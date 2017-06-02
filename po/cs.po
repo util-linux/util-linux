@@ -46,7 +46,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.28-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-05-23 11:41+0200\n"
+"POT-Creation-Date: 2017-06-02 11:14+0200\n"
 "PO-Revision-Date: 2016-04-02 14:23+02:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -86,7 +86,7 @@ msgstr "Řekne jádru o existenci zadaného oddílu.\n"
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:259 login-utils/vipw.c:277
 #: misc-utils/findmnt.c:1099 misc-utils/logger.c:1188 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
-#: sys-utils/dmesg.c:522 sys-utils/eject.c:499 sys-utils/eject.c:699
+#: sys-utils/dmesg.c:521 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
 #: sys-utils/hwclock.c:215 sys-utils/ldattach.c:387 sys-utils/nsenter.c:130
 #: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:270 sys-utils/setpriv.c:230
@@ -96,8 +96,8 @@ msgstr "Řekne jádru o existenci zadaného oddílu.\n"
 #: term-utils/agetty.c:2624 term-utils/mesg.c:127 term-utils/script.c:426
 #: term-utils/script.c:432 term-utils/script.c:434 term-utils/script.c:530
 #: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
-#: term-utils/wall.c:410 text-utils/colcrt.c:282 text-utils/more.c:513
-#: text-utils/rev.c:141 text-utils/ul.c:224
+#: term-utils/wall.c:413 text-utils/colcrt.c:282 text-utils/more.c:519
+#: text-utils/rev.c:141 text-utils/ul.c:231
 #, c-format
 msgid "cannot open %s"
 msgstr "%s nelze otevřít"
@@ -624,8 +624,8 @@ msgstr "Jste si jisti, že chcete uložit tabulku rozdělení disku na disk? "
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Napište „ano“ nebo „ne“ nebo stiskněte Esc pro opuštění dialogu."
 
-#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1587
-#: sys-utils/lscpu.c:1597 sys-utils/lsmem.c:200
+#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1589
+#: sys-utils/lscpu.c:1599 sys-utils/lsmem.c:200
 msgid "yes"
 msgstr "ano"
 
@@ -676,7 +676,7 @@ msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               začne s vynulovanou tabulkou rozdělení disku\n"
 
 #: disk-utils/cfdisk.c:2597 disk-utils/fdisk.c:907 disk-utils/sfdisk.c:2128
-#: misc-utils/cal.c:390 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
+#: misc-utils/cal.c:391 sys-utils/dmesg.c:1332 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "nepodporovaný režim barev"
 
@@ -779,10 +779,10 @@ msgstr "neplatný argument – repair"
 #: disk-utils/mkfs.minix.c:816 disk-utils/mkswap.c:241 disk-utils/partx.c:952
 #: login-utils/last.c:684 login-utils/utmpdump.c:139 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
-#: sys-utils/dmesg.c:524 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
+#: sys-utils/dmesg.c:523 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:77 sys-utils/nsenter.c:165 sys-utils/nsenter.c:169
 #: sys-utils/swapon.c:520 sys-utils/switch_root.c:94
-#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:504
+#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:510
 #, c-format
 msgid "stat of %s failed"
 msgstr "volání stat nad %s selhalo"
@@ -1149,7 +1149,7 @@ msgstr "alokace iterátoru selhala"
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
 #: disk-utils/partx.c:667 login-utils/lslogins.c:918 misc-utils/fincore.c:362
 #: misc-utils/findmnt.c:1598 misc-utils/lsblk.c:1897 misc-utils/lslocks.c:449
-#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1760 sys-utils/lscpu.c:1863
+#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1762 sys-utils/lscpu.c:1865
 #: sys-utils/lsipc.c:338 sys-utils/prlimit.c:297 sys-utils/swapon.c:281
 #: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:196
 msgid "failed to allocate output table"
@@ -1159,7 +1159,7 @@ msgstr "výstupní tabulku se nepodařilo alokovat"
 #: disk-utils/partx.c:581 login-utils/lslogins.c:976 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1174
 #: misc-utils/lslocks.c:391 sys-utils/losetup.c:333 sys-utils/losetup.c:362
-#: sys-utils/lscpu.c:1786 sys-utils/lscpu.c:1814 sys-utils/lsipc.c:470
+#: sys-utils/lscpu.c:1788 sys-utils/lscpu.c:1816 sys-utils/lsipc.c:470
 #: sys-utils/lsipc.c:545 sys-utils/lsipc.c:647 sys-utils/lsipc.c:739
 #: sys-utils/lsipc.c:900 sys-utils/prlimit.c:229 sys-utils/swapon.c:176
 #: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:407
@@ -1169,8 +1169,8 @@ msgstr "výstupní řádek se nepodařilo alokovat"
 #: disk-utils/fdisk-list.c:173 disk-utils/fdisk-list.c:273
 #: disk-utils/partx.c:644 login-utils/lslogins.c:1074 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1165
-#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1794
-#: sys-utils/lscpu.c:1825 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
+#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1796
+#: sys-utils/lscpu.c:1827 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
 #: sys-utils/prlimit.c:261 sys-utils/swapon.c:224 sys-utils/wdctl.c:243
 #: sys-utils/zramctl.c:475 text-utils/column.c:413
 #, fuzzy
@@ -1653,8 +1653,8 @@ msgstr "%s není připojeno\n"
 #: disk-utils/fsck.cramfs.c:253 disk-utils/sfdisk.c:299 libfdisk/src/bsd.c:645
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:655
-#: sys-utils/setpriv.c:239 term-utils/setterm.c:724 term-utils/setterm.c:781
-#: term-utils/setterm.c:785 term-utils/setterm.c:792
+#: sys-utils/setpriv.c:239 term-utils/setterm.c:721 term-utils/setterm.c:778
+#: term-utils/setterm.c:782 term-utils/setterm.c:789
 #, c-format
 msgid "cannot read %s"
 msgstr "z %s nelze číst"
@@ -2626,9 +2626,9 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:833
 #: disk-utils/mkswap.c:539 disk-utils/partx.c:1058 disk-utils/resizepart.c:112
-#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:659 sys-utils/wdctl.c:348
+#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:658 sys-utils/wdctl.c:348
 #: sys-utils/wdctl.c:413 term-utils/script.c:273 term-utils/script.c:350
-#: term-utils/setterm.c:888 text-utils/pg.c:1248
+#: term-utils/setterm.c:885 text-utils/pg.c:1256
 msgid "write failed"
 msgstr "zápis selhal"
 
@@ -2876,7 +2876,7 @@ msgstr " -h, --help         zobrazí tuto nápovědu a skončí\n"
 #: sys-utils/nsenter.c:482 sys-utils/prlimit.c:642 sys-utils/rtcwake.c:577
 #: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
 #: sys-utils/swapon.c:341 sys-utils/switch_root.c:257 sys-utils/unshare.c:461
-#: term-utils/script.c:589 text-utils/pg.c:1375
+#: term-utils/script.c:589 text-utils/pg.c:1383
 #, c-format
 msgid "failed to execute %s"
 msgstr "spuštění %s selhalo"
@@ -3667,7 +3667,7 @@ msgstr[2] "č. %2d: %9ju–%9ju (%9ju sektorů, %6ju MB)\n"
 
 #: disk-utils/partx.c:678 misc-utils/fincore.c:374 misc-utils/findmnt.c:1624
 #: misc-utils/lsblk.c:1919 misc-utils/lslocks.c:462 sys-utils/losetup.c:326
-#: sys-utils/lscpu.c:1769 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
+#: sys-utils/lscpu.c:1771 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
 #: sys-utils/wdctl.c:272
 #, fuzzy
 msgid "failed to allocate output column"
@@ -4221,7 +4221,7 @@ msgstr " Příklad:\n"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     Vytvoří 4GiB oddíl na výchozí počáteční pozici.\n"
 
-#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1454
+#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1453
 msgid "unsupported command"
 msgstr "nepodporovaný příkaz"
 
@@ -4693,7 +4693,7 @@ msgstr ""
 "Podrobnosti naleznete v %s.\n"
 
 #: include/closestream.h:46 include/closestream.h:48 login-utils/vipw.c:274
-#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:812
+#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:809
 #: text-utils/col.c:157
 msgid "write error"
 msgstr "chyba při zápisu"
@@ -5310,7 +5310,7 @@ msgstr "Popis disku zaps8n do %s. (Nezapomeňte zapsat také popis disku %s.)"
 msgid "Disklabel written to %s."
 msgstr "Popis disku zapsán do %s."
 
-#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:641
+#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:645
 msgid "Syncing disks."
 msgstr "Synchronizují se disky."
 
@@ -5342,26 +5342,26 @@ msgstr "Blok"
 msgid "Cpg"
 msgstr "C/S"
 
-#: libfdisk/src/context.c:635
+#: libfdisk/src/context.c:639
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: uzavření zařízení selhalo"
 
-#: libfdisk/src/context.c:814
+#: libfdisk/src/context.c:820
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "cylindr"
 msgstr[1] "cylindry"
 msgstr[2] "cylindrů"
 
-#: libfdisk/src/context.c:815
+#: libfdisk/src/context.c:821
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektor"
 msgstr[1] "sektory"
 msgstr[2] "sektorů"
 
-#: libfdisk/src/context.c:1118
+#: libfdisk/src/context.c:1124
 msgid "Incomplete geometry setting."
 msgstr "Neúplné nastavení geometrie."
 
@@ -6233,7 +6233,7 @@ msgstr ""
 
 #: libfdisk/src/gpt.c:2631
 #, fuzzy, c-format
-msgid "The number of the partition has be smaller than %zu."
+msgid "The number of the partition has to be smaller than %zu."
 msgstr "Již je vytvořeno maximální množství oddílů."
 
 #: libfdisk/src/gpt.c:2654
@@ -6715,7 +6715,7 @@ msgstr ""
 "Jste si jisti, že chcete tento oddíl označit jako odkládací prostor pro\n"
 "Linux?"
 
-#: libmount/src/context.c:2359
+#: libmount/src/context.c:2367
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "volání readlink selhalo: %s"
@@ -7024,7 +7024,7 @@ msgstr "volání mount(2) neuspělo"
 msgid "waitpid failed (%s)"
 msgstr "volání waitpid selhalo (%s)"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1911
+#: lib/path.c:209 sys-utils/lscpu.c:1913
 msgid "failed to callocate cpu set"
 msgstr "množinu CPU nelze alokovat"
 
@@ -7048,12 +7048,12 @@ msgstr "nelze otevřít konzolu"
 msgid "cannot set option for UNIX socket"
 msgstr "časový limit pro %s nelze nastavit"
 
-#: lib/plymouth-ctrl.c:91
+#: lib/plymouth-ctrl.c:92
 #, fuzzy
 msgid "cannot connect on UNIX socket"
 msgstr "nelze otevřít konzolu"
 
-#: lib/plymouth-ctrl.c:131
+#: lib/plymouth-ctrl.c:132
 #, c-format
 msgid "the plymouth request %c is not implemented"
 msgstr ""
@@ -7303,7 +7303,7 @@ msgstr "Shell byl změněn.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Použití: %s <soubor_s_heslem> <uživatel>…\n"
 
-#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1193
+#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1192
 #: sys-utils/lsipc.c:269
 #, c-format
 msgid "unknown time format: %s"
@@ -7640,7 +7640,7 @@ msgstr "%s: %s obsahuje neplatnou číselnou hodnotu: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "stav tichého přihlášení: obnovení původních ID selhalo"
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1587 sys-utils/lscpu.c:1597
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1589 sys-utils/lscpu.c:1599
 #: sys-utils/lsmem.c:200
 msgid "no"
 msgstr "ne"
@@ -7880,9 +7880,9 @@ msgstr ""
 
 #: login-utils/lslogins.c:1227 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:494 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
-#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:2050 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
-#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:381
+#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:263 sys-utils/ipcmk.c:66
+#: sys-utils/lscpu.c:2052 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
+#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:378
 #: text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7979,7 +7979,7 @@ msgstr "     --wtmp-file <cesta>  nastaví jinou cestu k wtmp\n"
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <cesta>  nastaví jinou cestu k btmp\n"
 
-#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2069
+#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2071
 #: sys-utils/lsmem.c:391
 #, c-format
 msgid ""
@@ -8320,7 +8320,7 @@ msgstr ""
 " -e, --force              selže-li getpwnam(3), prozkoumá soubory s hesly přímo\n"
 
 #: login-utils/sulogin.c:863 misc-utils/findmnt.c:1470 sys-utils/wdctl.c:525
-#: term-utils/agetty.c:758 term-utils/wall.c:207
+#: term-utils/agetty.c:758 term-utils/wall.c:210
 msgid "invalid timeout argument"
 msgstr "neplatný argument přepínače --timeout"
 
@@ -8664,139 +8664,140 @@ msgstr ""
 msgid "The lookup option requires a search type specified using -t"
 msgstr ""
 
-#: misc-utils/cal.c:372
+#: misc-utils/cal.c:373
 msgid "invalid month argument"
 msgstr "neplatný argument měsíce"
 
-#: misc-utils/cal.c:380
+#: misc-utils/cal.c:381
 msgid "invalid week argument"
 msgstr "neplatný argument týdne"
 
-#: misc-utils/cal.c:382
+#: misc-utils/cal.c:383
 msgid "illegal week value: use 1-54"
 msgstr "zakázaná hodnota pro týden: použijte 1–54"
 
-#: misc-utils/cal.c:421
+#: misc-utils/cal.c:422
 #, fuzzy, c-format
 msgid "failed to parse timestamp or unknown month name: %s"
 msgstr "krok se nezdařilo rozebrat"
 
-#: misc-utils/cal.c:430
+#: misc-utils/cal.c:431
 msgid "illegal day value"
 msgstr "zakázaná hodnota pro den"
 
-#: misc-utils/cal.c:432 misc-utils/cal.c:455
+#: misc-utils/cal.c:433 misc-utils/cal.c:456
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "zakázaná hodnota pro den: použijte 1–%d"
 
-#: misc-utils/cal.c:436 misc-utils/cal.c:444
+#: misc-utils/cal.c:437 misc-utils/cal.c:445
 msgid "illegal month value: use 1-12"
 msgstr "zakázaná hodnota pro měsíc: použijte 1–12"
 
-#: misc-utils/cal.c:440
+#: misc-utils/cal.c:441
 #, fuzzy, c-format
 msgid "unknown month name: %s"
 msgstr "neznámý název priority: %s"
 
-#: misc-utils/cal.c:447 misc-utils/cal.c:451
+#: misc-utils/cal.c:448 misc-utils/cal.c:452
 msgid "illegal year value"
 msgstr "zakázaná hodnota pro rok"
 
-#: misc-utils/cal.c:449
+#: misc-utils/cal.c:450
 msgid "illegal year value: use positive integer"
 msgstr "zakázaná hodnota pro rok: použijte kladné celé číslo"
 
-#: misc-utils/cal.c:481 misc-utils/cal.c:494
+#: misc-utils/cal.c:482 misc-utils/cal.c:495
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "zakázaná hodnota pro týden: rok %d nemá týden %d"
 
-#: misc-utils/cal.c:678
+#: misc-utils/cal.c:679
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: misc-utils/cal.c:684
+#: misc-utils/cal.c:685
 #, c-format
 msgid "%04d"
 msgstr ""
 
-#: misc-utils/cal.c:690
+#: misc-utils/cal.c:691
 #, fuzzy, c-format
 msgid "%s %04d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:992
+#: misc-utils/cal.c:993
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [přepínače] [[[den] měsíc] rok]\n"
 
-#: misc-utils/cal.c:993
+#: misc-utils/cal.c:994
 #, fuzzy, c-format
 msgid " %s [options] <timestamp|monthname>\n"
 msgstr " %s [přepínače] <název_souboru>\n"
 
-#: misc-utils/cal.c:996
+#: misc-utils/cal.c:997
 msgid "Display a calendar, or some part of it.\n"
 msgstr "Zobrazí kalendář nebo jeho část.\n"
 
-#: misc-utils/cal.c:997
+#: misc-utils/cal.c:998
 msgid "Without any arguments, display the current month.\n"
 msgstr "Bez argumentů zobrazí současný měsíc.\n"
 
-#: misc-utils/cal.c:1000
+#: misc-utils/cal.c:1001
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -1, --one             zobrazí pouze jeden měsíc (výchozí)\n"
 
-#: misc-utils/cal.c:1001
+#: misc-utils/cal.c:1002
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -3, --three           zobrazí tři měsíce\n"
 
-#: misc-utils/cal.c:1002
+#: misc-utils/cal.c:1003
 msgid " -n, --months <num>    show num months starting with date's month\n"
 msgstr " -n, --month <počet>   zobrazí počet měsíců počínaje zadaným datem\n"
 
-#: misc-utils/cal.c:1003
+#: misc-utils/cal.c:1004
 msgid " -S, --span            span the date when displaying multiple months\n"
 msgstr " -S, --span            při více měsících zobrazí okolí\n"
 
-#: misc-utils/cal.c:1004
+#: misc-utils/cal.c:1005
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -s, --sunday          neděle jako první den týdne\n"
 
-#: misc-utils/cal.c:1005
+#: misc-utils/cal.c:1006
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          pondělí jako první den týdne\n"
 
-#: misc-utils/cal.c:1006
+#: misc-utils/cal.c:1007
 msgid " -j, --julian          output Julian dates\n"
 msgstr " -j, --julian          vypíše juliánská data\n"
 
-#: misc-utils/cal.c:1007
+#: misc-utils/cal.c:1008
 msgid " -y, --year            show the whole year\n"
 msgstr " -y, --year            zobrazí celý rok\n"
 
-#: misc-utils/cal.c:1008
+#: misc-utils/cal.c:1009
 msgid " -Y, --twelve          show the next twelve months\n"
 msgstr " -T, --twelve          zobrazí dalších dvanáct měsíců\n"
 
-#: misc-utils/cal.c:1009
+#: misc-utils/cal.c:1010
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr " -w, --week[=<číslo>]  zobrazí americká nebo ISO-8601 čísla týdnů\n"
 
-#: misc-utils/cal.c:1010
+#: misc-utils/cal.c:1011
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr "     --color[=<kdy>]   obarví zprávy (auto, always [vždy] nebo never [nikdy])\n"
 
 #: misc-utils/fincore.c:61
 #, fuzzy
-msgid "file data residend in memory in pages"
+msgid "file data resident in memory in pages"
 msgstr "Stránky sdílené paměti"
 
 #: misc-utils/fincore.c:62
-msgid "file data residend in memory in bytes"
-msgstr ""
+#, fuzzy
+msgid "file data resident in memory in bytes"
+msgstr "Stránky sdílené paměti"
 
 #: misc-utils/fincore.c:63
 #, fuzzy
@@ -9587,17 +9588,17 @@ msgstr "přepínač „%s“ vyžaduje argument"
 #: sys-utils/losetup.c:694 sys-utils/tunelp.c:161 sys-utils/tunelp.c:168
 #: sys-utils/tunelp.c:175 sys-utils/tunelp.c:182 sys-utils/tunelp.c:189
 #: sys-utils/tunelp.c:195 sys-utils/tunelp.c:199 sys-utils/tunelp.c:206
-#: sys-utils/tunelp.c:231 term-utils/setterm.c:214 term-utils/setterm.c:217
-#: term-utils/setterm.c:236 term-utils/setterm.c:238 term-utils/setterm.c:273
-#: term-utils/setterm.c:275 term-utils/setterm.c:292 term-utils/setterm.c:299
-#: term-utils/setterm.c:301 term-utils/setterm.c:313 term-utils/setterm.c:315
-#: term-utils/setterm.c:324 term-utils/setterm.c:332 term-utils/setterm.c:347
-#: term-utils/setterm.c:349 term-utils/setterm.c:361 term-utils/setterm.c:363
-#: term-utils/setterm.c:374 term-utils/setterm.c:542 term-utils/setterm.c:547
-#: term-utils/setterm.c:552 term-utils/setterm.c:557 term-utils/setterm.c:581
-#: term-utils/setterm.c:586 term-utils/setterm.c:591 term-utils/setterm.c:596
-#: term-utils/setterm.c:601 term-utils/setterm.c:606 term-utils/setterm.c:614
-#: term-utils/setterm.c:647
+#: sys-utils/tunelp.c:231 term-utils/setterm.c:211 term-utils/setterm.c:214
+#: term-utils/setterm.c:233 term-utils/setterm.c:235 term-utils/setterm.c:270
+#: term-utils/setterm.c:272 term-utils/setterm.c:289 term-utils/setterm.c:296
+#: term-utils/setterm.c:298 term-utils/setterm.c:310 term-utils/setterm.c:312
+#: term-utils/setterm.c:321 term-utils/setterm.c:329 term-utils/setterm.c:344
+#: term-utils/setterm.c:346 term-utils/setterm.c:358 term-utils/setterm.c:360
+#: term-utils/setterm.c:371 term-utils/setterm.c:539 term-utils/setterm.c:544
+#: term-utils/setterm.c:549 term-utils/setterm.c:554 term-utils/setterm.c:578
+#: term-utils/setterm.c:583 term-utils/setterm.c:588 term-utils/setterm.c:593
+#: term-utils/setterm.c:598 term-utils/setterm.c:603 term-utils/setterm.c:611
+#: term-utils/setterm.c:644
 msgid "argument error"
 msgstr "chyba argumentu"
 
@@ -10549,7 +10550,7 @@ msgstr "volání poll() selhalo"
 msgid "timeout [%d sec]\n"
 msgstr "časový limit [%d sekund]\n"
 
-#: misc-utils/uuidd.c:443 term-utils/setterm.c:900 text-utils/column.c:436
+#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:436
 #: text-utils/column.c:449
 msgid "read failed"
 msgstr "volání read selhalo"
@@ -11776,183 +11777,183 @@ msgstr "Musíte být root, abyste mohli nastavit chování Ctrl-Alt-Del"
 msgid "unknown argument: %s"
 msgstr "neznámý argument: %s"
 
-#: sys-utils/dmesg.c:110
+#: sys-utils/dmesg.c:109
 msgid "system is unusable"
 msgstr "systém je nepoužitelný"
 
-#: sys-utils/dmesg.c:111
+#: sys-utils/dmesg.c:110
 msgid "action must be taken immediately"
 msgstr "je třeba okamžité reakce"
 
-#: sys-utils/dmesg.c:112
+#: sys-utils/dmesg.c:111
 msgid "critical conditions"
 msgstr "kritický stav"
 
-#: sys-utils/dmesg.c:113
+#: sys-utils/dmesg.c:112
 msgid "error conditions"
 msgstr "chybový stav"
 
-#: sys-utils/dmesg.c:114
+#: sys-utils/dmesg.c:113
 msgid "warning conditions"
 msgstr "stav stojící za pozornost"
 
-#: sys-utils/dmesg.c:115
+#: sys-utils/dmesg.c:114
 msgid "normal but significant condition"
 msgstr "běžná, ale významná událost"
 
-#: sys-utils/dmesg.c:116
+#: sys-utils/dmesg.c:115
 msgid "informational"
 msgstr "informační"
 
-#: sys-utils/dmesg.c:117
+#: sys-utils/dmesg.c:116
 msgid "debug-level messages"
 msgstr "ladicí zprávy"
 
-#: sys-utils/dmesg.c:131
+#: sys-utils/dmesg.c:130
 msgid "kernel messages"
 msgstr "jaderné zprávy"
 
-#: sys-utils/dmesg.c:132
+#: sys-utils/dmesg.c:131
 msgid "random user-level messages"
 msgstr "náhodné uživatelské zprávy"
 
-#: sys-utils/dmesg.c:133
+#: sys-utils/dmesg.c:132
 msgid "mail system"
 msgstr "poštovní systém"
 
-#: sys-utils/dmesg.c:134
+#: sys-utils/dmesg.c:133
 msgid "system daemons"
 msgstr "systémoví démoni"
 
-#: sys-utils/dmesg.c:135
+#: sys-utils/dmesg.c:134
 msgid "security/authorization messages"
 msgstr "bezpečnostní/autorizační zprávy"
 
-#: sys-utils/dmesg.c:136
+#: sys-utils/dmesg.c:135
 msgid "messages generated internally by syslogd"
 msgstr "zprávy vnitřně vytvořené démonem syslogd"
 
-#: sys-utils/dmesg.c:137
+#: sys-utils/dmesg.c:136
 msgid "line printer subsystem"
 msgstr "tiskový podsystém"
 
-#: sys-utils/dmesg.c:138
+#: sys-utils/dmesg.c:137
 msgid "network news subsystem"
 msgstr "podsystém usenetu (news)"
 
-#: sys-utils/dmesg.c:139
+#: sys-utils/dmesg.c:138
 msgid "UUCP subsystem"
 msgstr "podsystém UUCP"
 
-#: sys-utils/dmesg.c:140
+#: sys-utils/dmesg.c:139
 msgid "clock daemon"
 msgstr "časový démon"
 
-#: sys-utils/dmesg.c:141
+#: sys-utils/dmesg.c:140
 msgid "security/authorization messages (private)"
 msgstr "bezpečnostní/autorizační zprávy (soukromé)"
 
-#: sys-utils/dmesg.c:142
+#: sys-utils/dmesg.c:141
 msgid "FTP daemon"
 msgstr "démon FTP"
 
-#: sys-utils/dmesg.c:267
+#: sys-utils/dmesg.c:266
 msgid "Display or control the kernel ring buffer.\n"
 msgstr "Zobrazí nebo ovládá kruhový jaderný buffer.\n"
 
-#: sys-utils/dmesg.c:270
+#: sys-utils/dmesg.c:269
 msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgstr " -C, --clear                 vyprázdní kruhový buffer v jádře\n"
 
-#: sys-utils/dmesg.c:271
+#: sys-utils/dmesg.c:270
 msgid " -c, --read-clear            read and clear all messages\n"
 msgstr " -c, --read-clear            přečte a vyprázdní zprávy\n"
 
-#: sys-utils/dmesg.c:272
+#: sys-utils/dmesg.c:271
 msgid " -D, --console-off           disable printing messages to console\n"
 msgstr " -D, --console-off           vypne vypisování zpráv do konzoly\n"
 
-#: sys-utils/dmesg.c:273
+#: sys-utils/dmesg.c:272
 msgid " -E, --console-on            enable printing messages to console\n"
 msgstr " -E, --console-on            zapne vypisování zpráv do konzoly\n"
 
-#: sys-utils/dmesg.c:274
+#: sys-utils/dmesg.c:273
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr " -F, --file <soubor>         použije zadaný soubor místo jaderného bufferu\n"
 
-#: sys-utils/dmesg.c:275
+#: sys-utils/dmesg.c:274
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
 msgstr " -f, --facility <seznam>     výstup omezí na zadané obory\n"
 
-#: sys-utils/dmesg.c:276
+#: sys-utils/dmesg.c:275
 msgid " -H, --human                 human readable output\n"
 msgstr " -H, --human                 výstup čitelný pro lidi\n"
 
-#: sys-utils/dmesg.c:277
+#: sys-utils/dmesg.c:276
 msgid " -k, --kernel                display kernel messages\n"
 msgstr " -k, --kernel                zobrazí jaderné zprávy\n"
 
-#: sys-utils/dmesg.c:278
+#: sys-utils/dmesg.c:277
 msgid " -L, --color[=<when>]        colorize messages (auto, always or never)\n"
 msgstr " -L, --color[=<kdy>]         obarví zprávy (auto, always [vždy], never [nikdy]\n"
 
-#: sys-utils/dmesg.c:281
+#: sys-utils/dmesg.c:280
 msgid " -l, --level <list>          restrict output to defined levels\n"
 msgstr " -l, --level <seznam>        výstup omezí na zadané úrovně\n"
 
-#: sys-utils/dmesg.c:282
+#: sys-utils/dmesg.c:281
 msgid " -n, --console-level <level> set level of messages printed to console\n"
 msgstr " -n, --console-level <úroveň> nastaví úroveň zpráv vypisovaných do konzoly\n"
 
-#: sys-utils/dmesg.c:283
+#: sys-utils/dmesg.c:282
 msgid " -P, --nopager               do not pipe output into a pager\n"
 msgstr " -P, --nopager               výstup neodešle rourou do stránkovače\n"
 
-#: sys-utils/dmesg.c:284
+#: sys-utils/dmesg.c:283
 msgid " -r, --raw                   print the raw message buffer\n"
 msgstr " -r, --raw                   vypíše buffer zpráv v neopracované podobě\n"
 
-#: sys-utils/dmesg.c:285
+#: sys-utils/dmesg.c:284
 msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr " -S, --syslog                vynutí použití syslog(2) místo /dev/kmsg\n"
 
-#: sys-utils/dmesg.c:286
+#: sys-utils/dmesg.c:285
 msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr ""
 " -s, --buffer-size <velikost> velikost bufferu, na který se zeptat jaderného\n"
 "                              kruhové bufferu\n"
 
-#: sys-utils/dmesg.c:287
+#: sys-utils/dmesg.c:286
 msgid " -u, --userspace             display userspace messages\n"
 msgstr " -u, --userspace             vypíše zprávy z uživatelského prostoru\n"
 
-#: sys-utils/dmesg.c:288
+#: sys-utils/dmesg.c:287
 msgid " -w, --follow                wait for new messages\n"
 msgstr " -w, --follow                čeká na nové zprávy\n"
 
-#: sys-utils/dmesg.c:289
+#: sys-utils/dmesg.c:288
 msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr " -x, --decode                obory a úrovně převede na čitelné řetězce\n"
 
-#: sys-utils/dmesg.c:290
+#: sys-utils/dmesg.c:289
 msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr " -d, --show-delta            ukáže časové rozdíly mezi hláškami\n"
 
-#: sys-utils/dmesg.c:291
+#: sys-utils/dmesg.c:290
 msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr " -e, --reltime               ukáže místní čas a časový rozdíl v čitelné podobě\n"
 
-#: sys-utils/dmesg.c:292
+#: sys-utils/dmesg.c:291
 msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr ""
 " -T, --ctime                 ukáže časové údaje v čitelné podobě (může být\n"
 "                             nepřesné!)\n"
 
-#: sys-utils/dmesg.c:293
+#: sys-utils/dmesg.c:292
 msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr " -t, --notime                neukazuje u zpráv žádní časové údaje\n"
 
-#: sys-utils/dmesg.c:294
+#: sys-utils/dmesg.c:293
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
@@ -11963,7 +11964,7 @@ msgstr ""
 "                             (rozdíl, relativní, čitelný, žádný, ISO)\n"
 "Uspání/probuzení způsobuje nepřesnosti při formátu ctime a iso.\n"
 
-#: sys-utils/dmesg.c:300
+#: sys-utils/dmesg.c:299
 msgid ""
 "\n"
 "Supported log facilities:\n"
@@ -11971,7 +11972,7 @@ msgstr ""
 "\n"
 "Podporované obory protokolu:\n"
 
-#: sys-utils/dmesg.c:306
+#: sys-utils/dmesg.c:305
 msgid ""
 "\n"
 "Supported log levels (priorities):\n"
@@ -11979,48 +11980,48 @@ msgstr ""
 "\n"
 "Podporované úrovně (priority) protokolu:\n"
 
-#: sys-utils/dmesg.c:360
+#: sys-utils/dmesg.c:359
 #, c-format
 msgid "failed to parse level '%s'"
 msgstr "nezdařilo se rozebrat úroveň „%s“"
 
-#: sys-utils/dmesg.c:362
+#: sys-utils/dmesg.c:361
 #, c-format
 msgid "unknown level '%s'"
 msgstr "neznámá úroveň „%s“"
 
-#: sys-utils/dmesg.c:398
+#: sys-utils/dmesg.c:397
 #, c-format
 msgid "failed to parse facility '%s'"
 msgstr "nezdařilo se rozebrat obor „%s“"
 
-#: sys-utils/dmesg.c:400
+#: sys-utils/dmesg.c:399
 #, c-format
 msgid "unknown facility '%s'"
 msgstr "neznámý obor „%s"
 
-#: sys-utils/dmesg.c:528
+#: sys-utils/dmesg.c:527
 #, c-format
 msgid "cannot mmap: %s"
 msgstr "nelze namapovat do paměti: %s"
 
-#: sys-utils/dmesg.c:1356
+#: sys-utils/dmesg.c:1355
 msgid "invalid buffer size argument"
 msgstr "neplatný argument velikosti bufferu"
 
-#: sys-utils/dmesg.c:1408
+#: sys-utils/dmesg.c:1407
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "přepínač --show-delta se ignoruje, je-li použit formát času ISO 8601"
 
-#: sys-utils/dmesg.c:1431
+#: sys-utils/dmesg.c:1430
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw lze použít spolu s --level nebo --facility pouze při čtení zpráv z /dev/kmsg"
 
-#: sys-utils/dmesg.c:1441
+#: sys-utils/dmesg.c:1440
 msgid "read kernel buffer failed"
 msgstr "čtení z jaderného bufferu selhalo"
 
-#: sys-utils/dmesg.c:1460
+#: sys-utils/dmesg.c:1459
 msgid "klogctl failed"
 msgstr "volání klogctl selhalo"
 
@@ -14447,19 +14448,19 @@ msgstr "obsluhu signálu nelze nastavit"
 msgid "failed to read from: %s"
 msgstr "selhalo čtení z: %s"
 
-#: sys-utils/lscpu.c:1457
+#: sys-utils/lscpu.c:1459
 msgid "Failed to extract the node number"
 msgstr "Získání čísla uzlu selhalo"
 
-#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
 msgid "Y"
 msgstr "A"
 
-#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:1678
+#: sys-utils/lscpu.c:1680
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -14470,216 +14471,216 @@ msgstr ""
 "# programů. Každá různá položka v každém sloupci má jedinečné ID,\n"
 "# které se počítá od nuly.\n"
 
-#: sys-utils/lscpu.c:1873 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
+#: sys-utils/lscpu.c:1875 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
 msgid "failed to initialize output column"
 msgstr "výstupní sloupec se nepodařilo inicializovat"
 
-#: sys-utils/lscpu.c:1875
+#: sys-utils/lscpu.c:1877
 msgid "Architecture:"
 msgstr "Architektura:"
 
 # FIXME: value alignment counts bytes instead of columns
-#: sys-utils/lscpu.c:1888
+#: sys-utils/lscpu.c:1890
 msgid "CPU op-mode(s):"
 msgstr "Operační režim(y) CPU:"
 
-#: sys-utils/lscpu.c:1891 sys-utils/lscpu.c:1893
+#: sys-utils/lscpu.c:1893 sys-utils/lscpu.c:1895
 msgid "Byte Order:"
 msgstr "Pořadí bajtů:"
 
-#: sys-utils/lscpu.c:1895
+#: sys-utils/lscpu.c:1897
 msgid "CPU(s):"
 msgstr "Počet CPU:"
 
-#: sys-utils/lscpu.c:1898
+#: sys-utils/lscpu.c:1900
 msgid "On-line CPU(s) mask:"
 msgstr "Maska zapnutých CPU:"
 
-#: sys-utils/lscpu.c:1899
+#: sys-utils/lscpu.c:1901
 msgid "On-line CPU(s) list:"
 msgstr "Seznam zapnutých CPU:"
 
-#: sys-utils/lscpu.c:1918
+#: sys-utils/lscpu.c:1920
 msgid "Off-line CPU(s) mask:"
 msgstr "Maska vypnutých CPU:"
 
-#: sys-utils/lscpu.c:1919
+#: sys-utils/lscpu.c:1921
 msgid "Off-line CPU(s) list:"
 msgstr "Seznam vypnutých CPU:"
 
-#: sys-utils/lscpu.c:1954
+#: sys-utils/lscpu.c:1956
 msgid "Thread(s) per core:"
 msgstr "Vláken na jádro:"
 
-#: sys-utils/lscpu.c:1956
+#: sys-utils/lscpu.c:1958
 msgid "Core(s) per socket:"
 msgstr "Jader na patici:"
 
-#: sys-utils/lscpu.c:1959
+#: sys-utils/lscpu.c:1961
 msgid "Socket(s) per book:"
 msgstr "Patic na knihu:"
 
-#: sys-utils/lscpu.c:1962
+#: sys-utils/lscpu.c:1964
 msgid "Book(s) per drawer:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1964
+#: sys-utils/lscpu.c:1966
 msgid "Drawer(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1966
+#: sys-utils/lscpu.c:1968
 msgid "Book(s):"
 msgstr "Knihy:"
 
-#: sys-utils/lscpu.c:1969
+#: sys-utils/lscpu.c:1971
 msgid "Socket(s):"
 msgstr "Patic:"
 
-#: sys-utils/lscpu.c:1973
+#: sys-utils/lscpu.c:1975
 msgid "NUMA node(s):"
 msgstr "Uzly NUMA:"
 
-#: sys-utils/lscpu.c:1975
+#: sys-utils/lscpu.c:1977
 msgid "Vendor ID:"
 msgstr "ID výrobce:"
 
-#: sys-utils/lscpu.c:1977
+#: sys-utils/lscpu.c:1979
 #, fuzzy
 msgid "Machine type:"
 msgstr "Typ oddílu:"
 
-#: sys-utils/lscpu.c:1979
+#: sys-utils/lscpu.c:1981
 msgid "CPU family:"
 msgstr "Rodina CPU:"
 
-#: sys-utils/lscpu.c:1981
+#: sys-utils/lscpu.c:1983
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:1983
+#: sys-utils/lscpu.c:1985
 msgid "Model name:"
 msgstr "Název modelu:"
 
 # ???: Existuje český překlad?
-#: sys-utils/lscpu.c:1985
+#: sys-utils/lscpu.c:1987
 msgid "Stepping:"
 msgstr "Stepping:"
 
-#: sys-utils/lscpu.c:1987
+#: sys-utils/lscpu.c:1989
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:1989
+#: sys-utils/lscpu.c:1991
 #, fuzzy
 msgid "CPU dynamic MHz:"
 msgstr "CPU min. MHz:"
 
-#: sys-utils/lscpu.c:1991
+#: sys-utils/lscpu.c:1993
 #, fuzzy
 msgid "CPU static MHz:"
 msgstr "CPU max. MHz:"
 
-#: sys-utils/lscpu.c:1993
+#: sys-utils/lscpu.c:1995
 msgid "CPU max MHz:"
 msgstr "CPU max. MHz:"
 
-#: sys-utils/lscpu.c:1995
+#: sys-utils/lscpu.c:1997
 msgid "CPU min MHz:"
 msgstr "CPU min. MHz:"
 
-#: sys-utils/lscpu.c:1997
+#: sys-utils/lscpu.c:1999
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:2000 sys-utils/lscpu.c:2002
+#: sys-utils/lscpu.c:2002 sys-utils/lscpu.c:2004
 msgid "Virtualization:"
 msgstr "Virtualizace:"
 
-#: sys-utils/lscpu.c:2005
+#: sys-utils/lscpu.c:2007
 msgid "Hypervisor:"
 msgstr "Hypervizor:"
 
-#: sys-utils/lscpu.c:2007
+#: sys-utils/lscpu.c:2009
 msgid "Hypervisor vendor:"
 msgstr "Výrobce hypervizoru:"
 
-#: sys-utils/lscpu.c:2008
+#: sys-utils/lscpu.c:2010
 msgid "Virtualization type:"
 msgstr "Druh virtualizace:"
 
-#: sys-utils/lscpu.c:2011
+#: sys-utils/lscpu.c:2013
 msgid "Dispatching mode:"
 msgstr "Režim rozhodování:"
 
-#: sys-utils/lscpu.c:2015 sys-utils/lscpu.c:2022
+#: sys-utils/lscpu.c:2017 sys-utils/lscpu.c:2024
 #, c-format
 msgid "%s cache:"
 msgstr "%s keš:"
 
-#: sys-utils/lscpu.c:2028
+#: sys-utils/lscpu.c:2030
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "CPU NUMA uzlu %d:"
 
-#: sys-utils/lscpu.c:2033
+#: sys-utils/lscpu.c:2035
 msgid "Physical sockets:"
 msgstr "Fyzické sockety:"
 
-#: sys-utils/lscpu.c:2034
+#: sys-utils/lscpu.c:2036
 msgid "Physical chips:"
 msgstr "Fyzické čipy:"
 
-#: sys-utils/lscpu.c:2035
+#: sys-utils/lscpu.c:2037
 msgid "Physical cores/chip:"
 msgstr "Fyzická jádra/čip:"
 
-#: sys-utils/lscpu.c:2039
+#: sys-utils/lscpu.c:2041
 msgid "Flags:"
 msgstr "Příznaky:"
 
-#: sys-utils/lscpu.c:2053
+#: sys-utils/lscpu.c:2055
 msgid "Display information about the CPU architecture.\n"
 msgstr "Zobrazí údaje o architektuře CPU.\n"
 
-#: sys-utils/lscpu.c:2056
+#: sys-utils/lscpu.c:2058
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               vypíše zapnutá i vypnutá CPU (výchozí pro -e)\n"
 
-#: sys-utils/lscpu.c:2057
+#: sys-utils/lscpu.c:2059
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            vypíše jen zapnutá CPUs (výchozí pro -p)\n"
 
-#: sys-utils/lscpu.c:2058
+#: sys-utils/lscpu.c:2060
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           vypíše jen vypnutá CPU\n"
 
-#: sys-utils/lscpu.c:2059
+#: sys-utils/lscpu.c:2061
 #, fuzzy
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr " -J, --json             výstup formátuje do JSONu\n"
 
-#: sys-utils/lscpu.c:2060
+#: sys-utils/lscpu.c:2062
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<seznam>]  výpis v rozšířeném čitelném formátu\n"
 
-#: sys-utils/lscpu.c:2061
+#: sys-utils/lscpu.c:2063
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<seznam>]  výpis v rozebratelném formátu\n"
 
-#: sys-utils/lscpu.c:2062
+#: sys-utils/lscpu.c:2064
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <adresář>  jako kořen systému použije <adresář>\n"
 
-#: sys-utils/lscpu.c:2063
+#: sys-utils/lscpu.c:2065
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               vypíše šestnáctkové masky namísto seznamů CPU\n"
 
-#: sys-utils/lscpu.c:2064
+#: sys-utils/lscpu.c:2066
 #, fuzzy
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -a, --all            vypíše všechna zařízení\n"
 
-#: sys-utils/lscpu.c:2169
+#: sys-utils/lscpu.c:2171
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr ""
@@ -15143,7 +15144,7 @@ msgstr ""
 
 #: sys-utils/lsmem.c:379
 #, fuzzy
-msgid " -a, --all            list each individiual memory block\n"
+msgid " -a, --all            list each individual memory block\n"
 msgstr " -a, --all            vypíše všechna zařízení\n"
 
 #: sys-utils/lsmem.c:384
@@ -18362,261 +18363,261 @@ msgstr "čtení z časového souboru %s selhalo"
 msgid "timing file %s: line %lu: unexpected format"
 msgstr "časový soubor %s: %lu: neočekávaný formát"
 
-#: term-utils/setterm.c:240
+#: term-utils/setterm.c:237
 #, c-format
 msgid "argument error: bright %s is not supported"
 msgstr "chyba argumentu: světlost %s není nepodporována"
 
-#: term-utils/setterm.c:329
+#: term-utils/setterm.c:326
 msgid "too many tabs"
 msgstr "příliš mnoho tabulátorů"
 
-#: term-utils/setterm.c:384
+#: term-utils/setterm.c:381
 msgid "Set the attributes of a terminal.\n"
 msgstr "Nastaví vlastnosti terminálu.\n"
 
-#: term-utils/setterm.c:387
+#: term-utils/setterm.c:384
 msgid " --term          <terminal_name>   override TERM environment variable\n"
 msgstr " --term          <název terminálu>  přebije proměnnou prostředí TERM\n"
 
-#: term-utils/setterm.c:388
+#: term-utils/setterm.c:385
 msgid " --reset                           reset terminal to power-on state\n"
 msgstr " --reset                           resetuje terminál do výchozího stavu\n"
 
-#: term-utils/setterm.c:389
+#: term-utils/setterm.c:386
 #, fuzzy
 msgid " --resize                          reset terminal rows and columns\n"
 msgstr " --reset                           resetuje terminál do výchozího stavu\n"
 
-#: term-utils/setterm.c:390
+#: term-utils/setterm.c:387
 msgid " --initialize                      display init string, and use default settings\n"
 msgstr ""
 " --initialize                      zobrazí inicializační řetězec a použije\n"
 "                                   výchozí nastavení\n"
 
-#: term-utils/setterm.c:391
+#: term-utils/setterm.c:388
 msgid " --default                         use default terminal settings\n"
 msgstr " --default                         použije výchozí nastavení terminálu\n"
 
-#: term-utils/setterm.c:392
+#: term-utils/setterm.c:389
 msgid " --store                           save current terminal settings as default\n"
 msgstr ""
 " --store                           uloží současné nastavení terminálu jako\n"
 "                                   výchozí\n"
 
-#: term-utils/setterm.c:393
+#: term-utils/setterm.c:390
 msgid " --cursor        [on|off]          display cursor\n"
 msgstr " --cursor        [on|off]          zapne (on) / vypne (off) zobrazení kurzoru\n"
 
-#: term-utils/setterm.c:394
+#: term-utils/setterm.c:391
 msgid " --repeat        [on|off]          keyboard repeat\n"
 msgstr "--repeat        [on|off]           opakování klávesnice\n"
 
-#: term-utils/setterm.c:395
+#: term-utils/setterm.c:392
 msgid " --appcursorkeys [on|off]          cursor key application mode\n"
 msgstr " --appcursorkeys [on|off]          režim aplikace kurzorových kláves\n"
 
-#: term-utils/setterm.c:396
+#: term-utils/setterm.c:393
 msgid " --linewrap      [on|off]          continue on a new line when a line is full\n"
 msgstr ""
 "--linewrap      [on|off]           pokračuje na dalším řádku, když řádek je\n"
 "                                   plný\n"
 
-#: term-utils/setterm.c:397
+#: term-utils/setterm.c:394
 msgid " --inversescreen [on|off]          swap colors for the whole screen\n"
 msgstr " --inversescreen [on|off]          prohodí barvy na celé obrazovce\n"
 
-#: term-utils/setterm.c:398
+#: term-utils/setterm.c:395
 msgid " --foreground    default|<color>   set foreground color\n"
 msgstr " --foreground    default|<barva>   nastaví barvu popředí („default“ je výchozí)\n"
 
-#: term-utils/setterm.c:399
+#: term-utils/setterm.c:396
 msgid " --background    default|<color>   set background color\n"
 msgstr " --background    default|<barva>   nastaví barvu pozadí\n"
 
-#: term-utils/setterm.c:400
+#: term-utils/setterm.c:397
 msgid " --ulcolor       [bright] <color>  set underlined text color\n"
 msgstr " --ulcolor       [jas] <barva>     nastaví barvu podtrženého textu\n"
 
-#: term-utils/setterm.c:401
+#: term-utils/setterm.c:398
 msgid " --hbcolor       [bright] <color>  set bold text color\n"
 msgstr " --hbcolor       [bright] <barva>  nastaví barvu tučného textu\n"
 
-#: term-utils/setterm.c:402
+#: term-utils/setterm.c:399
 msgid "                 <color>: black blue cyan green grey magenta red white yellow\n"
 msgstr ""
 "                 <barva>: black (černá), blue (modrá), cyan (azurová),\n"
 "                          green (zelená), grey (šedivá), magenta (purpurová)\n"
 "                          red (červená), white (bílá), yellow (žlutá)\n"
 
-#: term-utils/setterm.c:403
+#: term-utils/setterm.c:400
 msgid " --bold          [on|off]          bold\n"
 msgstr " --bold          [on|off]          tučnost\n"
 
-#: term-utils/setterm.c:404
+#: term-utils/setterm.c:401
 msgid " --half-bright   [on|off]          dim\n"
 msgstr " --half-bright   [on|off]          temnost\n"
 
-#: term-utils/setterm.c:405
+#: term-utils/setterm.c:402
 msgid " --blink         [on|off]          blink\n"
 msgstr " --blink         [on|off]          blikání\n"
 
-#: term-utils/setterm.c:406
+#: term-utils/setterm.c:403
 msgid " --underline     [on|off]          underline\n"
 msgstr " --underline     [on|off]          podtržení\n"
 
-#: term-utils/setterm.c:407
+#: term-utils/setterm.c:404
 msgid " --reverse       [on|off]          swap foreground and background colors\n"
 msgstr " --reverse       [on|off]          prohodí barvy popředí a pozadí\n"
 
-#: term-utils/setterm.c:408
+#: term-utils/setterm.c:405
 msgid " --clear         [all|rest]        clear screen and set cursor position\n"
 msgstr ""
 " --clear         [all|rest]        smaže obrazovku a nastaví polohu kurzoru:\n"
 "                                   all (vše), rest (zbytek)\n"
 
-#: term-utils/setterm.c:409
+#: term-utils/setterm.c:406
 msgid " --tabs          [<number>...]     set these tab stop positions, or show them\n"
 msgstr ""
 " --tabs          [<číslo>…]        nastaví tyto tabulátorové zarážky nebo je\n"
 "                                   zobrazí\n"
 
-#: term-utils/setterm.c:410
+#: term-utils/setterm.c:407
 msgid " --clrtabs       [<number>...]     clear these tab stop positions, or all\n"
 msgstr ""
 " --clrtabs       [<číslo>…]        odstraní tyto nebo všechny tabulátorové\n"
 "                                   zarážky\n"
 
-#: term-utils/setterm.c:411
+#: term-utils/setterm.c:408
 msgid " --regtabs       [1-160]           set a regular tab stop interval\n"
 msgstr ""
 " --regtabs       [1–160]           nastaví pravidelný rozestup tabulátorových\n"
 "                                   zarážek\n"
 
-#: term-utils/setterm.c:412
+#: term-utils/setterm.c:409
 msgid " --blank         [0-60|force|poke] set time of inactivity before screen blanks\n"
 msgstr ""
 " --blank         [0–60|force|poke] nastaví dobu nečinnosti nutnou pro\n"
 "                                   potemnění obrazovky\n"
 
-#: term-utils/setterm.c:413
+#: term-utils/setterm.c:410
 msgid " --dump          [<number>]        write vcsa<number> console dump to file\n"
 msgstr " --dump          [<číslo>]         zapíše obsah konzoly vcsa<číslo> do souboru\n"
 
-#: term-utils/setterm.c:414
+#: term-utils/setterm.c:411
 msgid " --append        [<number>]        append vcsa<number> console dump to file\n"
 msgstr " --append        [<číslo>]         připojí obsah konzoly vcsa<číslo> do souboru\n"
 
-#: term-utils/setterm.c:415
+#: term-utils/setterm.c:412
 msgid " --file          <filename>        name of the dump file\n"
 msgstr " --file          <soubor>          název výstupního souboru\n"
 
-#: term-utils/setterm.c:416
+#: term-utils/setterm.c:413
 msgid " --msg           [on|off]          send kernel messages to console\n"
 msgstr "  --msg           [on|off]         hlášení jádra odesílá na konzolu\n"
 
-#: term-utils/setterm.c:417
+#: term-utils/setterm.c:414
 msgid " --msglevel      0-8               kernel console log level\n"
 msgstr " --msglevel      0–8               úroveň protokolu jaderné konzole\n"
 
-#: term-utils/setterm.c:418
+#: term-utils/setterm.c:415
 msgid " --powersave     [on|vsync|hsync|powerdown|off]\n"
 msgstr " --powersave     [on|vsync|hsync|powerdown|off]\n"
 
-#: term-utils/setterm.c:419
+#: term-utils/setterm.c:416
 msgid "                                   set vesa powersaving features\n"
 msgstr "                                   nastavení šetření energií VESA\n"
 
-#: term-utils/setterm.c:420
+#: term-utils/setterm.c:417
 msgid " --powerdown     [0-60]            set vesa powerdown interval in minutes\n"
 msgstr ""
 " --powerdown     [0–60]            nastaví interval v minutách pro VESA režim\n"
 "                                   powerdown\n"
 
-#: term-utils/setterm.c:421
+#: term-utils/setterm.c:418
 msgid " --blength       [0-2000]          duration of the bell in milliseconds\n"
 msgstr " --blength       [0–2000]          délka zvonku v milisekundách\n"
 
-#: term-utils/setterm.c:422
+#: term-utils/setterm.c:419
 msgid " --bfreq         <number>          bell frequency in Hertz\n"
 msgstr " --bfreq         <číslo>           frekvence zvonku v hertzích\n"
 
-#: term-utils/setterm.c:423
+#: term-utils/setterm.c:420
 msgid " --version                         show version information and exit\n"
 msgstr " --version                         zobrazí údaje o verzi a skončí\n"
 
-#: term-utils/setterm.c:424
+#: term-utils/setterm.c:421
 msgid " --help                            display this help and exit\n"
 msgstr " --help                            zobrazí tuto nápovědu a skončí\n"
 
-#: term-utils/setterm.c:432
+#: term-utils/setterm.c:429
 msgid "duplicate use of an option"
 msgstr "vícekrát použitý přepínač"
 
-#: term-utils/setterm.c:741
+#: term-utils/setterm.c:738
 msgid "cannot force blank"
 msgstr "režim blank nelze vynutit"
 
-#: term-utils/setterm.c:746
+#: term-utils/setterm.c:743
 msgid "cannot force unblank"
 msgstr "režim unblank nelze vynutit"
 
-#: term-utils/setterm.c:752
+#: term-utils/setterm.c:749
 msgid "cannot get blank status"
 msgstr "stav režimu blank nelze zjistit"
 
-#: term-utils/setterm.c:778
+#: term-utils/setterm.c:775
 #, fuzzy, c-format
 msgid "cannot open dump file %s for output"
 msgstr "soubor s obsahem obrazovky %s nelze otevřít pro zápis"
 
-#: term-utils/setterm.c:820
+#: term-utils/setterm.c:817
 #, c-format
 msgid "terminal %s does not support %s"
 msgstr "terminál %s nepodporuje %s"
 
-#: term-utils/setterm.c:858
+#: term-utils/setterm.c:855
 #, fuzzy
 msgid "select failed"
 msgstr "volání semctl selhalo"
 
-#: term-utils/setterm.c:884
+#: term-utils/setterm.c:881
 #, fuzzy
 msgid "stdin does not refer to a terminal"
 msgstr "přihlášení uživatele %s na tomto terminálu odmítnuto."
 
-#: term-utils/setterm.c:912
+#: term-utils/setterm.c:909
 #, fuzzy, c-format
 msgid "invalid cursor position: %s"
 msgstr "neplatný přepínač"
 
-#: term-utils/setterm.c:934
+#: term-utils/setterm.c:931
 #, fuzzy
 msgid "reset failed"
 msgstr "volání setgid selhalo"
 
-#: term-utils/setterm.c:1098
+#: term-utils/setterm.c:1095
 msgid "cannot (un)set powersave mode"
 msgstr "šetřicí režim nelze vypnout/zapnout"
 
-#: term-utils/setterm.c:1117 term-utils/setterm.c:1126
+#: term-utils/setterm.c:1114 term-utils/setterm.c:1123
 msgid "klogctl error"
 msgstr "chyba klogctl"
 
-#: term-utils/setterm.c:1147
+#: term-utils/setterm.c:1144
 msgid "$TERM is not defined."
 msgstr "Proměnná TERM není nastavena."
 
-#: term-utils/setterm.c:1154
+#: term-utils/setterm.c:1151
 msgid "terminfo database cannot be found"
 msgstr "databázi terminfo nelze najít"
 
-#: term-utils/setterm.c:1156
+#: term-utils/setterm.c:1153
 #, c-format
 msgid "%s: unknown terminal type"
 msgstr "%s: neznámý druh terminálu"
 
-#: term-utils/setterm.c:1158
+#: term-utils/setterm.c:1155
 msgid "terminal is hardcopy"
 msgstr "terminál je čistě výstupní (hardcopy)"
 
@@ -18682,33 +18683,33 @@ msgstr "neplatný argument periody"
 msgid "%s: unknown gid"
 msgstr "%c: příkaz není znám"
 
-#: term-utils/wall.c:158
+#: term-utils/wall.c:161
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr ""
 
-#: term-utils/wall.c:204
+#: term-utils/wall.c:207
 msgid "--nobanner is available only for root"
 msgstr "--nobanner je dostupný jen superuživateli"
 
-#: term-utils/wall.c:209
+#: term-utils/wall.c:212
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr "chybný argument s časovým limitem: %s"
 
-#: term-utils/wall.c:348
+#: term-utils/wall.c:351
 msgid "cannot get passwd uid"
 msgstr "pro UID nelze získat záznam z databáze uživatelů"
 
-#: term-utils/wall.c:353
+#: term-utils/wall.c:356
 msgid "cannot get tty name"
 msgstr "název TTY nelze zjistit"
 
-#: term-utils/wall.c:373
+#: term-utils/wall.c:376
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Všeobecná zpráva od %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:406
+#: term-utils/wall.c:409
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "nebude se číst z %s – použijte standardní vstup."
@@ -19031,7 +19032,7 @@ msgstr ""
 msgid "option --table-columns required for --json"
 msgstr ""
 
-#: text-utils/hexdump.c:155 text-utils/more.c:225
+#: text-utils/hexdump.c:155 text-utils/more.c:231
 #, c-format
 msgid " %s [options] <file>...\n"
 msgstr " %s [přepínače] <soubor…>\n"
@@ -19122,60 +19123,60 @@ msgstr "počet bajtů s více než jedním konverzním znakem"
 msgid "Read one line.\n"
 msgstr "Načte jeden řádek.\n"
 
-#: text-utils/more.c:228
+#: text-utils/more.c:234
 msgid "A file perusal filter for CRT viewing.\n"
 msgstr "Filter pro prohlížení souborů na CRT.\n"
 
-#: text-utils/more.c:231
+#: text-utils/more.c:237
 msgid " -d          display help instead of ringing bell\n"
 msgstr " -d          zobrazí nápovědu místo zazvonění\n"
 
-#: text-utils/more.c:232
+#: text-utils/more.c:238
 msgid " -f          count logical rather than screen lines\n"
 msgstr " -f          počítá logické řádky namísto řádků obrazovky\n"
 
-#: text-utils/more.c:233
+#: text-utils/more.c:239
 msgid " -l          suppress pause after form feed\n"
 msgstr " -l          potlačí zastavení po odřádkování formuláře\n"
 
-#: text-utils/more.c:234
+#: text-utils/more.c:240
 msgid " -c          do not scroll, display text and clean line ends\n"
 msgstr " -c          neroluje, zobrazí text a vyčistí konce řádků\n"
 
-#: text-utils/more.c:235
+#: text-utils/more.c:241
 msgid " -p          do not scroll, clean screen and display text\n"
 msgstr " -p          neroluje, smaže obrazovku a zobrazí text\n"
 
-#: text-utils/more.c:236
+#: text-utils/more.c:242
 msgid " -s          squeeze multiple blank lines into one\n"
 msgstr " -s          srazí následující prázdné řádky do jediného\n"
 
-#: text-utils/more.c:237
+#: text-utils/more.c:243
 msgid " -u          suppress underlining\n"
 msgstr " -u          potlačí podtrhávání\n"
 
-#: text-utils/more.c:238
+#: text-utils/more.c:244
 msgid " -<number>   the number of lines per screenful\n"
 msgstr " -<číslo>    počet řádku na obsah obrazovky\n"
 
-#: text-utils/more.c:239
+#: text-utils/more.c:245
 msgid " +<number>   display file beginning from line number\n"
 msgstr " +<číslo>    zobrazí soubor počínaje číslem řádku\n"
 
-#: text-utils/more.c:240
+#: text-utils/more.c:246
 msgid " +/<string>  display file beginning from search string match\n"
 msgstr " +/<řetězec> zobrazí soubor počínaje shodou vyhledávacího řetězce\n"
 
-#: text-utils/more.c:241
+#: text-utils/more.c:247
 msgid " -V          display version information and exit\n"
 msgstr " -V          zobrazí údaje o verzi a skončí\n"
 
-#: text-utils/more.c:484
+#: text-utils/more.c:490
 #, c-format
 msgid "unknown option -%s"
 msgstr "neznámý přepínač -%s"
 
-#: text-utils/more.c:508
+#: text-utils/more.c:514
 #, c-format
 msgid ""
 "\n"
@@ -19186,7 +19187,7 @@ msgstr ""
 "*** %s je adresář ***\n"
 "\n"
 
-#: text-utils/more.c:550
+#: text-utils/more.c:556
 #, c-format
 msgid ""
 "\n"
@@ -19197,27 +19198,27 @@ msgstr ""
 "***** %s není textovým souborem *****\n"
 "\n"
 
-#: text-utils/more.c:645
+#: text-utils/more.c:651
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Stiskněte q či Q pro ukončení]"
 
-#: text-utils/more.c:724
+#: text-utils/more.c:730
 #, c-format
 msgid "--More--"
 msgstr "--Pokračování--"
 
-#: text-utils/more.c:726
+#: text-utils/more.c:732
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Další soubor: %s)"
 
-#: text-utils/more.c:734
+#: text-utils/more.c:740
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Stiskněte mezerník pro pokračování, 'q' pro ukončení.]"
 
-#: text-utils/more.c:1162
+#: text-utils/more.c:1168
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
@@ -19225,7 +19226,7 @@ msgstr[0] "…zpět o %d stranu"
 msgstr[1] "…zpět o %d strany"
 msgstr[2] "…zpět o %d stran"
 
-#: text-utils/more.c:1210
+#: text-utils/more.c:1216
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
@@ -19233,7 +19234,7 @@ msgstr[0] "…přeskakuje se %d řádek"
 msgstr[1] "…přeskakují se %d řádky"
 msgstr[2] "…přeskakuje se %d řádků"
 
-#: text-utils/more.c:1248
+#: text-utils/more.c:1254
 msgid ""
 "\n"
 "***Back***\n"
@@ -19242,11 +19243,11 @@ msgstr ""
 "\n"
 "***Zpět***\n"
 
-#: text-utils/more.c:1263
+#: text-utils/more.c:1269
 msgid "No previous regular expression"
 msgstr "Žádný předchozí regulární výraz"
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1299
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
@@ -19257,7 +19258,7 @@ msgstr ""
 "jsou v hranatých závorkách. Hvězdička (*) znamená, že hodnota argumentu se\n"
 "stane implicitní.\n"
 
-#: text-utils/more.c:1300
+#: text-utils/more.c:1306
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -19302,30 +19303,30 @@ msgstr ""
 ":f                      Vypíše jméno aktuálního souboru a číslo aktuálního řádku\n"
 ".                       Zopakuje předcházející příkaz\n"
 
-#: text-utils/more.c:1373 text-utils/more.c:1379
+#: text-utils/more.c:1379 text-utils/more.c:1385
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Stiskněte „h“ pro nápovědu.]"
 
-#: text-utils/more.c:1410
+#: text-utils/more.c:1416
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "„%s“ řádek %d"
 
-#: text-utils/more.c:1412
+#: text-utils/more.c:1418
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Nejedná se o soubor] řádek %d"
 
-#: text-utils/more.c:1494
+#: text-utils/more.c:1500
 msgid "  Overflow\n"
 msgstr "  Přetečení\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1549
 msgid "...skipping\n"
 msgstr "…vynechávám\n"
 
-#: text-utils/more.c:1577
+#: text-utils/more.c:1583
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -19333,19 +19334,19 @@ msgstr ""
 "\n"
 "Vzorek nebyl nalezen\n"
 
-#: text-utils/more.c:1583 text-utils/pg.c:1027 text-utils/pg.c:1173
+#: text-utils/more.c:1589 text-utils/pg.c:1035 text-utils/pg.c:1181
 msgid "Pattern not found"
 msgstr "Vzorek nebyl nalezen"
 
-#: text-utils/more.c:1629
+#: text-utils/more.c:1635
 msgid "exec failed\n"
 msgstr "volání exec selhalo\n"
 
-#: text-utils/more.c:1643
+#: text-utils/more.c:1649
 msgid "can't fork\n"
 msgstr "volání fork selhalo\n"
 
-#: text-utils/more.c:1677
+#: text-utils/more.c:1683
 msgid ""
 "\n"
 "...Skipping "
@@ -19353,23 +19354,23 @@ msgstr ""
 "\n"
 "…Vynechávám "
 
-#: text-utils/more.c:1681
+#: text-utils/more.c:1687
 msgid "...Skipping to file "
 msgstr "…Přecházím na soubor "
 
-#: text-utils/more.c:1683
+#: text-utils/more.c:1689
 msgid "...Skipping back to file "
 msgstr "…Vracím se na soubor "
 
-#: text-utils/more.c:1973
+#: text-utils/more.c:1979
 msgid "Line too long"
 msgstr "Řádek je příliš dlouhý"
 
-#: text-utils/more.c:2010
+#: text-utils/more.c:2016
 msgid "No previous command to substitute for"
 msgstr "Neexistuje žádný příkaz, jenž by bylo možno nahradit"
 
-#: text-utils/pg.c:144
+#: text-utils/pg.c:152
 msgid ""
 "-------------------------------------------------------\n"
 "  h                       this screen\n"
@@ -19417,139 +19418,139 @@ msgstr ""
 "Podrobnosti se lze dozvědět z pg(1).\n"
 "-------------------------------------------------------\n"
 
-#: text-utils/pg.c:222
+#: text-utils/pg.c:230
 #, c-format
 msgid " %s [options] [+line] [+/pattern/] [files]\n"
 msgstr " %s [přepínače] [+řádek] [+/vzor/] [soubor]\n"
 
-#: text-utils/pg.c:226
+#: text-utils/pg.c:234
 msgid "Browse pagewise through text files.\n"
 msgstr "Prochází textový souboru po stránkách.\n"
 
-#: text-utils/pg.c:229
+#: text-utils/pg.c:237
 msgid " -number      lines per page\n"
 msgstr " -number      řádků na stránku\n"
 
-#: text-utils/pg.c:230
+#: text-utils/pg.c:238
 msgid " -c           clear screen before displaying\n"
 msgstr " -c           před zobrazením smazat obrazovku\n"
 
-#: text-utils/pg.c:231
+#: text-utils/pg.c:239
 msgid " -e           do not pause at end of a file\n"
 msgstr " -e           nezastavit se na konci souboru\n"
 
-#: text-utils/pg.c:232
+#: text-utils/pg.c:240
 msgid " -f           do not split long lines\n"
 msgstr " -f           nedělit dlouhé řádky\n"
 
-#: text-utils/pg.c:233
+#: text-utils/pg.c:241
 msgid " -n           terminate command with new line\n"
 msgstr " -n           ukončit příkaz novým řádkem\n"
 
-#: text-utils/pg.c:234
+#: text-utils/pg.c:242
 msgid " -p <prompt>  specify prompt\n"
 msgstr " -p <výzva>   definuje výzvu\n"
 
-#: text-utils/pg.c:235
+#: text-utils/pg.c:243
 msgid " -r           disallow shell escape\n"
 msgstr " -r           zakáže útěk do shellu\n"
 
-#: text-utils/pg.c:236
+#: text-utils/pg.c:244
 msgid " -s           print messages to stdout\n"
 msgstr " -s           zprávy vypisuje na standardní výstup\n"
 
-#: text-utils/pg.c:237
+#: text-utils/pg.c:245
 msgid " +number      start at the given line\n"
 msgstr " +číslo       začne na zadaném řádku\n"
 
-#: text-utils/pg.c:238
+#: text-utils/pg.c:246
 msgid " +/pattern/   start at the line containing pattern\n"
 msgstr " +/vzor/      začne na řádku obsahujícím vzor\n"
 
-#: text-utils/pg.c:250
+#: text-utils/pg.c:258
 #, c-format
 msgid "option requires an argument -- %s"
 msgstr "přepínač vyžaduje argument – %s"
 
-#: text-utils/pg.c:256
+#: text-utils/pg.c:264
 #, c-format
 msgid "illegal option -- %s"
 msgstr "neplatný přepínač – %s"
 
-#: text-utils/pg.c:359
+#: text-utils/pg.c:367
 msgid "...skipping forward\n"
 msgstr "…skok vpřed\n"
 
-#: text-utils/pg.c:361
+#: text-utils/pg.c:369
 msgid "...skipping backward\n"
 msgstr "…skok vzad\n"
 
-#: text-utils/pg.c:377
+#: text-utils/pg.c:385
 msgid "No next file"
 msgstr "Žádný následující soubor"
 
-#: text-utils/pg.c:381
+#: text-utils/pg.c:389
 msgid "No previous file"
 msgstr "Žádný předchozí soubor"
 
-#: text-utils/pg.c:883
+#: text-utils/pg.c:891
 #, c-format
 msgid "Read error from %s file"
 msgstr "Chyba čtení ze souboru %s"
 
-#: text-utils/pg.c:886
+#: text-utils/pg.c:894
 #, c-format
 msgid "Unexpected EOF in %s file"
 msgstr "Neočekávaná značka konce souboru v %s"
 
-#: text-utils/pg.c:888
+#: text-utils/pg.c:896
 #, c-format
 msgid "Unknown error in %s file"
 msgstr "Neznámá chyba v souboru %s"
 
-#: text-utils/pg.c:941
+#: text-utils/pg.c:949
 #, fuzzy
 msgid "Cannot create temporary file"
 msgstr "Nelze vytvořit dočasný soubor"
 
-#: text-utils/pg.c:950 text-utils/pg.c:1114 text-utils/pg.c:1140
+#: text-utils/pg.c:958 text-utils/pg.c:1122 text-utils/pg.c:1148
 msgid "RE error: "
 msgstr "Chyba regulárního výrazu: "
 
-#: text-utils/pg.c:1097
+#: text-utils/pg.c:1105
 msgid "(EOF)"
 msgstr "(KONEC SOUBORU)"
 
-#: text-utils/pg.c:1122 text-utils/pg.c:1148
+#: text-utils/pg.c:1130 text-utils/pg.c:1156
 msgid "No remembered search string"
 msgstr "Žádný zapamatovaný řetězec pro vyhledání"
 
-#: text-utils/pg.c:1203
+#: text-utils/pg.c:1211
 msgid "cannot open "
 msgstr "nelze otevřít "
 
-#: text-utils/pg.c:1255
+#: text-utils/pg.c:1263
 msgid "saved"
 msgstr "uloženo"
 
-#: text-utils/pg.c:1345
+#: text-utils/pg.c:1353
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": !příkaz není dovolen v režimu rflag.\n"
 
-#: text-utils/pg.c:1380
+#: text-utils/pg.c:1388
 msgid "fork() failed, try again later\n"
 msgstr "fork() selhal, zkuste to později\n"
 
-#: text-utils/pg.c:1468
+#: text-utils/pg.c:1476
 msgid "(Next file: "
 msgstr "(Další soubor: "
 
-#: text-utils/pg.c:1534
+#: text-utils/pg.c:1542
 #, c-format
 msgid "%s %s Copyright (c) 2000-2001 Gunnar Ritter. All rights reserved.\n"
 msgstr "%s %s Copyright © 2000–2001 Gunnar Ritter. Všechna práva vyhrazena.\n"
 
-#: text-utils/pg.c:1587 text-utils/pg.c:1660
+#: text-utils/pg.c:1595 text-utils/pg.c:1668
 msgid "failed to parse number of lines per page"
 msgstr "nezdařilo se rozebrat počet řádků na stránku"
 
@@ -19562,38 +19563,38 @@ msgstr "Použití: %s [přepínače] [soubor…]\n"
 msgid "Reverse lines characterwise.\n"
 msgstr "Obrátí pořadí znaků na řádcích.\n"
 
-#: text-utils/ul.c:135
+#: text-utils/ul.c:142
 #, c-format
 msgid " %s [options] [<file> ...]\n"
 msgstr " %s [přepínače] [<soubor…>]\n"
 
-#: text-utils/ul.c:138
+#: text-utils/ul.c:145
 msgid "Do underlining.\n"
 msgstr "Podtrhává.\n"
 
-#: text-utils/ul.c:141
+#: text-utils/ul.c:148
 msgid " -t, -T, --terminal TERMINAL  override the TERM environment variable\n"
 msgstr " -t, -T, --terminal TERMINÁL  přebije proměnnou prostředí TERM\n"
 
-#: text-utils/ul.c:142
+#: text-utils/ul.c:149
 msgid " -i, --indicated              underlining is indicated via a separate line\n"
 msgstr " -i, --indicated              podtržení je vyznačeno samostatným řádkem\n"
 
-#: text-utils/ul.c:203
+#: text-utils/ul.c:210
 msgid "trouble reading terminfo"
 msgstr "chyba při čtení terminfo databáze"
 
-#: text-utils/ul.c:208
+#: text-utils/ul.c:215
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminál „%s“ není znám, použije se „dump“"
 
-#: text-utils/ul.c:298
+#: text-utils/ul.c:305
 #, c-format
 msgid "unknown escape sequence in input: %o, %o"
 msgstr "neznámá posloupnost řídicích znaků na vstupu: %o, %o"
 
-#: text-utils/ul.c:623
+#: text-utils/ul.c:630
 msgid "Input line too long."
 msgstr "Vstupní řádek je příliš dlouhý."
 

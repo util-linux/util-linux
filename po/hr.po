@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-05-23 11:41+0200\n"
+"POT-Creation-Date: 2017-06-02 11:14+0200\n"
 "PO-Revision-Date: 2013-04-18 16:36+0200\n"
 "Last-Translator: Tomislav Krznar <tomislav.krznar@gmail.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -47,7 +47,7 @@ msgstr ""
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:259 login-utils/vipw.c:277
 #: misc-utils/findmnt.c:1099 misc-utils/logger.c:1188 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
-#: sys-utils/dmesg.c:522 sys-utils/eject.c:499 sys-utils/eject.c:699
+#: sys-utils/dmesg.c:521 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
 #: sys-utils/hwclock.c:215 sys-utils/ldattach.c:387 sys-utils/nsenter.c:130
 #: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:270 sys-utils/setpriv.c:230
@@ -57,8 +57,8 @@ msgstr ""
 #: term-utils/agetty.c:2624 term-utils/mesg.c:127 term-utils/script.c:426
 #: term-utils/script.c:432 term-utils/script.c:434 term-utils/script.c:530
 #: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
-#: term-utils/wall.c:410 text-utils/colcrt.c:282 text-utils/more.c:513
-#: text-utils/rev.c:141 text-utils/ul.c:224
+#: term-utils/wall.c:413 text-utils/colcrt.c:282 text-utils/more.c:519
+#: text-utils/rev.c:141 text-utils/ul.c:231
 #, c-format
 msgid "cannot open %s"
 msgstr "ne mogu otvoriti %s"
@@ -591,8 +591,8 @@ msgstr ""
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1587
-#: sys-utils/lscpu.c:1597 sys-utils/lsmem.c:200
+#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1589
+#: sys-utils/lscpu.c:1599 sys-utils/lsmem.c:200
 msgid "yes"
 msgstr ""
 
@@ -649,7 +649,7 @@ msgid " -z, --zero               start with zeroed partition table\n"
 msgstr "ponovo pročitaj particijsku tablicu"
 
 #: disk-utils/cfdisk.c:2597 disk-utils/fdisk.c:907 disk-utils/sfdisk.c:2128
-#: misc-utils/cal.c:390 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
+#: misc-utils/cal.c:391 sys-utils/dmesg.c:1332 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr ""
 
@@ -754,10 +754,10 @@ msgstr "neispravan argument početka"
 #: disk-utils/mkfs.minix.c:816 disk-utils/mkswap.c:241 disk-utils/partx.c:952
 #: login-utils/last.c:684 login-utils/utmpdump.c:139 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
-#: sys-utils/dmesg.c:524 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
+#: sys-utils/dmesg.c:523 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:77 sys-utils/nsenter.c:165 sys-utils/nsenter.c:169
 #: sys-utils/swapon.c:520 sys-utils/switch_root.c:94
-#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:504
+#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:510
 #, fuzzy, c-format
 msgid "stat of %s failed"
 msgstr "seek nije uspio"
@@ -1113,7 +1113,7 @@ msgstr "nisam uspio alocirati iterator"
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
 #: disk-utils/partx.c:667 login-utils/lslogins.c:918 misc-utils/fincore.c:362
 #: misc-utils/findmnt.c:1598 misc-utils/lsblk.c:1897 misc-utils/lslocks.c:449
-#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1760 sys-utils/lscpu.c:1863
+#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1762 sys-utils/lscpu.c:1865
 #: sys-utils/lsipc.c:338 sys-utils/prlimit.c:297 sys-utils/swapon.c:281
 #: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:196
 #, fuzzy
@@ -1124,7 +1124,7 @@ msgstr "nisam uspio dodati particiju"
 #: disk-utils/partx.c:581 login-utils/lslogins.c:976 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1174
 #: misc-utils/lslocks.c:391 sys-utils/losetup.c:333 sys-utils/losetup.c:362
-#: sys-utils/lscpu.c:1786 sys-utils/lscpu.c:1814 sys-utils/lsipc.c:470
+#: sys-utils/lscpu.c:1788 sys-utils/lscpu.c:1816 sys-utils/lsipc.c:470
 #: sys-utils/lsipc.c:545 sys-utils/lsipc.c:647 sys-utils/lsipc.c:739
 #: sys-utils/lsipc.c:900 sys-utils/prlimit.c:229 sys-utils/swapon.c:176
 #: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:407
@@ -1135,8 +1135,8 @@ msgstr "ne mogu vratiti unatrag swap-uređaj"
 #: disk-utils/fdisk-list.c:173 disk-utils/fdisk-list.c:273
 #: disk-utils/partx.c:644 login-utils/lslogins.c:1074 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1165
-#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1794
-#: sys-utils/lscpu.c:1825 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
+#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1796
+#: sys-utils/lscpu.c:1827 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
 #: sys-utils/prlimit.c:261 sys-utils/swapon.c:224 sys-utils/wdctl.c:243
 #: sys-utils/zramctl.c:475 text-utils/column.c:413
 #, fuzzy
@@ -1630,8 +1630,8 @@ msgstr "%s nije montiran\n"
 #: disk-utils/fsck.cramfs.c:253 disk-utils/sfdisk.c:299 libfdisk/src/bsd.c:645
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:655
-#: sys-utils/setpriv.c:239 term-utils/setterm.c:724 term-utils/setterm.c:781
-#: term-utils/setterm.c:785 term-utils/setterm.c:792
+#: sys-utils/setpriv.c:239 term-utils/setterm.c:721 term-utils/setterm.c:778
+#: term-utils/setterm.c:782 term-utils/setterm.c:789
 #, fuzzy, c-format
 msgid "cannot read %s"
 msgstr "ne mogu otvoriti %s"
@@ -2604,9 +2604,9 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:833
 #: disk-utils/mkswap.c:539 disk-utils/partx.c:1058 disk-utils/resizepart.c:112
-#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:659 sys-utils/wdctl.c:348
+#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:658 sys-utils/wdctl.c:348
 #: sys-utils/wdctl.c:413 term-utils/script.c:273 term-utils/script.c:350
-#: term-utils/setterm.c:888 text-utils/pg.c:1248
+#: term-utils/setterm.c:885 text-utils/pg.c:1256
 msgid "write failed"
 msgstr ""
 
@@ -2838,7 +2838,7 @@ msgstr " -h, --help         prikaži ovu pomoć i izađi\n"
 #: sys-utils/nsenter.c:482 sys-utils/prlimit.c:642 sys-utils/rtcwake.c:577
 #: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
 #: sys-utils/swapon.c:341 sys-utils/switch_root.c:257 sys-utils/unshare.c:461
-#: term-utils/script.c:589 text-utils/pg.c:1375
+#: term-utils/script.c:589 text-utils/pg.c:1383
 #, c-format
 msgid "failed to execute %s"
 msgstr ""
@@ -3592,7 +3592,7 @@ msgstr[2] ""
 
 #: disk-utils/partx.c:678 misc-utils/fincore.c:374 misc-utils/findmnt.c:1624
 #: misc-utils/lsblk.c:1919 misc-utils/lslocks.c:462 sys-utils/losetup.c:326
-#: sys-utils/lscpu.c:1769 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
+#: sys-utils/lscpu.c:1771 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
 #: sys-utils/wdctl.c:272
 #, fuzzy
 msgid "failed to allocate output column"
@@ -4145,7 +4145,7 @@ msgstr ""
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1454
+#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1453
 msgid "unsupported command"
 msgstr ""
 
@@ -4585,7 +4585,7 @@ msgid ""
 msgstr ""
 
 #: include/closestream.h:46 include/closestream.h:48 login-utils/vipw.c:274
-#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:812
+#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:809
 #: text-utils/col.c:157
 msgid "write error"
 msgstr ""
@@ -5204,7 +5204,7 @@ msgstr ""
 msgid "Disklabel written to %s."
 msgstr ""
 
-#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:641
+#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:645
 #, fuzzy
 msgid "Syncing disks."
 msgstr "Zaključavam disk %s ... "
@@ -5234,26 +5234,26 @@ msgstr ""
 msgid "Cpg"
 msgstr ""
 
-#: libfdisk/src/context.c:635
+#: libfdisk/src/context.c:639
 #, fuzzy, c-format
 msgid "%s: close device failed"
 msgstr "%s: izvršavanje nije uspjelo"
 
-#: libfdisk/src/context.c:814
+#: libfdisk/src/context.c:820
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: libfdisk/src/context.c:815
+#: libfdisk/src/context.c:821
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: libfdisk/src/context.c:1118
+#: libfdisk/src/context.c:1124
 msgid "Incomplete geometry setting."
 msgstr ""
 
@@ -6138,7 +6138,7 @@ msgstr ""
 
 #: libfdisk/src/gpt.c:2631
 #, c-format
-msgid "The number of the partition has be smaller than %zu."
+msgid "The number of the partition has to be smaller than %zu."
 msgstr ""
 
 #: libfdisk/src/gpt.c:2654
@@ -6613,7 +6613,7 @@ msgid ""
 "Are you sure you want to tag the partition as Linux swap?"
 msgstr ""
 
-#: libmount/src/context.c:2359
+#: libmount/src/context.c:2367
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "readlink nije uspio: %s"
@@ -6914,7 +6914,7 @@ msgstr ""
 msgid "waitpid failed (%s)"
 msgstr ""
 
-#: lib/path.c:209 sys-utils/lscpu.c:1911
+#: lib/path.c:209 sys-utils/lscpu.c:1913
 msgid "failed to callocate cpu set"
 msgstr ""
 
@@ -6938,12 +6938,12 @@ msgstr "ne mogu otvoriti %s: %s"
 msgid "cannot set option for UNIX socket"
 msgstr "ne mogu otvoriti %s: %s"
 
-#: lib/plymouth-ctrl.c:91
+#: lib/plymouth-ctrl.c:92
 #, fuzzy
 msgid "cannot connect on UNIX socket"
 msgstr "ne mogu otvoriti %s: %s"
 
-#: lib/plymouth-ctrl.c:131
+#: lib/plymouth-ctrl.c:132
 #, c-format
 msgid "the plymouth request %c is not implemented"
 msgstr ""
@@ -7188,7 +7188,7 @@ msgstr ""
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr ""
 
-#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1193
+#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1192
 #: sys-utils/lsipc.c:269
 #, fuzzy, c-format
 msgid "unknown time format: %s"
@@ -7515,7 +7515,7 @@ msgstr ""
 msgid "hush login status: restore original IDs failed"
 msgstr ""
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1587 sys-utils/lscpu.c:1597
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1589 sys-utils/lscpu.c:1599
 #: sys-utils/lsmem.c:200
 msgid "no"
 msgstr ""
@@ -7755,9 +7755,9 @@ msgstr ""
 
 #: login-utils/lslogins.c:1227 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:494 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
-#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:2050 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
-#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:381
+#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:263 sys-utils/ipcmk.c:66
+#: sys-utils/lscpu.c:2052 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
+#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:378
 #: text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7860,7 +7860,7 @@ msgstr ""
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2069
+#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2071
 #: sys-utils/lsmem.c:391
 #, c-format
 msgid ""
@@ -8184,7 +8184,7 @@ msgid ""
 msgstr ""
 
 #: login-utils/sulogin.c:863 misc-utils/findmnt.c:1470 sys-utils/wdctl.c:525
-#: term-utils/agetty.c:758 term-utils/wall.c:207
+#: term-utils/agetty.c:758 term-utils/wall.c:210
 msgid "invalid timeout argument"
 msgstr ""
 
@@ -8518,145 +8518,145 @@ msgstr ""
 msgid "The lookup option requires a search type specified using -t"
 msgstr ""
 
-#: misc-utils/cal.c:372
+#: misc-utils/cal.c:373
 #, fuzzy
 msgid "invalid month argument"
 msgstr "neispravan argument duljine"
 
-#: misc-utils/cal.c:380
+#: misc-utils/cal.c:381
 #, fuzzy
 msgid "invalid week argument"
 msgstr "neispravan argument duljine"
 
-#: misc-utils/cal.c:382
+#: misc-utils/cal.c:383
 msgid "illegal week value: use 1-54"
 msgstr ""
 
-#: misc-utils/cal.c:421
+#: misc-utils/cal.c:422
 #, fuzzy, c-format
 msgid "failed to parse timestamp or unknown month name: %s"
 msgstr "%s: nisam uspio analizirati fstab"
 
-#: misc-utils/cal.c:430
+#: misc-utils/cal.c:431
 msgid "illegal day value"
 msgstr ""
 
-#: misc-utils/cal.c:432 misc-utils/cal.c:455
+#: misc-utils/cal.c:433 misc-utils/cal.c:456
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr ""
 
-#: misc-utils/cal.c:436 misc-utils/cal.c:444
+#: misc-utils/cal.c:437 misc-utils/cal.c:445
 msgid "illegal month value: use 1-12"
 msgstr ""
 
-#: misc-utils/cal.c:440
+#: misc-utils/cal.c:441
 #, fuzzy, c-format
 msgid "unknown month name: %s"
 msgstr "Nepoznata naredba: %s"
 
-#: misc-utils/cal.c:447 misc-utils/cal.c:451
+#: misc-utils/cal.c:448 misc-utils/cal.c:452
 msgid "illegal year value"
 msgstr ""
 
-#: misc-utils/cal.c:449
+#: misc-utils/cal.c:450
 msgid "illegal year value: use positive integer"
 msgstr ""
 
-#: misc-utils/cal.c:481 misc-utils/cal.c:494
+#: misc-utils/cal.c:482 misc-utils/cal.c:495
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr ""
 
-#: misc-utils/cal.c:678
+#: misc-utils/cal.c:679
 #, c-format
 msgid "%s"
 msgstr ""
 
-#: misc-utils/cal.c:684
+#: misc-utils/cal.c:685
 #, c-format
 msgid "%04d"
 msgstr ""
 
-#: misc-utils/cal.c:690
+#: misc-utils/cal.c:691
 #, c-format
 msgid "%s %04d"
 msgstr ""
 
-#: misc-utils/cal.c:992
+#: misc-utils/cal.c:993
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr ""
 
-#: misc-utils/cal.c:993
+#: misc-utils/cal.c:994
 #, fuzzy, c-format
 msgid " %s [options] <timestamp|monthname>\n"
 msgstr " %s [opcije] <uređaj>\n"
 
-#: misc-utils/cal.c:996
+#: misc-utils/cal.c:997
 msgid "Display a calendar, or some part of it.\n"
 msgstr ""
 
-#: misc-utils/cal.c:997
+#: misc-utils/cal.c:998
 msgid "Without any arguments, display the current month.\n"
 msgstr ""
 
-#: misc-utils/cal.c:1000
+#: misc-utils/cal.c:1001
 #, fuzzy
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: misc-utils/cal.c:1001
+#: misc-utils/cal.c:1002
 #, fuzzy
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: misc-utils/cal.c:1002
+#: misc-utils/cal.c:1003
 #, fuzzy
 msgid " -n, --months <num>    show num months starting with date's month\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: misc-utils/cal.c:1003
+#: misc-utils/cal.c:1004
 #, fuzzy
 msgid " -S, --span            span the date when displaying multiple months\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: misc-utils/cal.c:1004
+#: misc-utils/cal.c:1005
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr ""
 
-#: misc-utils/cal.c:1005
+#: misc-utils/cal.c:1006
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr ""
 
-#: misc-utils/cal.c:1006
+#: misc-utils/cal.c:1007
 msgid " -j, --julian          output Julian dates\n"
 msgstr ""
 
-#: misc-utils/cal.c:1007
+#: misc-utils/cal.c:1008
 #, fuzzy
 msgid " -y, --year            show the whole year\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: misc-utils/cal.c:1008
+#: misc-utils/cal.c:1009
 #, fuzzy
 msgid " -Y, --twelve          show the next twelve months\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: misc-utils/cal.c:1009
+#: misc-utils/cal.c:1010
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr ""
 
-#: misc-utils/cal.c:1010
+#: misc-utils/cal.c:1011
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr ""
 
 #: misc-utils/fincore.c:61
-msgid "file data residend in memory in pages"
+msgid "file data resident in memory in pages"
 msgstr ""
 
 #: misc-utils/fincore.c:62
-msgid "file data residend in memory in bytes"
+msgid "file data resident in memory in bytes"
 msgstr ""
 
 #: misc-utils/fincore.c:63
@@ -9412,17 +9412,17 @@ msgstr "%s zahtijeva argument"
 #: sys-utils/losetup.c:694 sys-utils/tunelp.c:161 sys-utils/tunelp.c:168
 #: sys-utils/tunelp.c:175 sys-utils/tunelp.c:182 sys-utils/tunelp.c:189
 #: sys-utils/tunelp.c:195 sys-utils/tunelp.c:199 sys-utils/tunelp.c:206
-#: sys-utils/tunelp.c:231 term-utils/setterm.c:214 term-utils/setterm.c:217
-#: term-utils/setterm.c:236 term-utils/setterm.c:238 term-utils/setterm.c:273
-#: term-utils/setterm.c:275 term-utils/setterm.c:292 term-utils/setterm.c:299
-#: term-utils/setterm.c:301 term-utils/setterm.c:313 term-utils/setterm.c:315
-#: term-utils/setterm.c:324 term-utils/setterm.c:332 term-utils/setterm.c:347
-#: term-utils/setterm.c:349 term-utils/setterm.c:361 term-utils/setterm.c:363
-#: term-utils/setterm.c:374 term-utils/setterm.c:542 term-utils/setterm.c:547
-#: term-utils/setterm.c:552 term-utils/setterm.c:557 term-utils/setterm.c:581
-#: term-utils/setterm.c:586 term-utils/setterm.c:591 term-utils/setterm.c:596
-#: term-utils/setterm.c:601 term-utils/setterm.c:606 term-utils/setterm.c:614
-#: term-utils/setterm.c:647
+#: sys-utils/tunelp.c:231 term-utils/setterm.c:211 term-utils/setterm.c:214
+#: term-utils/setterm.c:233 term-utils/setterm.c:235 term-utils/setterm.c:270
+#: term-utils/setterm.c:272 term-utils/setterm.c:289 term-utils/setterm.c:296
+#: term-utils/setterm.c:298 term-utils/setterm.c:310 term-utils/setterm.c:312
+#: term-utils/setterm.c:321 term-utils/setterm.c:329 term-utils/setterm.c:344
+#: term-utils/setterm.c:346 term-utils/setterm.c:358 term-utils/setterm.c:360
+#: term-utils/setterm.c:371 term-utils/setterm.c:539 term-utils/setterm.c:544
+#: term-utils/setterm.c:549 term-utils/setterm.c:554 term-utils/setterm.c:578
+#: term-utils/setterm.c:583 term-utils/setterm.c:588 term-utils/setterm.c:593
+#: term-utils/setterm.c:598 term-utils/setterm.c:603 term-utils/setterm.c:611
+#: term-utils/setterm.c:644
 #, fuzzy
 msgid "argument error"
 msgstr "greška obrade: %s"
@@ -10380,7 +10380,7 @@ msgstr "fork nije uspio"
 msgid "timeout [%d sec]\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:443 term-utils/setterm.c:900 text-utils/column.c:436
+#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:436
 #: text-utils/column.c:449
 #, fuzzy
 msgid "read failed"
@@ -11561,241 +11561,241 @@ msgstr ""
 msgid "unknown argument: %s"
 msgstr ""
 
-#: sys-utils/dmesg.c:110
+#: sys-utils/dmesg.c:109
 msgid "system is unusable"
 msgstr ""
 
-#: sys-utils/dmesg.c:111
+#: sys-utils/dmesg.c:110
 msgid "action must be taken immediately"
 msgstr ""
 
-#: sys-utils/dmesg.c:112
+#: sys-utils/dmesg.c:111
 msgid "critical conditions"
 msgstr ""
 
-#: sys-utils/dmesg.c:113
+#: sys-utils/dmesg.c:112
 msgid "error conditions"
 msgstr ""
 
-#: sys-utils/dmesg.c:114
+#: sys-utils/dmesg.c:113
 msgid "warning conditions"
 msgstr ""
 
-#: sys-utils/dmesg.c:115
+#: sys-utils/dmesg.c:114
 msgid "normal but significant condition"
 msgstr ""
 
-#: sys-utils/dmesg.c:116
+#: sys-utils/dmesg.c:115
 msgid "informational"
 msgstr ""
 
-#: sys-utils/dmesg.c:117
+#: sys-utils/dmesg.c:116
 msgid "debug-level messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:131
+#: sys-utils/dmesg.c:130
 msgid "kernel messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:132
+#: sys-utils/dmesg.c:131
 msgid "random user-level messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:133
+#: sys-utils/dmesg.c:132
 msgid "mail system"
 msgstr ""
 
-#: sys-utils/dmesg.c:134
+#: sys-utils/dmesg.c:133
 msgid "system daemons"
 msgstr ""
 
-#: sys-utils/dmesg.c:135
+#: sys-utils/dmesg.c:134
 msgid "security/authorization messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:136
+#: sys-utils/dmesg.c:135
 msgid "messages generated internally by syslogd"
 msgstr ""
 
-#: sys-utils/dmesg.c:137
+#: sys-utils/dmesg.c:136
 msgid "line printer subsystem"
 msgstr ""
 
-#: sys-utils/dmesg.c:138
+#: sys-utils/dmesg.c:137
 msgid "network news subsystem"
 msgstr ""
 
-#: sys-utils/dmesg.c:139
+#: sys-utils/dmesg.c:138
 msgid "UUCP subsystem"
 msgstr ""
 
-#: sys-utils/dmesg.c:140
+#: sys-utils/dmesg.c:139
 msgid "clock daemon"
 msgstr ""
 
-#: sys-utils/dmesg.c:141
+#: sys-utils/dmesg.c:140
 msgid "security/authorization messages (private)"
 msgstr ""
 
-#: sys-utils/dmesg.c:142
+#: sys-utils/dmesg.c:141
 msgid "FTP daemon"
 msgstr ""
 
-#: sys-utils/dmesg.c:267
+#: sys-utils/dmesg.c:266
 msgid "Display or control the kernel ring buffer.\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:270
+#: sys-utils/dmesg.c:269
 msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:271
+#: sys-utils/dmesg.c:270
 msgid " -c, --read-clear            read and clear all messages\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:272
+#: sys-utils/dmesg.c:271
 msgid " -D, --console-off           disable printing messages to console\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:273
+#: sys-utils/dmesg.c:272
 msgid " -E, --console-on            enable printing messages to console\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:274
+#: sys-utils/dmesg.c:273
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:275
+#: sys-utils/dmesg.c:274
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:276
+#: sys-utils/dmesg.c:275
 msgid " -H, --human                 human readable output\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:277
+#: sys-utils/dmesg.c:276
 msgid " -k, --kernel                display kernel messages\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:278
+#: sys-utils/dmesg.c:277
 msgid " -L, --color[=<when>]        colorize messages (auto, always or never)\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:281
+#: sys-utils/dmesg.c:280
 msgid " -l, --level <list>          restrict output to defined levels\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:282
+#: sys-utils/dmesg.c:281
 msgid " -n, --console-level <level> set level of messages printed to console\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:283
+#: sys-utils/dmesg.c:282
 msgid " -P, --nopager               do not pipe output into a pager\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:284
+#: sys-utils/dmesg.c:283
 msgid " -r, --raw                   print the raw message buffer\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:285
+#: sys-utils/dmesg.c:284
 msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:286
+#: sys-utils/dmesg.c:285
 msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:287
+#: sys-utils/dmesg.c:286
 msgid " -u, --userspace             display userspace messages\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:288
+#: sys-utils/dmesg.c:287
 msgid " -w, --follow                wait for new messages\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:289
+#: sys-utils/dmesg.c:288
 msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:290
+#: sys-utils/dmesg.c:289
 msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:291
+#: sys-utils/dmesg.c:290
 msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:292
+#: sys-utils/dmesg.c:291
 #, fuzzy
 msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: sys-utils/dmesg.c:293
+#: sys-utils/dmesg.c:292
 #, fuzzy
 msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: sys-utils/dmesg.c:294
+#: sys-utils/dmesg.c:293
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
 "Suspending/resume will make ctime and iso timestamps inaccurate.\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:300
+#: sys-utils/dmesg.c:299
 msgid ""
 "\n"
 "Supported log facilities:\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:306
+#: sys-utils/dmesg.c:305
 msgid ""
 "\n"
 "Supported log levels (priorities):\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:360
+#: sys-utils/dmesg.c:359
 #, c-format
 msgid "failed to parse level '%s'"
 msgstr ""
 
-#: sys-utils/dmesg.c:362
+#: sys-utils/dmesg.c:361
 #, c-format
 msgid "unknown level '%s'"
 msgstr ""
 
-#: sys-utils/dmesg.c:398
+#: sys-utils/dmesg.c:397
 #, c-format
 msgid "failed to parse facility '%s'"
 msgstr ""
 
-#: sys-utils/dmesg.c:400
+#: sys-utils/dmesg.c:399
 #, c-format
 msgid "unknown facility '%s'"
 msgstr ""
 
-#: sys-utils/dmesg.c:528
+#: sys-utils/dmesg.c:527
 #, c-format
 msgid "cannot mmap: %s"
 msgstr ""
 
-#: sys-utils/dmesg.c:1356
+#: sys-utils/dmesg.c:1355
 msgid "invalid buffer size argument"
 msgstr ""
 
-#: sys-utils/dmesg.c:1408
+#: sys-utils/dmesg.c:1407
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr ""
 
-#: sys-utils/dmesg.c:1431
+#: sys-utils/dmesg.c:1430
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr ""
 
-#: sys-utils/dmesg.c:1441
+#: sys-utils/dmesg.c:1440
 msgid "read kernel buffer failed"
 msgstr ""
 
-#: sys-utils/dmesg.c:1460
+#: sys-utils/dmesg.c:1459
 msgid "klogctl failed"
 msgstr ""
 
@@ -14132,20 +14132,20 @@ msgstr ""
 msgid "failed to read from: %s"
 msgstr "nisam uspio dodati particiju"
 
-#: sys-utils/lscpu.c:1457
+#: sys-utils/lscpu.c:1459
 #, fuzzy
 msgid "Failed to extract the node number"
 msgstr "nisam uspio obraditi broj indeksnih čvorova"
 
-#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
 msgid "Y"
 msgstr ""
 
-#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
 msgid "N"
 msgstr ""
 
-#: sys-utils/lscpu.c:1678
+#: sys-utils/lscpu.c:1680
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -14153,211 +14153,211 @@ msgid ""
 "# starting from zero.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1873 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
+#: sys-utils/lscpu.c:1875 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
 msgid "failed to initialize output column"
 msgstr ""
 
-#: sys-utils/lscpu.c:1875
+#: sys-utils/lscpu.c:1877
 msgid "Architecture:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1888
+#: sys-utils/lscpu.c:1890
 msgid "CPU op-mode(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1891 sys-utils/lscpu.c:1893
+#: sys-utils/lscpu.c:1893 sys-utils/lscpu.c:1895
 msgid "Byte Order:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1895
+#: sys-utils/lscpu.c:1897
 msgid "CPU(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1898
+#: sys-utils/lscpu.c:1900
 msgid "On-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1899
+#: sys-utils/lscpu.c:1901
 msgid "On-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1918
+#: sys-utils/lscpu.c:1920
 msgid "Off-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1919
+#: sys-utils/lscpu.c:1921
 msgid "Off-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1954
+#: sys-utils/lscpu.c:1956
 msgid "Thread(s) per core:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1956
+#: sys-utils/lscpu.c:1958
 msgid "Core(s) per socket:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1959
+#: sys-utils/lscpu.c:1961
 msgid "Socket(s) per book:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1962
+#: sys-utils/lscpu.c:1964
 msgid "Book(s) per drawer:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1964
+#: sys-utils/lscpu.c:1966
 msgid "Drawer(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1966
+#: sys-utils/lscpu.c:1968
 msgid "Book(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1969
+#: sys-utils/lscpu.c:1971
 msgid "Socket(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1973
+#: sys-utils/lscpu.c:1975
 msgid "NUMA node(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1975
+#: sys-utils/lscpu.c:1977
 msgid "Vendor ID:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1977
+#: sys-utils/lscpu.c:1979
 #, fuzzy
 msgid "Machine type:"
 msgstr "ponovo pročitaj particijsku tablicu"
 
-#: sys-utils/lscpu.c:1979
+#: sys-utils/lscpu.c:1981
 msgid "CPU family:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1981
+#: sys-utils/lscpu.c:1983
 msgid "Model:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1983
+#: sys-utils/lscpu.c:1985
 msgid "Model name:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1985
+#: sys-utils/lscpu.c:1987
 msgid "Stepping:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1987
+#: sys-utils/lscpu.c:1989
 msgid "CPU MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1989
+#: sys-utils/lscpu.c:1991
 msgid "CPU dynamic MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1991
+#: sys-utils/lscpu.c:1993
 msgid "CPU static MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1993
+#: sys-utils/lscpu.c:1995
 msgid "CPU max MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1995
+#: sys-utils/lscpu.c:1997
 msgid "CPU min MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1997
+#: sys-utils/lscpu.c:1999
 msgid "BogoMIPS:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2000 sys-utils/lscpu.c:2002
+#: sys-utils/lscpu.c:2002 sys-utils/lscpu.c:2004
 msgid "Virtualization:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2005
+#: sys-utils/lscpu.c:2007
 msgid "Hypervisor:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2007
+#: sys-utils/lscpu.c:2009
 msgid "Hypervisor vendor:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2008
+#: sys-utils/lscpu.c:2010
 msgid "Virtualization type:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2011
+#: sys-utils/lscpu.c:2013
 msgid "Dispatching mode:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2015 sys-utils/lscpu.c:2022
+#: sys-utils/lscpu.c:2017 sys-utils/lscpu.c:2024
 #, c-format
 msgid "%s cache:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2028
+#: sys-utils/lscpu.c:2030
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:2033
+#: sys-utils/lscpu.c:2035
 msgid "Physical sockets:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2034
+#: sys-utils/lscpu.c:2036
 msgid "Physical chips:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2035
+#: sys-utils/lscpu.c:2037
 msgid "Physical cores/chip:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2039
+#: sys-utils/lscpu.c:2041
 msgid "Flags:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2053
+#: sys-utils/lscpu.c:2055
 msgid "Display information about the CPU architecture.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2056
+#: sys-utils/lscpu.c:2058
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2057
+#: sys-utils/lscpu.c:2059
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2058
+#: sys-utils/lscpu.c:2060
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2059
+#: sys-utils/lscpu.c:2061
 #, fuzzy
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr " -a                       samo zbog kompatibilnosti, zanemareno\n"
 
-#: sys-utils/lscpu.c:2060
+#: sys-utils/lscpu.c:2062
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2061
+#: sys-utils/lscpu.c:2063
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2062
+#: sys-utils/lscpu.c:2064
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2063
+#: sys-utils/lscpu.c:2065
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2064
+#: sys-utils/lscpu.c:2066
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2169
+#: sys-utils/lscpu.c:2171
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr ""
@@ -14813,7 +14813,7 @@ msgstr ""
 
 #: sys-utils/lsmem.c:379
 #, fuzzy
-msgid " -a, --all            list each individiual memory block\n"
+msgid " -a, --all            list each individual memory block\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
 #: sys-utils/lsmem.c:384
@@ -17867,248 +17867,248 @@ msgstr ""
 msgid "timing file %s: line %lu: unexpected format"
 msgstr ""
 
-#: term-utils/setterm.c:240
+#: term-utils/setterm.c:237
 #, c-format
 msgid "argument error: bright %s is not supported"
 msgstr ""
 
-#: term-utils/setterm.c:329
+#: term-utils/setterm.c:326
 #, fuzzy
 msgid "too many tabs"
 msgstr "previše argumenata"
 
-#: term-utils/setterm.c:384
+#: term-utils/setterm.c:381
 msgid "Set the attributes of a terminal.\n"
 msgstr ""
 
-#: term-utils/setterm.c:387
+#: term-utils/setterm.c:384
 msgid " --term          <terminal_name>   override TERM environment variable\n"
 msgstr ""
 
-#: term-utils/setterm.c:388
+#: term-utils/setterm.c:385
 #, fuzzy
 msgid " --reset                           reset terminal to power-on state\n"
 msgstr " -a                       samo zbog kompatibilnosti, zanemareno\n"
 
-#: term-utils/setterm.c:389
+#: term-utils/setterm.c:386
 #, fuzzy
 msgid " --resize                          reset terminal rows and columns\n"
 msgstr " -a                       samo zbog kompatibilnosti, zanemareno\n"
 
-#: term-utils/setterm.c:390
+#: term-utils/setterm.c:387
 #, fuzzy
 msgid " --initialize                      display init string, and use default settings\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: term-utils/setterm.c:391
+#: term-utils/setterm.c:388
 #, fuzzy
 msgid " --default                         use default terminal settings\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: term-utils/setterm.c:392
+#: term-utils/setterm.c:389
 msgid " --store                           save current terminal settings as default\n"
 msgstr ""
 
-#: term-utils/setterm.c:393
+#: term-utils/setterm.c:390
 msgid " --cursor        [on|off]          display cursor\n"
 msgstr ""
 
-#: term-utils/setterm.c:394
+#: term-utils/setterm.c:391
 msgid " --repeat        [on|off]          keyboard repeat\n"
 msgstr ""
 
-#: term-utils/setterm.c:395
+#: term-utils/setterm.c:392
 msgid " --appcursorkeys [on|off]          cursor key application mode\n"
 msgstr ""
 
-#: term-utils/setterm.c:396
+#: term-utils/setterm.c:393
 msgid " --linewrap      [on|off]          continue on a new line when a line is full\n"
 msgstr ""
 
-#: term-utils/setterm.c:397
+#: term-utils/setterm.c:394
 msgid " --inversescreen [on|off]          swap colors for the whole screen\n"
 msgstr ""
 
-#: term-utils/setterm.c:398
+#: term-utils/setterm.c:395
 msgid " --foreground    default|<color>   set foreground color\n"
 msgstr ""
 
-#: term-utils/setterm.c:399
+#: term-utils/setterm.c:396
 msgid " --background    default|<color>   set background color\n"
 msgstr ""
 
-#: term-utils/setterm.c:400
+#: term-utils/setterm.c:397
 msgid " --ulcolor       [bright] <color>  set underlined text color\n"
 msgstr ""
 
-#: term-utils/setterm.c:401
+#: term-utils/setterm.c:398
 msgid " --hbcolor       [bright] <color>  set bold text color\n"
 msgstr ""
 
-#: term-utils/setterm.c:402
+#: term-utils/setterm.c:399
 msgid "                 <color>: black blue cyan green grey magenta red white yellow\n"
 msgstr ""
 
-#: term-utils/setterm.c:403
+#: term-utils/setterm.c:400
 msgid " --bold          [on|off]          bold\n"
 msgstr ""
 
-#: term-utils/setterm.c:404
+#: term-utils/setterm.c:401
 msgid " --half-bright   [on|off]          dim\n"
 msgstr ""
 
-#: term-utils/setterm.c:405
+#: term-utils/setterm.c:402
 msgid " --blink         [on|off]          blink\n"
 msgstr ""
 
-#: term-utils/setterm.c:406
+#: term-utils/setterm.c:403
 #, fuzzy
 msgid " --underline     [on|off]          underline\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: term-utils/setterm.c:407
+#: term-utils/setterm.c:404
 msgid " --reverse       [on|off]          swap foreground and background colors\n"
 msgstr ""
 
-#: term-utils/setterm.c:408
+#: term-utils/setterm.c:405
 msgid " --clear         [all|rest]        clear screen and set cursor position\n"
 msgstr ""
 
-#: term-utils/setterm.c:409
+#: term-utils/setterm.c:406
 msgid " --tabs          [<number>...]     set these tab stop positions, or show them\n"
 msgstr ""
 
-#: term-utils/setterm.c:410
+#: term-utils/setterm.c:407
 msgid " --clrtabs       [<number>...]     clear these tab stop positions, or all\n"
 msgstr ""
 
-#: term-utils/setterm.c:411
+#: term-utils/setterm.c:408
 msgid " --regtabs       [1-160]           set a regular tab stop interval\n"
 msgstr ""
 
-#: term-utils/setterm.c:412
+#: term-utils/setterm.c:409
 msgid " --blank         [0-60|force|poke] set time of inactivity before screen blanks\n"
 msgstr ""
 
-#: term-utils/setterm.c:413
+#: term-utils/setterm.c:410
 msgid " --dump          [<number>]        write vcsa<number> console dump to file\n"
 msgstr ""
 
-#: term-utils/setterm.c:414
+#: term-utils/setterm.c:411
 msgid " --append        [<number>]        append vcsa<number> console dump to file\n"
 msgstr ""
 
-#: term-utils/setterm.c:415
+#: term-utils/setterm.c:412
 msgid " --file          <filename>        name of the dump file\n"
 msgstr ""
 
-#: term-utils/setterm.c:416
+#: term-utils/setterm.c:413
 #, fuzzy
 msgid " --msg           [on|off]          send kernel messages to console\n"
 msgstr " -a                       samo zbog kompatibilnosti, zanemareno\n"
 
-#: term-utils/setterm.c:417
+#: term-utils/setterm.c:414
 #, fuzzy
 msgid " --msglevel      0-8               kernel console log level\n"
 msgstr " -a                       samo zbog kompatibilnosti, zanemareno\n"
 
-#: term-utils/setterm.c:418
+#: term-utils/setterm.c:415
 msgid " --powersave     [on|vsync|hsync|powerdown|off]\n"
 msgstr ""
 
-#: term-utils/setterm.c:419
+#: term-utils/setterm.c:416
 msgid "                                   set vesa powersaving features\n"
 msgstr ""
 
-#: term-utils/setterm.c:420
+#: term-utils/setterm.c:417
 msgid " --powerdown     [0-60]            set vesa powerdown interval in minutes\n"
 msgstr ""
 
-#: term-utils/setterm.c:421
+#: term-utils/setterm.c:418
 msgid " --blength       [0-2000]          duration of the bell in milliseconds\n"
 msgstr ""
 
-#: term-utils/setterm.c:422
+#: term-utils/setterm.c:419
 msgid " --bfreq         <number>          bell frequency in Hertz\n"
 msgstr ""
 
-#: term-utils/setterm.c:423
+#: term-utils/setterm.c:420
 #, fuzzy
 msgid " --version                         show version information and exit\n"
 msgstr " -?         prikaži ovu pomoć i izađi\n"
 
-#: term-utils/setterm.c:424
+#: term-utils/setterm.c:421
 #, fuzzy
 msgid " --help                            display this help and exit\n"
 msgstr " -h, --help         prikaži ovu pomoć i izađi\n"
 
-#: term-utils/setterm.c:432
+#: term-utils/setterm.c:429
 msgid "duplicate use of an option"
 msgstr ""
 
-#: term-utils/setterm.c:741
+#: term-utils/setterm.c:738
 msgid "cannot force blank"
 msgstr ""
 
-#: term-utils/setterm.c:746
+#: term-utils/setterm.c:743
 msgid "cannot force unblank"
 msgstr ""
 
-#: term-utils/setterm.c:752
+#: term-utils/setterm.c:749
 msgid "cannot get blank status"
 msgstr ""
 
-#: term-utils/setterm.c:778
+#: term-utils/setterm.c:775
 #, fuzzy, c-format
 msgid "cannot open dump file %s for output"
 msgstr "ne mogu otvoriti %s: %s"
 
-#: term-utils/setterm.c:820
+#: term-utils/setterm.c:817
 #, c-format
 msgid "terminal %s does not support %s"
 msgstr ""
 
-#: term-utils/setterm.c:858
+#: term-utils/setterm.c:855
 #, fuzzy
 msgid "select failed"
 msgstr "seek nije uspio"
 
-#: term-utils/setterm.c:884
+#: term-utils/setterm.c:881
 msgid "stdin does not refer to a terminal"
 msgstr ""
 
-#: term-utils/setterm.c:912
+#: term-utils/setterm.c:909
 #, c-format
 msgid "invalid cursor position: %s"
 msgstr ""
 
-#: term-utils/setterm.c:934
+#: term-utils/setterm.c:931
 #, fuzzy
 msgid "reset failed"
 msgstr "seek nije uspio"
 
-#: term-utils/setterm.c:1098
+#: term-utils/setterm.c:1095
 msgid "cannot (un)set powersave mode"
 msgstr ""
 
-#: term-utils/setterm.c:1117 term-utils/setterm.c:1126
+#: term-utils/setterm.c:1114 term-utils/setterm.c:1123
 msgid "klogctl error"
 msgstr ""
 
-#: term-utils/setterm.c:1147
+#: term-utils/setterm.c:1144
 msgid "$TERM is not defined."
 msgstr ""
 
-#: term-utils/setterm.c:1154
+#: term-utils/setterm.c:1151
 msgid "terminfo database cannot be found"
 msgstr ""
 
-#: term-utils/setterm.c:1156
+#: term-utils/setterm.c:1153
 #, c-format
 msgid "%s: unknown terminal type"
 msgstr ""
 
-#: term-utils/setterm.c:1158
+#: term-utils/setterm.c:1155
 msgid "terminal is hardcopy"
 msgstr ""
 
@@ -18173,33 +18173,33 @@ msgstr "neispravan argument duljine"
 msgid "%s: unknown gid"
 msgstr "Nepoznata naredba: %s"
 
-#: term-utils/wall.c:158
+#: term-utils/wall.c:161
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr ""
 
-#: term-utils/wall.c:204
+#: term-utils/wall.c:207
 msgid "--nobanner is available only for root"
 msgstr ""
 
-#: term-utils/wall.c:209
+#: term-utils/wall.c:212
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr ""
 
-#: term-utils/wall.c:348
+#: term-utils/wall.c:351
 msgid "cannot get passwd uid"
 msgstr ""
 
-#: term-utils/wall.c:353
+#: term-utils/wall.c:356
 msgid "cannot get tty name"
 msgstr ""
 
-#: term-utils/wall.c:373
+#: term-utils/wall.c:376
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr ""
 
-#: term-utils/wall.c:406
+#: term-utils/wall.c:409
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr ""
@@ -18499,7 +18499,7 @@ msgstr ""
 msgid "option --table-columns required for --json"
 msgstr ""
 
-#: text-utils/hexdump.c:155 text-utils/more.c:225
+#: text-utils/hexdump.c:155 text-utils/more.c:231
 #, fuzzy, c-format
 msgid " %s [options] <file>...\n"
 msgstr " %s [opcije] datoteka\n"
@@ -18588,65 +18588,65 @@ msgstr ""
 msgid "Read one line.\n"
 msgstr ""
 
-#: text-utils/more.c:228
+#: text-utils/more.c:234
 msgid "A file perusal filter for CRT viewing.\n"
 msgstr ""
 
-#: text-utils/more.c:231
+#: text-utils/more.c:237
 #, fuzzy
 msgid " -d          display help instead of ringing bell\n"
 msgstr " -?         prikaži ovu pomoć i izađi\n"
 
-#: text-utils/more.c:232
+#: text-utils/more.c:238
 msgid " -f          count logical rather than screen lines\n"
 msgstr ""
 
-#: text-utils/more.c:233
+#: text-utils/more.c:239
 msgid " -l          suppress pause after form feed\n"
 msgstr ""
 
-#: text-utils/more.c:234
-msgid " -c          do not scroll, display text and clean line ends\n"
-msgstr ""
-
-#: text-utils/more.c:235
-#, fuzzy
-msgid " -p          do not scroll, clean screen and display text\n"
-msgstr " -T         ne prikazuj naslov pri pokretanju\n"
-
-#: text-utils/more.c:236
-#, fuzzy
-msgid " -s          squeeze multiple blank lines into one\n"
-msgstr " -V         pojasni što program radi\n"
-
-#: text-utils/more.c:237
-msgid " -u          suppress underlining\n"
-msgstr ""
-
-#: text-utils/more.c:238
-#, fuzzy
-msgid " -<number>   the number of lines per screenful\n"
-msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
-
-#: text-utils/more.c:239
-msgid " +<number>   display file beginning from line number\n"
-msgstr ""
-
 #: text-utils/more.c:240
-msgid " +/<string>  display file beginning from search string match\n"
+msgid " -c          do not scroll, display text and clean line ends\n"
 msgstr ""
 
 #: text-utils/more.c:241
 #, fuzzy
+msgid " -p          do not scroll, clean screen and display text\n"
+msgstr " -T         ne prikazuj naslov pri pokretanju\n"
+
+#: text-utils/more.c:242
+#, fuzzy
+msgid " -s          squeeze multiple blank lines into one\n"
+msgstr " -V         pojasni što program radi\n"
+
+#: text-utils/more.c:243
+msgid " -u          suppress underlining\n"
+msgstr ""
+
+#: text-utils/more.c:244
+#, fuzzy
+msgid " -<number>   the number of lines per screenful\n"
+msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
+
+#: text-utils/more.c:245
+msgid " +<number>   display file beginning from line number\n"
+msgstr ""
+
+#: text-utils/more.c:246
+msgid " +/<string>  display file beginning from search string match\n"
+msgstr ""
+
+#: text-utils/more.c:247
+#, fuzzy
 msgid " -V          display version information and exit\n"
 msgstr " -?         prikaži ovu pomoć i izađi\n"
 
-#: text-utils/more.c:484
+#: text-utils/more.c:490
 #, c-format
 msgid "unknown option -%s"
 msgstr ""
 
-#: text-utils/more.c:508
+#: text-utils/more.c:514
 #, c-format
 msgid ""
 "\n"
@@ -18654,7 +18654,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: text-utils/more.c:550
+#: text-utils/more.c:556
 #, c-format
 msgid ""
 "\n"
@@ -18662,27 +18662,27 @@ msgid ""
 "\n"
 msgstr ""
 
-#: text-utils/more.c:645
+#: text-utils/more.c:651
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr ""
 
-#: text-utils/more.c:724
+#: text-utils/more.c:730
 #, c-format
 msgid "--More--"
 msgstr ""
 
-#: text-utils/more.c:726
+#: text-utils/more.c:732
 #, c-format
 msgid "(Next file: %s)"
 msgstr ""
 
-#: text-utils/more.c:734
+#: text-utils/more.c:740
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr ""
 
-#: text-utils/more.c:1162
+#: text-utils/more.c:1168
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
@@ -18690,7 +18690,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: text-utils/more.c:1210
+#: text-utils/more.c:1216
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
@@ -18698,25 +18698,25 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: text-utils/more.c:1248
+#: text-utils/more.c:1254
 msgid ""
 "\n"
 "***Back***\n"
 "\n"
 msgstr ""
 
-#: text-utils/more.c:1263
+#: text-utils/more.c:1269
 msgid "No previous regular expression"
 msgstr ""
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1299
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 
-#: text-utils/more.c:1300
+#: text-utils/more.c:1306
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -18739,70 +18739,70 @@ msgid ""
 ".                       Repeat previous command\n"
 msgstr ""
 
-#: text-utils/more.c:1373 text-utils/more.c:1379
+#: text-utils/more.c:1379 text-utils/more.c:1385
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr ""
 
-#: text-utils/more.c:1410
+#: text-utils/more.c:1416
 #, c-format
 msgid "\"%s\" line %d"
 msgstr ""
 
-#: text-utils/more.c:1412
+#: text-utils/more.c:1418
 #, c-format
 msgid "[Not a file] line %d"
 msgstr ""
 
-#: text-utils/more.c:1494
+#: text-utils/more.c:1500
 msgid "  Overflow\n"
 msgstr ""
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1549
 msgid "...skipping\n"
 msgstr ""
 
-#: text-utils/more.c:1577
+#: text-utils/more.c:1583
 msgid ""
 "\n"
 "Pattern not found\n"
 msgstr ""
 
-#: text-utils/more.c:1583 text-utils/pg.c:1027 text-utils/pg.c:1173
+#: text-utils/more.c:1589 text-utils/pg.c:1035 text-utils/pg.c:1181
 msgid "Pattern not found"
 msgstr ""
 
-#: text-utils/more.c:1629
+#: text-utils/more.c:1635
 msgid "exec failed\n"
 msgstr ""
 
-#: text-utils/more.c:1643
+#: text-utils/more.c:1649
 msgid "can't fork\n"
 msgstr ""
 
-#: text-utils/more.c:1677
+#: text-utils/more.c:1683
 msgid ""
 "\n"
 "...Skipping "
 msgstr ""
 
-#: text-utils/more.c:1681
+#: text-utils/more.c:1687
 msgid "...Skipping to file "
 msgstr ""
 
-#: text-utils/more.c:1683
+#: text-utils/more.c:1689
 msgid "...Skipping back to file "
 msgstr ""
 
-#: text-utils/more.c:1973
+#: text-utils/more.c:1979
 msgid "Line too long"
 msgstr ""
 
-#: text-utils/more.c:2010
+#: text-utils/more.c:2016
 msgid "No previous command to substitute for"
 msgstr ""
 
-#: text-utils/pg.c:144
+#: text-utils/pg.c:152
 msgid ""
 "-------------------------------------------------------\n"
 "  h                       this screen\n"
@@ -18828,139 +18828,139 @@ msgid ""
 "-------------------------------------------------------\n"
 msgstr ""
 
-#: text-utils/pg.c:222
+#: text-utils/pg.c:230
 #, c-format
 msgid " %s [options] [+line] [+/pattern/] [files]\n"
 msgstr ""
 
-#: text-utils/pg.c:226
+#: text-utils/pg.c:234
 msgid "Browse pagewise through text files.\n"
 msgstr ""
 
-#: text-utils/pg.c:229
+#: text-utils/pg.c:237
 msgid " -number      lines per page\n"
 msgstr ""
 
-#: text-utils/pg.c:230
+#: text-utils/pg.c:238
 msgid " -c           clear screen before displaying\n"
 msgstr ""
 
-#: text-utils/pg.c:231
+#: text-utils/pg.c:239
 msgid " -e           do not pause at end of a file\n"
 msgstr ""
 
-#: text-utils/pg.c:232
+#: text-utils/pg.c:240
 msgid " -f           do not split long lines\n"
 msgstr ""
 
-#: text-utils/pg.c:233
+#: text-utils/pg.c:241
 msgid " -n           terminate command with new line\n"
 msgstr ""
 
-#: text-utils/pg.c:234
+#: text-utils/pg.c:242
 msgid " -p <prompt>  specify prompt\n"
 msgstr ""
 
-#: text-utils/pg.c:235
+#: text-utils/pg.c:243
 msgid " -r           disallow shell escape\n"
 msgstr ""
 
-#: text-utils/pg.c:236
+#: text-utils/pg.c:244
 msgid " -s           print messages to stdout\n"
 msgstr ""
 
-#: text-utils/pg.c:237
+#: text-utils/pg.c:245
 msgid " +number      start at the given line\n"
 msgstr ""
 
-#: text-utils/pg.c:238
+#: text-utils/pg.c:246
 msgid " +/pattern/   start at the line containing pattern\n"
 msgstr ""
 
-#: text-utils/pg.c:250
+#: text-utils/pg.c:258
 #, fuzzy, c-format
 msgid "option requires an argument -- %s"
 msgstr "%s zahtijeva argument"
 
-#: text-utils/pg.c:256
+#: text-utils/pg.c:264
 #, c-format
 msgid "illegal option -- %s"
 msgstr ""
 
-#: text-utils/pg.c:359
+#: text-utils/pg.c:367
 msgid "...skipping forward\n"
 msgstr ""
 
-#: text-utils/pg.c:361
+#: text-utils/pg.c:369
 msgid "...skipping backward\n"
 msgstr ""
 
-#: text-utils/pg.c:377
+#: text-utils/pg.c:385
 msgid "No next file"
 msgstr ""
 
-#: text-utils/pg.c:381
+#: text-utils/pg.c:389
 msgid "No previous file"
 msgstr ""
 
-#: text-utils/pg.c:883
+#: text-utils/pg.c:891
 #, fuzzy, c-format
 msgid "Read error from %s file"
 msgstr "greška čitanja na %s"
 
-#: text-utils/pg.c:886
+#: text-utils/pg.c:894
 #, c-format
 msgid "Unexpected EOF in %s file"
 msgstr ""
 
-#: text-utils/pg.c:888
+#: text-utils/pg.c:896
 #, fuzzy, c-format
 msgid "Unknown error in %s file"
 msgstr "Nepoznata naredba: %s"
 
-#: text-utils/pg.c:941
+#: text-utils/pg.c:949
 #, fuzzy
 msgid "Cannot create temporary file"
 msgstr "ne mogu pristupiti datoteci %s"
 
-#: text-utils/pg.c:950 text-utils/pg.c:1114 text-utils/pg.c:1140
+#: text-utils/pg.c:958 text-utils/pg.c:1122 text-utils/pg.c:1148
 msgid "RE error: "
 msgstr ""
 
-#: text-utils/pg.c:1097
+#: text-utils/pg.c:1105
 msgid "(EOF)"
 msgstr ""
 
-#: text-utils/pg.c:1122 text-utils/pg.c:1148
+#: text-utils/pg.c:1130 text-utils/pg.c:1156
 msgid "No remembered search string"
 msgstr ""
 
-#: text-utils/pg.c:1203
+#: text-utils/pg.c:1211
 msgid "cannot open "
 msgstr ""
 
-#: text-utils/pg.c:1255
+#: text-utils/pg.c:1263
 msgid "saved"
 msgstr ""
 
-#: text-utils/pg.c:1345
+#: text-utils/pg.c:1353
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ""
 
-#: text-utils/pg.c:1380
+#: text-utils/pg.c:1388
 msgid "fork() failed, try again later\n"
 msgstr ""
 
-#: text-utils/pg.c:1468
+#: text-utils/pg.c:1476
 msgid "(Next file: "
 msgstr ""
 
-#: text-utils/pg.c:1534
+#: text-utils/pg.c:1542
 #, c-format
 msgid "%s %s Copyright (c) 2000-2001 Gunnar Ritter. All rights reserved.\n"
 msgstr ""
 
-#: text-utils/pg.c:1587 text-utils/pg.c:1660
+#: text-utils/pg.c:1595 text-utils/pg.c:1668
 msgid "failed to parse number of lines per page"
 msgstr ""
 
@@ -18973,38 +18973,38 @@ msgstr ""
 msgid "Reverse lines characterwise.\n"
 msgstr ""
 
-#: text-utils/ul.c:135
+#: text-utils/ul.c:142
 #, fuzzy, c-format
 msgid " %s [options] [<file> ...]\n"
 msgstr " %s [opcije] datoteka\n"
 
-#: text-utils/ul.c:138
+#: text-utils/ul.c:145
 msgid "Do underlining.\n"
 msgstr ""
 
-#: text-utils/ul.c:141
+#: text-utils/ul.c:148
 msgid " -t, -T, --terminal TERMINAL  override the TERM environment variable\n"
 msgstr ""
 
-#: text-utils/ul.c:142
+#: text-utils/ul.c:149
 msgid " -i, --indicated              underlining is indicated via a separate line\n"
 msgstr ""
 
-#: text-utils/ul.c:203
+#: text-utils/ul.c:210
 msgid "trouble reading terminfo"
 msgstr ""
 
-#: text-utils/ul.c:208
+#: text-utils/ul.c:215
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr ""
 
-#: text-utils/ul.c:298
+#: text-utils/ul.c:305
 #, c-format
 msgid "unknown escape sequence in input: %o, %o"
 msgstr ""
 
-#: text-utils/ul.c:623
+#: text-utils/ul.c:630
 msgid "Input line too long."
 msgstr ""
 

@@ -74,7 +74,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-05-23 11:41+0200\n"
+"POT-Creation-Date: 2017-06-02 11:14+0200\n"
 "PO-Revision-Date: 2016-11-15 19:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -114,7 +114,7 @@ msgstr "Fortæl kernen om eksistensen af en specificeret partition.\n"
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:259 login-utils/vipw.c:277
 #: misc-utils/findmnt.c:1099 misc-utils/logger.c:1188 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
-#: sys-utils/dmesg.c:522 sys-utils/eject.c:499 sys-utils/eject.c:699
+#: sys-utils/dmesg.c:521 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
 #: sys-utils/hwclock.c:215 sys-utils/ldattach.c:387 sys-utils/nsenter.c:130
 #: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:270 sys-utils/setpriv.c:230
@@ -124,8 +124,8 @@ msgstr "Fortæl kernen om eksistensen af en specificeret partition.\n"
 #: term-utils/agetty.c:2624 term-utils/mesg.c:127 term-utils/script.c:426
 #: term-utils/script.c:432 term-utils/script.c:434 term-utils/script.c:530
 #: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
-#: term-utils/wall.c:410 text-utils/colcrt.c:282 text-utils/more.c:513
-#: text-utils/rev.c:141 text-utils/ul.c:224
+#: term-utils/wall.c:413 text-utils/colcrt.c:282 text-utils/more.c:519
+#: text-utils/rev.c:141 text-utils/ul.c:231
 #, c-format
 msgid "cannot open %s"
 msgstr "kunne ikke åbne %s"
@@ -656,8 +656,8 @@ msgstr "Er du sikker på, at du vil skrive partitionstabellen til disken? "
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Tast »ja« eller »nej«, eller tryk ESC for at forlade denne dialog."
 
-#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1587
-#: sys-utils/lscpu.c:1597 sys-utils/lsmem.c:200
+#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1589
+#: sys-utils/lscpu.c:1599 sys-utils/lsmem.c:200
 msgid "yes"
 msgstr "ja"
 
@@ -708,7 +708,7 @@ msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               start med nulstillet partitionstabel\n"
 
 #: disk-utils/cfdisk.c:2597 disk-utils/fdisk.c:907 disk-utils/sfdisk.c:2128
-#: misc-utils/cal.c:390 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
+#: misc-utils/cal.c:391 sys-utils/dmesg.c:1332 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "ikke understøttet farvetilstand"
 
@@ -811,10 +811,10 @@ msgstr "ugyldig parameter - repair (reparer)"
 #: disk-utils/mkfs.minix.c:816 disk-utils/mkswap.c:241 disk-utils/partx.c:952
 #: login-utils/last.c:684 login-utils/utmpdump.c:139 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
-#: sys-utils/dmesg.c:524 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
+#: sys-utils/dmesg.c:523 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:77 sys-utils/nsenter.c:165 sys-utils/nsenter.c:169
 #: sys-utils/swapon.c:520 sys-utils/switch_root.c:94
-#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:504
+#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:510
 #, c-format
 msgid "stat of %s failed"
 msgstr "stat for %s mislykkedes"
@@ -1170,7 +1170,7 @@ msgstr "kunne ikke allokere iterator"
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
 #: disk-utils/partx.c:667 login-utils/lslogins.c:918 misc-utils/fincore.c:362
 #: misc-utils/findmnt.c:1598 misc-utils/lsblk.c:1897 misc-utils/lslocks.c:449
-#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1760 sys-utils/lscpu.c:1863
+#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1762 sys-utils/lscpu.c:1865
 #: sys-utils/lsipc.c:338 sys-utils/prlimit.c:297 sys-utils/swapon.c:281
 #: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:196
 msgid "failed to allocate output table"
@@ -1180,7 +1180,7 @@ msgstr "kunne ikke allokere uddatatabel"
 #: disk-utils/partx.c:581 login-utils/lslogins.c:976 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1174
 #: misc-utils/lslocks.c:391 sys-utils/losetup.c:333 sys-utils/losetup.c:362
-#: sys-utils/lscpu.c:1786 sys-utils/lscpu.c:1814 sys-utils/lsipc.c:470
+#: sys-utils/lscpu.c:1788 sys-utils/lscpu.c:1816 sys-utils/lsipc.c:470
 #: sys-utils/lsipc.c:545 sys-utils/lsipc.c:647 sys-utils/lsipc.c:739
 #: sys-utils/lsipc.c:900 sys-utils/prlimit.c:229 sys-utils/swapon.c:176
 #: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:407
@@ -1190,8 +1190,8 @@ msgstr "kunne ikke allokere uddatalinje"
 #: disk-utils/fdisk-list.c:173 disk-utils/fdisk-list.c:273
 #: disk-utils/partx.c:644 login-utils/lslogins.c:1074 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1165
-#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1794
-#: sys-utils/lscpu.c:1825 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
+#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1796
+#: sys-utils/lscpu.c:1827 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
 #: sys-utils/prlimit.c:261 sys-utils/swapon.c:224 sys-utils/wdctl.c:243
 #: sys-utils/zramctl.c:475 text-utils/column.c:413
 #, fuzzy
@@ -1672,8 +1672,8 @@ msgstr "%s er ikke monteret\n"
 #: disk-utils/fsck.cramfs.c:253 disk-utils/sfdisk.c:299 libfdisk/src/bsd.c:645
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:655
-#: sys-utils/setpriv.c:239 term-utils/setterm.c:724 term-utils/setterm.c:781
-#: term-utils/setterm.c:785 term-utils/setterm.c:792
+#: sys-utils/setpriv.c:239 term-utils/setterm.c:721 term-utils/setterm.c:778
+#: term-utils/setterm.c:782 term-utils/setterm.c:789
 #, c-format
 msgid "cannot read %s"
 msgstr "kan ikke læse %s"
@@ -2641,9 +2641,9 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:833
 #: disk-utils/mkswap.c:539 disk-utils/partx.c:1058 disk-utils/resizepart.c:112
-#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:659 sys-utils/wdctl.c:348
+#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:658 sys-utils/wdctl.c:348
 #: sys-utils/wdctl.c:413 term-utils/script.c:273 term-utils/script.c:350
-#: term-utils/setterm.c:888 text-utils/pg.c:1248
+#: term-utils/setterm.c:885 text-utils/pg.c:1256
 msgid "write failed"
 msgstr "skrivning mislykkedes"
 
@@ -2889,7 +2889,7 @@ msgstr " -h, --help         vis denne hjælpetekst og afslut\n"
 #: sys-utils/nsenter.c:482 sys-utils/prlimit.c:642 sys-utils/rtcwake.c:577
 #: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
 #: sys-utils/swapon.c:341 sys-utils/switch_root.c:257 sys-utils/unshare.c:461
-#: term-utils/script.c:589 text-utils/pg.c:1375
+#: term-utils/script.c:589 text-utils/pg.c:1383
 #, c-format
 msgid "failed to execute %s"
 msgstr "kunne ikke køre %s"
@@ -3668,7 +3668,7 @@ msgstr[1] "#%2d: %9ju-%9ju (%9ju sektorer, %6ju MB)\n"
 
 #: disk-utils/partx.c:678 misc-utils/fincore.c:374 misc-utils/findmnt.c:1624
 #: misc-utils/lsblk.c:1919 misc-utils/lslocks.c:462 sys-utils/losetup.c:326
-#: sys-utils/lscpu.c:1769 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
+#: sys-utils/lscpu.c:1771 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
 #: sys-utils/wdctl.c:272
 #, fuzzy
 msgid "failed to allocate output column"
@@ -4230,7 +4230,7 @@ msgstr " Eksempel:\n"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     opretter 4 GiB partition på standardens startforskydning.\n"
 
-#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1454
+#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1453
 msgid "unsupported command"
 msgstr "ikke understøttet kommando"
 
@@ -4682,7 +4682,7 @@ msgstr ""
 "For yderligere detaljer se %s.\n"
 
 #: include/closestream.h:46 include/closestream.h:48 login-utils/vipw.c:274
-#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:812
+#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:809
 #: text-utils/col.c:157
 msgid "write error"
 msgstr "skrivefejl"
@@ -5316,7 +5316,7 @@ msgstr ""
 msgid "Disklabel written to %s."
 msgstr "Disketiket skrevet til %s."
 
-#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:641
+#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:645
 msgid "Syncing disks."
 msgstr "Synkroniserer diske."
 
@@ -5346,24 +5346,24 @@ msgstr "Bstørrelse"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:635
+#: libfdisk/src/context.c:639
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: luk enhed mislykkedes"
 
-#: libfdisk/src/context.c:814
+#: libfdisk/src/context.c:820
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "cylinder"
 msgstr[1] "cylindre"
 
-#: libfdisk/src/context.c:815
+#: libfdisk/src/context.c:821
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektor"
 msgstr[1] "sektorer"
 
-#: libfdisk/src/context.c:1118
+#: libfdisk/src/context.c:1124
 msgid "Incomplete geometry setting."
 msgstr "Ufuldstændig geometriindstilling."
 
@@ -6256,7 +6256,7 @@ msgstr ""
 
 #: libfdisk/src/gpt.c:2631
 #, fuzzy, c-format
-msgid "The number of the partition has be smaller than %zu."
+msgid "The number of the partition has to be smaller than %zu."
 msgstr "Det maksimale antal partitioner er blevet oprettet."
 
 #: libfdisk/src/gpt.c:2654
@@ -6748,7 +6748,7 @@ msgstr ""
 "og opstartsblok. Er du er helt sikker på, at du vil\n"
 "markere den partition som Linux-swap?"
 
-#: libmount/src/context.c:2359
+#: libmount/src/context.c:2367
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "readlink mislykkedes: %s"
@@ -7058,7 +7058,7 @@ msgstr "mount(2) mislykkedes"
 msgid "waitpid failed (%s)"
 msgstr "waitpid mislykkedes (%s)"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1911
+#: lib/path.c:209 sys-utils/lscpu.c:1913
 msgid "failed to callocate cpu set"
 msgstr "kunne ikke udføre calloc for cpu-sæt"
 
@@ -7082,12 +7082,12 @@ msgstr "kan ikke åbne konsol"
 msgid "cannot set option for UNIX socket"
 msgstr "kan ikke angive tidsudløb for %s"
 
-#: lib/plymouth-ctrl.c:91
+#: lib/plymouth-ctrl.c:92
 #, fuzzy
 msgid "cannot connect on UNIX socket"
 msgstr "kan ikke åbne konsol"
 
-#: lib/plymouth-ctrl.c:131
+#: lib/plymouth-ctrl.c:132
 #, c-format
 msgid "the plymouth request %c is not implemented"
 msgstr ""
@@ -7337,7 +7337,7 @@ msgstr "Skal udskiftet.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Brug: %s <adgangsordfil> <brugernavn> ...\n"
 
-#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1193
+#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1192
 #: sys-utils/lsipc.c:269
 #, c-format
 msgid "unknown time format: %s"
@@ -7675,7 +7675,7 @@ msgstr "%s: %s indeholder ugyldig numerisk værdi: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "hush-logindstatus: gendan af oprindelige id'er mislykkedes"
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1587 sys-utils/lscpu.c:1597
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1589 sys-utils/lscpu.c:1599
 #: sys-utils/lsmem.c:200
 msgid "no"
 msgstr "nej"
@@ -7914,9 +7914,9 @@ msgstr ""
 
 #: login-utils/lslogins.c:1227 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:494 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
-#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:2050 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
-#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:381
+#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:263 sys-utils/ipcmk.c:66
+#: sys-utils/lscpu.c:2052 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
+#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:378
 #: text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -8010,7 +8010,7 @@ msgstr "     --wtmp-file <sti>    angiv en alternativ sti for wtmp\n"
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <sti>    angiv en alternativ sti for btmp\n"
 
-#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2069
+#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2071
 #: sys-utils/lsmem.c:391
 #, c-format
 msgid ""
@@ -8345,7 +8345,7 @@ msgstr ""
 " -e, --force              undersøg adgangskodefiler direkte hvis getpwnam(3) mislykkes\n"
 
 #: login-utils/sulogin.c:863 misc-utils/findmnt.c:1470 sys-utils/wdctl.c:525
-#: term-utils/agetty.c:758 term-utils/wall.c:207
+#: term-utils/agetty.c:758 term-utils/wall.c:210
 msgid "invalid timeout argument"
 msgstr "ugyldig parameter for tidsudløb"
 
@@ -8689,147 +8689,148 @@ msgstr ""
 msgid "The lookup option requires a search type specified using -t"
 msgstr ""
 
-#: misc-utils/cal.c:372
+#: misc-utils/cal.c:373
 #, fuzzy
 msgid "invalid month argument"
 msgstr "ugyldig længdeparameter"
 
-#: misc-utils/cal.c:380
+#: misc-utils/cal.c:381
 msgid "invalid week argument"
 msgstr "ugyldig ugeparameter"
 
-#: misc-utils/cal.c:382
+#: misc-utils/cal.c:383
 #, fuzzy
 msgid "illegal week value: use 1-54"
 msgstr "ugyldig ugeværdi: brug 1-53"
 
-#: misc-utils/cal.c:421
+#: misc-utils/cal.c:422
 #, fuzzy, c-format
 msgid "failed to parse timestamp or unknown month name: %s"
 msgstr "kunne ikke fortolke maksimal længde for filnavne"
 
-#: misc-utils/cal.c:430
+#: misc-utils/cal.c:431
 msgid "illegal day value"
 msgstr "Ugyldig dagsværdi"
 
-#: misc-utils/cal.c:432 misc-utils/cal.c:455
+#: misc-utils/cal.c:433 misc-utils/cal.c:456
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "ugyldig dagsværdi: brug 1-%d"
 
-#: misc-utils/cal.c:436 misc-utils/cal.c:444
+#: misc-utils/cal.c:437 misc-utils/cal.c:445
 msgid "illegal month value: use 1-12"
 msgstr "ugyldig månedsværdi: brug 1-12"
 
-#: misc-utils/cal.c:440
+#: misc-utils/cal.c:441
 #, fuzzy, c-format
 msgid "unknown month name: %s"
 msgstr "ukendt prioritetsnavn: %s"
 
-#: misc-utils/cal.c:447 misc-utils/cal.c:451
+#: misc-utils/cal.c:448 misc-utils/cal.c:452
 msgid "illegal year value"
 msgstr "ugyldig årsværdi"
 
-#: misc-utils/cal.c:449
+#: misc-utils/cal.c:450
 msgid "illegal year value: use positive integer"
 msgstr "ugyldig årsværdi: brug positive heltal"
 
-#: misc-utils/cal.c:481 misc-utils/cal.c:494
+#: misc-utils/cal.c:482 misc-utils/cal.c:495
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "ugyldig ugeværdi: år %d har ikke uge %d"
 
-#: misc-utils/cal.c:678
+#: misc-utils/cal.c:679
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: misc-utils/cal.c:684
+#: misc-utils/cal.c:685
 #, c-format
 msgid "%04d"
 msgstr ""
 
-#: misc-utils/cal.c:690
+#: misc-utils/cal.c:691
 #, fuzzy, c-format
 msgid "%s %04d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:992
+#: misc-utils/cal.c:993
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [tilvalg] [[[dag] måned] år]\n"
 
-#: misc-utils/cal.c:993
+#: misc-utils/cal.c:994
 #, fuzzy, c-format
 msgid " %s [options] <timestamp|monthname>\n"
 msgstr " %s [tilvalg] <filnavn>\n"
 
-#: misc-utils/cal.c:996
+#: misc-utils/cal.c:997
 msgid "Display a calendar, or some part of it.\n"
 msgstr "Vis en kalender, eller noget af den.\n"
 
-#: misc-utils/cal.c:997
+#: misc-utils/cal.c:998
 msgid "Without any arguments, display the current month.\n"
 msgstr "Uden nogen parametre, vis den aktuelle måned.\n"
 
-#: misc-utils/cal.c:1000
+#: misc-utils/cal.c:1001
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -1, --one             vis kun en enkelt måned (standard)\n"
 
 # spanning = omkring
-#: misc-utils/cal.c:1001
+#: misc-utils/cal.c:1002
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -3, --three           vis tre måneder omkring datoen\n"
 
 # spanning = omkring
-#: misc-utils/cal.c:1002
+#: misc-utils/cal.c:1003
 #, fuzzy
 msgid " -n, --months <num>    show num months starting with date's month\n"
 msgstr " -3, --three           vis tre måneder omkring datoen\n"
 
-#: misc-utils/cal.c:1003
+#: misc-utils/cal.c:1004
 #, fuzzy
 msgid " -S, --span            span the date when displaying multiple months\n"
 msgstr " -r, --raw                vis i rå tilstand\n"
 
-#: misc-utils/cal.c:1004
+#: misc-utils/cal.c:1005
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -s, --sunday          Søndag som første dag i ugen\n"
 
-#: misc-utils/cal.c:1005
+#: misc-utils/cal.c:1006
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          Mandag som første dag i ugen\n"
 
-#: misc-utils/cal.c:1006
+#: misc-utils/cal.c:1007
 msgid " -j, --julian          output Julian dates\n"
 msgstr " -j, --julian          vis datoer med juliansk kalenderformat\n"
 
-#: misc-utils/cal.c:1007
+#: misc-utils/cal.c:1008
 msgid " -y, --year            show the whole year\n"
 msgstr " -y, --year            vis hele året\n"
 
-#: misc-utils/cal.c:1008
+#: misc-utils/cal.c:1009
 #, fuzzy
 msgid " -Y, --twelve          show the next twelve months\n"
 msgstr " -y, --year            vis hele året\n"
 
-#: misc-utils/cal.c:1009
+#: misc-utils/cal.c:1010
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr " -w, --week[=<num>]    vis US eller ISO-8601 ugenumre\n"
 
 # det ville nok være logisk at have de danske i parentes, mens nøgleordene står udenfor
-#: misc-utils/cal.c:1010
+#: misc-utils/cal.c:1011
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr "     --color[=<når>]   farvelæg beskeder (auto, always (altid) eller never (aldrig))\n"
 
 #: misc-utils/fincore.c:61
 #, fuzzy
-msgid "file data residend in memory in pages"
+msgid "file data resident in memory in pages"
 msgstr "Delt hukommelses-id: %d\n"
 
 #: misc-utils/fincore.c:62
-msgid "file data residend in memory in bytes"
-msgstr ""
+#, fuzzy
+msgid "file data resident in memory in bytes"
+msgstr "Delt hukommelses-id: %d\n"
 
 #: misc-utils/fincore.c:63
 #, fuzzy
@@ -9597,17 +9598,17 @@ msgstr "tilvalg »%s« kræver en parameter"
 #: sys-utils/losetup.c:694 sys-utils/tunelp.c:161 sys-utils/tunelp.c:168
 #: sys-utils/tunelp.c:175 sys-utils/tunelp.c:182 sys-utils/tunelp.c:189
 #: sys-utils/tunelp.c:195 sys-utils/tunelp.c:199 sys-utils/tunelp.c:206
-#: sys-utils/tunelp.c:231 term-utils/setterm.c:214 term-utils/setterm.c:217
-#: term-utils/setterm.c:236 term-utils/setterm.c:238 term-utils/setterm.c:273
-#: term-utils/setterm.c:275 term-utils/setterm.c:292 term-utils/setterm.c:299
-#: term-utils/setterm.c:301 term-utils/setterm.c:313 term-utils/setterm.c:315
-#: term-utils/setterm.c:324 term-utils/setterm.c:332 term-utils/setterm.c:347
-#: term-utils/setterm.c:349 term-utils/setterm.c:361 term-utils/setterm.c:363
-#: term-utils/setterm.c:374 term-utils/setterm.c:542 term-utils/setterm.c:547
-#: term-utils/setterm.c:552 term-utils/setterm.c:557 term-utils/setterm.c:581
-#: term-utils/setterm.c:586 term-utils/setterm.c:591 term-utils/setterm.c:596
-#: term-utils/setterm.c:601 term-utils/setterm.c:606 term-utils/setterm.c:614
-#: term-utils/setterm.c:647
+#: sys-utils/tunelp.c:231 term-utils/setterm.c:211 term-utils/setterm.c:214
+#: term-utils/setterm.c:233 term-utils/setterm.c:235 term-utils/setterm.c:270
+#: term-utils/setterm.c:272 term-utils/setterm.c:289 term-utils/setterm.c:296
+#: term-utils/setterm.c:298 term-utils/setterm.c:310 term-utils/setterm.c:312
+#: term-utils/setterm.c:321 term-utils/setterm.c:329 term-utils/setterm.c:344
+#: term-utils/setterm.c:346 term-utils/setterm.c:358 term-utils/setterm.c:360
+#: term-utils/setterm.c:371 term-utils/setterm.c:539 term-utils/setterm.c:544
+#: term-utils/setterm.c:549 term-utils/setterm.c:554 term-utils/setterm.c:578
+#: term-utils/setterm.c:583 term-utils/setterm.c:588 term-utils/setterm.c:593
+#: term-utils/setterm.c:598 term-utils/setterm.c:603 term-utils/setterm.c:611
+#: term-utils/setterm.c:644
 msgid "argument error"
 msgstr "parameterfejl"
 
@@ -10579,7 +10580,7 @@ msgstr "poll() mislykkedes"
 msgid "timeout [%d sec]\n"
 msgstr "udløb efter %u sekunder"
 
-#: misc-utils/uuidd.c:443 term-utils/setterm.c:900 text-utils/column.c:436
+#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:436
 #: text-utils/column.c:449
 msgid "read failed"
 msgstr "læsning (read) mislykkedes"
@@ -11824,181 +11825,181 @@ msgstr "Du skal være root for at sætte Ctrl-Alt-Del-opførslen"
 msgid "unknown argument: %s"
 msgstr "ukendt parameter: %s"
 
-#: sys-utils/dmesg.c:110
+#: sys-utils/dmesg.c:109
 msgid "system is unusable"
 msgstr "system er ubrugelig"
 
-#: sys-utils/dmesg.c:111
+#: sys-utils/dmesg.c:110
 msgid "action must be taken immediately"
 msgstr "der må gøres noget øjeblikkeligt"
 
-#: sys-utils/dmesg.c:112
+#: sys-utils/dmesg.c:111
 msgid "critical conditions"
 msgstr "kritiske betingelser"
 
-#: sys-utils/dmesg.c:113
+#: sys-utils/dmesg.c:112
 msgid "error conditions"
 msgstr "fejlbetingelser"
 
-#: sys-utils/dmesg.c:114
+#: sys-utils/dmesg.c:113
 msgid "warning conditions"
 msgstr "advarselsbetingelser"
 
-#: sys-utils/dmesg.c:115
+#: sys-utils/dmesg.c:114
 msgid "normal but significant condition"
 msgstr "normal men signifikant betingelse"
 
-#: sys-utils/dmesg.c:116
+#: sys-utils/dmesg.c:115
 msgid "informational"
 msgstr "informationel"
 
-#: sys-utils/dmesg.c:117
+#: sys-utils/dmesg.c:116
 msgid "debug-level messages"
 msgstr "fejlsøgningsniveaubeskeder"
 
-#: sys-utils/dmesg.c:131
+#: sys-utils/dmesg.c:130
 msgid "kernel messages"
 msgstr "kernebeskeder"
 
-#: sys-utils/dmesg.c:132
+#: sys-utils/dmesg.c:131
 msgid "random user-level messages"
 msgstr "vilkårlige brugerniveaubeskeder"
 
-#: sys-utils/dmesg.c:133
+#: sys-utils/dmesg.c:132
 msgid "mail system"
 msgstr "postsystem"
 
-#: sys-utils/dmesg.c:134
+#: sys-utils/dmesg.c:133
 msgid "system daemons"
 msgstr "systemdæmoner"
 
-#: sys-utils/dmesg.c:135
+#: sys-utils/dmesg.c:134
 msgid "security/authorization messages"
 msgstr "sikkerheds- og godkendelsesbeskeder"
 
-#: sys-utils/dmesg.c:136
+#: sys-utils/dmesg.c:135
 msgid "messages generated internally by syslogd"
 msgstr "beskeder oprettet internt af syslogd"
 
-#: sys-utils/dmesg.c:137
+#: sys-utils/dmesg.c:136
 msgid "line printer subsystem"
 msgstr "line printer-undersystem"
 
-#: sys-utils/dmesg.c:138
+#: sys-utils/dmesg.c:137
 msgid "network news subsystem"
 msgstr "netværksnyhedsundersystem"
 
-#: sys-utils/dmesg.c:139
+#: sys-utils/dmesg.c:138
 msgid "UUCP subsystem"
 msgstr "UUCP-undersystem"
 
-#: sys-utils/dmesg.c:140
+#: sys-utils/dmesg.c:139
 msgid "clock daemon"
 msgstr "urdæmon"
 
-#: sys-utils/dmesg.c:141
+#: sys-utils/dmesg.c:140
 msgid "security/authorization messages (private)"
 msgstr "sikkerheds- og godkendelsesbeskeder (private)"
 
-#: sys-utils/dmesg.c:142
+#: sys-utils/dmesg.c:141
 msgid "FTP daemon"
 msgstr "FTP-dæmon"
 
-#: sys-utils/dmesg.c:267
+#: sys-utils/dmesg.c:266
 msgid "Display or control the kernel ring buffer.\n"
 msgstr "Vis eller kontroller kernens ringmellemlager.\n"
 
-#: sys-utils/dmesg.c:270
+#: sys-utils/dmesg.c:269
 msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgstr " -C, --clear                 ryd kernens ringbuffer\n"
 
-#: sys-utils/dmesg.c:271
+#: sys-utils/dmesg.c:270
 msgid " -c, --read-clear            read and clear all messages\n"
 msgstr " -c, --read-clear            læs og ryd alle beskeder\n"
 
-#: sys-utils/dmesg.c:272
+#: sys-utils/dmesg.c:271
 msgid " -D, --console-off           disable printing messages to console\n"
 msgstr " -D, --console-off           deaktiver udskrivning af beskeder til konsollen\n"
 
-#: sys-utils/dmesg.c:273
+#: sys-utils/dmesg.c:272
 msgid " -E, --console-on            enable printing messages to console\n"
 msgstr " -E, --console-on            aktiver udskrivning af beskeder til konsollen\n"
 
-#: sys-utils/dmesg.c:274
+#: sys-utils/dmesg.c:273
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr " -F, --file <fil>            brug filen i stedet for logmellemlageret til kernen\n"
 
-#: sys-utils/dmesg.c:275
+#: sys-utils/dmesg.c:274
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
 msgstr " -f, --facility <liste>      begræns uddata til definerede faciliteter\n"
 
-#: sys-utils/dmesg.c:276
+#: sys-utils/dmesg.c:275
 msgid " -H, --human                 human readable output\n"
 msgstr " -H, --human                 læsbare uddata\n"
 
-#: sys-utils/dmesg.c:277
+#: sys-utils/dmesg.c:276
 msgid " -k, --kernel                display kernel messages\n"
 msgstr " -k, --kernel                vis kernebeskeder\n"
 
-#: sys-utils/dmesg.c:278
+#: sys-utils/dmesg.c:277
 msgid " -L, --color[=<when>]        colorize messages (auto, always or never)\n"
 msgstr " -L, --color[=<hvornår>]     farvelæg beskeder (auto, always eller never)\n"
 
-#: sys-utils/dmesg.c:281
+#: sys-utils/dmesg.c:280
 msgid " -l, --level <list>          restrict output to defined levels\n"
 msgstr " -l, --level <liste>         begræns uddata til definerede niveauer\n"
 
-#: sys-utils/dmesg.c:282
+#: sys-utils/dmesg.c:281
 msgid " -n, --console-level <level> set level of messages printed to console\n"
 msgstr " -n, --console-level <niv.>  sæt niveau for beskeder vist i konsollen\n"
 
-#: sys-utils/dmesg.c:283
+#: sys-utils/dmesg.c:282
 msgid " -P, --nopager               do not pipe output into a pager\n"
 msgstr " -P, --nopager               Indskyd ikke uddata i en tekstsøger\n"
 
-#: sys-utils/dmesg.c:284
+#: sys-utils/dmesg.c:283
 msgid " -r, --raw                   print the raw message buffer\n"
 msgstr " -r, --raw                   udskriv det rå beskedmellemlager\n"
 
-#: sys-utils/dmesg.c:285
+#: sys-utils/dmesg.c:284
 msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr " -S, --syslog                fremtving brugen af syslog(2) frem for /dev/kmsg\n"
 
-#: sys-utils/dmesg.c:286
+#: sys-utils/dmesg.c:285
 msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr " -s, --buffer-size <str.>    mellemlagerstørrelse til at forespørge ring-mellemlageret for kernen\n"
 
-#: sys-utils/dmesg.c:287
+#: sys-utils/dmesg.c:286
 msgid " -u, --userspace             display userspace messages\n"
 msgstr " -u, --userspace             vis brugerrumsbeskeder\n"
 
-#: sys-utils/dmesg.c:288
+#: sys-utils/dmesg.c:287
 msgid " -w, --follow                wait for new messages\n"
 msgstr " -w, --follow                vent på nye beskeder\n"
 
-#: sys-utils/dmesg.c:289
+#: sys-utils/dmesg.c:288
 msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr " -x, --decode                afkod facilitet og niveau til læsbar streng\n"
 
-#: sys-utils/dmesg.c:290
+#: sys-utils/dmesg.c:289
 msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr " -d, --show-delta            vis tidsdelta mellem udskrevne beskeder\n"
 
-#: sys-utils/dmesg.c:291
+#: sys-utils/dmesg.c:290
 msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr " -e, --reltime               vis lokal tid og tidsforskel i læsbart format\n"
 
-#: sys-utils/dmesg.c:292
+#: sys-utils/dmesg.c:291
 #, fuzzy
 msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr " -T, --ctime                 vis læsbart tidsstempel\n"
 
-#: sys-utils/dmesg.c:293
+#: sys-utils/dmesg.c:292
 #, fuzzy
 msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr " -t, --notime                udskriv ikke beskedernes tidsstempel\n"
 
-#: sys-utils/dmesg.c:294
+#: sys-utils/dmesg.c:293
 #, fuzzy
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
@@ -12009,7 +12010,7 @@ msgstr ""
 "                               [delta|reltime|ctime|notime|iso]\n"
 "Suspension/genoptag vil gøre ctime og iso-tidsstempler upræcise.\n"
 
-#: sys-utils/dmesg.c:300
+#: sys-utils/dmesg.c:299
 msgid ""
 "\n"
 "Supported log facilities:\n"
@@ -12017,7 +12018,7 @@ msgstr ""
 "\n"
 "Understøttede logfaciliteter:\n"
 
-#: sys-utils/dmesg.c:306
+#: sys-utils/dmesg.c:305
 msgid ""
 "\n"
 "Supported log levels (priorities):\n"
@@ -12025,48 +12026,48 @@ msgstr ""
 "\n"
 "Understøttede logniveauer (prioriteter):\n"
 
-#: sys-utils/dmesg.c:360
+#: sys-utils/dmesg.c:359
 #, c-format
 msgid "failed to parse level '%s'"
 msgstr "kunne ikke fortolke niveau »%s«"
 
-#: sys-utils/dmesg.c:362
+#: sys-utils/dmesg.c:361
 #, c-format
 msgid "unknown level '%s'"
 msgstr "ukendt niveau »%s«"
 
-#: sys-utils/dmesg.c:398
+#: sys-utils/dmesg.c:397
 #, c-format
 msgid "failed to parse facility '%s'"
 msgstr "kunne ikke fortolke facilitet »%s«"
 
-#: sys-utils/dmesg.c:400
+#: sys-utils/dmesg.c:399
 #, c-format
 msgid "unknown facility '%s'"
 msgstr "ukendt facilitet »%s«"
 
-#: sys-utils/dmesg.c:528
+#: sys-utils/dmesg.c:527
 #, c-format
 msgid "cannot mmap: %s"
 msgstr "kunne ikke mmap: %s"
 
-#: sys-utils/dmesg.c:1356
+#: sys-utils/dmesg.c:1355
 msgid "invalid buffer size argument"
 msgstr "ugyldig parameter for mellemlagerstørrelse"
 
-#: sys-utils/dmesg.c:1408
+#: sys-utils/dmesg.c:1407
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "--show-delta ignoreret når den bruges sammen med iso8601-tidsformatet"
 
-#: sys-utils/dmesg.c:1431
+#: sys-utils/dmesg.c:1430
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw kan kun bruges sammen med --level eller --facility når der er læst beskeder fra /dev/kmsg"
 
-#: sys-utils/dmesg.c:1441
+#: sys-utils/dmesg.c:1440
 msgid "read kernel buffer failed"
 msgstr "læst kernemellemlager mislykkedes"
 
-#: sys-utils/dmesg.c:1460
+#: sys-utils/dmesg.c:1459
 msgid "klogctl failed"
 msgstr "klogctl mislykkedes"
 
@@ -14478,19 +14479,19 @@ msgstr "kunne ikke sætte signalhåndteringen"
 msgid "failed to read from: %s"
 msgstr "kunne ikke læse symbolsk henvisning: %s"
 
-#: sys-utils/lscpu.c:1457
+#: sys-utils/lscpu.c:1459
 msgid "Failed to extract the node number"
 msgstr "Kunne ikke udtrække knudenummeret"
 
-#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
 msgid "Y"
 msgstr "J"
 
-#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:1678
+#: sys-utils/lscpu.c:1680
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -14501,216 +14502,216 @@ msgstr ""
 "# programmer. Hvert element i kolonnerne har en unik id der\n"
 "# starter fra nul.\n"
 
-#: sys-utils/lscpu.c:1873 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
+#: sys-utils/lscpu.c:1875 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
 msgid "failed to initialize output column"
 msgstr "kunne ikke initialisere uddatakolonne"
 
-#: sys-utils/lscpu.c:1875
+#: sys-utils/lscpu.c:1877
 msgid "Architecture:"
 msgstr "Arkitektur:"
 
-#: sys-utils/lscpu.c:1888
+#: sys-utils/lscpu.c:1890
 msgid "CPU op-mode(s):"
 msgstr "Op-tilstande for CPU:"
 
-#: sys-utils/lscpu.c:1891 sys-utils/lscpu.c:1893
+#: sys-utils/lscpu.c:1893 sys-utils/lscpu.c:1895
 msgid "Byte Order:"
 msgstr "Byterækkefølge:"
 
-#: sys-utils/lscpu.c:1895
+#: sys-utils/lscpu.c:1897
 msgid "CPU(s):"
 msgstr "CPU'er:"
 
-#: sys-utils/lscpu.c:1898
+#: sys-utils/lscpu.c:1900
 msgid "On-line CPU(s) mask:"
 msgstr "Tilkoblet cpu(er) maske:"
 
-#: sys-utils/lscpu.c:1899
+#: sys-utils/lscpu.c:1901
 msgid "On-line CPU(s) list:"
 msgstr "Tilkoblet cpu(er) liste:"
 
-#: sys-utils/lscpu.c:1918
+#: sys-utils/lscpu.c:1920
 msgid "Off-line CPU(s) mask:"
 msgstr "Frakoblet cpu(er) maske:"
 
-#: sys-utils/lscpu.c:1919
+#: sys-utils/lscpu.c:1921
 msgid "Off-line CPU(s) list:"
 msgstr "Frakoblet cpu(er) liste:"
 
-#: sys-utils/lscpu.c:1954
+#: sys-utils/lscpu.c:1956
 msgid "Thread(s) per core:"
 msgstr "Tråde per kerne:"
 
-#: sys-utils/lscpu.c:1956
+#: sys-utils/lscpu.c:1958
 msgid "Core(s) per socket:"
 msgstr "Kerner per sokkel:"
 
-#: sys-utils/lscpu.c:1959
+#: sys-utils/lscpu.c:1961
 msgid "Socket(s) per book:"
 msgstr "Sokler per bog:"
 
-#: sys-utils/lscpu.c:1962
+#: sys-utils/lscpu.c:1964
 msgid "Book(s) per drawer:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1964
+#: sys-utils/lscpu.c:1966
 msgid "Drawer(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1966
+#: sys-utils/lscpu.c:1968
 msgid "Book(s):"
 msgstr "Bøger:"
 
-#: sys-utils/lscpu.c:1969
+#: sys-utils/lscpu.c:1971
 msgid "Socket(s):"
 msgstr "Sokler:"
 
-#: sys-utils/lscpu.c:1973
+#: sys-utils/lscpu.c:1975
 msgid "NUMA node(s):"
 msgstr "NUMA-knuder:"
 
-#: sys-utils/lscpu.c:1975
+#: sys-utils/lscpu.c:1977
 msgid "Vendor ID:"
 msgstr "Leverandør-id:"
 
-#: sys-utils/lscpu.c:1977
+#: sys-utils/lscpu.c:1979
 msgid "Machine type:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1979
+#: sys-utils/lscpu.c:1981
 msgid "CPU family:"
 msgstr "CPU-familie:"
 
-#: sys-utils/lscpu.c:1981
+#: sys-utils/lscpu.c:1983
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:1983
+#: sys-utils/lscpu.c:1985
 msgid "Model name:"
 msgstr "Modelnavn:"
 
-#: sys-utils/lscpu.c:1985
+#: sys-utils/lscpu.c:1987
 msgid "Stepping:"
 msgstr "Modelserie:"
 
-#: sys-utils/lscpu.c:1987
+#: sys-utils/lscpu.c:1989
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:1989
+#: sys-utils/lscpu.c:1991
 #, fuzzy
 msgid "CPU dynamic MHz:"
 msgstr "CPU min. MHz:"
 
-#: sys-utils/lscpu.c:1991
+#: sys-utils/lscpu.c:1993
 #, fuzzy
 msgid "CPU static MHz:"
 msgstr "CPU maks. MHz:"
 
-#: sys-utils/lscpu.c:1993
+#: sys-utils/lscpu.c:1995
 msgid "CPU max MHz:"
 msgstr "CPU maks. MHz:"
 
-#: sys-utils/lscpu.c:1995
+#: sys-utils/lscpu.c:1997
 msgid "CPU min MHz:"
 msgstr "CPU min. MHz:"
 
-#: sys-utils/lscpu.c:1997
+#: sys-utils/lscpu.c:1999
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:2000 sys-utils/lscpu.c:2002
+#: sys-utils/lscpu.c:2002 sys-utils/lscpu.c:2004
 msgid "Virtualization:"
 msgstr "Virtualisation:"
 
-#: sys-utils/lscpu.c:2005
+#: sys-utils/lscpu.c:2007
 msgid "Hypervisor:"
 msgstr "Hypervisor:"
 
-#: sys-utils/lscpu.c:2007
+#: sys-utils/lscpu.c:2009
 msgid "Hypervisor vendor:"
 msgstr "Hypervisorleverandør:"
 
-#: sys-utils/lscpu.c:2008
+#: sys-utils/lscpu.c:2010
 msgid "Virtualization type:"
 msgstr "Virtualisationstype:"
 
-#: sys-utils/lscpu.c:2011
+#: sys-utils/lscpu.c:2013
 msgid "Dispatching mode:"
 msgstr "Afsendelsestilstand:"
 
-#: sys-utils/lscpu.c:2015 sys-utils/lscpu.c:2022
+#: sys-utils/lscpu.c:2017 sys-utils/lscpu.c:2024
 #, c-format
 msgid "%s cache:"
 msgstr "%s mellemlager:"
 
-#: sys-utils/lscpu.c:2028
+#: sys-utils/lscpu.c:2030
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA-knuder%d CPU'er:"
 
-#: sys-utils/lscpu.c:2033
+#: sys-utils/lscpu.c:2035
 #, fuzzy
 msgid "Physical sockets:"
 msgstr "fysisk blokstørrelse (sektorstørrelse)"
 
-#: sys-utils/lscpu.c:2034
+#: sys-utils/lscpu.c:2036
 msgid "Physical chips:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2035
+#: sys-utils/lscpu.c:2037
 #, fuzzy
 msgid "Physical cores/chip:"
 msgstr "fysisk blokstørrelse (sektorstørrelse)"
 
-#: sys-utils/lscpu.c:2039
+#: sys-utils/lscpu.c:2041
 #, fuzzy
 msgid "Flags:"
 msgstr "Flag"
 
-#: sys-utils/lscpu.c:2053
+#: sys-utils/lscpu.c:2055
 msgid "Display information about the CPU architecture.\n"
 msgstr "Vis information om CPU-arkitekturen.\n"
 
-#: sys-utils/lscpu.c:2056
+#: sys-utils/lscpu.c:2058
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               vis både tilkoblede og frakoblede cpu'er (standard for -e)\n"
 
-#: sys-utils/lscpu.c:2057
+#: sys-utils/lscpu.c:2059
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            vis kun tilkoblede cpu'er (standard for -p)\n"
 
-#: sys-utils/lscpu.c:2058
+#: sys-utils/lscpu.c:2060
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           vis kun frakoblede cpu'er\n"
 
-#: sys-utils/lscpu.c:2059
+#: sys-utils/lscpu.c:2061
 #, fuzzy
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr " -r, --raw              brug rå uddataformat\n"
 
-#: sys-utils/lscpu.c:2060
+#: sys-utils/lscpu.c:2062
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<liste>] vis kun et udvidet læsbart format\n"
 
-#: sys-utils/lscpu.c:2061
+#: sys-utils/lscpu.c:2063
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<liste>]   vis kun et format der kan fortolkes\n"
 
-#: sys-utils/lscpu.c:2062
+#: sys-utils/lscpu.c:2064
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <mappe>   brug specificeret mappe som system-root\n"
 
-#: sys-utils/lscpu.c:2063
+#: sys-utils/lscpu.c:2065
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               vis hexadecimal masker frem for lister med cpu'er\n"
 
-#: sys-utils/lscpu.c:2064
+#: sys-utils/lscpu.c:2066
 #, fuzzy
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -a, --all            vis alle enheder\n"
 
-#: sys-utils/lscpu.c:2169
+#: sys-utils/lscpu.c:2171
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: tilvalg -all, --online og --offline kan kun bruges med tilvalgene --extended eller --parse.\n"
@@ -15216,7 +15217,7 @@ msgstr ""
 
 #: sys-utils/lsmem.c:379
 #, fuzzy
-msgid " -a, --all            list each individiual memory block\n"
+msgid " -a, --all            list each individual memory block\n"
 msgstr " -a, --all            vis alle enheder\n"
 
 #: sys-utils/lsmem.c:384
@@ -18432,242 +18433,242 @@ msgstr "kunne ikke læse timingfil %s"
 msgid "timing file %s: line %lu: unexpected format"
 msgstr "timingfil %s: %lu: uventet format"
 
-#: term-utils/setterm.c:240
+#: term-utils/setterm.c:237
 #, c-format
 msgid "argument error: bright %s is not supported"
 msgstr "parameterfejl: lys %s er ikke understøttet"
 
-#: term-utils/setterm.c:329
+#: term-utils/setterm.c:326
 msgid "too many tabs"
 msgstr "for mange indryk"
 
-#: term-utils/setterm.c:384
+#: term-utils/setterm.c:381
 msgid "Set the attributes of a terminal.\n"
 msgstr "Angiv attributterne for en terminal.\n"
 
-#: term-utils/setterm.c:387
+#: term-utils/setterm.c:384
 msgid " --term          <terminal_name>   override TERM environment variable\n"
 msgstr " --term          <terminalnavn>    overskriv TERM-miljøvariabel\n"
 
-#: term-utils/setterm.c:388
+#: term-utils/setterm.c:385
 msgid " --reset                           reset terminal to power-on state\n"
 msgstr " --reset                           nulstil terminal til power-on-tilstand\n"
 
-#: term-utils/setterm.c:389
+#: term-utils/setterm.c:386
 #, fuzzy
 msgid " --resize                          reset terminal rows and columns\n"
 msgstr " --reset                           nulstil terminal til power-on-tilstand\n"
 
-#: term-utils/setterm.c:390
+#: term-utils/setterm.c:387
 msgid " --initialize                      display init string, and use default settings\n"
 msgstr " --initialize                      vis init-streng, og brug standardinstillinger\n"
 
-#: term-utils/setterm.c:391
+#: term-utils/setterm.c:388
 msgid " --default                         use default terminal settings\n"
 msgstr " --default                         brug standardindstillinger for terminal\n"
 
-#: term-utils/setterm.c:392
+#: term-utils/setterm.c:389
 msgid " --store                           save current terminal settings as default\n"
 msgstr " --store                           gem nuværende terminalindstillinger som standard\n"
 
-#: term-utils/setterm.c:393
+#: term-utils/setterm.c:390
 msgid " --cursor        [on|off]          display cursor\n"
 msgstr " --cursor        [on|off]          vis markør\n"
 
-#: term-utils/setterm.c:394
+#: term-utils/setterm.c:391
 msgid " --repeat        [on|off]          keyboard repeat\n"
 msgstr " --repeat        [on|off]          tastaturgentagelse\n"
 
-#: term-utils/setterm.c:395
+#: term-utils/setterm.c:392
 msgid " --appcursorkeys [on|off]          cursor key application mode\n"
 msgstr " --appcursorkeys [on|off]          programtilstand for markørtast\n"
 
-#: term-utils/setterm.c:396
+#: term-utils/setterm.c:393
 msgid " --linewrap      [on|off]          continue on a new line when a line is full\n"
 msgstr " --linewrap      [on|off]          fortsæt på en ny linje når linjen er fuld\n"
 
-#: term-utils/setterm.c:397
+#: term-utils/setterm.c:394
 msgid " --inversescreen [on|off]          swap colors for the whole screen\n"
 msgstr " --inversescreen [on|off]          byt farverne om for hele skærmen\n"
 
-#: term-utils/setterm.c:398
+#: term-utils/setterm.c:395
 msgid " --foreground    default|<color>   set foreground color\n"
 msgstr " --foreground    default|<farve>   angiv forgrundsfarve\n"
 
-#: term-utils/setterm.c:399
+#: term-utils/setterm.c:396
 msgid " --background    default|<color>   set background color\n"
 msgstr " --background    default|<farve>   angiv baggrundsfarve\n"
 
-#: term-utils/setterm.c:400
+#: term-utils/setterm.c:397
 msgid " --ulcolor       [bright] <color>  set underlined text color\n"
 msgstr " --ulcolor       [bright] <farve>  angiv farve for understreget tekst\n"
 
-#: term-utils/setterm.c:401
+#: term-utils/setterm.c:398
 msgid " --hbcolor       [bright] <color>  set bold text color\n"
 msgstr " --hbcolor       [bright] <farve>  angiv farve for fed tekst\n"
 
-#: term-utils/setterm.c:402
+#: term-utils/setterm.c:399
 msgid "                 <color>: black blue cyan green grey magenta red white yellow\n"
 msgstr "                 <farve>: sort blå cyan grøn grå magenta rød hvid gul\n"
 
-#: term-utils/setterm.c:403
+#: term-utils/setterm.c:400
 msgid " --bold          [on|off]          bold\n"
 msgstr " --bold          [on|off]          fed\n"
 
-#: term-utils/setterm.c:404
+#: term-utils/setterm.c:401
 msgid " --half-bright   [on|off]          dim\n"
 msgstr " --half-bright  [on|off]           dæmp\n"
 
-#: term-utils/setterm.c:405
+#: term-utils/setterm.c:402
 msgid " --blink         [on|off]          blink\n"
 msgstr " --blink         [on|off]          blink\n"
 
-#: term-utils/setterm.c:406
+#: term-utils/setterm.c:403
 msgid " --underline     [on|off]          underline\n"
 msgstr " --underline     [on|off]          understreg\n"
 
-#: term-utils/setterm.c:407
+#: term-utils/setterm.c:404
 msgid " --reverse       [on|off]          swap foreground and background colors\n"
 msgstr " --reverse       [on|off]          byt om på forgrunds- og baggrundsfarver\n"
 
-#: term-utils/setterm.c:408
+#: term-utils/setterm.c:405
 msgid " --clear         [all|rest]        clear screen and set cursor position\n"
 msgstr " --clear         [all|rest]        ryd skærm og angive markørposition\n"
 
-#: term-utils/setterm.c:409
+#: term-utils/setterm.c:406
 msgid " --tabs          [<number>...]     set these tab stop positions, or show them\n"
 msgstr " --tabs          [<antal> ...]    angiv disse tabulator-stoppositioner, eller vis dem\n"
 
-#: term-utils/setterm.c:410
+#: term-utils/setterm.c:407
 msgid " --clrtabs       [<number>...]     clear these tab stop positions, or all\n"
 msgstr " --clrtabs       [<antal> ...]     ryd disse tabulator-stoppositioner, eller alle\n"
 
-#: term-utils/setterm.c:411
+#: term-utils/setterm.c:408
 msgid " --regtabs       [1-160]           set a regular tab stop interval\n"
 msgstr " --regtabs       [1-160]           angiv et regulært tabulator-stopinterval\n"
 
-#: term-utils/setterm.c:412
+#: term-utils/setterm.c:409
 msgid " --blank         [0-60|force|poke] set time of inactivity before screen blanks\n"
 msgstr " --blank         [0-60|force|poke] sæt tid for inaktivitet før tomme skærme\n"
 
-#: term-utils/setterm.c:413
+#: term-utils/setterm.c:410
 msgid " --dump          [<number>]        write vcsa<number> console dump to file\n"
 msgstr " --dump          [<nummer>]        skriv vcsa<nummer>-konsoldump til fil\n"
 
-#: term-utils/setterm.c:414
+#: term-utils/setterm.c:411
 msgid " --append        [<number>]        append vcsa<number> console dump to file\n"
 msgstr " --append        [<nummer>]        tilføj vcsa<nummer>-konsoldump til fil\n"
 
-#: term-utils/setterm.c:415
+#: term-utils/setterm.c:412
 msgid " --file          <filename>        name of the dump file\n"
 msgstr " --file          <filnavn>         navn på dumpfilen\n"
 
-#: term-utils/setterm.c:416
+#: term-utils/setterm.c:413
 msgid " --msg           [on|off]          send kernel messages to console\n"
 msgstr " --msg           [on|off]          send kernebeskeder til konsollen\n"
 
-#: term-utils/setterm.c:417
+#: term-utils/setterm.c:414
 msgid " --msglevel      0-8               kernel console log level\n"
 msgstr " --msglevel      0-8               logniveau for kernekonsol\n"
 
-#: term-utils/setterm.c:418
+#: term-utils/setterm.c:415
 msgid " --powersave     [on|vsync|hsync|powerdown|off]\n"
 msgstr " --powersave     [on|vsync|hsync|powerdown|off]\n"
 
-#: term-utils/setterm.c:419
+#: term-utils/setterm.c:416
 msgid "                                   set vesa powersaving features\n"
 msgstr "                                   angiv strømbesparelsesfunktioner for vesa\n"
 
-#: term-utils/setterm.c:420
+#: term-utils/setterm.c:417
 msgid " --powerdown     [0-60]            set vesa powerdown interval in minutes\n"
 msgstr " --powerdown     [0-60]            angiv nedlukningsinterval for vesa i minutter\n"
 
-#: term-utils/setterm.c:421
+#: term-utils/setterm.c:418
 msgid " --blength       [0-2000]          duration of the bell in milliseconds\n"
 msgstr " --blength       [0-2000]          klokkens længde i millisekunder\n"
 
-#: term-utils/setterm.c:422
+#: term-utils/setterm.c:419
 msgid " --bfreq         <number>          bell frequency in Hertz\n"
 msgstr " --bfreq         <nummer>          klokkefrekvens i hertz\n"
 
-#: term-utils/setterm.c:423
+#: term-utils/setterm.c:420
 msgid " --version                         show version information and exit\n"
 msgstr " --version                         vis versionsinformation og afslut\n"
 
-#: term-utils/setterm.c:424
+#: term-utils/setterm.c:421
 msgid " --help                            display this help and exit\n"
 msgstr " --help                            vis denne hjælpetekst og afslut\n"
 
-#: term-utils/setterm.c:432
+#: term-utils/setterm.c:429
 msgid "duplicate use of an option"
 msgstr "dupliker brug af et tilvalg"
 
 # ifølge man-filen gør den "the screen" blank, det lader til at den
 # styrer strømsparetilstand så 'blank skærm' vil nok være rigtigt i 
 # den her og de omkringstående
-#: term-utils/setterm.c:741
+#: term-utils/setterm.c:738
 msgid "cannot force blank"
 msgstr "kan ikke fremtvinge blank skærm"
 
-#: term-utils/setterm.c:746
+#: term-utils/setterm.c:743
 msgid "cannot force unblank"
 msgstr "kan ikke tvinge ud af blank skærmtilstand"
 
-#: term-utils/setterm.c:752
+#: term-utils/setterm.c:749
 msgid "cannot get blank status"
 msgstr "kan ikke indhente status for blank skærm"
 
-#: term-utils/setterm.c:778
+#: term-utils/setterm.c:775
 #, fuzzy, c-format
 msgid "cannot open dump file %s for output"
 msgstr "kan ikke åbne dumpfilen %s til skrivning"
 
-#: term-utils/setterm.c:820
+#: term-utils/setterm.c:817
 #, c-format
 msgid "terminal %s does not support %s"
 msgstr "terminal %s understøtter ikke %s"
 
-#: term-utils/setterm.c:858
+#: term-utils/setterm.c:855
 #, fuzzy
 msgid "select failed"
 msgstr "søgning mislykkedes"
 
-#: term-utils/setterm.c:884
+#: term-utils/setterm.c:881
 msgid "stdin does not refer to a terminal"
 msgstr ""
 
-#: term-utils/setterm.c:912
+#: term-utils/setterm.c:909
 #, fuzzy, c-format
 msgid "invalid cursor position: %s"
 msgstr "ugyldigt tilvalg"
 
-#: term-utils/setterm.c:934
+#: term-utils/setterm.c:931
 #, fuzzy
 msgid "reset failed"
 msgstr "setgid mislykkedes"
 
-#: term-utils/setterm.c:1098
+#: term-utils/setterm.c:1095
 msgid "cannot (un)set powersave mode"
 msgstr "kan ikke ændre strømsparetilstand"
 
-#: term-utils/setterm.c:1117 term-utils/setterm.c:1126
+#: term-utils/setterm.c:1114 term-utils/setterm.c:1123
 msgid "klogctl error"
 msgstr "klogctl-fejl"
 
-#: term-utils/setterm.c:1147
+#: term-utils/setterm.c:1144
 msgid "$TERM is not defined."
 msgstr "$TERM er ikke defineret."
 
-#: term-utils/setterm.c:1154
+#: term-utils/setterm.c:1151
 msgid "terminfo database cannot be found"
 msgstr "terminfo-databasen blev ikke fundet"
 
-#: term-utils/setterm.c:1156
+#: term-utils/setterm.c:1153
 #, c-format
 msgid "%s: unknown terminal type"
 msgstr "%s: ukendt terminaltype"
 
-#: term-utils/setterm.c:1158
+#: term-utils/setterm.c:1155
 msgid "terminal is hardcopy"
 msgstr "terminal er en papirudgave (hardcopy)"
 
@@ -18733,33 +18734,33 @@ msgstr "ugyldig hastighedsparameter"
 msgid "%s: unknown gid"
 msgstr "%c: ukendt kommando"
 
-#: term-utils/wall.c:158
+#: term-utils/wall.c:161
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr ""
 
-#: term-utils/wall.c:204
+#: term-utils/wall.c:207
 msgid "--nobanner is available only for root"
 msgstr "--nobanner er kun tilgængelig for root"
 
-#: term-utils/wall.c:209
+#: term-utils/wall.c:212
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr "ugyldig parameter for tidsudløb: %s"
 
-#: term-utils/wall.c:348
+#: term-utils/wall.c:351
 msgid "cannot get passwd uid"
 msgstr "kan ikke indhente adgangskode-uid"
 
-#: term-utils/wall.c:353
+#: term-utils/wall.c:356
 msgid "cannot get tty name"
 msgstr "Kan ikke indhente tty-navn"
 
-#: term-utils/wall.c:373
+#: term-utils/wall.c:376
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Rundsendt meddelelse fra %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:406
+#: term-utils/wall.c:409
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "kan ikke læse %s - brug standard-ind."
@@ -19082,7 +19083,7 @@ msgstr ""
 msgid "option --table-columns required for --json"
 msgstr ""
 
-#: text-utils/hexdump.c:155 text-utils/more.c:225
+#: text-utils/hexdump.c:155 text-utils/more.c:231
 #, c-format
 msgid " %s [options] <file>...\n"
 msgstr " %s [tilvalg] [<fil>] ...\n"
@@ -19171,60 +19172,60 @@ msgstr "byteantal med flere konverteringstegn"
 msgid "Read one line.\n"
 msgstr "Læs en linje.\n"
 
-#: text-utils/more.c:228
+#: text-utils/more.c:234
 msgid "A file perusal filter for CRT viewing.\n"
 msgstr "Et filgennemlæsningsfilter for CRT-visning.\n"
 
-#: text-utils/more.c:231
+#: text-utils/more.c:237
 msgid " -d          display help instead of ringing bell\n"
 msgstr " -d          vis denne hjælpetekst i stedet for ringende klokke\n"
 
-#: text-utils/more.c:232
+#: text-utils/more.c:238
 msgid " -f          count logical rather than screen lines\n"
 msgstr " -f           tæl logisk i stedet for skærmlinjer\n"
 
-#: text-utils/more.c:233
+#: text-utils/more.c:239
 msgid " -l          suppress pause after form feed\n"
 msgstr " -l          undertryk pause efter sideskift\n"
 
-#: text-utils/more.c:234
+#: text-utils/more.c:240
 msgid " -c          do not scroll, display text and clean line ends\n"
 msgstr " -c          rul ikke, vis tekst og ryd linjeendelser\n"
 
-#: text-utils/more.c:235
+#: text-utils/more.c:241
 msgid " -p          do not scroll, clean screen and display text\n"
 msgstr "  p          rul ikke, ryd skærm og vis tekst\n"
 
-#: text-utils/more.c:236
+#: text-utils/more.c:242
 msgid " -s          squeeze multiple blank lines into one\n"
 msgstr " -s          klem flere tomme linjer sammen til en\n"
 
-#: text-utils/more.c:237
+#: text-utils/more.c:243
 msgid " -u          suppress underlining\n"
 msgstr " -u          undtryk understregning\n"
 
-#: text-utils/more.c:238
+#: text-utils/more.c:244
 msgid " -<number>   the number of lines per screenful\n"
 msgstr " -<antal>     antallet af linjer per fuld skærm\n"
 
-#: text-utils/more.c:239
+#: text-utils/more.c:245
 msgid " +<number>   display file beginning from line number\n"
 msgstr " +<nummer>   vis fil begyndende fra linjenummer\n"
 
-#: text-utils/more.c:240
+#: text-utils/more.c:246
 msgid " +/<string>  display file beginning from search string match\n"
 msgstr " +/<streng>  vis fil begyndende fra søgestrengsmatch\n"
 
-#: text-utils/more.c:241
+#: text-utils/more.c:247
 msgid " -V          display version information and exit\n"
 msgstr " -V          vis versionsinformation og afslut\n"
 
-#: text-utils/more.c:484
+#: text-utils/more.c:490
 #, c-format
 msgid "unknown option -%s"
 msgstr "ukendt tilvalg -%s"
 
-#: text-utils/more.c:508
+#: text-utils/more.c:514
 #, c-format
 msgid ""
 "\n"
@@ -19235,7 +19236,7 @@ msgstr ""
 "*** %s: mappe ***\n"
 "\n"
 
-#: text-utils/more.c:550
+#: text-utils/more.c:556
 #, c-format
 msgid ""
 "\n"
@@ -19246,41 +19247,41 @@ msgstr ""
 "******** %s: Ikke en tekstfil ********\n"
 "\n"
 
-#: text-utils/more.c:645
+#: text-utils/more.c:651
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Brug q eller Q for at afslutte]"
 
-#: text-utils/more.c:724
+#: text-utils/more.c:730
 #, c-format
 msgid "--More--"
 msgstr "--Mere--"
 
-#: text-utils/more.c:726
+#: text-utils/more.c:732
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Næste fil: %s)"
 
-#: text-utils/more.c:734
+#: text-utils/more.c:740
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Tryk mellemrum for at fortsætte, »q« for at afslutte.]"
 
-#: text-utils/more.c:1162
+#: text-utils/more.c:1168
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "...bak %d side"
 msgstr[1] "...bak %d sider"
 
-#: text-utils/more.c:1210
+#: text-utils/more.c:1216
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "...springer %d linje over"
 msgstr[1] "...springer %d linjer over"
 
-#: text-utils/more.c:1248
+#: text-utils/more.c:1254
 msgid ""
 "\n"
 "***Back***\n"
@@ -19290,11 +19291,11 @@ msgstr ""
 "***Tilbage***\n"
 "\n"
 
-#: text-utils/more.c:1263
+#: text-utils/more.c:1269
 msgid "No previous regular expression"
 msgstr "Intet tidligere regulært udtryk"
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1299
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
@@ -19304,7 +19305,7 @@ msgstr ""
 "De fleste kommandoer kan efterfølges af et heltal k. Standardværdier i klammer.\n"
 "Stjerne (*) betyder at parameteren bliver den nye standardværdi.\n"
 
-#: text-utils/more.c:1300
+#: text-utils/more.c:1306
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -19346,30 +19347,30 @@ msgstr ""
 ":f                      Vis aktuelle filnavn og linjenummer\n"
 ".                       Gentag seneste kommando\n"
 
-#: text-utils/more.c:1373 text-utils/more.c:1379
+#: text-utils/more.c:1379 text-utils/more.c:1385
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Tryk »h« for instruktioner.]"
 
-#: text-utils/more.c:1410
+#: text-utils/more.c:1416
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "»%s« linje %d"
 
-#: text-utils/more.c:1412
+#: text-utils/more.c:1418
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Ikke en fil] linje %d"
 
-#: text-utils/more.c:1494
+#: text-utils/more.c:1500
 msgid "  Overflow\n"
 msgstr "  Overløb\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1549
 msgid "...skipping\n"
 msgstr "...springer over\n"
 
-#: text-utils/more.c:1577
+#: text-utils/more.c:1583
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -19377,19 +19378,19 @@ msgstr ""
 "\n"
 "Mønster ikke fundet\n"
 
-#: text-utils/more.c:1583 text-utils/pg.c:1027 text-utils/pg.c:1173
+#: text-utils/more.c:1589 text-utils/pg.c:1035 text-utils/pg.c:1181
 msgid "Pattern not found"
 msgstr "Mønster ikke fundet"
 
-#: text-utils/more.c:1629
+#: text-utils/more.c:1635
 msgid "exec failed\n"
 msgstr "programkørsel mislykkedes\n"
 
-#: text-utils/more.c:1643
+#: text-utils/more.c:1649
 msgid "can't fork\n"
 msgstr "kunne ikke forgrene (fork)\n"
 
-#: text-utils/more.c:1677
+#: text-utils/more.c:1683
 msgid ""
 "\n"
 "...Skipping "
@@ -19397,23 +19398,23 @@ msgstr ""
 "\n"
 "...Springer over "
 
-#: text-utils/more.c:1681
+#: text-utils/more.c:1687
 msgid "...Skipping to file "
 msgstr "...Springer til filen "
 
-#: text-utils/more.c:1683
+#: text-utils/more.c:1689
 msgid "...Skipping back to file "
 msgstr "...Springer tilbage til filen "
 
-#: text-utils/more.c:1973
+#: text-utils/more.c:1979
 msgid "Line too long"
 msgstr "For lang linje"
 
-#: text-utils/more.c:2010
+#: text-utils/more.c:2016
 msgid "No previous command to substitute for"
 msgstr "Ingen tidligere kommando at erstatte med"
 
-#: text-utils/pg.c:144
+#: text-utils/pg.c:152
 msgid ""
 "-------------------------------------------------------\n"
 "  h                       this screen\n"
@@ -19462,140 +19463,140 @@ msgstr ""
 "Se pg(1) for yderligere information.\n"
 "-------------------------------------------------------\n"
 
-#: text-utils/pg.c:222
+#: text-utils/pg.c:230
 #, c-format
 msgid " %s [options] [+line] [+/pattern/] [files]\n"
 msgstr " %s [tilvalg] [+linje] [+/mønster/] [filer]\n"
 
-#: text-utils/pg.c:226
+#: text-utils/pg.c:234
 msgid "Browse pagewise through text files.\n"
 msgstr "Gennemse sidevis igennem tekstfiler.\n"
 
-#: text-utils/pg.c:229
+#: text-utils/pg.c:237
 msgid " -number      lines per page\n"
 msgstr " -number      linjer per side\n"
 
-#: text-utils/pg.c:230
+#: text-utils/pg.c:238
 msgid " -c           clear screen before displaying\n"
 msgstr " -c           ryd skræm før visning\n"
 
-#: text-utils/pg.c:231
+#: text-utils/pg.c:239
 msgid " -e           do not pause at end of a file\n"
 msgstr " -e           lav ikke en pause i slutningen af en fil\n"
 
-#: text-utils/pg.c:232
+#: text-utils/pg.c:240
 msgid " -f           do not split long lines\n"
 msgstr " -f           opdel ikke lange linjer\n"
 
-#: text-utils/pg.c:233
+#: text-utils/pg.c:241
 msgid " -n           terminate command with new line\n"
 msgstr " -n           terminer kommando med ny linje\n"
 
-#: text-utils/pg.c:234
+#: text-utils/pg.c:242
 msgid " -p <prompt>  specify prompt\n"
 msgstr " -p <prompt>  angiv prompt\n"
 
-#: text-utils/pg.c:235
+#: text-utils/pg.c:243
 msgid " -r           disallow shell escape\n"
 msgstr " -r           deaktiver shell escape (skalundvigelse)\n"
 
-#: text-utils/pg.c:236
+#: text-utils/pg.c:244
 msgid " -s           print messages to stdout\n"
 msgstr " -s           udskriv beskeder til standardud\n"
 
-#: text-utils/pg.c:237
+#: text-utils/pg.c:245
 msgid " +number      start at the given line\n"
 msgstr " +number      start på den angivne linje\n"
 
-#: text-utils/pg.c:238
+#: text-utils/pg.c:246
 msgid " +/pattern/   start at the line containing pattern\n"
 msgstr " +/pattern/   start på linjen der indeholder mønsteret\n"
 
-#: text-utils/pg.c:250
+#: text-utils/pg.c:258
 #, c-format
 msgid "option requires an argument -- %s"
 msgstr "tilvalget kræver en parameter -- %s"
 
-#: text-utils/pg.c:256
+#: text-utils/pg.c:264
 #, c-format
 msgid "illegal option -- %s"
 msgstr "ugyldigt tilvalg -- %s"
 
-#: text-utils/pg.c:359
+#: text-utils/pg.c:367
 msgid "...skipping forward\n"
 msgstr "...hopper fremad\n"
 
-#: text-utils/pg.c:361
+#: text-utils/pg.c:369
 msgid "...skipping backward\n"
 msgstr "...hopper bagud\n"
 
-#: text-utils/pg.c:377
+#: text-utils/pg.c:385
 msgid "No next file"
 msgstr "Ingen næste fil"
 
-#: text-utils/pg.c:381
+#: text-utils/pg.c:389
 msgid "No previous file"
 msgstr "Ingen forrige fil"
 
 # kan filen %s bruges her?
-#: text-utils/pg.c:883
+#: text-utils/pg.c:891
 #, c-format
 msgid "Read error from %s file"
 msgstr "Læsefejl fra %s-fil"
 
-#: text-utils/pg.c:886
+#: text-utils/pg.c:894
 #, c-format
 msgid "Unexpected EOF in %s file"
 msgstr "Uventet filafslutning i filen %s"
 
-#: text-utils/pg.c:888
+#: text-utils/pg.c:896
 #, c-format
 msgid "Unknown error in %s file"
 msgstr "Ukendt fejl i filen %s"
 
-#: text-utils/pg.c:941
+#: text-utils/pg.c:949
 #, fuzzy
 msgid "Cannot create temporary file"
 msgstr "Kan ikke oprette midlertidig fil"
 
-#: text-utils/pg.c:950 text-utils/pg.c:1114 text-utils/pg.c:1140
+#: text-utils/pg.c:958 text-utils/pg.c:1122 text-utils/pg.c:1148
 msgid "RE error: "
 msgstr "RE fejl: "
 
-#: text-utils/pg.c:1097
+#: text-utils/pg.c:1105
 msgid "(EOF)"
 msgstr "(Filafslutning)"
 
-#: text-utils/pg.c:1122 text-utils/pg.c:1148
+#: text-utils/pg.c:1130 text-utils/pg.c:1156
 msgid "No remembered search string"
 msgstr "Ingen gammel søgestreng"
 
-#: text-utils/pg.c:1203
+#: text-utils/pg.c:1211
 msgid "cannot open "
 msgstr "kunne ikke åbne "
 
-#: text-utils/pg.c:1255
+#: text-utils/pg.c:1263
 msgid "saved"
 msgstr "gemte"
 
-#: text-utils/pg.c:1345
+#: text-utils/pg.c:1353
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": !kommando ikke tilladt i rflag-tilstand.\n"
 
-#: text-utils/pg.c:1380
+#: text-utils/pg.c:1388
 msgid "fork() failed, try again later\n"
 msgstr "fork() mislykkedes, prøv senere\n"
 
-#: text-utils/pg.c:1468
+#: text-utils/pg.c:1476
 msgid "(Next file: "
 msgstr "(Næste fil: "
 
-#: text-utils/pg.c:1534
+#: text-utils/pg.c:1542
 #, c-format
 msgid "%s %s Copyright (c) 2000-2001 Gunnar Ritter. All rights reserved.\n"
 msgstr "%s %s Ophavsret 2000-2001 Gunnar Ritter. Alle rettigheder forbeholdes.\n"
 
-#: text-utils/pg.c:1587 text-utils/pg.c:1660
+#: text-utils/pg.c:1595 text-utils/pg.c:1668
 msgid "failed to parse number of lines per page"
 msgstr "kunne ikke fortolke antallet af linjer per side"
 
@@ -19608,38 +19609,38 @@ msgstr "Brug: %s [tilvalg] [fil ...]\n"
 msgid "Reverse lines characterwise.\n"
 msgstr "Vend linjer per tegn.\n"
 
-#: text-utils/ul.c:135
+#: text-utils/ul.c:142
 #, c-format
 msgid " %s [options] [<file> ...]\n"
 msgstr " %s [tilvalg] [<fil> ...]\n"
 
-#: text-utils/ul.c:138
+#: text-utils/ul.c:145
 msgid "Do underlining.\n"
 msgstr "Udfør understregning.\n"
 
-#: text-utils/ul.c:141
+#: text-utils/ul.c:148
 msgid " -t, -T, --terminal TERMINAL  override the TERM environment variable\n"
 msgstr " -t, -T, --terminal TERMINAL  overskriv TERM-miljøvariablen\n"
 
-#: text-utils/ul.c:142
+#: text-utils/ul.c:149
 msgid " -i, --indicated              underlining is indicated via a separate line\n"
 msgstr " -i, --indicated              understregning indikeres med en separat linje\n"
 
-#: text-utils/ul.c:203
+#: text-utils/ul.c:210
 msgid "trouble reading terminfo"
 msgstr "problemer ved læsning af terminfo"
 
-#: text-utils/ul.c:208
+#: text-utils/ul.c:215
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminal »%s« er ikke kendt, bruger standard »dumb«"
 
-#: text-utils/ul.c:298
+#: text-utils/ul.c:305
 #, c-format
 msgid "unknown escape sequence in input: %o, %o"
 msgstr "ukendt undvigelsessekvens i inddata: %o, %o"
 
-#: text-utils/ul.c:623
+#: text-utils/ul.c:630
 msgid "Input line too long."
 msgstr "For lang inddatalinje."
 

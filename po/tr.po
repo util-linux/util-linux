@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-05-23 12:21+0200\n"
+"POT-Creation-Date: 2017-06-02 11:14+0200\n"
 "PO-Revision-Date: 2017-05-29 20:16+0000\n"
 "Last-Translator: Mesutcan Kurt <mesutcank@gmail.com>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -55,7 +55,7 @@ msgstr "Çekirdeğe bellirtilen bölümün varlığından bahset.\n"
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:259 login-utils/vipw.c:277
 #: misc-utils/findmnt.c:1099 misc-utils/logger.c:1188 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
-#: sys-utils/dmesg.c:522 sys-utils/eject.c:499 sys-utils/eject.c:699
+#: sys-utils/dmesg.c:521 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
 #: sys-utils/hwclock.c:215 sys-utils/ldattach.c:387 sys-utils/nsenter.c:130
 #: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:270 sys-utils/setpriv.c:230
@@ -65,8 +65,8 @@ msgstr "Çekirdeğe bellirtilen bölümün varlığından bahset.\n"
 #: term-utils/agetty.c:2624 term-utils/mesg.c:127 term-utils/script.c:426
 #: term-utils/script.c:432 term-utils/script.c:434 term-utils/script.c:530
 #: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
-#: term-utils/wall.c:410 text-utils/colcrt.c:282 text-utils/more.c:513
-#: text-utils/rev.c:141 text-utils/ul.c:224
+#: term-utils/wall.c:413 text-utils/colcrt.c:282 text-utils/more.c:519
+#: text-utils/rev.c:141 text-utils/ul.c:231
 #, c-format
 msgid "cannot open %s"
 msgstr "%s açılamıyor"
@@ -591,8 +591,8 @@ msgstr "Bölümleme tablosunu diske yazmak istediğinize emin misiniz? "
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "\"evet\" ya da \"hayır\" yazın ya da pencereyi kapatmak için ESC tuşuna basın."
 
-#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1587
-#: sys-utils/lscpu.c:1597 sys-utils/lsmem.c:200
+#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1589
+#: sys-utils/lscpu.c:1599 sys-utils/lsmem.c:200
 msgid "yes"
 msgstr "evet"
 
@@ -643,7 +643,7 @@ msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               sıfırlanmış disk bölümleme tablosu ile başla\n"
 
 #: disk-utils/cfdisk.c:2597 disk-utils/fdisk.c:907 disk-utils/sfdisk.c:2128
-#: misc-utils/cal.c:390 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
+#: misc-utils/cal.c:391 sys-utils/dmesg.c:1332 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "desteklenmeyen renk modu"
 
@@ -698,8 +698,8 @@ msgstr ""
 "Devam ediliyor... "
 
 #: disk-utils/fdformat.c:144 disk-utils/fsck.minix.c:182
-#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:458
-#: sys-utils/blkdiscard.c:84 sys-utils/tunelp.c:91
+#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:458 sys-utils/blkdiscard.c:84
+#: sys-utils/tunelp.c:91
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [seçenekler] <device>\n"
@@ -746,10 +746,10 @@ msgstr "geçersiz argüman - repair"
 #: disk-utils/mkfs.minix.c:816 disk-utils/mkswap.c:241 disk-utils/partx.c:952
 #: login-utils/last.c:684 login-utils/utmpdump.c:139 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
-#: sys-utils/dmesg.c:524 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
+#: sys-utils/dmesg.c:523 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:77 sys-utils/nsenter.c:165 sys-utils/nsenter.c:169
 #: sys-utils/swapon.c:520 sys-utils/switch_root.c:94
-#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:504
+#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:510
 #, c-format
 msgid "stat of %s failed"
 msgstr "%s istatistikleri başarısız"
@@ -921,13 +921,11 @@ msgstr "%s üzerinde BLKGETSIZE ioctl başarısız"
 
 #: disk-utils/fdisk.c:742 disk-utils/sfdisk.c:1483
 #, fuzzy, c-format
-#| msgid "The signature will be removed by a write command."
 msgid "The old %s signature will be removed by a write command."
 msgstr "İmza bir yazma komutu ile silinecek."
 
 #: disk-utils/fdisk.c:746
 #, fuzzy, c-format
-#| msgid "It is strongly recommended to wipe the device with wipefs(8), in order to avoid possible collisions."
 msgid "The old %s signature may remain on the device. It is recommended to wipe the device with wipefs(8) or fdisk --wipe, in order to avoid possible collisions."
 msgstr "Muhtemel çakışmaları önelemek için, aygıtı wipefs(8) ile temizlemeniz şiddetle tavsiye edilir."
 
@@ -1104,7 +1102,7 @@ msgstr "yineleyici tahsil edilemedi"
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
 #: disk-utils/partx.c:667 login-utils/lslogins.c:918 misc-utils/fincore.c:362
 #: misc-utils/findmnt.c:1598 misc-utils/lsblk.c:1897 misc-utils/lslocks.c:449
-#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1760 sys-utils/lscpu.c:1863
+#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1762 sys-utils/lscpu.c:1865
 #: sys-utils/lsipc.c:338 sys-utils/prlimit.c:297 sys-utils/swapon.c:281
 #: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:196
 msgid "failed to allocate output table"
@@ -1114,7 +1112,7 @@ msgstr "çıktı tablosu tahsil edilemedi"
 #: disk-utils/partx.c:581 login-utils/lslogins.c:976 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1174
 #: misc-utils/lslocks.c:391 sys-utils/losetup.c:333 sys-utils/losetup.c:362
-#: sys-utils/lscpu.c:1786 sys-utils/lscpu.c:1814 sys-utils/lsipc.c:470
+#: sys-utils/lscpu.c:1788 sys-utils/lscpu.c:1816 sys-utils/lsipc.c:470
 #: sys-utils/lsipc.c:545 sys-utils/lsipc.c:647 sys-utils/lsipc.c:739
 #: sys-utils/lsipc.c:900 sys-utils/prlimit.c:229 sys-utils/swapon.c:176
 #: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:407
@@ -1124,12 +1122,11 @@ msgstr "çıktı hattı tahsil edlemedi"
 #: disk-utils/fdisk-list.c:173 disk-utils/fdisk-list.c:273
 #: disk-utils/partx.c:644 login-utils/lslogins.c:1074 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1165
-#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1794
-#: sys-utils/lscpu.c:1825 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
+#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1796
+#: sys-utils/lscpu.c:1827 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
 #: sys-utils/prlimit.c:261 sys-utils/swapon.c:224 sys-utils/wdctl.c:243
 #: sys-utils/zramctl.c:475 text-utils/column.c:413
 #, fuzzy
-#| msgid "failed to add data to output table"
 msgid "failed to add output data"
 msgstr "çıktı tablosuna veri eklenemedi"
 
@@ -1607,8 +1604,8 @@ msgstr "%s bağlı değil\n"
 #: disk-utils/fsck.cramfs.c:253 disk-utils/sfdisk.c:299 libfdisk/src/bsd.c:645
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:655
-#: sys-utils/setpriv.c:239 term-utils/setterm.c:724 term-utils/setterm.c:781
-#: term-utils/setterm.c:785 term-utils/setterm.c:792
+#: sys-utils/setpriv.c:239 term-utils/setterm.c:721 term-utils/setterm.c:778
+#: term-utils/setterm.c:782 term-utils/setterm.c:789
 #, c-format
 msgid "cannot read %s"
 msgstr "%s okunamıyor"
@@ -2228,7 +2225,6 @@ msgstr "Yazma hatası: '%s' dosyasındaki bir blok bozuk\n"
 
 #: disk-utils/fsck.minix.c:424
 #, fuzzy, c-format
-#| msgid "Warning: inode count too big.\n"
 msgid "Warning: block out of range\n"
 msgstr "Uyarı: düğüm sayısı çok büyük.\n"
 
@@ -2569,9 +2565,9 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:833
 #: disk-utils/mkswap.c:539 disk-utils/partx.c:1058 disk-utils/resizepart.c:112
-#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:659 sys-utils/wdctl.c:348
+#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:658 sys-utils/wdctl.c:348
 #: sys-utils/wdctl.c:413 term-utils/script.c:273 term-utils/script.c:350
-#: term-utils/setterm.c:888 text-utils/pg.c:1248
+#: term-utils/setterm.c:885 text-utils/pg.c:1256
 msgid "write failed"
 msgstr "yazma başarısız"
 
@@ -2817,7 +2813,7 @@ msgstr " -h, --help         bu yardım metnini göster ve çık\n"
 #: sys-utils/nsenter.c:482 sys-utils/prlimit.c:642 sys-utils/rtcwake.c:577
 #: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
 #: sys-utils/swapon.c:341 sys-utils/switch_root.c:257 sys-utils/unshare.c:461
-#: term-utils/script.c:589 text-utils/pg.c:1375
+#: term-utils/script.c:589 text-utils/pg.c:1383
 #, c-format
 msgid "failed to execute %s"
 msgstr "çalıştırılamadı %s"
@@ -3587,10 +3583,9 @@ msgstr[1] "#%2d: %9ju-%9ju (%9ju sektör, %6ju MB)\n"
 
 #: disk-utils/partx.c:678 misc-utils/fincore.c:374 misc-utils/findmnt.c:1624
 #: misc-utils/lsblk.c:1919 misc-utils/lslocks.c:462 sys-utils/losetup.c:326
-#: sys-utils/lscpu.c:1769 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
+#: sys-utils/lscpu.c:1771 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
 #: sys-utils/wdctl.c:272
 #, fuzzy
-#| msgid "failed to allocate output line"
 msgid "failed to allocate output column"
 msgstr "çıktı hattı tahsil edlemedi"
 
@@ -3669,19 +3664,16 @@ msgstr " -r, --raw            ham çıktı formatını kullan\n"
 
 #: disk-utils/partx.c:769
 #, fuzzy
-#| msgid " -b, --sector-size <size>      physical and logical sector size\n"
 msgid " -S, --sector-size <num>  overwrite sector size\n"
 msgstr " -b, --sector-size <size>      fiziksel ve mantıksal sektör boyutu\n"
 
 #: disk-utils/partx.c:770
 #, fuzzy
-#| msgid " -t, --type <type>    specify the partition type (dos, bsd, solaris, etc.)\n"
 msgid " -t, --type <type>    specify the partition type\n"
 msgstr " -t, --type <type>    disk bölümü tipini belirt (dos, bsd, solaris, vs.)\n"
 
 #: disk-utils/partx.c:771
 #, fuzzy
-#| msgid "    -T [or --list-types]:list the known partition types"
 msgid "     --list-types     list supported partition types and exit\n"
 msgstr "    -T  --list-types    bilinen disk bölümü türlerini listeler"
 
@@ -3979,7 +3971,6 @@ msgstr "%s: disk bölümü %zu: silinemedi"
 
 #: disk-utils/sfdisk.c:956
 #, fuzzy, c-format
-#| msgid "Device does not contain a recognized partition table."
 msgid "%s: does not contain a recognized partition table"
 msgstr "Aygıt bilinen bir bölümleme tablosu içermiyor."
 
@@ -3989,7 +3980,6 @@ msgstr "döküm yapısı tahsis edilemedi"
 
 #: disk-utils/sfdisk.c:964
 #, fuzzy, c-format
-#| msgid "failed to dump partition table"
 msgid "%s: failed to dump partition table"
 msgstr "disk bölümü tablosu dökülemedi"
 
@@ -4142,7 +4132,7 @@ msgstr " Örnek:\n"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     Varsayılan başlangıç ofsetinde 4GiB bir disk bölümü oluşturu\n"
 
-#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1454
+#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1453
 msgid "unsupported command"
 msgstr "desteklenmeyen komut"
 
@@ -4153,7 +4143,6 @@ msgstr "satır %d: desteklenmeyen komut"
 
 #: disk-utils/sfdisk.c:1489
 #, fuzzy, c-format
-#| msgid "It is strongly recommended to wipe the device with wipefs(8), in order to avoid possible collisions."
 msgid "The old %s signature may remain on the device. It is recommended to wipe the device with wipefs(8) or sfdisk --wipe, in order to avoid possible collisions."
 msgstr "Muhtemel çakışmaları önelemek için, aygıtı wipefs(8) ile temizlemeniz şiddetle tavsiye edilir."
 
@@ -4270,7 +4259,6 @@ msgstr "Betik başlıkları uygulanamadı, disk etiketi oluşturulamadı."
 
 #: disk-utils/sfdisk.c:1763
 #, fuzzy, c-format
-#| msgid "Failed to add partition"
 msgid "Failed to add #%d partition"
 msgstr "Disk bölümü eklenemedi"
 
@@ -4542,13 +4530,11 @@ msgstr "-U'i yoksay (UUIDler desteklenmiyor)"
 
 #: include/c.h:214
 #, fuzzy, c-format
-#| msgid "Try `%s --help' for more information.\n"
 msgid "Try '%s --help' for more information.\n"
 msgstr "Daha fazla bilgi için `%s --help'i deneyin\n"
 
 #: include/c.h:220
 #, fuzzy, c-format
-#| msgid "Try `%s --help' for more information.\n"
 msgid "Try '%s -h' for more information.\n"
 msgstr "Daha fazla bilgi için `%s --help'i deneyin\n"
 
@@ -4586,7 +4572,7 @@ msgstr ""
 "Daha fazla bilgi için %s'e bakın.\n"
 
 #: include/closestream.h:46 include/closestream.h:48 login-utils/vipw.c:274
-#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:812
+#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:809
 #: text-utils/col.c:157
 msgid "write error"
 msgstr "yazma hatası"
@@ -4608,7 +4594,6 @@ msgstr "Ortam değişkeni %s ayarlanamadı"
 
 #: include/optutils.h:85
 #, fuzzy, c-format
-#| msgid "%s and %s are mutually exclusive"
 msgid "%s: mutually exclusive arguments:"
 msgstr "%s ve %s karşılıklı dışlanandır"
 
@@ -5202,7 +5187,7 @@ msgstr "Disk etiketi %s'e yazıldı.  (%s disk etiketini yazmayı da unutmayın.
 msgid "Disklabel written to %s."
 msgstr "Disk etiketi %s üzerine yazıldı."
 
-#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:641
+#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:645
 msgid "Syncing disks."
 msgstr "Diskler eşzamanlanıyor."
 
@@ -5231,24 +5216,24 @@ msgstr "Bsize"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:635
+#: libfdisk/src/context.c:639
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: aygıt kapatılamadı"
 
-#: libfdisk/src/context.c:814
+#: libfdisk/src/context.c:820
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "silindir"
 msgstr[1] "silindir"
 
-#: libfdisk/src/context.c:815
+#: libfdisk/src/context.c:821
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektör"
 msgstr[1] "sektör"
 
-#: libfdisk/src/context.c:1118
+#: libfdisk/src/context.c:1124
 msgid "Incomplete geometry setting."
 msgstr "Eksik geometri ayarı."
 
@@ -5279,7 +5264,6 @@ msgstr "Gösterim birimi olarak silindirler artık kullanılmıyor."
 
 #: libfdisk/src/dos.c:357
 #, fuzzy, c-format
-#| msgid "The size of this disk is %s (%ju bytes). DOS partition table format can not be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgid "The size of this disk is %s (%ju bytes). DOS partition table format cannot be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgstr "Bu diskin boyutu %s'dir (%ju bayt). DOS disk bölümü tablo formatı %lu bayttan büyük %lu-bayt birimler için sürücülerde kullanılamaz. GUID disk bölümü tablo formatını (GPT) kullanın."
 
@@ -5950,7 +5934,6 @@ msgstr "desteklenmeyen GPT öznitelik biti '%s'"
 
 #: libfdisk/src/gpt.c:1708
 #, fuzzy, c-format
-#| msgid "failed to parse list '%s'"
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "liste '%s' ayrıştırılamadı"
 
@@ -6042,7 +6025,6 @@ msgstr "Başlık sürümü: %s"
 
 #: libfdisk/src/gpt.c:2125
 #, fuzzy, c-format
-#| msgid "Using %u out of %d partitions."
 msgid "Using %zu out of %zu partitions."
 msgstr "Kullanılan %u, %d disk bölümü arasıdan."
 
@@ -6108,20 +6090,17 @@ msgstr "Yeni disk bölümü tablosu için yeterli alan yok!"
 
 #: libfdisk/src/gpt.c:2583
 #, fuzzy, c-format
-#| msgid "Partition #%u out of range (minimal start is %<PRIu64> sectors)"
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Disk bölümü #%u aralık dışında (en düşük başlangıç %<PRIu64> sektör)"
 
 #: libfdisk/src/gpt.c:2588
 #, fuzzy, c-format
-#| msgid "Partition #%u out of range (maximal end is %<PRIu64> sectors)"
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Disk bölümü #%u aralık dışında (en yüksek bitiş %<PRIu64> sektör)"
 
 #: libfdisk/src/gpt.c:2631
 #, fuzzy, c-format
-#| msgid "The maximum number of partitions has been created."
-msgid "The number of the partition has be smaller than %zu."
+msgid "The number of the partition has to be smaller than %zu."
 msgstr "Azami sayıda disk bölümü oluşturuldu."
 
 #: libfdisk/src/gpt.c:2654
@@ -6598,9 +6577,8 @@ msgstr ""
 "koymak disk bölümleme tablonuzu ve önyükleme blokunuzu bozabilir.\n"
 "Bu disk bölümünüzün Linux takas bölümü olarak etiketlemek istediğinize emin misiniz?"
 
-#: libmount/src/context.c:2359
+#: libmount/src/context.c:2367
 #, fuzzy, c-format
-#| msgid "readlink failed: %s"
 msgid "operation failed: %m"
 msgstr "okumabağlantısı başarısız: %s"
 
@@ -6611,7 +6589,6 @@ msgstr "UYARI: yayımlama bayrakları uygulanamadı"
 
 #: libmount/src/context_mount.c:1315
 #, fuzzy, c-format
-#| msgid "%s is write-protected, mounting read-only"
 msgid "WARNING: device write-protected, mounted read-only"
 msgstr "%s yazma korumalı, salt-okunur olarak bağlanıyor"
 
@@ -6627,13 +6604,11 @@ msgstr "%s zaten bağlı"
 
 #: libmount/src/context_mount.c:1339
 #, fuzzy, c-format
-#| msgid "can't find %s in %s"
 msgid "can't find in %s"
 msgstr "%s, %s içinde bulunamadı"
 
 #: libmount/src/context_mount.c:1342
 #, fuzzy, c-format
-#| msgid "can't find mountpoint %s in %s"
 msgid "can't find mount point in %s"
 msgstr "bağlama noktası %s, %s içinde bulunamadı"
 
@@ -6649,13 +6624,11 @@ msgstr ""
 
 #: libmount/src/context_mount.c:1355
 #, fuzzy, c-format
-#| msgid "cannot detect on-disk filesystem type"
 msgid "failed to determine filesystem type"
 msgstr "disk-üzerinde dosya sistemi tipi algılanamadı"
 
 #: libmount/src/context_mount.c:1356
 #, fuzzy, c-format
-#| msgid "no filename specified"
 msgid "no filesystem type specified"
 msgstr "dosya adı belirtilmedi"
 
@@ -6666,13 +6639,11 @@ msgstr "%s bulunamadı"
 
 #: libmount/src/context_mount.c:1365
 #, fuzzy, c-format
-#| msgid "no mountpoint specified"
 msgid "no mount source specified"
 msgstr "hiç bağlama noktası belirtilmedi"
 
 #: libmount/src/context_mount.c:1371
 #, fuzzy, c-format
-#| msgid "failed to parse mount options"
 msgid "failed to parse mount options: %m"
 msgstr "bağlanma noktaları ayrıştırılamadı"
 
@@ -6683,31 +6654,26 @@ msgstr "bağlanma noktaları ayrıştırılamadı"
 
 #: libmount/src/context_mount.c:1376
 #, fuzzy, c-format
-#| msgid "%s: failed to setup loop device"
 msgid "failed to setup loop device for %s"
 msgstr "%s: döngü aygıtı kurulamadı"
 
 #: libmount/src/context_mount.c:1380
 #, fuzzy, c-format
-#| msgid "%s: overlapping loop device exists"
 msgid "overlapping loop device exists for %s"
 msgstr "%s: örtüşen döngü aygıtı var"
 
 #: libmount/src/context_mount.c:1383
 #, fuzzy, c-format
-#| msgid "mount %s failed"
 msgid "mount failed: %m"
 msgstr "mount %s başarısız"
 
 #: libmount/src/context_mount.c:1393
 #, fuzzy, c-format
-#| msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s: dosya sistemi ayrıldı ancak mount(8) başarısız"
 
 #: libmount/src/context_mount.c:1411 libmount/src/context_mount.c:1468
 #, fuzzy, c-format
-#| msgid "mount point %s is not a directory"
 msgid "mount point is not a directory"
 msgstr "bağlama noktası %s bir dizin değil"
 
@@ -6723,31 +6689,26 @@ msgstr "mount kullanablilmek için süper kullanıcı olunmalı"
 
 #: libmount/src/context_mount.c:1425
 #, fuzzy, c-format
-#| msgid "mountpoint"
 msgid "mount point is busy"
 msgstr "bağlamanoktası"
 
 #: libmount/src/context_mount.c:1438
 #, fuzzy, c-format
-#| msgid "%s is already mounted or %s busy"
 msgid "%s already mounted on %s"
 msgstr "ya %s zaten bağlı ya da %s meşgul"
 
 #: libmount/src/context_mount.c:1444
 #, fuzzy, c-format
-#| msgid "%s is already mounted or %s busy"
 msgid "%s already mounted or mount point busy"
 msgstr "ya %s zaten bağlı ya da %s meşgul"
 
 #: libmount/src/context_mount.c:1450
 #, fuzzy, c-format
-#| msgid "mount point %s does not exist"
 msgid "mount point does not exist"
 msgstr "bağlama noktası %s yok"
 
 #: libmount/src/context_mount.c:1453
 #, fuzzy, c-format
-#| msgid "mount point %s is a symbolic link to nowhere"
 msgid "mount point is a symbolic link to nowhere"
 msgstr "bağlanma noktası %s hiçbir yeri göstermeyen sembolik bir bağ"
 
@@ -6759,7 +6720,6 @@ msgstr "özel aygıt %s mevcut değil"
 #: libmount/src/context_mount.c:1461 libmount/src/context_mount.c:1477
 #: libmount/src/context_mount.c:1561 libmount/src/context_mount.c:1575
 #, fuzzy, c-format
-#| msgid "mount(2) failed"
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) başarısız"
 
@@ -6770,21 +6730,16 @@ msgstr "özel aygıt %s mevcut değil (dosya yolu öneki bir dizin değil)"
 
 #: libmount/src/context_mount.c:1485
 #, fuzzy, c-format
-#| msgid "%s not mounted or bad option"
 msgid "mount point not mounted or bad option"
 msgstr "%s bağlı değil ya da seçenek yanlış"
 
 #: libmount/src/context_mount.c:1487
 #, fuzzy, c-format
-#| msgid "%s is not mountpoint or bad option"
 msgid "not mount point or bad option"
 msgstr "%s bağlantı noktası değil ya da seçenek yanlış"
 
 #: libmount/src/context_mount.c:1490
 #, fuzzy, c-format
-#| msgid ""
-#| "bad option. Note that moving a mount residing under a shared\n"
-#| "       mount is unsupported."
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 "kötü seçenek. Paylaşılan bir bağlanmanın altında bulunan bir bağlanmanı taşınması\n"
@@ -6792,9 +6747,6 @@ msgstr ""
 
 #: libmount/src/context_mount.c:1494
 #, fuzzy, c-format
-#| msgid ""
-#| "       (for several filesystems (e.g. nfs, cifs) you might\n"
-#| "       need a /sbin/mount.<type> helper program)\n"
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (birçok dosya sistemi için (nfs, cifs vb) bir\n"
@@ -6802,9 +6754,6 @@ msgstr ""
 
 #: libmount/src/context_mount.c:1498
 #, fuzzy, c-format
-#| msgid ""
-#| "wrong fs type, bad option, bad superblock on %s,\n"
-#| "       missing codepage or helper program, or other error"
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "dosya sistemi türü yanlış, seçenek yanlış, %s üzerinde süperblok\n"
@@ -6817,7 +6766,6 @@ msgstr "bağ tablosu dolu"
 
 #: libmount/src/context_mount.c:1510
 #, fuzzy, c-format
-#| msgid "%s: can't read superblock"
 msgid "can't read superblock on %s"
 msgstr "%s: superblok okunamıyor"
 
@@ -6838,9 +6786,6 @@ msgstr "%s bir blok aygıtı değil ve stat(2) başarısız mı?"
 
 #: libmount/src/context_mount.c:1532
 #, fuzzy, c-format
-#| msgid ""
-#| "the kernel does not recognize %s as a block device\n"
-#| "       (maybe `modprobe driver'?)"
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 "çekirdek %s aygıtını bir blok aygıtı olarak tanımıyor\n"
@@ -6848,13 +6793,11 @@ msgstr ""
 
 #: libmount/src/context_mount.c:1535
 #, fuzzy, c-format
-#| msgid "%s is not a block device (maybe try `-o loop'?)"
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s bir blok aygıtı değil ( `-o loop' denenebilir mi?)"
 
 #: libmount/src/context_mount.c:1537
 #, fuzzy, c-format
-#| msgid " %s is not a block device"
 msgid "%s is not a block device"
 msgstr " %s bir blok aygıtı değil"
 
@@ -6870,7 +6813,6 @@ msgstr "%s salt-okunur bağlanamıyor"
 
 #: libmount/src/context_mount.c:1554
 #, fuzzy, c-format
-#| msgid "%s is write-protected but explicit `-w' flag given"
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s yazma korumalı olduğu halde alenen `-w' seçeneği belirtilmiş"
 
@@ -6881,7 +6823,6 @@ msgstr "%s okunur-yazılır olarak yeniden bağlanamıyor, yazma korumalı"
 
 #: libmount/src/context_mount.c:1558
 #, fuzzy, c-format
-#| msgid "%s failed"
 msgid "bind %s failed"
 msgstr "%s başarısız"
 
@@ -6892,61 +6833,51 @@ msgstr "%s üzerinde ortam bulunamadı"
 
 #: libmount/src/context_umount.c:1051 libmount/src/context_umount.c:1080
 #, fuzzy, c-format
-#| msgid "%s: not mounted"
 msgid "not mounted"
 msgstr "%s: bağlı değil"
 
 #: libmount/src/context_umount.c:1055
 #, fuzzy, c-format
-#| msgid "%s: umount failed"
 msgid "umount failed: %m"
 msgstr "%s: umount başarısız"
 
 #: libmount/src/context_umount.c:1064
 #, fuzzy, c-format
-#| msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "%s: dosya sistemi ayrıldı ancak mount(8) başarısız"
 
 #: libmount/src/context_umount.c:1077
 #, fuzzy, c-format
-#| msgid "%s: invalid block device"
 msgid "invalid block device"
 msgstr "%s: blok aygıtı geçersiz"
 
 #: libmount/src/context_umount.c:1083
 #, fuzzy, c-format
-#| msgid "%s: can't write superblock"
 msgid "can't write superblock"
 msgstr "%s: superblok yazılamıyor"
 
 #: libmount/src/context_umount.c:1086
 #, fuzzy, c-format
-#| msgid "target exists"
 msgid "target is busy"
 msgstr "hedef mevcut"
 
 #: libmount/src/context_umount.c:1089
 #, fuzzy, c-format
-#| msgid "no mountpoint specified"
 msgid "no mount point specified"
 msgstr "hiç bağlama noktası belirtilmedi"
 
 #: libmount/src/context_umount.c:1092
 #, fuzzy, c-format
-#| msgid "%s: must be superuser to unmount"
 msgid "must be superuser to unmount"
 msgstr "%s: ayırmak için süper kullanıcı olmak gerekli"
 
 #: libmount/src/context_umount.c:1095
 #, fuzzy, c-format
-#| msgid "%s: block devices are not permitted on filesystem"
 msgid "block devices are not permitted on filesystem"
 msgstr "%s: dosya sisteminde blok aygıtlara izin yok"
 
 #: libmount/src/context_umount.c:1098
 #, fuzzy, c-format
-#| msgid "mount(2) failed"
 msgid "umount(2) system call failed: %m"
 msgstr "mount(2) başarısız"
 
@@ -6955,7 +6886,7 @@ msgstr "mount(2) başarısız"
 msgid "waitpid failed (%s)"
 msgstr "waitpid başarısız (%s)"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1911
+#: lib/path.c:209 sys-utils/lscpu.c:1913
 msgid "failed to callocate cpu set"
 msgstr "cpu seti tahsis edilemedi"
 
@@ -6971,30 +6902,26 @@ msgstr "CPU maskı %s ayrıştırılamadı"
 
 #: lib/plymouth-ctrl.c:72
 #, fuzzy
-#| msgid "can not open UNIX socket"
 msgid "cannot open UNIX socket"
 msgstr "UNIX soketi açılamadı"
 
 #: lib/plymouth-ctrl.c:78
 #, fuzzy
-#| msgid "can not set option for UNIX socket"
 msgid "cannot set option for UNIX socket"
 msgstr "UNIX soketi için seçenek ayarlanamadı"
 
-#: lib/plymouth-ctrl.c:91
+#: lib/plymouth-ctrl.c:92
 #, fuzzy
-#| msgid "can not connect on UNIX socket"
 msgid "cannot connect on UNIX socket"
 msgstr "UNIX soketine bağlanılamadı"
 
-#: lib/plymouth-ctrl.c:131
+#: lib/plymouth-ctrl.c:132
 #, c-format
 msgid "the plymouth request %c is not implemented"
 msgstr "plymouth isteği %c gerçeklenmedi"
 
 #: lib/randutils.c:159
 #, fuzzy
-#| msgid "libc pseudo-random functions"
 msgid "getrandom() function"
 msgstr "libc sözde-rastgele fonksiyonlar"
 
@@ -7238,7 +7165,7 @@ msgstr "Kabuk değiştirildi.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Kullanım: %s <passwordfile> <username>...\n"
 
-#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1193
+#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1192
 #: sys-utils/lsipc.c:269
 #, c-format
 msgid "unknown time format: %s"
@@ -7325,9 +7252,6 @@ msgstr ""
 
 #: login-utils/last.c:889
 #, fuzzy, c-format
-#| msgid ""
-#| "\n"
-#| "%s begins %s"
 msgid ""
 "\n"
 "%s begins %s\n"
@@ -7577,7 +7501,7 @@ msgstr "%s: %s geçersiz sayısal değer içeriyor: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "sessiz giriş durumu: orijinal ID'ler yeniden yüklenemedi"
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1587 sys-utils/lscpu.c:1597
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1589 sys-utils/lscpu.c:1599
 #: sys-utils/lsmem.c:200
 msgid "no"
 msgstr "hayır"
@@ -7815,9 +7739,9 @@ msgstr ""
 
 #: login-utils/lslogins.c:1227 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:494 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
-#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:2050 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
-#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:381
+#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:263 sys-utils/ipcmk.c:66
+#: sys-utils/lscpu.c:2052 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
+#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:378
 #: text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7911,8 +7835,8 @@ msgstr "     --wtmp-file <yol>   wtmp için alternatif yol ayarla\n"
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <yol>   btmp için alternatif bir yok ayarla\n"
 
-#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251
-#: sys-utils/lscpu.c:2069 sys-utils/lsmem.c:391
+#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2071
+#: sys-utils/lsmem.c:391
 #, c-format
 msgid ""
 "\n"
@@ -8043,7 +7967,6 @@ msgstr "kullanıcı id'si ayarlanamadı"
 
 #: login-utils/su-common.c:679
 #, fuzzy, c-format
-#| msgid " %s [options] -u <user> <command>\n"
 msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr " %s [seçenekler] -u <user> <command>\n"
 
@@ -8252,7 +8175,7 @@ msgstr ""
 " -e, --force              getpwnam(3) başarısız olursa parola dosyalarını doğrudan gözden geçir\n"
 
 #: login-utils/sulogin.c:863 misc-utils/findmnt.c:1470 sys-utils/wdctl.c:525
-#: term-utils/agetty.c:758 term-utils/wall.c:207
+#: term-utils/agetty.c:758 term-utils/wall.c:210
 msgid "invalid timeout argument"
 msgstr "geçersiz zaman aşımı argümanı"
 
@@ -8270,9 +8193,6 @@ msgstr "parola veritabanı açılamıyor"
 
 #: login-utils/sulogin.c:1012
 #, fuzzy, c-format
-#| msgid ""
-#| "Can not execute su shell\n"
-#| "\n"
 msgid ""
 "cannot execute su shell\n"
 "\n"
@@ -8290,9 +8210,6 @@ msgstr ""
 
 #: login-utils/sulogin.c:1051
 #, fuzzy
-#| msgid ""
-#| "Can not wait on su shell\n"
-#| "\n"
 msgid ""
 "cannot wait on su shell\n"
 "\n"
@@ -8406,7 +8323,6 @@ msgstr "%s dosyasını şimdi düzenlemek ister misiniz [e/h]? "
 
 #: misc-utils/blkid.c:65
 #, fuzzy, c-format
-#| msgid "%s from %s (libmount %s"
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s from %s (libmount %s"
 
@@ -8440,9 +8356,6 @@ msgstr ""
 
 #: misc-utils/blkid.c:82
 #, fuzzy
-#| msgid ""
-#| " -A, --adjfile <file>     specifies the path to the adjust file\n"
-#| "                            the default is %s\n"
 msgid ""
 " -c, --cache-file <file>    read from <file> instead of reading from the default\n"
 "                              cache file (-c /dev/null means no cache)\n"
@@ -8452,7 +8365,6 @@ msgstr ""
 
 #: misc-utils/blkid.c:84
 #, fuzzy
-#| msgid " -n, --noheadings          don't print headings\n"
 msgid " -d, --no-encoding          don't encode non-printing characters\n"
 msgstr " -n, --noheadings          başlıkları yazdır\n"
 
@@ -8468,7 +8380,6 @@ msgstr ""
 
 #: misc-utils/blkid.c:88
 #, fuzzy
-#| msgid " -l, --list-shells    print list of shells and exit\n"
 msgid " -k, --list-filesystems     list all known filesystems/RAIDs and exit\n"
 msgstr " -l, --list-shells    kabukların listesini yazdır ve çık\n"
 
@@ -8482,31 +8393,26 @@ msgstr ""
 
 #: misc-utils/blkid.c:91
 #, fuzzy
-#| msgid " -l, --list                    list info about all or specified (default)\n"
 msgid " -l, --list-one             look up only first device with token specified by -t\n"
 msgstr " -l, --list                    tamamı ya da belirtilen hakkında bilgi göster (varsayılan)\n"
 
 #: misc-utils/blkid.c:92
 #, fuzzy
-#| msgid " -s, --size <size>         device size\n"
 msgid " -L, --label <label>        convert LABEL to device name\n"
 msgstr " -s, --size <boyut>         aygıt boyutu\n"
 
 #: misc-utils/blkid.c:93
 #, fuzzy
-#| msgid " -u, --user <user>             username\n"
 msgid " -U, --uuid <uuid>          convert UUID to device name\n"
 msgstr " -u, --user <user>             kullanıcı ismi\n"
 
 #: misc-utils/blkid.c:94
 #, fuzzy
-#| msgid " <dev>                     device (usually disk) path\n"
 msgid " <dev>                      specify device(s) to probe (default: all devices)\n"
 msgstr " <dev>                     aygıt (genellikle disk) yolu\n"
 
 #: misc-utils/blkid.c:96
 #, fuzzy
-#| msgid "Scheduling options:\n"
 msgid "Low-level probing options:\n"
 msgstr "Zamanlama seçenekleri:\n"
 
@@ -8516,31 +8422,26 @@ msgstr ""
 
 #: misc-utils/blkid.c:98
 #, fuzzy
-#| msgid " -i, --info                print only info about the sampling step\n"
 msgid " -i, --info                 gather information about I/O limits\n"
 msgstr " -i, --info                sadece örnekleme adımları için bilgi göster\n"
 
 #: misc-utils/blkid.c:99
 #, fuzzy
-#| msgid " -s, --size <size>         device size\n"
 msgid " -S, --size <size>          overwrite device size\n"
 msgstr " -s, --size <boyut>         aygıt boyutu\n"
 
 #: misc-utils/blkid.c:100
 #, fuzzy
-#| msgid " -H, --host <hostname>      specify login host\n"
 msgid " -O, --offset <offset>      probe at the given offset\n"
 msgstr " -H, --host <makinaadı>      giriş makinasını belirt\n"
 
 #: misc-utils/blkid.c:101
 #, fuzzy
-#| msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgid " -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"
 msgstr " -t, --types <liste>      dosya sistemi tiplerini sınırla\n"
 
 #: misc-utils/blkid.c:102
 #, fuzzy
-#| msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgid " -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
 msgstr " -t, --types <liste>      dosya sistemi tiplerini sınırla\n"
 
@@ -8550,19 +8451,16 @@ msgstr ""
 
 #: misc-utils/blkid.c:237
 #, fuzzy
-#| msgid "Mark in use"
 msgid "(in use)"
 msgstr "Kullanımda olarak imlensin mi?"
 
 #: misc-utils/blkid.c:239
 #, fuzzy
-#| msgid "%s: not mounted"
 msgid "(not mounted)"
 msgstr "%s: bağlı değil"
 
 #: misc-utils/blkid.c:503
 #, fuzzy, c-format
-#| msgid "parse error: %s"
 msgid "error: %s"
 msgstr "ayrıştırma hatası: %s"
 
@@ -8573,7 +8471,6 @@ msgstr ""
 
 #: misc-utils/blkid.c:594
 #, fuzzy, c-format
-#| msgid "unknown argument: %s"
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "bilinmeyen argüman: %s"
 
@@ -8583,7 +8480,6 @@ msgstr ""
 
 #: misc-utils/blkid.c:754
 #, fuzzy, c-format
-#| msgid "unsupported option format: %s"
 msgid "unsupported output format %s"
 msgstr "desteklenmeyen seçenek biçimi: %s"
 
@@ -8593,13 +8489,11 @@ msgstr "geçersiz ofset argümanı"
 
 #: misc-utils/blkid.c:764
 #, fuzzy
-#| msgid "no command was specified"
 msgid "Too many tags specified"
 msgstr "herhangi bir komut belirtilmedi"
 
 #: misc-utils/blkid.c:770
 #, fuzzy
-#| msgid "invalid time argument"
 msgid "invalid size argument"
 msgstr "geçersiz zaman argümanı"
 
@@ -8623,210 +8517,198 @@ msgstr ""
 msgid "The lookup option requires a search type specified using -t"
 msgstr ""
 
-#: misc-utils/cal.c:372
+#: misc-utils/cal.c:373
 msgid "invalid month argument"
 msgstr "geçersiz ay argümanı"
 
-#: misc-utils/cal.c:380
+#: misc-utils/cal.c:381
 msgid "invalid week argument"
 msgstr "geçersiz hafta argümanı"
 
-#: misc-utils/cal.c:382
+#: misc-utils/cal.c:383
 msgid "illegal week value: use 1-54"
 msgstr "geçersiz hafta değeri: 1-54 arası bir değer kullan"
 
-#: misc-utils/cal.c:421
+#: misc-utils/cal.c:422
 #, c-format
 msgid "failed to parse timestamp or unknown month name: %s"
 msgstr "zaman damgası ayrıştırılamadı ya da bilinmeyen ay ismi: %s"
 
-#: misc-utils/cal.c:430
+#: misc-utils/cal.c:431
 msgid "illegal day value"
 msgstr "geçersiz gün değeri"
 
-#: misc-utils/cal.c:432 misc-utils/cal.c:455
+#: misc-utils/cal.c:433 misc-utils/cal.c:456
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "geçersiz gün değeri: 1-%d arası bir değer kullan"
 
-#: misc-utils/cal.c:436 misc-utils/cal.c:444
+#: misc-utils/cal.c:437 misc-utils/cal.c:445
 msgid "illegal month value: use 1-12"
 msgstr "ay numarası kuraldışı: 1..12 arasında olmalı"
 
-#: misc-utils/cal.c:440
+#: misc-utils/cal.c:441
 #, c-format
 msgid "unknown month name: %s"
 msgstr "bilinmeyen ay ismi: %s"
 
-#: misc-utils/cal.c:447 misc-utils/cal.c:451
+#: misc-utils/cal.c:448 misc-utils/cal.c:452
 msgid "illegal year value"
 msgstr "geçersiz yıl değeri"
 
-#: misc-utils/cal.c:449
+#: misc-utils/cal.c:450
 msgid "illegal year value: use positive integer"
 msgstr "geçersiz yıl değeri: pozitif tam sayı kullanın"
 
-#: misc-utils/cal.c:481 misc-utils/cal.c:494
+#: misc-utils/cal.c:482 misc-utils/cal.c:495
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "geçersiz hafta değeri: yıl %d'de hafta %d yok"
 
-#: misc-utils/cal.c:678
+#: misc-utils/cal.c:679
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: misc-utils/cal.c:684
+#: misc-utils/cal.c:685
 #, c-format
 msgid "%04d"
 msgstr "%04d"
 
-#: misc-utils/cal.c:690
+#: misc-utils/cal.c:691
 #, c-format
 msgid "%s %04d"
 msgstr "%s %04d"
 
-#: misc-utils/cal.c:992
+#: misc-utils/cal.c:993
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [seçenekler] [[[gün] ay] yıl]\n"
 
-#: misc-utils/cal.c:993
+#: misc-utils/cal.c:994
 #, c-format
 msgid " %s [options] <timestamp|monthname>\n"
 msgstr " %s [seçenekler] <zamandamgası|ayismi>\n"
 
-#: misc-utils/cal.c:996
+#: misc-utils/cal.c:997
 msgid "Display a calendar, or some part of it.\n"
 msgstr "Bir takvimi ya da bazı kısımlarını göster.\n"
 
-#: misc-utils/cal.c:997
+#: misc-utils/cal.c:998
 msgid "Without any arguments, display the current month.\n"
 msgstr "Argümansız, mevcut ayı göster.\n"
 
-#: misc-utils/cal.c:1000
+#: misc-utils/cal.c:1001
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -1, --one             sadece bir ay göster (varsayılan)\n"
 
-#: misc-utils/cal.c:1001
+#: misc-utils/cal.c:1002
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -3, --three           tarihi yayan üç ayı göster\n"
 
-#: misc-utils/cal.c:1002
+#: misc-utils/cal.c:1003
 msgid " -n, --months <num>    show num months starting with date's month\n"
 msgstr " -n, --months <sayı>    tarih'in ayı ile başlayan sayı kadar ay göster\n"
 
-#: misc-utils/cal.c:1003
+#: misc-utils/cal.c:1004
 msgid " -S, --span            span the date when displaying multiple months\n"
 msgstr " -S, --span            çoklu ay gösterirken tarihi yay\n"
 
-#: misc-utils/cal.c:1004
+#: misc-utils/cal.c:1005
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -s, --sunday          Haftanın ilk günü olarak Pazar\n"
 
-#: misc-utils/cal.c:1005
+#: misc-utils/cal.c:1006
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          Haftanın ilk günü olarak pazartesi\n"
 
-#: misc-utils/cal.c:1006
+#: misc-utils/cal.c:1007
 msgid " -j, --julian          output Julian dates\n"
 msgstr " -j, --julian          Julyen tarihlerini göster\n"
 
-#: misc-utils/cal.c:1007
+#: misc-utils/cal.c:1008
 msgid " -y, --year            show the whole year\n"
 msgstr " -y, --year            bütün yılı göster\n"
 
-#: misc-utils/cal.c:1008
+#: misc-utils/cal.c:1009
 msgid " -Y, --twelve          show the next twelve months\n"
 msgstr " -Y, --twelve          sonraki on iki ayı göster\n"
 
-#: misc-utils/cal.c:1009
+#: misc-utils/cal.c:1010
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr " -w, --week[=<sayı>]    US ya da ISO-8601 hafta numaralarını göster\n"
 
-#: misc-utils/cal.c:1010
+#: misc-utils/cal.c:1011
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr "     --color[=<zaman>]  iletileri renklendir (oto, daima ya da asla)\n"
 
 #: misc-utils/fincore.c:61
 #, fuzzy
-#| msgid "Shared memory pages"
-msgid "file data residend in memory in pages"
+msgid "file data resident in memory in pages"
 msgstr "Paylaşılan bellek sayfaları"
 
 #: misc-utils/fincore.c:62
-msgid "file data residend in memory in bytes"
-msgstr ""
+#, fuzzy
+msgid "file data resident in memory in bytes"
+msgstr "Paylaşılan bellek sayfaları"
 
 #: misc-utils/fincore.c:63
 #, fuzzy
-#| msgid "size of the device"
 msgid "size of the file"
 msgstr "aygıtın boyutu"
 
 #: misc-utils/fincore.c:64
 #, fuzzy
-#| msgid "Filename"
 msgid "file name"
 msgstr "Dosya Adı"
 
 #: misc-utils/fincore.c:174
 #, fuzzy, c-format
-#| msgid "failed to read symlink: %s"
 msgid "failed to do mincore: %s"
 msgstr "sembolik link okunamadı: %s"
 
 #: misc-utils/fincore.c:213
 #, fuzzy, c-format
-#| msgid "failed to read from: %s"
 msgid "failed to do mmap: %s"
 msgstr "%s'den okunamadı"
 
 #: misc-utils/fincore.c:241
 #, fuzzy, c-format
-#| msgid "failed to parse %s"
 msgid "failed to open: %s"
 msgstr "%s ayrıştırılamadı "
 
 #: misc-utils/fincore.c:246
 #, fuzzy, c-format
-#| msgid "failed to read from: %s"
 msgid "failed to do fstat: %s"
 msgstr "%s'den okunamadı"
 
 #: misc-utils/fincore.c:266
 #, fuzzy, c-format
-#| msgid " %s [options] <file>...\n"
 msgid " %s [options] file...\n"
 msgstr " %s [seçenekler] <dosya>...\n"
 
 #: misc-utils/fincore.c:269
 #, fuzzy
-#| msgid " -J, --json             use JSON output format\n"
 msgid " -J, --json            use JSON output format\n"
 msgstr " -J, --json            JSON çıktı formatını kullan\n"
 
 #: misc-utils/fincore.c:270
 #, fuzzy
-#| msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            boyutları okunabilir biçim yerine bayt olarak yazdır\n"
 
 #: misc-utils/fincore.c:271
 #, fuzzy
-#| msgid " -n, --noheadings       don't print headings\n"
 msgid " -n, --noheadings      don't print headings\n"
 msgstr " -n, --noheadings       başlıkları yazdırma\n"
 
 #: misc-utils/fincore.c:272
 #, fuzzy
-#| msgid " -o, --output <list>  output columns\n"
 msgid " -o, --output <list>   output columns\n"
 msgstr " -o, --output <liste>  çıktı sütunları\n"
 
 #: misc-utils/fincore.c:273
 #, fuzzy
-#| msgid " -r, --raw              use raw output format\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw              ham çıktı biçimini kullan\n"
 
@@ -9024,9 +8906,6 @@ msgstr " -s, --fstab            dosya sistemlerinin statik tablosunda ara\n"
 
 #: misc-utils/findmnt.c:1202
 #, fuzzy
-#| msgid ""
-#| " -k, --kernel           search in kernel table of mounted\n"
-#| "                          filesystems (default)\n"
 msgid ""
 " -m, --mtab             search in table of mounted filesystems\n"
 "                          (includes user space mount options)\n"
@@ -9148,7 +9027,6 @@ msgstr " -T, --target <yol>    kullanılacak dosya sistemi yolu\n"
 
 #: misc-utils/findmnt.c:1235
 #, fuzzy
-#| msgid " -l, --list             use list format output\n"
 msgid "     --tree             enable tree format output is possible\n"
 msgstr " -l, --list             liste çıktı formatını kullan\n"
 
@@ -9326,7 +9204,6 @@ msgstr "\"hiçbiri\" DS tipi sadece bağlanma ya da taşıma işlemleri için ö
 
 #: misc-utils/findmnt-verify.c:414
 #, fuzzy, c-format
-#| msgid "%s seems unspported by the current kernel"
 msgid "%s seems unsupported by the current kernel"
 msgstr "%s mevcut çekirdek tarafından desteklenmiyor"
 
@@ -9341,7 +9218,6 @@ msgstr "%s, disk-üzerindeki %s ile eşleşmiyor"
 
 #: misc-utils/findmnt-verify.c:431
 #, fuzzy, c-format
-#| msgid "on-disk %s seems unspported by the current kernel"
 msgid "on-disk %s seems unsupported by the current kernel"
 msgstr "disk-üzerindeki %s mevcut çekirdek tarafından desteklenmiyor"
 
@@ -9524,17 +9400,17 @@ msgstr "seçenek '%s' bir argümanla kullanılır"
 #: sys-utils/losetup.c:694 sys-utils/tunelp.c:161 sys-utils/tunelp.c:168
 #: sys-utils/tunelp.c:175 sys-utils/tunelp.c:182 sys-utils/tunelp.c:189
 #: sys-utils/tunelp.c:195 sys-utils/tunelp.c:199 sys-utils/tunelp.c:206
-#: sys-utils/tunelp.c:231 term-utils/setterm.c:214 term-utils/setterm.c:217
-#: term-utils/setterm.c:236 term-utils/setterm.c:238 term-utils/setterm.c:273
-#: term-utils/setterm.c:275 term-utils/setterm.c:292 term-utils/setterm.c:299
-#: term-utils/setterm.c:301 term-utils/setterm.c:313 term-utils/setterm.c:315
-#: term-utils/setterm.c:324 term-utils/setterm.c:332 term-utils/setterm.c:347
-#: term-utils/setterm.c:349 term-utils/setterm.c:361 term-utils/setterm.c:363
-#: term-utils/setterm.c:374 term-utils/setterm.c:542 term-utils/setterm.c:547
-#: term-utils/setterm.c:552 term-utils/setterm.c:557 term-utils/setterm.c:581
-#: term-utils/setterm.c:586 term-utils/setterm.c:591 term-utils/setterm.c:596
-#: term-utils/setterm.c:601 term-utils/setterm.c:606 term-utils/setterm.c:614
-#: term-utils/setterm.c:647
+#: sys-utils/tunelp.c:231 term-utils/setterm.c:211 term-utils/setterm.c:214
+#: term-utils/setterm.c:233 term-utils/setterm.c:235 term-utils/setterm.c:270
+#: term-utils/setterm.c:272 term-utils/setterm.c:289 term-utils/setterm.c:296
+#: term-utils/setterm.c:298 term-utils/setterm.c:310 term-utils/setterm.c:312
+#: term-utils/setterm.c:321 term-utils/setterm.c:329 term-utils/setterm.c:344
+#: term-utils/setterm.c:346 term-utils/setterm.c:358 term-utils/setterm.c:360
+#: term-utils/setterm.c:371 term-utils/setterm.c:539 term-utils/setterm.c:544
+#: term-utils/setterm.c:549 term-utils/setterm.c:554 term-utils/setterm.c:578
+#: term-utils/setterm.c:583 term-utils/setterm.c:588 term-utils/setterm.c:593
+#: term-utils/setterm.c:598 term-utils/setterm.c:603 term-utils/setterm.c:611
+#: term-utils/setterm.c:644
 msgid "argument error"
 msgstr "argüman hatası"
 
@@ -10021,7 +9897,6 @@ msgstr " -D, --discard        çıkarma yeteneklerini yazdır\n"
 
 #: misc-utils/lsblk.c:1640
 #, fuzzy
-#| msgid " -c, --offline           print offline CPUs only\n"
 msgid " -z, --zoned          print zone model\n"
 msgstr " -c, --offline           sadece çevrimdışı işlemcileri göster\n"
 
@@ -10323,7 +10198,6 @@ msgstr " -s, --symlink    sembolik linklerin hedefleri üzerinde oyna\n"
 
 #: misc-utils/rename.c:127
 #, fuzzy
-#| msgid " -n, --noheadings     don't print headings\n"
 msgid " -n, --no-act     do not make any changes\n"
 msgstr " -n, --noheadings     başlıkları yazdırma\n"
 
@@ -10465,7 +10339,7 @@ msgstr "poll başarısız"
 msgid "timeout [%d sec]\n"
 msgstr "zamanaşımı [%d sn]\n"
 
-#: misc-utils/uuidd.c:443 term-utils/setterm.c:900 text-utils/column.c:436
+#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:436
 #: text-utils/column.c:449
 msgid "read failed"
 msgstr "okuma başarısız"
@@ -11162,8 +11036,8 @@ msgstr "adım ayrıştırılamadı"
 msgid "no device specified"
 msgstr "hiçbir aygıt belirtilmedi"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398
-#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:334
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398 sys-utils/fallocate.c:382
+#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:334
 msgid "unexpected number of arguments"
 msgstr "beklenmeyen argüman sayısı"
 
@@ -11209,7 +11083,6 @@ msgstr "%s: BLKDISCARD ioctl başarısız"
 
 #: sys-utils/blkzone.c:73
 #, fuzzy
-#| msgid "List information about block devices.\n"
 msgid "Report zone information about the given device"
 msgstr "Blok aygıtları hakkında bilgi listele.\n"
 
@@ -11219,19 +11092,16 @@ msgstr ""
 
 #: sys-utils/blkzone.c:104
 #, fuzzy, c-format
-#| msgid "%s: set direct io failed"
 msgid "%s: blkdev_get_sectors ioctl failed"
 msgstr "%s: doğrudan gç ayarlanamadı"
 
 #: sys-utils/blkzone.c:177 sys-utils/blkzone.c:251
 #, fuzzy, c-format
-#| msgid "%s: unable to write zone map"
 msgid "%s: unable to determine zone size"
 msgstr "%s: bölge haritasına yazılamadı"
 
 #: sys-utils/blkzone.c:195
 #, fuzzy, c-format
-#| msgid "%s: BLKGETSIZE64 ioctl failed"
 msgid "%s: BLKREPORTZONE ioctl failed"
 msgstr "%s: BLKGETSIZE64 ioctl başarısız"
 
@@ -11247,31 +11117,26 @@ msgstr ""
 
 #: sys-utils/blkzone.c:256
 #, fuzzy, c-format
-#| msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: ofset %<PRIu64> sektör boyutu %i'ye hızalı değil"
 
 #: sys-utils/blkzone.c:275
 #, fuzzy, c-format
-#| msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: ofset %<PRIu64> sektör boyutu %i'ye hızalı değil"
 
 #: sys-utils/blkzone.c:283
 #, fuzzy, c-format
-#| msgid "%s: BLKSSZGET ioctl failed"
 msgid "%s: BLKRESETZONE ioctl failed"
 msgstr "%s: BLKSSZGET ioctl başarısız"
 
 #: sys-utils/blkzone.c:285
 #, fuzzy, c-format
-#| msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgid "%s: successfully reset in range from %<PRIu64>, to %<PRIu64>"
 msgstr "Disk bölümü boyutu %<PRIu32> den %<PRIu64> e değiştirildi."
 
 #: sys-utils/blkzone.c:298
 #, fuzzy, c-format
-#| msgid " %s [options] <device>\n"
 msgid " %s <command> [options] <device>\n"
 msgstr " %s [seçenekler] <device>\n"
 
@@ -11281,7 +11146,6 @@ msgstr ""
 
 #: sys-utils/blkzone.c:308
 #, fuzzy
-#| msgid " -o, --offset <num>   offset for range operations, in bytes\n"
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <sayı>   aralık işlemleri için ofset, bayt olarak\n"
 
@@ -11291,43 +11155,36 @@ msgstr ""
 
 #: sys-utils/blkzone.c:310
 #, fuzzy
-#| msgid " -t, --streams <number>    number of compression streams\n"
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -t, --streams <sayı>    sıkıştırma akışlarının sayısı\n"
 
 #: sys-utils/blkzone.c:311
 #, fuzzy
-#| msgid "     --verbose          print more details\n"
 msgid " -v, --verbose          display more details\n"
 msgstr "     --verbose          daha fazla bilgi yazdır\n"
 
 #: sys-utils/blkzone.c:354
 #, fuzzy, c-format
-#| msgid "%s is not a valid block device"
 msgid "%s is not valid command name"
 msgstr "%s geçerli bir blok aygıtı değil"
 
 #: sys-utils/blkzone.c:369
 #, fuzzy
-#| msgid "failed to parse number of lines"
 msgid "failed to parse number of zones"
 msgstr "satır sayısı ayrıştırılamadı"
 
 #: sys-utils/blkzone.c:373
 #, fuzzy
-#| msgid "failed to parse number of lines"
 msgid "failed to parse number of sectors"
 msgstr "satır sayısı ayrıştırılamadı"
 
 #: sys-utils/blkzone.c:377
 #, fuzzy
-#| msgid "failed to parse offset"
 msgid "failed to parse zone offset"
 msgstr "ofset ayrıştırılamadı"
 
 #: sys-utils/blkzone.c:391
 #, fuzzy
-#| msgid "no command was specified"
 msgid "no command specified"
 msgstr "herhangi bir komut belirtilmedi"
 
@@ -11512,31 +11369,26 @@ msgstr ""
 
 #: sys-utils/chmem.c:83 sys-utils/chmem.c:129
 #, fuzzy
-#| msgid "failed to parse id"
 msgid "Failed to parse index"
 msgstr "kimlik ayrıştırılamadı"
 
 #: sys-utils/chmem.c:91
 #, fuzzy, c-format
-#| msgid "CPU %u enable failed"
 msgid "%s enable failed\n"
 msgstr "İşlemci %u etkinleştirilemedi"
 
 #: sys-utils/chmem.c:93
 #, fuzzy, c-format
-#| msgid "CPU %u disable failed"
 msgid "%s disable failed\n"
 msgstr "İşlemci %u kapatılamadı"
 
 #: sys-utils/chmem.c:96 sys-utils/chmem.c:152
 #, fuzzy, c-format
-#| msgid "CPU %u enabled\n"
 msgid "%s enabled\n"
 msgstr "İşlemci %u etkinleştirildi\n"
 
 #: sys-utils/chmem.c:98 sys-utils/chmem.c:154
 #, fuzzy, c-format
-#| msgid "CPU %u disabled\n"
 msgid "%s disabled\n"
 msgstr "İşlemci %u kapatıldı\n"
 
@@ -11552,43 +11404,36 @@ msgstr ""
 
 #: sys-utils/chmem.c:138
 #, fuzzy, c-format
-#| msgid "CPU %u is already enabled\n"
 msgid "%s already enabled\n"
 msgstr "İşlemci %u zaten etkin\n"
 
 #: sys-utils/chmem.c:140
 #, fuzzy, c-format
-#| msgid "CPU %u is already disabled\n"
 msgid "%s already disabled\n"
 msgstr "İşlemci %u zaten devre dışı\n"
 
 #: sys-utils/chmem.c:147
 #, fuzzy, c-format
-#| msgid "CPU %u enable failed"
 msgid "%s enable failed"
 msgstr "İşlemci %u etkinleştirilemedi"
 
 #: sys-utils/chmem.c:149
 #, fuzzy, c-format
-#| msgid "CPU %u disable failed"
 msgid "%s disable failed"
 msgstr "İşlemci %u kapatılamadı"
 
 #: sys-utils/chmem.c:175 sys-utils/lsmem.c:360
 #, fuzzy, c-format
-#| msgid "failed to read speed"
 msgid "Failed to read %s"
 msgstr "hız okunamadı"
 
 #: sys-utils/chmem.c:183
 #, fuzzy
-#| msgid "failed to parse number"
 msgid "Failed to parse block number"
 msgstr "sayı ayrıştırılamadı"
 
 #: sys-utils/chmem.c:188
 #, fuzzy
-#| msgid "Failed to parse size."
 msgid "Failed to parse size"
 msgstr "Boyut çözümlenemedi."
 
@@ -11599,37 +11444,31 @@ msgstr ""
 
 #: sys-utils/chmem.c:201
 #, fuzzy
-#| msgid "failed to parse start"
 msgid "Failed to parse start"
 msgstr "başlangıç ayrıştırılamadı"
 
 #: sys-utils/chmem.c:202
 #, fuzzy
-#| msgid "failed to parse end"
 msgid "Failed to parse end"
 msgstr "bitiş ayrıştırılamadı"
 
 #: sys-utils/chmem.c:206
 #, fuzzy, c-format
-#| msgid "invalid start argument"
 msgid "Invalid start address format: %s"
 msgstr "geçersiz başlatma argümanı"
 
 #: sys-utils/chmem.c:208
 #, fuzzy, c-format
-#| msgid "Invalid set value: %s\n"
 msgid "Invalid end address format: %s"
 msgstr "Ayar değeri geçersiz: %s\n"
 
 #: sys-utils/chmem.c:209
 #, fuzzy
-#| msgid "failed to parse start"
 msgid "Failed to parse start address"
 msgstr "başlangıç ayrıştırılamadı"
 
 #: sys-utils/chmem.c:210
 #, fuzzy
-#| msgid "failed to parse end"
 msgid "Failed to parse end address"
 msgstr "bitiş ayrıştırılamadı"
 
@@ -11640,19 +11479,16 @@ msgstr ""
 
 #: sys-utils/chmem.c:227
 #, fuzzy, c-format
-#| msgid "invalid argument: %s"
 msgid "Invalid parameter: %s"
 msgstr "geçersiz argüman: %s"
 
 #: sys-utils/chmem.c:234
 #, fuzzy, c-format
-#| msgid "invalid argument: %s"
 msgid "Invalid range: %s"
 msgstr "geçersiz argüman: %s"
 
 #: sys-utils/chmem.c:240
 #, fuzzy, c-format
-#| msgid " %s [options] [y | n]\n"
 msgid " %s [options] [SIZE|RANGE|BLOCKRANGE]\n"
 msgstr " %s [seçenekler] [e | h]\n"
 
@@ -11662,7 +11498,6 @@ msgstr ""
 
 #: sys-utils/chmem.c:246
 #, fuzzy
-#| msgid " -v, --verbose    be verbose\n"
 msgid " -e, --enable   enable memory\n"
 msgstr " -v, --verbose    daha ayrıntılı ol\n"
 
@@ -11672,13 +11507,11 @@ msgstr ""
 
 #: sys-utils/chmem.c:248
 #, fuzzy
-#| msgid " -v, --verbose    be verbose\n"
 msgid " -b, --blocks   use memory blocks\n"
 msgstr " -v, --verbose    daha ayrıntılı ol\n"
 
 #: sys-utils/chmem.c:249
 #, fuzzy
-#| msgid " -v, --verbose    be verbose\n"
 msgid " -v, --verbose  verbose output\n"
 msgstr " -v, --verbose    daha ayrıntılı ol\n"
 
@@ -11710,179 +11543,179 @@ msgstr "Ctrl-Alt-Del davranışını ayarlamak için root kullanıcısı olmalı
 msgid "unknown argument: %s"
 msgstr "bilinmeyen argüman: %s"
 
-#: sys-utils/dmesg.c:110
+#: sys-utils/dmesg.c:109
 msgid "system is unusable"
 msgstr "sistem kullanılamaz durumda"
 
-#: sys-utils/dmesg.c:111
+#: sys-utils/dmesg.c:110
 msgid "action must be taken immediately"
 msgstr "en kısa sürede aksiyon alınmalı"
 
-#: sys-utils/dmesg.c:112
+#: sys-utils/dmesg.c:111
 msgid "critical conditions"
 msgstr "kritik koşullar"
 
-#: sys-utils/dmesg.c:113
+#: sys-utils/dmesg.c:112
 msgid "error conditions"
 msgstr "hata koşulları"
 
-#: sys-utils/dmesg.c:114
+#: sys-utils/dmesg.c:113
 msgid "warning conditions"
 msgstr "uyarı koşulları"
 
-#: sys-utils/dmesg.c:115
+#: sys-utils/dmesg.c:114
 msgid "normal but significant condition"
 msgstr "normal ama kayda değer koşullar"
 
-#: sys-utils/dmesg.c:116
+#: sys-utils/dmesg.c:115
 msgid "informational"
 msgstr "bilgi amaçlı"
 
-#: sys-utils/dmesg.c:117
+#: sys-utils/dmesg.c:116
 msgid "debug-level messages"
 msgstr "hata ayıklama seviyesi iletileri"
 
-#: sys-utils/dmesg.c:131
+#: sys-utils/dmesg.c:130
 msgid "kernel messages"
 msgstr "çekirdek iletileri"
 
-#: sys-utils/dmesg.c:132
+#: sys-utils/dmesg.c:131
 msgid "random user-level messages"
 msgstr "rastgele kullanıcı-seviyesi iletileri"
 
-#: sys-utils/dmesg.c:133
+#: sys-utils/dmesg.c:132
 msgid "mail system"
 msgstr "posta sistemi"
 
-#: sys-utils/dmesg.c:134
+#: sys-utils/dmesg.c:133
 msgid "system daemons"
 msgstr "sistem artalan süreçleri"
 
-#: sys-utils/dmesg.c:135
+#: sys-utils/dmesg.c:134
 msgid "security/authorization messages"
 msgstr "güvenlik/yetkilendirme iletileri"
 
-#: sys-utils/dmesg.c:136
+#: sys-utils/dmesg.c:135
 msgid "messages generated internally by syslogd"
 msgstr "syslogd tarafından oluşturulan dahili iletiler"
 
-#: sys-utils/dmesg.c:137
+#: sys-utils/dmesg.c:136
 msgid "line printer subsystem"
 msgstr "çizgi yazıcı altsistemi"
 
-#: sys-utils/dmesg.c:138
+#: sys-utils/dmesg.c:137
 msgid "network news subsystem"
 msgstr "ağ haberleri altsistemi"
 
-#: sys-utils/dmesg.c:139
+#: sys-utils/dmesg.c:138
 msgid "UUCP subsystem"
 msgstr "UUCP altsistemi"
 
-#: sys-utils/dmesg.c:140
+#: sys-utils/dmesg.c:139
 msgid "clock daemon"
 msgstr "saat artalan süreci"
 
-#: sys-utils/dmesg.c:141
+#: sys-utils/dmesg.c:140
 msgid "security/authorization messages (private)"
 msgstr "güvenlik/yetkilendirme iletileri (özel)"
 
-#: sys-utils/dmesg.c:142
+#: sys-utils/dmesg.c:141
 msgid "FTP daemon"
 msgstr "FTP artalan süreci"
 
-#: sys-utils/dmesg.c:267
+#: sys-utils/dmesg.c:266
 msgid "Display or control the kernel ring buffer.\n"
 msgstr "Çekirdek halka tamponunu göster ya da kontrol et.\n"
 
-#: sys-utils/dmesg.c:270
+#: sys-utils/dmesg.c:269
 msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgstr " -C, --clear                 çekirdek halka tamponunu temizle\n"
 
-#: sys-utils/dmesg.c:271
+#: sys-utils/dmesg.c:270
 msgid " -c, --read-clear            read and clear all messages\n"
 msgstr " -c, --read-clear            bütün iletileri oku ve temizle\n"
 
-#: sys-utils/dmesg.c:272
+#: sys-utils/dmesg.c:271
 msgid " -D, --console-off           disable printing messages to console\n"
 msgstr " -D, --console-off           iletileri konsola yazdırmayı kapat\n"
 
-#: sys-utils/dmesg.c:273
+#: sys-utils/dmesg.c:272
 msgid " -E, --console-on            enable printing messages to console\n"
 msgstr " -E, --console-on            iletileri konsola yazmayı etkinleştir\n"
 
-#: sys-utils/dmesg.c:274
+#: sys-utils/dmesg.c:273
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr " -F, --file <dosya>           çekirdek sistem günlüğü tamponu yerine dosyayı kullan\n"
 
-#: sys-utils/dmesg.c:275
+#: sys-utils/dmesg.c:274
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
 msgstr " -f, --facility <liste>       çıktıyı tanımlı yeteneklerle sınırla\n"
 
-#: sys-utils/dmesg.c:276
+#: sys-utils/dmesg.c:275
 msgid " -H, --human                 human readable output\n"
 msgstr " -H, --human                 okunabilir çıktı\n"
 
-#: sys-utils/dmesg.c:277
+#: sys-utils/dmesg.c:276
 msgid " -k, --kernel                display kernel messages\n"
 msgstr " -k, --kernel                çekirdek iletilerini göster\n"
 
-#: sys-utils/dmesg.c:278
+#: sys-utils/dmesg.c:277
 msgid " -L, --color[=<when>]        colorize messages (auto, always or never)\n"
 msgstr " -L, --color[=<nezaman>]        iletileri renklendir (oto, daima ya da asla)\n"
 
-#: sys-utils/dmesg.c:281
+#: sys-utils/dmesg.c:280
 msgid " -l, --level <list>          restrict output to defined levels\n"
 msgstr " -l, --level <liste>          çıktıyı belirlenen seviyelerle sınırla\n"
 
-#: sys-utils/dmesg.c:282
+#: sys-utils/dmesg.c:281
 msgid " -n, --console-level <level> set level of messages printed to console\n"
 msgstr " -n, --console-level <seviye> konsola yazılan iletilerin seviyesini ayarla\n"
 
-#: sys-utils/dmesg.c:283
+#: sys-utils/dmesg.c:282
 msgid " -P, --nopager               do not pipe output into a pager\n"
 msgstr " -P, --nopager               çıktıyı bir sayfalayıcıya gönderme\n"
 
-#: sys-utils/dmesg.c:284
+#: sys-utils/dmesg.c:283
 msgid " -r, --raw                   print the raw message buffer\n"
 msgstr " -r, --raw                   ham ileti tamponunu yazdır\n"
 
-#: sys-utils/dmesg.c:285
+#: sys-utils/dmesg.c:284
 msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr " -S, --syslog                /dev/kmsg yerine syslog(2) kullanmayı zorla\n"
 
-#: sys-utils/dmesg.c:286
+#: sys-utils/dmesg.c:285
 msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr " -s, --buffer-size <boyut>    çekirdek halka tamponu sorgulamak için tampon boyutu\n"
 
-#: sys-utils/dmesg.c:287
+#: sys-utils/dmesg.c:286
 msgid " -u, --userspace             display userspace messages\n"
 msgstr " -u, --userspace             kullanıcı uzayı iletilerini göster\n"
 
-#: sys-utils/dmesg.c:288
+#: sys-utils/dmesg.c:287
 msgid " -w, --follow                wait for new messages\n"
 msgstr " -w, --follow                yeni iletiler için bekle\n"
 
-#: sys-utils/dmesg.c:289
+#: sys-utils/dmesg.c:288
 msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr " -x, --decode                yetenek ve seviyeyi okunabilir karakter dizisine çöz\n"
 
-#: sys-utils/dmesg.c:290
+#: sys-utils/dmesg.c:289
 msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr " -d, --show-delta            yazdırılan iletiler arasındaki zaman farkını göster\n"
 
-#: sys-utils/dmesg.c:291
+#: sys-utils/dmesg.c:290
 msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr " -e, --reltime               yerel zamanı ve zaman farkını okunabilir biçimde göster\n"
 
-#: sys-utils/dmesg.c:292
+#: sys-utils/dmesg.c:291
 msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr " -T, --ctime                 okunabilir zaman damgasını göster (kusurlu olabilir!)\n"
 
-#: sys-utils/dmesg.c:293
+#: sys-utils/dmesg.c:292
 msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr " -t, --notime                iletilerle birlikte zaman damgası gösterme\n"
 
-#: sys-utils/dmesg.c:294
+#: sys-utils/dmesg.c:293
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
@@ -11892,7 +11725,7 @@ msgstr ""
 "                               [delta|reltime|ctime|notime|iso]\n"
 "Durduma/devam ettirme ctime ve iso zaman damgalarını  timestamps hatalı hale getirecektir.\n"
 
-#: sys-utils/dmesg.c:300
+#: sys-utils/dmesg.c:299
 msgid ""
 "\n"
 "Supported log facilities:\n"
@@ -11900,7 +11733,7 @@ msgstr ""
 "\n"
 "Desteklenen sistem günlüğü yetenekleri:\n"
 
-#: sys-utils/dmesg.c:306
+#: sys-utils/dmesg.c:305
 msgid ""
 "\n"
 "Supported log levels (priorities):\n"
@@ -11908,48 +11741,48 @@ msgstr ""
 "\n"
 "Desteklenen sistem günlüğü seviyeleri (öncelikler):\n"
 
-#: sys-utils/dmesg.c:360
+#: sys-utils/dmesg.c:359
 #, c-format
 msgid "failed to parse level '%s'"
 msgstr "seviye '%s' ayrıştırılamadı"
 
-#: sys-utils/dmesg.c:362
+#: sys-utils/dmesg.c:361
 #, c-format
 msgid "unknown level '%s'"
 msgstr "bilinmeyen seviye '%s'"
 
-#: sys-utils/dmesg.c:398
+#: sys-utils/dmesg.c:397
 #, c-format
 msgid "failed to parse facility '%s'"
 msgstr "yetenek '%s' ayrıştırılamadı"
 
-#: sys-utils/dmesg.c:400
+#: sys-utils/dmesg.c:399
 #, c-format
 msgid "unknown facility '%s'"
 msgstr "bilinmeyen yetenek '%s'"
 
-#: sys-utils/dmesg.c:528
+#: sys-utils/dmesg.c:527
 #, c-format
 msgid "cannot mmap: %s"
 msgstr "mmap başarısız: %s"
 
-#: sys-utils/dmesg.c:1356
+#: sys-utils/dmesg.c:1355
 msgid "invalid buffer size argument"
 msgstr "geçersiz tampon boyutu argümanı"
 
-#: sys-utils/dmesg.c:1408
+#: sys-utils/dmesg.c:1407
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "--show-delta, iso8601 zaman formatı ile kullanıldığı zaman yoksayılır"
 
-#: sys-utils/dmesg.c:1431
+#: sys-utils/dmesg.c:1430
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw sadece iletiler /dev/kmsg'den okunurken --level ve --facility ile birlikte kullanılabilir"
 
-#: sys-utils/dmesg.c:1441
+#: sys-utils/dmesg.c:1440
 msgid "read kernel buffer failed"
 msgstr "çekirdek tampon belleği okunamadı"
 
-#: sys-utils/dmesg.c:1460
+#: sys-utils/dmesg.c:1459
 msgid "klogctl failed"
 msgstr "klogctl başarısız"
 
@@ -12330,7 +12163,6 @@ msgstr " -z, --zero-range     bir aralığı sıfırla ve tahsis edildiğinden e
 
 #: sys-utils/fallocate.c:98
 #, fuzzy
-#| msgid " -y, --physical          print physical instead of logical IDs\n"
 msgid " -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"
 msgstr " -y, --physical          mantıksal kimlikler yerine fiziksel olanları yazdır\n"
 
@@ -12482,7 +12314,6 @@ msgstr " %s [seçenekler] <bağlamanoktası>\n"
 
 #: sys-utils/fsfreeze.c:43
 #, fuzzy
-#| msgid "Mount a filesystem.\n"
 msgid "Suspend access to a filesystem.\n"
 msgstr "Bir dosya sistemi bağla.\n"
 
@@ -12649,7 +12480,6 @@ msgstr "Donanım Saati %.2d:%.2d:%.2d = 1969 dan beri %ld saniye olarak ayarlan�
 
 #: sys-utils/hwclock.c:394 sys-utils/hwclock.c:638 sys-utils/hwclock.c:726
 #, fuzzy, c-format
-#| msgid "Time of the last change"
 msgid "Test mode: clock was not changed\n"
 msgstr "Son değişim zamanı"
 
@@ -12769,8 +12599,6 @@ msgstr ""
 
 #: sys-utils/hwclock.c:888
 #, fuzzy, c-format
-#| msgid "Time since last adjustment is %d second\n"
-#| msgid_plural "Time since last adjustment is %d seconds\n"
 msgid "Time since last adjustment is %ld second\n"
 msgid_plural "Time since last adjustment is %ld seconds\n"
 msgstr[0] "Son ayarlamadan beri %d saniye geçti\n"
@@ -12987,7 +12815,6 @@ msgstr "geçersiz dönemsellik argümanı"
 
 #: sys-utils/hwclock.c:1488
 #, fuzzy, c-format
-#| msgid "too many arguments"
 msgid "%d too many arguments given"
 msgstr "çok fazla argüman"
 
@@ -13001,13 +12828,11 @@ msgstr ""
 
 #: sys-utils/hwclock.c:1509
 #, fuzzy, c-format
-#| msgid "invalid id: %s"
 msgid "invalid date '%s'"
 msgstr "geçersiz kimlik: %s"
 
 #: sys-utils/hwclock-cmos.c:391
 #, fuzzy
-#| msgid "the plymouth request %c is not implemented"
 msgid "ISA port access is not implemented"
 msgstr "plymouth isteği %c gerçeklenmedi"
 
@@ -13021,20 +12846,17 @@ msgstr ""
 
 #: sys-utils/hwclock-cmos.c:402
 #, fuzzy
-#| msgid "Using direct I/O instructions to ISA clock."
 msgid "Using direct ISA access to the clock"
 msgstr "ISA saate doğrudan G/Ç yönergeleri kullanılıyor."
 
 #: sys-utils/hwclock-rtc.c:129
 #, fuzzy, c-format
-#| msgid "Unable to open %s\n"
 msgid "Trying to open: %s\n"
 msgstr "%s açılamıyor\n"
 
 #: sys-utils/hwclock-rtc.c:151 sys-utils/hwclock-rtc.c:249
 #: sys-utils/hwclock-rtc.c:411 sys-utils/hwclock-rtc.c:454
 #, fuzzy
-#| msgid "cannot open "
 msgid "cannot open rtc device"
 msgstr "açılamıyor "
 
@@ -13079,7 +12901,6 @@ msgstr "ioctl() %s den güncelleme kesmelerini açması gerekirken hata verdi"
 
 #: sys-utils/hwclock-rtc.c:361
 #, fuzzy, c-format
-#| msgid "ioctl(%s) to %s to set the time failed."
 msgid "ioctl(%s) to %s to set the time failed"
 msgstr "ioctl(%s)'den %s'e zamanı ayarlayamadı."
 
@@ -13090,13 +12911,11 @@ msgstr "ioctl(%s) başarıldı.\n"
 
 #: sys-utils/hwclock-rtc.c:378
 #, fuzzy
-#| msgid "Using the /dev interface to the clock."
 msgid "Using the rtc interface to the clock."
 msgstr "Saat için /dev arayüzü kullanılıyor."
 
 #: sys-utils/hwclock-rtc.c:407 sys-utils/hwclock-rtc.c:450
 #, fuzzy
-#| msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system."
 msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file.  This file does not exist on this system."
 msgstr "Çekirdekteki dönemsellik değerini değiştirmek için aygıt özel dosyası %s üzerinden Linux 'rtc' aygıt sürücüsüne erişilmelidir.   Bu dosya sistemde yok."
 
@@ -14175,9 +13994,6 @@ msgstr "     --raw                     ham --list çıktı biçimini kullan\n"
 
 #: sys-utils/losetup.c:424
 #, fuzzy
-#| msgid ""
-#| "\n"
-#| "Available --list columns:\n"
 msgid ""
 "\n"
 "Available --output columns:\n"
@@ -14349,7 +14165,6 @@ msgstr "işlemci sayısı belirlenemedi: %s"
 
 #: sys-utils/lscpu.c:897
 #, fuzzy
-#| msgid "cannot set signal handler"
 msgid "cannot restore signal handler"
 msgstr "sinyal işleyicisi ayarlanamıyor"
 
@@ -14358,19 +14173,19 @@ msgstr "sinyal işleyicisi ayarlanamıyor"
 msgid "failed to read from: %s"
 msgstr "%s'den okunamadı"
 
-#: sys-utils/lscpu.c:1457
+#: sys-utils/lscpu.c:1459
 msgid "Failed to extract the node number"
 msgstr "Düğüm sayısı çıkarılamadı"
 
-#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
 msgid "Y"
 msgstr "E"
 
-#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
 msgid "N"
 msgstr "H"
 
-#: sys-utils/lscpu.c:1678
+#: sys-utils/lscpu.c:1680
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -14381,211 +14196,210 @@ msgstr ""
 "# biçimdir. Bütün kolonlardaki her bir öge sıfırdan başlayan\n"
 "# kendine has bir kimliğe sahiptir.\n"
 
-#: sys-utils/lscpu.c:1873 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
+#: sys-utils/lscpu.c:1875 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
 msgid "failed to initialize output column"
 msgstr "çıktı sütunu başlatılamadı"
 
-#: sys-utils/lscpu.c:1875
+#: sys-utils/lscpu.c:1877
 msgid "Architecture:"
 msgstr "Mimari:"
 
-#: sys-utils/lscpu.c:1888
+#: sys-utils/lscpu.c:1890
 msgid "CPU op-mode(s):"
 msgstr "İşlemci işlem-kipi:"
 
-#: sys-utils/lscpu.c:1891 sys-utils/lscpu.c:1893
+#: sys-utils/lscpu.c:1893 sys-utils/lscpu.c:1895
 msgid "Byte Order:"
 msgstr "Bayt Sıralaması:"
 
-#: sys-utils/lscpu.c:1895
+#: sys-utils/lscpu.c:1897
 msgid "CPU(s):"
 msgstr "İşlemciler:"
 
-#: sys-utils/lscpu.c:1898
+#: sys-utils/lscpu.c:1900
 msgid "On-line CPU(s) mask:"
 msgstr "Çevrimiçi işlemci(ler) maskesi:"
 
-#: sys-utils/lscpu.c:1899
+#: sys-utils/lscpu.c:1901
 msgid "On-line CPU(s) list:"
 msgstr "Çevrimiçi işlemci(ler) listesi:"
 
-#: sys-utils/lscpu.c:1918
+#: sys-utils/lscpu.c:1920
 msgid "Off-line CPU(s) mask:"
 msgstr "Çevrimiçi işlemci maskesi:"
 
-#: sys-utils/lscpu.c:1919
+#: sys-utils/lscpu.c:1921
 msgid "Off-line CPU(s) list:"
 msgstr "Çevrimiçi işlemci listesi:"
 
-#: sys-utils/lscpu.c:1954
+#: sys-utils/lscpu.c:1956
 msgid "Thread(s) per core:"
 msgstr "Çekirdek başına iş parçacığı:"
 
-#: sys-utils/lscpu.c:1956
+#: sys-utils/lscpu.c:1958
 msgid "Core(s) per socket:"
 msgstr "Soket başına çekirdek:"
 
-#: sys-utils/lscpu.c:1959
+#: sys-utils/lscpu.c:1961
 msgid "Socket(s) per book:"
 msgstr "Kitap başına soket:"
 
-#: sys-utils/lscpu.c:1962
+#: sys-utils/lscpu.c:1964
 msgid "Book(s) per drawer:"
 msgstr "Sürgü başına kitap:"
 
-#: sys-utils/lscpu.c:1964
+#: sys-utils/lscpu.c:1966
 msgid "Drawer(s):"
 msgstr "Sürgü(ler):"
 
-#: sys-utils/lscpu.c:1966
+#: sys-utils/lscpu.c:1968
 msgid "Book(s):"
 msgstr "Kitap(lar):"
 
-#: sys-utils/lscpu.c:1969
+#: sys-utils/lscpu.c:1971
 msgid "Socket(s):"
 msgstr "Soket(ler):"
 
-#: sys-utils/lscpu.c:1973
+#: sys-utils/lscpu.c:1975
 msgid "NUMA node(s):"
 msgstr "NUMA düğümü(leri):"
 
-#: sys-utils/lscpu.c:1975
+#: sys-utils/lscpu.c:1977
 msgid "Vendor ID:"
 msgstr "Sağlayıcı Kimliği:"
 
-#: sys-utils/lscpu.c:1977
+#: sys-utils/lscpu.c:1979
 msgid "Machine type:"
 msgstr "Makine tipi:"
 
-#: sys-utils/lscpu.c:1979
+#: sys-utils/lscpu.c:1981
 msgid "CPU family:"
 msgstr "İşlemci ailesi:"
 
-#: sys-utils/lscpu.c:1981
+#: sys-utils/lscpu.c:1983
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:1983
+#: sys-utils/lscpu.c:1985
 msgid "Model name:"
 msgstr "Modem ismi:"
 
-#: sys-utils/lscpu.c:1985
+#: sys-utils/lscpu.c:1987
 msgid "Stepping:"
 msgstr "Adımlama:"
 
-#: sys-utils/lscpu.c:1987
+#: sys-utils/lscpu.c:1989
 msgid "CPU MHz:"
 msgstr "İşlemci MHz:"
 
-#: sys-utils/lscpu.c:1989
+#: sys-utils/lscpu.c:1991
 msgid "CPU dynamic MHz:"
 msgstr "İşlemci dinamik MHz: "
 
-#: sys-utils/lscpu.c:1991
+#: sys-utils/lscpu.c:1993
 msgid "CPU static MHz:"
 msgstr "İşlemci statik MHz: "
 
-#: sys-utils/lscpu.c:1993
+#: sys-utils/lscpu.c:1995
 msgid "CPU max MHz:"
 msgstr "İşlemci en yüksek MHz: "
 
-#: sys-utils/lscpu.c:1995
+#: sys-utils/lscpu.c:1997
 msgid "CPU min MHz:"
 msgstr "İşlemci asgari MHz:"
 
-#: sys-utils/lscpu.c:1997
+#: sys-utils/lscpu.c:1999
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:2000 sys-utils/lscpu.c:2002
+#: sys-utils/lscpu.c:2002 sys-utils/lscpu.c:2004
 msgid "Virtualization:"
 msgstr "Sanallaştırma:"
 
-#: sys-utils/lscpu.c:2005
+#: sys-utils/lscpu.c:2007
 msgid "Hypervisor:"
 msgstr "Hypervizör:"
 
-#: sys-utils/lscpu.c:2007
+#: sys-utils/lscpu.c:2009
 msgid "Hypervisor vendor:"
 msgstr "Hypervizör sağlayıcı:"
 
-#: sys-utils/lscpu.c:2008
+#: sys-utils/lscpu.c:2010
 msgid "Virtualization type:"
 msgstr "Sanallaştırma tipi:"
 
-#: sys-utils/lscpu.c:2011
+#: sys-utils/lscpu.c:2013
 msgid "Dispatching mode:"
 msgstr "Gönderim kipi:"
 
-#: sys-utils/lscpu.c:2015 sys-utils/lscpu.c:2022
+#: sys-utils/lscpu.c:2017 sys-utils/lscpu.c:2024
 #, c-format
 msgid "%s cache:"
 msgstr "%s önbelleği:"
 
-#: sys-utils/lscpu.c:2028
+#: sys-utils/lscpu.c:2030
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA düğüm%d işlemci:"
 
-#: sys-utils/lscpu.c:2033
+#: sys-utils/lscpu.c:2035
 msgid "Physical sockets:"
 msgstr "Fiziksel soketler:"
 
-#: sys-utils/lscpu.c:2034
+#: sys-utils/lscpu.c:2036
 msgid "Physical chips:"
 msgstr "Fiziksel çipler:"
 
-#: sys-utils/lscpu.c:2035
+#: sys-utils/lscpu.c:2037
 msgid "Physical cores/chip:"
 msgstr "Fiziksel çekirdekler/çipler:"
 
-#: sys-utils/lscpu.c:2039
+#: sys-utils/lscpu.c:2041
 msgid "Flags:"
 msgstr "Bayraklar:"
 
-#: sys-utils/lscpu.c:2053
+#: sys-utils/lscpu.c:2055
 msgid "Display information about the CPU architecture.\n"
 msgstr "İşlemci mimarisi hakkında bilgi göster:\n"
 
-#: sys-utils/lscpu.c:2056
+#: sys-utils/lscpu.c:2058
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               hem çevrimiçi hem çevrimdışı işlemcileri yazdır (-e için varsayılan)\n"
 
-#: sys-utils/lscpu.c:2057
+#: sys-utils/lscpu.c:2059
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            sadece çevrimiçi işlemcileri yazdır (-p için varsayılan)\n"
 
-#: sys-utils/lscpu.c:2058
+#: sys-utils/lscpu.c:2060
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           sadece çevrimdışı işlemcileri göster\n"
 
-#: sys-utils/lscpu.c:2059
+#: sys-utils/lscpu.c:2061
 #, fuzzy
-#| msgid " -J, --json             use JSON output format\n"
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr " -J, --json            JSON çıktı formatını kullan\n"
 
-#: sys-utils/lscpu.c:2060
+#: sys-utils/lscpu.c:2062
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<liste>] genişletilmiş okunabilir bir biçim yazdır\n"
 
-#: sys-utils/lscpu.c:2061
+#: sys-utils/lscpu.c:2063
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<liste>]    ayrıştırılabilir bir biçim yazdır\n"
 
-#: sys-utils/lscpu.c:2062
+#: sys-utils/lscpu.c:2064
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <dizin>     belirtilen dizini sistem kökü olarak kullan\n"
 
-#: sys-utils/lscpu.c:2063
+#: sys-utils/lscpu.c:2065
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               işlemci listeleri yerine onaltılık maskeleri yazdır\n"
 
-#: sys-utils/lscpu.c:2064
+#: sys-utils/lscpu.c:2066
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical          mantıksal kimlikler yerine fiziksel olanları yazdır\n"
 
-#: sys-utils/lscpu.c:2169
+#: sys-utils/lscpu.c:2171
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: seçenekler --all, --online ve --offline sadece --extended veya --parse seçenekleri ile kullanılabilir.\n"
@@ -14979,7 +14793,6 @@ msgstr ""
 
 #: sys-utils/lsmem.c:100
 #, fuzzy
-#| msgid "size of the device"
 msgid "size of the memory range"
 msgstr "aygıtın boyutu"
 
@@ -14989,7 +14802,6 @@ msgstr ""
 
 #: sys-utils/lsmem.c:102
 #, fuzzy
-#| msgid " removable"
 msgid "memory is removable"
 msgstr " silinebilir"
 
@@ -14999,19 +14811,16 @@ msgstr ""
 
 #: sys-utils/lsmem.c:104
 #, fuzzy
-#| msgid "Out of memory"
 msgid "numa node of memory"
 msgstr "Bellek yetersiz"
 
 #: sys-utils/lsmem.c:193
 #, fuzzy
-#| msgid ", on-line"
 msgid "online"
 msgstr ", çalışıyor"
 
 #: sys-utils/lsmem.c:194
 #, fuzzy
-#| msgid ", on-line"
 msgid "offline"
 msgstr ", çalışıyor"
 
@@ -15021,31 +14830,26 @@ msgstr ""
 
 #: sys-utils/lsmem.c:235 sys-utils/lsmem.c:239
 #, fuzzy
-#| msgid "get blocksize"
 msgid "Memory block size:"
 msgstr "blok uzunluğunu verir"
 
 #: sys-utils/lsmem.c:236 sys-utils/lsmem.c:241
 #, fuzzy
-#| msgid "out of memory"
 msgid "Total online memory:"
 msgstr "bellek yetersiz"
 
 #: sys-utils/lsmem.c:237 sys-utils/lsmem.c:243
 #, fuzzy
-#| msgid "out of memory"
 msgid "Total offline memory:"
 msgstr "bellek yetersiz"
 
 #: sys-utils/lsmem.c:259
 #, fuzzy, c-format
-#| msgid "Unable to open %s"
 msgid "Failed to open %s"
 msgstr "%s açılamıyor"
 
 #: sys-utils/lsmem.c:354
 #, fuzzy
-#| msgid "This system does not support rescanning of CPUs"
 msgid "This system does not support memory blocks"
 msgstr "Bu sistem işlemcilerin yeniden taranmasını desteklemiyor"
 
@@ -15055,13 +14859,11 @@ msgstr ""
 
 #: sys-utils/lsmem.c:379
 #, fuzzy
-#| msgid " -a, --all            print all devices\n"
-msgid " -a, --all            list each individiual memory block\n"
+msgid " -a, --all            list each individual memory block\n"
 msgstr " -a, --all            bütün aygıtları yazdır\n"
 
 #: sys-utils/lsmem.c:384
 #, fuzzy
-#| msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
 msgstr " -s, --sysroot <dizin>     belirtilen dizini sistem kökü olarak kullan\n"
 
@@ -15071,13 +14873,11 @@ msgstr ""
 
 #: sys-utils/lsmem.c:488
 #, fuzzy
-#| msgid "unsupported --setgroups argument '%s'"
 msgid "unsupported --summary argument"
 msgstr "geçersiz --setgroups argümanı '%s'"
 
 #: sys-utils/lsmem.c:501
 #, fuzzy
-#| msgid "options --setgroups=allow and --map-root-user are mutually exclusive"
 msgid "options --{raw,json,pairs} and --summary=only are mutually exclusive"
 msgstr "--setgroups=allow ve --map-root-user karşılıklı olarak dışlayandır"
 
@@ -15087,7 +14887,6 @@ msgstr "çıktı tablosu başlatılamadı"
 
 #: sys-utils/lsmem.c:544
 #, fuzzy
-#| msgid "failed to initialize output column"
 msgid "Failed to initialize output column"
 msgstr "çıktı sütunu başlatılamadı"
 
@@ -15241,7 +15040,6 @@ msgstr ""
 
 #: sys-utils/mount.c:305 sys-utils/umount.c:157
 #, fuzzy, c-format
-#| msgid "%15s: %s"
 msgid "%s: %s."
 msgstr "%15s: %s"
 
@@ -15470,7 +15268,6 @@ msgstr "Diğer süreçlerin isim uzayı ile bir program çalıştır.\n"
 
 #: sys-utils/nsenter.c:80
 #, fuzzy
-#| msgid " -a, --all            print all devices\n"
 msgid " -a, --all              enter all namespaces\n"
 msgstr " -a, --all            bütün aygıtları yazdır\n"
 
@@ -15563,7 +15360,6 @@ msgstr "çalıştırma içeriği '%s' olarak ayarlanamadı"
 
 #: sys-utils/nsenter.c:362
 #, fuzzy
-#| msgid "no target PID specified for --follow-context"
 msgid "no target PID specified for --all"
 msgstr "--follow-context için hedef PID belirtilmedi"
 
@@ -18126,15 +17922,11 @@ msgstr ""
 
 #: term-utils/script.c:442
 #, fuzzy, c-format
-#| msgid "Script started on %s"
 msgid "Script started on %s\n"
 msgstr "%s de betik başlatıldı"
 
 #: term-utils/script.c:519
 #, fuzzy, c-format
-#| msgid ""
-#| "\n"
-#| "Script done on %s"
 msgid ""
 "\n"
 "Script done on %s\n"
@@ -18214,245 +18006,240 @@ msgstr "zamanlama dosyası %s okunamadı"
 msgid "timing file %s: line %lu: unexpected format"
 msgstr "zamanlama dosyası %s: satır %lu: beklenmeyen biçim"
 
-#: term-utils/setterm.c:240
+#: term-utils/setterm.c:237
 #, c-format
 msgid "argument error: bright %s is not supported"
 msgstr "argüman hatası: parlaklık %s desteklenmiyor"
 
-#: term-utils/setterm.c:329
+#: term-utils/setterm.c:326
 msgid "too many tabs"
 msgstr "çok fazla sekme"
 
-#: term-utils/setterm.c:384
+#: term-utils/setterm.c:381
 msgid "Set the attributes of a terminal.\n"
 msgstr "Bir uç birim özniteliklerini ayarla.\n"
 
-#: term-utils/setterm.c:387
+#: term-utils/setterm.c:384
 msgid " --term          <terminal_name>   override TERM environment variable\n"
 msgstr " --term          <uçbirim_ismi>   TERM ortam değişkeninin üzerine yaz\n"
 
-#: term-utils/setterm.c:388
+#: term-utils/setterm.c:385
 msgid " --reset                           reset terminal to power-on state\n"
 msgstr " --reset                           uçbirimi güç-açık durumuna sıfırla\n"
 
-#: term-utils/setterm.c:389
+#: term-utils/setterm.c:386
 #, fuzzy
-#| msgid " --reset                           reset terminal to power-on state\n"
 msgid " --resize                          reset terminal rows and columns\n"
 msgstr " --reset                           uçbirimi güç-açık durumuna sıfırla\n"
 
-#: term-utils/setterm.c:390
+#: term-utils/setterm.c:387
 msgid " --initialize                      display init string, and use default settings\n"
 msgstr " --initialize                      başlangıç karakter dizisini göster ve varsayılan ayarları kullan\n"
 
-#: term-utils/setterm.c:391
+#: term-utils/setterm.c:388
 msgid " --default                         use default terminal settings\n"
 msgstr " --default                         varsayılan uç birim seçeneklerini kullan\n"
 
-#: term-utils/setterm.c:392
+#: term-utils/setterm.c:389
 msgid " --store                           save current terminal settings as default\n"
 msgstr " --store                           mevcut uçbirim ayarlarını varsayılan olarak kaydet\n"
 
-#: term-utils/setterm.c:393
+#: term-utils/setterm.c:390
 msgid " --cursor        [on|off]          display cursor\n"
 msgstr " --cursor        [açık|kapalı]          imleci göster\n"
 
-#: term-utils/setterm.c:394
+#: term-utils/setterm.c:391
 msgid " --repeat        [on|off]          keyboard repeat\n"
 msgstr " --repeat        [açık|kapalı]          klavye tekrarı\n"
 
-#: term-utils/setterm.c:395
+#: term-utils/setterm.c:392
 msgid " --appcursorkeys [on|off]          cursor key application mode\n"
 msgstr " --appcursorkeys [açık|kapalı]          imleç anahtar uygulama kipi\n"
 
-#: term-utils/setterm.c:396
+#: term-utils/setterm.c:393
 msgid " --linewrap      [on|off]          continue on a new line when a line is full\n"
 msgstr " --linewrap      [açık|kapalı]          bir satır dolduğunda yeni bir satıra devam et\n"
 
-#: term-utils/setterm.c:397
+#: term-utils/setterm.c:394
 msgid " --inversescreen [on|off]          swap colors for the whole screen\n"
 msgstr " --inversescreen [açık|kapalı]          tüm ekranın renklerini ters çevir\n"
 
-#: term-utils/setterm.c:398
+#: term-utils/setterm.c:395
 msgid " --foreground    default|<color>   set foreground color\n"
 msgstr " --foreground    varsayılan|<renk>   önplan rengini ayarla\n"
 
-#: term-utils/setterm.c:399
+#: term-utils/setterm.c:396
 msgid " --background    default|<color>   set background color\n"
 msgstr " --background    varsayılan|<renk>   arkaplan rengini ayarla\n"
 
-#: term-utils/setterm.c:400
+#: term-utils/setterm.c:397
 msgid " --ulcolor       [bright] <color>  set underlined text color\n"
 msgstr " --ulcolor       [parlaklık] <renk>  altı çizili metin rengini ayarla\n"
 
-#: term-utils/setterm.c:401
+#: term-utils/setterm.c:398
 msgid " --hbcolor       [bright] <color>  set bold text color\n"
 msgstr " --hbcolor       [parlaklık] <renk>  kalın metin rengini ayarla\n"
 
-#: term-utils/setterm.c:402
+#: term-utils/setterm.c:399
 msgid "                 <color>: black blue cyan green grey magenta red white yellow\n"
 msgstr "                 <renk>: siyah mavi cyan yeşil gri magenta kırmızı beyaz sarı\n"
 
-#: term-utils/setterm.c:403
+#: term-utils/setterm.c:400
 msgid " --bold          [on|off]          bold\n"
 msgstr " --bold          [açık|kapalı]          kalın\n"
 
-#: term-utils/setterm.c:404
+#: term-utils/setterm.c:401
 msgid " --half-bright   [on|off]          dim\n"
 msgstr " --half-bright   [açık|kapalı]          karanlık\n"
 
-#: term-utils/setterm.c:405
+#: term-utils/setterm.c:402
 msgid " --blink         [on|off]          blink\n"
 msgstr " --blink         [açık|kapalı]          yanıp sönme\n"
 
-#: term-utils/setterm.c:406
+#: term-utils/setterm.c:403
 msgid " --underline     [on|off]          underline\n"
 msgstr " --underline     [açık|kapalı]          alt çizgi\n"
 
-#: term-utils/setterm.c:407
+#: term-utils/setterm.c:404
 msgid " --reverse       [on|off]          swap foreground and background colors\n"
 msgstr " --reverse       [açık|kapalı]          ön plan ve arka plan renklerini değiştir\n"
 
-#: term-utils/setterm.c:408
+#: term-utils/setterm.c:405
 msgid " --clear         [all|rest]        clear screen and set cursor position\n"
 msgstr " --clear         [tümü|kalanı]        ekranı temizle ve imleç konumunu ayarla\n"
 
-#: term-utils/setterm.c:409
+#: term-utils/setterm.c:406
 msgid " --tabs          [<number>...]     set these tab stop positions, or show them\n"
 msgstr " --tabs          [<sayı>...]     bu tab durma konumlarını ayarla veya onları göster\n"
 
-#: term-utils/setterm.c:410
+#: term-utils/setterm.c:407
 msgid " --clrtabs       [<number>...]     clear these tab stop positions, or all\n"
 msgstr " --clrtabs       [<sayı>...]     bu tab durma konumlarını temizle veya hepsini\n"
 
-#: term-utils/setterm.c:411
+#: term-utils/setterm.c:408
 msgid " --regtabs       [1-160]           set a regular tab stop interval\n"
 msgstr " --regtabs       [1-160]           düzenli tab duraklama sıklığı ayarla\n"
 
-#: term-utils/setterm.c:412
+#: term-utils/setterm.c:409
 msgid " --blank         [0-60|force|poke] set time of inactivity before screen blanks\n"
 msgstr " --blank         [0-60|force|poke] ekrak temizlemeden önce durgunluk zamanı ayarla\n"
 
-#: term-utils/setterm.c:413
+#: term-utils/setterm.c:410
 msgid " --dump          [<number>]        write vcsa<number> console dump to file\n"
 msgstr " --dump          [<sayı>]        vcsa<sayı> konsol dökümünü dosyaya yaz\n"
 
-#: term-utils/setterm.c:414
+#: term-utils/setterm.c:411
 msgid " --append        [<number>]        append vcsa<number> console dump to file\n"
 msgstr " --append        [<sayı>]        vcsa<sayı> konsol dökümünü dosyaya ekle\n"
 
-#: term-utils/setterm.c:415
+#: term-utils/setterm.c:412
 msgid " --file          <filename>        name of the dump file\n"
 msgstr " --file          <dosyaismi>        döküm dosyası ismi\n"
 
-#: term-utils/setterm.c:416
+#: term-utils/setterm.c:413
 msgid " --msg           [on|off]          send kernel messages to console\n"
 msgstr " --msg           [açık|kapalı]          çekirdek iletilerini konsola gönder\n"
 
-#: term-utils/setterm.c:417
+#: term-utils/setterm.c:414
 msgid " --msglevel      0-8               kernel console log level\n"
 msgstr " --msglevel      0-8               çekirdek günlükleme seviyesi\n"
 
-#: term-utils/setterm.c:418
+#: term-utils/setterm.c:415
 msgid " --powersave     [on|vsync|hsync|powerdown|off]\n"
 msgstr " --powersave     [on|vsync|hsync|powerdown|off]\n"
 
-#: term-utils/setterm.c:419
+#: term-utils/setterm.c:416
 msgid "                                   set vesa powersaving features\n"
 msgstr "                                   vesa güç koruma özelliklerini ayarla\n"
 
-#: term-utils/setterm.c:420
+#: term-utils/setterm.c:417
 msgid " --powerdown     [0-60]            set vesa powerdown interval in minutes\n"
 msgstr " --powerdown     [0-60]            vesa güç kapatma aralığını dakika olarak ayarla\n"
 
-#: term-utils/setterm.c:421
+#: term-utils/setterm.c:418
 msgid " --blength       [0-2000]          duration of the bell in milliseconds\n"
 msgstr " --blength       [0-2000]          zilin milisaniye olarak süresi\n"
 
-#: term-utils/setterm.c:422
+#: term-utils/setterm.c:419
 msgid " --bfreq         <number>          bell frequency in Hertz\n"
 msgstr " --bfreq         <sayı>          Hertz cinsinden zil frekansı\n"
 
-#: term-utils/setterm.c:423
+#: term-utils/setterm.c:420
 msgid " --version                         show version information and exit\n"
 msgstr " --version                         sürüm bilgisini göster ve çık\n"
 
-#: term-utils/setterm.c:424
+#: term-utils/setterm.c:421
 msgid " --help                            display this help and exit\n"
 msgstr " --help                            bu yardım metnini göster ve çık\n"
 
-#: term-utils/setterm.c:432
+#: term-utils/setterm.c:429
 msgid "duplicate use of an option"
 msgstr "bir seçeneğin çift kullanımı"
 
-#: term-utils/setterm.c:741
+#: term-utils/setterm.c:738
 msgid "cannot force blank"
 msgstr "boşluk zorlanamadı"
 
-#: term-utils/setterm.c:746
+#: term-utils/setterm.c:743
 msgid "cannot force unblank"
 msgstr "boş olmama zorlanamıyor"
 
-#: term-utils/setterm.c:752
+#: term-utils/setterm.c:749
 msgid "cannot get blank status"
 msgstr "boş durumu alınamadı"
 
-#: term-utils/setterm.c:778
+#: term-utils/setterm.c:775
 #, fuzzy, c-format
-#| msgid "can not open dump file %s for output"
 msgid "cannot open dump file %s for output"
 msgstr "çıktı için döküm dosyası %s açılamıyor"
 
-#: term-utils/setterm.c:820
+#: term-utils/setterm.c:817
 #, c-format
 msgid "terminal %s does not support %s"
 msgstr "uç birim %s %s'i desteklemiyor"
 
-#: term-utils/setterm.c:858
+#: term-utils/setterm.c:855
 #, fuzzy
 msgid "select failed"
 msgstr "erişim başarısız"
 
-#: term-utils/setterm.c:884
+#: term-utils/setterm.c:881
 #, fuzzy
-#| msgid "%s login refused on this terminal.\n"
 msgid "stdin does not refer to a terminal"
 msgstr "%s için bu terminalden giriş reddedildi.\n"
 
-#: term-utils/setterm.c:912
+#: term-utils/setterm.c:909
 #, fuzzy, c-format
-#| msgid "invalid option"
 msgid "invalid cursor position: %s"
 msgstr "geçersiz seçenek"
 
-#: term-utils/setterm.c:934
+#: term-utils/setterm.c:931
 #, fuzzy
-#| msgid "setgid failed"
 msgid "reset failed"
 msgstr "setgid başarısız"
 
-#: term-utils/setterm.c:1098
+#: term-utils/setterm.c:1095
 msgid "cannot (un)set powersave mode"
 msgstr "güç koruma kipi ayarlanamadı(sıfırlanamadı)"
 
-#: term-utils/setterm.c:1117 term-utils/setterm.c:1126
+#: term-utils/setterm.c:1114 term-utils/setterm.c:1123
 msgid "klogctl error"
 msgstr "klogctl hatası"
 
-#: term-utils/setterm.c:1147
+#: term-utils/setterm.c:1144
 msgid "$TERM is not defined."
 msgstr "$TERM tanımlı değil."
 
-#: term-utils/setterm.c:1154
+#: term-utils/setterm.c:1151
 msgid "terminfo database cannot be found"
 msgstr "terminfo veritabanı bulunamadı"
 
-#: term-utils/setterm.c:1156
+#: term-utils/setterm.c:1153
 #, c-format
 msgid "%s: unknown terminal type"
 msgstr "%s: bilinmeyen uç birim tipi"
 
-#: term-utils/setterm.c:1158
+#: term-utils/setterm.c:1155
 msgid "terminal is hardcopy"
 msgstr "uçbirim bir tam kopya"
 
@@ -18497,7 +18284,6 @@ msgstr "Tüm kullanıcılara bir ileti yaz.\n"
 
 #: term-utils/wall.c:91
 #, fuzzy
-#| msgid " -g, --group <group>             specify the primary group\n"
 msgid " -g, --group <group>     only send message to group\n"
 msgstr " -g, --group <group>             birincil grubu belirt\n"
 
@@ -18511,43 +18297,41 @@ msgstr " -t, --timeout <zamanaşımı> saniye olarak yazma zaman aşımı\n"
 
 #: term-utils/wall.c:116
 #, fuzzy
-#| msgid "invalid period argument"
 msgid "invalid group argument"
 msgstr "geçersiz periyod argümanı"
 
 #: term-utils/wall.c:118
 #, fuzzy, c-format
-#| msgid "%c: unknown command"
 msgid "%s: unknown gid"
 msgstr "%c: bilinmeyen komut"
 
-#: term-utils/wall.c:158
+#: term-utils/wall.c:161
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr ""
 
-#: term-utils/wall.c:204
+#: term-utils/wall.c:207
 msgid "--nobanner is available only for root"
 msgstr "--nobanner sadece root için kullanılabilir"
 
-#: term-utils/wall.c:209
+#: term-utils/wall.c:212
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr "zaman aşımı değeri hatalı: %s"
 
-#: term-utils/wall.c:348
+#: term-utils/wall.c:351
 msgid "cannot get passwd uid"
 msgstr "parola uid'si alınamadı"
 
-#: term-utils/wall.c:353
+#: term-utils/wall.c:356
 msgid "cannot get tty name"
 msgstr "tty ismi alınamadı"
 
-#: term-utils/wall.c:373
+#: term-utils/wall.c:376
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "%s@%s (%s) (%s)'den yayın iletisi:"
 
-#: term-utils/wall.c:406
+#: term-utils/wall.c:409
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "%s okunmayacak - standart çıktı kullan."
@@ -18712,49 +18496,41 @@ msgstr "ikinci argüman"
 
 #: text-utils/column.c:217
 #, fuzzy
-#| msgid "failed to parse end"
 msgid "failed to parse column"
 msgstr "bitiş ayrıştırılamadı"
 
 #: text-utils/column.c:227
 #, fuzzy, c-format
-#| msgid "undefined mountpoint"
 msgid "undefined column name '%s'"
 msgstr "tanımlanmayan bağlanma noktası"
 
 #: text-utils/column.c:278
 #, fuzzy
-#| msgid "failed to parse --timeout"
 msgid "failed to parse --table-order list"
 msgstr "--timeout ayrıştırılamadı"
 
 #: text-utils/column.c:351
 #, fuzzy
-#| msgid "failed to parse start"
 msgid "failed to parse --table-right list"
 msgstr "başlangıç ayrıştırılamadı"
 
 #: text-utils/column.c:355
 #, fuzzy
-#| msgid "failed to parse --timeout"
 msgid "failed to parse --table-trunc list"
 msgstr "--timeout ayrıştırılamadı"
 
 #: text-utils/column.c:359
 #, fuzzy
-#| msgid "failed to parse --timeout"
 msgid "failed to parse --table-noextreme list"
 msgstr "--timeout ayrıştırılamadı"
 
 #: text-utils/column.c:363
 #, fuzzy
-#| msgid "failed to parse start"
 msgid "failed to parse --table-wrap list"
 msgstr "başlangıç ayrıştırılamadı"
 
 #: text-utils/column.c:367
 #, fuzzy
-#| msgid "failed to parse --timeout"
 msgid "failed to parse --table-hide list"
 msgstr "--timeout ayrıştırılamadı"
 
@@ -18765,7 +18541,6 @@ msgstr ""
 
 #: text-utils/column.c:411
 #, fuzzy
-#| msgid "failed to allocate output table"
 msgid "failed to allocate output data"
 msgstr "çıktı tablosu tahsil edilemedi"
 
@@ -18775,25 +18550,21 @@ msgstr "Listeleri sütunlaştır.\n"
 
 #: text-utils/column.c:557
 #, fuzzy
-#| msgid " -t, --table              create a table\n"
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table              bir tablo oluştur\n"
 
 #: text-utils/column.c:558
 #, fuzzy
-#| msgid " -n, --name <progname>         the name under which errors are reported\n"
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr " -n, --name <programismi>         hataların raporlandığı isim\n"
 
 #: text-utils/column.c:559
 #, fuzzy
-#| msgid " -x, --sort <column>  sort output by <column>\n"
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -x, --sort <kolon>  çıktıyı <kolon>a göre sırala\n"
 
 #: text-utils/column.c:560
 #, fuzzy
-#| msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -o, --options <liste>     takas seçeneklerinin virgülle ayrılmış listesi\n"
 
@@ -18803,7 +18574,6 @@ msgstr ""
 
 #: text-utils/column.c:562
 #, fuzzy
-#| msgid " -n, --noheadings       don't print column headings\n"
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -n, --noheadings       sütun başlıklarını yazdırma\n"
 
@@ -18813,7 +18583,6 @@ msgstr ""
 
 #: text-utils/column.c:564
 #, fuzzy
-#| msgid " -u, --notruncate       don't truncate text in columns\n"
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr " -u, --notruncate       sütunlardaki metinleri daraltma\n"
 
@@ -18823,39 +18592,31 @@ msgstr ""
 
 #: text-utils/column.c:566
 #, fuzzy
-#| msgid " -J, --json                    use JSON --list output format\n"
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr " -J, --json                    JSON --list çıktı biçimini kullan\n"
 
 #: text-utils/column.c:569
 #, fuzzy
-#| msgid " -O, --output <cols>           specify columns to output for --list\n"
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr " -O, --output <kolon>           --list için gösterilecek kolonları belirt\n"
 
 #: text-utils/column.c:570
 #, fuzzy
-#| msgid " -i, --irq <num>              specify parallel port irq\n"
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -i, --irq <sayı>              paralel port irq belirt\n"
 
 #: text-utils/column.c:571
 #, fuzzy
-#| msgid " -N, --partno <num>        specify partition number\n"
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -N, --partno <numara>        disk bölümü numarasını belirt\n"
 
 #: text-utils/column.c:574
 #, fuzzy
-#| msgid " -c, --columns <width>    width of output in number of characters\n"
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --columns <genişlik>    karakter sayısı olarak çıktı genişliği\n"
 
 #: text-utils/column.c:575
 #, fuzzy
-#| msgid ""
-#| " -o, --output-separator <string>\n"
-#| "                          columns separator for table output; default is two spaces\n"
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 " -o, --output-separator <karakterdizisi>\n"
@@ -18863,13 +18624,11 @@ msgstr ""
 
 #: text-utils/column.c:576
 #, fuzzy
-#| msgid " -s, --separator <string> possible table delimiters\n"
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <karakterdizisi> kullanılabilir tablo ayırıcıları\n"
 
 #: text-utils/column.c:577
 #, fuzzy
-#| msgid " -x, --fillrows           fill rows before columns\n"
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows           sütunlardan önce satırları doldur\n"
 
@@ -18879,7 +18638,6 @@ msgstr "geçersiz sütun argümanı"
 
 #: text-utils/column.c:662
 #, fuzzy
-#| msgid "failed to parse mount table"
 msgid "failed to parse column names"
 msgstr "bağlama tablosu ayrıştırılamadı"
 
@@ -18895,7 +18653,7 @@ msgstr ""
 msgid "option --table-columns required for --json"
 msgstr ""
 
-#: text-utils/hexdump.c:155 text-utils/more.c:225
+#: text-utils/hexdump.c:155 text-utils/more.c:231
 #, c-format
 msgid " %s [options] <file>...\n"
 msgstr " %s [seçenekler] <dosya>...\n"
@@ -18984,60 +18742,60 @@ msgstr "çoklu dönüşüm karakterleriyle bayt sayısı"
 msgid "Read one line.\n"
 msgstr "Bir satır oku.\n"
 
-#: text-utils/more.c:228
+#: text-utils/more.c:234
 msgid "A file perusal filter for CRT viewing.\n"
 msgstr "CRT görünüm için a bir dosya inceleme filtresi.\n"
 
-#: text-utils/more.c:231
+#: text-utils/more.c:237
 msgid " -d          display help instead of ringing bell\n"
 msgstr " -d          zil çalmak yerine yardım göster\n"
 
-#: text-utils/more.c:232
+#: text-utils/more.c:238
 msgid " -f          count logical rather than screen lines\n"
 msgstr " -f          ekran satırları yerine mantıksal say\n"
 
-#: text-utils/more.c:233
+#: text-utils/more.c:239
 msgid " -l          suppress pause after form feed\n"
 msgstr " -l          form beslemesi sonrası duraklamayı baskıla\n"
 
-#: text-utils/more.c:234
+#: text-utils/more.c:240
 msgid " -c          do not scroll, display text and clean line ends\n"
 msgstr " -c          kaydırma, metni göster ve satır sonlarını temizle\n"
 
-#: text-utils/more.c:235
+#: text-utils/more.c:241
 msgid " -p          do not scroll, clean screen and display text\n"
 msgstr " -p          kaydırma, ekranı temizle ve metni göster\n"
 
-#: text-utils/more.c:236
+#: text-utils/more.c:242
 msgid " -s          squeeze multiple blank lines into one\n"
 msgstr " -s          çoklu boş satırları teke sıkıştır\n"
 
-#: text-utils/more.c:237
+#: text-utils/more.c:243
 msgid " -u          suppress underlining\n"
 msgstr " -u          alt çizgilemeyi baskıla\n"
 
-#: text-utils/more.c:238
+#: text-utils/more.c:244
 msgid " -<number>   the number of lines per screenful\n"
 msgstr " -<sayı>   ekran başına satır sayısı\n"
 
-#: text-utils/more.c:239
+#: text-utils/more.c:245
 msgid " +<number>   display file beginning from line number\n"
 msgstr " +<sayı>   dosya başlangıcını satır sayısından itibaren göster\n"
 
-#: text-utils/more.c:240
+#: text-utils/more.c:246
 msgid " +/<string>  display file beginning from search string match\n"
 msgstr " +/<karakterdizisi>  arama karakter dizisinin eşleşmesinden itibaren dosya başlangıcını göster\n"
 
-#: text-utils/more.c:241
+#: text-utils/more.c:247
 msgid " -V          display version information and exit\n"
 msgstr " -V          sürüm bilgisini göster ve çık\n"
 
-#: text-utils/more.c:484
+#: text-utils/more.c:490
 #, c-format
 msgid "unknown option -%s"
 msgstr "bilinmeyen seçenek - %s"
 
-#: text-utils/more.c:508
+#: text-utils/more.c:514
 #, c-format
 msgid ""
 "\n"
@@ -19048,7 +18806,7 @@ msgstr ""
 "*** %s: dizin ***\n"
 "\n"
 
-#: text-utils/more.c:550
+#: text-utils/more.c:556
 #, c-format
 msgid ""
 "\n"
@@ -19059,41 +18817,41 @@ msgstr ""
 "******** %s: Bir metin dosyası değil ********\n"
 "\n"
 
-#: text-utils/more.c:645
+#: text-utils/more.c:651
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Çıkmak için q ya da Q kullanın]"
 
-#: text-utils/more.c:724
+#: text-utils/more.c:730
 #, c-format
 msgid "--More--"
 msgstr "--Başka--"
 
-#: text-utils/more.c:726
+#: text-utils/more.c:732
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Sonraki dosya: %s)"
 
-#: text-utils/more.c:734
+#: text-utils/more.c:740
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Devam etmek için boşluk çubuğuna, çıkmak için 'q' tuşuna basınız.]"
 
-#: text-utils/more.c:1162
+#: text-utils/more.c:1168
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "...%d sayfa geri"
 msgstr[1] "...%d sayfa geri"
 
-#: text-utils/more.c:1210
+#: text-utils/more.c:1216
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "...%d satırına atlanıyor"
 msgstr[1] "...%d satırına atlanıyor"
 
-#: text-utils/more.c:1248
+#: text-utils/more.c:1254
 msgid ""
 "\n"
 "***Back***\n"
@@ -19103,11 +18861,11 @@ msgstr ""
 "***Kalan***\n"
 "\n"
 
-#: text-utils/more.c:1263
+#: text-utils/more.c:1269
 msgid "No previous regular expression"
 msgstr "Önceki düzenli ifade yok"
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1299
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
@@ -19117,7 +18875,7 @@ msgstr ""
 "Komutların çoğu bir k tamsayı argüman alabilir. Verilmezse köşeli\n"
 "parantezlerle belirtilenler öntanımlıdır. Yıldız (*) işareti yeni öntanımlı değer olacağını belirtir.\n"
 
-#: text-utils/more.c:1300
+#: text-utils/more.c:1306
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -19159,30 +18917,30 @@ msgstr ""
 ":f             Dosya ismini ve satır numarasını gösterir\n"
 ".              Önceki komut tekrarlanır\n"
 
-#: text-utils/more.c:1373 text-utils/more.c:1379
+#: text-utils/more.c:1379 text-utils/more.c:1385
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Yardım başlıkları için 'h' tuşuna basınız]"
 
-#: text-utils/more.c:1410
+#: text-utils/more.c:1416
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" satır %d"
 
-#: text-utils/more.c:1412
+#: text-utils/more.c:1418
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Dosya değil] satır %d"
 
-#: text-utils/more.c:1494
+#: text-utils/more.c:1500
 msgid "  Overflow\n"
 msgstr "  Taşma\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1549
 msgid "...skipping\n"
 msgstr "...atlanıyor\n"
 
-#: text-utils/more.c:1577
+#: text-utils/more.c:1583
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -19190,19 +18948,19 @@ msgstr ""
 "\n"
 "Kalıp bulunamadı\n"
 
-#: text-utils/more.c:1583 text-utils/pg.c:1027 text-utils/pg.c:1173
+#: text-utils/more.c:1589 text-utils/pg.c:1035 text-utils/pg.c:1181
 msgid "Pattern not found"
 msgstr "Kalıp bulunamadı"
 
-#: text-utils/more.c:1629
+#: text-utils/more.c:1635
 msgid "exec failed\n"
 msgstr "çalıştırma başarısız\n"
 
-#: text-utils/more.c:1643
+#: text-utils/more.c:1649
 msgid "can't fork\n"
 msgstr "ast süreç oluşturulamadı\n"
 
-#: text-utils/more.c:1677
+#: text-utils/more.c:1683
 msgid ""
 "\n"
 "...Skipping "
@@ -19210,23 +18968,23 @@ msgstr ""
 "\n"
 "...Atlanıyor "
 
-#: text-utils/more.c:1681
+#: text-utils/more.c:1687
 msgid "...Skipping to file "
 msgstr "...Dosyaya atlanıyor: "
 
-#: text-utils/more.c:1683
+#: text-utils/more.c:1689
 msgid "...Skipping back to file "
 msgstr "...Önceki dosyaya atlanıyor: "
 
-#: text-utils/more.c:1973
+#: text-utils/more.c:1979
 msgid "Line too long"
 msgstr "Satır çok uzun"
 
-#: text-utils/more.c:2010
+#: text-utils/more.c:2016
 msgid "No previous command to substitute for"
 msgstr "Yerini alacak öncesinde bir komut yok"
 
-#: text-utils/pg.c:144
+#: text-utils/pg.c:152
 msgid ""
 "-------------------------------------------------------\n"
 "  h                       this screen\n"
@@ -19274,138 +19032,138 @@ msgstr ""
 "Daha fazla bilgi için pg(1)'e bakın.\n"
 "-------------------------------------------------------\n"
 
-#: text-utils/pg.c:222
+#: text-utils/pg.c:230
 #, c-format
 msgid " %s [options] [+line] [+/pattern/] [files]\n"
 msgstr " %s [seçenekler] [+satır] [+/desen/] [dosyalar]\n"
 
-#: text-utils/pg.c:226
+#: text-utils/pg.c:234
 msgid "Browse pagewise through text files.\n"
 msgstr "Metin dosyalarına sayfalı şekilde gözat.\n"
 
-#: text-utils/pg.c:229
+#: text-utils/pg.c:237
 msgid " -number      lines per page\n"
 msgstr " -number      sayfa başına satır sayısı\n"
 
-#: text-utils/pg.c:230
+#: text-utils/pg.c:238
 msgid " -c           clear screen before displaying\n"
 msgstr " -c           gösterim öncesi ekranı temizle\n"
 
-#: text-utils/pg.c:231
+#: text-utils/pg.c:239
 msgid " -e           do not pause at end of a file\n"
 msgstr " -e           bir dosyanın sonunda bekleme\n"
 
-#: text-utils/pg.c:232
+#: text-utils/pg.c:240
 msgid " -f           do not split long lines\n"
 msgstr " -f           uzun satırları bölme\n"
 
-#: text-utils/pg.c:233
+#: text-utils/pg.c:241
 msgid " -n           terminate command with new line\n"
 msgstr " -n           komutu yeni satır ile sonlandır\n"
 
-#: text-utils/pg.c:234
+#: text-utils/pg.c:242
 msgid " -p <prompt>  specify prompt\n"
 msgstr " -p <prompt>  bilgi istemeyi belirt\n"
 
-#: text-utils/pg.c:235
+#: text-utils/pg.c:243
 msgid " -r           disallow shell escape\n"
 msgstr " -r           kabuk kaçışını engelle\n"
 
-#: text-utils/pg.c:236
+#: text-utils/pg.c:244
 msgid " -s           print messages to stdout\n"
 msgstr " -s           iletileri standart çıktıya yazdır\n"
 
-#: text-utils/pg.c:237
+#: text-utils/pg.c:245
 msgid " +number      start at the given line\n"
 msgstr " +sayı      verilen satırdan başla\n"
 
-#: text-utils/pg.c:238
+#: text-utils/pg.c:246
 msgid " +/pattern/   start at the line containing pattern\n"
 msgstr " +/desen/   deseni içeren satırdan başla\n"
 
-#: text-utils/pg.c:250
+#: text-utils/pg.c:258
 #, c-format
 msgid "option requires an argument -- %s"
 msgstr "seçenek bir argümanla kullanılır -- %s"
 
-#: text-utils/pg.c:256
+#: text-utils/pg.c:264
 #, c-format
 msgid "illegal option -- %s"
 msgstr "geçersiz seçenek -- %s"
 
-#: text-utils/pg.c:359
+#: text-utils/pg.c:367
 msgid "...skipping forward\n"
 msgstr "...ileri atlanıyor\n"
 
-#: text-utils/pg.c:361
+#: text-utils/pg.c:369
 msgid "...skipping backward\n"
 msgstr "...geri atlanıyor\n"
 
-#: text-utils/pg.c:377
+#: text-utils/pg.c:385
 msgid "No next file"
 msgstr "Sonrasında dosya yok"
 
-#: text-utils/pg.c:381
+#: text-utils/pg.c:389
 msgid "No previous file"
 msgstr "Öncesinde dosya yok"
 
-#: text-utils/pg.c:883
+#: text-utils/pg.c:891
 #, c-format
 msgid "Read error from %s file"
 msgstr "%s dosyasından okuma hatası"
 
-#: text-utils/pg.c:886
+#: text-utils/pg.c:894
 #, c-format
 msgid "Unexpected EOF in %s file"
 msgstr "%s doyasında beklenmedik dosya sonu"
 
-#: text-utils/pg.c:888
+#: text-utils/pg.c:896
 #, c-format
 msgid "Unknown error in %s file"
 msgstr "%s doyasında bilinmeyen hata"
 
-#: text-utils/pg.c:941
+#: text-utils/pg.c:949
 msgid "Cannot create temporary file"
 msgstr "Geçici dosya oluşturulamıyor"
 
-#: text-utils/pg.c:950 text-utils/pg.c:1114 text-utils/pg.c:1140
+#: text-utils/pg.c:958 text-utils/pg.c:1122 text-utils/pg.c:1148
 msgid "RE error: "
 msgstr "RE hatası:"
 
-#: text-utils/pg.c:1097
+#: text-utils/pg.c:1105
 msgid "(EOF)"
 msgstr "(DosyaSonu)"
 
-#: text-utils/pg.c:1122 text-utils/pg.c:1148
+#: text-utils/pg.c:1130 text-utils/pg.c:1156
 msgid "No remembered search string"
 msgstr "Arama dizgesi yok"
 
-#: text-utils/pg.c:1203
+#: text-utils/pg.c:1211
 msgid "cannot open "
 msgstr "açılamıyor "
 
-#: text-utils/pg.c:1255
+#: text-utils/pg.c:1263
 msgid "saved"
 msgstr "kaydedildi"
 
-#: text-utils/pg.c:1345
+#: text-utils/pg.c:1353
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": rflag kipinde ! komutu kullanılmaz.\n"
 
-#: text-utils/pg.c:1380
+#: text-utils/pg.c:1388
 msgid "fork() failed, try again later\n"
 msgstr "Alt süreç oluşturulamadı, daha sonra tekrar deneyin\n"
 
-#: text-utils/pg.c:1468
+#: text-utils/pg.c:1476
 msgid "(Next file: "
 msgstr "(Sonraki dosya: "
 
-#: text-utils/pg.c:1534
+#: text-utils/pg.c:1542
 #, c-format
 msgid "%s %s Copyright (c) 2000-2001 Gunnar Ritter. All rights reserved.\n"
 msgstr "%s %s Telif Hakkı (c) 2000-2001 Gunnar Ritter. Tüm hakkları saklıdır.\n"
 
-#: text-utils/pg.c:1587 text-utils/pg.c:1660
+#: text-utils/pg.c:1595 text-utils/pg.c:1668
 msgid "failed to parse number of lines per page"
 msgstr "sayfa başına satır sayısı ayrıştırılamadı"
 
@@ -19418,38 +19176,38 @@ msgstr "Kullanım: %s [seçenekler] [dosya ...]\n"
 msgid "Reverse lines characterwise.\n"
 msgstr "Satırları karakter olarak ters çevir.\n"
 
-#: text-utils/ul.c:135
+#: text-utils/ul.c:142
 #, c-format
 msgid " %s [options] [<file> ...]\n"
 msgstr " %s [seçenekler] [<dosya> ...]\n"
 
-#: text-utils/ul.c:138
+#: text-utils/ul.c:145
 msgid "Do underlining.\n"
 msgstr "Satırların altını çiz.\n"
 
-#: text-utils/ul.c:141
+#: text-utils/ul.c:148
 msgid " -t, -T, --terminal TERMINAL  override the TERM environment variable\n"
 msgstr " -t, -T, --terminal UÇBİRİM  TERM ortam değişkeninin üzerine yaz\n"
 
-#: text-utils/ul.c:142
+#: text-utils/ul.c:149
 msgid " -i, --indicated              underlining is indicated via a separate line\n"
 msgstr " -i, --indicated              satırların altını çizme ayrı bir satır ile belirtildi\n"
 
-#: text-utils/ul.c:203
+#: text-utils/ul.c:210
 msgid "trouble reading terminfo"
 msgstr "terminfo okunmaya çalışılıyor"
 
-#: text-utils/ul.c:208
+#: text-utils/ul.c:215
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "uç birim `%s' bilinmiyor, `dump' öntanımlanıyor"
 
-#: text-utils/ul.c:298
+#: text-utils/ul.c:305
 #, c-format
 msgid "unknown escape sequence in input: %o, %o"
 msgstr "girdide bilinmeyen kaçış dizisi: %o, %o"
 
-#: text-utils/ul.c:623
+#: text-utils/ul.c:630
 msgid "Input line too long."
 msgstr "Girdi satırı çok uzun."
 
