@@ -376,7 +376,7 @@ static void __attribute__((__noreturn__)) lsmem_usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -J, --json           use JSON output format\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
-	fputs(_(" -a, --all            list each individiual memory block\n"), out);
+	fputs(_(" -a, --all            list each individual memory block\n"), out);
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -o, --output <list>  output columns\n"), out);

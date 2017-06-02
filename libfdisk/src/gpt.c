@@ -2628,7 +2628,7 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 	/* calculate the size (bytes) of the entries array */
 	rc = gpt_calculate_sizeof_ents(gpt->pheader, entries, &new_size);
 	if (rc) {
-		fdisk_warnx(cxt, _("The number of the partition has be smaller than %zu."),
+		fdisk_warnx(cxt, _("The number of the partition has to be smaller than %zu."),
 				UINT32_MAX / le32_to_cpu(gpt->pheader->sizeof_partition_entry));
 		return rc;
 	}
