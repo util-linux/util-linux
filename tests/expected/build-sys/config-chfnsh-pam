@@ -42,7 +42,7 @@ agetty:
 blkdiscard:  librt 
 blkzone:  
 blockdev:  
-cal:  libncursesw libtinfo 
+cal:  libtinfo 
 chcpu:  
 chfn:  libpam libpam_misc libreadline libselinux 
 chmem:  

@@ -43,7 +43,7 @@ blkdiscard:  librt
 blkid.static: STATIC
 blkzone:  
 blockdev:  
-cal:  libncursesw libtinfo 
+cal:  libtinfo 
 chcpu:  
 chfn:  libpam libpam_misc libpthread libreadline libuser 
 chmem:  
