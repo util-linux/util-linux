@@ -15,9 +15,12 @@ PAST MAINTAINERS:
 AUTHORS (merged projects & commands):
 
       blkdiscard:      Lukas Czerner <lczerner@redhat.com>
+      blkzone:         Shaun Tancheff <shaun@tancheff.com>
+                       Damien Le Moal <damien.lemoal@wdc.com>
       fallocate:       Eric Sandeen <sandeen@redhat.com>
                        Karel Zak <kzak@redhat.com>
                        Matěj Cepl <mcepl@redhat.com>
+      fincore:         Masatake YAMATO <yamato@redhat.com>
       findmnt:         Karel Zak <kzak@redhat.com>
       flock:           H. Peter Anvin <hpa@zytor.com>
       fsck:            [merged from e2fsprogs]
@@ -41,6 +44,7 @@ AUTHORS (merged projects & commands):
                        Karel Zak <kzak@redhat.com>
       lslocks:         Davidlohr Bueso <dave@gnu.org>
       lslogins:        Ondrej Oprala <ooprala@redhat.com>
+      lsmem/chmem:     Heiko Carstens <heiko.carstens@de.ibm.com>
       mountpoint:      Karel Zak <kzak@redhat.com>
       nsenter:         Eric W. Biederman <ebiederm@xmission.com>
       prlimit:         Davidlohr Bueso <dave@gnu.org>
@@ -67,6 +71,8 @@ AUTHORS (merged projects & commands):
                        Miquel van Smoorenburg <miquels@cistron.nl>
       wipefs:          Karel Zak <kzak@redhat.com>
       swaplabel:       Jason Borden <jborden@bluehost.com>
+                       Karel Zak <kzak@redhat.com>
+      zramctl:         Timofey Titovets <nefelim4ag@gmail.com>
                        Karel Zak <kzak@redhat.com>
 
 
@@ -380,6 +386,7 @@ CONTRIBUTORS:
       Maxim V. Dziumanenko <mvd@mylinux.com.ua>
       Max Klinger <max@fs.lmu.de>
       Meelis Roos <mroos@linux.ee>
+      Mesutcan Kurt <mesutcank@gmail.com>
       Michael Bunk <bunk@iat.uni-leipzig.de>
       Michael Forney <mforney@mforney.org>
       Michael Glad <glad@daimi.aau.dk>
