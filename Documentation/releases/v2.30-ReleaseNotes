@@ -135,24 +135,33 @@ build-sys:
    - fix bashism, introduced in 85004b14  [Ruediger Meier]
    - fix compilation with ncurses and uClibc or musl libc  [Carlos Santos]
    - fix empty package release number  [Ruediger Meier]
+   - fix library order when linking  [Ruediger Meier]
    - fix lsmem dependence  [Karel Zak]
    - improve detection of the "isnan" function in uClibc  [Carlos Santos]
+   - make ncurses detection more robust  [Karel Zak]
    - mark lsmem and chmem as Linux only  [Karel Zak]
+   - ncurses headers cleanup  [Karel Zak]
+   - prefer ncurses-config rather than pkg-config  [Karel Zak]
    - prefer pkg-config for ncurses  [Karel Zak]
    - release++ (v2.30-rc1)  [Karel Zak]
+   - release++ (v2.30-rc2)  [Karel Zak]
    - remove column-old.c  [Karel Zak]
    - remove duplicate includes  [Karel Zak]
    - remove old git fallback from git-version-gen  [Ruediger Meier]
+   - require kernel headers on Linux  [Karel Zak]
    - simplify UL_ENABLE_ALIAS() semantic  [Karel Zak]
    - test_linux_version is Linux only  [Karel Zak]
    - update package release number during development  [Ruediger Meier]
    - use -lm for scriptreplay if necessary  [Karel Zak]
    - use MATH_LIBS for hwclock  [Karel Zak]
    - use sed to substitute  [Karel Zak]
+cal:
+   - ncurses cleanup  [Karel Zak]
 cfdisk:
    - add copyright to help  [Karel Zak]
    - add hints for scanners [coverity scan]  [Karel Zak]
    - avoid use of VLA in combination with sizeof() [smatch scan]  [Sami Kerola]
+   - fix compiler warning  [Karel Zak]
    - support UI refresh on ^L  [Karel Zak]
    - use buffer editor for ui_get_string()  [Karel Zak]
 chfn:
@@ -179,6 +188,7 @@ column:
    - add --table-truncate  [Karel Zak]
    - add --table-wrap  [Karel Zak]
    - add --tree to the man page  [Karel Zak]
+   - add missed semicolons in case of !HAVE_WIDECHAR  [Alexander Kuleshov]
    - add note that circular dependencies are ignored  [Karel Zak]
    - add support for trees  [Karel Zak]
    - be robust on empty table  [Karel Zak]
@@ -211,10 +221,13 @@ columns:
    - add note about width  [Karel Zak]
 disk-utils/mkfs.minix:
    - Set ninodes after checking max  [Nate Clark]
+dmesg:
+   - remove unnecessary header  [Karel Zak]
 docs:
    - Fix word repetitions  [Yuri Chornoivan]
    - add BUG REPORTING section to README  [Karel Zak]
    - add chmem and tailf to ReleaseNotes  [Karel Zak]
+   - add information about mailing list rejection  [J William Piggott]
    - add note about branches to README  [Karel Zak]
    - improve agetty.8 manual page  [Sami Kerola]
    - improve boilerplate.c options example  [Sami Kerola]
@@ -229,6 +242,7 @@ docs:
    - lsns(8)  SEE ALSO  add namespaces(7)  [Michael Kerrisk]
    - make column.1 example to use ascii output  [Sami Kerola]
    - mount(8)  Wording fix  [Michael Kerrisk]
+   - move source-code-management.txt to README  [J William Piggott]
    - namei(1)  SEE ALSO  add symlink(7)  [Michael Kerrisk]
    - nsenter(1)  Describe the 'file' argument used by namespace options  [Michael Kerrisk]
    - nsenter(1)  Formatting fix  [Michael Kerrisk]
@@ -244,6 +258,7 @@ docs:
    - update AUTHORS file  [Karel Zak]
    - update Documentation/deprecated.txt  [Karel Zak]
    - update TODO, add mount(8) noauto,auto  [Karel Zak]
+   - update howto-contribute.txt  [J William Piggott]
    - update source-code-management.txt  [Karel Zak]
    - update v2.30-ReleaseNotes  [J William Piggott]
    - update v2.30-ReleaseNotes  [Karel Zak]
@@ -366,7 +381,10 @@ lib:
 lib,strutils:
    - add strtoux[16|32|64]_or_err functions  [Heiko Carstens]
 lib/colors:
+   - Fix bug where help text was not being translated.  [Sebastian Rasmussen]
    - assert rathen than overflow [-Wnull-dereference]  [Karel Zak]
+   - fix test compilation  [Karel Zak]
+   - ncurses cleanup  [Karel Zak]
 lib/cpuset:
    - stop changing variable that is not read  [Sami Kerola]
 lib/idcache:
@@ -377,9 +395,14 @@ lib/linux_version:
    - fix stupid typo  [Karel Zak]
 lib/list:
    - remove LIST_HEAD macro  [Karel Zak]
+lib/loopdev:
+   - remove unnecessary header  [Karel Zak]
 lib/mbsedit:
    - add simple buffer editor  [Karel Zak]
    - fix typo in comment  [Sami Kerola]
+lib/pager:
+   - don't use pager if command not available  [Karel Zak]
+   - use xalloc  [Karel Zak]
 lib/parse-date:
    - don't use xalloc in lib-like code  [Karel Zak]
 lib/randutils:
@@ -394,6 +417,7 @@ lib/timer.c:
    - prevent pathological race condition  [Rasmus Villemoes]
    - remove bogus SA_SIGINFO from timer_settime call  [Rasmus Villemoes]
 libblkid:
+   - (docs) add missing 'since' tags  [Karel Zak]
    - (gpt) fix force flag  [Karel Zak]
    - Add support for Latin1 encoding in blkid_encode_to_utf8()  [Pali Rohár]
    - Fix blkid.conf parsing  [Tobias Stoeckmann]
@@ -418,6 +442,7 @@ libblkid/minix:
    - Sanity check superblock s_state for v 1 and 2  [Nate Clark]
    - Use same checks for version 3  [Nate Clark]
 libfdisk:
+   - (docs) add missing 'since' tags  [Karel Zak]
    - (dos) add ID related debug messages  [Karel Zak]
    - (dos) debug what we read from first sector  [Karel Zak]
    - (dos) make it possible to create primary/logical by template  [Karel Zak]
@@ -447,11 +472,14 @@ libfdisk:
    - fix compiler warning [-Wsign-compare]  [Karel Zak]
    - fix fdisk_set_wipe_area() calls  [Karel Zak]
    - fix potentially NULL pointer usage  [Karel Zak]
+   - fix variable shadowing  [Sami Kerola]
    - initialize partno variable [coverity scan]  [Karel Zak]
    - recount size when apply user device properties  [Karel Zak]
+   - update docs  [Karel Zak]
    - use memcpy() for non-terminated string [coverity scan]  [Karel Zak]
    - verify partno from template  [Karel Zak]
 libmount:
+   - (docs) add missing 'since' tags  [Karel Zak]
    - (docs) add unused declarations  [Karel Zak]
    - (docs) remove unwanted tag  [Karel Zak]
    - Ensure utab.lock mode 644  [Stanislav Brabec]
@@ -474,6 +502,7 @@ libmount:
    - support name=value for mnt_match_options()  [Karel Zak]
    - use x-systemd options as X-*  [Karel Zak]
 libsmartcols:
+   - (docs) add missing 'since' tags  [Karel Zak]
    - add debug mesg to see width change  [Karel Zak]
    - add scols_cell_get_alignment()  [Karel Zak]
    - add scols_line_is_ancestor()  [Karel Zak]
@@ -518,6 +547,7 @@ lscpu:
    - don't use path_exist() before path_fopen()  [Karel Zak]
    - fix mem leak [coverity scan]  [Karel Zak]
    - make cpu_{max,min}_mhz() usage more elegant  [Karel Zak]
+   - make min/max freq arrays usage more robust  [Karel Zak]
    - make osrelease file optional  [Karel Zak]
    - reuse the same buffer  [Karel Zak]
    - use libsmartcols to print summary too  [Karel Zak]
@@ -556,6 +586,7 @@ misc:
    - consolidate smartcols error messages  [Karel Zak]
    - do not use plain 0 as NULL [smatch scan]  [Sami Kerola]
    - fix some printf format strings  [Ruediger Meier]
+   - fix some warnings  [Ruediger Meier]
    - fix typos using codespell  [Ruediger Meier]
    - spelling, always use "cannot" instead of "can not"  [Ruediger Meier]
    - stop mixing declarations and code  [Sami Kerola]
@@ -584,8 +615,14 @@ partx:
 po:
    - merge changes  [Karel Zak]
    - update da.po (from translationproject.org)  [Joe Hansen]
+   - update de.po (from translationproject.org)  [Philipp Thomas]
    - update fr.po (from translationproject.org)  [Stéphane Aulery]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+   - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
+   - update tr.po (from translationproject.org)  [Mesutcan Kurt]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
    - update zh_CN.po (from translationproject.org)  [Wylmer Wang]
 rename:
    - add --no-act option  [Alexander F Rødseth]
@@ -632,6 +669,8 @@ term-utils/script:
    - fix typo leading to syntax error  [Bert van Hall]
 test:
    - fix mountpoint device check in libmount/loop  [Ruediger Meier]
+test_uuidd:
+   - don't use error.h  [Karel Zak]
 tests:
    - (libmount) parse version from command line  [Karel Zak]
    - (sfdisk) tell kernel about new partition  [Karel Zak]
@@ -660,13 +699,19 @@ tests:
    - add udevadm settle to sfdisk wipe  [Karel Zak]
    - add x86_64-16g lsmem test  [Karel Zak]
    - another improvement to the sfdisk wipe test  [Karel Zak]
+   - avoid diff of diffs  [Ruediger Meier]
    - check for TS_HELPER_SYSINFO in fincore test  [Karel Zak]
+   - check for ps --ppid  [Karel Zak]
+   - check for timeout command  [Ruediger Meier]
    - cleanup and update lsmem  [Karel Zak]
    - define columns for fincore test  [Karel Zak]
    - do not use plain 0 as NULL [smatch scan]  [Sami Kerola]
    - fincore/count, skip unsupported FS  [Ruediger Meier]
    - fix fincore/count for PAGE_SIZE != 4096  [Ruediger Meier]
+   - grep's short option -A is more portable  [Ruediger Meier]
    - handle dd errors in fincore/count  [Ruediger Meier]
+   - handle non glibc error message for fallocate  [Ruediger Meier]
+   - make /proc optional  [Karel Zak]
    - make sfdisk wipe partition optional  [Karel Zak]
    - redirect unwanted dd(1) advices to /dev/null  [Karel Zak]
    - refresh fincore test  [Karel Zak]
@@ -674,12 +719,15 @@ tests:
    - remove fincore SMALLER_THAN_PAGESIZE tests  [Ruediger Meier]
    - remove status=none dd(1) from fincore  [Karel Zak]
    - update build-sys due to readline  [Karel Zak]
+   - update build-sys test  [Karel Zak]
    - update libmount outputs  [Karel Zak]
    - update lsmem tests  [Karel Zak]
    - update script(1) tests  [Karel Zak]
    - update sfdisk output  [Karel Zak]
    - update wipe-partition  [Karel Zak]
    - use swap in sfdisk wipe test  [Karel Zak]
+text-utils:
+   - use proper paths to term.h  [Karel Zak]
 travis:
    - let OSX auto-skip utmpx tools  [Ruediger Meier]
 umount:
@@ -699,6 +747,7 @@ vipw:
 wall:
    - add --group option  [Jim Patterson]
    - check -g GID  [Karel Zak]
+   - make sure with not referencing a null pointer  [Karel Zak]
    - remove unnecessary include  [Karel Zak]
 wipefs:
    - add note about no-act to the man page  [Karel Zak]
