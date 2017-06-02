@@ -1,9 +1,9 @@
 # Swedish messages for util-linux.
 # This file is distributed under the same license as the util-linux package.
-# Copyright © 2001, 2002, 2003, 2004, 2007, 2016 Free Software Foundation, Inc.
+# Copyright © 2001, 2002, 2003, 2004, 2007, 2016, 2017 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2001, 2002, 2003, 2004.
 # Daniel Nylander <po@danielnylander.se>, 2007.
-# Sebastian Rasmussen <sebras@gmail.com>, 2016.
+# Sebastian Rasmussen <sebras@gmail.com>, 2016, 2017.
 #
 # Permission is granted to freely copy and distribute
 # this file and modified versions, provided that this
@@ -12,10 +12,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.29-rc2\n"
+"Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-05-23 11:41+0200\n"
-"PO-Revision-Date: 2016-10-23 12:38+0800\n"
+"POT-Creation-Date: 2017-05-23 12:21+0200\n"
+"PO-Revision-Date: 2017-05-28 05:13+0800\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -24,7 +24,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: disk-utils/addpart.c:14
 #, c-format
@@ -698,8 +698,8 @@ msgstr ""
 "Fortsätter… "
 
 #: disk-utils/fdformat.c:144 disk-utils/fsck.minix.c:182
-#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:458 sys-utils/blkdiscard.c:84
-#: sys-utils/tunelp.c:91
+#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:458
+#: sys-utils/blkdiscard.c:84 sys-utils/tunelp.c:91
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [flaggor] <enhet>\n"
@@ -920,14 +920,14 @@ msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "BLKGETSIZE-ioctl misslyckades på %s"
 
 #: disk-utils/fdisk.c:742 disk-utils/sfdisk.c:1483
-#, fuzzy, c-format
+#, c-format
 msgid "The old %s signature will be removed by a write command."
-msgstr "Signaturen kommer att tas bort genom ett skrivkommando."
+msgstr "Den gamla %s-signaturen kommer att tas bort genom ett skrivkommando."
 
 #: disk-utils/fdisk.c:746
-#, fuzzy, c-format
+#, c-format
 msgid "The old %s signature may remain on the device. It is recommended to wipe the device with wipefs(8) or fdisk --wipe, in order to avoid possible collisions."
-msgstr "Det rekommenderas starkt att radera enheten med wipefs(8) för att undvika möjliga kollisioner."
+msgstr "Den gamla %s-signaturen kan komma att finnas kvar på enheten. Det rekommenderas att radera enheten med wipefs(8) eller fdisk --wipe för att undvika möjliga kollisioner."
 
 #: disk-utils/fdisk.c:757
 #, c-format
@@ -1126,9 +1126,8 @@ msgstr "misslyckades med att allokera utmatningsrad"
 #: sys-utils/lscpu.c:1825 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
 #: sys-utils/prlimit.c:261 sys-utils/swapon.c:224 sys-utils/wdctl.c:243
 #: sys-utils/zramctl.c:475 text-utils/column.c:413
-#, fuzzy
 msgid "failed to add output data"
-msgstr "misslyckades att lägga till data till utmatningstabell"
+msgstr "misslyckades att lägga till utmatningsdata"
 
 #: disk-utils/fdisk-list.c:193
 #, c-format
@@ -1138,7 +1137,7 @@ msgstr "Partition %zu börjar inte på en fysisk sektorgräns."
 #: disk-utils/fdisk-list.c:200
 #, c-format
 msgid "Filesystem/RAID signature on partition %zu will be wiped."
-msgstr ""
+msgstr "Filsystem/RAID-signatur i partition %zu kommer att rensas bort."
 
 #: disk-utils/fdisk-list.c:209
 msgid "Partition table entries are not in disk order."
@@ -1863,15 +1862,15 @@ msgstr "Kontrollera och reparera ett komprimerat ROM-filsystem.\n"
 
 #: disk-utils/fsck.cramfs.c:119
 msgid " -a                       for compatibility only, ignored\n"
-msgstr " -a                       endast för kompatibilitet, hoppas över\n"
+msgstr " -a                        endast för kompatibilitet, hoppas över\n"
 
 #: disk-utils/fsck.cramfs.c:120
 msgid " -v, --verbose            be more verbose\n"
-msgstr " -v, --verbose            var utförligare\n"
+msgstr " -v, --verbose             var utförligare\n"
 
 #: disk-utils/fsck.cramfs.c:121
 msgid " -y                       for compatibility only, ignored\n"
-msgstr " -y                       endast för kompatibilitet, hoppas över\n"
+msgstr " -y                        endast för kompatibilitet, hoppas över\n"
 
 #: disk-utils/fsck.cramfs.c:122
 msgid " -b, --blocksize <size>   use this blocksize, defaults to page size\n"
@@ -1879,7 +1878,7 @@ msgstr " -b, --blocksize <storlek> använd denna blockstorlek, standardvärdet �
 
 #: disk-utils/fsck.cramfs.c:123
 msgid "     --extract[=<dir>]    test uncompression, optionally extract into <dir>\n"
-msgstr "     --extract[=<kat>]    testa dekomprimering, extrahera valfritt till <kat>\n"
+msgstr "     --extract[=<kat>]     testa dekomprimering, extrahera valfritt till <kat>\n"
 
 #: disk-utils/fsck.cramfs.c:161
 #, c-format
@@ -2224,9 +2223,9 @@ msgid "Write error: bad block in file '%s'\n"
 msgstr "Skrivfel: felaktigt block i filen \"%s\"\n"
 
 #: disk-utils/fsck.minix.c:424
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: block out of range\n"
-msgstr "Varning: antalet inoder är för stort.\n"
+msgstr "Varning: block utanför intervall\n"
 
 #: disk-utils/fsck.minix.c:511
 msgid "seek failed in write_super_block"
@@ -2842,7 +2841,7 @@ msgstr ""
 " -E         gör alla varningar till fel (avslutningsstatus inte noll)\n"
 " -b blkstrl använd denna blockstorlek, måste vara lika med sidstorlek\n"
 " -e utgåva  ställ in editionsnummer (del av fsid)\n"
-"-N endian  ställ in endian för cramfs (big|little|host), standardvärdet är host\n"
+"-N endian   ställ in endian för cramfs (big|little|host), standardvärdet är host\n"
 " -i fil     infoga en filavbild i filsystemet (kräver >= 2.4.0)\n"
 " -n namn    ställ in namnet på cramfs-filsystemet\n"
 " -p         fyll ut med %d byte för startkod\n"
@@ -3589,9 +3588,8 @@ msgstr[1] "#%2d: %9ju-%9ju (%9ju sektorer, %6ju MB)\n"
 #: misc-utils/lsblk.c:1919 misc-utils/lslocks.c:462 sys-utils/losetup.c:326
 #: sys-utils/lscpu.c:1769 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
 #: sys-utils/wdctl.c:272
-#, fuzzy
 msgid "failed to allocate output column"
-msgstr "misslyckades med att allokera utmatningsrad"
+msgstr "misslyckades med att allokera utmatningskolumn"
 
 #: disk-utils/partx.c:722
 #, c-format
@@ -3624,66 +3622,63 @@ msgstr "Berätta för kärnan om närvaron och numreringen av partitioner.\n"
 
 #: disk-utils/partx.c:759
 msgid " -a, --add            add specified partitions or all of them\n"
-msgstr " -a, --add            lägg till angivna partitioner eller allihop\n"
+msgstr " -a, --add             lägg till angivna partitioner eller allihop\n"
 
 #: disk-utils/partx.c:760
 msgid " -d, --delete         delete specified partitions or all of them\n"
-msgstr " -d, --delete         ta bort angivna partitioner eller allihop\n"
+msgstr " -d, --delete          ta bort angivna partitioner eller allihop\n"
 
 #: disk-utils/partx.c:761
 msgid " -u, --update         update specified partitions or all of them\n"
-msgstr " -u, --update         uppdatera angivna partitioner eller allihop\n"
+msgstr " -u, --update          uppdatera angivna partitioner eller allihop\n"
 
 #: disk-utils/partx.c:762
 msgid ""
 " -s, --show           list partitions\n"
 "\n"
 msgstr ""
-" -s, --show           lista partitioner\n"
+" -s, --show            lista partitioner\n"
 "\n"
 
 #: disk-utils/partx.c:763 misc-utils/lsblk.c:1637 sys-utils/lsmem.c:380
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
-msgstr " -b, --bytes          skriv ut STORLEK i byte istället för format läsbart för människor\n"
+msgstr " -b, --bytes           skriv ut STORLEK i byte istället för format läsbart för människor\n"
 
 #: disk-utils/partx.c:764
 msgid " -g, --noheadings     don't print headings for --show\n"
-msgstr " -g, --noheadings     skriv inte ut rubriker för --show\n"
+msgstr " -g, --noheadings      skriv inte ut rubriker för --show\n"
 
 #: disk-utils/partx.c:765
 msgid " -n, --nr <n:m>       specify the range of partitions (e.g. --nr 2:4)\n"
-msgstr " -n, --nr <n:m>       ange intervallet för partitioner (t.ex. --nr 2:4)\n"
+msgstr " -n, --nr <n:m>        ange intervallet för partitioner (t.ex. --nr 2:4)\n"
 
 #: disk-utils/partx.c:766
 msgid " -o, --output <list>  define which output columns to use\n"
-msgstr " -o, --output <lista> definiera vilka utmatningskolumner som ska användas\n"
+msgstr " -o, --output <lista>  definiera vilka utmatningskolumner som ska användas\n"
 
 #: disk-utils/partx.c:767 misc-utils/lsblk.c:1652 sys-utils/lsmem.c:378
 msgid " -P, --pairs          use key=\"value\" output format\n"
-msgstr " -P, --pairs          använd utmatningsformatet nyckel=\"värde\"\n"
+msgstr " -P, --pairs           använd utmatningsformatet nyckel=\"värde\"\n"
 
 #: disk-utils/partx.c:768 misc-utils/lsblk.c:1653 sys-utils/lsmem.c:383
 msgid " -r, --raw            use raw output format\n"
-msgstr " -r, --raw           använd rått utmatningsformat\n"
+msgstr " -r, --raw             använd rått utmatningsformat\n"
 
 #: disk-utils/partx.c:769
-#, fuzzy
 msgid " -S, --sector-size <num>  overwrite sector size\n"
-msgstr " -b, --sector-size <storlek>   fysisk och logisk sektorstorlek\n"
+msgstr " -b, --sector-size <num>       skriv över sektorstorlek\n"
 
 #: disk-utils/partx.c:770
-#, fuzzy
 msgid " -t, --type <type>    specify the partition type\n"
-msgstr " -t, --type <typ>     ange partitionstyp (dos, bsd, solaris, etc.)\n"
+msgstr " -t, --type <typ>      ange partitionstyp\n"
 
 #: disk-utils/partx.c:771
-#, fuzzy
 msgid "     --list-types     list supported partition types and exit\n"
-msgstr "    -T [eller --list-types]:visa de kända partitionstyperna"
+msgstr "     --list-types      visa de kända partitionstyperna och avsluta\n"
 
 #: disk-utils/partx.c:772 sys-utils/fallocate.c:100
 msgid " -v, --verbose        verbose mode\n"
-msgstr " -v, --verbose        utförligt läge\n"
+msgstr " -v, --verbose         utförligt läge\n"
 
 #: disk-utils/partx.c:778
 msgid ""
@@ -3974,18 +3969,18 @@ msgid "%s: partition %zu: failed to delete"
 msgstr "%s: partition %zu: misslyckades med att ta bort"
 
 #: disk-utils/sfdisk.c:956
-#, fuzzy, c-format
+#, c-format
 msgid "%s: does not contain a recognized partition table"
-msgstr "Enheten innehåller inte en igenkänd partitionstabell."
+msgstr "%s: innehåller inte en igenkänd partitionstabell"
 
 #: disk-utils/sfdisk.c:960
 msgid "failed to allocate dump struct"
 msgstr "misslyckade att allokera dumpstruktur"
 
 #: disk-utils/sfdisk.c:964
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to dump partition table"
-msgstr "misslyckades med att dumpa partitionstabell"
+msgstr "%s: misslyckades med att dumpa partitionstabell"
 
 #: disk-utils/sfdisk.c:994
 #, c-format
@@ -4146,9 +4141,9 @@ msgid "line %d: unsupported command"
 msgstr "rad %d: kommando stöds inte"
 
 #: disk-utils/sfdisk.c:1489
-#, fuzzy, c-format
+#, c-format
 msgid "The old %s signature may remain on the device. It is recommended to wipe the device with wipefs(8) or sfdisk --wipe, in order to avoid possible collisions."
-msgstr "Det rekommenderas starkt att radera enheten med wipefs(8) för att undvika möjliga kollisioner."
+msgstr "Den gamla %s-signaturen kan komma att finnas kvar på enheten. Det rekommenderas att radera enheten med wipefs(8) eller sfdisk --wipe, för att undvika möjliga kollisioner."
 
 #: disk-utils/sfdisk.c:1537
 msgid "failed to allocate partition name"
@@ -4262,9 +4257,9 @@ msgid "Failed to apply script headers, disk label not created."
 msgstr "Misslyckades med att tillämpa skripthuvuden, disketikett skapades inte."
 
 #: disk-utils/sfdisk.c:1763
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to add #%d partition"
-msgstr "Misslyckades med att lägga till partition"
+msgstr "Misslyckades med att lägga till #%d partition"
 
 #: disk-utils/sfdisk.c:1786
 msgid "Script header accepted."
@@ -4377,15 +4372,15 @@ msgstr " <typ>                     partitionstyp, GUID för GPT, hex för MBR\n"
 
 #: disk-utils/sfdisk.c:1878
 msgid " -a, --append              append partitions to existing partition table\n"
-msgstr " -a, --append              lägg till partitioner till existerande partitionstabell\n"
+msgstr " -a, --append               lägg till partitioner till existerande partitionstabell\n"
 
 #: disk-utils/sfdisk.c:1879
 msgid " -b, --backup              backup partition table sectors (see -O)\n"
-msgstr " -b, --backup              säkerhetskopiera sektorer med partitionstabell (se -O)\n"
+msgstr " -b, --backup               säkerhetskopiera sektorer med partitionstabell (se -O)\n"
 
 #: disk-utils/sfdisk.c:1880
 msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
-msgstr "     --bytes               skriv ut STORLEK i byte snarare än i ett format läsbar av människor\n"
+msgstr "     --bytes                skriv ut STORLEK i byte snarare än i ett format läsbar av människor\n"
 
 #: disk-utils/sfdisk.c:1881
 msgid "     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"
@@ -4393,27 +4388,27 @@ msgstr "     --move-data[=<typskript>]  flytta partitionsdata efter omlokaliseri
 
 #: disk-utils/sfdisk.c:1882
 msgid " -f, --force               disable all consistency checking\n"
-msgstr " -f, --force               inaktivera alla konsistenskontroller\n"
+msgstr " -f, --force                inaktivera alla konsistenskontroller\n"
 
 #: disk-utils/sfdisk.c:1883
 msgid "     --color[=<when>]      colorize output (auto, always or never)\n"
-msgstr "     --color[=<när>]       färglägg utmatning (auto, always eller never)\n"
+msgstr "     --color[=<när>]        färglägg utmatning (auto, always eller never)\n"
 
 #: disk-utils/sfdisk.c:1886
 msgid " -N, --partno <num>        specify partition number\n"
-msgstr " -N, --partno <num>        ange partitionsnummer\n"
+msgstr " -N, --partno <num>         ange partitionsnummer\n"
 
 #: disk-utils/sfdisk.c:1887
 msgid " -n, --no-act              do everything except write to device\n"
-msgstr " -n, --no-act              gör allt förutom att skriva till enhet\n"
+msgstr " -n, --no-act               gör allt förutom att skriva till enhet\n"
 
 #: disk-utils/sfdisk.c:1888
 msgid "     --no-reread           do not check whether the device is in use\n"
-msgstr "     --no-reread           kontrollera inte huruvida enheten används\n"
+msgstr "     --no-reread            kontrollera inte huruvida enheten används\n"
 
 #: disk-utils/sfdisk.c:1889
 msgid "     --no-tell-kernel      do not tell kernel about changes\n"
-msgstr "     --no-tell-kernel     berätta inte för kärna om ändringar\n"
+msgstr "     --no-tell-kernel       berätta inte för kärna om ändringar\n"
 
 #: disk-utils/sfdisk.c:1890
 msgid " -O, --backup-file <path>  override default backup file name\n"
@@ -4421,35 +4416,35 @@ msgstr " -O, --backup-file <sökväg> åsidosätt standardfilnamnet för säkerh
 
 #: disk-utils/sfdisk.c:1891
 msgid " -o, --output <list>       output columns\n"
-msgstr " -o, --output <lista>      mata ut kolumner\n"
+msgstr " -o, --output <lista>       mata ut kolumner\n"
 
 #: disk-utils/sfdisk.c:1892
 msgid " -q, --quiet               suppress extra info messages\n"
-msgstr " -q, --quiet               undertryck extra informationsmeddelanden\n"
+msgstr " -q, --quiet                undertryck extra informationsmeddelanden\n"
 
 #: disk-utils/sfdisk.c:1893
 msgid " -w, --wipe <mode>         wipe signatures (auto, always or never)\n"
-msgstr " -w, --wipe <läge>         radera signaturer (auto, always eller never)\n"
+msgstr " -w, --wipe <läge>          radera signaturer (auto, always eller never)\n"
 
 #: disk-utils/sfdisk.c:1895
 msgid " -X, --label <name>        specify label type (dos, gpt, ...)\n"
-msgstr " -X, --label <namn>        ange etikettyp (dos, gpt, …)\n"
+msgstr " -X, --label <namn>         ange etikettyp (dos, gpt, …)\n"
 
 #: disk-utils/sfdisk.c:1896
 msgid " -Y, --label-nested <name> specify nested label type (dos, bsd)\n"
-msgstr " -Y, --label-nested <namn> ange nästlad etikettyp (dos, bsd)\n"
+msgstr " -Y, --label-nested <namn>  ange nästlad etikettyp (dos, bsd)\n"
 
 #: disk-utils/sfdisk.c:1898
 msgid " -G, --show-pt-geometry    deprecated, alias to --show-geometry\n"
-msgstr " -G, --show-pt-geometry    föråldrad, alias för --show-geometry\n"
+msgstr " -G, --show-pt-geometry     föråldrad, alias för --show-geometry\n"
 
 #: disk-utils/sfdisk.c:1899
 msgid " -L, --Linux               deprecated, only for backward compatibility\n"
-msgstr " -L, --Linux               föråldrad, endast för bakåtkompatibilitet\n"
+msgstr " -L, --Linux                föråldrad, endast för bakåtkompatibilitet\n"
 
 #: disk-utils/sfdisk.c:1900
 msgid " -u, --unit S              deprecated, only sector unit is supported\n"
-msgstr " -u, --unit S              föråldrad, endast enheten sektorer stöds\n"
+msgstr " -u, --unit S               föråldrad, endast enheten sektorer stöds\n"
 
 #: disk-utils/sfdisk.c:1904 login-utils/chfn.c:107 login-utils/chsh.c:84
 msgid " -v, --version  output version information and exit\n"
@@ -4526,19 +4521,19 @@ msgid ""
 " -U, --uuid <uuid>   specify a new uuid\n"
 msgstr ""
 " -L, --label <etikett> ange en ny etikett\n"
-" -U, --uuid <uuid>   ange ett nytt uuid\n"
+" -U, --uuid <uuid>     ange ett nytt uuid\n"
 
 #: disk-utils/swaplabel.c:167
 msgid "ignore -U (UUIDs are unsupported)"
 msgstr "hoppa över -U (UUID:n stöds inte)"
 
 #: include/c.h:214
-#, fuzzy, c-format
+#, c-format
 msgid "Try '%s --help' for more information.\n"
 msgstr "Försök med ”%s --help” för vidare information.\n"
 
 #: include/c.h:220
-#, fuzzy, c-format
+#, c-format
 msgid "Try '%s -h' for more information.\n"
 msgstr "Försök med ”%s --help” för vidare information.\n"
 
@@ -4597,9 +4592,9 @@ msgid "failed to set the %s environment variable"
 msgstr "misslyckades med att ställa in miljövariabeln %s"
 
 #: include/optutils.h:85
-#, fuzzy, c-format
+#, c-format
 msgid "%s: mutually exclusive arguments:"
-msgstr "%s och %s är ömsesidigt uteslutande"
+msgstr "%s: är ömsesidigt uteslutande:"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"
@@ -5267,9 +5262,9 @@ msgid "Cylinders as display units are deprecated."
 msgstr "Cylindrar som visningsenhet är föråldrade."
 
 #: libfdisk/src/dos.c:357
-#, fuzzy, c-format
+#, c-format
 msgid "The size of this disk is %s (%ju bytes). DOS partition table format cannot be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
-msgstr "Storleken på disken är %s (%ju byte). DOS partitionstabellsformat kan inte användas för enheter där volymerna är större än %lu byte för %lu-byte sektorer. Använd GUID partitionstabellsformat (GPT)."
+msgstr "Storleken på denna disk är %s (%ju byte). DOS partitionstabellsformat kan inte användas för enheter där volymerna är större än %lu byte för %lu-byte sektorer. Använd GUID partitionstabellsformat (GPT)."
 
 #: libfdisk/src/dos.c:516
 msgid "Bad offset in primary extended partition."
@@ -5937,9 +5932,9 @@ msgid "unsupported GPT attribute bit '%s'"
 msgstr "GPT-attributsbit ”%s” stöds inte"
 
 #: libfdisk/src/gpt.c:1708
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse GPT attribute string '%s'"
-msgstr "misslyckades med att tolka lista ”%s”"
+msgstr "misslyckades med att tolka GPT-attributsträng ”%s”"
 
 #: libfdisk/src/gpt.c:1803
 #, c-format
@@ -6028,9 +6023,9 @@ msgid "Header version: %s"
 msgstr "Huvudversion: %s"
 
 #: libfdisk/src/gpt.c:2125
-#, fuzzy, c-format
+#, c-format
 msgid "Using %zu out of %zu partitions."
-msgstr "Använder %u av %d partitioner."
+msgstr "Använder %zu av %zu partitioner."
 
 #: libfdisk/src/gpt.c:2135
 #, c-format
@@ -6093,19 +6088,19 @@ msgid "Not enough space for new partition table!"
 msgstr "Inte tillräckligt ledigt utrymme för ny partitionstabell!"
 
 #: libfdisk/src/gpt.c:2583
-#, fuzzy, c-format
+#, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
-msgstr "Partition #%u utanför intervall (minsta start är %<PRIu64> sektorer)"
+msgstr "Partition #%zu utanför intervall (minsta start är %<PRIu64> sektorer)"
 
 #: libfdisk/src/gpt.c:2588
-#, fuzzy, c-format
+#, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
-msgstr "Partition #%u är utanför intervall (största slut är %<PRIu64> sektorer)"
+msgstr "Partition #%zu är utanför intervall (största slut är %<PRIu64> sektorer)"
 
 #: libfdisk/src/gpt.c:2631
-#, fuzzy, c-format
+#, c-format
 msgid "The number of the partition has be smaller than %zu."
-msgstr "Det maximala antalet partitioner har skapats."
+msgstr "Partitionsnumret måste vara mindre än %zu."
 
 #: libfdisk/src/gpt.c:2654
 msgid "Cannot allocate memory!"
@@ -6579,9 +6574,9 @@ msgstr ""
 "Är du säker på att du vill tagga partitionen som Linux-växlingsyta?"
 
 #: libmount/src/context.c:2359
-#, fuzzy, c-format
+#, c-format
 msgid "operation failed: %m"
-msgstr "readlink misslyckades: %s"
+msgstr "åtgärd misslyckades: %m"
 
 #: libmount/src/context_mount.c:1305
 #, c-format
@@ -6589,14 +6584,14 @@ msgid "WARNING: failed to apply propagation flags"
 msgstr "VARNING: misslyckades med att tillämpa propageringsflaggor"
 
 #: libmount/src/context_mount.c:1315
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: device write-protected, mounted read-only"
-msgstr "%s är skrivskyddad, monterar som endast läsbar"
+msgstr "VARNING: enhet skrivskyddad, monterad som endast läsbar"
 
 #: libmount/src/context_mount.c:1329
 #, c-format
 msgid "operation permitted for root only"
-msgstr ""
+msgstr "åtgärd endast tillåten för root"
 
 #: libmount/src/context_mount.c:1333
 #, c-format
@@ -6604,14 +6599,14 @@ msgid "%s is already mounted"
 msgstr "%s är redan monterad"
 
 #: libmount/src/context_mount.c:1339
-#, fuzzy, c-format
+#, c-format
 msgid "can't find in %s"
-msgstr "kan inte hitta %s i %s"
+msgstr "kan inte hitta i %s"
 
 #: libmount/src/context_mount.c:1342
-#, fuzzy, c-format
+#, c-format
 msgid "can't find mount point in %s"
-msgstr "kan inte hitta monteringspunkt %s i %s"
+msgstr "kan inte hitta monteringspunkt i %s"
 
 #: libmount/src/context_mount.c:1345
 #, c-format
@@ -6621,17 +6616,17 @@ msgstr "kan inte hitta monteringskälla %s i %s"
 #: libmount/src/context_mount.c:1350
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
-msgstr ""
+msgstr "ytterligare filsystemsdetektering för %s; använd -t <typ> eller wipefs(8)"
 
 #: libmount/src/context_mount.c:1355
-#, fuzzy, c-format
+#, c-format
 msgid "failed to determine filesystem type"
-msgstr "kan inte identifiera filsystemstyp på disk"
+msgstr "misslyckades med att identifiera filsystemstyp"
 
 #: libmount/src/context_mount.c:1356
-#, fuzzy, c-format
+#, c-format
 msgid "no filesystem type specified"
-msgstr "inget filnamn angivet"
+msgstr "ingen filsystemstyp angiven"
 
 #: libmount/src/context_mount.c:1363
 #, c-format
@@ -6639,14 +6634,14 @@ msgid "can't find %s"
 msgstr "kan inte hitta %s"
 
 #: libmount/src/context_mount.c:1365
-#, fuzzy, c-format
+#, c-format
 msgid "no mount source specified"
-msgstr "ingen monteringspunkt angavs"
+msgstr "ingen monteringspunkt angiven"
 
 #: libmount/src/context_mount.c:1371
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse mount options: %m"
-msgstr "misslyckades med att tolka monteringsflaggor"
+msgstr "misslyckades med att tolka monteringsflaggor: %m"
 
 #: libmount/src/context_mount.c:1372
 #, c-format
@@ -6654,29 +6649,29 @@ msgid "failed to parse mount options"
 msgstr "misslyckades med att tolka monteringsflaggor"
 
 #: libmount/src/context_mount.c:1376
-#, fuzzy, c-format
+#, c-format
 msgid "failed to setup loop device for %s"
-msgstr "%s: misslyckades med att ställa in loopenhet"
+msgstr "misslyckades med att ställa in loopenhet för %s"
 
 #: libmount/src/context_mount.c:1380
-#, fuzzy, c-format
+#, c-format
 msgid "overlapping loop device exists for %s"
-msgstr "%s: överlappande loopenhet existerar"
+msgstr "överlappande loopenhet existerar för %s"
 
 #: libmount/src/context_mount.c:1383
-#, fuzzy, c-format
+#, c-format
 msgid "mount failed: %m"
-msgstr "montering av %s misslyckades"
+msgstr "mount misslyckjades: %m"
 
 #: libmount/src/context_mount.c:1393
-#, fuzzy, c-format
+#, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
-msgstr "%s: filsystemet avmonterades, men mount(8) misslyckades"
+msgstr "filsystemet monterades, men efterföljande åtgärd misslyckades: %m"
 
 #: libmount/src/context_mount.c:1411 libmount/src/context_mount.c:1468
-#, fuzzy, c-format
+#, c-format
 msgid "mount point is not a directory"
-msgstr "monteringspunkt %s är inte en katalog"
+msgstr "monteringspunkt är inte en katalog"
 
 #: libmount/src/context_mount.c:1413 login-utils/newgrp.c:227
 #, c-format
@@ -6689,29 +6684,29 @@ msgid "must be superuser to use mount"
 msgstr "måste vara superanvändare för att använda mount"
 
 #: libmount/src/context_mount.c:1425
-#, fuzzy, c-format
+#, c-format
 msgid "mount point is busy"
-msgstr "monteringspunkt"
+msgstr "monteringspunkt är upptagen"
 
 #: libmount/src/context_mount.c:1438
-#, fuzzy, c-format
+#, c-format
 msgid "%s already mounted on %s"
-msgstr "%s är redan monterad eller så är %s upptagen"
+msgstr "%s är redan monterad på %s"
 
 #: libmount/src/context_mount.c:1444
-#, fuzzy, c-format
+#, c-format
 msgid "%s already mounted or mount point busy"
-msgstr "%s är redan monterad eller så är %s upptagen"
+msgstr "%s är redan monterad eller så är monteringspunkten upptagen"
 
 #: libmount/src/context_mount.c:1450
-#, fuzzy, c-format
+#, c-format
 msgid "mount point does not exist"
-msgstr "monteringspunkt %s finns inte"
+msgstr "monteringspunkt finns inte"
 
 #: libmount/src/context_mount.c:1453
-#, fuzzy, c-format
+#, c-format
 msgid "mount point is a symbolic link to nowhere"
-msgstr "monteringspunkt %s är en symbolisk länk till ingenstans"
+msgstr "monteringspunkt är en symbolisk länk till ingenstans"
 
 #: libmount/src/context_mount.c:1458
 #, c-format
@@ -6720,9 +6715,9 @@ msgstr "specialenhet %s finns inte"
 
 #: libmount/src/context_mount.c:1461 libmount/src/context_mount.c:1477
 #: libmount/src/context_mount.c:1561 libmount/src/context_mount.c:1575
-#, fuzzy, c-format
+#, c-format
 msgid "mount(2) system call failed: %m"
-msgstr "mount(2) misslyckades"
+msgstr "mount(2) systemanrop misslyckades: %m"
 
 #: libmount/src/context_mount.c:1473
 #, c-format
@@ -6730,35 +6725,29 @@ msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specialenhet %s finns inte (ett sökvägsprefix är inte en katalog)"
 
 #: libmount/src/context_mount.c:1485
-#, fuzzy, c-format
+#, c-format
 msgid "mount point not mounted or bad option"
-msgstr "%s är inte monterad eller felaktig flagga"
+msgstr "monteringspunkt inte monterad eller felaktig flagga"
 
 #: libmount/src/context_mount.c:1487
-#, fuzzy, c-format
+#, c-format
 msgid "not mount point or bad option"
-msgstr "%s är inte en monteringspunkt eller felaktig flagga"
+msgstr "inte en monteringspunkt eller felaktig flagga"
 
 #: libmount/src/context_mount.c:1490
-#, fuzzy, c-format
+#, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
-msgstr ""
-"felaktig flagga. Notera att flytta en montering som finns under en\n"
-"       delad montering inte stöds."
+msgstr "felaktig flagga; att flytta en montering som finns under en delad montering stöds inte."
 
 #: libmount/src/context_mount.c:1494
-#, fuzzy, c-format
+#, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
-msgstr ""
-"       (för flera filsystem (t.ex. nfs, cifs) kan du behöva\n"
-"       ett hjälpprogram /sbin/mount.<typ>)\n"
+msgstr "felaktig flagga; för flera filsystem (t.ex. nfs, cifs) kan du behöva ett hjälpprogram /sbin/mount.<typ>"
 
 #: libmount/src/context_mount.c:1498
-#, fuzzy, c-format
+#, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
-msgstr ""
-"fel filsystemstyp, felaktig flagga, felaktigt superblock på %s,\n"
-"       codepage eller hjälpprogram saknas, eller annat fel"
+msgstr "fel filsystemstyp, felaktig flagga, felaktigt superblock på %s, teckentabell eller hjälpprogram saknas, eller annat fel"
 
 #: libmount/src/context_mount.c:1505
 #, c-format
@@ -6766,9 +6755,9 @@ msgid "mount table full"
 msgstr "monteringstabellen full"
 
 #: libmount/src/context_mount.c:1510
-#, fuzzy, c-format
+#, c-format
 msgid "can't read superblock on %s"
-msgstr "%s: kan inte läsa superblock"
+msgstr "kan inte läsa superblock på %s"
 
 #: libmount/src/context_mount.c:1517
 #, c-format
@@ -6786,21 +6775,19 @@ msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s är inte en blockenhet, och stat(2) misslyckas?"
 
 #: libmount/src/context_mount.c:1532
-#, fuzzy, c-format
+#, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
-msgstr ""
-"kärnan känner inte igen %s som en blockenhet\n"
-"       (prova ”modprobe drivrutin”?)"
+msgstr "kärnan känner inte igen %s som en blockenhet; kanske ”modprobe drivrutin” är nödvändigt"
 
 #: libmount/src/context_mount.c:1535
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a block device; try \"-o loop\""
-msgstr "%s är ingen blockenhet (prova med ”-o loop”?)"
+msgstr "%s är inte en blockenhet, prova med ”-o loop”"
 
 #: libmount/src/context_mount.c:1537
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a block device"
-msgstr " %s är inte en blockenhet"
+msgstr "%s är inte en blockenhet"
 
 #: libmount/src/context_mount.c:1544
 #, c-format
@@ -6813,9 +6800,9 @@ msgid "cannot mount %s read-only"
 msgstr "kan inte montera %s som endast läsbar"
 
 #: libmount/src/context_mount.c:1554
-#, fuzzy, c-format
+#, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
-msgstr "%s är skrivskyddat men en explicit ”-w”-flagga angavs"
+msgstr "%s är skrivskyddad men en explicit skrivbart läge begärdes"
 
 #: libmount/src/context_mount.c:1556
 #, c-format
@@ -6823,9 +6810,9 @@ msgid "cannot remount %s read-write, is write-protected"
 msgstr "kan inte återmontera %s för läsning/skrivning, den är skrivskyddad"
 
 #: libmount/src/context_mount.c:1558
-#, fuzzy, c-format
+#, c-format
 msgid "bind %s failed"
-msgstr "%s misslyckades"
+msgstr "bind %s misslyckades"
 
 #: libmount/src/context_mount.c:1569
 #, c-format
@@ -6833,54 +6820,54 @@ msgid "no medium found on %s"
 msgstr "inget media hittat på %s"
 
 #: libmount/src/context_umount.c:1051 libmount/src/context_umount.c:1080
-#, fuzzy, c-format
+#, c-format
 msgid "not mounted"
-msgstr "%s: inte monterad"
+msgstr "inte monterad"
 
 #: libmount/src/context_umount.c:1055
-#, fuzzy, c-format
+#, c-format
 msgid "umount failed: %m"
-msgstr "%s: umount misslyckades"
+msgstr "umount misslyckades: %m"
 
 #: libmount/src/context_umount.c:1064
-#, fuzzy, c-format
+#, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
-msgstr "%s: filsystemet avmonterades, men mount(8) misslyckades"
+msgstr "filsystemet avmonterades, men efterföljande åtgärd misslyckades: %m"
 
 #: libmount/src/context_umount.c:1077
-#, fuzzy, c-format
+#, c-format
 msgid "invalid block device"
-msgstr "%s: ogiltig blockenhet"
+msgstr "ogiltig blockenhet"
 
 #: libmount/src/context_umount.c:1083
-#, fuzzy, c-format
+#, c-format
 msgid "can't write superblock"
-msgstr "%s: kan inte skriva superblock"
+msgstr "kan inte skriva superblock"
 
 #: libmount/src/context_umount.c:1086
-#, fuzzy, c-format
+#, c-format
 msgid "target is busy"
-msgstr "mål existerar"
+msgstr "mål upptaget"
 
 #: libmount/src/context_umount.c:1089
-#, fuzzy, c-format
+#, c-format
 msgid "no mount point specified"
 msgstr "ingen monteringspunkt angavs"
 
 #: libmount/src/context_umount.c:1092
-#, fuzzy, c-format
+#, c-format
 msgid "must be superuser to unmount"
-msgstr "%s: måste vara superanvändare för att avmontera"
+msgstr "måste vara superanvändare för att avmontera"
 
 #: libmount/src/context_umount.c:1095
-#, fuzzy, c-format
+#, c-format
 msgid "block devices are not permitted on filesystem"
-msgstr "%s: blockenheter är inte tillåtna på filsystem"
+msgstr "blockenheter är inte tillåtna på filsystem"
 
 #: libmount/src/context_umount.c:1098
-#, fuzzy, c-format
+#, c-format
 msgid "umount(2) system call failed: %m"
-msgstr "mount(2) misslyckades"
+msgstr "umount(2) systemanrop misslyckades: %m"
 
 #: lib/pager.c:112
 #, c-format
@@ -6902,17 +6889,14 @@ msgid "failed to parse CPU mask %s"
 msgstr "misslyckades med att tolka CPU-mask %s"
 
 #: lib/plymouth-ctrl.c:72
-#, fuzzy
 msgid "cannot open UNIX socket"
 msgstr "kan inte öppna UNIX-uttag"
 
 #: lib/plymouth-ctrl.c:78
-#, fuzzy
 msgid "cannot set option for UNIX socket"
 msgstr "kan inte ställa in alternativ för UNIX-uttag"
 
 #: lib/plymouth-ctrl.c:91
-#, fuzzy
 msgid "cannot connect on UNIX socket"
 msgstr "kan inte ansluta till UNIX-uttag"
 
@@ -6922,9 +6906,8 @@ msgid "the plymouth request %c is not implemented"
 msgstr "plymouth-begäran %c är inte implementerad"
 
 #: lib/randutils.c:159
-#, fuzzy
 msgid "getrandom() function"
-msgstr "pseudoslumpstalsfunktioner från libc"
+msgstr "getrandom()-funktion"
 
 #: lib/randutils.c:172
 msgid "libc pseudo-random functions"
@@ -6965,15 +6948,15 @@ msgstr " -f, --full-name <fullständigt namn> riktigt namn\n"
 
 #: login-utils/chfn.c:102
 msgid " -o, --office <office>        office number\n"
-msgstr " -o, --office <kontor>        kontorsnummer\n"
+msgstr " -o, --office <kontor>               kontorsnummer\n"
 
 #: login-utils/chfn.c:103
 msgid " -p, --office-phone <phone>   office phone number\n"
-msgstr " -p, --office-phone <tfnnr>   telefonnummer till kontoret\n"
+msgstr " -p, --office-phone <tfnnr>          telefonnummer till kontoret\n"
 
 #: login-utils/chfn.c:104
 msgid " -h, --home-phone <phone>     home phone number\n"
-msgstr " -h, --home-phone <telefon>   nummer till hemtelefon\n"
+msgstr " -h, --home-phone <telefon>          nummer till hemtelefon\n"
 
 #: login-utils/chfn.c:106 login-utils/chsh.c:83
 msgid " -u, --help     display this help and exit\n"
@@ -7252,13 +7235,13 @@ msgstr ""
 "                               notime|short|full|iso\n"
 
 #: login-utils/last.c:889
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "%s begins %s\n"
 msgstr ""
 "\n"
-"%s inleder %s"
+"%s inleder %s\n"
 
 #: login-utils/last.c:968 term-utils/scriptreplay.c:64
 #: term-utils/scriptreplay.c:68
@@ -7755,31 +7738,31 @@ msgstr "Visa information om kända användare på systemet.\n"
 
 #: login-utils/lslogins.c:1233
 msgid " -a, --acc-expiration     display info about passwords expiration\n"
-msgstr " -a, --acc-expiration     visa information om lösenordsutgång\n"
+msgstr " -a, --acc-expiration        visa information om lösenordsutgång\n"
 
 #: login-utils/lslogins.c:1234
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
-msgstr " -c, --colon-separate     visa data i ett format liknande det i /etc/passwd\n"
+msgstr " -c, --colon-separate        visa data i ett format liknande det i /etc/passwd\n"
 
 #: login-utils/lslogins.c:1235 sys-utils/lsipc.c:296
 msgid " -e, --export             display in an export-able output format\n"
-msgstr " -e, --export             visa data i ett exporterbart utmatningsformat\n"
+msgstr " -e, --export                visa data i ett exporterbart utmatningsformat\n"
 
 #: login-utils/lslogins.c:1236
 msgid " -f, --failed             display data about the users' last failed logins\n"
-msgstr " -f, --failed             visa data om användarnas senaste misslyckade inloggningar\n"
+msgstr " -f, --failed                visa data om användarnas senaste misslyckade inloggningar\n"
 
 #: login-utils/lslogins.c:1237
 msgid " -G, --supp-groups        display information about groups\n"
-msgstr " -G, --supp-groups        visa information om grupper\n"
+msgstr " -G, --supp-groups           visa information om grupper\n"
 
 #: login-utils/lslogins.c:1238
 msgid " -g, --groups=<groups>    display users belonging to a group in <groups>\n"
-msgstr " -g, --groups=<grupper>   visa användare som hör till en grupp i <grupper>\n"
+msgstr " -g, --groups=<grupper>      visa användare som hör till en grupp i <grupper>\n"
 
 #: login-utils/lslogins.c:1239
 msgid " -L, --last               show info about the users' last login sessions\n"
-msgstr " -L, --last               visa information om användarens senaste inloggningssessioner\n"
+msgstr " -L, --last                  visa information om användarens senaste inloggningssessioner\n"
 
 #: login-utils/lslogins.c:1240
 msgid " -l, --logins=<logins>    display only users from <logins>\n"
@@ -7787,58 +7770,58 @@ msgstr " -l, --logins=<inloggningar> visa endast användare från <inloggningar>
 
 #: login-utils/lslogins.c:1241 sys-utils/lsipc.c:298
 msgid " -n, --newline            display each piece of information on a new line\n"
-msgstr " -n, --newline            visa varje bit av information på en ny rad\n"
+msgstr " -n, --newline               visa varje bit av information på en ny rad\n"
 
 #: login-utils/lslogins.c:1242 sys-utils/lsipc.c:291
 msgid "     --noheadings         don't print headings\n"
-msgstr "     --noheadings         skriv inte ut rubriker\n"
+msgstr "     --noheadings            skriv inte ut rubriker\n"
 
 #: login-utils/lslogins.c:1243 sys-utils/lsipc.c:292
 msgid "     --notruncate         don't truncate output\n"
-msgstr "     --notruncate         trunkera inte utmatning\n"
+msgstr "     --notruncate            trunkera inte utmatning\n"
 
 #: login-utils/lslogins.c:1244 sys-utils/lsipc.c:300
 msgid " -o, --output[=<list>]    define the columns to output\n"
-msgstr " -o, --output[=<lista>]   definiera kolumnerna som ska matas ut\n"
+msgstr " -o, --output[=<lista>]      definiera kolumnerna som ska matas ut\n"
 
 #: login-utils/lslogins.c:1245
 msgid " -p, --pwd                display information related to login by password.\n"
-msgstr " -p, --pwd                visa information relaterad till inloggningen via lösenord.\n"
+msgstr " -p, --pwd                   visa information relaterad till inloggningen via lösenord.\n"
 
 #: login-utils/lslogins.c:1246 sys-utils/lsipc.c:302
 msgid " -r, --raw                display in raw mode\n"
-msgstr " -r, --raw                visa i råläge\n"
+msgstr " -r, --raw                   visa i råläge\n"
 
 #: login-utils/lslogins.c:1247
 msgid " -s, --system-accs        display system accounts\n"
-msgstr " -s, --system-accs        visa systemkonton\n"
+msgstr " -s, --system-accs           visa systemkonton\n"
 
 #: login-utils/lslogins.c:1248 sys-utils/lsipc.c:293
 msgid "     --time-format=<type> display dates in short, full or iso format\n"
-msgstr "     --time-format=<typ>  visa datum i formatet short, full eller iso\n"
+msgstr "     --time-format=<typ>     visa datum i formatet short, full eller iso\n"
 
 #: login-utils/lslogins.c:1249
 msgid " -u, --user-accs          display user accounts\n"
-msgstr " -u, --user-accs          visa användarkonton\n"
+msgstr " -u, --user-accs             visa användarkonton\n"
 
 #: login-utils/lslogins.c:1250
 msgid " -Z, --context            display SELinux contexts\n"
-msgstr " -Z, --context            visa SELinux-kontexter\n"
+msgstr " -Z, --context               visa SELinux-kontexter\n"
 
 #: login-utils/lslogins.c:1251
 msgid " -z, --print0             delimit user entries with a nul character\n"
-msgstr " -z, --print0             separera användarposter med ett nul-tecken\n"
+msgstr " -z, --print0                separera användarposter med ett nul-tecken\n"
 
 #: login-utils/lslogins.c:1252
 msgid "     --wtmp-file <path>   set an alternate path for wtmp\n"
-msgstr "     --wtmp-file <sökväg> ställ in en alternativ sökväg för wtmp\n"
+msgstr "     --wtmp-file <sökväg>    ställ in en alternativ sökväg för wtmp\n"
 
 #: login-utils/lslogins.c:1253
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
-msgstr "     --btmp-file <sökväg> ställ in en alternativ sökväg för btmp\n"
+msgstr "     --btmp-file <sökväg>    ställ in en alternativ sökväg för btmp\n"
 
-#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2069
-#: sys-utils/lsmem.c:391
+#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251
+#: sys-utils/lscpu.c:2069 sys-utils/lsmem.c:391
 #, c-format
 msgid ""
 "\n"
@@ -7968,9 +7951,9 @@ msgid "cannot set user id"
 msgstr "kan inte ställa in användar-ID"
 
 #: login-utils/su-common.c:679
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] -u <user> [[--] <command>]\n"
-msgstr " %s [flaggor] -u <användare> <kommando>\n"
+msgstr " %s [flaggor] -u <användare> [[--] <kommando>]\n"
 
 #: login-utils/su-common.c:680 login-utils/su-common.c:692
 #, c-format
@@ -7991,7 +7974,7 @@ msgstr ""
 
 #: login-utils/su-common.c:688
 msgid " -u, --user <user>             username\n"
-msgstr " -u, --user <användare>        användarnamn\n"
+msgstr " -u, --user <användare>          användarnamn\n"
 
 #: login-utils/su-common.c:693
 msgid ""
@@ -8194,12 +8177,12 @@ msgid "cannot open password database"
 msgstr "kan inte öppna lösenordsdatabas"
 
 #: login-utils/sulogin.c:1012
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "cannot execute su shell\n"
 "\n"
 msgstr ""
-"Kan inte köra su-skal\n"
+"kan inte köra su-skal\n"
 "\n"
 
 #: login-utils/sulogin.c:1019
@@ -8211,12 +8194,11 @@ msgstr ""
 "\n"
 
 #: login-utils/sulogin.c:1051
-#, fuzzy
 msgid ""
 "cannot wait on su shell\n"
 "\n"
 msgstr ""
-"Kan inte vänta på su-skal\n"
+"kan inte vänta på su-skal\n"
 "\n"
 
 #: login-utils/utmpdump.c:176
@@ -8324,9 +8306,9 @@ msgid "Would you like to edit %s now [y/n]? "
 msgstr "Vill du redigera %s nu [j/n]? "
 
 #: misc-utils/blkid.c:65
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
-msgstr "%s från %s (libmount %s"
+msgstr "%s från %s  (libblkid %s, %s)\n"
 
 #: misc-utils/blkid.c:75
 #, c-format
@@ -8334,6 +8316,8 @@ msgid ""
 " %s --label <label> | --uuid <uuid>\n"
 "\n"
 msgstr ""
+" %s --label <etikett> | --uuid <uuid>\n"
+"\n"
 
 #: misc-utils/blkid.c:76
 #, c-format
@@ -8342,6 +8326,9 @@ msgid ""
 "       [--match-token <token>] [<dev> ...]\n"
 "\n"
 msgstr ""
+" %s [--cache-file <fil>] [-ghlLv] [--output <format>] [--match-tag <tagg>] \n"
+"       [--match-token <symbol>] [<enh> …]\n"
+"\n"
 
 #: misc-utils/blkid.c:78
 #, c-format
@@ -8350,174 +8337,163 @@ msgid ""
 "       [--output <format>] <dev> ...\n"
 "\n"
 msgstr ""
+" %s -p [--match-tag <tagg>] [--offset <position>] [--size <storlek>] \n"
+"       [--output <format>] <enh> …\n"
+"\n"
 
 #: misc-utils/blkid.c:80
 #, c-format
 msgid " %s -i [--match-tag <tag>] [--output <format>] <dev> ...\n"
-msgstr ""
+msgstr " %s -i [--match-tag <tagg>] [--output <format>] <enh> …\n"
 
 #: misc-utils/blkid.c:82
-#, fuzzy
 msgid ""
 " -c, --cache-file <file>    read from <file> instead of reading from the default\n"
 "                              cache file (-c /dev/null means no cache)\n"
 msgstr ""
-" -A, --adjfile <fil>      anger sökvägen till justeringsfilen\n"
-"                            standard är %s\n"
+" -c, --cache-file <fil>     läs från <fil> istället för att läsa från standard\n"
+"                              cachefil (-c /dev/null innebär ingen cache)\n"
 
 #: misc-utils/blkid.c:84
-#, fuzzy
 msgid " -d, --no-encoding          don't encode non-printing characters\n"
-msgstr " -n, --noheadings          skriv inte ut rubriker\n"
+msgstr " -d, --no-encoding          koda inte tecken som inte kan skrivas ut\n"
 
 #: misc-utils/blkid.c:85
 msgid " -g, --garbage-collect      garbage collect the blkid cache\n"
-msgstr ""
+msgstr " -g, --garbage-collect      skräpsamla blkid-cachen\n"
 
 #: misc-utils/blkid.c:86
 msgid ""
 " -o, --output <format>      output format; can be one of:\n"
 "                              value, device, export or full; (default: full)\n"
 msgstr ""
+" -o, --output <format>      utmatningsformat; kan vara endera av:\n"
+"                              value, device, export eller full; (standard: full)\n"
 
+# sebras: what should the swedish plural be?
 #: misc-utils/blkid.c:88
-#, fuzzy
 msgid " -k, --list-filesystems     list all known filesystems/RAIDs and exit\n"
-msgstr " -l, --list-shells    skriv ut en lista över skal och avsluta\n"
+msgstr " -k, --list-filesystems     lista alla kända filsystem/RAID:er och avsluta\n"
 
 #: misc-utils/blkid.c:89
 msgid " -s, --match-tag <tag>      show specified tag(s) (default show all tags)\n"
-msgstr ""
+msgstr " -s, --match-tag <tagg>     visa angivna taggar (standard visa alla taggar)\n"
 
 #: misc-utils/blkid.c:90
 msgid " -t, --match-token <token>  find device with a specific token (NAME=value pair)\n"
-msgstr ""
+msgstr " -t, --match-token <symbol> hitta enhet med angiven symbol (NAMN=värde-par)\n"
 
 #: misc-utils/blkid.c:91
-#, fuzzy
 msgid " -l, --list-one             look up only first device with token specified by -t\n"
-msgstr " -l, --list                    lista information om alla eller angivna (standard)\n"
+msgstr " -l, --list-one             slå upp endast första enhet med symbol angiven av -t\n"
 
 #: misc-utils/blkid.c:92
-#, fuzzy
 msgid " -L, --label <label>        convert LABEL to device name\n"
-msgstr " -s, --size <storlek>      storlek för enhet\n"
+msgstr " -L, --label <etikett>      konvertera ETIKETT to enhetsnamn\n"
 
 #: misc-utils/blkid.c:93
-#, fuzzy
 msgid " -U, --uuid <uuid>          convert UUID to device name\n"
-msgstr " -u, --user <användare>        användarnamn\n"
+msgstr " -U, --uuid <uuid>          konvertera UUID till enhetsnamn\n"
 
 #: misc-utils/blkid.c:94
-#, fuzzy
 msgid " <dev>                      specify device(s) to probe (default: all devices)\n"
-msgstr " <enh>                     sökväg för enhet (vanligtvis disk)\n"
+msgstr " <dev>                      ange enheter att avsöka (standardvärde: alla enheter)\n"
 
 #: misc-utils/blkid.c:96
-#, fuzzy
 msgid "Low-level probing options:\n"
-msgstr "Schemaläggningsflaggor:\n"
+msgstr "Lågnivåavsönkningsflaggor:\n"
 
 #: misc-utils/blkid.c:97
 msgid " -p, --probe                low-level superblocks probing (bypass cache)\n"
-msgstr ""
+msgstr " -p, --probe                lågnivåavsökning för superblock (förbifå cache)\n"
 
 #: misc-utils/blkid.c:98
-#, fuzzy
 msgid " -i, --info                 gather information about I/O limits\n"
-msgstr " -i, --info                skriv endast ut information om samplingssteget\n"
+msgstr " -i, --info                 samla endast information om I/O-begränsningar\n"
 
 #: misc-utils/blkid.c:99
-#, fuzzy
 msgid " -S, --size <size>          overwrite device size\n"
-msgstr " -s, --size <storlek>      storlek för enhet\n"
+msgstr " -s, --size <storlek>       skriv över storlek för enhet\n"
 
 #: misc-utils/blkid.c:100
-#, fuzzy
 msgid " -O, --offset <offset>      probe at the given offset\n"
-msgstr " -H, --host <värdnamn>      ange inloggningsvärd\n"
+msgstr " -O, --offset <position>    avsök vid angiven position\n"
 
 #: misc-utils/blkid.c:101
-#, fuzzy
 msgid " -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"
-msgstr " -t, --types <lista>     begränsa uppsättningen av filsystemstyper\n"
+msgstr " -u, --usages <lista>       filtrera efter ”användning” (t.ex. -u filesystem,raid)\n"
 
 #: misc-utils/blkid.c:102
-#, fuzzy
 msgid " -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
-msgstr " -t, --types <lista>     begränsa uppsättningen av filsystemstyper\n"
+msgstr " -n, --match-types <lista>  filtrera efter filsystemstyp (t.ex. -n vfat,ext3)\n"
 
 #: misc-utils/blkid.c:235
 msgid "(mounted, mtpt unknown)"
-msgstr ""
+msgstr "(monterad, mtpt okänd)"
 
 #: misc-utils/blkid.c:237
-#, fuzzy
 msgid "(in use)"
-msgstr "Märk som använd"
+msgstr "(används)"
 
 #: misc-utils/blkid.c:239
-#, fuzzy
 msgid "(not mounted)"
-msgstr "%s: inte monterad"
+msgstr "(inte monterad)"
 
 #: misc-utils/blkid.c:503
-#, fuzzy, c-format
+#, c-format
 msgid "error: %s"
-msgstr "tolkningsfel: %s"
+msgstr "fel: %s"
 
 #: misc-utils/blkid.c:548
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
-msgstr ""
+msgstr "%s: tvetydigt resultat (troligtvis flera filsystem på enheten, använd wipefs(8) för att se ytterligare detaljer)"
 
 #: misc-utils/blkid.c:594
-#, fuzzy, c-format
+#, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
-msgstr "okänt argument: %s"
+msgstr "okänt nyckelord i -u <lista>-argument: ”%s”"
 
 #: misc-utils/blkid.c:611
 msgid "error: -u <list> argument is empty"
-msgstr ""
+msgstr "fel: -u <lista> argumentet är tomt"
 
 #: misc-utils/blkid.c:754
-#, fuzzy, c-format
+#, c-format
 msgid "unsupported output format %s"
-msgstr "flaggformat stöds inte: %s"
+msgstr "umatningsformat %s stöds inte"
 
 #: misc-utils/blkid.c:757 misc-utils/wipefs.c:535
 msgid "invalid offset argument"
 msgstr "ogiltigt positionsargument"
 
 #: misc-utils/blkid.c:764
-#, fuzzy
 msgid "Too many tags specified"
-msgstr "inget kommando angavs"
+msgstr "För många taggar angavs"
 
 #: misc-utils/blkid.c:770
-#, fuzzy
 msgid "invalid size argument"
-msgstr "ogiltigt tidsargument"
+msgstr "ogiltigt storleksargument"
 
 #: misc-utils/blkid.c:774
 msgid "Can only search for one NAME=value pair"
-msgstr ""
+msgstr "Kan endast söka efter ett NAMN=värde-par"
 
 #: misc-utils/blkid.c:781
 msgid "-t needs NAME=value pair"
-msgstr ""
+msgstr "-t kräver NAMN=värde-par"
 
 #: misc-utils/blkid.c:831
 msgid "The low-level probing mode does not support 'list' output format"
-msgstr ""
+msgstr "Lågnivåavsökningsläget har inte stöd för utmatningsformatet ”list”"
 
 #: misc-utils/blkid.c:844
 msgid "The low-level probing mode requires a device"
-msgstr ""
+msgstr "Lågnivåavsökningsläget kräver en enhet"
 
 #: misc-utils/blkid.c:894
 msgid "The lookup option requires a search type specified using -t"
-msgstr ""
+msgstr "Uppslagsflaggan kräver att en söktyp anges med -t"
 
 #: misc-utils/cal.c:372
 msgid "invalid month argument"
@@ -8644,74 +8620,68 @@ msgstr " -w, --week[=<num>]    visa US- eller ISO-8601-veckonummer\n"
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr "     --color[=<när>]   färglägg meddelanden (auto, always eller never)\n"
 
+# sebras: typo in english text
 #: misc-utils/fincore.c:61
-#, fuzzy
 msgid "file data residend in memory in pages"
-msgstr "Delade minnessidor"
+msgstr "fildata resident i minne i sidor"
 
+# sebras: spelling error in English
 #: misc-utils/fincore.c:62
 msgid "file data residend in memory in bytes"
-msgstr ""
+msgstr "fildata resident i minne i byte"
 
 #: misc-utils/fincore.c:63
-#, fuzzy
 msgid "size of the file"
-msgstr "enhetsstorlek"
+msgstr "filstorlek"
 
 #: misc-utils/fincore.c:64
-#, fuzzy
 msgid "file name"
-msgstr "Filnamn"
+msgstr "filnamn"
 
 #: misc-utils/fincore.c:174
-#, fuzzy, c-format
+#, c-format
 msgid "failed to do mincore: %s"
-msgstr "misslyckades med att läsa symbolisk länk: %s"
+msgstr "misslyckades med att köra mincore: %s"
 
 #: misc-utils/fincore.c:213
-#, fuzzy, c-format
+#, c-format
 msgid "failed to do mmap: %s"
-msgstr "misslyckades med att läsa från: %s"
+msgstr "misslyckades med att köra mmap: %s"
 
 #: misc-utils/fincore.c:241
-#, fuzzy, c-format
+#, c-format
 msgid "failed to open: %s"
-msgstr "misslyckades med att tolka %s"
+msgstr "misslyckades med att öppna: %s"
 
 #: misc-utils/fincore.c:246
-#, fuzzy, c-format
+#, c-format
 msgid "failed to do fstat: %s"
-msgstr "misslyckades med att läsa från: %s"
+msgstr "misslyckades med att köra fstat: %s"
 
 #: misc-utils/fincore.c:266
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] file...\n"
-msgstr " %s [flaggor] <fil>…\n"
+msgstr " %s [flaggor] fil…\n"
 
 #: misc-utils/fincore.c:269
-#, fuzzy
 msgid " -J, --json            use JSON output format\n"
-msgstr " -J, --json             använd JSON-utmatningsformat\n"
+msgstr " -J, --json            använd JSON-utmatningsformat\n"
 
 #: misc-utils/fincore.c:270
-#, fuzzy
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
-msgstr " -b, --bytes            skriv ut storlekar i byte snarare än i ett format läsbart för människor\n"
+msgstr " -b, --bytes           skriv ut storlekar i byte snarare än i ett format läsbart för människor\n"
 
 #: misc-utils/fincore.c:271
-#, fuzzy
 msgid " -n, --noheadings      don't print headings\n"
-msgstr " -n, --noheadings       skriv inte ut rubriker\n"
+msgstr " -n, --noheadings      skriv inte ut rubriker\n"
 
 #: misc-utils/fincore.c:272
-#, fuzzy
 msgid " -o, --output <list>   output columns\n"
-msgstr " -o, --output <lista> skriv ut kolumner\n"
+msgstr " -o, --output <lista>  skriv ut kolumner\n"
 
 #: misc-utils/fincore.c:273
-#, fuzzy
 msgid " -r, --raw             use raw output format\n"
-msgstr " -r, --raw              använd rått utmatningsformat\n"
+msgstr " -r, --raw             använd rått utmatningsformat\n"
 
 #: misc-utils/fincore.c:279 misc-utils/lsblk.c:1662 misc-utils/lslocks.c:512
 #: sys-utils/lsns.c:632 sys-utils/prlimit.c:196 sys-utils/zramctl.c:548
@@ -8903,68 +8873,67 @@ msgstr "Hitta ett (monterat) filsystem.\n"
 
 #: misc-utils/findmnt.c:1201
 msgid " -s, --fstab            search in static table of filesystems\n"
-msgstr " -s, --fstab            sök i statisk tabell över filsystem\n"
+msgstr " -s, --fstab             sök i statisk tabell över filsystem\n"
 
 #: misc-utils/findmnt.c:1202
-#, fuzzy
 msgid ""
 " -m, --mtab             search in table of mounted filesystems\n"
 "                          (includes user space mount options)\n"
 msgstr ""
-" -k, --kernel           sök i kärntabell över monterade\n"
-"                          filsystem (standard)\n"
+" -m, --mtab              sök i tabell över monterade filsystem\n"
+"                           (inkluderar monteringsflaggor från användarrymd)\n"
 
 #: misc-utils/findmnt.c:1204
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
 msgstr ""
-" -k, --kernel           sök i kärntabell över monterade\n"
-"                          filsystem (standard)\n"
+" -k, --kernel            sök i kärntabell över monterade\n"
+"                           filsystem (standard)\n"
 
 #: misc-utils/findmnt.c:1207
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
-msgstr " -p, --poll[=<lista>]   övervaka ändringar i tabellen över monterade filsystem\n"
+msgstr " -p, --poll[=<lista>]    övervaka ändringar i tabellen över monterade filsystem\n"
 
 #: misc-utils/findmnt.c:1208
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
-msgstr " -w, --timeout <num>    övre gräns i millisekunder som --poll kommer att blockera\n"
+msgstr " -w, --timeout <num>     övre gräns i millisekunder som --poll kommer att blockera\n"
 
 #: misc-utils/findmnt.c:1211
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
-msgstr " -A, --all              inaktivera alla inbyggda filter, skriv ut alla filsystem\n"
+msgstr " -A, --all               inaktivera alla inbyggda filter, skriv ut alla filsystem\n"
 
 #: misc-utils/findmnt.c:1212
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
-msgstr " -a, --ascii            använd ASCII-tecken för trädformatering\n"
+msgstr " -a, --ascii             använd ASCII-tecken för trädformatering\n"
 
 #: misc-utils/findmnt.c:1213
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
-msgstr " -b, --bytes            skriv ut storlekar i byte snarare än i ett format läsbart för människor\n"
+msgstr " -b, --bytes             skriv ut storlekar i byte snarare än i ett format läsbart för människor\n"
 
 #: misc-utils/findmnt.c:1214
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
-msgstr " -C, --nocanonicalize   gör inte sökvägar kanoniska vid jämförelser\n"
+msgstr " -C, --nocanonicalize    gör inte sökvägar kanoniska vid jämförelser\n"
 
 #: misc-utils/findmnt.c:1215
 msgid " -c, --canonicalize     canonicalize printed paths\n"
-msgstr " -c, --canonicalize     gör sökvägar kanoniska vid utskrift\n"
+msgstr " -c, --canonicalize      gör sökvägar kanoniska vid utskrift\n"
 
 #: misc-utils/findmnt.c:1216
 msgid " -D, --df               imitate the output of df(1)\n"
-msgstr " -D, --df               imitera utmatning från df(1)\n"
+msgstr " -D, --df                imitera utmatning från df(1)\n"
 
 #: misc-utils/findmnt.c:1217
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
-msgstr " -d, --direction <ord>  sökriktning, ”forward” eller ”backward”\n"
+msgstr " -d, --direction <ord>   sökriktning, ”forward” eller ”backward”\n"
 
 #: misc-utils/findmnt.c:1218
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
 msgstr ""
-" -e, --evaluate         konvertera taggar (LABEL,UUID,PARTUUID,PARTLABEL) \n"
-"                          till enhetsnamn\n"
+" -e, --evaluate          konvertera taggar (LABEL,UUID,PARTUUID,PARTLABEL) \n"
+"                           till enhetsnamn\n"
 
 #: misc-utils/findmnt.c:1220
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
@@ -8972,92 +8941,92 @@ msgstr " -F, --tab-file <sökväg> alternativ fil för flaggorna -s, -m eller -k
 
 #: misc-utils/findmnt.c:1221
 msgid " -f, --first-only       print the first found filesystem only\n"
-msgstr " -f, --first-only       skriv bara ut det första filsystemet som hittas\n"
+msgstr " -f, --first-only        skriv bara ut det första filsystemet som hittas\n"
 
 #: misc-utils/findmnt.c:1222
 msgid " -i, --invert           invert the sense of matching\n"
-msgstr " -i, --invert           invertera matchningen\n"
+msgstr " -i, --invert            invertera matchningen\n"
 
 #: misc-utils/findmnt.c:1223 misc-utils/lslocks.c:500 sys-utils/lsns.c:619
 msgid " -J, --json             use JSON output format\n"
-msgstr " -J, --json             använd JSON-utmatningsformat\n"
+msgstr " -J, --json              använd JSON-utmatningsformat\n"
 
 #: misc-utils/findmnt.c:1224 sys-utils/lsns.c:620
 msgid " -l, --list             use list format output\n"
-msgstr " -l, --list             använd listutmatningsformat\n"
+msgstr " -l, --list              använd listutmatningsformat\n"
 
 #: misc-utils/findmnt.c:1225
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
-msgstr " -N, --task <tid>       använd alternativ namnrymd  (/proc/<tid>/mountinfo-filen)\n"
+msgstr " -N, --task <tid>        använd alternativ namnrymd  (/proc/<tid>/mountinfo-filen)\n"
 
 #: misc-utils/findmnt.c:1226
 msgid " -n, --noheadings       don't print column headings\n"
-msgstr " -n, --noheadings       skriv inte ut kolumnrubriker\n"
+msgstr " -n, --noheadings        skriv inte ut kolumnrubriker\n"
 
 #: misc-utils/findmnt.c:1227
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
-msgstr " -O, --options <lista>  begränsa mängden filsystem efter monteringsflaggor\n"
+msgstr " -O, --options <lista>   begränsa mängden filsystem efter monteringsflaggor\n"
 
 #: misc-utils/findmnt.c:1228
 msgid " -o, --output <list>    the output columns to be shown\n"
-msgstr " -o, --output <lista>   utmatningskolumner som ska visas\n"
+msgstr " -o, --output <lista>    utmatningskolumner som ska visas\n"
 
 #: misc-utils/findmnt.c:1229
 msgid " -P, --pairs            use key=\"value\" output format\n"
-msgstr " -P, --pairs            använd utmatningsformat med nyckel=\"värde\"\n"
+msgstr " -P, --pairs             använd utmatningsformat med nyckel=\"värde\"\n"
 
 #: misc-utils/findmnt.c:1230
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
-msgstr " -R, --submounts        skriv ut alla undermonteringar för matchande filsystem\n"
+msgstr " -R, --submounts         skriv ut alla undermonteringar för matchande filsystem\n"
 
 #: misc-utils/findmnt.c:1231
 msgid " -r, --raw              use raw output format\n"
-msgstr " -r, --raw              använd rått utmatningsformat\n"
+msgstr " -r, --raw               använd rått utmatningsformat\n"
 
 #: misc-utils/findmnt.c:1232
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 msgstr ""
-" -S, --source <sträng>  enheten att montera (efter namn, övr:undr, \n"
-"                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
+" -S, --source <sträng>   enheten att montera (efter namn, övr:undr, \n"
+"                           LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 
 #: misc-utils/findmnt.c:1234
 msgid " -T, --target <path>    the path to the filesystem to use\n"
-msgstr " -T, --target <sökväg>  sökvägen till filsystemet som ska användas\n"
+msgstr " -T, --target <sökväg>   sökvägen till filsystemet som ska användas\n"
 
+# sebras: typo in english text
 #: misc-utils/findmnt.c:1235
-#, fuzzy
 msgid "     --tree             enable tree format output is possible\n"
-msgstr " -l, --list             använd listutmatningsformat\n"
+msgstr "     --tree              aktivera trädutmatningsformat om möjligt\n"
 
 #: misc-utils/findmnt.c:1236
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
-msgstr " -M, --mountpoint <kat> katalogen som är monteringspunkten\n"
+msgstr " -M, --mountpoint <kat>  katalogen som är monteringspunkten\n"
 
 #: misc-utils/findmnt.c:1237
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
-msgstr " -t, --types <lista>    begränsa uppsättningen av filsystem till FS-typer\n"
+msgstr " -t, --types <lista>     begränsa uppsättningen av filsystem till FS-typer\n"
 
 #: misc-utils/findmnt.c:1238
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
-msgstr " -U, --uniq             hoppa över filsystem med ett dubblerat mål\n"
+msgstr " -U, --uniq              hoppa över filsystem med ett dubblerat mål\n"
 
 #: misc-utils/findmnt.c:1239 misc-utils/lslocks.c:506 sys-utils/lsns.c:625
 msgid " -u, --notruncate       don't truncate text in columns\n"
-msgstr " -u, --notruncate       trunkera inte text i kolumner\n"
+msgstr " -u, --notruncate        trunkera inte text i kolumner\n"
 
 #: misc-utils/findmnt.c:1240
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
-msgstr " -v, --nofsroot         skriv inte ut [/kat] för bind- eller btrfs-monteringar\n"
+msgstr " -v, --nofsroot          skriv inte ut [/kat] för bind- eller btrfs-monteringar\n"
 
 #: misc-utils/findmnt.c:1243
 msgid " -x, --verify           verify mount table content (default is fstab)\n"
-msgstr " -x, --verify          verifiera innehållet i monteringstabell (standardvärdet är fstab)\n"
+msgstr " -x, --verify            verifiera innehållet i monteringstabell (standardvärdet är fstab)\n"
 
 #: misc-utils/findmnt.c:1244
 msgid "     --verbose          print more details\n"
-msgstr "     --verbose             skriv ut utförlig information\n"
+msgstr "     --verbose           skriv ut utförlig information\n"
 
 #: misc-utils/findmnt.c:1375
 #, c-format
@@ -9205,7 +9174,7 @@ msgid "\"none\" FS type is recommended for bind or move oprations only"
 msgstr "FS-typen ”none” rekommenderas endast för eller bindnings- eller förflyttningsåtgärder"
 
 #: misc-utils/findmnt-verify.c:414
-#, fuzzy, c-format
+#, c-format
 msgid "%s seems unsupported by the current kernel"
 msgstr "%s verkar sakna stöd hos den aktuella kärnan"
 
@@ -9219,7 +9188,7 @@ msgid "%s does not match with on-disk %s"
 msgstr "%s matchar inte den på disk: %s"
 
 #: misc-utils/findmnt-verify.c:431
-#, fuzzy, c-format
+#, c-format
 msgid "on-disk %s seems unsupported by the current kernel"
 msgstr "%s på disk verkar sakna stöd hos den aktuella kärnan"
 
@@ -9832,7 +9801,7 @@ msgstr "enhetstillverkare"
 
 #: misc-utils/lsblk.c:206
 msgid "zone model"
-msgstr ""
+msgstr "zonmodell"
 
 #: misc-utils/lsblk.c:1290
 msgid "failed to open device directory in sysfs"
@@ -9887,20 +9856,19 @@ msgstr "Lista information om blockenheter.\n"
 
 #: misc-utils/lsblk.c:1636
 msgid " -a, --all            print all devices\n"
-msgstr " -a, --all            skriv ut alla enheter\n"
+msgstr " -a, --all             skriv ut alla enheter\n"
 
 #: misc-utils/lsblk.c:1638
 msgid " -d, --nodeps         don't print slaves or holders\n"
-msgstr " -d, --nodeps         skriv inte ute slavar eller hållare\n"
+msgstr " -d, --nodeps          skriv inte ute slavar eller hållare\n"
 
 #: misc-utils/lsblk.c:1639
 msgid " -D, --discard        print discard capabilities\n"
-msgstr " -D, --discard        skriv ut kasseringsförmågor\n"
+msgstr " -D, --discard         skriv ut kasseringsförmågor\n"
 
 #: misc-utils/lsblk.c:1640
-#, fuzzy
 msgid " -z, --zoned          print zone model\n"
-msgstr " -c, --offline           skriv endast ut inaktiva CPU:er\n"
+msgstr " -z, --zoned           skriv ut zonmodell\n"
 
 #: misc-utils/lsblk.c:1641
 msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
@@ -9908,11 +9876,11 @@ msgstr " -e, --exclude <lista> exkludera enheter efter övrenummer (standard: RA
 
 #: misc-utils/lsblk.c:1642
 msgid " -f, --fs             output info about filesystems\n"
-msgstr " -f, --fs             skriv ut information om filsystem\n"
+msgstr " -f, --fs              skriv ut information om filsystem\n"
 
 #: misc-utils/lsblk.c:1643
 msgid " -i, --ascii          use ascii characters only\n"
-msgstr " -i, --ascii          använd endast ascii-tecken\n"
+msgstr " -i, --ascii           använd endast ascii-tecken\n"
 
 #: misc-utils/lsblk.c:1644
 msgid " -I, --include <list> show only devices with specified major numbers\n"
@@ -9920,47 +9888,47 @@ msgstr " -I, --include <lista> visa bara enheter med angivna övrenummer\n"
 
 #: misc-utils/lsblk.c:1645 sys-utils/lsmem.c:377
 msgid " -J, --json           use JSON output format\n"
-msgstr " -J, --json           använd utmatningsformatet JSON\n"
+msgstr " -J, --json            använd utmatningsformatet JSON\n"
 
 #: misc-utils/lsblk.c:1646
 msgid " -l, --list           use list format output\n"
-msgstr " -l, --list           använd listutmatningsformatet\n"
+msgstr " -l, --list            använd listutmatningsformatet\n"
 
 #: misc-utils/lsblk.c:1647
 msgid " -m, --perms          output info about permissions\n"
-msgstr " -m, --perms          skriv ut information om rättigheter\n"
+msgstr " -m, --perms           skriv ut information om rättigheter\n"
 
 #: misc-utils/lsblk.c:1648 sys-utils/lsmem.c:381
 msgid " -n, --noheadings     don't print headings\n"
-msgstr " -n, --noheadings     skriv inte ut rubriker\n"
+msgstr " -n, --noheadings      skriv inte ut rubriker\n"
 
 #: misc-utils/lsblk.c:1649 sys-utils/lsmem.c:382
 msgid " -o, --output <list>  output columns\n"
-msgstr " -o, --output <lista> skriv ut kolumner\n"
+msgstr " -o, --output <lista>  skriv ut kolumner\n"
 
 #: misc-utils/lsblk.c:1650
 msgid " -O, --output-all     output all columns\n"
-msgstr " -O, --output-all     skriv ut alla kolumner\n"
+msgstr " -O, --output-all      skriv ut alla kolumner\n"
 
 #: misc-utils/lsblk.c:1651
 msgid " -p, --paths          print complete device path\n"
-msgstr " -p, --paths          skriv ut fullständig enhetssökväg\n"
+msgstr " -p, --paths           skriv ut fullständig enhetssökväg\n"
 
 #: misc-utils/lsblk.c:1654
 msgid " -s, --inverse        inverse dependencies\n"
-msgstr " -s, --inverse        omvända beroenden\n"
+msgstr " -s, --inverse         omvända beroenden\n"
 
 #: misc-utils/lsblk.c:1655
 msgid " -S, --scsi           output info about SCSI devices\n"
-msgstr " -S, --scsi           mata ut information om SCSI-enheter\n"
+msgstr " -S, --scsi            mata ut information om SCSI-enheter\n"
 
 #: misc-utils/lsblk.c:1656
 msgid " -t, --topology       output info about topology\n"
-msgstr " -t, --topology       mata ut information om topologi\n"
+msgstr " -t, --topology        mata ut information om topologi\n"
 
 #: misc-utils/lsblk.c:1657
 msgid " -x, --sort <column>  sort output by <column>\n"
-msgstr " -x, --sort <kolumn>  sortera utmatning efter <kolumn>\n"
+msgstr " -x, --sort <kolumn>   sortera utmatning efter <kolumn>\n"
 
 #: misc-utils/lsblk.c:1675
 #, c-format
@@ -10033,23 +10001,23 @@ msgstr "Lista lokala systemlås.\n"
 
 #: misc-utils/lslocks.c:501
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
-msgstr " -i, --noinaccessible   ignorera lås utan läsrättigheter\n"
+msgstr " -i, --noinaccessible    ignorera lås utan läsrättigheter\n"
 
 #: misc-utils/lslocks.c:502 sys-utils/lsns.c:621
 msgid " -n, --noheadings       don't print headings\n"
-msgstr " -n, --noheadings       skriv inte ut rubriker\n"
+msgstr " -n, --noheadings        skriv inte ut rubriker\n"
 
 #: misc-utils/lslocks.c:503 sys-utils/lsns.c:622
 msgid " -o, --output <list>    define which output columns to use\n"
-msgstr " -o, --output <lista>   definiera vilka utmatningskolumner som ska användas\n"
+msgstr " -o, --output <lista>    definiera vilka utmatningskolumner som ska användas\n"
 
 #: misc-utils/lslocks.c:504
 msgid " -p, --pid <pid>        display only locks held by this process\n"
-msgstr " -p, --pid <pid>        visa bara lås som hålls av denna process\n"
+msgstr " -p, --pid <pid>         visa bara lås som hålls av denna process\n"
 
 #: misc-utils/lslocks.c:505 sys-utils/lsns.c:624
 msgid " -r, --raw              use the raw output format\n"
-msgstr " -r, --raw              använd rått utmatningsformat\n"
+msgstr " -r, --raw               använd rått utmatningsformat\n"
 
 #: misc-utils/lslocks.c:563 schedutils/chrt.c:476 schedutils/ionice.c:177
 #: schedutils/taskset.c:170 sys-utils/lsns.c:699 sys-utils/prlimit.c:585
@@ -10199,9 +10167,8 @@ msgid " -s, --symlink    act on the target of symlinks\n"
 msgstr " -s, --symlink    agera på målet för symboliska länkar\n"
 
 #: misc-utils/rename.c:127
-#, fuzzy
 msgid " -n, --no-act     do not make any changes\n"
-msgstr " -n, --noheadings     skriv inte ut rubriker\n"
+msgstr " -n, --no-act     gör inte några ändringar\n"
 
 #: misc-utils/uuidd.c:72
 msgid "A daemon for generating UUIDs.\n"
@@ -11038,8 +11005,8 @@ msgstr "misslyckades med att tolka steg"
 msgid "no device specified"
 msgstr "ingen enhet angiven"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:334
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:334
 msgid "unexpected number of arguments"
 msgstr "oväntat antal argument"
 
@@ -11084,111 +11051,104 @@ msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s: BLKDISCARD-ioctl misslyckades"
 
 #: sys-utils/blkzone.c:73
-#, fuzzy
 msgid "Report zone information about the given device"
-msgstr "Lista information om blockenheter.\n"
+msgstr "Rapportera zoninformation för angiven enhet"
 
 #: sys-utils/blkzone.c:74
 msgid "Reset a range of zones."
-msgstr ""
+msgstr "Återställ ett intervall av zoner."
 
 #: sys-utils/blkzone.c:104
-#, fuzzy, c-format
+#, c-format
 msgid "%s: blkdev_get_sectors ioctl failed"
-msgstr "%s: inställning av direkt-I/O misslyckades"
+msgstr "%s: blkdev_get_sectors ioctl misslyckades"
 
 #: sys-utils/blkzone.c:177 sys-utils/blkzone.c:251
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unable to determine zone size"
-msgstr "%s: kan inte skriva zonkarta"
+msgstr "%s: kan inte avgöra zonstorlek"
 
 #: sys-utils/blkzone.c:195
-#, fuzzy, c-format
+#, c-format
 msgid "%s: BLKREPORTZONE ioctl failed"
-msgstr "%s: BLKGETSIZE64 ioctl misslyckades"
+msgstr "%s: BLKREPORTZONE ioctl misslyckades"
 
 #: sys-utils/blkzone.c:198
 #, c-format
 msgid "Found %d zones from 0x%<PRIx64>\n"
-msgstr ""
+msgstr "Hittade %d zoner från 0x%<PRIx64>\n"
 
 #: sys-utils/blkzone.c:219
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
-msgstr ""
+msgstr "  start: 0x%09<PRIx64>, lgd 0x%06<PRIx64>, spek 0x%06<PRIx64> åter:%u icke-sekv:%u, zkond:%2u(%s) [typ: %u(%s)]\n"
 
 #: sys-utils/blkzone.c:256
-#, fuzzy, c-format
+#, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
-msgstr "%s: position %<PRIu64> är inte justerad till sektorstorlek %i"
+msgstr "%s: position %<PRIu64> är inte justerad till zonstorlek %lu"
 
 #: sys-utils/blkzone.c:275
-#, fuzzy, c-format
+#, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
-msgstr "%s: position %<PRIu64> är inte justerad till sektorstorlek %i"
+msgstr "%s: antal sektorer %<PRIu64> är inte justerat till zonstorlek %lu"
 
 #: sys-utils/blkzone.c:283
-#, fuzzy, c-format
+#, c-format
 msgid "%s: BLKRESETZONE ioctl failed"
-msgstr "%s: BLKSSZGET ioctl misslyckades"
+msgstr "%s: BLKRESETZONE ioctl misslyckades"
 
 #: sys-utils/blkzone.c:285
-#, fuzzy, c-format
+#, c-format
 msgid "%s: successfully reset in range from %<PRIu64>, to %<PRIu64>"
-msgstr "Partitionstabellslängd ändrad från %<PRIu32> till %<PRIu64>."
+msgstr "%s: framgångsrikt återställd i intervall från %<PRIu64> till %<PRIu64>"
 
 #: sys-utils/blkzone.c:298
-#, fuzzy, c-format
+#, c-format
 msgid " %s <command> [options] <device>\n"
-msgstr " %s [flaggor] <enhet>\n"
+msgstr " %s <kommando> [flaggor] <enhet>\n"
 
 #: sys-utils/blkzone.c:301
 msgid "Run zone command on the given block device.\n"
-msgstr ""
+msgstr "Kör zonkommando på den givna blockenheten.\n"
 
 #: sys-utils/blkzone.c:308
-#, fuzzy
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
-msgstr " -o, --offset <num>   position för intervallåtgärder, i byte\n"
+msgstr " -o, --offset <sektor>  startsektor för zone att agera på (i 512-byte sektorer)\n"
 
+# sebras: what does act mean here?
 #: sys-utils/blkzone.c:309
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
-msgstr ""
+msgstr " -l, --length <sektorer> största sektorstorlek att aktivera (i 512-byte sektorer)\n"
 
 #: sys-utils/blkzone.c:310
-#, fuzzy
 msgid " -c, --count <number>   maximum number of zones\n"
-msgstr " -t, --streams <nummer>    antal komprimeringsströmmar\n"
+msgstr " -c, --count <antal>    maximalt antal zoner\n"
 
 #: sys-utils/blkzone.c:311
-#, fuzzy
 msgid " -v, --verbose          display more details\n"
-msgstr "     --verbose             skriv ut utförlig information\n"
+msgstr " -v, --verbose          visa ytterligare detaljer\n"
 
 #: sys-utils/blkzone.c:354
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not valid command name"
-msgstr "%s är inte en giltig blockenhet"
+msgstr "%s är inte ett giltigt kommandonamn"
 
 #: sys-utils/blkzone.c:369
-#, fuzzy
 msgid "failed to parse number of zones"
-msgstr "misslyckades med att tolka antal rader"
+msgstr "misslyckades med att tolk antal zoner"
 
 #: sys-utils/blkzone.c:373
-#, fuzzy
 msgid "failed to parse number of sectors"
-msgstr "misslyckades med att tolka antal rader"
+msgstr "misslyckades med att tolka antal sektorer"
 
 #: sys-utils/blkzone.c:377
-#, fuzzy
 msgid "failed to parse zone offset"
-msgstr "misslyckades med att tolka position"
+msgstr "misslyckades med att tolka zonposition"
 
 #: sys-utils/blkzone.c:391
-#, fuzzy
 msgid "no command specified"
-msgstr "inget kommando angavs"
+msgstr "inget kommando angivet"
 
 #: sys-utils/chcpu.c:87 sys-utils/chcpu.c:179
 #, c-format
@@ -11367,155 +11327,147 @@ msgstr "argument stöds inte: %s"
 #: sys-utils/chmem.c:67
 #, c-format
 msgid "Memory Block %<PRIu64> (0x%016<PRIx64>-0x%016<PRIx64>)"
-msgstr ""
+msgstr "Minnesblock %<PRIu64> (0x%016<PRIx64>-0x%016<PRIx64>)"
 
 #: sys-utils/chmem.c:83 sys-utils/chmem.c:129
-#, fuzzy
 msgid "Failed to parse index"
-msgstr "misslyckades med att tolka id"
+msgstr "Misslyckades med att tolka index"
 
 #: sys-utils/chmem.c:91
-#, fuzzy, c-format
+#, c-format
 msgid "%s enable failed\n"
-msgstr "Aktivering av CPU %u misslyckades"
+msgstr "%s-aktivering misslyckades\n"
 
 #: sys-utils/chmem.c:93
-#, fuzzy, c-format
+#, c-format
 msgid "%s disable failed\n"
-msgstr "Inaktivering av CPU %u misslyckades"
+msgstr "%s-inaktivering misslyckades\n"
 
 #: sys-utils/chmem.c:96 sys-utils/chmem.c:152
-#, fuzzy, c-format
+#, c-format
 msgid "%s enabled\n"
-msgstr "CPU %u aktiverad\n"
+msgstr "%s aktiverad\n"
 
 #: sys-utils/chmem.c:98 sys-utils/chmem.c:154
-#, fuzzy, c-format
+#, c-format
 msgid "%s disabled\n"
-msgstr "CPU %u inaktiverad\n"
+msgstr "%s inaktiverad\n"
 
+# sebras: what is %s?
 #: sys-utils/chmem.c:110
 #, c-format
 msgid "Could only enable %s of memory"
-msgstr ""
+msgstr "Kunde endast aktivera %s minne"
 
+# sebras: what is %s?
 #: sys-utils/chmem.c:112
 #, c-format
 msgid "Could only disable %s of memory"
-msgstr ""
+msgstr "Kunde endast inaktivera %s minne"
 
 #: sys-utils/chmem.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "%s already enabled\n"
-msgstr "CPU %u är redan aktiverad\n"
+msgstr "%s redan aktiverad\n"
 
 #: sys-utils/chmem.c:140
-#, fuzzy, c-format
+#, c-format
 msgid "%s already disabled\n"
-msgstr "CPU %u är redan inaktiverad\n"
+msgstr "%s redan inaktiverad\n"
 
 #: sys-utils/chmem.c:147
-#, fuzzy, c-format
+#, c-format
 msgid "%s enable failed"
-msgstr "Aktivering av CPU %u misslyckades"
+msgstr "%s-aktivering misslyckades"
 
 #: sys-utils/chmem.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "%s disable failed"
-msgstr "Inaktivering av CPU %u misslyckades"
+msgstr "%s-inaktivering misslyckades"
 
 #: sys-utils/chmem.c:175 sys-utils/lsmem.c:360
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to read %s"
-msgstr "misslyckades med att läsa hastighet"
+msgstr "Misslyckades med att läsa %s"
 
 #: sys-utils/chmem.c:183
-#, fuzzy
 msgid "Failed to parse block number"
-msgstr "misslyckades med att tolka nummer"
+msgstr "Misslyckades med att tolka blocknummer"
 
 #: sys-utils/chmem.c:188
-#, fuzzy
 msgid "Failed to parse size"
-msgstr "Misslyckades med att tolka storlek."
+msgstr "Misslyckades med att tolka storlek"
 
 #: sys-utils/chmem.c:192
 #, c-format
 msgid "Size must be aligned to memory block size (%s)"
-msgstr ""
+msgstr "Storlek måste vara justerad enligt minnesblocksstorlek (%s)"
 
 #: sys-utils/chmem.c:201
-#, fuzzy
 msgid "Failed to parse start"
-msgstr "misslyckades med att tolka start"
+msgstr "Misslyckades med att tolka start"
 
 #: sys-utils/chmem.c:202
-#, fuzzy
 msgid "Failed to parse end"
-msgstr "misslyckades med att tolka end"
+msgstr "Misslyckades med att tolka slut"
 
 #: sys-utils/chmem.c:206
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid start address format: %s"
-msgstr "ogiltigt startargument"
+msgstr "Ogiltigt startadressformat: %s"
 
 #: sys-utils/chmem.c:208
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid end address format: %s"
-msgstr "Ogiltigt inställt värde: %s\n"
+msgstr "Ogiltigt slutadressformat: %s"
 
 #: sys-utils/chmem.c:209
-#, fuzzy
 msgid "Failed to parse start address"
-msgstr "misslyckades med att tolka start"
+msgstr "Misslyckades med att tolka startadressd"
 
 #: sys-utils/chmem.c:210
-#, fuzzy
 msgid "Failed to parse end address"
-msgstr "misslyckades med att tolka end"
+msgstr "Misslyckades med att tolka slutadress"
 
 #: sys-utils/chmem.c:213
 #, c-format
 msgid "Start address and (end address + 1) must be aligned to memory block size (%s)"
-msgstr ""
+msgstr "Startadress och (slutadress + 1) måste vara justerade till minnesblocksstorlek (%s)"
 
 #: sys-utils/chmem.c:227
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid parameter: %s"
-msgstr "ogiltigt argument: %s"
+msgstr "Ogiltig parameter: %s"
 
 #: sys-utils/chmem.c:234
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid range: %s"
-msgstr "ogiltigt argument: %s"
+msgstr "Ogiltigt intervall: %s"
 
 #: sys-utils/chmem.c:240
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] [SIZE|RANGE|BLOCKRANGE]\n"
-msgstr " %s [flaggor] [y | n ]\n"
+msgstr " %s [flaggor] [STORLEK|INTERVALL|BLOCKINTERVALL]\n"
 
 #: sys-utils/chmem.c:243
 msgid "Set a particular size or range of memory online or offline.\n"
-msgstr ""
+msgstr "Ställ in en särskild storlek eller intervall av minne som inkopplat eller urkopplat.\n"
 
 #: sys-utils/chmem.c:246
-#, fuzzy
 msgid " -e, --enable   enable memory\n"
-msgstr " -v, --verbose    var utförlig\n"
+msgstr " -e, --enable   aktivera minne\n"
 
 #: sys-utils/chmem.c:247
 msgid " -d, --disable  disable memory\n"
-msgstr ""
+msgstr " -d, --disable  inaktivera minne\n"
 
 #: sys-utils/chmem.c:248
-#, fuzzy
 msgid " -b, --blocks   use memory blocks\n"
-msgstr " -v, --verbose    var utförlig\n"
+msgstr " -b, --blocks   använd minnesblock\n"
 
 #: sys-utils/chmem.c:249
-#, fuzzy
 msgid " -v, --verbose  verbose output\n"
-msgstr " -v, --verbose    var utförlig\n"
+msgstr " -v, --verbose  utförlig utmatning\n"
 
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
@@ -12141,7 +12093,7 @@ msgstr " -d, --dig-holes      identifiera nollor och ersätt med hål\n"
 
 #: sys-utils/fallocate.c:91
 msgid " -i, --insert-range   insert a hole at range, shifting existing data\n"
-msgstr ""
+msgstr " -i, --insert-range   infoga ett hål vid intervall, skifta existerande data\n"
 
 #: sys-utils/fallocate.c:92
 msgid " -l, --length <num>   length for range operations, in bytes\n"
@@ -12164,9 +12116,8 @@ msgid " -z, --zero-range     zero and ensure allocation of a range\n"
 msgstr " -z, --zero-range     nolla och säkerställ allokering för ett intervall\n"
 
 #: sys-utils/fallocate.c:98
-#, fuzzy
 msgid " -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"
-msgstr " -y, --physical       skriv ut fysiska istället för logiska ID\n"
+msgstr " -x, --posix          använd posix_fallocate(3) istället för fallocate(2)\n"
 
 #: sys-utils/fallocate.c:135
 msgid "fallocate failed: keep size mode is unsupported"
@@ -12188,7 +12139,7 @@ msgstr "%s: %s (%ju byte) konverterade till glesa hål.\n"
 
 #: sys-utils/fallocate.c:363
 msgid "posix_fallocate support is not compiled"
-msgstr ""
+msgstr "posix_fallocate-stöd är inte kompilerat"
 
 #: sys-utils/fallocate.c:377 sys-utils/fsfreeze.c:107
 msgid "no filename specified"
@@ -12315,9 +12266,8 @@ msgid " %s [options] <mountpoint>\n"
 msgstr " %s [flaggor] <monteringspunkt>\n"
 
 #: sys-utils/fsfreeze.c:43
-#, fuzzy
 msgid "Suspend access to a filesystem.\n"
-msgstr "Montera ett filsystem.\n"
+msgstr "Stäng av åtkomst till ett filsystem.\n"
 
 #: sys-utils/fsfreeze.c:46
 msgid " -f, --freeze      freeze the filesystem\n"
@@ -12481,9 +12431,9 @@ msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "Ställer hårdvaruklockan till %.2d:%.2d:%.2d = %ld sekunder sedan 1969\n"
 
 #: sys-utils/hwclock.c:394 sys-utils/hwclock.c:638 sys-utils/hwclock.c:726
-#, fuzzy, c-format
+#, c-format
 msgid "Test mode: clock was not changed\n"
-msgstr "Tid för senaste ändring"
+msgstr "Testläge: klockan ändrades inte\n"
 
 #: sys-utils/hwclock.c:486
 #, c-format
@@ -12601,11 +12551,11 @@ msgstr ""
 "Justerar dragningsfaktorn med %f sekunder/dag\n"
 
 #: sys-utils/hwclock.c:888
-#, fuzzy, c-format
+#, c-format
 msgid "Time since last adjustment is %ld second\n"
 msgid_plural "Time since last adjustment is %ld seconds\n"
-msgstr[0] "Tid sedan senaste justeringen är %d sekund\n"
-msgstr[1] "Tid sedan senaste justeringen är %d sekunder\n"
+msgstr[0] "Tid sedan senaste justeringen är %ld sekund\n"
+msgstr[1] "Tid sedan senaste justeringen är %ld sekunder\n"
 
 #: sys-utils/hwclock.c:892
 #, c-format
@@ -12613,11 +12563,13 @@ msgid "Calculated Hardware Clock drift is %ld.%06ld seconds\n"
 msgstr "Beräknad hårdvaruklockdragning är %ld.%06ld sekunder\n"
 
 #: sys-utils/hwclock.c:922
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Test mode: %s was not updated with:\n"
 "%s"
-msgstr "write: %s är inte inloggad på %s.\n"
+msgstr ""
+"Testläge: %s uppdaterades inte med:\n"
+"%s"
 
 #: sys-utils/hwclock.c:931
 #, c-format
@@ -12776,10 +12728,12 @@ msgid ""
 "     --directisa      access the ISA bus directly instead of %s\n"
 "     --date <time>    specifies the time to which to set the hardware clock\n"
 msgstr ""
+"     --directisa      använd direktåtkomst för ISA-bussen istället för %s\n"
+"     --date <tid>     anger tiden som hårdvaruklockan sätts till\n"
 
 #: sys-utils/hwclock.c:1253
 msgid "     --epoch <year>   specifies the hardware clock's epoch value\n"
-msgstr ""
+msgstr "     --epoch <år>     ange hårdvaruklockans epokvärde\n"
 
 #: sys-utils/hwclock.c:1256
 #, c-format
@@ -12818,9 +12772,9 @@ msgid "invalid epoch argument"
 msgstr "ogiltigt epokargument"
 
 #: sys-utils/hwclock.c:1488
-#, fuzzy, c-format
+#, c-format
 msgid "%d too many arguments given"
-msgstr "allt för många argument"
+msgstr "%d för många argument angavs"
 
 #: sys-utils/hwclock.c:1496
 msgid "With --noadjfile, you must specify either --utc or --localtime"
@@ -12828,41 +12782,38 @@ msgstr "Med --noadjfile måste du ange antingen --utc eller --localtime"
 
 #: sys-utils/hwclock.c:1503
 msgid "--date is required for --set or --predict"
-msgstr ""
+msgstr "--date krävs för --set eller --predict"
 
 #: sys-utils/hwclock.c:1509
-#, fuzzy, c-format
+#, c-format
 msgid "invalid date '%s'"
-msgstr "ogiltigt id: %s"
+msgstr "ogiltigt datum ”%s”"
 
 #: sys-utils/hwclock-cmos.c:391
-#, fuzzy
 msgid "ISA port access is not implemented"
-msgstr "plymouth-begäran %c är inte implementerad"
+msgstr "ISA-portåtkomst inte implementerad"
 
 #: sys-utils/hwclock-cmos.c:394
 msgid "iopl() port access failed"
-msgstr ""
+msgstr "iopl()-portåtkomst misslyckades"
 
 #: sys-utils/hwclock-cmos.c:396
 msgid "root privileges may be required"
-msgstr ""
+msgstr "root-privilegier kan krävas"
 
 #: sys-utils/hwclock-cmos.c:402
-#, fuzzy
 msgid "Using direct ISA access to the clock"
-msgstr "Använd direkta I/O-instruktioner för ISA-klocka."
+msgstr "Använd direkt ISA-åtkomst till klockan."
 
 #: sys-utils/hwclock-rtc.c:129
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to open: %s\n"
-msgstr "Kan inte öppna %s\n"
+msgstr "Försöker att öppna: %s\n"
 
 #: sys-utils/hwclock-rtc.c:151 sys-utils/hwclock-rtc.c:249
 #: sys-utils/hwclock-rtc.c:411 sys-utils/hwclock-rtc.c:454
-#, fuzzy
 msgid "cannot open rtc device"
-msgstr "kan inte öppna "
+msgstr "kan inte öppna rtc-enhet"
 
 #: sys-utils/hwclock-rtc.c:187
 #, c-format
@@ -12904,9 +12855,9 @@ msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
 msgstr "ioctl() på %s för att slå på uppdateringsavbrott misslyckades oväntat"
 
 #: sys-utils/hwclock-rtc.c:361
-#, fuzzy, c-format
+#, c-format
 msgid "ioctl(%s) to %s to set the time failed"
-msgstr "ioctl(%s) på %s för att ställa tiden misslyckades."
+msgstr "ioctl(%s) på %s för att ställa tiden misslyckades"
 
 #: sys-utils/hwclock-rtc.c:367
 #, c-format
@@ -12914,14 +12865,12 @@ msgid "ioctl(%s) was successful.\n"
 msgstr "ioctl(%s) lyckades.\n"
 
 #: sys-utils/hwclock-rtc.c:378
-#, fuzzy
 msgid "Using the rtc interface to the clock."
-msgstr "Använd /dev-gränssnittet för klockan."
+msgstr "Använd rtc-gränssnittet för klockan."
 
 #: sys-utils/hwclock-rtc.c:407 sys-utils/hwclock-rtc.c:450
-#, fuzzy
 msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file.  This file does not exist on this system."
-msgstr "För att manipulera epokvärdet i kärnan måste vi komma åt Linux ”rtc”-drivrutin via specialenhetsfilen %s. Denna fil finns inte på detta system."
+msgstr "För att manipulera epokvärdet i kärnan måste vi komma åt Linux ”rtc”-drivrutin via specialenhetsfilen. Denna fil finns inte på detta system."
 
 #: sys-utils/hwclock-rtc.c:416
 #, c-format
@@ -13023,23 +12972,23 @@ msgstr "Ta bort specifika IPC-resurser.\n"
 
 #: sys-utils/ipcrm.c:57
 msgid " -m, --shmem-id <id>        remove shared memory segment by id\n"
-msgstr " -m, --shmem-id <id>        ta bort delat minnessegment givet id\n"
+msgstr " -m, --shmem-id <id>          ta bort delat minnessegment givet id\n"
 
 #: sys-utils/ipcrm.c:58
 msgid " -M, --shmem-key <key>      remove shared memory segment by key\n"
-msgstr " -M, --shmem-key <nyckel>   ta bort delat minnessegment givet nyckel\n"
+msgstr " -M, --shmem-key <nyckel>     ta bort delat minnessegment givet nyckel\n"
 
 #: sys-utils/ipcrm.c:59
 msgid " -q, --queue-id <id>        remove message queue by id\n"
-msgstr " -q, --queue-id <id>        ta bort meddelandekö givet id\n"
+msgstr " -q, --queue-id <id>          ta bort meddelandekö givet id\n"
 
 #: sys-utils/ipcrm.c:60
 msgid " -Q, --queue-key <key>      remove message queue by key\n"
-msgstr " -Q, --queue-key <nyckel>   ta bort meddelandekö givet nyckel\n"
+msgstr " -Q, --queue-key <nyckel>     ta bort meddelandekö givet nyckel\n"
 
 #: sys-utils/ipcrm.c:61
 msgid " -s, --semaphore-id <id>    remove semaphore by id\n"
-msgstr " -s, --semaphore-id <id>    ta bort semafor givet id\n"
+msgstr " -s, --semaphore-id <id>      ta bort semafor givet id\n"
 
 #: sys-utils/ipcrm.c:62
 msgid " -S, --semaphore-key <key>  remove semaphore by key\n"
@@ -13047,11 +12996,11 @@ msgstr " -S, --semaphore-key <nyckel> ta bort semafor givet nyckel\n"
 
 #: sys-utils/ipcrm.c:63
 msgid " -a, --all[=shm|msg|sem]    remove all (in the specified category)\n"
-msgstr " -a, --all[=shm|msg|sem]    ta bort alla (i den angivna kategorin)\n"
+msgstr " -a, --all[=shm|msg|sem]      ta bort alla (i den angivna kategorin)\n"
 
 #: sys-utils/ipcrm.c:64
 msgid " -v, --verbose              explain what is being done\n"
-msgstr " -v, --verbose              förklara vad som händer\n"
+msgstr " -v, --verbose                förklara vad som händer\n"
 
 #: sys-utils/ipcrm.c:86
 #, c-format
@@ -13740,47 +13689,47 @@ msgstr "Ställ in en linjedisciplin för en seriell linje.\n"
 
 #: sys-utils/ldattach.c:202
 msgid " -d, --debug             print verbose messages to stderr\n"
-msgstr " -d, --debug             skriv ut utförliga meddelanden till standard fel\n"
+msgstr " -d, --debug              skriv ut utförliga meddelanden till standard fel\n"
 
 #: sys-utils/ldattach.c:203
 msgid " -s, --speed <value>     set serial line speed\n"
-msgstr " -s, --speed <värde>     ställ in hastighet för seriell linje\n"
+msgstr " -s, --speed <värde>      ställ in hastighet för seriell linje\n"
 
 #: sys-utils/ldattach.c:204
 msgid " -c, --intro-command <string> intro sent before ldattach\n"
-msgstr " -c, --intro-command <sträng> introduktion skickad före ldattach\n"
+msgstr " -c, --intro-command <sträng>  introduktion skickad före ldattach\n"
 
 #: sys-utils/ldattach.c:205
 msgid " -p, --pause <seconds>   pause between intro and ldattach\n"
-msgstr " -p, --pause <sekunder>  paus mellan introduktion och ldattach\n"
+msgstr " -p, --pause <sekunder>   paus mellan introduktion och ldattach\n"
 
 #: sys-utils/ldattach.c:206
 msgid " -7, --sevenbits         set character size to 7 bits\n"
-msgstr " -7, --sevenbits         ställ in teckenstorlek på 7 bitar\n"
+msgstr " -7, --sevenbits          ställ in teckenstorlek på 7 bitar\n"
 
 #: sys-utils/ldattach.c:207
 msgid " -8, --eightbits         set character size to 8 bits\n"
-msgstr " -8, --eightbits         ställ in teckenstorlek till 8 bitar\n"
+msgstr " -8, --eightbits          ställ in teckenstorlek till 8 bitar\n"
 
 #: sys-utils/ldattach.c:208
 msgid " -n, --noparity          set parity to none\n"
-msgstr " -n, --noparity          ställ in paritet på ingen\n"
+msgstr " -n, --noparity           ställ in paritet på ingen\n"
 
 #: sys-utils/ldattach.c:209
 msgid " -e, --evenparity        set parity to even\n"
-msgstr " -e, --evenparity        ställ in paritet på jämn\n"
+msgstr " -e, --evenparity         ställ in paritet på jämn\n"
 
 #: sys-utils/ldattach.c:210
 msgid " -o, --oddparity         set parity to odd\n"
-msgstr " -o, --oddparity         ställ in paritet på udda\n"
+msgstr " -o, --oddparity          ställ in paritet på udda\n"
 
 #: sys-utils/ldattach.c:211
 msgid " -1, --onestopbit        set stop bits to one\n"
-msgstr " -1, --onestopbit        ställ in stoppbitar på en\n"
+msgstr " -1, --onestopbit         ställ in stoppbitar på en\n"
 
 #: sys-utils/ldattach.c:212
 msgid " -2, --twostopbits       set stop bits to two\n"
-msgstr " -2, --twostopbits       ställ in stoppbitar på två\n"
+msgstr " -2, --twostopbits        ställ in stoppbitar på två\n"
 
 #: sys-utils/ldattach.c:213
 msgid " -i, --iflag [-]<iflag>  set input mode flag\n"
@@ -13946,7 +13895,7 @@ msgstr " -j, --associated <fil>        lista alla enheter som är associerade me
 
 #: sys-utils/losetup.c:400
 msgid " -L, --nooverlap               avoid possible conflict between devices\n"
-msgstr " -L, --nooverlap           undvik möjliga konflikter mellan enheter\n"
+msgstr " -L, --nooverlap               undvik möjliga konflikter mellan enheter\n"
 
 #: sys-utils/losetup.c:404
 msgid " -o, --offset <num>            start at offset <num> into file\n"
@@ -13997,13 +13946,12 @@ msgid "     --raw                     use raw --list output format\n"
 msgstr "     --raw                     använd rått utmatningsformat för --list\n"
 
 #: sys-utils/losetup.c:424
-#, fuzzy
 msgid ""
 "\n"
 "Available --output columns:\n"
 msgstr ""
 "\n"
-"Tillgängliga --list-kolumner:\n"
+"Tillgängliga --output-kolumner:\n"
 
 #: sys-utils/losetup.c:444
 #, c-format
@@ -14168,9 +14116,8 @@ msgid "failed to determine number of CPUs: %s"
 msgstr "misslyckades med att avgöra antal CPU:er: %s"
 
 #: sys-utils/lscpu.c:897
-#, fuzzy
 msgid "cannot restore signal handler"
-msgstr "kan inte ställa in signalhanterare"
+msgstr "kan inte återställa signalhanterare"
 
 #: sys-utils/lscpu.c:958
 #, c-format
@@ -14368,20 +14315,19 @@ msgstr "Visa information om CPU-arkitekturen.\n"
 
 #: sys-utils/lscpu.c:2056
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
-msgstr " -a, --all               skriv ut både aktiva och inaktiva CPU:er (standard för -e)\n"
+msgstr " -a, --all                skriv ut både aktiva och inaktiva CPU:er (standard för -e)\n"
 
 #: sys-utils/lscpu.c:2057
 msgid " -b, --online            print online CPUs only (default for -p)\n"
-msgstr " -b, --online            skriv endast ut aktiva CPU:er (standard för -p)\n"
+msgstr " -b, --online             skriv endast ut aktiva CPU:er (standard för -p)\n"
 
 #: sys-utils/lscpu.c:2058
 msgid " -c, --offline           print offline CPUs only\n"
-msgstr " -c, --offline           skriv endast ut inaktiva CPU:er\n"
+msgstr " -c, --offline            skriv endast ut inaktiva CPU:er\n"
 
 #: sys-utils/lscpu.c:2059
-#, fuzzy
 msgid " -J, --json              use JSON for default or extended format\n"
-msgstr " -J, --json             använd JSON-utmatningsformat\n"
+msgstr " -J, --json               använd JSON som standard- eller utökat utmatningsformat\n"
 
 #: sys-utils/lscpu.c:2060
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
@@ -14389,19 +14335,19 @@ msgstr " -e, --extended[=<lista>] skriv ut i ett utökat, läsbart format\n"
 
 #: sys-utils/lscpu.c:2061
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
-msgstr " -p, --parse[=<lista>]   skriv ut en lista i tolkningsbart format\n"
+msgstr " -p, --parse[=<lista>]    skriv ut en lista i tolkningsbart format\n"
 
 #: sys-utils/lscpu.c:2062
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
-msgstr " -s, --sysroot <kat>     använd angiven katalog som systemrot\n"
+msgstr " -s, --sysroot <kat>      använd angiven katalog som systemrot\n"
 
 #: sys-utils/lscpu.c:2063
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
-msgstr " -x, --hex               skriv ut hexadecimala masker snarare än listor över CPU:er\n"
+msgstr " -x, --hex                skriv ut hexadecimala masker snarare än listor över CPU:er\n"
 
 #: sys-utils/lscpu.c:2064
 msgid " -y, --physical          print physical instead of logical IDs\n"
-msgstr " -y, --physical       skriv ut fysiska istället för logiska ID\n"
+msgstr " -y, --physical           skriv ut fysiska istället för logiska ID\n"
 
 #: sys-utils/lscpu.c:2169
 #, c-format
@@ -14793,106 +14739,92 @@ msgstr "--global är ömsesidigt uteslutande med --creator, --id och --time"
 
 #: sys-utils/lsmem.c:99
 msgid "start and end address of the memory range"
-msgstr ""
+msgstr "start- och slutadress för minnesintervallet"
 
 #: sys-utils/lsmem.c:100
-#, fuzzy
 msgid "size of the memory range"
-msgstr "enhetsstorlek"
+msgstr "storlek på minnesintervall"
 
 #: sys-utils/lsmem.c:101
 msgid "online status of the memory range"
-msgstr ""
+msgstr "inkopplingsstatus för minnesintervallet"
 
 #: sys-utils/lsmem.c:102
-#, fuzzy
 msgid "memory is removable"
-msgstr " löstagbar"
+msgstr "minne är löstagbart"
 
 #: sys-utils/lsmem.c:103
 msgid "memory block number or blocks range"
-msgstr ""
+msgstr "minnesblocksnummer och blockintervall"
 
 #: sys-utils/lsmem.c:104
-#, fuzzy
 msgid "numa node of memory"
-msgstr "Slut på minne"
+msgstr "numa minnesnod"
 
 #: sys-utils/lsmem.c:193
-#, fuzzy
 msgid "online"
-msgstr ", inkopplad"
+msgstr "inkopplad"
 
 #: sys-utils/lsmem.c:194
-#, fuzzy
 msgid "offline"
-msgstr ", inkopplad"
+msgstr "urkopplad"
 
 #: sys-utils/lsmem.c:195
 msgid "on->off"
-msgstr ""
+msgstr "på->av"
 
 #: sys-utils/lsmem.c:235 sys-utils/lsmem.c:239
-#, fuzzy
 msgid "Memory block size:"
-msgstr "hämta blockstorlek"
+msgstr "Minnesblockstorlek:"
 
 #: sys-utils/lsmem.c:236 sys-utils/lsmem.c:241
-#, fuzzy
 msgid "Total online memory:"
-msgstr "slut på minne"
+msgstr "Totalt minne inkopplat:"
 
 #: sys-utils/lsmem.c:237 sys-utils/lsmem.c:243
-#, fuzzy
 msgid "Total offline memory:"
-msgstr "slut på minne"
+msgstr "Totalt minne urkopplat:"
 
 #: sys-utils/lsmem.c:259
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open %s"
-msgstr "Kan inte öppna %s"
+msgstr "Misslyckades med att öppna %s"
 
 #: sys-utils/lsmem.c:354
-#, fuzzy
 msgid "This system does not support memory blocks"
-msgstr "Detta system har inte stöd för omdetektering av CPU:er"
+msgstr "Detta system har inte stöd för minnesblock"
 
 #: sys-utils/lsmem.c:374
 msgid "List the ranges of available memory with their online status.\n"
-msgstr ""
+msgstr "Lista intervallerna för tillgängligt minne med deras inkopplingsstatus.\n"
 
 #: sys-utils/lsmem.c:379
-#, fuzzy
 msgid " -a, --all            list each individiual memory block\n"
-msgstr " -a, --all            skriv ut alla enheter\n"
+msgstr " -a, --all             lista varje individuellt minnesblock\n"
 
 #: sys-utils/lsmem.c:384
-#, fuzzy
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
-msgstr " -s, --sysroot <kat>     använd angiven katalog som systemrot\n"
+msgstr " -s, --sysroot <kat>   använd den angivna katalogen som systemrot\n"
 
 #: sys-utils/lsmem.c:385
 msgid "     --summary[=when] print summary information (never,always or only)\n"
-msgstr ""
+msgstr "     --summary[=när]   skriv ut sammanfattning (never,always eller only)\n"
 
 #: sys-utils/lsmem.c:488
-#, fuzzy
 msgid "unsupported --summary argument"
-msgstr "argumentet ”%s” till --setgroups stöds inte"
+msgstr "argumentet --summary stöds inte"
 
 #: sys-utils/lsmem.c:501
-#, fuzzy
 msgid "options --{raw,json,pairs} and --summary=only are mutually exclusive"
-msgstr "flaggorna --setgroups=allow och --map-root-user är ömsesidigt uteslutande"
+msgstr "flaggorna --{raw,json,pairs} och --summary=only är ömsesidigt uteslutande"
 
 #: sys-utils/lsmem.c:532 sys-utils/lsns.c:511
 msgid "failed to initialize output table"
 msgstr "misslyckades att initiera utmatningstabell"
 
 #: sys-utils/lsmem.c:544
-#, fuzzy
 msgid "Failed to initialize output column"
-msgstr "misslyckades att initiera utmatningskolumn"
+msgstr "Misslyckades att initiera utmatningskolumn"
 
 #: sys-utils/lsns.c:83
 msgid "namespace identifier (inode number)"
@@ -14945,11 +14877,11 @@ msgstr "Lista systemnamnrymden.\n"
 
 #: sys-utils/lsns.c:623
 msgid " -p, --task <pid>       print process namespaces\n"
-msgstr " -p, --task <pid>       skriv ut processnamnrymd\n"
+msgstr " -p, --task <pid>        skriv ut processnamnrymd\n"
 
 #: sys-utils/lsns.c:626
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"
-msgstr " -t, --type <namn>      namnrymdstyp (mnt, net, ipc, user, pid, uts, cgroup)\n"
+msgstr " -t, --type <namn>       namnrymdstyp (mnt, net, ipc, user, pid, uts, cgroup)\n"
 
 #: sys-utils/lsns.c:716
 #, c-format
@@ -15043,9 +14975,9 @@ msgstr ""
 "       få tillgång till filsystemet. För vidare detaljer se restorecon(8) och mount(8).\n"
 
 #: sys-utils/mount.c:305 sys-utils/umount.c:157
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s."
-msgstr "%15s: %s"
+msgstr "%s: %s."
 
 #: sys-utils/mount.c:331
 #, c-format
@@ -15271,9 +15203,8 @@ msgid "Run a program with namespaces of other processes.\n"
 msgstr "Kör ett program med namnrymder från andra processer.\n"
 
 #: sys-utils/nsenter.c:80
-#, fuzzy
 msgid " -a, --all              enter all namespaces\n"
-msgstr " -a, --all            skriv ut alla enheter\n"
+msgstr " -a, --all              gå in i alla namnrymder\n"
 
 #: sys-utils/nsenter.c:81
 msgid " -t, --target <pid>     target process to get namespaces from\n"
@@ -15364,9 +15295,8 @@ msgid "failed to set exec context to '%s'"
 msgstr "misslyckades med att ställa in exekveringsmiljö till ”%s”"
 
 #: sys-utils/nsenter.c:362
-#, fuzzy
 msgid "no target PID specified for --all"
-msgstr "ingen mål-PID angiven för --follow-context"
+msgstr "ingen mål-PID angiven för --all"
 
 #: sys-utils/nsenter.c:426
 #, c-format
@@ -17668,63 +17598,63 @@ msgstr "Öppna en terminal och ställ in dess läge.\n"
 
 #: term-utils/agetty.c:2119
 msgid " -8, --8bits                assume 8-bit tty\n"
-msgstr " -8, --8bits                antag att det är en 8-bitars tty\n"
+msgstr " -8, --8bits                   antag att det är en 8-bitars tty\n"
 
 #: term-utils/agetty.c:2120
 msgid " -a, --autologin <user>     login the specified user automatically\n"
-msgstr " -a, --autologin <användare> logga in den angivna användaren automatiskt\n"
+msgstr " -a, --autologin <användare>   logga in den angivna användaren automatiskt\n"
 
 #: term-utils/agetty.c:2121
 msgid " -c, --noreset              do not reset control mode\n"
-msgstr " -c, --noreset              återställ inte kontrolläge\n"
+msgstr " -c, --noreset                 återställ inte kontrolläge\n"
 
 #: term-utils/agetty.c:2122
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
-msgstr " -E, --remote               använd -r <värdnamn> för login(1)\n"
+msgstr " -E, --remote                  använd -r <värdnamn> för login(1)\n"
 
 #: term-utils/agetty.c:2123
 msgid " -f, --issue-file <file>    display issue file\n"
-msgstr " -f, --issue-file <fil>      visa issue-fil\n"
+msgstr " -f, --issue-file <fil>        visa issue-fil\n"
 
 #: term-utils/agetty.c:2124
 msgid " -h, --flow-control         enable hardware flow control\n"
-msgstr " -h, --flow-control         aktivera hårdvarubaserad flödeskontroll\n"
+msgstr " -h, --flow-control            aktivera hårdvarubaserad flödeskontroll\n"
 
 #: term-utils/agetty.c:2125
 msgid " -H, --host <hostname>      specify login host\n"
-msgstr " -H, --host <värdnamn>      ange inloggningsvärd\n"
+msgstr " -H, --host <värdnamn>         ange inloggningsvärd\n"
 
 #: term-utils/agetty.c:2126
 msgid " -i, --noissue              do not display issue file\n"
-msgstr " -i, --noissue              visa inte issue-fil\n"
+msgstr " -i, --noissue                 visa inte issue-fil\n"
 
 #: term-utils/agetty.c:2127
 msgid " -I, --init-string <string> set init string\n"
-msgstr " -I, --init-string <sträng> ställ in initierings-sträng\n"
+msgstr " -I, --init-string <sträng>    ställ in initierings-sträng\n"
 
 #: term-utils/agetty.c:2128
 msgid " -J  --noclear              do not clear the screen before prompt\n"
-msgstr " -J  --noclear              rensa inte skärmen innan prompt\n"
+msgstr " -J  --noclear                 rensa inte skärmen innan prompt\n"
 
 #: term-utils/agetty.c:2129
 msgid " -l, --login-program <file> specify login program\n"
-msgstr " -l, --login-program <fil>  ange inloggningsprogram\n"
+msgstr " -l, --login-program <fil>     ange inloggningsprogram\n"
 
 #: term-utils/agetty.c:2130
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
-msgstr " -L, --local-line[=<läge>]  styr flaggan för den lokala linjen\n"
+msgstr " -L, --local-line[=<läge>]     styr flaggan för den lokala linjen\n"
 
 #: term-utils/agetty.c:2131
 msgid " -m, --extract-baud         extract baud rate during connect\n"
-msgstr " -m, --extract-baud         extrahera baud-hastighet under anslutning\n"
+msgstr " -m, --extract-baud            extrahera baud-hastighet under anslutning\n"
 
 #: term-utils/agetty.c:2132
 msgid " -n, --skip-login           do not prompt for login\n"
-msgstr " -n, --skip-login           fråga inte efter inloggning\n"
+msgstr " -n, --skip-login              fråga inte efter inloggning\n"
 
 #: term-utils/agetty.c:2133
 msgid " -N  --nonewline            do not print a newline before issue\n"
-msgstr " -N  --nonewline            skriv inte ut nyrad innan issue-fil\n"
+msgstr " -N  --nonewline               skriv inte ut nyrad innan issue-fil\n"
 
 #: term-utils/agetty.c:2134
 msgid " -o, --login-options <opts> options that are passed to login\n"
@@ -17732,79 +17662,79 @@ msgstr " -o, --login-options <flaggor> flaggor som skickas vidare till login\n"
 
 #: term-utils/agetty.c:2135
 msgid " -p, --login-pause          wait for any key before the login\n"
-msgstr " -p, --login-pause          vänta på valfri tangent innan inloggning\n"
+msgstr " -p, --login-pause             vänta på valfri tangent innan inloggning\n"
 
 # sebras: change root to the given directory
 #: term-utils/agetty.c:2136
 msgid " -r, --chroot <dir>         change root to the directory\n"
-msgstr " -r, --chroot <kat>         ändra rot till angiven katalog\n"
+msgstr " -r, --chroot <kat>            ändra rot till angiven katalog\n"
 
 #: term-utils/agetty.c:2137
 msgid " -R, --hangup               do virtually hangup on the tty\n"
-msgstr " -R, --hangup               avring tty:n virtuellt\n"
+msgstr " -R, --hangup                  avring tty:n virtuellt\n"
 
 #: term-utils/agetty.c:2138
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
-msgstr " -s, --keep-baud            försök att behålla baud-hastighet efter avbrott\n"
+msgstr " -s, --keep-baud               försök att behålla baud-hastighet efter avbrott\n"
 
 #: term-utils/agetty.c:2139
 msgid " -t, --timeout <number>     login process timeout\n"
-msgstr " -t, --timeout <nummer>     tidsgräns för inloggningsprocess\n"
+msgstr " -t, --timeout <nummer>        tidsgräns för inloggningsprocess\n"
 
 #: term-utils/agetty.c:2140
 msgid " -U, --detect-case          detect uppercase terminal\n"
-msgstr " -U, --detect-case          identifiera terminal som använder versaler\n"
+msgstr " -U, --detect-case             identifiera terminal som använder versaler\n"
 
 #: term-utils/agetty.c:2141
 msgid " -w, --wait-cr              wait carriage-return\n"
-msgstr " -w, --wait-cr              vänta på vagnretur\n"
+msgstr " -w, --wait-cr                 vänta på vagnretur\n"
 
 #: term-utils/agetty.c:2142
 msgid "     --nohints              do not print hints\n"
-msgstr "     --nohints              skriv inte ut tips\n"
+msgstr "     --nohints                 skriv inte ut tips\n"
 
 # sebras: hostname will not be shown at all
 #: term-utils/agetty.c:2143
 msgid "     --nohostname           no hostname at all will be shown\n"
-msgstr "     --nohostname           värdnamnet kommer inte att visas alls\n"
+msgstr "     --nohostname              värdnamnet kommer inte att visas alls\n"
 
 #: term-utils/agetty.c:2144
 msgid "     --long-hostname        show full qualified hostname\n"
-msgstr "     --long-hostname        visa fullständigt värdnamn\n"
+msgstr "     --long-hostname           visa fullständigt värdnamn\n"
 
 #: term-utils/agetty.c:2145
 msgid "     --erase-chars <string> additional backspace chars\n"
-msgstr "     --erase-chars <sträng> ytterligare backstegstecken\n"
+msgstr "     --erase-chars <sträng>    ytterligare backstegstecken\n"
 
 #: term-utils/agetty.c:2146
 msgid "     --kill-chars <string>  additional kill chars\n"
-msgstr "     --kill-chars <sträng>  ytterligare tecken som ignorerar all tidigare tecken\n"
+msgstr "     --kill-chars <sträng>     ytterligare tecken som ignorerar alla tidigare tecken\n"
 
 # sebras: change directory before login
 #: term-utils/agetty.c:2147
 msgid "     --chdir <directory>    chdir before the login\n"
-msgstr "     --chdir <katalog>      byt katalog innan inloggning\n"
+msgstr "     --chdir <katalog>         byt katalog innan inloggning\n"
 
 # sebras: <seconds> seconds of delay before prompt
 #: term-utils/agetty.c:2148
 msgid "     --delay <number>       sleep seconds before prompt\n"
-msgstr "     --delay <nummer>       antal sekunder fördröjning innan prompt\n"
+msgstr "     --delay <nummer>          antal sekunder fördröjning innan prompt\n"
 
 #: term-utils/agetty.c:2149
 msgid "     --nice <number>        run login with this priority\n"
-msgstr "     --nice <nummer>        kör inloggning med denna prioritet\n"
+msgstr "     --nice <nummer>           kör inloggning med denna prioritet\n"
 
 #: term-utils/agetty.c:2150
 msgid "     --reload               reload prompts on running agetty instances\n"
-msgstr "     --reload               återinläs prompt i körande agetty-instanser\n"
+msgstr "     --reload                  återinläs prompt i körande agetty-instanser\n"
 
 #: term-utils/agetty.c:2151
 msgid "     --help                 display this help and exit\n"
-msgstr "     --help                 visa denna hjälp och avsluta\n"
+msgstr "     --help                    visa denna hjälp och avsluta\n"
 
 #: term-utils/agetty.c:2152
 msgid "     --version              output version information and exit\n"
-msgstr "     --version              skriv ut versionsinformation och avsluta\n"
+msgstr "     --version                 skriv ut versionsinformation och avsluta\n"
 
 #: term-utils/agetty.c:2487
 #, c-format
@@ -17892,15 +17822,15 @@ msgid ""
 " -h, --help              display this help and exit\n"
 "\n"
 msgstr ""
-" -a, --append            lägg till utmatning\n"
+" -a, --append             lägg till utmatning\n"
 " -c, --command <kommando> kör kommando snarare än ett interaktivt skal\n"
-" -e, --return            returnera avslutningskod för barnprocessen\n"
-" -f, --flush             kör spolning efter varje skrivning\n"
-"     --force             använd utmatningsfil även om det är en länk\n"
-" -q, --quiet             var tyst\n"
-" -t, --timing[=<fil>]    mata ut tidmätningsdata till standard fel (eller till FIL)\n"
-" -V, --version           mata ut versionsinformation och avsluta\n"
-" -h, --help              visa denna hjälp och avsluta\n"
+" -e, --return             returnera avslutningskod för barnprocessen\n"
+" -f, --flush              kör spolning efter varje skrivning\n"
+"     --force              använd utmatningsfil även om det är en länk\n"
+" -q, --quiet              var tyst\n"
+" -t, --timing[=<fil>]     mata ut tidmätningsdata till standard fel (eller till FIL)\n"
+" -V, --version            mata ut versionsinformation och avsluta\n"
+" -h, --help               visa denna hjälp och avsluta\n"
 "\n"
 
 #: term-utils/script.c:188
@@ -17933,18 +17863,18 @@ msgstr ""
 "Session avslutades.\n"
 
 #: term-utils/script.c:442
-#, fuzzy, c-format
+#, c-format
 msgid "Script started on %s\n"
-msgstr "Skriptet startades %s"
+msgstr "Skriptet startades %s\n"
 
 #: term-utils/script.c:519
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Script done on %s\n"
 msgstr ""
 "\n"
-"Skriptet färdigt %s"
+"Skriptet färdigt %s\n"
 
 #: term-utils/script.c:615
 msgid "failed to get terminal attributes"
@@ -18040,9 +17970,8 @@ msgid " --reset                           reset terminal to power-on state\n"
 msgstr " --reset                           återställ terminal till läget efter uppstart\n"
 
 #: term-utils/setterm.c:389
-#, fuzzy
 msgid " --resize                          reset terminal rows and columns\n"
-msgstr " --reset                           återställ terminal till läget efter uppstart\n"
+msgstr " --resize                          återställ terminalrader och kolumner\n"
 
 #: term-utils/setterm.c:390
 msgid " --initialize                      display init string, and use default settings\n"
@@ -18126,7 +18055,7 @@ msgstr " --tabs          [<nummer>…]       ställ in, eller visa, dessa tabbpo
 
 #: term-utils/setterm.c:410
 msgid " --clrtabs       [<number>...]     clear these tab stop positions, or all\n"
-msgstr " --clrtabs       [<nummer>…]      rensa bort dessa, eller alla, tabbpositioner\n"
+msgstr " --clrtabs       [<nummer>…]       rensa bort dessa, eller alla, tabbpositioner\n"
 
 #: term-utils/setterm.c:411
 msgid " --regtabs       [1-160]           set a regular tab stop interval\n"
@@ -18201,7 +18130,7 @@ msgid "cannot get blank status"
 msgstr "kan inte hämta tömningsstatus"
 
 #: term-utils/setterm.c:778
-#, fuzzy, c-format
+#, c-format
 msgid "cannot open dump file %s for output"
 msgstr "kan inte öppna dumpfil %s för utmatning"
 
@@ -18211,25 +18140,21 @@ msgid "terminal %s does not support %s"
 msgstr "terminal %s har inte stöd för %s"
 
 #: term-utils/setterm.c:858
-#, fuzzy
 msgid "select failed"
-msgstr "sökning misslyckades"
+msgstr "select misslyckades"
 
-# %s blir här "root" i de flesta fall vad jag förstår
 #: term-utils/setterm.c:884
-#, fuzzy
 msgid "stdin does not refer to a terminal"
-msgstr "%s-inloggning nekas på denna terminal.\n"
+msgstr "stdin refererar inte till en terminal"
 
 #: term-utils/setterm.c:912
-#, fuzzy, c-format
+#, c-format
 msgid "invalid cursor position: %s"
-msgstr "ogiltig flagga"
+msgstr "ogiltig markörposition: %s"
 
 #: term-utils/setterm.c:934
-#, fuzzy
 msgid "reset failed"
-msgstr "setgid misslyckades"
+msgstr "reset misslyckades"
 
 #: term-utils/setterm.c:1098
 msgid "cannot (un)set powersave mode"
@@ -18296,9 +18221,8 @@ msgid "Write a message to all users.\n"
 msgstr "Skriv ett meddelande till alla användare.\n"
 
 #: term-utils/wall.c:91
-#, fuzzy
 msgid " -g, --group <group>     only send message to group\n"
-msgstr " -g, --group <grupp>             ange primärgruppen\n"
+msgstr " -g, --group <group>     skicka meddelande endast till grupp\n"
 
 #: term-utils/wall.c:92
 msgid " -n, --nobanner          do not print banner, works only for root\n"
@@ -18309,18 +18233,17 @@ msgid " -t, --timeout <timeout> write timeout in seconds\n"
 msgstr " -t, --timeout <tidsgräns> tidsgräns för skrivning i sekunder\n"
 
 #: term-utils/wall.c:116
-#, fuzzy
 msgid "invalid group argument"
-msgstr "ogiltigt periodargument"
+msgstr "ogiltigt gruppargument"
 
 #: term-utils/wall.c:118
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unknown gid"
-msgstr "%c: okänt kommando"
+msgstr "%s: okänd gid"
 
 #: term-utils/wall.c:158
 msgid "getgrouplist found more groups than sysconf allows"
-msgstr ""
+msgstr "getgrouplist hittade fler grupper än sysconf tillåter"
 
 #: term-utils/wall.c:204
 msgid "--nobanner is available only for root"
@@ -18508,163 +18431,138 @@ msgid "second argument"
 msgstr "andra argument"
 
 #: text-utils/column.c:217
-#, fuzzy
 msgid "failed to parse column"
-msgstr "misslyckades med att tolka end"
+msgstr "misslyckades med att tolka kolumn"
 
 #: text-utils/column.c:227
-#, fuzzy, c-format
+#, c-format
 msgid "undefined column name '%s'"
-msgstr "odefinierad monteringspunkt"
+msgstr "odefinierat kolumnnamn ”%s”"
 
 #: text-utils/column.c:278
-#, fuzzy
 msgid "failed to parse --table-order list"
-msgstr "misslyckades med att tolka --timeout"
+msgstr "misslyckades med att tolka --table-order-lista"
 
 #: text-utils/column.c:351
-#, fuzzy
 msgid "failed to parse --table-right list"
-msgstr "misslyckades med att tolka start"
+msgstr "misslyckades med att tolka --table-right-lista"
 
 #: text-utils/column.c:355
-#, fuzzy
 msgid "failed to parse --table-trunc list"
-msgstr "misslyckades med att tolka --timeout"
+msgstr "misslyckades med att tolka --table-trunc-lista"
 
 #: text-utils/column.c:359
-#, fuzzy
 msgid "failed to parse --table-noextreme list"
-msgstr "misslyckades med att tolka --timeout"
+msgstr "misslyckades med att tolka --table-noextreme-lista"
 
 #: text-utils/column.c:363
-#, fuzzy
 msgid "failed to parse --table-wrap list"
-msgstr "misslyckades med att tolka start"
+msgstr "misslyckades med att tolka --table-wrap-lista"
 
 #: text-utils/column.c:367
-#, fuzzy
 msgid "failed to parse --table-hide list"
-msgstr "misslyckades med att tolka --timeout"
+msgstr "misslyckades med att tolka --table-hide-lista"
 
 #: text-utils/column.c:398
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
-msgstr ""
+msgstr "rad %zu: för JSON krävs namnat för kolumn %zu"
 
 #: text-utils/column.c:411
-#, fuzzy
 msgid "failed to allocate output data"
-msgstr "misslyckades med att allokera utmatningstabell"
+msgstr "misslyckades med att allokera utmatningsdata"
 
 #: text-utils/column.c:554
 msgid "Columnate lists.\n"
 msgstr "Kolumnlistor.\n"
 
 #: text-utils/column.c:557
-#, fuzzy
 msgid " -t, --table                      create a table\n"
-msgstr " -t, --table              skapa en tabell\n"
+msgstr " -t, --table                      skapa en tabell\n"
 
 #: text-utils/column.c:558
-#, fuzzy
 msgid " -n, --table-name <name>          table name for JSON output\n"
-msgstr " -n, --name <programnamn>      namnet under vilket fel rapporteras\n"
+msgstr " -n, --table-name <namn>          tabellnamn för JSON-utmatning\n"
 
 #: text-utils/column.c:559
-#, fuzzy
 msgid " -O, --table-order <columns>      specify order of output columns\n"
-msgstr " -x, --sort <kolumn>  sortera utmatning efter <kolumn>\n"
+msgstr " -O, --table-order <kolumner>     ange ordning för utmatningskolumner\n"
 
 #: text-utils/column.c:560
-#, fuzzy
 msgid " -N, --table-columns <names>      comma separated columns names\n"
-msgstr " -o, --options <lista>    kommaseparerad lista över växlingsflaggor\n"
+msgstr " -N, --table-columns <namn>       kommaseparerade kolumnnamn\n"
 
 #: text-utils/column.c:561
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
-msgstr ""
+msgstr " -E, --table-noextreme <kolumner> räkna inte in lång text från kolumner i kolumnbredd\n"
 
 #: text-utils/column.c:562
-#, fuzzy
 msgid " -H, --table-hide <columns>       don't print the columns\n"
-msgstr " -n, --noheadings       skriv inte ut kolumnrubriker\n"
+msgstr " -H, --table-hide <kolumner>      skriv inte ut kolumnerna\n"
 
 #: text-utils/column.c:563
 msgid " -R, --table-right <columns>      right align text in these columns\n"
-msgstr ""
+msgstr " -R, --table-right <kolumner>     högerjustera text i dessa kolumner\n"
 
 #: text-utils/column.c:564
-#, fuzzy
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
-msgstr " -u, --notruncate       trunkera inte text i kolumner\n"
+msgstr " -T, --table-truncate <kolumner>  trunkera text i kolumnerna när nödvändigt\n"
 
 #: text-utils/column.c:565
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
-msgstr ""
+msgstr " -W, --table-wrap <kolumner>      radbryt text i kolumnerna när nödvändigt\n"
 
 #: text-utils/column.c:566
-#, fuzzy
 msgid " -J, --json                       use JSON output format for table\n"
-msgstr " -J, --json                    använd utmatningformatet JSON för --list\n"
+msgstr " -J, --json                       använd JSON som utmatningsformat för tabell\n"
 
 #: text-utils/column.c:569
-#, fuzzy
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
-msgstr " -O, --output <kolumner>       ange kolumner att skriva ut för --list\n"
+msgstr " -r, --tree <kolumn>              kolumn som ska använda trädlik utmatning för tabellen\n"
 
 #: text-utils/column.c:570
-#, fuzzy
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
-msgstr " -i, --irq <num>              ange irq för parallellport\n"
+msgstr " -i, --tree-id <kolumn>           rad-ID som anger barn-förälder-relation\n"
 
 #: text-utils/column.c:571
-#, fuzzy
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
-msgstr " -N, --partno <num>        ange partitionsnummer\n"
+msgstr " -p, --tree-parent <kolumn>       förälder som anger barn-förälder-relation\n"
 
 #: text-utils/column.c:574
-#, fuzzy
 msgid " -c, --output-width <width>       width of output in number of characters\n"
-msgstr " -c, --columns <bredd>    bredd för utmatningsformat i antal tecken\n"
+msgstr " -c, --output-width <bredd>       utmatningsbredd i antal tecken\n"
 
 #: text-utils/column.c:575
-#, fuzzy
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
-msgstr ""
-" -o, --output-separator <sträng>\n"
-"                          kolumnavgränsare för tabellutmatning; standard är två blanksteg\n"
+msgstr " -o, --output-separator <sträng>  kolumnavgränsare för tabellutmatning (standardvärde är två blanksteg)\n"
 
 #: text-utils/column.c:576
-#, fuzzy
 msgid " -s, --separator <string>         possible table delimiters\n"
-msgstr " -s, --separator <sträng> möjliga tabellavskiljare\n"
+msgstr " -s, --separator <sträng>         möjliga tabellavgränsare\n"
 
 #: text-utils/column.c:577
-#, fuzzy
 msgid " -x, --fillrows                   fill rows before columns\n"
-msgstr " -x, --fillrows           fyll rader före kolumner\n"
+msgstr " -x, --fillrows                   fyll rader före kolumner\n"
 
 #: text-utils/column.c:643
 msgid "invalid columns argument"
 msgstr "ogiltigt kolumnargument"
 
 #: text-utils/column.c:662
-#, fuzzy
 msgid "failed to parse column names"
-msgstr "misslyckades med att tolka monteringstabell"
+msgstr "misslyckades med att tolka kolumnnamn"
 
 #: text-utils/column.c:715
 msgid "options --tree-id and --tree-parent are required for tree formatting"
-msgstr ""
+msgstr "flaggorna --tree-id och --tree-parent krävs för trädformatering"
 
 #: text-utils/column.c:723
 msgid "option --table required for all --table-*"
-msgstr ""
+msgstr "flaggan --table krävs för alla --table-*"
 
 #: text-utils/column.c:726
 msgid "option --table-columns required for --json"
-msgstr ""
+msgstr "flaggan --table-columns krävs för --json"
 
 #: text-utils/hexdump.c:155 text-utils/more.c:225
 #, c-format
@@ -18709,7 +18607,7 @@ msgstr " -e, --format <format>     formatsträng som ska användas för att visa
 
 #: text-utils/hexdump.c:171
 msgid " -f, --format-file <file>  file that contains format strings\n"
-msgstr " -f, --format-file <fil>  fil som innehåller formatsträngar\n"
+msgstr " -f, --format-file <fil>   fil som innehåller formatsträngar\n"
 
 #: text-utils/hexdump.c:172
 msgid " -n, --length <length>     interpret only length bytes of input\n"
@@ -19230,16 +19128,6 @@ msgstr "Okänd kontrollsekvens i indata: %o, %o"
 msgid "Input line too long."
 msgstr "Indataraden är för lång."
 
-#~ msgid "failed to add data to output table"
-#~ msgstr "misslyckades att lägga till data till utmatningstabell"
-
-#~ msgid "failed to initialize output line"
-#~ msgstr "misslyckades med att initiera utmatningsrad"
-
-#, fuzzy
-#~ msgid "failed to create output table"
-#~ msgstr "misslyckades med att allokera utmatningstabell"
-
 #~ msgid "Device %s already contains a %s signature."
 #~ msgstr "Enheten %s innehåller redan en %s-signatur."
 
@@ -19396,6 +19284,9 @@ msgstr "Indataraden är för lång."
 
 #~ msgid "Probably you need root privileges.\n"
 #~ msgstr "Du behöver troligtvis root-privilegier.\n"
+
+#~ msgid "failed to initialize output line"
+#~ msgstr "misslyckades med att initiera utmatningsrad"
 
 #~ msgid "error: can not set signal handler"
 #~ msgstr "fel: Kan inte ställa in signalhanterare"
