@@ -186,7 +186,7 @@ static int has_command(const char *cmd)
 	path = getenv("PATH");
 	if (!path)
 		goto done;
-	p = strdup(path);
+	p = xstrdup(path);
 	if (!p)
 		goto done;
 
