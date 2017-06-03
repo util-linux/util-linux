@@ -53,7 +53,7 @@ static int string_replace(char *from, char *to, char *s, char *orig, char **newn
 	return 0;
 }
 
-static int do_symlink(char *from, char *to, char *s, int verbose, int noact, int nooverride)
+static int do_symlink(char *from, char *to, char *s, int verbose, int noact, int nooverwrite)
 {
 	char *newname = NULL, *target = NULL;
 	int ret = 1;
@@ -77,7 +77,7 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact, int
 	if (string_replace(from, to, target, target, &newname))
 		ret = 0;
 
-	if (ret == 1 && nooverride && lstat(newname, &sb) == 0) {
+	if (ret == 1 && nooverwrite && lstat(newname, &sb) == 0) {
 		if (verbose)
 			printf(_("Skipping existing link: `%s'\n"), newname);
 
@@ -101,7 +101,7 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact, int
 	return ret;
 }
 
-static int do_file(char *from, char *to, char *s, int verbose, int noact, int nooverride)
+static int do_file(char *from, char *to, char *s, int verbose, int noact, int nooverwrite)
 {
 	char *newname = NULL, *file=NULL;
 	int ret = 1;
@@ -113,7 +113,7 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact, int no
 		file = s;
 	if (string_replace(from, to, file, s, &newname))
 		return 0;
-	if (nooverride && stat(newname, &sb) == 0) {
+	if (nooverwrite && stat(newname, &sb) == 0) {
 		printf(_("Skipping existing file: `%s'\n"), newname);
 		ret = 0;
 	}
@@ -138,10 +138,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_("Rename files.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -v, --verbose      explain what is being done\n"), out);
-	fputs(_(" -s, --symlink      act on the target of symlinks\n"), out);
-	fputs(_(" -n, --no-act       do not make any changes\n"), out);
-	fputs(_(" -o, --no-override  don't override existing files\n"), out);
+	fputs(_(" -v, --verbose       explain what is being done\n"), out);
+	fputs(_(" -s, --symlink       act on the target of symlinks\n"), out);
+	fputs(_(" -n, --no-act        do not make any changes\n"), out);
+	fputs(_(" -o, --no-overwrite  don't overwrite existing files\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -152,15 +152,15 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main(int argc, char **argv)
 {
 	char *from, *to;
-	int i, c, ret = 0, verbose = 0, noact = 0, nooverride = 0;
-	int (*do_rename)(char *from, char *to, char *s, int verbose, int noact, int nooverride) = do_file;
+	int i, c, ret = 0, verbose = 0, noact = 0, nooverwrite = 0;
+	int (*do_rename)(char *from, char *to, char *s, int verbose, int noact, int nooverwrite) = do_file;
 
 	static const struct option longopts[] = {
 		{"verbose", no_argument, NULL, 'v'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{"no-act", no_argument, NULL, 'n'},
-		{"no-override", no_argument, NULL, 'o'},
+		{"no-overwrite", no_argument, NULL, 'o'},
 		{"symlink", no_argument, NULL, 's'},
 		{NULL, 0, NULL, 0}
 	};
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
 			noact = 1;
 			/* fallthrough */
 		case 'o':
-			nooverride = 1;
+			nooverwrite = 1;
                         break;
 		case 'v':
 			verbose = 1;
@@ -206,7 +206,7 @@ int main(int argc, char **argv)
 	to = argv[1];
 
 	for (i = 2; i < argc; i++)
-		ret |= do_rename(from, to, argv[i], verbose, noact, nooverride);
+		ret |= do_rename(from, to, argv[i], verbose, noact, nooverwrite);
 
 	switch (ret) {
 	case 0:
