@@ -136,28 +136,35 @@ static int init_shells(char ***shells)
 }
 
 /*
- *  get_shell_list () -- if the given shell appears in /etc/shells,
+ *  is_known_shell() -- if the given shell appears in /etc/shells,
  *	return true.  if not, return false.
- *	if the given shell is NULL, /etc/shells is outputted to stdout.
  */
-static int get_shell_list(const char *shell_name, char ***shells)
+static int is_known_shell(const char *shell_name, char ***shells)
 {
 	char **s;
-	int found = 0;
+
+	if (!shells || !shell_name)
+		return 0;
+
+	for (s = *shells; *s; s++) {
+		if (strcmp(shell_name, *s) == 0)
+			return 1;
+	}
+	return 0;
+}
+
+/*
+ *  print_shells () -- /etc/shells is outputted to stdout.
+ */
+static void print_shells(char ***shells)
+{
+	char **s;
 
 	if (!shells)
-		return found;
-	s = *shells;
-	for (s = *shells; *s; s++) {
-		if (shell_name) {
-			if (!strcmp(shell_name, *s)) {
-				found = 1;
-				break;
-			}
-		} else
-			printf("%s\n", *s);
-	}
-	return found;
+		return;
+
+	for (s = *shells; *s; s++)
+		printf("%s\n", *s);
 }
 
 #ifdef HAVE_LIBREADLINE
@@ -212,7 +219,7 @@ static void parse_argv(int argc, char **argv, struct sinfo *pinfo, char ***shell
 			usage(stdout);
 		case 'l':
 			init_shells(shells);
-			get_shell_list(NULL, shells);
+			print_shells(shells);
 			exit(EXIT_SUCCESS);
 		case 's':
 			if (!optarg)
@@ -275,7 +282,7 @@ static void check_shell(const char *shell, char ***shells)
 		errx(EXIT_FAILURE, _("\"%s\" is not executable"), shell);
 	if (illegal_passwd_chars(shell))
 		errx(EXIT_FAILURE, _("%s: has illegal characters"), shell);
-	if (!get_shell_list(shell, shells)) {
+	if (!is_known_shell(shell, shells)) {
 #ifdef ONLY_LISTED_SHELLS
 		if (!getuid())
 			warnx(_("Warning: \"%s\" is not listed in %s."), shell,
@@ -367,7 +374,7 @@ int main(int argc, char **argv)
 		      "altering, shell change denied"));
 	}
 	init_shells(&global_shells);
-	if (uid != 0 && !get_shell_list(oldshell, &global_shells)) {
+	if (uid != 0 && !is_known_shell(oldshell, &global_shells)) {
 		errno = EACCES;
 		err(EXIT_FAILURE, _("your shell is not in %s, "
 				    "shell change denied"), _PATH_SHELLS);
