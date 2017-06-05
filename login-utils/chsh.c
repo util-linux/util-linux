@@ -68,7 +68,7 @@ struct sinfo {
 };
 
 /* global due readline completion */
-static char **global_shells = NULL;
+static char **global_shells;
 
 static void __attribute__((__noreturn__)) usage (FILE *fp)
 {
@@ -93,27 +93,34 @@ static void __attribute__((__noreturn__)) usage (FILE *fp)
  */
 static void free_shells(void)
 {
-	char **s;
+	if (global_shells) {
+		char **s;
 
-	for (s = global_shells; *s; s++)
-		free(*s);
-	free(global_shells);
+		for (s = global_shells; *s; s++)
+			free(*s);
+		free(global_shells);
+	}
 }
 
 /*
- *  init_shells () -- fill shells variable from /etc/shells,
+ *  init_shells () -- reads /etc/shells into global_shells
  */
-static int init_shells(char ***shells)
+static int init_shells(void)
 {
 	FILE *fp;
 	char *buf = NULL;
 	size_t sz = 0, shellsz = 8, n = 0;
 	ssize_t len;
 
-	*shells = xmalloc(sizeof(char *) * shellsz);
+	if (global_shells)
+		return 0;	/* already initialized */
+
 	fp = fopen(_PATH_SHELLS, "r");
 	if (!fp)
 		return 1;
+
+	global_shells = xmalloc(sizeof(char *) * shellsz);
+
 	while ((len = getline(&buf, &sz, fp)) != -1) {
 		/* ignore comments and blank lines */
 		if (*buf == '#' || len < 2)
@@ -121,17 +128,20 @@ static int init_shells(char ***shells)
 		/* strip the ending newline */
 		if (buf[len - 1] == '\n')
 			buf[len - 1] = 0;
-		(*shells)[n++] = buf;
+		global_shells[n++] = buf;
 		if (shellsz < n) {
 			shellsz *= 2;
-			shells = xrealloc(shells, sizeof(char *) * shellsz);
+			global_shells = xrealloc(global_shells, sizeof(char *) * shellsz);
 		}
 		buf = NULL;
 	}
+
 	free(buf);
-	(*shells)[n] = NULL;
+	global_shells[n] = NULL;
+
 	fclose(fp);
 	atexit(free_shells);
+
 	return 0;
 }
 
@@ -139,14 +149,14 @@ static int init_shells(char ***shells)
  *  is_known_shell() -- if the given shell appears in /etc/shells,
  *	return true.  if not, return false.
  */
-static int is_known_shell(const char *shell_name, char ***shells)
+static int is_known_shell(const char *shell_name)
 {
 	char **s;
 
-	if (!shells || !shell_name)
+	if (!global_shells || !shell_name)
 		return 0;
 
-	for (s = *shells; *s; s++) {
+	for (s = global_shells; *s; s++) {
 		if (strcmp(shell_name, *s) == 0)
 			return 1;
 	}
@@ -156,14 +166,14 @@ static int is_known_shell(const char *shell_name, char ***shells)
 /*
  *  print_shells () -- /etc/shells is outputted to stdout.
  */
-static void print_shells(char ***shells)
+static void print_shells(void)
 {
 	char **s;
 
-	if (!shells)
+	if (!global_shells)
 		return;
 
-	for (s = *shells; *s; s++)
+	for (s = global_shells; *s; s++)
 		printf("%s\n", *s);
 }
 
@@ -172,6 +182,9 @@ static char *shell_name_generator(const char *text, int state)
 {
 	static size_t len, idx;
 	char *s;
+
+	if (!global_shells)
+		return NULL;
 
 	if (!state) {
 		idx = 0;
@@ -198,7 +211,7 @@ static char **shell_name_completion(const char *text,
  *	parse the command line arguments, and fill in "pinfo" with any
  *	information from the command line.
  */
-static void parse_argv(int argc, char **argv, struct sinfo *pinfo, char ***shells)
+static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 {
 	static const struct option long_options[] = {
 		{"shell",       required_argument, NULL, 's'},
@@ -218,8 +231,8 @@ static void parse_argv(int argc, char **argv, struct sinfo *pinfo, char ***shell
 		case 'h':
 			usage(stdout);
 		case 'l':
-			init_shells(shells);
-			print_shells(shells);
+			init_shells();
+			print_shells();
 			exit(EXIT_SUCCESS);
 		case 's':
 			if (!optarg)
@@ -272,7 +285,7 @@ static char *ask_new_shell(char *question, char *oldshell)
  *  check_shell () -- if the shell is completely invalid, print
  *	an error and exit.
  */
-static void check_shell(const char *shell, char ***shells)
+static void check_shell(const char *shell)
 {
 	if (*shell != '/')
 		errx(EXIT_FAILURE, _("shell must be a full path name"));
@@ -282,7 +295,7 @@ static void check_shell(const char *shell, char ***shells)
 		errx(EXIT_FAILURE, _("\"%s\" is not executable"), shell);
 	if (illegal_passwd_chars(shell))
 		errx(EXIT_FAILURE, _("%s: has illegal characters"), shell);
-	if (!is_known_shell(shell, shells)) {
+	if (!is_known_shell(shell)) {
 #ifdef ONLY_LISTED_SHELLS
 		if (!getuid())
 			warnx(_("Warning: \"%s\" is not listed in %s."), shell,
@@ -314,7 +327,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	parse_argv(argc, argv, &info, &global_shells);
+	parse_argv(argc, argv, &info);
 	if (!info.username) {
 		pw = getpwuid(uid);
 		if (!pw)
@@ -373,8 +386,8 @@ int main(int argc, char **argv)
 		    _("running UID doesn't match UID of user we're "
 		      "altering, shell change denied"));
 	}
-	init_shells(&global_shells);
-	if (uid != 0 && !is_known_shell(oldshell, &global_shells)) {
+	init_shells();
+	if (uid != 0 && !is_known_shell(oldshell)) {
 		errno = EACCES;
 		err(EXIT_FAILURE, _("your shell is not in %s, "
 				    "shell change denied"), _PATH_SHELLS);
@@ -393,7 +406,7 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 	}
 
-	check_shell(info.shell, &global_shells);
+	check_shell(info.shell);
 
 	if (!nullshell && strcmp(oldshell, info.shell) == 0)
 		errx(EXIT_SUCCESS, _("Shell not changed."));
