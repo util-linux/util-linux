@@ -77,6 +77,7 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 	 * it's usable only for canonicalized stuff (e.g. kernel mountinfo).
 	 */
 	if (!mnt_context_mtab_writable(cxt) && *tgt == '/' &&
+	    !mnt_context_is_nocanonicalize(cxt) &&
 	    !mnt_context_is_force(cxt) && !mnt_context_is_lazy(cxt))
 		rc = mnt_context_get_mtab_for_target(cxt, &mtab, tgt);
 	else
@@ -245,6 +246,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	    && !mnt_context_mtab_writable(cxt)
 	    && !mnt_context_is_force(cxt)
 	    && !mnt_context_is_lazy(cxt)
+	    && !mnt_context_is_nocanonicalize(cxt)
 	    && !mnt_context_is_loopdel(cxt)
 	    && mnt_stat_mountpoint(tgt, &st) == 0 && S_ISDIR(st.st_mode)
 	    && !has_utab_entry(cxt, tgt)) {
