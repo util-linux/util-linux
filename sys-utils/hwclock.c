@@ -1242,7 +1242,7 @@ static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
 
 	fputs(USAGE_OPTIONS, usageto);
 	fputs(_(" -u, --utc            the hardware clock is kept in UTC\n"
-		"     --localtime      the hardware clock is kept in local time\n"), usageto);
+		" -l, --localtime      the hardware clock is kept in local time\n"), usageto);
 #ifdef __linux__
 	fputs(_(" -f, --rtc <file>     special /dev/... file to use instead of default\n"), usageto);
 #endif
@@ -1302,7 +1302,6 @@ int main(int argc, char **argv)
 		OPT_EPOCH,
 		OPT_GET,
 		OPT_GETEPOCH,
-		OPT_LOCALTIME,
 		OPT_NOADJFILE,
 		OPT_PREDICT,
 		OPT_SET,
@@ -1315,6 +1314,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "adjust",       no_argument,       NULL, 'a'            },
 		{ "help",         no_argument,       NULL, 'h'            },
+		{ "localtime",    no_argument,       NULL, 'l'            },
 		{ "show",         no_argument,       NULL, 'r'            },
 		{ "hctosys",      no_argument,       NULL, 's'            },
 		{ "utc",          no_argument,       NULL, 'u'            },
@@ -1328,7 +1328,6 @@ int main(int argc, char **argv)
 		{ "epoch",        required_argument, NULL, OPT_EPOCH      },
 #endif
 		{ "noadjfile",    no_argument,       NULL, OPT_NOADJFILE  },
-		{ "localtime",    no_argument,       NULL, OPT_LOCALTIME  },
 		{ "directisa",    no_argument,       NULL, OPT_DIRECTISA  },
 		{ "test",         no_argument,       NULL, OPT_TEST       },
 		{ "date",         required_argument, NULL, OPT_DATE       },
@@ -1347,7 +1346,7 @@ int main(int argc, char **argv)
 		{ 'a','r','s','w',
 		  OPT_GET, OPT_GETEPOCH, OPT_PREDICT,
 		  OPT_SET, OPT_SETEPOCH, OPT_SYSTZ },
-		{ 'u', OPT_LOCALTIME},
+		{ 'l', 'u' },
 		{ OPT_ADJFILE, OPT_NOADJFILE },
 		{ OPT_NOADJFILE, OPT_UPDATE },
 		{ 0 }
@@ -1383,7 +1382,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-				"?hvVDarsuwAJSFf:", longopts, NULL)) != -1) {
+				"?hvVDalrsuwAJSFf:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1395,6 +1394,9 @@ int main(int argc, char **argv)
 			ctl.adjust = 1;
 			ctl.show = 0;
 			ctl.hwaudit_on = 1;
+			break;
+		case 'l':
+			ctl.local_opt = 1;	/* --localtime */
 			break;
 		case 'r':
 			ctl.show = 1;
@@ -1434,9 +1436,6 @@ int main(int argc, char **argv)
 #endif
 		case OPT_NOADJFILE:
 			ctl.noadjfile = 1;
-			break;
-		case OPT_LOCALTIME:
-			ctl.local_opt = 1;	/* --localtime */
 			break;
 		case OPT_DIRECTISA:
 			ctl.directisa = 1;
