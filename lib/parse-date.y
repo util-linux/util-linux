@@ -990,10 +990,8 @@ static table const * lookup_word(parser_control const *pc, char *word)
 	int abbrev;
 
 	/* Make it uppercase. */
-	for (p = word; *p; p++) {
-		unsigned char ch = *p;
-		*p = c_toupper (ch);
-	}
+	for (p = word; *p; p++)
+		*p = c_toupper (to_uchar (*p));
 
 	for (tp = meridian_table; tp->name; tp++)
 		if (strcmp (word, tp->name) == 0)
