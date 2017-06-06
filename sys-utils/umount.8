@@ -75,9 +75,17 @@ This option is only supported on systems where /etc/mtab is a symlink
 to /proc/mounts.
 .TP
 .BR \-c , " \-\-no\-canonicalize"
-Do not canonicalize paths.  For more details about this option see the
+Do not canonicalize paths.  The paths canonicalization is based on
+.BR stat (2)
+and
+.BR readlink (2)
+system calls. These system calls may hang in some cases (for example on NFS if
+server is not available). The option has to be used with canonical path to the
+mount point.
+
+For more details about this option see the
 .BR mount (8)
-man page.  Note that \fBumount\fR does not pass this option to the
+man page. Note that \fBumount\fR does not pass this option to the
 .BI /sbin/umount. type
 helpers.
 .TP
