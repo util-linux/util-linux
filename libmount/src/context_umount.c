@@ -78,11 +78,14 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 	 * canonicalized. If --no-canonicalize is enabled than the target path
 	 * is expected already canonical.
 	 *
+	 * Anyway it's better to read huge mount table than canonicalize target
+	 * paths. It means we use the filter only if --no-canonicalize enabled.
+	 *
 	 * It also means that we have to read mount table from kernel
 	 * (non-writable mtab).
 	 */
-	if (!mnt_context_mtab_writable(cxt) && *tgt == '/' &&
-	    !mnt_context_is_force(cxt) && !mnt_context_is_lazy(cxt))
+	if (mnt_context_is_nocanonicalize(cxt) &&
+	    !mnt_context_mtab_writable(cxt) && *tgt == '/')
 		rc = mnt_context_get_mtab_for_target(cxt, &mtab, tgt);
 	else
 		rc = mnt_context_get_mtab(cxt, &mtab);
@@ -257,12 +260,16 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 
 		const char *type = mnt_fs_get_fstype(cxt->fs);
 
+		DBG(CXT, ul_debugobj(cxt, "umount: disable mtab"));
+
 		/* !mnt_context_mtab_writable(cxt) && has_utab_entry() verified that there
 		 * is no stuff in utab, so disable all mtab/utab related actions */
 		mnt_context_disable_mtab(cxt, TRUE);
 
 		if (!type) {
 			struct statfs vfs;
+
+			DBG(CXT, ul_debugobj(cxt, "umount: trying statfs()"));
 			if (statfs(tgt, &vfs) == 0)
 				type = mnt_statfs_get_fstype(&vfs);
 			if (type) {
