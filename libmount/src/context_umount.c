@@ -67,17 +67,21 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 		return 1; /* empty string is not an error */
 
 	/*
-	 * The mount table may be huge, and on systems with utab we have to merge
-	 * userspace mount options into /proc/self/mountinfo. This all is
-	 * expensive. The tab filter allows to filter out entries, then
-	 * a mount table and utab are very tiny files.
+	 * The mount table may be huge, and on systems with utab we have to
+	 * merge userspace mount options into /proc/self/mountinfo. This all is
+	 * expensive. The tab filter allows to filter out entries, then a mount
+	 * table and utab are very tiny files.
 	 *
-	 * *but*... the filter uses mnt_fs_streq_{target,srcpath} functions
-	 * where LABEL, UUID or symlinks are canonicalized. It means that
-	 * it's usable only for canonicalized stuff (e.g. kernel mountinfo).
+	 * The filter uses mnt_fs_streq_{target,srcpath} function where all
+	 * paths should be absolute and canonicalized. This is done within
+	 * mnt_context_get_mtab_for_target() where LABEL, UUID or symlinks are
+	 * canonicalized. If --no-canonicalize is enabled than the target path
+	 * is expected already canonical.
+	 *
+	 * It also means that we have to read mount table from kernel
+	 * (non-writable mtab).
 	 */
 	if (!mnt_context_mtab_writable(cxt) && *tgt == '/' &&
-	    !mnt_context_is_nocanonicalize(cxt) &&
 	    !mnt_context_is_force(cxt) && !mnt_context_is_lazy(cxt))
 		rc = mnt_context_get_mtab_for_target(cxt, &mtab, tgt);
 	else

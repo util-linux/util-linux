@@ -1124,7 +1124,10 @@ int mnt_context_get_mtab_for_target(struct libmnt_context *cxt,
 	char *cn_tgt = NULL;
 	int rc;
 
-	if (mnt_stat_mountpoint(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
+	if (mnt_context_is_nocanonicalize(cxt))
+		mnt_context_set_tabfilter(cxt, mtab_filter, (void *) tgt);
+
+	else if (mnt_stat_mountpoint(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
 		cache = mnt_context_get_cache(cxt);
 		cn_tgt = mnt_resolve_path(tgt, cache);
 		if (cn_tgt)
@@ -1132,12 +1135,10 @@ int mnt_context_get_mtab_for_target(struct libmnt_context *cxt,
 	}
 
 	rc = mnt_context_get_mtab(cxt, mtab);
+	mnt_context_set_tabfilter(cxt, NULL, NULL);
 
-	if (cn_tgt) {
-		mnt_context_set_tabfilter(cxt, NULL, NULL);
-		if (!cache)
-			free(cn_tgt);
-	}
+	if (cn_tgt && !cache)
+		free(cn_tgt);
 
 	return rc;
 }
