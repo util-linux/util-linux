@@ -90,7 +90,7 @@ static int Context_init(ContextObjext *self, PyObject *args, PyObject *kwds)
 		"source", "target", "fstype",
 		"options", "mflags", "fstype_pattern",
 		"options_pattern", "fs", "fstab",
-		"optsmode"
+		"optsmode", NULL
 	};
 
 	if (!PyArg_ParseTupleAndKeywords(
