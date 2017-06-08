@@ -97,6 +97,7 @@ struct sfdisk {
 	const char	*label_nested;	/* --label-nested <label> */
 	const char	*backup_file;	/* -O <path> */
 	const char	*move_typescript; /* --movedata <typescript> */
+	const char	*unit;		/* accept or report unit (deprecated) */
 	char		*prompt;
 
 	struct fdisk_context	*cxt;		/* libfdisk context */
@@ -2078,6 +2079,7 @@ int main(int argc, char *argv[])
 		case 'u':
 			if (*optarg != 'S')
 				errx(EXIT_FAILURE, _("unsupported unit '%c'"), *optarg);
+			sf->unit = optarg;
 			break;
 		case 'v':
 			printf(_("%s from %s\n"), program_invocation_short_name,
@@ -2158,6 +2160,9 @@ int main(int argc, char *argv[])
 
 	if (sf->movedata && !(sf->act == ACT_FDISK && sf->partno >= 0))
 		errx(EXIT_FAILURE, _("--movedata requires -N"));
+
+	if (sf->act == ACT_SHOW_SIZE && sf->unit != NULL)
+		errx(EXIT_FAILURE, _("use of both --unit and --show-size unsupported"));
 
 	switch (sf->act) {
 	case ACT_ACTIVATE:
