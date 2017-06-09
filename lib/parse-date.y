@@ -206,7 +206,6 @@ typedef struct {
 	size_t dsts_seen;
 	size_t times_seen;
 	size_t zones_seen;
-	size_t year_seen;
 
 	/* 1 if the user specified explicit ordinal day value, */
 	int ordinal_day_seen;
@@ -229,7 +228,6 @@ static void digits_to_date_time(parser_control *pc, textint text_int)
 {
 	if (pc->dates_seen && ! pc->year.digits
 	    && ! pc->rels_seen && (pc->times_seen || 2 < text_int.digits)) {
-		pc->year_seen++;
 		pc->year = text_int;
 	} else {
 		if (4 < text_int.digits) {
@@ -1368,7 +1366,6 @@ int parse_date(struct timespec *result, char const *p,
 	pc.local_zones_seen = 0;
 	pc.dsts_seen = 0;
 	pc.zones_seen = 0;
-	pc.year_seen = 0;
 	pc.ordinal_day_seen = 0;
 
 #if HAVE_STRUCT_TM_TM_ZONE
