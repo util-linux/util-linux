@@ -207,9 +207,6 @@ typedef struct {
 	size_t times_seen;
 	size_t zones_seen;
 
-	/* 1 if the user specified explicit ordinal day value, */
-	int ordinal_day_seen;
-
 	/* Table of local time zone abbreviations, null terminated. */
 	table local_time_zone_table[3];
 } parser_control;
@@ -480,12 +477,10 @@ day:
 	| tORDINAL tDAY {
 		pc->day_ordinal = $1;
 		pc->day_number = $2;
-		pc->ordinal_day_seen = 1;
 	  }
 	| tUNUMBER tDAY {
 		pc->day_ordinal = $1.value;
 		pc->day_number = $2;
-		pc->ordinal_day_seen = 1;
 	  }
 ;
 
@@ -1366,7 +1361,6 @@ int parse_date(struct timespec *result, char const *p,
 	pc.local_zones_seen = 0;
 	pc.dsts_seen = 0;
 	pc.zones_seen = 0;
-	pc.ordinal_day_seen = 0;
 
 #if HAVE_STRUCT_TM_TM_ZONE
 	pc.local_time_zone_table[0].name = tmp->tm_zone;
