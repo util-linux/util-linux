@@ -532,7 +532,7 @@ static int loopcxt_next_from_sysfs(struct loopdev_cxt *lc)
 	fd = dirfd(iter->sysblock);
 
 	while ((d = readdir(iter->sysblock))) {
-		char name[256];
+		char name[NAME_MAX + 18 + 1];
 		struct stat st;
 
 		DBG(ITER, ul_debugobj(iter, "check %s", d->d_name));
