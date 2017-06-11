@@ -598,7 +598,7 @@ static void __attribute__((__noreturn__)) usage(const struct last_control *ctl, 
 static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 {
 	struct passwd *pw;
-	char path[32];
+	char path[sizeof(ut->ut_line) + 16];
 	int ret = 0;
 
 	if (ut->ut_tv.tv_sec < ctl->boot_time.tv_sec)
