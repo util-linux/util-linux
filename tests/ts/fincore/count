@@ -70,7 +70,7 @@ function run_dd_test
 		_dd if=/dev/zero of=$input count=1 bs=$bs $flags || return
     fi
 
-    $TS_CMD_FINCORE --output $COLUMNS  --bytes --noheadings $input
+    $TS_CMD_FINCORE --output $OUT_COLUMNS  --bytes --noheadings $input
 
     footer "$?"
 }
@@ -90,7 +90,7 @@ function run_dd_dd_test
     _dd if=/dev/zero of=$input count=1 bs=$bs $flags0 || return
     _dd if=/dev/zero of=$input count=1 bs=$bs $flags1 || return
 
-    $TS_CMD_FINCORE --output $COLUMNS --bytes --noheadings $input
+    $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes --noheadings $input
 
     footer "$?"
 }
@@ -102,10 +102,10 @@ WINDOW_SIZE=$(( 32 * 1024 * PAGE_SIZE ))
 # we use PAGE_SIZE dependent output for a few systems
 if test -f "$TS_EXPECTED.$PAGE_SIZE"; then
 	TS_EXPECTED+=".$PAGE_SIZE"
-	COLUMNS="PAGES,SIZE,FILE"
+	OUT_COLUMNS="PAGES,SIZE,FILE"
 else
 	TS_EXPECTED+=".nosize"
-	COLUMNS="PAGES,FILE"
+	OUT_COLUMNS="PAGES,FILE"
 fi
 
 
@@ -122,7 +122,7 @@ input=
     INPUT="${INPUT} ${input}"
 
     header "NO EXCITING FILE"
-    $TS_CMD_FINCORE --output $COLUMNS --bytes --noheadings $input
+    $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes --noheadings $input
     footer "$?"
 } >> $TS_OUTPUT 2>&1
 
@@ -220,7 +220,7 @@ input=
 
 {
     header "MULTIPLE FILES"
-    $TS_CMD_FINCORE --output $COLUMNS --bytes $INPUT
+    $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes $INPUT
     footer "$?"
 } >> $TS_OUTPUT 2>&1
 
