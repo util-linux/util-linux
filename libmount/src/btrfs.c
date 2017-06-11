@@ -67,10 +67,6 @@ struct btrfs_dir_item {
 static inline uint##bits##_t btrfs_##name(const type *s)		\
 {									\
 	return le##bits##_to_cpu(s->member);				\
-}									\
-static inline void btrfs_set_##name(type *s, uint##bits##_t val)	\
-{									\
-	s->member = cpu_to_le##bits(val);				\
 }
 
 /* struct btrfs_disk_key */
