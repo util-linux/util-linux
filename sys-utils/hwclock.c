@@ -1535,7 +1535,7 @@ int main(int argc, char **argv)
 	return rc;		/* Not reached */
 }
 
-void __attribute__((__noreturn__))
+void
 hwclock_exit(const struct hwclock_control *ctl
 #ifndef HAVE_LIBAUDIT
 	     __attribute__((__unused__))

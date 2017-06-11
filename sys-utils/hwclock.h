@@ -73,6 +73,7 @@ extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch
 extern int set_epoch_rtc(const struct hwclock_control *ctl);
 #endif
 
-extern void hwclock_exit(const struct hwclock_control *ctl, int status);
+extern void __attribute__((__noreturn__))
+hwclock_exit(const struct hwclock_control *ctl, int status);
 
 #endif				/* HWCLOCK_CLOCK_H */
