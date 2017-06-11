@@ -152,7 +152,7 @@ static int is_dm_leaf(const char *devname)
 {
 	struct dirent	*de, *d_de;
 	DIR		*dir, *d_dir;
-	char		path[256];
+	char		path[NAME_MAX + 18 + 1];
 	int		ret = 1;
 
 	if ((dir = opendir("/sys/block")) == NULL)
