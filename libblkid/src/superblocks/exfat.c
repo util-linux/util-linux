@@ -36,7 +36,7 @@ struct exfat_entry_label {
 	uint8_t name[30];
 } __attribute__((__packed__));
 
-#define BLOCK_SIZE(sb) (1 << (sb)->block_bits)
+#define BLOCK_SIZE(sb) (1u << (sb)->block_bits)
 #define CLUSTER_SIZE(sb) (BLOCK_SIZE(sb) << (sb)->bpc_bits)
 #define EXFAT_FIRST_DATA_CLUSTER 2
 #define EXFAT_LAST_DATA_CLUSTER 0xffffff6
