@@ -282,6 +282,8 @@ extern int scols_table_set_termforce(struct libscols_table *tb, int force);
 extern int scols_table_get_termforce(const struct libscols_table *tb);
 extern int scols_table_set_termwidth(struct libscols_table *tb, size_t width);
 extern size_t scols_table_get_termwidth(const struct libscols_table *tb);
+extern int scols_table_set_termheight(struct libscols_table *tb, size_t height);
+extern size_t scols_table_get_termheight(const struct libscols_table *tb);
 
 
 /* table_print.c */

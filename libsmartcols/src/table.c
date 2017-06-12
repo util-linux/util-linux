@@ -61,6 +61,7 @@ static void check_padding_debug(struct libscols_table *tb)
 struct libscols_table *scols_new_table(void)
 {
 	struct libscols_table *tb;
+	int c, l;
 
 	tb = calloc(1, sizeof(struct libscols_table));
 	if (!tb)
@@ -68,7 +69,10 @@ struct libscols_table *scols_new_table(void)
 
 	tb->refcount = 1;
 	tb->out = stdout;
-	tb->termwidth = get_terminal_width(80);
+
+	get_terminal_dimension(&c, &l);
+	tb->termwidth  = c > 0 ? c : 80;
+	tb->termheight = l > 0 ? l : 24;
 
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
@@ -1426,9 +1430,41 @@ int scols_table_set_termwidth(struct libscols_table *tb, size_t width)
  * scols_table_get_termwidth
  * @tb: table
  *
- * Returns: terminal width or a negative value in case of an error.
+ * Returns: terminal width.
  */
 size_t scols_table_get_termwidth(const struct libscols_table *tb)
 {
 	return tb->termwidth;
+}
+
+/**
+ * scols_table_set_termheight
+ * @tb: table
+ * @height: terminal height (number of lines)
+ *
+ * The library automatically detects terminal height or defaults to 24 lines if
+ * detections is unsuccessful. This function override this behaviour.
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.31
+ */
+int scols_table_set_termheight(struct libscols_table *tb, size_t height)
+{
+	DBG(TAB, ul_debugobj(tb, "set terminatl height: %zu", height));
+	tb->termheight = height;
+	return 0;
+}
+
+/**
+ * scols_table_get_termheight
+ * @tb: table
+ *
+ * Returns: terminal height (number of lines).
+ *
+ * Since: 2.31
+ */
+size_t scols_table_get_termheight(const struct libscols_table *tb)
+{
+	return tb->termheight;
 }
