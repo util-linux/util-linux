@@ -166,3 +166,9 @@ global:
 	scols_sort_table_by_tree;
 	scols_line_is_ancestor;
 } SMARTCOLS_2.29;
+
+
+SMARTCOLS_2.31 {
+	scols_table_set_termheight;
+	scols_table_get_termheight;
+} SMARTCOLS_2.30;
