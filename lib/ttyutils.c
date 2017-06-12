@@ -10,35 +10,61 @@
 #include "c.h"
 #include "ttyutils.h"
 
+
+static int get_env_int(const char *name)
+{
+	const char *cp = getenv(name);
+
+	if (cp) {
+		char *end = NULL;
+		long x;
+
+		errno = 0;
+		x = strtol(cp, &end, 10);
+
+		if (errno == 0 && end && *end == '\0' && end > cp &&
+		    x > 0 && x <= INT_MAX)
+			return x;
+	}
+
+	return -1;
+}
+
+int get_terminal_dimension(int *cols, int *lines)
+{
+	int c = 0, l = 0;
+
+#if defined(TIOCGWINSZ)
+	struct winsize	w_win;
+	if (ioctl (STDOUT_FILENO, TIOCGWINSZ, &w_win) == 0) {
+		c = w_win.ws_col;
+		l = w_win.ws_row;
+	}
+#elif defined(TIOCGSIZE)
+	struct ttysize	t_win;
+	if (ioctl (STDOUT_FILENO, TIOCGSIZE, &t_win) == 0) {
+		c = t_win.ts_cols;
+		l = t_win.ts_lines;
+	}
+#endif
+
+	if (cols && c <= 0)
+		c = get_env_int("COLUMNS");
+	if (lines && l <= 0)
+		l = get_env_int("LINES");
+
+	if (cols)
+		*cols = c;
+	if (lines)
+		*lines = l;
+	return 0;
+}
+
 int get_terminal_width(int default_width)
 {
 	int width = 0;
 
-#if defined(TIOCGWINSZ)
-	struct winsize	w_win;
-	if (ioctl (STDOUT_FILENO, TIOCGWINSZ, &w_win) == 0)
-		width = w_win.ws_col;
-#elif defined(TIOCGSIZE)
-	struct ttysize	t_win;
-	if (ioctl (STDOUT_FILENO, TIOCGSIZE, &t_win) == 0)
-		width = t_win.ts_cols;
-#endif
-
-	if (width <= 0) {
-		const char *cp = getenv("COLUMNS");
-
-		if (cp) {
-			char *end = NULL;
-			long c;
-
-			errno = 0;
-			c = strtol(cp, &end, 10);
-
-			if (errno == 0 && end && *end == '\0' && end > cp &&
-			    c > 0 && c <= INT_MAX)
-				width = c;
-		}
-	}
+	get_terminal_dimension(&width, NULL);
 
 	return width > 0 ? width : default_width;
 }
@@ -93,13 +119,17 @@ int get_terminal_name(const char **path,
 int main(void)
 {
 	const char *path, *name, *num;
+	int c, l;
 
 	if (get_terminal_name(&path, &name, &num) == 0) {
 		fprintf(stderr, "tty path:   %s\n", path);
 		fprintf(stderr, "tty name:   %s\n", name);
 		fprintf(stderr, "tty number: %s\n", num);
 	}
-	fprintf(stderr,         "tty width:  %d\n", get_terminal_width(0));
+	get_terminal_dimension(&c, &l);
+	fprintf(stderr,         "tty cols:   %d\n", c);
+	fprintf(stderr,         "tty lines:  %d\n", l);
+
 
 	return EXIT_SUCCESS;
 }

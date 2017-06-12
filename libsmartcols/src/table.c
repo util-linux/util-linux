@@ -490,6 +490,10 @@ FILE *scols_table_get_stream(const struct libscols_table *tb)
  * The @reduce must be smaller than terminal width, otherwise it's silently
  * ignored. The reduction is not applied when STDOUT_FILENO is not terminal.
  *
+ * Note that after output initialization (scols_table_print_* calls) the width
+ * will be reduced, this behavior affects subsequenced scols_table_get_termwidth()
+ * calls.
+ *
  * Returns: 0, a negative value in case of an error.
  */
 int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce)
