@@ -46,7 +46,7 @@ function check_dd_fs_feat
 	touch "$testf"
 
 	# NFS seems to fail for direct AND append
-	_dd if=/dev/zero of="$testf" bs=1K count=2 oflag=direct,append &>/dev/null \
+	_dd if=/dev/zero of="$testf" bs=1k count=2 oflag=direct,append &>/dev/null \
 		|| ts_skip "unsupported: dd oflag=direct,append"
 
 	# TODO: Should we check for sparse file support?

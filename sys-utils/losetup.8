@@ -179,7 +179,7 @@ loop control device
 The following commands can be used as an example of using the loop device.
 .nf
 .IP
-# dd if=/dev/zero of=~/file.img bs=1MiB count=10
+# dd if=/dev/zero of=~/file.img bs=1024k count=10
 # losetup --find --show ~/file.img
 /dev/loop0
 # mkfs -t ext2 /dev/loop0
