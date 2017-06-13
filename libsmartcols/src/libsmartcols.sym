@@ -171,4 +171,6 @@ global:
 SMARTCOLS_2.31 {
 	scols_table_set_termheight;
 	scols_table_get_termheight;
+	scols_table_is_header_repeat;
+	scols_table_enable_header_repeat;
 } SMARTCOLS_2.30;

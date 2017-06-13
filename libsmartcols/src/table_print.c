@@ -43,6 +43,9 @@
 #define cellpadding_symbol(tb)  ((tb)->padding_debug ? "." : \
 				 ((tb)->symbols->cell_padding ? (tb)->symbols->cell_padding: " "))
 
+#define want_repeat_header(tb)	(!(tb)->header_repeat || (tb)->header_next <= (tb)->termlines_used)
+
+
 /* This is private struct to work with output data */
 struct libscols_buffer {
 	char	*begin;		/* begin of the buffer */
@@ -307,6 +310,7 @@ static void print_newline_padding(struct libscols_table *tb,
 	assert(cl);
 
 	fputs(linesep(tb), tb->out);		/* line break */
+	tb->termlines_used++;
 
 	/* fill cells after line break */
 	for (i = 0; i <= (size_t) cl->seqnum; i++)
@@ -650,6 +654,7 @@ static void fput_children_open(struct libscols_table *tb)
 	fputs(linesep(tb), tb->out);
 	tb->indent_last_sep = 1;
 	tb->indent++;
+	tb->termlines_used++;
 }
 
 static void fput_children_close(struct libscols_table *tb)
@@ -684,8 +689,10 @@ static void fput_line_close(struct libscols_table *tb, int last, int last_in_tab
 		if (!tb->no_linesep)
 			fputs(linesep(tb), tb->out);
 
-	} else if (tb->no_linesep == 0 && last_in_table == 0)
+	} else if (tb->no_linesep == 0 && last_in_table == 0) {
 		fputs(linesep(tb), tb->out);
+		tb->termlines_used++;
+	}
 
 	tb->indent_last_sep = 1;
 }
@@ -724,6 +731,7 @@ static int print_line(struct libscols_table *tb,
 	while (rc == 0 && pending) {
 		pending = 0;
 		fputs(linesep(tb), tb->out);
+		tb->termlines_used++;
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 		while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
 			if (scols_column_is_hidden(cl))
@@ -833,7 +841,7 @@ static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 
 	assert(tb);
 
-	if (tb->header_printed == 1 ||
+	if ((tb->header_printed == 1 && tb->header_repeat == 0) ||
 	    scols_table_is_noheadings(tb) ||
 	    scols_table_is_export(tb) ||
 	    scols_table_is_json(tb) ||
@@ -852,12 +860,19 @@ static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 			rc = print_data(tb, cl, NULL, &cl->header, buf);
 	}
 
-	if (rc == 0)
+	if (rc == 0) {
 		fputs(linesep(tb), tb->out);
+		tb->termlines_used++;
+	}
 
 	tb->header_printed = 1;
+	tb->header_next = tb->termlines_used + tb->termheight;
+	if (tb->header_repeat)
+		DBG(TAB, ul_debugobj(tb, "\tnext header: %zu [current=%zu]",
+					tb->header_next, tb->termlines_used));
 	return rc;
 }
+
 
 static int print_range(	struct libscols_table *tb,
 			struct libscols_buffer *buf,
@@ -879,6 +894,9 @@ static int print_range(	struct libscols_table *tb,
 
 		if (end && ln == end)
 			break;
+
+		if (!last && want_repeat_header(tb))
+			print_header(tb, buf);
 	}
 
 	return rc;
@@ -1397,6 +1415,9 @@ static int initialize_printing(struct libscols_table *tb, struct libscols_buffer
 		bufsz = width;
 	} else
 		bufsz = BUFSIZ;
+
+	if (!tb->is_term || tb->format != SCOLS_FMT_HUMAN || scols_table_is_tree(tb))
+		tb->header_repeat = 0;
 
 	/*
 	 * Estimate extra space necessary for tree, JSON or another output

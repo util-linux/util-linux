@@ -164,12 +164,16 @@ struct libscols_table {
 	int	indent_last_sep;/* last printed has been line separator */
 	int	format;		/* SCOLS_FMT_* */
 
+	size_t	termlines_used;	/* printed line counter */
+	size_t	header_next;	/* where repeat header */
+
 	/* flags */
 	unsigned int	ascii		:1,	/* don't use unicode */
 			colors_wanted	:1,	/* enable colors */
 			is_term		:1,	/* isatty() */
 			padding_debug	:1,	/* output visible padding chars */
 			maxout		:1,	/* maximize output */
+			header_repeat   :1,     /* print header after libscols_table->termheight */
 			header_printed  :1,	/* header already printed */
 			priv_symbols	:1,	/* default private symbols */
 			no_headings	:1,	/* don't print header */

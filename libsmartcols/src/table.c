@@ -1033,6 +1033,28 @@ int scols_table_enable_noheadings(struct libscols_table *tb, int enable)
 }
 
 /**
+ * scols_table_enable_header_repeat:
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * Enable/disable header line repeat. The header line is printed only once by
+ * default.  Note that the flag will be silently ignored and disabled if the
+ * output is not on terminal or output format is JSON, raw, etc.
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ *
+ * Since: 2.31
+ */
+int scols_table_enable_header_repeat(struct libscols_table *tb, int enable)
+{
+	if (!tb)
+		return -EINVAL;
+	DBG(TAB, ul_debugobj(tb, "header-repeat: %s", enable ? "ENABLE" : "DISABLE"));
+	tb->header_repeat = enable ? 1 : 0;
+	return 0;
+}
+
+/**
  * scols_table_enable_maxout:
  * @tb: table
  * @enable: 1 or 0
@@ -1126,6 +1148,19 @@ int scols_table_is_ascii(const struct libscols_table *tb)
 int scols_table_is_noheadings(const struct libscols_table *tb)
 {
 	return tb->no_headings;
+}
+
+/**
+ * scols_table_is_header_repeat
+ * @tb: table
+ *
+ * Returns: 1 if header repeat is enabled.
+ *
+ * Since: 2.31
+ */
+int scols_table_is_header_repeat(const struct libscols_table *tb)
+{
+	return tb->header_repeat;
 }
 
 /**
