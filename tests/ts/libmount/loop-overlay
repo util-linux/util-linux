@@ -36,7 +36,7 @@ IMG=$(ts_image_init 5)
 mkfs.ext2 -F "$IMG" &> /dev/null || ts_die "Cannot make extn on $IMG"
 OFFSET=$(stat -c %s "$IMG")
 
-dd if="$IMG" of="$IMG" oflag=append bs=5MiB count=1 conv=notrunc &>/dev/null
+dd if="$IMG" of="$IMG" oflag=append bs=1024k count=5 conv=notrunc &>/dev/null
 
 [ -d "$TS_MOUNTPOINT-1" ] || mkdir -p $TS_MOUNTPOINT-1
 [ -d "$TS_MOUNTPOINT-2" ] || mkdir -p $TS_MOUNTPOINT-2

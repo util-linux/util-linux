@@ -110,8 +110,6 @@ static int sun_probe_label(struct fdisk_context *cxt)
 {
 	struct fdisk_sun_label *sun;
 	struct sun_disklabel *sunlabel;
-	unsigned short *ush;
-	int csum;
 	int need_fixing = 0;
 
 	assert(cxt);
@@ -128,11 +126,7 @@ static int sun_probe_label(struct fdisk_context *cxt)
 		return 0;		/* failed */
 	}
 
-	ush = ((unsigned short *) (sunlabel + 1)) - 1;
-	for (csum = 0; ush >= (unsigned short *)sunlabel;)
-		csum ^= *ush--;
-
-	if (csum) {
+	if (sun_pt_checksum(sunlabel)) {
 		fdisk_warnx(cxt, _("Detected sun disklabel with wrong checksum. "
 			      "Probably you'll have to set all the values, "
 			      "e.g. heads, sectors, cylinders and partitions "
@@ -171,12 +165,8 @@ static int sun_probe_label(struct fdisk_context *cxt)
 		sunlabel->vtoc.version = cpu_to_be32(SUN_VTOC_VERSION);
 		sunlabel->vtoc.sanity = cpu_to_be32(SUN_VTOC_SANITY);
 		sunlabel->vtoc.nparts = cpu_to_be16(SUN_MAXPARTITIONS);
-
-		ush = (unsigned short *)sunlabel;
-		csum = 0;
-		while(ush < (unsigned short *)(&sunlabel->csum))
-			csum ^= *ush++;
-		sunlabel->csum = csum;
+		sunlabel->csum = 0;
+		sunlabel->csum = sun_pt_checksum(sunlabel);
 
 		fdisk_label_set_changed(cxt->label, 1);
 	}
@@ -286,13 +276,8 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 			  SUN_TAG_WHOLEDISK);
 	}
 
-	{
-		unsigned short *ush = (unsigned short *)sunlabel;
-		unsigned short csum = 0;
-		while(ush < (unsigned short *)(&sunlabel->csum))
-			csum ^= *ush++;
-		sunlabel->csum = csum;
-	}
+	sunlabel->csum = 0;
+	sunlabel->csum = sun_pt_checksum(sunlabel);
 
 	fdisk_label_set_changed(cxt->label, 1);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
@@ -979,8 +964,6 @@ int fdisk_sun_set_pcylcount(struct fdisk_context *cxt)
 static int sun_write_disklabel(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel;
-	unsigned short *ush;
-	unsigned short csum = 0;
 	const size_t sz = sizeof(struct sun_disklabel);
 
 	assert(cxt);
@@ -999,11 +982,9 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 		sunlabel->ncyl = a - b;
 	}
 
-	ush = (unsigned short *) sunlabel;
+	sunlabel->csum = 0;
+	sunlabel->csum = sun_pt_checksum(sunlabel);
 
-	while(ush < (unsigned short *)(&sunlabel->csum))
-		csum ^= *ush++;
-	sunlabel->csum = csum;
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
 		return -errno;
 	if (write_all(cxt->dev_fd, sunlabel, sz) != 0)

@@ -1656,9 +1656,9 @@ int scols_print_table(struct libscols_table *tb)
  *
  * Returns: 0, a negative value in case of an error.
  */
+#ifdef HAVE_OPEN_MEMSTREAM
 int scols_print_table_to_string(struct libscols_table *tb, char **data)
 {
-#ifdef HAVE_OPEN_MEMSTREAM
 	FILE *stream, *old_stream;
 	size_t sz;
 	int rc;
@@ -1680,8 +1680,13 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 	scols_table_set_stream(tb, old_stream);
 
 	return rc;
-#else
-	return -ENOSYS;
-#endif
 }
+#else
+int scols_print_table_to_string(
+		struct libscols_table *tb __attribute__((__unused__)),
+		char **data  __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+#endif
 

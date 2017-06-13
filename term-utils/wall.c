@@ -99,10 +99,17 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+/* getgrouplist() on OSX takes int* not gid_t* */
+#ifdef __APPLE__
+# define GID_T int
+#else
+# define GID_T gid_t
+#endif
+
 struct group_workspace {
 	gid_t	requested_group;
 	int	ngroups;
-	gid_t	*groups;
+	GID_T	*groups;
 };
 
 static gid_t get_group_gid(const char *optarg)
@@ -126,7 +133,7 @@ static struct group_workspace *init_group_workspace(const char *optarg)
 
 	buf->requested_group = get_group_gid(optarg);
 	buf->ngroups = sysconf(_SC_NGROUPS_MAX) + 1;  /* room for the primary gid */
-	buf->groups = xcalloc(sizeof(gid_t), buf->ngroups);
+	buf->groups = xcalloc(sizeof(*buf->groups), buf->ngroups);
 
 	return buf;
 }
@@ -162,7 +169,7 @@ static int is_gr_member(const char *login, const struct group_workspace *buf)
 	}
 
 	for (; ngroups >= 0; --ngroups) {
-		if (buf->requested_group == buf->groups[ngroups])
+		if ((GID_T)buf->requested_group == buf->groups[ngroups])
 			return 1;
 	}
 
