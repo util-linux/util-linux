@@ -92,7 +92,8 @@ struct column_control {
 	size_t	maxlength;	/* longest input record (line) */
 
 	unsigned int greedy :1,
-		     json :1;
+		     json :1,
+		     header_repeat :1;
 };
 
 static size_t width(const wchar_t *str)
@@ -205,6 +206,8 @@ static void init_table(struct column_control *ctl)
 
 		STRV_FOREACH(name, ctl->tab_colnames)
 			scols_table_new_column(ctl->tab, *name, 0, 0);
+		if (ctl->header_repeat)
+			scols_table_enable_header_repeat(ctl->tab, 1);
 	} else
 		scols_table_enable_noheadings(ctl->tab, 1);
 }
@@ -559,6 +562,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_(" -O, --table-order <columns>      specify order of output columns\n"), out);
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
 	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
+	fputs(_(" -e, --table-header-repeat        repeat header for each page\n"), out);
 	fputs(_(" -H, --table-hide <columns>       don't print the columns\n"), out);
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
@@ -613,6 +617,7 @@ int main(int argc, char **argv)
 		{ "table-right",         required_argument, NULL, 'R' },
 		{ "table-truncate",      required_argument, NULL, 'T' },
 		{ "table-wrap",          required_argument, NULL, 'W' },
+		{ "table-header-repeat", no_argument,       NULL, 'e' },
 		{ "tree",                required_argument, NULL, 'r' },
 		{ "tree-id",             required_argument, NULL, 'i' },
 		{ "tree-parent",         required_argument, NULL, 'p' },
@@ -634,7 +639,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "c:E:H:hi:JN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c:E:eH:hi:JN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -644,6 +649,9 @@ int main(int argc, char **argv)
 			break;
 		case 'E':
 			ctl.tab_colnoextrem = optarg;
+			break;
+		case 'e':
+			ctl.header_repeat = 1;
 			break;
 		case 'H':
 			ctl.tab_colhide = optarg;
