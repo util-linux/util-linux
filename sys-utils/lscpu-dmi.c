@@ -174,7 +174,7 @@ done:
 static int hypervisor_decode_legacy(uint8_t *buf, const char *devmem)
 {
 	if (!checksum(buf, 0x0F))
-		return HYPER_NONE;
+		return -1;
 
 	return hypervisor_from_dmi_table(DWORD(buf + 0x08), WORD(buf + 0x06),
 			 WORD(buf + 0x0C),
@@ -254,11 +254,15 @@ int read_hypervisor_dmi(void)
 	    || sizeof(uint16_t) != 2
 	    || sizeof(uint32_t) != 4
 	    || '\0' != 0)
-		return rc;
+		goto done;
 
+	/* -1 : no DMI in /sys,
+	 *  0 : DMI exist, nothing detected (HYPER_NONE)
+	 * >0 : hypervisor detected
+	 */
 	rc = hypervisor_decode_sysfw();
-	if (rc >= 0)
-		return rc;
+	if (rc >= HYPER_NONE)
+		goto done;
 
 	/* First try EFI (ia64, Intel-based Mac) */
 	switch (address_from_efi(&fp)) {
@@ -273,8 +277,9 @@ int read_hypervisor_dmi(void)
 		goto done;
 
 	rc = hypervisor_decode_smbios(buf, _PATH_DEV_MEM);
-	if (rc)
+	if (rc >= HYPER_NONE)
 		goto done;
+
 	free(buf);
 	buf = NULL;
 memory_scan:
@@ -287,17 +292,17 @@ memory_scan:
 	for (fp = 0; fp <= 0xFFF0; fp += 16) {
 		if (memcmp(buf + fp, "_SM_", 4) == 0 && fp <= 0xFFE0) {
 			rc = hypervisor_decode_smbios(buf + fp, _PATH_DEV_MEM);
-			if (rc == -1)
+			if (rc < 0)
 				fp += 16;
 
 		} else if (memcmp(buf + fp, "_DMI_", 5) == 0)
 			rc = hypervisor_decode_legacy(buf + fp, _PATH_DEV_MEM);
 
-		if (rc >= 0)
+		if (rc >= HYPER_NONE)
 			break;
 	}
 #endif
 done:
 	free(buf);
-	return rc;
+	return rc < 0 ? HYPER_NONE : rc;
 }
