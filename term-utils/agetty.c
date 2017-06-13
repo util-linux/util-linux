@@ -2041,12 +2041,12 @@ static void termio_final(struct options *op, struct termios *tp, struct chardata
 	case 1:
 		/* odd parity */
 		tp->c_cflag |= PARODD;
-		/* do not break */
+		/* fallthrough */
 	case 2:
 		/* even parity */
 		tp->c_cflag |= PARENB;
 		tp->c_iflag |= INPCK | ISTRIP;
-		/* do not break */
+		/* fallthrough */
 	case (1 | 2):
 		/* no parity bit */
 		tp->c_cflag &= ~CSIZE;

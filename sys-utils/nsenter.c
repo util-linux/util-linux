@@ -65,7 +65,7 @@ static struct namespace_file {
 	{ .nstype = 0, .name = NULL, .fd = -1 }
 };
 
-static void usage(int status)
+static void __attribute__((__noreturn__)) usage(int status)
 {
 	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
 
