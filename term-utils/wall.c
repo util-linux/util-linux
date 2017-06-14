@@ -102,7 +102,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 struct group_workspace {
 	gid_t	requested_group;
 	int	ngroups;
+
+/* getgrouplist() on OSX takes int* not gid_t* */
+#ifdef __APPLE__
+	int	*groups;
+#else
 	gid_t	*groups;
+#endif
 };
 
 static gid_t get_group_gid(const char *optarg)
@@ -162,7 +168,7 @@ static int is_gr_member(const char *login, const struct group_workspace *buf)
 	}
 
 	for (; ngroups >= 0; --ngroups) {
-		if (buf->requested_group == buf->groups[ngroups])
+		if (buf->requested_group == (gid_t) buf->groups[ngroups])
 			return 1;
 	}
 
