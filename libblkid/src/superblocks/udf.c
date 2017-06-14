@@ -127,7 +127,7 @@ static int probe_udf(blkid_probe pr,
 	struct volume_descriptor *vd;
 	struct volume_structure_descriptor *vsd;
 	unsigned int bs;
-	unsigned int pbs[2];
+	unsigned int pbs[5];
 	unsigned int b;
 	unsigned int type;
 	unsigned int count;
@@ -141,9 +141,12 @@ static int probe_udf(blkid_probe pr,
 
 	/* The block size of a UDF filesystem is that of the underlying
 	 * storage; we check later on for the special case of image files,
-	 * which may have the 2048-byte block size of optical media. */
+	 * which may have any block size valid for UDF filesystem */
 	pbs[0] = blkid_probe_get_sectorsize(pr);
-	pbs[1] = 0x800;
+	pbs[1] = 512;
+	pbs[2] = 1024;
+	pbs[3] = 2048;
+	pbs[4] = 4096;
 
 	/* check for a Volume Structure Descriptor (VSD); each is
 	 * 2048 bytes long */
@@ -168,8 +171,6 @@ nsr:
 					sizeof(*vsd));
 		if (!vsd)
 			return errno ? -errno : 1;
-		if (vsd->id[0] == '\0')
-			return 1;
 		if (memcmp(vsd->id, "NSR02", 5) == 0)
 			goto anchor;
 		if (memcmp(vsd->id, "NSR03", 5) == 0)
@@ -179,7 +180,7 @@ nsr:
 
 anchor:
 	/* read Anchor Volume Descriptor (AVDP), checking block size */
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 5; i++) {
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr, 256 * pbs[i], sizeof(*vd));
 		if (!vd)
