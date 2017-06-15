@@ -1422,15 +1422,12 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 {
 	char *root = NULL;
 	const char *mnt = NULL;
-	const char *fstype;
 	struct libmnt_fs *src_fs = NULL;
 
 	assert(fs);
 	assert(fsroot);
 
 	DBG(TAB, ul_debug("lookup fs-root for '%s'", mnt_fs_get_source(fs)));
-
-	fstype = mnt_fs_get_fstype(fs);
 
 	if (tb && (mountflags & MS_BIND)) {
 		const char *src, *src_root;
@@ -1496,7 +1493,8 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 	/*
 	 * btrfs-subvolume mount -- get subvolume name and use it as a root-fs path
 	 */
-	else if (tb && fstype && (!strcmp(fstype, "btrfs") || !strcmp(fstype, "auto"))) {
+	else if (tb && fs->fstype &&
+		 (!strcmp(fs->fstype, "btrfs") || !strcmp(fs->fstype, "auto"))) {
 		if (get_btrfs_fs_root(tb, fs, &root) < 0)
 			goto err;
 	}
