@@ -194,7 +194,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	mnt_table_uniq_fs(tab, 0, uniq_fs_target_cmp);
 
 	/* de-duplicate by source and root */
-	mnt_table_uniq_fs(tab, 0, uniq_fs_source_cmp);
+	mnt_table_uniq_fs(tab, MNT_UNIQ_FORWARD, uniq_fs_source_cmp);
 
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
 		const char *src = mnt_fs_get_srcpath(fs),
