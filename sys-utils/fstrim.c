@@ -193,7 +193,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	/* de-duplicate by mountpoints */
 	mnt_table_uniq_fs(tab, 0, uniq_fs_target_cmp);
 
-	/* de-duplicate by source and root */
+	/* de-duplicate by source */
 	mnt_table_uniq_fs(tab, MNT_UNIQ_FORWARD, uniq_fs_source_cmp);
 
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
