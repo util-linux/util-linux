@@ -17,8 +17,8 @@ env:
 
 matrix:
   include:
-    - os: linux
-      dist: precise
+    # test old Ubuntu 12.04 and OSX for compatibility
+    - dist: precise
       compiler: gcc
       env: PRECISE="yes" MAKE_CHECK="root"
     - os: osx
@@ -35,10 +35,6 @@ branches:
 before_install:
   # print some host info
   - env | grep -v "encrypted" | LC_ALL=C sort
-  - $CC --version
-  - which $CC
-  # workaround clang not system wide, fail on sudo make install
-  - export CC=`which $CC`
   # workaround travis-ci issue #5301
   - unset PYTHON_CFLAGS
 

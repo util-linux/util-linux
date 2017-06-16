@@ -138,7 +138,7 @@ void prepare_line_buffer(void);
 
 static struct termios otty, savetty0;
 static long file_pos, file_size;
-static int fnum, no_intty, no_tty, slow_tty;
+static int fnum, no_intty, no_tty;
 static int dum_opt, dlines;
 static void onquit(int), onsusp(int), chgwinsz(int), end_it(int);
 static int nscroll = SCROLL_LEN;	/* Number of lines scrolled by 'd' */
@@ -1818,7 +1818,6 @@ void initterm(void)
 	no_intty = tcgetattr(fileno(stdin), &otty);
 	tcgetattr(fileno(stderr), &otty);
 	savetty0 = otty;
-	slow_tty = cfgetispeed(&otty) < B1200;
 	hardtabs = (otty.c_oflag & TABDLY) != XTABS;
 	if (!no_tty) {
 		otty.c_lflag &= ~(ICANON | ECHO);

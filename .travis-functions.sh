@@ -17,8 +17,15 @@ MAKE="make -j2"
 DUMP_CONFIG_LOG="short"
 export TS_OPT_parsable="yes"
 
+# workaround ugly warning on travis OSX,
+# see https://github.com/direnv/direnv/issues/210
+shell_session_update() { :; }
+
 function xconfigure
 {
+	which "$CC"
+	"$CC" --version
+
 	./configure "$@" $OSX_CONFOPTS
 	err=$?
 	if [ "$DUMP_CONFIG_LOG" = "short" ]; then
@@ -58,7 +65,8 @@ function check_root
 	osx_prepare_check
 	sudo -E $MAKE check TS_OPTS="$opts" || return
 
-	sudo $MAKE install || return
+	# keep PATH to make sure sudo would find $CC
+	sudo env "PATH=$PATH" $MAKE install || return
 }
 
 function check_dist
@@ -75,8 +83,8 @@ function travis_install_script
 		return
 	fi
 
-	# install some packages from Ubuntu's default sources
-	sudo apt-get -qq update
+	# install required packages
+	sudo apt-get -qq update --fix-missing
 	sudo apt-get install -qq >/dev/null \
 		bc \
 		btrfs-tools \
