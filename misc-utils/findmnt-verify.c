@@ -126,14 +126,13 @@ done:
 static int verify_target(struct verify_context *vfy)
 {
 	const char *tgt = mnt_fs_get_target(vfy->fs);
-	const char *cn = tgt;
 	struct stat sb;
 
 	if (!tgt)
 		return verify_err(vfy, _("undefined target (fs_file)"));
 
 	if (!(flags & FL_NOCACHE)) {
-		cn = mnt_resolve_target(tgt, cache);
+		const char *cn = mnt_resolve_target(tgt, cache);
 		if (!cn)
 			return -ENOMEM;
 		if (strcmp(cn, tgt) != 0)
