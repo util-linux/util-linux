@@ -1206,35 +1206,35 @@ usage(const struct hwclock_control *ctl, FILE *out)
 	fputs(_(" hwclock [function] [option...]\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" Query or set the hardware clock\n"), out);
+	fputs(_(" Query or set the RTC (Real Time Clock / Hardware Clock)\n"), out);
 
 	fputs(USAGE_FUNCTIONS, out);
-	fputs(_(" -r, --show           read hardware clock and print result\n"
-		"     --get            read hardware clock and print drift corrected result\n"
+	fputs(_(" -r, --show           read the RTC and print result\n"
+		"     --get            read the RTC and print drift corrected result\n"
 		"     --set            set the RTC to the time given with --date\n"), out);
-	fputs(_(" -s, --hctosys        set the system time from the hardware clock\n"
-		" -w, --systohc        set the hardware clock from the current system time\n"
+	fputs(_(" -s, --hctosys        set the system time from the RTC\n"
+		" -w, --systohc        set the RTC from the current system time\n"
 		"     --systz          set the system time based on the current timezone\n"
 		"     --adjust         adjust the RTC to account for systematic drift since\n"
 		"                        the clock was last set or adjusted\n"), out);
 #if defined(__linux__) && defined(__alpha__)
-	fputs(_("     --getepoch       print out the kernel's hardware clock epoch value\n"
-		"     --setepoch       set the kernel's hardware clock epoch value to the \n"
+	fputs(_("     --getepoch       print out the kernel's RTC epoch value\n"
+		"     --setepoch       set the kernel's RTC epoch value to the \n"
 		"                        value given with --epoch\n"), out);
 #endif
-	fputs(_("     --predict        predict RTC reading at time given with --date\n"), out);
+	fputs(_("     --predict        predict the RTC reading at time given with --date\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -u, --utc            the hardware clock is kept in UTC\n"
-		" -l, --localtime      the hardware clock is kept in local time\n"), out);
+	fputs(_(" -u, --utc            the RTC is kept in UTC\n"
+		" -l, --localtime      the RTC is kept in local time\n"), out);
 #ifdef __linux__
 	fputs(_(" -f, --rtc <file>     special /dev/... file to use instead of default\n"), out);
 #endif
 	fprintf(out, _(
 		"     --directisa      access the ISA bus directly instead of %s\n"
-		"     --date <time>    specifies the time to which to set the hardware clock\n"), _PATH_RTC_DEV);
+		"     --date <time>    specifies the time to which to set the RTC\n"), _PATH_RTC_DEV);
 #if defined(__linux__) && defined(__alpha__)
-	fputs(_("     --epoch <year>   specifies the hardware clock's epoch value\n"), out);
+	fputs(_("     --epoch <year>   specifies the RTC's epoch value\n"), out);
 #endif
 	fprintf(out, _(
 		"     --update-drift   update drift factor in %1$s (requires\n"
