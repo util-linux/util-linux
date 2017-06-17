@@ -1208,8 +1208,7 @@ usage(const struct hwclock_control *ctl, FILE *out)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" Query or set the hardware clock\n"), out);
 
-	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Functions:\n"), out);
+	fputs(USAGE_FUNCTIONS, out);
 	fputs(_(" -r, --show           read hardware clock and print result\n"
 		"     --get            read hardware clock and print drift corrected result\n"
 		"     --set            set the RTC to the time given with --date\n"), out);
