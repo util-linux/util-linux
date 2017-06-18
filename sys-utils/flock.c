@@ -46,34 +46,34 @@
 #include "monotonic.h"
 #include "timer.h"
 
-static void __attribute__((__noreturn__)) usage(int ex)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fprintf(stderr, USAGE_HEADER);
-	fprintf(stderr,
+	fputs(USAGE_HEADER, stdout);
+	printf(
 		_(" %1$s [options] <file>|<directory> <command> [<argument>...]\n"
 		  " %1$s [options] <file>|<directory> -c <command>\n"
 		  " %1$s [options] <file descriptor number>\n"),
 		program_invocation_short_name);
 
-	fputs(USAGE_SEPARATOR, stderr);
-	fputs(_("Manage file locks from shell scripts.\n"), stderr);
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(_("Manage file locks from shell scripts.\n"), stdout);
 
-	fputs(USAGE_OPTIONS, stderr);
-	fputs(_(  " -s, --shared             get a shared lock\n"), stderr);
-	fputs(_(  " -x, --exclusive          get an exclusive lock (default)\n"), stderr);
-	fputs(_(  " -u, --unlock             remove a lock\n"), stderr);
-	fputs(_(  " -n, --nonblock           fail rather than wait\n"), stderr);
-	fputs(_(  " -w, --timeout <secs>     wait for a limited amount of time\n"), stderr);
-	fputs(_(  " -E, --conflict-exit-code <number>  exit code after conflict or timeout\n"), stderr);
-	fputs(_(  " -o, --close              close file descriptor before running command\n"), stderr);
-	fputs(_(  " -c, --command <command>  run a single command string through the shell\n"), stderr);
-	fputs(_(  " -F, --no-fork            execute command without forking\n"), stderr);
-	fputs(_(  "     --verbose            increase verbosity\n"), stderr);
-	fprintf(stderr, USAGE_SEPARATOR);
-	fprintf(stderr, USAGE_HELP);
-	fprintf(stderr, USAGE_VERSION);
-	fprintf(stderr, USAGE_MAN_TAIL("flock(1)"));
-	exit(ex);
+	fputs(USAGE_OPTIONS, stdout);
+	fputs(_(  " -s, --shared             get a shared lock\n"), stdout);
+	fputs(_(  " -x, --exclusive          get an exclusive lock (default)\n"), stdout);
+	fputs(_(  " -u, --unlock             remove a lock\n"), stdout);
+	fputs(_(  " -n, --nonblock           fail rather than wait\n"), stdout);
+	fputs(_(  " -w, --timeout <secs>     wait for a limited amount of time\n"), stdout);
+	fputs(_(  " -E, --conflict-exit-code <number>  exit code after conflict or timeout\n"), stdout);
+	fputs(_(  " -o, --close              close file descriptor before running command\n"), stdout);
+	fputs(_(  " -c, --command <command>  run a single command string through the shell\n"), stdout);
+	fputs(_(  " -F, --no-fork            execute command without forking\n"), stdout);
+	fputs(_(  "     --verbose            increase verbosity\n"), stdout);
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(USAGE_HELP, stdout);
+	fputs(USAGE_VERSION, stdout);
+	printf(USAGE_MAN_TAIL("flock(1)"));
+	exit(EXIT_SUCCESS);
 }
 
 static sig_atomic_t timeout_expired = 0;
@@ -172,8 +172,10 @@ int main(int argc, char *argv[])
 
 	strutils_set_exitcode(EX_USAGE);
 
-	if (argc < 2)
-		usage(EX_USAGE);
+	if (argc < 2) {
+		warnx(_("not enough arguments"));
+		errtryhelp(EX_USAGE);
+	}
 
 	memset(&timeout, 0, sizeof timeout);
 
@@ -217,7 +219,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			exit(EX_OK);
 		case 'h':
-			usage(0);
+			usage();
 		default:
 			errtryhelp(EX_USAGE);
 		}
