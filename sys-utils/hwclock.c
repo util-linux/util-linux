@@ -1233,7 +1233,7 @@ usage(const struct hwclock_control *ctl, FILE *out)
 #if defined(__linux__) && defined(__alpha__)
 	fputs(_("     --epoch <year>   epoch input for --setepoch\n"), out);
 #endif
-	fputs(_("     --update-drift   update drift factor (requires --set or --systohc)\n"), out);
+	fputs(_("     --update-drift   update the RTC drift factor\n"), out);
 	fprintf(out, _(
 		"     --noadjfile      do not use %1$s\n"
 		"     --adjfile <file> use an alternate file to %1$s\n"), _PATH_ADJTIME);
@@ -1464,6 +1464,11 @@ int main(int argc, char **argv)
 
 	if (!ctl.adj_file_name)
 		ctl.adj_file_name = _PATH_ADJTIME;
+
+	if (ctl.update && !ctl.set && !ctl.systohc) {
+		warnx(_("--update-drift requires --set or --systohc"));
+		hwclock_exit(&ctl, EX_USAGE);
+	}
 
 	if (ctl.noadjfile && !ctl.utc && !ctl.local_opt) {
 		warnx(_("With --noadjfile, you must specify "
