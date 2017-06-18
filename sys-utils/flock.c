@@ -46,34 +46,36 @@
 #include "monotonic.h"
 #include "timer.h"
 
-static void __attribute__((__noreturn__)) usage(int ex)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fprintf(stderr, USAGE_HEADER);
-	fprintf(stderr,
+	FILE *out = stdout;
+
+	fputs(USAGE_HEADER, out);
+	fprintf(out,
 		_(" %1$s [options] <file>|<directory> <command> [<argument>...]\n"
 		  " %1$s [options] <file>|<directory> -c <command>\n"
 		  " %1$s [options] <file descriptor number>\n"),
 		program_invocation_short_name);
 
-	fputs(USAGE_SEPARATOR, stderr);
-	fputs(_("Manage file locks from shell scripts.\n"), stderr);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Manage file locks from shell scripts.\n"),  out);
 
-	fputs(USAGE_OPTIONS, stderr);
-	fputs(_(  " -s, --shared             get a shared lock\n"), stderr);
-	fputs(_(  " -x, --exclusive          get an exclusive lock (default)\n"), stderr);
-	fputs(_(  " -u, --unlock             remove a lock\n"), stderr);
-	fputs(_(  " -n, --nonblock           fail rather than wait\n"), stderr);
-	fputs(_(  " -w, --timeout <secs>     wait for a limited amount of time\n"), stderr);
-	fputs(_(  " -E, --conflict-exit-code <number>  exit code after conflict or timeout\n"), stderr);
-	fputs(_(  " -o, --close              close file descriptor before running command\n"), stderr);
-	fputs(_(  " -c, --command <command>  run a single command string through the shell\n"), stderr);
-	fputs(_(  " -F, --no-fork            execute command without forking\n"), stderr);
-	fputs(_(  "     --verbose            increase verbosity\n"), stderr);
-	fprintf(stderr, USAGE_SEPARATOR);
-	fprintf(stderr, USAGE_HELP);
-	fprintf(stderr, USAGE_VERSION);
-	fprintf(stderr, USAGE_MAN_TAIL("flock(1)"));
-	exit(ex);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(  " -s, --shared             get a shared lock\n"), out);
+	fputs(_(  " -x, --exclusive          get an exclusive lock (default)\n"), out);
+	fputs(_(  " -u, --unlock             remove a lock\n"), out);
+	fputs(_(  " -n, --nonblock           fail rather than wait\n"), out);
+	fputs(_(  " -w, --timeout <secs>     wait for a limited amount of time\n"), out);
+	fputs(_(  " -E, --conflict-exit-code <number>  exit code after conflict or timeout\n"), out);
+	fputs(_(  " -o, --close              close file descriptor before running command\n"), out);
+	fputs(_(  " -c, --command <command>  run a single command string through the shell\n"), out);
+	fputs(_(  " -F, --no-fork            execute command without forking\n"), out);
+	fputs(_(  "     --verbose            increase verbosity\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("flock(1)"));
+	exit(EXIT_SUCCESS);
 }
 
 static sig_atomic_t timeout_expired = 0;
@@ -170,9 +172,6 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (argc < 2)
-		usage(EX_USAGE);
-
 	memset(&timeout, 0, sizeof timeout);
 
 	optopt = 0;
@@ -215,24 +214,25 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			exit(EX_OK);
 		case 'h':
-			usage(0);
+			usage();
 		default:
 			errtryhelp(EX_USAGE);
 		}
 	}
 
-	if (no_fork && do_close)
-		errx(EX_USAGE,
-			_("the --no-fork and --close options are incompatible"));
-
+	if (no_fork && do_close) {
+		warnx(_("the --no-fork and --close options are incompatible"));
+		errtryhelp(EX_USAGE);
+	}
 	if (argc > optind + 1) {
 		/* Run command */
 		if (!strcmp(argv[optind + 1], "-c") ||
 		    !strcmp(argv[optind + 1], "--command")) {
-			if (argc != optind + 3)
-				errx(EX_USAGE,
-				     _("%s requires exactly one command argument"),
+			if (argc != optind + 3) {
+				warnx(_("%s requires exactly one command argument"),
 				     argv[optind + 1]);
+				errtryhelp(EX_USAGE);
+			}
 			cmd_argv = sh_c_argv;
 			cmd_argv[0] = getenv("SHELL");
 			if (!cmd_argv[0] || !*cmd_argv[0])
@@ -252,7 +252,8 @@ int main(int argc, char *argv[])
 		fd = strtos32_or_err(argv[optind], _("bad file descriptor"));
 	} else {
 		/* Bad options */
-		errx(EX_USAGE, _("requires file descriptor, file or directory"));
+		warnx(_("requires file descriptor, file or directory"));
+		errtryhelp(EX_USAGE);
 	}
 
 	if (have_timeout) {
