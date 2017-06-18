@@ -10,8 +10,7 @@ other purpose:
 The rule of thumb with other options is that once they exist, you may
 not change them, nor change how they work, nor remove them.
 
-Notice that '-?' is not expected to be a synonym of '--help', but is an
-unknown option resulting in a usage print-out due to a getopt failure.
+See Legacy options below.
 
 
 How a usage text is supposed to look
@@ -118,6 +117,7 @@ entail for translators will pay off later, at the time of the next change,
 when they will not need to search in the long fuzzy text what was changed,
 where, how, and whether it was the only change.
 
+
 Synopsis
 --------
 
@@ -143,13 +143,15 @@ Some commands use peculiar options and arguments.  These will continue
 to be supported, but anything like them will not be accepted as new
 additions.  A short list of examples:
 
-- Other characters than '-' to start an option.  See '+' in 'more'.
-- Using a number as an option argument.  See '-<number>' in 'more'.
+- Characters other than '-' to start an option.  See '+' in 'more'.
+- Using a number as an option.  See '-<number>' in 'more'.
 - Long options that start with a single '-'.  See 'setterm'.
+- '-?' is not expected to be a synonym of '--help', but is an unknown
+  option resulting in a suggestion to try --help due to a getopt failure.
 
 
 Example file
 ------------
 
-The file disk-utils/delpart.c is a minimal example of how to write
+The file ./boilerplate.c is a minimal example of how to write
 a usage function, set up option parsing, version printing and so on.
