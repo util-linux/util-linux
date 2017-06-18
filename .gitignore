@@ -165,6 +165,7 @@ ylwrap
 /utmpdump
 /uuidd
 /uuidgen
+/uuidparse
 /vipw
 /wall
 /wdctl

@@ -1146,6 +1146,11 @@ UL_BUILD_INIT([uuidgen], [check])
 UL_REQUIRES_BUILD([uuidgen], [libuuid])
 AM_CONDITIONAL([BUILD_UUIDGEN], [test "x$build_uuidgen" = xyes])
 
+UL_BUILD_INIT([uuidparse], [check])
+UL_REQUIRES_BUILD([uuidparse], [libuuid])
+UL_REQUIRES_BUILD([uuidparse], [libsmartcols])
+AM_CONDITIONAL([BUILD_UUIDPARSE], [test "x$build_uuidparse" = xyes])
+
 UL_BUILD_INIT([blkid], [check])
 UL_REQUIRES_BUILD([blkid], [libblkid])
 AM_CONDITIONAL([BUILD_BLKID], [test "x$build_blkid" = xyes])

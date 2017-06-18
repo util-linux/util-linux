@@ -93,6 +93,7 @@ TS_CMD_UMOUNT=${TS_CMD_UMOUNT:-"$top_builddir/umount"}
 TS_CMD_UTMPDUMP=${TS_CMD_UTMPDUMP-"$top_builddir/utmpdump"}
 TS_CMD_UUIDD=${TS_CMD_UUIDD-"$top_builddir/uuidd"}
 TS_CMD_UUIDGEN=${TS_CMD_UUIDGEN-"$top_builddir/uuidgen"}
+TS_CMD_UUIDPARSE=${TS_CMD_UUIDPARSE-"$top_builddir/uuidparse"}
 TS_CMD_WHEREIS=${TS_CMD_WHEREIS-"$top_builddir/whereis"}
 TS_CMD_WIPEFS=${TS_CMD_WIPEFS-"$top_builddir/wipefs"}
 TS_CMD_CHRT=${TS_CMD_CHRT-"$top_builddir/chrt"}
