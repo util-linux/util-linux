@@ -319,8 +319,8 @@ static inline int xusleep(useconds_t usec)
 #define USAGE_OPTIONS    _("\nOptions:\n")
 #define USAGE_FUNCTIONS  _("\nFunctions:\n")
 #define USAGE_SEPARATOR    "\n"
-#define USAGE_HELP       _(" -h, --help     display this help and exit\n")
-#define USAGE_VERSION    _(" -V, --version  output version information and exit\n")
+#define USAGE_HELP       _(" -h, --help     display help information and exit\n")
+#define USAGE_VERSION    _(" -V, --version  display version information and exit\n")
 #define USAGE_MAN_TAIL(_man)   _("\nFor more details see %s.\n"), _man
 
 #define UTIL_LINUX_VERSION _("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING
