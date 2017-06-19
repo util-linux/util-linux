@@ -308,7 +308,7 @@ static void termio_final(struct options *op,
 			 struct termios *tp, struct chardata *cp);
 static int caps_lock(char *s);
 static speed_t bcode(char *s);
-static void usage(FILE * out) __attribute__((__noreturn__));
+static void usage(void) __attribute__((__noreturn__));
 static void log_err(const char *, ...) __attribute__((__noreturn__))
 			       __attribute__((__format__(printf, 1, 2)));
 static void log_warn (const char *, ...)
@@ -785,9 +785,9 @@ static void parse_args(int argc, char **argv, struct options *op)
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case HELP_OPTION:
-			usage(stdout);
+			usage();
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
@@ -795,7 +795,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 
 	if (argc < optind + 1) {
 		log_warn(_("not enough arguments"));
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	/* Accept "tty", "baudrate tty", and "tty baudrate". */
@@ -804,7 +804,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		parse_speeds(op, argv[optind++]);
 		if (argc < optind + 1) {
 			warn(_("not enough arguments"));
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 		op->tty = argv[optind++];
 	} else {
@@ -2106,8 +2106,10 @@ static speed_t bcode(char *s)
 	return 0;
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
+
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 		       " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"), program_invocation_short_name);
@@ -2152,7 +2154,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("     --version              output version information and exit\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("agetty(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 /*
