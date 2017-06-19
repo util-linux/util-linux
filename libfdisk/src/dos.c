@@ -1580,7 +1580,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		}
 
 	/* pa specifies start, but outside extended partition */
-	} else if (pa && fdisk_partition_has_start(pa)) {
+	} else if (pa && fdisk_partition_has_start(pa) && l->ext_offset) {
 		DBG(LABEL, ul_debug("DOS: pa template %p: add primary", pa));
 		rc = get_partition_unused_primary(cxt, pa, &res);
 		if (rc == 0)
@@ -1590,7 +1590,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	/* pa follows default, but partno < 4, it means primary partition */
 	} else if (pa && fdisk_partition_start_is_default(pa)
 		   && fdisk_partition_has_partno(pa)
-		    && pa->partno < 4) {
+		   && pa->partno < 4) {
 		DBG(LABEL, ul_debug("DOS: pa template %p: add primary (partno < 4)", pa));
 		rc = get_partition_unused_primary(cxt, pa, &res);
 		if (rc == 0)
