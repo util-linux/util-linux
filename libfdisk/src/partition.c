@@ -1054,7 +1054,7 @@ static int resize_get_last_possible(
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
 	*maxsz = 0;
-	DBG(TAB, ul_debugobj(tb, "checking last possible for start=%ju", start));
+	DBG(TAB, ul_debugobj(tb, "checking last possible for start=%ju", (uintmax_t) start));
 
 
 	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
@@ -1082,6 +1082,13 @@ static int resize_get_last_possible(
 			continue;
 		}
 
+		/* The current is nested, free space has to be nested within the same parent */
+		if (fdisk_partition_is_nested(cur)
+		    && pa->parent_partno != cur->parent_partno) {
+			DBG(TAB, ul_debugobj(tb, "  ignore (nested required)"));
+			continue;
+		}
+
 		if (!last) {
 			if (start >= pa->start &&  start < pa->start + pa->size) {
 				if (fdisk_partition_is_freespace(pa) || pa == cur) {
@@ -1092,7 +1099,9 @@ static int resize_get_last_possible(
 					break;
 				}
 
+
 				*maxsz = pa->size - (start - pa->start);
+				DBG(TAB, ul_debugobj(tb, "  new max=%ju", (uintmax_t) *maxsz));
 			}
 		} else if (!fdisk_partition_is_freespace(pa) && pa != cur) {
 			DBG(TAB, ul_debugobj(tb, "  no free space behind current"));
@@ -1100,6 +1109,7 @@ static int resize_get_last_possible(
 		} else {
 			last = pa;
 			*maxsz += pa->size;
+			DBG(TAB, ul_debugobj(tb, "  new max=%ju (last updated)", (uintmax_t) *maxsz));
 		}
 	}
 
