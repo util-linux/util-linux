@@ -163,15 +163,15 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_("Make a typescript of a terminal session.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --append            append the output\n"
-		" -c, --command <command> run command rather than interactive shell\n"
-		" -e, --return            return exit code of the child process\n"
-		" -f, --flush             run flush after each write\n"
-		"     --force             use output file even when it is a link\n"
-		" -q, --quiet             be quiet\n"
+	fputs(_(" -a, --append                    append the output\n"
+		" -c, --command <command>         run command rather than interactive shell\n"
+		" -e, --return                    return exit code of the child process\n"
+		" -f, --flush                     run flush after each write\n"
+		"     --force                     use output file even when it is a link\n"
+		" -q, --quiet                     be quiet\n"
 		" -t[<file>], --timing[=<file>]   output timing data to stderr (or to FILE)\n"
-		" -V, --version           output version information and exit\n"
-		" -h, --help              display this help and exit\n\n"), out);
+		" -V, --version                   output version information and exit\n"
+		" -h, --help                      display this help and exit\n\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("script(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
