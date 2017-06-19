@@ -212,8 +212,11 @@ static int get_partition_unused_primary(struct fdisk_context *cxt,
 	if (rc == 1) {
 		fdisk_info(cxt, _("All primary partitions have been defined already."));
 		rc = -1;
+	} else if (rc == -ERANGE) {
+		fdisk_warnx(cxt, _("Primary partition not available."));
 	} else if (rc == 0)
 		*partno = n;
+
 	return rc;
 }
 
