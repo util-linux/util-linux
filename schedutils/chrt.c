@@ -128,9 +128,9 @@ struct chrt_ctl {
 		     verbose : 1;		/* verbose output */
 };
 
-static void __attribute__((__noreturn__)) show_usage(int rc)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE *out = rc == EXIT_SUCCESS ? stdout : stderr;
+	FILE *out = stdout;
 
 	fputs(_("Show or change the real-time scheduling attributes of a process.\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -169,7 +169,7 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 	fputs(USAGE_VERSION, out);
 
 	fprintf(out, USAGE_MAN_TAIL("chrt(1)"));
-	exit(rc);
+	exit(EXIT_SUCCESS);
 }
 
 static const char *get_policy_name(int policy)
@@ -494,15 +494,17 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			show_usage(EXIT_SUCCESS);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
 	if (((ctl->pid > -1) && argc - optind < 1) ||
-	    ((ctl->pid == -1) && argc - optind < 2))
-		show_usage(EXIT_FAILURE);
+	    ((ctl->pid == -1) && argc - optind < 2)) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+}
 
 	if ((ctl->pid > -1) && (ctl->verbose || argc - optind == 1)) {
 		show_sched_info(ctl);

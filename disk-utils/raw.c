@@ -42,10 +42,9 @@ void open_raw_ctl(void);
 static int query(int minor_raw, const char *raw_name, int quiet);
 static int bind(int minor_raw, int block_major, int block_minor);
 
-static void __attribute__ ((__noreturn__)) usage(int err)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE *out = err == EXIT_SUCCESS ? stdout : stderr;
-
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 		_(" %1$s %2$srawN <major> <minor>\n"
@@ -63,7 +62,7 @@ static void __attribute__ ((__noreturn__)) usage(int err)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("raw(8)"));
-	exit(err);
+	exit(EXIT_SUCCESS);
 }
 
 static long strtol_octal_or_err(const char *str, const char *errmesg)
@@ -124,7 +123,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(EXIT_SUCCESS);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -135,8 +134,10 @@ int main(int argc, char *argv[])
 	open_raw_ctl();
 
 	if (do_query_all) {
-		if (optind < argc)
-			usage(EXIT_FAILURE);
+		if (optind < argc) {
+			warnx(_("bad usage"));
+			errtryhelp(EXIT_FAILURE);
+		}
 		for (i = 1; i < RAW_NR_MINORS; i++)
 			query(i, NULL, 1);
 		exit(EXIT_SUCCESS);
@@ -146,8 +147,10 @@ int main(int argc, char *argv[])
 	 * It's a bind or a single query.  Either way we need a raw device.
 	 */
 
-	if (optind >= argc)
-		usage(EXIT_FAILURE);
+	if (optind >= argc) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 	raw_name = argv[optind++];
 
 	/*
@@ -156,9 +159,10 @@ int main(int argc, char *argv[])
 	 * causes udev to *remove* /dev/rawctl
 	 */
 	rc = sscanf(raw_name, _PATH_RAWDEVDIR "raw%d", &raw_minor);
-	if (rc != 1)
-		usage(EXIT_FAILURE);
-
+	if (rc != 1) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 	if (raw_minor == 0)
 		errx(EXIT_RAW_ACCESS,
 		     _("Device '%s' is the control raw device "
@@ -197,7 +201,8 @@ int main(int argc, char *argv[])
 		break;
 
 	default:
-		usage(EXIT_FAILURE);
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	return bind(raw_minor, block_major, block_minor);

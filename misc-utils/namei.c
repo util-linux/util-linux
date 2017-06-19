@@ -320,10 +320,10 @@ print_namei(struct namei *nm, char *path)
 	return 0;
 }
 
-static void usage(int rc)
+static void __attribute__((__noreturn__)) usage(void)
 {
 	const char *p = program_invocation_short_name;
-	FILE *out = rc == EXIT_FAILURE ? stderr : stdout;
+	FILE *out = stdout;
 
 	if (!*p)
 		p = "namei";
@@ -346,7 +346,7 @@ static void usage(int rc)
 		" -v, --vertical      vertical align of modes and owners\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("namei(1)"));
-	exit(rc);
+	exit(EXIT_SUCCESS);
 }
 
 static const struct option longopts[] =
@@ -376,7 +376,7 @@ main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "hVlmnovx", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
-			usage(EXIT_SUCCESS);
+			usage();
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -406,7 +406,7 @@ main(int argc, char **argv)
 
 	if (optind == argc) {
 		warnx(_("pathname argument is missing"));
-		usage(EXIT_FAILURE);
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	ucache = new_idcache();
