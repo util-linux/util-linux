@@ -1070,8 +1070,15 @@ static int resize_get_last_possible(
 
 		if (!fdisk_partition_has_start(pa) ||
 		    !fdisk_partition_has_size(pa) ||
-		    fdisk_partition_is_container(pa)) {
+		    (fdisk_partition_is_container(pa) && pa != cur)) {
 			DBG(TAB, ul_debugobj(tb, "  ignored (no start/size or container)"));
+			continue;
+		}
+
+		if (fdisk_partition_is_nested(pa)
+		    && fdisk_partition_is_container(cur)
+		    && pa->parent_partno == cur->partno) {
+			DBG(TAB, ul_debugobj(tb, "  ignore (nested child of the current partition)"));
 			continue;
 		}
 
