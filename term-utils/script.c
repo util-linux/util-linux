@@ -169,7 +169,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -f, --flush             run flush after each write\n"
 		"     --force             use output file even when it is a link\n"
 		" -q, --quiet             be quiet\n"
-		" -t, --timing[=<file>]   output timing data to stderr (or to FILE)\n"
+		" -t[<file>], --timing[=<file>]   output timing data to stderr (or to FILE)\n"
 		" -V, --version           output version information and exit\n"
 		" -h, --help              display this help and exit\n\n"), out);
 
