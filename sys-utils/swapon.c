@@ -782,9 +782,11 @@ static int swapon_all(struct swapon_ctl *ctl)
 }
 
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
+
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);
 
@@ -829,7 +831,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		fprintf(out, " %-5s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("swapon(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -895,7 +897,7 @@ int main(int argc, char *argv[])
 			ctl.all = 1;
 			break;
 		case 'h':		/* help */
-			usage(stdout);
+			usage();
 			break;
 		case 'o':
 			options = optarg;
@@ -980,8 +982,10 @@ int main(int argc, char *argv[])
 		return status;
 	}
 
-	if (ctl.props.no_fail && !ctl.all)
-		usage(stderr);
+	if (ctl.props.no_fail && !ctl.all) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	if (ctl.all)
 		status |= swapon_all(&ctl);

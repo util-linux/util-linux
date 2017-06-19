@@ -111,8 +111,9 @@ static int print_devno(const struct mountpoint_control *ctl)
 	return 0;
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %1$s [-qd] /path/to/directory\n"
@@ -130,7 +131,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("mountpoint(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -167,7 +168,7 @@ int main(int argc, char **argv)
 			ctl.dev_devno = 1;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -177,8 +178,10 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (optind + 1 != argc)
-		usage(stderr);
+	if (optind + 1 != argc) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	ctl.path = argv[optind];
 

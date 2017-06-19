@@ -363,8 +363,9 @@ static void read_basic_info(struct lsmem *lsmem)
 		lsmem->have_nodes = 1;
 }
 
-static void __attribute__((__noreturn__)) lsmem_usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	unsigned int i;
 
 	fputs(USAGE_HEADER, out);
@@ -449,7 +450,7 @@ int main(int argc, char **argv)
 			lsmem->bytes = 1;
 			break;
 		case 'h':
-			lsmem_usage(stdout);
+			usage();
 			break;
 		case 'J':
 			lsmem->json = 1;
@@ -493,8 +494,10 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (argc != optind)
-		lsmem_usage(stderr);
+	if (argc != optind) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	if (lsmem->want_table + lsmem->want_summary == 0)
 		errx(EXIT_FAILURE, _("options --{raw,json,pairs} and --summary=only are mutually exclusive"));

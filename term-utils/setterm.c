@@ -371,8 +371,9 @@ static int parse_bfreq(char **av, char *oa, int *oi)
 	return strtos32_or_err(arg, _("argument error"));
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
@@ -420,7 +421,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" --version                         show version information and exit\n"), out);
 	fputs(_(" --help                            display this help and exit\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("setterm(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static int __attribute__((__pure__)) set_opt_flag(int opt)
@@ -672,7 +673,7 @@ static void parse_option(struct setterm_control *ctl, int ac, char **av)
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case OPT_HELP:
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -1170,9 +1171,10 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (argc < 2)
-		usage(stderr);
-
+	if (argc < 2) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 	parse_option(&ctl, argc, argv);
 	init_terminal(&ctl);
 	perform_sequence(&ctl);

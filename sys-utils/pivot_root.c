@@ -27,20 +27,21 @@
 
 #define pivot_root(new_root,put_old) syscall(SYS_pivot_root,new_root,put_old)
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fprintf(out, USAGE_HEADER);
+	FILE *out = stdout;
+	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] new_root put_old\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Change the root filesystem.\n"), out);
 
-	fprintf(out, USAGE_OPTIONS);
-	fprintf(out, USAGE_HELP);
-	fprintf(out, USAGE_VERSION);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("pivot_root(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -63,14 +64,15 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
 
-	if (argc != 3)
-		usage(stderr);
-
+	if (argc != 3) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 	if (pivot_root(argv[1], argv[2]) < 0)
 		err(EXIT_FAILURE, _("failed to change root from `%s' to `%s'"),
 		    argv[1], argv[2]);

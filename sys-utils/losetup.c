@@ -375,8 +375,9 @@ done:
 	return rc;
 }
 
-static void usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -427,7 +428,7 @@ static void usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("losetup(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static void warn_size(const char *filename, uint64_t size)
@@ -653,7 +654,7 @@ int main(int argc, char **argv)
 			act = A_FIND_FREE;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'J':
 			json = 1;
@@ -860,7 +861,8 @@ int main(int argc, char **argv)
 			        loopcxt_get_device(&lc));
 		break;
 	default:
-		usage(stderr);
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
 		break;
 	}
 

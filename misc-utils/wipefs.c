@@ -451,8 +451,9 @@ do_wipe(struct wipe_desc *wp, const char *devname, int flags)
 
 
 static void __attribute__((__noreturn__))
-usage(FILE *out)
+usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <device>\n"), program_invocation_short_name);
@@ -474,7 +475,7 @@ usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("wipefs(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 
@@ -525,7 +526,7 @@ main(int argc, char **argv)
 			flags |= WP_FL_FORCE;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'n':
 			flags |= WP_FL_NOACT;
@@ -552,8 +553,11 @@ main(int argc, char **argv)
 		}
 	}
 
-	if (optind == argc)
-		usage(stderr);
+	if (optind == argc) {
+		warnx(_("no device specified"));
+		errtryhelp(EXIT_FAILURE);
+
+	}
 
 	if ((flags & WP_FL_BACKUP) && !((flags & WP_FL_ALL) || has_offset))
 		warnx(_("The --backup option is meaningless in this context"));

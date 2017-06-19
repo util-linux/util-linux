@@ -266,8 +266,9 @@ static int set_level_color(int log_level, const char *mesg, size_t mesgsz)
 	return id >= 0 ? 0 : -1;
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -320,7 +321,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 			_(level_names[i].help));
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_MAN_TAIL("dmesg(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 /*
@@ -1422,7 +1423,7 @@ int main(int argc, char *argv[])
 			ctl.pager = 1;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'k':
 			ctl.fltr_fac = 1;
@@ -1487,8 +1488,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (argc != optind)
-		usage(stderr);
+	if (argc != optind) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	if ((is_timefmt(&ctl, RELTIME) ||
 	     is_timefmt(&ctl, CTIME)   ||

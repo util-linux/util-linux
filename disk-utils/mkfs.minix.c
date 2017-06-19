@@ -131,8 +131,9 @@ static char *zone_map;
 #define mark_zone(x) (setbit(zone_map,(x)-get_first_zone()+1))
 #define unmark_zone(x) (clrbit(zone_map,(x)-get_first_zone()+1))
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] /dev/name [blocks]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
@@ -147,7 +148,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("mkfs.minix(8)"));
-	exit(out == stderr ? MKFS_EX_USAGE : MKFS_EX_OK);
+	exit(MKFS_EX_OK);
 }
 
 #ifdef TEST_SCRIPT
@@ -795,7 +796,7 @@ int main(int argc, char ** argv)
 			printf(UTIL_LINUX_VERSION);
 			return MKFS_EX_OK;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(MKFS_EX_USAGE);
 		}
@@ -810,7 +811,8 @@ int main(int argc, char ** argv)
 		ctl.fs_blocks = strtoul_or_err(argv[0], _("failed to parse number of blocks"));
 
 	if (!ctl.device_name) {
-		usage(stderr);
+		warnx(_("no device specified"));
+		errtryhelp(MKFS_EX_USAGE);
 	}
 	check_user_instructions(&ctl);
 	if (is_mounted(ctl.device_name))

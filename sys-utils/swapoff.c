@@ -116,8 +116,9 @@ static int swapoff_by(const char *name, const char *value, int quiet)
 	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(value);
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);
 
@@ -141,7 +142,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" <file>                 name of file to be used\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("swapoff(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static int swapoff_all(void)
@@ -207,7 +208,7 @@ int main(int argc, char *argv[])
 			++all;
 			break;
 		case 'h':		/* help */
-			usage(stdout);
+			usage();
 			break;
 		case 'v':		/* be chatty */
 			++verbose;
@@ -227,8 +228,10 @@ int main(int argc, char *argv[])
 	}
 	argv += optind;
 
-	if (!all && !numof_labels() && !numof_uuids() && *argv == NULL)
-		usage(stderr);
+	if (!all && !numof_labels() && !numof_uuids() && *argv == NULL) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	mnt_init_debug(0);
 	mntcache = mnt_new_cache();

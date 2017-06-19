@@ -244,7 +244,7 @@ static int week_number(int day, int month, int32_t year, const struct cal_contro
 static int week_to_day(const struct cal_control *ctl);
 static int center_str(const char *src, char *dest, size_t dest_size, size_t width);
 static void center(const char *str, size_t len, int separate);
-static void __attribute__((__noreturn__)) usage(FILE *out);
+static void __attribute__((__noreturn__)) usage(void);
 
 int main(int argc, char **argv)
 {
@@ -394,7 +394,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -470,7 +470,8 @@ int main(int argc, char **argv)
 			ctl.req.month = local_time->tm_mon + 1;
 		break;
 	default:
-		usage(stderr);
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	if (0 < ctl.req.week) {
@@ -987,8 +988,9 @@ static void center(const char *str, size_t len, int separate)
 	}
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [[[day] month] year]\n"), program_invocation_short_name);
 	fprintf(out, _(" %s [options] <timestamp|monthname>\n"), program_invocation_short_name);
@@ -1017,5 +1019,5 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("cal(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

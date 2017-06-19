@@ -78,7 +78,7 @@ static int compare (char *, char *);
 static char *linear_search (char *, char *);
 static int look (char *, char *);
 static void print_from (char *, char *);
-static void __attribute__ ((__noreturn__)) usage(FILE * out);
+static void __attribute__((__noreturn__)) usage(void);
 
 int
 main(int argc, char *argv[])
@@ -126,7 +126,7 @@ main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -143,7 +143,8 @@ main(int argc, char *argv[])
 		string = *argv;
 		break;
 	default:
-		usage(stderr);
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	if (termchar != '\0' && (p = strchr(string, termchar)) != NULL)
@@ -348,8 +349,9 @@ compare(char *s2, char *s2end) {
 	return ((i > 0) ? LESS : (i < 0) ? GREATER : EQUAL);
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <string> [<file>...]\n"), program_invocation_short_name);
 
@@ -367,5 +369,5 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("look(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

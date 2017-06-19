@@ -141,8 +141,9 @@ static void set_uuid_and_label(const struct mkswap_control *ctl)
 	}
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fprintf(out,
 		_("\nUsage:\n"
 		  " %s [options] device [size]\n"),
@@ -162,7 +163,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 		" -V, --version             output version information and exit\n"
 		" -h, --help                display this help and exit\n\n"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static void page_bad(struct mkswap_control *ctl, unsigned int page)
@@ -400,7 +401,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -412,7 +413,7 @@ int main(int argc, char **argv)
 		block_count = argv[optind++];
 	if (optind != argc) {
 		warnx(_("only one device argument is currently supported"));
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
 	}
 
 #ifdef HAVE_LIBUUID
@@ -428,7 +429,7 @@ int main(int argc, char **argv)
 
 	if (!ctl.devname) {
 		warnx(_("error: Nowhere to set up swap on?"));
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
 	}
 	if (block_count) {
 		/* this silly user specified the number of blocks explicitly */

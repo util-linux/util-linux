@@ -66,8 +66,9 @@
 #define IS_NOT_ALLOWED    1  /* Receiving messages is not allowed.  */
 #define MESG_EXIT_FAILURE 2  /* An error occurred.  */
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	/* TRANSLATORS: this program uses for y and n rpmatch(3),
 	 * which means they can be translated.  */
@@ -83,7 +84,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("mesg(1)"));
 
-	exit(out == stderr ? MESG_EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -113,7 +114,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -159,7 +160,7 @@ int main(int argc, char *argv[])
 		break;
 	case RPMATCH_INVALID:
 		warnx(_("invalid argument: %s"), argv[0]);
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
         default:
                 abort();
 	}

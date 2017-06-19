@@ -194,8 +194,9 @@ static void compose_tree(struct libscols_table *tb, int parent_col, int id_col)
 }
 
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fprintf(out,
 		"\n %s [options] <column-data-file> ...\n\n", program_invocation_short_name);
 
@@ -212,7 +213,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(" -h, --help                     this help\n", out);
 	fputs("\n", out);
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -298,9 +299,9 @@ int main(int argc, char *argv[])
 			scols_table_set_termwidth(tb, strtou32_or_err(optarg, "failed to parse terminal width"));
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
