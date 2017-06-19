@@ -1054,26 +1054,41 @@ static int resize_get_last_possible(
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
 	*maxsz = 0;
+	DBG(TAB, ul_debugobj(tb, "checking last possible for start=%ju", start));
+
 
 	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
+
+		DBG(TAB, ul_debugobj(tb, " checking entry %p [start=%ju, end=%ju, size=%ju, %s %s %s]",
+			pa,
+			(uintmax_t) fdisk_partition_get_start(pa),
+			(uintmax_t) fdisk_partition_get_end(pa),
+			(uintmax_t) fdisk_partition_get_size(pa),
+			fdisk_partition_is_freespace(pa) ? "freespace" : "",
+			fdisk_partition_is_nested(pa)    ? "nested"    : "",
+			fdisk_partition_is_container(pa) ? "container" : "primary"));
+
 		if (!fdisk_partition_has_start(pa) ||
 		    !fdisk_partition_has_size(pa) ||
-		    fdisk_partition_is_container(pa))
+		    fdisk_partition_is_container(pa)) {
+			DBG(TAB, ul_debugobj(tb, "  ignored (no start/size or container)"));
 			continue;
-
-		DBG(PART, ul_debugobj(pa, "checking start=%ju, size=%ju",
-		                      (uintmax_t)pa->start, (uintmax_t)pa->size));
+		}
 
 		if (!last) {
 			if (start >= pa->start &&  start < pa->start + pa->size) {
-				if (fdisk_partition_is_freespace(pa) || pa == cur)
+				if (fdisk_partition_is_freespace(pa) || pa == cur) {
+					DBG(TAB, ul_debugobj(tb, "  accepted as last"));
 					last = pa;
-				else
+				} else {
+					DBG(TAB, ul_debugobj(tb, "  failed to set last"));
 					break;
+				}
 
 				*maxsz = pa->size - (start - pa->start);
 			}
 		} else if (!fdisk_partition_is_freespace(pa) && pa != cur) {
+			DBG(TAB, ul_debugobj(tb, "  no free space behind current"));
 			break;
 		} else {
 			last = pa;
