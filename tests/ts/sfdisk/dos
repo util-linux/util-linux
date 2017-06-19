@@ -146,6 +146,73 @@ udevadm settle
 ts_finalize_subtest
 
 
+ts_init_subtest "resize-empty-extended"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} > /dev/null 2>&1 <<EOF
+label: dos
+,1M
+,2M,E
+EOF
+udevadm settle
+echo ',+' | $TS_CMD_SFDISK --no-reread -N2 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
+ts_init_subtest "reduce-empty-extended"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} > /dev/null 2>&1 <<EOF
+label: dos
+,1M
+,5M,E
+EOF
+udevadm settle
+echo ',-2M' | $TS_CMD_SFDISK --no-reread -N2 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+ts_init_subtest "resize-extended"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} > /dev/null 2>&1 <<EOF
+label: dos
+,1M
+,1M
+,1M
+,5M,E
+,1M
+,1M
+EOF
+udevadm settle
+echo ',+' | $TS_CMD_SFDISK --no-reread -N4 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
+ts_init_subtest "resize-logical"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} > /dev/null 2>&1 <<EOF
+label: dos
+,1M
+,1M
+,1M
+,10M,E
+,1M
+,1M
+EOF
+udevadm settle
+echo ',+' | $TS_CMD_SFDISK --no-reread -N6 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
 ts_init_subtest "dump-old"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
