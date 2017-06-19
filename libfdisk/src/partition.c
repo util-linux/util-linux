@@ -702,11 +702,14 @@ int fdisk_partition_is_wholedisk(struct fdisk_partition *pa)
  * @cxt: context
  * @n: returns partition number
  *
- * If partno-follow-default (see fdisk_partition_partno_follow_default())
- * enabled then returns next expected partno, otherwise use Ask API to ask user
- * for the next partno.
+ * If @pa specified and partno-follow-default (see fdisk_partition_partno_follow_default())
+ * enabled then returns next expected partno or -ERANGE on error.
  *
- * Returns: 0 on success, <0 on error
+ * If @pa is NULL, or @pa does not specify any sepamntic for the next partno
+ * then use Ask API to ask user for the next partno. In this case returns 1 if
+ * no free partition avaialble.
+ *
+ * Returns: 0 on success, <0 on error, or 1 for non-free partno by Ask API.
  */
 int fdisk_partition_next_partno(
 		struct fdisk_partition *pa,
