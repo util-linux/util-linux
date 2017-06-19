@@ -41,12 +41,6 @@
 
 #include "nls.h"
 
-#ifdef __GNUC__
-#define CODE_ATTR(x) __attribute__(x)
-#else
-#define CODE_ATTR(x)
-#endif
-
 /* length of textual representation of UUID, including trailing \0 */
 #define UUID_STR_LEN	37
 
