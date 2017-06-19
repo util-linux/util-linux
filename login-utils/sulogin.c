@@ -795,8 +795,9 @@ static void sushell(struct passwd *pwd)
 	warn(_("failed to execute %s"), "/bin/sh");
 }
 
-static void usage(FILE *out)
+static void usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 		" %s [options] [tty device]\n"), program_invocation_short_name);
@@ -872,11 +873,10 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 			return EXIT_SUCCESS;
 		default:
-			usage(stderr);
-			/* Do not exit! */
+			/* Do not exit! getopt prints a warning. */
 			break;
 		}
 	}

@@ -223,8 +223,9 @@ static void __attribute__((__noreturn__)) quit(int status)
 }
 
 /* Usage message and similar routines. */
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 		_(" %s [options] [+line] [+/pattern/] [files]\n"),
@@ -250,19 +251,19 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 
 	fprintf(out, USAGE_MAN_TAIL("pg(1)"));
-	quit(out == stderr ? 2 : 0);
+	exit(0);
 }
 
 static void __attribute__((__noreturn__)) needarg(const char *s)
 {
 	warnx(_("option requires an argument -- %s"), s);
-	usage(stderr);
+	errtryhelp(2);
 }
 
 static void __attribute__((__noreturn__)) invopt(const char *s)
 {
 	warnx(_("illegal option -- %s"), s);
-	usage(stderr);
+	errtryhelp(2);
 }
 
 #ifdef HAVE_WIDECHAR
@@ -1567,7 +1568,7 @@ int main(int argc, char **argv)
 		argc--;
 
 		if (!strcmp(argv[arg], "--help")) {
-		    usage(stdout);
+		    usage();
 		}
 
 		if (!strcmp(argv[arg], "--version")) {
@@ -1623,7 +1624,7 @@ int main(int argc, char **argv)
 				sflag = 1;
 				break;
 			case 'h':
-				usage(stdout);
+				usage();
 			case 'V':
 				printf(UTIL_LINUX_VERSION);
 				return EXIT_SUCCESS;
