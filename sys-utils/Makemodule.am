@@ -291,7 +291,9 @@ endif
 
 if MAKEINSTALL_DO_SETUID
 install-exec-hook-mount:
+	chown root:root $(DESTDIR)$(bindir)/mount
 	chmod 4755 $(DESTDIR)$(bindir)/mount
+	chown root:root $(DESTDIR)$(bindir)/umount
 	chmod 4755 $(DESTDIR)$(bindir)/umount
 
 INSTALL_EXEC_HOOKS += install-exec-hook-mount
