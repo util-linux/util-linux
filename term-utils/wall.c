@@ -78,8 +78,9 @@
 static char *makemsg(char *fname, char **mvec, int mvecsz,
 		    size_t *mbufsize, int print_banner);
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] [<file> | <message>]\n"), program_invocation_short_name);
@@ -96,7 +97,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("wall(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 struct group_workspace {
@@ -224,7 +225,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

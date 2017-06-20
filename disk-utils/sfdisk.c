@@ -1839,8 +1839,9 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	return rc;
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
@@ -1906,7 +1907,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	list_available_columns(out);
 
 	fprintf(out, USAGE_MAN_TAIL("sfdisk(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 
@@ -2042,7 +2043,7 @@ int main(int argc, char *argv[])
 			sf->act = ACT_SHOW_GEOM;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'l':
 			sf->act = ACT_LIST;

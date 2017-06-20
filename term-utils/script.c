@@ -154,8 +154,9 @@ static inline time_t script_time(time_t *t)
 # define script_time(x) time(x)
 #endif
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [file]\n"), program_invocation_short_name);
 
@@ -174,7 +175,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -h, --help              display this help and exit\n\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("script(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static void die_if_link(const struct script_control *ctl)
@@ -736,7 +737,7 @@ int main(int argc, char **argv)
 			exit(EXIT_SUCCESS);
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);

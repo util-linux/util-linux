@@ -296,8 +296,9 @@ static void undump(FILE *in, FILE *out)
 	free(linestart);
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
@@ -314,7 +315,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 
 	fprintf(out, USAGE_MAN_TAIL("utmpdump(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -356,7 +357,7 @@ int main(int argc, char **argv)
 			break;
 
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);

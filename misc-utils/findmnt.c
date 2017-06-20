@@ -1182,8 +1182,9 @@ static int uniq_fs_target_cmp(
 	return !mnt_fs_match_target(a, mnt_fs_get_target(b), cache);
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -1254,7 +1255,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("findmnt(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -1377,7 +1378,7 @@ int main(int argc, char *argv[])
 			flags |= FL_EVALUATE;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'i':
 			flags |= FL_INVERT;

@@ -127,8 +127,9 @@ static inline void info(const char *fmt, ...)
 	va_end(va);
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 		_(" %s [options] [<device>|<mountpoint>]\n"), program_invocation_short_name);
@@ -164,7 +165,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_("\nBy default tries -r, -s, -f, and -q in order until success.\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("eject(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 
@@ -223,7 +224,7 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 			ctl->F_option = 1;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'i':
 			ctl->i_option = 1;

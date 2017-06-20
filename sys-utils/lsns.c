@@ -603,8 +603,9 @@ static int show_namespace_processes(struct lsns *ls, struct lsns_namespace *ns)
 	return 0;
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -635,7 +636,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fprintf(out, USAGE_MAN_TAIL("lsns(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 
@@ -698,7 +699,7 @@ int main(int argc, char *argv[])
 			ls.fltr_pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 		case 'n':
 			ls.no_headings = 1;
 			break;

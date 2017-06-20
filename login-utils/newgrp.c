@@ -166,19 +166,20 @@ static int allow_setgid(const struct passwd *pe, const struct group *ge)
 	return FALSE;
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fprintf(out, USAGE_HEADER);
+	FILE *out = stdout;
+	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s <group>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Log in to a new group.\n"), out);
 
-	fprintf(out, USAGE_OPTIONS);
-	fprintf(out, USAGE_HELP);
-	fprintf(out, USAGE_VERSION);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP,out);
+	fputs(USAGE_VERSION,out);
 	fprintf(out, USAGE_MAN_TAIL("newgrp(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -204,7 +205,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

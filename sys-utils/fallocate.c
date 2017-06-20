@@ -76,8 +76,9 @@
 static int verbose;
 static char *filename;
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <filename>\n"), program_invocation_short_name);
@@ -105,7 +106,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("fallocate(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static loff_t cvtnum(char *s)
@@ -329,7 +330,7 @@ int main(int argc, char **argv)
 
 		switch(c) {
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'c':
 			mode |= FALLOC_FL_COLLAPSE_RANGE;
