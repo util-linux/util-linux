@@ -238,9 +238,9 @@ static void bind_ns_files_from_child(pid_t *child, int fds[2])
 	}
 }
 
-static void __attribute__((__noreturn__)) usage(int status)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
+	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<program> [<argument>...]]\n"),
@@ -269,7 +269,7 @@ static void __attribute__((__noreturn__)) usage(int status)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("unshare(1)"));
 
-	exit(status);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -321,7 +321,7 @@ int main(int argc, char *argv[])
 			forkit = 1;
 			break;
 		case 'h':
-			usage(EXIT_SUCCESS);
+			usage();
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
