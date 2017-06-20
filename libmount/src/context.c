@@ -2045,7 +2045,7 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
  */
 int mnt_context_apply_fstab(struct libmnt_context *cxt)
 {
-	int rc = -1, isremount = 0;
+	int rc = -1, isremount = 0, iscmdbind = 0;
 	struct libmnt_table *tab = NULL;
 	const char *src = NULL, *tgt = NULL;
 	unsigned long mflags = 0;
@@ -2070,8 +2070,10 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		cxt->optsmode &= ~MNT_OMODE_FORCE;
 	}
 
-	if (mnt_context_get_mflags(cxt, &mflags) == 0 && mflags & MS_REMOUNT)
-		isremount = 1;
+	if (mnt_context_get_mflags(cxt, &mflags) == 0) {
+		isremount = !!(mflags & MS_REMOUNT);
+		iscmdbind = !!(mflags & MS_BIND);
+	}
 
 	if (cxt->fs) {
 		src = mnt_fs_get_source(cxt->fs);
@@ -2138,6 +2140,12 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		 * not found are not so important and may be misinterpreted by
 		 * applications... */
 		rc = -MNT_ERR_NOFSTAB;
+
+
+	} else if (isremount && !iscmdbind) {
+
+		/* remove "bind" from fstab (or no-op if not present) */
+		mnt_optstr_remove_option(&cxt->fs->optstr, "bind");
 	}
 	return rc;
 }

@@ -385,6 +385,20 @@ will be read-only.
 It's also possible to change nosuid, nodev, noexec, noatime, nodiratime and
 relatime VFS entry flags by "remount,bind" operation. It's impossible to change
 mount options recursively (for example with \fB-o rbind,ro\fR).
+
+.BR mount (8)
+since v2.31 ignores the \fBbind\fR flag from
+.I /etc/fstab
+on
+.B remount operation
+(if "-o remount" specified on command line). This is necessary to fully control
+mount options on remount by command line. In the previous versions the bind
+flag has been always applied and it was impossible to re-define mount options
+without interaction with the bind semantic. This
+.BR mount (8)
+behavior does not affect situations when "remount,bind" is specified in the
+.I /etc/fstab
+file.
 .RE
 
 .SS The move operation
@@ -1087,6 +1101,10 @@ This option implies the options
 Attempt to remount an already-mounted filesystem.  This is commonly
 used to change the mount flags for a filesystem, especially to make a
 readonly filesystem writable.  It does not change device or mount point.
+
+The remount operation together with the
+.B bind
+flag has special semantic. See above, the subsection \fBBind mounts\fR.
 
 The remount functionality follows the standard way the mount command works
 with options from fstab.  This means that \fBmount\fR does not
