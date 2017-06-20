@@ -1425,6 +1425,7 @@ int main(int argc, char **argv)
 		case OPT_SYSTZ:
 			ctl.systz = 1;		/* --systz */
 			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 		case OPT_PREDICT:
 			ctl.predict = 1;	/* --predict */
