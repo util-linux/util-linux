@@ -910,5 +910,5 @@ int main(int argc, char **argv)
 	    (warn_namelen|warn_skip|warn_size|warn_uid|warn_gid|warn_dev))
 		exit(MKFS_EX_ERROR);
 
-	return EXIT_SUCCESS;
+	return MKFS_EX_OK;
 }

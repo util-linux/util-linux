@@ -55,7 +55,7 @@
 #include "fileutils.h"
 #include "monotonic.h"
 
-#define STRTOXX_EXIT_CODE	FSCK_EX_ERROR
+#define STRTOXX_EXIT_CODE	FSCK_EX_USAGE
 #include "strutils.h"
 
 #define XALLOC_EXIT_CODE	FSCK_EX_ERROR

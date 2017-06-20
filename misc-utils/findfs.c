@@ -63,11 +63,11 @@ int main(int argc, char **argv)
 		switch (c) {
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			return FINDFS_SUCCESS;
 		case 'h':
 			usage(FINDFS_SUCCESS);
 		default:
-			errtryhelp(EXIT_FAILURE);
+			errtryhelp(FINDFS_USAGE_ERROR);
 		}
 
 	dev = blkid_evaluate_tag(argv[1], NULL, NULL);

@@ -71,13 +71,16 @@
 
 #include "lp.h"
 #include "nls.h"
-#include "xalloc.h"
 #include "closestream.h"
 
+#define EXIT_LP_MALLOC		2
 #define STRTOXX_EXIT_CODE	3
 #define EXIT_LP_IO_ERR		4
 
 #include "strutils.h"
+
+#define XALLOC_EXIT_CODE EXIT_LP_MALLOC
+#include "xalloc.h"
 
 struct command {
 	long op;

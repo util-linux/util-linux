@@ -671,7 +671,7 @@ int main(int argc, char **argv)
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			return FSCK_EX_OK;
 		case 'x':
 			opt_extract = 1;
 			if(optarg)
