@@ -93,17 +93,6 @@
 #endif
 
 /**
- * ISDIGIT differs from isdigit, as follows:
- * - Its arg may be any int or unsigned int; it need not be an unsigned char
- *   or EOF.
- * - It's typically faster.
- * POSIX says that only '0' through '9' are digits.  Prefer ISDIGIT to
- * isdigit unless it's important to use the locale's definition
- * of "digit" even when the host does not conform to POSIX.
- */
-#define ISDIGIT(c) ((unsigned int) (c) - '0' <= 9)
-
-/**
  * Shift A right by B bits portably, by dividing A by 2**B and
  * truncating towards minus infinity.  A and B should be free of side
  * effects, and B should be in the range 0 <= B <= INT_BITS - 2, where
@@ -120,7 +109,6 @@
 	 ? (a) >> (b) \
 	 : (a) / (1 << (b)) - ((a) % (1 << (b)) < 0))
 
-#define EPOCH_YEAR 1970
 #define TM_YEAR_BASE 1900
 
 #define HOUR(x) ((x) * 60)
@@ -145,7 +133,7 @@ static unsigned char to_uchar (char ch) { return ch; }
  */
 typedef struct {
 	int negative;
-	long int value;
+	intmax_t value;
 	size_t digits;
 } textint;
 
@@ -163,13 +151,13 @@ enum { BILLION = 1000000000, LOG10_BILLION = 9 };
 
 /* Relative year, month, day, hour, minutes, seconds, and nanoseconds. */
 typedef struct {
-	long int year;
-	long int month;
-	long int day;
-	long int hour;
-	long int minutes;
+	intmax_t year;
+	intmax_t month;
+	intmax_t day;
+	intmax_t hour;
+	intmax_t minutes;
 	time_t seconds;
-	long int ns;
+	int ns;
 } relative_time;
 
 #if HAVE_COMPOUND_LITERALS
@@ -184,7 +172,7 @@ typedef struct {
 	const char *input;
 
 	/* N, if this is the Nth Tuesday. */
-	long int day_ordinal;
+	intmax_t day_ordinal;
 
 	/* Day of week; Sunday is 0. */
 	int day_number;
@@ -193,17 +181,17 @@ typedef struct {
 	int local_isdst;
 
 	/* Time zone, in minutes east of UTC. */
-	long int time_zone;
+	int time_zone;
 
 	/* Style used for time. */
 	int meridian;
 
 	/* Gregorian year, month, day, hour, minutes, seconds, and ns. */
 	textint year;
-	long int month;
-	long int day;
-	long int hour;
-	long int minutes;
+	intmax_t month;
+	intmax_t day;
+	intmax_t hour;
+	intmax_t minutes;
 	struct timespec seconds; /* includes nanoseconds */
 
 	/* Relative year, month, day, hour, minutes, seconds, and ns. */
@@ -218,10 +206,6 @@ typedef struct {
 	size_t dsts_seen;
 	size_t times_seen;
 	size_t zones_seen;
-	size_t year_seen;
-
-	/* 1 if the user specified explicit ordinal day value, */
-	int ordinal_day_seen;
 
 	/* Table of local time zone abbreviations, null terminated. */
 	table local_time_zone_table[3];
@@ -230,7 +214,7 @@ typedef struct {
 union YYSTYPE;
 static int yylex (union YYSTYPE *, parser_control *);
 static int yyerror (parser_control const *, char const *);
-static long int time_zone_hhmm (parser_control *, textint, long int);
+static int time_zone_hhmm (parser_control *, textint, textint);
 
 /**
  * Extract into *PC any date and time info from a string of digits
@@ -241,7 +225,6 @@ static void digits_to_date_time(parser_control *pc, textint text_int)
 {
 	if (pc->dates_seen && ! pc->year.digits
 	    && ! pc->rels_seen && (pc->times_seen || 2 < text_int.digits)) {
-		pc->year_seen++;
 		pc->year = text_int;
 	} else {
 		if (4 < text_int.digits) {
@@ -283,8 +266,8 @@ static void apply_relative_time(parser_control *pc, relative_time rel,
 
 /* Set PC-> hour, minutes, seconds and nanoseconds members from arguments. */
 static void
-set_hhmmss(parser_control *pc, long int hour, long int minutes,
-	   time_t sec, long int nsec)
+set_hhmmss(parser_control *pc, intmax_t hour, intmax_t minutes,
+	   time_t sec, int nsec)
 {
 	pc->hour = hour;
 	pc->minutes = minutes;
@@ -306,7 +289,7 @@ set_hhmmss(parser_control *pc, long int hour, long int minutes,
 %expect 31
 
 %union {
-	long int intval;
+	intmax_t intval;
 	textint textintval;
 	struct timespec timespec;
 	relative_time rel;
@@ -324,7 +307,7 @@ set_hhmmss(parser_control *pc, long int hour, long int minutes,
 %token <textintval> tSNUMBER tUNUMBER
 %token <timespec> tSDECIMAL_NUMBER tUDECIMAL_NUMBER
 
-%type <intval> o_colon_minutes
+%type <textintval> o_colon_minutes
 %type <timespec> seconds signed_seconds unsigned_seconds
 
 %type <rel> relunit relunit_snumber dayshift
@@ -419,7 +402,7 @@ o_zone_offset:
 zone_offset:
 	  tSNUMBER o_colon_minutes {
 		pc->zones_seen++;
-		pc->time_zone = time_zone_hhmm (pc, $1, $2);
+		if (! time_zone_hhmm (pc, $1, $2)) YYABORT;
 	  }
 ;
 
@@ -472,7 +455,8 @@ zone:
 		apply_relative_time (pc, $2, 1);
 	  }
 	| tZONE tSNUMBER o_colon_minutes {
-		pc->time_zone = $1 + time_zone_hhmm (pc, $2, $3);
+		if (! time_zone_hhmm (pc, $2, $3)) YYABORT;
+		pc->time_zone += $1;
 	  }
 	| tDAYZONE {
 		pc->time_zone = $1 + 60;
@@ -494,12 +478,10 @@ day:
 	| tORDINAL tDAY {
 		pc->day_ordinal = $1;
 		pc->day_number = $2;
-		pc->ordinal_day_seen = 1;
 	  }
 	| tUNUMBER tDAY {
 		pc->day_ordinal = $1.value;
 		pc->day_number = $2;
-		pc->ordinal_day_seen = 1;
 	  }
 ;
 
@@ -681,9 +663,10 @@ hybrid:
 
 o_colon_minutes:
 	  /* empty */
-		{ $$ = -1; }
-	| ':' tUNUMBER
-		{ $$ = $2.value; }
+		{ $$.value = $$.digits = 0; }
+	| ':' tUNUMBER {
+		$$ = $2;
+	  }
 ;
 
 %%
@@ -874,42 +857,38 @@ static table const military_table[] = {
 };
 
 /**
- * Convert a time zone expressed as HH:MM into an integer count of
- * minutes.  If MM is negative, then S is of the form HHMM and needs
- * to be picked apart; otherwise, S is of the form HH.  As specified in
- * http://www.opengroup.org/susv3xbd/xbd_chap08.html#tag_08_03, allow
- * only valid TZ range, and consider first two digits as hours, if no
- * minutes specified.
+ * Convert a time offset expressed as HH:MM or HHMM into an integer count of
+ * minutes.  If hh is more than 2 digits then it is of the form HHMM and must be
+ * delimited; in that case 'mm' is required to be absent.  Otherwise, hh and mm
+ * are used ('mm' contains digits that were prefixed with a colon).
+ *
+ * POSIX TZ and ISO 8601 both define the maximum offset as 24:59. POSIX also
+ * allows seconds, but currently the parser rejects them. Both require minutes
+ * to be zero padded (2 digits). ISO requires hours to be zero padded, POSIX
+ * does not, either is accepted; which means an invalid ISO offset could pass.
  */
 
-static long int time_zone_hhmm(parser_control *pc, textint s, long int mm)
+static int time_zone_hhmm(parser_control *pc, textint hh, textint mm)
 {
-	long int n_minutes;
+	int h, m;
 
-	/**
-	 * If the length of S is 1 or 2 and no minutes are specified,
-	 * interpret it as a number of hours.
-	 */
-	if (s.digits <= 2 && mm < 0)
-		s.value *= 100;
+	if (hh.digits > 2 && hh.digits < 5 && mm.digits == 0) {
+		h = hh.value / 100;
+		m = hh.value % 100;
+	} else if (hh.digits < 3 && (mm.digits == 0 || mm.digits == 2)) {
+		h = hh.value;
+		m = hh.negative ? -mm.value : mm.value;
+	} else
+		return 0;
 
-	if (mm < 0)
-		n_minutes = (s.value / 100) * 60 + s.value % 100;
-	else
-		n_minutes = s.value * 60 + (s.negative ? -mm : mm);
+	if (abs(h) > 24 || abs(m) > 59)
+		return 0;
 
-	/**
-	 * If the absolute number of minutes is larger than 24 hours,
-	 * arrange to reject it by incrementing pc->zones_seen.	Thus,
-	 * we allow only values in the range UTC-24:00 to UTC+24:00.
-	 */
-	if (24 * 60 < abs (n_minutes))
-		pc->zones_seen++;
-
-	return n_minutes;
+	pc->time_zone =  h * 60 + m;
+	return 1;
 }
 
-static int to_hour(long int hours, int meridian)
+static int to_hour(intmax_t hours, int meridian)
 {
 	switch (meridian) {
 	default: /* Pacify GCC. */
@@ -924,7 +903,7 @@ static int to_hour(long int hours, int meridian)
 
 static long int to_year(textint textyear)
 {
-	long int year = textyear.value;
+	intmax_t year = textyear.value;
 
 	if (year < 0)
 		year = -year;
@@ -969,7 +948,7 @@ static table const * lookup_zone(parser_control const *pc, char const *name)
  * The body of this function is taken directly from the GNU C Library;
  * see src/strftime.c.
  */
-static long int tm_diff(struct tm const *a, struct tm const *b)
+static int tm_diff(struct tm const *a, struct tm const *b)
 {
 	/**
 	 * Compute intervening leap days correctly even if year is negative.
@@ -982,9 +961,8 @@ static long int tm_diff(struct tm const *a, struct tm const *b)
 	int a400 = SHR (a100, 2);
 	int b400 = SHR (b100, 2);
 	int intervening_leap_days = (a4 - b4) - (a100 - b100) + (a400 - b400);
-	long int ayear = a->tm_year;
-	long int years = ayear - b->tm_year;
-	long int days = (365 * years + intervening_leap_days
+	int years = a->tm_year - b->tm_year;
+	int days = (365 * years + intervening_leap_days
 			 + (a->tm_yday - b->tm_yday));
 	return (60 * (60 * (24 * days + (a->tm_hour - b->tm_hour))
 		+ (a->tm_min - b->tm_min))
@@ -1002,10 +980,8 @@ static table const * lookup_word(parser_control const *pc, char *word)
 	int abbrev;
 
 	/* Make it uppercase. */
-	for (p = word; *p; p++) {
-		unsigned char ch = *p;
-		*p = c_toupper (ch);
-	}
+	for (p = word; *p; p++)
+		*p = c_toupper (to_uchar (*p));
 
 	for (tp = meridian_table; tp->name; tp++)
 		if (strcmp (word, tp->name) == 0)
@@ -1070,36 +1046,36 @@ static int yylex (union YYSTYPE *lvalp, parser_control *pc)
 		while (c = *pc->input, c_isspace (c))
 			pc->input++;
 
-		if (ISDIGIT (c) || c == '-' || c == '+') {
+		if (c_isdigit (c) || c == '-' || c == '+') {
 			char const *p;
 			int sign;
-			unsigned long int value;
+			uintmax_t value;
 			if (c == '-' || c == '+') {
 				sign = c == '-' ? -1 : 1;
 				while (c = *++pc->input, c_isspace (c))
 					continue;
-				if (! ISDIGIT (c))
+				if (! c_isdigit (c))
 					/* skip the '-' sign */
 					continue;
 			} else
 				sign = 0;
 			p = pc->input;
 			for (value = 0; ; value *= 10) {
-				unsigned long int value1 = value + (c - '0');
+				uintmax_t value1 = value + (c - '0');
 				if (value1 < value)
 					return '?';
 				value = value1;
 				c = *++p;
-				if (! ISDIGIT (c))
+				if (! c_isdigit (c))
 					break;
-				if (ULONG_MAX / 10 < value)
+				if (UINTMAX_MAX / 10 < value)
 					return '?';
 			}
-			if ((c == '.' || c == ',') && ISDIGIT (p[1])) {
+			if ((c == '.' || c == ',') && c_isdigit (p[1])) {
 				time_t s;
 				int ns;
 				int digits;
-				unsigned long int value1;
+				uintmax_t value1;
 
 				/* Check for overflow when converting value to
 				 * time_t.
@@ -1124,7 +1100,7 @@ static int yylex (union YYSTYPE *lvalp, parser_control *pc)
 				for (digits = 2;
 				     digits <= LOG10_BILLION; digits++) {
 					ns *= 10;
-					if (ISDIGIT (*p))
+					if (c_isdigit (*p))
 						ns += *p++ - '0';
 				}
 
@@ -1132,12 +1108,12 @@ static int yylex (union YYSTYPE *lvalp, parser_control *pc)
 				 * -Infinity.
 				 */
 				if (sign < 0)
-					for (; ISDIGIT (*p); p++)
+					for (; c_isdigit (*p); p++)
 						if (*p != '0') {
 							ns++;
 							break;
 						}
-				while (ISDIGIT (*p))
+				while (c_isdigit (*p))
 					p++;
 
 				/* Adjust to the timespec convention, which is
@@ -1277,7 +1253,7 @@ int parse_date(struct timespec *result, char const *p,
 		   struct timespec const *now)
 {
 	time_t Start;
-	long int Start_ns;
+	intmax_t Start_ns;
 	struct tm const *tmp;
 	struct tm tm;
 	struct tm tm0;
@@ -1383,8 +1359,6 @@ int parse_date(struct timespec *result, char const *p,
 	pc.local_zones_seen = 0;
 	pc.dsts_seen = 0;
 	pc.zones_seen = 0;
-	pc.year_seen = 0;
-	pc.ordinal_day_seen = 0;
 
 #if HAVE_STRUCT_TM_TM_ZONE
 	pc.local_time_zone_table[0].name = tmp->tm_zone;
@@ -1513,12 +1487,12 @@ int parse_date(struct timespec *result, char const *p,
 				 * TZ="XXX1:00" and try mktime again.
 				 */
 
-				long int time_zone = pc.time_zone;
+				intmax_t time_zone = pc.time_zone;
 
-				long int abs_time_zone = time_zone < 0
+				intmax_t abs_time_zone = time_zone < 0
 					 ? - time_zone : time_zone;
 
-				long int abs_time_zone_hour
+				intmax_t abs_time_zone_hour
 					 = abs_time_zone / 60;
 
 				int abs_time_zone_min = abs_time_zone % 60;
@@ -1584,7 +1558,7 @@ int parse_date(struct timespec *result, char const *p,
 		 * so this block must follow others that clobber Start.
 		 */
 		if (pc.zones_seen) {
-			long int delta = pc.time_zone * 60;
+			intmax_t delta = pc.time_zone * 60;
 			time_t t1;
 #ifdef HAVE_TM_GMTOFF
 			delta -= tm.tm_gmtoff;
@@ -1612,16 +1586,16 @@ int parse_date(struct timespec *result, char const *p,
 		 * zone indicator must be applied before relative times, and if
 		 * mktime is applied again the time zone will be lost.
 		 */
-		long int sum_ns = pc.seconds.tv_nsec + pc.rel.ns;
-		long int normalized_ns = (sum_ns % BILLION + BILLION) % BILLION;
+		intmax_t sum_ns = pc.seconds.tv_nsec + pc.rel.ns;
+		intmax_t normalized_ns = (sum_ns % BILLION + BILLION) % BILLION;
 		time_t t0 = Start;
-		long int d1 = 60 * 60 * pc.rel.hour;
+		intmax_t d1 = 60 * 60 * pc.rel.hour;
 		time_t t1 = t0 + d1;
-		long int d2 = 60 * pc.rel.minutes;
+		intmax_t d2 = 60 * pc.rel.minutes;
 		time_t t2 = t1 + d2;
 		time_t d3 = pc.rel.seconds;
 		time_t t3 = t2 + d3;
-		long int d4 = (sum_ns - normalized_ns) / BILLION;
+		intmax_t d4 = (sum_ns - normalized_ns) / BILLION;
 		time_t t4 = t3 + d4;
 		time_t t5 = t4;
 
