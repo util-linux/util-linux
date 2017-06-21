@@ -42,6 +42,7 @@ function check_nonroot
 
 	xconfigure \
 		--disable-use-tty-group \
+		--disable-makeinstall-chown \
 		--enable-all-programs \
 		|| return
 	$MAKE || return

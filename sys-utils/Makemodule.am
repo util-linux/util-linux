@@ -289,15 +289,21 @@ umount_static_LDFLAGS = $(umount_LDFLAGS) -all-static
 umount_static_LDADD = $(umount_LDADD)
 endif
 
-if MAKEINSTALL_DO_SETUID
 install-exec-hook-mount:
+if MAKEINSTALL_DO_CHOWN
 	chown root:root $(DESTDIR)$(bindir)/mount
+endif
+if MAKEINSTALL_DO_SETUID
 	chmod 4755 $(DESTDIR)$(bindir)/mount
+endif
+if MAKEINSTALL_DO_CHOWN
 	chown root:root $(DESTDIR)$(bindir)/umount
+endif
+if MAKEINSTALL_DO_SETUID
 	chmod 4755 $(DESTDIR)$(bindir)/umount
+endif
 
 INSTALL_EXEC_HOOKS += install-exec-hook-mount
-endif
 endif # BUILD_MOUNT
 
 

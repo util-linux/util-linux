@@ -229,8 +229,10 @@ test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
 
 install-exec-hook:
 if BUILD_SU
-if MAKEINSTALL_DO_SETUID
+if MAKEINSTALL_DO_CHOWN
 	chown root:root $(DESTDIR)$(bindir)/su
+endif
+if MAKEINSTALL_DO_SETUID
 	chmod 4755 $(DESTDIR)$(bindir)/su
 endif
 endif
