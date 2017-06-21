@@ -122,15 +122,11 @@ struct entry {
 #define CRAMFS_GID_WIDTH 8
 #define CRAMFS_OFFSET_WIDTH 26
 
-/* Input status of 0 to print help and exit without an error. */
-static void __attribute__((__noreturn__))
-usage(int status) {
-	FILE *stream = status ? stderr : stdout;
-
-	fprintf(stream,
+static void __attribute__((__noreturn__)) usage(void)
+{
+	printf(
 		_("usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] "
 		  "[-n name] dirname outfile\n"
-		  " -h         print this help\n"
 		  " -v         be verbose\n"
 		  " -E         make all warnings errors "
 		    "(non-zero exit status)\n"
@@ -147,7 +143,11 @@ usage(int status) {
 		  " outfile    output file\n"),
 		program_invocation_short_name, PAD_SIZE);
 
-	exit(status);
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(USAGE_HELP, stdout);
+	fputs(USAGE_VERSION, stdout);
+	printf(USAGE_MAN_TAIL("mkfs.cramfs(8)"));
+	exit(MKFS_EX_OK);
 }
 
 static char *
@@ -717,11 +717,21 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	if (argc > 1) {
+		/* first arg may be one of our standard longopts */
+		if (!strcmp(argv[1], "--help"))
+			usage();
+		if (!strcmp(argv[1], "--version")) {
+			printf(UTIL_LINUX_VERSION);
+			exit(MKFS_EX_OK);
+		}
+	}
+
 	/* command line options */
 	while ((c = getopt(argc, argv, "hb:Ee:i:n:N:psVvz")) != EOF) {
 		switch (c) {
 		case 'h':
-			usage(MKFS_EX_OK);
+			usage();
 		case 'b':
 			blksize = strtou32_or_err(optarg, _("invalid blocksize argument"));
 			break;
@@ -773,8 +783,10 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if ((argc - optind) != 2)
-		usage(MKFS_EX_USAGE);
+	if ((argc - optind) != 2) {
+		warnx(_("bad usage"));
+		errtryhelp(MKFS_EX_USAGE);
+	}
 	dirname = argv[optind];
 	outfile = argv[optind + 1];
 
