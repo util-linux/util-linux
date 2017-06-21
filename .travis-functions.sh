@@ -73,7 +73,7 @@ function check_root
 
 function check_dist
 {
-	xconfigure \
+	xconfigure --disable-makeinstall-chown \
 		|| return
 	$MAKE distcheck || return
 }
