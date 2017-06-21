@@ -84,7 +84,7 @@
 
 static int archwrapper;
 
-static void __attribute__((__noreturn__)) show_help(void)
+static void __attribute__((__noreturn__)) usage(void)
 {
 	fputs(USAGE_HEADER, stdout);
 	if (!archwrapper)
@@ -119,17 +119,6 @@ static void __attribute__((__noreturn__)) show_help(void)
 	printf(USAGE_MAN_TAIL("setarch(8)"));
 
 	exit(EXIT_SUCCESS);
-}
-
-static void __attribute__((__noreturn__)) show_usage(const char *s)
-{
-	if (s)
-		errx(EXIT_FAILURE,
-		     _("%s\nTry `%s --help' for more information."), s,
-		     program_invocation_short_name);
-	else
-		errx(EXIT_FAILURE, _("Try `%s --help' for more information."),
-		     program_invocation_short_name);
 }
 
 static void __attribute__((__noreturn__))
@@ -301,9 +290,10 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (argc < 1)
-		show_usage(_("Not enough arguments"));
-
+	if (argc < 1) {
+		warnx(_("Not enough arguments"));
+		errtryhelp(EXIT_FAILURE);
+	}
 	archwrapper = strcmp(program_invocation_short_name, "setarch") != 0;
 	if (archwrapper)
 		arch = program_invocation_short_name;	/* symlinks to setarch */
@@ -328,7 +318,7 @@ int main(int argc, char *argv[])
 	while ((c = getopt_long(argc, argv, "+hVv3BFILRSTXZ", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
-			show_help();
+			usage();
 			break;
 		case 'V':
 			show_version();
