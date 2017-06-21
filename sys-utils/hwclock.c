@@ -1205,7 +1205,7 @@ usage(const struct hwclock_control *ctl, FILE *out)
 	fputs(_(" hwclock [function] [option...]\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" Query or set the RTC (Real Time Clock / Hardware Clock)\n"), out);
+	fputs(_("Query or set the RTC (Real Time Clock / Hardware Clock)\n"), out);
 
 	fputs(USAGE_FUNCTIONS, out);
 	fputs(_(" -r, --show           display the RTC time\n"), out);
