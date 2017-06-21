@@ -58,6 +58,7 @@ function check_root
 	local opts="$MAKE_CHECK_OPTS --parallel=1 --show-diff"
 
 	xconfigure \
+		--disable-makeinstall-chown \
 		--enable-all-programs \
 		|| return
 	$MAKE || return
