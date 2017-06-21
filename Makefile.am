@@ -187,6 +187,7 @@ DISTCHECK_CONFIGURE_FLAGS = \
 	--disable-use-tty-group \
 	--disable-silent-rules \
 	--enable-all-programs \
+	--disable-makeinstall-chown \
 	--enable-static-programs \
 	--enable-gtk-doc \
 	--with-python \
