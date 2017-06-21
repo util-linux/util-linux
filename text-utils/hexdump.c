@@ -107,7 +107,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 		case 'f':
 			addfile(optarg, hex);
 			break;
-                case 'L':
+		case 'L':
 			colormode = UL_COLORMODE_AUTO;
 			if (optarg)
 				colormode = colormode_or_err(optarg,

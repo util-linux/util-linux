@@ -235,8 +235,6 @@ static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 			print_shells();
 			exit(EXIT_SUCCESS);
 		case 's':
-			if (!optarg)
-				usage(stderr);
 			pinfo->shell = optarg;
 			break;
 		default:

@@ -1381,15 +1381,12 @@ int main(int argc, char *argv[])
 			outmode = OUT_NEWLINE;
 			break;
 		case 'o':
-			if (optarg) {
-				if (*optarg == '=')
-					optarg++;
-				ncolumns = string_to_idarray(optarg,
-						columns, ARRAY_SIZE(columns),
-						column_name_to_id);
-				if (ncolumns < 0)
-					return EXIT_FAILURE;
-			}
+			if (*optarg == '=')
+				optarg++;
+			ncolumns = string_to_idarray(optarg, columns,
+					ARRAY_SIZE(columns), column_name_to_id);
+			if (ncolumns < 0)
+				return EXIT_FAILURE;
 			opt_o = 1;
 			break;
 		case 'r':
