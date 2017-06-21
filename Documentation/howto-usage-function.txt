@@ -42,6 +42,8 @@ look like.
 Usage:
  program [options] <file> [...]
 
+Short program description, ideally one line only.
+
 Options:
  -n, --no-argument       option does not use argument
      --optional[=<arg>]  option argument is optional

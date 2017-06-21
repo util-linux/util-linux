@@ -33,6 +33,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] file...\n"), program_invocation_short_name);
+
+        fputs(USAGE_SEPARATOR, out);
+        fputs(_("Short program description.\n"), out);
+
 	fputs(USAGE_FUNCTIONS, out);
 	fputs(_(" -s, --do-something      some specific task\n"), out);
 	fputs(_(" -o, --do-other          some different task\n"), out);
