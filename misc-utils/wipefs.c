@@ -310,7 +310,7 @@ static void do_wipe_real(blkid_probe pr, const char *devname,
 	size_t i;
 
 	if (blkid_do_wipe(pr, (flags & WP_FL_NOACT) != 0))
-		warn(_("%s: failed to erase %s magic string at offset 0x%08jx"),
+		err(EXIT_FAILURE, _("%s: failed to erase %s magic string at offset 0x%08jx"),
 		     devname, w->type, (intmax_t)w->offset);
 
 	if (flags & WP_FL_QUIET)
