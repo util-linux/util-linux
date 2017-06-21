@@ -602,7 +602,7 @@ static int fwrite_hex(const char *buf, size_t size, FILE *out)
 	size_t i;
 
 	for (i = 0; i < size; i++) {
-		int rc = fprintf(out, "\\x%02x", buf[i]);
+		int rc = fprintf(out, "\\x%02hhx", buf[i]);
 		if (rc < 0)
 			return rc;
 	}
