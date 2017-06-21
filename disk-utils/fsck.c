@@ -1369,8 +1369,9 @@ static int check_all(void)
 	return status;
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] -- [fs-options] [<filesystem> ...]\n"),
 			 program_invocation_short_name);
@@ -1393,13 +1394,14 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -t <type>  specify filesystem types to be checked;\n"
 		"            <type> is allowed to be a comma-separated list\n"), out);
 	fputs(_(" -V         explain what is being done\n"), out);
-	fputs(_(" -?         display this help and exit\n"), out);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -?, --help     display this help and exit\n"), out);
+	fputs(_("     --version  output version information and exit\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("See the specific fsck.* commands for available fs-options."), out);
 	fprintf(out, USAGE_MAN_TAIL("fsck(8)"));
-
-	exit(out == stderr ? FSCK_EX_USAGE : FSCK_EX_OK);
+	exit(FSCK_EX_OK);
 }
 
 static void signal_cancel(int sig __attribute__((__unused__)))
@@ -1433,6 +1435,15 @@ static void parse_argv(int argc, char *argv[])
 		arg = argv[i];
 		if (!arg)
 			continue;
+
+		/* the only two longopts to satisfy UL standards */
+		if (!opts_for_fsck && !strcmp(arg, "--help"))
+			usage();
+		if (!opts_for_fsck && !strcmp(arg, "--version")) {
+			printf(UTIL_LINUX_VERSION);
+			exit(FSCK_EX_OK);
+		}
+
 		if ((arg[0] == '/' && !opts_for_fsck) || strchr(arg, '=')) {
 			if (num_devices >= MAX_DEVICES)
 				errx(FSCK_EX_ERROR, _("too many devices"));
@@ -1536,13 +1547,15 @@ static void parse_argv(int argc, char *argv[])
 			case 't':
 				tmp = NULL;
 				if (fstype)
-					usage(stderr);
+					errx(FSCK_EX_USAGE,
+						_("option '%s' may be specified only once"), "-t");
 				if (arg[j+1])
 					tmp = arg+j+1;
 				else if ((i+1) < argc)
 					tmp = argv[++i];
 				else
-					usage(stderr);
+					errx(FSCK_EX_USAGE,
+						_("option '%s' requires an argument"), "-t");
 				fstype = xstrdup(tmp);
 				compile_fs_type(fstype, &fs_type_compiled);
 				goto next_arg;
@@ -1550,7 +1563,7 @@ static void parse_argv(int argc, char *argv[])
 				opts_for_fsck++;
 				break;
 			case '?':
-				usage(stdout);
+				usage();
 				break;
 			default:
 				options[++opt] = arg[j];
