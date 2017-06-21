@@ -376,9 +376,8 @@ in learning about the internal operations of hwclock.
 .B \-\-update\-drift
 Update the Hardware Clock's drift factor in
 .IR @ADJTIME_PATH@ .
-It is used with
+It can only be used with
 .BR \-\-set " or " \%\-\-systohc ,
-otherwise it is ignored.
 .sp
 A minimum four hour period between settings is required.  This is to
 avoid invalid calculations.  The longer the period, the more precise the

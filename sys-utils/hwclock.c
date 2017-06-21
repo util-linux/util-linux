@@ -61,7 +61,6 @@
 #include <getopt.h>
 #include <limits.h>
 #include <math.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1199,78 +1198,51 @@ static void out_version(void)
 	printf(UTIL_LINUX_VERSION);
 }
 
-/*
- * usage - Output (error and) usage information
- *
- * This function is called both directly from main to show usage information
- * and as fatal function from shhopt if some argument is not understood. In
- * case of normal usage info FMT should be NULL. In that case the info is
- * printed to stdout. If FMT is given usage will act like fprintf( stderr,
- * fmt, ... ), show a usage information and terminate the program
- * afterwards.
- */
 static void __attribute__((__noreturn__))
-usage(const struct hwclock_control *ctl, const char *fmt, ...)
+usage(const struct hwclock_control *ctl, FILE *out)
 {
-	FILE *usageto;
-	va_list ap;
+	fputs(USAGE_HEADER, out);
+	fputs(_(" hwclock [function] [option...]\n"), out);
 
-	usageto = fmt ? stderr : stdout;
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" Query or set the RTC (Real Time Clock / Hardware Clock)\n"), out);
 
-	fputs(USAGE_HEADER, usageto);
-	fputs(_(" hwclock [function] [option...]\n"), usageto);
-
-	fputs(USAGE_SEPARATOR, usageto);
-	fputs(_("Query or set the hardware clock.\n"), usageto);
-
-	fputs(_("\nFunctions:\n"), usageto);
-	fputs(_(" -h, --help           show this help text and exit\n"
-		" -r, --show           read hardware clock and print result\n"
-		"     --get            read hardware clock and print drift corrected result\n"
-		"     --set            set the RTC to the time given with --date\n"), usageto);
-	fputs(_(" -s, --hctosys        set the system time from the hardware clock\n"
-		" -w, --systohc        set the hardware clock from the current system time\n"
-		"     --systz          set the system time based on the current timezone\n"
-		"     --adjust         adjust the RTC to account for systematic drift since\n"
-		"                        the clock was last set or adjusted\n"), usageto);
+	fputs(USAGE_FUNCTIONS, out);
+	fputs(_(" -r, --show           display the RTC time\n"), out);
+	fputs(_("     --get            display drift corrected RTC time\n"), out);
+	fputs(_("     --set            set the RTC according to --date\n"), out);
+	fputs(_(" -s, --hctosys        set the system time from the RTC\n"), out);
+	fputs(_(" -w, --systohc        set the RTC from the system time\n"), out);
+	fputs(_("     --systz          send timescale configurations to the kernel\n"), out);
+	fputs(_("     --adjust         adjust the RTC to account for systematic drift\n"), out);
 #if defined(__linux__) && defined(__alpha__)
-	fputs(_("     --getepoch       print out the kernel's hardware clock epoch value\n"
-		"     --setepoch       set the kernel's hardware clock epoch value to the \n"
-		"                        value given with --epoch\n"), usageto);
+	fputs(_("     --getepoch       display the RTC epoch\n"), out);
+	fputs(_("     --setepoch       set the RTC epoch according to --epoch\n"), out);
 #endif
-	fputs(_("     --predict        predict RTC reading at time given with --date\n"
-		" -V, --version        display version information and exit\n"), usageto);
-
-	fputs(USAGE_OPTIONS, usageto);
-	fputs(_(" -u, --utc            the hardware clock is kept in UTC\n"
-		" -l, --localtime      the hardware clock is kept in local time\n"), usageto);
+	fputs(_("     --predict        predict the drifted RTC time according to --date\n"), out);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -u, --utc            inform hwclock the RTC timescale is UTC\n"), out);
+	fputs(_(" -l, --localtime      inform hwclock the RTC timescale is Local\n"), out);
+	fprintf(out, _(
 #ifdef __linux__
-	fputs(_(" -f, --rtc <file>     special /dev/... file to use instead of default\n"), usageto);
+		" -f, --rtc <file>     use an alternate file to %1$s\n"
 #endif
-	fprintf(usageto, _(
-		"     --directisa      access the ISA bus directly instead of %s\n"
-		"     --date <time>    specifies the time to which to set the hardware clock\n"), _PATH_RTC_DEV);
+		"     --directisa      use the ISA bus instead of %1$s access\n"), _PATH_RTC_DEV);
+	fputs(_("     --date <time>    date/time input for --set and --predict\n"), out);
 #if defined(__linux__) && defined(__alpha__)
-	fputs(_("     --epoch <year>   specifies the hardware clock's epoch value\n"), usageto);
+	fputs(_("     --epoch <year>   epoch input for --setepoch\n"), out);
 #endif
-	fprintf(usageto, _(
-		"     --update-drift   update drift factor in %1$s (requires\n"
-		"                        --set or --systohc)\n"
-		"     --noadjfile      do not access %1$s; this requires the use of\n"
-		"                        either --utc or --localtime\n"
-		"     --adjfile <file> specifies the path to the adjust file;\n"
-		"                        the default is %1$s\n"), _PATH_ADJTIME);
-	fputs(_("     --test           do not update anything, just show what would happen\n"
-		" -D, --debug          debugging mode\n" "\n"), usageto);
-
-	if (fmt) {
-		va_start(ap, fmt);
-		vfprintf(usageto, fmt, ap);
-		va_end(ap);
-	}
-
-	fflush(usageto);
-	hwclock_exit(ctl, fmt ? EX_USAGE : EX_OK);
+	fputs(_("     --update-drift   update the RTC drift factor\n"), out);
+	fprintf(out, _(
+		"     --noadjfile      do not use %1$s\n"
+		"     --adjfile <file> use an alternate file to %1$s\n"), _PATH_ADJTIME);
+	fputs(_("     --test           dry run; use -D to view what would have happened\n"), out);
+	fputs(_(" -D, --debug          use debug mode\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("hwclock(8)"));
+	hwclock_exit(ctl, EXIT_SUCCESS);
 }
 
 /*
@@ -1475,7 +1447,7 @@ int main(int argc, char **argv)
 			out_version();
 			return 0;
 		case 'h':			/* --help */
-			usage(&ctl, NULL);
+			usage(&ctl, stdout);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -1491,6 +1463,11 @@ int main(int argc, char **argv)
 
 	if (!ctl.adj_file_name)
 		ctl.adj_file_name = _PATH_ADJTIME;
+
+	if (ctl.update && !ctl.set && !ctl.systohc) {
+		warnx(_("--update-drift requires --set or --systohc"));
+		hwclock_exit(&ctl, EX_USAGE);
+	}
 
 	if (ctl.noadjfile && !ctl.utc && !ctl.local_opt) {
 		warnx(_("With --noadjfile, you must specify "
