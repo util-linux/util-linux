@@ -1355,7 +1355,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-				"?hvVDalrsuwAJSFf:", longopts, NULL)) != -1) {
+				"hvVDalrsuwf:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1425,6 +1425,7 @@ int main(int argc, char **argv)
 		case OPT_SYSTZ:
 			ctl.systz = 1;		/* --systz */
 			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 		case OPT_PREDICT:
 			ctl.predict = 1;	/* --predict */
