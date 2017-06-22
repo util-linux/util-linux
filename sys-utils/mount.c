@@ -534,6 +534,8 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	strutils_set_exitcode(MNT_EX_USAGE);
+
 	mnt_init_debug(0);
 	cxt = mnt_new_context();
 	if (!cxt)

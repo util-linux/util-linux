@@ -758,6 +758,8 @@ int main(int argc, char ** argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	strutils_set_exitcode(MKFS_EX_USAGE);
+
 	while ((i = getopt_long(argc, argv, "1v23n:i:cl:Vh", longopts, NULL)) != -1)
 		switch (i) {
 		case '1':

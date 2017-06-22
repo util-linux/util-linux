@@ -660,6 +660,8 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	strutils_set_exitcode(FSCK_EX_USAGE);
+
 	/* command line options */
 	while ((c = getopt_long(argc, argv, "ayvVhb:", longopts, NULL)) != EOF)
 		switch (c) {

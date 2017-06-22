@@ -1326,6 +1326,8 @@ int main(int argc, char **argv)
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
+	strutils_set_exitcode(EX_USAGE);
+
 	/* Remember what time we were invoked */
 	gettimeofday(&startup_time, NULL);
 
