@@ -54,8 +54,6 @@
 #include "c.h"
 #include "fileutils.h"
 #include "monotonic.h"
-
-#define STRTOXX_EXIT_CODE	FSCK_EX_USAGE
 #include "strutils.h"
 
 #define XALLOC_EXIT_CODE	FSCK_EX_ERROR
@@ -1599,6 +1597,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	strutils_set_exitcode(FSCK_EX_USAGE);
 	mnt_init_debug(0);		/* init libmount debug mask */
 	mntcache = mnt_new_cache();	/* no fatal error if failed */
 

@@ -34,7 +34,6 @@
 
 #include "ismounted.h"
 
-#define STRTOXX_EXIT_CODE	BLKID_EXIT_OTHER	/* strtoxx_or_err() */
 #include "strutils.h"
 #define OPTUTILS_EXIT_CODE	BLKID_EXIT_OTHER	/* exclusive_option() */
 #include "optutils.h"
@@ -690,6 +689,8 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
+	strutils_set_exitcode(BLKID_EXIT_OTHER);
 
 	while ((c = getopt_long (argc, argv,
 			    "c:dghilL:n:ko:O:ps:S:t:u:U:w:Vv", longopts, NULL)) != -1) {

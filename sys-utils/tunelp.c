@@ -72,12 +72,11 @@
 #include "lp.h"
 #include "nls.h"
 #include "closestream.h"
+#include "strutils.h"
 
 #define EXIT_LP_MALLOC		2
-#define STRTOXX_EXIT_CODE	3
+#define EXIT_LP_BADVAL		3
 #define EXIT_LP_IO_ERR		4
-
-#include "strutils.h"
 
 #define XALLOC_EXIT_CODE EXIT_LP_MALLOC
 #include "xalloc.h"
@@ -146,6 +145,8 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
+	strutils_set_exitcode(EXIT_LP_BADVAL);
 
 	if (argc < 2)
 		print_usage(stderr);
