@@ -71,6 +71,7 @@
 #include <unistd.h>
 
 #define OPTUTILS_EXIT_CODE EX_USAGE
+#define XALLOC_EXIT_CODE EX_OSERR
 
 #include "c.h"
 #include "closestream.h"

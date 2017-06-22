@@ -42,6 +42,8 @@
 
 #include "nls.h"
 #include "ttyutils.h"
+
+#define XALLOC_EXIT_CODE    BLKID_EXIT_OTHER    /* x.*alloc(), xstrndup() */
 #include "xalloc.h"
 
 struct blkid_control {

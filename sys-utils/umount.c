@@ -36,6 +36,8 @@
 #include "closestream.h"
 #include "pathnames.h"
 #include "canonicalize.h"
+
+#define XALLOC_EXIT_CODE MNT_EX_SYSERR
 #include "xalloc.h"
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),

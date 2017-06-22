@@ -36,9 +36,11 @@
 #include "c.h"
 #include "env.h"
 #include "strutils.h"
-#include "xalloc.h"
 #include "closestream.h"
 #include "canonicalize.h"
+
+#define XALLOC_EXIT_CODE MNT_EX_SYSERR
+#include "xalloc.h"
 
 #define OPTUTILS_EXIT_CODE MNT_EX_USAGE
 #include "optutils.h"

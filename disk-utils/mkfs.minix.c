@@ -77,6 +77,8 @@
 #include "all-io.h"
 #include "closestream.h"
 #include "ismounted.h"
+
+#define XALLOC_EXIT_CODE MKFS_EX_ERROR
 #include "xalloc.h"
 
 #define MINIX_ROOT_INO 1
