@@ -19,13 +19,15 @@
 #include "superblocks.h"
 
 struct dstring128 {
+	uint8_t	cid;
+	uint8_t	c[126];
 	uint8_t	clen;
-	uint8_t	c[127];
 } __attribute__((packed));
 
 struct dstring32 {
+	uint8_t	cid;
+	uint8_t	c[30];
 	uint8_t	clen;
-	uint8_t	c[31];
 } __attribute__((packed));
 
 struct volume_descriptor {
@@ -80,15 +82,22 @@ static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring
 {
 	size_t i;
 	size_t len;
+	size_t clen;
 	size_t nonhexpos;
 	unsigned char buf[17];
 
 	memset(buf, 0, sizeof(buf));
 
-	if (volset_id->clen == 8)
-		len = blkid_encode_to_utf8(BLKID_ENC_LATIN1, buf, sizeof(buf), volset_id->c, 127);
-	else if (volset_id->clen == 16)
-		len = blkid_encode_to_utf8(BLKID_ENC_UTF16BE, buf, sizeof(buf), volset_id->c, 127);
+	clen = volset_id->clen;
+	if (clen > 0)
+		--clen;
+	if (clen > sizeof(volset_id->c))
+		clen = sizeof(volset_id->c);
+
+	if (volset_id->cid == 8)
+		len = blkid_encode_to_utf8(BLKID_ENC_LATIN1, buf, sizeof(buf), volset_id->c, clen);
+	else if (volset_id->cid == 16)
+		len = blkid_encode_to_utf8(BLKID_ENC_UTF16BE, buf, sizeof(buf), volset_id->c, clen);
 	else
 		return -1;
 
@@ -215,14 +224,19 @@ real_blksz:
 			break;
 		if (type == 1) { /* TAG_ID_PVD */
 			if (!have_volid) {
+				uint8_t cid = vd->type.primary.ident.cid;
 				uint8_t clen = vd->type.primary.ident.clen;
-				if (clen == 8)
+				if (clen > 0)
+					--clen;
+				if (clen > sizeof(vd->type.primary.ident.c))
+					clen = sizeof(vd->type.primary.ident.c);
+				if (cid == 8)
 					have_volid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_ID",
-							vd->type.primary.ident.c, 31,
+							vd->type.primary.ident.c, clen,
 							BLKID_ENC_LATIN1);
-				else if (clen == 16)
+				else if (cid == 16)
 					have_volid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_ID",
-							vd->type.primary.ident.c, 31,
+							vd->type.primary.ident.c, clen,
 							BLKID_ENC_UTF16BE);
 			}
 			if (!have_uuid) {
@@ -260,14 +274,19 @@ real_blksz:
 					have_uuid = !blkid_probe_strncpy_uuid(pr, uuid, sizeof(uuid));
 			}
 			if (!have_volsetid) {
+				uint8_t cid = vd->type.primary.volset_id.cid;
 				uint8_t clen = vd->type.primary.volset_id.clen;
-				if (clen == 8)
+				if (clen > 0)
+					--clen;
+				if (clen > sizeof(vd->type.primary.volset_id.c))
+					clen = sizeof(vd->type.primary.volset_id.c);
+				if (cid == 8)
 					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
-							vd->type.primary.volset_id.c, 127,
+							vd->type.primary.volset_id.c, clen,
 							BLKID_ENC_LATIN1);
-				else if (clen == 16)
+				else if (cid == 16)
 					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
-							vd->type.primary.volset_id.c, 127,
+							vd->type.primary.volset_id.c, clen,
 							BLKID_ENC_UTF16BE);
 			}
 		} else if (type == 6) { /* TAG_ID_LVD */
@@ -298,24 +317,29 @@ real_blksz:
 				 * LABEL also from this field. Program newfs_udf (from UDFclient)
 				 * when formatting disk set this field from user option Disc Name.
 				 */
+				uint8_t cid = vd->type.logical.logvol_id.cid;
 				uint8_t clen = vd->type.logical.logvol_id.clen;
-				if (clen == 8) {
+				if (clen > 0)
+					--clen;
+				if (clen > sizeof(vd->type.logical.logvol_id.c))
+					clen = sizeof(vd->type.logical.logvol_id.c);
+				if (cid == 8) {
 					if (!have_label)
 						have_label = !blkid_probe_set_utf8label(pr,
-								vd->type.logical.logvol_id.c, 127,
+								vd->type.logical.logvol_id.c, clen,
 								BLKID_ENC_LATIN1);
 					if (!have_logvolid)
 						have_logvolid = !blkid_probe_set_utf8_id_label(pr, "LOGICAL_VOLUME_ID",
-								vd->type.logical.logvol_id.c, 127,
+								vd->type.logical.logvol_id.c, clen,
 								BLKID_ENC_LATIN1);
-				} else if (clen == 16) {
+				} else if (cid == 16) {
 					if (!have_label)
 						have_label = !blkid_probe_set_utf8label(pr,
-								vd->type.logical.logvol_id.c,
-								127, BLKID_ENC_UTF16BE);
+								vd->type.logical.logvol_id.c, clen,
+								BLKID_ENC_UTF16BE);
 					if (!have_logvolid)
 						have_logvolid = !blkid_probe_set_utf8_id_label(pr, "LOGICAL_VOLUME_ID",
-								vd->type.logical.logvol_id.c, 127,
+								vd->type.logical.logvol_id.c, clen,
 								BLKID_ENC_UTF16BE);
 				}
 			}
