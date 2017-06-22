@@ -1,5 +1,5 @@
 getopt: missing optstring argument
-Try `getopt --help' for more information.
+Try 'getopt --help' for more information.
 exit value: 2
  --
 exit value: 0
