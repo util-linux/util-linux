@@ -1579,26 +1579,10 @@ static int process_netlink(void)
 	return changed;
 }
 
-static int wait_for_term_input(int fd, char *prebuf, size_t prebufsz, size_t *readsz)
+static int wait_for_term_input(int fd)
 {
 	char buffer[sizeof(struct inotify_event) + NAME_MAX + 1];
-	struct termios orig, nonc;
 	fd_set rfds;
-	int count;
-
-	/* Our aim here is to fall through if something fails
-         * and not be stuck waiting. On failure assume we have input */
-
-	if (tcgetattr(fd, &orig) != 0)
-		return 1;
-
-	memcpy(&nonc, &orig, sizeof (nonc));
-	nonc.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHOKE);
-	nonc.c_cc[VMIN] = 1;
-	nonc.c_cc[VTIME] = 0;
-
-	if (tcsetattr(fd, TCSANOW, &nonc) != 0)
-		return 1;
 
 	if (inotify_fd == AGETTY_RELOAD_FDNONE) {
 		/* make sure the reload trigger file exists */
@@ -1639,15 +1623,6 @@ static int wait_for_term_input(int fd, char *prebuf, size_t prebufsz, size_t *re
 			return 1;
 
 		if (FD_ISSET(fd, &rfds)) {
-			count = read(fd, buffer, sizeof (buffer));
-
-			tcsetattr(fd, TCSANOW, &orig);
-
-			if (count > 0 && prebuf && prebufsz) {
-				memcpy(prebuf, buffer, min(sizeof(buffer), prebufsz));
-				*readsz = count;
-			}
-
 			return 1;
 
 		} else if (netlink_fd >= 0 && FD_ISSET(netlink_fd, &rfds)) {
@@ -1659,9 +1634,6 @@ static int wait_for_term_input(int fd, char *prebuf, size_t prebufsz, size_t *re
 			while (read(inotify_fd, buffer, sizeof (buffer)) > 0);
 		}
 
-		tcsetattr(fd, TCSANOW, &orig);
-
-		/* Need to reprompt */
 		return 0;
 	}
 }
@@ -1716,7 +1688,7 @@ again:
 	if (op->flags & F_LOGINPAUSE) {
 		puts(_("[press ENTER to login]"));
 #ifdef AGETTY_RELOAD
-		if (!wait_for_term_input(STDIN_FILENO, NULL, 0, NULL)) {
+		if (!wait_for_term_input(STDIN_FILENO)) {
 			/* reload issue */
 			if (op->flags & F_VCONSOLE)
 				termio_clear(STDOUT_FILENO);
@@ -1843,28 +1815,21 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 	*bp = '\0';
 
 	while (*logname == '\0') {
-		char prebuf[LOGIN_NAME_MAX] = { 0 };
-		size_t presz = 0, precur = 0;
-
 		/* Write issue file and prompt */
 		do_prompt(op, tp);
 
 #ifdef AGETTY_RELOAD
-		/* If asked to reprompt *before* terminal input arrives, then do so.
-		 *
-		 * Note that wait_for_term_input() calls read() and the result
-		 * is stored to the 'prebuf'. We need this to avoid data lost
-		 * by terminal attributes reset (and return chars back to the
-		 * terminal by TIOCSTI is fragile (chars reorder)).
-		 *
-		 * The data from 'prebuf' are not printed to the terminal yet
-		 * (disabled ECHO in wait_for_term_input()).
-		 */
-		if (!wait_for_term_input(STDIN_FILENO,
-					 prebuf, sizeof(prebuf), &presz)) {
-
+		if (!wait_for_term_input(STDIN_FILENO)) {
+			/* refresh prompt -- discard input data, clear terminal
+			 * and call do_prompt() again
+			 */
+			if ((op->flags & F_VCONSOLE) == 0)
+				sleep(1);
+			tcflush(STDIN_FILENO, TCIFLUSH);
 			if (op->flags & F_VCONSOLE)
 				termio_clear(STDOUT_FILENO);
+			bp = logname;
+			*bp = '\0';
 			continue;
 		}
 #endif
@@ -1874,15 +1839,10 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		while (cp->eol == '\0') {
 
 			char key;
-			int force_echo = 0;
 
-			/* use already read data from buffer */
-			if (presz && precur < presz) {
-				c = prebuf[precur++];
-				force_echo = 1;
-
-			/* read from terminal */
-			} else if (read(STDIN_FILENO, &c, 1) < 1) {
+			debug("read from FD\n");
+			if (read(STDIN_FILENO, &c, 1) < 1) {
+				debug("read failed\n");
 
 				/* The terminal could be open with O_NONBLOCK when
 				 * -L (force CLOCAL) is specified...  */
@@ -1958,7 +1918,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 					break;
 				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
 					log_err(_("%s: input overrun"), op->tty);
-				if ((tp->c_lflag & ECHO) == 0 || force_echo)
+				if ((tp->c_lflag & ECHO) == 0)
 					write_all(1, &c, 1);	/* echo the character */
 				*bp++ = ascval;			/* and store it */
 				break;
