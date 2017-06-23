@@ -313,11 +313,13 @@ static inline int xusleep(useconds_t usec)
 
 /*
  * Constant strings for usage() functions. For more info see
- * Documentation/howto-usage-function.txt and disk-utils/delpart.c
+ * Documentation/{howto-usage-function.txt,boilerplate.c}
  */
 #define USAGE_HEADER     _("\nUsage:\n")
 #define USAGE_OPTIONS    _("\nOptions:\n")
 #define USAGE_FUNCTIONS  _("\nFunctions:\n")
+#define USAGE_COMMANDS   _("\nCommands:\n")
+#define USAGE_COLUMNS    _("\nAvailable columns:\n")
 #define USAGE_SEPARATOR    "\n"
 #define USAGE_HELP       _(" -h, --help     display help information and exit\n")
 #define USAGE_VERSION    _(" -V, --version  display version information and exit\n")
