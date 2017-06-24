@@ -140,6 +140,7 @@ ylwrap
 /renice
 /resizepart
 /rev
+/rfkill
 /rtcwake
 /runuser
 /sample-*

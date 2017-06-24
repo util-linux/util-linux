@@ -30,8 +30,11 @@
 #include <sys/poll.h>
 #include <sys/time.h>
 
-#include "rfkill.h"
-#include "core.h"
+#include <linux/rfkill.h>
+
+#include "c.h"
+#include "closestream.h"
+#include "nls.h"
 
 static void rfkill_event(void)
 {
@@ -313,7 +316,7 @@ static void usage(void)
 
 	fprintf(stderr, "Usage:\t%s [options] command\n", argv0);
 	fprintf(stderr, "Options:\n");
-	fprintf(stderr, "\t--version\tshow version (%s)\n", rfkill_version);
+	fprintf(stderr, "\t--version\tshow version (%s)\n", PACKAGE_VERSION);
 	fprintf(stderr, "Commands:\n");
 	fprintf(stderr, "\thelp\n");
 	fprintf(stderr, "\tevent\n");
@@ -329,7 +332,7 @@ static void usage(void)
 
 static void version(void)
 {
-	printf("rfkill %s\n", rfkill_version);
+	printf("rfkill %s\n", PACKAGE_VERSION);
 }
 
 int main(int argc, char **argv)
