@@ -27,8 +27,8 @@ mostly useless, information.  Incompatible with all other options.
 .B \-\-groups \fIgroup\fR...
 Set supplementary groups.  The argument is a comma-separated list.
 .TP
-.BR \-\-inh\-caps " (" + | \- ) \fIcap "...  or  " \-\-bounding\-set " (" + | \- ) \fIcap ...
-Set the inheritable capabilities or the capability bounding set.  See
+.BR \-\-inh\-caps " (" + | \- ) \fIcap "...  or  " \-\-ambient-caps " (" + | \- ) \fIcap "...  or  " \-\-bounding\-set " (" + | \- ) \fIcap ...
+Set the inheritable capabilities, ambient capabilities or the capability bounding set.  See
 .BR capabilities (7).
 The argument is a comma-separated list of
 .BI + cap
@@ -40,7 +40,9 @@ and
 .B \-all
 can be used to add or remove all caps.  The set of capabilities starts out as
 the current inheritable set for
-.B \-\-inh\-caps
+.BR \-\-inh\-caps ,
+the current ambient set for
+.B \-\-ambient\-caps
 and the current bounding set for
 .BR \-\-bounding\-set .
 If you drop something from the bounding set without also dropping it from the

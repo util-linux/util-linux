@@ -49,6 +49,8 @@
 #ifndef PR_CAP_AMBIENT
 # define PR_CAP_AMBIENT		47
 #  define PR_CAP_AMBIENT_IS_SET	1
+#  define PR_CAP_AMBIENT_RAISE	2
+#  define PR_CAP_AMBIENT_LOWER	3
 #endif
 
 #define SETPRIV_EXIT_PRIVERR 127	/* how we exit when we fail to set privs */
@@ -95,6 +97,7 @@ struct privctx {
 
 	/* caps */
 	const char *caps_to_inherit;
+	const char *ambient_caps;
 	const char *bounding_set;
 
 	/* securebits */
@@ -479,6 +482,19 @@ static int cap_update(capng_act_t action,
 		case CAP_TYPE_INHERITABLE:
 		case CAP_TYPE_PERMITTED:
 			return capng_update(action, (capng_type_t) type, cap);
+		case CAP_TYPE_AMBIENT:
+		{
+			int ret;
+
+			if (action == CAPNG_ADD)
+				ret = prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE,
+						(unsigned long) cap, 0UL, 0UL);
+			else
+				ret = prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_LOWER,
+						(unsigned long) cap, 0UL, 0UL);
+
+			return ret;
+		}
 		default:
 			errx(EXIT_FAILURE, _("unsupported capability type"));
 			return -1;
@@ -687,6 +703,7 @@ int main(int argc, char **argv)
 		INIT_GROUPS,
 		GROUPS,
 		INHCAPS,
+		AMBCAPS,
 		LISTCAPS,
 		CAPBSET,
 		SECUREBITS,
@@ -699,6 +716,7 @@ int main(int argc, char **argv)
 		{ "nnp",              no_argument,       NULL, NNP              },
 		{ "no-new-privs",     no_argument,       NULL, NNP              },
 		{ "inh-caps",         required_argument, NULL, INHCAPS          },
+		{ "ambient-caps",     required_argument, NULL, AMBCAPS          },
 		{ "list-caps",        no_argument,       NULL, LISTCAPS         },
 		{ "ruid",             required_argument, NULL, RUID             },
 		{ "euid",             required_argument, NULL, EUID             },
@@ -831,6 +849,12 @@ int main(int argc, char **argv)
 				     _("duplicate --inh-caps option"));
 			opts.caps_to_inherit = optarg;
 			break;
+		case AMBCAPS:
+			if (opts.ambient_caps)
+				errx(EXIT_FAILURE,
+				     _("duplicate --ambient-caps option"));
+			opts.ambient_caps = optarg;
+			break;
 		case CAPBSET:
 			if (opts.bounding_set)
 				errx(EXIT_FAILURE,
@@ -955,6 +979,10 @@ int main(int argc, char **argv)
 		do_caps(CAP_TYPE_INHERITABLE, opts.caps_to_inherit);
 		if (capng_apply(CAPNG_SELECT_CAPS) != 0)
 			err(SETPRIV_EXIT_PRIVERR, _("apply capabilities"));
+	}
+
+	if (opts.ambient_caps) {
+		do_caps(CAP_TYPE_AMBIENT, opts.ambient_caps);
 	}
 
 	execvp(argv[optind], argv + optind);
