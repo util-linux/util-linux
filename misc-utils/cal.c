@@ -1015,8 +1015,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	        "                         %s\n", USAGE_COLORS_DEFAULT);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(23);
 	fprintf(out, USAGE_MAN_TAIL("cal(1)"));
 
 	exit(EXIT_SUCCESS);

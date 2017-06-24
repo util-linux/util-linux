@@ -112,8 +112,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --reset                  reset the port\n"), out);
 	fputs(_(" -q, --print-irq <on|off>     display current irq setting\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(30);
 	fprintf(out, USAGE_MAN_TAIL("tunelp(8)"));
 
 	exit(EXIT_SUCCESS);

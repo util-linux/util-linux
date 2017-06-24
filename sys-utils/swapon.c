@@ -808,8 +808,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose            verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(26);
 
 	fputs(_("\nThe <spec> parameter:\n" \
 		" -L <label>             synonym for LABEL=<label>\n"

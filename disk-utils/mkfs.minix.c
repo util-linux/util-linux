@@ -145,8 +145,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --check             check the device for bad blocks\n"), out);
 	fputs(_(" -l, --badblocks <file>  list of bad blocks from file\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(25);
 	fprintf(out, USAGE_MAN_TAIL("mkfs.minix(8)"));
 	exit(MKFS_EX_OK);
 }

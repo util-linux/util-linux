@@ -105,8 +105,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw              use the raw output format\n"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputs(USAGE_HELP, stdout);
-	fputs(USAGE_VERSION, stdout);
+	print_usage_help_options(24);
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)

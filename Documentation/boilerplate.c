@@ -56,8 +56,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                           consecutive lines are intended by two spaces\n"), out);
 	fputs(_(" -f, --foobar            next option description resets indent\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(25); /* char offset to align option descriptions */
 	fprintf(out, USAGE_MAN_TAIL("fixme-command-name(1)"));
 	exit(EXIT_SUCCESS);
 }

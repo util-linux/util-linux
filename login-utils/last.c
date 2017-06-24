@@ -589,8 +589,7 @@ static void __attribute__((__noreturn__)) usage(const struct last_control *ctl)
 		"                               notime|short|full|iso\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(22);
 	fprintf(out, USAGE_MAN_TAIL("last(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);

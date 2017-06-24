@@ -97,8 +97,7 @@ static void __attribute__((__noreturn__)) usage(void)
 #endif
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(24);
 	fprintf(out, USAGE_MAN_TAIL("nsenter(1)"));
 
 	exit(EXIT_SUCCESS);

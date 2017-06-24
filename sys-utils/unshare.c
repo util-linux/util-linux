@@ -265,8 +265,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --setgroups allow|deny  control the setgroups syscall in user namespaces\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(27);
 	fprintf(out, USAGE_MAN_TAIL("unshare(1)"));
 
 	exit(EXIT_SUCCESS);

@@ -311,8 +311,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --count <number>   maximum number of zones\n"), out);
 	fputs(_(" -v, --verbose          display more details\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(24);
 
 	fprintf(out, USAGE_MAN_TAIL("blkzone(8)"));
 	exit(EXIT_SUCCESS);

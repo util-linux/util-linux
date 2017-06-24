@@ -419,8 +419,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --raw                     use raw --list output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(31);
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)

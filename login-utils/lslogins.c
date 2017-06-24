@@ -1253,8 +1253,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --wtmp-file <path>   set an alternate path for wtmp\n"), out);
 	fputs(_("     --btmp-file <path>   set an alternate path for btmp\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(26);
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++)

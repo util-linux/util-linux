@@ -130,8 +130,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -v, --verbose          verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(24);
 
 	fputs(_("\nThe <spec> parameter:\n" \
 		" -L <label>             LABEL of device to be used\n" \

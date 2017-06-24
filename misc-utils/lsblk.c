@@ -1658,8 +1658,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --topology       output info about topology\n"), out);
 	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(22);
 
 	fprintf(out, USAGE_COLUMNS);
 

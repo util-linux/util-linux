@@ -386,8 +386,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --summary[=when] print summary information (never,always or only)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(22);
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++)

@@ -812,8 +812,7 @@ static void usage(void)
 		out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(26);
 	fprintf(out, USAGE_MAN_TAIL("sulogin(8)"));
 }
 

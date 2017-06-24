@@ -58,8 +58,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -i, --id <id>  print details on resource identified by <id>\n"), out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(16);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Resource options:\n"), out);

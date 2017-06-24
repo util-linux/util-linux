@@ -114,8 +114,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		fputs(_("     --list               list settable architectures, and exit\n"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputs(USAGE_HELP, stdout);
-	fputs(USAGE_VERSION, stdout);
+	print_usage_help_options(26);
 	printf(USAGE_MAN_TAIL("setarch(8)"));
 
 	exit(EXIT_SUCCESS);

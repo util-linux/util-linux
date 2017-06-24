@@ -59,8 +59,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -q, --query    set query mode\n"), out);
 	fputs(_(" -a, --all      query all raw devices\n"), out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(16);
 	fprintf(out, USAGE_MAN_TAIL("raw(8)"));
 	exit(EXIT_SUCCESS);
 }

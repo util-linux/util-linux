@@ -120,8 +120,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --blocksize <size>   use this blocksize, defaults to page size\n"), out);
 	fputs(_("     --extract[=<dir>]    test uncompression, optionally extract into <dir>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(16);
 	fputs(USAGE_SEPARATOR, out);
 
 	exit(FSCK_EX_OK);

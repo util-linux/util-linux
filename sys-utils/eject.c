@@ -159,8 +159,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(29);
 
 	fputs(_("\nBy default tries -r, -s, -f, and -q in order until success.\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("eject(1)"));

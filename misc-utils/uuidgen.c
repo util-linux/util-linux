@@ -32,8 +32,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --random     generate random-based uuid\n"), out);
 	fputs(_(" -t, --time       generate time-based uuid\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(18);
 	fprintf(out, USAGE_MAN_TAIL("uuidgen(1)"));
 	exit(EXIT_SUCCESS);
 }

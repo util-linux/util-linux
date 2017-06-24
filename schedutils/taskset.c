@@ -78,7 +78,6 @@ static void __attribute__((__noreturn__)) usage(void)
 		program_invocation_short_name);
 
 	fprintf(out, USAGE_MAN_TAIL("taskset(1)"));
-
 	exit(EXIT_SUCCESS);
 }
 

@@ -1241,8 +1241,7 @@ usage(const struct hwclock_control *ctl)
 	fputs(_("     --test           dry run; use -D to view what would have happened\n"), out);
 	fputs(_(" -D, --debug          use debug mode\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(22);
 	fprintf(out, USAGE_MAN_TAIL("hwclock(8)"));
 	hwclock_exit(ctl, EXIT_SUCCESS);
 }
