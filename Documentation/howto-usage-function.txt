@@ -4,20 +4,6 @@ Example file
 
 Refer to the ./boilerplate.c example file while reading this howto.
 
-Well-known options
-------------------
-
-The following options are well-known, and should not be used for any
-other purpose:
-
- -h, --help     display usage and exit
- -V, --version  display version and exit
-
-The rule of thumb with other options is that once they exist, you may
-not change them, nor change how they work, nor remove them.
-
-See Legacy options below.
-
 
 How a usage text is supposed to look
 ------------------------------------
@@ -144,19 +130,5 @@ Note that the synopsis is not meant to be a repetition of the options
 section. The fundamental difference in execution is a bit difficult to
 define. The command author, package maintainer or patch submitter will
 usually know when it should be done that way.
-
-
-Legacy options
---------------
-
-Some commands use peculiar options and arguments.  These will continue
-to be supported, but anything like them will not be accepted as new
-additions.  A short list of examples:
-
-- Characters other than '-' to start an option.  See '+' in 'more'.
-- Using a number as an option.  See '-<number>' in 'more'.
-- Long options that start with a single '-'.  See 'setterm'.
-- '-?' is not expected to be a synonym of '--help', but is an unknown
-  option resulting in a suggestion to try --help due to a getopt failure.
 
 
