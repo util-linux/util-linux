@@ -162,13 +162,32 @@ static int real_cap_last_cap(void)
 	return ret;
 }
 
+static int has_cap(enum cap_type which, unsigned int i)
+{
+	switch (which) {
+	case CAP_TYPE_EFFECTIVE:
+	case CAP_TYPE_BOUNDING:
+	case CAP_TYPE_INHERITABLE:
+	case CAP_TYPE_PERMITTED:
+		return capng_have_capability(which, i);
+	default:
+		warnx(_("invalid capability type"));
+		return -1;
+	}
+}
+
 /* Returns the number of capabilities printed. */
 static int print_caps(FILE *f, enum cap_type which)
 {
 	int i, n = 0, max = real_cap_last_cap();
 
 	for (i = 0; i <= max; i++) {
-		if (capng_have_capability((capng_type_t) which, i)) {
+		int ret = has_cap(which, i);
+
+		if (i == 0 && ret < 0)
+			return -1;
+
+		if (ret == 1) {
 			const char *name = capng_capability_to_name(i);
 			if (n)
 				fputc(',', f);
