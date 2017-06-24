@@ -52,12 +52,6 @@ endif
 endif
 
 
-if BUILD_RESET
-dist_usrbin_exec_SCRIPTS += term-utils/reset
-dist_man_MANS += term-utils/reset.1
-endif
-
-
 if BUILD_MESG
 usrbin_exec_PROGRAMS += mesg
 dist_man_MANS += term-utils/mesg.1

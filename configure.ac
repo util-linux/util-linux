@@ -1741,14 +1741,6 @@ UL_BUILD_INIT([rename])
 AM_CONDITIONAL([BUILD_RENAME], [test "x$build_rename" = xyes])
 
 
-AC_ARG_ENABLE([reset],
-  AS_HELP_STRING([--enable-reset], [build reset]),
-  [], [UL_DEFAULT_ENABLE([reset], [no])]
-)
-UL_BUILD_INIT([reset])
-AM_CONDITIONAL([BUILD_RESET], [test "x$build_reset" = xyes])
-
-
 AC_ARG_ENABLE([vipw],
   AS_HELP_STRING([--enable-vipw], [build vipw]),
   [], [UL_DEFAULT_ENABLE([vipw], [no])]
