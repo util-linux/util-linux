@@ -190,12 +190,23 @@ static void die_if_link(const struct script_control *ctl)
 		       "Program not started."), ctl->fname);
 }
 
+static void restore_tty(struct script_control *ctl, int mode)
+{
+	struct termios rtt;
+
+	if (!ctl->isterm)
+		return;
+
+	rtt = ctl->attrs;
+	tcsetattr(STDIN_FILENO, mode, &rtt);
+}
+
 static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 {
 	DBG(MISC, ul_debug("done!"));
 
-	if (ctl->isterm)
-		tcsetattr(STDIN_FILENO, TCSADRAIN, &ctl->attrs);
+	restore_tty(ctl, TCSADRAIN);
+
 	if (!ctl->quiet && ctl->typescriptfp)
 		printf(_("Script done, file is %s\n"), ctl->fname);
 #ifdef HAVE_LIBUTEMPTER
@@ -423,15 +434,19 @@ static void do_io(struct script_control *ctl)
 
 	if ((ctl->typescriptfp =
 	     fopen(ctl->fname, ctl->append ? "a" UL_CLOEXECSTR : "w" UL_CLOEXECSTR)) == NULL) {
+
+		restore_tty(ctl, TCSANOW);
 		warn(_("cannot open %s"), ctl->fname);
 		fail(ctl);
 	}
 	if (ctl->timing) {
-		if (!ctl->tname) {
-			if (!(ctl->timingfp = fopen("/dev/stderr", "w" UL_CLOEXECSTR)))
-				err(EXIT_FAILURE, _("cannot open %s"), "/dev/stderr");
-		} else if (!(ctl->timingfp = fopen(ctl->tname, "w" UL_CLOEXECSTR)))
-			err(EXIT_FAILURE, _("cannot open %s"), ctl->tname);
+		const char *tname = ctl->tname ? ctl->tname : "/dev/stderr";
+
+		if (!(ctl->timingfp = fopen(tname, "w" UL_CLOEXECSTR))) {
+			restore_tty(ctl, TCSANOW);
+			warn(_("cannot open %s"), tname);
+			fail(ctl);
+		}
 	}
 
 
