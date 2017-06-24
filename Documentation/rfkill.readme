@@ -1,3 +1,6 @@
+This was the original README when rfkill was a standalone project.
+
+-- snip
 
 This is 'rfkill', a tool to use /dev/rfkill.
 
