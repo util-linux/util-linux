@@ -48,6 +48,13 @@
 
 #define SETPRIV_EXIT_PRIVERR 127	/* how we exit when we fail to set privs */
 
+enum cap_type {
+	CAP_TYPE_EFFECTIVE   = CAPNG_EFFECTIVE,
+	CAP_TYPE_PERMITTED   = CAPNG_PERMITTED,
+	CAP_TYPE_INHERITABLE = CAPNG_INHERITABLE,
+	CAP_TYPE_BOUNDING    = CAPNG_BOUNDING_SET
+};
+
 /*
  * Note: We are subject to https://bugzilla.redhat.com/show_bug.cgi?id=895105
  * and we will therefore have problems if new capabilities are added.  Once
@@ -156,12 +163,12 @@ static int real_cap_last_cap(void)
 }
 
 /* Returns the number of capabilities printed. */
-static int print_caps(FILE *f, capng_type_t which)
+static int print_caps(FILE *f, enum cap_type which)
 {
 	int i, n = 0, max = real_cap_last_cap();
 
 	for (i = 0; i <= max; i++) {
-		if (capng_have_capability(which, i)) {
+		if (capng_have_capability((capng_type_t) which, i)) {
 			const char *name = capng_capability_to_name(i);
 			if (n)
 				fputc(',', f);
@@ -175,6 +182,7 @@ static int print_caps(FILE *f, capng_type_t which)
 			n++;
 		}
 	}
+
 	return n;
 }
 
@@ -323,23 +331,23 @@ static void dump(int dumplevel)
 
 	if (2 <= dumplevel) {
 		printf(_("Effective capabilities: "));
-		if (print_caps(stdout, CAPNG_EFFECTIVE) == 0)
+		if (print_caps(stdout, CAP_TYPE_EFFECTIVE) == 0)
 			printf(_("[none]"));
 		printf("\n");
 
 		printf(_("Permitted capabilities: "));
-		if (print_caps(stdout, CAPNG_PERMITTED) == 0)
+		if (print_caps(stdout, CAP_TYPE_PERMITTED) == 0)
 			printf(_("[none]"));
 		printf("\n");
 	}
 
 	printf(_("Inheritable capabilities: "));
-	if (print_caps(stdout, CAPNG_INHERITABLE) == 0)
+	if (print_caps(stdout, CAP_TYPE_INHERITABLE) == 0)
 		printf(_("[none]"));
 	printf("\n");
 
 	printf(_("Capability bounding set: "));
-	if (print_caps(stdout, CAPNG_BOUNDING_SET) == 0)
+	if (print_caps(stdout, CAP_TYPE_BOUNDING) == 0)
 		printf(_("[none]"));
 	printf("\n");
 
@@ -426,7 +434,7 @@ static void bump_cap(unsigned int cap)
 		capng_update(CAPNG_ADD, CAPNG_EFFECTIVE, cap);
 }
 
-static void do_caps(capng_type_t type, const char *caps)
+static void do_caps(enum cap_type type, const char *caps)
 {
 	char *my_caps = xstrdup(caps);
 	char *c;
@@ -448,11 +456,11 @@ static void do_caps(capng_type_t type, const char *caps)
 				errx(SETPRIV_EXIT_PRIVERR,
 				     _("libcap-ng is too old for \"all\" caps"));
 			for (i = 0; i <= CAP_LAST_CAP; i++)
-				capng_update(action, type, i);
+				capng_update(action, (capng_type_t) type, i);
 		} else {
 			int cap = capng_name_to_capability(c + 1);
 			if (0 <= cap)
-				capng_update(action, type, cap);
+				capng_update(action, (capng_type_t) type, cap);
 			else
 				errx(EXIT_FAILURE,
 				     _("unknown capability \"%s\""), c + 1);
@@ -886,14 +894,14 @@ int main(int argc, char **argv)
 		err(SETPRIV_EXIT_PRIVERR, _("set process securebits failed"));
 
 	if (opts.bounding_set) {
-		do_caps(CAPNG_BOUNDING_SET, opts.bounding_set);
+		do_caps(CAP_TYPE_BOUNDING, opts.bounding_set);
 		errno = EPERM;	/* capng doesn't set errno if we're missing CAP_SETPCAP */
 		if (capng_apply(CAPNG_SELECT_BOUNDS) != 0)
 			err(SETPRIV_EXIT_PRIVERR, _("apply bounding set"));
 	}
 
 	if (opts.caps_to_inherit) {
-		do_caps(CAPNG_INHERITABLE, opts.caps_to_inherit);
+		do_caps(CAP_TYPE_INHERITABLE, opts.caps_to_inherit);
 		if (capng_apply(CAPNG_SELECT_CAPS) != 0)
 			err(SETPRIV_EXIT_PRIVERR, _("apply capabilities"));
 	}
