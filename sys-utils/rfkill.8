@@ -1,38 +1,82 @@
-.\"                                      Hey, EMACS: -*- nroff -*-
-.TH RFKILL 8 "July 10, 2009"
+.\" -*- nroff -*-
+.TH RFKILL "8" "2017-06-24" "util-linux" "System Administration"
 .SH NAME
 rfkill \- tool for enabling and disabling wireless devices
 .SH SYNOPSIS
 .B rfkill
-.RI [ options ] " command"
+.RI [ options ] " command" " [" index | type ]
 .SH OPTIONS
 .TP
+.B \-\-help
+Display help text and exit.
+.TP
 .B \-\-version
-Show the version of rfkill.
+Display version information and exit.
 .SH COMMANDS
 .TP
 .B help
-Show rfkill's built-in help text.
+Display help text and exit.
 .TP
 .B event
 Listen for rfkill events and display them on stdout.
 .TP
-.B list [type]
-List the current state of all available rfkill-using devices,
-or just all of the given type.
+\fBlist \fR[\fIindex\fR|\fItype\fR]
+List the current state of all available rfkill\-using devices, or just all
+of the given type.
 .TP
-.BI block " index|type"
-Disable the device corresponding to the given index.
-\fItype\fR is one of "all", "wifi", "wlan", "bluetooth", "uwb",
-"ultrawideband", "wimax", "wwan", "gps", "fm" or "nfc".
+\fBblock \fBindex\fR|\fBtype\fR
+Disable the corresponding device.
 .TP
-.BI unblock " index|type"
-Enable the device corresponding to the given index. If the device is
-hard-blocked, e.g. via a hardware switch, it will remain unavailable though
-it is now soft-unblocked.
+\fBunblock \fBindex\fR|\fBtype\fR
+Enable the corresponding device.  If the device is hard\-blocked, for example
+via a hardware switch, it will remain unavailable though it is now
+soft\-unblocked.
+.SS
+INDEXES AND TYPES
+.TS
+tab(:);
+left l l.
+0:all
+1:wifi
+1:wlan (alias of wifi)
+2:bluetooth
+3:uwb
+3:ultrawideband (alias of uwb)
+4:wimax
+5:wwan
+6:gps
+7:fm
+8:nfc
+.TE
+.SH EXAMPLES
+rfkill list
+.br
+rfkill block all
+.br
+rfkill unblock wlan
 .SH AUTHORS
-rfkill was originally written by Johannes Berg <johannes@sipsolutions.net>
-and Marcel Holtmann <marcel@holtmann.org>.
+.B rfkill
+was originally written by
+.MT johannes@\:sipsolutions.\:net
+Johannes Berg
+.ME
+and
+.MT marcel@\:holtmann.\:org
+Marcel Holtmann
+.ME .
 .PP
-This manual page was written by Darren Salt <linux@youmustbejoking.demon.co.uk>,
+This manual page was written by
+.MT linux@\:youmustbejoking.\:demon.\:co.uk
+Darren Salt
+.ME ,
 for the Debian project (and may be used by others).
+.SH "SEE ALSO"
+.BR powertop (8),
+.UR https://\:git.\:kernel.\:org/\:pub/\:scm/\:linux/\:kernel/\:git/\:torvalds/\:linux.git/\:tree/\:Documentation/\:rfkill.txt
+Linux kernel documentation
+.UE
+.SH AVAILABILITY
+The rfkill command is part of the util\-linux package and is available from
+.UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util\-linux/
+Linux Kernel Archive
+.UE .
