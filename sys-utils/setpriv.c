@@ -453,6 +453,21 @@ static void bump_cap(unsigned int cap)
 		capng_update(CAPNG_ADD, CAPNG_EFFECTIVE, cap);
 }
 
+static int cap_update(capng_act_t action,
+		enum cap_type type, unsigned int cap)
+{
+	switch (type) {
+		case CAP_TYPE_EFFECTIVE:
+		case CAP_TYPE_BOUNDING:
+		case CAP_TYPE_INHERITABLE:
+		case CAP_TYPE_PERMITTED:
+			return capng_update(action, (capng_type_t) type, cap);
+		default:
+			errx(EXIT_FAILURE, _("unsupported capability type"));
+			return -1;
+	}
+}
+
 static void do_caps(enum cap_type type, const char *caps)
 {
 	char *my_caps = xstrdup(caps);
@@ -475,11 +490,11 @@ static void do_caps(enum cap_type type, const char *caps)
 				errx(SETPRIV_EXIT_PRIVERR,
 				     _("libcap-ng is too old for \"all\" caps"));
 			for (i = 0; i <= CAP_LAST_CAP; i++)
-				capng_update(action, (capng_type_t) type, i);
+				cap_update(action, type, i);
 		} else {
 			int cap = capng_name_to_capability(c + 1);
 			if (0 <= cap)
-				capng_update(action, (capng_type_t) type, cap);
+				cap_update(action, type, cap);
 			else
 				errx(EXIT_FAILURE,
 				     _("unknown capability \"%s\""), c + 1);
