@@ -46,13 +46,19 @@
 # define PR_GET_NO_NEW_PRIVS 39
 #endif
 
+#ifndef PR_CAP_AMBIENT
+# define PR_CAP_AMBIENT		47
+#  define PR_CAP_AMBIENT_IS_SET	1
+#endif
+
 #define SETPRIV_EXIT_PRIVERR 127	/* how we exit when we fail to set privs */
 
 enum cap_type {
 	CAP_TYPE_EFFECTIVE   = CAPNG_EFFECTIVE,
 	CAP_TYPE_PERMITTED   = CAPNG_PERMITTED,
 	CAP_TYPE_INHERITABLE = CAPNG_INHERITABLE,
-	CAP_TYPE_BOUNDING    = CAPNG_BOUNDING_SET
+	CAP_TYPE_BOUNDING    = CAPNG_BOUNDING_SET,
+	CAP_TYPE_AMBIENT     = (1 << 4)
 };
 
 /*
@@ -170,6 +176,9 @@ static int has_cap(enum cap_type which, unsigned int i)
 	case CAP_TYPE_INHERITABLE:
 	case CAP_TYPE_PERMITTED:
 		return capng_have_capability(which, i);
+	case CAP_TYPE_AMBIENT:
+		return prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_IS_SET,
+				(unsigned long) i, 0UL, 0UL);
 	default:
 		warnx(_("invalid capability type"));
 		return -1;
@@ -363,6 +372,14 @@ static void dump(int dumplevel)
 	printf(_("Inheritable capabilities: "));
 	if (print_caps(stdout, CAP_TYPE_INHERITABLE) == 0)
 		printf(_("[none]"));
+	printf("\n");
+
+	printf(_("Ambient capabilities: "));
+	x = print_caps(stdout, CAP_TYPE_AMBIENT);
+	if (x == 0)
+		printf(_("[none]"));
+	if (x < 0)
+		printf(_("[unsupported]"));
 	printf("\n");
 
 	printf(_("Capability bounding set: "));
