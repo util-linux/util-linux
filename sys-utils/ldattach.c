@@ -137,11 +137,15 @@ static void dbg(char *fmt, ...)
 	if (debug == 0)
 		return;
 	fflush(NULL);
-	fprintf(stderr, "%s: ", program_invocation_short_name);
 	va_start(args, fmt);
+#ifdef HAVE_VWARNX
+	vwarnx(fmt, args);
+#else
+	fprintf(stderr, "%s: ", program_invocation_short_name);
 	vfprintf(stderr, fmt, args);
-	va_end(args);
 	fprintf(stderr, "\n");
+#endif
+	va_end(args);
 	fflush(NULL);
 	return;
 }
@@ -252,7 +256,7 @@ static int my_cfsetspeed(struct termios *ts, int speed)
 
 static void handler(int s)
 {
-	dbg("got SIG %i -> exiting\n", s);
+	dbg("got SIG %i -> exiting", s);
 	exit(EXIT_SUCCESS);
 }
 

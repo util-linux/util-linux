@@ -428,6 +428,7 @@ AC_CHECK_FUNCS([ \
 	sysinfo \
 	timegm \
 	usleep \
+	vwarnx \
 	warn \
 	warnx \
 ])
