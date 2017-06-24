@@ -188,4 +188,8 @@
 /* lscpu paths */
 #define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
 
+/* rfkill paths */
+#define _PATH_DEV_RFKILL	"/dev/rfkill"
+#define _PATH_SYS_RFKILL	"/sys/class/rfkill"
+
 #endif /* PATHNAMES_H */

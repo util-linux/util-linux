@@ -18,36 +18,63 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stdio.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
-#include <stdbool.h>
-#include <sys/types.h>
+#include <getopt.h>
+#include <linux/rfkill.h>
 #include <sys/poll.h>
 #include <sys/time.h>
-
-#include <linux/rfkill.h>
 
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
+#include "pathnames.h"
+#include "strutils.h"
+#include "widechar.h"
 
-static void rfkill_event(void)
+struct rfkill_type_str {
+	enum rfkill_type type;
+	const char *name;
+};
+
+static const struct rfkill_type_str rfkill_type_strings[] = {
+	{ .type = RFKILL_TYPE_ALL,       .name = "all"           },
+	{ .type = RFKILL_TYPE_WLAN,      .name = "wifi"          },
+	{ .type = RFKILL_TYPE_WLAN,      .name = "wlan"          }, /* alias */
+	{ .type = RFKILL_TYPE_BLUETOOTH, .name = "bluetooth"     },
+	{ .type = RFKILL_TYPE_UWB,       .name = "uwb"           },
+	{ .type = RFKILL_TYPE_UWB,       .name = "ultrawideband" }, /* alias */
+	{ .type = RFKILL_TYPE_WIMAX,     .name = "wimax"         },
+	{ .type = RFKILL_TYPE_WWAN,      .name = "wwan"          },
+	{ .type = RFKILL_TYPE_GPS,       .name = "gps"           },
+	{ .type = RFKILL_TYPE_FM,        .name = "fm"            },
+	{ .type = RFKILL_TYPE_NFC,       .name = "nfc"           },
+	{ .type = NUM_RFKILL_TYPES,      .name = NULL            }
+};
+
+struct rfkill_id {
+	union {
+		enum rfkill_type type;
+		uint32_t index;
+	};
+	enum {
+		RFKILL_IS_INVALID,
+		RFKILL_IS_TYPE,
+		RFKILL_IS_INDEX,
+	} result;
+};
+
+static int rfkill_event(void)
 {
 	struct rfkill_event event;
 	struct timeval tv;
 	struct pollfd p;
 	ssize_t len;
-	int fd, n;
+	int fd, n, ret = 0;
 
-	fd = open("/dev/rfkill", O_RDONLY);
+	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
 	if (fd < 0) {
-		perror("Can't open RFKILL control device");
-		return;
+		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
+		return 1;
 	}
 
 	memset(&p, 0, sizeof(p));
@@ -57,7 +84,8 @@ static void rfkill_event(void)
 	while (1) {
 		n = poll(&p, 1, -1);
 		if (n < 0) {
-			perror("Failed to poll RFKILL control device");
+			warn(_("failed to poll %s"), _PATH_DEV_RFKILL);
+			ret = 1;
 			break;
 		}
 
@@ -66,12 +94,14 @@ static void rfkill_event(void)
 
 		len = read(fd, &event, sizeof(event));
 		if (len < 0) {
-			perror("Reading of RFKILL events failed");
+			warn(_("cannot read %s"), _PATH_DEV_RFKILL);
+			ret = 1;
 			break;
 		}
 
 		if (len != RFKILL_EVENT_SIZE_V1) {
-			fprintf(stderr, "Wrong size of RFKILL event\n");
+			warnx(_("wrong size of rfkill event: %zu != %d"), len, RFKILL_EVENT_SIZE_V1);
+			ret = 1;
 			continue;
 		}
 
@@ -83,22 +113,24 @@ static void rfkill_event(void)
 	}
 
 	close(fd);
+	return ret;
 }
 
-static const char *get_name(__u32 idx)
+static const char *get_name(uint32_t idx)
 {
-	static char name[128] = {};
+	static char name[128] = { 0 };
 	char *pos, filename[64];
 	int fd;
 
 	snprintf(filename, sizeof(filename) - 1,
-				"/sys/class/rfkill/rfkill%u/name", idx);
+				_PATH_SYS_RFKILL "/rfkill%u/name", idx);
 
 	fd = open(filename, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		warn(_("cannot open %s"), filename);
 		return NULL;
+	}
 
-	memset(name, 0, sizeof(name));
 	read(fd, name, sizeof(name) - 1);
 
 	pos = strchr(name, '\n');
@@ -133,41 +165,11 @@ static const char *type2string(enum rfkill_type type)
 		return "NFC";
 	case NUM_RFKILL_TYPES:
 		return NULL;
+	default:
+		abort();
 	}
-
 	return NULL;
 }
-
-struct rfkill_type_str {
-	enum rfkill_type type;
-	const char *name;
-};
-static const struct rfkill_type_str rfkill_type_strings[] = {
-	{	.type = RFKILL_TYPE_ALL,		.name = "all"	},
-	{	.type = RFKILL_TYPE_WLAN,		.name = "wifi"	},
-	{	.type = RFKILL_TYPE_WLAN,		.name = "wlan"	}, /* alias */
-	{	.type = RFKILL_TYPE_BLUETOOTH,	.name = "bluetooth"	},
-	{	.type = RFKILL_TYPE_UWB,		.name = "uwb"	},
-	{	.type = RFKILL_TYPE_UWB,		.name = "ultrawideband"	}, /* alias */
-	{	.type = RFKILL_TYPE_WIMAX,		.name = "wimax"	},
-	{	.type = RFKILL_TYPE_WWAN,		.name = "wwan"	},
-	{	.type = RFKILL_TYPE_GPS,		.name = "gps"	},
-	{	.type = RFKILL_TYPE_FM,			.name = "fm"	},
-	{	.type = RFKILL_TYPE_NFC,		.name = "nfc"	},
-	{	.name = NULL }
-};
-
-struct rfkill_id {
-	union {
-		enum rfkill_type type;
-		__u32 index;
-	};
-	enum {
-		RFKILL_IS_INVALID,
-		RFKILL_IS_TYPE,
-		RFKILL_IS_INDEX,
-	} result;
-};
 
 static struct rfkill_id rfkill_id_to_type(const char *s)
 {
@@ -176,7 +178,7 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 
 	if (islower(*s)) {
 		for (p = rfkill_type_strings; p->name != NULL; p++) {
-			if ((strlen(s) == strlen(p->name)) && (!strcmp(s,p->name))) {
+			if (!strcmp(s, p->name)) {
 				ret.type = p->type;
 				ret.result = RFKILL_IS_TYPE;
 				return ret;
@@ -184,7 +186,7 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 		}
 	} else if (isdigit(*s)) {
 		/* assume a numeric character implies an index. */
-		ret.index = atoi(s);
+		ret.index = strtou32_or_err(s, _("invalid identifier"));
 		ret.result = RFKILL_IS_INDEX;
 		return ret;
 	}
@@ -204,22 +206,22 @@ static int rfkill_list(const char *param)
 	if (param) {
 		id = rfkill_id_to_type(param);
 		if (id.result == RFKILL_IS_INVALID) {
-			fprintf(stderr, "Bogus %s argument '%s'.\n", "list", param);
-			return 2;
+			warnx(_("invalid identifier: %s"), param);
+			return 1;
 		}
 		/* don't filter "all" */
 		if (id.result == RFKILL_IS_TYPE && id.type == RFKILL_TYPE_ALL)
 			id.result = RFKILL_IS_INVALID;
 	}
 
-	fd = open("/dev/rfkill", O_RDONLY);
+	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
 	if (fd < 0) {
-		perror("Can't open RFKILL control device");
+		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
 		return 1;
 	}
 
 	if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
-		perror("Can't set RFKILL control device to non-blocking");
+		warn(_("cannot set non-blocking %s"), _PATH_DEV_RFKILL);
 		close(fd);
 		return 1;
 	}
@@ -229,12 +231,12 @@ static int rfkill_list(const char *param)
 		if (len < 0) {
 			if (errno == EAGAIN)
 				break;
-			perror("Reading of RFKILL events failed");
+			warn(_("cannot read %s"), _PATH_DEV_RFKILL);
 			break;
 		}
 
 		if (len != RFKILL_EVENT_SIZE_V1) {
-			fprintf(stderr, "Wrong size of RFKILL event\n");
+			warnx(_("wrong size of rfkill event: %zu != %d"), len, RFKILL_EVENT_SIZE_V1);
 			continue;
 		}
 
@@ -242,8 +244,7 @@ static int rfkill_list(const char *param)
 			continue;
 
 		/* filter out unwanted results */
-		switch (id.result)
-		{
+		switch (id.result) {
 		case RFKILL_IS_TYPE:
 			if (event.type != id.type)
 				continue;
@@ -252,22 +253,24 @@ static int rfkill_list(const char *param)
 			if (event.idx != id.index)
 				continue;
 			break;
-		case RFKILL_IS_INVALID:; /* must be last */
+		case RFKILL_IS_INVALID:
+			break;
+		default:
+			abort();
 		}
-
 		name = get_name(event.idx);
 
 		printf("%u: %s: %s\n", event.idx, name,
 						type2string(event.type));
-		printf("\tSoft blocked: %s\n", event.soft ? "yes" : "no");
-		printf("\tHard blocked: %s\n", event.hard ? "yes" : "no");
+		printf("\t%s: %s\n", _("Soft blocked"), event.soft ? _("yes") : _("no"));
+		printf("\t%s: %s\n", _("Hard blocked"), event.hard ? _("yes") : _("no"));
 	}
 
 	close(fd);
 	return 0;
 }
 
-static int rfkill_block(__u8 block, const char *param)
+static int rfkill_block(uint8_t block, const char *param)
 {
 	struct rfkill_id id;
 	struct rfkill_event event;
@@ -276,13 +279,13 @@ static int rfkill_block(__u8 block, const char *param)
 
 	id = rfkill_id_to_type(param);
 	if (id.result == RFKILL_IS_INVALID) {
-		fprintf(stderr, "Bogus %s argument '%s'.\n", block ? "block" : "unblock", param);
-		return 2;
+		warnx(_("invalid identifier: %s"), param);
+		return 1;
 	}
 
-	fd = open("/dev/rfkill", O_RDWR);
+	fd = open(_PATH_DEV_RFKILL, O_RDWR);
 	if (fd < 0) {
-		perror("Can't open RFKILL control device");
+		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
 		return 1;
 	}
 
@@ -296,81 +299,101 @@ static int rfkill_block(__u8 block, const char *param)
 		event.op = RFKILL_OP_CHANGE;
 		event.idx = id.index;
 		break;
-	case RFKILL_IS_INVALID:; /* must be last */
+	case RFKILL_IS_INVALID:
+		break;
+	default:
+		abort();
 	}
 	event.soft = block;
 
 	len = write(fd, &event, sizeof(event));
 	if (len < 0)
-		perror("Failed to change RFKILL state");
-
-	close(fd);
-	return 0;
+		warn(_("write failed: %s"), _PATH_DEV_RFKILL);
+	return close_fd(fd);
 }
 
-static const char *argv0;
-
-static void usage(void)
+static void __attribute__((__noreturn__)) usage(void)
 {
 	const struct rfkill_type_str *p;
 
-	fprintf(stderr, "Usage:\t%s [options] command\n", argv0);
-	fprintf(stderr, "Options:\n");
-	fprintf(stderr, "\t--version\tshow version (%s)\n", PACKAGE_VERSION);
-	fprintf(stderr, "Commands:\n");
-	fprintf(stderr, "\thelp\n");
-	fprintf(stderr, "\tevent\n");
-	fprintf(stderr, "\tlist [IDENTIFIER]\n");
-	fprintf(stderr, "\tblock IDENTIFIER\n");
-	fprintf(stderr, "\tunblock IDENTIFIER\n");
-	fprintf(stderr, "where IDENTIFIER is the index no. of an rfkill switch or one of:\n");
-	fprintf(stderr, "\t<idx>");
-	for (p = rfkill_type_strings; p->name != NULL; p++)
-		fprintf(stderr, " %s", p->name);
-	fprintf(stderr, "\n");
-}
+	fputs(USAGE_HEADER, stdout);
+	fprintf(stdout, _(" %s command [identifier]\n"), program_invocation_short_name);
 
-static void version(void)
-{
-	printf("rfkill %s\n", PACKAGE_VERSION);
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(_("Tool for enabling and disabling wireless devices.\n"), stdout);
+
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(_("Commands:\n"), stdout);
+	/*
+	 * TRANSLATORS: command names should not be translated, explaining
+	 * them as additional field after identifer is fine, for example
+	 *
+	 * list   [identifier]   (lista [tarkenne])
+	 */
+	fputs(_(" help\n"), stdout);
+	fputs(_(" event\n"), stdout);
+	fputs(_(" list   [identifier]\n"), stdout);
+	fputs(_(" block   identifier\n"), stdout);
+	fputs(_(" unblock identifier\n"), stdout);
+
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(_("Identifiers, that can be referred by id number or name:\n"), stdout);
+	for (p = rfkill_type_strings; p->name != NULL; p++)
+		printf(" %d %s\n", p->type, p->name);
+
+	fprintf(stdout, USAGE_MAN_TAIL("rfkill(8)"));
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
 {
-	int ret = 0;
+	int c;
+	static const struct option longopts[] = {
+		{ "version", no_argument, NULL, 'V' },
+		{ "help",    no_argument, NULL, 'h' },
+		{ NULL, 0, NULL, 0 }
+	};
+	int ret;
 
-	/* strip off self */
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
+
+	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+		switch (c) {
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage();
+		default:
+			errtryhelp(EXIT_FAILURE);
+		}
+
+	/* Skip program name. */
+	argv++;
 	argc--;
-	argv0 = *argv++;
 
-	if (argc > 0 && strcmp(*argv, "--version") == 0) {
-		version();
-		return 0;
-	}
-
-	if (argc == 0 || strcmp(*argv, "help") == 0) {
+	if (argc == 0 || strcmp(*argv, _("help")) == 0)
 		usage();
-		return 0;
-	}
 
 	if (strcmp(*argv, "event") == 0) {
-		rfkill_event();
+		ret = rfkill_event();
 	} else if (strcmp(*argv, "list") == 0) {
 		argc--;
 		argv++;
-		rfkill_list(*argv); /* NULL is acceptable */
+		ret = rfkill_list(*argv); /* NULL is acceptable */
 	} else if (strcmp(*argv, "block") == 0 && argc > 1) {
 		argc--;
 		argv++;
-		ret = rfkill_block(1,*argv);
+		ret = rfkill_block(1, *argv);
 	} else if (strcmp(*argv, "unblock") == 0 && argc > 1) {
 		argc--;
 		argv++;
-		ret = rfkill_block(0,*argv);
-	} else {
-		usage();
-		return 1;
-	}
+		ret = rfkill_block(0, *argv);
+	} else
+		errtryhelp(EXIT_FAILURE);
 
 	return ret;
 }
