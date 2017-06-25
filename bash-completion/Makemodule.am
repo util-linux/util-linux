@@ -282,6 +282,9 @@ endif
 if BUILD_LDATTACH
 dist_bashcompletion_DATA += bash-completion/ldattach
 endif
+if BUILD_RFKILL
+dist_bashcompletion_DATA += bash-completion/rfkill
+endif
 if BUILD_RTCWAKE
 dist_bashcompletion_DATA += bash-completion/rtcwake
 endif
