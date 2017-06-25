@@ -23,6 +23,7 @@
 #include <libsmartcols.h>
 #include <linux/rfkill.h>
 #include <sys/poll.h>
+#include <sys/syslog.h>
 #include <sys/time.h>
 
 #include "c.h"
@@ -388,6 +389,7 @@ static int rfkill_block(uint8_t block, const char *param)
 	};
 	ssize_t len;
 	int fd;
+	char *message = NULL;
 
 	id = rfkill_id_to_type(param);
 
@@ -397,12 +399,15 @@ static int rfkill_block(uint8_t block, const char *param)
 		return 1;
 	case RFKILL_IS_TYPE:
 		event.type = id.type;
+		xasprintf(&message, "type %s", param);
 		break;
 	case RFKILL_IS_INDEX:
 		event.op = RFKILL_OP_CHANGE;
 		event.idx = id.index;
+		xasprintf(&message, "id %d", id.index);
 		break;
 	case RFKILL_IS_ALL:
+		message = xstrdup("all");
 		break;
 	default:
 		abort();
@@ -411,12 +416,17 @@ static int rfkill_block(uint8_t block, const char *param)
 	fd = open(_PATH_DEV_RFKILL, O_RDWR);
 	if (fd < 0) {
 		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
+		free(message);
 		return 1;
 	}
 
 	len = write(fd, &event, sizeof(event));
 	if (len < 0)
 		warn(_("write failed: %s"), _PATH_DEV_RFKILL);
+	openlog("rfkill", 0, LOG_USER);
+	syslog(LOG_NOTICE, "%s set for %s", block ? "block" : "unblock", message);
+	free(message);
+	closelog();
 	return close_fd(fd);
 }
 
