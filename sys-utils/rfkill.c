@@ -132,7 +132,11 @@ static const char *get_name(uint32_t idx)
 		return NULL;
 	}
 
-	read(fd, name, sizeof(name) - 1);
+	if (read(fd, name, sizeof(name) - 1) < 0) {
+		warn(_("cannot read %s"), filename);
+		close(fd);
+		return NULL;
+	}
 
 	pos = strchr(name, '\n');
 	if (pos)
