@@ -31,6 +31,7 @@
 #include "optutils.h"
 #include "pathnames.h"
 #include "strutils.h"
+#include "timeutils.h"
 #include "widechar.h"
 #include "xalloc.h"
 
@@ -135,6 +136,7 @@ static int rfkill_event(void)
 {
 	struct rfkill_event event;
 	struct timeval tv;
+	char date_buf[ISO_8601_BUFSIZ];
 	struct pollfd p;
 	ssize_t len;
 	int fd, n, ret = 0;
@@ -172,11 +174,16 @@ static int rfkill_event(void)
 			ret = 1;
 			continue;
 		}
-
 		gettimeofday(&tv, NULL);
-		printf("%ld.%06u: idx %u type %u op %u soft %u hard %u\n",
-			(long) tv.tv_sec, (unsigned int) tv.tv_usec,
-			event.idx, event.type, event.op, event.soft, event.hard);
+		strtimeval_iso(&tv,
+			       ISO_8601_DATE |
+			       ISO_8601_TIME |
+			       ISO_8601_COMMAUSEC |
+			       ISO_8601_TIMEZONE |
+			       ISO_8601_SPACE, date_buf, sizeof(date_buf));
+		printf("%s: idx %u type %u op %u soft %u hard %u\n",
+		       date_buf,
+		       event.idx, event.type, event.op, event.soft, event.hard);
 		fflush(stdout);
 	}
 
