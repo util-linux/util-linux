@@ -316,8 +316,8 @@ static inline int xusleep(useconds_t usec)
 #define USAGE_COLUMNS    _("\nAvailable output columns:\n")
 #define USAGE_SEPARATOR    "\n"
 
-#define USAGE_OPTSTR_HELP     _("display this help and exit")
-#define USAGE_OPTSTR_VERSION  _("output version information and exit")
+#define USAGE_OPTSTR_HELP     _("display this help")
+#define USAGE_OPTSTR_VERSION  _("print version")
 
 #define print_usage_help_options(marg_dsc) \
 	printf( \
