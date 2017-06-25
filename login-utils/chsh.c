@@ -83,8 +83,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --shell <shell>  specify login shell\n"), fp);
 	fputs(_(" -l, --list-shells    print list of shells and exit\n"), fp);
 	fputs(USAGE_SEPARATOR, fp);
-	fputs(_(" -u, --help     display this help and exit\n"), fp);
-	fputs(_(" -v, --version  output version information and exit\n"), fp);
+	printf( " -u, --help           %s\n", USAGE_OPTSTR_HELP);
+	printf( " -v, --version        %s\n", USAGE_OPTSTR_VERSION);
 	fprintf(fp, USAGE_MAN_TAIL("chsh(1)"));
 	exit(EXIT_SUCCESS);
 }

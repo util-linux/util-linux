@@ -61,9 +61,10 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -a, --all-tasks         operate on all the tasks (threads) for a given pid\n"
 		" -p, --pid               operate on existing given pid\n"
 		" -c, --cpu-list          display and specify cpus in list format\n"
-		" -h, --help              display this help\n"
-		" -V, --version           output version information\n\n"));
+		));
+	print_usage_help_options(25);
 
+	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, _(
 		"The default behavior is to run a new command:\n"
 		"    %1$s 03 sshd -b 1024\n"

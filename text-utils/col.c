@@ -142,9 +142,11 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -h, --tabs             convert spaces to tabs\n"
 		" -x, --spaces           convert tabs to spaces\n"
 		" -l, --lines NUM        buffer at least NUM lines\n"
-		" -V, --version          output version information and exit\n"
-		" -H, --help             display this help and exit\n\n"));
+		));
+	printf( " -H, --help             %s\n", USAGE_OPTSTR_HELP);
+	printf( " -V, --version          %s\n", USAGE_OPTSTR_VERSION);
 
+	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, _(
 		"%s reads from standard input and writes to standard output\n\n"),
 		program_invocation_short_name);

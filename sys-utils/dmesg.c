@@ -318,7 +318,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		fprintf(out, " %7s - %s\n",
 			level_names[i].name,
 			_(level_names[i].help));
-	fputs(USAGE_SEPARATOR, out);
+
 	fprintf(out, USAGE_MAN_TAIL("dmesg(1)"));
 	exit(EXIT_SUCCESS);
 }

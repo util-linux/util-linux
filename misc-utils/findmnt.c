@@ -1243,7 +1243,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputc('\n', out);
 	fputs(_(" -x, --verify           verify mount table content (default is fstab)\n"), out);
 	fputs(_("     --verbose          print more details\n"), out);
-	fputc('\n', out);
 
 	fputs(USAGE_SEPARATOR, out);
 	print_usage_help_options(24);

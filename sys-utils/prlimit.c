@@ -172,8 +172,8 @@ static void __attribute__((__noreturn__)) usage(void)
 		"     --noheadings       don't print headings\n"
 		"     --raw              use the raw output format\n"
 		"     --verbose          verbose output\n"
-		" -h, --help             display this help and exit\n"
-		" -V, --version          output version information and exit\n"), out);
+		), out);
+	print_usage_help_options(24);
 
 	fputs(_("\nResources Options:\n"), out);
 	fputs(_(" -c, --core             maximum size of core files created\n"

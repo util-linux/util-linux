@@ -247,8 +247,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" +/<string>  display file beginning from search string match\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("     --help     display this help and exit\n"), out);
-	fputs(_(" -V, --version  output version information and exit\n"), out);
+	printf( "     --help     %s\n", USAGE_OPTSTR_HELP);
+	printf( " -V, --version  %s\n", USAGE_OPTSTR_VERSION);
 	fprintf(out, USAGE_MAN_TAIL("more(1)"));
 	exit(EXIT_SUCCESS);
 }

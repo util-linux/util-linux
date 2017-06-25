@@ -120,9 +120,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --blocksize <size>   use this blocksize, defaults to page size\n"), out);
 	fputs(_("     --extract[=<dir>]    test uncompression, optionally extract into <dir>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(16);
-	fputs(USAGE_SEPARATOR, out);
+	print_usage_help_options(26);
 
+	printf(USAGE_MAN_TAIL("fsck.cramfs(8)"));
 	exit(FSCK_EX_OK);
 }
 

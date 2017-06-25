@@ -52,8 +52,8 @@ usage(void)
 		" -s, --typescript <file> script terminal session output file\n"
 		" -d, --divisor <num>     speed up or slow down execution with time divisor\n"
 		" -m, --maxdelay <num>    wait at most this many seconds between updates\n"
-		" -V, --version           output version information and exit\n"
-		" -h, --help              display this help and exit\n\n"), out);
+		), out);
+	print_usage_help_options(25);
 
 	fprintf(out, USAGE_MAN_TAIL("scriptreplay(1)"));
 	exit(EXIT_SUCCESS);

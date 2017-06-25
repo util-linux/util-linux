@@ -418,8 +418,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --powerdown     [0-60]            set vesa powerdown interval in minutes\n"), out);
 	fputs(_(" --blength       [0-2000]          duration of the bell in milliseconds\n"), out);
 	fputs(_(" --bfreq         <number>          bell frequency in Hertz\n"), out);
-	fputs(_(" --version                         show version information and exit\n"), out);
-	fputs(_(" --help                            display this help and exit\n"), out);
+	printf( " --help                            %s\n", USAGE_OPTSTR_HELP);
+	printf( " --version                         %s\n", USAGE_OPTSTR_VERSION);
+
 	fprintf(out, USAGE_MAN_TAIL("setterm(1)"));
 	exit(EXIT_SUCCESS);
 }
