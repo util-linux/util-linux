@@ -60,6 +60,7 @@ struct rfkill_id {
 		RFKILL_IS_INVALID,
 		RFKILL_IS_TYPE,
 		RFKILL_IS_INDEX,
+		RFKILL_IS_ALL
 	} result;
 };
 
@@ -180,7 +181,10 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 		for (p = rfkill_type_strings; p->name != NULL; p++) {
 			if (!strcmp(s, p->name)) {
 				ret.type = p->type;
-				ret.result = RFKILL_IS_TYPE;
+				if (!strcmp(s, "all"))
+					ret.result = RFKILL_IS_ALL;
+				else
+					ret.result = RFKILL_IS_TYPE;
 				return ret;
 			}
 		}
@@ -197,7 +201,7 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 
 static int rfkill_list(const char *param)
 {
-	struct rfkill_id id = { .result = RFKILL_IS_INVALID };
+	struct rfkill_id id = { .result = RFKILL_IS_ALL };
 	struct rfkill_event event;
 	const char *name;
 	ssize_t len;
@@ -209,9 +213,6 @@ static int rfkill_list(const char *param)
 			warnx(_("invalid identifier: %s"), param);
 			return 1;
 		}
-		/* don't filter "all" */
-		if (id.result == RFKILL_IS_TYPE && id.type == RFKILL_TYPE_ALL)
-			id.result = RFKILL_IS_INVALID;
 	}
 
 	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
@@ -253,7 +254,7 @@ static int rfkill_list(const char *param)
 			if (event.idx != id.index)
 				continue;
 			break;
-		case RFKILL_IS_INVALID:
+		case RFKILL_IS_ALL:
 			break;
 		default:
 			abort();
@@ -273,14 +274,31 @@ static int rfkill_list(const char *param)
 static int rfkill_block(uint8_t block, const char *param)
 {
 	struct rfkill_id id;
-	struct rfkill_event event;
+	struct rfkill_event event = {
+		.op = RFKILL_OP_CHANGE_ALL,
+		.soft = block,
+		0
+	};
 	ssize_t len;
 	int fd;
 
 	id = rfkill_id_to_type(param);
-	if (id.result == RFKILL_IS_INVALID) {
+
+	switch (id.result) {
+	case RFKILL_IS_INVALID:
 		warnx(_("invalid identifier: %s"), param);
 		return 1;
+	case RFKILL_IS_TYPE:
+		event.type = id.type;
+		break;
+	case RFKILL_IS_INDEX:
+		event.op = RFKILL_OP_CHANGE;
+		event.idx = id.index;
+		break;
+	case RFKILL_IS_ALL:
+		break;
+	default:
+		abort();
 	}
 
 	fd = open(_PATH_DEV_RFKILL, O_RDWR);
@@ -288,23 +306,6 @@ static int rfkill_block(uint8_t block, const char *param)
 		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
 		return 1;
 	}
-
-	memset(&event, 0, sizeof(event));
-	switch (id.result) {
-	case RFKILL_IS_TYPE:
-		event.op = RFKILL_OP_CHANGE_ALL;
-		event.type = id.type;
-		break;
-	case RFKILL_IS_INDEX:
-		event.op = RFKILL_OP_CHANGE;
-		event.idx = id.index;
-		break;
-	case RFKILL_IS_INVALID:
-		break;
-	default:
-		abort();
-	}
-	event.soft = block;
 
 	len = write(fd, &event, sizeof(event));
 	if (len < 0)
