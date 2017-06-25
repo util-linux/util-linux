@@ -1619,6 +1619,7 @@ AM_CONDITIONAL([BUILD_RENICE], [test "x$build_renice" = xyes])
 
 UL_BUILD_INIT([rfkill], [yes])
 UL_REQUIRES_LINUX([rfkill])
+UL_REQUIRES_BUILD([rfkill], [libsmartcols])
 AM_CONDITIONAL([BUILD_RFKILL], [test "x$build_rfkill" = xyes])
 
 UL_BUILD_INIT([setsid], [yes])

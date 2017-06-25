@@ -20,6 +20,7 @@
 
 #include <ctype.h>
 #include <getopt.h>
+#include <libsmartcols.h>
 #include <linux/rfkill.h>
 #include <sys/poll.h>
 #include <sys/time.h>
@@ -27,9 +28,11 @@
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
+#include "optutils.h"
 #include "pathnames.h"
 #include "strutils.h"
 #include "widechar.h"
+#include "xalloc.h"
 
 struct rfkill_type_str {
 	enum rfkill_type type;
@@ -63,6 +66,70 @@ struct rfkill_id {
 		RFKILL_IS_ALL
 	} result;
 };
+
+/* column IDs */
+enum {
+	COL_DEVICE,
+	COL_ID,
+	COL_TYPE,
+	COL_SOFT,
+	COL_HARD
+};
+
+/* column names */
+struct colinfo {
+	const char *name;	/* header */
+	double whint;		/* width hint (N < 1 is in percent of termwidth) */
+	int flags;		/* SCOLS_FL_* */
+	const char *help;
+};
+
+/* columns descriptions */
+static const struct colinfo infos[] = {
+	[COL_DEVICE] = {"DEVICE", 0, 0, N_("kernel device name")},
+	[COL_ID]     = {"ID",	  0, 0, N_("device identifier value")},
+	[COL_TYPE]   = {"TYPE",	  0, 0, N_("device type name that can be used as identifier")},
+	[COL_SOFT]   = {"SOFT",	  0, 0, N_("status of software block")},
+	[COL_HARD]   = {"HARD",	  0, 0, N_("status of hardware block")}
+};
+
+static int columns[ARRAY_SIZE(infos) * 2];
+static size_t ncolumns;
+
+struct control {
+	unsigned int
+		json:1,
+		no_headings:1,
+		raw:1;
+};
+
+static int column_name_to_id(const char *name, size_t namesz)
+{
+	size_t i;
+
+	assert(name);
+
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
+		const char *cn = infos[i].name;
+
+		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+			return i;
+	}
+	warnx(_("unknown column: %s"), name);
+	return -1;
+}
+
+static int get_column_id(size_t num)
+{
+	assert(num < ncolumns);
+	assert(columns[num] < (int)ARRAY_SIZE(infos));
+	return columns[num];
+}
+
+static const struct colinfo *get_column_info(int num)
+{
+	return &infos[get_column_id(num)];
+}
 
 static int rfkill_event(void)
 {
@@ -117,14 +184,18 @@ static int rfkill_event(void)
 	return ret;
 }
 
-static const char *get_name(uint32_t idx)
+static const char *get_name_or_type(uint32_t idx, int type)
 {
 	static char name[128] = { 0 };
 	char *pos, filename[64];
 	int fd;
 
+	if (type)
+		pos = "type";
+	else
+		pos = "name";
 	snprintf(filename, sizeof(filename) - 1,
-				_PATH_SYS_RFKILL "/rfkill%u/name", idx);
+				_PATH_SYS_RFKILL "/rfkill%u/%s", idx, pos);
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0) {
@@ -145,35 +216,6 @@ static const char *get_name(uint32_t idx)
 	close(fd);
 
 	return name;
-}
-
-static const char *type2string(enum rfkill_type type)
-{
-	switch (type) {
-	case RFKILL_TYPE_ALL:
-		return "All";
-	case RFKILL_TYPE_WLAN:
-		return "Wireless LAN";
-	case RFKILL_TYPE_BLUETOOTH:
-		return "Bluetooth";
-	case RFKILL_TYPE_UWB:
-		return "Ultra-Wideband";
-	case RFKILL_TYPE_WIMAX:
-		return "WiMAX";
-	case RFKILL_TYPE_WWAN:
-		return "Wireless WAN";
-	case RFKILL_TYPE_GPS:
-		return "GPS";
-	case RFKILL_TYPE_FM:
-		return "FM";
-	case RFKILL_TYPE_NFC:
-		return "NFC";
-	case NUM_RFKILL_TYPES:
-		return NULL;
-	default:
-		abort();
-	}
-	return NULL;
 }
 
 static struct rfkill_id rfkill_id_to_type(const char *s)
@@ -203,13 +245,71 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 	return ret;
 }
 
-static int rfkill_list(const char *param)
+static void fill_table_row(struct libscols_table *tb, struct rfkill_event *event)
+{
+	static struct libscols_line *ln;
+	size_t i;
+
+	assert(tb);
+
+	ln = scols_table_new_line(tb, NULL);
+	if (!ln) {
+		errno = ENOMEM;
+		errx(EXIT_FAILURE, _("failed to allocate output line"));
+	}
+
+	for (i = 0; i < (size_t)ncolumns; i++) {
+		char *str = NULL;
+		switch (get_column_id(i)) {
+		case COL_DEVICE:
+			str = xstrdup(get_name_or_type(event->idx, 0));
+			break;
+		case COL_ID:
+			xasprintf(&str, "%" PRIu32, event->idx);
+			break;
+		case COL_TYPE:
+			str = xstrdup(get_name_or_type(event->idx, 1));
+			break;
+		case COL_SOFT:
+			str = xstrdup(event->soft ? _("blocked") : _("unblocked"));
+			break;
+		case COL_HARD:
+			str = xstrdup(event->hard ? _("blocked") : _("unblocked"));
+			break;
+		default:
+			abort();
+		}
+		if (str && scols_line_refer_data(ln, i, str))
+			errx(EXIT_FAILURE, _("failed to add output data"));
+	}
+}
+
+static int rfkill_list(struct control const *const ctrl, const char *param)
 {
 	struct rfkill_id id = { .result = RFKILL_IS_ALL };
 	struct rfkill_event event;
-	const char *name;
 	ssize_t len;
 	int fd;
+	struct libscols_table *tb;
+
+	scols_init_debug(0);
+	tb = scols_new_table();
+	if (!tb)
+		err(EXIT_FAILURE, _("failed to allocate output table"));
+
+	scols_table_enable_json(tb, ctrl->json);
+	scols_table_enable_noheadings(tb, ctrl->no_headings);
+	scols_table_enable_raw(tb, ctrl->raw);
+	{
+		size_t i;
+
+		for (i = 0; i < (size_t)ncolumns; i++) {
+			const struct colinfo *col = get_column_info(i);
+
+			if (!scols_table_new_column(tb, col->name, col->whint, col->flags))
+				err(EXIT_FAILURE, _("failed to initialize output column"));
+		}
+	}
 
 	if (param) {
 		id = rfkill_id_to_type(param);
@@ -263,15 +363,11 @@ static int rfkill_list(const char *param)
 		default:
 			abort();
 		}
-		name = get_name(event.idx);
-
-		printf("%u: %s: %s\n", event.idx, name,
-						type2string(event.type));
-		printf("\t%s: %s\n", _("Soft blocked"), event.soft ? _("yes") : _("no"));
-		printf("\t%s: %s\n", _("Hard blocked"), event.hard ? _("yes") : _("no"));
+		fill_table_row(tb, &event);
 	}
-
 	close(fd);
+	scols_print_table(tb);
+	scols_unref_table(tb);
 	return 0;
 }
 
@@ -319,13 +415,27 @@ static int rfkill_block(uint8_t block, const char *param)
 
 static void __attribute__((__noreturn__)) usage(void)
 {
-	const struct rfkill_type_str *p;
+	size_t i;
 
 	fputs(USAGE_HEADER, stdout);
-	fprintf(stdout, _(" %s command [identifier]\n"), program_invocation_short_name);
+	fprintf(stdout, _(" %s [options] command [identifier]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(_("Tool for enabling and disabling wireless devices.\n"), stdout);
+
+	fputs(USAGE_OPTIONS, stdout);
+	fputs(_(" -J, --json             use JSON output format\n"), stdout);
+	fputs(_(" -n, --noheadings       don't print headings\n"), stdout);
+	fputs(_(" -o, --output <list>    define which output columns to use\n"), stdout);
+	fputs(_(" -r, --raw              use the raw output format\n"), stdout);
+
+	fputs(USAGE_SEPARATOR, stdout);
+	print_usage_help_options(24);
+
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(_("Available columns:\n"), stdout);
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
+		fprintf(stdout, " %-6s  %s\n", infos[i].name, _(infos[i].help));
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(_("Commands:\n"), stdout);
@@ -341,23 +451,29 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" block   identifier\n"), stdout);
 	fputs(_(" unblock identifier\n"), stdout);
 
-	fputs(USAGE_SEPARATOR, stdout);
-	fputs(_("Identifiers, that can be referred by id number or name:\n"), stdout);
-	for (p = rfkill_type_strings; p->name != NULL; p++)
-		printf(" %d %s\n", p->type, p->name);
-
 	fprintf(stdout, USAGE_MAN_TAIL("rfkill(8)"));
 	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
 {
+	struct control ctrl = { 0 };
 	int c;
+	char *outarg = NULL;
 	static const struct option longopts[] = {
-		{ "version", no_argument, NULL, 'V' },
-		{ "help",    no_argument, NULL, 'h' },
+		{ "json",	no_argument,	   NULL, 'J' },
+		{ "noheadings", no_argument,	   NULL, 'n' },
+		{ "output",	required_argument, NULL, 'o' },
+		{ "raw",	no_argument,	   NULL, 'r' },
+		{ "version",	no_argument,	   NULL, 'V' },
+		{ "help",	no_argument,	   NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
+	static const ul_excl_t excl[] = {
+		{'J', 'r'},
+		{0}
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 	int ret;
 
 	setlocale(LC_ALL, "");
@@ -365,8 +481,21 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "Jno:rVh", longopts, NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
+		case 'J':
+			ctrl.json = 1;
+			break;
+		case 'n':
+			ctrl.no_headings = 1;
+			break;
+		case 'o':
+			outarg = optarg;
+			break;
+		case 'r':
+			ctrl.raw = 1;
+			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
@@ -375,20 +504,31 @@ int main(int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
+	argc -= optind;
+	argv += optind;
 
-	/* Skip program name. */
-	argv++;
-	argc--;
+	if (argc == 0 || strcmp(*argv, "list") == 0) {
+		columns[ncolumns++] = COL_DEVICE;
+		columns[ncolumns++] = COL_ID;
+		columns[ncolumns++] = COL_TYPE;
+		columns[ncolumns++] = COL_SOFT;
+		columns[ncolumns++] = COL_HARD;
 
-	if (argc == 0 || strcmp(*argv, _("help")) == 0)
-		usage();
-
-	if (strcmp(*argv, "event") == 0) {
+		if (outarg
+		    && string_add_to_idarray(outarg, columns,
+					     ARRAY_SIZE(columns), &ncolumns,
+					     column_name_to_id) < 0)
+			return EXIT_FAILURE;
+		if (argc) {
+			argc--;
+			argv++;
+		}
+		ret = rfkill_list(&ctrl, *argv);
+	} else if (strcmp(*argv, "event") == 0) {
 		ret = rfkill_event();
-	} else if (strcmp(*argv, "list") == 0) {
-		argc--;
-		argv++;
-		ret = rfkill_list(*argv); /* NULL is acceptable */
+	} else if (strcmp(*argv, "help") == 0) {
+		usage();
 	} else if (strcmp(*argv, "block") == 0 && argc > 1) {
 		argc--;
 		argv++;

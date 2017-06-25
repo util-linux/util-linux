@@ -4,8 +4,21 @@
 rfkill \- tool for enabling and disabling wireless devices
 .SH SYNOPSIS
 .B rfkill
-.RI [ options ] " command" " [" index | type ]
+.RI [ options ] " command" " [" id | type ]
 .SH OPTIONS
+.TP
+\fB\-J\fR, \fB\-\-json\fR
+Use JSON output format.
+.TP
+\fB\-n\fR, \fB\-\-noheadings\fR
+Do not print a header line.
+.TP
+\fB\-o\fR, \fB\-\-output\fR
+Specify which output columns to print.  Use \-\-help to get a list of
+available columns.
+.TP
+\fB\-r\fR, \fB\-\-raw\fR
+Use the raw output format.
 .TP
 .B \-\-help
 Display help text and exit.
@@ -20,34 +33,26 @@ Display help text and exit.
 .B event
 Listen for rfkill events and display them on stdout.
 .TP
-\fBlist \fR[\fIindex\fR|\fItype\fR]
-List the current state of all available rfkill\-using devices, or just all
-of the given type.
+\fBlist \fR[\fIid\fR|\fItype\fR]
+List the current state of all available devices.  The full list has TYPE and
+ID columns that one can use to limit the scope.  It is a good idea to check
+with
+.B list
+command
+.BR id " or " type
+scope is appropriate before setting
+.BR block " or " unblock .
+Special
+.B all
+type string will match everything.
 .TP
-\fBblock \fBindex\fR|\fBtype\fR
+\fBblock \fBid\fR|\fBtype\fR
 Disable the corresponding device.
 .TP
-\fBunblock \fBindex\fR|\fBtype\fR
+\fBunblock \fBid\fR|\fBtype\fR
 Enable the corresponding device.  If the device is hard\-blocked, for example
 via a hardware switch, it will remain unavailable though it is now
 soft\-unblocked.
-.SS
-INDEXES AND TYPES
-.TS
-tab(:);
-left l l.
-0:all
-1:wifi
-1:wlan (alias of wifi)
-2:bluetooth
-3:uwb
-3:ultrawideband (alias of uwb)
-4:wimax
-5:wwan
-6:gps
-7:fm
-8:nfc
-.TE
 .SH EXAMPLES
 rfkill list
 .br
