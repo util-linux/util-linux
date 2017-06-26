@@ -435,7 +435,7 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 		errx(EXIT_FAILURE, _("preallocation size exceeded"));
 
 	/* log-out time */
-	secs  = logout_time - utmp_time;
+	secs  = logout_time - utmp_time; /* Under strange circumstances, secs < 0 can happen */
 	mins  = (secs / 60) % 60;
 	hours = (secs / 3600) % 24;
 	days  = secs / 86400;
@@ -454,9 +454,13 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 			sprintf(length, "running");
 		}
 	} else if (days) {
-		sprintf(length, "(%d+%02d:%02d)", days, hours, mins);
+		sprintf(length, "(%d+%02d:%02d)", days, abs(hours), abs(mins)); /* hours and mins always shown as positive (w/o minus sign!) even if secs < 0 */
+	} else if (hours) {
+		sprintf(length, " (%02d:%02d)", hours, abs(mins));  /* mins always shown as positive (w/o minus sign!) even if secs < 0 */
+	} else if (secs > 0) {
+		sprintf(length, " (%02d:%02d)", hours, mins); 
 	} else {
-		sprintf(length, " (%02d:%02d)", hours, mins);
+		sprintf(length, " (-00:%02d)", abs(mins));  /* mins always shown as positive (w/o minus sign!) even if secs < 0 */
 	}
 
 	switch(what) {
