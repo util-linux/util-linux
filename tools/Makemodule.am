@@ -6,4 +6,5 @@ EXTRA_DIST += \
        	tools/checkdecl.sh \
       	tools/checkincludes.pl \
 	tools/checkmans.sh \
+	tools/checkusage.sh \
        	tools/checkxalloc.sh
