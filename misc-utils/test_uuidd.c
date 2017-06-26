@@ -73,17 +73,17 @@ static int shmem_id;
 static object_t *objects;
 
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fprintf(out, "\n %s [options]\n", program_invocation_short_name);
+	printf("\n %s [options]\n", program_invocation_short_name);
 
-	fprintf(out, "  -p <num>     number of nprocesses (default:%zu)\n", nprocesses);
-	fprintf(out, "  -t <num>     number of nthreads (default:%zu)\n", nthreads);
-	fprintf(out, "  -o <num>     number of nobjects (default:%zu)\n", nobjects);
-	fprintf(out, "  -l <level>   log level (default:%zu)\n", loglev);
-	fprintf(out, "  -h           display help\n");
+	printf("  -p <num>     number of nprocesses (default:%zu)\n", nprocesses);
+	printf("  -t <num>     number of nthreads (default:%zu)\n", nthreads);
+	printf("  -o <num>     number of nobjects (default:%zu)\n", nobjects);
+	printf("  -l <level>   log level (default:%zu)\n", loglev);
+	printf("  -h           display help\n");
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static void allocate_segment(int *id, void **address, size_t number, size_t size)
@@ -260,6 +260,8 @@ static void object_dump(size_t idx, object_t *obj)
 	fprintf(stderr, "}\n");
 }
 
+#define MSG_TRY_HELP "Try '-h' for help."
+
 int main(int argc, char *argv[])
 {
 	size_t i, nfailed = 0, nignored = 0;
@@ -280,15 +282,16 @@ int main(int argc, char *argv[])
 			loglev = strtou32_or_err(optarg, "invalid log level argument");
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		default:
-			errtryh(EXIT_FAILURE);
+			fprintf(stderr, MSG_TRY_HELP);
+			exit(EXIT_FAILURE);
 		}
 	}
 
 	if (optind != argc)
-		usage(stderr);
+		errx(EXIT_FAILURE, "bad usage\n" MSG_TRY_HELP);
 
 	if (loglev == 1)
 		fprintf(stderr, "requested: %zu processes, %zu threads, %zu objects per thread (%zu objects = %zu bytes)\n",

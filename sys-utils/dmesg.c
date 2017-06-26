@@ -1486,10 +1486,8 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
-	argc -= optind;
-	argv += optind;
 
-	if (argc > 1)
+	if (argc != optind)
 		usage(stderr);
 
 	if ((is_timefmt(&ctl, RELTIME) ||

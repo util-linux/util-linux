@@ -216,12 +216,6 @@ errmsg(char doexit, int excode, char adderr, const char *fmt, ...)
 	exit(eval); \
 })
 
-#define errtryh(eval) __extension__ ({ \
-	fprintf(stderr, _("Try '%s -h' for more information.\n"), \
-			program_invocation_short_name); \
-	exit(eval); \
-})
-
 
 static inline __attribute__((const)) int is_power_of_2(unsigned long num)
 {

@@ -225,8 +225,9 @@ static void putstring(char *s)
 	tputs(s, fileno(stdout), putchar);	/* putp(s); */
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <file>...\n"), program_invocation_short_name);
 
@@ -244,9 +245,12 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -<number>   the number of lines per screenful\n"), out);
 	fputs(_(" +<number>   display file beginning from line number\n"), out);
 	fputs(_(" +/<string>  display file beginning from search string match\n"), out);
-	fputs(_(" -V          display version information and exit\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("     --help     display this help and exit\n"), out);
+	fputs(_(" -V, --version  output version information and exit\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("more(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -266,6 +270,16 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
+	if (argc > 1) {
+		/* first arg may be one of our standard longopts */
+		if (!strcmp(argv[1], "--help"))
+			usage();
+		if (!strcmp(argv[1], "--version")) {
+			printf(UTIL_LINUX_VERSION);
+			exit(EXIT_SUCCESS);
+		}
+	}
 
 	nfiles = argc;
 	fnames = argv;
@@ -319,9 +333,10 @@ int main(int argc, char **argv)
 	left = dlines;
 	if (nfiles > 1)
 		prnames++;
-	if (!no_intty && nfiles == 0)
-		usage(stderr);
-	else
+	if (!no_intty && nfiles == 0) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	} else
 		f = stdin;
 	if (!no_tty) {
 		signal(SIGQUIT, onquit);
@@ -488,7 +503,7 @@ void argscan(char *s)
 			break;
 		default:
 			warnx(_("unknown option -%s"), s);
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 			break;
 		}
 		s++;

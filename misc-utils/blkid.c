@@ -762,7 +762,7 @@ int main(int argc, char **argv)
 		case 's':
 			if (numtag + 1 >= sizeof(ctl.show) / sizeof(*ctl.show)) {
 				warnx(_("Too many tags specified"));
-				errtryh(err);
+				errtryhelp(err);
 			}
 			ctl.show[numtag++] = optarg;
 			break;
@@ -773,13 +773,13 @@ int main(int argc, char **argv)
 			if (search_type) {
 				warnx(_("Can only search for "
 					"one NAME=value pair"));
-				errtryh(err);
+				errtryhelp(err);
 			}
 			if (blkid_parse_tag_string(optarg,
 						   &search_type,
 						   &search_value)) {
 				warnx(_("-t needs NAME=value pair"));
-				errtryh(err);
+				errtryhelp(err);
 			}
 			break;
 		case 'V':
@@ -794,7 +794,7 @@ int main(int argc, char **argv)
 			usage(0);
 			break;
 		default:
-			errtryh(EXIT_FAILURE);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

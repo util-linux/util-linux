@@ -1095,6 +1095,16 @@ static void init_remote_info(struct login_context *cxt, char *remotehost)
 	}
 }
 
+static void __attribute__((__noreturn__)) usage(void)
+{
+	fputs(USAGE_HEADER, stdout);
+	printf(_(" %s [-p] [-h <host>] [-H] [[-f] <username>]\n"), program_invocation_short_name);
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(_("Begin a session on the system.\n"), stdout);
+	printf(USAGE_MAN_TAIL("login(1)"));
+	exit(EXIT_SUCCESS);
+}
+
 int main(int argc, char **argv)
 {
 	int c;
@@ -1117,6 +1127,14 @@ int main(int argc, char **argv)
 		.conv = { openpam_ttyconv, NULL } /* OpenPAM conversation function */
 #endif
 
+	};
+
+	/* the only two longopts to satisfy UL standards */
+	enum { HELP_OPTION = CHAR_MAX + 1 };
+	static const struct option longopts[] = {
+		{"help", no_argument, NULL, HELP_OPTION},
+		{"version", no_argument, NULL, 'V'},
+		{NULL, 0, NULL, 0}
 	};
 
 	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
@@ -1142,7 +1160,7 @@ int main(int argc, char **argv)
 	 * -h is used by other servers to pass the name of the remote
 	 *    host to login so that it may be placed in utmp and wtmp
 	 */
-	while ((c = getopt(argc, argv, "fHh:pV")) != -1)
+	while ((c = getopt_long(argc, argv, "fHh:pV", longopts, NULL)) != -1)
 		switch (c) {
 		case 'f':
 			cxt.noauth = 1;
@@ -1168,12 +1186,10 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
-		case '?':
+		case HELP_OPTION:
+			usage();
 		default:
-			fprintf(stderr, _("Usage: login [-p] [-h <host>] [-H] [[-f] <username>]\n"));
-			fputs(USAGE_SEPARATOR, stderr);
-			fputs(_("Begin a session on the system.\n"), stderr);
-			exit(EXIT_FAILURE);
+			errtryhelp(EXIT_FAILURE);
 		}
 	argc -= optind;
 	argv += optind;
