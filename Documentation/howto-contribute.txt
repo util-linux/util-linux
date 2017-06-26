@@ -3,6 +3,7 @@ CONTENTS
  Patching Process
  Email Format
  Coding Style
+ Options
  Various Notes
  Standards Compliance
 
@@ -154,6 +155,30 @@ Coding Style
 	* when you use 'if' short-shorthand make sure it does not wrap into
 	  multiple lines. In case the shorthand does not look good on one line
 	  use the normal "if () else" syntax.
+
+Options
+
+	* The rule of thumb for options is that once they exist, you may not
+	  change them, nor change how they work, nor remove them.
+
+	* The following options are well-known, and should not be used for any
+	  other purpose:
+
+		-h, --help     display usage and exit
+		-V, --version  display version and exit
+
+	* Some commands use peculiar options and arguments. These will continue
+	  to be supported, but anything like them will not be accepted as new
+	  additions. A short list of examples:
+
+		Characters other than '-' to start an option. See '+' in 'more'.
+
+		Using a number as an option. See '-<number>' in 'more'.
+
+		Long options that start with a single '-'. See 'setterm'.
+
+		'-?' is not a synonym for '--help', but is an unknown option
+		resulting in a suggestion to try --help due to a getopt failure.
 
 Various Notes
 

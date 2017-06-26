@@ -1850,7 +1850,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Display or manipulate a disk partition table.\n"), out);
 
-	fputs(_("\nCommands:\n"), out);
+	fputs(USAGE_COMMANDS, out);
 	fputs(_(" -A, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"), out);
 	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
 	fputs(_(" -J, --json <dev>                  dump partition table in JSON format\n"), out);

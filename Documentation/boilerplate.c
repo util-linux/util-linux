@@ -29,6 +29,11 @@
 #include "closestream.h"
 #include "nls.h"
 
+/*
+ * FIXME: remove this comment.
+ * Other usage() constants that are not demonstrated below:
+ * USAGE_FUNCTIONS USAGE_COMMANDS USAGE_COLUMNS
+ */
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -37,9 +42,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
         fputs(USAGE_SEPARATOR, out);
         fputs(_("Short program description.\n"), out);
 
-	fputs(USAGE_FUNCTIONS, out);
-	fputs(_(" -s, --do-something      some specific task\n"), out);
-	fputs(_(" -o, --do-other          some different task\n"), out);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -n, --no-argument       option does not use argument\n"), out);
 	fputs(_("     --optional[=<arg>]  option argument is optional\n"), out);

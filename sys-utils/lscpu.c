@@ -2068,8 +2068,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 
-	fprintf(out, _("\nAvailable columns:\n"));
-
+	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
 		fprintf(out, " %13s  %s\n", coldescs[i].name, _(coldescs[i].help));
 

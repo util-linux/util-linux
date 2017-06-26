@@ -300,7 +300,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Run zone command on the given block device.\n"), out);
 
-	fputs(_("\nCommands:\n"), out);
+	fputs(USAGE_COMMANDS, out);
 	for (i = 0; i < ARRAY_SIZE(commands); i++)
 		fprintf(out, " %-11s  %s\n", commands[i].name, _(commands[i].help));
 

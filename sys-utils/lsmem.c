@@ -388,10 +388,9 @@ static void __attribute__((__noreturn__)) lsmem_usage(FILE *out)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 
-	fputs(_("\nAvailable columns:\n"), out);
-
+	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
-		fprintf(out, " %10s  %s\n", coldescs[i].name, coldescs[i].help);
+		fprintf(out, " %10s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("lsmem(1)"));
 
