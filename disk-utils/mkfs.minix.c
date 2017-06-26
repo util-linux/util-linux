@@ -77,6 +77,8 @@
 #include "all-io.h"
 #include "closestream.h"
 #include "ismounted.h"
+
+#define XALLOC_EXIT_CODE MKFS_EX_ERROR
 #include "xalloc.h"
 
 #define MINIX_ROOT_INO 1
@@ -757,6 +759,8 @@ int main(int argc, char ** argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
+	strutils_set_exitcode(MKFS_EX_USAGE);
 
 	while ((i = getopt_long(argc, argv, "1v23n:i:cl:Vh", longopts, NULL)) != -1)
 		switch (i) {

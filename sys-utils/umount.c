@@ -32,11 +32,15 @@
 #include "nls.h"
 #include "c.h"
 #include "env.h"
-#include "optutils.h"
 #include "closestream.h"
 #include "pathnames.h"
 #include "canonicalize.h"
+
+#define XALLOC_EXIT_CODE MNT_EX_SYSERR
 #include "xalloc.h"
+
+#define OPTUTILS_EXIT_CODE MNT_EX_USAGE
+#include "optutils.h"
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
 			const char *filename, int line)

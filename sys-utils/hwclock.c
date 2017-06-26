@@ -71,6 +71,7 @@
 #include <unistd.h>
 
 #define OPTUTILS_EXIT_CODE EX_USAGE
+#define XALLOC_EXIT_CODE EX_OSERR
 
 #include "c.h"
 #include "closestream.h"
@@ -1325,6 +1326,8 @@ int main(int argc, char **argv)
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
+	strutils_set_exitcode(EX_USAGE);
 
 	/* Remember what time we were invoked */
 	gettimeofday(&startup_time, NULL);

@@ -17,6 +17,12 @@
 #include "strutils.h"
 #include "bitops.h"
 
+static int STRTOXX_EXIT_CODE = EXIT_FAILURE;
+
+void strutils_set_exitcode(int ex) {
+	STRTOXX_EXIT_CODE = ex;
+}
+
 static int do_scale_by_power (uintmax_t *x, int base, int power)
 {
 	while (power--) {

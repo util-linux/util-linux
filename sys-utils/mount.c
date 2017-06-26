@@ -36,9 +36,11 @@
 #include "c.h"
 #include "env.h"
 #include "strutils.h"
-#include "xalloc.h"
 #include "closestream.h"
 #include "canonicalize.h"
+
+#define XALLOC_EXIT_CODE MNT_EX_SYSERR
+#include "xalloc.h"
 
 #define OPTUTILS_EXIT_CODE MNT_EX_USAGE
 #include "optutils.h"
@@ -533,6 +535,8 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
+	strutils_set_exitcode(MNT_EX_USAGE);
 
 	mnt_init_debug(0);
 	cxt = mnt_new_context();
