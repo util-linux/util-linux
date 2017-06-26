@@ -775,8 +775,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 
-	fputs(_("\nAvailable columns (for --show, --raw or --pairs):\n"), out);
-
+	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < NCOLS; i++)
 		fprintf(out, " %10s  %s\n", infos[i].name, _(infos[i].help));
 

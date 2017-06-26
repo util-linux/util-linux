@@ -193,8 +193,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -y, --rttime           CPU time in microseconds a process scheduled\n"
 		"                        under real-time scheduling\n"), out);
 
-	fputs(_("\nAvailable columns (for --output):\n"), out);
-
+	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 

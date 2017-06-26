@@ -824,7 +824,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" pages   : freed pages are discarded before they are reused\n"
 		"If no policy is selected, both discard types are enabled (default).\n"), out);
 
-	fputs(_("\nAvailable columns (for --show):\n"), out);
+	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %-5s  %s\n", infos[i].name, _(infos[i].help));
 

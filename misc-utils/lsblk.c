@@ -1660,7 +1660,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 
-	fprintf(out, _("\nAvailable columns (for --output):\n"));
+	fprintf(out, USAGE_COLUMNS);
 
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
