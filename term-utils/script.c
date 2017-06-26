@@ -201,6 +201,19 @@ static void restore_tty(struct script_control *ctl, int mode)
 	tcsetattr(STDIN_FILENO, mode, &rtt);
 }
 
+static void enable_rawmode_tty(struct script_control *ctl)
+{
+	struct termios rtt;
+
+	if (!ctl->isterm)
+		return;
+
+	rtt = ctl->attrs;
+	cfmakeraw(&rtt);
+	rtt.c_lflag &= ~ECHO;
+	tcsetattr(STDIN_FILENO, TCSANOW, &rtt);
+}
+
 static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 {
 	DBG(MISC, ul_debug("done!"));
@@ -605,18 +618,6 @@ static void __attribute__((__noreturn__)) do_shell(struct script_control *ctl)
 	fail(ctl);
 }
 
-static void fixtty(struct script_control *ctl)
-{
-	struct termios rtt;
-
-	if (!ctl->isterm)
-		return;
-
-	rtt = ctl->attrs;
-	cfmakeraw(&rtt);
-	rtt.c_lflag &= ~ECHO;
-	tcsetattr(STDIN_FILENO, TCSANOW, &rtt);
-}
 
 static void getmaster(struct script_control *ctl)
 {
@@ -773,7 +774,7 @@ int main(int argc, char **argv)
 	getmaster(&ctl);
 	if (!ctl.quiet)
 		printf(_("Script started, file is %s\n"), ctl.fname);
-	fixtty(&ctl);
+	enable_rawmode_tty(&ctl);
 
 #ifdef HAVE_LIBUTEMPTER
 	utempter_add_record(ctl.master, NULL);
