@@ -299,6 +299,7 @@ int main(int argc, char **argv)
 		{"raw",        no_argument,       NULL, 'r'},
 		{"version",    no_argument,       NULL, 'V'},
 		{"help",       no_argument,       NULL, 'h'},
+		{NULL, 0, NULL, 0}
 	};
 	static const ul_excl_t excl[] = {
 		{'J', 'r'},
