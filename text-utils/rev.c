@@ -71,8 +71,9 @@ static void sig_handler(int signo __attribute__ ((__unused__)))
 	_exit(EXIT_SUCCESS);
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fprintf(out, _("Usage: %s [options] [file ...]\n"),
 		program_invocation_short_name);
 
@@ -84,7 +85,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("rev(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static void reverse_str(wchar_t *str, size_t n)
@@ -125,7 +126,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

@@ -198,8 +198,9 @@ static int switchroot(const char *newroot)
 	return 0;
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *output)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *output = stdout;
 	fputs(USAGE_HEADER, output);
 	fprintf(output, _(" %s [options] <newrootdir> <init> <args to init>\n"),
 		program_invocation_short_name);
@@ -212,7 +213,7 @@ static void __attribute__((__noreturn__)) usage(FILE *output)
 	fputs(USAGE_VERSION, output);
 	fprintf(output, USAGE_MAN_TAIL("switch_root(8)"));
 
-	exit(output == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -233,19 +234,23 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
-	if (argc < 3)
-		usage(stderr);
+	if (argc < 3) {
+		warnx(_("not enough arguments"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	newroot = argv[1];
 	init = argv[2];
 	initargs = &argv[2];
 
-	if (!*newroot || !*init)
-		usage(stderr);
+	if (!*newroot || !*init) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	if (switchroot(newroot))
 		errx(EXIT_FAILURE, _("failed. Sorry."));

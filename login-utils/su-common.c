@@ -672,7 +672,7 @@ restricted_shell (const char * const shell)
 }
 
 static void __attribute__((__noreturn__))
-usage (const int status)
+usage(void)
 {
   if (su_mode == RUNUSER_MODE) {
     fputs(USAGE_HEADER, stdout);
@@ -712,7 +712,7 @@ usage (const int status)
   fputs(USAGE_HELP, stdout);
   fputs(USAGE_VERSION, stdout);
   printf(USAGE_MAN_TAIL(su_mode == SU_MODE ? "su(1)" : "runuser(1)"));
-  exit (status);
+  exit(EXIT_SUCCESS);
 }
 
 static
@@ -851,13 +851,15 @@ su_main (int argc, char **argv, int mode)
 	  break;
 
 	case 'u':
-	  if (su_mode != RUNUSER_MODE)
-	    usage (EXIT_FAILURE);
+	  if (su_mode != RUNUSER_MODE) {
+	    warnx(_("invalid option -- 'u'"));
+	    errtryhelp(EXIT_FAILURE);
+	  }
 	  runuser_user = optarg;
 	  break;
 
 	case 'h':
-	  usage(0);
+	  usage();
 
 	case 'V':
 	  printf(UTIL_LINUX_VERSION);

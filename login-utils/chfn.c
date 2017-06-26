@@ -89,8 +89,9 @@ struct chfn_control {
 /* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
 #define MAX_FIELD_SIZE		256
 
-static void __attribute__((__noreturn__)) usage(FILE *fp)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *fp = stdout;
 	fputs(USAGE_HEADER, fp);
 	fprintf(fp, _(" %s [options] [<username>]\n"), program_invocation_short_name);
 
@@ -106,7 +107,7 @@ static void __attribute__((__noreturn__)) usage(FILE *fp)
 	fputs(_(" -u, --help     display this help and exit\n"), fp);
 	fputs(_(" -v, --version  output version information and exit\n"), fp);
 	fprintf(fp, USAGE_MAN_TAIL("chfn(1)"));
-	exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 /*
@@ -178,7 +179,7 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case 'u':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -189,8 +190,10 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 		exit(EXIT_FAILURE);
 	/* done parsing arguments.  check for a username. */
 	if (optind < argc) {
-		if (optind + 1 < argc)
-			usage(stderr);
+		if (optind + 1 < argc) {
+			warnx(_("cannot handle multiple usernames"));
+			errtryhelp(EXIT_FAILURE);
+		}
 		ctl->username = argv[optind];
 	}
 	return;

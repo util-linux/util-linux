@@ -65,9 +65,9 @@ static struct namespace_file {
 	{ .nstype = 0, .name = NULL, .fd = -1 }
 };
 
-static void __attribute__((__noreturn__)) usage(int status)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
+	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<program> [<argument>...]]\n"),
@@ -101,7 +101,7 @@ static void __attribute__((__noreturn__)) usage(int status)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("nsenter(1)"));
 
-	exit(status);
+	exit(EXIT_SUCCESS);
 }
 
 static pid_t namespace_target_pid = 0;
@@ -253,7 +253,7 @@ int main(int argc, char *argv[])
 			    longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
-			usage(EXIT_SUCCESS);
+			usage();
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;

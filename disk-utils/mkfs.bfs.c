@@ -67,8 +67,9 @@ struct bfsde {
 	char d_name[BFS_NAMELEN];
 };
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fprintf(out,
 		_("Usage: %s [options] device [block-count]\n"),
 		program_invocation_short_name);
@@ -88,7 +89,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		       " -h, --help          display this help and exit\n\n"));
 
 	fprintf(out, USAGE_MAN_TAIL("mkfs.bfs(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static void __attribute__ ((__noreturn__)) print_version(void)
@@ -129,9 +130,10 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (argc < 2)
-		usage(stderr);
-
+	if (argc < 2) {
+		warnx(_("not enough arguments"));
+		errtryhelp(EXIT_FAILURE);
+	}
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 		print_version();
 
@@ -170,14 +172,16 @@ int main(int argc, char **argv)
 		case VERSION_OPTION:
 			print_version();
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
-	if (optind == argc)
-		usage(stderr);
+	if (optind == argc) {
+		warnx(_("no device specified"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	device = argv[optind++];
 
@@ -191,8 +195,10 @@ int main(int argc, char **argv)
 	if (optind == argc - 1)
 		user_specified_total_blocks =
 			strtou64_or_err(argv[optind], _("invalid block-count"));
-	else if (optind != argc)
-		usage(stderr);
+	else if (optind != argc) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	if (blkdev_get_sectors(fd, &total_blocks) == -1) {
 		if (!user_specified_total_blocks)

@@ -151,8 +151,9 @@ static int prlimit(pid_t p, int resource,
 }
 #endif
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -199,7 +200,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fprintf(out, USAGE_MAN_TAIL("prlimit(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static inline int get_column_id(int num)
@@ -584,7 +585,7 @@ int main(int argc, char **argv)
 			pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 		case 'o':
 			ncolumns = string_to_idarray(optarg,
 						     columns, ARRAY_SIZE(columns),

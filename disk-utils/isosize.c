@@ -126,8 +126,9 @@ static void isosize(int argc, char *filenamep, int xflag, long divisor)
 	close(fd);
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 		_(" %s [options] <iso9660_image_file>\n"),
@@ -144,7 +145,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("isosize(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -179,15 +180,17 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
 
 	ct = argc - optind;
 
-	if (ct <= 0)
-		usage(stderr);
+	if (ct <= 0) {
+		warnx(_("no device specified"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	for (j = optind; j < argc; j++)
 		isosize(ct, argv[j], xflag, divisor);

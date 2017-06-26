@@ -71,8 +71,9 @@ static void __attribute__((__noreturn__)) print_version(void)
 	fputs(")\n", stdout);
 	exit(MNT_EX_SUCCESS);
 }
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 		" %1$s [-hV]\n"
@@ -105,7 +106,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("umount(8)"));
 
-	exit(out == stderr ? MNT_EX_USAGE : MNT_EX_SUCCESS);
+	exit(MNT_EX_SUCCESS);
 }
 
 static void __attribute__((__noreturn__)) exit_non_root(const char *option)
@@ -479,7 +480,7 @@ int main(int argc, char **argv)
 			mnt_context_enable_force(cxt, TRUE);
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'i':
 			mnt_context_disable_helpers(cxt, TRUE);
@@ -525,7 +526,8 @@ int main(int argc, char **argv)
 		rc = umount_all(cxt);
 
 	} else if (argc < 1) {
-		usage(stderr);
+		warnx(_("bad usage"));
+		errtryhelp(MNT_EX_USAGE);
 
 	} else if (alltargets) {
 		while (argc--)

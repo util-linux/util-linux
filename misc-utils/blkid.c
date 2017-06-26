@@ -68,9 +68,9 @@ static void print_version(FILE *out)
 		LIBBLKID_VERSION, LIBBLKID_DATE);
 }
 
-static void usage(int error)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE *out = error ? stderr : stdout;
+	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(	" %s --label <label> | --uuid <uuid>\n\n"), program_invocation_short_name);
@@ -106,7 +106,7 @@ static void usage(int error)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("blkid(8)"));
-	exit(error);
+	exit(EXIT_SUCCESS);
 }
 
 /*
@@ -794,7 +794,7 @@ int main(int argc, char **argv)
 			/* ignore - backward compatibility */
 			break;
 		case 'h':
-			usage(0);
+			usage();
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);

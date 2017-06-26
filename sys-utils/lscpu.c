@@ -2044,8 +2044,9 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	scols_unref_table(tb);
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -2074,7 +2075,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("lscpu(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -2130,7 +2131,7 @@ int main(int argc, char *argv[])
 			cpu_modifier_specified = 1;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 		case 'J':
 			mod->json = 1;
 			break;
@@ -2173,8 +2174,10 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	if (argc != optind)
-		usage(stderr);
+	if (argc != optind) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	/* set default cpu display mode if none was specified */
 	if (!mod->online && !mod->offline) {

@@ -517,8 +517,9 @@ static void status(struct zram *z)
 	scols_unref_table(tb);
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -550,7 +551,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("zramctl(8)"));
-	exit(out == stderr ? 1 : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 /* actions */
@@ -642,7 +643,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

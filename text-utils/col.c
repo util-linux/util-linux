@@ -124,8 +124,9 @@ static int pass_unknown_seqs;		/* whether to pass unknown control sequences */
 	if (putwchar(ch) == WEOF) \
 		wrerr();
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fprintf(out, _(
 		"\nUsage:\n"
 		" %s [options]\n"), program_invocation_short_name);
@@ -149,7 +150,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		program_invocation_short_name);
 
 	fprintf(out, USAGE_MAN_TAIL("col(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static void __attribute__((__noreturn__)) wrerr(void)
@@ -221,13 +222,15 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'H':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
 
-	if (optind != argc)
-		usage(stderr);
+	if (optind != argc) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	adjust = cur_col = extra_lines = warned = 0;
 	cur_line = max_line = nflushd_lines = this_line = 0;

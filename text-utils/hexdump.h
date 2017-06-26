@@ -101,7 +101,7 @@ void add_fmt(const char *, struct hexdump *);
 void rewrite_rules(struct hexdump_fs *, struct hexdump *);
 void addfile(char *, struct hexdump *);
 void display(struct hexdump *);
-void __attribute__((__noreturn__)) usage(FILE *out);
+void __attribute__((__noreturn__)) usage(void);
 void conv_c(struct hexdump_pr *, u_char *);
 void conv_u(struct hexdump_pr *, u_char *);
 int  next(char **, struct hexdump *);

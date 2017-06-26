@@ -1200,8 +1200,9 @@ static void out_version(void)
 }
 
 static void __attribute__((__noreturn__))
-usage(const struct hwclock_control *ctl, FILE *out)
+usage(const struct hwclock_control *ctl)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fputs(_(" hwclock [function] [option...]\n"), out);
 
@@ -1451,7 +1452,7 @@ int main(int argc, char **argv)
 			out_version();
 			return 0;
 		case 'h':			/* --help */
-			usage(&ctl, stdout);
+			usage(&ctl);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

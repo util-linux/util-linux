@@ -1219,8 +1219,9 @@ static int parse_time_mode(const char *s)
 	errx(EXIT_FAILURE, _("unknown time format: %s"), s);
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -1261,7 +1262,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("lslogins(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -1365,7 +1366,7 @@ int main(int argc, char *argv[])
 			groups = optarg;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'L':
 			add_column(columns, ncolumns++, COL_LAST_TTY);

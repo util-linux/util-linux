@@ -102,11 +102,9 @@ static char *outbuffer;
 
 static size_t blksize = 0;
 
-
-/* Input status of 0 to print help and exit without an error. */
-static void __attribute__((__noreturn__)) usage(int status)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE *out = status ? stderr : stdout;
+	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
@@ -126,7 +124,7 @@ static void __attribute__((__noreturn__)) usage(int status)
 	fputs(USAGE_VERSION, out);
 	fputs(USAGE_SEPARATOR, out);
 
-	exit(status);
+	exit(FSCK_EX_OK);
 }
 
 static int get_superblock_endianness(uint32_t magic)
@@ -669,7 +667,7 @@ int main(int argc, char **argv)
 		case 'y':
 			break;
 		case 'h':
-			usage(FSCK_EX_OK);
+			usage();
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -689,8 +687,10 @@ int main(int argc, char **argv)
 			errtryhelp(FSCK_EX_USAGE);
 		}
 
-	if ((argc - optind) != 1)
-		usage(FSCK_EX_USAGE);
+	if ((argc - optind) != 1){
+		warnx(_("bad usage"));
+		errtryhelp(FSCK_EX_USAGE);
+	}
 	filename = argv[optind];
 
 	test_super(&start, &length);

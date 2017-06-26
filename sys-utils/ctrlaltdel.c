@@ -21,19 +21,20 @@
 #define LINUX_REBOOT_CMD_CAD_ON 0x89ABCDEF
 #define LINUX_REBOOT_CMD_CAD_OFF 0x00000000
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fprintf(out, USAGE_HEADER);
+	FILE *out = stdout;
+	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s hard|soft\n"), program_invocation_short_name);
 
-	fprintf(out, USAGE_SEPARATOR);
+	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, _("Set the function of the Ctrl-Alt-Del combination.\n"));
 
-	fprintf(out, USAGE_OPTIONS);
-	fprintf(out, USAGE_HELP);
-	fprintf(out, USAGE_VERSION);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION,out);
 	fprintf(out, USAGE_MAN_TAIL("ctrlaltdel(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static int get_cad(void)
@@ -98,7 +99,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

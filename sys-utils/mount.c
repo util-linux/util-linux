@@ -384,8 +384,9 @@ static int has_remount_flag(struct libmnt_context *cxt)
 	return mflags & MS_REMOUNT;
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 		" %1$s [-lhV]\n"
@@ -460,7 +461,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("mount(8)"));
 
-	exit(out == stderr ? MNT_EX_USAGE : MNT_EX_SUCCESS);
+	exit(MNT_EX_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -571,7 +572,7 @@ int main(int argc, char **argv)
 			mnt_context_enable_fork(cxt, TRUE);
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'i':
 			mnt_context_disable_helpers(cxt, TRUE);
@@ -694,8 +695,10 @@ int main(int argc, char **argv)
 	    !mnt_context_get_target(cxt) &&
 	    !argc &&
 	    !all) {
-		if (oper || mnt_context_get_options(cxt))
-			usage(stderr);
+		if (oper || mnt_context_get_options(cxt)) {
+			warnx(_("bad usage"));
+			errtryhelp(MNT_EX_USAGE);
+		}
 		print_all(cxt, types, show_labels);
 		goto done;
 	}
@@ -705,8 +708,10 @@ int main(int argc, char **argv)
 	if (mnt_context_is_restricted(cxt) && types)
 		exit_non_root("types");
 
-	if (oper && (types || all || mnt_context_get_source(cxt)))
-		usage(stderr);
+	if (oper && (types || all || mnt_context_get_source(cxt))) {
+		warnx(_("bad usage"));
+		errtryhelp(MNT_EX_USAGE);
+	}
 
 	if (types && (all || strchr(types, ',') ||
 			     strncmp(types, "no", 2) == 0))
@@ -772,8 +777,10 @@ int main(int argc, char **argv)
 		mnt_context_set_source(cxt, argv[0]);
 		mnt_context_set_target(cxt, argv[1]);
 
-	} else
-		usage(stderr);
+	} else {
+		warnx(_("bad usage"));
+		errtryhelp(MNT_EX_USAGE);
+	}
 
 	if (mnt_context_is_restricted(cxt))
 		sanitize_paths(cxt);

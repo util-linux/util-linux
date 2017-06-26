@@ -1622,8 +1622,9 @@ static int cmp_u64_cells(struct libscols_cell *a,
 	return *adata == *bdata ? 0 : *adata >= *bdata ? 1 : -1;
 }
 
-static void __attribute__((__noreturn__)) help(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -1667,7 +1668,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("lsblk(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static void check_sysdevblock(void)
@@ -1766,7 +1767,7 @@ int main(int argc, char *argv[])
 			parse_excludes(optarg);
 			break;
 		case 'h':
-			help(stdout);
+			usage();
 			break;
 		case 'J':
 			lsblk->flags |= LSBLK_JSON;

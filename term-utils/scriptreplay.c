@@ -36,8 +36,9 @@
 #define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
 
 static void __attribute__((__noreturn__))
-usage(FILE *out)
+usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [-t] timingfile [typescript] [divisor]\n"),
@@ -55,7 +56,7 @@ usage(FILE *out)
 		" -h, --help              display this help and exit\n\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("scriptreplay(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static double
@@ -172,7 +173,7 @@ main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case 'h':
-			usage(stdout);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 			}

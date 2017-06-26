@@ -269,8 +269,9 @@ static int parse_time_mode(const char *s)
 	errx(EXIT_FAILURE, _("unknown time format: %s"), s);
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -327,7 +328,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("lsipc(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static struct libscols_table *new_table(struct lsipc_control *ctl)
@@ -1223,12 +1224,12 @@ int main(int argc, char *argv[])
 			show_creat = 1;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

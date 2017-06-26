@@ -484,8 +484,9 @@ static int show_locks(struct list_head *locks)
 }
 
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -516,7 +517,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fprintf(out, USAGE_MAN_TAIL("lslocks(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -569,7 +570,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 		case 'n':
 			no_headings = 1;
 			break;

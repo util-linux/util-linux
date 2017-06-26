@@ -44,8 +44,9 @@ typedef enum type_id {
 static int verbose = 0;
 
 /* print the usage */
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %1$s [options]\n"
 		       " %1$s shm|msg|sem <id>...\n"), program_invocation_short_name);
@@ -68,7 +69,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("ipcrm(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static int remove_id(int type, int iskey, int id)
@@ -158,7 +159,7 @@ static int deprecated_main(int argc, char **argv)
 
 	if (argc < 3) {
 		warnx(_("not enough arguments"));
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	if (remove_arg_list(type, argc - 2, &argv[2]))
@@ -401,7 +402,7 @@ int main(int argc, char **argv)
 			verbose = 1;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;

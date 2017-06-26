@@ -243,9 +243,7 @@ static void __attribute__ ((__noreturn__)) parse_error(const char *message)
 {
 	if (message)
 		warnx("%s", message);
-	fprintf(stderr, _("Try `%s --help' for more information.\n"),
-		program_invocation_short_name);
-	exit(PARAMETER_EXIT_CODE);
+	errtryhelp(PARAMETER_EXIT_CODE);
 }
 
 
@@ -325,33 +323,33 @@ static shell_t shell_type(const char *new_shell)
 	parse_error(_("unknown shell after -s or --shell argument"));
 }
 
-static void __attribute__ ((__noreturn__)) print_help(void)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fputs(USAGE_HEADER, stderr);
-	fprintf(stderr, _(
+	fputs(USAGE_HEADER, stdout);
+	printf(_(
 		" %1$s <optstring> <parameters>\n"
 		" %1$s [options] [--] <optstring> <parameters>\n"
 		" %1$s [options] -o|--options <optstring> [options] [--] <parameters>\n"),
 		program_invocation_short_name);
 
-	fputs(USAGE_SEPARATOR, stderr);
-	fputs(_("Parse command options.\n"), stderr);
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(_("Parse command options.\n"), stdout);
 
-	fputs(USAGE_OPTIONS, stderr);
-	fputs(_(" -a, --alternative             allow long options starting with single -\n"), stderr);
-	fputs(_(" -l, --longoptions <longopts>  the long options to be recognized\n"), stderr);
-	fputs(_(" -n, --name <progname>         the name under which errors are reported\n"), stderr);
-	fputs(_(" -o, --options <optstring>     the short options to be recognized\n"), stderr);
-	fputs(_(" -q, --quiet                   disable error reporting by getopt(3)\n"), stderr);
-	fputs(_(" -Q, --quiet-output            no normal output\n"), stderr);
-	fputs(_(" -s, --shell <shell>           set quoting conventions to those of <shell>\n"), stderr);
-	fputs(_(" -T, --test                    test for getopt(1) version\n"), stderr);
-	fputs(_(" -u, --unquoted                do not quote the output\n"), stderr);
-	fputs(USAGE_SEPARATOR, stderr);
-	fputs(USAGE_HELP, stderr);
-	fputs(USAGE_VERSION, stderr);
-	fprintf(stderr, USAGE_MAN_TAIL("getopt(1)"));
-	exit(PARAMETER_EXIT_CODE);
+	fputs(USAGE_OPTIONS, stdout);
+	fputs(_(" -a, --alternative             allow long options starting with single -\n"), stdout);
+	fputs(_(" -l, --longoptions <longopts>  the long options to be recognized\n"), stdout);
+	fputs(_(" -n, --name <progname>         the name under which errors are reported\n"), stdout);
+	fputs(_(" -o, --options <optstring>     the short options to be recognized\n"), stdout);
+	fputs(_(" -q, --quiet                   disable error reporting by getopt(3)\n"), stdout);
+	fputs(_(" -Q, --quiet-output            no normal output\n"), stdout);
+	fputs(_(" -s, --shell <shell>           set quoting conventions to those of <shell>\n"), stdout);
+	fputs(_(" -T, --test                    test for getopt(1) version\n"), stdout);
+	fputs(_(" -u, --unquoted                do not quote the output\n"), stdout);
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(USAGE_HELP, stdout);
+	fputs(USAGE_VERSION, stdout);
+	printf(USAGE_MAN_TAIL("getopt(1)"));
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -417,7 +415,7 @@ int main(int argc, char *argv[])
 			getopt_long_fp = getopt_long_only;
 			break;
 		case 'h':
-			print_help();
+			usage();
 		case 'o':
 			free(ctl.optstr);
 			ctl.optstr = xstrdup(optarg);

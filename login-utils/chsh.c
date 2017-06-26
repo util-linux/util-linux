@@ -70,8 +70,9 @@ struct sinfo {
 /* global due readline completion */
 static char **global_shells;
 
-static void __attribute__((__noreturn__)) usage (FILE *fp)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *fp = stdout;
 	fputs(USAGE_HEADER, fp);
 	fprintf(fp, _(" %s [options] [<username>]\n"), program_invocation_short_name);
 
@@ -85,7 +86,7 @@ static void __attribute__((__noreturn__)) usage (FILE *fp)
 	fputs(_(" -u, --help     display this help and exit\n"), fp);
 	fputs(_(" -v, --version  output version information and exit\n"), fp);
 	fprintf(fp, USAGE_MAN_TAIL("chsh(1)"));
-	exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 /*
@@ -229,7 +230,7 @@ static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 			exit(EXIT_SUCCESS);
 		case 'u': /* deprecated */
 		case 'h':
-			usage(stdout);
+			usage();
 		case 'l':
 			init_shells();
 			print_shells();
@@ -243,8 +244,9 @@ static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 	}
 	/* done parsing arguments.  check for a username. */
 	if (optind < argc) {
-		if (optind + 1 < argc)
-			usage(stderr);
+		if (optind + 1 < argc) {
+			errx(EXIT_FAILURE, _("cannot handle multiple usernames"));
+		}
 		pinfo->username = argv[optind];
 	}
 }

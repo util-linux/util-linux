@@ -546,9 +546,9 @@ static void simple_print(struct column_control *ctl)
 	}
 }
 
-static void __attribute__((__noreturn__)) usage(int rc)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE *out = rc == EXIT_FAILURE ? stderr : stdout;
+	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<file>...]\n"), program_invocation_short_name);
@@ -585,7 +585,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("column(1)"));
 
-	exit(rc);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -657,7 +657,7 @@ int main(int argc, char **argv)
 			ctl.tab_colhide = optarg;
 			break;
 		case 'h':
-			usage(EXIT_SUCCESS);
+			usage();
 			break;
 		case 'i':
 			ctl.tree_id = optarg;

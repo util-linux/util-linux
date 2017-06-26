@@ -183,11 +183,15 @@ checkdecl:
 checkcompletion:
 	@ $(top_srcdir)/tools/checkcompletion.sh $(top_srcdir)
 
+checkusage:
+	@ $(top_srcdir)/tools/checkusage.sh \
+		$(bin_PROGRAMS) $(sbin_PROGRAMS) \
+		$(usrbin_exec_PROGRAMS) $(usrsbin_exec_PROGRAMS)
+
 DISTCHECK_CONFIGURE_FLAGS = \
 	--disable-use-tty-group \
 	--disable-silent-rules \
 	--enable-all-programs \
-	--disable-makeinstall-chown \
 	--enable-static-programs \
 	--enable-gtk-doc \
 	--with-python \

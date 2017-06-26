@@ -749,8 +749,10 @@ void follow_wipe_mode(struct fdisk_context *cxt)
 			fdisk_get_collision(cxt));
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
+
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
@@ -789,7 +791,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	list_available_columns(out);
 
 	fprintf(out, USAGE_MAN_TAIL("fdisk(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 
@@ -852,7 +854,7 @@ int main(int argc, char **argv)
 			size_t sz = strtou32_or_err(optarg,
 					_("invalid sector size argument"));
 			if (sz != 512 && sz != 1024 && sz != 2048 && sz != 4096)
-				usage(stderr);
+				errx(EXIT_FAILURE, _("invalid sector size argument"));
 			fdisk_save_user_sector_size(cxt, sz, sz);
 			break;
 		}
@@ -879,10 +881,8 @@ int main(int argc, char **argv)
 					fdisk_dos_enable_compatible(lb, TRUE);
 				else if (strcmp(p, "nondos") == 0)
 					fdisk_dos_enable_compatible(lb, FALSE);
-				else {
-					warnx(_("unknown compatibility mode '%s'"), p);
-					usage(stderr);
-				}
+				else
+					errx(EXIT_FAILURE, _("unknown compatibility mode '%s'"), p);
 			}
 			/* use default if no optarg specified */
 			break;
@@ -929,7 +929,7 @@ int main(int argc, char **argv)
 			if (optarg && *optarg == '=')
 				optarg++;
 			if (fdisk_set_unit(cxt, optarg) != 0)
-				usage(stderr);
+				errx(EXIT_FAILURE, _("unsupported unit"));
 			break;
 		case 'V': /* preferred for util-linux */
 		case 'v': /* for backward compatibility only */
@@ -946,7 +946,7 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("unsupported wipe mode"));
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 		case OPT_BYTES:
 			fdisk_set_size_unit(cxt, FDISK_SIZEUNIT_BYTES);
 			break;
@@ -985,9 +985,10 @@ int main(int argc, char **argv)
 
 	case ACT_SHOWSIZE:
 		/* deprecated */
-		if (argc - optind <= 0)
-			usage(stderr);
-
+		if (argc - optind <= 0) {
+			warnx(_("bad usage"));
+			errtryhelp(EXIT_FAILURE);
+		}
 		for (i = optind; i < argc; i++) {
 			uintmax_t blks = get_dev_blocks(argv[i]);
 
@@ -999,8 +1000,10 @@ int main(int argc, char **argv)
 		break;
 
 	case ACT_FDISK:
-		if (argc-optind != 1)
-			usage(stderr);
+		if (argc-optind != 1) {
+			warnx(_("bad usage"));
+			errtryhelp(EXIT_FAILURE);
+		}
 
 		/* Here starts interactive mode, use fdisk_{warn,info,..} functions */
 		color_scheme_enable("welcome", UL_COLOR_GREEN);

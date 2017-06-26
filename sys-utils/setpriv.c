@@ -92,8 +92,9 @@ struct privctx {
 	const char *apparmor_profile;
 };
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <program> [<argument>...]\n"),
 		program_invocation_short_name);
@@ -127,7 +128,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" This tool can be dangerous.  Read the manpage, and be careful.\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("setpriv(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static int real_cap_last_cap(void)
@@ -797,7 +798,7 @@ int main(int argc, char **argv)
 			opts.apparmor_profile = optarg;
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;

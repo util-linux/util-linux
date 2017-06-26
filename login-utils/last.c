@@ -560,8 +560,9 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 }
 
 
-static void __attribute__((__noreturn__)) usage(const struct last_control *ctl, FILE *out)
+static void __attribute__((__noreturn__)) usage(const struct last_control *ctl)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 		" %s [options] [<username>...] [<tty>...]\n"), program_invocation_short_name);
@@ -953,7 +954,7 @@ int main(int argc, char **argv)
 
 		switch(c) {
 		case 'h':
-			usage(&ctl, stdout);
+			usage(&ctl);
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);

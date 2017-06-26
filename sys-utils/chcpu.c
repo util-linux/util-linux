@@ -232,8 +232,9 @@ static void cpu_parse(char *cpu_string, cpu_set_t *cpu_set, size_t setsize)
 	errx(EXIT_FAILURE, _("failed to parse CPU list: %s"), cpu_string);
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fprintf(out, _(
 		"\nUsage:\n"
 		" %s [options]\n"), program_invocation_short_name);
@@ -251,7 +252,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		"  -r, --rescan                  trigger rescan of cpus\n"
 		"  -V, --version                 output version information and exit\n"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -316,7 +317,7 @@ int main(int argc, char *argv[])
 			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
 		case 'h':
-			usage(stdout);
+			usage();
 		case 'p':
 			if (strcmp("horizontal", argv[optind - 1]) == 0)
 				cmd = CMD_CPU_DISPATCH_HORIZONTAL;
@@ -337,8 +338,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if ((argc == 1) || (argc != optind))
-		usage(stderr);
+	if ((argc == 1) || (argc != optind)) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	switch (cmd) {
 	case CMD_CPU_ENABLE:

@@ -45,8 +45,9 @@ struct taskset {
 			get_only:1;	/* print the mask, but not modify */
 };
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fprintf(out,
 		_("Usage: %s [options] [mask | cpu-list] [pid|cmd [args...]]\n\n"),
 		program_invocation_short_name);
@@ -78,7 +79,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("taskset(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static void print_affinity(struct taskset *ts, int isnew)
@@ -176,7 +177,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
@@ -184,8 +185,10 @@ int main(int argc, char **argv)
 	}
 
 	if ((!pid && argc - optind < 2)
-	    || (pid && (argc - optind < 1 || argc - optind > 2)))
-		usage(stderr);
+	    || (pid && (argc - optind < 1 || argc - optind > 2))) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	ncpus = get_max_number_of_cpus();
 	if (ncpus <= 0)

@@ -33,9 +33,10 @@ enum fs_operation {
 	UNFREEZE
 };
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fprintf(out, USAGE_HEADER);
+	FILE *out = stdout;
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <mountpoint>\n"), program_invocation_short_name);
 
@@ -45,12 +46,12 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --freeze      freeze the filesystem\n"), out);
 	fputs(_(" -u, --unfreeze    unfreeze the filesystem\n"), out);
-	fprintf(out, USAGE_SEPARATOR);
-	fprintf(out, USAGE_HELP);
-	fprintf(out, USAGE_VERSION);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("fsfreeze(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -85,7 +86,7 @@ int main(int argc, char **argv)
 
 		switch(c) {
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'f':
 			action = FREEZE;
@@ -109,7 +110,7 @@ int main(int argc, char **argv)
 
 	if (optind != argc) {
 		warnx(_("unexpected number of arguments"));
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	fd = open(path, O_RDONLY);

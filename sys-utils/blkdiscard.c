@@ -77,8 +77,9 @@ static void print_stats(int act, char *path, uint64_t stats[])
 	}
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <device>\n"), program_invocation_short_name);
@@ -99,7 +100,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 
 	fprintf(out, USAGE_MAN_TAIL("blkdiscard(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 
@@ -136,7 +137,7 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "hVsvo:l:p:z", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -174,7 +175,7 @@ int main(int argc, char **argv)
 
 	if (optind != argc) {
 		warnx(_("unexpected number of arguments"));
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	fd = open(path, O_WRONLY);

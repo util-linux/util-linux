@@ -290,8 +290,9 @@ static int blkzone_reset(struct blkzone_control *ctl)
 	return 0;
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(void)
 {
+	FILE *out = stdout;
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
@@ -314,7 +315,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 
 	fprintf(out, USAGE_MAN_TAIL("blkzone(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -362,7 +363,7 @@ int main(int argc, char **argv)
 
 		switch (c) {
 		case 'h':
-			usage(stdout);
+			usage();
 			break;
 		case 'c':
 			ctl.count = strtou32_or_err(optarg,
