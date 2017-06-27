@@ -14,6 +14,9 @@ fi
 builddir="."
 cmds=$(echo $@ | tr ' ' '\n' | sort)
 
+# set env to dump all output to files
+test -z "$CU_DUMP" || rm -f /tmp/checkusage--{help,version,unknownopt}
+
 ## Set alternative options for --help, --version
 ## or --unknownopt. "x" means "not implemented".
 ##
@@ -32,6 +35,7 @@ function exec_option {
 	local cmdb=$1
 	local cmd=$2
 	opt=$3
+	local tofile="/tmp/checkusage$opt"
 
 	local alt="alt_${cmdb}${opt}"
 	alt=${alt//-/_}
@@ -43,6 +47,12 @@ function exec_option {
 		fi
 		opt=$alt
 	fi
+
+	test -z "$CU_DUMP" || {
+		echo "##########################################################"
+		echo "#### $cmdb"
+		$cmd $opt
+	} >> "$tofile" 2>&1
 
 	out=$("$cmd" $opt 2>/dev/null)
 	err=$("$cmd" $opt 2>&1 >/dev/null)
