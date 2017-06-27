@@ -14,6 +14,9 @@ fi
 builddir="."
 cmds=$(echo $@ | tr ' ' '\n' | sort)
 
+# set env to dump all output to files
+test -z "$CU_DUMP" || rm -f /tmp/checkusage--{help,version,unknownopt}
+
 ## Set alternative options for --help, --version
 ## or --unknownopt. "x" means "not implemented".
 ##
@@ -21,12 +24,18 @@ cmds=$(echo $@ | tr ' ' '\n' | sort)
 ##   alt_whereis__help="-h"  # in past whereis(1) had no longopt for --help
 ##   alt_more__help="x"      # more(1) had neither --help nor -h
 
-alt_fsck__unknownopt="-Tunknown"  # no title (-T) and pass -unknown to fsck.foo
+alt_fsck__unknownopt="x" # fsck passes unknown opts to fsck.ext4, etc.
+alt_mkfs__unknownopt="x" # dito
+alt_kill__unknownopt="inval pids" # trick, kill does not use errtryhelp()
+if [ $(id -ru) -eq 0 ]; then
+	alt_sulogin__unknownopt="x" # would hang at pwd prompt
+fi
 
 function exec_option {
 	local cmdb=$1
 	local cmd=$2
 	opt=$3
+	local tofile="/tmp/checkusage$opt"
 
 	local alt="alt_${cmdb}${opt}"
 	alt=${alt//-/_}
@@ -39,8 +48,14 @@ function exec_option {
 		opt=$alt
 	fi
 
-	out=$("$cmd" "$opt" 2>/dev/null)
-	err=$("$cmd" "$opt" 2>&1 >/dev/null)
+	test -z "$CU_DUMP" || {
+		echo "##########################################################"
+		echo "#### $cmdb"
+		$cmd $opt
+	} >> "$tofile" 2>&1
+
+	out=$("$cmd" $opt 2>/dev/null)
+	err=$("$cmd" $opt 2>&1 >/dev/null)
 	ret=$?
 
 	# hardcoded ... nologin should always return false
@@ -118,10 +133,7 @@ function check_unknownopt {
 		out_len=$(echo "$out" | wc -l)
 		err_len=$(echo "$err" | wc -l)
 		if test "$err_len" -gt 2; then
-			# hardcoded ignore ... mkfs sends options to mkfs.ext2
-			if test "$cb" != "mkfs" -a "$cb" != "fsck"; then
-				echo "$cb: $opt, stderr too long: $err_len"
-			fi
+			echo "$cb: $opt, stderr too long: $err_len"
 		elif test "$err_len" -lt 2; then
 			echo "$cb: $opt, stderr too short: $err_len"
 		fi
