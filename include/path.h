@@ -4,8 +4,11 @@
 #include <stdio.h>
 #include <stdint.h>
 
-extern char *path_strdup(const char *path, ...)
+/* Returns a pointer to a static buffer which may be destroyed by any later
+path_* function call. NULL means error and errno will be set. */
+extern const char *path_get(const char *path, ...)
 			__attribute__ ((__format__ (__printf__, 1, 2)));
+
 extern FILE *path_fopen(const char *mode, int exit_on_err, const char *path, ...)
 			__attribute__ ((__format__ (__printf__, 3, 4)));
 extern void path_read_str(char *result, size_t len, const char *path, ...)

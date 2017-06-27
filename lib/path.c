@@ -50,8 +50,8 @@ path_vcreate(const char *path, va_list ap)
 	return pathbuf;
 }
 
-char *
-path_strdup(const char *path, ...)
+const char *
+path_get(const char *path, ...)
 {
 	const char *p;
 	va_list ap;
@@ -60,7 +60,7 @@ path_strdup(const char *path, ...)
 	p = path_vcreate(path, ap);
 	va_end(ap);
 
-	return p ? strdup(p) : NULL;
+	return p;
 }
 
 static FILE *

@@ -248,15 +248,14 @@ static void print_summary(struct lsmem *lsmem)
 static int memory_block_get_node(char *name)
 {
 	struct dirent *de;
-	char *path;
+	const char *path;
 	DIR *dir;
 	int node;
 
-	path = path_strdup(_PATH_SYS_MEMORY"/%s", name);
-	dir = opendir(path);
-	free(path);
-	if (!dir)
-		err(EXIT_FAILURE, _("Failed to open %s"), path);
+	path = path_get(_PATH_SYS_MEMORY"/%s", name);
+	if (!path || !(dir= opendir(path)))
+		err(EXIT_FAILURE, _("Failed to open %s"), path ? path : name);
+
 	node = -1;
 	while ((de = readdir(dir)) != NULL) {
 		if (strncmp("node", de->d_name, 4))
@@ -348,14 +347,16 @@ static int memory_block_filter(const struct dirent *de)
 
 static void read_basic_info(struct lsmem *lsmem)
 {
-	char *dir;
+	const char *dir;
 
 	if (!path_exist(_PATH_SYS_MEMORY_BLOCK_SIZE))
 		errx(EXIT_FAILURE, _("This system does not support memory blocks"));
 
-	dir = path_strdup(_PATH_SYS_MEMORY);
+	dir = path_get(_PATH_SYS_MEMORY);
+	if (!dir)
+		err(EXIT_FAILURE, _("Failed to read %s"), _PATH_SYS_MEMORY);
+
 	lsmem->ndirs = scandir(dir, &lsmem->dirs, memory_block_filter, versionsort);
-	free(dir);
 	if (lsmem->ndirs <= 0)
 		err(EXIT_FAILURE, _("Failed to read %s"), _PATH_SYS_MEMORY);
 
