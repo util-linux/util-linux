@@ -470,7 +470,8 @@ int main(int argc, char **argv)
 			lsmem->want_summary = 0;
 			break;
 		case 's':
-			path_set_prefix(optarg);
+			if(path_set_prefix(optarg))
+				err(EXIT_FAILURE, _("invalid argument to %s"), "--sysroot");
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);

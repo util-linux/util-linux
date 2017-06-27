@@ -2148,7 +2148,8 @@ int main(int argc, char *argv[])
 			mod->mode = c == 'p' ? OUTPUT_PARSABLE : OUTPUT_READABLE;
 			break;
 		case 's':
-			path_set_prefix(optarg);
+			if(path_set_prefix(optarg))
+				err(EXIT_FAILURE, _("invalid argument to %s"), "--sysroot");
 			mod->system = SYSTEM_SNAPSHOT;
 			break;
 		case 'x':

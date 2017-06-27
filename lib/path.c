@@ -244,12 +244,18 @@ path_read_cpulist(int maxcpus, const char *path, ...)
 	return set;
 }
 
-void
+int
 path_set_prefix(const char *prefix)
 {
-	prefixlen = strlen(prefix);
-	strncpy(pathbuf, prefix, sizeof(pathbuf));
-	pathbuf[sizeof(pathbuf) - 1] = '\0';
+	size_t len = strlen(prefix);
+
+	if (len >= sizeof(pathbuf) - 1) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+	prefixlen = len;
+	strcpy(pathbuf, prefix);
+	return 0;
 }
 
 #endif /* HAVE_CPU_SET_T */
