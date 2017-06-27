@@ -121,8 +121,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --uid <uid>...     act on already running processes owned by these users\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(24);
 
 	fprintf(out, USAGE_MAN_TAIL("ionice(1)"));
 

@@ -336,14 +336,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Follow a pathname until a terminal point is found.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -h, --help          displays this help text\n"
-		" -V, --version       output version information and exit\n"
+	fputs(_(
 		" -x, --mountpoints   show mount point directories with a 'D'\n"
 		" -m, --modes         show the mode bits of each file\n"
 		" -o, --owners        show owner and group name of each file\n"
 		" -l, --long          use a long listing format (-m -o -v) \n"
 		" -n, --nosymlinks    don't follow symlinks\n"
 		" -v, --vertical      vertical align of modes and owners\n"), out);
+	print_usage_help_options(21);
 
 	fprintf(out, USAGE_MAN_TAIL("namei(1)"));
 	exit(EXIT_SUCCESS);

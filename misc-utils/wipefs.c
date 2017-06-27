@@ -465,16 +465,15 @@ usage(void)
 	fputs(_(" -a, --all           wipe all magic strings (BE CAREFUL!)\n"
 		" -b, --backup        create a signature backup in $HOME\n"
 		" -f, --force         force erasure\n"
-		" -h, --help          show this help text\n"
 		" -n, --no-act        do everything except the actual write() call\n"
 		" -o, --offset <num>  offset to erase, in bytes\n"
 		" -p, --parsable      print out in parsable instead of printable format\n"
 		" -q, --quiet         suppress output messages\n"
 		" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables\n"
-		" -V, --version       output version information and exit\n"), out);
+		), out);
+	print_usage_help_options(21);
 
 	fprintf(out, USAGE_MAN_TAIL("wipefs(8)"));
-
 	exit(EXIT_SUCCESS);
 }
 

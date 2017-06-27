@@ -306,8 +306,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                               [delta|reltime|ctime|notime|iso]\n"
 		"Suspending/resume will make ctime and iso timestamps inaccurate.\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(29);
 	fputs(_("\nSupported log facilities:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(level_names); i++)
 		fprintf(out, " %7s - %s\n",
@@ -319,7 +318,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		fprintf(out, " %7s - %s\n",
 			level_names[i].name,
 			_(level_names[i].help));
-	fputs(USAGE_SEPARATOR, out);
+
 	fprintf(out, USAGE_MAN_TAIL("dmesg(1)"));
 	exit(EXIT_SUCCESS);
 }

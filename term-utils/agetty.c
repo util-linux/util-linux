@@ -2110,8 +2110,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --delay <number>       sleep seconds before prompt\n"), out);
 	fputs(_("     --nice <number>        run login with this priority\n"), out);
 	fputs(_("     --reload               reload prompts on running agetty instances\n"), out);
-	fputs(_("     --help                 display this help and exit\n"), out);
-	fputs(_("     --version              output version information and exit\n"), out);
+	printf( "     --help                 %s\n", USAGE_OPTSTR_HELP);
+	printf( "     --version              %s\n", USAGE_OPTSTR_VERSION);
 	fprintf(out, USAGE_MAN_TAIL("agetty(8)"));
 
 	exit(EXIT_SUCCESS);

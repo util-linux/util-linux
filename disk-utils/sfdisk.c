@@ -1901,8 +1901,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --unit S              deprecated, only sector unit is supported\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(_(" -v, --version  output version information and exit\n"), out);
+	printf( " -h, --help                %s\n", USAGE_OPTSTR_HELP);
+	printf( " -v, --version             %s\n", USAGE_OPTSTR_VERSION);
 
 	list_available_columns(out);
 

@@ -144,8 +144,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --no-act        do not make any changes\n"), out);
 	fputs(_(" -o, --no-overwrite  don't overwrite existing files\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(21);
 	fprintf(out, USAGE_MAN_TAIL("rename(1)"));
 	exit(EXIT_SUCCESS);
 }

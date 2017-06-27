@@ -89,8 +89,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -2, --half-lines        print all half-lines\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(25);
 
 	fprintf(out, USAGE_MAN_TAIL("colcrt(1)"));
 

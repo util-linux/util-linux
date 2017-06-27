@@ -84,9 +84,8 @@ static void __attribute__((__noreturn__)) usage(void)
 		       " -v, --verbose       explain what is being done\n"
 		       " -c                  this option is silently ignored\n"
 		       " -l                  this option is silently ignored\n"
-		       " -V, --version       output version information and exit\n"
-		       "                     -V as version must be only option\n"
-		       " -h, --help          display this help and exit\n\n"));
+		       ));
+	print_usage_help_options(21);
 
 	fprintf(out, USAGE_MAN_TAIL("mkfs.bfs(8)"));
 	exit(EXIT_SUCCESS);

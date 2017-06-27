@@ -274,8 +274,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw             use raw output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(23);
 
 	fprintf(out, USAGE_COLUMNS);
 

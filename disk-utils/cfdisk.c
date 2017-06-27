@@ -2559,8 +2559,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -z, --zero               start with zeroed partition table\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(26);
 
 	fprintf(out, USAGE_MAN_TAIL("cfdisk(8)"));
 	exit(EXIT_SUCCESS);

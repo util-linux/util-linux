@@ -581,8 +581,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -x, --fillrows                   fill rows before columns\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(34);
 	fprintf(out, USAGE_MAN_TAIL("column(1)"));
 
 	exit(EXIT_SUCCESS);

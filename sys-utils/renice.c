@@ -73,8 +73,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -g, --pgrp <id>        interpret argument as process group ID\n"), out);
 	fputs(_(" -u, --user <name>|<id> interpret argument as username or user ID\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(24);
 	fprintf(out, USAGE_MAN_TAIL("renice(1)"));
 	exit(EXIT_SUCCESS);
 }

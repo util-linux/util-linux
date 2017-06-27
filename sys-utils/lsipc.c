@@ -304,8 +304,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --time               show attach, detach and change times\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(26);
 
 	fprintf(out, _("\nGeneric columns:\n"));
 	for (i = COLDESC_IDX_GEN_FIRST; i <= COLDESC_IDX_GEN_LAST; i++)

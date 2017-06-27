@@ -1394,8 +1394,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -V         explain what is being done\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -?, --help     display this help and exit\n"), out);
-	fputs(_("     --version  output version information and exit\n"), out);
+	printf( " -?, --help     %s\n", USAGE_OPTSTR_HELP);
+	printf( "     --version  %s\n", USAGE_OPTSTR_VERSION);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("See the specific fsck.* commands for available fs-options."), out);
 	fprintf(out, USAGE_MAN_TAIL("fsck(8)"));

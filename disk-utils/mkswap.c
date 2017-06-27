@@ -160,9 +160,10 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -L, --label LABEL         specify label\n"
 		" -v, --swapversion NUM     specify swap-space version number\n"
 		" -U, --uuid UUID           specify the uuid to use\n"
-		" -V, --version             output version information and exit\n"
-		" -h, --help                display this help and exit\n\n"));
+		));
+	print_usage_help_options(27);
 
+	printf(USAGE_MAN_TAIL("mkswap(8)"));
 	exit(EXIT_SUCCESS);
 }
 

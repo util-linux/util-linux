@@ -213,8 +213,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -i, --iflag [-]<iflag>  set input mode flag\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(25);
 
 	fputs(_("\nKnown <ldisc> names:\n"), out);
 	print_table(out, ld_discs);

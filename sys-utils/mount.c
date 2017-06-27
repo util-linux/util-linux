@@ -426,8 +426,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	" -w, --rw, --read-write  mount the filesystem read-write (default)\n"));
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(25);
 
 	fprintf(out, _(
 	"\nSource:\n"

@@ -180,27 +180,39 @@ static const struct bdc bdcms[] =
 
 static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE * out = stdout;
 	size_t i;
 
-	fprintf(out, _("\nUsage:\n"
-		       " %1$s -V\n"
-		       " %1$s --report [devices]\n"
-		       " %1$s [-v|-q] commands devices\n\n"
-		       "Available commands:\n"), program_invocation_short_name);
+	fputs(USAGE_HEADER, stdout);
+	printf(_(
+	         " %1$s [-v|-q] commands devices\n"
+	         " %1$s --report [devices]\n"
+	         " %1$s -h|-V\n"
+		), program_invocation_short_name);
 
-	fprintf(out, _(" %-25s get size in 512-byte sectors\n"), "--getsz");
+	fputs(USAGE_SEPARATOR, stdout);
+	puts(  _("Call block device ioctls from the command line."));
+
+	fputs(USAGE_OPTIONS, stdout);
+	puts(  _(" -q             quiet mode"));
+	puts(  _(" -v             verbose mode"));
+	puts(  _("     --report   print report for specified (or all) devices"));
+	fputs(USAGE_SEPARATOR, stdout);
+	print_usage_help_options(16);
+
+	fputs(USAGE_SEPARATOR, stdout);
+	puts(  _("Available commands:"));
+	printf(_(" %-25s get size in 512-byte sectors\n"), "--getsz");
 	for (i = 0; i < ARRAY_SIZE(bdcms); i++) {
 		if (bdcms[i].argname)
-			fprintf(out, " %s %-*s %s\n", bdcms[i].name,
+			printf(" %s %-*s %s\n", bdcms[i].name,
 				(int)(24 - strlen(bdcms[i].name)),
 				bdcms[i].argname, _(bdcms[i].help));
 		else
-			fprintf(out, " %-25s %s\n", bdcms[i].name,
+			printf(" %-25s %s\n", bdcms[i].name,
 				_(bdcms[i].help));
 	}
 
-	fprintf(out, USAGE_MAN_TAIL("blockdev(1)"));
+	printf(USAGE_MAN_TAIL("blockdev(1)"));
 	exit(EXIT_SUCCESS);
 }
 

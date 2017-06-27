@@ -543,8 +543,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --streams <number>    number of compression streams\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(27);
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)

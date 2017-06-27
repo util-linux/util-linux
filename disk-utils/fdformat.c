@@ -156,8 +156,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --no-verify   disable the verification after the format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(19);
 	fprintf(out, USAGE_MAN_TAIL("fdformat(8)"));
 
 	exit(EXIT_SUCCESS);

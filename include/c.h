@@ -315,8 +315,18 @@ static inline int xusleep(useconds_t usec)
 #define USAGE_COMMANDS   _("\nCommands:\n")
 #define USAGE_COLUMNS    _("\nAvailable output columns:\n")
 #define USAGE_SEPARATOR    "\n"
-#define USAGE_HELP       _(" -h, --help     display help information and exit\n")
-#define USAGE_VERSION    _(" -V, --version  display version information and exit\n")
+
+#define USAGE_OPTSTR_HELP     _("display this help")
+#define USAGE_OPTSTR_VERSION  _("print version")
+
+#define print_usage_help_options(marg_dsc) \
+	printf( \
+		"%-" #marg_dsc "s%s\n" \
+		"%-" #marg_dsc "s%s\n" \
+		, " -h, --help",    USAGE_OPTSTR_HELP \
+		, " -V, --version", USAGE_OPTSTR_VERSION \
+	)
+
 #define USAGE_MAN_TAIL(_man)   _("\nFor more details see %s.\n"), _man
 
 #define UTIL_LINUX_VERSION _("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING

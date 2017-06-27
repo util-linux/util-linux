@@ -242,16 +242,18 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Configure CPUs in a multi-processor system.\n"), out);
 
-	puts(_(	"\nOptions:\n"
-		"  -h, --help                    print this help\n"
-		"  -e, --enable <cpu-list>       enable cpus\n"
-		"  -d, --disable <cpu-list>      disable cpus\n"
-		"  -c, --configure <cpu-list>    configure cpus\n"
-		"  -g, --deconfigure <cpu-list>  deconfigure cpus\n"
-		"  -p, --dispatch <mode>         set dispatching mode\n"
-		"  -r, --rescan                  trigger rescan of cpus\n"
-		"  -V, --version                 output version information and exit\n"));
+	fputs(USAGE_OPTIONS, stdout);
+	fputs(_(
+		" -e, --enable <cpu-list>       enable cpus\n"
+		" -d, --disable <cpu-list>      disable cpus\n"
+		" -c, --configure <cpu-list>    configure cpus\n"
+		" -g, --deconfigure <cpu-list>  deconfigure cpus\n"
+		" -p, --dispatch <mode>         set dispatching mode\n"
+		" -r, --rescan                  trigger rescan of cpus\n"
+		), stdout);
+	print_usage_help_options(31);
 
+	printf(USAGE_MAN_TAIL("chcpu(8)"));
 	exit(EXIT_SUCCESS);
 }
 

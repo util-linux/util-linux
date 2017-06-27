@@ -190,8 +190,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -x, --flags-only       print only flags table (same as -I -T)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(24);
 	fputs(USAGE_SEPARATOR, out);
 
 	fprintf(out, _("The default device is %s.\n"), _PATH_WATCHDOG_DEV);

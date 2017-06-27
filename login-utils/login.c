@@ -1101,6 +1101,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(_(" %s [-p] [-h <host>] [-H] [[-f] <username>]\n"), program_invocation_short_name);
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(_("Begin a session on the system.\n"), stdout);
+
+	fputs(USAGE_OPTIONS, stdout);
+	puts(_(" -p             do not destroy the environment"));
+	puts(_(" -f             skip a second login authentication"));
+	puts(_(" -h <host>      hostname to be used for utmp logging"));
+	puts(_(" -H             suppress hostname in the login prompt"));
+	printf("     --help     %s\n", USAGE_OPTSTR_HELP);
+	printf(" -V, --version  %s\n", USAGE_OPTSTR_VERSION);
 	printf(USAGE_MAN_TAIL("login(1)"));
 	exit(EXIT_SUCCESS);
 }

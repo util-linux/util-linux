@@ -144,8 +144,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		program_invocation_short_name, PAD_SIZE);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputs(USAGE_HELP, stdout);
-	fputs(USAGE_VERSION, stdout);
+	print_usage_help_options(16);
 	printf(USAGE_MAN_TAIL("mkfs.cramfs(8)"));
 	exit(MKFS_EX_OK);
 }

@@ -125,8 +125,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -L, --label <label> specify a new label\n"
 		" -U, --uuid <uuid>   specify a new uuid\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(21);
 	fprintf(out, USAGE_MAN_TAIL("swaplabel(8)"));
 	exit(EXIT_SUCCESS);
 }

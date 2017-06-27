@@ -17,13 +17,14 @@ blockdev \- call block device ioctls from the command line
 .B blockdev
 .B \-\-report
 .RI [ device \&...\&]
+.br
+.B blockdev
+.RB \-h | \-V
 .SH DESCRIPTION
 The utility
 .B blockdev
 allows one to call block device ioctls from the command line.
 .SH OPTIONS
-.IP "\fB\-V\fP"
-Print version and exit.
 .IP "\fB\-q\fP"
 Be quiet.
 .IP "\fB\-v\fP"
@@ -32,6 +33,10 @@ Be verbose.
 Print a report for the specified device. It is possible to give multiple
 devices. If none is given, all devices which appear in /proc/partitions are
 shown. Note that the partition StartSec is in 512-byte sectors.
+.IP "\fB\-h\fR, \fB\-\-help\fR"
+Display help text and exit.
+.IP "\fB\-V\fR, \fB\-\-version\fR"
+Print version and exit.
 .SH COMMANDS
 It is possible to give multiple devices and multiple commands.
 .IP "\fB\-\-flushbufs\fP"

@@ -205,8 +205,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l         output effective lookup paths\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(16);
 	fprintf(out, USAGE_MAN_TAIL("whereis(1)"));
 	exit(EXIT_SUCCESS);
 }

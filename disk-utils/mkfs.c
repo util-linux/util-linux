@@ -55,12 +55,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, _("     <size>         number of blocks to be used on the device\n"));
 	fprintf(out, _(" -V, --verbose      explain what is being done;\n"
 		       "                      specifying -V more than once will cause a dry-run\n"));
-	fprintf(out, _(" -V, --version      display version information and exit;\n"
-		       "                      -V as --version must be the only option\n"));
-	fprintf(out, _(" -h, --help         display this help text and exit\n"));
+	print_usage_help_options(20);
 
 	fprintf(out, USAGE_MAN_TAIL("mkfs(8)"));
-
 	exit(EXIT_SUCCESS);
 }
 

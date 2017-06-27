@@ -507,8 +507,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	print_usage_help_options(24);
 
 	fputs(USAGE_COLUMNS, out);
 
