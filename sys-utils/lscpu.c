@@ -1432,35 +1432,34 @@ read_nodes(struct lscpu_desc *desc)
 	struct dirent *d;
 	const char *path;
 
+	desc->nnodes = 0;
+
 	/* number of NUMA node */
 	if (!(path = path_get(_PATH_SYS_NODE)))
 		return;
-	dir = opendir(path);
-
-	while (dir && (d = readdir(dir))) {
+	if (!(dir = opendir(path)))
+		return;
+	while ((d = readdir(dir))) {
 		if (is_node_dirent(d))
 			desc->nnodes++;
 	}
 
 	if (!desc->nnodes) {
-		if (dir)
-			closedir(dir);
+		closedir(dir);
 		return;
 	}
 
 	desc->nodemaps = xcalloc(desc->nnodes, sizeof(cpu_set_t *));
 	desc->idx2nodenum = xmalloc(desc->nnodes * sizeof(int));
 
-	if (dir) {
-		rewinddir(dir);
-		while ((d = readdir(dir)) && i < desc->nnodes) {
-			if (is_node_dirent(d))
-				desc->idx2nodenum[i++] = strtol_or_err(((d->d_name) + 4),
-							_("Failed to extract the node number"));
-		}
-		closedir(dir);
-		qsort(desc->idx2nodenum, desc->nnodes, sizeof(int), nodecmp);
+	rewinddir(dir);
+	while ((d = readdir(dir)) && i < desc->nnodes) {
+		if (is_node_dirent(d))
+			desc->idx2nodenum[i++] = strtol_or_err(((d->d_name) + 4),
+						_("Failed to extract the node number"));
 	}
+	closedir(dir);
+	qsort(desc->idx2nodenum, desc->nnodes, sizeof(int), nodecmp);
 
 	/* information about how nodes share different CPUs */
 	for (i = 0; i < desc->nnodes; i++)
