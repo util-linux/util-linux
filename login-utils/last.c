@@ -457,7 +457,7 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 		sprintf(length, "(%d+%02d:%02d)", days, abs(hours), abs(mins)); /* hours and mins always shown as positive (w/o minus sign!) even if secs < 0 */
 	} else if (hours) {
 		sprintf(length, " (%02d:%02d)", hours, abs(mins));  /* mins always shown as positive (w/o minus sign!) even if secs < 0 */
-	} else if (secs > 0) {
+	} else if (secs >= 0) {
 		sprintf(length, " (%02d:%02d)", hours, mins); 
 	} else {
 		sprintf(length, " (-00:%02d)", abs(mins));  /* mins always shown as positive (w/o minus sign!) even if secs < 0 */
