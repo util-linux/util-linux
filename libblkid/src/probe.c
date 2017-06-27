@@ -124,7 +124,6 @@ static const struct blkid_chaindrv *chains_drvs[] = {
 	[BLKID_CHAIN_PARTS] = &partitions_drv
 };
 
-static struct blkid_prval *blkid_probe_new_value(void);
 static void blkid_probe_reset_values(blkid_probe pr);
 static void blkid_probe_reset_buffer(blkid_probe pr);
 
@@ -299,27 +298,6 @@ static void blkid_probe_chain_reset_position(struct blkid_chain *chn)
 {
 	chn->idx = -1;
 }
-
-/*
-static struct blkid_prval *blkid_probe_copy_value(struct blkid_prval *src)
-{
-	struct blkid_prval *dest = blkid_probe_new_value();
-
-	if (!dest)
-		return NULL;
-
-	memcpy(dest, src, sizeof(struct blkid_prval));
-
-	dest->data = malloc(src->len);
-	if (!dest->data)
-		return NULL;
-
-	memcpy(dest->data, src->data, src->len);
-
-	INIT_LIST_HEAD(&dest->prvals);
-	return dest;
-}
-*/
 
 /*
  * Move chain values from probing result to @vals
@@ -1373,26 +1351,16 @@ struct blkid_prval *blkid_probe_assign_value(blkid_probe pr, const char *name)
 {
 	struct blkid_prval *v;
 
-	v = blkid_probe_new_value();
+	v = calloc(1, sizeof(struct blkid_prval));
 	if (!v)
 		return NULL;
 
+	INIT_LIST_HEAD(&v->prvals);
 	v->name = name;
 	v->chain = pr->cur_chain;
 	list_add_tail(&v->prvals, &pr->values);
 
 	DBG(LOWPROBE, ul_debug("assigning %s [%s]", name, v->chain->driver->name));
-	return v;
-}
-
-static struct blkid_prval *blkid_probe_new_value(void)
-{
-	struct blkid_prval *v = calloc(1, sizeof(struct blkid_prval));
-	if (!v)
-		return NULL;
-
-	INIT_LIST_HEAD(&v->prvals);
-
 	return v;
 }
 
