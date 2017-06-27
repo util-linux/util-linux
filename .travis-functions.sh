@@ -36,6 +36,17 @@ function xconfigure
 	return $err
 }
 
+# TODO: integrate checkusage into our regular tests and remove this function
+function make_checkusage
+{
+	local tmp
+	if ! tmp=$($MAKE checkusage 2>&1) || test -n "$tmp"; then
+		echo "$tmp"
+		echo "make checkusage failed" >&2
+		return 1
+	fi
+}
+
 function check_nonroot
 {
 	local opts="$MAKE_CHECK_OPTS --show-diff"
@@ -49,6 +60,8 @@ function check_nonroot
 
 	osx_prepare_check
 	$MAKE check TS_OPTS="$opts" || return
+
+	make_checkusage || return
 
 	$MAKE install DESTDIR=/tmp/dest || return
 }
