@@ -61,8 +61,8 @@ function exec_option {
 	# hardcoded ... nologin should always return false
 	if test "$cmdb" = "nologin" &&
 			test "$opt" = "--help" -o "$opt" = "--version"; then
-		if test "$ret" = "0"; then
-			echo "$cmdb, $opt, should return false"
+		if test "$ret" -eq 0 -o "$ret" -ge 128; then
+			echo "$cmdb, $opt, should return false: $ret"
 		fi
 		ret=0
 	fi
@@ -123,6 +123,8 @@ function check_unknownopt {
 
 	if test $ret = 0; then
 		echo "$cb: $opt, returns no error"
+	elif test $ret -ge 128; then
+		echo "$cb: $opt, abnormal exit: $ret"
 	fi
 	if test -n "$out"; then
 		echo "$cb: $opt, non-empty stdout"
