@@ -391,9 +391,12 @@ do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
 		free(tmp);
 	}
 
+	/* wp0 is the list of wanted offsets */
 	wp0 = clone_offset(wp);
 
 	while (blkid_do_probe(pr) == 0) {
+		int wiped = 0;
+
 		wp = get_desc_for_probe(ctl, wp, pr, NULL);
 		if (!wp)
 			break;
@@ -404,14 +407,14 @@ do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
 			w = w->next;
 
 		if (wp0 && !w)
-			continue;
+			goto done;
 
 		/* Mark done if found in provided list */
 		if (w)
 			w->on_disk = wp->on_disk;
 
 		if (!wp->on_disk)
-			continue;
+			goto done;
 
 		if (!ctl->force
 		    && wp->is_parttable
@@ -419,9 +422,8 @@ do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
 			warnx(_("%s: ignoring nested \"%s\" partition table "
 				"on non-whole disk device"), ctl->devname, wp->type);
 			need_force = 1;
-			continue;
+			goto done;
 		}
-
 
 		if (zap) {
 			if (backup)
@@ -429,7 +431,21 @@ do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
 			do_wipe_real(ctl, pr, wp);
 			if (wp->is_parttable)
 				reread = 1;
+			wiped = 1;
 		}
+	done:
+		if (!wiped) {
+			/* if the offset has not been wiped (probably because
+			 * filtered out by -t or -o) we need to hide it for
+			 * libblkid to try another magic string for the same
+			 * superblock, otherwise libblkid will continue with
+			 * another superblock. Don't forget that the same
+			 * superblock could be detected by more magic strings
+			 * */
+			blkid_probe_hide_range(pr, wp->offset, wp->len);
+			blkid_probe_step_back(pr);
+		}
+
 	}
 
 	for (w = wp0; w != NULL; w = w->next) {
