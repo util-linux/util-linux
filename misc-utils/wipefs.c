@@ -604,30 +604,26 @@ do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
 static void __attribute__((__noreturn__))
 usage(void)
 {
-	FILE *out = stdout;
 	size_t i;
 
-	fputs(USAGE_HEADER, out);
-	fprintf(out,
-	      _(" %s [options] <device>\n"), program_invocation_short_name);
+	fputs(USAGE_HEADER, stdout);
+	printf(_(" %s [options] <device>\n"), program_invocation_short_name);
 
-	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Wipe signatures from a device.\n"), out);
+	fputs(USAGE_SEPARATOR, stdout);
+	puts(_("Wipe signatures from a device."));
 
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all           wipe all magic strings (BE CAREFUL!)\n"
-		" -b, --backup        create a signature backup in $HOME\n"
-		" -f, --force         force erasure\n"
-		" -n, --no-act        do everything except the actual write() call\n"
-		" -o, --offset <num>  offset to erase, in bytes\n"
-		" -p, --parsable      print out in parsable instead of printable format\n"
-		" -q, --quiet         suppress output messages\n"
-		" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables\n"
-		), out);
-
-	fputs(_(" -J, --json          use JSON output format\n"), out);
-	fputs(_(" -n, --noheadings    don't print headings\n"), out);
-	fputs(_(" -o, --output <list> output columns\n"), out);
+	fputs(USAGE_OPTIONS, stdout);
+	puts(_(" -a, --all           wipe all magic strings (BE CAREFUL!)"));
+	puts(_(" -b, --backup        create a signature backup in $HOME"));
+	puts(_(" -f, --force         force erasure"));
+	puts(_(" -i, --noheadings    don't print headings"));
+	puts(_(" -J, --json          use JSON output format"));
+	puts(_(" -n, --no-act        do everything except the actual write() call"));
+	puts(_(" -o, --offset <num>  offset to erase, in bytes"));
+	puts(_(" -O, --output <list> COLUMNS to display (see below)"));
+	puts(_(" -p, --parsable      print out in parsable instead of printable format"));
+	puts(_(" -q, --quiet         suppress output messages"));
+	puts(_(" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables"));
 
 	print_usage_help_options(21);
 
@@ -635,7 +631,7 @@ usage(void)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(stdout, " %8s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("wipefs(8)"));
+	fprintf(stdout, USAGE_MAN_TAIL("wipefs(8)"));
 	exit(EXIT_SUCCESS);
 }
 
