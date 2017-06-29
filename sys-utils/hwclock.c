@@ -1225,10 +1225,11 @@ usage(const struct hwclock_control *ctl)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -u, --utc            inform hwclock the RTC timescale is UTC\n"), out);
 	fputs(_(" -l, --localtime      inform hwclock the RTC timescale is Local\n"), out);
-	fprintf(out, _(
 #ifdef __linux__
-		" -f, --rtc <file>     use an alternate file to %1$s\n"
+	printf(_(
+		" -f, --rtc <file>     use an alternate file to %1$s\n"), _PATH_RTC_DEV);
 #endif
+	printf(_(
 		"     --directisa      use the ISA bus instead of %1$s access\n"), _PATH_RTC_DEV);
 	fputs(_("     --date <time>    date/time input for --set and --predict\n"), out);
 #if defined(__linux__) && defined(__alpha__)
@@ -1457,10 +1458,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	argc -= optind;
-	argv += optind;
-
-	if (argc > 0) {
+	if (argc > optind) {
 		warnx(_("%d too many arguments given"), argc);
 		errtryhelp(EXIT_FAILURE);
 	}

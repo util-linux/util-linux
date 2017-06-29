@@ -38,16 +38,20 @@ static char pathbuf[PATH_MAX];
 static const char *
 path_vcreate(const char *path, va_list ap)
 {
-	if (prefixlen)
-		vsnprintf(pathbuf + prefixlen,
-			  sizeof(pathbuf) - prefixlen, path, ap);
-	else
-		vsnprintf(pathbuf, sizeof(pathbuf), path, ap);
+	int rc = vsnprintf(
+		pathbuf + prefixlen, sizeof(pathbuf) - prefixlen, path, ap);
+
+	if (rc < 0)
+		return NULL;
+	if ((size_t)rc >= sizeof(pathbuf)) {
+		errno = ENAMETOOLONG;
+		return NULL;
+	}
 	return pathbuf;
 }
 
-char *
-path_strdup(const char *path, ...)
+const char *
+path_get(const char *path, ...)
 {
 	const char *p;
 	va_list ap;
@@ -56,7 +60,7 @@ path_strdup(const char *path, ...)
 	p = path_vcreate(path, ap);
 	va_end(ap);
 
-	return p ? strdup(p) : NULL;
+	return p;
 }
 
 static FILE *
@@ -64,11 +68,18 @@ path_vfopen(const char *mode, int exit_on_error, const char *path, va_list ap)
 {
 	FILE *f;
 	const char *p = path_vcreate(path, ap);
+	if (!p)
+		goto err;
 
 	f = fopen(p, mode);
-	if (!f && exit_on_error)
-		err(EXIT_FAILURE, _("cannot open %s"), p);
+	if (!f)
+		goto err;
+
 	return f;
+err:
+	if (exit_on_error)
+		err(EXIT_FAILURE, _("cannot open %s"), p ? p : "path");
+	return NULL;
 }
 
 static int
@@ -76,11 +87,16 @@ path_vopen(int flags, const char *path, va_list ap)
 {
 	int fd;
 	const char *p = path_vcreate(path, ap);
+	if (!p)
+		goto err;
 
 	fd = open(p, flags);
 	if (fd == -1)
-		err(EXIT_FAILURE, _("cannot open %s"), p);
+		goto err;
+
 	return fd;
+err:
+	err(EXIT_FAILURE, _("cannot open %s"), p ? p : "path");
 }
 
 FILE *
@@ -181,7 +197,7 @@ path_exist(const char *path, ...)
 	p = path_vcreate(path, ap);
 	va_end(ap);
 
-	return access(p, F_OK) == 0;
+	return p && access(p, F_OK) == 0;
 }
 
 #ifdef HAVE_CPU_SET_T
@@ -244,12 +260,18 @@ path_read_cpulist(int maxcpus, const char *path, ...)
 	return set;
 }
 
-void
+int
 path_set_prefix(const char *prefix)
 {
-	prefixlen = strlen(prefix);
-	strncpy(pathbuf, prefix, sizeof(pathbuf));
-	pathbuf[sizeof(pathbuf) - 1] = '\0';
+	size_t len = strlen(prefix);
+
+	if (len >= sizeof(pathbuf) - 1) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+	prefixlen = len;
+	strcpy(pathbuf, prefix);
+	return 0;
 }
 
 #endif /* HAVE_CPU_SET_T */

@@ -1430,37 +1430,36 @@ read_nodes(struct lscpu_desc *desc)
 	int i = 0;
 	DIR *dir;
 	struct dirent *d;
-	char *path;
+	const char *path;
+
+	desc->nnodes = 0;
 
 	/* number of NUMA node */
-	path = path_strdup(_PATH_SYS_NODE);
-	dir = opendir(path);
-	free(path);
-
-	while (dir && (d = readdir(dir))) {
+	if (!(path = path_get(_PATH_SYS_NODE)))
+		return;
+	if (!(dir = opendir(path)))
+		return;
+	while ((d = readdir(dir))) {
 		if (is_node_dirent(d))
 			desc->nnodes++;
 	}
 
 	if (!desc->nnodes) {
-		if (dir)
-			closedir(dir);
+		closedir(dir);
 		return;
 	}
 
 	desc->nodemaps = xcalloc(desc->nnodes, sizeof(cpu_set_t *));
 	desc->idx2nodenum = xmalloc(desc->nnodes * sizeof(int));
 
-	if (dir) {
-		rewinddir(dir);
-		while ((d = readdir(dir)) && i < desc->nnodes) {
-			if (is_node_dirent(d))
-				desc->idx2nodenum[i++] = strtol_or_err(((d->d_name) + 4),
-							_("Failed to extract the node number"));
-		}
-		closedir(dir);
-		qsort(desc->idx2nodenum, desc->nnodes, sizeof(int), nodecmp);
+	rewinddir(dir);
+	while ((d = readdir(dir)) && i < desc->nnodes) {
+		if (is_node_dirent(d))
+			desc->idx2nodenum[i++] = strtol_or_err(((d->d_name) + 4),
+						_("Failed to extract the node number"));
 	}
+	closedir(dir);
+	qsort(desc->idx2nodenum, desc->nnodes, sizeof(int), nodecmp);
 
 	/* information about how nodes share different CPUs */
 	for (i = 0; i < desc->nnodes; i++)
@@ -2148,7 +2147,8 @@ int main(int argc, char *argv[])
 			mod->mode = c == 'p' ? OUTPUT_PARSABLE : OUTPUT_READABLE;
 			break;
 		case 's':
-			path_set_prefix(optarg);
+			if(path_set_prefix(optarg))
+				err(EXIT_FAILURE, _("invalid argument to %s"), "--sysroot");
 			mod->system = SYSTEM_SNAPSHOT;
 			break;
 		case 'x':
