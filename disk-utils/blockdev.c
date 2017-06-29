@@ -212,7 +212,7 @@ static void __attribute__((__noreturn__)) usage(void)
 				_(bdcms[i].help));
 	}
 
-	printf(USAGE_MAN_TAIL("blockdev(1)"));
+	printf(USAGE_MAN_TAIL("blockdev(8)"));
 	exit(EXIT_SUCCESS);
 }
 
