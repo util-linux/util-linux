@@ -50,7 +50,7 @@ Why:    udevd links libblkid directly; the 'list' is unnecessary, use lsblk(8)
 --------------------------
 
 What:   line(1) command
-Why:    useless, nobody uses this command, head(1) is better
+Why:    use the read(1) command
 
 --------------------------
 
