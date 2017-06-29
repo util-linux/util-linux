@@ -179,7 +179,7 @@ static int has_cap(enum cap_type which, unsigned int i)
 	case CAP_TYPE_BOUNDING:
 	case CAP_TYPE_INHERITABLE:
 	case CAP_TYPE_PERMITTED:
-		return capng_have_capability(which, i);
+		return capng_have_capability((capng_type_t)which, i);
 	case CAP_TYPE_AMBIENT:
 		return prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_IS_SET,
 				(unsigned long) i, 0UL, 0UL);
