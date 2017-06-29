@@ -50,9 +50,9 @@ Calling ioctl() to re-read partition table.
 Syncing disks.
 
 =====Check content (disk)================================
-offset               type
-----------------------------------------------------------------
-0x200                gpt   [partition table]
-
+DEVICE OFFSET    TYPE UUID LABEL
+sdc    0x1fe     PMBR      
+sdc    0x31ffe00 gpt       
+sdc    0x200     gpt       
 
 =====Check content (partition)================================
