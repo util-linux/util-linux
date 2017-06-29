@@ -258,7 +258,10 @@ static void print_output(struct control const *const ctrl, int argc,
 	if (!tb)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
 
-	scols_table_enable_json(tb, ctrl->json);
+	if (ctrl->json) {
+		scols_table_enable_json(tb, 1);
+		scols_table_set_name(tb, "uuids");
+	}
 	scols_table_enable_noheadings(tb, ctrl->no_headings);
 	scols_table_enable_raw(tb, ctrl->raw);
 
