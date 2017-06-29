@@ -1161,6 +1161,7 @@ AM_CONDITIONAL([BUILD_FINDFS], [test "x$build_findfs" = xyes])
 
 UL_BUILD_INIT([wipefs], [check])
 UL_REQUIRES_BUILD([wipefs], [libblkid])
+UL_REQUIRES_BUILD([wipefs], [libsmartcols])
 AM_CONDITIONAL([BUILD_WIPEFS], [test "x$build_wipefs" = xyes])
 
 UL_BUILD_INIT([findmnt], [check])

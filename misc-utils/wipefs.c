@@ -32,6 +32,7 @@
 #include <libgen.h>
 
 #include <blkid.h>
+#include <libsmartcols.h>
 
 #include "nls.h"
 #include "xalloc.h"
@@ -65,68 +66,195 @@ struct wipe_control {
 	const char	*devname;
 	const char	*type_pattern;
 
+	struct libscols_table *outtab;
+
 	unsigned int	noact : 1,
 			all : 1,
 			quiet : 1,
 			backup : 1,
 			force : 1,
+			json : 1,
+			no_headings : 1,
 			parsable : 1;
 };
 
-static void
-print_pretty(struct wipe_desc *wp, int line)
+
+/* column IDs */
+enum {
+	COL_UUID = 0,
+	COL_LABEL,
+	COL_LEN,
+	COL_TYPE,
+	COL_OFFSET,
+	COL_USAGE,
+	COL_DEVICE
+};
+
+/* column names */
+struct colinfo {
+	const char *name;	/* header */
+	double whint;		/* width hint (N < 1 is in percent of termwidth) */
+	int flags;		/* SCOLS_FL_* */
+	const char *help;
+};
+
+/* columns descriptions */
+static const struct colinfo infos[] = {
+	[COL_UUID]    = {"UUID",     4, 0, N_("partition/filesystem UUID")},
+	[COL_LABEL]   = {"LABEL",    5, 0, N_("filesystem LABEL")},
+	[COL_LEN]     = {"LENGTH",   6, 0, N_("magic string length")},
+	[COL_TYPE]    = {"TYPE",     4, 0, N_("superblok type")},
+	[COL_OFFSET]  = {"OFFSET",   5, 0, N_("magic string offset")},
+	[COL_USAGE]   = {"USAGE",    5, 0, N_("type description")},
+	[COL_DEVICE]  = {"DEVICE",   5, 0, N_("block device name")}
+};
+
+static int columns[ARRAY_SIZE(infos) * 2];
+static size_t ncolumns;
+
+static int column_name_to_id(const char *name, size_t namesz)
 {
-	if (!line) {
-		printf("offset               type\n");
-		printf("----------------------------------------------------------------\n");
+	size_t i;
+
+	assert(name);
+
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
+		const char *cn = infos[i].name;
+		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+			return i;
 	}
-
-	printf("0x%-17jx  %s   [%s]", (intmax_t)wp->offset, wp->type, _(wp->usage));
-
-	if (wp->label && *wp->label)
-		printf("\n%27s %s", "LABEL:", wp->label);
-	if (wp->uuid)
-		printf("\n%27s %s", "UUID: ", wp->uuid);
-	puts("\n");
+	warnx(_("unknown column: %s"), name);
+	return -1;
 }
 
-static void
-print_parsable(struct wipe_desc *wp, int line)
+static int get_column_id(size_t num)
 {
-	char enc[256];
-
-	if (!line)
-		printf("# offset,uuid,label,type\n");
-
-	printf("0x%jx,", (intmax_t)wp->offset);
-
-	if (wp->uuid) {
-		blkid_encode_string(wp->uuid, enc, sizeof(enc));
-		printf("%s,", enc);
-	} else
-		fputc(',', stdout);
-
-	if (wp->label) {
-		blkid_encode_string(wp->label, enc, sizeof(enc));
-		printf("%s,", enc);
-	} else
-		fputc(',', stdout);
-
-	blkid_encode_string(wp->type, enc, sizeof(enc));
-	printf("%s\n", enc);
+	assert(num < ncolumns);
+	assert(columns[num] < (int)ARRAY_SIZE(infos));
+	return columns[num];
 }
 
-static void
-print_all(struct wipe_control *ctl, struct wipe_desc *wp)
+static const struct colinfo *get_column_info(int num)
 {
-	int n = 0;
+	return &infos[get_column_id(num)];
+}
 
-	for (/*nothing*/; wp; wp = wp->next) {
-		if (ctl->parsable)
-			print_parsable(wp, n++);
-		else
-			print_pretty(wp, n++);
+
+static void init_output(struct wipe_control *ctl)
+{
+	struct libscols_table *tb;
+	size_t i;
+
+	scols_init_debug(0);
+	tb = scols_new_table();
+	if (!tb)
+		err(EXIT_FAILURE, _("failed to allocate output table"));
+
+	if (ctl->json) {
+		scols_table_enable_json(tb, 1);
+		scols_table_set_name(tb, "signatures");
 	}
+	scols_table_enable_noheadings(tb, ctl->no_headings);
+
+	if (ctl->parsable) {
+		scols_table_enable_raw(tb, 1);
+		scols_table_set_column_separator(tb, ",");
+	}
+
+	for (i = 0; i < ncolumns; i++) {
+		const struct colinfo *col = get_column_info(i);
+
+		if (!scols_table_new_column(tb, col->name, col->whint,
+					    col->flags))
+			err(EXIT_FAILURE,
+			    _("failed to initialize output column"));
+	}
+	ctl->outtab = tb;
+}
+
+static void finalize_output(struct wipe_control *ctl)
+{
+	if (ctl->parsable && !ctl->no_headings
+	    && !scols_table_is_empty(ctl->outtab)) {
+		struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
+		struct libscols_column *cl;
+		int i = 0;
+
+		if (!itr)
+			err_oom();
+
+		fputs("# ", stdout);
+		while (scols_table_next_column(ctl->outtab, itr, &cl) == 0) {
+			struct libscols_cell *hdr = scols_column_get_header(cl);
+			const char *name = scols_cell_get_data(hdr);
+
+			if (i)
+				fputc(',', stdout);
+			fputs(name, stdout);
+			i++;
+		}
+		fputc('\n', stdout);
+		scols_free_iter(itr);
+	}
+	scols_print_table(ctl->outtab);
+	scols_unref_table(ctl->outtab);
+}
+
+static void fill_table_row(struct wipe_control *ctl, struct wipe_desc *wp)
+{
+	static struct libscols_line *ln;
+	size_t i;
+
+	ln = scols_table_new_line(ctl->outtab, NULL);
+	if (!ln)
+		errx(EXIT_FAILURE, _("failed to allocate output line"));
+
+	for (i = 0; i < ncolumns; i++) {
+		char *str = NULL;
+
+		switch (get_column_id(i)) {
+		case COL_UUID:
+			if (wp->uuid)
+				str = xstrdup(wp->uuid);
+			break;
+		case COL_LABEL:
+			if (wp->label)
+				str = xstrdup(wp->label);
+			break;
+		case COL_OFFSET:
+			xasprintf(&str, "0x%jx", (intmax_t)wp->offset);
+			break;
+		case COL_LEN:
+			xasprintf(&str, "%zu", wp->len);
+			break;
+		case COL_USAGE:
+			if (wp->usage)
+				str = xstrdup(wp->usage);
+			break;
+		case COL_TYPE:
+			if (wp->type)
+				str = xstrdup(wp->type);
+			break;
+		case COL_DEVICE:
+			if (ctl->devname) {
+				char *dev = xstrdup(ctl->devname);
+				str = xstrdup(basename(dev));
+				free(dev);
+			}
+			break;
+		default:
+			abort();
+		}
+
+		if (str && scols_line_refer_data(ln, i, str))
+			errx(EXIT_FAILURE, _("failed to add output data"));
+	}
+}
+
+static void add_to_output(struct wipe_control *ctl, struct wipe_desc *wp)
+{
+	for (/*nothing*/; wp; wp = wp->next)
+		fill_table_row(ctl, wp);
 }
 
 static struct wipe_desc *
@@ -186,7 +314,7 @@ get_desc_for_probe(struct wipe_control *ctl, struct wipe_desc *wp, blkid_probe p
 			rc = blkid_probe_lookup_value(pr, "PTMAGIC", &mag, &len);
 		if (rc)
 			return wp;
-		usage = N_("partition table");
+		usage = N_("partition-table");
 		ispt = 1;
 	} else
 		return wp;
@@ -477,6 +605,8 @@ static void __attribute__((__noreturn__))
 usage(void)
 {
 	FILE *out = stdout;
+	size_t i;
+
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <device>\n"), program_invocation_short_name);
@@ -494,7 +624,16 @@ usage(void)
 		" -q, --quiet         suppress output messages\n"
 		" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables\n"
 		), out);
+
+	fputs(_(" -J, --json          use JSON output format\n"), out);
+	fputs(_(" -n, --noheadings    don't print headings\n"), out);
+	fputs(_(" -o, --output <list> output columns\n"), out);
+
 	print_usage_help_options(21);
+
+	fputs(USAGE_COLUMNS, stdout);
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
+		fprintf(stdout, " %8s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("wipefs(8)"));
 	exit(EXIT_SUCCESS);
@@ -507,6 +646,7 @@ main(int argc, char **argv)
 	struct wipe_control ctl = { .devname = NULL };
 	struct wipe_desc *wp0 = NULL;
 	int c, noffsets = 0;
+	char *outarg = NULL;
 
 	static const struct option longopts[] = {
 	    { "all",       no_argument,       NULL, 'a' },
@@ -519,11 +659,14 @@ main(int argc, char **argv)
 	    { "quiet",     no_argument,       NULL, 'q' },
 	    { "types",     required_argument, NULL, 't' },
 	    { "version",   no_argument,       NULL, 'V' },
+	    { "json",      no_argument,       NULL, 'J'},
+	    { "noheadings",no_argument,       NULL, 'i'},
+	    { "output",    required_argument, NULL, 'O'},
 	    { NULL,        0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
-		{ 'a','o' },
+		{ 'O','a','o' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -533,7 +676,7 @@ main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "abfhno:pqt:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "abfhiJnO:o:pqt:V", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -550,6 +693,15 @@ main(int argc, char **argv)
 		case 'h':
 			usage();
 			break;
+		case 'J':
+			ctl.json = 1;
+			break;
+		case 'i':
+			ctl.no_headings = 1;
+			break;
+		case 'O':
+			outarg = optarg;
+			break;
 		case 'n':
 			ctl.noact = 1;
 			break;
@@ -560,6 +712,7 @@ main(int argc, char **argv)
 			break;
 		case 'p':
 			ctl.parsable = 1;
+			ctl.no_headings = 1;
 			break;
 		case 'q':
 			ctl.quiet = 1;
@@ -588,14 +741,36 @@ main(int argc, char **argv)
 		/*
 		 * Print only
 		 */
+		if (ctl.parsable) {
+			/* keep it backward compatible */
+			columns[ncolumns++] = COL_OFFSET;
+			columns[ncolumns++] = COL_UUID;
+			columns[ncolumns++] = COL_LABEL;
+			columns[ncolumns++] = COL_TYPE;
+		} else {
+			/* default, may be modified by -O <list> */
+			columns[ncolumns++] = COL_DEVICE;
+			columns[ncolumns++] = COL_OFFSET;
+			columns[ncolumns++] = COL_TYPE;
+			columns[ncolumns++] = COL_UUID;
+			columns[ncolumns++] = COL_LABEL;
+		}
+
+		if (outarg
+		    && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+					     &ncolumns, column_name_to_id) < 0)
+			return EXIT_FAILURE;
+
+		init_output(&ctl);
 
 		while (optind < argc) {
 			ctl.devname = argv[optind++];
 			wp0 = read_offsets(&ctl, NULL);
 			if (wp0)
-				print_all(&ctl, wp0);
+				add_to_output(&ctl, wp0);
 			free_wipe(wp0);
 		}
+		finalize_output(&ctl);
 	} else {
 		/*
 		 * Erase

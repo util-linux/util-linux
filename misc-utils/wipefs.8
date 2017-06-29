@@ -6,9 +6,18 @@
 wipefs \- wipe a signature from a device
 .SH SYNOPSIS
 .B wipefs
-.RB [ \-ahnpqtV ]
-.RB [ \-o
-.IR offset ]
+.RB [ options ]
+.IR device ...
+.sp
+.B wipefs
+.RB [ \-\-backup ]
+.RB  \-o
+.IR offset
+.IR device ...
+.sp
+.B wipefs
+.RB [ \-\-backup ]
+.RB \-a
 .IR device ...
 .SH DESCRIPTION
 .B wipefs
@@ -19,8 +28,13 @@ to make the signatures invisible for libblkid.
 .B wipefs
 does not erase the filesystem itself nor any other data from the device.
 
-When used without any options, \fBwipefs\fR lists all visible filesystems
-and the offsets of their basic signatures.
+When used without any options, wipefs lists all visible filesystems and the
+offsets of their basic signatures.  The default output is subject to change.
+So whenever possible, you should avoid using default outputs in your scripts.
+Always explicitly define expected columns by using
+.B \-\-output
+.I columns-list
+in environments where a stable output is required.
 
 .B wipefs
 calls the BLKRRPART ioctl when it has erased a partition-table signature
@@ -59,6 +73,16 @@ order to erase a partition-table signature on a block device.
 .BR \-h , " \-\-help"
 Display help text and exit.
 .TP
+.BR \-J , " \-\-json"
+Use JSON output format.
+.TP
+.BR \-n , " \-\-noheadings"
+Do not print a header line.
+.TP
+.BR \-O , " \-\-output " \fIlist\fP
+Specify which output columns to print.  Use \-\-help to
+get a list of all supported columns.
+.TP
 .BR -n , " \-\-no\-act"
 Causes everything to be done except for the write() call.
 .TP
@@ -88,6 +112,9 @@ taken.  For more details see mount(8).
 .BR -V , " \-\-version"
 Display version information and exit.
 .SH EXAMPLES
+.TP
+.BR "wipefs /dev/sda*"
+Prints infomation about sda and all partitions on sda.
 .TP
 .BR "wipefs --all --backup /dev/sdb"
 Erases all signatures from the device /dev/sdb and creates a signature backup

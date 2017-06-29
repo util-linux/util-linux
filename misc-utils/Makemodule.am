@@ -152,8 +152,8 @@ if BUILD_WIPEFS
 sbin_PROGRAMS += wipefs
 dist_man_MANS += misc-utils/wipefs.8
 wipefs_SOURCES = misc-utils/wipefs.c
-wipefs_LDADD = $(LDADD) libblkid.la libcommon.la
-wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+wipefs_LDADD = $(LDADD) libblkid.la libcommon.la libsmartcols.la
+wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libsmartcols_incdir)
 endif
 
 if BUILD_FINDMNT
