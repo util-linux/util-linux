@@ -159,14 +159,22 @@ static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, w
 	wchar_t *result = NULL;
 
 	if (greedy)
+#ifdef HAVE_WIDECHAR
 		return wcstok(p, separator, state);
+#else
+		return strtok_r(p, separator, state);
+#endif
 	if (!p) {
 		if (!*state || !**state)
 			return NULL;
 		p = *state;
 	}
 	result = p;
+#ifdef HAVE_WIDECHAR
 	p = wcspbrk(result, separator);
+#else
+	p = strpbrk(result, separator);
+#endif
 	if (!p)
 		*state = NULL;
 	else {
