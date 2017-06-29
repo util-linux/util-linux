@@ -52,5 +52,5 @@ Device     Boot Start    End Sectors Size Id Type
 The partition table has been altered.
 
 =====Check content================================
-DEVICE OFFSET TYPE UUID LABEL
-sdc    0x1fe  dos       
+OFFSET TYPE
+0x1fe  dos

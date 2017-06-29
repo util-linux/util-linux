@@ -41,7 +41,7 @@ echo ',,L' | $TS_CMD_SFDISK $SFDISK_OPTS --wipe=always --label=dos ${TS_DEVICE} 
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_separator "Check content"
-$TS_CMD_WIPEFS ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_WIPEFS -O OFFSET,TYPE ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
@@ -57,7 +57,7 @@ echo ',,L' | $TS_CMD_SFDISK $SFDISK_OPTS --label=dos ${TS_DEVICE} >> $TS_OUTPUT 
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_separator "Check content"
-$TS_CMD_WIPEFS ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_WIPEFS -O OFFSET,TYPE ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
@@ -72,7 +72,7 @@ echo ',,L' | $TS_CMD_SFDISK $SFDISK_OPTS --wipe=always  --label=dos ${TS_DEVICE}
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_separator "Check content"
-$TS_CMD_WIPEFS ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_WIPEFS -O OFFSET,TYPE ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
@@ -92,10 +92,10 @@ ts_separator "Create GPT (again)"
 echo ',,L' | $TS_CMD_SFDISK --no-reread --wipe-partition=always --label=gpt ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 udevadm settle
 ts_separator "Check content (disk)"
-$TS_CMD_WIPEFS ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_WIPEFS -O OFFSET,TYPE ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 udevadm settle
 ts_separator "Check content (partition)"
-$TS_CMD_WIPEFS ${TS_DEVICE}1 >> $TS_OUTPUT 2>&1
+$TS_CMD_WIPEFS -O OFFSET,TYPE ${TS_DEVICE}1 >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
