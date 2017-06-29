@@ -543,10 +543,10 @@ static int exec_helper(struct libmnt_context *cxt)
 		int i = 0;
 
 		if (setgid(getgid()) < 0)
-			exit(EXIT_FAILURE);
+			_exit(EXIT_FAILURE);
 
 		if (setuid(getuid()) < 0)
-			exit(EXIT_FAILURE);
+			_exit(EXIT_FAILURE);
 
 		type = mnt_fs_get_fstype(cxt->fs);
 
@@ -576,7 +576,7 @@ static int exec_helper(struct libmnt_context *cxt)
 							i, args[i]));
 		DBG_FLUSH;
 		execv(cxt->helper, (char * const *) args);
-		exit(EXIT_FAILURE);
+		_exit(EXIT_FAILURE);
 	}
 	default:
 	{

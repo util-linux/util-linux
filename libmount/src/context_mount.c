@@ -597,10 +597,10 @@ static int exec_helper(struct libmnt_context *cxt)
 		int i = 0;
 
 		if (setgid(getgid()) < 0)
-			exit(EXIT_FAILURE);
+			_exit(EXIT_FAILURE);
 
 		if (setuid(getuid()) < 0)
-			exit(EXIT_FAILURE);
+			_exit(EXIT_FAILURE);
 
 		type = mnt_fs_get_fstype(cxt->fs);
 
@@ -632,7 +632,7 @@ static int exec_helper(struct libmnt_context *cxt)
 							i, args[i]));
 		DBG_FLUSH;
 		execv(cxt->helper, (char * const *) args);
-		exit(EXIT_FAILURE);
+		_exit(EXIT_FAILURE);
 	}
 	default:
 	{
@@ -1244,7 +1244,7 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	if (mnt_context_is_child(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "next-mount: child exit [rc=%d]", rc));
 		DBG_FLUSH;
-		exit(rc);
+		_exit(rc);
 	}
 	return 0;
 }
