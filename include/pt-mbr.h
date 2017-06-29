@@ -177,7 +177,7 @@ enum {
 	MBR_DOS_SECONDARY_PARTITION	= 0xf2, /* DOS 3.3+ secondary */
 	MBR_VMWARE_VMFS_PARTITION	= 0xfb,
 	MBR_VMWARE_VMKCORE_PARTITION	= 0xfc, /* VMware kernel dump partition */
-	MBR_LINUX_RAID_PARTITION	= 0xfd, /* New (2.2.x) raid partition with autodetect using persistent superblock */
+	MBR_LINUX_RAID_PARTITION	= 0xfd, /* Linux raid partition with autodetect using persistent superblock */
 	MBR_LANSTEP_PARTITION		= 0xfe, /* SpeedStor >1024 cyl. or LANstep */
 	MBR_XENIX_BBT_PARTITION		= 0xff, /* Xenix Bad Block Table */
 };

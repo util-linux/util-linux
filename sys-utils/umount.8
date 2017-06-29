@@ -105,8 +105,7 @@ that were unmounted earlier with the
 option.
 .TP
 .BR \-f , " \-\-force"
-Force an unmount (in case of an unreachable NFS system).  (Requires kernel
-2.1.116 or later.)
+Force an unmount (in case of an unreachable NFS system).
 
 Note that this option does not guarantee that umount command does not hang.
 It's strongly recommended to use absolute paths without symlinks to avoid
@@ -119,7 +118,7 @@ By default such a helper program is called if it exists.
 .BR \-l , " \-\-lazy"
 Lazy unmount.  Detach the filesystem from the file hierarchy now,
 and clean up all references to this filesystem as soon as it is not busy
-anymore.  (Requires kernel 2.4.11 or later.)
+anymore.
 .TP
 .BR \-n , " \-\-no\-mtab"
 Unmount without writing in
