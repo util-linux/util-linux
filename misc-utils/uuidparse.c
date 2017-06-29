@@ -99,12 +99,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(stdout, _(" %s [options] <uuid ...>\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, stdout);
-	fputs(_(" -J, --json             use JSON output format\n"), stdout);
-	fputs(_(" -n, --noheadings       don't print headings\n"), stdout);
-	fputs(_(" -o, --output <list>    define which output columns to use\n"), stdout);
-	fputs(_(" -r, --raw              use the raw output format\n"), stdout);
-
-	fputs(USAGE_SEPARATOR, stdout);
+	puts(_(" -J, --json             use JSON output format"));
+	puts(_(" -n, --noheadings       don't print headings"));
+	puts(_(" -o, --output <list>    COLUMNS to display (see below)"));
+	puts(_(" -r, --raw              use the raw output format"));
 	print_usage_help_options(24);
 
 	fputs(USAGE_COLUMNS, stdout);
