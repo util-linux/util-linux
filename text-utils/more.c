@@ -249,7 +249,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	printf( "     --help     %s\n", USAGE_OPTSTR_HELP);
 	printf( " -V, --version  %s\n", USAGE_OPTSTR_VERSION);
-	fprintf(out, USAGE_MAN_TAIL("more(1)"));
+	printf(USAGE_MAN_TAIL("more(1)"));
 	exit(EXIT_SUCCESS);
 }
 

@@ -76,8 +76,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --mode <mode>        permission for the resource (default is 0644)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(26);
-	fprintf(out, USAGE_MAN_TAIL("ipcmk(1)"));
+	printf(USAGE_HELP_OPTIONS(26));
+	printf(USAGE_MAN_TAIL("ipcmk(1)"));
 
 	exit(EXIT_SUCCESS);
 }

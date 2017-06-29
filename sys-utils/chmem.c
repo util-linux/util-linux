@@ -249,9 +249,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --blocks   use memory blocks\n"), out);
 	fputs(_(" -v, --verbose  verbose output\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(16);
+	printf(USAGE_HELP_OPTIONS(16));
 
-	fprintf(out, USAGE_MAN_TAIL("chmem(8)"));
+	printf(USAGE_MAN_TAIL("chmem(8)"));
 
 	exit(EXIT_SUCCESS);
 }

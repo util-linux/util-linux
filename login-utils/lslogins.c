@@ -1253,13 +1253,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --wtmp-file <path>   set an alternate path for wtmp\n"), out);
 	fputs(_("     --btmp-file <path>   set an alternate path for btmp\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(26);
+	printf(USAGE_HELP_OPTIONS(26));
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("lslogins(1)"));
+	printf(USAGE_MAN_TAIL("lslogins(1)"));
 
 	exit(EXIT_SUCCESS);
 }

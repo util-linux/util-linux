@@ -139,10 +139,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --apparmor-profile <pr>     set AppArmor profile\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(29);
+	printf(USAGE_HELP_OPTIONS(29));
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" This tool can be dangerous.  Read the manpage, and be careful.\n"), out);
-	fprintf(out, USAGE_MAN_TAIL("setpriv(1)"));
+	printf(USAGE_MAN_TAIL("setpriv(1)"));
 
 	exit(EXIT_SUCCESS);
 }

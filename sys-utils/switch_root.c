@@ -209,8 +209,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Switch to another filesystem as the root of the mount tree.\n"), output);
 
 	fputs(USAGE_OPTIONS, output);
-	print_usage_help_options(16);
-	fprintf(output, USAGE_MAN_TAIL("switch_root(8)"));
+	printf(USAGE_HELP_OPTIONS(16));
+	printf(USAGE_MAN_TAIL("switch_root(8)"));
 
 	exit(EXIT_SUCCESS);
 }

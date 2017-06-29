@@ -30,9 +30,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Politely refuse a login.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	print_usage_help_options(16);
+	printf(USAGE_HELP_OPTIONS(16));
 
-	fprintf(out, USAGE_MAN_TAIL("nologin(8)"));
+	printf(USAGE_MAN_TAIL("nologin(8)"));
 	exit(EXIT_FAILURE);
 }
 

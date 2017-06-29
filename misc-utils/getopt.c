@@ -346,7 +346,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --test                    test for getopt(1) version\n"), stdout);
 	fputs(_(" -u, --unquoted                do not quote the output\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
-	print_usage_help_options(31);
+	printf(USAGE_HELP_OPTIONS(31));
 	printf(USAGE_MAN_TAIL("getopt(1)"));
 	exit(EXIT_SUCCESS);
 }

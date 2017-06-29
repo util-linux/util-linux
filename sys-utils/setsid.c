@@ -40,9 +40,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --ctty     set the controlling terminal to the current one\n"), out);
 	fputs(_(" -w, --wait     wait program to exit, and use the same return\n"), out);
 
-	print_usage_help_options(16);
+	printf(USAGE_HELP_OPTIONS(16));
 
-	fprintf(out, USAGE_MAN_TAIL("setsid(1)"));
+	printf(USAGE_MAN_TAIL("setsid(1)"));
 	exit(EXIT_SUCCESS);
 }
 

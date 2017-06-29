@@ -62,7 +62,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -p, --pid               operate on existing given pid\n"
 		" -c, --cpu-list          display and specify cpus in list format\n"
 		));
-	print_usage_help_options(25);
+	printf(USAGE_HELP_OPTIONS(25));
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, _(
@@ -78,7 +78,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"    e.g. 0-31:2 is equivalent to mask 0x55555555\n"),
 		program_invocation_short_name);
 
-	fprintf(out, USAGE_MAN_TAIL("taskset(1)"));
+	printf(USAGE_MAN_TAIL("taskset(1)"));
 	exit(EXIT_SUCCESS);
 }
 

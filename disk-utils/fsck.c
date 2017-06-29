@@ -1398,7 +1398,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf( "     --version  %s\n", USAGE_OPTSTR_VERSION);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("See the specific fsck.* commands for available fs-options."), out);
-	fprintf(out, USAGE_MAN_TAIL("fsck(8)"));
+	printf(USAGE_MAN_TAIL("fsck(8)"));
 	exit(FSCK_EX_OK);
 }
 

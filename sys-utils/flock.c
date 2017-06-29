@@ -70,7 +70,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(  " -F, --no-fork            execute command without forking\n"), stdout);
 	fputs(_(  "     --verbose            increase verbosity\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
-	print_usage_help_options(26);
+	printf(USAGE_HELP_OPTIONS(26));
 	printf(USAGE_MAN_TAIL("flock(1)"));
 	exit(EXIT_SUCCESS);
 }

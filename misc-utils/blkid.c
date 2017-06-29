@@ -103,8 +103,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(	" -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(28);
-	fprintf(out, USAGE_MAN_TAIL("blkid(8)"));
+	printf(USAGE_HELP_OPTIONS(28));
+	printf(USAGE_MAN_TAIL("blkid(8)"));
 	exit(EXIT_SUCCESS);
 }
 

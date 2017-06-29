@@ -85,9 +85,9 @@ static void __attribute__((__noreturn__)) usage(void)
 		       " -c                  this option is silently ignored\n"
 		       " -l                  this option is silently ignored\n"
 		       ));
-	print_usage_help_options(21);
+	printf(USAGE_HELP_OPTIONS(21));
 
-	fprintf(out, USAGE_MAN_TAIL("mkfs.bfs(8)"));
+	printf(USAGE_MAN_TAIL("mkfs.bfs(8)"));
 	exit(EXIT_SUCCESS);
 }
 

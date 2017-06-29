@@ -172,9 +172,9 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -q, --quiet             be quiet\n"
 		" -t, --timing[=<file>]   output timing data to stderr (or to FILE)\n"
 		), out);
-	print_usage_help_options(25);
+	printf(USAGE_HELP_OPTIONS(25));
 
-	fprintf(out, USAGE_MAN_TAIL("script(1)"));
+	printf(USAGE_MAN_TAIL("script(1)"));
 	exit(EXIT_SUCCESS);
 }
 

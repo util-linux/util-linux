@@ -387,13 +387,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --summary[=when] print summary information (never,always or only)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(22);
+	printf(USAGE_HELP_OPTIONS(22));
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
 		fprintf(out, " %10s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("lsmem(1)"));
+	printf(USAGE_MAN_TAIL("lsmem(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

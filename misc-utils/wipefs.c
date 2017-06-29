@@ -625,13 +625,13 @@ usage(void)
 	puts(_(" -q, --quiet         suppress output messages"));
 	puts(_(" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables"));
 
-	print_usage_help_options(21);
+	printf(USAGE_HELP_OPTIONS(21));
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(stdout, " %8s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(stdout, USAGE_MAN_TAIL("wipefs(8)"));
+	printf(USAGE_MAN_TAIL("wipefs(8)"));
 	exit(EXIT_SUCCESS);
 }
 

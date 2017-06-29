@@ -2065,13 +2065,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
 	fputs(_(" -y, --physical          print physical instead of logical IDs\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(25);
+	printf(USAGE_HELP_OPTIONS(25));
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
 		fprintf(out, " %13s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("lscpu(1)"));
+	printf(USAGE_MAN_TAIL("lscpu(1)"));
 
 	exit(EXIT_SUCCESS);
 }

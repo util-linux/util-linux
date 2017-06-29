@@ -426,7 +426,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	" -w, --rw, --read-write  mount the filesystem read-write (default)\n"));
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(25);
+	printf(USAGE_HELP_OPTIONS(25));
 
 	fprintf(out, _(
 	"\nSource:\n"
@@ -458,7 +458,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	" --make-rprivate         recursively mark a whole subtree as private\n"
 	" --make-runbindable      recursively mark a whole subtree as unbindable\n"));
 
-	fprintf(out, USAGE_MAN_TAIL("mount(8)"));
+	printf(USAGE_MAN_TAIL("mount(8)"));
 
 	exit(MNT_EX_SUCCESS);
 }

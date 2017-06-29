@@ -106,7 +106,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, fp);
 	printf( " -u, --help                   %s\n", USAGE_OPTSTR_HELP);
 	printf( " -v, --version                %s\n", USAGE_OPTSTR_VERSION);
-	fprintf(fp, USAGE_MAN_TAIL("chfn(1)"));
+	printf(USAGE_MAN_TAIL("chfn(1)"));
 	exit(EXIT_SUCCESS);
 }
 

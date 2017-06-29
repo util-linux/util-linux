@@ -55,9 +55,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, _("     <size>         number of blocks to be used on the device\n"));
 	fprintf(out, _(" -V, --verbose      explain what is being done;\n"
 		       "                      specifying -V more than once will cause a dry-run\n"));
-	print_usage_help_options(20);
+	printf(USAGE_HELP_OPTIONS(20));
 
-	fprintf(out, USAGE_MAN_TAIL("mkfs(8)"));
+	printf(USAGE_MAN_TAIL("mkfs(8)"));
 	exit(EXIT_SUCCESS);
 }
 

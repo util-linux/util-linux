@@ -773,13 +773,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(22);
+	printf(USAGE_HELP_OPTIONS(22));
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < NCOLS; i++)
 		fprintf(out, " %10s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("partx(8)"));
+	printf(USAGE_MAN_TAIL("partx(8)"));
 
 	exit(EXIT_SUCCESS);
 }

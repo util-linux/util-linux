@@ -190,7 +190,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -x, --flags-only       print only flags table (same as -I -T)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(24);
+	printf(USAGE_HELP_OPTIONS(24));
 	fputs(USAGE_SEPARATOR, out);
 
 	fprintf(out, _("The default device is %s.\n"), _PATH_WATCHDOG_DEV);
@@ -199,7 +199,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %13s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("wdctl(8)"));
+	printf(USAGE_MAN_TAIL("wdctl(8)"));
 
 	exit(EXIT_SUCCESS);
 }

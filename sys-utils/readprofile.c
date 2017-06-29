@@ -122,8 +122,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --reset               reset all the counters (root only)\n"), out);
 	fputs(_(" -n, --no-auto             disable byte order auto-detection\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(27);
-	fprintf(out, USAGE_MAN_TAIL("readprofile(8)"));
+	printf(USAGE_HELP_OPTIONS(27));
+	printf(USAGE_MAN_TAIL("readprofile(8)"));
 	exit(EXIT_SUCCESS);
 }
 

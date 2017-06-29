@@ -24,8 +24,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Tell the kernel about the new size of a partition.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	print_usage_help_options(16);
-	fprintf(out, USAGE_MAN_TAIL("resizepart(8)"));
+	printf(USAGE_HELP_OPTIONS(16));
+	printf(USAGE_MAN_TAIL("resizepart(8)"));
 	exit(EXIT_SUCCESS);
 }
 

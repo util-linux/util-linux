@@ -79,8 +79,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -d, --debug             run in debugging mode\n"), out);
 	fputs(_(" -q, --quiet             turn on quiet mode\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(25);
-	fprintf(out, USAGE_MAN_TAIL("uuidd(8)"));
+	printf(USAGE_HELP_OPTIONS(25));
+	printf(USAGE_MAN_TAIL("uuidd(8)"));
 	exit(EXIT_SUCCESS);
 }
 
