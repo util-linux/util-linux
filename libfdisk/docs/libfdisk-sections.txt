@@ -66,7 +66,6 @@ fdisk_align_lba_in_range
 fdisk_has_user_device_properties
 fdisk_lba_is_phy_aligned
 fdisk_override_geometry
-fdisk_reread_partition_table
 fdisk_reset_alignment
 fdisk_reset_device_properties
 fdisk_save_user_geometry
@@ -325,6 +324,7 @@ fdisk_new_context
 fdisk_new_nested_context
 FDISK_PLURAL
 fdisk_ref_context
+fdisk_reread_partition_table
 fdisk_set_first_lba
 fdisk_set_last_lba
 fdisk_set_size_unit

@@ -692,6 +692,47 @@ int fdisk_reassign_device(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_reread_partition_table:
+ * @cxt: context
+ *
+ * Force *kernel* to re-read partition table on block devices.
+ *
+ * Returns: 0 on success, < 0 in case of error.
+ */
+int fdisk_reread_partition_table(struct fdisk_context *cxt)
+{
+	int i;
+	struct stat statbuf;
+
+	assert(cxt);
+	assert(cxt->dev_fd >= 0);
+
+	i = fstat(cxt->dev_fd, &statbuf);
+	if (i == 0 && S_ISBLK(statbuf.st_mode)) {
+		DBG(CXT, ul_debugobj(cxt, "calling re-read ioctl"));
+		sync();
+#ifdef BLKRRPART
+		fdisk_info(cxt, _("Calling ioctl() to re-read partition table."));
+		i = ioctl(cxt->dev_fd, BLKRRPART);
+#else
+		errno = ENOSYS;
+		i = 1;
+#endif
+	}
+
+	if (i) {
+		fdisk_warn(cxt, _("Re-reading the partition table failed."));
+		fdisk_info(cxt,	_(
+			"The kernel still uses the old table. The "
+			"new table will be used at the next reboot "
+			"or after you run partprobe(8) or kpartx(8)."));
+		return -errno;
+	}
+
+	return 0;
+}
+
+/**
  * fdisk_is_readonly:
  * @cxt: context
  *
