@@ -701,14 +701,14 @@ int fdisk_reassign_device(struct fdisk_context *cxt)
  */
 int fdisk_reread_partition_table(struct fdisk_context *cxt)
 {
-	int i;
-	struct stat statbuf;
+	int i = 0;
 
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
 
-	i = fstat(cxt->dev_fd, &statbuf);
-	if (i == 0 && S_ISBLK(statbuf.st_mode)) {
+	if (!S_ISBLK(cxt->dev_st.st_mode))
+		return 0;
+	else {
 		DBG(CXT, ul_debugobj(cxt, "calling re-read ioctl"));
 		sync();
 #ifdef BLKRRPART
@@ -731,6 +731,7 @@ int fdisk_reread_partition_table(struct fdisk_context *cxt)
 
 	return 0;
 }
+
 
 /**
  * fdisk_is_readonly:
