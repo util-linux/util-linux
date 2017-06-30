@@ -48,7 +48,6 @@
 #include "blkdev.h"
 #include "all-io.h"
 #include "rpmatch.h"
-#include "loopdev.h"
 #include "optutils.h"
 
 #include "libfdisk.h"
@@ -1392,31 +1391,6 @@ static size_t last_pt_partno(struct sfdisk *sf)
 	return partno;
 }
 
-#ifdef BLKRRPART
-static int is_device_used(struct sfdisk *sf)
-{
-	struct stat st;
-	int fd;
-
-	assert(sf);
-	assert(sf->cxt);
-
-	fd = fdisk_get_devfd(sf->cxt);
-	if (fd < 0)
-		return 0;
-
-	if (fstat(fd, &st) == 0 && S_ISBLK(st.st_mode)
-	    && major(st.st_rdev) != LOOPDEV_MAJOR)
-		return ioctl(fd, BLKRRPART) != 0;
-	return 0;
-}
-#else
-static int is_device_used(struct sfdisk *sf __attribute__((__unused__)))
-{
-	return 0;
-}
-#endif
-
 #ifdef HAVE_LIBREADLINE
 static char *sfdisk_fgets(struct fdisk_script *dp,
 			  char *buf, size_t bufsz, FILE *f)
@@ -1629,7 +1603,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (!sf->noact && !sf->noreread) {
 		if (!sf->quiet)
 			fputs(_("Checking that no-one is using this disk right now ..."), stdout);
-		if (is_device_used(sf)) {
+		if (fdisk_device_is_used(sf->cxt)) {
 			if (!sf->quiet)
 				fputs(_(" FAILED\n\n"), stdout);
 
