@@ -2,6 +2,8 @@
 # include <blkid.h>
 #endif
 
+#include "blkdev.h"
+#include "loopdev.h"
 #include "fdiskP.h"
 
 
@@ -732,6 +734,38 @@ int fdisk_reread_partition_table(struct fdisk_context *cxt)
 	return 0;
 }
 
+
+/**
+ * fdisk_device_is_used:
+ * @cxt: context
+ *
+ * On systems where is no BLKRRPART ioctl the function returns zero and
+ * sets errno to ENOSYS.
+ *
+ * Returns: 1 if the device assigned to the context is used by system, or 0.
+ */
+int fdisk_device_is_used(struct fdisk_context *cxt)
+{
+	int rc = 0;
+
+	assert(cxt);
+	assert(cxt->dev_fd >= 0);
+
+	errno = 0;
+
+#ifdef BLKRRPART
+	/* it seems kernel always return EINVAL for BLKRRPART on loopdevices */
+	if (S_ISBLK(cxt->dev_st.st_mode)
+	    && major(cxt->dev_st.st_rdev) != LOOPDEV_MAJOR) {
+		DBG(CXT, ul_debugobj(cxt, "calling re-read ioctl"));
+		rc = ioctl(cxt->dev_fd, BLKRRPART) != 0;
+	}
+#else
+	errno = ENOSYS;
+#endif
+	DBG(CXT, ul_debugobj(cxt, "device used: %s [errno=%d]", rc ? "TRUE" : "FALSE", errno));
+	return rc;
+}
 
 /**
  * fdisk_is_readonly:

@@ -285,4 +285,5 @@ FDISK_2.30 {
 
 FDISK_2.31 {
 	fdisk_reassign_device;
+	fdisk_device_is_used;
 } FDISK_2.30;
