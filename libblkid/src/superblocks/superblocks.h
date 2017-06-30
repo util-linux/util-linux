@@ -30,6 +30,7 @@ extern const struct blkid_idinfo jbd_idinfo;
 extern const struct blkid_idinfo jfs_idinfo;
 extern const struct blkid_idinfo xfs_idinfo;
 extern const struct blkid_idinfo xfs_log_idinfo;
+extern const struct blkid_idinfo exfs_idinfo;
 extern const struct blkid_idinfo gfs_idinfo;
 extern const struct blkid_idinfo gfs2_idinfo;
 extern const struct blkid_idinfo romfs_idinfo;
