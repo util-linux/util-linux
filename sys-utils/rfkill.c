@@ -170,8 +170,8 @@ static int rfkill_event(void)
 			break;
 		}
 
-		if (len != RFKILL_EVENT_SIZE_V1) {
-			warnx(_("wrong size of rfkill event: %zu != %d"), len, RFKILL_EVENT_SIZE_V1);
+		if (len < RFKILL_EVENT_SIZE_V1) {
+			warnx(_("wrong size of rfkill event: %zu < %d"), len, RFKILL_EVENT_SIZE_V1);
 			ret = 1;
 			continue;
 		}
@@ -348,8 +348,8 @@ static int rfkill_list(struct control const *const ctrl, const char *param)
 			break;
 		}
 
-		if (len != RFKILL_EVENT_SIZE_V1) {
-			warnx(_("wrong size of rfkill event: %zu != %d"), len, RFKILL_EVENT_SIZE_V1);
+		if (len < RFKILL_EVENT_SIZE_V1) {
+			warnx(_("wrong size of rfkill event: %zu < %d"), len, RFKILL_EVENT_SIZE_V1);
 			continue;
 		}
 
