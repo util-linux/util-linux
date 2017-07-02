@@ -1203,7 +1203,7 @@ static void __attribute__((__noreturn__))
 usage(const struct hwclock_control *ctl)
 {
 	fputs(USAGE_HEADER, stdout);
-	puts(_(" hwclock [function] [option...]"));
+	printf(_(" %s [function] [option...]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	puts(_("Query or set the RTC (Real Time Clock / Hardware Clock)"));
@@ -1222,8 +1222,8 @@ usage(const struct hwclock_control *ctl)
 #endif
 	puts(_("     --predict        predict the drifted RTC time according to --date"));
 	fputs(USAGE_OPTIONS, stdout);
-	puts(_(" -u, --utc            inform hwclock the RTC timescale is UTC"));
-	puts(_(" -l, --localtime      inform hwclock the RTC timescale is Local"));
+	puts(_(" -u, --utc            the RTC timescale is UTC"));
+	puts(_(" -l, --localtime      the RTC timescale is Local"));
 #ifdef __linux__
 	printf(_(
 	       " -f, --rtc <file>     use an alternate file to %1$s\n"), _PATH_RTC_DEV);
