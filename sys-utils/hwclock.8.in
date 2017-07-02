@@ -6,7 +6,7 @@
 .\"
 .TH HWCLOCK 8 "April 2015" "util-linux" "System Administration"
 .SH NAME
-hwclock \- read or set the hardware clock (RTC)
+hwclock \- time clocks utility
 .SH SYNOPSIS
 .B hwclock
 .RI [ function ]
@@ -14,7 +14,7 @@ hwclock \- read or set the hardware clock (RTC)
 .
 .SH DESCRIPTION
 .B hwclock
-is a tool for accessing the Hardware Clock.  It can: display the
+is an administration tool for the time clocks.  It can: display the
 Hardware Clock time; set the Hardware Clock to a specified time; set the
 Hardware Clock from the System Clock; set the System Clock from the
 Hardware Clock; compensate for Hardware Clock drift; correct the System
