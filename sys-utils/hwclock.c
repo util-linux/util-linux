@@ -1236,7 +1236,8 @@ usage(const struct hwclock_control *ctl)
 #endif
 	puts(_("     --update-drift   update the RTC drift factor"));
 	printf(_(
-	       "     --noadjfile      do not use %1$s\n"
+	       "     --noadjfile      do not use %1$s\n"), _PATH_ADJTIME);
+	printf(_(
 	       "     --adjfile <file> use an alternate file to %1$s\n"), _PATH_ADJTIME);
 	puts(_("     --test           dry run; use -D to view what would have happened"));
 	puts(_(" -D, --debug          use debug mode"));
