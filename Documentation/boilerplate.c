@@ -36,26 +36,25 @@
  */
 static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE *out = stdout;
-	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] file...\n"), program_invocation_short_name);
+	fputs(USAGE_HEADER, stdout);
+	printf(_(" %s [options] file...\n"), program_invocation_short_name);
 
-        fputs(USAGE_SEPARATOR, out);
-        fputs(_("Short program description.\n"), out);
+	fputs(USAGE_SEPARATOR, stdout);
+	puts(_("Short program description."));
 
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -n, --no-argument       option does not use argument\n"), out);
-	fputs(_("     --optional[=<arg>]  option argument is optional\n"), out);
-	fputs(_(" -r, --required <arg>    option requires an argument\n"), out);
-	fputs(_(" -z                      no long option\n"), out);
-	fputs(_("     --xyzzy             a long option only\n"), out);
-	fputs(_(" -e, --extremely-long-long-option\n"
-		"                         use next line for description when needed\n"), out);
-	fputs(_(" -l, --long-explanation  an example of very verbose, and chatty option\n"
-		"                           description on two, or multiple lines, where the\n"
-		"                           consecutive lines are intended by two spaces\n"), out);
-	fputs(_(" -f, --foobar            next option description resets indent\n"), out);
-	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_OPTIONS, stdout);
+	puts(_(" -n, --no-argument       option does not use argument"));
+	puts(_("     --optional[=<arg>]  option argument is optional"));
+	puts(_(" -r, --required <arg>    option requires an argument"));
+	puts(_(" -z                      no long option"));
+	puts(_("     --xyzzy             a long option only"));
+	puts(_(" -e, --extremely-long-long-option\n"
+	       "                         use next line for description when needed"));
+	puts(_(" -l, --long-explanation  an example of very verbose, and chatty option\n"
+	       "                           description on two, or multiple lines, where the\n"
+	       "                           consecutive lines are intended by two spaces"));
+	puts(_(" -f, --foobar            next option description resets indent"));
+	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(25)); /* char offset to align option descriptions */
 	printf(USAGE_MAN_TAIL("fixme-command-name(1)"));
 	exit(EXIT_SUCCESS);
