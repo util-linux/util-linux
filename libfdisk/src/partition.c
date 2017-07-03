@@ -1474,6 +1474,9 @@ int fdisk_delete_all_partitions(struct fdisk_context *cxt)
  * @cxt: context
  * @n: partition number (0 is the first partition)
  *
+ * Check if the partition number @n is used by partition table. This function
+ * does not check if the device is used (e.g. mounted) by system!
+ *
  * This is faster than fdisk_get_partition() + fdisk_partition_is_used().
  *
  * Returns: 0 or 1
