@@ -1088,8 +1088,15 @@ static void init_remote_info(struct login_context *cxt, char *remotehost)
 		} else if (info->ai_family == AF_INET6) {
 			struct sockaddr_in6 *sa =
 				     (struct sockaddr_in6 *) info->ai_addr;
+#ifdef IN6_IS_ADDR_V4MAPPED
+			if (IN6_IS_ADDR_V4MAPPED(&sa->sin6_addr)) {
+				const uint8_t *bytes = sa->sin6_addr.s6_addr;
+				struct in_addr addr = { *(const in_addr_t *) (bytes + 12) };
 
-			memcpy(cxt->hostaddress, &(sa->sin6_addr), sizeof(sa->sin6_addr));
+				memcpy(cxt->hostaddress, &addr, sizeof(struct in_addr));
+			} else
+#endif
+				memcpy(cxt->hostaddress, &(sa->sin6_addr), sizeof(sa->sin6_addr));
 		}
 		freeaddrinfo(info);
 	}
