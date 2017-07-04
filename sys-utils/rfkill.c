@@ -244,8 +244,15 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 		}
 	} else if (isdigit(*s)) {
 		/* assume a numeric character implies an index. */
+		char filename[64];
+
 		ret.index = strtou32_or_err(s, _("invalid identifier"));
-		ret.result = RFKILL_IS_INDEX;
+		snprintf(filename, sizeof(filename) - 1,
+			 _PATH_SYS_RFKILL "/rfkill%" PRIu32 "/name", ret.index);
+		if (access(filename, F_OK) == 0)
+			ret.result = RFKILL_IS_INDEX;
+		else
+			ret.result = RFKILL_IS_INVALID;
 		return ret;
 	}
 
