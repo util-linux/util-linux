@@ -136,13 +136,13 @@ static int probe_udf(blkid_probe pr,
 {
 	struct volume_descriptor *vd;
 	struct volume_structure_descriptor *vsd;
-	unsigned int bs;
-	unsigned int pbs[5];
-	unsigned int b;
-	unsigned int type;
-	unsigned int count;
-	unsigned int loc;
-	unsigned int i;
+	uint32_t bs;
+	uint32_t pbs[5];
+	uint32_t b;
+	uint16_t type;
+	uint32_t count;
+	uint32_t loc;
+	size_t i;
 	int have_label = 0;
 	int have_uuid = 0;
 	int have_logvolid = 0;
@@ -190,7 +190,7 @@ nsr:
 
 anchor:
 	/* read Anchor Volume Descriptor (AVDP), checking block size */
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < ARRAY_SIZE(pbs); i++) {
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr, 256 * pbs[i], sizeof(*vd));
 		if (!vd)
