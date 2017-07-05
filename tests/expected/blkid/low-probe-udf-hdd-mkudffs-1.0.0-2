@@ -5,5 +5,6 @@ ID_FS_TYPE=udf
 ID_FS_USAGE=filesystem
 ID_FS_UUID=54aead85c291280d
 ID_FS_UUID_ENC=54aead85c291280d
+ID_FS_VERSION=2.01
 ID_FS_VOLUME_ID=Label
 ID_FS_VOLUME_SET_ID=54aead85(Volume set identifier
