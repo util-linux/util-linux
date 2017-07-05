@@ -67,6 +67,15 @@ struct volume_descriptor {
 			uint32_t	seq_num;
 			uint8_t		desc_charset[64];
 			struct dstring128 logvol_id;
+			uint32_t	logical_blocksize;
+			uint8_t		domain_id[32];
+			uint8_t		logical_contents_use[16];
+			uint32_t	map_table_length;
+			uint32_t	num_partition_maps;
+			uint8_t		imp_id[32];
+			uint8_t		imp_use[128];
+			uint32_t	lvid_length;
+			uint32_t	lvid_location;
 		} __attribute__((packed)) logical;
 	} __attribute__((packed)) type;
 
@@ -79,6 +88,18 @@ struct volume_structure_descriptor {
 } __attribute__((packed));
 
 #define UDF_VSD_OFFSET			0x8000LL
+
+struct logical_vol_integ_descriptor_imp_use
+{
+	uint8_t		imp_id[32];
+	uint32_t	num_files;
+	uint32_t	num_dirs;
+	uint16_t	min_udf_read_rev;
+	uint16_t	min_udf_write_rev;
+	uint16_t	max_udf_write_rev;
+} __attribute__ ((packed));
+
+#define UDF_LVIDIU_OFFSET(num_partition_maps) (80 + 2 * 4 * num_partition_maps)
 
 static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring128 *volset_id)
 {
@@ -136,6 +157,10 @@ static int probe_udf(blkid_probe pr,
 {
 	struct volume_descriptor *vd;
 	struct volume_structure_descriptor *vsd;
+	struct logical_vol_integ_descriptor_imp_use *lvidiu;
+	uint32_t num_partition_maps = 0;
+	uint32_t lvid_count = 0;
+	uint32_t lvid_loc = 0;
 	uint32_t bs;
 	uint32_t pbs[5];
 	uint32_t b;
@@ -148,6 +173,7 @@ static int probe_udf(blkid_probe pr,
 	int have_logvolid = 0;
 	int have_volid = 0;
 	int have_volsetid = 0;
+	int have_udf_rev = 0;
 
 	/* The block size of a UDF filesystem is that of the underlying
 	 * storage; we check later on for the special case of image files,
@@ -281,6 +307,11 @@ real_blksz:
 							vd->type.primary.volset_id.c, clen, enc);
 			}
 		} else if (type == 6) { /* TAG_ID_LVD */
+			if (!num_partition_maps || !lvid_count || !lvid_loc) {
+				num_partition_maps = le32_to_cpu(vd->type.logical.num_partition_maps);
+				lvid_count = le32_to_cpu(vd->type.logical.lvid_length) / bs;
+				lvid_loc = le32_to_cpu(vd->type.logical.lvid_location);
+			}
 			if (!have_logvolid || !have_label) {
 				/* LogicalVolumeIdentifier in UDF 2.01 specification:
 				 * ===============================================================
@@ -324,8 +355,42 @@ real_blksz:
 				}
 			}
 		}
-		if (have_logvolid && have_volid && have_volsetid)
+		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && num_partition_maps && lvid_count && lvid_loc)
 			break;
+	}
+
+	/* pick the logical volume integrity descriptor from the list and read UDF revision */
+	if (lvid_count && lvid_loc && num_partition_maps) {
+		for (b = 0; b < lvid_count; b++) {
+			vd = (struct volume_descriptor *)
+				blkid_probe_get_buffer(pr,
+						(uint64_t) (lvid_loc + b) * bs,
+						sizeof(*vd));
+			if (!vd)
+				return errno ? -errno : 1;
+			type = le16_to_cpu(vd->tag.id);
+			if (type == 0)
+				break;
+			if (le32_to_cpu(vd->tag.location) != lvid_loc + b)
+				break;
+			if (type == 9) { /* TAG_ID_LVID */
+				uint16_t udf_rev;
+				lvidiu = (struct logical_vol_integ_descriptor_imp_use *)
+					blkid_probe_get_buffer(pr,
+							(uint64_t) (lvid_loc + b) * bs + UDF_LVIDIU_OFFSET(num_partition_maps),
+							sizeof(*lvidiu));
+				if (!lvidiu)
+					return errno ? -errno : 1;
+				/* Use Minimum UDF Read Revision as ID_FS_VERSION */
+				udf_rev = le16_to_cpu(lvidiu->min_udf_read_rev);
+				if (udf_rev)
+					have_udf_rev = !blkid_probe_sprintf_version(pr, "%d.%02d",
+							(int)(udf_rev >> 8),
+							(int)(udf_rev & 0xFF));
+			}
+			if (have_udf_rev)
+				break;
+		}
 	}
 
 	return 0;
