@@ -18,6 +18,8 @@
 
 #include "superblocks.h"
 
+#define udf_cid_to_enc(cid) ((cid) == 8 ? BLKID_ENC_LATIN1 : (cid) == 16 ? BLKID_ENC_UTF16BE : -1)
+
 struct dstring128 {
 	uint8_t	cid;
 	uint8_t	c[126];
@@ -80,6 +82,7 @@ struct volume_structure_descriptor {
 
 static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring128 *volset_id)
 {
+	int enc;
 	size_t i;
 	size_t len;
 	size_t clen;
@@ -94,13 +97,11 @@ static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring
 	if (clen > sizeof(volset_id->c))
 		clen = sizeof(volset_id->c);
 
-	if (volset_id->cid == 8)
-		len = blkid_encode_to_utf8(BLKID_ENC_LATIN1, buf, sizeof(buf), volset_id->c, clen);
-	else if (volset_id->cid == 16)
-		len = blkid_encode_to_utf8(BLKID_ENC_UTF16BE, buf, sizeof(buf), volset_id->c, clen);
-	else
+	enc = udf_cid_to_enc(volset_id->cid);
+	if (enc == -1)
 		return -1;
 
+	len = blkid_encode_to_utf8(enc, buf, sizeof(buf), volset_id->c, clen);
 	if (len < 8)
 		return -1;
 
@@ -224,20 +225,15 @@ real_blksz:
 			break;
 		if (type == 1) { /* TAG_ID_PVD */
 			if (!have_volid) {
-				uint8_t cid = vd->type.primary.ident.cid;
+				int enc = udf_cid_to_enc(vd->type.primary.ident.cid);
 				uint8_t clen = vd->type.primary.ident.clen;
 				if (clen > 0)
 					--clen;
 				if (clen > sizeof(vd->type.primary.ident.c))
 					clen = sizeof(vd->type.primary.ident.c);
-				if (cid == 8)
+				if (enc != -1)
 					have_volid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_ID",
-							vd->type.primary.ident.c, clen,
-							BLKID_ENC_LATIN1);
-				else if (cid == 16)
-					have_volid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_ID",
-							vd->type.primary.ident.c, clen,
-							BLKID_ENC_UTF16BE);
+							vd->type.primary.ident.c, clen, enc);
 			}
 			if (!have_uuid) {
 				/* VolumeSetIdentifier in UDF 2.01 specification:
@@ -274,20 +270,15 @@ real_blksz:
 					have_uuid = !blkid_probe_strncpy_uuid(pr, uuid, sizeof(uuid));
 			}
 			if (!have_volsetid) {
-				uint8_t cid = vd->type.primary.volset_id.cid;
+				int enc = udf_cid_to_enc(vd->type.primary.volset_id.cid);
 				uint8_t clen = vd->type.primary.volset_id.clen;
 				if (clen > 0)
 					--clen;
 				if (clen > sizeof(vd->type.primary.volset_id.c))
 					clen = sizeof(vd->type.primary.volset_id.c);
-				if (cid == 8)
+				if (enc != -1)
 					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
-							vd->type.primary.volset_id.c, clen,
-							BLKID_ENC_LATIN1);
-				else if (cid == 16)
-					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
-							vd->type.primary.volset_id.c, clen,
-							BLKID_ENC_UTF16BE);
+							vd->type.primary.volset_id.c, clen, enc);
 			}
 		} else if (type == 6) { /* TAG_ID_LVD */
 			if (!have_logvolid || !have_label) {
@@ -317,30 +308,19 @@ real_blksz:
 				 * LABEL also from this field. Program newfs_udf (from UDFclient)
 				 * when formatting disk set this field from user option Disc Name.
 				 */
-				uint8_t cid = vd->type.logical.logvol_id.cid;
+				int enc = udf_cid_to_enc(vd->type.logical.logvol_id.cid);
 				uint8_t clen = vd->type.logical.logvol_id.clen;
 				if (clen > 0)
 					--clen;
 				if (clen > sizeof(vd->type.logical.logvol_id.c))
 					clen = sizeof(vd->type.logical.logvol_id.c);
-				if (cid == 8) {
+				if (enc != -1) {
 					if (!have_label)
 						have_label = !blkid_probe_set_utf8label(pr,
-								vd->type.logical.logvol_id.c, clen,
-								BLKID_ENC_LATIN1);
+								vd->type.logical.logvol_id.c, clen, enc);
 					if (!have_logvolid)
 						have_logvolid = !blkid_probe_set_utf8_id_label(pr, "LOGICAL_VOLUME_ID",
-								vd->type.logical.logvol_id.c, clen,
-								BLKID_ENC_LATIN1);
-				} else if (cid == 16) {
-					if (!have_label)
-						have_label = !blkid_probe_set_utf8label(pr,
-								vd->type.logical.logvol_id.c, clen,
-								BLKID_ENC_UTF16BE);
-					if (!have_logvolid)
-						have_logvolid = !blkid_probe_set_utf8_id_label(pr, "LOGICAL_VOLUME_ID",
-								vd->type.logical.logvol_id.c, clen,
-								BLKID_ENC_UTF16BE);
+								vd->type.logical.logvol_id.c, clen, enc);
 				}
 			}
 		}
