@@ -33,6 +33,7 @@
 
 #include "mountP.h"
 #include "fileutils.h"
+#include "strutils.h"
 
 #include <sys/wait.h>
 
@@ -2458,14 +2459,23 @@ int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *arg)
 int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 			      struct libmnt_fs *fs, int *mounted)
 {
-	struct libmnt_table *mtab;
+	struct libmnt_table *mtab, *orig;
 	int rc;
 
 	if (!cxt || !fs || !mounted)
 		return -EINVAL;
 
+	orig = cxt->mtab;
 	rc = mnt_context_get_mtab(cxt, &mtab);
-	if (rc)
+	if (rc == -ENOENT && mnt_fs_streq_target(fs, "/proc") &&
+	    (!cxt->mtab_path || startswith(cxt->mtab_path, "/proc/"))) {
+		if (!orig) {
+			mnt_unref_table(cxt->mtab);
+			cxt->mtab = NULL;
+		}
+		*mounted = 0;
+		return 0;	/* /proc not mounted */
+	} else if (rc)
 		return rc;
 
 	*mounted = mnt_table_is_fs_mounted(mtab, fs);
