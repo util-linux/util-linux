@@ -282,3 +282,7 @@ FDISK_2.30 {
 	fdisk_is_ptcollision;
 	fdisk_partition_has_wipe;
 } FDISK_2.29;
+
+FDISK_2.31 {
+	fdisk_reassign_device;
+} FDISK_2.30;

@@ -181,6 +181,8 @@ int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype id);
 int fdisk_assign_device(struct fdisk_context *cxt,
 			const char *fname, int readonly);
 int fdisk_deassign_device(struct fdisk_context *cxt, int nosync);
+int fdisk_reassign_device(struct fdisk_context *cxt);
+
 int fdisk_is_readonly(struct fdisk_context *cxt);
 int fdisk_is_regfile(struct fdisk_context *cxt);
 

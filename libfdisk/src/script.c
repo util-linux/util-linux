@@ -1373,6 +1373,7 @@ struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt)
  * @dp: script
  *
  * Associate context @cxt with script @dp and creates a new empty disklabel.
+ * The script may be later unreference by fdisk_set_script() with NULL as script.
  *
  * Returns: 0 on success, <0 on error.
  */

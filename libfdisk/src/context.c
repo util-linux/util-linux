@@ -632,6 +632,8 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 		return rc;
 	}
 
+	DBG(CXT, ul_debugobj(cxt, "de-assigning device %s", cxt->dev_path));
+
 	if (cxt->readonly)
 		close(cxt->dev_fd);
 	else {
@@ -653,6 +655,40 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 	cxt->dev_fd = -1;
 
 	return 0;
+}
+
+/**
+ * fdisk_reassign_device:
+ * @cxt: context
+ *
+ * This function is "hard reset" of the context and it does not write anything
+ * to the device. All in-memory changes associated with the context will be
+ * lost. It's recommended to use this function after some fatal problem when the
+ * context (and label specific driver) is in an undefined state.
+ *
+ * Returns: 0 on success, < 0 on error.
+ */
+int fdisk_reassign_device(struct fdisk_context *cxt)
+{
+	char *devname;
+	int rdonly, rc;
+
+	assert(cxt);
+	assert(cxt->dev_fd >= 0);
+
+	DBG(CXT, ul_debugobj(cxt, "re-assigning device %s", cxt->dev_path));
+
+	devname = strdup(cxt->dev_path);
+	if (!devname)
+		return -ENOMEM;
+
+	rdonly = cxt->readonly;
+
+	fdisk_deassign_device(cxt, 1);
+	rc = fdisk_assign_device(cxt, devname, rdonly);
+	free(devname);
+
+	return rc;
 }
 
 /**
