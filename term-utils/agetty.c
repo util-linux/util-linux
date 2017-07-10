@@ -317,6 +317,7 @@ static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
 static void check_username (const char* nm);
 static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
 static void reload_agettys(void);
+static void print_issue_file(struct options *op, struct termios *tp);
 
 /* Fake hostname for ut_host specified on command line. */
 static char *fakehost;
@@ -452,7 +453,9 @@ int main(int argc, char **argv)
 		username = options.autolog;
 	}
 
-	if ((options.flags & F_NOPROMPT) == 0) {
+	if (options.flags & F_NOPROMPT) {	/* --skip-login */
+		print_issue_file(&options, &termios);
+	} else {				/* regular (auto)login */
 		if (options.autolog) {
 			/* Autologin prompt */
 			do_prompt(&options, &termios);
