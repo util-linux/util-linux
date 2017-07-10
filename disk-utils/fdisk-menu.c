@@ -465,9 +465,15 @@ static int script_read(struct fdisk_context *cxt)
 		fdisk_warn(cxt, _("Cannot open %s"), filename);
 	else if (!sc)
 		fdisk_warnx(cxt, _("Failed to parse script file %s"), filename);
-	else if (fdisk_apply_script(cxt, sc) != 0)
+	else if (fdisk_apply_script(cxt, sc) != 0) {
 		fdisk_warnx(cxt, _("Failed to apply script %s"), filename);
-	else
+		fdisk_warnx(cxt, _("Resetting fdisk!"));
+		rc = fdisk_reassign_device(cxt);
+                if (rc == 0 && !fdisk_has_label(cxt)) {
+                        fdisk_info(cxt, _("Device does not contain a recognized partition table."));
+                        fdisk_create_disklabel(cxt, NULL);
+		}
+	} else
 		fdisk_info(cxt, _("Script successfully applied."));
 
 	fdisk_unref_script(sc);
