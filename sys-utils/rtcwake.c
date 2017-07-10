@@ -115,7 +115,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose            verbose messages\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(26);
+	printf(USAGE_HELP_OPTIONS(26));
 	printf(USAGE_MAN_TAIL("rtcwake(8)"));
 	exit(EXIT_SUCCESS);
 }

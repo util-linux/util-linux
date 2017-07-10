@@ -139,10 +139,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --apparmor-profile <pr>     set AppArmor profile\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(29);
+	printf(USAGE_HELP_OPTIONS(29));
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" This tool can be dangerous.  Read the manpage, and be careful.\n"), out);
-	fprintf(out, USAGE_MAN_TAIL("setpriv(1)"));
+	printf(USAGE_MAN_TAIL("setpriv(1)"));
 
 	exit(EXIT_SUCCESS);
 }
@@ -179,7 +179,7 @@ static int has_cap(enum cap_type which, unsigned int i)
 	case CAP_TYPE_BOUNDING:
 	case CAP_TYPE_INHERITABLE:
 	case CAP_TYPE_PERMITTED:
-		return capng_have_capability(which, i);
+		return capng_have_capability((capng_type_t)which, i);
 	case CAP_TYPE_AMBIENT:
 		return prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_IS_SET,
 				(unsigned long) i, 0UL, 0UL);

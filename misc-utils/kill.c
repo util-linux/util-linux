@@ -318,8 +318,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --verbose          print pids that will be signaled\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(24);
-	fprintf(out, USAGE_MAN_TAIL("kill(1)"));
+	printf(USAGE_HELP_OPTIONS(24));
+	printf(USAGE_MAN_TAIL("kill(1)"));
 
 	exit(EXIT_SUCCESS);
 }

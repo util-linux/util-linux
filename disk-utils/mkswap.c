@@ -161,7 +161,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -v, --swapversion NUM     specify swap-space version number\n"
 		" -U, --uuid UUID           specify the uuid to use\n"
 		));
-	print_usage_help_options(27);
+	printf(USAGE_HELP_OPTIONS(27));
 
 	printf(USAGE_MAN_TAIL("mkswap(8)"));
 	exit(EXIT_SUCCESS);

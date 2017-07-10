@@ -262,8 +262,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose       print number of discarded bytes\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(21);
-	fprintf(out, USAGE_MAN_TAIL("fstrim(8)"));
+	printf(USAGE_HELP_OPTIONS(21));
+	printf(USAGE_MAN_TAIL("fstrim(8)"));
 	exit(EXIT_SUCCESS);
 }
 

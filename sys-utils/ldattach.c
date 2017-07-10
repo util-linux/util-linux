@@ -213,7 +213,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -i, --iflag [-]<iflag>  set input mode flag\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(25);
+	printf(USAGE_HELP_OPTIONS(25));
 
 	fputs(_("\nKnown <ldisc> names:\n"), out);
 	print_table(out, ld_discs);
@@ -222,7 +222,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("\nKnown <iflag> names:\n"), out);
 	print_table(out, ld_iflags);
 
-	fprintf(out, USAGE_MAN_TAIL("ldattach(8)"));
+	printf(USAGE_MAN_TAIL("ldattach(8)"));
 	exit(EXIT_SUCCESS);
 }
 

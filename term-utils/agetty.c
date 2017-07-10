@@ -2112,7 +2112,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --reload               reload prompts on running agetty instances\n"), out);
 	printf( "     --help                 %s\n", USAGE_OPTSTR_HELP);
 	printf( "     --version              %s\n", USAGE_OPTSTR_VERSION);
-	fprintf(out, USAGE_MAN_TAIL("agetty(8)"));
+	printf(USAGE_MAN_TAIL("agetty(8)"));
 
 	exit(EXIT_SUCCESS);
 }

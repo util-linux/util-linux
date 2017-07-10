@@ -311,9 +311,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -f, --follow         output appended data as the file grows\n"), out);
 	fputs(_(" -r, --reverse        write back dumped data into utmp file\n"), out);
 	fputs(_(" -o, --output <file>  write to file instead of standard output\n"), out);
-	print_usage_help_options(22);
+	printf(USAGE_HELP_OPTIONS(22));
 
-	fprintf(out, USAGE_MAN_TAIL("utmpdump(1)"));
+	printf(USAGE_MAN_TAIL("utmpdump(1)"));
 	exit(EXIT_SUCCESS);
 }
 

@@ -174,8 +174,8 @@ void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --skip <offset>       skip offset bytes from the beginning\n"), out);
 	fputs(_(" -v, --no-squeezing        output identical lines\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(27);
-	fprintf(out, USAGE_MAN_TAIL("hexdump(1)"));
+	printf(USAGE_HELP_OPTIONS(27));
+	printf(USAGE_MAN_TAIL("hexdump(1)"));
 
 	exit(EXIT_SUCCESS);
 }

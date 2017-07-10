@@ -197,7 +197,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	puts(  _(" -v             verbose mode"));
 	puts(  _("     --report   print report for specified (or all) devices"));
 	fputs(USAGE_SEPARATOR, stdout);
-	print_usage_help_options(16);
+	printf(USAGE_HELP_OPTIONS(16));
 
 	fputs(USAGE_SEPARATOR, stdout);
 	puts(  _("Available commands:"));
@@ -212,7 +212,7 @@ static void __attribute__((__noreturn__)) usage(void)
 				_(bdcms[i].help));
 	}
 
-	printf(USAGE_MAN_TAIL("blockdev(1)"));
+	printf(USAGE_MAN_TAIL("blockdev(8)"));
 	exit(EXIT_SUCCESS);
 }
 

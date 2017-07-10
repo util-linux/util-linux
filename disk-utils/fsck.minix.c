@@ -192,8 +192,8 @@ usage(void) {
 	fputs(_(" -m, --uncleared  activate mode not cleared warnings\n"), out);
 	fputs(_(" -f, --force      force check\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(18);
-	fprintf(out, USAGE_MAN_TAIL("fsck.minix(8)"));
+	printf(USAGE_HELP_OPTIONS(18));
+	printf(USAGE_MAN_TAIL("fsck.minix(8)"));
 	exit(FSCK_EX_OK);
 }
 

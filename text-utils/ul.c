@@ -148,9 +148,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, -T, --terminal TERMINAL  override the TERM environment variable\n"), out);
 	fputs(_(" -i, --indicated              underlining is indicated via a separate line\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(30);
+	printf(USAGE_HELP_OPTIONS(30));
 
-	fprintf(out, USAGE_MAN_TAIL("ul(1)"));
+	printf(USAGE_MAN_TAIL("ul(1)"));
 
 	exit(EXIT_SUCCESS);
 }

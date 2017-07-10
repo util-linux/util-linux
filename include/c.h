@@ -319,13 +319,11 @@ static inline int xusleep(useconds_t usec)
 #define USAGE_OPTSTR_HELP     _("display this help")
 #define USAGE_OPTSTR_VERSION  _("print version")
 
-#define print_usage_help_options(marg_dsc) \
-	printf( \
+#define USAGE_HELP_OPTIONS(marg_dsc) \
 		"%-" #marg_dsc "s%s\n" \
 		"%-" #marg_dsc "s%s\n" \
 		, " -h, --help",    USAGE_OPTSTR_HELP \
-		, " -V, --version", USAGE_OPTSTR_VERSION \
-	)
+		, " -V, --version", USAGE_OPTSTR_VERSION
 
 #define USAGE_MAN_TAIL(_man)   _("\nFor more details see %s.\n"), _man
 

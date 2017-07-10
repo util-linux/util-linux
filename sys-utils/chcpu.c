@@ -251,7 +251,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -p, --dispatch <mode>         set dispatching mode\n"
 		" -r, --rescan                  trigger rescan of cpus\n"
 		), stdout);
-	print_usage_help_options(31);
+	printf(USAGE_HELP_OPTIONS(31));
 
 	printf(USAGE_MAN_TAIL("chcpu(8)"));
 	exit(EXIT_SUCCESS);

@@ -709,7 +709,7 @@ usage(void)
   fputs (_(" -s, --shell <shell>             run <shell> if /etc/shells allows it\n"), stdout);
 
   fputs(USAGE_SEPARATOR, stdout);
-  print_usage_help_options(33);
+  printf(USAGE_HELP_OPTIONS(33));
   printf(USAGE_MAN_TAIL(su_mode == SU_MODE ? "su(1)" : "runuser(1)"));
   exit(EXIT_SUCCESS);
 }

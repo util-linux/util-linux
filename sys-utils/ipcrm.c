@@ -65,8 +65,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose              explain what is being done\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(28);
-	fprintf(out, USAGE_MAN_TAIL("ipcrm(1)"));
+	printf(USAGE_HELP_OPTIONS(28));
+	printf(USAGE_MAN_TAIL("ipcrm(1)"));
 
 	exit(EXIT_SUCCESS);
 }

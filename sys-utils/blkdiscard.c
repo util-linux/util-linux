@@ -96,9 +96,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose       print aligned length and offset\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(21);
+	printf(USAGE_HELP_OPTIONS(21));
 
-	fprintf(out, USAGE_MAN_TAIL("blkdiscard(8)"));
+	printf(USAGE_MAN_TAIL("blkdiscard(8)"));
 	exit(EXIT_SUCCESS);
 }
 

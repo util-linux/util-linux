@@ -1906,7 +1906,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	list_available_columns(out);
 
-	fprintf(out, USAGE_MAN_TAIL("sfdisk(8)"));
+	printf(USAGE_MAN_TAIL("sfdisk(8)"));
 	exit(EXIT_SUCCESS);
 }
 

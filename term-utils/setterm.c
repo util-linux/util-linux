@@ -421,7 +421,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf( " --help                            %s\n", USAGE_OPTSTR_HELP);
 	printf( " --version                         %s\n", USAGE_OPTSTR_VERSION);
 
-	fprintf(out, USAGE_MAN_TAIL("setterm(1)"));
+	printf(USAGE_MAN_TAIL("setterm(1)"));
 	exit(EXIT_SUCCESS);
 }
 

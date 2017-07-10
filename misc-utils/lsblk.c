@@ -1658,14 +1658,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --topology       output info about topology\n"), out);
 	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(22);
+	printf(USAGE_HELP_OPTIONS(22));
 
 	fprintf(out, USAGE_COLUMNS);
 
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("lsblk(8)"));
+	printf(USAGE_MAN_TAIL("lsblk(8)"));
 
 	exit(EXIT_SUCCESS);
 }

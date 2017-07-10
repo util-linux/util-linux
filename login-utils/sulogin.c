@@ -812,8 +812,8 @@ static void usage(void)
 		out);
 
 	fputs(USAGE_SEPARATOR, out);
-	print_usage_help_options(26);
-	fprintf(out, USAGE_MAN_TAIL("sulogin(8)"));
+	printf(USAGE_HELP_OPTIONS(26));
+	printf(USAGE_MAN_TAIL("sulogin(8)"));
 }
 
 int main(int argc, char **argv)

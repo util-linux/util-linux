@@ -343,9 +343,9 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -l, --long          use a long listing format (-m -o -v) \n"
 		" -n, --nosymlinks    don't follow symlinks\n"
 		" -v, --vertical      vertical align of modes and owners\n"), out);
-	print_usage_help_options(21);
+	printf(USAGE_HELP_OPTIONS(21));
 
-	fprintf(out, USAGE_MAN_TAIL("namei(1)"));
+	printf(USAGE_MAN_TAIL("namei(1)"));
 	exit(EXIT_SUCCESS);
 }
 
