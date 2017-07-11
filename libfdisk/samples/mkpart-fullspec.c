@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 
 	if (fdisk_assign_device(cxt, device, 0))
 		err(EXIT_FAILURE, "failed to assign device");
-	if (fdisk_create_disklabel(cxt, "dos"))
+	if (fdisk_create_disklabel(cxt, label))
 		err(EXIT_FAILURE, "failed to create disk label");
 
 	while (optind < argc) {
