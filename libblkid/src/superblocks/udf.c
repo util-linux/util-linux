@@ -18,6 +18,8 @@
 
 #include "superblocks.h"
 
+#define udf_cid_to_enc(cid) ((cid) == 8 ? BLKID_ENC_LATIN1 : (cid) == 16 ? BLKID_ENC_UTF16BE : -1)
+
 struct dstring128 {
 	uint8_t	cid;
 	uint8_t	c[126];
@@ -65,6 +67,15 @@ struct volume_descriptor {
 			uint32_t	seq_num;
 			uint8_t		desc_charset[64];
 			struct dstring128 logvol_id;
+			uint32_t	logical_blocksize;
+			uint8_t		domain_id[32];
+			uint8_t		logical_contents_use[16];
+			uint32_t	map_table_length;
+			uint32_t	num_partition_maps;
+			uint8_t		imp_id[32];
+			uint8_t		imp_use[128];
+			uint32_t	lvid_length;
+			uint32_t	lvid_location;
 		} __attribute__((packed)) logical;
 	} __attribute__((packed)) type;
 
@@ -78,8 +89,21 @@ struct volume_structure_descriptor {
 
 #define UDF_VSD_OFFSET			0x8000LL
 
+struct logical_vol_integ_descriptor_imp_use
+{
+	uint8_t		imp_id[32];
+	uint32_t	num_files;
+	uint32_t	num_dirs;
+	uint16_t	min_udf_read_rev;
+	uint16_t	min_udf_write_rev;
+	uint16_t	max_udf_write_rev;
+} __attribute__ ((packed));
+
+#define UDF_LVIDIU_OFFSET(num_partition_maps) (80 + 2 * 4 * num_partition_maps)
+
 static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring128 *volset_id)
 {
+	int enc;
 	size_t i;
 	size_t len;
 	size_t clen;
@@ -94,13 +118,11 @@ static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring
 	if (clen > sizeof(volset_id->c))
 		clen = sizeof(volset_id->c);
 
-	if (volset_id->cid == 8)
-		len = blkid_encode_to_utf8(BLKID_ENC_LATIN1, buf, sizeof(buf), volset_id->c, clen);
-	else if (volset_id->cid == 16)
-		len = blkid_encode_to_utf8(BLKID_ENC_UTF16BE, buf, sizeof(buf), volset_id->c, clen);
-	else
+	enc = udf_cid_to_enc(volset_id->cid);
+	if (enc == -1)
 		return -1;
 
+	len = blkid_encode_to_utf8(enc, buf, sizeof(buf), volset_id->c, clen);
 	if (len < 8)
 		return -1;
 
@@ -135,18 +157,23 @@ static int probe_udf(blkid_probe pr,
 {
 	struct volume_descriptor *vd;
 	struct volume_structure_descriptor *vsd;
-	unsigned int bs;
-	unsigned int pbs[5];
-	unsigned int b;
-	unsigned int type;
-	unsigned int count;
-	unsigned int loc;
-	unsigned int i;
+	struct logical_vol_integ_descriptor_imp_use *lvidiu;
+	uint32_t num_partition_maps = 0;
+	uint32_t lvid_count = 0;
+	uint32_t lvid_loc = 0;
+	uint32_t bs;
+	uint32_t pbs[5];
+	uint32_t b;
+	uint16_t type;
+	uint32_t count;
+	uint32_t loc;
+	size_t i;
 	int have_label = 0;
 	int have_uuid = 0;
 	int have_logvolid = 0;
 	int have_volid = 0;
 	int have_volsetid = 0;
+	int have_udf_rev = 0;
 
 	/* The block size of a UDF filesystem is that of the underlying
 	 * storage; we check later on for the special case of image files,
@@ -189,7 +216,7 @@ nsr:
 
 anchor:
 	/* read Anchor Volume Descriptor (AVDP), checking block size */
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < ARRAY_SIZE(pbs); i++) {
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr, 256 * pbs[i], sizeof(*vd));
 		if (!vd)
@@ -224,20 +251,15 @@ real_blksz:
 			break;
 		if (type == 1) { /* TAG_ID_PVD */
 			if (!have_volid) {
-				uint8_t cid = vd->type.primary.ident.cid;
+				int enc = udf_cid_to_enc(vd->type.primary.ident.cid);
 				uint8_t clen = vd->type.primary.ident.clen;
 				if (clen > 0)
 					--clen;
 				if (clen > sizeof(vd->type.primary.ident.c))
 					clen = sizeof(vd->type.primary.ident.c);
-				if (cid == 8)
+				if (enc != -1)
 					have_volid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_ID",
-							vd->type.primary.ident.c, clen,
-							BLKID_ENC_LATIN1);
-				else if (cid == 16)
-					have_volid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_ID",
-							vd->type.primary.ident.c, clen,
-							BLKID_ENC_UTF16BE);
+							vd->type.primary.ident.c, clen, enc);
 			}
 			if (!have_uuid) {
 				/* VolumeSetIdentifier in UDF 2.01 specification:
@@ -274,22 +296,22 @@ real_blksz:
 					have_uuid = !blkid_probe_strncpy_uuid(pr, uuid, sizeof(uuid));
 			}
 			if (!have_volsetid) {
-				uint8_t cid = vd->type.primary.volset_id.cid;
+				int enc = udf_cid_to_enc(vd->type.primary.volset_id.cid);
 				uint8_t clen = vd->type.primary.volset_id.clen;
 				if (clen > 0)
 					--clen;
 				if (clen > sizeof(vd->type.primary.volset_id.c))
 					clen = sizeof(vd->type.primary.volset_id.c);
-				if (cid == 8)
+				if (enc != -1)
 					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
-							vd->type.primary.volset_id.c, clen,
-							BLKID_ENC_LATIN1);
-				else if (cid == 16)
-					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
-							vd->type.primary.volset_id.c, clen,
-							BLKID_ENC_UTF16BE);
+							vd->type.primary.volset_id.c, clen, enc);
 			}
 		} else if (type == 6) { /* TAG_ID_LVD */
+			if (!num_partition_maps || !lvid_count || !lvid_loc) {
+				num_partition_maps = le32_to_cpu(vd->type.logical.num_partition_maps);
+				lvid_count = le32_to_cpu(vd->type.logical.lvid_length) / bs;
+				lvid_loc = le32_to_cpu(vd->type.logical.lvid_location);
+			}
 			if (!have_logvolid || !have_label) {
 				/* LogicalVolumeIdentifier in UDF 2.01 specification:
 				 * ===============================================================
@@ -317,35 +339,58 @@ real_blksz:
 				 * LABEL also from this field. Program newfs_udf (from UDFclient)
 				 * when formatting disk set this field from user option Disc Name.
 				 */
-				uint8_t cid = vd->type.logical.logvol_id.cid;
+				int enc = udf_cid_to_enc(vd->type.logical.logvol_id.cid);
 				uint8_t clen = vd->type.logical.logvol_id.clen;
 				if (clen > 0)
 					--clen;
 				if (clen > sizeof(vd->type.logical.logvol_id.c))
 					clen = sizeof(vd->type.logical.logvol_id.c);
-				if (cid == 8) {
+				if (enc != -1) {
 					if (!have_label)
 						have_label = !blkid_probe_set_utf8label(pr,
-								vd->type.logical.logvol_id.c, clen,
-								BLKID_ENC_LATIN1);
+								vd->type.logical.logvol_id.c, clen, enc);
 					if (!have_logvolid)
 						have_logvolid = !blkid_probe_set_utf8_id_label(pr, "LOGICAL_VOLUME_ID",
-								vd->type.logical.logvol_id.c, clen,
-								BLKID_ENC_LATIN1);
-				} else if (cid == 16) {
-					if (!have_label)
-						have_label = !blkid_probe_set_utf8label(pr,
-								vd->type.logical.logvol_id.c, clen,
-								BLKID_ENC_UTF16BE);
-					if (!have_logvolid)
-						have_logvolid = !blkid_probe_set_utf8_id_label(pr, "LOGICAL_VOLUME_ID",
-								vd->type.logical.logvol_id.c, clen,
-								BLKID_ENC_UTF16BE);
+								vd->type.logical.logvol_id.c, clen, enc);
 				}
 			}
 		}
-		if (have_logvolid && have_volid && have_volsetid)
+		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && num_partition_maps && lvid_count && lvid_loc)
 			break;
+	}
+
+	/* pick the logical volume integrity descriptor from the list and read UDF revision */
+	if (lvid_count && lvid_loc && num_partition_maps) {
+		for (b = 0; b < lvid_count; b++) {
+			vd = (struct volume_descriptor *)
+				blkid_probe_get_buffer(pr,
+						(uint64_t) (lvid_loc + b) * bs,
+						sizeof(*vd));
+			if (!vd)
+				return errno ? -errno : 1;
+			type = le16_to_cpu(vd->tag.id);
+			if (type == 0)
+				break;
+			if (le32_to_cpu(vd->tag.location) != lvid_loc + b)
+				break;
+			if (type == 9) { /* TAG_ID_LVID */
+				uint16_t udf_rev;
+				lvidiu = (struct logical_vol_integ_descriptor_imp_use *)
+					blkid_probe_get_buffer(pr,
+							(uint64_t) (lvid_loc + b) * bs + UDF_LVIDIU_OFFSET(num_partition_maps),
+							sizeof(*lvidiu));
+				if (!lvidiu)
+					return errno ? -errno : 1;
+				/* Use Minimum UDF Read Revision as ID_FS_VERSION */
+				udf_rev = le16_to_cpu(lvidiu->min_udf_read_rev);
+				if (udf_rev)
+					have_udf_rev = !blkid_probe_sprintf_version(pr, "%d.%02d",
+							(int)(udf_rev >> 8),
+							(int)(udf_rev & 0xFF));
+			}
+			if (have_udf_rev)
+				break;
+		}
 	}
 
 	return 0;
