@@ -1606,16 +1606,22 @@ static int dos_add_partition(struct fdisk_context *cxt,
 			rc = add_partition(cxt, res, pa);
 		goto done;
 
-	/* D) template specifies default start, partno >= 4; add logical */
-	} else if (pa && fdisk_partition_start_is_default(pa)
+	/* D) template specifies start (or default), partno >= 4; add logical */
+	} else if (pa && (fdisk_partition_start_is_default(pa) || fdisk_partition_has_start(pa))
 		   && fdisk_partition_has_partno(pa)
 		   && pa->partno >= 4) {
 		DBG(LABEL, ul_debug("DOS: pa template %p: add logical (by partno)", pa));
 
 		if (!ext_pe) {
-			fdisk_warnx(cxt, _("Extended partition does not exists. Failed to add logical partition"));
+			fdisk_warnx(cxt, _("Extended partition does not exists. Failed to add logical partition."));
+			return -EINVAL;
+		} else if (fdisk_partition_has_start(pa)
+			   && pa->start < l->ext_offset
+			   && pa->start > get_abs_partition_end(ext_pe)) {
+			DBG(LABEL, ul_debug("DOS: pa template specifies partno>=4, but start out of extended"));
 			return -EINVAL;
 		}
+
 		rc = add_logical(cxt, pa, &res);
 		goto done;
 	}
