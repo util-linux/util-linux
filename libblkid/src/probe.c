@@ -626,7 +626,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len
 		return NULL;
 	}
 
-	if (len == 0 || pr->off + pr->size < real_off + len) {
+	if (len == 0 || (!S_ISCHR(pr->mode) && pr->off + pr->size < real_off + len)) {
 		DBG(BUFFER, ul_debug("\t  ignore: request out of probing area"));
 		errno = 0;
 		return NULL;
