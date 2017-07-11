@@ -19,6 +19,9 @@ TS_DESC="last"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LAST"
+ts_check_test_command "$TS_CMD_UTMPDUMP"
+ts_check_prog "ln"
+
 $TS_CMD_LAST --version 2>&1 | grep -q "invalid option" \
 	&& ts_skip "deprecated last"
 
