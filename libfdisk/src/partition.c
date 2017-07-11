@@ -1337,6 +1337,18 @@ int fdisk_partition_has_wipe(struct fdisk_context *cxt, struct fdisk_partition *
  * If @pa is not specified or any @pa item is missing the libfdisk will ask by
  * fdisk_ask_ API.
  *
+ * The @pa template is is important for non-interactive partitioning,
+ * especially for MBR where is necessary to differentiate between
+ * primary/logical; this is done by start offset or/and partno.
+ * The rules for MBR:
+ *
+ *   A) template specifies start within extended partition: add logical
+ *   B) template specifies start out of extended partition: add primary
+ *   C) template specifies start (or default), partno < 4: add primary
+ *   D) template specifies default start, partno >= 4: add logical
+ *
+ * otherwise MBR driver uses Ask-API to get missing information.
+ *
  * Adds a new partition to disklabel.
  *
  * Returns: 0 on success, <0 on error.
