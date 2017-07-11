@@ -1561,59 +1561,67 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	 * partition template (@pa) based partitioning
 	 */
 
-	/* pa specifies start within extended partition, add logical */
+	/* A) template specifies start within extended partition; add logical */
 	if (pa && fdisk_partition_has_start(pa) && ext_pe
 	    && pa->start >= l->ext_offset
 	    && pa->start <= get_abs_partition_end(ext_pe)) {
-		DBG(LABEL, ul_debug("DOS: pa template %p: add logical", pa));
+		DBG(LABEL, ul_debug("DOS: pa template %p: add logical (by offset)", pa));
+
+		if (fdisk_partition_has_partno(pa) && fdisk_partition_get_partno(pa) < 4) {
+			DBG(LABEL, ul_debug("DOS: pa template specifies partno<4 for logical partition"));
+			return -EINVAL;
+		}
 		rc = add_logical(cxt, pa, &res);
 		goto done;
 
-	/* pa specifies that extended partition is wanted */
-	} else if (pa && pa->type && IS_EXTENDED(pa->type->code)) {
-		DBG(LABEL, ul_debug("DOS: pa template %p: add extended", pa));
-		if (l->ext_offset) {
+	/* B) template specifies start out of extended partition; add primary */
+	} else if (pa && fdisk_partition_has_start(pa) && ext_pe) {
+		DBG(LABEL, ul_debug("DOS: pa template %p: add primary (by offset)", pa));
+
+		if (fdisk_partition_has_partno(pa) && fdisk_partition_get_partno(pa) >= 4) {
+			DBG(LABEL, ul_debug("DOS: pa template specifies partno>=4 for primary partition"));
+			return -EINVAL;
+		}
+		if (pa->type && IS_EXTENDED(pa->type->code)) {
 			fdisk_warnx(cxt, _("Extended partition already exists."));
 			return -EINVAL;
 		}
 		rc = get_partition_unused_primary(cxt, pa, &res);
-		if (rc == 0) {
-			rc = add_partition(cxt, res, pa);
-			goto done;
-		}
-
-	/* pa specifies start, but outside extended partition */
-	} else if (pa && fdisk_partition_has_start(pa) && l->ext_offset) {
-		DBG(LABEL, ul_debug("DOS: pa template %p: add primary", pa));
-		rc = get_partition_unused_primary(cxt, pa, &res);
 		if (rc == 0)
 			rc = add_partition(cxt, res, pa);
 		goto done;
 
-	/* pa follows default, but partno < 4, it means primary partition */
-	} else if (pa && fdisk_partition_start_is_default(pa)
+	/* C) template specifies start (or default), partno < 4; add primary */
+	} else if (pa && (fdisk_partition_start_is_default(pa) || fdisk_partition_has_start(pa))
 		   && fdisk_partition_has_partno(pa)
 		   && pa->partno < 4) {
-		DBG(LABEL, ul_debug("DOS: pa template %p: add primary (partno < 4)", pa));
+		DBG(LABEL, ul_debug("DOS: pa template %p: add primary (by partno)", pa));
+
+		if (ext_pe && pa->type && IS_EXTENDED(pa->type->code)) {
+			fdisk_warnx(cxt, _("Extended partition already exists."));
+			return -EINVAL;
+		}
 		rc = get_partition_unused_primary(cxt, pa, &res);
 		if (rc == 0)
 			rc = add_partition(cxt, res, pa);
 		goto done;
 
-	/* pa follows default, but partno >= 4, it means logical partition */
+	/* D) template specifies default start, partno >= 4; add logical */
 	} else if (pa && fdisk_partition_start_is_default(pa)
-		   && ext_pe
 		   && fdisk_partition_has_partno(pa)
 		   && pa->partno >= 4) {
-		DBG(LABEL, ul_debug("DOS: pa template %p: add logical (partno >= 4)", pa));
+		DBG(LABEL, ul_debug("DOS: pa template %p: add logical (by partno)", pa));
+
+		if (!ext_pe) {
+			fdisk_warnx(cxt, _("Extended partition does not exists. Failed to add logical partition"));
+			return -EINVAL;
+		}
 		rc = add_logical(cxt, pa, &res);
 		goto done;
 	}
 
-	/*
-	 * dialog driven partitioning (it does not mean that @pa template is
-	 * completely ignored!)
-	 */
+	DBG(LABEL, ul_debug("DOS: dialog driven partitioning"));
+	/* Note @pa may be still used for things like partition type, etc */
 
 	/* check if there is space for primary partition */
 	grain = cxt->grain > cxt->sector_size ? cxt->grain / cxt->sector_size : 1;
