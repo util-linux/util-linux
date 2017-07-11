@@ -5,22 +5,10 @@
  * GNU Lesser General Public License.
  *
  *
- * Libfdisk sample to create partitions by specify size, for example:
- *
- *	mkpart --label dos --device /dev/sdc 2M 2M 2M 10M 1M -
- *
-  * creates 6 partitions:
-  *	- 3 primary  (3x 2M)
-  *	- 1 extended (1x 10M)
-  *	- 2 logical  (1x 1M, 1x remaining-space-in-extended-partition)
-  *
-  * Notes:
-  *     The sample specifies size and partno for MBR, and size only for another
-  *     labels (e.g. GPT).
-  *
-  *     The Ask-API does not use anything else than warning/info. The
-  *     partitionning has to be done non-interactive.
-  */
+ * Libfdisk sample to create partitions by specify all required partition
+ * properties (partno, start and size). The defauls is only partition type
+ * (except MBR where 4th partition is extended).
+ */
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -68,8 +56,7 @@ int main(int argc, char *argv[])
 	struct fdisk_context *cxt;
 	struct fdisk_partition *pa;
 	const char *label = NULL, *device = NULL;
-	int n = 0, c;
-	unsigned int sectorsize;
+	int c;
 
 	static const struct option longopts[] = {
 		{ "label",  required_argument, NULL, 'x' },
@@ -91,13 +78,16 @@ int main(int argc, char *argv[])
 			device = optarg;
 			break;
 		case 'h':
-			printf("%s [options] <size> ...", program_invocation_short_name);
+			printf("%s [options] <partno,start,size> ...", program_invocation_short_name);
 			fputs(USAGE_SEPARATOR, stdout);
-			fputs("Make disklabel and partitions.\n", stdout);
+			puts("Make disklabel and partitions.");
+			puts(" <partno>                     number from 1..n (4th is extended for MBR)");
+			puts(" <start>                      partition start offset in sectors");
+			puts(" <size>                       partition size in sectors");
 			fputs(USAGE_OPTIONS, stdout);
-			fputs(" -x, --label <dos,gpt,...>    disk label type\n", stdout);
-			fputs(" -d, --device <path>          block device\n", stdout);
-			fputs(" -h, --help                   this help\n", stdout);
+			puts(" -x, --label <dos,gpt,...>    disk label type (default MBR)");
+			puts(" -d, --device <path>          block device");
+			puts(" -h, --help                   this help");
 			fputs(USAGE_SEPARATOR, stdout);
 			return EXIT_SUCCESS;
 		}
@@ -122,39 +112,34 @@ int main(int argc, char *argv[])
 	if (fdisk_create_disklabel(cxt, "dos"))
 		err(EXIT_FAILURE, "failed to create disk label");
 
-	sectorsize = fdisk_get_sector_size(cxt);
-
 	while (optind < argc) {
 		int rc;
-		uint64_t size;
+		unsigned int partno = 0;
+		uint64_t start = 0, size = 0;
 		const char *str = argv[optind];
 
-		/* defaults */
-		fdisk_partition_start_follow_default(pa, 1);
-		fdisk_partition_end_follow_default(pa, 1);
+		if (sscanf(str, "%u,%ju,%ju", &partno, &start, &size) != 3)
+			errx(EXIT_FAILURE, "faild to parse %s", str);
 
-		/* set size */
-		if (isdigit(*str)) {
-			size = strtosize_or_err(argv[optind], "failed to parse partition size");
-			fdisk_partition_set_size(pa, size / sectorsize);
-			fdisk_partition_end_follow_default(pa, 0);
+		/* disable defaults */
+		fdisk_partition_partno_follow_default(pa, 0);
+		fdisk_partition_end_follow_default(pa, 0);
 
-		} else if (*str == '-') {
-			fdisk_partition_end_follow_default(pa, 1);
-		}
+		/* set all */
+		fdisk_partition_set_partno(pa, partno - 1);	/* library uses 0..n */
+		fdisk_partition_set_start(pa, start);
+		fdisk_partition_set_size(pa, size);
+
+		fprintf(stderr, "Requested partition: <partno=%zu,start=%ju,size=%ju>\n",
+				fdisk_partition_get_partno(pa),
+				fdisk_partition_get_start(pa),
+				fdisk_partition_get_size(pa));
 
 		if (fdisk_is_label(cxt, DOS)) {
-			/* For MBR we want to avoid primary/logical dialog.
-			 * This is possible by explicitly specified partition
-			 * number, <4 means primary, >=4 means logical.
-			 */
-			fdisk_partition_partno_follow_default(pa, 0);
-			fdisk_partition_set_partno(pa, n);
-
 			/* Make sure last primary partition is extended if user
 			 * wants more than 4 partitions.
 			 */
-			if (n == 3 && optind + 1 < argc) {
+			if (partno == 4 && optind + 1 < argc) {
 				struct fdisk_parttype *type =
 					fdisk_label_parse_parttype(
 							fdisk_get_label(cxt, NULL), "05");
@@ -163,19 +148,16 @@ int main(int argc, char *argv[])
 				fdisk_partition_set_type(pa, type);
 				fdisk_unref_parttype(type);
 			}
-		} else
-			fdisk_partition_partno_follow_default(pa, 1);
-
+		}
 
 		rc = fdisk_add_partition(cxt, pa, NULL);
 		if (rc) {
 			errno = -rc;
-			err(EXIT_FAILURE, "failed to add #%d partition", n + 1);
+			err(EXIT_FAILURE, "failed to add #%d partition", partno);
 		}
 
 		fdisk_reset_partition(pa);
 		optind++;
-		n++;
 	}
 
 	if (fdisk_write_disklabel(cxt))
