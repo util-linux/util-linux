@@ -862,6 +862,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 {
 	struct stat sb;
 	uint64_t devsiz = 0;
+	char *dm_uuid = NULL;
 
 	blkid_reset_probe(pr);
 	blkid_probe_reset_buffers(pr);
@@ -925,7 +926,8 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	if (pr->size <= 1440 * 1024 && !S_ISCHR(sb.st_mode))
 		pr->flags |= BLKID_FL_TINY_DEV;
 
-	if (S_ISBLK(sb.st_mode) && sysfs_devno_is_lvm_private(sb.st_rdev)) {
+	if (S_ISBLK(sb.st_mode) &&
+	    sysfs_devno_is_lvm_private(sb.st_rdev, &dm_uuid)) {
 		DBG(LOWPROBE, ul_debug("ignore private LVM device"));
 		pr->flags |= BLKID_FL_NOSCAN_DEV;
 	}
@@ -933,6 +935,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 #ifdef CDROM_GET_CAPABILITY
 	else if (S_ISBLK(sb.st_mode) &&
 	    !blkid_probe_is_tiny(pr) &&
+	    !dm_uuid &&
 	    blkid_probe_is_wholedisk(pr) &&
 	    ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0) {
 
@@ -940,6 +943,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		cdrom_size_correction(pr);
 	}
 #endif
+	free(dm_uuid);
 
 	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%"PRIu64", size=%"PRIu64"",
 				pr->off, pr->size));

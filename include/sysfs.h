@@ -81,7 +81,7 @@ extern int sysfs_is_partition_dirent(DIR *dir, struct dirent *d,
 extern int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
             size_t len, dev_t *diskdevno);
 
-extern int sysfs_devno_is_lvm_private(dev_t devno);
+extern int sysfs_devno_is_lvm_private(dev_t devno, char **uuid);
 extern int sysfs_devno_is_wholedisk(dev_t devno);
 
 extern int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h,
