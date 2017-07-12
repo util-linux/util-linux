@@ -4,7 +4,7 @@ Requested partition: <partno=2,start=6144,size=2048>
 Requested partition: <partno=3,start=8192,size=22528>
 Requested partition: <partno=4,start=10240,size=2048>
 Requested partition: <partno=5,start=4096,size=2048>
-sample-fdisk-mkpart-fullspec: failed to add #6 partition: Invalid argument
+sample-fdisk-mkpart-fullspec: failed to add #6 partition
 Created a new <removed>.
 Created a new <removed>.
 Created a new <removed>.

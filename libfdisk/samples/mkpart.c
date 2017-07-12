@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
 		rc = fdisk_add_partition(cxt, pa, NULL);
 		if (rc) {
 			errno = -rc;
-			err(EXIT_FAILURE, "failed to add #%d partition", n + 1);
+			errx(EXIT_FAILURE, "failed to add #%d partition", n + 1);
 		}
 
 		fdisk_reset_partition(pa);
