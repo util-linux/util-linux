@@ -34,6 +34,7 @@ dist_noinst_HEADERS += \
 	include/optutils.h \
 	include/pager.h \
 	include/pamfail.h \
+	include/partx.h \
 	include/path.h \
 	include/pathnames.h \
 	include/plymouth-ctrl.h \

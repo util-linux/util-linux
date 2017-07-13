@@ -212,24 +212,16 @@ dist_man_MANS += \
 	disk-utils/resizepart.8 \
 	disk-utils/partx.8
 
-addpart_SOURCES = \
-	disk-utils/addpart.c \
-	disk-utils/partx.h
+addpart_SOURCES = disk-utils/addpart.c
 addpart_LDADD = $(LDADD) libcommon.la
 
-delpart_SOURCES = \
-	disk-utils/delpart.c \
-	disk-utils/partx.h
+delpart_SOURCES = disk-utils/delpart.c
 delpart_LDADD = $(LDADD) libcommon.la
 
-resizepart_SOURCES = \
-	disk-utils/resizepart.c \
-	disk-utils/partx.h
+resizepart_SOURCES = disk-utils/resizepart.c
 resizepart_LDADD = $(LDADD) libcommon.la
 
-partx_SOURCES = \
-	disk-utils/partx.c \
-	disk-utils/partx.h
+partx_SOURCES = disk-utils/partx.c
 partx_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libsmartcols_incdir)
 partx_LDADD = $(LDADD) libblkid.la libcommon.la libsmartcols.la
 
