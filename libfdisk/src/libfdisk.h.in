@@ -391,7 +391,7 @@ extern int fdisk_partition_is_freespace(struct fdisk_partition *pa);
 
 int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off);
 int fdisk_partition_unset_start(struct fdisk_partition *pa);
-uint64_t fdisk_partition_get_start(struct fdisk_partition *pa);
+fdisk_sector_t fdisk_partition_get_start(struct fdisk_partition *pa);
 int fdisk_partition_has_start(struct fdisk_partition *pa);
 int fdisk_partition_cmp_start(struct fdisk_partition *a,
 			      struct fdisk_partition *b);
@@ -400,7 +400,7 @@ int fdisk_partition_start_is_default(struct fdisk_partition *pa);
 
 int fdisk_partition_set_size(struct fdisk_partition *pa, uint64_t sz);
 int fdisk_partition_unset_size(struct fdisk_partition *pa);
-uint64_t fdisk_partition_get_size(struct fdisk_partition *pa);
+fdisk_sector_t fdisk_partition_get_size(struct fdisk_partition *pa);
 int fdisk_partition_has_size(struct fdisk_partition *pa);
 int fdisk_partition_size_explicit(struct fdisk_partition *pa, int enable);
 

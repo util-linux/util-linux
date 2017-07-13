@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 		uint64_t start = 0, size = 0;
 		const char *str = argv[optind];
 
-		if (sscanf(str, "%u,%ju,%ju", &partno, &start, &size) != 3)
+		if (sscanf(str, "%u,%"SCNu64",%"SCNu64"", &partno, &start, &size) != 3)
 			errx(EXIT_FAILURE, "faild to parse %s", str);
 
 		/* disable defaults */
@@ -132,8 +132,8 @@ int main(int argc, char *argv[])
 
 		fprintf(stderr, "Requested partition: <partno=%zu,start=%ju,size=%ju>\n",
 				fdisk_partition_get_partno(pa),
-				fdisk_partition_get_start(pa),
-				fdisk_partition_get_size(pa));
+				(uintmax_t) fdisk_partition_get_start(pa),
+				(uintmax_t) fdisk_partition_get_size(pa));
 
 		if (fdisk_is_label(cxt, DOS)) {
 			/* Make sure last primary partition is extended if user
