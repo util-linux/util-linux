@@ -25,6 +25,8 @@
 #define FDISKPROG_DEBUG_ALL	0xFFFF
 
 extern int pwipemode;
+extern struct fdisk_table *original_layout;
+extern int device_is_used;
 
 UL_DEBUG_DECLARE_MASK(fdisk);
 #define DBG(m, x)       __UL_DBG(fdisk, FDISKPROG_DEBUG_, m, x)

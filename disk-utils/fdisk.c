@@ -52,6 +52,9 @@
 #endif
 
 int pwipemode = WIPEMODE_AUTO;
+int device_is_used;
+struct fdisk_table *original_layout;
+
 static int wipemode = WIPEMODE_AUTO;
 
 /*
@@ -1035,6 +1038,11 @@ int main(int argc, char **argv)
 				  "the hybrid MBR manually (expert command 'M')."));
 
 		init_fields(cxt, outarg, NULL);		/* -o <columns> */
+
+		if (!fdisk_is_readonly(cxt)) {
+			fdisk_get_partitions(cxt, &original_layout);
+			device_is_used = fdisk_device_is_used(cxt);
+		}
 
 		while (1)
 			process_fdisk_menu(&cxt);

@@ -582,7 +582,11 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		if (fdisk_get_parent(cxt))
 			break; /* nested PT, don't leave */
 		fdisk_info(cxt, _("The partition table has been altered."));
-		rc = fdisk_reread_partition_table(cxt);
+
+		if (device_is_used)
+			rc = fdisk_reread_changes(cxt, original_layout);
+		else
+			rc = fdisk_reread_partition_table(cxt);
 		if (!rc)
 			rc = fdisk_deassign_device(cxt, 0);
 		/* fallthrough */
