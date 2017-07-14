@@ -78,7 +78,6 @@
 #include "nls.h"
 #include "optutils.h"
 #include "pathnames.h"
-#include "strutils.h"
 #include "hwclock.h"
 #include "timeutils.h"
 #include "env.h"
@@ -1179,13 +1178,13 @@ manipulate_epoch(const struct hwclock_control *ctl)
 			printf(_("Kernel is assuming an epoch value of %lu\n"),
 			       epoch);
 	} else if (ctl->setepoch) {
-		if (ctl->epoch_option == 0)
+		if (!ctl->epoch_option)
 			warnx(_
 			      ("To set the epoch value, you must use the 'epoch' "
 			       "option to tell to what value to set it."));
 		else if (ctl->testing)
 			printf(_
-			       ("Not setting the epoch to %lu - testing only.\n"),
+			       ("Not setting the epoch to %s - testing only.\n"),
 			       ctl->epoch_option);
 		else if (set_epoch_rtc(ctl))
 			printf(_
@@ -1328,8 +1327,6 @@ int main(int argc, char **argv)
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	strutils_set_exitcode(EX_USAGE);
-
 	/* Remember what time we were invoked */
 	gettimeofday(&startup_time, NULL);
 
@@ -1407,8 +1404,7 @@ int main(int argc, char **argv)
 			ctl.hwaudit_on = 1;
 			break;
 		case OPT_EPOCH:
-			ctl.epoch_option =	/* --epoch */
-			    strtoul_or_err(optarg, _("invalid epoch argument"));
+			ctl.epoch_option = optarg;	/* --epoch */
 			break;
 #endif
 		case OPT_NOADJFILE:

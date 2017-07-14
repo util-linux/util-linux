@@ -431,15 +431,13 @@ int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p)
 int set_epoch_rtc(const struct hwclock_control *ctl)
 {
 	int rtc_fd;
+	unsigned long epoch;
 
-	if (ctl->epoch_option < 1900) {
-		/* kernel would not accept this epoch value
-		 *
-		 * Bad habit, deciding not to do what the user asks just
-		 * because one believes that the kernel might not like it.
-		 */
-		warnx(_("The epoch value may not be less than 1900.  "
-			"You requested %ld"), ctl->epoch_option);
+	epoch = strtoul(ctl->epoch_option, NULL, 10);
+
+	/* There were no RTC clocks before 1900. */
+	if (epoch < 1900 || epoch == ULONG_MAX) {
+		warnx(_("invalid epoch '%s'."), ctl->epoch_option);
 		return 1;
 	}
 
@@ -457,10 +455,9 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 
 	if (ctl->debug)
 		printf(_("setting epoch to %lu "
-			 "with RTC_EPOCH_SET ioctl to %s.\n"), ctl->epoch_option,
+			 "with RTC_EPOCH_SET ioctl to %s.\n"), epoch,
 		       rtc_dev_name);
-
-	if (ioctl(rtc_fd, RTC_EPOCH_SET, ctl->epoch_option) == -1) {
+	if (ioctl(rtc_fd, RTC_EPOCH_SET, epoch) == -1) {
 		if (errno == EINVAL)
 			warnx(_("The kernel device driver for %s "
 				"does not have the RTC_EPOCH_SET ioctl."),
