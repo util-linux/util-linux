@@ -506,11 +506,12 @@ static int gpt_mknew_pmbr(struct fdisk_context *cxt)
 		return rc;
 
 	pmbr = (struct gpt_legacy_mbr *) cxt->firstsector;
+	memset(pmbr->partition_record, 0, sizeof(pmbr->partition_record));
 
 	pmbr->signature = cpu_to_le16(MSDOS_MBR_SIGNATURE);
 	pmbr->partition_record[0].os_type      = EFI_PMBR_OSTYPE;
-	pmbr->partition_record[0].start_sector = 1;
-	pmbr->partition_record[0].end_head     = 0xFE;
+	pmbr->partition_record[0].start_sector = 2;
+	pmbr->partition_record[0].end_head     = 0xFF;
 	pmbr->partition_record[0].end_sector   = 0xFF;
 	pmbr->partition_record[0].end_track    = 0xFF;
 	pmbr->partition_record[0].starting_lba = cpu_to_le32(1);
@@ -1925,8 +1926,8 @@ static int gpt_write_pmbr(struct fdisk_context *cxt)
 
 	pmbr->signature = cpu_to_le16(MSDOS_MBR_SIGNATURE);
 	pmbr->partition_record[0].os_type      = EFI_PMBR_OSTYPE;
-	pmbr->partition_record[0].start_sector = 1;
-	pmbr->partition_record[0].end_head     = 0xFE;
+	pmbr->partition_record[0].start_sector = 2;
+	pmbr->partition_record[0].end_head     = 0xFF;
 	pmbr->partition_record[0].end_sector   = 0xFF;
 	pmbr->partition_record[0].end_track    = 0xFF;
 	pmbr->partition_record[0].starting_lba = cpu_to_le32(1);
