@@ -805,7 +805,7 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 		pa = rem[i];
 		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_DEL_PARTITION", pa->partno));
 		if (partx_del_partition(cxt->dev_fd, pa->partno + 1) != 0) {
-			fdisk_warn(cxt, _("Failed to remove partition %zu from system"), pa->partno + 1); 
+			fdisk_warn(cxt, _("Failed to remove partition %zu from system"), pa->partno + 1);
 			err++;
 		}
 	}
@@ -813,7 +813,7 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 		pa = upd[i];
 		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_RESIZE_PARTITION", pa->partno));
 		if (partx_resize_partition(cxt->dev_fd, pa->partno + 1, pa->start, pa->size) != 0) {
-			fdisk_warn(cxt, _("Failed to update system information about partition %zu"), pa->partno + 1); 
+			fdisk_warn(cxt, _("Failed to update system information about partition %zu"), pa->partno + 1);
 			err++;
 		}
 	}
@@ -821,7 +821,7 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 		pa = add[i];
 		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_ADD_PARTITION", pa->partno));
 		if (partx_add_partition(cxt->dev_fd, pa->partno + 1, pa->start, pa->size) != 0) {
-			fdisk_warn(cxt, _("Failed to add partition %zu to system"), pa->partno + 1); 
+			fdisk_warn(cxt, _("Failed to add partition %zu to system"), pa->partno + 1);
 			err++;
 		}
 	}
