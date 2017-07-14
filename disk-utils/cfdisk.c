@@ -212,6 +212,7 @@ struct cfdisk_line {
 struct cfdisk {
 	struct fdisk_context	*cxt;	/* libfdisk context */
 	struct fdisk_table	*table;	/* partition table */
+	struct fdisk_table	*original_layout; /* original on-disk PT */
 
 	struct cfdisk_menu	*menu;	/* the current menu */
 
@@ -238,6 +239,7 @@ struct cfdisk {
 #endif
 	unsigned int	wrong_order :1,		/* PT not in right order */
 			zero_start :1,		/* ignore existing partition table */
+			device_is_used : 1,	/* don't use re-read ioctl */
 			show_extra :1;		/* show extra partinfo */
 };
 
@@ -2371,7 +2373,10 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		if (rc)
 			warn = _("Failed to write disklabel.");
 		else {
-			fdisk_reread_partition_table(cf->cxt);
+			if (cf->device_is_used)
+				fdisk_reread_changes(cf->cxt, cf->original_layout);
+			else
+				fdisk_reread_partition_table(cf->cxt);
 			info = _("The partition table has been altered.");
 		}
 		cf->nwrites++;
@@ -2637,6 +2642,11 @@ int main(int argc, char *argv[])
 		rc = fdisk_assign_device(cf->cxt, diskpath, 1);
 	if (rc != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), diskpath);
+
+	if (!fdisk_is_readonly(cf->cxt)) {
+		cf->device_is_used = fdisk_device_is_used(cf->cxt);
+		fdisk_get_partitions(cf->cxt, &cf->original_layout);
+	}
 
 	/* Don't use err(), warn() from this point */
 	ui_init(cf);
