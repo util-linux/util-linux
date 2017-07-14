@@ -709,3 +709,72 @@ int fdisk_apply_table(struct fdisk_context *cxt, struct fdisk_table *tb)
 	return rc;
 }
 
+int fdisk_diff_tables(struct fdisk_table *a, struct fdisk_table *b,
+		      struct fdisk_iter *itr,
+		      struct fdisk_partition **res, int *change)
+{
+	struct fdisk_partition *pa, *pb;
+	int rc = 1;
+
+	assert(itr);
+	assert(res);
+	assert(change);
+
+	DBG(TAB, ul_debugobj(a, "table diff [new table=%p]", b));
+
+	if (a && (itr->head == NULL || itr->head == &a->parts)) {
+		DBG(TAB, ul_debugobj(a, " scanning old table"));
+		do {
+			rc = fdisk_table_next_partition(a, itr, &pa);
+			if (rc != 0)
+				break;
+		} while (!fdisk_partition_has_partno(pa));
+	}
+
+	if (rc == 1 && b) {
+		DBG(TAB, ul_debugobj(a, " scanning new table"));
+		if (itr->head != &b->parts) {
+			DBG(TAB, ul_debugobj(a, "  initialize to TAB=%p", b));
+			fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
+		}
+
+		while (fdisk_table_next_partition(b, itr, &pb) == 0) {
+			if (!fdisk_partition_has_partno(pb))
+				continue;
+			if (a == NULL ||
+			    fdisk_table_get_partition_by_partno(a, pb->partno) == NULL) {
+				DBG(TAB, ul_debugobj(a, " #%zu ADDED", pb->partno));
+				*change = FDISK_DIFF_ADDED;
+				*res = pb;
+				return 0;
+			}
+		}
+	}
+
+	if (rc) {
+		DBG(TAB, ul_debugobj(a, "table diff done [rc=%d]", rc));
+		return rc;	/* error or done */
+	}
+
+	pb = fdisk_table_get_partition_by_partno(b, pa->partno);
+
+	if (!pb) {
+		DBG(TAB, ul_debugobj(a, " #%zu REMOVED", pa->partno));
+		*change = FDISK_DIFF_REMOVED;
+		*res = pa;
+	} else if (pb->start != pa->start) {
+		DBG(TAB, ul_debugobj(a, " #%zu MOVED", pb->partno));
+		*change = FDISK_DIFF_MOVED;
+		*res = pb;
+	} else if (pb->size != pa->size) {
+		DBG(TAB, ul_debugobj(a, " #%zu RESIZED", pb->partno));
+		*change = FDISK_DIFF_RESIZED;
+		*res = pb;
+	} else {
+		DBG(TAB, ul_debugobj(a, " #%zu UNCHANGED", pb->partno));
+		*change = FDISK_DIFF_UNCHANGED;
+		*res = pa;
+	}
+	return 0;
+}
+

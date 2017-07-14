@@ -325,6 +325,7 @@ fdisk_new_context
 fdisk_new_nested_context
 FDISK_PLURAL
 fdisk_ref_context
+fdisk_reread_changes
 fdisk_reread_partition_table
 fdisk_set_first_lba
 fdisk_set_last_lba

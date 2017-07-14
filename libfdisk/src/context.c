@@ -3,6 +3,7 @@
 #endif
 
 #include "blkdev.h"
+#include "partx.h"
 #include "loopdev.h"
 #include "fdiskP.h"
 
@@ -734,6 +735,107 @@ int fdisk_reread_partition_table(struct fdisk_context *cxt)
 	return 0;
 }
 
+static inline int add_to_partitions_array(
+			struct fdisk_partition ***ary,
+			struct fdisk_partition *pa,
+			size_t *n, size_t nmax)
+{
+	if (!*ary) {
+		*ary = calloc(nmax, sizeof(struct fdisk_partition *));
+		if (!*ary)
+			return -ENOMEM;
+	}
+	(*ary)[*n] = pa;
+	(*n)++;
+	return 0;
+}
+
+/**
+ * fdisk_reread_changes:
+ * @cxt: context
+ * @org: original layout (on disk)
+ *
+ * Like fdisk_reread_partition_table() but don't forces kernel re-read all
+ * partition table. The BLKPG_* ioctls are used for individual partitions. The
+ * advantage is that unmodified partitions maybe mounted.
+ *
+ * Returns: <0 on error, or 0.
+ */
+int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
+{
+	struct fdisk_table *tb = NULL;
+	struct fdisk_iter itr;
+	struct fdisk_partition *pa;
+	struct fdisk_partition **rem = NULL, **add = NULL, **upd = NULL;
+	int change, rc = 0, err = 0;
+	size_t nparts, i, nadds = 0, nupds = 0, nrems = 0;
+
+	DBG(CXT, ul_debugobj(cxt, "rereading changes"));
+
+	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+
+	/* the current layout */
+	fdisk_get_partitions(cxt, &tb);
+	/* maximal number of partitions */
+	nparts = max(fdisk_table_get_nents(tb), fdisk_table_get_nents(org));
+
+	while (fdisk_diff_tables(org, tb, &itr, &pa, &change) == 0) {
+		if (change == FDISK_DIFF_UNCHANGED)
+			continue;
+		switch (change) {
+		case FDISK_DIFF_REMOVED:
+			rc = add_to_partitions_array(&rem, pa, &nrems, nparts);
+			break;
+		case FDISK_DIFF_ADDED:
+			rc = add_to_partitions_array(&add, pa, &nadds, nparts);
+			break;
+		case FDISK_DIFF_RESIZED:
+			rc = add_to_partitions_array(&upd, pa, &nupds, nparts);
+			break;
+		case FDISK_DIFF_MOVED:
+			rc = add_to_partitions_array(&rem, pa, &nrems, nparts);
+			rc = add_to_partitions_array(&add, pa, &nadds, nparts);
+			break;
+		}
+		if (rc != 0)
+			goto done;
+	}
+
+	for (i = 0; i < nrems; i++) {
+		pa = rem[i];
+		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_DEL_PARTITION", pa->partno));
+		if (partx_del_partition(cxt->dev_fd, pa->partno + 1) != 0) {
+			fdisk_warn(cxt, _("Failed to remove partition %zu from system"), pa->partno + 1); 
+			err++;
+		}
+	}
+	for (i = 0; i < nupds; i++) {
+		pa = upd[i];
+		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_RESIZE_PARTITION", pa->partno));
+		if (partx_resize_partition(cxt->dev_fd, pa->partno + 1, pa->start, pa->size) != 0) {
+			fdisk_warn(cxt, _("Failed to update system information about partition %zu"), pa->partno + 1); 
+			err++;
+		}
+	}
+	for (i = 0; i < nadds; i++) {
+		pa = add[i];
+		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_ADD_PARTITION", pa->partno));
+		if (partx_add_partition(cxt->dev_fd, pa->partno + 1, pa->start, pa->size) != 0) {
+			fdisk_warn(cxt, _("Failed to add partition %zu to system"), pa->partno + 1); 
+			err++;
+		}
+	}
+	if (err)
+		fdisk_info(cxt,	_(
+			"The kernel still uses the old partitions. The new "
+			"table will be used at the next reboot. "));
+done:
+	free(rem);
+	free(add);
+	free(upd);
+	fdisk_unref_table(tb);
+	return rc;
+}
 
 /**
  * fdisk_device_is_used:

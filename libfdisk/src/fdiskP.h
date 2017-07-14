@@ -412,6 +412,17 @@ struct fdisk_context {
 	struct fdisk_script	*script;	/* what we want to follow */
 };
 
+/* table */
+enum {
+	FDISK_DIFF_UNCHANGED = 0,
+	FDISK_DIFF_REMOVED,
+	FDISK_DIFF_ADDED,
+	FDISK_DIFF_MOVED,
+	FDISK_DIFF_RESIZED
+};
+extern int fdisk_diff_tables(struct fdisk_table *a, struct fdisk_table *b,
+				struct fdisk_iter *itr,
+				struct fdisk_partition **res, int *change);
 
 /* context.c */
 extern int __fdisk_switch_label(struct fdisk_context *cxt,
