@@ -403,24 +403,21 @@ int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p)
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
 		if (errno == ENOENT)
-			warnx(_
-			      ("To manipulate the epoch value in the kernel, we must "
-			       "access the Linux 'rtc' device driver via the device special "
-			       "file.  This file does not exist on this system."));
+			warnx(_("%s does not exist."), rtc_dev_name);
 		else
-			warn(_("cannot open rtc device"));
+			warn(_("cannot open %s"), rtc_dev_name);
 		return 1;
 	}
 
 	if (ioctl(rtc_fd, RTC_EPOCH_READ, epoch_p) == -1) {
-		warn(_("ioctl(RTC_EPOCH_READ) to %s failed"), rtc_dev_name);
+		warn(_("ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s failed"),
+		     rtc_fd, rtc_dev_name);
 		return 1;
 	}
 
 	if (ctl->debug)
-		printf(_("we have read epoch %lu from %s "
-			 "with RTC_EPOCH_READ ioctl.\n"), *epoch_p,
-		       rtc_dev_name);
+		printf(_("ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"),
+		       rtc_fd, rtc_dev_name);
 
 	return 0;
 }
@@ -444,23 +441,21 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
 		if (errno == ENOENT)
-			warnx(_
-			      ("To manipulate the epoch value in the kernel, we must "
-			       "access the Linux 'rtc' device driver via the device special "
-			       "file.  This file does not exist on this system."));
+			warnx(_("%s does not exist."), rtc_dev_name);
 		else
-			warn(_("cannot open rtc device"));
+			warn(_("cannot open %s"), rtc_dev_name);
+		return 1;
+	}
+
+	if (ioctl(rtc_fd, RTC_EPOCH_SET, epoch) == -1) {
+		warn(_("ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"),
+		     rtc_fd, epoch, rtc_dev_name);
 		return 1;
 	}
 
 	if (ctl->debug)
-		printf(_("setting epoch to %lu "
-			 "with RTC_EPOCH_SET ioctl to %s.\n"), epoch,
-		       rtc_dev_name);
-	if (ioctl(rtc_fd, RTC_EPOCH_SET, epoch) == -1) {
-		warn(_("ioctl(RTC_EPOCH_SET) to %s failed"), rtc_dev_name);
-		return 1;
-	}
+		printf(_("ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"),
+		       rtc_fd, epoch, rtc_dev_name);
 
 	return 0;
 }
