@@ -458,13 +458,7 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 			 "with RTC_EPOCH_SET ioctl to %s.\n"), epoch,
 		       rtc_dev_name);
 	if (ioctl(rtc_fd, RTC_EPOCH_SET, epoch) == -1) {
-		if (errno == EINVAL)
-			warnx(_("The kernel device driver for %s "
-				"does not have the RTC_EPOCH_SET ioctl."),
-			      rtc_dev_name);
-		else
-			warn(_("ioctl(RTC_EPOCH_SET) to %s failed"),
-				  rtc_dev_name);
+		warn(_("ioctl(RTC_EPOCH_SET) to %s failed"), rtc_dev_name);
 		return 1;
 	}
 
