@@ -305,6 +305,9 @@ methods fail.  See the
 .BI \-\-epoch= year
 This option is required when using the
 .BR \%\-\-setepoch \ function.
+.RI "The minimum " year
+value is 1900. The maximum is system dependent
+.RB ( ULONG_MAX\ -\ 1 ).
 .
 .TP
 .BR \-f , \ \-\-rtc=\fIfilename\fR

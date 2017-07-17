@@ -403,24 +403,21 @@ int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p)
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
 		if (errno == ENOENT)
-			warnx(_
-			      ("To manipulate the epoch value in the kernel, we must "
-			       "access the Linux 'rtc' device driver via the device special "
-			       "file.  This file does not exist on this system."));
+			warnx(_("%s does not exist."), rtc_dev_name);
 		else
-			warn(_("cannot open rtc device"));
+			warn(_("cannot open %s"), rtc_dev_name);
 		return 1;
 	}
 
 	if (ioctl(rtc_fd, RTC_EPOCH_READ, epoch_p) == -1) {
-		warn(_("ioctl(RTC_EPOCH_READ) to %s failed"), rtc_dev_name);
+		warn(_("ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s failed"),
+		     rtc_fd, rtc_dev_name);
 		return 1;
 	}
 
 	if (ctl->debug)
-		printf(_("we have read epoch %lu from %s "
-			 "with RTC_EPOCH_READ ioctl.\n"), *epoch_p,
-		       rtc_dev_name);
+		printf(_("ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"),
+		       rtc_fd, rtc_dev_name);
 
 	return 0;
 }
@@ -431,45 +428,34 @@ int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p)
 int set_epoch_rtc(const struct hwclock_control *ctl)
 {
 	int rtc_fd;
+	unsigned long epoch;
 
-	if (ctl->epoch_option < 1900) {
-		/* kernel would not accept this epoch value
-		 *
-		 * Bad habit, deciding not to do what the user asks just
-		 * because one believes that the kernel might not like it.
-		 */
-		warnx(_("The epoch value may not be less than 1900.  "
-			"You requested %ld"), ctl->epoch_option);
+	epoch = strtoul(ctl->epoch_option, NULL, 10);
+
+	/* There were no RTC clocks before 1900. */
+	if (epoch < 1900 || epoch == ULONG_MAX) {
+		warnx(_("invalid epoch '%s'."), ctl->epoch_option);
 		return 1;
 	}
 
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
 		if (errno == ENOENT)
-			warnx(_
-			      ("To manipulate the epoch value in the kernel, we must "
-			       "access the Linux 'rtc' device driver via the device special "
-			       "file.  This file does not exist on this system."));
+			warnx(_("%s does not exist."), rtc_dev_name);
 		else
-			warn(_("cannot open rtc device"));
+			warn(_("cannot open %s"), rtc_dev_name);
+		return 1;
+	}
+
+	if (ioctl(rtc_fd, RTC_EPOCH_SET, epoch) == -1) {
+		warn(_("ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"),
+		     rtc_fd, epoch, rtc_dev_name);
 		return 1;
 	}
 
 	if (ctl->debug)
-		printf(_("setting epoch to %lu "
-			 "with RTC_EPOCH_SET ioctl to %s.\n"), ctl->epoch_option,
-		       rtc_dev_name);
-
-	if (ioctl(rtc_fd, RTC_EPOCH_SET, ctl->epoch_option) == -1) {
-		if (errno == EINVAL)
-			warnx(_("The kernel device driver for %s "
-				"does not have the RTC_EPOCH_SET ioctl."),
-			      rtc_dev_name);
-		else
-			warn(_("ioctl(RTC_EPOCH_SET) to %s failed"),
-				  rtc_dev_name);
-		return 1;
-	}
+		printf(_("ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"),
+		       rtc_fd, epoch, rtc_dev_name);
 
 	return 0;
 }

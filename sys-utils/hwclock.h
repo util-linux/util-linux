@@ -20,7 +20,7 @@ struct hwclock_control {
 	char *date_opt;
 	char *adj_file_name;
 #if defined(__linux__) && defined(__alpha__)
-	unsigned long epoch_option;
+	char *epoch_option;
 #endif
 #ifdef __linux__
 	char *rtc_dev_name;

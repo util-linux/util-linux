@@ -78,7 +78,6 @@
 #include "nls.h"
 #include "optutils.h"
 #include "pathnames.h"
-#include "strutils.h"
 #include "hwclock.h"
 #include "timeutils.h"
 #include "env.h"
@@ -1173,23 +1172,17 @@ manipulate_epoch(const struct hwclock_control *ctl)
 		unsigned long epoch;
 
 		if (get_epoch_rtc(ctl, &epoch))
-			warnx(_
-			      ("Unable to get the epoch value from the kernel."));
+			warnx(_("unable to read the RTC epoch."));
 		else
-			printf(_("Kernel is assuming an epoch value of %lu\n"),
-			       epoch);
+			printf(_("The RTC epoch is set to %lu.\n"), epoch);
 	} else if (ctl->setepoch) {
-		if (ctl->epoch_option == 0)
-			warnx(_
-			      ("To set the epoch value, you must use the 'epoch' "
-			       "option to tell to what value to set it."));
+		if (!ctl->epoch_option)
+			warnx(_("--epoch is required for --setepoch."));
 		else if (ctl->testing)
-			printf(_
-			       ("Not setting the epoch to %lu - testing only.\n"),
+			printf(_("Test mode: epoch was not set to %s.\n"),
 			       ctl->epoch_option);
 		else if (set_epoch_rtc(ctl))
-			printf(_
-			       ("Unable to set the epoch value in the kernel.\n"));
+			warnx(_("unable to set the RTC epoch."));
 	}
 }
 #endif		/* __linux__ __alpha__ */
@@ -1328,8 +1321,6 @@ int main(int argc, char **argv)
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	strutils_set_exitcode(EX_USAGE);
-
 	/* Remember what time we were invoked */
 	gettimeofday(&startup_time, NULL);
 
@@ -1407,8 +1398,7 @@ int main(int argc, char **argv)
 			ctl.hwaudit_on = 1;
 			break;
 		case OPT_EPOCH:
-			ctl.epoch_option =	/* --epoch */
-			    strtoul_or_err(optarg, _("invalid epoch argument"));
+			ctl.epoch_option = optarg;	/* --epoch */
 			break;
 #endif
 		case OPT_NOADJFILE:
