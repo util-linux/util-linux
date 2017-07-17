@@ -3,7 +3,9 @@
 #endif
 
 #include "blkdev.h"
-#include "partx.h"
+#ifdef __linux__
+# include "partx.h"
+#endif
 #include "loopdev.h"
 #include "fdiskP.h"
 
@@ -759,8 +761,12 @@ static inline int add_to_partitions_array(
  * partition table. The BLKPG_* ioctls are used for individual partitions. The
  * advantage is that unmodified partitions maybe mounted.
  *
+ * The function behavies like fdisk_reread_partition_table() on systems where
+ * are no avaialble BLKPG_* ioctls.
+ *
  * Returns: <0 on error, or 0.
  */
+#ifdef __linux__
 int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 {
 	struct fdisk_table *tb = NULL;
@@ -836,6 +842,12 @@ done:
 	fdisk_unref_table(tb);
 	return rc;
 }
+#else
+int fdisk_reread_changes(struct fdisk_context *cxt,
+			 struct fdisk_table *org __attribute__((__unused__))) {
+	return fdisk_reread_partition_table(cxt);
+}
+#endif
 
 /**
  * fdisk_device_is_used:
