@@ -183,6 +183,9 @@ endif
 if BUILD_LIBUUID
 dist_bashcompletion_DATA += bash-completion/uuidgen
 endif
+if BUILD_UUIDPARSE
+dist_bashcompletion_DATA += bash-completion/uuidparse
+endif
 if BUILD_UUIDD
 dist_bashcompletion_DATA += bash-completion/uuidd
 endif

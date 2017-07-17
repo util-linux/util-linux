@@ -1,24 +1,15 @@
-_lslocks_module()
+_uuidparse_module()
 {
 	local cur prev OPTS
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-p'|'--pid')
-			local PIDS
-			# /proc/locks can have 8 to 9 fields, see commit
-			# 55c0d16bab8cc84b72bf11cb2fdd8aa6205ac608
-			PIDS="$(awk '{print $(NF-3)}' /proc/locks)"
-			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
-			return 0
-			;;
 		'-o'|'--output')
-			local prefix realcur OUTPUT_ALL OUTPUT
+			local prefix realcur OUTPUT
 			realcur="${cur##*,}"
 			prefix="${cur%$realcur}"
-			OUTPUT_ALL="COMMAND PID TYPE SIZE MODE M START END PATH BLOCKER"
-			for WORD in $OUTPUT_ALL; do
+			for WORD in "UUID VARIANT TYPE TIME"; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
 					OUTPUT="$WORD ${OUTPUT:-""}"
 				fi
@@ -33,12 +24,9 @@ _lslocks_module()
 	esac
 	OPTS="
 		--json
-		--noinaccessible
 		--noheadings
 		--output
-		--pid
 		--raw
-		--notruncate
 		--help
 		--version
 	"
@@ -46,4 +34,4 @@ _lslocks_module()
 	return 0
 
 }
-complete -F _lslocks_module lslocks
+complete -F _uuidparse_module uuidparse

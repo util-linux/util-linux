@@ -12,7 +12,7 @@ _lsmem_module()
 			OUTPUT_ALL='RANGE SIZE STATE REMOVABLE BLOCK NODE'
 			for WORD in $OUTPUT_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					OUTPUT="$WORD $OUTPUT"
+					OUTPUT="$WORD ${OUTPUT:-""}"
 				fi
 			done
 			compopt -o nospace

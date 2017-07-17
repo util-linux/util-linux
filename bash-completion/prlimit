@@ -17,7 +17,7 @@ _prlimit_module()
 			OUTPUT_ALL="DESCRIPTION RESOURCE SOFT HARD UNITS"
 			for WORD in $OUTPUT_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					OUTPUT="$WORD $OUTPUT"
+					OUTPUT="$WORD ${OUTPUT:-""}"
 				fi
 			done
 			compopt -o nospace

@@ -93,11 +93,6 @@ Why:	parallel port printers are probably almost extinct devices
 
 ----------------------------
 
-What:	reset
-Why:	ncurses has better reset(1)
-
-----------------------------
-
 The Single UNIX(TM) Specification, Version 2
 Copyright (C) 1997 The Open Group
 
