@@ -529,6 +529,9 @@ static void do_caps(enum cap_type type, const char *caps)
 			int cap = capng_name_to_capability(c + 1);
 			if (0 <= cap)
 				cap_update(action, type, cap);
+			else if (sscanf(c + 1, "cap_%d", &cap) == 1
+			    && 0 <= cap && cap <= real_cap_last_cap())
+				cap_update(action, type, cap);
 			else
 				errx(EXIT_FAILURE,
 				     _("unknown capability \"%s\""), c + 1);
