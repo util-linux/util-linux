@@ -174,6 +174,32 @@ static int probe_verity(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
+struct integrity_sb {
+	uint8_t  magic[8];
+	uint8_t  version;
+	int8_t   log2_interleave_sectors;
+	uint16_t integrity_tag_size;
+	uint32_t journal_sections;
+	uint64_t provided_data_sectors;
+	uint32_t flags;
+	uint8_t  log2_sectors_per_block;
+} __attribute__ ((packed));
+
+static int probe_integrity(blkid_probe pr, const struct blkid_idmag *mag)
+{
+	struct integrity_sb *sb;
+
+	sb = blkid_probe_get_sb(pr, mag, struct integrity_sb);
+	if (sb == NULL)
+		return errno ? -errno : 1;
+
+	if (sb->version != 1)
+		return 1;
+
+	blkid_probe_sprintf_version(pr, "%u", sb->version);
+	return 0;
+}
+
 /* NOTE: the original libblkid uses "lvm2pv" as a name */
 const struct blkid_idinfo lvm2_idinfo =
 {
@@ -221,6 +247,18 @@ const struct blkid_idinfo verity_hash_idinfo =
 	.magics		=
 	{
 		{ .magic = "verity\0\0", .len = 8 },
+		{ NULL }
+	}
+};
+
+const struct blkid_idinfo integrity_idinfo =
+{
+	.name		= "DM_integrity",
+	.usage		= BLKID_USAGE_CRYPTO,
+	.probefunc	= probe_integrity,
+	.magics		=
+	{
+		{ .magic = "integrt\0", .len = 8 },
 		{ NULL }
 	}
 };

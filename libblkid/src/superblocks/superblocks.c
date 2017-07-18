@@ -109,6 +109,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&lvm1_idinfo,
 	&snapcow_idinfo,
 	&verity_hash_idinfo,
+	&integrity_idinfo,
 	&luks_idinfo,
 	&vmfs_volume_idinfo,
 
