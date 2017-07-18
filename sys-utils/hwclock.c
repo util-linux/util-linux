@@ -1444,13 +1444,13 @@ int main(int argc, char **argv)
 		case 'h':			/* --help */
 			usage(&ctl);
 		default:
-			errtryhelp(EXIT_FAILURE);
+			errtryhelp(EX_USAGE);
 		}
 	}
 
-	if (argc > optind) {
+	if (argc -= optind) {
 		warnx(_("%d too many arguments given"), argc);
-		errtryhelp(EXIT_FAILURE);
+		errtryhelp(EX_USAGE);
 	}
 
 	if (!ctl.adj_file_name)
