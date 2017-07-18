@@ -7,7 +7,6 @@ UUID                                  VARIANT   TYPE       TIME
 00000000-0000-5000-0000-000000000000  NCS       sha1-based 
 00000000-0000-6000-0000-000000000000  NCS       unknown    
 00000000-0000-0000-8000-000000000000  DCE       nil        
-00000000-0000-1000-8000-000000000000  DCE       time-based 60038-03-11 05:36:10,955161+0000
 00000000-0000-2000-8000-000000000000  DCE       DCE        
 00000000-0000-3000-8000-000000000000  DCE       name-based 
 00000000-0000-4000-8000-000000000000  DCE       random     
@@ -28,6 +27,5 @@ UUID                                  VARIANT   TYPE       TIME
 00000000-0000-5000-f000-000000000000  other     sha1-based 
 00000000-0000-6000-f000-000000000000  other     unknown    
 9b274c46-544a-11e7-a972-00037f500001  DCE       time-based 2017-06-18 17:21:46,544647+0000
-ffffffff-ffff-1fff-8fff-ffffffffffff  DCE       time-based 5236-03-31 21:21:00,684697+0000
 invalid-input                         invalid   invalid    invalid
 return value: 0
