@@ -737,6 +737,7 @@ int fdisk_reread_partition_table(struct fdisk_context *cxt)
 	return 0;
 }
 
+#ifdef __linux__
 static inline int add_to_partitions_array(
 			struct fdisk_partition ***ary,
 			struct fdisk_partition *pa,
@@ -751,6 +752,7 @@ static inline int add_to_partitions_array(
 	(*n)++;
 	return 0;
 }
+#endif
 
 /**
  * fdisk_reread_changes:
