@@ -64,7 +64,6 @@ typedef int bool;
 
 /* hwclock.c */
 extern int debug;
-extern unsigned long epoch_option;
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
 
 /* rtc.c */

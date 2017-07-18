@@ -1468,7 +1468,7 @@ int main(int argc, char **argv)
 	}
 
 	if (ctl.set || ctl.predict) {
-		if (!ctl.date_opt){
+		if (!ctl.date_opt) {
 		warnx(_("--date is required for --set or --predict"));
 		hwclock_exit(&ctl, EX_USAGE);
 		}
