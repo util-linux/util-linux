@@ -122,4 +122,32 @@ test_label_resize dos
 # GPT
 test_label_resize gpt
 
+
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+
+ts_init_subtest "dos-unsorted"
+# create layout where partition #4 is the last on disk (by offset)
+# and there is freespace at the end of the disk. Note that #4 is not the last
+# partno on the disk. The libfdisk has to be able to check for the free space
+# independently on the partno, only offset+size matters.
+$TS_CMD_SFDISK --no-reread ${TS_DEVICE}  >> $TS_OUTPUT 2>&1 <<EOF
+label: dos
+label-id: 0xda2e45ac
+device: ${TS_DEVICE}
+unit: sectors
+
+${TS_DEVICE}1 : start=        2048, size=        2048, type=83
+${TS_DEVICE}2 : start=        4096, size=        2048, type=83
+${TS_DEVICE}3 : start=        6144, size=      102400, type=5
+${TS_DEVICE}4 : start=      108544, size=        2048, type=83
+${TS_DEVICE}5 : start=        8192, size=        2048, type=83
+${TS_DEVICE}6 : start=       12288, size=       96256, type=83
+EOF
+# enlarge to use all space behind partition #4
+echo ',+,' | $TS_CMD_SFDISK --no-reread -N 4 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
 ts_finalize
