@@ -1061,14 +1061,15 @@ static int resize_get_last_possible(
 
 	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
 
-		DBG(TAB, ul_debugobj(tb, " checking entry %p [start=%ju, end=%ju, size=%ju, %s %s %s]",
+		DBG(TAB, ul_debugobj(tb, " checking entry %p [partno=%zu start=%ju, end=%ju, size=%ju%s%s%s]",
 			pa,
+			fdisk_partition_get_partno(pa),
 			(uintmax_t) fdisk_partition_get_start(pa),
 			(uintmax_t) fdisk_partition_get_end(pa),
 			(uintmax_t) fdisk_partition_get_size(pa),
-			fdisk_partition_is_freespace(pa) ? "freespace" : "",
-			fdisk_partition_is_nested(pa)    ? "nested"    : "",
-			fdisk_partition_is_container(pa) ? "container" : "primary"));
+			fdisk_partition_is_freespace(pa) ? " freespace" : "",
+			fdisk_partition_is_nested(pa)    ? " nested"    : "",
+			fdisk_partition_is_container(pa) ? " container" : ""));
 
 		if (!fdisk_partition_has_start(pa) ||
 		    !fdisk_partition_has_size(pa) ||
@@ -1146,6 +1147,11 @@ static int recount_resize(
 		rc = fdisk_get_freespaces(cxt, &tb);
 	if (rc)
 		return rc;
+
+	fdisk_table_sort_partitions(tb, fdisk_partition_cmp_start);
+
+	DBG(PART, ul_debugobj(tpl, "resize partition partno=%zu in table:", partno));
+	ON_DBG(PART, fdisk_debug_print_table(tb));
 
 	cur = fdisk_table_get_partition_by_partno(tb, partno);
 	if (!cur) {
