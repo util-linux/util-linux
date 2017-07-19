@@ -401,7 +401,7 @@ static void reset_pte(struct pte *pe)
 	memset(pe, 0, sizeof(struct pte));
 }
 
-static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
+static int delete_partition(struct fdisk_context *cxt, size_t partnum)
 {
 	struct fdisk_dos_label *l;
 	struct pte *pe;
@@ -497,6 +497,21 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 
 	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
+}
+
+static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
+{
+	struct pte *pe;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_label(cxt, DOS));
+
+	pe = self_pte(cxt, partnum);
+	if (!pe || !is_used_partition(pe->pt_entry))
+		return -EINVAL;
+
+	return delete_partition(cxt, partnum);
 }
 
 static void read_extended(struct fdisk_context *cxt, size_t ext)
@@ -628,7 +643,7 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 		if (p && !dos_partition_get_size(p) &&
 		    (cxt->label->nparts_max > 5 || (q && q->sys_ind))) {
 			fdisk_info(cxt, _("omitting empty partition (%zu)"), i+1);
-			dos_delete_partition(cxt, i);
+			delete_partition(cxt, i);
 			goto remove; 	/* numbering changed */
 		}
 	}
