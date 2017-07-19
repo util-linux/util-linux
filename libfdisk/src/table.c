@@ -331,18 +331,21 @@ int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb)
 	return 0;
 }
 
-static void debug_print_table(struct fdisk_table *tb)
+void fdisk_debug_print_table(struct fdisk_table *tb)
 {
 	struct fdisk_iter itr;
 	struct fdisk_partition *pa;
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	while (fdisk_table_next_partition(tb, &itr, &pa) == 0)
-		ul_debugobj(tb, "partition %p [partno=%zu, start=%ju, end=%ju, size=%ju] ",
+		ul_debugobj(tb, "partition %p [partno=%zu, start=%ju, end=%ju, size=%ju%s%s%s] ",
 			    pa, pa->partno,
 			    (uintmax_t) fdisk_partition_get_start(pa),
 			    (uintmax_t) fdisk_partition_get_end(pa),
-			    (uintmax_t) fdisk_partition_get_size(pa));
+			    (uintmax_t) fdisk_partition_get_size(pa),
+			    fdisk_partition_is_nested(pa) ? " nested" : "",
+			    fdisk_partition_is_freespace(pa) ? " freespace" : "",
+			    fdisk_partition_is_container(pa) ? " container" : "");
 
 }
 
@@ -376,13 +379,17 @@ int fdisk_table_sort_partitions(struct fdisk_table *tb,
 	if (!tb)
 		return -EINVAL;
 
+	/*
 	DBG(TAB, ul_debugobj(tb, "Before sort:"));
-	ON_DBG(TAB, debug_print_table(tb));
+	ON_DBG(TAB, fdisk_debug_print_table(tb));
+	*/
 
 	list_sort(&tb->parts, cmp_parts_wrapper, (void *) cmp);
 
+	/*
 	DBG(TAB, ul_debugobj(tb, "After sort:"));
-	ON_DBG(TAB, debug_print_table(tb));
+	ON_DBG(TAB, fdisk_debug_print_table(tb));
+	*/
 
 	return 0;
 }

@@ -424,6 +424,8 @@ enum {
 extern int fdisk_diff_tables(struct fdisk_table *a, struct fdisk_table *b,
 				struct fdisk_iter *itr,
 				struct fdisk_partition **res, int *change);
+extern void fdisk_debug_print_table(struct fdisk_table *tb);
+
 
 /* context.c */
 extern int __fdisk_switch_label(struct fdisk_context *cxt,
