@@ -187,6 +187,9 @@ int fdisk_is_readonly(struct fdisk_context *cxt);
 int fdisk_is_regfile(struct fdisk_context *cxt);
 int fdisk_device_is_used(struct fdisk_context *cxt);
 
+int fdisk_disable_dialogs(struct fdisk_context *cxt, int disable);
+int fdisk_has_dialogs(struct fdisk_context *cxt);
+
 int fdisk_enable_details(struct fdisk_context *cxt, int enable);
 int fdisk_is_details(struct fdisk_context *cxt);
 

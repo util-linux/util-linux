@@ -287,4 +287,6 @@ FDISK_2.31 {
 	fdisk_reassign_device;
 	fdisk_device_is_used;
 	fdisk_reread_changes;
+	fdisk_disable_dialogs;
+	fdisk_has_dialogs;
 } FDISK_2.30;

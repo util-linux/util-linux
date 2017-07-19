@@ -1597,7 +1597,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 			DBG(LABEL, ul_debug("DOS: pa template specifies partno>=4 for primary partition"));
 			return -EINVAL;
 		}
-		if (pa->type && IS_EXTENDED(pa->type->code)) {
+		if (ext_pe && pa->type && IS_EXTENDED(pa->type->code)) {
 			fdisk_warnx(cxt, _("Extended partition already exists."));
 			return -EINVAL;
 		}
@@ -1674,6 +1674,8 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		DBG(LABEL, ul_debug("DOS: primary impossible, add logical"));
 		if (l->ext_offset) {
 			if (!pa || fdisk_partition_has_start(pa)) {
+				/* See above case A); here we have start, but
+				 * out of extended partition */
 				const char *msg;
 				if (!free_primary)
 					msg = _("All primary partitions are in use.");
@@ -1708,7 +1710,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		int c;
 
 		/* the default layout for scripts is to create primary partitions */
-		if (cxt->script) {
+		if (cxt->script || !fdisk_has_dialogs(cxt)) {
 			rc = get_partition_unused_primary(cxt, pa, &res);
 			if (rc == 0)
 				rc = add_partition(cxt, res, pa);

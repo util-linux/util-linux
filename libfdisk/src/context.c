@@ -344,6 +344,40 @@ int fdisk_enable_bootbits_protection(struct fdisk_context *cxt, int enable)
 	cxt->protect_bootbits = enable ? 1 : 0;
 	return 0;
 }
+/**
+ * fdisk_disable_dialogs
+ * @cxt: fdisk context
+ * @enable: 1 or 0
+ *
+ * The library uses dialog driven partitioning by default.
+ *
+ * Returns: 0 on success, < 0 on error.
+ *
+ * Since: 2.31
+ */
+int fdisk_disable_dialogs(struct fdisk_context *cxt, int disable)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->no_disalogs = disable;
+	return 0;
+}
+
+/**
+ * fdisk_has_dialogs
+ * @cxt: fdisk context
+ *
+ * See fdisk_disable_dialogs()
+ *
+ * Returns: 1 if dialog driven partitioning enabled (default), or 0.
+ *
+ * Since: 2.31
+ */
+int fdisk_has_dialogs(struct fdisk_context *cxt)
+{
+	return cxt->no_disalogs == 0;
+}
 
 /**
  * fdisk_enable_wipe

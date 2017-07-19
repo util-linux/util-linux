@@ -142,6 +142,14 @@ int fdisk_do_ask(struct fdisk_context *cxt, struct fdisk_ask *ask)
 				ask->type == FDISK_ASKTYPE_WARN  ? "warn" :
 				"?nothing?"));
 
+	if (!fdisk_has_dialogs(cxt) &&
+	    !(ask->type == FDISK_ASKTYPE_INFO ||
+	      ask->type == FDISK_ASKTYPE_WARNX ||
+	      ask->type == FDISK_ASKTYPE_WARN)) {
+		DBG(ASK, ul_debugobj(ask, "dialogs disabled"));
+		return -EINVAL;
+	}
+
 	if (!cxt->ask_cb) {
 		DBG(ASK, ul_debugobj(ask, "no ask callback specified!"));
 		return -EINVAL;
