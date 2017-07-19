@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
 	struct fdisk_partition *pa;
 	const char *label = NULL, *device = NULL;
 	int c;
+	size_t n = 1;
 
 	static const struct option longopts[] = {
 		{ "label",  required_argument, NULL, 'x' },
@@ -78,10 +79,10 @@ int main(int argc, char *argv[])
 			device = optarg;
 			break;
 		case 'h':
-			printf("%s [options] <partno,start,size> ...", program_invocation_short_name);
+			printf("%s [options] -- <partno,start,size> ...", program_invocation_short_name);
 			fputs(USAGE_SEPARATOR, stdout);
 			puts("Make disklabel and partitions.");
-			puts(" <partno>                     number from 1..n (4th is extended for MBR)");
+			puts(" <partno>                     1..n (4th is extended for MBR), or '-' for default");
 			puts(" <start>                      partition start offset in sectors");
 			puts(" <size>                       partition size in sectors");
 			fputs(USAGE_OPTIONS, stdout);
@@ -112,34 +113,51 @@ int main(int argc, char *argv[])
 	if (fdisk_create_disklabel(cxt, label))
 		err(EXIT_FAILURE, "failed to create disk label");
 
+	fdisk_disable_dialogs(cxt, 1);
+
 	while (optind < argc) {
 		int rc;
 		unsigned int partno = 0;
 		uint64_t start = 0, size = 0;
 		const char *str = argv[optind];
 
-		if (sscanf(str, "%u,%"SCNu64",%"SCNu64"", &partno, &start, &size) != 3)
-			errx(EXIT_FAILURE, "faild to parse %s", str);
-
-		/* disable defaults */
-		fdisk_partition_partno_follow_default(pa, 0);
+		fdisk_reset_partition(pa);
 		fdisk_partition_end_follow_default(pa, 0);
 
-		/* set all */
-		fdisk_partition_set_partno(pa, partno - 1);	/* library uses 0..n */
+		if (*str == '-') {
+			/* partno unspecified */
+			if (sscanf(str, "-,%"SCNu64",%"SCNu64"", &start, &size) != 2)
+				errx(EXIT_FAILURE, "faild to parse %s", str);
+			fdisk_partition_partno_follow_default(pa, 1);
+			fdisk_partition_unset_partno(pa);
+		} else {
+			/* partno specified */
+			if (sscanf(str, "%u,%"SCNu64",%"SCNu64"", &partno, &start, &size) != 3)
+				errx(EXIT_FAILURE, "faild to parse %s", str);
+
+			fdisk_partition_partno_follow_default(pa, 0);
+			fdisk_partition_set_partno(pa, partno - 1);     /* library uses 0..n */
+		}
+
 		fdisk_partition_set_start(pa, start);
 		fdisk_partition_set_size(pa, size);
 
-		fprintf(stderr, "Requested partition: <partno=%zu,start=%ju,size=%ju>\n",
-				fdisk_partition_get_partno(pa),
-				(uintmax_t) fdisk_partition_get_start(pa),
-				(uintmax_t) fdisk_partition_get_size(pa));
+		if (fdisk_partition_has_partno(pa))
+			fprintf(stderr, "Requested partition: <partno=%zu,start=%ju,size=%ju>\n",
+					fdisk_partition_get_partno(pa),
+					(uintmax_t) fdisk_partition_get_start(pa),
+					(uintmax_t) fdisk_partition_get_size(pa));
+		else
+			fprintf(stderr, "Requested partition: <partno=<default>,start=%ju,size=%ju>\n",
+					(uintmax_t) fdisk_partition_get_start(pa),
+					(uintmax_t) fdisk_partition_get_size(pa));
 
 		if (fdisk_is_label(cxt, DOS)) {
 			/* Make sure last primary partition is extended if user
 			 * wants more than 4 partitions.
 			 */
-			if (partno == 4 && optind + 1 < argc) {
+			if ((partno == 4 || (n == 4 && !fdisk_partition_has_partno(pa)))
+			    && optind + 1 < argc) {
 				struct fdisk_parttype *type =
 					fdisk_label_parse_parttype(
 							fdisk_get_label(cxt, NULL), "05");
@@ -153,11 +171,14 @@ int main(int argc, char *argv[])
 		rc = fdisk_add_partition(cxt, pa, NULL);
 		if (rc) {
 			errno = -rc;
-			errx(EXIT_FAILURE, "failed to add #%d partition", partno);
+			errx(EXIT_FAILURE, "failed to add #%zu partition",
+					fdisk_partition_has_partno(pa) ?
+					fdisk_partition_get_partno(pa) + 1: n);
 		}
 
 		fdisk_reset_partition(pa);
 		optind++;
+		n++;
 	}
 
 	if (fdisk_write_disklabel(cxt))

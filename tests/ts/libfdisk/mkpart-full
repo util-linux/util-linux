@@ -43,6 +43,20 @@ ts_finalize_subtest
 
 $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
+
+ts_init_subtest "mbr-primary-nopartno"
+$TESTPROG --label mbr --device ${TEST_IMAGE_NAME} -- \
+	-,2048,2048 \
+	-,4096,2048 \
+	-,6144,2048 \
+	-,8192,22528 \
+	>> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --list ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean ${TEST_IMAGE_NAME}
+ts_finalize_subtest
+
+$TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
+
 ## no extended but partno > 4 requested
 ts_init_subtest "mbr-err-primary"
 $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
@@ -79,6 +93,22 @@ $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
 	5,10240,2048 \
 	6,14336,2048 \
 	7,18432,12288 \
+       	>> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --list ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean ${TEST_IMAGE_NAME}
+ts_finalize_subtest
+
+$TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
+
+ts_init_subtest "mbr-nopartno"
+$TESTPROG --label mbr --device ${TEST_IMAGE_NAME} -- \
+	-,2048,2048 \
+	-,4096,2048 \
+	-,6144,2048 \
+	-,8192,22528 \
+	-,10240,2048 \
+	-,14336,2048 \
+	-,18432,12288 \
        	>> $TS_OUTPUT 2>&1
 $TS_CMD_SFDISK --list ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean ${TEST_IMAGE_NAME}
@@ -124,6 +154,22 @@ $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
 	5,10240,2048 \
 	6,12288,2048 \
 	7,14336,2048 \
+       	>> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --list ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean ${TEST_IMAGE_NAME}
+ts_finalize_subtest
+
+$TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
+
+ts_init_subtest "gpt-nopartno"
+$TESTPROG --label gpt --device ${TEST_IMAGE_NAME} -- \
+	-,2048,2048 \
+	-,4096,2048 \
+	-,6144,2048 \
+	-,8192,2048 \
+	-,10240,2048 \
+	-,12288,2048 \
+	-,14336,2048 \
        	>> $TS_OUTPUT 2>&1
 $TS_CMD_SFDISK --list ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean ${TEST_IMAGE_NAME}
