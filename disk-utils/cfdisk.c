@@ -183,6 +183,7 @@ struct cfdisk_menu {
 static struct cfdisk_menuitem main_menuitems[] = {
 	{ 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
 	{ 'd', N_("Delete"), N_("Delete the current partition") },
+	{ 'r', N_("Resize"), N_("Reduce or enlarge the current partition") },
 	{ 'n', N_("New"), N_("Create new partition from free space") },
 	{ 'q', N_("Quit"), N_("Quit program without writing changes") },
 	{ 't', N_("Type"), N_("Change the partition type") },
@@ -1822,9 +1823,12 @@ done:
 	return rc;
 }
 
-/* @res is default value as well as result in bytes */
-static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
-		       uintmax_t low, uintmax_t up, int *expsize)
+static int ui_get_size(struct cfdisk *cf,	/* context */
+		       const char *prompt,	/* UI dialog string */
+		       uintmax_t *res,		/* result in bytes */
+		       uintmax_t low,		/* minimal size */
+		       uintmax_t up,		/* maximal size */
+		       int *expsize)		/* explicitly specified size */
 {
 	char buf[128];
 	uintmax_t user = 0;
@@ -1864,7 +1868,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 		}
 
 		if (rc == 0) {
-			DBG(UI, ul_debug("get_size user=%ju, power=%d, sectors=%s",
+			DBG(UI, ul_debug("get_size user=%ju, power=%d, in-sectors=%s",
 						user, pwr, insec ? "yes" : "no"));
 			if (insec)
 				user *= fdisk_get_sector_size(cf->cxt);
@@ -2197,6 +2201,7 @@ static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
 		ignore[i++] = 'd';	/* delete */
 		ignore[i++] = 't';	/* set type */
 		ignore[i++] = 'b';      /* set bootable */
+		ignore[i++] = 'r';	/* resize */
 		cf->menu->prefkey = 'n';
 	} else {
 		cf->menu->prefkey = 'q';
@@ -2282,7 +2287,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		break;
 	case 'n': /* New */
 	{
-		uint64_t start, size, dflt_size, secs;
+		uint64_t start, size, dflt_size, secs, max_size;
 		struct fdisk_partition *npa;	/* the new partition */
 		int expsize = 0;		/* size specified explicitly in sectors */
 
@@ -2291,11 +2296,11 @@ static int main_menu_action(struct cfdisk *cf, int key)
 
 		/* free space range */
 		start = fdisk_partition_get_start(pa);
-		size = dflt_size = fdisk_partition_get_size(pa) * fdisk_get_sector_size(cf->cxt);
+		size = max_size = dflt_size = fdisk_partition_get_size(pa) * fdisk_get_sector_size(cf->cxt);
 
 		if (ui_get_size(cf, _("Partition size: "), &size,
 				fdisk_get_sector_size(cf->cxt),
-				size, &expsize) == -CFDISK_ERR_ESC)
+				max_size, &expsize) == -CFDISK_ERR_ESC)
 			break;
 
 		secs = size / fdisk_get_sector_size(cf->cxt);
@@ -2337,6 +2342,43 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			info = _("Changed type of partition %zu.");
 		else
 			info = _("The type of partition %zu is unchanged.");
+		break;
+	}
+	case 'r': /* resize */
+	{
+		struct fdisk_partition *npa, *next;
+		uint64_t size, max_size, secs;
+
+		if (fdisk_partition_is_freespace(pa) || !fdisk_partition_has_start(pa))
+			return -EINVAL;
+
+		size = fdisk_partition_get_size(pa);
+
+		/* is the next freespace? */
+		next = fdisk_table_get_partition(cf->table, cf->lines_idx + 1);
+		if (next && fdisk_partition_is_freespace(next))
+			size += fdisk_partition_get_size(next);
+
+		size *= fdisk_get_sector_size(cf->cxt);
+		max_size = size;
+
+		if (ui_get_size(cf, _("New size: "), &size,
+				fdisk_get_sector_size(cf->cxt),
+				max_size, NULL) == -CFDISK_ERR_ESC)
+			break;
+		secs = size / fdisk_get_sector_size(cf->cxt);
+		npa = fdisk_new_partition();
+		if (!npa)
+			return -ENOMEM;
+
+		fdisk_partition_set_size(npa, secs);
+
+		rc = fdisk_set_partition(cf->cxt, n, npa);
+		fdisk_unref_partition(npa);
+		if (rc == 0) {
+			ref = 1;
+			info = _("Partition %zu resized.");
+		}
 		break;
 	}
 	case 's': /* Sort */
