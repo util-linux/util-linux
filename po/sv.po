@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-06-02 11:14+0200\n"
+"POT-Creation-Date: 2017-07-20 11:08+0200\n"
 "PO-Revision-Date: 2017-05-28 05:13+0800\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -62,7 +62,7 @@ msgstr "Säg till kärnan om att en angiven partition existerar.\n"
 #: sys-utils/setpriv.c:529 sys-utils/setpriv.c:552 sys-utils/swapon.c:372
 #: sys-utils/swapon.c:515 sys-utils/switch_root.c:167 sys-utils/unshare.c:106
 #: sys-utils/unshare.c:121 sys-utils/wdctl.c:323 sys-utils/wdctl.c:379
-#: term-utils/agetty.c:2624 term-utils/mesg.c:127 term-utils/script.c:426
+#: term-utils/agetty.c:2584 term-utils/mesg.c:127 term-utils/script.c:426
 #: term-utils/script.c:432 term-utils/script.c:434 term-utils/script.c:530
 #: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
 #: term-utils/wall.c:413 text-utils/colcrt.c:282 text-utils/more.c:519
@@ -268,7 +268,7 @@ msgid "Quit program without writing changes"
 msgstr "Avsluta programmet utan att skriva förändringar"
 
 #: disk-utils/cfdisk.c:188 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
-#: libfdisk/src/dos.c:2396 libfdisk/src/gpt.c:3017 libfdisk/src/sgi.c:1159
+#: libfdisk/src/dos.c:2413 libfdisk/src/gpt.c:3018 libfdisk/src/sgi.c:1159
 #: libfdisk/src/sun.c:1119
 msgid "Type"
 msgstr "Typ"
@@ -814,7 +814,7 @@ msgid "Using default response %c."
 msgstr "Använder standardsvaret %c."
 
 #: disk-utils/fdisk.c:178 disk-utils/fdisk.c:252 disk-utils/fdisk.c:327
-#: libfdisk/src/dos.c:1223 libfdisk/src/gpt.c:2359
+#: libfdisk/src/dos.c:1226 libfdisk/src/gpt.c:2360
 msgid "Value out of range."
 msgstr "Värde utanför intervall."
 
@@ -909,8 +909,8 @@ msgstr "kan inte söka"
 msgid "cannot read"
 msgstr "kan inte läsa"
 
-#: disk-utils/fdisk.c:697 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:964
-#: libfdisk/src/gpt.c:2292
+#: disk-utils/fdisk.c:697 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:967
+#: libfdisk/src/gpt.c:2293
 msgid "First sector"
 msgstr "Första sektorn"
 
@@ -1104,7 +1104,7 @@ msgstr "misslyckades med att allokera iterator"
 #: misc-utils/findmnt.c:1598 misc-utils/lsblk.c:1897 misc-utils/lslocks.c:449
 #: sys-utils/losetup.c:314 sys-utils/lscpu.c:1762 sys-utils/lscpu.c:1865
 #: sys-utils/lsipc.c:338 sys-utils/prlimit.c:297 sys-utils/swapon.c:281
-#: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:196
+#: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:204
 msgid "failed to allocate output table"
 msgstr "misslyckades med att allokera utmatningstabell"
 
@@ -1115,7 +1115,7 @@ msgstr "misslyckades med att allokera utmatningstabell"
 #: sys-utils/lscpu.c:1788 sys-utils/lscpu.c:1816 sys-utils/lsipc.c:470
 #: sys-utils/lsipc.c:545 sys-utils/lsipc.c:647 sys-utils/lsipc.c:739
 #: sys-utils/lsipc.c:900 sys-utils/prlimit.c:229 sys-utils/swapon.c:176
-#: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:407
+#: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:415
 msgid "failed to allocate output line"
 msgstr "misslyckades med att allokera utmatningsrad"
 
@@ -1125,7 +1125,7 @@ msgstr "misslyckades med att allokera utmatningsrad"
 #: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1796
 #: sys-utils/lscpu.c:1827 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
 #: sys-utils/prlimit.c:261 sys-utils/swapon.c:224 sys-utils/wdctl.c:243
-#: sys-utils/zramctl.c:475 text-utils/column.c:413
+#: sys-utils/zramctl.c:475 text-utils/column.c:421
 msgid "failed to add output data"
 msgstr "misslyckades att lägga till utmatningsdata"
 
@@ -1143,23 +1143,23 @@ msgstr "Filsystem/RAID-signatur i partition %zu kommer att rensas bort."
 msgid "Partition table entries are not in disk order."
 msgstr "Poster i partitionstabell är inte i diskordning."
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2390
-#: libfdisk/src/gpt.c:3013 libfdisk/src/sgi.c:1153 libfdisk/src/sun.c:1113
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2407
+#: libfdisk/src/gpt.c:3014 libfdisk/src/sgi.c:1153 libfdisk/src/sun.c:1113
 msgid "Start"
 msgstr "Början"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2391
-#: libfdisk/src/gpt.c:3014 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1114
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2408
+#: libfdisk/src/gpt.c:3015 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1114
 msgid "End"
 msgstr "Slutet"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2392
-#: libfdisk/src/gpt.c:3015 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1115
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2409
+#: libfdisk/src/gpt.c:3016 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1115
 msgid "Sectors"
 msgstr "Sektorer"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1021 libfdisk/src/dos.c:2394
-#: libfdisk/src/gpt.c:3016 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1117
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1021 libfdisk/src/dos.c:2411
+#: libfdisk/src/gpt.c:3017 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1117
 msgid "Size"
 msgstr "Storlek"
 
@@ -5027,15 +5027,15 @@ msgstr "Partition %zd: har ogiltig startsektor 0."
 msgid "There is no *BSD partition on %s."
 msgstr "Det finns ingen *BSD-partition på %s."
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:964
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:967
 msgid "First cylinder"
 msgstr "Första cylindern"
 
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1195
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1198
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Sista cylinder, +cylindrar eller +storlek{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1200 libfdisk/src/gpt.c:2337
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1203 libfdisk/src/gpt.c:2338
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Sista sektorn, +sektorer eller +storlek{K,M,G,T,P}"
 
@@ -5084,7 +5084,7 @@ msgstr "Spår/cylinder"
 msgid "Sectors/Cylinder"
 msgstr "Sektorer/cylinder"
 
-#: libfdisk/src/bsd.c:490 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2393
+#: libfdisk/src/bsd.c:490 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2410
 #: libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:199 libfdisk/src/sun.c:1116
 msgid "Cylinders"
 msgstr "Cylindrar"
@@ -5240,305 +5240,314 @@ msgstr "Ofullständig geometriinställning."
 msgid "All primary partitions have been defined already."
 msgstr "Alla primära partitioner har redan definierats."
 
-#: libfdisk/src/dos.c:267
+#: libfdisk/src/dos.c:216
+#, fuzzy
+msgid "Primary partition not available."
+msgstr "Ingen ledig partition tillgänglig!"
+
+#: libfdisk/src/dos.c:270
 #, c-format
 msgid "Failed to read extended partition table (offset=%ju)"
 msgstr "Misslyckades med att läsa utökad partitionstabell (position=%ju)"
 
-#: libfdisk/src/dos.c:337
+#: libfdisk/src/dos.c:340
 msgid "You can set geometry from the extra functions menu."
 msgstr "Du kan ställa in geometri från extrafunktionsmenyn."
 
-#: libfdisk/src/dos.c:340
+#: libfdisk/src/dos.c:343
 msgid "DOS-compatible mode is deprecated."
 msgstr "DOS-kompatibilitetsläge är föråldrat."
 
-#: libfdisk/src/dos.c:344
+#: libfdisk/src/dos.c:347
 msgid "The device presents a logical sector size that is smaller than the physical sector size. Aligning to a physical sector (or optimal I/O) size boundary is recommended, or performance may be impacted."
 msgstr "Enheten presenterar en logisk sektorstorlek som är mindre än den fysiska sektorstorleken. Justering till en gräns för fysisk sektorstorlek (eller optimal I/O-storlek)  rekommenderas annars kan prestanda påverkas."
 
-#: libfdisk/src/dos.c:350
+#: libfdisk/src/dos.c:353
 msgid "Cylinders as display units are deprecated."
 msgstr "Cylindrar som visningsenhet är föråldrade."
 
-#: libfdisk/src/dos.c:357
+#: libfdisk/src/dos.c:360
 #, c-format
 msgid "The size of this disk is %s (%ju bytes). DOS partition table format cannot be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgstr "Storleken på denna disk är %s (%ju byte). DOS partitionstabellsformat kan inte användas för enheter där volymerna är större än %lu byte för %lu-byte sektorer. Använd GUID partitionstabellsformat (GPT)."
 
-#: libfdisk/src/dos.c:516
+#: libfdisk/src/dos.c:519
 msgid "Bad offset in primary extended partition."
 msgstr "Felaktigt position i primär utökad partition."
 
-#: libfdisk/src/dos.c:530
+#: libfdisk/src/dos.c:533
 #, c-format
 msgid "Omitting partitions after #%zu. They will be deleted if you save this partition table."
 msgstr "Utelämnar partitioner efter nr %zu. De kommer att tas bort om du sparar denna partitionstabell."
 
-#: libfdisk/src/dos.c:563
+#: libfdisk/src/dos.c:566
 #, c-format
 msgid "Extra link pointer in partition table %zu."
 msgstr "Extra link pointer in partition table %zu."
 
-#: libfdisk/src/dos.c:571
+#: libfdisk/src/dos.c:574
 #, c-format
 msgid "Ignoring extra data in partition table %zu."
 msgstr "Hoppar över extra data i partitionstabell %zu."
 
-#: libfdisk/src/dos.c:627
+#: libfdisk/src/dos.c:630
 #, c-format
 msgid "omitting empty partition (%zu)"
 msgstr "hoppar över tom partition (%zu)"
 
-#: libfdisk/src/dos.c:687
+#: libfdisk/src/dos.c:690
 #, c-format
 msgid "Created a new DOS disklabel with disk identifier 0x%08x."
 msgstr "Skapade en ny DOS-disketikett med diskidentifierare 0x%08x."
 
-#: libfdisk/src/dos.c:708
+#: libfdisk/src/dos.c:711
 msgid "Enter the new disk identifier"
 msgstr "Mata in den nya diskidentifieraren"
 
-#: libfdisk/src/dos.c:715
+#: libfdisk/src/dos.c:718
 msgid "Incorrect value."
 msgstr "Felaktigt värde."
 
-#: libfdisk/src/dos.c:724
+#: libfdisk/src/dos.c:727
 #, c-format
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "Diskidentifierare ändrades från 0x%08x till 0x%08x."
 
-#: libfdisk/src/dos.c:820
+#: libfdisk/src/dos.c:823
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "Hoppar över extra utökad partition %zu"
 
-#: libfdisk/src/dos.c:834
+#: libfdisk/src/dos.c:837
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "Ogiltigt flagga 0x%02x%02x för EBR (för partition %zu) kommer ett korrigeras vid skrivning med w(skriv)."
 
-#: libfdisk/src/dos.c:951
+#: libfdisk/src/dos.c:954
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "Startsektor %ju är utanför intervall."
 
-#: libfdisk/src/dos.c:1058 libfdisk/src/gpt.c:2217 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1061 libfdisk/src/gpt.c:2218 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "Partition %zu är redan definierad. Ta bort den innan du lägger till den igen."
 
-#: libfdisk/src/dos.c:1128
+#: libfdisk/src/dos.c:1131
 #, c-format
 msgid "Sector %llu is already allocated."
 msgstr "Sektor %llu är redan allokerad."
 
-#: libfdisk/src/dos.c:1167 libfdisk/src/gpt.c:2226
+#: libfdisk/src/dos.c:1170 libfdisk/src/gpt.c:2227
 msgid "No free sectors available."
 msgstr "Inga lediga sektorer är tillgängliga."
 
-#: libfdisk/src/dos.c:1323
+#: libfdisk/src/dos.c:1326
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "Lägger till logisk partition %zu"
 
-#: libfdisk/src/dos.c:1354
+#: libfdisk/src/dos.c:1357
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Partition %zu innehåller sektor 0"
 
-#: libfdisk/src/dos.c:1356
+#: libfdisk/src/dos.c:1359
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Partition %zu: huvud %d är större än maximala %d"
 
-#: libfdisk/src/dos.c:1359
+#: libfdisk/src/dos.c:1362
 #, c-format
 msgid "Partition %zu: sector %d greater than maximum %llu"
 msgstr "Partition %zu: sektor %d är större än maximala %llu"
 
-#: libfdisk/src/dos.c:1362
+#: libfdisk/src/dos.c:1365
 #, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgstr "Partitioner %zu: cylinder %d är större än maximala %llu"
 
-#: libfdisk/src/dos.c:1368
+#: libfdisk/src/dos.c:1371
 #, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "Partition %zu: tidigare sektorer %u stämmer inte överens med totala %u"
 
-#: libfdisk/src/dos.c:1421
+#: libfdisk/src/dos.c:1424
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partition %zu: olika fysiska/logiska början (icke-Linux?): fys=(%d, %d, %d), logiskt=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1432
+#: libfdisk/src/dos.c:1435
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partition %zu: olika fysiska/logiska slut: phys=(%d, %d, %d), logiskt=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1441
+#: libfdisk/src/dos.c:1444
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "Partition %zu: slutar inte på cylindergräns."
 
-#: libfdisk/src/dos.c:1468
+#: libfdisk/src/dos.c:1471
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "Partition %zu: felaktig början på data."
 
-#: libfdisk/src/dos.c:1481
+#: libfdisk/src/dos.c:1484
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Partition %zu: överlappar med partition %zu."
 
-#: libfdisk/src/dos.c:1509
+#: libfdisk/src/dos.c:1512
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "Partition %zu: tom."
 
-#: libfdisk/src/dos.c:1514
+#: libfdisk/src/dos.c:1517
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Logisk partition %zu: inte helt inuti partition %zu."
 
-#: libfdisk/src/dos.c:1522
+#: libfdisk/src/dos.c:1525
 #, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgstr "Totalt antal allokerade sektorer %llu är större än maximala %llu."
 
-#: libfdisk/src/dos.c:1525
+#: libfdisk/src/dos.c:1528
 #, c-format
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr "%lld oallokerade %ld-byte sektorer återstår."
 
-#: libfdisk/src/dos.c:1573 libfdisk/src/dos.c:2028
+#: libfdisk/src/dos.c:1586 libfdisk/src/dos.c:1601 libfdisk/src/dos.c:2045
 msgid "Extended partition already exists."
 msgstr "Utökad partition existerar redan."
 
-#: libfdisk/src/dos.c:1635
+#: libfdisk/src/dos.c:1616
+msgid "Extended partition does not exists. Failed to add logical partition."
+msgstr ""
+
+#: libfdisk/src/dos.c:1652
 msgid "The maximum number of partitions has been created."
 msgstr "Det maximala antalet partitioner har skapats."
 
-#: libfdisk/src/dos.c:1647
+#: libfdisk/src/dos.c:1664
 msgid "All primary partitions are in use."
 msgstr "Alla logiska partitioner används."
 
-#: libfdisk/src/dos.c:1649 libfdisk/src/dos.c:1660
+#: libfdisk/src/dos.c:1666 libfdisk/src/dos.c:1677
 msgid "All space for primary partitions is in use."
 msgstr "Allt utrymmet för primära partitioner används."
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:1663
+#: libfdisk/src/dos.c:1680
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "För att skapa fler partitioner måste du först ersätta en primär med en utökad partition."
 
-#: libfdisk/src/dos.c:1668
+#: libfdisk/src/dos.c:1685
 msgid "All logical partitions are in use. Adding a primary partition."
 msgstr "Alla logiska partitioner används. Lägger till en primär-partition."
 
-#: libfdisk/src/dos.c:1690
+#: libfdisk/src/dos.c:1707
 msgid "Partition type"
 msgstr "Partitionstyp"
 
-#: libfdisk/src/dos.c:1694
+#: libfdisk/src/dos.c:1711
 #, c-format
 msgid "%zu primary, %d extended, %zu free"
 msgstr "%zu primär, %d utökat, %zu ledigt"
 
-#: libfdisk/src/dos.c:1699
+#: libfdisk/src/dos.c:1716
 msgid "primary"
 msgstr "primär"
 
-#: libfdisk/src/dos.c:1701
+#: libfdisk/src/dos.c:1718
 msgid "extended"
 msgstr "utökad"
 
-#: libfdisk/src/dos.c:1701
+#: libfdisk/src/dos.c:1718
 msgid "container for logical partitions"
 msgstr "behållare för logiska partitioner"
 
-#: libfdisk/src/dos.c:1703
+#: libfdisk/src/dos.c:1720
 msgid "logical"
 msgstr "logisk"
 
-#: libfdisk/src/dos.c:1703
+#: libfdisk/src/dos.c:1720
 msgid "numbered from 5"
 msgstr "numrerade från 5"
 
-#: libfdisk/src/dos.c:1741
+#: libfdisk/src/dos.c:1758
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Ogiltig partitionstyp ”%c”."
 
-#: libfdisk/src/dos.c:1759
+#: libfdisk/src/dos.c:1776
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Kan inte skriva sektor %jd: sökning misslyckades"
 
-#: libfdisk/src/dos.c:1919 libfdisk/src/gpt.c:1138
+#: libfdisk/src/dos.c:1936 libfdisk/src/gpt.c:1139
 msgid "Disk identifier"
 msgstr "Diskidentifierare"
 
-#: libfdisk/src/dos.c:2033
+#: libfdisk/src/dos.c:2050
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "Typ 0 betyder ledigt utrymme för många system. Att ha partitioner av typ 0 är förmodligen oklokt."
 
-#: libfdisk/src/dos.c:2038
+#: libfdisk/src/dos.c:2055
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Kan inte ändra typ för utökad partitions som redan används av logiska partitioner. Ta bort logiska partitioner först."
 
-#: libfdisk/src/dos.c:2224 libfdisk/src/gpt.c:2922
+#: libfdisk/src/dos.c:2241 libfdisk/src/gpt.c:2923
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Ingenting att göra. Ordningen är redan korrekt."
 
-#: libfdisk/src/dos.c:2279
+#: libfdisk/src/dos.c:2296
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "Partition %zu: har inget dataområde."
 
-#: libfdisk/src/dos.c:2312
+#: libfdisk/src/dos.c:2329
 msgid "New beginning of data"
 msgstr "Ny början utav data"
 
-#: libfdisk/src/dos.c:2368
+#: libfdisk/src/dos.c:2385
 #, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "VARNING: Partition %zu är en utökad partition."
 
-#: libfdisk/src/dos.c:2374
+#: libfdisk/src/dos.c:2391
 #, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "Startbarhetsflaggan för partition %zu är nu aktiverad."
 
-#: libfdisk/src/dos.c:2375
+#: libfdisk/src/dos.c:2392
 #, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Startbarhetsflaggan för partition %zu är nu inaktiverad."
 
-#: libfdisk/src/dos.c:2388 libfdisk/src/gpt.c:3012 libfdisk/src/sgi.c:1152
+#: libfdisk/src/dos.c:2405 libfdisk/src/gpt.c:3013 libfdisk/src/sgi.c:1152
 #: libfdisk/src/sun.c:1112
 msgid "Device"
 msgstr "Enhet"
 
-#: libfdisk/src/dos.c:2389 libfdisk/src/sun.c:40
+#: libfdisk/src/dos.c:2406 libfdisk/src/sun.c:40
 msgid "Boot"
 msgstr "Start"
 
-#: libfdisk/src/dos.c:2395 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1118
+#: libfdisk/src/dos.c:2412 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1118
 msgid "Id"
 msgstr "Id"
 
-#: libfdisk/src/dos.c:2399
+#: libfdisk/src/dos.c:2416
 msgid "Start-C/H/S"
 msgstr "Start-C/H/S"
 
-#: libfdisk/src/dos.c:2400
+#: libfdisk/src/dos.c:2417
 msgid "End-C/H/S"
 msgstr "Slut-C/H/S"
 
-#: libfdisk/src/dos.c:2401 libfdisk/src/gpt.c:3022 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2418 libfdisk/src/gpt.c:3023 libfdisk/src/sgi.c:1160
 msgid "Attrs"
 msgstr "Attribut"
 
@@ -5862,307 +5871,307 @@ msgstr "QNX6-filsystem"
 msgid "Plan 9 partition"
 msgstr "Plan 9-partition"
 
-#: libfdisk/src/gpt.c:589
+#: libfdisk/src/gpt.c:590
 msgid "failed to allocate GPT header"
 msgstr "misslyckades med att allokera GPT-huvud"
 
-#: libfdisk/src/gpt.c:672
+#: libfdisk/src/gpt.c:673
 msgid "First LBA specified by script is out of range."
 msgstr "Första LBA angiven av skript är utanför intervallet."
 
-#: libfdisk/src/gpt.c:684
+#: libfdisk/src/gpt.c:685
 msgid "Last LBA specified by script is out of range."
 msgstr "Sista LBA angiven av skript är utanför intervallet."
 
-#: libfdisk/src/gpt.c:817
+#: libfdisk/src/gpt.c:818
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by w(rite)."
 msgstr "GPT PMBR storleksfel (%<PRIu64> != %<PRIu64>) kommer att korrigeras vid w(skriv)."
 
-#: libfdisk/src/gpt.c:834
+#: libfdisk/src/gpt.c:835
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() misslyckades"
 
-#: libfdisk/src/gpt.c:844
+#: libfdisk/src/gpt.c:845
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: kan inte hantera filer med läge %o"
 
-#: libfdisk/src/gpt.c:1108
+#: libfdisk/src/gpt.c:1109
 msgid "GPT Header"
 msgstr "GPT-huvud"
 
-#: libfdisk/src/gpt.c:1113
+#: libfdisk/src/gpt.c:1114
 msgid "GPT Entries"
 msgstr "GPT-poster"
 
-#: libfdisk/src/gpt.c:1145
+#: libfdisk/src/gpt.c:1146
 msgid "First LBA"
 msgstr "Första LBA"
 
-#: libfdisk/src/gpt.c:1150
+#: libfdisk/src/gpt.c:1151
 msgid "Last LBA"
 msgstr "Sista LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1156
+#: libfdisk/src/gpt.c:1157
 msgid "Alternative LBA"
 msgstr "Alternativ LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1162
+#: libfdisk/src/gpt.c:1163
 msgid "Partition entries LBA"
 msgstr "Partitionsposter LBA"
 
-#: libfdisk/src/gpt.c:1167
+#: libfdisk/src/gpt.c:1168
 msgid "Allocated partition entries"
 msgstr "Allokerade partitionsposter"
 
-#: libfdisk/src/gpt.c:1512
+#: libfdisk/src/gpt.c:1513
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Säkerhetskopian av GPT-tabellen är korrupt, men den primära verkar OK så den kommer att användas."
 
-#: libfdisk/src/gpt.c:1521
+#: libfdisk/src/gpt.c:1522
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Den primära GPT-tabellen är korrupt, men säkerhetskopian verkar OK så den kommer att användas."
 
-#: libfdisk/src/gpt.c:1703
+#: libfdisk/src/gpt.c:1704
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "GPT-attributsbit ”%s” stöds inte"
 
-#: libfdisk/src/gpt.c:1708
+#: libfdisk/src/gpt.c:1709
 #, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "misslyckades med att tolka GPT-attributsträng ”%s”"
 
-#: libfdisk/src/gpt.c:1803
+#: libfdisk/src/gpt.c:1804
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "Partitions-UUID ändrat från %s till %s."
 
-#: libfdisk/src/gpt.c:1811
+#: libfdisk/src/gpt.c:1812
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Partitionsnamn ändrades från ”%s” till ”%.*s”."
 
-#: libfdisk/src/gpt.c:1840
+#: libfdisk/src/gpt.c:1841
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Start för partitionen föregår FirstUsableLBA."
 
-#: libfdisk/src/gpt.c:1847
+#: libfdisk/src/gpt.c:1848
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "Slutet på partitionen stegar över LastUsableLBA."
 
-#: libfdisk/src/gpt.c:2010
+#: libfdisk/src/gpt.c:2011
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "Enheten innehåller en hybrid-MBR -- skriver endast GPT. Du måste synkronisera MBR:en manuellt."
 
-#: libfdisk/src/gpt.c:2047
+#: libfdisk/src/gpt.c:2048
 msgid "Disk does not contain a valid backup header."
 msgstr "Disk innehåller inte ett giltigt säkerhetshuvud."
 
-#: libfdisk/src/gpt.c:2052
+#: libfdisk/src/gpt.c:2053
 msgid "Invalid primary header CRC checksum."
 msgstr "Ogiltigt primärhuvud vid kontroll av CRC."
 
-#: libfdisk/src/gpt.c:2056
+#: libfdisk/src/gpt.c:2057
 msgid "Invalid backup header CRC checksum."
 msgstr "Ogiltigt huvud för säkerhetskopia vid kontroll av CRC."
 
-#: libfdisk/src/gpt.c:2061
+#: libfdisk/src/gpt.c:2062
 msgid "Invalid partition entry checksum."
 msgstr "Ogiltig kontrollsumma för partitionspost."
 
-#: libfdisk/src/gpt.c:2066
+#: libfdisk/src/gpt.c:2067
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Ogiltigt primärhuvud vid kontroll av LBA."
 
-#: libfdisk/src/gpt.c:2070
+#: libfdisk/src/gpt.c:2071
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Ogiltigt huvud för säkerhetskopia vid kontroll av LBA."
 
-#: libfdisk/src/gpt.c:2075
+#: libfdisk/src/gpt.c:2076
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA stämmer inte med riktig position vid primärt huvud."
 
-#: libfdisk/src/gpt.c:2079
+#: libfdisk/src/gpt.c:2080
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA stämmer inte med riktig position i huvudet på säkerhetskopian."
 
-#: libfdisk/src/gpt.c:2084
+#: libfdisk/src/gpt.c:2085
 msgid "Disk is too small to hold all data."
 msgstr "Disken är för liten för att hålla all data."
 
-#: libfdisk/src/gpt.c:2094
+#: libfdisk/src/gpt.c:2095
 msgid "Primary and backup header mismatch."
 msgstr "Primärt huvud och huvud i säkerhetskopia stämmer inte."
 
-#: libfdisk/src/gpt.c:2100
+#: libfdisk/src/gpt.c:2101
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Partition %u överlappar med partition %u."
 
-#: libfdisk/src/gpt.c:2107
+#: libfdisk/src/gpt.c:2108
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Partition %u är för stor för disken."
 
-#: libfdisk/src/gpt.c:2114
+#: libfdisk/src/gpt.c:2115
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Partition %u slutar före den börjar."
 
-#: libfdisk/src/gpt.c:2123
+#: libfdisk/src/gpt.c:2124
 msgid "No errors detected."
 msgstr "Inga fel hittades."
 
-#: libfdisk/src/gpt.c:2124
+#: libfdisk/src/gpt.c:2125
 #, c-format
 msgid "Header version: %s"
 msgstr "Huvudversion: %s"
 
-#: libfdisk/src/gpt.c:2125
+#: libfdisk/src/gpt.c:2126
 #, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "Använder %zu av %zu partitioner."
 
-#: libfdisk/src/gpt.c:2135
+#: libfdisk/src/gpt.c:2136
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Totalt %ju lediga sektorer är tillgängliga i %u segment."
 msgstr[1] "Totalt %ju lediga sektorer är tillgängliga i %u segment (det största är %s)."
 
-#: libfdisk/src/gpt.c:2143
+#: libfdisk/src/gpt.c:2144
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "%d fel hittades."
 msgstr[1] "%d fel hittades."
 
-#: libfdisk/src/gpt.c:2222
+#: libfdisk/src/gpt.c:2223
 msgid "All partitions are already in use."
 msgstr "Alla partitioner används redan."
 
-#: libfdisk/src/gpt.c:2279 libfdisk/src/gpt.c:2304
+#: libfdisk/src/gpt.c:2280 libfdisk/src/gpt.c:2305
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Sektor %ju används redan."
 
-#: libfdisk/src/gpt.c:2365
+#: libfdisk/src/gpt.c:2366
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Kunde inte skapa inte partition %zu"
 
-#: libfdisk/src/gpt.c:2372
+#: libfdisk/src/gpt.c:2373
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "Den sista användbara GPT-sektorn är %ju, men %ju begärdes."
 
-#: libfdisk/src/gpt.c:2379
+#: libfdisk/src/gpt.c:2380
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "Den första användbara GPT-sektorn är %ju, men %ju begärdes."
 
-#: libfdisk/src/gpt.c:2513
+#: libfdisk/src/gpt.c:2514
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Skapade en ny GPT-disketikett (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2531
+#: libfdisk/src/gpt.c:2532
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Mata in ett nytt disk-UUID (i 8-4-4-4-12-format)"
 
-#: libfdisk/src/gpt.c:2538
+#: libfdisk/src/gpt.c:2539
 msgid "Failed to parse your UUID."
 msgstr "Misslyckades med att tolka din UUID."
 
-#: libfdisk/src/gpt.c:2552
+#: libfdisk/src/gpt.c:2553
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Diskidentifierare ändrad från %s till %s."
 
-#: libfdisk/src/gpt.c:2572
+#: libfdisk/src/gpt.c:2573
 msgid "Not enough space for new partition table!"
 msgstr "Inte tillräckligt ledigt utrymme för ny partitionstabell!"
 
-#: libfdisk/src/gpt.c:2583
+#: libfdisk/src/gpt.c:2584
 #, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Partition #%zu utanför intervall (minsta start är %<PRIu64> sektorer)"
 
-#: libfdisk/src/gpt.c:2588
+#: libfdisk/src/gpt.c:2589
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Partition #%zu är utanför intervall (största slut är %<PRIu64> sektorer)"
 
-#: libfdisk/src/gpt.c:2631
+#: libfdisk/src/gpt.c:2632
 #, fuzzy, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Partitionsnumret måste vara mindre än %zu."
 
-#: libfdisk/src/gpt.c:2654
+#: libfdisk/src/gpt.c:2655
 msgid "Cannot allocate memory!"
 msgstr "Kan inte allokera minne!"
 
-#: libfdisk/src/gpt.c:2684
+#: libfdisk/src/gpt.c:2685
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Partitionstabellslängd ändrad från %<PRIu32> till %<PRIu64>."
 
-#: libfdisk/src/gpt.c:2793
+#: libfdisk/src/gpt.c:2794
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Attributen för partition %zu ändrade till 0x%016<PRIx64>."
 
-#: libfdisk/src/gpt.c:2843
+#: libfdisk/src/gpt.c:2844
 msgid "Enter GUID specific bit"
 msgstr "Mata in GUID-specifik bit"
 
-#: libfdisk/src/gpt.c:2858
+#: libfdisk/src/gpt.c:2859
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "misslyckades med att växla bit %lu som inte stöds"
 
-#: libfdisk/src/gpt.c:2871
+#: libfdisk/src/gpt.c:2872
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "GUID-specifik bit %d för partition %zu är aktiverad nu."
 
-#: libfdisk/src/gpt.c:2872
+#: libfdisk/src/gpt.c:2873
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "GUID-specifik bit %d för partition %zu är inaktiverad nu."
 
-#: libfdisk/src/gpt.c:2876
+#: libfdisk/src/gpt.c:2877
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Flaggan %s för partition %zu är nu aktiverad."
 
-#: libfdisk/src/gpt.c:2877
+#: libfdisk/src/gpt.c:2878
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Flaggan %s för partition %zu är nu inaktiverad."
 
-#: libfdisk/src/gpt.c:3019
+#: libfdisk/src/gpt.c:3020
 msgid "Type-UUID"
 msgstr "Typ-UUID"
 
-#: libfdisk/src/gpt.c:3020
+#: libfdisk/src/gpt.c:3021
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3021 login-utils/chfn.c:155 login-utils/chfn.c:157
+#: libfdisk/src/gpt.c:3022 login-utils/chfn.c:155 login-utils/chfn.c:157
 #: login-utils/chfn.c:321
 msgid "Name"
 msgstr "Namn"
 
-#: libfdisk/src/partition.c:841
+#: libfdisk/src/partition.c:844
 msgid "Free space"
 msgstr "Ledigt utrymme"
 
-#: libfdisk/src/partition.c:1210
+#: libfdisk/src/partition.c:1213
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Misslyckades med att ändra storlek på partitionen #%zu."
@@ -6573,7 +6582,7 @@ msgstr ""
 "Linux-växlingsyta där kan förstöra din partitionstabell och startblock.\n"
 "Är du säker på att du vill tagga partitionen som Linux-växlingsyta?"
 
-#: libmount/src/context.c:2367
+#: libmount/src/context.c:2368
 #, c-format
 msgid "operation failed: %m"
 msgstr "åtgärd misslyckades: %m"
@@ -6819,52 +6828,52 @@ msgstr "bind %s misslyckades"
 msgid "no medium found on %s"
 msgstr "inget media hittat på %s"
 
-#: libmount/src/context_umount.c:1051 libmount/src/context_umount.c:1080
+#: libmount/src/context_umount.c:1053 libmount/src/context_umount.c:1082
 #, c-format
 msgid "not mounted"
 msgstr "inte monterad"
 
-#: libmount/src/context_umount.c:1055
+#: libmount/src/context_umount.c:1057
 #, c-format
 msgid "umount failed: %m"
 msgstr "umount misslyckades: %m"
 
-#: libmount/src/context_umount.c:1064
+#: libmount/src/context_umount.c:1066
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "filsystemet avmonterades, men efterföljande åtgärd misslyckades: %m"
 
-#: libmount/src/context_umount.c:1077
+#: libmount/src/context_umount.c:1079
 #, c-format
 msgid "invalid block device"
 msgstr "ogiltig blockenhet"
 
-#: libmount/src/context_umount.c:1083
+#: libmount/src/context_umount.c:1085
 #, c-format
 msgid "can't write superblock"
 msgstr "kan inte skriva superblock"
 
-#: libmount/src/context_umount.c:1086
+#: libmount/src/context_umount.c:1088
 #, c-format
 msgid "target is busy"
 msgstr "mål upptaget"
 
-#: libmount/src/context_umount.c:1089
+#: libmount/src/context_umount.c:1091
 #, c-format
 msgid "no mount point specified"
 msgstr "ingen monteringspunkt angavs"
 
-#: libmount/src/context_umount.c:1092
+#: libmount/src/context_umount.c:1094
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "måste vara superanvändare för att avmontera"
 
-#: libmount/src/context_umount.c:1095
+#: libmount/src/context_umount.c:1097
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "blockenheter är inte tillåtna på filsystem"
 
-#: libmount/src/context_umount.c:1098
+#: libmount/src/context_umount.c:1100
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "umount(2) systemanrop misslyckades: %m"
@@ -10310,8 +10319,8 @@ msgstr "poll misslyckades"
 msgid "timeout [%d sec]\n"
 msgstr "tidsgräns [%d sek]\n"
 
-#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:436
-#: text-utils/column.c:449
+#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:444
+#: text-utils/column.c:457
 msgid "read failed"
 msgstr "läsning misslyckades"
 
@@ -17447,7 +17456,7 @@ msgstr "%s: kan inte köra %s: %m"
 #: term-utils/agetty.c:563 term-utils/agetty.c:849 term-utils/agetty.c:861
 #: term-utils/agetty.c:878 term-utils/agetty.c:1396 term-utils/agetty.c:1414
 #: term-utils/agetty.c:1450 term-utils/agetty.c:1460 term-utils/agetty.c:1497
-#: term-utils/agetty.c:1981 term-utils/agetty.c:2527
+#: term-utils/agetty.c:1941 term-utils/agetty.c:2487
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "misslyckades med att allokera minne: %m"
@@ -17527,32 +17536,32 @@ msgstr "inställning av terminalattribut misslyckades: %m"
 msgid "cannot open os-release file"
 msgstr "kan inte öppna os-release-fil"
 
-#: term-utils/agetty.c:1618
+#: term-utils/agetty.c:1602
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "misslyckades med att skapa återinläsningsfil: %s: %m"
 
-#: term-utils/agetty.c:1717
+#: term-utils/agetty.c:1689
 msgid "[press ENTER to login]"
 msgstr "[tryck på RETUR för att logga in]"
 
-#: term-utils/agetty.c:1742
+#: term-utils/agetty.c:1714
 msgid "Num Lock off"
 msgstr "Num Lock är av"
 
-#: term-utils/agetty.c:1745
+#: term-utils/agetty.c:1717
 msgid "Num Lock on"
 msgstr "Num Lock är på"
 
-#: term-utils/agetty.c:1748
+#: term-utils/agetty.c:1720
 msgid "Caps Lock on"
 msgstr "Caps Lock är på"
 
-#: term-utils/agetty.c:1751
+#: term-utils/agetty.c:1723
 msgid "Scroll Lock on"
 msgstr "Scroll Lock är på"
 
-#: term-utils/agetty.c:1754
+#: term-utils/agetty.c:1726
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -17561,32 +17570,32 @@ msgstr ""
 "Tips: %s\n"
 "\n"
 
-#: term-utils/agetty.c:1901
+#: term-utils/agetty.c:1861
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: läste: %m"
 
-#: term-utils/agetty.c:1960
+#: term-utils/agetty.c:1920
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: indataspill"
 
-#: term-utils/agetty.c:1977 term-utils/agetty.c:1985
+#: term-utils/agetty.c:1937 term-utils/agetty.c:1945
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ogiltig teckenkonvertering för inloggningsnamn"
 
-#: term-utils/agetty.c:1991
+#: term-utils/agetty.c:1951
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ogiltigt tecken 0x%x i inloggningsnamn"
 
-#: term-utils/agetty.c:2076
+#: term-utils/agetty.c:2036
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s misslyckades med att ställa in terminalattribut: %m"
 
-#: term-utils/agetty.c:2112
+#: term-utils/agetty.c:2072
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -17595,168 +17604,168 @@ msgstr ""
 " %1$s [flaggor] <linje> [<baud_hastighet>,…] [<termtyp>]\n"
 " %1$s [flaggor] <baud_hastighet>,… <linje> [<termtyp>]\n"
 
-#: term-utils/agetty.c:2116
+#: term-utils/agetty.c:2076
 msgid "Open a terminal and set its mode.\n"
 msgstr "Öppna en terminal och ställ in dess läge.\n"
 
-#: term-utils/agetty.c:2119
+#: term-utils/agetty.c:2079
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                   antag att det är en 8-bitars tty\n"
 
-#: term-utils/agetty.c:2120
+#: term-utils/agetty.c:2080
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <användare>   logga in den angivna användaren automatiskt\n"
 
-#: term-utils/agetty.c:2121
+#: term-utils/agetty.c:2081
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset                 återställ inte kontrolläge\n"
 
-#: term-utils/agetty.c:2122
+#: term-utils/agetty.c:2082
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote                  använd -r <värdnamn> för login(1)\n"
 
-#: term-utils/agetty.c:2123
+#: term-utils/agetty.c:2083
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <fil>        visa issue-fil\n"
 
-#: term-utils/agetty.c:2124
+#: term-utils/agetty.c:2084
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control            aktivera hårdvarubaserad flödeskontroll\n"
 
-#: term-utils/agetty.c:2125
+#: term-utils/agetty.c:2085
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <värdnamn>         ange inloggningsvärd\n"
 
-#: term-utils/agetty.c:2126
+#: term-utils/agetty.c:2086
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue                 visa inte issue-fil\n"
 
-#: term-utils/agetty.c:2127
+#: term-utils/agetty.c:2087
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <sträng>    ställ in initierings-sträng\n"
 
-#: term-utils/agetty.c:2128
+#: term-utils/agetty.c:2088
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear                 rensa inte skärmen innan prompt\n"
 
-#: term-utils/agetty.c:2129
+#: term-utils/agetty.c:2089
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <fil>     ange inloggningsprogram\n"
 
-#: term-utils/agetty.c:2130
+#: term-utils/agetty.c:2090
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<läge>]     styr flaggan för den lokala linjen\n"
 
-#: term-utils/agetty.c:2131
+#: term-utils/agetty.c:2091
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud            extrahera baud-hastighet under anslutning\n"
 
-#: term-utils/agetty.c:2132
+#: term-utils/agetty.c:2092
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login              fråga inte efter inloggning\n"
 
-#: term-utils/agetty.c:2133
+#: term-utils/agetty.c:2093
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline               skriv inte ut nyrad innan issue-fil\n"
 
-#: term-utils/agetty.c:2134
+#: term-utils/agetty.c:2094
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <flaggor> flaggor som skickas vidare till login\n"
 
-#: term-utils/agetty.c:2135
+#: term-utils/agetty.c:2095
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause             vänta på valfri tangent innan inloggning\n"
 
 # sebras: change root to the given directory
-#: term-utils/agetty.c:2136
+#: term-utils/agetty.c:2096
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <kat>            ändra rot till angiven katalog\n"
 
-#: term-utils/agetty.c:2137
+#: term-utils/agetty.c:2097
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup                  avring tty:n virtuellt\n"
 
-#: term-utils/agetty.c:2138
+#: term-utils/agetty.c:2098
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud               försök att behålla baud-hastighet efter avbrott\n"
 
-#: term-utils/agetty.c:2139
+#: term-utils/agetty.c:2099
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <nummer>        tidsgräns för inloggningsprocess\n"
 
-#: term-utils/agetty.c:2140
+#: term-utils/agetty.c:2100
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case             identifiera terminal som använder versaler\n"
 
-#: term-utils/agetty.c:2141
+#: term-utils/agetty.c:2101
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr                 vänta på vagnretur\n"
 
-#: term-utils/agetty.c:2142
+#: term-utils/agetty.c:2102
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints                 skriv inte ut tips\n"
 
 # sebras: hostname will not be shown at all
-#: term-utils/agetty.c:2143
+#: term-utils/agetty.c:2103
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname              värdnamnet kommer inte att visas alls\n"
 
-#: term-utils/agetty.c:2144
+#: term-utils/agetty.c:2104
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname           visa fullständigt värdnamn\n"
 
-#: term-utils/agetty.c:2145
+#: term-utils/agetty.c:2105
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <sträng>    ytterligare backstegstecken\n"
 
-#: term-utils/agetty.c:2146
+#: term-utils/agetty.c:2106
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <sträng>     ytterligare tecken som ignorerar alla tidigare tecken\n"
 
 # sebras: change directory before login
-#: term-utils/agetty.c:2147
+#: term-utils/agetty.c:2107
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <katalog>         byt katalog innan inloggning\n"
 
 # sebras: <seconds> seconds of delay before prompt
-#: term-utils/agetty.c:2148
+#: term-utils/agetty.c:2108
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <nummer>          antal sekunder fördröjning innan prompt\n"
 
-#: term-utils/agetty.c:2149
+#: term-utils/agetty.c:2109
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <nummer>           kör inloggning med denna prioritet\n"
 
-#: term-utils/agetty.c:2150
+#: term-utils/agetty.c:2110
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload                  återinläs prompt i körande agetty-instanser\n"
 
-#: term-utils/agetty.c:2151
+#: term-utils/agetty.c:2111
 msgid "     --help                 display this help and exit\n"
 msgstr "     --help                    visa denna hjälp och avsluta\n"
 
-#: term-utils/agetty.c:2152
+#: term-utils/agetty.c:2112
 msgid "     --version              output version information and exit\n"
 msgstr "     --version                 skriv ut versionsinformation och avsluta\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2447
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d användare"
 msgstr[1] "%d användare"
 
-#: term-utils/agetty.c:2615
+#: term-utils/agetty.c:2575
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname misslyckades: %m"
 
-#: term-utils/agetty.c:2627
+#: term-utils/agetty.c:2587
 #, c-format
 msgid "cannot touch file %s"
 msgstr "kan inte röra filen %s"
 
-#: term-utils/agetty.c:2631
+#: term-utils/agetty.c:2591
 msgid "--reload is unsupported on your system"
 msgstr "--reload stöds inte på ditt system"
 
@@ -18393,7 +18402,7 @@ msgstr "förbi första raden"
 msgid "-- line already flushed"
 msgstr "-- raden redan spolad"
 
-#: text-utils/colcrt.c:81 text-utils/column.c:551
+#: text-utils/colcrt.c:81 text-utils/column.c:559
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr " %s [flaggor] [<fil>…]\n"
@@ -18433,137 +18442,137 @@ msgstr "första argument"
 msgid "second argument"
 msgstr "andra argument"
 
-#: text-utils/column.c:217
+#: text-utils/column.c:225
 msgid "failed to parse column"
 msgstr "misslyckades med att tolka kolumn"
 
-#: text-utils/column.c:227
+#: text-utils/column.c:235
 #, c-format
 msgid "undefined column name '%s'"
 msgstr "odefinierat kolumnnamn ”%s”"
 
-#: text-utils/column.c:278
+#: text-utils/column.c:286
 msgid "failed to parse --table-order list"
 msgstr "misslyckades med att tolka --table-order-lista"
 
-#: text-utils/column.c:351
+#: text-utils/column.c:359
 msgid "failed to parse --table-right list"
 msgstr "misslyckades med att tolka --table-right-lista"
 
-#: text-utils/column.c:355
+#: text-utils/column.c:363
 msgid "failed to parse --table-trunc list"
 msgstr "misslyckades med att tolka --table-trunc-lista"
 
-#: text-utils/column.c:359
+#: text-utils/column.c:367
 msgid "failed to parse --table-noextreme list"
 msgstr "misslyckades med att tolka --table-noextreme-lista"
 
-#: text-utils/column.c:363
+#: text-utils/column.c:371
 msgid "failed to parse --table-wrap list"
 msgstr "misslyckades med att tolka --table-wrap-lista"
 
-#: text-utils/column.c:367
+#: text-utils/column.c:375
 msgid "failed to parse --table-hide list"
 msgstr "misslyckades med att tolka --table-hide-lista"
 
-#: text-utils/column.c:398
+#: text-utils/column.c:406
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr "rad %zu: för JSON krävs namnat för kolumn %zu"
 
-#: text-utils/column.c:411
+#: text-utils/column.c:419
 msgid "failed to allocate output data"
 msgstr "misslyckades med att allokera utmatningsdata"
 
-#: text-utils/column.c:554
+#: text-utils/column.c:562
 msgid "Columnate lists.\n"
 msgstr "Kolumnlistor.\n"
 
-#: text-utils/column.c:557
+#: text-utils/column.c:565
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table                      skapa en tabell\n"
 
-#: text-utils/column.c:558
+#: text-utils/column.c:566
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr " -n, --table-name <namn>          tabellnamn för JSON-utmatning\n"
 
-#: text-utils/column.c:559
+#: text-utils/column.c:567
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -O, --table-order <kolumner>     ange ordning för utmatningskolumner\n"
 
-#: text-utils/column.c:560
+#: text-utils/column.c:568
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -N, --table-columns <namn>       kommaseparerade kolumnnamn\n"
 
-#: text-utils/column.c:561
+#: text-utils/column.c:569
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr " -E, --table-noextreme <kolumner> räkna inte in lång text från kolumner i kolumnbredd\n"
 
-#: text-utils/column.c:562
+#: text-utils/column.c:570
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -H, --table-hide <kolumner>      skriv inte ut kolumnerna\n"
 
-#: text-utils/column.c:563
+#: text-utils/column.c:571
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr " -R, --table-right <kolumner>     högerjustera text i dessa kolumner\n"
 
-#: text-utils/column.c:564
+#: text-utils/column.c:572
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr " -T, --table-truncate <kolumner>  trunkera text i kolumnerna när nödvändigt\n"
 
-#: text-utils/column.c:565
+#: text-utils/column.c:573
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr " -W, --table-wrap <kolumner>      radbryt text i kolumnerna när nödvändigt\n"
 
-#: text-utils/column.c:566
+#: text-utils/column.c:574
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr " -J, --json                       använd JSON som utmatningsformat för tabell\n"
 
-#: text-utils/column.c:569
+#: text-utils/column.c:577
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr " -r, --tree <kolumn>              kolumn som ska använda trädlik utmatning för tabellen\n"
 
-#: text-utils/column.c:570
+#: text-utils/column.c:578
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -i, --tree-id <kolumn>           rad-ID som anger barn-förälder-relation\n"
 
-#: text-utils/column.c:571
+#: text-utils/column.c:579
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -p, --tree-parent <kolumn>       förälder som anger barn-förälder-relation\n"
 
-#: text-utils/column.c:574
+#: text-utils/column.c:582
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --output-width <bredd>       utmatningsbredd i antal tecken\n"
 
-#: text-utils/column.c:575
+#: text-utils/column.c:583
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr " -o, --output-separator <sträng>  kolumnavgränsare för tabellutmatning (standardvärde är två blanksteg)\n"
 
-#: text-utils/column.c:576
+#: text-utils/column.c:584
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <sträng>         möjliga tabellavgränsare\n"
 
-#: text-utils/column.c:577
+#: text-utils/column.c:585
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows                   fyll rader före kolumner\n"
 
-#: text-utils/column.c:643
+#: text-utils/column.c:651
 msgid "invalid columns argument"
 msgstr "ogiltigt kolumnargument"
 
-#: text-utils/column.c:662
+#: text-utils/column.c:670
 msgid "failed to parse column names"
 msgstr "misslyckades med att tolka kolumnnamn"
 
-#: text-utils/column.c:715
+#: text-utils/column.c:723
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr "flaggorna --tree-id och --tree-parent krävs för trädformatering"
 
-#: text-utils/column.c:723
+#: text-utils/column.c:731
 msgid "option --table required for all --table-*"
 msgstr "flaggan --table krävs för alla --table-*"
 
-#: text-utils/column.c:726
+#: text-utils/column.c:734
 msgid "option --table-columns required for --json"
 msgstr "flaggan --table-columns krävs för --json"
 

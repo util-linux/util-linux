@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-06-02 11:14+0200\n"
+"POT-Creation-Date: 2017-07-20 11:08+0200\n"
 "PO-Revision-Date: 2016-10-23 11:30+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -64,7 +64,7 @@ msgstr "Informa al núcleo de la existencia de una partición especificada.\n"
 #: sys-utils/setpriv.c:529 sys-utils/setpriv.c:552 sys-utils/swapon.c:372
 #: sys-utils/swapon.c:515 sys-utils/switch_root.c:167 sys-utils/unshare.c:106
 #: sys-utils/unshare.c:121 sys-utils/wdctl.c:323 sys-utils/wdctl.c:379
-#: term-utils/agetty.c:2624 term-utils/mesg.c:127 term-utils/script.c:426
+#: term-utils/agetty.c:2584 term-utils/mesg.c:127 term-utils/script.c:426
 #: term-utils/script.c:432 term-utils/script.c:434 term-utils/script.c:530
 #: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
 #: term-utils/wall.c:413 text-utils/colcrt.c:282 text-utils/more.c:519
@@ -270,7 +270,7 @@ msgid "Quit program without writing changes"
 msgstr "Sale del programa sin escribir los cambios"
 
 #: disk-utils/cfdisk.c:188 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
-#: libfdisk/src/dos.c:2396 libfdisk/src/gpt.c:3017 libfdisk/src/sgi.c:1159
+#: libfdisk/src/dos.c:2413 libfdisk/src/gpt.c:3018 libfdisk/src/sgi.c:1159
 #: libfdisk/src/sun.c:1119
 msgid "Type"
 msgstr "Tipo"
@@ -823,7 +823,7 @@ msgid "Using default response %c."
 msgstr "Se está utilizando la respuesta predeterminada %c."
 
 #: disk-utils/fdisk.c:178 disk-utils/fdisk.c:252 disk-utils/fdisk.c:327
-#: libfdisk/src/dos.c:1223 libfdisk/src/gpt.c:2359
+#: libfdisk/src/dos.c:1226 libfdisk/src/gpt.c:2360
 msgid "Value out of range."
 msgstr "El valor está fuera del rango."
 
@@ -918,8 +918,8 @@ msgstr "no se puede efectuar `seek'"
 msgid "cannot read"
 msgstr "no se puede leer"
 
-#: disk-utils/fdisk.c:697 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:964
-#: libfdisk/src/gpt.c:2292
+#: disk-utils/fdisk.c:697 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:967
+#: libfdisk/src/gpt.c:2293
 msgid "First sector"
 msgstr "Primer sector"
 
@@ -1115,7 +1115,7 @@ msgstr "fallo al reservar iterador"
 #: misc-utils/findmnt.c:1598 misc-utils/lsblk.c:1897 misc-utils/lslocks.c:449
 #: sys-utils/losetup.c:314 sys-utils/lscpu.c:1762 sys-utils/lscpu.c:1865
 #: sys-utils/lsipc.c:338 sys-utils/prlimit.c:297 sys-utils/swapon.c:281
-#: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:196
+#: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:204
 msgid "failed to allocate output table"
 msgstr "no se ha podido reservar la tabla de salida"
 
@@ -1126,7 +1126,7 @@ msgstr "no se ha podido reservar la tabla de salida"
 #: sys-utils/lscpu.c:1788 sys-utils/lscpu.c:1816 sys-utils/lsipc.c:470
 #: sys-utils/lsipc.c:545 sys-utils/lsipc.c:647 sys-utils/lsipc.c:739
 #: sys-utils/lsipc.c:900 sys-utils/prlimit.c:229 sys-utils/swapon.c:176
-#: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:407
+#: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:415
 msgid "failed to allocate output line"
 msgstr "no se ha podido reservar la línea de salida"
 
@@ -1136,7 +1136,7 @@ msgstr "no se ha podido reservar la línea de salida"
 #: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1796
 #: sys-utils/lscpu.c:1827 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
 #: sys-utils/prlimit.c:261 sys-utils/swapon.c:224 sys-utils/wdctl.c:243
-#: sys-utils/zramctl.c:475 text-utils/column.c:413
+#: sys-utils/zramctl.c:475 text-utils/column.c:421
 #, fuzzy
 msgid "failed to add output data"
 msgstr "no se han podido añadir los datos a la tabla de salida"
@@ -1155,23 +1155,23 @@ msgstr ""
 msgid "Partition table entries are not in disk order."
 msgstr "Las entradas de la tabla de particiones no están en el orden del disco."
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2390
-#: libfdisk/src/gpt.c:3013 libfdisk/src/sgi.c:1153 libfdisk/src/sun.c:1113
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2407
+#: libfdisk/src/gpt.c:3014 libfdisk/src/sgi.c:1153 libfdisk/src/sun.c:1113
 msgid "Start"
 msgstr "Comienzo"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2391
-#: libfdisk/src/gpt.c:3014 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1114
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2408
+#: libfdisk/src/gpt.c:3015 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1114
 msgid "End"
 msgstr "Final"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2392
-#: libfdisk/src/gpt.c:3015 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1115
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2409
+#: libfdisk/src/gpt.c:3016 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1115
 msgid "Sectors"
 msgstr "Sectores"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1021 libfdisk/src/dos.c:2394
-#: libfdisk/src/gpt.c:3016 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1117
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1021 libfdisk/src/dos.c:2411
+#: libfdisk/src/gpt.c:3017 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1117
 msgid "Size"
 msgstr "Tamaño"
 
@@ -5058,15 +5058,15 @@ msgstr "La partición %zd: tiene un sector 0 de inicio no válido."
 msgid "There is no *BSD partition on %s."
 msgstr "No hay ninguna partición *BSD en %s."
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:964
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:967
 msgid "First cylinder"
 msgstr "Primer cilindro"
 
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1195
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1198
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Último cilindro, +cilindros o +tamaño{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1200 libfdisk/src/gpt.c:2337
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1203 libfdisk/src/gpt.c:2338
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Último sector, +sectores o +tamaño{K,M,G,T,P}"
 
@@ -5115,7 +5115,7 @@ msgstr "Pistas/cilindro"
 msgid "Sectors/Cylinder"
 msgstr "Sectores/cilindro"
 
-#: libfdisk/src/bsd.c:490 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2393
+#: libfdisk/src/bsd.c:490 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2410
 #: libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:199 libfdisk/src/sun.c:1116
 msgid "Cylinders"
 msgstr "Cilindros"
@@ -5271,306 +5271,315 @@ msgstr "Configuración de la geometría incompleta."
 msgid "All primary partitions have been defined already."
 msgstr "Ya se han definido todas las particiones primarias."
 
-#: libfdisk/src/dos.c:267
+#: libfdisk/src/dos.c:216
+#, fuzzy
+msgid "Primary partition not available."
+msgstr "¡No hay disponible ninguna partición libre!"
+
+#: libfdisk/src/dos.c:270
 #, c-format
 msgid "Failed to read extended partition table (offset=%ju)"
 msgstr "No se ha podido leer la tabla de particiones extendidas (desplazamiento=%ju)"
 
-#: libfdisk/src/dos.c:337
+#: libfdisk/src/dos.c:340
 msgid "You can set geometry from the extra functions menu."
 msgstr "Se puede establecer la geometría desde el menú de funciones adicionales."
 
-#: libfdisk/src/dos.c:340
+#: libfdisk/src/dos.c:343
 msgid "DOS-compatible mode is deprecated."
 msgstr "El modo de compatibilidad con DOS está obsoleto"
 
-#: libfdisk/src/dos.c:344
+#: libfdisk/src/dos.c:347
 msgid "The device presents a logical sector size that is smaller than the physical sector size. Aligning to a physical sector (or optimal I/O) size boundary is recommended, or performance may be impacted."
 msgstr "El dispositivo presenta un tamaño de sector lógico menor que el tamaño de sector físico. Se recomienda alinearlo con el límite del tamaño del sector físico (o E/S óptima), o el rendimiento puede verse afectado."
 
-#: libfdisk/src/dos.c:350
+#: libfdisk/src/dos.c:353
 msgid "Cylinders as display units are deprecated."
 msgstr "Los cilindros como unidad de visualización están obsoletos."
 
-#: libfdisk/src/dos.c:357
+#: libfdisk/src/dos.c:360
 #, fuzzy, c-format
 msgid "The size of this disk is %s (%ju bytes). DOS partition table format cannot be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgstr "El tamaño de este disco es %s (%ju bytes). El formato de la tabla de particiones DOS no se puede utilizar con controladores de volúmenes mayores que %lu bytes oara sectores de %lu bytes. Utilice el formato de tabla de particiones GUID (GPT)."
 
-#: libfdisk/src/dos.c:516
+#: libfdisk/src/dos.c:519
 msgid "Bad offset in primary extended partition."
 msgstr "Desplazamiento incorrecto en particiones extendidas primarias."
 
-#: libfdisk/src/dos.c:530
+#: libfdisk/src/dos.c:533
 #, c-format
 msgid "Omitting partitions after #%zu. They will be deleted if you save this partition table."
 msgstr "Se omiten las particiones después de la nº %zu. Se borrarán si guarda esta tabla de particiones."
 
-#: libfdisk/src/dos.c:563
+#: libfdisk/src/dos.c:566
 #, c-format
 msgid "Extra link pointer in partition table %zu."
 msgstr "Puntero de enlace adicional en tabla de particiones %zu."
 
-#: libfdisk/src/dos.c:571
+#: libfdisk/src/dos.c:574
 #, c-format
 msgid "Ignoring extra data in partition table %zu."
 msgstr "No se tienen en cuenta los datos adicionales de la tabla de particiones %zu."
 
-#: libfdisk/src/dos.c:627
+#: libfdisk/src/dos.c:630
 #, c-format
 msgid "omitting empty partition (%zu)"
 msgstr "se omite partición vacía (%zu)"
 
-#: libfdisk/src/dos.c:687
+#: libfdisk/src/dos.c:690
 #, c-format
 msgid "Created a new DOS disklabel with disk identifier 0x%08x."
 msgstr "Se ha creado una nueva etiqueta de disco DOS con el identificador de disco 0x%08x."
 
-#: libfdisk/src/dos.c:708
+#: libfdisk/src/dos.c:711
 msgid "Enter the new disk identifier"
 msgstr "Introduzca el nuevo identificador de disco"
 
-#: libfdisk/src/dos.c:715
+#: libfdisk/src/dos.c:718
 msgid "Incorrect value."
 msgstr "Valor incorrecto."
 
-#: libfdisk/src/dos.c:724
+#: libfdisk/src/dos.c:727
 #, c-format
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "El identificador del disco ha cambiado de 0x%08x a 0x%08x."
 
-#: libfdisk/src/dos.c:820
+#: libfdisk/src/dos.c:823
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "No se tiene en cuenta la partición extendida adicional %zu"
 
-#: libfdisk/src/dos.c:834
+#: libfdisk/src/dos.c:837
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "El indicador 0x%02x%02x no válido de EBR (para la partición %zu) se corregirá mediante w(rite)."
 
-#: libfdisk/src/dos.c:951
+#: libfdisk/src/dos.c:954
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "Sector inicial %ju fuera de rango."
 
-#: libfdisk/src/dos.c:1058 libfdisk/src/gpt.c:2217 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1061 libfdisk/src/gpt.c:2218 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "La partición %zu ya está definida. Suprímala antes de volver a añadirla."
 
-#: libfdisk/src/dos.c:1128
+#: libfdisk/src/dos.c:1131
 #, c-format
 msgid "Sector %llu is already allocated."
 msgstr "El sector %llu ya está asignado."
 
-#: libfdisk/src/dos.c:1167 libfdisk/src/gpt.c:2226
+#: libfdisk/src/dos.c:1170 libfdisk/src/gpt.c:2227
 msgid "No free sectors available."
 msgstr "No hay disponible ningún sector libre."
 
-#: libfdisk/src/dos.c:1323
+#: libfdisk/src/dos.c:1326
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "Se añade la partición lógica %zu"
 
-#: libfdisk/src/dos.c:1354
+#: libfdisk/src/dos.c:1357
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Partición %zu: contiene el sector 0"
 
-#: libfdisk/src/dos.c:1356
+#: libfdisk/src/dos.c:1359
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Partición %zu: la cabeza %d supera el máximo %d"
 
-#: libfdisk/src/dos.c:1359
+#: libfdisk/src/dos.c:1362
 #, c-format
 msgid "Partition %zu: sector %d greater than maximum %llu"
 msgstr "Partición %zu: el sector %d supera el máximo %llu"
 
-#: libfdisk/src/dos.c:1362
+#: libfdisk/src/dos.c:1365
 #, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgstr "Partición %zu: el cilindro %d supera el máximo %llu"
 
-#: libfdisk/src/dos.c:1368
+#: libfdisk/src/dos.c:1371
 #, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "Partición %zu: los sectores previous %u no concuerdan con el total %u"
 
-#: libfdisk/src/dos.c:1421
+#: libfdisk/src/dos.c:1424
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partición %zu: tiene distintos principios físicos/lógicos (¿no Linux?): físicos=(%d, %d, %d), lógicos=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1432
+#: libfdisk/src/dos.c:1435
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partición %zu: tiene distintos finales físicos/lógicos: físicos=(%d, %d, %d), lógicos=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1441
+#: libfdisk/src/dos.c:1444
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "Partición %zu: no termina en un límite de cilindro."
 
-#: libfdisk/src/dos.c:1468
+#: libfdisk/src/dos.c:1471
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "Partición %zu: inicio de datos incorrecto en."
 
-#: libfdisk/src/dos.c:1481
+#: libfdisk/src/dos.c:1484
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Partición %zu: se solapa con la partición %zu."
 
-#: libfdisk/src/dos.c:1509
+#: libfdisk/src/dos.c:1512
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "Partición %zu: vacía."
 
-#: libfdisk/src/dos.c:1514
+#: libfdisk/src/dos.c:1517
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Partición lógica %zu: no está por completo en la partición %zu."
 
-#: libfdisk/src/dos.c:1522
+#: libfdisk/src/dos.c:1525
 #, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgstr "El total de sectores asignados %llu supera el máximo %llu."
 
-#: libfdisk/src/dos.c:1525
+#: libfdisk/src/dos.c:1528
 #, c-format
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr "Quedan %lld sectores no asignados de %ld bytes."
 
-#: libfdisk/src/dos.c:1573 libfdisk/src/dos.c:2028
+#: libfdisk/src/dos.c:1586 libfdisk/src/dos.c:1601 libfdisk/src/dos.c:2045
 msgid "Extended partition already exists."
 msgstr "La partición extendida ya existe."
 
-#: libfdisk/src/dos.c:1635
+#: libfdisk/src/dos.c:1616
+msgid "Extended partition does not exists. Failed to add logical partition."
+msgstr ""
+
+#: libfdisk/src/dos.c:1652
 msgid "The maximum number of partitions has been created."
 msgstr "Se ha creado el número máximo de particiones."
 
-#: libfdisk/src/dos.c:1647
+#: libfdisk/src/dos.c:1664
 msgid "All primary partitions are in use."
 msgstr "Se están usando todas las particiones primarias."
 
-#: libfdisk/src/dos.c:1649 libfdisk/src/dos.c:1660
+#: libfdisk/src/dos.c:1666 libfdisk/src/dos.c:1677
 msgid "All space for primary partitions is in use."
 msgstr "Se está utilizando todo el espacio para particiones primarias."
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:1663
+#: libfdisk/src/dos.c:1680
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "Para crear más particiones, primero reemplace una primaria por una extendida."
 
-#: libfdisk/src/dos.c:1668
+#: libfdisk/src/dos.c:1685
 msgid "All logical partitions are in use. Adding a primary partition."
 msgstr "Se están usando todas las particiones lógicas. Se añade una partición primaria."
 
-#: libfdisk/src/dos.c:1690
+#: libfdisk/src/dos.c:1707
 msgid "Partition type"
 msgstr "Tipo de partición"
 
-#: libfdisk/src/dos.c:1694
+#: libfdisk/src/dos.c:1711
 #, c-format
 msgid "%zu primary, %d extended, %zu free"
 msgstr "%zu primaria(s), %d extendida(s), %zu libre(s)"
 
-#: libfdisk/src/dos.c:1699
+#: libfdisk/src/dos.c:1716
 msgid "primary"
 msgstr "primaria"
 
-#: libfdisk/src/dos.c:1701
+#: libfdisk/src/dos.c:1718
 msgid "extended"
 msgstr "extendida"
 
-#: libfdisk/src/dos.c:1701
+#: libfdisk/src/dos.c:1718
 msgid "container for logical partitions"
 msgstr "contenedor para particiones lógicas"
 
-#: libfdisk/src/dos.c:1703
+#: libfdisk/src/dos.c:1720
 msgid "logical"
 msgstr "lógica"
 
-#: libfdisk/src/dos.c:1703
+#: libfdisk/src/dos.c:1720
 msgid "numbered from 5"
 msgstr "la numeración empieza por 5"
 
-#: libfdisk/src/dos.c:1741
+#: libfdisk/src/dos.c:1758
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Tipo de partición no válido `%c'."
 
-#: libfdisk/src/dos.c:1759
+#: libfdisk/src/dos.c:1776
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "No se puede escribir en el sector %jd: fallo al buscar"
 
-#: libfdisk/src/dos.c:1919 libfdisk/src/gpt.c:1138
+#: libfdisk/src/dos.c:1936 libfdisk/src/gpt.c:1139
 msgid "Disk identifier"
 msgstr "Identificador del disco"
 
-#: libfdisk/src/dos.c:2033
+#: libfdisk/src/dos.c:2050
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "En muchos sistemas el tipo 0 significa espacio libre. Probablemente no sea acertado tener particiones de tipo 0."
 
-#: libfdisk/src/dos.c:2038
+#: libfdisk/src/dos.c:2055
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "No se puede cambiar el tipo de la partición extendida que está siendo utilizada por particiones lógicas. Primero borre las particiones lógicas."
 
-#: libfdisk/src/dos.c:2224 libfdisk/src/gpt.c:2922
+#: libfdisk/src/dos.c:2241 libfdisk/src/gpt.c:2923
 msgid "Nothing to do. Ordering is correct already."
 msgstr "No hay nada que hacer. El orden ya es correcto."
 
-#: libfdisk/src/dos.c:2279
+#: libfdisk/src/dos.c:2296
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "La partición %zu: no tiene ninguna área de datos."
 
-#: libfdisk/src/dos.c:2312
+#: libfdisk/src/dos.c:2329
 msgid "New beginning of data"
 msgstr "Nuevo principio de datos"
 
-#: libfdisk/src/dos.c:2368
+#: libfdisk/src/dos.c:2385
 #, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "La partición %zu: es una partición extendida."
 
-#: libfdisk/src/dos.c:2374
+#: libfdisk/src/dos.c:2391
 #, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "El indicador de iniciable de la partición %zu ahora está activado."
 
-#: libfdisk/src/dos.c:2375
+#: libfdisk/src/dos.c:2392
 #, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "El indicador de iniciable de la partición %zu ahora está desactivado."
 
 # Nota: si se pone Dispositivo no queda bien el resto de la línea.
-#: libfdisk/src/dos.c:2388 libfdisk/src/gpt.c:3012 libfdisk/src/sgi.c:1152
+#: libfdisk/src/dos.c:2405 libfdisk/src/gpt.c:3013 libfdisk/src/sgi.c:1152
 #: libfdisk/src/sun.c:1112
 msgid "Device"
 msgstr "Disposit."
 
-#: libfdisk/src/dos.c:2389 libfdisk/src/sun.c:40
+#: libfdisk/src/dos.c:2406 libfdisk/src/sun.c:40
 msgid "Boot"
 msgstr "Inicio"
 
-#: libfdisk/src/dos.c:2395 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1118
+#: libfdisk/src/dos.c:2412 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1118
 msgid "Id"
 msgstr "Id"
 
-#: libfdisk/src/dos.c:2399
+#: libfdisk/src/dos.c:2416
 msgid "Start-C/H/S"
 msgstr "Inicio-C/H/S"
 
-#: libfdisk/src/dos.c:2400
+#: libfdisk/src/dos.c:2417
 msgid "End-C/H/S"
 msgstr "Fin-C/H/S"
 
-#: libfdisk/src/dos.c:2401 libfdisk/src/gpt.c:3022 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2418 libfdisk/src/gpt.c:3023 libfdisk/src/sgi.c:1160
 msgid "Attrs"
 msgstr "Atributos"
 
@@ -5894,307 +5903,307 @@ msgstr "Sistema de ficheros de QNX6"
 msgid "Plan 9 partition"
 msgstr "Partición del plan 9"
 
-#: libfdisk/src/gpt.c:589
+#: libfdisk/src/gpt.c:590
 msgid "failed to allocate GPT header"
 msgstr "fallo al asignar la cabecera GPT"
 
-#: libfdisk/src/gpt.c:672
+#: libfdisk/src/gpt.c:673
 msgid "First LBA specified by script is out of range."
 msgstr "La primera LBA especificada en el script está fuera de rango."
 
-#: libfdisk/src/gpt.c:684
+#: libfdisk/src/gpt.c:685
 msgid "Last LBA specified by script is out of range."
 msgstr "La última LBA especificada en el script está fuera de rango."
 
-#: libfdisk/src/gpt.c:817
+#: libfdisk/src/gpt.c:818
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by w(rite)."
 msgstr "La discordancia de tamaños del registro de arranque maestro primario (GPT PMBR) (%<PRIu64> != %<PRIu64>) se corregirá mediante w(escribir)."
 
-#: libfdisk/src/gpt.c:834
+#: libfdisk/src/gpt.c:835
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() falló"
 
-#: libfdisk/src/gpt.c:844
+#: libfdisk/src/gpt.c:845
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: no se pueden manejar ficheros con modo %o"
 
-#: libfdisk/src/gpt.c:1108
+#: libfdisk/src/gpt.c:1109
 msgid "GPT Header"
 msgstr "Cabecera GPT"
 
-#: libfdisk/src/gpt.c:1113
+#: libfdisk/src/gpt.c:1114
 msgid "GPT Entries"
 msgstr "Entradas GPT"
 
-#: libfdisk/src/gpt.c:1145
+#: libfdisk/src/gpt.c:1146
 msgid "First LBA"
 msgstr "Primera LBA"
 
-#: libfdisk/src/gpt.c:1150
+#: libfdisk/src/gpt.c:1151
 msgid "Last LBA"
 msgstr "Última LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1156
+#: libfdisk/src/gpt.c:1157
 msgid "Alternative LBA"
 msgstr "LBA alternativa"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1162
+#: libfdisk/src/gpt.c:1163
 msgid "Partition entries LBA"
 msgstr "LBA de las particiones LBA"
 
-#: libfdisk/src/gpt.c:1167
+#: libfdisk/src/gpt.c:1168
 msgid "Allocated partition entries"
 msgstr "Particiones asignadas"
 
-#: libfdisk/src/gpt.c:1512
+#: libfdisk/src/gpt.c:1513
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "La tabla GPT de respaldo está dañada, pero la primera parece que está bien, así que esa será la que se utilice."
 
-#: libfdisk/src/gpt.c:1521
+#: libfdisk/src/gpt.c:1522
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "La tabla GPT primaria está dañada, pero la de respaldo parece que está bien, así que esa será la que se utilice."
 
-#: libfdisk/src/gpt.c:1703
+#: libfdisk/src/gpt.c:1704
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "atributo de bit GPT no soportado: '%s'"
 
-#: libfdisk/src/gpt.c:1708
+#: libfdisk/src/gpt.c:1709
 #, fuzzy, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "fallo al analizar la lista '%s'"
 
-#: libfdisk/src/gpt.c:1803
+#: libfdisk/src/gpt.c:1804
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "El UUID de la partición ha cambiado de %s a %s."
 
-#: libfdisk/src/gpt.c:1811
+#: libfdisk/src/gpt.c:1812
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "El nombre de la partición ha cambiado de '%s' a '%.*s'."
 
-#: libfdisk/src/gpt.c:1840
+#: libfdisk/src/gpt.c:1841
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "El comienzo de la partición no llega al «FirstUsableLBA»."
 
-#: libfdisk/src/gpt.c:1847
+#: libfdisk/src/gpt.c:1848
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "El final de la partición va más allá de «LastUsableLBA»."
 
-#: libfdisk/src/gpt.c:2010
+#: libfdisk/src/gpt.c:2011
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "El dispositivo contiene un MBR híbrido -- solamente se escribe en GPT. Tendrá que sincronizar el MBR manualmente."
 
-#: libfdisk/src/gpt.c:2047
+#: libfdisk/src/gpt.c:2048
 msgid "Disk does not contain a valid backup header."
 msgstr "El disco no contiene una cabecera de respaldo válida."
 
-#: libfdisk/src/gpt.c:2052
+#: libfdisk/src/gpt.c:2053
 msgid "Invalid primary header CRC checksum."
 msgstr "La suma de verificación CRC de la cabecera primaria no es válida"
 
-#: libfdisk/src/gpt.c:2056
+#: libfdisk/src/gpt.c:2057
 msgid "Invalid backup header CRC checksum."
 msgstr "La suma de verificación CRC de la cabecera de respaldo no es válida"
 
-#: libfdisk/src/gpt.c:2061
+#: libfdisk/src/gpt.c:2062
 msgid "Invalid partition entry checksum."
 msgstr "La suma de verificación de la entrada de la partición no es válida"
 
-#: libfdisk/src/gpt.c:2066
+#: libfdisk/src/gpt.c:2067
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Comprobaciones de integridad LBA de la cabecera primaria no válidas"
 
-#: libfdisk/src/gpt.c:2070
+#: libfdisk/src/gpt.c:2071
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Comprobaciones de integridad LBA del cabezal de respaldo no válidas"
 
-#: libfdisk/src/gpt.c:2075
+#: libfdisk/src/gpt.c:2076
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA no corresponde con la posición real en el cabezal primario"
 
-#: libfdisk/src/gpt.c:2079
+#: libfdisk/src/gpt.c:2080
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA no corresponde con la posición real en el cabezal de respaldo"
 
-#: libfdisk/src/gpt.c:2084
+#: libfdisk/src/gpt.c:2085
 msgid "Disk is too small to hold all data."
 msgstr "El disco es demasiado pequeño para albergar todos los datos."
 
-#: libfdisk/src/gpt.c:2094
+#: libfdisk/src/gpt.c:2095
 msgid "Primary and backup header mismatch."
 msgstr "Las cabeceras primaria y de respaldo no coinciden."
 
-#: libfdisk/src/gpt.c:2100
+#: libfdisk/src/gpt.c:2101
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "La partición %u se solapa con la partición %u."
 
-#: libfdisk/src/gpt.c:2107
+#: libfdisk/src/gpt.c:2108
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "La partición %u es demasiado grande para el disco."
 
-#: libfdisk/src/gpt.c:2114
+#: libfdisk/src/gpt.c:2115
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "La partición %u termina antes de su comienzo."
 
-#: libfdisk/src/gpt.c:2123
+#: libfdisk/src/gpt.c:2124
 msgid "No errors detected."
 msgstr "No se ha detectado ningún error."
 
-#: libfdisk/src/gpt.c:2124
+#: libfdisk/src/gpt.c:2125
 #, c-format
 msgid "Header version: %s"
 msgstr "Cabecera versión %s"
 
-#: libfdisk/src/gpt.c:2125
+#: libfdisk/src/gpt.c:2126
 #, fuzzy, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "Se utilizan %u de un total de %d particiones."
 
-#: libfdisk/src/gpt.c:2135
+#: libfdisk/src/gpt.c:2136
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Un total de %ju sectores libres está disponible en %u segmento"
 msgstr[1] "Un total de %ju sectores libres está disponible en %u segmentos (el mayor es %s)."
 
-#: libfdisk/src/gpt.c:2143
+#: libfdisk/src/gpt.c:2144
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "%d error detectado."
 msgstr[1] "%d errores detectados."
 
-#: libfdisk/src/gpt.c:2222
+#: libfdisk/src/gpt.c:2223
 msgid "All partitions are already in use."
 msgstr "Ya se están usando todas las particiones."
 
-#: libfdisk/src/gpt.c:2279 libfdisk/src/gpt.c:2304
+#: libfdisk/src/gpt.c:2280 libfdisk/src/gpt.c:2305
 #, c-format
 msgid "Sector %ju already used."
 msgstr "El sector %ju ya está asignado."
 
-#: libfdisk/src/gpt.c:2365
+#: libfdisk/src/gpt.c:2366
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "No se pudo crear la partición %zu"
 
-#: libfdisk/src/gpt.c:2372
+#: libfdisk/src/gpt.c:2373
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "El último sector GPT utilizable es %ju, pero se ha solicitado %ju."
 
-#: libfdisk/src/gpt.c:2379
+#: libfdisk/src/gpt.c:2380
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "El primer sector GPT utilizable es %ju, pero se ha solicitado %ju."
 
-#: libfdisk/src/gpt.c:2513
+#: libfdisk/src/gpt.c:2514
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Se ha creado una nueva etiqueta de disco GPT (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2531
+#: libfdisk/src/gpt.c:2532
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Introduczca el nuevo UUID del disco (en formato 8-4-4-4-12)"
 
-#: libfdisk/src/gpt.c:2538
+#: libfdisk/src/gpt.c:2539
 msgid "Failed to parse your UUID."
 msgstr "Error al analizar su UUID."
 
-#: libfdisk/src/gpt.c:2552
+#: libfdisk/src/gpt.c:2553
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "El identificador del disco ha cambiado de %s a %s."
 
-#: libfdisk/src/gpt.c:2572
+#: libfdisk/src/gpt.c:2573
 msgid "Not enough space for new partition table!"
 msgstr "¡No hay espacio suficiente para una tabla de particiones nueva!"
 
-#: libfdisk/src/gpt.c:2583
+#: libfdisk/src/gpt.c:2584
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Partición #%u fuera de rango (el comienzo mínimo es %<PRIu64> sectores)"
 
-#: libfdisk/src/gpt.c:2588
+#: libfdisk/src/gpt.c:2589
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Partición #%u fuera de rango (el final máximo es %<PRIu64> sectores)"
 
-#: libfdisk/src/gpt.c:2631
+#: libfdisk/src/gpt.c:2632
 #, fuzzy, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Se ha creado el número máximo de particiones."
 
-#: libfdisk/src/gpt.c:2654
+#: libfdisk/src/gpt.c:2655
 msgid "Cannot allocate memory!"
 msgstr "¡No se puede asignar memoria!"
 
-#: libfdisk/src/gpt.c:2684
+#: libfdisk/src/gpt.c:2685
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "La longitud de la table de particiones ha cambiado de %<PRIu32> a %<PRIu64>."
 
-#: libfdisk/src/gpt.c:2793
+#: libfdisk/src/gpt.c:2794
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Los atributos de la partición %zu se cambian a 0x%016<PRIx64>."
 
-#: libfdisk/src/gpt.c:2843
+#: libfdisk/src/gpt.c:2844
 msgid "Enter GUID specific bit"
 msgstr "Introduzca el bit específico de GUID"
 
-#: libfdisk/src/gpt.c:2858
+#: libfdisk/src/gpt.c:2859
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "no se ha podido cambiar el bit no soportado %lu"
 
-#: libfdisk/src/gpt.c:2871
+#: libfdisk/src/gpt.c:2872
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "El bit específico de GUID %d de la partición %zu está ahora activado."
 
-#: libfdisk/src/gpt.c:2872
+#: libfdisk/src/gpt.c:2873
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "El bit específico de GUID %d de la partición %zu está ahora desactivado."
 
-#: libfdisk/src/gpt.c:2876
+#: libfdisk/src/gpt.c:2877
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "El indicador %s de la partición %zu ahora está activado."
 
-#: libfdisk/src/gpt.c:2877
+#: libfdisk/src/gpt.c:2878
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "El indicador %s de la partición %zu ahora está desactivado."
 
-#: libfdisk/src/gpt.c:3019
+#: libfdisk/src/gpt.c:3020
 msgid "Type-UUID"
 msgstr "Tipo-UUID"
 
-#: libfdisk/src/gpt.c:3020
+#: libfdisk/src/gpt.c:3021
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3021 login-utils/chfn.c:155 login-utils/chfn.c:157
+#: libfdisk/src/gpt.c:3022 login-utils/chfn.c:155 login-utils/chfn.c:157
 #: login-utils/chfn.c:321
 msgid "Name"
 msgstr "Nombre"
 
-#: libfdisk/src/partition.c:841
+#: libfdisk/src/partition.c:844
 msgid "Free space"
 msgstr "Espacio libre"
 
-#: libfdisk/src/partition.c:1210
+#: libfdisk/src/partition.c:1213
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "No se ha podido cambiar el tamaño de la partición nº %zu."
@@ -6608,7 +6617,7 @@ msgstr ""
 "puede destruir la tabla de particiones y el bloque de inicio.\n"
 "¿Está seguro de que desea que la partición esté marcada como Linux swap?"
 
-#: libmount/src/context.c:2367
+#: libmount/src/context.c:2368
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "readlink falló: %s"
@@ -6862,52 +6871,52 @@ msgstr "%s falló"
 msgid "no medium found on %s"
 msgstr "no se ha encontrado ningún medio en %s"
 
-#: libmount/src/context_umount.c:1051 libmount/src/context_umount.c:1080
+#: libmount/src/context_umount.c:1053 libmount/src/context_umount.c:1082
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "%s: no montado"
 
-#: libmount/src/context_umount.c:1055
+#: libmount/src/context_umount.c:1057
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "%s: umount ha fallado"
 
-#: libmount/src/context_umount.c:1064
+#: libmount/src/context_umount.c:1066
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "%s: se ha desmontado el sistema de ficheros, pero mount(8) ha fallado"
 
-#: libmount/src/context_umount.c:1077
+#: libmount/src/context_umount.c:1079
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "%s: dispositivo de bloques no válido"
 
-#: libmount/src/context_umount.c:1083
+#: libmount/src/context_umount.c:1085
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "%s: no se puede escribir el superbloque"
 
-#: libmount/src/context_umount.c:1086
+#: libmount/src/context_umount.c:1088
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "el destino existe"
 
-#: libmount/src/context_umount.c:1089
+#: libmount/src/context_umount.c:1091
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "no se ha especificado punto de montaje"
 
-#: libmount/src/context_umount.c:1092
+#: libmount/src/context_umount.c:1094
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "%s: debe ser superusuario para desmontar"
 
-#: libmount/src/context_umount.c:1095
+#: libmount/src/context_umount.c:1097
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "%s: no se permiten dispositivos de bloque en el sistema de ficheros"
 
-#: libmount/src/context_umount.c:1098
+#: libmount/src/context_umount.c:1100
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount(2) ha fallado"
@@ -10369,8 +10378,8 @@ msgstr "el sondeo ha fallado"
 msgid "timeout [%d sec]\n"
 msgstr "tiempo de espera [%d s]\n"
 
-#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:436
-#: text-utils/column.c:449
+#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:444
+#: text-utils/column.c:457
 msgid "read failed"
 msgstr "fallo al leer"
 
@@ -17552,7 +17561,7 @@ msgstr "%s: no se puede ejecutar %s: %m"
 #: term-utils/agetty.c:563 term-utils/agetty.c:849 term-utils/agetty.c:861
 #: term-utils/agetty.c:878 term-utils/agetty.c:1396 term-utils/agetty.c:1414
 #: term-utils/agetty.c:1450 term-utils/agetty.c:1460 term-utils/agetty.c:1497
-#: term-utils/agetty.c:1981 term-utils/agetty.c:2527
+#: term-utils/agetty.c:1941 term-utils/agetty.c:2487
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "mo se ha podido asignar memoria: %m"
@@ -17632,32 +17641,32 @@ msgstr "fallo al establecer los atributos del terminal: %m"
 msgid "cannot open os-release file"
 msgstr "no se puede abrir el fichero «os-release»"
 
-#: term-utils/agetty.c:1618
+#: term-utils/agetty.c:1602
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "no se ha podido crear el fichero de recarga: %s: %m"
 
-#: term-utils/agetty.c:1717
+#: term-utils/agetty.c:1689
 msgid "[press ENTER to login]"
 msgstr "[presione ENTER para iniciar sesión]"
 
-#: term-utils/agetty.c:1742
+#: term-utils/agetty.c:1714
 msgid "Num Lock off"
 msgstr "Bloqueo del teclado numérico desactivado"
 
-#: term-utils/agetty.c:1745
+#: term-utils/agetty.c:1717
 msgid "Num Lock on"
 msgstr "Bloqueo del teclado numérico activado"
 
-#: term-utils/agetty.c:1748
+#: term-utils/agetty.c:1720
 msgid "Caps Lock on"
 msgstr "Bloqueo de mayúsculas activado"
 
-#: term-utils/agetty.c:1751
+#: term-utils/agetty.c:1723
 msgid "Scroll Lock on"
 msgstr "Bloqueo de desplazamiento activado"
 
-#: term-utils/agetty.c:1754
+#: term-utils/agetty.c:1726
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -17666,32 +17675,32 @@ msgstr ""
 "Pista: %s\n"
 "\n"
 
-#: term-utils/agetty.c:1901
+#: term-utils/agetty.c:1861
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: lectura: %m"
 
-#: term-utils/agetty.c:1960
+#: term-utils/agetty.c:1920
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: desbordamiento de entrada"
 
-#: term-utils/agetty.c:1977 term-utils/agetty.c:1985
+#: term-utils/agetty.c:1937 term-utils/agetty.c:1945
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: conversión de carácter no válida para el nombre de inicio de sesión"
 
-#: term-utils/agetty.c:1991
+#: term-utils/agetty.c:1951
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: carácter no váldo 0x%x en el nombre de inicio de seisión"
 
-#: term-utils/agetty.c:2076
+#: term-utils/agetty.c:2036
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: no se ihan podido establecer los atributos del terminal: %m"
 
-#: term-utils/agetty.c:2112
+#: term-utils/agetty.c:2072
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -17700,164 +17709,164 @@ msgstr ""
 " %1$s [opciones] <línea> [<veloc_baudios>,...] [<tipoterm>]\n"
 " %1$s [opciones] <veloc_baudios>,... <línea> [<tipoterm>]\n"
 
-#: term-utils/agetty.c:2116
+#: term-utils/agetty.c:2076
 msgid "Open a terminal and set its mode.\n"
 msgstr "Abre un terminal y configura su modo.\n"
 
-#: term-utils/agetty.c:2119
+#: term-utils/agetty.c:2079
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                asume terminal de 8 bits\n"
 
-#: term-utils/agetty.c:2120
+#: term-utils/agetty.c:2080
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <usuario>  incia sesión automáticamente con el usuario especificado\n"
 
-#: term-utils/agetty.c:2121
+#: term-utils/agetty.c:2081
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              no reicia el modo de control\n"
 
-#: term-utils/agetty.c:2122
+#: term-utils/agetty.c:2082
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               utiliza -r <nombremáquina> para login(1)\n"
 
-#: term-utils/agetty.c:2123
+#: term-utils/agetty.c:2083
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <fichero> muestra el fichero issue\n"
 
-#: term-utils/agetty.c:2124
+#: term-utils/agetty.c:2084
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         activa el control de flujo por hardware\n"
 
-#: term-utils/agetty.c:2125
+#: term-utils/agetty.c:2085
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <nombremáquina> especifica máquina para inicio de sesión\n"
 
-#: term-utils/agetty.c:2126
+#: term-utils/agetty.c:2086
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              no muestra el fichero issue\n"
 
-#: term-utils/agetty.c:2127
+#: term-utils/agetty.c:2087
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <cadena> establece la cadena de inicio\n"
 
-#: term-utils/agetty.c:2128
+#: term-utils/agetty.c:2088
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J, --noclear              no limpia la pantalla antes de sacar el indicador\n"
 
-#: term-utils/agetty.c:2129
+#: term-utils/agetty.c:2089
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <fich> especifica el programa de inicio de sesión\n"
 
-#: term-utils/agetty.c:2130
+#: term-utils/agetty.c:2090
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<modo>]  controla el indicador de línea local\n"
 
-#: term-utils/agetty.c:2131
+#: term-utils/agetty.c:2091
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         extrae la velocidad en baudios durante la conexión\n"
 
-#: term-utils/agetty.c:2132
+#: term-utils/agetty.c:2092
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           no pregunta para iniciar sesión\n"
 
-#: term-utils/agetty.c:2133
+#: term-utils/agetty.c:2093
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N, --nonewline            no imprime un salto de línea antes de issue\n"
 
-#: term-utils/agetty.c:2134
+#: term-utils/agetty.c:2094
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <opcs> opciones que se pasan al iniciar sesión\n"
 
-#: term-utils/agetty.c:2135
+#: term-utils/agetty.c:2095
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          espera a que se pulse una tecla antes de iniciar sesión\n"
 
-#: term-utils/agetty.c:2136
+#: term-utils/agetty.c:2096
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r. --chroot <dir>         establece como raíz el directorio especificado\n"
 
-#: term-utils/agetty.c:2137
+#: term-utils/agetty.c:2097
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               cuelga virtualmente en el terminal\n"
 
-#: term-utils/agetty.c:2138
+#: term-utils/agetty.c:2098
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            tarta de mantener la velocidad en baudios tras cortar\n"
 
-#: term-utils/agetty.c:2139
+#: term-utils/agetty.c:2099
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <número>     tiempo límite del proceso de inicio de sesión\n"
 
-#: term-utils/agetty.c:2140
+#: term-utils/agetty.c:2100
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          detecta terminal de mayúsculas\n"
 
-#: term-utils/agetty.c:2141
+#: term-utils/agetty.c:2101
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              espera al retorno de carro\n"
 
-#: term-utils/agetty.c:2142
+#: term-utils/agetty.c:2102
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              no imprime pistas\n"
 
-#: term-utils/agetty.c:2143
+#: term-utils/agetty.c:2103
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           no se muestra ningún nombre de máquina en absoluto\n"
 
-#: term-utils/agetty.c:2144
+#: term-utils/agetty.c:2104
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        muestra el nombrede máquina completamente cualificado\n"
 
-#: term-utils/agetty.c:2145
+#: term-utils/agetty.c:2105
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <cadena> caracteres adicionales de borrado hacia atrás\n"
 
-#: term-utils/agetty.c:2146
+#: term-utils/agetty.c:2106
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <cadena>  caracteres de terminación adicionales\n"
 
-#: term-utils/agetty.c:2147
+#: term-utils/agetty.c:2107
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <directorio>   cambia de directorio antes de iniciar sesión\n"
 
-#: term-utils/agetty.c:2148
+#: term-utils/agetty.c:2108
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <número>       reposa un número de segundos antes de preguntar\n"
 
-#: term-utils/agetty.c:2149
+#: term-utils/agetty.c:2109
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <número>        inicia sesión con esta prioridad\n"
 
-#: term-utils/agetty.c:2150
+#: term-utils/agetty.c:2110
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               recarga los indicadores en las instancias de agetty en ejecución\n"
 
-#: term-utils/agetty.c:2151
+#: term-utils/agetty.c:2111
 msgid "     --help                 display this help and exit\n"
 msgstr "     --help                 muestra esta ayuda y termina\n"
 
-#: term-utils/agetty.c:2152
+#: term-utils/agetty.c:2112
 msgid "     --version              output version information and exit\n"
 msgstr "     --version              saca la información de versión y termina\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2447
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d usuario"
 msgstr[1] "%d usuarios"
 
-#: term-utils/agetty.c:2615
+#: term-utils/agetty.c:2575
 #, c-format
 msgid "checkname failed: %m"
 msgstr "error de comprobación de nombre: %m"
 
-#: term-utils/agetty.c:2627
+#: term-utils/agetty.c:2587
 #, c-format
 msgid "cannot touch file %s"
 msgstr "no se puede tocar el fichero %s"
 
-#: term-utils/agetty.c:2631
+#: term-utils/agetty.c:2591
 msgid "--reload is unsupported on your system"
 msgstr "--reload no se admite en su sistema"
 
@@ -18499,7 +18508,7 @@ msgstr "más allá de primera línea"
 msgid "-- line already flushed"
 msgstr "-- línea ya vaciada"
 
-#: text-utils/colcrt.c:81 text-utils/column.c:551
+#: text-utils/colcrt.c:81 text-utils/column.c:559
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr " %s [opciones] [<fichero>...]\n"
@@ -18538,162 +18547,162 @@ msgstr "primer argumento"
 msgid "second argument"
 msgstr "segundo argumento"
 
-#: text-utils/column.c:217
+#: text-utils/column.c:225
 #, fuzzy
 msgid "failed to parse column"
 msgstr "fallo al analizar el final"
 
-#: text-utils/column.c:227
+#: text-utils/column.c:235
 #, fuzzy, c-format
 msgid "undefined column name '%s'"
 msgstr "punto de montaje no definido"
 
-#: text-utils/column.c:278
+#: text-utils/column.c:286
 #, fuzzy
 msgid "failed to parse --table-order list"
 msgstr "fallo al analizar --timeout"
 
-#: text-utils/column.c:351
+#: text-utils/column.c:359
 #, fuzzy
 msgid "failed to parse --table-right list"
 msgstr "fallo al analizar el principio"
 
-#: text-utils/column.c:355
+#: text-utils/column.c:363
 #, fuzzy
 msgid "failed to parse --table-trunc list"
 msgstr "fallo al analizar --timeout"
 
-#: text-utils/column.c:359
+#: text-utils/column.c:367
 #, fuzzy
 msgid "failed to parse --table-noextreme list"
 msgstr "fallo al analizar --timeout"
 
-#: text-utils/column.c:363
+#: text-utils/column.c:371
 #, fuzzy
 msgid "failed to parse --table-wrap list"
 msgstr "fallo al analizar el principio"
 
-#: text-utils/column.c:367
+#: text-utils/column.c:375
 #, fuzzy
 msgid "failed to parse --table-hide list"
 msgstr "fallo al analizar --timeout"
 
-#: text-utils/column.c:398
+#: text-utils/column.c:406
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr ""
 
-#: text-utils/column.c:411
+#: text-utils/column.c:419
 #, fuzzy
 msgid "failed to allocate output data"
 msgstr "no se ha podido reservar la tabla de salida"
 
-#: text-utils/column.c:554
+#: text-utils/column.c:562
 msgid "Columnate lists.\n"
 msgstr "Listas en columnas.\n"
 
-#: text-utils/column.c:557
+#: text-utils/column.c:565
 #, fuzzy
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table              crea una tabla\n"
 
-#: text-utils/column.c:558
+#: text-utils/column.c:566
 #, fuzzy
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr " -n, --name <programa>         nombre con el que se informa de los errores\n"
 
-#: text-utils/column.c:559
+#: text-utils/column.c:567
 #, fuzzy
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -x, --sort <columna> ordena la salida por <columna>\n"
 
-#: text-utils/column.c:560
+#: text-utils/column.c:568
 #, fuzzy
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -o, --options <lista>    lista de las opciones de intercambio, separadas por coma\n"
 
-#: text-utils/column.c:561
+#: text-utils/column.c:569
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 
-#: text-utils/column.c:562
+#: text-utils/column.c:570
 #, fuzzy
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -n, --noheadings       no imprime los títulos de las columnas\n"
 
-#: text-utils/column.c:563
+#: text-utils/column.c:571
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr ""
 
-#: text-utils/column.c:564
+#: text-utils/column.c:572
 #, fuzzy
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr " -u, --notruncate       no trunca el texto de las columnas\n"
 
-#: text-utils/column.c:565
+#: text-utils/column.c:573
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr ""
 
-#: text-utils/column.c:566
+#: text-utils/column.c:574
 #, fuzzy
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr " -J, --json                    utiliza el formato de salida --list JSON\n"
 
-#: text-utils/column.c:569
+#: text-utils/column.c:577
 #, fuzzy
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr " -O, --output <cols>           especifica las columnas que se mostrarán con --list\n"
 
-#: text-utils/column.c:570
+#: text-utils/column.c:578
 #, fuzzy
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -i, --irq <num>              especifica la irq del puerto paralelo\n"
 
-#: text-utils/column.c:571
+#: text-utils/column.c:579
 #, fuzzy
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -N, --partno <número>     especifica el número de la partición\n"
 
-#: text-utils/column.c:574
+#: text-utils/column.c:582
 #, fuzzy
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --columns <ancho>    ancho de la salida en número de caracteres\n"
 
-#: text-utils/column.c:575
+#: text-utils/column.c:583
 #, fuzzy
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 " -o, --output-separator <cadena>\n"
 "                          separador de columnas para la salida de las tablas; el predeterminado es dos espacios\n"
 
-#: text-utils/column.c:576
+#: text-utils/column.c:584
 #, fuzzy
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <cadena> delimitadores de tabla que se pueden utilizar\n"
 
-#: text-utils/column.c:577
+#: text-utils/column.c:585
 #, fuzzy
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows           llenar las filas antes que las columnas\n"
 
-#: text-utils/column.c:643
+#: text-utils/column.c:651
 msgid "invalid columns argument"
 msgstr "argumento de las columnas no válido"
 
-#: text-utils/column.c:662
+#: text-utils/column.c:670
 #, fuzzy
 msgid "failed to parse column names"
 msgstr "No se podido analizar la tabla de montaje"
 
-#: text-utils/column.c:715
+#: text-utils/column.c:723
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr ""
 
-#: text-utils/column.c:723
+#: text-utils/column.c:731
 msgid "option --table required for all --table-*"
 msgstr ""
 
-#: text-utils/column.c:726
+#: text-utils/column.c:734
 msgid "option --table-columns required for --json"
 msgstr ""
 

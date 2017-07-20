@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-06-02 11:14+0200\n"
+"POT-Creation-Date: 2017-07-20 11:08+0200\n"
 "PO-Revision-Date: 2017-05-26 20:14+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -66,7 +66,7 @@ msgstr "カーネルに指定したパーティションの存在を伝えます
 #: sys-utils/setpriv.c:529 sys-utils/setpriv.c:552 sys-utils/swapon.c:372
 #: sys-utils/swapon.c:515 sys-utils/switch_root.c:167 sys-utils/unshare.c:106
 #: sys-utils/unshare.c:121 sys-utils/wdctl.c:323 sys-utils/wdctl.c:379
-#: term-utils/agetty.c:2624 term-utils/mesg.c:127 term-utils/script.c:426
+#: term-utils/agetty.c:2584 term-utils/mesg.c:127 term-utils/script.c:426
 #: term-utils/script.c:432 term-utils/script.c:434 term-utils/script.c:530
 #: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
 #: term-utils/wall.c:413 text-utils/colcrt.c:282 text-utils/more.c:519
@@ -272,7 +272,7 @@ msgid "Quit program without writing changes"
 msgstr "変更を書き込まずにプログラムを終了します"
 
 #: disk-utils/cfdisk.c:188 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
-#: libfdisk/src/dos.c:2396 libfdisk/src/gpt.c:3017 libfdisk/src/sgi.c:1159
+#: libfdisk/src/dos.c:2413 libfdisk/src/gpt.c:3018 libfdisk/src/sgi.c:1159
 #: libfdisk/src/sun.c:1119
 msgid "Type"
 msgstr "タイプ"
@@ -819,7 +819,7 @@ msgid "Using default response %c."
 msgstr "既定の回答 %c であるものとみなします。"
 
 #: disk-utils/fdisk.c:178 disk-utils/fdisk.c:252 disk-utils/fdisk.c:327
-#: libfdisk/src/dos.c:1223 libfdisk/src/gpt.c:2359
+#: libfdisk/src/dos.c:1226 libfdisk/src/gpt.c:2360
 msgid "Value out of range."
 msgstr "範囲外の値です。"
 
@@ -914,8 +914,8 @@ msgstr "シークできません"
 msgid "cannot read"
 msgstr "読み取れません"
 
-#: disk-utils/fdisk.c:697 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:964
-#: libfdisk/src/gpt.c:2292
+#: disk-utils/fdisk.c:697 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:967
+#: libfdisk/src/gpt.c:2293
 msgid "First sector"
 msgstr "最初のセクタ"
 
@@ -1112,7 +1112,7 @@ msgstr "列挙子の割り当てに失敗しました"
 #: misc-utils/findmnt.c:1598 misc-utils/lsblk.c:1897 misc-utils/lslocks.c:449
 #: sys-utils/losetup.c:314 sys-utils/lscpu.c:1762 sys-utils/lscpu.c:1865
 #: sys-utils/lsipc.c:338 sys-utils/prlimit.c:297 sys-utils/swapon.c:281
-#: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:196
+#: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:204
 msgid "failed to allocate output table"
 msgstr "出力テーブルの準備に失敗しました"
 
@@ -1123,7 +1123,7 @@ msgstr "出力テーブルの準備に失敗しました"
 #: sys-utils/lscpu.c:1788 sys-utils/lscpu.c:1816 sys-utils/lsipc.c:470
 #: sys-utils/lsipc.c:545 sys-utils/lsipc.c:647 sys-utils/lsipc.c:739
 #: sys-utils/lsipc.c:900 sys-utils/prlimit.c:229 sys-utils/swapon.c:176
-#: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:407
+#: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:415
 msgid "failed to allocate output line"
 msgstr "出力先への行追加に失敗しました"
 
@@ -1133,7 +1133,7 @@ msgstr "出力先への行追加に失敗しました"
 #: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1796
 #: sys-utils/lscpu.c:1827 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
 #: sys-utils/prlimit.c:261 sys-utils/swapon.c:224 sys-utils/wdctl.c:243
-#: sys-utils/zramctl.c:475 text-utils/column.c:413
+#: sys-utils/zramctl.c:475 text-utils/column.c:421
 msgid "failed to add output data"
 msgstr "出力データの追加に失敗しました"
 
@@ -1151,23 +1151,23 @@ msgstr "パーティション %zu にあるファイルシステム/RAIDの署�
 msgid "Partition table entries are not in disk order."
 msgstr "パーティション情報の項目がディスクの順序と一致しません。"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2390
-#: libfdisk/src/gpt.c:3013 libfdisk/src/sgi.c:1153 libfdisk/src/sun.c:1113
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2407
+#: libfdisk/src/gpt.c:3014 libfdisk/src/sgi.c:1153 libfdisk/src/sun.c:1113
 msgid "Start"
 msgstr "開始位置"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2391
-#: libfdisk/src/gpt.c:3014 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1114
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2408
+#: libfdisk/src/gpt.c:3015 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1114
 msgid "End"
 msgstr "最後から"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2392
-#: libfdisk/src/gpt.c:3015 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1115
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2409
+#: libfdisk/src/gpt.c:3016 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1115
 msgid "Sectors"
 msgstr "セクタ"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1021 libfdisk/src/dos.c:2394
-#: libfdisk/src/gpt.c:3016 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1117
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1021 libfdisk/src/dos.c:2411
+#: libfdisk/src/gpt.c:3017 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1117
 msgid "Size"
 msgstr "サイズ"
 
@@ -5061,15 +5061,15 @@ msgstr "パーティション %zd の開始点セクタが不正な値 (0) に�
 msgid "There is no *BSD partition on %s."
 msgstr "%s には *BSD パーティションはありません。"
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:964
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:967
 msgid "First cylinder"
 msgstr "最初のシリンダ"
 
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1195
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1198
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "最後のシリンダ, +シリンダ番号または +サイズ{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1200 libfdisk/src/gpt.c:2337
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1203 libfdisk/src/gpt.c:2338
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "最終セクタ, +セクタ番号 または +サイズ{K,M,G,T,P}"
 
@@ -5118,7 +5118,7 @@ msgstr "トラック/シリンダ"
 msgid "Sectors/Cylinder"
 msgstr "セクタ/シリンダ"
 
-#: libfdisk/src/bsd.c:490 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2393
+#: libfdisk/src/bsd.c:490 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2410
 #: libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:199 libfdisk/src/sun.c:1116
 msgid "Cylinders"
 msgstr "シリンダ"
@@ -5272,305 +5272,314 @@ msgstr "ジオメトリ設定が不完全です。"
 msgid "All primary partitions have been defined already."
 msgstr "全ての基本パーティションが設定済みです"
 
-#: libfdisk/src/dos.c:267
+#: libfdisk/src/dos.c:216
+#, fuzzy
+msgid "Primary partition not available."
+msgstr "空きパーティションがありません！"
+
+#: libfdisk/src/dos.c:270
 #, c-format
 msgid "Failed to read extended partition table (offset=%ju)"
 msgstr "拡張パーティション情報 (オフセット=%ju) の読み込みに失敗しました"
 
-#: libfdisk/src/dos.c:337
+#: libfdisk/src/dos.c:340
 msgid "You can set geometry from the extra functions menu."
 msgstr "特殊機能からジオメトリをセットすることができます。"
 
-#: libfdisk/src/dos.c:340
+#: libfdisk/src/dos.c:343
 msgid "DOS-compatible mode is deprecated."
 msgstr "DOS 互換モードは廃止予定です。"
 
-#: libfdisk/src/dos.c:344
+#: libfdisk/src/dos.c:347
 msgid "The device presents a logical sector size that is smaller than the physical sector size. Aligning to a physical sector (or optimal I/O) size boundary is recommended, or performance may be impacted."
 msgstr "デバイスから提供された情報によると、物理セクタサイズよりも小さな論理セクタサイズが提供されています。性能への影響を避けるため、物理セクタ (または I/O) に合わせてサイズ境界を設定しておくことをお勧めします。"
 
-#: libfdisk/src/dos.c:350
+#: libfdisk/src/dos.c:353
 msgid "Cylinders as display units are deprecated."
 msgstr "シリンダを表示単位とすることは非推奨です。"
 
-#: libfdisk/src/dos.c:357
+#: libfdisk/src/dos.c:360
 #, c-format
 msgid "The size of this disk is %s (%ju bytes). DOS partition table format cannot be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgstr "このディスクのサイズは %s (%ju バイト) です。DOS パーティションテーブル形式では %lu バイト以上のドライブには セクタサイズ %lu バイトを使用することができません。GUID パーティションテーブル (GPT) 形式を使用してください。"
 
-#: libfdisk/src/dos.c:516
+#: libfdisk/src/dos.c:519
 msgid "Bad offset in primary extended partition."
 msgstr "基本拡張パーティション内に、不正なオフセット値が設定されています。"
 
-#: libfdisk/src/dos.c:530
+#: libfdisk/src/dos.c:533
 #, c-format
 msgid "Omitting partitions after #%zu. They will be deleted if you save this partition table."
 msgstr "#%zu より後のパーティションを省略しました。パーティション情報を保存すると、省略された分のパーティションが削除されます。"
 
-#: libfdisk/src/dos.c:563
+#: libfdisk/src/dos.c:566
 #, c-format
 msgid "Extra link pointer in partition table %zu."
 msgstr "パーティション情報 %zu 内に追加のリンクポインタが存在しています。"
 
-#: libfdisk/src/dos.c:571
+#: libfdisk/src/dos.c:574
 #, c-format
 msgid "Ignoring extra data in partition table %zu."
 msgstr "パーティション情報 %zu 内に存在する追加のデータを無視します。"
 
-#: libfdisk/src/dos.c:627
+#: libfdisk/src/dos.c:630
 #, c-format
 msgid "omitting empty partition (%zu)"
 msgstr "空のパーティション (%zu) を無視します"
 
-#: libfdisk/src/dos.c:687
+#: libfdisk/src/dos.c:690
 #, c-format
 msgid "Created a new DOS disklabel with disk identifier 0x%08x."
 msgstr "新しい DOS ディスクラベルを作成しました。識別子は 0x%08x です。"
 
-#: libfdisk/src/dos.c:708
+#: libfdisk/src/dos.c:711
 msgid "Enter the new disk identifier"
 msgstr "ディスク識別子を入力してください"
 
-#: libfdisk/src/dos.c:715
+#: libfdisk/src/dos.c:718
 msgid "Incorrect value."
 msgstr "値が誤っています。"
 
-#: libfdisk/src/dos.c:724
+#: libfdisk/src/dos.c:727
 #, c-format
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "ディスク識別子を 0x%08x から 0x%08x に変更しました。"
 
-#: libfdisk/src/dos.c:820
+#: libfdisk/src/dos.c:823
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "余分な拡張パーティション %zu を無視します"
 
-#: libfdisk/src/dos.c:834
+#: libfdisk/src/dos.c:837
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "無効なフラグ 0x%02x%02x がパーティション %zu の EBR に設定されています。w (書き込み) コマンドを実行すると、修正されます。"
 
-#: libfdisk/src/dos.c:951
+#: libfdisk/src/dos.c:954
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "開始セクタ番号 %ju が範囲外の値です。"
 
-#: libfdisk/src/dos.c:1058 libfdisk/src/gpt.c:2217 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1061 libfdisk/src/gpt.c:2218 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "パーティション %zu は定義済みです。再追加を行うには、まず削除してください。"
 
-#: libfdisk/src/dos.c:1128
+#: libfdisk/src/dos.c:1131
 #, c-format
 msgid "Sector %llu is already allocated."
 msgstr "セクタ %llu は既に割り当て済みです。"
 
-#: libfdisk/src/dos.c:1167 libfdisk/src/gpt.c:2226
+#: libfdisk/src/dos.c:1170 libfdisk/src/gpt.c:2227
 msgid "No free sectors available."
 msgstr "利用可能な空きセクタがありません。"
 
-#: libfdisk/src/dos.c:1323
+#: libfdisk/src/dos.c:1326
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "論理パーティション %zu を追加します"
 
-#: libfdisk/src/dos.c:1354
+#: libfdisk/src/dos.c:1357
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "パーティション %zu: セクタ 0 から始まっています"
 
-#: libfdisk/src/dos.c:1356
+#: libfdisk/src/dos.c:1359
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "パーティション %zu: ヘッド %d は最大値 %d よりも大きい値になっています"
 
-#: libfdisk/src/dos.c:1359
+#: libfdisk/src/dos.c:1362
 #, c-format
 msgid "Partition %zu: sector %d greater than maximum %llu"
 msgstr "パーティション %zu: セクタ %d は最大値 %llu よりも大きい値になっています"
 
-#: libfdisk/src/dos.c:1362
+#: libfdisk/src/dos.c:1365
 #, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgstr "パーティション %zu: シリンダ %d は最大値 %llu よりも大きい値になっています"
 
-#: libfdisk/src/dos.c:1368
+#: libfdisk/src/dos.c:1371
 #, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "パーティション %zu: 直前のセクタ %u は合計値 %u と一致しません"
 
-#: libfdisk/src/dos.c:1421
+#: libfdisk/src/dos.c:1424
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "パーティション %zu: 異なった物理／論理開始位置になっています (Linux では無い?): 物理=(%d, %d, %d), 論理=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1432
+#: libfdisk/src/dos.c:1435
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "パーティション %zu: 物理／論理終端が異なっています: 物理=(%d, %d, %d), 論理=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1441
+#: libfdisk/src/dos.c:1444
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "パーティション %zu: シリンダ境界で終わっていません。"
 
-#: libfdisk/src/dos.c:1468
+#: libfdisk/src/dos.c:1471
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "パーティション %zu: データ領域の始点が異常です。"
 
-#: libfdisk/src/dos.c:1481
+#: libfdisk/src/dos.c:1484
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "パーティション %zu: パーティション %zu と重なっている部分があります。"
 
-#: libfdisk/src/dos.c:1509
+#: libfdisk/src/dos.c:1512
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "パーティション %zu: 空き領域。"
 
-#: libfdisk/src/dos.c:1514
+#: libfdisk/src/dos.c:1517
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "論理パーティション %zu: パーティション %zu の全部ではありません。"
 
-#: libfdisk/src/dos.c:1522
+#: libfdisk/src/dos.c:1525
 #, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgstr "割り当て済みセクタの合計値 %llu が、最大値 %llu よりも大きい値になっています。"
 
-#: libfdisk/src/dos.c:1525
+#: libfdisk/src/dos.c:1528
 #, c-format
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr "未割り当ての %2$ld バイトセクタが %1$lld 個あります。"
 
-#: libfdisk/src/dos.c:1573 libfdisk/src/dos.c:2028
+#: libfdisk/src/dos.c:1586 libfdisk/src/dos.c:1601 libfdisk/src/dos.c:2045
 msgid "Extended partition already exists."
 msgstr "拡張パーティションは既に存在します"
 
-#: libfdisk/src/dos.c:1635
+#: libfdisk/src/dos.c:1616
+msgid "Extended partition does not exists. Failed to add logical partition."
+msgstr ""
+
+#: libfdisk/src/dos.c:1652
 msgid "The maximum number of partitions has been created."
 msgstr "パーティションは最大数まで作成済みです。"
 
-#: libfdisk/src/dos.c:1647
+#: libfdisk/src/dos.c:1664
 msgid "All primary partitions are in use."
 msgstr "全ての基本パーティションが使用済みです。"
 
-#: libfdisk/src/dos.c:1649 libfdisk/src/dos.c:1660
+#: libfdisk/src/dos.c:1666 libfdisk/src/dos.c:1677
 msgid "All space for primary partitions is in use."
 msgstr "全ての基本パーティションが使用済みです。"
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:1663
+#: libfdisk/src/dos.c:1680
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "これ以上のパーティションを作成したい場合は、まず既存の基本パーティションを1つ、拡張パーティションに置き換えてください。"
 
-#: libfdisk/src/dos.c:1668
+#: libfdisk/src/dos.c:1685
 msgid "All logical partitions are in use. Adding a primary partition."
 msgstr "すべての論理パーティションが使用済みです。基本パーティションを追加しています。"
 
-#: libfdisk/src/dos.c:1690
+#: libfdisk/src/dos.c:1707
 msgid "Partition type"
 msgstr "パーティションタイプ"
 
-#: libfdisk/src/dos.c:1694
+#: libfdisk/src/dos.c:1711
 #, c-format
 msgid "%zu primary, %d extended, %zu free"
 msgstr "%zu プライマリ, %d 拡張, %zu 空き"
 
-#: libfdisk/src/dos.c:1699
+#: libfdisk/src/dos.c:1716
 msgid "primary"
 msgstr "基本パーティション"
 
-#: libfdisk/src/dos.c:1701
+#: libfdisk/src/dos.c:1718
 msgid "extended"
 msgstr "拡張領域"
 
-#: libfdisk/src/dos.c:1701
+#: libfdisk/src/dos.c:1718
 msgid "container for logical partitions"
 msgstr "論理パーティションが入ります"
 
-#: libfdisk/src/dos.c:1703
+#: libfdisk/src/dos.c:1720
 msgid "logical"
 msgstr "論理パーティション"
 
-#: libfdisk/src/dos.c:1703
+#: libfdisk/src/dos.c:1720
 msgid "numbered from 5"
 msgstr "5 以上の番号"
 
-#: libfdisk/src/dos.c:1741
+#: libfdisk/src/dos.c:1758
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "パーティションの種類 `%c' が正しくありません。"
 
-#: libfdisk/src/dos.c:1759
+#: libfdisk/src/dos.c:1776
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "セクタ %jd に書き込めません: シークに失敗しました"
 
-#: libfdisk/src/dos.c:1919 libfdisk/src/gpt.c:1138
+#: libfdisk/src/dos.c:1936 libfdisk/src/gpt.c:1139
 msgid "Disk identifier"
 msgstr "ディスク識別子"
 
-#: libfdisk/src/dos.c:2033
+#: libfdisk/src/dos.c:2050
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "タイプ 0 は多くのシステムで空き領域を意味します。タイプ 0 パーティションを持つことは、多分あまり賢い選択ではありません。"
 
-#: libfdisk/src/dos.c:2038
+#: libfdisk/src/dos.c:2055
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "すでに論理パーティションを含む拡張パーティションの種類を変更することはできません。まず論理パーティションを削除してください。"
 
-#: libfdisk/src/dos.c:2224 libfdisk/src/gpt.c:2922
+#: libfdisk/src/dos.c:2241 libfdisk/src/gpt.c:2923
 msgid "Nothing to do. Ordering is correct already."
 msgstr "すべきことは何もありません。既に正常な順序になっています。"
 
-#: libfdisk/src/dos.c:2279
+#: libfdisk/src/dos.c:2296
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "パーティション %zu: データ領域がありません。"
 
-#: libfdisk/src/dos.c:2312
+#: libfdisk/src/dos.c:2329
 msgid "New beginning of data"
 msgstr "新規データ開始位置"
 
-#: libfdisk/src/dos.c:2368
+#: libfdisk/src/dos.c:2385
 #, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "パーティション %zu: 拡張パーティションです。"
 
-#: libfdisk/src/dos.c:2374
+#: libfdisk/src/dos.c:2391
 #, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "パーティション %zu の起動フラグを有効にしました。"
 
-#: libfdisk/src/dos.c:2375
+#: libfdisk/src/dos.c:2392
 #, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "パーティション %zu の起動フラグを無効にしました。"
 
-#: libfdisk/src/dos.c:2388 libfdisk/src/gpt.c:3012 libfdisk/src/sgi.c:1152
+#: libfdisk/src/dos.c:2405 libfdisk/src/gpt.c:3013 libfdisk/src/sgi.c:1152
 #: libfdisk/src/sun.c:1112
 msgid "Device"
 msgstr "デバイス"
 
-#: libfdisk/src/dos.c:2389 libfdisk/src/sun.c:40
+#: libfdisk/src/dos.c:2406 libfdisk/src/sun.c:40
 msgid "Boot"
 msgstr "起動"
 
-#: libfdisk/src/dos.c:2395 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1118
+#: libfdisk/src/dos.c:2412 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1118
 msgid "Id"
 msgstr "Id"
 
-#: libfdisk/src/dos.c:2399
+#: libfdisk/src/dos.c:2416
 msgid "Start-C/H/S"
 msgstr "始点 シリンダ/ヘッド/セクタ"
 
-#: libfdisk/src/dos.c:2400
+#: libfdisk/src/dos.c:2417
 msgid "End-C/H/S"
 msgstr "終点 シリンダ/ヘッド/セクタ"
 
-#: libfdisk/src/dos.c:2401 libfdisk/src/gpt.c:3022 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2418 libfdisk/src/gpt.c:3023 libfdisk/src/sgi.c:1160
 msgid "Attrs"
 msgstr "属性"
 
@@ -5894,309 +5903,309 @@ msgstr "QNX6 ファイルシステム"
 msgid "Plan 9 partition"
 msgstr "Plan 9 パーティション"
 
-#: libfdisk/src/gpt.c:589
+#: libfdisk/src/gpt.c:590
 msgid "failed to allocate GPT header"
 msgstr "GPTヘッダの割り当てに失敗しました"
 
-#: libfdisk/src/gpt.c:672
+#: libfdisk/src/gpt.c:673
 msgid "First LBA specified by script is out of range."
 msgstr ""
 
-#: libfdisk/src/gpt.c:684
+#: libfdisk/src/gpt.c:685
 msgid "Last LBA specified by script is out of range."
 msgstr ""
 
-#: libfdisk/src/gpt.c:817
+#: libfdisk/src/gpt.c:818
 #, fuzzy, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by w(rite)."
 msgstr "GPT PMBR のサイズが合致していません (%u != %u) が、w (書き込み) コマンドで修正されます。"
 
-#: libfdisk/src/gpt.c:834
+#: libfdisk/src/gpt.c:835
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() に失敗しました"
 
-#: libfdisk/src/gpt.c:844
+#: libfdisk/src/gpt.c:845
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: モード %o が設定されたファイルを扱うことができません1"
 
-#: libfdisk/src/gpt.c:1108
+#: libfdisk/src/gpt.c:1109
 msgid "GPT Header"
 msgstr "GPT ヘッダ"
 
-#: libfdisk/src/gpt.c:1113
+#: libfdisk/src/gpt.c:1114
 msgid "GPT Entries"
 msgstr "GPT エントリー"
 
-#: libfdisk/src/gpt.c:1145
+#: libfdisk/src/gpt.c:1146
 msgid "First LBA"
 msgstr "先頭の LBA"
 
-#: libfdisk/src/gpt.c:1150
+#: libfdisk/src/gpt.c:1151
 msgid "Last LBA"
 msgstr "最後の LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1156
+#: libfdisk/src/gpt.c:1157
 msgid "Alternative LBA"
 msgstr "代替 LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1162
+#: libfdisk/src/gpt.c:1163
 #, fuzzy
 msgid "Partition entries LBA"
 msgstr "パーティションエントリー LBA: %ju"
 
-#: libfdisk/src/gpt.c:1167
+#: libfdisk/src/gpt.c:1168
 #, fuzzy
 msgid "Allocated partition entries"
 msgstr "割り当てたパーティションエントリー: %u"
 
-#: libfdisk/src/gpt.c:1512
+#: libfdisk/src/gpt.c:1513
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "バックアップの GPT テーブルは破損しているようです、しかしプライマリテーブルは大丈夫のようですので、そちらを使用します。"
 
-#: libfdisk/src/gpt.c:1521
+#: libfdisk/src/gpt.c:1522
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "プライマリの GPT テーブルは破損しているようです、しかしバックアップテーブルは大丈夫のようですので、そちらを使用します。"
 
-#: libfdisk/src/gpt.c:1703
+#: libfdisk/src/gpt.c:1704
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "未対応の GPT 属性ビット '%s' です"
 
-#: libfdisk/src/gpt.c:1708
+#: libfdisk/src/gpt.c:1709
 #, fuzzy, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "一覧 '%s' の処理に失敗しました"
 
-#: libfdisk/src/gpt.c:1803
+#: libfdisk/src/gpt.c:1804
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "パーティション UUID を `%s' から `%s' に変更しました。"
 
-#: libfdisk/src/gpt.c:1811
+#: libfdisk/src/gpt.c:1812
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "パーティションの名前を `%s' から `%.*s' に変更しました。"
 
-#: libfdisk/src/gpt.c:1840
+#: libfdisk/src/gpt.c:1841
 #, fuzzy
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "パーティションの開始位置 (セクタ単位)"
 
-#: libfdisk/src/gpt.c:1847
+#: libfdisk/src/gpt.c:1848
 #, fuzzy
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "パーティションの終了位置 (セクタ単位)"
 
-#: libfdisk/src/gpt.c:2010
+#: libfdisk/src/gpt.c:2011
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "デバイスがハイブリッド MBR 含んでいます -- GPT のみを書き込みます。MBR の同期は手動で行ってください。"
 
-#: libfdisk/src/gpt.c:2047
+#: libfdisk/src/gpt.c:2048
 msgid "Disk does not contain a valid backup header."
 msgstr "ディスクには有効なバックアップヘッダが含まれていません。"
 
-#: libfdisk/src/gpt.c:2052
+#: libfdisk/src/gpt.c:2053
 msgid "Invalid primary header CRC checksum."
 msgstr "プライマリヘッダの CRC チェックサムが正しくありません。"
 
-#: libfdisk/src/gpt.c:2056
+#: libfdisk/src/gpt.c:2057
 msgid "Invalid backup header CRC checksum."
 msgstr "バックアップヘッダの CRC チェックサムが正しくありません。"
 
-#: libfdisk/src/gpt.c:2061
+#: libfdisk/src/gpt.c:2062
 msgid "Invalid partition entry checksum."
 msgstr "パーティション項目のチェックサムが正しくありません。"
 
-#: libfdisk/src/gpt.c:2066
+#: libfdisk/src/gpt.c:2067
 msgid "Invalid primary header LBA sanity checks."
 msgstr "プライマリヘッダの LBA がチェックに合格しませんでた。"
 
-#: libfdisk/src/gpt.c:2070
+#: libfdisk/src/gpt.c:2071
 msgid "Invalid backup header LBA sanity checks."
 msgstr "バックアップヘッダの LBA がチェックに合格しませんでた。"
 
-#: libfdisk/src/gpt.c:2075
+#: libfdisk/src/gpt.c:2076
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "プライマリヘッダにある MyLBA の値が、実際の位置とは異なっています。"
 
-#: libfdisk/src/gpt.c:2079
+#: libfdisk/src/gpt.c:2080
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "バックアップにある MyLBA の値が、実際の位置とは異なっています。"
 
-#: libfdisk/src/gpt.c:2084
+#: libfdisk/src/gpt.c:2085
 msgid "Disk is too small to hold all data."
 msgstr "すべてのデータを収めるには、ディスクが小さすぎます。"
 
-#: libfdisk/src/gpt.c:2094
+#: libfdisk/src/gpt.c:2095
 msgid "Primary and backup header mismatch."
 msgstr "プライマリヘッダとバックアップヘッダの内容が合致していません。"
 
-#: libfdisk/src/gpt.c:2100
+#: libfdisk/src/gpt.c:2101
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "パーティション %u は、パーティション %u と重複しています。"
 
-#: libfdisk/src/gpt.c:2107
+#: libfdisk/src/gpt.c:2108
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "パーティション %u はディスクに比べて大きすぎます。"
 
-#: libfdisk/src/gpt.c:2114
+#: libfdisk/src/gpt.c:2115
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "パーティション %u は開始位置よりも前で終わってしまっています。"
 
-#: libfdisk/src/gpt.c:2123
+#: libfdisk/src/gpt.c:2124
 msgid "No errors detected."
 msgstr "エラーは検出されませんでした。"
 
-#: libfdisk/src/gpt.c:2124
+#: libfdisk/src/gpt.c:2125
 #, c-format
 msgid "Header version: %s"
 msgstr "ヘッダバージョン: %s"
 
-#: libfdisk/src/gpt.c:2125
+#: libfdisk/src/gpt.c:2126
 #, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "%2$zu 個のパーティションのうち、 %1$zu 個を使用しています。"
 
-#: libfdisk/src/gpt.c:2135
+#: libfdisk/src/gpt.c:2136
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "合計 %ju 個の空きセクタが %u セグメント(最大 %s)内に、あります。"
 
-#: libfdisk/src/gpt.c:2143
+#: libfdisk/src/gpt.c:2144
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "エラーが %d 個検出されました。"
 
-#: libfdisk/src/gpt.c:2222
+#: libfdisk/src/gpt.c:2223
 msgid "All partitions are already in use."
 msgstr "すべてのパーティションが使用済みです。"
 
-#: libfdisk/src/gpt.c:2279 libfdisk/src/gpt.c:2304
+#: libfdisk/src/gpt.c:2280 libfdisk/src/gpt.c:2305
 #, c-format
 msgid "Sector %ju already used."
 msgstr "セクタ %ju は既に使用済みです。"
 
-#: libfdisk/src/gpt.c:2365
+#: libfdisk/src/gpt.c:2366
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "パーティション %zu を作成できませんでした"
 
-#: libfdisk/src/gpt.c:2372
+#: libfdisk/src/gpt.c:2373
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2379
+#: libfdisk/src/gpt.c:2380
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2513
+#: libfdisk/src/gpt.c:2514
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "新しい GPT ディスクラベル (GUID: %s) を作成しました。"
 
-#: libfdisk/src/gpt.c:2531
+#: libfdisk/src/gpt.c:2532
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "新しいディスク UUID を (8-4-4-4-12 形式で) 入力してください"
 
-#: libfdisk/src/gpt.c:2538
+#: libfdisk/src/gpt.c:2539
 msgid "Failed to parse your UUID."
 msgstr "UUID の解析に失敗しました。"
 
-#: libfdisk/src/gpt.c:2552
+#: libfdisk/src/gpt.c:2553
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "ディスク識別子を `%s' から `%s' に変更しました。"
 
-#: libfdisk/src/gpt.c:2572
+#: libfdisk/src/gpt.c:2573
 msgid "Not enough space for new partition table!"
 msgstr "新しくパーティションを作成するための十分な空き領域がありません！"
 
-#: libfdisk/src/gpt.c:2583
+#: libfdisk/src/gpt.c:2584
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "パーティション %zd の開始点セクタが不正な値 (0) になっています。"
 
-#: libfdisk/src/gpt.c:2588
+#: libfdisk/src/gpt.c:2589
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2631
+#: libfdisk/src/gpt.c:2632
 #, fuzzy, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "パーティションは最大数まで作成済みです。"
 
-#: libfdisk/src/gpt.c:2654
+#: libfdisk/src/gpt.c:2655
 msgid "Cannot allocate memory!"
 msgstr "メモリの割り当てに失敗しました!"
 
-#: libfdisk/src/gpt.c:2684
+#: libfdisk/src/gpt.c:2685
 #, fuzzy, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "パーティションの名前を `%s' から `%.*s' に変更しました。"
 
-#: libfdisk/src/gpt.c:2793
+#: libfdisk/src/gpt.c:2794
 #, fuzzy, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "パーティション %zu のタイプは変更していません。"
 
-#: libfdisk/src/gpt.c:2843
+#: libfdisk/src/gpt.c:2844
 msgid "Enter GUID specific bit"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2858
+#: libfdisk/src/gpt.c:2859
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "サポートされていないビット %lu を変更できませんでした"
 
-#: libfdisk/src/gpt.c:2871
+#: libfdisk/src/gpt.c:2872
 #, fuzzy, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "パーティション %zu のタイプは変更していません: %s。"
 
-#: libfdisk/src/gpt.c:2872
+#: libfdisk/src/gpt.c:2873
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2876
+#: libfdisk/src/gpt.c:2877
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "%s フラグ (パーティション %zu) を有効にしました。"
 
-#: libfdisk/src/gpt.c:2877
+#: libfdisk/src/gpt.c:2878
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "%s フラグ (パーティション %zu) を無効にしました。"
 
-#: libfdisk/src/gpt.c:3019
+#: libfdisk/src/gpt.c:3020
 msgid "Type-UUID"
 msgstr "パーティションの種類 (UUID)"
 
-#: libfdisk/src/gpt.c:3020
+#: libfdisk/src/gpt.c:3021
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3021 login-utils/chfn.c:155 login-utils/chfn.c:157
+#: libfdisk/src/gpt.c:3022 login-utils/chfn.c:155 login-utils/chfn.c:157
 #: login-utils/chfn.c:321
 msgid "Name"
 msgstr "名前"
 
-#: libfdisk/src/partition.c:841
+#: libfdisk/src/partition.c:844
 msgid "Free space"
 msgstr "空き領域"
 
-#: libfdisk/src/partition.c:1210
+#: libfdisk/src/partition.c:1213
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "パーティション #%zu のサイズ変更に失敗しました"
@@ -6610,7 +6619,7 @@ msgstr ""
 "起動ブロックを破壊してしまいます。\n"
 "パーティションのタグを Linux swap に設定してよろしいですか？"
 
-#: libmount/src/context.c:2367
+#: libmount/src/context.c:2368
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "readlink に失敗しました: %s"
@@ -6864,52 +6873,52 @@ msgstr "%s に失敗しました。"
 msgid "no medium found on %s"
 msgstr "%s にメディアが挿入されていません"
 
-#: libmount/src/context_umount.c:1051 libmount/src/context_umount.c:1080
+#: libmount/src/context_umount.c:1053 libmount/src/context_umount.c:1082
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "%s: マウントされていません"
 
-#: libmount/src/context_umount.c:1055
+#: libmount/src/context_umount.c:1057
 #, c-format
 msgid "umount failed: %m"
 msgstr "アンマウントに失敗しました: %m"
 
-#: libmount/src/context_umount.c:1064
+#: libmount/src/context_umount.c:1066
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "%s: ファイルシステムをアンマウントしましたが、 mount(8) が失敗しました"
 
-#: libmount/src/context_umount.c:1077
+#: libmount/src/context_umount.c:1079
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "%s: 不正なブロックデバイスです"
 
-#: libmount/src/context_umount.c:1083
+#: libmount/src/context_umount.c:1085
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "%s: スーパーブロックに書き込むことができません"
 
-#: libmount/src/context_umount.c:1086
+#: libmount/src/context_umount.c:1088
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "%s は使用中です"
 
-#: libmount/src/context_umount.c:1089
+#: libmount/src/context_umount.c:1091
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "マウントポイントが指定されていません"
 
-#: libmount/src/context_umount.c:1092
+#: libmount/src/context_umount.c:1094
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "%s: アンマウントするにはスーパーユーザでなければなりません"
 
-#: libmount/src/context_umount.c:1095
+#: libmount/src/context_umount.c:1097
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "%s: 指定したブロックデバイスはファイルシステム上で許可されていません"
 
-#: libmount/src/context_umount.c:1098
+#: libmount/src/context_umount.c:1100
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount(2) に失敗しました"
@@ -10489,8 +10498,8 @@ msgstr "poll() がエラーを返しました"
 msgid "timeout [%d sec]\n"
 msgstr "時間切れ [%d sec]\n"
 
-#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:436
-#: text-utils/column.c:449
+#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:444
+#: text-utils/column.c:457
 msgid "read failed"
 msgstr "読み込みに失敗しました"
 
@@ -17813,7 +17822,7 @@ msgstr "%s: %s を実行できません: %m"
 #: term-utils/agetty.c:563 term-utils/agetty.c:849 term-utils/agetty.c:861
 #: term-utils/agetty.c:878 term-utils/agetty.c:1396 term-utils/agetty.c:1414
 #: term-utils/agetty.c:1450 term-utils/agetty.c:1460 term-utils/agetty.c:1497
-#: term-utils/agetty.c:1981 term-utils/agetty.c:2527
+#: term-utils/agetty.c:1941 term-utils/agetty.c:2487
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "メモリの割り当てに失敗しました: %m"
@@ -17895,32 +17904,32 @@ msgstr "端末の属性設定に失敗しました: %m"
 msgid "cannot open os-release file"
 msgstr "os-release ファイルを開くことができません"
 
-#: term-utils/agetty.c:1618
+#: term-utils/agetty.c:1602
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "リロードファイル %s の作成に失敗しました: %m"
 
-#: term-utils/agetty.c:1717
+#: term-utils/agetty.c:1689
 msgid "[press ENTER to login]"
 msgstr "[Enter を押すとログインできます]"
 
-#: term-utils/agetty.c:1742
+#: term-utils/agetty.c:1714
 msgid "Num Lock off"
 msgstr "Num Lock は無効な状態です"
 
-#: term-utils/agetty.c:1745
+#: term-utils/agetty.c:1717
 msgid "Num Lock on"
 msgstr "Num Lock が有効な状態です"
 
-#: term-utils/agetty.c:1748
+#: term-utils/agetty.c:1720
 msgid "Caps Lock on"
 msgstr "Caps Lock が有効な状態です"
 
-#: term-utils/agetty.c:1751
+#: term-utils/agetty.c:1723
 msgid "Scroll Lock on"
 msgstr "Scroll Lock が有効な状態です"
 
-#: term-utils/agetty.c:1754
+#: term-utils/agetty.c:1726
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -17929,32 +17938,32 @@ msgstr ""
 "ヒント: %s\n"
 "\n"
 
-#: term-utils/agetty.c:1901
+#: term-utils/agetty.c:1861
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: 読み込み: %m"
 
-#: term-utils/agetty.c:1960
+#: term-utils/agetty.c:1920
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: 入力が溢れました"
 
-#: term-utils/agetty.c:1977 term-utils/agetty.c:1985
+#: term-utils/agetty.c:1937 term-utils/agetty.c:1945
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ログイン名の文字変換が失敗しました"
 
-#: term-utils/agetty.c:1991
+#: term-utils/agetty.c:1951
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ログイン名に不正な文字 0x%x が含まれています"
 
-#: term-utils/agetty.c:2076
+#: term-utils/agetty.c:2036
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: 端末属性の設定に失敗しました: %m"
 
-#: term-utils/agetty.c:2112
+#: term-utils/agetty.c:2072
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -17963,163 +17972,163 @@ msgstr ""
 " %1$s [オプション] <回線> [<ボーレート>,...] [端末タイプ]\n"
 " %1$s [オプション] <ボーレート>,... 回線 [端末タイプ]\n"
 
-#: term-utils/agetty.c:2116
+#: term-utils/agetty.c:2076
 msgid "Open a terminal and set its mode.\n"
 msgstr ""
 
-#: term-utils/agetty.c:2119
+#: term-utils/agetty.c:2079
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                端末が 8 ビットであるものとみなします\n"
 
-#: term-utils/agetty.c:2120
+#: term-utils/agetty.c:2080
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <ユーザ>   指定したユーザで自動ログインします\n"
 
-#: term-utils/agetty.c:2121
+#: term-utils/agetty.c:2081
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              制御モードをリセットしないようにします\n"
 
-#: term-utils/agetty.c:2122
+#: term-utils/agetty.c:2082
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               login(1) に対して -r <ホスト名> を設定します\n"
 
-#: term-utils/agetty.c:2123
+#: term-utils/agetty.c:2083
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <file>    issue ファイルを表示します\n"
 
-#: term-utils/agetty.c:2124
+#: term-utils/agetty.c:2084
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         ハードウェアフロー制御を有効にします\n"
 
-#: term-utils/agetty.c:2125
+#: term-utils/agetty.c:2085
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <ホスト名>      ログインホストを指定します\n"
 
-#: term-utils/agetty.c:2126
+#: term-utils/agetty.c:2086
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              issue ファイルを表示しないようにします\n"
 
-#: term-utils/agetty.c:2127
+#: term-utils/agetty.c:2087
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <文字列> 初期化文字列を指定します\n"
 
-#: term-utils/agetty.c:2128
+#: term-utils/agetty.c:2088
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              プロンプトの表示前に画面消去を行いません\n"
 
-#: term-utils/agetty.c:2129
+#: term-utils/agetty.c:2089
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <ファイル> ログインプログラムを指定します\n"
 
-#: term-utils/agetty.c:2130
+#: term-utils/agetty.c:2090
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<モード>] ローカル回線フラグを設定します\n"
 
-#: term-utils/agetty.c:2131
+#: term-utils/agetty.c:2091
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         接続時にボーレートを取得します\n"
 
-#: term-utils/agetty.c:2132
+#: term-utils/agetty.c:2092
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           ログインプロンプトを表示しないようにします\n"
 
-#: term-utils/agetty.c:2133
+#: term-utils/agetty.c:2093
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            issue を表示する前に、改行を表示しないようにします\n"
 
-#: term-utils/agetty.c:2134
+#: term-utils/agetty.c:2094
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <オプション> login コマンドに渡すオプションを指定します\n"
 
-#: term-utils/agetty.c:2135
+#: term-utils/agetty.c:2095
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          ログイン前に任意のキーが入力されるのを待つようにします\n"
 
-#: term-utils/agetty.c:2136
+#: term-utils/agetty.c:2096
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <ディレクトリ> 指定したディレクトリをルートにします\n"
 
-#: term-utils/agetty.c:2137
+#: term-utils/agetty.c:2097
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               tty を擬似的にハングアップするようにします\n"
 
-#: term-utils/agetty.c:2138
+#: term-utils/agetty.c:2098
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            break 後もボーレートを維持するようにします\n"
 
-#: term-utils/agetty.c:2139
+#: term-utils/agetty.c:2099
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <数値>       ログイン処理の制限時間を指定します\n"
 
-#: term-utils/agetty.c:2140
+#: term-utils/agetty.c:2100
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          大文字のみを使用する端末を検出するようにします\n"
 
-#: term-utils/agetty.c:2141
+#: term-utils/agetty.c:2101
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              キャリッジリターンを待機します\n"
 
-#: term-utils/agetty.c:2142
+#: term-utils/agetty.c:2102
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              ヒントを表示しないようにします\n"
 
-#: term-utils/agetty.c:2143
+#: term-utils/agetty.c:2103
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           ホスト名を全く表示しないようにします\n"
 
-#: term-utils/agetty.c:2144
+#: term-utils/agetty.c:2104
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        完全修飾ホスト名を表示します\n"
 
-#: term-utils/agetty.c:2145
+#: term-utils/agetty.c:2105
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <文字列> 追加のバックスペース文字を指定します\n"
 
-#: term-utils/agetty.c:2146
+#: term-utils/agetty.c:2106
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <文字列>  追加の kill 文字を指定します\n"
 
-#: term-utils/agetty.c:2147
+#: term-utils/agetty.c:2107
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <ディレクトリ>  ログインする前にディレクトリを変更します\n"
 
-#: term-utils/agetty.c:2148
+#: term-utils/agetty.c:2108
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <秒数>         プロンプトを表示する前に指定した秒数待ちます\n"
 
-#: term-utils/agetty.c:2149
+#: term-utils/agetty.c:2109
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <優先度>        login を指定した優先度で実行します\n"
 
-#: term-utils/agetty.c:2150
+#: term-utils/agetty.c:2110
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               実行中の agetty インスタンスをリロードします\n"
 
-#: term-utils/agetty.c:2151
+#: term-utils/agetty.c:2111
 msgid "     --help                 display this help and exit\n"
 msgstr "     --help                 このヘルプを表示して終了します\n"
 
-#: term-utils/agetty.c:2152
+#: term-utils/agetty.c:2112
 msgid "     --version              output version information and exit\n"
 msgstr "     --version              バージョン情報を表示して終了します\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2447
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d ユーザ"
 
-#: term-utils/agetty.c:2615
+#: term-utils/agetty.c:2575
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname に失敗しました: %m"
 
-#: term-utils/agetty.c:2627
+#: term-utils/agetty.c:2587
 #, c-format
 msgid "cannot touch file %s"
 msgstr "ファイル %s にアクセスできません"
 
-#: term-utils/agetty.c:2631
+#: term-utils/agetty.c:2591
 msgid "--reload is unsupported on your system"
 msgstr "--reload はあなたのシステムではサポートされていません"
 
@@ -18765,7 +18774,7 @@ msgstr "最初の行以前"
 msgid "-- line already flushed"
 msgstr "行は既に書き込まれてしまったため"
 
-#: text-utils/colcrt.c:81 text-utils/column.c:551
+#: text-utils/colcrt.c:81 text-utils/column.c:559
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr " %s [オプション] [<ファイル>...]\n"
@@ -18805,94 +18814,94 @@ msgstr "1 つ目の値"
 msgid "second argument"
 msgstr "2 つ目の値"
 
-#: text-utils/column.c:217
+#: text-utils/column.c:225
 #, fuzzy
 msgid "failed to parse column"
 msgstr "終了位置の処理に失敗しました"
 
-#: text-utils/column.c:227
+#: text-utils/column.c:235
 #, fuzzy, c-format
 msgid "undefined column name '%s'"
 msgstr "マウントポイントが定義されていません"
 
-#: text-utils/column.c:278
+#: text-utils/column.c:286
 #, fuzzy
 msgid "failed to parse --table-order list"
 msgstr "--timeout の解釈に失敗しました"
 
-#: text-utils/column.c:351
+#: text-utils/column.c:359
 #, fuzzy
 msgid "failed to parse --table-right list"
 msgstr "開始位置の処理に失敗しました"
 
-#: text-utils/column.c:355
+#: text-utils/column.c:363
 #, fuzzy
 msgid "failed to parse --table-trunc list"
 msgstr "--timeout の解釈に失敗しました"
 
-#: text-utils/column.c:359
+#: text-utils/column.c:367
 #, fuzzy
 msgid "failed to parse --table-noextreme list"
 msgstr "--timeout の解釈に失敗しました"
 
-#: text-utils/column.c:363
+#: text-utils/column.c:371
 #, fuzzy
 msgid "failed to parse --table-wrap list"
 msgstr "開始位置の処理に失敗しました"
 
-#: text-utils/column.c:367
+#: text-utils/column.c:375
 #, fuzzy
 msgid "failed to parse --table-hide list"
 msgstr "--timeout の解釈に失敗しました"
 
-#: text-utils/column.c:398
+#: text-utils/column.c:406
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr ""
 
-#: text-utils/column.c:411
+#: text-utils/column.c:419
 #, fuzzy
 msgid "failed to allocate output data"
 msgstr "出力テーブルの準備に失敗しました"
 
-#: text-utils/column.c:554
+#: text-utils/column.c:562
 msgid "Columnate lists.\n"
 msgstr "入力を列ごとに整形します。\n"
 
-#: text-utils/column.c:557
+#: text-utils/column.c:565
 #, fuzzy
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table              表を作成します\n"
 
-#: text-utils/column.c:558
+#: text-utils/column.c:566
 #, fuzzy
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr " -n, --name <プログラム名>    エラーが報告された場合に使用する名前を指定します\n"
 
-#: text-utils/column.c:559
+#: text-utils/column.c:567
 #, fuzzy
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -o, --output <list>  出力する列を指定します\n"
 
-#: text-utils/column.c:560
+#: text-utils/column.c:568
 #, fuzzy
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -O, --options <list>   マウントオプションでファイルシステムの出力を制限します\n"
 
-#: text-utils/column.c:561
+#: text-utils/column.c:569
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 
-#: text-utils/column.c:562
+#: text-utils/column.c:570
 #, fuzzy
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -n, --noheadings       ヘッダを表示しません\n"
 
-#: text-utils/column.c:563
+#: text-utils/column.c:571
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr ""
 
-#: text-utils/column.c:564
+#: text-utils/column.c:572
 #, fuzzy
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr ""
@@ -18904,36 +18913,36 @@ msgstr ""
 " -h, --help             このヘルプを表示して終了します\n"
 " -V, --version          バージョン情報を表示して終了します\n"
 
-#: text-utils/column.c:565
+#: text-utils/column.c:573
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr ""
 
-#: text-utils/column.c:566
+#: text-utils/column.c:574
 #, fuzzy
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr "     --raw              --list の結果を特に加工を行わずに出力します\n"
 
-#: text-utils/column.c:569
+#: text-utils/column.c:577
 #, fuzzy
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr " -O, --output <cols>    --list で表示する列を指定します\n"
 
-#: text-utils/column.c:570
+#: text-utils/column.c:578
 #, fuzzy
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -i, --irq <番号>             パラレルポートの IRQ を指定します\n"
 
-#: text-utils/column.c:571
+#: text-utils/column.c:579
 #, fuzzy
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -H, --heads <数値>            ヘッド数を指定します\n"
 
-#: text-utils/column.c:574
+#: text-utils/column.c:582
 #, fuzzy
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --columns <幅>       出力幅を文字数で指定します\n"
 
-#: text-utils/column.c:575
+#: text-utils/column.c:583
 #, fuzzy
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
@@ -18941,34 +18950,34 @@ msgstr ""
 "                          表出力時の列区切りを指定します。\n"
 "                            既定値はスペース 2 つです\n"
 
-#: text-utils/column.c:576
+#: text-utils/column.c:584
 #, fuzzy
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <文字列> 表の区切り文字列を指定します\n"
 
-#: text-utils/column.c:577
+#: text-utils/column.c:585
 #, fuzzy
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows           列の前に行を埋めます\n"
 
-#: text-utils/column.c:643
+#: text-utils/column.c:651
 msgid "invalid columns argument"
 msgstr "列の引数が正しくありません"
 
-#: text-utils/column.c:662
+#: text-utils/column.c:670
 #, fuzzy
 msgid "failed to parse column names"
 msgstr "マウントテーブルの解釈に失敗しました"
 
-#: text-utils/column.c:715
+#: text-utils/column.c:723
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr ""
 
-#: text-utils/column.c:723
+#: text-utils/column.c:731
 msgid "option --table required for all --table-*"
 msgstr ""
 
-#: text-utils/column.c:726
+#: text-utils/column.c:734
 msgid "option --table-columns required for --json"
 msgstr ""
 
