@@ -1,0 +1,110 @@
+blkid:  libblkid libuuid 
+cfdisk:  libblkid libfdisk libmount libncursesw librt libsmartcols libtinfo libuuid 
+column:  libsmartcols 
+eject:  libblkid libmount librt libuuid 
+fdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
+fincore:  libsmartcols 
+findfs:  libblkid libuuid 
+findmnt:  libblkid libmount librt libsmartcols libudev libuuid 
+fsck:  libblkid libmount librt libuuid 
+fstrim:  libblkid libmount librt libuuid 
+libblkid.so.1.1.0:  libuuid 
+libfdisk.so.1.1.0:  libblkid libuuid 
+libmount.so.1.1.0:  libblkid librt libuuid 
+libsmartcols.so.1.1.0:  
+libuuid.so.1.3.0:  
+losetup:  libsmartcols 
+lsblk:  libblkid libmount librt libsmartcols libudev libuuid 
+lscpu:  libsmartcols 
+lsipc:  libsmartcols 
+lslocks:  libblkid libmount librt libsmartcols libuuid 
+lslogins:  libsmartcols libsystemd 
+lsmem:  libsmartcols 
+lsns:  libsmartcols 
+mkswap:  libblkid libuuid 
+mount:  libblkid libmount librt libuuid 
+mountpoint:  libblkid libmount librt libuuid 
+partx:  libblkid libsmartcols libuuid 
+prlimit:  libsmartcols 
+pylibmount.so:  libblkid libmount libpython2 librt libuuid 
+sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
+swaplabel:  libblkid libuuid 
+swapoff:  libblkid libmount librt libuuid 
+swapon:  libblkid libmount librt libsmartcols libuuid 
+umount:  libblkid libmount librt libuuid 
+uuidd:  librt libsystemd libuuid 
+uuidgen:  libuuid 
+wdctl:  libsmartcols 
+wipefs:  libblkid libuuid 
+zramctl:  libsmartcols 
+addpart:  
+agetty:  
+blkdiscard:  librt 
+blkzone:  
+blockdev:  
+cal:  libtinfo 
+chcpu:  
+chfn:  libpam libpam_misc libpthread libreadline libuser 
+chmem:  
+chrt:  
+chsh:  libpam libpam_misc libpthread libreadline libuser 
+col:  
+colcrt:  
+colrm:  
+ctrlaltdel:  
+delpart:  
+dmesg:  librt libtinfo 
+fallocate:  
+fdformat:  
+flock:  librt 
+fsck.cramfs:  libz 
+fsck.minix:  
+fsfreeze:  
+getopt:  
+hexdump:  libtinfo 
+hwclock:  libm 
+ionice:  
+ipcmk:  
+ipcrm:  
+ipcs:  
+isosize:  
+kill:  
+last:  librt 
+ldattach:  
+logger:  libsystemd 
+login:  libpam libpam_misc 
+look:  
+mcookie:  
+mesg:  
+mkfs:  
+mkfs.bfs:  
+mkfs.cramfs:  libz 
+mkfs.minix:  
+more:  libtinfo 
+namei:  
+nologin:  
+nsenter:  
+pivot_root:  
+raw:  
+readprofile:  
+rename:  
+renice:  
+resizepart:  
+rev:  
+rtcwake:  
+runuser:  libpam libpam_misc 
+script:  librt libutil 
+scriptreplay:  
+setarch:  
+setpriv:  ap-ng 
+setsid:  
+setterm:  libtinfo 
+su:  libpam libpam_misc 
+sulogin:  rypt 
+switch_root:  
+taskset:  
+ul:  libtinfo 
+unshare:  
+utmpdump:  
+wall:  
+whereis:  
