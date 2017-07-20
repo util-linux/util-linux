@@ -34,7 +34,12 @@ The argument is a comma-separated list of
 .BI + cap
 and
 .BI \- cap
-entries, which add or remove an entry respectively.
+entries, which add or remove an entry respectively. \fIcap\fR can either be a
+human-readable name as seen in
+.BR capabilities (7)
+without the \fIcap_\fR prefix or of the format
+.BI cap_N ,
+where \fIN\fR is the internal capability index used by Linux.
 .B +all
 and
 .B \-all
