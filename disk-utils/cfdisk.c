@@ -37,7 +37,7 @@
 # include <slcurses.h>
 #elif defined(HAVE_SLANG_SLCURSES_H)
 # include <slang/slcurses.h>
-#elif defined(HAVE_NCURSESW_NCURSES_H) && defined(HAVE_WIDECHAR)
+#elif defined(HAVE_NCURSESW_NCURSES_H)
 # include <ncursesw/ncurses.h>
 #elif defined(HAVE_NCURSES_H)
 # include <ncurses.h>
