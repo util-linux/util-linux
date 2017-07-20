@@ -1,0 +1,49 @@
+util-linux 2.30.1 Release Notes
+===============================
+
+agetty:
+   - fix login name DEL/CTRL^U issue  [Karel Zak]
+cfdisk:
+   - simplify ncurses includes  [Karel Zak]
+column:
+   - fix compilation when libc lacks wide-character support  [Carlos Santos]
+dmesg:
+   - print only 2 hex digits for each hex-escaped byte  [Ivan Delalande]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fdformat:
+   - clear progress message before printing "done"  [Jakub Wilk]
+fstrim:
+   - prefer earlier mounted filesystems  [Alex Ivanov]
+libblkid:
+   - don't use CDROM_GET_CAPABILITY ioctl for DM devices  [Karel Zak]
+   - udf  Fix detection of UDF images with block size 1024 and 4096  [Pali Rohár]
+libfdisk:
+   - (dos) accept start for log.partitions on template  [Karel Zak]
+   - (dos) be more verbose on partno -ERANGE error  [Karel Zak]
+   - (dos) cleanup template based partitioning  [Karel Zak]
+   - (dos) fix primary/logical logic when follow template  [Karel Zak]
+   - make fdisk compliant to UEFI/GPT specification on PMBR  [Karel Zak]
+libmount:
+   - make mnt_context_is_fs_mounted work for /proc  [Ivan Delalande]
+lscpu:
+   - cleanup DMI detection return codes  [Karel Zak]
+mount:
+   - fix man page typo (--bind,ro)  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update da.po (from translationproject.org)  [Joe Hansen]
+   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+pylibmount:
+   - NULL terminate kwlist in Context_init  [Zac Medico]
+test:
+   - update PMBR hex dumps  [Karel Zak]
+tests:
+   - Add UDF hdd images with blocksize 1024 and 4096 created by Linux mkudffs 1.3  [Pali Rohár]
+   - fix fincore, don't use variable COLUMNS  [Ruediger Meier]
+   - update build-sys non-widechar test  [Karel Zak]
+umount:
+   - add note about NFS and -c to umount.8  [Karel Zak]
+   - never 'stat' the path when "-c" is given.  [NeilBrown]
+wipefs:
+   - exit on failed erase  [Karel Zak]
