@@ -402,10 +402,7 @@ int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p)
 
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
-		if (errno == ENOENT)
-			warnx(_("%s does not exist."), rtc_dev_name);
-		else
-			warn(_("cannot open %s"), rtc_dev_name);
+		warn(_("cannot open %s"), rtc_dev_name);
 		return 1;
 	}
 
@@ -440,10 +437,7 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
-		if (errno == ENOENT)
-			warnx(_("%s does not exist."), rtc_dev_name);
-		else
-			warn(_("cannot open %s"), rtc_dev_name);
+		warn(_("cannot open %s"), rtc_dev_name);
 		return 1;
 	}
 
