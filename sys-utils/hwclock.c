@@ -648,14 +648,8 @@ set_system_clock(const struct hwclock_control *ctl, const bool hclock_valid,
 			if (!rc)
 				rc = settimeofday(&newtime, &tz);
 			if (rc) {
-				if (errno == EPERM) {
-					warnx(_
-					      ("Must be superuser to set system clock."));
-					retcode = EX_NOPERM;
-				} else {
-					warn(_("settimeofday() failed"));
-					retcode = 1;
-				}
+				warn(_("settimeofday() failed"));
+				retcode = 1;
 			} else
 				retcode = 0;
 		}
@@ -744,14 +738,8 @@ static int set_system_clock_timezone(const struct hwclock_control *ctl)
 			rc = settimeofday(tv_null, &tz);
 
 		if (rc) {
-			if (errno == EPERM) {
-				warnx(_
-				      ("Must be superuser to set system clock."));
-				retcode = EX_NOPERM;
-			} else {
-				warn(_("settimeofday() failed"));
-				retcode = 1;
-			}
+			warn(_("settimeofday() failed"));
+			retcode = 1;
 		} else
 			retcode = 0;
 	}
@@ -1134,17 +1122,9 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 			adjust_drift_factor(ctl, adjtime, nowtime,
 					    hclock_valid, hclocktime);
 	} else if (ctl->hctosys) {
-		rc = set_system_clock(ctl, hclock_valid, hclocktime);
-		if (rc) {
-			printf(_("Unable to set system clock.\n"));
-			return rc;
-		}
+		return set_system_clock(ctl, hclock_valid, hclocktime);
 	} else if (ctl->systz) {
-		rc = set_system_clock_timezone(ctl);
-		if (rc) {
-			printf(_("Unable to set system clock.\n"));
-			return rc;
-		}
+		return set_system_clock_timezone(ctl);
 	} else if (ctl->predict) {
 		hclocktime = time_inc(hclocktime, (double)
 				      -(tdrift.tv_sec + tdrift.tv_usec / 1E6));
