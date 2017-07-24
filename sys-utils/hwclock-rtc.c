@@ -194,8 +194,11 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 }
 
 /*
- * Wait for the top of a clock tick by reading /dev/rtc in a busy loop until
- * we see it.
+ * Wait for the top of a clock tick by reading /dev/rtc in a busy loop
+ * until we see it. This function is used for rtc drivers without ioctl
+ * interrupts. This is typical on an Alpha, where the Hardware Clock
+ * interrupts are used by the kernel for the system clock, so aren't at
+ * the user's disposal.
  */
 static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 				       const int rtc_fd)
@@ -206,9 +209,12 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 	int rc;
 	struct timeval begin, now;
 
-	if (ctl->debug)
+	if (ctl->debug) {
+		printf("ioctl(%d, RTC_UIE_ON, 0): %s\n",
+		       rtc_fd, strerror(errno));
 		printf(_("Waiting in loop for time from %s to change\n"),
 		       rtc_dev_name);
+	}
 
 	rc = do_rtc_read_ioctl(rtc_fd, &start_time);
 	if (rc)
@@ -294,19 +300,11 @@ static int synchronize_to_clock_tick_rtc(const struct hwclock_control *ctl)
 				warn(_("ioctl() to %s to turn off update interrupts failed"),
 				     rtc_dev_name);
 		} else if (errno == ENOTTY) {
-			/*
-			 * This rtc device doesn't have interrupt functions.
-			 * This is typical on an Alpha, where the Hardware
-			 * Clock interrupts are used by the kernel for the
-			 * system clock, so aren't at the user's disposal.
-			 */
-			if (ctl->debug)
-				printf(_("%s does not have interrupt functions. "),
-				       rtc_dev_name);
+			/* rtc ioctl interrupts are unimplemented */
 			ret = busywait_for_rtc_clock_tick(ctl, rtc_fd);
 		} else
-			warn(_("ioctl() to %s to turn on update interrupts "
-			      "failed unexpectedly"), rtc_dev_name);
+			warn(_("ioctl(%d, RTC_UIE_ON, 0) to %s failed"),
+			     rtc_fd, rtc_dev_name);
 	}
 	return ret;
 }
