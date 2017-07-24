@@ -533,11 +533,6 @@ direct I/O and disable interrupts.
 provides it for testing, troubleshooting, and  because it may be the
 only method available on ISA systems which do not have a working rtc
 device driver.
-.PP
-On an m68k system,
-.B \%hwclock
-can access the clock with the console driver, via the device special file
-.IR \%/dev/tty1 .
 .SS The Adjust Function
 .PP
 The Hardware Clock is usually not very accurate.  However, much of its
@@ -941,10 +936,6 @@ may try for Hardware Clock access:
 .I /dev/efirtc
 .br
 .I /dev/misc/efirtc
-.br
-.I /dev/port
-.br
-.I /dev/tty1
 .SH "SEE ALSO"
 .BR date (1),
 .BR adjtimex (8),
