@@ -257,7 +257,7 @@ static int synchronize_to_clock_tick_rtc(const struct hwclock_control *ctl)
 		 * they should.
 		 */
 		rc = -1;
-		errno = EINVAL;
+		errno = ENOTTY;
 #else
 		rc = ioctl(rtc_fd, RTC_UIE_ON, 0);
 #endif
@@ -293,7 +293,7 @@ static int synchronize_to_clock_tick_rtc(const struct hwclock_control *ctl)
 			if (rc == -1)
 				warn(_("ioctl() to %s to turn off update interrupts failed"),
 				     rtc_dev_name);
-		} else if (errno == ENOTTY || errno == EINVAL) {
+		} else if (errno == ENOTTY) {
 			/*
 			 * This rtc device doesn't have interrupt functions.
 			 * This is typical on an Alpha, where the Hardware
