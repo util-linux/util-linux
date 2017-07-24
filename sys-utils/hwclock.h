@@ -1,7 +1,6 @@
 #ifndef HWCLOCK_CLOCK_H
 #define HWCLOCK_CLOCK_H
 
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

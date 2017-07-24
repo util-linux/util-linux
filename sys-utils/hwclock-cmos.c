@@ -45,7 +45,6 @@
  *   tm_isdst	>0: yes, 0: no, <0: unknown
  */
 
-#include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
@@ -390,12 +389,9 @@ static int get_permissions_cmos(void)
 	if (rc == IOPL_NOT_IMPLEMENTED) {
 		warnx(_("ISA port access is not implemented"));
 	} else if (rc != 0) {
-		rc = errno;
 		warn(_("iopl() port access failed"));
-		if (rc == EPERM && geteuid())
-			warnx(_("root privileges may be required"));
 	}
-	return rc ? 1 : 0;
+	return rc;
 }
 
 static struct clock_ops cmos_interface = {
