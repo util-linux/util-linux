@@ -17,7 +17,7 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 DAEMON=/usr/sbin/uuidd
 UUIDD_USER=uuidd
 UUIDD_GROUP=uuidd
-UUIDD_DIR=@localstatedir@/uuidd
+UUIDD_DIR=@runstatedir@/uuidd
 PIDFILE=$UUIDD_DIR/uuidd.pid
 
 test -x $DAEMON || exit 0

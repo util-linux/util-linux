@@ -72,13 +72,17 @@ AS_CASE([$exec_prefix:$prefix],
   ]
 )
 
-AS_CASE([$prefix:$localstatedir],
-  [NONE:'${prefix}/var' | /usr:'${prefix}/var'],
-    [localstatedir=/run
-     AC_MSG_NOTICE([  --localstatedir defaults to /run])
-    ]
+
+# default for old versions without $runstatedir
+AS_IF([test x"$runstatedir" = x], [runstatedir='${localstatedir}/run'])
+
+# our default if $localstatedir unchanged
+AS_CASE([$localstatedir:$runstatedir],
+ [NONE:'${localstatedir}/run' | /var:'${localstatedir}/run' | NONE:'/run' ],
+   [runstatedir=/run; AC_MSG_NOTICE([  --runstatedir defaults to /run])]
 )
-AC_SUBST([localstatedir])
+
+AC_SUBST([runstatedir])
 
 
 # The original default values of {bin,sbin,lib}dir
@@ -2282,7 +2286,7 @@ AC_MSG_RESULT([
 	prefix:            ${prefix}
 	exec prefix:       ${exec_prefix}
 
-	localstatedir:     ${localstatedir}
+	runstatedir:       ${runstatedir}
 	bindir:            ${bindir}
 	sbindir:           ${sbindir}
 	libdir:            ${libdir}

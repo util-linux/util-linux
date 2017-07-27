@@ -18,10 +18,10 @@
  *
  *	uuidd --debug --no-fork --no-pid --socket /run/uuidd/request
  *
- * if the $localstatedir (as defined by build-system) is /run. If you want
+ * if the $runstatedir (as defined by build-system) is /run. If you want
  * to overwrite the built-in default then use:
  *
- *	make uuidd uuidgen localstatedir=/var
+ *	make uuidd uuidgen runstatedir=/var/run
  */
 #include <pthread.h>
 #include <stdio.h>

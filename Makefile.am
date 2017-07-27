@@ -2,7 +2,7 @@ AM_CPPFLAGS = \
 	-include config.h \
 	-I$(top_srcdir)/include \
 	-DLOCALEDIR=\"$(localedir)\" \
-	-D_PATH_LOCALSTATEDIR=\"${localstatedir}\"
+	-D_PATH_RUNSTATEDIR=\"${runstatedir}\"
 AM_CFLAGS = -fsigned-char $(WARN_CFLAGS)
 AM_LDFLAGS =
 
@@ -119,7 +119,7 @@ edit_cmd = sed \
 	 -e 's|@sbindir[@]|$(sbindir)|g' \
 	 -e 's|@bindir[@]|$(bindir)|g' \
 	 -e 's|@includedir[@]|$(includedir)|g' \
-	 -e 's|@localstatedir[@]|$(localstatedir)|g' \
+	 -e 's|@runstatedir[@]|$(runstatedir)|g' \
 	 -e 's|@usrlib_execdir[@]|$(usrlib_execdir)|g' \
 	 -e 's|@usrbin_execdir[@]|$(usrbin_execdir)|g' \
 	 -e 's|@usrsbin_execdir[@]|$(usrsbin_execdir)|g' \

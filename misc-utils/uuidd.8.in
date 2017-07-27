@@ -37,7 +37,7 @@ Do not create a pid file.
 .TP
 .BR \-p , " \-\-pid " \fIpath\fR
 Specify the pathname where the pid file should be written.  By default,
-the pid file is written to @localstatedir@/uuidd/uuidd.pid.
+the pid file is written to @runstatedir@/uuidd/uuidd.pid.
 .TP
 .BR \-q , " \-\-quiet "
 Suppress some failure messages.
@@ -54,7 +54,7 @@ a configure option.
 .TP
 .BR \-s , " \-\-socket " \fIpath\fR
 Make uuidd use this pathname for the unix-domain socket.  By default, the
-pathname used is @localstatedir@/uuidd/request.  This option is primarily
+pathname used is @runstatedir@/uuidd/request.  This option is primarily
 for debugging purposes, since the pathname is hard-coded in the libuuid
 library.
 .TP
