@@ -116,7 +116,8 @@ lower case characters.
 .RS
 This field describes the mount point (target) for the filesystem.  For swap partitions, this
 field should be specified as `none'. If the name of the mount point
-contains spaces these can be escaped as `\\040'.
+contains spaces or tabs these can be escaped as `\\040' and '\\011'
+respectively.
 .RE
 
 .B The third field
