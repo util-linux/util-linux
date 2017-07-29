@@ -1046,8 +1046,11 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 		adjtime->dirty = TRUE;
 	}
 
+	if (ctl->systz)
+		return set_system_clock_timezone(ctl);
+
 	if (ctl->show || ctl->get || ctl->adjust || ctl->hctosys
-	    || (!ctl->noadjfile && !ctl->systz && !ctl->predict)) {
+	    || (!ctl->noadjfile && !ctl->predict)) {
 		/* data from HW-clock are required */
 		rc = synchronize_to_clock_tick(ctl);
 
@@ -1123,8 +1126,6 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 					    hclock_valid, hclocktime);
 	} else if (ctl->hctosys) {
 		return set_system_clock(ctl, hclock_valid, hclocktime);
-	} else if (ctl->systz) {
-		return set_system_clock_timezone(ctl);
 	} else if (ctl->predict) {
 		hclocktime = time_inc(hclocktime, (double)
 				      -(tdrift.tv_sec + tdrift.tv_usec / 1E6));
