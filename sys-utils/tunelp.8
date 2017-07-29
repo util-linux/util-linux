@@ -96,22 +96,6 @@ This option returns the current printer status, both as a decimal number from
 0..255, and as a list of active flags.  When this option is specified, \-q
 off, turning off the display of the current IRQ, is implied.
 .TP
-\fB\-T\fR, \fB\-\-trust\-irq\fR \fI<on|off>\fR
-This option is obsolete. It was added in Linux 2.1.131, and removed again in
-Linux 2.3.10.  The below is for these old kernels only.
-.IP
-This option tells the lp driver to trust or not the IRQ.  This option makes
-sense only if you are using interrupts.  If you tell the lp driver to trust
-the irq, then, when the lp driver will get an irq, it will send the next
-pending character to the printer unconditionally, even if the printer still
-claims to be BUSY.  This is the only way to sleep on interrupt (and so the
-handle the irq printing efficiently) at least on Epson Stylus Color Printers.
-The lp driver automagically detects if you could get improved performance by
-setting this flag, and in such case it will warn you with a kernel message.
-.IP
-NOTE: Trusting the irq is reported to corrupt the printing on some hardware,
-you must try to know if your printer will work or not...
-.TP
 \fB\-r\fR, \fB\-\-reset\fR
 This option resets the port.  It requires a Linux kernel version of 1.1.80 or
 later.
@@ -127,14 +111,6 @@ all require a Linux kernel version of 1.1.76 or later.
 .PP
 .B \-C
 requires a Linux version prior to 2.1.131.
-.PP
-.B \-T
-requires a Linux version of 2.1.131 or later.
-.SH BUGS
-By some unfortunate coincidence the ioctl LPSTRICT of 2.0.36 has the same
-number as the ioctl LPTRUSTIRQ introduced in 2.1.131.  So, use of the \-T
-option on a 2.0.36 kernel with an tunelp compiled under 2.1.131 or later may
-have unexpected effects.
 .SH FILES
 .I /dev/lp?
 .br

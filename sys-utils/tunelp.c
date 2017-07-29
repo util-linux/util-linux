@@ -69,7 +69,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "lp.h"
+#include <linux/lp.h>
+
 #include "nls.h"
 #include "closestream.h"
 #include "strutils.h"
@@ -108,7 +109,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --check-status <on|off>  check printer status before printing\n"), out);
 	fputs(_(" -C, --careful <on|off>       extra checking to status check\n"), out);
 	fputs(_(" -s, --status                 query printer status\n"), out);
-	fputs(_(" -T, --trust-irq <on|off>     make driver to trust irq\n"), out);
 	fputs(_(" -r, --reset                  reset the port\n"), out);
 	fputs(_(" -q, --print-irq <on|off>     display current irq setting\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -225,16 +225,6 @@ int main(int argc, char **argv)
 		case 'r':
 			cmds->op = LPRESET;
 			cmds->val = 0;
-			cmds->next = xmalloc(sizeof(struct command));
-			cmds = cmds->next;
-			cmds->next = NULL;
-			break;
-		case 'T':
-			/* Note: this will do the wrong thing on
-			 * 2.0.36 when compiled under 2.2.x
-			 */
-			cmds->op = LPTRUSTIRQ;
-			cmds->val = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = NULL;

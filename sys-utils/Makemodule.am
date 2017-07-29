@@ -74,7 +74,7 @@ endif
 if BUILD_TUNELP
 usrsbin_exec_PROGRAMS += tunelp
 dist_man_MANS += sys-utils/tunelp.8
-tunelp_SOURCES = sys-utils/tunelp.c sys-utils/lp.h
+tunelp_SOURCES = sys-utils/tunelp.c
 tunelp_LDADD = $(LDADD) libcommon.la
 endif
 
