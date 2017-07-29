@@ -100,6 +100,9 @@ static void copyfile(int from, int to)
 
 	if (nr < 0)
 		pw_error(orig_file, 1, 1);
+#ifdef HAVE_EXPLICIT_BZERO
+	explicit_bzero(buf, sizeof(buf));
+#endif
 }
 
 static void pw_init(void)
