@@ -195,7 +195,10 @@ static void fill_table_row(struct libscols_table *tb, char const *const uuid)
 			}
 			switch (type) {
 			case 0:
-				str = xstrdup(_("nil"));
+				if (strspn(uuid, "0-") == 36)
+					str = xstrdup(_("nil"));
+				else
+					str = xstrdup(_("unknown"));
 				break;
 			case 1:
 				str = xstrdup(_("time-based"));
