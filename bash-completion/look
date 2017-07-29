@@ -20,9 +20,16 @@ _look_module()
 			return 0
 			;;
 	esac
-	local IFS=$'\n'
-	compopt -o filenames
-	COMPREPLY=( $(compgen -f -- $cur) )
+	case $COMP_CWORD in
+		1)
+			COMPREPLY=( $(compgen -W "$(look "$cur")" -- $cur) )
+			;;
+		2)
+			local IFS=$'\n'
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			;;
+	esac
 	return 0
 }
 complete -F _look_module look
