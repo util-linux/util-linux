@@ -1490,6 +1490,11 @@ AM_CONDITIONAL([BUILD_MCOOKIE], [test "x$build_mcookie" = xyes])
 UL_BUILD_INIT([namei], [yes])
 AM_CONDITIONAL([BUILD_NAMEI], [test "x$build_namei" = xyes])
 
+matriplet="$($CC -print-multiarch 2>/dev/null || true)"
+if test "x$matriplet" != "x"; then
+  AC_DEFINE_UNQUOTED([MULTIARCHTRIPLET], ["$matriplet"],
+  ["Multi-arch triplet for whereis library search path"])
+fi
 UL_BUILD_INIT([whereis], [yes])
 AM_CONDITIONAL([BUILD_WHEREIS], [test "x$build_whereis" = xyes])
 

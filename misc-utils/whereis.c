@@ -96,6 +96,11 @@ struct wh_dirlist {
 static const char *bindirs[] = {
 	"/usr/bin",
 	"/usr/sbin",
+#if defined(MULTIARCHTRIPLET)
+	"/lib/" MULTIARCHTRIPLET,
+	"/usr/lib/" MULTIARCHTRIPLET,
+	"/usr/local/lib/" MULTIARCHTRIPLET,
+#endif
 	"/usr/lib",
 	"/usr/lib64",
 	"/bin",
