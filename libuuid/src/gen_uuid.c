@@ -534,9 +534,8 @@ void uuid_generate_random(uuid_t out)
  */
 static int have_random_source(void)
 {
-	struct stat s;
-
-	return (!stat("/dev/random", &s) || !stat("/dev/urandom", &s));
+	return (access("/dev/random", R_OK) == 0 ||
+		access("/dev/urandom", R_OK) == 0);
 }
 
 
