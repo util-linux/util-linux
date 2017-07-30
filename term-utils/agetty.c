@@ -298,6 +298,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op);
 static void termio_init(struct options *op, struct termios *tp);
 static void reset_vc (const struct options *op, struct termios *tp);
 static void auto_baud(struct termios *tp);
+static void list_speeds(void) __attribute__((__noreturn__));
 static void output_special_char (unsigned char c, struct options *op,
 		struct termios *tp, FILE *fp);
 static void do_prompt(struct options *op, struct termios *tp);
@@ -632,6 +633,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		ERASE_CHARS_OPTION,
 		KILL_CHARS_OPTION,
 		RELOAD_OPTION,
+		LIST_SPEEDS_OPTION,
 	};
 	const struct option longopts[] = {
 		{  "8bits",	     no_argument,	 NULL,  '8'  },
@@ -649,6 +651,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "login-program",  required_argument,  NULL,  'l'  },
 		{  "local-line",     optional_argument,	 NULL,  'L'  },
 		{  "extract-baud",   no_argument,	 NULL,  'm'  },
+		{  "list-speeds",    no_argument,	 NULL,	LIST_SPEEDS_OPTION },
 		{  "skip-login",     no_argument,	 NULL,  'n'  },
 		{  "nonewline",	     no_argument,	 NULL,  'N'  },
 		{  "login-options",  required_argument,  NULL,  'o'  },
@@ -784,6 +787,8 @@ static void parse_args(int argc, char **argv, struct options *op)
 		case RELOAD_OPTION:
 			reload_agettys();
 			exit(EXIT_SUCCESS);
+		case LIST_SPEEDS_OPTION:
+			list_speeds();
 		case VERSION_OPTION:
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
@@ -2073,10 +2078,20 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --delay <number>       sleep seconds before prompt\n"), out);
 	fputs(_("     --nice <number>        run login with this priority\n"), out);
 	fputs(_("     --reload               reload prompts on running agetty instances\n"), out);
+	fputs(_("     --list-speeds          display supported baud rates\n"), out);
 	printf( "     --help                 %s\n", USAGE_OPTSTR_HELP);
 	printf( "     --version              %s\n", USAGE_OPTSTR_VERSION);
 	printf(USAGE_MAN_TAIL("agetty(8)"));
 
+	exit(EXIT_SUCCESS);
+}
+
+static void __attribute__((__noreturn__)) list_speeds(void)
+{
+	const struct Speedtab *sp;
+
+	for (sp = speedtab; sp->speed; sp++)
+		printf("%10ld\n", sp->speed);
 	exit(EXIT_SUCCESS);
 }
 
