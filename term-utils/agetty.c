@@ -847,7 +847,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 
 	if (argc < optind + 1) {
 		log_warn(_("not enough arguments"));
-		warn(_("not enough arguments"));
+		errx(EXIT_FAILURE, _("not enough arguments"));
 	}
 
 	/* Accept "tty", "baudrate tty", and "tty baudrate". */
@@ -856,7 +856,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		parse_speeds(op, argv[optind++]);
 		if (argc < optind + 1) {
 			log_warn(_("not enough arguments"));
-			warn(_("not enough arguments"));
+			errx(EXIT_FAILURE, _("not enough arguments"));
 		}
 		op->tty = argv[optind++];
 	} else {
