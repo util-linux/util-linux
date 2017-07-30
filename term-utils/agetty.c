@@ -829,45 +829,6 @@ static void parse_args(int argc, char **argv, struct options *op)
 	if (argc > optind && argv[optind])
 		op->term = argv[optind];
 
-#ifdef DO_DEVFS_FIDDLING
-	/*
-	 * Some devfs junk, following Goswin Brederlow:
-	 *   turn ttyS<n> into tts/<n>
-	 *   turn tty<n> into vc/<n>
-	 * http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=72241
-	 */
-	if (op->tty && strlen(op->tty) < 90) {
-		char dev_name[100];
-		struct stat st;
-
-		if (strncmp(op->tty, "ttyS", 4) == 0) {
-			strcpy(dev_name, "/dev/");
-			strcat(dev_name, op->tty);
-			if (stat(dev_name, &st) < 0) {
-				strcpy(dev_name, "/dev/tts/");
-				strcat(dev_name, op->tty + 4);
-				if (stat(dev_name, &st) == 0) {
-					op->tty = strdup(dev_name + 5);
-					if (!op->tty)
-						log_err(_("failed to allocate memory: %m"));
-				}
-			}
-		} else if (strncmp(op->tty, "tty", 3) == 0) {
-			strcpy(dev_name, "/dev/");
-			strncat(dev_name, op->tty, 90);
-			if (stat(dev_name, &st) < 0) {
-				strcpy(dev_name, "/dev/vc/");
-				strcat(dev_name, op->tty + 3);
-				if (stat(dev_name, &st) == 0) {
-					op->tty = strdup(dev_name + 5);
-					if (!op->tty)
-						log_err(_("failed to allocate memory: %m"));
-				}
-			}
-		}
-	}
-#endif				/* DO_DEVFS_FIDDLING */
-
 	debug("exiting parseargs\n");
 }
 
