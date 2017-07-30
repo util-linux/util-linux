@@ -1034,8 +1034,6 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	struct timeval hclocktime = { 0, 0 };
 	/* Total Hardware Clock drift correction needed. */
 	struct timeval tdrift;
-	/* local return code */
-	int rc = 0;
 
 	if ((ctl->set || ctl->systohc || ctl->adjust) &&
 	    (adjtime->local_utc == UTC) != ctl->universal) {
@@ -1068,32 +1066,26 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	if (ur->get_permissions())
 		return EX_NOPERM;
 
-	if (ctl->show || ctl->get || ctl->adjust || ctl->hctosys
-	    || !ctl->noadjfile) {
-		/* data from HW-clock are required */
-		rc = synchronize_to_clock_tick(ctl);
-
+	/*
+	 * Read and drift correct RTC time; except for RTC set functions
+	 * without the --update-drift option because: 1) it's not needed;
+	 * 2) it enables setting a corrupted RTC without reading it first;
+	 * 3) it significantly reduces system shutdown time.
+	 */
+	if ( ! ((ctl->set || ctl->systohc) && !ctl->update)) {
 		/*
-		 * We don't error out if the user is attempting to set the
-		 * RTC and synchronization timeout happens - the RTC could
-		 * be functioning but contain invalid time data so we still
-		 * want to allow a user to set the RTC time.
+		 * Timing critical - do not change the order of, or put
+		 * anything between the follow three statements.
+		 * Synchronization failure MUST exit, because all drift
+		 * operations are invalid without it.
 		 */
-		if (rc == RTC_BUSYWAIT_FAILED && !ctl->set && !ctl->systohc)
+		if (synchronize_to_clock_tick(ctl))
 			return EX_IOERR;
+		read_hardware_clock(ctl, &hclock_valid, &hclocktime.tv_sec);
 		gettimeofday(&read_time, NULL);
 
-		/*
-		 * If we can't synchronize to a clock tick,
-		 * we likely can't read from the RTC so
-		 * don't bother reading it again.
-		 */
-		if (!rc) {
-			rc = read_hardware_clock(ctl, &hclock_valid,
-						 &hclocktime.tv_sec);
-			if (rc && !ctl->set && !ctl->systohc)
-				return EX_IOERR;
-		}
+		if (!hclock_valid)
+			return EX_IOERR;
 		/*
 		 * Calculate and apply drift correction to the Hardware Clock
 		 * time for everything except --show
