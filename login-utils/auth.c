@@ -7,8 +7,25 @@
  *   there is no warranty.
  *
  */
+
+#include <security/pam_appl.h>
+#ifdef HAVE_SECURITY_PAM_MISC_H
+# include <security/pam_misc.h>
+#elif defined(HAVE_SECURITY_OPENPAM_H)
+# include <security/openpam.h>
+#endif
+
+#include "c.h"
 #include "auth.h"
-#include "pamfail.h"
+
+static int pam_fail_check(pam_handle_t *pamh, int retcode)
+{
+	if (retcode == PAM_SUCCESS)
+		return 0;
+	warnx("%s", pam_strerror(pamh, retcode));
+	pam_end(pamh, retcode);
+	return 1;
+}
 
 int auth_pam(const char *service_name, uid_t uid, const char *username)
 {
