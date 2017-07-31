@@ -208,7 +208,9 @@ static void init_table(struct column_control *ctl)
 	if (ctl->json) {
 		scols_table_enable_json(ctl->tab, 1);
 		scols_table_set_name(ctl->tab, ctl->tab_name ? : "table");
-	}
+	} else
+		scols_table_enable_noencoding(ctl->tab, 1);
+
 	if (ctl->tab_colnames) {
 		char **name;
 
