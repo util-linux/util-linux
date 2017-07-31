@@ -173,4 +173,6 @@ SMARTCOLS_2.31 {
 	scols_table_get_termheight;
 	scols_table_is_header_repeat;
 	scols_table_enable_header_repeat;
+	scols_table_enable_noencoding;
+	scols_table_is_noencoding;
 } SMARTCOLS_2.30;

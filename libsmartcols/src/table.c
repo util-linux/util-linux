@@ -1107,6 +1107,39 @@ int scols_table_is_nowrap(const struct libscols_table *tb)
 }
 
 /**
+ * scols_table_enable_noencoding:
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * The library encode non-printable and control chars by \x<hex> by default.
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ *
+ * Since: 2.31
+ */
+int scols_table_enable_noencoding(struct libscols_table *tb, int enable)
+{
+	if (!tb)
+		return -EINVAL;
+	DBG(TAB, ul_debugobj(tb, "encoding: %s", enable ? "ENABLE" : "DISABLE"));
+	tb->no_encode = enable ? 1 : 0;
+	return 0;
+}
+
+/**
+ * scols_table_is_noencoding:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: 1 if encoding is disabled.
+ *
+ * Since: 2.31
+ */
+int scols_table_is_noencoding(const struct libscols_table *tb)
+{
+	return tb->no_encode;
+}
+
+/**
  * scols_table_colors_wanted:
  * @tb: table
  *

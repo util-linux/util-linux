@@ -226,6 +226,7 @@ extern int scols_table_is_maxout(const struct libscols_table *tb);
 extern int scols_table_is_nowrap(const struct libscols_table *tb);
 extern int scols_table_is_nolinesep(const struct libscols_table *tb);
 extern int scols_table_is_tree(const struct libscols_table *tb);
+extern int scols_table_is_noencoding(const struct libscols_table *tb);
 
 extern int scols_table_enable_colors(struct libscols_table *tb, int enable);
 extern int scols_table_enable_raw(struct libscols_table *tb, int enable);
@@ -237,6 +238,7 @@ extern int scols_table_enable_export(struct libscols_table *tb, int enable);
 extern int scols_table_enable_maxout(struct libscols_table *tb, int enable);
 extern int scols_table_enable_nowrap(struct libscols_table *tb, int enable);
 extern int scols_table_enable_nolinesep(struct libscols_table *tb, int enable);
+extern int scols_table_enable_noencoding(struct libscols_table *tb, int enable);
 
 extern int scols_table_set_column_separator(struct libscols_table *tb, const char *sep);
 extern int scols_table_set_line_separator(struct libscols_table *tb, const char *sep);

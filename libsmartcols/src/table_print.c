@@ -132,7 +132,9 @@ static char *buffer_get_data(struct libscols_buffer *buf)
 }
 
 /* encode data by mbs_safe_encode() to avoid control and non-printable chars */
-static char *buffer_get_safe_data(struct libscols_buffer *buf, size_t *cells,
+static char *buffer_get_safe_data(struct libscols_table *tb,
+				  struct libscols_buffer *buf,
+				  size_t *cells,
 				  const char *safechars)
 {
 	char *data = buffer_get_data(buf);
@@ -147,7 +149,14 @@ static char *buffer_get_safe_data(struct libscols_buffer *buf, size_t *cells,
 			goto nothing;
 	}
 
-	res = mbs_safe_encode_to_buffer(data, cells, buf->encdata, safechars);
+	if (tb->no_encode) {
+		*cells = mbs_safe_width(data);
+		strcpy(buf->encdata, data);
+		res = buf->encdata;
+	} else {
+		res = mbs_safe_encode_to_buffer(data, cells, buf->encdata, safechars);
+	}
+
 	if (!res || !*cells || *cells == (size_t) -1)
 		goto nothing;
 	return res;
@@ -251,7 +260,7 @@ static void print_empty_cell(struct libscols_table *tb,
 				line_ascii_art_to_buffer(tb, ln, art);
 				if (!list_empty(&ln->ln_branch) && has_pending_data(tb))
 					buffer_append_data(art, vertical_symbol(tb));
-				data = buffer_get_safe_data(art, &len_pad, NULL);
+				data = buffer_get_safe_data(tb, art, &len_pad, NULL);
 				if (data && len_pad)
 					fputs(data, tb->out);
 				free_buffer(art);
@@ -475,7 +484,7 @@ static int print_data(struct libscols_table *tb,
 
 	/* Encode. Note that 'len' and 'width' are number of cells, not bytes.
 	 */
-	data = buffer_get_safe_data(buf, &len, scols_column_get_safechars(cl));
+	data = buffer_get_safe_data(tb, buf, &len, scols_column_get_safechars(cl));
 	if (!data)
 		data = "";
 	bytes = strlen(data);
@@ -763,21 +772,30 @@ static int print_title(struct libscols_table *tb)
 	DBG(TAB, ul_debugobj(tb, "printing title"));
 
 	/* encode data */
-	bufsz = mbs_safe_encode_size(strlen(tb->title.data)) + 1;
-	if (bufsz == 1) {
-		DBG(TAB, ul_debugobj(tb, "title is empty string -- ignore"));
-		return 0;
-	}
-	buf = malloc(bufsz);
-	if (!buf) {
-		rc = -ENOMEM;
-		goto done;
-	}
+	if (tb->no_encode) {
+		bufsz = strlen(tb->title.data) + 1;
+		buf = strdup(tb->title.data);
+		if (!buf) {
+			rc = -ENOMEM;
+			goto done;
+		}
+	} else {
+		bufsz = mbs_safe_encode_size(strlen(tb->title.data)) + 1;
+		if (bufsz == 1) {
+			DBG(TAB, ul_debugobj(tb, "title is empty string -- ignore"));
+			return 0;
+		}
+		buf = malloc(bufsz);
+		if (!buf) {
+			rc = -ENOMEM;
+			goto done;
+		}
 
-	if (!mbs_safe_encode_to_buffer(tb->title.data, &bufsz, buf, NULL) ||
-	    !bufsz || bufsz == (size_t) -1) {
-		rc = -EINVAL;
-		goto done;
+		if (!mbs_safe_encode_to_buffer(tb->title.data, &bufsz, buf, NULL) ||
+		    !bufsz || bufsz == (size_t) -1) {
+			rc = -EINVAL;
+			goto done;
+		}
 	}
 
 	/* truncate and align */

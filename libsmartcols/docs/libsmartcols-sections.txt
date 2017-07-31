@@ -112,6 +112,7 @@ scols_table_add_line
 scols_table_colors_wanted
 scols_table_enable_ascii
 scols_table_enable_colors
+scols_table_enable_noencoding
 scols_table_enable_export
 scols_table_enable_header_repeat
 scols_table_enable_json
@@ -140,6 +141,7 @@ scols_table_is_header_repeat
 scols_table_is_json
 scols_table_is_maxout
 scols_table_is_noheadings
+scols_table_is_noencoding
 scols_table_is_nolinesep
 scols_table_is_nowrap
 scols_table_is_raw

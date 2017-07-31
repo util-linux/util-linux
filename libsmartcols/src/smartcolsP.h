@@ -177,6 +177,7 @@ struct libscols_table {
 			header_printed  :1,	/* header already printed */
 			priv_symbols	:1,	/* default private symbols */
 			no_headings	:1,	/* don't print header */
+			no_encode	:1,	/* don't care about control and non-printable chars */
 			no_linesep	:1,	/* don't print line separator */
 			no_wrap		:1;	/* never wrap lines */
 };
