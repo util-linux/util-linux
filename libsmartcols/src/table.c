@@ -1111,7 +1111,7 @@ int scols_table_is_nowrap(const struct libscols_table *tb)
  * @tb: table
  * @enable: 1 or 0
  *
- * The library encode non-printable and control chars by \x<hex> by default.
+ * The library encode non-printable and control chars by \xHEX by default.
  *
  * Returns: 0 on success, negative number in case of an error.
  *
