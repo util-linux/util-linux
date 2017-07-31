@@ -1697,9 +1697,8 @@ again:
 				termio_clear(STDOUT_FILENO);
 			goto again;
 		}
-#else
-		getc(stdin);
 #endif
+		getc(stdin);
 	}
 #ifdef KDGKBLED
 	if (!(op->flags & F_NOHINTS) && !op->autolog &&
