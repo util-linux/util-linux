@@ -288,9 +288,8 @@ static int synchronize_to_clock_tick_rtc(const struct hwclock_control *ctl)
 			if (0 < rc)
 				ret = 0;
 			else if (rc == 0) {
-				if (ctl->debug)
-					printf(_("select() to %s to wait for clock tick timed out"),
-					       rtc_dev_name);
+				warnx(_("select() to %s to wait for clock tick timed out"),
+				      rtc_dev_name);
 			} else
 				warn(_("select() to %s to wait for clock tick failed"),
 				     rtc_dev_name);
