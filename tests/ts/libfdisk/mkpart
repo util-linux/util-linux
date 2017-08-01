@@ -46,6 +46,15 @@ ts_finalize_subtest
 
 $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
+ts_init_subtest "mbr-nopartno"
+$TESTPROG --nopartno --label mbr --device ${TEST_IMAGE_NAME} \
+	1M 1M 1M - 1M 1M ->> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --list ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean ${TEST_IMAGE_NAME}
+ts_finalize_subtest
+
+$TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
+
 ts_init_subtest "gpt"
 $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
 	1M 1M 1M 1M 1M 1M - >> $TS_OUTPUT 2>&1

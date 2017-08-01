@@ -68,12 +68,13 @@ int main(int argc, char *argv[])
 	struct fdisk_context *cxt;
 	struct fdisk_partition *pa;
 	const char *label = NULL, *device = NULL;
-	int n = 0, c;
+	int n = 0, c, nopartno = 0;
 	unsigned int sectorsize;
 
 	static const struct option longopts[] = {
 		{ "label",  required_argument, NULL, 'x' },
 		{ "device", required_argument, NULL, 'd' },
+		{ "nopartno", no_argument, NULL, 'p' },
 		{ "help",   no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
 	};
@@ -90,6 +91,9 @@ int main(int argc, char *argv[])
 		case 'd':
 			device = optarg;
 			break;
+		case 'p':
+			nopartno = 1;
+			break;
 		case 'h':
 			printf("%s [options] <size> ...", program_invocation_short_name);
 			fputs(USAGE_SEPARATOR, stdout);
@@ -97,6 +101,7 @@ int main(int argc, char *argv[])
 			fputs(USAGE_OPTIONS, stdout);
 			fputs(" -x, --label <dos,gpt,...>    disk label type\n", stdout);
 			fputs(" -d, --device <path>          block device\n", stdout);
+			fputs(" -p, --nopartno               don't set partno (use default)\n", stdout);
 			fputs(" -h, --help                   this help\n", stdout);
 			fputs(USAGE_SEPARATOR, stdout);
 			return EXIT_SUCCESS;
@@ -124,6 +129,8 @@ int main(int argc, char *argv[])
 
 	sectorsize = fdisk_get_sector_size(cxt);
 
+	fdisk_disable_dialogs(cxt, 1);
+
 	while (optind < argc) {
 		int rc;
 		uint64_t size;
@@ -132,6 +139,7 @@ int main(int argc, char *argv[])
 		/* defaults */
 		fdisk_partition_start_follow_default(pa, 1);
 		fdisk_partition_end_follow_default(pa, 1);
+		fdisk_partition_partno_follow_default(pa, 1);
 
 		/* set size */
 		if (isdigit(*str)) {
@@ -148,8 +156,10 @@ int main(int argc, char *argv[])
 			 * This is possible by explicitly specified partition
 			 * number, <4 means primary, >=4 means logical.
 			 */
-			fdisk_partition_partno_follow_default(pa, 0);
-			fdisk_partition_set_partno(pa, n);
+			if (!nopartno) {
+				fdisk_partition_partno_follow_default(pa, 0);
+				fdisk_partition_set_partno(pa, n);
+			}
 
 			/* Make sure last primary partition is extended if user
 			 * wants more than 4 partitions.
@@ -163,9 +173,7 @@ int main(int argc, char *argv[])
 				fdisk_partition_set_type(pa, type);
 				fdisk_unref_parttype(type);
 			}
-		} else
-			fdisk_partition_partno_follow_default(pa, 1);
-
+		}
 
 		rc = fdisk_add_partition(cxt, pa, NULL);
 		if (rc) {
