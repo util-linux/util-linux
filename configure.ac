@@ -810,6 +810,13 @@ AS_IF([test "x$with_ncursesw" != xno], [
   AS_IF([test "x$have_ncursesw" = xyes], [
     AC_CHECK_HEADERS([ncursesw/ncurses.h], [have_ncursesw_header=yes])
     AC_CHECK_HEADERS([ncursesw/term.h])
+
+    # Define HAVE_NCURSES_H only if check for HAVE_NCURSESW_NCURSES_H is
+    # unsuccessful to avoid too many *_H permitations in config.h
+    AS_IF([test "x$have_ncursesw_header" = xno], [
+	   AC_CHECK_HEADERS([ncurses.h], [have_ncursesw_header=yes])
+	   AC_CHECK_HEADERS([term.h])
+    ])
     AS_IF([test "x$have_ncursesw_header" = xno], [have_ncursesw=no])
   ])
   AS_IF([test "x$have_ncursesw" = xyes], [
@@ -834,8 +841,15 @@ AS_CASE([$with_ncurses:$build_widechar],
 AS_IF([test "x$have_ncursesw" = xno -a "x$with_ncurses" != xno ], [
   UL_NCURSES_CHECK([ncurses])
   AS_IF([test "x$have_ncurses" = xyes], [
-    AC_CHECK_HEADERS([ncurses/ncurses.h ncurses.h], [have_ncurses_header=yes])
-    AC_CHECK_HEADERS([ncurses/term.h term.h])
+    AC_CHECK_HEADERS([ncurses/ncurses.h], [have_ncurses_header=yes])
+    AC_CHECK_HEADERS([ncurses/term.h])
+
+    # Define HAVE_NCURSES_H only if check for HAVE_NCURSES_NCURSES_H is
+    # unsuccessful to avoid too many *_H permitations in config.h
+    AS_IF([test "x$have_ncurses_header" = xno], [
+	   AC_CHECK_HEADERS([ncurses.h], [have_ncurses_header=yes])
+	   AC_CHECK_HEADERS([term.h])
+    ])
     AS_IF([test "x$have_ncurses_header" = xno], [have_ncurses=no])
   ])
   AS_IF([test "x$have_ncurses" = xyes], [
