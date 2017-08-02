@@ -85,6 +85,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/superblocks.h \
 	libblkid/src/superblocks/swap.c \
 	libblkid/src/superblocks/sysv.c \
+	libblkid/src/superblocks/ubi.c \
 	libblkid/src/superblocks/ubifs.c \
 	libblkid/src/superblocks/udf.c \
 	libblkid/src/superblocks/ufs.c \
