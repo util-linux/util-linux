@@ -617,6 +617,50 @@ static void login_options_to_argv(char *argv[], int *argc,
 	*argc = i;
 }
 
+static void output_version(void)
+{
+	static const char *features[] = {
+#ifdef DEBUGGING
+		"debug",
+#endif
+#ifdef CRTSCTS
+		"flow control",
+#endif
+#ifdef KDGKBLED
+		"hints",
+#endif
+#ifdef ISSUE
+		"issue",
+#endif
+#ifdef KDGKBMODE
+		"keyboard mode",
+#endif
+#ifdef USE_PLYMOUTH_SUPPORT
+		"plymouth",
+#endif
+#ifdef AGETTY_RELOAD
+		"reload",
+#endif
+#ifdef USE_SYSLOG
+		"syslog",
+#endif
+#ifdef HAVE_WIDECHAR
+		"widechar",
+#endif
+		NULL
+	};
+	unsigned int i;
+
+	printf( _("%s from %s"), program_invocation_short_name, PACKAGE_STRING);
+	fputs(" (", stdout);
+	for (i = 0; features[i]; i++) {
+		if (0 < i)
+			fputs(", ", stdout);
+		printf("%s", features[i]);
+	}
+	fputs(")\n", stdout);
+}
+
 #define is_speed(str) (strlen((str)) == strspn((str), "0123456789,"))
 
 /* Parse command-line arguments. */
@@ -790,7 +834,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		case LIST_SPEEDS_OPTION:
 			list_speeds();
 		case VERSION_OPTION:
-			printf(UTIL_LINUX_VERSION);
+			output_version();
 			exit(EXIT_SUCCESS);
 		case HELP_OPTION:
 			usage();
