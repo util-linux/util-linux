@@ -594,6 +594,7 @@ set_system_clock(const struct hwclock_control *ctl,
 	struct tm *broken;
 	int minuteswest;
 	int rc = 0;
+	const struct timezone tz_utc = { 0 };
 
 	broken = localtime(&newtime.tv_sec);
 #ifdef HAVE_TM_GMTOFF
@@ -621,10 +622,15 @@ set_system_clock(const struct hwclock_control *ctl,
 		 * mode does not clobber the Hardware Clock with UTC. This
 		 * is only available on first call of settimeofday after boot.
 		 */
-		if (!ctl->universal)
+		if (ctl->hctosys && !ctl->universal)	/* set PCIL */
 			rc = settimeofday(tv_null, &tz);
-		if (!rc)
+		if (ctl->systz && ctl->universal)	/* lock warp_clock */
+			rc = settimeofday(tv_null, &tz_utc);
+		if (!rc && ctl->hctosys)
 			rc = settimeofday(&newtime, &tz);
+		else if (!rc)
+			rc = settimeofday(NULL, &tz);
+
 		if (rc) {
 			warn(_("settimeofday() failed"));
 			retcode = 1;
@@ -1024,7 +1030,7 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	}
 
 	if (ctl->systz)
-		return set_system_clock_timezone(ctl);
+		return set_system_clock(ctl, startup_time);
 
 	if (ur->get_permissions())
 		return EX_NOPERM;
