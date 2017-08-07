@@ -99,32 +99,40 @@ void random_get_bytes(void *buf, size_t nbytes)
 	unsigned char *cp = (unsigned char *)buf;
 
 #ifdef HAVE_GETRANDOM
+	errno = 0;
 	while (getrandom(buf, nbytes, 0) < 0) {
 		if (errno == EINTR)
 			continue;
 		break;
 	}
-#else
-	size_t n = nbytes;
-	int fd = random_get_fd();
-	int lose_counter = 0;
-
-	if (fd >= 0) {
-		while (n > 0) {
-			ssize_t x = read(fd, cp, n);
-			if (x <= 0) {
-				if (lose_counter++ > 16)
-					break;
-				continue;
-			}
-			n -= x;
-			cp += x;
-			lose_counter = 0;
-		}
-
-		close(fd);
-	}
+	if (errno == ENOSYS)
+	/*
+	 * We've been built against headers that support getrandom,
+	 * but the running kernel does not.
+	 * Fallback to reading from /dev/{u,}random as before
+	 */
 #endif
+	{
+		size_t n = nbytes;
+		int fd = random_get_fd();
+		int lose_counter = 0;
+
+		if (fd >= 0) {
+			while (n > 0) {
+				ssize_t x = read(fd, cp, n);
+				if (x <= 0) {
+					if (lose_counter++ > 16)
+						break;
+					continue;
+				}
+				n -= x;
+				cp += x;
+				lose_counter = 0;
+			}
+
+			close(fd);
+		}
+	}
 	/*
 	 * We do this all the time, but this is the only source of
 	 * randomness if /dev/random/urandom is out to lunch.
