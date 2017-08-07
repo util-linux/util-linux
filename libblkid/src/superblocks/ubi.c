@@ -41,7 +41,7 @@ static int probe_ubi(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo ubi_idinfo =
 {
 	.name		= "ubi",
-	.usage		= BLKID_USAGE_FILESYSTEM,
+	.usage		= BLKID_USAGE_RAID,
 	.probefunc	= probe_ubi,
 	.magics		=
 	{
