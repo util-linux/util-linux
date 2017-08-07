@@ -4,7 +4,7 @@
 .\"   Authored new section: DATE-TIME CONFIGURATION.
 .\"   Subsections: Keeping Time..., LOCAL vs UTC, POSIX vs 'RIGHT'.
 .\"
-.TH HWCLOCK 8 "April 2015" "util-linux" "System Administration"
+.TH HWCLOCK 8 "July 2017" "util-linux" "System Administration"
 .SH NAME
 hwclock \- time clocks utility
 .SH SYNOPSIS
@@ -197,8 +197,9 @@ Set the Hardware Clock to the time given by the
 option, and update the timestamps in
 .IR @ADJTIME_PATH@ .
 With the
-.B --update-drift
-option (re)calculate the drift factor.
+.B \%\-\-update-drift
+option also (re)calculate the drift factor.  Try it without the option if
+.BR \%\-\-set " fails.  See " \%\-\-update-drift " below."
 .
 .TP
 .B \-\-systz
@@ -234,9 +235,10 @@ changed then a reboot would be required to inform the kernel.
 .BR \-w , \ \-\-systohc
 Set the Hardware Clock from the System Clock, and update the timestamps in
 .IR @ADJTIME_PATH@ .
-When the
-.B --update-drift
-option is given, then also (re)calculate the drift factor.
+With the
+.B \%\-\-update-drift
+option also (re)calculate the drift factor.  Try it without the option if
+.BR \%\-\-systohc " fails.  See " \%\-\-update-drift " below."
 .
 .TP
 .BR \-V , \ \-\-version
@@ -404,6 +406,11 @@ on the drift factor.
 (Re)calculating drift factor on every shutdown delivers suboptimal
 results.  For example, if ephemeral conditions cause the machine to be
 abnormally hot the drift factor calculation would be out of range.
+.IP \(bu 2
+Significantly increased system shutdown times (as of v2.31 when not
+using
+.B \%\-\-update\-drift
+the RTC is not read).
 .PP
 .RB "Having " \%hwclock
 calculate the drift factor is a good starting point, but for optimal
@@ -414,6 +421,13 @@ crafted it should not need to be changed.  Therefore, the old behavior to
 automatically (re)calculate drift was changed and now requires this
 option to be used.  See the discussion below, under
 .BR "The Adjust Function" .
+.PP
+This option requires reading the Hardware Clock before setting it.  If
+it cannot be read, then this option will cause the set functions to fail.
+This can happen, for example, if the Hardware Clock is corrupted by a
+power failure.  In that case, the clock must first be set without this
+option.  Despite it not working, the resulting drift correction factor
+would be invalid anyway.
 .RE
 .
 .SH NOTES
