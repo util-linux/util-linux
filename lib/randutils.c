@@ -100,7 +100,7 @@ void random_get_bytes(void *buf, size_t nbytes)
 
 #ifdef HAVE_GETRANDOM
 	errno = 0;
-	while (getrandom(buf, nbytes, 0) < 0) {
+	while (getrandom(buf, nbytes, 0) != (ssize_t)nbytes) {
 		if (errno == EINTR)
 			continue;
 		break;
