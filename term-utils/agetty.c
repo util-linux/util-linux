@@ -298,7 +298,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op);
 static void termio_init(struct options *op, struct termios *tp);
 static void reset_vc (const struct options *op, struct termios *tp);
 static void auto_baud(struct termios *tp);
-static void list_speeds(void) __attribute__((__noreturn__));
+static void list_speeds(void);
 static void output_special_char (unsigned char c, struct options *op,
 		struct termios *tp, FILE *fp);
 static void do_prompt(struct options *op, struct termios *tp);
@@ -833,6 +833,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 			exit(EXIT_SUCCESS);
 		case LIST_SPEEDS_OPTION:
 			list_speeds();
+			exit(EXIT_SUCCESS);
 		case VERSION_OPTION:
 			output_version();
 			exit(EXIT_SUCCESS);
@@ -2130,13 +2131,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) list_speeds(void)
+static void list_speeds(void)
 {
 	const struct Speedtab *sp;
 
 	for (sp = speedtab; sp->speed; sp++)
 		printf("%10ld\n", sp->speed);
-	exit(EXIT_SUCCESS);
 }
 
 /*
