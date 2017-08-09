@@ -606,11 +606,24 @@ set_system_clock(const struct hwclock_control *ctl,
 #endif
 
 	if (ctl->debug) {
-		printf(_("Calling settimeofday:\n"));
-		printf(_("\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"),
-		       newtime.tv_sec, newtime.tv_usec);
-		printf(_("\ttz.tz_minuteswest = %d\n"), minuteswest);
+		if (ctl->hctosys && !ctl->universal)
+			printf(_("Calling settimeofday(NULL, %d) to set "
+				 "persistent_clock_is_local.\n"), minuteswest);
+		if (ctl->systz && ctl->universal)
+			puts(_("Calling settimeofday(NULL, 0) "
+				"to lock the warp function."));
+		if (ctl->hctosys)
+			printf(_("Calling settimeofday(%ld.%06ld, %d)\n"),
+			       newtime.tv_sec, newtime.tv_usec, minuteswest);
+		else {
+			printf(_("Calling settimeofday(NULL, %d) "), minuteswest);
+			if (ctl->universal)
+				 puts(_("to set the kernel timezone."));
+			else
+				 puts(_("to warp System time."));
+		}
 	}
+
 	if (ctl->testing) {
 		printf(_
 		       ("Test mode: clock was not changed\n"));
