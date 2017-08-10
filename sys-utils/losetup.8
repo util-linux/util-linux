@@ -87,7 +87,10 @@ for non-root users.  See also \fB\-\-list\fR.  The old output format (as printed
 without \fB--list)\fR is deprecated.
 .TP
 .BR \-d , " \-\-detach " \fIloopdev\fR...
-Detach the file or device associated with the specified loop device(s).
+Detach the file or device associated with the specified loop device(s). Note
+that since Linux v3.7 kernel uses "lazy device destruction".  The detach
+operation does not return EBUSY error anymore if device is actively used by
+system, but it is marked by autoclear flag and destroyed later.
 .TP
 .BR \-D , " \-\-detach\-all"
 Detach all associated loop devices.
