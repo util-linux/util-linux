@@ -323,9 +323,17 @@ static void supam_open_session(struct su_context *su)
 
 static void create_watching_parent(struct su_context *su)
 {
+	enum {
+		SIGTERM_IDX = 0,
+		SIGINT_IDX,
+		SIGQUIT_IDX,
+
+		SIGNALS_IDX_COUNT
+	};
+	struct sigaction oldact[SIGNALS_IDX_COUNT];
+
 	pid_t child;
 	sigset_t ourset;
-	struct sigaction oldact[3];
 	int status = 0;
 
 	DBG(MISC, ul_debug("forking..."));
@@ -348,7 +356,6 @@ static void create_watching_parent(struct su_context *su)
 	DBG(SIG, ul_debug("initialize signals"));
 	memset(oldact, 0, sizeof(oldact));
 
-
 	/* In the parent watch the child.  */
 
 	/* su without pam support does not have a helper that keeps
@@ -356,40 +363,56 @@ static void create_watching_parent(struct su_context *su)
 	if (chdir("/") != 0)
 		warn(_("cannot change directory to %s"), "/");
 
+	/*
+	 * 1) block all signals
+	 * 2) add handler for SIGTERM
+	 * 3) unblock signals:
+	 *		 - SIGINT SIGQUIT (if no session)
+	 *		 - SIGTERM SIGALRM
+	 * 4) add handler for SIGINT SIGQUIT (if no session)
+	 */
 	sigfillset(&ourset);
 	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
 		warn(_("cannot block signals"));
 		caught_signal = true;
 	}
+
 	if (!caught_signal) {
 		struct sigaction action;
 		action.sa_handler = su_catch_sig;
 		sigemptyset(&action.sa_mask);
 		action.sa_flags = 0;
 		sigemptyset(&ourset);
-		if (!su->same_session) {
-			if (sigaddset(&ourset, SIGINT)
-			    || sigaddset(&ourset, SIGQUIT)) {
-				warn(_("cannot set signal handler"));
-				caught_signal = true;
-			}
-		}
-		if (!caught_signal && (sigaddset(&ourset, SIGTERM)
-				       || sigaddset(&ourset, SIGALRM)
-				       || sigaction(SIGTERM, &action,
-						    &oldact[0])
-				       || sigprocmask(SIG_UNBLOCK, &ourset,
-						      NULL))) {
+
+		if (!su->same_session
+		    && (sigaddset(&ourset, SIGINT)
+		       || sigaddset(&ourset, SIGQUIT))) {
+
 			warn(_("cannot set signal handler"));
 			caught_signal = true;
 		}
-		if (!caught_signal && !su->same_session
-		    && (sigaction(SIGINT, &action, &oldact[1])
-			|| sigaction(SIGQUIT, &action, &oldact[2]))) {
+		if (!caught_signal
+		    && (sigaddset(&ourset, SIGTERM)
+		       || sigaddset(&ourset, SIGALRM)
+		       || sigaction(SIGTERM, &action, &oldact[SIGTERM_IDX])
+		       || sigprocmask(SIG_UNBLOCK, &ourset, NULL))) {
+
+			warn(_("cannot set signal handler"));
+			caught_signal = true;
+		}
+		if (!caught_signal
+		    && !su->same_session
+		    && (sigaction(SIGINT, &action, &oldact[SIGINT_IDX])
+		       || sigaction(SIGQUIT, &action, &oldact[SIGQUIT_IDX]))) {
+
 			warn(_("cannot set signal handler"));
 			caught_signal = true;
 		}
 	}
+
+	/*
+	 * Wait for child
+	 */
 	if (!caught_signal) {
 		pid_t pid;
 
@@ -447,13 +470,13 @@ static void create_watching_parent(struct su_context *su)
 		DBG(SIG, ul_debug("restore signals setting"));
 		switch (caught_signal) {
 		case SIGTERM:
-			sigaction(SIGTERM, &oldact[0], NULL);
+			sigaction(SIGTERM, &oldact[SIGTERM_IDX], NULL);
 			break;
 		case SIGINT:
-			sigaction(SIGINT, &oldact[1], NULL);
+			sigaction(SIGINT, &oldact[SIGINT_IDX], NULL);
 			break;
 		case SIGQUIT:
-			sigaction(SIGQUIT, &oldact[2], NULL);
+			sigaction(SIGQUIT, &oldact[SIGQUIT_IDX], NULL);
 			break;
 		default:
 			/* just in case that signal stuff initialization failed and
