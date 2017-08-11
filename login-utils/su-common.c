@@ -630,7 +630,7 @@ static bool is_restricted_shell(const char *shell)
 	}
 	endusershell();
 
-	DBG(MISC, ul_debug("%s is restricted shell (not in /etc/shells)"));
+	DBG(MISC, ul_debug("%s is restricted shell (not in /etc/shells)", shell));
 	return true;
 }
 
