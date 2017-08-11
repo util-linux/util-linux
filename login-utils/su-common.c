@@ -364,12 +364,9 @@ static void create_watching_parent(struct su_context *su)
 		warn(_("cannot change directory to %s"), "/");
 
 	/*
+	 * Signals setup
+	 *
 	 * 1) block all signals
-	 * 2) add handler for SIGTERM
-	 * 3) unblock signals:
-	 *		 - SIGINT SIGQUIT (if no session)
-	 *		 - SIGTERM SIGALRM
-	 * 4) add handler for SIGINT SIGQUIT (if no session)
 	 */
 	sigfillset(&ourset);
 	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
@@ -382,30 +379,49 @@ static void create_watching_parent(struct su_context *su)
 		action.sa_handler = su_catch_sig;
 		sigemptyset(&action.sa_mask);
 		action.sa_flags = 0;
+
 		sigemptyset(&ourset);
 
+		/* 2a) add wanted signals to the mask (for session) */
 		if (!su->same_session
 		    && (sigaddset(&ourset, SIGINT)
 		       || sigaddset(&ourset, SIGQUIT))) {
 
-			warn(_("cannot set signal handler"));
+			warn(_("cannot initialize signal mask for session"));
 			caught_signal = true;
 		}
+		/* 2b) add wanted generic signals to the mask */
 		if (!caught_signal
 		    && (sigaddset(&ourset, SIGTERM)
-		       || sigaddset(&ourset, SIGALRM)
-		       || sigaction(SIGTERM, &action, &oldact[SIGTERM_IDX])
-		       || sigprocmask(SIG_UNBLOCK, &ourset, NULL))) {
+		       || sigaddset(&ourset, SIGALRM))) {
 
-			warn(_("cannot set signal handler"));
+			warn(_("cannot initialize signal mask"));
 			caught_signal = true;
 		}
+
+		/* 3a) set signal handlers (for session) */
 		if (!caught_signal
 		    && !su->same_session
 		    && (sigaction(SIGINT, &action, &oldact[SIGINT_IDX])
 		       || sigaction(SIGQUIT, &action, &oldact[SIGQUIT_IDX]))) {
 
+			warn(_("cannot set signal handler for session"));
+			caught_signal = true;
+		}
+
+		/* 3b) set signal handlers */
+		if (!caught_signal
+		     && sigaction(SIGTERM, &action, &oldact[SIGTERM_IDX])) {
+
 			warn(_("cannot set signal handler"));
+			caught_signal = true;
+		}
+
+		/* 4) unblock wanted signals */
+		if (!caught_signal
+		    && sigprocmask(SIG_UNBLOCK, &ourset, NULL)) {
+
+			warn(_("cannot set signal mask"));
 			caught_signal = true;
 		}
 	}
