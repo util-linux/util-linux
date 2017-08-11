@@ -578,7 +578,7 @@ static void run_shell(
 		size_t n_additional_args)
 {
 	size_t n_args = 1 + su->fast_startup + 2 * ! !command + n_additional_args + 1;
-	char const **args = xcalloc(n_args, sizeof *args);
+	const char **args = xcalloc(n_args, sizeof *args);
 	size_t argno = 1;
 	int rc;
 
