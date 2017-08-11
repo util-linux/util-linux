@@ -393,7 +393,7 @@ static void create_watching_parent(struct su_context *su)
 	if (!caught_signal) {
 		pid_t pid;
 
-		DBG(SIG, ul_debug("waiting for child"));
+		DBG(SIG, ul_debug("waiting for child [%d]...", child));
 		for (;;) {
 			pid = waitpid(child, &status, WUNTRACED);
 
@@ -579,7 +579,10 @@ static void run_shell(
 	size_t argno = 1;
 	int rc;
 
-	DBG(MISC, ul_debug("starting shell [shell=%s, command=%s]", shell, command));
+	DBG(MISC, ul_debug("starting shell [shell=%s, command=\"%s\"%s%s]",
+				shell, command,
+				su->simulate_login ? " login" : "",
+				su->fast_startup ? " fast-start" : ""));
 
 	if (su->simulate_login) {
 		char *arg0;
@@ -623,6 +626,8 @@ static bool is_restricted_shell(const char *shell)
 		}
 	}
 	endusershell();
+
+	DBG(MISC, ul_debug("%s is restricted shell (not in /etc/shells)"));
 	return true;
 }
 
