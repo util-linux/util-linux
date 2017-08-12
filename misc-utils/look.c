@@ -104,7 +104,11 @@ main(int argc, char *argv[])
 
 	setlocale(LC_ALL, "");
 
-	file = _PATH_WORDS;
+	if ((file = getenv("WORDLIST")) && !access(file, R_OK))
+		/* use the WORDLIST */;
+	else
+		file = _PATH_WORDS;
+
 	termchar = '\0';
 	string = NULL;		/* just for gcc */
 

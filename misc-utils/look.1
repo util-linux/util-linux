@@ -101,6 +101,11 @@ sort -d /etc/passwd -o /tmp/look.dict
 look -t: root:foobar /tmp/look.dict
 .nf
 .RE
+.SH ENVIRONMENT
+.TP
+.B WORDLIST
+Path to a dictionary file.  The environment variable has greater priority
+than the dictionary path defined in FILES segment.
 .SH FILES
 .IP "\fB/usr/share/dict/words\fR" 4
 the dictionary
