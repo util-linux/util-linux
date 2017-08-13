@@ -1365,8 +1365,11 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	if (ctl.debug)
+	if (ctl.debug) {
 		out_version();
+		printf(_("System Time: %ld.%06ld\n"),
+		       startup_time.tv_sec, startup_time.tv_usec);
+	}
 
 	if (!ctl.systz && !ctl.predict)
 		determine_clock_access_method(&ctl);
