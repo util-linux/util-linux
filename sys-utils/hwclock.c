@@ -604,9 +604,6 @@ static int
 set_system_clock(const struct hwclock_control *ctl,
 		 const struct timeval newtime)
 {
-	int retcode;
-
-	const struct timeval *tv_null = NULL;
 	struct tm *broken;
 	int minuteswest;
 	int rc = 0;
@@ -643,14 +640,13 @@ set_system_clock(const struct hwclock_control *ctl,
 	if (ctl->testing) {
 		printf(_
 		       ("Test mode: clock was not changed\n"));
-		retcode = 0;
 	} else {
-		const struct timezone tz = { minuteswest, 0 };
+		const struct timezone tz = { minuteswest };
 
 		if (ctl->hctosys && !ctl->universal)	/* set PCIL */
-			rc = settimeofday(tv_null, &tz);
+			rc = settimeofday(NULL, &tz);
 		if (ctl->systz && ctl->universal)	/* lock warp_clock */
-			rc = settimeofday(tv_null, &tz_utc);
+			rc = settimeofday(NULL, &tz_utc);
 		if (!rc && ctl->hctosys)
 			rc = settimeofday(&newtime, &tz);
 		else if (!rc)
@@ -658,11 +654,10 @@ set_system_clock(const struct hwclock_control *ctl,
 
 		if (rc) {
 			warn(_("settimeofday() failed"));
-			retcode = 1;
-		} else
-			retcode = 0;
+			return  1;
+		}
 	}
-	return retcode;
+	return 0;
 }
 
 /*
