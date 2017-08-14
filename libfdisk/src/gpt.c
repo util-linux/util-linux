@@ -2302,6 +2302,8 @@ static int gpt_add_partition(
 				ask = fdisk_new_ask();
 			else
 				fdisk_reset_ask(ask);
+			if (!ask)
+				return -ENOMEM;
 
 			/* First sector */
 			fdisk_ask_set_query(ask, _("First sector"));
