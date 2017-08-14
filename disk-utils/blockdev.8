@@ -75,7 +75,8 @@ Set filesystem readahead (same like \-\-setra on 2.6 kernels).
 .IP "\fB\-\-setra\fP \fIsectors\fP"
 Set readahead (in 512-byte sectors).
 .IP "\fB\-\-setro\fP"
-Set read-only.
+Set read-only. The currently active access to the device may not be affected by the change. For example
+filesystem already mounted in read-write mode will not be affected. The change applies after remount.
 .IP "\fB\-\-setrw\fP"
 Set read-write.
 .SH AUTHOR
