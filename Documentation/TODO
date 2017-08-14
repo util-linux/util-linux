@@ -115,6 +115,13 @@ login-utils:
       su --group too.
     * note that shadow-utils newgpr(1) provides support for syslog and audit log.
 
+
+libuuid
+-------
+  - add support for UUID v3 and v5 (Object IDs based UUIDs hashed by MD5/SHA1,
+    see RFC 4122) https://github.com/karelzak/util-linux/issues/495
+
+
 libblkid
 --------
 
