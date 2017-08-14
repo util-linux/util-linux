@@ -1737,10 +1737,11 @@ static int dos_add_partition(struct fdisk_context *cxt,
 			fdisk_ask_menu_add_item(ask, 'l', _("logical"), _("numbered from 5"));
 
 		rc = fdisk_do_ask(cxt, ask);
+		if (!rc)
+			fdisk_ask_menu_get_result(ask, &c);
+		fdisk_unref_ask(ask);
 		if (rc)
 			return rc;
-		fdisk_ask_menu_get_result(ask, &c);
-		fdisk_unref_ask(ask);
 
 		if (c == 'p') {
 			rc = get_partition_unused_primary(cxt, pa, &res);
