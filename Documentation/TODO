@@ -1,6 +1,16 @@
 
  Note that items with (!) have high priority.
 
+build-sys
+---------
+  - for example 
+		./configure --disable-all-programs --enable-hwclock
+
+    enables only hwclock, unfortunately we have no --enable/disable for all programs.
+    It would be nice to have generic --enable-programs <list>, for example:
+
+		./configure --disable-all-programs --enable-programs hwclock,lsblk		
+
 su/runuser
 ----------
   - (!) implement pty container for all su/runuser session (something like
