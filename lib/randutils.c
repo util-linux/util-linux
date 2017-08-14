@@ -120,7 +120,6 @@ void random_get_bytes(void *buf, size_t nbytes)
 
 	if (errno == ENOSYS)
 #endif
-
 	/*
 	 * We've been built against headers that support getrandom, but the
 	 * running kernel does not.  Fallback to reading from /dev/{u,}random
@@ -129,6 +128,7 @@ void random_get_bytes(void *buf, size_t nbytes)
 	{
 		int fd = random_get_fd();
 
+		lose_counter = 0;
 		if (fd >= 0) {
 			while (n > 0) {
 				ssize_t x = read(fd, cp, n);
