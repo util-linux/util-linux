@@ -85,6 +85,21 @@ static char *rl_fgets(char *s, int n, FILE *stream, const char *prompt)
 }
 #endif
 
+static char *wrap_fgets(char *s, int n, FILE *stream, const char *prompt)
+{
+#ifdef HAVE_LIBREADLINE
+	if (isatty(STDIN_FILENO)) {
+		return rl_fgets(s, n, stream, prompt);
+	}
+	else
+#endif
+	{
+		fputs(prompt, stream);
+		fflush(stream);
+		return fgets(s, n, stdin);
+	}
+}
+
 int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 			  char *buf, size_t bufsz)
 {
@@ -92,37 +107,17 @@ int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 	size_t sz;
 
 	do {
-#ifdef HAVE_LIBREADLINE
-		if (isatty(STDIN_FILENO)) {
-			if (!rl_fgets(buf, bufsz, stdout, prompt)) {
-				if (fdisk_label_is_changed(fdisk_get_label(cxt, NULL))) {
-					if (rl_fgets(buf, bufsz, stderr,
-							_("\nDo you really want to quit? "))
-							&& !rpmatch(buf))
-						continue;
-				}
-				fdisk_unref_context(cxt);
-				exit(EXIT_FAILURE);
-			} else
-				break;
-		}
-		else
-#endif
-		{
-			fputs(prompt, stdout);
-			fflush(stdout);
-			if (!fgets(buf, bufsz, stdin)) {
-				if (fdisk_label_is_changed(fdisk_get_label(cxt, NULL))) {
-					fprintf(stderr, _("\nDo you really want to quit? "));
-
-					if (fgets(buf, bufsz, stdin) && !rpmatch(buf))
-						continue;
-				}
-				fdisk_unref_context(cxt);
-				exit(EXIT_FAILURE);
-			} else
-				break;
-		}
+		if (!wrap_fgets(buf, bufsz, stdout, prompt)) {
+			if (fdisk_label_is_changed(fdisk_get_label(cxt, NULL))) {
+				if (wrap_fgets(buf, bufsz, stderr,
+						_("\nDo you really want to quit? "))
+						&& !rpmatch(buf))
+					continue;
+			}
+			fdisk_unref_context(cxt);
+			exit(EXIT_FAILURE);
+		} else
+			break;
 	} while (1);
 
 	for (p = buf; *p && !isgraph(*p); p++);	/* get first non-blank */
