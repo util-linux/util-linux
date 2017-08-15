@@ -1798,6 +1798,7 @@ static ssize_t ui_get_string(const char *prompt,
 			rc = mbs_edit_delete(edit);
 			break;
 		case '\b':
+		case KEY_DELETE:
 		case KEY_BACKSPACE:
 			rc = mbs_edit_backspace(edit);
 			break;
