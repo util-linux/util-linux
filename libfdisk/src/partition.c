@@ -70,6 +70,8 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	free(pa->fstype);
 	free(pa->fsuuid);
 	free(pa->fslabel);
+	free(pa->start_chs);
+	free(pa->end_chs);
 
 	memset(pa, 0, sizeof(*pa));
 	pa->refcount = ref;
