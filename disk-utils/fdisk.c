@@ -21,6 +21,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <limits.h>
+#include <signal.h>
 #include <libsmartcols.h>
 #ifdef HAVE_LIBREADLINE
 # define _FUNCTION_DEF
@@ -68,6 +69,12 @@ static void fdiskprog_init_debug(void)
 	__UL_INIT_DEBUG(fdisk, FDISKPROG_DEBUG_, 0, FDISK_DEBUG);
 }
 
+static sig_atomic_t volatile got_sigint = 0;
+static void int_handler(int sig __attribute__((unused)))
+{
+	got_sigint = 1;
+}
+
 #ifdef HAVE_LIBREADLINE
 static char *rl_fgets(char *s, int n, FILE *stream, const char *prompt)
 {
@@ -105,9 +112,25 @@ int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 {
 	char *p;
 	size_t sz;
+	int ret = 0;
+	struct sigaction oldact, act = {
+		.sa_handler = int_handler,
+	};
+
+	sigemptyset(&act.sa_mask);
+
+	got_sigint = 0;
+	sigaction(SIGINT, &act, &oldact);
 
 	do {
-		if (!wrap_fgets(buf, bufsz, stdout, prompt)) {
+		char *tmp = wrap_fgets(buf, bufsz, stdout, prompt);
+
+		if (got_sigint) {
+			ret = -ECANCELED;
+			goto end;
+		}
+
+		if (!tmp) {
 			if (fdisk_label_is_changed(fdisk_get_label(cxt, NULL))) {
 				if (wrap_fgets(buf, bufsz, stderr,
 						_("\nDo you really want to quit? "))
@@ -129,7 +152,9 @@ int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 		*(buf + sz - 1) = '\0';
 
 	DBG(ASK, ul_debug("user's reply: >>>%s<<<", buf));
-	return 0;
+end:
+	sigaction(SIGINT, &oldact, NULL);
+	return ret;
 }
 
 static int ask_menu(struct fdisk_context *cxt, struct fdisk_ask *ask,
