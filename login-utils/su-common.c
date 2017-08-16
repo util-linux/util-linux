@@ -320,6 +320,42 @@ static void supam_open_session(struct su_context *su)
 		su->pam_has_session = 1;
 }
 
+static pid_t wait_for_child(pid_t child, int *rc)
+{
+	pid_t pid;
+	int status = 0;
+
+	DBG(SIG, ul_debug("waiting for child [%d]...", child));
+	for (;;) {
+		pid = waitpid(child, &status, WUNTRACED);
+
+		if (pid != (pid_t) - 1 && WIFSTOPPED(status)) {
+			kill(getpid(), SIGSTOP);
+			/* once we get here, we must have resumed */
+			kill(pid, SIGCONT);
+		} else
+			break;
+	}
+	if (pid != (pid_t) - 1) {
+		if (WIFSIGNALED(status)) {
+			fprintf(stderr, "%s%s\n",
+				strsignal(WTERMSIG(status)),
+				WCOREDUMP(status) ? _(" (core dumped)")
+				: "");
+			status = WTERMSIG(status) + 128;
+		} else
+			status = WEXITSTATUS(status);
+	} else if (caught_signal)
+		status = caught_signal + 128;
+	else
+		status = 1;
+
+	DBG(SIG, ul_debug("child %d is dead [status=%d]", child, status));
+	child = (pid_t) -1;	/* Don't use the PID anymore! */
+
+	*rc = status;
+	return child;
+}
 
 static void create_watching_parent(struct su_context *su)
 {
@@ -353,9 +389,6 @@ static void create_watching_parent(struct su_context *su)
 	}
 
 
-	DBG(SIG, ul_debug("initialize signals"));
-	memset(oldact, 0, sizeof(oldact));
-
 	/* In the parent watch the child.  */
 
 	/* su without pam support does not have a helper that keeps
@@ -368,6 +401,9 @@ static void create_watching_parent(struct su_context *su)
 	 *
 	 * 1) block all signals
 	 */
+	DBG(SIG, ul_debug("initialize signals"));
+	memset(oldact, 0, sizeof(oldact));
+
 	sigfillset(&ourset);
 	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
 		warn(_("cannot block signals"));
@@ -429,37 +465,9 @@ static void create_watching_parent(struct su_context *su)
 	/*
 	 * Wait for child
 	 */
-	if (!caught_signal) {
-		pid_t pid;
-
-		DBG(SIG, ul_debug("waiting for child [%d]...", child));
-		for (;;) {
-			pid = waitpid(child, &status, WUNTRACED);
-
-			if (pid != (pid_t) - 1 && WIFSTOPPED(status)) {
-				kill(getpid(), SIGSTOP);
-				/* once we get here, we must have resumed */
-				kill(pid, SIGCONT);
-			} else
-				break;
-		}
-		if (pid != (pid_t) - 1) {
-			if (WIFSIGNALED(status)) {
-				fprintf(stderr, "%s%s\n",
-					strsignal(WTERMSIG(status)),
-					WCOREDUMP(status) ? _(" (core dumped)")
-					: "");
-				status = WTERMSIG(status) + 128;
-			} else
-				status = WEXITSTATUS(status);
-		} else if (caught_signal)
-			status = caught_signal + 128;
-		else
-			status = 1;
-
-		DBG(SIG, ul_debug("child %d is dead [status=%d]", child, status));
-		child = (pid_t) -1;	/* Don't use the PID anymore! */
-	} else
+	if (!caught_signal)
+		child = wait_for_child(child, &status);
+	else
 		status = 1;
 
 	if (caught_signal && child != (pid_t)-1) {
