@@ -115,6 +115,8 @@ struct su_context {
 	char		*new_user;		/* wanted user */
 	char		*old_user;		/* orginal user */
 
+	pid_t		child;			/* fork() baby */
+
 	unsigned int runuser :1,		/* flase=su, true=runuser */
 		     runuser_uopt :1,		/* runuser -u specified */
 		     isterm :1,			/* is stdin terminal? */
@@ -320,14 +322,14 @@ static void supam_open_session(struct su_context *su)
 		su->pam_has_session = 1;
 }
 
-static pid_t wait_for_child(pid_t child, int *rc)
+static int wait_for_child(struct su_context *su)
 {
 	pid_t pid;
 	int status = 0;
 
-	DBG(SIG, ul_debug("waiting for child [%d]...", child));
+	DBG(SIG, ul_debug("waiting for child [%d]...", su->child));
 	for (;;) {
-		pid = waitpid(child, &status, WUNTRACED);
+		pid = waitpid(su->child, &status, WUNTRACED);
 
 		if (pid != (pid_t) - 1 && WIFSTOPPED(status)) {
 			kill(getpid(), SIGSTOP);
@@ -350,11 +352,10 @@ static pid_t wait_for_child(pid_t child, int *rc)
 	else
 		status = 1;
 
-	DBG(SIG, ul_debug("child %d is dead [status=%d]", child, status));
-	child = (pid_t) -1;	/* Don't use the PID anymore! */
+	DBG(SIG, ul_debug("child %d is dead [status=%d]", su->child, status));
+	su->child = (pid_t) -1;	/* Don't use the PID anymore! */
 
-	*rc = status;
-	return child;
+	return status;
 }
 
 static void create_watching_parent(struct su_context *su)
@@ -367,14 +368,12 @@ static void create_watching_parent(struct su_context *su)
 		SIGNALS_IDX_COUNT
 	};
 	struct sigaction oldact[SIGNALS_IDX_COUNT];
-
-	pid_t child;
 	sigset_t ourset;
-	int status = 0;
+	int status;
 
 	DBG(MISC, ul_debug("forking..."));
 
-	switch ((int) (child = fork())) {
+	switch ((int) (su->child = fork())) {
 	case -1: /* error */
 		supam_cleanup(su, PAM_ABORT);
 		err(EXIT_FAILURE, _("cannot create child process"));
@@ -384,7 +383,7 @@ static void create_watching_parent(struct su_context *su)
 		return;
 
 	default: /* parent */
-		DBG(MISC, ul_debug("child [pid=%d]", (int) child));
+		DBG(MISC, ul_debug("child [pid=%d]", (int) su->child));
 		break;
 	}
 
@@ -466,22 +465,22 @@ static void create_watching_parent(struct su_context *su)
 	 * Wait for child
 	 */
 	if (!caught_signal)
-		child = wait_for_child(child, &status);
+		status = wait_for_child(su);
 	else
 		status = 1;
 
-	if (caught_signal && child != (pid_t)-1) {
+	if (caught_signal && su->child != (pid_t)-1) {
 		fprintf(stderr, _("\nSession terminated, killing shell..."));
-		kill(child, SIGTERM);
+		kill(su->child, SIGTERM);
 	}
 
 	supam_cleanup(su, PAM_SUCCESS);
 
 	if (caught_signal) {
-		if (child != (pid_t)-1) {
+		if (su->child != (pid_t)-1) {
 			DBG(SIG, ul_debug("killing child"));
 			sleep(2);
-			kill(child, SIGKILL);
+			kill(su->child, SIGKILL);
 			fprintf(stderr, _(" ...killed.\n"));
 		}
 
