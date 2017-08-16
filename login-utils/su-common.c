@@ -334,21 +334,23 @@ static void supam_open_session(struct su_context *su)
 
 static int wait_for_child(struct su_context *su)
 {
-	pid_t pid;
+	pid_t pid = (pid_t) -1;;
 	int status = 0;
 
-	DBG(SIG, ul_debug("waiting for child [%d]...", su->child));
-	for (;;) {
-		pid = waitpid(su->child, &status, WUNTRACED);
+	if (su->child != (pid_t) -1) {
+		DBG(SIG, ul_debug("waiting for child [%d]...", su->child));
+		for (;;) {
+			pid = waitpid(su->child, &status, WUNTRACED);
 
-		if (pid != (pid_t) - 1 && WIFSTOPPED(status)) {
-			kill(getpid(), SIGSTOP);
-			/* once we get here, we must have resumed */
-			kill(pid, SIGCONT);
-		} else
-			break;
+			if (pid != (pid_t) - 1 && WIFSTOPPED(status)) {
+				kill(getpid(), SIGSTOP);
+				/* once we get here, we must have resumed */
+				kill(pid, SIGCONT);
+			} else
+				break;
+		}
 	}
-	if (pid != (pid_t) - 1) {
+	if (pid != (pid_t) -1) {
 		if (WIFSIGNALED(status)) {
 			fprintf(stderr, "%s%s\n",
 				strsignal(WTERMSIG(status)),
