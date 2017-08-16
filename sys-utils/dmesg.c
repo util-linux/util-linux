@@ -862,7 +862,7 @@ static const char *get_subsys_delimiter(const char *mesg, size_t mesg_size)
 		const char *d = strnchr(p, sz, ':');
 		if (!d)
 			return NULL;
-		sz -= d - p;
+		sz -= d - p + 1;
 		if (sz) {
 			if (isblank(*(d + 1)))
 				return d;
