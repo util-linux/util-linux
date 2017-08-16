@@ -99,6 +99,14 @@ enum {
 	EXIT_ENOENT = 127
 };
 
+enum {
+	SIGTERM_IDX = 0,
+	SIGINT_IDX,
+	SIGQUIT_IDX,
+
+	SIGNALS_IDX_COUNT
+};
+
 /*
  * su/runuser control struct
  */
@@ -116,6 +124,8 @@ struct su_context {
 	char		*old_user;		/* orginal user */
 
 	pid_t		child;			/* fork() baby */
+
+	struct sigaction oldact[SIGNALS_IDX_COUNT];	/* original sigactions indexed by SIG*_IDX */
 
 	unsigned int runuser :1,		/* flase=su, true=runuser */
 		     runuser_uopt :1,		/* runuser -u specified */
@@ -361,14 +371,6 @@ static int wait_for_child(struct su_context *su)
 
 static void create_watching_parent(struct su_context *su)
 {
-	enum {
-		SIGTERM_IDX = 0,
-		SIGINT_IDX,
-		SIGQUIT_IDX,
-
-		SIGNALS_IDX_COUNT
-	};
-	struct sigaction oldact[SIGNALS_IDX_COUNT];
 	sigset_t ourset;
 	int status;
 
@@ -402,7 +404,6 @@ static void create_watching_parent(struct su_context *su)
 	 * 1) block all signals
 	 */
 	DBG(SIG, ul_debug("initialize signals"));
-	memset(oldact, 0, sizeof(oldact));
 
 	sigfillset(&ourset);
 	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
@@ -438,8 +439,8 @@ static void create_watching_parent(struct su_context *su)
 		/* 3a) set signal handlers (for session) */
 		if (!caught_signal
 		    && !su->same_session
-		    && (sigaction(SIGINT, &action, &oldact[SIGINT_IDX])
-		       || sigaction(SIGQUIT, &action, &oldact[SIGQUIT_IDX]))) {
+		    && (sigaction(SIGINT, &action, &su->oldact[SIGINT_IDX])
+		       || sigaction(SIGQUIT, &action, &su->oldact[SIGQUIT_IDX]))) {
 
 			warn(_("cannot set signal handler for session"));
 			caught_signal = true;
@@ -447,7 +448,7 @@ static void create_watching_parent(struct su_context *su)
 
 		/* 3b) set signal handlers */
 		if (!caught_signal
-		     && sigaction(SIGTERM, &action, &oldact[SIGTERM_IDX])) {
+		     && sigaction(SIGTERM, &action, &su->oldact[SIGTERM_IDX])) {
 
 			warn(_("cannot set signal handler"));
 			caught_signal = true;
@@ -494,13 +495,13 @@ static void create_watching_parent(struct su_context *su)
 		DBG(SIG, ul_debug("restore signals setting"));
 		switch (caught_signal) {
 		case SIGTERM:
-			sigaction(SIGTERM, &oldact[SIGTERM_IDX], NULL);
+			sigaction(SIGTERM, &su->oldact[SIGTERM_IDX], NULL);
 			break;
 		case SIGINT:
-			sigaction(SIGINT, &oldact[SIGINT_IDX], NULL);
+			sigaction(SIGINT, &su->oldact[SIGINT_IDX], NULL);
 			break;
 		case SIGQUIT:
-			sigaction(SIGQUIT, &oldact[SIGQUIT_IDX], NULL);
+			sigaction(SIGQUIT, &su->oldact[SIGQUIT_IDX], NULL);
 			break;
 		default:
 			/* just in case that signal stuff initialization failed and
