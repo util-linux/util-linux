@@ -347,14 +347,15 @@ static int wait_for_child(struct su_context *su)
 			status = WTERMSIG(status) + 128;
 		} else
 			status = WEXITSTATUS(status);
+
+		DBG(SIG, ul_debug("child %d is dead", su->child));
+		su->child = (pid_t) -1;	/* Don't use the PID anymore! */
 	} else if (caught_signal)
 		status = caught_signal + 128;
 	else
 		status = 1;
 
-	DBG(SIG, ul_debug("child %d is dead [status=%d]", su->child, status));
-	su->child = (pid_t) -1;	/* Don't use the PID anymore! */
-
+	DBG(SIG, ul_debug("status=%d", status));
 	return status;
 }
 
