@@ -697,10 +697,9 @@ static void usage_common(void)
 
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(33));
-
 }
 
-static void __attribute__ ((__noreturn__)) usage_runuser(void)
+static void usage_runuser(void)
 {
 	fputs(USAGE_HEADER, stdout);
 	fprintf(stdout,
@@ -719,10 +718,9 @@ static void __attribute__ ((__noreturn__)) usage_runuser(void)
 	fputs(USAGE_SEPARATOR, stdout);
 
 	fprintf(stdout, USAGE_MAN_TAIL("runuser(1)"));
-	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__ ((__noreturn__)) usage_su(void)
+static void usage_su(void)
 {
 	fputs(USAGE_HEADER, stdout);
 	fprintf(stdout,
@@ -737,15 +735,16 @@ static void __attribute__ ((__noreturn__)) usage_su(void)
 	usage_common();
 
 	fprintf(stdout, USAGE_MAN_TAIL("su(1)"));
-	exit(EXIT_SUCCESS);
 }
 
-static void usage(int mode)
+static void __attribute__((__noreturn__)) usage(int mode)
 {
 	if (mode == SU_MODE)
 		usage_su();
 	else
 		usage_runuser();
+
+	exit(EXIT_SUCCESS);
 }
 
 static void load_config(void *data)
@@ -909,7 +908,11 @@ int su_main(int argc, char **argv, int mode)
 
 	switch (mode) {
 	case RUNUSER_MODE:
-		/* runuser -u <user> <command> */
+		/* runuser -u <user> <command>
+		 *
+		 * If -u <user> is not specified, then follow traditional su(1) behavior and
+		 * fallthrough
+		 */
 		if (su->runuser_uopt) {
 			if (shell || su->fast_startup || command || su->simulate_login)
 				errx(EXIT_FAILURE,
@@ -919,9 +922,7 @@ int su_main(int argc, char **argv, int mode)
 				errx(EXIT_FAILURE, _("no command was specified"));
 			break;
 		}
-		/* fallthrough if -u <user> is not specified, then follow
-		 * traditional su(1) behavior
-		 */
+		/* fallthrough */
 	case SU_MODE:
 		if (optind < argc)
 			su->new_user = argv[optind++];
