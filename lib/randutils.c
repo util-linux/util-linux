@@ -192,6 +192,8 @@ const char *random_tell_source(void)
 }
 
 #ifdef TEST_PROGRAM_RANDUTILS
+#include <inttypes.h>
+
 int main(int argc, char *argv[])
 {
 	size_t i, n;
@@ -204,7 +206,7 @@ int main(int argc, char *argv[])
 	printf("Multiple random calls:\n");
 	for (i = 0; i < n; i++) {
 		random_get_bytes(&v, sizeof(v));
-		printf("#%02zu: %25ju\n", i, v);
+		printf("#%02zu: %25"PRIu64"\n", i, v);
 	}
 
 
@@ -217,7 +219,7 @@ int main(int argc, char *argv[])
 	random_get_bytes(buf, bufsz);
 	for (i = 0; i < n; i++) {
 		vp = (int64_t *) (buf + (i * sizeof(*vp)));
-		printf("#%02zu: %25ju\n", i, *vp);
+		printf("#%02zu: %25"PRIu64"\n", i, *vp);
 	}
 
 	return EXIT_SUCCESS;
