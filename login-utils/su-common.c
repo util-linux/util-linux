@@ -137,6 +137,7 @@ struct su_context {
 		     suppress_pam_info:1,	/* don't print PAM info messages (Last login, etc.). */
 		     pam_has_session :1,	/* PAM session opened */
 		     pam_has_cred :1,		/* PAM cred established */
+		     pty :1,			/* create pseudo-terminal */
 		     restricted :1;		/* false for root user */
 };
 
@@ -704,6 +705,7 @@ static void usage_common(void)
 	        "                                   and do not create a new session\n"), stdout);
 	fputs(_(" -f, --fast                      pass -f to the shell (for csh or tcsh)\n"), stdout);
 	fputs(_(" -s, --shell <shell>             run <shell> if /etc/shells allows it\n"), stdout);
+	fputs(_(" -P, --pty                       create pseudo-terminal session\n"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(33));
@@ -827,6 +829,7 @@ int su_main(int argc, char **argv, int mode)
 		{"fast", no_argument, NULL, 'f'},
 		{"login", no_argument, NULL, 'l'},
 		{"preserve-environment", no_argument, NULL, 'p'},
+		{"pty", no_argument, NULL, 'P'},
 		{"shell", required_argument, NULL, 's'},
 		{"group", required_argument, NULL, 'g'},
 		{"supp-group", required_argument, NULL, 'G'},
@@ -845,7 +848,7 @@ int su_main(int argc, char **argv, int mode)
 	su->conv.appdata_ptr = (void *) su;
 
 	while ((optc =
-		getopt_long(argc, argv, "c:fg:G:lmps:u:hV", longopts,
+		getopt_long(argc, argv, "c:fg:G:lmpPs:u:hV", longopts,
 			    NULL)) != -1) {
 		switch (optc) {
 		case 'c':
@@ -878,6 +881,10 @@ int su_main(int argc, char **argv, int mode)
 		case 'm':
 		case 'p':
 			su->change_environment = false;
+			break;
+
+		case 'P':
+			su->pty = 1;
 			break;
 
 		case 's':
