@@ -37,6 +37,7 @@ TS_HELPER_STRUTILS="$top_builddir/test_strutils"
 TS_HELPER_SYSINFO="$top_builddir/test_sysinfo"
 TS_HELPER_TIOCSTI="$top_builddir/test_tiocsti"
 TS_HELPER_UUID_PARSER="$top_builddir/test_uuid_parser"
+TS_HELPER_UUID_NAMESPACE="$top_builddir/test_uuid_namespace"
 
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"$top_builddir/addpart"}

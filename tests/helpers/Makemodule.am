@@ -21,3 +21,7 @@ test_sigreceive_LDADD = $(LDADD) libcommon.la
 check_PROGRAMS += test_tiocsti
 test_tiocsti_SOURCES = tests/helpers/test_tiocsti.c
 
+check_PROGRAMS += test_uuid_namespace
+test_uuid_namespace_SOURCES = tests/helpers/test_uuid_namespace.c \
+	libuuid/src/predefined.c libuuid/src/unpack.c libuuid/src/unparse.c
+
