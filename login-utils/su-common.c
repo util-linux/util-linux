@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1992-2006 Free Software Foundation, Inc.
  * Copyright (C) 2012 SUSE Linux Products GmbH, Nuernberg
- * Copyright (C) 2016 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2016-2017 Karel Zak <kzak@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -37,6 +37,14 @@
 #include <syslog.h>
 #include <utmpx.h>
 
+#if defined(HAVE_LIBUTIL) && defined(HAVE_PTY_H) && defined(HAVE_SYS_SIGNALFD_H)
+# include <pty.h>
+# include <poll.h>
+# include <sys/signalfd.h>
+# include "all-io.h"
+# define USE_PTY
+#endif
+
 #include "err.h"
 
 #include <stdbool.h>
@@ -66,6 +74,7 @@ UL_DEBUG_DEFINE_MASKNAMES(su) = UL_DEBUG_EMPTY_MASKNAMES;
 #define SU_DEBUG_LOG		(1 << 5)
 #define SU_DEBUG_MISC		(1 << 6)
 #define SU_DEBUG_SIG		(1 << 7)
+#define SU_DEBUG_PTY		(1 << 8)
 #define SU_DEBUG_ALL		0xFFFF
 
 #define DBG(m, x)       __UL_DBG(su, SU_DEBUG_, m, x)
@@ -126,7 +135,16 @@ struct su_context {
 	pid_t		child;			/* fork() baby */
 
 	struct sigaction oldact[SIGNALS_IDX_COUNT];	/* original sigactions indexed by SIG*_IDX */
+	sigset_t	oldsig;			/* original signal mask */
 
+#ifdef USE_PTY
+	struct termios	stdin_attrs;		/* stdin and slave terminal runtime attributes */
+	int		pty_master;
+	int		pty_slave;
+	int		pty_sigfd;		/* signalfd() */
+	int		poll_timeout;
+	struct winsize	win;			/* terminal window size */
+#endif
 	unsigned int runuser :1,		/* flase=su, true=runuser */
 		     runuser_uopt :1,		/* runuser -u specified */
 		     isterm :1,			/* is stdin terminal? */
@@ -163,6 +181,383 @@ static void init_tty(struct su_context *su)
 	if (su->isterm)
 		get_terminal_name(NULL, &su->tty_name, &su->tty_number);
 }
+
+static int wait_for_child(struct su_context *su)
+{
+	pid_t pid = (pid_t) -1;;
+	int status = 0;
+
+	if (su->child != (pid_t) -1) {
+		DBG(SIG, ul_debug("waiting for child [%d]...", su->child));
+		for (;;) {
+			pid = waitpid(su->child, &status, WUNTRACED);
+
+			if (pid != (pid_t) - 1 && WIFSTOPPED(status)) {
+				kill(getpid(), SIGSTOP);
+				/* once we get here, we must have resumed */
+				kill(pid, SIGCONT);
+			} else
+				break;
+		}
+	}
+	if (pid != (pid_t) -1) {
+		if (WIFSIGNALED(status)) {
+			fprintf(stderr, "%s%s\n",
+				strsignal(WTERMSIG(status)),
+				WCOREDUMP(status) ? _(" (core dumped)")
+				: "");
+			status = WTERMSIG(status) + 128;
+		} else
+			status = WEXITSTATUS(status);
+
+		DBG(SIG, ul_debug("child %d is dead", su->child));
+		su->child = (pid_t) -1;	/* Don't use the PID anymore! */
+	} else if (caught_signal)
+		status = caught_signal + 128;
+	else
+		status = 1;
+
+	DBG(SIG, ul_debug("status=%d", status));
+	return status;
+}
+
+
+#ifdef USE_PTY
+static void pty_init_slave(struct su_context *su)
+{
+	DBG(PTY, ul_debug("initialize slave"));
+
+	ioctl(su->pty_slave, TIOCSCTTY, 0);
+	close(su->pty_master);
+
+	dup2(su->pty_slave, STDIN_FILENO);
+	dup2(su->pty_slave, STDOUT_FILENO);
+	dup2(su->pty_slave, STDERR_FILENO);
+
+	close(su->pty_slave);
+	close(su->pty_sigfd);
+
+	su->pty_slave = -1;
+	su->pty_master = -1;
+	su->pty_sigfd = -1;
+
+	sigprocmask(SIG_SETMASK, &su->oldsig, NULL);
+
+	DBG(PTY, ul_debug("... initialize slave done"));
+}
+
+static void pty_create(struct su_context *su)
+{
+	struct termios slave_attrs;
+	int rc;
+
+	if (su->isterm) {
+	        DBG(PTY, ul_debug("create for terminal"));
+		struct winsize win;
+
+		/* original setting of the current terminal */
+		if (tcgetattr(STDIN_FILENO, &su->stdin_attrs) != 0)
+			err(EXIT_FAILURE, _("failed to get terminal attributes"));
+
+		/* reuse the current terminal setting for slave */
+		slave_attrs = su->stdin_attrs;
+		cfmakeraw(&slave_attrs);
+
+		ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&su->win);
+
+		/* create master+slave */
+		rc = openpty(&su->pty_master, &su->pty_slave, NULL, &slave_attrs, &win);
+
+	} else {
+	        DBG(PTY, ul_debug("create for non-terminal"));
+		rc = openpty(&su->pty_master, &su->pty_slave, NULL, NULL, NULL);
+
+		/* set slave attributes */
+		if (rc < 0) {
+			tcgetattr(su->pty_slave, &slave_attrs);
+			cfmakeraw(&slave_attrs);
+			tcsetattr(su->pty_slave, TCSANOW, &slave_attrs);
+		}
+	}
+
+	if (rc < 0)
+		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
+
+	DBG(PTY, ul_debug("pty setup done [master=%d, slave=%d]", su->pty_master, su->pty_slave));
+}
+
+static void pty_cleanup(struct su_context *su)
+{
+	if (su->pty_master == -1)
+		return;
+
+	DBG(PTY, ul_debug("cleanup"));
+	if (su->isterm)
+		tcsetattr(STDIN_FILENO, TCSADRAIN, &su->stdin_attrs);
+}
+
+static int write_output(char *obuf, ssize_t bytes)
+{
+	DBG(PTY, ul_debug(" writing output"));
+
+	if (write_all(STDOUT_FILENO, obuf, bytes)) {
+		DBG(PTY, ul_debug("  writing output *failed*"));
+		warn(_("write failed"));
+		return -errno;
+	}
+
+	return 0;
+}
+
+static int write_to_child(struct su_context *su,
+			  char *buf, size_t bufsz)
+{
+	return write_all(su->pty_master, buf, bufsz);
+}
+
+/*
+ * The su(1) is usually faster than shell, so it's a good idea to wait until
+ * the previous message has been already read by shell from slave before we
+ * write to master. This is necessary especially for EOF situation when we can
+ * send EOF to master before shell is fully initialized, to workaround this
+ * problem we wait until slave is empty. For example:
+ *
+ *   echo "date" | su
+ *
+ * Unfortunately, the child (usually shell) can ignore stdin at all, so we
+ * don't wait forever to avoid dead locks...
+ *
+ * Note that su --pty is primarily designed for interactive sessions as it
+ * maintains master+slave tty stuff within the session. Use pipe to write to
+ * su(1) and assume non-interactive (tee-like) behavior is NOT well
+ * supported.
+ */
+static void write_eof_to_child(struct su_context *su)
+{
+	unsigned int tries = 0;
+	struct pollfd fds[] = {
+	           { .fd = su->pty_slave, .events = POLLIN }
+	};
+	char c = DEF_EOF;
+
+	DBG(PTY, ul_debug(" waiting for empty slave"));
+	while (poll(fds, 1, 10) == 1 && tries < 8) {
+		DBG(PTY, ul_debug("   slave is not empty"));
+		xusleep(250000);
+		tries++;
+	}
+	if (tries < 8)
+		DBG(PTY, ul_debug("   slave is empty now"));
+
+	DBG(PTY, ul_debug(" sending EOF to master"));
+	write_to_child(su, &c, sizeof(char));
+}
+
+static int pty_handle_io(struct su_context *su, int fd, int *eof)
+{
+	char buf[BUFSIZ];
+	ssize_t bytes;
+
+	DBG(PTY, ul_debug("%d FD active", fd));
+	*eof = 0;
+
+	/* read from active FD */
+	bytes = read(fd, buf, sizeof(buf));
+	if (bytes < 0) {
+		if (errno == EAGAIN || errno == EINTR)
+			return 0;
+		return -errno;
+	}
+
+	if (bytes == 0) {
+		*eof = 1;
+		return 0;
+	}
+
+	/* from stdin (user) to command */
+	if (fd == STDIN_FILENO) {
+		DBG(PTY, ul_debug(" stdin --> master %zd bytes", bytes));
+
+		if (write_to_child(su, buf, bytes)) {
+			warn(_("write failed"));
+			return -errno;
+		}
+		/* without sync write_output() will write both input &
+		 * shell output that looks like double echoing */
+		fdatasync(su->pty_master);
+
+	/* from command (master) to stdout */
+	} else if (fd == su->pty_master) {
+		DBG(PTY, ul_debug(" master --> stdout %zd bytes", bytes));
+		write_output(buf, bytes);
+	}
+
+	return 0;
+}
+
+static int pty_handle_signal(struct su_context *su, int fd)
+{
+	struct signalfd_siginfo info;
+	ssize_t bytes;
+
+	DBG(SIG, ul_debug("signal FD %d active", fd));
+
+	bytes = read(fd, &info, sizeof(info));
+	if (bytes != sizeof(info)) {
+		if (bytes < 0 && (errno == EAGAIN || errno == EINTR))
+			return 0;
+		return -errno;
+	}
+
+	switch (info.ssi_signo) {
+	case SIGCHLD:
+		DBG(SIG, ul_debug(" get signal SIGCHLD"));
+		wait_for_child(su);
+		su->poll_timeout = 10;
+		return 0;
+	case SIGWINCH:
+		DBG(SIG, ul_debug(" get signal SIGWINCH"));
+		if (su->isterm) {
+			ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&su->win);
+			ioctl(su->pty_slave, TIOCSWINSZ, (char *)&su->win);
+		}
+		break;
+	case SIGTERM:
+		/* fallthrough */
+	case SIGINT:
+		/* fallthrough */
+	case SIGQUIT:
+		DBG(SIG, ul_debug(" get signal SIG{TERM,INT,QUIT}"));
+		caught_signal = info.ssi_signo;
+                /* Child termination is going to generate SIGCHILD (see above) */
+                kill(su->child, SIGTERM);
+		break;
+	default:
+		abort();
+	}
+
+	return 0;
+}
+
+static void pty_proxy_master(struct su_context *su)
+{
+	sigset_t ourset;
+	int rc = 0, ret, ignore_stdin = 0, eof = 0;
+	enum {
+		POLLFD_SIGNAL = 0,
+		POLLFD_MASTER,
+		POLLFD_STDIN	/* optional; keep it last, see ignore_stdin */
+
+	};
+	struct pollfd pfd[] = {
+		[POLLFD_SIGNAL] = { .fd = -1,		  .events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_MASTER] = { .fd = su->pty_master, .events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_STDIN]	= { .fd = STDIN_FILENO,   .events = POLLIN | POLLERR | POLLHUP }
+	};
+
+	/* for PTY mode we use signalfd
+	 *
+	 * TODO: script(1) initializes this FD before fork, good or bad idea?
+	 */
+	sigfillset(&ourset);
+	if (sigprocmask(SIG_BLOCK, &ourset, &su->oldsig)) {
+		warn(_("cannot block signals"));
+		caught_signal = true;
+		return;
+	}
+
+	sigemptyset(&ourset);
+	sigaddset(&ourset, SIGCHLD);
+	sigaddset(&ourset, SIGWINCH);
+	sigaddset(&ourset, SIGALRM);
+	sigaddset(&ourset, SIGTERM);
+	sigaddset(&ourset, SIGINT);
+	sigaddset(&ourset, SIGQUIT);
+
+	if ((su->pty_sigfd = signalfd(-1, &ourset, SFD_CLOEXEC)) < 0) {
+		warn(("cannot create signal file descriptor"));
+		caught_signal = true;
+		return;
+	}
+
+	pfd[POLLFD_SIGNAL].fd = su->pty_sigfd;
+	su->poll_timeout = -1;
+
+	while (!caught_signal) {
+		size_t i;
+		int errsv;
+
+		DBG(PTY, ul_debug("calling poll()"));
+
+		/* wait for input or signal */
+		ret = poll(pfd, ARRAY_SIZE(pfd) - ignore_stdin, su->poll_timeout);
+		errsv = errno;
+		DBG(PTY, ul_debug("poll() rc=%d", ret));
+
+		if (ret < 0) {
+			if (errsv == EAGAIN)
+				continue;
+			warn(_("poll failed"));
+			break;
+		}
+		if (ret == 0) {
+			DBG(PTY, ul_debug("leaving poll() loop [timeout=%d]", su->poll_timeout));
+			break;
+		}
+
+		for (i = 0; i < ARRAY_SIZE(pfd) - ignore_stdin; i++) {
+			rc = 0;
+
+			if (pfd[i].revents == 0)
+				continue;
+
+			DBG(PTY, ul_debug(" active pfd[%s].fd=%d %s %s %s",
+						i == POLLFD_STDIN  ? "stdin" :
+						i == POLLFD_MASTER ? "master" :
+						i == POLLFD_SIGNAL ? "signal" : "???",
+						pfd[i].fd,
+						pfd[i].revents & POLLIN  ? "POLLIN" : "",
+						pfd[i].revents & POLLHUP ? "POLLHUP" : "",
+						pfd[i].revents & POLLERR ? "POLLERR" : ""));
+			switch (i) {
+			case POLLFD_STDIN:
+			case POLLFD_MASTER:
+				/* data */
+				if (pfd[i].revents & POLLIN)
+					rc = pty_handle_io(su, pfd[i].fd, &eof);
+				/* EOF maybe detected by two ways:
+				 *	A) poll() return POLLHUP event after close()
+				 *	B) read() returns 0 (no data) */
+				if ((pfd[i].revents & POLLHUP) || eof) {
+					DBG(PTY, ul_debug(" ignore FD"));
+					pfd[i].fd = -1;
+					/* according to man poll() set FD to -1 can't be used to ignore
+					 * STDIN, so let's remove the FD from pool at all */
+					if (i == POLLFD_STDIN) {
+						ignore_stdin = 1;
+						write_eof_to_child(su);
+						DBG(PTY, ul_debug("  ignore STDIN"));
+					}
+				}
+				continue;
+			case POLLFD_SIGNAL:
+				rc = pty_handle_signal(su, pfd[i].fd);
+				break;
+			}
+			if (rc)
+				break;
+		}
+	}
+
+	DBG(PTY, ul_debug("poll() done [signal=%d, rc=%d]", caught_signal, rc));
+}
+#else
+# define pty_create
+# define pty_cleanup
+# define pty_init_slave
+# define pty_proxy_master
+#endif /* USE_PTY */
+
 
 /* Log the fact that someone has run su to the user given by PW;
    if SUCCESSFUL is true, they gave the correct password, etc.  */
@@ -333,45 +728,6 @@ static void supam_open_session(struct su_context *su)
 		su->pam_has_session = 1;
 }
 
-static int wait_for_child(struct su_context *su)
-{
-	pid_t pid = (pid_t) -1;;
-	int status = 0;
-
-	if (su->child != (pid_t) -1) {
-		DBG(SIG, ul_debug("waiting for child [%d]...", su->child));
-		for (;;) {
-			pid = waitpid(su->child, &status, WUNTRACED);
-
-			if (pid != (pid_t) - 1 && WIFSTOPPED(status)) {
-				kill(getpid(), SIGSTOP);
-				/* once we get here, we must have resumed */
-				kill(pid, SIGCONT);
-			} else
-				break;
-		}
-	}
-	if (pid != (pid_t) -1) {
-		if (WIFSIGNALED(status)) {
-			fprintf(stderr, "%s%s\n",
-				strsignal(WTERMSIG(status)),
-				WCOREDUMP(status) ? _(" (core dumped)")
-				: "");
-			status = WTERMSIG(status) + 128;
-		} else
-			status = WEXITSTATUS(status);
-
-		DBG(SIG, ul_debug("child %d is dead", su->child));
-		su->child = (pid_t) -1;	/* Don't use the PID anymore! */
-	} else if (caught_signal)
-		status = caught_signal + 128;
-	else
-		status = 1;
-
-	DBG(SIG, ul_debug("status=%d", status));
-	return status;
-}
-
 static void parent_setup_signals(struct su_context *su)
 {
 	sigset_t ourset;
@@ -384,7 +740,7 @@ static void parent_setup_signals(struct su_context *su)
 	DBG(SIG, ul_debug("initialize signals"));
 
 	sigfillset(&ourset);
-	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
+	if (sigprocmask(SIG_BLOCK, &ourset, &su->oldsig)) {
 		warn(_("cannot block signals"));
 		caught_signal = true;
 	}
@@ -449,9 +805,17 @@ static void create_watching_parent(struct su_context *su)
 
 	DBG(MISC, ul_debug("forking..."));
 
+	if (su->pty)
+		/* create master and slave terminals */
+		pty_create(su);
+
+	fflush(stdout);			/* ??? */
+
 	switch ((int) (su->child = fork())) {
 	case -1: /* error */
 		supam_cleanup(su, PAM_ABORT);
+		if (su->pty)
+			pty_cleanup(su);
 		err(EXIT_FAILURE, _("cannot create child process"));
 		break;
 
@@ -471,7 +835,10 @@ static void create_watching_parent(struct su_context *su)
 	if (chdir("/") != 0)
 		warn(_("cannot change directory to %s"), "/");
 
-	parent_setup_signals(su);
+	if (su->pty)
+		pty_proxy_master(su);
+	else
+		parent_setup_signals(su);
 
 	/*
 	 * Wait for child
@@ -523,6 +890,8 @@ static void create_watching_parent(struct su_context *su)
 		kill(getpid(), caught_signal);
 	}
 
+	if (su->pty)
+		pty_cleanup(su);
 	DBG(MISC, ul_debug("exiting [rc=%d]", status));
 	exit(status);
 }
@@ -809,7 +1178,12 @@ int su_main(int argc, char **argv, int mode)
 		.conv			= { supam_conv, NULL },
 		.runuser		= (mode == RUNUSER_MODE ? 1 : 0),
 		.change_environment	= 1,
-		.new_user		= DEFAULT_USER
+		.new_user		= DEFAULT_USER,
+#ifdef USE_PTY
+		.pty_master		= -1,
+		.pty_slave		= -1,
+		.pty_sigfd		= -1,
+#endif
 	}, *su = &_su;
 
 	int optc;
@@ -884,7 +1258,11 @@ int su_main(int argc, char **argv, int mode)
 			break;
 
 		case 'P':
+#ifdef USE_PTY
 			su->pty = 1;
+#else
+			err(EXIT_FAILURE, _("--pty is not implemented"));
+#endif
 			break;
 
 		case 's':
@@ -1008,8 +1386,11 @@ int su_main(int argc, char **argv, int mode)
 	/* Now we're in the child.  */
 
 	change_identity(su->pwd);
-	if (!su->same_session)
+	if (!su->same_session || su->pty)
 		setsid();
+
+	if (su->pty)
+		pty_init_slave(su);
 
 	/* Set environment after pam_open_session, which may put KRB5CCNAME
 	   into the pam_env, etc.  */

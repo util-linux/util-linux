@@ -146,6 +146,9 @@ su_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_LINUXPAM
 su_LDADD += -lpam_misc
 endif
+if HAVE_UTIL
+su_LDADD += -lutil
+endif
 endif # BUILD_SU
 
 
