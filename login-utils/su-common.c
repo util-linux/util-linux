@@ -371,34 +371,9 @@ static int wait_for_child(struct su_context *su)
 	return status;
 }
 
-static void create_watching_parent(struct su_context *su)
+static void parent_setup_signals(struct su_context *su)
 {
 	sigset_t ourset;
-	int status;
-
-	DBG(MISC, ul_debug("forking..."));
-
-	switch ((int) (su->child = fork())) {
-	case -1: /* error */
-		supam_cleanup(su, PAM_ABORT);
-		err(EXIT_FAILURE, _("cannot create child process"));
-		break;
-
-	case 0: /* child */
-		return;
-
-	default: /* parent */
-		DBG(MISC, ul_debug("child [pid=%d]", (int) su->child));
-		break;
-	}
-
-
-	/* In the parent watch the child.  */
-
-	/* su without pam support does not have a helper that keeps
-	   sitting on any directory so let's go to /.  */
-	if (chdir("/") != 0)
-		warn(_("cannot change directory to %s"), "/");
 
 	/*
 	 * Signals setup
@@ -464,6 +439,38 @@ static void create_watching_parent(struct su_context *su)
 			caught_signal = true;
 		}
 	}
+}
+
+
+static void create_watching_parent(struct su_context *su)
+{
+	int status;
+
+	DBG(MISC, ul_debug("forking..."));
+
+	switch ((int) (su->child = fork())) {
+	case -1: /* error */
+		supam_cleanup(su, PAM_ABORT);
+		err(EXIT_FAILURE, _("cannot create child process"));
+		break;
+
+	case 0: /* child */
+		return;
+
+	default: /* parent */
+		DBG(MISC, ul_debug("child [pid=%d]", (int) su->child));
+		break;
+	}
+
+
+	/* In the parent watch the child.  */
+
+	/* su without pam support does not have a helper that keeps
+	   sitting on any directory so let's go to /.  */
+	if (chdir("/") != 0)
+		warn(_("cannot change directory to %s"), "/");
+
+	parent_setup_signals(su);
 
 	/*
 	 * Wait for child
