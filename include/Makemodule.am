@@ -45,6 +45,7 @@ dist_noinst_HEADERS += \
 	include/pt-sun.h \
 	include/randutils.h \
 	include/rpmatch.h \
+	include/sha1.h \
 	include/setproctitle.h \
 	include/statfs_magic.h \
 	include/strutils.h \
