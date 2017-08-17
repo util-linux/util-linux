@@ -87,12 +87,17 @@
 #include "randutils.h"
 #include "strutils.h"
 #include "c.h"
+#include "md5.h"
+#include "sha1.h"
 
 #ifdef HAVE_TLS
 #define THREAD_LOCAL static __thread
 #else
 #define THREAD_LOCAL static
 #endif
+
+/* index with UUID_VARIANT_xxx and shift 5 bits */
+static unsigned char variant_bits[] = { 0x00, 0x04, 0x06, 0x07 };
 
 #ifdef _WIN32
 static void gettimeofday (struct timeval *tv, void *dummy)
@@ -552,3 +557,54 @@ void uuid_generate(uuid_t out)
 	else
 		uuid_generate_time(out);
 }
+
+/*
+ * Generate an MD5 hashed (predictable) UUID based on a well-known UUID
+ * providing the namespace and an arbitrary binary string.
+ */
+void uuid_generate_md5(uuid_t out, const uuid_t ns, const char *name, size_t len)
+{
+	MD5_CTX ctx;
+	char hash[MD5LENGTH];
+
+	MD5Init(&ctx);
+	/* hash concatenation of well-known UUID with name */
+	MD5Update(&ctx, ns, sizeof(uuid_t));
+	MD5Update(&ctx, (const unsigned char *)name, len);
+
+	MD5Final((unsigned char *)hash, &ctx);
+
+	memcpy(out, hash, sizeof(uuid_t));
+
+	out[6] &= ~(UUID_TYPE_MASK << UUID_TYPE_SHIFT);
+	out[6] |= (UUID_TYPE_DCE_MD5 << UUID_TYPE_SHIFT);
+
+	out[8] &= ~(UUID_VARIANT_MASK << UUID_VARIANT_SHIFT);
+	out[8] |= (variant_bits[UUID_VARIANT_DCE] << UUID_VARIANT_SHIFT);
+}
+
+/*
+ * Generate a SHA1 hashed (predictable) UUID based on a well-known UUID
+ * providing the namespace and an arbitrary binary string.
+ */
+void uuid_generate_sha1(uuid_t out, const uuid_t ns, const char *name, size_t len)
+{
+	SHA1_CTX ctx;
+	char hash[SHA1LENGTH];
+
+	SHA1Init(&ctx);
+	/* hash concatenation of well-known UUID with name */
+	SHA1Update(&ctx, ns, sizeof(uuid_t));
+	SHA1Update(&ctx, (const unsigned char *)name, len);
+
+	SHA1Final((unsigned char *)hash, &ctx);
+
+	memcpy(out, hash, sizeof(uuid_t));
+
+	out[6] &= ~(UUID_TYPE_MASK << UUID_TYPE_SHIFT);
+	out[6] |= (UUID_TYPE_DCE_SHA1 << UUID_TYPE_SHIFT);
+
+	out[8] &= ~(UUID_VARIANT_MASK << UUID_VARIANT_SHIFT);
+	out[8] |= (variant_bits[UUID_VARIANT_DCE] << UUID_VARIANT_SHIFT);
+}
+
