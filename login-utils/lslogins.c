@@ -895,12 +895,11 @@ static int create_usertree(struct lslogins_control *ctl)
 	size_t n = 0;
 
 	if (ctl->ulist_on) {
-		while (n < ctl->ulsiz) {
+		for (n = 0; n < ctl->ulsiz; n++) {
 			if (get_user(ctl, &user, ctl->ulist[n]))
-				return -1;
+				continue;
 			if (user) /* otherwise an invalid user name has probably been given */
 				tsearch(user, &ctl->usertree, cmp_uid);
-			++n;
 		}
 	} else {
 		while ((user = get_next_user(ctl)))
