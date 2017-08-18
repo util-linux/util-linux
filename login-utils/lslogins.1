@@ -35,11 +35,16 @@ Output data in the format of NAME=VALUE.
 Display data about the users' last failed login attempts.
 .TP
 \fB\-G\fR, \fB\-\-supp\-groups\fR
-Show information about groups.
+Show information about supplementary groups.
 .TP
 \fB\-g\fR, \fB\-\-groups\fR=\fIgroups\fR
 Only show data of users belonging to \fIgroups\fR.  More than one group
 may be specified; the list has to be comma-separated.
+
+Note that relation between user and group may be invisible for primary group if
+the user is not explicitly specify as group member (e.g. in /etc/group). If the
+command lslogins scans for groups than it uses groups database only, and user
+database with primary GID is not used at all.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help information and exit.
