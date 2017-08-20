@@ -81,6 +81,11 @@ struct volume_descriptor {
 
 } __attribute__((packed));
 
+#define TAG_ID_PVD  1
+#define TAG_ID_AVDP 2
+#define TAG_ID_LVD  6
+#define TAG_ID_LVID 9
+
 struct volume_structure_descriptor {
 	uint8_t		type;
 	uint8_t		id[5];
@@ -223,7 +228,7 @@ anchor:
 			return errno ? -errno : 1;
 
 		type = le16_to_cpu(vd->tag.id);
-		if (type == 2) /* TAG_ID_AVDP */
+		if (type == TAG_ID_AVDP)
 			goto real_blksz;
 	}
 	return 0;
@@ -249,7 +254,7 @@ real_blksz:
 			break;
 		if (le32_to_cpu(vd->tag.location) != loc + b)
 			break;
-		if (type == 1) { /* TAG_ID_PVD */
+		if (type == TAG_ID_PVD) {
 			if (!have_volid) {
 				int enc = udf_cid_to_enc(vd->type.primary.ident.cid);
 				uint8_t clen = vd->type.primary.ident.clen;
@@ -306,7 +311,7 @@ real_blksz:
 					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
 							vd->type.primary.volset_id.c, clen, enc);
 			}
-		} else if (type == 6) { /* TAG_ID_LVD */
+		} else if (type == TAG_ID_LVD) {
 			if (!num_partition_maps || !lvid_count || !lvid_loc) {
 				num_partition_maps = le32_to_cpu(vd->type.logical.num_partition_maps);
 				lvid_count = le32_to_cpu(vd->type.logical.lvid_length) / bs;
@@ -373,7 +378,7 @@ real_blksz:
 				break;
 			if (le32_to_cpu(vd->tag.location) != lvid_loc + b)
 				break;
-			if (type == 9) { /* TAG_ID_LVID */
+			if (type == TAG_ID_LVID) {
 				uint16_t udf_rev;
 				lvidiu = (struct logical_vol_integ_descriptor_imp_use *)
 					blkid_probe_get_buffer(pr,
