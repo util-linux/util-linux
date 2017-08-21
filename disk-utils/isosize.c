@@ -36,6 +36,7 @@
 static int is_iso(int fd)
 {
 	char label[8];
+
 	if (pread(fd, &label, 8, 0x8000) == -1)
 		return 1;
 	return memcmp(&label, &"\1CD001\1", 8);
@@ -57,6 +58,7 @@ static int isonum_723(unsigned char *p, int xflag)
 {
 	int le = isonum_721(p);
 	int be = isonum_722(p + 2);
+
 	if (xflag && le != be)
 		/* translation is useless */
 		warnx("723error: le=%d be=%d", le, be);
@@ -83,6 +85,7 @@ static int isonum_733(unsigned char *p, int xflag)
 {
 	int le = isonum_731(p);
 	int be = isonum_732(p + 4);
+
 	if (xflag && le != be)
 		/* translation is useless */
 		warnx("733error: le=%d be=%d", le, be);
@@ -117,9 +120,9 @@ static int isosize(int argc, char *filenamep, int xflag, long divisor)
 
 	if (1 < argc)
 		printf("%s: ", filenamep);
-	if (xflag) {
+	if (xflag)
 		printf(_("sector count: %d, sector size: %d\n"), nsecs, ssize);
-	} else {
+	else {
 		long long product = nsecs;
 
 		if (divisor == 0)
@@ -139,19 +142,19 @@ done:
 
 static void __attribute__((__noreturn__)) usage(void)
 {
-	FILE *out = stdout;
-	fputs(USAGE_HEADER, out);
-	fprintf(out,
-		_(" %s [options] <iso9660_image_file>\n"),
+
+	fputs(USAGE_HEADER, stdout);
+	fprintf(stdout,
+		_(" %s [options] <iso9660_image_file> ...\n"),
 		program_invocation_short_name);
 
-	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Show the length of an ISO-9660 filesystem.\n"), out);
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(_("Show the length of an ISO-9660 filesystem.\n"), stdout);
 
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -d, --divisor=<number>  divide the amount of bytes by <number>\n"), out);
-	fputs(_(" -x, --sectors           show sector count and size\n"), out);
-	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_OPTIONS, stdout);
+	fputs(_(" -d, --divisor=<number>  divide the amount of bytes by <number>\n"), stdout);
+	fputs(_(" -x, --sectors           show sector count and size\n"), stdout);
+
 	printf(USAGE_HELP_OPTIONS(25));
 	printf(USAGE_MAN_TAIL("isosize(8)"));
 
@@ -176,7 +179,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((opt = getopt_long(argc, argv, "d:xVh", longopts, NULL)) != -1)
+	while ((opt = getopt_long(argc, argv, "d:xVh", longopts, NULL)) != -1) {
 		switch (opt) {
 		case 'd':
 			divisor =
@@ -194,6 +197,7 @@ int main(int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
 
 	ct = argc - optind;
 
