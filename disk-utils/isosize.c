@@ -30,6 +30,9 @@
 #include "strutils.h"
 #include "closestream.h"
 
+#define ISOSIZE_EXIT_ALLFAILED	32
+#define ISOSIZE_EXIT_SOMEOK	64
+
 static int is_iso(int fd)
 {
 	char label[8];
@@ -86,22 +89,26 @@ static int isonum_733(unsigned char *p, int xflag)
 	return (le);
 }
 
-static void isosize(int argc, char *filenamep, int xflag, long divisor)
+static int isosize(int argc, char *filenamep, int xflag, long divisor)
 {
-	int fd, nsecs, ssize;
+	int fd, nsecs, ssize, rc = -1;
 	unsigned char volume_space_size[8];
 	unsigned char logical_block_size[4];
 
-	if ((fd = open(filenamep, O_RDONLY)) < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), filenamep);
+	if ((fd = open(filenamep, O_RDONLY)) < 0) {
+		warn(_("cannot open %s"), filenamep);
+		goto done;
+	}
 	if (is_iso(fd))
 		warnx(_("%s: might not be an ISO filesystem"), filenamep);
 
-	if (pread(fd, volume_space_size, sizeof(volume_space_size), 0x8050) <= 0 ||
-	    pread(fd, logical_block_size, sizeof(logical_block_size), 0x8080) <= 0) {
+	if (pread(fd, volume_space_size, sizeof(volume_space_size), 0x8050) != sizeof(volume_space_size) ||
+	    pread(fd, logical_block_size, sizeof(logical_block_size), 0x8080) != sizeof(logical_block_size)) {
 		if (errno)
-			err(EXIT_FAILURE, _("read error on %s"), filenamep);
-		errx(EXIT_FAILURE, _("read error on %s"), filenamep);
+			warn(_("read error on %s"), filenamep);
+		else
+			warnx(_("read error on %s"), filenamep);
+		goto done;
 	}
 
 	nsecs = isonum_733(volume_space_size, xflag);
@@ -123,7 +130,11 @@ static void isosize(int argc, char *filenamep, int xflag, long divisor)
 			printf("%lld\n", (product * ssize) / divisor);
 	}
 
-	close(fd);
+	rc = 0;
+done:
+	if (fd >= 0)
+		close(fd);
+	return rc;
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -149,7 +160,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char **argv)
 {
-	int j, ct, opt, xflag = 0;
+	int j, ct_err = 0, ct, opt, xflag = 0;
 	long divisor = 0;
 
 	static const struct option longopts[] = {
@@ -191,8 +202,12 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	for (j = optind; j < argc; j++)
-		isosize(ct, argv[j], xflag, divisor);
+	for (j = optind; j < argc; j++) {
+		if (isosize(ct, argv[j], xflag, divisor) != 0)
+			ct_err++;
+	}
 
-	return EXIT_SUCCESS;
+	return	ct == ct_err	? ISOSIZE_EXIT_ALLFAILED :	/* all failed */
+		ct_err		? ISOSIZE_EXIT_SOMEOK :		/* some ok */
+		EXIT_SUCCESS;					/* all success */
 }
