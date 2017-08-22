@@ -280,6 +280,8 @@ static struct fdisk_parttype gpt_parttypes[] =
 	DEF_GUID("C91818F9-8025-47AF-89D2-F030D7000C2C", N_("Plan 9 partition"))
 };
 
+#define alignment_required(_x)  ((_x)->grain != (_x)->sector_size)
+
 /* gpt_entry macros */
 #define gpt_partition_start(_e)		le64_to_cpu((_e)->lba_start)
 #define gpt_partition_end(_e)		le64_to_cpu((_e)->lba_end)
@@ -2332,8 +2334,12 @@ static int gpt_add_partition(
 		user_l = user_f + pa->size - 1;
 		DBG(LABEL, ul_debug("size defined: %ju, end: %"PRIu64" (last possible: %"PRIu64")",
 					 (uintmax_t)pa->size, user_l, dflt_l));
-		if (user_l != dflt_l && !pa->size_explicit
+
+		if (user_l != dflt_l
+		    && !pa->size_explicit
+		    && alignment_required(cxt)
 		    && user_l - user_f > (cxt->grain / fdisk_get_sector_size(cxt))) {
+
 			user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l);
 			if (user_l > user_f)
 				user_l -= 1ULL;
