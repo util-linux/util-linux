@@ -70,11 +70,13 @@ int main(int argc, char *argv[])
 	const char *label = NULL, *device = NULL;
 	int n = 0, c, nopartno = 0;
 	unsigned int sectorsize;
+	uint64_t grain = 0;
 
 	static const struct option longopts[] = {
 		{ "label",  required_argument, NULL, 'x' },
 		{ "device", required_argument, NULL, 'd' },
 		{ "nopartno", no_argument, NULL, 'p' },
+		{ "grain", required_argument, NULL, 'g' },
 		{ "help",   no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
 	};
@@ -83,7 +85,7 @@ int main(int argc, char *argv[])
 
 	fdisk_init_debug(0);
 
-	while((c = getopt_long(argc, argv, "x:d:h", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "g:x:d:h", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'x':
 			label = optarg;
@@ -93,6 +95,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'p':
 			nopartno = 1;
+			break;
+		case 'g':
+			grain = strtosize_or_err(optarg, "failed to parse grain");
 			break;
 		case 'h':
 			printf("%s [options] <size> ...", program_invocation_short_name);
@@ -117,6 +122,9 @@ int main(int argc, char *argv[])
 	if (!cxt)
 		err_oom();
 	fdisk_set_ask(cxt, ask_callback, NULL);
+
+	if (grain)
+		fdisk_save_user_grain(cxt, grain);
 
 	pa = fdisk_new_partition();
 	if (!pa)
