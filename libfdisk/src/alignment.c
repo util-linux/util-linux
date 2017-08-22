@@ -112,14 +112,14 @@ fdisk_sector_t fdisk_align_lba(struct fdisk_context *cxt, fdisk_sector_t lba, in
 	}
 
 	if (lba != res)
-		DBG(CXT, ul_debugobj(cxt, "LBA %ju -aligned-%s-> %ju [grain=%lus]",
+		DBG(CXT, ul_debugobj(cxt, "LBA %12ju aligned-%s %12ju [grain=%lus]",
 				(uintmax_t) lba,
-				direction == FDISK_ALIGN_UP ? "up" :
+				direction == FDISK_ALIGN_UP ? "up  " :
 				direction == FDISK_ALIGN_DOWN ? "down" : "near",
 				(uintmax_t) res,
 				cxt->grain / cxt->sector_size));
 	else
-		DBG(CXT, ul_debugobj(cxt, "LBA %ju -unchanged-", (uintmax_t)lba));
+		DBG(CXT, ul_debugobj(cxt, "LBA %12ju already aligned", (uintmax_t)lba));
 
 	return res;
 }
@@ -159,9 +159,8 @@ fdisk_sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
 		res = stop;
 	else
 		res = lba;
-
 done:
-	DBG(CXT, ul_debugobj(cxt, "LBA %ju range:<%ju..%ju>, result: %ju",
+	DBG(CXT, ul_debugobj(cxt, "%ju in range <%ju..%ju> aligned to %ju",
 				(uintmax_t) lba,
 				(uintmax_t) start,
 				(uintmax_t) stop,
