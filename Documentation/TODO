@@ -85,6 +85,15 @@ bash completion
 libmount (mount/umount)
 -----------------------
 
+ - support CAP_SYS_ADMIN; for mount(2) syscall the CAP_SYS_ADMIN is good
+   enough. Unfortunately, mount(8) does more things like check for filesystem
+   type (but it's usually done by udev, so root perms are unnecessary), create
+   loop devices, write to /run/mount/utab or /etc/mtab, etc.
+
+   It would be nice to improve libmount to check for CAP_SYS_ADMIN if suid not
+   set and allow to use it for simple tasks where no another operation is
+   necessary.
+
  - allow to execute mount(2) in another namespace, something like:
 	mount --namespace=/proc/$n/ns/mnt  /dev/sda2 /bar
    see https://bugzilla.redhat.com/show_bug.cgi?id=1199554 for more details.
