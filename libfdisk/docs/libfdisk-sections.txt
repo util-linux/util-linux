@@ -69,6 +69,7 @@ fdisk_override_geometry
 fdisk_reset_alignment
 fdisk_reset_device_properties
 fdisk_save_user_geometry
+fdisk_save_user_grain
 fdisk_save_user_sector_size
 </SECTION>
 

@@ -399,6 +399,7 @@ struct fdisk_context {
 	struct fdisk_geometry user_geom;
 	unsigned long user_pyh_sector;
 	unsigned long user_log_sector;
+	unsigned long user_grain;
 
 	struct fdisk_label *label;	/* current label, pointer to labels[] */
 

@@ -503,6 +503,9 @@ int fdisk_save_user_geometry(struct fdisk_context *cxt,
 int fdisk_save_user_sector_size(struct fdisk_context *cxt,
 				unsigned int phy,
 				unsigned int log);
+
+int fdisk_save_user_grain(struct fdisk_context *cxt, unsigned long grain);
+
 int fdisk_has_user_device_properties(struct fdisk_context *cxt);
 int fdisk_reset_alignment(struct fdisk_context *cxt);
 int fdisk_reset_device_properties(struct fdisk_context *cxt);

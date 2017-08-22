@@ -289,4 +289,5 @@ FDISK_2.31 {
 	fdisk_reread_changes;
 	fdisk_disable_dialogs;
 	fdisk_has_dialogs;
+	fdisk_save_user_grain;
 } FDISK_2.30;
