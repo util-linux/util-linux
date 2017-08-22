@@ -1408,12 +1408,15 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 
 	if (pa) {
 		pa->fs_probed = 0;
-		DBG(CXT, ul_debugobj(cxt, "adding new partition %p (start=%ju, end=%ju, size=%ju, "
-			    "defaults(start=%s, end=%s, partno=%s)",
-			    pa,
-			    (uintmax_t) fdisk_partition_get_start(pa),
-			    (uintmax_t) fdisk_partition_get_end(pa),
-			    (uintmax_t) fdisk_partition_get_size(pa),
+		DBG(CXT, ul_debugobj(cxt, "adding new partition %p", pa));
+		if (fdisk_partition_has_start(pa))
+			DBG(CXT, ul_debugobj(cxt, "     start: %ju", (uintmax_t) fdisk_partition_get_start(pa)));
+		if (fdisk_partition_has_end(pa))
+			DBG(CXT, ul_debugobj(cxt, "       end: %ju", (uintmax_t) fdisk_partition_get_end(pa)));
+		if (fdisk_partition_has_size(pa))
+			DBG(CXT, ul_debugobj(cxt, "      size: %ju", (uintmax_t) fdisk_partition_get_size(pa)));
+
+		DBG(CXT, ul_debugobj(cxt,         "  defaults: start=%s, end=%s, partno=%s",
 			    pa->start_follow_default ? "yes" : "no",
 			    pa->end_follow_default ? "yes" : "no",
 			    pa->partno_follow_default ? "yes" : "no"));
