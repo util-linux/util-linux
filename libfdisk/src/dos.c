@@ -1196,7 +1196,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	else if (pa && fdisk_partition_has_size(pa)) {
 		stop = start + pa->size;
 		isrel = pa->size_explicit ? 0 : 1;
-		if (!isrel && stop > start)
+		if ((!isrel || !alignment_required(cxt)) && stop > start)
 			stop -= 1;
 	} else {
 		/* ask user by dialog */
@@ -1242,7 +1242,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		}
 	}
 
-	DBG(LABEL, ul_debug("DOS: raw stop: %ju", (uintmax_t) stop));
+	DBG(LABEL, ul_debug("DOS: raw stop: %ju [limit %ju]", (uintmax_t) stop, (uintmax_t) limit));
 
 	if (stop > limit)
 		stop = limit;
@@ -1252,7 +1252,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		isrel = 0;
 		if (stop > start)
 			stop -= 1;
-		DBG(LABEL, ul_debug("DOS: don't align end os tiny partition [start=%ju, stop=%ju, grain=%lu]",
+		DBG(LABEL, ul_debug("DOS: don't align end of tiny partition [start=%ju, stop=%ju, grain=%lu]",
 			    (uintmax_t)start,  (uintmax_t)stop, cxt->grain));
 	}
 
