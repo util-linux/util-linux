@@ -107,7 +107,16 @@ nor
 This option is ignored if the option \fB\-\-login\fR is specified.
 .TP
 .BR \-P , " \-\-pty"
-Create pseudo-terminal for the session.
+Create pseudo-terminal for the session. The independent terminal provides
+better security as user does not share terminal with the original
+session.  This allow to avoid TIOCSTI ioctl terminal injection and another
+security attacks against terminal file descriptors. The all session is also
+possible to move to background (e.g. "su --pty - usename -c
+application &"). If the pseudo-terminal is enabled then su command works
+as a proxy between the sessions (copy stdin and stdout).
+
+This feature is EXPERIMENTAL for now and may be removed in the next releases.
+
 .TP
 .BR \-s , " \-\-shell" = \fIshell
 Run the specified \fIshell\fR instead of the default.  The shell to run is
@@ -262,7 +271,7 @@ session  required  pam_lastlog.so nowtmp
 .SH HISTORY
 This \fBsu\fR command was
 derived from coreutils' \fBsu\fR, which was based on an implementation by
-David MacKenzie.
+David MacKenzie. The util-linux has been refactored by Karel Zak.
 .SH AVAILABILITY
 The su command is part of the util-linux package and is
 available from
