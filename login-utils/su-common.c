@@ -551,11 +551,6 @@ static void pty_proxy_master(struct su_context *su)
 
 	DBG(PTY, ul_debug("poll() done [signal=%d, rc=%d]", caught_signal, rc));
 }
-#else
-# define pty_create
-# define pty_cleanup
-# define pty_init_slave
-# define pty_proxy_master
 #endif /* USE_PTY */
 
 
@@ -804,18 +799,19 @@ static void create_watching_parent(struct su_context *su)
 	int status;
 
 	DBG(MISC, ul_debug("forking..."));
-
+#ifdef USE_PTY
 	if (su->pty)
-		/* create master and slave terminals */
 		pty_create(su);
-
+#endif
 	fflush(stdout);			/* ??? */
 
 	switch ((int) (su->child = fork())) {
 	case -1: /* error */
 		supam_cleanup(su, PAM_ABORT);
+#ifdef USE_PTY
 		if (su->pty)
 			pty_cleanup(su);
+#endif
 		err(EXIT_FAILURE, _("cannot create child process"));
 		break;
 
@@ -834,10 +830,11 @@ static void create_watching_parent(struct su_context *su)
 	   sitting on any directory so let's go to /.  */
 	if (chdir("/") != 0)
 		warn(_("cannot change directory to %s"), "/");
-
+#ifdef USE_PTY
 	if (su->pty)
 		pty_proxy_master(su);
 	else
+#endif
 		parent_setup_signals(su);
 
 	/*
@@ -890,8 +887,10 @@ static void create_watching_parent(struct su_context *su)
 		kill(getpid(), caught_signal);
 	}
 
+#ifdef USE_PTY
 	if (su->pty)
 		pty_cleanup(su);
+#endif
 	DBG(MISC, ul_debug("exiting [rc=%d]", status));
 	exit(status);
 }
@@ -1261,7 +1260,7 @@ int su_main(int argc, char **argv, int mode)
 #ifdef USE_PTY
 			su->pty = 1;
 #else
-			err(EXIT_FAILURE, _("--pty is not implemented"));
+			errx(EXIT_FAILURE, _("--pty is not supported for your system"));
 #endif
 			break;
 
