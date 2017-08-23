@@ -227,7 +227,7 @@ static void pty_init_slave(struct su_context *su)
 {
 	DBG(PTY, ul_debug("initialize slave"));
 
-	ioctl(su->pty_slave, TIOCSCTTY, 0);
+	ioctl(su->pty_slave, TIOCSCTTY, 1);
 	close(su->pty_master);
 
 	dup2(su->pty_slave, STDIN_FILENO);
@@ -1074,7 +1074,7 @@ static void usage_common(void)
 	        "                                   and do not create a new session\n"), stdout);
 	fputs(_(" -f, --fast                      pass -f to the shell (for csh or tcsh)\n"), stdout);
 	fputs(_(" -s, --shell <shell>             run <shell> if /etc/shells allows it\n"), stdout);
-	fputs(_(" -P, --pty                       create pseudo-terminal session\n"), stdout);
+	fputs(_(" -P, --pty                       create a new pseudo-terminal\n"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(33));
@@ -1386,8 +1386,10 @@ int su_main(int argc, char **argv, int mode)
 	/* Now we're in the child.  */
 
 	change_identity(su->pwd);
-	if (!su->same_session || su->pty)
+	if (!su->same_session || su->pty) {
+		DBG(MISC, ul_debug("call setsid()"));
 		setsid();
+	}
 
 	if (su->pty)
 		pty_init_slave(su);
