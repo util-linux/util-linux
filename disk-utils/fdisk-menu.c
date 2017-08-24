@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "c.h"
+#include "rpmatch.h"
 #include "fdisk.h"
 #include "pt-sun.h"
 #include "pt-mbr.h"
