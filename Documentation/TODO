@@ -160,15 +160,6 @@ libfdisk
  - add support for Apple Partition Map (see libblkid/src/partitions/mac.c)
    http://en.wikipedia.org/wiki/Apple_Partition_Map
 
- - catch SIGINT (Ctrl-C) and return to main menu.
-   From Red Hat bugzilla #545488:
-
-   While using fdisk normally, if you accidentally pressed the wrong button (to
-   start a sequence of questions for some operation, e.g. 'c' to create
-   partition).  The tool tries too hard to keep asking you for valid input.  You
-   can't provide a blank or invalid input to get it to break out of the current
-   dialog sequence and get back to the main menu.
-
 misc
 ----
 

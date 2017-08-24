@@ -22,6 +22,7 @@
 #include <time.h>
 #include <limits.h>
 #include <signal.h>
+#include <poll.h>
 #include <libsmartcols.h>
 #ifdef HAVE_LIBREADLINE
 # define _FUNCTION_DEF
@@ -52,8 +53,11 @@
 # include <linux/blkpg.h>
 #endif
 
+#undef HAVE_LIBREADLINE
+
 int pwipemode = WIPEMODE_AUTO;
 int device_is_used;
+int is_interactive;
 struct fdisk_table *original_layout;
 
 static int wipemode = WIPEMODE_AUTO;
@@ -69,90 +73,111 @@ static void fdiskprog_init_debug(void)
 	__UL_INIT_DEBUG(fdisk, FDISKPROG_DEBUG_, 0, FDISK_DEBUG);
 }
 
-static sig_atomic_t volatile got_sigint = 0;
-static void int_handler(int sig __attribute__((unused)))
+static void reply_sighandler(int sig __attribute__((unused)))
 {
-	got_sigint = 1;
+	DBG(ASK, ul_debug("got signal"));
 }
 
+static int reply_running;
+
 #ifdef HAVE_LIBREADLINE
-static char *rl_fgets(char *s, int n, FILE *stream, const char *prompt)
+static char *reply_line;
+
+static void reply_linehandler(char *line)
 {
-	char *p;
-
-	rl_outstream = stream;
-	p = readline(prompt);
-	if (!p)
-		return NULL;
-
-	strncpy(s, p, n);
-	s[n - 1] = '\0';
-	free(p);
-	return s;
+	reply_line = line;
+	reply_running = 0;
+	rl_callback_handler_remove();	/* avoid duplicate prompt */
 }
 #endif
 
-static char *wrap_fgets(char *s, int n, FILE *stream, const char *prompt)
+int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 {
-#ifdef HAVE_LIBREADLINE
-	if (isatty(STDIN_FILENO)) {
-		return rl_fgets(s, n, stream, prompt);
-	}
-	else
-#endif
-	{
-		fputs(prompt, stream);
-		fflush(stream);
-		return fgets(s, n, stdin);
-	}
-}
-
-int get_user_reply(struct fdisk_context *cxt, const char *prompt,
-			  char *buf, size_t bufsz)
-{
+	struct sigaction oldact, act = {
+		.sa_handler = reply_sighandler
+	};
+	struct pollfd fds[] = {
+		{ .fd = fileno(stdin), .events = POLLIN }
+	};
 	char *p;
 	size_t sz;
 	int ret = 0;
-	struct sigaction oldact, act = {
-		.sa_handler = int_handler,
-	};
+
+	DBG(ASK, ul_debug("asking for user replay %s", is_interactive ? "[interactive]" : ""));
 
 	sigemptyset(&act.sa_mask);
-
-	got_sigint = 0;
 	sigaction(SIGINT, &act, &oldact);
 
+#ifdef HAVE_LIBREADLINE
+	if (is_interactive)
+		rl_callback_handler_install(prompt, reply_linehandler);
+#endif
+	reply_running = 1;
 	do {
-		char *tmp = wrap_fgets(buf, bufsz, stdout, prompt);
+		int rc;
 
-		if (got_sigint) {
-			ret = -ECANCELED;
-			goto end;
+		*buf = '\0';
+#ifdef HAVE_LIBREADLINE
+		if (!is_interactive)
+#endif
+		{
+			fputs(prompt, stdout);
+			fflush(stdout);
 		}
 
-		if (!tmp) {
-			if (fdisk_label_is_changed(fdisk_get_label(cxt, NULL))) {
-				if (wrap_fgets(buf, bufsz, stderr,
-						_("\nDo you really want to quit? "))
-						&& !rpmatch(buf))
-					continue;
+		rc = poll(fds, 1, -1);
+		if (rc == -1 && errno == EINTR)	{	/* interrupted by signal */
+			DBG(ASK, ul_debug("cancel by CTRL+C"));
+			ret = -ECANCELED;
+			goto done;
+		}
+		if (rc == -1 && errno != EAGAIN) {	/* error */
+			ret = -errno;
+			goto done;
+		}
+#ifdef HAVE_LIBREADLINE
+		if (is_interactive) {
+			/* read input and copy to buf[] */
+			rl_callback_read_char();
+			if (!reply_running && reply_line) {
+				sz = strlen(reply_line);
+				memcpy(buf, reply_line, min(sz, bufsz));
+				buf[bufsz - 1] = '\0';
+				free(reply_line);
+				reply_line = NULL;
 			}
-			fdisk_unref_context(cxt);
-			exit(EXIT_FAILURE);
 		} else
+#endif
+		{
+			if (!fgets(buf, bufsz, stdin))
+				*buf = '\0';
 			break;
-	} while (1);
+		}
+	} while (reply_running);
 
+	if (!*buf) {
+		DBG(ASK, ul_debug("cancel by CTRL+D"));
+		ret = -ECANCELED;
+		goto done;
+	}
+
+	/*
+	 * cleanup the reply
+	 */
 	for (p = buf; *p && !isgraph(*p); p++);	/* get first non-blank */
 
 	if (p > buf)
-		memmove(buf, p, p - buf);		/* remove blank space */
+		memmove(buf, p, p - buf);	/* remove blank space */
 	sz = strlen(buf);
 	if (sz && *(buf + sz - 1) == '\n')
 		*(buf + sz - 1) = '\0';
 
 	DBG(ASK, ul_debug("user's reply: >>>%s<<<", buf));
-end:
+done:
+#ifdef HAVE_LIBREADLINE
+	if (is_interactive)
+		rl_callback_handler_remove();
+#endif
 	sigaction(SIGINT, &oldact, NULL);
 	return ret;
 }
@@ -181,7 +206,7 @@ static int ask_menu(struct fdisk_context *cxt, struct fdisk_ask *ask,
 
 		/* ask for key */
 		snprintf(prompt, sizeof(prompt), _("Select (default %c): "), dft);
-		rc = get_user_reply(cxt, prompt, buf, bufsz);
+		rc = get_user_reply(prompt, buf, bufsz);
 		if (rc)
 			return rc;
 		if (!*buf) {
@@ -249,7 +274,7 @@ static int ask_number(struct fdisk_context *cxt,
 				q, low, high);
 
 	do {
-		int rc = get_user_reply(cxt, prompt, buf, bufsz);
+		int rc = get_user_reply(prompt, buf, bufsz);
 		uint64_t num;
 
 		if (rc)
@@ -312,7 +337,7 @@ static int ask_offset(struct fdisk_context *cxt,
 		char sig = 0, *p;
 		int pwr = 0;
 
-		int rc = get_user_reply(cxt, prompt, buf, bufsz);
+		int rc = get_user_reply(prompt, buf, bufsz);
 		if (rc)
 			return rc;
 		if (!*buf && dflt >= low && dflt <= high)
@@ -414,7 +439,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		do {
 			int x;
 			fputs(fdisk_ask_get_query(ask), stdout);
-			rc = get_user_reply(cxt, _(" [Y]es/[N]o: "), buf, sizeof(buf));
+			rc = get_user_reply(_(" [Y]es/[N]o: "), buf, sizeof(buf));
 			if (rc)
 				break;
 			x = rpmatch(buf);
@@ -430,7 +455,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		char prmt[BUFSIZ];
 		snprintf(prmt, sizeof(prmt), "%s: ", fdisk_ask_get_query(ask));
 		fputc('\n', stdout);
-		rc = get_user_reply(cxt, prmt, buf, sizeof(buf));
+		rc = get_user_reply(prmt, buf, sizeof(buf));
 		if (rc == 0)
 			fdisk_ask_string_set_result(ask, xstrdup(buf));
 		DBG(ASK, ul_debug("string ask: reply '%s' [rc=%d]", buf, rc));
@@ -459,7 +484,7 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 		_("Partition type (type L to list all types): ");
 	do {
 		char buf[256];
-		int rc = get_user_reply(cxt, q, buf, sizeof(buf));
+		int rc = get_user_reply(q, buf, sizeof(buf));
 
 		if (rc)
 			break;
@@ -982,6 +1007,7 @@ int main(int argc, char **argv)
 			" be used with one specified device only."));
 
 	colors_init(colormode, "fdisk");
+	is_interactive = isatty(STDIN_FILENO);
 
 	switch (act) {
 	case ACT_LIST:

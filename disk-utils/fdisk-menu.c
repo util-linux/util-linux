@@ -423,11 +423,24 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 		prompt = _("Command (m for help): ");
 
 	fputc('\n',stdout);
-	rc = get_user_reply(cxt, prompt, buf, sizeof(buf));
-	if (rc)
-		return rc;
+	rc = get_user_reply(prompt, buf, sizeof(buf));
 
-	key = buf[0];
+	if (rc == -ECANCELED) {
+		/* Map ^C and ^D in main menu to 'q' */
+		if (is_interactive
+		    && fdisk_label_is_changed(fdisk_get_label(cxt, NULL))) {
+			rc = get_user_reply(
+				_("\nDo you really want to quit? "),
+				buf, sizeof(buf));
+			if (rc || !rpmatch(buf))
+				return 0;
+		}
+		key = 'q';
+	} else if (rc) {
+		return rc;
+	} else
+		key = buf[0];
+
 	ent = get_fdisk_menu_entry(cxt, key, &menu);
 	if (!ent) {
 		fdisk_warnx(cxt, _("%c: unknown command"), key);
