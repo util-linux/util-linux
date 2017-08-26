@@ -6,7 +6,7 @@ _prlimit_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-p'|'--pid')
-			PIDS=$(for I in /proc/[0-9]*; do echo ${I##"/proc/"}; done)
+			PIDS=$(cd /proc && echo [0-9]*)
 			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
 			return 0
 			;;

@@ -25,7 +25,7 @@ _taskset_module()
 			# setting an affinity the optarg has to be cpu
 			# mask.  The following is good only for getting
 			# affinity.
-			PIDS=$(for I in /proc/[0-9]*; do echo ${I##"/proc/"}; done)
+			PIDS=$(cd /proc && echo [0-9]*)
 			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
 			return 0
 			;;

@@ -15,7 +15,7 @@ _nsenter_module()
 			;;
 		'-t'|'--target')
 			local PIDS
-			PIDS=$(for I in /proc/[0-9]*; do echo ${I##"/proc/"}; done)
+			PIDS=$(cd /proc && echo [0-9]*)
 			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
 			return 0
 			;;
