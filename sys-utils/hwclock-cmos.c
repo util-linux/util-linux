@@ -277,10 +277,9 @@ static int synchronize_to_clock_tick_cmos(const struct hwclock_control *ctl
 static int read_hardware_clock_cmos(const struct hwclock_control *ctl
 				    __attribute__((__unused__)), struct tm *tm)
 {
-	bool got_time = FALSE;
 	unsigned char status = 0, pmbit = 0;
 
-	while (!got_time) {
+	while (1) {
 		/*
 		 * Bit 7 of Byte 10 of the Hardware Clock value is the
 		 * Update In Progress (UIP) bit, which is on while and 244
@@ -310,7 +309,7 @@ static int read_hardware_clock_cmos(const struct hwclock_control *ctl
 			 * consider this a good clock read .
 			 */
 			if (tm->tm_sec == hclock_read(0))
-				got_time = TRUE;
+				break;
 		}
 		/*
 		 * Yes, in theory we could have been running for 60 seconds
@@ -403,16 +402,13 @@ static struct clock_ops cmos_interface = {
 };
 
 /*
- * return &cmos if cmos clock present, NULL otherwise choose this
- * construction to avoid gcc messages about unused variables
+ * return &cmos if cmos clock present, NULL otherwise.
  */
 struct clock_ops *probe_for_cmos_clock(void)
 {
-	static const int have_cmos =
 #if defined(__i386__) || defined(__x86_64__)
-	    TRUE;
+	return &cmos_interface;
 #else
-	    FALSE;
+	return NULL;
 #endif
-	return have_cmos ? &cmos_interface : NULL;
 }

@@ -105,7 +105,7 @@ struct adjtime {
 	 * structure is not what's in the disk file (because it has been
 	 * updated since read from the disk file).
 	 */
-	bool dirty;
+	int dirty;
 	/* line 1 */
 	double drift_factor;
 	time_t last_adj_time;
@@ -170,16 +170,16 @@ static struct timeval time_inc(struct timeval addend, double increment)
 	return newtime;
 }
 
-static bool
+static int
 hw_clock_is_utc(const struct hwclock_control *ctl,
 		const struct adjtime adjtime)
 {
-	bool ret;
+	int ret;
 
 	if (ctl->utc)
-		ret = TRUE;	/* --utc explicitly given on command line */
+		ret = 1;	/* --utc explicitly given on command line */
 	else if (ctl->local_opt)
-		ret = FALSE;	/* --localtime explicitly given */
+		ret = 0;	/* --localtime explicitly given */
 	else
 		/* get info from adjtime file - default is UTC */
 		ret = (adjtime.local_utc != LOCAL);
@@ -306,10 +306,12 @@ static int synchronize_to_clock_tick(const struct hwclock_control *ctl)
  * case, we return the same fictional value mktime() does as *systime_p and
  * return *valid_p == true.
  */
-static void
+static int
 mktime_tz(const struct hwclock_control *ctl, struct tm tm,
-	  bool *valid_p, time_t *systime_p)
+	  time_t *systime_p)
 {
+	int valid;
+
 	if (ctl->universal)
 		*systime_p = timegm(&tm);
 	else
@@ -321,14 +323,14 @@ mktime_tz(const struct hwclock_control *ctl, struct tm tm,
 		 * (however, not containing valid values does _not_ imply
 		 * mktime() returns -1).
 		 */
-		*valid_p = FALSE;
+		valid = 0;
 		if (ctl->debug)
 			printf(_("Invalid values in hardware clock: "
 				 "%4d/%.2d/%.2d %.2d:%.2d:%.2d\n"),
 			       tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
 			       tm.tm_hour, tm.tm_min, tm.tm_sec);
 	} else {
-		*valid_p = TRUE;
+		valid = 1;
 		if (ctl->debug)
 			printf(_
 			       ("Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = "
@@ -336,6 +338,7 @@ mktime_tz(const struct hwclock_control *ctl, struct tm tm,
 			       tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min,
 			       tm.tm_sec, (long)*systime_p);
 	}
+	return valid;
 }
 
 /*
@@ -346,7 +349,7 @@ mktime_tz(const struct hwclock_control *ctl, struct tm tm,
  */
 static int
 read_hardware_clock(const struct hwclock_control *ctl,
-		    bool * valid_p, time_t *systime_p)
+		    int *valid_p, time_t *systime_p)
 {
 	struct tm tm;
 	int err;
@@ -360,7 +363,7 @@ read_hardware_clock(const struct hwclock_control *ctl,
 		       ("Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"),
 		       tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
 		       tm.tm_min, tm.tm_sec);
-	mktime_tz(ctl, tm, valid_p, systime_p);
+	*valid_p = mktime_tz(ctl, tm, systime_p);
 
 	return 0;
 }
@@ -749,7 +752,7 @@ adjust_drift_factor(const struct hwclock_control *ctl,
 
 	adjtime_p->not_adjusted = 0;
 
-	adjtime_p->dirty = TRUE;
+	adjtime_p->dirty = 1;
 }
 
 /*
@@ -873,7 +876,7 @@ do_adjustment(const struct hwclock_control *ctl, struct adjtime *adjtime_p,
 						  -(hclocktime.tv_usec / 1E6)));
 		adjtime_p->last_adj_time = hclocktime.tv_sec;
 		adjtime_p->not_adjusted = 0;
-		adjtime_p->dirty = TRUE;
+		adjtime_p->dirty = 1;
 	}
 }
 
@@ -921,7 +924,7 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	 * The Hardware Clock gives us a valid time, or at
 	 * least something close enough to fool mktime().
 	 */
-	bool hclock_valid = FALSE;
+	int hclock_valid = 0;
 	/*
 	 * Tick synchronized time read from the Hardware Clock and
 	 * then drift corrected for all operations except --show.
@@ -938,7 +941,7 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	if ((ctl->set || ctl->systohc || ctl->adjust) &&
 	    (adjtime->local_utc == UTC) != ctl->universal) {
 		adjtime->local_utc = ctl->universal ? UTC : LOCAL;
-		adjtime->dirty = TRUE;
+		adjtime->dirty = 1;
 	}
 	/*
 	 * Negate the drift correction, because we want to 'predict' a
@@ -1379,7 +1382,7 @@ int main(int argc, char **argv)
 			hwclock_exit(&ctl, rc);
 	} else
 		/* Avoid writing adjtime file if we don't have to. */
-		adjtime.dirty = FALSE;
+		adjtime.dirty = 0;
 	ctl.universal = hw_clock_is_utc(&ctl, adjtime);
 	rc = manipulate_clock(&ctl, set_time, startup_time, &adjtime);
 	hwclock_exit(&ctl, rc);

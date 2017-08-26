@@ -53,8 +53,6 @@ struct clock_ops {
 extern struct clock_ops *probe_for_cmos_clock(void);
 extern struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl);
 
-typedef int bool;
-
 /* hwclock.c */
 extern int debug;
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
