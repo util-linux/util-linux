@@ -165,6 +165,9 @@ runuser_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_LINUXPAM
 runuser_LDADD += -lpam_misc
 endif
+if HAVE_UTIL
+runuser_LDADD += -lutil
+endif
 endif # BUILD_RUNUSER
 
 
