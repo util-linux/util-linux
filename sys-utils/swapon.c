@@ -67,6 +67,10 @@
 
 #define MAX_PAGESIZE	(64 * 1024)
 
+#ifndef UUID_STR_LEN
+#define UUID_STR_LEN	37
+#endif
+
 enum {
 	SIG_SWAPSPACE = 1,
 	SIG_SWSUSPEND
@@ -485,7 +489,7 @@ static void swap_get_info(struct swap_device *dev, const char *hdr)
 
 	if (s && *s->uuid) {
 		const unsigned char *u = s->uuid;
-		char str[37];
+		char str[UUID_STR_LEN];
 
 		snprintf(str, sizeof(str),
 			"%02x%02x%02x%02x-"

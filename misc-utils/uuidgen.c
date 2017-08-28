@@ -42,7 +42,7 @@ main (int argc, char *argv[])
 {
 	int    c;
 	int    do_type = 0;
-	char   str[37];
+	char   str[UUID_STR_LEN];
 	uuid_t uu;
 
 	static const struct option longopts[] = {

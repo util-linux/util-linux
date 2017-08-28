@@ -4,6 +4,10 @@
 #include "blkidP.h"
 #include "pt-mbr.h"
 
+#ifndef UUID_STR_LEN
+#define UUID_STR_LEN	37
+#endif
+
 extern int blkid_partitions_get_flags(blkid_probe pr);
 
 extern blkid_parttable blkid_partlist_new_parttable(blkid_partlist ls,

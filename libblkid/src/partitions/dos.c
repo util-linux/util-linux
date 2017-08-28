@@ -177,7 +177,7 @@ static int probe_dos_pt(blkid_probe pr,
 	struct dos_partition *p0, *p;
 	unsigned char *data;
 	uint32_t start, size, id;
-	char idstr[37];
+	char idstr[UUID_STR_LEN];
 
 
 	data = blkid_probe_get_sector(pr, 0);

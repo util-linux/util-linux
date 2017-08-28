@@ -41,9 +41,6 @@
 
 #include "nls.h"
 
-/* length of textual representation of UUID, including trailing \0 */
-#define UUID_STR_LEN	37
-
 /* length of binary representation of UUID */
 #define UUID_LEN	(sizeof(uuid_t))
 

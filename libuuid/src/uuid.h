@@ -99,6 +99,8 @@ extern int uuid_is_null(const uuid_t uu);
 /* parse.c */
 extern int uuid_parse(const char *in, uuid_t uu);
 
+#define UUID_STR_LEN	37
+
 /* unparse.c */
 extern void uuid_unparse(const uuid_t uu, char *out);
 extern void uuid_unparse_lower(const uuid_t uu, char *out);
