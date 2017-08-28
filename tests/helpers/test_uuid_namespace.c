@@ -7,7 +7,7 @@
 static void get_template(const char *ns)
 {
 	const uuid_t *uuidptr;
-	char buf[37];
+	char buf[UUID_STR_LEN];
 
 	uuidptr = uuid_get_template(ns);
 	if (uuidptr == NULL)

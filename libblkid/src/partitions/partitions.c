@@ -166,7 +166,7 @@ struct blkid_struct_parttable {
 	uint64_t	offset;		/* begin of the partition table (in bytes) */
 	int		nparts;		/* number of partitions */
 	blkid_partition	parent;		/* parent of nested partition table */
-	char		id[37];		/* PT identifier (e.g. UUID for GPT) */
+	char		id[UUID_STR_LEN]; /* PT identifier (e.g. UUID for GPT) */
 
 	struct list_head t_tabs;	/* all tables */
 };
@@ -177,12 +177,12 @@ struct blkid_struct_partition {
 	uint64_t	size;		/* size of the partitions (512-bytes sectors) */
 
 	int		type;		/* partition type */
-	char		typestr[37];	/* partition type string (GPT and Mac) */
+	char		typestr[UUID_STR_LEN]; /* partition type string (GPT and Mac) */
 
 	unsigned long long flags;	/* partition flags / attributes */
 
 	int		partno;		/* partition number */
-	char		uuid[37];	/* UUID (when supported by PT), e.g GPT */
+	char		uuid[UUID_STR_LEN]; /* UUID (when supported by PT), e.g GPT */
 	unsigned char	name[128];	/* Partition in UTF8 name (when supported by PT), e.g. Mac */
 
 	blkid_parttable	tab;		/* partition table */
@@ -1122,7 +1122,7 @@ int blkid_partitions_set_ptuuid(blkid_probe pr, unsigned char *uuid)
 	if (!v)
 		return -ENOMEM;
 
-	v->len = 37;
+	v->len = UUID_STR_LEN;
 	v->data = calloc(1, v->len);
 	if (v->data) {
 		blkid_unparse_uuid(uuid, (char *) v->data, v->len);

@@ -768,7 +768,7 @@ int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *nam
 	if (!v)
 		return -ENOMEM;
 
-	v->len = 37;
+	v->len = UUID_STR_LEN;
 	v->data = calloc(1, v->len);
 	if (!v->data)
 		rc = -ENOMEM;

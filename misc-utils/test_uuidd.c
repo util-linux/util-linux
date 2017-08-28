@@ -247,7 +247,7 @@ static void create_nprocesses(void)
 
 static void object_dump(size_t idx, object_t *obj)
 {
-	char uuid_string[37], *p;
+	char uuid_string[UUID_STR_LEN], *p;
 
 	p = uuid_string;
 	object_uuid_to_string(obj, &p);
