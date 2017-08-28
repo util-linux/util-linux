@@ -53,8 +53,6 @@
 # include <linux/blkpg.h>
 #endif
 
-#undef HAVE_LIBREADLINE
-
 int pwipemode = WIPEMODE_AUTO;
 int device_is_used;
 int is_interactive;
@@ -141,7 +139,10 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 			rl_callback_read_char();
 			if (!reply_running && reply_line) {
 				sz = strlen(reply_line);
-				memcpy(buf, reply_line, min(sz, bufsz));
+				if (sz == 0)
+					buf[0] = '\n';
+				else
+					memcpy(buf, reply_line, min(sz, bufsz));
 				buf[bufsz - 1] = '\0';
 				free(reply_line);
 				reply_line = NULL;
