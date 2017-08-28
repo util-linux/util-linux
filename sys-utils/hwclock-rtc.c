@@ -6,7 +6,6 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sysexits.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
 #include <sys/time.h>
@@ -149,7 +148,7 @@ static int open_rtc_or_exit(const struct hwclock_control *ctl)
 
 	if (rtc_fd < 0) {
 		warn(_("cannot open rtc device"));
-		hwclock_exit(ctl, EX_OSFILE);
+		hwclock_exit(ctl, EXIT_FAILURE);
 	}
 	return rtc_fd;
 }
@@ -356,7 +355,7 @@ static int set_hardware_clock_rtc(const struct hwclock_control *ctl,
 	if (rc == -1) {
 		warn(_("ioctl(%s) to %s to set the time failed"),
 			ioctlname, rtc_dev_name);
-		hwclock_exit(ctl, EX_IOERR);
+		hwclock_exit(ctl, EXIT_FAILURE);
 	}
 
 	if (ctl->debug)

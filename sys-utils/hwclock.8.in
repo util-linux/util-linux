@@ -917,6 +917,14 @@ timescale. The zoneinfo database must be configured to use either posix
 or 'right', as described above, or by assigning a database path to the
 .SB TZDIR
 environment variable.
+.SH EXIT STATUS
+One of the following exit values will be returned:
+.TP
+.BR EXIT_SUCCESS " ('0' on POSIX systems)"
+Successful program execution.
+.TP
+.BR EXIT_FAILURE " ('1' on POSIX systems)"
+The operation failed or the command syntax was not valid.
 .SH ENVIRONMENT
 .TP
 .B TZ
