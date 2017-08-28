@@ -140,10 +140,10 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 			if (!reply_running && reply_line) {
 				sz = strlen(reply_line);
 				if (sz == 0)
-					buf[0] = '\n';
+					buf[sz++] = '\n';
 				else
 					memcpy(buf, reply_line, min(sz, bufsz));
-				buf[bufsz - 1] = '\0';
+				buf[min(sz, bufsz - 1)] = '\0';
 				free(reply_line);
 				reply_line = NULL;
 			}
@@ -168,7 +168,7 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	for (p = buf; *p && !isgraph(*p); p++);	/* get first non-blank */
 
 	if (p > buf)
-		memmove(buf, p, p - buf);	/* remove blank space */
+		memmove(buf, p, strlen(p) + 1);	/* remove blank space */
 	sz = strlen(buf);
 	if (sz && *(buf + sz - 1) == '\n')
 		*(buf + sz - 1) = '\0';
