@@ -97,7 +97,6 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	struct pollfd fds[] = {
 		{ .fd = fileno(stdin), .events = POLLIN }
 	};
-	char *p;
 	size_t sz;
 	int ret = 0;
 
@@ -165,11 +164,7 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	/*
 	 * cleanup the reply
 	 */
-	for (p = buf; *p && !isgraph(*p); p++);	/* get first non-blank */
-
-	if (p > buf)
-		memmove(buf, p, strlen(p) + 1);	/* remove blank space */
-	sz = strlen(buf);
+	sz = ltrim_whitespace((unsigned char *) buf);
 	if (sz && *(buf + sz - 1) == '\n')
 		*(buf + sz - 1) = '\0';
 

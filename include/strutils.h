@@ -213,7 +213,7 @@ static inline size_t ltrim_whitespace(unsigned char *str)
 
 	len = strlen((char *) p);
 
-	if (len && p > str)
+	if (p > str)
 		memmove(str, p, len + 1);
 
 	return len;
