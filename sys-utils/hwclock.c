@@ -1379,8 +1379,8 @@ hwclock_exit(const struct hwclock_control *ctl
 		audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,
 				       "op=change-system-time", NULL, NULL, NULL,
 				       status);
-		close(hwaudit_fd);
 	}
+	close(hwaudit_fd);
 #endif
 	exit(status);
 }
