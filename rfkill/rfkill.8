@@ -1,0 +1,38 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.TH RFKILL 8 "July 10, 2009"
+.SH NAME
+rfkill \- tool for enabling and disabling wireless devices
+.SH SYNOPSIS
+.B rfkill
+.RI [ options ] " command"
+.SH OPTIONS
+.TP
+.B \-\-version
+Show the version of rfkill.
+.SH COMMANDS
+.TP
+.B help
+Show rfkill's built-in help text.
+.TP
+.B event
+Listen for rfkill events and display them on stdout.
+.TP
+.B list [type]
+List the current state of all available rfkill-using devices,
+or just all of the given type.
+.TP
+.BI block " index|type"
+Disable the device corresponding to the given index.
+\fItype\fR is one of "all", "wifi", "wlan", "bluetooth", "uwb",
+"ultrawideband", "wimax", "wwan", "gps", "fm" or "nfc".
+.TP
+.BI unblock " index|type"
+Enable the device corresponding to the given index. If the device is
+hard-blocked, e.g. via a hardware switch, it will remain unavailable though
+it is now soft-unblocked.
+.SH AUTHORS
+rfkill was originally written by Johannes Berg <johannes@sipsolutions.net>
+and Marcel Holtmann <marcel@holtmann.org>.
+.PP
+This manual page was written by Darren Salt <linux@youmustbejoking.demon.co.uk>,
+for the Debian project (and may be used by others).

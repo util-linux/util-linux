@@ -1,0 +1,5 @@
+version.c
+*.o
+rfkill
+*~
+*.gz
