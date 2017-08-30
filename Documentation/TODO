@@ -154,9 +154,6 @@ libblkid
 libfdisk
 --------
 
- - (!) use fputs_quoted() when print partition name= and allow to use \x%02x
-       for input to escape unprintable chars and quotes.
-
  - add support for Apple Partition Map (see libblkid/src/partitions/mac.c)
    http://en.wikipedia.org/wiki/Apple_Partition_Map
 
