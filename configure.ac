@@ -445,6 +445,7 @@ AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
 AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=no])
 AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 AC_CHECK_FUNCS([updwtmpx updwtmpx], [have_gnu_utmpx=yes], [have_gnu_utmpx=no])
+AC_CHECK_FUNCS([getusershell], [have_getusershell=yes],[have_getusershell=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 
@@ -1813,6 +1814,7 @@ AC_ARG_ENABLE([chfn-chsh],
 )
 UL_BUILD_INIT([chfn_chsh])
 UL_REQUIRES_HAVE([chfn_chsh], [shadow_h], [shadow.h header])
+UL_REQUIRES_HAVE([chfn_chsh], [getusershell], [getusershell function])
 
 AS_IF([test "x$enable_chfn_chsh_password" = xyes -o "x$have_user" = xyes], [
   UL_REQUIRES_HAVE([chfn_chsh], [security_pam_appl_h], [PAM header file])
