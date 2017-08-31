@@ -454,15 +454,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw              use the raw output format\n"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	print_usage_help_options(24);
+	printf(USAGE_HELP_OPTIONS(24));
 
-	fputs(USAGE_SEPARATOR, stdout);
-	fputs(_("Available columns:\n"), stdout);
+	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(stdout, " %-6s  %s\n", infos[i].name, _(infos[i].help));
 
-	fputs(USAGE_SEPARATOR, stdout);
-	fputs(_("Commands:\n"), stdout);
+	fputs(USAGE_COMMANDS, stdout);
+
 	/*
 	 * TRANSLATORS: command names should not be translated, explaining
 	 * them as additional field after identifer is fine, for example
