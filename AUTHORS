@@ -51,6 +51,9 @@ AUTHORS (merged projects & commands):
       runuser:         [derived from coreutils su(1)]
                        Karel Zak <kzak@redhat.com>
       resizepart:      Vivek Goyal <vgoyal@redhat.com>
+      rfkill:          Johannes Berg <johannes@sipsolutions.net>
+                       Marcel Holtmann <marcel@holtmann.org>
+                       Tim Gardner <tim.gardner@canonical.com>
       rtcwake:         David Brownell <david-b@pacbell.net>
                        Bernhard Walle <bwalle@suse.de>
       schedutils:      Robert Love <rlove@rlove.org>
@@ -190,6 +193,7 @@ CONTRIBUTORS:
       Daniel Stodden <daniel.stodden@googlemail.com>
       Daniel Thumim <dthumim@mit.edu>
       Daniel Trebbien <dtrebbien@gmail.com>
+      Darren Salt <linux@youmustbejoking.demon.co.uk>
       Dave Reisner <dreisner@archlinux.org>
       David Brownell <david-b@pacbell.net>
       David Holland <dholland@hcs.harvard.edu>
@@ -317,9 +321,11 @@ CONTRIBUTORS:
       Jindrich Makovicka <makovick@gmail.com>
       Jiro SEKIBA <jir@unicus.jp>
       Joe Hansen <joedalton2@yahoo.dk>
+      Johannes Berg <johannes@sipsolutions.net>
       John Keeping <john.keeping@lineone.net>
       John Lindgren <john.lindgren@tds.net>
       John Paul Morrison <jmorriso@rflab.ee.ubc.ca>
+      John W. Linville <linville@tuxdriver.com>
       Jonathan Liu <net147@gmail.com>
       Jon Grant <jg@jguk.org>
       Jon Ringle <jon@ringle.org>
@@ -364,6 +370,7 @@ CONTRIBUTORS:
       Mantas Mikulėnas <grawity@gmail.com>
       Marc-Antoine Perennou <Marc-Antoine@Perennou.com>
       Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+      Marcel Holtmann <marcel@holtmann.org>
       Marco Colombo <m.colombo@ed.ac.uk>
       Marco d'Itri <md@Linux.IT>
       Marek Michalkiewicz <marekm@i17linuxb.ists.pwr.wroc.pl>
@@ -506,6 +513,7 @@ CONTRIBUTORS:
       Rui Zhao (renyuneyun) <renyuneyun@gmail.com>
       Sami Kerola <kerolasa@iki.fi>
       Sami Liedes <sami.liedes@iki.fi>
+      Samuel Ortiz <sameo@linux.intel.com>
       Samuel Thibault <samuel.thibault@ens-lyon.org>
       Sam Varshavchik <mrsam@courier-mta.com>
       Sander van Malssen <svm@kozmix.ow.nl>
@@ -560,10 +568,12 @@ CONTRIBUTORS:
       Tilman Schmidt <tilman@imap.cc>
       Timo Juhani Lindfors <timo.lindfors@iki.fi>
       Timo Warns <Warns@Pre-Sense.DE>
+      Tim Gardner <tim.gardner@canonical.com>
       Tim Waugh <twaugh@redhat.com>
       Tobias Klauser <tklauser@distanz.ch>
       Tobias Stoeckmann <tobias@stoeckmann.org>
       Tom Gundersen <teg@jklm.no>
+      Tomas Winkler <tomas.winkler@intel.com>
       Tomislav Krznar <tomislav.krznar@gmail.com>
       Tommi Kyntola <kynde@iki.fi>
       Tommy Thorn

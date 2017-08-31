@@ -59,6 +59,14 @@ dist_man_MANS += sys-utils/renice.1
 renice_SOURCES = sys-utils/renice.c
 endif
 
+if BUILD_RFKILL
+usrbin_exec_PROGRAMS += rfkill
+dist_man_MANS += sys-utils/rfkill.8
+rfkill_SOURCES = sys-utils/rfkill.c
+rfkill_LDADD = $(LDADD) libcommon.la libsmartcols.la
+rfkill_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+endif
+
 if BUILD_SETSID
 usrbin_exec_PROGRAMS += setsid
 dist_man_MANS += sys-utils/setsid.1
