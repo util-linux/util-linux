@@ -56,17 +56,17 @@ struct wipe_desc {
 
 	struct wipe_desc	*next;
 
-	unsigned int	zap : 1,
-			on_disk : 1,
+	unsigned int	on_disk : 1,
 			is_parttable : 1;
 
 };
 
 struct wipe_control {
 	const char	*devname;
-	const char	*type_pattern;
+	const char	*type_pattern;		/* -t <pattern> */
 
 	struct libscols_table *outtab;
+	struct wipe_desc *offsets;		/* -o <offset> -o <offset> ... */
 
 	unsigned int	noact : 1,
 			all : 1,
@@ -257,74 +257,90 @@ static void add_to_output(struct wipe_control *ctl, struct wipe_desc *wp)
 		fill_table_row(ctl, wp);
 }
 
-static struct wipe_desc *
-add_offset(struct wipe_desc *wp0, loff_t offset, int zap)
+/* Allocates a new wipe_desc and add to the wp0 if not NULL */
+static struct wipe_desc *add_offset(struct wipe_desc **wp0, loff_t offset)
 {
-	struct wipe_desc *wp = wp0;
+	struct wipe_desc *wp, *last = NULL;
 
-	while (wp) {
-		if (wp->offset == offset)
-			return wp;
-		wp = wp->next;
+	if (wp0) {
+		/* check if already exists */
+		for (wp = *wp0; wp; wp = wp->next) {
+			if (wp->offset == offset)
+				return wp;
+			last = wp;
+		}
 	}
 
 	wp = xcalloc(1, sizeof(struct wipe_desc));
 	wp->offset = offset;
-	wp->next = wp0;
-	wp->zap = zap ? 1 : 0;
+	wp->next = NULL;
+
+	if (last)
+		last->next = wp;
+	if (wp0 && !*wp0)
+		*wp0 = wp;
 	return wp;
 }
 
-static struct wipe_desc *
-clone_offset(struct wipe_desc *wp0)
-{
-	struct wipe_desc *wp = NULL;
-
-	while(wp0) {
-		wp = add_offset(wp, wp0->offset, wp0->zap);
-		wp0 = wp0->next;
-	}
-
-	return wp;
-}
-
-static struct wipe_desc *
-get_desc_for_probe(struct wipe_control *ctl, struct wipe_desc *wp, blkid_probe pr, int *found)
+/* Read data from libblkid and if detected type pass -t and -o filters than:
+ * - allocates a new wipe_desc
+ * - add the new wipe_desc to wp0 list (if not NULL)
+ *
+ * The function always returns offset and len if libblkid detected something.
+ */
+static struct wipe_desc *get_desc_for_probe(struct wipe_control *ctl,
+					    struct wipe_desc **wp0,
+					    blkid_probe pr,
+					    loff_t *offset,
+					    size_t *len)
 {
 	const char *off, *type, *mag, *p, *usage = NULL;
-	size_t len;
-	loff_t offset;
+	struct wipe_desc *wp;
 	int rc, ispt = 0;
 
-	if (found)
-		*found = 0;
+	*len = 0;
 
 	/* superblocks */
 	if (blkid_probe_lookup_value(pr, "TYPE", &type, NULL) == 0) {
 		rc = blkid_probe_lookup_value(pr, "SBMAGIC_OFFSET", &off, NULL);
 		if (!rc)
-			rc = blkid_probe_lookup_value(pr, "SBMAGIC", &mag, &len);
+			rc = blkid_probe_lookup_value(pr, "SBMAGIC", &mag, len);
 		if (rc)
-			return wp;
+			return NULL;
 
 	/* partitions */
 	} else if (blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL) == 0) {
 		rc = blkid_probe_lookup_value(pr, "PTMAGIC_OFFSET", &off, NULL);
 		if (!rc)
-			rc = blkid_probe_lookup_value(pr, "PTMAGIC", &mag, &len);
+			rc = blkid_probe_lookup_value(pr, "PTMAGIC", &mag, len);
 		if (rc)
-			return wp;
+			return NULL;
 		usage = N_("partition-table");
 		ispt = 1;
 	} else
-		return wp;
+		return NULL;
 
+	*offset = strtoll(off, NULL, 10);
+
+	/* Filter out by -t <type> */
 	if (ctl->type_pattern && !match_fstype(type, ctl->type_pattern))
-		return wp;
+		return NULL;
 
-	offset = strtoll(off, NULL, 10);
+	/* Filter out by -o <offset> */
+	if (ctl->offsets) {
+		struct wipe_desc *w = NULL;
 
-	wp = add_offset(wp, offset, 0);
+		for (w = ctl->offsets; w; w = w->next) {
+			if (w->offset == *offset)
+				break;
+		}
+		if (!w)
+			return NULL;
+
+		w->on_disk = 1; /* mark as "found" */
+	}
+
+	wp = add_offset(wp0, *offset);
 	if (!wp)
 		return NULL;
 
@@ -335,9 +351,9 @@ get_desc_for_probe(struct wipe_control *ctl, struct wipe_desc *wp, blkid_probe p
 	wp->on_disk = 1;
 	wp->is_parttable = ispt ? 1 : 0;
 
-	wp->magic = xmalloc(len);
-	memcpy(wp->magic, mag, len);
-	wp->len = len;
+	wp->magic = xmalloc(*len);
+	memcpy(wp->magic, mag, *len);
+	wp->len = *len;
 
 	if (blkid_probe_lookup_value(pr, "LABEL", &p, NULL) == 0)
 		wp->label = xstrdup(p);
@@ -345,8 +361,6 @@ get_desc_for_probe(struct wipe_control *ctl, struct wipe_desc *wp, blkid_probe p
 	if (blkid_probe_lookup_value(pr, "UUID", &p, NULL) == 0)
 		wp->uuid = xstrdup(p);
 
-	if (found)
-		*found = 1;
 	return wp;
 }
 
@@ -392,34 +406,33 @@ error:
 	err(EXIT_FAILURE, _("error: %s: probing initialization failed"), devname);
 }
 
-static struct wipe_desc *
-read_offsets(struct wipe_control *ctl, struct wipe_desc *wp)
+static struct wipe_desc *read_offsets(struct wipe_control *ctl)
 {
 	blkid_probe pr = new_probe(ctl->devname, 0);
+	struct wipe_desc *wp0 = NULL;
 
 	if (!pr)
 		return NULL;
 
 	while (blkid_do_probe(pr) == 0) {
-		int found = 0;
+		size_t len = 0;
+		loff_t offset = 0;
 
-		wp = get_desc_for_probe(ctl, wp, pr, &found);
-		if (!wp)
-			break;
+		/* add a new offset to wp0 */
+		get_desc_for_probe(ctl, &wp0, pr, &offset, &len);
 
 		/* hide last detected signature and scan again */
-		if (found) {
-			blkid_probe_hide_range(pr, wp->offset, wp->len);
+		if (len) {
+			blkid_probe_hide_range(pr, offset, len);
 			blkid_probe_step_back(pr);
 		}
 	}
 
 	blkid_free_probe(pr);
-	return wp;
+	return wp0;
 }
 
-static void
-free_wipe(struct wipe_desc *wp)
+static void free_wipe(struct wipe_desc *wp)
 {
 	while (wp) {
 		struct wipe_desc *next = wp->next;
@@ -493,23 +506,21 @@ static void rereadpt(int fd, const char *devname)
 }
 #endif
 
-static struct wipe_desc *
-do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
+static int do_wipe(struct wipe_control *ctl)
 {
 	int mode = O_RDWR, reread = 0, need_force = 0;
 	blkid_probe pr;
-	struct wipe_desc *w, *wp0;
-	int zap = ctl->all ? 1 : wp->zap;
 	char *backup = NULL;
+	struct wipe_desc *w;
 
 	if (!ctl->force)
 		mode |= O_EXCL;
 
 	pr = new_probe(ctl->devname, mode);
 	if (!pr)
-		return NULL;
+		return -errno;
 
-	if (zap && ctl->backup) {
+	if (ctl->backup) {
 		const char *home = getenv ("HOME");
 		char *tmp = xstrdup(ctl->devname);
 
@@ -519,29 +530,14 @@ do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
 		free(tmp);
 	}
 
-	/* wp0 is the list of wanted offsets */
-	wp0 = clone_offset(wp);
-
 	while (blkid_do_probe(pr) == 0) {
 		int wiped = 0;
+		size_t len = 0;
+		loff_t offset = 0;
+		struct wipe_desc *wp;
 
-		wp = get_desc_for_probe(ctl, wp, pr, NULL);
+		wp = get_desc_for_probe(ctl, NULL, pr, &offset, &len);
 		if (!wp)
-			break;
-
-		/* Check if offset is in provided list */
-		w = wp0;
-		while(w && w->offset != wp->offset)
-			w = w->next;
-
-		if (wp0 && !w)
-			goto done;
-
-		/* Mark done if found in provided list */
-		if (w)
-			w->on_disk = wp->on_disk;
-
-		if (!wp->on_disk)
 			goto done;
 
 		if (!ctl->force
@@ -553,16 +549,14 @@ do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
 			goto done;
 		}
 
-		if (zap) {
-			if (backup)
-				do_backup(wp, backup);
-			do_wipe_real(ctl, pr, wp);
-			if (wp->is_parttable)
-				reread = 1;
-			wiped = 1;
-		}
+		if (backup)
+			do_backup(wp, backup);
+		do_wipe_real(ctl, pr, wp);
+		if (wp->is_parttable)
+			reread = 1;
+		wiped = 1;
 	done:
-		if (!wiped) {
+		if (!wiped && len) {
 			/* if the offset has not been wiped (probably because
 			 * filtered out by -t or -o) we need to hide it for
 			 * libblkid to try another magic string for the same
@@ -570,13 +564,13 @@ do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
 			 * another superblock. Don't forget that the same
 			 * superblock could be detected by more magic strings
 			 * */
-			blkid_probe_hide_range(pr, wp->offset, wp->len);
+			blkid_probe_hide_range(pr, offset, len);
 			blkid_probe_step_back(pr);
 		}
-
+		free_wipe(wp);
 	}
 
-	for (w = wp0; w != NULL; w = w->next) {
+	for (w = ctl->offsets; w; w = w->next) {
 		if (!w->on_disk && !ctl->quiet)
 			warnx(_("%s: offset 0x%jx not found"),
 					ctl->devname, (uintmax_t)w->offset);
@@ -594,10 +588,8 @@ do_wipe(struct wipe_control *ctl, struct wipe_desc *wp)
 
 	close(blkid_probe_get_fd(pr));
 	blkid_free_probe(pr);
-	free_wipe(wp0);
 	free(backup);
-
-	return wp;
+	return 0;
 }
 
 
@@ -640,8 +632,7 @@ int
 main(int argc, char **argv)
 {
 	struct wipe_control ctl = { .devname = NULL };
-	struct wipe_desc *wp0 = NULL;
-	int c, noffsets = 0;
+	int c;
 	char *outarg = NULL;
 
 	static const struct option longopts[] = {
@@ -702,9 +693,8 @@ main(int argc, char **argv)
 			ctl.noact = 1;
 			break;
 		case 'o':
-			wp0 = add_offset(wp0, strtosize_or_err(optarg,
-					 _("invalid offset argument")), 1);
-			noffsets++;
+			add_offset(&ctl.offsets, strtosize_or_err(optarg,
+					 _("invalid offset argument")));
 			break;
 		case 'p':
 			ctl.parsable = 1;
@@ -730,10 +720,10 @@ main(int argc, char **argv)
 
 	}
 
-	if (ctl.backup && !(ctl.all || noffsets))
+	if (ctl.backup && !(ctl.all || ctl.offsets))
 		warnx(_("The --backup option is meaningless in this context"));
 
-	if (!ctl.all && !noffsets) {
+	if (!ctl.all && !ctl.offsets) {
 		/*
 		 * Print only
 		 */
@@ -760,11 +750,13 @@ main(int argc, char **argv)
 		init_output(&ctl);
 
 		while (optind < argc) {
+			struct wipe_desc *wp;
+
 			ctl.devname = argv[optind++];
-			wp0 = read_offsets(&ctl, NULL);
-			if (wp0)
-				add_to_output(&ctl, wp0);
-			free_wipe(wp0);
+			wp = read_offsets(&ctl);
+			if (wp)
+				add_to_output(&ctl, wp);
+			free_wipe(wp);
 		}
 		finalize_output(&ctl);
 	} else {
@@ -772,11 +764,8 @@ main(int argc, char **argv)
 		 * Erase
 		 */
 		while (optind < argc) {
-			struct wipe_desc *wp = clone_offset(wp0);
-
 			ctl.devname = argv[optind++];
-			wp = do_wipe(&ctl, wp);
-			free_wipe(wp);
+			do_wipe(&ctl);
 		}
 	}
 
