@@ -141,24 +141,24 @@ static int rfkill_event(void)
 	char date_buf[ISO_8601_BUFSIZ];
 	struct pollfd p;
 	ssize_t len;
-	int fd, n, ret = 0;
+	int fd, n;
 
 	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
 	if (fd < 0) {
 		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
-		return 1;
+		return -errno;
 	}
 
 	memset(&p, 0, sizeof(p));
 	p.fd = fd;
 	p.events = POLLIN | POLLHUP;
 
+	/* interrupted by signal only */
 	while (1) {
 		n = poll(&p, 1, -1);
 		if (n < 0) {
 			warn(_("failed to poll %s"), _PATH_DEV_RFKILL);
-			ret = 1;
-			break;
+			goto failed;
 		}
 
 		if (n == 0)
@@ -167,13 +167,11 @@ static int rfkill_event(void)
 		len = read(fd, &event, sizeof(event));
 		if (len < 0) {
 			warn(_("cannot read %s"), _PATH_DEV_RFKILL);
-			ret = 1;
-			break;
+			goto failed;
 		}
 
 		if (len < RFKILL_EVENT_SIZE_V1) {
 			warnx(_("wrong size of rfkill event: %zu < %d"), len, RFKILL_EVENT_SIZE_V1);
-			ret = 1;
 			continue;
 		}
 		gettimeofday(&tv, NULL);
@@ -189,8 +187,9 @@ static int rfkill_event(void)
 		fflush(stdout);
 	}
 
+failed:
 	close(fd);
-	return ret;
+	return -1;
 }
 
 static const char *get_name_or_type(uint32_t idx, int type)
@@ -331,28 +330,27 @@ static int rfkill_list(struct control const *const ctrl, const char *param)
 		id = rfkill_id_to_type(param);
 		if (id.result == RFKILL_IS_INVALID) {
 			warnx(_("invalid identifier: %s"), param);
-			return 1;
+			return -EINVAL;
 		}
 	}
 
 	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
 	if (fd < 0) {
 		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
-		return 1;
+		return -errno;
 	}
 
 	if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
 		warn(_("cannot set non-blocking %s"), _PATH_DEV_RFKILL);
 		close(fd);
-		return 1;
+		return -errno;
 	}
 
 	while (1) {
 		len = read(fd, &event, sizeof(event));
 		if (len < 0) {
-			if (errno == EAGAIN)
-				break;
-			warn(_("cannot read %s"), _PATH_DEV_RFKILL);
+			if (errno != EAGAIN)
+				warn(_("cannot read %s"), _PATH_DEV_RFKILL);
 			break;
 		}
 
@@ -404,7 +402,7 @@ static int rfkill_block(uint8_t block, const char *param)
 	switch (id.result) {
 	case RFKILL_IS_INVALID:
 		warnx(_("invalid identifier: %s"), param);
-		return 1;
+		return -1;
 	case RFKILL_IS_TYPE:
 		event.type = id.type;
 		xasprintf(&message, "type %s", param);
@@ -425,16 +423,18 @@ static int rfkill_block(uint8_t block, const char *param)
 	if (fd < 0) {
 		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
 		free(message);
-		return 1;
+		return -errno;
 	}
 
 	len = write(fd, &event, sizeof(event));
 	if (len < 0)
 		warn(_("write failed: %s"), _PATH_DEV_RFKILL);
-	openlog("rfkill", 0, LOG_USER);
-	syslog(LOG_NOTICE, "%s set for %s", block ? "block" : "unblock", message);
+	else {
+		openlog("rfkill", 0, LOG_USER);
+		syslog(LOG_NOTICE, "%s set for %s", block ? "block" : "unblock", message);
+		closelog();
+	}
 	free(message);
-	closelog();
 	return close_fd(fd);
 }
 
@@ -564,5 +564,5 @@ int main(int argc, char **argv)
 	} else
 		errtryhelp(EXIT_FAILURE);
 
-	return ret;
+	return ret ? EXIT_FAILURE : EXIT_SUCCESS;
 }
