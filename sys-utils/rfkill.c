@@ -4,6 +4,7 @@
  * Copyright 2009 Johannes Berg <johannes@sipsolutions.net>
  * Copyright 2009 Marcel Holtmann <marcel@holtmann.org>
  * Copyright 2009 Tim Gardner <tim.gardner@canonical.com>
+ * Copyright 2017 Sami Kerola <kerolasa@iki.fi>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
