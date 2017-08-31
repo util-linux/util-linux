@@ -37,6 +37,15 @@
 #include "widechar.h"
 #include "xalloc.h"
 
+
+/*
+ * NFC supported by kernel since v3.10 (year 2013); FM and another types are from
+ * year 2009 (2.6.33) or older.
+ */
+#ifndef RFKILL_TYPE_NFC
+# define RFKILL_TYPE_NFC	RFKILL_TYPE_FM + 1
+#endif
+
 struct rfkill_type_str {
 	enum rfkill_type type;
 	const char *name;
