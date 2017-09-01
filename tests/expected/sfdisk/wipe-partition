@@ -51,8 +51,8 @@ Syncing disks.
 
 =====Check content (disk)================================
 OFFSET    TYPE
-0x1fe     PMBR
-0x31ffe00 gpt
 0x200     gpt
+0x31ffe00 gpt
+0x1fe     PMBR
 
 =====Check content (partition)================================
