@@ -1061,7 +1061,7 @@ static void out_version(void)
 }
 
 static void __attribute__((__noreturn__))
-usage(const struct hwclock_control *ctl)
+usage(void)
 {
 	fputs(USAGE_HEADER, stdout);
 	printf(_(" %s [function] [option...]\n"), program_invocation_short_name);
@@ -1105,7 +1105,7 @@ usage(const struct hwclock_control *ctl)
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(22));
 	printf(USAGE_MAN_TAIL("hwclock(8)"));
-	hwclock_exit(ctl, EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -1301,7 +1301,7 @@ int main(int argc, char **argv)
 			out_version();
 			return 0;
 		case 'h':			/* --help */
-			usage(&ctl);
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -1317,25 +1317,25 @@ int main(int argc, char **argv)
 
 	if (ctl.update && !ctl.set && !ctl.systohc) {
 		warnx(_("--update-drift requires --set or --systohc"));
-		hwclock_exit(&ctl, EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	if (ctl.noadjfile && !ctl.utc && !ctl.local_opt) {
 		warnx(_("With --noadjfile, you must specify "
 			"either --utc or --localtime"));
-		hwclock_exit(&ctl, EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	if (ctl.set || ctl.predict) {
 		if (!ctl.date_opt) {
 		warnx(_("--date is required for --set or --predict"));
-		hwclock_exit(&ctl, EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 		}
 		if (parse_date(&when, ctl.date_opt, NULL))
 			set_time = when.tv_sec;
 		else {
 			warnx(_("invalid date '%s'"), ctl.date_opt);
-			hwclock_exit(&ctl, EXIT_FAILURE);
+			exit(EXIT_FAILURE);
 		}
 	}
 
