@@ -24,7 +24,8 @@ libcommon_la_SOURCES = \
 	lib/timeutils.c \
 	lib/ttyutils.c \
 	lib/exec_shell.c \
-	lib/strv.c
+	lib/strv.c \
+	lib/sha1.c
 
 if LINUX
 libcommon_la_SOURCES += \

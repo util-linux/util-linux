@@ -34,6 +34,15 @@ global:
 	uuid_generate_time_safe;
 } UUID_1.0;
 
+/*
+ * version(s) since util-linux.2.31
+ */
+UUID_2.31 {
+global:
+	uuid_generate_md5;
+	uuid_generate_sha1;
+	uuid_get_template;
+} UUID_1.0;
 
 /*
  * __uuid_* this is not part of the official API, this is
