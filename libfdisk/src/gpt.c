@@ -286,6 +286,10 @@ static struct fdisk_parttype gpt_parttypes[] =
 #define gpt_partition_start(_e)		le64_to_cpu((_e)->lba_start)
 #define gpt_partition_end(_e)		le64_to_cpu((_e)->lba_end)
 
+#ifndef UUID_STR_LEN
+#define UUID_STR_LEN	37
+#endif
+
 /*
  * in-memory fdisk GPT stuff
  */
@@ -368,7 +372,7 @@ static struct fdisk_parttype *gpt_partition_parttype(
 		const struct gpt_entry *e)
 {
 	struct fdisk_parttype *t;
-	char str[37];
+	char str[UUID_STR_LEN];
 	struct gpt_guid guid = e->type;
 
 	guid_to_string(&guid, str);
@@ -482,7 +486,7 @@ static inline int gpt_sizeof_ents(struct gpt_header *hdr, size_t *sz)
 
 static char *gpt_get_header_id(struct gpt_header *header)
 {
-	char str[37];
+	char str[UUID_STR_LEN];
 	struct gpt_guid guid = header->disk_guid;
 
 	guid_to_string(&guid, str);
@@ -1735,7 +1739,7 @@ static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
 {
 	struct fdisk_gpt_label *gpt;
 	struct gpt_entry *e;
-	char u_str[37];
+	char u_str[UUID_STR_LEN];
 	int rc = 0;
 	struct gpt_guid guid;
 
@@ -1805,7 +1809,7 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	e = gpt_get_entry(gpt, n);
 
 	if (pa->uuid) {
-		char new_u[37], old_u[37];
+		char new_u[UUID_STR_LEN], old_u[UUID_STR_LEN];
 		struct gpt_guid guid;
 
 		guid = e->partition_guid;
@@ -2473,7 +2477,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 {
 	int rc = 0;
 	size_t esz = 0;
-	char str[37];
+	char str[UUID_STR_LEN];
 	struct fdisk_gpt_label *gpt;
 	struct gpt_guid guid;
 

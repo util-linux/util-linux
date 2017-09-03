@@ -68,7 +68,7 @@ static int check_uuids_in_file(const char *file)
 {
 	int fd, ret = 0;
 	size_t sz;
-	char str[sizeof("01234567-89ab-cdef-0134-567890abcedf")];
+	char str[UUID_STR_LEN];
 	uuid_t uuidBits;
 
 	if ((fd = open(file, O_RDONLY)) < 0) {

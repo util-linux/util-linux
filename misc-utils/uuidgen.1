@@ -18,18 +18,41 @@ all UUIDs created on the local system,
 and among UUIDs created on other systems in the past
 and in the future.
 .PP
-There are two types of UUIDs which
+There are three types of UUIDs which
 .B uuidgen
-can generate: time-based UUIDs and random-based UUIDs.  By default
+can generate: time-based UUIDs, random-based UUIDs, and hash-based UUIDs.
+By default
 .B uuidgen
 will generate a random-based UUID if a high-quality random number
 generator is present.  Otherwise, it will choose a time-based UUID.
-It is possible to force the generation of one of these two
+It is possible to force the generation of one of these first two
 UUID types by using the
 .B \-r
 or
 .B \-t
 options.
+.PP
+The third type of UUID is generated with the
+.B \-m
+or
+.B \-s
+options (MD5 or SHA1, respectively), followed by
+.BR "\-n " \fInamespace
+and
+.BR "\-N " \fIname\fR.
+The \fInamespace\fR may either be a well-known UUID, or else
+an alias to one of the well-known UUIDs defined in RFC 4122, that is
+.BR @dns ,
+.BR @url ,
+.BR @oid ,
+or
+.BR @x500 .
+The \fIname\fR is an arbitrary string value.  The generated UUID is the
+digest of the concatentation of the namespace UUID and the name value, hashed
+with the MD5 or SHA1 algorithms.  It is, therefore, a predictable value
+which may be useful when UUIDs are being used as handles or nonces for
+more complex values or values which shouldn't be disclosed directly.
+See the RFC for more information.
 .SH OPTIONS
 .TP
 .BR \-r , " \-\-random"
@@ -47,13 +70,29 @@ Display help text and exit.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
+.TP
+.BR \-m , " \-\-md5"
+Use MD5 as the hash algorithm.
+.TP
+.BR \-s , " \-\-sha1"
+Use SHA1 as the hash algorith.
+.TP
+.BR \-n , " \-\-namespace " \fInamespace\fP
+Generate the hash with the \fInamespace\fP prefix.
+.TP
+.BR \-N , " \-\-name " \fIname\fR
+Generate the hash of the \fIname\fR.
+.TP
+.BR \-x , " \-\-hex"
+Interpret name \fIname\fR as a hexidecimal string.
 .SH "CONFORMING TO"
 OSF DCE 1.1
 .SH AUTHOR
 .B uuidgen
 was written by Andreas Dilger for libuuid.
 .SH SEE ALSO
-.BR libuuid (3)
+.BR libuuid (3),
+.B "RFC 4122"
 .SH AVAILABILITY
 The uuidgen command is part of the util-linux package and is available from
 https://www.kernel.org/pub/linux/utils/util-linux/.

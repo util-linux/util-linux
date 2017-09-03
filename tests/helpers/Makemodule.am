@@ -5,6 +5,9 @@ test_byteswap_SOURCES = tests/helpers/test_byteswap.c
 check_PROGRAMS += test_md5
 test_md5_SOURCES = tests/helpers/test_md5.c lib/md5.c
 
+check_PROGRAMS += test_sha1
+test_sha1_SOURCES = tests/helpers/test_sha1.c lib/sha1.c
+
 check_PROGRAMS += test_pathnames
 test_pathnames_SOURCES = tests/helpers/test_pathnames.c
 
@@ -17,4 +20,8 @@ test_sigreceive_LDADD = $(LDADD) libcommon.la
 
 check_PROGRAMS += test_tiocsti
 test_tiocsti_SOURCES = tests/helpers/test_tiocsti.c
+
+check_PROGRAMS += test_uuid_namespace
+test_uuid_namespace_SOURCES = tests/helpers/test_uuid_namespace.c \
+	libuuid/src/predefined.c libuuid/src/unpack.c libuuid/src/unparse.c
 

@@ -9,6 +9,10 @@
 
 #include "blkidP.h"
 
+#ifndef UUID_STR_LEN
+#define UUID_STR_LEN	37
+#endif
+
 extern const struct blkid_idinfo cramfs_idinfo;
 extern const struct blkid_idinfo swap_idinfo;
 extern const struct blkid_idinfo swsuspend_idinfo;

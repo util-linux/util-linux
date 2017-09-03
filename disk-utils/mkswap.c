@@ -132,7 +132,7 @@ static void set_uuid_and_label(const struct mkswap_control *ctl)
 			printf(_("no label, "));
 #ifdef HAVE_LIBUUID
 		if (ctl->uuid) {
-			char uuid_string[37];
+			char uuid_string[UUID_STR_LEN];
 			uuid_unparse(ctl->uuid, uuid_string);
 			printf("UUID=%s\n", uuid_string);
 		} else
