@@ -1076,7 +1076,7 @@ usage(void)
 	puts(_(" -s, --hctosys        set the system time from the RTC"));
 	puts(_(" -w, --systohc        set the RTC from the system time"));
 	puts(_("     --systz          send timescale configurations to the kernel"));
-	puts(_("     --adjust         adjust the RTC to account for systematic drift"));
+	puts(_(" -a, --adjust         adjust the RTC to account for systematic drift"));
 #if defined(__linux__) && defined(__alpha__)
 	puts(_("     --getepoch       display the RTC epoch"));
 	puts(_("     --setepoch       set the RTC epoch according to --epoch"));
@@ -1145,7 +1145,7 @@ int main(int argc, char **argv)
 		{ "show",         no_argument,       NULL, 'r'            },
 		{ "hctosys",      no_argument,       NULL, 's'            },
 		{ "utc",          no_argument,       NULL, 'u'            },
-		{ "version",      no_argument,       NULL, 'v'            },
+		{ "version",      no_argument,       NULL, 'V'            },
 		{ "systohc",      no_argument,       NULL, 'w'            },
 		{ "debug",        no_argument,       NULL, 'D'            },
 		{ "set",          no_argument,       NULL, OPT_SET        },

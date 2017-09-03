@@ -34,7 +34,7 @@ was added.  See their respective descriptions below.
 The following functions are mutually exclusive, only one can be given at
 a time.  If none is given, the default is \fB\-\-show\fR.
 .TP
-.B \-\-adjust
+.B \-a, \-\-adjust
 Add or subtract time from the Hardware Clock to account for systematic
 drift since the last time the clock was set or adjusted.  See the
 discussion below, under
