@@ -317,7 +317,7 @@ static inline int xusleep(useconds_t usec)
 #define USAGE_SEPARATOR    "\n"
 
 #define USAGE_OPTSTR_HELP     _("display this help")
-#define USAGE_OPTSTR_VERSION  _("print version")
+#define USAGE_OPTSTR_VERSION  _("display version")
 
 #define USAGE_HELP_OPTIONS(marg_dsc) \
 		"%-" #marg_dsc "s%s\n" \

@@ -1101,7 +1101,7 @@ usage(void)
 	printf(_(
 	       "     --adjfile <file> use an alternate file to %1$s\n"), _PATH_ADJTIME);
 	puts(_("     --test           dry run; use -D to view what would have happened"));
-	puts(_(" -D, --debug          use debug mode"));
+	puts(_(" -D, --debug          display more details"));
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(22));
 	printf(USAGE_MAN_TAIL("hwclock(8)"));
