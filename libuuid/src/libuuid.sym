@@ -6,7 +6,7 @@
  * The original libuuid from e2fsprogs (<=1.41.5) does not to use
  * symbol versioning -- all the original symbols are in UUID_1.0 now.
  *
- * Copyright (C) 2011-2014 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2011-2017 Kareil Zak <kzak@redhat.com>
  */
 UUID_1.0 {
 global:
@@ -34,6 +34,15 @@ global:
 	uuid_generate_time_safe;
 } UUID_1.0;
 
+/*
+ * version(s) since util-linux.2.31
+ */
+UUID_2.31 {
+global:
+	uuid_generate_md5;
+	uuid_generate_sha1;
+	uuid_get_template;
+} UUID_2.20;
 
 /*
  * __uuid_* this is not part of the official API, this is

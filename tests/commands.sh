@@ -26,6 +26,7 @@ TS_HELPER_PYLIBMOUNT_UPDATE="$top_srcdir/libmount/python/test_mount_tab_update.p
 TS_HELPER_LOGGER="$top_builddir/test_logger"
 TS_HELPER_LOGINDEFS="$top_builddir/test_logindefs"
 TS_HELPER_MD5="$top_builddir/test_md5"
+TS_HELPER_SHA1="$top_builddir/test_sha1"
 TS_HELPER_MKFS_MINIX="$top_builddir/test_mkfs_minix"
 TS_HELPER_MORE=${TS_HELPER_MORE-"$top_builddir/test_more"}
 TS_HELPER_PARTITIONS="$top_builddir/sample-partitions"
@@ -36,6 +37,7 @@ TS_HELPER_STRUTILS="$top_builddir/test_strutils"
 TS_HELPER_SYSINFO="$top_builddir/test_sysinfo"
 TS_HELPER_TIOCSTI="$top_builddir/test_tiocsti"
 TS_HELPER_UUID_PARSER="$top_builddir/test_uuid_parser"
+TS_HELPER_UUID_NAMESPACE="$top_builddir/test_uuid_namespace"
 
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"$top_builddir/addpart"}
