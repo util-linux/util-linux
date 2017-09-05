@@ -64,14 +64,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sysexits.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
-
-#define OPTUTILS_EXIT_CODE EX_USAGE
-#define XALLOC_EXIT_CODE EX_OSERR
 
 #include "c.h"
 #include "closestream.h"
@@ -192,11 +188,8 @@ hw_clock_is_utc(const struct hwclock_control *ctl,
 /*
  * Read the adjustment parameters out of the /etc/adjtime file.
  *
- * Return them as the adjtime structure <*adjtime_p>. If there is no
- * /etc/adjtime file, return defaults. If values are missing from the file,
- * return defaults for them.
- *
- * return value 0 if all OK, !=0 otherwise.
+ * Return them as the adjtime structure <*adjtime_p>. Its defaults are
+ * initialized in main().
  */
 static int read_adjtime(const struct hwclock_control *ctl,
 			struct adjtime *adjtime_p)
@@ -207,12 +200,12 @@ static int read_adjtime(const struct hwclock_control *ctl,
 	char line3[81];		/* String: third line of adjtime file */
 
 	if (access(ctl->adj_file_name, R_OK) != 0)
-		return 0;
+		return EXIT_SUCCESS;
 
 	adjfile = fopen(ctl->adj_file_name, "r");	/* open file for reading */
 	if (adjfile == NULL) {
 		warn(_("cannot open %s"), ctl->adj_file_name);
-		return EX_OSFILE;
+		return EXIT_FAILURE;
 	}
 
 	if (!fgets(line1, sizeof(line1), adjfile))
@@ -255,7 +248,7 @@ static int read_adjtime(const struct hwclock_control *ctl,
 					       UTC) ? _("UTC") : _("unknown"));
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 /*
@@ -657,10 +650,10 @@ set_system_clock(const struct hwclock_control *ctl,
 
 		if (rc) {
 			warn(_("settimeofday() failed"));
-			return  1;
+			return  EXIT_FAILURE;
 		}
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 /*
@@ -903,17 +896,11 @@ static void determine_clock_access_method(const struct hwclock_control *ctl)
 			warnx(_("Use the --debug option to see the "
 				"details of our search for an access "
 				"method."));
-		hwclock_exit(ctl, EX_SOFTWARE);
+		hwclock_exit(ctl, EXIT_FAILURE);
 	}
 }
 
-/*
- * Do all the normal work of hwclock - read, set clock, etc.
- *
- * Issue output to stdout and error message to stderr where appropriate.
- *
- * Return rc == 0 if everything went OK, rc != 0 if not.
- */
+/* Do all the normal work of hwclock - read, set clock, etc. */
 static int
 manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 		 const struct timeval startup_time, struct adjtime *adjtime)
@@ -960,14 +947,14 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 			printf(_ ("Predicted RTC: %ld\n"), hclocktime.tv_sec);
 		}
 		display_time(hclocktime);
-		return 0;
+		return EXIT_SUCCESS;
 	}
 
 	if (ctl->systz)
 		return set_system_clock(ctl, startup_time);
 
 	if (ur->get_permissions())
-		return EX_NOPERM;
+		return EXIT_FAILURE;
 
 	/*
 	 * Read and drift correct RTC time; except for RTC set functions
@@ -983,13 +970,13 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 		 * operations are invalid without it.
 		 */
 		if (synchronize_to_clock_tick(ctl))
-			return EX_IOERR;
+			return EXIT_FAILURE;
 		read_hardware_clock(ctl, &hclock_valid, &hclocktime.tv_sec);
 		gettimeofday(&read_time, NULL);
 
 		if (!hclock_valid) {
 			warnx(_("RTC read returned an invalid value."));
-			return EX_IOERR;
+			return EXIT_FAILURE;
 		}
 		/*
 		 * Calculate and apply drift correction to the Hardware Clock
@@ -1038,7 +1025,7 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	}
 	if (!ctl->noadjfile)
 		save_adjtime(ctl, adjtime);
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 /**
@@ -1074,7 +1061,7 @@ static void out_version(void)
 }
 
 static void __attribute__((__noreturn__))
-usage(const struct hwclock_control *ctl)
+usage(void)
 {
 	fputs(USAGE_HEADER, stdout);
 	printf(_(" %s [function] [option...]\n"), program_invocation_short_name);
@@ -1118,18 +1105,9 @@ usage(const struct hwclock_control *ctl)
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(22));
 	printf(USAGE_MAN_TAIL("hwclock(8)"));
-	hwclock_exit(ctl, EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
-/*
- * Returns:
- *  EX_USAGE: bad invocation
- *  EX_NOPERM: no permission
- *  EX_OSFILE: cannot open /dev/rtc or /etc/adjtime
- *  EX_IOERR: ioctl error getting or setting the time
- *  0: OK (or not)
- *  1: failure
- */
 int main(int argc, char **argv)
 {
 	struct hwclock_control ctl = { .show = 1 }; /* default op is show */
@@ -1214,7 +1192,7 @@ int main(int argc, char **argv)
 		 * have audit compiled in.
 		 */
 		warnx(_("Unable to connect to audit system"));
-		return EX_NOPERM;
+		return EXIT_FAILURE;
 	}
 #endif
 	setlocale(LC_ALL, "");
@@ -1323,15 +1301,15 @@ int main(int argc, char **argv)
 			out_version();
 			return 0;
 		case 'h':			/* --help */
-			usage(&ctl);
+			usage();
 		default:
-			errtryhelp(EX_USAGE);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
 	if (argc -= optind) {
 		warnx(_("%d too many arguments given"), argc);
-		errtryhelp(EX_USAGE);
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	if (!ctl.adj_file_name)
@@ -1339,32 +1317,32 @@ int main(int argc, char **argv)
 
 	if (ctl.update && !ctl.set && !ctl.systohc) {
 		warnx(_("--update-drift requires --set or --systohc"));
-		hwclock_exit(&ctl, EX_USAGE);
+		exit(EXIT_FAILURE);
 	}
 
 	if (ctl.noadjfile && !ctl.utc && !ctl.local_opt) {
 		warnx(_("With --noadjfile, you must specify "
 			"either --utc or --localtime"));
-		hwclock_exit(&ctl, EX_USAGE);
+		exit(EXIT_FAILURE);
 	}
 
 	if (ctl.set || ctl.predict) {
 		if (!ctl.date_opt) {
 		warnx(_("--date is required for --set or --predict"));
-		hwclock_exit(&ctl, EX_USAGE);
+		exit(EXIT_FAILURE);
 		}
 		if (parse_date(&when, ctl.date_opt, NULL))
 			set_time = when.tv_sec;
 		else {
 			warnx(_("invalid date '%s'"), ctl.date_opt);
-			hwclock_exit(&ctl, EX_USAGE);
+			exit(EXIT_FAILURE);
 		}
 	}
 
 #if defined(__linux__) && defined(__alpha__)
 	if (ctl.getepoch || ctl.setepoch) {
 		manipulate_epoch(&ctl);
-		hwclock_exit(&ctl, EX_OK);
+		hwclock_exit(&ctl, EXIT_SUCCESS);
 	}
 #endif
 
@@ -1400,9 +1378,9 @@ hwclock_exit(const struct hwclock_control *ctl
 	if (ctl->hwaudit_on && !ctl->testing) {
 		audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,
 				       "op=change-system-time", NULL, NULL, NULL,
-				       status ? 0 : 1);
-		close(hwaudit_fd);
+				       status);
 	}
+	close(hwaudit_fd);
 #endif
 	exit(status);
 }
