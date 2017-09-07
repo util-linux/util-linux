@@ -135,7 +135,6 @@ struct su_context {
 	pid_t		child;			/* fork() baby */
 
 	struct sigaction oldact[SIGNALS_IDX_COUNT];	/* original sigactions indexed by SIG*_IDX */
-	sigset_t	oldsig;			/* original signal mask */
 
 #ifdef USE_PTY
 	struct termios	stdin_attrs;		/* stdin and slave terminal runtime attributes */
@@ -144,6 +143,7 @@ struct su_context {
 	int		pty_sigfd;		/* signalfd() */
 	int		poll_timeout;
 	struct winsize	win;			/* terminal window size */
+	sigset_t	oldsig;			/* original signal mask */
 #endif
 	unsigned int runuser :1,		/* flase=su, true=runuser */
 		     runuser_uopt :1,		/* runuser -u specified */
@@ -460,7 +460,7 @@ static void pty_proxy_master(struct su_context *su)
 	 * TODO: script(1) initializes this FD before fork, good or bad idea?
 	 */
 	sigfillset(&ourset);
-	if (sigprocmask(SIG_BLOCK, &ourset, &su->oldsig)) {
+	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
 		warn(_("cannot block signals"));
 		caught_signal = true;
 		return;
@@ -735,7 +735,7 @@ static void parent_setup_signals(struct su_context *su)
 	DBG(SIG, ul_debug("initialize signals"));
 
 	sigfillset(&ourset);
-	if (sigprocmask(SIG_BLOCK, &ourset, &su->oldsig)) {
+	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
 		warn(_("cannot block signals"));
 		caught_signal = true;
 	}
@@ -800,6 +800,9 @@ static void create_watching_parent(struct su_context *su)
 
 	DBG(MISC, ul_debug("forking..."));
 #ifdef USE_PTY
+	/* no-op, just save original signal mask to oldsig */
+	sigprocmask(SIG_BLOCK, NULL, &su->oldsig);
+
 	if (su->pty)
 		pty_create(su);
 #endif
