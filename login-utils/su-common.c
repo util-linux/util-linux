@@ -273,7 +273,7 @@ static void pty_create(struct su_context *su)
 		rc = openpty(&su->pty_master, &su->pty_slave, NULL, NULL, NULL);
 
 		/* set slave attributes */
-		if (rc < 0) {
+		if (!rc) {
 			tcgetattr(su->pty_slave, &slave_attrs);
 			cfmakeraw(&slave_attrs);
 			tcsetattr(su->pty_slave, TCSANOW, &slave_attrs);
