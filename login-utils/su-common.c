@@ -133,6 +133,7 @@ struct su_context {
 	char		*old_user;		/* orginal user */
 
 	pid_t		child;			/* fork() baby */
+	int		childstatus;		/* wait() status */
 
 	struct sigaction oldact[SIGNALS_IDX_COUNT];	/* original sigactions indexed by SIG*_IDX */
 
@@ -182,10 +183,17 @@ static void init_tty(struct su_context *su)
 		get_terminal_name(NULL, &su->tty_name, &su->tty_number);
 }
 
+/*
+ * Note, this function has to be possible call more than once. If the child is
+ * already dead than it returns saved result from the previous call.
+ */
 static int wait_for_child(struct su_context *su)
 {
 	pid_t pid = (pid_t) -1;;
 	int status = 0;
+
+	if (su->child == (pid_t) -1)
+		return su->childstatus;
 
 	if (su->child != (pid_t) -1) {
 		DBG(SIG, ul_debug("waiting for child [%d]...", su->child));
@@ -212,12 +220,13 @@ static int wait_for_child(struct su_context *su)
 
 		DBG(SIG, ul_debug("child %d is dead", su->child));
 		su->child = (pid_t) -1;	/* Don't use the PID anymore! */
+		su->childstatus = status;
 	} else if (caught_signal)
 		status = caught_signal + 128;
 	else
 		status = 1;
 
-	DBG(SIG, ul_debug("status=%d", status));
+	DBG(SIG, ul_debug("child status=%d", status));
 	return status;
 }
 
@@ -844,6 +853,8 @@ static void create_watching_parent(struct su_context *su)
 		status = wait_for_child(su);
 	else
 		status = 1;
+
+	DBG(SIG, ul_debug("final child status=%d", status));
 
 	if (caught_signal && su->child != (pid_t)-1) {
 		fprintf(stderr, _("\nSession terminated, killing shell..."));
