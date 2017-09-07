@@ -442,11 +442,11 @@ static int pty_handle_signal(struct su_context *su, int fd)
 static void pty_proxy_master(struct su_context *su)
 {
 	sigset_t ourset;
-	int rc = 0, ret, ignore_stdin = 0, eof = 0;
+	int rc = 0, ret, eof = 0;
 	enum {
 		POLLFD_SIGNAL = 0,
 		POLLFD_MASTER,
-		POLLFD_STDIN	/* optional; keep it last, see ignore_stdin */
+		POLLFD_STDIN
 
 	};
 	struct pollfd pfd[] = {
@@ -490,7 +490,7 @@ static void pty_proxy_master(struct su_context *su)
 		DBG(PTY, ul_debug("calling poll()"));
 
 		/* wait for input or signal */
-		ret = poll(pfd, ARRAY_SIZE(pfd) - ignore_stdin, su->poll_timeout);
+		ret = poll(pfd, ARRAY_SIZE(pfd), su->poll_timeout);
 		errsv = errno;
 		DBG(PTY, ul_debug("poll() rc=%d", ret));
 
@@ -505,7 +505,7 @@ static void pty_proxy_master(struct su_context *su)
 			break;
 		}
 
-		for (i = 0; i < ARRAY_SIZE(pfd) - ignore_stdin; i++) {
+		for (i = 0; i < ARRAY_SIZE(pfd); i++) {
 			rc = 0;
 
 			if (pfd[i].revents == 0)
@@ -531,10 +531,7 @@ static void pty_proxy_master(struct su_context *su)
 				if ((pfd[i].revents & POLLHUP) || eof) {
 					DBG(PTY, ul_debug(" ignore FD"));
 					pfd[i].fd = -1;
-					/* according to man poll() set FD to -1 can't be used to ignore
-					 * STDIN, so let's remove the FD from pool at all */
 					if (i == POLLFD_STDIN) {
-						ignore_stdin = 1;
 						write_eof_to_child(su);
 						DBG(PTY, ul_debug("  ignore STDIN"));
 					}
