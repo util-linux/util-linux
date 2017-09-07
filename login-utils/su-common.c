@@ -196,14 +196,28 @@ static int wait_for_child(struct su_context *su)
 		return su->childstatus;
 
 	if (su->child != (pid_t) -1) {
+		/*
+		 * The "su" parent process spends all time here in waitpid(),
+		 * but "su --pty" uses pty_proxy_master() and waitpid() is only
+		 * called to pick up child status or to react to SIGSTOP.
+		 */
 		DBG(SIG, ul_debug("waiting for child [%d]...", su->child));
 		for (;;) {
 			pid = waitpid(su->child, &status, WUNTRACED);
 
 			if (pid != (pid_t) - 1 && WIFSTOPPED(status)) {
+				DBG(SIG, ul_debug(" child got SIGSTOP -- stop all session"));
 				kill(getpid(), SIGSTOP);
 				/* once we get here, we must have resumed */
 				kill(pid, SIGCONT);
+				DBG(SIG, ul_debug(" session resumed -- continue"));
+#ifdef USE_PTY
+				/* Let's go back to pty_proxy_master() */
+				if (su->pty_sigfd != -1) {
+					DBG(SIG, ul_debug(" leaving on child SIGSTOP"));
+					return 0;
+				}
+#endif
 			} else
 				break;
 		}
@@ -421,8 +435,14 @@ static int pty_handle_signal(struct su_context *su, int fd)
 	switch (info.ssi_signo) {
 	case SIGCHLD:
 		DBG(SIG, ul_debug(" get signal SIGCHLD"));
-		wait_for_child(su);
-		su->poll_timeout = 10;
+
+		/* The child terminated or stopped. Note that we ignore SIGCONT
+		 * here, because stop/cont semantic is handled by wait_for_child() */
+		if (info.ssi_code == CLD_EXITED || info.ssi_status == SIGSTOP)
+			wait_for_child(su);
+		/* The child is dead, force poll() timeout. */
+		if (su->child == (pid_t) -1)
+			su->poll_timeout = 10;
 		return 0;
 	case SIGWINCH:
 		DBG(SIG, ul_debug(" get signal SIGWINCH"));
@@ -555,6 +575,8 @@ static void pty_proxy_master(struct su_context *su)
 		}
 	}
 
+	close(su->pty_sigfd);
+	su->pty_sigfd = -1;
 	DBG(PTY, ul_debug("poll() done [signal=%d, rc=%d]", caught_signal, rc));
 }
 #endif /* USE_PTY */
