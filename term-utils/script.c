@@ -437,13 +437,13 @@ static void handle_signal(struct script_control *ctl, int fd)
 
 static void do_io(struct script_control *ctl)
 {
-	int ret, ignore_stdin = 0, eof = 0;
+	int ret, eof = 0;
 	time_t tvec = script_time((time_t *)NULL);
 	char buf[128];
 	enum {
 		POLLFD_SIGNAL = 0,
 		POLLFD_MASTER,
-		POLLFD_STDIN	/* optional; keep it last, see ignore_stdin */
+		POLLFD_STDIN
 
 	};
 	struct pollfd pfd[] = {
@@ -486,7 +486,7 @@ static void do_io(struct script_control *ctl)
 		DBG(POLL, ul_debug("calling poll()"));
 
 		/* wait for input or signal */
-		ret = poll(pfd, ARRAY_SIZE(pfd) - ignore_stdin, ctl->poll_timeout);
+		ret = poll(pfd, ARRAY_SIZE(pfd), ctl->poll_timeout);
 		errsv = errno;
 		DBG(POLL, ul_debug("poll() rc=%d", ret));
 
@@ -502,7 +502,7 @@ static void do_io(struct script_control *ctl)
 			break;
 		}
 
-		for (i = 0; i < ARRAY_SIZE(pfd) - ignore_stdin; i++) {
+		for (i = 0; i < ARRAY_SIZE(pfd); i++) {
 			if (pfd[i].revents == 0)
 				continue;
 
@@ -526,10 +526,7 @@ static void do_io(struct script_control *ctl)
 				if ((pfd[i].revents & POLLHUP) || eof) {
 					DBG(POLL, ul_debug(" ignore FD"));
 					pfd[i].fd = -1;
-					/* according to man poll() set FD to -1 can't be used to ignore
-					 * STDIN, so let's remove the FD from pool at all */
 					if (i == POLLFD_STDIN) {
-						ignore_stdin = 1;
 						write_eof_to_shell(ctl);
 						DBG(POLL, ul_debug("  ignore STDIN"));
 					}
