@@ -403,8 +403,15 @@ static void handle_signal(struct script_control *ctl, int fd)
 	switch (info.ssi_signo) {
 	case SIGCHLD:
 		DBG(SIGNAL, ul_debug(" get signal SIGCHLD"));
-		wait_for_child(ctl, 0);
-		ctl->poll_timeout = 10;
+		if (info.ssi_code == CLD_EXITED) {
+			wait_for_child(ctl, 0);
+			ctl->poll_timeout = 10;
+		} else if (info.ssi_status == SIGSTOP && ctl->child) {
+			DBG(SIGNAL, ul_debug(" child stop by SIGSTOP -- stop parent too"));
+			kill(getpid(), SIGSTOP);
+			DBG(SIGNAL, ul_debug(" resume"));
+			kill(ctl->child, SIGCONT);
+		}
 		return;
 	case SIGWINCH:
 		DBG(SIGNAL, ul_debug(" get signal SIGWINCH"));
