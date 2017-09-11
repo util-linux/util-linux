@@ -452,7 +452,7 @@ static int rfkill_block(uint8_t block, const char *param)
 		closelog();
 	}
 	free(message);
-	return close_fd(fd);
+	return close(fd);
 }
 
 static void __attribute__((__noreturn__)) usage(void)
