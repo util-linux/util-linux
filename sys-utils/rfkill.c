@@ -109,6 +109,7 @@ static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
 struct control {
+	struct libscols_table *tb;
 	unsigned int
 		json:1,
 		no_headings:1,
@@ -308,32 +309,35 @@ static void fill_table_row(struct libscols_table *tb, struct rfkill_event *event
 	}
 }
 
-static int rfkill_list(struct control const *const ctrl, const char *param)
+static void rfkill_list_init(struct control *ctrl)
 {
-	struct rfkill_id id = { .result = RFKILL_IS_ALL };
-	struct rfkill_event event;
-	ssize_t len;
-	int fd;
-	struct libscols_table *tb;
-
 	scols_init_debug(0);
-	tb = scols_new_table();
-	if (!tb)
+	ctrl->tb = scols_new_table();
+	if (!ctrl->tb)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
 
-	scols_table_enable_json(tb, ctrl->json);
-	scols_table_enable_noheadings(tb, ctrl->no_headings);
-	scols_table_enable_raw(tb, ctrl->raw);
+	scols_table_enable_json(ctrl->tb, ctrl->json);
+	scols_table_enable_noheadings(ctrl->tb, ctrl->no_headings);
+	scols_table_enable_raw(ctrl->tb, ctrl->raw);
 	{
 		size_t i;
 
 		for (i = 0; i < (size_t)ncolumns; i++) {
 			const struct colinfo *col = get_column_info(i);
 
-			if (!scols_table_new_column(tb, col->name, col->whint, col->flags))
+			if (!scols_table_new_column(ctrl->tb, col->name, col->whint, col->flags))
 				err(EXIT_FAILURE, _("failed to initialize output column"));
 		}
 	}
+}
+
+
+static int rfkill_list_fill(struct control const *ctrl, const char *param)
+{
+	struct rfkill_id id = { .result = RFKILL_IS_ALL };
+	struct rfkill_event event;
+	ssize_t len;
+	int fd;
 
 	if (param) {
 		id = rfkill_id_to_type(param);
@@ -386,12 +390,16 @@ static int rfkill_list(struct control const *const ctrl, const char *param)
 		default:
 			abort();
 		}
-		fill_table_row(tb, &event);
+		fill_table_row(ctrl->tb, &event);
 	}
 	close(fd);
-	scols_print_table(tb);
-	scols_unref_table(tb);
 	return 0;
+}
+
+static void rfkill_list_output(struct control const *ctrl)
+{
+	scols_print_table(ctrl->tb);
+	scols_unref_table(ctrl->tb);
 }
 
 static int rfkill_block(uint8_t block, const char *param)
@@ -452,7 +460,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	size_t i;
 
 	fputs(USAGE_HEADER, stdout);
-	fprintf(stdout, _(" %s [options] command [identifier]\n"), program_invocation_short_name);
+	fprintf(stdout, _(" %s [options] command [identifier ...]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(_("Tool for enabling and disabling wireless devices.\n"), stdout);
@@ -507,7 +515,7 @@ int main(int argc, char **argv)
 		{0}
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-	int ret;
+	int ret = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -553,23 +561,32 @@ int main(int argc, char **argv)
 					     ARRAY_SIZE(columns), &ncolumns,
 					     column_name_to_id) < 0)
 			return EXIT_FAILURE;
-		if (argc) {
-			argc--;
-			argv++;
+		rfkill_list_init(&ctrl);
+		if (argc < 2) {
+			if (*argv && strcmp(*argv, "list") == 0)
+				argv++;
+			ret |= rfkill_list_fill(&ctrl, *argv);
+		} else {
+			while (--argc) {
+				argv++;
+				ret |= rfkill_list_fill(&ctrl, *argv);
+			}
 		}
-		ret = rfkill_list(&ctrl, *argv);
+		rfkill_list_output(&ctrl);
 	} else if (strcmp(*argv, "event") == 0) {
 		ret = rfkill_event();
 	} else if (strcmp(*argv, "help") == 0) {
 		usage();
 	} else if (strcmp(*argv, "block") == 0 && argc > 1) {
-		argc--;
-		argv++;
-		ret = rfkill_block(1, *argv);
+		while (--argc) {
+			argv++;
+			ret |= rfkill_block(1, *argv);
+		}
 	} else if (strcmp(*argv, "unblock") == 0 && argc > 1) {
-		argc--;
-		argv++;
-		ret = rfkill_block(0, *argv);
+		while (--argc) {
+			argv++;
+			ret |= rfkill_block(0, *argv);
+		}
 	} else
 		errtryhelp(EXIT_FAILURE);
 

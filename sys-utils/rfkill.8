@@ -4,7 +4,7 @@
 rfkill \- tool for enabling and disabling wireless devices
 .SH SYNOPSIS
 .B rfkill
-.RI [ options ] " command" " [" id | type ]
+.RI [ options ] " command" " [" id | type \ ...]
 .SH OPTIONS
 .TP
 \fB\-J\fR, \fB\-\-json\fR
@@ -33,23 +33,25 @@ Display help text and exit.
 .B event
 Listen for rfkill events and display them on stdout.
 .TP
-\fBlist \fR[\fIid\fR|\fItype\fR]
+\fBlist \fR[\fIid\fR|\fItype\fR ...]
 List the current state of all available devices.  The full list has TYPE and
 ID columns that one can use to limit the scope.  It is a good idea to check
 with
 .B list
 command
-.BR id " or " type
+.IR id " or " type
 scope is appropriate before setting
 .BR block " or " unblock .
 Special
-.B all
-type string will match everything.
+.I all
+type string will match everything.  Use of multiple
+.IR id " or " type
+arguments is supported.
 .TP
-\fBblock \fBid\fR|\fBtype\fR
+\fBblock \fBid\fR|\fBtype\fR [...]
 Disable the corresponding device.
 .TP
-\fBunblock \fBid\fR|\fBtype\fR
+\fBunblock \fBid\fR|\fBtype\fR [...]
 Enable the corresponding device.  If the device is hard\-blocked, for example
 via a hardware switch, it will remain unavailable though it is now
 soft\-unblocked.
@@ -59,6 +61,8 @@ rfkill list
 rfkill block all
 .br
 rfkill unblock wlan
+.br
+rfkill block bluetooth uwb wimax wwan gps fm nfc
 .SH AUTHORS
 .B rfkill
 was originally written by
