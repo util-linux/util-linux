@@ -979,6 +979,8 @@ static void logger_stdin(struct logger_ctl *ctl)
 		if (c == '\n')	/* discard line terminator */
 			c = getchar();
 	}
+
+	free(buf);
 }
 
 static void logger_close(const struct logger_ctl *ctl)
