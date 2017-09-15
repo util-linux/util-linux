@@ -1063,6 +1063,10 @@ int mnt_context_get_umount_excode(
 			if (buf)
 				snprintf(buf, bufsz, _("not mounted"));
 			return MNT_EX_USAGE;
+		} else if (rc == -MNT_ERR_LOCK) {
+			if (buf)
+				snprintf(buf, bufsz, _("locking failed"));
+			return MNT_EX_FILEIO;
 		}
 		return mnt_context_get_generic_excode(rc, buf, bufsz,
 					_("umount failed: %m"));
@@ -1072,7 +1076,12 @@ int mnt_context_get_umount_excode(
 		 * umount(2) syscall success, but something else failed
 		 * (probably error in mtab processing).
 		 */
-		if (rc < 0)
+		if (rc == -MNT_ERR_LOCK) {
+			if (buf)
+				snprintf(buf, bufsz, _("filesystem was unmounted, but failed to update userspace mount table"));
+			return MNT_EX_FILEIO;
+
+		} else if (rc < 0)
 			return mnt_context_get_generic_excode(rc, buf, bufsz,
 				_("filesystem was unmounted, but any subsequent operation failed: %m"));
 

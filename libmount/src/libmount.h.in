@@ -184,6 +184,12 @@ enum {
  * detected overlapping loop device that cannot be re-used
  */
 #define MNT_ERR_LOOPOVERLAP 5007
+/**
+ * MNT_ERR_LOCK:
+ *
+ * failed to lock mtab/utab or so.
+ */
+#define MNT_ERR_LOCK         5008
 
 
 /*
@@ -230,7 +236,7 @@ enum {
 /**
  * MNT_EX_FILEIO:
  *
- * [u]mount(8) exit code: problems writing, locking, ... mtab/fstab
+ * [u]mount(8) exit code: problems writing, locking, ... mtab/utab
  */
 #define MNT_EX_FILEIO	16
 

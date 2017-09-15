@@ -696,7 +696,7 @@ static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 	if (lc)
 		rc = mnt_lock_file(lc);
 	if (rc)
-		return rc;
+		return -MNT_ERR_LOCK;
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
@@ -722,7 +722,7 @@ static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc
 	if (lc)
 		rc = mnt_lock_file(lc);
 	if (rc)
-		return rc;
+		return -MNT_ERR_LOCK;
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
@@ -751,7 +751,7 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 	if (lc)
 		rc = mnt_lock_file(lc);
 	if (rc)
-		return rc;
+		return -MNT_ERR_LOCK;
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
@@ -788,7 +788,7 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 	if (lc)
 		rc = mnt_lock_file(lc);
 	if (rc)
-		return rc;
+		return -MNT_ERR_LOCK;
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
@@ -885,10 +885,13 @@ int mnt_update_already_done(struct libmnt_update *upd, struct libmnt_lock *lc)
 	}
 	if (lc && upd->userspace_only)
 		mnt_lock_use_simplelock(lc, TRUE);	/* use flock */
-	if (lc)
+	if (lc) {
 		rc = mnt_lock_file(lc);
-	if (rc)
-		goto done;
+		if (rc) {
+			rc = -MNT_ERR_LOCK;
+			goto done;
+		}
+	}
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
