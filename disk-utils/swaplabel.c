@@ -51,7 +51,12 @@ static int print_info(blkid_probe pr)
 }
 
 /* Change the swap partition info */
+#ifdef HAVE_LIBUUID
 static int change_info(const char *devname, const char *label, const char *uuid)
+#else
+static int change_info(const char *devname, const char *label,
+		       const char *uuid __attribute__((__unused__)))
+#endif
 {
 	int fd;
 
