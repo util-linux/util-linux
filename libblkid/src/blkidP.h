@@ -23,6 +23,12 @@
 #include <stdarg.h>
 #include <stdint.h>
 
+#ifdef HAVE_LIBUUID
+# include <uuid.h>
+#else
+# define UUID_STR_LEN   37
+#endif
+
 #include "c.h"
 #include "bitops.h"	/* $(top_srcdir)/include/ */
 #include "blkdev.h"

@@ -286,10 +286,6 @@ static struct fdisk_parttype gpt_parttypes[] =
 #define gpt_partition_start(_e)		le64_to_cpu((_e)->lba_start)
 #define gpt_partition_end(_e)		le64_to_cpu((_e)->lba_end)
 
-#ifndef UUID_STR_LEN
-#define UUID_STR_LEN	37
-#endif
-
 /*
  * in-memory fdisk GPT stuff
  */

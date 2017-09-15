@@ -62,6 +62,8 @@ typedef unsigned char uuid_t[16];
 #define UUID_TYPE_SHIFT      4
 #define UUID_TYPE_MASK     0xf
 
+#define UUID_STR_LEN	37
+
 /* Allow UUID constants to be defined */
 #ifdef __GNUC__
 #define UUID_DEFINE(name,u0,u1,u2,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14,u15) \
@@ -98,8 +100,6 @@ extern int uuid_is_null(const uuid_t uu);
 
 /* parse.c */
 extern int uuid_parse(const char *in, uuid_t uu);
-
-#define UUID_STR_LEN	37
 
 /* unparse.c */
 extern void uuid_unparse(const uuid_t uu, char *out);

@@ -105,10 +105,6 @@
 #include <stdarg.h>
 #include <limits.h>
 
-#ifdef HAVE_LIBUUID
-# include <uuid.h>
-#endif
-
 #include "blkidP.h"
 #include "all-io.h"
 #include "sysfs.h"

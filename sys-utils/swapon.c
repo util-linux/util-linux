@@ -68,7 +68,7 @@
 #define MAX_PAGESIZE	(64 * 1024)
 
 #ifndef UUID_STR_LEN
-#define UUID_STR_LEN	37
+# define UUID_STR_LEN	37
 #endif
 
 enum {

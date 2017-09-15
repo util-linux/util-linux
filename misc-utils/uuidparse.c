@@ -55,8 +55,6 @@
 #include "uuid.h"
 #include "xalloc.h"
 
-#define UUID_STR_LEN 37
-
 /* column IDs */
 enum {
 	COL_UUID = 0,
