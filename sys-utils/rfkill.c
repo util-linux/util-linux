@@ -311,7 +311,10 @@ static void fill_table_row(struct libscols_table *tb, struct rfkill_event *event
 
 static void rfkill_list_init(struct control *ctrl)
 {
+	size_t i;
+
 	scols_init_debug(0);
+
 	ctrl->tb = scols_new_table();
 	if (!ctrl->tb)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
@@ -319,15 +322,12 @@ static void rfkill_list_init(struct control *ctrl)
 	scols_table_enable_json(ctrl->tb, ctrl->json);
 	scols_table_enable_noheadings(ctrl->tb, ctrl->no_headings);
 	scols_table_enable_raw(ctrl->tb, ctrl->raw);
-	{
-		size_t i;
 
-		for (i = 0; i < (size_t)ncolumns; i++) {
-			const struct colinfo *col = get_column_info(i);
+	for (i = 0; i < (size_t) ncolumns; i++) {
+		const struct colinfo *col = get_column_info(i);
 
-			if (!scols_table_new_column(ctrl->tb, col->name, col->whint, col->flags))
-				err(EXIT_FAILURE, _("failed to initialize output column"));
-		}
+		if (!scols_table_new_column(ctrl->tb, col->name, col->whint, col->flags))
+			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 }
 
