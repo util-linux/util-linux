@@ -45,6 +45,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <uuid.h>
 
 #include "c.h"
 #include "closestream.h"
@@ -52,7 +53,6 @@
 #include "optutils.h"
 #include "strutils.h"
 #include "timeutils.h"
-#include "uuid.h"
 #include "xalloc.h"
 
 /* column IDs */
@@ -279,8 +279,7 @@ static void print_output(struct control const *const ctrl, int argc,
 	if (i == 0) {
 		char uuid[UUID_STR_LEN];
 
-		while (scanf(" %" stringify_value(UUID_STR_LEN)
-			     "[^ \t\n]%*c", uuid) && !feof(stdin))
+		while (scanf(" %36[^ \t\n]%*c", uuid) && !feof(stdin))
 			fill_table_row(tb, uuid);
 	}
 	scols_print_table(tb);
