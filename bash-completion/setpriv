@@ -5,14 +5,14 @@ _setpriv_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'--inh-caps'|'--bounding-set')
+		'--ambient-caps'|'--inh-caps'|'--bounding-set')
 			local prefix realcur INHERIT_ALL INHERIT
 			realcur="${cur##*,}"
 			prefix="${cur%$realcur}"
 			INHERIT_ALL=$($1 --list-caps| awk '{print $1, "-" $1}')
 			for WORD in $INHERIT_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					INHERIT="$WORD $INHERIT"
+					INHERIT="$WORD ${INHERIT:-""}"
 				fi
 			done
 			compopt -o nospace
@@ -70,6 +70,7 @@ _setpriv_module()
 		-*)
 			OPTS="--dump
 				--no-new-privs
+				--ambient-caps
 				--inh-caps
 				--bounding-set
 				--ruid

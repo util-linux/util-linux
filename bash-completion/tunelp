@@ -17,7 +17,7 @@ _tunelp_module()
 			COMPREPLY=( $(compgen -W "microseconds" -- $cur) )
 			return 0
 			;;
-		'-a'|'--abort'|'-o'|'--check-status'|'-C'|'--careful'|'-T'|'--trust-irq'|'-q'|'--print-irq')
+		'-a'|'--abort'|'-o'|'--check-status'|'-C'|'--careful'|'-q'|'--print-irq')
 			COMPREPLY=( $(compgen -W "off on" -- $cur) )
 			return 0
 			;;
@@ -35,7 +35,6 @@ _tunelp_module()
 				--check-status
 				--careful
 				--status
-				--trust-irq
 				--reset
 				--print-irq
 				--help

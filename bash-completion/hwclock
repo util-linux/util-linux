@@ -27,6 +27,7 @@ _hwclock_module()
 		-*)
 			OPTS="--help
 				--show
+				--get
 				--set
 				--hctosys
 				--systohc

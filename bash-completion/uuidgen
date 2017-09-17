@@ -5,13 +5,31 @@ _uuidgen_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-n'|'--namespace')
+			COMPREPLY=( $(compgen -W "@dns @url @oid @x500 @x.500" -- "$cur") )
+			return 0
+			;;
+		'-N'|'--name')
+			COMPREPLY=( $(compgen -W "name" -- "$cur") )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
 	esac
 	case $cur in
 		-*)
-			OPTS="--random --time --version --help"
+			OPTS="
+				--random
+				--time
+				--namespace
+				--name
+				--md5
+				--sha1
+				--hex
+				--help
+				--version
+			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
