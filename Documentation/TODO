@@ -11,6 +11,27 @@ build-sys
 
 		./configure --disable-all-programs --enable-programs hwclock,lsblk		
 
+tests (!):
+---------
+
+  - add a new --enable-clang-asan to ./configure
+  - add a new --asan option to tests/run.sh
+  - rename tests/run.sh --memcheck to --valgrind
+  - rename tests/functions.sh:ts_valgrind() to ts_run()
+  - improve ts_run() to be sensitive to --asan or --valgrind (etc.)
+  - use export ASAN_OPTIONS='detect_leaks=0' by default
+  - add TS_ENABLE_MEMLEAK_CHECK=yes to tests where we want to check for
+    memory leaks
+
+    Note we don't want free-before-exit code in simple utils, so no all memory
+    leaks are relevant. We care about leaks in libs, deamons, etc.
+
+  and then we can use
+
+    $ ./configure --enable-clang-asan
+    $ cd tests
+    $ ./run.sh --asan
+
 su/runuser
 ----------
   - (!) implement pty container for all su/runuser session (something like
