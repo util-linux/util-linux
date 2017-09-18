@@ -163,12 +163,12 @@ int scols_line_move_cells(struct libscols_line *ln, size_t newn, size_t oldn)
 	/* remove old possition (move data behind oldn to oldn) */
 	if (oldn + 1 < ln->ncells)
 		memmove(ln->cells + oldn, ln->cells + oldn + 1,
-			(ln->ncells - oldn) * sizeof(struct libscols_cell));
+			(ln->ncells - oldn - 1) * sizeof(struct libscols_cell));
 
 	/* create a space for new position */
 	if (newn + 1 < ln->ncells)
 		memmove(ln->cells + newn + 1, ln->cells + newn,
-			(ln->ncells - newn) * sizeof(struct libscols_cell));
+			(ln->ncells - newn - 1) * sizeof(struct libscols_cell));
 
 	/* copy original data to new position */
 	memcpy(&ln->cells[newn], &ce, sizeof(struct libscols_cell));
