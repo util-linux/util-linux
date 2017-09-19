@@ -23,12 +23,13 @@ mountpoint:  libblkid libmount librt
 partx:  libblkid libsmartcols 
 prlimit:  libsmartcols 
 pylibmount.so:  libblkid libmount libpython2 librt 
+rfkill:  libsmartcols 
 swaplabel:  libblkid 
 swapoff:  libblkid libmount librt 
 swapon:  libblkid libmount librt libsmartcols 
 umount:  libblkid libmount librt 
 wdctl:  libsmartcols 
-wipefs:  libblkid 
+wipefs:  libblkid libsmartcols 
 zramctl:  libsmartcols 
 addpart:  
 agetty:  
@@ -85,14 +86,14 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc 
+runuser:  libpam libpam_misc libutil 
 script:  librt libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc 
+su:  libpam libpam_misc libutil 
 sulogin:  rypt 
 switch_root:  
 taskset:  

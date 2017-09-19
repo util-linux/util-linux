@@ -15,7 +15,6 @@ swaplabel:  libblkid libuuid
 umount:  libblkid libmount librt libuuid 
 uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
-wipefs:  libblkid libuuid 
 agetty:  
 blkdiscard:  librt 
 blkzone:  
@@ -68,14 +67,14 @@ rename:
 renice:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc 
+runuser:  libpam libpam_misc libutil 
 script:  librt libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc 
+su:  libpam libpam_misc libutil 
 sulogin:  rypt 
 switch_root:  
 taskset:  

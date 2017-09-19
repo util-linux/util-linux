@@ -13,9 +13,11 @@ lsmem:  libsmartcols
 lsns:  libsmartcols 
 mkswap:  libuuid 
 prlimit:  libsmartcols 
+rfkill:  libsmartcols 
 sfdisk:  libfdisk libreadline libsmartcols libtinfo libuuid 
 uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
+uuidparse:  libsmartcols libuuid 
 wdctl:  libsmartcols 
 zramctl:  libsmartcols 
 agetty:  
@@ -70,14 +72,14 @@ rename:
 renice:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc 
+runuser:  libpam libpam_misc libutil 
 script:  librt libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc 
+su:  libpam libpam_misc libutil 
 sulogin:  rypt 
 switch_root:  
 taskset:  

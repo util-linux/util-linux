@@ -27,6 +27,7 @@ mountpoint:  libblkid libmount librt libselinux libuuid
 partx:  libblkid libsmartcols libuuid 
 prlimit:  libsmartcols 
 pylibmount.so:  libblkid libmount libpython2 librt libselinux libuuid 
+rfkill:  libsmartcols 
 sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 swaplabel:  libblkid libuuid 
 swapoff:  libblkid libmount librt libselinux libuuid 
@@ -34,8 +35,9 @@ swapon:  libblkid libmount librt libselinux libsmartcols libuuid
 umount:  libblkid libmount librt libselinux libuuid 
 uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
+uuidparse:  libsmartcols libuuid 
 wdctl:  libsmartcols 
-wipefs:  libblkid libuuid 
+wipefs:  libblkid libsmartcols libuuid 
 zramctl:  libsmartcols 
 addpart:  
 agetty:  
@@ -95,14 +97,14 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc 
+runuser:  libpam libpam_misc libutil 
 script:  librt libutempter libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc 
+su:  libpam libpam_misc libutil 
 sulogin:  libselinux rypt 
 switch_root:  
 taskset:  

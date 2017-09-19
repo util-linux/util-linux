@@ -17,12 +17,14 @@ lsns:  libsmartcols
 mkswap:  libblkid libuuid 
 partx:  libblkid libsmartcols libuuid 
 prlimit:  libsmartcols 
+rfkill:  libsmartcols 
 sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 swaplabel:  libblkid libuuid 
 uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
+uuidparse:  libsmartcols libuuid 
 wdctl:  libsmartcols 
-wipefs:  libblkid libuuid 
+wipefs:  libblkid libsmartcols libuuid 
 zramctl:  libsmartcols 
 addpart:  
 agetty:  
@@ -79,14 +81,14 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc 
+runuser:  libpam libpam_misc libutil 
 script:  librt libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc 
+su:  libpam libpam_misc libutil 
 sulogin:  rypt 
 switch_root:  
 taskset:  
