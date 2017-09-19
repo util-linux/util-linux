@@ -905,27 +905,21 @@ AC_ARG_WITH([tinfo], AS_HELP_STRING([--without-tinfo], [compile without libtinfo
   [], [with_tinfo=auto]
 )
 have_tinfo=no
+have_tinfow=no
 AS_IF([test "x$with_tinfo" != xno], [
-  dnl Try pkg-config for libtinfo
-  PKG_CHECK_MODULES(TINFO, [tinfo], [
-    dnl pkg-config success
-    have_tinfo=yes
-    UL_PKG_STATIC([TINFO_LIBS_STATIC], [tinfo])], [
-
-    dnl If pkg-config failed, fall back to classic searching.
-    AC_CHECK_LIB([tinfo], [tgetent], [
-       have_tinfo=yes
-       TINFO_LIBS="-ltinfo"
-       TINFO_LIBS_STATIC="-ltinfo"
-       TINFO_CFLAGS=""])
+  AS_IF([test "x$have_ncursesw" = xyes], [
+    UL_TINFO_CHECK([tinfow])
+  ])
+  AS_IF([test "x$have_tinfow" = xno], [
+    UL_TINFO_CHECK([tinfo])
   ])
 ])
 AC_SUBST([TINFO_LIBS])
 AC_SUBST([TINFO_LIBS_STATIC])
 AC_SUBST([TINFO_CFLAGS])
-AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xyes])
-AS_IF([test "x$have_tinfo" = xyes], [
-  AC_DEFINE(HAVE_LIBTINFO, 1, [Define if libtinfo available.])
+AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xyes -o "x$have_tinfow" = xyes])
+AS_IF([test "x$have_tinfo" = xyes -o "x$have_tinfow" = xyes], [
+  AC_DEFINE(HAVE_LIBTINFO, 1, [Define if libtinfo or libtinfow available.])
 ])
 
 

@@ -498,3 +498,30 @@ AC_DEFUN([UL_NCURSES_CHECK], [
     AS_IF([test "x$have_[]suffix" = xyes], [NCURSES_LIBS="-l[]suffix"])
   ])
 ])
+
+dnl
+dnl UL_TINFO_CHECK(NAME)
+dnl
+dnl Initializes $have_<name>, TINFO_LIBS and TINFO_CFLAGS variables.
+dnl
+dnl The expected <name> is tinfow or tinfo.
+dnl
+AC_DEFUN([UL_TINFO_CHECK], [
+  m4_define([suffix], $1)
+  m4_define([SUFFIX], m4_toupper($1))
+
+  PKG_CHECK_MODULES(SUFFIX, [$1], [
+    dnl pkg-config success
+    have_[]suffix=yes
+    TINFO_LIBS=${SUFFIX[]_LIBS}
+    TINFO_CFLAGS=${SUFFIX[]_CFLAGS}
+    UL_PKG_STATIC([TINFO_LIBS_STATIC], [$1])
+  ],[
+    dnl If pkg-config failed, fall back to classic searching.
+    AC_CHECK_LIB([$1], [tgetent], [
+       have_[]suffix=yes
+       TINFO_LIBS="-l[]suffix"
+       TINFO_LIBS_STATIC="-l[]suffix"
+       TINFO_CFLAGS=""])
+  ])
+])
