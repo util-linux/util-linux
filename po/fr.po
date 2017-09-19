@@ -14,10 +14,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.29-rc2\n"
+"Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-06-02 11:14+0200\n"
-"PO-Revision-Date: 2017-05-07 22:31+0200\n"
+"POT-Creation-Date: 2017-05-23 12:21+0200\n"
+"PO-Revision-Date: 2017-08-22 02:33+0200\n"
 "Last-Translator: Stéphane Aulery <lkppo@free.fr>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
@@ -56,7 +56,7 @@ msgstr "Informer le noyau de l’existence d’une partition indiquée.\n"
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:259 login-utils/vipw.c:277
 #: misc-utils/findmnt.c:1099 misc-utils/logger.c:1188 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
-#: sys-utils/dmesg.c:521 sys-utils/eject.c:499 sys-utils/eject.c:699
+#: sys-utils/dmesg.c:522 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
 #: sys-utils/hwclock.c:215 sys-utils/ldattach.c:387 sys-utils/nsenter.c:130
 #: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:270 sys-utils/setpriv.c:230
@@ -66,8 +66,8 @@ msgstr "Informer le noyau de l’existence d’une partition indiquée.\n"
 #: term-utils/agetty.c:2624 term-utils/mesg.c:127 term-utils/script.c:426
 #: term-utils/script.c:432 term-utils/script.c:434 term-utils/script.c:530
 #: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
-#: term-utils/wall.c:413 text-utils/colcrt.c:282 text-utils/more.c:519
-#: text-utils/rev.c:141 text-utils/ul.c:231
+#: term-utils/wall.c:410 text-utils/colcrt.c:282 text-utils/more.c:513
+#: text-utils/rev.c:141 text-utils/ul.c:224
 #, c-format
 msgid "cannot open %s"
 msgstr "impossible d'ouvrir %s"
@@ -592,8 +592,8 @@ msgstr "Voulez-vous vraiment écrire la table de partitions sur le disque ? "
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Tapez « oui » ou « non » ou appuyez sur Échap pour quitter cette fenêtre de dialogue."
 
-#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1589
-#: sys-utils/lscpu.c:1599 sys-utils/lsmem.c:200
+#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1587
+#: sys-utils/lscpu.c:1597 sys-utils/lsmem.c:200
 msgid "yes"
 msgstr "oui"
 
@@ -644,7 +644,7 @@ msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               démarrer avec une table de partitions mise à zéro\n"
 
 #: disk-utils/cfdisk.c:2597 disk-utils/fdisk.c:907 disk-utils/sfdisk.c:2128
-#: misc-utils/cal.c:391 sys-utils/dmesg.c:1332 text-utils/hexdump.c:114
+#: misc-utils/cal.c:390 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "mode de couleur non pris en charge"
 
@@ -699,8 +699,8 @@ msgstr ""
 "Poursuite du traitement… "
 
 #: disk-utils/fdformat.c:144 disk-utils/fsck.minix.c:182
-#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:458 sys-utils/blkdiscard.c:84
-#: sys-utils/tunelp.c:91
+#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:458
+#: sys-utils/blkdiscard.c:84 sys-utils/tunelp.c:91
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [options] <périphérique>\n"
@@ -747,10 +747,10 @@ msgstr "argument incorrect - repair"
 #: disk-utils/mkfs.minix.c:816 disk-utils/mkswap.c:241 disk-utils/partx.c:952
 #: login-utils/last.c:684 login-utils/utmpdump.c:139 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
-#: sys-utils/dmesg.c:523 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
+#: sys-utils/dmesg.c:524 sys-utils/fallocate.c:216 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:77 sys-utils/nsenter.c:165 sys-utils/nsenter.c:169
 #: sys-utils/swapon.c:520 sys-utils/switch_root.c:94
-#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:510
+#: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:504
 #, c-format
 msgid "stat of %s failed"
 msgstr "échec de stat sur %s"
@@ -927,6 +927,7 @@ msgstr ""
 
 #: disk-utils/fdisk.c:746
 #, fuzzy, c-format
+#| msgid "It is strongly recommended to wipe the device with wipefs(8), in order to avoid possible collisions."
 msgid "The old %s signature may remain on the device. It is recommended to wipe the device with wipefs(8) or fdisk --wipe, in order to avoid possible collisions."
 msgstr "Il est fortement recommandé de nettoyer le périphérique avec wipefs(8), pour prévenir les problèmes de collision."
 
@@ -1104,7 +1105,7 @@ msgstr "échec d'allocation d'itérateur"
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
 #: disk-utils/partx.c:667 login-utils/lslogins.c:918 misc-utils/fincore.c:362
 #: misc-utils/findmnt.c:1598 misc-utils/lsblk.c:1897 misc-utils/lslocks.c:449
-#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1762 sys-utils/lscpu.c:1865
+#: sys-utils/losetup.c:314 sys-utils/lscpu.c:1760 sys-utils/lscpu.c:1863
 #: sys-utils/lsipc.c:338 sys-utils/prlimit.c:297 sys-utils/swapon.c:281
 #: sys-utils/wdctl.c:261 sys-utils/zramctl.c:488 text-utils/column.c:196
 msgid "failed to allocate output table"
@@ -1114,7 +1115,7 @@ msgstr "échec d’allocation du tableau de sortie"
 #: disk-utils/partx.c:581 login-utils/lslogins.c:976 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1174
 #: misc-utils/lslocks.c:391 sys-utils/losetup.c:333 sys-utils/losetup.c:362
-#: sys-utils/lscpu.c:1788 sys-utils/lscpu.c:1816 sys-utils/lsipc.c:470
+#: sys-utils/lscpu.c:1786 sys-utils/lscpu.c:1814 sys-utils/lsipc.c:470
 #: sys-utils/lsipc.c:545 sys-utils/lsipc.c:647 sys-utils/lsipc.c:739
 #: sys-utils/lsipc.c:900 sys-utils/prlimit.c:229 sys-utils/swapon.c:176
 #: sys-utils/wdctl.c:215 sys-utils/zramctl.c:409 text-utils/column.c:407
@@ -1124,13 +1125,12 @@ msgstr "échec d’allocation de la ligne de sortie"
 #: disk-utils/fdisk-list.c:173 disk-utils/fdisk-list.c:273
 #: disk-utils/partx.c:644 login-utils/lslogins.c:1074 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1165
-#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1796
-#: sys-utils/lscpu.c:1827 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
+#: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1794
+#: sys-utils/lscpu.c:1825 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
 #: sys-utils/prlimit.c:261 sys-utils/swapon.c:224 sys-utils/wdctl.c:243
 #: sys-utils/zramctl.c:475 text-utils/column.c:413
-#, fuzzy
 msgid "failed to add output data"
-msgstr "échec d'ajout de données au tableau de sortie"
+msgstr "échec d'ajout de données de sortie"
 
 #: disk-utils/fdisk-list.c:193
 #, c-format
@@ -1606,8 +1606,8 @@ msgstr "%s n'est pas monté\n"
 #: disk-utils/fsck.cramfs.c:253 disk-utils/sfdisk.c:299 libfdisk/src/bsd.c:645
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:655
-#: sys-utils/setpriv.c:239 term-utils/setterm.c:721 term-utils/setterm.c:778
-#: term-utils/setterm.c:782 term-utils/setterm.c:789
+#: sys-utils/setpriv.c:239 term-utils/setterm.c:724 term-utils/setterm.c:781
+#: term-utils/setterm.c:785 term-utils/setterm.c:792
 #, c-format
 msgid "cannot read %s"
 msgstr "impossible de lire %s"
@@ -2231,9 +2231,9 @@ msgid "Write error: bad block in file '%s'\n"
 msgstr "Erreur d'écriture : bloc corrompu dans le fichier « %s »\n"
 
 #: disk-utils/fsck.minix.c:424
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: block out of range\n"
-msgstr "Avertissement : compte d'inœuds trop grand.\n"
+msgstr "Avertissement : bloc hors intervalle\n"
 
 #: disk-utils/fsck.minix.c:511
 msgid "seek failed in write_super_block"
@@ -2572,9 +2572,9 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:833
 #: disk-utils/mkswap.c:539 disk-utils/partx.c:1058 disk-utils/resizepart.c:112
-#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:658 sys-utils/wdctl.c:348
+#: login-utils/utmpdump.c:393 sys-utils/dmesg.c:659 sys-utils/wdctl.c:348
 #: sys-utils/wdctl.c:413 term-utils/script.c:273 term-utils/script.c:350
-#: term-utils/setterm.c:885 text-utils/pg.c:1256
+#: term-utils/setterm.c:888 text-utils/pg.c:1248
 msgid "write failed"
 msgstr "échec d'écriture"
 
@@ -2820,7 +2820,7 @@ msgstr " -h, --help         afficher cette aide et quitter\n"
 #: sys-utils/nsenter.c:482 sys-utils/prlimit.c:642 sys-utils/rtcwake.c:577
 #: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
 #: sys-utils/swapon.c:341 sys-utils/switch_root.c:257 sys-utils/unshare.c:461
-#: term-utils/script.c:589 text-utils/pg.c:1383
+#: term-utils/script.c:589 text-utils/pg.c:1375
 #, c-format
 msgid "failed to execute %s"
 msgstr "échec d'exécution de %s"
@@ -3592,11 +3592,10 @@ msgstr[1] "nº %2d : %9ju-%9ju (%9ju secteurs, %6ju Mo)\n"
 
 #: disk-utils/partx.c:678 misc-utils/fincore.c:374 misc-utils/findmnt.c:1624
 #: misc-utils/lsblk.c:1919 misc-utils/lslocks.c:462 sys-utils/losetup.c:326
-#: sys-utils/lscpu.c:1771 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
+#: sys-utils/lscpu.c:1769 sys-utils/prlimit.c:306 sys-utils/swapon.c:290
 #: sys-utils/wdctl.c:272
-#, fuzzy
 msgid "failed to allocate output column"
-msgstr "échec d’allocation de la ligne de sortie"
+msgstr "échec d’allocation de la colonne de sortie"
 
 #: disk-utils/partx.c:722
 #, c-format
@@ -3672,19 +3671,16 @@ msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw            utiliser le format de sortie brut\n"
 
 #: disk-utils/partx.c:769
-#, fuzzy
 msgid " -S, --sector-size <num>  overwrite sector size\n"
-msgstr " -b, --sector-size <taille>    taille des secteurs physique et logique\n"
+msgstr " -S, --sector-size <num>    taille du secteur à écraser\n"
 
 #: disk-utils/partx.c:770
-#, fuzzy
 msgid " -t, --type <type>    specify the partition type\n"
-msgstr " -t, --type <type>    indiquer le type de partition (dos, bsd, solaris, etc.)\n"
+msgstr " -t, --type <type>    indiquer le type de partition\n"
 
 #: disk-utils/partx.c:771
-#, fuzzy
 msgid "     --list-types     list supported partition types and exit\n"
-msgstr "     --list               afficher les architectures configurables et quitter\n"
+msgstr "     --list-types               affiche la liste des types de partition pris en charge et quitter\n"
 
 #: disk-utils/partx.c:772 sys-utils/fallocate.c:100
 msgid " -v, --verbose        verbose mode\n"
@@ -3980,17 +3976,18 @@ msgstr "%s : partition %zu : échec de suppression"
 
 #: disk-utils/sfdisk.c:956
 #, fuzzy, c-format
+#| msgid "Device does not contain a recognized partition table."
 msgid "%s: does not contain a recognized partition table"
-msgstr "Le périphérique ne contient pas de table de partitions reconnue."
+msgstr "%s : le périphérique ne contient pas de table de partitions reconnue."
 
 #: disk-utils/sfdisk.c:960
 msgid "failed to allocate dump struct"
 msgstr "échec d’allocation de structure de sauvegarde"
 
 #: disk-utils/sfdisk.c:964
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to dump partition table"
-msgstr "échec de sauvegarde de table de partitions"
+msgstr "%s : échec de sauvegarde de table de partitions"
 
 #: disk-utils/sfdisk.c:994
 #, c-format
@@ -4142,7 +4139,7 @@ msgstr " Exemple :\n"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     crée une partition de 4 Gio à l’index de début par défaut.\n"
 
-#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1453
+#: disk-utils/sfdisk.c:1341 sys-utils/dmesg.c:1454
 msgid "unsupported command"
 msgstr "commande non prise en charge"
 
@@ -4153,6 +4150,7 @@ msgstr "ligne %d : commande non prise en charge"
 
 #: disk-utils/sfdisk.c:1489
 #, fuzzy, c-format
+#| msgid "It is strongly recommended to wipe the device with wipefs(8), in order to avoid possible collisions."
 msgid "The old %s signature may remain on the device. It is recommended to wipe the device with wipefs(8) or sfdisk --wipe, in order to avoid possible collisions."
 msgstr "Il est fortement recommandé de nettoyer le périphérique avec wipefs(8), pour prévenir les problèmes de collision."
 
@@ -4270,9 +4268,9 @@ msgid "Failed to apply script headers, disk label not created."
 msgstr "Échec d’application du script d’en-têtes, étiquette de disque non créée."
 
 #: disk-utils/sfdisk.c:1763
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to add #%d partition"
-msgstr "Échec d'ajout de partition"
+msgstr "Échec d'ajout de la partition n. %d"
 
 #: disk-utils/sfdisk.c:1786
 msgid "Script header accepted."
@@ -4544,12 +4542,12 @@ msgid "ignore -U (UUIDs are unsupported)"
 msgstr "option -U ignorée (les UUID ne sont pas pris en charge)"
 
 #: include/c.h:214
-#, fuzzy, c-format
+#, c-format
 msgid "Try '%s --help' for more information.\n"
 msgstr "Exécutez « %s --help » pour obtenir des renseignements complémentaires.\n"
 
 #: include/c.h:220
-#, fuzzy, c-format
+#, c-format
 msgid "Try '%s -h' for more information.\n"
 msgstr "Exécutez « %s --help » pour obtenir des renseignements complémentaires.\n"
 
@@ -4587,7 +4585,7 @@ msgstr ""
 "Consultez %s pour obtenir des précisions complémentaires.\n"
 
 #: include/closestream.h:46 include/closestream.h:48 login-utils/vipw.c:274
-#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:809
+#: login-utils/vipw.c:293 sys-utils/rtcwake.c:280 term-utils/setterm.c:812
 #: text-utils/col.c:157
 msgid "write error"
 msgstr "erreur d'écriture"
@@ -4608,9 +4606,9 @@ msgid "failed to set the %s environment variable"
 msgstr "échec de la configuration de la variable d’environement %s"
 
 #: include/optutils.h:85
-#, fuzzy, c-format
+#, c-format
 msgid "%s: mutually exclusive arguments:"
-msgstr "%s et %s s'excluent mutuellement"
+msgstr "%s : arguments mutuellement exclusifs :"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"
@@ -5202,7 +5200,7 @@ msgstr ""
 msgid "Disklabel written to %s."
 msgstr "Étiquette de disque écrite sur %s."
 
-#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:645
+#: libfdisk/src/bsd.c:911 libfdisk/src/context.c:641
 msgid "Syncing disks."
 msgstr "Synchronisation des disques."
 
@@ -5231,24 +5229,24 @@ msgstr "TailleB"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:639
+#: libfdisk/src/context.c:635
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s : échec de fermeture du périphérique"
 
-#: libfdisk/src/context.c:820
+#: libfdisk/src/context.c:814
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "cylindre"
 msgstr[1] "cylindres"
 
-#: libfdisk/src/context.c:821
+#: libfdisk/src/context.c:815
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "secteur"
 msgstr[1] "secteurs"
 
-#: libfdisk/src/context.c:1124
+#: libfdisk/src/context.c:1118
 msgid "Incomplete geometry setting."
 msgstr "Configuration incomplète de la géométrie."
 
@@ -5279,6 +5277,7 @@ msgstr "L'affichage par cylindres est obsolète."
 
 #: libfdisk/src/dos.c:357
 #, fuzzy, c-format
+#| msgid "The size of this disk is %s (%ju bytes). DOS partition table format can not be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgid "The size of this disk is %s (%ju bytes). DOS partition table format cannot be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgstr "La taille du disque est %s (%ju octets). Ce format de table de partitions DOS ne peut pas être utilisé sur des disques pour des volumes plus grands que %lu octets pour des secteurs de %lu octets. Utilisez le format de table de partitions à GUID (GPT)."
 
@@ -5949,6 +5948,7 @@ msgstr "bit « %s » d’attribut GPT non pris en charge"
 
 #: libfdisk/src/gpt.c:1708
 #, fuzzy, c-format
+#| msgid "failed to parse list '%s'"
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "échec d'analyse de la liste « %s »"
 
@@ -6040,6 +6040,7 @@ msgstr "Version d'en-tête : %s"
 
 #: libfdisk/src/gpt.c:2125
 #, fuzzy, c-format
+#| msgid "Using %u out of %d partitions."
 msgid "Using %zu out of %zu partitions."
 msgstr "Utilisation de %u partitions sur %d."
 
@@ -6105,8 +6106,9 @@ msgstr "Pas assez d’espace pour la nouvelle table de partition !"
 
 #: libfdisk/src/gpt.c:2583
 #, fuzzy, c-format
+#| msgid "Partition %zd: has invalid starting sector 0."
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
-msgstr "Partition %zd : contient un secteur 0 de départ non valable."
+msgstr "Partition n. %zd : contient un secteur 0 de départ non valable."
 
 #: libfdisk/src/gpt.c:2588
 #, c-format
@@ -6114,9 +6116,9 @@ msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr ""
 
 #: libfdisk/src/gpt.c:2631
-#, fuzzy, c-format
-msgid "The number of the partition has to be smaller than %zu."
-msgstr "Le nombre maximal de partitions a été créé."
+#, c-format
+msgid "The number of the partition has be smaller than %zu."
+msgstr "Le nombre de la partition est inférieur à %zu."
 
 #: libfdisk/src/gpt.c:2654
 msgid "Cannot allocate memory!"
@@ -6593,10 +6595,10 @@ msgstr ""
 "d'échange Linux pourrait détruire la table de partitions et le bloc d'amorçage.\n"
 "Faut-il vraiment étiqueter la table de partitions en partition d'échange Linux ?"
 
-#: libmount/src/context.c:2367
-#, fuzzy, c-format
+#: libmount/src/context.c:2359
+#, c-format
 msgid "operation failed: %m"
-msgstr "échec de lecture de lien : %s"
+msgstr "opération échouée : %m"
 
 #: libmount/src/context_mount.c:1305
 #, c-format
@@ -6605,8 +6607,9 @@ msgstr "Attention : échec d'application des indicateurs de propagation"
 
 #: libmount/src/context_mount.c:1315
 #, fuzzy, c-format
+#| msgid "%s is write-protected, mounting read-only"
 msgid "WARNING: device write-protected, mounted read-only"
-msgstr "%s est protégé en écriture, sera monté en lecture seule"
+msgstr "WARNING: est protégé en écriture, sera monté en lecture seule"
 
 #: libmount/src/context_mount.c:1329
 #, c-format
@@ -6619,14 +6622,14 @@ msgid "%s is already mounted"
 msgstr "%s est déjà monté"
 
 #: libmount/src/context_mount.c:1339
-#, fuzzy, c-format
+#, c-format
 msgid "can't find in %s"
-msgstr "impossible de trouver %s dans %s"
+msgstr "impossible à trouver dans %s"
 
 #: libmount/src/context_mount.c:1342
-#, fuzzy, c-format
+#, c-format
 msgid "can't find mount point in %s"
-msgstr "impossible de trouver le point de montage %s dans %s"
+msgstr "impossible de trouver le point de montage dans %s"
 
 #: libmount/src/context_mount.c:1345
 #, c-format
@@ -6639,14 +6642,14 @@ msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
 #: libmount/src/context_mount.c:1355
-#, fuzzy, c-format
+#, c-format
 msgid "failed to determine filesystem type"
-msgstr "impossible de détecter de le type de système de fichiers du disque"
+msgstr "impossible de détecter de le type de système de fichiers"
 
 #: libmount/src/context_mount.c:1356
-#, fuzzy, c-format
+#, c-format
 msgid "no filesystem type specified"
-msgstr "Aucun nom de fichier indiqué"
+msgstr "Aucun type de système de fichiers indiqué"
 
 #: libmount/src/context_mount.c:1363
 #, c-format
@@ -6654,14 +6657,14 @@ msgid "can't find %s"
 msgstr "impossible de trouver %s"
 
 #: libmount/src/context_mount.c:1365
-#, fuzzy, c-format
+#, c-format
 msgid "no mount source specified"
-msgstr "Aucun point de montage indiqué"
+msgstr "Aucun point de montage source indiqué"
 
 #: libmount/src/context_mount.c:1371
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse mount options: %m"
-msgstr "échec d'analyse des options de montage"
+msgstr "échec d'analyse des options de montage : %m"
 
 #: libmount/src/context_mount.c:1372
 #, c-format
@@ -6670,29 +6673,29 @@ msgstr "échec d'analyse des options de montage"
 
 # disk-utils/mkswap.c:612
 #: libmount/src/context_mount.c:1376
-#, fuzzy, c-format
+#, c-format
 msgid "failed to setup loop device for %s"
-msgstr "%s : échec de configuration du périphérique boucle"
+msgstr "échec de configuration du périphérique de boucle %s"
 
 #: libmount/src/context_mount.c:1380
-#, fuzzy, c-format
+#, c-format
 msgid "overlapping loop device exists for %s"
-msgstr "%s : périphérique de bouclage existant"
+msgstr "périphérique de bouclage existant pour %s"
 
 #: libmount/src/context_mount.c:1383
-#, fuzzy, c-format
+#, c-format
 msgid "mount failed: %m"
-msgstr "échec du montage de %s"
+msgstr "montage échoué : %m"
 
 #: libmount/src/context_mount.c:1393
-#, fuzzy, c-format
+#, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
-msgstr "%s : le système de fichiers était démonté, mais échec de mount(8)"
+msgstr "le système était monté, mais la suivante a échouée : %m"
 
 #: libmount/src/context_mount.c:1411 libmount/src/context_mount.c:1468
-#, fuzzy, c-format
+#, c-format
 msgid "mount point is not a directory"
-msgstr "le point de montage %s n'est pas un répertoire"
+msgstr "le point de montage n'est pas un répertoire"
 
 #: libmount/src/context_mount.c:1413 login-utils/newgrp.c:227
 #, c-format
@@ -6705,29 +6708,29 @@ msgid "must be superuser to use mount"
 msgstr "seul le superutilisateur peut utiliser mount"
 
 #: libmount/src/context_mount.c:1425
-#, fuzzy, c-format
+#, c-format
 msgid "mount point is busy"
-msgstr "point de montage"
+msgstr "point de montage actif"
 
 #: libmount/src/context_mount.c:1438
-#, fuzzy, c-format
+#, c-format
 msgid "%s already mounted on %s"
-msgstr "%s est déjà monté ou %s est occupé"
+msgstr "%s déjà monté sur %s"
 
 #: libmount/src/context_mount.c:1444
-#, fuzzy, c-format
+#, c-format
 msgid "%s already mounted or mount point busy"
-msgstr "%s est déjà monté ou %s est occupé"
+msgstr "%s déjà monté ou point de montage actif"
 
 #: libmount/src/context_mount.c:1450
-#, fuzzy, c-format
+#, c-format
 msgid "mount point does not exist"
-msgstr "le point de montage %s n'existe pas"
+msgstr "le point de montage n'existe pas"
 
 #: libmount/src/context_mount.c:1453
-#, fuzzy, c-format
+#, c-format
 msgid "mount point is a symbolic link to nowhere"
-msgstr "le point de montage %s est un lien symbolique qui ne pointe nulle part"
+msgstr "le point de montage est un lien symbolique qui ne pointe nulle part"
 
 #: libmount/src/context_mount.c:1458
 #, c-format
@@ -6736,9 +6739,9 @@ msgstr "le périphérique spécial %s n'existe pas"
 
 #: libmount/src/context_mount.c:1461 libmount/src/context_mount.c:1477
 #: libmount/src/context_mount.c:1561 libmount/src/context_mount.c:1575
-#, fuzzy, c-format
+#, c-format
 msgid "mount(2) system call failed: %m"
-msgstr "échec de mount(2)"
+msgstr "échec de l’appel système mount(2) : %m"
 
 #: libmount/src/context_mount.c:1473
 #, c-format
@@ -6746,17 +6749,20 @@ msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "le périphérique spécial %s n'existe pas (un préfixe de chemin n'est pas un répertoire)"
 
 #: libmount/src/context_mount.c:1485
-#, fuzzy, c-format
+#, c-format
 msgid "mount point not mounted or bad option"
-msgstr "%s n'est pas monté, ou option erronée"
+msgstr "point de montage non monté ou mauvaise option"
 
 #: libmount/src/context_mount.c:1487
-#, fuzzy, c-format
+#, c-format
 msgid "not mount point or bad option"
-msgstr "%s n'est pas un point de montage, ou option erronée"
+msgstr "n'est pas un point de montage ou mauvaise option"
 
 #: libmount/src/context_mount.c:1490
 #, fuzzy, c-format
+#| msgid ""
+#| "bad option. Note that moving a mount residing under a shared\n"
+#| "       mount is unsupported."
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 "mauvaise option. Remarquez que le déplacement d'un montage résidant sous un\n"
@@ -6764,6 +6770,9 @@ msgstr ""
 
 #: libmount/src/context_mount.c:1494
 #, fuzzy, c-format
+#| msgid ""
+#| "       (for several filesystems (e.g. nfs, cifs) you might\n"
+#| "       need a /sbin/mount.<type> helper program)\n"
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "        (pour plusieurs système de fichiers (NFS ou CIFS par exemple), un\n"
@@ -6771,6 +6780,9 @@ msgstr ""
 
 #: libmount/src/context_mount.c:1498
 #, fuzzy, c-format
+#| msgid ""
+#| "wrong fs type, bad option, bad superblock on %s,\n"
+#| "       missing codepage or helper program, or other error"
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "mauvais type de système de fichiers, option erronée, superbloc erroné\n"
@@ -6782,9 +6794,9 @@ msgid "mount table full"
 msgstr "la table des périphériques montés est pleine"
 
 #: libmount/src/context_mount.c:1510
-#, fuzzy, c-format
+#, c-format
 msgid "can't read superblock on %s"
-msgstr "%s : impossible de lire le superbloc"
+msgstr "impossible de lire le superbloc à l’adresse %s"
 
 #: libmount/src/context_mount.c:1517
 #, c-format
@@ -6802,21 +6814,19 @@ msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s n'est pas un périphérique bloc, et possible échec de stat(2)"
 
 #: libmount/src/context_mount.c:1532
-#, fuzzy, c-format
+#, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
-msgstr ""
-"le noyau ne reconnaît pas %s comme un périphérique bloc\n"
-"        (essayez peut-être « modprobe pilote »)"
+msgstr "le noyau ne reconnaît pas %s comme un périphérique bloc ; essayez « modprobe pilote » si nécessaire"
 
 #: libmount/src/context_mount.c:1535
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a block device; try \"-o loop\""
-msgstr "%s n'est pas un périphérique bloc (essayer peut-être « -o loop »)"
+msgstr "%s n'est pas un périphérique bloc ; essayer « -o loop »"
 
 #: libmount/src/context_mount.c:1537
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a block device"
-msgstr " %s n'est pas un périphérique bloc"
+msgstr "%s n'est pas un périphérique bloc"
 
 #: libmount/src/context_mount.c:1544
 #, c-format
@@ -6829,9 +6839,9 @@ msgid "cannot mount %s read-only"
 msgstr "impossible de monter %s en lecture seule"
 
 #: libmount/src/context_mount.c:1554
-#, fuzzy, c-format
+#, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
-msgstr "%s est protégé en écriture mais l'option « -w » a été fournie"
+msgstr "%s est protégé en écriture mais le mode lecture-écriture a été explicitement demandé"
 
 #: libmount/src/context_mount.c:1556
 #, c-format
@@ -6839,9 +6849,9 @@ msgid "cannot remount %s read-write, is write-protected"
 msgstr "impossible de remonter %s en lecture/écriture, est protégé en écriture"
 
 #: libmount/src/context_mount.c:1558
-#, fuzzy, c-format
+#, c-format
 msgid "bind %s failed"
-msgstr "échec de %s"
+msgstr "liaison de %s échouée"
 
 #: libmount/src/context_mount.c:1569
 #, c-format
@@ -6849,61 +6859,61 @@ msgid "no medium found on %s"
 msgstr "aucun support trouvé dans %s"
 
 #: libmount/src/context_umount.c:1051 libmount/src/context_umount.c:1080
-#, fuzzy, c-format
+#, c-format
 msgid "not mounted"
-msgstr "%s : non monté"
+msgstr "non monté"
 
 #: libmount/src/context_umount.c:1055
-#, fuzzy, c-format
+#, c-format
 msgid "umount failed: %m"
-msgstr "%s : échec de démontage"
+msgstr "démontage échoué : %m"
 
 #: libmount/src/context_umount.c:1064
-#, fuzzy, c-format
+#, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
-msgstr "%s : le système de fichiers était démonté, mais échec de mount(8)"
+msgstr "le système de fichiers était démonté, mais l’opération suivante a échouée : %m"
 
 #: libmount/src/context_umount.c:1077
-#, fuzzy, c-format
+#, c-format
 msgid "invalid block device"
-msgstr "%s : périphérique bloc non valable"
+msgstr "périphérique bloc non invalable"
 
 #: libmount/src/context_umount.c:1083
-#, fuzzy, c-format
+#, c-format
 msgid "can't write superblock"
-msgstr "%s : impossible d'écrire sur le superbloc"
+msgstr "impossible d'écrire le superbloc"
 
 #: libmount/src/context_umount.c:1086
-#, fuzzy, c-format
+#, c-format
 msgid "target is busy"
-msgstr "la cible existe"
+msgstr "la cible est active"
 
 #: libmount/src/context_umount.c:1089
-#, fuzzy, c-format
+#, c-format
 msgid "no mount point specified"
 msgstr "Aucun point de montage indiqué"
 
 #: libmount/src/context_umount.c:1092
-#, fuzzy, c-format
+#, c-format
 msgid "must be superuser to unmount"
-msgstr "%s : seul le superutilisateur peut démonter"
+msgstr "seul le superutilisateur peut démonter"
 
 #: libmount/src/context_umount.c:1095
-#, fuzzy, c-format
+#, c-format
 msgid "block devices are not permitted on filesystem"
-msgstr "%s : les périphériques bloc ne sont pas autorisés sur le système de fichiers"
+msgstr "les périphériques bloc ne sont pas autorisés sur ce système de fichiers"
 
 #: libmount/src/context_umount.c:1098
-#, fuzzy, c-format
+#, c-format
 msgid "umount(2) system call failed: %m"
-msgstr "échec de mount(2)"
+msgstr "l’appel système unnount(2) a échoué : %m"
 
 #: lib/pager.c:112
 #, c-format
 msgid "waitpid failed (%s)"
 msgstr "échec de la fonction « waitpid » (%s)"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1913
+#: lib/path.c:209 sys-utils/lscpu.c:1911
 msgid "failed to callocate cpu set"
 msgstr "échec de callocate sur l'ensemble de processeurs"
 
@@ -6918,29 +6928,25 @@ msgid "failed to parse CPU mask %s"
 msgstr "échec d'analyse du masque de processeur %s"
 
 #: lib/plymouth-ctrl.c:72
-#, fuzzy
 msgid "cannot open UNIX socket"
 msgstr "impossible d'ouvrir un socket UNIX"
 
 #: lib/plymouth-ctrl.c:78
-#, fuzzy
 msgid "cannot set option for UNIX socket"
 msgstr "impossible de définir les options du socket UNIX"
 
-#: lib/plymouth-ctrl.c:92
-#, fuzzy
+#: lib/plymouth-ctrl.c:91
 msgid "cannot connect on UNIX socket"
 msgstr "impossible de se connecter au socket UNIX"
 
-#: lib/plymouth-ctrl.c:132
+#: lib/plymouth-ctrl.c:131
 #, c-format
 msgid "the plymouth request %c is not implemented"
 msgstr ""
 
 #: lib/randutils.c:159
-#, fuzzy
 msgid "getrandom() function"
-msgstr "fonctions pseudoaléatoires de libc"
+msgstr "fonction getrandom()"
 
 #: lib/randutils.c:172
 msgid "libc pseudo-random functions"
@@ -7184,7 +7190,7 @@ msgstr "L'interpréteur a été modifié.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Utilisation : %s <fichier_de_mot_de_passe> <nom_d’utilisateur> ...\n"
 
-#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1192
+#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1193
 #: sys-utils/lsipc.c:269
 #, c-format
 msgid "unknown time format: %s"
@@ -7276,13 +7282,13 @@ msgstr ""
 "                               notime|short|full|iso\n"
 
 #: login-utils/last.c:889
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "%s begins %s\n"
 msgstr ""
 "\n"
-"%s commence %s"
+"%s commence %s\n"
 
 #: login-utils/last.c:968 term-utils/scriptreplay.c:64
 #: term-utils/scriptreplay.c:68
@@ -7526,7 +7532,7 @@ msgstr "%s : %s contient une valeur numérique non valable : %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "état de connexion silencieuse : échec de restauration des identifiants d'origine"
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1589 sys-utils/lscpu.c:1599
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1587 sys-utils/lscpu.c:1597
 #: sys-utils/lsmem.c:200
 msgid "no"
 msgstr "non"
@@ -7764,9 +7770,9 @@ msgstr ""
 
 #: login-utils/lslogins.c:1227 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:494 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
-#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:263 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:2052 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
-#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:378
+#: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
+#: sys-utils/lscpu.c:2050 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
+#: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:95 term-utils/setterm.c:381
 #: text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7871,8 +7877,8 @@ msgstr "     --wtmp-file <chemin>  définir un chemin alternatif pour wtmp\n"
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <chemin>  définir un chemin alternatif pour btmp\n"
 
-#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2071
-#: sys-utils/lsmem.c:391
+#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251
+#: sys-utils/lscpu.c:2069 sys-utils/lsmem.c:391
 #, c-format
 msgid ""
 "\n"
@@ -8002,9 +8008,9 @@ msgid "cannot set user id"
 msgstr "impossible de configurer l'identifiant d'utilisateur"
 
 #: login-utils/su-common.c:679
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] -u <user> [[--] <command>]\n"
-msgstr " %s [options] -u <utilisateur> <commande>\n"
+msgstr " %s [options] -u <utilisateur> [[--] <commande>]\n"
 
 #: login-utils/su-common.c:680 login-utils/su-common.c:692
 #, c-format
@@ -8218,7 +8224,7 @@ msgstr ""
 "                            en cas d'échec de getpwnam(3)\n"
 
 #: login-utils/sulogin.c:863 misc-utils/findmnt.c:1470 sys-utils/wdctl.c:525
-#: term-utils/agetty.c:758 term-utils/wall.c:210
+#: term-utils/agetty.c:758 term-utils/wall.c:207
 msgid "invalid timeout argument"
 msgstr "argument d'expiration de la minuterie incorrect"
 
@@ -8235,7 +8241,7 @@ msgid "cannot open password database"
 msgstr "impossible d'ouvrir la base de données de mots de passe"
 
 #: login-utils/sulogin.c:1012
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "cannot execute su shell\n"
 "\n"
@@ -8252,7 +8258,6 @@ msgstr ""
 "\n"
 
 #: login-utils/sulogin.c:1051
-#, fuzzy
 msgid ""
 "cannot wait on su shell\n"
 "\n"
@@ -8365,9 +8370,9 @@ msgid "Would you like to edit %s now [y/n]? "
 msgstr "Voulez-vous éditer %s maintenant [o/n]? "
 
 #: misc-utils/blkid.c:65
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
-msgstr "%s de %s (libmount %s"
+msgstr "%s de %s (libblkid %s, %s)\n"
 
 #: misc-utils/blkid.c:75
 #, c-format
@@ -8399,17 +8404,19 @@ msgstr ""
 
 #: misc-utils/blkid.c:82
 #, fuzzy
+#| msgid ""
+#| " -A, --adjfile <file>     specifies the path to the adjust file\n"
+#| "                            the default is %s\n"
 msgid ""
 " -c, --cache-file <file>    read from <file> instead of reading from the default\n"
 "                              cache file (-c /dev/null means no cache)\n"
 msgstr ""
-" -A, --adjfile <fichier>  indiquer le chemin du fichier adjust\n"
+" -c, --cache-file <fichier>  indiquer le chemin du fichier adjust\n"
 "                            (%s par défaut)\n"
 
 #: misc-utils/blkid.c:84
-#, fuzzy
 msgid " -d, --no-encoding          don't encode non-printing characters\n"
-msgstr " -n, --noheadings          ne pas afficher les en-têtes\n"
+msgstr " -d, --no-encoding          ne pas encoder les caractères non imprimables\n"
 
 #: misc-utils/blkid.c:85
 msgid " -g, --garbage-collect      garbage collect the blkid cache\n"
@@ -8422,9 +8429,8 @@ msgid ""
 msgstr ""
 
 #: misc-utils/blkid.c:88
-#, fuzzy
 msgid " -k, --list-filesystems     list all known filesystems/RAIDs and exit\n"
-msgstr " -l, --list-shells              afficher la liste des interpréteurs et quitter\n"
+msgstr " -k, --list-filesystems    affiche la liste des systèmes de fichiers / RAID et quitte\n"
 
 #: misc-utils/blkid.c:89
 msgid " -s, --match-tag <tag>      show specified tag(s) (default show all tags)\n"
@@ -8436,28 +8442,29 @@ msgstr ""
 
 #: misc-utils/blkid.c:91
 #, fuzzy
+#| msgid " -l, --list                    list info about all or specified (default)\n"
 msgid " -l, --list-one             look up only first device with token specified by -t\n"
 msgstr ""
-" -l, --list                    afficher les renseignements sur tout ou ce qui\n"
+" -l, --list-one                  afficher les renseignements sur tout ou ce qui\n"
 "                                 est indiqué (par défaut)\n"
 
 #: misc-utils/blkid.c:92
-#, fuzzy
 msgid " -L, --label <label>        convert LABEL to device name\n"
-msgstr " -s, --size <taille>       taille de périphérique\n"
+msgstr " -L, --label <label>       convertie LABEL en nom de périphérique\n"
 
 #: misc-utils/blkid.c:93
-#, fuzzy
 msgid " -U, --uuid <uuid>          convert UUID to device name\n"
-msgstr " -u, --user <utilisateur>      nom d'utilisateur\n"
+msgstr " -U, --uuid <uuid>      convertie un UUID en nom de périphérique\n"
 
 #: misc-utils/blkid.c:94
 #, fuzzy
+#| msgid " <dev>                     device (usually disk) path\n"
 msgid " <dev>                      specify device(s) to probe (default: all devices)\n"
 msgstr " <périph.>                 chemin du périphérique (disque en général)\n"
 
 #: misc-utils/blkid.c:96
 #, fuzzy
+#| msgid "Scheduling options:\n"
 msgid "Low-level probing options:\n"
 msgstr "Options d’ordonnancement :\n"
 
@@ -8467,48 +8474,49 @@ msgstr ""
 
 #: misc-utils/blkid.c:98
 #, fuzzy
+#| msgid " -i, --info                print only info about the sampling step\n"
 msgid " -i, --info                 gather information about I/O limits\n"
 msgstr " -i, --info                n'afficher que les rens. du cycle d'échantillonnage\n"
 
 #: misc-utils/blkid.c:99
-#, fuzzy
 msgid " -S, --size <size>          overwrite device size\n"
-msgstr " -s, --size <taille>       taille de périphérique\n"
+msgstr " -S, --size <taille>       taille de périphérique écrasée\n"
 
 # getopt-1.1.2/getopt.c:335
 #: misc-utils/blkid.c:100
 #, fuzzy
+#| msgid " -H, --host <hostname>      specify login host\n"
 msgid " -O, --offset <offset>      probe at the given offset\n"
-msgstr " -H, --host <nom_d_hôte>    indiquer l'hôte de connexion\n"
+msgstr " -O, --offset <offset>    indiquer l'hôte de connexion\n"
 
 #: misc-utils/blkid.c:101
 #, fuzzy
+#| msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgid " -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"
-msgstr " -t, --types <liste>     limiter l'ensemble de systèmes de fichiers par types\n"
+msgstr " -u, --usages <liste>     limiter l'ensemble de systèmes de fichiers par types\n"
 
 #: misc-utils/blkid.c:102
 #, fuzzy
+#| msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgid " -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
-msgstr " -t, --types <liste>     limiter l'ensemble de systèmes de fichiers par types\n"
+msgstr " -n, --match-types <liste>     limiter l'ensemble de systèmes de fichiers par types\n"
 
 #: misc-utils/blkid.c:235
 msgid "(mounted, mtpt unknown)"
-msgstr ""
+msgstr "(mounté, mtpt inconnu)"
 
 #: misc-utils/blkid.c:237
-#, fuzzy
 msgid "(in use)"
-msgstr "Marquer utilisé"
+msgstr "(utilisé)"
 
 #: misc-utils/blkid.c:239
-#, fuzzy
 msgid "(not mounted)"
-msgstr "%s : non monté"
+msgstr "(non monté)"
 
 #: misc-utils/blkid.c:503
-#, fuzzy, c-format
+#, c-format
 msgid "error: %s"
-msgstr "erreur d'analyse : %s"
+msgstr "erreur : %s"
 
 #: misc-utils/blkid.c:548
 #, c-format
@@ -8517,6 +8525,7 @@ msgstr ""
 
 #: misc-utils/blkid.c:594
 #, fuzzy, c-format
+#| msgid "unknown argument: %s"
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "argument inconnu : %s"
 
@@ -8526,6 +8535,7 @@ msgstr ""
 
 #: misc-utils/blkid.c:754
 #, fuzzy, c-format
+#| msgid "unsupported option format: %s"
 msgid "unsupported output format %s"
 msgstr "format d’option non pris en charge : %s"
 
@@ -8535,11 +8545,13 @@ msgstr "argument d'index incorrect"
 
 #: misc-utils/blkid.c:764
 #, fuzzy
+#| msgid "no command was specified"
 msgid "Too many tags specified"
 msgstr "aucune commande n’a été indiquée"
 
 #: misc-utils/blkid.c:770
 #, fuzzy
+#| msgid "invalid time argument"
 msgid "invalid size argument"
 msgstr "argument d'heure incorrect"
 
@@ -8563,198 +8575,193 @@ msgstr ""
 msgid "The lookup option requires a search type specified using -t"
 msgstr ""
 
-#: misc-utils/cal.c:373
+#: misc-utils/cal.c:372
 msgid "invalid month argument"
 msgstr "argument mois incorrect"
 
-#: misc-utils/cal.c:381
+#: misc-utils/cal.c:380
 msgid "invalid week argument"
 msgstr "argument de semaine incorrect"
 
-#: misc-utils/cal.c:383
+#: misc-utils/cal.c:382
 msgid "illegal week value: use 1-54"
 msgstr "valeur de semaine incorrecte : utilisez 1-54"
 
-#: misc-utils/cal.c:422
+#: misc-utils/cal.c:421
 #, c-format
 msgid "failed to parse timestamp or unknown month name: %s"
 msgstr "échec d'analyse du timestamp ou nom de mois inconnu : %s"
 
-#: misc-utils/cal.c:431
+#: misc-utils/cal.c:430
 msgid "illegal day value"
 msgstr "valeur de jour incorrecte"
 
-#: misc-utils/cal.c:433 misc-utils/cal.c:456
+#: misc-utils/cal.c:432 misc-utils/cal.c:455
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "valeur de jour incorrecte : utilisez 1-%d"
 
-#: misc-utils/cal.c:437 misc-utils/cal.c:445
+#: misc-utils/cal.c:436 misc-utils/cal.c:444
 msgid "illegal month value: use 1-12"
 msgstr "valeur de mois incorrecte : utilisez 1-12"
 
-#: misc-utils/cal.c:441
+#: misc-utils/cal.c:440
 #, c-format
 msgid "unknown month name: %s"
 msgstr "Mois inconnu : %s"
 
-#: misc-utils/cal.c:448 misc-utils/cal.c:452
+#: misc-utils/cal.c:447 misc-utils/cal.c:451
 msgid "illegal year value"
 msgstr "valeur d’année incorrecte"
 
-#: misc-utils/cal.c:450
+#: misc-utils/cal.c:449
 msgid "illegal year value: use positive integer"
 msgstr "valeur d'année incorrecte : utilisez un entier positif"
 
-#: misc-utils/cal.c:482 misc-utils/cal.c:495
+#: misc-utils/cal.c:481 misc-utils/cal.c:494
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "valeur de semaine incorrecte : l’année %d n’a pas de semaine %d"
 
-#: misc-utils/cal.c:679
+#: misc-utils/cal.c:678
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: misc-utils/cal.c:685
+#: misc-utils/cal.c:684
 #, c-format
 msgid "%04d"
 msgstr ""
 
-#: misc-utils/cal.c:691
+#: misc-utils/cal.c:690
 #, c-format
 msgid "%s %04d"
 msgstr "%s %04d"
 
-#: misc-utils/cal.c:993
+#: misc-utils/cal.c:992
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [options][[[jour] mois] année]\n"
 
-#: misc-utils/cal.c:994
+#: misc-utils/cal.c:993
 #, c-format
 msgid " %s [options] <timestamp|monthname>\n"
 msgstr " %s [options] <timestamp|mois>\n"
 
-#: misc-utils/cal.c:997
+#: misc-utils/cal.c:996
 msgid "Display a calendar, or some part of it.\n"
 msgstr "Afficher un calendrier ou une partie de calendrier.\n"
 
-#: misc-utils/cal.c:998
+#: misc-utils/cal.c:997
 msgid "Without any arguments, display the current month.\n"
 msgstr "Sans argument, afficher le mois en cours.\n"
 
-#: misc-utils/cal.c:1001
+#: misc-utils/cal.c:1000
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -1, --one             n'afficher qu’un seul mois (par défaut)\n"
 
-#: misc-utils/cal.c:1002
+#: misc-utils/cal.c:1001
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -3, --three           afficher les trois mois encadrant la date\n"
 
-#: misc-utils/cal.c:1003
+#: misc-utils/cal.c:1002
 msgid " -n, --months <num>    show num months starting with date's month\n"
 msgstr " -n, --months <nombre>    afficher N mois commençant par la date du mois\n"
 
-#: misc-utils/cal.c:1004
+#: misc-utils/cal.c:1003
 msgid " -S, --span            span the date when displaying multiple months\n"
 msgstr " -S, --span                couvrir la date lors de l'affichage de plusieurs mois\n"
 
-#: misc-utils/cal.c:1005
+#: misc-utils/cal.c:1004
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -s, --sunday          dimanche comme premier jour de la semaine\n"
 
-#: misc-utils/cal.c:1006
+#: misc-utils/cal.c:1005
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          lundi comme premier jour de la semaine\n"
 
-#: misc-utils/cal.c:1007
+#: misc-utils/cal.c:1006
 msgid " -j, --julian          output Julian dates\n"
 msgstr " -j, --julian          afficher la date julienne\n"
 
-#: misc-utils/cal.c:1008
+#: misc-utils/cal.c:1007
 msgid " -y, --year            show the whole year\n"
 msgstr " -y, --year            afficher toute l'année\n"
 
-#: misc-utils/cal.c:1009
+#: misc-utils/cal.c:1008
 msgid " -Y, --twelve          show the next twelve months\n"
 msgstr " -Y, --twelve            afficher les douze prochains mois\n"
 
-#: misc-utils/cal.c:1010
+#: misc-utils/cal.c:1009
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr " -w, --week[=<num>]    montrer les numéros de semaine US ou ISO-8601\n"
 
-#: misc-utils/cal.c:1011
+#: misc-utils/cal.c:1010
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr "     --color[=<quand>] messages en couleur (auto, always ou never)\n"
 
 #: misc-utils/fincore.c:61
 #, fuzzy
-msgid "file data resident in memory in pages"
+#| msgid "Shared memory pages"
+msgid "file data residend in memory in pages"
 msgstr "Pages de mémoire partagée"
 
 #: misc-utils/fincore.c:62
-#, fuzzy
-msgid "file data resident in memory in bytes"
-msgstr "Pages de mémoire partagée"
+msgid "file data residend in memory in bytes"
+msgstr ""
 
 #: misc-utils/fincore.c:63
-#, fuzzy
 msgid "size of the file"
-msgstr "taille du périphérique"
+msgstr "taille du fichier"
 
 #: misc-utils/fincore.c:64
-#, fuzzy
 msgid "file name"
 msgstr "Nom de fichier"
 
 #: misc-utils/fincore.c:174
 #, fuzzy, c-format
+#| msgid "failed to read symlink: %s"
 msgid "failed to do mincore: %s"
 msgstr "échec de lecture du lien symbolique : %s"
 
 #: misc-utils/fincore.c:213
 #, fuzzy, c-format
+#| msgid "failed to read from: %s"
 msgid "failed to do mmap: %s"
 msgstr "échec de lecture depuis : %s"
 
 #: misc-utils/fincore.c:241
-#, fuzzy, c-format
+#, c-format
 msgid "failed to open: %s"
-msgstr "échec d'analyse de %s"
+msgstr "échec d'ouverture : %s"
 
 #: misc-utils/fincore.c:246
-#, fuzzy, c-format
+#, c-format
 msgid "failed to do fstat: %s"
-msgstr "échec de lecture depuis : %s"
+msgstr "échec de fstat : %s"
 
 #: misc-utils/fincore.c:266
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] file...\n"
-msgstr " %s [options] <fichier>...\n"
+msgstr " %s [options] fichier…\n"
 
 #: misc-utils/fincore.c:269
-#, fuzzy
 msgid " -J, --json            use JSON output format\n"
 msgstr " -J, --json              utiliser le format de sortie JSON\n"
 
 #: misc-utils/fincore.c:270
-#, fuzzy
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            afficher les tailles en octet plutôt qu'en format lisible\n"
 
 #: misc-utils/fincore.c:271
-#, fuzzy
 msgid " -n, --noheadings      don't print headings\n"
 msgstr " -n, --noheadings     ne pas afficher les en-têtes\n"
 
 #: misc-utils/fincore.c:272
-#, fuzzy
 msgid " -o, --output <list>   output columns\n"
 msgstr " -o, --output <liste> colonnes affichées\n"
 
 #: misc-utils/fincore.c:273
-#, fuzzy
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw              utiliser le format de sortie brut\n"
 
@@ -8952,11 +8959,14 @@ msgstr " -s, --fstab            chercher dans la table statique des systèmes de
 
 #: misc-utils/findmnt.c:1202
 #, fuzzy
+#| msgid ""
+#| " -k, --kernel           search in kernel table of mounted\n"
+#| "                          filesystems (default)\n"
 msgid ""
 " -m, --mtab             search in table of mounted filesystems\n"
 "                          (includes user space mount options)\n"
 msgstr ""
-" -k, --kernel           rechercher dans la table du noyau des systèmes de\n"
+" -k, --mtab           rechercher dans la table du noyau des systèmes de\n"
 "                          fichiers montés (par défaut)\n"
 
 #: misc-utils/findmnt.c:1204
@@ -9083,8 +9093,9 @@ msgstr " -T, --target <chemin>  le chemin du système de fichier à utiliser\n"
 
 #: misc-utils/findmnt.c:1235
 #, fuzzy
+#| msgid " -l, --list             use list format output\n"
 msgid "     --tree             enable tree format output is possible\n"
-msgstr " -l, --list             utiliser le format de sortie en liste\n"
+msgstr "     --tree             utiliser le format de sortie en liste\n"
 
 #: misc-utils/findmnt.c:1236
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
@@ -9261,6 +9272,7 @@ msgstr ""
 
 #: misc-utils/findmnt-verify.c:414
 #, fuzzy, c-format
+#| msgid "CD-ROM select speed command not supported by this kernel"
 msgid "%s seems unsupported by the current kernel"
 msgstr "la commande de sélection de vitesse du CD n'est pas prise en charge par ce noyau"
 
@@ -9275,6 +9287,7 @@ msgstr ""
 
 #: misc-utils/findmnt-verify.c:431
 #, fuzzy, c-format
+#| msgid "CD-ROM select speed command not supported by this kernel"
 msgid "on-disk %s seems unsupported by the current kernel"
 msgstr "la commande de sélection de vitesse du CD n'est pas prise en charge par ce noyau"
 
@@ -9462,17 +9475,17 @@ msgstr "l’option « %s » nécessite un argument"
 #: sys-utils/losetup.c:694 sys-utils/tunelp.c:161 sys-utils/tunelp.c:168
 #: sys-utils/tunelp.c:175 sys-utils/tunelp.c:182 sys-utils/tunelp.c:189
 #: sys-utils/tunelp.c:195 sys-utils/tunelp.c:199 sys-utils/tunelp.c:206
-#: sys-utils/tunelp.c:231 term-utils/setterm.c:211 term-utils/setterm.c:214
-#: term-utils/setterm.c:233 term-utils/setterm.c:235 term-utils/setterm.c:270
-#: term-utils/setterm.c:272 term-utils/setterm.c:289 term-utils/setterm.c:296
-#: term-utils/setterm.c:298 term-utils/setterm.c:310 term-utils/setterm.c:312
-#: term-utils/setterm.c:321 term-utils/setterm.c:329 term-utils/setterm.c:344
-#: term-utils/setterm.c:346 term-utils/setterm.c:358 term-utils/setterm.c:360
-#: term-utils/setterm.c:371 term-utils/setterm.c:539 term-utils/setterm.c:544
-#: term-utils/setterm.c:549 term-utils/setterm.c:554 term-utils/setterm.c:578
-#: term-utils/setterm.c:583 term-utils/setterm.c:588 term-utils/setterm.c:593
-#: term-utils/setterm.c:598 term-utils/setterm.c:603 term-utils/setterm.c:611
-#: term-utils/setterm.c:644
+#: sys-utils/tunelp.c:231 term-utils/setterm.c:214 term-utils/setterm.c:217
+#: term-utils/setterm.c:236 term-utils/setterm.c:238 term-utils/setterm.c:273
+#: term-utils/setterm.c:275 term-utils/setterm.c:292 term-utils/setterm.c:299
+#: term-utils/setterm.c:301 term-utils/setterm.c:313 term-utils/setterm.c:315
+#: term-utils/setterm.c:324 term-utils/setterm.c:332 term-utils/setterm.c:347
+#: term-utils/setterm.c:349 term-utils/setterm.c:361 term-utils/setterm.c:363
+#: term-utils/setterm.c:374 term-utils/setterm.c:542 term-utils/setterm.c:547
+#: term-utils/setterm.c:552 term-utils/setterm.c:557 term-utils/setterm.c:581
+#: term-utils/setterm.c:586 term-utils/setterm.c:591 term-utils/setterm.c:596
+#: term-utils/setterm.c:601 term-utils/setterm.c:606 term-utils/setterm.c:614
+#: term-utils/setterm.c:647
 msgid "argument error"
 msgstr "erreur d'argument"
 
@@ -9957,9 +9970,8 @@ msgid " -D, --discard        print discard capabilities\n"
 msgstr " -D, --discard        afficher les capacités d'abandon\n"
 
 #: misc-utils/lsblk.c:1640
-#, fuzzy
 msgid " -z, --zoned          print zone model\n"
-msgstr " -c, --offline           n'afficher que les processeurs hors ligne\n"
+msgstr " -z, --zoned           afficher le modèle de zone\n"
 
 #: misc-utils/lsblk.c:1641
 msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
@@ -10263,8 +10275,9 @@ msgstr " -s, --symlink    agir sur la cible du lien symbolique\n"
 
 #: misc-utils/rename.c:127
 #, fuzzy
+#| msgid " -n, --noheadings     don't print headings\n"
 msgid " -n, --no-act     do not make any changes\n"
-msgstr " -n, --noheadings     ne pas afficher les en-têtes\n"
+msgstr " -n, --no-act     ne pas afficher les en-têtes\n"
 
 #: misc-utils/uuidd.c:72
 msgid "A daemon for generating UUIDs.\n"
@@ -10404,7 +10417,7 @@ msgstr "poll échoué"
 msgid "timeout [%d sec]\n"
 msgstr "expiration du délai [%d s]\n"
 
-#: misc-utils/uuidd.c:443 term-utils/setterm.c:897 text-utils/column.c:436
+#: misc-utils/uuidd.c:443 term-utils/setterm.c:900 text-utils/column.c:436
 #: text-utils/column.c:449
 msgid "read failed"
 msgstr "échec de lecture"
@@ -11102,8 +11115,8 @@ msgstr "échec d'analyse du pas"
 msgid "no device specified"
 msgstr "aucun périphérique indiqué"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:334
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:334
 msgid "unexpected number of arguments"
 msgstr "nombre d'arguments inattendu"
 
@@ -11149,6 +11162,7 @@ msgstr "%s : échec d'ioctl BLKDISCARD"
 
 #: sys-utils/blkzone.c:73
 #, fuzzy
+#| msgid "List information about block devices.\n"
 msgid "Report zone information about the given device"
 msgstr "Afficher des renseignements sur des périphériques blocs.\n"
 
@@ -11158,16 +11172,19 @@ msgstr ""
 
 #: sys-utils/blkzone.c:104
 #, fuzzy, c-format
+#| msgid "%s: set direct io failed"
 msgid "%s: blkdev_get_sectors ioctl failed"
 msgstr "%s : échec de la sélection d’io directe"
 
 #: sys-utils/blkzone.c:177 sys-utils/blkzone.c:251
 #, fuzzy, c-format
+#| msgid "%s: unable to write zone map"
 msgid "%s: unable to determine zone size"
 msgstr "%s : impossible d'écrire la table des zones"
 
 #: sys-utils/blkzone.c:195
 #, fuzzy, c-format
+#| msgid "%s: BLKGETSIZE64 ioctl failed"
 msgid "%s: BLKREPORTZONE ioctl failed"
 msgstr "%s : échec d'ioctl BLKGETSIZE64 ioctl"
 
@@ -11183,76 +11200,75 @@ msgstr ""
 
 #: sys-utils/blkzone.c:256
 #, fuzzy, c-format
+#| msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s : l’index %<PRIu64> n’est pas aligné sur une taille de secteur %i"
 
 #: sys-utils/blkzone.c:275
 #, fuzzy, c-format
+#| msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s : l’index %<PRIu64> n’est pas aligné sur une taille de secteur %i"
 
 #: sys-utils/blkzone.c:283
 #, fuzzy, c-format
+#| msgid "%s: BLKSSZGET ioctl failed"
 msgid "%s: BLKRESETZONE ioctl failed"
 msgstr "%s : échec d'ioctl BLKSSZGET"
 
 #: sys-utils/blkzone.c:285
 #, fuzzy, c-format
+#| msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgid "%s: successfully reset in range from %<PRIu64>, to %<PRIu64>"
 msgstr "Longueur de la table de partitions modifiée de « %<PRIu32> » en « %<PRIu64> »."
 
 #: sys-utils/blkzone.c:298
-#, fuzzy, c-format
+#, c-format
 msgid " %s <command> [options] <device>\n"
-msgstr " %s [options] <périphérique>\n"
+msgstr " %s <command> [options] <périphérique>\n"
 
 #: sys-utils/blkzone.c:301
 msgid "Run zone command on the given block device.\n"
 msgstr ""
 
 #: sys-utils/blkzone.c:308
-#, fuzzy
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
-msgstr " -o, --offset <nbr>   position pour les opérations d’intervalle, en octet\n"
+msgstr " -o, --offset <sector>  secteur de début de zone à utiliser (dans les secteurs de 512 octets)\n"
 
 #: sys-utils/blkzone.c:309
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 
 #: sys-utils/blkzone.c:310
-#, fuzzy
 msgid " -c, --count <number>   maximum number of zones\n"
-msgstr " -t, --streams <nombre>    nombre de flux de compression\n"
+msgstr " -c, --count <nombre>   nombre maximum de zones\n"
 
 #: sys-utils/blkzone.c:311
-#, fuzzy
 msgid " -v, --verbose          display more details\n"
-msgstr "     --verbose             afficher en mode bavard\n"
+msgstr " -v, --verbose          afficher plus de détails\n"
 
 #: sys-utils/blkzone.c:354
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not valid command name"
-msgstr "%s n'est pas un périphérique bloc valable"
+msgstr "%s n'est pas un nom de commande valable"
 
 #: sys-utils/blkzone.c:369
 #, fuzzy
+#| msgid "failed to parse number of lines"
 msgid "failed to parse number of zones"
 msgstr "échec d'analyse du nombre de lignes"
 
 #: sys-utils/blkzone.c:373
-#, fuzzy
 msgid "failed to parse number of sectors"
-msgstr "échec d'analyse du nombre de lignes"
+msgstr "échec d'analyse du nombre de secteurs"
 
 #: sys-utils/blkzone.c:377
-#, fuzzy
 msgid "failed to parse zone offset"
-msgstr "échec d'analyse de position"
+msgstr "échec d'analyse de décalage de zone"
 
 #: sys-utils/blkzone.c:391
-#, fuzzy
 msgid "no command specified"
-msgstr "aucune commande n’a été indiquée"
+msgstr "aucune commande indiquée"
 
 #: sys-utils/chcpu.c:87 sys-utils/chcpu.c:179
 #, c-format
@@ -11434,29 +11450,29 @@ msgid "Memory Block %<PRIu64> (0x%016<PRIx64>-0x%016<PRIx64>)"
 msgstr ""
 
 #: sys-utils/chmem.c:83 sys-utils/chmem.c:129
-#, fuzzy
 msgid "Failed to parse index"
-msgstr "échec d'analyse de l’identifiant"
+msgstr "échec d'analyse de l’index"
 
 #: sys-utils/chmem.c:91
-#, fuzzy, c-format
+#, c-format
 msgid "%s enable failed\n"
-msgstr "Échec d'activation du processeur %u"
+msgstr "Activation de %s échouée\n"
 
 #: sys-utils/chmem.c:93
-#, fuzzy, c-format
+#, c-format
 msgid "%s disable failed\n"
-msgstr "Échec de désactivation du processeur %u"
+msgstr "Désactivation de %s échouée\n"
 
 #: sys-utils/chmem.c:96 sys-utils/chmem.c:152
-#, fuzzy, c-format
+#, c-format
 msgid "%s enabled\n"
-msgstr "processeur %u activé\n"
+msgstr "%s activé\n"
 
 #: sys-utils/chmem.c:98 sys-utils/chmem.c:154
 #, fuzzy, c-format
+#| msgid "CPU %u disabled\n"
 msgid "%s disabled\n"
-msgstr "processeur %u désactivé\n"
+msgstr "%s désactivé\n"
 
 #: sys-utils/chmem.c:110
 #, c-format
@@ -11469,39 +11485,37 @@ msgid "Could only disable %s of memory"
 msgstr ""
 
 #: sys-utils/chmem.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "%s already enabled\n"
-msgstr "le processeur %u est déjà activé\n"
+msgstr "%s est déjà activé\n"
 
 #: sys-utils/chmem.c:140
-#, fuzzy, c-format
+#, c-format
 msgid "%s already disabled\n"
-msgstr "le processeur %u est déjà désactivé\n"
+msgstr "%s est déjà désactivé\n"
 
 #: sys-utils/chmem.c:147
-#, fuzzy, c-format
+#, c-format
 msgid "%s enable failed"
-msgstr "Échec d'activation du processeur %u"
+msgstr "Activation de %s échouée"
 
 #: sys-utils/chmem.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "%s disable failed"
-msgstr "Échec de désactivation du processeur %u"
+msgstr "Désactivation de %s échouée"
 
 #: sys-utils/chmem.c:175 sys-utils/lsmem.c:360
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to read %s"
-msgstr "échec de lecture de la vitesse"
+msgstr "Échec de lecture de %s"
 
 #: sys-utils/chmem.c:183
-#, fuzzy
 msgid "Failed to parse block number"
-msgstr "échec d'analyse du numéro"
+msgstr "Échec d'analyse du numéro de bloc"
 
 #: sys-utils/chmem.c:188
-#, fuzzy
 msgid "Failed to parse size"
-msgstr "Échec d'analyse de taille."
+msgstr "Échec d'analyse de la taille"
 
 #: sys-utils/chmem.c:192
 #, c-format
@@ -11509,34 +11523,30 @@ msgid "Size must be aligned to memory block size (%s)"
 msgstr ""
 
 #: sys-utils/chmem.c:201
-#, fuzzy
 msgid "Failed to parse start"
-msgstr "échec d'analyse du début"
+msgstr "Échec d'analyse du début"
 
 #: sys-utils/chmem.c:202
-#, fuzzy
 msgid "Failed to parse end"
-msgstr "échec d'analyse de la fin"
+msgstr "Échec d'analyse de la fin"
 
 #: sys-utils/chmem.c:206
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid start address format: %s"
-msgstr "argument de début incorrect"
+msgstr "Format d’adresse de début incorrecte : %s"
 
 #: sys-utils/chmem.c:208
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid end address format: %s"
-msgstr "nom ou numéro de signal incorrect : %s"
+msgstr "Format d’adresse de début incorrecte : %s"
 
 #: sys-utils/chmem.c:209
-#, fuzzy
 msgid "Failed to parse start address"
-msgstr "échec d'analyse du début"
+msgstr "Échec d'analyse de l’adresse de début"
 
 #: sys-utils/chmem.c:210
-#, fuzzy
 msgid "Failed to parse end address"
-msgstr "échec d'analyse de la fin"
+msgstr "Échec d'analyse de l’adresse de fin"
 
 #: sys-utils/chmem.c:213
 #, c-format
@@ -11544,42 +11554,39 @@ msgid "Start address and (end address + 1) must be aligned to memory block size 
 msgstr ""
 
 #: sys-utils/chmem.c:227
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid parameter: %s"
-msgstr "argument incorrect : %s"
+msgstr "Paramètre incorrect : %s"
 
 #: sys-utils/chmem.c:234
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid range: %s"
-msgstr "argument incorrect : %s"
+msgstr "Intervalle incorrect : %s"
 
 #: sys-utils/chmem.c:240
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] [SIZE|RANGE|BLOCKRANGE]\n"
-msgstr " %s [options] [y|n]\n"
+msgstr " %s [options] [TAILLE|INTERVALLE|INTERVALLEBLOC]\n"
 
 #: sys-utils/chmem.c:243
 msgid "Set a particular size or range of memory online or offline.\n"
 msgstr ""
 
 #: sys-utils/chmem.c:246
-#, fuzzy
 msgid " -e, --enable   enable memory\n"
-msgstr " -v, --verbose        mode bavard\n"
+msgstr " -e, --enable        activer la mémoire\n"
 
 #: sys-utils/chmem.c:247
 msgid " -d, --disable  disable memory\n"
-msgstr ""
+msgstr " -d, --disable        désactiver la mémoire\n"
 
 #: sys-utils/chmem.c:248
-#, fuzzy
 msgid " -b, --blocks   use memory blocks\n"
-msgstr " -v, --verbose        mode bavard\n"
+msgstr " -b, --blocks        utiliser les blocs mémoire\n"
 
 #: sys-utils/chmem.c:249
-#, fuzzy
 msgid " -v, --verbose  verbose output\n"
-msgstr " -v, --verbose        mode bavard\n"
+msgstr " -v, --verbose  mode bavard\n"
 
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
@@ -11609,187 +11616,187 @@ msgstr "Vous devez être superutilisateur pour activer le comportement de Ctrl-A
 msgid "unknown argument: %s"
 msgstr "argument inconnu : %s"
 
-#: sys-utils/dmesg.c:109
+#: sys-utils/dmesg.c:110
 msgid "system is unusable"
 msgstr "le système est inutilisable"
 
-#: sys-utils/dmesg.c:110
+#: sys-utils/dmesg.c:111
 msgid "action must be taken immediately"
 msgstr "il faut agir immédiatement"
 
-#: sys-utils/dmesg.c:111
+#: sys-utils/dmesg.c:112
 msgid "critical conditions"
 msgstr "conditions critiques"
 
-#: sys-utils/dmesg.c:112
+#: sys-utils/dmesg.c:113
 msgid "error conditions"
 msgstr "conditions d'erreur"
 
-#: sys-utils/dmesg.c:113
+#: sys-utils/dmesg.c:114
 msgid "warning conditions"
 msgstr "conditions d'avertissement"
 
-#: sys-utils/dmesg.c:114
+#: sys-utils/dmesg.c:115
 msgid "normal but significant condition"
 msgstr "condition normale mais significative"
 
-#: sys-utils/dmesg.c:115
+#: sys-utils/dmesg.c:116
 msgid "informational"
 msgstr "information"
 
-#: sys-utils/dmesg.c:116
+#: sys-utils/dmesg.c:117
 msgid "debug-level messages"
 msgstr "messages du niveau de débogage"
 
-#: sys-utils/dmesg.c:130
+#: sys-utils/dmesg.c:131
 msgid "kernel messages"
 msgstr "messages du noyau"
 
-#: sys-utils/dmesg.c:131
+#: sys-utils/dmesg.c:132
 msgid "random user-level messages"
 msgstr "messages utilisateur aléatoires"
 
-#: sys-utils/dmesg.c:132
+#: sys-utils/dmesg.c:133
 msgid "mail system"
 msgstr "système de courrier électronique"
 
-#: sys-utils/dmesg.c:133
+#: sys-utils/dmesg.c:134
 msgid "system daemons"
 msgstr "démons du système"
 
-#: sys-utils/dmesg.c:134
+#: sys-utils/dmesg.c:135
 msgid "security/authorization messages"
 msgstr "message de sécurité ou autorisation"
 
-#: sys-utils/dmesg.c:135
+#: sys-utils/dmesg.c:136
 msgid "messages generated internally by syslogd"
 msgstr "message interne de syslogd"
 
-#: sys-utils/dmesg.c:136
+#: sys-utils/dmesg.c:137
 msgid "line printer subsystem"
 msgstr "message du sous-système d'impression"
 
-#: sys-utils/dmesg.c:137
+#: sys-utils/dmesg.c:138
 msgid "network news subsystem"
 msgstr "sous-système de nouvelles réseau"
 
-#: sys-utils/dmesg.c:138
+#: sys-utils/dmesg.c:139
 msgid "UUCP subsystem"
 msgstr "sous-système UUCP"
 
-#: sys-utils/dmesg.c:139
+#: sys-utils/dmesg.c:140
 msgid "clock daemon"
 msgstr "démon horaire"
 
-#: sys-utils/dmesg.c:140
+#: sys-utils/dmesg.c:141
 msgid "security/authorization messages (private)"
 msgstr "message de sécurité ou autorisation (privé)"
 
-#: sys-utils/dmesg.c:141
+#: sys-utils/dmesg.c:142
 msgid "FTP daemon"
 msgstr "démon FTP"
 
-#: sys-utils/dmesg.c:266
+#: sys-utils/dmesg.c:267
 msgid "Display or control the kernel ring buffer.\n"
 msgstr "Afficher et contrôler le tampon circulaire du noyau.\n"
 
-#: sys-utils/dmesg.c:269
+#: sys-utils/dmesg.c:270
 msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgstr " -C, --clear                 vider le tampon circulaire du noyau\n"
 
-#: sys-utils/dmesg.c:270
+#: sys-utils/dmesg.c:271
 msgid " -c, --read-clear            read and clear all messages\n"
 msgstr " -c, --read-clear            lire et effacer tous les messages\n"
 
-#: sys-utils/dmesg.c:271
+#: sys-utils/dmesg.c:272
 msgid " -D, --console-off           disable printing messages to console\n"
 msgstr " -D, --console-off           désactiver l'affichage des messages en console\n"
 
-#: sys-utils/dmesg.c:272
+#: sys-utils/dmesg.c:273
 msgid " -E, --console-on            enable printing messages to console\n"
 msgstr " -E, --console-on            activer l'affichage des messages en console\n"
 
-#: sys-utils/dmesg.c:273
+#: sys-utils/dmesg.c:274
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr ""
 " -F, --file <fichier>        utiliser le fichier à la place du tampon de\n"
 "                               journal du noyau\n"
 
-#: sys-utils/dmesg.c:274
+#: sys-utils/dmesg.c:275
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
 msgstr " -f, --facility <liste>      restreindre la sortie aux services indiqués\n"
 
-#: sys-utils/dmesg.c:275
+#: sys-utils/dmesg.c:276
 msgid " -H, --human                 human readable output\n"
 msgstr " -H, --human                 sortie lisible\n"
 
-#: sys-utils/dmesg.c:276
+#: sys-utils/dmesg.c:277
 msgid " -k, --kernel                display kernel messages\n"
 msgstr " -k, --kernel                afficher les messages du noyau\n"
 
-#: sys-utils/dmesg.c:277
+#: sys-utils/dmesg.c:278
 msgid " -L, --color[=<when>]        colorize messages (auto, always or never)\n"
 msgstr " -L, --color[=<quand>]       messages en couleur (auto, always ou never)\n"
 
-#: sys-utils/dmesg.c:280
+#: sys-utils/dmesg.c:281
 msgid " -l, --level <list>          restrict output to defined levels\n"
 msgstr " -l, --level <liste>         restreindre la sortie aux niveaux indiqués\n"
 
-#: sys-utils/dmesg.c:281
+#: sys-utils/dmesg.c:282
 msgid " -n, --console-level <level> set level of messages printed to console\n"
 msgstr " -n, --console-level <niv.>  configurer niveau des messages affichés en console\n"
 
-#: sys-utils/dmesg.c:282
+#: sys-utils/dmesg.c:283
 msgid " -P, --nopager               do not pipe output into a pager\n"
 msgstr " -P, --nopager               ne pas renvoyer la sortie dans un visualiseur\n"
 
-#: sys-utils/dmesg.c:283
+#: sys-utils/dmesg.c:284
 msgid " -r, --raw                   print the raw message buffer\n"
 msgstr " -r, --raw                   afficher le tampon de message brut\n"
 
-#: sys-utils/dmesg.c:284
+#: sys-utils/dmesg.c:285
 msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr ""
 " -S, --syslog                forcer l'utilisation de syslog(2) à la place de\n"
 "                               /dev/kmsg\n"
 
-#: sys-utils/dmesg.c:285
+#: sys-utils/dmesg.c:286
 msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr ""
 " -s, --buffer-size <taille>  taille du tampon pour demander le tampon circulaire\n"
 "                               du noyau\n"
 
-#: sys-utils/dmesg.c:286
+#: sys-utils/dmesg.c:287
 msgid " -u, --userspace             display userspace messages\n"
 msgstr " -u, --userspace             afficher les messages en espace utilisateur\n"
 
-#: sys-utils/dmesg.c:287
+#: sys-utils/dmesg.c:288
 msgid " -w, --follow                wait for new messages\n"
 msgstr " -w, --follow                attendre les nouveaux messages\n"
 
-#: sys-utils/dmesg.c:288
+#: sys-utils/dmesg.c:289
 msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr " -x, --decode                décoder le service et le niveau en chaînes lisibles\n"
 
-#: sys-utils/dmesg.c:289
+#: sys-utils/dmesg.c:290
 msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr " -d, --show-delta            montrer la diff. de temps entre messages affichés\n"
 
-#: sys-utils/dmesg.c:290
+#: sys-utils/dmesg.c:291
 msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr ""
 " -e, --reltime               montrer la date locale et la différence de temps\n"
 "                               en format lisible\n"
 
-#: sys-utils/dmesg.c:291
+#: sys-utils/dmesg.c:292
 msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr " -T, --ctime                 affiche l'horodatage lisible par l'utilisateur (peut-être inexacte!)\n"
 
-#: sys-utils/dmesg.c:292
+#: sys-utils/dmesg.c:293
 msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr " -t, --notime                ne pas afficher l'horodatage avec des messages\n"
 
-#: sys-utils/dmesg.c:293
+#: sys-utils/dmesg.c:294
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
@@ -11799,7 +11806,7 @@ msgstr ""
 "                               [delta|reltime|ctime|notime|iso]\n"
 "La mise en veille et le réveil rendront ctime et l’horodatage ISO inexact).\n"
 
-#: sys-utils/dmesg.c:299
+#: sys-utils/dmesg.c:300
 msgid ""
 "\n"
 "Supported log facilities:\n"
@@ -11807,7 +11814,7 @@ msgstr ""
 "\n"
 "Services de journalisation possibles :\n"
 
-#: sys-utils/dmesg.c:305
+#: sys-utils/dmesg.c:306
 msgid ""
 "\n"
 "Supported log levels (priorities):\n"
@@ -11815,49 +11822,49 @@ msgstr ""
 "\n"
 "Niveaux de journalisation possibles (priorités) :\n"
 
-#: sys-utils/dmesg.c:359
+#: sys-utils/dmesg.c:360
 #, c-format
 msgid "failed to parse level '%s'"
 msgstr "échec d'analyse du niveau « %s »"
 
-#: sys-utils/dmesg.c:361
+#: sys-utils/dmesg.c:362
 #, c-format
 msgid "unknown level '%s'"
 msgstr "niveau « %s » inconnu"
 
-#: sys-utils/dmesg.c:397
+#: sys-utils/dmesg.c:398
 #, c-format
 msgid "failed to parse facility '%s'"
 msgstr "échec d'analyse de service « %s »"
 
-#: sys-utils/dmesg.c:399
+#: sys-utils/dmesg.c:400
 #, c-format
 msgid "unknown facility '%s'"
 msgstr "service « %s » inconnu"
 
-#: sys-utils/dmesg.c:527
+#: sys-utils/dmesg.c:528
 #, c-format
 msgid "cannot mmap: %s"
 msgstr "échec de mmap : %s"
 
-#: sys-utils/dmesg.c:1355
+#: sys-utils/dmesg.c:1356
 msgid "invalid buffer size argument"
 msgstr "argument de taille du tampon incorrect"
 
-#: sys-utils/dmesg.c:1407
+#: sys-utils/dmesg.c:1408
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "--show-delta est ignoré quand utilisé avec un format d’heure ISO 8601"
 
-#: sys-utils/dmesg.c:1430
+#: sys-utils/dmesg.c:1431
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw ne peut être utilisée avec les options --level ou --facility qu’en lisant les messages de /dev/kmsg"
 
-#: sys-utils/dmesg.c:1440
+#: sys-utils/dmesg.c:1441
 msgid "read kernel buffer failed"
 msgstr "échec de lecture du tampon de noyau"
 
 # disk-utils/mkswap.c:623
-#: sys-utils/dmesg.c:1459
+#: sys-utils/dmesg.c:1460
 msgid "klogctl failed"
 msgstr "échec de la fonction klogctl"
 
@@ -12240,8 +12247,9 @@ msgstr " -z, --zero-range     mettre à zéro et s’assurer de l’allocation d
 
 #: sys-utils/fallocate.c:98
 #, fuzzy
+#| msgid " -y, --physical          print physical instead of logical IDs\n"
 msgid " -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"
-msgstr " -y, --physical          afficher les ID physique au lieu des logiques\n"
+msgstr " -x, --posix          afficher les ID physique au lieu des logiques\n"
 
 #: sys-utils/fallocate.c:135
 msgid "fallocate failed: keep size mode is unsupported"
@@ -12397,6 +12405,7 @@ msgstr " %s [options] <point de montage>\n"
 
 #: sys-utils/fsfreeze.c:43
 #, fuzzy
+#| msgid "Mount a filesystem.\n"
 msgid "Suspend access to a filesystem.\n"
 msgstr "Monter un système de fichiers.\n"
 
@@ -12563,6 +12572,7 @@ msgstr "Initialiser l'horloge matérielle à %.2d:%.2d:%.2d = %ld secondes depu
 
 #: sys-utils/hwclock.c:394 sys-utils/hwclock.c:638 sys-utils/hwclock.c:726
 #, fuzzy, c-format
+#| msgid "Time of the last change"
 msgid "Test mode: clock was not changed\n"
 msgstr "Date du dernier changement"
 
@@ -12681,11 +12691,11 @@ msgstr ""
 "Ajustement du facteur de dérive de %f secondes/jour\n"
 
 #: sys-utils/hwclock.c:888
-#, fuzzy, c-format
+#, c-format
 msgid "Time since last adjustment is %ld second\n"
 msgid_plural "Time since last adjustment is %ld seconds\n"
-msgstr[0] "L'heure depuis le dernier ajustement est de %d seconde\n"
-msgstr[1] "L'heure depuis le dernier ajustement est de %d secondes\n"
+msgstr[0] "L'heure depuis le dernier ajustement est de %ld seconde\n"
+msgstr[1] "L'heure depuis le dernier ajustement est de %ld secondes\n"
 
 #: sys-utils/hwclock.c:892
 #, c-format
@@ -12898,9 +12908,9 @@ msgid "invalid epoch argument"
 msgstr "argument « epoch » incorrect"
 
 #: sys-utils/hwclock.c:1488
-#, fuzzy, c-format
+#, c-format
 msgid "%d too many arguments given"
-msgstr "trop d'arguments"
+msgstr "%d trop d'arguments"
 
 #: sys-utils/hwclock.c:1496
 msgid "With --noadjfile, you must specify either --utc or --localtime"
@@ -12911,9 +12921,9 @@ msgid "--date is required for --set or --predict"
 msgstr ""
 
 #: sys-utils/hwclock.c:1509
-#, fuzzy, c-format
+#, c-format
 msgid "invalid date '%s'"
-msgstr "identifiant non valable : %s"
+msgstr "date invalide « %s »"
 
 #: sys-utils/hwclock-cmos.c:391
 msgid "ISA port access is not implemented"
@@ -12928,20 +12938,18 @@ msgid "root privileges may be required"
 msgstr ""
 
 #: sys-utils/hwclock-cmos.c:402
-#, fuzzy
 msgid "Using direct ISA access to the clock"
-msgstr "Utilisation d’instructions d’E/S directes pour l’horloge ISA."
+msgstr "Utilisation d’instructions d’accès ISA à l’horloge"
 
 #: sys-utils/hwclock-rtc.c:129
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to open: %s\n"
-msgstr "impossible d'ouvrir %s"
+msgstr "Essai d’ouverture : %s\n"
 
 #: sys-utils/hwclock-rtc.c:151 sys-utils/hwclock-rtc.c:249
 #: sys-utils/hwclock-rtc.c:411 sys-utils/hwclock-rtc.c:454
-#, fuzzy
 msgid "cannot open rtc device"
-msgstr "impossible d'ouvrir "
+msgstr "impossible d'ouvrir le périphérique rtc"
 
 #: sys-utils/hwclock-rtc.c:187
 #, c-format
@@ -12984,6 +12992,7 @@ msgstr "Échec inattendu d'ioctl() de %s pour démarrer les mises à jour par in
 
 #: sys-utils/hwclock-rtc.c:361
 #, fuzzy, c-format
+#| msgid "ioctl(%s) to %s to set the time failed."
 msgid "ioctl(%s) to %s to set the time failed"
 msgstr "Échec d'ioctl(%s) de %s lors de l'initialisation de l'heure."
 
@@ -12993,14 +13002,12 @@ msgid "ioctl(%s) was successful.\n"
 msgstr "ioctl(%s) a réussi.\n"
 
 #: sys-utils/hwclock-rtc.c:378
-#, fuzzy
 msgid "Using the rtc interface to the clock."
-msgstr "Utilisation de l’interface /dev pour l’horloge."
+msgstr "Utilisation de l’interface rtc pour l’horloge."
 
 #: sys-utils/hwclock-rtc.c:407 sys-utils/hwclock-rtc.c:450
-#, fuzzy
 msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file.  This file does not exist on this system."
-msgstr "Pour manipuler la valeur « epoch » dans le noyau, vous devez accéder au pilote Linux du périphérique « rtc » par le biais du fichier spécial %s. Ce fichier n'existe pas sur ce système."
+msgstr "Pour manipuler la valeur « epoch » dans le noyau, vous devez accéder au pilote Linux du périphérique « rtc » par le biais du fichier spécial. Ce fichier n'existe pas sur ce système."
 
 #: sys-utils/hwclock-rtc.c:416
 #, c-format
@@ -14081,6 +14088,9 @@ msgstr "     --raw                     utiliser le format de sortie --list brut\
 
 #: sys-utils/losetup.c:424
 #, fuzzy
+#| msgid ""
+#| "\n"
+#| "Available --list columns:\n"
 msgid ""
 "\n"
 "Available --output columns:\n"
@@ -14254,28 +14264,27 @@ msgid "failed to determine number of CPUs: %s"
 msgstr "échec de détermination du nombre de processeurs : %s"
 
 #: sys-utils/lscpu.c:897
-#, fuzzy
 msgid "cannot restore signal handler"
-msgstr "impossible d'initialiser le traitement de signaux"
+msgstr "impossible de restaurer le traitement de signaux"
 
 #: sys-utils/lscpu.c:958
 #, c-format
 msgid "failed to read from: %s"
 msgstr "échec de lecture depuis : %s"
 
-#: sys-utils/lscpu.c:1459
+#: sys-utils/lscpu.c:1457
 msgid "Failed to extract the node number"
 msgstr "Échec d’extraction du numéro de nœud"
 
-#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
+#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
 msgid "Y"
 msgstr "O"
 
-#: sys-utils/lscpu.c:1586 sys-utils/lscpu.c:1596
+#: sys-utils/lscpu.c:1584 sys-utils/lscpu.c:1594
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:1680
+#: sys-utils/lscpu.c:1678
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -14286,217 +14295,216 @@ msgstr ""
 "# programmes. Les items distincts dans chaque colonne ont\n"
 "# un numéro d'identifiant unique à partir de zéro.\n"
 
-#: sys-utils/lscpu.c:1875 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
+#: sys-utils/lscpu.c:1873 sys-utils/lsns.c:532 sys-utils/zramctl.c:497
 msgid "failed to initialize output column"
 msgstr "échec d'initialisation de la colonne de sortie"
 
-#: sys-utils/lscpu.c:1877
+#: sys-utils/lscpu.c:1875
 msgid "Architecture:"
 msgstr "Architecture : "
 
-#: sys-utils/lscpu.c:1890
+#: sys-utils/lscpu.c:1888
 msgid "CPU op-mode(s):"
 msgstr "Mode(s) opératoire(s) des processeurs : "
 
-#: sys-utils/lscpu.c:1893 sys-utils/lscpu.c:1895
+#: sys-utils/lscpu.c:1891 sys-utils/lscpu.c:1893
 msgid "Byte Order:"
 msgstr "Boutisme : "
 
-#: sys-utils/lscpu.c:1897
+#: sys-utils/lscpu.c:1895
 msgid "CPU(s):"
 msgstr "Processeur(s) : "
 
-#: sys-utils/lscpu.c:1900
+#: sys-utils/lscpu.c:1898
 msgid "On-line CPU(s) mask:"
 msgstr "Masque de processeur(s) en ligne : "
 
-#: sys-utils/lscpu.c:1901
+#: sys-utils/lscpu.c:1899
 msgid "On-line CPU(s) list:"
 msgstr "Liste de processeur(s) en ligne : "
 
-#: sys-utils/lscpu.c:1920
+#: sys-utils/lscpu.c:1918
 msgid "Off-line CPU(s) mask:"
 msgstr "Masque de processeur(s) hors ligne : "
 
-#: sys-utils/lscpu.c:1921
+#: sys-utils/lscpu.c:1919
 msgid "Off-line CPU(s) list:"
 msgstr "Liste de processeur(s) hors ligne : "
 
-#: sys-utils/lscpu.c:1956
+#: sys-utils/lscpu.c:1954
 msgid "Thread(s) per core:"
 msgstr "Thread(s) par cœur : "
 
-#: sys-utils/lscpu.c:1958
+#: sys-utils/lscpu.c:1956
 msgid "Core(s) per socket:"
 msgstr "Cœur(s) par socket : "
 
-#: sys-utils/lscpu.c:1961
+#: sys-utils/lscpu.c:1959
 msgid "Socket(s) per book:"
 msgstr "Socket(s) par livre : "
 
-#: sys-utils/lscpu.c:1964
+#: sys-utils/lscpu.c:1962
 msgid "Book(s) per drawer:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1966
+#: sys-utils/lscpu.c:1964
 msgid "Drawer(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1968
+#: sys-utils/lscpu.c:1966
 msgid "Book(s):"
 msgstr "Livre(s) : "
 
-#: sys-utils/lscpu.c:1971
+#: sys-utils/lscpu.c:1969
 msgid "Socket(s):"
 msgstr "Socket(s) : "
 
-#: sys-utils/lscpu.c:1975
+#: sys-utils/lscpu.c:1973
 msgid "NUMA node(s):"
 msgstr "Nœud(s) NUMA : "
 
-#: sys-utils/lscpu.c:1977
+#: sys-utils/lscpu.c:1975
 msgid "Vendor ID:"
 msgstr "Identifiant constructeur : "
 
-#: sys-utils/lscpu.c:1979
+#: sys-utils/lscpu.c:1977
 msgid "Machine type:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1981
+#: sys-utils/lscpu.c:1979
 msgid "CPU family:"
 msgstr "Famille de processeur : "
 
-#: sys-utils/lscpu.c:1983
+#: sys-utils/lscpu.c:1981
 msgid "Model:"
 msgstr "Modèle : "
 
-#: sys-utils/lscpu.c:1985
+#: sys-utils/lscpu.c:1983
 msgid "Model name:"
 msgstr "Nom de modèle : "
 
-#: sys-utils/lscpu.c:1987
+#: sys-utils/lscpu.c:1985
 msgid "Stepping:"
 msgstr "Révision : "
 
-#: sys-utils/lscpu.c:1989
+#: sys-utils/lscpu.c:1987
 msgid "CPU MHz:"
 msgstr "Vitesse du processeur en MHz : "
 
-#: sys-utils/lscpu.c:1991
+#: sys-utils/lscpu.c:1989
 msgid "CPU dynamic MHz:"
 msgstr "Vitesse dynamique du processeur en MHz :"
 
-#: sys-utils/lscpu.c:1993
+#: sys-utils/lscpu.c:1991
 msgid "CPU static MHz:"
 msgstr "Vitesse statique du processeur en MHz :"
 
-#: sys-utils/lscpu.c:1995
+#: sys-utils/lscpu.c:1993
 msgid "CPU max MHz:"
 msgstr "Vitesse maximale du processeur en MHz :"
 
-#: sys-utils/lscpu.c:1997
+#: sys-utils/lscpu.c:1995
 msgid "CPU min MHz:"
 msgstr "Vitesse minimale du processeur en MHz :"
 
-#: sys-utils/lscpu.c:1999
+#: sys-utils/lscpu.c:1997
 msgid "BogoMIPS:"
 msgstr "BogoMIPS :"
 
-#: sys-utils/lscpu.c:2002 sys-utils/lscpu.c:2004
+#: sys-utils/lscpu.c:2000 sys-utils/lscpu.c:2002
 msgid "Virtualization:"
 msgstr "Virtualisation :"
 
-#: sys-utils/lscpu.c:2007
+#: sys-utils/lscpu.c:2005
 msgid "Hypervisor:"
 msgstr "Hyperviseur :"
 
-#: sys-utils/lscpu.c:2009
+#: sys-utils/lscpu.c:2007
 msgid "Hypervisor vendor:"
 msgstr "Constructeur d'hyperviseur :"
 
-#: sys-utils/lscpu.c:2010
+#: sys-utils/lscpu.c:2008
 msgid "Virtualization type:"
 msgstr "Type de virtualisation :"
 
-#: sys-utils/lscpu.c:2013
+#: sys-utils/lscpu.c:2011
 msgid "Dispatching mode:"
 msgstr "Mode distribué :"
 
-#: sys-utils/lscpu.c:2017 sys-utils/lscpu.c:2024
+#: sys-utils/lscpu.c:2015 sys-utils/lscpu.c:2022
 #, c-format
 msgid "%s cache:"
 msgstr "Cache %s :"
 
-#: sys-utils/lscpu.c:2030
+#: sys-utils/lscpu.c:2028
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "Nœud NUMA %d de processeur(s) :"
 
-#: sys-utils/lscpu.c:2035
+#: sys-utils/lscpu.c:2033
 msgid "Physical sockets:"
 msgstr "Sockets physiques :"
 
-#: sys-utils/lscpu.c:2036
+#: sys-utils/lscpu.c:2034
 msgid "Physical chips:"
 msgstr "Processeurs matériels :"
 
-#: sys-utils/lscpu.c:2037
+#: sys-utils/lscpu.c:2035
 msgid "Physical cores/chip:"
 msgstr "Processeurs / cœurs matériels :"
 
-#: sys-utils/lscpu.c:2041
+#: sys-utils/lscpu.c:2039
 msgid "Flags:"
 msgstr "Drapaux :"
 
-#: sys-utils/lscpu.c:2055
+#: sys-utils/lscpu.c:2053
 msgid "Display information about the CPU architecture.\n"
 msgstr "Afficher des informations sur l'architecture du processeur.\n"
 
-#: sys-utils/lscpu.c:2058
+#: sys-utils/lscpu.c:2056
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr ""
 " -a, --all               afficher à la fois les processeurs en et hors ligne\n"
 "                           (par défaut pour -e)\n"
 
-#: sys-utils/lscpu.c:2059
+#: sys-utils/lscpu.c:2057
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr ""
 " -b, --online            n'afficher que les processeurs en ligne\n"
 "                           (par défaut pour -p)\n"
 
-#: sys-utils/lscpu.c:2060
+#: sys-utils/lscpu.c:2058
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           n'afficher que les processeurs hors ligne\n"
 
-#: sys-utils/lscpu.c:2061
-#, fuzzy
+#: sys-utils/lscpu.c:2059
 msgid " -J, --json              use JSON for default or extended format\n"
-msgstr " -J, --json              utiliser le format de sortie JSON\n"
+msgstr " -J, --json              utiliser JSON comme format par défaut et étendu\n"
 
 # s/an/in/
-#: sys-utils/lscpu.c:2062
+#: sys-utils/lscpu.c:2060
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<liste>]  afficher en format étendu lisible\n"
 
-#: sys-utils/lscpu.c:2063
+#: sys-utils/lscpu.c:2061
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<liste>]   afficher en format analysable\n"
 
-#: sys-utils/lscpu.c:2064
+#: sys-utils/lscpu.c:2062
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <rép.>    utiliser ce répertoire comme racine du système\n"
 
-#: sys-utils/lscpu.c:2065
+#: sys-utils/lscpu.c:2063
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr ""
 " -x, --hex               afficher les masques hexadécimaux au lieu des\n"
 "                           listes de processeurs\n"
 
-#: sys-utils/lscpu.c:2066
+#: sys-utils/lscpu.c:2064
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical          afficher les ID physique au lieu des logiques\n"
 
-#: sys-utils/lscpu.c:2171
+#: sys-utils/lscpu.c:2169
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s : les options --all, --online et --offline ne peuvent être utilisées qu'avec les options --extended ou --parse.\n"
@@ -14883,77 +14891,67 @@ msgid "start and end address of the memory range"
 msgstr ""
 
 #: sys-utils/lsmem.c:100
-#, fuzzy
 msgid "size of the memory range"
-msgstr "taille du périphérique"
+msgstr "intervalle de taille du mémoire"
 
 #: sys-utils/lsmem.c:101
 msgid "online status of the memory range"
 msgstr ""
 
 #: sys-utils/lsmem.c:102
-#, fuzzy
 msgid "memory is removable"
-msgstr " amovible"
+msgstr "mémoire amovible"
 
 #: sys-utils/lsmem.c:103
 msgid "memory block number or blocks range"
 msgstr ""
 
 #: sys-utils/lsmem.c:104
-#, fuzzy
 msgid "numa node of memory"
-msgstr "nombre de secteurs"
+msgstr "nœud numa de mémoire"
 
 #: sys-utils/lsmem.c:193
-#, fuzzy
 msgid "online"
-msgstr ", en ligne"
+msgstr "en ligne"
 
 #: sys-utils/lsmem.c:194
-#, fuzzy
 msgid "offline"
-msgstr ", en ligne"
+msgstr "hors ligne"
 
 #: sys-utils/lsmem.c:195
 msgid "on->off"
-msgstr ""
+msgstr "on->off"
 
 #: sys-utils/lsmem.c:235 sys-utils/lsmem.c:239
-#, fuzzy
 msgid "Memory block size:"
-msgstr "afficher la taille de bloc"
+msgstr "Taille du bloc mémoire :"
 
 #: sys-utils/lsmem.c:236 sys-utils/lsmem.c:241
-#, fuzzy
 msgid "Total online memory:"
-msgstr "total de mémoire partagée maximal"
+msgstr "Mémoire partagée totale :"
 
 #: sys-utils/lsmem.c:237 sys-utils/lsmem.c:243
 msgid "Total offline memory:"
 msgstr ""
 
 #: sys-utils/lsmem.c:259
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open %s"
-msgstr "échec d'analyse de %s"
+msgstr "Échec d'ouverture de %s"
 
 #: sys-utils/lsmem.c:354
-#, fuzzy
 msgid "This system does not support memory blocks"
-msgstr "Ce système ne permet pas de rechercher les processeurs"
+msgstr "Ce système ne permet pas les blocs de mémoire"
 
 #: sys-utils/lsmem.c:374
 msgid "List the ranges of available memory with their online status.\n"
 msgstr ""
 
 #: sys-utils/lsmem.c:379
-#, fuzzy
-msgid " -a, --all            list each individual memory block\n"
-msgstr " -a, --all            afficher tous les périphériques\n"
+msgid " -a, --all            list each individiual memory block\n"
+msgstr " -a, --all            afficher chaque bloc mémoire individuel\n"
 
 #: sys-utils/lsmem.c:384
-#, fuzzy
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
 msgstr " -s, --sysroot <rép.>    utiliser ce répertoire comme racine du système\n"
 
@@ -14962,27 +14960,24 @@ msgid "     --summary[=when] print summary information (never,always or only)\n"
 msgstr ""
 
 #: sys-utils/lsmem.c:488
-#, fuzzy
 msgid "unsupported --summary argument"
-msgstr "argument « %s » de --setgroups non pris en charge"
+msgstr "argument --summary non pris en charge"
 
 #: sys-utils/lsmem.c:501
-#, fuzzy
 msgid "options --{raw,json,pairs} and --summary=only are mutually exclusive"
-msgstr "les options --setgroups=allow et --map-root-user s'excluent mutuellement"
+msgstr "les options --{raw,json,pairs} et --summary=only s'excluent mutuellement"
 
 #: sys-utils/lsmem.c:532 sys-utils/lsns.c:511
 msgid "failed to initialize output table"
 msgstr "échec d'initialisation du tableau de sortie"
 
 #: sys-utils/lsmem.c:544
-#, fuzzy
 msgid "Failed to initialize output column"
-msgstr "échec d'initialisation de la colonne de sortie"
+msgstr "Échec d'initialisation de la colonne de sortie"
 
 #: sys-utils/lsns.c:83
 msgid "namespace identifier (inode number)"
-msgstr "identifinat d’espace de nom (inode number)"
+msgstr "identifiant d’espace de nom (inode number)"
 
 #: sys-utils/lsns.c:84
 msgid "kind of namespace"
@@ -15130,9 +15125,9 @@ msgstr ""
 "       Pour plus de précisions, consultez restorecon(8) et mount(8).\n"
 
 #: sys-utils/mount.c:305 sys-utils/umount.c:157
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s."
-msgstr "%15s: %s"
+msgstr "%s : %s."
 
 #: sys-utils/mount.c:331
 #, c-format
@@ -15361,9 +15356,8 @@ msgid "Run a program with namespaces of other processes.\n"
 msgstr "Exécuter un programme avec les espaces de noms d’autres processus.\n"
 
 #: sys-utils/nsenter.c:80
-#, fuzzy
 msgid " -a, --all              enter all namespaces\n"
-msgstr " -a, --all            afficher tous les périphériques\n"
+msgstr " -a, --all            saisir tous les espaces de noms\n"
 
 #: sys-utils/nsenter.c:81
 msgid " -t, --target <pid>     target process to get namespaces from\n"
@@ -15455,9 +15449,8 @@ msgid "failed to set exec context to '%s'"
 msgstr "échec de configuration le contexte d’exécution à « %s »"
 
 #: sys-utils/nsenter.c:362
-#, fuzzy
 msgid "no target PID specified for --all"
-msgstr "cible indiquée plusieurs fois"
+msgstr "pas de PID cible indiqué pour --all"
 
 #: sys-utils/nsenter.c:426
 #, c-format
@@ -18044,18 +18037,18 @@ msgstr ""
 "Session terminée.\n"
 
 #: term-utils/script.c:442
-#, fuzzy, c-format
+#, c-format
 msgid "Script started on %s\n"
-msgstr "Le script a débuté sur %s"
+msgstr "Script démarré sur %s\n"
 
 #: term-utils/script.c:519
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Script done on %s\n"
 msgstr ""
 "\n"
-"Script terminé sur %s"
+"Script terminé sur %s\n"
 
 #: term-utils/script.c:615
 msgid "failed to get terminal attributes"
@@ -18129,239 +18122,238 @@ msgstr "échec de lecture du fichier de déroulement temporel %s"
 msgid "timing file %s: line %lu: unexpected format"
 msgstr "fichier de déroulement temporel %s : ligne %lu : format inattendu"
 
-#: term-utils/setterm.c:237
+#: term-utils/setterm.c:240
 #, c-format
 msgid "argument error: bright %s is not supported"
 msgstr "erreur d'argument : luminosité %s non prise en charge"
 
-#: term-utils/setterm.c:326
+#: term-utils/setterm.c:329
 msgid "too many tabs"
 msgstr "trop de tabulations"
 
-#: term-utils/setterm.c:381
+#: term-utils/setterm.c:384
 msgid "Set the attributes of a terminal.\n"
 msgstr "Définir les attributs d’un terminal.\n"
 
-#: term-utils/setterm.c:384
+#: term-utils/setterm.c:387
 msgid " --term          <terminal_name>   override TERM environment variable\n"
 msgstr " --term          <nom_terminal>    remplacer la variable d'environnement TERM\n"
 
-#: term-utils/setterm.c:385
+#: term-utils/setterm.c:388
 msgid " --reset                           reset terminal to power-on state\n"
 msgstr " --reset                           réinitialiser le terminal en état alimenté\n"
 
-#: term-utils/setterm.c:386
+#: term-utils/setterm.c:389
 #, fuzzy
+#| msgid " --reset                           reset terminal to power-on state\n"
 msgid " --resize                          reset terminal rows and columns\n"
-msgstr " --reset                           réinitialiser le terminal en état alimenté\n"
+msgstr " --resize                           réinitialiser le terminal en état alimenté\n"
 
-#: term-utils/setterm.c:387
+#: term-utils/setterm.c:390
 msgid " --initialize                      display init string, and use default settings\n"
 msgstr " --initialize                      afficher la chaîne d’initialisation et utiliser les réglages par défaut\n"
 
-#: term-utils/setterm.c:388
+#: term-utils/setterm.c:391
 msgid " --default                         use default terminal settings\n"
 msgstr " --default                         utiliser les réglages par défaut du terminal\n"
 
-#: term-utils/setterm.c:389
+#: term-utils/setterm.c:392
 msgid " --store                           save current terminal settings as default\n"
 msgstr " --store                           sauvegarder les réglages actuels du terminal comme réglages par défaut\n"
 
-#: term-utils/setterm.c:390
+#: term-utils/setterm.c:393
 msgid " --cursor        [on|off]          display cursor\n"
 msgstr " --cursor        [on|off]          afficher le curseur\n"
 
-#: term-utils/setterm.c:391
+#: term-utils/setterm.c:394
 msgid " --repeat        [on|off]          keyboard repeat\n"
 msgstr " --repeat        [on|off]          répéter le clavier\n"
 
-#: term-utils/setterm.c:392
+#: term-utils/setterm.c:395
 msgid " --appcursorkeys [on|off]          cursor key application mode\n"
 msgstr " --appcursorkeys [on|off]          mode d’application de touche du curseur\n"
 
-#: term-utils/setterm.c:393
+#: term-utils/setterm.c:396
 msgid " --linewrap      [on|off]          continue on a new line when a line is full\n"
 msgstr " --linewrap      [on|off]          continuer sur une nouvelle ligne quand une ligne est pleine\n"
 
-#: term-utils/setterm.c:394
+#: term-utils/setterm.c:397
 msgid " --inversescreen [on|off]          swap colors for the whole screen\n"
 msgstr " --inversescreen [on|off]          échanger les couleurs pour tout l’écran\n"
 
-#: term-utils/setterm.c:395
+#: term-utils/setterm.c:398
 msgid " --foreground    default|<color>   set foreground color\n"
 msgstr " --foreground    default|<couleur> définir la couleur de premier plan\n"
 
-#: term-utils/setterm.c:396
+#: term-utils/setterm.c:399
 msgid " --background    default|<color>   set background color\n"
 msgstr " --background    default|<couleur> définir la couleur d’arrière-plan\n"
 
-#: term-utils/setterm.c:397
+#: term-utils/setterm.c:400
 msgid " --ulcolor       [bright] <color>  set underlined text color\n"
 msgstr " --ulcolor       [bright] <couleur> définir la couleur de texte souligné\n"
 
-#: term-utils/setterm.c:398
+#: term-utils/setterm.c:401
 msgid " --hbcolor       [bright] <color>  set bold text color\n"
 msgstr " --hbcolor       [bright] <couleur> définir la couleur de texte gras\n"
 
-#: term-utils/setterm.c:399
+#: term-utils/setterm.c:402
 msgid "                 <color>: black blue cyan green grey magenta red white yellow\n"
 msgstr "                 <couleur> : black blue cyan green grey magenta red white yellow\n"
 
-#: term-utils/setterm.c:400
+#: term-utils/setterm.c:403
 msgid " --bold          [on|off]          bold\n"
 msgstr " --bold          [on|off]          gras\n"
 
-#: term-utils/setterm.c:401
+#: term-utils/setterm.c:404
 msgid " --half-bright   [on|off]          dim\n"
 msgstr " --half-bright   [on|off]          dim\n"
 
-#: term-utils/setterm.c:402
+#: term-utils/setterm.c:405
 msgid " --blink         [on|off]          blink\n"
 msgstr " --blink         [on|off]          clignotement\n"
 
-#: term-utils/setterm.c:403
+#: term-utils/setterm.c:406
 msgid " --underline     [on|off]          underline\n"
 msgstr " --underline     [on|off]          soulignement\n"
 
-#: term-utils/setterm.c:404
+#: term-utils/setterm.c:407
 msgid " --reverse       [on|off]          swap foreground and background colors\n"
 msgstr " --reverse       [on|off]          échanger les couleurs de premier plan et d’arrière-plan\n"
 
-#: term-utils/setterm.c:405
+#: term-utils/setterm.c:408
 msgid " --clear         [all|rest]        clear screen and set cursor position\n"
 msgstr " --clear         [all|rest]        effacer l’écran et définir la position du curseur\n"
 
-#: term-utils/setterm.c:406
+#: term-utils/setterm.c:409
 msgid " --tabs          [<number>...]     set these tab stop positions, or show them\n"
 msgstr " --tabs          [<nombre> ...]    définir ces positions d’arrêt de tabulation ou les montrer\n"
 
-#: term-utils/setterm.c:407
+#: term-utils/setterm.c:410
 msgid " --clrtabs       [<number>...]     clear these tab stop positions, or all\n"
 msgstr " --clrtabs       [<nombre> ...]    effacer ces positions d’arrêt de tabulation ou toutes\n"
 
-#: term-utils/setterm.c:408
+#: term-utils/setterm.c:411
 msgid " --regtabs       [1-160]           set a regular tab stop interval\n"
 msgstr " --regtabs       [1-160]           définir un intervalle d’arrêt de tabulation régulier\n"
 
-#: term-utils/setterm.c:409
+#: term-utils/setterm.c:412
 msgid " --blank         [0-60|force|poke] set time of inactivity before screen blanks\n"
 msgstr " --blank         [0-60|force|poke] définir le temps d’inactivité avant de nettoyer l’écran\n"
 
-#: term-utils/setterm.c:410
+#: term-utils/setterm.c:413
 msgid " --dump          [<number>]        write vcsa<number> console dump to file\n"
 msgstr " --dump          [<nombre>]        écrire le contenu de la console vcsa<nombre> dans un fichier\n"
 
-#: term-utils/setterm.c:411
+#: term-utils/setterm.c:414
 msgid " --append        [<number>]        append vcsa<number> console dump to file\n"
 msgstr " --append        [<nombre>]        ajouter le contenu de la console vcsa<nombre> dans un fichier\n"
 
-#: term-utils/setterm.c:412
+#: term-utils/setterm.c:415
 msgid " --file          <filename>        name of the dump file\n"
 msgstr " --file          <fichier>         nom du fichier de sauvegarde\n"
 
-#: term-utils/setterm.c:413
+#: term-utils/setterm.c:416
 msgid " --msg           [on|off]          send kernel messages to console\n"
 msgstr " --msg           [on|off]          envoyer les messages du noyau à la console\n"
 
-#: term-utils/setterm.c:414
+#: term-utils/setterm.c:417
 msgid " --msglevel      0-8               kernel console log level\n"
 msgstr " --msglevel      0-8               niveau de journalisation du noyau en console\n"
 
-#: term-utils/setterm.c:415
+#: term-utils/setterm.c:418
 msgid " --powersave     [on|vsync|hsync|powerdown|off]\n"
 msgstr " --powersave     [on|vsync|hsync|powerdown|off]\n"
 
-#: term-utils/setterm.c:416
+#: term-utils/setterm.c:419
 msgid "                                   set vesa powersaving features\n"
 msgstr "                                   définir les fonctionnalités de sauvegarde d’énergie VESA\n"
 
-#: term-utils/setterm.c:417
+#: term-utils/setterm.c:420
 msgid " --powerdown     [0-60]            set vesa powerdown interval in minutes\n"
 msgstr " --powerdown     [0-60]            définir l’intervalle d’extinction VESA en minute\n"
 
-#: term-utils/setterm.c:418
+#: term-utils/setterm.c:421
 msgid " --blength       [0-2000]          duration of the bell in milliseconds\n"
 msgstr " --blength       [0-2000]          temps de sonnerie en milliseconde\n"
 
-#: term-utils/setterm.c:419
+#: term-utils/setterm.c:422
 msgid " --bfreq         <number>          bell frequency in Hertz\n"
 msgstr " --bfreq         <nombre>          fréquence de sonnerie en Hertz\n"
 
-#: term-utils/setterm.c:420
+#: term-utils/setterm.c:423
 msgid " --version                         show version information and exit\n"
 msgstr " --version                         afficher les informations de version et quitter\n"
 
-#: term-utils/setterm.c:421
+#: term-utils/setterm.c:424
 msgid " --help                            display this help and exit\n"
 msgstr " --help                            afficher cette aide et quitter\n"
 
-#: term-utils/setterm.c:429
+#: term-utils/setterm.c:432
 msgid "duplicate use of an option"
 msgstr "utilisation d’une option en double"
 
-#: term-utils/setterm.c:738
+#: term-utils/setterm.c:741
 msgid "cannot force blank"
 msgstr "impossible d'activer le nettoyage automatique de l'écran"
 
-#: term-utils/setterm.c:743
+#: term-utils/setterm.c:746
 msgid "cannot force unblank"
 msgstr "impossible de désactiver le nettoyage automatique de l'écran"
 
-#: term-utils/setterm.c:749
+#: term-utils/setterm.c:752
 msgid "cannot get blank status"
 msgstr "impossible d'obtenir l'état de nettoyage automatique de l'écran"
 
-#: term-utils/setterm.c:775
-#, fuzzy, c-format
+#: term-utils/setterm.c:778
+#, c-format
 msgid "cannot open dump file %s for output"
 msgstr "impossible d'ouvrir le fichier de sauvegarde %s en sortie"
 
-#: term-utils/setterm.c:817
+#: term-utils/setterm.c:820
 #, c-format
 msgid "terminal %s does not support %s"
 msgstr "le terminal %s ne prend pas en charge %s"
 
-#: term-utils/setterm.c:855
-#, fuzzy
+#: term-utils/setterm.c:858
 msgid "select failed"
-msgstr "échec de positionnement"
+msgstr "sélection échouée"
 
-#: term-utils/setterm.c:881
+#: term-utils/setterm.c:884
 msgid "stdin does not refer to a terminal"
 msgstr ""
 
-#: term-utils/setterm.c:909
-#, fuzzy, c-format
+#: term-utils/setterm.c:912
+#, c-format
 msgid "invalid cursor position: %s"
-msgstr "option incorrecte"
+msgstr "position du curseur invalide : %s"
 
-#: term-utils/setterm.c:931
-#, fuzzy
+#: term-utils/setterm.c:934
 msgid "reset failed"
-msgstr "échec de setgid"
+msgstr "réinitialisation échouée"
 
-#: term-utils/setterm.c:1095
+#: term-utils/setterm.c:1098
 msgid "cannot (un)set powersave mode"
 msgstr "impossible de (dé)configurer le mode powersave"
 
-#: term-utils/setterm.c:1114 term-utils/setterm.c:1123
+#: term-utils/setterm.c:1117 term-utils/setterm.c:1126
 msgid "klogctl error"
 msgstr "erreur klogctl"
 
-#: term-utils/setterm.c:1144
+#: term-utils/setterm.c:1147
 msgid "$TERM is not defined."
 msgstr "$TERM n'est pas défini."
 
-#: term-utils/setterm.c:1151
+#: term-utils/setterm.c:1154
 msgid "terminfo database cannot be found"
 msgstr "La base de donnée terminfo est introuvable"
 
-#: term-utils/setterm.c:1153
+#: term-utils/setterm.c:1156
 #, c-format
 msgid "%s: unknown terminal type"
 msgstr "%s : type de terminal inconnu"
 
-#: term-utils/setterm.c:1155
+#: term-utils/setterm.c:1158
 msgid "terminal is hardcopy"
 msgstr "le terminal est un terminal brut"
 
@@ -18406,6 +18398,7 @@ msgstr "Envoyer un message à tous les utilisateurs.\n"
 
 #: term-utils/wall.c:91
 #, fuzzy
+#| msgid " -g, --group <group>             specify the primary group\n"
 msgid " -g, --group <group>     only send message to group\n"
 msgstr " -g, --group <groupe>            indiquer le groupe primaire\n"
 
@@ -18418,42 +18411,41 @@ msgid " -t, --timeout <timeout> write timeout in seconds\n"
 msgstr " -t, --timeout <tempsex> écrire le temps d'expiration en seconde\n"
 
 #: term-utils/wall.c:116
-#, fuzzy
 msgid "invalid group argument"
-msgstr "argument period incorrect"
+msgstr "argument group incorrect"
 
 #: term-utils/wall.c:118
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unknown gid"
-msgstr "%c : commande inconnue"
+msgstr "%s : gid inconnu"
 
-#: term-utils/wall.c:161
+#: term-utils/wall.c:158
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr ""
 
-#: term-utils/wall.c:207
+#: term-utils/wall.c:204
 msgid "--nobanner is available only for root"
 msgstr "seul le superutilisateur peut utiliser --nobanner"
 
-#: term-utils/wall.c:212
+#: term-utils/wall.c:209
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr "argument d'expiration de la minuterie incorrect : %s"
 
-#: term-utils/wall.c:351
+#: term-utils/wall.c:348
 msgid "cannot get passwd uid"
 msgstr "impossible d'obtenir l'identifiant utilisateur de passwd"
 
-#: term-utils/wall.c:356
+#: term-utils/wall.c:353
 msgid "cannot get tty name"
 msgstr "impossible d'obtenir le nom du terminal"
 
-#: term-utils/wall.c:376
+#: term-utils/wall.c:373
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Diffusion de message de %s@%s (%s) (%s) :"
 
-#: term-utils/wall.c:409
+#: term-utils/wall.c:406
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "ne lira pas %s — utiliser l'entrée standard."
@@ -18617,44 +18609,37 @@ msgid "second argument"
 msgstr "deuxième argument"
 
 #: text-utils/column.c:217
-#, fuzzy
 msgid "failed to parse column"
-msgstr "échec d'analyse de la fin"
+msgstr "échec d'analyse de la colonne"
 
 #: text-utils/column.c:227
-#, fuzzy, c-format
+#, c-format
 msgid "undefined column name '%s'"
-msgstr "point de montage non défini"
+msgstr "nom de colonne indéfini « %s »"
 
 #: text-utils/column.c:278
-#, fuzzy
 msgid "failed to parse --table-order list"
-msgstr "échec d'analyse de --timeout"
+msgstr "échec d'analyse de la liste --table-order"
 
 #: text-utils/column.c:351
-#, fuzzy
 msgid "failed to parse --table-right list"
-msgstr "échec d'analyse du début"
+msgstr "échec d'analyse de la liste --table-right"
 
 #: text-utils/column.c:355
-#, fuzzy
 msgid "failed to parse --table-trunc list"
-msgstr "échec d'analyse de --timeout"
+msgstr "échec d'analyse de la liste --table-trunc"
 
 #: text-utils/column.c:359
-#, fuzzy
 msgid "failed to parse --table-noextreme list"
-msgstr "échec d'analyse de --timeout"
+msgstr "échec d'analyse de la liste --table-noextreme"
 
 #: text-utils/column.c:363
-#, fuzzy
 msgid "failed to parse --table-wrap list"
-msgstr "échec d'analyse du début"
+msgstr "échec d'analyse de la liste --table-wrap"
 
 #: text-utils/column.c:367
-#, fuzzy
 msgid "failed to parse --table-hide list"
-msgstr "échec d'analyse de --timeout"
+msgstr "échec d'analyse de la liste --table-hide"
 
 #: text-utils/column.c:398
 #, c-format
@@ -18662,35 +18647,34 @@ msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr ""
 
 #: text-utils/column.c:411
-#, fuzzy
 msgid "failed to allocate output data"
-msgstr "échec d’allocation du tableau de sortie"
+msgstr "échec d’allocation des données de sortie"
 
 #: text-utils/column.c:554
 msgid "Columnate lists.\n"
 msgstr "Formater des listes en plusieurs colonnes.\n"
 
 #: text-utils/column.c:557
-#, fuzzy
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table              créer un tableau\n"
 
 #: text-utils/column.c:558
 #, fuzzy
+#| msgid " -n, --name <progname>         the name under which errors are reported\n"
 msgid " -n, --table-name <name>          table name for JSON output\n"
-msgstr " -n, --name <nom-programme>   le nom sous lequel les erreurs sont signalées\n"
+msgstr " -n, --table-name <nom>   le nom sous lequel les erreurs sont signalées\n"
 
 #: text-utils/column.c:559
 #, fuzzy
+#| msgid " -x, --sort <column>  sort output by <column>\n"
 msgid " -O, --table-order <columns>      specify order of output columns\n"
-msgstr " -x, --sort <colonne>  trier la sortie par <colonne>\n"
+msgstr " -O, --table-order <colonnes>  trier la sortie par <colonnes>\n"
 
 #: text-utils/column.c:560
 #, fuzzy
+#| msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgid " -N, --table-columns <names>      comma separated columns names\n"
-msgstr ""
-" -o, --options <liste>    liste d’options d’espace d’échange séparées par\n"
-"                            des virgules\n"
+msgstr " -N, --table-columns <noms>    liste d’options d’espace d’échange séparées par des virgules\n"
 
 #: text-utils/column.c:561
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
@@ -18698,8 +18682,9 @@ msgstr ""
 
 #: text-utils/column.c:562
 #, fuzzy
+#| msgid " -n, --noheadings       don't print column headings\n"
 msgid " -H, --table-hide <columns>       don't print the columns\n"
-msgstr " -n, --noheadings       ne pas afficher les en-têtes de colonne\n"
+msgstr " -H, --table-hide <colonnes>      ne pas afficher les en-têtes de colonne\n"
 
 #: text-utils/column.c:563
 msgid " -R, --table-right <columns>      right align text in these columns\n"
@@ -18707,8 +18692,9 @@ msgstr ""
 
 #: text-utils/column.c:564
 #, fuzzy
+#| msgid " -u, --notruncate       don't truncate text in columns\n"
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
-msgstr " -u, --notruncate       ne pas tronquer le texte des colonnes\n"
+msgstr " -T, --table-truncate <colonnes> ne pas tronquer le texte des colonnes\n"
 
 #: text-utils/column.c:565
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
@@ -18716,31 +18702,39 @@ msgstr ""
 
 #: text-utils/column.c:566
 #, fuzzy
+#| msgid " -J, --json                    use JSON --list output format\n"
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr " -J, --json                    utiliser le format de sortie JSON --list\n"
 
 #: text-utils/column.c:569
 #, fuzzy
+#| msgid " -O, --output <cols>           specify columns to output for --list\n"
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr " -O, --output <cols>           indiquer les colonnes à afficher pour --list\n"
 
 #: text-utils/column.c:570
 #, fuzzy
+#| msgid " -i, --irq <num>              specify parallel port irq\n"
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -i, --irq <numéro>           indiquer l'IRQ du port parallèle\n"
 
 #: text-utils/column.c:571
 #, fuzzy
+#| msgid " -N, --partno <num>        specify partition number\n"
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -N, --partno <num>        indiquer le numéro de partition\n"
 
 #: text-utils/column.c:574
 #, fuzzy
+#| msgid " -c, --columns <width>    width of output in number of characters\n"
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --columns <largeur>  largeur de l'affichage en nombre de caractères\n"
 
 #: text-utils/column.c:575
 #, fuzzy
+#| msgid ""
+#| " -o, --output-separator <string>\n"
+#| "                          columns separator for table output; default is two spaces\n"
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 "-o, --output-separator <chaîne>\n"
@@ -18749,11 +18743,13 @@ msgstr ""
 
 #: text-utils/column.c:576
 #, fuzzy
+#| msgid " -s, --separator <string> possible table delimiters\n"
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <chaîne> délimiteurs de tableau possibles\n"
 
 #: text-utils/column.c:577
 #, fuzzy
+#| msgid " -x, --fillrows           fill rows before columns\n"
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows           remplir les lignes avant les colonnes\n"
 
@@ -18762,9 +18758,8 @@ msgid "invalid columns argument"
 msgstr "argument de colonnes incorrect"
 
 #: text-utils/column.c:662
-#, fuzzy
 msgid "failed to parse column names"
-msgstr "échec d'analyse de la table de montage"
+msgstr "échec d'analyse des noms de colonne"
 
 #: text-utils/column.c:715
 msgid "options --tree-id and --tree-parent are required for tree formatting"
@@ -18778,7 +18773,7 @@ msgstr ""
 msgid "option --table-columns required for --json"
 msgstr ""
 
-#: text-utils/hexdump.c:155 text-utils/more.c:231
+#: text-utils/hexdump.c:155 text-utils/more.c:225
 #, c-format
 msgid " %s [options] <file>...\n"
 msgstr " %s [options] <fichier>...\n"
@@ -18867,60 +18862,60 @@ msgstr "décompte d'octets erroné pour plusieurs caractères de conversion"
 msgid "Read one line.\n"
 msgstr "Lire une ligne.\n"
 
-#: text-utils/more.c:234
+#: text-utils/more.c:228
 msgid "A file perusal filter for CRT viewing.\n"
 msgstr "Filtre lecteur de fichier.\n"
 
-#: text-utils/more.c:237
+#: text-utils/more.c:231
 msgid " -d          display help instead of ringing bell\n"
 msgstr " -d         afficher l’aide au lieu de déclencher la sonnerie\n"
 
-#: text-utils/more.c:238
+#: text-utils/more.c:232
 msgid " -f          count logical rather than screen lines\n"
 msgstr " -f          compter logiquement au lieu des lignes d’écran\n"
 
-#: text-utils/more.c:239
+#: text-utils/more.c:233
 msgid " -l          suppress pause after form feed\n"
 msgstr " -l          supprimer la pause après le saut de page\n"
 
-#: text-utils/more.c:240
+#: text-utils/more.c:234
 msgid " -c          do not scroll, display text and clean line ends\n"
 msgstr " -c          ne pas défiler, afficher le texte et nettoyer les fins de ligne\n"
 
-#: text-utils/more.c:241
+#: text-utils/more.c:235
 msgid " -p          do not scroll, clean screen and display text\n"
 msgstr " -p          ne pas défiler, nettoyer l’écran et afficher le texte\n"
 
-#: text-utils/more.c:242
+#: text-utils/more.c:236
 msgid " -s          squeeze multiple blank lines into one\n"
 msgstr " -s          regrouper les lignes blanches consécutives en une seule\n"
 
-#: text-utils/more.c:243
+#: text-utils/more.c:237
 msgid " -u          suppress underlining\n"
 msgstr " -u          supprimer le soulignement\n"
 
-#: text-utils/more.c:244
+#: text-utils/more.c:238
 msgid " -<number>   the number of lines per screenful\n"
 msgstr " -<nombre>   le nombre de lignes par écran complet\n"
 
-#: text-utils/more.c:245
+#: text-utils/more.c:239
 msgid " +<number>   display file beginning from line number\n"
 msgstr " +<numéro>   afficher le fichier à partir du numéro de ligne\n"
 
-#: text-utils/more.c:246
+#: text-utils/more.c:240
 msgid " +/<string>  display file beginning from search string match\n"
 msgstr " +/<chaîne>  afficher le fichier à partir de la chaîne de recherche correspondante\n"
 
-#: text-utils/more.c:247
+#: text-utils/more.c:241
 msgid " -V          display version information and exit\n"
 msgstr " -V          afficher les informations de version et quitter\n"
 
-#: text-utils/more.c:490
+#: text-utils/more.c:484
 #, c-format
 msgid "unknown option -%s"
 msgstr "option -%s inconnue"
 
-#: text-utils/more.c:514
+#: text-utils/more.c:508
 #, c-format
 msgid ""
 "\n"
@@ -18931,7 +18926,7 @@ msgstr ""
 "*** %s : répertoire ***\n"
 "\n"
 
-#: text-utils/more.c:556
+#: text-utils/more.c:550
 #, c-format
 msgid ""
 "\n"
@@ -18942,41 +18937,41 @@ msgstr ""
 "******** %s : N'est pas un fichier texte ********\n"
 "\n"
 
-#: text-utils/more.c:651
+#: text-utils/more.c:645
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Utiliser q ou Q pour quitter]"
 
-#: text-utils/more.c:730
+#: text-utils/more.c:724
 #, c-format
 msgid "--More--"
 msgstr "--Plus--"
 
-#: text-utils/more.c:732
+#: text-utils/more.c:726
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Prochain fichier : %s)"
 
-#: text-utils/more.c:740
+#: text-utils/more.c:734
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Appuyer sur la barre d'espacement pour continuer, « q » pour quitter.]"
 
-#: text-utils/more.c:1168
+#: text-utils/more.c:1162
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "… reculé de %d page"
 msgstr[1] "… reculé de %d pages"
 
-#: text-utils/more.c:1216
+#: text-utils/more.c:1210
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "… escamotage de %d ligne"
 msgstr[1] "… escamotage de %d lignes"
 
-#: text-utils/more.c:1254
+#: text-utils/more.c:1248
 msgid ""
 "\n"
 "***Back***\n"
@@ -18986,11 +18981,11 @@ msgstr ""
 "***Arrière***\n"
 "\n"
 
-#: text-utils/more.c:1269
+#: text-utils/more.c:1263
 msgid "No previous regular expression"
 msgstr "Pas d'expression rationnelle précédente"
 
-#: text-utils/more.c:1299
+#: text-utils/more.c:1293
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
@@ -19000,7 +18995,7 @@ msgstr ""
 "La plupart des commandes précédées optionnellement par un argument entier k. Par défaut entre crochets.\n"
 "L'étoile « * » indique que l'argument devient le nouveau défaut.\n"
 
-#: text-utils/more.c:1306
+#: text-utils/more.c:1300
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -19044,30 +19039,30 @@ msgstr ""
 ":f                       afficher le nom du fichier actuel et le numéro de ligne\n"
 ".                        répéter la commande précédente\n"
 
-#: text-utils/more.c:1379 text-utils/more.c:1385
+#: text-utils/more.c:1373 text-utils/more.c:1379
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Appuyer sur « h » pour obtenir les instructions.]"
 
-#: text-utils/more.c:1416
+#: text-utils/more.c:1410
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "« %s » ligne %d"
 
-#: text-utils/more.c:1418
+#: text-utils/more.c:1412
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Pas un fichier] ligne %d"
 
-#: text-utils/more.c:1500
+#: text-utils/more.c:1494
 msgid "  Overflow\n"
 msgstr "  Débordement\n"
 
-#: text-utils/more.c:1549
+#: text-utils/more.c:1543
 msgid "...skipping\n"
 msgstr "… escamotage\n"
 
-#: text-utils/more.c:1583
+#: text-utils/more.c:1577
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -19075,19 +19070,19 @@ msgstr ""
 "\n"
 "Motif introuvable\n"
 
-#: text-utils/more.c:1589 text-utils/pg.c:1035 text-utils/pg.c:1181
+#: text-utils/more.c:1583 text-utils/pg.c:1027 text-utils/pg.c:1173
 msgid "Pattern not found"
 msgstr "Motif introuvable"
 
-#: text-utils/more.c:1635
+#: text-utils/more.c:1629
 msgid "exec failed\n"
 msgstr "échec de exec()\n"
 
-#: text-utils/more.c:1649
+#: text-utils/more.c:1643
 msgid "can't fork\n"
 msgstr "impossible d'établir un relais fork()\n"
 
-#: text-utils/more.c:1683
+#: text-utils/more.c:1677
 msgid ""
 "\n"
 "...Skipping "
@@ -19095,23 +19090,23 @@ msgstr ""
 "\n"
 "… Escamotage en cours "
 
-#: text-utils/more.c:1687
+#: text-utils/more.c:1681
 msgid "...Skipping to file "
 msgstr "… Escamotage vers le fichier "
 
-#: text-utils/more.c:1689
+#: text-utils/more.c:1683
 msgid "...Skipping back to file "
 msgstr "… Escamotage arrière vers le fichier "
 
-#: text-utils/more.c:1979
+#: text-utils/more.c:1973
 msgid "Line too long"
 msgstr "Ligne trop longue"
 
-#: text-utils/more.c:2016
+#: text-utils/more.c:2010
 msgid "No previous command to substitute for"
 msgstr "Aucune commande précédente pour substitution"
 
-#: text-utils/pg.c:152
+#: text-utils/pg.c:144
 msgid ""
 "-------------------------------------------------------\n"
 "  h                       this screen\n"
@@ -19160,138 +19155,138 @@ msgstr ""
 "Consultez pg(1) pour obtenir plus de renseignements.\n"
 "-------------------------------------------------------\n"
 
-#: text-utils/pg.c:230
+#: text-utils/pg.c:222
 #, c-format
 msgid " %s [options] [+line] [+/pattern/] [files]\n"
 msgstr " %s [options] [+ligne] [+/motif/] [fichiers]\n"
 
-#: text-utils/pg.c:234
+#: text-utils/pg.c:226
 msgid "Browse pagewise through text files.\n"
 msgstr "Naviguer page par page dans des fichiers texte.\n"
 
-#: text-utils/pg.c:237
+#: text-utils/pg.c:229
 msgid " -number      lines per page\n"
 msgstr " -nombre      lignes par page\n"
 
-#: text-utils/pg.c:238
+#: text-utils/pg.c:230
 msgid " -c           clear screen before displaying\n"
 msgstr " -c           effacer l'écran avant d'afficher\n"
 
-#: text-utils/pg.c:239
+#: text-utils/pg.c:231
 msgid " -e           do not pause at end of a file\n"
 msgstr " -e           ne pas s'arrêter à la fin du fichier\n"
 
-#: text-utils/pg.c:240
+#: text-utils/pg.c:232
 msgid " -f           do not split long lines\n"
 msgstr " -f           ne pas couper les lignes longues\n"
 
-#: text-utils/pg.c:241
+#: text-utils/pg.c:233
 msgid " -n           terminate command with new line\n"
 msgstr " -n           terminer la commande par entrée\n"
 
-#: text-utils/pg.c:242
+#: text-utils/pg.c:234
 msgid " -p <prompt>  specify prompt\n"
 msgstr " -p <chaîne>  indiquer l'invite\n"
 
-#: text-utils/pg.c:243
+#: text-utils/pg.c:235
 msgid " -r           disallow shell escape\n"
 msgstr " -r           interdire les protections de l'interpréteur de commande\n"
 
-#: text-utils/pg.c:244
+#: text-utils/pg.c:236
 msgid " -s           print messages to stdout\n"
 msgstr " -s           afficher les messages sur la sortie standard\n"
 
-#: text-utils/pg.c:245
+#: text-utils/pg.c:237
 msgid " +number      start at the given line\n"
 msgstr " +ligne       commencer à la ligne donnée\n"
 
-#: text-utils/pg.c:246
+#: text-utils/pg.c:238
 msgid " +/pattern/   start at the line containing pattern\n"
 msgstr "+/motif/      commencer à la ligne qui contient le motif\n"
 
-#: text-utils/pg.c:258
+#: text-utils/pg.c:250
 #, c-format
 msgid "option requires an argument -- %s"
 msgstr "l'option nécessite un argument — %s"
 
-#: text-utils/pg.c:264
+#: text-utils/pg.c:256
 #, c-format
 msgid "illegal option -- %s"
 msgstr "option incorrecte — %s"
 
-#: text-utils/pg.c:367
+#: text-utils/pg.c:359
 msgid "...skipping forward\n"
 msgstr "… escamotage avant\n"
 
-#: text-utils/pg.c:369
+#: text-utils/pg.c:361
 msgid "...skipping backward\n"
 msgstr "… escamotage arrière\n"
 
-#: text-utils/pg.c:385
+#: text-utils/pg.c:377
 msgid "No next file"
 msgstr "Pas de prochain fichier"
 
-#: text-utils/pg.c:389
+#: text-utils/pg.c:381
 msgid "No previous file"
 msgstr "Pas de fichier précédent"
 
-#: text-utils/pg.c:891
+#: text-utils/pg.c:883
 #, c-format
 msgid "Read error from %s file"
 msgstr "Erreur de lecture du fichier %s"
 
-#: text-utils/pg.c:894
+#: text-utils/pg.c:886
 #, c-format
 msgid "Unexpected EOF in %s file"
 msgstr "EOF inattendue dans le fichier %s"
 
-#: text-utils/pg.c:896
+#: text-utils/pg.c:888
 #, c-format
 msgid "Unknown error in %s file"
 msgstr "Erreur inconnue dans le fichier %s"
 
-#: text-utils/pg.c:949
+#: text-utils/pg.c:941
 msgid "Cannot create temporary file"
 msgstr "Impossible de créer le fichier temporaire"
 
-#: text-utils/pg.c:958 text-utils/pg.c:1122 text-utils/pg.c:1148
+#: text-utils/pg.c:950 text-utils/pg.c:1114 text-utils/pg.c:1140
 msgid "RE error: "
 msgstr "Erreur RE : "
 
-#: text-utils/pg.c:1105
+#: text-utils/pg.c:1097
 msgid "(EOF)"
 msgstr "(EOF)"
 
-#: text-utils/pg.c:1130 text-utils/pg.c:1156
+#: text-utils/pg.c:1122 text-utils/pg.c:1148
 msgid "No remembered search string"
 msgstr "Pas de chaîne de recherche mémorisée"
 
-#: text-utils/pg.c:1211
+#: text-utils/pg.c:1203
 msgid "cannot open "
 msgstr "impossible d'ouvrir "
 
-#: text-utils/pg.c:1263
+#: text-utils/pg.c:1255
 msgid "saved"
 msgstr "sauvegardé"
 
-#: text-utils/pg.c:1353
+#: text-utils/pg.c:1345
 msgid ": !command not allowed in rflag mode.\n"
 msgstr " : !commande non autorisée en mode rflag.\n"
 
-#: text-utils/pg.c:1388
+#: text-utils/pg.c:1380
 msgid "fork() failed, try again later\n"
 msgstr "échec du fork(), réessayer plus tard.\n"
 
-#: text-utils/pg.c:1476
+#: text-utils/pg.c:1468
 msgid "(Next file: "
 msgstr "(Prochain fichier : "
 
-#: text-utils/pg.c:1542
+#: text-utils/pg.c:1534
 #, c-format
 msgid "%s %s Copyright (c) 2000-2001 Gunnar Ritter. All rights reserved.\n"
 msgstr "%s %s Copyright (c) 2000-2001 Gunnar Ritter. Tous droits réservés.\n"
 
-#: text-utils/pg.c:1595 text-utils/pg.c:1668
+#: text-utils/pg.c:1587 text-utils/pg.c:1660
 msgid "failed to parse number of lines per page"
 msgstr "échec d'analyse du nombre de lignes par page"
 
@@ -19304,50 +19299,40 @@ msgstr "Utilisation : %s [options] [fichier ...]\n"
 msgid "Reverse lines characterwise.\n"
 msgstr "Inverser les lignes au niveau des caractères.\n"
 
-#: text-utils/ul.c:142
+#: text-utils/ul.c:135
 #, c-format
 msgid " %s [options] [<file> ...]\n"
 msgstr " %s [options] [<fichier> ...]\n"
 
-#: text-utils/ul.c:145
+#: text-utils/ul.c:138
 msgid "Do underlining.\n"
 msgstr "Souligner.\n"
 
-#: text-utils/ul.c:148
+#: text-utils/ul.c:141
 msgid " -t, -T, --terminal TERMINAL  override the TERM environment variable\n"
 msgstr " -t, -T, --terminal TERMINAL  remplacer la variable d'environnement TERM\n"
 
-#: text-utils/ul.c:149
+#: text-utils/ul.c:142
 msgid " -i, --indicated              underlining is indicated via a separate line\n"
 msgstr " -i, --indicated              soulignement indiqué à l'aide d'une ligne séparée\n"
 
-#: text-utils/ul.c:210
+#: text-utils/ul.c:203
 msgid "trouble reading terminfo"
 msgstr "problème à la lecture de terminfo"
 
-#: text-utils/ul.c:215
+#: text-utils/ul.c:208
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminal « %s » inconnu, utilisation de « dumb » par défaut"
 
-#: text-utils/ul.c:305
+#: text-utils/ul.c:298
 #, c-format
 msgid "unknown escape sequence in input: %o, %o"
 msgstr "séquence de protection inconnue en entrée : %o, %o"
 
-#: text-utils/ul.c:630
+#: text-utils/ul.c:623
 msgid "Input line too long."
 msgstr "Ligne d'entrée trop longue."
-
-#~ msgid "failed to add data to output table"
-#~ msgstr "échec d'ajout de données au tableau de sortie"
-
-#~ msgid "failed to initialize output line"
-#~ msgstr "échec d'initialisation de la ligne de sortie"
-
-#, fuzzy
-#~ msgid "failed to create output table"
-#~ msgstr "échec d’allocation du tableau de sortie"
 
 #~ msgid "%s: these options are mutually exclusive:"
 #~ msgstr "%s : ces options s'excluent mutuellement :"
@@ -19507,6 +19492,9 @@ msgstr "Ligne d'entrée trop longue."
 
 #~ msgid "Probably you need root privileges.\n"
 #~ msgstr "Les privilèges du superutilisateur sont probablement nécessaire.\n"
+
+#~ msgid "failed to initialize output line"
+#~ msgstr "échec d'initialisation de la ligne de sortie"
 
 #~ msgid "error: can not set signal handler"
 #~ msgstr "erreur : impossible d'initialiser le traitement de signaux"
