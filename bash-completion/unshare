@@ -27,6 +27,7 @@ _unshare_module()
 				--user
 				--cgroup
 				--fork
+				--kill-child
 				--mount-proc
 				--map-root-user
 				--propagation
