@@ -97,9 +97,14 @@ int fdisk_set_wipe_area(struct fdisk_context *cxt,
 	return 0;
 }
 
+#ifndef HAVE_LIBBLKID
+int fdisk_do_wipe(struct fdisk_context *cxt __attribute__((__unused__)))
+{
+	return 0;
+}
+#else
 int fdisk_do_wipe(struct fdisk_context *cxt)
 {
-#ifdef HAVE_LIBBLKID
 	struct list_head *p;
 	blkid_probe pr;
 	int rc;
@@ -140,9 +145,9 @@ int fdisk_do_wipe(struct fdisk_context *cxt)
 	}
 
 	blkid_free_probe(pr);
-#endif
 	return 0;
 }
+#endif
 
 
 /*
@@ -150,9 +155,14 @@ int fdisk_do_wipe(struct fdisk_context *cxt)
  *
  * Returns: 0 if nothing found, < 0 on error, 1 if found a signature
  */
+#ifndef HAVE_LIBBLKID
+int fdisk_check_collisions(struct fdisk_context *cxt __attribute__((__unused__)))
+{
+	return 0;
+}
+#else
 int fdisk_check_collisions(struct fdisk_context *cxt)
 {
-#ifdef HAVE_LIBBLKID
 	int rc = 0;
 	blkid_probe pr;
 
@@ -195,8 +205,5 @@ int fdisk_check_collisions(struct fdisk_context *cxt)
 
 	blkid_free_probe(pr);
 	return rc;
-#else
-	return 0;
-#endif
 }
-
+#endif

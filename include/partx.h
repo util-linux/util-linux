@@ -3,6 +3,7 @@
 
 #include <sys/ioctl.h>
 #include <linux/blkpg.h>
+#include <stdint.h>
 
 #ifndef BLKPG_ADD_PARTITION
 # define BLKPG_ADD_PARTITION	1
