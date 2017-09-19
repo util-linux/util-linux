@@ -1614,7 +1614,7 @@ AM_CONDITIONAL([BUILD_RENICE], [test "x$build_renice" = xyes])
 
 AC_ARG_ENABLE([rfkill],
   AS_HELP_STRING([--disable-rfkill], [do not build rfkill]),
-  [], [UL_DEFAULT_ENABLE([rfkill], [yes])]
+  [], [UL_DEFAULT_ENABLE([rfkill], [check])]
 )
 UL_BUILD_INIT([rfkill])
 UL_REQUIRES_LINUX([rfkill])
