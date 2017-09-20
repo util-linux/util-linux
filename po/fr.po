@@ -13345,7 +13345,7 @@ msgstr " -s, --semaphore-id <id.>   retirer le sémaphore par identifiant\n"
 
 #: sys-utils/ipcrm.c:63
 msgid " -S, --semaphore-key <key>  remove semaphore by key\n"
-msgstr " -s, --semaphore-key <clef> retirer le sémaphore par clef\n"
+msgstr " -S, --semaphore-key <clef> retirer le sémaphore par clef\n"
 
 #: sys-utils/ipcrm.c:64
 msgid " -a, --all[=shm|msg|sem]    remove all (in the specified category)\n"
