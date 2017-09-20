@@ -382,19 +382,45 @@ static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *uuid)
 	DBG(LABEL, gpt_debug_uuid("new type", uuid));
 }
 
-static void gpt_entry_set_name(struct gpt_entry *e, char *str)
+static int gpt_entry_set_name(struct gpt_entry *e, char *str)
 {
-	char name[GPT_PART_NAME_LEN] = { 0 };
-	size_t i, sz = strlen(str);
+	uint16_t name[GPT_PART_NAME_LEN] = { 0 };
+	size_t i, mblen = 0;
+	uint8_t *in = (uint8_t *) str;
 
-	if (sz) {
-		if (sz > GPT_PART_NAME_LEN)
-			sz = GPT_PART_NAME_LEN;
-		memcpy(name, str, sz);
+	for (i = 0; *in && i < GPT_PART_NAME_LEN; in++) {
+		if (!mblen) {
+			if (!(*in & 0x80)) {
+				name[i++] = *in;
+			} else if ((*in & 0xE0) == 0xC0) {
+				mblen = 1;
+				name[i] = (uint16_t)(*in & 0x1F) << (mblen *6);
+			} else if ((*in & 0xF0) == 0xE0) {
+				mblen = 2;
+				name[i] = (uint16_t)(*in & 0x0F) << (mblen *6);
+			} else {
+				/* broken UTF-8 or code point greater than U+FFFF */
+				return -EILSEQ;
+			}
+		} else {
+			/* incomplete UTF-8 sequence */
+			if ((*in & 0xC0) != 0x80)
+				return -EILSEQ;
+
+			name[i] |= (uint16_t)(*in & 0x3F) << (--mblen *6);
+			if (!mblen) {
+				/* check for code points reserved for surrogate pairs*/
+				if ((name[i] & 0xF800) == 0xD800)
+					return -EILSEQ;
+				i++;
+			}
+		}
 	}
 
 	for (i = 0; i < GPT_PART_NAME_LEN; i++)
-		e->name[i] = cpu_to_le16((uint16_t) name[i]);
+		e->name[i] = cpu_to_le16(name[i]);
+
+	return 0;
 }
 
 static int gpt_entry_set_uuid(struct gpt_entry *e, char *str)
