@@ -1083,7 +1083,7 @@ usage(void)
 	       "     --noadjfile      do not use %1$s\n"), _PATH_ADJTIME);
 	printf(_(
 	       "     --adjfile <file> use an alternate file to %1$s\n"), _PATH_ADJTIME);
-	puts(_("     --test           dry run; use -D to view what would have happened"));
+	puts(_("     --test           dry run; implies --debug"));
 	puts(_(" -D, --debug          display more details"));
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(22));
@@ -1251,6 +1251,7 @@ int main(int argc, char **argv)
 			break;
 		case OPT_TEST:
 			ctl.testing = 1;	/* --test */
+			ctl.debug++;
 			break;
 		case OPT_DATE:
 			ctl.date_opt = optarg;	/* --date */
