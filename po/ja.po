@@ -3060,7 +3060,7 @@ msgstr " -C, --cylinders <数値>        シリンダ数を指定します\n"
 #: disk-utils/mkfs.minix.c:145
 #, fuzzy
 msgid " -c, --check             check the device for bad blocks\n"
-msgstr " -u, --unlock             ロックを解除します\n"
+msgstr " -c, --check            デバイスの不良ブロックを調べます\n"
 
 #: disk-utils/mkfs.minix.c:146
 msgid " -l, --badblocks <file>  list of bad blocks from file\n"
