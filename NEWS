@@ -1,3 +1,7 @@
+util-linux 2.30.2: Sep 21 2017
+* see Documentation/releases/v2.30.2-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.30/v2.30.2-ChangeLog
+
 util-linux 2.30.1: Jul 20 2017
 * see Documentation/releases/v2.30.1-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.30/v2.30.1-ChangeLog
