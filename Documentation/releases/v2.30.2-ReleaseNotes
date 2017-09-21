@@ -1,0 +1,42 @@
+util-linux 2.30.2 Release Notes
+===============================
+
+blockdev:
+   - document --setro more properly  [Karel Zak]
+cfdisk:
+   - add missing 0x7F key mapping  [Karel Zak]
+dmesg:
+   - fix delimiter calculation  [Karel Zak]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fstab(5):
+   - mention how tabs are escaped  [Andreas Henriksson]
+lib/randutils:
+   - improve getrandom() usage  [Karel Zak]
+   - reset lose counter  [Karel Zak]
+lib/randutils.c:
+   - Fall back gracefully when kernel doesn't support getrandom(2).  [Christopher James Halse Rogers]
+   - More paranoia in getrandom() call.  [Christopher James Halse Rogers]
+libblkid:
+   - don't check for size on UBI (char dev)  [Karel Zak]
+   - fix compiler warning [-Wformat-truncation=]  [Karel Zak]
+libfdisk:
+   - (dos) use size-=1 when alignment not used later  [Karel Zak]
+   - (gpt) fix size-1 error  [Karel Zak]
+   - fix fdisk_reset_partition() leaking *_chs strings.  [Vaclav Dolezal]
+   - fix two potential memory errors.  [Vaclav Dolezal]
+login:
+   - use IPv4 on IPv4-mapping-to-IPv6  [Karel Zak]
+lslogins:
+   - be more explicit with -g in man page  [Karel Zak]
+   - ignore non-existing users  [Karel Zak]
+po:
+   - fix ipcrm translation error fr.po  [Karel Zak]
+   - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Písař]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update fr.po (from translationproject.org)  [Stéphane Aulery]
+swaplabel:
+   - fix --disable-libuuid compilation  [Karel Zak]
+wdctl:
+   - do not call fsync(2) when closing watchdog device  [Sami Kerola]
