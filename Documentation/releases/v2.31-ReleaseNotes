@@ -67,6 +67,14 @@ option --ambient-caps (thanks Patrick Steinhardt) and the new command line
 option --init-groups allows initialization of supplementary groups (thanks to
 Sebastian Schrader).
 
+The hwclock command now significantly reduces system shutdown times by not
+reading the RTC before setting it (except when the --update-drift option is
+used). This also mitigates other potential shutdown and RTC setting problems
+caused by requiring an RTC read.
+
+The hwclock command now logs --systz when using libaudit. Also, for busybox
+compatibility -l is now aliased to --localtime.
+
 
 Security issues
 ---------------
