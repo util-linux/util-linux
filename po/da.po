@@ -75,7 +75,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-07-20 11:08+0200\n"
+"POT-Creation-Date: 2017-09-21 11:15+0200\n"
 "PO-Revision-Date: 2017-06-05 14:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -96,7 +96,7 @@ msgid "Tell the kernel about the existence of a specified partition.\n"
 msgstr "Fortæl kernen om eksistensen af en specificeret partition.\n"
 
 #: disk-utils/addpart.c:56 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
-#: disk-utils/blockdev.c:446 disk-utils/cfdisk.c:2639 disk-utils/delpart.c:57
+#: disk-utils/blockdev.c:446 disk-utils/cfdisk.c:2640 disk-utils/delpart.c:57
 #: disk-utils/fdformat.c:227 disk-utils/fdisk.c:720 disk-utils/fdisk.c:1019
 #: disk-utils/fdisk-list.c:321 disk-utils/fdisk-list.c:361
 #: disk-utils/fdisk-list.c:380 disk-utils/fsck.c:1448
@@ -108,7 +108,7 @@ msgstr "Fortæl kernen om eksistensen af en specificeret partition.\n"
 #: disk-utils/resizepart.c:101 disk-utils/sfdisk.c:649 disk-utils/sfdisk.c:705
 #: disk-utils/sfdisk.c:759 disk-utils/sfdisk.c:818 disk-utils/sfdisk.c:882
 #: disk-utils/sfdisk.c:923 disk-utils/sfdisk.c:953 disk-utils/sfdisk.c:990
-#: disk-utils/sfdisk.c:1574 disk-utils/swaplabel.c:60 libfdisk/src/bsd.c:640
+#: disk-utils/sfdisk.c:1574 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:640
 #: lib/path.c:70 lib/path.c:82 login-utils/islocal.c:87 login-utils/last.c:670
 #: login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:354
@@ -329,7 +329,7 @@ msgid "Quit program without writing changes"
 msgstr "Afslut program uden at skrive ændringer"
 
 #: disk-utils/cfdisk.c:188 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
-#: libfdisk/src/dos.c:2413 libfdisk/src/gpt.c:3018 libfdisk/src/sgi.c:1159
+#: libfdisk/src/dos.c:2414 libfdisk/src/gpt.c:3026 libfdisk/src/sgi.c:1159
 #: libfdisk/src/sun.c:1119
 msgid "Type"
 msgstr "Type"
@@ -435,285 +435,285 @@ msgstr "Etikel: %s, identifikation: %s"
 msgid "Label: %s"
 msgstr "Etiket: %s"
 
-#: disk-utils/cfdisk.c:1842
+#: disk-utils/cfdisk.c:1843
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
 msgstr "Kan efterfølges af M for MiB, G for GiB, T for TiB eller S for sektorer."
 
-#: disk-utils/cfdisk.c:1848
+#: disk-utils/cfdisk.c:1849
 msgid "Please, specify size."
 msgstr "Angiv venligst størrelse."
 
-#: disk-utils/cfdisk.c:1870
+#: disk-utils/cfdisk.c:1871
 #, c-format
 msgid "Minimum size is %ju bytes."
 msgstr "Minimumstørrelse er %ju byte."
 
-#: disk-utils/cfdisk.c:1879
+#: disk-utils/cfdisk.c:1880
 #, c-format
 msgid "Maximum size is %ju bytes."
 msgstr "Maksmimumstørrelse er %ju byte."
 
-#: disk-utils/cfdisk.c:1886
+#: disk-utils/cfdisk.c:1887
 msgid "Failed to parse size."
 msgstr "Kunne ikke fortolke størrelse."
 
-#: disk-utils/cfdisk.c:1944
+#: disk-utils/cfdisk.c:1945
 msgid "Select partition type"
 msgstr "Vælg partitionstype"
 
-#: disk-utils/cfdisk.c:1990 disk-utils/cfdisk.c:2020
+#: disk-utils/cfdisk.c:1991 disk-utils/cfdisk.c:2021
 msgid "Enter script file name: "
 msgstr "Indtast skriptfilnavn: "
 
-#: disk-utils/cfdisk.c:1991
+#: disk-utils/cfdisk.c:1992
 msgid "The script file will be applied to in-memory partition table."
 msgstr "Skriptfilen vil blive anvendt i i-hukommelse partitionstabel."
 
-#: disk-utils/cfdisk.c:2000 disk-utils/cfdisk.c:2042
+#: disk-utils/cfdisk.c:2001 disk-utils/cfdisk.c:2043
 #: disk-utils/fdisk-menu.c:465 disk-utils/fdisk-menu.c:503
 #, c-format
 msgid "Cannot open %s"
 msgstr "Kan ikke åbne %s"
 
-#: disk-utils/cfdisk.c:2002 disk-utils/fdisk-menu.c:467
+#: disk-utils/cfdisk.c:2003 disk-utils/fdisk-menu.c:467
 #, c-format
 msgid "Failed to parse script file %s"
 msgstr "Kunne ikke fortolke skriptfilen %s"
 
-#: disk-utils/cfdisk.c:2004 disk-utils/fdisk-menu.c:469
+#: disk-utils/cfdisk.c:2005 disk-utils/fdisk-menu.c:469
 #, c-format
 msgid "Failed to apply script %s"
 msgstr "Kunne ikke anvende skriptet %s"
 
-#: disk-utils/cfdisk.c:2021
+#: disk-utils/cfdisk.c:2022
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr "Den nuværende i-hukommelse partitionstabel vil blive dumpet til filen."
 
-#: disk-utils/cfdisk.c:2029 disk-utils/fdisk-menu.c:491
+#: disk-utils/cfdisk.c:2030 disk-utils/fdisk-menu.c:491
 msgid "Failed to allocate script handler"
 msgstr "Kunne ikke allokere skripthåndtering"
 
-#: disk-utils/cfdisk.c:2035
+#: disk-utils/cfdisk.c:2036
 msgid "Failed to read disk layout into script."
 msgstr "Kunne ikke læse disklayout ind i skript."
 
-#: disk-utils/cfdisk.c:2049
+#: disk-utils/cfdisk.c:2050
 msgid "Disk layout successfully dumped."
 msgstr "Disklayout blev dumpet."
 
-#: disk-utils/cfdisk.c:2052 disk-utils/fdisk-menu.c:509
+#: disk-utils/cfdisk.c:2053 disk-utils/fdisk-menu.c:509
 #, c-format
 msgid "Failed to write script %s"
 msgstr "Kunne ikke skrive skriptet %s"
 
-#: disk-utils/cfdisk.c:2088
+#: disk-utils/cfdisk.c:2089
 msgid "Select label type"
 msgstr "Vælg etikettype"
 
-#: disk-utils/cfdisk.c:2091 disk-utils/fdisk.c:1027
+#: disk-utils/cfdisk.c:2092 disk-utils/fdisk.c:1027
 msgid "Device does not contain a recognized partition table."
 msgstr "Enheden indeholder ikke en genkendt partitionstabel."
 
-#: disk-utils/cfdisk.c:2099
+#: disk-utils/cfdisk.c:2100
 msgid "Select a type to create a new label or press 'L' to load script file."
 msgstr "Vælg en type til at oprette en ny etiket eller tryk »L« for at indlæse skriptfil."
 
-#: disk-utils/cfdisk.c:2144
+#: disk-utils/cfdisk.c:2145
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "Dette er cfdisk, et curses-baseret diskpartitioneringsprogram."
 
-#: disk-utils/cfdisk.c:2145
+#: disk-utils/cfdisk.c:2146
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "Det lader dig oprette, slette eller modificere partitioner på en blokenhed."
 
 # se nedenfor
-#: disk-utils/cfdisk.c:2147
+#: disk-utils/cfdisk.c:2148
 msgid "Command      Meaning"
 msgstr "Kommando     Betydning"
 
 # Tror understregerne her skal passe til forrige streng
-#: disk-utils/cfdisk.c:2148
+#: disk-utils/cfdisk.c:2149
 msgid "-------      -------"
 msgstr "--------     ---------"
 
-#: disk-utils/cfdisk.c:2149
+#: disk-utils/cfdisk.c:2150
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Skift opstartsflaget for den aktuelle partition"
 
-#: disk-utils/cfdisk.c:2150
+#: disk-utils/cfdisk.c:2151
 msgid "  d          Delete the current partition"
 msgstr "  d          Slet den aktuelle partition"
 
-#: disk-utils/cfdisk.c:2151
+#: disk-utils/cfdisk.c:2152
 msgid "  h          Print this screen"
 msgstr "  h          Vis denne skærm"
 
-#: disk-utils/cfdisk.c:2152
+#: disk-utils/cfdisk.c:2153
 msgid "  n          Create new partition from free space"
 msgstr "  n          Opret ny partition i frit område"
 
-#: disk-utils/cfdisk.c:2153
+#: disk-utils/cfdisk.c:2154
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Afslut program uden at skrive partitionstabellen"
 
-#: disk-utils/cfdisk.c:2154
+#: disk-utils/cfdisk.c:2155
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s          Ret partitionsrækkefølge (kun når i uorden)"
 
-#: disk-utils/cfdisk.c:2155
+#: disk-utils/cfdisk.c:2156
 msgid "  t          Change the partition type"
 msgstr "  t          Skift partitionstype"
 
-#: disk-utils/cfdisk.c:2156
+#: disk-utils/cfdisk.c:2157
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u          Dump disklayout til sfdisk-kompatibel skriptfil"
 
-#: disk-utils/cfdisk.c:2157
+#: disk-utils/cfdisk.c:2158
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W          Skriv partitionstabellen til disk (skal være stort W);"
 
-#: disk-utils/cfdisk.c:2158
+#: disk-utils/cfdisk.c:2159
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "               siden dette kan ødelægge data på disken, skal du enten"
 
-#: disk-utils/cfdisk.c:2159
+#: disk-utils/cfdisk.c:2160
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "               bekræfte eller afvise ved at skrive henholdsvis »ja« eller »nej«"
 
-#: disk-utils/cfdisk.c:2160
+#: disk-utils/cfdisk.c:2161
 msgid "  x          Display/hide extra information about a partition"
 msgstr "  x          Vis/skjul ekstra information om en partition"
 
-#: disk-utils/cfdisk.c:2161
+#: disk-utils/cfdisk.c:2162
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Pil op       Flyt markøren til forrige partition"
 
-#: disk-utils/cfdisk.c:2162
+#: disk-utils/cfdisk.c:2163
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Pil ned      Flyt markøren til næste partition"
 
-#: disk-utils/cfdisk.c:2163
+#: disk-utils/cfdisk.c:2164
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "Venstre pil  Flyt markøren til forrige menupunkt"
 
-#: disk-utils/cfdisk.c:2164
+#: disk-utils/cfdisk.c:2165
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "Højre pil    Flyt markøren til næste menupunkt"
 
-#: disk-utils/cfdisk.c:2166
+#: disk-utils/cfdisk.c:2167
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Bemærk: Alle kommandoerne kan angives med enten store eller små"
 
-#: disk-utils/cfdisk.c:2167
+#: disk-utils/cfdisk.c:2168
 msgid "case letters (except for Write)."
 msgstr "store bogstaver (undtagen Write)."
 
-#: disk-utils/cfdisk.c:2169
+#: disk-utils/cfdisk.c:2170
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr "Brug lsblk(8) eller partx(8) for at se flere detaljer om enheden."
 
-#: disk-utils/cfdisk.c:2179 disk-utils/cfdisk.c:2438
+#: disk-utils/cfdisk.c:2180 disk-utils/cfdisk.c:2439
 msgid "Press a key to continue."
 msgstr "Tryk en tast for at fortsætte."
 
-#: disk-utils/cfdisk.c:2261
+#: disk-utils/cfdisk.c:2262
 msgid "Could not toggle the flag."
 msgstr "Kunne ikke skifte flaget."
 
-#: disk-utils/cfdisk.c:2271
+#: disk-utils/cfdisk.c:2272
 #, c-format
 msgid "Could not delete partition %zu."
 msgstr "Kunne ikke slette partition %zu."
 
-#: disk-utils/cfdisk.c:2273 disk-utils/fdisk-menu.c:633
+#: disk-utils/cfdisk.c:2274 disk-utils/fdisk-menu.c:633
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Partition %zu er blevet slettet."
 
-#: disk-utils/cfdisk.c:2294
+#: disk-utils/cfdisk.c:2295
 msgid "Partition size: "
 msgstr "Partitionsstørrelse: "
 
-#: disk-utils/cfdisk.c:2335
+#: disk-utils/cfdisk.c:2336
 #, c-format
 msgid "Changed type of partition %zu."
 msgstr "Ændrede systemtypen for partition %zu."
 
-#: disk-utils/cfdisk.c:2337
+#: disk-utils/cfdisk.c:2338
 #, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "Systemtypen for partition %zu er uændret."
 
-#: disk-utils/cfdisk.c:2354 disk-utils/cfdisk.c:2467 disk-utils/fdisk.c:1016
+#: disk-utils/cfdisk.c:2355 disk-utils/cfdisk.c:2468 disk-utils/fdisk.c:1016
 #: disk-utils/fdisk-menu.c:570
 msgid "Device is open in read-only mode."
 msgstr "Enhed er åben i skrivebeskyttet tilstand."
 
-#: disk-utils/cfdisk.c:2359
+#: disk-utils/cfdisk.c:2360
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Er du sikker på, at du vil skrive partitionstabellen til disken? "
 
-#: disk-utils/cfdisk.c:2361
+#: disk-utils/cfdisk.c:2362
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Tast »ja« eller »nej«, eller tryk ESC for at forlade denne dialog."
 
-#: disk-utils/cfdisk.c:2366 login-utils/lslogins.c:209 sys-utils/lscpu.c:1589
+#: disk-utils/cfdisk.c:2367 login-utils/lslogins.c:209 sys-utils/lscpu.c:1589
 #: sys-utils/lscpu.c:1599 sys-utils/lsmem.c:200
 msgid "yes"
 msgstr "ja"
 
-#: disk-utils/cfdisk.c:2367
+#: disk-utils/cfdisk.c:2368
 msgid "Did not write partition table to disk."
 msgstr "Skrev ikke partitionstabellen til disken."
 
-#: disk-utils/cfdisk.c:2372
+#: disk-utils/cfdisk.c:2373
 msgid "Failed to write disklabel."
 msgstr "Kunne ikke skrive disketiket."
 
-#: disk-utils/cfdisk.c:2375 disk-utils/fdisk-menu.c:578
+#: disk-utils/cfdisk.c:2376 disk-utils/fdisk-menu.c:578
 msgid "The partition table has been altered."
 msgstr "Partitionstabellen er ændret."
 
-#: disk-utils/cfdisk.c:2398 disk-utils/cfdisk.c:2469
+#: disk-utils/cfdisk.c:2399 disk-utils/cfdisk.c:2470
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Bemærk at partitionstabellens indgange ikke er i diskrækkefølge nu."
 
-#: disk-utils/cfdisk.c:2435
+#: disk-utils/cfdisk.c:2436
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr "Enhed indeholder allerede en %s-signatur; den vil blive fjernet med en write-kommando."
 
-#: disk-utils/cfdisk.c:2446
+#: disk-utils/cfdisk.c:2447
 msgid "failed to create a new disklabel"
 msgstr "kunne ikke oprette en ny disketiket"
 
-#: disk-utils/cfdisk.c:2454
+#: disk-utils/cfdisk.c:2455
 msgid "failed to read partitions"
 msgstr "kunne ikke læse partitioner"
 
-#: disk-utils/cfdisk.c:2549
+#: disk-utils/cfdisk.c:2550
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [tilvalg] <disk>\n"
 
-#: disk-utils/cfdisk.c:2552 disk-utils/fdisk.c:762 disk-utils/sfdisk.c:1851
+#: disk-utils/cfdisk.c:2553 disk-utils/fdisk.c:762 disk-utils/sfdisk.c:1851
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Vis eller manipuler en diskpartitionstabel.\n"
 
-#: disk-utils/cfdisk.c:2555
+#: disk-utils/cfdisk.c:2556
 msgid " -L, --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr " -L, --color[=<hvornår>]  farvelæg uddata (auto, altid eller aldrig)\n"
 
-#: disk-utils/cfdisk.c:2558
+#: disk-utils/cfdisk.c:2559
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               start med nulstillet partitionstabel\n"
 
-#: disk-utils/cfdisk.c:2597 disk-utils/fdisk.c:907 disk-utils/sfdisk.c:2128
+#: disk-utils/cfdisk.c:2598 disk-utils/fdisk.c:907 disk-utils/sfdisk.c:2128
 #: misc-utils/cal.c:391 sys-utils/dmesg.c:1332 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "ikke understøttet farvetilstand"
 
-#: disk-utils/cfdisk.c:2617 disk-utils/fdisk.c:843 disk-utils/sfdisk.c:225
+#: disk-utils/cfdisk.c:2618 disk-utils/fdisk.c:843 disk-utils/sfdisk.c:225
 msgid "failed to allocate libfdisk context"
 msgstr "kunne ikke allokere libfdisk-kontekst"
 
@@ -764,7 +764,7 @@ msgstr ""
 "Fortsætter ... "
 
 #: disk-utils/fdformat.c:144 disk-utils/fsck.minix.c:182
-#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:458 sys-utils/blkdiscard.c:84
+#: disk-utils/swaplabel.c:122 misc-utils/wipefs.c:458 sys-utils/blkdiscard.c:84
 #: sys-utils/tunelp.c:91
 #, c-format
 msgid " %s [options] <device>\n"
@@ -880,7 +880,7 @@ msgid "Using default response %c."
 msgstr "Bruger standardsvar %c."
 
 #: disk-utils/fdisk.c:178 disk-utils/fdisk.c:252 disk-utils/fdisk.c:327
-#: libfdisk/src/dos.c:1226 libfdisk/src/gpt.c:2360
+#: libfdisk/src/dos.c:1226 libfdisk/src/gpt.c:2368
 msgid "Value out of range."
 msgstr "Værdi uden for området."
 
@@ -976,7 +976,7 @@ msgid "cannot read"
 msgstr "kunne ikke læse"
 
 #: disk-utils/fdisk.c:697 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:967
-#: libfdisk/src/gpt.c:2293
+#: libfdisk/src/gpt.c:2297
 msgid "First sector"
 msgstr "Første sektor"
 
@@ -1169,7 +1169,7 @@ msgid "failed to allocate iterator"
 msgstr "kunne ikke allokere iterator"
 
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
-#: disk-utils/partx.c:667 login-utils/lslogins.c:918 misc-utils/fincore.c:362
+#: disk-utils/partx.c:667 login-utils/lslogins.c:917 misc-utils/fincore.c:362
 #: misc-utils/findmnt.c:1598 misc-utils/lsblk.c:1897 misc-utils/lslocks.c:449
 #: sys-utils/losetup.c:314 sys-utils/lscpu.c:1762 sys-utils/lscpu.c:1865
 #: sys-utils/lsipc.c:338 sys-utils/prlimit.c:297 sys-utils/swapon.c:281
@@ -1178,7 +1178,7 @@ msgid "failed to allocate output table"
 msgstr "kunne ikke allokere uddatatabel"
 
 #: disk-utils/fdisk-list.c:163 disk-utils/fdisk-list.c:266
-#: disk-utils/partx.c:581 login-utils/lslogins.c:976 misc-utils/fincore.c:123
+#: disk-utils/partx.c:581 login-utils/lslogins.c:975 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1174
 #: misc-utils/lslocks.c:391 sys-utils/losetup.c:333 sys-utils/losetup.c:362
 #: sys-utils/lscpu.c:1788 sys-utils/lscpu.c:1816 sys-utils/lsipc.c:470
@@ -1189,7 +1189,7 @@ msgid "failed to allocate output line"
 msgstr "kunne ikke allokere uddatalinje"
 
 #: disk-utils/fdisk-list.c:173 disk-utils/fdisk-list.c:273
-#: disk-utils/partx.c:644 login-utils/lslogins.c:1074 misc-utils/fincore.c:159
+#: disk-utils/partx.c:644 login-utils/lslogins.c:1073 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1165
 #: misc-utils/lslocks.c:436 sys-utils/losetup.c:294 sys-utils/lscpu.c:1796
 #: sys-utils/lscpu.c:1827 sys-utils/lsipc.c:504 sys-utils/lsipc.c:629
@@ -1212,23 +1212,23 @@ msgstr "Filsystem/RAID-signatur på partition %zu vil blive ryddet."
 msgid "Partition table entries are not in disk order."
 msgstr "Partitionstabellens indgange er ikke i diskrækkefølge."
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2407
-#: libfdisk/src/gpt.c:3014 libfdisk/src/sgi.c:1153 libfdisk/src/sun.c:1113
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2408
+#: libfdisk/src/gpt.c:3022 libfdisk/src/sgi.c:1153 libfdisk/src/sun.c:1113
 msgid "Start"
 msgstr "Start"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2408
-#: libfdisk/src/gpt.c:3015 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1114
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2409
+#: libfdisk/src/gpt.c:3023 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1114
 msgid "End"
 msgstr "Slut"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2409
-#: libfdisk/src/gpt.c:3016 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1115
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2410
+#: libfdisk/src/gpt.c:3024 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1115
 msgid "Sectors"
 msgstr "Sektorer"
 
-#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1021 libfdisk/src/dos.c:2411
-#: libfdisk/src/gpt.c:3017 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1117
+#: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1021 libfdisk/src/dos.c:2412
+#: libfdisk/src/gpt.c:3025 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1117
 msgid "Size"
 msgstr "Størrelse"
 
@@ -2071,7 +2071,7 @@ msgid "non-size (%ld vs %ld) bytes"
 msgstr "ikke-størrelse (%ld mod %ld) byte"
 
 #: disk-utils/fsck.cramfs.c:413 disk-utils/fsck.cramfs.c:516
-#: disk-utils/swaplabel.c:104 misc-utils/uuidd.c:375 sys-utils/fallocate.c:417
+#: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:375 sys-utils/fallocate.c:417
 #: sys-utils/setpriv.c:535 sys-utils/setpriv.c:558 sys-utils/swapon.c:390
 #: term-utils/ttymsg.c:175
 #, c-format
@@ -4567,41 +4567,41 @@ msgstr "%s fra %s\n"
 msgid "--movedata requires -N"
 msgstr "--movedata kræver -N"
 
-#: disk-utils/swaplabel.c:69
+#: disk-utils/swaplabel.c:74
 #, c-format
 msgid "failed to parse UUID: %s"
 msgstr "kunne ikke fortolke UUID: %s"
 
-#: disk-utils/swaplabel.c:73
+#: disk-utils/swaplabel.c:78
 #, c-format
 msgid "%s: failed to seek to swap UUID"
 msgstr "%s: Kunne ikke søge (seek) UUID for swap"
 
-#: disk-utils/swaplabel.c:77
+#: disk-utils/swaplabel.c:82
 #, c-format
 msgid "%s: failed to write UUID"
 msgstr "%s: Kunne ikke skrive UUID"
 
-#: disk-utils/swaplabel.c:88
+#: disk-utils/swaplabel.c:93
 #, c-format
 msgid "%s: failed to seek to swap label "
 msgstr "%s: Kunne ikke søge (seek) til swap-etiket"
 
-#: disk-utils/swaplabel.c:95
+#: disk-utils/swaplabel.c:100
 #, c-format
 msgid "label is too long. Truncating it to '%s'"
 msgstr "etiket er for lang. Forkorter den til »%s«"
 
-#: disk-utils/swaplabel.c:98
+#: disk-utils/swaplabel.c:103
 #, c-format
 msgid "%s: failed to write label"
 msgstr "%s: kunne ikke skrive etiket"
 
-#: disk-utils/swaplabel.c:121
+#: disk-utils/swaplabel.c:126
 msgid "Display or change the label or UUID of a swap area.\n"
 msgstr "Vis eller ændr etiketten eller UUID for et swapområde.\n"
 
-#: disk-utils/swaplabel.c:124
+#: disk-utils/swaplabel.c:129
 msgid ""
 " -L, --label <label> specify a new label\n"
 " -U, --uuid <uuid>   specify a new uuid\n"
@@ -4609,7 +4609,7 @@ msgstr ""
 " -L, --label <etiket> angiv en ny etiket\n"
 " -U, --uuid <uuid>    angiv en ny uuid\n"
 
-#: disk-utils/swaplabel.c:167
+#: disk-utils/swaplabel.c:172
 msgid "ignore -U (UUIDs are unsupported)"
 msgstr "ignorer -U (UUID'er er ikke understøttet)"
 
@@ -5126,7 +5126,7 @@ msgstr "Seneste cylinder, +cylindere eller +størrelse{K,M,G,T,P}"
 
 # (lidt specielt men man skriver vist +1024, +1024K, +2048M eller
 # tilsvarende konstruktion)
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1203 libfdisk/src/gpt.c:2338
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1203 libfdisk/src/gpt.c:2346
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Seneste sektor, +sektorer eller +størrelse{K,M,G,T,P}"
 
@@ -5175,7 +5175,7 @@ msgstr "Spor/cylinder"
 msgid "Sectors/Cylinder"
 msgstr "Sektorer/cylinder"
 
-#: libfdisk/src/bsd.c:490 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2410
+#: libfdisk/src/bsd.c:490 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2411
 #: libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:199 libfdisk/src/sun.c:1116
 msgid "Cylinders"
 msgstr "Cylindre"
@@ -5423,7 +5423,7 @@ msgstr "Ugyldigt flag 0x%02x%02x for EBR (for partition %zu) vil blive rettet me
 msgid "Start sector %ju out of range."
 msgstr "Startsektor %ju uden for området."
 
-#: libfdisk/src/dos.c:1061 libfdisk/src/gpt.c:2218 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1061 libfdisk/src/gpt.c:2220 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5434,7 +5434,7 @@ msgstr "Partition %zu er allerede defineret. Slet den før du tilføjer den igen
 msgid "Sector %llu is already allocated."
 msgstr "Sektor %llu er allerede allokeret."
 
-#: libfdisk/src/dos.c:1170 libfdisk/src/gpt.c:2227
+#: libfdisk/src/dos.c:1170 libfdisk/src/gpt.c:2229
 msgid "No free sectors available."
 msgstr "Ingen tilgængelige frie sektorer."
 
@@ -5513,7 +5513,7 @@ msgstr "Det totale antal allokerede sektorer %llu er større end de maksimale %l
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr "Tilbageværende %lld ikke-allokerede %ld-byte sektorer."
 
-#: libfdisk/src/dos.c:1586 libfdisk/src/dos.c:1601 libfdisk/src/dos.c:2045
+#: libfdisk/src/dos.c:1586 libfdisk/src/dos.c:1601 libfdisk/src/dos.c:2046
 msgid "Extended partition already exists."
 msgstr "Udvidet partition findes allerede."
 
@@ -5571,12 +5571,12 @@ msgstr "logisk"
 msgid "numbered from 5"
 msgstr "nummereret fra 5"
 
-#: libfdisk/src/dos.c:1758
+#: libfdisk/src/dos.c:1759
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Ugyldig partitionstype »%c«."
 
-#: libfdisk/src/dos.c:1776
+#: libfdisk/src/dos.c:1777
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Kan ikke skrive sektor %jd: søgning mislykkedes"
@@ -5584,69 +5584,69 @@ msgstr "Kan ikke skrive sektor %jd: søgning mislykkedes"
 # Evt. kan vi omgå det lidt mystiske "identifikation" ved bare at bruge
 # forkortelsen id:
 # Disk-id: ...
-#: libfdisk/src/dos.c:1936 libfdisk/src/gpt.c:1139
+#: libfdisk/src/dos.c:1937 libfdisk/src/gpt.c:1141
 msgid "Disk identifier"
 msgstr "Diskidentifikation"
 
-#: libfdisk/src/dos.c:2050
+#: libfdisk/src/dos.c:2051
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "Type 0 betyder fri plads for mange systemer. At have partitioner med type 0 er sandsynligvis uklogt."
 
-#: libfdisk/src/dos.c:2055
+#: libfdisk/src/dos.c:2056
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Kan ikke ændre typen for den udvidede partition, som allerede er brugt af logiske partitioner. Slet logiske partitioner først."
 
-#: libfdisk/src/dos.c:2241 libfdisk/src/gpt.c:2923
+#: libfdisk/src/dos.c:2242 libfdisk/src/gpt.c:2931
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Intet at gøre. Rækkefølgen er allerede korrekt."
 
-#: libfdisk/src/dos.c:2296
+#: libfdisk/src/dos.c:2297
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "Partition %zu: intet dataområde."
 
-#: libfdisk/src/dos.c:2329
+#: libfdisk/src/dos.c:2330
 msgid "New beginning of data"
 msgstr "Ny begyndelse på data"
 
-#: libfdisk/src/dos.c:2385
+#: libfdisk/src/dos.c:2386
 #, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "Partition %zu: er en udvidet partition."
 
-#: libfdisk/src/dos.c:2391
+#: libfdisk/src/dos.c:2392
 #, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "Opstartsflaget på partition %zu er nu aktiveret."
 
-#: libfdisk/src/dos.c:2392
+#: libfdisk/src/dos.c:2393
 #, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Opstartsflaget på partition %zu er nu deaktiveret."
 
-#: libfdisk/src/dos.c:2405 libfdisk/src/gpt.c:3013 libfdisk/src/sgi.c:1152
+#: libfdisk/src/dos.c:2406 libfdisk/src/gpt.c:3021 libfdisk/src/sgi.c:1152
 #: libfdisk/src/sun.c:1112
 msgid "Device"
 msgstr "Enhed"
 
-#: libfdisk/src/dos.c:2406 libfdisk/src/sun.c:40
+#: libfdisk/src/dos.c:2407 libfdisk/src/sun.c:40
 msgid "Boot"
 msgstr "Opstart"
 
-#: libfdisk/src/dos.c:2412 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1118
+#: libfdisk/src/dos.c:2413 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1118
 msgid "Id"
 msgstr "Id"
 
-#: libfdisk/src/dos.c:2416
+#: libfdisk/src/dos.c:2417
 msgid "Start-C/H/S"
 msgstr "Start-C/H/S"
 
-#: libfdisk/src/dos.c:2417
+#: libfdisk/src/dos.c:2418
 msgid "End-C/H/S"
 msgstr "Slut-C/H/S"
 
 # er det attributs?
-#: libfdisk/src/dos.c:2418 libfdisk/src/gpt.c:3023 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2419 libfdisk/src/gpt.c:3031 libfdisk/src/sgi.c:1160
 msgid "Attrs"
 msgstr "Attrs"
 
@@ -5970,308 +5970,308 @@ msgstr "QNX6-filsystem"
 msgid "Plan 9 partition"
 msgstr "Plan 9-partition"
 
-#: libfdisk/src/gpt.c:590
+#: libfdisk/src/gpt.c:592
 msgid "failed to allocate GPT header"
 msgstr "kunne ikke allokere GPT-teksthoved"
 
-#: libfdisk/src/gpt.c:673
+#: libfdisk/src/gpt.c:675
 msgid "First LBA specified by script is out of range."
 msgstr "Første LBA specificeret af skript er uden for interval."
 
-#: libfdisk/src/gpt.c:685
+#: libfdisk/src/gpt.c:687
 msgid "Last LBA specified by script is out of range."
 msgstr "Sidste LBA specificeret af skript er uden for interval."
 
-#: libfdisk/src/gpt.c:818
+#: libfdisk/src/gpt.c:820
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by w(rite)."
 msgstr "GPT PMBR-størrelsesforskel (%<PRIu64> != %<PRIu64>) vil blive rettet af w(rite)."
 
-#: libfdisk/src/gpt.c:835
+#: libfdisk/src/gpt.c:837
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() mislykkedes"
 
-#: libfdisk/src/gpt.c:845
+#: libfdisk/src/gpt.c:847
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: kan ikke håndtere filer med tilstand %o"
 
-#: libfdisk/src/gpt.c:1109
+#: libfdisk/src/gpt.c:1111
 msgid "GPT Header"
 msgstr "GPT-hoved"
 
-#: libfdisk/src/gpt.c:1114
+#: libfdisk/src/gpt.c:1116
 msgid "GPT Entries"
 msgstr "GPT-punkter"
 
-#: libfdisk/src/gpt.c:1146
+#: libfdisk/src/gpt.c:1148
 msgid "First LBA"
 msgstr "Første LBA"
 
-#: libfdisk/src/gpt.c:1151
+#: libfdisk/src/gpt.c:1153
 msgid "Last LBA"
 msgstr "Sidste LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1157
+#: libfdisk/src/gpt.c:1159
 msgid "Alternative LBA"
 msgstr "Alternativ LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1163
+#: libfdisk/src/gpt.c:1165
 msgid "Partition entries LBA"
 msgstr "Partitionspunkter LBA"
 
-#: libfdisk/src/gpt.c:1168
+#: libfdisk/src/gpt.c:1170
 msgid "Allocated partition entries"
 msgstr "Allokerede partitionspunkter"
 
-#: libfdisk/src/gpt.c:1513
+#: libfdisk/src/gpt.c:1515
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Sikkerhedstabellen for GPT er ødelagt, men den primære ser ud til at være o.k., så den bliver brugt."
 
-#: libfdisk/src/gpt.c:1522
+#: libfdisk/src/gpt.c:1524
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Den primære GPT-tabel er ødelagt, men sikkerhedskopien ser o.k. ud, så den vil blive brugt."
 
-#: libfdisk/src/gpt.c:1704
+#: libfdisk/src/gpt.c:1706
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "ikke understøttet GPT-attributbit »%s«"
 
-#: libfdisk/src/gpt.c:1709
+#: libfdisk/src/gpt.c:1711
 #, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "kunne ikke fortolke GPT-attributstreng »%s«"
 
-#: libfdisk/src/gpt.c:1804
+#: libfdisk/src/gpt.c:1806
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "Partition UUID ændret fra %s til %s."
 
-#: libfdisk/src/gpt.c:1812
+#: libfdisk/src/gpt.c:1814
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Partitionsnavn ændret fra »%s« til »%.*s«."
 
 # findes understeps som dansk betegnelse, selv engelsk giver meget få resultater på google
-#: libfdisk/src/gpt.c:1841
+#: libfdisk/src/gpt.c:1843
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Begyndelsen på partitionen understeps FirstUsableLBA."
 
-#: libfdisk/src/gpt.c:1848
+#: libfdisk/src/gpt.c:1850
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "Slutningen på partitionen oversteps LastUsableLBA."
 
-#: libfdisk/src/gpt.c:2011
+#: libfdisk/src/gpt.c:2013
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "Enheden indeholder hybrid MBR - skriver kun GPT. Du skal synkronisere MBR'en manuelt."
 
-#: libfdisk/src/gpt.c:2048
+#: libfdisk/src/gpt.c:2050
 msgid "Disk does not contain a valid backup header."
 msgstr "Disk indeholder ikke et gyldigt sikkerhedskopihoved."
 
-#: libfdisk/src/gpt.c:2053
+#: libfdisk/src/gpt.c:2055
 msgid "Invalid primary header CRC checksum."
 msgstr "Ugyldig primær teksthoved-CRC-kontrolsum."
 
-#: libfdisk/src/gpt.c:2057
+#: libfdisk/src/gpt.c:2059
 msgid "Invalid backup header CRC checksum."
 msgstr "Ugyldig teksthoved-CRC-kontrolsum for sikkerhedskopi."
 
-#: libfdisk/src/gpt.c:2062
+#: libfdisk/src/gpt.c:2064
 msgid "Invalid partition entry checksum."
 msgstr "Ugyldig kontrolsum for partitionspunkt."
 
-#: libfdisk/src/gpt.c:2067
+#: libfdisk/src/gpt.c:2069
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Ugyldige LBA-sanitetskontroller for primær teksthoved"
 
-#: libfdisk/src/gpt.c:2071
+#: libfdisk/src/gpt.c:2073
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Ugyldige LBA-sanitetskontroller for sikkerhedsteksthoved"
 
-#: libfdisk/src/gpt.c:2076
+#: libfdisk/src/gpt.c:2078
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA-forskel til reel position på primært teksthoved."
 
-#: libfdisk/src/gpt.c:2080
+#: libfdisk/src/gpt.c:2082
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA-forskel til reel position på sikkerhedsteksthoved."
 
-#: libfdisk/src/gpt.c:2085
+#: libfdisk/src/gpt.c:2087
 msgid "Disk is too small to hold all data."
 msgstr "Disken er for lille til alle disse data."
 
-#: libfdisk/src/gpt.c:2095
+#: libfdisk/src/gpt.c:2097
 msgid "Primary and backup header mismatch."
 msgstr "Forskel på primær- og sikkerhedsteksthoved"
 
-#: libfdisk/src/gpt.c:2101
+#: libfdisk/src/gpt.c:2103
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Partition %u overlapper med partition %u."
 
-#: libfdisk/src/gpt.c:2108
+#: libfdisk/src/gpt.c:2110
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Partition %u er for stor for disken."
 
-#: libfdisk/src/gpt.c:2115
+#: libfdisk/src/gpt.c:2117
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Partition %u slutter før den starter."
 
-#: libfdisk/src/gpt.c:2124
+#: libfdisk/src/gpt.c:2126
 msgid "No errors detected."
 msgstr "Ingen fejl detekteret."
 
-#: libfdisk/src/gpt.c:2125
+#: libfdisk/src/gpt.c:2127
 #, c-format
 msgid "Header version: %s"
 msgstr "Teksthovedversion: %s"
 
-#: libfdisk/src/gpt.c:2126
+#: libfdisk/src/gpt.c:2128
 #, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "Bruger %zu ud af %zu partitioner."
 
-#: libfdisk/src/gpt.c:2136
+#: libfdisk/src/gpt.c:2138
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Et antal af %ju frie sektorer er tilgængelige i %u segment."
 msgstr[1] "Et antal af %ju frie sektorer er tilgængelige i %u segmenter (den største er %s)."
 
-#: libfdisk/src/gpt.c:2144
+#: libfdisk/src/gpt.c:2146
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "Ingen fejl detekteret"
 msgstr[1] "%d fejl detekteret"
 
-#: libfdisk/src/gpt.c:2223
+#: libfdisk/src/gpt.c:2225
 msgid "All partitions are already in use."
 msgstr "Alle partitioner er allerede i brug."
 
-#: libfdisk/src/gpt.c:2280 libfdisk/src/gpt.c:2305
+#: libfdisk/src/gpt.c:2282 libfdisk/src/gpt.c:2309
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Sektor %ju er allerede brugt."
 
-#: libfdisk/src/gpt.c:2366
+#: libfdisk/src/gpt.c:2374
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Kunne ikke oprette partition %zu"
 
-#: libfdisk/src/gpt.c:2373
+#: libfdisk/src/gpt.c:2381
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "Den sidste brugbare GPT-sektor er %ju, men %ju kræves."
 
-#: libfdisk/src/gpt.c:2380
+#: libfdisk/src/gpt.c:2388
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "Den første brugbare GPT-sektor er %ju, men %ju er krævet."
 
-#: libfdisk/src/gpt.c:2514
+#: libfdisk/src/gpt.c:2522
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Oprettede en ny GPT-disketiket (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2532
+#: libfdisk/src/gpt.c:2540
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Indtast ny disk-UUID (i 8-4-4-4-12-format)"
 
-#: libfdisk/src/gpt.c:2539
+#: libfdisk/src/gpt.c:2547
 msgid "Failed to parse your UUID."
 msgstr "Kunne ikke fortolke din UUID."
 
-#: libfdisk/src/gpt.c:2553
+#: libfdisk/src/gpt.c:2561
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Diskidentifikation ændret fra %s til %s."
 
-#: libfdisk/src/gpt.c:2573
+#: libfdisk/src/gpt.c:2581
 msgid "Not enough space for new partition table!"
 msgstr "Ikke nok plads til ny partitionstabel!"
 
-#: libfdisk/src/gpt.c:2584
+#: libfdisk/src/gpt.c:2592
 #, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Partitionen #%zu er uden for interval (mindste start er %<PRIu64> sektorer)"
 
-#: libfdisk/src/gpt.c:2589
+#: libfdisk/src/gpt.c:2597
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Partitionen #%zu er uden for interval (største slutning er %<PRIu64> sektorer)"
 
-#: libfdisk/src/gpt.c:2632
+#: libfdisk/src/gpt.c:2640
 #, fuzzy, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Nummeret på partitionen skal være mindre end %zu."
 
-#: libfdisk/src/gpt.c:2655
+#: libfdisk/src/gpt.c:2663
 msgid "Cannot allocate memory!"
 msgstr "Kan ikke allokere hukommelse!"
 
-#: libfdisk/src/gpt.c:2685
+#: libfdisk/src/gpt.c:2693
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Partitionstabellens længde blev ændret fra %<PRIu32> til %<PRIu64>."
 
-#: libfdisk/src/gpt.c:2794
+#: libfdisk/src/gpt.c:2802
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Attributterne på partitionen %zu blev ændredet til 0x%016<PRIx64>."
 
-#: libfdisk/src/gpt.c:2844
+#: libfdisk/src/gpt.c:2852
 msgid "Enter GUID specific bit"
 msgstr "Indtast GUID-specifik bit"
 
-#: libfdisk/src/gpt.c:2859
+#: libfdisk/src/gpt.c:2867
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "kunne ikke skifte ej understøttet bit %lu"
 
-#: libfdisk/src/gpt.c:2872
+#: libfdisk/src/gpt.c:2880
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "GUIDs specifikationsbit %d på partition %zu er aktiveret nu."
 
-#: libfdisk/src/gpt.c:2873
+#: libfdisk/src/gpt.c:2881
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "GUIDs specifikationsbit %d på partition %zu er deaktiveret nu."
 
-#: libfdisk/src/gpt.c:2877
+#: libfdisk/src/gpt.c:2885
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "%s-flaget på partition %zu er aktiveret nu."
 
-#: libfdisk/src/gpt.c:2878
+#: libfdisk/src/gpt.c:2886
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "%s-flaget på partition %zu er deaktiveret nu."
 
-#: libfdisk/src/gpt.c:3020
+#: libfdisk/src/gpt.c:3028
 msgid "Type-UUID"
 msgstr "Type-UUID"
 
-#: libfdisk/src/gpt.c:3021
+#: libfdisk/src/gpt.c:3029
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3022 login-utils/chfn.c:155 login-utils/chfn.c:157
+#: libfdisk/src/gpt.c:3030 login-utils/chfn.c:155 login-utils/chfn.c:157
 #: login-utils/chfn.c:321
 msgid "Name"
 msgstr "Navn"
 
-#: libfdisk/src/partition.c:844
+#: libfdisk/src/partition.c:846
 msgid "Free space"
 msgstr "Frit område"
 
-#: libfdisk/src/partition.c:1213
+#: libfdisk/src/partition.c:1215
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Kunne ikke ændre størrelse på partitionen #%zu."
@@ -7032,11 +7032,11 @@ msgstr "kan ikke forbinde på UNIX-sokkel"
 msgid "the plymouth request %c is not implemented"
 msgstr "plymouth-forespørgslen %c er ikke implementeret"
 
-#: lib/randutils.c:159
+#: lib/randutils.c:178
 msgid "getrandom() function"
 msgstr "getrandom()-funktion"
 
-#: lib/randutils.c:172
+#: lib/randutils.c:191
 msgid "libc pseudo-random functions"
 msgstr "libc pseudo-vilkårlige funktioner"
 
@@ -7276,7 +7276,7 @@ msgstr "Skal udskiftet.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Brug: %s <adgangsordfil> <brugernavn> ...\n"
 
-#: login-utils/last.c:169 login-utils/lslogins.c:1219 sys-utils/dmesg.c:1192
+#: login-utils/last.c:169 login-utils/lslogins.c:1218 sys-utils/dmesg.c:1192
 #: sys-utils/lsipc.c:269
 #, c-format
 msgid "unknown time format: %s"
@@ -7525,7 +7525,7 @@ msgstr ""
 "\n"
 "Logind ugyldigt\n"
 
-#: login-utils/login.c:866 login-utils/login.c:1216 login-utils/login.c:1239
+#: login-utils/login.c:866 login-utils/login.c:1223 login-utils/login.c:1246
 msgid ""
 "\n"
 "Session setup problem, abort."
@@ -7545,63 +7545,63 @@ msgstr "TOMT brugernavn i %s:%d. Afbryder."
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY mislykkedes: %m"
 
-#: login-utils/login.c:1158
+#: login-utils/login.c:1165
 #, c-format
 msgid "login: -h is for superuser only\n"
 msgstr "login: -h er kun for superbrugeren\n"
 
-#: login-utils/login.c:1173
+#: login-utils/login.c:1180
 #, c-format
 msgid "Usage: login [-p] [-h <host>] [-H] [[-f] <username>]\n"
 msgstr "Brug: login [-p] [-h <vært>] [-H] [-f] <brugernavn>\n"
 
-#: login-utils/login.c:1175
+#: login-utils/login.c:1182
 msgid "Begin a session on the system.\n"
 msgstr "Begynd en session på systemet.\n"
 
-#: login-utils/login.c:1217
+#: login-utils/login.c:1224
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Ugyldigt brugernavn »%s« i %s:%d. Afbryder."
 
-#: login-utils/login.c:1238
+#: login-utils/login.c:1245
 #, c-format
 msgid "groups initialization failed: %m"
 msgstr "gruppeinitialisering mislykkedes: %m"
 
-#: login-utils/login.c:1263
+#: login-utils/login.c:1270
 msgid "setgid() failed"
 msgstr "setgid() mislykkedes"
 
-#: login-utils/login.c:1293
+#: login-utils/login.c:1300
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Du har ny post.\n"
 
-#: login-utils/login.c:1295
+#: login-utils/login.c:1302
 #, c-format
 msgid "You have mail.\n"
 msgstr "Du har post.\n"
 
-#: login-utils/login.c:1309
+#: login-utils/login.c:1316
 msgid "setuid() failed"
 msgstr "setuid() mislykkedes"
 
-#: login-utils/login.c:1315 login-utils/sulogin.c:729
+#: login-utils/login.c:1322 login-utils/sulogin.c:729
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: Kunne ikke ændre mappe"
 
-#: login-utils/login.c:1322 login-utils/sulogin.c:730
+#: login-utils/login.c:1329 login-utils/sulogin.c:730
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Logger ind med hjemmemappe = \"/\".\n"
 
-#: login-utils/login.c:1351
+#: login-utils/login.c:1358
 msgid "couldn't exec shell script"
 msgstr "kunne ikke køre skal-skript"
 
-#: login-utils/login.c:1353
+#: login-utils/login.c:1360
 msgid "no shell"
 msgstr "ingen skal"
 
@@ -7837,11 +7837,11 @@ msgstr "kunne ikke oprette tidsstreng"
 msgid "failed to get supplementary groups"
 msgstr "kunne ikke hente supplementære grupper"
 
-#: login-utils/lslogins.c:1070
+#: login-utils/lslogins.c:1069
 msgid "internal error: unknown column"
 msgstr "intern fejl: ukendt kolonne"
 
-#: login-utils/lslogins.c:1168
+#: login-utils/lslogins.c:1167
 #, c-format
 msgid ""
 "\n"
@@ -7850,7 +7850,7 @@ msgstr ""
 "\n"
 "Sidste logge:\n"
 
-#: login-utils/lslogins.c:1227 login-utils/nologin.c:26
+#: login-utils/lslogins.c:1226 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:494 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
 #: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:263 sys-utils/ipcmk.c:66
 #: sys-utils/lscpu.c:2052 sys-utils/lsipc.c:277 sys-utils/lsmem.c:371
@@ -7860,95 +7860,95 @@ msgstr ""
 msgid " %s [options]\n"
 msgstr " %s [tilvalg]\n"
 
-#: login-utils/lslogins.c:1230
+#: login-utils/lslogins.c:1229
 msgid "Display information about known users in the system.\n"
 msgstr "Vis information om kendte brugere i systemet.\n"
 
-#: login-utils/lslogins.c:1233
+#: login-utils/lslogins.c:1232
 msgid " -a, --acc-expiration     display info about passwords expiration\n"
 msgstr " -a, --acc-expiration     vis information om adgangskodernes udløb\n"
 
-#: login-utils/lslogins.c:1234
+#: login-utils/lslogins.c:1233
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
 msgstr " -c, --colon-separate     vis data i et format der svarer til /etc/passwd\n"
 
-#: login-utils/lslogins.c:1235 sys-utils/lsipc.c:296
+#: login-utils/lslogins.c:1234 sys-utils/lsipc.c:296
 msgid " -e, --export             display in an export-able output format\n"
 msgstr " -e, --export             vis i et uddataformat egnet for eksport\n"
 
-#: login-utils/lslogins.c:1236
+#: login-utils/lslogins.c:1235
 msgid " -f, --failed             display data about the users' last failed logins\n"
 msgstr " -f, --failed             vis data om brugerens sidste mislykkede forsøg på logind\n"
 
-#: login-utils/lslogins.c:1237
+#: login-utils/lslogins.c:1236
 msgid " -G, --supp-groups        display information about groups\n"
 msgstr " -G, --supp-groups        vis information om grupper\n"
 
-#: login-utils/lslogins.c:1238
+#: login-utils/lslogins.c:1237
 msgid " -g, --groups=<groups>    display users belonging to a group in <groups>\n"
 msgstr " -g, --groups=<grupper>   vis brugere tilhørende en gruppe i <gruppe>\n"
 
-#: login-utils/lslogins.c:1239
+#: login-utils/lslogins.c:1238
 msgid " -L, --last               show info about the users' last login sessions\n"
 msgstr " -L, --last               vis information om brugerens sidste logindsessioner\n"
 
-#: login-utils/lslogins.c:1240
+#: login-utils/lslogins.c:1239
 msgid " -l, --logins=<logins>    display only users from <logins>\n"
 msgstr " -l, --logins=<logind>    vis kun brugere fra <logind>\n"
 
-#: login-utils/lslogins.c:1241 sys-utils/lsipc.c:298
+#: login-utils/lslogins.c:1240 sys-utils/lsipc.c:298
 msgid " -n, --newline            display each piece of information on a new line\n"
 msgstr " -n, --newline            vis hver stykke information på en ny linje\n"
 
-#: login-utils/lslogins.c:1242 sys-utils/lsipc.c:291
+#: login-utils/lslogins.c:1241 sys-utils/lsipc.c:291
 msgid "     --noheadings         don't print headings\n"
 msgstr "     --noheadings         vis ikke teksthoveder\n"
 
-#: login-utils/lslogins.c:1243 sys-utils/lsipc.c:292
+#: login-utils/lslogins.c:1242 sys-utils/lsipc.c:292
 msgid "     --notruncate         don't truncate output\n"
 msgstr "     --notruncate         afkort ikke uddata\n"
 
-#: login-utils/lslogins.c:1244 sys-utils/lsipc.c:300
+#: login-utils/lslogins.c:1243 sys-utils/lsipc.c:300
 msgid " -o, --output[=<list>]    define the columns to output\n"
 msgstr " -o, --output[=<liste>]   definer kolonnerne i uddata\n"
 
-#: login-utils/lslogins.c:1245
+#: login-utils/lslogins.c:1244
 msgid " -p, --pwd                display information related to login by password.\n"
 msgstr " -p, --pwd                vis information relateret til logind efter adgangskode.\n"
 
-#: login-utils/lslogins.c:1246 sys-utils/lsipc.c:302
+#: login-utils/lslogins.c:1245 sys-utils/lsipc.c:302
 msgid " -r, --raw                display in raw mode\n"
 msgstr " -r, --raw                vis i rå tilstand\n"
 
-#: login-utils/lslogins.c:1247
+#: login-utils/lslogins.c:1246
 msgid " -s, --system-accs        display system accounts\n"
 msgstr " -s, --system-accs        vis systemkonti\n"
 
-#: login-utils/lslogins.c:1248 sys-utils/lsipc.c:293
+#: login-utils/lslogins.c:1247 sys-utils/lsipc.c:293
 msgid "     --time-format=<type> display dates in short, full or iso format\n"
 msgstr "     --time-format=<type> vis datoer i kort, fuld eller iso-format\n"
 
-#: login-utils/lslogins.c:1249
+#: login-utils/lslogins.c:1248
 msgid " -u, --user-accs          display user accounts\n"
 msgstr " -u, --user-accs          vis brugerkonti\n"
 
-#: login-utils/lslogins.c:1250
+#: login-utils/lslogins.c:1249
 msgid " -Z, --context            display SELinux contexts\n"
 msgstr " -Z, --context            vis SELinux-kontekts\n"
 
-#: login-utils/lslogins.c:1251
+#: login-utils/lslogins.c:1250
 msgid " -z, --print0             delimit user entries with a nul character\n"
 msgstr " -z, --print0             afgræns brugerposter med et nul-tegn\n"
 
-#: login-utils/lslogins.c:1252
+#: login-utils/lslogins.c:1251
 msgid "     --wtmp-file <path>   set an alternate path for wtmp\n"
 msgstr "     --wtmp-file <sti>    angiv en alternativ sti for wtmp\n"
 
-#: login-utils/lslogins.c:1253
+#: login-utils/lslogins.c:1252
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <sti>    angiv en alternativ sti for btmp\n"
 
-#: login-utils/lslogins.c:1258 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2071
+#: login-utils/lslogins.c:1257 misc-utils/findmnt.c:1251 sys-utils/lscpu.c:2071
 #: sys-utils/lsmem.c:391
 #, c-format
 msgid ""
@@ -7958,11 +7958,11 @@ msgstr ""
 "\n"
 "Tilgængelige kolonner:\n"
 
-#: login-utils/lslogins.c:1441
+#: login-utils/lslogins.c:1440
 msgid "failed to request selinux state"
 msgstr "kunne ikke anmode om selinux-tilstand"
 
-#: login-utils/lslogins.c:1455 login-utils/lslogins.c:1459
+#: login-utils/lslogins.c:1454 login-utils/lslogins.c:1458
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr "Kun en bruger kan specificeres. Brug -l for flere brugere."
 
