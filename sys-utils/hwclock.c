@@ -385,9 +385,7 @@ set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 		       new_broken_time.tm_hour, new_broken_time.tm_min,
 		       new_broken_time.tm_sec, (long)newtime);
 
-	if (ctl->testing)
-		printf(_("Test mode: clock was not changed\n"));
-	else
+	if (!ctl->testing)
 		ur->set_hardware_clock(ctl, &new_broken_time);
 }
 
@@ -633,10 +631,7 @@ set_system_clock(const struct hwclock_control *ctl,
 		}
 	}
 
-	if (ctl->testing) {
-		printf(_
-		       ("Test mode: clock was not changed\n"));
-	} else {
+	if (!ctl->testing) {
 		const struct timezone tz = { minuteswest };
 
 		if (ctl->hctosys && !ctl->universal)	/* set PCIL */
@@ -787,15 +782,11 @@ calculate_adjustment(const struct hwclock_control *ctl,
  * But if the contents are clean (unchanged since read from disk), don't
  * bother.
  */
-static void save_adjtime(const struct hwclock_control *ctl,
+static int save_adjtime(const struct hwclock_control *ctl,
 			 const struct adjtime *adjtime)
 {
 	char *content;		/* Stuff to write to disk file */
 	FILE *fp;
-	int err = 0;
-
-	if (!adjtime->dirty)
-		return;
 
 	xasprintf(&content, "%f %ld %f\n%ld\n%s\n",
 		  adjtime->drift_factor,
@@ -804,28 +795,22 @@ static void save_adjtime(const struct hwclock_control *ctl,
 		  adjtime->last_calib_time,
 		  (adjtime->local_utc == LOCAL) ? "LOCAL" : "UTC");
 
-	if (ctl->testing) {
-		if (ctl->debug){
-			printf(_("Test mode: %s was not updated with:\n%s"),
-			       ctl->adj_file_name, content);
-		}
-		free(content);
-		return;
+	if (ctl->debug){
+		printf(_("New %s data:\n%s"),
+		       ctl->adj_file_name, content);
 	}
 
-	fp = fopen(ctl->adj_file_name, "w");
-	if (fp == NULL) {
-		warn(_("Could not open file with the clock adjustment parameters "
-		       "in it (%s) for writing"), ctl->adj_file_name);
-		err = 1;
-	} else if (fputs(content, fp) < 0 || close_stream(fp) != 0) {
-		warn(_("Could not update file with the clock adjustment "
-		       "parameters (%s) in it"), ctl->adj_file_name);
-		err = 1;
+	if (!ctl->testing) {
+		fp = fopen(ctl->adj_file_name, "w");
+		if (fp == NULL) {
+			warn(_("cannot open %s"), ctl->adj_file_name);
+			return EXIT_FAILURE;
+		} else if (fputs(content, fp) < 0 || close_stream(fp) != 0) {
+			warn(_("cannot update %s"), ctl->adj_file_name);
+			return EXIT_FAILURE;
+		}
 	}
-	free(content);
-	if (err)
-		warnx(_("Drift adjustment parameters not updated."));
+	return EXIT_SUCCESS;
 }
 
 /*
@@ -1023,8 +1008,8 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	} else if (ctl->hctosys) {
 		return set_system_clock(ctl, hclocktime);
 	}
-	if (!ctl->noadjfile)
-		save_adjtime(ctl, adjtime);
+	if (!ctl->noadjfile && adjtime->dirty)
+		return save_adjtime(ctl, adjtime);
 	return EXIT_SUCCESS;
 }
 
@@ -1046,11 +1031,9 @@ manipulate_epoch(const struct hwclock_control *ctl)
 	} else if (ctl->setepoch) {
 		if (!ctl->epoch_option)
 			warnx(_("--epoch is required for --setepoch."));
-		else if (ctl->testing)
-			printf(_("Test mode: epoch was not set to %s.\n"),
-			       ctl->epoch_option);
-		else if (set_epoch_rtc(ctl))
-			warnx(_("unable to set the RTC epoch."));
+		else if (!ctl->testing)
+			if (set_epoch_rtc(ctl))
+				warnx(_("unable to set the RTC epoch."));
 	}
 }
 #endif		/* __linux__ __alpha__ */
@@ -1100,7 +1083,7 @@ usage(void)
 	       "     --noadjfile      do not use %1$s\n"), _PATH_ADJTIME);
 	printf(_(
 	       "     --adjfile <file> use an alternate file to %1$s\n"), _PATH_ADJTIME);
-	puts(_("     --test           dry run; use -D to view what would have happened"));
+	puts(_("     --test           dry run; implies --debug"));
 	puts(_(" -D, --debug          display more details"));
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(22));
@@ -1268,6 +1251,7 @@ int main(int argc, char **argv)
 			break;
 		case OPT_TEST:
 			ctl.testing = 1;	/* --test */
+			ctl.debug++;
 			break;
 		case OPT_DATE:
 			ctl.date_opt = optarg;	/* --date */
@@ -1363,6 +1347,8 @@ int main(int argc, char **argv)
 		adjtime.dirty = 0;
 	ctl.universal = hw_clock_is_utc(&ctl, adjtime);
 	rc = manipulate_clock(&ctl, set_time, startup_time, &adjtime);
+	if (ctl.testing)
+		puts(_("Test mode: nothing was changed."));
 	hwclock_exit(&ctl, rc);
 	return rc;		/* Not reached */
 }

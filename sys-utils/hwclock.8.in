@@ -372,10 +372,10 @@ must be specified when using this option.
 .
 .TP
 .B \-\-test
-Do not actually change anything on the system, i.e., the Clocks or
-adjtime file.  This is useful, especially in conjunction with
-.BR \%\-\-debug ,
-in learning about the internal operations of hwclock.
+Do not actually change anything on the system, that is, the Clocks or
+.I @ADJTIME_PATH@
+.RB ( \%\-\-debug
+is implicit with this option).
 .
 .TP
 .B \-\-update\-drift
