@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-09-19 14:06+0200\n"
+"POT-Creation-Date: 2017-09-22 11:44+0200\n"
 "PO-Revision-Date: 2017-05-26 20:14+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -71,7 +71,7 @@ msgstr "十分な引数がありません"
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:532 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
-#: sys-utils/hwclock.c:207 sys-utils/hwclock-rtc.c:400
+#: sys-utils/hwclock.c:207 sys-utils/hwclock.c:806 sys-utils/hwclock-rtc.c:400
 #: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
 #: sys-utils/rfkill.c:158 sys-utils/rfkill.c:220 sys-utils/rfkill.c:352
 #: sys-utils/rfkill.c:441 sys-utils/rtcwake.c:134 sys-utils/rtcwake.c:268
@@ -12965,75 +12965,70 @@ msgstr "ハードウェアの時計から読み込んだ時刻: %4d/%.2d/%.2d %0
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "ハードウェアの時刻値を %.2d:%.2d:%.2d (= 1969 年から %ld 秒経過) に設定しています\n"
 
-#: sys-utils/hwclock.c:389 sys-utils/hwclock.c:638
-#, fuzzy, c-format
-msgid "Test mode: clock was not changed\n"
-msgstr "スワップ領域のサイズ"
-
-#: sys-utils/hwclock.c:481
+#: sys-utils/hwclock.c:479
 #, c-format
 msgid "sleeping ~%d usec\n"
 msgstr "sleeping ~%d μ秒\n"
 
-#: sys-utils/hwclock.c:492
+#: sys-utils/hwclock.c:490
 #, c-format
 msgid "time jumped backward %.6f seconds to %ld.%06ld - retargeting\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:500
+#: sys-utils/hwclock.c:498
 #, fuzzy, c-format
 msgid "%ld.%06ld < %ld.%06ld (%.6f)\n"
 msgstr "%ld.%06d < %ld.%06d (%.6f)\n"
 
-#: sys-utils/hwclock.c:516
+#: sys-utils/hwclock.c:514
 #, c-format
 msgid "missed it - %ld.%06ld is too far past %ld.%06ld (%.6f > %.6f)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:544
+#: sys-utils/hwclock.c:542
 #, c-format
 msgid ""
 "%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:619
+#: sys-utils/hwclock.c:617
 #, c-format
 msgid "Calling settimeofday(NULL, %d) to set persistent_clock_is_local.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:622
+#: sys-utils/hwclock.c:620
 msgid "Calling settimeofday(NULL, 0) to lock the warp function."
 msgstr ""
 
-#: sys-utils/hwclock.c:625
+#: sys-utils/hwclock.c:623
 #, fuzzy, c-format
 msgid "Calling settimeofday(%ld.%06ld, %d)\n"
 msgstr "settimeofday を呼び出しています:\n"
 
-#: sys-utils/hwclock.c:628
+#: sys-utils/hwclock.c:626
 #, fuzzy, c-format
 msgid "Calling settimeofday(NULL, %d) "
 msgstr "settimeofday を呼び出しています:\n"
 
-#: sys-utils/hwclock.c:630
+#: sys-utils/hwclock.c:628
 msgid "to set the kernel timezone."
 msgstr ""
 
-#: sys-utils/hwclock.c:632
+#: sys-utils/hwclock.c:630
 msgid "to warp System time."
 msgstr ""
 
-#: sys-utils/hwclock.c:652
+#: sys-utils/hwclock.c:647
 msgid "settimeofday() failed"
 msgstr "settimeofday() に失敗しました"
 
-#: sys-utils/hwclock.c:676
+#: sys-utils/hwclock.c:671
 #, fuzzy, c-format
 msgid "Not adjusting drift factor because the --update-drift option was not used.\n"
 msgstr "以前、ハードウェアの時計内にゴミが含まれていたため、ズレの値を調整する処理は行いません。\n"
 
-#: sys-utils/hwclock.c:680
+#: sys-utils/hwclock.c:675
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -13042,19 +13037,19 @@ msgstr ""
 "直近の校正時刻がゼロになっているため、ズレの値を調整する処理は行いません。\n"
 "これは校正履歴が正しいものではないため、校正をやり直す必要があるためです。\n"
 
-#: sys-utils/hwclock.c:686
+#: sys-utils/hwclock.c:681
 #, fuzzy, c-format
 msgid "Not adjusting drift factor because it has been less than four hours since the last calibration.\n"
 msgstr "直近の校正時刻から、少なくとも 1 日以上経過しないと、ズレの値を調整することができません。\n"
 
-#: sys-utils/hwclock.c:724
+#: sys-utils/hwclock.c:719
 #, c-format
 msgid ""
 "Clock drift factor was calculated as %f seconds/day.\n"
 "It is far too much. Resetting to zero.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:731
+#: sys-utils/hwclock.c:726
 #, fuzzy, c-format
 msgid ""
 "Clock drifted %f seconds in the past %f seconds\n"
@@ -13064,240 +13059,232 @@ msgstr ""
 "ズレの値が 1 日あたり %3$f 秒に設定されているにも関わらず、過去 %2$d 秒間に%1$.1f 秒のズレが発生しました。\n"
 "ズレの値を %4$f 秒／日に調整します。\n"
 
-#: sys-utils/hwclock.c:775
+#: sys-utils/hwclock.c:770
 #, fuzzy, c-format
 msgid "Time since last adjustment is %ld second\n"
 msgid_plural "Time since last adjustment is %ld seconds\n"
 msgstr[0] "前回の修正からの %d 秒が経過しています\n"
 
-#: sys-utils/hwclock.c:779
+#: sys-utils/hwclock.c:774
 #, fuzzy, c-format
 msgid "Calculated Hardware Clock drift is %ld.%06ld seconds\n"
 msgstr "%s  .%06d 秒\n"
 
+#: sys-utils/hwclock.c:799
+#, c-format
+msgid ""
+"New %s data:\n"
+"%s"
+msgstr ""
+
 #: sys-utils/hwclock.c:809
 #, fuzzy, c-format
-msgid ""
-"Test mode: %s was not updated with:\n"
-"%s"
-msgstr "デバイス %s は %s に関連づけられていません\n"
+msgid "cannot update %s"
+msgstr "%s を open できません"
 
-#: sys-utils/hwclock.c:818
-#, c-format
-msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
-msgstr "時計の調整パラメータをファイル (%s) に書き込む際、ファイルを開くことができませんでした"
-
-#: sys-utils/hwclock.c:822
-#, c-format
-msgid "Could not update file with the clock adjustment parameters (%s) in it"
-msgstr "時計の調整パラメータをファイル (%s) に書き込む際、更新処理に失敗しました"
-
-#: sys-utils/hwclock.c:828
-msgid "Drift adjustment parameters not updated."
-msgstr "微調整パラメータは更新しませんでした。"
-
-#: sys-utils/hwclock.c:860
+#: sys-utils/hwclock.c:845
 #, fuzzy, c-format
 msgid "Not setting clock because last adjustment time is zero, so history is bad.\n"
 msgstr "直近の校正時刻がゼロになっていて履歴が取得できないため、時刻設定は行いません。"
 
-#: sys-utils/hwclock.c:864
+#: sys-utils/hwclock.c:849
 #, fuzzy, c-format
 msgid "Not setting clock because drift factor %f is far too high.\n"
 msgstr "直近の校正時刻がゼロになっていて履歴が取得できないため、時刻設定は行いません。"
 
-#: sys-utils/hwclock.c:892
+#: sys-utils/hwclock.c:877
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "利用可能なクロックインターフェイスが見つかりません。\n"
 
-#: sys-utils/hwclock.c:893
+#: sys-utils/hwclock.c:878
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr "既知のいずれの方法を使用しても、ハードウェアの時計にアクセスすることができません。"
 
-#: sys-utils/hwclock.c:896
+#: sys-utils/hwclock.c:881
 msgid "Use the --debug option to see the details of our search for an access method."
 msgstr "--debug オプションを使用すると、アクセス方法の検索処理を詳しく確認することができます。"
 
-#: sys-utils/hwclock.c:946
+#: sys-utils/hwclock.c:931
 #, c-format
 msgid "Target date:   %ld\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:947
+#: sys-utils/hwclock.c:932
 #, c-format
 msgid "Predicted RTC: %ld\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:978
+#: sys-utils/hwclock.c:963
 msgid "RTC read returned an invalid value."
 msgstr ""
 
-#: sys-utils/hwclock.c:1006
+#: sys-utils/hwclock.c:991
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr "必要な修正が 1 秒未満なので、時刻設定は行いません。\n"
 
-#: sys-utils/hwclock.c:1043
+#: sys-utils/hwclock.c:1028
 #, fuzzy
 msgid "unable to read the RTC epoch."
 msgstr "スーパーブロックを読み込むことができません"
 
-#: sys-utils/hwclock.c:1045
+#: sys-utils/hwclock.c:1030
 #, c-format
 msgid "The RTC epoch is set to %lu.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1048
+#: sys-utils/hwclock.c:1033
 msgid "--epoch is required for --setepoch."
 msgstr ""
 
-#: sys-utils/hwclock.c:1050
-#, fuzzy, c-format
-msgid "Test mode: epoch was not set to %s.\n"
-msgstr "スワップ領域のサイズ"
-
-#: sys-utils/hwclock.c:1053
+#: sys-utils/hwclock.c:1036
 #, fuzzy
 msgid "unable to set the RTC epoch."
 msgstr "システム時刻を設定することができません。\n"
 
-#: sys-utils/hwclock.c:1067
+#: sys-utils/hwclock.c:1050
 #, fuzzy, c-format
 msgid " %s [function] [option...]\n"
 msgstr " hwclock [機能] [オプション...]\n"
 
-#: sys-utils/hwclock.c:1070
+#: sys-utils/hwclock.c:1053
 msgid "Time clocks utility."
 msgstr ""
 
-#: sys-utils/hwclock.c:1073
+#: sys-utils/hwclock.c:1056
 #, fuzzy
 msgid " -r, --show           display the RTC time"
 msgstr " -r, --raw            加工を行なわない出力形式を使用します\n"
 
-#: sys-utils/hwclock.c:1074
+#: sys-utils/hwclock.c:1057
 #, fuzzy
 msgid "     --get            display drift corrected RTC time"
 msgstr " -k, --kernel                カーネルメッセージを表示します\n"
 
-#: sys-utils/hwclock.c:1075
+#: sys-utils/hwclock.c:1058
 #, fuzzy
 msgid "     --set            set the RTC according to --date"
 msgstr " -r, --reset                  ポートをリセットします\n"
 
-#: sys-utils/hwclock.c:1076
+#: sys-utils/hwclock.c:1059
 msgid " -s, --hctosys        set the system time from the RTC"
 msgstr ""
 
-#: sys-utils/hwclock.c:1077
+#: sys-utils/hwclock.c:1060
 #, fuzzy
 msgid " -w, --systohc        set the RTC from the system time"
 msgstr " -t, --types <リスト>    ファイルシステムの種類を指定します\n"
 
-#: sys-utils/hwclock.c:1078
+#: sys-utils/hwclock.c:1061
 msgid "     --systz          send timescale configurations to the kernel"
 msgstr ""
 
-#: sys-utils/hwclock.c:1079
+#: sys-utils/hwclock.c:1062
 msgid " -a, --adjust         adjust the RTC to account for systematic drift"
 msgstr ""
 
-#: sys-utils/hwclock.c:1081
+#: sys-utils/hwclock.c:1064
 #, fuzzy
 msgid "     --getepoch       display the RTC epoch"
 msgstr "     --help                 このヘルプを表示して終了します\n"
 
-#: sys-utils/hwclock.c:1082
+#: sys-utils/hwclock.c:1065
 msgid "     --setepoch       set the RTC epoch according to --epoch"
 msgstr ""
 
-#: sys-utils/hwclock.c:1084
+#: sys-utils/hwclock.c:1067
 msgid "     --predict        predict the drifted RTC time according to --date"
 msgstr ""
 
-#: sys-utils/hwclock.c:1086
+#: sys-utils/hwclock.c:1069
 #, fuzzy
 msgid " -u, --utc            the RTC timescale is UTC"
 msgstr " -u, --utc                RTC が UTC になっているものとみなします\n"
 
-#: sys-utils/hwclock.c:1087
+#: sys-utils/hwclock.c:1070
 #, fuzzy
 msgid " -l, --localtime      the RTC timescale is Local"
 msgstr " -l, --local              RTC がローカル時刻になっているものとみなします\n"
 
-#: sys-utils/hwclock.c:1090
+#: sys-utils/hwclock.c:1073
 #, fuzzy, c-format
 msgid " -f, --rtc <file>     use an alternate file to %1$s\n"
 msgstr " -F, --file <ファイル>    %s ではなく、指定したファイルを使用して出力します\n"
 
-#: sys-utils/hwclock.c:1093
+#: sys-utils/hwclock.c:1076
 #, c-format
 msgid "     --directisa      use the ISA bus instead of %1$s access\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1094
+#: sys-utils/hwclock.c:1077
 #, fuzzy
 msgid "     --date <time>    date/time input for --set and --predict"
 msgstr " -t, --time <time_t>      復帰する時刻を指定します\n"
 
-#: sys-utils/hwclock.c:1096
+#: sys-utils/hwclock.c:1079
 msgid "     --epoch <year>   epoch input for --setepoch"
 msgstr ""
 
-#: sys-utils/hwclock.c:1098
+#: sys-utils/hwclock.c:1081
 msgid "     --update-drift   update the RTC drift factor"
 msgstr ""
 
-#: sys-utils/hwclock.c:1100
+#: sys-utils/hwclock.c:1083
 #, fuzzy, c-format
 msgid "     --noadjfile      do not use %1$s\n"
 msgstr " -n, --noheadings        ヘッダを表示しません\n"
 
-#: sys-utils/hwclock.c:1102
+#: sys-utils/hwclock.c:1085
 #, fuzzy, c-format
 msgid "     --adjfile <file> use an alternate file to %1$s\n"
 msgstr " -F, --file <ファイル>    %s ではなく、指定したファイルを使用して出力します\n"
 
-#: sys-utils/hwclock.c:1103
-msgid "     --test           dry run; use -D to view what would have happened"
-msgstr ""
+#: sys-utils/hwclock.c:1086
+#, fuzzy
+msgid "     --test           dry run; implies --debug"
+msgstr "     --fake              実際には umount(2) のシステムコールを行いません\n"
 
-#: sys-utils/hwclock.c:1104
+#: sys-utils/hwclock.c:1087
 #, fuzzy
 msgid " -D, --debug          display more details"
 msgstr " -v, --verbose             冗長なデータ出力を行います\n"
 
-#: sys-utils/hwclock.c:1194
+#: sys-utils/hwclock.c:1177
 msgid "Unable to connect to audit system"
 msgstr "監査システムに接続することができません"
 
-#: sys-utils/hwclock.c:1311
+#: sys-utils/hwclock.c:1295
 #, fuzzy, c-format
 msgid "%d too many arguments given"
 msgstr "引数が多すぎます"
 
-#: sys-utils/hwclock.c:1319
+#: sys-utils/hwclock.c:1303
 msgid "--update-drift requires --set or --systohc"
 msgstr ""
 
-#: sys-utils/hwclock.c:1324
+#: sys-utils/hwclock.c:1308
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "--noadjfile を使用するには、 --utc または --localtime のいずれかを指定しなければなりません"
 
-#: sys-utils/hwclock.c:1331
+#: sys-utils/hwclock.c:1315
 msgid "--date is required for --set or --predict"
 msgstr ""
 
-#: sys-utils/hwclock.c:1337
+#: sys-utils/hwclock.c:1321
 #, fuzzy, c-format
 msgid "invalid date '%s'"
 msgstr "ID が正しくありません: %s"
 
-#: sys-utils/hwclock.c:1351
+#: sys-utils/hwclock.c:1335
 #, fuzzy, c-format
 msgid "System Time: %ld.%06ld\n"
 msgstr "現在のシステム時刻: %ld = %s\n"
+
+#: sys-utils/hwclock.c:1351
+#, fuzzy
+msgid "Test mode: nothing was changed."
+msgstr "スワップ領域のサイズ"
 
 #: sys-utils/hwclock-cmos.c:389
 msgid "ISA port access is not implemented"
@@ -19914,6 +19901,25 @@ msgstr "未知のエスケープシーケンスが入力に含まれています
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "入力行が長すぎます。"
+
+#, fuzzy
+#~ msgid ""
+#~ "Test mode: %s was not updated with:\n"
+#~ "%s"
+#~ msgstr "デバイス %s は %s に関連づけられていません\n"
+
+#~ msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
+#~ msgstr "時計の調整パラメータをファイル (%s) に書き込む際、ファイルを開くことができませんでした"
+
+#~ msgid "Could not update file with the clock adjustment parameters (%s) in it"
+#~ msgstr "時計の調整パラメータをファイル (%s) に書き込む際、更新処理に失敗しました"
+
+#~ msgid "Drift adjustment parameters not updated."
+#~ msgstr "微調整パラメータは更新しませんでした。"
+
+#, fuzzy
+#~ msgid "Test mode: epoch was not set to %s.\n"
+#~ msgstr "スワップ領域のサイズ"
 
 #~ msgid ""
 #~ "\n"

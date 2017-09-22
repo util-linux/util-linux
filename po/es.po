@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-09-19 14:06+0200\n"
+"POT-Creation-Date: 2017-09-22 11:44+0200\n"
 "PO-Revision-Date: 2017-07-24 09:16+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -69,7 +69,7 @@ msgstr "no hay suficientes argumentos"
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:532 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
-#: sys-utils/hwclock.c:207 sys-utils/hwclock-rtc.c:400
+#: sys-utils/hwclock.c:207 sys-utils/hwclock.c:806 sys-utils/hwclock-rtc.c:400
 #: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
 #: sys-utils/rfkill.c:158 sys-utils/rfkill.c:220 sys-utils/rfkill.c:352
 #: sys-utils/rfkill.c:441 sys-utils/rtcwake.c:134 sys-utils/rtcwake.c:268
@@ -12758,32 +12758,27 @@ msgstr "Hora leída del reloj de hardware: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "Estableciendo reloj de hardware en %.2d:%.2d:%.2d = %ld segundos desde 1969\n"
 
-#: sys-utils/hwclock.c:389 sys-utils/hwclock.c:638
-#, c-format
-msgid "Test mode: clock was not changed\n"
-msgstr "Modo de pruebas: no se cambió el reloj\n"
-
-#: sys-utils/hwclock.c:481
+#: sys-utils/hwclock.c:479
 #, c-format
 msgid "sleeping ~%d usec\n"
 msgstr "se duerme ~%d usec\n"
 
-#: sys-utils/hwclock.c:492
+#: sys-utils/hwclock.c:490
 #, c-format
 msgid "time jumped backward %.6f seconds to %ld.%06ld - retargeting\n"
 msgstr "el tiempo ha saltado hacia atrás %.6f segundos a %ld,%06ld - se rehace objetivo\n"
 
-#: sys-utils/hwclock.c:500
+#: sys-utils/hwclock.c:498
 #, c-format
 msgid "%ld.%06ld < %ld.%06ld (%.6f)\n"
 msgstr "%ld,%06ld < %ld,%06ld (%.6f)\n"
 
-#: sys-utils/hwclock.c:516
+#: sys-utils/hwclock.c:514
 #, c-format
 msgid "missed it - %ld.%06ld is too far past %ld.%06ld (%.6f > %.6f)\n"
 msgstr "perdido - %ld,%06ld es demasiado posterior a %ld,%06ld (%.6f > %.6f)\n"
 
-#: sys-utils/hwclock.c:544
+#: sys-utils/hwclock.c:542
 #, c-format
 msgid ""
 "%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
@@ -12792,43 +12787,43 @@ msgstr ""
 "%ld,%06ld está suficientemente cerca de %ld,%06ld (%.6f < %.6f)\n"
 "Poner RTC a %ld (%ld + %d; refsystime = %ld,%06ld)\n"
 
-#: sys-utils/hwclock.c:619
+#: sys-utils/hwclock.c:617
 #, c-format
 msgid "Calling settimeofday(NULL, %d) to set persistent_clock_is_local.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:622
+#: sys-utils/hwclock.c:620
 msgid "Calling settimeofday(NULL, 0) to lock the warp function."
 msgstr ""
 
-#: sys-utils/hwclock.c:625
+#: sys-utils/hwclock.c:623
 #, fuzzy, c-format
 msgid "Calling settimeofday(%ld.%06ld, %d)\n"
 msgstr "Se está llamando settimeofday:\n"
 
-#: sys-utils/hwclock.c:628
+#: sys-utils/hwclock.c:626
 #, fuzzy, c-format
 msgid "Calling settimeofday(NULL, %d) "
 msgstr "Se está llamando settimeofday:\n"
 
-#: sys-utils/hwclock.c:630
+#: sys-utils/hwclock.c:628
 msgid "to set the kernel timezone."
 msgstr ""
 
-#: sys-utils/hwclock.c:632
+#: sys-utils/hwclock.c:630
 msgid "to warp System time."
 msgstr ""
 
-#: sys-utils/hwclock.c:652
+#: sys-utils/hwclock.c:647
 msgid "settimeofday() failed"
 msgstr "settimeofday() ha fallado"
 
-#: sys-utils/hwclock.c:676
+#: sys-utils/hwclock.c:671
 #, c-format
 msgid "Not adjusting drift factor because the --update-drift option was not used.\n"
 msgstr "No se ajusta el factor de desfase porque no se ha utilizado la opción --update-drift.\n"
 
-#: sys-utils/hwclock.c:680
+#: sys-utils/hwclock.c:675
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -12838,12 +12833,12 @@ msgstr ""
 "calibración es cero, así que el historial es erróneo y es necesaria una\n"
 "calibración desde el principio.\n"
 
-#: sys-utils/hwclock.c:686
+#: sys-utils/hwclock.c:681
 #, c-format
 msgid "Not adjusting drift factor because it has been less than four hours since the last calibration.\n"
 msgstr "No se ajusta el factor de desfase porque hace menos de cuatro horas de la última calibración.\n"
 
-#: sys-utils/hwclock.c:724
+#: sys-utils/hwclock.c:719
 #, c-format
 msgid ""
 "Clock drift factor was calculated as %f seconds/day.\n"
@@ -12852,7 +12847,7 @@ msgstr ""
 "Se ha calculado un factor de deriva del reloj de %f segundos/día.\n"
 "Es demasiado. Se pone a cero.\n"
 
-#: sys-utils/hwclock.c:731
+#: sys-utils/hwclock.c:726
 #, c-format
 msgid ""
 "Clock drifted %f seconds in the past %f seconds\n"
@@ -12863,246 +12858,236 @@ msgstr ""
 "pese al factor de desfase de %f segundos por día.\n"
 "Se ajusta el factor de desfase en %f segundos por día.\n"
 
-#: sys-utils/hwclock.c:775
+#: sys-utils/hwclock.c:770
 #, c-format
 msgid "Time since last adjustment is %ld second\n"
 msgid_plural "Time since last adjustment is %ld seconds\n"
 msgstr[0] "El tiempo transcurrido desde el último ajuste es de %ld segundo\n"
 msgstr[1] "El tiempo transcurrido desde el último ajuste es de %ld segundos\n"
 
-#: sys-utils/hwclock.c:779
+#: sys-utils/hwclock.c:774
 #, c-format
 msgid "Calculated Hardware Clock drift is %ld.%06ld seconds\n"
 msgstr "El desfase del reloj de hardware calculado es de %ld,%06ld segundos\n"
 
-#: sys-utils/hwclock.c:809
+#: sys-utils/hwclock.c:799
 #, c-format
 msgid ""
-"Test mode: %s was not updated with:\n"
+"New %s data:\n"
 "%s"
 msgstr ""
-"Modo de pruebas: %s no se actualizó con:\n"
-"%s"
 
-#: sys-utils/hwclock.c:818
-#, c-format
-msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
-msgstr "No se ha podido abrir para escritura el fichero que contiene los parámetros de ajuste del reloj (%s)"
+#: sys-utils/hwclock.c:809
+#, fuzzy, c-format
+msgid "cannot update %s"
+msgstr "no se puede abrir %s"
 
-#: sys-utils/hwclock.c:822
-#, c-format
-msgid "Could not update file with the clock adjustment parameters (%s) in it"
-msgstr "No se ha podido actualizar el fichero que tiene los parámetros de ajuste del reloj (%s)"
-
-#: sys-utils/hwclock.c:828
-msgid "Drift adjustment parameters not updated."
-msgstr "Parámetros de ajuste del desfase no actualizados."
-
-#: sys-utils/hwclock.c:860
+#: sys-utils/hwclock.c:845
 #, c-format
 msgid "Not setting clock because last adjustment time is zero, so history is bad.\n"
 msgstr "No se pone en hora el reloj porque la hora del último ajusto es cero, por lo que la historia no es buena.\n"
 
-#: sys-utils/hwclock.c:864
+#: sys-utils/hwclock.c:849
 #, c-format
 msgid "Not setting clock because drift factor %f is far too high.\n"
 msgstr "No se cambia la hora del reloj porque el factor de deriva %f es demasiado alto.\n"
 
-#: sys-utils/hwclock.c:892
+#: sys-utils/hwclock.c:877
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "No se ha encontrado ninguna interfaz de reloj utilizable.\n"
 
-#: sys-utils/hwclock.c:893
+#: sys-utils/hwclock.c:878
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr "No se puede acceder al reloj de hardware por ningún método conocido."
 
-#: sys-utils/hwclock.c:896
+#: sys-utils/hwclock.c:881
 msgid "Use the --debug option to see the details of our search for an access method."
 msgstr "Utilice la opción --debug para ver los detalles de la búsqueda para un método de acceso."
 
-#: sys-utils/hwclock.c:946
+#: sys-utils/hwclock.c:931
 #, c-format
 msgid "Target date:   %ld\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:947
+#: sys-utils/hwclock.c:932
 #, c-format
 msgid "Predicted RTC: %ld\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:978
+#: sys-utils/hwclock.c:963
 msgid "RTC read returned an invalid value."
 msgstr ""
 
-#: sys-utils/hwclock.c:1006
+#: sys-utils/hwclock.c:991
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr "El ajuste necesario es inferior a un segundo, por lo que no se establece el reloj.\n"
 
-#: sys-utils/hwclock.c:1043
+#: sys-utils/hwclock.c:1028
 #, fuzzy
 msgid "unable to read the RTC epoch."
 msgstr "No se puede leer el superbloque"
 
-#: sys-utils/hwclock.c:1045
+#: sys-utils/hwclock.c:1030
 #, c-format
 msgid "The RTC epoch is set to %lu.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1048
+#: sys-utils/hwclock.c:1033
 #, fuzzy
 msgid "--epoch is required for --setepoch."
 msgstr "hace falta --date para --set o --predict"
 
-#: sys-utils/hwclock.c:1050
-#, fuzzy, c-format
-msgid "Test mode: epoch was not set to %s.\n"
-msgstr "Modo de pruebas: no se cambió el reloj\n"
-
-#: sys-utils/hwclock.c:1053
+#: sys-utils/hwclock.c:1036
 #, fuzzy
 msgid "unable to set the RTC epoch."
 msgstr "No se puede establecer el reloj del sistema.\n"
 
-#: sys-utils/hwclock.c:1067
+#: sys-utils/hwclock.c:1050
 #, fuzzy, c-format
 msgid " %s [function] [option...]\n"
 msgstr " hwclock [función] [opción...]\n"
 
-#: sys-utils/hwclock.c:1070
+#: sys-utils/hwclock.c:1053
 msgid "Time clocks utility."
 msgstr ""
 
-#: sys-utils/hwclock.c:1073
+#: sys-utils/hwclock.c:1056
 #, fuzzy
 msgid " -r, --show           display the RTC time"
 msgstr " -r, --raw                muestra en modo bruto\n"
 
-#: sys-utils/hwclock.c:1074
+#: sys-utils/hwclock.c:1057
 #, fuzzy
 msgid "     --get            display drift corrected RTC time"
 msgstr " -Z, --context            muestras los contextos SELinux\n"
 
-#: sys-utils/hwclock.c:1075
+#: sys-utils/hwclock.c:1058
 #, fuzzy
 msgid "     --set            set the RTC according to --date"
 msgstr " -r, --reset                  restablece el puerto\n"
 
-#: sys-utils/hwclock.c:1076
+#: sys-utils/hwclock.c:1059
 msgid " -s, --hctosys        set the system time from the RTC"
 msgstr ""
 
-#: sys-utils/hwclock.c:1077
+#: sys-utils/hwclock.c:1060
 #, fuzzy
 msgid " -w, --systohc        set the RTC from the system time"
 msgstr " -t, --types <lista>     limita el conjunto de tipos de sistemas de fichero\n"
 
-#: sys-utils/hwclock.c:1078
+#: sys-utils/hwclock.c:1061
 msgid "     --systz          send timescale configurations to the kernel"
 msgstr ""
 
-#: sys-utils/hwclock.c:1079
+#: sys-utils/hwclock.c:1062
 msgid " -a, --adjust         adjust the RTC to account for systematic drift"
 msgstr ""
 
-#: sys-utils/hwclock.c:1081
+#: sys-utils/hwclock.c:1064
 #, fuzzy
 msgid "     --getepoch       display the RTC epoch"
 msgstr "     --help                 muestra esta ayuda y termina\n"
 
-#: sys-utils/hwclock.c:1082
+#: sys-utils/hwclock.c:1065
 msgid "     --setepoch       set the RTC epoch according to --epoch"
 msgstr ""
 
-#: sys-utils/hwclock.c:1084
+#: sys-utils/hwclock.c:1067
 msgid "     --predict        predict the drifted RTC time according to --date"
 msgstr ""
 
-#: sys-utils/hwclock.c:1086
+#: sys-utils/hwclock.c:1069
 #, fuzzy
 msgid " -u, --utc            the RTC timescale is UTC"
 msgstr " -u, --utc                RTC utiliza UTC\n"
 
-#: sys-utils/hwclock.c:1087
+#: sys-utils/hwclock.c:1070
 #, fuzzy
 msgid " -l, --localtime      the RTC timescale is Local"
 msgstr " -l, --local              RTC utiliza huso horario local\n"
 
-#: sys-utils/hwclock.c:1090
+#: sys-utils/hwclock.c:1073
 #, fuzzy, c-format
 msgid " -f, --rtc <file>     use an alternate file to %1$s\n"
 msgstr " -f, --file <fichero> utiliza un fichero específico en lugar de %s\n"
 
-#: sys-utils/hwclock.c:1093
+#: sys-utils/hwclock.c:1076
 #, c-format
 msgid "     --directisa      use the ISA bus instead of %1$s access\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1094
+#: sys-utils/hwclock.c:1077
 #, fuzzy
 msgid "     --date <time>    date/time input for --set and --predict"
 msgstr "hace falta --date para --set o --predict"
 
-#: sys-utils/hwclock.c:1096
+#: sys-utils/hwclock.c:1079
 #, fuzzy
 msgid "     --epoch <year>   epoch input for --setepoch"
 msgstr "     --epoch <año>    especifica el valor de la época del reloj de hardware\n"
 
-#: sys-utils/hwclock.c:1098
+#: sys-utils/hwclock.c:1081
 msgid "     --update-drift   update the RTC drift factor"
 msgstr ""
 
-#: sys-utils/hwclock.c:1100
+#: sys-utils/hwclock.c:1083
 #, fuzzy, c-format
 msgid "     --noadjfile      do not use %1$s\n"
 msgstr "     --noheadings         no imprime las cabeceras\n"
 
-#: sys-utils/hwclock.c:1102
+#: sys-utils/hwclock.c:1085
 #, fuzzy, c-format
 msgid "     --adjfile <file> use an alternate file to %1$s\n"
 msgstr " -f, --file <fichero> utiliza un fichero específico en lugar de %s\n"
 
-#: sys-utils/hwclock.c:1103
-msgid "     --test           dry run; use -D to view what would have happened"
-msgstr ""
+#: sys-utils/hwclock.c:1086
+#, fuzzy
+msgid "     --test           dry run; implies --debug"
+msgstr "     --fake              hace una prueba; no realiza la llamada al sistema umount(2)\n"
 
-#: sys-utils/hwclock.c:1104
+#: sys-utils/hwclock.c:1087
 #, fuzzy
 msgid " -D, --debug          display more details"
 msgstr " -v, --verbose          imprime más detalles\n"
 
-#: sys-utils/hwclock.c:1194
+#: sys-utils/hwclock.c:1177
 msgid "Unable to connect to audit system"
 msgstr "No se puede conectar con el sistema de auditoría"
 
-#: sys-utils/hwclock.c:1311
+#: sys-utils/hwclock.c:1295
 #, c-format
 msgid "%d too many arguments given"
 msgstr "%d demasiados argumentos proporcionados"
 
-#: sys-utils/hwclock.c:1319
+#: sys-utils/hwclock.c:1303
 #, fuzzy
 msgid "--update-drift requires --set or --systohc"
 msgstr "hace falta --date para --set o --predict"
 
-#: sys-utils/hwclock.c:1324
+#: sys-utils/hwclock.c:1308
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "Con --noadjfile, debe especificarse o bien --utc o bien --localtime"
 
-#: sys-utils/hwclock.c:1331
+#: sys-utils/hwclock.c:1315
 msgid "--date is required for --set or --predict"
 msgstr "hace falta --date para --set o --predict"
 
-#: sys-utils/hwclock.c:1337
+#: sys-utils/hwclock.c:1321
 #, c-format
 msgid "invalid date '%s'"
 msgstr "fecha no válida: '%s'"
 
-#: sys-utils/hwclock.c:1351
+#: sys-utils/hwclock.c:1335
 #, fuzzy, c-format
 msgid "System Time: %ld.%06ld\n"
 msgstr "Hora actual del sistema: %ld = %s\n"
+
+#: sys-utils/hwclock.c:1351
+#, fuzzy
+msgid "Test mode: nothing was changed."
+msgstr "Modo de pruebas: no se cambió el reloj\n"
 
 #: sys-utils/hwclock-cmos.c:389
 msgid "ISA port access is not implemented"
@@ -19537,6 +19522,26 @@ msgstr "secuencia de escape desconocida en entrada: %o, %o"
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "Línea de entrada demasiado larga."
+
+#~ msgid ""
+#~ "Test mode: %s was not updated with:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Modo de pruebas: %s no se actualizó con:\n"
+#~ "%s"
+
+#~ msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
+#~ msgstr "No se ha podido abrir para escritura el fichero que contiene los parámetros de ajuste del reloj (%s)"
+
+#~ msgid "Could not update file with the clock adjustment parameters (%s) in it"
+#~ msgstr "No se ha podido actualizar el fichero que tiene los parámetros de ajuste del reloj (%s)"
+
+#~ msgid "Drift adjustment parameters not updated."
+#~ msgstr "Parámetros de ajuste del desfase no actualizados."
+
+#, fuzzy
+#~ msgid "Test mode: epoch was not set to %s.\n"
+#~ msgstr "Modo de pruebas: no se cambió el reloj\n"
 
 #~ msgid ""
 #~ "\n"

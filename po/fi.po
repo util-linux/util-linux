@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-09-19 14:06+0200\n"
+"POT-Creation-Date: 2017-09-22 11:44+0200\n"
 "PO-Revision-Date: 2015-08-02 17:53+0300\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -72,7 +72,7 @@ msgstr "liian vähän argumentteja"
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:532 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
-#: sys-utils/hwclock.c:207 sys-utils/hwclock-rtc.c:400
+#: sys-utils/hwclock.c:207 sys-utils/hwclock.c:806 sys-utils/hwclock-rtc.c:400
 #: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
 #: sys-utils/rfkill.c:158 sys-utils/rfkill.c:220 sys-utils/rfkill.c:352
 #: sys-utils/rfkill.c:441 sys-utils/rtcwake.c:134 sys-utils/rtcwake.c:268
@@ -13393,75 +13393,70 @@ msgstr "Laitteistokellosta luettu aika: %3$.2d.%2$.2d.%1$4d %4$02d:%5$02d:%6$02d
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "Asetetaan laitteistokello aikaan %.2d:%.2d:%.2d = %ld sekuntia vuodesta 1969\n"
 
-#: sys-utils/hwclock.c:389 sys-utils/hwclock.c:638
-#, fuzzy, c-format
-msgid "Test mode: clock was not changed\n"
-msgstr "BSDI sivutus"
-
-#: sys-utils/hwclock.c:481
+#: sys-utils/hwclock.c:479
 #, c-format
 msgid "sleeping ~%d usec\n"
 msgstr "nukutaan ~%d µs\n"
 
-#: sys-utils/hwclock.c:492
+#: sys-utils/hwclock.c:490
 #, c-format
 msgid "time jumped backward %.6f seconds to %ld.%06ld - retargeting\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:500
+#: sys-utils/hwclock.c:498
 #, c-format
 msgid "%ld.%06ld < %ld.%06ld (%.6f)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:516
+#: sys-utils/hwclock.c:514
 #, c-format
 msgid "missed it - %ld.%06ld is too far past %ld.%06ld (%.6f > %.6f)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:544
+#: sys-utils/hwclock.c:542
 #, c-format
 msgid ""
 "%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:619
+#: sys-utils/hwclock.c:617
 #, c-format
 msgid "Calling settimeofday(NULL, %d) to set persistent_clock_is_local.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:622
+#: sys-utils/hwclock.c:620
 msgid "Calling settimeofday(NULL, 0) to lock the warp function."
 msgstr ""
 
-#: sys-utils/hwclock.c:625
+#: sys-utils/hwclock.c:623
 #, fuzzy, c-format
 msgid "Calling settimeofday(%ld.%06ld, %d)\n"
 msgstr "Kutsutaan settimeofday:\n"
 
-#: sys-utils/hwclock.c:628
+#: sys-utils/hwclock.c:626
 #, fuzzy, c-format
 msgid "Calling settimeofday(NULL, %d) "
 msgstr "Kutsutaan settimeofday:\n"
 
-#: sys-utils/hwclock.c:630
+#: sys-utils/hwclock.c:628
 msgid "to set the kernel timezone."
 msgstr ""
 
-#: sys-utils/hwclock.c:632
+#: sys-utils/hwclock.c:630
 msgid "to warp System time."
 msgstr ""
 
-#: sys-utils/hwclock.c:652
+#: sys-utils/hwclock.c:647
 msgid "settimeofday() failed"
 msgstr "settimeofday() epäonnistui"
 
-#: sys-utils/hwclock.c:676
+#: sys-utils/hwclock.c:671
 #, fuzzy, c-format
 msgid "Not adjusting drift factor because the --update-drift option was not used.\n"
 msgstr "Ei säädetä siirtymäkerrointa, koska laitteistokellossa oli edellisellä kerralla roskaa.\n"
 
-#: sys-utils/hwclock.c:680
+#: sys-utils/hwclock.c:675
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -13471,19 +13466,19 @@ msgstr ""
 "joten historia on virheellinen ja kalibroinnin uudelleen aloitus on\n"
 "tarpeellista.\n"
 
-#: sys-utils/hwclock.c:686
+#: sys-utils/hwclock.c:681
 #, fuzzy, c-format
 msgid "Not adjusting drift factor because it has been less than four hours since the last calibration.\n"
 msgstr "Ei säädetä siirtymäkerrointa, koska edellisestä kalibroinnista on alle vuorokausi.\n"
 
-#: sys-utils/hwclock.c:724
+#: sys-utils/hwclock.c:719
 #, c-format
 msgid ""
 "Clock drift factor was calculated as %f seconds/day.\n"
 "It is far too much. Resetting to zero.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:731
+#: sys-utils/hwclock.c:726
 #, fuzzy, c-format
 msgid ""
 "Clock drifted %f seconds in the past %f seconds\n"
@@ -13493,245 +13488,237 @@ msgstr ""
 "Kellon siirtymä oli %.1f sekuntia viimeisten %d sekunnin aikana, %f sekuntia/vrk -siirtymäkertoimesta\n"
 "huolimatta. Säädetään siirtymäkerrointa %f sekunnilla/vrk\n"
 
-#: sys-utils/hwclock.c:775
+#: sys-utils/hwclock.c:770
 #, fuzzy, c-format
 msgid "Time since last adjustment is %ld second\n"
 msgid_plural "Time since last adjustment is %ld seconds\n"
 msgstr[0] "Aikaa edellisestä säädöstä on kulunut %d sekuntia\n"
 msgstr[1] "Aikaa edellisestä säädöstä on kulunut %d sekuntia\n"
 
-#: sys-utils/hwclock.c:779
+#: sys-utils/hwclock.c:774
 #, fuzzy, c-format
 msgid "Calculated Hardware Clock drift is %ld.%06ld seconds\n"
 msgstr "%s  %.6f sekuntia\n"
 
+#: sys-utils/hwclock.c:799
+#, c-format
+msgid ""
+"New %s data:\n"
+"%s"
+msgstr ""
+
 #: sys-utils/hwclock.c:809
 #, fuzzy, c-format
-msgid ""
-"Test mode: %s was not updated with:\n"
-"%s"
-msgstr "Laite: %s\n"
+msgid "cannot update %s"
+msgstr "laitetta %s ei voi avata"
 
-#: sys-utils/hwclock.c:818
-#, c-format
-msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
-msgstr ""
-
-#: sys-utils/hwclock.c:822
-#, c-format
-msgid "Could not update file with the clock adjustment parameters (%s) in it"
-msgstr ""
-
-#: sys-utils/hwclock.c:828
-msgid "Drift adjustment parameters not updated."
-msgstr "Siirtymänsäätöparametreja ei päivitetty."
-
-#: sys-utils/hwclock.c:860
+#: sys-utils/hwclock.c:845
 #, c-format
 msgid "Not setting clock because last adjustment time is zero, so history is bad.\n"
 msgstr "Ei aseteta kelloa, koska edellinen säätöaika on nolla, joten historia on virheellinen.\n"
 
-#: sys-utils/hwclock.c:864
+#: sys-utils/hwclock.c:849
 #, c-format
 msgid "Not setting clock because drift factor %f is far too high.\n"
 msgstr "Ei aseteta kelloa, koska siirtymäkerroin %f on aivan liian suuri.\n"
 
-#: sys-utils/hwclock.c:892
+#: sys-utils/hwclock.c:877
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Käyttökelpoista kellorajapintaa ei löytynyt.\n"
 
-#: sys-utils/hwclock.c:893
+#: sys-utils/hwclock.c:878
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr "Laitteistokelloa ei pystytä käyttämään millään tunnetulla tavalla."
 
-#: sys-utils/hwclock.c:896
+#: sys-utils/hwclock.c:881
 msgid "Use the --debug option to see the details of our search for an access method."
 msgstr "Käytä --debug -valitsinta nähdäksesi yksityiskohdat käyttötavan etsinnästä."
 
-#: sys-utils/hwclock.c:946
+#: sys-utils/hwclock.c:931
 #, c-format
 msgid "Target date:   %ld\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:947
+#: sys-utils/hwclock.c:932
 #, c-format
 msgid "Predicted RTC: %ld\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:978
+#: sys-utils/hwclock.c:963
 msgid "RTC read returned an invalid value."
 msgstr ""
 
-#: sys-utils/hwclock.c:1006
+#: sys-utils/hwclock.c:991
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr "Tarvittava muutos on alle sekunti, joten ei aseteta kelloa.\n"
 
-#: sys-utils/hwclock.c:1043
+#: sys-utils/hwclock.c:1028
 #, fuzzy
 msgid "unable to read the RTC epoch."
 msgstr "superlohkoa ei voi lukea"
 
-#: sys-utils/hwclock.c:1045
+#: sys-utils/hwclock.c:1030
 #, c-format
 msgid "The RTC epoch is set to %lu.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1048
+#: sys-utils/hwclock.c:1033
 msgid "--epoch is required for --setepoch."
 msgstr ""
 
-#: sys-utils/hwclock.c:1050
-#, fuzzy, c-format
-msgid "Test mode: epoch was not set to %s.\n"
-msgstr "BSDI sivutus"
-
-#: sys-utils/hwclock.c:1053
+#: sys-utils/hwclock.c:1036
 #, fuzzy
 msgid "unable to set the RTC epoch."
 msgstr "Järjestelmäkellon asetus ei onnistu.\n"
 
-#: sys-utils/hwclock.c:1067
+#: sys-utils/hwclock.c:1050
 #, fuzzy, c-format
 msgid " %s [function] [option...]\n"
 msgstr " hwclock [toiminto] [valitsin...]\n"
 
-#: sys-utils/hwclock.c:1070
+#: sys-utils/hwclock.c:1053
 msgid "Time clocks utility."
 msgstr ""
 
-#: sys-utils/hwclock.c:1073
+#: sys-utils/hwclock.c:1056
 #, fuzzy
 msgid " -r, --show           display the RTC time"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: sys-utils/hwclock.c:1074
+#: sys-utils/hwclock.c:1057
 #, fuzzy
 msgid "     --get            display drift corrected RTC time"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: sys-utils/hwclock.c:1075
+#: sys-utils/hwclock.c:1058
 #, fuzzy
 msgid "     --set            set the RTC according to --date"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: sys-utils/hwclock.c:1076
+#: sys-utils/hwclock.c:1059
 msgid " -s, --hctosys        set the system time from the RTC"
 msgstr ""
 
-#: sys-utils/hwclock.c:1077
+#: sys-utils/hwclock.c:1060
 #, fuzzy
 msgid " -w, --systohc        set the RTC from the system time"
 msgstr "   l    listaa tunnetut tiedostojärjestelmätyypit"
 
-#: sys-utils/hwclock.c:1078
+#: sys-utils/hwclock.c:1061
 #, fuzzy
 msgid "     --systz          send timescale configurations to the kernel"
 msgstr "    -n :                 älä kirjoita levylle oikeasti"
 
-#: sys-utils/hwclock.c:1079
+#: sys-utils/hwclock.c:1062
 msgid " -a, --adjust         adjust the RTC to account for systematic drift"
 msgstr ""
 
-#: sys-utils/hwclock.c:1081
+#: sys-utils/hwclock.c:1064
 #, fuzzy
 msgid "     --getepoch       display the RTC epoch"
 msgstr "      --help                näytä tämä ohje ja poistu\n"
 
-#: sys-utils/hwclock.c:1082
+#: sys-utils/hwclock.c:1065
 msgid "     --setepoch       set the RTC epoch according to --epoch"
 msgstr ""
 
-#: sys-utils/hwclock.c:1084
+#: sys-utils/hwclock.c:1067
 msgid "     --predict        predict the drifted RTC time according to --date"
 msgstr ""
 
-#: sys-utils/hwclock.c:1086
+#: sys-utils/hwclock.c:1069
 #, fuzzy
 msgid " -u, --utc            the RTC timescale is UTC"
 msgstr "%s: oletetaan RTC:n käyttävän UTC:tä...\n"
 
-#: sys-utils/hwclock.c:1087
+#: sys-utils/hwclock.c:1070
 #, fuzzy
 msgid " -l, --localtime      the RTC timescale is Local"
 msgstr "  -h, --help                   Tämä pieni käyttöopas\n"
 
-#: sys-utils/hwclock.c:1090
+#: sys-utils/hwclock.c:1073
 #, fuzzy, c-format
 msgid " -f, --rtc <file>     use an alternate file to %1$s\n"
 msgstr ""
 "Näytä class-tiedoston sisältö luettavassa muodossa.\n"
 "\n"
 
-#: sys-utils/hwclock.c:1093
+#: sys-utils/hwclock.c:1076
 #, c-format
 msgid "     --directisa      use the ISA bus instead of %1$s access\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1094
+#: sys-utils/hwclock.c:1077
 msgid "     --date <time>    date/time input for --set and --predict"
 msgstr ""
 
-#: sys-utils/hwclock.c:1096
+#: sys-utils/hwclock.c:1079
 msgid "     --epoch <year>   epoch input for --setepoch"
 msgstr ""
 
-#: sys-utils/hwclock.c:1098
+#: sys-utils/hwclock.c:1081
 msgid "     --update-drift   update the RTC drift factor"
 msgstr ""
 
-#: sys-utils/hwclock.c:1100
+#: sys-utils/hwclock.c:1083
 #, fuzzy, c-format
 msgid "     --noadjfile      do not use %1$s\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: sys-utils/hwclock.c:1102
+#: sys-utils/hwclock.c:1085
 #, c-format
 msgid "     --adjfile <file> use an alternate file to %1$s\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1103
-msgid "     --test           dry run; use -D to view what would have happened"
-msgstr ""
+#: sys-utils/hwclock.c:1086
+#, fuzzy
+msgid "     --test           dry run; implies --debug"
+msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: sys-utils/hwclock.c:1104
+#: sys-utils/hwclock.c:1087
 #, fuzzy
 msgid " -D, --debug          display more details"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: sys-utils/hwclock.c:1194
+#: sys-utils/hwclock.c:1177
 #, fuzzy
 msgid "Unable to connect to audit system"
 msgstr "Järjestelmäkellon asetus ei onnistu.\n"
 
-#: sys-utils/hwclock.c:1311
+#: sys-utils/hwclock.c:1295
 #, fuzzy, c-format
 msgid "%d too many arguments given"
 msgstr "liian monta argumenttia"
 
-#: sys-utils/hwclock.c:1319
+#: sys-utils/hwclock.c:1303
 msgid "--update-drift requires --set or --systohc"
 msgstr ""
 
-#: sys-utils/hwclock.c:1324
+#: sys-utils/hwclock.c:1308
 #, fuzzy
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "%s: Valitsimen --noadjfile kanssa on käytettävä joko valitsinta --utc tai --localtime\n"
 
-#: sys-utils/hwclock.c:1331
+#: sys-utils/hwclock.c:1315
 msgid "--date is required for --set or --predict"
 msgstr ""
 
-#: sys-utils/hwclock.c:1337
+#: sys-utils/hwclock.c:1321
 #, fuzzy, c-format
 msgid "invalid date '%s'"
 msgstr "virheellinen prosessi-ID ”%s”"
 
-#: sys-utils/hwclock.c:1351
+#: sys-utils/hwclock.c:1335
 #, fuzzy, c-format
 msgid "System Time: %ld.%06ld\n"
 msgstr "%s: %ld nykyinen kynnys ja %ld nykyinen aikakatkaisu\n"
+
+#: sys-utils/hwclock.c:1351
+#, fuzzy
+msgid "Test mode: nothing was changed."
+msgstr "BSDI sivutus"
 
 #: sys-utils/hwclock-cmos.c:389
 msgid "ISA port access is not implemented"
@@ -20434,6 +20421,19 @@ msgstr "tuntematon ohjaussarja syötteessä: %o, %o"
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "Syöterivi on liian pitkä."
+
+#, fuzzy
+#~ msgid ""
+#~ "Test mode: %s was not updated with:\n"
+#~ "%s"
+#~ msgstr "Laite: %s\n"
+
+#~ msgid "Drift adjustment parameters not updated."
+#~ msgstr "Siirtymänsäätöparametreja ei päivitetty."
+
+#, fuzzy
+#~ msgid "Test mode: epoch was not set to %s.\n"
+#~ msgstr "BSDI sivutus"
 
 #, fuzzy
 #~ msgid ""

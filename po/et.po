@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11r\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-09-19 14:06+0200\n"
+"POT-Creation-Date: 2017-09-22 11:44+0200\n"
 "PO-Revision-Date: 2002-05-19 20:04GMT+0300\n"
 "Last-Translator: Meelis Roos <mroos@linux.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -63,7 +63,7 @@ msgstr "Liiga palju argumente\n"
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:532 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
-#: sys-utils/hwclock.c:207 sys-utils/hwclock-rtc.c:400
+#: sys-utils/hwclock.c:207 sys-utils/hwclock.c:806 sys-utils/hwclock-rtc.c:400
 #: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
 #: sys-utils/rfkill.c:158 sys-utils/rfkill.c:220 sys-utils/rfkill.c:352
 #: sys-utils/rfkill.c:441 sys-utils/rtcwake.c:134 sys-utils/rtcwake.c:268
@@ -13414,94 +13414,89 @@ msgstr "Riistvaralisest kellast loetud aeg: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "Sean riistavaralise kella näiduks %.2d:%.2d:%.2d = %ld sekundit pärast 1969\n"
 
-#: sys-utils/hwclock.c:389 sys-utils/hwclock.c:638
-#, fuzzy, c-format
-msgid "Test mode: clock was not changed\n"
-msgstr "kataloogi stat() ei õnnestunud\n"
-
-#: sys-utils/hwclock.c:481
+#: sys-utils/hwclock.c:479
 #, c-format
 msgid "sleeping ~%d usec\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:492
+#: sys-utils/hwclock.c:490
 #, c-format
 msgid "time jumped backward %.6f seconds to %ld.%06ld - retargeting\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:500
+#: sys-utils/hwclock.c:498
 #, c-format
 msgid "%ld.%06ld < %ld.%06ld (%.6f)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:516
+#: sys-utils/hwclock.c:514
 #, c-format
 msgid "missed it - %ld.%06ld is too far past %ld.%06ld (%.6f > %.6f)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:544
+#: sys-utils/hwclock.c:542
 #, c-format
 msgid ""
 "%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:619
+#: sys-utils/hwclock.c:617
 #, c-format
 msgid "Calling settimeofday(NULL, %d) to set persistent_clock_is_local.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:622
+#: sys-utils/hwclock.c:620
 msgid "Calling settimeofday(NULL, 0) to lock the warp function."
 msgstr ""
 
-#: sys-utils/hwclock.c:625
+#: sys-utils/hwclock.c:623
 #, fuzzy, c-format
 msgid "Calling settimeofday(%ld.%06ld, %d)\n"
 msgstr "kutsun välja settimeofday:\n"
 
-#: sys-utils/hwclock.c:628
+#: sys-utils/hwclock.c:626
 #, fuzzy, c-format
 msgid "Calling settimeofday(NULL, %d) "
 msgstr "kutsun välja settimeofday:\n"
 
-#: sys-utils/hwclock.c:630
+#: sys-utils/hwclock.c:628
 msgid "to set the kernel timezone."
 msgstr ""
 
-#: sys-utils/hwclock.c:632
+#: sys-utils/hwclock.c:630
 msgid "to warp System time."
 msgstr ""
 
-#: sys-utils/hwclock.c:652
+#: sys-utils/hwclock.c:647
 msgid "settimeofday() failed"
 msgstr "settimeofday() ei õnnestunud"
 
-#: sys-utils/hwclock.c:676
+#: sys-utils/hwclock.c:671
 #, fuzzy, c-format
 msgid "Not adjusting drift factor because the --update-drift option was not used.\n"
 msgstr "Ei paranda korrigeerimistegurit, kuna riistvaraline kell sisaldas sodi\n"
 
-#: sys-utils/hwclock.c:680
+#: sys-utils/hwclock.c:675
 #, fuzzy, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
 "so history is bad and calibration startover is necessary.\n"
 msgstr "Ei paranda korrigeerimistegurit, kuna viimane kalibreerimine toimus vähem kui ööpäev tagasi\n"
 
-#: sys-utils/hwclock.c:686
+#: sys-utils/hwclock.c:681
 #, fuzzy, c-format
 msgid "Not adjusting drift factor because it has been less than four hours since the last calibration.\n"
 msgstr "Ei paranda korrigeerimistegurit, kuna viimane kalibreerimine toimus vähem kui ööpäev tagasi\n"
 
-#: sys-utils/hwclock.c:724
+#: sys-utils/hwclock.c:719
 #, c-format
 msgid ""
 "Clock drift factor was calculated as %f seconds/day.\n"
 "It is far too much. Resetting to zero.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:731
+#: sys-utils/hwclock.c:726
 #, fuzzy, c-format
 msgid ""
 "Clock drifted %f seconds in the past %f seconds\n"
@@ -13511,246 +13506,237 @@ msgstr ""
 "Kell on ujunud %d sekundit viimase %d sekundi jooksul vaatamata korrigeerimistegurile %f sekundit päevas.\n"
 "Paranen korrigeerimisfaktoriks %f sekundit päevas.\n"
 
-#: sys-utils/hwclock.c:775
+#: sys-utils/hwclock.c:770
 #, fuzzy, c-format
 msgid "Time since last adjustment is %ld second\n"
 msgid_plural "Time since last adjustment is %ld seconds\n"
 msgstr[0] "Viimasest kellaaja korrigeermisest on möödunud %d sekundit\n"
 msgstr[1] "Viimasest kellaaja korrigeermisest on möödunud %d sekundit\n"
 
-#: sys-utils/hwclock.c:779
+#: sys-utils/hwclock.c:774
 #, fuzzy, c-format
 msgid "Calculated Hardware Clock drift is %ld.%06ld seconds\n"
 msgstr "%s  %.6f sekundit\n"
 
+#: sys-utils/hwclock.c:799
+#, c-format
+msgid ""
+"New %s data:\n"
+"%s"
+msgstr ""
+
 #: sys-utils/hwclock.c:809
 #, fuzzy, c-format
-msgid ""
-"Test mode: %s was not updated with:\n"
-"%s"
-msgstr "Sektor%d on juba kasutusel\n"
+msgid "cannot update %s"
+msgstr "ei suuda avada seadet %s"
 
-#: sys-utils/hwclock.c:818
-#, c-format
-msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
-msgstr ""
-
-#: sys-utils/hwclock.c:822
-#, c-format
-msgid "Could not update file with the clock adjustment parameters (%s) in it"
-msgstr ""
-
-#: sys-utils/hwclock.c:828
-#, fuzzy
-msgid "Drift adjustment parameters not updated."
-msgstr "Ujumise kompenseerimise parameetreid ei uuendatud\n"
-
-#: sys-utils/hwclock.c:860
+#: sys-utils/hwclock.c:845
 #, fuzzy, c-format
 msgid "Not setting clock because last adjustment time is zero, so history is bad.\n"
 msgstr "Ei paranda korrigeerimistegurit, kuna viimane kalibreerimine toimus vähem kui ööpäev tagasi\n"
 
-#: sys-utils/hwclock.c:864
+#: sys-utils/hwclock.c:849
 #, fuzzy, c-format
 msgid "Not setting clock because drift factor %f is far too high.\n"
 msgstr "Ei paranda korrigeerimistegurit, kuna viimane kalibreerimine toimus vähem kui ööpäev tagasi\n"
 
-#: sys-utils/hwclock.c:892
+#: sys-utils/hwclock.c:877
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Ei leidnud kasutatavat kellaliidest\n"
 
-#: sys-utils/hwclock.c:893
+#: sys-utils/hwclock.c:878
 #, fuzzy
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr "Ei suuda ühegi tuntud meetodiga riistvaralist kella kätte saada\n"
 
-#: sys-utils/hwclock.c:896
+#: sys-utils/hwclock.c:881
 #, fuzzy
 msgid "Use the --debug option to see the details of our search for an access method."
 msgstr "Kasutage --debug võtit, et näha otsingu detaile juurdepääsu otsimisel\n"
 
-#: sys-utils/hwclock.c:946
+#: sys-utils/hwclock.c:931
 #, c-format
 msgid "Target date:   %ld\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:947
+#: sys-utils/hwclock.c:932
 #, c-format
 msgid "Predicted RTC: %ld\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:978
+#: sys-utils/hwclock.c:963
 msgid "RTC read returned an invalid value."
 msgstr ""
 
-#: sys-utils/hwclock.c:1006
+#: sys-utils/hwclock.c:991
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr "Vajalik parandus on alla sekundi, seega kella ei sea\n"
 
-#: sys-utils/hwclock.c:1043
+#: sys-utils/hwclock.c:1028
 #, fuzzy
 msgid "unable to read the RTC epoch."
 msgstr "ei suuda lugeda superplokki"
 
-#: sys-utils/hwclock.c:1045
+#: sys-utils/hwclock.c:1030
 #, c-format
 msgid "The RTC epoch is set to %lu.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1048
+#: sys-utils/hwclock.c:1033
 msgid "--epoch is required for --setepoch."
 msgstr ""
 
-#: sys-utils/hwclock.c:1050
-#, fuzzy, c-format
-msgid "Test mode: epoch was not set to %s.\n"
-msgstr "kataloogi stat() ei õnnestunud\n"
-
-#: sys-utils/hwclock.c:1053
+#: sys-utils/hwclock.c:1036
 #, fuzzy
 msgid "unable to set the RTC epoch."
 msgstr "Süsteemikella seadmine ei õnnestunud\n"
 
-#: sys-utils/hwclock.c:1067
+#: sys-utils/hwclock.c:1050
 #, fuzzy, c-format
 msgid " %s [function] [option...]\n"
 msgstr "Kasutamine: %s [ võtmed ] seade ...\n"
 
-#: sys-utils/hwclock.c:1070
+#: sys-utils/hwclock.c:1053
 msgid "Time clocks utility."
 msgstr ""
 
-#: sys-utils/hwclock.c:1073
+#: sys-utils/hwclock.c:1056
 #, fuzzy
 msgid " -r, --show           display the RTC time"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1074
+#: sys-utils/hwclock.c:1057
 #, fuzzy
 msgid "     --get            display drift corrected RTC time"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1075
+#: sys-utils/hwclock.c:1058
 #, fuzzy
 msgid "     --set            set the RTC according to --date"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1076
+#: sys-utils/hwclock.c:1059
 msgid " -s, --hctosys        set the system time from the RTC"
 msgstr ""
 
-#: sys-utils/hwclock.c:1077
+#: sys-utils/hwclock.c:1060
 #, fuzzy
 msgid " -w, --systohc        set the RTC from the system time"
 msgstr "   l   anda nimekiri tuntud failisüsteemide tüüpidest"
 
-#: sys-utils/hwclock.c:1078
+#: sys-utils/hwclock.c:1061
 #, fuzzy
 msgid "     --systz          send timescale configurations to the kernel"
 msgstr "            Esimene  Viimane\n"
 
-#: sys-utils/hwclock.c:1079
+#: sys-utils/hwclock.c:1062
 msgid " -a, --adjust         adjust the RTC to account for systematic drift"
 msgstr ""
 
-#: sys-utils/hwclock.c:1081
+#: sys-utils/hwclock.c:1064
 #, fuzzy
 msgid "     --getepoch       display the RTC epoch"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1082
+#: sys-utils/hwclock.c:1065
 msgid "     --setepoch       set the RTC epoch according to --epoch"
 msgstr ""
 
-#: sys-utils/hwclock.c:1084
+#: sys-utils/hwclock.c:1067
 msgid "     --predict        predict the drifted RTC time according to --date"
 msgstr ""
 
-#: sys-utils/hwclock.c:1086
+#: sys-utils/hwclock.c:1069
 #, fuzzy
 msgid " -u, --utc            the RTC timescale is UTC"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1087
+#: sys-utils/hwclock.c:1070
 #, fuzzy
 msgid " -l, --localtime      the RTC timescale is Local"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1090
+#: sys-utils/hwclock.c:1073
 #, fuzzy, c-format
 msgid " -f, --rtc <file>     use an alternate file to %1$s\n"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1093
+#: sys-utils/hwclock.c:1076
 #, c-format
 msgid "     --directisa      use the ISA bus instead of %1$s access\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1094
+#: sys-utils/hwclock.c:1077
 msgid "     --date <time>    date/time input for --set and --predict"
 msgstr ""
 
-#: sys-utils/hwclock.c:1096
+#: sys-utils/hwclock.c:1079
 msgid "     --epoch <year>   epoch input for --setepoch"
 msgstr ""
 
-#: sys-utils/hwclock.c:1098
+#: sys-utils/hwclock.c:1081
 msgid "     --update-drift   update the RTC drift factor"
 msgstr ""
 
-#: sys-utils/hwclock.c:1100
+#: sys-utils/hwclock.c:1083
 #, fuzzy, c-format
 msgid "     --noadjfile      do not use %1$s\n"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1102
+#: sys-utils/hwclock.c:1085
 #, c-format
 msgid "     --adjfile <file> use an alternate file to %1$s\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1103
-msgid "     --test           dry run; use -D to view what would have happened"
-msgstr ""
+#: sys-utils/hwclock.c:1086
+#, fuzzy
+msgid "     --test           dry run; implies --debug"
+msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1104
+#: sys-utils/hwclock.c:1087
 #, fuzzy
 msgid " -D, --debug          display more details"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/hwclock.c:1194
+#: sys-utils/hwclock.c:1177
 #, fuzzy
 msgid "Unable to connect to audit system"
 msgstr "Süsteemikella seadmine ei õnnestunud\n"
 
-#: sys-utils/hwclock.c:1311
+#: sys-utils/hwclock.c:1295
 #, fuzzy, c-format
 msgid "%d too many arguments given"
 msgstr "%s: Tundmatu argument: %s\n"
 
-#: sys-utils/hwclock.c:1319
+#: sys-utils/hwclock.c:1303
 msgid "--update-drift requires --set or --systohc"
 msgstr ""
 
-#: sys-utils/hwclock.c:1324
+#: sys-utils/hwclock.c:1308
 #, fuzzy
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "%s: Koos võtmega --noadjfile tuleb anda ka kas --utc või --localtime võti\n"
 
-#: sys-utils/hwclock.c:1331
+#: sys-utils/hwclock.c:1315
 msgid "--date is required for --set or --predict"
 msgstr ""
 
-#: sys-utils/hwclock.c:1337
+#: sys-utils/hwclock.c:1321
 #, fuzzy, c-format
 msgid "invalid date '%s'"
 msgstr "vigane kiirus: %s"
 
-#: sys-utils/hwclock.c:1351
+#: sys-utils/hwclock.c:1335
 #, c-format
 msgid "System Time: %ld.%06ld\n"
 msgstr ""
+
+#: sys-utils/hwclock.c:1351
+#, fuzzy
+msgid "Test mode: nothing was changed."
+msgstr "kataloogi stat() ei õnnestunud\n"
 
 #: sys-utils/hwclock-cmos.c:389
 msgid "ISA port access is not implemented"
@@ -20255,6 +20241,20 @@ msgstr ""
 #, fuzzy
 msgid "Input line too long."
 msgstr "köite nimi on liiga pikk"
+
+#, fuzzy
+#~ msgid ""
+#~ "Test mode: %s was not updated with:\n"
+#~ "%s"
+#~ msgstr "Sektor%d on juba kasutusel\n"
+
+#, fuzzy
+#~ msgid "Drift adjustment parameters not updated."
+#~ msgstr "Ujumise kompenseerimise parameetreid ei uuendatud\n"
+
+#, fuzzy
+#~ msgid "Test mode: epoch was not set to %s.\n"
+#~ msgstr "kataloogi stat() ei õnnestunud\n"
 
 #, fuzzy
 #~ msgid "seek error on %s"
