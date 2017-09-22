@@ -103,8 +103,11 @@ Changes between v2.30 and v2.31
 -------------------------------
 Docs:
    - add a comment for constants to boilerplate.c  [J William Piggott]
+   - add hwclock 'highlights' v2.31-ReleaseNotes  [J William Piggott]
+   - grammar fixes for v2.31-ReleaseNotes  [J William Piggott]
    - move option naming to howto-contribute.txt  [J William Piggott]
    - update howto-usage-function.txt  [J William Piggott]
+   - output rfkill type names from an array instead of a static string.  [Darren Salt]
 agetty:
    - add --list-speeds option  [Sami Kerola]
    - add compile time features to --version output  [Sami Kerola]
@@ -126,9 +129,8 @@ blockdev:
    - correct man page name in --help  [Ruediger Meier]
    - document --setro more properly  [Karel Zak]
    - improve --help and man page  [Ruediger Meier]
-build:
-   - use --runstatedir instead of --localstatedir  [Andreas Henriksson]
 build-sys:
+   - use --runstatedir instead of --localstatedir  [Andreas Henriksson]
    - add --disable-rfkill  [Karel Zak]
    - add libtinfow check  [Karel Zak]
    - chown before chmod for SUIDs  [Karel Zak]
@@ -168,11 +170,13 @@ docs:
    - add program-desc to howto-usage-function.txt and boilerplate.c  [Karel Zak]
    - correct line(1) deprecation comment  [Ruediger Meier]
    - remove TODO item for fdisk  [Karel Zak]
+   - remove UUID v3 and v5 from TODO  [Karel Zak]
    - remove repeated word from mount(8) man page  [Sami Kerola]
    - remove some old history from manpages  [Ruediger Meier]
    - update AUTHORS file  [Karel Zak]
    - update TODO, remove auto,noauto  [Karel Zak]
    - update boilerplate.c usage()  [J William Piggott]
+   - update v2.31-ReleaseNotes  [Karel Zak]
 fdformat:
    - clear progress message before printing "done"  [Jakub Wilk]
 fdisk:
@@ -205,6 +209,7 @@ hwclock:
    - correlate hclocktime instead of set_time.  [J William Piggott]
    - don't always use hwclock_exit  [J William Piggott]
    - don't ifdef printf arguments  [Ruediger Meier]
+   - exit bug fix and single test mode message  [J William Piggott]
    - final usage() strings slice  [J William Piggott]
    - fix RTC read logic  [J William Piggott]
    - fix hclock_valid test and error messages  [J William Piggott]
@@ -213,6 +218,7 @@ hwclock:
    - fix warning [-Winvalid-noreturn]  [Ruediger Meier]
    - for debugging print startup system time  [J William Piggott]
    - improve RTC epoch messages  [J William Piggott]
+   - make debug implicit for test mode.  [J William Piggott]
    - move drift correction and --predict  [J William Piggott]
    - move rtc permissions test  [J William Piggott]
    - move systz above init clocks read  [J William Piggott]
@@ -430,6 +436,9 @@ parse-date:
 partx:
    - move partx.h to include/  [Karel Zak]
 po:
+   - Fix a typo  [Masanari Iida]
+   - Fix translation in ja.po  [Masanari Iida]
+   - fix ipcrm translation error fr.po  [Karel Zak]
    - merge changes  [Karel Zak]
    - update cs.po (from translationproject.org)  [Petr Písař]
    - update da.po (from translationproject.org)  [Joe Hansen]
@@ -444,8 +453,6 @@ rename:
 reset:
    - remove script from the package  [Sami Kerola]
 rfkill:
-   - output rfkill type names from an array instead of a static string.  [Darren Salt]
-   - move it below rfkill_block.  [Darren Salt]
    - add NFC fallback for old headers  [Karel Zak]
    - add Sami to authors  [Karel Zak]
    - add bash-completion file  [Sami Kerola]
@@ -466,6 +473,8 @@ rfkill:
    - use back and forward compatible test  [Sami Kerola]
    - use human readable timestamps in event output  [Sami Kerola]
    - use libsmartcols output  [Sami Kerola]
+   - refactor rfkill index/type lookup:
+   - move it below rfkill_block.  [Darren Salt]
 runuser:
    - fix linking  [Sami Kerola]
 script:
