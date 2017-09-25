@@ -17,7 +17,7 @@
 extern char **environ;
 
 static char **argv0;
-static int argv_lth;
+static size_t argv_lth;
 
 void initproctitle (int argc, char **argv)
 {
@@ -42,16 +42,17 @@ void initproctitle (int argc, char **argv)
 			return;
 	environ[i] = NULL;
 
-	argv0 = argv;
 	if (i > 0)
-		argv_lth = envp[i-1] + strlen(envp[i-1]) - argv0[0];
+		argv_lth = envp[i-1] + strlen(envp[i-1]) - argv[0];
 	else
-		argv_lth = argv0[argc-1] + strlen(argv0[argc-1]) - argv0[0];
+		argv_lth = argv[argc-1] + strlen(argv[argc-1]) - argv[0];
+	if (argv_lth > 1)
+		argv0 = argv;
 }
 
 void setproctitle (const char *prog, const char *txt)
 {
-        int i;
+        size_t i;
         char buf[SPT_BUFSIZE];
 
         if (!argv0)
