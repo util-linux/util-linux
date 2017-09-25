@@ -139,6 +139,7 @@ struct login_context {
 static unsigned int timeout = LOGIN_TIMEOUT;
 static int child_pid = 0;
 static volatile int got_sig = 0;
+static char timeout_msg[128];
 
 #ifdef LOGIN_CHOWN_VCS
 /* true if the filedescriptor fd is a console tty, very Linux specific */
@@ -174,15 +175,14 @@ timedout2(int sig __attribute__ ((__unused__)))
 	tcgetattr(0, &ti);
 	ti.c_lflag |= ECHO;
 	tcsetattr(0, TCSANOW, &ti);
-	exit(EXIT_SUCCESS);	/* %% */
+	_exit(EXIT_SUCCESS);	/* %% */
 }
 
 static void timedout(int sig __attribute__ ((__unused__)))
 {
 	signal(SIGALRM, timedout2);
 	alarm(10);
-	/* TRANSLATORS: The standard value for %u is 60. */
-	warnx(_("timed out after %u seconds"), timeout);
+	ignore_result( write(STDERR_FILENO, timeout_msg, strlen(timeout_msg)) );
 	signal(SIGALRM, SIG_IGN);
 	alarm(0);
 	timedout2(0);
@@ -1134,6 +1134,15 @@ int main(int argc, char **argv)
 
 	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	/* TRANSLATORS: The standard value for %u is 60. */
+	snprintf(timeout_msg, sizeof(timeout_msg),
+	    _("%s: timed out after %u seconds"),
+	    program_invocation_short_name, timeout);
+
 	signal(SIGALRM, timedout);
 	(void) sigaction(SIGALRM, NULL, &act);
 	act.sa_flags &= ~SA_RESTART;
@@ -1141,10 +1150,6 @@ int main(int argc, char **argv)
 	alarm(timeout);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, SIG_IGN);
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
 
 	setpriority(PRIO_PROCESS, 0, 0);
 	initproctitle(argc, argv);
