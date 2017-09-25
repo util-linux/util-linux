@@ -99,6 +99,11 @@ util-linux 2.30.1 [Jul 07 2017]
  * https://www.kernel.org/pub/linux/utils/util-linux/v2.30/v2.30.1-ReleaseNotes
    https://www.kernel.org/pub/linux/utils/util-linux/v2.30/v2.30.1-ChangeLog
 
+util-linux 2.30.2 [Sep 21 2017]
+
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.30/v2.30.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.30/v2.30.2-ChangeLog
+
 Changes between v2.30 and v2.31
 -------------------------------
 Docs:
