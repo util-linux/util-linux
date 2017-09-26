@@ -134,6 +134,7 @@ static struct cfdisk_menu *menu_push(struct cfdisk *cf, struct cfdisk_menuitem *
 static struct cfdisk_menu *menu_pop(struct cfdisk *cf);
 static void menu_refresh_size(struct cfdisk *cf);
 
+static int ui_end(void);
 static int ui_refresh(struct cfdisk *cf);
 static void ui_warnx(const char *fmt, ...);
 static void ui_warn(const char *fmt, ...);
@@ -146,7 +147,8 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 		       uintmax_t low, uintmax_t up, int *expsize);
 
 static int ui_enabled;
-static int sig_resize;
+static volatile sig_atomic_t sig_resize;
+static volatile sig_atomic_t sig_die;
 
 /* ncurses LINES and COLS may be actual variables or *macros*, but we need
  * something portable and writable */
@@ -277,6 +279,13 @@ static int cols_init(struct cfdisk *cf)
 	cf->nfields = 0;
 
 	return fdisk_label_get_fields_ids(NULL, cf->cxt, &cf->fields, &cf->nfields);
+}
+
+static void die_on_signal(void)
+{
+	DBG(MISC, ul_debug("die on signal."));
+	ui_end();
+	exit(EXIT_FAILURE);
 }
 
 static void resize(void)
@@ -575,9 +584,11 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 	refresh();
 
 	/* wait for keys */
-	do {
+	while (!sig_die) {
 		key = getch();
 
+		if (sig_die)
+			break;
 		if (sig_resize)
 			ui_menu_resize(cf);
 		if (ui_menu_move(cf, key) == 0)
@@ -594,7 +605,10 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 			free(cm);
 			return 0;
 		}
-	} while (1);
+	}
+
+	if (sig_die)
+		die_on_signal();
 
 	menu_pop(cf);
 	free(cm);
@@ -784,16 +798,14 @@ static void ui_clean_hint(void)
 	clrtoeol();
 }
 
-static void die_on_signal(int dummy __attribute__((__unused__)))
+
+static void sig_handler_die(int dummy __attribute__((__unused__)))
 {
-	DBG(MISC, ul_debug("die on signal."));
-	ui_end();
-	exit(EXIT_FAILURE);
+	sig_die = 1;
 }
 
 static void sig_handler_resize(int dummy __attribute__((__unused__)))
 {
-	DBG(MISC, ul_debug("resize on signal."));
 	sig_resize = 1;
 }
 
@@ -922,7 +934,7 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 	/* setup SIGCHLD handler */
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-	sa.sa_handler = die_on_signal;
+	sa.sa_handler = sig_handler_die;
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
 
@@ -1746,7 +1758,7 @@ static ssize_t ui_get_string(const char *prompt,
 
 	curs_set(1);
 
-	while (1) {
+	while (!sig_die) {
 		wint_t c;	/* we have fallback in widechar.h */
 
 		move(ln, cl);
@@ -1761,6 +1773,8 @@ static ssize_t ui_get_string(const char *prompt,
 #else
 		if ((c = getch()) == (wint_t) ERR) {
 #endif
+			if (sig_die)
+				break;
 			if (sig_resize) {
 				resize();
 				continue;
@@ -1812,6 +1826,9 @@ static ssize_t ui_get_string(const char *prompt,
 		if (rc == 1)
 			beep();
 	}
+
+	if (sig_die)
+		die_on_signal();
 
 	rc = strlen(edit->buf);		/* success */
 done:
@@ -1952,9 +1969,11 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 	ui_draw_menu(cf);
 	refresh();
 
-	do {
+	while (!sig_die) {
 		int key = getch();
 
+		if (sig_die)
+			break;
 		if (sig_resize)
 			ui_menu_resize(cf);
 		if (ui_menu_move(cf, key) == 0)
@@ -1973,8 +1992,10 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 		case 'Q':
 			goto done;
 		}
-	} while (1);
+	}
 
+	if (sig_die)
+		die_on_signal();
 done:
 	menu_pop(cf);
 	if (codetypes) {
@@ -2098,7 +2119,7 @@ static int ui_create_label(struct cfdisk *cf)
 		ui_info(_("Device does not contain a recognized partition table."));
 
 
-	do {
+	while (!sig_die) {
 		int key;
 
 		if (refresh_menu) {
@@ -2110,6 +2131,8 @@ static int ui_create_label(struct cfdisk *cf)
 
 		key = getch();
 
+		if (sig_die)
+			break;
 		if (sig_resize)
 			ui_menu_resize(cf);
 		if (ui_menu_move(cf, key) == 0)
@@ -2134,8 +2157,10 @@ static int ui_create_label(struct cfdisk *cf)
 			refresh_menu = 1;
 			break;
 		}
-	} while (1);
+	}
 
+	if (sig_die)
+		die_on_signal();
 done:
 	menu_pop(cf);
 	free(cm);
@@ -2186,6 +2211,9 @@ static int ui_help(void)
 	ui_info(_("Press a key to continue."));
 
 	getch();
+
+	if (sig_die)
+		die_on_signal();
 	return 0;
 }
 
@@ -2516,10 +2544,13 @@ static int ui_run(struct cfdisk *cf)
 	else if (cf->wrong_order)
 		ui_info(_("Note that partition table entries are not in disk order now."));
 
-	do {
+	while (!sig_die) {
 		int key = getch();
 
 		rc = 0;
+
+		if (sig_die)
+			break;
 		if (sig_resize)
 			/* Note that ncurses getch() returns ERR when interrupted
 			 * by signal, but SLang does not interrupt at all. */
@@ -2582,7 +2613,7 @@ static int ui_run(struct cfdisk *cf)
 
 		if (rc == 1)
 			break; /* quit */
-	} while (1);
+	}
 
 	menu_pop(cf);
 
