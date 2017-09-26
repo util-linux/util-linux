@@ -65,7 +65,7 @@ enum {
 	ISO_8601_GMTIME		= (1 << 7)
 };
 
-#define ISO_8601_BUFSIZ	32
+#define ISO_8601_BUFSIZ	42
 
 int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz);
 int strtm_iso(struct tm *tm, int flags, char *buf, size_t bufsz);
