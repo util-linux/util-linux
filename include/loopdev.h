@@ -24,6 +24,7 @@
 /* #define LOOP_CHANGE_FD	0x4C06 */
 #define LOOP_SET_CAPACITY	0x4C07
 #define LOOP_SET_DIRECT_IO	0x4C08
+#define LOOP_SET_BLOCK_SIZE	0x4C09
 
 /* /dev/loop-control interface */
 #ifndef LOOP_CTL_ADD
@@ -173,11 +174,13 @@ int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset);
 int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit);
 int loopcxt_set_flags(struct loopdev_cxt *lc, uint32_t flags);
 int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename);
+int loopcxt_set_blocksize(struct loopdev_cxt *lc, uint64_t blocksize);
 
 extern char *loopcxt_get_backing_file(struct loopdev_cxt *lc);
 extern int loopcxt_get_backing_devno(struct loopdev_cxt *lc, dev_t *devno);
 extern int loopcxt_get_backing_inode(struct loopdev_cxt *lc, ino_t *ino);
 extern int loopcxt_get_offset(struct loopdev_cxt *lc, uint64_t *offset);
+extern int loopcxt_get_blocksize(struct loopdev_cxt *lc, uint64_t *blocksize);
 extern int loopcxt_get_sizelimit(struct loopdev_cxt *lc, uint64_t *size);
 extern int loopcxt_get_encrypt_type(struct loopdev_cxt *lc, uint32_t *type);
 extern const char *loopcxt_get_crypt_name(struct loopdev_cxt *lc);

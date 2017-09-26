@@ -737,6 +737,38 @@ int loopcxt_get_offset(struct loopdev_cxt *lc, uint64_t *offset)
 
 /*
  * @lc: context
+ * @blocksize: returns logical blocksize for the given device
+ *
+ * Returns: <0 on error, 0 on success
+ */
+int loopcxt_get_blocksize(struct loopdev_cxt *lc, uint64_t *blocksize)
+{
+	struct sysfs_cxt *sysfs = loopcxt_get_sysfs(lc);
+	int rc = -EINVAL;
+
+	if (sysfs)
+		rc = sysfs_read_u64(sysfs, "queue/logical_block_size", blocksize);
+
+	/* Fallback based on BLKSSZGET ioctl */
+	if (rc) {
+		int fd = loopcxt_get_fd(lc);
+		int sz = 0;
+
+		if (fd < 0)
+			return -EINVAL;
+		rc = blkdev_get_sector_size(fd, &sz);
+		if (rc)
+			return rc;
+
+		*blocksize = sz;
+	}
+
+	DBG(CXT, ul_debugobj(lc, "get_blocksize [rc=%d]", rc));
+	return rc;
+}
+
+/*
+ * @lc: context
  * @sizelimit: returns size limit for the given device
  *
  * Returns: <0 on error, 0 on success
@@ -1395,6 +1427,24 @@ int loopcxt_set_dio(struct loopdev_cxt *lc, unsigned long use_dio)
 	}
 
 	DBG(CXT, ul_debugobj(lc, "direct io set"));
+	return 0;
+}
+
+int loopcxt_set_blocksize(struct loopdev_cxt *lc, unsigned long blocksize)
+{
+	int fd = loopcxt_get_fd(lc);
+
+	if (fd < 0)
+		return -EINVAL;
+
+	/* Kernels prior to v4.14 don't support this ioctl */
+	if (ioctl(fd, LOOP_SET_BLOCK_SIZE, blocksize) < 0) {
+		int rc = -errno;
+		DBG(CXT, ul_debugobj(lc, "LOOP_SET_BLOCK_SIZE failed: %m"));
+		return rc;
+	}
+
+	DBG(CXT, ul_debugobj(lc, "logical block size set"));
 	return 0;
 }
 
