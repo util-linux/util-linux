@@ -146,7 +146,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 		       uintmax_t low, uintmax_t up, int *expsize);
 
 static int ui_enabled;
-static int ui_resize;
+static int sig_resize;
 
 /* ncurses LINES and COLS may be actual variables or *macros*, but we need
  * something portable and writable */
@@ -296,7 +296,7 @@ static void resize(void)
 
 	DBG(UI, ul_debug("ui: resize refresh ui_cols=%zu, ui_lines=%zu",
 				ui_cols, ui_lines));
-	ui_resize = 0;
+	sig_resize = 0;
 }
 
 /* Reads partition in tree-like order from scols
@@ -578,7 +578,7 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 	do {
 		key = getch();
 
-		if (ui_resize)
+		if (sig_resize)
 			ui_menu_resize(cf);
 		if (ui_menu_move(cf, key) == 0)
 			continue;
@@ -791,10 +791,10 @@ static void die_on_signal(int dummy __attribute__((__unused__)))
 	exit(EXIT_FAILURE);
 }
 
-static void resize_on_signal(int dummy __attribute__((__unused__)))
+static void sig_handler_resize(int dummy __attribute__((__unused__)))
 {
 	DBG(MISC, ul_debug("resize on signal."));
-	ui_resize = 1;
+	sig_resize = 1;
 }
 
 static void menu_refresh_size(struct cfdisk *cf)
@@ -926,7 +926,7 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
 
-	sa.sa_handler = resize_on_signal;
+	sa.sa_handler = sig_handler_resize;
 	sigaction(SIGWINCH, &sa, NULL);
 
 	ui_enabled = 1;
@@ -1761,7 +1761,7 @@ static ssize_t ui_get_string(const char *prompt,
 #else
 		if ((c = getch()) == (wint_t) ERR) {
 #endif
-			if (ui_resize) {
+			if (sig_resize) {
 				resize();
 				continue;
 			}
@@ -1955,7 +1955,7 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 	do {
 		int key = getch();
 
-		if (ui_resize)
+		if (sig_resize)
 			ui_menu_resize(cf);
 		if (ui_menu_move(cf, key) == 0)
 			continue;
@@ -2110,7 +2110,7 @@ static int ui_create_label(struct cfdisk *cf)
 
 		key = getch();
 
-		if (ui_resize)
+		if (sig_resize)
 			ui_menu_resize(cf);
 		if (ui_menu_move(cf, key) == 0)
 			continue;
@@ -2520,7 +2520,7 @@ static int ui_run(struct cfdisk *cf)
 		int key = getch();
 
 		rc = 0;
-		if (ui_resize)
+		if (sig_resize)
 			/* Note that ncurses getch() returns ERR when interrupted
 			 * by signal, but SLang does not interrupt at all. */
 			ui_resize_refresh(cf);
