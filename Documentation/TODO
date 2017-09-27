@@ -141,6 +141,13 @@ docs
 
  - (!) add API documentation to libuuid
 
+exit codes
+----------
+
+  - we need coreutils-like exit codes for failed exec(). See:
+    https://www.spinics.net/lists/util-linux-ng/msg12776.html
+    and original attempt:
+    https://github.com/karelzak/util-linux/pull/311
 
 login-utils:
 -----------
