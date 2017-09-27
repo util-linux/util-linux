@@ -269,3 +269,42 @@ $ lsmem --json --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
       {"range": "0x0000000438000000-0x000000043fffffff", "size": "128M", "state": "online", "removable": "no", "block": "135", "node": "0"}
    ]
 }
+
+---
+
+$ lsmem -o +ZONES
+RANGE                                  SIZE  STATE REMOVABLE   BLOCK  ZONES
+0x0000000000000000-0x0000000007ffffff  128M online        no       0   None
+0x0000000008000000-0x0000000037ffffff  768M online       yes     1-6  DMA32
+0x0000000038000000-0x000000003fffffff  128M online        no       7  DMA32
+0x0000000040000000-0x0000000077ffffff  896M online       yes    8-14  DMA32
+0x0000000078000000-0x000000007fffffff  128M online        no      15  DMA32
+0x0000000080000000-0x00000000afffffff  768M online       yes   16-21  DMA32
+0x00000000b0000000-0x00000000bfffffff  256M online        no   22-23  DMA32
+0x0000000100000000-0x00000001a7ffffff  2.6G online        no   32-52 Normal
+0x00000001a8000000-0x00000001afffffff  128M online       yes      53 Normal
+0x00000001b0000000-0x00000001bfffffff  256M online        no   54-55 Normal
+0x00000001c0000000-0x00000001ffffffff    1G online       yes   56-63 Normal
+0x0000000200000000-0x0000000207ffffff  128M online        no      64 Normal
+0x0000000208000000-0x000000021fffffff  384M online       yes   65-67 Normal
+0x0000000220000000-0x0000000237ffffff  384M online        no   68-70 Normal
+0x0000000238000000-0x0000000277ffffff    1G online       yes   71-78 Normal
+0x0000000278000000-0x000000028fffffff  384M online        no   79-81 Normal
+0x0000000290000000-0x0000000297ffffff  128M online       yes      82 Normal
+0x0000000298000000-0x00000002a7ffffff  256M online        no   83-84 Normal
+0x00000002a8000000-0x00000002c7ffffff  512M online       yes   85-88 Normal
+0x00000002c8000000-0x00000002dfffffff  384M online        no   89-91 Normal
+0x00000002e0000000-0x00000002efffffff  256M online       yes   92-93 Normal
+0x00000002f0000000-0x000000034fffffff  1.5G online        no  94-105 Normal
+0x0000000350000000-0x0000000357ffffff  128M online       yes     106 Normal
+0x0000000358000000-0x000000036fffffff  384M online        no 107-109 Normal
+0x0000000370000000-0x0000000377ffffff  128M online       yes     110 Normal
+0x0000000378000000-0x00000003c7ffffff  1.3G online        no 111-120 Normal
+0x00000003c8000000-0x00000003e7ffffff  512M online       yes 121-124 Normal
+0x00000003e8000000-0x000000042fffffff  1.1G online        no 125-133 Normal
+0x0000000430000000-0x0000000437ffffff  128M online       yes     134 Normal
+0x0000000438000000-0x000000043fffffff  128M online        no     135   None
+
+Memory block size:       128M
+Total online memory:      16G
+Total offline memory:      0B

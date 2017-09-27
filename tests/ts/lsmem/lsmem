@@ -49,6 +49,7 @@ for dump in $(ls $TS_SELF/dumps/*.tar.bz2 | sort); do
 	do_lsmem --all --output $LSCOLUMNS
 	do_lsmem --raw --output $LSCOLUMNS
 	do_lsmem --json --output $LSCOLUMNS
+	do_lsmem -o +ZONES
 
 	ts_finalize_subtest
 done
