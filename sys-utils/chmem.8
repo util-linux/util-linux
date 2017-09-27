@@ -5,6 +5,7 @@ chmem \- configure memory
 .B chmem
 .RB [ \-h "] [" \-V "] [" \-v "] [" \-e | \-d "]"
 [\fISIZE\fP|\fIRANGE\fP|\fB\-b\fP \fIBLOCKRANGE\fP]
+[-z ZONE]
 .SH DESCRIPTION
 The chmem command sets a particular size or range of memory online or offline.
 .
@@ -24,6 +25,19 @@ output of the \fBlsmem\fP command. <first> is the number of the first memory blo
 and <last> is the number of the last memory block in the memory
 range. Alternatively a single block can be specified. \fIBLOCKRANGE\fP requires
 the \fB--blocks\fP option.
+.
+.IP "\(hy" 2
+Specify \fIZONE\fP as the name of a memory zone, as shown in the output of the
+\fBlsmem -o +ZONES\fP command. The output shows one or more valid memory zones
+for each memory range. If multiple zones are shown, then the memory range
+currently belongs to the first zone. By default, chmem will set memory online
+to the zone Movable, if this is among the valid zones. This default can be
+changed by specifying the \fB--zone\fP option with another valid zone.
+For memory ballooning, it is recommended to select the zone Movable for memory
+online and offline, if possible. Memory in this zone is much more likely to be
+able to be offlined again, but it cannot be used for arbitrary kernel
+allocations, only for migratable pages (e.g. anonymous and page cache pages).
+Use the \fB\-\-help\fR option to see all available zones.
 .
 .PP
 \fISIZE\fP and \fIRANGE\fP must be aligned to the Linux memory block size, as
@@ -50,6 +64,11 @@ Set the specified \fIRANGE\fP, \fISIZE\fP, or \fIBLOCKRANGE\fP of memory offline
 .TP
 .BR \-e ", " \-\-enable
 Set the specified \fIRANGE\fP, \fISIZE\fP, or \fIBLOCKRANGE\fP of memory online.
+.TP
+.BR \-z ", " \-\-zone
+Select the memory \fIZONE\fP where to set the specified \fIRANGE\fP, \fISIZE\fP,
+or \fIBLOCKRANGE\fP of memory online or offline. By default, memory will be set
+online to the zone Movable, if possible.
 .TP
 .BR \-h ", " \-\-help
 Print a short help text, then exit.

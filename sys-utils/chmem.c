@@ -49,6 +49,7 @@ struct chmem_desc {
 	unsigned int	use_blocks : 1;
 	unsigned int	is_size	   : 1;
 	unsigned int	verbose	   : 1;
+	unsigned int	have_zones : 1;
 };
 
 enum {
@@ -56,6 +57,38 @@ enum {
 	CMD_MEMORY_DISABLE,
 	CMD_NONE
 };
+
+enum zone_id {
+	ZONE_DMA = 0,
+	ZONE_DMA32,
+	ZONE_NORMAL,
+	ZONE_HIGHMEM,
+	ZONE_MOVABLE,
+	ZONE_DEVICE,
+};
+
+static char *zone_names[] = {
+	[ZONE_DMA]	= "DMA",
+	[ZONE_DMA32]	= "DMA32",
+	[ZONE_NORMAL]	= "Normal",
+	[ZONE_HIGHMEM]	= "Highmem",
+	[ZONE_MOVABLE]	= "Movable",
+	[ZONE_DEVICE]	= "Device",
+};
+
+/*
+ * name must be null-terminated
+ */
+static int zone_name_to_id(const char *name)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(zone_names); i++) {
+		if (!strcasecmp(name, zone_names[i]))
+			return i;
+	}
+	return -1;
+}
 
 static void idxtostr(struct chmem_desc *desc, uint64_t idx, char *buf, size_t bufsz)
 {
@@ -68,22 +101,49 @@ static void idxtostr(struct chmem_desc *desc, uint64_t idx, char *buf, size_t bu
 		 idx, start, end);
 }
 
-static int chmem_size(struct chmem_desc *desc, int enable)
+static int chmem_size(struct chmem_desc *desc, int enable, int zone_id)
 {
 	char *name, *onoff, line[BUFSIZ], str[BUFSIZ];
 	uint64_t size, index;
+	const char *zn;
 	int i, rc;
 
 	size = desc->size;
 	onoff = enable ? "online" : "offline";
 	i = enable ? 0 : desc->ndirs - 1;
 
+	if (enable && zone_id >= 0) {
+		if (zone_id == ZONE_MOVABLE)
+			onoff = "online_movable";
+		else
+			onoff = "online_kernel";
+	}
+
 	for (; i >= 0 && i < desc->ndirs && size; i += enable ? 1 : -1) {
 		name = desc->dirs[i]->d_name;
 		index = strtou64_or_err(name + 6, _("Failed to parse index"));
 		path_read_str(line, sizeof(line), _PATH_SYS_MEMORY "/%s/state", name);
-		if (strcmp(onoff, line) == 0)
+		if (strncmp(onoff, line, 6) == 0)
 			continue;
+
+		if (desc->have_zones) {
+			path_read_str(line, sizeof(line),
+				      _PATH_SYS_MEMORY "/%s/valid_zones", name);
+			if (zone_id >= 0) {
+				zn = zone_names[zone_id];
+				if (enable && !strcasestr(line, zn))
+					continue;
+				if (!enable && strncasecmp(line, zn, strlen(zn)))
+					continue;
+			} else if (enable) {
+				/* By default, use zone Movable for online, if valid */
+				if (strcasestr(line, zone_names[ZONE_MOVABLE]))
+					onoff = "online_movable";
+				else
+					onoff = "online";
+			}
+		}
+
 		idxtostr(desc, index, str, sizeof(str));
 		rc = path_write_str(onoff, _PATH_SYS_MEMORY"/%s/state", name);
 		if (rc == -1 && desc->verbose) {
@@ -115,14 +175,22 @@ static int chmem_size(struct chmem_desc *desc, int enable)
 	return size == 0 ? 0 : size == desc->size ? -1 : 1;
 }
 
-static int chmem_range(struct chmem_desc *desc, int enable)
+static int chmem_range(struct chmem_desc *desc, int enable, int zone_id)
 {
 	char *name, *onoff, line[BUFSIZ], str[BUFSIZ];
 	uint64_t index, todo;
+	const char *zn;
 	int i, rc;
 
 	todo = desc->end - desc->start + 1;
 	onoff = enable ? "online" : "offline";
+
+	if (enable && zone_id >= 0) {
+		if (zone_id == ZONE_MOVABLE)
+			onoff = "online_movable";
+		else
+			onoff = "online_kernel";
+	}
 
 	for (i = 0; i < desc->ndirs; i++) {
 		name = desc->dirs[i]->d_name;
@@ -133,7 +201,7 @@ static int chmem_range(struct chmem_desc *desc, int enable)
 			break;
 		idxtostr(desc, index, str, sizeof(str));
 		path_read_str(line, sizeof(line), _PATH_SYS_MEMORY "/%s/state", name);
-		if (strcmp(onoff, line) == 0) {
+		if (strncmp(onoff, line, 6) == 0) {
 			if (desc->verbose && enable)
 				fprintf(stdout, _("%s already enabled\n"), str);
 			else if (desc->verbose && !enable)
@@ -141,6 +209,29 @@ static int chmem_range(struct chmem_desc *desc, int enable)
 			todo--;
 			continue;
 		}
+
+		if (desc->have_zones) {
+			path_read_str(line, sizeof(line),
+				      _PATH_SYS_MEMORY "/%s/valid_zones", name);
+			if (zone_id >= 0) {
+				zn = zone_names[zone_id];
+				if (enable && !strcasestr(line, zn)) {
+					warnx(_("%s enable failed: Zone mismatch"), str);
+					continue;
+				}
+				if (!enable && strncasecmp(line, zn, strlen(zn))) {
+					warnx(_("%s disable failed: Zone mismatch"), str);
+					continue;
+				}
+			} else if (enable) {
+				/* By default, use zone Movable for online, if valid */
+				if (strcasestr(line, zone_names[ZONE_MOVABLE]))
+					onoff = "online_movable";
+				else
+					onoff = "online";
+			}
+		}
+
 		rc = path_write_str(onoff, _PATH_SYS_MEMORY"/%s/state", name);
 		if (rc == -1) {
 			if (enable)
@@ -237,6 +328,8 @@ static void parse_parameter(struct chmem_desc *desc, char *param)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
+	unsigned int i;
+
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [SIZE|RANGE|BLOCKRANGE]\n"), program_invocation_short_name);
 
@@ -247,6 +340,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -e, --enable   enable memory\n"), out);
 	fputs(_(" -d, --disable  disable memory\n"), out);
 	fputs(_(" -b, --blocks   use memory blocks\n"), out);
+	fputs(_(" -z, --zone     select memory zone ("), out);
+	for (i = 0; i < ARRAY_SIZE(zone_names); i++) {
+		fputs(zone_names[i], out);
+		if (i < ARRAY_SIZE(zone_names) - 1)
+			fputc('|', out);
+	}
+	fputs(")\n", out);
+
 	fputs(_(" -v, --verbose  verbose output\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(16));
@@ -259,7 +360,8 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	struct chmem_desc _desc = { }, *desc = &_desc;
-	int cmd = CMD_NONE;
+	int cmd = CMD_NONE, zone_id = -1;
+	char *zone = NULL;
 	int c, rc;
 
 	static const struct option longopts[] = {
@@ -269,6 +371,7 @@ int main(int argc, char **argv)
 		{"help",	no_argument,		NULL, 'h'},
 		{"verbose",	no_argument,		NULL, 'v'},
 		{"version",	no_argument,		NULL, 'V'},
+		{"zone",	required_argument,	NULL, 'z'},
 		{NULL,		0,			NULL, 0}
 	};
 
@@ -285,7 +388,7 @@ int main(int argc, char **argv)
 
 	read_info(desc);
 
-	while ((c = getopt_long(argc, argv, "bdehvV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "bdehvVz:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -308,6 +411,9 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		case 'z':
+			zone = xstrdup(optarg);
+			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -320,10 +426,24 @@ int main(int argc, char **argv)
 
 	parse_parameter(desc, argv[optind]);
 
+	/* The valid_zones sysfs attribute was introduced with kernel 3.18 */
+	if (path_exist(_PATH_SYS_MEMORY "/memory0/valid_zones"))
+		desc->have_zones = 1;
+	else if (zone)
+		warnx(_("zone ignored, no valid_zones sysfs attribute present"));
+
+	if (zone && desc->have_zones) {
+		zone_id = zone_name_to_id(zone);
+		if (zone_id == -1) {
+			warnx(_("unknown memory zone: %s"), zone);
+			errtryhelp(EXIT_FAILURE);
+		}
+	}
+
 	if (desc->is_size)
-		rc = chmem_size(desc, cmd == CMD_MEMORY_ENABLE ? 1 : 0);
+		rc = chmem_size(desc, cmd == CMD_MEMORY_ENABLE ? 1 : 0, zone_id);
 	else
-		rc = chmem_range(desc, cmd == CMD_MEMORY_ENABLE ? 1 : 0);
+		rc = chmem_range(desc, cmd == CMD_MEMORY_ENABLE ? 1 : 0, zone_id);
 
 	return rc == 0 ? EXIT_SUCCESS :
 		rc < 0 ? EXIT_FAILURE : CHMEM_EXIT_SOMEOK;

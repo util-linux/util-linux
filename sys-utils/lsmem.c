@@ -42,11 +42,25 @@
 #define MEMORY_STATE_GOING_OFFLINE	2
 #define MEMORY_STATE_UNKNOWN		3
 
+enum zone_id {
+	ZONE_DMA = 0,
+	ZONE_DMA32,
+	ZONE_NORMAL,
+	ZONE_HIGHMEM,
+	ZONE_MOVABLE,
+	ZONE_DEVICE,
+	ZONE_NONE,
+	ZONE_UNKNOWN,
+	MAX_NR_ZONES,
+};
+
 struct memory_block {
 	uint64_t	index;
 	uint64_t	count;
 	int		state;
 	int		node;
+	int		nr_zones;
+	int		zones[MAX_NR_ZONES];
 	unsigned int	removable:1;
 };
 
@@ -72,7 +86,9 @@ struct lsmem {
 				want_state : 1,
 				want_removable : 1,
 				want_summary : 1,
-				want_table : 1;
+				want_table : 1,
+				want_zones : 1,
+				have_zones : 1;
 };
 
 enum {
@@ -82,6 +98,18 @@ enum {
 	COL_REMOVABLE,
 	COL_BLOCK,
 	COL_NODE,
+	COL_ZONES,
+};
+
+static char *zone_names[] = {
+	[ZONE_DMA]	= "DMA",
+	[ZONE_DMA32]	= "DMA32",
+	[ZONE_NORMAL]	= "Normal",
+	[ZONE_HIGHMEM]	= "Highmem",
+	[ZONE_MOVABLE]	= "Movable",
+	[ZONE_DEVICE]	= "Device",
+	[ZONE_NONE]	= "None",	/* block contains more than one zone, can't be offlined */
+	[ZONE_UNKNOWN]	= "Unknown",
 };
 
 /* column names */
@@ -102,6 +130,7 @@ static struct coldesc coldescs[] = {
 	[COL_REMOVABLE]	= { "REMOVABLE", 0, SCOLS_FL_RIGHT, N_("memory is removable")},
 	[COL_BLOCK]	= { "BLOCK", 0, SCOLS_FL_RIGHT, N_("memory block number or blocks range")},
 	[COL_NODE]	= { "NODE", 0, SCOLS_FL_RIGHT, N_("numa node of memory")},
+	[COL_ZONES]	= { "ZONES", 0, SCOLS_FL_RIGHT, N_("valid zones for the memory range")},
 };
 
 /* columns[] array specifies all currently wanted output column. The columns
@@ -118,6 +147,20 @@ static inline size_t err_columns_index(size_t arysz, size_t idx)
 				     "the limit is %zu columns"),
 				arysz - 1);
 	return idx;
+}
+
+/*
+ * name must be null-terminated
+ */
+static int zone_name_to_id(const char *name)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(zone_names); i++) {
+		if (!strcasecmp(name, zone_names[i]))
+			return i;
+	}
+	return ZONE_UNKNOWN;
 }
 
 #define add_column(ary, n, id)	\
@@ -214,6 +257,25 @@ static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
 			else
 				str = xstrdup("-");
 			break;
+		case COL_ZONES:
+			if (lsmem->have_zones) {
+				char valid_zones[BUFSIZ];
+				int j, zone_id;
+
+				valid_zones[0] = '\0';
+				for (j = 0; j < blk->nr_zones; j++) {
+					zone_id = blk->zones[j];
+					if (strlen(valid_zones) +
+					    strlen(zone_names[zone_id]) > BUFSIZ - 2)
+						break;
+					strcat(valid_zones, zone_names[zone_id]);
+					if (j + 1 < blk->nr_zones)
+						strcat(valid_zones, "/");
+				}
+				str = xstrdup(valid_zones);
+			} else
+				str = xstrdup("-");
+			break;
 		}
 
 		if (str && scols_line_refer_data(line, i, str) != 0)
@@ -272,7 +334,9 @@ static int memory_block_get_node(char *name)
 static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
 				    struct memory_block *blk)
 {
+	char *token = NULL;
 	char line[BUFSIZ];
+	int i;
 
 	blk->count = 1;
 	blk->index = strtoumax(name + 6, NULL, 10); /* get <num> of "memory<num>" */
@@ -287,11 +351,26 @@ static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
 		blk->state = MEMORY_STATE_GOING_OFFLINE;
 	if (lsmem->have_nodes)
 		blk->node = memory_block_get_node(name);
+
+	blk->nr_zones = 0;
+	if (lsmem->have_zones) {
+		path_read_str(line, sizeof(line), _PATH_SYS_MEMORY"/%s/%s", name,
+			      "valid_zones");
+		token = strtok(line, " ");
+	}
+	for (i = 0; i < MAX_NR_ZONES; i++) {
+		if (token) {
+			blk->zones[i] = zone_name_to_id(token);
+			blk->nr_zones++;
+			token = strtok(NULL, " ");
+		}
+	}
 }
 
 static int is_mergeable(struct lsmem *lsmem, struct memory_block *blk)
 {
 	struct memory_block *curr;
+	int i;
 
 	if (!lsmem->nblocks)
 		return 0;
@@ -307,6 +386,15 @@ static int is_mergeable(struct lsmem *lsmem, struct memory_block *blk)
 	if (lsmem->want_node && lsmem->have_nodes) {
 		if (curr->node != blk->node)
 			return 0;
+	}
+	if (lsmem->want_zones && lsmem->have_zones) {
+		if (curr->nr_zones != blk->nr_zones)
+			return 0;
+		for (i = 0; i < curr->nr_zones; i++) {
+			if (curr->zones[i] == ZONE_UNKNOWN ||
+			    curr->zones[i] != blk->zones[i])
+				return 0;
+		}
 	}
 	return 1;
 }
@@ -362,6 +450,12 @@ static void read_basic_info(struct lsmem *lsmem)
 
 	if (memory_block_get_node(lsmem->dirs[0]->d_name) != -1)
 		lsmem->have_nodes = 1;
+
+	/* The valid_zones sysfs attribute was introduced with kernel 3.18 */
+	if (path_exist(_PATH_SYS_MEMORY "/memory0/valid_zones"))
+		lsmem->have_zones = 1;
+	else if (lsmem->want_zones)
+		warnx(_("Cannot read zones, no valid_zones sysfs attribute present"));
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -553,6 +647,8 @@ int main(int argc, char **argv)
 		lsmem->want_node = 1;
 	if (has_column(COL_REMOVABLE))
 		lsmem->want_removable = 1;
+	if (has_column(COL_ZONES))
+		lsmem->want_zones = 1;
 
 	/*
 	 * Read data and print output

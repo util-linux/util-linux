@@ -41,12 +41,12 @@ Do not print a header line.
 .BR \-o , " \-\-output " \fIlist\fP
 Specify which output columns to print.  Use \fB\-\-help\fR
 to get a list of all supported columns.
+The default list of columns may be extended if \fIlist\fP is
+specified in the format \fB+\fIlist\fP (e.g. \fBlsmem \-o +NODE\fP).
 .TP
 .BR \-P , " \-\-pairs"
 Produce output in the form of key="value" pairs.
 All potentially unsafe characters are hex-escaped (\\x<code>).
-The default list of columns may be extended if \fIlist\fP is
-specified in the format \fB+\fIlist\fP (e.g. \fBlsmem \-o +NODE\fP).
 .TP
 .BR \-r , " \-\-raw"
 Produce output in raw format.  All potentially unsafe characters are hex-escaped
