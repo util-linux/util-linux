@@ -16,6 +16,7 @@ _chmem_module()
 				--disable
 				--blocks
 				--verbose
+				--zone
 				--help
 				--version
 			"

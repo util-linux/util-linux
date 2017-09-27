@@ -9,7 +9,7 @@ _lsmem_module()
 			local prefix realcur OUTPUT_ALL OUTPUT
 			realcur="${cur##*,}"
 			prefix="${cur%$realcur}"
-			OUTPUT_ALL='RANGE SIZE STATE REMOVABLE BLOCK NODE'
+			OUTPUT_ALL='RANGE SIZE STATE REMOVABLE BLOCK NODE ZONES'
 			for WORD in $OUTPUT_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
 					OUTPUT="$WORD ${OUTPUT:-""}"
