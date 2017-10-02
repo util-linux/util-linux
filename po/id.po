@@ -229,22 +229,22 @@ msgstr "mount: perangkat loop dispesifikasikan dua kali"
 #: disk-utils/blockdev.c:330
 #, fuzzy
 msgid "could not get device size"
-msgstr "Tidak dapat memperoleh ukuran disk"
+msgstr "tidak dapat memperoleh ukuran disk"
 
 #: disk-utils/blockdev.c:336
 #, fuzzy, c-format
 msgid "Unknown command: %s"
-msgstr "%s: Perintah tidak diketahui: %s\n"
+msgstr "Perintah tidak diketahui: %s"
 
 #: disk-utils/blockdev.c:352
 #, fuzzy, c-format
 msgid "%s requires an argument"
-msgstr "%s membutuhkan sebuah argument\n"
+msgstr "%s membutuhkan sebuah argument"
 
 #: disk-utils/blockdev.c:387 disk-utils/blockdev.c:493
 #, fuzzy, c-format
 msgid "ioctl error on %s"
-msgstr "%s: ioctl error pada %s\n"
+msgstr "ioctl error pada %s"
 
 #: disk-utils/blockdev.c:389
 #, c-format
@@ -259,7 +259,7 @@ msgstr "%s sukses.\n"
 #: disk-utils/blockdev.c:476
 #, fuzzy, c-format
 msgid "%s: failed to initialize sysfs handler"
-msgstr "gagal menginisialisasi baris penyangga\n"
+msgstr "%s: gagal menginisialisasi baris penyangga"
 
 #: disk-utils/blockdev.c:480
 #, fuzzy, c-format
@@ -372,19 +372,17 @@ msgstr "fsck: %s: tidak ditemukan\n"
 #: disk-utils/cfdisk.c:1285
 #, fuzzy
 msgid "Partition name:"
-msgstr "Nomor partisi"
+msgstr "Nama partisi:"
 
 #: disk-utils/cfdisk.c:1292
 #, fuzzy
 msgid "Partition UUID:"
-msgstr ""
-"\n"
-"%d partisi:\n"
+msgstr "UUID partisi:"
 
 #: disk-utils/cfdisk.c:1304
 #, fuzzy
 msgid "Partition type:"
-msgstr "Nomor partisi"
+msgstr "Tipe partisi:"
 
 #: disk-utils/cfdisk.c:1311
 msgid "Attributes:"
@@ -393,27 +391,27 @@ msgstr ""
 #: disk-utils/cfdisk.c:1335
 #, fuzzy
 msgid "Filesystem UUID:"
-msgstr "Masukkan tipe filesystem: "
+msgstr "Masukkan UUID filesystem: "
 
 #: disk-utils/cfdisk.c:1342
 #, fuzzy
 msgid "Filesystem LABEL:"
-msgstr "Masukkan tipe filesystem: "
+msgstr "Masukkan LABEL filesystem: "
 
 #: disk-utils/cfdisk.c:1348
 #, fuzzy
 msgid "Filesystem:"
-msgstr "Masukkan tipe filesystem: "
+msgstr "Filesystem: "
 
 #: disk-utils/cfdisk.c:1353
 #, fuzzy
 msgid "Mountpoint:"
-msgstr "%s telah di mount.\t "
+msgstr "Telah di mount:"
 
 #: disk-utils/cfdisk.c:1696
 #, fuzzy, c-format
 msgid "Disk: %s"
-msgstr "disk: %.*s\n"
+msgstr "Disk: %s"
 
 #: disk-utils/cfdisk.c:1698
 #, fuzzy, c-format
@@ -430,7 +428,7 @@ msgstr "Identifikasi disk: 0x%08x\n"
 #: disk-utils/cfdisk.c:1704
 #, fuzzy, c-format
 msgid "Label: %s"
-msgstr "label: %.*s\n"
+msgstr "Label: %s"
 
 #: disk-utils/cfdisk.c:1849
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
@@ -439,7 +437,7 @@ msgstr ""
 #: disk-utils/cfdisk.c:1855
 #, fuzzy
 msgid "Please, specify size."
-msgstr "nama berkas tidak dispesifikasikan."
+msgstr "Nama berkas tidak dispesifikasikan."
 
 #: disk-utils/cfdisk.c:1877
 #, fuzzy, c-format
@@ -454,7 +452,7 @@ msgstr "get size in bytes"
 #: disk-utils/cfdisk.c:1893
 #, fuzzy
 msgid "Failed to parse size."
-msgstr "gagal mendapatkan pid"
+msgstr "Gagal mendapatkan pid"
 
 #: disk-utils/cfdisk.c:1951
 #, fuzzy
@@ -480,12 +478,12 @@ msgstr "Tidak dapat membuka %s\n"
 #: disk-utils/cfdisk.c:2009 disk-utils/fdisk-menu.c:481
 #, fuzzy, c-format
 msgid "Failed to parse script file %s"
-msgstr "gagal membaca typescript berkas %s"
+msgstr "Gagal membaca typescript berkas %s"
 
 #: disk-utils/cfdisk.c:2011 disk-utils/fdisk-menu.c:483
 #, fuzzy, c-format
 msgid "Failed to apply script %s"
-msgstr "gagal membaca typescript berkas %s"
+msgstr "Gagal membaca typescript berkas %s"
 
 #: disk-utils/cfdisk.c:2028
 msgid "The current in-memory partition table will be dumped to the file."
@@ -494,12 +492,12 @@ msgstr ""
 #: disk-utils/cfdisk.c:2036 disk-utils/fdisk-menu.c:511
 #, fuzzy
 msgid "Failed to allocate script handler"
-msgstr "gagal mengalokasikan outbuffer"
+msgstr "Gagal mengalokasikan outbuffer"
 
 #: disk-utils/cfdisk.c:2042
 #, fuzzy
 msgid "Failed to read disk layout into script."
-msgstr "gagal mengalokasikan outbuffer"
+msgstr "Gagal mengalokasikan outbuffer"
 
 #: disk-utils/cfdisk.c:2056
 msgid "Disk layout successfully dumped."
@@ -508,7 +506,7 @@ msgstr ""
 #: disk-utils/cfdisk.c:2059 disk-utils/fdisk-menu.c:529
 #, fuzzy, c-format
 msgid "Failed to write script %s"
-msgstr "gagal membaca typescript berkas %s"
+msgstr "Gagal membaca typescript berkas %s"
 
 #: disk-utils/cfdisk.c:2095
 #, fuzzy
@@ -616,12 +614,12 @@ msgstr "Panah Bawah  Memindahkan cursor ke partisi sesudahnya"
 
 #: disk-utils/cfdisk.c:2173
 msgid "Note: All of the commands can be entered with either upper or lower"
-msgstr "Catatan: Semua perintah dapat diketikkan dengan menggunakan huruf "
+msgstr "Catatan: Semua perintah dapat diketikkan dengan menggunakan huruf"
 
 #: disk-utils/cfdisk.c:2174
 #, fuzzy
 msgid "case letters (except for Write)."
-msgstr "besar atau huruf kecil (kecuali untuk penulisan ke disk)"
+msgstr "besar atau huruf kecil (kecuali untuk penulisan ke disk)."
 
 #: disk-utils/cfdisk.c:2176
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
@@ -630,7 +628,7 @@ msgstr ""
 #: disk-utils/cfdisk.c:2186 disk-utils/cfdisk.c:2486
 #, fuzzy
 msgid "Press a key to continue."
-msgstr "Tekan sebuah tombol untuk melanjutkan"
+msgstr "Tekan sebuah tombol untuk melanjutkan."
 
 #: disk-utils/cfdisk.c:2269
 #, fuzzy
@@ -682,7 +680,7 @@ msgstr ""
 #: disk-utils/cfdisk.c:2404
 #, fuzzy
 msgid "Are you sure you want to write the partition table to disk? "
-msgstr "Apakah anda yakin ingin menulis tabel partisi ke disk? (ya atau tidak): "
+msgstr "Apakah anda yakin ingin menulis tabel partisi ke disk? "
 
 #: disk-utils/cfdisk.c:2406
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
@@ -790,7 +788,7 @@ msgstr "selesai\n"
 #: disk-utils/fdformat.c:80
 #, c-format
 msgid "Verifying ... "
-msgstr "Verifikasi ..."
+msgstr "Verifikasi ... "
 
 #: disk-utils/fdformat.c:108
 msgid "Read: "
@@ -799,7 +797,7 @@ msgstr "Baca: "
 #: disk-utils/fdformat.c:110
 #, fuzzy, c-format
 msgid "Problem reading track/head %u/%u, expected %d, read %d\n"
-msgstr "Masalah dalam membaca cylinder %d, diperkirakan %d, terbaca %d\n"
+msgstr "Masalah dalam membaca track/head %u/%u, diperkirakan %d, terbaca %d\n"
 
 #: disk-utils/fdformat.c:127
 #, fuzzy, c-format
@@ -807,7 +805,7 @@ msgid ""
 "bad data in track/head %u/%u\n"
 "Continuing ... "
 msgstr ""
-"data jelek dalam cyl %d\n"
+"data jelek dalam track/head %u/%u\n"
 "Melanjutkan ..."
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
@@ -873,12 +871,12 @@ msgstr "stat gagal: %s"
 #: sys-utils/mountpoint.c:107
 #, fuzzy, c-format
 msgid "%s: not a block device"
-msgstr "%s: bukan sebuah block device\n"
+msgstr "%s: bukan sebuah block device"
 
 #: disk-utils/fdformat.c:231
 #, fuzzy
 msgid "could not determine current format type"
-msgstr "Tidak dapat menentukan tipe format saat ini"
+msgstr "tidak dapat menentukan tipe format saat ini"
 
 #: disk-utils/fdformat.c:233
 #, c-format
@@ -918,43 +916,43 @@ msgstr "%s (%u-%u, default %u): "
 #: disk-utils/fdisk.c:209
 #, fuzzy, c-format
 msgid "Using default response %c."
-msgstr "Menggunakan nilai default %u\n"
+msgstr "Menggunakan respon default %c."
 
 #: disk-utils/fdisk.c:222 disk-utils/fdisk.c:296 disk-utils/fdisk.c:371
 #: libfdisk/src/dos.c:1241 libfdisk/src/gpt.c:2380
 #, fuzzy
 msgid "Value out of range."
-msgstr "Nilai diluar dari jangkauan.\n"
+msgstr "Nilai diluar dari jangkauan."
 
 #: disk-utils/fdisk.c:251
 #, fuzzy, c-format
 msgid "%s (%s, default %c): "
-msgstr "%s (%u-%u, default %u): "
+msgstr "%s (%s, default %c): "
 
 #: disk-utils/fdisk.c:254 disk-utils/fdisk.c:321
 #, fuzzy, c-format
 msgid "%s (%s, default %<PRIu64>): "
-msgstr "%s (%u-%u, default %u): "
+msgstr "%s (%s, default %<PRIu64>): "
 
 #: disk-utils/fdisk.c:259
 #, fuzzy, c-format
 msgid "%s (%c-%c, default %c): "
-msgstr "%s (%u-%u, default %u): "
+msgstr "%s (%c-%c, default %c): "
 
 #: disk-utils/fdisk.c:263 disk-utils/fdisk.c:325
 #, fuzzy, c-format
 msgid "%s (%<PRIu64>-%<PRIu64>, default %<PRIu64>): "
-msgstr "%s (%u-%u, default %u): "
+msgstr "%s (%<PRIu64>-%<PRIu64>, default %<PRIu64>): "
 
 #: disk-utils/fdisk.c:266
 #, fuzzy, c-format
 msgid "%s (%c-%c): "
-msgstr "%s (%s)\n"
+msgstr "%s (%c-%c):"
 
 #: disk-utils/fdisk.c:269 disk-utils/fdisk.c:328
 #, fuzzy, c-format
 msgid "%s (%<PRIu64>-%<PRIu64>): "
-msgstr "%s (%s)\n"
+msgstr "%s (%<PRIu64>-%<PRIu64>): "
 
 #: disk-utils/fdisk.c:438 disk-utils/sfdisk.c:198
 msgid " [Y]es/[N]o: "
@@ -973,17 +971,17 @@ msgstr "Kode hex (ketik L untuk daftar dari kode): "
 #: disk-utils/fdisk.c:582
 #, fuzzy
 msgid "DOS Compatibility flag is set (DEPRECATED!)"
-msgstr "Tanda kompatibilitas DOS telah diset\n"
+msgstr "Tanda kompatibilitas DOS telah diset (DEPRECATED!)"
 
 #: disk-utils/fdisk.c:583
 #, fuzzy
 msgid "DOS Compatibility flag is not set"
-msgstr "Tanda kompatibilias DOS belum diset\n"
+msgstr "Tanda kompatibilias DOS belum diset"
 
 #: disk-utils/fdisk.c:604 disk-utils/fdisk.c:640
 #, fuzzy, c-format
 msgid "Partition %zu does not exist yet!"
-msgstr "Partisi %d belum ada!\n"
+msgstr "Partisi %zu belum ada!"
 
 #: disk-utils/fdisk.c:609 disk-utils/fdisk.c:618 libfdisk/src/ask.c:1003
 msgid "Unknown"
@@ -992,12 +990,12 @@ msgstr "Tidak diketahui"
 #: disk-utils/fdisk.c:617
 #, fuzzy, c-format
 msgid "Changed type of partition '%s' to '%s'."
-msgstr "Menguba tipe sistem partisi dari %d menjadi %x (%s)\n"
+msgstr "Menguba tipe sistem partisi dari '%s' menjadi '%s'."
 
 #: disk-utils/fdisk.c:621
 #, fuzzy, c-format
 msgid "Type of partition %zu is unchanged: %s."
-msgstr "Tipe sistem dari parisi %d tidak berubah: %x (%s)\n"
+msgstr "Tipe sistem dari parisi %zu tidak berubah: %s."
 
 #: disk-utils/fdisk.c:660
 #, fuzzy, c-format
@@ -1019,13 +1017,13 @@ msgstr "tidak dapat melakukan fork"
 #: disk-utils/fdisk.c:728
 #, fuzzy
 msgid "cannot read"
-msgstr "%s: tidak dapat membaca %s.\n"
+msgstr "tidak dapat membaca"
 
 #: disk-utils/fdisk.c:741 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:982
 #: libfdisk/src/gpt.c:2309
 #, fuzzy
 msgid "First sector"
-msgstr "Pertama %s"
+msgstr "Sektor Pertama"
 
 #: disk-utils/fdisk.c:768
 #, fuzzy, c-format
