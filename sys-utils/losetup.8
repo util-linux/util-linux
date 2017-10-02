@@ -7,7 +7,7 @@ Get info:
 .sp
 .in +5
 .B losetup
-.I loopdev
+[\fIloopdev\fP]
 .sp
 .B losetup -l
 .RB [ \-a ]
@@ -31,12 +31,6 @@ Detach all associated loop devices:
 .B "losetup \-D"
 .sp
 .in -5
-Print the name of the first unused loop device:
-.sp
-.in +5
-.B "losetup \-f"
-.sp
-.in -5
 Set up a loop device:
 .sp
 .in +5
@@ -44,6 +38,8 @@ Set up a loop device:
 .RB [ \-o
 .IR offset ]
 .RB [ \-\-sizelimit
+.IR size ]
+.RB [ \-\-sector\-size
 .IR size ]
 .in +8
 .RB [ \-Pr ]
@@ -116,8 +112,10 @@ The data start is moved \fIoffset\fP bytes into the specified file or device.
 .IP "\fB\-\-sizelimit \fIsize\fP"
 The data end is set to no more than \fIsize\fP bytes after the data start.
 .TP
-.BR \-b , " \-\-logical-blocksize " \fIsize
-Set the logical block size of the loop device in bytes (since Linux 4.14).
+.BR \-b , " \-\-sector-size " \fIsize
+Set the logical sector size of the loop device in bytes (since Linux 4.14). The
+option may be used when create a new loop device as well as stand-alone command
+to modify sector size of the already existing loop device.
 .TP
 .BR \-c , " \-\-set\-capacity " \fIloopdev
 Force the loop driver to reread the size of the file associated with the

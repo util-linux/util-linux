@@ -51,7 +51,7 @@ enum {
 	COL_RO,
 	COL_SIZELIMIT,
 	COL_DIO,
-	COL_BLOCKSIZE,
+	COL_LOGSEC,
 };
 
 /* basic output flags */
@@ -78,7 +78,7 @@ static struct colinfo infos[] = {
 	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, SCOLS_FL_RIGHT, N_("size limit of the file in bytes")},
 	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
 	[COL_DIO]         = { "DIO",          1, SCOLS_FL_RIGHT, N_("access backing file with direct-io")},
-	[COL_BLOCKSIZE]   = { "BLOCKSIZE",    4, SCOLS_FL_RIGHT, N_("logical block size in bytes")},
+	[COL_LOGSEC]      = { "LOG-SEC",      4, SCOLS_FL_RIGHT, N_("logical sector size in bytes")},
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
@@ -283,7 +283,7 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 		case COL_PARTSCAN:
 			p = loopcxt_is_partscan(lc) ? "1" : "0";
 			break;
-		case COL_BLOCKSIZE:
+		case COL_LOGSEC:
 			if (loopcxt_get_blocksize(lc, &x) == 0)
 				xasprintf(&np, "%jd", x);
 			break;
@@ -411,7 +411,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -o, --offset <num>            start at offset <num> into file\n"), out);
 	fputs(_("     --sizelimit <num>         device is limited to <num> bytes of the file\n"), out);
-	fputs(_(" -b  --logical-blocksize <num> set the logical block size to <num>\n"), out);
+	fputs(_(" -b  --sector-size <num>       set the logical sector size to <num>\n"), out);
 	fputs(_(" -P, --partscan                create a partitioned loop device\n"), out);
 	fputs(_(" -r, --read-only               set up a read-only loop device\n"), out);
 	fputs(_("     --direct-io[=<on|off>]    open backing file with O_DIRECT\n"), out);
@@ -597,7 +597,7 @@ int main(int argc, char **argv)
 		{ "associated",   required_argument, NULL, 'j'           },
 		{ "json",         no_argument,       NULL, 'J'           },
 		{ "list",         no_argument,       NULL, 'l'           },
-		{ "logical-blocksize", required_argument, NULL, 'b'      },
+		{ "sector-size",  required_argument, NULL, 'b'      },
 		{ "noheadings",   no_argument,       NULL, 'n'           },
 		{ "offset",       required_argument, NULL, 'o'           },
 		{ "output",       required_argument, NULL, 'O'           },
@@ -740,7 +740,7 @@ int main(int argc, char **argv)
 		columns[ncolumns++] = COL_RO;
 		columns[ncolumns++] = COL_BACK_FILE;
 		columns[ncolumns++] = COL_DIO;
-		columns[ncolumns++] = COL_BLOCKSIZE;
+		columns[ncolumns++] = COL_LOGSEC;
 	}
 
 	if (act == A_FIND_FREE && optind < argc) {
