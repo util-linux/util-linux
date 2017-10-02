@@ -21463,7 +21463,7 @@ msgstr "Linea di input troppo lunga.\n"
 #~ msgstr "\t\tinizio: (c,h,s) previsto (%ld,%ld,%ld) trovato (%ld,%ld,%ld)\n"
 
 #~ msgid "\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-#~ msgstr "\t\tendenza: (c,h,s) previsto (%ld,%ld,%ld) trovato (%ld,%ld,%ld)\n"
+#~ msgstr "\t\tfine: (c,h,s) previsto (%ld,%ld,%ld) trovato (%ld,%ld,%ld)\n"
 
 #~ msgid "partition ends on cylinder %ld, beyond the end of the disk\n"
 #~ msgstr "la partizione termina sul cilindro %ld, oltre la fine del disco\n"
