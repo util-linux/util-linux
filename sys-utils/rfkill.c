@@ -5,6 +5,7 @@
  * Copyright 2009 Marcel Holtmann <marcel@holtmann.org>
  * Copyright 2009 Tim Gardner <tim.gardner@canonical.com>
  * Copyright 2017 Sami Kerola <kerolasa@iki.fi>
+ * Copyright (C) 2017 Karel Zak <kzak@redhat.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -36,6 +37,7 @@
 #include "timeutils.h"
 #include "widechar.h"
 #include "xalloc.h"
+#include "path.h"
 
 
 /*
@@ -47,22 +49,23 @@
 #endif
 
 struct rfkill_type_str {
-	enum rfkill_type type;
-	const char *name;
+	enum rfkill_type type;	/* ID */
+	const char *name;	/* generic name */
+	const char *desc;	/* human readable name */
 };
 
 static const struct rfkill_type_str rfkill_type_strings[] = {
 	{ .type = RFKILL_TYPE_ALL,       .name = "all"           },
-	{ .type = RFKILL_TYPE_WLAN,      .name = "wifi"          },
-	{ .type = RFKILL_TYPE_WLAN,      .name = "wlan"          }, /* alias */
-	{ .type = RFKILL_TYPE_BLUETOOTH, .name = "bluetooth"     },
-	{ .type = RFKILL_TYPE_UWB,       .name = "uwb"           },
+	{ .type = RFKILL_TYPE_WLAN,      .name = "wlan",         .desc = "Wireless LAN" },
+	{ .type = RFKILL_TYPE_WLAN,      .name = "wifi"          },				/* alias */
+	{ .type = RFKILL_TYPE_BLUETOOTH, .name = "bluetooth",    .desc = "Bluetooth" },
+	{ .type = RFKILL_TYPE_UWB,       .name = "uwb",          .desc = "Ultra-Wideband" },
 	{ .type = RFKILL_TYPE_UWB,       .name = "ultrawideband" }, /* alias */
-	{ .type = RFKILL_TYPE_WIMAX,     .name = "wimax"         },
-	{ .type = RFKILL_TYPE_WWAN,      .name = "wwan"          },
-	{ .type = RFKILL_TYPE_GPS,       .name = "gps"           },
-	{ .type = RFKILL_TYPE_FM,        .name = "fm"            },
-	{ .type = RFKILL_TYPE_NFC,       .name = "nfc"           },
+	{ .type = RFKILL_TYPE_WIMAX,     .name = "wimax",        .desc = "WiMAX" },
+	{ .type = RFKILL_TYPE_WWAN,      .name = "wwan",         .desc = "Wireless WAN" },
+	{ .type = RFKILL_TYPE_GPS,       .name = "gps",          .desc = "GPT" },
+	{ .type = RFKILL_TYPE_FM,        .name = "fm",           .desc = "FM" },
+	{ .type = RFKILL_TYPE_NFC,       .name = "nfc",          .desc = "NFC" },
 	{ .type = NUM_RFKILL_TYPES,      .name = NULL            }
 };
 
@@ -85,7 +88,9 @@ enum {
 	ACT_HELP,
 	ACT_EVENT,
 	ACT_BLOCK,
-	ACT_UNBLOCK
+	ACT_UNBLOCK,
+
+	ACT_LIST_OLD
 };
 
 static char *rfkill_actions[] = {
@@ -101,6 +106,7 @@ enum {
 	COL_DEVICE,
 	COL_ID,
 	COL_TYPE,
+	COL_DESC,
 	COL_SOFT,
 	COL_HARD
 };
@@ -118,6 +124,7 @@ static const struct colinfo infos[] = {
 	[COL_DEVICE] = {"DEVICE", 0, 0, N_("kernel device name")},
 	[COL_ID]     = {"ID",	  2, SCOLS_FL_RIGHT, N_("device identifier value")},
 	[COL_TYPE]   = {"TYPE",	  0, 0, N_("device type name that can be used as identifier")},
+	[COL_DESC]   = {"TYPE-DESC",   0, 0, N_("device type description")},
 	[COL_SOFT]   = {"SOFT",	  0, SCOLS_FL_RIGHT, N_("status of software block")},
 	[COL_HARD]   = {"HARD",	  0, SCOLS_FL_RIGHT, N_("status of hardware block")}
 };
@@ -263,37 +270,22 @@ failed:
 	return -1;
 }
 
-static const char *get_name_or_type(uint32_t idx, int type)
+static const char *get_sys_attr(uint32_t idx, const char *attr)
 {
-	static char name[128] = { 0 };
-	char *pos, filename[64];
-	int fd;
+	static char name[128];
+	FILE *f = path_fopen("r", 0, _PATH_SYS_RFKILL "/rfkill%u/%s", idx, attr);
+	char *p;
 
-	if (type)
-		pos = "type";
-	else
-		pos = "name";
-	snprintf(filename, sizeof(filename) - 1,
-				_PATH_SYS_RFKILL "/rfkill%u/%s", idx, pos);
-
-	fd = open(filename, O_RDONLY);
-	if (fd < 0) {
-		warn(_("cannot open %s"), filename);
-		return NULL;
-	}
-
-	if (read(fd, name, sizeof(name) - 1) < 0) {
-		warn(_("cannot read %s"), filename);
-		close(fd);
-		return NULL;
-	}
-
-	pos = strchr(name, '\n');
-	if (pos)
-		*pos = '\0';
-
-	close(fd);
-
+	if (!f)
+		goto done;
+	if (!fgets(name, sizeof(name), f))
+		goto done;
+	p = strchr(name, '\n');
+	if (p)
+		*p = '\0';
+done:
+	if (f)
+		fclose(f);
 	return name;
 }
 
@@ -330,6 +322,19 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 	ret.result = RFKILL_IS_INVALID;
 	return ret;
 }
+
+static const char *rfkill_type_to_desc(enum rfkill_type type)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(rfkill_type_strings); i++) {
+		if (type == rfkill_type_strings[i].type)
+			return rfkill_type_strings[i].desc;
+	}
+
+	return NULL;
+}
+
 
 static int event_match(struct rfkill_event *event, struct rfkill_id *id)
 {
@@ -372,13 +377,16 @@ static void fill_table_row(struct libscols_table *tb, struct rfkill_event *event
 		char *str = NULL;
 		switch (get_column_id(i)) {
 		case COL_DEVICE:
-			str = xstrdup(get_name_or_type(event->idx, 0));
+			str = xstrdup(get_sys_attr(event->idx, "name"));
 			break;
 		case COL_ID:
 			xasprintf(&str, "%" PRIu32, event->idx);
 			break;
 		case COL_TYPE:
-			str = xstrdup(get_name_or_type(event->idx, 1));
+			str = xstrdup(get_sys_attr(event->idx, "type"));
+			break;
+		case COL_DESC:
+			str = xstrdup(rfkill_type_to_desc(event->type));
 			break;
 		case COL_SOFT:
 			str = xstrdup(event->soft ? _("blocked") : _("unblocked"));
@@ -392,6 +400,49 @@ static void fill_table_row(struct libscols_table *tb, struct rfkill_event *event
 		if (str && scols_line_refer_data(ln, i, str))
 			errx(EXIT_FAILURE, _("failed to add output data"));
 	}
+}
+
+static int rfkill_list_old(const char *param)
+{
+	struct rfkill_id id = { .result = RFKILL_IS_ALL };
+	struct rfkill_event event;
+	int fd, rc = 0;
+
+	if (param) {
+		id = rfkill_id_to_type(param);
+		if (id.result == RFKILL_IS_INVALID) {
+			warnx(_("invalid identifier: %s"), param);
+			return -EINVAL;
+		}
+	}
+
+	fd = rfkill_ro_open(1);
+
+	while (1) {
+		rc = rfkill_read_event(fd, &event);
+		if (rc < 0)
+			break;
+		if (rc == 1 && errno == EAGAIN) {
+			rc = 0;		/* done */
+			break;
+		}
+		if (rc == 0 && event_match(&event, &id)) {
+			char *name = xstrdup(get_sys_attr(event.idx, "name")),
+			     *type = xstrdup(rfkill_type_to_desc(event.type));
+
+			if (!type)
+				type = xstrdup(get_sys_attr(event.idx, "type"));
+
+			printf("%u: %s: %s\n", event.idx, name, type);
+			printf("\tSoft blocked: %s\n", event.soft ? "yes" : "no");
+			printf("\tHard blocked: %s\n", event.hard ? "yes" : "no");
+
+			free(name);
+			free(type);
+		}
+	}
+	close(fd);
+	return rc;
 }
 
 static void rfkill_list_init(struct control *ctrl)
@@ -527,7 +578,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(stdout, " %-6s  %s\n", infos[i].name, _(infos[i].help));
+		fprintf(stdout, " %-10s  %s\n", infos[i].name, _(infos[i].help));
 
 	fputs(USAGE_COMMANDS, stdout);
 
@@ -606,9 +657,27 @@ int main(int argc, char **argv)
 			errtryhelp(EXIT_FAILURE);
 		argv++;
 		argc--;
+
+		/*
+		 * For backward compatibility we use old output format if
+		 * "list" explicitly specified and--output not defined.
+		 */
+		if (!outarg && act == ACT_LIST)
+			act = ACT_LIST_OLD;
 	}
 
 	switch (act) {
+	case ACT_LIST_OLD:
+		/* Deprecated in favour of ACT_LIST */
+		if (!argc)
+			ret |= rfkill_list_old(NULL);	/* ALL */
+		else while (argc) {
+			ret |= rfkill_list_old(*argv);
+			argc--;
+			argv++;
+		}
+		break;
+
 	case ACT_LIST:
 		columns[ncolumns++] = COL_ID;
 		columns[ncolumns++] = COL_TYPE;

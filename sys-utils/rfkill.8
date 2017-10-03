@@ -4,16 +4,23 @@
 rfkill \- tool for enabling and disabling wireless devices
 .SH SYNOPSIS
 .B rfkill
-.RI [ options ] " command" " [" id | type \ ...]
+.RI [ options ]
+.RI [ command ]
+.RI [ id|type \ ...]
 
 .SH DESCRIPTION
 .B rfkill
 lists, enabling and disabling wireless devices.
 
+The command "list" output format is deprecated and maintained for backward
+compatibility only. The new output format is the default when no command is
+specified or when the option \fB\-\-output\fR is used.
+
 The default output is subject to change.  So whenever possible, you should
 avoid using default outputs in your scripts.  Always explicitly define expected
 columns by using the \fB\-\-output\fR option together with a columns list in
 environments where a stable output is required.
+
 
 .SH OPTIONS
 .TP
@@ -44,9 +51,8 @@ Display help text and exit.
 Listen for rfkill events and display them on stdout.
 .TP
 \fBlist \fR[\fIid\fR|\fItype\fR ...]
-List the current state of all available devices.  The full list has TYPE and
-ID columns that one can use to limit the scope.  It is a good idea to check
-with
+List the current state of all available devices.  The command output format is deprecated, see the section DESCRIPTION.
+It is a good idea to check with
 .B list
 command
 .IR id " or " type
@@ -66,7 +72,7 @@ Enable the corresponding device.  If the device is hard\-blocked, for example
 via a hardware switch, it will remain unavailable though it is now
 soft\-unblocked.
 .SH EXAMPLES
-rfkill list
+rfkill --output ID,TYPE
 .br
 rfkill block all
 .br
@@ -86,6 +92,10 @@ Marcel Holtmann
 The code has been later modifified by
 .MT kerolasa@\:iki.\:fi
 Sami Kerola
+.ME
+and
+.MT kzak@\:redhat.\:com
+Karel Zak
 .ME
 for util-linux project.
 .PP
