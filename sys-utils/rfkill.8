@@ -5,6 +5,16 @@ rfkill \- tool for enabling and disabling wireless devices
 .SH SYNOPSIS
 .B rfkill
 .RI [ options ] " command" " [" id | type \ ...]
+
+.SH DESCRIPTION
+.B rfkill
+lists, enabling and disabling wireless devices.
+
+The default output is subject to change.  So whenever possible, you should
+avoid using default outputs in your scripts.  Always explicitly define expected
+columns by using the \fB\-\-output\fR option together with a columns list in
+environments where a stable output is required.
+
 .SH OPTIONS
 .TP
 \fB\-J\fR, \fB\-\-json\fR

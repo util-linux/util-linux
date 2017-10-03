@@ -79,6 +79,23 @@ struct rfkill_id {
 	} result;
 };
 
+/* supported actions */
+enum {
+	ACT_LIST,
+	ACT_HELP,
+	ACT_EVENT,
+	ACT_BLOCK,
+	ACT_UNBLOCK
+};
+
+static char *rfkill_actions[] = {
+	[ACT_LIST]	= "list",
+	[ACT_HELP]	= "help",
+	[ACT_EVENT]	= "event",
+	[ACT_BLOCK]	= "block",
+	[ACT_UNBLOCK]	= "unblock"
+};
+
 /* column IDs */
 enum {
 	COL_DEVICE,
@@ -142,6 +159,17 @@ static int get_column_id(size_t num)
 static const struct colinfo *get_column_info(int num)
 {
 	return &infos[get_column_id(num)];
+}
+
+static int string_to_action(const char *str)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(rfkill_actions); i++)
+		if (strcmp(str, rfkill_actions[i]) == 0)
+			return i;
+
+	return -EINVAL;
 }
 
 static int rfkill_event(void)
@@ -499,7 +527,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	struct control ctrl = { 0 };
-	int c;
+	int c, act = ACT_LIST;
 	char *outarg = NULL;
 	static const struct option longopts[] = {
 		{ "json",	no_argument,	   NULL, 'J' },
@@ -549,7 +577,16 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (argc == 0 || strcmp(*argv, "list") == 0) {
+	if (argc > 0) {
+		act = string_to_action(*argv);
+		if (act < 0)
+			errtryhelp(EXIT_FAILURE);
+		argv++;
+		argc--;
+	}
+
+	switch (act) {
+	case ACT_LIST:
 		columns[ncolumns++] = COL_ID;
 		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_DEVICE;
@@ -561,34 +598,42 @@ int main(int argc, char **argv)
 					     ARRAY_SIZE(columns), &ncolumns,
 					     column_name_to_id) < 0)
 			return EXIT_FAILURE;
+
 		rfkill_list_init(&ctrl);
-		if (argc < 2) {
-			if (*argv && strcmp(*argv, "list") == 0)
-				argv++;
+		if (!argc)
+			ret |= rfkill_list_fill(&ctrl, NULL);	/* ALL */
+		else while (argc) {
 			ret |= rfkill_list_fill(&ctrl, *argv);
-		} else {
-			while (--argc) {
-				argv++;
-				ret |= rfkill_list_fill(&ctrl, *argv);
-			}
+			argc--;
+			argv++;
 		}
 		rfkill_list_output(&ctrl);
-	} else if (strcmp(*argv, "event") == 0) {
+		break;
+
+	case ACT_EVENT:
 		ret = rfkill_event();
-	} else if (strcmp(*argv, "help") == 0) {
+		break;
+
+	case ACT_HELP:
 		usage();
-	} else if (strcmp(*argv, "block") == 0 && argc > 1) {
-		while (--argc) {
-			argv++;
+		break;
+
+	case ACT_BLOCK:
+		while (argc) {
 			ret |= rfkill_block(1, *argv);
-		}
-	} else if (strcmp(*argv, "unblock") == 0 && argc > 1) {
-		while (--argc) {
+			argc--;
 			argv++;
-			ret |= rfkill_block(0, *argv);
 		}
-	} else
-		errtryhelp(EXIT_FAILURE);
+		break;
+
+	case ACT_UNBLOCK:
+		while (argc) {
+			ret |= rfkill_block(0, *argv);
+			argv++;
+			argc--;
+		}
+		break;
+	}
 
 	return ret ? EXIT_FAILURE : EXIT_SUCCESS;
 }
