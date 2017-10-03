@@ -172,14 +172,9 @@ static int string_to_action(const char *str)
 	return -EINVAL;
 }
 
-static int rfkill_event(void)
+static int rfkill_ro_open(int nonblock)
 {
-	struct rfkill_event event;
-	struct timeval tv;
-	char date_buf[ISO_8601_BUFSIZ];
-	struct pollfd p;
-	ssize_t len;
-	int fd, n;
+	int fd;
 
 	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
 	if (fd < 0) {
@@ -187,31 +182,69 @@ static int rfkill_event(void)
 		return -errno;
 	}
 
+	if (nonblock && fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
+		warn(_("cannot set non-blocking %s"), _PATH_DEV_RFKILL);
+		close(fd);
+		return -errno;
+	}
+
+	return fd;
+}
+
+/* returns: 0 success, 1 read again, < 0 error */
+static int rfkill_read_event(int fd, struct rfkill_event *event)
+{
+	ssize_t	len = read(fd, event, sizeof(event));
+
+	if (len < 0) {
+		if (errno == EAGAIN)
+			return 1;
+		warn(_("cannot read %s"), _PATH_DEV_RFKILL);
+		return -errno;
+	}
+
+	if (len < RFKILL_EVENT_SIZE_V1) {
+		warnx(_("wrong size of rfkill event: %zu < %d"), len, RFKILL_EVENT_SIZE_V1);
+		return 1;
+	}
+
+	return 0;
+}
+
+
+static int rfkill_event(void)
+{
+	struct rfkill_event event;
+	struct timeval tv;
+	char date_buf[ISO_8601_BUFSIZ];
+	struct pollfd p;
+	int fd, n;
+
+	fd = rfkill_ro_open(0);
+	if (fd < 0)
+		return -errno;
+
 	memset(&p, 0, sizeof(p));
 	p.fd = fd;
 	p.events = POLLIN | POLLHUP;
 
 	/* interrupted by signal only */
 	while (1) {
+		int rc = 1;	/* recover-able error */
+
 		n = poll(&p, 1, -1);
 		if (n < 0) {
 			warn(_("failed to poll %s"), _PATH_DEV_RFKILL);
 			goto failed;
 		}
 
-		if (n == 0)
-			continue;
-
-		len = read(fd, &event, sizeof(event));
-		if (len < 0) {
-			warn(_("cannot read %s"), _PATH_DEV_RFKILL);
+		if (n)
+			rc = rfkill_read_event(fd, &event);
+		if (rc < 0)
 			goto failed;
-		}
-
-		if (len < RFKILL_EVENT_SIZE_V1) {
-			warnx(_("wrong size of rfkill event: %zu < %d"), len, RFKILL_EVENT_SIZE_V1);
+		if (rc)
 			continue;
-		}
+
 		gettimeofday(&tv, NULL);
 		strtimeval_iso(&tv,
 			       ISO_8601_DATE |
@@ -298,6 +331,30 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 	return ret;
 }
 
+static int event_match(struct rfkill_event *event, struct rfkill_id *id)
+{
+	if (event->op != RFKILL_OP_ADD)
+		return 0;
+
+	/* filter out unwanted results */
+	switch (id->result) {
+	case RFKILL_IS_TYPE:
+		if (event->type != id->type)
+			return 0;
+		break;
+	case RFKILL_IS_INDEX:
+		if (event->idx != id->index)
+			return 0;
+		break;
+	case RFKILL_IS_ALL:
+		break;
+	default:
+		abort();
+	}
+
+	return 1;
+}
+
 static void fill_table_row(struct libscols_table *tb, struct rfkill_event *event)
 {
 	static struct libscols_line *ln;
@@ -359,13 +416,11 @@ static void rfkill_list_init(struct control *ctrl)
 	}
 }
 
-
 static int rfkill_list_fill(struct control const *ctrl, const char *param)
 {
 	struct rfkill_id id = { .result = RFKILL_IS_ALL };
 	struct rfkill_event event;
-	ssize_t len;
-	int fd;
+	int fd, rc = 0;
 
 	if (param) {
 		id = rfkill_id_to_type(param);
@@ -375,53 +430,21 @@ static int rfkill_list_fill(struct control const *ctrl, const char *param)
 		}
 	}
 
-	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
-	if (fd < 0) {
-		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
-		return -errno;
-	}
-
-	if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
-		warn(_("cannot set non-blocking %s"), _PATH_DEV_RFKILL);
-		close(fd);
-		return -errno;
-	}
+	fd = rfkill_ro_open(1);
 
 	while (1) {
-		len = read(fd, &event, sizeof(event));
-		if (len < 0) {
-			if (errno != EAGAIN)
-				warn(_("cannot read %s"), _PATH_DEV_RFKILL);
+		rc = rfkill_read_event(fd, &event);
+		if (rc < 0)
+			break;
+		if (rc == 1 && errno == EAGAIN) {
+			rc = 0;		/* done */
 			break;
 		}
-
-		if (len < RFKILL_EVENT_SIZE_V1) {
-			warnx(_("wrong size of rfkill event: %zu < %d"), len, RFKILL_EVENT_SIZE_V1);
-			continue;
-		}
-
-		if (event.op != RFKILL_OP_ADD)
-			continue;
-
-		/* filter out unwanted results */
-		switch (id.result) {
-		case RFKILL_IS_TYPE:
-			if (event.type != id.type)
-				continue;
-			break;
-		case RFKILL_IS_INDEX:
-			if (event.idx != id.index)
-				continue;
-			break;
-		case RFKILL_IS_ALL:
-			break;
-		default:
-			abort();
-		}
-		fill_table_row(ctrl->tb, &event);
+		if (rc == 0 && event_match(&event, &id))
+			fill_table_row(ctrl->tb, &event);
 	}
 	close(fd);
-	return 0;
+	return rc;
 }
 
 static void rfkill_list_output(struct control const *ctrl)
