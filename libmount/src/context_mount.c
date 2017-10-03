@@ -1578,6 +1578,14 @@ int mnt_context_get_mount_excode(
 			snprintf(buf, bufsz, _("no medium found on %s"), src);
 		break;
 
+	case EBADMSG:
+		/* Bad CRC for classic filesystems (e.g. extN or XFS) */
+		if (buf && (S_ISBLK(st.st_mode) || S_ISREG(st.st_mode))) {
+			snprintf(buf, bufsz, _("cannot mount; probably corrupted filesystem on %s"), src);
+			break;
+		}
+		/* fallthrough */
+
 	default:
 		if (buf) {
 			errno = syserr;

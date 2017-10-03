@@ -145,12 +145,15 @@ build-sys:
    - fix non-blkid compilation  [Karel Zak]
    - make chown usage more robust  [Karel Zak]
    - make rfkill optional (and enabled by default)  [Karel Zak]
+   - release++ (v2.31-rc1)  [Karel Zak]
    - remove unused rfkill.py  [Karel Zak]
    - support ncursesw without headers in ncursesw/ directory  [Karel Zak]
    - update DISTCHECK_CONFIGURE_FLAGS  [Karel Zak]
 cfdisk:
    - add missing 0x7F key mapping  [Karel Zak]
    - add resize function  [Karel Zak]
+   - cleanup die-on-signal code  [Karel Zak]
+   - make resize code more readable  [Karel Zak]
    - use fdisk_reread_changes()  [Karel Zak]
 chsh:
    - cleanup global_shells usage  [Karel Zak]
@@ -168,9 +171,12 @@ dmesg:
    - print only 2 hex digits for each hex-escaped byte  [Ivan Delalande]
 docs:
    - add --enable-programs to TODO  [Karel Zak]
+   - add 2.30.2 to ReleaseNotes  [Karel Zak]
    - add ASAN to TODO list  [Karel Zak]
+   - add Atari PT to the TODO list  [Karel Zak]
    - add CAP_SYS_ADMIN to TODO  [Karel Zak]
    - add UUID v3 an v5 to TODO  [Karel Zak]
+   - add exec() exit codes to TODO  [Karel Zak]
    - add optional option back to struct option  [Sami Kerola]
    - add program-desc to howto-usage-function.txt and boilerplate.c  [Karel Zak]
    - correct line(1) deprecation comment  [Ruediger Meier]
@@ -181,6 +187,7 @@ docs:
    - update AUTHORS file  [Karel Zak]
    - update TODO, remove auto,noauto  [Karel Zak]
    - update boilerplate.c usage()  [J William Piggott]
+   - update v2.31 release notes  [Karel Zak]
    - update v2.31-ReleaseNotes  [Karel Zak]
 fdformat:
    - clear progress message before printing "done"  [Jakub Wilk]
@@ -285,6 +292,7 @@ lib/pwdutils:
    - add xgetlogin()  [Karel Zak]
 lib/randutils:
    - improve getrandom() usage  [Karel Zak]
+   - remove superfluous continue  [Karel Zak]
    - reset lose counter  [Karel Zak]
 lib/randutils.c:
    - Fall back gracefully when kernel doesn't support getrandom(2).  [Christopher James Halse Rogers]
@@ -347,8 +355,10 @@ libfdisk:
    - use fdisk_sector_t consistently and fix printf format strings  [Ruediger Meier]
 libmount:
    - (umount) use mount table filter on -c only  [Karel Zak]
+   - add human compatible message for EBADMSG errno  [Karel Zak]
    - btrfs, remove unused setter functions  [Ruediger Meier]
    - export locking errors as MNT_EX_FILEIO  [Karel Zak]
+   - fix Python get_propagation  [Giuseppe Scrivano]
    - fix warning "set but not used"  [Ruediger Meier]
    - ignore "bind" from fstab on command line "remount"  [Karel Zak]
    - make mnt_context_is_fs_mounted work for /proc  [Ivan Delalande]
@@ -373,12 +383,15 @@ login:
    - add --help and --version  [Ruediger Meier]
    - add --help text  [Ruediger Meier]
    - add xgetpwnam()  [Karel Zak]
+   - fix signal race  [Tobias Stoeckmann]
    - use IPv4 on IPv4-mapping-to-IPv6  [Karel Zak]
 look:
    - use WORDLIST environment variable to find word list  [Sami Kerola]
 losetup:
+   - Add support for logical block size  [Stanislav Brabec]
    - add info about lazy detach to manpage  [Karel Zak]
    - add missing initializer [clang]  [Sami Kerola]
+   - rename to --sector-size and LOG-SEC  [Karel Zak]
 lsblk:
    - add option --tree  [Karel Zak]
    - small man page change in return codes description  [Karel Zak]
@@ -470,15 +483,19 @@ rfkill:
    - do not fsync(3) /dev/rfkill file descriptor  [Sami Kerola]
    - do not ignore read error  [Sami Kerola]
    - fix coding style and error messages  [Karel Zak]
+   - improve default output  [Karel Zak]
    - inform in syslog when rfkill is invoked  [Sami Kerola]
    - make command to build in util-linux project  [Sami Kerola]
    - make programming style to match util-linux project  [Sami Kerola]
    - move files to appropriate locations  [Sami Kerola]
+   - refactor actions  [Karel Zak]
+   - remove duplicate code  [Karel Zak]
+   - support old "list" output  [Karel Zak]
    - update manual page  [Sami Kerola]
    - use back and forward compatible test  [Sami Kerola]
    - use human readable timestamps in event output  [Sami Kerola]
    - use libsmartcols output  [Sami Kerola]
-   - refactor rfkill index/type lookup:
+   - refactor rfkill index/type lookup
    - move it below rfkill_block.  [Darren Salt]
 runuser:
    - fix linking  [Sami Kerola]
@@ -502,6 +519,8 @@ setpriv:
    - support dumping ambient capabilities  [Patrick Steinhardt]
    - support modifying the set of ambient capabilities  [Patrick Steinhardt]
    - support setting unnamed capabilities  [Patrick Steinhardt]
+setproctitle:
+   - fix out of boundary access  [Tobias Stoeckmann]
 sfdisk:
    - use fdisk_device_is_used()  [Karel Zak]
 su:

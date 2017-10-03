@@ -171,6 +171,9 @@ libblkid
 
  - add FSSIZE value  -- filesystem size (klibc requirement)
 
+ - (!) add support for Atari PT
+       https://github.com/karelzak/util-linux/issues/517
+
  - (!) add support for dasd PT (used for example on s390)
 
 libfdisk

@@ -5,6 +5,7 @@
  * Copyright 2009 Marcel Holtmann <marcel@holtmann.org>
  * Copyright 2009 Tim Gardner <tim.gardner@canonical.com>
  * Copyright 2017 Sami Kerola <kerolasa@iki.fi>
+ * Copyright (C) 2017 Karel Zak <kzak@redhat.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -36,6 +37,7 @@
 #include "timeutils.h"
 #include "widechar.h"
 #include "xalloc.h"
+#include "path.h"
 
 
 /*
@@ -47,22 +49,23 @@
 #endif
 
 struct rfkill_type_str {
-	enum rfkill_type type;
-	const char *name;
+	enum rfkill_type type;	/* ID */
+	const char *name;	/* generic name */
+	const char *desc;	/* human readable name */
 };
 
 static const struct rfkill_type_str rfkill_type_strings[] = {
 	{ .type = RFKILL_TYPE_ALL,       .name = "all"           },
-	{ .type = RFKILL_TYPE_WLAN,      .name = "wifi"          },
-	{ .type = RFKILL_TYPE_WLAN,      .name = "wlan"          }, /* alias */
-	{ .type = RFKILL_TYPE_BLUETOOTH, .name = "bluetooth"     },
-	{ .type = RFKILL_TYPE_UWB,       .name = "uwb"           },
+	{ .type = RFKILL_TYPE_WLAN,      .name = "wlan",         .desc = "Wireless LAN" },
+	{ .type = RFKILL_TYPE_WLAN,      .name = "wifi"          },				/* alias */
+	{ .type = RFKILL_TYPE_BLUETOOTH, .name = "bluetooth",    .desc = "Bluetooth" },
+	{ .type = RFKILL_TYPE_UWB,       .name = "uwb",          .desc = "Ultra-Wideband" },
 	{ .type = RFKILL_TYPE_UWB,       .name = "ultrawideband" }, /* alias */
-	{ .type = RFKILL_TYPE_WIMAX,     .name = "wimax"         },
-	{ .type = RFKILL_TYPE_WWAN,      .name = "wwan"          },
-	{ .type = RFKILL_TYPE_GPS,       .name = "gps"           },
-	{ .type = RFKILL_TYPE_FM,        .name = "fm"            },
-	{ .type = RFKILL_TYPE_NFC,       .name = "nfc"           },
+	{ .type = RFKILL_TYPE_WIMAX,     .name = "wimax",        .desc = "WiMAX" },
+	{ .type = RFKILL_TYPE_WWAN,      .name = "wwan",         .desc = "Wireless WAN" },
+	{ .type = RFKILL_TYPE_GPS,       .name = "gps",          .desc = "GPT" },
+	{ .type = RFKILL_TYPE_FM,        .name = "fm",           .desc = "FM" },
+	{ .type = RFKILL_TYPE_NFC,       .name = "nfc",          .desc = "NFC" },
 	{ .type = NUM_RFKILL_TYPES,      .name = NULL            }
 };
 
@@ -79,11 +82,31 @@ struct rfkill_id {
 	} result;
 };
 
+/* supported actions */
+enum {
+	ACT_LIST,
+	ACT_HELP,
+	ACT_EVENT,
+	ACT_BLOCK,
+	ACT_UNBLOCK,
+
+	ACT_LIST_OLD
+};
+
+static char *rfkill_actions[] = {
+	[ACT_LIST]	= "list",
+	[ACT_HELP]	= "help",
+	[ACT_EVENT]	= "event",
+	[ACT_BLOCK]	= "block",
+	[ACT_UNBLOCK]	= "unblock"
+};
+
 /* column IDs */
 enum {
 	COL_DEVICE,
 	COL_ID,
 	COL_TYPE,
+	COL_DESC,
 	COL_SOFT,
 	COL_HARD
 };
@@ -99,10 +122,11 @@ struct colinfo {
 /* columns descriptions */
 static const struct colinfo infos[] = {
 	[COL_DEVICE] = {"DEVICE", 0, 0, N_("kernel device name")},
-	[COL_ID]     = {"ID",	  0, 0, N_("device identifier value")},
+	[COL_ID]     = {"ID",	  2, SCOLS_FL_RIGHT, N_("device identifier value")},
 	[COL_TYPE]   = {"TYPE",	  0, 0, N_("device type name that can be used as identifier")},
-	[COL_SOFT]   = {"SOFT",	  0, 0, N_("status of software block")},
-	[COL_HARD]   = {"HARD",	  0, 0, N_("status of hardware block")}
+	[COL_DESC]   = {"TYPE-DESC",   0, 0, N_("device type description")},
+	[COL_SOFT]   = {"SOFT",	  0, SCOLS_FL_RIGHT, N_("status of software block")},
+	[COL_HARD]   = {"HARD",	  0, SCOLS_FL_RIGHT, N_("status of hardware block")}
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
@@ -144,14 +168,20 @@ static const struct colinfo *get_column_info(int num)
 	return &infos[get_column_id(num)];
 }
 
-static int rfkill_event(void)
+static int string_to_action(const char *str)
 {
-	struct rfkill_event event;
-	struct timeval tv;
-	char date_buf[ISO_8601_BUFSIZ];
-	struct pollfd p;
-	ssize_t len;
-	int fd, n;
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(rfkill_actions); i++)
+		if (strcmp(str, rfkill_actions[i]) == 0)
+			return i;
+
+	return -EINVAL;
+}
+
+static int rfkill_ro_open(int nonblock)
+{
+	int fd;
 
 	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
 	if (fd < 0) {
@@ -159,31 +189,69 @@ static int rfkill_event(void)
 		return -errno;
 	}
 
+	if (nonblock && fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
+		warn(_("cannot set non-blocking %s"), _PATH_DEV_RFKILL);
+		close(fd);
+		return -errno;
+	}
+
+	return fd;
+}
+
+/* returns: 0 success, 1 read again, < 0 error */
+static int rfkill_read_event(int fd, struct rfkill_event *event)
+{
+	ssize_t	len = read(fd, event, sizeof(event));
+
+	if (len < 0) {
+		if (errno == EAGAIN)
+			return 1;
+		warn(_("cannot read %s"), _PATH_DEV_RFKILL);
+		return -errno;
+	}
+
+	if (len < RFKILL_EVENT_SIZE_V1) {
+		warnx(_("wrong size of rfkill event: %zu < %d"), len, RFKILL_EVENT_SIZE_V1);
+		return 1;
+	}
+
+	return 0;
+}
+
+
+static int rfkill_event(void)
+{
+	struct rfkill_event event;
+	struct timeval tv;
+	char date_buf[ISO_8601_BUFSIZ];
+	struct pollfd p;
+	int fd, n;
+
+	fd = rfkill_ro_open(0);
+	if (fd < 0)
+		return -errno;
+
 	memset(&p, 0, sizeof(p));
 	p.fd = fd;
 	p.events = POLLIN | POLLHUP;
 
 	/* interrupted by signal only */
 	while (1) {
+		int rc = 1;	/* recover-able error */
+
 		n = poll(&p, 1, -1);
 		if (n < 0) {
 			warn(_("failed to poll %s"), _PATH_DEV_RFKILL);
 			goto failed;
 		}
 
-		if (n == 0)
-			continue;
-
-		len = read(fd, &event, sizeof(event));
-		if (len < 0) {
-			warn(_("cannot read %s"), _PATH_DEV_RFKILL);
+		if (n)
+			rc = rfkill_read_event(fd, &event);
+		if (rc < 0)
 			goto failed;
-		}
-
-		if (len < RFKILL_EVENT_SIZE_V1) {
-			warnx(_("wrong size of rfkill event: %zu < %d"), len, RFKILL_EVENT_SIZE_V1);
+		if (rc)
 			continue;
-		}
+
 		gettimeofday(&tv, NULL);
 		strtimeval_iso(&tv,
 			       ISO_8601_DATE |
@@ -202,37 +270,22 @@ failed:
 	return -1;
 }
 
-static const char *get_name_or_type(uint32_t idx, int type)
+static const char *get_sys_attr(uint32_t idx, const char *attr)
 {
-	static char name[128] = { 0 };
-	char *pos, filename[64];
-	int fd;
+	static char name[128];
+	FILE *f = path_fopen("r", 0, _PATH_SYS_RFKILL "/rfkill%u/%s", idx, attr);
+	char *p;
 
-	if (type)
-		pos = "type";
-	else
-		pos = "name";
-	snprintf(filename, sizeof(filename) - 1,
-				_PATH_SYS_RFKILL "/rfkill%u/%s", idx, pos);
-
-	fd = open(filename, O_RDONLY);
-	if (fd < 0) {
-		warn(_("cannot open %s"), filename);
-		return NULL;
-	}
-
-	if (read(fd, name, sizeof(name) - 1) < 0) {
-		warn(_("cannot read %s"), filename);
-		close(fd);
-		return NULL;
-	}
-
-	pos = strchr(name, '\n');
-	if (pos)
-		*pos = '\0';
-
-	close(fd);
-
+	if (!f)
+		goto done;
+	if (!fgets(name, sizeof(name), f))
+		goto done;
+	p = strchr(name, '\n');
+	if (p)
+		*p = '\0';
+done:
+	if (f)
+		fclose(f);
 	return name;
 }
 
@@ -270,6 +323,43 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 	return ret;
 }
 
+static const char *rfkill_type_to_desc(enum rfkill_type type)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(rfkill_type_strings); i++) {
+		if (type == rfkill_type_strings[i].type)
+			return rfkill_type_strings[i].desc;
+	}
+
+	return NULL;
+}
+
+
+static int event_match(struct rfkill_event *event, struct rfkill_id *id)
+{
+	if (event->op != RFKILL_OP_ADD)
+		return 0;
+
+	/* filter out unwanted results */
+	switch (id->result) {
+	case RFKILL_IS_TYPE:
+		if (event->type != id->type)
+			return 0;
+		break;
+	case RFKILL_IS_INDEX:
+		if (event->idx != id->index)
+			return 0;
+		break;
+	case RFKILL_IS_ALL:
+		break;
+	default:
+		abort();
+	}
+
+	return 1;
+}
+
 static void fill_table_row(struct libscols_table *tb, struct rfkill_event *event)
 {
 	static struct libscols_line *ln;
@@ -287,13 +377,16 @@ static void fill_table_row(struct libscols_table *tb, struct rfkill_event *event
 		char *str = NULL;
 		switch (get_column_id(i)) {
 		case COL_DEVICE:
-			str = xstrdup(get_name_or_type(event->idx, 0));
+			str = xstrdup(get_sys_attr(event->idx, "name"));
 			break;
 		case COL_ID:
 			xasprintf(&str, "%" PRIu32, event->idx);
 			break;
 		case COL_TYPE:
-			str = xstrdup(get_name_or_type(event->idx, 1));
+			str = xstrdup(get_sys_attr(event->idx, "type"));
+			break;
+		case COL_DESC:
+			str = xstrdup(rfkill_type_to_desc(event->type));
 			break;
 		case COL_SOFT:
 			str = xstrdup(event->soft ? _("blocked") : _("unblocked"));
@@ -307,6 +400,49 @@ static void fill_table_row(struct libscols_table *tb, struct rfkill_event *event
 		if (str && scols_line_refer_data(ln, i, str))
 			errx(EXIT_FAILURE, _("failed to add output data"));
 	}
+}
+
+static int rfkill_list_old(const char *param)
+{
+	struct rfkill_id id = { .result = RFKILL_IS_ALL };
+	struct rfkill_event event;
+	int fd, rc = 0;
+
+	if (param) {
+		id = rfkill_id_to_type(param);
+		if (id.result == RFKILL_IS_INVALID) {
+			warnx(_("invalid identifier: %s"), param);
+			return -EINVAL;
+		}
+	}
+
+	fd = rfkill_ro_open(1);
+
+	while (1) {
+		rc = rfkill_read_event(fd, &event);
+		if (rc < 0)
+			break;
+		if (rc == 1 && errno == EAGAIN) {
+			rc = 0;		/* done */
+			break;
+		}
+		if (rc == 0 && event_match(&event, &id)) {
+			char *name = xstrdup(get_sys_attr(event.idx, "name")),
+			     *type = xstrdup(rfkill_type_to_desc(event.type));
+
+			if (!type)
+				type = xstrdup(get_sys_attr(event.idx, "type"));
+
+			printf("%u: %s: %s\n", event.idx, name, type);
+			printf("\tSoft blocked: %s\n", event.soft ? "yes" : "no");
+			printf("\tHard blocked: %s\n", event.hard ? "yes" : "no");
+
+			free(name);
+			free(type);
+		}
+	}
+	close(fd);
+	return rc;
 }
 
 static void rfkill_list_init(struct control *ctrl)
@@ -331,13 +467,11 @@ static void rfkill_list_init(struct control *ctrl)
 	}
 }
 
-
 static int rfkill_list_fill(struct control const *ctrl, const char *param)
 {
 	struct rfkill_id id = { .result = RFKILL_IS_ALL };
 	struct rfkill_event event;
-	ssize_t len;
-	int fd;
+	int fd, rc = 0;
 
 	if (param) {
 		id = rfkill_id_to_type(param);
@@ -347,53 +481,21 @@ static int rfkill_list_fill(struct control const *ctrl, const char *param)
 		}
 	}
 
-	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
-	if (fd < 0) {
-		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
-		return -errno;
-	}
-
-	if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
-		warn(_("cannot set non-blocking %s"), _PATH_DEV_RFKILL);
-		close(fd);
-		return -errno;
-	}
+	fd = rfkill_ro_open(1);
 
 	while (1) {
-		len = read(fd, &event, sizeof(event));
-		if (len < 0) {
-			if (errno != EAGAIN)
-				warn(_("cannot read %s"), _PATH_DEV_RFKILL);
+		rc = rfkill_read_event(fd, &event);
+		if (rc < 0)
+			break;
+		if (rc == 1 && errno == EAGAIN) {
+			rc = 0;		/* done */
 			break;
 		}
-
-		if (len < RFKILL_EVENT_SIZE_V1) {
-			warnx(_("wrong size of rfkill event: %zu < %d"), len, RFKILL_EVENT_SIZE_V1);
-			continue;
-		}
-
-		if (event.op != RFKILL_OP_ADD)
-			continue;
-
-		/* filter out unwanted results */
-		switch (id.result) {
-		case RFKILL_IS_TYPE:
-			if (event.type != id.type)
-				continue;
-			break;
-		case RFKILL_IS_INDEX:
-			if (event.idx != id.index)
-				continue;
-			break;
-		case RFKILL_IS_ALL:
-			break;
-		default:
-			abort();
-		}
-		fill_table_row(ctrl->tb, &event);
+		if (rc == 0 && event_match(&event, &id))
+			fill_table_row(ctrl->tb, &event);
 	}
 	close(fd);
-	return 0;
+	return rc;
 }
 
 static void rfkill_list_output(struct control const *ctrl)
@@ -476,7 +578,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(stdout, " %-6s  %s\n", infos[i].name, _(infos[i].help));
+		fprintf(stdout, " %-10s  %s\n", infos[i].name, _(infos[i].help));
 
 	fputs(USAGE_COMMANDS, stdout);
 
@@ -499,7 +601,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	struct control ctrl = { 0 };
-	int c;
+	int c, act = ACT_LIST;
 	char *outarg = NULL;
 	static const struct option longopts[] = {
 		{ "json",	no_argument,	   NULL, 'J' },
@@ -549,10 +651,37 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (argc == 0 || strcmp(*argv, "list") == 0) {
-		columns[ncolumns++] = COL_DEVICE;
+	if (argc > 0) {
+		act = string_to_action(*argv);
+		if (act < 0)
+			errtryhelp(EXIT_FAILURE);
+		argv++;
+		argc--;
+
+		/*
+		 * For backward compatibility we use old output format if
+		 * "list" explicitly specified and--output not defined.
+		 */
+		if (!outarg && act == ACT_LIST)
+			act = ACT_LIST_OLD;
+	}
+
+	switch (act) {
+	case ACT_LIST_OLD:
+		/* Deprecated in favour of ACT_LIST */
+		if (!argc)
+			ret |= rfkill_list_old(NULL);	/* ALL */
+		else while (argc) {
+			ret |= rfkill_list_old(*argv);
+			argc--;
+			argv++;
+		}
+		break;
+
+	case ACT_LIST:
 		columns[ncolumns++] = COL_ID;
 		columns[ncolumns++] = COL_TYPE;
+		columns[ncolumns++] = COL_DEVICE;
 		columns[ncolumns++] = COL_SOFT;
 		columns[ncolumns++] = COL_HARD;
 
@@ -561,34 +690,42 @@ int main(int argc, char **argv)
 					     ARRAY_SIZE(columns), &ncolumns,
 					     column_name_to_id) < 0)
 			return EXIT_FAILURE;
+
 		rfkill_list_init(&ctrl);
-		if (argc < 2) {
-			if (*argv && strcmp(*argv, "list") == 0)
-				argv++;
+		if (!argc)
+			ret |= rfkill_list_fill(&ctrl, NULL);	/* ALL */
+		else while (argc) {
 			ret |= rfkill_list_fill(&ctrl, *argv);
-		} else {
-			while (--argc) {
-				argv++;
-				ret |= rfkill_list_fill(&ctrl, *argv);
-			}
+			argc--;
+			argv++;
 		}
 		rfkill_list_output(&ctrl);
-	} else if (strcmp(*argv, "event") == 0) {
+		break;
+
+	case ACT_EVENT:
 		ret = rfkill_event();
-	} else if (strcmp(*argv, "help") == 0) {
+		break;
+
+	case ACT_HELP:
 		usage();
-	} else if (strcmp(*argv, "block") == 0 && argc > 1) {
-		while (--argc) {
-			argv++;
+		break;
+
+	case ACT_BLOCK:
+		while (argc) {
 			ret |= rfkill_block(1, *argv);
-		}
-	} else if (strcmp(*argv, "unblock") == 0 && argc > 1) {
-		while (--argc) {
+			argc--;
 			argv++;
-			ret |= rfkill_block(0, *argv);
 		}
-	} else
-		errtryhelp(EXIT_FAILURE);
+		break;
+
+	case ACT_UNBLOCK:
+		while (argc) {
+			ret |= rfkill_block(0, *argv);
+			argv++;
+			argc--;
+		}
+		break;
+	}
 
 	return ret ? EXIT_FAILURE : EXIT_SUCCESS;
 }

@@ -404,16 +404,13 @@ in mountinfo file. The kernel default is MS_PRIVATE, this flag is not stored\n\
 in the mountinfo file.\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Fs_get_propagation(FsObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Fs_get_propagation(FsObject *self)
 {
 	unsigned long flags;
-	char *kwlist[] = {"flags", NULL};
+	int rc;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "k", kwlist, &flags)) {
-		PyErr_SetString(PyExc_TypeError, ARG_ERR);
-		return NULL;
-	}
-	return PyObjectResultInt(mnt_fs_get_propagation(self->fs, &flags));
+	rc =  mnt_fs_get_propagation(self->fs, &flags);
+	return rc ? UL_RaiseExc(-rc) : PyObjectResultInt(flags);
 }
 
 static PyObject *Fs_get_tid(FsObject *self)
@@ -589,7 +586,7 @@ static PyObject *Fs_streq_target(FsObject *self, PyObject *args, PyObject *kwds)
 static PyObject *Fs_copy_fs(FsObject *self, PyObject *args, PyObject *kwds);
 
 static PyMethodDef Fs_methods[] = {
-	{"get_propagation",	(PyCFunction)Fs_get_propagation, METH_VARARGS|METH_KEYWORDS, Fs_get_propagation_HELP},
+	{"get_propagation",	(PyCFunction)Fs_get_propagation, METH_NOARGS, Fs_get_propagation_HELP},
 	{"mnt_fs_append_attributes",	(PyCFunction)Fs_append_attributes, METH_VARARGS|METH_KEYWORDS, Fs_append_attributes_HELP},
 	{"append_options",	(PyCFunction)Fs_append_options, METH_VARARGS|METH_KEYWORDS, Fs_append_options_HELP},
 	{"mnt_fs_prepend_attributes",	(PyCFunction)Fs_prepend_attributes, METH_VARARGS|METH_KEYWORDS, Fs_prepend_attributes_HELP},
