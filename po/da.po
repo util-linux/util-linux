@@ -75,7 +75,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-09-22 11:44+0200\n"
+"POT-Creation-Date: 2017-10-03 17:22+0200\n"
 "PO-Revision-Date: 2017-06-05 14:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -106,7 +106,7 @@ msgid "not enough arguments"
 msgstr "ikke nok parametre"
 
 #: disk-utils/addpart.c:58 disk-utils/blockdev.c:295 disk-utils/blockdev.c:439
-#: disk-utils/blockdev.c:465 disk-utils/cfdisk.c:2687 disk-utils/delpart.c:59
+#: disk-utils/blockdev.c:465 disk-utils/cfdisk.c:2718 disk-utils/delpart.c:59
 #: disk-utils/fdformat.c:229 disk-utils/fdisk.c:764 disk-utils/fdisk.c:1066
 #: disk-utils/fdisk-list.c:321 disk-utils/fdisk-list.c:361
 #: disk-utils/fdisk-list.c:380 disk-utils/fsck.c:1457
@@ -129,16 +129,15 @@ msgstr "ikke nok parametre"
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
 #: sys-utils/hwclock.c:207 sys-utils/hwclock.c:806 sys-utils/hwclock-rtc.c:400
 #: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
-#: sys-utils/rfkill.c:158 sys-utils/rfkill.c:220 sys-utils/rfkill.c:352
-#: sys-utils/rfkill.c:441 sys-utils/rtcwake.c:134 sys-utils/rtcwake.c:268
-#: sys-utils/setpriv.c:276 sys-utils/setpriv.c:614 sys-utils/setpriv.c:637
-#: sys-utils/swapon.c:376 sys-utils/swapon.c:519 sys-utils/switch_root.c:167
-#: sys-utils/unshare.c:106 sys-utils/unshare.c:121 sys-utils/wdctl.c:322
-#: sys-utils/wdctl.c:378 term-utils/agetty.c:2608 term-utils/mesg.c:127
-#: term-utils/script.c:460 term-utils/script.c:468 term-utils/script.c:563
-#: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
-#: text-utils/rev.c:141 text-utils/ul.c:230
+#: sys-utils/rfkill.c:188 sys-utils/rfkill.c:543 sys-utils/rtcwake.c:134
+#: sys-utils/rtcwake.c:268 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
+#: sys-utils/setpriv.c:637 sys-utils/swapon.c:376 sys-utils/swapon.c:519
+#: sys-utils/switch_root.c:167 sys-utils/unshare.c:106 sys-utils/unshare.c:121
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 term-utils/agetty.c:2608
+#: term-utils/mesg.c:127 term-utils/script.c:460 term-utils/script.c:468
+#: term-utils/script.c:563 term-utils/scriptreplay.c:198
+#: term-utils/scriptreplay.c:201 term-utils/wall.c:419 text-utils/colcrt.c:282
+#: text-utils/more.c:534 text-utils/rev.c:141 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
 msgstr "kunne ikke åbne %s"
@@ -329,138 +328,138 @@ msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
 msgstr "RO    RA   SST   BST   StartSekt           Størr.  Enhed\n"
 
 # "Opstartbar"
-#: disk-utils/cfdisk.c:184
+#: disk-utils/cfdisk.c:186
 msgid "Bootable"
 msgstr "Opstartsflag"
 
-#: disk-utils/cfdisk.c:184
+#: disk-utils/cfdisk.c:186
 msgid "Toggle bootable flag of the current partition"
 msgstr "Skift opstartsflaget for den aktuelle partition"
 
-#: disk-utils/cfdisk.c:185
+#: disk-utils/cfdisk.c:187
 msgid "Delete"
 msgstr "Slet"
 
-#: disk-utils/cfdisk.c:185
+#: disk-utils/cfdisk.c:187
 msgid "Delete the current partition"
 msgstr "Slet den aktuelle partition"
 
-#: disk-utils/cfdisk.c:186
+#: disk-utils/cfdisk.c:188
 #, fuzzy
 msgid "Resize"
 msgstr "størrelse"
 
-#: disk-utils/cfdisk.c:186
+#: disk-utils/cfdisk.c:188
 #, fuzzy
 msgid "Reduce or enlarge the current partition"
 msgstr "Slet den aktuelle partition"
 
-#: disk-utils/cfdisk.c:187
+#: disk-utils/cfdisk.c:189
 msgid "New"
 msgstr "Ny"
 
-#: disk-utils/cfdisk.c:187
+#: disk-utils/cfdisk.c:189
 msgid "Create new partition from free space"
 msgstr "Opret ny partition i frit område"
 
-#: disk-utils/cfdisk.c:188
+#: disk-utils/cfdisk.c:190
 msgid "Quit"
 msgstr "Afslut"
 
-#: disk-utils/cfdisk.c:188
+#: disk-utils/cfdisk.c:190
 msgid "Quit program without writing changes"
 msgstr "Afslut program uden at skrive ændringer"
 
-#: disk-utils/cfdisk.c:189 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
+#: disk-utils/cfdisk.c:191 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
 #: libfdisk/src/dos.c:2431 libfdisk/src/gpt.c:3043 libfdisk/src/sgi.c:1159
 #: libfdisk/src/sun.c:1100
 msgid "Type"
 msgstr "Type"
 
-#: disk-utils/cfdisk.c:189
+#: disk-utils/cfdisk.c:191
 msgid "Change the partition type"
 msgstr "Ændr partitionstypen"
 
-#: disk-utils/cfdisk.c:190
+#: disk-utils/cfdisk.c:192
 msgid "Help"
 msgstr "Hjælp"
 
-#: disk-utils/cfdisk.c:190
+#: disk-utils/cfdisk.c:192
 msgid "Print help screen"
 msgstr "Vis hjælpeskærm"
 
-#: disk-utils/cfdisk.c:191
+#: disk-utils/cfdisk.c:193
 msgid "Sort"
 msgstr "Sorter"
 
-#: disk-utils/cfdisk.c:191
+#: disk-utils/cfdisk.c:193
 msgid "Fix partitions order"
 msgstr "Ordn partitionsrækkefølgen"
 
-#: disk-utils/cfdisk.c:192
+#: disk-utils/cfdisk.c:194
 msgid "Write"
 msgstr "Skriv"
 
-#: disk-utils/cfdisk.c:192
+#: disk-utils/cfdisk.c:194
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "Skriv partitionstabellen til disk (dette kan ødelægge data)"
 
-#: disk-utils/cfdisk.c:193
+#: disk-utils/cfdisk.c:195
 msgid "Dump"
 msgstr "Dump"
 
-#: disk-utils/cfdisk.c:193
+#: disk-utils/cfdisk.c:195
 msgid "Dump partition table to sfdisk compatible script file"
 msgstr "Dump partitionstabellen til sfdisk-kompatibel skriptfil"
 
-#: disk-utils/cfdisk.c:628 disk-utils/fdisk.c:461
+#: disk-utils/cfdisk.c:642 disk-utils/fdisk.c:461
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr "intern fejl: ej understøttet dialogtype %d"
 
-#: disk-utils/cfdisk.c:1265
+#: disk-utils/cfdisk.c:1277
 #, c-format
 msgid "%s (mounted)"
 msgstr "%s (monteret)"
 
-#: disk-utils/cfdisk.c:1285
+#: disk-utils/cfdisk.c:1297
 msgid "Partition name:"
 msgstr "Partitionsnavn:"
 
-#: disk-utils/cfdisk.c:1292
+#: disk-utils/cfdisk.c:1304
 msgid "Partition UUID:"
 msgstr "Partition-UUID:"
 
-#: disk-utils/cfdisk.c:1304
+#: disk-utils/cfdisk.c:1316
 msgid "Partition type:"
 msgstr "Partitionstype:"
 
-#: disk-utils/cfdisk.c:1311
+#: disk-utils/cfdisk.c:1323
 msgid "Attributes:"
 msgstr "Attributter:"
 
-#: disk-utils/cfdisk.c:1335
+#: disk-utils/cfdisk.c:1347
 msgid "Filesystem UUID:"
 msgstr "Filsystem-UUID:"
 
-#: disk-utils/cfdisk.c:1342
+#: disk-utils/cfdisk.c:1354
 msgid "Filesystem LABEL:"
 msgstr "Filsystem-ETIKET:"
 
-#: disk-utils/cfdisk.c:1348
+#: disk-utils/cfdisk.c:1360
 msgid "Filesystem:"
 msgstr "Filsystem:"
 
-#: disk-utils/cfdisk.c:1353
+#: disk-utils/cfdisk.c:1365
 msgid "Mountpoint:"
 msgstr "Monteringspunkt:"
 
-#: disk-utils/cfdisk.c:1696
+#: disk-utils/cfdisk.c:1708
 #, c-format
 msgid "Disk: %s"
 msgstr "Disk: %s"
 
-#: disk-utils/cfdisk.c:1698
+#: disk-utils/cfdisk.c:1710
 #, c-format
 msgid "Size: %s, %ju bytes, %ju sectors"
 msgstr "Størrelse: %s, %ju byte, %ju sektorer"
@@ -468,305 +467,305 @@ msgstr "Størrelse: %s, %ju byte, %ju sektorer"
 # Evt. kan vi omgå det lidt mystiske "identifikation" ved bare at bruge
 # forkortelsen id:
 # Disk-id: ...
-#: disk-utils/cfdisk.c:1701
+#: disk-utils/cfdisk.c:1713
 #, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "Etikel: %s, identifikation: %s"
 
-#: disk-utils/cfdisk.c:1704
+#: disk-utils/cfdisk.c:1716
 #, c-format
 msgid "Label: %s"
 msgstr "Etiket: %s"
 
-#: disk-utils/cfdisk.c:1849
+#: disk-utils/cfdisk.c:1866
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
 msgstr "Kan efterfølges af M for MiB, G for GiB, T for TiB eller S for sektorer."
 
-#: disk-utils/cfdisk.c:1855
+#: disk-utils/cfdisk.c:1872
 msgid "Please, specify size."
 msgstr "Angiv venligst størrelse."
 
-#: disk-utils/cfdisk.c:1877
+#: disk-utils/cfdisk.c:1894
 #, c-format
 msgid "Minimum size is %ju bytes."
 msgstr "Minimumstørrelse er %ju byte."
 
-#: disk-utils/cfdisk.c:1886
+#: disk-utils/cfdisk.c:1903
 #, c-format
 msgid "Maximum size is %ju bytes."
 msgstr "Maksmimumstørrelse er %ju byte."
 
-#: disk-utils/cfdisk.c:1893
+#: disk-utils/cfdisk.c:1910
 msgid "Failed to parse size."
 msgstr "Kunne ikke fortolke størrelse."
 
-#: disk-utils/cfdisk.c:1951
+#: disk-utils/cfdisk.c:1968
 msgid "Select partition type"
 msgstr "Vælg partitionstype"
 
-#: disk-utils/cfdisk.c:1997 disk-utils/cfdisk.c:2027
+#: disk-utils/cfdisk.c:2018 disk-utils/cfdisk.c:2048
 msgid "Enter script file name: "
 msgstr "Indtast skriptfilnavn: "
 
-#: disk-utils/cfdisk.c:1998
+#: disk-utils/cfdisk.c:2019
 msgid "The script file will be applied to in-memory partition table."
 msgstr "Skriptfilen vil blive anvendt i i-hukommelse partitionstabel."
 
-#: disk-utils/cfdisk.c:2007 disk-utils/cfdisk.c:2049
+#: disk-utils/cfdisk.c:2028 disk-utils/cfdisk.c:2070
 #: disk-utils/fdisk-menu.c:479 disk-utils/fdisk-menu.c:523
 #, c-format
 msgid "Cannot open %s"
 msgstr "Kan ikke åbne %s"
 
-#: disk-utils/cfdisk.c:2009 disk-utils/fdisk-menu.c:481
+#: disk-utils/cfdisk.c:2030 disk-utils/fdisk-menu.c:481
 #, c-format
 msgid "Failed to parse script file %s"
 msgstr "Kunne ikke fortolke skriptfilen %s"
 
-#: disk-utils/cfdisk.c:2011 disk-utils/fdisk-menu.c:483
+#: disk-utils/cfdisk.c:2032 disk-utils/fdisk-menu.c:483
 #, c-format
 msgid "Failed to apply script %s"
 msgstr "Kunne ikke anvende skriptet %s"
 
-#: disk-utils/cfdisk.c:2028
+#: disk-utils/cfdisk.c:2049
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr "Den nuværende i-hukommelse partitionstabel vil blive dumpet til filen."
 
-#: disk-utils/cfdisk.c:2036 disk-utils/fdisk-menu.c:511
+#: disk-utils/cfdisk.c:2057 disk-utils/fdisk-menu.c:511
 msgid "Failed to allocate script handler"
 msgstr "Kunne ikke allokere skripthåndtering"
 
-#: disk-utils/cfdisk.c:2042
+#: disk-utils/cfdisk.c:2063
 msgid "Failed to read disk layout into script."
 msgstr "Kunne ikke læse disklayout ind i skript."
 
-#: disk-utils/cfdisk.c:2056
+#: disk-utils/cfdisk.c:2077
 msgid "Disk layout successfully dumped."
 msgstr "Disklayout blev dumpet."
 
-#: disk-utils/cfdisk.c:2059 disk-utils/fdisk-menu.c:529
+#: disk-utils/cfdisk.c:2080 disk-utils/fdisk-menu.c:529
 #, c-format
 msgid "Failed to write script %s"
 msgstr "Kunne ikke skrive skriptet %s"
 
-#: disk-utils/cfdisk.c:2095
+#: disk-utils/cfdisk.c:2116
 msgid "Select label type"
 msgstr "Vælg etikettype"
 
-#: disk-utils/cfdisk.c:2098 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:487
+#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:487
 msgid "Device does not contain a recognized partition table."
 msgstr "Enheden indeholder ikke en genkendt partitionstabel."
 
-#: disk-utils/cfdisk.c:2106
+#: disk-utils/cfdisk.c:2127
 msgid "Select a type to create a new label or press 'L' to load script file."
 msgstr "Vælg en type til at oprette en ny etiket eller tryk »L« for at indlæse skriptfil."
 
-#: disk-utils/cfdisk.c:2151
+#: disk-utils/cfdisk.c:2176
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "Dette er cfdisk, et curses-baseret diskpartitioneringsprogram."
 
-#: disk-utils/cfdisk.c:2152
+#: disk-utils/cfdisk.c:2177
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "Det lader dig oprette, slette eller modificere partitioner på en blokenhed."
 
 # se nedenfor
-#: disk-utils/cfdisk.c:2154
+#: disk-utils/cfdisk.c:2179
 msgid "Command      Meaning"
 msgstr "Kommando     Betydning"
 
 # Tror understregerne her skal passe til forrige streng
-#: disk-utils/cfdisk.c:2155
+#: disk-utils/cfdisk.c:2180
 msgid "-------      -------"
 msgstr "--------     ---------"
 
-#: disk-utils/cfdisk.c:2156
+#: disk-utils/cfdisk.c:2181
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Skift opstartsflaget for den aktuelle partition"
 
-#: disk-utils/cfdisk.c:2157
+#: disk-utils/cfdisk.c:2182
 msgid "  d          Delete the current partition"
 msgstr "  d          Slet den aktuelle partition"
 
-#: disk-utils/cfdisk.c:2158
+#: disk-utils/cfdisk.c:2183
 msgid "  h          Print this screen"
 msgstr "  h          Vis denne skærm"
 
-#: disk-utils/cfdisk.c:2159
+#: disk-utils/cfdisk.c:2184
 msgid "  n          Create new partition from free space"
 msgstr "  n          Opret ny partition i frit område"
 
-#: disk-utils/cfdisk.c:2160
+#: disk-utils/cfdisk.c:2185
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Afslut program uden at skrive partitionstabellen"
 
-#: disk-utils/cfdisk.c:2161
+#: disk-utils/cfdisk.c:2186
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s          Ret partitionsrækkefølge (kun når i uorden)"
 
-#: disk-utils/cfdisk.c:2162
+#: disk-utils/cfdisk.c:2187
 msgid "  t          Change the partition type"
 msgstr "  t          Skift partitionstype"
 
-#: disk-utils/cfdisk.c:2163
+#: disk-utils/cfdisk.c:2188
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u          Dump disklayout til sfdisk-kompatibel skriptfil"
 
-#: disk-utils/cfdisk.c:2164
+#: disk-utils/cfdisk.c:2189
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W          Skriv partitionstabellen til disk (skal være stort W);"
 
-#: disk-utils/cfdisk.c:2165
+#: disk-utils/cfdisk.c:2190
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "               siden dette kan ødelægge data på disken, skal du enten"
 
-#: disk-utils/cfdisk.c:2166
+#: disk-utils/cfdisk.c:2191
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "               bekræfte eller afvise ved at skrive henholdsvis »ja« eller »nej«"
 
-#: disk-utils/cfdisk.c:2167
+#: disk-utils/cfdisk.c:2192
 msgid "  x          Display/hide extra information about a partition"
 msgstr "  x          Vis/skjul ekstra information om en partition"
 
-#: disk-utils/cfdisk.c:2168
+#: disk-utils/cfdisk.c:2193
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Pil op       Flyt markøren til forrige partition"
 
-#: disk-utils/cfdisk.c:2169
+#: disk-utils/cfdisk.c:2194
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Pil ned      Flyt markøren til næste partition"
 
-#: disk-utils/cfdisk.c:2170
+#: disk-utils/cfdisk.c:2195
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "Venstre pil  Flyt markøren til forrige menupunkt"
 
-#: disk-utils/cfdisk.c:2171
+#: disk-utils/cfdisk.c:2196
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "Højre pil    Flyt markøren til næste menupunkt"
 
-#: disk-utils/cfdisk.c:2173
+#: disk-utils/cfdisk.c:2198
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Bemærk: Alle kommandoerne kan angives med enten store eller små"
 
-#: disk-utils/cfdisk.c:2174
+#: disk-utils/cfdisk.c:2199
 msgid "case letters (except for Write)."
 msgstr "store bogstaver (undtagen Write)."
 
-#: disk-utils/cfdisk.c:2176
+#: disk-utils/cfdisk.c:2201
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr "Brug lsblk(8) eller partx(8) for at se flere detaljer om enheden."
 
-#: disk-utils/cfdisk.c:2186 disk-utils/cfdisk.c:2486
+#: disk-utils/cfdisk.c:2211 disk-utils/cfdisk.c:2514
 msgid "Press a key to continue."
 msgstr "Tryk en tast for at fortsætte."
 
-#: disk-utils/cfdisk.c:2269
+#: disk-utils/cfdisk.c:2297
 msgid "Could not toggle the flag."
 msgstr "Kunne ikke skifte flaget."
 
-#: disk-utils/cfdisk.c:2279
+#: disk-utils/cfdisk.c:2307
 #, c-format
 msgid "Could not delete partition %zu."
 msgstr "Kunne ikke slette partition %zu."
 
-#: disk-utils/cfdisk.c:2281 disk-utils/fdisk-menu.c:657
+#: disk-utils/cfdisk.c:2309 disk-utils/fdisk-menu.c:657
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Partition %zu er blevet slettet."
 
-#: disk-utils/cfdisk.c:2302
+#: disk-utils/cfdisk.c:2330
 msgid "Partition size: "
 msgstr "Partitionsstørrelse: "
 
-#: disk-utils/cfdisk.c:2343
+#: disk-utils/cfdisk.c:2371
 #, c-format
 msgid "Changed type of partition %zu."
 msgstr "Ændrede systemtypen for partition %zu."
 
-#: disk-utils/cfdisk.c:2345
+#: disk-utils/cfdisk.c:2373
 #, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "Systemtypen for partition %zu er uændret."
 
-#: disk-utils/cfdisk.c:2366
+#: disk-utils/cfdisk.c:2394
 #, fuzzy
 msgid "New size: "
 msgstr "Ny skal"
 
-#: disk-utils/cfdisk.c:2381
+#: disk-utils/cfdisk.c:2409
 #, fuzzy, c-format
 msgid "Partition %zu resized."
 msgstr "%s: partition #%d har fået ændret størrelse\n"
 
-#: disk-utils/cfdisk.c:2399 disk-utils/cfdisk.c:2515 disk-utils/fdisk.c:1063
+#: disk-utils/cfdisk.c:2427 disk-utils/cfdisk.c:2543 disk-utils/fdisk.c:1063
 #: disk-utils/fdisk-menu.c:590
 msgid "Device is open in read-only mode."
 msgstr "Enhed er åben i skrivebeskyttet tilstand."
 
-#: disk-utils/cfdisk.c:2404
+#: disk-utils/cfdisk.c:2432
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Er du sikker på, at du vil skrive partitionstabellen til disken? "
 
-#: disk-utils/cfdisk.c:2406
+#: disk-utils/cfdisk.c:2434
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Tast »ja« eller »nej«, eller tryk ESC for at forlade denne dialog."
 
-#: disk-utils/cfdisk.c:2411 login-utils/lslogins.c:209 sys-utils/lscpu.c:1588
+#: disk-utils/cfdisk.c:2439 login-utils/lslogins.c:209 sys-utils/lscpu.c:1588
 #: sys-utils/lscpu.c:1598 sys-utils/lsmem.c:200
 msgid "yes"
 msgstr "ja"
 
-#: disk-utils/cfdisk.c:2412
+#: disk-utils/cfdisk.c:2440
 msgid "Did not write partition table to disk."
 msgstr "Skrev ikke partitionstabellen til disken."
 
-#: disk-utils/cfdisk.c:2417
+#: disk-utils/cfdisk.c:2445
 msgid "Failed to write disklabel."
 msgstr "Kunne ikke skrive disketiket."
 
-#: disk-utils/cfdisk.c:2423 disk-utils/fdisk-menu.c:598
+#: disk-utils/cfdisk.c:2451 disk-utils/fdisk-menu.c:598
 msgid "The partition table has been altered."
 msgstr "Partitionstabellen er ændret."
 
-#: disk-utils/cfdisk.c:2446 disk-utils/cfdisk.c:2517
+#: disk-utils/cfdisk.c:2474 disk-utils/cfdisk.c:2545
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Bemærk at partitionstabellens indgange ikke er i diskrækkefølge nu."
 
-#: disk-utils/cfdisk.c:2483
+#: disk-utils/cfdisk.c:2511
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr "Enhed indeholder allerede en %s-signatur; den vil blive fjernet med en write-kommando."
 
-#: disk-utils/cfdisk.c:2494
+#: disk-utils/cfdisk.c:2522
 msgid "failed to create a new disklabel"
 msgstr "kunne ikke oprette en ny disketiket"
 
-#: disk-utils/cfdisk.c:2502
+#: disk-utils/cfdisk.c:2530
 msgid "failed to read partitions"
 msgstr "kunne ikke læse partitioner"
 
-#: disk-utils/cfdisk.c:2598
+#: disk-utils/cfdisk.c:2629
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [tilvalg] <disk>\n"
 
-#: disk-utils/cfdisk.c:2601 disk-utils/fdisk.c:808 disk-utils/sfdisk.c:1826
+#: disk-utils/cfdisk.c:2632 disk-utils/fdisk.c:808 disk-utils/sfdisk.c:1826
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Vis eller manipuler en diskpartitionstabel.\n"
 
-#: disk-utils/cfdisk.c:2604
+#: disk-utils/cfdisk.c:2635
 msgid " -L, --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr " -L, --color[=<hvornår>]  farvelæg uddata (auto, altid eller aldrig)\n"
 
-#: disk-utils/cfdisk.c:2607
+#: disk-utils/cfdisk.c:2638
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               start med nulstillet partitionstabel\n"
 
-#: disk-utils/cfdisk.c:2645 disk-utils/fdisk.c:950 disk-utils/sfdisk.c:2103
+#: disk-utils/cfdisk.c:2676 disk-utils/fdisk.c:950 disk-utils/sfdisk.c:2103
 #: misc-utils/cal.c:391 sys-utils/dmesg.c:1435 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "ikke understøttet farvetilstand"
 
-#: disk-utils/cfdisk.c:2665 disk-utils/fdisk.c:888 disk-utils/sfdisk.c:224
+#: disk-utils/cfdisk.c:2696 disk-utils/fdisk.c:888 disk-utils/sfdisk.c:224
 msgid "failed to allocate libfdisk context"
 msgstr "kunne ikke allokere libfdisk-kontekst"
 
@@ -1160,7 +1159,7 @@ msgstr "Enhedsegenskaberne (sektorstørrelse og geometri) kræver at kun en enhe
 #: misc-utils/whereis.c:581 misc-utils/whereis.c:592 misc-utils/whereis.c:634
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
 #: sys-utils/chcpu.c:344 sys-utils/chmem.c:317 sys-utils/dmesg.c:1491
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:863
+#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
 #: sys-utils/lscpu.c:2177 sys-utils/lsmem.c:499 sys-utils/mount.c:698
 #: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
 #: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:231 sys-utils/swapon.c:989
@@ -1238,9 +1237,9 @@ msgstr "kunne ikke allokere iterator"
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
 #: disk-utils/partx.c:667 login-utils/lslogins.c:917 misc-utils/fincore.c:362
 #: misc-utils/findmnt.c:1596 misc-utils/lsblk.c:1906 misc-utils/lslocks.c:449
-#: misc-utils/uuidparse.c:258 misc-utils/wipefs.c:151 sys-utils/losetup.c:314
+#: misc-utils/uuidparse.c:258 misc-utils/wipefs.c:151 sys-utils/losetup.c:321
 #: sys-utils/lscpu.c:1761 sys-utils/lscpu.c:1864 sys-utils/lsipc.c:338
-#: sys-utils/prlimit.c:297 sys-utils/rfkill.c:320 sys-utils/swapon.c:285
+#: sys-utils/prlimit.c:297 sys-utils/rfkill.c:456 sys-utils/swapon.c:285
 #: sys-utils/wdctl.c:260 sys-utils/zramctl.c:488 text-utils/column.c:205
 msgid "failed to allocate output table"
 msgstr "kunne ikke allokere uddatatabel"
@@ -1249,10 +1248,10 @@ msgstr "kunne ikke allokere uddatatabel"
 #: disk-utils/partx.c:581 login-utils/lslogins.c:975 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1174
 #: misc-utils/lslocks.c:391 misc-utils/uuidparse.c:154 misc-utils/wipefs.c:210
-#: sys-utils/losetup.c:333 sys-utils/losetup.c:362 sys-utils/lscpu.c:1787
+#: sys-utils/losetup.c:340 sys-utils/losetup.c:369 sys-utils/lscpu.c:1787
 #: sys-utils/lscpu.c:1815 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
-#: sys-utils/prlimit.c:229 sys-utils/rfkill.c:283 sys-utils/swapon.c:180
+#: sys-utils/prlimit.c:229 sys-utils/rfkill.c:373 sys-utils/swapon.c:180
 #: sys-utils/wdctl.c:214 sys-utils/zramctl.c:409 text-utils/column.c:420
 msgid "failed to allocate output line"
 msgstr "kunne ikke allokere uddatalinje"
@@ -1261,9 +1260,9 @@ msgstr "kunne ikke allokere uddatalinje"
 #: disk-utils/partx.c:644 login-utils/lslogins.c:1073 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1165
 #: misc-utils/lslocks.c:436 misc-utils/uuidparse.c:245 misc-utils/wipefs.c:250
-#: sys-utils/losetup.c:294 sys-utils/lscpu.c:1795 sys-utils/lscpu.c:1826
+#: sys-utils/losetup.c:301 sys-utils/lscpu.c:1795 sys-utils/lscpu.c:1826
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
-#: sys-utils/rfkill.c:308 sys-utils/swapon.c:228 sys-utils/wdctl.c:242
+#: sys-utils/rfkill.c:401 sys-utils/swapon.c:228 sys-utils/wdctl.c:242
 #: sys-utils/zramctl.c:475 text-utils/column.c:426
 msgid "failed to add output data"
 msgstr "kunne ikke tilføje data til uddata"
@@ -1745,9 +1744,8 @@ msgstr "%s er ikke monteret\n"
 #: disk-utils/fsck.cramfs.c:250 disk-utils/sfdisk.c:298 libfdisk/src/bsd.c:645
 #: lib/path.c:126 lib/path.c:147 lib/path.c:168 lib/path.c:216
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:655
-#: sys-utils/rfkill.c:179 sys-utils/rfkill.c:225 sys-utils/rfkill.c:366
-#: sys-utils/setpriv.c:285 term-utils/setterm.c:723 term-utils/setterm.c:780
-#: term-utils/setterm.c:784 term-utils/setterm.c:791
+#: sys-utils/rfkill.c:209 sys-utils/setpriv.c:285 term-utils/setterm.c:723
+#: term-utils/setterm.c:780 term-utils/setterm.c:784 term-utils/setterm.c:791
 #, c-format
 msgid "cannot read %s"
 msgstr "kan ikke læse %s"
@@ -2152,7 +2150,7 @@ msgstr "ikke-størrelse (%ld mod %ld) byte"
 
 #: disk-utils/fsck.cramfs.c:410 disk-utils/fsck.cramfs.c:513
 #: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:366 sys-utils/fallocate.c:417
-#: sys-utils/rfkill.c:448 sys-utils/setpriv.c:620 sys-utils/setpriv.c:643
+#: sys-utils/rfkill.c:550 sys-utils/setpriv.c:620 sys-utils/setpriv.c:643
 #: sys-utils/swapon.c:394 term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
@@ -3597,7 +3595,7 @@ msgstr "partitionsflag"
 msgid "partition type (a string, a UUID, or hex)"
 msgstr "partitionstype (en streng, en UUID eller hex)"
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:513 sys-utils/losetup.c:621
+#: disk-utils/partx.c:114 sys-utils/losetup.c:521 sys-utils/losetup.c:630
 msgid "failed to initialize loopcxt"
 msgstr "kunne ikke initialisere loopcxt"
 
@@ -3616,16 +3614,16 @@ msgstr "Forsøger at bruge »%s« for løkkeenheden\n"
 msgid "%s: failed to set backing file"
 msgstr "%s: Kunne ikke angive reservefil"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:557
+#: disk-utils/partx.c:131 sys-utils/losetup.c:565
 #, c-format
 msgid "%s: failed to set up loop device"
 msgstr "%s: klargøring af løkkeenhed mislykkedes"
 
 #: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/fincore.c:92
 #: misc-utils/findmnt.c:376 misc-utils/lsblk.c:365 misc-utils/lslocks.c:342
-#: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:107
+#: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:110
 #: sys-utils/lscpu.c:373 sys-utils/lsipc.c:232 sys-utils/lsmem.c:136
-#: sys-utils/lsns.c:189 sys-utils/prlimit.c:277 sys-utils/rfkill.c:131
+#: sys-utils/lsns.c:189 sys-utils/prlimit.c:277 sys-utils/rfkill.c:155
 #: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:148
 #, c-format
 msgid "unknown column: %s"
@@ -3724,8 +3722,8 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju sektor, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju sektorer, %6ju MB)\n"
 
 #: disk-utils/partx.c:678 misc-utils/fincore.c:374 misc-utils/findmnt.c:1622
-#: misc-utils/lsblk.c:1928 misc-utils/lslocks.c:462 sys-utils/losetup.c:326
-#: sys-utils/lscpu.c:1770 sys-utils/prlimit.c:306 sys-utils/rfkill.c:330
+#: misc-utils/lsblk.c:1928 misc-utils/lslocks.c:462 sys-utils/losetup.c:333
+#: sys-utils/lscpu.c:1770 sys-utils/prlimit.c:306 sys-utils/rfkill.c:466
 #: sys-utils/swapon.c:294 sys-utils/wdctl.c:271
 msgid "failed to allocate output column"
 msgstr "kunne ikke allokere uddatakolonne"
@@ -6922,7 +6920,7 @@ msgid "special device %s does not exist"
 msgstr "specielenhed %s findes ikke"
 
 #: libmount/src/context_mount.c:1470 libmount/src/context_mount.c:1486
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1592
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2)-systemkald mislykkedes: %m"
@@ -7033,6 +7031,11 @@ msgstr "bind %s mislykkedes"
 msgid "no medium found on %s"
 msgstr "intet medie fundet på %s"
 
+#: libmount/src/context_mount.c:1584
+#, fuzzy, c-format
+msgid "cannot mount; probably corrupted filesystem on %s"
+msgstr "kan ikke ændre rodfilsystemets formering"
+
 #: libmount/src/context_umount.c:1064 libmount/src/context_umount.c:1102
 #, c-format
 msgid "not mounted"
@@ -7124,11 +7127,11 @@ msgstr "kan ikke forbinde på UNIX-sokkel"
 msgid "the plymouth request %c is not implemented"
 msgstr "plymouth-forespørgslen %c er ikke implementeret"
 
-#: lib/randutils.c:178
+#: lib/randutils.c:175
 msgid "getrandom() function"
 msgstr "getrandom()-funktion"
 
-#: lib/randutils.c:191
+#: lib/randutils.c:188
 msgid "libc pseudo-random functions"
 msgstr "libc pseudo-vilkårlige funktioner"
 
@@ -7487,12 +7490,6 @@ msgstr "ændring af brugerattribut mislykkedes"
 msgid "user attribute not changed: %s"
 msgstr "brugerattribut blev ikke ændret: %s"
 
-#. TRANSLATORS: The standard value for %u is 60.
-#: login-utils/login.c:185
-#, c-format
-msgid "timed out after %u seconds"
-msgstr "udløb efter %u sekunder"
-
 #: login-utils/login.c:291
 #, c-format
 msgid "FATAL: can't reopen tty: %m"
@@ -7613,7 +7610,7 @@ msgstr ""
 "\n"
 "Logind ugyldigt\n"
 
-#: login-utils/login.c:848 login-utils/login.c:1228 login-utils/login.c:1251
+#: login-utils/login.c:848 login-utils/login.c:1233 login-utils/login.c:1256
 msgid ""
 "\n"
 "Session setup problem, abort."
@@ -7660,54 +7657,59 @@ msgstr ""
 msgid " -H             suppress hostname in the login prompt"
 msgstr " -u          undtryk understregning\n"
 
-#: login-utils/login.c:1171
+#: login-utils/login.c:1143
+#, fuzzy, c-format
+msgid "%s: timed out after %u seconds"
+msgstr "udløb efter %u sekunder"
+
+#: login-utils/login.c:1176
 #, c-format
 msgid "login: -h is for superuser only\n"
 msgstr "login: -h er kun for superbrugeren\n"
 
-#: login-utils/login.c:1229
+#: login-utils/login.c:1234
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Ugyldigt brugernavn »%s« i %s:%d. Afbryder."
 
-#: login-utils/login.c:1250
+#: login-utils/login.c:1255
 #, c-format
 msgid "groups initialization failed: %m"
 msgstr "gruppeinitialisering mislykkedes: %m"
 
-#: login-utils/login.c:1275
+#: login-utils/login.c:1280
 msgid "setgid() failed"
 msgstr "setgid() mislykkedes"
 
-#: login-utils/login.c:1305
+#: login-utils/login.c:1310
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Du har ny post.\n"
 
-#: login-utils/login.c:1307
+#: login-utils/login.c:1312
 #, c-format
 msgid "You have mail.\n"
 msgstr "Du har post.\n"
 
-#: login-utils/login.c:1321
+#: login-utils/login.c:1326
 msgid "setuid() failed"
 msgstr "setuid() mislykkedes"
 
-#: login-utils/login.c:1327 login-utils/sulogin.c:729
+#: login-utils/login.c:1332 login-utils/sulogin.c:729
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: Kunne ikke ændre mappe"
 
-#: login-utils/login.c:1334 login-utils/sulogin.c:730
+#: login-utils/login.c:1339 login-utils/sulogin.c:730
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Logger ind med hjemmemappe = \"/\".\n"
 
-#: login-utils/login.c:1363
+#: login-utils/login.c:1368
 msgid "couldn't exec shell script"
 msgstr "kunne ikke køre skal-skript"
 
-#: login-utils/login.c:1365
+#: login-utils/login.c:1370
 msgid "no shell"
 msgstr "ingen skal"
 
@@ -8969,7 +8971,7 @@ msgstr " -o, --output <liste>    vis kolonner\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             brug rå uddataformat\n"
 
-#: misc-utils/fincore.c:344 sys-utils/losetup.c:777
+#: misc-utils/fincore.c:344 sys-utils/losetup.c:793
 msgid "no file specified"
 msgstr "ingen fil angivet"
 
@@ -9225,7 +9227,7 @@ msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           vend fornemmelsen for match om\n"
 
 #: misc-utils/findmnt.c:1224 misc-utils/lslocks.c:501 sys-utils/lsns.c:620
-#: sys-utils/rfkill.c:469
+#: sys-utils/rfkill.c:571
 msgid " -J, --json             use JSON output format\n"
 msgstr " -J, --json             brug JSON-uddataformat\n"
 
@@ -9637,7 +9639,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr "%s og %s udelukker hinanden"
 
 #: misc-utils/kill.c:414 sys-utils/eject.c:205 sys-utils/eject.c:230
-#: sys-utils/losetup.c:694 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
+#: sys-utils/losetup.c:707 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
 #: sys-utils/tunelp.c:181 sys-utils/tunelp.c:188 sys-utils/tunelp.c:195
 #: sys-utils/tunelp.c:201 sys-utils/tunelp.c:205 sys-utils/tunelp.c:212
 #: term-utils/setterm.c:211 term-utils/setterm.c:214 term-utils/setterm.c:233
@@ -9948,7 +9950,7 @@ msgstr "partitions-ETIKET"
 msgid "read-ahead of the device"
 msgstr "read-ahead (fremadlæsning) for enheden"
 
-#: misc-utils/lsblk.c:175 sys-utils/losetup.c:75
+#: misc-utils/lsblk.c:175 sys-utils/losetup.c:77
 msgid "read-only device"
 msgstr "skrivebeskyttet enhed"
 
@@ -10281,11 +10283,11 @@ msgstr "Vis lokale systemlåse.\n"
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr " -i, --noinaccessible   ignorer låse uden læserettigheder\n"
 
-#: misc-utils/lslocks.c:503 sys-utils/lsns.c:622 sys-utils/rfkill.c:470
+#: misc-utils/lslocks.c:503 sys-utils/lsns.c:622 sys-utils/rfkill.c:572
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings       udskriv ikke teksthoveder\n"
 
-#: misc-utils/lslocks.c:504 sys-utils/lsns.c:623 sys-utils/rfkill.c:471
+#: misc-utils/lslocks.c:504 sys-utils/lsns.c:623 sys-utils/rfkill.c:573
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --output <liste>     definer hvilken resultatkolonne, der skal bruges\n"
 
@@ -10293,7 +10295,7 @@ msgstr " -o, --output <liste>     definer hvilken resultatkolonne, der skal brug
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr " -p, --pid <pid>...     vis kun låse holdt af denne proces\n"
 
-#: misc-utils/lslocks.c:506 sys-utils/lsns.c:625 sys-utils/rfkill.c:472
+#: misc-utils/lslocks.c:506 sys-utils/lsns.c:625 sys-utils/rfkill.c:574
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              brug det rå uddataformat\n"
 
@@ -11446,7 +11448,7 @@ msgstr " -z, --zeroout       nul-udfyld frem for at fjerne\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose       udskriv justeret længde og forskydning\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:312 sys-utils/losetup.c:678
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:312 sys-utils/losetup.c:691
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "kunne ikke fortolke forskydning"
@@ -13320,7 +13322,7 @@ msgstr " -Q, --queue              opret beskedkø\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <tilstand>    tilladelse for ressourcen (standard er 0644)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:702 sys-utils/zramctl.c:626
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:626
 msgid "failed to parse size"
 msgstr "kunne ikke fortolke størrelse"
 
@@ -14202,67 +14204,72 @@ msgstr "kan ikke angive linjedisciplin"
 msgid "cannot daemonize"
 msgstr "kan ikke dæmonisere"
 
-#: sys-utils/losetup.c:68
+#: sys-utils/losetup.c:70
 msgid "autoclear flag set"
 msgstr "flag for automatisk rydning angivet"
 
-#: sys-utils/losetup.c:69
+#: sys-utils/losetup.c:71
 msgid "device backing file"
 msgstr "enhedsreservefil"
 
-#: sys-utils/losetup.c:70
+#: sys-utils/losetup.c:72
 msgid "backing file inode number"
 msgstr "inode-nummer for reservefil"
 
-#: sys-utils/losetup.c:71
+#: sys-utils/losetup.c:73
 msgid "backing file major:minor device number"
 msgstr "reservefil-major:minor-enhedsnummer"
 
-#: sys-utils/losetup.c:72
+#: sys-utils/losetup.c:74
 msgid "loop device name"
 msgstr "loop-enhedsnavn"
 
-#: sys-utils/losetup.c:73
+#: sys-utils/losetup.c:75
 msgid "offset from the beginning"
 msgstr "forskydning fra begyndelsen"
 
-#: sys-utils/losetup.c:74
+#: sys-utils/losetup.c:76
 msgid "partscan flag set"
 msgstr "partscan-flag angivet"
 
-#: sys-utils/losetup.c:76
+#: sys-utils/losetup.c:78
 msgid "size limit of the file in bytes"
 msgstr "størrelsesbegræsning for filen i byte"
 
-#: sys-utils/losetup.c:77
+#: sys-utils/losetup.c:79
 msgid "loop device major:minor number"
 msgstr "loopenhed-major:minor-nummer"
 
-#: sys-utils/losetup.c:78
+#: sys-utils/losetup.c:80
 msgid "access backing file with direct-io"
 msgstr "tilgå reservefil med direct-io"
 
-#: sys-utils/losetup.c:135 sys-utils/losetup.c:147
+#: sys-utils/losetup.c:81
+#, fuzzy
+msgid "logical sector size in bytes"
+msgstr "logisk blokstørrelse (sektorstørrelse)"
+
+#: sys-utils/losetup.c:138 sys-utils/losetup.c:150
 #, c-format
 msgid ", offset %ju"
 msgstr ", forskydning %ju"
 
-#: sys-utils/losetup.c:138 sys-utils/losetup.c:150
+#: sys-utils/losetup.c:141 sys-utils/losetup.c:153
 #, c-format
 msgid ", sizelimit %ju"
 msgstr ", størrelsesgrænse %ju"
 
-#: sys-utils/losetup.c:158
+#: sys-utils/losetup.c:161
 #, c-format
 msgid ", encryption %s (type %u)"
 msgstr ", kryptering %s (type %u>)"
 
-#: sys-utils/losetup.c:199
+#: sys-utils/losetup.c:202
 #, c-format
 msgid "%s: detach failed"
 msgstr "%s: afkobl mislykkedes"
 
-#: sys-utils/losetup.c:386
+#: sys-utils/losetup.c:393
 #, c-format
 msgid ""
 " %1$s [options] [<loopdev>]\n"
@@ -14271,162 +14278,178 @@ msgstr ""
 " %1$s [tilvalg] [<loopdev>]\n"
 " %1$s [tilvalg] -f | <loopdev> <fil>\n"
 
-#: sys-utils/losetup.c:391
+#: sys-utils/losetup.c:398
 msgid "Set up and control loop devices.\n"
 msgstr "Opsæt og kontroller loopenheder.\n"
 
-#: sys-utils/losetup.c:395
+#: sys-utils/losetup.c:402
 msgid " -a, --all                     list all used devices\n"
 msgstr " -a, --all                     vis alle anvendte enheder\n"
 
-#: sys-utils/losetup.c:396
+#: sys-utils/losetup.c:403
 msgid " -d, --detach <loopdev>...     detach one or more devices\n"
 msgstr " -d, --detach <loopdev>...     afkobl en eller flere enheder\n"
 
-#: sys-utils/losetup.c:397
+#: sys-utils/losetup.c:404
 msgid " -D, --detach-all              detach all used devices\n"
 msgstr " -D, --detach-all              afkobl alle brugte enheder\n"
 
-#: sys-utils/losetup.c:398
+#: sys-utils/losetup.c:405
 msgid " -f, --find                    find first unused device\n"
 msgstr " -f, --find                    find første ubrugte enhed\n"
 
-#: sys-utils/losetup.c:399
+#: sys-utils/losetup.c:406
 msgid " -c, --set-capacity <loopdev>  resize the device\n"
 msgstr " -c, --set-capacity <loopdev>  ændr størrelse på enheden\n"
 
-#: sys-utils/losetup.c:400
+#: sys-utils/losetup.c:407
 msgid " -j, --associated <file>       list all devices associated with <file>\n"
 msgstr " -j, --associated <fil>        vis alle enheder associeret med <fil>\n"
 
-#: sys-utils/losetup.c:401
+#: sys-utils/losetup.c:408
 msgid " -L, --nooverlap               avoid possible conflict between devices\n"
 msgstr " -L, --nooverlap               undgå mulig konflikt mellem enheder\n"
 
-#: sys-utils/losetup.c:405
+#: sys-utils/losetup.c:412
 msgid " -o, --offset <num>            start at offset <num> into file\n"
 msgstr " -o, --offset <num>            start ved forskydning <num> inde i filen\n"
 
-#: sys-utils/losetup.c:406
+#: sys-utils/losetup.c:413
 msgid "     --sizelimit <num>         device is limited to <num> bytes of the file\n"
 msgstr "     --sizelimit <num>         enhed er begrænset til <num> byte af filen\n"
 
-#: sys-utils/losetup.c:407
+#: sys-utils/losetup.c:414
+#, fuzzy
+msgid " -b  --sector-size <num>       set the logical sector size to <num>\n"
+msgstr " -b, --sector-size <str>       fysisk og logisk sektorstørrelse\n"
+
+#: sys-utils/losetup.c:415
 msgid " -P, --partscan                create a partitioned loop device\n"
 msgstr " -P, --partscan                opret en partionsopdelt loop-enhed\n"
 
-#: sys-utils/losetup.c:408
+#: sys-utils/losetup.c:416
 msgid " -r, --read-only               set up a read-only loop device\n"
 msgstr " -r, --read-only               opsæt en skrivebeskyttet loop-enhed\n"
 
-#: sys-utils/losetup.c:409
+#: sys-utils/losetup.c:417
 msgid "     --direct-io[=<on|off>]    open backing file with O_DIRECT\n"
 msgstr "     --direct-io[=<on|off>]    åbn reservefil med O_DIRECT\n"
 
-#: sys-utils/losetup.c:410
+#: sys-utils/losetup.c:418
 msgid "     --show                    print device name after setup (with -f)\n"
 msgstr "     --show                    vis enhedsnavn efter opsætning (med -f)\n"
 
-#: sys-utils/losetup.c:411
+#: sys-utils/losetup.c:419
 msgid " -v, --verbose                 verbose mode\n"
 msgstr " -v, --verbose                 uddybende tilstand\n"
 
-#: sys-utils/losetup.c:415
+#: sys-utils/losetup.c:423
 msgid " -J, --json                    use JSON --list output format\n"
 msgstr " -J, --json                    brug JSON --list uddataformat\n"
 
-#: sys-utils/losetup.c:416
+#: sys-utils/losetup.c:424
 msgid " -l, --list                    list info about all or specified (default)\n"
 msgstr " -l, --list                    vis information om alle eller specificerede (standard)\n"
 
-#: sys-utils/losetup.c:417
+#: sys-utils/losetup.c:425
 msgid " -n, --noheadings              don't print headings for --list output\n"
 msgstr " -n, --noheadings              vis ikke teksthoveder for --list output\n"
 
-#: sys-utils/losetup.c:418
+#: sys-utils/losetup.c:426
 msgid " -O, --output <cols>           specify columns to output for --list\n"
 msgstr " -O, --output <kolonner>       specificer kolonner at vise for --list\n"
 
-#: sys-utils/losetup.c:419
+#: sys-utils/losetup.c:427
 msgid "     --raw                     use raw --list output format\n"
 msgstr "     --raw                     brug rå --list uddataformat\n"
 
-#: sys-utils/losetup.c:444
+#: sys-utils/losetup.c:452
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr "%s: Advarsel: fil er mindre end 512 byte; loop-enheden kan være ubrugelig eller usynlig for systemværktøjer."
 
-#: sys-utils/losetup.c:448
+#: sys-utils/losetup.c:456
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr "%s: Advarsel: fil passer ikke på en 512-byte sektor; slutningen af filen vil blive ignoreret."
 
-#: sys-utils/losetup.c:469 sys-utils/losetup.c:521
+#: sys-utils/losetup.c:477 sys-utils/losetup.c:529
 #, c-format
 msgid "%s: overlapping loop device exists"
 msgstr "%s: der er overlappende løkkenheder"
 
-#: sys-utils/losetup.c:480
+#: sys-utils/losetup.c:488
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
 msgstr "%s: der er overlappende skrivebeskyttede løkkenheder"
 
-#: sys-utils/losetup.c:487
+#: sys-utils/losetup.c:495
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
 msgstr "%s: der er overlappende krypterede løkkeenheder"
 
-#: sys-utils/losetup.c:493
+#: sys-utils/losetup.c:501
 #, c-format
 msgid "%s: failed to re-use loop device"
 msgstr "%s: kunne ikke genbruge løkkeenhed"
 
-#: sys-utils/losetup.c:499
+#: sys-utils/losetup.c:507
 msgid "failed to inspect loop devices"
 msgstr "kunne ikke inspicere løkkeenheder"
 
-#: sys-utils/losetup.c:522
+#: sys-utils/losetup.c:530
 #, c-format
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: kunne ikke kontrollere for løkkeenheder med konflikter"
 
-#: sys-utils/losetup.c:534 sys-utils/losetup.c:831
+#: sys-utils/losetup.c:542 sys-utils/losetup.c:847
 msgid "cannot find an unused loop device"
 msgstr "kan ikke finde ubrugt loop-enhed"
 
-#: sys-utils/losetup.c:544
+#: sys-utils/losetup.c:552
 #, c-format
 msgid "%s: failed to use backing file"
 msgstr "%s: kunne ikke bruge reservefil"
 
-#: sys-utils/losetup.c:636 sys-utils/losetup.c:646 sys-utils/losetup.c:758
-#: sys-utils/losetup.c:772 sys-utils/losetup.c:811
+#: sys-utils/losetup.c:643
+#, fuzzy
+msgid "failed to parse logical block size"
+msgstr "kunne ikke fortolke størrelse"
+
+#: sys-utils/losetup.c:649 sys-utils/losetup.c:659 sys-utils/losetup.c:774
+#: sys-utils/losetup.c:788 sys-utils/losetup.c:827
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: kunne ikke bruge enhed"
 
-#: sys-utils/losetup.c:769
+#: sys-utils/losetup.c:785
 msgid "no loop device specified"
 msgstr "ingen loop-enhed angivet"
 
-#: sys-utils/losetup.c:784
+#: sys-utils/losetup.c:800
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "tilvalgene %s er kun tilladt under opsætning af loop-enhed"
 
-#: sys-utils/losetup.c:789
+#: sys-utils/losetup.c:805
 msgid "the option --offset is not allowed in this context"
 msgstr "tilvalget --offset er ikke tilladt i denne kontekst"
 
-#: sys-utils/losetup.c:852
+#: sys-utils/losetup.c:868
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: sæt funktion mislykkedes"
 
-#: sys-utils/losetup.c:859
+#: sys-utils/losetup.c:877
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: angiv direkte io mislykkedes"
+
+# Hent størrelse mislykkedes
+#: sys-utils/losetup.c:883
+#, fuzzy, c-format
+msgid "%s: set logical block size failed"
+msgstr "%s: Kunne ikke finde størrelse"
 
 #: sys-utils/lscpu.c:108
 msgid "none"
@@ -16134,51 +16157,61 @@ msgstr "ukendt bruger %s"
 msgid "bad %s value: %s"
 msgstr "ugyldig %s værdi: %s"
 
-#: sys-utils/rfkill.c:101
+#: sys-utils/rfkill.c:124
 #, fuzzy
 msgid "kernel device name"
 msgstr "intern enhedsnavn for kerne"
 
-#: sys-utils/rfkill.c:102
+#: sys-utils/rfkill.c:125
 #, fuzzy
 msgid "device identifier value"
 msgstr "enhedsidentifikation"
 
-#: sys-utils/rfkill.c:103
+#: sys-utils/rfkill.c:126
 msgid "device type name that can be used as identifier"
 msgstr ""
 
-#: sys-utils/rfkill.c:104
+#: sys-utils/rfkill.c:127
+#, fuzzy
+msgid "device type description"
+msgstr "flagbeskrivelse"
+
+#: sys-utils/rfkill.c:128
 #, fuzzy
 msgid "status of software block"
 msgstr "størrelse på låsen"
 
-#: sys-utils/rfkill.c:105
+#: sys-utils/rfkill.c:129
 #, fuzzy
 msgid "status of hardware block"
 msgstr "Vis status for vagthundens udstyr.\n"
 
-#: sys-utils/rfkill.c:170
+#: sys-utils/rfkill.c:193
 #, fuzzy, c-format
-msgid "failed to poll %s"
-msgstr "kunne ikke fortolke %s"
+msgid "cannot set non-blocking %s"
+msgstr "kunne ikke låse %s"
 
-#: sys-utils/rfkill.c:184 sys-utils/rfkill.c:371
+#: sys-utils/rfkill.c:214
 #, c-format
 msgid "wrong size of rfkill event: %zu < %d"
 msgstr ""
 
-#: sys-utils/rfkill.c:259
+#: sys-utils/rfkill.c:244
+#, fuzzy, c-format
+msgid "failed to poll %s"
+msgstr "kunne ikke fortolke %s"
+
+#: sys-utils/rfkill.c:312
 #, fuzzy
 msgid "invalid identifier"
 msgstr "enhedsidentifikation"
 
-#: sys-utils/rfkill.c:299 sys-utils/rfkill.c:302
+#: sys-utils/rfkill.c:392 sys-utils/rfkill.c:395
 #, fuzzy
 msgid "blocked"
 msgstr "låst"
 
-#: sys-utils/rfkill.c:299 sys-utils/rfkill.c:302
+#: sys-utils/rfkill.c:392 sys-utils/rfkill.c:395
 #, fuzzy
 msgid "unblocked"
 msgstr "låst"
@@ -16186,22 +16219,17 @@ msgstr "låst"
 # Evt. kan vi omgå det lidt mystiske "identifikation" ved bare at bruge
 # forkortelsen id:
 # Disk-id: ...
-#: sys-utils/rfkill.c:345 sys-utils/rfkill.c:421
+#: sys-utils/rfkill.c:414 sys-utils/rfkill.c:479 sys-utils/rfkill.c:523
 #, fuzzy, c-format
 msgid "invalid identifier: %s"
 msgstr "Diskidentifikation: %s"
 
-#: sys-utils/rfkill.c:357
-#, fuzzy, c-format
-msgid "cannot set non-blocking %s"
-msgstr "kunne ikke låse %s"
-
-#: sys-utils/rfkill.c:463
+#: sys-utils/rfkill.c:565
 #, fuzzy, c-format
 msgid " %s [options] command [identifier ...]\n"
 msgstr " %s [tilvalg] [<enhed> ...]\n"
 
-#: sys-utils/rfkill.c:466
+#: sys-utils/rfkill.c:568
 msgid "Tool for enabling and disabling wireless devices.\n"
 msgstr ""
 
@@ -16210,18 +16238,18 @@ msgstr ""
 #. *
 #. list   [identifier]   (lista [tarkenne])
 #.
-#: sys-utils/rfkill.c:489
+#: sys-utils/rfkill.c:591
 msgid " help\n"
 msgstr ""
 
-#: sys-utils/rfkill.c:490
+#: sys-utils/rfkill.c:592
 msgid " event\n"
 msgstr ""
 
 # Evt. kan vi omgå det lidt mystiske "identifikation" ved bare at bruge
 # forkortelsen id:
 # Disk-id: ...
-#: sys-utils/rfkill.c:491
+#: sys-utils/rfkill.c:593
 #, fuzzy
 msgid " list   [identifier]\n"
 msgstr "Diskidentifikation"
@@ -16229,7 +16257,7 @@ msgstr "Diskidentifikation"
 # Evt. kan vi omgå det lidt mystiske "identifikation" ved bare at bruge
 # forkortelsen id:
 # Disk-id: ...
-#: sys-utils/rfkill.c:492
+#: sys-utils/rfkill.c:594
 #, fuzzy
 msgid " block   identifier\n"
 msgstr "Diskidentifikation"
@@ -16237,7 +16265,7 @@ msgstr "Diskidentifikation"
 # Evt. kan vi omgå det lidt mystiske "identifikation" ved bare at bruge
 # forkortelsen id:
 # Disk-id: ...
-#: sys-utils/rfkill.c:493
+#: sys-utils/rfkill.c:595
 #, fuzzy
 msgid " unblock identifier\n"
 msgstr "Diskidentifikation"

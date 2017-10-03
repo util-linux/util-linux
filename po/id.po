@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-09-22 11:44+0200\n"
+"POT-Creation-Date: 2017-10-03 17:22+0200\n"
 "PO-Revision-Date: 2010-02-18 04:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -41,7 +41,7 @@ msgid "not enough arguments"
 msgstr "Argumen tidak cukup"
 
 #: disk-utils/addpart.c:58 disk-utils/blockdev.c:295 disk-utils/blockdev.c:439
-#: disk-utils/blockdev.c:465 disk-utils/cfdisk.c:2687 disk-utils/delpart.c:59
+#: disk-utils/blockdev.c:465 disk-utils/cfdisk.c:2718 disk-utils/delpart.c:59
 #: disk-utils/fdformat.c:229 disk-utils/fdisk.c:764 disk-utils/fdisk.c:1066
 #: disk-utils/fdisk-list.c:321 disk-utils/fdisk-list.c:361
 #: disk-utils/fdisk-list.c:380 disk-utils/fsck.c:1457
@@ -64,16 +64,15 @@ msgstr "Argumen tidak cukup"
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
 #: sys-utils/hwclock.c:207 sys-utils/hwclock.c:806 sys-utils/hwclock-rtc.c:400
 #: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
-#: sys-utils/rfkill.c:158 sys-utils/rfkill.c:220 sys-utils/rfkill.c:352
-#: sys-utils/rfkill.c:441 sys-utils/rtcwake.c:134 sys-utils/rtcwake.c:268
-#: sys-utils/setpriv.c:276 sys-utils/setpriv.c:614 sys-utils/setpriv.c:637
-#: sys-utils/swapon.c:376 sys-utils/swapon.c:519 sys-utils/switch_root.c:167
-#: sys-utils/unshare.c:106 sys-utils/unshare.c:121 sys-utils/wdctl.c:322
-#: sys-utils/wdctl.c:378 term-utils/agetty.c:2608 term-utils/mesg.c:127
-#: term-utils/script.c:460 term-utils/script.c:468 term-utils/script.c:563
-#: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
-#: text-utils/rev.c:141 text-utils/ul.c:230
+#: sys-utils/rfkill.c:188 sys-utils/rfkill.c:543 sys-utils/rtcwake.c:134
+#: sys-utils/rtcwake.c:268 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
+#: sys-utils/setpriv.c:637 sys-utils/swapon.c:376 sys-utils/swapon.c:519
+#: sys-utils/switch_root.c:167 sys-utils/unshare.c:106 sys-utils/unshare.c:121
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 term-utils/agetty.c:2608
+#: term-utils/mesg.c:127 term-utils/script.c:460 term-utils/script.c:468
+#: term-utils/script.c:563 term-utils/scriptreplay.c:198
+#: term-utils/scriptreplay.c:201 term-utils/wall.c:419 text-utils/colcrt.c:282
+#: text-utils/more.c:534 text-utils/rev.c:141 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
 msgstr "tidak dapat membuka %s"
@@ -271,494 +270,494 @@ msgstr "membaca lagi tabel partisi"
 msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
 msgstr "RO    RA   SSZ   BSZ   AwalSekt            Ukuran Perangkat\n"
 
-#: disk-utils/cfdisk.c:184
+#: disk-utils/cfdisk.c:186
 msgid "Bootable"
 msgstr "Bootable"
 
-#: disk-utils/cfdisk.c:184
+#: disk-utils/cfdisk.c:186
 msgid "Toggle bootable flag of the current partition"
 msgstr "Ubah tanda bootable dari partisi terpilih"
 
-#: disk-utils/cfdisk.c:185
+#: disk-utils/cfdisk.c:187
 msgid "Delete"
 msgstr "Hapus"
 
-#: disk-utils/cfdisk.c:185
+#: disk-utils/cfdisk.c:187
 msgid "Delete the current partition"
 msgstr "Hapus partisi terpilih"
 
-#: disk-utils/cfdisk.c:186
+#: disk-utils/cfdisk.c:188
 #, fuzzy
 msgid "Resize"
 msgstr ", besar=%9lu"
 
-#: disk-utils/cfdisk.c:186
+#: disk-utils/cfdisk.c:188
 #, fuzzy
 msgid "Reduce or enlarge the current partition"
 msgstr "Hapus partisi terpilih"
 
-#: disk-utils/cfdisk.c:187
+#: disk-utils/cfdisk.c:189
 msgid "New"
 msgstr "Baru"
 
-#: disk-utils/cfdisk.c:187
+#: disk-utils/cfdisk.c:189
 msgid "Create new partition from free space"
 msgstr "Buat partisi baru dari ruang kosong"
 
-#: disk-utils/cfdisk.c:188
+#: disk-utils/cfdisk.c:190
 msgid "Quit"
 msgstr "Berhenti"
 
-#: disk-utils/cfdisk.c:188
+#: disk-utils/cfdisk.c:190
 #, fuzzy
 msgid "Quit program without writing changes"
 msgstr "Berhenti dari aplikasi tanpa menulis tabel partisi"
 
-#: disk-utils/cfdisk.c:189 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
+#: disk-utils/cfdisk.c:191 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
 #: libfdisk/src/dos.c:2431 libfdisk/src/gpt.c:3043 libfdisk/src/sgi.c:1159
 #: libfdisk/src/sun.c:1100
 msgid "Type"
 msgstr "Tipe"
 
-#: disk-utils/cfdisk.c:189
+#: disk-utils/cfdisk.c:191
 #, fuzzy
 msgid "Change the partition type"
 msgstr "   t   ubah id dari partisi system"
 
-#: disk-utils/cfdisk.c:190
+#: disk-utils/cfdisk.c:192
 msgid "Help"
 msgstr "Bantuan"
 
-#: disk-utils/cfdisk.c:190
+#: disk-utils/cfdisk.c:192
 msgid "Print help screen"
 msgstr "Cetak layar bantuan"
 
-#: disk-utils/cfdisk.c:191
+#: disk-utils/cfdisk.c:193
 msgid "Sort"
 msgstr ""
 
-#: disk-utils/cfdisk.c:191
+#: disk-utils/cfdisk.c:193
 #, fuzzy
 msgid "Fix partitions order"
 msgstr "   f   betulkan urutan dari partisi"
 
-#: disk-utils/cfdisk.c:192
+#: disk-utils/cfdisk.c:194
 msgid "Write"
 msgstr "Tulis"
 
-#: disk-utils/cfdisk.c:192
+#: disk-utils/cfdisk.c:194
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "Tulis tabel partisi ke disk (Ini mungkin akan menghancurkan data)"
 
-#: disk-utils/cfdisk.c:193
+#: disk-utils/cfdisk.c:195
 msgid "Dump"
 msgstr ""
 
-#: disk-utils/cfdisk.c:193
+#: disk-utils/cfdisk.c:195
 #, fuzzy
 msgid "Dump partition table to sfdisk compatible script file"
 msgstr "Cetak tabel partisi di layar atau ke sebuah file"
 
-#: disk-utils/cfdisk.c:628 disk-utils/fdisk.c:461
+#: disk-utils/cfdisk.c:642 disk-utils/fdisk.c:461
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1265
+#: disk-utils/cfdisk.c:1277
 #, fuzzy, c-format
 msgid "%s (mounted)"
 msgstr "fsck: %s: tidak ditemukan\n"
 
-#: disk-utils/cfdisk.c:1285
+#: disk-utils/cfdisk.c:1297
 #, fuzzy
 msgid "Partition name:"
 msgstr "Nomor partisi"
 
-#: disk-utils/cfdisk.c:1292
+#: disk-utils/cfdisk.c:1304
 #, fuzzy
 msgid "Partition UUID:"
 msgstr ""
 "\n"
 "%d partisi:\n"
 
-#: disk-utils/cfdisk.c:1304
+#: disk-utils/cfdisk.c:1316
 #, fuzzy
 msgid "Partition type:"
 msgstr "Nomor partisi"
 
-#: disk-utils/cfdisk.c:1311
+#: disk-utils/cfdisk.c:1323
 msgid "Attributes:"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1335
+#: disk-utils/cfdisk.c:1347
 #, fuzzy
 msgid "Filesystem UUID:"
 msgstr "Masukkan tipe filesystem: "
 
-#: disk-utils/cfdisk.c:1342
+#: disk-utils/cfdisk.c:1354
 #, fuzzy
 msgid "Filesystem LABEL:"
 msgstr "Masukkan tipe filesystem: "
 
-#: disk-utils/cfdisk.c:1348
+#: disk-utils/cfdisk.c:1360
 #, fuzzy
 msgid "Filesystem:"
 msgstr "Masukkan tipe filesystem: "
 
-#: disk-utils/cfdisk.c:1353
+#: disk-utils/cfdisk.c:1365
 #, fuzzy
 msgid "Mountpoint:"
 msgstr "%s telah di mount.\t "
 
-#: disk-utils/cfdisk.c:1696
+#: disk-utils/cfdisk.c:1708
 #, fuzzy, c-format
 msgid "Disk: %s"
 msgstr "disk: %.*s\n"
 
-#: disk-utils/cfdisk.c:1698
+#: disk-utils/cfdisk.c:1710
 #, fuzzy, c-format
 msgid "Size: %s, %ju bytes, %ju sectors"
 msgstr ""
 "\n"
 "Disk %s: %lu cylinders, %lu heads, %lu sectors/track\n"
 
-#: disk-utils/cfdisk.c:1701
+#: disk-utils/cfdisk.c:1713
 #, fuzzy, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "Identifikasi disk: 0x%08x\n"
 
-#: disk-utils/cfdisk.c:1704
+#: disk-utils/cfdisk.c:1716
 #, fuzzy, c-format
 msgid "Label: %s"
 msgstr "label: %.*s\n"
 
-#: disk-utils/cfdisk.c:1849
+#: disk-utils/cfdisk.c:1866
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1855
+#: disk-utils/cfdisk.c:1872
 #, fuzzy
 msgid "Please, specify size."
 msgstr "nama berkas tidak dispesifikasikan."
 
-#: disk-utils/cfdisk.c:1877
+#: disk-utils/cfdisk.c:1894
 #, fuzzy, c-format
 msgid "Minimum size is %ju bytes."
 msgstr "get size in bytes"
 
-#: disk-utils/cfdisk.c:1886
+#: disk-utils/cfdisk.c:1903
 #, fuzzy, c-format
 msgid "Maximum size is %ju bytes."
 msgstr "get size in bytes"
 
-#: disk-utils/cfdisk.c:1893
+#: disk-utils/cfdisk.c:1910
 #, fuzzy
 msgid "Failed to parse size."
 msgstr "gagal mendapatkan pid"
 
-#: disk-utils/cfdisk.c:1951
+#: disk-utils/cfdisk.c:1968
 #, fuzzy
 msgid "Select partition type"
 msgstr "Partisi yang terpilih %d\n"
 
-#: disk-utils/cfdisk.c:1997 disk-utils/cfdisk.c:2027
+#: disk-utils/cfdisk.c:2018 disk-utils/cfdisk.c:2048
 #, fuzzy
 msgid "Enter script file name: "
 msgstr "%s: tidak dapat menulis berkas script, error: %s\n"
 
-#: disk-utils/cfdisk.c:1998
+#: disk-utils/cfdisk.c:2019
 #, fuzzy
 msgid "The script file will be applied to in-memory partition table."
 msgstr "Anda tidak akan dapat menulis ke tabel partisi.\n"
 
-#: disk-utils/cfdisk.c:2007 disk-utils/cfdisk.c:2049
+#: disk-utils/cfdisk.c:2028 disk-utils/cfdisk.c:2070
 #: disk-utils/fdisk-menu.c:479 disk-utils/fdisk-menu.c:523
 #, fuzzy, c-format
 msgid "Cannot open %s"
 msgstr "Tidak dapat membuka %s\n"
 
-#: disk-utils/cfdisk.c:2009 disk-utils/fdisk-menu.c:481
+#: disk-utils/cfdisk.c:2030 disk-utils/fdisk-menu.c:481
 #, fuzzy, c-format
 msgid "Failed to parse script file %s"
 msgstr "gagal membaca typescript berkas %s"
 
-#: disk-utils/cfdisk.c:2011 disk-utils/fdisk-menu.c:483
+#: disk-utils/cfdisk.c:2032 disk-utils/fdisk-menu.c:483
 #, fuzzy, c-format
 msgid "Failed to apply script %s"
 msgstr "gagal membaca typescript berkas %s"
 
-#: disk-utils/cfdisk.c:2028
+#: disk-utils/cfdisk.c:2049
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2036 disk-utils/fdisk-menu.c:511
+#: disk-utils/cfdisk.c:2057 disk-utils/fdisk-menu.c:511
 #, fuzzy
 msgid "Failed to allocate script handler"
 msgstr "gagal mengalokasikan outbuffer"
 
-#: disk-utils/cfdisk.c:2042
+#: disk-utils/cfdisk.c:2063
 #, fuzzy
 msgid "Failed to read disk layout into script."
 msgstr "gagal mengalokasikan outbuffer"
 
-#: disk-utils/cfdisk.c:2056
+#: disk-utils/cfdisk.c:2077
 msgid "Disk layout successfully dumped."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2059 disk-utils/fdisk-menu.c:529
+#: disk-utils/cfdisk.c:2080 disk-utils/fdisk-menu.c:529
 #, fuzzy, c-format
 msgid "Failed to write script %s"
 msgstr "gagal membaca typescript berkas %s"
 
-#: disk-utils/cfdisk.c:2095
+#: disk-utils/cfdisk.c:2116
 #, fuzzy
 msgid "Select label type"
 msgstr "Tipe ilegal\n"
 
-#: disk-utils/cfdisk.c:2098 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:487
+#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:487
 #, fuzzy
 msgid "Device does not contain a recognized partition table."
 msgstr "Disk %s tidak memiliki sebuah tabel partisi yang valid\n"
 
-#: disk-utils/cfdisk.c:2106
+#: disk-utils/cfdisk.c:2127
 msgid "Select a type to create a new label or press 'L' to load script file."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2151
+#: disk-utils/cfdisk.c:2176
 #, fuzzy
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "Ini adalah cfdisk, sebuah program untuk mempartisi disk berbasis curses, yang"
 
-#: disk-utils/cfdisk.c:2152
+#: disk-utils/cfdisk.c:2177
 #, fuzzy
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "memungkinkan anda untuk membuat, menghapus, dan memodifikasi partisi di perangkat"
 
-#: disk-utils/cfdisk.c:2154
+#: disk-utils/cfdisk.c:2179
 msgid "Command      Meaning"
 msgstr "Perintah     Arti"
 
-#: disk-utils/cfdisk.c:2155
+#: disk-utils/cfdisk.c:2180
 msgid "-------      -------"
 msgstr "-------      -------"
 
-#: disk-utils/cfdisk.c:2156
+#: disk-utils/cfdisk.c:2181
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Ubah tanda bootable pada partisi terpilih"
 
-#: disk-utils/cfdisk.c:2157
+#: disk-utils/cfdisk.c:2182
 msgid "  d          Delete the current partition"
 msgstr "  d          Hapus partisi terpilih"
 
-#: disk-utils/cfdisk.c:2158
+#: disk-utils/cfdisk.c:2183
 msgid "  h          Print this screen"
 msgstr "  h          Cetak layar ini"
 
-#: disk-utils/cfdisk.c:2159
+#: disk-utils/cfdisk.c:2184
 msgid "  n          Create new partition from free space"
 msgstr "  n          Membuat partisi baru dari ruang yang tersisa/kosong"
 
-#: disk-utils/cfdisk.c:2160
+#: disk-utils/cfdisk.c:2185
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Keluar dari program tanpa menulis tabel partisi"
 
-#: disk-utils/cfdisk.c:2161
+#: disk-utils/cfdisk.c:2186
 #, fuzzy
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "              parameters\n"
 
-#: disk-utils/cfdisk.c:2162
+#: disk-utils/cfdisk.c:2187
 #, fuzzy
 msgid "  t          Change the partition type"
 msgstr "  t          Ubah tipe filesystem"
 
-#: disk-utils/cfdisk.c:2163
+#: disk-utils/cfdisk.c:2188
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr ""
 
-#: disk-utils/cfdisk.c:2164
+#: disk-utils/cfdisk.c:2189
 #, fuzzy
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W          Tulis tabel partisi ke disk (harus mengetikkan huruf besar W)"
 
-#: disk-utils/cfdisk.c:2165
+#: disk-utils/cfdisk.c:2190
 #, fuzzy
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "             Karen ini mungkin menghancurkan data di disk, anda harus"
 
-#: disk-utils/cfdisk.c:2166
+#: disk-utils/cfdisk.c:2191
 #, fuzzy
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "             mengkonfirmasikan atau menolak penulisan dengan mengetikkan 'yes' atau"
 
-#: disk-utils/cfdisk.c:2167
+#: disk-utils/cfdisk.c:2192
 #, fuzzy
 msgid "  x          Display/hide extra information about a partition"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
-#: disk-utils/cfdisk.c:2168
+#: disk-utils/cfdisk.c:2193
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Panah Atas   Memindahkan cursor ke partisi sebelumnya"
 
-#: disk-utils/cfdisk.c:2169
+#: disk-utils/cfdisk.c:2194
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Panah Bawah  Memindahkan cursor ke partisi sesudahnya"
 
-#: disk-utils/cfdisk.c:2170
+#: disk-utils/cfdisk.c:2195
 #, fuzzy
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "Panah Atas   Memindahkan cursor ke partisi sebelumnya"
 
-#: disk-utils/cfdisk.c:2171
+#: disk-utils/cfdisk.c:2196
 #, fuzzy
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "Panah Bawah  Memindahkan cursor ke partisi sesudahnya"
 
-#: disk-utils/cfdisk.c:2173
+#: disk-utils/cfdisk.c:2198
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Catatan: Semua perintah dapat diketikkan dengan menggunakan huruf "
 
-#: disk-utils/cfdisk.c:2174
+#: disk-utils/cfdisk.c:2199
 #, fuzzy
 msgid "case letters (except for Write)."
 msgstr "besar atau huruf kecil (kecuali untuk penulisan ke disk)"
 
-#: disk-utils/cfdisk.c:2176
+#: disk-utils/cfdisk.c:2201
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2186 disk-utils/cfdisk.c:2486
+#: disk-utils/cfdisk.c:2211 disk-utils/cfdisk.c:2514
 #, fuzzy
 msgid "Press a key to continue."
 msgstr "Tekan sebuah tombol untuk melanjutkan"
 
-#: disk-utils/cfdisk.c:2269
+#: disk-utils/cfdisk.c:2297
 #, fuzzy
 msgid "Could not toggle the flag."
 msgstr "Tidak dapat membuka %s\n"
 
-#: disk-utils/cfdisk.c:2279
+#: disk-utils/cfdisk.c:2307
 #, fuzzy, c-format
 msgid "Could not delete partition %zu."
 msgstr "Partisi yang terpilih %d\n"
 
-#: disk-utils/cfdisk.c:2281 disk-utils/fdisk-menu.c:657
+#: disk-utils/cfdisk.c:2309 disk-utils/fdisk-menu.c:657
 #, fuzzy, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Partisi %d tidak memiliki area data\n"
 
-#: disk-utils/cfdisk.c:2302
+#: disk-utils/cfdisk.c:2330
 #, fuzzy
 msgid "Partition size: "
 msgstr ""
 "\n"
 "%d partisi:\n"
 
-#: disk-utils/cfdisk.c:2343
+#: disk-utils/cfdisk.c:2371
 #, fuzzy, c-format
 msgid "Changed type of partition %zu."
 msgstr "Menguba tipe sistem partisi dari %d menjadi %x (%s)\n"
 
-#: disk-utils/cfdisk.c:2345
+#: disk-utils/cfdisk.c:2373
 #, fuzzy, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "Tipe sistem dari parisi %d tidak berubah: %x (%s)\n"
 
-#: disk-utils/cfdisk.c:2366
+#: disk-utils/cfdisk.c:2394
 #, fuzzy
 msgid "New size: "
 msgstr "Shell baru"
 
-#: disk-utils/cfdisk.c:2381
+#: disk-utils/cfdisk.c:2409
 #, fuzzy, c-format
 msgid "Partition %zu resized."
 msgstr "Tidak ada partisi yang didefinisikan\n"
 
-#: disk-utils/cfdisk.c:2399 disk-utils/cfdisk.c:2515 disk-utils/fdisk.c:1063
+#: disk-utils/cfdisk.c:2427 disk-utils/cfdisk.c:2543 disk-utils/fdisk.c:1063
 #: disk-utils/fdisk-menu.c:590
 msgid "Device is open in read-only mode."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2404
+#: disk-utils/cfdisk.c:2432
 #, fuzzy
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Apakah anda yakin ingin menulis tabel partisi ke disk? (ya atau tidak): "
 
-#: disk-utils/cfdisk.c:2406
+#: disk-utils/cfdisk.c:2434
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2411 login-utils/lslogins.c:209 sys-utils/lscpu.c:1588
+#: disk-utils/cfdisk.c:2439 login-utils/lslogins.c:209 sys-utils/lscpu.c:1588
 #: sys-utils/lscpu.c:1598 sys-utils/lsmem.c:200
 msgid "yes"
 msgstr "ya"
 
-#: disk-utils/cfdisk.c:2412
+#: disk-utils/cfdisk.c:2440
 #, fuzzy
 msgid "Did not write partition table to disk."
 msgstr "Tidak menulis tabel partisi di disk"
 
-#: disk-utils/cfdisk.c:2417
+#: disk-utils/cfdisk.c:2445
 #, fuzzy
 msgid "Failed to write disklabel."
 msgstr "seek gagal dalam write_tables"
 
-#: disk-utils/cfdisk.c:2423 disk-utils/fdisk-menu.c:598
+#: disk-utils/cfdisk.c:2451 disk-utils/fdisk-menu.c:598
 #, fuzzy
 msgid "The partition table has been altered."
 msgstr ""
 "Tabel partisi telah diubah!\n"
 "\n"
 
-#: disk-utils/cfdisk.c:2446 disk-utils/cfdisk.c:2517
+#: disk-utils/cfdisk.c:2474 disk-utils/cfdisk.c:2545
 #, fuzzy
 msgid "Note that partition table entries are not in disk order now."
 msgstr ""
 "\n"
 "Masukan tabel partisi tidak dalam urutan disk\n"
 
-#: disk-utils/cfdisk.c:2483
+#: disk-utils/cfdisk.c:2511
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2494
+#: disk-utils/cfdisk.c:2522
 #, fuzzy
 msgid "failed to create a new disklabel"
 msgstr "seek gagal dalam write_tables"
 
-#: disk-utils/cfdisk.c:2502
+#: disk-utils/cfdisk.c:2530
 #, fuzzy
 msgid "failed to read partitions"
 msgstr "membaca lagi tabel partisi"
 
-#: disk-utils/cfdisk.c:2598
+#: disk-utils/cfdisk.c:2629
 #, fuzzy, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr "Penggunaan: %s [pilihan] perangkat ...\n"
 
-#: disk-utils/cfdisk.c:2601 disk-utils/fdisk.c:808 disk-utils/sfdisk.c:1826
+#: disk-utils/cfdisk.c:2632 disk-utils/fdisk.c:808 disk-utils/sfdisk.c:1826
 #, fuzzy
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "membaca lagi tabel partisi"
 
-#: disk-utils/cfdisk.c:2604
+#: disk-utils/cfdisk.c:2635
 #, fuzzy
 msgid " -L, --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr "  -Q, --quiet-output           Tidak ada output normal\n"
 
-#: disk-utils/cfdisk.c:2607
+#: disk-utils/cfdisk.c:2638
 #, fuzzy
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr "  -Q, --quiet-output           Tidak ada output normal\n"
 
-#: disk-utils/cfdisk.c:2645 disk-utils/fdisk.c:950 disk-utils/sfdisk.c:2103
+#: disk-utils/cfdisk.c:2676 disk-utils/fdisk.c:950 disk-utils/sfdisk.c:2103
 #: misc-utils/cal.c:391 sys-utils/dmesg.c:1435 text-utils/hexdump.c:114
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "tidak ada perintah?\n"
 
-#: disk-utils/cfdisk.c:2665 disk-utils/fdisk.c:888 disk-utils/sfdisk.c:224
+#: disk-utils/cfdisk.c:2696 disk-utils/fdisk.c:888 disk-utils/sfdisk.c:224
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "gagal mengalokasikan outbuffer"
@@ -1180,7 +1179,7 @@ msgstr "Peringatan: pilihan -b (set ukuran sektor) seharusnya digunakan dengan s
 #: misc-utils/whereis.c:581 misc-utils/whereis.c:592 misc-utils/whereis.c:634
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
 #: sys-utils/chcpu.c:344 sys-utils/chmem.c:317 sys-utils/dmesg.c:1491
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:863
+#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
 #: sys-utils/lscpu.c:2177 sys-utils/lsmem.c:499 sys-utils/mount.c:698
 #: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
 #: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:231 sys-utils/swapon.c:989
@@ -1260,9 +1259,9 @@ msgstr "gagal mengalokasikan outbuffer"
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
 #: disk-utils/partx.c:667 login-utils/lslogins.c:917 misc-utils/fincore.c:362
 #: misc-utils/findmnt.c:1596 misc-utils/lsblk.c:1906 misc-utils/lslocks.c:449
-#: misc-utils/uuidparse.c:258 misc-utils/wipefs.c:151 sys-utils/losetup.c:314
+#: misc-utils/uuidparse.c:258 misc-utils/wipefs.c:151 sys-utils/losetup.c:321
 #: sys-utils/lscpu.c:1761 sys-utils/lscpu.c:1864 sys-utils/lsipc.c:338
-#: sys-utils/prlimit.c:297 sys-utils/rfkill.c:320 sys-utils/swapon.c:285
+#: sys-utils/prlimit.c:297 sys-utils/rfkill.c:456 sys-utils/swapon.c:285
 #: sys-utils/wdctl.c:260 sys-utils/zramctl.c:488 text-utils/column.c:205
 #, fuzzy
 msgid "failed to allocate output table"
@@ -1272,10 +1271,10 @@ msgstr "gagal menginisialisasi baris penyangga\n"
 #: disk-utils/partx.c:581 login-utils/lslogins.c:975 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1174
 #: misc-utils/lslocks.c:391 misc-utils/uuidparse.c:154 misc-utils/wipefs.c:210
-#: sys-utils/losetup.c:333 sys-utils/losetup.c:362 sys-utils/lscpu.c:1787
+#: sys-utils/losetup.c:340 sys-utils/losetup.c:369 sys-utils/lscpu.c:1787
 #: sys-utils/lscpu.c:1815 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
-#: sys-utils/prlimit.c:229 sys-utils/rfkill.c:283 sys-utils/swapon.c:180
+#: sys-utils/prlimit.c:229 sys-utils/rfkill.c:373 sys-utils/swapon.c:180
 #: sys-utils/wdctl.c:214 sys-utils/zramctl.c:409 text-utils/column.c:420
 #, fuzzy
 msgid "failed to allocate output line"
@@ -1285,9 +1284,9 @@ msgstr "gagal menginisialisasi baris penyangga\n"
 #: disk-utils/partx.c:644 login-utils/lslogins.c:1073 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1165
 #: misc-utils/lslocks.c:436 misc-utils/uuidparse.c:245 misc-utils/wipefs.c:250
-#: sys-utils/losetup.c:294 sys-utils/lscpu.c:1795 sys-utils/lscpu.c:1826
+#: sys-utils/losetup.c:301 sys-utils/lscpu.c:1795 sys-utils/lscpu.c:1826
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
-#: sys-utils/rfkill.c:308 sys-utils/swapon.c:228 sys-utils/wdctl.c:242
+#: sys-utils/rfkill.c:401 sys-utils/swapon.c:228 sys-utils/wdctl.c:242
 #: sys-utils/zramctl.c:475 text-utils/column.c:426
 #, fuzzy
 msgid "failed to add output data"
@@ -1841,9 +1840,8 @@ msgstr "fsck: %s: tidak ditemukan\n"
 #: disk-utils/fsck.cramfs.c:250 disk-utils/sfdisk.c:298 libfdisk/src/bsd.c:645
 #: lib/path.c:126 lib/path.c:147 lib/path.c:168 lib/path.c:216
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:655
-#: sys-utils/rfkill.c:179 sys-utils/rfkill.c:225 sys-utils/rfkill.c:366
-#: sys-utils/setpriv.c:285 term-utils/setterm.c:723 term-utils/setterm.c:780
-#: term-utils/setterm.c:784 term-utils/setterm.c:791
+#: sys-utils/rfkill.c:209 sys-utils/setpriv.c:285 term-utils/setterm.c:723
+#: term-utils/setterm.c:780 term-utils/setterm.c:784 term-utils/setterm.c:791
 #, fuzzy, c-format
 msgid "cannot read %s"
 msgstr "%s: tidak dapat membaca %s.\n"
@@ -2255,7 +2253,7 @@ msgstr "bukan ukuran (%ld vs %ld) bytes"
 
 #: disk-utils/fsck.cramfs.c:410 disk-utils/fsck.cramfs.c:513
 #: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:366 sys-utils/fallocate.c:417
-#: sys-utils/rfkill.c:448 sys-utils/setpriv.c:620 sys-utils/setpriv.c:643
+#: sys-utils/rfkill.c:550 sys-utils/setpriv.c:620 sys-utils/setpriv.c:643
 #: sys-utils/swapon.c:394 term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
@@ -3703,7 +3701,7 @@ msgstr ""
 msgid "partition type (a string, a UUID, or hex)"
 msgstr ""
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:513 sys-utils/losetup.c:621
+#: disk-utils/partx.c:114 sys-utils/losetup.c:521 sys-utils/losetup.c:630
 #, fuzzy
 msgid "failed to initialize loopcxt"
 msgstr "gagal menginisialisasi baris penyangga\n"
@@ -3723,16 +3721,16 @@ msgstr "mount: akan menggunakan perangkat loop %s\n"
 msgid "%s: failed to set backing file"
 msgstr "%s: gagal untuk berpindah ke ofset 0x%jx"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:557
+#: disk-utils/partx.c:131 sys-utils/losetup.c:565
 #, fuzzy, c-format
 msgid "%s: failed to set up loop device"
 msgstr "tidak dapat merewind perangkat swap"
 
 #: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/fincore.c:92
 #: misc-utils/findmnt.c:376 misc-utils/lsblk.c:365 misc-utils/lslocks.c:342
-#: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:107
+#: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:110
 #: sys-utils/lscpu.c:373 sys-utils/lsipc.c:232 sys-utils/lsmem.c:136
-#: sys-utils/lsns.c:189 sys-utils/prlimit.c:277 sys-utils/rfkill.c:131
+#: sys-utils/lsns.c:189 sys-utils/prlimit.c:277 sys-utils/rfkill.c:155
 #: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:148
 #, fuzzy, c-format
 msgid "unknown column: %s"
@@ -3831,8 +3829,8 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: disk-utils/partx.c:678 misc-utils/fincore.c:374 misc-utils/findmnt.c:1622
-#: misc-utils/lsblk.c:1928 misc-utils/lslocks.c:462 sys-utils/losetup.c:326
-#: sys-utils/lscpu.c:1770 sys-utils/prlimit.c:306 sys-utils/rfkill.c:330
+#: misc-utils/lsblk.c:1928 misc-utils/lslocks.c:462 sys-utils/losetup.c:333
+#: sys-utils/lscpu.c:1770 sys-utils/prlimit.c:306 sys-utils/rfkill.c:466
 #: sys-utils/swapon.c:294 sys-utils/wdctl.c:271
 #, fuzzy
 msgid "failed to allocate output column"
@@ -7283,7 +7281,7 @@ msgid "special device %s does not exist"
 msgstr "mount: perangkat spesial %s tidak ada"
 
 #: libmount/src/context_mount.c:1470 libmount/src/context_mount.c:1486
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1592
 #, fuzzy, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount gagal"
@@ -7396,6 +7394,11 @@ msgstr "%s gagal.\n"
 msgid "no medium found on %s"
 msgstr "mount: tidak ada media ditemukan di %s"
 
+#: libmount/src/context_mount.c:1584
+#, fuzzy, c-format
+msgid "cannot mount; probably corrupted filesystem on %s"
+msgstr "tidak akan mencoba untuk membuat filesystem pada '%s'"
+
 #: libmount/src/context_umount.c:1064 libmount/src/context_umount.c:1102
 #, fuzzy, c-format
 msgid "not mounted"
@@ -7491,11 +7494,11 @@ msgstr "tidak dapat membuka %s"
 msgid "the plymouth request %c is not implemented"
 msgstr ""
 
-#: lib/randutils.c:178
+#: lib/randutils.c:175
 msgid "getrandom() function"
 msgstr ""
 
-#: lib/randutils.c:191
+#: lib/randutils.c:188
 msgid "libc pseudo-random functions"
 msgstr ""
 
@@ -7875,12 +7878,6 @@ msgstr "pembuatan semaphor gagal"
 msgid "user attribute not changed: %s"
 msgstr ""
 
-#. TRANSLATORS: The standard value for %u is 60.
-#: login-utils/login.c:185
-#, fuzzy, c-format
-msgid "timed out after %u seconds"
-msgstr "Waktu habis untuk Login sesudah %d detik\n"
-
 #: login-utils/login.c:291
 #, fuzzy, c-format
 msgid "FATAL: can't reopen tty: %m"
@@ -8002,7 +7999,7 @@ msgstr ""
 "\n"
 "Login tidak benar\n"
 
-#: login-utils/login.c:848 login-utils/login.c:1228 login-utils/login.c:1251
+#: login-utils/login.c:848 login-utils/login.c:1233 login-utils/login.c:1256
 #, fuzzy
 msgid ""
 "\n"
@@ -8049,56 +8046,61 @@ msgstr ""
 msgid " -H             suppress hostname in the login prompt"
 msgstr "  p          Cetak tabel partisi di layar atau ke sebuah file"
 
-#: login-utils/login.c:1171
+#: login-utils/login.c:1143
+#, fuzzy, c-format
+msgid "%s: timed out after %u seconds"
+msgstr "Waktu habis untuk Login sesudah %d detik\n"
+
+#: login-utils/login.c:1176
 #, fuzzy, c-format
 msgid "login: -h is for superuser only\n"
 msgstr "login: -h hanya untuk super-user.\n"
 
-#: login-utils/login.c:1229
+#: login-utils/login.c:1234
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Pengguna (username) tidak valid \"%s\" dalam %s:%d. Batal."
 
-#: login-utils/login.c:1250
+#: login-utils/login.c:1255
 #, fuzzy, c-format
 msgid "groups initialization failed: %m"
 msgstr "error: %s: gagal melakukan inisialisasi probing"
 
-#: login-utils/login.c:1275
+#: login-utils/login.c:1280
 #, fuzzy
 msgid "setgid() failed"
 msgstr "setuid() gagal"
 
-#: login-utils/login.c:1305
+#: login-utils/login.c:1310
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Anda memiliki mail baru.\n"
 
-#: login-utils/login.c:1307
+#: login-utils/login.c:1312
 #, c-format
 msgid "You have mail.\n"
 msgstr "Anda memiliki mail.\n"
 
-#: login-utils/login.c:1321
+#: login-utils/login.c:1326
 msgid "setuid() failed"
 msgstr "setuid() gagal"
 
-#: login-utils/login.c:1327 login-utils/sulogin.c:729
+#: login-utils/login.c:1332 login-utils/sulogin.c:729
 #, fuzzy, c-format
 msgid "%s: change directory failed"
 msgstr "%s: gagal mendapatkan ukuran"
 
-#: login-utils/login.c:1334 login-utils/sulogin.c:730
+#: login-utils/login.c:1339 login-utils/sulogin.c:730
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Logging in dengan home = \"/\".\n"
 
-#: login-utils/login.c:1363
+#: login-utils/login.c:1368
 #, fuzzy
 msgid "couldn't exec shell script"
 msgstr "login: tidak dapat mengeksekusi shell script: %s.\n"
 
-#: login-utils/login.c:1365
+#: login-utils/login.c:1370
 #, fuzzy
 msgid "no shell"
 msgstr "Tidak ada shell"
@@ -9436,7 +9438,7 @@ msgstr "  -o, --options=optstring      Pilihan pendek yang dikenal\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
-#: misc-utils/fincore.c:344 sys-utils/losetup.c:777
+#: misc-utils/fincore.c:344 sys-utils/losetup.c:793
 #, fuzzy
 msgid "no file specified"
 msgstr "nama berkas tidak dispesifikasikan."
@@ -9717,7 +9719,7 @@ msgid " -i, --invert           invert the sense of matching\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
 #: misc-utils/findmnt.c:1224 misc-utils/lslocks.c:501 sys-utils/lsns.c:620
-#: sys-utils/rfkill.c:469
+#: sys-utils/rfkill.c:571
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
@@ -10148,7 +10150,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr "--offset dan --all adalah 'mutually exclusive'"
 
 #: misc-utils/kill.c:414 sys-utils/eject.c:205 sys-utils/eject.c:230
-#: sys-utils/losetup.c:694 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
+#: sys-utils/losetup.c:707 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
 #: sys-utils/tunelp.c:181 sys-utils/tunelp.c:188 sys-utils/tunelp.c:195
 #: sys-utils/tunelp.c:201 sys-utils/tunelp.c:205 sys-utils/tunelp.c:212
 #: term-utils/setterm.c:211 term-utils/setterm.c:214 term-utils/setterm.c:233
@@ -10482,7 +10484,7 @@ msgstr "Nomor partisi"
 msgid "read-ahead of the device"
 msgstr "gagal memperoleh statistik dari path\n"
 
-#: misc-utils/lsblk.c:175 sys-utils/losetup.c:75
+#: misc-utils/lsblk.c:175 sys-utils/losetup.c:77
 #, fuzzy
 msgid "read-only device"
 msgstr "set hanya-baca"
@@ -10845,12 +10847,12 @@ msgstr "Tidak dapat menset system clock.\n"
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:503 sys-utils/lsns.c:622 sys-utils/rfkill.c:470
+#: misc-utils/lslocks.c:503 sys-utils/lsns.c:622 sys-utils/rfkill.c:572
 #, fuzzy
 msgid " -n, --noheadings       don't print headings\n"
 msgstr "  -u, --unqote                 Jangan quote output\n"
 
-#: misc-utils/lslocks.c:504 sys-utils/lsns.c:623 sys-utils/rfkill.c:471
+#: misc-utils/lslocks.c:504 sys-utils/lsns.c:623 sys-utils/rfkill.c:573
 #, fuzzy
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr "  -o, --options=optstring      Pilihan pendek yang dikenal\n"
@@ -10859,7 +10861,7 @@ msgstr "  -o, --options=optstring      Pilihan pendek yang dikenal\n"
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:506 sys-utils/lsns.c:625 sys-utils/rfkill.c:472
+#: misc-utils/lslocks.c:506 sys-utils/lsns.c:625 sys-utils/rfkill.c:574
 #, fuzzy
 msgid " -r, --raw              use the raw output format\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
@@ -12039,7 +12041,7 @@ msgstr "  -Q, --quiet-output           Tidak ada output normal\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:312 sys-utils/losetup.c:678
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:312 sys-utils/losetup.c:691
 #: text-utils/hexdump.c:124
 #, fuzzy
 msgid "failed to parse offset"
@@ -13969,7 +13971,7 @@ msgstr "  -Q, --quiet-output           Tidak ada output normal\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr ""
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:702 sys-utils/zramctl.c:626
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:626
 #, fuzzy
 msgid "failed to parse size"
 msgstr "gagal mendapatkan pid"
@@ -14871,249 +14873,269 @@ msgstr "Tidak dapat menset baris disiplin"
 msgid "cannot daemonize"
 msgstr "tidak dapat daemonize"
 
-#: sys-utils/losetup.c:68
+#: sys-utils/losetup.c:70
 msgid "autoclear flag set"
 msgstr ""
 
-#: sys-utils/losetup.c:69
+#: sys-utils/losetup.c:71
 #, fuzzy
 msgid "device backing file"
 msgstr "membaca lagi tabel partisi"
 
-#: sys-utils/losetup.c:70
+#: sys-utils/losetup.c:72
 msgid "backing file inode number"
 msgstr ""
 
-#: sys-utils/losetup.c:71
+#: sys-utils/losetup.c:73
 msgid "backing file major:minor device number"
 msgstr ""
 
-#: sys-utils/losetup.c:72
+#: sys-utils/losetup.c:74
 #, fuzzy
 msgid "loop device name"
 msgstr "mount: %s: perangkat tidak diketahui"
 
-#: sys-utils/losetup.c:73
+#: sys-utils/losetup.c:75
 msgid "offset from the beginning"
 msgstr ""
 
-#: sys-utils/losetup.c:74
+#: sys-utils/losetup.c:76
 #, fuzzy
 msgid "partscan flag set"
 msgstr ""
 "\n"
 "%d partisi:\n"
 
-#: sys-utils/losetup.c:76
+#: sys-utils/losetup.c:78
 #, fuzzy
 msgid "size limit of the file in bytes"
 msgstr "get penyesuaian ofset"
 
-#: sys-utils/losetup.c:77
+#: sys-utils/losetup.c:79
 msgid "loop device major:minor number"
 msgstr ""
 
-#: sys-utils/losetup.c:78
+#: sys-utils/losetup.c:80
 msgid "access backing file with direct-io"
 msgstr ""
 
-#: sys-utils/losetup.c:135 sys-utils/losetup.c:147
+#: sys-utils/losetup.c:81
+#, fuzzy
+msgid "logical sector size in bytes"
+msgstr "get ukuran logikal blok (sektor)"
+
+#: sys-utils/losetup.c:138 sys-utils/losetup.c:150
 #, fuzzy, c-format
 msgid ", offset %ju"
 msgstr ", offset %d"
 
-#: sys-utils/losetup.c:138 sys-utils/losetup.c:150
+#: sys-utils/losetup.c:141 sys-utils/losetup.c:153
 #, fuzzy, c-format
 msgid ", sizelimit %ju"
 msgstr ", sizelimit %<PRIu64>"
 
-#: sys-utils/losetup.c:158
+#: sys-utils/losetup.c:161
 #, fuzzy, c-format
 msgid ", encryption %s (type %u)"
 msgstr ", enkripsi %s (tipe %<PRIu32>)"
 
-#: sys-utils/losetup.c:199
+#: sys-utils/losetup.c:202
 #, fuzzy, c-format
 msgid "%s: detach failed"
 msgstr "%s: stat gagal"
 
-#: sys-utils/losetup.c:386
+#: sys-utils/losetup.c:393
 #, c-format
 msgid ""
 " %1$s [options] [<loopdev>]\n"
 " %1$s [options] -f | <loopdev> <file>\n"
 msgstr ""
 
-#: sys-utils/losetup.c:391
+#: sys-utils/losetup.c:398
 msgid "Set up and control loop devices.\n"
 msgstr ""
 
-#: sys-utils/losetup.c:395
+#: sys-utils/losetup.c:402
 #, fuzzy
 msgid " -a, --all                     list all used devices\n"
 msgstr "  -h, --help                   Ini sedikit petunjuk penggunaan\n"
 
-#: sys-utils/losetup.c:396
+#: sys-utils/losetup.c:403
 #, fuzzy
 msgid " -d, --detach <loopdev>...     detach one or more devices\n"
 msgstr "  -h, --help                   Ini sedikit petunjuk penggunaan\n"
 
-#: sys-utils/losetup.c:397
+#: sys-utils/losetup.c:404
 #, fuzzy
 msgid " -D, --detach-all              detach all used devices\n"
 msgstr "  -h, --help                   Ini sedikit petunjuk penggunaan\n"
 
-#: sys-utils/losetup.c:398
+#: sys-utils/losetup.c:405
 #, fuzzy
 msgid " -f, --find                    find first unused device\n"
 msgstr "  -Q, --quiet-output           Tidak ada output normal\n"
 
-#: sys-utils/losetup.c:399
+#: sys-utils/losetup.c:406
 msgid " -c, --set-capacity <loopdev>  resize the device\n"
 msgstr ""
 
-#: sys-utils/losetup.c:400
+#: sys-utils/losetup.c:407
 msgid " -j, --associated <file>       list all devices associated with <file>\n"
 msgstr ""
 
-#: sys-utils/losetup.c:401
+#: sys-utils/losetup.c:408
 #, fuzzy
 msgid " -L, --nooverlap               avoid possible conflict between devices\n"
 msgstr "  -Q, --quiet-output           Tidak ada output normal\n"
 
-#: sys-utils/losetup.c:405
+#: sys-utils/losetup.c:412
 msgid " -o, --offset <num>            start at offset <num> into file\n"
 msgstr ""
 
-#: sys-utils/losetup.c:406
+#: sys-utils/losetup.c:413
 msgid "     --sizelimit <num>         device is limited to <num> bytes of the file\n"
 msgstr ""
 
-#: sys-utils/losetup.c:407
+#: sys-utils/losetup.c:414
 #, fuzzy
-msgid " -P, --partscan                create a partitioned loop device\n"
-msgstr "  -u, --unqote                 Jangan quote output\n"
-
-#: sys-utils/losetup.c:408
-#, fuzzy
-msgid " -r, --read-only               set up a read-only loop device\n"
-msgstr "  -u, --unqote                 Jangan quote output\n"
-
-#: sys-utils/losetup.c:409
-msgid "     --direct-io[=<on|off>]    open backing file with O_DIRECT\n"
-msgstr ""
-
-#: sys-utils/losetup.c:410
-msgid "     --show                    print device name after setup (with -f)\n"
-msgstr ""
-
-#: sys-utils/losetup.c:411
-#, fuzzy
-msgid " -v, --verbose                 verbose mode\n"
+msgid " -b  --sector-size <num>       set the logical sector size to <num>\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
 #: sys-utils/losetup.c:415
 #, fuzzy
-msgid " -J, --json                    use JSON --list output format\n"
-msgstr "  -V, --version                Tampilkan informasi versi\n"
+msgid " -P, --partscan                create a partitioned loop device\n"
+msgstr "  -u, --unqote                 Jangan quote output\n"
 
 #: sys-utils/losetup.c:416
 #, fuzzy
-msgid " -l, --list                    list info about all or specified (default)\n"
-msgstr "  -T, --test                   Test untuk versi getopt(1)\n"
-
-#: sys-utils/losetup.c:417
-#, fuzzy
-msgid " -n, --noheadings              don't print headings for --list output\n"
+msgid " -r, --read-only               set up a read-only loop device\n"
 msgstr "  -u, --unqote                 Jangan quote output\n"
 
+#: sys-utils/losetup.c:417
+msgid "     --direct-io[=<on|off>]    open backing file with O_DIRECT\n"
+msgstr ""
+
 #: sys-utils/losetup.c:418
-msgid " -O, --output <cols>           specify columns to output for --list\n"
+msgid "     --show                    print device name after setup (with -f)\n"
 msgstr ""
 
 #: sys-utils/losetup.c:419
 #, fuzzy
+msgid " -v, --verbose                 verbose mode\n"
+msgstr "  -V, --version                Tampilkan informasi versi\n"
+
+#: sys-utils/losetup.c:423
+#, fuzzy
+msgid " -J, --json                    use JSON --list output format\n"
+msgstr "  -V, --version                Tampilkan informasi versi\n"
+
+#: sys-utils/losetup.c:424
+#, fuzzy
+msgid " -l, --list                    list info about all or specified (default)\n"
+msgstr "  -T, --test                   Test untuk versi getopt(1)\n"
+
+#: sys-utils/losetup.c:425
+#, fuzzy
+msgid " -n, --noheadings              don't print headings for --list output\n"
+msgstr "  -u, --unqote                 Jangan quote output\n"
+
+#: sys-utils/losetup.c:426
+msgid " -O, --output <cols>           specify columns to output for --list\n"
+msgstr ""
+
+#: sys-utils/losetup.c:427
+#, fuzzy
 msgid "     --raw                     use raw --list output format\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
-#: sys-utils/losetup.c:444
+#: sys-utils/losetup.c:452
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr ""
 
-#: sys-utils/losetup.c:448
+#: sys-utils/losetup.c:456
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr ""
 
-#: sys-utils/losetup.c:469 sys-utils/losetup.c:521
+#: sys-utils/losetup.c:477 sys-utils/losetup.c:529
 #, fuzzy, c-format
 msgid "%s: overlapping loop device exists"
 msgstr "%s: %s bukan sebuah perangkat lp.\n"
 
-#: sys-utils/losetup.c:480
+#: sys-utils/losetup.c:488
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
 msgstr ""
 
-#: sys-utils/losetup.c:487
+#: sys-utils/losetup.c:495
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
 msgstr ""
 
-#: sys-utils/losetup.c:493
+#: sys-utils/losetup.c:501
 #, fuzzy, c-format
 msgid "%s: failed to re-use loop device"
 msgstr "tidak dapat merewind perangkat swap"
 
-#: sys-utils/losetup.c:499
+#: sys-utils/losetup.c:507
 #, fuzzy
 msgid "failed to inspect loop devices"
 msgstr "mount: gagal menset-up perangkat loop\n"
 
-#: sys-utils/losetup.c:522
+#: sys-utils/losetup.c:530
 #, fuzzy, c-format
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "tidak dapat merewind perangkat swap"
 
-#: sys-utils/losetup.c:534 sys-utils/losetup.c:831
+#: sys-utils/losetup.c:542 sys-utils/losetup.c:847
 #, fuzzy
 msgid "cannot find an unused loop device"
 msgstr "tidak dapat menemukan perangkat %s"
 
-#: sys-utils/losetup.c:544
+#: sys-utils/losetup.c:552
 #, fuzzy, c-format
 msgid "%s: failed to use backing file"
 msgstr "membaca lagi tabel partisi"
 
-#: sys-utils/losetup.c:636 sys-utils/losetup.c:646 sys-utils/losetup.c:758
-#: sys-utils/losetup.c:772 sys-utils/losetup.c:811
+#: sys-utils/losetup.c:643
+#, fuzzy
+msgid "failed to parse logical block size"
+msgstr "gagal mendapatkan pid"
+
+#: sys-utils/losetup.c:649 sys-utils/losetup.c:659 sys-utils/losetup.c:774
+#: sys-utils/losetup.c:788 sys-utils/losetup.c:827
 #, fuzzy, c-format
 msgid "%s: failed to use device"
 msgstr "tidak dapat merewind perangkat swap"
 
-#: sys-utils/losetup.c:769
+#: sys-utils/losetup.c:785
 #, fuzzy
 msgid "no loop device specified"
 msgstr "mount: perangkat loop dispesifikasikan dua kali"
 
-#: sys-utils/losetup.c:784
+#: sys-utils/losetup.c:800
 #, fuzzy, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "--offset dan --all adalah 'mutually exclusive'"
 
-#: sys-utils/losetup.c:789
+#: sys-utils/losetup.c:805
 msgid "the option --offset is not allowed in this context"
 msgstr ""
 
-#: sys-utils/losetup.c:852
+#: sys-utils/losetup.c:868
 #, fuzzy, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: stat gagal"
 
-#: sys-utils/losetup.c:859
+#: sys-utils/losetup.c:877
 #, fuzzy, c-format
 msgid "%s: set direct io failed"
+msgstr "%s: gagal mendapatkan ukuran"
+
+#: sys-utils/losetup.c:883
+#, fuzzy, c-format
+msgid "%s: set logical block size failed"
 msgstr "%s: gagal mendapatkan ukuran"
 
 #: sys-utils/lscpu.c:108
@@ -16902,71 +16924,76 @@ msgstr "%s: Perintah tidak diketahui: %s\n"
 msgid "bad %s value: %s"
 msgstr "nilai waktu timeout buruk: %s"
 
-#: sys-utils/rfkill.c:101
+#: sys-utils/rfkill.c:124
 #, fuzzy
 msgid "kernel device name"
 msgstr "mount: %s: perangkat tidak diketahui"
 
-#: sys-utils/rfkill.c:102
+#: sys-utils/rfkill.c:125
 #, fuzzy
 msgid "device identifier value"
 msgstr "Identifikasi disk: 0x%08x\n"
 
-#: sys-utils/rfkill.c:103
+#: sys-utils/rfkill.c:126
 msgid "device type name that can be used as identifier"
 msgstr ""
 
-#: sys-utils/rfkill.c:104
+#: sys-utils/rfkill.c:127
+#, fuzzy
+msgid "device type description"
+msgstr "perangkat block "
+
+#: sys-utils/rfkill.c:128
 #, fuzzy
 msgid "status of software block"
 msgstr "gagal memperoleh statistik dari path\n"
 
-#: sys-utils/rfkill.c:105
+#: sys-utils/rfkill.c:129
 #, fuzzy
 msgid "status of hardware block"
 msgstr "gagal memperoleh statistik dari path\n"
 
-#: sys-utils/rfkill.c:170
-#, fuzzy, c-format
-msgid "failed to poll %s"
-msgstr "gagal mendapatkan pid"
-
-#: sys-utils/rfkill.c:184 sys-utils/rfkill.c:371
-#, c-format
-msgid "wrong size of rfkill event: %zu < %d"
-msgstr ""
-
-#: sys-utils/rfkill.c:259
-#, fuzzy
-msgid "invalid identifier"
-msgstr "Identifikasi disk: 0x%08x\n"
-
-#: sys-utils/rfkill.c:299 sys-utils/rfkill.c:302
-#, fuzzy
-msgid "blocked"
-msgstr "terkunci"
-
-#: sys-utils/rfkill.c:299 sys-utils/rfkill.c:302
-#, fuzzy
-msgid "unblocked"
-msgstr "terkunci"
-
-#: sys-utils/rfkill.c:345 sys-utils/rfkill.c:421
-#, fuzzy, c-format
-msgid "invalid identifier: %s"
-msgstr "Identifikasi disk: 0x%08x\n"
-
-#: sys-utils/rfkill.c:357
+#: sys-utils/rfkill.c:193
 #, fuzzy, c-format
 msgid "cannot set non-blocking %s"
 msgstr "tidak dapat membuka %s"
 
-#: sys-utils/rfkill.c:463
+#: sys-utils/rfkill.c:214
+#, c-format
+msgid "wrong size of rfkill event: %zu < %d"
+msgstr ""
+
+#: sys-utils/rfkill.c:244
+#, fuzzy, c-format
+msgid "failed to poll %s"
+msgstr "gagal mendapatkan pid"
+
+#: sys-utils/rfkill.c:312
+#, fuzzy
+msgid "invalid identifier"
+msgstr "Identifikasi disk: 0x%08x\n"
+
+#: sys-utils/rfkill.c:392 sys-utils/rfkill.c:395
+#, fuzzy
+msgid "blocked"
+msgstr "terkunci"
+
+#: sys-utils/rfkill.c:392 sys-utils/rfkill.c:395
+#, fuzzy
+msgid "unblocked"
+msgstr "terkunci"
+
+#: sys-utils/rfkill.c:414 sys-utils/rfkill.c:479 sys-utils/rfkill.c:523
+#, fuzzy, c-format
+msgid "invalid identifier: %s"
+msgstr "Identifikasi disk: 0x%08x\n"
+
+#: sys-utils/rfkill.c:565
 #, fuzzy, c-format
 msgid " %s [options] command [identifier ...]\n"
 msgstr "Penggunaan: %s [pilihan] perangkat ...\n"
 
-#: sys-utils/rfkill.c:466
+#: sys-utils/rfkill.c:568
 msgid "Tool for enabling and disabling wireless devices.\n"
 msgstr ""
 
@@ -16975,25 +17002,25 @@ msgstr ""
 #. *
 #. list   [identifier]   (lista [tarkenne])
 #.
-#: sys-utils/rfkill.c:489
+#: sys-utils/rfkill.c:591
 msgid " help\n"
 msgstr ""
 
-#: sys-utils/rfkill.c:490
+#: sys-utils/rfkill.c:592
 msgid " event\n"
 msgstr ""
 
-#: sys-utils/rfkill.c:491
+#: sys-utils/rfkill.c:593
 #, fuzzy
 msgid " list   [identifier]\n"
 msgstr "Identifikasi disk: 0x%08x\n"
 
-#: sys-utils/rfkill.c:492
+#: sys-utils/rfkill.c:594
 #, fuzzy
 msgid " block   identifier\n"
 msgstr "Identifikasi disk: 0x%08x\n"
 
-#: sys-utils/rfkill.c:493
+#: sys-utils/rfkill.c:595
 #, fuzzy
 msgid " unblock identifier\n"
 msgstr "Identifikasi disk: 0x%08x\n"
@@ -21160,9 +21187,6 @@ msgstr "Baris input terlalu panjang.\n"
 #, fuzzy
 #~ msgid "%s: bad inode size"
 #~ msgstr "ukuran inode buruk"
-
-#~ msgid "will not try to make filesystem on '%s'"
-#~ msgstr "tidak akan mencoba untuk membuat filesystem pada '%s'"
 
 #, fuzzy
 #~ msgid "type: %d"
