@@ -99,10 +99,10 @@ struct colinfo {
 /* columns descriptions */
 static const struct colinfo infos[] = {
 	[COL_DEVICE] = {"DEVICE", 0, 0, N_("kernel device name")},
-	[COL_ID]     = {"ID",	  0, 0, N_("device identifier value")},
+	[COL_ID]     = {"ID",	  2, SCOLS_FL_RIGHT, N_("device identifier value")},
 	[COL_TYPE]   = {"TYPE",	  0, 0, N_("device type name that can be used as identifier")},
-	[COL_SOFT]   = {"SOFT",	  0, 0, N_("status of software block")},
-	[COL_HARD]   = {"HARD",	  0, 0, N_("status of hardware block")}
+	[COL_SOFT]   = {"SOFT",	  0, SCOLS_FL_RIGHT, N_("status of software block")},
+	[COL_HARD]   = {"HARD",	  0, SCOLS_FL_RIGHT, N_("status of hardware block")}
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
@@ -550,9 +550,9 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (argc == 0 || strcmp(*argv, "list") == 0) {
-		columns[ncolumns++] = COL_DEVICE;
 		columns[ncolumns++] = COL_ID;
 		columns[ncolumns++] = COL_TYPE;
+		columns[ncolumns++] = COL_DEVICE;
 		columns[ncolumns++] = COL_SOFT;
 		columns[ncolumns++] = COL_HARD;
 
