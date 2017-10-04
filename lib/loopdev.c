@@ -1430,7 +1430,11 @@ int loopcxt_set_dio(struct loopdev_cxt *lc, unsigned long use_dio)
 	return 0;
 }
 
-int loopcxt_set_blocksize(struct loopdev_cxt *lc, unsigned long blocksize)
+/*
+ * Kernel uses "unsigned long" as ioctl arg, but we use u64 for all sizes to
+ * keep loopdev internal API simple.
+ */
+int loopcxt_set_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
 {
 	int fd = loopcxt_get_fd(lc);
 
@@ -1438,7 +1442,7 @@ int loopcxt_set_blocksize(struct loopdev_cxt *lc, unsigned long blocksize)
 		return -EINVAL;
 
 	/* Kernels prior to v4.14 don't support this ioctl */
-	if (ioctl(fd, LOOP_SET_BLOCK_SIZE, blocksize) < 0) {
+	if (ioctl(fd, LOOP_SET_BLOCK_SIZE, (unsigned long) blocksize) < 0) {
 		int rc = -errno;
 		DBG(CXT, ul_debugobj(lc, "LOOP_SET_BLOCK_SIZE failed: %m"));
 		return rc;
