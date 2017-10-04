@@ -32,11 +32,6 @@ tests (!):
     $ cd tests
     $ ./run.sh --asan
 
-su/runuser
-----------
-  - (!) implement pty container for all su/runuser session (something like
-    script(1)) to separate user from the original terminal (see CVE-2016-2779)
-
 - add functions strtime_short(), strtime_iso(), strtime_ctime(), ...
 
 cleanup lib/path.c:
@@ -69,6 +64,13 @@ cfdisk
     enabled by default for logical partitions if we created all container (extended
     partition) in the current session.
       
+fdisk
+-----
+  - add "Print PMBR" and "Toggle PMBR boot flag" to main menu for GPT
+
+sfdisk
+------
+  - make "--activate" usable also for GPT, in this case set PMBR boot flag
 
 agetty
 -----
