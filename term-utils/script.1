@@ -83,15 +83,23 @@ Allow the default output destination, i.e. the typescript file, to be a hard
 or symbolic link.  The command will follow a symbolic link.
 .TP
 \fB\-q\fR, \fB\-\-quiet\fR
-Be quiet (do not write start and done messages to standard output).
+Be quiet (do not write start and done messages to either standard output
+or the typescript file).
 .TP
-\fB\-t\fR[\fIfile\fR], \fB\-\-timing\fR[=\fIfile\fR]
-Output timing data to standard error, or to
+\fB\-t\fR, \fB\-\-timing\fR[=\fIfile|descriptor\fR]
+Output timing data to standard error, or to a
 .I file
+or
+.I descriptor
 when given.  This data contains two fields, separated by a space.  The first
 field indicates how much time elapsed since the previous output.  The second
 field indicates how many characters were output this time.  This information
 can be used to replay typescripts with realistic typing and output delays.
+.TP
+\fB\-d\fR, \fB\-\-descriptor\fR
+Use this option in combination with
+.I --timing
+for using the given resource as a file descriptor number as destination for timing data
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
