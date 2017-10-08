@@ -145,8 +145,8 @@ static struct last_timefmt timefmts[] = {
 	},
 	[LAST_TIMEFTM_ISO8601] = {
 		.name    = "iso",
-		.in_len  = 24,
-		.out_len = 26,
+		.in_len  = 25,
+		.out_len = 27,
 		.in_fmt  = LAST_TIMEFTM_ISO8601,
 		.out_fmt = LAST_TIMEFTM_ISO8601
 	}

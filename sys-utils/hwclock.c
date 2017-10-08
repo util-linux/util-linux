@@ -608,13 +608,7 @@ set_system_clock(const struct hwclock_control *ctl,
 	const struct timezone tz_utc = { 0 };
 
 	broken = localtime(&newtime.tv_sec);
-#ifdef HAVE_TM_GMTOFF
-	minuteswest = -broken->tm_gmtoff / 60;	/* GNU extension */
-#else
-	minuteswest = timezone / 60;
-	if (broken->tm_isdst)
-		minuteswest -= 60;
-#endif
+	minuteswest = -get_gmtoff(broken) / 60;
 
 	if (ctl->debug) {
 		if (ctl->hctosys && !ctl->universal)

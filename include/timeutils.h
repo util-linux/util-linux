@@ -53,6 +53,7 @@ typedef uint64_t nsec_t;
 #define FORMAT_TIMESPAN_MAX 64
 
 int parse_timestamp(const char *t, usec_t *usec);
+int get_gmtoff(const struct tm *tp);
 
 /* flags for strxxx_iso() functions */
 enum {
