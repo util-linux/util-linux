@@ -647,17 +647,24 @@ done:
 
 static int try_write(const char *filename)
 {
-	int fd, rc = 0;
+	int rc = 0;
 
 	if (!filename)
 		return -EINVAL;
 
-	fd = open(filename, O_RDWR|O_CREAT|O_CLOEXEC,
-			    S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
-	if (fd < 0)
+#ifdef HAVE_EACCESS
+	if (eaccess(filename, R_OK|W_OK) != 0)
 		rc = -errno;
-	else
-		close(fd);
+#else
+	{
+		int fd = open(filename, O_RDWR|O_CREAT|O_CLOEXEC,
+			    S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
+		if (fd < 0)
+			rc = -errno;
+		else
+			close(fd);
+	}
+#endif
 	return rc;
 }
 
