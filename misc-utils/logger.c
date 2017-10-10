@@ -139,6 +139,8 @@ struct logger_ctl {
 			octet_count:1;		/* use RFC6587 octet counting */
 };
 
+static void logger_reopen(struct logger_ctl *ctl);
+
 /*
  * For tests we want to be able to control datetime outputs
  */
@@ -425,7 +427,7 @@ static char const *rfc3164_current_time(void)
  * it is too much for the logger utility. If octet-counting is
  * selected, we use that.
  */
-static void write_output(const struct logger_ctl *ctl, const char *const msg)
+static void write_output(struct logger_ctl *ctl, const char *const msg)
 {
 	struct iovec iov[4];
 	int iovlen = 0;
@@ -482,9 +484,18 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 			cred->pid = ctl->pid;
 		}
 #endif
+		/* Note that logger(1) maybe executed for long time (as pipe
+		 * reader) and connection endpoint (syslogd) may be restarted.
+		 *
+		 * The libc syslog() function reconnects on failed send().
+		 * Let's do the same to be robust.    [kzak -- Oct 2017]
+		 */
 
-		if (sendmsg(ctl->fd, &message, 0) < 0)
-			warn(_("send message failed"));
+		if (sendmsg(ctl->fd, &message, MSG_NOSIGNAL) < 0) {
+			logger_reopen(ctl);
+			if (sendmsg(ctl->fd, &message, MSG_NOSIGNAL) < 0)
+				warn(_("send message failed"));
+		}
 	}
 
 	if (ctl->stderr_printout) {
@@ -865,26 +876,44 @@ static void generate_syslog_header(struct logger_ctl *const ctl)
 	ctl->syslogfp(ctl);
 }
 
-static void logger_open(struct logger_ctl *ctl)
+/* just open, nothing else */
+static void __logger_open(struct logger_ctl *ctl)
 {
 	if (ctl->server) {
 		ctl->fd = inet_socket(ctl->server, ctl->port, &ctl->socket_type);
-		if (!ctl->syslogfp)
-			ctl->syslogfp = syslog_rfc5424_header;
 	} else {
 		if (!ctl->unix_socket)
 			ctl->unix_socket = _PATH_DEVLOG;
 
 		ctl->fd = unix_socket(ctl, ctl->unix_socket, &ctl->socket_type);
-		if (!ctl->syslogfp)
-			ctl->syslogfp = syslog_local_header;
 	}
+}
+
+/* open and initialize relevant @ctl tuff */
+static void logger_open(struct logger_ctl *ctl)
+{
+	__logger_open(ctl);
+
+	if (!ctl->syslogfp)
+		ctl->syslogfp = ctl->server ? syslog_rfc5424_header :
+					      syslog_local_header;
 	if (!ctl->tag)
 		ctl->tag = xgetlogin();
+
 	generate_syslog_header(ctl);
 }
 
-static void logger_command_line(const struct logger_ctl *ctl, char **argv)
+/* re-open; usually after failed connection */
+static void logger_reopen(struct logger_ctl *ctl)
+{
+	if (ctl->fd != -1)
+		close(ctl->fd);
+	ctl->fd = -1;
+
+	__logger_open(ctl);
+}
+
+static void logger_command_line(struct logger_ctl *ctl, char **argv)
 {
 	/* note: we never re-generate the syslog header here, even if we
 	 * generate multiple messages. If so, we think it is the right thing
