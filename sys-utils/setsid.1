@@ -10,7 +10,10 @@ setsid \- run a program in a new session
 .RI [ arguments ]
 .SH DESCRIPTION
 .B setsid
-runs a program in a new session.
+runs a program in a new session. The command calls
+.BR fork (2)
+if already a process group leader. Otherwise, it executes a program in the
+current process.
 .SH OPTIONS
 .TP
 .BR \-c , " \-\-ctty"

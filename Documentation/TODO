@@ -45,6 +45,11 @@ cleanup lib/path.c:
      to /sys snapshots (e.g. lsblk regression tests)
 	
 
+setsid
+------
+  - add --fork to always call fork(2) before setsid(2)
+    https://github.com/karelzak/util-linux/issues/518
+
 lscpu
 -----
   - read cpuid and uname information from file if --sysroot is specified, then
