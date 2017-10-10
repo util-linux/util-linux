@@ -489,8 +489,13 @@ static void write_output(struct logger_ctl *ctl, const char *const msg)
 		 *
 		 * The libc syslog() function reconnects on failed send().
 		 * Let's do the same to be robust.    [kzak -- Oct 2017]
+		 *
+		 * MSG_NOSIGNAL is POSIX.1-2008 compatible, but it for example
+		 * no suported by apple-darwin15.6.0.
 		 */
-
+#ifndef MSG_NOSIGNAL
+# define MSG_NOSIGNAL 0
+#endif
 		if (sendmsg(ctl->fd, &message, MSG_NOSIGNAL) < 0) {
 			logger_reopen(ctl);
 			if (sendmsg(ctl->fd, &message, MSG_NOSIGNAL) < 0)
