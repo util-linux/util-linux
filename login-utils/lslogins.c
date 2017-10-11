@@ -606,11 +606,11 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 		return NULL;
 	}
 
-	user = xcalloc(1, sizeof(struct lslogins_user));
-
 	grp = getgrgid(pwd->pw_gid);
 	if (!grp)
 		return NULL;
+
+	user = xcalloc(1, sizeof(struct lslogins_user));
 
 	if (ctl->wtmp)
 		user_wtmp = get_last_wtmp(ctl, pwd->pw_name);
