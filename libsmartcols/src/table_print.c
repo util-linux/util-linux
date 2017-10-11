@@ -1409,6 +1409,7 @@ static int initialize_printing(struct libscols_table *tb, struct libscols_buffer
 	int rc;
 
 	DBG(TAB, ul_debugobj(tb, "initialize printing"));
+	*buf = NULL;
 
 	if (!tb->symbols) {
 		rc = scols_table_set_default_symbols(tb);
@@ -1516,7 +1517,7 @@ int scols_table_print_range(	struct libscols_table *tb,
 				struct libscols_line *start,
 				struct libscols_line *end)
 {
-	struct libscols_buffer *buf;
+	struct libscols_buffer *buf = NULL;
 	struct libscols_iter itr;
 	int rc;
 
@@ -1602,7 +1603,7 @@ int scols_table_print_range_to_string(
 static int __scols_print_table(struct libscols_table *tb, int *is_empty)
 {
 	int rc = 0;
-	struct libscols_buffer *buf;
+	struct libscols_buffer *buf = NULL;
 
 	if (!tb)
 		return -EINVAL;
