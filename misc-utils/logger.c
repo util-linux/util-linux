@@ -139,6 +139,7 @@ struct logger_ctl {
 			octet_count:1;		/* use RFC6587 octet counting */
 };
 
+#define is_connected(_ctl)	((_ctl)->fd >= 0)
 static void logger_reopen(struct logger_ctl *ctl);
 
 /*
@@ -268,9 +269,7 @@ static int unix_socket(struct logger_ctl *ctl, const char *path, int *socket_typ
 		if (ctl->unix_socket_errors)
 			err(EXIT_FAILURE, _("socket %s"), path);
 
-		/* openlog(3) compatibility, socket errors are
-		 * not reported, but ignored silently */
-		ctl->noact = 1;
+		/* write_output() will try to reconnect */
 		return -1;
 	}
 
@@ -433,6 +432,10 @@ static void write_output(struct logger_ctl *ctl, const char *const msg)
 	int iovlen = 0;
 	char *octet = NULL;
 
+	/* initial connect failed? */
+	if (!ctl->noact && !is_connected(ctl))
+		logger_reopen(ctl);
+
 	/* 1) octen count */
 	if (ctl->octet_count) {
 		size_t len = xasprintf(&octet, "%zu ", strlen(ctl->hdr) + strlen(msg));
@@ -445,7 +448,7 @@ static void write_output(struct logger_ctl *ctl, const char *const msg)
 	/* 3) message */
 	iovec_add_string(iov, iovlen, msg, 0);
 
-	if (!ctl->noact) {
+	if (!ctl->noact && is_connected(ctl)) {
 		struct msghdr message = { 0 };
 #ifdef SCM_CREDENTIALS
 		struct cmsghdr *cmhp;
