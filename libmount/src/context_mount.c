@@ -1534,13 +1534,13 @@ int mnt_context_get_mount_excode(
 			return MNT_EX_SUCCESS;
 		if (!buf)
 			break;
-		if (stat(src, &st))
+		if (src && stat(src, &st))
 			snprintf(buf, bufsz, _("%s is not a block device, and stat(2) fails?"), src);
-		else if (S_ISBLK(st.st_mode))
+		else if (src && S_ISBLK(st.st_mode))
 			snprintf(buf, bufsz,
 				_("the kernel does not recognize %s as a block device; "
 				  "maybe \"modprobe driver\" is necessary"), src);
-		else if (S_ISREG(st.st_mode))
+		else if (src && S_ISREG(st.st_mode))
 			snprintf(buf, bufsz, _("%s is not a block device; try \"-o loop\""), src);
 		else
 			snprintf(buf, bufsz, _("%s is not a block device"), src);
@@ -1580,7 +1580,8 @@ int mnt_context_get_mount_excode(
 
 	case EBADMSG:
 		/* Bad CRC for classic filesystems (e.g. extN or XFS) */
-		if (buf && (S_ISBLK(st.st_mode) || S_ISREG(st.st_mode))) {
+		if (buf && src && stat(src, &st) == 0
+		    && (S_ISBLK(st.st_mode) || S_ISREG(st.st_mode))) {
 			snprintf(buf, bufsz, _("cannot mount; probably corrupted filesystem on %s"), src);
 			break;
 		}
