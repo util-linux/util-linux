@@ -158,6 +158,8 @@ static size_t mbs_insert(char *str, wint_t c, size_t *ncells)
 	char in_buf[MB_CUR_MAX];
 
 	n = wctomb(in_buf, wc);
+	if (n == (size_t) -1)
+		return n;
 	*ncells = wcwidth(wc);
 	in = in_buf;
 #else
