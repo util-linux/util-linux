@@ -194,13 +194,13 @@ static int fincore_fd (struct fincore_control *ctl,
 		       off_t *count_incore)
 {
 	size_t window_size = N_PAGES_IN_WINDOW * ctl->pagesize;
-	off_t  file_offset;
-	void  *window = NULL;
+	off_t file_offset;
 	int rc = 0;
 	int warned_once = 0;
 
 	for (file_offset = 0; file_offset < file_size; file_offset += window_size) {
 		size_t len;
+		void  *window = NULL;
 
 		len = file_size - file_offset;
 		if (len >= window_size)
