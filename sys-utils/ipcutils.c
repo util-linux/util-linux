@@ -517,9 +517,13 @@ void ipc_print_size(int unit, char *msg, uint64_t size, const char *end,
 		printf(format, size / 1024);
 		break;
 	case IPC_UNIT_HUMAN:
+	{
+		char *tmp;
 		sprintf(format, "%%%ds", width);
-		printf(format, size_to_human_string(SIZE_SUFFIX_1LETTER, size));
+		printf(format, (tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, size)));
+		free(tmp);
 		break;
+	}
 	default:
 		/* impossible occurred */
 		abort();
