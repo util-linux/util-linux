@@ -523,8 +523,6 @@ static void syslog_rfc3164_header(struct logger_ctl *const ctl)
 	char pid[30], *hostname;
 
 	*pid = '\0';
-	if (ctl->fd < 0)
-		return;
 	if (ctl->pid)
 		snprintf(pid, sizeof(pid), "[%d]", ctl->pid);
 
@@ -752,9 +750,6 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 	char *structured = NULL;
 	struct list_head *sd;
 
-	if (ctl->fd < 0)
-		return;
-
 	if (ctl->rfc5424_time) {
 		struct timeval tv;
 		struct tm *tm;
@@ -881,6 +876,7 @@ static void syslog_local_header(struct logger_ctl *const ctl)
 static void generate_syslog_header(struct logger_ctl *const ctl)
 {
 	free(ctl->hdr);
+	ctl->hdr = NULL;
 	ctl->syslogfp(ctl);
 }
 
