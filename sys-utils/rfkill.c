@@ -201,7 +201,7 @@ static int rfkill_ro_open(int nonblock)
 /* returns: 0 success, 1 read again, < 0 error */
 static int rfkill_read_event(int fd, struct rfkill_event *event)
 {
-	ssize_t	len = read(fd, event, sizeof(event));
+	ssize_t	len = read(fd, event, sizeof(*event));
 
 	if (len < 0) {
 		if (errno == EAGAIN)
