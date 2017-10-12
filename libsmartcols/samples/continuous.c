@@ -108,8 +108,16 @@ int main(int argc, char *argv[])
 			sprintf(timecell, "%f [%3d%%]", diff,
 				done ? 100 : (int)(diff / (TIME_PERIOD / 100.0)));
 
-			/* don't print line separator when in progress */
-			scols_table_enable_nolinesep(tb, !done);
+			/* Note that libsmartcols don't print \n for last line
+			 * in the table, but if you print a line somewhere in
+			 * the midle of the table you need
+			 *
+			 *    scols_table_enable_nolinesep(tb, !done);
+			 *
+			 * to disable line breaks. In this example it's
+			 * unnecessary as we print the latest line only.
+			 */
+
 			/* print the line */
 			scols_table_print_range(tb, line, NULL);
 
@@ -118,7 +126,8 @@ int main(int argc, char *argv[])
 				fflush(scols_table_get_stream(tb));
 				/* move to the begin of the line */
 				fputc('\r', scols_table_get_stream(tb));
-			}
+			} else
+				fputc('\n', scols_table_get_stream(tb));
 		} while (!done);
 
 		last = now;

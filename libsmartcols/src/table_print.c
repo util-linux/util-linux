@@ -901,6 +901,7 @@ static int print_range(	struct libscols_table *tb,
 	struct libscols_line *ln;
 
 	assert(tb);
+	DBG(TAB, ul_debugobj(tb, "printing range"));
 
 	while (rc == 0 && scols_table_next_line(tb, itr, &ln) == 0) {
 
@@ -1524,7 +1525,7 @@ int scols_table_print_range(	struct libscols_table *tb,
 	if (scols_table_is_tree(tb))
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "printing range"));
+	DBG(TAB, ul_debugobj(tb, "printing range from API"));
 
 	rc = initialize_printing(tb, &buf);
 	if (rc)
