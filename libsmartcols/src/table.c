@@ -874,6 +874,10 @@ struct libscols_symbols *scols_table_get_symbols(const struct libscols_table *tb
  * re-printing the same line more than once (e.g. progress bar). Don't use it
  * if you're not sure.
  *
+ * Note that for the last line in the table the separator is disabled at all.
+ * The library differentiate between table terminator and line terminator
+ * (although for standard output \n byte is used in both cases).
+ *
  * Returns: 0 on success, negative number in case of an error.
  */
 int scols_table_enable_nolinesep(struct libscols_table *tb, int enable)
