@@ -495,7 +495,7 @@ static int create_loop(struct loopdev_cxt *lc,
 				errx(EXIT_FAILURE, _("%s: overlapping encrypted loop device exists"), file);
 			}
 
-			lc->info.lo_flags &= !LO_FLAGS_AUTOCLEAR;
+			lc->info.lo_flags &= ~LO_FLAGS_AUTOCLEAR;
 			if (loopcxt_set_status(lc)) {
 				loopcxt_deinit(lc);
 				errx(EXIT_FAILURE, _("%s: failed to re-use loop device"), file);
