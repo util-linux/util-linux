@@ -107,7 +107,6 @@ static const char *mm_stat_names[] = {
 	[MM_NUM_MIGRATED]    = "num_migrated"
 };
 
-
 struct zram {
 	char	devname[32];
 	struct sysfs_cxt sysfs;
@@ -118,10 +117,7 @@ struct zram {
 		     has_control : 1;	/* has /sys/class/zram-control/ */
 };
 
-#define ZRAM_EMPTY	{ .devname = { '\0' }, .sysfs = UL_SYSFSCXT_EMPTY }
-
 static unsigned int raw, no_headings, inbytes;
-
 
 static int get_column_id(int num)
 {
