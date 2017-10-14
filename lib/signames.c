@@ -51,7 +51,7 @@
 
 
 #ifdef SIGRTMIN
-static int rtsig_to_signum(char *sig)
+static int rtsig_to_signum(const char *sig)
 {
 	int num, maxi = 0;
 	char *ep = NULL;
@@ -75,7 +75,7 @@ static int rtsig_to_signum(char *sig)
 }
 #endif
 
-int signame_to_signum(char *sig)
+int signame_to_signum(const char *sig)
 {
 	size_t n;
 

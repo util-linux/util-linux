@@ -127,6 +127,6 @@ static const struct signv {
 #endif
 };
 
-int signame_to_signum(char *sig);
+int signame_to_signum(const char *sig);
 
 #endif /* SIGNAMES_H */
