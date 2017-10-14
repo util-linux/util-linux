@@ -41,6 +41,7 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "all-io.h"
+#include "signames.h"
 
 /* synchronize parent and child by pipe */
 #define PIPE_SYNC_BYTE	0x06
@@ -259,7 +260,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -U, --user[=<file>]       unshare user namespace\n"), out);
 	fputs(_(" -C, --cgroup[=<file>]     unshare cgroup namespace\n"), out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
-	fputs(_("     --kill-child          when dying, kill the forked child (implies --fork)\n"), out);
+	fputs(_("     --kill-child[=<signame>]  when dying, kill the forked child (implies --fork); defaults to SIGKILL\n"), out);
 	fputs(_("     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
 	fputs(_("     --propagation slave|shared|private|unchanged\n"
@@ -294,7 +295,7 @@ int main(int argc, char *argv[])
 		{ "cgroup",        optional_argument, NULL, 'C'             },
 
 		{ "fork",          no_argument,       NULL, 'f'             },
-		{ "kill-child",    no_argument,       NULL, OPT_KILLCHILD   },
+		{ "kill-child",    optional_argument, NULL, OPT_KILLCHILD   },
 		{ "mount-proc",    optional_argument, NULL, OPT_MOUNTPROC   },
 		{ "map-root-user", no_argument,       NULL, 'r'             },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
@@ -305,7 +306,7 @@ int main(int argc, char *argv[])
 	int setgrpcmd = SETGROUPS_NONE;
 	int unshare_flags = 0;
 	int c, forkit = 0, maproot = 0;
-	int kill_child = 0;
+	int kill_child_signo = 0; /* 0 means --kill-child was not used */
 	const char *procmnt = NULL;
 	pid_t pid = 0;
 	int fds[2];
@@ -379,8 +380,14 @@ int main(int argc, char *argv[])
 			propagation = parse_propagation(optarg);
 			break;
 		case OPT_KILLCHILD:
-			kill_child = 1;
 			forkit = 1;
+			if (optarg) {
+				if ((kill_child_signo = signame_to_signum(optarg)) < 0)
+					errx(EXIT_FAILURE, _("unknown signal: %s"),
+					     optarg);
+			} else {
+				kill_child_signo = SIGKILL;
+			}
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
@@ -439,8 +446,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (kill_child)
-		if (prctl(PR_SET_PDEATHSIG, SIGKILL) < 0)
+	if (kill_child_signo != 0)
+		if (prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
 			err(EXIT_FAILURE, "prctl failed");
 
 	if (maproot) {

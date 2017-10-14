@@ -138,10 +138,11 @@ by bind mount.
 Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather than
 running it directly.  This is useful when creating a new PID namespace.
 .TP
-.BR \-\-kill\-child
-When \fBunshare\fR terminates, have \fBSIGKILL\fR be sent to the forked child process.
+.BR \-\-kill\-child [ =\fIsigname ]
+When \fBunshare\fR terminates, have \fIsigname\fP be sent to the forked child process.
 Combined with \fB--pid\fR this allows for an easy and realiable killing of the entire
 process tree below \fBunshare\fR.
+If not given, \fIsigname\fP defaults to \fBSIGKILL\fR.
 This option implies \fB--fork\fR.
 .TP
 .BR \-\-mount\-proc [ =\fImountpoint ]
