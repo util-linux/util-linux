@@ -23,6 +23,8 @@
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 #include <libsmartcols.h>
 
@@ -476,6 +478,8 @@ static void status(struct zram *z)
 {
 	struct libscols_table *tb;
 	size_t i;
+	DIR *dir;
+	struct dirent *d;
 
 	scols_init_debug(0);
 
@@ -493,22 +497,29 @@ static void status(struct zram *z)
 			err(EXIT_FAILURE, _("failed to initialize output column"));
 	}
 
-	if (z)
-		fill_table_row(tb, z);		/* just one device specified */
-	else {
-		/* list all used devices */
-		z = new_zram(NULL);
-
-		for (i = 0; ; i++) {
-			zram_set_devname(z, NULL, i);
-			if (!zram_exist(z))
-				break;
-			if (zram_used(z))
-				fill_table_row(tb, z);
-		}
-		free_zram(z);
+	if (z) {
+		/* just one device specified */
+		fill_table_row(tb, z);
+		goto print_table;
 	}
 
+	/* list all used devices */
+	z = new_zram(NULL);
+	if (!(dir = opendir(_PATH_DEV)))
+		err(EXIT_FAILURE, _("cannot open %s"), _PATH_DEV);
+
+	while ((d = readdir(dir))) {
+		int n;
+		if (sscanf(d->d_name, "zram%d", &n) != 1)
+			continue;
+		zram_set_devname(z, NULL, n);
+		if (zram_exist(z) && zram_used(z))
+			fill_table_row(tb, z);
+	}
+	closedir(dir);
+	free_zram(z);
+
+print_table:
 	scols_print_table(tb);
 	scols_unref_table(tb);
 }
