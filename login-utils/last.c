@@ -349,7 +349,7 @@ static int time_formatter(int fmt, char *dst, size_t dlen, time_t *when)
 		ret = rtrim_whitespace((unsigned char *) dst);
 		break;
 	case LAST_TIMEFTM_ISO8601:
-		ret = strtime_iso(when, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_TIMEZONE, dst, dlen);
+		ret = strtime_iso(when, ISO_TIMESTAMP_T, dst, dlen);
 		break;
 	default:
 		abort();

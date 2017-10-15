@@ -451,7 +451,7 @@ static char *make_time(int mode, time_t time)
 		strtime_short(&time, &now, 0, buf, sizeof(buf));
 		break;
 	case TIME_ISO:
-		strtime_iso(&time, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_TIMEZONE, buf, sizeof(buf));
+		strtime_iso(&time, ISO_TIMESTAMP_T, buf, sizeof(buf));
 		break;
 	default:
 		errx(EXIT_FAILURE, _("unsupported time type"));

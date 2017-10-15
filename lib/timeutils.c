@@ -405,7 +405,7 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 	char *p = buf;
 	int len;
 
-	if (flags & ISO_8601_DATE) {
+	if (flags & ISO_DATE) {
 		len = snprintf(p, bufsz, "%4d-%.2d-%.2d", tm->tm_year + 1900,
 						tm->tm_mon + 1, tm->tm_mday);
 		if (len < 0 || (size_t) len > bufsz)
@@ -414,14 +414,14 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 		p += len;
 	}
 
-	if ((flags & ISO_8601_DATE) && (flags & ISO_8601_TIME)) {
+	if ((flags & ISO_DATE) && (flags & ISO_TIME)) {
 		if (bufsz < 1)
 			return -1;
-		*p++ = (flags & ISO_8601_SPACE) ? ' ' : 'T';
+		*p++ = (flags & ISO_T) ? 'T' : ' ';
 		bufsz--;
 	}
 
-	if (flags & ISO_8601_TIME) {
+	if (flags & ISO_TIME) {
 		len = snprintf(p, bufsz, "%02d:%02d:%02d", tm->tm_hour,
 						 tm->tm_min, tm->tm_sec);
 		if (len < 0 || (size_t) len > bufsz)
@@ -430,14 +430,14 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 		p += len;
 	}
 
-	if (flags & ISO_8601_DOTUSEC) {
+	if (flags & ISO_DOTUSEC) {
 		len = snprintf(p, bufsz, ".%06ld", (long) usec);
 		if (len < 0 || (size_t) len > bufsz)
 			return -1;
 		bufsz -= len;
 		p += len;
 
-	} else if (flags & ISO_8601_COMMAUSEC) {
+	} else if (flags & ISO_COMMAUSEC) {
 		len = snprintf(p, bufsz, ",%06ld", (long) usec);
 		if (len < 0 || (size_t) len > bufsz)
 			return -1;
@@ -445,7 +445,7 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 		p += len;
 	}
 
-	if (flags & ISO_8601_TIMEZONE) {
+	if (flags & ISO_TIMEZONE) {
 		int tmin  = get_gmtoff(tm) / 60;
 		int zhour = tmin / 60;
 		int zmin  = abs(tmin % 60);
@@ -461,7 +461,7 @@ int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz)
 {
 	struct tm tm;
 
-	if (flags & ISO_8601_GMTIME)
+	if (flags & ISO_GMTIME)
 		tm = *gmtime(&tv->tv_sec);
 	else
 		tm = *localtime(&tv->tv_sec);
@@ -479,7 +479,7 @@ int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz)
 {
 	struct tm tm;
 
-	if (flags & ISO_8601_GMTIME)
+	if (flags & ISO_GMTIME)
 		tm = *gmtime(t);
 	else
 		tm = *localtime(t);
@@ -548,7 +548,7 @@ time_t timegm(struct tm *tm)
 int main(int argc, char *argv[])
 {
 	struct timeval tv = { 0 };
-	char buf[ISO_8601_BUFSIZ];
+	char buf[ISO_BUFSIZ];
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s <time> [<usec>]\n", argv[0]);
@@ -559,19 +559,17 @@ int main(int argc, char *argv[])
 	if (argc == 3)
 		tv.tv_usec = strtos64_or_err(argv[2], "failed to parse <usec>");
 
-	strtimeval_iso(&tv, ISO_8601_DATE, buf, sizeof(buf));
+	strtimeval_iso(&tv, ISO_DATE, buf, sizeof(buf));
 	printf("Date: '%s'\n", buf);
 
-	strtimeval_iso(&tv, ISO_8601_TIME, buf, sizeof(buf));
+	strtimeval_iso(&tv, ISO_TIME, buf, sizeof(buf));
 	printf("Time: '%s'\n", buf);
 
-	strtimeval_iso(&tv, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_COMMAUSEC,
-			    buf, sizeof(buf));
+	strtimeval_iso(&tv, ISO_DATE | ISO_TIME | ISO_COMMAUSEC | ISO_T,
+		       buf, sizeof(buf));
 	printf("Full: '%s'\n", buf);
 
-	strtimeval_iso(&tv, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_DOTUSEC |
-			    ISO_8601_TIMEZONE | ISO_8601_SPACE,
-			    buf, sizeof(buf));
+	strtimeval_iso(&tv, ISO_TIMESTAMP_DOT, buf, sizeof(buf));
 	printf("Zone: '%s'\n", buf);
 
 	return EXIT_SUCCESS;

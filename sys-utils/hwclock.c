@@ -554,11 +554,9 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 static int
 display_time(struct timeval hwctime)
 {
-	char buf[ISO_8601_BUFSIZ];
+	char buf[ISO_BUFSIZ];
 
-	if (strtimeval_iso(&hwctime, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_DOTUSEC|
-				 ISO_8601_TIMEZONE|ISO_8601_SPACE,
-				 buf, sizeof(buf))) {
+	if (strtimeval_iso(&hwctime, ISO_TIMESTAMP_DOT, buf, sizeof(buf))) {
 		warnx(_("iso-8601 format overflow"));
 		return EXIT_FAILURE;
 	}

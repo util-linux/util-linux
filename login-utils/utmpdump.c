@@ -102,9 +102,7 @@ static void print_utline(struct utmpx *ut, FILE *out)
 	tv.tv_sec = ut->ut_tv.tv_sec;
 	tv.tv_usec = ut->ut_tv.tv_usec;
 
-	if (strtimeval_iso(&tv,
-			   ISO_8601_DATE | ISO_8601_TIME | ISO_8601_COMMAUSEC |
-			   ISO_8601_TIMEZONE | ISO_8601_GMTIME, time_string,
+	if (strtimeval_iso(&tv, ISO_TIMESTAMP_COMMA_GT, time_string,
 			   sizeof(time_string)) != 0)
 		return;
 	cleanse(ut->ut_id);

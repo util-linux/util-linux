@@ -840,9 +840,7 @@ static char *iso_8601_time(struct dmesg_control *ctl, struct dmesg_record *rec,
 		.tv_usec = rec->tv.tv_usec
 	};
 
-	if (strtimeval_iso(&tv,	ISO_8601_DATE|ISO_8601_TIME|ISO_8601_COMMAUSEC|
-				ISO_8601_TIMEZONE,
-				buf, bufsz) != 0)
+	if (strtimeval_iso(&tv,	ISO_TIMESTAMP_COMMA_T, buf, bufsz) != 0)
 		return NULL;
 
 	return buf;
