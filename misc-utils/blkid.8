@@ -85,6 +85,16 @@ are shown, if they are recognized.
 has two main forms of operation: either searching for a device with a
 specific NAME=value pair, or displaying NAME=value pairs for one or
 more specified devices.
+
+For security reasons
+.B blkid
+silently ignores all devices where the probing result is ambivalent (more
+collide filesystems is detected).  The low-level probing mode (\fB-p\fR)
+provides more information and extra return code in this case.
+It's recommended to use
+.BR wipefs (8)
+to get a detailed overview and to erase obsolete stuff (magic strings) from the device.
+
 .SH OPTIONS
 The \fIsize\fR and \fIoffset\fR arguments may be followed by the multiplicative
 suffixes like KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
