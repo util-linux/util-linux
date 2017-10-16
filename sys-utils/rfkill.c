@@ -63,7 +63,7 @@ static const struct rfkill_type_str rfkill_type_strings[] = {
 	{ .type = RFKILL_TYPE_UWB,       .name = "ultrawideband" }, /* alias */
 	{ .type = RFKILL_TYPE_WIMAX,     .name = "wimax",        .desc = "WiMAX" },
 	{ .type = RFKILL_TYPE_WWAN,      .name = "wwan",         .desc = "Wireless WAN" },
-	{ .type = RFKILL_TYPE_GPS,       .name = "gps",          .desc = "GPT" },
+	{ .type = RFKILL_TYPE_GPS,       .name = "gps",          .desc = "GPS" },
 	{ .type = RFKILL_TYPE_FM,        .name = "fm",           .desc = "FM" },
 	{ .type = RFKILL_TYPE_NFC,       .name = "nfc",          .desc = "NFC" },
 	{ .type = NUM_RFKILL_TYPES,      .name = NULL            }
