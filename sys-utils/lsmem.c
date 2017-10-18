@@ -340,22 +340,23 @@ static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
 
 	blk->count = 1;
 	blk->index = strtoumax(name + 6, NULL, 10); /* get <num> of "memory<num>" */
-	blk->removable = path_read_u64(_PATH_SYS_MEMORY"/%s/%s", name, "removable");
+	blk->removable = path_read_u64(_PATH_SYS_MEMORY"/%s/removable", name);
 	blk->state = MEMORY_STATE_UNKNOWN;
-	path_read_str(line, sizeof(line), _PATH_SYS_MEMORY"/%s/%s", name, "state");
+
+	path_read_str(line, sizeof(line), _PATH_SYS_MEMORY"/%s/state", name);
 	if (strcmp(line, "offline") == 0)
 		blk->state = MEMORY_STATE_OFFLINE;
 	else if (strcmp(line, "online") == 0)
 		blk->state = MEMORY_STATE_ONLINE;
 	else if (strcmp(line, "going-offline") == 0)
 		blk->state = MEMORY_STATE_GOING_OFFLINE;
+
 	if (lsmem->have_nodes)
 		blk->node = memory_block_get_node(name);
 
 	blk->nr_zones = 0;
 	if (lsmem->have_zones) {
-		path_read_str(line, sizeof(line), _PATH_SYS_MEMORY"/%s/%s", name,
-			      "valid_zones");
+		path_read_str(line, sizeof(line), _PATH_SYS_MEMORY"/%s/valid_zones", name);
 		token = strtok(line, " ");
 	}
 	for (i = 0; i < MAX_NR_ZONES; i++) {
@@ -461,7 +462,7 @@ static void read_basic_info(struct lsmem *lsmem)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	unsigned int i;
+	size_t i;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
