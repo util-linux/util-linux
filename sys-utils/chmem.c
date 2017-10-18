@@ -328,7 +328,7 @@ static void parse_parameter(struct chmem_desc *desc, char *param)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	unsigned int i;
+	size_t i;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [SIZE|RANGE|BLOCKRANGE]\n"), program_invocation_short_name);
@@ -337,20 +337,16 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Set a particular size or range of memory online or offline.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -e, --enable   enable memory\n"), out);
-	fputs(_(" -d, --disable  disable memory\n"), out);
-	fputs(_(" -b, --blocks   use memory blocks\n"), out);
-	fputs(_(" -z, --zone     select memory zone ("), out);
-	for (i = 0; i < ARRAY_SIZE(zone_names); i++) {
-		fputs(zone_names[i], out);
-		if (i < ARRAY_SIZE(zone_names) - 1)
-			fputc('|', out);
-	}
-	fputs(")\n", out);
+	fputs(_(" -e, --enable       enable memory\n"), out);
+	fputs(_(" -d, --disable      disable memory\n"), out);
+	fputs(_(" -b, --blocks       use memory blocks\n"), out);
+	fputs(_(" -z, --zone <name>  select memory zone (see below)\n"), out);
+	fputs(_(" -v, --verbose      verbose output\n"), out);
+	printf(USAGE_HELP_OPTIONS(20));
 
-	fputs(_(" -v, --verbose  verbose output\n"), out);
-	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(16));
+	fputs(_("\nSupported zones:\n"), out);
+	for (i = 0; i < ARRAY_SIZE(zone_names); i++)
+		fprintf(out, " %s\n", zone_names[i]);
 
 	printf(USAGE_MAN_TAIL("chmem(8)"));
 
