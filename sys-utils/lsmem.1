@@ -18,6 +18,11 @@ together with a columns list in environments where a stable output is required.
 Not all columns are supported on all systems.  If an unsupported column is
 specified, \fBlsmem\fP prints the column but does not provide any data for it.
 
+The number of output entries (memory ranges) maybe be influenced by specified
+columns. The lsmem command shows larger memory ranges if the blocks in the
+range do not distinguish in output columns. For example RANGE maybe be
+different if the command output contains column ZONES (lsmem -o +ZONES).
+
 Use the \fB\-\-help\fR option to see the columns description.
 
 .SH OPTIONS
