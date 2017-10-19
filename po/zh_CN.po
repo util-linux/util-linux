@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-10-03 17:22+0200\n"
+"POT-Creation-Date: 2017-10-19 12:53+0200\n"
 "PO-Revision-Date: 2016-11-07 05:25-0500\n"
 "Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -59,7 +59,7 @@ msgstr "参数不够"
 #: login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:354
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:262 login-utils/vipw.c:280
-#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1190 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:532 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
@@ -69,11 +69,12 @@ msgstr "参数不够"
 #: sys-utils/rtcwake.c:268 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
 #: sys-utils/setpriv.c:637 sys-utils/swapon.c:376 sys-utils/swapon.c:519
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:106 sys-utils/unshare.c:121
-#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 term-utils/agetty.c:2608
-#: term-utils/mesg.c:127 term-utils/script.c:460 term-utils/script.c:468
-#: term-utils/script.c:563 term-utils/scriptreplay.c:198
-#: term-utils/scriptreplay.c:201 term-utils/wall.c:419 text-utils/colcrt.c:282
-#: text-utils/more.c:534 text-utils/rev.c:141 text-utils/ul.c:230
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:509
+#: term-utils/agetty.c:2614 term-utils/mesg.c:127 term-utils/script.c:460
+#: term-utils/script.c:468 term-utils/script.c:563
+#: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
+#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
+#: text-utils/rev.c:141 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
 msgstr "打不开 %s"
@@ -215,7 +216,7 @@ msgstr " %-25s 获得 512-字节扇区的大小\n"
 #: disk-utils/mkfs.bfs.c:181 disk-utils/mkfs.c:116 disk-utils/mkfs.minix.c:813
 #: disk-utils/swaplabel.c:181 misc-utils/wipefs.c:718
 #: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:394 sys-utils/tunelp.c:242
-#: sys-utils/zramctl.c:686 sys-utils/zramctl.c:712
+#: sys-utils/zramctl.c:693 sys-utils/zramctl.c:719
 msgid "no device specified"
 msgstr "未指定设备"
 
@@ -840,7 +841,7 @@ msgstr "用户定义的结束磁道超出了媒体的最大指定值"
 msgid "user defined start track exceeds the user defined end track"
 msgstr "用户定义的起始磁道超过了定义的终止磁道"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:989
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1022
 msgid "close failed"
 msgstr "关闭失败"
 
@@ -1181,7 +1182,7 @@ msgstr "分配输出表失败"
 #: sys-utils/lscpu.c:1815 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
 #: sys-utils/prlimit.c:229 sys-utils/rfkill.c:373 sys-utils/swapon.c:180
-#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:409 text-utils/column.c:420
+#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:420
 msgid "failed to allocate output line"
 msgstr "分配输出行失败"
 
@@ -1192,7 +1193,7 @@ msgstr "分配输出行失败"
 #: sys-utils/losetup.c:301 sys-utils/lscpu.c:1795 sys-utils/lscpu.c:1826
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
 #: sys-utils/rfkill.c:401 sys-utils/swapon.c:228 sys-utils/wdctl.c:242
-#: sys-utils/zramctl.c:475 text-utils/column.c:426
+#: sys-utils/zramctl.c:473 text-utils/column.c:426
 #, fuzzy
 msgid "failed to add output data"
 msgstr "向输出表添加数据出错"
@@ -3528,7 +3529,7 @@ msgstr "%s：设置回环设备失败"
 #: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:110
 #: sys-utils/lscpu.c:373 sys-utils/lsipc.c:232 sys-utils/lsmem.c:136
 #: sys-utils/lsns.c:189 sys-utils/prlimit.c:277 sys-utils/rfkill.c:155
-#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:148
+#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:146
 #, c-format
 msgid "unknown column: %s"
 msgstr "未知列: %s"
@@ -6793,7 +6794,7 @@ msgid "special device %s does not exist"
 msgstr "特殊设备 %s 不存在"
 
 #: libmount/src/context_mount.c:1470 libmount/src/context_mount.c:1486
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1593
 #, fuzzy, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) 失败"
@@ -6904,7 +6905,7 @@ msgstr "%s 失败"
 msgid "no medium found on %s"
 msgstr "在 %s 上找不到媒体"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1585
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "将不会尝试在“%s”上创建文件系统"
@@ -9552,153 +9553,153 @@ msgstr "向 %s 发送信号失败"
 msgid "cannot find process \"%s\""
 msgstr "找不到进程“%s”"
 
-#: misc-utils/logger.c:222
+#: misc-utils/logger.c:225
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "未知设施名称：%s"
 
-#: misc-utils/logger.c:228
+#: misc-utils/logger.c:231
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "未知优先级名称：%s"
 
-#: misc-utils/logger.c:240
+#: misc-utils/logger.c:243
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s：路径名过长"
 
-#: misc-utils/logger.c:267
+#: misc-utils/logger.c:270
 #, c-format
 msgid "socket %s"
 msgstr "套接字 %s"
 
-#: misc-utils/logger.c:306
+#: misc-utils/logger.c:307
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "解析名称 %s 端口 %s 失败：%s"
 
-#: misc-utils/logger.c:323
+#: misc-utils/logger.c:324
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "连接 %s 端口 %s 失败"
 
-#: misc-utils/logger.c:352
+#: misc-utils/logger.c:353
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "超过了最大输入行数(%d)"
 
-#: misc-utils/logger.c:487
+#: misc-utils/logger.c:505
 msgid "send message failed"
 msgstr "发送消息失败"
 
-#: misc-utils/logger.c:558
+#: misc-utils/logger.c:575
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr "结构化数据的 ID “%s” 不唯一"
 
-#: misc-utils/logger.c:572
+#: misc-utils/logger.c:589
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr "没有为 --sd-param %s 指定 --sd-id"
 
-#: misc-utils/logger.c:754
+#: misc-utils/logger.c:768
 msgid "localtime() failed"
 msgstr "localtime() 失败"
 
-#: misc-utils/logger.c:764
+#: misc-utils/logger.c:778
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "主机名“'%s”太长"
 
-#: misc-utils/logger.c:770
+#: misc-utils/logger.c:784
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "标签“%s”太长"
 
-#: misc-utils/logger.c:833
+#: misc-utils/logger.c:847
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "将忽略未知的选项参数：%s"
 
-#: misc-utils/logger.c:845
+#: misc-utils/logger.c:859
 #, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "无效参数︰ %s︰ 将使用自动错误"
 
-#: misc-utils/logger.c:997
+#: misc-utils/logger.c:1030
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [选项] [<消息>]\n"
 
-#: misc-utils/logger.c:1000
+#: misc-utils/logger.c:1033
 msgid "Enter messages into the system log.\n"
 msgstr "将消息输入系统日志。\n"
 
-#: misc-utils/logger.c:1003
+#: misc-utils/logger.c:1036
 msgid " -i                       log the logger command's PID\n"
 msgstr " -i                       记录日志程序的 PID\n"
 
-#: misc-utils/logger.c:1004
+#: misc-utils/logger.c:1037
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr "     --id[=<id>]          记录指定的 <id>，否则记录 PID\n"
 
-#: misc-utils/logger.c:1005
+#: misc-utils/logger.c:1038
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <文件>       记录指定文件的内容\n"
 
-#: misc-utils/logger.c:1006
+#: misc-utils/logger.c:1039
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -e, --skip-empty         处理文件时不记录空行\n"
 
-#: misc-utils/logger.c:1007
+#: misc-utils/logger.c:1040
 msgid "     --no-act             do everything except the write the log\n"
 msgstr "     --no-act             操作但不实际写入日志\n"
 
-#: misc-utils/logger.c:1008
+#: misc-utils/logger.c:1041
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    将指定消息标记为此优先级\n"
 
-#: misc-utils/logger.c:1009
+#: misc-utils/logger.c:1042
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr "     --octet-count        使用 rfc6587 八位元组(octet) 计数\n"
 
-#: misc-utils/logger.c:1010
+#: misc-utils/logger.c:1043
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        从 stdin 输入的每一行查找前缀\n"
 
-#: misc-utils/logger.c:1011
+#: misc-utils/logger.c:1044
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             也向标准错误输出消息\n"
 
-#: misc-utils/logger.c:1012
+#: misc-utils/logger.c:1045
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr " -S, --size <大小>        单条消息的最大尺寸\n"
 
-#: misc-utils/logger.c:1013
+#: misc-utils/logger.c:1046
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <tag>          向每一行添加指定标记\n"
 
-#: misc-utils/logger.c:1014
+#: misc-utils/logger.c:1047
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <名称>      写入指定的远程 syslog 服务器\n"
 
-#: misc-utils/logger.c:1015
+#: misc-utils/logger.c:1048
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <端口>        使用指定端口进行 UDP 或 TCP 连接\n"
 
-#: misc-utils/logger.c:1016
+#: misc-utils/logger.c:1049
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                只用 TCP\n"
 
-#: misc-utils/logger.c:1017
+#: misc-utils/logger.c:1050
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                只用 UDP\n"
 
-#: misc-utils/logger.c:1018
+#: misc-utils/logger.c:1051
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            使用过时的 BSD syslog 协议\n"
 
-#: misc-utils/logger.c:1019
+#: misc-utils/logger.c:1052
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
@@ -9706,23 +9707,23 @@ msgstr ""
 "     --rfc5424[=<snip>]   使用 syslog 协议(远程时默认);\n"
 "                            <snip> 可以是 notime, 或 notq, 和/或 nohost\n"
 
-#: misc-utils/logger.c:1021
+#: misc-utils/logger.c:1054
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr "     --sd-id <id>         rfc5424 结构化数据 ID\n"
 
-#: misc-utils/logger.c:1022
+#: misc-utils/logger.c:1055
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr "     --sd-param <数据>    rfc5424 结构化数据名称=值\n"
 
-#: misc-utils/logger.c:1023
+#: misc-utils/logger.c:1056
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr "     --msgid <msgid>      设置 rfc5424 消息 id 字段\n"
 
-#: misc-utils/logger.c:1024
+#: misc-utils/logger.c:1057
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <套接字>    写入此 Unix 套接字\n"
 
-#: misc-utils/logger.c:1025
+#: misc-utils/logger.c:1058
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
@@ -9730,42 +9731,42 @@ msgstr ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          使用 Unix 套接字时打印连接错误\n"
 
-#: misc-utils/logger.c:1028
+#: misc-utils/logger.c:1061
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr "     --journald[=<文件>]  写 journald 记录\n"
 
-#: misc-utils/logger.c:1114
+#: misc-utils/logger.c:1147
 #, c-format
 msgid "file %s"
 msgstr "文件 %s"
 
-#: misc-utils/logger.c:1129
+#: misc-utils/logger.c:1162
 msgid "failed to parse id"
 msgstr "解析 id 失败"
 
-#: misc-utils/logger.c:1147
+#: misc-utils/logger.c:1180
 msgid "failed to parse message size"
 msgstr "解析消息大小失败"
 
-#: misc-utils/logger.c:1182
+#: misc-utils/logger.c:1215
 msgid "--msgid cannot contain space"
 msgstr "--msgid 不能包含空格"
 
-#: misc-utils/logger.c:1204
+#: misc-utils/logger.c:1237
 #, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "无效的结构化数据 ID: “%s”"
 
-#: misc-utils/logger.c:1209
+#: misc-utils/logger.c:1242
 #, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "无效的结构化数据参数: “%s”"
 
-#: misc-utils/logger.c:1219
+#: misc-utils/logger.c:1252
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <文件> 和 <消息> 互斥，消息已忽略"
 
-#: misc-utils/logger.c:1226
+#: misc-utils/logger.c:1259
 msgid "journald entry could not be written"
 msgstr "无法写入 journald 项"
 
@@ -9806,7 +9807,7 @@ msgstr "内部内核设备名称"
 msgid "internal parent kernel device name"
 msgstr "内部上级内核设备名称"
 
-#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:84
+#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:86
 msgid "where the device is mounted"
 msgstr "设备挂载位置"
 
@@ -13195,7 +13196,7 @@ msgstr " -Q, --queue              创建消息队列\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <模式>        资源的权限模式掩码(默认为 0644)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:626
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:633
 msgid "failed to parse size"
 msgstr "解析大小失败"
 
@@ -17714,55 +17715,55 @@ msgstr "标识："
 msgid "version"
 msgstr "版本："
 
-#: sys-utils/zramctl.c:73
+#: sys-utils/zramctl.c:75
 msgid "zram device name"
 msgstr "zram 设备名称"
 
-#: sys-utils/zramctl.c:74
+#: sys-utils/zramctl.c:76
 msgid "limit on the uncompressed amount of data"
 msgstr "对未压缩数据量的限制"
 
-#: sys-utils/zramctl.c:75
+#: sys-utils/zramctl.c:77
 msgid "uncompressed size of stored data"
 msgstr "存储数据的未压缩大小"
 
-#: sys-utils/zramctl.c:76
+#: sys-utils/zramctl.c:78
 msgid "compressed size of stored data"
 msgstr "存储数据的压缩后大小"
 
-#: sys-utils/zramctl.c:77
+#: sys-utils/zramctl.c:79
 msgid "the selected compression algorithm"
 msgstr "所选的压缩算法"
 
-#: sys-utils/zramctl.c:78
+#: sys-utils/zramctl.c:80
 msgid "number of concurrent compress operations"
 msgstr "并发的压缩操作的数量"
 
-#: sys-utils/zramctl.c:79
+#: sys-utils/zramctl.c:81
 msgid "empty pages with no allocated memory"
 msgstr "未分配内存的空页"
 
-#: sys-utils/zramctl.c:80
+#: sys-utils/zramctl.c:82
 msgid "all memory including allocator fragmentation and metadata overhead"
 msgstr "包括分配器碎片和元数据开销在内的所有内存"
 
-#: sys-utils/zramctl.c:81
+#: sys-utils/zramctl.c:83
 msgid "memory limit used to store compressed data"
 msgstr "用于存储压缩后数据的内存限制"
 
-#: sys-utils/zramctl.c:82
+#: sys-utils/zramctl.c:84
 msgid "memory zram have been consumed to store compressed data"
 msgstr "已消耗内存 zram 来存储压缩的数据"
 
-#: sys-utils/zramctl.c:83
+#: sys-utils/zramctl.c:85
 msgid "number of objects migrated by compaction"
 msgstr "通过压实迁移的对象数"
 
-#: sys-utils/zramctl.c:378
+#: sys-utils/zramctl.c:376
 msgid "Failed to parse mm_stat"
 msgstr "解析 mm_stat 失败"
 
-#: sys-utils/zramctl.c:526
+#: sys-utils/zramctl.c:533
 #, c-format
 msgid ""
 " %1$s [options] <device>\n"
@@ -17772,87 +17773,87 @@ msgstr ""
 " %1$s [选项] [<回环设备>]\n"
 " %1$s [选项] -f | <回环设备> <文件>\n"
 
-#: sys-utils/zramctl.c:532
+#: sys-utils/zramctl.c:539
 msgid "Set up and control zram devices.\n"
 msgstr "设置和控制 zram 设备。\n"
 
-#: sys-utils/zramctl.c:535
+#: sys-utils/zramctl.c:542
 msgid " -a, --algorithm lzo|lz4   compression algorithm to use\n"
 msgstr " -a, --algorithm lzo|lz4   要使用的压缩算法\n"
 
-#: sys-utils/zramctl.c:536
+#: sys-utils/zramctl.c:543
 msgid " -b, --bytes               print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes               以字节为打印尺寸，而非易读格式\n"
 
-#: sys-utils/zramctl.c:537
+#: sys-utils/zramctl.c:544
 msgid " -f, --find                find a free device\n"
 msgstr " -f, --find                查找空闲设备\n"
 
-#: sys-utils/zramctl.c:538
+#: sys-utils/zramctl.c:545
 msgid " -n, --noheadings          don't print headings\n"
 msgstr " -n, --noheadings          不打印标题\n"
 
-#: sys-utils/zramctl.c:539
+#: sys-utils/zramctl.c:546
 msgid " -o, --output <list>       columns to use for status output\n"
 msgstr " -o, --output <list>       用于状态输出的列\n"
 
-#: sys-utils/zramctl.c:540
+#: sys-utils/zramctl.c:547
 msgid "     --raw                 use raw status output format\n"
 msgstr "     --raw                 使用原生状态输出格式\n"
 
-#: sys-utils/zramctl.c:541
+#: sys-utils/zramctl.c:548
 msgid " -r, --reset               reset all specified devices\n"
 msgstr " -r, --reset               重置所有指定的设备\n"
 
-#: sys-utils/zramctl.c:542
+#: sys-utils/zramctl.c:549
 msgid " -s, --size <size>         device size\n"
 msgstr " -s, --size <尺寸>         设备尺寸\n"
 
-#: sys-utils/zramctl.c:543
+#: sys-utils/zramctl.c:550
 msgid " -t, --streams <number>    number of compression streams\n"
 msgstr " -t, --streams <数字>      压缩流数量\n"
 
-#: sys-utils/zramctl.c:608
+#: sys-utils/zramctl.c:615
 #, c-format
 msgid "unsupported algorithm: %s"
 msgstr "不支持的算法︰%s"
 
-#: sys-utils/zramctl.c:630
+#: sys-utils/zramctl.c:637
 msgid "failed to parse streams"
 msgstr "解析流失败"
 
-#: sys-utils/zramctl.c:652
+#: sys-utils/zramctl.c:659
 msgid "option --find is mutually exclusive with <device>"
 msgstr "--find 选项与<设备>互斥"
 
-#: sys-utils/zramctl.c:658
+#: sys-utils/zramctl.c:665
 msgid "only one <device> at a time is allowed"
 msgstr "一次只允许一个 <设备>"
 
-#: sys-utils/zramctl.c:661
+#: sys-utils/zramctl.c:668
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr "--algorithm 和 --streams 必须与 --size 合用"
 
-#: sys-utils/zramctl.c:691 sys-utils/zramctl.c:720
+#: sys-utils/zramctl.c:698 sys-utils/zramctl.c:727
 #, c-format
 msgid "%s: failed to reset"
 msgstr "%s︰重置失败"
 
-#: sys-utils/zramctl.c:702 sys-utils/zramctl.c:710
+#: sys-utils/zramctl.c:709 sys-utils/zramctl.c:717
 msgid "no free zram device found"
 msgstr "未找到空闲的 zram 设备"
 
-#: sys-utils/zramctl.c:724
+#: sys-utils/zramctl.c:731
 #, c-format
 msgid "%s: failed to set number of streams"
 msgstr "%s︰设置流数量失败"
 
-#: sys-utils/zramctl.c:728
+#: sys-utils/zramctl.c:735
 #, c-format
 msgid "%s: failed to set algorithm"
 msgstr "%s︰设置算法失败"
 
-#: sys-utils/zramctl.c:731
+#: sys-utils/zramctl.c:738
 #, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "%s：设置磁盘大小失败(%ju 个字节)"
@@ -17883,8 +17884,8 @@ msgid "%s: can't exec %s: %m"
 msgstr "%s：无法执行 %s：%m"
 
 #: term-utils/agetty.c:567 term-utils/agetty.c:892 term-utils/agetty.c:1410
-#: term-utils/agetty.c:1428 term-utils/agetty.c:1464 term-utils/agetty.c:1474
-#: term-utils/agetty.c:1511 term-utils/agetty.c:1954 term-utils/agetty.c:2511
+#: term-utils/agetty.c:1428 term-utils/agetty.c:1465 term-utils/agetty.c:1475
+#: term-utils/agetty.c:1517 term-utils/agetty.c:1960 term-utils/agetty.c:2517
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "分配内存失败：%m"
@@ -17965,36 +17966,36 @@ msgstr "%s：获取终端属性失败：%m"
 msgid "setting terminal attributes failed: %m"
 msgstr "设置终端属性失败：%m"
 
-#: term-utils/agetty.c:1454
+#: term-utils/agetty.c:1455
 msgid "cannot open os-release file"
 msgstr "无法打开 os-release 文件"
 
-#: term-utils/agetty.c:1616
+#: term-utils/agetty.c:1622
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "未能创建 reload 文件︰%s：%m"
 
-#: term-utils/agetty.c:1703
+#: term-utils/agetty.c:1709
 msgid "[press ENTER to login]"
 msgstr "[按 ENTER 键登录]"
 
-#: term-utils/agetty.c:1727
+#: term-utils/agetty.c:1733
 msgid "Num Lock off"
 msgstr "Num Lock 关"
 
-#: term-utils/agetty.c:1730
+#: term-utils/agetty.c:1736
 msgid "Num Lock on"
 msgstr "Num Lock 开"
 
-#: term-utils/agetty.c:1733
+#: term-utils/agetty.c:1739
 msgid "Caps Lock on"
 msgstr "Caps Lock 开"
 
-#: term-utils/agetty.c:1736
+#: term-utils/agetty.c:1742
 msgid "Scroll Lock on"
 msgstr "Scroll Lock 开"
 
-#: term-utils/agetty.c:1739
+#: term-utils/agetty.c:1745
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -18003,32 +18004,32 @@ msgstr ""
 "提示：%s\n"
 "\n"
 
-#: term-utils/agetty.c:1874
+#: term-utils/agetty.c:1880
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s：read：%m"
 
-#: term-utils/agetty.c:1933
+#: term-utils/agetty.c:1939
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s：输入过载"
 
-#: term-utils/agetty.c:1950 term-utils/agetty.c:1958
+#: term-utils/agetty.c:1956 term-utils/agetty.c:1964
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s：登录名字符转换无效"
 
-#: term-utils/agetty.c:1964
+#: term-utils/agetty.c:1970
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s：登录名中的字符 0x%x 无效"
 
-#: term-utils/agetty.c:2049
+#: term-utils/agetty.c:2055
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s：设置终端属性失败：%m"
 
-#: term-utils/agetty.c:2087
+#: term-utils/agetty.c:2093
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18037,160 +18038,160 @@ msgstr ""
 " %1$s [选项] <线路> [<波特率>,...] [<终端类型>]\n"
 " %1$s [选项] <波特率>,... <线路> [<终端类型>]\n"
 
-#: term-utils/agetty.c:2091
+#: term-utils/agetty.c:2097
 msgid "Open a terminal and set its mode.\n"
 msgstr "打开一个终端并设置其模式。\n"
 
-#: term-utils/agetty.c:2094
+#: term-utils/agetty.c:2100
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                采用 8 位 tty\n"
 
-#: term-utils/agetty.c:2095
+#: term-utils/agetty.c:2101
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <用户>     以指定用户自动登录\n"
 
-#: term-utils/agetty.c:2096
+#: term-utils/agetty.c:2102
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              不重置控制模式\n"
 
-#: term-utils/agetty.c:2097
+#: term-utils/agetty.c:2103
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               使用 -r <主机名> 选项调用 login(1)\n"
 
-#: term-utils/agetty.c:2098
+#: term-utils/agetty.c:2104
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <文件>    指定要显示的预登录消息(issue)文件\n"
 
-#: term-utils/agetty.c:2099
+#: term-utils/agetty.c:2105
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         启用硬件流控制\n"
 
-#: term-utils/agetty.c:2100
+#: term-utils/agetty.c:2106
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <主机名>        指定登录主机\n"
 
-#: term-utils/agetty.c:2101
+#: term-utils/agetty.c:2107
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              不显示预登录消息(issue)文件\n"
 
-#: term-utils/agetty.c:2102
+#: term-utils/agetty.c:2108
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <字符串> 设置初始字符串\n"
 
-#: term-utils/agetty.c:2103
+#: term-utils/agetty.c:2109
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              提示之前不清屏\n"
 
-#: term-utils/agetty.c:2104
+#: term-utils/agetty.c:2110
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <文件> 指定登录程序\n"
 
-#: term-utils/agetty.c:2105
+#: term-utils/agetty.c:2111
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<模式>]  控制本地线路标志\n"
 
-#: term-utils/agetty.c:2106
+#: term-utils/agetty.c:2112
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         连接过程中提取波特率\n"
 
-#: term-utils/agetty.c:2107
+#: term-utils/agetty.c:2113
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           不提示登录\n"
 
-#: term-utils/agetty.c:2108
+#: term-utils/agetty.c:2114
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            预登录消息(issue)前不打印换行(newline)\n"
 
-#: term-utils/agetty.c:2109
+#: term-utils/agetty.c:2115
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <选项> 传递给登录程序的选项\n"
 
-#: term-utils/agetty.c:2110
+#: term-utils/agetty.c:2116
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          登录前等待按下任意键来继续\n"
 
-#: term-utils/agetty.c:2111
+#: term-utils/agetty.c:2117
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <目录>        将根目录更改为指定目录\n"
 
-#: term-utils/agetty.c:2112
+#: term-utils/agetty.c:2118
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               对 tty 执行虚拟挂起(virtual hangup)\n"
 
-#: term-utils/agetty.c:2113
+#: term-utils/agetty.c:2119
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            中断(break)后尝试保持波特率\n"
 
-#: term-utils/agetty.c:2114
+#: term-utils/agetty.c:2120
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <数字>       登录进程超时(秒)\n"
 
-#: term-utils/agetty.c:2115
+#: term-utils/agetty.c:2121
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          检测纯大写终端\n"
 
-#: term-utils/agetty.c:2116
+#: term-utils/agetty.c:2122
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              等待回车\n"
 
-#: term-utils/agetty.c:2117
+#: term-utils/agetty.c:2123
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              不打印提示信息\n"
 
-#: term-utils/agetty.c:2118
+#: term-utils/agetty.c:2124
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           将完全不显示主机名\n"
 
-#: term-utils/agetty.c:2119
+#: term-utils/agetty.c:2125
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        显示完全限定主机名\n"
 
-#: term-utils/agetty.c:2120
+#: term-utils/agetty.c:2126
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <字符串> 附加的退格字符\n"
 
-#: term-utils/agetty.c:2121
+#: term-utils/agetty.c:2127
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <字符串>  附加的杀死(kill)字符\n"
 
-#: term-utils/agetty.c:2122
+#: term-utils/agetty.c:2128
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <目录>         登录前切换目录(chdir)\n"
 
-#: term-utils/agetty.c:2123
+#: term-utils/agetty.c:2129
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <数字>         提示前睡眠的秒数\n"
 
-#: term-utils/agetty.c:2124
+#: term-utils/agetty.c:2130
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <数字>          以指定优先级运行 login\n"
 
-#: term-utils/agetty.c:2125
+#: term-utils/agetty.c:2131
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               在运行 agetty 实例时重新载入提示\n"
 
-#: term-utils/agetty.c:2126
+#: term-utils/agetty.c:2132
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list               列出可设置的架构并退出\n"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2477
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d 位用户"
 
-#: term-utils/agetty.c:2599
+#: term-utils/agetty.c:2605
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname 失败：%m"
 
-#: term-utils/agetty.c:2611
+#: term-utils/agetty.c:2617
 #, c-format
 msgid "cannot touch file %s"
 msgstr "无法 touch 文件 %s"
 
-#: term-utils/agetty.c:2615
+#: term-utils/agetty.c:2621
 msgid "--reload is unsupported on your system"
 msgstr "您的系统不支持 --reload"
 

@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-10-03 17:22+0200\n"
+"POT-Creation-Date: 2017-10-19 12:53+0200\n"
 "PO-Revision-Date: 2017-05-26 20:14+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -67,7 +67,7 @@ msgstr "十分な引数がありません"
 #: login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:354
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:262 login-utils/vipw.c:280
-#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1190 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:532 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
@@ -77,11 +77,12 @@ msgstr "十分な引数がありません"
 #: sys-utils/rtcwake.c:268 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
 #: sys-utils/setpriv.c:637 sys-utils/swapon.c:376 sys-utils/swapon.c:519
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:106 sys-utils/unshare.c:121
-#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 term-utils/agetty.c:2608
-#: term-utils/mesg.c:127 term-utils/script.c:460 term-utils/script.c:468
-#: term-utils/script.c:563 term-utils/scriptreplay.c:198
-#: term-utils/scriptreplay.c:201 term-utils/wall.c:419 text-utils/colcrt.c:282
-#: text-utils/more.c:534 text-utils/rev.c:141 text-utils/ul.c:230
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:509
+#: term-utils/agetty.c:2614 term-utils/mesg.c:127 term-utils/script.c:460
+#: term-utils/script.c:468 term-utils/script.c:563
+#: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
+#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
+#: text-utils/rev.c:141 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
 msgstr "%s を open できません"
@@ -223,7 +224,7 @@ msgstr " %-25s 512バイトセクタのサイズを取得\n"
 #: disk-utils/mkfs.bfs.c:181 disk-utils/mkfs.c:116 disk-utils/mkfs.minix.c:813
 #: disk-utils/swaplabel.c:181 misc-utils/wipefs.c:718
 #: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:394 sys-utils/tunelp.c:242
-#: sys-utils/zramctl.c:686 sys-utils/zramctl.c:712
+#: sys-utils/zramctl.c:693 sys-utils/zramctl.c:719
 msgid "no device specified"
 msgstr "デバイスが指定されていません"
 
@@ -847,7 +848,7 @@ msgstr "ユーザーが定義した終了トラックがメディアの最大値
 msgid "user defined start track exceeds the user defined end track"
 msgstr "ユーザーが定義した終了トラックが開始トラックを超えています"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:989
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1022
 msgid "close failed"
 msgstr "閉じるのに失敗しました"
 
@@ -1191,7 +1192,7 @@ msgstr "出力テーブルの準備に失敗しました"
 #: sys-utils/lscpu.c:1815 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
 #: sys-utils/prlimit.c:229 sys-utils/rfkill.c:373 sys-utils/swapon.c:180
-#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:409 text-utils/column.c:420
+#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:420
 msgid "failed to allocate output line"
 msgstr "出力先への行追加に失敗しました"
 
@@ -1202,7 +1203,7 @@ msgstr "出力先への行追加に失敗しました"
 #: sys-utils/losetup.c:301 sys-utils/lscpu.c:1795 sys-utils/lscpu.c:1826
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
 #: sys-utils/rfkill.c:401 sys-utils/swapon.c:228 sys-utils/wdctl.c:242
-#: sys-utils/zramctl.c:475 text-utils/column.c:426
+#: sys-utils/zramctl.c:473 text-utils/column.c:426
 msgid "failed to add output data"
 msgstr "出力データの追加に失敗しました"
 
@@ -3538,7 +3539,7 @@ msgstr "%s: ループバックデバイスの設定に失敗しました"
 #: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:110
 #: sys-utils/lscpu.c:373 sys-utils/lsipc.c:232 sys-utils/lsmem.c:136
 #: sys-utils/lsns.c:189 sys-utils/prlimit.c:277 sys-utils/rfkill.c:155
-#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:148
+#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:146
 #, c-format
 msgid "unknown column: %s"
 msgstr "不明なカラム: %s"
@@ -6845,7 +6846,7 @@ msgid "special device %s does not exist"
 msgstr "スペシャルデバイス %s が存在しません"
 
 #: libmount/src/context_mount.c:1470 libmount/src/context_mount.c:1486
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1593
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) システムコールが失敗しました: %m"
@@ -6958,7 +6959,7 @@ msgstr "%s に失敗しました。"
 msgid "no medium found on %s"
 msgstr "%s にメディアが挿入されていません"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1585
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "'%s' 上にファイルシステムを作らないようにします"
@@ -9697,129 +9698,129 @@ msgstr "%s へのシグナル送信に失敗しました"
 msgid "cannot find process \"%s\""
 msgstr "プロセス \"%s\" が見つかりません"
 
-#: misc-utils/logger.c:222
+#: misc-utils/logger.c:225
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "不明な分類名です: %s"
 
-#: misc-utils/logger.c:228
+#: misc-utils/logger.c:231
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "不明な優先順位名です: %s"
 
-#: misc-utils/logger.c:240
+#: misc-utils/logger.c:243
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s: パス名が長すぎます"
 
-#: misc-utils/logger.c:267
+#: misc-utils/logger.c:270
 #, c-format
 msgid "socket %s"
 msgstr "ソケット %s"
 
-#: misc-utils/logger.c:306
+#: misc-utils/logger.c:307
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "%s ポート %s の名前を解決できませんでした: %s"
 
-#: misc-utils/logger.c:323
+#: misc-utils/logger.c:324
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "%s ポート %s に接続できませんでした"
 
-#: misc-utils/logger.c:352
+#: misc-utils/logger.c:353
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "最大入力行数 (%d) を超えました"
 
-#: misc-utils/logger.c:487
+#: misc-utils/logger.c:505
 msgid "send message failed"
 msgstr "メッセージの送信に失敗しました"
 
-#: misc-utils/logger.c:558
+#: misc-utils/logger.c:575
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr ""
 
-#: misc-utils/logger.c:572
+#: misc-utils/logger.c:589
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr ""
 
-#: misc-utils/logger.c:754
+#: misc-utils/logger.c:768
 msgid "localtime() failed"
 msgstr "localtime() が失敗しました"
 
-#: misc-utils/logger.c:764
+#: misc-utils/logger.c:778
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "ホスト名 '%s' が長すぎます"
 
-#: misc-utils/logger.c:770
+#: misc-utils/logger.c:784
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "タグ '%s' が長すぎます"
 
-#: misc-utils/logger.c:833
+#: misc-utils/logger.c:847
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "不明なオプション引数を無視します: %s"
 
-#: misc-utils/logger.c:845
+#: misc-utils/logger.c:859
 #, fuzzy, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "--auto/-a オプションの引数が間違っています"
 
-#: misc-utils/logger.c:997
+#: misc-utils/logger.c:1030
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [オプション] [<メッセージ>]\n"
 
-#: misc-utils/logger.c:1000
+#: misc-utils/logger.c:1033
 msgid "Enter messages into the system log.\n"
 msgstr "メッセージをシステムログに記録します。\n"
 
-#: misc-utils/logger.c:1003
+#: misc-utils/logger.c:1036
 #, fuzzy
 msgid " -i                       log the logger command's PID\n"
 msgstr " --help                            このヘルプを表示して終了します\n"
 
-#: misc-utils/logger.c:1004
+#: misc-utils/logger.c:1037
 #, fuzzy
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr " -i, --id[=<id>]          <id> を記録します(既定値は PID)\n"
 
-#: misc-utils/logger.c:1005
+#: misc-utils/logger.c:1038
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, ---file <ファイル>   指定したファイルの内容をログに記録します\n"
 
-#: misc-utils/logger.c:1006
+#: misc-utils/logger.c:1039
 #, fuzzy
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -n, --skip-login           ログインプロンプトを表示しないようにします\n"
 
-#: misc-utils/logger.c:1007
+#: misc-utils/logger.c:1040
 #, fuzzy
 msgid "     --no-act             do everything except the write the log\n"
 msgstr " -n, --no-act              デバイスに書き込まないこと以外は通常に動作します\n"
 
-#: misc-utils/logger.c:1008
+#: misc-utils/logger.c:1041
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <優先順位> 対象のメッセージを指定した優先順位にします\n"
 
-#: misc-utils/logger.c:1009
+#: misc-utils/logger.c:1042
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr ""
 
-#: misc-utils/logger.c:1010
+#: misc-utils/logger.c:1043
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        標準入力の各行から先頭一致で検索します\n"
 
-#: misc-utils/logger.c:1011
+#: misc-utils/logger.c:1044
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             メッセージを標準エラーにも出力します\n"
 
-#: misc-utils/logger.c:1012
+#: misc-utils/logger.c:1045
 #, fuzzy
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr ""
@@ -9827,98 +9828,98 @@ msgstr ""
 "使い方:\n"
 " %s [オプション] デバイス [サイズ]\n"
 
-#: misc-utils/logger.c:1013
+#: misc-utils/logger.c:1046
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <タグ>         各行全てにこのタグを付けます\n"
 
-#: misc-utils/logger.c:1014
+#: misc-utils/logger.c:1047
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <名前>      指定したリモート syslog サーバに書き込みます\n"
 
-#: misc-utils/logger.c:1015
+#: misc-utils/logger.c:1048
 #, fuzzy
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <番号>        指定した UDP ポートを利用します\n"
 
-#: misc-utils/logger.c:1016
+#: misc-utils/logger.c:1049
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                TCP のみを使用します\n"
 
-#: misc-utils/logger.c:1017
+#: misc-utils/logger.c:1050
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                UDP のみを使用します\n"
 
-#: misc-utils/logger.c:1018
+#: misc-utils/logger.c:1051
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            古い BSD syslog プロトコルを使用します\n"
 
-#: misc-utils/logger.c:1019
+#: misc-utils/logger.c:1052
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
 msgstr ""
 
-#: misc-utils/logger.c:1021
+#: misc-utils/logger.c:1054
 #, fuzzy
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr " --rgid <gid>             実際の GID を設定します\n"
 
-#: misc-utils/logger.c:1022
+#: misc-utils/logger.c:1055
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr ""
 
-#: misc-utils/logger.c:1023
+#: misc-utils/logger.c:1056
 #, fuzzy
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr " --rgid <gid>             実際の GID を設定します\n"
 
-#: misc-utils/logger.c:1024
+#: misc-utils/logger.c:1057
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <ソケット>   指定した Unix ソケットに書き込みます\n"
 
-#: misc-utils/logger.c:1025
+#: misc-utils/logger.c:1058
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
 msgstr ""
 
-#: misc-utils/logger.c:1028
+#: misc-utils/logger.c:1061
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr ""
 
-#: misc-utils/logger.c:1114
+#: misc-utils/logger.c:1147
 #, c-format
 msgid "file %s"
 msgstr "ファイル %s"
 
-#: misc-utils/logger.c:1129
+#: misc-utils/logger.c:1162
 msgid "failed to parse id"
 msgstr "ID の解析に失敗しました"
 
-#: misc-utils/logger.c:1147
+#: misc-utils/logger.c:1180
 #, fuzzy
 msgid "failed to parse message size"
 msgstr "サイズ情報の解釈に失敗しました"
 
-#: misc-utils/logger.c:1182
+#: misc-utils/logger.c:1215
 msgid "--msgid cannot contain space"
 msgstr ""
 
-#: misc-utils/logger.c:1204
+#: misc-utils/logger.c:1237
 #, fuzzy, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "引数が正しくありません: %s"
 
-#: misc-utils/logger.c:1209
+#: misc-utils/logger.c:1242
 #, fuzzy, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "制限時間の引数が正しくありません: %s"
 
-#: misc-utils/logger.c:1219
+#: misc-utils/logger.c:1252
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr ""
 
-#: misc-utils/logger.c:1226
+#: misc-utils/logger.c:1259
 msgid "journald entry could not be written"
 msgstr ""
 
@@ -9961,7 +9962,7 @@ msgstr "カーネル内部デバイス名"
 msgid "internal parent kernel device name"
 msgstr "親のカーネル内部デバイス名"
 
-#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:84
+#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:86
 msgid "where the device is mounted"
 msgstr "マウントされている場所"
 
@@ -13406,7 +13407,7 @@ msgstr " -Q, --queue                 メッセージキューを作成します\
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <モード>      資源に割り当てるパーミッションを指定します (既定値は 0644 です)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:626
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:633
 msgid "failed to parse size"
 msgstr "サイズ情報の解釈に失敗しました"
 
@@ -18049,60 +18050,60 @@ msgstr "識別子:"
 msgid "version"
 msgstr "バージョン"
 
-#: sys-utils/zramctl.c:73
+#: sys-utils/zramctl.c:75
 msgid "zram device name"
 msgstr "zram デバイス名"
 
-#: sys-utils/zramctl.c:74
+#: sys-utils/zramctl.c:76
 msgid "limit on the uncompressed amount of data"
 msgstr "圧縮前のデータ容量による制限"
 
-#: sys-utils/zramctl.c:75
+#: sys-utils/zramctl.c:77
 msgid "uncompressed size of stored data"
 msgstr "圧縮前の格納されたデータのサイズ"
 
-#: sys-utils/zramctl.c:76
+#: sys-utils/zramctl.c:78
 msgid "compressed size of stored data"
 msgstr "圧縮後の格納されたデータのサイズ"
 
-#: sys-utils/zramctl.c:77
+#: sys-utils/zramctl.c:79
 msgid "the selected compression algorithm"
 msgstr "選択された圧縮アルゴリズム"
 
-#: sys-utils/zramctl.c:78
+#: sys-utils/zramctl.c:80
 msgid "number of concurrent compress operations"
 msgstr "並行して実行される圧縮オペレーションの数"
 
-#: sys-utils/zramctl.c:79
+#: sys-utils/zramctl.c:81
 #, fuzzy
 msgid "empty pages with no allocated memory"
 msgstr "メモリの割り当てに失敗しました: %m"
 
-#: sys-utils/zramctl.c:80
+#: sys-utils/zramctl.c:82
 msgid "all memory including allocator fragmentation and metadata overhead"
 msgstr ""
 
-#: sys-utils/zramctl.c:81
+#: sys-utils/zramctl.c:83
 #, fuzzy
 msgid "memory limit used to store compressed data"
 msgstr "圧縮前のデータ容量による制限"
 
-#: sys-utils/zramctl.c:82
+#: sys-utils/zramctl.c:84
 #, fuzzy
 msgid "memory zram have been consumed to store compressed data"
 msgstr "圧縮前のデータ容量による制限"
 
-#: sys-utils/zramctl.c:83
+#: sys-utils/zramctl.c:85
 #, fuzzy
 msgid "number of objects migrated by compaction"
 msgstr "並行して実行される圧縮オペレーションの数"
 
-#: sys-utils/zramctl.c:378
+#: sys-utils/zramctl.c:376
 #, fuzzy
 msgid "Failed to parse mm_stat"
 msgstr "開始位置の処理に失敗しました"
 
-#: sys-utils/zramctl.c:526
+#: sys-utils/zramctl.c:533
 #, c-format
 msgid ""
 " %1$s [options] <device>\n"
@@ -18113,92 +18114,92 @@ msgstr ""
 " %1$s -r <デバイス> [...]\n"
 " %1$s [オプション] -f | <デバイス> -s <サイズ>\n"
 
-#: sys-utils/zramctl.c:532
+#: sys-utils/zramctl.c:539
 msgid "Set up and control zram devices.\n"
 msgstr "zram デバイスの設定と制御を行います。\n"
 
-#: sys-utils/zramctl.c:535
+#: sys-utils/zramctl.c:542
 msgid " -a, --algorithm lzo|lz4   compression algorithm to use\n"
 msgstr " -a, --algorithm lzo|lz4   使用する圧縮アルゴリズム\n"
 
-#: sys-utils/zramctl.c:536
+#: sys-utils/zramctl.c:543
 msgid " -b, --bytes               print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes               可読性の高い形式ではなく、バイト単位でサイズを表示します\n"
 
-#: sys-utils/zramctl.c:537
+#: sys-utils/zramctl.c:544
 msgid " -f, --find                find a free device\n"
 msgstr " -f, --find                使っていないデバイスを検索します\n"
 
-#: sys-utils/zramctl.c:538
+#: sys-utils/zramctl.c:545
 msgid " -n, --noheadings          don't print headings\n"
 msgstr " -n, --noheadings          ヘッダを表示しません\n"
 
-#: sys-utils/zramctl.c:539
+#: sys-utils/zramctl.c:546
 #, fuzzy
 msgid " -o, --output <list>       columns to use for status output\n"
 msgstr " -o, --output <list> 出力する列を指定します\n"
 
-#: sys-utils/zramctl.c:540
+#: sys-utils/zramctl.c:547
 #, fuzzy
 msgid "     --raw                 use raw status output format\n"
 msgstr " -r, --raw            加工を行なわない出力形式を使用します\n"
 
-#: sys-utils/zramctl.c:541
+#: sys-utils/zramctl.c:548
 msgid " -r, --reset               reset all specified devices\n"
 msgstr " -r, --reset               すべての指定したデバイスをリセットします\n"
 
-#: sys-utils/zramctl.c:542
+#: sys-utils/zramctl.c:549
 msgid " -s, --size <size>         device size\n"
 msgstr ""
 " -s, --size <サイズ>       デバイスのサイズ\n"
 "\n"
 
-#: sys-utils/zramctl.c:543
+#: sys-utils/zramctl.c:550
 #, fuzzy
 msgid " -t, --streams <number>    number of compression streams\n"
 msgstr " -s, --sectors <数値>   利用するセクタの数をセットします\n"
 
-#: sys-utils/zramctl.c:608
+#: sys-utils/zramctl.c:615
 #, c-format
 msgid "unsupported algorithm: %s"
 msgstr "未対応のアルゴリズムです: %s"
 
-#: sys-utils/zramctl.c:630
+#: sys-utils/zramctl.c:637
 msgid "failed to parse streams"
 msgstr "ストリームの解釈に失敗しました"
 
-#: sys-utils/zramctl.c:652
+#: sys-utils/zramctl.c:659
 msgid "option --find is mutually exclusive with <device>"
 msgstr "オプション --find は <device> と同時に指定することができません"
 
-#: sys-utils/zramctl.c:658
+#: sys-utils/zramctl.c:665
 msgid "only one <device> at a time is allowed"
 msgstr "1度に1つのデバイスのみを指定できます"
 
-#: sys-utils/zramctl.c:661
+#: sys-utils/zramctl.c:668
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr "オプション --algorithm と --streams は --size と組み合わせる必要があります"
 
-#: sys-utils/zramctl.c:691 sys-utils/zramctl.c:720
+#: sys-utils/zramctl.c:698 sys-utils/zramctl.c:727
 #, c-format
 msgid "%s: failed to reset"
 msgstr "%s: リセットに失敗しました"
 
-#: sys-utils/zramctl.c:702 sys-utils/zramctl.c:710
+#: sys-utils/zramctl.c:709 sys-utils/zramctl.c:717
 msgid "no free zram device found"
 msgstr "空きのある zram デバイスがありません"
 
-#: sys-utils/zramctl.c:724
+#: sys-utils/zramctl.c:731
 #, c-format
 msgid "%s: failed to set number of streams"
 msgstr "%s: ストリームの番号の設定に失敗しました"
 
-#: sys-utils/zramctl.c:728
+#: sys-utils/zramctl.c:735
 #, c-format
 msgid "%s: failed to set algorithm"
 msgstr "%s: アルゴリズムの設定に失敗しました"
 
-#: sys-utils/zramctl.c:731
+#: sys-utils/zramctl.c:738
 #, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "%s: ディスクサイズ(%ju バイト)の設定に失敗しました"
@@ -18229,8 +18230,8 @@ msgid "%s: can't exec %s: %m"
 msgstr "%s: %s を実行できません: %m"
 
 #: term-utils/agetty.c:567 term-utils/agetty.c:892 term-utils/agetty.c:1410
-#: term-utils/agetty.c:1428 term-utils/agetty.c:1464 term-utils/agetty.c:1474
-#: term-utils/agetty.c:1511 term-utils/agetty.c:1954 term-utils/agetty.c:2511
+#: term-utils/agetty.c:1428 term-utils/agetty.c:1465 term-utils/agetty.c:1475
+#: term-utils/agetty.c:1517 term-utils/agetty.c:1960 term-utils/agetty.c:2517
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "メモリの割り当てに失敗しました: %m"
@@ -18313,36 +18314,36 @@ msgstr "%s: 端末の属性取得に失敗しました: %m"
 msgid "setting terminal attributes failed: %m"
 msgstr "端末の属性設定に失敗しました: %m"
 
-#: term-utils/agetty.c:1454
+#: term-utils/agetty.c:1455
 msgid "cannot open os-release file"
 msgstr "os-release ファイルを開くことができません"
 
-#: term-utils/agetty.c:1616
+#: term-utils/agetty.c:1622
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "リロードファイル %s の作成に失敗しました: %m"
 
-#: term-utils/agetty.c:1703
+#: term-utils/agetty.c:1709
 msgid "[press ENTER to login]"
 msgstr "[Enter を押すとログインできます]"
 
-#: term-utils/agetty.c:1727
+#: term-utils/agetty.c:1733
 msgid "Num Lock off"
 msgstr "Num Lock は無効な状態です"
 
-#: term-utils/agetty.c:1730
+#: term-utils/agetty.c:1736
 msgid "Num Lock on"
 msgstr "Num Lock が有効な状態です"
 
-#: term-utils/agetty.c:1733
+#: term-utils/agetty.c:1739
 msgid "Caps Lock on"
 msgstr "Caps Lock が有効な状態です"
 
-#: term-utils/agetty.c:1736
+#: term-utils/agetty.c:1742
 msgid "Scroll Lock on"
 msgstr "Scroll Lock が有効な状態です"
 
-#: term-utils/agetty.c:1739
+#: term-utils/agetty.c:1745
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -18351,32 +18352,32 @@ msgstr ""
 "ヒント: %s\n"
 "\n"
 
-#: term-utils/agetty.c:1874
+#: term-utils/agetty.c:1880
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: 読み込み: %m"
 
-#: term-utils/agetty.c:1933
+#: term-utils/agetty.c:1939
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: 入力が溢れました"
 
-#: term-utils/agetty.c:1950 term-utils/agetty.c:1958
+#: term-utils/agetty.c:1956 term-utils/agetty.c:1964
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ログイン名の文字変換が失敗しました"
 
-#: term-utils/agetty.c:1964
+#: term-utils/agetty.c:1970
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ログイン名に不正な文字 0x%x が含まれています"
 
-#: term-utils/agetty.c:2049
+#: term-utils/agetty.c:2055
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: 端末属性の設定に失敗しました: %m"
 
-#: term-utils/agetty.c:2087
+#: term-utils/agetty.c:2093
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18385,160 +18386,160 @@ msgstr ""
 " %1$s [オプション] <回線> [<ボーレート>,...] [端末タイプ]\n"
 " %1$s [オプション] <ボーレート>,... 回線 [端末タイプ]\n"
 
-#: term-utils/agetty.c:2091
+#: term-utils/agetty.c:2097
 msgid "Open a terminal and set its mode.\n"
 msgstr ""
 
-#: term-utils/agetty.c:2094
+#: term-utils/agetty.c:2100
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                端末が 8 ビットであるものとみなします\n"
 
-#: term-utils/agetty.c:2095
+#: term-utils/agetty.c:2101
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <ユーザ>   指定したユーザで自動ログインします\n"
 
-#: term-utils/agetty.c:2096
+#: term-utils/agetty.c:2102
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              制御モードをリセットしないようにします\n"
 
-#: term-utils/agetty.c:2097
+#: term-utils/agetty.c:2103
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               login(1) に対して -r <ホスト名> を設定します\n"
 
-#: term-utils/agetty.c:2098
+#: term-utils/agetty.c:2104
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <file>    issue ファイルを表示します\n"
 
-#: term-utils/agetty.c:2099
+#: term-utils/agetty.c:2105
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         ハードウェアフロー制御を有効にします\n"
 
-#: term-utils/agetty.c:2100
+#: term-utils/agetty.c:2106
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <ホスト名>      ログインホストを指定します\n"
 
-#: term-utils/agetty.c:2101
+#: term-utils/agetty.c:2107
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              issue ファイルを表示しないようにします\n"
 
-#: term-utils/agetty.c:2102
+#: term-utils/agetty.c:2108
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <文字列> 初期化文字列を指定します\n"
 
-#: term-utils/agetty.c:2103
+#: term-utils/agetty.c:2109
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              プロンプトの表示前に画面消去を行いません\n"
 
-#: term-utils/agetty.c:2104
+#: term-utils/agetty.c:2110
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <ファイル> ログインプログラムを指定します\n"
 
-#: term-utils/agetty.c:2105
+#: term-utils/agetty.c:2111
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<モード>] ローカル回線フラグを設定します\n"
 
-#: term-utils/agetty.c:2106
+#: term-utils/agetty.c:2112
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         接続時にボーレートを取得します\n"
 
-#: term-utils/agetty.c:2107
+#: term-utils/agetty.c:2113
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           ログインプロンプトを表示しないようにします\n"
 
-#: term-utils/agetty.c:2108
+#: term-utils/agetty.c:2114
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            issue を表示する前に、改行を表示しないようにします\n"
 
-#: term-utils/agetty.c:2109
+#: term-utils/agetty.c:2115
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <オプション> login コマンドに渡すオプションを指定します\n"
 
-#: term-utils/agetty.c:2110
+#: term-utils/agetty.c:2116
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          ログイン前に任意のキーが入力されるのを待つようにします\n"
 
-#: term-utils/agetty.c:2111
+#: term-utils/agetty.c:2117
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <ディレクトリ> 指定したディレクトリをルートにします\n"
 
-#: term-utils/agetty.c:2112
+#: term-utils/agetty.c:2118
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               tty を擬似的にハングアップするようにします\n"
 
-#: term-utils/agetty.c:2113
+#: term-utils/agetty.c:2119
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            break 後もボーレートを維持するようにします\n"
 
-#: term-utils/agetty.c:2114
+#: term-utils/agetty.c:2120
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <数値>       ログイン処理の制限時間を指定します\n"
 
-#: term-utils/agetty.c:2115
+#: term-utils/agetty.c:2121
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          大文字のみを使用する端末を検出するようにします\n"
 
-#: term-utils/agetty.c:2116
+#: term-utils/agetty.c:2122
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              キャリッジリターンを待機します\n"
 
-#: term-utils/agetty.c:2117
+#: term-utils/agetty.c:2123
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              ヒントを表示しないようにします\n"
 
-#: term-utils/agetty.c:2118
+#: term-utils/agetty.c:2124
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           ホスト名を全く表示しないようにします\n"
 
-#: term-utils/agetty.c:2119
+#: term-utils/agetty.c:2125
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        完全修飾ホスト名を表示します\n"
 
-#: term-utils/agetty.c:2120
+#: term-utils/agetty.c:2126
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <文字列> 追加のバックスペース文字を指定します\n"
 
-#: term-utils/agetty.c:2121
+#: term-utils/agetty.c:2127
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <文字列>  追加の kill 文字を指定します\n"
 
-#: term-utils/agetty.c:2122
+#: term-utils/agetty.c:2128
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <ディレクトリ>  ログインする前にディレクトリを変更します\n"
 
-#: term-utils/agetty.c:2123
+#: term-utils/agetty.c:2129
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <秒数>         プロンプトを表示する前に指定した秒数待ちます\n"
 
-#: term-utils/agetty.c:2124
+#: term-utils/agetty.c:2130
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <優先度>        login を指定した優先度で実行します\n"
 
-#: term-utils/agetty.c:2125
+#: term-utils/agetty.c:2131
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               実行中の agetty インスタンスをリロードします\n"
 
-#: term-utils/agetty.c:2126
+#: term-utils/agetty.c:2132
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list               設定可能なアーキテクチャを表示して終了します\n"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2477
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d ユーザ"
 
-#: term-utils/agetty.c:2599
+#: term-utils/agetty.c:2605
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname に失敗しました: %m"
 
-#: term-utils/agetty.c:2611
+#: term-utils/agetty.c:2617
 #, c-format
 msgid "cannot touch file %s"
 msgstr "ファイル %s にアクセスできません"
 
-#: term-utils/agetty.c:2615
+#: term-utils/agetty.c:2621
 msgid "--reload is unsupported on your system"
 msgstr "--reload はあなたのシステムではサポートされていません"
 

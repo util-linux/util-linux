@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-10-03 17:22+0200\n"
+"POT-Creation-Date: 2017-10-19 12:53+0200\n"
 "PO-Revision-Date: 2017-08-22 02:33+0200\n"
 "Last-Translator: Stéphane Aulery <lkppo@free.fr>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -64,7 +64,7 @@ msgstr "pas assez d'arguments"
 #: login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:354
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:262 login-utils/vipw.c:280
-#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1190 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:532 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
@@ -74,11 +74,12 @@ msgstr "pas assez d'arguments"
 #: sys-utils/rtcwake.c:268 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
 #: sys-utils/setpriv.c:637 sys-utils/swapon.c:376 sys-utils/swapon.c:519
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:106 sys-utils/unshare.c:121
-#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 term-utils/agetty.c:2608
-#: term-utils/mesg.c:127 term-utils/script.c:460 term-utils/script.c:468
-#: term-utils/script.c:563 term-utils/scriptreplay.c:198
-#: term-utils/scriptreplay.c:201 term-utils/wall.c:419 text-utils/colcrt.c:282
-#: text-utils/more.c:534 text-utils/rev.c:141 text-utils/ul.c:230
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:509
+#: term-utils/agetty.c:2614 term-utils/mesg.c:127 term-utils/script.c:460
+#: term-utils/script.c:468 term-utils/script.c:563
+#: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
+#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
+#: text-utils/rev.c:141 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
 msgstr "impossible d'ouvrir %s"
@@ -220,7 +221,7 @@ msgstr " %-25s afficher la capacité en secteur de 512 octets\n"
 #: disk-utils/mkfs.bfs.c:181 disk-utils/mkfs.c:116 disk-utils/mkfs.minix.c:813
 #: disk-utils/swaplabel.c:181 misc-utils/wipefs.c:718
 #: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:394 sys-utils/tunelp.c:242
-#: sys-utils/zramctl.c:686 sys-utils/zramctl.c:712
+#: sys-utils/zramctl.c:693 sys-utils/zramctl.c:719
 msgid "no device specified"
 msgstr "aucun périphérique indiqué"
 
@@ -843,7 +844,7 @@ msgstr "la piste finale définie par l’utilisateur dépasse le maximum spécif
 msgid "user defined start track exceeds the user defined end track"
 msgstr "la piste initiale définie par l’utilisateur dépasse la piste finale définie par l’utilisateur"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:989
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1022
 msgid "close failed"
 msgstr "échec de fermeture"
 
@@ -1185,7 +1186,7 @@ msgstr "échec d’allocation du tableau de sortie"
 #: sys-utils/lscpu.c:1815 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
 #: sys-utils/prlimit.c:229 sys-utils/rfkill.c:373 sys-utils/swapon.c:180
-#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:409 text-utils/column.c:420
+#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:420
 msgid "failed to allocate output line"
 msgstr "échec d’allocation de la ligne de sortie"
 
@@ -1196,7 +1197,7 @@ msgstr "échec d’allocation de la ligne de sortie"
 #: sys-utils/losetup.c:301 sys-utils/lscpu.c:1795 sys-utils/lscpu.c:1826
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
 #: sys-utils/rfkill.c:401 sys-utils/swapon.c:228 sys-utils/wdctl.c:242
-#: sys-utils/zramctl.c:475 text-utils/column.c:426
+#: sys-utils/zramctl.c:473 text-utils/column.c:426
 msgid "failed to add output data"
 msgstr "échec d'ajout de données de sortie"
 
@@ -3545,7 +3546,7 @@ msgstr "%s : échec de configuration du périphérique boucle"
 #: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:110
 #: sys-utils/lscpu.c:373 sys-utils/lsipc.c:232 sys-utils/lsmem.c:136
 #: sys-utils/lsns.c:189 sys-utils/prlimit.c:277 sys-utils/rfkill.c:155
-#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:148
+#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:146
 #, c-format
 msgid "unknown column: %s"
 msgstr "colonne inconnue : %s"
@@ -6824,7 +6825,7 @@ msgid "special device %s does not exist"
 msgstr "le périphérique spécial %s n'existe pas"
 
 #: libmount/src/context_mount.c:1470 libmount/src/context_mount.c:1486
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1593
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "échec de l’appel système mount(2) : %m"
@@ -6935,7 +6936,7 @@ msgstr "liaison de %s échouée"
 msgid "no medium found on %s"
 msgstr "aucun support trouvé dans %s"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1585
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "impossible de modifier la propagation au système de fichiers root"
@@ -9612,153 +9613,153 @@ msgstr "échec d’envoi de signal à %s"
 msgid "cannot find process \"%s\""
 msgstr "impossible de trouver le processus « %s »"
 
-#: misc-utils/logger.c:222
+#: misc-utils/logger.c:225
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "nom de service inconnu : %s"
 
-#: misc-utils/logger.c:228
+#: misc-utils/logger.c:231
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "nom de priorité inconnu : %s"
 
-#: misc-utils/logger.c:240
+#: misc-utils/logger.c:243
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s : chemin trop long"
 
-#: misc-utils/logger.c:267
+#: misc-utils/logger.c:270
 #, c-format
 msgid "socket %s"
 msgstr "socket %s"
 
-#: misc-utils/logger.c:306
+#: misc-utils/logger.c:307
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "échec de résolution du nom %s sur le port %s : %s"
 
-#: misc-utils/logger.c:323
+#: misc-utils/logger.c:324
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "échec de connexion à %s sur le port %s"
 
-#: misc-utils/logger.c:352
+#: misc-utils/logger.c:353
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "nombre maximal de lignes (%d) dépassé"
 
-#: misc-utils/logger.c:487
+#: misc-utils/logger.c:505
 msgid "send message failed"
 msgstr "échec de l,envoi du message"
 
-#: misc-utils/logger.c:558
+#: misc-utils/logger.c:575
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr ""
 
-#: misc-utils/logger.c:572
+#: misc-utils/logger.c:589
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr ""
 
-#: misc-utils/logger.c:754
+#: misc-utils/logger.c:768
 msgid "localtime() failed"
 msgstr "échec de localtime()"
 
-#: misc-utils/logger.c:764
+#: misc-utils/logger.c:778
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "le nom d’hôte « %s » est trop long"
 
-#: misc-utils/logger.c:770
+#: misc-utils/logger.c:784
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "l’étiquette « %s » est trop longue"
 
-#: misc-utils/logger.c:833
+#: misc-utils/logger.c:847
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "argument d’option inconnu ignoré : %s"
 
-#: misc-utils/logger.c:845
+#: misc-utils/logger.c:859
 #, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "argument incorrect : %s : en utilisant les erreurs automatiques"
 
-#: misc-utils/logger.c:997
+#: misc-utils/logger.c:1030
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [options] [<message>]\n"
 
-#: misc-utils/logger.c:1000
+#: misc-utils/logger.c:1033
 msgid "Enter messages into the system log.\n"
 msgstr "Entrer des messages dans le journal système.\n"
 
-#: misc-utils/logger.c:1003
+#: misc-utils/logger.c:1036
 msgid " -i                       log the logger command's PID\n"
 msgstr " -i              journaliser le PID de la commande logger\n"
 
-#: misc-utils/logger.c:1004
+#: misc-utils/logger.c:1037
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr "     --id[=<id>]          journaliser l’<id> indiqué ou le PID\n"
 
-#: misc-utils/logger.c:1005
+#: misc-utils/logger.c:1038
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <fichier>     journaliser le contenu de ce fichier\n"
 
-#: misc-utils/logger.c:1006
+#: misc-utils/logger.c:1039
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -e, --skip-empty           ne pas journaliser les lignes vides lors du traitement des fichiers\n"
 
-#: misc-utils/logger.c:1007
+#: misc-utils/logger.c:1040
 msgid "     --no-act             do everything except the write the log\n"
 msgstr "     --no-act              tout faire sauf l’écriture du journal\n"
 
-#: misc-utils/logger.c:1008
+#: misc-utils/logger.c:1041
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    marquer le message donné avec cette priorité\n"
 
-#: misc-utils/logger.c:1009
+#: misc-utils/logger.c:1042
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr ""
 
-#: misc-utils/logger.c:1010
+#: misc-utils/logger.c:1043
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        rechercher un préfixe sur les lignes d’entrée standard\n"
 
-#: misc-utils/logger.c:1011
+#: misc-utils/logger.c:1044
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             afficher aussi le message en sortie d'erreur standard\n"
 
-#: misc-utils/logger.c:1012
+#: misc-utils/logger.c:1045
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr " -S, --size <taille>       taille maximale d’un message\n"
 
-#: misc-utils/logger.c:1013
+#: misc-utils/logger.c:1046
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <étiquette>    marquer toutes les lignes avec cette étiquette\n"
 
-#: misc-utils/logger.c:1014
+#: misc-utils/logger.c:1047
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <nom>       écrire vers ce serveur de journalisation distant\n"
 
-#: misc-utils/logger.c:1015
+#: misc-utils/logger.c:1048
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <port>      utiliser ce port pour la connexion UDP ou TCP\n"
 
-#: misc-utils/logger.c:1016
+#: misc-utils/logger.c:1049
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                n’utiliser que TCP\n"
 
-#: misc-utils/logger.c:1017
+#: misc-utils/logger.c:1050
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                n’utiliser qu’UDP\n"
 
-#: misc-utils/logger.c:1018
+#: misc-utils/logger.c:1051
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            utiliser le protocole syslog BSD obsolète\n"
 
-#: misc-utils/logger.c:1019
+#: misc-utils/logger.c:1052
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
@@ -9766,64 +9767,64 @@ msgstr ""
 "     --rfc5424[=<snip>]   utiliser le protocole syslog (par défaut pour l’accès distant) ;\n"
 "                            <snip> peut être notime ou notq, et ou nohost\n"
 
-#: misc-utils/logger.c:1021
+#: misc-utils/logger.c:1054
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr ""
 
-#: misc-utils/logger.c:1022
+#: misc-utils/logger.c:1055
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr ""
 
-#: misc-utils/logger.c:1023
+#: misc-utils/logger.c:1056
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr " --rgid <MSGID>             définir le champ Message ID rfc5424\n"
 
-#: misc-utils/logger.c:1024
+#: misc-utils/logger.c:1057
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <socket>    écrire vers cette socket UNIX\n"
 
-#: misc-utils/logger.c:1025
+#: misc-utils/logger.c:1058
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
 msgstr ""
 
-#: misc-utils/logger.c:1028
+#: misc-utils/logger.c:1061
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr "     --journald[=<fic.>]  écrire une entrée de journald\n"
 
-#: misc-utils/logger.c:1114
+#: misc-utils/logger.c:1147
 #, c-format
 msgid "file %s"
 msgstr "fichier %s"
 
-#: misc-utils/logger.c:1129
+#: misc-utils/logger.c:1162
 msgid "failed to parse id"
 msgstr "échec d'analyse de l’identifiant"
 
-#: misc-utils/logger.c:1147
+#: misc-utils/logger.c:1180
 msgid "failed to parse message size"
 msgstr "échec d'analyse de taille du message"
 
-#: misc-utils/logger.c:1182
+#: misc-utils/logger.c:1215
 msgid "--msgid cannot contain space"
 msgstr ""
 
-#: misc-utils/logger.c:1204
+#: misc-utils/logger.c:1237
 #, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "ID de données structurées invalide : « %s »"
 
-#: misc-utils/logger.c:1209
+#: misc-utils/logger.c:1242
 #, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "Paramètre de données structurées invalide : « %s »"
 
-#: misc-utils/logger.c:1219
+#: misc-utils/logger.c:1252
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <fichier> et <message> s'excluent mutuellement, message est ignoré"
 
-#: misc-utils/logger.c:1226
+#: misc-utils/logger.c:1259
 msgid "journald entry could not be written"
 msgstr "l’entrée journald n’a pas pu être écrite"
 
@@ -9864,7 +9865,7 @@ msgstr "nom du périphérique interne du noyau"
 msgid "internal parent kernel device name"
 msgstr "nom du périphérique parent interne du noyau"
 
-#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:84
+#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:86
 msgid "where the device is mounted"
 msgstr "où le périphérique est monté"
 
@@ -13264,7 +13265,7 @@ msgstr " -Q, --queue              créer une file de messages\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <mode>        droits de la ressource (0644 par défaut)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:626
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:633
 msgid "failed to parse size"
 msgstr "échec d'analyse de taille"
 
@@ -17809,55 +17810,55 @@ msgstr "Identité :"
 msgid "version"
 msgstr "version"
 
-#: sys-utils/zramctl.c:73
+#: sys-utils/zramctl.c:75
 msgid "zram device name"
 msgstr "nom du périphérique zRAM"
 
-#: sys-utils/zramctl.c:74
+#: sys-utils/zramctl.c:76
 msgid "limit on the uncompressed amount of data"
 msgstr "limite de quantité de données non compressées"
 
-#: sys-utils/zramctl.c:75
+#: sys-utils/zramctl.c:77
 msgid "uncompressed size of stored data"
 msgstr "taille non compressée de données stockées"
 
-#: sys-utils/zramctl.c:76
+#: sys-utils/zramctl.c:78
 msgid "compressed size of stored data"
 msgstr "taille compressée de données stockées"
 
-#: sys-utils/zramctl.c:77
+#: sys-utils/zramctl.c:79
 msgid "the selected compression algorithm"
 msgstr "l’algorithme de compression sélectionné"
 
-#: sys-utils/zramctl.c:78
+#: sys-utils/zramctl.c:80
 msgid "number of concurrent compress operations"
 msgstr "nombre d’opérations de compression concurrentes"
 
-#: sys-utils/zramctl.c:79
+#: sys-utils/zramctl.c:81
 msgid "empty pages with no allocated memory"
 msgstr "vider les pages sans allocation mémoire"
 
-#: sys-utils/zramctl.c:80
+#: sys-utils/zramctl.c:82
 msgid "all memory including allocator fragmentation and metadata overhead"
 msgstr "toute la mémoire, y compris la fragmentation d’allocation et les en-têtes de métadonnées"
 
-#: sys-utils/zramctl.c:81
+#: sys-utils/zramctl.c:83
 msgid "memory limit used to store compressed data"
 msgstr "Limite de mémoire utilisée pour stocker des données compressées"
 
-#: sys-utils/zramctl.c:82
+#: sys-utils/zramctl.c:84
 msgid "memory zram have been consumed to store compressed data"
 msgstr ""
 
-#: sys-utils/zramctl.c:83
+#: sys-utils/zramctl.c:85
 msgid "number of objects migrated by compaction"
 msgstr "nombre d’objets migrés par compaction"
 
-#: sys-utils/zramctl.c:378
+#: sys-utils/zramctl.c:376
 msgid "Failed to parse mm_stat"
 msgstr "échec d'analyse mm_stat"
 
-#: sys-utils/zramctl.c:526
+#: sys-utils/zramctl.c:533
 #, c-format
 msgid ""
 " %1$s [options] <device>\n"
@@ -17868,87 +17869,87 @@ msgstr ""
 " %1$s -r <périphérique> [...]\n"
 " %1$s [options] -f | <périphérique> -s <taille>\n"
 
-#: sys-utils/zramctl.c:532
+#: sys-utils/zramctl.c:539
 msgid "Set up and control zram devices.\n"
 msgstr "Mettre en place et contrôler des périphériques zRAM.\n"
 
-#: sys-utils/zramctl.c:535
+#: sys-utils/zramctl.c:542
 msgid " -a, --algorithm lzo|lz4   compression algorithm to use\n"
 msgstr " -a, --algorithm lzo|lz4   algorithme de compression à utiliser\n"
 
-#: sys-utils/zramctl.c:536
+#: sys-utils/zramctl.c:543
 msgid " -b, --bytes               print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes               afficher les tailles en octet plutôt qu'en format lisible\n"
 
-#: sys-utils/zramctl.c:537
+#: sys-utils/zramctl.c:544
 msgid " -f, --find                find a free device\n"
 msgstr " -f, --find                trouver un premier périphérique libre\n"
 
-#: sys-utils/zramctl.c:538
+#: sys-utils/zramctl.c:545
 msgid " -n, --noheadings          don't print headings\n"
 msgstr " -n, --noheadings          ne pas afficher les en-têtes\n"
 
-#: sys-utils/zramctl.c:539
+#: sys-utils/zramctl.c:546
 msgid " -o, --output <list>       columns to use for status output\n"
 msgstr " -o, --output <liste>      colonnes à utiliser pour afficher l’état\n"
 
-#: sys-utils/zramctl.c:540
+#: sys-utils/zramctl.c:547
 msgid "     --raw                 use raw status output format\n"
 msgstr "     --raw                 utiliser le format d’affichage d’état brut\n"
 
-#: sys-utils/zramctl.c:541
+#: sys-utils/zramctl.c:548
 msgid " -r, --reset               reset all specified devices\n"
 msgstr " -r, --reset               réinitialiser tous les périphériques indiqués\n"
 
-#: sys-utils/zramctl.c:542
+#: sys-utils/zramctl.c:549
 msgid " -s, --size <size>         device size\n"
 msgstr " -s, --size <taille>       taille de périphérique\n"
 
-#: sys-utils/zramctl.c:543
+#: sys-utils/zramctl.c:550
 msgid " -t, --streams <number>    number of compression streams\n"
 msgstr " -t, --streams <nombre>    nombre de flux de compression\n"
 
-#: sys-utils/zramctl.c:608
+#: sys-utils/zramctl.c:615
 #, c-format
 msgid "unsupported algorithm: %s"
 msgstr "algorithme non pris en charge : %s"
 
-#: sys-utils/zramctl.c:630
+#: sys-utils/zramctl.c:637
 msgid "failed to parse streams"
 msgstr "échec d'analyse des flux"
 
-#: sys-utils/zramctl.c:652
+#: sys-utils/zramctl.c:659
 msgid "option --find is mutually exclusive with <device>"
 msgstr "l’option --find et <périphérique> s'excluent mutuellement"
 
-#: sys-utils/zramctl.c:658
+#: sys-utils/zramctl.c:665
 msgid "only one <device> at a time is allowed"
 msgstr "un seul <périphérique> à la fois est permis"
 
-#: sys-utils/zramctl.c:661
+#: sys-utils/zramctl.c:668
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr "les options --algorithm et --streams doivent être combinées avec --size"
 
-#: sys-utils/zramctl.c:691 sys-utils/zramctl.c:720
+#: sys-utils/zramctl.c:698 sys-utils/zramctl.c:727
 #, c-format
 msgid "%s: failed to reset"
 msgstr "%s : échec de réinitialisation"
 
-#: sys-utils/zramctl.c:702 sys-utils/zramctl.c:710
+#: sys-utils/zramctl.c:709 sys-utils/zramctl.c:717
 msgid "no free zram device found"
 msgstr "aucun périphérique zRAM libre disponible"
 
-#: sys-utils/zramctl.c:724
+#: sys-utils/zramctl.c:731
 #, c-format
 msgid "%s: failed to set number of streams"
 msgstr "%s : échec de configuration du nombre de flux"
 
-#: sys-utils/zramctl.c:728
+#: sys-utils/zramctl.c:735
 #, c-format
 msgid "%s: failed to set algorithm"
 msgstr "%s : échec de configuration de l’algorithme"
 
-#: sys-utils/zramctl.c:731
+#: sys-utils/zramctl.c:738
 #, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "%s : échec de configuration de la taille de disque (%ju octets)"
@@ -17979,8 +17980,8 @@ msgid "%s: can't exec %s: %m"
 msgstr "%s : impossible d'exécuter %s : %m"
 
 #: term-utils/agetty.c:567 term-utils/agetty.c:892 term-utils/agetty.c:1410
-#: term-utils/agetty.c:1428 term-utils/agetty.c:1464 term-utils/agetty.c:1474
-#: term-utils/agetty.c:1511 term-utils/agetty.c:1954 term-utils/agetty.c:2511
+#: term-utils/agetty.c:1428 term-utils/agetty.c:1465 term-utils/agetty.c:1475
+#: term-utils/agetty.c:1517 term-utils/agetty.c:1960 term-utils/agetty.c:2517
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "échec d'allocation de tampon de mémoire : %m"
@@ -18061,36 +18062,36 @@ msgstr "%s : échec d'obtention des attributs du terminal : %m"
 msgid "setting terminal attributes failed: %m"
 msgstr "échec de configuration des attributs du terminal : %m"
 
-#: term-utils/agetty.c:1454
+#: term-utils/agetty.c:1455
 msgid "cannot open os-release file"
 msgstr "impossible d'ouvrir le fichier os-release"
 
-#: term-utils/agetty.c:1616
+#: term-utils/agetty.c:1622
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "échec de créer le  fichier de rechargement : %s : %m"
 
-#: term-utils/agetty.c:1703
+#: term-utils/agetty.c:1709
 msgid "[press ENTER to login]"
 msgstr "[appuyez sur Entrée pour vous connecter]"
 
-#: term-utils/agetty.c:1727
+#: term-utils/agetty.c:1733
 msgid "Num Lock off"
 msgstr "Verrouillage numérique désactivé"
 
-#: term-utils/agetty.c:1730
+#: term-utils/agetty.c:1736
 msgid "Num Lock on"
 msgstr "Verrouillage numérique activé"
 
-#: term-utils/agetty.c:1733
+#: term-utils/agetty.c:1739
 msgid "Caps Lock on"
 msgstr "Verrouillage majuscules activé"
 
-#: term-utils/agetty.c:1736
+#: term-utils/agetty.c:1742
 msgid "Scroll Lock on"
 msgstr "Arrêt de défilement activé"
 
-#: term-utils/agetty.c:1739
+#: term-utils/agetty.c:1745
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -18099,32 +18100,32 @@ msgstr ""
 "Conseil : %s\n"
 "\n"
 
-#: term-utils/agetty.c:1874
+#: term-utils/agetty.c:1880
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s : lu : %m"
 
-#: term-utils/agetty.c:1933
+#: term-utils/agetty.c:1939
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s : dépassement du tampon d'entrée"
 
-#: term-utils/agetty.c:1950 term-utils/agetty.c:1958
+#: term-utils/agetty.c:1956 term-utils/agetty.c:1964
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s : caractère de conversion non valable pour le nom de connexion"
 
-#: term-utils/agetty.c:1964
+#: term-utils/agetty.c:1970
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s : caractère 0x%x non valable dans le nom de connexion"
 
-#: term-utils/agetty.c:2049
+#: term-utils/agetty.c:2055
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s : échec de configuration des attributs du terminal : %m"
 
-#: term-utils/agetty.c:2087
+#: term-utils/agetty.c:2093
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18133,162 +18134,162 @@ msgstr ""
 " %1$s [options] <ligne> [<vitesse_de_connexion>,...] [<typeterm>]\n"
 " %1$s [options] <vitesse_de_connexion>,... <ligne> [<typeterm>]\n"
 
-#: term-utils/agetty.c:2091
+#: term-utils/agetty.c:2097
 msgid "Open a terminal and set its mode.\n"
 msgstr "Ouvrir un terminal et définir son mode.\n"
 
-#: term-utils/agetty.c:2094
+#: term-utils/agetty.c:2100
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                supposer que le terminal gère les caractères 8 bits\n"
 
-#: term-utils/agetty.c:2095
+#: term-utils/agetty.c:2101
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <ident>    connecter l'utilisateur indiqué automatiquement\n"
 
-#: term-utils/agetty.c:2096
+#: term-utils/agetty.c:2102
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              ne pas réinitialiser le mode de contrôle\n"
 
-#: term-utils/agetty.c:2097
+#: term-utils/agetty.c:2103
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               utiliser -r <nom_d_hôte> pour login(1)\n"
 
-#: term-utils/agetty.c:2098
+#: term-utils/agetty.c:2104
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <fichier> afficher le fichier issue\n"
 
-#: term-utils/agetty.c:2099
+#: term-utils/agetty.c:2105
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         activer le contrôle de flux matériel\n"
 
 # getopt-1.1.2/getopt.c:335
-#: term-utils/agetty.c:2100
+#: term-utils/agetty.c:2106
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <nom_d_hôte>    indiquer l'hôte de connexion\n"
 
-#: term-utils/agetty.c:2101
+#: term-utils/agetty.c:2107
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              ne pas afficher le fichier issue\n"
 
-#: term-utils/agetty.c:2102
+#: term-utils/agetty.c:2108
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <chaîne> définir la chaîne initiale\n"
 
-#: term-utils/agetty.c:2103
+#: term-utils/agetty.c:2109
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              ne pas effacer l'écran avant l'invite\n"
 
-#: term-utils/agetty.c:2104
+#: term-utils/agetty.c:2110
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <fic.> indiquer le programme de connexion\n"
 
-#: term-utils/agetty.c:2105
+#: term-utils/agetty.c:2111
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<mode>]  contrôler l’attribut de ligne locale\n"
 
-#: term-utils/agetty.c:2106
+#: term-utils/agetty.c:2112
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         extraire la vitesse pendant la connexion\n"
 
-#: term-utils/agetty.c:2107
+#: term-utils/agetty.c:2113
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           ne pas demander d'identifiant de connexion\n"
 
-#: term-utils/agetty.c:2108
+#: term-utils/agetty.c:2114
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            ne pas afficher de changement de ligne avant issue\n"
 
-#: term-utils/agetty.c:2109
+#: term-utils/agetty.c:2115
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <opt.> options qui sont passées à la connexion\n"
 
-#: term-utils/agetty.c:2110
+#: term-utils/agetty.c:2116
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          attendre une touche avant la connexion\n"
 
-#: term-utils/agetty.c:2111
+#: term-utils/agetty.c:2117
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <répertoire>  modifier la racine au répertoire\n"
 
-#: term-utils/agetty.c:2112
+#: term-utils/agetty.c:2118
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               raccrocher virtuellement sur le terminal\n"
 
-#: term-utils/agetty.c:2113
+#: term-utils/agetty.c:2119
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            essayer de garder la vitesse en baud après une pause\n"
 
-#: term-utils/agetty.c:2114
+#: term-utils/agetty.c:2120
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <nombre>     temps d'expiration du processus de connexion\n"
 
-#: term-utils/agetty.c:2115
+#: term-utils/agetty.c:2121
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          détecter les terminaux en majuscule\n"
 
-#: term-utils/agetty.c:2116
+#: term-utils/agetty.c:2122
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              attendre un retour chariot\n"
 
-#: term-utils/agetty.c:2117
+#: term-utils/agetty.c:2123
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              ne pas afficher de conseils\n"
 
-#: term-utils/agetty.c:2118
+#: term-utils/agetty.c:2124
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           ne montrer aucun nom d'hôte\n"
 
-#: term-utils/agetty.c:2119
+#: term-utils/agetty.c:2125
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        montrer le nom d'hôte complètement qualifié\n"
 
-#: term-utils/agetty.c:2120
+#: term-utils/agetty.c:2126
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <chaîne> caractères supplémentaires d'espace arrière\n"
 
-#: term-utils/agetty.c:2121
+#: term-utils/agetty.c:2127
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <chaîne>  caractères supplémentaires pour tuer\n"
 
-#: term-utils/agetty.c:2122
+#: term-utils/agetty.c:2128
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <répertoire>   changer de répertoire avant la connexion\n"
 
-#: term-utils/agetty.c:2123
+#: term-utils/agetty.c:2129
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <nombre>       temps de sommeil, en seconde, avant l'invite\n"
 
-#: term-utils/agetty.c:2124
+#: term-utils/agetty.c:2130
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <nombre>        exécuter la connexion avec cette priorité\n"
 
-#: term-utils/agetty.c:2125
+#: term-utils/agetty.c:2131
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               recharger les invites des instances agetty en cours\n"
 
-#: term-utils/agetty.c:2126
+#: term-utils/agetty.c:2132
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-types               affiche la liste des types de partition pris en charge et quitter\n"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2477
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d utilisateur"
 msgstr[1] "%d utilisateurs"
 
-#: term-utils/agetty.c:2599
+#: term-utils/agetty.c:2605
 #, c-format
 msgid "checkname failed: %m"
 msgstr "échec de checkname : %m"
 
-#: term-utils/agetty.c:2611
+#: term-utils/agetty.c:2617
 #, c-format
 msgid "cannot touch file %s"
 msgstr "impossible de toucher le fichier %s"
 
-#: term-utils/agetty.c:2615
+#: term-utils/agetty.c:2621
 msgid "--reload is unsupported on your system"
 msgstr "--reload n’est pas pris en charge sur ce système"
 

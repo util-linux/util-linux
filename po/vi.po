@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-10-03 17:22+0200\n"
+"POT-Creation-Date: 2017-10-19 12:53+0200\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -59,7 +59,7 @@ msgstr "không đủ đối số"
 #: login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:354
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:262 login-utils/vipw.c:280
-#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1190 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:532 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
@@ -69,11 +69,12 @@ msgstr "không đủ đối số"
 #: sys-utils/rtcwake.c:268 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
 #: sys-utils/setpriv.c:637 sys-utils/swapon.c:376 sys-utils/swapon.c:519
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:106 sys-utils/unshare.c:121
-#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 term-utils/agetty.c:2608
-#: term-utils/mesg.c:127 term-utils/script.c:460 term-utils/script.c:468
-#: term-utils/script.c:563 term-utils/scriptreplay.c:198
-#: term-utils/scriptreplay.c:201 term-utils/wall.c:419 text-utils/colcrt.c:282
-#: text-utils/more.c:534 text-utils/rev.c:141 text-utils/ul.c:230
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:509
+#: term-utils/agetty.c:2614 term-utils/mesg.c:127 term-utils/script.c:460
+#: term-utils/script.c:468 term-utils/script.c:563
+#: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
+#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
+#: text-utils/rev.c:141 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
 msgstr "không thể mở %s"
@@ -215,7 +216,7 @@ msgstr " %-25s lấy kích cỡ theo cung từ là 512 byte\n"
 #: disk-utils/mkfs.bfs.c:181 disk-utils/mkfs.c:116 disk-utils/mkfs.minix.c:813
 #: disk-utils/swaplabel.c:181 misc-utils/wipefs.c:718
 #: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:394 sys-utils/tunelp.c:242
-#: sys-utils/zramctl.c:686 sys-utils/zramctl.c:712
+#: sys-utils/zramctl.c:693 sys-utils/zramctl.c:719
 msgid "no device specified"
 msgstr "chưa chỉ định thiết bị"
 
@@ -854,7 +855,7 @@ msgstr "rãnh cuối do người dùng định nghĩa đã vượt quá số l�
 msgid "user defined start track exceeds the user defined end track"
 msgstr "rãnh bắt đầu do người dùng định nghĩa đã vượt quá điểm cuối được người dùng định nghĩa"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:989
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1022
 msgid "close failed"
 msgstr "gặp lỗi khi đóng"
 
@@ -1206,7 +1207,7 @@ msgstr "gặp lỗi khi phân bổ bảng kết xuất"
 #: sys-utils/lscpu.c:1815 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
 #: sys-utils/prlimit.c:229 sys-utils/rfkill.c:373 sys-utils/swapon.c:180
-#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:409 text-utils/column.c:420
+#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:420
 msgid "failed to allocate output line"
 msgstr "gặp lỗi khi phân bổ dòng kết xuất"
 
@@ -1217,7 +1218,7 @@ msgstr "gặp lỗi khi phân bổ dòng kết xuất"
 #: sys-utils/losetup.c:301 sys-utils/lscpu.c:1795 sys-utils/lscpu.c:1826
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
 #: sys-utils/rfkill.c:401 sys-utils/swapon.c:228 sys-utils/wdctl.c:242
-#: sys-utils/zramctl.c:475 text-utils/column.c:426
+#: sys-utils/zramctl.c:473 text-utils/column.c:426
 #, fuzzy
 msgid "failed to add output data"
 msgstr "gặp lỗi khi thêm dữ liệu vào bảng kết xuất"
@@ -3580,7 +3581,7 @@ msgstr "%s: gặp lỗi khi cài đặt thiết bị loop"
 #: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:110
 #: sys-utils/lscpu.c:373 sys-utils/lsipc.c:232 sys-utils/lsmem.c:136
 #: sys-utils/lsns.c:189 sys-utils/prlimit.c:277 sys-utils/rfkill.c:155
-#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:148
+#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:146
 #, c-format
 msgid "unknown column: %s"
 msgstr "không hiểu cột: %s"
@@ -6925,7 +6926,7 @@ msgid "special device %s does not exist"
 msgstr "thiết bị đặc biệt %s không tồn tại"
 
 #: libmount/src/context_mount.c:1470 libmount/src/context_mount.c:1486
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1593
 #, fuzzy, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "gặp lỗi khi mount(2)"
@@ -7038,7 +7039,7 @@ msgstr "%s gặp lỗi"
 msgid "no medium found on %s"
 msgstr "không tìm thấy vật chứa trên %s"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1585
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "sẽ không thử tạo hệ thống tập tin trên “%s”"
@@ -9702,160 +9703,160 @@ msgstr "gửi tín hiệu đến %s gặp lỗi"
 msgid "cannot find process \"%s\""
 msgstr "không thể tìm thấy tiến trình “%s”"
 
-#: misc-utils/logger.c:222
+#: misc-utils/logger.c:225
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "không hiểu tên cơ cấu: %s."
 
-#: misc-utils/logger.c:228
+#: misc-utils/logger.c:231
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "không hiểu tên ưu tiên: %s"
 
-#: misc-utils/logger.c:240
+#: misc-utils/logger.c:243
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s: tên đường dẫn quá dài"
 
-#: misc-utils/logger.c:267
+#: misc-utils/logger.c:270
 #, c-format
 msgid "socket %s"
 msgstr "ổ cắm (socket) %s"
 
-#: misc-utils/logger.c:306
+#: misc-utils/logger.c:307
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "gặp lỗi khi phân giải tên %s cổng %s: %s"
 
-#: misc-utils/logger.c:323
+#: misc-utils/logger.c:324
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "gặp lỗi khi kết nối đến %s cổng %s"
 
-#: misc-utils/logger.c:352
+#: misc-utils/logger.c:353
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "đã vượt quá số lượng dòng tối đa (%d)"
 
-#: misc-utils/logger.c:487
+#: misc-utils/logger.c:505
 #, fuzzy
 msgid "send message failed"
 msgstr "lỗi tạo hàng đợi thông điệp"
 
-#: misc-utils/logger.c:558
+#: misc-utils/logger.c:575
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr ""
 
-#: misc-utils/logger.c:572
+#: misc-utils/logger.c:589
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr ""
 
-#: misc-utils/logger.c:754
+#: misc-utils/logger.c:768
 msgid "localtime() failed"
 msgstr "localtime() bị lỗi"
 
-#: misc-utils/logger.c:764
+#: misc-utils/logger.c:778
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "tên máy “%s” là quá dài"
 
-#: misc-utils/logger.c:770
+#: misc-utils/logger.c:784
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "thẻ “%s” là quá dài"
 
-#: misc-utils/logger.c:833
+#: misc-utils/logger.c:847
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "bỏ qua các đối số tùy chon chưa biết: %s"
 
-#: misc-utils/logger.c:845
+#: misc-utils/logger.c:859
 #, fuzzy, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "đối số không hợp lệ đối với tùy chọn --auto/-a"
 
-#: misc-utils/logger.c:997
+#: misc-utils/logger.c:1030
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [tùy chọn] [thông điệp]\n"
 
-#: misc-utils/logger.c:1000
+#: misc-utils/logger.c:1033
 msgid "Enter messages into the system log.\n"
 msgstr "Nhập lời nhắn vào nhật ký hệ thống.\n"
 
-#: misc-utils/logger.c:1003
+#: misc-utils/logger.c:1036
 #, fuzzy
 msgid " -i                       log the logger command's PID\n"
 msgstr "                       dùng giao thức syslog (mặc định)\n"
 
-#: misc-utils/logger.c:1004
+#: misc-utils/logger.c:1037
 #, fuzzy
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr " -i, --id[=<id>]          log <id> (mặc định là PID)\n"
 
-#: misc-utils/logger.c:1005
+#: misc-utils/logger.c:1038
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <TẬP-TIN>     hiển thị nhật ký của tập tin này\n"
 
-#: misc-utils/logger.c:1006
+#: misc-utils/logger.c:1039
 #, fuzzy
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -n, --skip-login           không nhắc đăng nhập\n"
 
-#: misc-utils/logger.c:1007
+#: misc-utils/logger.c:1040
 #, fuzzy
 msgid "     --no-act             do everything except the write the log\n"
 msgstr " -n, --no-act              làm mọi thứ ngoại trừ ghi lên thiết bị\n"
 
-#: misc-utils/logger.c:1008
+#: misc-utils/logger.c:1041
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    đánh dấu lời nhắn đã cho với mức ưu tiên này\n"
 
-#: misc-utils/logger.c:1009
+#: misc-utils/logger.c:1042
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr ""
 
-#: misc-utils/logger.c:1010
+#: misc-utils/logger.c:1043
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        tìm kiếm tiền tố trên mỗi dòng đọc từ đầu vào chuẩn\n"
 
-#: misc-utils/logger.c:1011
+#: misc-utils/logger.c:1044
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             cũng hiển thị thông điệp ra đầu ra lỗi tiêu chuẩn\n"
 
-#: misc-utils/logger.c:1012
+#: misc-utils/logger.c:1045
 #, fuzzy
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr " -s, --size <cỡ>           cỡ thiết bị\n"
 
-#: misc-utils/logger.c:1013
+#: misc-utils/logger.c:1046
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <tag>          đánh dấu mọi dòng bằng thẻ này\n"
 
-#: misc-utils/logger.c:1014
+#: misc-utils/logger.c:1047
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <tên>       ghi cái này đến máy chủ ghi syslog\n"
 
-#: misc-utils/logger.c:1015
+#: misc-utils/logger.c:1048
 #, fuzzy
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <số>          dùng cổng UDP này\n"
 
-#: misc-utils/logger.c:1016
+#: misc-utils/logger.c:1049
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                chỉ dùng TCP\n"
 
-#: misc-utils/logger.c:1017
+#: misc-utils/logger.c:1050
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                chỉ dùng UDP\n"
 
-#: misc-utils/logger.c:1018
+#: misc-utils/logger.c:1051
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            dùng giao thức syslog BSD kiểu cũ\n"
 
-#: misc-utils/logger.c:1019
+#: misc-utils/logger.c:1052
 #, fuzzy
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
@@ -9864,67 +9865,67 @@ msgstr ""
 "     --rfc5424[=<snip>]   dùng giao thức syslog (mặc định);\n"
 "                            <snip> có thể là notime, hoặc notq, và/hoặc nohost\n"
 
-#: misc-utils/logger.c:1021
+#: misc-utils/logger.c:1054
 #, fuzzy
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr " --rgid <gid>             đặt gid thực tế\n"
 
-#: misc-utils/logger.c:1022
+#: misc-utils/logger.c:1055
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr ""
 
-#: misc-utils/logger.c:1023
+#: misc-utils/logger.c:1056
 #, fuzzy
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr " --rgid <gid>             đặt gid thực tế\n"
 
-#: misc-utils/logger.c:1024
+#: misc-utils/logger.c:1057
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <socket>    ghi ra ổ cắm Unix này\n"
 
-#: misc-utils/logger.c:1025
+#: misc-utils/logger.c:1058
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
 msgstr ""
 
-#: misc-utils/logger.c:1028
+#: misc-utils/logger.c:1061
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr "     --journald[=<tập-tin>]  ghi mục nhật ký\n"
 
-#: misc-utils/logger.c:1114
+#: misc-utils/logger.c:1147
 #, c-format
 msgid "file %s"
 msgstr "tập tin %s"
 
-#: misc-utils/logger.c:1129
+#: misc-utils/logger.c:1162
 msgid "failed to parse id"
 msgstr "gặp lỗi khi phân tích ID"
 
-#: misc-utils/logger.c:1147
+#: misc-utils/logger.c:1180
 #, fuzzy
 msgid "failed to parse message size"
 msgstr "gặp lỗi khi đặt kích cỡ trang"
 
-#: misc-utils/logger.c:1182
+#: misc-utils/logger.c:1215
 msgid "--msgid cannot contain space"
 msgstr ""
 
-#: misc-utils/logger.c:1204
+#: misc-utils/logger.c:1237
 #, fuzzy, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "đối số không hợp lệ: %s"
 
-#: misc-utils/logger.c:1209
+#: misc-utils/logger.c:1242
 #, fuzzy, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "đối số đặt cho quá giờ không hợp lệ: %s"
 
-#: misc-utils/logger.c:1219
+#: misc-utils/logger.c:1252
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <file> and <message> loại từ lẫn nhau, chuỗi bị bỏ qua"
 
-#: misc-utils/logger.c:1226
+#: misc-utils/logger.c:1259
 msgid "journald entry could not be written"
 msgstr "không thể ghi mục tin journald"
 
@@ -9966,7 +9967,7 @@ msgstr "tên thiết bị nhân nội bộ"
 msgid "internal parent kernel device name"
 msgstr "tên thiết bị nhân cha mẹ nội bộ"
 
-#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:84
+#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:86
 msgid "where the device is mounted"
 msgstr "nơi mà thiết bị được gắn vào"
 
@@ -13419,7 +13420,7 @@ msgstr " -Q, --queue              tạo hàng đợi thông điệp\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <mode>        quyền của nguồn tài nguyên (mặc định là 0644)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:626
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:633
 msgid "failed to parse size"
 msgstr "gặp lỗi khi đặt kích cỡ trang"
 
@@ -18032,59 +18033,59 @@ msgstr "Định danh:"
 msgid "version"
 msgstr "phiên bản"
 
-#: sys-utils/zramctl.c:73
+#: sys-utils/zramctl.c:75
 msgid "zram device name"
 msgstr "tên thiết bị zram"
 
-#: sys-utils/zramctl.c:74
+#: sys-utils/zramctl.c:76
 msgid "limit on the uncompressed amount of data"
 msgstr "giới hạn tổng dữ liệu chưa nén"
 
-#: sys-utils/zramctl.c:75
+#: sys-utils/zramctl.c:77
 msgid "uncompressed size of stored data"
 msgstr "cỡ chưa nén của dữ liệu lưu trữ"
 
-#: sys-utils/zramctl.c:76
+#: sys-utils/zramctl.c:78
 msgid "compressed size of stored data"
 msgstr "cỡ sau nén của dữ liệu lưu trữ"
 
-#: sys-utils/zramctl.c:77
+#: sys-utils/zramctl.c:79
 msgid "the selected compression algorithm"
 msgstr "thuật toán nén đã chọn"
 
-#: sys-utils/zramctl.c:78
+#: sys-utils/zramctl.c:80
 msgid "number of concurrent compress operations"
 msgstr "số lượng thao tác nén đồng thời"
 
-#: sys-utils/zramctl.c:79
+#: sys-utils/zramctl.c:81
 msgid "empty pages with no allocated memory"
 msgstr "trang trống với không bộ nhớ cấp phát"
 
-#: sys-utils/zramctl.c:80
+#: sys-utils/zramctl.c:82
 msgid "all memory including allocator fragmentation and metadata overhead"
 msgstr "mọi bộ nhớ bao gồm các mảnh phân định và tổng phí dữ liệu meta"
 
-#: sys-utils/zramctl.c:81
+#: sys-utils/zramctl.c:83
 #, fuzzy
 msgid "memory limit used to store compressed data"
 msgstr "giới hạn tổng dữ liệu chưa nén"
 
-#: sys-utils/zramctl.c:82
+#: sys-utils/zramctl.c:84
 #, fuzzy
 msgid "memory zram have been consumed to store compressed data"
 msgstr "giới hạn tổng dữ liệu chưa nén"
 
-#: sys-utils/zramctl.c:83
+#: sys-utils/zramctl.c:85
 #, fuzzy
 msgid "number of objects migrated by compaction"
 msgstr "số lượng thao tác nén đồng thời"
 
-#: sys-utils/zramctl.c:378
+#: sys-utils/zramctl.c:376
 #, fuzzy
 msgid "Failed to parse mm_stat"
 msgstr "gặp lỗi phân tích bắt đầu"
 
-#: sys-utils/zramctl.c:526
+#: sys-utils/zramctl.c:533
 #, c-format
 msgid ""
 " %1$s [options] <device>\n"
@@ -18095,87 +18096,87 @@ msgstr ""
 " %1$s -r <thiết bị> […]\n"
 " %1$s [các tùy chọn] -f | <thiết bị> -s <cỡ>\n"
 
-#: sys-utils/zramctl.c:532
+#: sys-utils/zramctl.c:539
 msgid "Set up and control zram devices.\n"
 msgstr "Cài đặt và điều khiển các thiết bị zram.\n"
 
-#: sys-utils/zramctl.c:535
+#: sys-utils/zramctl.c:542
 msgid " -a, --algorithm lzo|lz4   compression algorithm to use\n"
 msgstr " -a, --algorithm lzo|lz4   thuật toán nén muốn dùng\n"
 
-#: sys-utils/zramctl.c:536
+#: sys-utils/zramctl.c:543
 msgid " -b, --bytes               print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes               hiển thị cỡ theo byte thay vì dạng dành cho con người đọc\n"
 
-#: sys-utils/zramctl.c:537
+#: sys-utils/zramctl.c:544
 msgid " -f, --find                find a free device\n"
 msgstr " -f, --find                tìm thiết bị còn rảnh\n"
 
-#: sys-utils/zramctl.c:538
+#: sys-utils/zramctl.c:545
 msgid " -n, --noheadings          don't print headings\n"
 msgstr " -n, --noheadings          không in phần đầu\n"
 
-#: sys-utils/zramctl.c:539
+#: sys-utils/zramctl.c:546
 msgid " -o, --output <list>       columns to use for status output\n"
 msgstr " -o, --output[=<list>]     định nghĩa các cột sẽ hiển thị ra\n"
 
-#: sys-utils/zramctl.c:540
+#: sys-utils/zramctl.c:547
 msgid "     --raw                 use raw status output format\n"
 msgstr "     --raw                 dùng định dạng thô cho kết xuất\n"
 
-#: sys-utils/zramctl.c:541
+#: sys-utils/zramctl.c:548
 msgid " -r, --reset               reset all specified devices\n"
 msgstr " -r, --reset               đặt lại mọi thiết bị đã cho\n"
 
-#: sys-utils/zramctl.c:542
+#: sys-utils/zramctl.c:549
 msgid " -s, --size <size>         device size\n"
 msgstr " -s, --size <cỡ>           cỡ thiết bị\n"
 
-#: sys-utils/zramctl.c:543
+#: sys-utils/zramctl.c:550
 msgid " -t, --streams <number>    number of compression streams\n"
 msgstr " -t, --streams <sô>        số luồng nén\n"
 
-#: sys-utils/zramctl.c:608
+#: sys-utils/zramctl.c:615
 #, c-format
 msgid "unsupported algorithm: %s"
 msgstr "thuật toán không được hỗ trợ: %s"
 
-#: sys-utils/zramctl.c:630
+#: sys-utils/zramctl.c:637
 msgid "failed to parse streams"
 msgstr "gặp lỗi phân tích các dòng dữ liệu"
 
-#: sys-utils/zramctl.c:652
+#: sys-utils/zramctl.c:659
 msgid "option --find is mutually exclusive with <device>"
 msgstr "tùy chọn --find loại trừ với <thiết bị>"
 
-#: sys-utils/zramctl.c:658
+#: sys-utils/zramctl.c:665
 msgid "only one <device> at a time is allowed"
 msgstr "chỉ một <thiết bị> được dùng tại một thời điểm"
 
-#: sys-utils/zramctl.c:661
+#: sys-utils/zramctl.c:668
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr "tùy chọn --algorithm và --streams không thể tổ hợp cùng với --size"
 
-#: sys-utils/zramctl.c:691 sys-utils/zramctl.c:720
+#: sys-utils/zramctl.c:698 sys-utils/zramctl.c:727
 #, c-format
 msgid "%s: failed to reset"
 msgstr " %s: gặp lỗi khi đặt lại"
 
-#: sys-utils/zramctl.c:702 sys-utils/zramctl.c:710
+#: sys-utils/zramctl.c:709 sys-utils/zramctl.c:717
 msgid "no free zram device found"
 msgstr "không tìm thấy thiết bị zram còn rảnh"
 
-#: sys-utils/zramctl.c:724
+#: sys-utils/zramctl.c:731
 #, c-format
 msgid "%s: failed to set number of streams"
 msgstr "%s: gặp lỗi khi đặt số của luồng"
 
-#: sys-utils/zramctl.c:728
+#: sys-utils/zramctl.c:735
 #, c-format
 msgid "%s: failed to set algorithm"
 msgstr "%s: gặp lỗi khi đặt thuật toán"
 
-#: sys-utils/zramctl.c:731
+#: sys-utils/zramctl.c:738
 #, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "%s: gặp lỗi khi đặt cỡ đĩa (%ju byte)"
@@ -18206,8 +18207,8 @@ msgid "%s: can't exec %s: %m"
 msgstr "%s: không thực hiện được %s: %m"
 
 #: term-utils/agetty.c:567 term-utils/agetty.c:892 term-utils/agetty.c:1410
-#: term-utils/agetty.c:1428 term-utils/agetty.c:1464 term-utils/agetty.c:1474
-#: term-utils/agetty.c:1511 term-utils/agetty.c:1954 term-utils/agetty.c:2511
+#: term-utils/agetty.c:1428 term-utils/agetty.c:1465 term-utils/agetty.c:1475
+#: term-utils/agetty.c:1517 term-utils/agetty.c:1960 term-utils/agetty.c:2517
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "không cấp pháp được bộ nhớ: %m"
@@ -18290,37 +18291,37 @@ msgstr "%s: gặp lỗi khi lấy các thuộc tính thiết bị cuối: %m"
 msgid "setting terminal attributes failed: %m"
 msgstr "gặp lỗi khi cài đặt các thuộc tính thiết bị cuối: %m"
 
-#: term-utils/agetty.c:1454
+#: term-utils/agetty.c:1455
 #, fuzzy
 msgid "cannot open os-release file"
 msgstr "không mở được tập tin khóa %s"
 
-#: term-utils/agetty.c:1616
+#: term-utils/agetty.c:1622
 #, fuzzy, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "lỗi đọc tập tin bản đánh máy %s"
 
-#: term-utils/agetty.c:1703
+#: term-utils/agetty.c:1709
 msgid "[press ENTER to login]"
 msgstr "[bấm ENTER để đăng nhập]"
 
-#: term-utils/agetty.c:1727
+#: term-utils/agetty.c:1733
 msgid "Num Lock off"
 msgstr "Tắt phím Num Lock"
 
-#: term-utils/agetty.c:1730
+#: term-utils/agetty.c:1736
 msgid "Num Lock on"
 msgstr "Bật phím Num Lock"
 
-#: term-utils/agetty.c:1733
+#: term-utils/agetty.c:1739
 msgid "Caps Lock on"
 msgstr "Bật phím Caps Lock"
 
-#: term-utils/agetty.c:1736
+#: term-utils/agetty.c:1742
 msgid "Scroll Lock on"
 msgstr "Bật phím Scroll Lock"
 
-#: term-utils/agetty.c:1739
+#: term-utils/agetty.c:1745
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -18329,32 +18330,32 @@ msgstr ""
 "Tìm thấy: %s\n"
 "\n"
 
-#: term-utils/agetty.c:1874
+#: term-utils/agetty.c:1880
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: đọc: %m"
 
-#: term-utils/agetty.c:1933
+#: term-utils/agetty.c:1939
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: thừa dữ liệu vào"
 
-#: term-utils/agetty.c:1950 term-utils/agetty.c:1958
+#: term-utils/agetty.c:1956 term-utils/agetty.c:1964
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: chuyển đổi ký tự không hợp lệ cho tên đăng nhập"
 
-#: term-utils/agetty.c:1964
+#: term-utils/agetty.c:1970
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ký tự 0x%x không hợp lệ trong tên đăng nhập"
 
-#: term-utils/agetty.c:2049
+#: term-utils/agetty.c:2055
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: gặp lỗi khi đặt các thuộc tính thiết bị cuối: %m"
 
-#: term-utils/agetty.c:2087
+#: term-utils/agetty.c:2093
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18363,160 +18364,160 @@ msgstr ""
 " %1$s [các tùy chọn] <line> [<baud_rate>,…] [<termtype>]\n"
 " %1$s [các tùy chọn] <baud_rate>,… <line> [<termtype>]\n"
 
-#: term-utils/agetty.c:2091
+#: term-utils/agetty.c:2097
 msgid "Open a terminal and set its mode.\n"
 msgstr "Mở một thiết bị cuối và đặt chế độ của nó.\n"
 
-#: term-utils/agetty.c:2094
+#: term-utils/agetty.c:2100
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                coi là tty 8-bit\n"
 
-#: term-utils/agetty.c:2095
+#: term-utils/agetty.c:2101
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <user>     đăng nhập với tài khoản đã chỉ định một cách tự động\n"
 
-#: term-utils/agetty.c:2096
+#: term-utils/agetty.c:2102
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              không đặt lại chế độ điều khiển\n"
 
-#: term-utils/agetty.c:2097
+#: term-utils/agetty.c:2103
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               dùng -r <tên-máy> dành cho login(1)\n"
 
-#: term-utils/agetty.c:2098
+#: term-utils/agetty.c:2104
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <TẬP-TIN> hiển thị tập tin đưa ra\n"
 
-#: term-utils/agetty.c:2099
+#: term-utils/agetty.c:2105
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         bật điều khiển tràn phần cứng\n"
 
-#: term-utils/agetty.c:2100
+#: term-utils/agetty.c:2106
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <tên máy>       chỉ định tên máy chủ đăng nhập\n"
 
-#: term-utils/agetty.c:2101
+#: term-utils/agetty.c:2107
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              không hiển thị tập tin phát ra\n"
 
-#: term-utils/agetty.c:2102
+#: term-utils/agetty.c:2108
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <chuỗi>  đặt chuỗi khởi tạo\n"
 
-#: term-utils/agetty.c:2103
+#: term-utils/agetty.c:2109
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              không xóa màn hình trước dấu nhắc\n"
 
-#: term-utils/agetty.c:2104
+#: term-utils/agetty.c:2110
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <T.Tin> chỉ định chương trình đăng nhập\n"
 
-#: term-utils/agetty.c:2105
+#: term-utils/agetty.c:2111
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<chếđộ>] điều khiển cờ dây nội bộ\n"
 
-#: term-utils/agetty.c:2106
+#: term-utils/agetty.c:2112
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         trích tốc độ baud trong quá trình kết nối\n"
 
-#: term-utils/agetty.c:2107
+#: term-utils/agetty.c:2113
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           không nhắc đăng nhập\n"
 
-#: term-utils/agetty.c:2108
+#: term-utils/agetty.c:2114
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            không in một ký hiệu dòng mới trước phát hành\n"
 
-#: term-utils/agetty.c:2109
+#: term-utils/agetty.c:2115
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <opts> các tùy chọn chuyển qua cho login\n"
 
-#: term-utils/agetty.c:2110
+#: term-utils/agetty.c:2116
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          chờ bấm phím bất kỳ trước khi đăng nhập\n"
 
-#: term-utils/agetty.c:2111
+#: term-utils/agetty.c:2117
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <t.mục>       thay đổi thư mục gốc sang thư mục\n"
 
-#: term-utils/agetty.c:2112
+#: term-utils/agetty.c:2118
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               thực hiện việc treo ảo trên tty\n"
 
-#: term-utils/agetty.c:2113
+#: term-utils/agetty.c:2119
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            thử giữ tốc độ baud sau ngắt\n"
 
-#: term-utils/agetty.c:2114
+#: term-utils/agetty.c:2120
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <số>         thời hạn chờ tiến trình tối đa\n"
 
-#: term-utils/agetty.c:2115
+#: term-utils/agetty.c:2121
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          phân biệt HOA/thường thiết bị cuối\n"
 
-#: term-utils/agetty.c:2116
+#: term-utils/agetty.c:2122
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              đợi ký hiệu về đầu dòng\n"
 
-#: term-utils/agetty.c:2117
+#: term-utils/agetty.c:2123
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              Không gợi ý\n"
 
-#: term-utils/agetty.c:2118
+#: term-utils/agetty.c:2124
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           không hiển thị tên máy\n"
 
-#: term-utils/agetty.c:2119
+#: term-utils/agetty.c:2125
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        hiển thị tên máy đủ điều kiện dạng đầy đủ\n"
 
-#: term-utils/agetty.c:2120
+#: term-utils/agetty.c:2126
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <chuỗi>  các ký tự xóa lùi phụ thêm\n"
 
-#: term-utils/agetty.c:2121
+#: term-utils/agetty.c:2127
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <chuỗi>   các ký tự giết bổ xung\n"
 
-#: term-utils/agetty.c:2122
+#: term-utils/agetty.c:2128
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <thư-mục>      đổi thư mục trước khi đăng nhập\n"
 
-#: term-utils/agetty.c:2123
+#: term-utils/agetty.c:2129
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <số>           nghỉ trước khi nhắc\n"
 
-#: term-utils/agetty.c:2124
+#: term-utils/agetty.c:2130
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <số>            chạy đăng nhập với mức ưu tiên này\n"
 
-#: term-utils/agetty.c:2125
+#: term-utils/agetty.c:2131
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               lấy lại dấu nhắc trên minh dụ agetty đang chạy\n"
 
-#: term-utils/agetty.c:2126
+#: term-utils/agetty.c:2132
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "    -T [hay --list-types]:\t\tliệt kê các kiểu phân vùng đã biết"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2477
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d tài khoản"
 
-#: term-utils/agetty.c:2599
+#: term-utils/agetty.c:2605
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname gặp lỗi: %m"
 
-#: term-utils/agetty.c:2611
+#: term-utils/agetty.c:2617
 #, c-format
 msgid "cannot touch file %s"
 msgstr "không thể chạm tập tin %s"
 
-#: term-utils/agetty.c:2615
+#: term-utils/agetty.c:2621
 msgid "--reload is unsupported on your system"
 msgstr "hệ thống của bạn không hỗ trợ --reload"
 

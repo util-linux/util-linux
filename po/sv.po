@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.31-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-10-03 17:55+0200\n"
+"POT-Creation-Date: 2017-10-19 12:53+0200\n"
 "PO-Revision-Date: 2017-10-05 01:34+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -63,18 +63,18 @@ msgstr "inte tillräckligt många argument"
 #: login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:354
 #: login-utils/utmpdump.c:376 login-utils/vipw.c:262 login-utils/vipw.c:280
-#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1190 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:532 sys-utils/eject.c:499 sys-utils/eject.c:699
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
 #: sys-utils/hwclock.c:207 sys-utils/hwclock.c:806 sys-utils/hwclock-rtc.c:400
-#: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392
-#: sys-utils/nsenter.c:129 sys-utils/rfkill.c:188 sys-utils/rfkill.c:543
-#: sys-utils/rtcwake.c:134 sys-utils/rtcwake.c:268 sys-utils/setpriv.c:276
-#: sys-utils/setpriv.c:614 sys-utils/setpriv.c:637 sys-utils/swapon.c:376
-#: sys-utils/swapon.c:519 sys-utils/switch_root.c:167 sys-utils/unshare.c:106
-#: sys-utils/unshare.c:121 sys-utils/wdctl.c:322 sys-utils/wdctl.c:378
-#: term-utils/agetty.c:2608 term-utils/mesg.c:127 term-utils/script.c:460
+#: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
+#: sys-utils/rfkill.c:188 sys-utils/rfkill.c:543 sys-utils/rtcwake.c:134
+#: sys-utils/rtcwake.c:268 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
+#: sys-utils/setpriv.c:637 sys-utils/swapon.c:376 sys-utils/swapon.c:519
+#: sys-utils/switch_root.c:167 sys-utils/unshare.c:106 sys-utils/unshare.c:121
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:509
+#: term-utils/agetty.c:2614 term-utils/mesg.c:127 term-utils/script.c:460
 #: term-utils/script.c:468 term-utils/script.c:563
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
@@ -220,7 +220,7 @@ msgstr " %-25s hämta storlek i 512-byte sektorer\n"
 #: disk-utils/mkfs.bfs.c:181 disk-utils/mkfs.c:116 disk-utils/mkfs.minix.c:813
 #: disk-utils/swaplabel.c:181 misc-utils/wipefs.c:718
 #: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:394 sys-utils/tunelp.c:242
-#: sys-utils/zramctl.c:686 sys-utils/zramctl.c:712
+#: sys-utils/zramctl.c:693 sys-utils/zramctl.c:719
 msgid "no device specified"
 msgstr "ingen enhet angiven"
 
@@ -487,8 +487,7 @@ msgstr "Misslyckades att skriva skript %s"
 msgid "Select label type"
 msgstr "Välj etikettstyp"
 
-#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074
-#: disk-utils/fdisk-menu.c:487
+#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:487
 msgid "Device does not contain a recognized partition table."
 msgstr "Enheten innehåller inte en igenkänd partitionstabell."
 
@@ -749,8 +748,8 @@ msgstr ""
 "Fortsätter… "
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:602
-#: sys-utils/blkdiscard.c:85 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:602 sys-utils/blkdiscard.c:85
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [flaggor] <enhet>\n"
@@ -841,7 +840,7 @@ msgstr "användardefinierat slutspår överstiger mediets specificerade maximum"
 msgid "user defined start track exceeds the user defined end track"
 msgstr "användardefinierat startspår överstiger användardefinierat slutspår"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:989
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1022
 msgid "close failed"
 msgstr "stängning misslyckades"
 
@@ -1083,21 +1082,20 @@ msgstr "raderingsläge stöds ej"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Enhetsegenskaperna (sektorstorlek och geometri) bör endast användas med en enhet."
 
-#: disk-utils/fdisk.c:1033 disk-utils/fdisk.c:1048
-#: disk-utils/fsck.cramfs.c:690 disk-utils/mkfs.bfs.c:198
-#: disk-utils/mkfs.cramfs.c:786 disk-utils/partx.c:967 disk-utils/raw.c:137
-#: disk-utils/raw.c:150 disk-utils/raw.c:162 disk-utils/raw.c:203
-#: misc-utils/cal.c:473 misc-utils/findfs.c:59 misc-utils/look.c:150
-#: misc-utils/whereis.c:570 misc-utils/whereis.c:581 misc-utils/whereis.c:592
-#: misc-utils/whereis.c:634 schedutils/chrt.c:504 schedutils/ionice.c:262
-#: schedutils/taskset.c:189 sys-utils/chcpu.c:344 sys-utils/chmem.c:317
-#: sys-utils/dmesg.c:1491 sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:888 sys-utils/lscpu.c:2177 sys-utils/lsmem.c:499
-#: sys-utils/mount.c:698 sys-utils/mount.c:711 sys-utils/mount.c:780
-#: sys-utils/mountpoint.c:181 sys-utils/pivot_root.c:72
-#: sys-utils/swapoff.c:231 sys-utils/swapon.c:989 sys-utils/switch_root.c:250
-#: sys-utils/umount.c:528 term-utils/setterm.c:1176 text-utils/col.c:233
-#: text-utils/more.c:337
+#: disk-utils/fdisk.c:1033 disk-utils/fdisk.c:1048 disk-utils/fsck.cramfs.c:690
+#: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:786
+#: disk-utils/partx.c:967 disk-utils/raw.c:137 disk-utils/raw.c:150
+#: disk-utils/raw.c:162 disk-utils/raw.c:203 misc-utils/cal.c:473
+#: misc-utils/findfs.c:59 misc-utils/look.c:150 misc-utils/whereis.c:570
+#: misc-utils/whereis.c:581 misc-utils/whereis.c:592 misc-utils/whereis.c:634
+#: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
+#: sys-utils/chcpu.c:344 sys-utils/chmem.c:317 sys-utils/dmesg.c:1491
+#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
+#: sys-utils/lscpu.c:2177 sys-utils/lsmem.c:499 sys-utils/mount.c:698
+#: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
+#: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:231 sys-utils/swapon.c:989
+#: sys-utils/switch_root.c:250 sys-utils/umount.c:528 term-utils/setterm.c:1176
+#: text-utils/col.c:233 text-utils/more.c:337
 msgid "bad usage"
 msgstr "felaktig användning"
 
@@ -1181,7 +1179,7 @@ msgstr "misslyckades med att allokera utmatningstabell"
 #: sys-utils/lscpu.c:1815 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
 #: sys-utils/prlimit.c:229 sys-utils/rfkill.c:373 sys-utils/swapon.c:180
-#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:409 text-utils/column.c:420
+#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:420
 msgid "failed to allocate output line"
 msgstr "misslyckades med att allokera utmatningsrad"
 
@@ -1192,7 +1190,7 @@ msgstr "misslyckades med att allokera utmatningsrad"
 #: sys-utils/losetup.c:301 sys-utils/lscpu.c:1795 sys-utils/lscpu.c:1826
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
 #: sys-utils/rfkill.c:401 sys-utils/swapon.c:228 sys-utils/wdctl.c:242
-#: sys-utils/zramctl.c:475 text-utils/column.c:426
+#: sys-utils/zramctl.c:473 text-utils/column.c:426
 msgid "failed to add output data"
 msgstr "misslyckades att lägga till utmatningsdata"
 
@@ -3530,7 +3528,7 @@ msgstr "%s: misslyckades med att ställa in loopenhet"
 #: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:110
 #: sys-utils/lscpu.c:373 sys-utils/lsipc.c:232 sys-utils/lsmem.c:136
 #: sys-utils/lsns.c:189 sys-utils/prlimit.c:277 sys-utils/rfkill.c:155
-#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:148
+#: sys-utils/swapon.c:151 sys-utils/wdctl.c:151 sys-utils/zramctl.c:146
 #, c-format
 msgid "unknown column: %s"
 msgstr "okänd kolumn: %s"
@@ -6793,7 +6791,7 @@ msgid "special device %s does not exist"
 msgstr "specialenhet %s finns inte"
 
 #: libmount/src/context_mount.c:1470 libmount/src/context_mount.c:1486
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1593
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) systemanrop misslyckades: %m"
@@ -6898,7 +6896,7 @@ msgstr "bind %s misslyckades"
 msgid "no medium found on %s"
 msgstr "inget media hittat på %s"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1585
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "kan inte montera; förmodligen korrupt filsystem på %s"
@@ -9512,153 +9510,153 @@ msgstr "att skicka signal till %s misslyckades"
 msgid "cannot find process \"%s\""
 msgstr "kan inte hitta process ”%s”"
 
-#: misc-utils/logger.c:222
+#: misc-utils/logger.c:225
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "okänt resursnamn: %s"
 
-#: misc-utils/logger.c:228
+#: misc-utils/logger.c:231
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "okänt prioritetsnamn: %s"
 
-#: misc-utils/logger.c:240
+#: misc-utils/logger.c:243
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s: sökvägsnamnet är för långt"
 
-#: misc-utils/logger.c:267
+#: misc-utils/logger.c:270
 #, c-format
 msgid "socket %s"
 msgstr "uttag %s"
 
-#: misc-utils/logger.c:306
+#: misc-utils/logger.c:307
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "misslyckades med att slå upp namn %s port %s: %s"
 
-#: misc-utils/logger.c:323
+#: misc-utils/logger.c:324
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "misslyckades med att ansluta till %s port %s"
 
-#: misc-utils/logger.c:352
+#: misc-utils/logger.c:353
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "maximalt antal indatarader (%d) överskreds"
 
-#: misc-utils/logger.c:487
+#: misc-utils/logger.c:505
 msgid "send message failed"
 msgstr "misslyckades med att skicka meddelande"
 
-#: misc-utils/logger.c:558
+#: misc-utils/logger.c:575
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr "strukturdata-ID ”%s” är inte unikt"
 
-#: misc-utils/logger.c:572
+#: misc-utils/logger.c:589
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr "--sd-id angavs inte för --sd-param %s"
 
-#: misc-utils/logger.c:754
+#: misc-utils/logger.c:768
 msgid "localtime() failed"
 msgstr "localtime() misslyckades"
 
-#: misc-utils/logger.c:764
+#: misc-utils/logger.c:778
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "värdnamn ”%s” är för långt"
 
-#: misc-utils/logger.c:770
+#: misc-utils/logger.c:784
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "tagg ”%s” är för lång"
 
-#: misc-utils/logger.c:833
+#: misc-utils/logger.c:847
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "hoppar över okänt flaggargument: %s"
 
-#: misc-utils/logger.c:845
+#: misc-utils/logger.c:859
 #, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "ogiltigt argument: %s: använder automatiska fel"
 
-#: misc-utils/logger.c:997
+#: misc-utils/logger.c:1030
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [flaggor] [<meddelande>]\n"
 
-#: misc-utils/logger.c:1000
+#: misc-utils/logger.c:1033
 msgid "Enter messages into the system log.\n"
 msgstr "Mata in meddelanden i systemloggen.\n"
 
-#: misc-utils/logger.c:1003
+#: misc-utils/logger.c:1036
 msgid " -i                       log the logger command's PID\n"
 msgstr " -i                       logga logger-kommandots PID\n"
 
-#: misc-utils/logger.c:1004
+#: misc-utils/logger.c:1037
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr "     --id[=<id>]          logga det givna ID:t <id>, annars PID\n"
 
-#: misc-utils/logger.c:1005
+#: misc-utils/logger.c:1038
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <fil>         logga innehållet i denna fil\n"
 
-#: misc-utils/logger.c:1006
+#: misc-utils/logger.c:1039
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -e, --skip-empty         logga inte tomma rader när filer behandlas\n"
 
-#: misc-utils/logger.c:1007
+#: misc-utils/logger.c:1040
 msgid "     --no-act             do everything except the write the log\n"
 msgstr "     --no-act             gör allt utom att skriva till loggen\n"
 
-#: misc-utils/logger.c:1008
+#: misc-utils/logger.c:1041
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    markera angivet meddelande med denna prioritet\n"
 
-#: misc-utils/logger.c:1009
+#: misc-utils/logger.c:1042
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr "     --octet-count        använd oktetträkning från rfc6587\n"
 
-#: misc-utils/logger.c:1010
+#: misc-utils/logger.c:1043
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        leta efter ett prefix på varje rad som läses från standard in\n"
 
-#: misc-utils/logger.c:1011
+#: misc-utils/logger.c:1044
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             mata även ut meddelanden till standard fel\n"
 
-#: misc-utils/logger.c:1012
+#: misc-utils/logger.c:1045
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr " -S, --size <storlek>     maximal storlek för ett enstaka meddelande\n"
 
-#: misc-utils/logger.c:1013
+#: misc-utils/logger.c:1046
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <tagg>         markera varje rad med denna tagg\n"
 
-#: misc-utils/logger.c:1014
+#: misc-utils/logger.c:1047
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <namn>      skriv till denna fjärrsyslog-server\n"
 
-#: misc-utils/logger.c:1015
+#: misc-utils/logger.c:1048
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <port>        använd denna port för UDP- eller TCP-anslutningar\n"
 
-#: misc-utils/logger.c:1016
+#: misc-utils/logger.c:1049
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                använd endast TCP\n"
 
-#: misc-utils/logger.c:1017
+#: misc-utils/logger.c:1050
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                använd endast UDP\n"
 
-#: misc-utils/logger.c:1018
+#: misc-utils/logger.c:1051
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            använd det föråldrade BSD-syslog-protokollet\n"
 
-#: misc-utils/logger.c:1019
+#: misc-utils/logger.c:1052
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
@@ -9666,23 +9664,23 @@ msgstr ""
 "     --rfc5424[=<bort>]   använd syslog-protokollet (standard för fjärr);\n"
 "                            <bort> kan vara notime, eller notq, och/eller nohost\n"
 
-#: misc-utils/logger.c:1021
+#: misc-utils/logger.c:1054
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr "     --sd-id <id>         rfc5424-strukturerad data-ID\n"
 
-#: misc-utils/logger.c:1022
+#: misc-utils/logger.c:1055
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr "     --sd-param <data>    rfc5424-strukturerad data namn=värde\n"
 
-#: misc-utils/logger.c:1023
+#: misc-utils/logger.c:1056
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr "     --msgid <medd-id>    ställ in rfc5424-fältet för meddelande-ID\n"
 
-#: misc-utils/logger.c:1024
+#: misc-utils/logger.c:1057
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <uttag>     skriv till detta Unix-uttag\n"
 
-#: misc-utils/logger.c:1025
+#: misc-utils/logger.c:1058
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
@@ -9690,42 +9688,42 @@ msgstr ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          skriv ut anslutningsfel när Unix-uttag används\n"
 
-#: misc-utils/logger.c:1028
+#: misc-utils/logger.c:1061
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr "     --journald[=<fil>]   skriv journald-post\n"
 
-#: misc-utils/logger.c:1114
+#: misc-utils/logger.c:1147
 #, c-format
 msgid "file %s"
 msgstr "fil %s"
 
-#: misc-utils/logger.c:1129
+#: misc-utils/logger.c:1162
 msgid "failed to parse id"
 msgstr "misslyckades med att tolka id"
 
-#: misc-utils/logger.c:1147
+#: misc-utils/logger.c:1180
 msgid "failed to parse message size"
 msgstr "misslyckades med att tolka meddelandestorlek"
 
-#: misc-utils/logger.c:1182
+#: misc-utils/logger.c:1215
 msgid "--msgid cannot contain space"
 msgstr "--msgid kan inte innehålla blanksteg"
 
-#: misc-utils/logger.c:1204
+#: misc-utils/logger.c:1237
 #, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "ogiltigt strukturdata-ID: ”%s”"
 
-#: misc-utils/logger.c:1209
+#: misc-utils/logger.c:1242
 #, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "ogiltig strukturerad dataparameter: ”%s”"
 
-#: misc-utils/logger.c:1219
+#: misc-utils/logger.c:1252
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <fil> och <meddelande> kan inte båda användas, meddelande ignoreras"
 
-#: misc-utils/logger.c:1226
+#: misc-utils/logger.c:1259
 msgid "journald entry could not be written"
 msgstr "journald-post kunde inte skrivas"
 
@@ -9766,7 +9764,7 @@ msgstr "kärninternt enhetsnamn"
 msgid "internal parent kernel device name"
 msgstr "kärninternt överordnat enhetsnamn"
 
-#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:84
+#: misc-utils/lsblk.c:165 sys-utils/zramctl.c:86
 msgid "where the device is mounted"
 msgstr "där enheten är monterad"
 
@@ -11240,8 +11238,8 @@ msgstr "misslyckades med att tolka position"
 msgid "failed to parse step"
 msgstr "misslyckades med att tolka steg"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398
-#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:334
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398 sys-utils/fallocate.c:382
+#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:334
 msgid "unexpected number of arguments"
 msgstr "oväntat antal argument"
 
@@ -13091,7 +13089,7 @@ msgstr " -Q, --queue              skapa meddelandekö\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <läge>        rättigheter för resursen (standard är 0644)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:626
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:715 sys-utils/zramctl.c:633
 msgid "failed to parse size"
 msgstr "misslyckades med att tolka storlek"
 
@@ -17559,55 +17557,55 @@ msgstr "Identitet:"
 msgid "version"
 msgstr "version"
 
-#: sys-utils/zramctl.c:73
+#: sys-utils/zramctl.c:75
 msgid "zram device name"
 msgstr "zram-enhetsnamn"
 
-#: sys-utils/zramctl.c:74
+#: sys-utils/zramctl.c:76
 msgid "limit on the uncompressed amount of data"
 msgstr "begränsning av mängden dekomprimerad data"
 
-#: sys-utils/zramctl.c:75
+#: sys-utils/zramctl.c:77
 msgid "uncompressed size of stored data"
 msgstr "dekomprimerad storlek för lagrad data"
 
-#: sys-utils/zramctl.c:76
+#: sys-utils/zramctl.c:78
 msgid "compressed size of stored data"
 msgstr "komprimerad storlek av lagrad data"
 
-#: sys-utils/zramctl.c:77
+#: sys-utils/zramctl.c:79
 msgid "the selected compression algorithm"
 msgstr "den valda komprimeringsalgoritmen"
 
-#: sys-utils/zramctl.c:78
+#: sys-utils/zramctl.c:80
 msgid "number of concurrent compress operations"
 msgstr "antal samtidiga komprimeringsåtgärder"
 
-#: sys-utils/zramctl.c:79
+#: sys-utils/zramctl.c:81
 msgid "empty pages with no allocated memory"
 msgstr "tomma sidor utan allokerat minne"
 
-#: sys-utils/zramctl.c:80
+#: sys-utils/zramctl.c:82
 msgid "all memory including allocator fragmentation and metadata overhead"
 msgstr "allt minne inklusive allokatorfragmentering och metadataomkostnader"
 
-#: sys-utils/zramctl.c:81
+#: sys-utils/zramctl.c:83
 msgid "memory limit used to store compressed data"
 msgstr "minnesbegränsning använd för att spara komprimerad data"
 
-#: sys-utils/zramctl.c:82
+#: sys-utils/zramctl.c:84
 msgid "memory zram have been consumed to store compressed data"
 msgstr "minnet zram har konsumerats för att lagra komprimerad data"
 
-#: sys-utils/zramctl.c:83
+#: sys-utils/zramctl.c:85
 msgid "number of objects migrated by compaction"
 msgstr "antal objekt som flyttats på grund av komprimering"
 
-#: sys-utils/zramctl.c:378
+#: sys-utils/zramctl.c:376
 msgid "Failed to parse mm_stat"
 msgstr "Misslyckades med att tolka mm_stat"
 
-#: sys-utils/zramctl.c:526
+#: sys-utils/zramctl.c:533
 #, c-format
 msgid ""
 " %1$s [options] <device>\n"
@@ -17618,87 +17616,87 @@ msgstr ""
 " %1$s -r <enhet> […]\n"
 " %1$s [flaggor] -f | <enhet> -s <storlek>\n"
 
-#: sys-utils/zramctl.c:532
+#: sys-utils/zramctl.c:539
 msgid "Set up and control zram devices.\n"
 msgstr "Ställ in och kontrollera zram-enheter.\n"
 
-#: sys-utils/zramctl.c:535
+#: sys-utils/zramctl.c:542
 msgid " -a, --algorithm lzo|lz4   compression algorithm to use\n"
 msgstr " -a, --algorithm lzo|lz4   vilken komprimeringsalgoritm som ska användas\n"
 
-#: sys-utils/zramctl.c:536
+#: sys-utils/zramctl.c:543
 msgid " -b, --bytes               print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes               skriv ut storlekar i byte snarare än i format läsligt för människor\n"
 
-#: sys-utils/zramctl.c:537
+#: sys-utils/zramctl.c:544
 msgid " -f, --find                find a free device\n"
 msgstr " -f, --find                hitta en ledig enhet\n"
 
-#: sys-utils/zramctl.c:538
+#: sys-utils/zramctl.c:545
 msgid " -n, --noheadings          don't print headings\n"
 msgstr " -n, --noheadings          skriv inte ut rubriker\n"
 
-#: sys-utils/zramctl.c:539
+#: sys-utils/zramctl.c:546
 msgid " -o, --output <list>       columns to use for status output\n"
 msgstr " -o, --output <lista>      kolumner att använda för statusutmatning\n"
 
-#: sys-utils/zramctl.c:540
+#: sys-utils/zramctl.c:547
 msgid "     --raw                 use raw status output format\n"
 msgstr "     --raw                 använd rått utmatningsformat\n"
 
-#: sys-utils/zramctl.c:541
+#: sys-utils/zramctl.c:548
 msgid " -r, --reset               reset all specified devices\n"
 msgstr " -r, --reset               återställ alla angivna enheter\n"
 
-#: sys-utils/zramctl.c:542
+#: sys-utils/zramctl.c:549
 msgid " -s, --size <size>         device size\n"
 msgstr " -s, --size <storlek>      storlek för enhet\n"
 
-#: sys-utils/zramctl.c:543
+#: sys-utils/zramctl.c:550
 msgid " -t, --streams <number>    number of compression streams\n"
 msgstr " -t, --streams <nummer>    antal komprimeringsströmmar\n"
 
-#: sys-utils/zramctl.c:608
+#: sys-utils/zramctl.c:615
 #, c-format
 msgid "unsupported algorithm: %s"
 msgstr "algoritm stöds inte: %s"
 
-#: sys-utils/zramctl.c:630
+#: sys-utils/zramctl.c:637
 msgid "failed to parse streams"
 msgstr "misslyckades med att tolka strömmar"
 
-#: sys-utils/zramctl.c:652
+#: sys-utils/zramctl.c:659
 msgid "option --find is mutually exclusive with <device>"
 msgstr "flaggan --find är ömsesidigt uteslutande med <enhet>"
 
-#: sys-utils/zramctl.c:658
+#: sys-utils/zramctl.c:665
 msgid "only one <device> at a time is allowed"
 msgstr "endast en <enhet> tillåts åt gången"
 
-#: sys-utils/zramctl.c:661
+#: sys-utils/zramctl.c:668
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr "flaggorna --algorithm och --streams måste kombineras med --size"
 
-#: sys-utils/zramctl.c:691 sys-utils/zramctl.c:720
+#: sys-utils/zramctl.c:698 sys-utils/zramctl.c:727
 #, c-format
 msgid "%s: failed to reset"
 msgstr "%s: misslyckades med att återställa"
 
-#: sys-utils/zramctl.c:702 sys-utils/zramctl.c:710
+#: sys-utils/zramctl.c:709 sys-utils/zramctl.c:717
 msgid "no free zram device found"
 msgstr "ingen ledig zram-enhet hittades"
 
-#: sys-utils/zramctl.c:724
+#: sys-utils/zramctl.c:731
 #, c-format
 msgid "%s: failed to set number of streams"
 msgstr "%s: misslyckades med att ställa in antal strömmar"
 
-#: sys-utils/zramctl.c:728
+#: sys-utils/zramctl.c:735
 #, c-format
 msgid "%s: failed to set algorithm"
 msgstr "%s: misslyckades med att ställa in algoritm"
 
-#: sys-utils/zramctl.c:731
+#: sys-utils/zramctl.c:738
 #, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "%s: misslyckades med att ställa diskstorlek (%ju byte)"
@@ -17729,8 +17727,8 @@ msgid "%s: can't exec %s: %m"
 msgstr "%s: kan inte köra %s: %m"
 
 #: term-utils/agetty.c:567 term-utils/agetty.c:892 term-utils/agetty.c:1410
-#: term-utils/agetty.c:1428 term-utils/agetty.c:1464 term-utils/agetty.c:1474
-#: term-utils/agetty.c:1511 term-utils/agetty.c:1954 term-utils/agetty.c:2511
+#: term-utils/agetty.c:1428 term-utils/agetty.c:1465 term-utils/agetty.c:1475
+#: term-utils/agetty.c:1517 term-utils/agetty.c:1960 term-utils/agetty.c:2517
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "misslyckades med att allokera minne: %m"
@@ -17811,36 +17809,36 @@ msgstr "%s: misslyckades med att hämta terminalattribut: %m"
 msgid "setting terminal attributes failed: %m"
 msgstr "inställning av terminalattribut misslyckades: %m"
 
-#: term-utils/agetty.c:1454
+#: term-utils/agetty.c:1455
 msgid "cannot open os-release file"
 msgstr "kan inte öppna os-release-fil"
 
-#: term-utils/agetty.c:1616
+#: term-utils/agetty.c:1622
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "misslyckades med att skapa återinläsningsfil: %s: %m"
 
-#: term-utils/agetty.c:1703
+#: term-utils/agetty.c:1709
 msgid "[press ENTER to login]"
 msgstr "[tryck på RETUR för att logga in]"
 
-#: term-utils/agetty.c:1727
+#: term-utils/agetty.c:1733
 msgid "Num Lock off"
 msgstr "Num Lock är av"
 
-#: term-utils/agetty.c:1730
+#: term-utils/agetty.c:1736
 msgid "Num Lock on"
 msgstr "Num Lock är på"
 
-#: term-utils/agetty.c:1733
+#: term-utils/agetty.c:1739
 msgid "Caps Lock on"
 msgstr "Caps Lock är på"
 
-#: term-utils/agetty.c:1736
+#: term-utils/agetty.c:1742
 msgid "Scroll Lock on"
 msgstr "Scroll Lock är på"
 
-#: term-utils/agetty.c:1739
+#: term-utils/agetty.c:1745
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -17849,32 +17847,32 @@ msgstr ""
 "Tips: %s\n"
 "\n"
 
-#: term-utils/agetty.c:1874
+#: term-utils/agetty.c:1880
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: läste: %m"
 
-#: term-utils/agetty.c:1933
+#: term-utils/agetty.c:1939
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: indataspill"
 
-#: term-utils/agetty.c:1950 term-utils/agetty.c:1958
+#: term-utils/agetty.c:1956 term-utils/agetty.c:1964
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ogiltig teckenkonvertering för inloggningsnamn"
 
-#: term-utils/agetty.c:1964
+#: term-utils/agetty.c:1970
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ogiltigt tecken 0x%x i inloggningsnamn"
 
-#: term-utils/agetty.c:2049
+#: term-utils/agetty.c:2055
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s misslyckades med att ställa in terminalattribut: %m"
 
-#: term-utils/agetty.c:2087
+#: term-utils/agetty.c:2093
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -17883,164 +17881,164 @@ msgstr ""
 " %1$s [flaggor] <linje> [<baud_hastighet>,…] [<termtyp>]\n"
 " %1$s [flaggor] <baud_hastighet>,… <linje> [<termtyp>]\n"
 
-#: term-utils/agetty.c:2091
+#: term-utils/agetty.c:2097
 msgid "Open a terminal and set its mode.\n"
 msgstr "Öppna en terminal och ställ in dess läge.\n"
 
-#: term-utils/agetty.c:2094
+#: term-utils/agetty.c:2100
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                   antag att det är en 8-bitars tty\n"
 
-#: term-utils/agetty.c:2095
+#: term-utils/agetty.c:2101
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <användare>   logga in den angivna användaren automatiskt\n"
 
-#: term-utils/agetty.c:2096
+#: term-utils/agetty.c:2102
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset                 återställ inte kontrolläge\n"
 
-#: term-utils/agetty.c:2097
+#: term-utils/agetty.c:2103
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote                  använd -r <värdnamn> för login(1)\n"
 
-#: term-utils/agetty.c:2098
+#: term-utils/agetty.c:2104
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <fil>        visa issue-fil\n"
 
-#: term-utils/agetty.c:2099
+#: term-utils/agetty.c:2105
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control            aktivera hårdvarubaserad flödeskontroll\n"
 
-#: term-utils/agetty.c:2100
+#: term-utils/agetty.c:2106
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <värdnamn>         ange inloggningsvärd\n"
 
-#: term-utils/agetty.c:2101
+#: term-utils/agetty.c:2107
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue                 visa inte issue-fil\n"
 
-#: term-utils/agetty.c:2102
+#: term-utils/agetty.c:2108
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <sträng>    ställ in initierings-sträng\n"
 
-#: term-utils/agetty.c:2103
+#: term-utils/agetty.c:2109
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear                 rensa inte skärmen innan prompt\n"
 
-#: term-utils/agetty.c:2104
+#: term-utils/agetty.c:2110
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <fil>     ange inloggningsprogram\n"
 
-#: term-utils/agetty.c:2105
+#: term-utils/agetty.c:2111
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<läge>]     styr flaggan för den lokala linjen\n"
 
-#: term-utils/agetty.c:2106
+#: term-utils/agetty.c:2112
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud            extrahera baud-hastighet under anslutning\n"
 
-#: term-utils/agetty.c:2107
+#: term-utils/agetty.c:2113
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login              fråga inte efter inloggning\n"
 
-#: term-utils/agetty.c:2108
+#: term-utils/agetty.c:2114
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline               skriv inte ut nyrad innan issue-fil\n"
 
-#: term-utils/agetty.c:2109
+#: term-utils/agetty.c:2115
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <flaggor> flaggor som skickas vidare till login\n"
 
-#: term-utils/agetty.c:2110
+#: term-utils/agetty.c:2116
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause             vänta på valfri tangent innan inloggning\n"
 
 # sebras: change root to the given directory
-#: term-utils/agetty.c:2111
+#: term-utils/agetty.c:2117
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <kat>            ändra rot till angiven katalog\n"
 
-#: term-utils/agetty.c:2112
+#: term-utils/agetty.c:2118
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup                  avring tty:n virtuellt\n"
 
-#: term-utils/agetty.c:2113
+#: term-utils/agetty.c:2119
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud               försök att behålla baud-hastighet efter avbrott\n"
 
-#: term-utils/agetty.c:2114
+#: term-utils/agetty.c:2120
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <nummer>        tidsgräns för inloggningsprocess\n"
 
-#: term-utils/agetty.c:2115
+#: term-utils/agetty.c:2121
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case             identifiera terminal som använder versaler\n"
 
-#: term-utils/agetty.c:2116
+#: term-utils/agetty.c:2122
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr                 vänta på vagnretur\n"
 
-#: term-utils/agetty.c:2117
+#: term-utils/agetty.c:2123
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints                 skriv inte ut tips\n"
 
 # sebras: hostname will not be shown at all
-#: term-utils/agetty.c:2118
+#: term-utils/agetty.c:2124
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname              värdnamnet kommer inte att visas alls\n"
 
-#: term-utils/agetty.c:2119
+#: term-utils/agetty.c:2125
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname           visa fullständigt värdnamn\n"
 
-#: term-utils/agetty.c:2120
+#: term-utils/agetty.c:2126
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <sträng>    ytterligare backstegstecken\n"
 
-#: term-utils/agetty.c:2121
+#: term-utils/agetty.c:2127
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <sträng>     ytterligare tecken som ignorerar alla tidigare tecken\n"
 
 # sebras: change directory before login
-#: term-utils/agetty.c:2122
+#: term-utils/agetty.c:2128
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <katalog>         byt katalog innan inloggning\n"
 
 # sebras: <seconds> seconds of delay before prompt
-#: term-utils/agetty.c:2123
+#: term-utils/agetty.c:2129
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <nummer>          antal sekunder fördröjning innan prompt\n"
 
-#: term-utils/agetty.c:2124
+#: term-utils/agetty.c:2130
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <nummer>           kör inloggning med denna prioritet\n"
 
-#: term-utils/agetty.c:2125
+#: term-utils/agetty.c:2131
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload                  återinläs prompt i körande agetty-instanser\n"
 
-#: term-utils/agetty.c:2126
+#: term-utils/agetty.c:2132
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-types      visa baud-hastigheter som stöds\n"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2477
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d användare"
 msgstr[1] "%d användare"
 
-#: term-utils/agetty.c:2599
+#: term-utils/agetty.c:2605
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname misslyckades: %m"
 
-#: term-utils/agetty.c:2611
+#: term-utils/agetty.c:2617
 #, c-format
 msgid "cannot touch file %s"
 msgstr "kan inte röra filen %s"
 
-#: term-utils/agetty.c:2615
+#: term-utils/agetty.c:2621
 msgid "--reload is unsupported on your system"
 msgstr "--reload stöds inte på ditt system"
 
