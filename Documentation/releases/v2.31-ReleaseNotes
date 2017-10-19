@@ -117,6 +117,7 @@ agetty:
    - add --list-speeds option  [Sami Kerola]
    - add compile time features to --version output  [Sami Kerola]
    - fix --login-pause logic  [Karel Zak]
+   - fix /etc/os-release parsing  [Karel Zak]
    - fix invalid usage crash  [Sami Kerola]
    - fix login name DEL/CTRL^U issue  [Karel Zak]
    - keep returns in main()  [Karel Zak]
@@ -129,6 +130,9 @@ bash-completion:
    - update uuidgen, wipefs, tunelp, setpriv, and hwclock  [Sami Kerola]
 blkid:
    - Add dm-integrity superblock signature  [Milan Broz]
+   - cleanup man page info about lsblk  [Karel Zak]
+   - improve man page wording  [Karel Zak]
+   - more info about ambivalent results to the man page  [Karel Zak]
    - use errtryhelp instead of errtryh  [Ruediger Meier]
 blockdev:
    - correct man page name in --help  [Ruediger Meier]
@@ -146,6 +150,7 @@ build-sys:
    - make chown usage more robust  [Karel Zak]
    - make rfkill optional (and enabled by default)  [Karel Zak]
    - release++ (v2.31-rc1)  [Karel Zak]
+   - release++ (v2.31-rc2)  [Karel Zak]
    - remove unused rfkill.py  [Karel Zak]
    - support ncursesw without headers in ncursesw/ directory  [Karel Zak]
    - update DISTCHECK_CONFIGURE_FLAGS  [Karel Zak]
@@ -170,6 +175,7 @@ dmesg:
    - fragment concatenation  [Vinnie Magro]
    - print only 2 hex digits for each hex-escaped byte  [Ivan Delalande]
 docs:
+   - (TODO) make PMBR boot flag more user-friendly  [Karel Zak]
    - add --enable-programs to TODO  [Karel Zak]
    - add 2.30.2 to ReleaseNotes  [Karel Zak]
    - add ASAN to TODO list  [Karel Zak]
@@ -201,6 +207,8 @@ fdisk:
    - reset context after failed script  [Karel Zak]
    - use fdisk_reread_changes()  [Karel Zak]
    - use strutils to trim whitespace from input  [Vaclav Dolezal]
+fincore:
+   - make sure mmap(NULL, ...) [coverity scan]  [Karel Zak]
 flock, getopt:
    - write --help to stdout and return 0  [Ruediger Meier]
 fsck:
@@ -267,6 +275,8 @@ include:
    - update pathnames.h  [J William Piggott]
 include/c.h:
    - add USAGE_COMMANDS and USAGE_COLUMNS  [J William Piggott]
+ipcs:
+   - fix memory leak [coverity scan]  [Karel Zak]
 isosize:
    - avoid reading more data than what is needed  [Sami Kerola]
    - iterate over all arguments even when something fails  [Karel Zak]
@@ -285,6 +295,10 @@ lib/blkdev:
    - remove support for Linux < 2.6  [Ruediger Meier]
 lib/match:
    - make match_fstype() case insensitive  [Karel Zak]
+lib/mbsedit:
+   - check wctomb() return code [coverity scan]  [Karel Zak]
+lib/pager:
+   - check open() return code [coverity scan]  [Karel Zak]
 lib/path:
    - add error handling to path_vcreate()  [Ruediger Meier]
    - fix crash, pathbuf overflow  [Ruediger Meier]
@@ -324,6 +338,7 @@ libfdisk:
    - (dos) return EINVAL when delete unused partition  [Karel Zak]
    - (dos) use size-=1 when alignment not used later  [Karel Zak]
    - (gpt) fix size-1 error  [Karel Zak]
+   - (sun) make math more robust [coverity scan]  [Karel Zak]
    - add --grain to mkpart sample  [Karel Zak]
    - add --nopartno to mkpart sample  [Karel Zak]
    - add comment  [Karel Zak]
@@ -362,14 +377,18 @@ libmount:
    - fix warning "set but not used"  [Ruediger Meier]
    - ignore "bind" from fstab on command line "remount"  [Karel Zak]
    - make mnt_context_is_fs_mounted work for /proc  [Ivan Delalande]
+   - make sure we call stat() propely [coverity scan]  [Karel Zak]
    - use _exit() in <type> handlers  [Karel Zak]
    - use mount table filter on --no-canonicalize  [Karel Zak]
 libsmartcols:
    - (docs) add new functions  [Karel Zak]
+   - (docs) add note about line separators  [Karel Zak]
+   - (sample) cleanup line separator usage  [Karel Zak]
    - add header-repeat feature  [Karel Zak]
    - add missing symbols  [Karel Zak]
    - add scols_table_enable_noencoding()  [Karel Zak]
    - add scols_table_{set,get}_termheight()  [Karel Zak]
+   - don't call free_buffer() for uninitialized variable [coverity scan]  [Karel Zak]
    - fix comment (to make gtk-docs happy)  [Karel Zak]
    - fix heap-buffer-overflow when move columns  [Karel Zak]
    - fix scols_line_move_cells() n+1 error [asan]  [Karel Zak]
@@ -378,7 +397,11 @@ libuuid:
    - add support for hash-based UUIDs  [Philip Prindeville]
    - use access(2) when checking /dev/random availability  [Sami Kerola]
 logger:
+   - add dummy fallback for OSX  [Karel Zak]
+   - allow to reconnect on initial failed connect too  [Karel Zak]
+   - keep header generators independent on connection  [Karel Zak]
    - make stdin parsing more friendly to static analyzers  [Karel Zak]
+   - reconnect on failed send()  [Karel Zak]
 login:
    - add --help and --version  [Ruediger Meier]
    - add --help text  [Ruediger Meier]
@@ -391,6 +414,8 @@ losetup:
    - Add support for logical block size  [Stanislav Brabec]
    - add info about lazy detach to manpage  [Karel Zak]
    - add missing initializer [clang]  [Sami Kerola]
+   - fix bitwise vs. logical typo [coverity scan]  [Karel Zak]
+   - fix conflicting types for ‘loopcxt_set_blocksize’  [Karel Zak]
    - rename to --sector-size and LOG-SEC  [Karel Zak]
 lsblk:
    - add option --tree  [Karel Zak]
@@ -400,6 +425,7 @@ lscpu:
    - make clang analyzer happy  [Ruediger Meier]
 lslogins:
    - be more explicit with -g in man page  [Karel Zak]
+   - fix possible memory leak [coverity scan]  [Karel Zak]
    - ignore non-existing users  [Karel Zak]
 lsmem:
    - fix, using freed memory  [Ruediger Meier]
@@ -462,7 +488,9 @@ po:
    - update da.po (from translationproject.org)  [Joe Hansen]
    - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
    - update fr.po (from translationproject.org)  [Stéphane Aulery]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+   - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
 pylibmount:
    - NULL terminate kwlist in Context_init  [Zac Medico]
 rename:
@@ -483,6 +511,8 @@ rfkill:
    - do not fsync(3) /dev/rfkill file descriptor  [Sami Kerola]
    - do not ignore read error  [Sami Kerola]
    - fix coding style and error messages  [Karel Zak]
+   - fix description name typo  [Sami Kerola]
+   - fix typo [coverity scan]  [Karel Zak]
    - improve default output  [Karel Zak]
    - inform in syslog when rfkill is invoked  [Sami Kerola]
    - make command to build in util-linux project  [Sami Kerola]
@@ -495,7 +525,6 @@ rfkill:
    - use back and forward compatible test  [Sami Kerola]
    - use human readable timestamps in event output  [Sami Kerola]
    - use libsmartcols output  [Sami Kerola]
-   - refactor rfkill index/type lookup
    - move it below rfkill_block.  [Darren Salt]
 runuser:
    - fix linking  [Sami Kerola]
@@ -521,6 +550,8 @@ setpriv:
    - support setting unnamed capabilities  [Patrick Steinhardt]
 setproctitle:
    - fix out of boundary access  [Tobias Stoeckmann]
+setsid:
+   - document fork(2) usage  [Karel Zak]
 sfdisk:
    - use fdisk_device_is_used()  [Karel Zak]
 su:
@@ -635,3 +666,6 @@ wipefs:
    - print all signature permutations  [Karel Zak]
    - try another magic strings on -o and -t  [Karel Zak]
    - use libsmartcols  [Karel Zak]
+zramctl:
+   - fix show all non-zero zram devices  [James Sanford]
+   - remove unused ZRAM_EMPTY and blank line  [James Sanford]
