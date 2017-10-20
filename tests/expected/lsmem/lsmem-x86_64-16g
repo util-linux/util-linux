@@ -1,7 +1,7 @@
 
 ---
 
-$ lsmem 
+$ lsmem --split=STATE,REMOVABLE
 RANGE                                  SIZE  STATE REMOVABLE   BLOCK
 0x0000000000000000-0x0000000007ffffff  128M online        no       0
 0x0000000008000000-0x0000000037ffffff  768M online       yes     1-6
@@ -40,7 +40,7 @@ Total offline memory:      0B
 
 ---
 
-$ lsmem --output RANGE,SIZE
+$ lsmem --output RANGE,SIZE --split none
 RANGE                                 SIZE
 0x0000000000000000-0x00000000bfffffff   3G
 0x0000000100000000-0x000000043fffffff  13G
@@ -51,7 +51,7 @@ Total offline memory:      0B
 
 ---
 
-$ lsmem --output RANGE,SIZE,STATE
+$ lsmem --output RANGE,SIZE,STATE --split STATE
 RANGE                                 SIZE  STATE
 0x0000000000000000-0x00000000bfffffff   3G online
 0x0000000100000000-0x000000043fffffff  13G online
@@ -199,7 +199,7 @@ Total offline memory:      0B
 
 ---
 
-$ lsmem --raw --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
+$ lsmem --raw --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE --split RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
 RANGE SIZE STATE REMOVABLE BLOCK NODE
 0x0000000000000000-0x0000000007ffffff 128M online no 0 0
 0x0000000008000000-0x0000000037ffffff 768M online yes 1-6 0
@@ -234,7 +234,7 @@ RANGE SIZE STATE REMOVABLE BLOCK NODE
 
 ---
 
-$ lsmem --json --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
+$ lsmem --json --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE --split RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
 {
    "memory": [
       {"range": "0x0000000000000000-0x0000000007ffffff", "size": "128M", "state": "online", "removable": "no", "block": "0", "node": "0"},
@@ -304,6 +304,45 @@ RANGE                                  SIZE  STATE REMOVABLE   BLOCK  ZONES
 0x00000003e8000000-0x000000042fffffff  1.1G online        no 125-133 Normal
 0x0000000430000000-0x0000000437ffffff  128M online       yes     134 Normal
 0x0000000438000000-0x000000043fffffff  128M online        no     135   None
+
+Memory block size:       128M
+Total online memory:      16G
+Total offline memory:      0B
+
+---
+
+$ lsmem 
+RANGE                                  SIZE  STATE REMOVABLE   BLOCK
+0x0000000000000000-0x0000000007ffffff  128M online        no       0
+0x0000000008000000-0x0000000037ffffff  768M online       yes     1-6
+0x0000000038000000-0x000000003fffffff  128M online        no       7
+0x0000000040000000-0x0000000077ffffff  896M online       yes    8-14
+0x0000000078000000-0x000000007fffffff  128M online        no      15
+0x0000000080000000-0x00000000afffffff  768M online       yes   16-21
+0x00000000b0000000-0x00000000bfffffff  256M online        no   22-23
+0x0000000100000000-0x00000001a7ffffff  2.6G online        no   32-52
+0x00000001a8000000-0x00000001afffffff  128M online       yes      53
+0x00000001b0000000-0x00000001bfffffff  256M online        no   54-55
+0x00000001c0000000-0x00000001ffffffff    1G online       yes   56-63
+0x0000000200000000-0x0000000207ffffff  128M online        no      64
+0x0000000208000000-0x000000021fffffff  384M online       yes   65-67
+0x0000000220000000-0x0000000237ffffff  384M online        no   68-70
+0x0000000238000000-0x0000000277ffffff    1G online       yes   71-78
+0x0000000278000000-0x000000028fffffff  384M online        no   79-81
+0x0000000290000000-0x0000000297ffffff  128M online       yes      82
+0x0000000298000000-0x00000002a7ffffff  256M online        no   83-84
+0x00000002a8000000-0x00000002c7ffffff  512M online       yes   85-88
+0x00000002c8000000-0x00000002dfffffff  384M online        no   89-91
+0x00000002e0000000-0x00000002efffffff  256M online       yes   92-93
+0x00000002f0000000-0x000000034fffffff  1.5G online        no  94-105
+0x0000000350000000-0x0000000357ffffff  128M online       yes     106
+0x0000000358000000-0x000000036fffffff  384M online        no 107-109
+0x0000000370000000-0x0000000377ffffff  128M online       yes     110
+0x0000000378000000-0x00000003c7ffffff  1.3G online        no 111-120
+0x00000003c8000000-0x00000003e7ffffff  512M online       yes 121-124
+0x00000003e8000000-0x000000042fffffff  1.1G online        no 125-133
+0x0000000430000000-0x0000000437ffffff  128M online       yes     134
+0x0000000438000000-0x000000043fffffff  128M online        no     135
 
 Memory block size:       128M
 Total online memory:      16G

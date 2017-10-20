@@ -1,7 +1,7 @@
 
 ---
 
-$ lsmem 
+$ lsmem --split=STATE,REMOVABLE
 RANGE                                  SIZE   STATE REMOVABLE BLOCK
 0x0000000000000000-0x000000006fffffff  1.8G  online       yes   0-6
 0x0000000070000000-0x000000007fffffff  256M  online        no     7
@@ -20,7 +20,7 @@ Total offline memory:    1.3G
 
 ---
 
-$ lsmem --output RANGE,SIZE
+$ lsmem --output RANGE,SIZE --split none
 RANGE                                 SIZE
 0x0000000000000000-0x000000017fffffff   6G
 
@@ -30,7 +30,7 @@ Total offline memory:      0B
 
 ---
 
-$ lsmem --output RANGE,SIZE,STATE
+$ lsmem --output RANGE,SIZE,STATE --split STATE
 RANGE                                  SIZE   STATE
 0x0000000000000000-0x00000000dfffffff  3.5G  online
 0x00000000e0000000-0x00000000efffffff  256M offline
@@ -76,7 +76,7 @@ Total offline memory:    1.3G
 
 ---
 
-$ lsmem --raw --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
+$ lsmem --raw --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE --split RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
 RANGE SIZE STATE REMOVABLE BLOCK NODE
 0x0000000000000000-0x000000006fffffff 1.8G online yes 0-6 0
 0x0000000070000000-0x000000007fffffff 256M online no 7 0
@@ -91,7 +91,7 @@ RANGE SIZE STATE REMOVABLE BLOCK NODE
 
 ---
 
-$ lsmem --json --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
+$ lsmem --json --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE --split RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
 {
    "memory": [
       {"range": "0x0000000000000000-0x000000006fffffff", "size": "1.8G", "state": "online", "removable": "yes", "block": "0-6", "node": "0"},
@@ -123,6 +123,27 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK          ZON
 0x0000000120000000-0x000000012fffffff  256M  online       yes    18 Movable/Normal
 0x0000000130000000-0x000000013fffffff  256M  online       yes    19        Movable
 0x0000000140000000-0x000000017fffffff    1G offline         - 20-23        Movable
+
+Memory block size:       256M
+Total online memory:     4.8G
+Total offline memory:    1.3G
+
+---
+
+$ lsmem 
+RANGE                                  SIZE   STATE REMOVABLE BLOCK
+0x0000000000000000-0x000000006fffffff  1.8G  online       yes   0-6
+0x0000000070000000-0x000000007fffffff  256M  online        no     7
+0x0000000080000000-0x000000009fffffff  512M  online       yes   8-9
+0x00000000a0000000-0x00000000bfffffff  512M  online        no 10-11
+0x00000000c0000000-0x00000000dfffffff  512M  online       yes 12-13
+0x00000000e0000000-0x00000000efffffff  256M offline         -    14
+0x00000000f0000000-0x00000000ffffffff  256M  online       yes    15
+0x0000000100000000-0x000000010fffffff  256M  online        no    16
+0x0000000110000000-0x000000011fffffff  256M  online        no    17
+0x0000000120000000-0x000000012fffffff  256M  online       yes    18
+0x0000000130000000-0x000000013fffffff  256M  online       yes    19
+0x0000000140000000-0x000000017fffffff    1G offline         - 20-23
 
 Memory block size:       256M
 Total online memory:     4.8G

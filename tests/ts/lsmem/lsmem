@@ -43,13 +43,14 @@ for dump in $(ls $TS_SELF/dumps/*.tar.bz2 | sort); do
 
 	tar -C $dumpdir -jxf $dump
 
-	do_lsmem
-	do_lsmem --output RANGE,SIZE
-	do_lsmem --output RANGE,SIZE,STATE
+	do_lsmem --split=STATE,REMOVABLE
+	do_lsmem --output RANGE,SIZE --split none
+	do_lsmem --output RANGE,SIZE,STATE --split STATE
 	do_lsmem --all --output $LSCOLUMNS
-	do_lsmem --raw --output $LSCOLUMNS
-	do_lsmem --json --output $LSCOLUMNS
+	do_lsmem --raw --output $LSCOLUMNS --split $LSCOLUMNS
+	do_lsmem --json --output $LSCOLUMNS --split $LSCOLUMNS
 	do_lsmem -o +ZONES
+	do_lsmem
 
 	ts_finalize_subtest
 done
