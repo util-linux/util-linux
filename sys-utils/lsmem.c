@@ -82,14 +82,15 @@ struct lsmem {
 				summary : 1,
 				list_all : 1,
 				bytes : 1,
-				want_node : 1,
-				want_state : 1,
-				want_removable : 1,
 				want_summary : 1,
 				want_table : 1,
-				want_zones : 1,
+				split_by_node : 1,
+				split_by_state : 1,
+				split_by_removable : 1,
+				split_by_zones : 1,
 				have_zones : 1;
 };
+
 
 enum {
 	COL_RANGE,
@@ -194,14 +195,12 @@ static inline struct coldesc *get_column_desc(int num)
 	return &coldescs[ get_column_id(num) ];
 }
 
-static inline int has_column(int id)
+static inline void reset_split_policy(struct lsmem *l, int enable)
 {
-	size_t i;
-
-	for (i = 0; i < ncolumns; i++)
-		if (columns[i] == id)
-			return 1;
-	return 0;
+	l->split_by_state = enable;
+	l->split_by_node = enable;
+	l->split_by_removable = enable;
+	l->split_by_zones = enable;
 }
 
 static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
@@ -380,15 +379,15 @@ static int is_mergeable(struct lsmem *lsmem, struct memory_block *blk)
 		return 0;
 	if (curr->index + curr->count != blk->index)
 		return 0;
-	if (lsmem->want_state && curr->state != blk->state)
+	if (lsmem->split_by_state && curr->state != blk->state)
 		return 0;
-	if (lsmem->want_removable && curr->removable != blk->removable)
+	if (lsmem->split_by_removable && curr->removable != blk->removable)
 		return 0;
-	if (lsmem->want_node && lsmem->have_nodes) {
+	if (lsmem->split_by_node && lsmem->have_nodes) {
 		if (curr->node != blk->node)
 			return 0;
 	}
-	if (lsmem->want_zones && lsmem->have_zones) {
+	if (lsmem->split_by_zones && lsmem->have_zones) {
 		if (curr->nr_zones != blk->nr_zones)
 			return 0;
 		for (i = 0; i < curr->nr_zones; i++) {
@@ -455,8 +454,6 @@ static void read_basic_info(struct lsmem *lsmem)
 	/* The valid_zones sysfs attribute was introduced with kernel 3.18 */
 	if (path_exist(_PATH_SYS_MEMORY "/memory0/valid_zones"))
 		lsmem->have_zones = 1;
-	else if (lsmem->want_zones)
-		warnx(_("Cannot read zones, no valid_zones sysfs attribute present"));
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -478,6 +475,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -o, --output <list>  output columns\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
+	fputs(_(" -S, --split <list>   split ranges by specified columns\n"), out);
 	fputs(_(" -s, --sysroot <dir>  use the specified directory as system root\n"), out);
 	fputs(_("     --summary[=when] print summary information (never,always or only)\n"), out);
 
@@ -500,7 +498,7 @@ int main(int argc, char **argv)
 			.want_summary = 1
 		}, *lsmem = &_lsmem;
 
-	const char *outarg = NULL;
+	const char *outarg = NULL, *splitarg = NULL;
 	int c;
 	size_t i;
 
@@ -518,12 +516,14 @@ int main(int argc, char **argv)
 		{"pairs",	no_argument,		NULL, 'P'},
 		{"raw",		no_argument,		NULL, 'r'},
 		{"sysroot",	required_argument,	NULL, 's'},
+		{"split",       required_argument,      NULL, 'S'},
 		{"version",	no_argument,		NULL, 'V'},
 		{"summary",     optional_argument,	NULL, LSMEM_OPT_SUMARRY },
 		{NULL,		0,			NULL, 0}
 	};
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'J', 'P', 'r' },
+		{ 'S', 'a' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -533,7 +533,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "abhJno:Prs:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "abhJno:PrS:s:V", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -568,6 +568,9 @@ int main(int argc, char **argv)
 		case 's':
 			if(path_set_prefix(optarg))
 				err(EXIT_FAILURE, _("invalid argument to %s"), "--sysroot");
+			break;
+		case 'S':
+			splitarg = optarg;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -642,14 +645,36 @@ int main(int argc, char **argv)
 			err(EXIT_FAILURE, _("Failed to initialize output column"));
 	}
 
-	if (has_column(COL_STATE))
-		lsmem->want_state = 1;
-	if (has_column(COL_NODE))
-		lsmem->want_node = 1;
-	if (has_column(COL_REMOVABLE))
-		lsmem->want_removable = 1;
-	if (has_column(COL_ZONES))
-		lsmem->want_zones = 1;
+	if (splitarg) {
+		int split[ARRAY_SIZE(coldescs)] = { 0 };
+		static size_t nsplits = 0;
+
+		reset_split_policy(lsmem, 0);	/* disable all */
+
+		if (strcasecmp(splitarg, "none") == 0)
+			;
+		else if (string_add_to_idarray(splitarg, split, ARRAY_SIZE(split),
+					&nsplits, column_name_to_id) < 0)
+			return EXIT_FAILURE;
+
+		for (i = 0; i < nsplits; i++) {
+			switch (split[i]) {
+			case COL_STATE:
+				lsmem->split_by_state = 1;
+				break;
+			case COL_NODE:
+				lsmem->split_by_node = 1;
+				break;
+			case COL_REMOVABLE:
+				lsmem->split_by_removable = 1;
+				break;
+			case COL_ZONES:
+				lsmem->split_by_zones = 1;
+				break;
+			}
+		}
+	} else
+		reset_split_policy(lsmem, 1); /* enable all */
 
 	/*
 	 * Read data and print output

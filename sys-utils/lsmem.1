@@ -10,18 +10,28 @@ status. The listed memory blocks correspond to the memory block representation
 in sysfs. The command also shows the memory block size and the amount of memory
 in online and offline state.
 
-The default output compatible with original implementaion from s390-tools, but
+The default output compatible with original implementation from s390-tools, but
 it's strongly recommended to avoid using default outputs in your scripts.
 Always explicitly define expected columns by using the \fB\-\-output\fR option
 together with a columns list in environments where a stable output is required.
 
+The \fBlsmem\fP command lists a new memory range always when the current memory
+block distinguish from the previous block by STATE, REMOVABLE, NODE or ZONES
+attribute.  This default behavior is possible to override by the
+\fB\-\-split\fR option (e.g. \fBlsmem \-\-split=STATE,ZONES\fR).  The special
+word "none" may be used to ignore all differences between memory blocks and to
+create as large as possible continuous ranges.  The opposite semantic is
+\fB\-\-all\fR to list individual memory blocks.  The default split policy is
+subject to change.  Always explicitly use \fB\-\-split\fR in environments where
+a stable output is required.
+
+Note that some output columns may provide inaccurate information if a split policy
+forces \fBlsmem\fP to ignore diffrences in some attributes. For example if you
+merge removable and non-removable memory blocks to the one range than all
+the range will be marked as non-removable on \fBlsmem\fP output.
+
 Not all columns are supported on all systems.  If an unsupported column is
 specified, \fBlsmem\fP prints the column but does not provide any data for it.
-
-The number of output entries (memory ranges) maybe be influenced by specified
-columns. The lsmem command shows larger memory ranges if the blocks in the
-range do not distinguish in output columns. For example RANGE maybe be
-different if the command output contains column ZONES (lsmem -o +ZONES).
 
 Use the \fB\-\-help\fR option to see the columns description.
 
@@ -56,6 +66,11 @@ All potentially unsafe characters are hex-escaped (\\x<code>).
 .BR \-r , " \-\-raw"
 Produce output in raw format.  All potentially unsafe characters are hex-escaped
 (\\x<code>).
+.TP
+.BR \-S , " \-\-split " \fIlist\fP
+Specify which columns (attributes) use to split memory blocks to ranges.  The
+supported columns are STATE, REMOVABLE, NODE and ZONES, or "none". The another columns are
+silently ignored. For more details see DESCRIPTION above.
 .TP
 .BR \-s , " \-\-sysroot " \fIdirectory\fP
 Gather memory data for a Linux instance other than the instance from which the
