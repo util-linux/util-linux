@@ -375,9 +375,9 @@ set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 	 */
 
 	if (ctl->universal)
-		new_broken_time = *gmtime(&newtime);
+		gmtime_r(&newtime, &new_broken_time);
 	else
-		new_broken_time = *localtime(&newtime);
+		localtime_r(&newtime, &new_broken_time);
 
 	if (ctl->debug)
 		printf(_("Setting Hardware Clock to %.2d:%.2d:%.2d "
@@ -600,13 +600,13 @@ static int
 set_system_clock(const struct hwclock_control *ctl,
 		 const struct timeval newtime)
 {
-	struct tm *broken;
+	struct tm broken;
 	int minuteswest;
 	int rc = 0;
 	const struct timezone tz_utc = { 0 };
 
-	broken = localtime(&newtime.tv_sec);
-	minuteswest = -get_gmtoff(broken) / 60;
+	localtime_r(&newtime.tv_sec, &broken);
+	minuteswest = -get_gmtoff(&broken) / 60;
 
 	if (ctl->debug) {
 		if (ctl->hctosys && !ctl->universal)
