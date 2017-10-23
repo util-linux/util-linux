@@ -446,9 +446,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (kill_child_signo != 0)
-		if (prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
-			err(EXIT_FAILURE, "prctl failed");
+	if (kill_child_signo != 0 && prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
+		err(EXIT_FAILURE, "prctl failed");
 
 	if (maproot) {
 		if (setgrpcmd == SETGROUPS_ALLOW)
