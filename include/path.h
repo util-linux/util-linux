@@ -6,6 +6,10 @@
 
 /* Returns a pointer to a static buffer which may be destroyed by any later
 path_* function call. NULL means error and errno will be set. */
+/* Returns: 0 on success, sets errno on error. */
+extern int path_set_prefix(const char *)
+			__attribute__((warn_unused_result));
+
 extern const char *path_get(const char *path, ...)
 			__attribute__ ((__format__ (__printf__, 1, 2)));
 
@@ -31,10 +35,5 @@ extern cpu_set_t *path_read_cpuset(int, const char *path, ...)
 extern cpu_set_t *path_read_cpulist(int, const char *path, ...)
 			       __attribute__ ((__format__ (__printf__, 2, 3)));
 
-/* Returns: 0 on success, sets errno on error. */
-extern int path_set_prefix(const char *)
-			__attribute__((warn_unused_result));
-
 #endif /* HAVE_CPU_SET_T */
-
 #endif /* UTIL_LINUX_PATH_H */
