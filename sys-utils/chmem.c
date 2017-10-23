@@ -24,14 +24,14 @@
 #include <assert.h>
 #include <dirent.h>
 
-#include <c.h>
-#include <nls.h>
-#include <path.h>
-#include <strutils.h>
-#include <strv.h>
-#include <optutils.h>
-#include <closestream.h>
-#include <xalloc.h>
+#include "c.h"
+#include "nls.h"
+#include "path.h"
+#include "strutils.h"
+#include "strv.h"
+#include "optutils.h"
+#include "closestream.h"
+#include "xalloc.h"
 
 /* partial success, otherwise we return regular EXIT_{SUCCESS,FAILURE} */
 #define CHMEM_EXIT_SOMEOK		64
