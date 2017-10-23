@@ -85,13 +85,11 @@ struct kill_control {
 
 static void print_signal_name(int signum)
 {
-	size_t n;
+	const char *name = signum_to_signame(signum);
 
-	for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
-		if (sys_signame[n].val == signum) {
-			printf("%s\n", sys_signame[n].name);
-			return;
-		}
+	if (name) {
+		printf("%s\n", name);
+		return;
 	}
 #ifdef SIGRTMIN
 	if (SIGRTMIN <= signum && signum <= SIGRTMAX) {
@@ -116,17 +114,19 @@ static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
 static void print_all_signals(FILE *fp, int pretty)
 {
 	size_t n, lth, lpos = 0, width;
+	const char *signame = NULL;
+	int signum = 0;
 
 	if (!pretty) {
-		for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
-			lth = 1 + strlen(sys_signame[n].name);
+		for (n = 0; get_signame_by_idx(n, &signame, NULL) == 0; n++) {
+			lth = 1 + strlen(signame);
 			if (KILL_OUTPUT_WIDTH < lpos + lth) {
 				fputc('\n', fp);
 				lpos = 0;
 			} else if (lpos)
 				fputc(' ', fp);
 			lpos += lth;
-			fputs(sys_signame[n].name, fp);
+			fputs(signame, fp);
 		}
 #ifdef SIGRTMIN
 		fputs(" RT<N> RTMIN+<N> RTMAX-<N>", fp);
@@ -137,9 +137,8 @@ static void print_all_signals(FILE *fp, int pretty)
 
 	/* pretty print */
 	width = get_terminal_width(KILL_OUTPUT_WIDTH + 1) - 1;
-	for (n = 0; n < ARRAY_SIZE(sys_signame); n++)
-		pretty_print_signal(fp, width, &lpos,
-				    sys_signame[n].val, sys_signame[n].name);
+	for (n = 0; get_signame_by_idx(n, &signame, &signum) == 0; n++)
+		pretty_print_signal(fp, width, &lpos, signum, signame);
 #ifdef SIGRTMIN
 	pretty_print_signal(fp, width, &lpos, SIGRTMIN, "RTMIN");
 	pretty_print_signal(fp, width, &lpos, SIGRTMAX, "RTMAX");
