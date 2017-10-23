@@ -49,10 +49,10 @@
 #include "strutils.h"
 #include "signames.h"
 
-static const struct signv {
+static const struct ul_signal_name {
 	const char *name;
 	int val;
-} sys_signame[] = {
+} ul_signames[] = {
 	/* POSIX signals */
 	{ "HUP",	SIGHUP },	/* 1 */
 	{ "INT",	SIGINT },	/* 2 */
@@ -169,9 +169,9 @@ int signame_to_signum(const char *sig)
 		return rtsig_to_signum(sig + 2);
 #endif
 	/* Normal signals */
-	for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
-		if (!strcasecmp(sys_signame[n].name, sig))
-			return sys_signame[n].val;
+	for (n = 0; n < ARRAY_SIZE(ul_signames); n++) {
+		if (!strcasecmp(ul_signames[n].name, sig))
+			return ul_signames[n].val;
 	}
 	return -1;
 }
@@ -180,9 +180,9 @@ const char *signum_to_signame(int signum)
 {
 	size_t n;
 
-	for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
-		if (sys_signame[n].val == signum) {
-			return sys_signame[n].name;
+	for (n = 0; n < ARRAY_SIZE(ul_signames); n++) {
+		if (ul_signames[n].val == signum) {
+			return ul_signames[n].name;
 		}
 	}
 
@@ -191,18 +191,18 @@ const char *signum_to_signame(int signum)
 
 size_t get_numof_signames(void)
 {
-	return ARRAY_SIZE(sys_signame);
+	return ARRAY_SIZE(ul_signames);
 }
 
 int get_signame_by_idx(size_t idx, const char **signame, int *signum)
 {
-	if (idx >= ARRAY_SIZE(sys_signame))
+	if (idx >= ARRAY_SIZE(ul_signames))
 		return -1;
 
 	if (signame)
-		*signame = sys_signame[idx].name;
+		*signame = ul_signames[idx].name;
 	if (signum)
-		*signum = sys_signame[idx].val;
+		*signum = ul_signames[idx].val;
 	return 0;
 
 }
