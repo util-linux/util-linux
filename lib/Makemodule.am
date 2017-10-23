@@ -26,7 +26,8 @@ libcommon_la_SOURCES = \
 	lib/ttyutils.c \
 	lib/exec_shell.c \
 	lib/strv.c \
-	lib/sha1.c
+	lib/sha1.c \
+	lib/signames.c
 
 if LINUX
 libcommon_la_SOURCES += \

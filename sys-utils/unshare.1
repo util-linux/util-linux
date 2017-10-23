@@ -138,6 +138,13 @@ by bind mount.
 Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather than
 running it directly.  This is useful when creating a new PID namespace.
 .TP
+.BR \-\-kill\-child [ =\fIsigname ]
+When \fBunshare\fR terminates, have \fIsigname\fP be sent to the forked child process.
+Combined with \fB--pid\fR this allows for an easy and realiable killing of the entire
+process tree below \fBunshare\fR.
+If not given, \fIsigname\fP defaults to \fBSIGKILL\fR.
+This option implies \fB--fork\fR.
+.TP
 .BR \-\-mount\-proc [ =\fImountpoint ]
 Just before running the program, mount the proc filesystem at \fImountpoint\fP
 (default is /proc).  This is useful when creating a new PID namespace.  It also
@@ -229,6 +236,17 @@ the bind reference.
 Establish a persistent mount namespace referenced by the bind mount
 /root/namespaces/mnt.  This example shows a portable solution, because it
 makes sure that the bind mount is created on a shared filesystem.
+.TP
+.B # unshare -pf --kill-child -- bash -c "(sleep 999 &) && sleep 1000" &
+.TQ
+.B # pid=$!
+.TQ
+.B # kill $pid
+.br
+Reliable killing of subprocesses of the \fIprogram\fR.
+When \fBunshare\fR gets killed, everything below it gets killed as well.
+Without it, the children of \fIprogram\fR would have orphaned and
+been re-parented to PID 1.
 
 .SH SEE ALSO
 .BR clone (2),
