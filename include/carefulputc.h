@@ -1,5 +1,5 @@
-#ifndef UTIL_LINUX_CAREFUULPUTC_H
-#define UTIL_LINUX_CAREFUULPUTC_H
+#ifndef UTIL_LINUX_CAREFULPUTC_H
+#define UTIL_LINUX_CAREFULPUTC_H
 
 /*
  * A putc() for use in write and wall (that sometimes are sgid tty).
@@ -150,4 +150,4 @@ static inline void fputs_nonblank(const char *data, FILE *out)
 }
 
 
-#endif  /*  _CAREFUULPUTC_H  */
+#endif  /*  _CAREFULPUTC_H  */
