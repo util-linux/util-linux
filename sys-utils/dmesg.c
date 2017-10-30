@@ -20,7 +20,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <poll.h>
 
 #include "c.h"
 #include "colors.h"
@@ -179,8 +178,6 @@ struct dmesg_control {
 	int		kmsg;		/* /dev/kmsg file descriptor */
 	ssize_t		kmsg_first_read;/* initial read() return code */
 	char		kmsg_buf[BUFSIZ];/* buffer to read kmsg data */
-	char		kmsg_saved[BUFSIZ];/* buffer to save line after fragment */
-	ssize_t		kmsg_saved_size;  /* if nonzero, read from kmsg_saved */
 
 	/*
 	 * For the --file option we mmap whole file. The unnecessary (already
@@ -209,7 +206,6 @@ struct dmesg_record {
 	int		level;
 	int		facility;
 	struct timeval  tv;
-	char		flags;
 
 	const char	*next;		/* buffer with next unparsed record */
 	size_t		next_size;	/* size of the next buffer */
@@ -225,13 +221,6 @@ struct dmesg_record {
 	} while (0)
 
 static int read_kmsg(struct dmesg_control *ctl);
-
-
-static int parse_kmsg_record(struct dmesg_control *ctl,
-			     struct dmesg_record *rec,
-			     char *buf,
-			     size_t sz);
-
 
 static int set_level_color(int log_level, const char *mesg, size_t mesgsz)
 {
@@ -1024,101 +1013,15 @@ static void print_buffer(struct dmesg_control *ctl,
 		print_record(ctl, &rec);
 }
 
-/*
- * Read one record from kmsg, automatically concatenating message fragments
- */
 static ssize_t read_kmsg_one(struct dmesg_control *ctl)
 {
 	ssize_t size;
-	struct dmesg_record rec = { .flags = 0 };
-	char fragment_buf[BUFSIZ] = { 0 };
-	ssize_t fragment_offset = 0;
 
-	if (ctl->kmsg_saved_size != 0) {
-		size = ctl->kmsg_saved_size;
-		memcpy(ctl->kmsg_buf, ctl->kmsg_saved, size);
-		ctl->kmsg_saved_size = 0;
-		return size;
-	}
-
-	/*
-	 * kmsg returns EPIPE if record was modified while reading.
-	 * Read records until there is one with a flag different from 'c'/'+',
-	 * which indicates that a fragment (if it exists) is complete.
-	 */
+	/* kmsg returns EPIPE if record was modified while reading */
 	do {
-		/*
-		 * If there is a fragment in progress, and we're in follow mode,
-		 * read with a timeout so that if no line is read in 100ms, we can
-		 * assume that the fragment is the last line in /dev/kmsg and it
-		 * is completed.
-		 */
-		if (ctl->follow && fragment_offset) {
-			struct pollfd pfd = {.fd = ctl->kmsg, .events = POLLIN};
-			poll(&pfd, 1, 100);
-			/* If 100ms has passed and kmsg has no data to read() */
-			if (!(pfd.revents & POLLIN)) {
-				memcpy(ctl->kmsg_buf, fragment_buf, fragment_offset);
-				return fragment_offset + 1;
-			}
-		}
-		size = read(ctl->kmsg, ctl->kmsg_buf, sizeof(ctl->kmsg_buf) - 1);
-
-		/*
-		 * If read() would have blocked and we have a fragment in
-		 * progress, assume that it's completed (ie. it was the last line
-		 * in the ring buffer) otherwise it won't be displayed until
-		 * another non-fragment message is logged.
-		 */
-		if (errno == EAGAIN && fragment_offset) {
-			memcpy(ctl->kmsg_buf, fragment_buf, fragment_offset);
-			return fragment_offset + 1;
-		}
-
-		if (parse_kmsg_record(ctl, &rec, ctl->kmsg_buf,
-				     (size_t) size) == 0) {
-			/*
-			 * 'c' can indicate a start of a fragment or a
-			 * continuation, '+' is used in older kernels to
-			 * indicate a continuation.
-			 */
-			if (rec.flags == 'c' || rec.flags == '+') {
-				if (!fragment_offset) {
-					memcpy(fragment_buf, ctl->kmsg_buf, size);
-					fragment_offset = size - 1;
-				} else {
-					/*
-					 * In case of a buffer overflow, just
-					 * truncate the fragment - no one should
-					 * be logging this much anyway
-					 */
-					ssize_t truncate_size = min(
-						    fragment_offset + rec.mesg_size,
-						    sizeof(fragment_buf));
-
-					memcpy(fragment_buf + fragment_offset,
-					       rec.mesg, truncate_size);
-					fragment_offset += rec.mesg_size;
-				}
-
-			} else if (rec.flags == '-') {
-				/*
-				 * If there was a fragment being built, move it
-				 * into kmsg_buf, but first save a copy of the
-				 * current message so that it doesn't get lost.
-				 */
-				if (fragment_offset) {
-					memcpy(ctl->kmsg_saved,
-					       ctl->kmsg_buf, size);
-					ctl->kmsg_saved_size = size;
-					memcpy(ctl->kmsg_buf,
-					       fragment_buf, fragment_offset);
-					return fragment_offset + 1;
-				}
-			}
-		}
-	} while ((size < 0 && errno == EPIPE) ||
-		 (rec.flags == 'c' || rec.flags == '+'));
+		size = read(ctl->kmsg, ctl->kmsg_buf,
+			    sizeof(ctl->kmsg_buf) - 1);
+	} while (size < 0 && errno == EPIPE);
 
 	return size;
 }
@@ -1212,17 +1115,11 @@ static int parse_kmsg_record(struct dmesg_control *ctl,
 	if (LAST_KMSG_FIELD(p))
 		goto mesg;
 
-	/* D) flags */
-	rec->flags = *p; // flag is one char
-	p = p + 1;
-	if (LAST_KMSG_FIELD(p))
-		goto mesg;
-
-	/* E) optional fields (ignore) */
+	/* D) optional fields (ignore) */
 	p = skip_item(p, end, ";");
 
 mesg:
-	/* F) message text */
+	/* E) message text */
 	rec->mesg = p;
 	p = skip_item(p, end, "\n");
 
@@ -1238,7 +1135,7 @@ mesg:
 	 */
 	unhexmangle_to_buffer(rec->mesg, (char *) rec->mesg, rec->mesg_size + 1);
 
-	/* G) message tags (ignore) */
+	/* F) message tags (ignore) */
 
 	return 0;
 }
