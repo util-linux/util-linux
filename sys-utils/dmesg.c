@@ -195,7 +195,9 @@ struct dmesg_control {
 			fltr_fac:1,	/* filter out by facilities[] */
 			decode:1,	/* use "facility: level: " prefix */
 			pager:1,	/* pipe output into a pager */
-			color:1;	/* colorize messages */
+			color:1,	/* colorize messages */
+			force_prefix:1;	/* force timestamp and decode prefix
+					   on each line */
 	int		indent;		/* due to timestamps if newline */
 };
 
@@ -281,6 +283,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --level <list>          restrict output to defined levels\n"), out);
 	fputs(_(" -n, --console-level <level> set level of messages printed to console\n"), out);
 	fputs(_(" -P, --nopager               do not pipe output into a pager\n"), out);
+	fputs(_(" -p, --force-prefix          force timestamp output on each line of multi-line messages\n"), out);
 	fputs(_(" -r, --raw                   print the raw message buffer\n"), out);
 	fputs(_(" -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"), out);
 	fputs(_(" -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"), out);
@@ -743,6 +746,10 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 		rec->mesg = begin;
 		rec->mesg_size = end - begin;
 
+		/* Don't count \n from the last message to the message size */
+		if (*end != '\n' && *(end - 1) == '\n')
+			rec->mesg_size--;
+
 		rec->next_size -= end - rec->next;
 		rec->next = rec->next_size > 0 ? end + 1 : NULL;
 		if (rec->next_size > 0)
@@ -875,11 +882,13 @@ static const char *get_subsys_delimiter(const char *mesg, size_t mesg_size)
 static void print_record(struct dmesg_control *ctl,
 			 struct dmesg_record *rec)
 {
-	char buf[256];
-	int has_color = 0;
-	const char *mesg;
+	char buf[128];
+	char fpbuf[32] = "\0";
+	char tsbuf[64] = "\0";
 	size_t mesg_size;
-	int indent = 0;
+	int timebreak = 0;
+	char *mesg_copy = NULL;
+	const char *line = NULL;
 
 	if (!accept_record(ctl, rec))
 		return;
@@ -890,30 +899,28 @@ static void print_record(struct dmesg_control *ctl,
 	}
 
 	/*
-	 * compose syslog(2) compatible raw output -- used for /dev/kmsg for
+	 * Compose syslog(2) compatible raw output -- used for /dev/kmsg for
 	 * backward compatibility with syslog(2) buffers only
 	 */
 	if (ctl->raw) {
-		ctl->indent = printf("<%d>[%5ld.%06ld] ",
-				     LOG_MAKEPRI(rec->facility, rec->level),
-				     (long) rec->tv.tv_sec,
-				     (long) rec->tv.tv_usec);
-
-		goto mesg;
+		ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
+				       "<%d>[%5ld.%06ld] ",
+				       LOG_MAKEPRI(rec->facility, rec->level),
+				       (long) rec->tv.tv_sec,
+				       (long) rec->tv.tv_usec);
+		goto mesg_output;
 	}
 
-	/*
-	 * facility : priority :
-	 */
+	/* Store decode information (facility & priority level) in a buffer */
 	if (ctl->decode &&
-	    -1 < rec->level    && rec->level     < (int) ARRAY_SIZE(level_names) &&
-	    -1 < rec->facility && rec->facility  < (int) ARRAY_SIZE(facility_names))
-		indent = printf("%-6s:%-6s: ", facility_names[rec->facility].name,
-				               level_names[rec->level].name);
+	    (rec->level > -1) && (rec->level < (int) ARRAY_SIZE(level_names)) &&
+	    (rec->facility > -1) &&
+	    (rec->facility < (int) ARRAY_SIZE(facility_names)))
+		snprintf(fpbuf, sizeof(fpbuf), "%-6s:%-6s: ",
+			 facility_names[rec->facility].name,
+			 level_names[rec->level].name);
 
-	if (ctl->color)
-		dmesg_enable_color(DMESG_COLOR_TIME);
-
+	/* Store the timestamp in a buffer */
 	switch (ctl->time_fmt) {
 		double delta;
 		struct tm cur;
@@ -921,15 +928,17 @@ static void print_record(struct dmesg_control *ctl,
 		ctl->indent = 0;
 		break;
 	case DMESG_TIMEFTM_CTIME:
-		ctl->indent = printf("[%s] ", record_ctime(ctl, rec, buf, sizeof(buf)));
+		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s] ",
+				      record_ctime(ctl, rec, buf, sizeof(buf)));
 		break;
 	case DMESG_TIMEFTM_CTIME_DELTA:
-		ctl->indent = printf("[%s <%12.06f>] ",
-		       		     record_ctime(ctl, rec, buf, sizeof(buf)),
-		       		     record_count_delta(ctl, rec));
+		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s <%12.06f>] ",
+				      record_ctime(ctl, rec, buf, sizeof(buf)),
+				      record_count_delta(ctl, rec));
 		break;
 	case DMESG_TIMEFTM_DELTA:
-		ctl->indent = printf("[<%12.06f>] ", record_count_delta(ctl, rec));
+		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[<%12.06f>] ",
+				      record_count_delta(ctl, rec));
 		break;
 	case DMESG_TIMEFTM_RELTIME:
 		record_localtime(ctl, rec, &cur);
@@ -937,62 +946,121 @@ static void print_record(struct dmesg_control *ctl,
 		if (cur.tm_min != ctl->lasttm.tm_min ||
 		    cur.tm_hour != ctl->lasttm.tm_hour ||
 		    cur.tm_yday != ctl->lasttm.tm_yday) {
-			dmesg_enable_color(DMESG_COLOR_TIMEBREAK);
-			ctl->indent = printf("[%s] ", short_ctime(&cur, buf, sizeof(buf)));
+			timebreak = 1;
+			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s] ",
+					      short_ctime(&cur, buf,
+							  sizeof(buf)));
 		} else {
 			if (delta < 10)
-				ctl->indent = printf("[  %+8.06f] ", delta);
+				ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
+						"[  %+8.06f] ",  delta);
 			else
-				ctl->indent = printf("[ %+9.06f] ", delta);
+				ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
+						"[ %+9.06f] ", delta);
 		}
 		ctl->lasttm = cur;
 		break;
 	case DMESG_TIMEFTM_TIME:
-		ctl->indent = printf("[%5ld.%06ld] ",
-		               (long)rec->tv.tv_sec, (long)rec->tv.tv_usec);
+		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%5ld.%06ld] ",
+				      (long)rec->tv.tv_sec,
+				      (long)rec->tv.tv_usec);
 		break;
 	case DMESG_TIMEFTM_TIME_DELTA:
-		ctl->indent = printf("[%5ld.%06ld <%12.06f>] ", (long)rec->tv.tv_sec,
-		               (long)rec->tv.tv_usec, record_count_delta(ctl, rec));
+		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%5ld.%06ld <%12.06f>] ",
+				      (long)rec->tv.tv_sec,
+				      (long)rec->tv.tv_usec,
+				      record_count_delta(ctl, rec));
 		break;
 	case DMESG_TIMEFTM_ISO8601:
-		ctl->indent = printf("%s ", iso_8601_time(ctl, rec, buf, sizeof(buf)));
+		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "%s ",
+				      iso_8601_time(ctl, rec, buf,
+						    sizeof(buf)));
 		break;
 	default:
 		abort();
 	}
 
-	ctl->indent += indent;
+	ctl->indent += strlen(fpbuf);
 
-	if (ctl->color)
-		color_disable();
+full_output:
+	/* Output the decode information */
+	if (*fpbuf)
+		fputs(fpbuf, stdout);
 
-mesg:
-	mesg = rec->mesg;
-	mesg_size = rec->mesg_size;
+	/* Output the timestamp buffer */
+	if (*tsbuf) {
+		/* Colorize the timestamp */
+		if (ctl->color)
+			dmesg_enable_color(timebreak ? DMESG_COLOR_TIMEBREAK :
+						       DMESG_COLOR_TIME);
+		if (ctl->time_fmt != DMESG_TIMEFTM_RELTIME) {
+			fputs(tsbuf, stdout);
+		} else {
+			/*
+			 * For relative timestamping, the first line's
+			 * timestamp is the offset and all other lines will
+			 * report an offset of 0.000000.
+			 */
+			if (!line)
+				fputs(tsbuf, stdout);
+			else
+				printf("[  +0.000000] ");
+		}
+		if (ctl->color)
+			color_disable();
+	}
 
-	/* Colorize output */
+mesg_output:
+	/*
+	 * A kernel message may contain several lines of output, separated
+	 * by '\n'.  If the timestamp and decode outputs are forced then each
+	 * line of the message must be displayed with that information.
+	 */
+	if (ctl->force_prefix) {
+		if (!line) {
+			mesg_copy = strdup(rec->mesg);
+			line = strtok(mesg_copy, "\n");
+			mesg_size = strlen(line);
+		}
+	} else {
+		line = rec->mesg;
+		mesg_size = rec->mesg_size;
+	}
+
+	/* Colorize kernel message output */
 	if (ctl->color) {
-		/* subsystem prefix */
-		const char *subsys = get_subsys_delimiter(mesg, mesg_size);
+		/* Subsystem prefix */
+		const char *subsys = get_subsys_delimiter(line, mesg_size);
+		int has_color = 0;
+
 		if (subsys) {
 			dmesg_enable_color(DMESG_COLOR_SUBSYS);
-			safe_fwrite(mesg, subsys - mesg, ctl->indent, stdout);
+			safe_fwrite(line, subsys - line, ctl->indent, stdout);
 			color_disable();
 
-			mesg_size -= subsys - mesg;
-			mesg = subsys;
+			mesg_size -= subsys - line;
+			line = subsys;
 		}
-		/* error, alert .. etc. colors */
-		has_color = set_level_color(rec->level, mesg, mesg_size) == 0;
-		safe_fwrite(mesg, mesg_size, ctl->indent, stdout);
+		/* Error, alert .. etc. colors */
+		has_color = set_level_color(rec->level, line, mesg_size) == 0;
+		safe_fwrite(line, mesg_size, ctl->indent, stdout);
 		if (has_color)
 			color_disable();
 	} else
-		safe_fwrite(mesg, mesg_size, ctl->indent, stdout);
+		safe_fwrite(line, mesg_size, ctl->indent, stdout);
 
-	if (*(mesg + mesg_size - 1) != '\n')
-		putchar('\n');
+	/* Get the next line */
+	if (ctl->force_prefix) {
+		line = strtok(NULL, "\n");
+		if (line && *line) {
+			putchar('\n');
+			mesg_size = strlen(line);
+			goto full_output;
+		}
+		free(mesg_copy);
+	}
+
+	putchar('\n');
 }
 
 /*
@@ -1122,18 +1190,29 @@ mesg:
 	/* E) message text */
 	rec->mesg = p;
 	p = skip_item(p, end, "\n");
-
 	if (!p)
 		return -1;
 
-	rec->mesg_size = p - rec->mesg;
+	/* The message text is terminated by \n, but it's possible that the
+	 * message contains another stuff behind this linebreak; in this case
+	 * the previous skip_item() returns pointer to the stuff behind \n.
+	 * Let's notmalize all these sitations and make sure we always point to
+	 * the \n.
+	 *
+	 * Note that the next unhexmangle_to_buffer() will replace \n by \0.
+	 */
+	if (*p && *p != '\n')
+		p--;
 
 	/*
 	 * Kernel escapes non-printable characters, unfortunately kernel
 	 * definition of "non-printable" is too strict. On UTF8 console we can
 	 * print many chars, so let's decode from kernel.
 	 */
-	unhexmangle_to_buffer(rec->mesg, (char *) rec->mesg, rec->mesg_size + 1);
+	rec->mesg_size = unhexmangle_to_buffer(rec->mesg,
+				(char *) rec->mesg, p - rec->mesg + 1);
+
+	rec->mesg_size--;	/* don't count \0 */
 
 	/* F) message tags (ignore) */
 
@@ -1257,6 +1336,7 @@ int main(int argc, char *argv[])
 		{ "userspace",     no_argument,       NULL, 'u' },
 		{ "version",       no_argument,	      NULL, 'V' },
 		{ "time-format",   required_argument, NULL, OPT_TIME_FORMAT },
+		{ "force-prefix",  no_argument,       NULL, 'p' },
 		{ NULL,	           0, NULL, 0 }
 	};
 
@@ -1279,7 +1359,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkL::l:n:iPrSs:TtuVwx",
+	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkL::l:n:iPprSs:TtuVwx",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1343,6 +1423,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'P':
 			nopager = 1;
+			break;
+		case 'p':
+			ctl.force_prefix = 1;
 			break;
 		case 'r':
 			ctl.raw = 1;
@@ -1429,6 +1512,11 @@ int main(int argc, char *argv[])
 		    && (ctl.fltr_lev || ctl.fltr_fac))
 			    errx(EXIT_FAILURE, _("--raw can be used together with --level or "
 				 "--facility only when reading messages from /dev/kmsg"));
+
+		/* only kmsg supports multi-line messages */
+		if (ctl.force_prefix && ctl.method != DMESG_METHOD_KMSG)
+			ctl.force_prefix = 0;
+
 		if (ctl.pager)
 			pager_redirect();
 		n = read_buffer(&ctl, &buf);
