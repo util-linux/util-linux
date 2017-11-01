@@ -70,12 +70,13 @@ void unmangle_to_buffer(const char *s, char *buf, size_t len)
 	*buf = '\0';
 }
 
-void unhexmangle_to_buffer(const char *s, char *buf, size_t len)
+size_t unhexmangle_to_buffer(const char *s, char *buf, size_t len)
 {
 	size_t sz = 0;
+	const char *buf0 = buf;
 
 	if (!s)
-		return;
+		return 0;
 
 	while(*s && sz < len - 1) {
 		if (*s == '\\' && sz + 3 < len - 1 && s[1] == 'x' &&
@@ -90,6 +91,7 @@ void unhexmangle_to_buffer(const char *s, char *buf, size_t len)
 		}
 	}
 	*buf = '\0';
+	return buf - buf0 + 1;
 }
 
 static inline char *skip_nonspaces(const char *s)
