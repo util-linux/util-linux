@@ -1,0 +1,2 @@
+fsck.cramfs: file extends past end of filesystem
+fsck.cramfs: crc error
