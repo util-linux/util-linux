@@ -88,6 +88,7 @@ DECLARE_MENU_CB(generic_menu_cb);
 
 #define MENU_ENT_NEST(k, t, l, p)	{ .title = t, .key = k, .normal = 1, .label = l, .parent = p }
 #define MENU_XENT_NEST(k, t, l, p)	{ .title = t, .key = k, .expert = 1, .label = l, .parent = p }
+#define MENU_BENT_NEST(k, t, l, p)	{ .title = t, .key = k, .expert = 1, .normal = 1, .label = l, .parent = p }
 
 /* Generic menu */
 static const struct menu menu_generic = {
@@ -162,12 +163,12 @@ static const struct menu menu_gpt = {
 	.callback = gpt_menu_cb,
 	.label = FDISK_DISKLABEL_GPT,
 	.entries = {
-		MENU_XSEP(N_("GPT")),
+		MENU_BSEP(N_("GPT")),
 		MENU_XENT('i', N_("change disk GUID")),
 		MENU_XENT('n', N_("change partition name")),
 		MENU_XENT('u', N_("change partition UUID")),
 		MENU_XENT('l', N_("change table length")),
-		MENU_XENT('M', N_("enter protective/hybrid MBR")),
+		MENU_BENT('M', N_("enter protective/hybrid MBR")),
 
 		MENU_XSEP(""),
 		MENU_XENT('A', N_("toggle the legacy BIOS bootable flag")),
@@ -221,7 +222,7 @@ static const struct menu menu_dos = {
 		MENU_XENT('b', N_("move beginning of data in a partition")),
 		MENU_XENT('i', N_("change the disk identifier")),
 
-		MENU_XENT_NEST('M', N_("return from protective/hybrid MBR to GPT"),
+		MENU_BENT_NEST('M', N_("return from protective/hybrid MBR to GPT"),
 					FDISK_DISKLABEL_DOS, FDISK_DISKLABEL_GPT),
 		{ 0, NULL }
 	}
@@ -739,7 +740,8 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 			if (!mbr)
 				return -ENOMEM;
 			*cxt0 = cxt = mbr;
-			fdisk_enable_details(cxt, 1);	/* keep us in expert mode */
+			if (fdisk_is_details(cxt))
+				fdisk_enable_details(cxt, 1);	/* keep us in expert mode */
 			fdisk_info(cxt, _("Entering protective/hybrid MBR disklabel."));
 			return 0;
 		}
