@@ -529,6 +529,11 @@ static int sun_add_partition(
 	} else {
 		struct fdisk_ask *ask;
 
+		if (n == 2)
+			fdisk_info(cxt, _("It is highly recommended that the "
+					   "third partition covers the whole disk "
+					   "and is of type `Whole disk'"));
+
 		snprintf(mesg, sizeof(mesg), _("First %s"),
 				fdisk_get_unit(cxt, FDISK_SINGULAR));
 		for (;;) {
@@ -543,6 +548,10 @@ static int sun_add_partition(
 				fdisk_ask_number_set_low(ask,     0);	/* minimal */
 				fdisk_ask_number_set_default(ask, 0);	/* default */
 				fdisk_ask_number_set_high(ask,    0);	/* maximal */
+			} else if (n == 2) {
+				fdisk_ask_number_set_low(ask,     0);				/* minimal */
+				fdisk_ask_number_set_default(ask, 0);                           /* default */
+				fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, stop));    /* maximal */
 			} else {
 				fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, start));	/* minimal */
 				fdisk_ask_number_set_default(ask, fdisk_scround(cxt, start));	/* default */
@@ -584,10 +593,6 @@ static int sun_add_partition(
 		}
 	}
 
-	if (n == 2 && first != 0)
-		fdisk_warnx(cxt, _("It is highly recommended that the "
-				   "third partition covers the whole disk "
-				   "and is of type `Whole disk'"));
 
 	if (!fdisk_use_cylinders(cxt)) {
 		/* Starting sector has to be properly aligned */
