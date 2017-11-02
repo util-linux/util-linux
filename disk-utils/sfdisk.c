@@ -853,7 +853,11 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 
 	/* sfdisk --activate <partno> [..] */
 	for (i = 1; i < argc; i++) {
-		int n = strtou32_or_err(argv[i], _("failed to parse partition number"));
+		int n;
+
+		if (i == 1 && strcmp(argv[1], "-") == 0)
+			break;
+		n = strtou32_or_err(argv[i], _("failed to parse partition number"));
 
 		rc = fdisk_toggle_partition_flag(sf->cxt, n - 1, DOS_FLAG_ACTIVE);
 		if (rc)

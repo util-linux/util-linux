@@ -78,10 +78,14 @@ partitions may be smaller.  In this case \fBsfdisk\fR follows the default
 values from the partition table and does not use built-in defaults for the
 unused partition given with \fB\-N\fR.  See also \fB\-\-append\fR.
 .TP
-.BR \-A , " \-\-activate \fIdevice " [ \fIpartition-number ...]
-Switch on the bootable flag for the specified partitions.
-If no \fIpartition-number\fR is specified,
-then list the partitions with an enabled flag.
+.BR \-A , " \-\-activate \fIdevice " [ \fIpartition-number...]
+Switch on the bootable flag for the specified partitions and switch off the
+bootable flag on all unspecified partitions. The special placeholder '-'
+may be used instead of the partition numbers to switch off the bootable flag
+on all partitions.
+
+If no \fIpartition-number\fR is specified, then list the partitions with an
+enabled flag.
 .TP
 .BR "\-\-delete \fIdevice " [ \fIpartition-number ...]
 Delete all or the specified partitions.
