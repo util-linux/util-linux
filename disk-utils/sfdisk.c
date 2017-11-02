@@ -816,8 +816,13 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 	if (rc)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
-	if (!fdisk_is_label(sf->cxt, DOS))
-		errx(EXIT_FAILURE, _("toggle boot flags is supported for MBR only"));
+	if (fdisk_is_label(sf->cxt, GPT)) {
+		/* Switch from GPT to PMBR */
+		sf->cxt = fdisk_new_nested_context(sf->cxt, "dos");
+		if (!sf->cxt)
+			err(EXIT_FAILURE, _("cannot switch to PMBR"));
+	} else if (!fdisk_is_label(sf->cxt, DOS))
+		errx(EXIT_FAILURE, _("toggle boot flags is supported for MBR or PMBR only"));
 
 	if (!listonly && sf->backup)
 		backup_partition_table(sf, devname);
@@ -858,6 +863,7 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 	}
 
 	fdisk_unref_partition(pa);
+
 	if (listonly)
 		rc = fdisk_deassign_device(sf->cxt, 1);
 	else
@@ -1826,7 +1832,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Display or manipulate a disk partition table.\n"), out);
 
 	fputs(USAGE_COMMANDS, out);
-	fputs(_(" -A, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"), out);
+	fputs(_(" -A, --activate <dev> [<part> ...] list or set bootable (P)MBR partitions\n"), out);
 	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
 	fputs(_(" -J, --json <dev>                  dump partition table in JSON format\n"), out);
 	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
