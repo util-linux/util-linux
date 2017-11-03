@@ -418,7 +418,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 		rc = fdisk_script_set_header(dp, "unit", "sectors");
 
 	if (!rc && fdisk_is_label(cxt, GPT)) {
-		struct fdisk_labelitem item;
+		struct fdisk_labelitem item = FDISK_LABELITEM_INIT;
 		char buf[64];
 
 		/* first-lba */
