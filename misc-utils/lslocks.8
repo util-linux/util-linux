@@ -53,8 +53,8 @@ The command name of the process holding the lock.
 .IP "PID"
 The process ID of the process which holds the lock.
 .IP "TYPE"
-The type of lock; can be FLOCK (created with \fBflock\fR(2)) or POSIX
-(created with \fBfcntl\fR(2) and \fBlockf\fR(3)).
+The type of lock; can be FLOCK (created with \fBflock\fR(2)), POSIX
+(created with \fBfcntl\fR(2) and \fBlockf\fR(3)) or OFDLCK (created with fcntl(2).
 .IP "SIZE"
 Size of the locked file.
 .IP "MODE"
