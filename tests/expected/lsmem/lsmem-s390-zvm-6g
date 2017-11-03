@@ -139,10 +139,8 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK
 0x00000000c0000000-0x00000000dfffffff  512M  online       yes 12-13
 0x00000000e0000000-0x00000000efffffff  256M offline         -    14
 0x00000000f0000000-0x00000000ffffffff  256M  online       yes    15
-0x0000000100000000-0x000000010fffffff  256M  online        no    16
-0x0000000110000000-0x000000011fffffff  256M  online        no    17
-0x0000000120000000-0x000000012fffffff  256M  online       yes    18
-0x0000000130000000-0x000000013fffffff  256M  online       yes    19
+0x0000000100000000-0x000000011fffffff  512M  online        no 16-17
+0x0000000120000000-0x000000013fffffff  512M  online       yes 18-19
 0x0000000140000000-0x000000017fffffff    1G offline         - 20-23
 
 Memory block size:       256M

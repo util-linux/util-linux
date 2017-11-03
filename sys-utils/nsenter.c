@@ -238,6 +238,7 @@ int main(int argc, char *argv[])
 	int do_fork = -1; /* unknown yet */
 	uid_t uid = 0;
 	gid_t gid = 0;
+	const char *rd_path = NULL, *wd_path = NULL;
 #ifdef HAVE_LIBSELINUX
 	bool selinux = 0;
 #endif
@@ -318,13 +319,13 @@ int main(int argc, char *argv[])
 			break;
 		case 'r':
 			if (optarg)
-				open_target_fd(&root_fd, "root", optarg);
+				rd_path = optarg;
 			else
 				do_rd = true;
 			break;
 		case 'w':
 			if (optarg)
-				open_target_fd(&wd_fd, "cwd", optarg);
+				wd_path = optarg;
 			else
 				do_wd = true;
 			break;
@@ -432,6 +433,11 @@ int main(int argc, char *argv[])
 			nsfile->fd = -1;
 		}
 	}
+
+	if (wd_path)
+		open_target_fd(&wd_fd, "cwd", wd_path);
+	if (rd_path)
+		open_target_fd(&root_fd, "root", rd_path);
 
 	/* Remember the current working directory if I'm not changing it */
 	if (root_fd >= 0 && wd_fd < 0) {
