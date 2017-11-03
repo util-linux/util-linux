@@ -203,6 +203,32 @@ static inline void reset_split_policy(struct lsmem *l, int enable)
 	l->split_by_zones = enable;
 }
 
+static void set_split_policy(struct lsmem *l, int cols[], size_t ncols)
+{
+	size_t i;
+
+	reset_split_policy(l, 0);
+
+	for (i = 0; i < ncols; i++) {
+		switch (cols[i]) {
+		case COL_STATE:
+			l->split_by_state = 1;
+			break;
+		case COL_NODE:
+			l->split_by_node = 1;
+			break;
+		case COL_REMOVABLE:
+			l->split_by_removable = 1;
+			break;
+		case COL_ZONES:
+			l->split_by_zones = 1;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
 {
 	size_t i;
@@ -649,32 +675,17 @@ int main(int argc, char **argv)
 		int split[ARRAY_SIZE(coldescs)] = { 0 };
 		static size_t nsplits = 0;
 
-		reset_split_policy(lsmem, 0);	/* disable all */
-
 		if (strcasecmp(splitarg, "none") == 0)
 			;
 		else if (string_add_to_idarray(splitarg, split, ARRAY_SIZE(split),
 					&nsplits, column_name_to_id) < 0)
 			return EXIT_FAILURE;
 
-		for (i = 0; i < nsplits; i++) {
-			switch (split[i]) {
-			case COL_STATE:
-				lsmem->split_by_state = 1;
-				break;
-			case COL_NODE:
-				lsmem->split_by_node = 1;
-				break;
-			case COL_REMOVABLE:
-				lsmem->split_by_removable = 1;
-				break;
-			case COL_ZONES:
-				lsmem->split_by_zones = 1;
-				break;
-			}
-		}
+		set_split_policy(lsmem, split, nsplits);
+
 	} else
-		reset_split_policy(lsmem, 1); /* enable all */
+		/* follow output columns */
+		set_split_policy(lsmem, columns, ncolumns);
 
 	/*
 	 * Read data and print output

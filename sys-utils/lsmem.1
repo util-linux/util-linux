@@ -16,14 +16,12 @@ Always explicitly define expected columns by using the \fB\-\-output\fR option
 together with a columns list in environments where a stable output is required.
 
 The \fBlsmem\fP command lists a new memory range always when the current memory
-block distinguish from the previous block by STATE, REMOVABLE, NODE or ZONES
-attribute.  This default behavior is possible to override by the
-\fB\-\-split\fR option (e.g. \fBlsmem \-\-split=STATE,ZONES\fR).  The special
-word "none" may be used to ignore all differences between memory blocks and to
-create as large as possible continuous ranges.  The opposite semantic is
-\fB\-\-all\fR to list individual memory blocks.  The default split policy is
-subject to change.  Always explicitly use \fB\-\-split\fR in environments where
-a stable output is required.
+block distinguish from the previous block by some output column.  This default
+behavior is possible to override by the \fB\-\-split\fR option (e.g. \fBlsmem
+\-\-split=ZONES\fR).  The special word "none" may be used to ignore all
+differences between memory blocks and to create as large as possible continuous
+ranges.  The opposite semantic is \fB\-\-all\fR to list individual memory
+blocks.
 
 Note that some output columns may provide inaccurate information if a split policy
 forces \fBlsmem\fP to ignore diffrences in some attributes. For example if you
