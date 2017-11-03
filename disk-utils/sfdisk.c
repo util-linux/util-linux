@@ -1766,7 +1766,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	} while (1);
 
 	/* create empty disk label if label, but no partition specified */
-	if (rc == SFDISK_DONE_EOF && created == 0
+	if ((rc == SFDISK_DONE_EOF || rc == SFDISK_DONE_WRITE) && created == 0
 	    && fdisk_script_has_force_label(dp) == 1
 	    && fdisk_table_get_nents(tb) == 0
 	    && fdisk_script_get_header(dp, "label")) {
