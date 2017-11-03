@@ -72,7 +72,7 @@ struct colinfo {
 static struct colinfo infos[] = {
 	[COL_SRC]  = { "COMMAND",15, 0, N_("command of the process holding the lock") },
 	[COL_PID]  = { "PID",     5, SCOLS_FL_RIGHT, N_("PID of the process holding the lock") },
-	[COL_TYPE] = { "TYPE",    5, SCOLS_FL_RIGHT, N_("kind of lock: FL_FLOCK or FL_POSIX.") },
+	[COL_TYPE] = { "TYPE",    5, SCOLS_FL_RIGHT, N_("kind of lock") },
 	[COL_SIZE] = { "SIZE",    4, SCOLS_FL_RIGHT, N_("size of the lock") },
 	[COL_MODE] = { "MODE",    5, 0, N_("lock access mode") },
 	[COL_M]    = { "M",       1, 0, N_("mandatory state of the lock: 0 (none), 1 (set)")},
