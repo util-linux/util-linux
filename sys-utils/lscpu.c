@@ -954,9 +954,6 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 								== XEN_FEATURES_PVH_MASK)
 					desc->virtype = VIRT_PARA;
 				fclose(fd);
-			} else {
-				err(EXIT_FAILURE, _("failed to read from: %s"),
-						_PATH_SYS_HYP_FEATURES);
 			}
 		}
 	} else if (read_hypervisor_powerpc(desc) > 0) {}
