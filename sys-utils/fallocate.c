@@ -147,25 +147,6 @@ static void xposix_fallocate(int fd, off_t offset, off_t length)
 }
 #endif
 
-static int skip_hole(int fd, off_t *off)
-{
-	off_t newoff;
-
-	errno = 0;
-	newoff	= lseek(fd, *off, SEEK_DATA);
-
-	/* ENXIO means that there is no more data -- probably sparse hole at
-	 * the end of the file */
-	if (newoff < 0 && errno == ENXIO)
-		return 1;
-
-	if (newoff > *off) {
-		*off = newoff;
-		return 0;	/* success */
-	}
-	return -1;		/* no hole */
-}
-
 /* The real buffer size has to be bufsize + sizeof(uintptr_t) */
 static int is_nul(void *buf, size_t bufsize)
 {
@@ -191,16 +172,77 @@ static int is_nul(void *buf, size_t bufsize)
 	return cbuf + bufsize < cp;
 }
 
+struct dig_holes_ctx {
+	int fd;
+	size_t bufsz;
+	char *buf;
+	uintmax_t ct;
+#if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
+	size_t cache_sz;
+	off_t cache_start;
+#endif
+};
+
+static off_t dig_holes_work(struct dig_holes_ctx *ctx, off_t off, off_t end)
+{
+	off_t hole_start = 0, hole_sz = 0;
+
+	while (off < end) {
+		ssize_t rsz;
+
+		rsz = pread(ctx->fd, ctx->buf, ctx->bufsz, off);
+		if (rsz < 0 && errno)
+			err(EXIT_FAILURE, _("%s: read failed"), filename);
+		if (rsz > 0 && off > end - rsz)
+			rsz = end - off;
+		if (rsz <= 0)
+			break;
+
+		if (is_nul(ctx->buf, rsz)) {
+			if (!hole_sz) {				/* new hole detected */
+				hole_start = off;
+			}
+			hole_sz += rsz;
+		} else if (hole_sz) {
+			xfallocate(ctx->fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
+					   hole_start, hole_sz);
+			ctx->ct += hole_sz;
+			hole_sz = hole_start = 0;
+		}
+
+#if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
+		/* discard cached data */
+		if (off - ctx->cache_start > (off_t) ctx->cache_sz) {
+			size_t clen = off - ctx->cache_start;
+
+			clen = (clen / ctx->cache_sz) * ctx->cache_sz;
+			posix_fadvise(ctx->fd, ctx->cache_start, clen, POSIX_FADV_DONTNEED);
+			ctx->cache_start = ctx->cache_start + clen;
+		}
+#endif
+		off += rsz;
+	}
+
+	if (hole_sz) {
+		xfallocate(ctx->fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
+				   hole_start, hole_sz);
+		ctx->ct += hole_sz;
+	}
+
+	return off;
+}
+
 static void dig_holes(int fd, off_t off, off_t len)
 {
 	off_t end = len ? off + len : 0;
-	off_t hole_start = 0, hole_sz = 0;
-	uintmax_t ct = 0;
-	size_t  bufsz;
-	char *buf;
+	off_t data_end = off;
 	struct stat st;
-#if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
-	off_t cache_start = off;
+	struct dig_holes_ctx ctx = {
+		.fd = fd,
+		.ct = 0,
+	};
+#if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
+	ctx.cache_start = off;
 	/*
 	 * We don't want to call POSIX_FADV_DONTNEED to discard cached
 	 * data in PAGE_SIZE steps. IMHO it's overkill (too many syscalls).
@@ -209,76 +251,42 @@ static void dig_holes(int fd, off_t off, off_t len)
 	 * a good compromise.
 	 *					    -- kzak Feb-2014
 	 */
-	const size_t cachesz = getpagesize() * 256;
+	ctx.cache_sz = getpagesize() * 256;
 #endif
 
 	if (fstat(fd, &st) != 0)
 		err(EXIT_FAILURE, _("stat of %s failed"), filename);
 
-	bufsz = st.st_blksize;
+	ctx.bufsz = st.st_blksize;
 
 	if (lseek(fd, off, SEEK_SET) < 0)
 		err(EXIT_FAILURE, _("seek on %s failed"), filename);
 
 	/* buffer + extra space for is_nul() sentinel */
-	buf = xmalloc(bufsz + sizeof(uintptr_t));
+	ctx.buf = xmalloc(ctx.bufsz + sizeof(uintptr_t));
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
-	posix_fadvise(fd, off, 0, POSIX_FADV_SEQUENTIAL);
+	posix_fadvise(ctx.fd, off, 0, POSIX_FADV_SEQUENTIAL);
 #endif
 
-	while (end == 0 || off < end) {
-		ssize_t rsz;
-
-		rsz = pread(fd, buf, bufsz, off);
-		if (rsz < 0 && errno)
-			err(EXIT_FAILURE, _("%s: read failed"), filename);
-		if (end && rsz > 0 && off > end - rsz)
-			rsz = end - off;
-		if (rsz <= 0)
+	while (1) {
+		off = lseek(ctx.fd, data_end, SEEK_DATA);
+		if ((off == -1 && errno == ENXIO) ||
+		    (end && off >= end))
 			break;
 
-		if (is_nul(buf, rsz)) {
-			if (!hole_sz) {				/* new hole detected */
-				int rc = skip_hole(fd, &off);
-				if (rc == 0)
-					continue;	/* hole skipped */
-				else if (rc == 1)
-					break;		/* end of file */
-				hole_start = off;
-			}
-			hole_sz += rsz;
-		 } else if (hole_sz) {
-			xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
-				   hole_start, hole_sz);
-			ct += hole_sz;
-			hole_sz = hole_start = 0;
-		}
+		data_end = lseek(ctx.fd, off, SEEK_HOLE);
+		if (end && data_end > end)
+			data_end = end;
 
-#if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
-		/* discard cached data */
-		if (off - cache_start > (off_t) cachesz) {
-			size_t clen = off - cache_start;
-
-			clen = (clen / cachesz) * cachesz;
-			posix_fadvise(fd, cache_start, clen, POSIX_FADV_DONTNEED);
-			cache_start = cache_start + clen;
-		}
-#endif
-		off += rsz;
+		off = dig_holes_work(&ctx, off, data_end);
 	}
 
-	if (hole_sz) {
-		xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
-				hole_start, hole_sz);
-		ct += hole_sz;
-	}
-
-	free(buf);
+	free(ctx.buf);
 
 	if (verbose) {
-		char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE, ct);
+		char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE, ctx.ct);
 		fprintf(stdout, _("%s: %s (%ju bytes) converted to sparse holes.\n"),
-				filename, str, ct);
+				filename, str, ctx.ct);
 		free(str);
 	}
 }
