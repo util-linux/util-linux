@@ -193,7 +193,7 @@ enum {
 
 #define F_INITSTRING    (1<<4)	/* initstring is set */
 #define F_WAITCRLF	(1<<5)	/* wait for CR or LF */
-#define F_CUSTISSUE	(1<<6)	/* give alternative issue file */
+
 #define F_NOPROMPT	(1<<7)	/* do not ask for login name! */
 #define F_LCUC		(1<<8)	/* support for *LCUC stty modes */
 #define F_KEEPSPEED	(1<<9)	/* follow baud rate from kernel */
@@ -741,7 +741,6 @@ static void parse_args(int argc, char **argv, struct options *op)
 			op->flags |= F_REMOTE;
 			break;
 		case 'f':
-			op->flags |= F_CUSTISSUE;
 			op->issue = optarg;
 			break;
 		case 'h':
