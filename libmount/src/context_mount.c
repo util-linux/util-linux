@@ -576,6 +576,7 @@ static int exec_helper(struct libmnt_context *cxt)
 {
 	char *o = NULL;
 	int rc;
+	pid_t pid;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -590,8 +591,8 @@ static int exec_helper(struct libmnt_context *cxt)
 
 	DBG_FLUSH;
 
-	switch (fork()) {
-	case 0:
+	pid = fork();
+	if (pid == 0)
 	{
 		const char *args[12], *type;
 		int i = 0;
@@ -634,22 +635,20 @@ static int exec_helper(struct libmnt_context *cxt)
 		execv(cxt->helper, (char * const *) args);
 		_exit(EXIT_FAILURE);
 	}
-	default:
+	else if (pid == -1)
+	{
+		cxt->helper_exec_status = rc = -errno;
+		DBG(CXT, ul_debugobj(cxt, "fork() failed"));
+	}
+	else
 	{
 		int st;
-		wait(&st);
+		waitpid(pid, &st, 0);
 		cxt->helper_status = WIFEXITED(st) ? WEXITSTATUS(st) : -1;
 
 		DBG(CXT, ul_debugobj(cxt, "%s executed [status=%d]",
 					cxt->helper, cxt->helper_status));
 		cxt->helper_exec_status = rc = 0;
-		break;
-	}
-
-	case -1:
-		cxt->helper_exec_status = rc = -errno;
-		DBG(CXT, ul_debugobj(cxt, "fork() failed"));
-		break;
 	}
 
 	free(o);
