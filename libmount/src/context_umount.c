@@ -704,7 +704,7 @@ static int do_umount(struct libmnt_context *cxt)
 	if (mnt_context_is_lazy(cxt))
 		flags |= MNT_DETACH;
 
-	else if (mnt_context_is_force(cxt))
+	if (mnt_context_is_force(cxt))
 		flags |= MNT_FORCE;
 
 	DBG(CXT, ul_debugobj(cxt, "umount(2) [target='%s', flags=0x%08x]%s",
