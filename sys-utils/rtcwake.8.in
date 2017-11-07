@@ -45,6 +45,11 @@ appropriate for such suspend modes.
 .PP
 Note that alarm functionality depends on hardware; not every RTC is able to setup 
 an alarm up to 24 hours in the future.
+.PP
+The suspend setup maybe be interrupted by active hardware; for example wireless USB
+input devices that continue to send events for some fraction of a second after the
+return key is pressed. In this case is better to use sleep command before invoking
+suspend by rtcwake.
 .SH OPTIONS
 .TP
 .BR \-A , " \-\-adjfile " \fIfile
