@@ -32,7 +32,7 @@ Optionally does not hang up when it is given an already opened line
 .IP \(bu
 Optionally does not display the contents of the \fI/etc/issue\fP file.
 .IP \(bu
-Optionally displays an alternative issue file instead of \fI/etc/issue\fP.
+Optionally displays an alternative issue file or directory instead of \fI/etc/issue\fP or \fI/etc/issue.d\fP.
 .IP \(bu
 Optionally does not ask for a login name.
 .IP \(bu
@@ -113,10 +113,12 @@ is added to the \fB/bin/login\fP command line.
 .IP
 See \fB\-\-login\-options\fR.
 .TP
-\-f, \-\-issue\-file \fIissue_file\fP
-Display the contents of \fIissue_file\fP instead of \fI/etc/issue\fP.
-This allows custom messages to be displayed on different terminals.
-The \-\-noissue option will override this option.
+\-f, \-\-issue\-file \fIfile|directory\fP
+Display the contents of \fIfile\fP instead of \fI/etc/issue\fP.  If the
+specified path is a \fIdirectory\fP then displays all files with .issue file
+extension in version-sort order from the directory.  This allows custom
+messages to be displayed on different terminals.  The
+\-\-noissue option will override this option.
 .TP
 \-h, \-\-flow\-control
 Enable hardware (RTS/CTS) flow control.  It is left up to the
@@ -337,9 +339,20 @@ Some  programs use "\-\-" to indicate that the rest of the commandline should
 not be interpreted as options.  Use this feature if available by passing "\-\-"
 before the username gets passed by \\u.
 
-.SH ISSUE ESCAPES
-The issue-file (\fI/etc/issue\fP, or the file set with the \fB\-\-issue\-file\fP option)
-may contain certain escape codes to display the system name, date, time
+.SH ISSUE FILES
+The default issue file is \fI/etc/issue\fP. If the file exists then agetty also
+checks for \fI/etc/issue.d\fP directory. The directory is optional extension to
+the default issue file and content of the directory is printed after
+\fI/etc/issue\fP content. If the \fI/etc/issue\fP does not exist than the
+directory is ignored. All files with .issue extension from the directory are
+printed in version-sort order. The directory allow to maintain 3rd-party
+messages independently on the primary system \fI/etc/issue\fP file.
+
+The default path maybe overrided by \fB\-\-issue\-file\fP option. In this case
+specified path has to be file or directory and the default \fI/etc/issue\fP as
+well as \fI/etc/issue.d\fP are ignored.
+
+The issue files may contain certain escape codes to display the system name, date, time
 etcetera.  All escape codes consist of a backslash (\\) immediately
 followed by one of the characters listed below.
 
