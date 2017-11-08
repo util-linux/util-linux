@@ -38,6 +38,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --ctty     set the controlling terminal to the current one\n"), out);
+	fputs(_(" -f, --fork     always fork\n"), out);
 	fputs(_(" -w, --wait     wait program to exit, and use the same return\n"), out);
 
 	printf(USAGE_HELP_OPTIONS(16));
@@ -48,13 +49,14 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char **argv)
 {
-	int ch;
+	int ch, forcefork = 0;
 	int ctty = 0;
 	pid_t pid;
 	int status = 0;
 
 	static const struct option longopts[] = {
 		{"ctty", no_argument, NULL, 'c'},
+		{"fork", no_argument, NULL, 'f'},
 		{"wait", no_argument, NULL, 'w'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -66,13 +68,16 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((ch = getopt_long(argc, argv, "+Vhcw", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "+Vhcfw", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'c':
 			ctty=1;
+			break;
+		case 'f':
+			forcefork = 1;
 			break;
 		case 'w':
 			status = 1;
@@ -88,7 +93,7 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	if (getpgrp() == getpid()) {
+	if (forcefork || getpgrp() == getpid()) {
 		pid = fork();
 		switch (pid) {
 		case -1:
