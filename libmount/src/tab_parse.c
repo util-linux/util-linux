@@ -838,7 +838,7 @@ int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 	return __mnt_table_parse_dir(tb, dirname);
 }
 
-struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt)
+struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt, int empty_for_enoent)
 {
 	struct libmnt_table *tb;
 	struct stat st;
@@ -846,7 +846,8 @@ struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt)
 	if (!filename)
 		return NULL;
 	if (stat(filename, &st))
-		return NULL;
+		return empty_for_enoent ? mnt_new_table() : NULL;
+
 	tb = mnt_new_table();
 	if (tb) {
 		DBG(TAB, ul_debugobj(tb, "new tab for file: %s", filename));
@@ -875,7 +876,7 @@ struct libmnt_table *mnt_new_table_from_file(const char *filename)
 	if (!filename)
 		return NULL;
 
-	return __mnt_new_table_from_file(filename, MNT_FMT_GUESS);
+	return __mnt_new_table_from_file(filename, MNT_FMT_GUESS, 0);
 }
 
 /**

@@ -242,7 +242,7 @@ struct libmnt_table {
 	void		*userdata;
 };
 
-extern struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt);
+extern struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt, int empty_for_enoent);
 
 /*
  * Tab file format
