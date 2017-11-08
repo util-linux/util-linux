@@ -45,11 +45,6 @@ cleanup lib/path.c:
      to /sys snapshots (e.g. lsblk regression tests)
 	
 
-setsid
-------
-  - add --fork to always call fork(2) before setsid(2)
-    https://github.com/karelzak/util-linux/issues/518
-
 lscpu
 -----
   - read cpuid and uname information from file if --sysroot is specified, then
@@ -69,14 +64,6 @@ cfdisk
     enabled by default for logical partitions if we created all container (extended
     partition) in the current session.
       
-fdisk
------
-  - add "Print PMBR" and "Toggle PMBR boot flag" to main menu for GPT
-
-sfdisk
-------
-  - make "--activate" usable also for GPT, in this case set PMBR boot flag
-
 agetty
 -----
   - support default issue (/etc/issue) output for agetty to make it agetty
