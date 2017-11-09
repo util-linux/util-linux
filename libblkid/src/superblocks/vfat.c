@@ -165,6 +165,8 @@ static unsigned char *search_fat_label(blkid_probe pr,
 		if ((ent->attr & (FAT_ATTR_VOLUME_ID | FAT_ATTR_DIR)) ==
 		    FAT_ATTR_VOLUME_ID) {
 			DBG(LOWPROBE, ul_debug("\tfound fs LABEL at entry %d", i));
+			if (ent->name[0] == 0x05)
+				ent->name[0] = 0xE5;
 			return ent->name;
 		}
 	}
