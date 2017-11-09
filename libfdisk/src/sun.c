@@ -566,6 +566,19 @@ static int sun_add_partition(
 			if (fdisk_use_cylinders(cxt))
 				first *= fdisk_get_units_per_sector(cxt);
 
+			if (!fdisk_use_cylinders(cxt)) {
+				/* Starting sector has to be properly aligned */
+				int cs = cxt->geom.heads * cxt->geom.sectors;
+				int x = first % cs;
+
+				if (x) {
+					fdisk_info(cxt, _("Aligning the first sector from %u to %u "
+							  "to be on cylinder boundary."),
+							first, first + cs - x);
+					first += cs - x;
+				}
+			}
+
 			/* ewt asks to add: "don't start a partition at cyl 0"
 			   However, edmundo@rano.demon.co.uk writes:
 			   "In addition to having a Sun partition table, to be able to
@@ -590,20 +603,6 @@ static int sun_add_partition(
 				fdisk_warnx(cxt, _("Sector %d is already allocated"), first);
 			} else
 				break;
-		}
-	}
-
-
-	if (!fdisk_use_cylinders(cxt)) {
-		/* Starting sector has to be properly aligned */
-		int cs = cxt->geom.heads * cxt->geom.sectors;
-		int x = first % cs;
-
-		if (x) {
-			fdisk_info(cxt, _("Aligning the first sector from %u to %u "
-					  "to be on cylinder boundary."),
-					first, first + cs - x);
-			first += cs - x;
 		}
 	}
 
