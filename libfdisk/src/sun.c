@@ -326,6 +326,7 @@ static void fetch_sun(struct fdisk_context *cxt,
 	struct sun_disklabel *sunlabel;
 	int continuous = 1;
 	size_t i;
+	int sectors_per_cylinder = cxt->geom.heads * cxt->geom.sectors;
 
 	assert(cxt);
 	assert(cxt);
@@ -335,7 +336,7 @@ static void fetch_sun(struct fdisk_context *cxt,
 	sunlabel = self_disklabel(cxt);
 
 	*start = 0;
-	*stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;
+	*stop = cxt->geom.cylinders * sectors_per_cylinder;
 
 	for (i = 0; i < cxt->label->nparts_max; i++) {
 		struct sun_partition *part = &sunlabel->partitions[i];
@@ -345,12 +346,16 @@ static void fetch_sun(struct fdisk_context *cxt,
 		    be16_to_cpu(info->id) != SUN_TAG_UNASSIGNED &&
 		    be16_to_cpu(info->id) != SUN_TAG_WHOLEDISK) {
 			starts[i] = be32_to_cpu(part->start_cylinder) *
-				     cxt->geom.heads * cxt->geom.sectors;
+				     sectors_per_cylinder;
 			lens[i] = be32_to_cpu(part->num_sectors);
 			if (continuous) {
-				if (starts[i] == *start)
+				if (starts[i] == *start) {
 					*start += lens[i];
-				else if (starts[i] + lens[i] >= *stop)
+					int remained_sectors = *start % sectors_per_cylinder;
+					if (remained_sectors) {
+						*start += sectors_per_cylinder - remained_sectors;
+					}
+				} else if (starts[i] + lens[i] >= *stop)
 					*stop = starts[i];
 				else
 					continuous = 0;
