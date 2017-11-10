@@ -37,6 +37,7 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	int i, nparts = BSD_MAXPARTITIONS;
 	unsigned char *data;
 	int rc = BLKID_PROBE_NONE;
+	uint32_t abs_offset = 0;
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
@@ -62,6 +63,7 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		switch(blkid_partition_get_type(parent)) {
 		case MBR_FREEBSD_PARTITION:
 			name = "freebsd";
+			abs_offset = blkid_partition_get_start(parent);
 			break;
 		case MBR_NETBSD_PARTITION:
 			name = "netbsd";
@@ -96,12 +98,19 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_partition par;
 		uint32_t start, size;
 
-		/* TODO: in fdisk-mode returns all non-zero (p_size) partitions */
 		if (p->p_fstype == BSD_FS_UNUSED)
 			continue;
 
 		start = le32_to_cpu(p->p_offset);
 		size = le32_to_cpu(p->p_size);
+
+		/* FreeBSD since version 10 uses relative offsets. We can use
+		 * 3rd partition (special wholedisk partition) to detect this
+		 * situation.
+		 */
+		if (abs_offset && nparts >= 3
+		    && le32_to_cpu(l->d_partitions[2].p_offset) == 0)
+			start += abs_offset;
 
 		if (parent && blkid_partition_get_start(parent) == start
 			   && blkid_partition_get_size(parent) == size) {
