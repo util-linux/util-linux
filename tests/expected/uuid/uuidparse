@@ -26,6 +26,6 @@ UUID                                  VARIANT   TYPE       TIME
 00000000-0000-4000-f000-000000000000  other     random     
 00000000-0000-5000-f000-000000000000  other     sha1-based 
 00000000-0000-6000-f000-000000000000  other     unknown    
-9b274c46-544a-11e7-a972-00037f500001  DCE       time-based 2017-06-18 17:21:46,544647+0000
+9b274c46-544a-11e7-a972-00037f500001  DCE       time-based 2017-06-18 17:21:46,544647+00:00
 invalid-input                         invalid   invalid    invalid
 return value: 0
