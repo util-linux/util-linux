@@ -167,12 +167,13 @@ static int probe_udf(blkid_probe pr,
 	uint32_t lvid_count = 0;
 	uint32_t lvid_loc = 0;
 	uint32_t bs;
-	uint32_t pbs[5];
 	uint32_t b;
 	uint16_t type;
 	uint32_t count;
 	uint32_t loc;
 	size_t i;
+	uint32_t vsd_len;
+	int vsd_2048_valid = -1;
 	int have_label = 0;
 	int have_uuid = 0;
 	int have_logvolid = 0;
@@ -183,55 +184,81 @@ static int probe_udf(blkid_probe pr,
 	/* The block size of a UDF filesystem is that of the underlying
 	 * storage; we check later on for the special case of image files,
 	 * which may have any block size valid for UDF filesystem */
+	uint32_t pbs[] = { 0, 512, 1024, 2048, 4096 };
 	pbs[0] = blkid_probe_get_sectorsize(pr);
-	pbs[1] = 512;
-	pbs[2] = 1024;
-	pbs[3] = 2048;
-	pbs[4] = 4096;
 
-	/* check for a Volume Structure Descriptor (VSD); each is
-	 * 2048 bytes long */
-	for (b = 0; b < 0x8000; b += 0x800) {
-		vsd = (struct volume_structure_descriptor *)
-			blkid_probe_get_buffer(pr,
-					UDF_VSD_OFFSET + b,
-					sizeof(*vsd));
-		if (!vsd)
-			return errno ? -errno : 1;
-		if (vsd->id[0] != '\0')
-			goto nsr;
-	}
-	return 1;
+	for (i = 0; i < ARRAY_SIZE(pbs); i++) {
+		/* Do not try with block size same as sector size two times */
+		if (i != 0 && pbs[0] == pbs[i])
+			continue;
 
-nsr:
-	/* search the list of VSDs for a NSR descriptor */
-	for (b = 0; b < 64; b++) {
-		vsd = (struct volume_structure_descriptor *)
-			blkid_probe_get_buffer(pr,
-					UDF_VSD_OFFSET + ((uint64_t) b * 0x800),
-					sizeof(*vsd));
-		if (!vsd)
-			return errno ? -errno : 1;
-		if (memcmp(vsd->id, "NSR02", 5) == 0)
-			goto anchor;
-		if (memcmp(vsd->id, "NSR03", 5) == 0)
-			goto anchor;
-	}
-	return 1;
+		/* ECMA-167 2/8.4, 2/9.1: Each VSD is either 2048 bytes long or
+		 * its size is same as blocksize (for blocksize > 2048 bytes)
+		 * plus padded with zeros */
+		vsd_len = pbs[i] > 2048 ? pbs[i] : 2048;
+
+		/* Process 2048 bytes long VSD only once */
+		if (vsd_len == 2048) {
+			if (vsd_2048_valid == 0)
+				continue;
+			else if (vsd_2048_valid == 1)
+				goto anchor;
+		}
+
+		/* Check for a Volume Structure Descriptor (VSD) */
+		for (b = 0; b < 64; b++) {
+			vsd = (struct volume_structure_descriptor *)
+				blkid_probe_get_buffer(pr,
+						UDF_VSD_OFFSET + b * vsd_len,
+						sizeof(*vsd));
+			if (!vsd)
+				return errno ? -errno : 1;
+			if (vsd->id[0] == '\0')
+				break;
+			if (memcmp(vsd->id, "NSR02", 5) == 0 ||
+			    memcmp(vsd->id, "NSR03", 5) == 0)
+				goto anchor;
+			else if (memcmp(vsd->id, "BEA01", 5) != 0 &&
+			         memcmp(vsd->id, "BOOT2", 5) != 0 &&
+			         memcmp(vsd->id, "CD001", 5) != 0 &&
+			         memcmp(vsd->id, "CDW02", 5) != 0 &&
+			         memcmp(vsd->id, "TEA01", 5) != 0)
+				/* ECMA-167 2/8.3.1: The volume recognition sequence is
+				 * terminated by the first sector which is not a valid
+				 * descriptor.
+				 * UDF-2.60 2.1.7: UDF 2.00 and lower revisions do not
+				 * have requirement that NSR descritor is in Extended Area
+				 * (between BEA01 and TEA01) and that there is only one
+				 * Extended Area. So do not stop scanning after TEA01. */
+				break;
+		}
+
+		if (vsd_len == 2048)
+			vsd_2048_valid = 0;
+
+		/* NSR was not found, try with next block size */
+		continue;
 
 anchor:
-	/* read Anchor Volume Descriptor (AVDP), checking block size */
-	for (i = 0; i < ARRAY_SIZE(pbs); i++) {
+		if (vsd_len == 2048)
+			vsd_2048_valid = 1;
+
+		/* Read Anchor Volume Descriptor (AVDP), detect block size */
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr, 256 * pbs[i], sizeof(*vd));
 		if (!vd)
 			return errno ? -errno : 1;
 
+		/* Check that we read correct sector and detected correct block size */
+		if (le32_to_cpu(vd->tag.location) != 256)
+			continue;
+
 		type = le16_to_cpu(vd->tag.id);
 		if (type == TAG_ID_AVDP)
 			goto real_blksz;
+
 	}
-	return 0;
+	return 1;
 
 real_blksz:
 	/* Use the actual block size from here on out */
