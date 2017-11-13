@@ -77,6 +77,16 @@ struct volume_descriptor {
 			uint32_t	lvid_length;
 			uint32_t	lvid_location;
 		} __attribute__((packed)) logical;
+
+		struct logical_vol_integ_descriptor {
+			uint8_t		recording_date[12];
+			uint32_t	type;
+			uint32_t	next_lvid_length;
+			uint32_t	next_lvid_location;
+			uint8_t		logical_contents_use[32];
+			uint32_t	num_partitions;
+			uint32_t	imp_use_length;
+		} __attribute__((packed)) logical_vol_integ;
 	} __attribute__((packed)) type;
 
 } __attribute__((packed));
@@ -104,7 +114,8 @@ struct logical_vol_integ_descriptor_imp_use
 	uint16_t	max_udf_write_rev;
 } __attribute__ ((packed));
 
-#define UDF_LVIDIU_OFFSET(num_partition_maps) (80 + 2 * 4 * num_partition_maps)
+#define UDF_LVIDIU_OFFSET(vd) (sizeof((vd).tag) + sizeof((vd).type.logical_vol_integ) + 2 * 4 * le32_to_cpu((vd).type.logical_vol_integ.num_partitions))
+#define UDF_LVIDIU_LENGTH(vd) (le32_to_cpu((vd).type.logical_vol_integ.imp_use_length))
 
 static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring128 *volset_id)
 {
@@ -163,7 +174,6 @@ static int probe_udf(blkid_probe pr,
 	struct volume_descriptor *vd;
 	struct volume_structure_descriptor *vsd;
 	struct logical_vol_integ_descriptor_imp_use *lvidiu;
-	uint32_t num_partition_maps = 0;
 	uint32_t lvid_count = 0;
 	uint32_t lvid_loc = 0;
 	uint32_t bs;
@@ -339,8 +349,7 @@ real_blksz:
 							vd->type.primary.volset_id.c, clen, enc);
 			}
 		} else if (type == TAG_ID_LVD) {
-			if (!num_partition_maps || !lvid_count || !lvid_loc) {
-				num_partition_maps = le32_to_cpu(vd->type.logical.num_partition_maps);
+			if (!lvid_count || !lvid_loc) {
 				lvid_count = le32_to_cpu(vd->type.logical.lvid_length) / bs;
 				lvid_loc = le32_to_cpu(vd->type.logical.lvid_location);
 			}
@@ -387,12 +396,12 @@ real_blksz:
 				}
 			}
 		}
-		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && num_partition_maps && lvid_count && lvid_loc)
+		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && lvid_count && lvid_loc)
 			break;
 	}
 
 	/* pick the logical volume integrity descriptor from the list and read UDF revision */
-	if (lvid_count && lvid_loc && num_partition_maps) {
+	if (lvid_count && lvid_loc) {
 		for (b = 0; b < lvid_count; b++) {
 			vd = (struct volume_descriptor *)
 				blkid_probe_get_buffer(pr,
@@ -405,11 +414,11 @@ real_blksz:
 				break;
 			if (le32_to_cpu(vd->tag.location) != lvid_loc + b)
 				break;
-			if (type == TAG_ID_LVID) {
+			if (type == TAG_ID_LVID && UDF_LVIDIU_LENGTH(*vd) >= sizeof(*lvidiu)) {
 				uint16_t udf_rev;
 				lvidiu = (struct logical_vol_integ_descriptor_imp_use *)
 					blkid_probe_get_buffer(pr,
-							(uint64_t) (lvid_loc + b) * bs + UDF_LVIDIU_OFFSET(num_partition_maps),
+							(uint64_t) (lvid_loc + b) * bs + UDF_LVIDIU_OFFSET(*vd),
 							sizeof(*lvidiu));
 				if (!lvidiu)
 					return errno ? -errno : 1;
