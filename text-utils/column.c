@@ -93,7 +93,8 @@ struct column_control {
 
 	unsigned int greedy :1,
 		     json :1,
-		     header_repeat :1;
+		     header_repeat :1,
+		     tab_noheadings :1;
 };
 
 static size_t width(const wchar_t *str)
@@ -218,6 +219,7 @@ static void init_table(struct column_control *ctl)
 			scols_table_new_column(ctl->tab, *name, 0, 0);
 		if (ctl->header_repeat)
 			scols_table_enable_header_repeat(ctl->tab, 1);
+		scols_table_enable_noheadings(ctl->tab, !!ctl->tab_noheadings);
 	} else
 		scols_table_enable_noheadings(ctl->tab, 1);
 }
@@ -572,6 +574,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -O, --table-order <columns>      specify order of output columns\n"), out);
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
 	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
+	fputs(_(" -d, --table-noheadings           don't print header\n"), out);
 	fputs(_(" -e, --table-header-repeat        repeat header for each page\n"), out);
 	fputs(_(" -H, --table-hide <columns>       don't print the columns\n"), out);
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
@@ -622,6 +625,7 @@ int main(int argc, char **argv)
 		{ "table-hide",          required_argument, NULL, 'H' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "table-noextreme",     required_argument, NULL, 'E' },
+		{ "table-noheadings",    no_argument,       NULL, 'd' },
 		{ "table-order",         required_argument, NULL, 'O' },
 		{ "table-right",         required_argument, NULL, 'R' },
 		{ "table-truncate",      required_argument, NULL, 'T' },
@@ -648,13 +652,16 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "c:E:eH:hi:JN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c:dE:eH:hi:JN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
 		case 'c':
 			ctl.termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
+			break;
+		case 'd':
+			ctl.tab_noheadings = 1;
 			break;
 		case 'E':
 			ctl.tab_colnoextrem = optarg;
