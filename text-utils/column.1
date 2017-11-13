@@ -100,7 +100,8 @@ Print header line for each page.
 Specify columns where is possible to use multi-line cell for long text when
 necessary.
 .IP "\fB\-H, \-\-table-hide\fP \fIcolumns\fP"
-Don't print specified columns.
+Don't print specified columns. The special placeholder '-' maybe be used to
+hide all unnamed columns (see --table-columns).
 .IP "\fB\-O, \-\-table-order\fP \fIcolumns\fP"
 Specify columns order on output.
 .IP "\fB\-n, \-\-table-name\fP \fIname\fP"
@@ -127,6 +128,13 @@ Print fstab with header line and align number to the right:
 .EX
 \fBsed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ\fR
 .EE
+.PP
+Print fstab and hide unnamed columns:
+.EX
+\fBsed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE --table-hide -\fR
+.EE
+.PP
+
 .PP
 Print a tree:
 .EX
