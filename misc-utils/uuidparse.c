@@ -224,17 +224,11 @@ static void fill_table_row(struct libscols_table *tb, char const *const uuid)
 			}
 			if (variant == UUID_VARIANT_DCE && type == 1) {
 				struct timeval tv;
-				char date_buf[ISO_8601_BUFSIZ + 4];
+				char date_buf[ISO_BUFSIZ];
 
 				uuid_time(buf, &tv);
-				strtimeval_iso(&tv,
-					       ISO_8601_DATE |
-						 ISO_8601_TIME |
-						 ISO_8601_COMMAUSEC |
-						 ISO_8601_TIMEZONE |
-						 ISO_8601_SPACE,
-					       date_buf,
-					       sizeof(date_buf));
+				strtimeval_iso(&tv, ISO_TIMESTAMP_COMMA,
+					       date_buf, sizeof(date_buf));
 				str = xstrdup(date_buf);
 			}
 			break;

@@ -551,15 +551,17 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 	set_hardware_clock(ctl, newhwtime);
 }
 
-static void
+static int
 display_time(struct timeval hwctime)
 {
-	char buf[ISO_8601_BUFSIZ];
+	char buf[ISO_BUFSIZ];
 
-	strtimeval_iso(&hwctime, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_DOTUSEC|
-				 ISO_8601_TIMEZONE|ISO_8601_SPACE,
-				 buf, sizeof(buf));
+	if (strtimeval_iso(&hwctime, ISO_TIMESTAMP_DOT, buf, sizeof(buf))) {
+		warnx(_("iso-8601 format overflow"));
+		return EXIT_FAILURE;
+	}
 	printf("%s\n", buf);
+	return EXIT_SUCCESS;
 }
 
 /*
@@ -604,13 +606,7 @@ set_system_clock(const struct hwclock_control *ctl,
 	const struct timezone tz_utc = { 0 };
 
 	broken = localtime(&newtime.tv_sec);
-#ifdef HAVE_TM_GMTOFF
-	minuteswest = -broken->tm_gmtoff / 60;	/* GNU extension */
-#else
-	minuteswest = timezone / 60;
-	if (broken->tm_isdst)
-		minuteswest -= 60;
-#endif
+	minuteswest = -get_gmtoff(broken) / 60;
 
 	if (ctl->debug) {
 		if (ctl->hctosys && !ctl->universal)
@@ -931,8 +927,7 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 			printf(_ ("Target date:   %ld\n"), set_time);
 			printf(_ ("Predicted RTC: %ld\n"), hclocktime.tv_sec);
 		}
-		display_time(hclocktime);
-		return EXIT_SUCCESS;
+		return display_time(hclocktime);
 	}
 
 	if (ctl->systz)
@@ -978,7 +973,7 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 		 time_inc(hclocktime, time_diff(startup_time, read_time));
 	}
 	if (ctl->show || ctl->get) {
-		display_time(startup_hclocktime);
+		return display_time(startup_hclocktime);
 	} else if (ctl->set) {
 		set_hardware_clock_exact(ctl, set_time, startup_time);
 		if (!ctl->noadjfile)

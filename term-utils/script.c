@@ -472,9 +472,7 @@ static void do_io(struct script_control *ctl)
 
 
 	if (ctl->typescriptfp) {
-		strtime_iso(&tvec, ISO_8601_DATE | ISO_8601_TIME |
-				ISO_8601_TIMEZONE | ISO_8601_SPACE,
-				buf, sizeof(buf));
+		strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
 		fprintf(ctl->typescriptfp, _("Script started on %s\n"), buf);
 	}
 	gettime_monotonic(&ctl->oldtime);
@@ -546,9 +544,7 @@ static void do_io(struct script_control *ctl)
 
 	if (ctl->typescriptfp) {
 		tvec = script_time((time_t *)NULL);
-		strtime_iso(&tvec, ISO_8601_DATE | ISO_8601_TIME |
-				ISO_8601_TIMEZONE | ISO_8601_SPACE,
-				buf, sizeof(buf));
+		strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
 		fprintf(ctl->typescriptfp, _("\nScript done on %s\n"), buf);
 	}
 	done(ctl);

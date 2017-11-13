@@ -223,7 +223,7 @@ static int rfkill_event(void)
 {
 	struct rfkill_event event;
 	struct timeval tv;
-	char date_buf[ISO_8601_BUFSIZ];
+	char date_buf[ISO_BUFSIZ];
 	struct pollfd p;
 	int fd, n;
 
@@ -253,12 +253,8 @@ static int rfkill_event(void)
 			continue;
 
 		gettimeofday(&tv, NULL);
-		strtimeval_iso(&tv,
-			       ISO_8601_DATE |
-			       ISO_8601_TIME |
-			       ISO_8601_COMMAUSEC |
-			       ISO_8601_TIMEZONE |
-			       ISO_8601_SPACE, date_buf, sizeof(date_buf));
+		strtimeval_iso(&tv, ISO_TIMESTAMP_COMMA, date_buf,
+			       sizeof(date_buf));
 		printf("%s: idx %u type %u op %u soft %u hard %u\n",
 		       date_buf,
 		       event.idx, event.type, event.op, event.soft, event.hard);
