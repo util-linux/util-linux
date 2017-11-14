@@ -525,6 +525,40 @@ static int gpt_mknew_pmbr(struct fdisk_context *cxt)
 	return 0;
 }
 
+/* Move backup header to the end of the device */
+static void gpt_fix_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_label *gpt)
+{
+	struct gpt_header *p, *b;
+	uint64_t esz, esects, last;
+
+	if (!cxt)
+		return;
+
+	p = gpt->pheader;	/* primary */
+	b = gpt->bheader;	/* backup */
+
+	/* count size of partitions array */
+	esz = (uint64_t) le32_to_cpu(p->npartition_entries) * sizeof(struct gpt_entry);
+	esects = (esz + cxt->sector_size - 1) / cxt->sector_size;
+
+	/* reference from primary to backup */
+	p->alternative_lba = cpu_to_le64(cxt->total_sectors - 1ULL);
+
+	/* reference from backup to primary */
+	b->alternative_lba = p->my_lba;
+	b->my_lba = p->alternative_lba;
+
+	/* fix backup partitions array address */
+	b->partition_entry_lba = cpu_to_le64(cxt->total_sectors - 1ULL - esects);
+
+	/* update last usable LBA */
+	last = cxt->total_sectors - 2ULL - esects;
+	p->last_usable_lba  = cpu_to_le64(last);
+	b->last_usable_lba  = cpu_to_le64(last);
+
+	DBG(LABEL, ul_debug("Alternative-LBA updated to: %"PRIu64, le64_to_cpu(p->alternative_lba)));
+}
+
 /* some universal differences between the headers */
 static void gpt_mknew_header_common(struct fdisk_context *cxt,
 				    struct gpt_header *header, uint64_t lba)
@@ -824,9 +858,15 @@ static int valid_pmbr(struct fdisk_context *cxt)
 	if (ret == GPT_MBR_PROTECTIVE) {
 		uint64_t sz_lba = (uint64_t) le32_to_cpu(pmbr->partition_record[part].size_in_lba);
 		if (sz_lba != cxt->total_sectors - 1ULL && sz_lba != 0xFFFFFFFFULL) {
+
 			fdisk_warnx(cxt, _("GPT PMBR size mismatch (%"PRIu64" != %"PRIu64") "
-					   "will be corrected by w(rite)."),
+					   "will be corrected by write."),
 					sz_lba, cxt->total_sectors - 1ULL);
+
+			/* Note that gpt_write_pmbr() overwrites PMBR, but we want to keep it valid already 
+			 * in memory too to disable warnings when valid_pmbr() called next time */
+			pmbr->partition_record[part].size_in_lba  =
+				cpu_to_le32((uint32_t) min( cxt->total_sectors - 1ULL, 0xFFFFFFFFULL) );
 			fdisk_label_set_changed(cxt->label, 1);
 		}
 	}
@@ -1525,6 +1565,7 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 		if (!gpt->bheader)
 			goto failed;
 		gpt_recompute_crc(gpt->bheader, gpt->ents);
+		fdisk_label_set_changed(cxt->label, 1);
 
 	/* primary corrupted, backup OK -- recovery */
 	} else if (!gpt->pheader && gpt->bheader) {
@@ -1534,6 +1575,20 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 		if (!gpt->pheader)
 			goto failed;
 		gpt_recompute_crc(gpt->pheader, gpt->ents);
+		fdisk_label_set_changed(cxt->label, 1);
+	}
+
+	/* The headers make be correct, but Backup do not have to be on the end
+	 * of the device (due to device resize, etc.). Let's fix this issue. */
+	if (le64_to_cpu(gpt->pheader->alternative_lba) > cxt->total_sectors ||
+	    le64_to_cpu(gpt->pheader->alternative_lba) < cxt->total_sectors - 1ULL) {
+		fdisk_warnx(cxt, _("The backup GPT table is not on the end of the device. "
+				   "This problem will be corrected by write."));
+
+		gpt_fix_alternative_lba(cxt, gpt);
+		gpt_recompute_crc(gpt->bheader, gpt->ents);
+		gpt_recompute_crc(gpt->pheader, gpt->ents);
+		fdisk_label_set_changed(cxt->label, 1);
 	}
 
 	cxt->label->nparts_max = gpt_get_nentries(gpt);
@@ -1991,7 +2046,6 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 
 	/* check that the backup header is properly placed */
 	if (le64_to_cpu(gpt->pheader->alternative_lba) < cxt->total_sectors - 1ULL)
-		/* TODO: correct this (with user authorization) and write */
 		goto err0;
 
 	if (check_overlap_partitions(gpt))
