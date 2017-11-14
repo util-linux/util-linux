@@ -350,8 +350,12 @@ real_blksz:
 			}
 		} else if (type == TAG_ID_LVD) {
 			if (!lvid_count || !lvid_loc) {
-				lvid_count = le32_to_cpu(vd->type.logical.lvid_length) / bs;
-				lvid_loc = le32_to_cpu(vd->type.logical.lvid_location);
+				uint32_t num_partition_maps = le32_to_cpu(vd->type.logical.num_partition_maps);
+				/* ECMA-167 3/10.6.12: If num_partition_maps is 0, then no LVID is specified */
+				if (num_partition_maps) {
+					lvid_count = le32_to_cpu(vd->type.logical.lvid_length) / bs;
+					lvid_loc = le32_to_cpu(vd->type.logical.lvid_location);
+				}
 			}
 			if (!have_logvolid || !have_label) {
 				/* LogicalVolumeIdentifier in UDF 2.01 specification:
@@ -415,6 +419,11 @@ real_blksz:
 			if (le32_to_cpu(vd->tag.location) != lvid_loc + b)
 				break;
 			if (type == TAG_ID_LVID && UDF_LVIDIU_LENGTH(*vd) >= sizeof(*lvidiu)) {
+				/* ECMA-167 3/8.8.2: There is stored sequence of LVIDs and valid is just last
+				 * one. So correctly we should jump to next_lvid_location and read next LVID
+				 * until we find last one. This could be time consuming process and could
+				 * lead to scanning lot of disk blocks. Because we use LVID only for UDF
+				 * version, in the worst case we would report only wrong ID_FS_VERSION. */
 				uint16_t udf_rev;
 				lvidiu = (struct logical_vol_integ_descriptor_imp_use *)
 					blkid_probe_get_buffer(pr,
