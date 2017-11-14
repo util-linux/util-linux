@@ -1,0 +1,54 @@
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+
+>>> Created a new <removed>.
+<removed>p1: Created a new <removed>.
+<removed>p2: Done.
+
+New situation:
+Disklabel type: gpt
+Disk identifier: <removed>
+
+Device             Start   End Sectors Size Type
+<removed>p1  2048 20446   18399   9M Linux filesystem
+
+The partition table has been altered.
+
+
+----- fixing after resize: -----
+
+
+
+Welcome to fdisk <removed>.
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+GPT PMBR size mismatch (20479 != 40959) will be corrected by write.
+The backup GPT table is not on the end of the device. This problem will be corrected by write.
+
+Command (m for help): Partition number (2-128, default 2): First sector (20447-40926, default 20480): Last sector, +sectors or +size{K,M,G,T,P} (20480-40926, default 40926): 
+Created a new <removed>.
+
+Command (m for help): The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Re-reading the partition table failed.: Invalid argument
+
+The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or kpartx(8).
+
+
+
+----- list result: -----
+
+
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: gpt
+Disk identifier: <removed>
+
+Device             Start   End Sectors Size Type
+<removed>p1  2048 20446   18399   9M Linux filesystem
+<removed>p2 20480 40926   20447  10M Linux filesystem
