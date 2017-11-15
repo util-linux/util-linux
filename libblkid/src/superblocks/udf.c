@@ -174,7 +174,7 @@ static int probe_udf(blkid_probe pr,
 	struct volume_descriptor *vd;
 	struct volume_structure_descriptor *vsd;
 	struct logical_vol_integ_descriptor_imp_use *lvidiu;
-	uint32_t lvid_count = 0;
+	uint32_t lvid_len = 0;
 	uint32_t lvid_loc = 0;
 	uint32_t bs;
 	uint32_t b;
@@ -189,7 +189,6 @@ static int probe_udf(blkid_probe pr,
 	int have_logvolid = 0;
 	int have_volid = 0;
 	int have_volsetid = 0;
-	int have_udf_rev = 0;
 
 	/* The block size of a UDF filesystem is that of the underlying
 	 * storage; we check later on for the special case of image files,
@@ -349,11 +348,11 @@ real_blksz:
 							vd->type.primary.volset_id.c, clen, enc);
 			}
 		} else if (type == TAG_ID_LVD) {
-			if (!lvid_count || !lvid_loc) {
+			if (!lvid_len || !lvid_loc) {
 				uint32_t num_partition_maps = le32_to_cpu(vd->type.logical.num_partition_maps);
 				/* ECMA-167 3/10.6.12: If num_partition_maps is 0, then no LVID is specified */
 				if (num_partition_maps) {
-					lvid_count = le32_to_cpu(vd->type.logical.lvid_length) / bs;
+					lvid_len = le32_to_cpu(vd->type.logical.lvid_length);
 					lvid_loc = le32_to_cpu(vd->type.logical.lvid_location);
 				}
 			}
@@ -400,46 +399,40 @@ real_blksz:
 				}
 			}
 		}
-		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && lvid_count && lvid_loc)
+		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && lvid_len && lvid_loc)
 			break;
 	}
 
-	/* pick the logical volume integrity descriptor from the list and read UDF revision */
-	if (lvid_count && lvid_loc) {
-		for (b = 0; b < lvid_count; b++) {
-			vd = (struct volume_descriptor *)
+	/* Pick the first logical volume integrity descriptor and read UDF revision */
+	if (lvid_loc && lvid_len >= sizeof(*vd)) {
+		vd = (struct volume_descriptor *)
+			blkid_probe_get_buffer(pr,
+					(uint64_t) lvid_loc * bs,
+					sizeof(*vd));
+		if (!vd)
+			return errno ? -errno : 1;
+		type = le16_to_cpu(vd->tag.id);
+		if (type == TAG_ID_LVID &&
+		    le32_to_cpu(vd->tag.location) == lvid_loc &&
+		    UDF_LVIDIU_LENGTH(*vd) >= sizeof(*lvidiu)) {
+			/* ECMA-167 3/8.8.2: There is stored sequence of LVIDs and valid is just last
+			 * one. So correctly we should jump to next_lvid_location and read next LVID
+			 * until we find last one. This could be time consuming process and could
+			 * lead to scanning lot of disk blocks. Because we use LVID only for UDF
+			 * version, in the worst case we would report only wrong ID_FS_VERSION. */
+			uint16_t udf_rev;
+			lvidiu = (struct logical_vol_integ_descriptor_imp_use *)
 				blkid_probe_get_buffer(pr,
-						(uint64_t) (lvid_loc + b) * bs,
-						sizeof(*vd));
-			if (!vd)
+						(uint64_t) lvid_loc * bs + UDF_LVIDIU_OFFSET(*vd),
+						sizeof(*lvidiu));
+			if (!lvidiu)
 				return errno ? -errno : 1;
-			type = le16_to_cpu(vd->tag.id);
-			if (type == 0)
-				break;
-			if (le32_to_cpu(vd->tag.location) != lvid_loc + b)
-				break;
-			if (type == TAG_ID_LVID && UDF_LVIDIU_LENGTH(*vd) >= sizeof(*lvidiu)) {
-				/* ECMA-167 3/8.8.2: There is stored sequence of LVIDs and valid is just last
-				 * one. So correctly we should jump to next_lvid_location and read next LVID
-				 * until we find last one. This could be time consuming process and could
-				 * lead to scanning lot of disk blocks. Because we use LVID only for UDF
-				 * version, in the worst case we would report only wrong ID_FS_VERSION. */
-				uint16_t udf_rev;
-				lvidiu = (struct logical_vol_integ_descriptor_imp_use *)
-					blkid_probe_get_buffer(pr,
-							(uint64_t) (lvid_loc + b) * bs + UDF_LVIDIU_OFFSET(*vd),
-							sizeof(*lvidiu));
-				if (!lvidiu)
-					return errno ? -errno : 1;
-				/* Use Minimum UDF Read Revision as ID_FS_VERSION */
-				udf_rev = le16_to_cpu(lvidiu->min_udf_read_rev);
-				if (udf_rev)
-					have_udf_rev = !blkid_probe_sprintf_version(pr, "%d.%02d",
-							(int)(udf_rev >> 8),
-							(int)(udf_rev & 0xFF));
-			}
-			if (have_udf_rev)
-				break;
+			/* Use Minimum UDF Read Revision as ID_FS_VERSION */
+			udf_rev = le16_to_cpu(lvidiu->min_udf_read_rev);
+			if (udf_rev)
+				blkid_probe_sprintf_version(pr, "%d.%02d",
+						(int)(udf_rev >> 8),
+						(int)(udf_rev & 0xFF));
 		}
 	}
 
