@@ -94,6 +94,7 @@ struct volume_descriptor {
 #define TAG_ID_PVD  1
 #define TAG_ID_AVDP 2
 #define TAG_ID_LVD  6
+#define TAG_ID_TD   8
 #define TAG_ID_LVID 9
 
 struct volume_structure_descriptor {
@@ -289,6 +290,8 @@ real_blksz:
 		if (type == 0)
 			break;
 		if (le32_to_cpu(vd->tag.location) != loc + b)
+			break;
+		if (type == TAG_ID_TD)
 			break;
 		if (type == TAG_ID_PVD) {
 			if (!have_volid) {
