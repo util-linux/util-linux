@@ -70,6 +70,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/luks.c \
 	libblkid/src/superblocks/lvm.c \
 	libblkid/src/superblocks/minix.c \
+	libblkid/src/superblocks/mpool.c \
 	libblkid/src/superblocks/netware.c \
 	libblkid/src/superblocks/nilfs.c \
 	libblkid/src/superblocks/ntfs.c \
