@@ -40,9 +40,10 @@ _umount_module()
 			return 0
 			;;
 	esac
-	local DEVS_MPOINTS
-	DEVS_MPOINTS="$(mount | awk '{print $1, $3}')"
-	COMPREPLY=( $(compgen -W "$DEVS_MPOINTS" -- $cur) )
-	return 0
+
+	local oldifs=$IFS
+	IFS=$'\n'
+	COMPREPLY=( $( compgen -W '$(findmnt -lno TARGET | sed "s/\([[:blank:]]\)/\\\\\1/g")' -- "$cur" ) )
+	IFS=$oldifs
 }
 complete -F _umount_module umount
