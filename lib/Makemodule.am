@@ -5,6 +5,7 @@ libcommon_la_SOURCES = \
 	lib/blkdev.c \
 	lib/canonicalize.c \
 	lib/crc32.c \
+	lib/crc32c.c \
 	lib/env.c \
 	lib/idcache.c \
 	lib/fileutils.c \
