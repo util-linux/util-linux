@@ -12,6 +12,7 @@ dist_noinst_HEADERS += \
 	include/color-names.h \
 	include/cpuset.h \
 	include/crc32.h \
+	include/crc32c.h \
 	include/debug.h \
 	include/env.h \
 	include/exec_shell.h \
