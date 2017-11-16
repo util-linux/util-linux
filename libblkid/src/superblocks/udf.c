@@ -4,6 +4,7 @@
  * Copyright (C) 2001 by Andreas Dilger
  * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2014-2017 Pali Rohár <pali.rohar@gmail.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
