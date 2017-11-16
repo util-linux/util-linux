@@ -1,0 +1,7 @@
+ID_FS_LABEL=Volume_Label
+ID_FS_LABEL_ENC=Volume\x20Label
+ID_FS_LOGICAL_VOLUME_ID=Volume Label
+ID_FS_TYPE=udf
+ID_FS_USAGE=filesystem
+ID_FS_VERSION=1.02
+ID_FS_VOLUME_ID=Volume Label
