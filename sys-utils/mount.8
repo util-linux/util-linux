@@ -63,7 +63,8 @@ These files can be spread out over several devices.  The
 command serves to attach the filesystem found on some device
 to the big file tree.  Conversely, the
 .BR umount (8)
-command will detach it again.
+command will detach it again.  The filesystem is used to control how data is
+stored on the device or provided in a virtual way by network or another services.
 
 The standard form of the
 .B mount
@@ -125,7 +126,7 @@ The following command lists all mounted filesystems (of type
 .RE
 The option \fB\-l\fR adds labels to this listing.  See below.
 
-.SS Indicating the device
+.SS Indicating the device and filesystem
 Most devices are indicated by a filename (of a block special device), like
 .IR /dev/sda1 ,
 but there are other possibilities.  For example, in the case of an NFS mount,
@@ -134,15 +135,24 @@ may look like
 .IR knuth.cwi.nl:/dir .
 It is also possible to indicate a block special device using its filesystem label
 or UUID (see the \fB\-L\fR and \fB\-U\fR options below), or its partition label
-or UUID.  (Partition identifiers are supported for example for GUID Partition
-Tables (GPT).)
+or UUID.  Partition identifiers are supported for example for GUID Partition
+Tables (GPT).
+
+The device name of disk partitions are unstable; hardware reconfiguration,
+adding or removing a device can cause change in names. This is reason why it's
+strongly recommended to use filesystem or partition identificators like UUID or
+LABEL.
+
+The command \fBlsblk --fs\fR provides overview of filesystems, LABELs and UUIDs
+on available block devices.  The command \fBblkid -p <device>\fR provides details about
+a filesystem on the specified device.
 
 Don't forget that there is no guarantee that UUIDs and labels are really
 unique, especially if you move, share or copy the device.  Use
 .B "lsblk \-o +UUID,PARTUUID"
 to verify that the UUIDs are really unique in your system.
 
-The recommended setup is to use tags (e.g.\& \fBLABEL=\fIlabel\fR) rather than
+The recommended setup is to use tags (e.g.\& \fBUUID=\fIuuid\fR) rather than
 .I /dev/disk/by-{label,uuid,partuuid,partlabel}
 udev symlinks in the
 .I /etc/fstab
