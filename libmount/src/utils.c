@@ -216,6 +216,8 @@ int mnt_is_readonly(const char *path)
 	{
 		struct timespec times[2];
 
+		DBG(UTILS, ul_debug(" doing utimensat() based write test"));
+
 		times[0].tv_nsec = UTIME_NOW;	/* atime */
 		times[1].tv_nsec = UTIME_OMIT;	/* mtime */
 

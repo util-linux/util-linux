@@ -998,7 +998,13 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 #ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	if (mnt_context_get_status(cxt)
 	    && !mnt_context_is_fake(cxt)
-	    && !cxt->helper) {
+	    && !cxt->helper
+	    && mnt_context_mtab_writable(cxt)) {
+
+		int is_rdonly = -1;
+
+		DBG(CXT, ul_debugobj(cxt, "checking for RDONLY mismatch"));
+
 		/*
 		 * Mounted by mount(2), do some post-mount checks
 		 *
@@ -1007,11 +1013,13 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 		 * avoid 'ro' in mtab and 'rw' in /proc/mounts.
 		 */
 		if ((cxt->mountflags & MS_BIND)
-		    && (cxt->mountflags & MS_RDONLY)
-		    && !mnt_is_readonly(mnt_context_get_target(cxt)))
+		    && (cxt->mountflags & MS_RDONLY)) {
 
-			mnt_context_set_mflags(cxt,
-					cxt->mountflags & ~MS_RDONLY);
+			if (is_rdonly < 0)
+				is_rdonly = mnt_is_readonly(mnt_context_get_target(cxt));
+			if (!is_rdonly)
+				mnt_context_set_mflags(cxt, cxt->mountflags & ~MS_RDONLY);
+		}
 
 
 		/* Kernel can silently add MS_RDONLY flag when mounting file
@@ -1019,11 +1027,13 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 		 * 'ro' in /proc/mounts and 'rw' in mtab.
 		 */
 		if (!(cxt->mountflags & (MS_RDONLY | MS_MOVE))
-		    && !mnt_context_propagation_only(cxt)
-		    && mnt_is_readonly(mnt_context_get_target(cxt)))
+		    && !mnt_context_propagation_only(cxt)) {
 
-			mnt_context_set_mflags(cxt,
-					cxt->mountflags | MS_RDONLY);
+			if (is_rdonly < 0)
+				is_rdonly = mnt_is_readonly(mnt_context_get_target(cxt));
+			if (is_rdonly)
+				mnt_context_set_mflags(cxt, cxt->mountflags | MS_RDONLY);
+		}
 	}
 #endif
 
