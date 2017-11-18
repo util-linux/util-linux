@@ -494,7 +494,7 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 			/* The retarget is handled at the end of the loop. */
 		} else if (deltavstarget < 0) {
 			/* deltavstarget < 0 if current time < target time */
-			if (ctl->debug >= 2)
+			if (ctl->debug >= 9)
 				printf(_("%ld.%06ld < %ld.%06ld (%.6f)\n"),
 				       nowsystime.tv_sec,
 				       nowsystime.tv_usec,
