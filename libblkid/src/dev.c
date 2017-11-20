@@ -148,7 +148,7 @@ blkid_dev_iterate blkid_dev_iterate_begin(blkid_cache cache)
 }
 
 int blkid_dev_set_search(blkid_dev_iterate iter,
-				 char *search_type, char *search_value)
+				 const char *search_type, const char *search_value)
 {
 	char *new_type, *new_value;
 

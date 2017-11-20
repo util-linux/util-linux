@@ -149,7 +149,7 @@ extern const char *blkid_dev_devname(blkid_dev dev)
 
 extern blkid_dev_iterate blkid_dev_iterate_begin(blkid_cache cache);
 extern int blkid_dev_set_search(blkid_dev_iterate iter,
-				char *search_type, char *search_value);
+				const char *search_type, const char *search_value);
 extern int blkid_dev_next(blkid_dev_iterate iterate, blkid_dev *dev);
 extern void blkid_dev_iterate_end(blkid_dev_iterate iterate);
 
