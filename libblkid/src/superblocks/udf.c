@@ -4,6 +4,7 @@
  * Copyright (C) 2001 by Andreas Dilger
  * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2014-2017 Pali Rohár <pali.rohar@gmail.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -68,7 +69,11 @@ struct volume_descriptor {
 			uint8_t		desc_charset[64];
 			struct dstring128 logvol_id;
 			uint32_t	logical_blocksize;
-			uint8_t		domain_id[32];
+			uint8_t		domain_id_flags;
+			char		domain_id[23];
+			uint16_t	udf_rev;
+			uint8_t		domain_suffix_flags;
+			uint8_t		reserved[5];
 			uint8_t		logical_contents_use[16];
 			uint32_t	map_table_length;
 			uint32_t	num_partition_maps;
@@ -184,6 +189,7 @@ static int probe_udf(blkid_probe pr,
 	uint32_t loc;
 	size_t i;
 	uint32_t vsd_len;
+	uint16_t udf_rev = 0;
 	int vsd_2048_valid = -1;
 	int have_label = 0;
 	int have_uuid = 0;
@@ -359,6 +365,12 @@ real_blksz:
 					lvid_loc = le32_to_cpu(vd->type.logical.lvid_location);
 				}
 			}
+			if (!udf_rev) {
+				/* UDF-2.60: 2.1.5.3: UDF revision field shall indicate revision of UDF document
+				 * We use this field as fallback value for ID_FS_VERSION when LVIDIU is missing */
+				if (strncmp(vd->type.logical.domain_id, "*OSTA UDF Compliant", sizeof(vd->type.logical.domain_id)) == 0)
+					udf_rev = le16_to_cpu(vd->type.logical.udf_rev);
+			}
 			if (!have_logvolid || !have_label) {
 				/* LogicalVolumeIdentifier in UDF 2.01 specification:
 				 * ===============================================================
@@ -423,7 +435,7 @@ real_blksz:
 			 * until we find last one. This could be time consuming process and could
 			 * lead to scanning lot of disk blocks. Because we use LVID only for UDF
 			 * version, in the worst case we would report only wrong ID_FS_VERSION. */
-			uint16_t udf_rev;
+			uint16_t lvidiu_udf_rev;
 			lvidiu = (struct logical_vol_integ_descriptor_imp_use *)
 				blkid_probe_get_buffer(pr,
 						(uint64_t) lvid_loc * bs + UDF_LVIDIU_OFFSET(*vd),
@@ -431,13 +443,14 @@ real_blksz:
 			if (!lvidiu)
 				return errno ? -errno : 1;
 			/* Use Minimum UDF Read Revision as ID_FS_VERSION */
-			udf_rev = le16_to_cpu(lvidiu->min_udf_read_rev);
-			if (udf_rev)
-				blkid_probe_sprintf_version(pr, "%d.%02d",
-						(int)(udf_rev >> 8),
-						(int)(udf_rev & 0xFF));
+			lvidiu_udf_rev = le16_to_cpu(lvidiu->min_udf_read_rev);
+			if (lvidiu_udf_rev)
+				udf_rev = lvidiu_udf_rev;
 		}
 	}
+
+	if (udf_rev)
+		blkid_probe_sprintf_version(pr, "%d.%02d", (int)(udf_rev >> 8), (int)(udf_rev & 0xFF));
 
 	return 0;
 }
