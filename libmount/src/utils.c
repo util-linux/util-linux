@@ -284,6 +284,7 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"mqueue",
 		"nfsd",
 		"none",
+		"nsfs",
 		"overlay",
 		"pipefs",
 		"proc",
