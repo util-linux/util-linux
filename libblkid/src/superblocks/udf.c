@@ -450,7 +450,9 @@ real_blksz:
 	}
 
 	if (udf_rev)
-		blkid_probe_sprintf_version(pr, "%d.%02d", (int)(udf_rev >> 8), (int)(udf_rev & 0xFF));
+		/* UDF revision is stored as decimal number in hexadecimal format.
+		 * E.g. number 0x0150 is revision 1.50, number 0x0201 is revision 2.01. */
+		blkid_probe_sprintf_version(pr, "%x.%02x", (unsigned int)(udf_rev >> 8), (unsigned int)(udf_rev & 0xFF));
 
 	return 0;
 }
