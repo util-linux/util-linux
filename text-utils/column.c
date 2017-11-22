@@ -52,6 +52,7 @@
 #include "ttyutils.h"
 #include "strv.h"
 #include "optutils.h"
+#include "mbsalign.h"
 
 #include "libsmartcols.h"
 
@@ -485,8 +486,18 @@ static int read_input(struct column_control *ctl, FILE *fp)
 			continue;
 
 		wcs = mbs_to_wcs(str);
-		if (!wcs)
-			err(EXIT_FAILURE, _("read failed"));
+		if (!wcs) {
+			/*
+			 * Convert broken sequences to \x<hex> and continue.
+			 */
+			size_t tmpsz = 0;
+			char *tmp = mbs_invalid_encode(str, &tmpsz);
+
+			if (!tmp)
+				err(EXIT_FAILURE, _("read failed"));
+			wcs = mbs_to_wcs(tmp);
+			free(tmp);
+		}
 
 		switch (ctl->mode) {
 		case COLUMN_MODE_TABLE:
@@ -617,6 +628,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -x, --fillrows                   fill rows before columns\n"), out);
+
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(34));
