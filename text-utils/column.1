@@ -54,7 +54,7 @@ mode is enabled by option \fB-t, \-\-table\fP and columns formatting is
 possible to modify by \fB\-\-table-*\fP options.  Use this mode if not sure.
 .PP
 Input is taken from \fIfile\fR, or otherwise from standard input.  Empty lines
-are ignored.
+are ignored and all invalid multibyte sequences are encoded by \\x<hex> convention.
 .PP
 .SH OPTIONS
 The argument \fIcolumns\fP for \fB\-\-table-*\fP options is comma separated
