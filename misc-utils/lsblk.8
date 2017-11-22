@@ -13,7 +13,9 @@ command reads the
 .B sysfs
 filesystem and
 .B udev db
-to gather information.
+to gather information. If the udev db is not available or lsblk is compiled without udev support than it
+tries to read LABELs, UUIDs and filesystem types from the block device. In this case root permissions
+are necessary.
 .PP
 The command prints all block devices (except RAM disks) in a tree-like format
 by default.  Use
