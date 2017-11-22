@@ -82,6 +82,10 @@ This tells the kernel to attach the filesystem found on
 .IR type )
 at the directory
 .IR dir .
+The option \fB\-t \fItype\fR is optional.  The
+.B mount
+command is usually able to detect a filesystem.  The root permissions are necessary
+to mount a filesystem by default.  See section "Non-superuser mounts" below for more details.
 The previous contents (if any) and owner and mode of
 .I dir
 become invisible, and as long as this filesystem remains mounted,
