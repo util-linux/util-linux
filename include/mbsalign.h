@@ -57,4 +57,7 @@ extern char *mbs_safe_encode(const char *s, size_t *width);
 extern char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, const char *safechars);
 extern size_t mbs_safe_encode_size(size_t bytes);
 
+extern char *mbs_invalid_encode(const char *s, size_t *width);
+extern char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf);
+
 #endif /* UTIL_LINUX_MBSALIGN_H */
