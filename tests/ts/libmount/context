@@ -83,49 +83,49 @@ ts_device_has "TYPE" "ext4" $DEVICE || ts_die "Cannot find ext3 on $DEVICE"
 
 ts_init_subtest "mount-by-devname"
 mkdir -p $MOUNTPOINT &>  /dev/null
-ts_valgrind $TESTPROG --mount $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --mount $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "umount-by-devname"
-ts_valgrind $TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "mount-by-label"
 mkdir -p $MOUNTPOINT &>  /dev/null
-ts_valgrind $TESTPROG --mount LABEL="$LABEL" $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --mount LABEL="$LABEL" $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "umount-by-mountpoint"
-ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE  && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "mount-by-uuid"
 mkdir -p $MOUNTPOINT &> /dev/null
-ts_valgrind $TESTPROG --mount UUID="$UUID" $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --mount UUID="$UUID" $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE  || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
-ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "mount-flags"
 mkdir -p $MOUNTPOINT &> /dev/null
-ts_valgrind $TESTPROG --mount -o ro,noexec,nosuid,strictatime $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --mount -o ro,noexec,nosuid,strictatime $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
 $TS_CMD_FINDMNT --kernel --mountpoint $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
 
-ts_valgrind $TESTPROG --mount -o remount,rw $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --mount -o remount,rw $MOUNTPOINT >> $TS_OUTPUT 2>&1
 $TS_CMD_FINDMNT --kernel --mountpoint $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
 
-ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
@@ -136,10 +136,10 @@ img=$(ts_image_init)
 mkfs.ext3 -F $img &> /dev/null
 udevadm settle
 
-ts_valgrind $TESTPROG --mount -o loop $img $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --mount -o loop $img $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $MOUNTPOINT || echo "$MOUNTPOINT not mounted" >> $TS_OUTPUT 2>&1
 udevadm settle
-ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $MOUNTPOINT && echo "$MOUNTPOINT still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 

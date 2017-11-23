@@ -51,13 +51,13 @@ ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize_subtest
 
 ts_init_subtest "getattr"
-ts_valgrind $TESTPROG --getattr ${TEST_IMAGE_NAME} 1 >> $TS_OUTPUT 2>&1
-ts_valgrind $TESTPROG --getattr ${TEST_IMAGE_NAME} 2 >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --getattr ${TEST_IMAGE_NAME} 1 >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --getattr ${TEST_IMAGE_NAME} 2 >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 ts_init_subtest "setattr"
-ts_valgrind $TESTPROG --setattr ${TEST_IMAGE_NAME} 1 0xff00000000000000 >> $TS_OUTPUT 2>&1
-ts_valgrind $TESTPROG --setattr ${TEST_IMAGE_NAME} 2 0x4 >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --setattr ${TEST_IMAGE_NAME} 1 0xff00000000000000 >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --setattr ${TEST_IMAGE_NAME} 2 0x4 >> $TS_OUTPUT 2>&1
 $TS_CMD_SFDISK --part-attrs ${TEST_IMAGE_NAME} 1 >> $TS_OUTPUT 2>&1
 $TS_CMD_SFDISK --part-attrs ${TEST_IMAGE_NAME} 2 >> $TS_OUTPUT 2>&1
 ts_finalize_subtest

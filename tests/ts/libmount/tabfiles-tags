@@ -38,12 +38,12 @@ FSTAB="$TS_OUTDIR/fstab"
 echo "LABEL=$LABEL /mnt/mountpoint auto defaults" > $FSTAB
 
 ts_init_subtest "fstab-label2uuid"
-ts_valgrind $TESTPROG --find-forward $FSTAB source "UUID=$UUID" &> $TS_OUTPUT
+ts_run $TESTPROG --find-forward $FSTAB source "UUID=$UUID" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "fstab-label2dev"
-ts_valgrind $TESTPROG --find-forward $FSTAB source $TS_DEVICE &> $TS_OUTPUT
+ts_run $TESTPROG --find-forward $FSTAB source $TS_DEVICE &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
@@ -54,20 +54,20 @@ echo "UUID=$UUID  /mnt/mountpoint2 auto defaults" >> $FSTAB
 
 ts_init_subtest "fstab-uuid"
 # has to return /mnt/mountpoint2
-ts_valgrind $TESTPROG --find-forward $FSTAB source "UUID=$UUID" &> $TS_OUTPUT
+ts_run $TESTPROG --find-forward $FSTAB source "UUID=$UUID" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "fstab-label"
 # has to return /mnt/mountpoint
-ts_valgrind $TESTPROG --find-forward $FSTAB source "LABEL=$LABEL" &> $TS_OUTPUT
+ts_run $TESTPROG --find-forward $FSTAB source "LABEL=$LABEL" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 
 ts_init_subtest "fstab-dev2label"
 # has to return /mnt/mountpoint
-ts_valgrind $TESTPROG --find-forward $FSTAB source $TS_DEVICE &> $TS_OUTPUT
+ts_run $TESTPROG --find-forward $FSTAB source $TS_DEVICE &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
@@ -78,7 +78,7 @@ echo "$TS_DEVICE  /mnt/mountpoint3 auto defaults" >> $FSTAB
 
 ts_init_subtest "fstab-dev"
 # has to return /mnt/mountpoint3
-ts_valgrind $TESTPROG --find-forward $FSTAB source $TS_DEVICE &> $TS_OUTPUT
+ts_run $TESTPROG --find-forward $FSTAB source $TS_DEVICE &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 sed -i -e 's/source: .*//g' $TS_OUTPUT		# devname is generated, remove it
 ts_finalize_subtest

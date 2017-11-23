@@ -376,7 +376,7 @@ function ts_init_py {
 	export PYTHON="python${PYTHON_MAJOR_VERSION}"
 }
 
-function ts_valgrind {
+function ts_run {
 	if [ -z "$TS_VALGRIND_CMD" ]; then
 		"$@"
 	else
