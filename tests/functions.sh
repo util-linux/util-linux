@@ -280,7 +280,7 @@ function ts_init_env {
 	TS_PARSABLE=$(ts_has_option "parsable" "$*")
 	[ "$TS_PARSABLE" = "yes" ] || TS_PARSABLE="$TS_PARALLEL"
 
-	tmp=$( ts_has_option "memcheck" "$*")
+	tmp=$( ts_has_option "memcheck-valgrind" "$*")
 	if [ "$tmp" == "yes" -a -f /usr/bin/valgrind ]; then
 		TS_VALGRIND_CMD="/usr/bin/valgrind"
 	fi
@@ -377,12 +377,19 @@ function ts_init_py {
 }
 
 function ts_run {
-	if [ -z "$TS_VALGRIND_CMD" ]; then
-		"$@"
-	else
+	#
+	# valgrind mode
+	#
+	if [ -n "$TS_VALGRIND_CMD" ]; then
 		$TS_VALGRIND_CMD --tool=memcheck --leak-check=full \
 				 --leak-resolution=high --num-callers=20 \
 				 --log-file="$TS_VGDUMP" "$@"
+
+	#
+	# Default mode
+	#
+	else
+		"$@"
 	fi
 }
 
@@ -415,11 +422,13 @@ function ts_gen_diff {
 }
 
 function tt_gen_mem_report {
-	[ -z "$TS_VALGRIND_CMD" ] && echo "$1"
-
-	grep -q -E 'ERROR SUMMARY: [1-9]' $TS_VGDUMP &> /dev/null
-	if [ $? -eq 0 ]; then
-		echo "mem-error detected!"
+	if [ -n "$TS_VALGRIND_CMD" ]; then
+		grep -q -E 'ERROR SUMMARY: [1-9]' $TS_VGDUMP &> /dev/null
+		if [ $? -eq 0 ]; then
+			echo "mem-error detected!"
+		fi
+	else
+		echo "$1"
 	fi
 }
 

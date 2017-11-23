@@ -45,7 +45,7 @@ while [ -n "$1" ]; do
 	case "$1" in
 	--force |\
 	--fake |\
-	--memcheck |\
+	--memcheck-valgrind |\
 	--show-diff |\
 	--verbose  |\
 	--skip-loopdevs |\
@@ -79,16 +79,16 @@ while [ -n "$1" ]; do
 		echo "Usage: "
 		echo "  $(basename $0) [options] [<component> ...]"
 		echo "Options:"
-		echo "  --force           execute demanding tests"
-		echo "  --fake            do not run, setup tests only"
-		echo "  --memcheck        run with valgrind"
-		echo "  --verbose         verbose mode"
-		echo "  --show-diff       show diff from failed tests"
-		echo "  --nonroot         ignore test suite if user is root"
-		echo "  --srcdir=<path>   autotools top source directory"
-		echo "  --builddir=<path> autotools top build directory"
-		echo "  --parallel=<num>  number of parallel test jobs, default: num cpus"
-		echo "  --exclude=<list>  exclude tests by list '<utilname>/<testname> ..'"
+		echo "  --force              execute demanding tests"
+		echo "  --fake               do not run, setup tests only"
+		echo "  --memcheck-valgrind  run with valgrind"
+		echo "  --verbose            verbose mode"
+		echo "  --show-diff          show diff from failed tests"
+		echo "  --nonroot            ignore test suite if user is root"
+		echo "  --srcdir=<path>      autotools top source directory"
+		echo "  --builddir=<path>    autotools top build directory"
+		echo "  --parallel=<num>     number of parallel test jobs, default: num cpus"
+		echo "  --exclude=<list>     exclude tests by list '<utilname>/<testname> ..'"
 		echo
 		exit 1
 		;;
