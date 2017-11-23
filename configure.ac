@@ -141,6 +141,17 @@ AC_SUBST([BSD_WARN_CFLAGS])
 UL_WARN_ADD([-Wno-unused-parameter], [NO_UNUSED_WARN_CFLAGS])
 AC_SUBST([NO_UNUSED_WARN_CFLAGS])
 
+
+AC_ARG_ENABLE([asan],
+  AS_HELP_STRING([--enable-asan], [compile with Address Sanitizer]),
+  [], [enable_asan=no]
+)
+AS_IF([test "x$enable_asan" == xyes], [
+  UL_WARN_ADD([-fsanitize=address])
+])
+
+
+
 dnl libtool-2
 LT_INIT
 

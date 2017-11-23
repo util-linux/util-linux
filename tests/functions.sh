@@ -230,8 +230,9 @@ function ts_init_env {
 	LANGUAGE="POSIX"
 	LC_ALL="POSIX"
 	CHARSET="UTF-8"
+	ASAN_OPTIONS="detect_leaks=0"
 
-	export LANG LANGUAGE LC_ALL CHARSET
+	export LANG LANGUAGE LC_ALL CHARSET ASAN_OPTIONS
 
 	mydir=$(ts_canonicalize "$mydir")
 
@@ -283,6 +284,10 @@ function ts_init_env {
 	tmp=$( ts_has_option "memcheck-valgrind" "$*")
 	if [ "$tmp" == "yes" -a -f /usr/bin/valgrind ]; then
 		TS_VALGRIND_CMD="/usr/bin/valgrind"
+	fi
+	tmp=$( ts_has_option "memcheck-asan" "$*")
+	if [ "$tmp" == "yes" ]; then
+		TS_ENABLE_ASAN="yes"
 	fi
 
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
@@ -384,6 +389,11 @@ function ts_run {
 		$TS_VALGRIND_CMD --tool=memcheck --leak-check=full \
 				 --leak-resolution=high --num-callers=20 \
 				 --log-file="$TS_VGDUMP" "$@"
+	#
+	# ASAN mode
+	#
+	elif [ "$TS_ENABLE_ASAN" == "yes" ]; then
+		ASAN_OPTIONS='detect_leaks=1' "$@"
 
 	#
 	# Default mode
