@@ -23,6 +23,6 @@ ts_init "$*"
 TESTPROG="$TS_HELPER_LIBSMARTCOLS_TITLE"
 ts_check_test_command "$TESTPROG"
 
-$TESTPROG --width 80 >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --width 80 >> $TS_OUTPUT 2>&1
 
 ts_finalize

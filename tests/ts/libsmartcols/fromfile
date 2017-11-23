@@ -24,7 +24,7 @@ TESTPROG="$TS_HELPER_LIBSMARTCOLS_FROMFILE"
 ts_check_test_command "$TESTPROG"
 
 ts_init_subtest "tree"
-$TESTPROG --nlines 10 \
+ts_run $TESTPROG --nlines 10 \
 	--tree-id-column 1 \
 	--tree-parent-column 2 \
 	--column $TS_SELF/files/col-tree \
@@ -39,7 +39,7 @@ $TESTPROG --nlines 10 \
 ts_finalize_subtest
 
 ts_init_subtest "tree-json"
-$TESTPROG --nlines 10 --json \
+ts_run $TESTPROG --nlines 10 --json \
 	--tree-id-column 1 \
 	--tree-parent-column 2 \
 	--column $TS_SELF/files/col-tree \
@@ -54,7 +54,7 @@ $TESTPROG --nlines 10 --json \
 ts_finalize_subtest
 
 ts_init_subtest "tree-middle"
-$TESTPROG --nlines 10 \
+ts_run $TESTPROG --nlines 10 \
 	--tree-id-column 0 \
 	--tree-parent-column 1 \
 	--column $TS_SELF/files/col-id \
@@ -69,7 +69,7 @@ $TESTPROG --nlines 10 \
 ts_finalize_subtest
 
 ts_init_subtest "tree-end"
-$TESTPROG --nlines 10 \
+ts_run $TESTPROG --nlines 10 \
 	--tree-id-column 0 \
 	--tree-parent-column 1 \
 	--column $TS_SELF/files/col-id \
@@ -84,7 +84,7 @@ $TESTPROG --nlines 10 \
 ts_finalize_subtest
 
 ts_init_subtest "trunc"
-$TESTPROG --nlines 10 --width 40 \
+ts_run $TESTPROG --nlines 10 --width 40 \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-trunc \
@@ -95,7 +95,7 @@ $TESTPROG --nlines 10 --width 40 \
 ts_finalize_subtest
 
 ts_init_subtest "right"
-$TESTPROG --nlines 10 \
+ts_run $TESTPROG --nlines 10 \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-string \
@@ -106,7 +106,7 @@ $TESTPROG --nlines 10 \
 ts_finalize_subtest
 
 ts_init_subtest "right-maxout"
-$TESTPROG --nlines 10 --maxout --width 80\
+ts_run $TESTPROG --nlines 10 --maxout --width 80\
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	$TS_SELF/files/data-string \
@@ -115,7 +115,7 @@ $TESTPROG --nlines 10 --maxout --width 80\
 ts_finalize_subtest
 
 ts_init_subtest "strictwidth"
-$TESTPROG --nlines 10 \
+ts_run $TESTPROG --nlines 10 \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-strict \
 	--column $TS_SELF/files/col-number \
@@ -126,7 +126,7 @@ $TESTPROG --nlines 10 \
 ts_finalize_subtest
 
 ts_init_subtest "noextremes"
-$TESTPROG --nlines 10 --width 45 \
+ts_run $TESTPROG --nlines 10 --width 45 \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-noextremes \
 	--column $TS_SELF/files/col-number \
@@ -141,7 +141,7 @@ $TESTPROG --nlines 10 --width 45 \
 ts_finalize_subtest
 
 ts_init_subtest "hidden"
-$TESTPROG --nlines 10 \
+ts_run $TESTPROG --nlines 10 \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-hidden \
 	--column $TS_SELF/files/col-number \
@@ -152,7 +152,7 @@ $TESTPROG --nlines 10 \
 ts_finalize_subtest
 
 ts_init_subtest "wrap"
-$TESTPROG --nlines 10 --width 40 \
+ts_run $TESTPROG --nlines 10 --width 40 \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-wrap \
@@ -163,7 +163,7 @@ $TESTPROG --nlines 10 --width 40 \
 ts_finalize_subtest
 
 ts_init_subtest "wrap-tree"
-$TESTPROG --nlines 10 --width 45 \
+ts_run $TESTPROG --nlines 10 --width 45 \
 	--tree-id-column 1 \
 	--tree-parent-column 2 \
 	--column $TS_SELF/files/col-tree \
@@ -178,7 +178,7 @@ $TESTPROG --nlines 10 --width 45 \
 ts_finalize_subtest
 
 ts_init_subtest "wrapnl"
-$TESTPROG --nlines 10 \
+ts_run $TESTPROG --nlines 10 \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-wrapnl \
@@ -189,7 +189,7 @@ $TESTPROG --nlines 10 \
 ts_finalize_subtest
 
 ts_init_subtest "wrapnl-tree"
-$TESTPROG --nlines 10 \
+ts_run $TESTPROG --nlines 10 \
 	--tree-id-column 1 \
 	--tree-parent-column 2 \
 	--column $TS_SELF/files/col-tree \
@@ -204,7 +204,7 @@ $TESTPROG --nlines 10 \
 ts_finalize_subtest
 
 ts_init_subtest "raw"
-$TESTPROG --nlines 10 --raw \
+ts_run $TESTPROG --nlines 10 --raw \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-trunc \
@@ -215,7 +215,7 @@ $TESTPROG --nlines 10 --raw \
 ts_finalize_subtest
 
 ts_init_subtest "export"
-$TESTPROG --nlines 10 --export \
+ts_run $TESTPROG --nlines 10 --export \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-trunc \
@@ -226,7 +226,7 @@ $TESTPROG --nlines 10 --export \
 ts_finalize_subtest
 
 ts_init_subtest "column-separator"
-$TESTPROG --nlines 10 --colsep \| \
+ts_run $TESTPROG --nlines 10 --colsep \| \
 	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-trunc \
