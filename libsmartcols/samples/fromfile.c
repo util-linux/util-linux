@@ -121,8 +121,10 @@ static struct libscols_column *parse_column(FILE *f)
 		nlines++;
 	}
 
+	free(line);
 	return cl;
 fail:
+	free(line);
 	scols_unref_column(cl);
 	return NULL;
 }
@@ -152,6 +154,7 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 		scols_line_set_data(ln, col, str);
 	}
 
+	free(str);
 	return 0;
 
 }
@@ -313,6 +316,8 @@ int main(int argc, char *argv[])
 
 		if (!ln || scols_table_add_line(tb, ln))
 			err(EXIT_FAILURE, "failed to add a new line");
+
+		scols_unref_line(ln);
 	}
 
 	n = 0;

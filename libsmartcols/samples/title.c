@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
 	if (!sy)
 		err_oom();
 	scols_table_set_symbols(tb, sy);
+	scols_unref_symbols(sy);
 
 	scols_symbols_set_title_padding(sy, "=");
 	scols_cell_set_data(title, "This is center title (with padding)");
