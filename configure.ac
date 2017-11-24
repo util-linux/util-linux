@@ -234,6 +234,7 @@ AC_CHECK_HEADERS([ \
 	linux/tiocl.h \
 	linux/version.h \
 	linux/securebits.h \
+	linux/net_namespace.h \
 	locale.h \
 	mntent.h \
 	net/if.h \
