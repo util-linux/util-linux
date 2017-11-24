@@ -74,6 +74,7 @@ TS_CMD_LOSETUP=${TS_CMD_LOSETUP:-"$top_builddir/losetup"}
 TS_CMD_LSBLK=${TS_CMD_LSBLK-"$top_builddir/lsblk"}
 TS_CMD_LSCPU=${TS_CMD_LSCPU-"$top_builddir/lscpu"}
 TS_CMD_LSMEM=${TS_CMD_LSMEM-"$top_builddir/lsmem"}
+TS_CMD_LSNS=${TS_CMD_LSNS-"$top_builddir/lsns"}
 TS_CMD_MCOOKIE=${TS_CMD_MCOOKIE-"$top_builddir/mcookie"}
 TS_CMD_MKCRAMFS=${TS_CMD_MKCRAMFS:-"$top_builddir/mkfs.cramfs"}
 TS_CMD_MKMINIX=${TS_CMD_MKMINIX:-"$top_builddir/mkfs.minix"}
