@@ -20,6 +20,11 @@ avoid using default outputs in your scripts.  Always explicitly define expected
 columns by using the \fB\-\-output\fR option together with a columns list in
 environments where a stable output is required.
 
+\fBNSFS\fP column, printed when \fBnet\fP is specified for
+\fB\-\-type\fR option, is specifal; it uses multi-line cells.
+\fB\-\-nowrap\fR is for switching to "," separated single-line
+representation.
+
 Note that \fBlsns\fR reads information directly from the /proc filesystem and
 for non-root users it may return incomplete information.  The current /proc
 filesystem may be unshared and affected by a PID namespace
@@ -59,6 +64,9 @@ Display the specified \fItype\fP of namespaces only.  The supported types are
 .TP
 .BR \-u , " \-\-notruncate"
 Do not truncate text in columns.
+.TP
+.BR \-W , " \-\-nowrap"
+Do not use multi-line text in columns.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
