@@ -260,8 +260,8 @@ if BUILD_LSNS
 usrbin_exec_PROGRAMS += lsns
 dist_man_MANS += sys-utils/lsns.8
 lsns_SOURCES =	sys-utils/lsns.c
-lsns_LDADD = $(LDADD) libcommon.la libsmartcols.la
-lsns_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+lsns_LDADD = $(LDADD) libcommon.la libsmartcols.la libmount.la
+lsns_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir) -I$(ul_libmount_incdir)
 endif
 
 
