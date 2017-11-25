@@ -308,6 +308,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	struct vfat_super_block *vs;
 	struct msdos_super_block *ms;
 	const unsigned char *vol_label = NULL;
+	const unsigned char *boot_label = NULL;
 	unsigned char *vol_serno = NULL, vol_label_buf[11];
 	uint16_t sector_size = 0, reserved;
 	uint32_t cluster_count, fat_size;
@@ -338,8 +339,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			vol_label = vol_label_buf;
 		}
 
-		if (!vol_label || !memcmp(vol_label, no_name, 11))
-			vol_label = ms->ms_label;
+		boot_label = ms->ms_label;
 		vol_serno = ms->ms_serno;
 
 		blkid_probe_set_value(pr, "SEC_TYPE", (unsigned char *) "msdos",
@@ -393,8 +393,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 
 		version = "FAT32";
 
-		if (!vol_label || !memcmp(vol_label, no_name, 11))
-			vol_label = vs->vs_label;
+		boot_label = vs->vs_label;
 		vol_serno = vs->vs_serno;
 
 		/*
@@ -423,7 +422,10 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		}
 	}
 
-	if (vol_label && memcmp(vol_label, no_name, 11))
+	if (boot_label && memcmp(boot_label, no_name, 11))
+		blkid_probe_set_id_label(pr, "LABEL_FATBOOT", (unsigned char *) boot_label, 11);
+
+	if (vol_label)
 		blkid_probe_set_label(pr, (unsigned char *) vol_label, 11);
 
 	/* We can't just print them as %04X, because they are unaligned */
