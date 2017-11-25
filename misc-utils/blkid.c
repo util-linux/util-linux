@@ -254,7 +254,7 @@ static void print_udev_format(const char *name, const char *value)
 		printf("ID_FS_%s=%s\n", name, enc);
 
 	} else if (!strcmp(name, "UUID") ||
-		 !strcmp(name, "LABEL") ||
+		 !strncmp(name, "LABEL", 5) ||
 		 !strcmp(name, "UUID_SUB")) {
 
 		blkid_safe_string(value, safe, sizeof(safe));
