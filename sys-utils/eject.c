@@ -548,7 +548,6 @@ static int read_speed(const char *devname)
  */
 static void list_speeds(struct eject_control *ctl)
 {
-#ifdef CDROM_SELECT_SPEED
 	int max_speed, curr_speed = 0;
 
 	select_speed(ctl);
@@ -565,9 +564,6 @@ static void list_speeds(struct eject_control *ctl)
 	}
 
 	printf("\n");
-#else
-	warnx(_("CD-ROM select speed command not supported by this kernel"));
-#endif
 }
 
 /*
