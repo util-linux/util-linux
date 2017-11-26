@@ -189,11 +189,6 @@ const char *signum_to_signame(int signum)
 	return NULL;
 }
 
-size_t get_numof_signames(void)
-{
-	return ARRAY_SIZE(ul_signames);
-}
-
 int get_signame_by_idx(size_t idx, const char **signame, int *signum)
 {
 	if (idx >= ARRAY_SIZE(ul_signames))
