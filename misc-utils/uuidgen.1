@@ -27,19 +27,19 @@ will generate a random-based UUID if a high-quality random number
 generator is present.  Otherwise, it will choose a time-based UUID.
 It is possible to force the generation of one of these first two
 UUID types by using the
-.B \-r
+.B \-\-random
 or
-.B \-t
+.B \-\-time
 options.
 .PP
 The third type of UUID is generated with the
-.B \-m
+.B \-\-md5
 or
-.B \-s
-options (MD5 or SHA1, respectively), followed by
-.BR "\-n " \fInamespace
+.B \-\-sha1
+options, followed by
+\fB\-\-namespace\fR \fInamespace\fR
 and
-.BR "\-N " \fIname\fR.
+\fB\-\-name\fR \fIname\fR.
 The \fInamespace\fR may either be a well-known UUID, or else
 an alias to one of the well-known UUIDs defined in RFC 4122, that is
 .BR @dns ,
@@ -89,6 +89,8 @@ Generate the hash of the \fIname\fR.
 Interpret name \fIname\fR as a hexidecimal string.
 .SH "CONFORMING TO"
 OSF DCE 1.1
+.SH EXAMPLES
+uuidgen \-\-sha1 \-\-namespace @dns \-\-name "www.example.com"
 .SH AUTHOR
 .B uuidgen
 was written by Andreas Dilger for libuuid.
