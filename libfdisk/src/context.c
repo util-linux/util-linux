@@ -433,7 +433,7 @@ const char *fdisk_get_collision(struct fdisk_context *cxt)
  * fdisk_is_ptcollision:
  * @cxt: fdisk context
  *
- * The collision detected by libblkid (usally another partition table). Note
+ * The collision detected by libblkid (usually another partition table). Note
  * that libfdisk does not support all partitions tables, so fdisk_has_label()
  * may return false, but fdisk_is_ptcollision() may return true.
  *

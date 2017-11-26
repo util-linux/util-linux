@@ -130,7 +130,7 @@ struct su_context {
 	const char	*tty_number;		/* end of the tty_path */
 
 	char		*new_user;		/* wanted user */
-	char		*old_user;		/* orginal user */
+	char		*old_user;		/* original user */
 
 	pid_t		child;			/* fork() baby */
 	int		childstatus;		/* wait() status */
