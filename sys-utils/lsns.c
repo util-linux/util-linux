@@ -102,8 +102,8 @@ static const struct colinfo infos[] = {
 	[COL_COMMAND] = { "COMMAND", 0, SCOLS_FL_TRUNC, N_("command line of the PID")},
 	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("UID of the PID")},
 	[COL_USER]    = { "USER",    0, 0, N_("username of the PID")},
-	[COL_NETNSID] = { "NETNSID", 0, SCOLS_FL_RIGHT, N_("Net namespace ID")},
-	[COL_NSFS]    = { "NSFS",    0, SCOLS_FL_WRAP, N_("Logical name established by nsfs")}
+	[COL_NETNSID] = { "NETNSID", 0, SCOLS_FL_RIGHT, N_("namespace ID as used by network subsystem")},
+	[COL_NSFS]    = { "NSFS",    0, SCOLS_FL_WRAP, N_("nsfs mountpoint (usually used network subsystem)")}
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
@@ -219,6 +219,17 @@ static int column_name_to_id(const char *name, size_t namesz)
 	}
 	warnx(_("unknown column: %s"), name);
 	return -1;
+}
+
+static int has_column(int id)
+{
+	size_t i;
+
+	for (i = 0; i < ncolumns; i++) {
+		if (columns[i] == id)
+			return 1;
+	}
+	return 0;
 }
 
 static inline int get_column_id(int num)
@@ -936,7 +947,7 @@ int main(int argc, char *argv[])
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-	int enabling_netnsid = 0;
+	int is_net = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -990,7 +1001,7 @@ int main(int argc, char *argv[])
 			ls.fltr_types[type] = 1;
 			ls.fltr_ntypes++;
 			if (type == LSNS_ID_NET)
-				enabling_netnsid = 1;
+				is_net = 1;
 			break;
 		}
 		case 'W':
@@ -1028,27 +1039,17 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_NPROCS;
 		columns[ncolumns++] = COL_PID;
 		columns[ncolumns++] = COL_USER;
-		if (enabling_netnsid) {
+		if (is_net) {
 			columns[ncolumns++] = COL_NETNSID;
 			columns[ncolumns++] = COL_NSFS;
 		}
 		columns[ncolumns++] = COL_COMMAND;
 	}
 
-	if (outarg) {
-		size_t i;
+	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+				  &ncolumns, column_name_to_id) < 0)
+		return EXIT_FAILURE;
 
-		if (string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
-					  &ncolumns, column_name_to_id) < 0)
-			return EXIT_FAILURE;
-
-		for (i = 0; i < ncolumns; i++) {
-			if (columns[i] == COL_NETNSID) {
-				enabling_netnsid = 1;
-				break;
-			}
-		}
-	}
 	scols_init_debug(0);
 
 	uid_cache = new_idcache();
@@ -1056,12 +1057,14 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("failed to allocate UID cache"));
 
 #ifdef HAVE_LINUX_NET_NAMESPACE_H
-	if (enabling_netnsid)
+	if (has_column(COL_NETNSID))
 		netlink_fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 #endif
-	ls.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
-	if (!ls.tab)
-		err(MNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
+	if (has_column(COL_NSFS)) {
+		ls.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
+		if (!ls.tab)
+			err(MNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
+	}
 
 	r = read_processes(&ls);
 	if (!r)
