@@ -532,7 +532,7 @@ int main(int argc, char **argv)
 			if (alarm < ctl.sys_time)
 				errx(EXIT_FAILURE, _("time doesn't go backward to %s"),
 						ctime(&alarm));
-			alarm += ctl.sys_time - ctl.rtc_time;
+			alarm -= ctl.sys_time - ctl.rtc_time;
 		} else
 			alarm = ctl.rtc_time + seconds + 1;
 
