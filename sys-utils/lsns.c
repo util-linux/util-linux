@@ -274,7 +274,7 @@ error:
 }
 
 #ifdef HAVE_LINUX_NET_NAMESPACE_H
-static bool netnsid_cache_find(ino_t netino, int *netnsid)
+static int netnsid_cache_find(ino_t netino, int *netnsid)
 {
 	struct list_head *p;
 
@@ -284,11 +284,11 @@ static bool netnsid_cache_find(ino_t netino, int *netnsid)
 						     netnsids);
 		if (e->ino == netino) {
 			*netnsid = e->id;
-			return true;
+			return 1;
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 static void netnsid_cache_add(ino_t netino, int netnsid)
@@ -618,13 +618,15 @@ static int read_namespaces(struct lsns *ls)
 	return 0;
 }
 
-static int find_nsfs_in_tab(struct libmnt_fs *fs, void *data)
+static int is_nsfs_root(struct libmnt_fs *fs, void *data)
 {
-	return (mnt_fs_match_fstype(fs, "nsfs") &&
-		(strcmp(mnt_fs_get_root(fs), (char *)data) == 0));
+	if (!mnt_fs_match_fstype(fs, "nsfs") || !mnt_fs_get_root(fs))
+		return 0;
+
+	return (strcmp(mnt_fs_get_root(fs), (char *)data) == 0);
 }
 
-static bool str_includes_path(const char *path_set, const char *elt,
+static int is_path_included(const char *path_set, const char *elt,
 			      const char sep)
 {
 	size_t elt_len;
@@ -634,7 +636,7 @@ static bool str_includes_path(const char *path_set, const char *elt,
 
 	tmp = strstr(path_set, elt);
 	if (!tmp)
-		return false;
+		return 0;
 
 	elt_len = strlen(elt);
 	path_set_len = strlen(path_set);
@@ -645,16 +647,17 @@ static bool str_includes_path(const char *path_set, const char *elt,
 	if (tmp == path_set
 	    && ((path_set_len == elt_len)
 		|| (path_set[elt_len] == sep)))
-		return true;
+		return 1;
+
 	/* path_set includes elt at the middle
 	 * or as the last element.
 	 */
 	if ((*(tmp - 1) == sep)
 	    && ((*(tmp + elt_len) == sep)
 		|| (*(tmp + elt_len) == '\0')))
-		return true;
+		return 1;
 
-	return false;
+	return 0;
 }
 
 static int nsfs_xasputs(char **str,
@@ -664,27 +667,25 @@ static int nsfs_xasputs(char **str,
 {
 	struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_FORWARD);
 	char *expected_root;
-	char *tmp;
+	struct libmnt_fs *fs = NULL;
 
 	xasprintf(&expected_root, "%s:[%lu]", ns_names[ns->type], ns->id);
+	*str = NULL;
 
-	tmp = NULL;
-	while (1) {
-		struct libmnt_fs *fs = NULL;
+	while (mnt_table_find_next_fs(tab, itr, is_nsfs_root,
+				      expected_root, &fs) == 0) {
 
-		if (mnt_table_find_next_fs(tab, itr, find_nsfs_in_tab,
-					   expected_root, &fs) != 0)
-			break;
-		if (tmp == NULL) {
-			xasprintf(str, "%s", mnt_fs_get_target(fs));
-			tmp = *str;
-		} else if (!str_includes_path(*str, mnt_fs_get_target(fs),
-					      sep)) {
-			*str = NULL;
-			xasprintf(str, "%s%c%s",
-				  tmp, sep, mnt_fs_get_target(fs));
-			free(tmp);
-			tmp = *str;
+		const char *tgt = mnt_fs_get_target(fs);
+
+		if (!*str)
+			xasprintf(str, "%s", tgt);
+
+		else if (!is_path_included(*str, tgt, sep)) {
+			char *tmp = NULL;
+
+			xasprintf(&tmp, "%s%c%s", *str, sep, tgt);
+			free(*str);
+			*str = tmp;
 		}
 	}
 	free(expected_root);
@@ -746,8 +747,7 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 				netnsid_xasputs(&str, proc->netnsid);
 			break;
 		case COL_NSFS:
-			nsfs_xasputs(&str, ns, ls->tab,
-				     (ls->raw || ls->no_wrap) ? ',' : '\n');
+			nsfs_xasputs(&str, ns, ls->tab, ls->no_wrap ? ',' : '\n');
 			break;
 		default:
 			break;
@@ -795,7 +795,7 @@ static struct libscols_table *init_scols_table(struct lsns *ls)
 			warnx(_("failed to initialize output column"));
 			goto err;
 		}
-		if (get_column_id(i) == COL_NSFS) {
+		if (!ls->no_wrap && get_column_id(i) == COL_NSFS) {
 			scols_column_set_wrapfunc(cl,
 						  scols_wrapnl_chunksize,
 						  scols_wrapnl_nextchunk,
@@ -936,7 +936,7 @@ int main(int argc, char *argv[])
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-	bool enabling_netnsid = false;
+	int enabling_netnsid = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -951,7 +951,7 @@ int main(int argc, char *argv[])
 	INIT_LIST_HEAD(&netnsids_cache);
 
 	while ((c = getopt_long(argc, argv,
-				"Jlp:o:nruhVt:", long_opts, NULL)) != -1) {
+				"Jlp:o:nruhVt:W", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -977,7 +977,7 @@ int main(int argc, char *argv[])
 			ls.no_headings = 1;
 			break;
 		case 'r':
-			ls.raw = 1;
+			ls.no_wrap = ls.raw = 1;
 			break;
 		case 'u':
 			ls.notrunc = 1;
@@ -990,7 +990,7 @@ int main(int argc, char *argv[])
 			ls.fltr_types[type] = 1;
 			ls.fltr_ntypes++;
 			if (type == LSNS_ID_NET)
-				enabling_netnsid = true;
+				enabling_netnsid = 1;
 			break;
 		}
 		case 'W':
@@ -1041,9 +1041,10 @@ int main(int argc, char *argv[])
 		if (string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					  &ncolumns, column_name_to_id) < 0)
 			return EXIT_FAILURE;
+
 		for (i = 0; i < ncolumns; i++) {
 			if (columns[i] == COL_NETNSID) {
-				enabling_netnsid = true;
+				enabling_netnsid = 1;
 				break;
 			}
 		}
@@ -1058,7 +1059,6 @@ int main(int argc, char *argv[])
 	if (enabling_netnsid)
 		netlink_fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 #endif
-
 	ls.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	if (!ls.tab)
 		err(MNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
