@@ -1619,6 +1619,7 @@ AM_CONDITIONAL([BUILD_LSIPC], [test "x$build_lsipc" = xyes])
 UL_BUILD_INIT([lsns], [check])
 UL_REQUIRES_LINUX([lsns])
 UL_REQUIRES_BUILD([lsns], [libsmartcols])
+UL_REQUIRES_BUILD([lsns], [libmount])
 AM_CONDITIONAL([BUILD_LSNS], [test "x$build_lsns" = xyes])
 
 UL_BUILD_INIT([renice], [yes])
