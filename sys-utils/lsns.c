@@ -172,7 +172,7 @@ struct lsns {
 		     json	: 1,
 		     tree	: 1,
 		     list	: 1,
-		     notrunc	: 1,
+		     no_trunc	: 1,
 		     no_headings: 1,
 		     no_wrap    : 1;
 
@@ -783,7 +783,7 @@ static struct libscols_table *init_scols_table(struct lsns *ls)
 		int flags = col->flags;
 		struct libscols_column *cl;
 
-		if (ls->notrunc)
+		if (ls->no_trunc)
 		       flags &= ~SCOLS_FL_TRUNC;
 		if (ls->tree && get_column_id(i) == COL_COMMAND)
 			flags |= SCOLS_FL_TREE;
@@ -980,7 +980,7 @@ int main(int argc, char *argv[])
 			ls.no_wrap = ls.raw = 1;
 			break;
 		case 'u':
-			ls.notrunc = 1;
+			ls.no_trunc = 1;
 			break;
 		case 't':
 		{
