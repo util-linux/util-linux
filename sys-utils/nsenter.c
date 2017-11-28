@@ -157,7 +157,7 @@ static int get_ns_ino(const char *path, ino_t *ino)
 static int is_same_namespace(pid_t a, pid_t b, const char *type)
 {
 	char path[PATH_MAX];
-	ino_t a_ino, b_ino;
+	ino_t a_ino = 0, b_ino = 0;
 
 	snprintf(path, sizeof(path), "/proc/%u/%s", a, type);
 	if (get_ns_ino(path, &a_ino) != 0)
