@@ -48,6 +48,8 @@ function cleanup {
 	ip netns delete $NAME1
 }
 
+set -x
+
 ip netns delete $NAME1 2> /dev/null || :
 $TS_CMD_UMOUNT $PATH2 2>/dev/null || :
 rm -f $PATH2
@@ -66,6 +68,7 @@ else
 fi
 {
     dd if=/dev/zero bs=1 count=1 2> $NULL
+    LSNS_FULL=$($TS_CMD_LSNS --type net)
     NSFS_NAMES_MLINES=$($TS_CMD_LSNS -n -o NSFS --type net --task $PID | { while read VAL; do echo $VAL; done; } )
     NSFS_NAMES_1LINE=$($TS_CMD_LSNS -n -o NSFS --nowrap --type net --task $PID | { while read VAL; do echo $VAL; done; } )
     dd if=/dev/zero bs=1 count=1 2> $NULL
@@ -80,6 +83,9 @@ echo $RESULT >> $TS_OUTPUT
 
 if [ $RESULT -ne 0 ]; then
 	echo
+	echo "**Full-report**"
+	echo "$LSNS_FULL"
+	echo "**Paths**"
 	echo "PATH1: $PATH1"
 	echo "PATH2: $PATH2"
 	echo "**Multi-line:**"
