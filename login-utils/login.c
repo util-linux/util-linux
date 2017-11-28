@@ -945,6 +945,8 @@ static void fork_session(struct login_context *cxt)
 		close(0);
 		close(1);
 		close(2);
+		free_getlogindefs_data();
+
 		sa.sa_handler = SIG_IGN;
 		sigaction(SIGQUIT, &sa, NULL);
 		sigaction(SIGINT, &sa, NULL);

@@ -854,6 +854,8 @@ static void create_watching_parent(struct su_context *su)
 		break;
 	}
 
+	/* free unnecessary stuff */
+	free_getlogindefs_data();
 
 	/* In the parent watch the child.  */
 
