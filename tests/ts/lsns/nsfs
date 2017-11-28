@@ -21,9 +21,15 @@ TS_DESC="list NSFS for namespaces created by ip-netns-add"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_LSNS"
-
 ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_LSNS"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_prog "ip"
+ts_check_prog "dd"
+ts_check_prog "touch"
+ts_check_prog "mkfifo"
 
 ts_cd "$TS_OUTDIR"
 
@@ -31,11 +37,19 @@ NAME1=ABC
 NAME2=XYZ
 PATH1=/run/netns/$NAME1
 PATH2=$TS_OUTDIR/$NAME2
-FIFO=$TS_OUTDIR/UTIL-LINUX-LSNS-TEST-FIFO
+FIFO=$TS_OUTDIR/FIFO
 NULL=/dev/null
 
+function cleanup {
+	rm $FIFO
+
+	$TS_CMD_UMOUNT $PATH2
+	rm -f $PATH2
+	ip netns delete $NAME1
+}
+
 ip netns delete $NAME1 2> /dev/null || :
-umount $PATH2 2>/dev/null || :
+$TS_CMD_UMOUNT $PATH2 2>/dev/null || :
 rm -f $PATH2
 
 rm -f $FIFO
@@ -43,9 +57,12 @@ mkfifo $FIFO
 
 if ip netns add $NAME1 &&
 	touch ${PATH2} &&
-	mount -o bind ${PATH1} ${PATH2}; then
+	$TS_CMD_MOUNT -o bind ${PATH1} ${PATH2}; then
     ip netns exec $NAME1 dd if=$FIFO bs=1 count=2 of=$NULL 2> $NULL &
     PID=$!
+else
+    cleanup
+    ts_skip "failed to initialize"
 fi
 {
     dd if=/dev/zero bs=1 count=1 2> $NULL
@@ -54,15 +71,11 @@ fi
     dd if=/dev/zero bs=1 count=1 2> $NULL
 } > $FIFO
 
-rm $FIFO
-
-umount $PATH2
-rm -f $PATH2
-ip netns delete $NAME1
-
 test "$NSFS_NAMES_MLINES" = "$PATH1
 $PATH2" && test "$NSFS_NAMES_1LINE" = "$PATH1,$PATH2"
 
 echo $? >> $TS_OUTPUT
+
+cleanup
 
 ts_finalize
