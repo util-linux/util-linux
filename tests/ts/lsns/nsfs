@@ -74,8 +74,20 @@ fi
 test "$NSFS_NAMES_MLINES" = "$PATH1
 $PATH2" && test "$NSFS_NAMES_1LINE" = "$PATH1,$PATH2"
 
-echo $? >> $TS_OUTPUT
+RESULT=$?
+
+echo $RESULT >> $TS_OUTPUT
+
+if [ $RESULT -ne 0 ]; then
+	echo
+	echo "PATH1: $PATH1"
+	echo "PATH2: $PATH2"
+	echo "**Multi-line:**"
+	echo "$NSFS_NAMES_MLINES"
+	echo "**One-line:**"
+	echo "$NSFS_NAMES_1LINE"
+	echo "****"
+fi
 
 cleanup
-
 ts_finalize
