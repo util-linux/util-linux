@@ -883,7 +883,7 @@ static void print_record(struct dmesg_control *ctl,
 	char buf[128];
 	char fpbuf[32] = "\0";
 	char tsbuf[64] = "\0";
-	size_t mesg_size;
+	size_t mesg_size = rec->mesg_size;
 	int timebreak = 0;
 	char *mesg_copy = NULL;
 	const char *line = NULL;
