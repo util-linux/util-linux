@@ -16,7 +16,7 @@
 #
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="list NSFS for namespaces created by ip-netns-add"
+TS_DESC="NSFS for ip-netns-add"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
@@ -30,6 +30,9 @@ ts_check_prog "ip"
 ts_check_prog "dd"
 ts_check_prog "touch"
 ts_check_prog "mkfifo"
+ts_check_prog "sed"
+
+grep -q '#define HAVE_LINUX_NET_NAMESPACE_H' ${top_builddir}/config.h || ts_skip "no netns support"
 
 ts_cd "$TS_OUTDIR"
 
@@ -37,24 +40,17 @@ NAME1=ABC
 NAME2=XYZ
 PATH1=/run/netns/$NAME1
 PATH2=$TS_OUTDIR/$NAME2
-FIFO=$TS_OUTDIR/FIFO
+FIFO=$TS_OUTDIR/FIFO-NSFS
 NULL=/dev/null
 
 function cleanup {
-	rm $FIFO
-
-	$TS_CMD_UMOUNT $PATH2
+	rm -f $FIFO
+	$TS_CMD_UMOUNT $PATH2 2> /dev/null || :
 	rm -f $PATH2
-	ip netns delete $NAME1
+	ip netns delete $NAME1 2> /dev/null || :
 }
 
-set -x
-
-ip netns delete $NAME1 2> /dev/null || :
-$TS_CMD_UMOUNT $PATH2 2>/dev/null || :
-rm -f $PATH2
-
-rm -f $FIFO
+cleanup
 mkfifo $FIFO
 
 if ip netns add $NAME1 &&
@@ -78,7 +74,6 @@ test "$NSFS_NAMES_MLINES" = "$PATH1
 $PATH2" && test "$NSFS_NAMES_1LINE" = "$PATH1,$PATH2"
 
 RESULT=$?
-
 echo $RESULT >> $TS_OUTPUT
 
 if [ $RESULT -ne 0 ]; then

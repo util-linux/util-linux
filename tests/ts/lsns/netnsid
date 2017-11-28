@@ -16,27 +16,34 @@
 #
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="compare NETNSID reported by lsns and that by ip-link"
+TS_DESC="NETNSID compare to ip-link"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LSNS"
-
+ts_check_prog "ip"
+ts_check_prog "dd"
+ts_check_prog "mkfifo"
+ts_check_prog "sed"
 ts_skip_nonroot
 
+grep -q '#define HAVE_LINUX_NET_NAMESPACE_H' ${top_builddir}/config.h || ts_skip "no netns support"
 ts_cd "$TS_OUTDIR"
 
 vetha=lsns-vetha
 vethb=lsns-vethb
-NS=UTIL-LINUX-LSNS-TEST-NS
-FIFO=$TS_OUTDIR/UTIL-LINUX-LSNS-TEST-FIFO
+NS=LSNS-TEST-NETNSID-NS
+FIFO=$TS_OUTDIR/FIFO-NETNSID
 NULL=/dev/null
 
-ip netns delete $NS 2> $NULL || :
-ip link delete  $vetha 2> $NULL || :
+function cleanup {
+	ip link delete $vetha 2> $NULL || :
+	ip netns delete $NS 2> $NULL || :
+	rm -f $FIFO
+}
 
-rm -f $FIFO
+cleanup
 mkfifo $FIFO
 
 if ip netns add $NS &&
@@ -44,6 +51,9 @@ if ip netns add $NS &&
 	ip link set $vethb netns $NS; then
     ip netns exec $NS dd if=$FIFO bs=1 count=2 of=$NULL 2> $NULL &
     PID=$!
+else
+    cleanup
+    ts_skip "failed to initialize"
 fi
 {
     dd if=/dev/zero bs=1 count=1 2> $NULL
@@ -55,11 +65,8 @@ fi
     dd if=/dev/zero bs=1 count=1 2> $NULL
 } > $FIFO
 
-rm $FIFO
-ip link delete $vetha
-ip netns delete $NS
-
 test "$IP_ID" = "$LSNS_ID"
 echo $? >> $TS_OUTPUT
 
+cleanup
 ts_finalize
