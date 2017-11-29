@@ -205,7 +205,7 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 	buf = xmalloc(bufsz + sizeof(uintptr_t));
 	while (file_end == 0 || file_off < file_end) {
 		/*
-		 * Detect data area (skip exiting holes)
+		 * Detect data area (skip holes)
 		 */
 		off_t end, off;
 
