@@ -147,25 +147,6 @@ static void xposix_fallocate(int fd, off_t offset, off_t length)
 }
 #endif
 
-static int skip_hole(int fd, off_t *off)
-{
-	off_t newoff;
-
-	errno = 0;
-	newoff	= lseek(fd, *off, SEEK_DATA);
-
-	/* ENXIO means that there is no more data -- probably sparse hole at
-	 * the end of the file */
-	if (newoff < 0 && errno == ENXIO)
-		return 1;
-
-	if (newoff > *off) {
-		*off = newoff;
-		return 0;	/* success */
-	}
-	return -1;		/* no hole */
-}
-
 /* The real buffer size has to be bufsize + sizeof(uintptr_t) */
 static int is_nul(void *buf, size_t bufsize)
 {
@@ -191,16 +172,16 @@ static int is_nul(void *buf, size_t bufsize)
 	return cbuf + bufsize < cp;
 }
 
-static void dig_holes(int fd, off_t off, off_t len)
+static void dig_holes(int fd, off_t file_off, off_t len)
 {
-	off_t end = len ? off + len : 0;
+	off_t file_end = len ? file_off + len : 0;
 	off_t hole_start = 0, hole_sz = 0;
 	uintmax_t ct = 0;
 	size_t  bufsz;
 	char *buf;
 	struct stat st;
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
-	off_t cache_start = off;
+	off_t cache_start = file_off;
 	/*
 	 * We don't want to call POSIX_FADV_DONTNEED to discard cached
 	 * data in PAGE_SIZE steps. IMHO it's overkill (too many syscalls).
@@ -217,60 +198,70 @@ static void dig_holes(int fd, off_t off, off_t len)
 
 	bufsz = st.st_blksize;
 
-	if (lseek(fd, off, SEEK_SET) < 0)
+	if (lseek(fd, file_off, SEEK_SET) < 0)
 		err(EXIT_FAILURE, _("seek on %s failed"), filename);
 
 	/* buffer + extra space for is_nul() sentinel */
 	buf = xmalloc(bufsz + sizeof(uintptr_t));
-#if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
-	posix_fadvise(fd, off, 0, POSIX_FADV_SEQUENTIAL);
-#endif
+	while (file_end == 0 || file_off < file_end) {
+		/*
+		 * Detect data area (skip exiting holes)
+		 */
+		off_t end, off;
 
-	while (end == 0 || off < end) {
-		ssize_t rsz;
-
-		rsz = pread(fd, buf, bufsz, off);
-		if (rsz < 0 && errno)
-			err(EXIT_FAILURE, _("%s: read failed"), filename);
-		if (end && rsz > 0 && off > end - rsz)
-			rsz = end - off;
-		if (rsz <= 0)
+		off = lseek(fd, file_off, SEEK_DATA);
+		if ((off == -1 && errno == ENXIO) ||
+		    (file_end && off >= file_end))
 			break;
 
-		if (is_nul(buf, rsz)) {
-			if (!hole_sz) {				/* new hole detected */
-				int rc = skip_hole(fd, &off);
-				if (rc == 0)
-					continue;	/* hole skipped */
-				else if (rc == 1)
-					break;		/* end of file */
-				hole_start = off;
+		end = lseek(fd, off, SEEK_HOLE);
+		if (file_end && end > file_end)
+			end = file_end;
+
+#if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
+		posix_fadvise(fd, off, end, POSIX_FADV_SEQUENTIAL);
+#endif
+		/*
+		 * Dig holes in the area
+		 */
+		while (off < end) {
+			ssize_t rsz = pread(fd, buf, bufsz, off);
+			if (rsz < 0 && errno)
+				err(EXIT_FAILURE, _("%s: read failed"), filename);
+			if (end && rsz > 0 && off > end - rsz)
+				rsz = end - off;
+			if (rsz <= 0)
+				break;
+
+			if (is_nul(buf, rsz)) {
+				if (!hole_sz)				/* new hole detected */
+					hole_start = off;
+				hole_sz += rsz;
+			 } else if (hole_sz) {
+				xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
+					   hole_start, hole_sz);
+				ct += hole_sz;
+				hole_sz = hole_start = 0;
 			}
-			hole_sz += rsz;
-		 } else if (hole_sz) {
-			xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
-				   hole_start, hole_sz);
-			ct += hole_sz;
-			hole_sz = hole_start = 0;
-		}
 
 #if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
-		/* discard cached data */
-		if (off - cache_start > (off_t) cachesz) {
-			size_t clen = off - cache_start;
+			/* discard cached data */
+			if (off - cache_start > (off_t) cachesz) {
+				size_t clen = off - cache_start;
 
-			clen = (clen / cachesz) * cachesz;
-			posix_fadvise(fd, cache_start, clen, POSIX_FADV_DONTNEED);
-			cache_start = cache_start + clen;
-		}
+				clen = (clen / cachesz) * cachesz;
+				posix_fadvise(fd, cache_start, clen, POSIX_FADV_DONTNEED);
+				cache_start = cache_start + clen;
+			}
 #endif
-		off += rsz;
-	}
-
-	if (hole_sz) {
-		xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
-				hole_start, hole_sz);
-		ct += hole_sz;
+			off += rsz;
+		}
+		if (hole_sz) {
+			xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
+					hole_start, hole_sz);
+			ct += hole_sz;
+		}
+		file_off = off;
 	}
 
 	free(buf);
