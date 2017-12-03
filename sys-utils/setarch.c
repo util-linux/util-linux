@@ -82,9 +82,8 @@
 # define ADDR_LIMIT_3GB          0x8000000
 #endif
 
-static int archwrapper;
 
-static void __attribute__((__noreturn__)) usage(void)
+static void __attribute__((__noreturn__)) usage(int archwrapper)
 {
 	fputs(USAGE_HEADER, stdout);
 	if (!archwrapper)
@@ -117,13 +116,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(USAGE_HELP_OPTIONS(26));
 	printf(USAGE_MAN_TAIL("setarch(8)"));
 
-	exit(EXIT_SUCCESS);
-}
-
-static void __attribute__((__noreturn__))
-    show_version(void)
-{
-	printf(UTIL_LINUX_VERSION);
 	exit(EXIT_SUCCESS);
 }
 
@@ -253,6 +245,7 @@ int main(int argc, char *argv[])
 	const char *arch = NULL;
 	unsigned long options = 0;
 	int verbose = 0;
+	int archwrapper;
 	int c;
 
 	/* Options without equivalent short options */
@@ -294,9 +287,17 @@ int main(int argc, char *argv[])
 		errtryhelp(EXIT_FAILURE);
 	}
 	archwrapper = strcmp(program_invocation_short_name, "setarch") != 0;
-	if (archwrapper)
+	if (archwrapper) {
 		arch = program_invocation_short_name;	/* symlinks to setarch */
-	else {
+#if defined(__sparc64__) || defined(__sparc__)
+		if (strcmp(arch, "sparc32bash") == 0) {
+			if (set_arch(arch, 0L, 0))
+				err(EXIT_FAILURE, _("Failed to set personality to %s"), arch);
+			execl("/bin/bash", "", NULL);
+			err(EXIT_FAILURE, _("failed to execute %s"), "/bin/bash");
+		}
+#endif
+	} else {
 		if (1 < argc && *argv[1] != '-') {
 			arch = argv[1];
 			argv[1] = argv[0];	/* for getopt_long() to get the program name */
@@ -305,23 +306,14 @@ int main(int argc, char *argv[])
 		}
 	}
 
-#if defined(__sparc64__) || defined(__sparc__)
-	if (archwrapper && strcmp(arch, "sparc32bash") == 0) {
-		if (set_arch(arch, 0L, 0))
-			err(EXIT_FAILURE, _("Failed to set personality to %s"), arch);
-		execl("/bin/bash", NULL);
-		err(EXIT_FAILURE, _("failed to execute %s"), "/bin/bash");
-	}
-#endif
-
 	while ((c = getopt_long(argc, argv, "+hVv3BFILRSTXZ", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
-			usage();
+			usage(archwrapper);
 			break;
 		case 'V':
-			show_version();
-			break;
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'v':
 			verbose = 1;
 			break;
