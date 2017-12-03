@@ -105,7 +105,6 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact, int no
 {
 	char *newname = NULL, *file=NULL;
 	int ret = 1;
-	struct stat sb;
 
 	if (strchr(from, '/') == NULL && strchr(to, '/') == NULL)
 		file = strrchr(s, '/');
@@ -113,7 +112,7 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact, int no
 		file = s;
 	if (string_replace(from, to, file, s, &newname))
 		return 0;
-	if (nooverwrite && stat(newname, &sb) == 0) {
+	if (nooverwrite && access(newname, F_OK) == 0) {
 		printf(_("Skipping existing file: `%s'\n"), newname);
 		ret = 0;
 	}
