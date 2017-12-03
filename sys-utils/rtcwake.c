@@ -23,12 +23,14 @@
 #include <fcntl.h>
 #include <getopt.h>
 #include <linux/rtc.h>
+#include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <termios.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -260,6 +262,22 @@ nothing:
 	return NULL;
 }
 
+static void wait_stdin(struct rtcwake_control *ctl)
+{
+	struct pollfd fd[] = {
+		{.fd = STDIN_FILENO, .events = POLLIN}
+	};
+	int tries = 0;
+
+	while (tries < 8 && poll(fd, 1, 10) == 1) {
+		if (ctl->verbose)
+			warnx(_("discarding stdin"));
+		xusleep(250000);
+		tcflush(STDIN_FILENO, TCIFLUSH);
+		tries++;
+	}
+}
+
 static void suspend_system(struct rtcwake_control *ctl)
 {
 	FILE	*f = fopen(SYS_POWER_STATE_PATH, "w");
@@ -270,6 +288,8 @@ static void suspend_system(struct rtcwake_control *ctl)
 	}
 
 	if (!ctl->dryrun) {
+		if (isatty(STDIN_FILENO))
+			wait_stdin(ctl);
 		fprintf(f, "%s\n", ctl->mode_str);
 		fflush(f);
 	}
