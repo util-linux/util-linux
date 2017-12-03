@@ -257,7 +257,7 @@ static void edit_file(int is_shadow)
 	if (lckpwdf() < 0)
 		err(EXIT_FAILURE, _("cannot get lock"));
 
-	passwd_file = open(orig_file, O_RDONLY, 0);
+	passwd_file = open(orig_file, O_RDONLY | O_CLOEXEC, 0);
 	if (passwd_file < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), orig_file);
 	tmp_fd = pw_tmpfile(passwd_file);
@@ -275,7 +275,7 @@ static void edit_file(int is_shadow)
 	if (end.st_nlink == 0) {
 		if (close_stream(tmp_fd) != 0)
 			err(EXIT_FAILURE, _("write error"));
-		tmp_fd = fopen(tmp_file, "r");
+		tmp_fd = fopen(tmp_file, "r" UL_CLOEXECSTR);
 		if (!tmp_fd)
 			err(EXIT_FAILURE, _("cannot open %s"), tmp_file);
 		if (fstat(fileno(tmp_fd), &end))
