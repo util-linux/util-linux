@@ -59,7 +59,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-	      _(" %1$s [-n] <priority> [-p|--pid] <pid>...\n"
+	      _(" %1$s [-n] <priority> 	-p|--pid <pid>...\n"
 		" %1$s [-n] <priority>  -g|--pgrp <pgid>...\n"
 		" %1$s [-n] <priority>  -u|--user <user>...\n"),
 		program_invocation_short_name);
