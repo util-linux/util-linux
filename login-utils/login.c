@@ -677,7 +677,8 @@ static void loginpam_err(pam_handle_t *pamh, int retcode)
 }
 
 /*
- * Composes "<host> login: " string; or returns "login: " if -H is given.
+ * Composes "<host> login: " string; or returns "login: " if -H is given or
+ * LOGIN_PLAIN_PROMPT=yes configured.
  */
 static const char *loginpam_get_prompt(struct login_context *cxt)
 {
@@ -685,11 +686,16 @@ static const char *loginpam_get_prompt(struct login_context *cxt)
 	char *prompt, *dflt_prompt = _("login: ");
 	size_t sz;
 
-	if (cxt->nohost || !(host = get_thishost(cxt, NULL)))
+	if (cxt->nohost)
+		return dflt_prompt;	/* -H on command line */
+
+	if (getlogindefs_bool("LOGIN_PLAIN_PROMPT", 0) == 1)
+		return dflt_prompt;
+
+	if (!(host = get_thishost(cxt, NULL)))
 		return dflt_prompt;
 
 	sz = strlen(host) + 1 + strlen(dflt_prompt) + 1;
-
 	prompt = xmalloc(sz);
 	snprintf(prompt, sz, "%s %s", host, dflt_prompt);
 
