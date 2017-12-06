@@ -113,6 +113,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&luks_idinfo,
 	&vmfs_volume_idinfo,
 	&ubi_idinfo,
+	&vdo_idinfo,
 
 	/* Filesystems */
 	&vfat_idinfo,
