@@ -271,6 +271,9 @@ function ts_init_env {
 	TS_OUTDIR="$top_builddir/tests/output/$TS_COMPONENT"
 	TS_DIFFDIR="$top_builddir/tests/diff/$TS_COMPONENT"
 
+	TS_NOLOCKS=$(ts_has_option "nolocks" "$*")
+	TS_LOCKDIR="$top_builddir/tests/output"
+
 	ts_init_core_env
 
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
@@ -673,10 +676,33 @@ function ts_fdisk_clean {
 		$TS_OUTPUT
 }
 
+
+function ts_lock {
+	local resource="$1"
+	local lockfile="${TS_LOCKDIR}/${resource}.lock"
+
+	if [ "$TS_NOLOCKS" == "yes" ]; then
+		return 0
+	fi
+
+	# Don't lock if flock(1) is missing
+	type "flock" >/dev/null 2>&1 || return 1
+
+	eval "exec 200>$lockfile"
+	flock --exclusive --timeout 30 200 || ts_skip "failed to lock $resource"
+}
+
+# Note that flock(2) lock is released on FD close.
+function ts_unlock {
+	200<&-
+}
+
 function ts_scsi_debug_init {
 	local devname
 	local t
 	TS_DEVICE="none"
+
+	ts_lock "scsi_debug"
 
 	# dry run is not really reliable, real modprobe may still fail
 	modprobe --dry-run --quiet scsi_debug &>/dev/null \
@@ -746,6 +772,7 @@ function ts_scsi_debug_rmmod {
 
 	# TODO unset TS_DEVICE, check that nobody uses it later, e.g. ts_fdisk_clean
 
+	ts_unlock "scsi_debug"
 	return 0
 }
 

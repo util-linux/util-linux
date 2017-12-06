@@ -47,6 +47,7 @@ while [ -n "$1" ]; do
 	--fake |\
 	--memcheck-valgrind |\
 	--memcheck-asan |\
+	--nolocks |\
 	--show-diff |\
 	--verbose  |\
 	--skip-loopdevs |\
@@ -84,6 +85,7 @@ while [ -n "$1" ]; do
 		echo "  --fake               do not run, setup tests only"
 		echo "  --memcheck-valgrind  run with valgrind"
 		echo "  --memcheck-asan      enable ASAN (requires ./configure --enable-asan)"
+		echo "  --nolocks            don't use flock to lock resources"
 		echo "  --verbose            verbose mode"
 		echo "  --show-diff          show diff from failed tests"
 		echo "  --nonroot            ignore test suite if user is root"
