@@ -31,6 +31,7 @@ ts_skip_nonroot
 MNT=$TS_MOUNTPOINT
 mkdir -p $MNT
 
+ts_fstab_lock
 ts_fstab_open
 echo "tmpd $MNT tmpfs" >> /etc/fstab
 ts_fstab_close
@@ -72,7 +73,7 @@ else
 fi
 ts_finalize_subtest
 
-ts_fstab_clean
+ts_fstab_clean	# this unlocks too
 
 ts_log "Success"
 ts_finalize

@@ -628,6 +628,7 @@ function ts_fstab_open {
 
 function ts_fstab_close {
 	echo "# -->" >> /etc/fstab
+	sync /etc/fstab
 }
 
 function ts_fstab_addline {
@@ -639,7 +640,12 @@ function ts_fstab_addline {
 	echo "$SPEC   $MNT   $FS   $OPT   0   0" >> /etc/fstab
 }
 
+function ts_fstab_lock {
+	ts_lock "fstab"
+}
+
 function ts_fstab_add {
+	ts_fstab_lock
 	ts_fstab_open
 	ts_fstab_addline $*
 	ts_fstab_close
@@ -655,6 +661,9 @@ function ts_fstab_clean {
 }
 s/# <!-- util-linux.*-->//;
 /^$/d" /etc/fstab
+
+	sync /etc/fstab
+	ts_unlock "fstab"
 }
 
 function ts_fdisk_clean {
@@ -694,7 +703,7 @@ function ts_lock {
 
 # Note that flock(2) lock is released on FD close.
 function ts_unlock {
-	200<&-
+	200<&- || :
 }
 
 function ts_scsi_debug_init {

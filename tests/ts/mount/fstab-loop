@@ -35,11 +35,16 @@ mkfs.ext3 -F $IMG &> /dev/null || ts_die "Cannot make ext3 on $IMG"
 [ -d "$TS_MOUNTPOINT-1" ] || mkdir -p $TS_MOUNTPOINT-1
 [ -d "$TS_MOUNTPOINT-2" ] || mkdir -p $TS_MOUNTPOINT-2
 
-ts_fstab_add "$IMG" "$TS_MOUNTPOINT-1" "ext3" "loop"
+ts_fstab_lock
+ts_fstab_open
+
+ts_fstab_addline "$IMG" "$TS_MOUNTPOINT-1" "ext3" "loop"
 $TS_CMD_MOUNT -a >> $TS_OUTPUT 2>&1
 
-ts_fstab_add "$IMG" "$TS_MOUNTPOINT-2" "ext3" "loop"
+ts_fstab_addline "$IMG" "$TS_MOUNTPOINT-2" "ext3" "loop"
 $TS_CMD_MOUNT -a >> $TS_OUTPUT 2>&1
+
+ts_fstab_close
 
 $TS_CMD_UMOUNT "$TS_MOUNTPOINT-1" >> $TS_OUTPUT 2>&1
 $TS_CMD_UMOUNT "$TS_MOUNTPOINT-2" >> $TS_OUTPUT 2>&1

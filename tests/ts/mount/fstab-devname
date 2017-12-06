@@ -50,7 +50,5 @@ ts_is_mounted $DEVICE || ts_die "B) Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $DEVICE || ts_die "B) Cannot umount $DEVICE"
 
 ts_fstab_clean
-
 ts_log "Success"
 ts_finalize
-

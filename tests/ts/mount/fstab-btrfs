@@ -78,15 +78,18 @@ $TS_CMD_UMOUNT "$TS_MOUNTPOINT_CREATE"
 
 
 ts_init_subtest "btrfs"
+ts_fstab_lock
+ts_fstab_open
 # Tests with fs == btrfs
 # mounting default subvolume, deep in the structure, without entry in fstab
-ts_fstab_add "$DEVICE" "$TS_MOUNTPOINT_DEFAULT" "btrfs" ""
+ts_fstab_addline "$DEVICE" "$TS_MOUNTPOINT_DEFAULT" "btrfs" ""
 # mounting default subvolume, deep in the structure
-ts_fstab_add "$DEVICE" "$TS_MOUNTPOINT_SUBVOL" "btrfs" "subvol=$NON_DEFAULT_SUBVOL"
+ts_fstab_addline "$DEVICE" "$TS_MOUNTPOINT_SUBVOL" "btrfs" "subvol=$NON_DEFAULT_SUBVOL"
 # mounting non-default subvolume
-ts_fstab_add "$DEVICE" "$TS_MOUNTPOINT_SUBVOLID" "btrfs" "subvolid=$NON_DEFAULT_SUBVOLID"
+ts_fstab_addline "$DEVICE" "$TS_MOUNTPOINT_SUBVOLID" "btrfs" "subvolid=$NON_DEFAULT_SUBVOLID"
 # test bind mount pointing to subvolume root
-ts_fstab_add "$TS_MOUNTPOINT_SUBVOLID" "$TS_MOUNTPOINT_BIND" "auto" "bind"
+ts_fstab_addline "$TS_MOUNTPOINT_SUBVOLID" "$TS_MOUNTPOINT_BIND" "auto" "bind"
+ts_fstab_close
 
 $TS_CMD_MOUNT -a >> $TS_OUTPUT 2>&1
 $TS_CMD_MOUNT -a >> $TS_OUTPUT 2>&1
@@ -99,20 +102,24 @@ $TS_CMD_UMOUNT "$TS_MOUNTPOINT_SUBVOLID" >> $TS_OUTPUT 2>&1
 # check that everything was unmounted
 $TS_CMD_MOUNT | grep "$TS_MOUNTPOINT_ANY" >> $TS_OUTPUT 2>&1
 
-ts_fstab_clean
+ts_fstab_clean		# this unlock too
 ts_log "Success"
 ts_finalize_subtest
 
+
 ts_init_subtest "auto"
+ts_fstab_lock
+ts_fstab_open
 # Tests with fs == auto
 # mounting default subvolume, deep in the structure, without entry in fstab
-ts_fstab_add "$DEVICE" "$TS_MOUNTPOINT_DEFAULT" "auto" ""
+ts_fstab_addline "$DEVICE" "$TS_MOUNTPOINT_DEFAULT" "auto" ""
 # mounting default subvolume, deep in the structure
-ts_fstab_add "$DEVICE" "$TS_MOUNTPOINT_SUBVOL" "auto" "subvol=$NON_DEFAULT_SUBVOL"
+ts_fstab_addline "$DEVICE" "$TS_MOUNTPOINT_SUBVOL" "auto" "subvol=$NON_DEFAULT_SUBVOL"
 # mounting non-default subvolume
-ts_fstab_add "$DEVICE" "$TS_MOUNTPOINT_SUBVOLID" "auto" "subvolid=$NON_DEFAULT_SUBVOLID"
+ts_fstab_addline "$DEVICE" "$TS_MOUNTPOINT_SUBVOLID" "auto" "subvolid=$NON_DEFAULT_SUBVOLID"
 # test bind mount pointing to subvolume sub-directory
-ts_fstab_add "$TS_MOUNTPOINT_SUBVOL/bind-mnt" "$TS_MOUNTPOINT_BIND" "auto" "bind"
+ts_fstab_addline "$TS_MOUNTPOINT_SUBVOL/bind-mnt" "$TS_MOUNTPOINT_BIND" "auto" "bind"
+ts_fstab_close
 
 $TS_CMD_MOUNT -a >> $TS_OUTPUT 2>&1
 $TS_CMD_MOUNT -a >> $TS_OUTPUT 2>&1
@@ -125,7 +132,7 @@ $TS_CMD_UMOUNT "$TS_MOUNTPOINT_SUBVOLID" >> $TS_OUTPUT 2>&1
 # check that everything was unmounted
 $TS_CMD_MOUNT | grep "$TS_MOUNTPOINT_ANY" >> $TS_OUTPUT 2>&1
 
-ts_fstab_clean
+ts_fstab_clean		# this unlock too
 ts_log "Success"
 ts_finalize_subtest
 
