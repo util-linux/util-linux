@@ -90,6 +90,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/ubifs.c \
 	libblkid/src/superblocks/udf.c \
 	libblkid/src/superblocks/ufs.c \
+	libblkid/src/superblocks/vdo.c \
 	libblkid/src/superblocks/vfat.c \
 	libblkid/src/superblocks/via_raid.c \
 	libblkid/src/superblocks/vmfs.c \
