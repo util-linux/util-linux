@@ -62,6 +62,8 @@ udevadm settle
 MD_DEVNAME=md8
 MD_DEVICE=/dev/${MD_DEVNAME}
 
+ts_lock "md"
+
 ts_log "Create RAID1 device"
 mdadm -q -S ${MD_DEVICE} &> /dev/null
 mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=1 \
@@ -79,6 +81,8 @@ $TS_CMD_BLKID -p -o udev ${TS_DEVICE}2 2>&1 | sort >> $TS_OUTPUT
 
 mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
 
+udevadm settle
+ts_unlock "md"
 
 ts_fdisk_clean $TS_DEVICE
 # substitue UUIDs and major/minor number before comparison

@@ -41,6 +41,7 @@ DEVICE2=$TS_LODEV
 MD_DEVNAME=md8
 MD_DEVICE=/dev/${MD_DEVNAME}
 
+ts_lock "md"
 mdadm -q -S ${MD_DEVICE} &> /dev/null
 
 ts_log "Create RAID device"
@@ -76,6 +77,7 @@ ts_log "Stop RAID device"
 mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
 
 udevadm settle
+ts_unlock "md"
 
 ts_log "Deinitialize devices"
 

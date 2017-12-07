@@ -56,14 +56,18 @@ udevadm settle
 ts_log "Alignment offsets:"
 cat /sys/block/${DEVNAME}/${DEVNAME}{1,2}/alignment_offset >> $TS_OUTPUT 2>&1
 
+ts_lock "md"
+
 MD_DEVNAME=md8
 MD_DEVICE=/dev/${MD_DEVNAME}
 
 mdadm -q -S ${MD_DEVICE} &> /dev/null
+udevadm settle
+
 mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 \
 	    --level=0 --raid-devices=2 ${TS_DEVICE}1 ${TS_DEVICE}2 >> $TS_OUTPUT 2>&1
-
 udevadm settle
+
 ts_log "Create partitions (MD)"
 $TS_CMD_FDISK ${MD_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
 n
@@ -86,6 +90,9 @@ ts_log "Alignment offsets (MD):"
 cat /sys/block/${MD_DEVNAME}/${MD_DEVNAME}p{1,2}/alignment_offset >> $TS_OUTPUT 2>&1
 
 mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
+
+udevadm settle
+ts_unlock "md"
 
 ts_fdisk_clean $TS_DEVICE
 ts_fdisk_clean $MD_DEVICE
