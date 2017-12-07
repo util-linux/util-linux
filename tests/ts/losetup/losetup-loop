@@ -202,34 +202,44 @@ ts_finalize_subtest
 udevadm settle
 
 ts_init_subtest "plain-conflict"
-LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
-if [ -z "$LODEV" ]; then
-	ts_log "Failed to create loop device"
+if [ "$TS_PARALLEL" = "yes" ]; then
+	# There is a race in $LODEV is usage
+	ts_skip_subtest "no-reentrant"
+else
+	LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
+	if [ -z "$LODEV" ]; then
+		ts_log "Failed to create loop device"
+	fi
+	LODEVR=$( $TS_CMD_LOSETUP --find )
+	$TS_CMD_LOSETUP --nooverlap "$LODEVR" $BACKFILE >/dev/null 2>&1
+	ts_log $?
+	udevadm settle
+	$TS_CMD_LOSETUP -d "$LODEV"
+	$TS_CMD_LOSETUP -d "$LODEVR" >/dev/null 2>&1
+	ts_log "Success"
+	ts_finalize_subtest
 fi
-LODEVR=$( $TS_CMD_LOSETUP --find )
-$TS_CMD_LOSETUP --nooverlap "$LODEVR" $BACKFILE >/dev/null 2>&1
-ts_log $?
-udevadm settle
-$TS_CMD_LOSETUP -d "$LODEV"
-$TS_CMD_LOSETUP -d "$LODEVR" >/dev/null 2>&1
-ts_log "Success"
-ts_finalize_subtest
 
 udevadm settle
 
 ts_init_subtest "plain-readonly"
-LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --read-only $BACKFILE )
-if [ -z "$LODEV" ]; then
-	ts_log "Failed to create loop device"
+if [ "$TS_PARALLEL" = "yes" ]; then
+	# There is a race in $LODEV is usage
+	ts_skip_subtest "no-reentrant"
+else
+	LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --read-only $BACKFILE )
+	if [ -z "$LODEV" ]; then
+		ts_log "Failed to create loop device"
+	fi
+	LODEVR=$( $TS_CMD_LOSETUP --find )
+	$TS_CMD_LOSETUP --nooverlap "$LODEVR" $BACKFILE >/dev/null 2>&1
+	ts_log $?
+	udevadm settle
+	$TS_CMD_LOSETUP -d "$LODEV"
+	$TS_CMD_LOSETUP -d "$LODEVR" >/dev/null 2>&1
+	ts_log "Success"
+	ts_finalize_subtest
 fi
-LODEVR=$( $TS_CMD_LOSETUP --find )
-$TS_CMD_LOSETUP --nooverlap "$LODEVR" $BACKFILE >/dev/null 2>&1
-ts_log $?
-udevadm settle
-$TS_CMD_LOSETUP -d "$LODEV"
-$TS_CMD_LOSETUP -d "$LODEVR" >/dev/null 2>&1
-ts_log "Success"
-ts_finalize_subtest
 
 udevadm settle
 

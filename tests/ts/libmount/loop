@@ -81,14 +81,19 @@ ts_log "Success"
 ts_finalize_subtest
 
 ts_init_subtest "o-loop-val"
-[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-LODEV=$( $TS_CMD_LOSETUP --find 2>> $TS_OUTPUT )
-$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>&1
-verify_mount_dev "$LODEV" "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>&1
-$TS_CMD_UMOUNT "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>&1
-udevadm settle
-ts_log "Success"
-ts_finalize_subtest
+if [ "$TS_PARALLEL" = "yes" ]; then
+	# There is a race in $LODEV is usage
+	ts_skip_subtest "no-reentrant"
+else
+	[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
+	LODEV=$( $TS_CMD_LOSETUP --find 2>> $TS_OUTPUT )
+	$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>&1
+	verify_mount_dev "$LODEV" "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>&1
+	$TS_CMD_UMOUNT "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>&1
+	udevadm settle
+	ts_log "Success"
+	ts_finalize_subtest
+fi
 
 ts_init_subtest "reuse"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
@@ -112,28 +117,38 @@ ts_log "Success"
 ts_finalize_subtest
 
 ts_init_subtest "o-loop-val-initialized"
-[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-LODEV=$( $TS_CMD_LOSETUP --find 2>> $TS_OUTPUT )
-$TS_CMD_LOSETUP $LODEV "$BACKFILE" >> $TS_OUTPUT 2>&1
-$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 \
-       | sed 's/:.*:/: <target>/; s/for .*/for <source>/' > $TS_OUTPUT
-$TS_CMD_LOSETUP --detach $LODEV >> $TS_OUTPUT 2>&1
-udevadm settle
-ts_log "Success"
-ts_finalize_subtest
+if [ "$TS_PARALLEL" = "yes" ]; then
+	# There is a race in $LODEV is usage
+	ts_skip_subtest "no-reentrant"
+else
+	[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
+	LODEV=$( $TS_CMD_LOSETUP --find 2>> $TS_OUTPUT )
+	$TS_CMD_LOSETUP $LODEV "$BACKFILE" >> $TS_OUTPUT 2>&1
+	$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 \
+	       | sed 's/:.*:/: <target>/; s/for .*/for <source>/' > $TS_OUTPUT
+	$TS_CMD_LOSETUP --detach $LODEV >> $TS_OUTPUT 2>&1
+	udevadm settle
+	ts_log "Success"
+	ts_finalize_subtest
+fi
 
 ts_init_subtest "o-loop-val-conflict"
-[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-cp "$BACKFILE" "$BACKFILE"-2
-LODEV=$( $TS_CMD_LOSETUP --find 2>> $TS_OUTPUT )
-$TS_CMD_LOSETUP $LODEV "$BACKFILE"-2 >> $TS_OUTPUT 2>&1
-$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 \
-	| sed 's/:.*:/: <target>/; s/for .*/for <source>/' > $TS_OUTPUT
-$TS_CMD_LOSETUP --detach $LODEV >> $TS_OUTPUT 2>&1
-rm "$BACKFILE"-2
-udevadm settle
-ts_log "Success"
-ts_finalize_subtest
+if [ "$TS_PARALLEL" = "yes" ]; then
+	# There is a race in $LODEV is usage
+	ts_skip_subtest "no-reentrant"
+else
+	[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
+	cp "$BACKFILE" "$BACKFILE"-2
+	LODEV=$( $TS_CMD_LOSETUP --find 2>> $TS_OUTPUT )
+	$TS_CMD_LOSETUP $LODEV "$BACKFILE"-2 >> $TS_OUTPUT 2>&1
+	$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 \
+		| sed 's/:.*:/: <target>/; s/for .*/for <source>/' > $TS_OUTPUT
+	$TS_CMD_LOSETUP --detach $LODEV >> $TS_OUTPUT 2>&1
+	rm "$BACKFILE"-2
+	udevadm settle
+	ts_log "Success"
+	ts_finalize_subtest
+fi
 
 ts_log "Success"
 ts_finalize
