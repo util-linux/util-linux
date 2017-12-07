@@ -719,7 +719,7 @@ function ts_lock {
 	# Don't lock again
 	fd=$(ts_get_lock_fd $$ $lockfile)
 	if [ -n "$fd" ]; then
-		echo "${resource} already locked!"
+		echo "[$$ $TS_TESTNAME] ${resource} already locked!"
 		return 0
 	fi
 
@@ -728,7 +728,7 @@ function ts_lock {
 	eval "exec $fd>$lockfile"
 	flock --exclusive --timeout 30 $fd || ts_skip "failed to lock $resource"
 
-	echo "[$$] Locked $lockfile"
+	###echo "[$$ $TS_TESTNAME] Locked   $resource"
 }
 
 function ts_unlock {
@@ -742,7 +742,7 @@ function ts_unlock {
 
 	fd=$(ts_get_lock_fd $$ $lockfile)
 	if [ -n "$fd" ]; then
-		echo "[$$] Unlocking $lockfile"
+		###echo "[$$ $TS_TESTNAME] Unlocked $resource"
 		eval "exec $fd<&-"
 	fi
 }
@@ -760,8 +760,11 @@ function ts_scsi_debug_init {
 
 	# skip if still in use or removal of modules not supported at all
 	# We don't want a slow timeout here so we don't use ts_scsi_debug_rmmod!
-	modprobe -r scsi_debug &>/dev/null \
-		|| ts_skip "cannot remove scsi_debug module (rmmod)"
+	modprobe -r scsi_debug &>/dev/null
+	if [ "$?" -eq 1 ]; then
+		ts_unlock "scsi_debug"
+		ts_skip "cannot remove scsi_debug module (rmmod)"
+	fi
 
 	modprobe -b scsi_debug "$@" &>/dev/null \
 		|| ts_skip "cannot load scsi_debug module (modprobe)"
