@@ -341,14 +341,18 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 	blkid_probe_chain_reset_values(pr, chn);
 
-	if (pr->flags & BLKID_FL_NOSCAN_DEV)
+	if (pr->flags & BLKID_FL_NOSCAN_DEV) {
+		DBG(LOWPROBE, ul_debug("*** ignore (noscan flag)"));
 		return BLKID_PROBE_NONE;
+	}
 
-	if (pr->size <= 0 || (pr->size <= 1024 && !S_ISCHR(pr->mode)))
+	if (pr->size <= 0 || (pr->size <= 1024 && !S_ISCHR(pr->mode))) {
 		/* Ignore very very small block devices or regular files (e.g.
 		 * extended partitions). Note that size of the UBI char devices
 		 * is 1 byte */
+		DBG(LOWPROBE, ul_debug("*** ignore (size <= 1024)"));
 		return BLKID_PROBE_NONE;
+	}
 
 	DBG(LOWPROBE, ul_debug("--> starting probing loop [SUBLKS idx=%d]",
 		chn->idx));
