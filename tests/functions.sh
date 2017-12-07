@@ -274,6 +274,13 @@ function ts_init_env {
 	TS_NOLOCKS=$(ts_has_option "nolocks" "$*")
 	TS_LOCKDIR="$top_builddir/tests/output"
 
+	if [ ! -d "/proc/self/fd" ]; then
+		TS_NOLOCKS="yes"
+	fi
+
+	# Don't lock if flock(1) is missing
+	type "flock" >/dev/null 2>&1 || TS_NOLOCKS="yes"
+
 	ts_init_core_env
 
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
@@ -686,24 +693,58 @@ function ts_fdisk_clean {
 }
 
 
+function ts_get_lock_fd {
+        local proc=$1
+        local lockfile=$2
+
+        for fd in $(ls /proc/$proc/fd); do
+                file=$(readlink "/proc/$proc/fd/$fd")
+                if [ x"$file" = x"$lockfile" ]; then
+                        echo "$fd"
+                        return 0
+                fi
+        done
+        return 1
+}
+
 function ts_lock {
 	local resource="$1"
 	local lockfile="${TS_LOCKDIR}/${resource}.lock"
+	local fd
 
 	if [ "$TS_NOLOCKS" == "yes" ]; then
 		return 0
 	fi
 
-	# Don't lock if flock(1) is missing
-	type "flock" >/dev/null 2>&1 || return 1
+	# Don't lock again
+	fd=$(ts_get_lock_fd $$ $lockfile)
+	if [ -n "$fd" ]; then
+		echo "${resource} already locked!"
+		return 0
+	fi
 
-	eval "exec 200>$lockfile"
-	flock --exclusive --timeout 30 200 || ts_skip "failed to lock $resource"
+	fd=$(( $(ls /proc/$$/fd/ | sort | tail -1) + 1))
+
+	eval "exec $fd>$lockfile"
+	flock --exclusive --timeout 30 $fd || ts_skip "failed to lock $resource"
+
+	echo "[$$] Locked $lockfile"
 }
 
-# Note that flock(2) lock is released on FD close.
 function ts_unlock {
-	200<&- || :
+	local resource="$1"
+	local lockfile="${TS_LOCKDIR}/${resource}.lock"
+	local fd
+
+	if [ "$TS_NOLOCKS" == "yes" ]; then
+		return 0
+	fi
+
+	fd=$(ts_get_lock_fd $$ $lockfile)
+	if [ -n "$fd" ]; then
+		echo "[$$] Unlocking $lockfile"
+		eval "exec $fd<&-"
+	fi
 }
 
 function ts_scsi_debug_init {
