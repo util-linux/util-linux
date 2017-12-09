@@ -462,9 +462,9 @@ int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz)
 	struct tm tm;
 
 	if (flags & ISO_GMTIME)
-		tm = *gmtime(&tv->tv_sec);
+		gmtime_r(&tv->tv_sec, &tm);
 	else
-		tm = *localtime(&tv->tv_sec);
+		localtime_r(&tv->tv_sec, &tm);
 	return format_iso_time(&tm, tv->tv_usec, flags, buf, bufsz);
 }
 
@@ -480,9 +480,9 @@ int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz)
 	struct tm tm;
 
 	if (flags & ISO_GMTIME)
-		tm = *gmtime(t);
+		gmtime_r(t, &tm);
 	else
-		tm = *localtime(t);
+		localtime_r(t, &tm);
 	return format_iso_time(&tm, 0, flags, buf, bufsz);
 }
 
