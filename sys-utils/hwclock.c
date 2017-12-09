@@ -556,10 +556,9 @@ display_time(struct timeval hwctime)
 {
 	char buf[ISO_BUFSIZ];
 
-	if (strtimeval_iso(&hwctime, ISO_TIMESTAMP_DOT, buf, sizeof(buf))) {
-		warnx(_("iso-8601 format overflow"));
+	if (strtimeval_iso(&hwctime, ISO_TIMESTAMP_DOT, buf, sizeof(buf)))
 		return EXIT_FAILURE;
-	}
+
 	printf("%s\n", buf);
 	return EXIT_SUCCESS;
 }
