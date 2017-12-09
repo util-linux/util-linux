@@ -460,12 +460,18 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz)
 {
 	struct tm tm;
+	struct tm *rc;
 
 	if (flags & ISO_GMTIME)
-		gmtime_r(&tv->tv_sec, &tm);
+		rc = gmtime_r(&tv->tv_sec, &tm);
 	else
-		localtime_r(&tv->tv_sec, &tm);
-	return format_iso_time(&tm, tv->tv_usec, flags, buf, bufsz);
+		rc = localtime_r(&tv->tv_sec, &tm);
+
+	if (rc)
+		return format_iso_time(&tm, tv->tv_usec, flags, buf, bufsz);
+
+	warnx(_("time %ld is out of range."), tv->tv_sec);
+	return -1;
 }
 
 /* struct tm to ISO 8601 */
@@ -478,12 +484,18 @@ int strtm_iso(struct tm *tm, int flags, char *buf, size_t bufsz)
 int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz)
 {
 	struct tm tm;
+	struct tm *rc;
 
 	if (flags & ISO_GMTIME)
-		gmtime_r(t, &tm);
+		rc = gmtime_r(t, &tm);
 	else
-		localtime_r(t, &tm);
-	return format_iso_time(&tm, 0, flags, buf, bufsz);
+		rc = localtime_r(t, &tm);
+
+	if (rc)
+		return format_iso_time(&tm, 0, flags, buf, bufsz);
+
+	warnx(_("time %ld is out of range."), (long)t);
+	return -1;
 }
 
 /* relative time functions */
