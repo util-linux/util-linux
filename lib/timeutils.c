@@ -406,8 +406,9 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 	int len;
 
 	if (flags & ISO_DATE) {
-		len = snprintf(p, bufsz, "%4d-%.2d-%.2d", tm->tm_year + 1900,
-						tm->tm_mon + 1, tm->tm_mday);
+		len = snprintf(p, bufsz, "%4ld-%.2d-%.2d",
+			       tm->tm_year + (long) 1900,
+			       tm->tm_mon + 1, tm->tm_mday);
 		if (len < 0 || (size_t) len > bufsz)
 			return -1;
 		bufsz -= len;
@@ -423,7 +424,7 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 
 	if (flags & ISO_TIME) {
 		len = snprintf(p, bufsz, "%02d:%02d:%02d", tm->tm_hour,
-						 tm->tm_min, tm->tm_sec);
+			       tm->tm_min, tm->tm_sec);
 		if (len < 0 || (size_t) len > bufsz)
 			return -1;
 		bufsz -= len;
@@ -451,7 +452,7 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 		int zmin  = abs(tmin % 60);
 		len = snprintf(p, bufsz, "%+03d:%02d", zhour,zmin);
 		if (len < 0 || (size_t) len > bufsz)
-		return -1;
+			return -1;
 	}
 	return 0;
 }
