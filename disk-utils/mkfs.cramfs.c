@@ -98,7 +98,7 @@ struct entry {
 	/* stats */
 	unsigned char *name;
 	unsigned int mode, size, uid, gid;
-	unsigned char md5sum[MD5LENGTH];
+	unsigned char md5sum[UL_MD5LENGTH];
 	unsigned char flags;	   /* CRAMFS_EFLAG_* */
 
 	/* FS data */
@@ -194,16 +194,17 @@ do_munmap(char *start, unsigned int size, unsigned int mode){
 /* compute md5sums, so that we do not have to compare every pair of files */
 static void
 mdfile(struct entry *e) {
-	MD5_CTX ctx;
 	char *start;
 
 	start = do_mmap(e->path, e->size, e->mode);
 	if (start == NULL) {
 		e->flags |= CRAMFS_EFLAG_INVALID;
 	} else {
-		MD5Init(&ctx);
-		MD5Update(&ctx, (unsigned char *) start, e->size);
-		MD5Final(e->md5sum, &ctx);
+		UL_MD5_CTX ctx;
+
+		ul_MD5Init(&ctx);
+		ul_MD5Update(&ctx, (unsigned char *) start, e->size);
+		ul_MD5Final(e->md5sum, &ctx);
 
 		do_munmap(start, e->size, e->mode);
 
@@ -255,7 +256,7 @@ static int find_identical_file(struct entry *orig, struct entry *new, loff_t *fs
 
 		if ((orig->flags & CRAMFS_EFLAG_MD5) &&
 		    (new->flags & CRAMFS_EFLAG_MD5) &&
-		    !memcmp(orig->md5sum, new->md5sum, MD5LENGTH) &&
+		    !memcmp(orig->md5sum, new->md5sum, UL_MD5LENGTH) &&
 		    identical_file(orig, new)) {
 			new->same = orig;
 			*fslen_ub -= new->size;
