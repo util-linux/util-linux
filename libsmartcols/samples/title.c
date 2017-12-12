@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
 	static const struct option longopts[] = {
 		{ "maxout", 0, NULL, 'm' },
 		{ "width",  1, NULL, 'w' },
+		{ "help",   1, NULL, 'h' },
+
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -73,8 +75,11 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "mw:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hmw:", longopts, NULL)) != -1) {
 		switch(c) {
+		case 'h':
+			printf("%s [--help | --maxout | --width <num>]\n", program_invocation_short_name);
+			break;
 		case 'm':
 			scols_table_enable_maxout(tb, TRUE);
 			break;
@@ -98,6 +103,12 @@ int main(int argc, char *argv[])
 	scols_cell_set_flags(title, SCOLS_CELL_FL_RIGHT);
 	scols_print_table(tb);
 
+	/* left without padding */
+	scols_cell_set_data(title, "This is left title (without padding)");
+	scols_cell_set_color(title, "yellow");
+	scols_cell_set_flags(title, SCOLS_CELL_FL_LEFT);
+	scols_print_table(tb);
+
 	/* center */
 	sy = scols_new_symbols();
 	if (!sy)
@@ -110,12 +121,13 @@ int main(int argc, char *argv[])
 	scols_cell_set_flags(title, SCOLS_CELL_FL_CENTER);
 	scols_print_table(tb);
 
-	/* left */
+	/* left with padding */
 	scols_symbols_set_title_padding(sy, "-");
 	scols_cell_set_data(title, "This is left title (with padding)");
 	scols_cell_set_color(title, "blue");
 	scols_cell_set_flags(title, SCOLS_CELL_FL_LEFT);
 	scols_print_table(tb);
+
 
 	scols_unref_table(tb);
 	return EXIT_SUCCESS;
