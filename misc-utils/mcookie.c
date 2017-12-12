@@ -176,6 +176,7 @@ int main(int argc, char **argv)
 	if (ctl.maxsz && ctl.nfiles == 0)
 		warnx(_("--max-size ignored when used without --file"));
 
+	ul_MD5Init(&ctl.ctx);
 	randomness_from_files(&ctl);
 	free(ctl.files);
 
