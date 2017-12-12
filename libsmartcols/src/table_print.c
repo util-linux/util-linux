@@ -761,7 +761,7 @@ static int print_title(struct libscols_table *tb)
 {
 	int rc, color = 0;
 	mbs_align_t align;
-	size_t width, bufsz, titlesz;
+	size_t width, len = 0, bufsz, titlesz;
 	char *title = NULL, *buf = NULL;
 
 	assert(tb);
@@ -773,7 +773,7 @@ static int print_title(struct libscols_table *tb)
 
 	/* encode data */
 	if (tb->no_encode) {
-		bufsz = strlen(tb->title.data) + 1;
+		len = bufsz = strlen(tb->title.data) + 1;
 		buf = strdup(tb->title.data);
 		if (!buf) {
 			rc = -ENOMEM;
@@ -791,8 +791,8 @@ static int print_title(struct libscols_table *tb)
 			goto done;
 		}
 
-		if (!mbs_safe_encode_to_buffer(tb->title.data, &bufsz, buf, NULL) ||
-		    !bufsz || bufsz == (size_t) -1) {
+		if (!mbs_safe_encode_to_buffer(tb->title.data, &len, buf, NULL) ||
+		    !len || len == (size_t) -1) {
 			rc = -EINVAL;
 			goto done;
 		}
@@ -818,6 +818,14 @@ static int print_title(struct libscols_table *tb)
 	case SCOLS_CELL_FL_LEFT:
 	default:
 		align = MBS_ALIGN_LEFT;
+		/*
+		 * Don't print extra blank chars after the title if on left
+		 * (that's same as we use for the last column in the table).
+		 */
+		if (len < width
+		    && !scols_table_is_maxout(tb)
+		    && isblank(*titlepadding_symbol(tb)))
+			width = len;
 		break;
 
 	}
