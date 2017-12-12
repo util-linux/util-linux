@@ -589,15 +589,15 @@ void uuid_generate_md5(uuid_t out, const uuid_t ns, const char *name, size_t len
  */
 void uuid_generate_sha1(uuid_t out, const uuid_t ns, const char *name, size_t len)
 {
-	SHA1_CTX ctx;
-	char hash[SHA1LENGTH];
+	UL_SHA1_CTX ctx;
+	char hash[UL_SHA1LENGTH];
 
-	SHA1Init(&ctx);
+	ul_SHA1Init(&ctx);
 	/* hash concatenation of well-known UUID with name */
-	SHA1Update(&ctx, ns, sizeof(uuid_t));
-	SHA1Update(&ctx, (const unsigned char *)name, len);
+	ul_SHA1Update(&ctx, ns, sizeof(uuid_t));
+	ul_SHA1Update(&ctx, (const unsigned char *)name, len);
 
-	SHA1Final((unsigned char *)hash, &ctx);
+	ul_SHA1Final((unsigned char *)hash, &ctx);
 
 	memcpy(out, hash, sizeof(uuid_t));
 
