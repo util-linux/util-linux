@@ -130,19 +130,21 @@ struct hfsplus_vol_header {
 
 static int hfs_set_uuid(blkid_probe pr, unsigned char const *hfs_info, size_t len)
 {
-	static unsigned char const hash_init[MD5LENGTH] = {
+	static unsigned char const hash_init[UL_MD5LENGTH] = {
 		0xb3, 0xe2, 0x0f, 0x39, 0xf2, 0x92, 0x11, 0xd6,
 		0x97, 0xa4, 0x00, 0x30, 0x65, 0x43, 0xec, 0xac
 	};
-	unsigned char uuid[MD5LENGTH];
-	struct MD5Context md5c;
+	unsigned char uuid[UL_MD5LENGTH];
+	struct UL_MD5Context md5c;
 
 	if (memcmp(hfs_info, "\0\0\0\0\0\0\0\0", len) == 0)
 		return -1;
-	MD5Init(&md5c);
-	MD5Update(&md5c, hash_init, MD5LENGTH);
-	MD5Update(&md5c, hfs_info, len);
-	MD5Final(uuid, &md5c);
+
+	ul_MD5Init(&md5c);
+	ul_MD5Update(&md5c, hash_init, UL_MD5LENGTH);
+	ul_MD5Update(&md5c, hfs_info, len);
+	ul_MD5Final(uuid, &md5c);
+
 	uuid[6] = 0x30 | (uuid[6] & 0x0f);
 	uuid[8] = 0x80 | (uuid[8] & 0x3f);
 	return blkid_probe_set_uuid(pr, uuid);

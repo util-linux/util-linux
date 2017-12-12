@@ -41,7 +41,7 @@ enum {
 };
 
 struct mcookie_control {
-	struct	MD5Context ctx;
+	struct	UL_MD5Context ctx;
 	char	**files;
 	size_t	nfiles;
 	uint64_t maxsz;
@@ -67,12 +67,12 @@ static uint64_t hash_file(struct mcookie_control *ctl, int fd)
 		r = read_all(fd, (char *) buf, rdsz);
 		if (r < 0)
 			break;
-		MD5Update(&ctl->ctx, buf, r);
+		ul_MD5Update(&ctl->ctx, buf, r);
 		count += r;
 	}
 	/* Separate files with a null byte */
 	buf[0] = '\0';
-	MD5Update(&ctl->ctx, buf, 1);
+	ul_MD5Update(&ctl->ctx, buf, 1);
 	return count;
 }
 
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 {
 	struct mcookie_control ctl = { .verbose = 0 };
 	size_t i;
-	unsigned char digest[MD5LENGTH];
+	unsigned char digest[UL_MD5LENGTH];
 	unsigned char buf[RAND_BYTES];
 	int c;
 
@@ -180,14 +180,14 @@ int main(int argc, char **argv)
 	free(ctl.files);
 
 	random_get_bytes(&buf, RAND_BYTES);
-	MD5Update(&ctl.ctx, buf, RAND_BYTES);
+	ul_MD5Update(&ctl.ctx, buf, RAND_BYTES);
 	if (ctl.verbose)
 		fprintf(stderr, P_("Got %d byte from %s\n",
 				   "Got %d bytes from %s\n", RAND_BYTES),
 				RAND_BYTES, random_tell_source());
 
-	MD5Final(digest, &ctl.ctx);
-	for (i = 0; i < MD5LENGTH; i++)
+	ul_MD5Final(digest, &ctl.ctx);
+	for (i = 0; i < UL_MD5LENGTH; i++)
 		printf("%02x", digest[i]);
 	putchar('\n');
 

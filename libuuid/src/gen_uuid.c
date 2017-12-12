@@ -564,15 +564,15 @@ void uuid_generate(uuid_t out)
  */
 void uuid_generate_md5(uuid_t out, const uuid_t ns, const char *name, size_t len)
 {
-	MD5_CTX ctx;
-	char hash[MD5LENGTH];
+	UL_MD5_CTX ctx;
+	char hash[UL_MD5LENGTH];
 
-	MD5Init(&ctx);
+	ul_MD5Init(&ctx);
 	/* hash concatenation of well-known UUID with name */
-	MD5Update(&ctx, ns, sizeof(uuid_t));
-	MD5Update(&ctx, (const unsigned char *)name, len);
+	ul_MD5Update(&ctx, ns, sizeof(uuid_t));
+	ul_MD5Update(&ctx, (const unsigned char *)name, len);
 
-	MD5Final((unsigned char *)hash, &ctx);
+	ul_MD5Final((unsigned char *)hash, &ctx);
 
 	memcpy(out, hash, sizeof(uuid_t));
 
