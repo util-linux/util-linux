@@ -862,14 +862,22 @@ static int day_in_year(int day, int month, int32_t year)
  */
 static int day_in_week(int day, int month, int32_t year)
 {
-	static const int reform[] = {
-		SUNDAY, WEDNESDAY, TUESDAY, FRIDAY, SUNDAY, WEDNESDAY,
-		FRIDAY, MONDAY, THURSDAY, SATURDAY, TUESDAY, THURSDAY
-	};
-	static const int old[] = {
-		FRIDAY, MONDAY, SUNDAY, WEDNESDAY, FRIDAY, MONDAY,
-		WEDNESDAY, SATURDAY, TUESDAY, THURSDAY, SUNDAY, TUESDAY
-	};
+	/* This leaves us to explain the ‘magic’ values for 'e'. Let us look at
+	 * the following table with the number d(m) of days in a month, the sum
+	 * e(m) of days for the previous months (number of days from begin of
+	 * the year for non leap years only) and their values modulo 7:
+	 *
+	 *    m     1  2  3  4   5   6   7   8   9  10  11  12
+	 *   d(m)  31 28 31 30  31  30  31  31  30  31  30  31
+	 *   e(m)   0 31 59 90 120 151 181 212 243 273 304 334
+	 * (mod 7)  0  3  3  6   1   4   6   2   5   0   3   5
+	 *
+	 * The ‘magic’ value is e=e(m) for the months m=1,2 and e=e(m)−1 for
+	 * the other months.
+	 */
+	static const int reform[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+	static const int old[]    = { 5, 1, 0, 3, 5, 1, 3, 6, 2, 4, 0, 2 };
+
 	if (year != REFORMATION_YEAR + 1)
 		year -= month < MARCH;
 	else
