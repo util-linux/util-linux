@@ -2,6 +2,10 @@
 NAME DATA
 foo  bla bla bla
 bar  alb alb alb
+This is left title (without padding)
+NAME DATA
+foo  bla bla bla
+bar  alb alb alb
 =======================This is center title (with padding)======================
 NAME DATA
 foo  bla bla bla
