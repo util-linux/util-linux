@@ -455,7 +455,7 @@ static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
 	DBG(SEARCH, ul_debug("lookup dirs for '%s' (%s), want: %s %s %s",
 				patbuf, pattern,
 				want & BIN_DIR ? "bin" : "",
-				want & MAN_DIR ? "min" : "",
+				want & MAN_DIR ? "man" : "",
 				want & SRC_DIR ? "src" : ""));
 	p = strrchr(patbuf, '.');
 	if (p)
