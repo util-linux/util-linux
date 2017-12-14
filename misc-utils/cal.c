@@ -531,9 +531,13 @@ int main(int argc, char **argv)
 	return EXIT_SUCCESS;
 }
 
+/* leap year -- account for gregorian reformation in 1752 */
 static int leap_year(int32_t year)
 {
-	return ( !(year % 4) && (year % 100) ) || !(year % 400);
+	if (year <= REFORMATION_YEAR)
+		return !(year % 4);
+	else
+		return ( !(year % 4) && (year % 100) ) || !(year % 400);
 }
 
 static void init_monthnames(struct cal_control *ctl)
