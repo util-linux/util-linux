@@ -19,11 +19,6 @@
 #define node(i, j)         ((i)->d + (j))
 #define end(i)             node(i, le16_to_cpu((i)->keys))
 
-static const char bcache_magic[] = {
-	0xc6, 0x85, 0x73, 0xf6, 0x4e, 0x1a, 0x45, 0xca,
-	0x82, 0x65, 0xf5, 0x7f, 0x48, 0xba, 0x6d, 0x81
-};
-
 struct bcache_super_block {
 	uint64_t		csum;
 	uint64_t		offset;	/* sector where this sb was written */
@@ -76,9 +71,9 @@ struct bcache_super_block {
 };
 
 /* magic string */
-#define BCACHE_SB_MAGIC     bcache_magic
+#define BCACHE_SB_MAGIC     "\xc6\x85\x73\xf6\x4e\x1a\x45\xca\x82\x65\xf5\x7f\x48\xba\x6d\x81"
 /* magic string len */
-#define BCACHE_SB_MAGIC_LEN sizeof (bcache_magic)
+#define BCACHE_SB_MAGIC_LEN (sizeof(BCACHE_SB_MAGIC) - 1)
 /* super block offset */
 #define BCACHE_SB_OFF       0x1000
 /* supper block offset in kB */
@@ -111,11 +106,12 @@ const struct blkid_idinfo bcache_idinfo =
 	.minsz		= 8192,
 	.magics		=
 	{
-		{ .magic = BCACHE_SB_MAGIC
-		, .len   = BCACHE_SB_MAGIC_LEN
-		, .kboff = BCACHE_SB_KBOFF
-		, .sboff = BCACHE_SB_MAGIC_OFF
-		} ,
+		{
+			.magic = BCACHE_SB_MAGIC,
+			.len   = BCACHE_SB_MAGIC_LEN,
+			.kboff = BCACHE_SB_KBOFF,
+			.sboff = BCACHE_SB_MAGIC_OFF
+		},
 		{ NULL }
 	}
 };
