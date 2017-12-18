@@ -866,19 +866,23 @@ static int day_in_year(int day, int month, int32_t year)
  */
 static int day_in_week(int day, int month, int32_t year)
 {
-	/* This leaves us to explain the ‘magic’ values for 'e'. Let us look at
-	 * the following table with the number d(m) of days in a month, the sum
-	 * e(m) of days for the previous months (number of days from begin of
-	 * the year for non leap years only) and their values modulo 7:
-	 *
-	 *    m     1  2  3  4   5   6   7   8   9  10  11  12
-	 *   d(m)  31 28 31 30  31  30  31  31  30  31  30  31
-	 *   e(m)   0 31 59 90 120 151 181 212 243 273 304 334
-	 * (mod 7)  0  3  3  6   1   4   6   2   5   0   3   5
-	 *
-	 * The ‘magic’ value is e=e(m) for the months m=1,2 and e=e(m)−1 for
-	 * the other months.
-	 */
+	/*
+	* The magic constants in the reform[] array are, in a simplified
+	* sense, the remaining days after slicing into one week periods the total
+	* days from the beginning of the year to the target month. That is,
+	* weeks + reform[] days gets us to the target month. The exception is,
+	* that for the months past February 'DOY - 1' must be used.
+	*
+	*   DoY (Day of Year): total days to the target month
+	*
+	*   Month            1  2  3  4   5   6   7   8   9  10  11  12
+	*   DoY              0 31 59 90 120 151 181 212 243 273 304 334
+	*   DoY % 7          0  3
+	*   DoY - 1 % 7      - --  2  5   0   3   5   1   4   6   2   4
+	*       reform[] = { 0, 3, 2, 5,  0,  3,  5,  1,  4,  6,  2,  4 };
+	*
+	*  Note: these calculations are for non leap years.
+	*/
 	static const int reform[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
 	static const int old[]    = { 5, 1, 0, 3, 5, 1, 3, 6, 2, 4, 0, 2 };
 
