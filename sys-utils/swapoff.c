@@ -14,8 +14,7 @@
 #include "swapprober.h"
 #include "swapon-common.h"
 
-#ifndef SWAPON_HAS_TWO_ARGS
-/* libc is insane, let's call the kernel */
+#if !defined(HAVE_SWAPOFF) && defined(SYS_swapoff)
 # include <sys/syscall.h>
 # define swapoff(path) syscall(SYS_swapoff, path)
 #endif

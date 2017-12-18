@@ -343,20 +343,6 @@ AC_CHECK_MEMBERS([struct termios.c_line],,,
 AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
 	[#include <sys/stat.h>])
 
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
-[[
-#ifdef HAVE_SYS_SWAP_H
-# include <sys/swap.h>
-#endif
-#include <unistd.h>
-]],
-[[swapon("/dev/null", 0);]])],
-[AC_DEFINE([SWAPON_HAS_TWO_ARGS], [1], [Is swapon() declared with two parameters?])
-],
-[AC_MSG_NOTICE([Your libc thinks that swapon has 1 arg only.])
-])
-
-
 AC_CHECK_DECLS([_NL_TIME_WEEK_1STDAY],[],[],[[#include <langinfo.h>]])
 
 AC_CHECK_DECL([llseek],
@@ -1431,10 +1417,14 @@ AM_CONDITIONAL([BUILD_FSTRIM], [test "x$build_fstrim" = xyes])
 
 UL_BUILD_INIT([swapon], [check])
 UL_REQUIRES_LINUX([swapon])
+UL_REQUIRES_SYSCALL_CHECK([swapon], [UL_CHECK_SYSCALL([swapon])], [swapon])
+UL_REQUIRES_SYSCALL_CHECK([swapon], [UL_CHECK_SYSCALL([swapoff])], [swapoff])
 UL_REQUIRES_BUILD([swapon], [libblkid])
 UL_REQUIRES_BUILD([swapon], [libmount])
 UL_REQUIRES_BUILD([swapon], [libsmartcols])
 AM_CONDITIONAL([BUILD_SWAPON], [test "x$build_swapon" = xyes])
+AC_CHECK_FUNCS([swapon])
+AC_CHECK_FUNCS([swapoff])
 
 
 UL_BUILD_INIT([lsblk], [check])

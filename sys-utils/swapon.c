@@ -59,8 +59,7 @@
 # define SWAP_FLAG_PRIO_SHIFT	0
 #endif
 
-#ifndef SWAPON_HAS_TWO_ARGS
-/* libc is insane, let's call the kernel */
+#if !defined(HAVE_SWAPON) && defined(SYS_swapon)
 # include <sys/syscall.h>
 # define swapon(path, flags) syscall(SYS_swapon, path, flags)
 #endif
