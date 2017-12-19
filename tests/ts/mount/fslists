@@ -71,7 +71,7 @@ ts_finalize_subtest
 
 ts_init_subtest "type-pattern"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -t nofoo,bar $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT -i -t nofoo,bar $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $TS_MOUNTPOINT
 ts_log "Success"
@@ -80,7 +80,7 @@ ts_finalize_subtest
 
 ts_init_subtest "type-pattern-neg"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -t nofoo,bar,ext3,ext2,ext4 $DEVICE $TS_MOUNTPOINT &> /dev/null
+$TS_CMD_MOUNT -i -t nofoo,bar,ext3,ext2,ext4 $DEVICE $TS_MOUNTPOINT &> /dev/null
 ts_is_mounted $DEVICE && ts_die "$DEVICE unexpectedly mounted"
 ts_log "Success"
 ts_finalize_subtest
