@@ -1,0 +1,87 @@
+util-linux 2.31.1 Release Notes
+===============================
+
+bash-completion:
+   - Exclude /dev/fd from fsck find  [Kevin Locke]
+blkid:
+   - Add support for LUKS2 and new LABEL attributes.  [Milan Broz]
+blockdev:
+   - be more explicit for BLKSSZ in blockdev.8  [Karel Zak]
+build-sys:
+   - move rfkill to /usr/sbin  [Karel Zak]
+column:
+   - use \x<hex> for invalid multibyte seq.  [Karel Zak]
+dmesg:
+   - add note about -F format to the man page  [Karel Zak]
+docs:
+   - improve setarch(8) manual page  [Sami Kerola]
+   - update AUTHORS file  [Karel Zak]
+fincore:
+   - fix a typo in fincore.1  [Masatake YAMATO]
+fsck.cramfs:
+   - Fix bus error on broken file system.  [Tobias Stoeckmann]
+hwclock:
+   - add iso-8601 overflow check  [J William Piggott]
+   - fix debug regression  [J William Piggott]
+   - revert ioctl test  [Karel Zak]
+lib/mbsalign:
+   - add mbs_invalid_encode()  [Karel Zak]
+lib/md5:
+   - use ul_/UL_ prefix  [Karel Zak]
+lib/sha1:
+   - use ul_/UL_prefix for symbols  [Karel Zak]
+lib/timeutils:
+   - ISO_8601_BUFSIZ too small  [J William Piggott]
+libblkid:
+   - vfat  Fix reading labels which starts with byte 0x05  [Pali Rohár]
+libfdisk:
+   - (sun) enhance searching of free space  [Mikhail Vorobyov]
+   - (sun) fix creation of whole disk partition  [Mikhail Vorobyov]
+   - (sun) move aligning of the first sector before availability check  [Mikhail Vorobyov]
+   - Fix uninitialized structure  [Roddy Shuler]
+libmount:
+   - Allow MNT_FORCE and MNT_DETACH at umount  [Joshua Watt]
+   - add nsfs between pseudo filesystems  [Karel Zak]
+libsmartcols:
+   - don't add blank padding after left aligned title  [Karel Zak]
+lsblk:
+   - add hint about perms to man page  [Karel Zak]
+lscpu:
+   - Treat read failure on Xen Hypervisor properties as non-fatal  [Dirk Mueller]
+lslocks:
+   - add note about OFDLCK  [Karel Zak]
+man:
+   - use long options in text and add example to uuidgen  [Sami Kerola]
+mcookie:
+   - properly initialize hash  [Karel Zak]
+md5:
+   - declare byteReverse as static  [Luca Ceresoli]
+misc:
+   - fix typos  [Sami Kerola]
+mount:
+   - add hint about -t and root perms to the man page  [Karel Zak]
+   - add more details about UUIDs and LABELs to the man page  [Karel Zak]
+nsenter:
+   - fix compiler warning [-Wuninitialized]  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Písař]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+rtcwake:
+   - add note about HW and sleep to the man page  [Karel Zak]
+   - fix sys vs. rtc time delta usage  [Karel Zak]
+sample-scols-title:
+   - add left title without padding  [Karel Zak]
+sfdisk:
+   - create empty label on 'write' command  [Karel Zak]
+test_sha1:
+   - update helper  [Karel Zak]
+tests:
+   - add LUKS test images  [Milan Broz]
+   - add fsck.cramfs bad-header test  [Karel Zak]
+   - don't use mount.<type> helpers in mount-by-pattern tests  [Karel Zak]
+   - update columns test due to dda229c7b2b16a31fae8e99079ab4f4ae5bc8eac  [Karel Zak]
+   - update libsmartcols/title  [Karel Zak]
+vipw:
+   - do not let editor to inherit open file descriptors  [Sami Kerola]
