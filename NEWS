@@ -1,3 +1,7 @@
+util-linux 2.31.1: Dec 19 2017
+* see Documentation/releases/v2.31.1-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.31/v2.31.1-ChangeLog
+
 util-linux 2.31: Oct 19 2017
 * see Documentation/releases/v2.31-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.31/v2.31-ChangeLog
