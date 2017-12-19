@@ -420,7 +420,7 @@ static int gpt_entry_set_name(struct gpt_entry *e, char *str)
 	for (i = 0; i < GPT_PART_NAME_LEN; i++)
 		e->name[i] = cpu_to_le16(name[i]);
 
-	return 0;
+	return (int)((char *) in - str);
 }
 
 static int gpt_entry_set_uuid(struct gpt_entry *e, char *str)
@@ -1900,11 +1900,14 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	}
 
 	if (pa->name) {
+		int len;
 		char *old = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
-		gpt_entry_set_name(e, pa->name);
-
-		fdisk_info(cxt, _("Partition name changed from '%s' to '%.*s'."),
-			old, (int) GPT_PART_NAME_LEN, pa->name);
+		len = gpt_entry_set_name(e, pa->name);
+		if (len < 0)
+			fdisk_info(cxt, _("Failed to translate partition name, name not changed."));
+		else
+			fdisk_info(cxt, _("Partition name changed from '%s' to '%.*s'."),
+				old, len, pa->name);
 		free(old);
 	}
 
