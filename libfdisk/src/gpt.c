@@ -382,19 +382,45 @@ static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *uuid)
 	DBG(LABEL, gpt_debug_uuid("new type", uuid));
 }
 
-static void gpt_entry_set_name(struct gpt_entry *e, char *str)
+static int gpt_entry_set_name(struct gpt_entry *e, char *str)
 {
-	char name[GPT_PART_NAME_LEN] = { 0 };
-	size_t i, sz = strlen(str);
+	uint16_t name[GPT_PART_NAME_LEN] = { 0 };
+	size_t i, mblen = 0;
+	uint8_t *in = (uint8_t *) str;
 
-	if (sz) {
-		if (sz > GPT_PART_NAME_LEN)
-			sz = GPT_PART_NAME_LEN;
-		memcpy(name, str, sz);
+	for (i = 0; *in && i < GPT_PART_NAME_LEN; in++) {
+		if (!mblen) {
+			if (!(*in & 0x80)) {
+				name[i++] = *in;
+			} else if ((*in & 0xE0) == 0xC0) {
+				mblen = 1;
+				name[i] = (uint16_t)(*in & 0x1F) << (mblen *6);
+			} else if ((*in & 0xF0) == 0xE0) {
+				mblen = 2;
+				name[i] = (uint16_t)(*in & 0x0F) << (mblen *6);
+			} else {
+				/* broken UTF-8 or code point greater than U+FFFF */
+				return -EILSEQ;
+			}
+		} else {
+			/* incomplete UTF-8 sequence */
+			if ((*in & 0xC0) != 0x80)
+				return -EILSEQ;
+
+			name[i] |= (uint16_t)(*in & 0x3F) << (--mblen *6);
+			if (!mblen) {
+				/* check for code points reserved for surrogate pairs*/
+				if ((name[i] & 0xF800) == 0xD800)
+					return -EILSEQ;
+				i++;
+			}
+		}
 	}
 
 	for (i = 0; i < GPT_PART_NAME_LEN; i++)
-		e->name[i] = cpu_to_le16((uint16_t) name[i]);
+		e->name[i] = cpu_to_le16(name[i]);
+
+	return (int)((char *) in - str);
 }
 
 static int gpt_entry_set_uuid(struct gpt_entry *e, char *str)
@@ -1608,9 +1634,10 @@ static char *encode_to_utf8(unsigned char *src, size_t count)
 {
 	uint16_t c;
 	char *dest;
-	size_t i, j, len = count;
+	size_t i, j;
+	size_t len = count * 3 / 2;
 
-	dest = calloc(1, count);
+	dest = calloc(1, len + 1);
 	if (!dest)
 		return NULL;
 
@@ -1618,26 +1645,24 @@ static char *encode_to_utf8(unsigned char *src, size_t count)
 		/* always little endian */
 		c = (src[i+1] << 8) | src[i];
 		if (c == 0) {
-			dest[j] = '\0';
 			break;
 		} else if (c < 0x80) {
-			if (j+1 >= len)
+			if (j+1 > len)
 				break;
 			dest[j++] = (uint8_t) c;
 		} else if (c < 0x800) {
-			if (j+2 >= len)
+			if (j+2 > len)
 				break;
 			dest[j++] = (uint8_t) (0xc0 | (c >> 6));
 			dest[j++] = (uint8_t) (0x80 | (c & 0x3f));
 		} else {
-			if (j+3 >= len)
+			if (j+3 > len)
 				break;
 			dest[j++] = (uint8_t) (0xe0 | (c >> 12));
 			dest[j++] = (uint8_t) (0x80 | ((c >> 6) & 0x3f));
 			dest[j++] = (uint8_t) (0x80 | (c & 0x3f));
 		}
 	}
-	dest[j] = '\0';
 
 	return dest;
 }
@@ -1875,11 +1900,14 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	}
 
 	if (pa->name) {
+		int len;
 		char *old = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
-		gpt_entry_set_name(e, pa->name);
-
-		fdisk_info(cxt, _("Partition name changed from '%s' to '%.*s'."),
-			old, (int) GPT_PART_NAME_LEN, pa->name);
+		len = gpt_entry_set_name(e, pa->name);
+		if (len < 0)
+			fdisk_info(cxt, _("Failed to translate partition name, name not changed."));
+		else
+			fdisk_info(cxt, _("Partition name changed from '%s' to '%.*s'."),
+				old, len, pa->name);
 		free(old);
 	}
 

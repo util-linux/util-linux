@@ -54,7 +54,7 @@ size_t mbs_safe_nwidth(const char *buf, size_t bufsz, size_t *sz)
 		last = p + (bufsz - 1);
 
 	while (p && *p && p <= last) {
-		if (iscntrl((unsigned char) *p)) {
+		if (*p == '\\' || iscntrl((unsigned char) *p)) {
 			width += 4, bytes += 4;		/* *p encoded to \x?? */
 			p++;
 		}
@@ -135,7 +135,7 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, const c
 			continue;
 		}
 
-		if (iscntrl((unsigned char) *p)) {
+		if (*p == '\\' || iscntrl((unsigned char) *p)) {
 			sprintf(r, "\\x%02x", (unsigned char) *p);
 			r += 4;
 			*width += 4;
