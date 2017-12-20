@@ -1904,7 +1904,7 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 		char *old = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
 		len = gpt_entry_set_name(e, pa->name);
 		if (len < 0)
-			fdisk_info(cxt, _("Failed to translate partition name, name not changed."));
+			fdisk_warn(cxt, _("Failed to translate partition name, name not changed."));
 		else
 			fdisk_info(cxt, _("Partition name changed from '%s' to '%.*s'."),
 				old, len, pa->name);
