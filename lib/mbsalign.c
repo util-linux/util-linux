@@ -223,6 +223,9 @@ char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf)
 #ifdef HAVE_WIDECHAR
 		wchar_t wc;
 		size_t len = mbrtowc(&wc, p, MB_CUR_MAX, &st);
+#else
+		size_t len = 1;
+#endif
 
 		if (len == 0)
 			break;		/* end of string */
@@ -251,10 +254,6 @@ char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf)
 			*width += wcwidth(wc);
 		}
 		p += len;
-#else
-		*r++ = *p++;
-		(*width)++;
-#endif
 	}
 
 	*r = '\0';
