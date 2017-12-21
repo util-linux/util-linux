@@ -1,0 +1,62 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2018 Vaclav Dolezal <vdolezal@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="mbsencode"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+STRINGS=(
+# ASCII
+	$'foo\tbar baz'
+	 '\\foo.local\bar'
+	 '\\foo.local\xbar'
+
+# UNICODE
+	 'über'
+	$'c\xcc\x8ca\xcc\x81rka' # 'c\u030Ca\u0301rka'
+	 'Москва́'
+	 '北京'
+	$'\xf0\x9f\x90\xb1' # \U0001F431
+
+# INVALID UNICODE
+	$'\xff'
+	$'\xe8\xe1\xf9\xa7'
+)
+
+ts_init_subtest "safe-ascii"
+$TS_HELPER_MBSENCODE --safe "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "invalid-ascii"
+$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "safe-utf8"
+LC_ALL=C.UTF-8 \
+$TS_HELPER_MBSENCODE --safe "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "invalid-utf8"
+LC_ALL=C.UTF-8 \
+$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_finalize
+
