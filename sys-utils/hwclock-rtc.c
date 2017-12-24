@@ -124,7 +124,7 @@ static int open_rtc(const struct hwclock_control *ctl)
 		rtc_dev_fd = open(rtc_dev_name, O_RDONLY);
 	} else {
 		for (i = 0; i < ARRAY_SIZE(fls); i++) {
-			if (ctl->debug)
+			if (ctl->verbose)
 				printf(_("Trying to open: %s\n"), fls[i]);
 			rtc_dev_fd = open(fls[i], O_RDONLY);
 
@@ -208,7 +208,7 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 	int rc;
 	struct timeval begin, now;
 
-	if (ctl->debug) {
+	if (ctl->verbose) {
 		printf("ioctl(%d, RTC_UIE_ON, 0): %s\n",
 		       rtc_fd, strerror(errno));
 		printf(_("Waiting in loop for time from %s to change\n"),
@@ -358,7 +358,7 @@ static int set_hardware_clock_rtc(const struct hwclock_control *ctl,
 		hwclock_exit(ctl, EXIT_FAILURE);
 	}
 
-	if (ctl->debug)
+	if (ctl->verbose)
 		printf(_("ioctl(%s) was successful.\n"), ioctlname);
 
 	return 0;
@@ -407,7 +407,7 @@ int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p)
 		return 1;
 	}
 
-	if (ctl->debug)
+	if (ctl->verbose)
 		printf(_("ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"),
 		       rtc_fd, rtc_dev_name);
 
@@ -442,7 +442,7 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 		return 1;
 	}
 
-	if (ctl->debug)
+	if (ctl->verbose)
 		printf(_("ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"),
 		       rtc_fd, epoch, rtc_dev_name);
 

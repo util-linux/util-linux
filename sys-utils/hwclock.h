@@ -18,7 +18,7 @@ struct hwclock_control {
 #ifdef __linux__
 	char *rtc_dev_name;
 #endif
-	unsigned int debug;
+	unsigned int verbose;
 	unsigned int
 		hwaudit_on:1,
 		adjust:1,
@@ -54,7 +54,6 @@ extern struct clock_ops *probe_for_cmos_clock(void);
 extern struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl);
 
 /* hwclock.c */
-extern int debug;
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
 
 /* rtc.c */

@@ -2,6 +2,18 @@ The following is a list of commands or features that are deprecated.  All
 deprecated utils are in maintenance mode and we keep them in source tree for
 backward compatibility only.
 
+what:  hwclock --debug
+why:   renamed to --verbose, and may be repurposed later.
+since: v2.32
+
+--------------------------
+
+what:  hwclock -v for version
+why:   renamed to -V
+since: v2.20 (was repurposed to verbose in v2.32)
+
+--------------------------
+
 what:  column --columns
 why:   renamed to --output-width
 since: v2.30

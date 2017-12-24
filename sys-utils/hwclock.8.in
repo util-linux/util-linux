@@ -281,10 +281,9 @@ parameters should be observed.
 .
 .TP
 .BR \-D ", " \-\-debug
-Display a lot of information about what
-.B \%hwclock
-is doing internally.  Some of its functions are complex and this output
-can help you understand how the program works.
+.RB Use\  \-\-verbose .
+.RB The\  \%\-\-debug\  option
+has been deprecated and may be repurposed or removed in a future release.
 .
 .TP
 .B \-\-directisa
@@ -374,7 +373,7 @@ must be specified when using this option.
 .B \-\-test
 Do not actually change anything on the system, that is, the Clocks or
 .I @ADJTIME_PATH@
-.RB ( \%\-\-debug
+.RB ( \%\-\-verbose
 is implicit with this option).
 .
 .TP
@@ -429,6 +428,12 @@ power failure.  In that case, the clock must first be set without this
 option.  Despite it not working, the resulting drift correction factor
 would be invalid anyway.
 .RE
+.
+.TP
+.BR \-v ", " \-\-verbose
+Display more details about what
+.B \%hwclock
+is doing internally.
 .
 .SH NOTES
 .
