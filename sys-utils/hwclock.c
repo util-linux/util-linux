@@ -84,6 +84,9 @@
 static int hwaudit_fd = -1;
 #endif
 
+UL_DEBUG_DEFINE_MASK(hwclock);
+UL_DEBUG_DEFINE_MASKNAMES(hwclock) = UL_DEBUG_EMPTY_MASKNAMES;
+
 /* The struct that holds our hardware access routines */
 static struct clock_ops *ur;
 
@@ -119,6 +122,23 @@ struct adjtime {
 	 * hardware clock.
 	 */
 };
+
+static void hwclock_init_debug(const char *str)
+{
+	__UL_INIT_DEBUG_FROM_STRING(hwclock, HWCLOCK_DEBUG_, 0, str);
+
+	DBG(INIT, ul_debug("hwclock debug mask: 0x%04x", hwclock_debug_mask));
+	DBG(INIT, ul_debug("hwclock version: %s", PACKAGE_STRING));
+}
+
+/* FOR TESTING ONLY: inject random delays of up to 1000ms */
+static void up_to_1000ms_sleep(void)
+{
+	int usec = random() % 1000000;
+
+	DBG(RANDOM_SLEEP, ul_debug("sleeping ~%d usec", usec));
+	xusleep(usec);
+}
 
 /*
  * time_t to timeval conversion.
@@ -473,12 +493,7 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 	while (1) {
 		double ticksize;
 
-		/* FOR TESTING ONLY: inject random delays of up to 1000ms */
-		if (ctl->verbose >= 10) {
-			int usec = random() % 1000000;
-			printf(_("sleeping ~%d usec\n"), usec);
-			xusleep(usec);
-		}
+		ON_DBG(RANDOM_SLEEP, up_to_1000ms_sleep());
 
 		gettimeofday(&nowsystime, NULL);
 		deltavstarget = time_diff(nowsystime, targetsystime);
@@ -494,13 +509,11 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 			/* The retarget is handled at the end of the loop. */
 		} else if (deltavstarget < 0) {
 			/* deltavstarget < 0 if current time < target time */
-			if (ctl->verbose >= 9)
-				printf(_("%ld.%06ld < %ld.%06ld (%.6f)\n"),
-				       nowsystime.tv_sec,
-				       nowsystime.tv_usec,
-				       targetsystime.tv_sec,
-				       targetsystime.tv_usec,
-				       deltavstarget);
+			DBG(DELTA_VS_TARGET,
+			    ul_debug("%ld.%06ld < %ld.%06ld (%.6f)",
+				     nowsystime.tv_sec, nowsystime.tv_usec,
+				     targetsystime.tv_sec,
+				     targetsystime.tv_usec, deltavstarget));
 			continue;  /* not there yet - keep spinning */
 		} else if (deltavstarget <= target_time_tolerance_secs) {
 			/* Close enough to the target time; done waiting. */
@@ -1125,6 +1138,7 @@ int main(int argc, char **argv)
 		{ "version",      no_argument,       NULL, 'V'            },
 		{ "systohc",      no_argument,       NULL, 'w'            },
 		{ "debug",        no_argument,       NULL, 'D'            },
+		{ "ul-debug",     required_argument, NULL, 'd'            },
 		{ "verbose",      no_argument,       NULL, 'v'            },
 		{ "set",          no_argument,       NULL, OPT_SET        },
 #if defined(__linux__) && defined(__alpha__)
@@ -1187,7 +1201,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-				"hvVDalrsuwf:", longopts, NULL)) != -1) {
+				"hvVDd:alrsuwf:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1196,7 +1210,10 @@ int main(int argc, char **argv)
 			warnx(_("use --verbose, --debug has been deprecated."));
 			break;
 		case 'v':
-			ctl.verbose++;
+			ctl.verbose = 1;
+			break;
+		case 'd':
+			hwclock_init_debug(optarg);
 			break;
 		case 'a':
 			ctl.adjust = 1;
@@ -1249,7 +1266,7 @@ int main(int argc, char **argv)
 			break;
 		case OPT_TEST:
 			ctl.testing = 1;	/* --test */
-			ctl.verbose++;
+			ctl.verbose = 1;
 			break;
 		case OPT_DATE:
 			ctl.date_opt = optarg;	/* --date */
