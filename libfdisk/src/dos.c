@@ -2490,7 +2490,7 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	lb->geom_min.cylinders = 1;
 
 	lb->geom_max.sectors = 63;
-	lb->geom_max.heads = 256;
+	lb->geom_max.heads = 255;
 	lb->geom_max.cylinders = 1048576;
 
 	return lb;
