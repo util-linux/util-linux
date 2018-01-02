@@ -321,6 +321,13 @@ extern int fdisk_locate_disklabel(struct fdisk_context *cxt, int n,
 				  uint64_t *offset,
 				  size_t *size);
 
+extern int fdisk_label_get_geomrange_cylinders(const struct fdisk_label *lb,
+			fdisk_sector_t *mi, fdisk_sector_t *ma);
+extern int fdisk_label_get_geomrange_heads(const struct fdisk_label *lb,
+                        unsigned int *mi, unsigned int *ma);
+extern int fdisk_label_get_geomrange_sectors(const struct fdisk_label *lb,
+                        fdisk_sector_t *mi, fdisk_sector_t *ma);
+
 /**
  * fdisk_labelitem_gen:
  *

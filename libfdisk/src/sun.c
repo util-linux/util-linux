@@ -182,11 +182,19 @@ static void ask_geom(struct fdisk_context *cxt)
 
 	assert(cxt);
 
-	if (fdisk_ask_number(cxt, 1, 1, 1024, _("Heads"), &res) == 0)
+	if (fdisk_ask_number(cxt, cxt->label->geom_min.heads, 1,
+				  cxt->label->geom_max.heads,
+				  _("Heads"), &res) == 0)
 		cxt->geom.heads = res;
-	if (fdisk_ask_number(cxt, 1, 1, 1024, _("Sectors/track"), &res) == 0)
+
+	if (fdisk_ask_number(cxt, cxt->label->geom_min.sectors, 1,
+				  cxt->label->geom_max.sectors,
+				  _("Sectors/track"), &res) == 0)
 		cxt->geom.sectors = res;
-	if (fdisk_ask_number(cxt, 1, 1, USHRT_MAX, _("Cylinders"), &res) == 0)
+
+	if (fdisk_ask_number(cxt, cxt->label->geom_min.cylinders, 1,
+				  cxt->label->geom_max.cylinders,
+				  _("Cylinders"), &res) == 0)
 		cxt->geom.cylinders = res;
 }
 
@@ -1154,5 +1162,12 @@ struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt)
 	lb->nfields = ARRAY_SIZE(sun_fields);
 	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
 
+	lb->geom_min.sectors = 1;
+	lb->geom_min.heads = 1;
+	lb->geom_min.cylinders = 1;
+
+	lb->geom_max.sectors = 1024;
+	lb->geom_max.heads = 1024;
+	lb->geom_max.cylinders = USHRT_MAX;
 	return lb;
 }

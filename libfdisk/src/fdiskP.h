@@ -279,6 +279,9 @@ struct fdisk_label {
 
 	int			flags;		/* FDISK_LABEL_FL_* flags */
 
+	struct fdisk_geometry	geom_min;	/* minimal geometry */
+	struct fdisk_geometry	geom_max;	/* maximal geometry */
+
 	unsigned int		changed:1,	/* label has been modified */
 				disabled:1;	/* this driver is disabled at all */
 

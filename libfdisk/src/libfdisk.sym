@@ -291,3 +291,9 @@ FDISK_2.31 {
 	fdisk_has_dialogs;
 	fdisk_save_user_grain;
 } FDISK_2.30;
+
+FDISK_2.32 {
+	fdisk_label_get_geomrange_sectors;
+	fdisk_label_get_geomrange_heads;
+	fdisk_label_get_geomrange_cylinders;
+} FDISK_2.31;

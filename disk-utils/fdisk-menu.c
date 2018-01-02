@@ -151,7 +151,7 @@ static const struct menu menu_geo = {
 	.callback = geo_menu_cb,
 	.exclude = FDISK_DISKLABEL_GPT | FDISK_DISKLABEL_BSD,
 	.entries = {
-		MENU_XSEP(N_("Geometry")),
+		MENU_XSEP(N_("Geometry (for the current label)")),
 		MENU_XENT('c', N_("change number of cylinders")),
 		MENU_XENT('h', N_("change number of heads")),
 		MENU_XENT('s', N_("change number of sectors/track")),
@@ -1004,32 +1004,50 @@ static int bsd_menu_cb(struct fdisk_context **cxt0,
 	return rc;
 }
 
-/* C/H/S commands */
+/* C/H/S commands
+ *
+ * The geometry setting from this dialog is not persistent and maybe reseted by
+ * fdisk_reset_device_properties() (for example when you create a new disk
+ * label). Note that on command line specified -C/-H/-S setting is persistent
+ * as it's based on fdisk_save_user_geometry().
+ */
 static int geo_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu *menu __attribute__((__unused__)),
 		       const struct menu_entry *ent)
 {
 	struct fdisk_context *cxt = *cxt0;
+	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
 	int rc = -EINVAL;
 	uintmax_t c = 0, h = 0, s = 0;
+	fdisk_sector_t mi, ma;
 
 	DBG(MENU, ul_debug("enter GEO menu"));
 
 	assert(cxt);
 	assert(ent);
 
+	/* default */
+	if (!lb)
+		lb = fdisk_get_label(cxt, "dos");
+
 	switch (ent->key) {
 	case 'c':
-		rc =  fdisk_ask_number(cxt, 1, fdisk_get_geom_cylinders(cxt),
-				1048576, _("Number of cylinders"), &c);
+		fdisk_label_get_geomrange_cylinders(lb, &mi, &ma);
+		rc =  fdisk_ask_number(cxt, mi, fdisk_get_geom_cylinders(cxt),
+				ma, _("Number of cylinders"), &c);
 		break;
 	case 'h':
-		rc =  fdisk_ask_number(cxt, 1, fdisk_get_geom_heads(cxt),
-				256, _("Number of heads"), &h);
+	{
+		unsigned int i, a;
+		fdisk_label_get_geomrange_heads(lb, &i, &a);
+		rc =  fdisk_ask_number(cxt, i, fdisk_get_geom_heads(cxt),
+				a, _("Number of heads"), &h);
 		break;
+	}
 	case 's':
-		rc =  fdisk_ask_number(cxt, 1, fdisk_get_geom_sectors(cxt),
-				63, _("Number of sectors"), &s);
+		fdisk_label_get_geomrange_sectors(lb, &mi, &ma);
+		rc =  fdisk_ask_number(cxt, mi, fdisk_get_geom_sectors(cxt),
+				ma, _("Number of sectors"), &s);
 		break;
 	}
 
