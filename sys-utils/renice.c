@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 
 	prio = strtol(*argv, &endptr, 10);
 	if (*endptr) {
-		warnx(_("invalid priorty '%s'"), *argv);
+		warnx(_("invalid priority '%s'"), *argv);
 		errtryhelp(EXIT_FAILURE);
 	}
 	argc--;
