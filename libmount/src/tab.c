@@ -1561,7 +1561,8 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		struct libmnt_fs *rootfs;
 		int flags = 0;
 
-		if (mnt_fs_get_option(fstab_fs, "bind", NULL, NULL) == 0)
+		if (mnt_fs_get_option(fstab_fs, "bind", NULL, NULL) == 0 ||
+		    mnt_fs_get_option(fstab_fs, "rbind", NULL, NULL) == 0)
 			flags = MS_BIND;
 
 		rootfs = mnt_table_get_fs_root(tb, fstab_fs, flags, &root);
