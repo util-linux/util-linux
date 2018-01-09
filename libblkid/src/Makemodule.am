@@ -82,6 +82,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/romfs.c \
 	libblkid/src/superblocks/silicon_raid.c \
 	libblkid/src/superblocks/squashfs.c \
+	libblkid/src/superblocks/stratis.c \
 	libblkid/src/superblocks/superblocks.c \
 	libblkid/src/superblocks/superblocks.h \
 	libblkid/src/superblocks/swap.c \
