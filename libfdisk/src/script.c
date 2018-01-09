@@ -1016,6 +1016,13 @@ static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, 
 		case 'U':	/* UEFI system */
 			type = "EF";
 			break;
+		case 'R':	/* Linux RAID */
+			type = "fd";
+			break;
+		case 'V':	/* LVM */
+			type = "8e";
+			break;
+
 		}
 	} else if (lb->id == FDISK_DISKLABEL_GPT) {
 		switch (*str) {
@@ -1030,6 +1037,12 @@ static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, 
 			break;
 		case 'U':	/* UEFI system */
 			type = "C12A7328-F81F-11D2-BA4B-00A0C93EC93B";
+			break;
+		case 'R':	/* Linux RAID */
+			type = "A19D880F-05FC-4D3B-A006-743F0F84911E";
+			break;
+		case 'V':	/* LVM */
+			type = "E6D6D379-F507-44C2-A23C-238F2A3DF928";
 			break;
 		}
 	}

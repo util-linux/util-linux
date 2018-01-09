@@ -1312,8 +1312,8 @@ static void command_fdisk_help(void)
 
 	fputc('\n', stdout);
 	fputs(_("   <type>   The partition type.  Default is a Linux data partition.\n"), stdout);
-	fputs(_("            MBR: hex or L,S,E,X shortcuts.\n"), stdout);
-	fputs(_("            GPT: UUID or L,S,H shortcuts.\n"), stdout);
+	fputs(_("            MBR: hex or L,S,E,X,U,R,V shortcuts.\n"), stdout);
+	fputs(_("            GPT: UUID or L,S,H,U,R,V shortcuts.\n"), stdout);
 
 	fputc('\n', stdout);
 	fputs(_("   <bootable>  Use '*' to mark an MBR partition as bootable.\n"), stdout);
