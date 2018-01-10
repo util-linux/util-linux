@@ -29,6 +29,7 @@ libblkid_la_SOURCES = \
 	\
 	libblkid/src/partitions/aix.c \
 	libblkid/src/partitions/aix.h \
+	libblkid/src/partitions/atari.c \
 	libblkid/src/partitions/bsd.c \
 	libblkid/src/partitions/dos.c \
 	libblkid/src/partitions/gpt.c \
