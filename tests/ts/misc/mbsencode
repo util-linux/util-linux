@@ -40,23 +40,41 @@ STRINGS=(
 	$'\xe8\xe1\xf9\xa7'
 )
 
+if grep -q '^#define HAVE_WIDECHAR' ${top_builddir}/config.h ;then
+	HAVE_WIDECHAR=true
+else
+	HAVE_WIDECHAR=false
+fi
+
 ts_init_subtest "safe-ascii"
 $TS_HELPER_MBSENCODE --safe "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 ts_init_subtest "invalid-ascii"
-$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
-ts_finalize_subtest
+if [ "$HAVE_WIDECHAR" = true ]; then
+	$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
+	ts_finalize_subtest
+else
+	ts_skip_subtest 'No widechar support'
+fi
 
 ts_init_subtest "safe-utf8"
-LC_ALL=C.UTF-8 \
-$TS_HELPER_MBSENCODE --safe "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
-ts_finalize_subtest
+if [ "$HAVE_WIDECHAR" = true ]; then
+	LC_ALL=C.UTF-8 \
+	$TS_HELPER_MBSENCODE --safe "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
+	ts_finalize_subtest
+else
+	ts_skip_subtest 'No widechar support'
+fi
 
 ts_init_subtest "invalid-utf8"
-LC_ALL=C.UTF-8 \
-$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
-ts_finalize_subtest
+if [ "$HAVE_WIDECHAR" = true ]; then
+	LC_ALL=C.UTF-8 \
+	$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> $TS_OUTPUT 2>&1
+	ts_finalize_subtest
+else
+	ts_skip_subtest 'No widechar support'
+fi
 
 ts_finalize
 
