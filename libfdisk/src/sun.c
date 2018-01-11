@@ -507,6 +507,8 @@ static int sun_add_partition(
 	size_t i;
 	unsigned int first, last;
 
+	DBG(LABEL, ul_debug("SUN adding partition"));
+
 	rc = fdisk_partition_next_partno(pa, cxt, &n);
 	if (rc)
 		return rc;
@@ -703,6 +705,8 @@ static int sun_add_partition(
 
 	if (whole_disk)
 		sys = SUN_TAG_WHOLEDISK;
+
+	DBG(LABEL, ul_debug("SUN new partition #%zu: first=%u, last=%u, sys=%d", n, first, last, sys));
 
 	set_partition(cxt, n, first, last, sys);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
@@ -1088,6 +1092,7 @@ static int sun_set_partition(
 
 static int sun_reset_alignment(struct fdisk_context *cxt __attribute__((__unused__)))
 {
+	fdisk_set_first_lba(cxt, 0);
 	return 0;
 }
 

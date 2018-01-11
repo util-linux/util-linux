@@ -411,7 +411,7 @@ static int new_freespace(struct fdisk_context *cxt,
 	if (start == end)
 		return 0;
 
-	assert(start);
+	assert(start >= cxt->first_lba);
 	assert(end);
 	assert(end > start);
 
