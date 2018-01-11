@@ -22,6 +22,9 @@ TS_DESC="mbsencode"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+# These test may fail on some machines (locales, other libc...)
+TS_KNOWN_FAIL="yes"
+
 STRINGS=(
 # ASCII
 	$'foo\tbar baz'
