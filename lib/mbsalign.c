@@ -168,7 +168,7 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, const c
 			} else if (!iswprint(wc)) {
 				size_t i;
 				for (i = 0; i < len; i++) {
-					sprintf(r, "\\x%02x", (unsigned char) *p);
+					sprintf(r, "\\x%02x", (unsigned char) p[i]);
 					r += 4;
 					*width += 4;
 				}
