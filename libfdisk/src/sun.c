@@ -522,6 +522,9 @@ static int sun_add_partition(
 
 	fetch_sun(cxt, starts, lens, &start, &stop);
 
+	if (pa && pa->type && pa->type->code == SUN_TAG_WHOLEDISK)
+		whole_disk = 1;
+
 	if (stop <= start) {
 		if (n == 2)
 			whole_disk = 1;
@@ -629,8 +632,9 @@ static int sun_add_partition(
 	/* last */
 	if (pa && pa->end_follow_default)
 		last = whole_disk || (n == 2 && !first) ? stop2 : stop;
+
 	else if (pa && fdisk_partition_has_size(pa)) {
-		last = first + pa->size - 1ULL;
+		last = first + pa->size;
 
 		if (!whole_disk && last > stop)
 			return -ERANGE;
