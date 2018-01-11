@@ -680,7 +680,7 @@ static int nsfs_xasputs(char **str,
 	char *expected_root;
 	struct libmnt_fs *fs = NULL;
 
-	xasprintf(&expected_root, "%s:[%lu]", ns_names[ns->type], ns->id);
+	xasprintf(&expected_root, "%s:[%ju]", ns_names[ns->type], (uintmax_t)ns->id);
 	*str = NULL;
 
 	while (mnt_table_find_next_fs(tab, itr, is_nsfs_root,
