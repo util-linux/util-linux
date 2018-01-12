@@ -1017,10 +1017,10 @@ static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, 
 			type = "EF";
 			break;
 		case 'R':	/* Linux RAID */
-			type = "fd";
+			type = "FD";
 			break;
 		case 'V':	/* LVM */
-			type = "8e";
+			type = "8E";
 			break;
 
 		}
