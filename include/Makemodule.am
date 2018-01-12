@@ -14,6 +14,7 @@ dist_noinst_HEADERS += \
 	include/crc32.h \
 	include/crc32c.h \
 	include/debug.h \
+	include/debugobj.h \
 	include/env.h \
 	include/exec_shell.h \
 	include/exitcodes.h \

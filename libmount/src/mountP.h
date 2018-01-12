@@ -50,6 +50,9 @@ UL_DEBUG_DECLARE_MASK(libmount);
 #define ON_DBG(m, x)	__UL_DBG_CALL(libmount, MNT_DEBUG_, m, x)
 #define DBG_FLUSH	__UL_DBG_FLUSH(libmount, MNT_DEBUG_)
 
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(libmount)
+#include "debugobj.h"
+
 /*
  * NLS -- the library has to be independent on main program, so define
  * UL_TEXTDOMAIN_EXPLICIT before you include nls.h.

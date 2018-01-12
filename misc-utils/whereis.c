@@ -72,6 +72,9 @@ UL_DEBUG_DEFINE_MASKNAMES(whereis) = UL_DEBUG_EMPTY_MASKNAMES;
 #define DBG(m, x)       __UL_DBG(whereis, WHEREIS_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(whereis, WHEREIS_DEBUG_, m, x)
 
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(whereis)
+#include "debugobj.h"
+
 static char uflag = 0;
 
 /* supported types */

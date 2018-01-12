@@ -36,6 +36,9 @@ UL_DEBUG_DECLARE_MASK(libsmartcols);
 #define ON_DBG(m, x)	__UL_DBG_CALL(libsmartcols, SCOLS_DEBUG_, m, x)
 #define DBG_FLUSH	__UL_DBG_FLUSH(libsmartcols, SCOLS_DEBUG_)
 
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(libsmartcols)
+#include "debugobj.h"
+
 /*
  * Generic iterator
  */

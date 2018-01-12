@@ -75,6 +75,8 @@ UL_DEBUG_DEFINE_MASKNAMES(lsblk) = UL_DEBUG_EMPTY_MASKNAMES;
 #define DBG(m, x)       __UL_DBG(lsblk, LSBLK_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(lsblk, LSBLK_DEBUG_, m, x)
 
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(lsblk)
+#include "debugobj.h"
 
 #define LSBLK_EXIT_SOMEOK 64
 #define LSBLK_EXIT_ALLFAILED 32

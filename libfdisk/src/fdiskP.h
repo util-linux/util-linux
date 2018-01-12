@@ -47,6 +47,9 @@ UL_DEBUG_DECLARE_MASK(libfdisk);
 #define ON_DBG(m, x)	__UL_DBG_CALL(libfdisk, LIBFDISK_DEBUG_, m, x)
 #define DBG_FLUSH	__UL_DBG_FLUSH(libfdisk, LIBFDISK_DEBUG_)
 
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(libfdisk)
+#include "debugobj.h"
+
 /*
  * NLS -- the library has to be independent on main program, so define
  * UL_TEXTDOMAIN_EXPLICIT before you include nls.h.

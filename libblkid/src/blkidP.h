@@ -338,6 +338,9 @@ UL_DEBUG_DECLARE_MASK(libblkid);
 #define DBG(m, x)	__UL_DBG(libblkid, BLKID_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(libblkid, BLKID_DEBUG_, m, x)
 
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(libblkid)
+#include "debugobj.h"
+
 extern void blkid_debug_dump_dev(blkid_dev dev);
 
 

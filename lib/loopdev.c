@@ -57,6 +57,9 @@ UL_DEBUG_DEFINE_MASKNAMES(loopdev) = UL_DEBUG_EMPTY_MASKNAMES;
 #define DBG(m, x)       __UL_DBG(loopdev, LOOPDEV_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(loopdev, LOOPDEV_DEBUG_, m, x)
 
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(loopdev)
+#include "debugobj.h"
+
 static void loopdev_init_debug(void)
 {
 	if (loopdev_debug_mask)
