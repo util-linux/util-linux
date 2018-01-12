@@ -1,3 +1,6 @@
+check_PROGRAMS += test_mbsencode
+test_mbsencode_SOURCES = tests/helpers/test_mbsencode.c
+test_mbsencode_LDADD = $(LDADD) libcommon.la
 
 check_PROGRAMS += test_byteswap
 test_byteswap_SOURCES = tests/helpers/test_byteswap.c
