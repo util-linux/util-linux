@@ -97,7 +97,7 @@ struct ul_debug_maskname {
 		if (lib ## _debug_mask) { \
 			if (getuid() != geteuid() || getgid() != getegid()) { \
 				lib ## _debug_mask |= __UL_DEBUG_FL_NOADDR; \
-				fprintf(stderr, "%d: %s: SUID executable: pointer addresses suppressed.\n", getpid(), # lib); \
+				fprintf(stderr, "%d: %s: don't print memory addresses (SUID executable).\n", getpid(), # lib); \
 			} \
 		} \
 		lib ## _debug_mask |= pref ## INIT; \
