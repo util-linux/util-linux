@@ -3,6 +3,10 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="count file contents in core"
 
+# Send patch if you know how to keep it portable and robust. Thanks.
+TS_KNOWN_FAIL="yes"
+
+
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
