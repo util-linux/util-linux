@@ -58,6 +58,22 @@ does.
 It is necessary to explicitly create all partitions including whole-disk system
 partitions.
 
+.B sfdisk
+uses BLKRRPART (reread partition table) ioctl to make sure that the device is
+not used by system or another tools (see also --no-reread).  It's possible that
+this feature or another sfdisk activity races with \fBudevd\fR.  The recommended way
+how to avoid possible collisions is to use exclusive flock for the whole-disk
+device to serialize device access.  The exclusive lock will cause udevd to skip
+the event handling on the device.  For example:
+.RS
+.sp
+.nf
+.B "flock /dev/sdc sfdisk /dev/sdc"
+.fi
+.sp
+.RE
+Note, this semantic is not currently supported by udevd for MD and DM devices.
+
 .SH COMMANDS
 The commands are mutually exclusive.
 .TP
