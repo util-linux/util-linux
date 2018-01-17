@@ -43,7 +43,7 @@ void fdisk_init_debug(int mask)
 	if (libfdisk_debug_mask)
 		return;
 
-	__UL_INIT_DEBUG(libfdisk, LIBFDISK_DEBUG_, mask, LIBFDISK_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(libfdisk, LIBFDISK_DEBUG_, mask, LIBFDISK_DEBUG);
 
 
 	if (libfdisk_debug_mask != LIBFDISK_DEBUG_INIT

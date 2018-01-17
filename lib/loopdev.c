@@ -64,7 +64,7 @@ static void loopdev_init_debug(void)
 {
 	if (loopdev_debug_mask)
 		return;
-	__UL_INIT_DEBUG(loopdev, LOOPDEV_DEBUG_, 0, LOOPDEV_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(loopdev, LOOPDEV_DEBUG_, 0, LOOPDEV_DEBUG);
 }
 
 /*

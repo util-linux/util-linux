@@ -194,7 +194,7 @@ static int netlink_fd = -1;
 
 static void lsns_init_debug(void)
 {
-	__UL_INIT_DEBUG(lsns, LSNS_DEBUG_, 0, LSNS_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(lsns, LSNS_DEBUG_, 0, LSNS_DEBUG);
 }
 
 static int ns_name2type(const char *name)

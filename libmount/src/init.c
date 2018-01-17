@@ -51,7 +51,7 @@ void mnt_init_debug(int mask)
 	if (libmount_debug_mask)
 		return;
 
-	__UL_INIT_DEBUG(libmount, MNT_DEBUG_, mask, LIBMOUNT_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(libmount, MNT_DEBUG_, mask, LIBMOUNT_DEBUG);
 
 	if (libmount_debug_mask != MNT_DEBUG_INIT
 	    && libmount_debug_mask != (MNT_DEBUG_HELP|MNT_DEBUG_INIT)) {

@@ -132,7 +132,7 @@ struct script_control {
 
 static void script_init_debug(void)
 {
-	__UL_INIT_DEBUG(script, SCRIPT_DEBUG_, 0, SCRIPT_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(script, SCRIPT_DEBUG_, 0, SCRIPT_DEBUG);
 }
 
 /*

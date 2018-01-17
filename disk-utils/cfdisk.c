@@ -264,7 +264,7 @@ UL_DEBUG_DEFINE_MASKNAMES(cfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 
 static void cfdisk_init_debug(void)
 {
-	__UL_INIT_DEBUG(cfdisk, CFDISK_DEBUG_, 0, CFDISK_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(cfdisk, CFDISK_DEBUG_, 0, CFDISK_DEBUG);
 }
 
 /* Initialize output columns -- we follow libfdisk fields (usually specific

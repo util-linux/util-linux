@@ -83,15 +83,12 @@ struct ul_debug_maskname {
 		} \
 	} while (0)
 
-
-#define __UL_INIT_DEBUG(lib, pref, mask, env) \
+#define __UL_INIT_DEBUG_FROM_STRING(lib, pref, mask, str) \
 	do { \
 		if (lib ## _debug_mask & pref ## INIT) \
 		; \
-		else if (!mask) { \
-			char *str = getenv(# env); \
-			if (str) \
-				lib ## _debug_mask = ul_debug_parse_envmask(lib ## _masknames, str); \
+		else if (!mask && str) { \
+			lib ## _debug_mask = ul_debug_parse_mask(lib ## _masknames, str); \
 		} else \
 			lib ## _debug_mask = mask; \
 		if (lib ## _debug_mask) { \
@@ -104,6 +101,14 @@ struct ul_debug_maskname {
 	} while (0)
 
 
+#define __UL_INIT_DEBUG_FROM_ENV(lib, pref, mask, env) \
+	do { \
+		const char *envstr = mask ? NULL : getenv(# env); \
+		__UL_INIT_DEBUG_FROM_STRING(lib, pref, mask, envstr); \
+	} while (0)
+
+
+
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
 ul_debug(const char *mesg, ...)
 {
@@ -114,7 +119,7 @@ ul_debug(const char *mesg, ...)
 	fputc('\n', stderr);
 }
 
-static inline int ul_debug_parse_envmask(
+static inline int ul_debug_parse_mask(
 			const struct ul_debug_maskname flagnames[],
 			const char *mask)
 {

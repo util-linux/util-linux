@@ -178,7 +178,7 @@ static const char *srcdirs[] = {
 
 static void whereis_init_debug(void)
 {
-	__UL_INIT_DEBUG(whereis, WHEREIS_DEBUG_, 0, WHEREIS_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(whereis, WHEREIS_DEBUG_, 0, WHEREIS_DEBUG);
 }
 
 static const char *whereis_type_to_name(int type)

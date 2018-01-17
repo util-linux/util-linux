@@ -68,7 +68,7 @@ UL_DEBUG_DEFINE_MASKNAMES(fdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 
 static void fdiskprog_init_debug(void)
 {
-	__UL_INIT_DEBUG(fdisk, FDISKPROG_DEBUG_, 0, FDISK_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(fdisk, FDISKPROG_DEBUG_, 0, FDISK_DEBUG);
 }
 
 static void reply_sighandler(int sig __attribute__((unused)))

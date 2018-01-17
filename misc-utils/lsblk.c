@@ -301,7 +301,7 @@ struct blkdev_cxt {
 
 static void lsblk_init_debug(void)
 {
-	__UL_INIT_DEBUG(lsblk, LSBLK_DEBUG_, 0, LSBLK_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(lsblk, LSBLK_DEBUG_, 0, LSBLK_DEBUG);
 }
 
 static int is_maj_excluded(int maj)

@@ -45,7 +45,7 @@ void scols_init_debug(int mask)
 	if (libsmartcols_debug_mask)
 		return;
 
-	__UL_INIT_DEBUG(libsmartcols, SCOLS_DEBUG_, mask, LIBSMARTCOLS_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(libsmartcols, SCOLS_DEBUG_, mask, LIBSMARTCOLS_DEBUG);
 
 	if (libsmartcols_debug_mask != SCOLS_DEBUG_INIT
 	    && libsmartcols_debug_mask != (SCOLS_DEBUG_HELP|SCOLS_DEBUG_INIT)) {

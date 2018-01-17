@@ -646,7 +646,7 @@ done:
 
 static void termcolors_init_debug(void)
 {
-	__UL_INIT_DEBUG(termcolors, TERMCOLORS_DEBUG_, 0, TERMINAL_COLORS_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(termcolors, TERMCOLORS_DEBUG_, 0, TERMINAL_COLORS_DEBUG);
 }
 
 static int colors_terminal_is_ready(void)

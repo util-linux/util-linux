@@ -172,7 +172,7 @@ su_catch_sig(int sig)
 
 static void su_init_debug(void)
 {
-	__UL_INIT_DEBUG(su, SU_DEBUG_, 0, SU_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(su, SU_DEBUG_, 0, SU_DEBUG);
 }
 
 static void init_tty(struct su_context *su)

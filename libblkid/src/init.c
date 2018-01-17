@@ -50,7 +50,7 @@ void blkid_init_debug(int mask)
 	if (libblkid_debug_mask)
 		return;
 
-	__UL_INIT_DEBUG(libblkid, BLKID_DEBUG_, mask, LIBBLKID_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(libblkid, BLKID_DEBUG_, mask, LIBBLKID_DEBUG);
 
 	if (libblkid_debug_mask != BLKID_DEBUG_INIT
 	    && libblkid_debug_mask != (BLKID_DEBUG_HELP|BLKID_DEBUG_INIT)) {

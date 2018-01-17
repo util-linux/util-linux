@@ -119,7 +119,7 @@ struct sfdisk {
 
 static void sfdiskprog_init_debug(void)
 {
-	__UL_INIT_DEBUG(sfdisk, SFDISKPROG_DEBUG_, 0, SFDISK_DEBUG);
+	__UL_INIT_DEBUG_FROM_ENV(sfdisk, SFDISKPROG_DEBUG_, 0, SFDISK_DEBUG);
 }
 
 
