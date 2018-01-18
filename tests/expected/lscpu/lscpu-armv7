@@ -3,7 +3,10 @@ On-line CPU(s) list: 0,1
 Thread(s) per core:  1
 Core(s) per socket:  2
 Socket(s):           1
+Vendor ID:           ARM
 Model:               4
+Model name:          Cortex-A15
+Stepping:            r0p4
 CPU max MHz:         1700.0000
 CPU min MHz:         200.0000
 BogoMIPS:            1694.10

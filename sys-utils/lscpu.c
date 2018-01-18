@@ -68,6 +68,7 @@
 #include "closestream.h"
 #include "optutils.h"
 #include "lscpu.h"
+#include "lscpu-arm.h"
 
 #define CACHE_MAX 100
 
@@ -539,6 +540,48 @@ static void read_physical_info_powerpc(
 #endif
 
 static void
+arm_cpu_decode(struct lscpu_desc *desc)
+{
+	int j, impl, part;
+	const struct id_part *parts = NULL;
+	char buf[8];
+	if (desc->vendor == NULL || desc->model == NULL)
+		return;
+	if ((strncmp(desc->vendor,"0x",2) ||
+		 strncmp(desc->model,"0x",2) ))
+		return;
+
+	impl=(int)strtol(desc->vendor, NULL, 0);
+	part=(int)strtol(desc->model, NULL, 0);
+
+	for (j = 0; hw_implementer[j].id != -1; j++) {
+	if (hw_implementer[j].id == impl) {
+		parts = hw_implementer[j].parts;
+		desc->vendor = (char *)hw_implementer[j].name;
+		break;
+		}
+	}
+	if ( parts == NULL)
+		return;
+
+	for (j = 0; parts[j].id != -1; j++) {
+	if (parts[j].id == part) {
+		desc->modelname = (char *)parts[j].name;
+		break;
+		}
+	}
+
+	/* Print out the rXpY string for ARM cores */
+	if (impl == 0x41 && desc->revision != NULL &&
+		desc->stepping != NULL)	{
+		int revision = atoi(desc->revision);
+		int variant = (int)strtol(desc->stepping, NULL, 0);
+		snprintf(buf, sizeof(buf), "r%dp%d", variant, revision );
+		desc->stepping=xstrdup(buf);
+	}
+}
+
+static void
 read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
 	FILE *fp = path_fopen("r", 1, _PATH_PROC_CPUINFO);
@@ -555,11 +598,14 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	while (fgets(buf, sizeof(buf), fp) != NULL) {
 		if (lookup(buf, "vendor", &desc->vendor)) ;
 		else if (lookup(buf, "vendor_id", &desc->vendor)) ;
+		else if (lookup(buf, "CPU implementer", &desc->vendor)) ; /* ARM and aarch64 */
 		else if (lookup(buf, "family", &desc->family)) ;
 		else if (lookup(buf, "cpu family", &desc->family)) ;
 		else if (lookup(buf, "model", &desc->model)) ;
+		else if (lookup(buf, "CPU part", &desc->model)) ; /* ARM and aarch64 */
 		else if (lookup(buf, "model name", &desc->modelname)) ;
 		else if (lookup(buf, "stepping", &desc->stepping)) ;
+		else if (lookup(buf, "CPU variant", &desc->stepping)) ; /* aarch64 */
 		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
 		else if (lookup(buf, "cpu MHz dynamic", &desc->dynamic_mhz)) ; /* s390 */
 		else if (lookup(buf, "cpu MHz static", &desc->static_mhz)) ;   /* s390 */
@@ -2207,6 +2253,7 @@ int main(int argc, char *argv[])
 
 	read_nodes(desc);
 	read_hypervisor(desc, mod);
+	arm_cpu_decode(desc);
 
 	switch(mod->mode) {
 	case OUTPUT_SUMMARY:
