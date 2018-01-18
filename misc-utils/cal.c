@@ -924,14 +924,15 @@ static int day_in_week(const struct cal_control *ctl, int day,
 	    || (year == ctl->reform_year && REFORMATION_MONTH < month)
 	    || (year == ctl->reform_year
 		&& month == REFORMATION_MONTH && 13 < day)) {
-		int64_t long_year = year;
-		return (long_year + (year / 4) - (year / 100) + (year / 400) +
-			reform[month - 1] + day) % DAYS_IN_WEEK;
+		return ((int64_t) year + (year / 4)
+			- (year / 100) + (year / 400)
+			+ reform[month - 1] + day) % DAYS_IN_WEEK;
 	}
 	if (year < ctl->reform_year
 	    || (year == ctl->reform_year && month < REFORMATION_MONTH)
 	    || (year == ctl->reform_year && month == REFORMATION_MONTH && day < 3))
-		return (year + year / 4 + old[month - 1] + day) % DAYS_IN_WEEK;
+		return ((int64_t) year + year / 4 + old[month - 1] + day)
+			% DAYS_IN_WEEK;
 	return NONEDAY;
 }
 
