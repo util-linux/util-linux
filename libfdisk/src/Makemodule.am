@@ -43,8 +43,7 @@ libfdisk_la_CFLAGS = \
 libfdisk_la_DEPENDENCIES = \
 	libcommon.la \
 	libuuid.la \
-	libfdisk/src/libfdisk.sym \
-	libfdisk/src/libfdisk.h.in
+	libfdisk/src/libfdisk.sym
 
 libfdisk_la_LDFLAGS = $(SOLIB_LDFLAGS)
 if HAVE_VSCRIPT

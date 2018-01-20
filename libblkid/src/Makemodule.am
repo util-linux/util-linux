@@ -115,8 +115,7 @@ libblkid_la_LIBADD = libcommon.la
 
 libblkid_la_DEPENDENCIES = \
 	libcommon.la \
-	libblkid/src/libblkid.sym \
-	libblkid/src/blkid.h.in
+	libblkid/src/libblkid.sym
 
 libblkid_la_CFLAGS = \
 	$(AM_CFLAGS) \

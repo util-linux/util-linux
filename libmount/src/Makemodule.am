@@ -55,8 +55,7 @@ libmount_la_CFLAGS = \
 libmount_la_DEPENDENCIES = \
 	libcommon.la \
 	libblkid.la \
-	libmount/src/libmount.sym \
-	libmount/src/libmount.h.in
+	libmount/src/libmount.sym
 
 libmount_la_LDFLAGS = $(SOLIB_LDFLAGS)
 if HAVE_VSCRIPT

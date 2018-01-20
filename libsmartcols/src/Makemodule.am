@@ -29,8 +29,7 @@ libsmartcols_la_CFLAGS = \
 
 libsmartcols_la_DEPENDENCIES = \
 	libcommon.la \
-	libsmartcols/src/libsmartcols.sym \
-	libsmartcols/src/libsmartcols.h.in
+	libsmartcols/src/libsmartcols.sym
 
 libsmartcols_la_LDFLAGS = $(SOLIB_LDFLAGS)
 if HAVE_VSCRIPT
