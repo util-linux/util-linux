@@ -29,11 +29,7 @@ libfdisk_la_SOURCES = \
 	libfdisk/src/sgi.c \
 	libfdisk/src/dos.c \
 	libfdisk/src/bsd.c \
-	libfdisk/src/gpt.c \
-	$(nodist_fdiskinc_HEADERS)
-
-
-nodist_libfdisk_la_SOURCES = libfdisk/src/fdiskP.h
+	libfdisk/src/gpt.c
 
 libfdisk_la_LIBADD = libcommon.la libuuid.la
 

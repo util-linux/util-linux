@@ -11,6 +11,7 @@ uuidinc_HEADERS = libuuid/src/uuid.h
 usrlib_exec_LTLIBRARIES += libuuid.la
 
 libuuid_la_SOURCES = \
+	libuuid/src/uuidP.h \
 	libuuid/src/clear.c \
 	libuuid/src/compare.c \
 	libuuid/src/copy.c \
@@ -21,11 +22,8 @@ libuuid_la_SOURCES = \
 	libuuid/src/unpack.c \
 	libuuid/src/unparse.c \
 	libuuid/src/uuidd.h \
-	libuuid/src/uuidd.h \
-	libuuid/src/uuidP.h \
 	libuuid/src/uuid_time.c \
 	libuuid/src/predefined.c \
-	$(uuidinc_HEADERS) \
 	lib/randutils.c \
 	lib/md5.c \
 	lib/sha1.c

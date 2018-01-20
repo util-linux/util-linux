@@ -17,10 +17,7 @@ libsmartcols_la_SOURCES= \
 	libsmartcols/src/table.c \
 	libsmartcols/src/table_print.c \
 	libsmartcols/src/version.c \
-	libsmartcols/src/init.c \
-	$(nodist_smartcolsinc_HEADERS)
-
-nodist_libsmartcols_la_SOURCES = libsmartcols/src/smartcolsP.h
+	libsmartcols/src/init.c
 
 libsmartcols_la_LIBADD = libcommon.la
 

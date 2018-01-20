@@ -8,12 +8,12 @@ libmount_la_SOURCES = \
 	include/list.h \
 	lib/monotonic.c \
 	\
+	libmount/src/mountP.h \
 	libmount/src/cache.c \
 	libmount/src/fs.c \
 	libmount/src/init.c \
 	libmount/src/iter.c \
 	libmount/src/lock.c \
-	libmount/src/mountP.h \
 	libmount/src/optmap.c \
 	libmount/src/optstr.c \
 	libmount/src/tab.c \
@@ -22,8 +22,7 @@ libmount_la_SOURCES = \
 	libmount/src/tab_update.c \
 	libmount/src/test.c \
 	libmount/src/utils.c \
-	libmount/src/version.c \
-	$(nodist_mountinc_HEADERS)
+	libmount/src/version.c
 
 if LINUX
 libmount_la_SOURCES += \
@@ -39,7 +38,6 @@ endif
 
 endif # LINUX
 
-nodist_libmount_la_SOURCES = libmount/src/mountP.h
 
 libmount_la_LIBADD = \
 	libcommon.la \

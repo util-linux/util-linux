@@ -26,7 +26,6 @@ libblkid_la_SOURCES = \
 	libblkid/src/tag.c \
 	libblkid/src/verify.c \
 	libblkid/src/version.c \
-	$(nodist_blkidinc_HEADERS) \
 	\
 	libblkid/src/partitions/aix.c \
 	libblkid/src/partitions/aix.h \
@@ -112,7 +111,6 @@ libblkid_la_SOURCES += \
 	libblkid/src/topology/sysfs.c
 endif
 
-nodist_libblkid_la_SOURCES = libblkid/src/blkid.h
 libblkid_la_LIBADD = libcommon.la
 
 libblkid_la_DEPENDENCIES = \
