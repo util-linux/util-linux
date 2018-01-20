@@ -27,8 +27,7 @@ libsmartcols_la_CFLAGS = \
 	-I$(ul_libsmartcols_incdir) \
 	-I$(top_srcdir)/libsmartcols/src
 
-libsmartcols_la_DEPENDENCIES = \
-	libcommon.la \
+EXTRA_libsmartcols_la_DEPENDENCIES = \
 	libsmartcols/src/libsmartcols.sym
 
 libsmartcols_la_LDFLAGS = $(SOLIB_LDFLAGS)

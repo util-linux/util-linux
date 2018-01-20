@@ -52,9 +52,7 @@ libmount_la_CFLAGS = \
 	-I$(ul_libmount_incdir) \
 	-I$(top_srcdir)/libmount/src
 
-libmount_la_DEPENDENCIES = \
-	libcommon.la \
-	libblkid.la \
+EXTRA_libmount_la_DEPENDENCIES = \
 	libmount/src/libmount.sym
 
 libmount_la_LDFLAGS = $(SOLIB_LDFLAGS)
