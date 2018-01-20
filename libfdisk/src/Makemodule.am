@@ -1,7 +1,7 @@
 
 # libfdisk.h is generated, so it's stored in builddir!
 fdiskincdir = $(includedir)/libfdisk
-nodist_fdiskinc_HEADERS = $(top_builddir)/libfdisk/src/libfdisk.h
+nodist_fdiskinc_HEADERS = libfdisk/src/libfdisk.h
 
 usrlib_exec_LTLIBRARIES += libfdisk.la
 libfdisk_la_SOURCES = \

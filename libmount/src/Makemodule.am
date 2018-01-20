@@ -1,7 +1,7 @@
 
 # libmount.h is generated, so it's store in builddir!
 mountincdir = $(includedir)/libmount
-nodist_mountinc_HEADERS = $(top_builddir)/libmount/src/libmount.h
+nodist_mountinc_HEADERS = libmount/src/libmount.h
 
 usrlib_exec_LTLIBRARIES += libmount.la
 libmount_la_SOURCES = \

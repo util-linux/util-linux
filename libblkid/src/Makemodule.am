@@ -1,7 +1,7 @@
 
 # blkid.h is generated, so it's store in builddir!
 blkidincdir = $(includedir)/blkid
-nodist_blkidinc_HEADERS = $(top_builddir)/libblkid/src/blkid.h
+nodist_blkidinc_HEADERS = libblkid/src/blkid.h
 
 usrlib_exec_LTLIBRARIES += libblkid.la
 libblkid_la_SOURCES = \

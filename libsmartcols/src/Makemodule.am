@@ -2,7 +2,7 @@
 
 # smartcols.h is generated, so it's stored in builddir!
 smartcolsincdir = $(includedir)/libsmartcols
-nodist_smartcolsinc_HEADERS = $(top_builddir)/libsmartcols/src/libsmartcols.h
+nodist_smartcolsinc_HEADERS = libsmartcols/src/libsmartcols.h
 
 usrlib_exec_LTLIBRARIES += libsmartcols.la
 libsmartcols_la_SOURCES= \
