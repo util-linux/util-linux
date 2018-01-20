@@ -56,8 +56,7 @@ libfdisk_la_CFLAGS += -I$(ul_libblkid_incdir)
 endif
 
 EXTRA_DIST += \
-	libfdisk/src/libfdisk.sym \
-	libfdisk/src/libfdisk.h.in
+	libfdisk/src/libfdisk.sym
 
 if BUILD_LIBFDISK_TESTS
 check_PROGRAMS += \

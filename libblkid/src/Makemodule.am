@@ -134,8 +134,7 @@ endif
 libblkid_la_LDFLAGS += -version-info $(LIBBLKID_VERSION_INFO)
 
 EXTRA_DIST += \
-	libblkid/src/libblkid.sym \
-	libblkid/src/blkid.h.in
+	libblkid/src/libblkid.sym
 
 if BUILD_LIBBLKID_TESTS
 check_PROGRAMS += \

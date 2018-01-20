@@ -63,8 +63,7 @@ libmount_la_LDFLAGS += -version-info $(LIBMOUNT_VERSION_INFO)
 
 
 EXTRA_DIST += \
-	libmount/src/libmount.sym \
-	libmount/src/libmount.h.in
+	libmount/src/libmount.sym
 
 if BUILD_LIBMOUNT_TESTS
 check_PROGRAMS += \
