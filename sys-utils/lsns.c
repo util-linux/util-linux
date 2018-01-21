@@ -347,7 +347,8 @@ static int get_netnsid_via_netlink_recv_response(int *netnsid)
 			      < RTA_SPACE(sizeof(struct nlmsgerr)))
 			     ? RTA_SPACE(sizeof(struct nlmsgerr))
 			     : RTA_SPACE(sizeof(int32_t)))];
-	int reslen, rtalen;
+	int rtalen;
+	ssize_t reslen;
 
 	struct nlmsghdr *nlh;
 	struct rtattr *rta;
@@ -357,7 +358,7 @@ static int get_netnsid_via_netlink_recv_response(int *netnsid)
 		return -1;
 
 	nlh = (struct nlmsghdr *)res;
-	if (!(NLMSG_OK(nlh, reslen)
+	if (!(NLMSG_OK(nlh, (size_t)reslen)
 	      && nlh->nlmsg_type == RTM_NEWNSID))
 		return -1;
 
