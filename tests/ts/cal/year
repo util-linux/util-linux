@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+# Copyright (C) 2007-2018 Karel Zak <kzak@redhat.com>
 #
 # This file is part of util-linux.
 #
@@ -28,33 +28,27 @@ export TERM=linux
 USETERM=$( ts_has_option "useterm" "$*" )
 MYTIME="29 11 2006"
 
-[ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
-ts_log ""
+function call_cal {
+	local testname=$(echo "$2" | sed 's/-//g')
 
-ts_log "Gregorian - Monday-based week"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -ym $MYTIME
-fi
-$TS_CMD_CAL -ym $MYTIME >> $TS_OUTPUT
+	ts_init_subtest "$testname"
+	ts_log "$1"
+	shift
+	if [ "$USETERM" == "yes" ]; then
+		$TS_CMD_CAL "$@"
+	fi
+	$TS_CMD_CAL "$@" >> $TS_OUTPUT
+	ts_finalize_subtest
+}
 
-ts_log "Gregorian - Sunday-based week"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -ys $MYTIME
-fi
-$TS_CMD_CAL -ys $MYTIME >> $TS_OUTPUT
-
-
-ts_log "Julian - Monday-based week"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -ymj $MYTIME
-fi
-$TS_CMD_CAL -ymj $MYTIME >> $TS_OUTPUT
-
-ts_log "Julian - Sunday-based week"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -ysj $MYTIME
-fi
-$TS_CMD_CAL -ysj $MYTIME >> $TS_OUTPUT
+call_cal "Gregorian - Monday-based week" -ym $MYTIME
+call_cal "Gregorian - Sunday-based week" -ys $MYTIME
+call_cal "Julian - Monday-based week" -ymj $MYTIME
+call_cal "Julian - Sunday-based week" -ysj $MYTIME
+call_cal "Gregorian - Monday-based week with week numbers" -ymw $MYTIME
+call_cal "Gregorian - Sunday-based week with week numbers" -ysw $MYTIME
+call_cal "Julian - Monday-based week with week numbers" -ymjw $MYTIME
+call_cal "Julian - Sunday-based week with week numbers" -ysjw $MYTIME
 
 ts_finalize
 
