@@ -27,9 +27,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "c.h"
-#include "pathnames.h"
-#include "all-io.h"
 #include "lscpu.h"
 
 #define _PATH_SYS_DMI	 "/sys/firmware/dmi/tables/DMI"
