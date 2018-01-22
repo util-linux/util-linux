@@ -25,19 +25,21 @@ export TERM=linux
 USETERM=$( ts_has_option "useterm" "$*" )
 MYMONTH="1 1753"
 
-[ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
-ts_log ""
+function call_cal {
+	local testname=$(echo "$2" | sed 's/-//g')
 
-ts_log "Monday-based 1753 week numbers"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -m3w $MYMONTH
-fi
-$TS_CMD_CAL -m3w $MYMONTH >> $TS_OUTPUT
+	ts_init_subtest "$testname"
+	ts_log "$1"
+	shift
+	if [ "$USETERM" == "yes" ]; then
+		$TS_CMD_CAL "$@"
+	fi
+	$TS_CMD_CAL "$@" >> $TS_OUTPUT
 
-ts_log "Sunday-based 1753 week numbers"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3w $MYMONTH
-fi
-$TS_CMD_CAL -3w $MYMONTH >> $TS_OUTPUT
+	ts_finalize_subtest
+}
+
+call_cal "Monday-based 1753 week numbers" -m3w $MYMONTH
+call_cal "Sunday-based 1753 week numbers" -3w $MYMONTH
 
 ts_finalize
