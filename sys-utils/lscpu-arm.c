@@ -189,39 +189,57 @@ void arm_cpu_decode(struct lscpu_desc *desc)
 {
 	int j, impl, part;
 	const struct id_part *parts = NULL;
-	char buf[8];
+	char *end;
+
 	if (desc->vendor == NULL || desc->model == NULL)
 		return;
-	if ((strncmp(desc->vendor,"0x",2) ||
-		 strncmp(desc->model,"0x",2) ))
+	if ((strncmp(desc->vendor,"0x",2) || strncmp(desc->model,"0x",2) ))
 		return;
 
-	impl=(int)strtol(desc->vendor, NULL, 0);
-	part=(int)strtol(desc->model, NULL, 0);
+	errno = 0;
+	impl = (int) strtol(desc->vendor, &end, 0);
+	if (errno || desc->vendor == end)
+		return;
+
+	errno = 0;
+	part = (int) strtol(desc->model, &end, 0);
+	if (errno || desc->model == end)
+		return;
 
 	for (j = 0; hw_implementer[j].id != -1; j++) {
-	if (hw_implementer[j].id == impl) {
-		parts = hw_implementer[j].parts;
-		desc->vendor = (char *)hw_implementer[j].name;
-		break;
+		if (hw_implementer[j].id == impl) {
+			parts = hw_implementer[j].parts;
+			desc->vendor = (char *) hw_implementer[j].name;
+			break;
 		}
 	}
-	if ( parts == NULL)
+
+	if (parts == NULL)
 		return;
 
 	for (j = 0; parts[j].id != -1; j++) {
-	if (parts[j].id == part) {
-		desc->modelname = (char *)parts[j].name;
-		break;
+		if (parts[j].id == part) {
+			desc->modelname = (char *) parts[j].name;
+			break;
 		}
 	}
 
 	/* Print out the rXpY string for ARM cores */
-	if (impl == 0x41 && desc->revision != NULL &&
-		desc->stepping != NULL)	{
-		int revision = atoi(desc->revision);
-		int variant = (int)strtol(desc->stepping, NULL, 0);
-		snprintf(buf, sizeof(buf), "r%dp%d", variant, revision );
-		desc->stepping=xstrdup(buf);
+	if (impl == 0x41 && desc->revision && desc->stepping) {
+		int revision, variant;
+		char buf[8];
+
+		errno = 0;
+		revision = (int) strtol(desc->revision, &end, 10);
+		if (errno || desc->revision == end)
+			return;
+
+		errno = 0;
+		variant = (int) strtol(desc->stepping, &end, 0);
+		if (errno || desc->stepping == end)
+			return;
+
+		snprintf(buf, sizeof(buf), "r%dp%d", variant, revision);
+		desc->stepping = xstrdup(buf);
 	}
 }
