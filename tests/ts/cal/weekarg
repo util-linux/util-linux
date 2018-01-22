@@ -32,133 +32,67 @@ export TERM=linux
 
 USETERM=$( ts_has_option "useterm" "$*" )
 
-[ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
-ts_log ""
+function call_cal_simple {
+	ts_log "$1"
+	shift
+	if [ "$USETERM" == "yes" ]; then
+		$TS_CMD_CAL "$@"
+	fi
+	$TS_CMD_CAL "$@" >> $TS_OUTPUT
+}
+
+function call_cal {
+	local testname=$(echo "${2}" | sed 's/-//g')
+	testname="${testname}-$(echo "${3}" | sed 's/=//g;s/-//g')"
+
+	ts_init_subtest "$testname"
+	call_cal_simple "$@"
+	ts_finalize_subtest
+}
+
+function call_cal_color {
+	local testname=$(echo "${2}" | sed 's/-//g')
+	testname="${testname}-$(echo "${3}" | sed 's/=//g;s/-//g')-color"
+
+	ts_init_subtest "$testname"
+	call_cal_simple "$@" --color=always
+	ts_finalize_subtest
+}
 
 MYTIME="7 10 2013"
 PWEEK="week 40"
 WEEK="--week=40"
-ts_log "Gregorian - Monday-based, $PWEEK, 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3m $WEEK $MYTIME
-fi
-$TS_CMD_CAL -3m $WEEK $MYTIME >> $TS_OUTPUT
+call_cal "Gregorian - Monday-based, $PWEEK, 3 month" -3m $WEEK $MYTIME
+call_cal "Gregorian - Sunday-based, $PWEEK, 3 month" -3s $WEEK $MYTIME
+call_cal "Julian    - Monday-based, $PWEEK, 3 month" -3mj $WEEK $MYTIME
+call_cal "Julian    - Sunday-based, $PWEEK, 3 month" -3sj $WEEK $MYTIME
+call_cal "Gregorian - Monday-based, $PWEEK, 1 month" -m $WEEK $MYTIME
+call_cal "Gregorian - Sunday-based, $PWEEK, 1 month" -s $WEEK $MYTIME
+call_cal "Julian    - Monday-based, $PWEEK, 1 month" -mj $WEEK $MYTIME
+call_cal "Julian    - Sunday-based, $PWEEK, 1 month" -sj $WEEK $MYTIME
 
-ts_log "Gregorian - Sunday-based, $PWEEK, 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3s $WEEK $MYTIME
-fi
-$TS_CMD_CAL -3s $WEEK $MYTIME >> $TS_OUTPUT
-
-
-ts_log "Julian - Monday-based, $PWEEK, 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3mj $WEEK $MYTIME
-fi
-$TS_CMD_CAL -3mj $WEEK $MYTIME >> $TS_OUTPUT
-
-ts_log "Julian - Sunday-based, $PWEEK, 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3sj $WEEK $MYTIME
-fi
-$TS_CMD_CAL -3sj $WEEK $MYTIME >> $TS_OUTPUT
-
-ts_log "Gregorian - Monday-based, $PWEEK, 1 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -m $WEEK $MYTIME
-fi
-$TS_CMD_CAL -m $WEEK $MYTIME >> $TS_OUTPUT
-
-ts_log "Gregorian - Sunday-based, $PWEEK, 1 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -s $WEEK $MYTIME
-fi
-$TS_CMD_CAL -s $WEEK $MYTIME >> $TS_OUTPUT
-
-
-ts_log "Julian - Monday-based, $PWEEK, 1 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -mj $WEEK $MYTIME
-fi
-$TS_CMD_CAL -mj $WEEK $MYTIME >> $TS_OUTPUT
-
-ts_log "Julian - Sunday-based, $PWEEK, 1 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -sj $WEEK $MYTIME
-fi
-$TS_CMD_CAL -sj $WEEK $MYTIME >> $TS_OUTPUT
+call_cal_color "Gregorian - Monday-based, $PWEEK, 3 month" -3m $WEEK $MYTIME 
+call_cal_color "Julian    - Monday-based, $PWEEK, 3 month" -3mj $WEEK $MYTIME
 
 # tricky year, starts with a bit of 53 yet ends during 52
 MYTIME="2010"
 PWEEK="week 53"
 WEEK="--week=53"
-ts_log "Gregorian - Monday-based, $PWEEK, 1 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1m $WEEK $MYTIME
-fi
-$TS_CMD_CAL -1m $WEEK $MYTIME >> $TS_OUTPUT
-
-ts_log "Julian - Monday-based, $PWEEK, 1 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1mj $WEEK $MYTIME
-fi
-$TS_CMD_CAL -1mj $WEEK $MYTIME >> $TS_OUTPUT
-
-MYTIME="2010"
-PWEEK="week 53 with colors"
-WEEK="--week=53 --color=always"
-ts_log "Gregorian - Monday-based, $PWEEK, 1 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1m $WEEK $MYTIME
-fi
-$TS_CMD_CAL -1m $WEEK $MYTIME >> $TS_OUTPUT
-
-ts_log "Julian - Monday-based, $PWEEK, 1 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1mj $WEEK $MYTIME
-fi
-$TS_CMD_CAL -1mj $WEEK $MYTIME >> $TS_OUTPUT
-
-MYTIME="7 10 2013"
-PWEEK="week 40 with colors"
-WEEK="--week=40 --color=always"
-ts_log "Gregorian - Monday-based, $PWEEK, 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3m $WEEK $MYTIME
-fi
-$TS_CMD_CAL -3m $WEEK $MYTIME >> $TS_OUTPUT
-
-ts_log "Julian - Monday-based, $PWEEK, 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3mj $WEEK $MYTIME
-fi
-$TS_CMD_CAL -3mj $WEEK $MYTIME >> $TS_OUTPUT
+call_cal "Gregorian - Monday-based, $PWEEK, 1 month" -1m $WEEK $MYTIME
+call_cal "Julian    - Monday-based, $PWEEK, 1 month" -1mj $WEEK $MYTIME
+call_cal_color "Gregorian - Monday-based, $PWEEK, 3 month" -3m $WEEK $MYTIME
+call_cal_color "Gregorian - Monday-based, $PWEEK, 1 month" -1m $WEEK $MYTIME
+call_cal_color "Julian    - Monday-based, $PWEEK, 1 month" -1mj $WEEK $MYTIME
 
 MYTIME="31 12 2000"
-PWEEK="week 54 with colors"
-WEEK="--week=54 --color=always"
-ts_log "Gregorian - Sunday-based, $PWEEK, 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --three --sunday $WEEK $MYTIME
-fi
-$TS_CMD_CAL --three --sunday $WEEK $MYTIME >> $TS_OUTPUT
+PWEEK="week 54"
+WEEK="--week=54"
+call_cal_color "Gregorian - Sunday-based, $PWEEK, 3 month" -3s $WEEK $MYTIME
 
-PWEEK="week 53 with colors"
-WEEK="--week=53 --color=always"
-ts_log "Gregorian - Monday-based, $PWEEK, 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --three --monday $WEEK $MYTIME
-fi
-$TS_CMD_CAL --three --monday $WEEK $MYTIME >> $TS_OUTPUT 2>&1
-
-PWEEK="week 52 with colors"
-WEEK="--week=52 --color=always"
-ts_log "Gregorian - Monday-based, $PWEEK, 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --three --monday $WEEK $MYTIME
-fi
-$TS_CMD_CAL --three --monday $WEEK $MYTIME >> $TS_OUTPUT 2>&1
-
+MYTIME="31 12 2000"
+PWEEK="week 52"
+WEEK="--week=52"
+call_cal_color "Gregorian - Monday-based, $PWEEK, 3 month" -3m $WEEK $MYTIME
 
 ts_finalize
 
