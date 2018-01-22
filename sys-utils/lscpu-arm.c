@@ -1,5 +1,5 @@
 /*
- * lscpu-arm.h - ARM CPU identification tables
+ * lscpu-arm.c - ARM CPU identification tables
  *
  * Copyright (C) 2018 Riku Voipio <riku.voipio@iki.fi>
  *
@@ -23,8 +23,7 @@
  *  - GCC sources: config/arch/arch-cores.def
  *  - Ancient wisdom
  */
-#ifndef LSCPU_ARM_H
-#define LSCPU_ARM_H
+#include "lscpu.h"
 
 struct id_part {
     const int id;
@@ -186,4 +185,43 @@ static const struct hw_impl hw_implementer[] = {
     { -1,   unknown_part, "unknown" },
 };
 
-#endif /* LSCPU_ARM_H */
+void arm_cpu_decode(struct lscpu_desc *desc)
+{
+	int j, impl, part;
+	const struct id_part *parts = NULL;
+	char buf[8];
+	if (desc->vendor == NULL || desc->model == NULL)
+		return;
+	if ((strncmp(desc->vendor,"0x",2) ||
+		 strncmp(desc->model,"0x",2) ))
+		return;
+
+	impl=(int)strtol(desc->vendor, NULL, 0);
+	part=(int)strtol(desc->model, NULL, 0);
+
+	for (j = 0; hw_implementer[j].id != -1; j++) {
+	if (hw_implementer[j].id == impl) {
+		parts = hw_implementer[j].parts;
+		desc->vendor = (char *)hw_implementer[j].name;
+		break;
+		}
+	}
+	if ( parts == NULL)
+		return;
+
+	for (j = 0; parts[j].id != -1; j++) {
+	if (parts[j].id == part) {
+		desc->modelname = (char *)parts[j].name;
+		break;
+		}
+	}
+
+	/* Print out the rXpY string for ARM cores */
+	if (impl == 0x41 && desc->revision != NULL &&
+		desc->stepping != NULL)	{
+		int revision = atoi(desc->revision);
+		int variant = (int)strtol(desc->stepping, NULL, 0);
+		snprintf(buf, sizeof(buf), "r%dp%d", variant, revision );
+		desc->stepping=xstrdup(buf);
+	}
+}

@@ -357,7 +357,7 @@ usrbin_exec_PROGRAMS += lscpu
 lscpu_SOURCES = \
 	sys-utils/lscpu.c \
 	sys-utils/lscpu.h \
-	sys-utils/lscpu-arm.h \
+	sys-utils/lscpu-arm.c \
 	sys-utils/lscpu-dmi.c
 lscpu_LDADD = $(LDADD) libcommon.la libsmartcols.la $(RTAS_LIBS)
 lscpu_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
