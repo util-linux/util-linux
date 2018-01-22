@@ -367,7 +367,6 @@ int main(int argc, char **argv)
 		case '3':
 			ctl.num_months = 3;
 			ctl.span_months = 1;
-			ctl.months_in_row = 3;
 			break;
 		case 's':
 			ctl.weekstart = SUNDAY;		/* default */
