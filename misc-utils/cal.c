@@ -267,7 +267,6 @@ int main(int argc, char **argv)
 	static struct cal_control ctl = {
 		.reform_year = DEFAULT_REFORM_YEAR,
 		.weekstart = SUNDAY,
-		.num_months = 1,		/* default is "cal -1" */
 		.span_months = 0,
 		.colormode = UL_COLORMODE_UNDEF,
 		.weektype = WEEK_NUM_DISABLED,
@@ -363,7 +362,7 @@ int main(int argc, char **argv)
 
 		switch(ch) {
 		case '1':
-			/* default */
+			ctl.num_months = 1;
 			break;
 		case '3':
 			ctl.num_months = 3;
@@ -536,7 +535,8 @@ int main(int argc, char **argv)
 
 	if (yflag || Yflag) {
 		ctl.gutter_width = 3;
-		ctl.num_months = MONTHS_IN_YEAR;
+		if (!ctl.num_months)
+			ctl.num_months = MONTHS_IN_YEAR;
 		if (yflag) {
 			ctl.req.start_month = 1;	/* start from Jan */
 			ctl.header_year = 1;		/* print year number */
@@ -548,6 +548,9 @@ int main(int argc, char **argv)
 						 MONTHS_IN_YEAR_ROW;
 	else if (!ctl.months_in_row)
 		ctl.months_in_row = 1;
+
+	if (!ctl.num_months)
+		ctl.num_months = 1;		/* display at least one month */
 
 	if (yflag || Yflag)
 		yearly(&ctl);
