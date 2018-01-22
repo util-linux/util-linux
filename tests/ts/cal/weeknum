@@ -28,62 +28,30 @@ export TERM=linux
 USETERM=$( ts_has_option "useterm" "$*" )
 
 [ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
-ts_log ""
 
-for x in 2001 2002 2003 2009 2010 2011 2012 ; do
-MYTIME="1 $x"
+function call_cal {
+	local testname=$(echo "$2" | sed 's/-//g')
 
-ts_log "Gregorian - Monday-based week with week numbers - year $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -ymw $MYTIME
-fi
-$TS_CMD_CAL -ymw $MYTIME >> $TS_OUTPUT
+	ts_init_subtest "$testname"
+	ts_log "$1"
+	shift
+	for x in 2001 2002 2003 2009 2010 2011 2012 ; do
+		if [ "$USETERM" == "yes" ]; then
+			$TS_CMD_CAL "$@" 1 $x
+		fi
+		$TS_CMD_CAL "$@" 1 $x >> $TS_OUTPUT
+	done
+	ts_finalize_subtest
+}
 
-ts_log "Gregorian - Sunday-based week with week numbers - year $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -ysw $MYTIME
-fi
-$TS_CMD_CAL -ysw $MYTIME >> $TS_OUTPUT
-
-
-ts_log "Julian - Monday-based week with week numbers - year $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -ymjw $MYTIME
-fi
-$TS_CMD_CAL -ymjw $MYTIME >> $TS_OUTPUT
-
-ts_log "Julian - Sunday-based week with week numbers - year $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -ysjw $MYTIME
-fi
-$TS_CMD_CAL -ysjw $MYTIME >> $TS_OUTPUT
-
-ts_log "Gregorian - Monday-based week with week numbers - 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3mw $MYTIME
-fi
-$TS_CMD_CAL -3mw $MYTIME >> $TS_OUTPUT
-
-ts_log "Gregorian - Sunday-based week with week numbers - 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3sw $MYTIME
-fi
-$TS_CMD_CAL -3sw $MYTIME >> $TS_OUTPUT
-
-
-ts_log "Julian - Monday-based week with week numbers - 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3mjw $MYTIME
-fi
-$TS_CMD_CAL -3mjw $MYTIME >> $TS_OUTPUT
-
-ts_log "Julian - Sunday-based week with week numbers - 3 month $x"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3sjw $MYTIME
-fi
-$TS_CMD_CAL -3sjw $MYTIME >> $TS_OUTPUT
-
-done
+call_cal "Gregorian - Monday-based week with week numbers" -ymw
+call_cal "Gregorian - Sunday-based week with week numbers" -ysw
+call_cal "Julian - Monday-based week with week numbers" -ymjw
+call_cal "Julian - Sunday-based week with week numbers" -ysjw
+call_cal "Gregorian - Monday-based week with week number" -3mw
+call_cal "Gregorian - Sunday-based week with week numbers - 3 month" -3sw
+call_cal "Julian - Monday-based week with week numbers - 3 month" -3mjw
+call_cal "Julian - Sunday-based week with week numbers - 3 month" -3sjw
 
 ts_finalize
 
