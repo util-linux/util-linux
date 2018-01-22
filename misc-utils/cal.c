@@ -1003,7 +1003,7 @@ static int week_to_day(const struct cal_control *ctl)
 	if (ctl->weektype & WEEK_NUM_ISO)
 		yday -= (wday >= FRIDAY ? -2 : 5);
 	else
-		yday -= (wday == SUNDAY ? 6 : -1);	/* WEEK_NUM_US */
+		yday -= 6;	/* WEEK_NUM_US */
 	if (yday <= 0)
 		return 1;
 

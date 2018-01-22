@@ -195,13 +195,13 @@ highlighted if the calendar is displayed on a terminal.  If no parameters are
 specified, the current month's calendar is displayed.
 .SH NOTES
 A year starts on January 1.  The first day of the week is determined by the
-locale.
+locale or the
+.BR \-\-sunday \ and \ \-\-monday \ options.
 .PP
-The week numbering depends on the choice of the first day of the week.  If Sunday
-(the default) is used for the first day of the week, then the customary North
-American numbering will be used, i.e. the first Sunday of the year starts the
-first week.  If Monday is selected, then the ISO-8601 standard week numbering
-is used, where the first Thursday of the year is in week number 1.
+The week numbering depends on the choice of the first day of the week.  If it
+is Sunday then the customary North American numbering is used, where 1 January
+is in week number 1.  If it is Monday then the ISO 8601 standard week numbering
+is used, where the first Thursday is in week number 1.
 .SH COLORS
 Implicit coloring can be disabled as follows:
 .RS
