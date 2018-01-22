@@ -305,6 +305,59 @@ AC_CHECK_HEADERS([langinfo.h],
 		[AM_CONDITIONAL([HAVE_LANGINFO], [true])],
 		[AM_CONDITIONAL([HAVE_LANGINFO], [false])])
 
+
+AC_MSG_CHECKING([whether langinfo.h defines ALTMON_x constants])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+	#include <langinfo.h>
+]], [[
+	char *str;
+	str = nl_langinfo (ALTMON_1);
+	str = nl_langinfo (ALTMON_2);
+	str = nl_langinfo (ALTMON_3);
+	str = nl_langinfo (ALTMON_4);
+	str = nl_langinfo (ALTMON_5);
+	str = nl_langinfo (ALTMON_6);
+	str = nl_langinfo (ALTMON_7);
+	str = nl_langinfo (ALTMON_8);
+	str = nl_langinfo (ALTMON_9);
+	str = nl_langinfo (ALTMON_10);
+	str = nl_langinfo (ALTMON_11);
+	str = nl_langinfo (ALTMON_12);
+]])], [
+	AC_MSG_RESULT([yes])
+	AC_DEFINE([HAVE_LANGINFO_ALTMON], [1],
+		[Define if langinfo.h defines ALTMON_x constants])
+], [
+	AC_MSG_RESULT([no])
+])
+
+
+AC_MSG_CHECKING([whether langinfo.h defines _NL_ABALTMON_x constants])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+	#include <langinfo.h>
+]], [[
+	char *str;
+	str = nl_langinfo (_NL_ABALTMON_1);
+	str = nl_langinfo (_NL_ABALTMON_2);
+	str = nl_langinfo (_NL_ABALTMON_3);
+	str = nl_langinfo (_NL_ABALTMON_4);
+	str = nl_langinfo (_NL_ABALTMON_5);
+	str = nl_langinfo (_NL_ABALTMON_6);
+	str = nl_langinfo (_NL_ABALTMON_7);
+	str = nl_langinfo (_NL_ABALTMON_8);
+	str = nl_langinfo (_NL_ABALTMON_9);
+	str = nl_langinfo (_NL_ABALTMON_10);
+	str = nl_langinfo (_NL_ABALTMON_11);
+	str = nl_langinfo (_NL_ABALTMON_12);
+]])], [
+	AC_MSG_RESULT([yes])
+	AC_DEFINE([HAVE_LANGINFO_NL_ABALTMON], [1],
+		[Define if langinfo.h defines _NL_ABALTMON_x constants])
+], [
+	AC_MSG_RESULT([no])
+])
+
+
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
 have_linux_version_h=$ac_cv_header_linux_version_h

@@ -574,7 +574,7 @@ static void init_monthnames(struct cal_control *ctl)
 		return;		/* already initialized */
 
 	for (i = 0; i < MONTHS_IN_YEAR; i++)
-		ctl->full_month[i] = nl_langinfo(MON_1 + i);
+		ctl->full_month[i] = nl_langinfo(ALTMON_1 + i);
 }
 
 static void init_abbr_monthnames(struct cal_control *ctl)
@@ -585,7 +585,7 @@ static void init_abbr_monthnames(struct cal_control *ctl)
 		return;		/* already initialized */
 
 	for (i = 0; i < MONTHS_IN_YEAR; i++)
-		ctl->abbr_month[i] = nl_langinfo(ABMON_1 + i);
+		ctl->abbr_month[i] = nl_langinfo(_NL_ABALTMON_1 + i);
 }
 
 static int monthname_to_number(struct cal_control *ctl, const char *name)
