@@ -95,4 +95,10 @@ if [ "$USETERM" == "yes" ]; then
 fi
 $TS_CMD_CAL -1sjw $MYYEAR >> $TS_OUTPUT
 
+ts_log "Gregorian - address by week number"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL --week=40 --iso $MYYEAR
+fi
+$TS_CMD_CAL --week=40 --iso $MYYEAR >> $TS_OUTPUT
+
 ts_finalize
