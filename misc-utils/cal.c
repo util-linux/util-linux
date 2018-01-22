@@ -997,6 +997,9 @@ static int week_to_day(const struct cal_control *ctl)
 	wday = day_in_week(ctl, 1, JANUARY, ctl->req.year);
 	yday = ctl->req.week * DAYS_IN_WEEK - wday;
 
+	if (ctl->req.year == ctl->reform_year && yday >= YDAY_AFTER_MISSING)
+		yday += NUMBER_MISSING_DAYS;
+
 	if (ctl->weektype & WEEK_NUM_ISO)
 		yday -= (wday >= FRIDAY ? -2 : 5);
 	else
