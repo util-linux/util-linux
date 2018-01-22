@@ -26,17 +26,27 @@ USETERM=$( ts_has_option "useterm" "$*" )
 MYMONTH="09 1752"
 MYYEAR="1752"
 
-[ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
-ts_log ""
-
-
-function call_cal {
+function call_cal_simple {
 	ts_log "$1"
 	shift
 	if [ "$USETERM" == "yes" ]; then
 		$TS_CMD_CAL "$@"
 	fi
 	$TS_CMD_CAL "$@" >> $TS_OUTPUT
+}
+
+function call_cal {
+	local testname=$(echo "$2" | sed 's/-//g')
+
+	if [ "$3" == "$MYYEAR" ]; then
+		testname="${testname}-year"
+	else
+		testname="${testname}-month"
+	fi
+
+	ts_init_subtest "$testname"
+	call_cal_simple "$@"
+	ts_finalize_subtest
 }
 
 
@@ -64,6 +74,8 @@ call_cal "Julian - Monday-based year with week numbers" -1mjw $MYYEAR
 
 call_cal "Julian - Sunday-based year with week numbers" -1sjw $MYYEAR
 
-call_cal "Gregorian - address by week number" --week=40 --iso $MYYEAR
+ts_init_subtest "week-iso"
+call_cal_simple "Gregorian - address by week number" --week=40 --iso $MYYEAR
+ts_finalize_subtest
 
 ts_finalize
