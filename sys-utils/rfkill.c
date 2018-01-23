@@ -45,7 +45,12 @@
  * year 2009 (2.6.33) or older.
  */
 #ifndef RFKILL_TYPE_NFC
+# ifndef RFKILL_TYPE_FM
+#  define RFKILL_TYPE_FM	RFKILL_TYPE_GPS + 1
+# endif
 # define RFKILL_TYPE_NFC	RFKILL_TYPE_FM + 1
+# undef NUM_RFKILL_TYPES
+# define NUM_RFKILL_TYPES	RFKILL_TYPE_NFC + 1
 #endif
 
 struct rfkill_type_str {
