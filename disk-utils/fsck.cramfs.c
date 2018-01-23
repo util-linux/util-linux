@@ -220,24 +220,23 @@ static void test_crc(int start)
 	crc = crc32(0L, NULL, 0);
 
 	buf =
-	    mmap(NULL, start + super.size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+	    mmap(NULL, super.size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 	if (buf == MAP_FAILED) {
 		buf =
-		    mmap(NULL, start + super.size, PROT_READ | PROT_WRITE,
+		    mmap(NULL, super.size, PROT_READ | PROT_WRITE,
 			 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 		if (buf != MAP_FAILED) {
-			if (lseek(fd, start, SEEK_SET) == (off_t) -1)
+			if (lseek(fd, 0, SEEK_SET) == (off_t) -1)
 				err(FSCK_EX_ERROR, _("seek on %s failed"), filename);
-			if (read(fd, (unsigned char *) buf + start, super.size) !=
-			    (ssize_t) super.size)
+			if (read(fd, buf, super.size) != (ssize_t) super.size)
 				err(FSCK_EX_ERROR, _("cannot read %s"), filename);
 		}
 	}
 	if (buf != MAP_FAILED) {
 		((struct cramfs_super *)((unsigned char *) buf + start))->fsid.crc =
 		    crc32(0L, NULL, 0);
-		crc = crc32(crc, (unsigned char *) buf + start, super.size);
-		munmap(buf, start + super.size);
+		crc = crc32(crc, (unsigned char *) buf + start, super.size - start);
+		munmap(buf, super.size);
 	} else {
 		int retval;
 		size_t length = 0;
