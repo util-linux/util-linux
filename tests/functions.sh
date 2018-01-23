@@ -635,7 +635,7 @@ function ts_fstab_open {
 
 function ts_fstab_close {
 	echo "# -->" >> /etc/fstab
-	sync /etc/fstab
+	sync /etc/fstab 2>/dev/null
 }
 
 function ts_fstab_addline {
@@ -669,7 +669,7 @@ function ts_fstab_clean {
 s/# <!-- util-linux.*-->//;
 /^$/d" /etc/fstab
 
-	sync /etc/fstab
+	sync /etc/fstab 2>/dev/null
 	ts_unlock "fstab"
 }
 
