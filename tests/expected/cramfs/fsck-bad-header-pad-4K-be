@@ -1,0 +1,29 @@
+## size: 76
+fsck.cramfs: superblock size (76) too small
+ret: 4
+
+## size: 587
+fsck.cramfs: superblock size (587) too small
+ret: 4
+
+## size: 588
+fsck.cramfs: file extends past end of filesystem
+fsck.cramfs: crc error
+ret: 4
+
+## size: 4095
+fsck.cramfs: file extends past end of filesystem
+fsck.cramfs: crc error
+ret: 4
+
+## size: 4096
+ret: 0
+
+## size: 4097
+fsck.cramfs: file length too short
+ret: 4
+
+## size: 4294967295
+fsck.cramfs: file length too short
+ret: 4
+
