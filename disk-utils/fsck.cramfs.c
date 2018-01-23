@@ -226,10 +226,15 @@ static void test_crc(int start)
 		    mmap(NULL, super.size, PROT_READ | PROT_WRITE,
 			 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 		if (buf != MAP_FAILED) {
+			ssize_t tmp;
 			if (lseek(fd, 0, SEEK_SET) == (off_t) -1)
 				err(FSCK_EX_ERROR, _("seek on %s failed"), filename);
-			if (read(fd, buf, super.size) != (ssize_t) super.size)
+			tmp = read(fd, buf, super.size);
+			if (tmp < 0)
 				err(FSCK_EX_ERROR, _("cannot read %s"), filename);
+			if (tmp != (ssize_t) super.size)
+				errx(FSCK_EX_ERROR, _("failed to read %"PRIu32" bytes from file %s"),
+					super.size, filename);
 		}
 	}
 	if (buf != MAP_FAILED) {
