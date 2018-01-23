@@ -144,6 +144,7 @@ ${TS_DEVICE}4 : start=      108544, size=        2048, type=83
 ${TS_DEVICE}5 : start=        8192, size=        2048, type=83
 ${TS_DEVICE}6 : start=       12288, size=       96256, type=83
 EOF
+udevadm settle
 # enlarge to use all space behind partition #4
 echo ',+,' | $TS_CMD_SFDISK --no-reread -N 4 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
