@@ -111,7 +111,9 @@ ts_init_subtest "mount-by-uuid"
 mkdir -p $MOUNTPOINT &> /dev/null
 ts_run $TESTPROG --mount UUID="$UUID" $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE  || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
+sleep 1
 ts_run $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+sleep 1
 is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
