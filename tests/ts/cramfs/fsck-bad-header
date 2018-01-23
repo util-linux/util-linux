@@ -16,7 +16,7 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="fsck endianness"
+TS_DESC="fsck bad header"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"

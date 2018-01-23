@@ -192,7 +192,7 @@ static void test_super(int *start, size_t * length)
 		errx(FSCK_EX_ERROR, _("unsupported filesystem features"));
 
 	/* What are valid superblock sizes? */
-	if (super.size < sizeof(struct cramfs_super))
+	if (super.size < *start + sizeof(struct cramfs_super))
 		errx(FSCK_EX_UNCORRECTED, _("superblock size (%d) too small"),
 		     super.size);
 

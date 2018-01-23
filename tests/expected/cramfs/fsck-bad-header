@@ -1,2 +1,1 @@
-fsck.cramfs: file extends past end of filesystem
-fsck.cramfs: crc error
+fsck.cramfs: superblock size (76) too small
