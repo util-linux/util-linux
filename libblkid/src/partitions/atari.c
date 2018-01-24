@@ -107,6 +107,13 @@ static int parse_partition(blkid_partlist ls, blkid_parttable tab,
 	start = be32_to_cpu(part->start) + offset;
 	size = be32_to_cpu(part->size);
 
+	if (blkid_partlist_get_partition_by_start(ls, start)) {
+		/* Don't increment partno for extended parts */
+		if (!offset)
+			blkid_partlist_increment_partno(ls);
+		return 0;
+	}
+
 	par = blkid_partlist_add_partition(ls, tab, start, size);
 	if (!par)
 		return -ENOMEM;
@@ -151,7 +158,7 @@ static int parse_extended(blkid_probe pr, blkid_partlist ls,
 			return 0;
 
 		rc = parse_partition(ls, tab, &xrs->part[i], xstart);
-		if (rc < 0)
+		if (rc <= 0)
 			return rc;
 
 		if (!IS_ACTIVE(xrs->part[i+1]))
