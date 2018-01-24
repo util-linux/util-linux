@@ -127,7 +127,7 @@ static int parse_extended(blkid_probe pr, blkid_partlist ls,
 	while (1) {
 		struct atari_rootsector *xrs;
 		xrs = (struct atari_rootsector *) blkid_probe_get_sector(pr, xstart);
-		if (!rs) {
+		if (!xrs) {
 			if (errno)
 				return -errno;
 			return 0;
