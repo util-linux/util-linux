@@ -74,12 +74,15 @@ static int linux_isalnum(unsigned char c) {
 
 #define IS_ACTIVE(partdef) ((partdef).flags & 1)
 
-#define IS_PARTDEF_VALID(partdef) \
+#define IS_PARTDEF_VALID(partdef, hdsize) \
 	( \
 		(partdef).flags & 1 && \
 		isalnum((partdef).id[0]) && \
 		isalnum((partdef).id[1]) && \
-		isalnum((partdef).id[2]) \
+		isalnum((partdef).id[2]) && \
+		be32_to_cpu((partdef).start) <= (hdsize) && \
+		be32_to_cpu((partdef).start) + \
+			be32_to_cpu((partdef).size) <= (hdsize) \
 	)
 
 static int is_id_common(char *id)
@@ -174,6 +177,7 @@ static int probe_atari_pt(blkid_probe pr,
 	unsigned i;
 	int has_xgm = 0;
 	int rc = 0;
+	off_t hdsize;
 
 	rs = (struct atari_rootsector *) blkid_probe_get_sector(pr, 0);
 	if (!rs) {
@@ -182,12 +186,14 @@ static int probe_atari_pt(blkid_probe pr,
 		goto nothing;
 	}
 
+	hdsize = blkid_probe_get_size(pr) / 512;
+
 	/* Look for validly looking primary partition */
 	for (i = 0; ; i++) {
 		if (i >= ARRAY_SIZE(rs->part))
 			goto nothing;
 
-		if (IS_PARTDEF_VALID(rs->part[i])) {
+		if (IS_PARTDEF_VALID(rs->part[i], hdsize)) {
 			blkid_probe_set_magic(pr,
 				offsetof(struct atari_rootsector, part[i]),
 				sizeof(rs->part[i].flags) + sizeof(rs->part[i].id),
