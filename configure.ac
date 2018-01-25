@@ -146,7 +146,7 @@ AC_ARG_ENABLE([asan],
   AS_HELP_STRING([--enable-asan], [compile with Address Sanitizer]),
   [], [enable_asan=no]
 )
-AS_IF([test "x$enable_asan" == xyes], [
+AS_IF([test "x$enable_asan" = xyes], [
   UL_WARN_ADD([-fsanitize=address])
 ])
 
@@ -1080,7 +1080,7 @@ AC_ARG_ENABLE([libmount-support-mtab],
   [], [enable_libmount_support_mtab=no]
 )
 
-AS_IF([test "x$enable_libmount_support_mtab" == xyes], [
+AS_IF([test "x$enable_libmount_support_mtab" = xyes], [
   AC_DEFINE([USE_LIBMOUNT_SUPPORT_MTAB], [1], [Define to 1 if want to support mtab.])
 ])
 
@@ -1202,7 +1202,7 @@ UL_BUILD_INIT([uuidd])
 UL_REQUIRES_BUILD([uuidd], [libuuid])
 UL_REQUIRES_HAVE([uuidd], [timer], [timer_create function])
 UL_REQUIRES_HAVE([uuidd], [sys_signalfd_h], [sys/signalfd.h header])
-AS_IF([test "x$build_uuidd" = xyes || test "x$enable_libuuid_force_uuidd" == xyes ], [
+AS_IF([test "x$build_uuidd" = xyes || test "x$enable_libuuid_force_uuidd" = xyes], [
   AC_DEFINE([HAVE_UUIDD], [1], [Define to 1 if you want to use uuid daemon.])
 ])
 AM_CONDITIONAL([BUILD_UUIDD], [test "x$build_uuidd" = xyes])
@@ -2281,7 +2281,7 @@ AC_ARG_ENABLE([usrdir-path],
   [], [enable_usrdir_path=no]
 )
 
-AS_IF([test "x$enable_usrdir_path" == xyes], [
+AS_IF([test "x$enable_usrdir_path" = xyes], [
   AC_DEFINE([USE_USRDIR_PATHS_ONLY], [1], [Define to 1 to remove /bin and /sbin from PATH env.variable])
 ])
 
