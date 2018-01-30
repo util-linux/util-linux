@@ -488,7 +488,8 @@ int main(int argc, char **argv)
 		}
 		if (!ctl.req.month && !ctl.req.week) {
 			ctl.req.month = local_time->tm_mon + 1;
-			yflag = 1;
+			if (!ctl.num_months)
+				yflag = 1;
 		}
 		break;
 	case 0:
