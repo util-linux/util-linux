@@ -75,6 +75,10 @@
 #include "strutils.h"
 #include "optutils.h"
 #include "timeutils.h"
+#include "ttyutils.h"
+
+#define DOY_MONTH_WIDTH	27	/* -j month width */
+#define DOM_MONTH_WIDTH	20	/* month width */
 
 static int has_term = 0;
 static const char *Senter = "", *Sexit = "";	/* enter and exit standout mode */
@@ -542,10 +546,19 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (ctl.num_months > 1 && ctl.months_in_row == 0)
-		ctl.months_in_row = ctl.julian ? MONTHS_IN_YEAR_ROW - 1 :
-						 MONTHS_IN_YEAR_ROW;
-	else if (!ctl.months_in_row)
+	if (ctl.num_months > 1 && ctl.months_in_row == 0) {
+		ctl.months_in_row = MONTHS_IN_YEAR_ROW;		/* default */
+
+		if (isatty(STDOUT_FILENO)) {
+			int w = get_terminal_width(STDOUT_FILENO);
+			int mw = ctl.julian ? DOY_MONTH_WIDTH : DOM_MONTH_WIDTH;
+			int extra = ((w / mw) - 1) * ctl.gutter_width;
+			int new_n = (w - extra) / mw;
+
+			if (new_n < MONTHS_IN_YEAR_ROW)
+				ctl.months_in_row = new_n;
+		}
+	} else if (!ctl.months_in_row)
 		ctl.months_in_row = 1;
 
 	if (!ctl.num_months)
@@ -798,11 +811,8 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 				my_putstring(out);
 			}
 		}
-		if (i == NULL) {
-			int extra = ctl->num_months > 3 ? 0 : 1;
-			sprintf(out, "%*s\n", ctl->gutter_width - extra, "");
-			my_putstring(out);
-		}
+		if (i == NULL)
+			my_putstring("\n");
 	}
 }
 
