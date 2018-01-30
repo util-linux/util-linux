@@ -879,9 +879,6 @@ static void yearly(const struct cal_control *ctl)
 		my_putstring("\n\n");
 	}
 	monthly(ctl);
-
-	/* Is empty line at the end year output really needed? */
-	my_putstring("\n");
 }
 
 /*
