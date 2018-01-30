@@ -186,6 +186,10 @@ static int probe_atari_pt(blkid_probe pr,
 	int rc = 0;
 	off_t hdsize;
 
+	/* Atari partition is not defined for other sector sizes */
+	if (blkid_probe_get_sectorsize(pr) != 512)
+		goto nothing;
+
 	rs = (struct atari_rootsector *) blkid_probe_get_sector(pr, 0);
 	if (!rs) {
 		if (errno)
