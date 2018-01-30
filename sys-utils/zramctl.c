@@ -423,18 +423,12 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 		{
 			char *alg = sysfs_strdup(sysfs, "comp_algorithm");
 
-			if (alg != NULL)	{
+			if (alg != NULL) {
+				char* lbr = strrchr(alg, '[');
+				char* rbr = strrchr(alg, ']');
 
-				char* left_br = strrchr(alg, '[');
-				char* right_br = strrchr(alg, ']');
-
-				if (left_br != NULL && right_br != NULL
-						&& right_br-left_br > 1)	{
-					str = xmalloc(right_br-left_br);
-					strncpy(str, left_br+1, right_br-left_br-1);
-					str[right_br-left_br-1] = '\0';
-				}
-
+				if (lbr != NULL && rbr != NULL && rbr - lbr > 1)
+					str = xstrndup(lbr + 1, rbr - lbr - 1);
 				free(alg);
 			}
 			break;
