@@ -24,13 +24,6 @@ lsblk
     btrfs specific code to provide a better output for FS based stacks. Not sure.
     https://bugzilla.redhat.com/show_bug.cgi?id=1084453
 
-cfdisk
-------
-  - (!) add auto-sort support (sort partitions automatically) and
-    --sort={auto,never,always} command line option. This feature should be
-    enabled by default for logical partitions if we created all container (extended
-    partition) in the current session.
-      
 agetty
 -----
   - support default issue (/etc/issue) output for agetty to make it agetty
@@ -131,9 +124,6 @@ libblkid
        stdint.h types and so on...
 
  - add FSSIZE value  -- filesystem size (klibc requirement)
-
- - (!) add support for Atari PT
-       https://github.com/karelzak/util-linux/issues/517
 
  - (!) add support for dasd PT (used for example on s390)
 
