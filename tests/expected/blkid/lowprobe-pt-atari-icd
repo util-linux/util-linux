@@ -1,0 +1,8 @@
+size: 8388608, sector size: 512, PT: atari, offset: 0, id=(null)
+---
+#1:         65       4032  0x0 type='FAT'
+#2:       4097        904  0x0 type='FOO'
+#4:      12289       4096  0x0 type='BAR'
+#5:       5002       1999  0x0 type='GEM'
+#6:       7003       3238  0x0 type='RAW'
+#7:      10241       2048  0x0 type='RAW'
