@@ -236,8 +236,5 @@ int main(int argc, char *argv[])
 	shell = (pw_entry->pw_shell && *pw_entry->pw_shell ?
 				pw_entry->pw_shell : _PATH_BSHELL);
 	execl(shell, shell, (char *)0);
-	warn(_("failed to execute %s"), shell);
-	fflush(stderr);
-
-	return EXIT_FAILURE;
+	errexec(shell);
 }
