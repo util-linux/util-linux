@@ -46,5 +46,5 @@ void __attribute__((__noreturn__)) exec_shell(void)
 	strcpy(arg0 + 1, shell_basename);
 
 	execl(shell, arg0, NULL);
-	err(EXIT_FAILURE, _("failed to execute %s"), shell);
+	errexec(shell);
 }

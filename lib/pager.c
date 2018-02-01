@@ -82,7 +82,7 @@ static int start_command(struct child_process *cmd)
 
 		cmd->preexec_cb();
 		execvp(cmd->argv[0], (char *const*) cmd->argv);
-		exit(127); /* cmd not found */
+		errexec(cmd->argv[0]);
 	}
 
 	if (cmd->pid < 0) {
