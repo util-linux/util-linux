@@ -43,7 +43,6 @@
 #include "closestream.h"
 #include "pathnames.h"
 #include "sysfs.h"
-#include "exitcodes.h"
 
 #include <libmount.h>
 
