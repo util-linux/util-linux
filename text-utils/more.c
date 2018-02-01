@@ -1619,6 +1619,7 @@ void execute(char *filename, char *cmd, ...)
 	for (n = 10; (id = fork()) < 0 && n > 0; n--)
 		sleep(5);
 	if (id == 0) {
+		int errsv;
 		if (!isatty(0)) {
 			close(0);
 			open("/dev/tty", 0);
@@ -1647,8 +1648,9 @@ void execute(char *filename, char *cmd, ...)
 		va_end(argp);
 
 		execvp(cmd, args);
+		errsv = errno;
 		putserr(_("exec failed\n"));
-		exit(EXIT_FAILURE);
+		exit(errsv == ENOENT ? EX_EXEC_ENOENT : EX_EXEC_FAILED);
 	}
 	if (id > 0) {
 		signal(SIGINT, SIG_IGN);

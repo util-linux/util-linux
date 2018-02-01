@@ -1380,9 +1380,8 @@ static void pgfile(FILE *f, const char *name)
 						my_sigset(SIGTERM, oldterm);
 						execl(sh, sh, "-c",
 						      cmd.cmdline + 1, NULL);
-						warn(_("failed to execute %s"), sh);
-						_exit(0177);
-						/* NOTREACHED */
+						errexec(sh);
+						break;
 					}
 					case -1:
 						mesg(_("fork() failed, "
