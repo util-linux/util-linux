@@ -169,6 +169,7 @@ html-build.stamp: sgml.stamp $(srcdir)/$(DOC_MAIN_SGML_FILE) $(content_files)
 		( cd $(srcdir) && cp $(HTML_IMAGES) $(abs_builddir)/html )
 
 	$(AM_V_GEN)gtkdoc-fixxref --module-dir=html \
+		       --module=$(DOC_MODULE) \
 	               --html-dir=$(HTML_DIR) \
 	               $(FIXXREF_OPTIONS)
 	@touch html-build.stamp
