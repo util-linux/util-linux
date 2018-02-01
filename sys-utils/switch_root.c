@@ -258,6 +258,6 @@ int main(int argc, char *argv[])
 		warn(_("cannot access %s"), init);
 
 	execv(init, initargs);
-	err(EXIT_FAILURE, _("failed to execute %s"), init);
+	errexec(init);
 }
 

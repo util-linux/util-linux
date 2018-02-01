@@ -990,6 +990,5 @@ int main(int argc, char **argv)
 	}
 
 	execvp(argv[optind], argv + optind);
-
-	err(EXIT_FAILURE, _("cannot execute: %s"), argv[optind]);
+	errexec(argv[optind]);
 }

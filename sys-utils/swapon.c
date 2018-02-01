@@ -341,7 +341,7 @@ static int swap_reinitialize(struct swap_device *dev)
 		cmd[idx++] = dev->path;
 		cmd[idx++] = NULL;
 		execvp(cmd[0], (char * const *) cmd);
-		err(EXIT_FAILURE, _("failed to execute %s"), cmd[0]);
+		errexec(cmd[0]);
 
 	default: /* parent */
 		do {
@@ -353,7 +353,7 @@ static int swap_reinitialize(struct swap_device *dev)
 			return -1;
 		}
 
-		/* mkswap returns: 0=suss, 1=error */
+		/* mkswap returns: 0=suss, >0 error */
 		if (WIFEXITED(status) && WEXITSTATUS(status)==0)
 			return 0; /* ok */
 		break;

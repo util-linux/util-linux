@@ -667,7 +667,7 @@ static void umount_one(const struct eject_control *ctl, const char *name)
 		else
 			execl("/bin/umount", "/bin/umount", name, NULL);
 
-		errx(EXIT_FAILURE, _("unable to exec /bin/umount of `%s'"), name);
+		errexec("/bin/umount");
 
 	case -1:
 		warn( _("unable to fork"));
