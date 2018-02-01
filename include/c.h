@@ -216,6 +216,12 @@ errmsg(char doexit, int excode, char adderr, const char *fmt, ...)
 	exit(eval); \
 })
 
+/* After failed execvp() */
+#define EX_EXEC_FAILED		126	/* Program located, but not usable. */
+#define EX_EXEC_ENOENT		127	/* Could not find program to exec.  */
+#define errexec(name)	err(errno == ENOENT ? EX_EXEC_ENOENT : EX_EXEC_FAILED, \
+			_("failed to execute %s"), name)
+
 
 static inline __attribute__((const)) int is_power_of_2(unsigned long num)
 {
