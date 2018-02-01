@@ -15,7 +15,6 @@
 #include "nls.h"
 #include "closestream.h"
 #include "c.h"
-#include "exitcodes.h"
 
 /* Exit codes used by findfs. */
 #define FINDFS_SUCCESS		0	/* no errors */
