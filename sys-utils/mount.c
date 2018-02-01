@@ -463,6 +463,32 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(MNT_EX_SUCCESS);
 }
 
+struct flag_str {
+	int value;
+	char *str;
+};
+
+static int flag_from_string(const struct flag_str *flags, const char *str)
+{
+	for (; flags->str; flags++) {
+		if (!strcmp(str, flags->str))
+			return flags->value;
+	}
+	return -EINVAL;
+}
+
+static int flags_from_string(const struct flag_str *flags, char *str)
+{
+	int ret = 0, tmp;
+	for (str = strtok(str, ","); str; str = strtok(NULL, ",")) {
+		tmp = flag_from_string(flags, str);
+		if (tmp < 0)
+			return tmp;
+		ret |= tmp;
+	}
+	return ret;
+}
+
 int main(int argc, char **argv)
 {
 	int c, rc = MNT_EX_SUCCESS, all = 0, show_labels = 0;
@@ -472,6 +498,7 @@ int main(int argc, char **argv)
 	char *types = NULL;
 	unsigned long oper = 0;
 	int propa = 0;
+	int optmode = 0, optmode_mode = 0, optmode_src = 0;
 
 	enum {
 		MOUNT_OPT_SHARED = CHAR_MAX + 1,
@@ -483,7 +510,10 @@ int main(int argc, char **argv)
 		MOUNT_OPT_RPRIVATE,
 		MOUNT_OPT_RUNBINDABLE,
 		MOUNT_OPT_TARGET,
-		MOUNT_OPT_SOURCE
+		MOUNT_OPT_SOURCE,
+		MOUNT_OPT_OPTMODE,
+		MOUNT_OPT_OPTSRC,
+		MOUNT_OPT_OPTSRC_FORCE
 	};
 
 	static const struct option longopts[] = {
@@ -520,6 +550,9 @@ int main(int argc, char **argv)
 		{ "show-labels",      no_argument,       NULL, 'l'                   },
 		{ "target",           required_argument, NULL, MOUNT_OPT_TARGET      },
 		{ "source",           required_argument, NULL, MOUNT_OPT_SOURCE      },
+		{ "options-mode",     required_argument, NULL, MOUNT_OPT_OPTMODE     },
+		{ "options-source",   required_argument, NULL, MOUNT_OPT_OPTSRC      },
+		{ "options-source-force",   no_argument, NULL, MOUNT_OPT_OPTSRC_FORCE},
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -529,6 +562,20 @@ int main(int argc, char **argv)
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
+	static const struct flag_str opt_optmodes[] = {
+		{ MNT_OMODE_IGNORE, "ignore" },
+		{ MNT_OMODE_APPEND, "append" },
+		{ MNT_OMODE_PREPEND, "prepend" },
+		{ MNT_OMODE_REPLACE, "replace" },
+		{ 0, NULL }
+	};
+	static const struct flag_str opt_optsources[] = {
+		{ MNT_OMODE_FSTAB, "fstab" },
+		{ MNT_OMODE_MTAB, "mtab" },
+		{ MNT_OMODE_NOTAB, "disable" },
+		{ 0, NULL }
+	};
 
 	sanitize_env();
 	setlocale(LC_ALL, "");
@@ -673,6 +720,23 @@ int main(int argc, char **argv)
 			mnt_context_disable_swapmatch(cxt, 1);
 			mnt_context_set_source(cxt, optarg);
 			break;
+		case MOUNT_OPT_OPTMODE:
+			optmode_mode = flag_from_string(opt_optmodes, optarg);
+			if (optmode_mode == -EINVAL) {
+				warnx(_("bad usage"));
+				errtryhelp(MNT_EX_USAGE);
+			}
+			break;
+		case MOUNT_OPT_OPTSRC:
+			optmode_src = flags_from_string(opt_optsources, optarg);
+			if (optmode_src == -EINVAL) {
+				warnx(_("bad usage"));
+				errtryhelp(MNT_EX_USAGE);
+			}
+			break;
+		case MOUNT_OPT_OPTSRC_FORCE:
+			optmode |= MNT_OMODE_FORCE;
+			break;
 		default:
 			errtryhelp(MNT_EX_USAGE);
 		}
@@ -680,6 +744,15 @@ int main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
+
+	optmode |= optmode_mode | optmode_src;
+	if (optmode) {
+		if (!optmode_mode)
+			optmode |= MNT_OMODE_PREPEND;
+		if (!optmode_src)
+			optmode |= MNT_OMODE_FSTAB | MNT_OMODE_MTAB;
+		mnt_context_set_optsmode(cxt, optmode);
+	}
 
 	if (fstab && !mnt_context_is_nocanonicalize(cxt)) {
 		/*
