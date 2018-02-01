@@ -185,7 +185,7 @@ int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl
 	if (cl->flags & SCOLS_FL_TREE)
 		tb->ntreecols++;
 
-	DBG(TAB, ul_debugobj(tb, "add column %p", cl));
+	DBG(TAB, ul_debugobj(tb, "add column"));
 	list_add_tail(&cl->cl_columns, &tb->tb_columns);
 	cl->seqnum = tb->ncols++;
 	cl->table = tb;
@@ -225,7 +225,7 @@ int scols_table_remove_column(struct libscols_table *tb,
 	if (cl->flags & SCOLS_FL_TREE)
 		tb->ntreecols--;
 
-	DBG(TAB, ul_debugobj(tb, "remove column %p", cl));
+	DBG(TAB, ul_debugobj(tb, "remove column"));
 	list_del_init(&cl->cl_columns);
 	tb->ncols--;
 	cl->table = NULL;
@@ -557,7 +557,7 @@ int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln)
 			return rc;
 	}
 
-	DBG(TAB, ul_debugobj(tb, "add line %p", ln));
+	DBG(TAB, ul_debugobj(tb, "add line"));
 	list_add_tail(&ln->ln_lines, &tb->tb_lines);
 	ln->seqnum = tb->nlines++;
 	scols_ref_line(ln);
@@ -580,7 +580,7 @@ int scols_table_remove_line(struct libscols_table *tb,
 	if (!tb || !ln)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "remove line %p", ln));
+	DBG(TAB, ul_debugobj(tb, "remove line"));
 	list_del_init(&ln->ln_lines);
 	tb->nlines--;
 	scols_unref_line(ln);
@@ -724,7 +724,7 @@ struct libscols_table *scols_copy_table(struct libscols_table *tb)
 	if (!ret)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "copy into %p", ret));
+	DBG(TAB, ul_debugobj(tb, "copy"));
 
 	if (tb->symbols)
 		scols_table_set_symbols(ret, tb->symbols);
@@ -838,14 +838,14 @@ int scols_table_set_symbols(struct libscols_table *tb,
 
 	/* remove old */
 	if (tb->symbols) {
-		DBG(TAB, ul_debugobj(tb, "remove symbols %p reference", tb->symbols));
+		DBG(TAB, ul_debugobj(tb, "remove symbols reference"));
 		scols_unref_symbols(tb->symbols);
 		tb->symbols = NULL;
 	}
 
 	/* set new */
 	if (sy) {					/* ref user defined */
-		DBG(TAB, ul_debugobj(tb, "set symbols so %p", sy));
+		DBG(TAB, ul_debugobj(tb, "set symbols"));
 		tb->symbols = sy;
 		scols_ref_symbols(sy);
 	}

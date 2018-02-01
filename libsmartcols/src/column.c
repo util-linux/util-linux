@@ -96,7 +96,7 @@ struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 	if (!ret)
 		return NULL;
 
-	DBG(COL, ul_debugobj(cl, "copy to %p", ret));
+	DBG(COL, ul_debugobj(cl, "copy"));
 
 	if (scols_column_set_color(ret, cl->color))
 		goto err;

@@ -217,7 +217,7 @@ int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *chil
 	if (!ln || !child)
 		return -EINVAL;
 
-	DBG(LINE, ul_debugobj(ln, "remove child %p", child));
+	DBG(LINE, ul_debugobj(ln, "remove child"));
 
 	list_del_init(&child->ln_children);
 	child->parent = NULL;
@@ -241,7 +241,7 @@ int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child)
 	if (!ln || !child)
 		return -EINVAL;
 
-	DBG(LINE, ul_debugobj(ln, "add child %p", child));
+	DBG(LINE, ul_debugobj(ln, "add child"));
 	scols_ref_line(child);
 	scols_ref_line(ln);
 
@@ -503,7 +503,7 @@ struct libscols_line *scols_copy_line(const struct libscols_line *ln)
 	ret->ncells   = ln->ncells;
 	ret->seqnum   = ln->seqnum;
 
-	DBG(LINE, ul_debugobj(ln, "copy to %p", ret));
+	DBG(LINE, ul_debugobj(ln, "copy"));
 
 	for (i = 0; i < ret->ncells; ++i) {
 		if (scols_cell_copy_content(&ret->cells[i], &ln->cells[i]))

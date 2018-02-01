@@ -380,8 +380,7 @@ static blkid_partlist partitions_init_data(struct blkid_chain *chn)
 
 	reset_partlist(ls);
 
-	DBG(LOWPROBE, ul_debug("parts: initialized partitions list (%p, size=%d)",
-		ls, ls->nparts_max));
+	DBG(LOWPROBE, ul_debug("parts: initialized partitions list (size=%d)", ls->nparts_max));
 	return ls;
 }
 
@@ -416,7 +415,7 @@ blkid_parttable blkid_partlist_new_parttable(blkid_partlist ls,
 	list_add_tail(&tab->t_tabs, &ls->l_tabs);
 
 	DBG(LOWPROBE, ul_debug("parts: create a new partition table "
-		       "(%p, type=%s, offset=%"PRId64")", tab, type, offset));
+		       "(type=%s, offset=%"PRId64")", type, offset));
 	return tab;
 }
 
@@ -457,9 +456,9 @@ blkid_partition blkid_partlist_add_partition(blkid_partlist ls,
 	par->start = start;
 	par->size = size;
 
-	DBG(LOWPROBE, ul_debug("parts: add partition (%p start=%"
-		PRIu64 ", size=%" PRIu64 ", table=%p)",
-		par, par->start, par->size, tab));
+	DBG(LOWPROBE, ul_debug("parts: add partition (start=%"
+		PRIu64 ", size=%" PRIu64 ")",
+		par->start, par->size));
 	return par;
 }
 
@@ -666,8 +665,8 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 	uint64_t sz, off;
 
 	DBG(LOWPROBE, ul_debug(
-		"parts: ----> %s subprobe requested (parent=%p)",
-		id->name, parent));
+		"parts: ----> %s subprobe requested)",
+		id->name));
 
 	if (!pr || !parent || !parent->size)
 		return -EINVAL;
@@ -713,8 +712,8 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 	blkid_free_probe(prc);	/* free cloned prober */
 
 	DBG(LOWPROBE, ul_debug(
-		"parts: <---- %s subprobe done (parent=%p, rc=%d)",
-		id->name, parent, rc));
+		"parts: <---- %s subprobe done (rc=%d)",
+		id->name, rc));
 
 	return rc;
 }

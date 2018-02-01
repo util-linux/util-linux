@@ -252,6 +252,6 @@ int scols_cell_copy_content(struct libscols_cell *dest,
 	if (!rc)
 		dest->userdata = src->userdata;
 
-	DBG(CELL, ul_debugobj(src, "copy into %p", dest));
+	DBG(CELL, ul_debugobj(src, "copy"));
 	return rc;
 }

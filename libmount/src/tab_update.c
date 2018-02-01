@@ -169,8 +169,8 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 		return -EINVAL;
 
 	DBG(UPDATE, ul_debugobj(upd,
-			"resetting FS [fs=0x%p, target=%s, flags=0x%08lx]",
-			fs, target, mountflags));
+			"resetting FS [target=%s, flags=0x%08lx]",
+			target, mountflags));
 	if (fs) {
 		DBG(UPDATE, ul_debugobj(upd, "FS template:"));
 		DBG(UPDATE, mnt_fs_print_debug(fs, stderr));

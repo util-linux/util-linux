@@ -441,10 +441,6 @@ static int print_data(struct libscols_table *tb,
 	assert(tb);
 	assert(cl);
 
-	DBG(TAB, ul_debugobj(tb,
-			" -> data, column=%p, line=%p, cell=%p, buff=%p",
-			cl, ln, ce, buf));
-
 	data = buffer_get_data(buf);
 	if (!data)
 		data = "";
@@ -720,7 +716,7 @@ static int print_line(struct libscols_table *tb,
 
 	assert(ln);
 
-	DBG(TAB, ul_debugobj(tb, "printing line, line=%p, buff=%p", ln, buf));
+	DBG(TAB, ul_debugobj(tb, "printing line"));
 
 	/* regular line */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);

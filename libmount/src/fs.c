@@ -185,8 +185,6 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 			return NULL;
 	}
 
-	/*DBG(FS, ul_debugobj(dest, "copy from %p", src));*/
-
 	dest->id         = src->id;
 	dest->parent     = src->parent;
 	dest->devno      = src->devno;
@@ -299,8 +297,6 @@ void *mnt_fs_get_userdata(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return NULL;
-
-	/*DBG(FS, ul_debugobj(fs, "get userdata [%p]", fs->userdata));*/
 	return fs->userdata;
 }
 
@@ -317,8 +313,6 @@ int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data)
 {
 	if (!fs)
 		return -EINVAL;
-
-	/*DBG(FS, ul_debugobj(fs, "set userdata [%p]", fs->userdata));*/
 	fs->userdata = data;
 	return 0;
 }
@@ -1477,7 +1471,7 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 {
 	if (!fs || !file)
 		return -EINVAL;
-	fprintf(file, "------ fs: %p\n", fs);
+	fprintf(file, "------ fs\n");
 	fprintf(file, "source: %s\n", mnt_fs_get_source(fs));
 	fprintf(file, "target: %s\n", mnt_fs_get_target(fs));
 	fprintf(file, "fstype: %s\n", mnt_fs_get_fstype(fs));
