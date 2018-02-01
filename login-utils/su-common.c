@@ -104,11 +104,6 @@ extern char **environ;
 #endif
 
 enum {
-	EXIT_CANNOT_INVOKE = 126,
-	EXIT_ENOENT = 127
-};
-
-enum {
 	SIGTERM_IDX = 0,
 	SIGINT_IDX,
 	SIGQUIT_IDX,
@@ -1041,7 +1036,6 @@ static void run_shell(
 	size_t n_args = 1 + su->fast_startup + 2 * ! !command + n_additional_args + 1;
 	const char **args = xcalloc(n_args, sizeof *args);
 	size_t argno = 1;
-	int rc;
 
 	DBG(MISC, ul_debug("starting shell [shell=%s, command=\"%s\"%s%s]",
 				shell, command,
@@ -1070,9 +1064,7 @@ static void run_shell(
 	memcpy(args + argno, additional_args, n_additional_args * sizeof *args);
 	args[argno + n_additional_args] = NULL;
 	execv(shell, (char **)args);
-
-	rc = errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE;
-	err(rc, _("failed to execute %s"), shell);
+	errexec(shell);
 }
 
 /* Return true if SHELL is a restricted shell (one not returned by
