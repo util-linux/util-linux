@@ -209,8 +209,7 @@ static void pw_edit(void)
 
 	if (!pid) {
 		execlp(editor, p, tmp_file, NULL);
-		/* Shouldn't get here */
-		_exit(EXIT_FAILURE);
+		errexec(editor);
 	}
 	for (;;) {
 		pid = waitpid(pid, &pstat, WUNTRACED);
