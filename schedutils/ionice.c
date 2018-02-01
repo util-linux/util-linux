@@ -257,7 +257,7 @@ int main(int argc, char **argv)
 		 */
 		ioprio_setid(0, ioclass, data, IOPRIO_WHO_PROCESS);
 		execvp(argv[optind], &argv[optind]);
-		err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
+		errexec(argv[optind]);
 	} else {
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);

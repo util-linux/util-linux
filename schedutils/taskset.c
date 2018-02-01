@@ -245,7 +245,7 @@ int main(int argc, char **argv)
 	if (!pid) {
 		argv += optind + 1;
 		execvp(argv[0], argv);
-		err(EXIT_FAILURE, _("failed to execute %s"), argv[0]);
+		errexec(argv[0]);
 	}
 
 	return EXIT_SUCCESS;
