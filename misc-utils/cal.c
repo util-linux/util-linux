@@ -261,6 +261,24 @@ static void center(const char *str, size_t len, int separate);
 static int parse_reform_year(const char *reform_year);
 static void __attribute__((__noreturn__)) usage(void);
 
+#ifdef TEST_CAL
+static time_t cal_time(time_t *t)
+{
+	char *str = getenv("CAL_TEST_TIME");
+
+	if (str) {
+		uint64_t x = strtou64_or_err(str, "failed to parse CAL_TEST_TIME");
+
+		*t = x;
+		return *t;
+	}
+
+	return time(t);
+}
+#else
+# define cal_time(t)	time(t)
+#endif
+
 int main(int argc, char **argv)
 {
 	struct tm *local_time;
@@ -443,12 +461,12 @@ int main(int argc, char **argv)
 			now = (time_t) (x / 1000000);
 		/* cal <monthname> */
 		else if ((ctl.req.month = monthname_to_number(&ctl, *argv)) > 0)
-			time(&now);	/* this year */
+			cal_time(&now);	/* this year */
 		else
 			errx(EXIT_FAILURE, _("failed to parse timestamp or unknown month name: %s"), *argv);
 		argc = 0;
 	} else
-		time(&now);
+		cal_time(&now);
 
 	local_time = localtime(&now);
 

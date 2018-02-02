@@ -14,6 +14,11 @@ cal_LDADD += $(NCURSES_LIBS)
 cal_CFLAGS += $(NCURSES_CFLAGS)
 endif
 endif # !HAVE_TINFO
+
+check_PROGRAMS += test_cal
+test_cal_SOURCES = $(cal_SOURCES)
+test_cal_LDADD = $(cal_LDADD)
+test_cal_CFLAGS = -DTEST_CAL $(cal_CFLAGS)
 endif # BUILD_CAL
 
 
