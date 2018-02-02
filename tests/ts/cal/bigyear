@@ -26,73 +26,58 @@ USETERM=$( ts_has_option "useterm" "$*" )
 MYMONTH="12 2147483646"
 MYYEAR="2147483646"
 
-[ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
-ts_log ""
+
+CAL_TEST_TIME=1516562739  # 21st January 2018
+export CAL_TEST_TIME
+
+function call_cal {
+	local testname=$(echo "$2" | sed 's/-//g')
+
+	if [ "$3" == "$MYYEAR" ]; then
+		testname="${testname}-year"
+	else
+		testname="${testname}-month"
+	fi
+
+	ts_init_subtest "$testname"
+	ts_log "$1"
+	shift
+	if [ "$USETERM" == "yes" ]; then
+		$TS_HELPER_CAL "$@"
+	fi
+	$TS_HELPER_CAL "$@" >> $TS_OUTPUT
+	ts_finalize_subtest
+}
+
+call_cal "Gregorian - Monday-based month" -1m $MYMONTH
+call_cal "Gregorian - Sunday-based month" -1s $MYMONTH
+call_cal "Julian    - Monday-based month" -1mj $MYMONTH
+call_cal "Julian    - Sunday-based month" -1sj $MYMONTH
+
+call_cal "Gregorian - Monday-based 3 months" -3m $MYMONTH
+call_cal "Gregorian - Sunday-based 3 months" -3s $MYMONTH
+call_cal "Julian    - Monday-based 3 months" -3mj $MYMONTH
+call_cal "Julian    - Sunday-based 3 months" -3sj $MYMONTH
+
+call_cal "Gregorian - Monday-based year" -1m $MYYEAR
+call_cal "Gregorian - Sunday-based year" -1s $MYYEAR
+call_cal "Julian    - Monday-based year" -1mj $MYYEAR
+call_cal "Julian    - Sunday-based year" -1sj $MYYEAR
 
 
-ts_log "Gregorian - Monday-based month"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1m
-fi
-$TS_CMD_CAL -1m $MYMONTH >> $TS_OUTPUT
-ts_log "Gregorian - Sunday-based month"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1s $MYMONTH
-fi
-$TS_CMD_CAL -1s $MYMONTH >> $TS_OUTPUT
-ts_log "Julian - Monday-based month"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1mj $MYMONTH
-fi
-$TS_CMD_CAL -1mj $MYMONTH >> $TS_OUTPUT
-ts_log "Julian - Sunday-based month"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1sj $MYMONTH
-fi
-$TS_CMD_CAL -1sj $MYMONTH >> $TS_OUTPUT
+call_cal "Gregorian - Monday-based month with weeks" -1mw $MYMONTH
+call_cal "Gregorian - Sunday-based month with weeks" -1sw $MYMONTH
+call_cal "Julian    - Monday-based month with weeks" -1mjw $MYMONTH
+call_cal "Julian    - Sunday-based month with weeks" -1sjw $MYMONTH
 
+call_cal "Gregorian - Monday-based 3 months with weeks" -3mw $MYMONTH
+call_cal "Gregorian - Sunday-based 3 months with weeks" -3sw $MYMONTH
+call_cal "Julian    - Monday-based 3 months with weeks" -3mjw $MYMONTH
+call_cal "Julian    - Sunday-based 3 months with weeks" -3sjw $MYMONTH
 
-ts_log "Gregorian - Monday-based three months"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3m
-fi
-$TS_CMD_CAL -3m $MYMONTH >> $TS_OUTPUT
-ts_log "Gregorian - Sunday-based three months"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3s $MYMONTH
-fi
-$TS_CMD_CAL -3s $MYMONTH >> $TS_OUTPUT
-ts_log "Julian - Monday-based three months"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3mj $MYMONTH
-fi
-$TS_CMD_CAL -3mj $MYMONTH >> $TS_OUTPUT
-ts_log "Julian - Sunday-based three months"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -3sj $MYMONTH
-fi
-$TS_CMD_CAL -3sj $MYMONTH >> $TS_OUTPUT
-
-
-ts_log "Gregorian - Monday-based year"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1m $MYYEAR
-fi
-$TS_CMD_CAL -1m $MYYEAR >> $TS_OUTPUT
-ts_log "Gregorian - Sunday-based year"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1s $MYYEAR
-fi
-$TS_CMD_CAL -1s $MYYEAR >> $TS_OUTPUT
-ts_log "Julian - Monday-based year"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1mj $MYYEAR
-fi
-$TS_CMD_CAL -1mj $MYYEAR >> $TS_OUTPUT
-ts_log "Julian - Sunday-based year"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -1sj $MYYEAR
-fi
-$TS_CMD_CAL -1sj $MYYEAR >> $TS_OUTPUT
+call_cal "Gregorian - Monday-based year with weeks" -1mw $MYYEAR
+call_cal "Gregorian - Sunday-based year with weeks" -1sw $MYYEAR
+call_cal "Julian    - Monday-based year with weeks" -1mjw $MYYEAR
+call_cal "Julian    - Sunday-based year with weeks" -1sjw $MYYEAR
 
 ts_finalize
