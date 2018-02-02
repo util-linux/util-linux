@@ -26,13 +26,16 @@ USETERM=$( ts_has_option "useterm" "$*" )
 MYMONTH="09 1752"
 MYYEAR="1752"
 
+CAL_TEST_TIME=1516562739  # 21st January 2018
+export CAL_TEST_TIME
+
 function call_cal_simple {
 	ts_log "$1"
 	shift
 	if [ "$USETERM" == "yes" ]; then
-		$TS_CMD_CAL "$@"
+		$TS_HELPER_CAL "$@"
 	fi
-	$TS_CMD_CAL "$@" >> $TS_OUTPUT
+	$TS_HELPER_CAL "$@" >> $TS_OUTPUT
 }
 
 function call_cal {

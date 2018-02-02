@@ -39,6 +39,7 @@ TS_HELPER_TIOCSTI="$top_builddir/test_tiocsti"
 TS_HELPER_UUID_PARSER="$top_builddir/test_uuid_parser"
 TS_HELPER_UUID_NAMESPACE="$top_builddir/test_uuid_namespace"
 TS_HELPER_MBSENCODE="$top_builddir/test_mbsencode"
+TS_HELPER_CAL="$top_builddir/test_cal"
 
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"$top_builddir/addpart"}
