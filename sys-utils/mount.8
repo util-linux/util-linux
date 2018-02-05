@@ -113,6 +113,13 @@ options to avoid ambivalent interpretation of the given argument.  For example:
 .sp
 .RE
 
+The same filesystem may be mounted more than once, and in some cases (e.g.
+network filesystems) the same filesystem maybe be mounted on the same
+mountpoint more times. The mount command does not implement any policy to
+control this behavior. All behavior is controlled by kernel and it is usually
+specific to filesystem driver. The exception is \fB\-\-all\fR, in this case
+already mounted filesystems are ignored.
+
 .SS Listing the mounts
 The listing mode is maintained for backward compatibility only.
 
