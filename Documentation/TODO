@@ -60,6 +60,12 @@ bash completion
 libmount (mount/umount)
 -----------------------
 
+ - add --onlyonce to force mount(8) to check if mountpoint is already used. Now
+   "already mounted" detection is used for --all only. The problem is if you
+   call "mount <mountpoint>" more than once for in fstab defined tmpfs (or network
+   filesystem etc.). In this case kernel does not return EBUSY, but a new instance
+   of the FS is created. https://github.com/karelzak/util-linux/issues/448
+
  - support CAP_SYS_ADMIN; for mount(2) syscall the CAP_SYS_ADMIN is good
    enough. Unfortunately, mount(8) does more things like check for filesystem
    type (but it's usually done by udev, so root perms are unnecessary), create
