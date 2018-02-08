@@ -413,6 +413,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, _(
 	" -n, --no-mtab           don't write to /etc/mtab\n"));
 	fprintf(out, _(
+	"     --options-mode <mode>\n"
+	"                         what to do with options loaded from fstab\n"
+	"     --options-source <source>\n"
+	"                         mount options source\n"
+	"     --options-source-force\n"
+	"                         force use of options from fstab/mtab\n"));
+	fprintf(out, _(
 	" -o, --options <list>    comma-separated list of mount options\n"
 	" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
 	" -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
