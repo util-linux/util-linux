@@ -48,10 +48,28 @@ char *sysfs_devno_path(dev_t devno, char *buf, size_t bufsiz)
 	return sysfs_devno_attribute_path(devno, buf, bufsiz, NULL);
 }
 
+static dev_t read_devno(const char *path)
+{
+	FILE *f;
+	int maj = 0, min = 0;
+	dev_t dev = 0;
+
+	f = fopen(path, "r" UL_CLOEXECSTR);
+	if (!f)
+		return 0;
+
+	if (fscanf(f, "%d:%d", &maj, &min) == 2)
+		dev = makedev(maj, min);
+	fclose(f);
+	return dev;
+}
+
 dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 {
-	char buf[PATH_MAX], *path = NULL;
+	char buf[PATH_MAX];
+	char *_name = NULL;	/* name as encoded in sysfs */
 	dev_t dev = 0;
+	int len;
 
 	if (strncmp("/dev/", name, 5) == 0) {
 		/*
@@ -59,69 +77,62 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 		 */
 		struct stat st;
 
-		if (stat(name, &st) == 0)
+		if (stat(name, &st) == 0) {
 			dev = st.st_rdev;
-		else
-			name += 5;	/* unaccesible, or not node in /dev */
+			goto done;
+		}
+		name += 5;	/* unaccesible, or not node in /dev */
 	}
 
-	if (!dev && parent && strncmp("dm-", name, 3)) {
+	_name = strdup(name);
+	if (!_name)
+		goto done;
+	sysfs_devname_dev_to_sys(_name);
+
+	if (parent && strncmp("dm-", name, 3)) {
 		/*
 		 * Create path to /sys/block/<parent>/<name>/dev
 		 */
-		char *_name = strdup(name), *_parent = strdup(parent);
-		int len;
+		char *_parent = strdup(parent);
 
-		if (!_name || !_parent) {
-			free(_name);
+		if (!_parent) {
 			free(_parent);
-			return 0;
+			goto done;
 		}
-		sysfs_devname_dev_to_sys(_name);
 		sysfs_devname_dev_to_sys(_parent);
 
 		len = snprintf(buf, sizeof(buf),
 				_PATH_SYS_BLOCK "/%s/%s/dev", _parent, _name);
-		free(_name);
 		free(_parent);
 		if (len < 0 || (size_t) len >= sizeof(buf))
-			return 0;
-		path = buf;
+			goto done;
 
-	} else if (!dev) {
+		/* don't try anything else for dm-* */
+		dev = read_devno(buf);
+		goto done;
+	}
+
+	/*
+	 * Read from /sys/block/<sysname>/dev
+	 */
+	len = snprintf(buf, sizeof(buf),
+			_PATH_SYS_BLOCK "/%s/dev", _name);
+	if (len < 0 || (size_t) len >= sizeof(buf))
+		goto done;
+	dev = read_devno(buf);
+
+	if (!dev) {
 		/*
-		 * Create path to /sys/block/<sysname>/dev
+		 * Read from /sys/block/<sysname>/device/dev
 		 */
-		char *_name = strdup(name);
-		int len;
-
-		if (!_name)
-			return 0;
-
-		sysfs_devname_dev_to_sys(_name);
 		len = snprintf(buf, sizeof(buf),
-				_PATH_SYS_BLOCK "/%s/dev", _name);
-		free(_name);
+				_PATH_SYS_BLOCK "/%s/device/dev", _name);
 		if (len < 0 || (size_t) len >= sizeof(buf))
-			return 0;
-		path = buf;
+			goto done;
+		dev = read_devno(buf);
 	}
-
-	if (path) {
-		/*
-		 * read devno from sysfs
-		 */
-		FILE *f;
-		int maj = 0, min = 0;
-
-		f = fopen(path, "r" UL_CLOEXECSTR);
-		if (!f)
-			return 0;
-
-		if (fscanf(f, "%d:%d", &maj, &min) == 2)
-			dev = makedev(maj, min);
-		fclose(f);
-	}
+done:
+	free(_name);
 	return dev;
 }
 
