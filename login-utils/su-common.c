@@ -1416,10 +1416,10 @@ int su_main(int argc, char **argv, int mode)
 		DBG(MISC, ul_debug("call setsid()"));
 		setsid();
 	}
-
+#ifdef USE_PTY
 	if (su->pty)
 		pty_init_slave(su);
-
+#endif
 	/* Set environment after pam_open_session, which may put KRB5CCNAME
 	   into the pam_env, etc.  */
 
