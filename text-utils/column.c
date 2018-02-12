@@ -86,6 +86,7 @@ struct column_control {
 	const char *tree_parent;
 
 	wchar_t *input_separator;
+	char *input_separator_raw;
 	const char *output_separator;
 
 	wchar_t	**ents;		/* input entries */
@@ -95,6 +96,7 @@ struct column_control {
 	unsigned int greedy :1,
 		     json :1,
 		     header_repeat :1,
+		     input_sep_space : 1,	/* input separator contains space chars */
 		     tab_noheadings :1;
 };
 
@@ -447,6 +449,7 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
 			if (!ln)
 				err(EXIT_FAILURE, _("failed to allocate output line"));
 		}
+
 		data = wcs_to_mbs(wcdata);
 		if (!data)
 			err(EXIT_FAILURE, _("failed to allocate output data"));
@@ -464,8 +467,21 @@ static int read_input(struct column_control *ctl, FILE *fp)
 	char *buf = NULL;
 	size_t bufsz = 0;
 	size_t maxents = 0;
-	int rc = 0;
+	int rc = 0, is_space_sep = 0;
 
+	/* Check if columns separator contains spaces chars */
+	if (ctl->mode == COLUMN_MODE_TABLE && ctl->input_separator_raw) {
+		char *p;
+
+		for (p = ctl->input_separator_raw; *p; p++) {
+			if (isspace(*p)) {
+				is_space_sep = 1;
+				break;
+			}
+		}
+	}
+
+	/* Read input */
 	do {
 		char *str, *p;
 		wchar_t *wcs = NULL;
@@ -477,6 +493,19 @@ static int read_input(struct column_control *ctl, FILE *fp)
 			err(EXIT_FAILURE, _("read failed"));
 		}
 		str = (char *) skip_space(buf);
+
+		/* The table columns separator could be a space. In this case
+		 * don't skip the separator if at begin of the line. For example:
+		 *
+		 * echo -e "\tcol1\tcol2\nrow\t1\t2" \
+		 *	| column -t -s "$(echo -e '\t')" --table-columns A,B,C
+		 */
+		if (is_space_sep && str > buf) {
+			char *x = strpbrk(buf, ctl->input_separator_raw);
+			if (x && x < str)
+				str = x;
+		}
+
 		if (str) {
 			p = strchr(str, '\n');
 			if (p)
@@ -688,6 +717,7 @@ int main(int argc, char **argv)
 
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
+	ctl.input_separator_raw = xstrdup("\t ");
 
 	while ((c = getopt_long(argc, argv, "c:dE:eH:hi:JN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
 
@@ -742,7 +772,9 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			free(ctl.input_separator);
+			free(ctl.input_separator_raw);
 			ctl.input_separator = mbs_to_wcs(optarg);
+			ctl.input_separator_raw = xstrdup(optarg);
 			ctl.greedy = 0;
 			break;
 		case 'T':
