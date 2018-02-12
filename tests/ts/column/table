@@ -36,6 +36,9 @@ ts_init_subtest "input-separator"
 $TS_CMD_COLUMN --separator ',' --table $TS_SELF/files/table-sep >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+ts_init_subtest "input-separator-space"
+$TS_CMD_COLUMN --separator ',' --table $TS_SELF/files/table-sep-space >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
 
 ts_init_subtest "long"
 $TS_CMD_COLUMN --table $TS_SELF/files/mountinfo >> $TS_OUTPUT 2>&1
