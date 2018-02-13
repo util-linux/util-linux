@@ -13,14 +13,12 @@
 #include "crc32c.h"
 #include "superblocks.h"
 
-#include <uuid.h>
-
 #define MAX_MPOOL_NAME_LEN 32
 
 struct omf_sb_descriptor {
 	uint64_t        osb_magic;
 	uint8_t         osb_name[MAX_MPOOL_NAME_LEN];
-	uuid_t          osb_poolid; /* UUID of pool this drive belongs to */
+	unsigned char   osb_poolid[16]; /* UUID of pool this drive belongs to */
 	uint16_t        osb_vers;
 	uint32_t        osb_gen;
 	uint32_t        osb_cksum1; /* crc32c of the preceding fields */
