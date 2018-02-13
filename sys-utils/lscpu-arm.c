@@ -77,6 +77,8 @@ static const struct id_part arm_part[] = {
 };
 
 static const struct id_part brcm_part[] = {
+    { 0x0f, "Brahma B15" },
+    { 0x100, "Brahma B53" },
     { 0x516, "ThunderX2" },
     { -1, "unknown" },
 };
@@ -119,7 +121,6 @@ static const struct id_part qcom_part[] = {
 static const struct id_part samsung_part[] = {
     { 0x001, "exynos-m1" },
     { -1, "unknown" },
-
 };
 
 static const struct id_part nvidia_part[] = {
@@ -133,7 +134,12 @@ static const struct id_part marvell_part[] = {
     { 0x581, "PJ4/PJ4b" },
     { 0x584, "PJ4B-MP" },
     { -1, "unknown" },
+};
 
+static const struct id_part faraday_part[] = {
+    { 0x526, "FA526" },
+    { 0x626, "FA626" },
+    { -1, "unknown" },
 };
 
 static const struct id_part intel_part[] = {
@@ -181,6 +187,7 @@ static const struct hw_impl hw_implementer[] = {
     { 0x51, qcom_part,    "Qualcomm" },
     { 0x53, samsung_part, "Samsung" },
     { 0x56, marvell_part, "Marvell" },
+    { 0x66, faraday_part, "Faraday" },
     { 0x69, intel_part,   "Intel" },
     { -1,   unknown_part, "unknown" },
 };
