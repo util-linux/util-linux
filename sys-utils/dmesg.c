@@ -1016,7 +1016,7 @@ mesg_output:
 	 */
 	if (ctl->force_prefix) {
 		if (!line) {
-			mesg_copy = strdup(rec->mesg);
+			mesg_copy = xstrdup(rec->mesg);
 			line = strtok(mesg_copy, "\n");
 			mesg_size = strlen(line);
 		}
