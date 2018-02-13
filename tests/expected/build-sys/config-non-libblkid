@@ -10,7 +10,6 @@ lscpu:  libsmartcols
 lsipc:  libsmartcols 
 lslogins:  libsmartcols libsystemd 
 lsmem:  libsmartcols 
-lsns:  libsmartcols 
 mkswap:  libuuid 
 prlimit:  libsmartcols 
 rfkill:  libsmartcols 

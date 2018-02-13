@@ -13,7 +13,6 @@ lscpu:  libsmartcols
 lsipc:  libsmartcols 
 lslogins:  libsmartcols libsystemd 
 lsmem:  libsmartcols 
-lsns:  libsmartcols 
 mkswap:  libblkid libuuid 
 partx:  libblkid libsmartcols libuuid 
 prlimit:  libsmartcols 

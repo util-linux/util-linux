@@ -20,7 +20,7 @@ lsipc:  libsmartcols
 lslocks:  libblkid libmount librt libselinux libsmartcols libuuid 
 lslogins:  libselinux libsmartcols libsystemd 
 lsmem:  libsmartcols 
-lsns:  libsmartcols 
+lsns:  libblkid libmount librt libselinux libsmartcols libuuid 
 mkswap:  libblkid libselinux libuuid 
 mount:  libblkid libmount librt libselinux libuuid 
 mountpoint:  libblkid libmount librt libselinux libuuid 

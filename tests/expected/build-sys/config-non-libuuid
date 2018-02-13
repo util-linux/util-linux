@@ -16,7 +16,7 @@ lsipc:  libsmartcols
 lslocks:  libblkid libmount librt libsmartcols 
 lslogins:  libsmartcols libsystemd 
 lsmem:  libsmartcols 
-lsns:  libsmartcols 
+lsns:  libblkid libmount librt libsmartcols 
 mkswap:  libblkid 
 mount:  libblkid libmount librt 
 mountpoint:  libblkid libmount librt 
