@@ -475,25 +475,39 @@ struct flag_str {
 	char *str;
 };
 
-static int flag_from_string(const struct flag_str *flags, const char *str)
+static int omode2mask(const char *str)
 {
-	for (; flags->str; flags++) {
-		if (!strcmp(str, flags->str))
-			return flags->value;
+	size_t i;
+
+	static const struct flag_str flags[] = {
+		{ MNT_OMODE_IGNORE, "ignore" },
+		{ MNT_OMODE_APPEND, "append" },
+		{ MNT_OMODE_PREPEND, "prepend" },
+		{ MNT_OMODE_REPLACE, "replace" },
+	};
+
+	for (i = 0; i < ARRAY_SIZE(flags); i++) {
+		if (!strcmp(str, flags[i].str))
+			return flags[i].value;
 	}
 	return -EINVAL;
 }
 
-static int flags_from_string(const struct flag_str *flags, char *str)
+static long osrc2mask(const char *str, size_t len)
 {
-	int ret = 0, tmp;
-	for (str = strtok(str, ","); str; str = strtok(NULL, ",")) {
-		tmp = flag_from_string(flags, str);
-		if (tmp < 0)
-			return tmp;
-		ret |= tmp;
+	size_t i;
+
+	static const struct flag_str flags[] = {
+		{ MNT_OMODE_FSTAB, "fstab" },
+		{ MNT_OMODE_MTAB, "mtab" },
+		{ MNT_OMODE_NOTAB, "disable" },
+	};
+
+	for (i = 0; i < ARRAY_SIZE(flags); i++) {
+		if (!strncmp(str, flags[i].str, len) && !flags[i].str[len])
+			return flags[i].value;
 	}
-	return ret;
+	return -EINVAL;
 }
 
 int main(int argc, char **argv)
@@ -569,20 +583,6 @@ int main(int argc, char **argv)
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-
-	static const struct flag_str opt_optmodes[] = {
-		{ MNT_OMODE_IGNORE, "ignore" },
-		{ MNT_OMODE_APPEND, "append" },
-		{ MNT_OMODE_PREPEND, "prepend" },
-		{ MNT_OMODE_REPLACE, "replace" },
-		{ 0, NULL }
-	};
-	static const struct flag_str opt_optsources[] = {
-		{ MNT_OMODE_FSTAB, "fstab" },
-		{ MNT_OMODE_MTAB, "mtab" },
-		{ MNT_OMODE_NOTAB, "disable" },
-		{ 0, NULL }
-	};
 
 	sanitize_env();
 	setlocale(LC_ALL, "");
@@ -728,19 +728,22 @@ int main(int argc, char **argv)
 			mnt_context_set_source(cxt, optarg);
 			break;
 		case MOUNT_OPT_OPTMODE:
-			optmode_mode = flag_from_string(opt_optmodes, optarg);
+			optmode_mode = omode2mask(optarg);
 			if (optmode_mode == -EINVAL) {
 				warnx(_("bad usage"));
 				errtryhelp(MNT_EX_USAGE);
 			}
 			break;
 		case MOUNT_OPT_OPTSRC:
-			optmode_src = flags_from_string(opt_optsources, optarg);
-			if (optmode_src == -EINVAL) {
+		{
+			unsigned long tmp = 0;
+			if (string_to_bitmask(optarg, &tmp, osrc2mask)) {
 				warnx(_("bad usage"));
 				errtryhelp(MNT_EX_USAGE);
 			}
+			optmode_src = tmp;
 			break;
+		}
 		case MOUNT_OPT_OPTSRC_FORCE:
 			optmode |= MNT_OMODE_FORCE;
 			break;
