@@ -387,6 +387,8 @@ static int print_pending_data(
 
 	if (!cl->pending_data)
 		return 0;
+	if (!width)
+		return -EINVAL;
 
 	DBG(COL, ul_debugobj(cl, "printing pending data"));
 
@@ -405,7 +407,8 @@ static int print_pending_data(
 	if (bytes == (size_t) -1)
 		goto err;
 
-	step_pending_data(cl, bytes);
+	if (bytes)
+		step_pending_data(cl, bytes);
 
 	if (color)
 		fputs(color, tb->out);
