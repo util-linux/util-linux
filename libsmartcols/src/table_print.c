@@ -1341,6 +1341,10 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 				width--;
 				break;
 			}
+
+			/* hide zero width columns */
+			if (cl->width == 0)
+				cl->flags |= SCOLS_FL_HIDDEN;
 		}
 
 		/* the current stage is without effect, go to the next */
