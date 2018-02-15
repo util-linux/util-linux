@@ -11,10 +11,11 @@ AC_CONFIG_MACRO_DIR([m4])
 dnl AC_USE_SYSTEM_EXTENSIONS must be called before any macros that run
 dnl the compiler (like AC_PROG_LIBTOOL) to avoid autoconf errors.
 AC_USE_SYSTEM_EXTENSIONS
-AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax dist-bzip2 no-dist-gzip dist-xz -Wno-portability subdir-objects])
+AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax no-dist-gzip dist-xz subdir-objects])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
 			    [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 AC_CONFIG_SRCDIR([sys-utils/mount.c])
 AC_PREFIX_DEFAULT([/usr])
