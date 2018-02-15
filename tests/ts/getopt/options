@@ -90,7 +90,7 @@ gnu_getopt_clean
 ts_finalize_subtest
 
 ts_init_subtest longopts
-$TS_CMD_GETOPT -o a -l long1,secondlong:,thirdlong::,abbriviation: -- --long1 EXTRA1 --thirdlong=ARGUMENT --secondlong=ARG --abbr ABBRARG -a >> $TS_OUTPUT 2>&1
+$TS_CMD_GETOPT -o a -l long1,secondlong:,thirdlong::,abbreviation: -- --long1 EXTRA1 --thirdlong=ARGUMENT --secondlong=ARG --abbr ABBRARG -a >> $TS_OUTPUT 2>&1
 echo "exit value: $?" >> $TS_OUTPUT
 gnu_getopt_clean
 ts_finalize_subtest

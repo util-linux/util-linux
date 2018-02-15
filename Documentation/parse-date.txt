@@ -462,7 +462,7 @@ parse more locale-specific dates using `strptime', but relies on an
 environment variable and external file, and lacks the thread-safety of
 `parse_datetime'.
 
-   This chapter was originally produced by Franc,ois Pinard
+   This chapter was originally produced by François Pinard
 (<pinard@iro.umontreal.ca>) from the `parse_datetime.y' source code,
 and then edited by K. Berry (<kb@cs.umb.edu>).
 

@@ -1348,12 +1348,12 @@ HIGHLIGHTS for version 2.8:
 
 util-linux 2.7:
 
-HIGLIGHTS for version 2.7:
+HIGHLIGHTS for version 2.7:
 
 1) util-linux now _requires_ ncurses.  Several programs are completely
    converted to use terminfo (instead of termcap).
 
-2) Removed progams:
+2) Removed programs:
    - clock: Dropped entirely.  Use hwclock (included).
    - sync: is in gnu fileutils.
    - setserial: Is being maintained by Ted Ts'o, he recommends
@@ -1423,7 +1423,7 @@ HIGHLIGHTS for version 2.6:
 2) Bugfixes, additions: 
    - SECURITY: All known holes in mount have been fixed.  UPGRADE NOW
      if you haven't already!
-   - Portability enhancments to the minix filesystem utils (m68k and
+   - Portability enhancements to the minix filesystem utils (m68k and
      Arm patches).
    - passwd/chsh/chfn will not mess up the passwd file on a NIS machine
    - others too numerous to enumerate.
@@ -1491,7 +1491,7 @@ HIGHLIGHTS for version 2.4 (2.3 was never released):
 4) fdisk and cfdisk have been patched with the latest llseek.c.  Although I
    had a lot of bug reports about fdisk from util-linux-2.2, I was unable
    to reproduce any of the problems.  Some of the problems appeared to be
-   releated to a failure to reboot the machine after changing the partition
+   related to a failure to reboot the machine after changing the partition
    table, and some may have been due to a specific kernel revision problem.
    However, this doesn't seem to account for all of the bug reports -- if
    this version gives you problem, please send as complete a bug report as

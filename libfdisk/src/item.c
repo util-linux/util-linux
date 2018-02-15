@@ -224,7 +224,7 @@ static int test_listitems(struct fdisk_test *ts, int argc, char *argv[])
 				printf("%s: %"PRIu64"\n", name, num);
 			break;
 		}
-		case 1: /* item unsuported by label -- ignore */
+		case 1: /* item unsupported by label -- ignore */
 			rc = 0;
 			break;
 		case 2:	/* end (out of range) */

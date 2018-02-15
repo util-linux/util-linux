@@ -416,8 +416,8 @@ int mnt_fs_set_source(struct libmnt_fs *fs, const char *source)
  * @fs: fs
  * @path: source path
  *
- * Compares @fs source path with @path. The redundant slashs are ignored.
- * This function compares strings and does not cannonicalize the paths.
+ * Compares @fs source path with @path. The redundant slashes are ignored.
+ * This function compares strings and does not canonicalize the paths.
  * See also more heavy and generic mnt_fs_match_source().
  *
  * Returns: 1 if @fs source path equal to @path, otherwise 0.
@@ -445,8 +445,8 @@ int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
  * @fs: fs
  * @path: mount point
  *
- * Compares @fs target path with @path. The redundant slashs are ignored.
- * This function compares strings and does not cannonicalize the paths.
+ * Compares @fs target path with @path. The redundant slashes are ignored.
+ * This function compares strings and does not canonicalize the paths.
  * See also more generic mnt_fs_match_target().
  *
  * Returns: 1 if @fs target path equal to @path, otherwise 0.

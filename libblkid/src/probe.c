@@ -1147,7 +1147,7 @@ int blkid_do_probe(blkid_probe pr)
  * After successful signature removing the @pr prober will be moved one step
  * back and the next blkid_do_probe() call will again call previously called
  * probing function. All in-memory cached data from the device are always
- * reseted.
+ * reset.
  *
  *  <example>
  *  <title>wipe all filesystems or raids from the device</title>
@@ -1248,7 +1248,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
  * according to the current libblkid probing result.
  *
  * Note that blkid_probe_hide_range() changes semantic of this function and
- * cached bufferes are not reseted, but library uses in-memory modified
+ * cached bufferes are not reset, but library uses in-memory modified
  * buffers to call the next probing function.
  *
  * <example>

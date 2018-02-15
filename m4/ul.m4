@@ -433,7 +433,7 @@ AC_DEFUN([UL_DEFAULT_ENABLE], [
 dnl UL_ENABLE_ALIAS(NAME, MASTERNAME)
 dnl
 dnl Initializes $enable_<name> variable according to $enable_<mastername>. This
-dnl is usefull for example if you want to use one --enable-mastername option
+dnl is useful for example if you want to use one --enable-mastername option
 dnl for group of programs.
 dnl
 AC_DEFUN([UL_ENABLE_ALIAS], [

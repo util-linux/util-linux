@@ -225,12 +225,12 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		rc = loopcxt_find_overlap(&lc, backing_file, offset, sizelimit);
 		switch (rc) {
 		case 0: /* not found */
-			DBG(LOOP, ul_debugobj(cxt, "not found overlaping loopdev"));
+			DBG(LOOP, ul_debugobj(cxt, "not found overlapping loopdev"));
 			loopcxt_deinit(&lc);
 			break;
 
 		case 1:	/* overlap */
-			DBG(LOOP, ul_debugobj(cxt, "overlaping %s detected",
+			DBG(LOOP, ul_debugobj(cxt, "overlapping %s detected",
 						loopcxt_get_device(&lc)));
 			rc = -MNT_ERR_LOOPOVERLAP;
 			goto done;

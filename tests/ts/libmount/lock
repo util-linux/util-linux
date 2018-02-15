@@ -21,7 +21,7 @@ TESTPROG="$TS_HELPER_LIBMOUNT_LOCK"
 #
 # Note: the original version (< 2.13) of util-linux is completely useless for
 # this test (maximum for this old version is NLOOPS=10 and NPROCESSES=5 (2-way
-# 2GHz machine)). It has terrible performance due a bad timeouts implemntation
+# 2GHz machine)). It has terrible performance due a bad timeouts implementation
 # in lock_mtab().
 #
 NLOOPS=1000

@@ -585,7 +585,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	/*
 	 * TRANSLATORS: command names should not be translated, explaining
-	 * them as additional field after identifer is fine, for example
+	 * them as additional field after identifier is fine, for example
 	 *
 	 * list   [identifier]   (lista [tarkenne])
 	 */

@@ -709,7 +709,7 @@ int fdisk_partition_is_wholedisk(struct fdisk_partition *pa)
  *
  * If @pa is NULL, or @pa does not specify any semantic for the next partno
  * then use Ask API to ask user for the next partno. In this case returns 1 if
- * no free partition avaialble. If fdisk dialogs are disabled then returns -EINVAL.
+ * no free partition available. If fdisk dialogs are disabled then returns -EINVAL.
  *
  * Returns: 0 on success, <0 on error, or 1 for non-free partno by Ask API.
  */

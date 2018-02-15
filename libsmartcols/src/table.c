@@ -259,7 +259,7 @@ int scols_table_remove_columns(struct libscols_table *tb)
  * scols_table_move_column:
  * @tb: table
  * @pre: column before the column
- * @cl: colum to move
+ * @cl: column to move
  *
  * Move the @cl behind @pre. If the @pre is NULL then the @col is the first
  * column in the table.
