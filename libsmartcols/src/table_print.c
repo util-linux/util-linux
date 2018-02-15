@@ -1068,6 +1068,8 @@ static int count_column_width(struct libscols_table *tb,
 			size_t len = mbs_safe_width(scols_cell_get_data(&cl->header));
 			cl->width_min = max(cl->width_min, len);
 		}
+		if (!cl->width_min)
+			cl->width_min = 1;
 	}
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
