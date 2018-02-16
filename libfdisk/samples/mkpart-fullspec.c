@@ -127,13 +127,13 @@ int main(int argc, char *argv[])
 		if (*str == '-') {
 			/* partno unspecified */
 			if (sscanf(str, "-,%"SCNu64",%"SCNu64"", &start, &size) != 2)
-				errx(EXIT_FAILURE, "faild to parse %s", str);
+				errx(EXIT_FAILURE, "failed to parse %s", str);
 			fdisk_partition_partno_follow_default(pa, 1);
 			fdisk_partition_unset_partno(pa);
 		} else {
 			/* partno specified */
 			if (sscanf(str, "%u,%"SCNu64",%"SCNu64"", &partno, &start, &size) != 3)
-				errx(EXIT_FAILURE, "faild to parse %s", str);
+				errx(EXIT_FAILURE, "failed to parse %s", str);
 
 			fdisk_partition_partno_follow_default(pa, 0);
 			fdisk_partition_set_partno(pa, partno - 1);     /* library uses 0..n */

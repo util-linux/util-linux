@@ -39,7 +39,7 @@
 
 /* We don't use our include/crc32.h, but crc32 from zlib!
  *
- * The zlib implemenation performs pre/post-conditioning. The util-linux
+ * The zlib implementation performs pre/post-conditioning. The util-linux
  * imlemenation requires post-conditioning (xor) in the applications.
  */
 #include <zlib.h>

@@ -1194,7 +1194,7 @@ mesg:
 	/* The message text is terminated by \n, but it's possible that the
 	 * message contains another stuff behind this linebreak; in this case
 	 * the previous skip_item() returns pointer to the stuff behind \n.
-	 * Let's notmalize all these sitations and make sure we always point to
+	 * Let's normalize all these situations and make sure we always point to
 	 * the \n.
 	 *
 	 * Note that the next unhexmangle_to_buffer() will replace \n by \0.

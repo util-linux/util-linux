@@ -147,7 +147,7 @@ int loopcxt_has_device(struct loopdev_cxt *lc)
  * Note about LOOPDEV_FL_{RDONLY,RDWR} flags. These flags are used for open(2)
  * syscall to open loop device. By default is the device open read-only.
  *
- * The expection is loopcxt_setup_device(), where the device is open read-write
+ * The exception is loopcxt_setup_device(), where the device is open read-write
  * if LO_FLAGS_READ_ONLY flags is not set (see loopcxt_set_flags()).
  *
  * Returns: <0 on error, 0 on success.

@@ -13,7 +13,7 @@ width to format output.
 The library libblkid has been extended to support LUKS2, Micron mpool, VDO and
 Atari partition table.
 
-The command rfkill(8) has been move to /usr/sbin to be compatible with the
+The command rfkill(8) has been moved to /usr/sbin to be compatible with the
 original rfkill implementation.
 
 The command dmesg(1) provides better support for multi-line messages and the

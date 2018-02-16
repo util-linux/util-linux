@@ -25,7 +25,7 @@ struct lconv
 # include <libintl.h>
 /*
  * For NLS support in the public shared libraries we have to specify text
- * domain name to be independend on the main program. For this purpose define
+ * domain name to be independent on the main program. For this purpose define
  * UL_TEXTDOMAIN_EXPLICIT before you include nls.h to your shared library code.
  */
 # ifdef UL_TEXTDOMAIN_EXPLICIT

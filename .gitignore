@@ -23,6 +23,7 @@
 .version
 ABOUT-NLS
 aclocal.m4
+ar-lib
 autom4te.cache
 compile
 config.cache

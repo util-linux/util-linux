@@ -72,7 +72,7 @@ Why:    use less(1) or more(1)
 --------------------------
 
 What:   CHS stuff in fdisk (except SUN where are partitions addresses by cylinders only)
-Why:    use addresssing by sectors, CHS does not work with modern disks,
+Why:    use addressing by sectors, CHS does not work with modern disks,
         confusing for users...
 
 --------------------------

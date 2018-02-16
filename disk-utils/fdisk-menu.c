@@ -1006,7 +1006,7 @@ static int bsd_menu_cb(struct fdisk_context **cxt0,
 
 /* C/H/S commands
  *
- * The geometry setting from this dialog is not persistent and maybe reseted by
+ * The geometry setting from this dialog is not persistent and maybe reset by
  * fdisk_reset_device_properties() (for example when you create a new disk
  * label). Note that on command line specified -C/-H/-S setting is persistent
  * as it's based on fdisk_save_user_geometry().

@@ -48,7 +48,7 @@ an alias to one of the well-known UUIDs defined in RFC 4122, that is
 or
 .BR @x500 .
 The \fIname\fR is an arbitrary string value.  The generated UUID is the
-digest of the concatentation of the namespace UUID and the name value, hashed
+digest of the concatenation of the namespace UUID and the name value, hashed
 with the MD5 or SHA1 algorithms.  It is, therefore, a predictable value
 which may be useful when UUIDs are being used as handles or nonces for
 more complex values or values which shouldn't be disclosed directly.
@@ -75,7 +75,7 @@ Display version information and exit.
 Use MD5 as the hash algorithm.
 .TP
 .BR \-s , " \-\-sha1"
-Use SHA1 as the hash algorith.
+Use SHA1 as the hash algorithm.
 .TP
 .BR \-n , " \-\-namespace " \fInamespace\fP
 Generate the hash with the \fInamespace\fP prefix. The \fInamespace\fP is UUID,
@@ -86,7 +86,7 @@ or '@ns' where "ns" is well-known predefined UUID addressed by namespace name
 Generate the hash of the \fIname\fR.
 .TP
 .BR \-x , " \-\-hex"
-Interpret name \fIname\fR as a hexidecimal string.
+Interpret name \fIname\fR as a hexadecimal string.
 .SH "CONFORMING TO"
 OSF DCE 1.1
 .SH EXAMPLES

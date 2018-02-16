@@ -106,7 +106,7 @@ struct fdisk_script;
 /**
  * fdisk_sector_t
  *
- * LBA adresses type
+ * LBA addresses type
  */
 typedef uint64_t fdisk_sector_t;
 

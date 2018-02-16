@@ -800,7 +800,7 @@ static inline int add_to_partitions_array(
  * advantage is that unmodified partitions maybe mounted.
  *
  * The function behavies like fdisk_reread_partition_table() on systems where
- * are no avaialble BLKPG_* ioctls.
+ * are no available BLKPG_* ioctls.
  *
  * Returns: <0 on error, or 0.
  */

@@ -173,7 +173,7 @@ static void su_init_debug(void)
 static void init_tty(struct su_context *su)
 {
 	su->isterm = isatty(STDIN_FILENO) ? 1 : 0;
-	DBG(TTY, ul_debug("initilize [is-term=%s]", su->isterm ? "true" : "false"));
+	DBG(TTY, ul_debug("initialize [is-term=%s]", su->isterm ? "true" : "false"));
 	if (su->isterm)
 		get_terminal_name(NULL, &su->tty_name, &su->tty_number);
 }
