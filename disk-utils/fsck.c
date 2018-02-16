@@ -554,10 +554,12 @@ static char *find_fsck(const char *type)
 		xasprintf(&prog, tpl, s, type);
 		if (access(prog, X_OK) == 0)
 			break;
-		free(prog); prog = NULL;
+		free(prog);
+		prog = NULL;
 	}
+
 	free(p);
-	return(prog);
+	return prog;
 }
 
 static int progress_active(void)
