@@ -6,7 +6,7 @@ _zramctl_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-a'|'--algorithm')
-			COMPREPLY=( $(compgen -W "lzo lz4" -- $cur) )
+			COMPREPLY=( $(compgen -W "lzo lz4 lz4hc deflate 842" -- $cur) )
 			return 0
 			;;
 		'-o'|'--output')
