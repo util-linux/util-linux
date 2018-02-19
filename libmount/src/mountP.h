@@ -268,6 +268,11 @@ struct libmnt_addmount {
 	struct list_head	mounts;
 };
 
+struct libmnt_ns {
+	int fd;				/* file descriptor of namespace, -1 when inactive */
+	struct libmnt_cache *cache;	/* paths cache associated with NS */
+};
+
 /*
  * Mount context -- high-level API
  */
@@ -328,6 +333,10 @@ struct libmnt_context
 
 
 	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
+
+	struct libmnt_ns	ns_orig;	/* original namespace */
+	struct libmnt_ns	ns_tgt;		/* target namespace */
+	struct libmnt_ns	*ns_cur;	/* pointer to current namespace */
 
 	unsigned int	enabled_textdomain : 1;		/* bindtextdomain() called */
 };

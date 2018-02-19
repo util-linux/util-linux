@@ -20,6 +20,7 @@ mnt_resolve_target
 <SECTION>
 <FILE>context</FILE>
 libmnt_context
+libmnt_ns
 mnt_free_context
 mnt_new_context
 mnt_reset_context
@@ -53,11 +54,13 @@ mnt_context_get_mtab
 mnt_context_get_mtab_userdata
 mnt_context_get_options
 mnt_context_get_optsmode
+mnt_context_get_origin_ns
 mnt_context_get_source
 mnt_context_get_status
 mnt_context_get_syscall_errno
 mnt_context_get_table
 mnt_context_get_target
+mnt_context_get_target_ns
 mnt_context_get_user_mflags
 mnt_context_helper_executed
 mnt_context_helper_setopt
@@ -95,8 +98,12 @@ mnt_context_set_source
 mnt_context_set_syscall_status
 mnt_context_set_tables_errcb
 mnt_context_set_target
+mnt_context_set_target_ns
 mnt_context_set_user_mflags
 mnt_context_strerror
+mnt_context_switch_ns
+mnt_context_switch_origin_ns
+mnt_context_switch_target_ns
 mnt_context_syscall_called
 mnt_context_tab_applied
 mnt_context_wait_for_children
@@ -110,6 +117,7 @@ MNT_ERR_NOFSTYPE
 MNT_ERR_NOSOURCE
 MNT_ERR_LOOPOVERLAP
 MNT_ERR_LOCK
+MNT_ERR_NAMESPACE
 <SUBSECTION>
 MNT_EX_SUCCESS
 MNT_EX_USAGE
