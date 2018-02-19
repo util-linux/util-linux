@@ -34,6 +34,7 @@
 #include "mountP.h"
 #include "fileutils.h"
 #include "strutils.h"
+#include "namespace.h"
 
 #include <sys/wait.h>
 
@@ -59,6 +60,10 @@ struct libmnt_context *mnt_new_context(void)
 	mnt_context_reset_status(cxt);
 
 	cxt->loopdev_fd = -1;
+
+	cxt->ns_orig.fd = -1;
+	cxt->ns_tgt.fd = -1;
+	cxt->ns_cur = &cxt->ns_orig;
 
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
@@ -92,6 +97,8 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_context_clear_loopdev(cxt);
 	mnt_free_lock(cxt->lock);
 	mnt_free_update(cxt->update);
+
+	mnt_context_set_target_ns(cxt, NULL);
 
 	free(cxt->children);
 
@@ -2577,6 +2584,196 @@ int mnt_context_wait_for_children(struct libmnt_context *cxt,
 	return 0;
 }
 
+static void close_ns(struct libmnt_ns *ns)
+{
+	if (ns->fd == -1)
+		return;
+
+	close(ns->fd);
+	ns->fd = -1;
+	mnt_unref_cache(ns->cache);
+}
+
+/**
+ * mnt_context_set_target_ns:
+ * @cxt: mount context
+ * @path: path to target namespace or NULL
+ *
+ * Sets target namespace to namespace represented by @path. If @path is NULL,
+ * target namespace is cleared.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path)
+{
+	int rc = 0;
+
+	int tmp;
+	if (!cxt)
+		return -EINVAL;
+
+	DBG(CXT, ul_debugobj(cxt, "Setting %s as target namespace", path));
+
+	if (!path) {
+		close_ns(&cxt->ns_orig);
+		close_ns(&cxt->ns_tgt);
+		return 0;
+	}
+
+	if (cxt->ns_orig.fd == -1) {
+		cxt->ns_orig.fd = open("/proc/self/ns/mnt", O_RDONLY | O_CLOEXEC);
+		if (cxt->ns_orig.fd == -1)
+			return -errno;
+		cxt->ns_orig.cache = NULL;
+	}
+
+	tmp = open(path, O_RDONLY | O_CLOEXEC);
+	if (tmp == -1)
+		return -errno;
+
+	/* test whether namespace switching works */
+	DBG(CXT, ul_debugobj(cxt, "Trying whether namespace is valid"));
+	if (setns(tmp, CLONE_NEWNS)
+	    || setns(cxt->ns_orig.fd, CLONE_NEWNS)) {
+		rc = -errno;
+		DBG(CXT, ul_debugobj(cxt, "setns(2) failed [errno=%d %m]", errno));
+		goto err;
+	}
+
+	close_ns(&cxt->ns_tgt);
+
+	cxt->ns_tgt.fd = tmp;
+	cxt->ns_tgt.cache = NULL;
+
+	return 0;
+
+err:
+	close(tmp);
+	return rc;
+}
+
+/**
+ * mnt_context_get_target_ns:
+ * @cxt: mount context
+ *
+ * Returns: pointer to target namespace
+ */
+struct libmnt_ns *mnt_context_get_target_ns(struct libmnt_context *cxt)
+{
+	return &cxt->ns_tgt;
+}
+
+/**
+ * mnt_context_get_origin_ns:
+ * @cxt: mount context
+ *
+ * Returns: pointer to original namespace
+ */
+struct libmnt_ns *mnt_context_get_origin_ns(struct libmnt_context *cxt)
+{
+	return &cxt->ns_orig;
+}
+
+
+/**
+ * mnt_context_switch_ns:
+ * @cxt: mount context
+ * @ns: namespace to switch to
+ *
+ * Switch to namespace specified by ns
+ *
+ * Typical usage:
+ * <informalexample>
+ *   <programlisting>
+ *	struct libmnt_ns *ns_old;
+ *	ns_old = mnt_context_switch_ns(cxt, mnt_context_get_target_ns(cxt));
+ *	... code ...
+ *	mnt_context_switch_ns(cxt, ns_old);
+ *   </programlisting>
+ * </informalexample>
+ *
+ * Returns: pointer to previous namespace or NULL on error
+ */
+struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmnt_ns *ns)
+{
+	struct libmnt_ns *ret;
+
+	if (!cxt || !ns)
+		return NULL;
+
+	ret = cxt->ns_cur;
+
+	if (ns == ret)
+		return ret;
+
+	if (ns->fd == -1)
+		return ret;
+
+	if (ret->cache != cxt->cache) {
+		mnt_unref_cache(ret->cache);
+		ret->cache = cxt->cache;
+		mnt_ref_cache(ret->cache);
+	}
+
+	DBG(CXT, ul_debugobj(cxt, "Switching to %s namespace",
+		ns == mnt_context_get_target_ns(cxt) ? "target" :
+		ns == mnt_context_get_origin_ns(cxt) ? "original" : "other"));
+
+	if (setns(ns->fd, CLONE_NEWNS)) {
+		int errsv = errno;
+
+		DBG(CXT, ul_debugobj(cxt, "setns(2) failed [errno=%d %m]", errno));
+		errno = errsv;
+		return NULL;
+	}
+
+	cxt->ns_cur = ns;
+	mnt_unref_cache(cxt->cache);
+	cxt->cache = ns->cache;
+	mnt_ref_cache(cxt->cache);
+
+	return ret;
+}
+
+/**
+ * mnt_context_switch_origin_ns:
+ * @cxt: mount context
+ *
+ * Switch to original namespace
+ *
+ * This is shorthand for
+ * <informalexample>
+ *   <programlisting>
+ *	mnt_context_switch_ns(cxt, mnt_context_get_origin_ns(cxt));
+ *   </programlisting>
+ * </informalexample>
+ *
+ * Returns: pointer to previous namespace or NULL on error
+ */
+struct libmnt_ns *mnt_context_switch_origin_ns(struct libmnt_context *cxt)
+{
+	return mnt_context_switch_ns(cxt, mnt_context_get_origin_ns(cxt));
+}
+
+/**
+ * mnt_context_switch_target_ns:
+ * @cxt: mount context
+ *
+ * Switch to target namespace
+ *
+ * This is shorthand for
+ * <informalexample>
+ *   <programlisting>
+ *	mnt_context_switch_ns(cxt, mnt_context_get_target_ns(cxt));
+ *   </programlisting>
+ * </informalexample>
+ *
+ * Returns: pointer to previous namespace or NULL on error
+ */
+struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt)
+{
+	return mnt_context_switch_ns(cxt, mnt_context_get_target_ns(cxt));
+}
 
 
 #ifdef TEST_PROGRAM
