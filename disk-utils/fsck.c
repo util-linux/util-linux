@@ -540,12 +540,13 @@ static struct libmnt_fs *lookup(char *path)
 }
 
 /* Find fsck program for a given fs type. */
-static char *find_fsck(const char *type)
+static int find_fsck(const char *type, char **progpath)
 {
 	char *s;
 	const char *tpl;
-	static char *prog = NULL;
+	char *prog = NULL;
 	char *p = xstrdup(fsck_path);
+	int rc;
 
 	/* Are we looking for a program or just a type? */
 	tpl = (strncmp(type, "fsck.", 5) ? "%s/fsck.%s" : "%s/%s");
@@ -559,7 +560,14 @@ static char *find_fsck(const char *type)
 	}
 
 	free(p);
-	return prog;
+	rc = prog ? 1 : 0;
+
+	if (progpath)
+		*progpath = prog;
+	else
+		free(prog);
+
+	return rc;
 }
 
 static int progress_active(void)
@@ -905,8 +913,8 @@ static int fsck_device(struct libmnt_fs *fs, int interactive)
 		type = DEFAULT_FSTYPE;
 
 	xasprintf(&progname, "fsck.%s", type);
-	progpath = find_fsck(progname);
-	if (progpath == NULL) {
+
+	if (!find_fsck(progname, &progpath)) {
 		free(progname);
 		if (fs_check_required(type)) {
 			retval = ENOENT;
@@ -1153,7 +1161,7 @@ static int ignore(struct libmnt_fs *fs)
 
 
 	/* See if the <fsck.fs> program is available. */
-	if (find_fsck(type) == NULL) {
+	if (!find_fsck(type, NULL)) {
 		if (fs_check_required(type))
 			warnx(_("cannot check %s: fsck.%s not found"),
 				fs_get_device(fs), type);
