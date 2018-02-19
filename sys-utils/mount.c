@@ -574,6 +574,7 @@ int main(int argc, char **argv)
 		{ "options-mode",     required_argument, NULL, MOUNT_OPT_OPTMODE     },
 		{ "options-source",   required_argument, NULL, MOUNT_OPT_OPTSRC      },
 		{ "options-source-force",   no_argument, NULL, MOUNT_OPT_OPTSRC_FORCE},
+		{ "namespace",        required_argument, NULL, 'N'                   },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -599,7 +600,7 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:rRsU:vVwt:T:",
+	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:rRsU:vVwt:T:N:",
 					longopts, NULL)) != -1) {
 
 		/* only few options are allowed for non-root users */
@@ -690,6 +691,15 @@ int main(int argc, char **argv)
 			oper = 1;
 			append_option(cxt, "rbind");
 			break;
+		case 'N':
+		{
+			int tmp;
+			if ((tmp = mnt_context_set_target_ns(cxt, optarg))) {
+				errno = -tmp;
+				err(MNT_EX_SYSERR, _("failed to set target namespace"));
+			}
+			break;
+		}
 		case MOUNT_OPT_SHARED:
 			append_option(cxt, "shared");
 			propa = 1;
