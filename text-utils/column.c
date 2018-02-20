@@ -333,6 +333,9 @@ static void reorder_table(struct column_control *ctl)
 		scols_table_move_column(ctl->tab, last, wanted[i]);
 		last = wanted[i];
 	}
+
+	free(wanted);
+	strv_free(order);
 }
 
 static void create_tree(struct column_control *ctl)
