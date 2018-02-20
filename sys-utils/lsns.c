@@ -437,10 +437,6 @@ static int read_process(struct lsns *ls, pid_t pid)
 		return -errno;
 
 	p = xcalloc(1, sizeof(*p));
-	if (!p) {
-		rc = -ENOMEM;
-		goto done;
-	}
 	p->netnsid = LSNS_NETNS_UNUSABLE;
 
 	if (fstat(dirfd(dir), &st) == 0) {
