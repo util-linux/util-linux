@@ -46,9 +46,7 @@ static int probe_mpool(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
-/**
- * Superblock (sb) -- magic = ASCII "mpoolDev"
- */
+/* "mpoolDev" in ASCII */
 #define MPOOL_SB_MAGIC "\x6D\x70\x6f\x6f\x6c\x44\x65\x76"
 
 const struct blkid_idinfo mpool_idinfo =
