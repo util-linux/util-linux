@@ -638,6 +638,8 @@ int fdisk_label_is_disabled(const struct fdisk_label *lb)
  * The function provides minimal and maximal geometry supported for the label,
  * if no range defined by library than returns -ENOSYS.
  *
+ * Since: 2.32
+ *
  * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_label_get_geomrange_sectors(const struct fdisk_label *lb,
@@ -661,6 +663,8 @@ int fdisk_label_get_geomrange_sectors(const struct fdisk_label *lb,
  * The function provides minimal and maximal geometry supported for the label,
  * if no range defined by library than returns -ENOSYS.
  *
+ * Since: 2.32
+ *
  * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_label_get_geomrange_heads(const struct fdisk_label *lb,
@@ -683,6 +687,8 @@ int fdisk_label_get_geomrange_heads(const struct fdisk_label *lb,
  *
  * The function provides minimal and maximal geometry supported for the label,
  * if no range defined by library than returns -ENOSYS.
+ *
+ * Since: 2.32
  *
  * Returns: 0 on success, otherwise, a corresponding error.
  */
