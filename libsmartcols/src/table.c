@@ -154,7 +154,7 @@ const char *scols_table_get_name(const struct libscols_table *tb)
  * title output alignment on non-tty is hardcoded to 80 output chars. For the
  * regular terminal it's based on terminal width.
  *
- * Returns: Title of the table, or %NULL in case of blank title.
+ * Returns: Title of the table, or NULL in case of blank title.
  *
  * Since: 2.28
  */
