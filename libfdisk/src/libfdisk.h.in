@@ -287,6 +287,28 @@ extern int fdisk_field_is_number(const struct fdisk_field *field);
 
 /**
  * fdisk_fieldtype:
+ * @FDISK_FIELD_NONE: unspecified item
+ * @FDISK_FIELD_DEVICE: partition device name
+ * @FDISK_FIELD_START: start offset of the partition
+ * @FDISK_FIELD_END: end offset of the partition
+ * @FDISK_FIELD_SECTORS: number of sectors
+ * @FDISK_FIELD_CYLINDERS: number of cylinders (deprecated)
+ * @FDISK_FIELD_SIZE: partition size
+ * @FDISK_FIELD_TYPE: partition type
+ * @FDISK_FIELD_TYPEID: partition type ID
+ * @FDISK_FIELD_ATTR: partition attribute (GPT)
+ * @FDISK_FIELD_BOOT: partition boot flag
+ * @FDISK_FIELD_BSIZE: size of the boot area (BSD)
+ * @FDISK_FIELD_CPG: BSD
+ * @FDISK_FIELD_EADDR: End-C/H/S (MBR)
+ * @FDISK_FIELD_FSIZE: BSD
+ * @FDISK_FIELD_NAME: partition label/name
+ * @FDISK_FIELD_SADDR: Start-C/H/S (MBR)
+ * @FDISK_FIELD_UUID: partition UUID (GPT)
+ * @FDISK_FIELD_FSUUID: Filesystem UUID
+ * @FDISK_FIELD_FSLABEL: Filesystem LABEL
+ * @FDISK_FIELD_FSTYPE: Filesystem type
+ * @FDISK_NFIELDS: Don't use, counter.
  *
  * Types of fdisk_field. The fields describe a partition.
  */
@@ -294,25 +316,25 @@ enum fdisk_fieldtype {
 	FDISK_FIELD_NONE = 0,
 
 	/* generic */
-	FDISK_FIELD_DEVICE,		/* partition device name */
-	FDISK_FIELD_START,		/* start offset of the partition */
-	FDISK_FIELD_END,		/* end offset of the partition */
-	FDISK_FIELD_SECTORS,		/* number of sectors */
-	FDISK_FIELD_CYLINDERS,		/* number of cylinders (deprecated) */
-	FDISK_FIELD_SIZE,		/* partition size */
-	FDISK_FIELD_TYPE,		/* partition type */
-	FDISK_FIELD_TYPEID,		/* partition type ID */
+	FDISK_FIELD_DEVICE,
+	FDISK_FIELD_START,
+	FDISK_FIELD_END,
+	FDISK_FIELD_SECTORS,
+	FDISK_FIELD_CYLINDERS,
+	FDISK_FIELD_SIZE,
+	FDISK_FIELD_TYPE,
+	FDISK_FIELD_TYPEID,
 
 	/* label specific */
-	FDISK_FIELD_ATTR,		/* partition attribute (GPT) */
-	FDISK_FIELD_BOOT,		/* partition boot flag */
-	FDISK_FIELD_BSIZE,		/* size of the boot area (BSD) */
-	FDISK_FIELD_CPG,		/* BSD */
-	FDISK_FIELD_EADDR,		/* End-C/H/S (MBR) */
-	FDISK_FIELD_FSIZE,		/* BSD */
-	FDISK_FIELD_NAME,		/* partition label/name (GPT) */
-	FDISK_FIELD_SADDR,		/* Start-C/H/S (MBR) */
-	FDISK_FIELD_UUID,		/* partition UUID (GPT) */
+	FDISK_FIELD_ATTR,
+	FDISK_FIELD_BOOT,
+	FDISK_FIELD_BSIZE,
+	FDISK_FIELD_CPG,
+	FDISK_FIELD_EADDR,
+	FDISK_FIELD_FSIZE,
+	FDISK_FIELD_NAME,
+	FDISK_FIELD_SADDR,
+	FDISK_FIELD_UUID,
 
 	FDISK_FIELD_FSUUID,
 	FDISK_FIELD_FSLABEL,
@@ -344,13 +366,14 @@ extern int fdisk_label_get_geomrange_sectors(const struct fdisk_label *lb,
 
 /**
  * fdisk_labelitem_gen:
+ * @FDISK_LABELITEM_ID: Unique disk identifier
+ * @__FDISK_NLABELITEMS: Specifies reserved range for generic items (0..7)
  *
- * Generic disklabel items
+ * Generic disklabel items.
  */
 enum fdisk_labelitem_gen {
-	FDISK_LABELITEM_ID = 0,		/* Unique disk identifier */
-
-	__FDISK_NLABELITEMS = 8		/* Specifies reserved range for generic items (0..7) */
+	FDISK_LABELITEM_ID = 0,
+	__FDISK_NLABELITEMS = 8
 };
 
 /* item.c */

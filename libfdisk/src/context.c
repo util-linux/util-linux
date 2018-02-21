@@ -349,7 +349,7 @@ int fdisk_enable_bootbits_protection(struct fdisk_context *cxt, int enable)
 /**
  * fdisk_disable_dialogs
  * @cxt: fdisk context
- * @enable: 1 or 0
+ * @disable: 1 or 0
  *
  * The library uses dialog driven partitioning by default.
  *
