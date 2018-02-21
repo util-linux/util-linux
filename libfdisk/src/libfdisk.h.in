@@ -112,6 +112,11 @@ typedef uint64_t fdisk_sector_t;
 
 /**
  * fdisk_labeltype:
+ * @FDISK_DISKLABEL_DOS: MBR label type
+ * @FDISK_DISKLABEL_SUN: SUN label type
+ * @FDISK_DISKLABEL_SGI: SGI label type
+ * @FDISK_DISKLABEL_BSD: BSD label type
+ * @FDISK_DISKLABEL_GPT: UEFI GPT type
  *
  * Supported partition table types (labels)
  */
@@ -124,7 +129,7 @@ enum fdisk_labeltype {
 };
 
 /**
- * fdisk_labelitem
+ * fdisk_labelitem:
  *
  * library handler for label specific information. See
  * generic FDISK_LABELITEM_* and label specific {GPT,MBR,..}_LABELITEM_*.
@@ -133,19 +138,28 @@ struct fdisk_labelitem;
 
 /**
  * fdisk_asktype:
+ * @FDISK_ASKTYPE_NONE: undefined type
+ * @FDISK_ASKTYPE_NUMBER: ask for number
+ * @FDISK_ASKTYPE_OFFSET:  ask for offset
+ * @FDISK_ASKTYPE_WARN:  print warning message and errno
+ * @FDISK_ASKTYPE_WARNX: print warning message
+ * @FDISK_ASKTYPE_INFO: print infor message
+ * @FDISK_ASKTYPE_YESNO: ask Yes/No question
+ * @FDISK_ASKTYPE_STRING: ask for string
+ * @FDISK_ASKTYPE_MENU: ask for menu item
  *
  * Ask API dialog types
  */
 enum fdisk_asktype {
-	FDISK_ASKTYPE_NONE = 0,			/* undefined type */
-	FDISK_ASKTYPE_NUMBER,			/* ask for number */
-	FDISK_ASKTYPE_OFFSET,			/* ask for offset */
-	FDISK_ASKTYPE_WARN,			/* print warning message and errno */
-	FDISK_ASKTYPE_WARNX,			/* print warning message */
-	FDISK_ASKTYPE_INFO,			/* print infor message */
-	FDISK_ASKTYPE_YESNO,			/* ask Yes/No question */
-	FDISK_ASKTYPE_STRING,			/* ask for string */
-	FDISK_ASKTYPE_MENU			/* ask for menu item */
+	FDISK_ASKTYPE_NONE = 0,
+	FDISK_ASKTYPE_NUMBER,
+	FDISK_ASKTYPE_OFFSET,
+	FDISK_ASKTYPE_WARN,
+	FDISK_ASKTYPE_WARNX,
+	FDISK_ASKTYPE_INFO,
+	FDISK_ASKTYPE_YESNO,
+	FDISK_ASKTYPE_STRING,
+	FDISK_ASKTYPE_MENU
 };
 
 /* init.c */
@@ -547,6 +561,13 @@ extern int fdisk_sun_set_pcylcount(struct fdisk_context *cxt);
 
 /**
  * fdisk_labelitem_sun:
+ * @SUN_LABELITEM_LABELID: Label ID
+ * @SUN_LABELITEM_VTOCID: Volume ID
+ * @SUN_LABELITEM_RPM: Rpm
+ * @SUN_LABELITEM_ACYL: Alternate cylinders
+ * @SUN_LABELITEM_PCYL: Physical cylinders
+ * @SUN_LABELITEM_APC: Extra sects/cyl
+ * @SUN_LABELITEM_INTRLV: Interleave
  *
  * SUN specific label items.
  */
@@ -567,6 +588,20 @@ extern int fdisk_bsd_link_partition(struct fdisk_context *cxt);
 
 /**
  * fdisk_labelitem_bsd:
+ * @BSD_LABELITEM_TYPE: type
+ * @BSD_LABELITEM_DISK: disk
+ * @BSD_LABELITEM_PACKNAME: packname
+ * @BSD_LABELITEM_FLAGS: flags (removeable, ecc, badsect)
+ * @BSD_LABELITEM_SECSIZE: Bytes/Sector
+ * @BSD_LABELITEM_NTRACKS: Tracks/Cylinder
+ * @BSD_LABELITEM_SECPERCYL: Sectors/Cylinder
+ * @BSD_LABELITEM_CYLINDERS: Cylinders
+ * @BSD_LABELITEM_RPM: rpm
+ * @BSD_LABELITEM_INTERLEAVE: interleave
+ * @BSD_LABELITEM_TRACKSKEW: trackskew
+ * @BSD_LABELITEM_CYLINDERSKEW: cylinderskew
+ * @BSD_LABELITEM_HEADSWITCH: headswitch
+ * @BSD_LABELITEM_TRKSEEK: track-to-track seek
  *
  * BSD specific label items.
  */
@@ -596,6 +631,10 @@ extern int fdisk_sgi_create_info(struct fdisk_context *cxt);
 
 /**
  * fdisk_labelitem_sgi:
+ * @SGI_LABELITEM_PCYLCOUNT: Physical cylinders
+ * @SGI_LABELITEM_SPARECYL: Extra sects/cyl
+ * @SGI_LABELITEM_ILFACT: nterleave
+ * @SGI_LABELITEM_BOOTFILE: Bootfile
  *
  * SGI specific label items.
  */
@@ -660,18 +699,24 @@ extern int fdisk_gpt_set_partition_attrs(struct fdisk_context *cxt, size_t partn
 
 /**
  * fdisk_labelitem_gpt:
+ * @GPT_LABELITEM_ID: GPT disklabel UUID (!= partition UUID)
+ * @GPT_LABELITEM_FIRSTLBA: First Usable LBA
+ * @GPT_LABELITEM_LASTLBA: Usable LBA
+ * @GPT_LABELITEM_ALTLBA: Alternative LBA (backup header LBA)
+ * @GPT_LABELITEM_ENTRIESLBA: Partitions entires array LBA
+ * @GPT_LABELITEM_ENTRIESALLOC: Number of allocated entries in entries array
  *
  * GPT specific label items.
  */
 enum fdisk_labelitem_gpt {
 	/* generic */
-	GPT_LABELITEM_ID = FDISK_LABELITEM_ID,		/* GPT disklabel UUID (!= partition UUID) */
+	GPT_LABELITEM_ID = FDISK_LABELITEM_ID,
 	/* specific */
-	GPT_LABELITEM_FIRSTLBA = __FDISK_NLABELITEMS,	/* First Usable LBA */
-	GPT_LABELITEM_LASTLBA,				/* Last Usable LBA */
-	GPT_LABELITEM_ALTLBA,				/* Alternative LBA (backup header LBA) */
-	GPT_LABELITEM_ENTRIESLBA,			/* Partitions entires array LBA */
-	GPT_LABELITEM_ENTRIESALLOC			/* Number of allocated entries in entries array */
+	GPT_LABELITEM_FIRSTLBA = __FDISK_NLABELITEMS,
+	GPT_LABELITEM_LASTLBA,
+	GPT_LABELITEM_ALTLBA,
+	GPT_LABELITEM_ENTRIESLBA,
+	GPT_LABELITEM_ENTRIESALLOC
 };
 
 /* script.c */
