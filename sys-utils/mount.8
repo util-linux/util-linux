@@ -118,7 +118,7 @@ network filesystems) the same filesystem maybe be mounted on the same
 mountpoint more times. The mount command does not implement any policy to
 control this behavior. All behavior is controlled by kernel and it is usually
 specific to filesystem driver. The exception is \fB\-\-all\fR, in this case
-already mounted filesystems are ignored.
+already mounted filesystems are ignored (see \fB\-\-all\fR below for more details).
 
 .SS Listing the mounts
 The listing mode is maintained for backward compatibility only.
@@ -553,6 +553,10 @@ Mount all filesystems (of the given types) mentioned in
 .B noauto
 keyword).  The filesystems are mounted following their order in
 .IR fstab .
+The mount command compares filesystem source, target (and fs root for bind
+mount or btrfs) to detect already mounted filesystems. The kernel table with
+already mounted filesystems is cached during \fBmount \-\-all\fR. It means
+that all duplicated fstab entries will be mounted.
 .sp
 Note that it is a bad practice to use \fBmount \-a\fR for
 .IR fstab
