@@ -307,7 +307,7 @@ static int probe_dos_pt(blkid_probe pr,
 
 	/* Parse subtypes (nested partitions) on large disks */
 	if (!blkid_probe_is_tiny(pr)) {
-		for (p = p0, i = 0; i < 4; i++, p++) {
+		for (p = p0, i = 1; i <= 4; i++, p++) {
 			size_t n;
 			int rc;
 
@@ -319,7 +319,7 @@ static int probe_dos_pt(blkid_probe pr,
 					continue;
 
 				rc = blkid_partitions_do_subprobe(pr,
-						blkid_partlist_get_partition(ls, i),
+						blkid_partlist_get_partition_by_partno(ls, i),
 						dos_nested[n].id);
 				if (rc < 0)
 					return rc;
