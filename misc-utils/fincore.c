@@ -199,11 +199,11 @@ static int fincore_fd (struct fincore_control *ctl,
 	int warned_once = 0;
 
 	for (file_offset = 0; file_offset < file_size; file_offset += window_size) {
-		size_t len;
+		off_t len;
 		void  *window = NULL;
 
 		len = file_size - file_offset;
-		if (len >= window_size)
+		if (len >= (off_t) window_size)
 			len = window_size;
 
 		window = mmap(window, len, PROT_NONE, MAP_PRIVATE, fd, file_offset);
