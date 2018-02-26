@@ -37,7 +37,7 @@ static int probe_mpool(blkid_probe pr, const struct blkid_idmag *mag)
 			offsetof(struct omf_sb_descriptor, osb_cksum1));
 	sb_crc ^= ~0L;
 
-	if (!blkid_probe_verify_csum(pr, sb_crc, osd->osb_cksum1))
+	if (!blkid_probe_verify_csum(pr, sb_crc, le32_to_cpu(osd->osb_cksum1)))
 		return 1;
 
 	blkid_probe_set_label(pr, osd->osb_name, sizeof(osd->osb_name));
