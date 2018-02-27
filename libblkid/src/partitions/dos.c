@@ -307,20 +307,31 @@ static int probe_dos_pt(blkid_probe pr,
 
 	/* Parse subtypes (nested partitions) on large disks */
 	if (!blkid_probe_is_tiny(pr)) {
-		for (p = p0, i = 0; i < 4; i++, p++) {
-			size_t n;
-			int rc;
+		int nparts = blkid_partlist_numof_partitions(ls);
 
-			if (!dos_partition_get_size(p) || is_extended(p))
+		DBG(LOWPROBE, ul_debug("checking for subtypes"));
+
+		for (i = 0; i < nparts; i++) {
+			size_t n;
+			int type;
+			blkid_partition pa = blkid_partlist_get_partition(ls, i);
+
+			if (pa == NULL
+			    || blkid_partition_get_size(pa) == 0
+			    || blkid_partition_is_extended(pa)
+			    || blkid_partition_is_logical(pa))
 				continue;
 
+			type = blkid_partition_get_type(pa);
+
 			for (n = 0; n < ARRAY_SIZE(dos_nested); n++) {
-				if (dos_nested[n].type != p->sys_ind)
+				int rc;
+
+				if (dos_nested[n].type != type)
 					continue;
 
-				rc = blkid_partitions_do_subprobe(pr,
-						blkid_partlist_get_partition(ls, i),
-						dos_nested[n].id);
+				rc = blkid_partitions_do_subprobe(pr, pa,
+							dos_nested[n].id);
 				if (rc < 0)
 					return rc;
 				break;
