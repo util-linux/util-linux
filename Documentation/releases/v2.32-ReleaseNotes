@@ -58,6 +58,8 @@ bash-completion:
    - Exclude /dev/fd from fsck find  [Kevin Locke]
 blkid:
    - Add support for LUKS2 and new LABEL attributes.  [Milan Broz]
+blkzone:
+   - Fix a typo in blkzone.8  [Masanari Iida]
 blockdev:
    - be more explicit for BLKSSZ in blockdev.8  [Karel Zak]
 build-sys:
@@ -66,7 +68,9 @@ build-sys:
    - add missing include  [Karel Zak]
    - automake is able to find headers in builddir ...  [Ruediger Meier]
    - avoid using prog_DEPENDENCIES  [Ruediger Meier]
+   - disable bz2 tarball and fix some am warnings  [Ruediger Meier]
    - don't check for swapon() number of arguments  [Karel Zak]
+   - forgot update NEWS for v2.32-rc1  [Karel Zak]
    - gtkdoc-fixxref v1.27 requires module option  [Karel Zak]
    - lsns requires libmount  [Karel Zak]
    - move rfkill to /usr/sbin  [Karel Zak]
@@ -93,10 +97,13 @@ cal:
 chmem:
    - cleanup includes  [Karel Zak]
    - cleanup usage()  [Karel Zak]
+chrt:
+   - fix compiler warning [-Wmaybe-uninitialized]  [Karel Zak]
 column:
    - add --table-noheadings  [Karel Zak]
    - allow to hide unnamed columns  [Karel Zak]
    - don't ignore space-char separators at begin of the line  [Karel Zak]
+   - fix memory leak [coverity scan]  [Karel Zak]
    - use \x<hex> for invalid multibyte seq.  [Karel Zak]
 dmesg:
    - Add --force-prefix option  [Prarit Bhargava]
@@ -105,10 +112,12 @@ dmesg:
    - use xstrdup() in xalloc.h based util  [Karel Zak]
 docs:
    - add ISC licence  [Carlos Santos]
+   - add note about NVMe-multipath to TODO  [Karel Zak]
    - improve setarch(8) manual page  [Sami Kerola]
    - update AUTHORS file  [Karel Zak]
    - update TODO  [Karel Zak]
    - update TODO file  [Karel Zak]
+   - update v2.32-ReleaseNotes  [Karel Zak]
 eject:
    - remove list_speeds() #ifdef CDROM_SELECT_SPEED protection  [Sami Kerola]
 fallocate:
@@ -117,11 +126,17 @@ fallocate:
 fdisk:
    - (gpt) make PMBR accessible from main menu  [Karel Zak]
 fincore:
+   - Handle large files correctly on 32 bit  [Tobias Stoeckmann]
+   - Handle large files on 32 bit without LFS  [Tobias Stoeckmann]
    - fix a typo in fincore.1  [Masatake YAMATO]
 findfs:
    - don't include exitcodes.h  [Karel Zak]
 findmnt:
    - findmnt.8 remove spurious spaces before "--tree" and "--verbose"  [Jakub Wilk]
+fsck:
+   - cleanup find_fsck()  [Karel Zak]
+   - coding style cleanup  [Karel Zak]
+   - use xasprintf to avoid buffer overruns with an insane fs type  [Theodore Ts'o]
 fsck.cramfs:
    - Fix bus error on broken file system.  [Tobias Stoeckmann]
    - fix crash when superblock size is too small  [Ruediger Meier]
@@ -180,6 +195,9 @@ lib/timeutils.c:
    - warn format_iso_time() overflow  [J William Piggott]
 libblkid:
    - (bcache) cleanup magic string definition  [Karel Zak]
+   - (dos)  make subtypes probing more robust  [Karel Zak]
+   - (mpool) checksum is LE  [Karel Zak]
+   - (mpool) don't use gtkdocs-like comment block  [Karel Zak]
    - Add VDO superblock information into blkid  [Sweet Tea Dorminy]
    - Add support for Micron mpool formatted drives  [John Groves]
    - Add support for stratis  [Tony Asleson]
@@ -202,6 +220,8 @@ libblkid:
    - udf  Use UDF revision field from LVD domain id "*OSTA UDF Compliant" as a fallback value for ID_FS_VERSION when LVIDIU is missing  [Pali Rohár]
    - vfat  Fix reading labels which starts with byte 0x05  [Pali Rohár]
 libfdisk:
+   - (docs) add missing docs blocks  [Karel Zak]
+   - (docs) improve enums documentation  [Karel Zak]
    - (dos) fix max heads  [Karel Zak]
    - (gpt) add VMware specific UUIDs  [Karel Zak]
    - (gpt) move backup header after device resize  [Karel Zak]
@@ -216,11 +236,13 @@ libfdisk:
    - allocate enough bytes for ucs2 to utf8 encoding  [Vaclav Dolezal]
    - allow to start freespace for zero  [Karel Zak]
    - extend API to provide label specific geometry ranges  [Karel Zak]
+   - fix docs warnings  [Karel Zak]
    - gpt  properly encode string on rename  [Vaclav Dolezal]
    - return bytes processed from gpt_entry_set_name(), process rc  [Vaclav Dolezal]
 libmount:
    - Allow MNT_FORCE and MNT_DETACH at umount  [Joshua Watt]
    - Use waitpid() when waiting for mount helper child process  [Vratislav Podzimek]
+   - add missing macro to docs  [Karel Zak]
    - add nsfs between pseudo filesystems  [Karel Zak]
    - check waitpid() return code  [Karel Zak]
    - fix access() utab write test  [Karel Zak]
@@ -230,13 +252,18 @@ libmount:
    - use eacess() rather than open() to check mtab/utab  [Karel Zak]
 libsmartcols:
    - don't add blank padding after left aligned title  [Karel Zak]
+   - fix docs warnings  [Karel Zak]
    - fix mem-leaks in samples  [Karel Zak]
+   - fixes issue with 0 width columns  [taiyu]
+   - interpret zero width for pending data as error  [Karel Zak]
+   - set minimal column width to 1  [Karel Zak]
 login:
    - add LOGIN_PLAIN_PROMPT to login.defs  [Karel Zak]
 login-utils:
    - use free_getlogindefs_data()  [Karel Zak]
 lsblk:
    - add hint about perms to man page  [Karel Zak]
+   - document LSBLK_DEBUG=  [Karel Zak]
    - try device/dev to read devno  [Karel Zak]
 lscpu:
    - (arm) cleanup code  [Karel Zak]
@@ -244,11 +271,14 @@ lscpu:
    - Treat read failure on Xen Hypervisor properties as non-fatal  [Dirk Mueller]
    - move ARM decoding to lscpu-arm.c  [Karel Zak]
    - move struct lscpu_desc header file  [Karel Zak]
+lscpu-arm:
+   - add Faraday And Brahma cores  [Riku Voipio]
 lslocks:
    - add note about OFDLCK  [Karel Zak]
 lsmem:
    - add --split  [Karel Zak]
    - add hint about block merges to the man page  [Karel Zak]
+   - fix memory leak [coverity scan]  [Karel Zak]
    - improve path_read_xxx() usage  [Karel Zak]
    - make --split optional, follow output by default  [Karel Zak]
 lsmem/chmem:
@@ -262,8 +292,10 @@ lsns:
    - add netnsid column  [Masatake YAMATO]
    - add nsfs column  [Masatake YAMATO]
    - disable netnsid column by default  [Masatake YAMATO]
+   - fix clang compiler warning  [Ruediger Meier]
    - initialize stuff when really necessary  [Karel Zak]
    - nsfs stuff cleanup  [Karel Zak]
+   - remove if-after-xcalloc  [Karel Zak]
    - rename notruns to no_trunc  [Karel Zak]
 man:
    - use long options in text and add example to uuidgen  [Sami Kerola]
@@ -274,11 +306,14 @@ md5:
 misc:
    - fix printf i386 compiler warnings  [Ruediger Meier]
    - fix typos  [Sami Kerola]
+   - fix typos using codespell  [Ruediger Meier]
    - remove %p from debug messages  [Karel Zak]
 mount:
+   - (man) update mount options for UDF  [Steve Kenton]
    - add hint about -t and root perms to the man page  [Karel Zak]
    - add more details about UUIDs and LABELs to the man page  [Karel Zak]
    - add note about "already mounted" behavior  [Karel Zak]
+   - add note about cached kernel table for --all  [Karel Zak]
    - be more accurate in man page about propagation flags  [Karel Zak]
 mount(8):
    - drop redundant filesystem-specific sections  [Mike Frysinger]
@@ -345,6 +380,7 @@ tests:
    - add mpool blkid test image  [Karel Zak]
    - add set-x to lsns test  [Karel Zak]
    - add tests for encode functions from lib/mbsalign.c  [Vaclav Dolezal]
+   - add udevadm settle to sfdisk/resize  [Ruediger Meier]
    - added missing expected outputs for partx (atari)  [Vaclav Dolezal]
    - added test for libblkid atari pt  [Vaclav Dolezal]
    - adjust for ISO timezone colon use  [J William Piggott]
@@ -382,6 +418,7 @@ tests:
    - update setarch test  [Karel Zak]
    - use TS_HELPER_CAL  [Karel Zak]
    - use flock to modify fstab  [Karel Zak]
+   - use pgrep instead of ps --ppid ...  [Ruediger Meier]
    - use subtests for sep1752w test  [Karel Zak]
    - use subtests for weekarg cal(1) tests  [Karel Zak]
    - use subtests for weeknum cal(1) tests  [Karel Zak]
@@ -389,6 +426,8 @@ tests/lsmem:
    - update lsmem test with ZONES column  [Gerald Schaefer]
 text-utils:
    - use errexec()  [Karel Zak]
+tools:
+   - improve checkmans  [Karel Zak]
 unshare:
    - Add --kill-child option.  [Niklas Hambüchen]
    - Allow passing <signame> to --kill-child  [Niklas Hambüchen]
