@@ -48,10 +48,11 @@ declare -i COUNT_TROFF=0
 declare -i COUNT_REPEATS=0
 declare -a REPEATS
 declare -A KNOWN_REPEATS
-KNOWN_REPEATS[mount.8]='foo l2 l c'
+KNOWN_REPEATS[mount.8]='foo l2 l c overlay'
 KNOWN_REPEATS[hexdump.1]='l'
 KNOWN_REPEATS[flock.1]='"$0"'
 KNOWN_REPEATS[switch_root.8]='$DIR'
+KNOWN_REPEATS[logger.1]='-'
 
 remove_repeats()
 {
@@ -70,7 +71,7 @@ remove_repeats()
 cd $(git rev-parse --show-toplevel)
 
 for I in $(
-	find . -type f -name '*[[:alpha:]].[1-8]' |grep -v "autom4te.cache\|\.libs/"
+	find . -type f -name '*[[:alpha:]].[1-8]' |grep -v "autom4te.cache\|\.libs/\|\.git"
 ); do
 	MAN_FILE=${I##*/}
 	MAN_LIST[${MAN_FILE%%.[0-9]}]=1
@@ -164,17 +165,23 @@ if [ ${GROG} = 0 ]; then
 echo "warning: neither grog nor lexgrog commands were found"
 fi
 
-if [ ${COUNT_GROG} -ne 0 -o ${COUNT_TROFF} -ne 0 -o ${COUNT_REPEATS} -ne 0 ]; then
+if [ ${COUNT_GROG} -ne 0 ]; then
 	echo "error: ${SCRIPT_INVOCATION_SHORT_NAME}: ${COUNT_GROG} files failed (lex)grog man-page test"
+fi
+if [ ${COUNT_TROFF} -ne 0 ]; then
 	echo "error: ${SCRIPT_INVOCATION_SHORT_NAME}: ${COUNT_TROFF} files failed troff parsing test"
+fi
+if [ ${COUNT_REPEATS} -ne 0 ]; then
 	echo "error: ${SCRIPT_INVOCATION_SHORT_NAME}: ${COUNT_REPEATS} files have repeating words"
-	ITER=${#MAN_LIST[*]}-${COUNT_GROG}-${COUNT_TROFF}-${COUNT_REPEATS}
-	echo "${SCRIPT_INVOCATION_SHORT_NAME}: ${ITER} man-pages approved"
+fi
+ITER=${#MAN_LIST[*]}-${COUNT_GROG}-${COUNT_TROFF}-${COUNT_REPEATS}
+echo "${SCRIPT_INVOCATION_SHORT_NAME}: ${ITER} man-pages approved"
+
+if [ ${COUNT_GROG} -ne 0 -o ${COUNT_TROFF} -ne 0 -o ${COUNT_REPEATS} -ne 0 ]; then
 	exit 1
 fi
 
 if ! ${VERBOSE}; then
 	echo "${SCRIPT_INVOCATION_SHORT_NAME}: success"
 fi
-
 exit 0
