@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-02-13 10:57+0100\n"
+"POT-Creation-Date: 2018-03-01 14:02+0100\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -45,7 +45,7 @@ msgstr "không đủ đối số"
 #: disk-utils/blockdev.c:465 disk-utils/cfdisk.c:2718 disk-utils/delpart.c:59
 #: disk-utils/fdformat.c:229 disk-utils/fdisk.c:764 disk-utils/fdisk.c:1066
 #: disk-utils/fdisk-list.c:321 disk-utils/fdisk-list.c:361
-#: disk-utils/fdisk-list.c:380 disk-utils/fsck.c:1457
+#: disk-utils/fdisk-list.c:380 disk-utils/fsck.c:1470
 #: disk-utils/fsck.cramfs.c:152 disk-utils/fsck.cramfs.c:512
 #: disk-utils/isosize.c:102 disk-utils/mkfs.bfs.c:192
 #: disk-utils/mkfs.cramfs.c:171 disk-utils/mkfs.cramfs.c:660
@@ -1118,7 +1118,7 @@ msgstr "Thuộc tính thiết bị (kích cỡ cung từ và cấu trúc hình h
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
 #: sys-utils/chcpu.c:344 sys-utils/chmem.c:419 sys-utils/dmesg.c:1469
 #: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
-#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:623 sys-utils/mount.c:698
+#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:630 sys-utils/mount.c:698
 #: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
 #: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:988
 #: sys-utils/switch_root.c:250 sys-utils/umount.c:528 term-utils/setterm.c:1176
@@ -1185,12 +1185,12 @@ msgid "Alignment offset: %lu bytes"
 msgstr "Khoảng chênh sắp hàng: %lu byte"
 
 #: disk-utils/fdisk-list.c:116 disk-utils/fdisk-list.c:236
-#: disk-utils/fsck.c:1242
+#: disk-utils/fsck.c:1255
 msgid "failed to allocate iterator"
 msgstr "gặp lỗi khi cấp phát iterator"
 
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
-#: disk-utils/partx.c:667 login-utils/lslogins.c:916 misc-utils/fincore.c:362
+#: disk-utils/partx.c:667 login-utils/lslogins.c:916 misc-utils/fincore.c:361
 #: misc-utils/findmnt.c:1596 misc-utils/lsblk.c:1908 misc-utils/lslocks.c:449
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:151 sys-utils/losetup.c:321
 #: sys-utils/lscpu.c:1609 sys-utils/lscpu.c:1712 sys-utils/lsipc.c:338
@@ -1207,7 +1207,7 @@ msgstr "gặp lỗi khi phân bổ bảng kết xuất"
 #: sys-utils/lscpu.c:1663 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
 #: sys-utils/prlimit.c:229 sys-utils/rfkill.c:374 sys-utils/swapon.c:179
-#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:450
+#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:453
 msgid "failed to allocate output line"
 msgstr "gặp lỗi khi phân bổ dòng kết xuất"
 
@@ -1218,7 +1218,7 @@ msgstr "gặp lỗi khi phân bổ dòng kết xuất"
 #: sys-utils/losetup.c:301 sys-utils/lscpu.c:1643 sys-utils/lscpu.c:1674
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
 #: sys-utils/rfkill.c:402 sys-utils/swapon.c:227 sys-utils/wdctl.c:242
-#: sys-utils/zramctl.c:472 text-utils/column.c:457
+#: sys-utils/zramctl.c:472 text-utils/column.c:460
 #, fuzzy
 msgid "failed to add output data"
 msgstr "gặp lỗi khi thêm dữ liệu vào bảng kết xuất"
@@ -1762,48 +1762,48 @@ msgstr "%s: lỗi phân tích cú pháp tại dòng %d -- ignore"
 msgid "%s: failed to parse fstab"
 msgstr "%s: gặp lỗi khi phân tích fstab"
 
-#: disk-utils/fsck.c:677 login-utils/login.c:940 login-utils/sulogin.c:1024
+#: disk-utils/fsck.c:687 login-utils/login.c:940 login-utils/sulogin.c:1024
 #: login-utils/vipw.c:208 sys-utils/flock.c:346 sys-utils/nsenter.c:180
 #: sys-utils/swapon.c:320 sys-utils/unshare.c:221 sys-utils/unshare.c:435
 #: term-utils/script.c:805
 msgid "fork failed"
 msgstr "gặp lỗi khi rẽ nhánh tiến trình"
 
-#: disk-utils/fsck.c:684
+#: disk-utils/fsck.c:694
 #, c-format
 msgid "%s: execute failed"
 msgstr "%s: thực thi gặp lỗi"
 
-#: disk-utils/fsck.c:772
+#: disk-utils/fsck.c:782
 msgid "wait: no more child process?!?"
 msgstr "đợi: không có tiến trình con nữa?!?"
 
-#: disk-utils/fsck.c:775 sys-utils/flock.c:364 sys-utils/swapon.c:352
+#: disk-utils/fsck.c:785 sys-utils/flock.c:364 sys-utils/swapon.c:352
 #: sys-utils/unshare.c:419 sys-utils/unshare.c:440
 msgid "waitpid failed"
 msgstr "waitpid bị lỗi"
 
-#: disk-utils/fsck.c:793
+#: disk-utils/fsck.c:803
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr "Cảnh báo… %s cho thiết bị %s đã thoát với tín hiệu %d."
 
-#: disk-utils/fsck.c:799
+#: disk-utils/fsck.c:809
 #, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr "%s %s: trạng thái là %x, không bao giờ nên xảy ra."
 
-#: disk-utils/fsck.c:845
+#: disk-utils/fsck.c:855
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "Đã kết thúc với %s (trạng thái thoát %d)\n"
 
-#: disk-utils/fsck.c:923
+#: disk-utils/fsck.c:936
 #, c-format
 msgid "error %d (%m) while executing fsck.%s for %s"
 msgstr "gặp lỗi %d (%m) trong khi thực hiện fsck.%s cho %s"
 
-#: disk-utils/fsck.c:989
+#: disk-utils/fsck.c:1002
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'."
@@ -1811,93 +1811,93 @@ msgstr ""
 "Hoặc tất cả hoặc không có kiểu hệ thống tập tin được qua\n"
 "cho tùy chọn “-t” phải có tiền tố “no” hay “!”."
 
-#: disk-utils/fsck.c:1105
+#: disk-utils/fsck.c:1118
 #, c-format
 msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr "%s: đang bỏ qua dòng sai trong “/etc/fstab”: buộc gắn với số gửi qua fsck khác-không"
 
-#: disk-utils/fsck.c:1117
+#: disk-utils/fsck.c:1130
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: đang bỏ qua thiết bị không tồn tại\n"
 
-#: disk-utils/fsck.c:1122
+#: disk-utils/fsck.c:1135
 #, c-format
 msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr "%s: thiết bị không sẵn sàng (tùy chọn \"nofail\" của fstab có lẽ đã được sử dụng để bỏ qua thiết bị này)\n"
 
-#: disk-utils/fsck.c:1139
+#: disk-utils/fsck.c:1152
 #, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr "%s: bỏ qua kiểu hệ thống tập tin chưa biết\n"
 
-#: disk-utils/fsck.c:1153
+#: disk-utils/fsck.c:1166
 #, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr "không thể kiểm tra %s: fsck.%s không tìm thấy"
 
-#: disk-utils/fsck.c:1257
+#: disk-utils/fsck.c:1270
 msgid "Checking all file systems.\n"
 msgstr "Đang kiểm tra tất cả các hệ thống tập tin.\n"
 
-#: disk-utils/fsck.c:1348
+#: disk-utils/fsck.c:1361
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "--waiting-- (lần chạy %d)\n"
 
-#: disk-utils/fsck.c:1374
+#: disk-utils/fsck.c:1387
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
 msgstr " %s [các tùy chọn] -- [tùy-chọn-fs] [<hệ thống tập tin> …]\n"
 
-#: disk-utils/fsck.c:1378
+#: disk-utils/fsck.c:1391
 msgid "Check and repair a Linux filesystem.\n"
 msgstr "Kiểm tra và sửa chữa hệ thống tập tin Linux.\n"
 
-#: disk-utils/fsck.c:1381
+#: disk-utils/fsck.c:1394
 msgid " -A         check all filesystems\n"
 msgstr " -A         kiểm tra tất cả các hệ thống tập tin\n"
 
-#: disk-utils/fsck.c:1382
+#: disk-utils/fsck.c:1395
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 msgstr " -C [<fd>]  hiển thị thanh diễn tiến; bộ mô tả tập tin là dành cho GUIs\n"
 
-#: disk-utils/fsck.c:1383
+#: disk-utils/fsck.c:1396
 msgid " -l         lock the device to guarantee exclusive access\n"
 msgstr " -l         khóa thiết bị để đảm bảo các ứng dụng khác không được truy cập vào\n"
 
-#: disk-utils/fsck.c:1384
+#: disk-utils/fsck.c:1397
 msgid " -M         do not check mounted filesystems\n"
 msgstr " -M         không kiểm tra các hệ thống tập tin đã được gắn\n"
 
-#: disk-utils/fsck.c:1385
+#: disk-utils/fsck.c:1398
 msgid " -N         do not execute, just show what would be done\n"
 msgstr " -N         không thực hiện, chỉ xem thử xem những gì sẽ được làm\n"
 
-#: disk-utils/fsck.c:1386
+#: disk-utils/fsck.c:1399
 msgid " -P         check filesystems in parallel, including root\n"
 msgstr " -P         kiểm tra hệ thống tập tin song song, bao gồm cả root\n"
 
-#: disk-utils/fsck.c:1387
+#: disk-utils/fsck.c:1400
 msgid " -R         skip root filesystem; useful only with '-A'\n"
 msgstr " -R         bỏ qua hệ thống tập tin gốc; chỉ hữu dụng với “-A”\n"
 
-#: disk-utils/fsck.c:1388
+#: disk-utils/fsck.c:1401
 #, fuzzy
 msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
 "            file descriptor is for GUIs\n"
 msgstr " -r         báo cáo thống kê cho từng thiết bị được kiểm tra\n"
 
-#: disk-utils/fsck.c:1390
+#: disk-utils/fsck.c:1403
 msgid " -s         serialize the checking operations\n"
 msgstr " -s         thao tác kiểm tra dạng nối tiếp\n"
 
-#: disk-utils/fsck.c:1391
+#: disk-utils/fsck.c:1404
 msgid " -T         do not show the title on startup\n"
 msgstr " -T         không hiển thị tiêu đề khi khởi động\n"
 
-#: disk-utils/fsck.c:1392
+#: disk-utils/fsck.c:1405
 #, fuzzy
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
@@ -1906,58 +1906,58 @@ msgstr ""
 " -t <kiểu>  chỉ định kiểu hệ thống tập tin được kiểm tra;\n"
 "             <kiểu> được phép dùng danh sách ngăn cách bằng dấu phẩy\n"
 
-#: disk-utils/fsck.c:1394
+#: disk-utils/fsck.c:1407
 msgid " -V         explain what is being done\n"
 msgstr " -V         giải thích những gì đang được làm\n"
 
-#: disk-utils/fsck.c:1400
+#: disk-utils/fsck.c:1413
 msgid "See the specific fsck.* commands for available fs-options."
 msgstr "Xem đặc tả về các lệnh fsck.* để biết các tùy chọn fs-options có thể dùng."
 
-#: disk-utils/fsck.c:1447
+#: disk-utils/fsck.c:1460
 msgid "too many devices"
 msgstr "quá nhiều thiết bị"
 
-#: disk-utils/fsck.c:1459
+#: disk-utils/fsck.c:1472
 msgid "Is /proc mounted?"
 msgstr "/proc đã được gắn chưa?"
 
-#: disk-utils/fsck.c:1467
+#: disk-utils/fsck.c:1480
 #, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr "phải là người chủ (root) để quét tìm hệ thống tập tin tương ứng: %s"
 
-#: disk-utils/fsck.c:1471
+#: disk-utils/fsck.c:1484
 #, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr "không tìm thấy hệ thống tập tin khớp: %s"
 
-#: disk-utils/fsck.c:1479 disk-utils/fsck.c:1576 misc-utils/kill.c:236
+#: disk-utils/fsck.c:1492 disk-utils/fsck.c:1589 misc-utils/kill.c:236
 #: sys-utils/eject.c:278
 msgid "too many arguments"
 msgstr "quá nhiều đối số"
 
-#: disk-utils/fsck.c:1534 disk-utils/fsck.c:1537
+#: disk-utils/fsck.c:1547 disk-utils/fsck.c:1550
 #, fuzzy
 msgid "invalid argument of -r"
 msgstr "đối số không hợp lệ - từ (from)"
 
-#: disk-utils/fsck.c:1549
+#: disk-utils/fsck.c:1562
 #, fuzzy, c-format
 msgid "option '%s' may be specified only once"
 msgstr "tùy chọn --pid có lẽ chỉ dùng một lần"
 
-#: disk-utils/fsck.c:1556 misc-utils/kill.c:282
+#: disk-utils/fsck.c:1569 misc-utils/kill.c:282
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr "tùy chọn “%s” cần một đối số"
 
-#: disk-utils/fsck.c:1587
+#: disk-utils/fsck.c:1600
 #, fuzzy, c-format
 msgid "invalid argument of -r: %d"
 msgstr "đối số không hợp lệ - đến (to)"
 
-#: disk-utils/fsck.c:1630
+#: disk-utils/fsck.c:1643
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "tùy chọn -l chỉ có thể sử dụng với một thiết bị mà thôi -- ignore"
 
@@ -3677,7 +3677,7 @@ msgid "#%2d: %9ju-%9ju (%9ju sector, %6ju MB)\n"
 msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju cung từ, %6ju MB)\n"
 
-#: disk-utils/partx.c:678 misc-utils/fincore.c:374 misc-utils/findmnt.c:1622
+#: disk-utils/partx.c:678 misc-utils/fincore.c:373 misc-utils/findmnt.c:1622
 #: misc-utils/lsblk.c:1930 misc-utils/lslocks.c:462 sys-utils/losetup.c:333
 #: sys-utils/lscpu.c:1618 sys-utils/prlimit.c:306 sys-utils/rfkill.c:467
 #: sys-utils/swapon.c:293 sys-utils/wdctl.c:271
@@ -3734,7 +3734,7 @@ msgstr ""
 " -s, --show           liệt kê các phân vùng\n"
 "\n"
 
-#: disk-utils/partx.c:764 misc-utils/lsblk.c:1640 sys-utils/lsmem.c:500
+#: disk-utils/partx.c:764 misc-utils/lsblk.c:1640 sys-utils/lsmem.c:507
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr " -b, --bytes          hiển thị kích thước theo byte thay vì định dạng dành cho con người\n"
 
@@ -3750,11 +3750,11 @@ msgstr " -n, --nr <n:m>       chỉ định vùng các phân vùng (ví dụ: --
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr " -o, --output <dsách> định nghĩa xem cột nào sẽ được dùng\n"
 
-#: disk-utils/partx.c:768 misc-utils/lsblk.c:1656 sys-utils/lsmem.c:498
+#: disk-utils/partx.c:768 misc-utils/lsblk.c:1656 sys-utils/lsmem.c:505
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -P, --pairs          dùng định dạng kết xuất khóa=\"giá trị\"\n"
 
-#: disk-utils/partx.c:769 misc-utils/lsblk.c:1657 sys-utils/lsmem.c:503
+#: disk-utils/partx.c:769 misc-utils/lsblk.c:1657 sys-utils/lsmem.c:510
 msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw            dùng định dạng thô\n"
 
@@ -8017,7 +8017,7 @@ msgstr ""
 #: login-utils/lslogins.c:1226 login-utils/nologin.c:27
 #: misc-utils/lslocks.c:495 misc-utils/mcookie.c:83 misc-utils/uuidd.c:62
 #: misc-utils/uuidgen.c:26 sys-utils/dmesg.c:266 sys-utils/ipcmk.c:67
-#: sys-utils/lscpu.c:1900 sys-utils/lsipc.c:278 sys-utils/lsmem.c:491
+#: sys-utils/lscpu.c:1900 sys-utils/lsipc.c:278 sys-utils/lsmem.c:498
 #: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:98 term-utils/setterm.c:379
 #: text-utils/line.c:31
 #, c-format
@@ -9010,52 +9010,52 @@ msgstr "Tên tập tin"
 msgid "failed to do mincore: %s"
 msgstr "gặp lỗi khi đọc liên kết mềm: %s"
 
-#: misc-utils/fincore.c:213
+#: misc-utils/fincore.c:212
 #, fuzzy, c-format
 msgid "failed to do mmap: %s"
 msgstr "lỗi mở %s"
 
-#: misc-utils/fincore.c:241
+#: misc-utils/fincore.c:240
 #, fuzzy, c-format
 msgid "failed to open: %s"
 msgstr "lỗi mở %s"
 
-#: misc-utils/fincore.c:246
+#: misc-utils/fincore.c:245
 #, fuzzy, c-format
 msgid "failed to do fstat: %s"
 msgstr "không đọc được: %s"
 
-#: misc-utils/fincore.c:267
+#: misc-utils/fincore.c:266
 #, c-format
 msgid " %s [options] file...\n"
 msgstr " %s [TUỲ_CHỌN] [TẬP_TIN…]\n"
 
-#: misc-utils/fincore.c:270
+#: misc-utils/fincore.c:269
 #, fuzzy
 msgid " -J, --json            use JSON output format\n"
 msgstr " -r, --raw              dùng định dạng thô\n"
 
-#: misc-utils/fincore.c:271
+#: misc-utils/fincore.c:270
 #, fuzzy
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            hiển thị cỡ theo byte thay vì dạng dành cho con người đọc\n"
 
-#: misc-utils/fincore.c:272
+#: misc-utils/fincore.c:271
 #, fuzzy
 msgid " -n, --noheadings      don't print headings\n"
 msgstr " -n, --noheadings     không in phần đầu\n"
 
-#: misc-utils/fincore.c:273
+#: misc-utils/fincore.c:272
 #, fuzzy
 msgid " -o, --output <list>   output columns\n"
 msgstr " -o, --output <d.sách> hiển thị các cột\n"
 
-#: misc-utils/fincore.c:274
+#: misc-utils/fincore.c:273
 #, fuzzy
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw              dùng định dạng thô\n"
 
-#: misc-utils/fincore.c:344 sys-utils/losetup.c:793
+#: misc-utils/fincore.c:343 sys-utils/losetup.c:793
 msgid "no file specified"
 msgstr "chưa ghi rõ tập tin"
 
@@ -9310,13 +9310,13 @@ msgstr " -f, --first-only       chỉ hiển thị hệ thống tập tin tìm t
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -s, --inverse          đảo ngược phần khớp\n"
 
-#: misc-utils/findmnt.c:1224 misc-utils/lslocks.c:501 sys-utils/lsns.c:904
+#: misc-utils/findmnt.c:1224 misc-utils/lslocks.c:501 sys-utils/lsns.c:901
 #: sys-utils/rfkill.c:572
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr " -r, --raw              dùng định dạng thô\n"
 
-#: misc-utils/findmnt.c:1225 sys-utils/lsns.c:905
+#: misc-utils/findmnt.c:1225 sys-utils/lsns.c:902
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             dùng định dạng kết xuất liệt kê\n"
 
@@ -9379,7 +9379,7 @@ msgstr " -t, --types <d.sách>   giới hạn tập hợp hệ thống tập tin
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             bỏ qua hệ thống tập tin với đích trùng lặp\n"
 
-#: misc-utils/findmnt.c:1240 misc-utils/lslocks.c:507 sys-utils/lsns.c:910
+#: misc-utils/findmnt.c:1240 misc-utils/lslocks.c:507 sys-utils/lsns.c:907
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       đừng cắt ngắn trong các cột\n"
 
@@ -10250,7 +10250,7 @@ msgstr " -i, --ascii          chỉ dùng chữ cái trong bảng mã ASCII\n"
 msgid " -I, --include <list> show only devices with specified major numbers\n"
 msgstr " -I, --include <dsách> chỉ hiển thị các thiết bị có số lớn đã cho\n"
 
-#: misc-utils/lsblk.c:1648 sys-utils/lsmem.c:497
+#: misc-utils/lsblk.c:1648 sys-utils/lsmem.c:504
 #, fuzzy
 msgid " -J, --json           use JSON output format\n"
 msgstr " -r, --raw            dùng định dạng thô\n"
@@ -10268,11 +10268,11 @@ msgstr " -l, --list           dùng kết xuất định dạng danh sách\n"
 msgid " -m, --perms          output info about permissions\n"
 msgstr " -m, --perms          xuất thông tin về các quyền\n"
 
-#: misc-utils/lsblk.c:1652 sys-utils/lsmem.c:501
+#: misc-utils/lsblk.c:1652 sys-utils/lsmem.c:508
 msgid " -n, --noheadings     don't print headings\n"
 msgstr " -n, --noheadings     không in phần đầu\n"
 
-#: misc-utils/lsblk.c:1653 sys-utils/lsmem.c:502
+#: misc-utils/lsblk.c:1653 sys-utils/lsmem.c:509
 msgid " -o, --output <list>  output columns\n"
 msgstr " -o, --output <d.sách> hiển thị các cột\n"
 
@@ -10374,12 +10374,12 @@ msgstr "Liệt kê các khóa hệ thống nội bộ.\n"
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:503 sys-utils/lsns.c:906 sys-utils/rfkill.c:573
+#: misc-utils/lslocks.c:503 sys-utils/lsns.c:903 sys-utils/rfkill.c:573
 #, fuzzy
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings     không in phần đầu\n"
 
-#: misc-utils/lslocks.c:504 sys-utils/lsns.c:907 sys-utils/rfkill.c:574
+#: misc-utils/lslocks.c:504 sys-utils/lsns.c:904 sys-utils/rfkill.c:574
 #, fuzzy
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --output <dsách> định nghĩa xem cột nào sẽ được dùng\n"
@@ -10389,13 +10389,13 @@ msgstr " -o, --output <dsách> định nghĩa xem cột nào sẽ được dùng
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr " -p, --pid <mã_số_tiến_trình>…     thực hiện trên những tiến trình đang chạy\n"
 
-#: misc-utils/lslocks.c:506 sys-utils/lsns.c:909 sys-utils/rfkill.c:575
+#: misc-utils/lslocks.c:506 sys-utils/lsns.c:906 sys-utils/rfkill.c:575
 #, fuzzy
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              dùng định dạng thô\n"
 
 #: misc-utils/lslocks.c:563 schedutils/chrt.c:475 schedutils/ionice.c:177
-#: schedutils/taskset.c:171 sys-utils/lsns.c:986 sys-utils/prlimit.c:585
+#: schedutils/taskset.c:171 sys-utils/lsns.c:983 sys-utils/prlimit.c:585
 msgid "invalid PID argument"
 msgstr "đối số PID không hợp lệ"
 
@@ -10483,7 +10483,7 @@ msgstr ""
 msgid "pathname argument is missing"
 msgstr "đối số tới tên đường dẫn còn thiếu"
 
-#: misc-utils/namei.c:414 sys-utils/lsns.c:1060
+#: misc-utils/namei.c:414 sys-utils/lsns.c:1057
 #, fuzzy
 msgid "failed to allocate UID cache"
 msgstr "gặp lỗi khi cấp phát phần đầu GPT"
@@ -10711,8 +10711,8 @@ msgstr "không hoặc là quá nhiều bộ mô tả tập tin được nhận v
 msgid "timeout [%d sec]\n"
 msgstr "lỗi quá lâu sau %u giây"
 
-#: misc-utils/uuidd.c:434 term-utils/setterm.c:899 text-utils/column.c:493
-#: text-utils/column.c:526
+#: misc-utils/uuidd.c:434 term-utils/setterm.c:899 text-utils/column.c:496
+#: text-utils/column.c:529
 msgid "read failed"
 msgstr "đọc gặp lỗi"
 
@@ -10921,7 +10921,7 @@ msgid "sha1-based"
 msgstr ""
 
 #: misc-utils/uuidparse.c:267 misc-utils/wipefs.c:170 sys-utils/lscpu.c:1722
-#: sys-utils/lsns.c:809 sys-utils/zramctl.c:496
+#: sys-utils/lsns.c:806 sys-utils/zramctl.c:496
 msgid "failed to initialize output column"
 msgstr "lỗi khởi tạo cột kết xuất"
 
@@ -11978,7 +11978,7 @@ msgstr "bật CPU %d gặp lỗi"
 msgid "%s disable failed"
 msgstr "tắt CPU %d gặp lỗi"
 
-#: sys-utils/chmem.c:266 sys-utils/lsmem.c:471 sys-utils/lsmem.c:475
+#: sys-utils/chmem.c:266 sys-utils/lsmem.c:478 sys-utils/lsmem.c:482
 #, fuzzy, c-format
 msgid "Failed to read %s"
 msgstr "đọc tốc độ gặp lỗi"
@@ -12945,7 +12945,7 @@ msgstr "%s: FITRIM ioctl không thành công"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> bytes) bị xén\n"
 
-#: sys-utils/fstrim.c:190 sys-utils/lsns.c:1069 sys-utils/swapon.c:733
+#: sys-utils/fstrim.c:190 sys-utils/lsns.c:1066 sys-utils/swapon.c:733
 #: sys-utils/umount.c:229
 #, c-format
 msgid "failed to parse %s"
@@ -14949,7 +14949,7 @@ msgstr " -x, --hex               hiển thị dạng thập lục phân thay cho
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -a, --all            hiển thị mọi thiết bị\n"
 
-#: sys-utils/lscpu.c:1999 sys-utils/lsmem.c:596
+#: sys-utils/lscpu.c:1999 sys-utils/lsmem.c:603
 #, fuzzy, c-format
 msgid "invalid argument to %s"
 msgstr "đối số không hợp lệ: %s"
@@ -15438,69 +15438,69 @@ msgstr ", trực tuyến"
 msgid "on->off"
 msgstr ""
 
-#: sys-utils/lsmem.c:322 sys-utils/lsmem.c:326
+#: sys-utils/lsmem.c:322 sys-utils/lsmem.c:329
 #, fuzzy
 msgid "Memory block size:"
 msgstr "lấy kích cỡ khối"
 
-#: sys-utils/lsmem.c:323 sys-utils/lsmem.c:328
+#: sys-utils/lsmem.c:323 sys-utils/lsmem.c:333
 #, fuzzy
 msgid "Total online memory:"
 msgstr "không đủ bộ nhớ"
 
-#: sys-utils/lsmem.c:324 sys-utils/lsmem.c:330
+#: sys-utils/lsmem.c:324 sys-utils/lsmem.c:337
 #, fuzzy
 msgid "Total offline memory:"
 msgstr "không đủ bộ nhớ"
 
-#: sys-utils/lsmem.c:344
+#: sys-utils/lsmem.c:351
 #, fuzzy, c-format
 msgid "Failed to open %s"
 msgstr "lỗi mở %s"
 
-#: sys-utils/lsmem.c:467
+#: sys-utils/lsmem.c:474
 #, fuzzy
 msgid "This system does not support memory blocks"
 msgstr "Hệ thống này không hỗ trợ quét tìm lại của CPU"
 
-#: sys-utils/lsmem.c:494
+#: sys-utils/lsmem.c:501
 msgid "List the ranges of available memory with their online status.\n"
 msgstr ""
 
-#: sys-utils/lsmem.c:499
+#: sys-utils/lsmem.c:506
 #, fuzzy
 msgid " -a, --all            list each individual memory block\n"
 msgstr " -a, --all            hiển thị mọi thiết bị\n"
 
-#: sys-utils/lsmem.c:504
+#: sys-utils/lsmem.c:511
 #, fuzzy
 msgid " -S, --split <list>   split ranges by specified columns\n"
 msgstr " -o, --output <d.sách>  hiển thị các cột\n"
 
-#: sys-utils/lsmem.c:505
+#: sys-utils/lsmem.c:512
 #, fuzzy
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
 msgstr " -s, --sysroot <dir>     dùng thư mục đã cho như là thư mục gốc của hệ thống\n"
 
-#: sys-utils/lsmem.c:506
+#: sys-utils/lsmem.c:513
 msgid "     --summary[=when] print summary information (never,always or only)\n"
 msgstr ""
 
-#: sys-utils/lsmem.c:613
+#: sys-utils/lsmem.c:620
 #, fuzzy
 msgid "unsupported --summary argument"
 msgstr "--setgroups không hỗ trợ tham số “%s”"
 
-#: sys-utils/lsmem.c:628
+#: sys-utils/lsmem.c:635
 #, fuzzy
 msgid "options --{raw,json,pairs} and --summary=only are mutually exclusive"
 msgstr "các tùy chọn --setgroups=allow và --map-root-user loại trừ lẫn nhau"
 
-#: sys-utils/lsmem.c:659 sys-utils/lsns.c:784
+#: sys-utils/lsmem.c:666 sys-utils/lsns.c:781
 msgid "failed to initialize output table"
 msgstr "lỗi khởi tạo bảng kết xuất"
 
-#: sys-utils/lsmem.c:671
+#: sys-utils/lsmem.c:678
 #, fuzzy
 msgid "Failed to initialize output column"
 msgstr "lỗi khởi tạo cột kết xuất"
@@ -15552,50 +15552,50 @@ msgstr ""
 msgid "nsfs mountpoint (usually used network subsystem)"
 msgstr ""
 
-#: sys-utils/lsns.c:722
+#: sys-utils/lsns.c:719
 msgid "failed to add line to output"
 msgstr "không thêm được dòng vào kết xuất"
 
-#: sys-utils/lsns.c:898
+#: sys-utils/lsns.c:895
 #, fuzzy, c-format
 msgid " %s [options] [<namespace>]\n"
 msgstr " %s [tùy chọn] [thông điệp]\n"
 
-#: sys-utils/lsns.c:901
+#: sys-utils/lsns.c:898
 #, fuzzy
 msgid "List system namespaces.\n"
 msgstr "Liệt kê các khóa hệ thống nội bộ.\n"
 
-#: sys-utils/lsns.c:908
+#: sys-utils/lsns.c:905
 #, fuzzy
 msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -t, --target <pid>     tiến trình đích để lấy không gian tên từ đó\n"
 
-#: sys-utils/lsns.c:911
+#: sys-utils/lsns.c:908
 #, fuzzy
 msgid " -W, --nowrap           don't use multi-line representation\n"
 msgstr " -n, --no-mtab           không ghi vào /etc/mtab\n"
 
-#: sys-utils/lsns.c:912
+#: sys-utils/lsns.c:909
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"
 msgstr ""
 
-#: sys-utils/lsns.c:1003
+#: sys-utils/lsns.c:1000
 #, fuzzy, c-format
 msgid "unknown namespace type: %s"
 msgstr "dạng nguồn không rõ: %s\n"
 
-#: sys-utils/lsns.c:1027
+#: sys-utils/lsns.c:1024
 #, fuzzy
 msgid "--task is mutually exclusive with <namespace>"
 msgstr "tùy chọn --find loại trừ với <thiết bị>"
 
-#: sys-utils/lsns.c:1028
+#: sys-utils/lsns.c:1025
 #, fuzzy
 msgid "invalid namespace argument"
 msgstr "đối số dừng không hợp lệ"
 
-#: sys-utils/lsns.c:1080
+#: sys-utils/lsns.c:1077
 #, c-format
 msgid "not found namespace: %ju"
 msgstr ""
@@ -16509,7 +16509,7 @@ msgid "Tool for enabling and disabling wireless devices.\n"
 msgstr ""
 
 #. TRANSLATORS: command names should not be translated, explaining
-#. them as additional field after identifer is fine, for example
+#. them as additional field after identifier is fine, for example
 #. *
 #. list   [identifier]   (lista [tarkenne])
 #.
@@ -19250,7 +19250,7 @@ msgstr "đi qua dòng cuối cùng"
 msgid "-- line already flushed"
 msgstr "-- dòng đã được đẩy vào đĩa"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:631
+#: text-utils/colcrt.c:82 text-utils/column.c:634
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr " %s [TUỲ_CHỌN] [<TẬP_TIN> …]\n"
@@ -19305,156 +19305,156 @@ msgstr "chưa định nghĩa điểm gắn"
 msgid "failed to parse --table-order list"
 msgstr "lỗi phân tích --timeout (chờ tối đa)"
 
-#: text-utils/column.c:394
+#: text-utils/column.c:397
 #, fuzzy
 msgid "failed to parse --table-right list"
 msgstr "gặp lỗi phân tích bắt đầu"
 
-#: text-utils/column.c:398
+#: text-utils/column.c:401
 #, fuzzy
 msgid "failed to parse --table-trunc list"
 msgstr "lỗi phân tích --timeout (chờ tối đa)"
 
-#: text-utils/column.c:402
+#: text-utils/column.c:405
 #, fuzzy
 msgid "failed to parse --table-noextreme list"
 msgstr "lỗi phân tích --timeout (chờ tối đa)"
 
-#: text-utils/column.c:406
+#: text-utils/column.c:409
 #, fuzzy
 msgid "failed to parse --table-wrap list"
 msgstr "gặp lỗi phân tích bắt đầu"
 
-#: text-utils/column.c:410
+#: text-utils/column.c:413
 #, fuzzy
 msgid "failed to parse --table-hide list"
 msgstr "lỗi phân tích --timeout (chờ tối đa)"
 
-#: text-utils/column.c:441
+#: text-utils/column.c:444
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr ""
 
-#: text-utils/column.c:455
+#: text-utils/column.c:458
 #, fuzzy
 msgid "failed to allocate output data"
 msgstr "gặp lỗi khi phân bổ bảng kết xuất"
 
-#: text-utils/column.c:634
+#: text-utils/column.c:637
 msgid "Columnate lists.\n"
 msgstr "Tạo các danh sách các cột.\n"
 
-#: text-utils/column.c:637
+#: text-utils/column.c:640
 #, fuzzy
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table              tạo một bảng\n"
 
-#: text-utils/column.c:638
+#: text-utils/column.c:641
 #, fuzzy
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr " -n, --name <tên_chương_trình> tên mà bị báo cáo lỗi\n"
 
-#: text-utils/column.c:639
+#: text-utils/column.c:642
 #, fuzzy
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -x, --sort <cột>     sắp xếp kết xuất theo <cột>\n"
 
-#: text-utils/column.c:640
+#: text-utils/column.c:643
 #, fuzzy
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -o, --options <d.sách> danh sách định giới bằng dấu phẩy của các tùy chọn tráo đổi\n"
 
-#: text-utils/column.c:641
+#: text-utils/column.c:644
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 
-#: text-utils/column.c:642
+#: text-utils/column.c:645
 #, fuzzy
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr " -n, --noheadings          không in phần đầu\n"
 
-#: text-utils/column.c:643
+#: text-utils/column.c:646
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr ""
 
-#: text-utils/column.c:644
+#: text-utils/column.c:647
 #, fuzzy
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -n, --noheadings       không hiển thị phần đầu của cột\n"
 
-#: text-utils/column.c:645
+#: text-utils/column.c:648
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr ""
 
-#: text-utils/column.c:646
+#: text-utils/column.c:649
 #, fuzzy
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr " -u, --notruncate       đừng cắt ngắn trong các cột\n"
 
-#: text-utils/column.c:647
+#: text-utils/column.c:650
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr ""
 
-#: text-utils/column.c:648
+#: text-utils/column.c:651
 #, fuzzy
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr "     --raw                     dùng định dạng thô cho kết xuất --list\n"
 
-#: text-utils/column.c:651
+#: text-utils/column.c:654
 #, fuzzy
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr " -O, --output <cột>            chỉ định cột sẽ hiển thị cho --list\n"
 
-#: text-utils/column.c:652
+#: text-utils/column.c:655
 #, fuzzy
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -i, --irq <num>              chỉ định con số irq cho cổng song song\n"
 
-#: text-utils/column.c:653
+#: text-utils/column.c:656
 #, fuzzy
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -N, --partno <num>        chỉ định số phân vùng\n"
 
-#: text-utils/column.c:656
+#: text-utils/column.c:659
 #, fuzzy
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --columns <rộng>     độ rộng ký tự kết xuất\n"
 
-#: text-utils/column.c:657
+#: text-utils/column.c:660
 #, fuzzy
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 " -o, --output-separator <chuỗi>\n"
 "                          chuỗi dùng để ngăn cách cột kết xuất bảng, mặc định là hai dấu cách\n"
 
-#: text-utils/column.c:658
+#: text-utils/column.c:661
 #, fuzzy
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <chuỗi>  dấu giới hạn bảng có thể\n"
 
-#: text-utils/column.c:659
+#: text-utils/column.c:662
 #, fuzzy
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows           điền đầy các hàng trước các cột\n"
 
-#: text-utils/column.c:728
+#: text-utils/column.c:731
 msgid "invalid columns argument"
 msgstr "đối số cột không hợp lệ"
 
-#: text-utils/column.c:753
+#: text-utils/column.c:756
 #, fuzzy
 msgid "failed to parse column names"
 msgstr "lỗi phân tích lớp"
 
-#: text-utils/column.c:808
+#: text-utils/column.c:811
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr ""
 
-#: text-utils/column.c:816
+#: text-utils/column.c:819
 msgid "option --table required for all --table-*"
 msgstr ""
 
-#: text-utils/column.c:819
+#: text-utils/column.c:822
 msgid "option --table-columns required for --json"
 msgstr ""
 

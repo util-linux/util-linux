@@ -48,7 +48,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.31-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-02-13 10:57+0100\n"
+"POT-Creation-Date: 2018-03-01 14:02+0100\n"
 "PO-Revision-Date: 2017-12-10 17:54+01:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -82,7 +82,7 @@ msgstr "málo argumentů"
 #: disk-utils/blockdev.c:465 disk-utils/cfdisk.c:2718 disk-utils/delpart.c:59
 #: disk-utils/fdformat.c:229 disk-utils/fdisk.c:764 disk-utils/fdisk.c:1066
 #: disk-utils/fdisk-list.c:321 disk-utils/fdisk-list.c:361
-#: disk-utils/fdisk-list.c:380 disk-utils/fsck.c:1457
+#: disk-utils/fdisk-list.c:380 disk-utils/fsck.c:1470
 #: disk-utils/fsck.cramfs.c:152 disk-utils/fsck.cramfs.c:512
 #: disk-utils/isosize.c:102 disk-utils/mkfs.bfs.c:192
 #: disk-utils/mkfs.cramfs.c:171 disk-utils/mkfs.cramfs.c:660
@@ -1139,7 +1139,7 @@ msgstr "Vlastnosti zařízení (velikost sektoru a geometrie) by měly být pou�
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
 #: sys-utils/chcpu.c:344 sys-utils/chmem.c:419 sys-utils/dmesg.c:1469
 #: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
-#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:623 sys-utils/mount.c:698
+#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:630 sys-utils/mount.c:698
 #: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
 #: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:988
 #: sys-utils/switch_root.c:250 sys-utils/umount.c:528 term-utils/setterm.c:1176
@@ -1205,12 +1205,12 @@ msgid "Alignment offset: %lu bytes"
 msgstr "Zarovnávací posun: %lu bajtů"
 
 #: disk-utils/fdisk-list.c:116 disk-utils/fdisk-list.c:236
-#: disk-utils/fsck.c:1242
+#: disk-utils/fsck.c:1255
 msgid "failed to allocate iterator"
 msgstr "alokace iterátoru selhala"
 
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
-#: disk-utils/partx.c:667 login-utils/lslogins.c:916 misc-utils/fincore.c:362
+#: disk-utils/partx.c:667 login-utils/lslogins.c:916 misc-utils/fincore.c:361
 #: misc-utils/findmnt.c:1596 misc-utils/lsblk.c:1908 misc-utils/lslocks.c:449
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:151 sys-utils/losetup.c:321
 #: sys-utils/lscpu.c:1609 sys-utils/lscpu.c:1712 sys-utils/lsipc.c:338
@@ -1227,7 +1227,7 @@ msgstr "výstupní tabulku se nepodařilo alokovat"
 #: sys-utils/lscpu.c:1663 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
 #: sys-utils/prlimit.c:229 sys-utils/rfkill.c:374 sys-utils/swapon.c:179
-#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:450
+#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:453
 msgid "failed to allocate output line"
 msgstr "výstupní řádek se nepodařilo alokovat"
 
@@ -1238,7 +1238,7 @@ msgstr "výstupní řádek se nepodařilo alokovat"
 #: sys-utils/losetup.c:301 sys-utils/lscpu.c:1643 sys-utils/lscpu.c:1674
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
 #: sys-utils/rfkill.c:402 sys-utils/swapon.c:227 sys-utils/wdctl.c:242
-#: sys-utils/zramctl.c:472 text-utils/column.c:457
+#: sys-utils/zramctl.c:472 text-utils/column.c:460
 msgid "failed to add output data"
 msgstr "přidání výstupních data selhalo"
 
@@ -1775,48 +1775,48 @@ msgstr "%s: chyba rozboru na řádku %d – ignorováno"
 msgid "%s: failed to parse fstab"
 msgstr "%s: fstab se nepodařilo rozebrat"
 
-#: disk-utils/fsck.c:677 login-utils/login.c:940 login-utils/sulogin.c:1024
+#: disk-utils/fsck.c:687 login-utils/login.c:940 login-utils/sulogin.c:1024
 #: login-utils/vipw.c:208 sys-utils/flock.c:346 sys-utils/nsenter.c:180
 #: sys-utils/swapon.c:320 sys-utils/unshare.c:221 sys-utils/unshare.c:435
 #: term-utils/script.c:805
 msgid "fork failed"
 msgstr "volání fork selhalo"
 
-#: disk-utils/fsck.c:684
+#: disk-utils/fsck.c:694
 #, c-format
 msgid "%s: execute failed"
 msgstr "%s: spuštění se selhalo"
 
-#: disk-utils/fsck.c:772
+#: disk-utils/fsck.c:782
 msgid "wait: no more child process?!?"
 msgstr "wait: Žádní další potomci?!"
 
-#: disk-utils/fsck.c:775 sys-utils/flock.c:364 sys-utils/swapon.c:352
+#: disk-utils/fsck.c:785 sys-utils/flock.c:364 sys-utils/swapon.c:352
 #: sys-utils/unshare.c:419 sys-utils/unshare.c:440
 msgid "waitpid failed"
 msgstr "volání waitpid selhalo"
 
-#: disk-utils/fsck.c:793
+#: disk-utils/fsck.c:803
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr "Varování… %s nad zařízením %s skončil signálem %d."
 
-#: disk-utils/fsck.c:799
+#: disk-utils/fsck.c:809
 #, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr "%s %s: status je %x, to by nikdy nemělo přihodit."
 
-#: disk-utils/fsck.c:845
+#: disk-utils/fsck.c:855
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "%s dokončeno (návratový kód %d)\n"
 
-#: disk-utils/fsck.c:923
+#: disk-utils/fsck.c:936
 #, c-format
 msgid "error %d (%m) while executing fsck.%s for %s"
 msgstr "chyba %d (%m) při provádění fsck.%s nad %s"
 
-#: disk-utils/fsck.c:989
+#: disk-utils/fsck.c:1002
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'."
@@ -1824,80 +1824,80 @@ msgstr ""
 "Buďto všechny, nebo žádný z typů souborových systémů předaných v -t musí\n"
 "být uvedeny s počátečním „no“ nebo „!“."
 
-#: disk-utils/fsck.c:1105
+#: disk-utils/fsck.c:1118
 #, c-format
 msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr ""
 "%s: přeskakuje se chybný řádek v /etc/fstab: přípojný bod typu bind\n"
 "s nenulovým pořadím kontroly"
 
-#: disk-utils/fsck.c:1117
+#: disk-utils/fsck.c:1130
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: přeskakuje se neexistující zařízení\n"
 
-#: disk-utils/fsck.c:1122
+#: disk-utils/fsck.c:1135
 #, c-format
 msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr "%s: neexistující zařízení (zařízení lze vynechat uvedením volby „nofail“ do fstabu)\n"
 
-#: disk-utils/fsck.c:1139
+#: disk-utils/fsck.c:1152
 #, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr "%s: neznámý typ systému souborů bude přeskočen\n"
 
-#: disk-utils/fsck.c:1153
+#: disk-utils/fsck.c:1166
 #, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr "%s nelze zkontrolovat: fsck.%s nenalezen"
 
-#: disk-utils/fsck.c:1257
+#: disk-utils/fsck.c:1270
 msgid "Checking all file systems.\n"
 msgstr "Kontroluji všechny systému souborů.\n"
 
-#: disk-utils/fsck.c:1348
+#: disk-utils/fsck.c:1361
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "– čeká se – (průchod %d)\n"
 
-#: disk-utils/fsck.c:1374
+#: disk-utils/fsck.c:1387
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
 msgstr "%s [přepínače] -- [přepínače_ss] [<souborový_systém>…]\n"
 
-#: disk-utils/fsck.c:1378
+#: disk-utils/fsck.c:1391
 msgid "Check and repair a Linux filesystem.\n"
 msgstr "Zkontroluje a opraví linuxový souborový systém.\n"
 
-#: disk-utils/fsck.c:1381
+#: disk-utils/fsck.c:1394
 msgid " -A         check all filesystems\n"
 msgstr " -A         zkontroluje všechny souborové systémy\n"
 
-#: disk-utils/fsck.c:1382
+#: disk-utils/fsck.c:1395
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 msgstr " -C [<fd>]  zobrazí ukazatel postupu; deskriptor souboru je pro GUI\n"
 
-#: disk-utils/fsck.c:1383
+#: disk-utils/fsck.c:1396
 msgid " -l         lock the device to guarantee exclusive access\n"
 msgstr " -l         zamkne zařízení, aby byl zaručen výlučný přístup\n"
 
-#: disk-utils/fsck.c:1384
+#: disk-utils/fsck.c:1397
 msgid " -M         do not check mounted filesystems\n"
 msgstr " -M         nekontroluje připojené souborové systémy\n"
 
-#: disk-utils/fsck.c:1385
+#: disk-utils/fsck.c:1398
 msgid " -N         do not execute, just show what would be done\n"
 msgstr " -N         nic nevykoná, pouze zobrazí, co by se udělalo\n"
 
-#: disk-utils/fsck.c:1386
+#: disk-utils/fsck.c:1399
 msgid " -P         check filesystems in parallel, including root\n"
 msgstr " -P         souborové systémy kontroluje paralelně, včetně kořenového\n"
 
-#: disk-utils/fsck.c:1387
+#: disk-utils/fsck.c:1400
 msgid " -R         skip root filesystem; useful only with '-A'\n"
 msgstr " -R         vynechá kořenový souborový systém; užitečné je s „-A“\n"
 
-#: disk-utils/fsck.c:1388
+#: disk-utils/fsck.c:1401
 msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
 "            file descriptor is for GUIs\n"
@@ -1905,15 +1905,15 @@ msgstr ""
 " -r [<fd>]  hlásí statistické údaje pro každé kontrolované zařízení;\n"
 "            deskriptor souboru je pro grafická rozhraní\n"
 
-#: disk-utils/fsck.c:1390
+#: disk-utils/fsck.c:1403
 msgid " -s         serialize the checking operations\n"
 msgstr " -s         kontrolní operace vykonává postupně\n"
 
-#: disk-utils/fsck.c:1391
+#: disk-utils/fsck.c:1404
 msgid " -T         do not show the title on startup\n"
 msgstr " -T         při spuštění nezobrazí nadpis\n"
 
-#: disk-utils/fsck.c:1392
+#: disk-utils/fsck.c:1405
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "            <type> is allowed to be a comma-separated list\n"
@@ -1921,57 +1921,57 @@ msgstr ""
 " -t <typ>   určuje druhy souborových systémů, které se mají zkontrolovat;\n"
 "            typ smí být čárkou oddělený seznam\n"
 
-#: disk-utils/fsck.c:1394
+#: disk-utils/fsck.c:1407
 msgid " -V         explain what is being done\n"
 msgstr " -V         vysvětlí, co se děje\n"
 
-#: disk-utils/fsck.c:1400
+#: disk-utils/fsck.c:1413
 msgid "See the specific fsck.* commands for available fs-options."
 msgstr "Přepínače souborových systémů naleznete v dokumentaci jednotlivých příkazů fsck.*."
 
-#: disk-utils/fsck.c:1447
+#: disk-utils/fsck.c:1460
 msgid "too many devices"
 msgstr "příliš mnoho zařízení"
 
-#: disk-utils/fsck.c:1459
+#: disk-utils/fsck.c:1472
 msgid "Is /proc mounted?"
 msgstr "Je /proc připojeno?"
 
-#: disk-utils/fsck.c:1467
+#: disk-utils/fsck.c:1480
 #, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr "jen root může hledat odpovídající souborové systémy: %s"
 
-#: disk-utils/fsck.c:1471
+#: disk-utils/fsck.c:1484
 #, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr "nebylo možné nalézt odpovídající systém souborů: %s"
 
-#: disk-utils/fsck.c:1479 disk-utils/fsck.c:1576 misc-utils/kill.c:236
+#: disk-utils/fsck.c:1492 disk-utils/fsck.c:1589 misc-utils/kill.c:236
 #: sys-utils/eject.c:278
 msgid "too many arguments"
 msgstr "příliš mnoho argumentů"
 
-#: disk-utils/fsck.c:1534 disk-utils/fsck.c:1537
+#: disk-utils/fsck.c:1547 disk-utils/fsck.c:1550
 msgid "invalid argument of -r"
 msgstr "neplatný argument přepínače –r"
 
-#: disk-utils/fsck.c:1549
+#: disk-utils/fsck.c:1562
 #, c-format
 msgid "option '%s' may be specified only once"
 msgstr "přepínač „%s“ lze zadat jen jednou"
 
-#: disk-utils/fsck.c:1556 misc-utils/kill.c:282
+#: disk-utils/fsck.c:1569 misc-utils/kill.c:282
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr "přepínač „%s“ vyžaduje argument"
 
-#: disk-utils/fsck.c:1587
+#: disk-utils/fsck.c:1600
 #, c-format
 msgid "invalid argument of -r: %d"
 msgstr "neplatný argument přepínače -r: %d"
 
-#: disk-utils/fsck.c:1630
+#: disk-utils/fsck.c:1643
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "přepínač -l lze použít pouze s jedním zařízením – ignoruje se"
 
@@ -3703,7 +3703,7 @@ msgstr[0] "č. %2d: %9ju–%9ju (%9ju sektor, %6ju MB)\n"
 msgstr[1] "č. %2d: %9ju–%9ju (%9ju sektory, %6ju MB)\n"
 msgstr[2] "č. %2d: %9ju–%9ju (%9ju sektorů, %6ju MB)\n"
 
-#: disk-utils/partx.c:678 misc-utils/fincore.c:374 misc-utils/findmnt.c:1622
+#: disk-utils/partx.c:678 misc-utils/fincore.c:373 misc-utils/findmnt.c:1622
 #: misc-utils/lsblk.c:1930 misc-utils/lslocks.c:462 sys-utils/losetup.c:333
 #: sys-utils/lscpu.c:1618 sys-utils/prlimit.c:306 sys-utils/rfkill.c:467
 #: sys-utils/swapon.c:293 sys-utils/wdctl.c:271
@@ -3759,7 +3759,7 @@ msgstr ""
 " -s, --show           vypíše oddíly\n"
 "\n"
 
-#: disk-utils/partx.c:764 misc-utils/lsblk.c:1640 sys-utils/lsmem.c:500
+#: disk-utils/partx.c:764 misc-utils/lsblk.c:1640 sys-utils/lsmem.c:507
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr ""
 " -b, --bytes          velikosti vypisuje v bajtech namísto podobě vhodné\n"
@@ -3779,11 +3779,11 @@ msgstr ""
 " -o, --output <seznam>\n"
 "                      určuje, které výstupní sloupce se použijí\n"
 
-#: disk-utils/partx.c:768 misc-utils/lsblk.c:1656 sys-utils/lsmem.c:498
+#: disk-utils/partx.c:768 misc-utils/lsblk.c:1656 sys-utils/lsmem.c:505
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -P, --pairs          výstup ve formátu klíč=\"hodnota\"\n"
 
-#: disk-utils/partx.c:769 misc-utils/lsblk.c:1657 sys-utils/lsmem.c:503
+#: disk-utils/partx.c:769 misc-utils/lsblk.c:1657 sys-utils/lsmem.c:510
 msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw            neformátovaný výstup\n"
 
@@ -8003,7 +8003,7 @@ msgstr ""
 #: login-utils/lslogins.c:1226 login-utils/nologin.c:27
 #: misc-utils/lslocks.c:495 misc-utils/mcookie.c:83 misc-utils/uuidd.c:62
 #: misc-utils/uuidgen.c:26 sys-utils/dmesg.c:266 sys-utils/ipcmk.c:67
-#: sys-utils/lscpu.c:1900 sys-utils/lsipc.c:278 sys-utils/lsmem.c:491
+#: sys-utils/lscpu.c:1900 sys-utils/lsipc.c:278 sys-utils/lsmem.c:498
 #: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:98 term-utils/setterm.c:379
 #: text-utils/line.c:31
 #, c-format
@@ -8973,51 +8973,51 @@ msgstr "název souboru"
 msgid "failed to do mincore: %s"
 msgstr "volání mincore selhalo: %s"
 
-#: misc-utils/fincore.c:213
+#: misc-utils/fincore.c:212
 #, c-format
 msgid "failed to do mmap: %s"
 msgstr "volání mmap selhalo: %s"
 
-#: misc-utils/fincore.c:241
+#: misc-utils/fincore.c:240
 #, c-format
 msgid "failed to open: %s"
 msgstr "nepodařilo se otevřít: %s"
 
-#: misc-utils/fincore.c:246
+#: misc-utils/fincore.c:245
 #, c-format
 msgid "failed to do fstat: %s"
 msgstr "volání fstat selhalo: %s"
 
-#: misc-utils/fincore.c:267
+#: misc-utils/fincore.c:266
 #, c-format
 msgid " %s [options] file...\n"
 msgstr " %s [přepínače] [soubor…]\n"
 
-#: misc-utils/fincore.c:270
+#: misc-utils/fincore.c:269
 msgid " -J, --json            use JSON output format\n"
 msgstr " -J, --json            výstup formátuje do JSONu\n"
 
-#: misc-utils/fincore.c:271
+#: misc-utils/fincore.c:270
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr ""
 " -b, --bytes           velikosti vypisuje v bajtech namísto v podobě\n"
 "                       vhodné pro člověka\n"
 
-#: misc-utils/fincore.c:272
+#: misc-utils/fincore.c:271
 msgid " -n, --noheadings      don't print headings\n"
 msgstr " -n, --noheadings      nevypíše záhlaví\n"
 
-#: misc-utils/fincore.c:273
+#: misc-utils/fincore.c:272
 msgid " -o, --output <list>   output columns\n"
 msgstr ""
 " -o, --output <seznam>\n"
 "                       zobrazí zadané sloupce\n"
 
-#: misc-utils/fincore.c:274
+#: misc-utils/fincore.c:273
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             neformátovaný výstup\n"
 
-#: misc-utils/fincore.c:344 sys-utils/losetup.c:793
+#: misc-utils/fincore.c:343 sys-utils/losetup.c:793
 msgid "no file specified"
 msgstr "nezadán žádný soubor"
 
@@ -9284,12 +9284,12 @@ msgstr " -f, --first-only       vypíše pouze první nalezený souborový syst�
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           obrátí význam hledání shody\n"
 
-#: misc-utils/findmnt.c:1224 misc-utils/lslocks.c:501 sys-utils/lsns.c:904
+#: misc-utils/findmnt.c:1224 misc-utils/lslocks.c:501 sys-utils/lsns.c:901
 #: sys-utils/rfkill.c:572
 msgid " -J, --json             use JSON output format\n"
 msgstr " -J, --json             výstup formátuje do JSONu\n"
 
-#: misc-utils/findmnt.c:1225 sys-utils/lsns.c:905
+#: misc-utils/findmnt.c:1225 sys-utils/lsns.c:902
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             výstup formátuje jako seznam\n"
 
@@ -9357,7 +9357,7 @@ msgstr " -t, --types <seznam>   omezí množinu souborových systémů podle jej
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             ignoruje souborové systémy s opakujícím se cílem\n"
 
-#: misc-utils/findmnt.c:1240 misc-utils/lslocks.c:507 sys-utils/lsns.c:910
+#: misc-utils/findmnt.c:1240 misc-utils/lslocks.c:507 sys-utils/lsns.c:907
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       ve sloupcích nezkracuje text\n"
 
@@ -10238,7 +10238,7 @@ msgstr ""
 " -I, --include <seznam>\n"
 "                      zobrazí pouze zařízení se zadanými hlavními čísly\n"
 
-#: misc-utils/lsblk.c:1648 sys-utils/lsmem.c:497
+#: misc-utils/lsblk.c:1648 sys-utils/lsmem.c:504
 msgid " -J, --json           use JSON output format\n"
 msgstr " -J, --json           výstup formátuje do JSONu\n"
 
@@ -10254,11 +10254,11 @@ msgstr " -T, --tree           výstup formátuje jako strom\n"
 msgid " -m, --perms          output info about permissions\n"
 msgstr " -m, --perms          vypíše údaje o přístupových právech\n"
 
-#: misc-utils/lsblk.c:1652 sys-utils/lsmem.c:501
+#: misc-utils/lsblk.c:1652 sys-utils/lsmem.c:508
 msgid " -n, --noheadings     don't print headings\n"
 msgstr " -n, --noheadings     nevypíše záhlaví\n"
 
-#: misc-utils/lsblk.c:1653 sys-utils/lsmem.c:502
+#: misc-utils/lsblk.c:1653 sys-utils/lsmem.c:509
 msgid " -o, --output <list>  output columns\n"
 msgstr ""
 " -o, --output <seznam>\n"
@@ -10363,11 +10363,11 @@ msgstr "Vypíše zámky na místním systému.\n"
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr " -i, --noinaccessible   ignoruje zámky bez práv a ke čtení\n"
 
-#: misc-utils/lslocks.c:503 sys-utils/lsns.c:906 sys-utils/rfkill.c:573
+#: misc-utils/lslocks.c:503 sys-utils/lsns.c:903 sys-utils/rfkill.c:573
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings       nevypíše záhlaví\n"
 
-#: misc-utils/lslocks.c:504 sys-utils/lsns.c:907 sys-utils/rfkill.c:574
+#: misc-utils/lslocks.c:504 sys-utils/lsns.c:904 sys-utils/rfkill.c:574
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr ""
 " -o, --output <seznam>\n"
@@ -10377,12 +10377,12 @@ msgstr ""
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr " -p, --pid <PID>        zobrazí pouze zámky držené tímto procesem\n"
 
-#: misc-utils/lslocks.c:506 sys-utils/lsns.c:909 sys-utils/rfkill.c:575
+#: misc-utils/lslocks.c:506 sys-utils/lsns.c:906 sys-utils/rfkill.c:575
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              neformátovaný výstup\n"
 
 #: misc-utils/lslocks.c:563 schedutils/chrt.c:475 schedutils/ionice.c:177
-#: schedutils/taskset.c:171 sys-utils/lsns.c:986 sys-utils/prlimit.c:585
+#: schedutils/taskset.c:171 sys-utils/lsns.c:983 sys-utils/prlimit.c:585
 msgid "invalid PID argument"
 msgstr "neplatný argument přepínače --pid"
 
@@ -10473,7 +10473,7 @@ msgstr ""
 msgid "pathname argument is missing"
 msgstr "argument s názvem cesty chybí"
 
-#: misc-utils/namei.c:414 sys-utils/lsns.c:1060
+#: misc-utils/namei.c:414 sys-utils/lsns.c:1057
 msgid "failed to allocate UID cache"
 msgstr "alokace keš UID selhala"
 
@@ -10680,8 +10680,8 @@ msgstr "přijato příliš mnoho deskriptorů souborů, zkontrolujte uuidd.socke
 msgid "timeout [%d sec]\n"
 msgstr "časový limit [%d sekund]\n"
 
-#: misc-utils/uuidd.c:434 term-utils/setterm.c:899 text-utils/column.c:493
-#: text-utils/column.c:526
+#: misc-utils/uuidd.c:434 term-utils/setterm.c:899 text-utils/column.c:496
+#: text-utils/column.c:529
 msgid "read failed"
 msgstr "volání read selhalo"
 
@@ -10883,7 +10883,7 @@ msgid "sha1-based"
 msgstr "založené na SHA1"
 
 #: misc-utils/uuidparse.c:267 misc-utils/wipefs.c:170 sys-utils/lscpu.c:1722
-#: sys-utils/lsns.c:809 sys-utils/zramctl.c:496
+#: sys-utils/lsns.c:806 sys-utils/zramctl.c:496
 msgid "failed to initialize output column"
 msgstr "výstupní sloupec se nepodařilo inicializovat"
 
@@ -11896,7 +11896,7 @@ msgstr "Zapnutí %s selhalo"
 msgid "%s disable failed"
 msgstr "Vypnutí %s selhalo"
 
-#: sys-utils/chmem.c:266 sys-utils/lsmem.c:471 sys-utils/lsmem.c:475
+#: sys-utils/chmem.c:266 sys-utils/lsmem.c:478 sys-utils/lsmem.c:482
 #, c-format
 msgid "Failed to read %s"
 msgstr "%s nebylo možné přečíst"
@@ -12858,7 +12858,7 @@ msgstr "%s: IOCTL volání FITRIM selhalo"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> bajtů) byl zahozen\n"
 
-#: sys-utils/fstrim.c:190 sys-utils/lsns.c:1069 sys-utils/swapon.c:733
+#: sys-utils/fstrim.c:190 sys-utils/lsns.c:1066 sys-utils/swapon.c:733
 #: sys-utils/umount.c:229
 #, c-format
 msgid "failed to parse %s"
@@ -14856,7 +14856,7 @@ msgstr " -x, --hex               vypíše šestnáctkové masky namísto seznam�
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical          vypíše fyzické identifikátory namísto logických\n"
 
-#: sys-utils/lscpu.c:1999 sys-utils/lsmem.c:596
+#: sys-utils/lscpu.c:1999 sys-utils/lsmem.c:603
 #, c-format
 msgid "invalid argument to %s"
 msgstr "neplatný argument za %s"
@@ -15294,65 +15294,65 @@ msgstr "odpojeno"
 msgid "on->off"
 msgstr "připojeno → odpojeno"
 
-#: sys-utils/lsmem.c:322 sys-utils/lsmem.c:326
+#: sys-utils/lsmem.c:322 sys-utils/lsmem.c:329
 msgid "Memory block size:"
 msgstr "Velikost paměťového bloku:"
 
-#: sys-utils/lsmem.c:323 sys-utils/lsmem.c:328
+#: sys-utils/lsmem.c:323 sys-utils/lsmem.c:333
 msgid "Total online memory:"
 msgstr "Celkem připojené paměti"
 
-#: sys-utils/lsmem.c:324 sys-utils/lsmem.c:330
+#: sys-utils/lsmem.c:324 sys-utils/lsmem.c:337
 msgid "Total offline memory:"
 msgstr "Celkem odpojené paměti:"
 
-#: sys-utils/lsmem.c:344
+#: sys-utils/lsmem.c:351
 #, c-format
 msgid "Failed to open %s"
 msgstr "%s se nepodařilo otevřít"
 
-#: sys-utils/lsmem.c:467
+#: sys-utils/lsmem.c:474
 msgid "This system does not support memory blocks"
 msgstr "Tento systém nepodporuje paměťové bloky"
 
-#: sys-utils/lsmem.c:494
+#: sys-utils/lsmem.c:501
 msgid "List the ranges of available memory with their online status.\n"
 msgstr "Vypíše rozsahy dostupné paměti spolu s jejich stavem připojení.\n"
 
-#: sys-utils/lsmem.c:499
+#: sys-utils/lsmem.c:506
 msgid " -a, --all            list each individual memory block\n"
 msgstr " -a, --all            vypíše každý jednotlivý paměťový blok\n"
 
-#: sys-utils/lsmem.c:504
+#: sys-utils/lsmem.c:511
 #, fuzzy
 msgid " -S, --split <list>   split ranges by specified columns\n"
 msgstr " -o, --output <seznam>     zobrazí zadané sloupce\n"
 
-#: sys-utils/lsmem.c:505
+#: sys-utils/lsmem.c:512
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
 msgstr ""
 " -s, --sysroot <adresář>\n"
 "                      jako kořen systému použije zadaný <adresář>\n"
 
-#: sys-utils/lsmem.c:506
+#: sys-utils/lsmem.c:513
 msgid "     --summary[=when] print summary information (never,always or only)\n"
 msgstr ""
 "     --summary[=kdy]  vypíše souhrnné údaje (never [nikdy], always [vždy]\n"
 "                      nebo only [pouze]\n"
 
-#: sys-utils/lsmem.c:613
+#: sys-utils/lsmem.c:620
 msgid "unsupported --summary argument"
 msgstr "nepodporovaný argument --summary"
 
-#: sys-utils/lsmem.c:628
+#: sys-utils/lsmem.c:635
 msgid "options --{raw,json,pairs} and --summary=only are mutually exclusive"
 msgstr "přepínače --{raw,json,pairs} a --summary=only se vzájemně vylučují"
 
-#: sys-utils/lsmem.c:659 sys-utils/lsns.c:784
+#: sys-utils/lsmem.c:666 sys-utils/lsns.c:781
 msgid "failed to initialize output table"
 msgstr "výstupní tabulku se nepodařilo inicializovat"
 
-#: sys-utils/lsmem.c:671
+#: sys-utils/lsmem.c:678
 msgid "Failed to initialize output column"
 msgstr "Výstupní sloupec se nepodařilo inicializovat"
 
@@ -15400,48 +15400,48 @@ msgstr ""
 msgid "nsfs mountpoint (usually used network subsystem)"
 msgstr ""
 
-#: sys-utils/lsns.c:722
+#: sys-utils/lsns.c:719
 msgid "failed to add line to output"
 msgstr "přidání řádku na výstup selhalo"
 
-#: sys-utils/lsns.c:898
+#: sys-utils/lsns.c:895
 #, c-format
 msgid " %s [options] [<namespace>]\n"
 msgstr " %s [přepínače] [<jmenný prostor>]\n"
 
-#: sys-utils/lsns.c:901
+#: sys-utils/lsns.c:898
 msgid "List system namespaces.\n"
 msgstr "Vypíše jmenné prostory na systému.\n"
 
-#: sys-utils/lsns.c:908
+#: sys-utils/lsns.c:905
 msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -p, --task <PID>       vypíše jmenný prostor procesu\n"
 
-#: sys-utils/lsns.c:911
+#: sys-utils/lsns.c:908
 #, fuzzy
 msgid " -W, --nowrap           don't use multi-line representation\n"
 msgstr " -n, --no-mtab           nezapíše do /etc/mtab\n"
 
-#: sys-utils/lsns.c:912
+#: sys-utils/lsns.c:909
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"
 msgstr ""
 " -t, --type <název>     druh jmenného prostoru (mnt, net, ipc, user, pid, uts,\n"
 "                        cgroup)\n"
 
-#: sys-utils/lsns.c:1003
+#: sys-utils/lsns.c:1000
 #, c-format
 msgid "unknown namespace type: %s"
 msgstr "druh jmenného prostoru není znám: %s"
 
-#: sys-utils/lsns.c:1027
+#: sys-utils/lsns.c:1024
 msgid "--task is mutually exclusive with <namespace>"
 msgstr "přepínač --task a <jmenný prostor> se vzájemně vylučují"
 
-#: sys-utils/lsns.c:1028
+#: sys-utils/lsns.c:1025
 msgid "invalid namespace argument"
 msgstr "neplatný argument se jmenným prostorem"
 
-#: sys-utils/lsns.c:1080
+#: sys-utils/lsns.c:1077
 #, c-format
 msgid "not found namespace: %ju"
 msgstr "jmenný prostor nenalezen: %ju"
@@ -16347,7 +16347,7 @@ msgid "Tool for enabling and disabling wireless devices.\n"
 msgstr "Nástroj pro povolení a zakázání bezdrátového zařízení.\n"
 
 #. TRANSLATORS: command names should not be translated, explaining
-#. them as additional field after identifer is fine, for example
+#. them as additional field after identifier is fine, for example
 #. *
 #. list   [identifier]   (lista [tarkenne])
 #.
@@ -19100,7 +19100,7 @@ msgstr "jsem za prvním řádkem"
 msgid "-- line already flushed"
 msgstr "-- řádek již není v bufru"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:631
+#: text-utils/colcrt.c:82 text-utils/column.c:634
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr " %s [přepínače] [<soubor…>]\n"
@@ -19153,142 +19153,142 @@ msgstr "název sloupce „%s“ není definován"
 msgid "failed to parse --table-order list"
 msgstr "nezdařilo se rozebrat seznam --table-order"
 
-#: text-utils/column.c:394
+#: text-utils/column.c:397
 msgid "failed to parse --table-right list"
 msgstr "nezdařilo se rozebrat seznam --table-right"
 
-#: text-utils/column.c:398
+#: text-utils/column.c:401
 msgid "failed to parse --table-trunc list"
 msgstr "nezdařilo se rozebrat seznam --table-trunc"
 
-#: text-utils/column.c:402
+#: text-utils/column.c:405
 msgid "failed to parse --table-noextreme list"
 msgstr "nezdařilo se rozebrat seznam --table-noextreme"
 
-#: text-utils/column.c:406
+#: text-utils/column.c:409
 msgid "failed to parse --table-wrap list"
 msgstr "nezdařilo se rozebrat seznam --table-wrap"
 
-#: text-utils/column.c:410
+#: text-utils/column.c:413
 msgid "failed to parse --table-hide list"
 msgstr "nezdařilo se rozebrat seznam --table-hide"
 
-#: text-utils/column.c:441
+#: text-utils/column.c:444
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr "řádek %zu: JSON vyžaduje název sloupce %zu"
 
-#: text-utils/column.c:455
+#: text-utils/column.c:458
 msgid "failed to allocate output data"
 msgstr "výstupní data se nepodařilo alokovat"
 
-#: text-utils/column.c:634
+#: text-utils/column.c:637
 msgid "Columnate lists.\n"
 msgstr "Vysází seznamy do sloupců.\n"
 
-#: text-utils/column.c:637
+#: text-utils/column.c:640
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table                      vytvoří tabulku\n"
 
-#: text-utils/column.c:638
+#: text-utils/column.c:641
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr " -n, --table-name <název>         název tabulky pro výstup v JSONu\n"
 
-#: text-utils/column.c:639
+#: text-utils/column.c:642
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -O, --table-order <sloupec>      určuje pořadí výstupních sloupců\n"
 
-#: text-utils/column.c:640
+#: text-utils/column.c:643
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -N, --table-columns <názvy>      čárkou oddělený seznam názvů sloupců\n"
 
-#: text-utils/column.c:641
+#: text-utils/column.c:644
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 " -E, --table-noextreme <sloupce>  nepočítá dlouhý text ze sloupců do šířky\n"
 "                                  sloupců\n"
 
-#: text-utils/column.c:642
+#: text-utils/column.c:645
 #, fuzzy
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr " -n, --noheadings          nevypíše záhlaví\n"
 
-#: text-utils/column.c:643
+#: text-utils/column.c:646
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr " -e, --table-header-repeat        zopakuje záhlaví na každé stránce\n"
 
-#: text-utils/column.c:644
+#: text-utils/column.c:647
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -H, --table-hide <sloupce>       nevypisuje zadané sloupce\n"
 
-#: text-utils/column.c:645
+#: text-utils/column.c:648
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr " -R, --table-right <sloupce>      v těchto sloupcích zarovná text doprava\n"
 
-#: text-utils/column.c:646
+#: text-utils/column.c:649
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr " -T, --table-truncate <sloupce>   v těchto sloupcích zkrátí text, bude-li třeba\n"
 
-#: text-utils/column.c:647
+#: text-utils/column.c:650
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr " -W, --table-wrap <sloupce>       v těchto sloupcích zalomí text, bude-li třeba\n"
 
-#: text-utils/column.c:648
+#: text-utils/column.c:651
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr " -J, --json                       formátuje výstup tabulek do JSONu\n"
 
-#: text-utils/column.c:651
+#: text-utils/column.c:654
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr ""
 " -r, --tree <sloupec>             sloupec, kde se použije výstup tabulky do\n"
 "                                  stromu\n"
 
-#: text-utils/column.c:652
+#: text-utils/column.c:655
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr ""
 " -i, --tree-id <sloupec>          identifikátor řádku, který určuje vztah\n"
 "                                  potomek-rodič\n"
 
-#: text-utils/column.c:653
+#: text-utils/column.c:656
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -p, --tree-parent <sloupec>      rodič, který určuje vztah potomek-rodič\n"
 
-#: text-utils/column.c:656
+#: text-utils/column.c:659
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --output-width <šířka>       šířka výstupu v počtu znaků\n"
 
-#: text-utils/column.c:657
+#: text-utils/column.c:660
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 " -o, --output-separator <řetězec>\n"
 "                                  oddělovač sloupců ve výstupní tabulce\n"
 "                                  (výchozí jsou dvě mezery)\n"
 
-#: text-utils/column.c:658
+#: text-utils/column.c:661
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <řetězec>        možné oddělovače tabulky\n"
 
-#: text-utils/column.c:659
+#: text-utils/column.c:662
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows                   před sloupci vyplní řádky\n"
 
-#: text-utils/column.c:728
+#: text-utils/column.c:731
 msgid "invalid columns argument"
 msgstr "neplatný argument sloupců"
 
-#: text-utils/column.c:753
+#: text-utils/column.c:756
 msgid "failed to parse column names"
 msgstr "nezdařilo rozebrat názvy sloupců"
 
-#: text-utils/column.c:808
+#: text-utils/column.c:811
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr "pro výstup do stromu jsou třeba přepínače --tree-id a --tree-parent"
 
-#: text-utils/column.c:816
+#: text-utils/column.c:819
 msgid "option --table required for all --table-*"
 msgstr "všechny přepínače --table-* vyžadují přepínač --table"
 
-#: text-utils/column.c:819
+#: text-utils/column.c:822
 msgid "option --table-columns required for --json"
 msgstr "přepínač --table-columns je vyžadován přepínačem --json"
 
