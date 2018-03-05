@@ -8,6 +8,26 @@ libsmartcols
      string) for everything. See for example SIZE in "lsblk --json --bytes"
      output.
 
+script
+------
+   - (!) add terminal type ($TERM), columns and lines to the header line, something like:
+
+		Script started on 2018-03-05 13:02:08+0100 [term="xterm-256color", lines=53, columns=190]
+
+     see https://github.com/karelzak/util-linux/issues/583
+
+   - think about optional "event" records in timing file to save information
+     about non-data changes like signals (SIGWINCH, SIGSTOP, SIGCONT, etc.)
+     in format:
+
+             <time> 0 <name>[: var=data, ...]
+
+     for example:
+
+	     0.001296 256
+	     0.001297   0 SIGWINCH: columns=50, lines=20
+	     0.000010 275
+
 lsblk
 -----
    The problem is NVMe-multipath driver where in /sys/.../slaves/ are nodes
