@@ -1,6 +1,13 @@
 
  Note that items with (!) have high priority.
 
+libsmartcols
+------------
+   - (!) add libscols_column->json_type and scols_column_set_jsontype()
+     to generate proper JSON output. Now the library uses quotes (= all is
+     string) for everything. See for example SIZE in "lsblk --json --bytes"
+     output.
+
 lsblk
 -----
    The problem is NVMe-multipath driver where in /sys/.../slaves/ are nodes
