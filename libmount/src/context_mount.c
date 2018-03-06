@@ -1175,6 +1175,7 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 {
 	struct libmnt_table *fstab, *mtab;
 	const char *o, *tgt;
+	char *pattern;
 	int rc, mounted = 0;
 
 	if (ignored)
@@ -1254,7 +1255,18 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 
 	rc = mnt_context_set_fs(cxt, *fs);
 	if (!rc) {
+		/*
+		 * "-t <pattern>" is used to filter out fstab entries, but for ordinary
+		 * mount operation -t means "-t <type>". We have to zeroize the pattern
+		 * to avoid misinterpretation.
+		 */
+		pattern = cxt->fstype_pattern;
+		cxt->fstype_pattern = NULL;
+
 		rc = mnt_context_mount(cxt);
+
+		cxt->fstype_pattern = pattern;
+
 		if (mntrc)
 			*mntrc = rc;
 	}
