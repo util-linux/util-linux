@@ -79,6 +79,9 @@ function check_root
 	osx_prepare_check
 	sudo -E $MAKE check TS_OPTS="$opts" || return
 
+	# root on osx has not enough permission for make install ;)
+	[ "$TRAVIS_OS_NAME" = "osx" ] && return
+
 	# keep PATH to make sure sudo would find $CC
 	sudo env "PATH=$PATH" $MAKE install || return
 }
