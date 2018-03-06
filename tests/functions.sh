@@ -15,6 +15,11 @@
 #
 
 
+# Global array to remember all issued lock FDs. It does not seem possible to
+# declare this within a function (ts_init_env).
+declare -A TS_LOCKFILE_FD
+
+
 function ts_abspath {
 	cd $1
 	pwd
@@ -273,10 +278,6 @@ function ts_init_env {
 
 	TS_NOLOCKS=$(ts_has_option "nolocks" "$*")
 	TS_LOCKDIR="$top_builddir/tests/output"
-
-	if [ ! -d "/proc/self/fd" ]; then
-		TS_NOLOCKS="yes"
-	fi
 
 	# Don't lock if flock(1) is missing
 	type "flock" >/dev/null 2>&1 || TS_NOLOCKS="yes"
@@ -693,18 +694,20 @@ function ts_fdisk_clean {
 }
 
 
-function ts_get_lock_fd {
-        local proc=$1
-        local lockfile=$2
-
-        for fd in $(ls /proc/$proc/fd); do
-                file=$(readlink "/proc/$proc/fd/$fd")
-                if [ x"$file" = x"$lockfile" ]; then
-                        echo "$fd"
-                        return 0
-                fi
-        done
-        return 1
+# https://stackoverflow.com/questions/41603787/how-to-find-next-available-file-descriptor-in-bash
+function ts_find_free_fd()
+{
+	local rco
+	local rci
+	for fd in {3..200}; do
+		rco="$(true 2>/dev/null >&${fd}; echo $?)"
+		rci="$(true 2>/dev/null <&${fd}; echo $?)"
+		if [[ "${rco}${rci}" = "11" ]]; then
+			echo "$fd"
+			return 0
+		fi
+	done
+	return 1
 }
 
 function ts_lock {
@@ -717,16 +720,17 @@ function ts_lock {
 	fi
 
 	# Don't lock again
-	fd=$(ts_get_lock_fd $$ $lockfile)
+	fd=${TS_LOCKFILE_FD["$resource"]}
 	if [ -n "$fd" ]; then
 		echo "[$$ $TS_TESTNAME] ${resource} already locked!"
 		return 0
 	fi
 
-	fd=$(( $(ls /proc/$$/fd/ | sort | tail -1) + 1))
+	fd=$(ts_find_free_fd) || ts_skip "failed to find lock fd"
 
 	eval "exec $fd>$lockfile"
 	flock --exclusive --timeout 30 $fd || ts_skip "failed to lock $resource"
+	TS_LOCKFILE_FD["$resource"]="$fd"
 
 	###echo "[$$ $TS_TESTNAME] Locked   $resource"
 }
@@ -740,10 +744,11 @@ function ts_unlock {
 		return 0
 	fi
 
-	fd=$(ts_get_lock_fd $$ $lockfile)
+	fd=${TS_LOCKFILE_FD["$resource"]}
 	if [ -n "$fd" ]; then
-		###echo "[$$ $TS_TESTNAME] Unlocked $resource"
 		eval "exec $fd<&-"
+		TS_LOCKFILE_FD["$resource"]=""
+		###echo "[$$ $TS_TESTNAME] Unlocked $resource"
 	fi
 }
 
