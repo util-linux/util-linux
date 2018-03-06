@@ -520,6 +520,8 @@ eperm:
 
 static int exec_helper(struct libmnt_context *cxt)
 {
+	char *namespace = NULL;
+	struct libmnt_ns *ns_tgt = mnt_context_get_target_ns(cxt);
 	int rc;
 	pid_t pid;
 
@@ -535,13 +537,19 @@ static int exec_helper(struct libmnt_context *cxt)
 		return rc;
 	}
 
+	if (ns_tgt->fd != -1
+	    && asprintf(&namespace, "/proc/%i/fd/%i",
+			getpid(), ns_tgt->fd) == -1) {
+		return -ENOMEM;
+	}
+
 	DBG_FLUSH;
 
 	pid = fork();
 	switch (pid) {
 	case 0:
 	{
-		const char *args[10], *type;
+		const char *args[12], *type;
 		int i = 0;
 
 		if (setgid(getgid()) < 0)
@@ -571,8 +579,12 @@ static int exec_helper(struct libmnt_context *cxt)
 			args[i++] = "-t";			/* 8 */
 			args[i++] = (char *) type;		/* 9 */
 		}
+		if (namespace) {
+			args[i++] = "-N";			/* 10 */
+			args[i++] = namespace;			/* 11 */
+		}
 
-		args[i] = NULL;					/* 10 */
+		args[i] = NULL;					/* 12 */
 		for (i = 0; args[i]; i++)
 			DBG(CXT, ul_debugobj(cxt, "argv[%d] = \"%s\"",
 							i, args[i]));
@@ -642,6 +654,10 @@ int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg)
 	case 't':
 		if (arg)
 			rc = mnt_context_set_fstype(cxt, arg);
+		break;
+	case 'N':
+		if (arg)
+			rc = mnt_context_set_target_ns(cxt, arg);
 		break;
 	default:
 		return 1;
