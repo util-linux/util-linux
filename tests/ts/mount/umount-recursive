@@ -87,6 +87,7 @@ ts_log "E) Mount child-bind"
 mkdir -p $TS_MOUNTPOINT/bindC
 $TS_CMD_MOUNT --bind $TS_MOUNTPOINT/mntB/mntC $TS_MOUNTPOINT/bindC
 
+udevadm settle
 $TS_CMD_UMOUNT --recursive $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 [ $? == 0 ] || ts_die "umount failed"
 

@@ -79,6 +79,8 @@ function multi_mount() {
 	ts_log "prepare: Mount /dev/xxx1 to mnt3"
 	[ -d "${MNT}3" ] || mkdir -p ${MNT}3
 	$TS_CMD_MOUNT $DEV ${MNT}3 >> $TS_OUTPUT 2>&1
+
+	udevadm settle
 }
 
 # use the same top-level mountpoint for all sub-tests

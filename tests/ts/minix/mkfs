@@ -41,6 +41,7 @@ mkfs_and_mount_minix() {
 	ts_mount "minix" $dev $TS_MOUNTPOINT
 	ts_is_mounted $dev || ts_die "Cannot find $dev in /proc/mounts"
 	ts_log "umount the image"
+	udevadm settle
 	$TS_CMD_UMOUNT $dev
 	ts_finalize_subtest
 }
