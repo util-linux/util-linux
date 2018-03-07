@@ -27,8 +27,21 @@ paraller_jobs=1
 
 function num_cpus()
 {
-	if lscpu -p &>/dev/null; then
-		lscpu -p | grep -cv '^#'
+	local num
+
+	# coreutils
+	if num=$(nproc --all 2>/dev/null); then
+		:
+	# BSD, OSX
+	elif num=$(sysctl -n hw.ncpu 2>/dev/null); then
+		:
+	else
+		num=$(grep -c "^processor" /proc/cpuinfo 2>/dev/null)
+	fi
+
+	# translate garbage output to "1"
+	if test "$num" -gt "0" 2>/dev/null ;then
+		echo "$num"
 	else
 		echo 1
 	fi

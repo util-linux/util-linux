@@ -68,7 +68,7 @@ function check_nonroot
 
 function check_root
 {
-	local opts="$MAKE_CHECK_OPTS --parallel=1 --show-diff"
+	local opts="$MAKE_CHECK_OPTS --show-diff"
 
 	xconfigure \
 		--enable-all-programs \
