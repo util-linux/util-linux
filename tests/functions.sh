@@ -512,6 +512,12 @@ function ts_cleanup_on_exit {
 	done
 	unset TS_LOOP_DEVS
 
+	# just informative warnings, currently not seen
+	for resource in "${!TS_LOCKFILE_FD[@]}"; do
+		test -n "${TS_LOCKFILE_FD["resource"]}" || continue
+		echo "[$$ $TS_TESTNAME] warning: found unlocked $resource"
+	done
+
 	ts_scsi_debug_rmmod
 }
 
@@ -660,6 +666,7 @@ function ts_fstab_add {
 }
 
 function ts_fstab_clean {
+	ts_have_lock "fstab" || return 0
 	sed --in-place "
 /# <!-- util-linux/!b
 :a
@@ -710,6 +717,14 @@ function ts_find_free_fd()
 	return 1
 }
 
+function ts_have_lock {
+	local resource=$1
+
+	test "$TS_NOLOCKS" = "yes" && return 0
+	test -n "${TS_LOCKFILE_FD["$resource"]}" && return 0
+	return 1
+}
+
 function ts_lock {
 	local resource="$1"
 	local lockfile="${TS_LOCKDIR}/${resource}.lock"
@@ -749,6 +764,8 @@ function ts_unlock {
 		eval "exec $fd<&-"
 		TS_LOCKFILE_FD["$resource"]=""
 		###echo "[$$ $TS_TESTNAME] Unlocked $resource"
+	else
+		echo "[$$ $TS_TESTNAME] ${resource} unlocking unlocked $resource!?"
 	fi
 }
 
@@ -799,6 +816,9 @@ function ts_scsi_debug_rmmod {
 	local err=1
 	local t
 	local lastmsg
+
+	# We must not run if we don't have the lock
+	ts_have_lock "scsi_debug" || return 0
 
 	# Return early most importantly in case we are not root or the module does
 	# not exist at all.
