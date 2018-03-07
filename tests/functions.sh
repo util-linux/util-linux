@@ -744,7 +744,7 @@ function ts_lock {
 	fd=$(ts_find_free_fd) || ts_skip "failed to find lock fd"
 
 	eval "exec $fd>$lockfile"
-	flock --exclusive --timeout 30 $fd || ts_skip "failed to lock $resource"
+	flock --exclusive "$fd" || ts_skip "failed to lock $resource"
 	TS_LOCKFILE_FD["$resource"]="$fd"
 
 	###echo "[$$ $TS_TESTNAME] Locked   $resource"
