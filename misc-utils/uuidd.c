@@ -118,8 +118,8 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	}
 
 	srv_addr.sun_family = AF_UNIX;
-	strncpy(srv_addr.sun_path, socket_path, sizeof(srv_addr.sun_path));
-	srv_addr.sun_path[sizeof(srv_addr.sun_path) - 1] = '\0';
+	assert(strlen(socket_path) < sizeof(srv_addr.sun_path));
+	xstrncpy(srv_addr.sun_path, socket_path, sizeof(srv_addr.sun_path));
 
 	if (connect(s, (const struct sockaddr *) &srv_addr,
 		    sizeof(struct sockaddr_un)) < 0) {
@@ -252,8 +252,8 @@ static int create_socket(struct uuidd_cxt_t *uuidd_cxt,
 	 * Create the address we will be binding to.
 	 */
 	my_addr.sun_family = AF_UNIX;
-	strncpy(my_addr.sun_path, socket_path, sizeof(my_addr.sun_path));
-	my_addr.sun_path[sizeof(my_addr.sun_path) - 1] = '\0';
+	assert(strlen(socket_path) < sizeof(my_addr.sun_path));
+	xstrncpy(my_addr.sun_path, socket_path, sizeof(my_addr.sun_path));
 	unlink(socket_path);
 	save_umask = umask(0);
 	if (bind(s, (const struct sockaddr *) &my_addr,
@@ -634,6 +634,10 @@ int main(int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
+
+	if (strlen(socket_path) >= sizeof(((struct sockaddr_un *)0)->sun_path)) {
+		errx(EXIT_FAILURE, _("socket name too long: %s"), socket_path);
 	}
 
 	if (!no_pid && !pidfile_path)
