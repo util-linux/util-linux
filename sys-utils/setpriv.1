@@ -111,7 +111,7 @@ does not change capabilities, although the exec call at the end might change
 capabilities.  This means that, if you are root, you probably want to do
 something like:
 .sp
-.B "        setpriv \-\-reuid=1000 \-\-regid=1000 \-\-caps=\-all"
+.B "        setpriv \-\-reuid=1000 \-\-regid=1000 \-\-inh\-caps=\-all"
 .TP
 .BR \-\-securebits " (" + | \- ) \fIsecurebit ...
 Set or clear securebits.  The argument is a comma-separated list.
