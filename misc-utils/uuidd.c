@@ -636,9 +636,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (strlen(socket_path) >= sizeof(((struct sockaddr_un *)0)->sun_path)) {
+	if (strlen(socket_path) >= sizeof(((struct sockaddr_un *)0)->sun_path))
 		errx(EXIT_FAILURE, _("socket name too long: %s"), socket_path);
-	}
 
 	if (!no_pid && !pidfile_path)
 		pidfile_path = UUIDD_PIDFILE_PATH;
