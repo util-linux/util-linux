@@ -10,11 +10,22 @@ setpriv \- run a program with different Linux privilege settings
 Sets or queries various Linux privilege settings that are inherited across
 .BR execve (2).
 .PP
-The difference between the commands setpriv and su (or runuser) is that setpriv does
-not use open PAM session and does not ask for password.
-It's simple non-set-user-ID wrapper around
-.B execve
-system call.
+In comparison to
+.BR su (1)
+and
+.BR runuser (1),
+.BR setpriv (1)
+neither uses PAM, nor does it prompt for a password.
+It is a simple, non-setuid wrapper around
+.BR execve (2),
+and can be used to drop privileges in the same way as
+.BR setuidgid (8)
+from
+.BR daemontools ,
+.BR chpst (8)
+from
+.BR runit ,
+or similar tools shipped by other service managers.
 .SH OPTION
 .TP
 .B \-\-clear\-groups
