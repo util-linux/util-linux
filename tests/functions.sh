@@ -15,11 +15,6 @@
 #
 
 
-# Global array to remember all issued lock FDs. It does not seem possible to
-# declare this within a function (ts_init_env).
-declare -A TS_LOCKFILE_FD
-
-
 function ts_abspath {
 	cd $1
 	pwd
@@ -307,6 +302,7 @@ function ts_init_env {
 	declare -a TS_SUID_USER
 	declare -a TS_SUID_GROUP
 	declare -a TS_LOOP_DEVS
+	declare -a TS_LOCKFILE_FD
 
 	if [ -f $TS_TOPDIR/commands.sh ]; then
 		. $TS_TOPDIR/commands.sh
@@ -512,12 +508,6 @@ function ts_cleanup_on_exit {
 	done
 	unset TS_LOOP_DEVS
 
-	# just informative warnings, currently not seen
-	for resource in "${!TS_LOCKFILE_FD[@]}"; do
-		test -n "${TS_LOCKFILE_FD["resource"]}" || continue
-		echo "[$$ $TS_TESTNAME] warning: found unlocked $resource"
-	done
-
 	ts_scsi_debug_rmmod
 }
 
@@ -717,11 +707,24 @@ function ts_find_free_fd()
 	return 1
 }
 
+function ts_get_lock_fd {
+	local resource=$1
+	local fd
+
+	for fd in "${!TS_LOCKFILE_FD[@]}"; do
+		if [ "${TS_LOCKFILE_FD["$fd"]}" = "$resource" ]; then
+			echo "$fd"
+			return 0
+		fi
+	done
+	return 1
+}
+
 function ts_have_lock {
 	local resource=$1
 
 	test "$TS_NOLOCKS" = "yes" && return 0
-	test -n "${TS_LOCKFILE_FD["$resource"]}" && return 0
+	ts_get_lock_fd "$resource" >/dev/null && return 0
 	return 1
 }
 
@@ -735,7 +738,7 @@ function ts_lock {
 	fi
 
 	# Don't lock again
-	fd=${TS_LOCKFILE_FD["$resource"]}
+	fd=$(ts_get_lock_fd "$resource")
 	if [ -n "$fd" ]; then
 		echo "[$$ $TS_TESTNAME] ${resource} already locked!"
 		return 0
@@ -745,8 +748,8 @@ function ts_lock {
 
 	eval "exec $fd>$lockfile"
 	flock --exclusive "$fd" || ts_skip "failed to lock $resource"
-	TS_LOCKFILE_FD["$resource"]="$fd"
 
+	TS_LOCKFILE_FD["$fd"]="$resource"
 	###echo "[$$ $TS_TESTNAME] Locked   $resource"
 }
 
@@ -759,13 +762,13 @@ function ts_unlock {
 		return 0
 	fi
 
-	fd=${TS_LOCKFILE_FD["$resource"]}
+	fd=$(ts_get_lock_fd "$resource")
 	if [ -n "$fd" ]; then
 		eval "exec $fd<&-"
-		TS_LOCKFILE_FD["$resource"]=""
+		TS_LOCKFILE_FD["$fd"]=""
 		###echo "[$$ $TS_TESTNAME] Unlocked $resource"
 	else
-		echo "[$$ $TS_TESTNAME] ${resource} unlocking unlocked $resource!?"
+		echo "[$$ $TS_TESTNAME] unlocking unlocked $resource!?"
 	fi
 }
 
