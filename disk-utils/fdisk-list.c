@@ -334,7 +334,7 @@ char *next_proc_partition(FILE **f)
 		if (devno <= 0)
 			continue;
 
-		if (sysfs_devno_is_lvm_private(devno, NULL) ||
+		if (sysfs_devno_is_dm_private(devno, NULL) ||
 		    sysfs_devno_is_wholedisk(devno) <= 0)
 			continue;
 

@@ -923,8 +923,8 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		pr->flags |= BLKID_FL_TINY_DEV;
 
 	if (S_ISBLK(sb.st_mode) &&
-	    sysfs_devno_is_lvm_private(sb.st_rdev, &dm_uuid)) {
-		DBG(LOWPROBE, ul_debug("ignore private LVM device"));
+	    sysfs_devno_is_dm_private(sb.st_rdev, &dm_uuid)) {
+		DBG(LOWPROBE, ul_debug("ignore private device mapper device"));
 		pr->flags |= BLKID_FL_NOSCAN_DEV;
 	}
 
