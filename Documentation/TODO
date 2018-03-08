@@ -69,20 +69,6 @@ lsblk
     btrfs specific code to provide a better output for FS based stacks. Not sure.
     https://bugzilla.redhat.com/show_bug.cgi?id=1084453
 
-agetty
------
-  - support default issue (/etc/issue) output for agetty to make it agetty
-    usable on systems with empty /etc. 
-
-    This change is little bit controversial, because now agetty prints nothing 
-    by default and it's probably used by admins to hide information about the 
-    system to unauthorized users. We already have --noissue to disable issue 
-    output. The question is if admins use this option, "rm /etc/issue" is 
-    probably easer than modify inittab (or systemd unit file).
-
-    Maybe we can implement it by --enable-agetty-default-issue compile option and 
-    move the decision to downstream maintainers ;-)
-
 nsenter(1)
 ----------
  - read the default UID and GID from the target process.
@@ -105,11 +91,17 @@ bash completion
 libmount (mount/umount)
 -----------------------
 
+ - remount all filesystems given their type, for example:
+        mount -a -t tmpfs -o remount
+   It should be probably enough to add remount_all() to mount(8) in way we
+   already have mount_all().  https://github.com/karelzak/util-linux/issues/589
+
  - add --onlyonce to force mount(8) to check if mountpoint is already used. Now
    "already mounted" detection is used for --all only. The problem is if you
    call "mount <mountpoint>" more than once for in fstab defined tmpfs (or network
    filesystem etc.). In this case kernel does not return EBUSY, but a new instance
    of the FS is created. https://github.com/karelzak/util-linux/issues/448
+   (... just idea, maybe wrong idea)
 
  - support CAP_SYS_ADMIN; for mount(2) syscall the CAP_SYS_ADMIN is good
    enough. Unfortunately, mount(8) does more things like check for filesystem
