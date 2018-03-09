@@ -27,6 +27,8 @@ ts_check_prog "bc"
 
 . $TS_SELF/functions.sh
 
+ts_lock "ipcslimits"
+
 ts_log "check for difference between kernel and IPC"
 ipcs_limits_check >> $TS_OUTPUT
 

@@ -29,6 +29,8 @@ ts_check_prog "bc"
 
 . $TS_SELF/functions.sh
 
+ts_lock "ipcslimits"
+
 ts_log "load original values"
 for i in $IPCS_IDX; do
 	SHM_ORG[$i]=$(cat ${IPCS_PROCFILES[$i]})
