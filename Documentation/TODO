@@ -8,6 +8,11 @@ libsmartcols
      string) for everything. See for example SIZE in "lsblk --json --bytes"
      output.
 
+column
+------
+   - add option to NOT ignore empty lines
+     https://github.com/karelzak/util-linux/issues/593
+
 script
 ------
    - (!) add terminal type ($TERM), columns and lines to the header line, something like:
