@@ -126,7 +126,6 @@ function travis_install_script
 function osx_install_script
 {
 	brew update >/dev/null
-	brew tap homebrew/dupes
 
 	brew install gettext ncurses socat xz
 	brew link --force gettext
