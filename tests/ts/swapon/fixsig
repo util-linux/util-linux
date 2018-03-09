@@ -41,7 +41,7 @@ ts_device_has "TYPE" "swsuspend" $DEVICE || ts_die "Cannot find swsuspend on $DE
 #
 $TS_CMD_SWAPON $DEVICE &> /dev/null
 
-grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps"
+grep -q "^$DEVICE\b" /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps"
 
 $TS_CMD_SWAPOFF $DEVICE
 

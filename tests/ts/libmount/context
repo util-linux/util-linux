@@ -53,7 +53,7 @@ DEVICE="${TS_DEVICE}1"
 
 udevadm settle
 
-grep -q $DEVNAME /proc/partitions
+grep -q " $DEVNAME\$" /proc/partitions
 if [ $? -ne 0 ]; then
 	ts_skip "no partition!"
 fi

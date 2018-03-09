@@ -38,7 +38,7 @@ ts_device_has "TYPE" "swap" $DEVICE || ts_die "Cannot find swap on $DEVICE"
 
 $TS_CMD_SWAPON $DEVICE >> $TS_OUTPUT 2>&1
 
-grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps"
+grep -q "^$DEVICE\b" /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps"
 
 $TS_CMD_SWAPOFF $DEVICE
 

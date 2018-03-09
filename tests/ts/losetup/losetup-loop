@@ -47,7 +47,7 @@ $TS_CMD_LOSETUP -d "$LODEV"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 udevadm settle
 dd if=/dev/zero of="$LODEV" count=1 bs=1 >/dev/null 2>&1
-$TS_CMD_LOSETUP --list | grep -q "$LODEV"
+$TS_CMD_LOSETUP --list | grep -q "$LODEV\b"
 ts_log $?
 udevadm settle
 $TS_CMD_LOSETUP -d "$LODEV" >/dev/null 2>&1

@@ -618,10 +618,10 @@ function ts_mount {
 function ts_is_mounted {
 	local DEV=$(ts_canonicalize "$1")
 
-	grep -q $DEV /proc/mounts && return 0
+	grep -q "\(^\| \)$DEV " /proc/mounts && return 0
 
 	if [ "${DEV#/dev/loop/}" != "$DEV" ]; then
-		grep -q "/dev/loop${DEV#/dev/loop/}" /proc/mounts && return 0
+		grep -q "^/dev/loop${DEV#/dev/loop/} " /proc/mounts && return 0
 	fi
 	return 1
 }

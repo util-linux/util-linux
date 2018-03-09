@@ -45,7 +45,7 @@ DEVICE="${TS_DEVICE}1"
 
 udevadm settle
 
-grep -q $DEVNAME /proc/partitions
+grep -q " $DEVNAME\$" /proc/partitions
 if [ $? -ne 0 ]; then
 	ts_skip "no partition!"
 fi
@@ -68,14 +68,14 @@ udevadm settle
 ts_init_subtest "mount-by-devname"
 mkdir -p $MOUNTPOINT &>  /dev/null
 $PYTHON $TESTPROG --mount $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE /proc/mounts || \
+ts_is_mounted "$DEVICE" || \
 	echo "(by device) cannot find $DEVICE in /proc/mounts" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "umount-by-devname"
 $PYTHON $TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
-grep -q $DEVICE /proc/mounts &&
+ts_is_mounted "$DEVICE" &&
 	echo "umount (device) failed: found $DEVICE in /proc/mounts" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
@@ -83,14 +83,14 @@ ts_finalize_subtest
 ts_init_subtest "mount-uhelper"
 mkdir -p $MOUNTPOINT &>  /dev/null
 $PYTHON $TESTPROG --mount -o uhelper=foo,rw LABEL="$LABEL" $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_UTAB || \
+grep -q "SRC=$DEVICE\b" "$LIBMOUNT_UTAB" || \
 	echo "(by label) cannot find $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "umount"
 $PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_UTAB && \
+grep -q "SRC=$DEVICE\b" "$LIBMOUNT_UTAB" && \
 	echo "umount (mountpoint) failed: found $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
@@ -110,7 +110,7 @@ if type "mkfs.btrfs" &>/dev/null && mkfs.btrfs --version &>/dev/null; then
 	ts_init_subtest "mount-uhelper-subvol"
 	mkdir -p $MOUNTPOINT &>  /dev/null
 	$PYTHON $TESTPROG --mount -o uhelper=foo,rw,subvol=sub $DEVICE  $MOUNTPOINT >> $TS_OUTPUT 2>&1
-	grep -q $DEVICE $LIBMOUNT_UTAB || \
+	grep -q "SRC=$DEVICE\b" "$LIBMOUNT_UTAB" || \
 		echo "cannot find $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
 	ts_finalize_subtest
 
