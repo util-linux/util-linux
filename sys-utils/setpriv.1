@@ -10,11 +10,22 @@ setpriv \- run a program with different Linux privilege settings
 Sets or queries various Linux privilege settings that are inherited across
 .BR execve (2).
 .PP
-The difference between the commands setpriv and su (or runuser) is that setpriv does
-not use open PAM session and does not ask for password.
-It's simple non-set-user-ID wrapper around
-.B execve
-system call.
+In comparison to
+.BR su (1)
+and
+.BR runuser (1),
+.BR setpriv (1)
+neither uses PAM, nor does it prompt for a password.
+It is a simple, non-set-user-ID wrapper around
+.BR execve (2),
+and can be used to drop privileges in the same way as
+.BR setuidgid (8)
+from
+.BR daemontools ,
+.BR chpst (8)
+from
+.BR runit ,
+or similar tools shipped by other service managers.
 .SH OPTION
 .TP
 .B \-\-clear\-groups
@@ -94,8 +105,9 @@ given as textual group name.
 .sp
 For safety, you must specify one of
 .BR \-\-clear\-groups ,
-.BR \-\-groups ", or"
-.BR \-\-keep\-groups
+.BR \-\-groups ,
+.BR \-\-keep\-groups ", or"
+.BR \-\-init\-groups
 if you set any primary
 .IR gid .
 .TP
@@ -163,6 +175,20 @@ Be careful with this tool \-\- it may have unexpected security consequences.
 For example, setting no_new_privs and then execing a program that is
 SELinux\-confined (as this tool would do) may prevent the SELinux
 restrictions from taking effect.
+.SH EXAMPLE
+If you're looking for behaviour similar to
+.BR su (1)/ runuser "(1), or " sudo (8)
+(without the
+.B -g
+option), try something like:
+.sp
+.B "    setpriv \-\-reuid=1000 \-\-regid=1000 \-\-init\-groups"
+.PP
+If you want to mimic daemontools'
+.BR setuid (8),
+try:
+.sp
+.B "    setpriv \-\-reuid=1000 \-\-regid=1000 \-\-clear\-groups"
 .SH SEE ALSO
 .BR runuser (1),
 .BR su (1),
