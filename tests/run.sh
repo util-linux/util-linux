@@ -82,6 +82,10 @@ while [ -n "$1" ]; do
 		;;
 	--parallel=*)
 		paraller_jobs="${1##--parallel=}"
+		if ! [ "$paraller_jobs" -ge 0 2>/dev/null ]; then
+			echo "invalid argument '$paraller_jobs' for --parallel="
+			exit 1
+		fi
 		;;
 	--parallel)
 		paraller_jobs=$(num_cpus)
@@ -184,8 +188,10 @@ printf "%13s: %-30s    " "kernel" "$(uname -r)"
 echo
 echo
 
-if [ $paraller_jobs -gt 1 ]; then
-	echo "              Executing the tests in parallel ($paraller_jobs jobs)    "
+if [ "$paraller_jobs" -ne 1 ]; then
+	tmp=$paraller_jobs
+	[ "$paraller_jobs" -eq 0 ] && tmp=infinite
+	echo "              Executing the tests in parallel ($tmp jobs)    "
 	echo
 	OPTS="$OPTS --parallel"
 fi
@@ -196,6 +202,10 @@ printf "%s\n" ${comps[*]} |
 	sort |
 	xargs -I '{}' -P $paraller_jobs -n 1 bash -c "'{}' \"$OPTS\" ||
 		echo 1 >> $top_builddir/tests/failures"
+if [ $? != 0 ]; then
+	echo "xargs error" >&2
+	exit 1
+fi
 declare -a fail_file
 fail_file=( $( < $top_builddir/tests/failures ) ) || exit 1
 rm -f $top_builddir/tests/failures
