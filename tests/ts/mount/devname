@@ -48,12 +48,12 @@ $TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 
-grep -q $DEVICE $MTAB_FILE ||
+grep -q "\(^\| \)$DEVICE " $MTAB_FILE ||
 	echo "mount failed: cannot find $DEVICE in $MTAB_FILE" >> $TS_OUTPUT 2>&1
 
 $TS_CMD_UMOUNT $DEVICE || ts_die "Cannot umount $DEVICE"
 
-grep -q $DEVICE $MTAB_FILE &&
+grep -q "\(^\| \)$DEVICE " $MTAB_FILE &&
 	echo "umount failed: found $DEVICE in $MTAB_FILE" >> $TS_OUTPUT 2>&1
 
 ts_log "Success"

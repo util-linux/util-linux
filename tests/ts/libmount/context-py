@@ -58,7 +58,7 @@ DEVICE="${TS_DEVICE}1"
 
 udevadm settle
 
-grep -q $DEVNAME /proc/partitions
+grep -q " $DEVNAME\$" /proc/partitions
 if [ $? -ne 0 ]; then
 	ts_skip "no partition!"
 fi
@@ -77,7 +77,7 @@ function is_mounted {
 		ts_is_mounted "$1"
 		return $?
 	fi
-	grep -q "$1" $LIBMOUNT_MTAB && return 0
+	grep -q "\(^\| \)$1 " $LIBMOUNT_MTAB && return 0
 	return 1
 }
 
