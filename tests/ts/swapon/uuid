@@ -33,10 +33,8 @@ DEVICE=$TS_LODEV
 
 $TS_CMD_MKSWAP $DEVICE > /dev/null 2>> $TS_OUTPUT \
  || ts_die "Cannot make swap $DEVICE"
-
-ts_device_has_uuid $DEVICE || ts_die "Cannot find UUID on $DEVICE"
-
-UUID=$(ts_uuid_by_devname $DEVICE)
+UUID=$(ts_uuid_by_devname "$DEVICE") || ts_die "Cannot find UUID on $DEVICE"
+ts_udevadm_settle "$DEVICE" "UUID"
 
 $TS_CMD_SWAPON -U $UUID >> $TS_OUTPUT 2>&1
 
