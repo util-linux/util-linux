@@ -555,16 +555,34 @@ function ts_device_deinit {
 	fi
 }
 
+function ts_blkidtag_by_devname()
+{
+	local tag=$1
+	local dev=$2
+	local out
+	local rval
+
+	out=$($TS_CMD_BLKID -p -s "$tag" -o value "$dev")
+	rval=$?
+	printf "%s\n" "$out"
+
+	test -n "$out" -a "$rval" = "0"
+	return $?
+}
+
 function ts_uuid_by_devname {
-	echo $($TS_CMD_BLKID -p -s UUID -o value $1)
+	ts_blkidtag_by_devname "UUID" "$1"
+	return $?
 }
 
 function ts_label_by_devname {
-	echo $($TS_CMD_BLKID -p -s LABEL -o value $1)
+	ts_blkidtag_by_devname "LABEL" "$1"
+	return $?
 }
 
 function ts_fstype_by_devname {
-	echo $($TS_CMD_BLKID -p -s TYPE -o value $1)
+	ts_blkidtag_by_devname "TYPE" "$1"
+	return $?
 }
 
 function ts_device_has {
@@ -573,22 +591,22 @@ function ts_device_has {
 	local DEV="$3"
 	local vl=""
 
-	case $TAG in
-		"TYPE") vl=$(ts_fstype_by_devname $DEV);;
-		"LABEL") vl=$(ts_label_by_devname $DEV);;
-		"UUID") vl=$(ts_uuid_by_devname $DEV);;
-		*) return 1;;
-	esac
-
-	if [ "$vl" == "$VAL" ]; then
-		return 0
-	fi
-	return 1
+	vl=$(ts_blkidtag_by_devname "$TAG" "$DEV")
+	test $? = 0 -a "$vl" = "$VAL"
+	return $?
 }
 
-function ts_device_has_uuid {
-	ts_uuid_by_devname "$1" | egrep -q '^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$'
+function ts_is_uuid()
+{
+	printf "%s\n" "$1" | egrep -q '^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$'
 	return $?
+}
+
+function ts_udevadm_settle()
+{
+	local dev=$1 # optional, might be empty
+	shift        # all other args are tags, LABEL, UUID, ...
+	udevadm settle
 }
 
 function ts_mount {
