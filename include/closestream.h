@@ -14,22 +14,20 @@
 # define CLOSE_EXIT_CODE EXIT_FAILURE
 #endif
 
-#ifndef HAVE___FPENDING
-static inline int
-__fpending(FILE *stream __attribute__((__unused__)))
-{
-	return 0;
-}
-#endif
-
 static inline int
 close_stream(FILE * stream)
 {
+#ifdef HAVE___FPENDING
 	const int some_pending = (__fpending(stream) != 0);
+#endif
 	const int prev_fail = (ferror(stream) != 0);
 	const int fclose_fail = (fclose(stream) != 0);
 
-	if (prev_fail || (fclose_fail && (some_pending || errno != EBADF))) {
+	if (prev_fail || (fclose_fail && (
+#ifdef HAVE___FPENDING
+					  some_pending ||
+#endif
+					  errno != EBADF))) {
 		if (!fclose_fail && !(errno == EPIPE))
 			errno = 0;
 		return EOF;
