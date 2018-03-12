@@ -117,6 +117,12 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
+    /* If device is null_blk device, can't support */
+    if (strstr(argv[optind],"null")) {
+        warnx(_("null block device not supported"));
+        errtryhelp(EXIT_FAILURE);
+    }
+
 	/* If -t wasn't specified, use the default */
 	if (fstype == NULL)
 		fstype = DEFAULT_FSTYPE;
