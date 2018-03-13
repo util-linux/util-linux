@@ -1076,6 +1076,10 @@ int mnt_context_get_umount_excode(
 			if (buf)
 				snprintf(buf, bufsz, _("locking failed"));
 			return MNT_EX_FILEIO;
+		} else if (rc == -MNT_ERR_NAMESPACE) {
+			if (buf)
+				snprintf(buf, bufsz, _("failed to switch namespace"));
+			return MNT_EX_SYSERR;
 		}
 		return mnt_context_get_generic_excode(rc, buf, bufsz,
 					_("umount failed: %m"));
@@ -1089,6 +1093,10 @@ int mnt_context_get_umount_excode(
 			if (buf)
 				snprintf(buf, bufsz, _("filesystem was unmounted, but failed to update userspace mount table"));
 			return MNT_EX_FILEIO;
+		} else if (rc == -MNT_ERR_NAMESPACE) {
+			if (buf)
+				snprintf(buf, bufsz, _("filesystem was unmounted, but failed to switch namespace back"));
+			return MNT_EX_SYSERR;
 
 		} else if (rc < 0)
 			return mnt_context_get_generic_excode(rc, buf, bufsz,

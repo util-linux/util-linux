@@ -205,6 +205,12 @@ enum {
  * failed to lock mtab/utab or so.
  */
 #define MNT_ERR_LOCK         5008
+/**
+ * MNT_ERR_NAMESPACE:
+ *
+ * failed to switch namespace
+ */
+#define MNT_ERR_NAMESPACE    5009
 
 
 /*
