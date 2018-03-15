@@ -424,6 +424,7 @@ int main(int argc, char **argv)
 		{ "types",           required_argument, NULL, 't'             },
 		{ "verbose",         no_argument,       NULL, 'v'             },
 		{ "version",         no_argument,       NULL, 'V'             },
+		{ "namespace",       required_argument, NULL, 'N'             },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -449,7 +450,7 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aAcdfhilnRrO:t:vV",
+	while ((c = getopt_long(argc, argv, "aAcdfhilnRrO:t:vVN:",
 					longopts, NULL)) != -1) {
 
 
@@ -509,6 +510,15 @@ int main(int argc, char **argv)
 		case 'V':
 			print_version();
 			break;
+		case 'N':
+		{
+			int tmp;
+			if ((tmp = mnt_context_set_target_ns(cxt, optarg))) {
+				errno = -tmp;
+				err(MNT_EX_SYSERR, _("failed to set target namespace"));
+			}
+	 		break;
+		}
 		default:
 			errtryhelp(MNT_EX_USAGE);
 		}
