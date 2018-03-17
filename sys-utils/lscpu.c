@@ -1108,10 +1108,10 @@ static char *
 cpu_max_mhz(struct lscpu_desc *desc, char *buf, size_t bufsz)
 {
 	int i;
-	float cpu_freq = atof(desc->maxmhz[0]);
+	float cpu_freq = 0.0;
 
 	if (desc->present) {
-		for (i = 1; i < desc->ncpuspos; i++) {
+		for (i = 0; i < desc->ncpuspos; i++) {
 			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)
 			    && desc->maxmhz[i]) {
 				float freq = atof(desc->maxmhz[i]);
@@ -1129,16 +1129,16 @@ cpu_max_mhz(struct lscpu_desc *desc, char *buf, size_t bufsz)
 static char *
 cpu_min_mhz(struct lscpu_desc *desc, char *buf, size_t bufsz)
 {
-        int i;
-        float cpu_freq = atof(desc->minmhz[0]);
+	int i;
+	float cpu_freq = -1.0;
 
 	if (desc->present) {
-		for (i = 1; i < desc->ncpuspos; i++) {
+		for (i = 0; i < desc->ncpuspos; i++) {
 			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)
 			    && desc->minmhz[i]) {
 				float freq = atof(desc->minmhz[i]);
 
-				if (freq < cpu_freq)
+				if (cpu_freq < 0.0 || freq < cpu_freq)
 					cpu_freq = freq;
 			}
 		}
