@@ -327,7 +327,7 @@ The
 option is similar, with the restriction that the user must be
 member of the group of the special file.
 
-.SS Bind mounts
+.SS Bind mount operation
 Remount part of the file hierarchy somewhere else.  The call is:
 
 .RS
@@ -346,6 +346,13 @@ or by using this fstab entry:
 .RE
 
 After this call the same contents are accessible in two places.
+
+It is important to understand that "bind" does not to create any second-class
+or special node in the kernel VFS. The "bind" is just another operation to
+attach a filesystem. There is nowhere stored information that the filesystem
+has been attached by "bind" operation. The \fIolddir\fR and \fInewdir\fR are
+independent and the \fIolddir\fR maybe be umounted.
+
 One can also remount a single file (on a single file).  It's also
 possible to use the bind mount to create a mountpoint from a regular
 directory, for example:
