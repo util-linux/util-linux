@@ -36,6 +36,8 @@
 
 #if !defined(HAVE_GETRANDOM) && defined(SYS_getrandom)
 /* libc without function, but we have syscal */
+#define GRND_NONBLOCK 0x01
+#define GRND_RANDOM 0x02
 static int getrandom(void *buf, size_t buflen, unsigned int flags)
 {
 	return (syscall(SYS_getrandom, buf, buflen, flags));
@@ -104,12 +106,14 @@ void random_get_bytes(void *buf, size_t nbytes)
 		int x;
 
 		errno = 0;
-		x = getrandom(cp, n, 0);
+		x = getrandom(cp, n, GRND_NONBLOCK);
 		if (x > 0) {			/* success */
 		       n -= x;
 		       cp += x;
 		       lose_counter = 0;
 		} else if (errno == ENOSYS)	/* kernel without getrandom() */
+			break;
+		else if (errno == EAGAIN)
 			break;
 		else if (lose_counter++ > 16)	/* entropy problem? */
 			break;
