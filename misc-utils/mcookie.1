@@ -17,15 +17,17 @@ system.  Typical usage:
 .PP
 The "random" number generated is actually the MD5 message
 digest of random information coming from one of the sources
+.IR "getrandom() "
+system call,
 .IR /dev/urandom ,
 .IR /dev/random ,
 or the
 .IR "libc pseudo-random functions" ,
-in this preference order.
+in this preference order. See also the option \fB\-\-file\fR.
 .SH OPTIONS
 .TP
 .BR \-f , " \-\-file " \fIfile
-Use this \fIfile\fR as an additional source of randomness.
+Use this \fIfile\fR as an additional source of randomness (for example /dev/urandom).
 When \fIfile\fR is '-', characters are read from standard input.
 .TP
 .BR \-m , " \-\-max\-size " \fInumber
