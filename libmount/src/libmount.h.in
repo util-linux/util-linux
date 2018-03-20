@@ -28,6 +28,7 @@ extern "C" {
 #include <stdio.h>
 #include <mntent.h>
 #include <sys/types.h>
+#include <sys/mount.h>
 
 #define LIBMOUNT_VERSION   "@LIBMOUNT_VERSION@"
 #define LIBMOUNT_MAJOR_VERSION   @LIBMOUNT_MAJOR_VERSION@
