@@ -25,8 +25,8 @@ RANGE                                 SIZE
 0x0000000000000000-0x000000017fffffff   6G
 
 Memory block size:       256M
-Total online memory:       6G
-Total offline memory:      0B
+Total online memory:     4.8G
+Total offline memory:    1.3G
 
 ---
 
