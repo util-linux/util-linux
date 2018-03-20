@@ -216,12 +216,14 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 		if (!fs->optstr)
 			rc = -ENOMEM;
 	} else {
-		free(fstype);
-		free(src);
 		DBG(TAB, ul_debug(
 			"mountinfo parse error [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
 	}
+
+	free(fstype);
+	free(src);
+
 	return rc;
 }
 
