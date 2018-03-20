@@ -187,7 +187,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 		fs->flags |= MNT_FS_KERNEL;
 		fs->devno = makedev(maj, min);
 
-		/* remove "(deleted)" suffix */
+		/* remove "\040(deleted)" suffix */
 		sz = strlen(fs->target);
 		if (sz > PATH_DELETED_SUFFIX_SZ) {
 			char *ptr = fs->target + (sz - PATH_DELETED_SUFFIX_SZ);
@@ -318,9 +318,7 @@ static int mnt_parse_swaps_line(struct libmnt_fs *fs, char *s)
 		fs->size = fsz;
 		fs->usedsize = usz;
 
-		unmangle_string(src);
-
-		/* remove "(deleted)" suffix */
+		/* remove "\040(deleted)" suffix */
 		sz = strlen(src);
 		if (sz > PATH_DELETED_SUFFIX_SZ) {
 			char *p = src + (sz - PATH_DELETED_SUFFIX_SZ);
@@ -328,14 +326,17 @@ static int mnt_parse_swaps_line(struct libmnt_fs *fs, char *s)
 				*p = '\0';
 		}
 
+		unmangle_string(src);
+
 		rc = mnt_fs_set_source(fs, src);
 		if (!rc)
 			mnt_fs_set_fstype(fs, "swap");
-		free(src);
 	} else {
 		DBG(TAB, ul_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
 	}
+
+	free(src);
 
 	return rc;
 }
