@@ -86,7 +86,7 @@ int mnt_get_library_version(const char **ver_string)
  * Example:
  * <informalexample>
  *   <programlisting>
- *	const char *features;
+ *	const char **features;
  *
  *	mnt_get_library_features(&features);
  *	while (features && *features)
