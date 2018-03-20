@@ -113,13 +113,14 @@ void mnt_free_context(struct libmnt_context *cxt)
  * Resets all information in the context that is directly related to
  * the latest mount (spec, source, target, mount options, ...).
  *
- * The match patterns, cached fstab, cached canonicalized paths and tags and
- * [e]uid are not reset. You have to use
+ * The match patterns, target namespace, cached fstab, cached canonicalized
+ * paths and tags and [e]uid are not reset. You have to use
  *
  *	mnt_context_set_fstab(cxt, NULL);
  *	mnt_context_set_cache(cxt, NULL);
  *	mnt_context_set_fstype_pattern(cxt, NULL);
  *	mnt_context_set_options_pattern(cxt, NULL);
+ *	mnt_context_set_target_ns(cxt, NULL);
  *
  *
  * to reset this stuff.
