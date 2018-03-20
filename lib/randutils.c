@@ -95,6 +95,9 @@ int random_get_fd(void)
  * Use /dev/urandom if possible, and if not,
  * use glibc pseudo-random functions.
  */
+#define UL_RAND_READ_ATTEMPTS	8
+#define UL_RAND_READ_DELAY	125000	/* microseconds */
+
 void random_get_bytes(void *buf, size_t nbytes)
 {
 	unsigned char *cp = (unsigned char *)buf;
@@ -111,11 +114,14 @@ void random_get_bytes(void *buf, size_t nbytes)
 		       n -= x;
 		       cp += x;
 		       lose_counter = 0;
-		} else if (errno == ENOSYS)	/* kernel without getrandom() */
+
+		} else if (errno == ENOSYS) {	/* kernel without getrandom() */
 			break;
-		else if (errno == EAGAIN)
-			break;
-		else if (lose_counter++ > 16)	/* entropy problem? */
+
+		} else if (errno == EAGAIN && lose_counter < UL_RAND_READ_ATTEMPTS) {
+			xusleep(UL_RAND_READ_DELAY);	/* no etropy, wait and try again */
+			lose_counter++;
+		} else
 			break;
 	}
 
@@ -134,8 +140,9 @@ void random_get_bytes(void *buf, size_t nbytes)
 			while (n > 0) {
 				ssize_t x = read(fd, cp, n);
 				if (x <= 0) {
-					if (lose_counter++ > 16)
+					if (lose_counter++ > UL_RAND_READ_ATTEMPTS)
 						break;
+					xusleep(UL_RAND_READ_DELAY);
 					continue;
 				}
 				n -= x;
