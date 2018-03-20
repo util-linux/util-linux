@@ -2,7 +2,7 @@
  * cramfs_common - cramfs common code
  *
  * Copyright (c) 2008 Roy Peled, the.roy.peled  -at-  gmail.com
- * Copyright (c) 2004-2006 by Michael Holzt, kju -at- fqdn.org
+ * Copyright (c) 2004-2006 by Juliane Holzt, kju -at- fqdn.org
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
