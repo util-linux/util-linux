@@ -280,6 +280,16 @@ AC_CHECK_HEADERS([ \
 	utmpx.h \
 ])
 
+# There is a collision in old kernel-headers. The both files mount.h and fs.h
+# define MS_* macros. Fixed by kernel commit e462ec50cb5fad19f6003a3d8087f4a0945dd2b1.
+#
+AC_CHECK_HEADERS([linux/fs.h ], [], [],
+ [#ifdef HAVE_SYS_MOUNT_H
+   # include <linux/fs.h>
+   # include <sys/mount.h>
+  #endif
+])
+
 AC_CHECK_HEADERS([linux/gsmmux.h ], [], [],
  [#ifdef LINUX_GSMMUX_H
    # include <linux/gsmmux.h>
@@ -305,7 +315,6 @@ AC_CHECK_HEADERS([security/openpam.h], [], [], [
 AC_CHECK_HEADERS([langinfo.h],
 		[AM_CONDITIONAL([HAVE_LANGINFO], [true])],
 		[AM_CONDITIONAL([HAVE_LANGINFO], [false])])
-
 
 AC_MSG_CHECKING([whether langinfo.h defines ALTMON_x constants])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
