@@ -443,6 +443,10 @@ static void read_info(struct lsmem *lsmem)
 
 	for (i = 0; i < lsmem->ndirs; i++) {
 		memory_block_read_attrs(lsmem, lsmem->dirs[i]->d_name, &blk);
+		if (blk.state == MEMORY_STATE_ONLINE)
+			lsmem->mem_online += lsmem->block_size;
+		else
+			lsmem->mem_offline += lsmem->block_size;
 		if (is_mergeable(lsmem, &blk)) {
 			lsmem->blocks[lsmem->nblocks - 1].count++;
 			continue;
@@ -450,12 +454,6 @@ static void read_info(struct lsmem *lsmem)
 		lsmem->nblocks++;
 		lsmem->blocks = xrealloc(lsmem->blocks, lsmem->nblocks * sizeof(blk));
 		*&lsmem->blocks[lsmem->nblocks - 1] = blk;
-	}
-	for (i = 0; i < lsmem->nblocks; i++) {
-		if (lsmem->blocks[i].state == MEMORY_STATE_ONLINE)
-			lsmem->mem_online += lsmem->block_size * lsmem->blocks[i].count;
-		else
-			lsmem->mem_offline += lsmem->block_size * lsmem->blocks[i].count;
 	}
 }
 
