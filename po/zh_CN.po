@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-03-01 14:02+0100\n"
+"POT-Creation-Date: 2018-03-21 13:12+0100\n"
 "PO-Revision-Date: 2016-11-07 05:25-0500\n"
 "Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -62,7 +62,7 @@ msgstr "参数不够"
 #: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:524 sys-utils/eject.c:499 sys-utils/eject.c:695
-#: sys-utils/fallocate.c:396 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:71
+#: sys-utils/fallocate.c:396 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:74
 #: sys-utils/hwclock.c:227 sys-utils/hwclock.c:814 sys-utils/hwclock-rtc.c:400
 #: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
 #: sys-utils/rfkill.c:193 sys-utils/rfkill.c:544 sys-utils/rtcwake.c:136
@@ -798,7 +798,7 @@ msgstr "无效参数 - repair"
 #: login-utils/last.c:688 login-utils/utmpdump.c:137 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
 #: sys-utils/dmesg.c:526 sys-utils/fallocate.c:197 sys-utils/fsfreeze.c:120
-#: sys-utils/fstrim.c:76 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
+#: sys-utils/fstrim.c:79 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
 #: sys-utils/swapon.c:523 sys-utils/switch_root.c:94
 #: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:525
 #, c-format
@@ -1093,7 +1093,7 @@ msgstr "设备属性(扇区大小和几何属性)只能用于某个指定的设�
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
 #: sys-utils/chcpu.c:344 sys-utils/chmem.c:419 sys-utils/dmesg.c:1469
 #: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
-#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:630 sys-utils/mount.c:698
+#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:628 sys-utils/mount.c:698
 #: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
 #: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:988
 #: sys-utils/switch_root.c:250 sys-utils/umount.c:528 term-utils/setterm.c:1176
@@ -3682,7 +3682,7 @@ msgstr ""
 " -s, --show           列出分区\n"
 "\n"
 
-#: disk-utils/partx.c:764 misc-utils/lsblk.c:1640 sys-utils/lsmem.c:507
+#: disk-utils/partx.c:764 misc-utils/lsblk.c:1640 sys-utils/lsmem.c:505
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr " -b, --bytes          以字节为单位而非易读的格式来打印 SIZE\n"
 
@@ -3698,11 +3698,11 @@ msgstr " -n, --nr <n:m>       指定分区范围(例如：--nr 2:4)\n"
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr " -o, --output <列表>  定义使用哪个输出列\n"
 
-#: disk-utils/partx.c:768 misc-utils/lsblk.c:1656 sys-utils/lsmem.c:505
+#: disk-utils/partx.c:768 misc-utils/lsblk.c:1656 sys-utils/lsmem.c:503
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -P, --pairs          使用 key=“value” 输出格式\n"
 
-#: disk-utils/partx.c:769 misc-utils/lsblk.c:1657 sys-utils/lsmem.c:510
+#: disk-utils/partx.c:769 misc-utils/lsblk.c:1657 sys-utils/lsmem.c:508
 msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw            使用原生输出格式\n"
 
@@ -6686,264 +6686,264 @@ msgstr ""
 msgid "operation failed: %m"
 msgstr "readlink 失败：%s"
 
-#: libmount/src/context_mount.c:1323
+#: libmount/src/context_mount.c:1335
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "警告：应用传播标志失败"
 
-#: libmount/src/context_mount.c:1333
+#: libmount/src/context_mount.c:1345
 #, fuzzy, c-format
 msgid "WARNING: device write-protected, mounted read-only"
 msgstr "%s 写保护，将以只读方式挂载"
 
-#: libmount/src/context_mount.c:1347
+#: libmount/src/context_mount.c:1359
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1351
+#: libmount/src/context_mount.c:1363
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s 已经挂载"
 
-#: libmount/src/context_mount.c:1357
+#: libmount/src/context_mount.c:1369
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "在 %2$s 中找不到 %1$s"
 
-#: libmount/src/context_mount.c:1360
+#: libmount/src/context_mount.c:1372
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "在 %2$s 中找不到挂载点 %1$s"
 
-#: libmount/src/context_mount.c:1363
+#: libmount/src/context_mount.c:1375
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "在 %2$s 中找不到挂载源 %1$s"
 
-#: libmount/src/context_mount.c:1368
+#: libmount/src/context_mount.c:1380
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1373
+#: libmount/src/context_mount.c:1385
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s：确定源失败"
 
-#: libmount/src/context_mount.c:1374
+#: libmount/src/context_mount.c:1386
 #, fuzzy, c-format
 msgid "no filesystem type specified"
 msgstr "未指定文件名"
 
-#: libmount/src/context_mount.c:1381
+#: libmount/src/context_mount.c:1393
 #, c-format
 msgid "can't find %s"
 msgstr "找不到 %s"
 
-#: libmount/src/context_mount.c:1383
+#: libmount/src/context_mount.c:1395
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "未指定挂载点"
 
-#: libmount/src/context_mount.c:1389
+#: libmount/src/context_mount.c:1401
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "解析挂臷选项失败"
 
-#: libmount/src/context_mount.c:1390
+#: libmount/src/context_mount.c:1402
 #, c-format
 msgid "failed to parse mount options"
 msgstr "解析挂臷选项失败"
 
-#: libmount/src/context_mount.c:1394
+#: libmount/src/context_mount.c:1406
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s：设置回环设备失败"
 
-#: libmount/src/context_mount.c:1398
+#: libmount/src/context_mount.c:1410
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s: 重叠的回环设备已存在"
 
-#: libmount/src/context_mount.c:1402 libmount/src/context_umount.c:1076
+#: libmount/src/context_mount.c:1414 libmount/src/context_umount.c:1076
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "关闭 %s 失败"
 
-#: libmount/src/context_mount.c:1405
+#: libmount/src/context_mount.c:1417
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "挂载失败"
 
-#: libmount/src/context_mount.c:1415
+#: libmount/src/context_mount.c:1427
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s：文件系统已卸载，但 mount(8) 失败"
 
-#: libmount/src/context_mount.c:1420
+#: libmount/src/context_mount.c:1432
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s：文件系统已卸载，但 mount(8) 失败"
 
-#: libmount/src/context_mount.c:1438 libmount/src/context_mount.c:1495
+#: libmount/src/context_mount.c:1450 libmount/src/context_mount.c:1507
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "挂载点 %s 不是目录"
 
-#: libmount/src/context_mount.c:1440 login-utils/newgrp.c:227
+#: libmount/src/context_mount.c:1452 login-utils/newgrp.c:227
 #, c-format
 msgid "permission denied"
 msgstr "权限不足"
 
-#: libmount/src/context_mount.c:1442
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "必须以超级用户身份使用 mount"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1464
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount：%s 忙"
 
-#: libmount/src/context_mount.c:1465
+#: libmount/src/context_mount.c:1477
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount：%s 已挂载于 %s\n"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1483
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s 已经挂载或 %s 忙"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1489
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "挂载点 %s 不存在"
 
-#: libmount/src/context_mount.c:1480
+#: libmount/src/context_mount.c:1492
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "挂载点 %s 是一个没有目标的符号链接"
 
-#: libmount/src/context_mount.c:1485
+#: libmount/src/context_mount.c:1497
 #, c-format
 msgid "special device %s does not exist"
 msgstr "特殊设备 %s 不存在"
 
-#: libmount/src/context_mount.c:1488 libmount/src/context_mount.c:1504
-#: libmount/src/context_mount.c:1588 libmount/src/context_mount.c:1611
+#: libmount/src/context_mount.c:1500 libmount/src/context_mount.c:1516
+#: libmount/src/context_mount.c:1600 libmount/src/context_mount.c:1623
 #, fuzzy, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) 失败"
 
-#: libmount/src/context_mount.c:1500
+#: libmount/src/context_mount.c:1512
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "特殊设备 %s 不存在(路径前缀不是目录)"
 
-#: libmount/src/context_mount.c:1512
+#: libmount/src/context_mount.c:1524
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "mount：%s 未挂载或选项错误"
 
-#: libmount/src/context_mount.c:1514
+#: libmount/src/context_mount.c:1526
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "%s 不是一个挂载点或选项有误"
 
-#: libmount/src/context_mount.c:1517
+#: libmount/src/context_mount.c:1529
 #, fuzzy, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "选项错误。注意，不支持移动位于共享挂载内的挂载。"
 
-#: libmount/src/context_mount.c:1521
+#: libmount/src/context_mount.c:1533
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (对某些文件系统(如 nfs、cifs) 您可能需要\n"
 "       一款 /sbin/mount.<类型> 助手程序)"
 
-#: libmount/src/context_mount.c:1525
+#: libmount/src/context_mount.c:1537
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "文件系统类型错误、选项错误、%s 上有坏超级块、\n"
 "       缺少代码页或助手程序，或其他错误"
 
-#: libmount/src/context_mount.c:1532
+#: libmount/src/context_mount.c:1544
 #, c-format
 msgid "mount table full"
 msgstr "挂载表满"
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1549
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "%s：不能读超级块"
 
-#: libmount/src/context_mount.c:1544
+#: libmount/src/context_mount.c:1556
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "未知的文件系统类型“%s”"
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1559
 #, c-format
 msgid "unknown filesystem type"
 msgstr "未知的文件系统类型"
 
-#: libmount/src/context_mount.c:1556
+#: libmount/src/context_mount.c:1568
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s 不是块设备，而且 stat(2) 失败？"
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1571
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 "内核无法将 %s 识别为块设备\n"
 "       (试试“modprobe driver”？)"
 
-#: libmount/src/context_mount.c:1562
+#: libmount/src/context_mount.c:1574
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s 不是块设备(用 `-o loop' 试试？)"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1576
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr "%s 不是一个块设备"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1583
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s 不是一个有效的块设备"
 
-#: libmount/src/context_mount.c:1579
+#: libmount/src/context_mount.c:1591
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "无法以只读方式挂载 %s"
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1593
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s 是写保护的，但指明了“-w”标志"
 
-#: libmount/src/context_mount.c:1583
+#: libmount/src/context_mount.c:1595
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "无法以读写方式重新挂载 %s，它是写保护的"
 
-#: libmount/src/context_mount.c:1585
+#: libmount/src/context_mount.c:1597
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "%s 失败"
 
-#: libmount/src/context_mount.c:1596
+#: libmount/src/context_mount.c:1608
 #, c-format
 msgid "no medium found on %s"
 msgstr "在 %s 上找不到媒体"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1615
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "将不会尝试在“%s”上创建文件系统"
@@ -7042,12 +7042,12 @@ msgstr "无法连接 UNIX 套接字"
 msgid "the plymouth request %c is not implemented"
 msgstr "plymouth 请求 %c 没有实现"
 
-#: lib/randutils.c:175
+#: lib/randutils.c:186
 #, fuzzy
 msgid "getrandom() function"
 msgstr "libc 伪随机函数"
 
-#: lib/randutils.c:188
+#: lib/randutils.c:199
 msgid "libc pseudo-random functions"
 msgstr "libc 伪随机函数"
 
@@ -7884,7 +7884,7 @@ msgstr ""
 #: login-utils/lslogins.c:1226 login-utils/nologin.c:27
 #: misc-utils/lslocks.c:495 misc-utils/mcookie.c:83 misc-utils/uuidd.c:62
 #: misc-utils/uuidgen.c:26 sys-utils/dmesg.c:266 sys-utils/ipcmk.c:67
-#: sys-utils/lscpu.c:1900 sys-utils/lsipc.c:278 sys-utils/lsmem.c:498
+#: sys-utils/lscpu.c:1900 sys-utils/lsipc.c:278 sys-utils/lsmem.c:496
 #: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:98 term-utils/setterm.c:379
 #: text-utils/line.c:31
 #, c-format
@@ -9063,7 +9063,7 @@ msgstr "不能读 %s"
 
 #: misc-utils/findmnt.c:1017 misc-utils/findmnt.c:1083
 #: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:481
-#: sys-utils/fstrim.c:186 sys-utils/mount.c:133 sys-utils/mount.c:181
+#: sys-utils/fstrim.c:189 sys-utils/mount.c:133 sys-utils/mount.c:181
 #: sys-utils/swapoff.c:55 sys-utils/swapoff.c:154 sys-utils/swapon.c:248
 #: sys-utils/swapon.c:278 sys-utils/swapon.c:737 sys-utils/umount.c:174
 msgid "failed to initialize libmount iterator"
@@ -10092,7 +10092,7 @@ msgstr " -i, --ascii          只使用 ascii 字符\n"
 msgid " -I, --include <list> show only devices with specified major numbers\n"
 msgstr " -I, --include <列表> 只显示有指定主设备号的设备\n"
 
-#: misc-utils/lsblk.c:1648 sys-utils/lsmem.c:504
+#: misc-utils/lsblk.c:1648 sys-utils/lsmem.c:502
 msgid " -J, --json           use JSON output format\n"
 msgstr " -J, --json           使用 JSON 输出格式\n"
 
@@ -10109,11 +10109,11 @@ msgstr " -l, --list           使用列表格式的输出\n"
 msgid " -m, --perms          output info about permissions\n"
 msgstr " -m, --perms          输出权限信息\n"
 
-#: misc-utils/lsblk.c:1652 sys-utils/lsmem.c:508
+#: misc-utils/lsblk.c:1652 sys-utils/lsmem.c:506
 msgid " -n, --noheadings     don't print headings\n"
 msgstr " -n, --noheadings     不打印标题\n"
 
-#: misc-utils/lsblk.c:1653 sys-utils/lsmem.c:509
+#: misc-utils/lsblk.c:1653 sys-utils/lsmem.c:507
 msgid " -o, --output <list>  output columns\n"
 msgstr " -o, --output <列表>  输出列\n"
 
@@ -10263,7 +10263,7 @@ msgstr[0] "从 %2$s 获得 %1$zu 字节\n"
 msgid "closing %s failed"
 msgstr "关闭 %s 失败"
 
-#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:146 sys-utils/fstrim.c:307
+#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:146 sys-utils/fstrim.c:310
 #: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "解析长度失败"
@@ -10594,36 +10594,41 @@ msgstr "uuidd 构建时没有添加套接字激活支持"
 msgid "failed to parse --timeout"
 msgstr "解析 --timeout 失败"
 
-#: misc-utils/uuidd.c:644
+#: misc-utils/uuidd.c:640
+#, fuzzy, c-format
+msgid "socket name too long: %s"
+msgstr "卷名过长"
+
+#: misc-utils/uuidd.c:647
 msgid "Both --socket-activation and --socket specified. Ignoring --socket."
 msgstr "同时指定了 --socket-activation 和 --socket。将忽略 --socket"
 
-#: misc-utils/uuidd.c:651 misc-utils/uuidd.c:679
+#: misc-utils/uuidd.c:654 misc-utils/uuidd.c:682
 #, c-format
 msgid "error calling uuidd daemon (%s)"
 msgstr "调用 uuidd 守护进程(%s)出错"
 
-#: misc-utils/uuidd.c:652 misc-utils/uuidd.c:680
+#: misc-utils/uuidd.c:655 misc-utils/uuidd.c:683
 msgid "unexpected error"
 msgstr "意外错误"
 
-#: misc-utils/uuidd.c:660
+#: misc-utils/uuidd.c:663
 #, c-format
 msgid "%s and %d subsequent UUID\n"
 msgid_plural "%s and %d subsequent UUIDs\n"
 msgstr[0] "%s 和 %d 个后续 UUID\n"
 
-#: misc-utils/uuidd.c:664
+#: misc-utils/uuidd.c:667
 #, c-format
 msgid "List of UUIDs:\n"
 msgstr "UUID 列表：\n"
 
-#: misc-utils/uuidd.c:696
+#: misc-utils/uuidd.c:699
 #, c-format
 msgid "couldn't kill uuidd running at pid %d"
 msgstr "无法运行 pid 为 %d 的 uuidd"
 
-#: misc-utils/uuidd.c:701
+#: misc-utils/uuidd.c:704
 #, c-format
 msgid "Killed uuidd running at pid %d.\n"
 msgstr "已杀死运行 pid 为 %d 的 uuidd。\n"
@@ -11364,7 +11369,7 @@ msgstr " -z, --zeroout       用 零填充而非丢弃\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose       打印对齐的长度和偏移\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:311 sys-utils/losetup.c:691
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:314 sys-utils/losetup.c:691
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "解析偏移失败"
@@ -11374,7 +11379,7 @@ msgid "failed to parse step"
 msgstr "解析步长失败"
 
 #: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398 sys-utils/fallocate.c:373
-#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:333
+#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:336
 msgid "unexpected number of arguments"
 msgstr "参数数量异常"
 
@@ -11766,7 +11771,7 @@ msgstr "CPU %u 启用失败"
 msgid "%s disable failed"
 msgstr "CPU %u 禁用失败"
 
-#: sys-utils/chmem.c:266 sys-utils/lsmem.c:478 sys-utils/lsmem.c:482
+#: sys-utils/chmem.c:266 sys-utils/lsmem.c:476 sys-utils/lsmem.c:480
 #, fuzzy, c-format
 msgid "Failed to read %s"
 msgstr "读 速度 失败"
@@ -12710,66 +12715,66 @@ msgstr "%s：冻结失败"
 msgid "%s: unfreeze failed"
 msgstr "%s：解冻失败"
 
-#: sys-utils/fstrim.c:81
+#: sys-utils/fstrim.c:84
 #, c-format
 msgid "%s: not a directory"
 msgstr "%s：不是一个目录"
 
-#: sys-utils/fstrim.c:90
+#: sys-utils/fstrim.c:93
 #, c-format
 msgid "%s: FITRIM ioctl failed"
 msgstr "%s：FITRIM ioctl 失败"
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/fstrim.c:99
+#: sys-utils/fstrim.c:102
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s：%s (%<PRIu64> 字节) 已修剪\n"
 
-#: sys-utils/fstrim.c:190 sys-utils/lsns.c:1066 sys-utils/swapon.c:733
+#: sys-utils/fstrim.c:193 sys-utils/lsns.c:1066 sys-utils/swapon.c:733
 #: sys-utils/umount.c:229
 #, c-format
 msgid "failed to parse %s"
 msgstr "解析 %s 失败"
 
-#: sys-utils/fstrim.c:251
+#: sys-utils/fstrim.c:254
 #, c-format
 msgid " %s [options] <mount point>\n"
 msgstr " %s [选项] <挂臷点>\n"
 
-#: sys-utils/fstrim.c:254
+#: sys-utils/fstrim.c:257
 msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr "忽略已挂载文件系统上的未用锁。\n"
 
-#: sys-utils/fstrim.c:257
+#: sys-utils/fstrim.c:260
 msgid " -a, --all           trim all mounted filesystems that are supported\n"
 msgstr " -a, --all           修剪不支持的所有已挂载文件系统\n"
 
-#: sys-utils/fstrim.c:258
+#: sys-utils/fstrim.c:261
 msgid " -o, --offset <num>  the offset in bytes to start discarding from\n"
 msgstr " -o, --offset <数字> 开始丢弃的偏移量(字节)\n"
 
-#: sys-utils/fstrim.c:259
+#: sys-utils/fstrim.c:262
 msgid " -l, --length <num>  the number of bytes to discard\n"
 msgstr " -l, --length <数字> 要丢弃的字符数\n"
 
-#: sys-utils/fstrim.c:260
+#: sys-utils/fstrim.c:263
 msgid " -m, --minimum <num> the minimum extent length to discard\n"
 msgstr " -m, --minimum <数字> 要丢弃的最小限制长度\n"
 
-#: sys-utils/fstrim.c:261
+#: sys-utils/fstrim.c:264
 msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose       打印丢弃的字节数\n"
 
-#: sys-utils/fstrim.c:315
+#: sys-utils/fstrim.c:318
 msgid "failed to parse minimum extent length"
 msgstr "解析 最小范围长度 失败"
 
-#: sys-utils/fstrim.c:328
+#: sys-utils/fstrim.c:331
 msgid "no mountpoint specified"
 msgstr "未指定挂载点"
 
-#: sys-utils/fstrim.c:342
+#: sys-utils/fstrim.c:345
 #, c-format
 msgid "%s: the discard operation is not supported"
 msgstr "%s：不支持丢弃操作"
@@ -14713,7 +14718,7 @@ msgstr " -x, --hex               打印十六进制掩码而非 CPU 列表\n"
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical          打印物理 ID 而非逻辑 ID\n"
 
-#: sys-utils/lscpu.c:1999 sys-utils/lsmem.c:603
+#: sys-utils/lscpu.c:1999 sys-utils/lsmem.c:601
 #, fuzzy, c-format
 msgid "invalid argument to %s"
 msgstr "无效参数：%s"
@@ -15171,49 +15176,49 @@ msgstr ""
 msgid "Failed to open %s"
 msgstr "解析 %s 失败"
 
-#: sys-utils/lsmem.c:474
+#: sys-utils/lsmem.c:472
 #, fuzzy
 msgid "This system does not support memory blocks"
 msgstr "该系统不支持重新扫描 CPU"
 
-#: sys-utils/lsmem.c:501
+#: sys-utils/lsmem.c:499
 msgid "List the ranges of available memory with their online status.\n"
 msgstr ""
 
-#: sys-utils/lsmem.c:506
+#: sys-utils/lsmem.c:504
 #, fuzzy
 msgid " -a, --all            list each individual memory block\n"
 msgstr " -a, --all            打印所有设备\n"
 
-#: sys-utils/lsmem.c:511
+#: sys-utils/lsmem.c:509
 #, fuzzy
 msgid " -S, --split <list>   split ranges by specified columns\n"
 msgstr " -o, --output <列表>       输出列\n"
 
-#: sys-utils/lsmem.c:512
+#: sys-utils/lsmem.c:510
 #, fuzzy
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
 msgstr " -s, --sysroot <目录>    以指定目录作为系统根目录\n"
 
-#: sys-utils/lsmem.c:513
+#: sys-utils/lsmem.c:511
 msgid "     --summary[=when] print summary information (never,always or only)\n"
 msgstr ""
 
-#: sys-utils/lsmem.c:620
+#: sys-utils/lsmem.c:618
 #, fuzzy
 msgid "unsupported --summary argument"
 msgstr "不支持的 --setgroups 参数“%s”"
 
-#: sys-utils/lsmem.c:635
+#: sys-utils/lsmem.c:633
 #, fuzzy
 msgid "options --{raw,json,pairs} and --summary=only are mutually exclusive"
 msgstr "--setgroups=allow 和 --map-root-user 选项是互斥的"
 
-#: sys-utils/lsmem.c:666 sys-utils/lsns.c:781
+#: sys-utils/lsmem.c:664 sys-utils/lsns.c:781
 msgid "failed to initialize output table"
 msgstr "初始化输出表失败"
 
-#: sys-utils/lsmem.c:678
+#: sys-utils/lsmem.c:676
 #, fuzzy
 msgid "Failed to initialize output column"
 msgstr "初始化输出列失败"

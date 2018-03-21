@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.32-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-03-01 14:21+0100\n"
+"POT-Creation-Date: 2018-03-21 13:12+0100\n"
 "PO-Revision-Date: 2018-03-10 18:04+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -61,23 +61,23 @@ msgstr "pas assez d'arguments"
 #: disk-utils/sfdisk.c:765 disk-utils/sfdisk.c:824 disk-utils/sfdisk.c:898
 #: disk-utils/sfdisk.c:939 disk-utils/sfdisk.c:969 disk-utils/sfdisk.c:1006
 #: disk-utils/sfdisk.c:1565 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:640
-#: lib/path.c:95 lib/path.c:113 login-utils/islocal.c:87
-#: login-utils/last.c:674 login-utils/sulogin.c:443 login-utils/sulogin.c:480
+#: lib/path.c:95 lib/path.c:113 login-utils/islocal.c:87 login-utils/last.c:674
+#: login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:134 login-utils/utmpdump.c:352
 #: login-utils/utmpdump.c:374 login-utils/vipw.c:261 login-utils/vipw.c:279
 #: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:524 sys-utils/eject.c:499 sys-utils/eject.c:695
-#: sys-utils/fallocate.c:396 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:71
+#: sys-utils/fallocate.c:396 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:74
 #: sys-utils/hwclock.c:227 sys-utils/hwclock.c:814 sys-utils/hwclock-rtc.c:400
-#: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392
-#: sys-utils/nsenter.c:129 sys-utils/rfkill.c:193 sys-utils/rfkill.c:544
-#: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:286 sys-utils/setpriv.c:276
-#: sys-utils/setpriv.c:614 sys-utils/setpriv.c:637 sys-utils/swapon.c:375
-#: sys-utils/swapon.c:518 sys-utils/switch_root.c:167 sys-utils/unshare.c:108
-#: sys-utils/unshare.c:123 sys-utils/wdctl.c:322 sys-utils/wdctl.c:378
-#: sys-utils/zramctl.c:508 term-utils/agetty.c:2752 term-utils/mesg.c:127
-#: term-utils/script.c:460 term-utils/script.c:468 term-utils/script.c:559
+#: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
+#: sys-utils/rfkill.c:193 sys-utils/rfkill.c:544 sys-utils/rtcwake.c:136
+#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
+#: sys-utils/setpriv.c:637 sys-utils/swapon.c:375 sys-utils/swapon.c:518
+#: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:508
+#: term-utils/agetty.c:2752 term-utils/mesg.c:127 term-utils/script.c:460
+#: term-utils/script.c:468 term-utils/script.c:559
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
 #: text-utils/rev.c:141 text-utils/ul.c:230
@@ -489,8 +489,7 @@ msgstr "Échec d’écriture du script %s"
 msgid "Select label type"
 msgstr "Sélectionner un type d’étiquette"
 
-#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074
-#: disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "Le périphérique ne contient pas de table de partitions reconnue."
 
@@ -751,8 +750,8 @@ msgstr ""
 "Poursuite du traitement… "
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:602
-#: sys-utils/blkdiscard.c:85 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:602 sys-utils/blkdiscard.c:85
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [options] <périphérique>\n"
@@ -800,7 +799,7 @@ msgstr "argument incorrect - repair"
 #: login-utils/last.c:688 login-utils/utmpdump.c:137 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
 #: sys-utils/dmesg.c:526 sys-utils/fallocate.c:197 sys-utils/fsfreeze.c:120
-#: sys-utils/fstrim.c:76 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
+#: sys-utils/fstrim.c:79 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
 #: sys-utils/swapon.c:523 sys-utils/switch_root.c:94
 #: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:525
 #, c-format
@@ -1086,21 +1085,20 @@ msgstr "mode nettoyage non pris en charge"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Les propriétés du périphérique (taille de secteur et géométrie) ne doivent être utilisées qu’avec un seul périphérique indiqué."
 
-#: disk-utils/fdisk.c:1033 disk-utils/fdisk.c:1048
-#: disk-utils/fsck.cramfs.c:695 disk-utils/mkfs.bfs.c:198
-#: disk-utils/mkfs.cramfs.c:787 disk-utils/partx.c:967 disk-utils/raw.c:137
-#: disk-utils/raw.c:150 disk-utils/raw.c:162 disk-utils/raw.c:203
-#: misc-utils/cal.c:520 misc-utils/findfs.c:58 misc-utils/look.c:150
-#: misc-utils/whereis.c:573 misc-utils/whereis.c:584 misc-utils/whereis.c:595
-#: misc-utils/whereis.c:637 schedutils/chrt.c:504 schedutils/ionice.c:262
-#: schedutils/taskset.c:189 sys-utils/chcpu.c:344 sys-utils/chmem.c:419
-#: sys-utils/dmesg.c:1469 sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:888 sys-utils/lscpu.c:2025 sys-utils/lsmem.c:630
-#: sys-utils/mount.c:698 sys-utils/mount.c:711 sys-utils/mount.c:780
-#: sys-utils/mountpoint.c:181 sys-utils/pivot_root.c:72
-#: sys-utils/swapoff.c:230 sys-utils/swapon.c:988 sys-utils/switch_root.c:250
-#: sys-utils/umount.c:528 term-utils/setterm.c:1176 text-utils/col.c:233
-#: text-utils/more.c:337
+#: disk-utils/fdisk.c:1033 disk-utils/fdisk.c:1048 disk-utils/fsck.cramfs.c:695
+#: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:787
+#: disk-utils/partx.c:967 disk-utils/raw.c:137 disk-utils/raw.c:150
+#: disk-utils/raw.c:162 disk-utils/raw.c:203 misc-utils/cal.c:520
+#: misc-utils/findfs.c:58 misc-utils/look.c:150 misc-utils/whereis.c:573
+#: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
+#: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
+#: sys-utils/chcpu.c:344 sys-utils/chmem.c:419 sys-utils/dmesg.c:1469
+#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
+#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:628 sys-utils/mount.c:698
+#: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
+#: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:988
+#: sys-utils/switch_root.c:250 sys-utils/umount.c:528 term-utils/setterm.c:1176
+#: text-utils/col.c:233 text-utils/more.c:337
 msgid "bad usage"
 msgstr "mauvaise utilisation"
 
@@ -3691,7 +3689,7 @@ msgstr ""
 " -s, --show           afficher la liste des partitions\n"
 "\n"
 
-#: disk-utils/partx.c:764 misc-utils/lsblk.c:1640 sys-utils/lsmem.c:507
+#: disk-utils/partx.c:764 misc-utils/lsblk.c:1640 sys-utils/lsmem.c:505
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr " -b, --bytes          afficher la TAILLE en octet plutôt qu'en format lisible\n"
 
@@ -3707,11 +3705,11 @@ msgstr " -n, --nr <m:n>       indiquer l'intervalle de partitions (par exemple -
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr " -o, --output <liste> définir les colonnes de sortie à utiliser\n"
 
-#: disk-utils/partx.c:768 misc-utils/lsblk.c:1656 sys-utils/lsmem.c:505
+#: disk-utils/partx.c:768 misc-utils/lsblk.c:1656 sys-utils/lsmem.c:503
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -P, --pairs          utiliser le format de sortie clef=\"valeur\"\n"
 
-#: disk-utils/partx.c:769 misc-utils/lsblk.c:1657 sys-utils/lsmem.c:510
+#: disk-utils/partx.c:769 misc-utils/lsblk.c:1657 sys-utils/lsmem.c:508
 msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw            utiliser le format de sortie brut\n"
 
@@ -6693,259 +6691,259 @@ msgstr ""
 msgid "operation failed: %m"
 msgstr "l'opération a échouée : %m"
 
-#: libmount/src/context_mount.c:1323
+#: libmount/src/context_mount.c:1335
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "Attention : échec d'application des indicateurs de propagation"
 
-#: libmount/src/context_mount.c:1333
+#: libmount/src/context_mount.c:1345
 #, c-format
 msgid "WARNING: device write-protected, mounted read-only"
 msgstr "Attention: périphérique protégé en écriture, monté en lecture seule"
 
-#: libmount/src/context_mount.c:1347
+#: libmount/src/context_mount.c:1359
 #, c-format
 msgid "operation permitted for root only"
 msgstr "opération permise uniquement pour root"
 
-#: libmount/src/context_mount.c:1351
+#: libmount/src/context_mount.c:1363
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s est déjà monté"
 
-#: libmount/src/context_mount.c:1357
+#: libmount/src/context_mount.c:1369
 #, c-format
 msgid "can't find in %s"
 msgstr "impossible à trouver dans %s"
 
-#: libmount/src/context_mount.c:1360
+#: libmount/src/context_mount.c:1372
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "impossible de trouver le point de montage dans %s"
 
-#: libmount/src/context_mount.c:1363
+#: libmount/src/context_mount.c:1375
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "impossible de trouver la source du montage %s dans %s"
 
-#: libmount/src/context_mount.c:1368
+#: libmount/src/context_mount.c:1380
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "plus de systèmes de fichiers détectés sur %s ; utilisez -t <type> ou wipefs(8)"
 
-#: libmount/src/context_mount.c:1373
+#: libmount/src/context_mount.c:1385
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "impossible de déterminer le type de système de fichiers"
 
-#: libmount/src/context_mount.c:1374
+#: libmount/src/context_mount.c:1386
 #, c-format
 msgid "no filesystem type specified"
 msgstr "Aucun type de système de fichiers indiqué"
 
-#: libmount/src/context_mount.c:1381
+#: libmount/src/context_mount.c:1393
 #, c-format
 msgid "can't find %s"
 msgstr "impossible de trouver %s"
 
-#: libmount/src/context_mount.c:1383
+#: libmount/src/context_mount.c:1395
 #, c-format
 msgid "no mount source specified"
 msgstr "Aucun point de montage source indiqué"
 
-#: libmount/src/context_mount.c:1389
+#: libmount/src/context_mount.c:1401
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "échec d'analyse des options de montage : %m"
 
-#: libmount/src/context_mount.c:1390
+#: libmount/src/context_mount.c:1402
 #, c-format
 msgid "failed to parse mount options"
 msgstr "échec d'analyse des options de montage"
 
 # disk-utils/mkswap.c:612
-#: libmount/src/context_mount.c:1394
+#: libmount/src/context_mount.c:1406
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "échec de configuration du périphérique de bouclage %s"
 
-#: libmount/src/context_mount.c:1398
+#: libmount/src/context_mount.c:1410
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "périphérique de bouclage existant pour %s"
 
-#: libmount/src/context_mount.c:1402 libmount/src/context_umount.c:1076
+#: libmount/src/context_mount.c:1414 libmount/src/context_umount.c:1076
 #, c-format
 msgid "locking failed"
 msgstr "échec du verrouillage"
 
-#: libmount/src/context_mount.c:1405
+#: libmount/src/context_mount.c:1417
 #, c-format
 msgid "mount failed: %m"
 msgstr "montage échoué : %m"
 
-#: libmount/src/context_mount.c:1415
+#: libmount/src/context_mount.c:1427
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "le système de fichiers a été monté mais la table de montage dans l'espace utilisateur n'a pas été mise à jour "
 
-#: libmount/src/context_mount.c:1420
+#: libmount/src/context_mount.c:1432
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "le système de fichiers a été monté mais les opérations suivantes ont échoué : %m"
 
-#: libmount/src/context_mount.c:1438 libmount/src/context_mount.c:1495
+#: libmount/src/context_mount.c:1450 libmount/src/context_mount.c:1507
 #, c-format
 msgid "mount point is not a directory"
 msgstr "le point de montage n'est pas un répertoire"
 
-#: libmount/src/context_mount.c:1440 login-utils/newgrp.c:227
+#: libmount/src/context_mount.c:1452 login-utils/newgrp.c:227
 #, c-format
 msgid "permission denied"
 msgstr "permission refusée"
 
-#: libmount/src/context_mount.c:1442
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "seul le superutilisateur peut utiliser mount"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1464
 #, c-format
 msgid "mount point is busy"
 msgstr "point de montage actif"
 
-#: libmount/src/context_mount.c:1465
+#: libmount/src/context_mount.c:1477
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s déjà monté sur %s"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1483
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s déjà monté ou point de montage actif"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1489
 #, c-format
 msgid "mount point does not exist"
 msgstr "le point de montage n'existe pas"
 
-#: libmount/src/context_mount.c:1480
+#: libmount/src/context_mount.c:1492
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "le point de montage est un lien symbolique qui ne pointe nulle part"
 
-#: libmount/src/context_mount.c:1485
+#: libmount/src/context_mount.c:1497
 #, c-format
 msgid "special device %s does not exist"
 msgstr "le périphérique spécial %s n'existe pas"
 
-#: libmount/src/context_mount.c:1488 libmount/src/context_mount.c:1504
-#: libmount/src/context_mount.c:1588 libmount/src/context_mount.c:1611
+#: libmount/src/context_mount.c:1500 libmount/src/context_mount.c:1516
+#: libmount/src/context_mount.c:1600 libmount/src/context_mount.c:1623
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "échec de l’appel système mount(2) : %m"
 
-#: libmount/src/context_mount.c:1500
+#: libmount/src/context_mount.c:1512
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "le périphérique spécial %s n'existe pas (un préfixe de chemin n'est pas un répertoire)"
 
-#: libmount/src/context_mount.c:1512
+#: libmount/src/context_mount.c:1524
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "point de montage non monté ou mauvaise option"
 
-#: libmount/src/context_mount.c:1514
+#: libmount/src/context_mount.c:1526
 #, c-format
 msgid "not mount point or bad option"
 msgstr "n'est pas un point de montage ou mauvaise option"
 
-#: libmount/src/context_mount.c:1517
+#: libmount/src/context_mount.c:1529
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "mauvaise option ; déplacer un montage résidant sous un montage partagé n'est pas pris en charge."
 
-#: libmount/src/context_mount.c:1521
+#: libmount/src/context_mount.c:1533
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "mauvaise option ; pour plusieurs systèmes de fichiers (NFS ou CIFS par exemple), un programme /sbin/mount.<type> auxiliaire pourrait être nécessaire)"
 
-#: libmount/src/context_mount.c:1525
+#: libmount/src/context_mount.c:1537
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "mauvais type de système de fichiers, option erronée, superbloc erroné sur %s, page de code ou programme auxiliaire manquant, ou autre erreur"
 
-#: libmount/src/context_mount.c:1532
+#: libmount/src/context_mount.c:1544
 #, c-format
 msgid "mount table full"
 msgstr "la table des périphériques montés est pleine"
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1549
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "impossible de lire le superbloc à l’adresse %s"
 
-#: libmount/src/context_mount.c:1544
+#: libmount/src/context_mount.c:1556
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "type de système de fichiers « %s » inconnu"
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1559
 #, c-format
 msgid "unknown filesystem type"
 msgstr "type de système de fichiers inconnu"
 
-#: libmount/src/context_mount.c:1556
+#: libmount/src/context_mount.c:1568
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s n'est pas un périphérique bloc, et possible échec de stat(2)"
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1571
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "le noyau ne reconnaît pas %s comme un périphérique bloc ; essayez « modprobe pilote » si nécessaire"
 
-#: libmount/src/context_mount.c:1562
+#: libmount/src/context_mount.c:1574
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s n'est pas un périphérique bloc ; essayer « -o loop »"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1576
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s n'est pas un périphérique bloc"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1583
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s n'est pas un périphérique bloc valable"
 
-#: libmount/src/context_mount.c:1579
+#: libmount/src/context_mount.c:1591
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "impossible de monter %s en lecture seule"
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1593
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s est protégé en écriture mais le mode lecture-écriture a été explicitement demandé"
 
-#: libmount/src/context_mount.c:1583
+#: libmount/src/context_mount.c:1595
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "impossible de remonter %s en lecture/écriture, est protégé en écriture"
 
-#: libmount/src/context_mount.c:1585
+#: libmount/src/context_mount.c:1597
 #, c-format
 msgid "bind %s failed"
 msgstr "la liaison de %s a échoué"
 
-#: libmount/src/context_mount.c:1596
+#: libmount/src/context_mount.c:1608
 #, c-format
 msgid "no medium found on %s"
 msgstr "aucun support trouvé dans %s"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1615
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "impossible de monter ; le système de fichiers est peut-être corrompu sur %s"
@@ -7041,11 +7039,11 @@ msgstr "impossible de se connecter au socket UNIX"
 msgid "the plymouth request %c is not implemented"
 msgstr "la requête plymouth %c n'est pas implémentée"
 
-#: lib/randutils.c:175
+#: lib/randutils.c:186
 msgid "getrandom() function"
 msgstr "fonction getrandom()"
 
-#: lib/randutils.c:188
+#: lib/randutils.c:199
 msgid "libc pseudo-random functions"
 msgstr "fonctions pseudoaléatoires de libc"
 
@@ -7888,7 +7886,7 @@ msgstr ""
 #: login-utils/lslogins.c:1226 login-utils/nologin.c:27
 #: misc-utils/lslocks.c:495 misc-utils/mcookie.c:83 misc-utils/uuidd.c:62
 #: misc-utils/uuidgen.c:26 sys-utils/dmesg.c:266 sys-utils/ipcmk.c:67
-#: sys-utils/lscpu.c:1900 sys-utils/lsipc.c:278 sys-utils/lsmem.c:498
+#: sys-utils/lscpu.c:1900 sys-utils/lsipc.c:278 sys-utils/lsmem.c:496
 #: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:98 term-utils/setterm.c:379
 #: text-utils/line.c:31
 #, c-format
@@ -9056,7 +9054,7 @@ msgstr "impossible de lire %s"
 
 #: misc-utils/findmnt.c:1017 misc-utils/findmnt.c:1083
 #: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:481
-#: sys-utils/fstrim.c:186 sys-utils/mount.c:133 sys-utils/mount.c:181
+#: sys-utils/fstrim.c:189 sys-utils/mount.c:133 sys-utils/mount.c:181
 #: sys-utils/swapoff.c:55 sys-utils/swapoff.c:154 sys-utils/swapon.c:248
 #: sys-utils/swapon.c:278 sys-utils/swapon.c:737 sys-utils/umount.c:174
 msgid "failed to initialize libmount iterator"
@@ -10106,7 +10104,7 @@ msgstr ""
 " -I, --include <liste> ne montrer que les périphériques avec les numéros\n"
 "                        majeurs indiqués\n"
 
-#: misc-utils/lsblk.c:1648 sys-utils/lsmem.c:504
+#: misc-utils/lsblk.c:1648 sys-utils/lsmem.c:502
 msgid " -J, --json           use JSON output format\n"
 msgstr " -J, --json           utiliser le format de sortie JSON\n"
 
@@ -10122,11 +10120,11 @@ msgstr " -T, --tree           utiliser l'affichage au format arborescent\n"
 msgid " -m, --perms          output info about permissions\n"
 msgstr " -m, --perms          afficher des renseignements sur les droits\n"
 
-#: misc-utils/lsblk.c:1652 sys-utils/lsmem.c:508
+#: misc-utils/lsblk.c:1652 sys-utils/lsmem.c:506
 msgid " -n, --noheadings     don't print headings\n"
 msgstr " -n, --noheadings     ne pas afficher les en-têtes\n"
 
-#: misc-utils/lsblk.c:1653 sys-utils/lsmem.c:509
+#: misc-utils/lsblk.c:1653 sys-utils/lsmem.c:507
 msgid " -o, --output <list>  output columns\n"
 msgstr " -o, --output <liste> colonnes affichées\n"
 
@@ -10276,7 +10274,7 @@ msgstr[1] "A obtenu %zu octets de %s\n"
 msgid "closing %s failed"
 msgstr "échec de fermeture de %s"
 
-#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:146 sys-utils/fstrim.c:307
+#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:146 sys-utils/fstrim.c:310
 #: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "échec d'analyse de longueur"
@@ -10604,37 +10602,42 @@ msgstr "uuidd a été construit sans prise en charge d'activation de sockets."
 msgid "failed to parse --timeout"
 msgstr "échec d'analyse de --timeout"
 
-#: misc-utils/uuidd.c:644
+#: misc-utils/uuidd.c:640
+#, fuzzy, c-format
+msgid "socket name too long: %s"
+msgstr "nom de volume trop long"
+
+#: misc-utils/uuidd.c:647
 msgid "Both --socket-activation and --socket specified. Ignoring --socket."
 msgstr "--socket-activation et --socket ont toutes deux été indiquées. --socket est ignorée."
 
-#: misc-utils/uuidd.c:651 misc-utils/uuidd.c:679
+#: misc-utils/uuidd.c:654 misc-utils/uuidd.c:682
 #, c-format
 msgid "error calling uuidd daemon (%s)"
 msgstr "erreur d'appel du démon uuidd (%s)"
 
-#: misc-utils/uuidd.c:652 misc-utils/uuidd.c:680
+#: misc-utils/uuidd.c:655 misc-utils/uuidd.c:683
 msgid "unexpected error"
 msgstr "erreur inattendue"
 
-#: misc-utils/uuidd.c:660
+#: misc-utils/uuidd.c:663
 #, c-format
 msgid "%s and %d subsequent UUID\n"
 msgid_plural "%s and %d subsequent UUIDs\n"
 msgstr[0] "%s et %d UUID suivant\n"
 msgstr[1] "%s et %d UUID suivants\n"
 
-#: misc-utils/uuidd.c:664
+#: misc-utils/uuidd.c:667
 #, c-format
 msgid "List of UUIDs:\n"
 msgstr "Liste des UUID :\n"
 
-#: misc-utils/uuidd.c:696
+#: misc-utils/uuidd.c:699
 #, c-format
 msgid "couldn't kill uuidd running at pid %d"
 msgstr "impossible de tuer uuidd en cours d’exécution avec le PID %d"
 
-#: misc-utils/uuidd.c:701
+#: misc-utils/uuidd.c:704
 #, c-format
 msgid "Killed uuidd running at pid %d.\n"
 msgstr "uuidd en cours d’exécution avec le PID %d tué\n"
@@ -11349,7 +11352,7 @@ msgstr " -z, --zeroout       remplacer par des zéros au lieu d’abandonner\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose       imprimer la longueur alignée et l'offset\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:311 sys-utils/losetup.c:691
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:314 sys-utils/losetup.c:691
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "échec d'analyse de position"
@@ -11358,8 +11361,8 @@ msgstr "échec d'analyse de position"
 msgid "failed to parse step"
 msgstr "échec d'analyse du pas"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398
-#: sys-utils/fallocate.c:373 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:333
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398 sys-utils/fallocate.c:373
+#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:336
 msgid "unexpected number of arguments"
 msgstr "nombre d'arguments inattendu"
 
@@ -11737,7 +11740,7 @@ msgstr "L'activation de %s a échoué"
 msgid "%s disable failed"
 msgstr "La désactivation de %s a échoué"
 
-#: sys-utils/chmem.c:266 sys-utils/lsmem.c:478 sys-utils/lsmem.c:482
+#: sys-utils/chmem.c:266 sys-utils/lsmem.c:476 sys-utils/lsmem.c:480
 #, c-format
 msgid "Failed to read %s"
 msgstr "Échec de lecture de %s"
@@ -12685,66 +12688,66 @@ msgstr "%s : échec de gel"
 msgid "%s: unfreeze failed"
 msgstr "%s : échec de dégel"
 
-#: sys-utils/fstrim.c:81
+#: sys-utils/fstrim.c:84
 #, c-format
 msgid "%s: not a directory"
 msgstr "%s : pas un répertoire"
 
-#: sys-utils/fstrim.c:90
+#: sys-utils/fstrim.c:93
 #, c-format
 msgid "%s: FITRIM ioctl failed"
 msgstr "%s : échec d'ioctl FITRIM"
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/fstrim.c:99
+#: sys-utils/fstrim.c:102
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s : %s (%<PRIu64> octets) taillés\n"
 
-#: sys-utils/fstrim.c:190 sys-utils/lsns.c:1066 sys-utils/swapon.c:733
+#: sys-utils/fstrim.c:193 sys-utils/lsns.c:1066 sys-utils/swapon.c:733
 #: sys-utils/umount.c:229
 #, c-format
 msgid "failed to parse %s"
 msgstr "échec d'analyse de %s"
 
-#: sys-utils/fstrim.c:251
+#: sys-utils/fstrim.c:254
 #, c-format
 msgid " %s [options] <mount point>\n"
 msgstr " %s [options] <point de montage>\n"
 
-#: sys-utils/fstrim.c:254
+#: sys-utils/fstrim.c:257
 msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr "Abandonner les blocs non utilisés d'un système de fichiers monté.\n"
 
-#: sys-utils/fstrim.c:257
+#: sys-utils/fstrim.c:260
 msgid " -a, --all           trim all mounted filesystems that are supported\n"
 msgstr " -a, --all           rogner tous les systèmes de fichiers pris en charge\n"
 
-#: sys-utils/fstrim.c:258
+#: sys-utils/fstrim.c:261
 msgid " -o, --offset <num>  the offset in bytes to start discarding from\n"
 msgstr " -o, --offset <num>  la position en octet à partir de laquelle abandonner\n"
 
-#: sys-utils/fstrim.c:259
+#: sys-utils/fstrim.c:262
 msgid " -l, --length <num>  the number of bytes to discard\n"
 msgstr " -l, --length <num>  le nombre d’octets à abandonner\n"
 
-#: sys-utils/fstrim.c:260
+#: sys-utils/fstrim.c:263
 msgid " -m, --minimum <num> the minimum extent length to discard\n"
 msgstr " -m, --minimum <num> la taille étendue minimale à abandonner\n"
 
-#: sys-utils/fstrim.c:261
+#: sys-utils/fstrim.c:264
 msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose       afficher le nombre d'octets abandonnés\n"
 
-#: sys-utils/fstrim.c:315
+#: sys-utils/fstrim.c:318
 msgid "failed to parse minimum extent length"
 msgstr "échec d'analyse de longueur étendue minimale"
 
-#: sys-utils/fstrim.c:328
+#: sys-utils/fstrim.c:331
 msgid "no mountpoint specified"
 msgstr "Aucun point de montage indiqué"
 
-#: sys-utils/fstrim.c:342
+#: sys-utils/fstrim.c:345
 #, c-format
 msgid "%s: the discard operation is not supported"
 msgstr "%s : l’opération d’abandon n’est pas prise en charge"
@@ -14685,7 +14688,7 @@ msgstr ""
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical          afficher les ID physique au lieu des logiques\n"
 
-#: sys-utils/lscpu.c:1999 sys-utils/lsmem.c:603
+#: sys-utils/lscpu.c:1999 sys-utils/lsmem.c:601
 #, c-format
 msgid "invalid argument to %s"
 msgstr "argument incorrect pour %s"
@@ -15135,43 +15138,43 @@ msgstr "Mémoire hors ligne totale :"
 msgid "Failed to open %s"
 msgstr "Échec d'ouverture de %s"
 
-#: sys-utils/lsmem.c:474
+#: sys-utils/lsmem.c:472
 msgid "This system does not support memory blocks"
 msgstr "Ce système ne permet pas les blocs de mémoire"
 
-#: sys-utils/lsmem.c:501
+#: sys-utils/lsmem.c:499
 msgid "List the ranges of available memory with their online status.\n"
 msgstr "Liste des plages de mémoire disponible avec leur statut en-ligne.\n"
 
-#: sys-utils/lsmem.c:506
+#: sys-utils/lsmem.c:504
 msgid " -a, --all            list each individual memory block\n"
 msgstr " -a, --all            afficher chaque bloc mémoire individuel\n"
 
-#: sys-utils/lsmem.c:511
+#: sys-utils/lsmem.c:509
 msgid " -S, --split <list>   split ranges by specified columns\n"
 msgstr " -S, --split <liste>  scinder les plages selon les colonnes spécifiées\n"
 
-#: sys-utils/lsmem.c:512
+#: sys-utils/lsmem.c:510
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
 msgstr " -s, --sysroot <rép.>    utiliser ce répertoire comme racine du système\n"
 
-#: sys-utils/lsmem.c:513
+#: sys-utils/lsmem.c:511
 msgid "     --summary[=when] print summary information (never,always or only)\n"
 msgstr "     --summary[=quand] afficher l'information résumée (never, always ou only)\n"
 
-#: sys-utils/lsmem.c:620
+#: sys-utils/lsmem.c:618
 msgid "unsupported --summary argument"
 msgstr "argument --summary non pris en charge"
 
-#: sys-utils/lsmem.c:635
+#: sys-utils/lsmem.c:633
 msgid "options --{raw,json,pairs} and --summary=only are mutually exclusive"
 msgstr "les options --{raw,json,pairs} et --summary=only s'excluent mutuellement"
 
-#: sys-utils/lsmem.c:666 sys-utils/lsns.c:781
+#: sys-utils/lsmem.c:664 sys-utils/lsns.c:781
 msgid "failed to initialize output table"
 msgstr "échec d'initialisation du tableau de sortie"
 
-#: sys-utils/lsmem.c:678
+#: sys-utils/lsmem.c:676
 msgid "Failed to initialize output column"
 msgstr "Échec d'initialisation de la colonne de sortie"
 
