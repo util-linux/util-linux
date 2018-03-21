@@ -393,6 +393,7 @@ function ts_run {
 	# valgrind mode
 	#
 	if [ -n "$TS_VALGRIND_CMD" ]; then
+		libtool --mode=execute \
 		$TS_VALGRIND_CMD --tool=memcheck --leak-check=full \
 				 --leak-resolution=high --num-callers=20 \
 				 --log-file="$TS_VGDUMP" "$@"
