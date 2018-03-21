@@ -56,6 +56,7 @@ agetty:
 bash-completion:
    - (umount) use findmnt, escape a space in paths  [Karel Zak]
    - Exclude /dev/fd from fsck find  [Kevin Locke]
+   - update zramctl algorithms list  [Sami Kerola]
 blkid:
    - Add support for LUKS2 and new LABEL attributes.  [Milan Broz]
 blkzone:
@@ -74,6 +75,7 @@ build-sys:
    - gtkdoc-fixxref v1.27 requires module option  [Karel Zak]
    - lsns requires libmount  [Karel Zak]
    - move rfkill to /usr/sbin  [Karel Zak]
+   - release++ (v2.32-rc2)  [Karel Zak]
    - remove generated headers from dist tar ball  [Ruediger Meier]
    - remove redundant EXTRA_DIST files  [Ruediger Meier]
    - remove unneeded dependencies on bla.h.in  [Ruediger Meier]
@@ -104,6 +106,7 @@ column:
    - allow to hide unnamed columns  [Karel Zak]
    - don't ignore space-char separators at begin of the line  [Karel Zak]
    - fix memory leak [coverity scan]  [Karel Zak]
+   - update column.1  [ahmogit]
    - use \x<hex> for invalid multibyte seq.  [Karel Zak]
 dmesg:
    - Add --force-prefix option  [Prarit Bhargava]
@@ -112,7 +115,11 @@ dmesg:
    - use xstrdup() in xalloc.h based util  [Karel Zak]
 docs:
    - add ISC licence  [Carlos Santos]
+   - add new idea to TODO list  [Karel Zak]
+   - add note about JSON  [Karel Zak]
    - add note about NVMe-multipath to TODO  [Karel Zak]
+   - add remount-all idea to TODO  [Karel Zak]
+   - add script(1) events idea to TODO  [Karel Zak]
    - improve setarch(8) manual page  [Sami Kerola]
    - update AUTHORS file  [Karel Zak]
    - update TODO  [Karel Zak]
@@ -143,6 +150,7 @@ fsck.cramfs:
    - fix error message  [Ruediger Meier]
 fstrim:
    - don't include exitcodes.h  [Karel Zak]
+   - fix fs.h and mount.h collision  [Karel Zak]
 hwclock:
    - add --ul-debug implementing debug.h  [J William Piggott]
    - add iso-8601 overflow check  [J William Piggott]
@@ -176,6 +184,9 @@ lib/md5:
    - use ul_/UL_ prefix  [Karel Zak]
 lib/path:
    - make path_set_prefix() independent on cpu_set_t  [Karel Zak]
+lib/randutils:
+   - Do not block on getrandom()  [Carlo Caione]
+   - don't break on EAGAIN, use usleep()  [Karel Zak]
 lib/sha1:
    - fix indention  [Karel Zak]
    - use proper WORDS_BIGENDIAN macro  [Karel Zak]
@@ -208,6 +219,7 @@ libblkid:
    - atari - fix bad variable name  [Vaclav Dolezal]
    - atari - reject devices with blocksize != 512  [Vaclav Dolezal]
    - atari - test if any partition fits disk size  [Vaclav Dolezal]
+   - ignore private Stratis devices  [Tony Asleson]
    - improve FreeBSD partitions parsing  [Karel Zak]
    - make mpool independent on libuuid  [Karel Zak]
    - udf  Fix parsing LVID location  [Pali Rohár]
@@ -222,6 +234,7 @@ libblkid:
 libfdisk:
    - (docs) add missing docs blocks  [Karel Zak]
    - (docs) improve enums documentation  [Karel Zak]
+   - (docs) update year  [Karel Zak]
    - (dos) fix max heads  [Karel Zak]
    - (gpt) add VMware specific UUIDs  [Karel Zak]
    - (gpt) move backup header after device resize  [Karel Zak]
@@ -240,23 +253,32 @@ libfdisk:
    - gpt  properly encode string on rename  [Vaclav Dolezal]
    - return bytes processed from gpt_entry_set_name(), process rc  [Vaclav Dolezal]
 libmount:
+   - (docs) update year  [Karel Zak]
    - Allow MNT_FORCE and MNT_DETACH at umount  [Joshua Watt]
    - Use waitpid() when waiting for mount helper child process  [Vratislav Podzimek]
    - add missing macro to docs  [Karel Zak]
    - add nsfs between pseudo filesystems  [Karel Zak]
    - check waitpid() return code  [Karel Zak]
+   - deallocate on /proc/swaps parse error  [Karel Zak]
    - fix access() utab write test  [Karel Zak]
    - fix debug message  [Karel Zak]
+   - fix example in docs  [Karel Zak]
+   - fix fs pattern usage in mount --all  [Karel Zak]
    - fix mnt_table_is_fs_mounted() for rbind  [Karel Zak]
+   - make libmount.h more robust  [Karel Zak]
+   - make sure we deallocate on parse error  [Karel Zak]
    - minimize utimensat() write test usage  [Karel Zak]
    - use eacess() rather than open() to check mtab/utab  [Karel Zak]
 libsmartcols:
+   - (docs) update year  [Karel Zak]
    - don't add blank padding after left aligned title  [Karel Zak]
    - fix docs warnings  [Karel Zak]
    - fix mem-leaks in samples  [Karel Zak]
    - fixes issue with 0 width columns  [taiyu]
    - interpret zero width for pending data as error  [Karel Zak]
    - set minimal column width to 1  [Karel Zak]
+libuuid:
+   - make "CONFORMING TO" man sections more explicit  [Karel Zak]
 login:
    - add LOGIN_PLAIN_PROMPT to login.defs  [Karel Zak]
 login-utils:
@@ -279,6 +301,7 @@ lsmem:
    - add --split  [Karel Zak]
    - add hint about block merges to the man page  [Karel Zak]
    - fix memory leak [coverity scan]  [Karel Zak]
+   - fix total online/offline memory calculation  [Gerald Schaefer]
    - improve path_read_xxx() usage  [Karel Zak]
    - make --split optional, follow output by default  [Karel Zak]
 lsmem/chmem:
@@ -300,6 +323,7 @@ lsns:
 man:
    - use long options in text and add example to uuidgen  [Sami Kerola]
 mcookie:
+   - (man) add note about getrandom()  [Karel Zak]
    - properly initialize hash  [Karel Zak]
 md5:
    - declare byteReverse as static  [Luca Ceresoli]
@@ -309,6 +333,7 @@ misc:
    - fix typos using codespell  [Ruediger Meier]
    - remove %p from debug messages  [Karel Zak]
 mount:
+   - (man) be explicit about bind operation  [Karel Zak]
    - (man) update mount options for UDF  [Steve Kenton]
    - add hint about -t and root perms to the man page  [Karel Zak]
    - add more details about UUIDs and LABELs to the man page  [Karel Zak]
@@ -329,6 +354,7 @@ po:
    - update cs.po (from translationproject.org)  [Petr Písař]
    - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
    - update fi.po (from translationproject.org)  [Lauri Nurmi]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
    - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
    - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
@@ -348,6 +374,11 @@ schedutils:
    - use errexec()  [Karel Zak]
 setarch:
    - minor code clean up  [Sami Kerola]
+setpriv:
+   - add example section  [Sam Morris]
+   - fix manpage typo  [Sam Morris]
+   - improve description in man page  [Sam Morris]
+   - include --init-groups in the list of options that can be specified with --[re]gid  [Sam Morris]
 setsid:
    - new option --fork  [Karel Zak]
 sfdisk:
@@ -372,15 +403,19 @@ test_sha1:
 tests:
    - Add UDF cd image created by mkudfiso 20100208  [Pali Rohár]
    - GPT device resize test  [Karel Zak]
+   - add /proc/swaps libmount parser test  [Karel Zak]
    - add LUKS test images  [Milan Broz]
    - add cal(1) --week=40 1752  [Karel Zak]
    - add fsck.cramfs bad-header test  [Karel Zak]
+   - add ipcslimits lock  [Ruediger Meier]
    - add lock on shared resources (e.g. scsi_debug)  [Karel Zak]
    - add mdadm locks  [Karel Zak]
    - add mpool blkid test image  [Karel Zak]
    - add set-x to lsns test  [Karel Zak]
+   - add some more udevadm settle  [Ruediger Meier]
    - add tests for encode functions from lib/mbsalign.c  [Vaclav Dolezal]
    - add udevadm settle to sfdisk/resize  [Ruediger Meier]
+   - add wierd sleep for libmount/context  [Ruediger Meier]
    - added missing expected outputs for partx (atari)  [Vaclav Dolezal]
    - added test for libblkid atari pt  [Vaclav Dolezal]
    - adjust for ISO timezone colon use  [J William Piggott]
@@ -389,10 +424,17 @@ tests:
    - check for HAVE_LINUX_NET_NAMESPACE_H  [Karel Zak]
    - column(1) test for space-char separator  [Karel Zak]
    - column(1) test non-space separator at begin of line  [Karel Zak]
+   - consolidate ts_device_has UUID or LABEL  [Ruediger Meier]
    - don't call tests with races in --parallel  [Karel Zak]
+   - don't lock fd 1 (stdout), don't use /proc/$$/fd  [Ruediger Meier]
    - don't use mount.<type> helpers in mount-by-pattern tests  [Karel Zak]
+   - don't use unlocked resources  [Ruediger Meier]
+   - dont't timeout flock  [Ruediger Meier]
    - fix fincore/count KNOWN_FAIL  [Ruediger Meier]
+   - fix grep expressions for devices  [Ruediger Meier]
+   - fix losetup race  [Ruediger Meier]
    - fix lsns perms  [Karel Zak]
+   - handle xargs errors and invalid args  [Ruediger Meier]
    - make lsns test more robust  [Karel Zak]
    - mark fincore/count as KNOWN_FAIL  [Karel Zak]
    - mark mbsencode as KNOWN_FAIL  [Vaclav Dolezal]
@@ -401,6 +443,7 @@ tests:
    - merge 1m and 3m cal(1) tests  [Karel Zak]
    - merge sep1752 cal(1) tests  [Karel Zak]
    - merge year cal(1) tests  [Karel Zak]
+   - re-introduce bash 3 compatibility (OSX)  [Ruediger Meier]
    - rename --memcheck to --memcheck-valgrind  [Karel Zak]
    - rename ts_valgrind to ts_run  [Karel Zak]
    - rewrite cal(1) bigyear test  [Karel Zak]
@@ -418,6 +461,7 @@ tests:
    - update setarch test  [Karel Zak]
    - use TS_HELPER_CAL  [Karel Zak]
    - use flock to modify fstab  [Karel Zak]
+   - use libtool to execute with valgrind  [Karel Zak]
    - use pgrep instead of ps --ppid ...  [Ruediger Meier]
    - use subtests for sep1752w test  [Karel Zak]
    - use subtests for weekarg cal(1) tests  [Karel Zak]
@@ -428,17 +472,21 @@ text-utils:
    - use errexec()  [Karel Zak]
 tools:
    - improve checkmans  [Karel Zak]
+travis:
+   - enable osx root checks  [Ruediger Meier]
+   - homebrew/dupes was deprecated  [Ruediger Meier]
+   - use parallel root checks  [Ruediger Meier]
 unshare:
    - Add --kill-child option.  [Niklas Hambüchen]
    - Allow passing <signame> to --kill-child  [Niklas Hambüchen]
    - cleanup if-if code  [Karel Zak]
+uuidd:
+   - cosmetic coding style change  [Karel Zak]
+   - don't truncate long socket paths  [Ruediger Meier]
 vipw:
    - do not let editor to inherit open file descriptors  [Sami Kerola]
    - use errexec()  [Karel Zak]
 whereis:
    - fix typo in debug message  [Karel Zak]
 zramctl:
-   - use xstrdup()  [Karel Zak]
-misc:
-   - priorty -> priority  [Yuri Chornoivan]
    - use xstrdup()  [Karel Zak]
