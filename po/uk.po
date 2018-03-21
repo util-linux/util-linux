@@ -3,13 +3,13 @@
 # This file is put in the public domain.
 #
 # Maxim V. Dziumanenko <mvd@mylinux.com.ua>, 2004-2006.
-# Yuri Chornoivan <yurchor@ukr.net>, 2012, 2013, 2014, 2015, 2016, 2017.
+# Yuri Chornoivan <yurchor@ukr.net>, 2012, 2013, 2014, 2015, 2016, 2017, 2018.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.31-rc2\n"
+"Project-Id-Version: util-linux 2.32-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-03-01 14:02+0100\n"
-"PO-Revision-Date: 2017-12-31 12:41+0200\n"
+"POT-Creation-Date: 2018-03-01 14:21+0100\n"
+"PO-Revision-Date: 2018-03-02 08:08+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
 "Language: uk\n"
@@ -53,8 +53,8 @@ msgstr "недостатньо аргументів"
 #: disk-utils/sfdisk.c:765 disk-utils/sfdisk.c:824 disk-utils/sfdisk.c:898
 #: disk-utils/sfdisk.c:939 disk-utils/sfdisk.c:969 disk-utils/sfdisk.c:1006
 #: disk-utils/sfdisk.c:1565 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:640
-#: lib/path.c:95 lib/path.c:113 login-utils/islocal.c:87 login-utils/last.c:674
-#: login-utils/sulogin.c:443 login-utils/sulogin.c:480
+#: lib/path.c:95 lib/path.c:113 login-utils/islocal.c:87
+#: login-utils/last.c:674 login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:134 login-utils/utmpdump.c:352
 #: login-utils/utmpdump.c:374 login-utils/vipw.c:261 login-utils/vipw.c:279
 #: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
@@ -62,14 +62,14 @@ msgstr "недостатньо аргументів"
 #: sys-utils/dmesg.c:524 sys-utils/eject.c:499 sys-utils/eject.c:695
 #: sys-utils/fallocate.c:396 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:71
 #: sys-utils/hwclock.c:227 sys-utils/hwclock.c:814 sys-utils/hwclock-rtc.c:400
-#: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
-#: sys-utils/rfkill.c:193 sys-utils/rfkill.c:544 sys-utils/rtcwake.c:136
-#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
-#: sys-utils/setpriv.c:637 sys-utils/swapon.c:375 sys-utils/swapon.c:518
-#: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
-#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:508
-#: term-utils/agetty.c:2752 term-utils/mesg.c:127 term-utils/script.c:460
-#: term-utils/script.c:468 term-utils/script.c:559
+#: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392
+#: sys-utils/nsenter.c:129 sys-utils/rfkill.c:193 sys-utils/rfkill.c:544
+#: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:286 sys-utils/setpriv.c:276
+#: sys-utils/setpriv.c:614 sys-utils/setpriv.c:637 sys-utils/swapon.c:375
+#: sys-utils/swapon.c:518 sys-utils/switch_root.c:167 sys-utils/unshare.c:108
+#: sys-utils/unshare.c:123 sys-utils/wdctl.c:322 sys-utils/wdctl.c:378
+#: sys-utils/zramctl.c:508 term-utils/agetty.c:2752 term-utils/mesg.c:127
+#: term-utils/script.c:460 term-utils/script.c:468 term-utils/script.c:559
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
 #: text-utils/rev.c:141 text-utils/ul.c:230
@@ -481,7 +481,8 @@ msgstr "Не вдалося записати скрипт %s"
 msgid "Select label type"
 msgstr "Вибрати тип мітки"
 
-#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074
+#: disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "Пристрій не містить розпізнаної таблиці розділів."
 
@@ -744,8 +745,8 @@ msgstr ""
 "Продовжуємо... "
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:602 sys-utils/blkdiscard.c:85
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:602
+#: sys-utils/blkdiscard.c:85 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [параметри] <пристрій>\n"
@@ -1080,20 +1081,21 @@ msgstr "непідтримуваний режим витирання"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Властивості пристрою (розмір сектора та геометрію) слід використовувати лише для одного вказаного пристрою."
 
-#: disk-utils/fdisk.c:1033 disk-utils/fdisk.c:1048 disk-utils/fsck.cramfs.c:695
-#: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:787
-#: disk-utils/partx.c:967 disk-utils/raw.c:137 disk-utils/raw.c:150
-#: disk-utils/raw.c:162 disk-utils/raw.c:203 misc-utils/cal.c:520
-#: misc-utils/findfs.c:58 misc-utils/look.c:150 misc-utils/whereis.c:573
-#: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
-#: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
-#: sys-utils/chcpu.c:344 sys-utils/chmem.c:419 sys-utils/dmesg.c:1469
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
-#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:630 sys-utils/mount.c:698
-#: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
-#: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:988
-#: sys-utils/switch_root.c:250 sys-utils/umount.c:528 term-utils/setterm.c:1176
-#: text-utils/col.c:233 text-utils/more.c:337
+#: disk-utils/fdisk.c:1033 disk-utils/fdisk.c:1048
+#: disk-utils/fsck.cramfs.c:695 disk-utils/mkfs.bfs.c:198
+#: disk-utils/mkfs.cramfs.c:787 disk-utils/partx.c:967 disk-utils/raw.c:137
+#: disk-utils/raw.c:150 disk-utils/raw.c:162 disk-utils/raw.c:203
+#: misc-utils/cal.c:520 misc-utils/findfs.c:58 misc-utils/look.c:150
+#: misc-utils/whereis.c:573 misc-utils/whereis.c:584 misc-utils/whereis.c:595
+#: misc-utils/whereis.c:637 schedutils/chrt.c:504 schedutils/ionice.c:262
+#: schedutils/taskset.c:189 sys-utils/chcpu.c:344 sys-utils/chmem.c:419
+#: sys-utils/dmesg.c:1469 sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:888 sys-utils/lscpu.c:2025 sys-utils/lsmem.c:630
+#: sys-utils/mount.c:698 sys-utils/mount.c:711 sys-utils/mount.c:780
+#: sys-utils/mountpoint.c:181 sys-utils/pivot_root.c:72
+#: sys-utils/swapoff.c:230 sys-utils/swapon.c:988 sys-utils/switch_root.c:250
+#: sys-utils/umount.c:528 term-utils/setterm.c:1176 text-utils/col.c:233
+#: text-utils/more.c:337
 msgid "bad usage"
 msgstr "помилкове використання"
 
@@ -1362,7 +1364,7 @@ msgstr "створити таблицю розділів IRIX (SGI)"
 
 #: disk-utils/fdisk-menu.c:154
 msgid "Geometry (for the current label)"
-msgstr ""
+msgstr "Геометрія (для поточної мітки)"
 
 #: disk-utils/fdisk-menu.c:155
 msgid "change number of cylinders"
@@ -2016,9 +2018,9 @@ msgid "unable to test CRC: old cramfs format"
 msgstr "не вдалося перевірити CRC: застарілий формат cramfs"
 
 #: disk-utils/fsck.cramfs.c:236
-#, fuzzy, c-format
+#, c-format
 msgid "failed to read %<PRIu32> bytes from file %s"
-msgstr "не вдалося прочитати файл typescript %s"
+msgstr "не вдалося прочитати %<PRIu32> байтів з файла %s"
 
 #: disk-utils/fsck.cramfs.c:274
 msgid "crc error"
@@ -3986,14 +3988,12 @@ msgid "no disk device specified"
 msgstr "не вказано пристрою диска"
 
 #: disk-utils/sfdisk.c:830
-#, fuzzy
 msgid "cannot switch to PMBR"
-msgstr "не вдалося отримати статистичні дані щодо %s"
+msgstr "не вдалося перемкнутися на PMBR"
 
 #: disk-utils/sfdisk.c:832
-#, fuzzy
 msgid "toggle boot flags is supported for MBR or PMBR only"
-msgstr "перемикання прапорців завантаження передбачено лише для MBR"
+msgstr "перемикання прапорців завантаження передбачено лише для MBR або PMBR"
 
 #: disk-utils/sfdisk.c:867 disk-utils/sfdisk.c:914 disk-utils/sfdisk.c:1037
 #: disk-utils/sfdisk.c:1101 disk-utils/sfdisk.c:1156 disk-utils/sfdisk.c:1212
@@ -4155,14 +4155,12 @@ msgid "   <type>   The partition type.  Default is a Linux data partition.\n"
 msgstr "   <тип>    тип розділу. Типовим є розділ даних Linux.\n"
 
 #: disk-utils/sfdisk.c:1315
-#, fuzzy
 msgid "            MBR: hex or L,S,E,X,U,R,V shortcuts.\n"
-msgstr "            MBR: шістнадцяткове число або скорочення L,S,E,X.\n"
+msgstr "            MBR: шістнадцяткове число або скорочення L,S,E,X,U,R,V.\n"
 
 #: disk-utils/sfdisk.c:1316
-#, fuzzy
 msgid "            GPT: UUID or L,S,H,U,R,V shortcuts.\n"
-msgstr "            GPT: UUID або скорочення L,S,H.\n"
+msgstr "            GPT: UUID або скорочення L,S,H,U,R,V.\n"
 
 #: disk-utils/sfdisk.c:1319
 msgid "   <bootable>  Use '*' to mark an MBR partition as bootable.\n"
@@ -4336,9 +4334,8 @@ msgstr ""
 " %1$s [параметри] <команда>\n"
 
 #: disk-utils/sfdisk.c:1846
-#, fuzzy
 msgid " -A, --activate <dev> [<part> ...] list or set bootable (P)MBR partitions\n"
-msgstr " -A, --activate <пристрій> [<розділ> ...] показати список або встановити завантажуваність для розділів MBR\n"
+msgstr " -A, --activate <пристрій> [<розділ> ...] показати список або встановити завантажуваність для розділів (P)MBR\n"
 
 #: disk-utils/sfdisk.c:1847
 msgid " -d, --dump <dev>                  dump partition table (usable for later input)\n"
@@ -5936,24 +5933,20 @@ msgid "Ceph crypt disk in creation"
 msgstr "Ceph, зашифрований диск під час створення"
 
 #: libfdisk/src/gpt.c:275
-#, fuzzy
 msgid "VMware Diagnostic"
-msgstr "Compaq diagnostics"
+msgstr "Діагностичний VMware"
 
 #: libfdisk/src/gpt.c:276
-#, fuzzy
 msgid "VMware Virtual SAN"
-msgstr "VMFS VMware"
+msgstr "Віртуальний SAN VMware"
 
 #: libfdisk/src/gpt.c:277
-#, fuzzy
 msgid "VMware Virsto"
-msgstr "VMFS VMware"
+msgstr "VMware Virsto"
 
 #: libfdisk/src/gpt.c:278
-#, fuzzy
 msgid "VMware Reserved"
-msgstr "ChromeOS, зарезервований"
+msgstr "VMware, зарезервований"
 
 #: libfdisk/src/gpt.c:281
 msgid "OpenBSD data"
@@ -5980,9 +5973,9 @@ msgid "Last LBA specified by script is out of range."
 msgstr "Останній LBA, вказаний скриптом, перебуває поза доступним діапазоном."
 
 #: libfdisk/src/gpt.c:895
-#, fuzzy, c-format
+#, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
-msgstr "Невідповідність розмірів PMBR GPT (%<PRIu64> != %<PRIu64>). Буде виправлено у відповідь на w (запис)."
+msgstr "Невідповідність розмірів PMBR GPT (%<PRIu64> != %<PRIu64>). Буде виправлено у відповідь на запис."
 
 #: libfdisk/src/gpt.c:917
 msgid "gpt: stat() failed"
@@ -6033,7 +6026,7 @@ msgstr "Основну таблицю GPT пошкоджено, але резе�
 
 #: libfdisk/src/gpt.c:1618
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
-msgstr ""
+msgstr "Резервну таблицю GPT розташовано не наприкінці пристрою. Цю проблему буде виправлено записом."
 
 #: libfdisk/src/gpt.c:1800
 #, c-format
@@ -6051,9 +6044,8 @@ msgid "Partition UUID changed from %s to %s."
 msgstr "UUID розділу змінено з %s на %s."
 
 #: libfdisk/src/gpt.c:1914
-#, fuzzy
 msgid "Failed to translate partition name, name not changed."
-msgstr "не вдалося отримати пам’ять під назву розділу"
+msgstr "Не вдалося перенести назву розділу, назву не змінено."
 
 #: libfdisk/src/gpt.c:1916
 #, c-format
@@ -7083,12 +7075,12 @@ msgstr "%s: непідтримувана версія свопінгу, «%s»"
 
 #: lib/timeutils.c:459
 msgid "format_iso_time: buffer overflow."
-msgstr ""
+msgstr "format_iso_time: переповнення буфера."
 
 #: lib/timeutils.c:477 lib/timeutils.c:501
-#, fuzzy, c-format
+#, c-format
 msgid "time %ld is out of range."
-msgstr "Значення поза припустимим діапазоном."
+msgstr "час %ld поза допустимим діапазоном."
 
 #: login-utils/chfn.c:96 login-utils/chsh.c:74
 #, c-format
@@ -8804,18 +8796,16 @@ msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          першим днем тижня є понеділок\n"
 
 #: misc-utils/cal.c:1108
-#, fuzzy
 msgid " -j, --julian          use day-of-year for all calendars\n"
-msgstr " -j, --julian          виводити дати за юліанським календарем\n"
+msgstr " -j, --julian          використовувати день року для усіх календарів\n"
 
 #: misc-utils/cal.c:1109
 msgid "     --reform <val>    Gregorian reform date (1752|gregorian|iso|julian)\n"
-msgstr ""
+msgstr "     --reform <знач>   дата григоріанської реформи (1752|gregorian|iso|julian)\n"
 
 #: misc-utils/cal.c:1110
-#, fuzzy
 msgid "     --iso             alias for --reform=iso\n"
-msgstr "     --nohints              не виводити підказки\n"
+msgstr "     --iso             те саме, що --reform=iso\n"
 
 #: misc-utils/cal.c:1111
 msgid " -y, --year            show the whole year\n"
@@ -10143,9 +10133,8 @@ msgid "PID of the process holding the lock"
 msgstr "PID процесу, який утримує блокування"
 
 #: misc-utils/lslocks.c:75
-#, fuzzy
 msgid "kind of lock"
-msgstr "розмір блокування"
+msgstr "тип блокування"
 
 #: misc-utils/lslocks.c:76
 msgid "size of the lock"
@@ -11341,8 +11330,8 @@ msgstr "не вдалося обробити зсув"
 msgid "failed to parse step"
 msgstr "не вдалося обробити крок"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398 sys-utils/fallocate.c:373
-#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:333
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398
+#: sys-utils/fallocate.c:373 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:333
 msgid "unexpected number of arguments"
 msgstr "неочікувана кількість аргументів"
 
@@ -11701,14 +11690,14 @@ msgid "%s already disabled\n"
 msgstr "%s вже вимкнено\n"
 
 #: sys-utils/chmem.c:219
-#, fuzzy, c-format
+#, c-format
 msgid "%s enable failed: Zone mismatch"
-msgstr "не вдалося увімкнути %s"
+msgstr "не вдалося увімкнути %s: невідповідність зон"
 
 #: sys-utils/chmem.c:223
-#, fuzzy, c-format
+#, c-format
 msgid "%s disable failed: Zone mismatch"
-msgstr "не вдалося вимкнути %s"
+msgstr "не вдалося вимкнути %s: невідповідність зон"
 
 #: sys-utils/chmem.c:238
 #, c-format
@@ -11789,46 +11778,41 @@ msgid "Set a particular size or range of memory online or offline.\n"
 msgstr "Встановити певний розмір або діапазон задіяної або незадіяної пам’яті.\n"
 
 #: sys-utils/chmem.c:340
-#, fuzzy
 msgid " -e, --enable       enable memory\n"
-msgstr " -e, --enable   увімкнути пам’ять\n"
+msgstr " -e, --enable       увімкнути пам'ять\n"
 
 #: sys-utils/chmem.c:341
-#, fuzzy
 msgid " -d, --disable      disable memory\n"
-msgstr " -d, --disable  вимкнути пам’ять\n"
+msgstr " -d, --disable      вимкнути пам’ять\n"
 
 #: sys-utils/chmem.c:342
-#, fuzzy
 msgid " -b, --blocks       use memory blocks\n"
-msgstr " -b, --blocks   використовувати блоки пам’яті\n"
+msgstr " -b, --blocks       використовувати блоки пам’яті\n"
 
 #: sys-utils/chmem.c:343
 msgid " -z, --zone <name>  select memory zone (see below)\n"
-msgstr ""
+msgstr " -z, --zone <назва> випрати зону пам'яті (див. нижче)\n"
 
 #: sys-utils/chmem.c:344
-#, fuzzy
 msgid " -v, --verbose      verbose output\n"
-msgstr " -v, --verbose  режим докладних повідомлень\n"
+msgstr " -v, --verbose      режим докладних повідомлень\n"
 
 #: sys-utils/chmem.c:347
-#, fuzzy
 msgid ""
 "\n"
 "Supported zones:\n"
 msgstr ""
 "\n"
-"Підтримувані можливості журналювання:\n"
+"Підтримувані зони:\n"
 
 #: sys-utils/chmem.c:429
 msgid "zone ignored, no valid_zones sysfs attribute present"
-msgstr ""
+msgstr "зону проігноровано, немає атрибута sysfs valid_zones"
 
 #: sys-utils/chmem.c:434
-#, fuzzy, c-format
+#, c-format
 msgid "unknown memory zone: %s"
-msgstr "невідома назва місяця: %s"
+msgstr "невідома зона пам'яті: %s"
 
 #: sys-utils/ctrlaltdel.c:28
 #, c-format
@@ -11994,7 +11978,7 @@ msgstr " -P, --nopager               не передавати виведені 
 
 #: sys-utils/dmesg.c:286
 msgid " -p, --force-prefix          force timestamp output on each line of multi-line messages\n"
-msgstr ""
+msgstr " -p, --force-prefix          примусове виведення часової позначки у кожному рядку багаторядкових повідомлень\n"
 
 #: sys-utils/dmesg.c:287
 msgid " -r, --raw                   print the raw message buffer\n"
@@ -12930,9 +12914,8 @@ msgid "Cannot access the Hardware Clock via any known method."
 msgstr "Не вдалося отримати доступ до апаратного годинника за допомогою будь-якого з відомих методів."
 
 #: sys-utils/hwclock.c:889
-#, fuzzy
 msgid "Use the --verbose option to see the details of our search for an access method."
-msgstr "Скористайтеся параметром --debug для отримання додаткових відомостей щодо пошуку способу доступу."
+msgstr "Скористайтеся параметром --verbose для отримання додаткових відомостей щодо пошуку способу доступу."
 
 #: sys-utils/hwclock.c:939
 #, c-format
@@ -13060,14 +13043,12 @@ msgid "     --adjfile <file> use an alternate file to %1$s\n"
 msgstr "     --adjfile <файл> використовувати альтернативний файл %1$s\n"
 
 #: sys-utils/hwclock.c:1093
-#, fuzzy
 msgid "     --test           dry run; implies --verbose"
-msgstr "     --test           діагностичний запуск; автоматично додається --debug"
+msgstr "     --test           діагностичний запуск; автоматично додається --verbose"
 
 #: sys-utils/hwclock.c:1094
-#, fuzzy
 msgid " -v, --verbose        display more details"
-msgstr " -v, --verbose          вивести докладніші повідомлення\n"
+msgstr " -v, --verbose        вивести докладніші повідомлення"
 
 #: sys-utils/hwclock.c:1186
 msgid "Unable to connect to audit system"
@@ -13075,7 +13056,7 @@ msgstr "Не вдалося зв'язатися із системою спост
 
 #: sys-utils/hwclock.c:1210
 msgid "use --verbose, --debug has been deprecated."
-msgstr ""
+msgstr "використовуємо --verbose, --debug вважається застарілим."
 
 #: sys-utils/hwclock.c:1309
 #, c-format
@@ -15067,9 +15048,8 @@ msgid "numa node of memory"
 msgstr "вузол numa пам’яті"
 
 #: sys-utils/lsmem.c:134
-#, fuzzy
 msgid "valid zones for the memory range"
-msgstr "розмір діапазону пам’яті"
+msgstr "коректні зони для діапазону пам'яті"
 
 #: sys-utils/lsmem.c:261
 msgid "online"
@@ -15113,9 +15093,8 @@ msgid " -a, --all            list each individual memory block\n"
 msgstr " -a, --all            показати список окремих блоків пам’яті\n"
 
 #: sys-utils/lsmem.c:511
-#, fuzzy
 msgid " -S, --split <list>   split ranges by specified columns\n"
-msgstr " -o, --output <список>     стовпчики виведених даних\n"
+msgstr " -S, --split <список> поділити діапазони за вказаними стовпчиками\n"
 
 #: sys-utils/lsmem.c:512
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
@@ -15179,11 +15158,11 @@ msgstr "ім’я користувача PID"
 
 #: sys-utils/lsns.c:108
 msgid "namespace ID as used by network subsystem"
-msgstr ""
+msgstr "ідентифікатор простору назв, який використовується підсистемою мережі"
 
 #: sys-utils/lsns.c:109
 msgid "nsfs mountpoint (usually used network subsystem)"
-msgstr ""
+msgstr "точка монтування nsfs (зазвичай, використана підсистема мережі)"
 
 #: sys-utils/lsns.c:719
 msgid "failed to add line to output"
@@ -15203,9 +15182,8 @@ msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -p, --task <pid>       вивести простори назв процесу\n"
 
 #: sys-utils/lsns.c:908
-#, fuzzy
 msgid " -W, --nowrap           don't use multi-line representation\n"
-msgstr " -n, --no-mtab           не виконувати запис до /etc/mtab\n"
+msgstr " -W, --nowrap           не використовувати багаторядкове представлення\n"
 
 #: sys-utils/lsns.c:909
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"
@@ -16037,9 +16015,9 @@ msgid "%d (%s) old priority %d, new priority %d\n"
 msgstr "%d (%s) попереднє значення пріоритетності - %d, нове значення пріоритетності - %d\n"
 
 #: sys-utils/renice.c:152
-#, fuzzy, c-format
+#, c-format
 msgid "invalid priority '%s'"
-msgstr "некоректна пріоритетність «%s»"
+msgstr "некоректна пріоритетність, «%s»"
 
 #: sys-utils/renice.c:179
 #, c-format
@@ -16217,9 +16195,8 @@ msgid "set rtc wake alarm failed"
 msgstr "спроба встановлення нагадування щодо пробудження rtc зазнала невдачі"
 
 #: sys-utils/rtcwake.c:274
-#, fuzzy
 msgid "discarding stdin"
-msgstr "відкинути відступ вирівнювання"
+msgstr "відкидаємо stdin"
 
 #: sys-utils/rtcwake.c:325
 #, c-format
@@ -16859,9 +16836,8 @@ msgid " -c, --ctty     set the controlling terminal to the current one\n"
 msgstr " -c, --ctty     зробити керівним терміналом поточний термінал\n"
 
 #: sys-utils/setsid.c:41
-#, fuzzy
 msgid " -f, --fork     always fork\n"
-msgstr " -f, --force      примусова перевірка\n"
+msgstr " -f, --fork     завжди відгалужувати\n"
 
 #: sys-utils/setsid.c:42
 msgid " -w, --wait     wait program to exit, and use the same return\n"
@@ -17507,7 +17483,7 @@ msgstr " -f, --fork                виконати розгалуження д�
 
 #: sys-utils/unshare.c:263
 msgid "     --kill-child[=<signame>]  when dying, kill the forked child (implies --fork); defaults to SIGKILL\n"
-msgstr ""
+msgstr "     --kill-child[=<назва_сиг>] під час завершення роботи вбити відгалужений дочірній процес (неявне --fork); типовим є сигнал SIGKILL\n"
 
 #: sys-utils/unshare.c:264
 msgid "     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"
@@ -17783,9 +17759,8 @@ msgid "Set up and control zram devices.\n"
 msgstr "Налаштувати пристрої zram і керувати ними.\n"
 
 #: sys-utils/zramctl.c:541
-#, fuzzy
 msgid " -a, --algorithm lzo|lz4|lz4hc|deflate|842   compression algorithm to use\n"
-msgstr " -a, --algorithm lzo|lz4   алгоритм стискання, яким слід скористатися\n"
+msgstr " -a, --algorithm lzo|lz4|lz4hc|deflate|842   алгоритм стискання, яким слід скористатися\n"
 
 #: sys-utils/zramctl.c:542
 msgid " -b, --bytes               print sizes in bytes rather than in human readable format\n"
@@ -18908,9 +18883,8 @@ msgid " -E, --table-noextreme <columns>  don't count long text from the columns 
 msgstr " -E, --table-noextreme <стовпчики> не включати довгі текстові рядки зі стовпчиків до ширини стовпчиків\n"
 
 #: text-utils/column.c:645
-#, fuzzy
 msgid " -d, --table-noheadings           don't print header\n"
-msgstr " -n, --noheadings          не виводити заголовки\n"
+msgstr " -d, --table-noheadings           не виводити заголовок\n"
 
 #: text-utils/column.c:646
 msgid " -e, --table-header-repeat        repeat header for each page\n"
@@ -19542,639 +19516,3 @@ msgstr "невідома керівна послідовність у вхідн
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "Рядок вхідних даних є надто довгим."
-
-#~ msgid "Geometry"
-#~ msgstr "Геометрія"
-
-#~ msgid "kind of lock: FL_FLOCK or FL_POSIX."
-#~ msgstr "тип блокування: FL_FLOCK або FL_POSIX."
-
-#~ msgid "unable to exec /bin/umount of `%s'"
-#~ msgstr "не вдалося виконати /bin/umount для «%s»"
-
-#~ msgid "sleeping ~%d usec\n"
-#~ msgstr "очікуємо ~%d мкс\n"
-
-#~ msgid "%ld.%06ld < %ld.%06ld (%.6f)\n"
-#~ msgstr "%ld.%06ld < %ld.%06ld (%.6f)\n"
-
-#~ msgid " -D, --debug          display more details"
-#~ msgstr " -D, --debug          вивести докладніші дані"
-
-#~ msgid "failed to read from: %s"
-#~ msgstr "не вдалося виконати читання з %s"
-
-#~ msgid "cannot execute: %s"
-#~ msgstr "не вдалося виконати: %s"
-
-#~ msgid "unsupported algorithm: %s"
-#~ msgstr "непідтримуваний алгоритм: %s"
-
-#~ msgid ""
-#~ "\n"
-#~ "Usage:\n"
-#~ " %1$s -V\n"
-#~ " %1$s --report [devices]\n"
-#~ " %1$s [-v|-q] commands devices\n"
-#~ "\n"
-#~ "Available commands:\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Користування:\n"
-#~ " %1$s -V\n"
-#~ " %1$s --report [пристрої]\n"
-#~ " %1$s [-v|-q] команди пристрої\n"
-#~ "\n"
-#~ "Доступні команди:\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Available columns (for -o):\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Можливі стовпчики (для -o):\n"
-
-#~ msgid "seek error on %s"
-#~ msgstr "помилка позиціювання на %s"
-
-#~ msgid ""
-#~ " -V, --version      display version information and exit;\n"
-#~ "                      -V as --version must be the only option\n"
-#~ msgstr ""
-#~ " -V, --version    вивести дані щодо версії і вийти;\n"
-#~ "                    -V як --version має бути єдиним параметром\n"
-
-#~ msgid " -h, --help         display this help text and exit\n"
-#~ msgstr " -h, --help         вивести текстову довідку і завершити роботу\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Available columns (for --show, --raw or --pairs):\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Доступні стовпчики (для --show, --raw або --pairs):\n"
-
-#~ msgid " -v, --version  output version information and exit\n"
-#~ msgstr " -v, --version  вивести інформацію щодо версії і вийти\n"
-
-#~ msgid "Try '%s -h' for more information.\n"
-#~ msgstr "Віддайте команду «%s -h», щоб дізнатися більше.\n"
-
-#~ msgid " -h, --help     display this help and exit\n"
-#~ msgstr " -h, --help     вивести довідку та завершити роботу\n"
-
-#~ msgid " -V, --version  output version information and exit\n"
-#~ msgstr " -V, --version  вивести інформацію щодо версії і вийти\n"
-
-#~ msgid " -u, --help     display this help and exit\n"
-#~ msgstr " -u, --help     показати ці довідкові дані і вийти\n"
-
-#~ msgid "No known shells."
-#~ msgstr "Немає відомих оболонок."
-
-#~ msgid ""
-#~ "\n"
-#~ "Available columns:\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Доступні стовпчики:\n"
-
-#~ msgid " %s [options] -u <user> [[--] <command>]\n"
-#~ msgstr " %s [параметри] -u <користувач> [[--] <команда>]\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Available columns (for --output):\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Можливі стовпчики (для --output):\n"
-
-#~ msgid "Try `%s --help' for more information.\n"
-#~ msgstr "Виконайте команду «%s --help», щоб дізнатися більше.\n"
-
-#~ msgid " -v, --verbose    explain what is being done\n"
-#~ msgstr " -v, --verbose    вивести дані щодо дій, які виконуються\n"
-
-#~ msgid ""
-#~ " -r, --random     generate random-based uuid\n"
-#~ " -t, --time       generate time-based uuid\n"
-#~ " -V, --version    output version information and exit\n"
-#~ " -h, --help       display this help and exit\n"
-#~ "\n"
-#~ msgstr ""
-#~ " -r, --random     створити псевдовипадковий uuid\n"
-#~ " -t, --time       створити uuid на основі поточного часу\n"
-#~ " -V, --version    вивести дані щодо версії і вийти\n"
-#~ " -h, --help       показати це довідкове повідомлення і вийти\n"
-#~ "\n"
-
-#~ msgid ""
-#~ " -a, --all           wipe all magic strings (BE CAREFUL!)\n"
-#~ " -b, --backup        create a signature backup in $HOME\n"
-#~ " -f, --force         force erasure\n"
-#~ " -h, --help          show this help text\n"
-#~ " -n, --no-act        do everything except the actual write() call\n"
-#~ " -o, --offset <num>  offset to erase, in bytes\n"
-#~ " -p, --parsable      print out in parsable instead of printable format\n"
-#~ " -q, --quiet         suppress output messages\n"
-#~ " -t, --types <list>  limit the set of filesystem, RAIDs or partition tables\n"
-#~ " -V, --version       output version information and exit\n"
-#~ msgstr ""
-#~ " -a, --all           витерти всі рядки контрольних сум (БУДЬТЕ ОБАЧНІ!)\n"
-#~ " -b, --backup        створити резервну копію підпису у $HOME\n"
-#~ " -f, --force         примусове витирання\n"
-#~ " -h, --help          вивести це довідкове повідомлення\n"
-#~ " -n, --no-act        виконати всі дії, окрім виклику функції write()\n"
-#~ " -o, --offset <n>    зсув для витирання у байтах\n"
-#~ " -p, --parsable      виводити повідомлення у зручному для читання, а не для друку форматі\n"
-#~ " -q, --quiet         придушити виведення повідомлень\n"
-#~ " -t, --types <список> обмежити набір файлових систем, масивів RAID або таблиць розділів\n"
-#~ " -V, --version       вивести дані щодо версії і вийти\n"
-
-#~ msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095)."
-#~ msgstr "Регістри апаратного годинника містять значення, які є або некоректними (наприклад 50-й день місяця), або за межами, які може обробити програма (наприклад 2095 рік)."
-
-#~ msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it."
-#~ msgstr "Апаратний годинник містить неправильний час, тому програма не може встановити за ним системний час."
-
-#~ msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
-#~ msgstr "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
-
-#~ msgid "\ttz.tz_minuteswest = %d\n"
-#~ msgstr "\ttz.tz_minuteswest = %d\n"
-
-#~ msgid "Must be superuser to set system clock."
-#~ msgstr "Для встановлення системного часу слід мати права адміністратора."
-
-#~ msgid "\tUTC: %s\n"
-#~ msgstr "\tUTC: %s\n"
-
-#~ msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
-#~ msgstr "Коефіцієнт відхилення не коригується, тому що попереднє значення апаратного годинника було неправильним.\n"
-
-#~ msgid ""
-#~ "Test mode: %s was not updated with:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Режим перевірки: %s не було оновлено на такій основі:\n"
-#~ "%s"
-
-#~ msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
-#~ msgstr "Не вдалося відкрити файл з параметрами коригування годинника (%s) для запису"
-
-#~ msgid "Could not update file with the clock adjustment parameters (%s) in it"
-#~ msgstr "Не вдалося оновити файл з параметрами коригування годинника (%s)"
-
-#~ msgid "Drift adjustment parameters not updated."
-#~ msgstr "Параметри корекції відхилення не оновлено."
-
-#~ msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it."
-#~ msgstr "У апаратному годиннику встановлено некоректний час, тому його не вдалося виправити."
-
-#~ msgid "At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"
-#~ msgstr "У час %ld секунд після 1969 року, RTC мало бути прочитано %ld секунд після 1969 року.\n"
-
-#~ msgid "Unable to get the epoch value from the kernel."
-#~ msgstr "Не вдалося отримати значення епохи від ядра."
-
-#~ msgid "Kernel is assuming an epoch value of %lu\n"
-#~ msgstr "Ядро вважає, що значення епохи - %lu\n"
-
-#~ msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it."
-#~ msgstr "Щоб встановити значення епохи, слід скористатися параметром 'epoch' із зазначенням встановлюваного значення."
-
-#~ msgid "Not setting the epoch to %lu - testing only.\n"
-#~ msgstr "Епоха не встановлюється у %lu - лише тестування.\n"
-
-#~ msgid "Unable to set the epoch value in the kernel.\n"
-#~ msgstr "не вдалося встановити значення епохи у ядрі.\n"
-
-#~ msgid "Query or set the hardware clock.\n"
-#~ msgstr "Виконати опитування або встановити час на апаратному годиннику.\n"
-
-#~ msgid ""
-#~ " -h, --help           show this help text and exit\n"
-#~ " -r, --show           read hardware clock and print result\n"
-#~ "     --get            read hardware clock and print drift corrected result\n"
-#~ "     --set            set the RTC to the time given with --date\n"
-#~ msgstr ""
-#~ " -h, --help           показати це довідкове повідомлення і завершити роботу\n"
-#~ " -r, --show           прочитати дані апаратного годинника і вивести результат\n"
-#~ "     --get            прочитати дані апаратного годинника і вивести виправлений за зсувом результат\n"
-#~ "     --set            встановити RTC у час, який задано за допомогою --date\n"
-
-#~ msgid ""
-#~ " -s, --hctosys        set the system time from the hardware clock\n"
-#~ " -w, --systohc        set the hardware clock from the current system time\n"
-#~ "     --systz          set the system time based on the current timezone\n"
-#~ "     --adjust         adjust the RTC to account for systematic drift since\n"
-#~ "                        the clock was last set or adjusted\n"
-#~ msgstr ""
-#~ " -s, --hctosys        встановити для системи час апаратного годинника\n"
-#~ " -w, --systohc        встановити для апаратного годинника час системи\n"
-#~ "     --systz          встановити час системи на основі поточного часового поясу\n"
-#~ "     --adjust         скоригувати RTC з метою врахування систематичної похибки\n"
-#~ "                        з часу останнього встановлення або коригування\n"
-
-#~ msgid ""
-#~ "     --getepoch       print out the kernel's hardware clock epoch value\n"
-#~ "     --setepoch       set the kernel's hardware clock epoch value to the \n"
-#~ "                        value given with --epoch\n"
-#~ msgstr ""
-#~ "     --getepoch       вивести значення епохи для апаратного годинника ядра\n"
-#~ "     --setepoch       встановити значення епохи для апаратного годинника \n"
-#~ "                        ядра у значення, задане за допомогою --epoch\n"
-
-#~ msgid ""
-#~ "     --predict        predict RTC reading at time given with --date\n"
-#~ " -V, --version        display version information and exit\n"
-#~ msgstr ""
-#~ "     --predict        передбачити значення RTC у час, заданий за допомогою --date\n"
-#~ " -V, --version        вивести дані щодо версії і вийти\n"
-
-#~ msgid ""
-#~ " -u, --utc            the hardware clock is kept in UTC\n"
-#~ "     --localtime      the hardware clock is kept in local time\n"
-#~ msgstr ""
-#~ " -u, --utc            апаратний годинник узгоджено за UTC\n"
-#~ "     --localtime      апаратний годинник узгоджено за місцевим часом\n"
-
-#~ msgid " -f, --rtc <file>     special /dev/... file to use instead of default\n"
-#~ msgstr " -f, --rtc <файл>     особливий файл /dev/..., яким слід скористатися замість типового\n"
-
-#~ msgid ""
-#~ "     --directisa      access the ISA bus directly instead of %s\n"
-#~ "     --date <time>    specifies the time to which to set the hardware clock\n"
-#~ msgstr ""
-#~ "     --directisa      отримувати доступ до каналу ISA безпосередньо, замість %s\n"
-#~ "     --date <час>     визначає час, у який слід встановити апаратний годинник\n"
-
-#~ msgid ""
-#~ "     --update-drift   update drift factor in %1$s (requires\n"
-#~ "                        --set or --systohc)\n"
-#~ "     --noadjfile      do not access %1$s; this requires the use of\n"
-#~ "                        either --utc or --localtime\n"
-#~ "     --adjfile <file> specifies the path to the adjust file;\n"
-#~ "                        the default is %1$s\n"
-#~ msgstr ""
-#~ "     --update-drift   оновити коефіцієнт зсуву у %1$s (потребує\n"
-#~ "                        --set або --systohc)\n"
-#~ "     --noadjfile      не отримувати доступ до %1$s; потребує використання\n"
-#~ "                        --utc або --localtime\n"
-#~ "     --adjfile <файл> визначає шлях до файла коригування;\n"
-#~ "                        типовим є %1$s\n"
-
-#~ msgid ""
-#~ "     --test           do not update anything, just show what would happen\n"
-#~ " -D, --debug          debugging mode\n"
-#~ "\n"
-#~ msgstr ""
-#~ "     --test           нічого не оновлювати, просто показати, які дії буде виконано\n"
-#~ " -D, --debug          діагностичний режим\n"
-#~ "\n"
-
-#~ msgid "invalid epoch argument"
-#~ msgstr "некоректний аргумент епохи"
-
-#~ msgid "root privileges may be required"
-#~ msgstr "можуть знадобитися права доступу адміністратора (root)"
-
-#~ msgid "%s does not have interrupt functions. "
-#~ msgstr "%s не має функції переривання."
-
-#~ msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
-#~ msgstr "неочікувана помилка вимкнення оновлення переривань у ioctl() для %s"
-
-#~ msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file.  This file does not exist on this system."
-#~ msgstr "Для роботи зі значенням епохи у ядрі потрібен доступ до драйвера пристрою «rtc» Linux за допомогою спеціального файла. У цій системі такого файла не існує."
-
-#~ msgid "we have read epoch %lu from %s with RTC_EPOCH_READ ioctl.\n"
-#~ msgstr "прочитано значення епохи %lu з %s через RTC_EPOCH_READ ioctl.\n"
-
-#~ msgid "The epoch value may not be less than 1900.  You requested %ld"
-#~ msgstr "Значення епохи не може бути нижчим за 1900. Ви вказали %ld"
-
-#~ msgid "setting epoch to %lu with RTC_EPOCH_SET ioctl to %s.\n"
-#~ msgstr "встановлюється епоха = %lu через RTC_EPOCH_SET ioctl у %s.\n"
-
-#~ msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl."
-#~ msgstr "Драйвер ядра для пристрою %s не містить ioctl RTC_EPOCH_SET."
-
-#~ msgid ""
-#~ "%s\n"
-#~ "Try `%s --help' for more information."
-#~ msgstr ""
-#~ "%s\n"
-#~ "Спробуйте «%s --help», щоб отримати додаткову інформацію."
-
-#~ msgid "Try `%s --help' for more information."
-#~ msgstr "Спробуйте «%s --help» для отримання докладнішого опису."
-
-#~ msgid ""
-#~ "\n"
-#~ "Available columns (for --show):\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Можливі стовпчики (для --show):\n"
-
-#~ msgid " -T, --trust-irq <on|off>     make driver to trust irq\n"
-#~ msgstr " -T, --trust-irq <on|off>     перемикач довіри до irq у драйвері\n"
-
-#~ msgid "     --version              output version information and exit\n"
-#~ msgstr "     --version              показати інформацію щодо версії і вийти\n"
-
-#~ msgid " --version                         show version information and exit\n"
-#~ msgstr " --version                         вивести дані щодо версії і завершити роботу\n"
-
-#~ msgid " --help                            display this help and exit\n"
-#~ msgstr " --help                            вивести ці довідкові повідомлення і завершити роботу\n"
-
-#~ msgid " -V          display version information and exit\n"
-#~ msgstr " -V          вивести дані щодо версії і завершити роботу\n"
-
-#~ msgid "Device %s already contains a %s signature."
-#~ msgstr "Пристрій %s вже містить підпис %s."
-
-#~ msgid "%s: these options are mutually exclusive:"
-#~ msgstr "%s: ці параметри не можна використовувати одночасно:"
-
-#~ msgid " -m, --mtab             search in table of mounted filesystems\n"
-#~ msgstr " -m, --mtab             шукати у таблиці змонтованих файлових систем\n"
-
-#~ msgid "Suspend access to a filesystem (ext3/4, ReiserFS, JFS, XFS).\n"
-#~ msgstr "Призупинити доступ до файлової системи (ext3/4, ReiserFS, JFS, XFS).\n"
-
-#~ msgid "Clock not changed - testing only.\n"
-#~ msgstr "Годинник не змінено - лише перевірка.\n"
-
-#~ msgid "No --date option specified."
-#~ msgstr "Не вказано параметра --date."
-
-#~ msgid "--date argument too long"
-#~ msgstr "аргумент --date є надто довгим"
-
-#~ msgid ""
-#~ "The value of the --date option is not a valid date.\n"
-#~ "In particular, it contains quotation marks."
-#~ msgstr ""
-#~ "Значення аргументу --date не є коректною датою.\n"
-#~ "Зокрема, у ньому містяться лапки."
-
-#~ msgid "Issuing date command: %s\n"
-#~ msgstr "Виконується команда date: %s\n"
-
-#~ msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
-#~ msgstr "не вдалося виконати команду 'date' у оболонці /bin/sh. Помилка popen()"
-
-#~ msgid "response from date command = %s\n"
-#~ msgstr "вивід команди date = %s\n"
-
-#~ msgid ""
-#~ "The date command issued by %s returned unexpected results.\n"
-#~ "The command was:\n"
-#~ "  %s\n"
-#~ "The response was:\n"
-#~ "  %s"
-#~ msgstr ""
-#~ "Команда date, виконана %s, повернула неочікувані дані.\n"
-#~ "Команда:\n"
-#~ "  %s\n"
-#~ "Результат:\n"
-#~ "  %s"
-
-#~ msgid ""
-#~ "The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
-#~ "The command was:\n"
-#~ "  %s\n"
-#~ "The response was:\n"
-#~ " %s\n"
-#~ msgstr ""
-#~ "Команда date виконана %s повернула результат відмінний від цілого числа, яке мало б бути конвертованим значенням часу.\n"
-#~ "Команда:\n"
-#~ "  %s\n"
-#~ "Результат:\n"
-#~ " %s\n"
-
-#~ msgid "date string %s equates to %ld seconds since 1969.\n"
-#~ msgstr "рядок дати %s дорівнює %ld секундам з 1969.\n"
-
-#~ msgid "Not setting system clock because running in test mode.\n"
-#~ msgstr "Системний час не встановлюється, тому що запущений у тестовому режимі.\n"
-
-#~ msgid "Not updating adjtime file because of testing mode.\n"
-#~ msgstr "У тестовому режимі файл adjtime не оновлюється.\n"
-
-#~ msgid ""
-#~ "Would have written the following to %s:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "У файл %s було б записано:\n"
-#~ "%s"
-
-#~ msgid ""
-#~ "The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
-#~ "This copy of hwclock was built for a machine other than Alpha\n"
-#~ "(and thus is presumably not running on an Alpha now).  No action taken."
-#~ msgstr ""
-#~ "Ядро зберігає значення епохи у апаратному годиннику лише на системах архітектури Alpha.\n"
-#~ "Цю копію hwclock зібрано для архітектури відмінної від Alpha\n"
-#~ "(тож, напевно, ця система не є системою Alpha). Ніяких дій не виконано."
-
-#~ msgid " -c, --compare        periodically compare the system clock with the CMOS clock\n"
-#~ msgstr " -c, --compare        періодично порівнювати значення системного годинника з годинником CMOS\n"
-
-#~ msgid ""
-#~ "     --directisa      access the ISA bus directly instead of %s\n"
-#~ "     --badyear        ignore RTC's year because the BIOS is broken\n"
-#~ "     --date <time>    specifies the time to which to set the hardware clock\n"
-#~ "     --epoch <year>   specifies the year which is the beginning of the\n"
-#~ "                        hardware clock's epoch value\n"
-#~ msgstr ""
-#~ "     --directisa      отримувати доступ до каналу ISA безпосередньо, замість %s\n"
-#~ "     --badyear        ігнорувати рік RTC, оскільки дані BIOS пошкоджено\n"
-#~ "     --date <час>     визначає час, у який слід встановити апаратний годинник\n"
-#~ "     --epoch <рік>    визначає рік, який є початком відліку значення епохи\n"
-#~ "                        апаратного годинника\n"
-
-#~ msgid ""
-#~ " -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
-#~ "      tell hwclock the type of Alpha you have (see hwclock(8))\n"
-#~ "\n"
-#~ msgstr ""
-#~ " -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
-#~ "      повідомити hwclock тип системи Alpha, з яким маєте справу (див. hwclock(8))\n"
-#~ "\n"
-
-#~ msgid "Sorry, only the superuser can use the Hardware Clock."
-#~ msgstr "Вибачте, користуватися апаратним годинником системи може лише адміністратор."
-
-#~ msgid "%s takes no non-option arguments.  You supplied %d.\n"
-#~ msgstr "%s не очікує параметрів без ключів. Ви вказали %d.\n"
-
-#~ msgid "No usable set-to time.  Cannot set clock."
-#~ msgstr "Немає придатного для встановлення значення часу. Час годинника не змінено."
-
-#~ msgid "booted from MILO\n"
-#~ msgstr "система завантажена з MILO\n"
-
-#~ msgid "Ruffian BCD clock\n"
-#~ msgstr "Ruffian BCD годинник\n"
-
-#~ msgid "clockport adjusted to 0x%x\n"
-#~ msgstr "порт годинника настроєно на 0x%x\n"
-
-#~ msgid "funky TOY!\n"
-#~ msgstr "боязливий TOY!\n"
-
-#~ msgid "atomic %s failed for 1000 iterations!"
-#~ msgstr "помилка атомарної дії %s протягом 1000 ітерацій!"
-
-#~ msgid "cmos_read(): write to control address %X failed"
-#~ msgstr "cmos_read(): спроба запису за контрольною адресою %X зазнала невдачі"
-
-#~ msgid "cmos_read(): read from data address %X failed"
-#~ msgstr "cmos_read(): спроба читання за адресою %X зазнала невдачі"
-
-#~ msgid "cmos_write(): write to control address %X failed"
-#~ msgstr "cmos_write(): спроба запису за контрольною адресою %X зазнала невдачі"
-
-#~ msgid "cmos_write(): write to data address %X failed"
-#~ msgstr "cmos_write(): спроба запису даних за адресою %X зазнала невдачі"
-
-#~ msgid "I failed to get permission because I didn't try."
-#~ msgstr "Не вдалося отримати дозвіл, оскільки не було зроблено спроби."
-
-#~ msgid "unable to get I/O port access:  the iopl(3) call failed."
-#~ msgstr "не вдалося отримати доступ до порту введення-виведення:  помилка системного виклику iopl(3)."
-
-#~ msgid "Probably you need root privileges.\n"
-#~ msgstr "Можливо слід мати права адміністратора.\n"
-
-#~ msgid "failed to initialize output line"
-#~ msgstr "не вдалося ініціалізувати рядок виведення"
-
-#~ msgid "error: can not set signal handler"
-#~ msgstr "помилка: не вдалося встановити обробник сигналу"
-
-#~ msgid "error: can not restore signal handler"
-#~ msgstr "помилка: не вдалося відновити обробки сигналу"
-
-#~ msgid "only root can mount %s on %s"
-#~ msgstr "лише адміністратор може монтувати %s до %s"
-
-#~ msgid "%s is used as read only loop, mounting read-only"
-#~ msgstr "%s використовується як придатний лише для читання петльовий пристрій, монтуємо лише для читання"
-
-#~ msgid ""
-#~ "%s: more filesystems detected. This should not happen,\n"
-#~ "       use -t <type> to explicitly specify the filesystem type or\n"
-#~ "       use wipefs(8) to clean up the device."
-#~ msgstr ""
-#~ "%s: виявлено додаткові файлові системи. Цього не мало трапитися,\n"
-#~ "       скористайтеся -t <тип>, щоб явно вказати тип файлової системи або\n"
-#~ "       wipefs(8), щоб спорожнити пристрій."
-
-#~ msgid "I could not determine the filesystem type, and none was specified"
-#~ msgstr "Не вдалося визначити тип файлової системи, та тип явно не вказаний"
-
-#~ msgid "you must specify the filesystem type"
-#~ msgstr "вам слід вказати тип файлової системи"
-
-#~ msgid "mount source not defined"
-#~ msgstr "джерело монтування не визначено"
-
-#~ msgid "%s: mount failed"
-#~ msgstr "%s: не вдалося змонтувати"
-
-#~ msgid "%s: filesystem mounted, but mount(8) failed"
-#~ msgstr "%s: файлову систему змонтовано, але спроба виконання mount(8) завершилася помилкою"
-
-#~ msgid "%s is busy"
-#~ msgstr "%s зайнято"
-
-#~ msgid "       %s is already mounted on %s\n"
-#~ msgstr "       %s вже змонтовано до %s\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "       In some cases useful info is found in syslog - try\n"
-#~ "       dmesg | tail or so.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "       Іноді корисну інформацію можна знайти у системному журналі,\n"
-#~ "       спробуйте - dmesg | tail чи щось подібне.\n"
-
-#~ msgid "unrecognized option '%c'"
-#~ msgstr "нерозпізнаний параметр «%c»"
-
-#~ msgid ""
-#~ "%s: target is busy\n"
-#~ "        (In some cases useful info about processes that\n"
-#~ "         use the device is found by lsof(8) or fuser(1).)"
-#~ msgstr ""
-#~ "%s: пристрій призначення зайнято.\n"
-#~ "        (Іноді корисні дані щодо процесів, які використовують\n"
-#~ "         пристрій, можна отримати за допомогою lsof(8) або fuser(1))"
-
-#~ msgid "%s: mountpoint not found"
-#~ msgstr "%s: точки монтування не знайдено"
-
-#~ msgid "line %d is too long, output will be truncated"
-#~ msgstr "рядок %d є надто довгим, виведені дані буде обрізано"
-
-#~ msgid "incomplete write to \"%s\" (written %zd, expected %zd)\n"
-#~ msgstr "незавершено запис до «%s» (записано %zd, мало бути записано %zd)\n"
-
-#~ msgid "%s: cannot add inotify watch (limit of inotify watches was reached)."
-#~ msgstr "%s: не вдалося додати пункт спостереження inotify (досягнуто обмеження на кількість спостережень inotify)."
-
-#~ msgid " %s [option] <file>\n"
-#~ msgstr " %s [параметр] <файл>\n"
-
-#~ msgid "Follow the growth of a log file.\n"
-#~ msgstr "Відтворювати зростання файла журналу.\n"
-
-#~ msgid " -n, --lines <number>   output the last <number> lines\n"
-#~ msgstr " -n, --lines <n>        вивести останні <n> рядків\n"
-
-#~ msgid " -<number>              same as '-n <number>'\n"
-#~ msgstr " -<n>                   те саме, що і «-n <n>»\n"
-
-#~ msgid "Warning: use of 'tailf' is deprecated, use 'tail -f' instead.\n"
-#~ msgstr "Попередження: використання «tailf» вважається застарілим, використовуйте «tail -f».\n"
-
-#~ msgid "no input file specified"
-#~ msgstr "не вказано файла вхідних даних"
-
-#~ msgid "%s: is not a file"
-#~ msgstr "%s: не є файлом"
-
-#~ msgid "Filesystem label:"
-#~ msgstr "Мітка файлової системи:"
-
-#~ msgid "failed to set PATH"
-#~ msgstr "не вдалося встановити PATH"
-
-#~ msgid "%d"
-#~ msgstr "%d"
-
-#~ msgid "use of 'kill --pid' option as command name is deprecated"
-#~ msgstr "використання параметра «kill --pid» як назви команди вважається застарілим"
-
-#~ msgid "%4d-%.2d-%.2d %02d:%02d:%02d.%06ld%+02d:%02d\n"
-#~ msgstr "%4d-%.2d-%.2d %02d:%02d:%02d.%06ld%+02d:%02d\n"
-
-#~ msgid "bad timeout value: %s"
-#~ msgstr "неправильне значення періоду очікування: %s"
-
-#~ msgid "expected a number, but got '%s'"
-#~ msgstr "очікувалося число, а отримано «%s»"
-
-#~ msgid "divisor '%s'"
-#~ msgstr "дільник «%s»"
-
-#~ msgid "argument error: %s"
-#~ msgstr "помилковий аргумент: %s"
-
-#~ msgid "tty path %s too long"
-#~ msgstr "шлях tty %s є надто довгим"
