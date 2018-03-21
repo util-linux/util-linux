@@ -20,7 +20,7 @@
 
 /**
  * SECTION: dos
- * @title: DOS (MBR)
+ * @title: DOS
  * @short_description: disk label specific functions
  *
  */
