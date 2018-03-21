@@ -2,14 +2,14 @@
 # Copyright (C) 2005 Free Software Foundation, Inc.
 # This file is distributed under the same license as the util-linux package.
 # Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>, 2006.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2009-2017.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2009-2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.31-rc2\n"
+"Project-Id-Version: util-linux 2.32-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-03-01 14:02+0100\n"
-"PO-Revision-Date: 2017-11-21 17:20+0100\n"
+"POT-Creation-Date: 2018-03-01 14:21+0100\n"
+"PO-Revision-Date: 2018-03-02 18:30+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -52,8 +52,8 @@ msgstr "za mało argumentów"
 #: disk-utils/sfdisk.c:765 disk-utils/sfdisk.c:824 disk-utils/sfdisk.c:898
 #: disk-utils/sfdisk.c:939 disk-utils/sfdisk.c:969 disk-utils/sfdisk.c:1006
 #: disk-utils/sfdisk.c:1565 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:640
-#: lib/path.c:95 lib/path.c:113 login-utils/islocal.c:87 login-utils/last.c:674
-#: login-utils/sulogin.c:443 login-utils/sulogin.c:480
+#: lib/path.c:95 lib/path.c:113 login-utils/islocal.c:87
+#: login-utils/last.c:674 login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:134 login-utils/utmpdump.c:352
 #: login-utils/utmpdump.c:374 login-utils/vipw.c:261 login-utils/vipw.c:279
 #: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
@@ -61,14 +61,14 @@ msgstr "za mało argumentów"
 #: sys-utils/dmesg.c:524 sys-utils/eject.c:499 sys-utils/eject.c:695
 #: sys-utils/fallocate.c:396 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:71
 #: sys-utils/hwclock.c:227 sys-utils/hwclock.c:814 sys-utils/hwclock-rtc.c:400
-#: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
-#: sys-utils/rfkill.c:193 sys-utils/rfkill.c:544 sys-utils/rtcwake.c:136
-#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:276 sys-utils/setpriv.c:614
-#: sys-utils/setpriv.c:637 sys-utils/swapon.c:375 sys-utils/swapon.c:518
-#: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
-#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:508
-#: term-utils/agetty.c:2752 term-utils/mesg.c:127 term-utils/script.c:460
-#: term-utils/script.c:468 term-utils/script.c:559
+#: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392
+#: sys-utils/nsenter.c:129 sys-utils/rfkill.c:193 sys-utils/rfkill.c:544
+#: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:286 sys-utils/setpriv.c:276
+#: sys-utils/setpriv.c:614 sys-utils/setpriv.c:637 sys-utils/swapon.c:375
+#: sys-utils/swapon.c:518 sys-utils/switch_root.c:167 sys-utils/unshare.c:108
+#: sys-utils/unshare.c:123 sys-utils/wdctl.c:322 sys-utils/wdctl.c:378
+#: sys-utils/zramctl.c:508 term-utils/agetty.c:2752 term-utils/mesg.c:127
+#: term-utils/script.c:460 term-utils/script.c:468 term-utils/script.c:559
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
 #: text-utils/rev.c:141 text-utils/ul.c:230
@@ -480,7 +480,8 @@ msgstr "Nie udało się zapisać skryptu %s"
 msgid "Select label type"
 msgstr "Proszę wybrać typ etykiety"
 
-#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074
+#: disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "Urządzenie nie zawiera żadnej znanej tablicy partycji."
 
@@ -741,8 +742,8 @@ msgstr ""
 "Kontynuacja... "
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:602 sys-utils/blkdiscard.c:85
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:602
+#: sys-utils/blkdiscard.c:85 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcje] <urządzenie>\n"
@@ -1077,20 +1078,21 @@ msgstr "nie obsługiwany tryb wymazywania"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Właściwości urządzenia (rozmiar sektora i geometria) powinny być używane tylko z jednym określonym urządzeniem."
 
-#: disk-utils/fdisk.c:1033 disk-utils/fdisk.c:1048 disk-utils/fsck.cramfs.c:695
-#: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:787
-#: disk-utils/partx.c:967 disk-utils/raw.c:137 disk-utils/raw.c:150
-#: disk-utils/raw.c:162 disk-utils/raw.c:203 misc-utils/cal.c:520
-#: misc-utils/findfs.c:58 misc-utils/look.c:150 misc-utils/whereis.c:573
-#: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
-#: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
-#: sys-utils/chcpu.c:344 sys-utils/chmem.c:419 sys-utils/dmesg.c:1469
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
-#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:630 sys-utils/mount.c:698
-#: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
-#: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:988
-#: sys-utils/switch_root.c:250 sys-utils/umount.c:528 term-utils/setterm.c:1176
-#: text-utils/col.c:233 text-utils/more.c:337
+#: disk-utils/fdisk.c:1033 disk-utils/fdisk.c:1048
+#: disk-utils/fsck.cramfs.c:695 disk-utils/mkfs.bfs.c:198
+#: disk-utils/mkfs.cramfs.c:787 disk-utils/partx.c:967 disk-utils/raw.c:137
+#: disk-utils/raw.c:150 disk-utils/raw.c:162 disk-utils/raw.c:203
+#: misc-utils/cal.c:520 misc-utils/findfs.c:58 misc-utils/look.c:150
+#: misc-utils/whereis.c:573 misc-utils/whereis.c:584 misc-utils/whereis.c:595
+#: misc-utils/whereis.c:637 schedutils/chrt.c:504 schedutils/ionice.c:262
+#: schedutils/taskset.c:189 sys-utils/chcpu.c:344 sys-utils/chmem.c:419
+#: sys-utils/dmesg.c:1469 sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:888 sys-utils/lscpu.c:2025 sys-utils/lsmem.c:630
+#: sys-utils/mount.c:698 sys-utils/mount.c:711 sys-utils/mount.c:780
+#: sys-utils/mountpoint.c:181 sys-utils/pivot_root.c:72
+#: sys-utils/swapoff.c:230 sys-utils/swapon.c:988 sys-utils/switch_root.c:250
+#: sys-utils/umount.c:528 term-utils/setterm.c:1176 text-utils/col.c:233
+#: text-utils/more.c:337
 msgid "bad usage"
 msgstr "błędna składnia"
 
@@ -1359,7 +1361,7 @@ msgstr "utworzenie tablicy partycji typu IRIX (SGI)"
 
 #: disk-utils/fdisk-menu.c:154
 msgid "Geometry (for the current label)"
-msgstr ""
+msgstr "Geometria (dla bieżącej etykiety)"
 
 #: disk-utils/fdisk-menu.c:155
 msgid "change number of cylinders"
@@ -2013,9 +2015,9 @@ msgid "unable to test CRC: old cramfs format"
 msgstr "nie można sprawdzić CRC: stary format cramfs"
 
 #: disk-utils/fsck.cramfs.c:236
-#, fuzzy, c-format
+#, c-format
 msgid "failed to read %<PRIu32> bytes from file %s"
-msgstr "nie udało się odczytać pliku skryptu %s"
+msgstr "nie udało się odczytać %<PRIu32> bajtów z pliku %s"
 
 #: disk-utils/fsck.cramfs.c:274
 msgid "crc error"
@@ -3982,14 +3984,12 @@ msgid "no disk device specified"
 msgstr "nie podano urządzenia dyskowego"
 
 #: disk-utils/sfdisk.c:830
-#, fuzzy
 msgid "cannot switch to PMBR"
-msgstr "nie można wykonać stat na %s"
+msgstr "nie można przełączyć na PMBR"
 
 #: disk-utils/sfdisk.c:832
-#, fuzzy
 msgid "toggle boot flags is supported for MBR or PMBR only"
-msgstr "zmiana flag rozruchu jest obsługiwana tylko dla MBR"
+msgstr "zmiana flag rozruchu jest obsługiwane tylko dla MBR lub PMBR"
 
 #: disk-utils/sfdisk.c:867 disk-utils/sfdisk.c:914 disk-utils/sfdisk.c:1037
 #: disk-utils/sfdisk.c:1101 disk-utils/sfdisk.c:1156 disk-utils/sfdisk.c:1212
@@ -4151,14 +4151,12 @@ msgid "   <type>   The partition type.  Default is a Linux data partition.\n"
 msgstr "   <typ>    Typ partycji. Domyślnie linuksowa partycja danych.\n"
 
 #: disk-utils/sfdisk.c:1315
-#, fuzzy
 msgid "            MBR: hex or L,S,E,X,U,R,V shortcuts.\n"
-msgstr "            MBR: szesnastkowo lub skrótem L,S,E,X.\n"
+msgstr "            MBR: szesnastkowo lub skrótem L,S,E,X,U,R,V.\n"
 
 #: disk-utils/sfdisk.c:1316
-#, fuzzy
 msgid "            GPT: UUID or L,S,H,U,R,V shortcuts.\n"
-msgstr "            GPT: UUID lub skrótem L,S,H.\n"
+msgstr "            GPT: UUID lub skrótem L,S,H,U,R,V.\n"
 
 #: disk-utils/sfdisk.c:1319
 msgid "   <bootable>  Use '*' to mark an MBR partition as bootable.\n"
@@ -4333,9 +4331,8 @@ msgstr ""
 " %1$s [opcje] <polecenie>\n"
 
 #: disk-utils/sfdisk.c:1846
-#, fuzzy
 msgid " -A, --activate <dev> [<part> ...] list or set bootable (P)MBR partitions\n"
-msgstr " -A, --activate <urz> [<part> ...] lista lub ustawienie partycji rozruchowych MBR\n"
+msgstr " -A, --activate <urz> [<part> ...] lista lub ustawienie partycji rozruchowych (P)MBR\n"
 
 #: disk-utils/sfdisk.c:1847
 msgid " -d, --dump <dev>                  dump partition table (usable for later input)\n"
@@ -5931,24 +5928,20 @@ msgid "Ceph crypt disk in creation"
 msgstr "Ceph - zaszyfrowany dysk podczas tworzenia"
 
 #: libfdisk/src/gpt.c:275
-#, fuzzy
 msgid "VMware Diagnostic"
-msgstr "Compaq diagnostics"
+msgstr "VMware Diagnostic"
 
 #: libfdisk/src/gpt.c:276
-#, fuzzy
 msgid "VMware Virtual SAN"
-msgstr "VMware VMFS"
+msgstr "VMware Virtual SAN"
 
 #: libfdisk/src/gpt.c:277
-#, fuzzy
 msgid "VMware Virsto"
-msgstr "VMware VMFS"
+msgstr "VMware Virsto"
 
 #: libfdisk/src/gpt.c:278
-#, fuzzy
 msgid "VMware Reserved"
-msgstr "ChromeOS - zarezerwowana"
+msgstr "VMware - zarezerwowana"
 
 #: libfdisk/src/gpt.c:281
 msgid "OpenBSD data"
@@ -5975,9 +5968,9 @@ msgid "Last LBA specified by script is out of range."
 msgstr "Ostatni LBA podane przez skrypt jest poza zakresem."
 
 #: libfdisk/src/gpt.c:895
-#, fuzzy, c-format
+#, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
-msgstr "niezgodność rozmiaru PMBR GPT (%<PRIu64> != %<PRIu64>) zostanie poprawiona przy zapisie (w)."
+msgstr "niezgodność rozmiaru PMBR GPT (%<PRIu64> != %<PRIu64>) zostanie naprawiona przy zapisie."
 
 #: libfdisk/src/gpt.c:917
 msgid "gpt: stat() failed"
@@ -6028,7 +6021,7 @@ msgstr "Główna tablica GPT jest uszkodzona, ale zapasowa wygląda dobrze, wię
 
 #: libfdisk/src/gpt.c:1618
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
-msgstr ""
+msgstr "Zapasowa tablica GPT nie jest na końcu urządzenia. Ten problem zostanie naprawiony przy zapisie."
 
 #: libfdisk/src/gpt.c:1800
 #, c-format
@@ -6046,9 +6039,8 @@ msgid "Partition UUID changed from %s to %s."
 msgstr "UUID partycji zmieniony z %s na %s."
 
 #: libfdisk/src/gpt.c:1914
-#, fuzzy
 msgid "Failed to translate partition name, name not changed."
-msgstr "nie udało się przydzielić nazwy partycji"
+msgstr "Nie udało się przetłumaczyć nazwy partycji, nazwa nie została zmieniona."
 
 #: libfdisk/src/gpt.c:1916
 #, c-format
@@ -7073,12 +7065,12 @@ msgstr "%s: nie obsługiwana wersja obszaru wymiany '%s'"
 
 #: lib/timeutils.c:459
 msgid "format_iso_time: buffer overflow."
-msgstr ""
+msgstr "format_iso_time: przepełnienie bufora."
 
 #: lib/timeutils.c:477 lib/timeutils.c:501
-#, fuzzy, c-format
+#, c-format
 msgid "time %ld is out of range."
-msgstr "Wartość spoza zakresu."
+msgstr "czas %ld jest poza zakresem."
 
 #: login-utils/chfn.c:96 login-utils/chsh.c:74
 #, c-format
@@ -8794,18 +8786,16 @@ msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          poniedziałek jako pierwszy dzień tygodnia\n"
 
 #: misc-utils/cal.c:1108
-#, fuzzy
 msgid " -j, --julian          use day-of-year for all calendars\n"
-msgstr " -j, --julian          wypisywanie dat juliańskich\n"
+msgstr " -j, --julian          użycie dnia roku dla wszystkich kalendarzy\n"
 
 #: misc-utils/cal.c:1109
 msgid "     --reform <val>    Gregorian reform date (1752|gregorian|iso|julian)\n"
-msgstr ""
+msgstr "     --reform <wart>   data reformy gregoriańskiej (1752|gregorian|iso|julian)\n"
 
 #: misc-utils/cal.c:1110
-#, fuzzy
 msgid "     --iso             alias for --reform=iso\n"
-msgstr "     --nohints                bez wypisywania podpowiedzi\n"
+msgstr "     --iso             alias dla --reform=iso\n"
 
 #: misc-utils/cal.c:1111
 msgid " -y, --year            show the whole year\n"
@@ -10134,9 +10124,8 @@ msgid "PID of the process holding the lock"
 msgstr "PID procesu trzymającego blokadę"
 
 #: misc-utils/lslocks.c:75
-#, fuzzy
 msgid "kind of lock"
-msgstr "rozmiar blokady"
+msgstr "rodzaj blokady"
 
 #: misc-utils/lslocks.c:76
 msgid "size of the lock"
@@ -11326,8 +11315,8 @@ msgstr "niezrozumiały offset"
 msgid "failed to parse step"
 msgstr "niezrozumiały krok"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398 sys-utils/fallocate.c:373
-#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:333
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398
+#: sys-utils/fallocate.c:373 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:333
 msgid "unexpected number of arguments"
 msgstr "nieoczekiwana liczba argumentów"
 
@@ -11686,14 +11675,14 @@ msgid "%s already disabled\n"
 msgstr "%s już wyłączony\n"
 
 #: sys-utils/chmem.c:219
-#, fuzzy, c-format
+#, c-format
 msgid "%s enable failed: Zone mismatch"
-msgstr "%s: włączenie nie powiodło się"
+msgstr "%s: włączenie nie powiodło się: Niezgodność strefy"
 
 #: sys-utils/chmem.c:223
-#, fuzzy, c-format
+#, c-format
 msgid "%s disable failed: Zone mismatch"
-msgstr "%s: wyłączenie nie powiodło się"
+msgstr "%s: wyłączenie nie powiodło się: Niezgodność strefy"
 
 #: sys-utils/chmem.c:238
 #, c-format
@@ -11774,46 +11763,41 @@ msgid "Set a particular size or range of memory online or offline.\n"
 msgstr "Ustawienie określonego rozmiaru lub przedziału pamięci jako aktywnej lub nieaktywnej.\n"
 
 #: sys-utils/chmem.c:340
-#, fuzzy
 msgid " -e, --enable       enable memory\n"
-msgstr " -e, --enable   włączenie pamięci\n"
+msgstr " -e, --enable       włączenie pamięci\n"
 
 #: sys-utils/chmem.c:341
-#, fuzzy
 msgid " -d, --disable      disable memory\n"
-msgstr " -d, --disable  wyłączenie pamięci\n"
+msgstr " -d, --disable      wyłączenie pamięci\n"
 
 #: sys-utils/chmem.c:342
-#, fuzzy
 msgid " -b, --blocks       use memory blocks\n"
-msgstr " -b, --blocks   użycie bloków pamięci\n"
+msgstr " -b, --blocks       użycie bloków pamięci\n"
 
 #: sys-utils/chmem.c:343
 msgid " -z, --zone <name>  select memory zone (see below)\n"
-msgstr ""
+msgstr " -z, --zona <nazwa> wybór strefy pamięci (p. niżej)\n"
 
 #: sys-utils/chmem.c:344
-#, fuzzy
 msgid " -v, --verbose      verbose output\n"
-msgstr " -v, --verbose  tryb szczegółowy\n"
+msgstr " -v, --verbose      tryb szczegółowy\n"
 
 #: sys-utils/chmem.c:347
-#, fuzzy
 msgid ""
 "\n"
 "Supported zones:\n"
 msgstr ""
 "\n"
-"Obsługiwane kategorie logowania:\n"
+"Obsługiwane strefy:\n"
 
 #: sys-utils/chmem.c:429
 msgid "zone ignored, no valid_zones sysfs attribute present"
-msgstr ""
+msgstr "strefa zignorowana, brak atrybutu sysfs valid_zones"
 
 #: sys-utils/chmem.c:434
-#, fuzzy, c-format
+#, c-format
 msgid "unknown memory zone: %s"
-msgstr "nieznana nazwa miesiąca: %s"
+msgstr "nieznana strefa pamięci: %s"
 
 #: sys-utils/ctrlaltdel.c:28
 #, c-format
@@ -11977,7 +11961,7 @@ msgstr " -P, --nopager               bez przepuszczania wyjścia do stronicowani
 
 #: sys-utils/dmesg.c:286
 msgid " -p, --force-prefix          force timestamp output on each line of multi-line messages\n"
-msgstr ""
+msgstr " -p, --force-prefix          wymuszenie wypisania czasu w każdym z wielu wierszy komunikatu\n"
 
 #: sys-utils/dmesg.c:287
 msgid " -r, --raw                   print the raw message buffer\n"
@@ -12912,9 +12896,8 @@ msgid "Cannot access the Hardware Clock via any known method."
 msgstr "Nie można uzyskać dostępu do zegara sprzętowego żadną znaną metodą."
 
 #: sys-utils/hwclock.c:889
-#, fuzzy
 msgid "Use the --verbose option to see the details of our search for an access method."
-msgstr "Proszę użyć opcji --debug, aby zobaczyć szczegóły poszukiwania metody dostępu."
+msgstr "Proszę użyć opcji --verbose, aby zobaczyć szczegóły poszukiwania metody dostępu."
 
 #: sys-utils/hwclock.c:939
 #, c-format
@@ -13042,14 +13025,12 @@ msgid "     --adjfile <file> use an alternate file to %1$s\n"
 msgstr "     --adjfile <plik> użycie alternatywnego pliku zamiast %1$s\n"
 
 #: sys-utils/hwclock.c:1093
-#, fuzzy
 msgid "     --test           dry run; implies --verbose"
-msgstr "     --test           testowe uruchomienie; włącza --debug"
+msgstr "     --test           testowe uruchomienie; włącza --verbose"
 
 #: sys-utils/hwclock.c:1094
-#, fuzzy
 msgid " -v, --verbose        display more details"
-msgstr " -v, --verbose          wypisanie większej ilości szczegółów\n"
+msgstr " -v, --verbose        wypisanie większej ilości szczegółów"
 
 #: sys-utils/hwclock.c:1186
 msgid "Unable to connect to audit system"
@@ -13057,7 +13038,7 @@ msgstr "Nie można połączyć się z systemem audytu"
 
 #: sys-utils/hwclock.c:1210
 msgid "use --verbose, --debug has been deprecated."
-msgstr ""
+msgstr "proszę użyć opcji --verbose, --debug jest wycofywana."
 
 #: sys-utils/hwclock.c:1309
 #, c-format
@@ -15051,9 +15032,8 @@ msgid "numa node of memory"
 msgstr "węzeł pamięci NUMA"
 
 #: sys-utils/lsmem.c:134
-#, fuzzy
 msgid "valid zones for the memory range"
-msgstr "rozmiar przedziału pamięci"
+msgstr "prawidłowe strefy dla przedziału pamięci"
 
 #: sys-utils/lsmem.c:261
 msgid "online"
@@ -15097,9 +15077,8 @@ msgid " -a, --all            list each individual memory block\n"
 msgstr " -a, --all            wyszczególnienie wszystkich bloków pamięci\n"
 
 #: sys-utils/lsmem.c:511
-#, fuzzy
 msgid " -S, --split <list>   split ranges by specified columns\n"
-msgstr " -o, --output <lista>      kolumny do wypisania\n"
+msgstr " -S, --split <lista>  podział przedziałów wg podanych kolumn\n"
 
 #: sys-utils/lsmem.c:512
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
@@ -15163,11 +15142,11 @@ msgstr "nazwa użytkownika PID-u"
 
 #: sys-utils/lsns.c:108
 msgid "namespace ID as used by network subsystem"
-msgstr ""
+msgstr "ID przestrzeni nazw używane przez podsystem sieciowy"
 
 #: sys-utils/lsns.c:109
 msgid "nsfs mountpoint (usually used network subsystem)"
-msgstr ""
+msgstr "punkt montowania nsfs (zwykle używany przez podsystem sieciowy)"
 
 #: sys-utils/lsns.c:719
 msgid "failed to add line to output"
@@ -15187,9 +15166,8 @@ msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -p, --task <pid>       wypisanie przestrzeni nazw procesów\n"
 
 #: sys-utils/lsns.c:908
-#, fuzzy
 msgid " -W, --nowrap           don't use multi-line representation\n"
-msgstr " -n, --no-mtab           bez zapisu do /etc/mtab\n"
+msgstr " -W, --nowrap           bez używania reprezentacji wielowierszowej\n"
 
 #: sys-utils/lsns.c:909
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"
@@ -16018,7 +15996,7 @@ msgid "%d (%s) old priority %d, new priority %d\n"
 msgstr "%d (%s): stary priorytet %d, nowy priorytet %d\n"
 
 #: sys-utils/renice.c:152
-#, fuzzy, c-format
+#, c-format
 msgid "invalid priority '%s'"
 msgstr "błędny priorytet '%s'"
 
@@ -16198,9 +16176,8 @@ msgid "set rtc wake alarm failed"
 msgstr "ustawianie budzika RTC nie powiodło się"
 
 #: sys-utils/rtcwake.c:274
-#, fuzzy
 msgid "discarding stdin"
-msgstr "wyrównanie usuwania"
+msgstr "porzucanie stdin"
 
 #: sys-utils/rtcwake.c:325
 #, c-format
@@ -16840,9 +16817,8 @@ msgid " -c, --ctty     set the controlling terminal to the current one\n"
 msgstr " -c, --ctty     ustawienie terminala sterującego na bieżący\n"
 
 #: sys-utils/setsid.c:41
-#, fuzzy
 msgid " -f, --fork     always fork\n"
-msgstr " -f, --force      wymuszenie sprawdzenia\n"
+msgstr " -f, --fork     zawsze odgałęzienie nowego procesu\n"
 
 #: sys-utils/setsid.c:42
 msgid " -w, --wait     wait program to exit, and use the same return\n"
@@ -17488,7 +17464,7 @@ msgstr " -f, --fork                wykonanie fork przed uruchomieniem <programu>
 
 #: sys-utils/unshare.c:263
 msgid "     --kill-child[=<signame>]  when dying, kill the forked child (implies --fork); defaults to SIGKILL\n"
-msgstr ""
+msgstr "     --kill-child[=<sygnał>]   przy śmierci, zabicie potomka (włącza --fork); domyślnie SIGKILL\n"
 
 #: sys-utils/unshare.c:264
 msgid "     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"
@@ -17764,9 +17740,8 @@ msgid "Set up and control zram devices.\n"
 msgstr "Konfiguracja i sterowanie urządzeniami zram.\n"
 
 #: sys-utils/zramctl.c:541
-#, fuzzy
 msgid " -a, --algorithm lzo|lz4|lz4hc|deflate|842   compression algorithm to use\n"
-msgstr " -a, --algorithm lzo|lz4   wybór algorytmu kompresji\n"
+msgstr " -a, --algorithm lzo|lz4|lz4hc|deflate|842   wybór algorytmu kompresji\n"
 
 #: sys-utils/zramctl.c:542
 msgid " -b, --bytes               print sizes in bytes rather than in human readable format\n"
@@ -18891,9 +18866,8 @@ msgid " -E, --table-noextreme <columns>  don't count long text from the columns 
 msgstr " -E, --table-noextreme <kolumny>  bez liczenia długich tekstów z kolumn do ich szerokości\n"
 
 #: text-utils/column.c:645
-#, fuzzy
 msgid " -d, --table-noheadings           don't print header\n"
-msgstr " -n, --noheadings          bez wypisywania nagłówków\n"
+msgstr " -d, --table-noheadings           bez wypisywania nagłówka\n"
 
 #: text-utils/column.c:646
 msgid " -e, --table-header-repeat        repeat header for each page\n"
@@ -19524,30 +19498,3 @@ msgstr "nieznana sekwencja specjalna na wejściu: %o, %o"
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "Linia wejściowa zbyt długa."
-
-#~ msgid "Geometry"
-#~ msgstr "Geometria"
-
-#~ msgid "kind of lock: FL_FLOCK or FL_POSIX."
-#~ msgstr "rodzaj blokady: FL_FLOCK lub FL_POSIX."
-
-#~ msgid "unable to exec /bin/umount of `%s'"
-#~ msgstr "nie udało się uruchomić /bin/umount `%s'"
-
-#~ msgid "sleeping ~%d usec\n"
-#~ msgstr "oczekiwanie ~%d usec\n"
-
-#~ msgid "%ld.%06ld < %ld.%06ld (%.6f)\n"
-#~ msgstr "%ld.%06ld < %ld.%06ld (%.6f)\n"
-
-#~ msgid " -D, --debug          display more details"
-#~ msgstr " -D, --debug          wypisanie większej ilości szczegółów"
-
-#~ msgid "failed to read from: %s"
-#~ msgstr "nie udało się odczytać z: %s"
-
-#~ msgid "cannot execute: %s"
-#~ msgstr "nie można uruchomić: %s"
-
-#~ msgid "unsupported algorithm: %s"
-#~ msgstr "nie obsługiwany algorytm: %s"
