@@ -28,7 +28,14 @@ extern "C" {
 #include <stdio.h>
 #include <mntent.h>
 #include <sys/types.h>
-#include <sys/mount.h>
+
+/* Make sure libc MS_* definitions are used by default. Note that MS_* flags
+ * may be already defined by linux/fs.h or another file -- in this case we
+ * don't want to include sys/mount.h at all to avoid collisions.
+ */
+#ifndef MS_RDONLY
+# include <sys/mount.h>
+#endif
 
 #define LIBMOUNT_VERSION   "@LIBMOUNT_VERSION@"
 #define LIBMOUNT_MAJOR_VERSION   @LIBMOUNT_MAJOR_VERSION@
