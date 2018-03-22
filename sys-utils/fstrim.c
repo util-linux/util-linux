@@ -36,10 +36,6 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 
-#ifdef HAVE_SYS_FS_H
-# include <linux/fs.h>
-#endif
-
 #include "nls.h"
 #include "strutils.h"
 #include "c.h"
@@ -49,6 +45,10 @@
 
 #include <libmount.h>
 
+
+/* We cannot include linux/fs.h due to MS_* constants collision with
+ * sys/mount.h (and libmount.h)
+ */
 #ifndef FITRIM
 struct fstrim_range {
 	uint64_t start;
