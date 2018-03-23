@@ -194,6 +194,19 @@ static struct arch_domain *init_arch_domains(void)
 		{PER_LINUX,	"alphaev6",	"alpha"},
 		{PER_LINUX,	"alphaev67",	"alpha"},
 #endif
+#if defined(__e2k__)
+		{PER_LINUX,	"e2k",      "e2k"},
+		{PER_LINUX,	"e2kv4",	"e2k"},
+		{PER_LINUX,	"e2kv5",	"e2k"},
+		{PER_LINUX,	"e2kv6",	"e2k"},
+		{PER_LINUX,	"e2k4c",	"e2k"},
+		{PER_LINUX,	"e2k8c",	"e2k"},
+		{PER_LINUX,	"e2k1cp",	"e2k"},
+		{PER_LINUX,	"e2k8c2",	"e2k"},
+		{PER_LINUX,	"e2k12c",	"e2k"},
+		{PER_LINUX,	"e2k16c",	"e2k"},
+		{PER_LINUX,	"e2k2c3",	"e2k"},
+#endif
 		/* place holder, will be filled up at runtime */
 		{-1,		NULL,		NULL},
 		{-1,		NULL,		NULL}
