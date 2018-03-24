@@ -26,7 +26,9 @@ Show which files were renamed, if any.
 Do not make any changes.
 .TP
 .BR \-o , " \-\-no\-overwrite"
-Do not overwrite existing files.
+Do not overwrite existing files.  When
+.BR \-\-symlink
+is active, do not overwrite symlinks pointing to existing targets.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
