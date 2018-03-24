@@ -73,9 +73,12 @@ rename '_with_long_name' '' file_with_long_name.*
 .RE
 will remove the substring in the filenames.
 .SH WARNING
-The renaming has no safeguards except the
-.B \-\-no\-act
-option.  If the user has
+The renaming has no safeguards by default or without any one of the options
+.B \-\-no-overwrite\fR,
+.B \-\-interactive
+or
+.B \-\-no\-act\fR.
+If the user has
 permission to rewrite file names, the command will perform the action without
 any questions.  For example, the result can be quite drastic when the command
 is run as root in the /lib directory.  Always make a backup before running the
