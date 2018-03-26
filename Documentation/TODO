@@ -13,6 +13,9 @@ column
    - add option to NOT ignore empty lines
      https://github.com/karelzak/util-linux/issues/593
 
+   - add option to NOT ignore line leading empty space
+     https://bugzilla.redhat.com/show_bug.cgi?id=1560283
+
 script
 ------
    - (!) add terminal type ($TERM), columns and lines to the header line, something like:
