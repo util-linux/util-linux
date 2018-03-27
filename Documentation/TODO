@@ -8,6 +8,13 @@ libsmartcols
      string) for everything. See for example SIZE in "lsblk --json --bytes"
      output.
 
+cal
+---
+   - add option to print calendar in vertical way
+     https://github.com/karelzak/util-linux/issues/604
+   - support another --reforms, see for example freebsd version
+     https://github.com/freebsd/freebsd/blob/master/usr.bin/ncal/ncal.c#L72
+
 column
 ------
    - add option to NOT ignore empty lines
