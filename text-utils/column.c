@@ -452,7 +452,7 @@ static int read_input(struct column_control *ctl, FILE *fp)
 		if (!str || !*str)
 			continue;
 
-		wcs = mbs_to_wcs(str);
+		wcs = mbs_to_wcs(buf);
 		if (!wcs)
 			err(EXIT_FAILURE, _("read failed"));
 
