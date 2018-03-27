@@ -59,7 +59,7 @@ struct namei {
 	struct namei	*next;		/* next item */
 	int		level;
 	int		mountpoint;	/* is mount point */
-	int		noent;		/* is this item not existing */
+	int		noent;		/* this item not existing (stores errno from stat()) */
 };
 
 static int flags;
@@ -151,9 +151,10 @@ new_namei(struct namei *parent, const char *path, const char *fname, int lev)
 	nm->level = lev;
 	nm->name = xstrdup(fname);
 
-	nm->noent = (lstat(path, &nm->st) == -1);
-	if (nm->noent)
+	if (lstat(path, &nm->st) != 0) {
+		nm->noent = errno;
 		return nm;
+	}
 
 	if (S_ISLNK(nm->st.st_mode))
 		readlink_to_namei(nm, path);
@@ -280,7 +281,7 @@ print_namei(struct namei *nm, char *path)
 				blanks += 1;
 			blanks += nm->level * 2;
 			printf("%*s ", blanks, "");
-			printf(_("%s - No such file or directory\n"), nm->name);
+			printf(_("%s - %s\n"), nm->name, strerror(nm->noent));
 			return -1;
 		}
 
