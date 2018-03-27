@@ -113,7 +113,8 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact, int no
 	if (string_replace(from, to, file, s, &newname))
 		return 0;
 	if (nooverwrite && access(newname, F_OK) == 0) {
-		printf(_("Skipping existing file: `%s'\n"), newname);
+		if (verbose)
+			printf(_("Skipping existing file: `%s'\n"), newname);
 		ret = 0;
 	}
 	else if (!noact && rename(s, newname) != 0) {
