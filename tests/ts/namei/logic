@@ -30,7 +30,6 @@ touch namei1/namei2/a namei1/namei2/b
 
 $TS_CMD_NAMEI namei1/namei2/a   >> $TS_OUTPUT 2>&1
 $TS_CMD_NAMEI namei1/namei2/b   >> $TS_OUTPUT 2>&1
-$TS_CMD_NAMEI namei1/namei2/a/b >> $TS_OUTPUT 2>&1
 
 ts_finalize
 
