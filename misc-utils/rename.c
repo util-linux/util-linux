@@ -18,6 +18,7 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #include <stdlib.h>
 #include <errno.h>
 #include <getopt.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -58,6 +59,11 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact, int
 	char *newname = NULL, *target = NULL;
 	int ret = 1;
 	struct stat sb;
+
+	if (faccessat(AT_FDCWD, s, F_OK, AT_SYMLINK_NOFOLLOW) != 0) {
+		warn(_("%s: not accessible"), s);
+		return 2;
+	}
 
 	if (lstat(s, &sb) == -1) {
 		warn(_("stat of %s failed"), s);
@@ -106,12 +112,18 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact, int no
 	char *newname = NULL, *file=NULL;
 	int ret = 1;
 
+	if (access(s, F_OK) != 0) {
+		warn(_("%s: not accessible"), s);
+		return 2;
+	}
+
 	if (strchr(from, '/') == NULL && strchr(to, '/') == NULL)
 		file = strrchr(s, '/');
 	if (file == NULL)
 		file = s;
 	if (string_replace(from, to, file, s, &newname))
 		return 0;
+
 	if (nooverwrite && access(newname, F_OK) == 0) {
 		if (verbose)
 			printf(_("Skipping existing file: `%s'\n"), newname);
