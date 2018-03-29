@@ -20,6 +20,7 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #include <getopt.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <termios.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -32,6 +33,8 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #define RENAME_EXIT_SOMEOK	2
 #define RENAME_EXIT_NOTHING	4
 #define RENAME_EXIT_UNEXPLAINED	64
+
+static int tty_cbreak = 0;
 
 static int string_replace(char *from, char *to, char *s, char *orig, char **newname)
 {
@@ -68,7 +71,9 @@ static int ask(char *name)
 	}
 	else {
 		buf[0] = c; buf[1] = '\0';
-		if (c != '\n')
+		if (c != '\n' && tty_cbreak) /* no purge necessary */
+			printf("\n");
+		else if (c != '\n')
 			while ((c = fgetc(stdin)) != '\n' && c != EOF);
 	}
 	if (rpmatch(buf) == RPMATCH_YES)
@@ -202,6 +207,7 @@ int main(int argc, char **argv)
 {
 	char *from, *to;
 	int i, c, ret = 0, verbose = 0, noact = 0, nooverwrite = 0, interactive = 0;
+	struct termios tio;
 	int (*do_rename)(char *from, char *to, char *s, int verbose, int noact,
 	                 int nooverwrite, int interactive) = do_file;
 
@@ -262,6 +268,14 @@ int main(int argc, char **argv)
 
 	if (!strcmp(from, to))
 		return RENAME_EXIT_NOTHING;
+
+	tty_cbreak = 0;
+	if (interactive && isatty(STDIN_FILENO) != 0) {
+		if (tcgetattr(STDIN_FILENO, &tio) != 0)
+			warn(_("failed to get terminal attributes"));
+		else if (!(tio.c_lflag & ICANON) && tio.c_cc[VMIN] == 1)
+			tty_cbreak = 1;
+	}
 
 	for (i = 2; i < argc; i++)
 		ret |= do_rename(from, to, argv[i], verbose, noact, nooverwrite, interactive);
