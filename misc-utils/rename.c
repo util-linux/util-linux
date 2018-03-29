@@ -174,12 +174,12 @@ int main(int argc, char **argv)
 		switch (c) {
 		case 'n':
 			noact = 1;
-			/* fallthrough */
-		case 'o':
-			nooverwrite = 1;
-                        break;
+			break;
 		case 'v':
 			verbose = 1;
+			break;
+		case 'o':
+			nooverwrite = 1;
 			break;
 		case 's':
 			do_rename = do_symlink;
