@@ -65,17 +65,18 @@ static int ask(char *name)
 	printf(_("%s: overwrite `%s'? "), program_invocation_short_name, name);
 	fflush(stdout);
 	if ((c = fgetc(stdin)) == EOF) {
-		buf[0] = '\0';
+		buf[0] = 'n';
 		clearerr(stdin); errno = 0;
-		printf("\n");
+		printf("n\n");
 	}
 	else {
-		buf[0] = c; buf[1] = '\0';
+		buf[0] = c;
 		if (c != '\n' && tty_cbreak) /* no purge necessary */
 			printf("\n");
 		else if (c != '\n')
 			while ((c = fgetc(stdin)) != '\n' && c != EOF);
 	}
+	buf[1] = '\0';
 	if (rpmatch(buf) == RPMATCH_YES)
 		return 0;
 	else
