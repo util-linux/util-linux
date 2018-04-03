@@ -172,6 +172,44 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
 }
 
 /**
+ * scols_column_set_json_type:
+ * @cl: a pointer to a struct libscols_column instance
+ * @type: SCOLS_JSON_* type
+ *
+ * Sets the type used for JSON formatting, the default is SCOLS_JSON_STRING.
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.33
+ */
+int scols_column_set_json_type(struct libscols_column *cl, int type)
+{
+	if (!cl)
+		return -EINVAL;
+
+	cl->json_type = type;
+	return 0;
+
+}
+
+/**
+ * scols_column_get_json_type:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Note that SCOLS_JSON_BOOLEAN interprets NULL, empty strings, '0', 'N' and
+ * 'n' as "false"; and everything else as "true".
+ *
+ * Returns: JSON type used for formatting or a negative value in case of an error.
+ *
+ * Since: 2.33
+ */
+int scols_column_get_json_type(const struct libscols_column *cl)
+{
+	return cl ? cl->json_type : -EINVAL;
+}
+
+
+/**
  * scols_column_get_table:
  * @cl: a pointer to a struct libscols_column instance
  *

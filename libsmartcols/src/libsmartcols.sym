@@ -176,3 +176,9 @@ SMARTCOLS_2.31 {
 	scols_table_enable_noencoding;
 	scols_table_is_noencoding;
 } SMARTCOLS_2.30;
+
+
+SMARTCOLS_2.33 {
+	scols_column_set_json_type;
+	scols_column_get_json_type;
+} SMARTCOLS_2.31;

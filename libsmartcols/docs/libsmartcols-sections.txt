@@ -22,6 +22,7 @@ libscols_column
 scols_column_get_color
 scols_column_get_flags
 scols_column_get_header
+scols_column_get_json_type
 scols_column_get_safechars
 scols_column_get_table
 scols_column_get_whint
@@ -37,6 +38,7 @@ scols_column_is_wrap
 scols_column_set_cmpfunc
 scols_column_set_color
 scols_column_set_flags
+scols_column_set_json_type
 scols_column_set_safechars
 scols_column_set_whint
 scols_column_set_wrapfunc

@@ -466,11 +466,23 @@ static int print_data(struct libscols_table *tb,
 
 	case SCOLS_FMT_JSON:
 		fputs_quoted_json_lower(scols_cell_get_data(&cl->header), tb->out);
-		fputs(": ", tb->out);
+		fputs(":", tb->out);
 		if (!*data)
 			fputs("null", tb->out);
-		else
-			fputs_quoted_json(data, tb->out);
+		else switch (cl->json_type) {
+			case SCOLS_JSON_STRING:
+				fputs_quoted_json(data, tb->out);
+				break;
+			case SCOLS_JSON_NUMBER:
+				fputs(data, tb->out);
+				break;
+			case SCOLS_JSON_BOOLEAN:
+				fputs(!*data ? "false" :
+				      *data == '0' ? "false" :
+				      *data == 'N' || *data == 'n' ? "false" : "true",
+				      tb->out);
+				break;
+		}
 		if (!is_last)
 			fputs(", ", tb->out);
 		return 0;

@@ -88,6 +88,15 @@ enum {
 };
 
 /*
+ * Column JSON types
+ */
+enum {
+	SCOLS_JSON_STRING    = 0,	/* default */
+	SCOLS_JSON_NUMBER    = 1,
+	SCOLS_JSON_BOOLEAN   = 2
+};
+
+/*
  * Cell flags, see scols_cell_set_flags() before use
  */
 enum {
@@ -153,6 +162,9 @@ extern size_t scols_column_get_width(const struct libscols_column *cl);
 
 extern int scols_column_set_safechars(struct libscols_column *cl, const char *safe);
 extern const char *scols_column_get_safechars(const struct libscols_column *cl);
+
+extern int scols_column_set_json_type(struct libscols_column *cl, int type);
+extern int scols_column_get_json_type(const struct libscols_column *cl);
 
 extern int scols_column_set_flags(struct libscols_column *cl, int flags);
 extern int scols_column_get_flags(const struct libscols_column *cl);
