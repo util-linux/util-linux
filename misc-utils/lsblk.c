@@ -142,9 +142,13 @@ enum {
 	LSBLK_JSON =		(1 << 5),
 };
 
+/* Types used for qsort() and JSON */
 enum {
-	SORT_STRING	= 0,	/* default is to use scols_cell_get_data() */
-	SORT_U64	= 1	/* use private pointer from scols_cell_get_userdata() */
+	COLTYPE_STR	= 0,	/* default */
+	COLTYPE_NUM	= 1,	/* always u64 number */
+	COLTYPE_SORTNUM = 2,	/* string on output, u64 for qsort() */
+	COLTYPE_SIZE	= 3,	/* srring by default, number when --bytes */
+	COLTYPE_BOOL	= 4	/* 0 or 1 */
 };
 
 /* column names */
@@ -154,7 +158,7 @@ struct colinfo {
 	int		flags;		/* SCOLS_FL_* */
 	const char      *help;
 
-	int	sort_type;		/* SORT_* */
+	int		type;		/* COLTYPE_* */
 };
 
 /* columns descriptions */
@@ -162,7 +166,7 @@ static struct colinfo infos[] = {
 	[COL_NAME]   = { "NAME",    0.25, SCOLS_FL_TREE | SCOLS_FL_NOEXTREMES, N_("device name") },
 	[COL_KNAME]  = { "KNAME",   0.3, 0, N_("internal kernel device name") },
 	[COL_PKNAME] = { "PKNAME",   0.3, 0, N_("internal parent kernel device name") },
-	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number"), SORT_U64 },
+	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number"), COLTYPE_SORTNUM },
 	[COL_FSTYPE] = { "FSTYPE",  0.1, SCOLS_FL_TRUNC, N_("filesystem type") },
 	[COL_TARGET] = { "MOUNTPOINT", 0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
 	[COL_LABEL]  = { "LABEL",   0.1, 0, N_("filesystem LABEL") },
@@ -173,32 +177,32 @@ static struct colinfo infos[] = {
 	[COL_PARTUUID]  = { "PARTUUID",  36,  0, N_("partition UUID") },
 	[COL_PARTFLAGS] = { "PARTFLAGS",  36,  0, N_("partition flags") },
 
-	[COL_RA]     = { "RA",      3, SCOLS_FL_RIGHT, N_("read-ahead of the device"), SORT_U64 },
-	[COL_RO]     = { "RO",      1, SCOLS_FL_RIGHT, N_("read-only device") },
-	[COL_RM]     = { "RM",      1, SCOLS_FL_RIGHT, N_("removable device") },
-	[COL_HOTPLUG]= { "HOTPLUG", 1, SCOLS_FL_RIGHT, N_("removable or hotplug device (usb, pcmcia, ...)") },
-	[COL_ROTA]   = { "ROTA",    1, SCOLS_FL_RIGHT, N_("rotational device") },
-	[COL_RAND]   = { "RAND",    1, SCOLS_FL_RIGHT, N_("adds randomness") },
+	[COL_RA]     = { "RA",      3, SCOLS_FL_RIGHT, N_("read-ahead of the device"), COLTYPE_NUM },
+	[COL_RO]     = { "RO",      1, SCOLS_FL_RIGHT, N_("read-only device"), COLTYPE_BOOL },
+	[COL_RM]     = { "RM",      1, SCOLS_FL_RIGHT, N_("removable device"), COLTYPE_BOOL },
+	[COL_HOTPLUG]= { "HOTPLUG", 1, SCOLS_FL_RIGHT, N_("removable or hotplug device (usb, pcmcia, ...)"), COLTYPE_BOOL },
+	[COL_ROTA]   = { "ROTA",    1, SCOLS_FL_RIGHT, N_("rotational device"), COLTYPE_BOOL },
+	[COL_RAND]   = { "RAND",    1, SCOLS_FL_RIGHT, N_("adds randomness"), COLTYPE_BOOL },
 	[COL_MODEL]  = { "MODEL",   0.1, SCOLS_FL_TRUNC, N_("device identifier") },
 	[COL_SERIAL] = { "SERIAL",  0.1, SCOLS_FL_TRUNC, N_("disk serial number") },
-	[COL_SIZE]   = { "SIZE",    5, SCOLS_FL_RIGHT, N_("size of the device"), SORT_U64 },
+	[COL_SIZE]   = { "SIZE",    5, SCOLS_FL_RIGHT, N_("size of the device"), COLTYPE_SIZE },
 	[COL_STATE]  = { "STATE",   7, SCOLS_FL_TRUNC, N_("state of the device") },
 	[COL_OWNER]  = { "OWNER",   0.1, SCOLS_FL_TRUNC, N_("user name"), },
 	[COL_GROUP]  = { "GROUP",   0.1, SCOLS_FL_TRUNC, N_("group name") },
 	[COL_MODE]   = { "MODE",    10,   0, N_("device node permissions") },
-	[COL_ALIOFF] = { "ALIGNMENT", 6, SCOLS_FL_RIGHT, N_("alignment offset"), SORT_U64 },
-	[COL_MINIO]  = { "MIN-IO",  6, SCOLS_FL_RIGHT, N_("minimum I/O size"), SORT_U64 },
-	[COL_OPTIO]  = { "OPT-IO",  6, SCOLS_FL_RIGHT, N_("optimal I/O size"), SORT_U64 },
-	[COL_PHYSEC] = { "PHY-SEC", 7, SCOLS_FL_RIGHT, N_("physical sector size"), SORT_U64 },
-	[COL_LOGSEC] = { "LOG-SEC", 7, SCOLS_FL_RIGHT, N_("logical sector size"), SORT_U64 },
+	[COL_ALIOFF] = { "ALIGNMENT", 6, SCOLS_FL_RIGHT, N_("alignment offset"), COLTYPE_NUM },
+	[COL_MINIO]  = { "MIN-IO",  6, SCOLS_FL_RIGHT, N_("minimum I/O size"), COLTYPE_NUM },
+	[COL_OPTIO]  = { "OPT-IO",  6, SCOLS_FL_RIGHT, N_("optimal I/O size"), COLTYPE_NUM },
+	[COL_PHYSEC] = { "PHY-SEC", 7, SCOLS_FL_RIGHT, N_("physical sector size"), COLTYPE_NUM },
+	[COL_LOGSEC] = { "LOG-SEC", 7, SCOLS_FL_RIGHT, N_("logical sector size"), COLTYPE_NUM },
 	[COL_SCHED]  = { "SCHED",   0.1, 0, N_("I/O scheduler name") },
-	[COL_RQ_SIZE]= { "RQ-SIZE", 5, SCOLS_FL_RIGHT, N_("request queue size"), SORT_U64 },
+	[COL_RQ_SIZE]= { "RQ-SIZE", 5, SCOLS_FL_RIGHT, N_("request queue size"), COLTYPE_NUM },
 	[COL_TYPE]   = { "TYPE",    4, 0, N_("device type") },
-	[COL_DALIGN] = { "DISC-ALN", 6, SCOLS_FL_RIGHT, N_("discard alignment offset"), SORT_U64 },
-	[COL_DGRAN]  = { "DISC-GRAN", 6, SCOLS_FL_RIGHT, N_("discard granularity"), SORT_U64 },
-	[COL_DMAX]   = { "DISC-MAX", 6, SCOLS_FL_RIGHT, N_("discard max bytes"), SORT_U64 },
-	[COL_DZERO]  = { "DISC-ZERO", 1, SCOLS_FL_RIGHT, N_("discard zeroes data") },
-	[COL_WSAME]  = { "WSAME",   6, SCOLS_FL_RIGHT, N_("write same max bytes"), SORT_U64 },
+	[COL_DALIGN] = { "DISC-ALN", 6, SCOLS_FL_RIGHT, N_("discard alignment offset"), COLTYPE_NUM },
+	[COL_DGRAN]  = { "DISC-GRAN", 6, SCOLS_FL_RIGHT, N_("discard granularity"), COLTYPE_SIZE },
+	[COL_DMAX]   = { "DISC-MAX", 6, SCOLS_FL_RIGHT, N_("discard max bytes"), COLTYPE_SIZE },
+	[COL_DZERO]  = { "DISC-ZERO", 1, SCOLS_FL_RIGHT, N_("discard zeroes data"), COLTYPE_BOOL },
+	[COL_WSAME]  = { "WSAME",   6, SCOLS_FL_RIGHT, N_("write same max bytes"), COLTYPE_SIZE },
 	[COL_WWN]    = { "WWN",     18, 0, N_("unique storage identifier") },
 	[COL_HCTL]   = { "HCTL", 10, 0, N_("Host:Channel:Target:Lun for SCSI") },
 	[COL_TRANSPORT] = { "TRAN", 6, 0, N_("device transport type") },
@@ -1933,8 +1937,27 @@ int main(int argc, char *argv[])
 		if (!lsblk->sort_col && lsblk->sort_id == id) {
 			lsblk->sort_col = cl;
 			scols_column_set_cmpfunc(cl,
-				ci->sort_type == SORT_STRING ?
-				scols_cmpstr_cells : cmp_u64_cells, NULL);
+				ci->type == COLTYPE_NUM     ? cmp_u64_cells :
+				ci->type == COLTYPE_SIZE    ? cmp_u64_cells :
+			        ci->type == COLTYPE_SORTNUM ? cmp_u64_cells : scols_cmpstr_cells,
+				NULL);
+		}
+		if (lsblk->flags & LSBLK_JSON) {
+			switch (ci->type) {
+			case COLTYPE_SIZE:
+				if (!lsblk->bytes)
+					break;
+				/* fallthrough */
+			case COLTYPE_NUM:
+				 scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+				break;
+			case COLTYPE_BOOL:
+				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
+				break;
+			default:
+				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+				break;
+			}
 		}
 	}
 
