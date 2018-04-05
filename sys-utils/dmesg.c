@@ -906,7 +906,7 @@ static void print_record(struct dmesg_control *ctl,
 				       LOG_MAKEPRI(rec->facility, rec->level),
 				       (long) rec->tv.tv_sec,
 				       (long) rec->tv.tv_usec);
-		goto mesg_output;
+		goto full_output;
 	}
 
 	/* Store decode information (facility & priority level) in a buffer */
@@ -1008,7 +1008,6 @@ full_output:
 			color_disable();
 	}
 
-mesg_output:
 	/*
 	 * A kernel message may contain several lines of output, separated
 	 * by '\n'.  If the timestamp and decode outputs are forced then each
