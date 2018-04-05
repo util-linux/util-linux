@@ -33,7 +33,7 @@ _blockdev_module()
 			COMPREPLY=( $(compgen -W "bytes" -- $cur) )
 			return 0
 			;;
-		'--setbsz'|'--setfra')
+		'--setra'|'--setfra')
 			COMPREPLY=( $(compgen -W "sectors" -- $cur) )
 			return 0
 			;;
