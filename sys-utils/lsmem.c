@@ -119,8 +119,6 @@ struct coldesc {
 	double		whint;		/* width hint (N < 1 is in percent of termwidth) */
 	int		flags;		/* SCOLS_FL_* */
 	const char      *help;
-
-	int	sort_type;		/* SORT_* */
 };
 
 /* columns descriptions */
