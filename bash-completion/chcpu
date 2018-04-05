@@ -12,7 +12,7 @@ _chcpu_module()
 			CPULIST_ALL=$(sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/offline)
 			for WORD in $(eval echo $CPULIST_ALL); do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					CPULIST="$WORD $CPULIST"
+					CPULIST="$WORD ${CPULIST:-""}"
 				fi
 			done
 			compopt -o nospace
@@ -26,7 +26,7 @@ _chcpu_module()
 			CPULIST_ALL=$(sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/online)
 			for WORD in $(eval echo $CPULIST_ALL); do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					CPULIST="$WORD $CPULIST"
+					CPULIST="$WORD ${CPULIST:-""}"
 				fi
 			done
 			compopt -o nospace

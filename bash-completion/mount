@@ -15,7 +15,7 @@ _mount_module()
 			prefix="${cur%$realcur}"
 			for WORD in $TYPES; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					TYPE_COLS="$WORD $TYPE_COLS"
+					TYPE_COLS="$WORD ${TYPE_COLS:-""}"
 				fi
 			done
 			compopt -o nospace

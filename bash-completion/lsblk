@@ -20,15 +20,15 @@ _lsblk_module()
 			prefix="${cur%$realcur}"
 			for I in /sys/dev/block/*; do
 				J=${I##*/}
-				MAJOR_ALL="$MAJOR_ALL ${J%%:*}"
+				MAJOR_ALL="${MAJOR_ALL:-""} ${J%%:*}"
 			done
-			for WORD in $MAJOR_ALL; do
+			for WORD in ${MAJOR_ALL:-""}; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					MAJOR="$WORD $MAJOR"
+					MAJOR="$WORD ${MAJOR:-""}"
 				fi
 			done
 			compopt -o nospace
-			COMPREPLY=( $(compgen -P "$prefix" -W "$MAJOR" -S ',' -- $realcur) )
+			COMPREPLY=( $(compgen -P "$prefix" -W "${MAJOR:-""}" -S ',' -- $realcur) )
 			return 0
 			;;
 		'-o'|'--output')
@@ -37,7 +37,7 @@ _lsblk_module()
 			prefix="${cur%$realcur}"
 			for WORD in $LSBLK_COLS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					LSBLK_COLS="$WORD $LSBLK_COLS"
+					LSBLK_COLS="$WORD ${LSBLK_COLS:-""}"
 				fi
 			done
 			compopt -o nospace

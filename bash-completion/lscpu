@@ -15,7 +15,7 @@ _lscpu_module()
 				CONFIGURED ONLINE MAXMHZ MINMHZ"
 			for WORD in $OPTS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					OPTS="$WORD $OPTS"
+					OPTS="$WORD ${OPTS:-""}"
 				fi
 			done
 			compopt -o nospace

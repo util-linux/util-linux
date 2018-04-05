@@ -38,7 +38,7 @@ _setpriv_module()
 			GIDS_ALL=$(getent group | awk -F: '{print $3}')
 			for WORD in $GIDS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					GIDS="$WORD $GIDS"
+					GIDS="$WORD ${GIDS:-""}"
 				fi
 			done
 			compopt -o nospace

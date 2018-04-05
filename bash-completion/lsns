@@ -14,7 +14,7 @@ _lsns_module()
 			prefix="${cur%$realcur}"
 			for WORD in $LSNS_COLS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					LSNS_COLS="$WORD $LSNS_COLS"
+					LSNS_COLS="$WORD ${LSNS_COLS:-""}"
 				fi
 			done
 			compopt -o nospace
