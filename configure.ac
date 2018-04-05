@@ -449,6 +449,8 @@ AC_CHECK_DECL([SO_PASSCRED],
                #include <sys/socket.h>])
 
 AC_CHECK_FUNCS([ \
+	__fpurge \
+	fpurge \
 	__fpending \
 	secure_getenv \
 	__secure_getenv \
