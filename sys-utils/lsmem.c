@@ -665,8 +665,28 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < ncolumns; i++) {
 		struct coldesc *ci = get_column_desc(i);
-		if (!scols_table_new_column(lsmem->table, ci->name, ci->whint, ci->flags))
+		struct libscols_column *cl;
+
+		cl = scols_table_new_column(lsmem->table, ci->name, ci->whint, ci->flags);
+		if (!cl)
 			err(EXIT_FAILURE, _("Failed to initialize output column"));
+
+		if (lsmem->json) {
+			int id = get_column_id(i);
+
+			switch (id) {
+			case COL_SIZE:
+				if (!lsmem->bytes)
+					break;
+				/* fallthrough */
+			case COL_NODE:
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+				break;
+			case COL_REMOVABLE:
+				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
+				break;
+			}
+		}
 	}
 
 	if (splitarg) {

@@ -8,11 +8,11 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK
 0x0000000080000000-0x000000009fffffff  512M  online       yes   8-9
 0x00000000a0000000-0x00000000bfffffff  512M  online        no 10-11
 0x00000000c0000000-0x00000000dfffffff  512M  online       yes 12-13
-0x00000000e0000000-0x00000000efffffff  256M offline         -    14
+0x00000000e0000000-0x00000000efffffff  256M offline              14
 0x00000000f0000000-0x00000000ffffffff  256M  online       yes    15
 0x0000000100000000-0x000000011fffffff  512M  online        no 16-17
 0x0000000120000000-0x000000013fffffff  512M  online       yes 18-19
-0x0000000140000000-0x000000017fffffff    1G offline         - 20-23
+0x0000000140000000-0x000000017fffffff    1G offline           20-23
 
 Memory block size:       256M
 Total online memory:     4.8G
@@ -59,16 +59,16 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK NODE
 0x00000000b0000000-0x00000000bfffffff  256M  online        no    11    0
 0x00000000c0000000-0x00000000cfffffff  256M  online       yes    12    0
 0x00000000d0000000-0x00000000dfffffff  256M  online       yes    13    0
-0x00000000e0000000-0x00000000efffffff  256M offline         -    14    0
+0x00000000e0000000-0x00000000efffffff  256M offline              14    0
 0x00000000f0000000-0x00000000ffffffff  256M  online       yes    15    0
 0x0000000100000000-0x000000010fffffff  256M  online        no    16    0
 0x0000000110000000-0x000000011fffffff  256M  online        no    17    0
 0x0000000120000000-0x000000012fffffff  256M  online       yes    18    0
 0x0000000130000000-0x000000013fffffff  256M  online       yes    19    0
-0x0000000140000000-0x000000014fffffff  256M offline         -    20    0
-0x0000000150000000-0x000000015fffffff  256M offline         -    21    0
-0x0000000160000000-0x000000016fffffff  256M offline         -    22    0
-0x0000000170000000-0x000000017fffffff  256M offline         -    23    0
+0x0000000140000000-0x000000014fffffff  256M offline              20    0
+0x0000000150000000-0x000000015fffffff  256M offline              21    0
+0x0000000160000000-0x000000016fffffff  256M offline              22    0
+0x0000000170000000-0x000000017fffffff  256M offline              23    0
 
 Memory block size:       256M
 Total online memory:     4.8G
@@ -83,27 +83,27 @@ RANGE SIZE STATE REMOVABLE BLOCK NODE
 0x0000000080000000-0x000000009fffffff 512M online yes 8-9 0
 0x00000000a0000000-0x00000000bfffffff 512M online no 10-11 0
 0x00000000c0000000-0x00000000dfffffff 512M online yes 12-13 0
-0x00000000e0000000-0x00000000efffffff 256M offline - 14 0
+0x00000000e0000000-0x00000000efffffff 256M offline  14 0
 0x00000000f0000000-0x00000000ffffffff 256M online yes 15 0
 0x0000000100000000-0x000000011fffffff 512M online no 16-17 0
 0x0000000120000000-0x000000013fffffff 512M online yes 18-19 0
-0x0000000140000000-0x000000017fffffff 1G offline - 20-23 0
+0x0000000140000000-0x000000017fffffff 1G offline  20-23 0
 
 ---
 
 $ lsmem --json --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE --split RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
 {
    "memory": [
-      {"range":"0x0000000000000000-0x000000006fffffff", "size":"1.8G", "state":"online", "removable":"yes", "block":"0-6", "node":"0"},
-      {"range":"0x0000000070000000-0x000000007fffffff", "size":"256M", "state":"online", "removable":"no", "block":"7", "node":"0"},
-      {"range":"0x0000000080000000-0x000000009fffffff", "size":"512M", "state":"online", "removable":"yes", "block":"8-9", "node":"0"},
-      {"range":"0x00000000a0000000-0x00000000bfffffff", "size":"512M", "state":"online", "removable":"no", "block":"10-11", "node":"0"},
-      {"range":"0x00000000c0000000-0x00000000dfffffff", "size":"512M", "state":"online", "removable":"yes", "block":"12-13", "node":"0"},
-      {"range":"0x00000000e0000000-0x00000000efffffff", "size":"256M", "state":"offline", "removable":"-", "block":"14", "node":"0"},
-      {"range":"0x00000000f0000000-0x00000000ffffffff", "size":"256M", "state":"online", "removable":"yes", "block":"15", "node":"0"},
-      {"range":"0x0000000100000000-0x000000011fffffff", "size":"512M", "state":"online", "removable":"no", "block":"16-17", "node":"0"},
-      {"range":"0x0000000120000000-0x000000013fffffff", "size":"512M", "state":"online", "removable":"yes", "block":"18-19", "node":"0"},
-      {"range":"0x0000000140000000-0x000000017fffffff", "size":"1G", "state":"offline", "removable":"-", "block":"20-23", "node":"0"}
+      {"range":"0x0000000000000000-0x000000006fffffff", "size":"1.8G", "state":"online", "removable":true, "block":"0-6", "node":0},
+      {"range":"0x0000000070000000-0x000000007fffffff", "size":"256M", "state":"online", "removable":false, "block":"7", "node":0},
+      {"range":"0x0000000080000000-0x000000009fffffff", "size":"512M", "state":"online", "removable":true, "block":"8-9", "node":0},
+      {"range":"0x00000000a0000000-0x00000000bfffffff", "size":"512M", "state":"online", "removable":false, "block":"10-11", "node":0},
+      {"range":"0x00000000c0000000-0x00000000dfffffff", "size":"512M", "state":"online", "removable":true, "block":"12-13", "node":0},
+      {"range":"0x00000000e0000000-0x00000000efffffff", "size":"256M", "state":"offline", "removable":false, "block":"14", "node":0},
+      {"range":"0x00000000f0000000-0x00000000ffffffff", "size":"256M", "state":"online", "removable":true, "block":"15", "node":0},
+      {"range":"0x0000000100000000-0x000000011fffffff", "size":"512M", "state":"online", "removable":false, "block":"16-17", "node":0},
+      {"range":"0x0000000120000000-0x000000013fffffff", "size":"512M", "state":"online", "removable":true, "block":"18-19", "node":0},
+      {"range":"0x0000000140000000-0x000000017fffffff", "size":"1G", "state":"offline", "removable":false, "block":"20-23", "node":0}
    ]
 }
 
@@ -116,13 +116,13 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK          ZON
 0x0000000080000000-0x000000009fffffff  512M  online       yes   8-9         Normal
 0x00000000a0000000-0x00000000bfffffff  512M  online        no 10-11         Normal
 0x00000000c0000000-0x00000000dfffffff  512M  online       yes 12-13         Normal
-0x00000000e0000000-0x00000000efffffff  256M offline         -    14         Normal
+0x00000000e0000000-0x00000000efffffff  256M offline              14         Normal
 0x00000000f0000000-0x00000000ffffffff  256M  online       yes    15         Normal
 0x0000000100000000-0x000000010fffffff  256M  online        no    16         Normal
 0x0000000110000000-0x000000011fffffff  256M  online        no    17 Normal/Movable
 0x0000000120000000-0x000000012fffffff  256M  online       yes    18 Movable/Normal
 0x0000000130000000-0x000000013fffffff  256M  online       yes    19        Movable
-0x0000000140000000-0x000000017fffffff    1G offline         - 20-23        Movable
+0x0000000140000000-0x000000017fffffff    1G offline           20-23        Movable
 
 Memory block size:       256M
 Total online memory:     4.8G
@@ -137,11 +137,11 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK
 0x0000000080000000-0x000000009fffffff  512M  online       yes   8-9
 0x00000000a0000000-0x00000000bfffffff  512M  online        no 10-11
 0x00000000c0000000-0x00000000dfffffff  512M  online       yes 12-13
-0x00000000e0000000-0x00000000efffffff  256M offline         -    14
+0x00000000e0000000-0x00000000efffffff  256M offline              14
 0x00000000f0000000-0x00000000ffffffff  256M  online       yes    15
 0x0000000100000000-0x000000011fffffff  512M  online        no 16-17
 0x0000000120000000-0x000000013fffffff  512M  online       yes 18-19
-0x0000000140000000-0x000000017fffffff    1G offline         - 20-23
+0x0000000140000000-0x000000017fffffff    1G offline           20-23
 
 Memory block size:       256M
 Total online memory:     4.8G
