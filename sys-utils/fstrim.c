@@ -241,7 +241,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	if (cnt && cnt_err)
 		return MNT_EX_SOMEOK;		/* some ok */
 
-	return EXIT_SUCCESS;
+	return MNT_EX_SUCCESS;
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -336,14 +336,11 @@ int main(int argc, char **argv)
 	}
 
 	if (all)
-		rc = fstrim_all(&range, verbose);
-	else {
-		rc = fstrim_filesystem(path, &range, verbose);
-		if (rc == 1) {
-			warnx(_("%s: the discard operation is not supported"), path);
-			rc = EXIT_FAILURE;
-		}
-	}
+		return fstrim_all(&range, verbose);	/* MNT_EX_* codes */
 
-	return rc;
+	rc = fstrim_filesystem(path, &range, verbose);
+	if (rc == 1)
+		warnx(_("%s: the discard operation is not supported"), path);
+
+	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
