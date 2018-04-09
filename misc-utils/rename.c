@@ -73,7 +73,6 @@ static int ask(char *name)
 	fflush(stdout);
 	if ((c = fgetc(stdin)) == EOF) {
 		buf[0] = 'n';
-		clearerr(stdin); errno = 0;
 		printf("n\n");
 	}
 	else {
@@ -130,7 +129,7 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact,
 		return 2;
 	}
 	target[sb.st_size] = '\0';
-	if (string_replace(from, to, target, target, &newname))
+	if (string_replace(from, to, target, target, &newname) != 0)
 		ret = 0;
 
 	if (ret == 1 && (nooverwrite || interactive) && lstat(newname, &sb) != 0)
@@ -148,14 +147,14 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact,
 		if (!noact && 0 > unlink(s)) {
 			warn(_("%s: unlink failed"), s);
 			ret = 2;
-		} else if (!noact && symlink(newname, s) != 0) {
+		}
+		else if (!noact && symlink(newname, s) != 0) {
 			warn(_("%s: symlinking to %s failed"), s, newname);
 			ret = 2;
 		}
 	}
 	if (verbose && (noact || ret == 1))
-		if (verbose)
-			printf("%s: `%s' -> `%s'\n", s, target, newname);
+		printf("%s: `%s' -> `%s'\n", s, target, newname);
 	free(newname);
 	free(target);
 	return ret;
@@ -176,7 +175,7 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact,
 		file = strrchr(s, '/');
 	if (file == NULL)
 		file = s;
-	if (string_replace(from, to, file, s, &newname))
+	if (string_replace(from, to, file, s, &newname) != 0)
 		return 0;
 
 	if ((nooverwrite || interactive) && access(newname, F_OK) != 0)
