@@ -259,6 +259,8 @@ you have to use the \fB\-o\fR option:
 and then the mount options from the command line will be appended to
 the list of options from
 .IR /etc/fstab .
+This default behaviour is possible to change by command line
+option \fB\-\-options\-mode\fR.
 The usual behavior is that the last option wins if there are conflicting
 ones.
 .sp
@@ -277,6 +279,11 @@ are specified.  For example, to mount device
 .B "mount /dev/foo /dir"
 .sp
 .RE
+This default behaviour is possible to change by command line option
+\fB\-\-options\-source\-force\fR to always read configuration from fstab. For
+non-root users
+.B mount
+always read fstab configuration.
 
 .SS Non-superuser mounts
 Normally, only the superuser can mount filesystems.
@@ -701,7 +708,8 @@ Controls how to combine options from fstab/mtab with options from command line.
 \fImode\fR can be one of
 .BR ignore ", " append ", " prepend " or " replace .
 For example \fBappend\fR means that options from fstab are appended to options from command line.
-Default value is \fBprepend\fR.
+Default value is \fBprepend\fR -- it means command line options are evaluated after fstab options.
+Note that the last option wins if there are conflicting ones.
 
 .TP
 .BR "\-\-options\-source " \fIsource
