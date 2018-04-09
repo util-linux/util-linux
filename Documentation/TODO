@@ -40,20 +40,11 @@ script
 
 lsblk
 -----
-   The problem is NVMe-multipath driver where in /sys/.../slaves/ are nodes
-   that should be probably hidden for userspace. Note that kernel developers
-   promised to fix this issue in kernel *** so hold off from that for now***
-   [Mar 1, 2018].
+   - rewrite lsblk to read all devices tree to memory to make it more extendable. Now
+     it always keep in memory just one device (only final output is buffered by
+     libsmartcols, but this stuff are output strings, nothing else).
 
-   Anyway, possible userspace solution is:
-
-   - verify that slave/holder nodes points to the real block devices
-     (/sys/dev/block/<maj:min> for the node exists), otherwise silently ignore
-     the slave/holder node -- see set_cxt().
-
-   - the same verification we necessary for nodes in /sys/block/<name>. It means
-     verify result from sysfs_devname_to_devno() in set_cxt().
-
+     See fopr example: https://github.com/karelzak/util-linux/issues/616
 
 
 cleanup lib/path.c: [Karel Zak for v2.33]
