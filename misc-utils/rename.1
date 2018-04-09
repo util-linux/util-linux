@@ -23,10 +23,14 @@ Do not rename a symlink but its target.
 Show which files were renamed, if any.
 .TP
 .BR \-n , " \-\-no\-act"
-Do not make any changes.
+Do not make any changes; add
+.BR \-\-verbose
+to see what would be made.
 .TP
 .BR \-o , " \-\-no\-overwrite"
-Do not overwrite existing files.
+Do not overwrite existing files.  When
+.BR \-\-symlink
+is active, do not overwrite symlinks pointing to existing targets.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.

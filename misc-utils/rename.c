@@ -77,9 +77,9 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact, int
 	if (string_replace(from, to, target, target, &newname))
 		ret = 0;
 
-	if (ret == 1 && nooverwrite && lstat(newname, &sb) == 0) {
+	if (ret == 1 && nooverwrite && lstat(target, &sb) == 0) {
 		if (verbose)
-			printf(_("Skipping existing link: `%s'\n"), newname);
+			printf(_("Skipping existing link: `%s' -> `%s'\n"), s, target);
 
 		ret = 0;
 	}
@@ -113,7 +113,8 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact, int no
 	if (string_replace(from, to, file, s, &newname))
 		return 0;
 	if (nooverwrite && access(newname, F_OK) == 0) {
-		printf(_("Skipping existing file: `%s'\n"), newname);
+		if (verbose)
+			printf(_("Skipping existing file: `%s'\n"), newname);
 		ret = 0;
 	}
 	else if (!noact && rename(s, newname) != 0) {
@@ -173,12 +174,12 @@ int main(int argc, char **argv)
 		switch (c) {
 		case 'n':
 			noact = 1;
-			/* fallthrough */
-		case 'o':
-			nooverwrite = 1;
-                        break;
+			break;
 		case 'v':
 			verbose = 1;
+			break;
+		case 'o':
+			nooverwrite = 1;
 			break;
 		case 's':
 			do_rename = do_symlink;
