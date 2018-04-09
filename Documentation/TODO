@@ -164,10 +164,9 @@ login-utils:
 libblkid
 --------
 
- - (!) don't use internally blkid_loff_t, rather use off_t, size_t, ssize_t,
-       stdint.h types and so on...
-
- - add FSSIZE value  -- filesystem size (klibc requirement)
+ - (!) add support for BitLocker Drive Encryption 
+   https://github.com/karelzak/util-linux/issues/617
+   https://github.com/libyal/libbde/blob/master/documentation/BitLocker%20Drive%20Encryption%20(BDE)%20format.asciidoc
 
  - (!) add support for dasd PT (used for example on s390)
 
