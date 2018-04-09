@@ -77,9 +77,9 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact, int
 	if (string_replace(from, to, target, target, &newname))
 		ret = 0;
 
-	if (ret == 1 && nooverwrite && lstat(newname, &sb) == 0) {
+	if (ret == 1 && nooverwrite && lstat(target, &sb) == 0) {
 		if (verbose)
-			printf(_("Skipping existing link: `%s'\n"), newname);
+			printf(_("Skipping existing link: `%s' -> `%s'\n"), s, target);
 
 		ret = 0;
 	}
