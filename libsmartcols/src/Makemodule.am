@@ -19,7 +19,7 @@ libsmartcols_la_SOURCES= \
 	libsmartcols/src/version.c \
 	libsmartcols/src/init.c
 
-libsmartcols_la_LIBADD = libcommon.la
+libsmartcols_la_LIBADD = $(LDADD) libcommon.la
 
 libsmartcols_la_CFLAGS = \
 	$(AM_CFLAGS) \
