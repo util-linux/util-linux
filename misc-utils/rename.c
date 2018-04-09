@@ -60,7 +60,11 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact, int
 	int ret = 1;
 	struct stat sb;
 
-	if (faccessat(AT_FDCWD, s, F_OK, AT_SYMLINK_NOFOLLOW) != 0) {
+	if ( faccessat(AT_FDCWD, s, F_OK, AT_SYMLINK_NOFOLLOW) != 0 &&
+	     errno != EINVAL )
+	   /* Skip if AT_SYMLINK_NOFOLLOW is not supported; lstat() below will
+	      detect the access error */
+	{
 		warn(_("%s: not accessible"), s);
 		return 2;
 	}
