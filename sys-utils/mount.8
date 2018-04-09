@@ -696,6 +696,28 @@ sections.
 .RE
 
 .TP
+.BR "\-\-options\-mode " \fImode
+Controls how to combine options from fstab/mtab with options from command line.
+\fImode\fR can be one of
+.BR ignore ", " append ", " prepend " or " replace .
+For example \fBappend\fR means that options from fstab are appended to options from command line.
+Default value is \fBprepend\fR.
+
+.TP
+.BR "\-\-options\-source " \fIsource
+Source of default options.
+\fIsource\fR is comma separated list of
+.BR fstab ", " mtab " and " disable .
+\fBdisable\fR disables
+.BR fstab " and " mtab
+and disables \fB\-\-options\-source\-force\fR.
+Default value is \fBfstab,mtab\fR.
+
+.TP
+.BR \-\-options\-source\-force
+Use options from fstab/mtab even if both \fIdevice\fR and \fIdir\fR are specified.
+
+.TP
 .BR \-R , " \-\-rbind"
 Remount a subtree and all possible submounts somewhere else (so that its
 contents are available in both places).  See above, the subsection
