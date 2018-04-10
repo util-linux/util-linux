@@ -33,6 +33,10 @@
 # include <slang/slang.h>
 #endif
 
+#ifndef _XOPEN_SOURCE
+# define _XOPEN_SOURCE 500 /* for inclusion of get_wch */
+#endif
+
 #ifdef HAVE_SLCURSES_H
 # include <slcurses.h>
 #elif defined(HAVE_SLANG_SLCURSES_H)
