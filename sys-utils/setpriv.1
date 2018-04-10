@@ -139,6 +139,12 @@ is cleared by
 .BR execve (2)
 and is therefore not allowed.
 .TP
+.BR "\-\-pdeathsig keep" | clear | <signal>
+Keep, clear or set the parent death signal.  Some LSMs, most notably SELinux and
+AppArmor, clear the signal when the process' credentials change.  Using
+\fB--pdeathsig keep\fR will restore the parent death signal after changing
+credentials to remedy that situation.
+.TP
 .BI \-\-selinux\-label " label"
 Request a particular SELinux transition (using a transition on exec, not
 dyntrans).  This will fail and cause

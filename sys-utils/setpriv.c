@@ -38,6 +38,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "pathnames.h"
+#include "signames.h"
 
 #ifndef PR_SET_NO_NEW_PRIVS
 # define PR_SET_NO_NEW_PRIVS 38
@@ -102,6 +103,8 @@ struct privctx {
 
 	/* securebits */
 	int securebits;
+	/* parent death signal (<0 clear, 0 nothing, >0 signal) */
+	int pdeathsig;
 
 	/* LSMs */
 	const char *selinux_label;
@@ -135,6 +138,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --init-groups               initialize supplementary groups\n"), out);
 	fputs(_(" --groups <group,...>        set supplementary groups\n"), out);
 	fputs(_(" --securebits <bits>         set securebits\n"), out);
+	fputs(_(" --pdeathsig keep|clear|<signame>\n"
+	        "                             set or clear parent death signal\n"), out);
 	fputs(_(" --selinux-label <label>     set SELinux label\n"), out);
 	fputs(_(" --apparmor-profile <pr>     set AppArmor profile\n"), out);
 
@@ -329,6 +334,24 @@ static void dump_groups(void)
 	free(groups);
 }
 
+static void dump_pdeathsig(void)
+{
+	int pdeathsig;
+
+	if (prctl(PR_GET_PDEATHSIG, &pdeathsig) != 0) {
+		warn(_("get pdeathsig failed"));
+		return;
+	}
+
+	printf("Parent death signal: ");
+	if (pdeathsig && signum_to_signame(pdeathsig) != NULL)
+		printf("%s\n", signum_to_signame(pdeathsig));
+	else if (pdeathsig)
+		printf("%d\n", pdeathsig);
+	else
+		printf("[none]\n");
+}
+
 static void dump(int dumplevel)
 {
 	int x;
@@ -392,6 +415,7 @@ static void dump(int dumplevel)
 	printf("\n");
 
 	dump_securebits();
+	dump_pdeathsig();
 
 	if (access(_PATH_SYS_SELINUX, F_OK) == 0)
 		dump_label(_("SELinux label"));
@@ -436,6 +460,19 @@ static void parse_groups(struct privctx *opts, const char *str)
 						  _("Invalid supplementary group id"));
 
 	free(groups);
+}
+
+static void parse_pdeathsig(struct privctx *opts, const char *str)
+{
+	if (!strcmp(str, "keep")) {
+		if (prctl(PR_GET_PDEATHSIG, &opts->pdeathsig) != 0)
+			errx(SETPRIV_EXIT_PRIVERR,
+				 _("failed to get parent death signal"));
+	} else if (!strcmp(str, "clear")) {
+		opts->pdeathsig = -1;
+	} else if ((opts->pdeathsig = signame_to_signum(str)) < 0) {
+		errx(EXIT_FAILURE, _("unknown signal: %s"), str);
+	}
 }
 
 static void do_setresuid(const struct privctx *opts)
@@ -711,6 +748,7 @@ int main(int argc, char **argv)
 		LISTCAPS,
 		CAPBSET,
 		SECUREBITS,
+		PDEATHSIG,
 		SELINUX_LABEL,
 		APPARMOR_PROFILE
 	};
@@ -734,6 +772,7 @@ int main(int argc, char **argv)
 		{ "groups",           required_argument, NULL, GROUPS           },
 		{ "bounding-set",     required_argument, NULL, CAPBSET          },
 		{ "securebits",       required_argument, NULL, SECUREBITS       },
+		{ "pdeathsig",        required_argument, NULL, PDEATHSIG,       },
 		{ "selinux-label",    required_argument, NULL, SELINUX_LABEL    },
 		{ "apparmor-profile", required_argument, NULL, APPARMOR_PROFILE },
 		{ "help",             no_argument,       NULL, 'h'              },
@@ -843,6 +882,12 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE,
 				     _("duplicate --groups option"));
 			parse_groups(&opts, optarg);
+			break;
+		case PDEATHSIG:
+			if (opts.pdeathsig)
+				errx(EXIT_FAILURE,
+				     _("duplicate --keep-pdeathsig option"));
+			parse_pdeathsig(&opts, optarg);
 			break;
 		case LISTCAPS:
 			list_caps = 1;
@@ -988,6 +1033,10 @@ int main(int argc, char **argv)
 	if (opts.ambient_caps) {
 		do_caps(CAP_TYPE_AMBIENT, opts.ambient_caps);
 	}
+
+	/* Clear or set parent death signal */
+	if (opts.pdeathsig && prctl(PR_SET_PDEATHSIG, opts.pdeathsig < 0 ? 0 : opts.pdeathsig) != 0)
+		err(SETPRIV_EXIT_PRIVERR, _("set parent death signal failed"));
 
 	execvp(argv[optind], argv + optind);
 	errexec(argv[optind]);
