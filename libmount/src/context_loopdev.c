@@ -89,6 +89,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	struct libmnt_cache *cache;
 	const char *bf;
 	int rc = 0;
+	struct libmnt_ns *ns_old;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -96,6 +97,10 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 
 	if (mnt_context_get_mtab(cxt, &tb))
 		return 0;
+
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
 
 	DBG(LOOP, ul_debugobj(cxt, "checking if %s mounted on %s",
 				backing_file, target));
@@ -132,6 +137,9 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	}
 	if (rc)
 		DBG(LOOP, ul_debugobj(cxt, "%s already mounted", backing_file));
+
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
 	return rc;
 }
 

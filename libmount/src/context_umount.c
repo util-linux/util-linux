@@ -51,6 +51,7 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 			       struct libmnt_fs **pfs)
 {
 	int rc;
+	struct libmnt_ns *ns_old;
 	struct libmnt_table *mtab = NULL;
 	struct libmnt_fs *fs;
 	char *loopdev = NULL;
@@ -99,6 +100,10 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 		DBG(CXT, ul_debugobj(cxt, "umount: mtab empty"));
 		return 1;
 	}
+
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
 
 try_loopdev:
 	fs = mnt_table_find_target(mtab, tgt, MNT_ITER_BACKWARD);
@@ -159,12 +164,16 @@ try_loopdev:
 	if (pfs)
 		*pfs = fs;
 	free(loopdev);
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
 
 	DBG(CXT, ul_debugobj(cxt, "umount fs: %s", fs ? mnt_fs_get_target(fs) :
 							"<not found>"));
 	return fs ? 0 : 1;
 err:
 	free(loopdev);
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
 	return rc;
 }
 
@@ -488,11 +497,19 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		char *curr_user;
 		char *mtab_user = NULL;
 		size_t sz;
+		struct libmnt_ns *ns_old;
 
 		DBG(CXT, ul_debugobj(cxt,
 				"umount: checking user=<username> from mtab"));
 
+		ns_old = mnt_context_switch_origin_ns(cxt);
+		if (!ns_old)
+			return -MNT_ERR_NAMESPACE;
+
 		curr_user = mnt_get_username(getuid());
+
+		if (!mnt_context_switch_ns(cxt, ns_old))
+			return -MNT_ERR_NAMESPACE;
 
 		if (!curr_user) {
 			DBG(CXT, ul_debugobj(cxt, "umount %s: cannot "
@@ -556,6 +573,9 @@ static int exec_helper(struct libmnt_context *cxt)
 			_exit(EXIT_FAILURE);
 
 		if (setuid(getuid()) < 0)
+			_exit(EXIT_FAILURE);
+
+		if (!mnt_context_switch_origin_ns(cxt))
 			_exit(EXIT_FAILURE);
 
 		type = mnt_fs_get_fstype(cxt->fs);
@@ -789,6 +809,7 @@ static int do_umount(struct libmnt_context *cxt)
 int mnt_context_prepare_umount(struct libmnt_context *cxt)
 {
 	int rc;
+	struct libmnt_ns *ns_old;
 
 	if (!cxt || !cxt->fs || mnt_fs_is_swaparea(cxt->fs))
 		return -EINVAL;
@@ -803,6 +824,10 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 	free(cxt->helper);	/* be paranoid */
 	cxt->helper = NULL;
 	cxt->action = MNT_ACT_UMOUNT;
+
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
 
 	rc = lookup_umount_fs(cxt);
 	if (!rc)
@@ -837,6 +862,10 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 		return rc;
 	}
 	cxt->flags |= MNT_FL_PREPARED;
+
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
+
 	return rc;
 }
 
@@ -861,6 +890,7 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 int mnt_context_do_umount(struct libmnt_context *cxt)
 {
 	int rc;
+	struct libmnt_ns *ns_old;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -870,9 +900,13 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 	assert((cxt->action == MNT_ACT_UMOUNT));
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
+
 	rc = do_umount(cxt);
 	if (rc)
-		return rc;
+		goto end;
 
 	if (mnt_context_get_status(cxt) && !mnt_context_is_fake(cxt)) {
 		/*
@@ -897,6 +931,10 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 						       cxt->mountflags, NULL, cxt->fs);
 		}
 	}
+end:
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
+
 	return rc;
 }
 
@@ -951,6 +989,7 @@ int mnt_context_finalize_umount(struct libmnt_context *cxt)
 int mnt_context_umount(struct libmnt_context *cxt)
 {
 	int rc;
+	struct libmnt_ns *ns_old;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -959,6 +998,10 @@ int mnt_context_umount(struct libmnt_context *cxt)
 
 	DBG(CXT, ul_debugobj(cxt, "umount: %s", mnt_context_get_target(cxt)));
 
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
+
 	rc = mnt_context_prepare_umount(cxt);
 	if (!rc)
 		rc = mnt_context_prepare_update(cxt);
@@ -966,6 +1009,10 @@ int mnt_context_umount(struct libmnt_context *cxt)
 		rc = mnt_context_do_umount(cxt);
 	if (!rc)
 		rc = mnt_context_update_tabs(cxt);
+
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
+
 	return rc;
 }
 
