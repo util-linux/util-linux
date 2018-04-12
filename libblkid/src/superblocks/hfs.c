@@ -25,6 +25,8 @@ struct hfs_finder_info {
         uint8_t         id[8];
 } __attribute__((packed));
 
+#define HFS_SECTOR_SIZE         512
+
 struct hfs_mdb {
         uint8_t         signature[2];
         uint32_t        cr_date;
@@ -153,6 +155,7 @@ static int hfs_set_uuid(blkid_probe pr, unsigned char const *hfs_info, size_t le
 static int probe_hfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct hfs_mdb	*hfs;
+	int size;
 
 	hfs = blkid_probe_get_sb(pr, mag, struct hfs_mdb);
 	if (!hfs)
@@ -161,6 +164,12 @@ static int probe_hfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if ((memcmp(hfs->embed_sig, "H+", 2) == 0) ||
 	    (memcmp(hfs->embed_sig, "HX", 2) == 0))
 		return 1;	/* Not hfs, but an embedded HFS+ */
+
+	size = be32_to_cpu(hfs->al_blk_size);
+	if (!size || (size & (HFS_SECTOR_SIZE - 1))) {
+		DBG(LOWPROBE, ul_debug("\tbad allocation size - ignore"));
+		return 1;
+	}
 
 	hfs_set_uuid(pr, hfs->finder_info.id, sizeof(hfs->finder_info.id));
 
