@@ -12,6 +12,11 @@ lslocks \- list local system locks
 .SH DESCRIPTION
 .B lslocks
 lists information about all the currently held file locks in a Linux system.
+.sp
+Note that lslocks also lists OFD (Open File Description) locks, these locks are
+not associated with any process (PID is -1).  OFD locks are associated with the
+open file description on which they are acquired.  This lock type is available
+since Linux 3.15, see \fBfcntl\fR(2) for more details.
 
 .SH OPTIONS
 .TP
@@ -51,7 +56,7 @@ Display help text and exit.
 .IP "COMMAND"
 The command name of the process holding the lock.
 .IP "PID"
-The process ID of the process which holds the lock.
+The process ID of the process which holds the lock or -1 for OFDLCK.
 .IP "TYPE"
 The type of lock; can be FLOCK (created with \fBflock\fR(2)), POSIX
 (created with \fBfcntl\fR(2) and \fBlockf\fR(3)) or OFDLCK (created with fcntl(2).

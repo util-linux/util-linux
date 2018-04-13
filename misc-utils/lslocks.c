@@ -276,12 +276,15 @@ static int get_local_locks(struct list_head *locks)
 			case 4: /* PID */
 				/*
 				 * If user passed a pid we filter it later when adding
-				 * to the list, no need to worry now.
+				 * to the list, no need to worry now. OFD locks use -1 PID.
 				 */
 				l->pid = strtos32_or_err(tok, _("failed to parse pid"));
-				l->cmdname = proc_get_command_name(l->pid);
-				if (!l->cmdname)
-					l->cmdname = xstrdup(_("(unknown)"));
+				if (l->pid > 0) {
+					l->cmdname = proc_get_command_name(l->pid);
+					if (!l->cmdname)
+						l->cmdname = xstrdup(_("(unknown)"));
+				} else
+					l->cmdname = xstrdup(_("(undefined)"));
 				break;
 
 			case 5: /* device major:minor and inode number */
