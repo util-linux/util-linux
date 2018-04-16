@@ -1664,6 +1664,10 @@ AC_ARG_ENABLE([ipcs],
 UL_BUILD_INIT([ipcs])
 AM_CONDITIONAL([BUILD_IPCS], [test "x$build_ipcs" = xyes])
 
+UL_BUILD_INIT([choom], [check])
+UL_REQUIRES_LINUX([choom])
+AM_CONDITIONAL([BUILD_CHOOM], [test "x$build_choom" = xyes])
+
 UL_BUILD_INIT([lsipc], [check])
 UL_REQUIRES_LINUX([lsipc])
 UL_REQUIRES_BUILD([lsipc], [libsmartcols])
