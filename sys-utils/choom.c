@@ -24,8 +24,6 @@
 #include <getopt.h>
 #include <errno.h>
 
-#include <linux/oom.h>
-
 #include "nls.h"
 #include "c.h"
 #include "path.h"
@@ -66,7 +64,7 @@ static int get_score_adj(const pid_t pid)
 
 static int set_score_adj(const pid_t pid, int adj)
 {
-	char buf[sizeof(stringify_value(OOM_SCORE_ADJ_MIN))];
+	char buf[sizeof(stringify_value(INT_MAX))];
 
 	snprintf(buf, sizeof(buf), "%d", adj);
 
