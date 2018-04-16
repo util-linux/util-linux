@@ -32,6 +32,9 @@ Do not overwrite existing files.  When
 .BR \-\-symlink
 is active, do not overwrite symlinks pointing to existing targets.
 .TP
+.BR \-i , " \-\-interactive"
+Ask before overwriting existing files.
+.TP
 .BR \-V , " \-\-version"
 Display version information and exit.
 .TP
@@ -70,13 +73,29 @@ rename '_with_long_name' '' file_with_long_name.*
 .RE
 will remove the substring in the filenames.
 .SH WARNING
-The renaming has no safeguards except the
-.B \-\-no\-act
-option.  If the user has
+The renaming has no safeguards by default or without any one of the options
+.B \-\-no-overwrite\fR,
+.B \-\-interactive
+or
+.B \-\-no\-act\fR.
+If the user has
 permission to rewrite file names, the command will perform the action without
 any questions.  For example, the result can be quite drastic when the command
 is run as root in the /lib directory.  Always make a backup before running the
 command, unless you truly know what you are doing.
+.SH INTERACTIVE MODE
+As most standard utilities rename can be used with a terminal device (tty in
+short) in canonical mode, where the line is buffered by the tty and you press
+ENTER to validate the user input.  If you put your tty in cbreak mode however,
+rename requires only a single key press to answer the prompt.  To set cbreak
+mode, run for example:
+.RS
+.PP
+.nf
+sh -c 'stty -icanon min 1; "$0" "$@"; stty icanon' rename -i from to files
+.fi
+.PP
+.RE
 .SH "EXIT STATUS"
 .RS
 .PD 0
