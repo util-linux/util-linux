@@ -20,6 +20,13 @@ flock_SOURCES = sys-utils/flock.c lib/monotonic.c lib/timer.c
 flock_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
 endif
 
+#if BUILD_CHOOM
+usrbin_exec_PROGRAMS += choom
+dist_man_MANS += sys-utils/choom.1
+choom_SOURCES = sys-utils/choom.c
+choom_LDADD = $(LDADD) libcommon.la
+#endif
+
 if BUILD_IPCMK
 usrbin_exec_PROGRAMS += ipcmk
 dist_man_MANS += sys-utils/ipcmk.1

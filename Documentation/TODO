@@ -8,11 +8,6 @@ cal
    - support another --reforms, see for example freebsd version
      https://github.com/freebsd/freebsd/blob/master/usr.bin/ncal/ncal.c#L72
 
-choom
------
-   - add new tool to set/get process OOM setting
-     https://github.com/karelzak/util-linux/issues/609
-
 column
 ------
    - add option to NOT ignore empty lines
