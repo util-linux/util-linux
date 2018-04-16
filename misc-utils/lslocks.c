@@ -437,6 +437,10 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 
 		if (str && scols_line_refer_data(line, i, str))
 			err(EXIT_FAILURE, _("failed to add output data"));
+
+        if (str != NULL){
+            free(str);
+        }
 	}
 }
 
