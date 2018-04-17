@@ -120,6 +120,10 @@ Lazy unmount.  Detach the filesystem from the file hierarchy now,
 and clean up all references to this filesystem as soon as it is not busy
 anymore.
 .TP
+.BR \-N , " \-\-namespace " \fIns
+Perform umount in namespace specified by \fIns\fR.
+\fIns\fR is typically in form \fI/proc/[pid]/ns/mnt\fR.
+.TP
 .BR \-n , " \-\-no\-mtab"
 Unmount without writing in
 .IR /etc/mtab .

@@ -643,6 +643,10 @@ This is necessary for example when
 .I /etc
 is on a read-only filesystem.
 .TP
+.BR \-N , " \-\-namespace " \fIns
+Perform mount in namespace specified by \fIns\fR.
+\fIns\fR is typically in form \fI/proc/[pid]/ns/mnt\fR.
+.TP
 .BR \-O , " \-\-test\-opts " \fIopts
 Limit the set of filesystems to which the
 .B \-a
