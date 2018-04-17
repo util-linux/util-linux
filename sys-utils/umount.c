@@ -100,6 +100,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --read-only         in case unmounting fails, try to remount read-only\n"), out);
 	fputs(_(" -t, --types <list>      limit the set of filesystem types\n"), out);
 	fputs(_(" -v, --verbose           say what is being done\n"), out);
+	fputs(_(" -N, --namespace <ns>    perform umount in another namespace\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(25));

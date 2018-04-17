@@ -128,6 +128,10 @@ an unreachable network share where a normal umount will hang due to a downed
 server or a network partition. Remounts of the share will not be possible.
 
 .TP
+.BR \-N , " \-\-namespace " \fIns
+Perform umount in namespace specified by \fIns\fR.
+\fIns\fR is typically in form \fI/proc/[pid]/ns/mnt\fR.
+.TP
 .BR \-n , " \-\-no\-mtab"
 Unmount without writing in
 .IR /etc/mtab .

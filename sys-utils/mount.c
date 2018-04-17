@@ -431,6 +431,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	" -v, --verbose           say what is being done\n"));
 	fprintf(out, _(
 	" -w, --rw, --read-write  mount the filesystem read-write (default)\n"));
+	fprintf(out, _(
+	" -N, --namespace <ns>    perform mount in another namespace\n"));
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(25));
