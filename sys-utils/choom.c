@@ -139,6 +139,8 @@ int main(int argc, char **argv)
 
 	/* Start new process */
 	} else {
+		if (set_score_adj(getpid(), adj))
+			err(EXIT_FAILURE, _("failed to set score adjust value"));
 		argv += optind;
 		execvp(argv[0], argv);
 		errexec(argv[0]);
