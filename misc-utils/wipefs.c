@@ -163,11 +163,19 @@ static void init_output(struct wipe_control *ctl)
 
 	for (i = 0; i < ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
+		struct libscols_column *cl;
 
-		if (!scols_table_new_column(tb, col->name, col->whint,
-					    col->flags))
+		cl = scols_table_new_column(tb, col->name, col->whint,
+					    col->flags);
+		if (!cl)
 			err(EXIT_FAILURE,
 			    _("failed to initialize output column"));
+		if (ctl->json) {
+			int id = get_column_id(i);
+
+			if (id == COL_LEN)
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+		}
 	}
 	ctl->outtab = tb;
 }
