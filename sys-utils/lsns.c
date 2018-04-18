@@ -92,18 +92,19 @@ struct colinfo {
 	double	   whint; /* width hint (N < 1 is in percent of termwidth) */
 	int	   flags; /* SCOLS_FL_* */
 	const char *help;
+	int        json_type;
 };
 
 /* columns descriptions */
 static const struct colinfo infos[] = {
-	[COL_NS]      = { "NS",     10, SCOLS_FL_RIGHT, N_("namespace identifier (inode number)") },
+	[COL_NS]      = { "NS",     10, SCOLS_FL_RIGHT, N_("namespace identifier (inode number)"), SCOLS_JSON_NUMBER },
 	[COL_TYPE]    = { "TYPE",    5, 0, N_("kind of namespace") },
 	[COL_PATH]    = { "PATH",    0, 0, N_("path to the namespace")},
-	[COL_NPROCS]  = { "NPROCS",  5, SCOLS_FL_RIGHT, N_("number of processes in the namespace") },
-	[COL_PID]     = { "PID",     5, SCOLS_FL_RIGHT, N_("lowest PID in the namespace") },
-	[COL_PPID]    = { "PPID",    5, SCOLS_FL_RIGHT, N_("PPID of the PID") },
+	[COL_NPROCS]  = { "NPROCS",  5, SCOLS_FL_RIGHT, N_("number of processes in the namespace"), SCOLS_JSON_NUMBER },
+	[COL_PID]     = { "PID",     5, SCOLS_FL_RIGHT, N_("lowest PID in the namespace"), SCOLS_JSON_NUMBER },
+	[COL_PPID]    = { "PPID",    5, SCOLS_FL_RIGHT, N_("PPID of the PID"), SCOLS_JSON_NUMBER },
 	[COL_COMMAND] = { "COMMAND", 0, SCOLS_FL_TRUNC, N_("command line of the PID")},
-	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("UID of the PID")},
+	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("UID of the PID"), SCOLS_JSON_NUMBER},
 	[COL_USER]    = { "USER",    0, 0, N_("username of the PID")},
 	[COL_NETNSID] = { "NETNSID", 0, SCOLS_FL_RIGHT, N_("namespace ID as used by network subsystem")},
 	[COL_NSFS]    = { "NSFS",    0, SCOLS_FL_WRAP, N_("nsfs mountpoint (usually used network subsystem)")}
@@ -806,6 +807,9 @@ static struct libscols_table *init_scols_table(struct lsns *ls)
 			warnx(_("failed to initialize output column"));
 			goto err;
 		}
+		if (ls->json)
+			scols_column_set_json_type(cl, col->json_type);
+
 		if (!ls->no_wrap && get_column_id(i) == COL_NSFS) {
 			scols_column_set_wrapfunc(cl,
 						  scols_wrapnl_chunksize,
