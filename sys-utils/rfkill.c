@@ -462,9 +462,16 @@ static void rfkill_list_init(struct control *ctrl)
 
 	for (i = 0; i < (size_t) ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
+		struct libscols_column *cl;
 
-		if (!scols_table_new_column(ctrl->tb, col->name, col->whint, col->flags))
+		cl = scols_table_new_column(ctrl->tb, col->name, col->whint, col->flags);
+		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
+		if (ctrl->json) {
+			int id = get_column_id(i);
+			if (id == COL_ID)
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+		}
 	}
 }
 
