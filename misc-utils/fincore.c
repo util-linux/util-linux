@@ -368,9 +368,29 @@ int main(int argc, char ** argv)
 
 	for (i = 0; i < ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
+		struct libscols_column *cl;
 
-		if (!scols_table_new_column(ctl.tb, col->name, col->whint, col->flags))
+		cl = scols_table_new_column(ctl.tb, col->name, col->whint, col->flags);
+		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
+
+		if (ctl.json) {
+			int id = get_column_id(i);
+
+			switch (id) {
+			case COL_FILE:
+				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+				break;
+			case COL_SIZE:
+			case COL_RES:
+				if (!ctl.bytes)
+					break;
+				/* fallthrough */
+			default:
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+				break;
+			}
+		}
 	}
 
 	for(; optind < argc; optind++) {
