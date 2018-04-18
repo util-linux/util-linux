@@ -1542,6 +1542,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	struct libmnt_fs *fs;
 
 	char *root = NULL;
+	char *src2 = NULL;
 	const char *src = NULL, *tgt = NULL;
 	char *xtgt = NULL;
 	int rc = 0;
@@ -1566,8 +1567,17 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 			flags = MS_BIND;
 
 		rootfs = mnt_table_get_fs_root(tb, fstab_fs, flags, &root);
-		if (rootfs)
+		if (rootfs) {
+			const char *fstype = mnt_fs_get_fstype(rootfs);
+
 			src = mnt_fs_get_srcpath(rootfs);
+			if (fstype && strncmp(fstype, "nfs", 3) == 0 && root) {
+				/* NFS stores the root at the end of the source */
+				src = src2 = strappend(src, root);
+				free(root);
+				root = NULL;
+			}
+		}
 	}
 
 	if (!src)
@@ -1667,6 +1677,7 @@ done:
 	free(root);
 
 	DBG(TAB, ul_debugobj(tb, "mnt_table_is_fs_mounted: %s [rc=%d]", src, rc));
+	free(src2);
 	return rc;
 }
 
