@@ -233,6 +233,19 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
+static int get_column_id(int num)
+{
+	assert(num >= 0);
+	assert((size_t) num < ncolumns);
+	assert((size_t) columns[num] < ARRAY_SIZE(coldescs));
+	return columns[num];
+}
+
+static const struct lsipc_coldesc *get_column_desc(int num)
+{
+	return &coldescs[ get_column_id(num) ];
+}
+
 static char *get_username(struct passwd **pw, uid_t id)
 {
 	if (!*pw || (*pw)->pw_uid != id)
@@ -368,15 +381,12 @@ static struct libscols_table *setup_table(struct lsipc_control *ctl)
 	size_t n;
 
 	for (n = 0; n < ncolumns; n++) {
-		int flags = coldescs[columns[n]].flag;
+		const struct lsipc_coldesc *desc = get_column_desc(n);
+		int flags = desc->flag;
 
 		if (ctl->notrunc)
 			flags &= ~SCOLS_FL_TRUNC;
-
-		if (!scols_table_new_column(table,
-				coldescs[columns[n]].name,
-				coldescs[columns[n]].whint,
-				flags))
+		if (!scols_table_new_column(table, desc->name, desc->whint, flags))
 			goto fail;
 	}
 	return table;
@@ -399,7 +409,7 @@ static int print_pretty(struct libscols_table *table)
 
 		data = scols_line_get_cell(ln, n);
 
-		hstr = N_(coldescs[columns[n]].pretty_name);
+		hstr = N_(get_column_desc(n)->pretty_name);
 		dstr = scols_cell_get_data(data);
 
 		if (dstr)
@@ -473,7 +483,7 @@ static void global_set_data(struct libscols_table *tb, const char *resource,
 		int rc = 0;
 		char *arg = NULL;
 
-		switch (columns[n]) {
+		switch (get_column_id(n)) {
 		case COL_RESOURCE:
 			rc = scols_line_set_data(ln, n, resource);
 			break;
@@ -546,7 +556,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 
 		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;
-			switch (columns[n]) {
+			switch (get_column_id(n)) {
 			case COL_KEY:
 				xasprintf(&arg, "0x%08x",semdsp->sem_perm.key);
 				rc = scols_line_refer_data(ln, n, arg);
@@ -749,7 +759,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;
 
-			switch (columns[n]) {
+			switch (get_column_id(n)) {
 			case COL_KEY:
 				xasprintf(&arg, "0x%08x",msgdsp->msg_perm.key);
 				rc = scols_line_refer_data(ln, n, arg);
@@ -902,7 +912,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;
 
-			switch (columns[n]) {
+			switch (get_column_id(n)) {
 			case COL_KEY:
 				xasprintf(&arg, "0x%08x",shmdsp->shm_perm.key);
 				rc = scols_line_refer_data(ln, n, arg);
