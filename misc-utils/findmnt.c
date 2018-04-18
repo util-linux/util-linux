@@ -1606,6 +1606,7 @@ int main(int argc, char *argv[])
 		scols_table_set_name(table, "filesystems");
 
 	for (i = 0; i < ncolumns; i++) {
+		struct libscols_column *cl;
 		int fl = get_column_flags(i);
 		int id = get_column_id(i);
 
@@ -1617,10 +1618,31 @@ int main(int argc, char *argv[])
 			       "is not enabled"), get_column_name(i));
 			goto leave;
 		}
-		if (!scols_table_new_column(table, get_column_name(i),
-					get_column_whint(i), fl)) {
+		cl = scols_table_new_column(table, get_column_name(i),
+					get_column_whint(i), fl);
+		if (!cl)	{
 			warn(_("failed to allocate output column"));
 			goto leave;
+		}
+
+		if (flags & FL_JSON) {
+			switch (id) {
+			case COL_SIZE:
+			case COL_AVAIL:
+			case COL_USED:
+				if (!(flags & FL_BYTES))
+					break;
+				/* fallthrough */
+			case COL_ID:
+			case COL_FREQ:
+			case COL_PASSNO:
+			case COL_TID:
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+				break;
+			default:
+				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+				break;
+			}
 		}
 	}
 
