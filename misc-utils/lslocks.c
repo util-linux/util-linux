@@ -463,10 +463,36 @@ static int show_locks(struct list_head *locks)
 		scols_table_set_name(table, "locks");
 
 	for (i = 0; i < ncolumns; i++) {
+		struct libscols_column *cl;
 		struct colinfo *col = get_column_info(i);
 
-		if (!scols_table_new_column(table, col->name, col->whint, col->flags))
+		cl = scols_table_new_column(table, col->name, col->whint, col->flags);
+		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
+
+		if (json) {
+			int id = get_column_id(i);
+
+			switch (id) {
+			case COL_SIZE:
+				if (!bytes)
+					break;
+				/* fallthrough */
+			case COL_PID:
+			case COL_START:
+			case COL_END:
+			case COL_BLOCKER:
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+				break;
+			case COL_M:
+				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
+				break;
+			default:
+				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+				break;
+			}
+		}
+
 	}
 
 	/* prepare data for output */
