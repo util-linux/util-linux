@@ -2084,8 +2084,8 @@ Set the block size. Default value prior to kernel version 2.6.30 was
 fallback to 2048. Since 4.11 it is logical block size with fallback to
 any valid block size between logical device block size and 4096.
 
-For other details see the updated mkudffs.8 manpage, section
-COMPATIBILITY and BLOCK SIZE.
+For other details see the \fBmkudffs\fP(8) 2.0+ manpage, sections
+\fBCOMPATIBILITY\fP and \fBBLOCK SIZE\fP.
 .TP
 .B unhide
 Show otherwise hidden files.
@@ -2108,8 +2108,11 @@ Use long UDF address descriptors. (default)
 .B nostrict
 Unset strict conformance.
 .TP
-.B iocharset
-Set the NLS character set.
+.B iocharset=
+Set the NLS character set. This requires kernel compiled with CONFIG_UDF_NLS option.
+.TP
+.B utf8
+Set the UTF-8 character set.
 .SS Mount options for debugging and disaster recovery
 .TP
 .B novrs
@@ -2126,22 +2129,22 @@ Set the last block of the filesystem.
 .SS Unused historical mount options that may be encountered and should be removed
 .TP
 .B uid=ignore
-use uid=<user> instead.
+Ignored, use uid=<user> instead.
 .TP
 .B gid=ignore
-use gid=<group> instead.
+Ignored, use gid=<group> instead.
 .TP
 .B volume=
-Override the VolumeDesc location.
+Unimplemented and ignored.
 .TP
 .B partition=
-Override the PartitionDesc location.
+Unimplemented and ignored.
 .TP
 .B fileset=
-Override the fileset block location.
+Unimplemented and ignored.
 .TP
 .B rootdir=
-Override the root directory location.
+Unimplemented and ignored.
 
 .SS "Mount options for ufs"
 .TP
