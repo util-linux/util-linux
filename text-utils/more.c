@@ -59,14 +59,21 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/wait.h>
+#include <regex.h>
+
+#if defined(HAVE_NCURSESW_TERM_H)
+# include <ncursesw/term.h>
+#elif defined(HAVE_NCURSES_TERM_H)
+# include <ncurses/term.h>
+#elif defined(HAVE_TERM_H)
+# include <term.h>
+#endif
 
 #include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
 #include "widechar.h"
 #include "closestream.h"
-
-#include <regex.h>
 
 #ifdef TEST_PROGRAM
 # define NON_INTERACTIVE_MORE 1
@@ -89,6 +96,14 @@
 
 #define stty(fd,argp)  tcsetattr(fd,TCSANOW,argp)
 
+#define ERASEONECOLUMN(x) \
+		do { \
+		    if (x) \
+			putserr(BSB); \
+		    else \
+			putserr(BS); \
+		} while(0)
+
 #define TBUFSIZ		1024
 #define LINSIZ		256	/* minimal Line buffer size */
 #define ctrl(letter)	(letter & 077)
@@ -103,6 +118,29 @@
 #define SHELL_LINE	1000
 #define COMMAND_BUF	200
 #define REGERR_BUF	NUM_COLUMNS
+#define STOP		-10
+
+#define TERM_AUTO_RIGHT_MARGIN    "am"
+#define TERM_CEOL                 "xhp"
+#define TERM_CLEAR                "clear"
+#define TERM_CLEAR_TO_LINE_END    "el"
+#define TERM_CLEAR_TO_SCREEN_END  "ed"
+#define TERM_COLS                 "cols"
+#define TERM_CURSOR_ADDRESS       "cup"
+#define TERM_EAT_NEW_LINE         "xenl"
+#define TERM_ENTER_UNDERLINE      "smul"
+#define TERM_EXIT_STANDARD_MODE   "rmso"
+#define TERM_EXIT_UNDERLINE       "rmul"
+#define TERM_HARD_COPY            "hc"
+#define TERM_HOME                 "home"
+#define TERM_LINE_DOWN            "cud1"
+#define TERM_LINES                "lines"
+#define TERM_OVER_STRIKE          "os"
+#define TERM_PAD_CHAR             "pad"
+#define TERM_STANDARD_MODE        "smso"
+#define TERM_STD_MODE_GLITCH      "xmc"
+#define TERM_UNDERLINE_CHAR       "uc"
+#define TERM_UNDERLINE            "ul"
 
 static struct termios otty, savetty0;
 static long file_pos, file_size;
@@ -158,35 +196,15 @@ static struct {
 } context, screen_start;
 extern char PC;			/* pad character */
 
-#if defined(HAVE_NCURSESW_TERM_H)
-# include <ncursesw/term.h>
-#elif defined(HAVE_NCURSES_TERM_H)
-# include <ncurses/term.h>
-#elif defined(HAVE_TERM_H)
-# include <term.h>
-#endif
+static char *BS = "\b";
+static char *BSB = "\b \b";
+static char *CARAT = "^";
 
-#define TERM_AUTO_RIGHT_MARGIN    "am"
-#define TERM_CEOL                 "xhp"
-#define TERM_CLEAR                "clear"
-#define TERM_CLEAR_TO_LINE_END    "el"
-#define TERM_CLEAR_TO_SCREEN_END  "ed"
-#define TERM_COLS                 "cols"
-#define TERM_CURSOR_ADDRESS       "cup"
-#define TERM_EAT_NEW_LINE         "xenl"
-#define TERM_ENTER_UNDERLINE      "smul"
-#define TERM_EXIT_STANDARD_MODE   "rmso"
-#define TERM_EXIT_UNDERLINE       "rmul"
-#define TERM_HARD_COPY            "hc"
-#define TERM_HOME                 "home"
-#define TERM_LINE_DOWN            "cud1"
-#define TERM_LINES                "lines"
-#define TERM_OVER_STRIKE          "os"
-#define TERM_PAD_CHAR             "pad"
-#define TERM_STANDARD_MODE        "smso"
-#define TERM_STD_MODE_GLITCH      "xmc"
-#define TERM_UNDERLINE_CHAR       "uc"
-#define TERM_UNDERLINE            "ul"
+static char ch;
+static int lastcmd, lastarg, lastp;
+static int lastcolon;
+static char shell_line[SHELL_LINE];
+
 
 static void putstring(char *s)
 {
@@ -733,8 +751,6 @@ static int readch(void)
 	return (c);
 }
 
-static char ch;
-
 /* Read a decimal number from the terminal.  Set cmd to the non-digit
  * which terminates the number. */
 static int number(char *cmd)
@@ -784,17 +800,6 @@ static void skipf(register int nskip)
 	putchar('\n');
 	--fnum;
 }
-
-static char *BS = "\b";
-static char *BSB = "\b \b";
-static char *CARAT = "^";
-#define ERASEONECOLUMN(x) \
-		do { \
-		    if (x) \
-			putserr(BSB); \
-		    else \
-			putserr(BS); \
-		} while(0)
 
 static void show(char c)
 {
@@ -951,10 +956,6 @@ static void ttyin(char buf[], register int nmax, char pchar)
 	if (sp - buf >= nmax - 1)
 		more_error(_("Line too long"));
 }
-
-static int lastcmd, lastarg, lastp;
-static int lastcolon;
-static char shell_line[SHELL_LINE];
 
 /* return: 0 - unchanged, 1 - changed, -1 - overflow (unchanged) */
 static int expand(char **outbuf, char *inbuf)
@@ -1615,7 +1616,6 @@ static int command(char *filename, register FILE *f)
 }
 
 /* Print out the contents of the file f, one screenful at a time. */
-#define STOP -10
 static void screen(register FILE *f, register int num_lines)
 {
 	register int c;
