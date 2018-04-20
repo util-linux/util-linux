@@ -398,6 +398,19 @@ static char *sanitize_path(const char *path)
 	return p;
 }
 
+static pid_t parse_pid(const char *str)
+{
+	char *end;
+	pid_t ret;
+
+	errno = 0;
+	ret = strtoul(str, &end, 10);
+
+	if (ret < 0 || errno || end == str || (end && *end))
+		return 0;
+	return ret;
+}
+
 int main(int argc, char **argv)
 {
 	int c, rc = 0, all = 0, recursive = 0, alltargets = 0;
@@ -512,8 +525,15 @@ int main(int argc, char **argv)
 			print_version();
 			break;
 		case 'N':
-			if (mnt_context_set_target_ns(cxt, optarg))
-				err(MNT_EX_SYSERR, _("failed to set target namespace"));
+		{
+			char path[PATH_MAX];
+			pid_t pid = parse_pid(optarg);
+
+			if (pid)
+				snprintf(path, sizeof(path), "/proc/%i/ns/mnt", pid);
+
+			if (mnt_context_set_target_ns(cxt, pid ? path : optarg))
+				err(MNT_EX_SYSERR, _("failed to set target namespace to %s"), pid ? path : optarg);
 			break;
 		}
 		default:
