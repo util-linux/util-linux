@@ -646,7 +646,9 @@ is on a read-only filesystem.
 .TP
 .BR \-N , " \-\-namespace " \fIns
 Perform mount in namespace specified by \fIns\fR.
-\fIns\fR is typically in form \fI/proc/[pid]/ns/mnt\fR.
+\fIns\fR is either PID of process running in that namespace
+or special file representing that namespace.
+See \fBnamespaces\fR(7) for more information.
 .TP
 .BR \-O , " \-\-test\-opts " \fIopts
 Limit the set of filesystems to which the
