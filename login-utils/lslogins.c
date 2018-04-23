@@ -1241,6 +1241,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --noheadings         don't print headings\n"), out);
 	fputs(_("     --notruncate         don't truncate output\n"), out);
 	fputs(_(" -o, --output[=<list>]    define the columns to output\n"), out);
+	fputs(_("     --output-all         output all columns\n"), out);
 	fputs(_(" -p, --pwd                display information related to login by password.\n"), out);
 	fputs(_(" -r, --raw                display in raw mode\n"), out);
 	fputs(_(" -s, --system-accs        display system accounts\n"), out);
@@ -1277,6 +1278,7 @@ int main(int argc, char *argv[])
 		OPT_NOTRUNC,
 		OPT_NOHEAD,
 		OPT_TIME_FMT,
+		OPT_OUTPUT_ALL,
 	};
 
 	static const struct option longopts[] = {
@@ -1292,6 +1294,7 @@ int main(int argc, char *argv[])
 		{ "notruncate",     no_argument,	0, OPT_NOTRUNC },
 		{ "noheadings",     no_argument,	0, OPT_NOHEAD },
 		{ "output",         required_argument,	0, 'o' },
+		{ "output-all",     no_argument,	0, OPT_OUTPUT_ALL },
 		{ "last",           no_argument,	0, 'L', },
 		{ "raw",            no_argument,	0, 'r' },
 		{ "system-accs",    no_argument,	0, 's' },
@@ -1384,6 +1387,10 @@ int main(int argc, char *argv[])
 			if (ncolumns < 0)
 				return EXIT_FAILURE;
 			opt_o = 1;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; (size_t)ncolumns < ARRAY_SIZE(coldescs); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'r':
 			outmode = OUT_RAW;

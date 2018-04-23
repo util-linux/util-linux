@@ -59,6 +59,7 @@ _lslogins_module()
 			--noheadings
 			--notruncate
 			--output
+			--output-all
 			--pwd
 			--raw
 			--system-accs
