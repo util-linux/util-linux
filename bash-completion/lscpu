@@ -37,6 +37,7 @@ _lscpu_module()
 				--sysroot
 				--hex
 				--physical
+				--output-all
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS_ALL[*]}" -- $cur) )
