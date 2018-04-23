@@ -150,6 +150,11 @@ options are not specified.
 The default list of columns may be extended if \fIlist\fP is
 specified in the format \fI+list\fP (e.g. \fBfindmnt \-o +PROPAGATION\fP).
 .TP
+.B \-\-output\-all
+Output almost all available columns.  The columns that require
+.B \-\-poll
+are not included.
+.TP
 .BR \-P , " \-\-pairs"
 Use key="value" output format.  All potentially unsafe characters are hex-escaped (\\x<code>).
 .TP
