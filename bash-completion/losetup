@@ -63,6 +63,7 @@ _losetup_module()
 				--list
 				--noheadings
 				--output
+				--output-all
 				--raw
 				--help
 				--version"

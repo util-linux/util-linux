@@ -430,6 +430,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --list                    list info about all or specified (default)\n"), out);
 	fputs(_(" -n, --noheadings              don't print headings for --list output\n"), out);
 	fputs(_(" -O, --output <cols>           specify columns to output for --list\n"), out);
+	fputs(_("     --output-all              output all columns\n"), out);
 	fputs(_("     --raw                     use raw --list output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -590,7 +591,8 @@ int main(int argc, char **argv)
 		OPT_SIZELIMIT = CHAR_MAX + 1,
 		OPT_SHOW,
 		OPT_RAW,
-		OPT_DIO
+		OPT_DIO,
+		OPT_OUTPUT_ALL
 	};
 	static const struct option longopts[] = {
 		{ "all",          no_argument,       NULL, 'a'           },
@@ -607,6 +609,7 @@ int main(int argc, char **argv)
 		{ "noheadings",   no_argument,       NULL, 'n'           },
 		{ "offset",       required_argument, NULL, 'o'           },
 		{ "output",       required_argument, NULL, 'O'           },
+		{ "output-all",   no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "sizelimit",    required_argument, NULL, OPT_SIZELIMIT },
 		{ "partscan",     no_argument,       NULL, 'P'           },
 		{ "read-only",    no_argument,       NULL, 'r'           },
@@ -700,6 +703,10 @@ int main(int argc, char **argv)
 		case 'O':
 			outarg = optarg;
 			list = 1;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'P':
 			lo_flags |= LO_FLAGS_PARTSCAN;
