@@ -536,6 +536,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -i, --noinaccessible   ignore locks without read permissions\n"), out);
 	fputs(_(" -n, --noheadings       don't print headings\n"), out);
 	fputs(_(" -o, --output <list>    define which output columns to use\n"), out);
+	fputs(_("     --output-all       output all columns\n"), out);
 	fputs(_(" -p, --pid <pid>        display only locks held by this process\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
@@ -558,12 +559,16 @@ int main(int argc, char *argv[])
 	int c, rc = 0;
 	struct list_head locks;
 	char *outarg = NULL;
+	enum {
+		OPT_OUTPUT_ALL = CHAR_MAX + 1
+	};
 	static const struct option long_opts[] = {
 		{ "bytes",      no_argument,       NULL, 'b' },
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "pid",	required_argument, NULL, 'p' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "output",     required_argument, NULL, 'o' },
+		{ "output-all",	no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "notruncate", no_argument,       NULL, 'u' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "noheadings", no_argument,       NULL, 'n' },
@@ -602,6 +607,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);

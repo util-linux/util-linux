@@ -36,6 +36,7 @@ _lslocks_module()
 		--noinaccessible
 		--noheadings
 		--output
+		--output-all
 		--pid
 		--raw
 		--notruncate
