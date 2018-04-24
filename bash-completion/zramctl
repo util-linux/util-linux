@@ -41,6 +41,7 @@ _zramctl_module()
 				--find
 				--noheadings
 				--output
+				--output-all
 				--raw
 				--reset
 				--size
