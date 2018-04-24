@@ -219,7 +219,13 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 
 static struct libmnt_table *new_mountinfo(struct libmnt_context *cxt)
 {
-	struct libmnt_table *tb = mnt_new_table();
+	struct libmnt_table *tb;
+	struct libmnt_ns *ns_old = mnt_context_switch_target_ns(cxt);
+
+	if (!ns_old)
+		err(MNT_EX_SYSERR, _("failed to switch namespace"));
+
+	tb = mnt_new_table();
 	if (!tb)
 		err(MNT_EX_SYSERR, _("libmount table allocation failed"));
 
@@ -231,6 +237,9 @@ static struct libmnt_table *new_mountinfo(struct libmnt_context *cxt)
 		mnt_unref_table(tb);
 		tb = NULL;
 	}
+
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		err(MNT_EX_SYSERR, _("failed to switch namespace"));
 
 	return tb;
 }
