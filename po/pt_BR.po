@@ -12535,7 +12535,7 @@ msgstr " -i, --insert-range   insere um buraco no intervalo, trocando dados exis
 
 #: sys-utils/fallocate.c:93
 msgid " -l, --length <num>   length for range operations, in bytes\n"
-msgstr " -n, --length <núm>   comprimento para operações de intervalo em bytes\n"
+msgstr " -l, --length <núm>   comprimento para operações de intervalo em bytes\n"
 
 #: sys-utils/fallocate.c:94
 msgid " -n, --keep-size      maintain the apparent size of the file\n"
