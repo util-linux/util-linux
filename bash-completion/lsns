@@ -40,6 +40,7 @@ _lsns_module()
 					--list
 					--noheadings
 					--output
+					--output-all
 					--task
 					--raw
 					--notruncate
