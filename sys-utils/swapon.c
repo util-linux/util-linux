@@ -846,7 +846,8 @@ int main(int argc, char *argv[])
 		BYTES_OPTION = CHAR_MAX + 1,
 		NOHEADINGS_OPTION,
 		RAW_OPTION,
-		SHOW_OPTION
+		SHOW_OPTION,
+		OPT_LIST_TYPES
 	};
 
 	static const struct option long_opts[] = {
@@ -861,6 +862,7 @@ int main(int argc, char *argv[])
 		{ "verbose",    no_argument,       NULL, 'v'               },
 		{ "version",    no_argument,       NULL, 'V'               },
 		{ "show",       optional_argument, NULL, SHOW_OPTION       },
+		{ "output-all", no_argument,       NULL, OPT_LIST_TYPES    },
 		{ "noheadings", no_argument,       NULL, NOHEADINGS_OPTION },
 		{ "raw",        no_argument,       NULL, RAW_OPTION        },
 		{ "bytes",      no_argument,       NULL, BYTES_OPTION      },
@@ -950,6 +952,10 @@ int main(int argc, char *argv[])
 					return EXIT_FAILURE;
 			}
 			ctl.show = 1;
+			break;
+		case OPT_LIST_TYPES:
+			for (ctl.ncolumns = 0; (size_t)ctl.ncolumns < ARRAY_SIZE(infos); ctl.ncolumns++)
+				ctl.columns[ctl.ncolumns] = ctl.ncolumns;
 			break;
 		case NOHEADINGS_OPTION:
 			ctl.no_heading = 1;
