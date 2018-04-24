@@ -268,6 +268,9 @@ static int fat_valid_superblock(blkid_probe pr,
 		}
 	}
 
+	if (blkid_probe_is_bitlocker(pr))
+		return 0;
+
 	return 1;	/* valid */
 }
 

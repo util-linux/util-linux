@@ -81,6 +81,7 @@ extern const struct blkid_idinfo bcache_idinfo;
 extern const struct blkid_idinfo mpool_idinfo;
 extern const struct blkid_idinfo vdo_idinfo;
 extern const struct blkid_idinfo stratis_idinfo;
+extern const struct blkid_idinfo bitlocker_idinfo;
 
 /*
  * superblock functions
@@ -104,5 +105,7 @@ extern int blkid_probe_set_id_label(blkid_probe pr, const char *name,
 			     unsigned char *data, size_t len);
 extern int blkid_probe_set_utf8_id_label(blkid_probe pr, const char *name,
 			     unsigned char *data, size_t len, int enc);
+
+extern int blkid_probe_is_bitlocker(blkid_probe pr);
 
 #endif /* _BLKID_SUPERBLOCKS_H */

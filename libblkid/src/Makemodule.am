@@ -47,6 +47,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/bcache.c \
 	libblkid/src/superblocks/befs.c \
 	libblkid/src/superblocks/bfs.c \
+	libblkid/src/superblocks/bitlocker.c \
 	libblkid/src/superblocks/btrfs.c \
 	libblkid/src/superblocks/cramfs.c \
 	libblkid/src/superblocks/ddf_raid.c \
