@@ -54,6 +54,10 @@ saves the dialogue in this
 If no filename is given, the dialogue is saved in the file
 .BR typescript .
 .SH OPTIONS
+Below, the \fIsize\fR argument may be followed by the multiplicative
+suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
+(the "iB" is optional, e.g. "K" has the same meaning as "KiB"), or the suffixes
+KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 .TP
 \fB\-a\fR, \fB\-\-append\fR
 Append the output to
@@ -84,6 +88,15 @@ or symbolic link.  The command will follow a symbolic link.
 .TP
 \fB\-q\fR, \fB\-\-quiet\fR
 Be quiet (do not write start and done messages to standard output).
+.TP
+\fB\-s\fR, \fB\-\-size\fR \fIsize\fR
+Limit the size of the output file to
+.I size
+and stops the child process after this size is exceeded.  The calculated
+file size does not include the start and done messages that the
+.B script
+command prepends and appends to the child process output.
+Due to buffering, the resulting output file might be larger than the specified value.
 .TP
 \fB\-t\fR[\fIfile\fR], \fB\-\-timing\fR[=\fIfile\fR]
 Output timing data to standard error, or to
