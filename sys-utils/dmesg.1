@@ -228,7 +228,13 @@ The text of the message with the warning log priority.
 .TP
 .B segfault
 The text of the message that inform about segmentation fault.
-
+.SH EXIT STATUS
+.B dmesg
+can fail reporting permission denied error.  This is usually caused by
+.B dmesg_restrict
+kernel setting, please see
+.BR syslog (2)
+for more details.
 .SH SEE ALSO
 .BR terminal-colors.d (5),
 .BR syslogd (8)
