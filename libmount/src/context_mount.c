@@ -961,8 +961,9 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  * WARNING: non-zero return code does not mean that mount(2) syscall or
  *          mount.type helper wasn't successfully called.
  *
- *          Check mnt_context_get_status() after error!
-*
+ * Check mnt_context_get_status() after error! See mnt_context_mount() for more
+ * details about errors and warnings.
+ *
  * Returns: 0 on success;
  *         >0 in case of mount(2) error (returns syscall errno),
  *         <0 in case of other errors.
@@ -1086,7 +1087,32 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
  * WARNING: non-zero return code does not mean that mount(2) syscall or
  *          mount.type helper wasn't successfully called.
  *
- *          Check mnt_context_get_status() after error!
+ * Always use mnt_context_get_status():
+ *
+ * <informalexample>
+ *   <programlisting>
+ *       rc = mnt_context_mount(cxt);
+ *
+ *       if (mnt_context_helper_executed(cxt))
+ *               return mnt_context_get_helper_status(cxt);
+ *       if (rc == 0 && mnt_context_get_status(cxt) == 1)
+ *               return MNT_EX_SUCCESS;
+ *       return MNT_EX_FAIL;
+ *   </programlisting>
+ * </informalexample>
+ *
+ * or mnt_context_get_excode() to generate mount(8) compatible error
+ * or warning message:
+ *
+ * <informalexample>
+ *   <programlisting>
+ *       rc = mnt_context_mount(cxt);
+ *       rc = mnt_context_get_excode(cxt, rc, buf, sizeof(buf));
+ *       if (buf)
+ *               warnx(_("%s: %s"), mnt_context_get_target(cxt), buf);
+ *	 return rc;   // MNT_EX_*
+ *   </programlisting>
+ * </informalexample>
  *
  * Returns: 0 on success;
  *         >0 in case of mount(2) error (returns syscall errno),
@@ -1162,6 +1188,8 @@ again:
  * mnt_context_next_mount() function returns zero, but the @mntrc is non-zero.
  * Use also mnt_context_get_status() to check if the filesystem was
  * successfully mounted.
+ *
+ * See mnt_context_mount() for more details about errors and warnings.
  *
  * Returns: 0 on success,
  *         <0 in case of error (!= mount(2) errors)
