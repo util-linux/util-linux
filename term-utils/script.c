@@ -71,6 +71,7 @@
 #include "all-io.h"
 #include "monotonic.h"
 #include "timeutils.h"
+#include "strutils.h"
 
 #include "debug.h"
 
@@ -104,6 +105,7 @@ struct script_control {
 	FILE *typescriptfp;	/* output file pointer */
 	char *tname;		/* timing file path */
 	FILE *timingfp;		/* timing file pointer */
+	ssize_t maxsz;		/* maximum output file size */
 	struct timeval oldtime;	/* previous write or command start time */
 	int master;		/* pseudoterminal master file descriptor */
 	int slave;		/* pseudoterminal slave file descriptor */
@@ -170,6 +172,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -f, --flush                   run flush after each write\n"
 		"     --force                   use output file even when it is a link\n"
 		" -q, --quiet                   be quiet\n"
+		" -s, --size <size>             terminate if output file exceeds size\n"
 		" -t[<file>], --timing[=<file>] output timing data to stderr or to FILE\n"
 		), out);
 	printf(USAGE_HELP_OPTIONS(31));
@@ -346,7 +349,7 @@ static void write_eof_to_shell(struct script_control *ctl)
 	write_to_shell(ctl, &c, sizeof(char));
 }
 
-static void handle_io(struct script_control *ctl, int fd, int *eof)
+static ssize_t handle_io(struct script_control *ctl, int fd, int *eof)
 {
 	char buf[BUFSIZ];
 	ssize_t bytes;
@@ -358,13 +361,13 @@ static void handle_io(struct script_control *ctl, int fd, int *eof)
 	bytes = read(fd, buf, sizeof(buf));
 	if (bytes < 0) {
 		if (errno == EAGAIN || errno == EINTR)
-			return;
+			return 0;
 		fail(ctl);
 	}
 
 	if (bytes == 0) {
 		*eof = 1;
-		return;
+		return 0;
 	}
 
 	/* from stdin (user) to command */
@@ -384,6 +387,7 @@ static void handle_io(struct script_control *ctl, int fd, int *eof)
 		DBG(IO, ul_debug(" master --> stdout %zd bytes", bytes));
 		write_output(ctl, buf, bytes);
 	}
+	return bytes;
 }
 
 static void handle_signal(struct script_control *ctl, int fd)
@@ -435,9 +439,29 @@ static void handle_signal(struct script_control *ctl, int fd)
 	}
 }
 
+/* returns 1 when the max output size is exceeded, provided that the -s option
+   was specified. Otherwise returns 0.
+*/
+static int output_size_exceeded(ssize_t bytes, struct script_control *ctl)
+{
+	static ssize_t filesz = 0;
+	if (ctl->maxsz > 0) {
+		filesz += bytes;
+		if (filesz >= ctl->maxsz) {
+			if (!ctl->quiet) {
+				printf(_("Script terminated, max output file size %ld exceeded\n"), ctl->maxsz);
+			}
+			DBG(IO, ul_debug("output size exceeded"));
+			return 1;
+		}
+	}
+	return 0;
+}
+
 static void do_io(struct script_control *ctl)
 {
 	int ret, eof = 0;
+	ssize_t bytes_written = 0;
 	time_t tvec = script_time((time_t *)NULL);
 	char buf[128];
 	enum {
@@ -516,8 +540,11 @@ static void do_io(struct script_control *ctl)
 			case POLLFD_STDIN:
 			case POLLFD_MASTER:
 				/* data */
-				if (pfd[i].revents & POLLIN)
-					handle_io(ctl, pfd[i].fd, &eof);
+				if (pfd[i].revents & POLLIN) {
+					bytes_written = handle_io(ctl, pfd[i].fd, &eof);
+					ctl->die = output_size_exceeded(bytes_written, ctl);
+					break;
+				}
 				/* EOF maybe detected by two ways:
 				 *	A) poll() return POLLHUP event after close()
 				 *	B) read() returns 0 (no data) */
@@ -723,7 +750,7 @@ int main(int argc, char **argv)
 
 	script_init_debug();
 
-	while ((ch = getopt_long(argc, argv, "ac:efqt::Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "ac:efqs:t::Vh", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'a':
 			ctl.append = 1;
@@ -743,6 +770,8 @@ int main(int argc, char **argv)
 		case 'q':
 			ctl.quiet = 1;
 			break;
+		case 's':
+			ctl.maxsz = strtosize_or_err(optarg, _("failed to parse maximum file size"));
 		case 't':
 			if (optarg)
 				ctl.tname = optarg;
