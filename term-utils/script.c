@@ -71,6 +71,7 @@
 #include "all-io.h"
 #include "monotonic.h"
 #include "timeutils.h"
+#include "strutils.h"
 
 #include "debug.h"
 
@@ -104,6 +105,7 @@ struct script_control {
 	FILE *typescriptfp;	/* output file pointer */
 	char *tname;		/* timing file path */
 	FILE *timingfp;		/* timing file pointer */
+	ssize_t maxsz;		/* maximum output file size */
 	struct timeval oldtime;	/* previous write or command start time */
 	int master;		/* pseudoterminal master file descriptor */
 	int slave;		/* pseudoterminal slave file descriptor */
@@ -170,6 +172,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -f, --flush                   run flush after each write\n"
 		"     --force                   use output file even when it is a link\n"
 		" -q, --quiet                   be quiet\n"
+		" -s, --size <size>             terminate if output file exceeds size\n"
 		" -t[<file>], --timing[=<file>] output timing data to stderr or to FILE\n"
 		), out);
 	printf(USAGE_HELP_OPTIONS(31));
@@ -350,7 +353,7 @@ static void handle_io(struct script_control *ctl, int fd, int *eof)
 {
 	char buf[BUFSIZ];
 	ssize_t bytes;
-
+	static ssize_t total_bytes = 0;
 	DBG(IO, ul_debug("%d FD active", fd));
 	*eof = 0;
 
@@ -383,6 +386,17 @@ static void handle_io(struct script_control *ctl, int fd, int *eof)
 	} else if (fd == ctl->master) {
 		DBG(IO, ul_debug(" master --> stdout %zd bytes", bytes));
 		write_output(ctl, buf, bytes);
+	}
+	if (ctl->maxsz > 0) {
+		total_bytes += bytes;
+		DBG(IO, ul_debug("  total written: %zd bytes", total_bytes));
+		if (total_bytes >= ctl->maxsz) {
+			if (!ctl->quiet) {
+				printf(_("Script terminated, max output file size %zd exceeded\n"), ctl->maxsz);
+			 }
+			DBG(IO, ul_debug("output size %zd, exceeded limit %zd", total_bytes, ctl->maxsz));
+			*eof = 1;
+		}
 	}
 }
 
@@ -702,6 +716,7 @@ int main(int argc, char **argv)
 		{"flush", no_argument, NULL, 'f'},
 		{"force", no_argument, NULL, FORCE_OPTION,},
 		{"quiet", no_argument, NULL, 'q'},
+		{"size", required_argument, NULL, 's'},
 		{"timing", optional_argument, NULL, 't'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -723,7 +738,7 @@ int main(int argc, char **argv)
 
 	script_init_debug();
 
-	while ((ch = getopt_long(argc, argv, "ac:efqt::Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "ac:efqs:t::Vh", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'a':
 			ctl.append = 1;
@@ -742,6 +757,9 @@ int main(int argc, char **argv)
 			break;
 		case 'q':
 			ctl.quiet = 1;
+			break;
+		case 's':
+			ctl.maxsz = strtosize_or_err(optarg, _("failed to parse maximum file size"));
 			break;
 		case 't':
 			if (optarg)

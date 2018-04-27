@@ -36,7 +36,7 @@ for i in `seq 1 $count`; do
 done | grep -c Bingo >> $TS_OUTPUT
 
 seen=$(<$TS_OUTPUT)
-if [ $seen = $count ]; then
+if [ "$seen" = "$count" ]; then
 	echo "all bingos seen" > $TS_OUTPUT
 else
 	echo "only $seen of $count bingos seen" > $TS_OUTPUT

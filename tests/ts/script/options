@@ -57,4 +57,11 @@ $TS_HELPER_SCRIPT --return --append -c "exit 127" $TS_OUTPUT </dev/null >/dev/nu
 echo $? >> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "size"
+$TS_HELPER_SCRIPT --size 9 --command "echo 1:1234567890" $TS_OUTPUT </dev/null >/dev/null 2>&1
+$TS_HELPER_SCRIPT -a -s 9 --command "echo 2:1234567890" $TS_OUTPUT </dev/null >/dev/null 2>&1
+echo $? >> $TS_OUTPUT
+cp /home/fmora/u/src/util-linux/tests/output/script/options-size /tmp
+ts_finalize_subtest
+
 ts_finalize
