@@ -164,7 +164,7 @@ m4_ifndef([PKG_PROG_PKG_CONFIG],
     macros. These are usually located in /usr/share/aclocal/pkg.m4.
     If your macros are in a different location, try setting the
     environment variable AL_OPTS="-I/other/macro/dir" before running
-    ./autogen.sh or autoreconf again.])])
+    ./autogen.sh or autoreconf again. Make sure pkg-config is installed.])])
 PKG_PROG_PKG_CONFIG
 
 GTK_DOC_CHECK([1.10])
