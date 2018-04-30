@@ -73,7 +73,7 @@ if ! (bison --version) < /dev/null > /dev/null 2>&1; then
 	echo
 	DIE=1
 else
-	lexver=$(bison --version | awk '/bison \(GNU Bison\)/ { print $4 }')
+	lexver=$(bison --version | awk '/^bison \(GNU [Bb]ison\)/ { print $4 }')
 	case "$lexver" in
 		[2-9].*)
 			;;
