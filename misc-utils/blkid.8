@@ -194,11 +194,16 @@ and \fB\-\-uuid\fR options
 .TP
 .B udev
 print key="value" pairs for easy import into the udev environment; the keys are
-prefixed by ID_FS_ or ID_PART_ prefixes
+prefixed by ID_FS_ or ID_PART_ prefixes.  The value may be modified to be
+safe for udev environment; allowed is plain ASCII, hex-escaping and valid UTF-8,
+everything else (including whitespaces) is replaced with '_'. The keys with
+_ENC postfix use hex-escaping for unsafe chars.
 
 The udev output returns the ID_FS_AMBIVALENT tag if more superblocks are detected,
 and ID_PART_ENTRY_* tags are always returned for all partitions including empty
-partitions.  This output format is \fBDEPRECATED\fR.
+partitions.
+
+This output format is \fBDEPRECATED\fR.
 .TP
 .B export
 print key=value pairs for easy import into the environment; this output format
