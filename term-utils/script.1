@@ -86,17 +86,17 @@ being done using `cat foo'.
 Allow the default output destination, i.e. the typescript file, to be a hard
 or symbolic link.  The command will follow a symbolic link.
 .TP
-\fB\-q\fR, \fB\-\-quiet\fR
-Be quiet (do not write start and done messages to standard output).
-.TP
-\fB\-s\fR, \fB\-\-size\fR \fIsize\fR
+\fB\-o\fR, \fB\-\-output-limit\fR \fIsize\fR
 Limit the size of the output file to
 .I size
-and stops the child process after this size is exceeded.  The calculated
+and stop the child process after this size is exceeded.  The calculated
 file size does not include the start and done messages that the
 .B script
 command prepends and appends to the child process output.
 Due to buffering, the resulting output file might be larger than the specified value.
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Be quiet (do not write start and done messages to standard output).
 .TP
 \fB\-t\fR[\fIfile\fR], \fB\-\-timing\fR[=\fIfile\fR]
 Output timing data to standard error, or to
