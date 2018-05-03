@@ -219,7 +219,7 @@ static int probe_zfs(blkid_probe pr,
 {
 	int swab_endian = 0;
 	struct zfs_uberblock *ub;
-	loff_t offset, ub_offset = 0;
+	loff_t offset = 0, ub_offset = 0;
 	int label_no, found = 0, found_in_label;
 	void *label;
 	loff_t blk_align = (pr->size % (256 * 1024ULL));
