@@ -395,7 +395,7 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	 *	uucp and ftp have special-type entries
 	 */
 	utline[0] = 0;
-	strncat(utline, p->ut_line, sizeof(p->ut_line));
+	strncat(utline, p->ut_line, sizeof(utline) - 1);
 	if (strncmp(utline, "ftp", 3) == 0 && isdigit(utline[3]))
 		utline[3] = 0;
 	if (strncmp(utline, "uucp", 4) == 0 && isdigit(utline[4]))
