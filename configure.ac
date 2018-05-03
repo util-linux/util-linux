@@ -865,7 +865,7 @@ AS_IF([test "x$with_udev" = xno], [
 
 dnl wide-char ncurses
 AC_ARG_WITH([ncursesw],
-  AS_HELP_STRING([--with-ncursesw], [build with wide-char ncurses, enabled by default]),
+  AS_HELP_STRING([--without-ncursesw], [do not build with wide-char ncurses]),
   [], [with_ncursesw=auto]
 )
 have_ncursesw=no
@@ -895,7 +895,7 @@ AS_CASE([$with_ncursesw:$have_ncursesw],
 
 dnl non-wide ncurses
 AC_ARG_WITH([ncurses],
-  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, disabled by default]),
+  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses]),
   [], [with_ncurses=auto]
 )
 have_ncurses=no
@@ -988,7 +988,7 @@ AS_IF([test "x$have_tinfo" = xyes -o "x$have_tinfow" = xyes], [
 
 
 AC_ARG_WITH([readline],
-  AS_HELP_STRING([--with-readline], [compile with GNU Readline support]),
+  AS_HELP_STRING([--without-readline], [do not build with GNU Readline support]),
   [], [with_readline=auto]
 )
 
@@ -2096,7 +2096,7 @@ AM_CONDITIONAL([BUILD_WRITE], [test "x$build_write" = xyes])
 
 
 AC_ARG_WITH([btrfs],
-  AS_HELP_STRING([--with-btrfs], [build with support for btrfs]),
+  AS_HELP_STRING([--without-btrfs], [do not build with btrfs support]),
   [], [with_btrfs=check]
 )
 have_btrfs=no
@@ -2115,7 +2115,7 @@ AM_CONDITIONAL([HAVE_BTRFS], [test "x$have_btrfs" = xyes])
 
 
 AC_ARG_WITH([systemd],
-  AS_HELP_STRING([--with-systemd], [build with support for systemd]),
+  AS_HELP_STRING([--without-systemd], [do not build with systemd support]),
   [], [with_systemd=check]
 )
 
@@ -2143,7 +2143,7 @@ AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
 
 
 AC_ARG_WITH([systemdsystemunitdir],
-  AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd service files (requires enabled systemd support)]),
+  AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd unit files (requires systemd support)]),
   [], [with_systemdsystemunitdir=check]
 )
 AS_IF([test "x$with_systemdsystemunitdir" = xcheck], [
