@@ -199,10 +199,9 @@ static struct monitor_entry *monitor_get_entry(struct libmnt_monitor *mn, int ty
  * Userspace monitor
  */
 
-static int userspace_monitor_close_fd(struct libmnt_monitor *mn,
+static int userspace_monitor_close_fd(struct libmnt_monitor *mn __attribute__((__unused__)),
 				    struct monitor_entry *me)
 {
-	assert(mn);
 	assert(me);
 
 	if (me->fd >= 0)
@@ -430,10 +429,9 @@ err:
  * Kernel monitor
  */
 
-static int kernel_monitor_close_fd(struct libmnt_monitor *mn,
+static int kernel_monitor_close_fd(struct libmnt_monitor *mn __attribute__((__unused__)),
 				   struct monitor_entry *me)
 {
-	assert(mn);
 	assert(me);
 
 	if (me->fd >= 0)
