@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 
 #include "canonicalize.h"
+#include "pathnames.h"
 
 /*
  * Converts private "dm-N" names to "/dev/mapper/<name>"
@@ -27,7 +28,7 @@ char *canonicalize_dm_name(const char *ptname)
 {
 	FILE	*f;
 	size_t	sz;
-	char	path[256], name[256], *res = NULL;
+	char	path[256], name[sizeof(path) - sizeof(_PATH_DEV_MAPPER)], *res = NULL;
 
 	if (!ptname || !*ptname)
 		return NULL;
@@ -39,7 +40,7 @@ char *canonicalize_dm_name(const char *ptname)
 	/* read "<name>\n" from sysfs */
 	if (fgets(name, sizeof(name), f) && (sz = strlen(name)) > 1) {
 		name[sz - 1] = '\0';
-		snprintf(path, sizeof(path), "/dev/mapper/%s", name);
+		snprintf(path, sizeof(path), _PATH_DEV_MAPPER "/%s", name);
 
 		if (access(path, F_OK) == 0)
 			res = strdup(path);

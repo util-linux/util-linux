@@ -131,6 +131,8 @@
 # define _PATH_DEV		"/dev/"
 #endif
 
+#define _PATH_DEV_MAPPER	"/dev/mapper"
+
 #define _PATH_DEV_MEM		"/dev/mem"
 
 #define _PATH_DEV_LOOP		"/dev/loop"
