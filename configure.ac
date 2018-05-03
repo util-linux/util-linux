@@ -2143,9 +2143,16 @@ AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
 
 
 AC_ARG_WITH([systemdsystemunitdir],
-  AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd service files]),
-  [], [with_systemdsystemunitdir=`$PKG_CONFIG --variable=systemdsystemunitdir systemd`])
-
+  AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd service files (requires enabled systemd support)]),
+  [], [with_systemdsystemunitdir=check]
+)
+AS_IF([test "x$with_systemdsystemunitdir" = xcheck], [
+  AS_IF([test "x$have_systemd" = xyes], [
+    with_systemdsystemunitdir=`$PKG_CONFIG --variable=systemdsystemunitdir systemd`
+  ],[
+    with_systemdsystemunitdir=no
+  ])
+])
 AS_IF([test "x$with_systemdsystemunitdir" != "xno"], [
   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 ])
@@ -2401,6 +2408,7 @@ AC_MSG_RESULT([
 
 	Bash completions:  ${with_bashcompletiondir}
 	Systemd support:   ${have_systemd}
+	Systemd unitdir:   ${with_systemdsystemunitdir}
 	Btrfs support:     ${have_btrfs}
 	Wide-char support: ${build_widechar}
 
