@@ -271,7 +271,7 @@ static int ask_number(struct fdisk_context *cxt,
 
 	do {
 		int rc = get_user_reply(prompt, buf, bufsz);
-		uint64_t num;
+		uint64_t num = 0;
 
 		if (rc)
 			return rc;
