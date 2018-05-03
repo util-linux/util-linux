@@ -3140,12 +3140,10 @@ static const struct fdisk_field gpt_fields[] =
 /*
  * allocates GPT in-memory stuff
  */
-struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt)
+struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt __attribute__ ((__unused__)))
 {
 	struct fdisk_label *lb;
 	struct fdisk_gpt_label *gpt;
-
-	assert(cxt);
 
 	gpt = calloc(1, sizeof(*gpt));
 	if (!gpt)

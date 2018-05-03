@@ -1149,12 +1149,10 @@ static const struct fdisk_label_operations sun_operations =
 /*
  * allocates SUN label driver
  */
-struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt)
+struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt __attribute__ ((__unused__)))
 {
 	struct fdisk_label *lb;
 	struct fdisk_sun_label *sun;
-
-	assert(cxt);
 
 	sun = calloc(1, sizeof(*sun));
 	if (!sun)

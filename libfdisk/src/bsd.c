@@ -1028,12 +1028,10 @@ static const struct fdisk_field bsd_fields[] =
 /*
  * allocates BSD label driver
  */
-struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt)
+struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt __attribute__ ((__unused__)))
 {
 	struct fdisk_label *lb;
 	struct fdisk_bsd_label *bsd;
-
-	assert(cxt);
 
 	bsd = calloc(1, sizeof(*bsd));
 	if (!bsd)

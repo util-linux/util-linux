@@ -2464,12 +2464,10 @@ static const struct fdisk_label_operations dos_operations =
 /*
  * allocates DOS in-memory stuff
  */
-struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
+struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt __attribute__ ((__unused__)))
 {
 	struct fdisk_label *lb;
 	struct fdisk_dos_label *dos;
-
-	assert(cxt);
 
 	dos = calloc(1, sizeof(*dos));
 	if (!dos)
