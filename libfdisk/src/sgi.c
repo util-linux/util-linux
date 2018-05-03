@@ -1178,12 +1178,10 @@ static const struct fdisk_label_operations sgi_operations =
 };
 
 /* Allocates an SGI label driver. */
-struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt)
+struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt __attribute__ ((__unused__)))
 {
 	struct fdisk_label *lb;
 	struct fdisk_sgi_label *sgi;
-
-	assert(cxt);
 
 	sgi = calloc(1, sizeof(*sgi));
 	if (!sgi)
