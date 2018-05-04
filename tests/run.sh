@@ -82,7 +82,7 @@ while [ -n "$1" ]; do
 		;;
 	--parallel=*)
 		paraller_jobs="${1##--parallel=}"
-		if ! [ "$paraller_jobs" -ge 0 2>/dev/null ]; then
+		if ! [ "$paraller_jobs" -ge 0 ] 2>/dev/null; then
 			echo "invalid argument '$paraller_jobs' for --parallel="
 			exit 1
 		fi
