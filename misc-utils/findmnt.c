@@ -1247,7 +1247,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --types <list>     limit the set of filesystems by FS types\n"), out);
 	fputs(_(" -U, --uniq             ignore filesystems with duplicate target\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
-	fputs(_(" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"), out);	
+	fputs(_(" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"), out);
 
 	fputc('\n', out);
 	fputs(_(" -x, --verify           verify mount table content (default is fstab)\n"), out);
@@ -1280,7 +1280,7 @@ int main(int argc, char *argv[])
 	struct libscols_table *table = NULL;
 
 	enum {
-                FINDMNT_OPT_VERBOSE = CHAR_MAX + 1,
+		FINDMNT_OPT_VERBOSE = CHAR_MAX + 1,
 		FINDMNT_OPT_TREE,
 		FINDMNT_OPT_OUTPUT_ALL,
 		FINDMNT_OPT_PSEUDO,
@@ -1332,7 +1332,7 @@ int main(int argc, char *argv[])
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'C', 'c'},                    /* [no]canonicalize */
+		{ 'C', 'c'},			/* [no]canonicalize */
 		{ 'C', 'e' },			/* nocanonicalize, evaluate */
 		{ 'J', 'P', 'r','x' },		/* json,pairs,raw,verify */
 		{ 'M', 'T' },			/* mountpoint, target */
