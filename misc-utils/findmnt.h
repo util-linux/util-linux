@@ -18,6 +18,8 @@ enum {
 	FL_NOCACHE	= (1 << 14),
 	FL_STRICTTARGET = (1 << 15),
 	FL_VERBOSE	= (1 << 16),
+	FL_PSEUDO	= (1 << 17),
+	FL_REAL		= (1 << 18),
 
 	/* basic table settings */
 	FL_ASCII	= (1 << 20),

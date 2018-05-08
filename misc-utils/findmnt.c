@@ -947,6 +947,12 @@ static int match_func(struct libmnt_fs *fs,
 			return rc;
 	}
 
+	if ((flags & FL_REAL) && mnt_fs_is_pseudofs(fs))
+	    return rc;
+
+	if ((flags & FL_PSEUDO) && !mnt_fs_is_pseudofs(fs))
+	    return rc;
+
 	return !rc;
 }
 
@@ -1229,8 +1235,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output <list>    the output columns to be shown\n"), out);
 	fputs(_("     --output-all       output all available columns\n"), out);
 	fputs(_(" -P, --pairs            use key=\"value\" output format\n"), out);
+	fputs(_("     --pseudo           print only pseudo-filesystems\n"), out);
 	fputs(_(" -R, --submounts        print all submounts for the matching filesystems\n"), out);
 	fputs(_(" -r, --raw              use raw output format\n"), out);
+	fputs(_("     --real             print only real filesystems\n"), out);
 	fputs(_(" -S, --source <string>  the device to mount (by name, maj:min, \n"
 	        "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"), out);
 	fputs(_(" -T, --target <path>    the path to the filesystem to use\n"), out);
@@ -1274,7 +1282,9 @@ int main(int argc, char *argv[])
 	enum {
                 FINDMNT_OPT_VERBOSE = CHAR_MAX + 1,
 		FINDMNT_OPT_TREE,
-		FINDMNT_OPT_OUTPUT_ALL
+		FINDMNT_OPT_OUTPUT_ALL,
+		FINDMNT_OPT_PSEUDO,
+		FINDMNT_OPT_REAL
 	};
 
 	static const struct option longopts[] = {
@@ -1316,6 +1326,8 @@ int main(int argc, char *argv[])
 		{ "version",	    no_argument,       NULL, 'V'		 },
 		{ "verbose",	    no_argument,       NULL, FINDMNT_OPT_VERBOSE },
 		{ "tree",	    no_argument,       NULL, FINDMNT_OPT_TREE	 },
+		{ "real",	    no_argument,       NULL, FINDMNT_OPT_REAL	 },
+		{ "pseudo",	    no_argument,       NULL, FINDMNT_OPT_PSEUDO	 },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -1328,6 +1340,7 @@ int main(int argc, char *argv[])
 		{ 'P','l','r','x' },		/* pairs,list,raw,verify */
 		{ 'p','x' },			/* poll,verify */
 		{ 'm','p','s' },		/* mtab,poll,fstab */
+		{ FINDMNT_OPT_PSEUDO, FINDMNT_OPT_REAL },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -1488,6 +1501,12 @@ int main(int argc, char *argv[])
 			break;
 		case FINDMNT_OPT_TREE:
 			force_tree = 1;
+			break;
+		case FINDMNT_OPT_PSEUDO:
+			flags |= FL_PSEUDO;
+			break;
+		case FINDMNT_OPT_REAL:
+			flags |= FL_REAL;
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
