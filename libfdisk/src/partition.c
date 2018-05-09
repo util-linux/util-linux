@@ -130,8 +130,8 @@ void fdisk_unref_partition(struct fdisk_partition *pa)
 
 	pa->refcount--;
 	if (pa->refcount <= 0) {
-		fdisk_reset_partition(pa);
 		list_del(&pa->parts);
+		fdisk_reset_partition(pa);
 		DBG(PART, ul_debugobj(pa, "free"));
 		free(pa);
 	}
