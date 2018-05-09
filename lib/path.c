@@ -2,24 +2,11 @@
  * Simple functions to access files. Paths can be globally prefixed to read
  * data from an alternative source (e.g. a /proc dump for regression tests).
  *
- * Copyright (C) 2008 Cai Qian <qcai@redhat.com>
- * Copyright (C) 2008-2012 Karel Zak <kzak@redhat.com>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it would be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- */
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
 
+ * Written by Karel Zak <kzak@redhat.com> [February 2018]
+ */
 #include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
@@ -27,250 +14,1031 @@
 #include <inttypes.h>
 #include <errno.h>
 
+#include "c.h"
+#include "fileutils.h"
 #include "all-io.h"
 #include "path.h"
-#include "nls.h"
-#include "c.h"
 
-static size_t prefixlen;
-static char pathbuf[PATH_MAX];
-
-int
-path_set_prefix(const char *prefix)
+struct path_cxt *ul_new_path(const char *dir)
 {
-	size_t len = strlen(prefix);
+	struct path_cxt *pc = calloc(1, sizeof(*pc));
 
-	if (len >= sizeof(pathbuf) - 1) {
-		errno = ENAMETOOLONG;
-		return -1;
-	}
-	prefixlen = len;
-	strcpy(pathbuf, prefix);
-	return 0;
-}
-
-static const char *
-path_vcreate(const char *path, va_list ap)
-{
-	int rc = vsnprintf(
-		pathbuf + prefixlen, sizeof(pathbuf) - prefixlen, path, ap);
-
-	if (rc < 0)
+	if (!pc)
 		return NULL;
-	if ((size_t)rc >= sizeof(pathbuf)) {
-		errno = ENAMETOOLONG;
-		return NULL;
+
+	pc->refcount = 1;
+	pc->dir_fd = -1;
+
+	if (dir) {
+		pc->dir_path = strdup(dir);
+		if (!pc->dir_path)
+			goto fail;
 	}
-	return pathbuf;
-}
-
-const char *
-path_get(const char *path, ...)
-{
-	const char *p;
-	va_list ap;
-
-	va_start(ap, path);
-	p = path_vcreate(path, ap);
-	va_end(ap);
-
-	return p;
-}
-
-static FILE *
-path_vfopen(const char *mode, int exit_on_error, const char *path, va_list ap)
-{
-	FILE *f;
-	const char *p = path_vcreate(path, ap);
-	if (!p)
-		goto err;
-
-	f = fopen(p, mode);
-	if (!f)
-		goto err;
-
-	return f;
-err:
-	if (exit_on_error)
-		err(EXIT_FAILURE, _("cannot open %s"), p ? p : "path");
+	return pc;
+fail:
+	ul_unref_path(pc);
 	return NULL;
 }
 
-static int
-path_vopen(int flags, const char *path, va_list ap)
+void ul_ref_path(struct path_cxt *pc)
 {
-	int fd;
-	const char *p = path_vcreate(path, ap);
-	if (!p)
-		goto err;
-
-	fd = open(p, flags);
-	if (fd == -1)
-		goto err;
-
-	return fd;
-err:
-	err(EXIT_FAILURE, _("cannot open %s"), p ? p : "path");
+	if (pc)
+		pc->refcount++;
 }
 
-FILE *
-path_fopen(const char *mode, int exit_on_error, const char *path, ...)
+void ul_unref_path(struct path_cxt *pc)
 {
-	FILE *fd;
-	va_list ap;
+	if (!pc)
+		return;
 
-	va_start(ap, path);
-	fd = path_vfopen(mode, exit_on_error, path, ap);
-	va_end(ap);
+	pc->refcount--;
 
-	return fd;
-}
-
-void
-path_read_str(char *result, size_t len, const char *path, ...)
-{
-	FILE *fd;
-	va_list ap;
-
-	va_start(ap, path);
-	fd = path_vfopen("r" UL_CLOEXECSTR, 1, path, ap);
-	va_end(ap);
-
-	if (!fgets(result, len, fd))
-		err(EXIT_FAILURE, _("cannot read %s"), pathbuf);
-	fclose(fd);
-
-	len = strlen(result);
-	if (result[len - 1] == '\n')
-		result[len - 1] = '\0';
-}
-
-int
-path_read_s32(const char *path, ...)
-{
-	FILE *fd;
-	va_list ap;
-	int result;
-
-	va_start(ap, path);
-	fd = path_vfopen("r" UL_CLOEXECSTR, 1, path, ap);
-	va_end(ap);
-
-	if (fscanf(fd, "%d", &result) != 1) {
-		if (ferror(fd))
-			err(EXIT_FAILURE, _("cannot read %s"), pathbuf);
-		else
-			errx(EXIT_FAILURE, _("parse error: %s"), pathbuf);
+	if (pc->refcount <= 0) {
+		if (pc->dialect)
+			pc->free_dialect(pc);
+		if (pc->dir_fd >= 0)
+			close(pc->dir_fd);
+		free(pc->dir_path);
+		free(pc->prefix);
+		free(pc);
 	}
-	fclose(fd);
-	return result;
 }
 
-uint64_t
-path_read_u64(const char *path, ...)
+int ul_path_set_prefix(struct path_cxt *pc, const char *prefix)
 {
-	FILE *fd;
-	va_list ap;
-	uint64_t result;
+	char *p = NULL;
 
-	va_start(ap, path);
-	fd = path_vfopen("r", 1, path, ap);
-	va_end(ap);
+	assert(pc->dir_fd < 0);
 
-	if (fscanf(fd, "%"SCNu64, &result) != 1) {
-		if (ferror(fd))
-			err(EXIT_FAILURE, _("cannot read %s"), pathbuf);
-		else
-			errx(EXIT_FAILURE, _("parse error: %s"), pathbuf);
+	if (prefix) {
+		p = strdup(prefix);
+		if (!p)
+			return -ENOMEM;
 	}
-	fclose(fd);
-	return result;
+
+	free(pc->prefix);
+	pc->prefix = p;
+	return 0;
 }
 
-int
-path_write_str(const char *str, const char *path, ...)
+const char *ul_path_get_prefix(struct path_cxt *pc)
 {
-	int fd, result;
-	va_list ap;
-
-	va_start(ap, path);
-	fd = path_vopen(O_WRONLY|O_CLOEXEC, path, ap);
-	va_end(ap);
-	result = write_all(fd, str, strlen(str));
-	close(fd);
-	return result;
+	return pc ? pc->prefix : NULL;
 }
 
-int
-path_exist(const char *path, ...)
+int ul_path_set_dir(struct path_cxt *pc, const char *dir)
+{
+	char *p = NULL;
+
+	if (dir) {
+		p = strdup(dir);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	if (pc->dir_fd >= 0) {
+		close(pc->dir_fd);
+		pc->dir_fd = -1;
+	}
+
+	free(pc->dir_path);
+	pc->dir_path = p;
+	return 0;
+}
+
+const char *ul_path_get_dir(struct path_cxt *pc)
+{
+	return pc ? pc->dir_path : NULL;
+}
+
+int ul_path_set_dialect(struct path_cxt *pc, void *data, void free_data(struct path_cxt *))
+{
+	pc->dialect = data;
+	pc->free_dialect = free_data;
+	return 0;
+}
+
+void *ul_path_get_dialect(struct path_cxt *pc)
+{
+	return pc ? pc->dialect : NULL;
+}
+
+int ul_path_set_enoent_redirect(struct path_cxt *pc, int (*func)(struct path_cxt *, const char *, int *))
+{
+	pc->redirect_on_enoent = func;
+	return 0;
+}
+
+static const char *get_absdir(struct path_cxt *pc)
+{
+	int rc;
+
+	if (!pc->prefix)
+		return pc->dir_path;
+
+	rc = snprintf(pc->path_buffer, sizeof(pc->path_buffer), "%s/%s", pc->prefix, pc->dir_path);
+	if (rc < 0)
+		return NULL;
+	if ((size_t)rc >= sizeof(pc->path_buffer)) {
+		errno = ENAMETOOLONG;
+		return NULL;
+	}
+
+	return pc->path_buffer;
+}
+
+
+int ul_path_get_dirfd(struct path_cxt *pc)
+{
+	assert(pc);
+	assert(pc->dir_path);
+
+	if (pc->dir_fd < 0) {
+		const char *path = get_absdir(pc);
+		if (!path)
+			return -errno;
+		pc->dir_fd = open(path, O_RDONLY|O_CLOEXEC);
+	}
+
+	return pc->dir_fd;
+}
+
+static const char *ul_path_mkpath(struct path_cxt *pc, const char *path, va_list ap)
+{
+	int rc = vsnprintf(pc->path_buffer, sizeof(pc->path_buffer), path, ap);
+
+	if (rc < 0)
+		return NULL;
+
+	if ((size_t)rc >= sizeof(pc->path_buffer)) {
+		errno = ENAMETOOLONG;
+		return NULL;
+	}
+
+	return pc->path_buffer;
+}
+
+int ul_path_access(struct path_cxt *pc, int mode, const char *path)
+{
+	int dir, rc;
+
+	dir = ul_path_get_dirfd(pc);
+	if (dir < 0)
+		return dir;
+
+	rc = faccessat(dir, path, mode, 0);
+
+	if (rc && errno == ENOENT
+	    && pc->redirect_on_enoent
+	    && pc->redirect_on_enoent(pc, path, &dir) == 0)
+		rc = faccessat(dir, path, mode, 0);
+
+	return rc;
+}
+
+int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 {
 	va_list ap;
 	const char *p;
 
 	va_start(ap, path);
-	p = path_vcreate(path, ap);
+	p = ul_path_mkpath(pc, path, ap);
 	va_end(ap);
 
-	return p && access(p, F_OK) == 0;
+	return ul_path_access(pc, mode, p);
+}
+
+int ul_path_open(struct path_cxt *pc, int flags, const char *path)
+{
+	int dir, fd;
+
+	dir = ul_path_get_dirfd(pc);
+	if (dir < 0)
+		return dir;
+
+	fd = openat(dir, path, flags);
+
+	if (fd < 0 && errno == ENOENT
+	    && pc->redirect_on_enoent
+	    && pc->redirect_on_enoent(pc, path, &dir) == 0)
+		fd = openat(dir, path, flags);
+
+	return fd;
+}
+
+int ul_path_vopenf(struct path_cxt *pc, int flags, const char *path, va_list ap)
+{
+	const char *p;
+
+	p = ul_path_mkpath(pc, path, ap);
+	if (!p)
+		return -errno;
+
+	return ul_path_open(pc, flags, p);
+}
+
+int ul_path_openf(struct path_cxt *pc, int flags, const char *path, ...)
+{
+	va_list ap;
+	int rc;
+
+	va_start(ap, path);
+	rc = ul_path_vopenf(pc, flags, path, ap);
+	va_end(ap);
+
+	return rc;
+}
+
+/*
+ * Maybe stupid, but good enough ;-)
+ */
+static int mode2flags(const char *mode)
+{
+	int flags = 0;
+	const char *p;
+
+	for (p = mode; p && *p; p++) {
+		if (*p == 'r' && *(p + 1) == '+')
+			flags |= O_RDWR;
+		else if (*p == 'r')
+			flags |= O_RDONLY;
+
+		else if (*p == 'w' && *(p + 1) == '+')
+			flags |= O_RDWR | O_TRUNC;
+		else if (*p == 'w')
+			flags |= O_WRONLY | O_TRUNC;
+
+		else if (*p == 'a' && *(p + 1) == '+')
+			flags |= O_RDWR | O_APPEND;
+		else if (*p == 'a')
+			flags |= O_WRONLY | O_APPEND;
+#ifdef O_CLOEXEC
+		else if (*p == *UL_CLOEXECSTR)
+			flags |= O_CLOEXEC;
+#endif
+	}
+
+	return flags;
+}
+
+FILE *ul_path_fopen(struct path_cxt *pc, const char *mode, const char *path)
+{
+	int flags = mode2flags(mode);
+	int fd = ul_path_open(pc, flags, path);
+
+	if (fd < 0)
+		return NULL;
+
+	return fdopen(fd, mode);
+}
+
+
+FILE *ul_path_vfopenf(struct path_cxt *pc, const char *mode, const char *path, va_list ap)
+{
+	const char *p;
+
+	p = ul_path_mkpath(pc, path, ap);
+	if (!p)
+		return NULL;
+
+	return ul_path_fopen(pc, mode, p);
+}
+
+FILE *ul_path_fopenf(struct path_cxt *pc, const char *mode, const char *path, ...)
+{
+	FILE *f;
+	va_list ap;
+
+	va_start(ap, path);
+	f = ul_path_vfopenf(pc, mode, path, ap);
+	va_end(ap);
+
+	return f;
+}
+
+/*
+ * Open directory @path in read-onl mode. If the path is NULL then duplicate FD
+ * to the directory addressed by @pc.
+ */
+DIR *ul_path_opendir(struct path_cxt *pc, const char *path)
+{
+	DIR *dir;
+	int fd = -1;
+
+	if (path)
+		fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, path);
+	else if (pc->dir_path)
+		fd = dup_fd_cloexec(ul_path_get_dirfd(pc), STDERR_FILENO + 1);
+
+	if (fd < 0)
+		return NULL;
+
+	dir = fdopendir(fd);
+	if (!dir) {
+		close(fd);
+		return NULL;
+	}
+	if (!path)
+		 rewinddir(dir);
+	return dir;
+}
+
+
+/*
+ * Open directory @path in read-onl mode. If the path is NULL then duplicate FD
+ * to the directory addressed by @pc.
+ */
+DIR *ul_path_vopendirf(struct path_cxt *pc, const char *path, va_list ap)
+{
+	const char *p;
+
+	p = ul_path_mkpath(pc, path, ap);
+	if (!p)
+		return NULL;
+
+	return ul_path_opendir(pc, p);
+}
+
+/*
+ * Open directory @path in read-onl mode. If the path is NULL then duplicate FD
+ * to the directory addressed by @pc.
+ */
+DIR *ul_path_opendirf(struct path_cxt *pc, const char *path, ...)
+{
+	va_list ap;
+	DIR *dir;
+
+	va_start(ap, path);
+	dir = ul_path_vopendirf(pc, path, ap);
+	va_end(ap);
+
+	return dir;
+}
+
+/*
+ * If @path is NULL then readlink is called on @pc directory.
+ */
+ssize_t ul_path_readlink(struct path_cxt *pc, char *buf, size_t bufsiz, const char *path)
+{
+	int dirfd;
+
+	if (!path) {
+		const char *p = get_absdir(pc);
+		if (!p)
+			return -errno;
+		return readlink(p, buf, bufsiz);
+	}
+
+	dirfd = ul_path_get_dirfd(pc);
+	if (dirfd < 0)
+		return dirfd;
+
+	return readlinkat(dirfd, path, buf, bufsiz);
+}
+
+/*
+ * If @path is NULL then readlink is called on @pc directory.
+ */
+ssize_t ul_path_readlinkf(struct path_cxt *pc, char *buf, size_t bufsiz, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -errno;
+
+	return ul_path_readlink(pc, buf, bufsiz, p);
+}
+
+int ul_path_read(struct path_cxt *pc, char *buf, size_t len, const char *path)
+{
+	int rc, errsv;
+	int fd;
+
+	fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, path);
+	if (fd < 0)
+		return -errno;
+
+	rc = read_all(fd, buf, len);
+
+	errsv = errno;
+	close(fd);
+	errno = errsv;
+	return rc;
+}
+
+int ul_path_vreadf(struct path_cxt *pc, char *buf, size_t len, const char *path, va_list ap)
+{
+	const char *p;
+
+	p = ul_path_mkpath(pc, path, ap);
+	if (!p)
+		return -EINVAL;
+
+	return ul_path_read(pc, buf, len, p);
+}
+
+int ul_path_readf(struct path_cxt *pc, char *buf, size_t len, const char *path, ...)
+{
+	va_list ap;
+	int rc;
+
+	va_start(ap, path);
+	rc = ul_path_vreadf(pc, buf, len, path, ap);
+	va_end(ap);
+
+	return rc;
+}
+
+
+/*
+ * Returns newly allocated buffer with data from file. Maximal size is BUFSIZ
+ * (send patch if you need something bigger;-)
+ *
+ */
+int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
+{
+	char buf[BUFSIZ];
+	int rc;
+
+	*str = NULL;
+
+	rc = ul_path_read(pc, buf, sizeof(buf) - 1, path);
+	if (rc < 0 || !str)
+		return rc;;
+
+	buf[rc] = '\0';
+	*str = strdup(buf);
+	if (!*str)
+		rc = -ENOMEM;
+
+	return rc;
+}
+
+int ul_path_readf_string(struct path_cxt *pc, char **str, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -EINVAL;
+
+	return ul_path_read_string(pc, str, p);
+}
+
+int ul_path_scanf(struct path_cxt *pc, const char *path, const char *fmt, ...)
+{
+	FILE *f;
+	va_list fmt_ap;
+	int rc;
+
+	f = ul_path_fopen(pc, "r" UL_CLOEXECSTR, path);
+	if (!f)
+		return -EINVAL;
+
+	va_start(fmt_ap, fmt);
+	rc = vfscanf(f, fmt, fmt_ap);
+	va_end(fmt_ap);
+
+	fclose(f);
+	return rc;
+}
+
+int ul_path_scanff(struct path_cxt *pc, const char *path, va_list ap, const char *fmt, ...)
+{
+	FILE *f;
+	va_list fmt_ap;
+	int rc;
+
+	f = ul_path_vfopenf(pc, "r" UL_CLOEXECSTR, path, ap);
+	if (!f)
+		return -EINVAL;
+
+	va_start(fmt_ap, fmt);
+	rc = vfscanf(f, fmt, fmt_ap);
+	va_end(fmt_ap);
+
+	fclose(f);
+	return rc;
+}
+
+
+int ul_path_read_s64(struct path_cxt *pc, int64_t *res, const char *path)
+{
+	int64_t x = 0;
+	int rc;
+
+	rc = ul_path_scanf(pc, path, "%"SCNd64, &x);
+	if (rc != 1)
+		return -1;
+	if (res)
+		*res = x;
+	return 0;
+}
+
+int ul_path_readf_s64(struct path_cxt *pc, int64_t *res, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -EINVAL;;
+
+	return ul_path_read_s64(pc, res, p);
+}
+
+int ul_path_read_u64(struct path_cxt *pc, uint64_t *res, const char *path)
+{
+	uint64_t x = 0;
+	int rc;
+
+	rc = ul_path_scanf(pc, path, "%"SCNu64, &x);
+	if (rc != 1)
+		return -1;
+	if (res)
+		*res = x;
+	return 0;
+}
+
+int ul_path_readf_u64(struct path_cxt *pc, uint64_t *res, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -EINVAL;
+
+	return ul_path_read_u64(pc, res, p);
+}
+
+int ul_path_read_s32(struct path_cxt *pc, int *res, const char *path)
+{
+	int rc, x = 0;
+
+	rc = ul_path_scanf(pc, path, "%d", &x);
+	if (rc != 1)
+		return -1;
+	if (res)
+		*res = x;
+	return 0;
+}
+
+int ul_path_readf_s32(struct path_cxt *pc, int *res, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -EINVAL;
+
+	return ul_path_read_s32(pc, res, p);
+}
+
+int ul_path_read_u32(struct path_cxt *pc, unsigned int *res, const char *path)
+{
+	int rc;
+	unsigned int x;
+
+	rc = ul_path_scanf(pc, path, "%u", &x);
+	if (rc != 1)
+		return -1;
+	if (res)
+		*res = x;
+	return 0;
+}
+
+int ul_path_readf_u32(struct path_cxt *pc, unsigned int *res, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -EINVAL;
+
+	return ul_path_read_u32(pc, res, p);
+}
+
+int ul_path_read_majmin(struct path_cxt *pc, dev_t *res, const char *path)
+{
+	int rc, maj, min;
+
+	rc = ul_path_scanf(pc, path, "%d:%d", &maj, &min);
+	if (rc != 2)
+		return -1;
+	if (res)
+		*res = makedev(maj, min);
+	return 0;
+}
+
+int ul_path_readf_majmin(struct path_cxt *pc, dev_t *res, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -EINVAL;
+
+	return ul_path_read_majmin(pc, res, p);
+}
+
+int ul_path_write_string(struct path_cxt *pc, const char *str, const char *path)
+{
+	int rc, errsv;
+	int fd;
+
+	fd = ul_path_open(pc, O_WRONLY|O_CLOEXEC, path);
+	if (fd < 0)
+		return -errno;
+
+	rc = write_all(fd, str, strlen(str));
+
+	errsv = errno;
+	close(fd);
+	errno = errsv;
+	return rc;
+}
+
+int ul_path_writef_string(struct path_cxt *pc, const char *str, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -EINVAL;
+
+	return ul_path_write_string(pc, str, p);
+}
+
+int ul_path_write_u64(struct path_cxt *pc, uint64_t num, const char *path)
+{
+	char buf[sizeof(stringify_value(ULLONG_MAX))];
+	int rc, errsv;
+	int fd, len;
+
+	fd = ul_path_open(pc, O_WRONLY|O_CLOEXEC, path);
+	if (fd < 0)
+		return -errno;
+
+	len = snprintf(buf, sizeof(buf), "%" PRIu64, num);
+	if (len < 0 || (size_t) len >= sizeof(buf))
+		rc = len < 0 ? -errno : -E2BIG;
+	else
+		rc = write_all(fd, buf, len);
+
+	errsv = errno;
+	close(fd);
+	errno = errsv;
+	return rc;
+}
+
+int ul_path_writef_u64(struct path_cxt *pc, uint64_t num, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -EINVAL;
+
+	return ul_path_write_u64(pc, num, p);
+
+}
+
+static struct dirent *xreaddir(DIR *dp)
+{
+	struct dirent *d;
+
+	while ((d = readdir(dp))) {
+		if (!strcmp(d->d_name, ".") ||
+		    !strcmp(d->d_name, ".."))
+			continue;
+
+		/* blacklist here? */
+		break;
+	}
+	return d;
+}
+
+int ul_path_count_dirents(struct path_cxt *pc, const char *path)
+{
+	DIR *dir;
+	int r = 0;
+
+	dir = ul_path_opendir(pc, path);
+	if (!dir)
+		return 0;
+
+	while (xreaddir(dir)) r++;
+
+	closedir(dir);
+	return r;
+}
+
+int ul_path_countf_dirents(struct path_cxt *pc, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return 0;
+
+	return ul_path_count_dirents(pc, p);
 }
 
 #ifdef HAVE_CPU_SET_T
-
-static cpu_set_t *
-path_cpuparse(int maxcpus, int islist, const char *path, va_list ap)
+static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, int islist, const char *path, va_list ap)
 {
-	FILE *fd;
-	cpu_set_t *set;
+	FILE *f;
 	size_t setsize, len = maxcpus * 7;
 	char buf[len];
 
-	fd = path_vfopen("r" UL_CLOEXECSTR, 1, path, ap);
+	f = ul_path_vfopenf(pc, "r" UL_CLOEXECSTR, path, ap);
+	if (!f)
+		return -errno;
 
-	if (!fgets(buf, len, fd))
-		err(EXIT_FAILURE, _("cannot read %s"), pathbuf);
-	fclose(fd);
+	if (!fgets(buf, len, f))
+		return -errno;
+	fclose(f);
 
 	len = strlen(buf);
 	if (buf[len - 1] == '\n')
 		buf[len - 1] = '\0';
 
-	set = cpuset_alloc(maxcpus, &setsize, NULL);
-	if (!set)
-		err(EXIT_FAILURE, _("failed to callocate cpu set"));
+	*set = cpuset_alloc(maxcpus, &setsize, NULL);
+	if (!*set)
+		return -ENOMEM;
 
 	if (islist) {
-		if (cpulist_parse(buf, set, setsize, 0))
-			errx(EXIT_FAILURE, _("failed to parse CPU list %s"), buf);
+		if (cpulist_parse(buf, *set, setsize, 0))
+			return -EINVAL;
 	} else {
-		if (cpumask_parse(buf, set, setsize))
-			errx(EXIT_FAILURE, _("failed to parse CPU mask %s"), buf);
+		if (cpumask_parse(buf, *set, setsize))
+			return -EINVAL;
 	}
-	return set;
+	return 0;
 }
 
-cpu_set_t *
-path_read_cpuset(int maxcpus, const char *path, ...)
+int ul_path_readf_cpuset(struct path_cxt *pc, cpu_set_t **set, int maxcpus, const char *path, ...)
 {
 	va_list ap;
-	cpu_set_t *set;
+	int rc = 0;
 
 	va_start(ap, path);
-	set = path_cpuparse(maxcpus, 0, path, ap);
+	rc = ul_path_cpuparse(pc, set, maxcpus, 0, path, ap);
 	va_end(ap);
 
-	return set;
+	return rc;
 }
 
-cpu_set_t *
-path_read_cpulist(int maxcpus, const char *path, ...)
+int ul_path_readf_cpulist(struct path_cxt *pc, cpu_set_t **set, int maxcpus, const char *path, ...)
 {
 	va_list ap;
-	cpu_set_t *set;
+	int rc = 0;
 
 	va_start(ap, path);
-	set = path_cpuparse(maxcpus, 1, path, ap);
+	rc = ul_path_cpuparse(pc, set, maxcpus, 1, path, ap);
 	va_end(ap);
 
-	return set;
+	return rc;
 }
+
 #endif /* HAVE_CPU_SET_T */
+
+
+#ifdef TEST_PROGRAM_PATH
+#include <getopt.h>
+
+static void __attribute__((__noreturn__)) usage(void)
+{
+	fprintf(stdout, " %s [options] <dir> <command>\n\n", program_invocation_short_name);
+	fputs(" -p, --prefix <dir>      redirect hardcoded paths to <dir>\n", stdout);
+
+	fputs(" Commands:\n", stdout);
+	fputs(" read-u64 <file>            read uint64_t from file\n", stdout);
+	fputs(" read-s64 <file>            read  int64_t from file\n", stdout);
+	fputs(" read-u32 <file>            read uint32_t from file\n", stdout);
+	fputs(" read-s32 <file>            read  int32_t from file\n", stdout);
+	fputs(" read-string <file>         read string  from file\n", stdout);
+	fputs(" read-majmin <file>         read devno from file\n", stdout);
+	fputs(" read-link <file>           read symlink\n", stdout);
+	fputs(" write-string <file> <str>  write string from file\n", stdout);
+	fputs(" write-u64 <file> <str>     write uint64_t from file\n", stdout);
+
+	exit(EXIT_SUCCESS);
+}
+
+int main(int argc, char *argv[])
+{
+	int c;
+	const char *prefix = NULL, *dir, *file, *command;
+	struct path_cxt *pc = NULL;
+
+	static const struct option longopts[] = {
+		{ "prefix",	1, NULL, 'p' },
+		{ "help",       0, NULL, 'h' },
+		{ NULL, 0, NULL, 0 },
+	};
+
+	while((c = getopt_long(argc, argv, "p:h", longopts, NULL)) != -1) {
+		switch(c) {
+		case 'p':
+			prefix = optarg, "failed to parse range start";
+			break;
+		case 'h':
+			usage();
+			break;
+		default:
+			err(EXIT_FAILURE, "try --help");
+		}
+	}
+
+	if (optind == argc)
+		errx(EXIT_FAILURE, "<dir> not defined");
+	dir = argv[optind++];
+
+	pc = ul_new_path(dir);
+	if (!pc)
+		err(EXIT_FAILURE, "failed to initialize path context");
+	if (prefix)
+		ul_path_set_prefix(pc, prefix);
+
+	if (optind == argc)
+		errx(EXIT_FAILURE, "<command> not defined");
+	command = argv[optind++];
+
+	if (strcmp(command, "read-u32") == 0) {
+		uint32_t res;
+
+		if (optind == argc)
+			errx(EXIT_FAILURE, "<file> not defined");
+		file = argv[optind++];
+
+		if (ul_path_read_u32(pc, &res, file) != 0)
+			err(EXIT_FAILURE, "read u64 failed");
+		printf("read:  %s: %u\n", file, res);
+
+		if (ul_path_readf_u32(pc, &res, "%s", file) != 0)
+			err(EXIT_FAILURE, "readf u64 failed");
+		printf("readf: %s: %u\n", file, res);
+
+	} else if (strcmp(command, "read-s32") == 0) {
+		int32_t res;
+
+		if (optind == argc)
+			errx(EXIT_FAILURE, "<file> not defined");
+		file = argv[optind++];
+
+		if (ul_path_read_s32(pc, &res, file) != 0)
+			err(EXIT_FAILURE, "read u64 failed");
+		printf("read:  %s: %d\n", file, res);
+
+		if (ul_path_readf_s32(pc, &res, "%s", file) != 0)
+			err(EXIT_FAILURE, "readf u64 failed");
+		printf("readf: %s: %d\n", file, res);
+
+	} else if (strcmp(command, "read-u64") == 0) {
+		uint64_t res;
+
+		if (optind == argc)
+			errx(EXIT_FAILURE, "<file> not defined");
+		file = argv[optind++];
+
+		if (ul_path_read_u64(pc, &res, file) != 0)
+			err(EXIT_FAILURE, "read u64 failed");
+		printf("read:  %s: %" PRIu64 "\n", file, res);
+
+		if (ul_path_readf_u64(pc, &res, "%s", file) != 0)
+			err(EXIT_FAILURE, "readf u64 failed");
+		printf("readf: %s: %" PRIu64 "\n", file, res);
+
+	} else if (strcmp(command, "read-s64") == 0) {
+		int64_t res;
+
+		if (optind == argc)
+			errx(EXIT_FAILURE, "<file> not defined");
+		file = argv[optind++];
+
+		if (ul_path_read_s64(pc, &res, file) != 0)
+			err(EXIT_FAILURE, "read u64 failed");
+		printf("read:  %s: %" PRIu64 "\n", file, res);
+
+		if (ul_path_readf_s64(pc, &res, "%s", file) != 0)
+			err(EXIT_FAILURE, "readf u64 failed");
+		printf("readf: %s: %" PRIu64 "\n", file, res);
+
+	} else if (strcmp(command, "read-majmin") == 0) {
+		dev_t res;
+
+		if (optind == argc)
+			errx(EXIT_FAILURE, "<file> not defined");
+		file = argv[optind++];
+
+		if (ul_path_read_majmin(pc, &res, file) != 0)
+			err(EXIT_FAILURE, "read maj:min failed");
+		printf("read:  %s: %d\n", file, (int) res);
+
+		if (ul_path_readf_majmin(pc, &res, "%s", file) != 0)
+			err(EXIT_FAILURE, "readf maj:min failed");
+		printf("readf: %s: %d\n", file, (int) res);
+
+	} else if (strcmp(command, "read-string") == 0) {
+		char *res;
+
+		if (optind == argc)
+			errx(EXIT_FAILURE, "<file> not defined");
+		file = argv[optind++];
+
+		if (ul_path_read_string(pc, &res, file) != 0)
+			err(EXIT_FAILURE, "read u64 failed");
+		printf("read:  %s: %s\n", file, res);
+
+		if (ul_path_readf_string(pc, &res, "%s", file) != 0)
+			err(EXIT_FAILURE, "readf u64 failed");
+		printf("readf: %s: %s\n", file, res);
+
+	} else if (strcmp(command, "read-link") == 0) {
+		char res[PATH_MAX];
+
+		if (optind == argc)
+			errx(EXIT_FAILURE, "<file> not defined");
+		file = argv[optind++];
+
+		if (ul_path_readlink(pc, res, sizeof(res), file) < 0)
+			err(EXIT_FAILURE, "read symlink failed");
+		printf("read:  %s: %s\n", file, res);
+
+		if (ul_path_readlinkf(pc, res, sizeof(res), "%s", file) < 0)
+			err(EXIT_FAILURE, "readf symlink failed");
+		printf("readf: %s: %s\n", file, res);
+
+	} else if (strcmp(command, "write-string") == 0) {
+		char *str;
+
+		if (optind + 1 == argc)
+			errx(EXIT_FAILURE, "<file> <string> not defined");
+		file = argv[optind++];
+		str = argv[optind++];
+
+		if (ul_path_write_string(pc, str, file) != 0)
+			err(EXIT_FAILURE, "write string failed");
+		if (ul_path_writef_string(pc, str, "%s", file) != 0)
+			err(EXIT_FAILURE, "writef string failed");
+
+	} else if (strcmp(command, "write-u64") == 0) {
+		uint64_t num;
+
+		if (optind + 1 == argc)
+			errx(EXIT_FAILURE, "<file> <num> not defined");
+		file = argv[optind++];
+		num = strtoumax(argv[optind++], NULL, 0);
+
+		if (ul_path_write_u64(pc, num, file) != 0)
+			err(EXIT_FAILURE, "write u64 failed");
+		if (ul_path_writef_u64(pc, num, "%s", file) != 0)
+			err(EXIT_FAILURE, "writef u64 failed");
+	}
+
+	ul_unref_path(pc);
+	return EXIT_SUCCESS;
+}
+#endif /* TEST_PROGRAM_PATH */
+
