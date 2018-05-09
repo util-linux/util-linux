@@ -75,12 +75,12 @@ enum {
  */
 static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 {
-	unsigned int cpu;
+	int cpu;
 	int online, rc;
 	int configured = -1;
-	size_t fails = 0;
+	int fails = 0;
 
-	for (cpu = 0; cpu < setsize; cpu++) {
+	for (cpu = 0; cpu < maxcpus; cpu++) {
 		if (!CPU_ISSET_S(cpu, setsize, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
@@ -132,7 +132,7 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 		}
 	}
 
-	return fails == 0 ? 0 : fails == setsize ? -1 : 1;
+	return fails == 0 ? 0 : fails == maxcpus ? -1 : 1;
 }
 
 static int cpu_rescan(void)
@@ -168,11 +168,11 @@ static int cpu_set_dispatch(int mode)
  */
 static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 {
-	unsigned int cpu;
+	int cpu;
 	int rc, current;
-	size_t fails = 0;
+	int fails = 0;
 
-	for (cpu = 0; cpu < setsize; cpu++) {
+	for (cpu = 0; cpu < maxcpus; cpu++) {
 		if (!CPU_ISSET_S(cpu, setsize, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
@@ -217,7 +217,7 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 		}
 	}
 
-	return fails == 0 ? 0 : fails == setsize ? -1 : 1;
+	return fails == 0 ? 0 : fails == maxcpus ? -1 : 1;
 }
 
 static void cpu_parse(char *cpu_string, cpu_set_t *cpu_set, size_t setsize)
