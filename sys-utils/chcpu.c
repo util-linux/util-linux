@@ -81,7 +81,7 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 	size_t fails = 0;
 
 	for (cpu = 0; cpu < setsize; cpu++) {
-		if (!CPU_ISSET(cpu, cpu_set))
+		if (!CPU_ISSET_S(cpu, setsize, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
 			warnx(_("CPU %u does not exist"), cpu);
@@ -127,7 +127,7 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 			} else {
 				printf(_("CPU %u disabled\n"), cpu);
 				if (onlinecpus)
-					CPU_CLR(cpu, onlinecpus);
+					CPU_CLR_S(cpu, setsize, onlinecpus);
 			}
 		}
 	}
@@ -173,7 +173,7 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 	size_t fails = 0;
 
 	for (cpu = 0; cpu < setsize; cpu++) {
-		if (!CPU_ISSET(cpu, cpu_set))
+		if (!CPU_ISSET_S(cpu, setsize, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
 			warnx(_("CPU %u does not exist"), cpu);
