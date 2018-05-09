@@ -478,7 +478,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		desc->idx2cpunum = xcalloc(desc->ncpuspos, sizeof(int));
 
 		for (num = 0, idx = 0; num < maxcpus; num++) {
-			if (CPU_ISSET(num, tmp))
+			if (CPU_ISSET_S(num, setsize, tmp))
 				desc->idx2cpunum[idx++] = num;
 		}
 		cpuset_free(tmp);
@@ -1109,10 +1109,11 @@ cpu_max_mhz(struct lscpu_desc *desc, char *buf, size_t bufsz)
 {
 	int i;
 	float cpu_freq = 0.0;
+	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 
 	if (desc->present) {
 		for (i = 0; i < desc->ncpuspos; i++) {
-			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)
+			if (CPU_ISSET_S(real_cpu_num(desc, i), setsize, desc->present)
 			    && desc->maxmhz[i]) {
 				float freq = atof(desc->maxmhz[i]);
 
@@ -1131,10 +1132,11 @@ cpu_min_mhz(struct lscpu_desc *desc, char *buf, size_t bufsz)
 {
 	int i;
 	float cpu_freq = -1.0;
+	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 
 	if (desc->present) {
 		for (i = 0; i < desc->ncpuspos; i++) {
-			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)
+			if (CPU_ISSET_S(real_cpu_num(desc, i), setsize, desc->present)
 			    && desc->minmhz[i]) {
 				float freq = atof(desc->minmhz[i]);
 
@@ -1931,6 +1933,7 @@ int main(int argc, char *argv[])
 	int c, i;
 	int columns[ARRAY_SIZE(coldescs)], ncolumns = 0;
 	int cpu_modifier_specified = 0;
+	size_t setsize;
 
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       NULL, 'a' },
@@ -2034,10 +2037,12 @@ int main(int argc, char *argv[])
 
 	read_basicinfo(desc, mod);
 
+	setsize = CPU_ALLOC_SIZE(maxcpus);
+
 	for (i = 0; i < desc->ncpuspos; i++) {
 		/* only consider present CPUs */
 		if (desc->present &&
-		    !CPU_ISSET(real_cpu_num(desc, i), desc->present))
+		    !CPU_ISSET_S(real_cpu_num(desc, i), setsize, desc->present))
 			continue;
 		read_topology(desc, i);
 		read_cache(desc, i);
