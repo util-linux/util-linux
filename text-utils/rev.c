@@ -64,8 +64,6 @@
 #include "c.h"
 #include "closestream.h"
 
-static wchar_t *buf;
-
 static void sig_handler(int signo __attribute__ ((__unused__)))
 {
 	_exit(EXIT_SUCCESS);
@@ -100,7 +98,8 @@ static void reverse_str(wchar_t *str, size_t n)
 
 int main(int argc, char *argv[])
 {
-	char *filename = "stdin";
+	char const *filename = "stdin";
+	wchar_t *buf;
 	size_t len, bufsiz = BUFSIZ;
 	FILE *fp = stdin;
 	int ch, rval = EXIT_SUCCESS;
