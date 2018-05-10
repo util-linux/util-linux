@@ -1,4 +1,4 @@
-.TH FINDMNT 8 "June 2015" "util-linux" "System Administration"
+.TH FINDMNT 8 "May 2018" "util-linux" "System Administration"
 .SH NAME
 findmnt \- find a filesystem
 .SH SYNOPSIS
@@ -183,6 +183,9 @@ available for umount and move actions
 available for umount and remount actions
 .RE
 .TP
+.BR "\-\-pseudo"
+Print only pseudo filesystems.
+.TP
 .BR \-R , " \-\-submounts"
 Print recursively all submounts for the selected filesystems.  The restrictions
 defined by options \fB\-t\fP, \fB\-O\fP, \fB\-S\fP, \fB\-T\fP and
@@ -192,6 +195,9 @@ default.  This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
 .TP
 .BR \-r , " \-\-raw"
 Use raw output format.  All potentially unsafe characters are hex-escaped (\\x<code>).
+.TP
+.BR "\-\-real"
+Print only real filesystems.
 .TP
 .BR \-S , " \-\-source \fIspec\fP"
 Explicitly define the mount source.  Supported specifications are \fIdevice\fR,
