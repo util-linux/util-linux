@@ -100,7 +100,7 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	size_t sz;
 	int ret = 0;
 
-	DBG(ASK, ul_debug("asking for user replay %s", is_interactive ? "[interactive]" : ""));
+	DBG(ASK, ul_debug("asking for user reply %s", is_interactive ? "[interactive]" : ""));
 
 	sigemptyset(&act.sa_mask);
 	sigaction(SIGINT, &act, &oldact);
