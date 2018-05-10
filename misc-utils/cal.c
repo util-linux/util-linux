@@ -739,19 +739,19 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 
 	if (ctl->header_hint || ctl->header_year) {
 		for (i = month; i; i = i->next) {
-			sprintf(out, _("%s"), ctl->full_month[i->month - 1]);
+			sprintf(out, "%s", ctl->full_month[i->month - 1]);
 			center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
 		}
 		if (!ctl->header_year) {
 			my_putstring("\n");
 			for (i = month; i; i = i->next) {
-				sprintf(out, _("%04d"), i->year);
+				sprintf(out, "%04d", i->year);
 				center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
 			}
 		}
 	} else {
 		for (i = month; i; i = i->next) {
-			sprintf(out, _("%s %04d"), ctl->full_month[i->month - 1], i->year);
+			sprintf(out, "%s %04d", ctl->full_month[i->month - 1], i->year);
 			center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
 		}
 	}

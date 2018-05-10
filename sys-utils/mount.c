@@ -304,7 +304,7 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 			spec = mnt_context_get_source(cxt);
 		if (!spec)
 			spec = "???";
-		warnx(_("%s: %s."), spec, buf);
+		warnx("%s: %s.", spec, buf);
 	}
 
 	if (rc == MNT_EX_SUCCESS && mnt_context_get_status(cxt) == 1) {
