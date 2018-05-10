@@ -281,7 +281,7 @@ print_namei(struct namei *nm, char *path)
 				blanks += 1;
 			blanks += nm->level * 2;
 			printf("%*s ", blanks, "");
-			printf(_("%s - %s\n"), nm->name, strerror(nm->noent));
+			printf("%s - %s\n", nm->name, strerror(nm->noent));
 			return -1;
 		}
 

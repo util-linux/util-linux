@@ -657,7 +657,7 @@ int print_partition_info(struct fdisk_context *cxt)
 			goto clean_data;
 		if (!data || !*data)
 			continue;
-		fdisk_info(cxt, _("%15s: %s"), fdisk_field_get_name(fd), data);
+		fdisk_info(cxt, "%15s: %s", fdisk_field_get_name(fd), data);
 		free(data);
 	}
 
