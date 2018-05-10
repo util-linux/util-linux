@@ -498,6 +498,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -o, --output <list>  output columns\n"), out);
+	fputs(_("     --output-all     output all columns\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -S, --split <list>   split ranges by specified columns\n"), out);
 	fputs(_(" -s, --sysroot <dir>  use the specified directory as system root\n"), out);
@@ -527,7 +528,8 @@ int main(int argc, char **argv)
 	size_t i;
 
 	enum {
-		LSMEM_OPT_SUMARRY = CHAR_MAX + 1
+		LSMEM_OPT_SUMARRY = CHAR_MAX + 1,
+		OPT_OUTPUT_ALL
 	};
 
 	static const struct option longopts[] = {
@@ -537,6 +539,7 @@ int main(int argc, char **argv)
 		{"json",	no_argument,		NULL, 'J'},
 		{"noheadings",	no_argument,		NULL, 'n'},
 		{"output",	required_argument,	NULL, 'o'},
+		{"output-all",	no_argument,		NULL, OPT_OUTPUT_ALL},
 		{"pairs",	no_argument,		NULL, 'P'},
 		{"raw",		no_argument,		NULL, 'r'},
 		{"sysroot",	required_argument,	NULL, 's'},
@@ -580,6 +583,10 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; (size_t)ncolumns < ARRAY_SIZE(coldescs); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'P':
 			lsmem->export = 1;

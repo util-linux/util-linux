@@ -40,6 +40,7 @@ _lsmem_module()
 		--bytes
 		--noheadings
 		--output
+		--output-all
 		--raw
 		--sysroot
 		--summary

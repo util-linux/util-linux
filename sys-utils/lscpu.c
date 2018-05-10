@@ -1935,6 +1935,9 @@ int main(int argc, char *argv[])
 	int cpu_modifier_specified = 0;
 	size_t setsize;
 
+	enum {
+		OPT_OUTPUT_ALL = CHAR_MAX + 1,
+	};
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       NULL, 'a' },
 		{ "online",     no_argument,       NULL, 'b' },
@@ -1947,6 +1950,7 @@ int main(int argc, char *argv[])
 		{ "physical",	no_argument,	   NULL, 'y' },
 		{ "hex",	no_argument,	   NULL, 'x' },
 		{ "version",	no_argument,	   NULL, 'V' },
+		{ "output-all",	no_argument,	   NULL, OPT_OUTPUT_ALL },
 		{ NULL,		0, NULL, 0 }
 	};
 
@@ -2011,6 +2015,13 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		case OPT_OUTPUT_ALL:
+		{
+			size_t sz;
+			for (sz = 0; sz < ARRAY_SIZE(coldescs); sz++)
+				columns[sz] = 1;
+			break;
+		}
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

@@ -45,6 +45,7 @@ _partx_module()
 				--noheadings
 				--nr
 				--output
+				--output-all
 				--pairs
 				--raw
 				--sector-size

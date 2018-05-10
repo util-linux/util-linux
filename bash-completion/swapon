@@ -50,6 +50,7 @@ _swapon_module()
 				--priority
 				--summary
 				--show
+				--output-all
 				--noheadings
 				--raw
 				--bytes

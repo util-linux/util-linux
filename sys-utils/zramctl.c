@@ -543,6 +543,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -f, --find                find a free device\n"), out);
 	fputs(_(" -n, --noheadings          don't print headings\n"), out);
 	fputs(_(" -o, --output <list>       columns to use for status output\n"), out);
+	fputs(_("     --output-all          output all columns\n"), out);
 	fputs(_("     --raw                 use raw status output format\n"), out);
 	fputs(_(" -r, --reset               reset all specified devices\n"), out);
 	fputs(_(" -s, --size <size>         device size\n"), out);
@@ -575,7 +576,10 @@ int main(int argc, char **argv)
 	int rc = 0, c, find = 0, act = A_NONE;
 	struct zram *zram = NULL;
 
-	enum { OPT_RAW = CHAR_MAX + 1 };
+	enum {
+		OPT_RAW = CHAR_MAX + 1,
+		OPT_LIST_TYPES
+	};
 
 	static const struct option longopts[] = {
 		{ "algorithm", required_argument, NULL, 'a' },
@@ -583,6 +587,7 @@ int main(int argc, char **argv)
 		{ "find",      no_argument, NULL, 'f' },
 		{ "help",      no_argument, NULL, 'h' },
 		{ "output",    required_argument, NULL, 'o' },
+		{ "output-all",no_argument, NULL, OPT_LIST_TYPES },
 		{ "noheadings",no_argument, NULL, 'n' },
 		{ "reset",     no_argument, NULL, 'r' },
 		{ "raw",       no_argument, NULL, OPT_RAW },
@@ -624,6 +629,10 @@ int main(int argc, char **argv)
 						     column_name_to_id);
 			if (ncolumns < 0)
 				return EXIT_FAILURE;
+			break;
+		case OPT_LIST_TYPES:
+			for (ncolumns = 0; (size_t)ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 's':
 			size = strtosize_or_err(optarg, _("failed to parse size"));

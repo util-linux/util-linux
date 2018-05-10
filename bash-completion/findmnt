@@ -118,6 +118,7 @@ _findmnt_module()
 				--notruncate
 				--options
 				--output
+				--output-all
 				--pairs
 				--raw
 				--types

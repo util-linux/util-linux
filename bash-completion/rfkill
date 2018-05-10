@@ -36,6 +36,7 @@ _rfkill_module()
 		--json
 		--noheadings
 		--output
+		--output-all
 		--raw
 		--help
 		--version

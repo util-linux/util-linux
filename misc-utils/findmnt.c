@@ -1227,6 +1227,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --noheadings       don't print column headings\n"), out);
 	fputs(_(" -O, --options <list>   limit the set of filesystems by mount options\n"), out);
 	fputs(_(" -o, --output <list>    the output columns to be shown\n"), out);
+	fputs(_("     --output-all       output all available columns\n"), out);
 	fputs(_(" -P, --pairs            use key=\"value\" output format\n"), out);
 	fputs(_(" -R, --submounts        print all submounts for the matching filesystems\n"), out);
 	fputs(_(" -r, --raw              use raw output format\n"), out);
@@ -1272,7 +1273,8 @@ int main(int argc, char *argv[])
 
 	enum {
                 FINDMNT_OPT_VERBOSE = CHAR_MAX + 1,
-		FINDMNT_OPT_TREE
+		FINDMNT_OPT_TREE,
+		FINDMNT_OPT_OUTPUT_ALL
 	};
 
 	static const struct option longopts[] = {
@@ -1296,6 +1298,7 @@ int main(int argc, char *argv[])
 		{ "notruncate",	    no_argument,       NULL, 'u'		 },
 		{ "options",	    required_argument, NULL, 'O'		 },
 		{ "output",	    required_argument, NULL, 'o'		 },
+		{ "output-all",	    no_argument,       NULL, FINDMNT_OPT_OUTPUT_ALL },
 		{ "poll",	    optional_argument, NULL, 'p'		 },
 		{ "pairs",	    no_argument,       NULL, 'P'		 },
 		{ "raw",	    no_argument,       NULL, 'r'		 },
@@ -1395,6 +1398,13 @@ int main(int argc, char *argv[])
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case FINDMNT_OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++) {
+				if (is_tabdiff_column(ncolumns))
+					continue;
+				columns[ncolumns] = ncolumns;
+			}
 			break;
 		case 'O':
 			set_match(COL_OPTIONS, optarg);
