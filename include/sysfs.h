@@ -16,81 +16,7 @@
 #include <inttypes.h>
 #include <dirent.h>
 
-struct sysfs_cxt {
-	dev_t	devno;
-	int	dir_fd;		/* /sys/block/<name> */
-	char	*dir_path;
-	struct sysfs_cxt *parent;
-
-	unsigned int	scsi_host,
-			scsi_channel,
-			scsi_target,
-			scsi_lun;
-
-	unsigned int	has_hctl   : 1,
-			hctl_error : 1 ;
-};
-
-#define UL_SYSFSCXT_EMPTY { 0, -1, NULL, NULL, 0, 0, 0, 0, 0 }
-
-extern char *sysfs_devno_attribute_path(dev_t devno, char *buf,
-                                 size_t bufsiz, const char *attr);
-extern int sysfs_devno_has_attribute(dev_t devno, const char *attr);
-extern char *sysfs_devno_path(dev_t devno, char *buf, size_t bufsiz);
-extern char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz);
-extern dev_t sysfs_devname_to_devno(const char *name, const char *parent);
-
-extern int sysfs_init(struct sysfs_cxt *cxt, dev_t devno, struct sysfs_cxt *parent)
-					__attribute__ ((warn_unused_result));
-extern void sysfs_deinit(struct sysfs_cxt *cxt);
-
-extern DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr);
-
-extern int sysfs_stat(struct sysfs_cxt *cxt, const char *attr, struct stat *st);
-extern ssize_t sysfs_readlink(struct sysfs_cxt *cxt, const char *attr,
-	                   char *buf, size_t bufsiz);
-extern int sysfs_has_attribute(struct sysfs_cxt *cxt, const char *attr);
-
-extern int sysfs_scanf(struct sysfs_cxt *cxt,  const char *attr,
-		       const char *fmt, ...)
-		        __attribute__ ((format (scanf, 3, 4)));
-
-extern int sysfs_read_s64(struct sysfs_cxt *cxt, const char *attr, int64_t *res);
-extern int sysfs_read_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t *res);
-extern int sysfs_read_int(struct sysfs_cxt *cxt, const char *attr, int *res);
-
-extern int sysfs_write_string(struct sysfs_cxt *cxt, const char *attr, const char *str);
-extern int sysfs_write_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t num);
-
-extern char *sysfs_get_devname(struct sysfs_cxt *cxt, char *buf, size_t bufsiz);
-
-extern char *sysfs_strdup(struct sysfs_cxt *cxt, const char *attr);
-
-extern int sysfs_count_dirents(struct sysfs_cxt *cxt, const char *attr);
-extern int sysfs_count_partitions(struct sysfs_cxt *cxt, const char *devname);
-extern dev_t sysfs_partno_to_devno(struct sysfs_cxt *cxt, int partno);
-extern char *sysfs_get_slave(struct sysfs_cxt *cxt);
-
-extern char *sysfs_get_devchain(struct sysfs_cxt *cxt, char *buf, size_t bufsz);
-extern int sysfs_next_subsystem(struct sysfs_cxt *cxt, char *devchain, char **subsys);
-extern int sysfs_is_hotpluggable(struct sysfs_cxt *cxt);
-
-extern int sysfs_is_partition_dirent(DIR *dir, struct dirent *d,
-			const char *parent_name);
-
-extern int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
-            size_t len, dev_t *diskdevno);
-
-extern int sysfs_devno_is_dm_private(dev_t devno, char **uuid);
-extern int sysfs_devno_is_wholedisk(dev_t devno);
-
-extern int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h,
-			       int *c, int *t, int *l);
-extern char *sysfs_scsi_host_strdup_attribute(struct sysfs_cxt *cxt,
-                const char *type, const char *attr);
-extern int sysfs_scsi_host_is(struct sysfs_cxt *cxt, const char *type);
-extern int sysfs_scsi_has_attribute(struct sysfs_cxt *cxt, const char *attr);
-extern int sysfs_scsi_path_contains(struct sysfs_cxt *cxt, const char *pattern);
+#include "path.h"
 
 /**
  * sysfs_devname_sys_to_dev:
@@ -124,5 +50,54 @@ static inline void sysfs_devname_dev_to_sys(char *name)
 		while ((c = strchr(name, '/')))
 			c[0] = '!';
 }
+
+struct sysfs_blkdev {
+	dev_t	devno;
+	struct path_cxt *parent;
+
+	unsigned int	scsi_host,
+			scsi_channel,
+			scsi_target,
+			scsi_lun;
+
+	unsigned int	has_hctl   : 1,
+			hctl_error : 1 ;
+};
+
+int sysfs_blkdev_init_path(struct path_cxt *pc, dev_t devno, struct path_cxt *parent);
+int sysfs_blkdev_set_parent(struct path_cxt *pc, struct path_cxt *parent);
+
+char *sysfs_blkdev_get_name(struct path_cxt *pc, char *buf, size_t bufsiz);
+int sysfs_blkdev_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_name);
+int sysfs_blkdev_count_partitions(struct path_cxt *pc, const char *devname);
+dev_t sysfs_blkdev_partno_to_devno(struct path_cxt *pc, int partno);
+char *sysfs_blkdev_get_slave(struct path_cxt *pc);
+char *sysfs_blkdev_get_path(struct path_cxt *pc, char *buf, size_t bufsiz);
+dev_t sysfs_blkdev_get_devno(struct path_cxt *pc);
+
+char *sysfs_blkdev_get_devchain(struct path_cxt *pc, char *buf, size_t bufsz);
+int sysfs_blkdev_next_subsystem(struct path_cxt *pc __attribute__((unused)), char *devchain, char **subsys);
+
+int sysfs_blkdev_is_hotpluggable(struct path_cxt *pc);
+int sysfs_blkdev_get_wholedisk( struct path_cxt *pc,
+                                char *diskname,
+                                size_t len,
+                                dev_t *diskdevno);
+
+int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
+                             size_t len, dev_t *diskdevno);
+int sysfs_devno_is_dm_private(dev_t devno, char **uuid);
+int sysfs_devno_is_wholedisk(dev_t devno);
+dev_t sysfs_devname_to_devno(const char *name);
+char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz);
+char *sysfs_devno_to_devname(dev_t devno, char *buf, size_t bufsiz);
+
+int sysfs_blkdev_scsi_get_hctl(struct path_cxt *pc, int *h, int *c, int *t, int *l);
+char *sysfs_blkdev_scsi_host_strdup_attribute(struct path_cxt *pc,
+                        const char *type, const char *attr);
+int sysfs_blkdev_scsi_host_is(struct path_cxt *pc, const char *type);
+int sysfs_scsi_has_attribute(struct path_cxt *pc, const char *attr);
+int sysfs_scsi_path_contains(struct path_cxt *pc, const char *pattern);
+
 
 #endif /* UTIL_LINUX_SYSFS_H */

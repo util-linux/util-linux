@@ -16,290 +16,126 @@
 #include "fileutils.h"
 #include "all-io.h"
 
-char *sysfs_devno_attribute_path(dev_t devno, char *buf,
-				 size_t bufsiz, const char *attr)
+static void sysfs_blkdev_deinit_path(struct path_cxt *pc);
+static int  sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, int *dirfd);
+static dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent);
+
+/*
+ * sysfs_blkdev_* is sysfs extension to ul_path_* API for block devices.
+ *
+ */
+int sysfs_blkdev_init_path(struct path_cxt *pc, dev_t devno, struct path_cxt *parent)
 {
-	int len;
+	struct sysfs_blkdev *blk;
+	int rc;
+	char buf[sizeof(_PATH_SYS_DEVBLOCK)
+		 + sizeof(stringify_value(UINT32_MAX)) * 2
+		 + 3];
 
-	if (attr)
-		len = snprintf(buf, bufsiz, _PATH_SYS_DEVBLOCK "/%d:%d/%s",
-			major(devno), minor(devno), attr);
-	else
-		len = snprintf(buf, bufsiz, _PATH_SYS_DEVBLOCK "/%d:%d",
-			major(devno), minor(devno));
+	/* define path to devno stuff */
+	snprintf(buf, sizeof(buf), _PATH_SYS_DEVBLOCK "/%d:%d", major(devno), minor(devno));
+	rc = ul_path_set_dir(pc, buf);
+	if (rc)
+		return rc;
 
-	return (len < 0 || (size_t) len >= bufsiz) ? NULL : buf;
-}
+	/* make sure path exists */
+	rc = ul_path_get_dirfd(pc);
+	if (rc < 0)
+		return rc;
 
-int sysfs_devno_has_attribute(dev_t devno, const char *attr)
-{
-	char path[PATH_MAX];
-	struct stat info;
+	/* initialize sysfs blkdev specific stuff */
+	blk = calloc(1, sizeof(struct sysfs_blkdev));
+	if (!blk)
+		return -ENOMEM;
 
-	if (!sysfs_devno_attribute_path(devno, path, sizeof(path), attr))
-		return 0;
-	if (stat(path, &info) == 0)
-		return 1;
+	blk->devno = devno;
+	ul_path_set_dialect(pc, blk, sysfs_blkdev_deinit_path);
+
+	sysfs_blkdev_set_parent(pc, parent);
+
+	ul_path_set_enoent_redirect(pc, sysfs_blkdev_enoent_redirect);
 	return 0;
 }
 
-char *sysfs_devno_path(dev_t devno, char *buf, size_t bufsiz)
+static void sysfs_blkdev_deinit_path(struct path_cxt *pc)
 {
-	return sysfs_devno_attribute_path(devno, buf, bufsiz, NULL);
+	struct sysfs_blkdev *blk;
+
+	if (!pc)
+		return;
+	blk = ul_path_get_dialect(pc);
+	if (!blk)
+		return;
+
+	ul_ref_path(blk->parent);
+	free(blk);
 }
 
-static dev_t read_devno(const char *path)
+int sysfs_blkdev_set_parent(struct path_cxt *pc, struct path_cxt *parent)
 {
-	FILE *f;
-	int maj = 0, min = 0;
-	dev_t dev = 0;
+	struct sysfs_blkdev *blk = ul_path_get_dialect(pc);
 
-	f = fopen(path, "r" UL_CLOEXECSTR);
-	if (!f)
-		return 0;
+	if (!pc || !blk)
+		return -EINVAL;
 
-	if (fscanf(f, "%d:%d", &maj, &min) == 2)
-		dev = makedev(maj, min);
-	fclose(f);
-	return dev;
-}
-
-dev_t sysfs_devname_to_devno(const char *name, const char *parent)
-{
-	char buf[PATH_MAX];
-	char *_name = NULL;	/* name as encoded in sysfs */
-	dev_t dev = 0;
-	int len;
-
-	if (strncmp("/dev/", name, 5) == 0) {
-		/*
-		 * Read from /dev
-		 */
-		struct stat st;
-
-		if (stat(name, &st) == 0) {
-			dev = st.st_rdev;
-			goto done;
-		}
-		name += 5;	/* unaccesible, or not node in /dev */
+	if (blk->parent) {
+		ul_unref_path(blk->parent);
+		blk->parent = NULL;
 	}
 
-	_name = strdup(name);
-	if (!_name)
-		goto done;
-	sysfs_devname_dev_to_sys(_name);
+	if (parent) {
+		ul_ref_path(parent);
+		blk->parent = parent;
+	} else
+		blk->parent = NULL;
 
-	if (parent && strncmp("dm-", name, 3)) {
-		/*
-		 * Create path to /sys/block/<parent>/<name>/dev
-		 */
-		char *_parent = strdup(parent);
-
-		if (!_parent) {
-			free(_parent);
-			goto done;
-		}
-		sysfs_devname_dev_to_sys(_parent);
-
-		len = snprintf(buf, sizeof(buf),
-				_PATH_SYS_BLOCK "/%s/%s/dev", _parent, _name);
-		free(_parent);
-		if (len < 0 || (size_t) len >= sizeof(buf))
-			goto done;
-
-		/* don't try anything else for dm-* */
-		dev = read_devno(buf);
-		goto done;
-	}
-
-	/*
-	 * Read from /sys/block/<sysname>/dev
-	 */
-	len = snprintf(buf, sizeof(buf),
-			_PATH_SYS_BLOCK "/%s/dev", _name);
-	if (len < 0 || (size_t) len >= sizeof(buf))
-		goto done;
-	dev = read_devno(buf);
-
-	if (!dev) {
-		/*
-		 * Read from /sys/block/<sysname>/device/dev
-		 */
-		len = snprintf(buf, sizeof(buf),
-				_PATH_SYS_BLOCK "/%s/device/dev", _name);
-		if (len < 0 || (size_t) len >= sizeof(buf))
-			goto done;
-		dev = read_devno(buf);
-	}
-done:
-	free(_name);
-	return dev;
+	return 0;
 }
 
 /*
- * Returns devname (e.g. "/dev/sda1") for the given devno.
+ * Redirects ENOENT errors to the parent, if the path is to the queue/
+ * sysfs directory. For example
  *
- * Please, use more robust blkid_devno_to_devname() in your applications.
+ *	/sys/dev/block/8:1/queue/logical_block_size redirects to
+ *	/sys/dev/block/8:0/queue/logical_block_size
  */
-char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz)
+static int sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, int *dirfd)
 {
-	struct sysfs_cxt cxt;
+	struct sysfs_blkdev *blk = ul_path_get_dialect(pc);
+
+	if (blk && blk->parent && strncmp(path, "queue/", 6) == 0) {
+		*dirfd = ul_path_get_dirfd(blk->parent);
+		if (*dirfd >= 0)
+			return 0;
+	}
+	return 1;	/* no redirect */
+}
+
+char *sysfs_blkdev_get_name(struct path_cxt *pc, char *buf, size_t bufsiz)
+{
+	char link[PATH_MAX];
 	char *name;
-	size_t sz;
-	struct stat st;
+	ssize_t	sz;
 
-	if (sysfs_init(&cxt, devno, NULL))
+        /* read /sys/dev/block/<maj:min> link */
+	sz = ul_path_readlink(pc, link, sizeof(link) - 1, NULL);
+	if (sz < 0)
 		return NULL;
+	link[sz] = '\0';
 
-	name = sysfs_get_devname(&cxt, buf, bufsiz);
-	sysfs_deinit(&cxt);
-
+	name = strrchr(link, '/');
 	if (!name)
 		return NULL;
 
+	name++;
 	sz = strlen(name);
-
-	if (sz + sizeof("/dev/") > bufsiz)
+	if ((size_t) sz + 1 > bufsiz)
 		return NULL;
 
-	/* create the final "/dev/<name>" string */
-	memmove(buf + 5, name, sz + 1);
-	memcpy(buf, "/dev/", 5);
-
-	if (!stat(buf, &st) && S_ISBLK(st.st_mode) && st.st_rdev == devno)
-		return buf;
-
-	return NULL;
+	memcpy(buf, name, sz + 1);
+	sysfs_devname_sys_to_dev(buf);
+	return buf;
 }
-
-int sysfs_init(struct sysfs_cxt *cxt, dev_t devno, struct sysfs_cxt *parent)
-{
-	char path[PATH_MAX];
-	int fd, rc;
-
-	memset(cxt, 0, sizeof(*cxt));
-	cxt->dir_fd = -1;
-
-	if (!sysfs_devno_path(devno, path, sizeof(path)))
-		goto err;
-
-	fd = open(path, O_RDONLY|O_CLOEXEC);
-	if (fd < 0)
-		goto err;
-	cxt->dir_fd = fd;
-
-	cxt->dir_path = strdup(path);
-	if (!cxt->dir_path)
-		goto err;
-	cxt->devno = devno;
-	cxt->parent = parent;
-	return 0;
-err:
-	rc = errno > 0 ? -errno : -1;
-	sysfs_deinit(cxt);
-	return rc;
-}
-
-void sysfs_deinit(struct sysfs_cxt *cxt)
-{
-	if (!cxt)
-		return;
-
-	if (cxt->dir_fd >= 0)
-	       close(cxt->dir_fd);
-	free(cxt->dir_path);
-
-	memset(cxt, 0, sizeof(*cxt));
-
-	cxt->dir_fd = -1;
-}
-
-int sysfs_stat(struct sysfs_cxt *cxt, const char *attr, struct stat *st)
-{
-	int rc = fstatat(cxt->dir_fd, attr, st, 0);
-
-	if (rc != 0 && errno == ENOENT &&
-	    strncmp(attr, "queue/", 6) == 0 && cxt->parent) {
-
-		/* Exception for "queue/<attr>". These attributes are available
-		 * for parental devices only
-		 */
-		return fstatat(cxt->parent->dir_fd, attr, st, 0);
-	}
-	return rc;
-}
-
-int sysfs_has_attribute(struct sysfs_cxt *cxt, const char *attr)
-{
-	struct stat st;
-
-	return sysfs_stat(cxt, attr, &st) == 0;
-}
-
-static int sysfs_open(struct sysfs_cxt *cxt, const char *attr, int flags)
-{
-	int fd = openat(cxt->dir_fd, attr, flags);
-
-	if (fd == -1 && errno == ENOENT &&
-	    strncmp(attr, "queue/", 6) == 0 && cxt->parent) {
-
-		/* Exception for "queue/<attr>". These attributes are available
-		 * for parental devices only
-		 */
-		fd = openat(cxt->parent->dir_fd, attr, flags);
-	}
-	return fd;
-}
-
-ssize_t sysfs_readlink(struct sysfs_cxt *cxt, const char *attr,
-		   char *buf, size_t bufsiz)
-{
-	if (!cxt->dir_path)
-		return -1;
-
-	if (attr)
-		return readlinkat(cxt->dir_fd, attr, buf, bufsiz);
-
-	/* read /sys/dev/block/<maj:min> link */
-	return readlink(cxt->dir_path, buf, bufsiz);
-}
-
-DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr)
-{
-	DIR *dir;
-	int fd = -1;
-
-	if (attr)
-		fd = sysfs_open(cxt, attr, O_RDONLY|O_CLOEXEC);
-
-	else if (cxt->dir_fd >= 0)
-		/* request to open root of device in sysfs (/sys/block/<dev>)
-		 * -- we cannot use cxt->sysfs_fd directly, because closedir()
-		 * will close this our persistent file descriptor.
-		 */
-		fd = dup_fd_cloexec(cxt->dir_fd, STDERR_FILENO + 1);
-
-	if (fd < 0)
-		return NULL;
-
-	dir = fdopendir(fd);
-	if (!dir) {
-		close(fd);
-		return NULL;
-	}
-	if (!attr)
-		 rewinddir(dir);
-	return dir;
-}
-
-
-static FILE *sysfs_fopen(struct sysfs_cxt *cxt, const char *attr)
-{
-	int fd = sysfs_open(cxt, attr, O_RDONLY|O_CLOEXEC);
-
-	return fd < 0 ? NULL : fdopen(fd, "r" UL_CLOEXECSTR);
-}
-
 
 static struct dirent *xreaddir(DIR *dp)
 {
@@ -316,7 +152,7 @@ static struct dirent *xreaddir(DIR *dp)
 	return d;
 }
 
-int sysfs_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_name)
+int sysfs_blkdev_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_name)
 {
 	char path[NAME_MAX + 6 + 1];
 
@@ -356,169 +192,18 @@ int sysfs_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_nam
 	return faccessat(dirfd(dir), path, R_OK, 0) == 0;
 }
 
-/*
- * Converts @partno (partition number) to devno of the partition.
- * The @cxt handles wholedisk device.
- *
- * Note that this code does not expect any special format of the
- * partitions devnames.
- */
-dev_t sysfs_partno_to_devno(struct sysfs_cxt *cxt, int partno)
+int sysfs_blkdev_count_partitions(struct path_cxt *pc, const char *devname)
 {
 	DIR *dir;
 	struct dirent *d;
-	char path[NAME_MAX + 10 + 1];
-	dev_t devno = 0;
+	int r = 0;
 
-	dir = sysfs_opendir(cxt, NULL);
+	dir = ul_path_opendir(pc, NULL);
 	if (!dir)
 		return 0;
 
 	while ((d = xreaddir(dir))) {
-		int n, maj, min;
-
-		if (!sysfs_is_partition_dirent(dir, d, NULL))
-			continue;
-
-		snprintf(path, sizeof(path), "%s/partition", d->d_name);
-		if (sysfs_read_int(cxt, path, &n))
-			continue;
-
-		if (n == partno) {
-			snprintf(path, sizeof(path), "%s/dev", d->d_name);
-			if (sysfs_scanf(cxt, path, "%d:%d", &maj, &min) == 2)
-				devno = makedev(maj, min);
-			break;
-		}
-	}
-
-	closedir(dir);
-	return devno;
-}
-
-
-int sysfs_scanf(struct sysfs_cxt *cxt,  const char *attr, const char *fmt, ...)
-{
-	FILE *f = sysfs_fopen(cxt, attr);
-	va_list ap;
-	int rc;
-
-	if (!f)
-		return -EINVAL;
-	va_start(ap, fmt);
-	rc = vfscanf(f, fmt, ap);
-	va_end(ap);
-
-	fclose(f);
-	return rc;
-}
-
-
-int sysfs_read_s64(struct sysfs_cxt *cxt, const char *attr, int64_t *res)
-{
-	int64_t x = 0;
-
-	if (sysfs_scanf(cxt, attr, "%"SCNd64, &x) == 1) {
-		if (res)
-			*res = x;
-		return 0;
-	}
-	return -1;
-}
-
-int sysfs_read_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t *res)
-{
-	uint64_t x = 0;
-
-	if (sysfs_scanf(cxt, attr, "%"SCNu64, &x) == 1) {
-		if (res)
-			*res = x;
-		return 0;
-	}
-	return -1;
-}
-
-int sysfs_read_int(struct sysfs_cxt *cxt, const char *attr, int *res)
-{
-	int x = 0;
-
-	if (sysfs_scanf(cxt, attr, "%d", &x) == 1) {
-		if (res)
-			*res = x;
-		return 0;
-	}
-	return -1;
-}
-
-int sysfs_write_string(struct sysfs_cxt *cxt, const char *attr, const char *str)
-{
-	int fd = sysfs_open(cxt, attr, O_WRONLY|O_CLOEXEC);
-	int rc, errsv;
-
-	if (fd < 0)
-		return -errno;
-	rc = write_all(fd, str, strlen(str));
-
-	errsv = errno;
-	close(fd);
-	errno = errsv;
-	return rc;
-}
-
-int sysfs_write_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t num)
-{
-	char buf[sizeof(stringify_value(ULLONG_MAX))];
-	int fd, rc = 0, len, errsv;
-
-	fd = sysfs_open(cxt, attr, O_WRONLY|O_CLOEXEC);
-	if (fd < 0)
-		return -errno;
-
-	len = snprintf(buf, sizeof(buf), "%" PRIu64, num);
-	if (len < 0 || (size_t) len >= sizeof(buf))
-		rc = len < 0 ? -errno : -E2BIG;
-	else
-		rc = write_all(fd, buf, len);
-
-	errsv = errno;
-	close(fd);
-	errno = errsv;
-	return rc;
-}
-
-char *sysfs_strdup(struct sysfs_cxt *cxt, const char *attr)
-{
-	char buf[BUFSIZ];
-	return sysfs_scanf(cxt, attr, "%1023[^\n]", buf) == 1 ?
-						strdup(buf) : NULL;
-}
-
-
-int sysfs_count_dirents(struct sysfs_cxt *cxt, const char *attr)
-{
-	DIR *dir;
-	int r = 0;
-
-	if (!(dir = sysfs_opendir(cxt, attr)))
-		return 0;
-
-	while (xreaddir(dir)) r++;
-
-	closedir(dir);
-	return r;
-}
-
-int sysfs_count_partitions(struct sysfs_cxt *cxt, const char *devname)
-{
-	DIR *dir;
-	struct dirent *d;
-	int r = 0;
-
-	if (!(dir = sysfs_opendir(cxt, NULL)))
-		return 0;
-
-	while ((d = xreaddir(dir))) {
-		if (sysfs_is_partition_dirent(dir, d, devname))
+		if (sysfs_blkdev_is_partition_dirent(dir, d, devname))
 			r++;
 	}
 
@@ -527,22 +212,59 @@ int sysfs_count_partitions(struct sysfs_cxt *cxt, const char *devname)
 }
 
 /*
+ * Converts @partno (partition number) to devno of the partition.
+ * The @pc handles wholedisk device.
+ *
+ * Note that this code does not expect any special format of the
+ * partitions devnames.
+ */
+dev_t sysfs_blkdev_partno_to_devno(struct path_cxt *pc, int partno)
+{
+	DIR *dir;
+	struct dirent *d;
+	dev_t devno = 0;
+
+	dir = ul_path_opendir(pc, NULL);
+	if (!dir)
+		return 0;
+
+	while ((d = xreaddir(dir))) {
+		int n;
+
+		if (!sysfs_blkdev_is_partition_dirent(dir, d, NULL))
+			continue;
+
+		if (ul_path_readf_s32(pc, &n, "%s/partition", d->d_name))
+			continue;
+
+		if (n == partno) {
+			if (ul_path_readf_majmin(pc, &devno, "%s/dev", d->d_name) == 0)
+				break;
+		}
+	}
+
+	closedir(dir);
+	return devno;
+}
+
+
+/*
  * Returns slave name if there is only one slave, otherwise returns NULL.
  * The result should be deallocated by free().
  */
-char *sysfs_get_slave(struct sysfs_cxt *cxt)
+char *sysfs_blkdev_get_slave(struct path_cxt *pc)
 {
 	DIR *dir;
 	struct dirent *d;
 	char *name = NULL;
 
-	if (!(dir = sysfs_opendir(cxt, "slaves")))
+	dir = ul_path_opendir(pc, "slaves");
+	if (!dir)
 		return NULL;
 
 	while ((d = xreaddir(dir))) {
 		if (name)
 			goto err;	/* more slaves */
-
 		name = strdup(d->d_name);
 	}
 
@@ -554,32 +276,6 @@ err:
 	return NULL;
 }
 
-char *sysfs_get_devname(struct sysfs_cxt *cxt, char *buf, size_t bufsiz)
-{
-	char linkpath[PATH_MAX];
-	char *name;
-	ssize_t	sz;
-
-	sz = sysfs_readlink(cxt, NULL, linkpath, sizeof(linkpath) - 1);
-	if (sz < 0)
-		return NULL;
-	linkpath[sz] = '\0';
-
-	name = strrchr(linkpath, '/');
-	if (!name)
-		return NULL;
-
-	name++;
-	sz = strlen(name);
-
-	if ((size_t) sz + 1 > bufsiz)
-		return NULL;
-
-	memcpy(buf, name, sz + 1);
-	sysfs_devname_sys_to_dev(buf);
-
-	return buf;
-}
 
 #define SUBSYSTEM_LINKNAME	"/subsystem"
 
@@ -637,19 +333,27 @@ static char *get_subsystem(char *chain, char *buf, size_t bufsz)
  * Returns complete path to the device, the patch contains all subsystems
  * used for the device.
  */
-char *sysfs_get_devchain(struct sysfs_cxt *cxt, char *buf, size_t bufsz)
+char *sysfs_blkdev_get_devchain(struct path_cxt *pc, char *buf, size_t bufsz)
 {
 	/* read /sys/dev/block/<maj>:<min> symlink */
-	ssize_t sz = sysfs_readlink(cxt, NULL, buf, bufsz);
+	ssize_t sz = ul_path_readlink(pc, buf, bufsz, NULL);
+	const char *prefix;
+	size_t psz = 0;
+
 	if (sz <= 0 || sz + sizeof(_PATH_SYS_DEVBLOCK "/") > bufsz)
 		return NULL;
 
 	buf[sz++] = '\0';
+	prefix = ul_path_get_prefix(pc);
+	if (prefix)
+		psz = strlen(prefix);
 
 	/* create absolute patch from the link */
-	memmove(buf + sizeof(_PATH_SYS_DEVBLOCK "/") - 1, buf, sz);
-	memcpy(buf, _PATH_SYS_DEVBLOCK "/", sizeof(_PATH_SYS_DEVBLOCK "/") - 1);
+	memmove(buf + psz + sizeof(_PATH_SYS_DEVBLOCK "/") - 1, buf, sz);
+	if (prefix)
+		memcpy(buf, prefix, psz);
 
+	memcpy(buf + psz, _PATH_SYS_DEVBLOCK "/", sizeof(_PATH_SYS_DEVBLOCK "/") - 1);
 	return buf;
 }
 
@@ -659,7 +363,7 @@ char *sysfs_get_devchain(struct sysfs_cxt *cxt, char *buf, size_t bufsz)
  *
  * Returns: 0 in success, <0 on error, 1 on end of chain
  */
-int sysfs_next_subsystem(struct sysfs_cxt *cxt __attribute__((unused)),
+int sysfs_blkdev_next_subsystem(struct path_cxt *pc __attribute__((unused)),
 			 char *devchain, char **subsys)
 {
 	char subbuf[PATH_MAX];
@@ -699,19 +403,19 @@ static int is_hotpluggable_subsystem(const char *name)
 	return 0;
 }
 
-int sysfs_is_hotpluggable(struct sysfs_cxt *cxt)
+int sysfs_blkdev_is_hotpluggable(struct path_cxt *pc)
 {
 	char buf[PATH_MAX], *chain, *sub;
 	int rc = 0;
 
 
 	/* check /sys/dev/block/<maj>:<min>/removable attribute */
-	if (sysfs_read_int(cxt, "removable", &rc) == 0 && rc == 1)
+	if (ul_path_read_s32(pc, &rc, "removable") == 0 && rc == 1)
 		return 1;
 
-	chain = sysfs_get_devchain(cxt, buf, sizeof(buf));
+	chain = sysfs_blkdev_get_devchain(pc, buf, sizeof(buf));
 
-	while (chain && sysfs_next_subsystem(cxt, chain, &sub) == 0) {
+	while (chain && sysfs_blkdev_next_subsystem(pc, chain, &sub) == 0) {
 		rc = is_hotpluggable_subsystem(sub);
 		if (rc) {
 			free(sub);
@@ -723,16 +427,16 @@ int sysfs_is_hotpluggable(struct sysfs_cxt *cxt)
 	return rc;
 }
 
-static int get_dm_wholedisk(struct sysfs_cxt *cxt, char *diskname,
+static int get_dm_wholedisk(struct path_cxt *pc, char *diskname,
                 size_t len, dev_t *diskdevno)
 {
     int rc = 0;
     char *name;
 
-    /* Note, sysfs_get_slave() returns the first slave only,
+    /* Note, sysfs_blkdev_get_slave() returns the first slave only,
      * if there is more slaves, then return NULL
      */
-    name = sysfs_get_slave(cxt);
+    name = sysfs_blkdev_get_slave(pc);
     if (!name)
         return -1;
 
@@ -742,7 +446,7 @@ static int get_dm_wholedisk(struct sysfs_cxt *cxt, char *diskname,
     }
 
     if (diskdevno) {
-        *diskdevno = sysfs_devname_to_devno(name, NULL);
+        *diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), name, NULL);
         if (!*diskdevno)
             rc = -1;
     }
@@ -755,16 +459,17 @@ static int get_dm_wholedisk(struct sysfs_cxt *cxt, char *diskname,
  * Returns by @diskdevno whole disk device devno and (optionally) by
  * @diskname the whole disk device name.
  */
-int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
-            size_t len, dev_t *diskdevno)
+int sysfs_blkdev_get_wholedisk(	struct path_cxt *pc,
+				char *diskname,
+				size_t len,
+				dev_t *diskdevno)
 {
-    struct sysfs_cxt cxt;
     int is_part = 0;
 
-    if (!dev || sysfs_init(&cxt, dev, NULL) != 0)
+    if (!pc)
         return -1;
 
-    is_part = sysfs_has_attribute(&cxt, "partition");
+    is_part = ul_path_access(pc, F_OK, "partition") == 0;
     if (!is_part) {
         /*
          * Extra case for partitions mapped by device-mapper.
@@ -774,16 +479,18 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
          * mapped by DM don't have such file, but they have "part"
          * prefix in DM UUID.
          */
-        char *uuid = sysfs_strdup(&cxt, "dm/uuid");
-        char *tmp = uuid;
-        char *prefix = uuid ? strsep(&tmp, "-") : NULL;
+        char *uuid = NULL, *tmp, *prefix;
+
+	ul_path_read_string(pc, &uuid, "dm/uuid");
+	tmp = uuid;
+	prefix = uuid ? strsep(&tmp, "-") : NULL;
 
         if (prefix && strncasecmp(prefix, "part", 4) == 0)
             is_part = 1;
         free(uuid);
 
         if (is_part &&
-            get_dm_wholedisk(&cxt, diskname, len, diskdevno) == 0)
+            get_dm_wholedisk(pc, diskname, len, diskdevno) == 0)
             /*
              * partitioned device, mapped by DM
              */
@@ -796,10 +503,10 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
         /*
          * unpartitioned device
          */
-        if (diskname && len && !sysfs_get_devname(&cxt, diskname, len))
+        if (diskname && !sysfs_blkdev_get_name(pc, diskname, len))
             goto err;
         if (diskdevno)
-            *diskdevno = dev;
+            *diskdevno = sysfs_blkdev_get_devno(pc);
 
     } else {
         /*
@@ -812,7 +519,7 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
         char *name;
 	ssize_t	linklen;
 
-	linklen = sysfs_readlink(&cxt, NULL, linkpath, sizeof(linkpath) - 1);
+	linklen = ul_path_readlink(pc, linkpath, sizeof(linkpath) - 1, NULL);
         if (linklen < 0)
             goto err;
         linkpath[linklen] = '\0';
@@ -829,18 +536,35 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
         }
 
         if (diskdevno) {
-            *diskdevno = sysfs_devname_to_devno(name, NULL);
+            *diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), diskname, NULL);
             if (!*diskdevno)
                 goto err;
         }
     }
 
 done:
-    sysfs_deinit(&cxt);
     return 0;
 err:
-    sysfs_deinit(&cxt);
     return -1;
+}
+
+int sysfs_devno_to_wholedisk(dev_t devno, char *diskname,
+		             size_t len, dev_t *diskdevno)
+{
+	struct path_cxt *pc;
+	int rc = 0;
+
+	if (!devno)
+		return -EINVAL;
+	pc = ul_new_path(NULL);
+	if (!pc)
+		return -ENOMEM;
+
+	rc = sysfs_blkdev_init_path(pc, devno, NULL);
+	if (!rc)
+		rc = sysfs_blkdev_get_wholedisk(pc, diskname, len, diskdevno);
+	ul_unref_path(pc);
+	return rc;
 }
 
 /*
@@ -849,32 +573,34 @@ err:
  */
 int sysfs_devno_is_dm_private(dev_t devno, char **uuid)
 {
-	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
+	struct path_cxt *pc = NULL;
 	char *id = NULL;
 	int rc = 0;
 
-	if (sysfs_init(&cxt, devno, NULL) != 0)
-		return 0;
+	pc = ul_new_path(NULL);
+	if (!pc)
+		goto done;
+	if (sysfs_blkdev_init_path(pc, devno, NULL) != 0)
+		goto done;
+	if (ul_path_read_string(pc, &id, "dm/uuid") <= 0 || !id)
+		goto done;
 
-	id = sysfs_strdup(&cxt, "dm/uuid");
-	if (id) {
-		/* Private LVM devices use "LVM-<uuid>-<name>" uuid format (important
-		 * is the "LVM" prefix and "-<name>" postfix).
-		 */
-		if (strncmp(id, "LVM-", 4) == 0) {
-			char *p = strrchr(id + 4, '-');
+	/* Private LVM devices use "LVM-<uuid>-<name>" uuid format (important
+	 * is the "LVM" prefix and "-<name>" postfix).
+	 */
+	if (strncmp(id, "LVM-", 4) == 0) {
+		char *p = strrchr(id + 4, '-');
 
-			if (p && *(p + 1))
-				rc = 1;
-
-		/* Private Stratis devices prefix the UUID with "stratis-1-private"
-		 */
-		} else if (strncmp(id, "stratis-1-private", 17) == 0) {
+		if (p && *(p + 1))
 			rc = 1;
-		}
-	}
 
-	sysfs_deinit(&cxt);
+	/* Private Stratis devices prefix the UUID with "stratis-1-private"
+	 */
+	} else if (strncmp(id, "stratis-1-private", 17) == 0) {
+		rc = 1;
+	}
+done:
+	ul_unref_path(pc);
 	if (uuid)
 		*uuid = id;
 	else
@@ -896,18 +622,21 @@ int sysfs_devno_is_wholedisk(dev_t devno)
 }
 
 
-int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h, int *c, int *t, int *l)
+int sysfs_blkdev_scsi_get_hctl(struct path_cxt *pc, int *h, int *c, int *t, int *l)
 {
 	char buf[PATH_MAX], *hctl;
+	struct sysfs_blkdev *blk;
 	ssize_t len;
 
-	if (!cxt || cxt->hctl_error)
+	blk = ul_path_get_dialect(pc);
+
+	if (!blk || blk->hctl_error)
 		return -EINVAL;
-	if (cxt->has_hctl)
+	if (blk->has_hctl)
 		goto done;
 
-	cxt->hctl_error = 1;
-	len = sysfs_readlink(cxt, "device", buf, sizeof(buf) - 1);
+	blk->hctl_error = 1;
+	len = ul_path_readlink(pc, buf, sizeof(buf) - 1, "device");
 	if (len < 0)
 		return len;
 
@@ -917,54 +646,63 @@ int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h, int *c, int *t, int *l)
 		return -1;
 	hctl++;
 
-	if (sscanf(hctl, "%u:%u:%u:%u", &cxt->scsi_host, &cxt->scsi_channel,
-				&cxt->scsi_target, &cxt->scsi_lun) != 4)
+	if (sscanf(hctl, "%u:%u:%u:%u",	&blk->scsi_host, &blk->scsi_channel,
+				&blk->scsi_target, &blk->scsi_lun) != 4)
 		return -1;
 
-	cxt->has_hctl = 1;
+	blk->has_hctl = 1;
 done:
 	if (h)
-		*h = cxt->scsi_host;
+		*h = blk->scsi_host;
 	if (c)
-		*c = cxt->scsi_channel;
+		*c = blk->scsi_channel;
 	if (t)
-		*t = cxt->scsi_target;
+		*t = blk->scsi_target;
 	if (l)
-		*l = cxt->scsi_lun;
+		*l = blk->scsi_lun;
 
-	cxt->hctl_error = 0;
+	blk->hctl_error = 0;
 	return 0;
 }
 
 
-static char *sysfs_scsi_host_attribute_path(struct sysfs_cxt *cxt,
-		const char *type, char *buf, size_t bufsz, const char *attr)
+static char *scsi_host_attribute_path(
+			struct path_cxt *pc,
+			const char *type,
+			char *buf,
+			size_t bufsz,
+			const char *attr)
 {
 	int len;
 	int host;
+	const char *prefix;
 
-	if (sysfs_scsi_get_hctl(cxt, &host, NULL, NULL, NULL))
+	if (sysfs_blkdev_scsi_get_hctl(pc, &host, NULL, NULL, NULL))
 		return NULL;
 
+	prefix = ul_path_get_prefix(pc);
+	if (!prefix)
+		prefix = "";
+
 	if (attr)
-		len = snprintf(buf, bufsz, _PATH_SYS_CLASS "/%s_host/host%d/%s",
-				type, host, attr);
+		len = snprintf(buf, bufsz, "%s%s/%s_host/host%d/%s",
+				prefix, _PATH_SYS_CLASS, type, host, attr);
 	else
-		len = snprintf(buf, bufsz, _PATH_SYS_CLASS "/%s_host/host%d",
-				type, host);
+		len = snprintf(buf, bufsz, "%s%s/%s_host/host%d",
+				prefix, _PATH_SYS_CLASS, type, host);
 
 	return (len < 0 || (size_t) len >= bufsz) ? NULL : buf;
 }
 
-char *sysfs_scsi_host_strdup_attribute(struct sysfs_cxt *cxt,
-		const char *type, const char *attr)
+char *sysfs_blkdev_scsi_host_strdup_attribute(struct path_cxt *pc,
+			const char *type, const char *attr)
 {
 	char buf[1024];
 	int rc;
 	FILE *f;
 
 	if (!attr || !type ||
-	    !sysfs_scsi_host_attribute_path(cxt, type, buf, sizeof(buf), attr))
+	    !scsi_host_attribute_path(pc, type, buf, sizeof(buf), attr))
 		return NULL;
 
 	if (!(f = fopen(buf, "r" UL_CLOEXECSTR)))
@@ -976,53 +714,60 @@ char *sysfs_scsi_host_strdup_attribute(struct sysfs_cxt *cxt,
 	return rc == 1 ? strdup(buf) : NULL;
 }
 
-int sysfs_scsi_host_is(struct sysfs_cxt *cxt, const char *type)
+int sysfs_blkdev_scsi_host_is(struct path_cxt *pc, const char *type)
 {
 	char buf[PATH_MAX];
 	struct stat st;
 
-	if (!type || !sysfs_scsi_host_attribute_path(cxt, type,
+	if (!type || !scsi_host_attribute_path(pc, type,
 				buf, sizeof(buf), NULL))
 		return 0;
 
 	return stat(buf, &st) == 0 && S_ISDIR(st.st_mode);
 }
 
-static char *sysfs_scsi_attribute_path(struct sysfs_cxt *cxt,
+static char *scsi_attribute_path(struct path_cxt *pc,
 		char *buf, size_t bufsz, const char *attr)
 {
 	int len, h, c, t, l;
+	const char *prefix;
 
-	if (sysfs_scsi_get_hctl(cxt, &h, &c, &t, &l) != 0)
+	if (sysfs_blkdev_scsi_get_hctl(pc, &h, &c, &t, &l) != 0)
 		return NULL;
 
+	prefix = ul_path_get_prefix(pc);
+	if (!prefix)
+		prefix = "";
+
 	if (attr)
-		len = snprintf(buf, bufsz, _PATH_SYS_SCSI "/devices/%d:%d:%d:%d/%s",
+		len = snprintf(buf, bufsz, "%s%s/devices/%d:%d:%d:%d/%s",
+				prefix, _PATH_SYS_SCSI,
 				h,c,t,l, attr);
 	else
-		len = snprintf(buf, bufsz, _PATH_SYS_SCSI "/devices/%d:%d:%d:%d",
+		len = snprintf(buf, bufsz, "%s%s/devices/%d:%d:%d:%d",
+				prefix, _PATH_SYS_SCSI,
 				h,c,t,l);
 	return (len < 0 || (size_t) len >= bufsz) ? NULL : buf;
 }
 
-int sysfs_scsi_has_attribute(struct sysfs_cxt *cxt, const char *attr)
+int sysfs_scsi_has_attribute(struct path_cxt *pc, const char *attr)
 {
 	char path[PATH_MAX];
 	struct stat st;
 
-	if (!sysfs_scsi_attribute_path(cxt, path, sizeof(path), attr))
+	if (!scsi_attribute_path(pc, path, sizeof(path), attr))
 		return 0;
 
 	return stat(path, &st) == 0;
 }
 
-int sysfs_scsi_path_contains(struct sysfs_cxt *cxt, const char *pattern)
+int sysfs_scsi_path_contains(struct path_cxt *pc, const char *pattern)
 {
 	char path[PATH_MAX], linkc[PATH_MAX];
 	struct stat st;
 	ssize_t len;
 
-	if (!sysfs_scsi_attribute_path(cxt, path, sizeof(path), NULL))
+	if (!scsi_attribute_path(pc, path, sizeof(path), NULL))
 		return 0;
 
 	if (stat(path, &st) != 0)
@@ -1036,6 +781,164 @@ int sysfs_scsi_path_contains(struct sysfs_cxt *cxt, const char *pattern)
 	return strstr(linkc, pattern) != NULL;
 }
 
+static dev_t read_devno(const char *path)
+{
+	FILE *f;
+	int maj = 0, min = 0;
+	dev_t dev = 0;
+
+	f = fopen(path, "r" UL_CLOEXECSTR);
+	if (!f)
+		return 0;
+
+	if (fscanf(f, "%d:%d", &maj, &min) == 2)
+		dev = makedev(maj, min);
+	fclose(f);
+	return dev;
+}
+
+static dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent)
+{
+	char buf[PATH_MAX];
+	char *_name = NULL;	/* name as encoded in sysfs */
+	dev_t dev = 0;
+	int len;
+
+	if (!prefix)
+		prefix = "";
+
+	if (strncmp("/dev/", name, 5) == 0) {
+		/*
+		 * Read from /dev
+		 */
+		struct stat st;
+
+		if (stat(name, &st) == 0) {
+			dev = st.st_rdev;
+			goto done;
+		}
+		name += 5;	/* unaccesible, or not node in /dev */
+	}
+
+	_name = strdup(name);
+	if (!_name)
+		goto done;
+	sysfs_devname_dev_to_sys(_name);
+
+	if (parent && strncmp("dm-", name, 3)) {
+		/*
+		 * Create path to /sys/block/<parent>/<name>/dev
+		 */
+		char *_parent = strdup(parent);
+
+		if (!_parent) {
+			free(_parent);
+			goto done;
+		}
+		sysfs_devname_dev_to_sys(_parent);
+		len = snprintf(buf, sizeof(buf),
+				"%s" _PATH_SYS_BLOCK "/%s/%s/dev",
+				prefix,	_parent, _name);
+		free(_parent);
+		if (len < 0 || (size_t) len >= sizeof(buf))
+			goto done;
+
+		/* don't try anything else for dm-* */
+		dev = read_devno(buf);
+		goto done;
+	}
+
+	/*
+	 * Read from /sys/block/<sysname>/dev
+	 */
+	len = snprintf(buf, sizeof(buf),
+			"%s" _PATH_SYS_BLOCK "/%s/dev",
+			prefix, _name);
+	if (len < 0 || (size_t) len >= sizeof(buf))
+		goto done;
+	dev = read_devno(buf);
+
+	if (!dev) {
+		/*
+		 * Read from /sys/block/<sysname>/device/dev
+		 */
+		len = snprintf(buf, sizeof(buf),
+				"%s" _PATH_SYS_BLOCK "/%s/device/dev",
+				prefix, _name);
+		if (len < 0 || (size_t) len >= sizeof(buf))
+			goto done;
+		dev = read_devno(buf);
+	}
+done:
+	free(_name);
+	return dev;
+}
+
+dev_t sysfs_devname_to_devno(const char *name)
+{
+	return __sysfs_devname_to_devno(NULL, name, NULL);
+}
+
+char *sysfs_blkdev_get_path(struct path_cxt *pc, char *buf, size_t bufsiz)
+{
+	const char *name = sysfs_blkdev_get_name(pc, buf, bufsiz);
+	char *res = NULL;
+	size_t sz;
+	struct stat st;
+
+	if (!name)
+		goto done;
+
+	sz = strlen(name);
+	if (sz + sizeof("/dev/") > bufsiz)
+		goto done;
+
+	/* create the final "/dev/<name>" string */
+	memmove(buf + 5, name, sz + 1);
+	memcpy(buf, "/dev/", 5);
+
+	if (!stat(buf, &st) && S_ISBLK(st.st_mode) && st.st_rdev == sysfs_blkdev_get_devno(pc))
+		res = buf;
+done:
+	return res;
+}
+
+dev_t sysfs_blkdev_get_devno(struct path_cxt *pc)
+{
+	return ((struct sysfs_blkdev *) ul_path_get_dialect(pc))->devno;
+}
+
+/*
+ * Returns devname (e.g. "/dev/sda1") for the given devno.
+ *
+ * Please, use more robust blkid_devno_to_devname() in your applications.
+ */
+char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz)
+{
+	struct path_cxt *pc = ul_new_path(NULL);
+	char *res = NULL;
+
+	if (sysfs_blkdev_init_path(pc, devno, NULL) == 0)
+		res = sysfs_blkdev_get_path(pc, buf, bufsiz);
+
+	ul_unref_path(pc);
+	return res;
+}
+
+char *sysfs_devno_to_devname(dev_t devno, char *buf, size_t bufsiz)
+{
+	struct path_cxt *pc = ul_new_path(NULL);
+	char *res = NULL;
+
+	if (sysfs_blkdev_init_path(pc, devno, NULL) == 0)
+		res = sysfs_blkdev_get_name(pc, buf, bufsiz);
+
+	ul_unref_path(pc);
+	return res;
+}
+
+
+
 #ifdef TEST_PROGRAM_SYSFS
 #include <errno.h>
 #include <err.h>
@@ -1043,79 +946,90 @@ int sysfs_scsi_path_contains(struct sysfs_cxt *cxt, const char *pattern)
 
 int main(int argc, char *argv[])
 {
-	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
+	struct path_cxt *pc;
 	char *devname;
 	dev_t devno, disk_devno;
 	char path[PATH_MAX], *sub, *chain;
 	char diskname[32];
-	int i, is_part;
+	int i, is_part, rc = EXIT_SUCCESS;
 	uint64_t u64;
-	ssize_t len;
 
 	if (argc != 2)
 		errx(EXIT_FAILURE, "usage: %s <devname>", argv[0]);
 
 	devname = argv[1];
-	devno = sysfs_devname_to_devno(devname, NULL);
+	devno = sysfs_devname_to_devno(devname);
 
 	if (!devno)
 		err(EXIT_FAILURE, "failed to read devno");
 
-	if (sysfs_init(&cxt, devno, NULL))
-		return EXIT_FAILURE;
-
-	printf("NAME: %s\n", devname);
-	printf("DEVNAME: %s\n", sysfs_get_devname(&cxt, path, sizeof(path)));
-	printf("DEVPATH: %s\n", sysfs_devno_to_devpath(devno, path, sizeof(path)));
-	printf("DEVNO: %u (%d:%d)\n", (unsigned int) devno, major(devno), minor(devno));
-	printf("DEVNO-PATH: %s\n", sysfs_devno_path(devno, path, sizeof(path)));
+	printf("non-context:\n");
+	printf(" DEVNO:   %u (%d:%d)\n", (unsigned int) devno, major(devno), minor(devno));
+	printf(" DEVNAME: %s\n", sysfs_devno_to_devname(devno, path, sizeof(path)));
+	printf(" DEVPATH: %s\n", sysfs_devno_to_devpath(devno, path, sizeof(path)));
 
 	sysfs_devno_to_wholedisk(devno, diskname, sizeof(diskname), &disk_devno);
-	printf("WHOLEDISK-DEVNO: %u (%d:%d)\n", (unsigned int) disk_devno, major(disk_devno), minor(disk_devno));
-	printf("WHOLEDISK-DEVNAME: %s\n", diskname);
+	printf(" WHOLEDISK-DEVNO:   %u (%d:%d)\n", (unsigned int) disk_devno, major(disk_devno), minor(disk_devno));
+	printf(" WHOLEDISK-DEVNAME: %s\n", diskname);
 
-	is_part = sysfs_devno_has_attribute(devno, "partition");
-	printf("PARTITION: %s\n", is_part ? "YES" : "NOT");
+	pc = ul_new_path(NULL);
+	if (sysfs_blkdev_init_path(pc, devno, NULL) != 0)
+		goto done;
 
-	printf("HOTPLUG: %s\n", sysfs_is_hotpluggable(&cxt) ? "yes" : "no");
-	printf("SLAVES: %d\n", sysfs_count_dirents(&cxt, "slaves"));
+	printf("context based:\n");
+	devno = sysfs_blkdev_get_devno(pc);
+	printf(" DEVNO:   %u (%d:%d)\n", (unsigned int) devno, major(devno), minor(devno));
+	printf(" DEVNAME: %s\n", sysfs_blkdev_get_name(pc, path, sizeof(path)));
+	printf(" DEVPATH: %s\n", sysfs_blkdev_get_path(pc, path, sizeof(path)));
 
-	len = sysfs_readlink(&cxt, NULL, path, sizeof(path) - 1);
-	if (len > 0) {
-		path[len] = '\0';
-		printf("DEVNOLINK: %s\n", path);
+	sysfs_devno_to_wholedisk(devno, diskname, sizeof(diskname), &disk_devno);
+	printf(" WHOLEDISK-DEVNO: %u (%d:%d)\n", (unsigned int) disk_devno, major(disk_devno), minor(disk_devno));
+	printf(" WHOLEDISK-DEVNAME: %s\n", diskname);
+
+	is_part = ul_path_access(pc, F_OK, "partition") == 0;
+	printf(" PARTITION: %s\n", is_part ? "YES" : "NOT");
+
+	if (is_part && disk_devno) {
+		struct path_cxt *disk_pc =  ul_new_path(NULL);
+
+		sysfs_blkdev_init_path(disk_pc, disk_devno, NULL);
+		sysfs_blkdev_set_parent(pc, disk_pc);
 	}
+
+	printf(" HOTPLUG: %s\n", sysfs_blkdev_is_hotpluggable(pc) ? "yes" : "no");
+	printf(" SLAVES: %d\n", ul_path_count_dirents(pc, "slaves"));
 
 	if (!is_part) {
 		printf("First 5 partitions:\n");
 		for (i = 1; i <= 5; i++) {
-			dev_t dev = sysfs_partno_to_devno(&cxt, i);
+			dev_t dev = sysfs_blkdev_partno_to_devno(pc, i);
 			if (dev)
 				printf("\t#%d %d:%d\n", i, major(dev), minor(dev));
 		}
 	}
 
-	if (sysfs_read_u64(&cxt, "size", &u64))
-		printf("read SIZE failed\n");
+	if (ul_path_read_u64(pc, &u64, "size") != 0)
+		printf(" (!) read SIZE failed\n");
 	else
-		printf("SIZE: %jd\n", u64);
+		printf(" SIZE: %jd\n", u64);
 
-	if (sysfs_read_int(&cxt, "queue/hw_sector_size", &i))
-		printf("read SECTOR failed\n");
+	if (ul_path_read_s32(pc, &i, "queue/hw_sector_size"))
+		printf(" (!) read SECTOR failed\n");
 	else
-		printf("SECTOR: %d\n", i);
+		printf(" SECTOR: %d\n", i);
 
 
-	chain = sysfs_get_devchain(&cxt, path, sizeof(path));
-	printf("SUBSUSTEMS:\n");
+	chain = sysfs_blkdev_get_devchain(pc, path, sizeof(path));
+	printf(" SUBSUSTEMS:\n");
 
-	while (chain && sysfs_next_subsystem(&cxt, chain, &sub) == 0) {
+	while (chain && sysfs_blkdev_next_subsystem(pc, chain, &sub) == 0) {
 		printf("\t%s\n", sub);
 		free(sub);
 	}
 
-
-	sysfs_deinit(&cxt);
-	return EXIT_SUCCESS;
+	rc = EXIT_SUCCESS;
+done:
+	ul_unref_path(pc);
+	return rc;
 }
 #endif /* TEST_PROGRAM_SYSFS */
