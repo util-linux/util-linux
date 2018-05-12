@@ -22,9 +22,11 @@ static inline struct dos_partition *mbr_get_partition(unsigned char *mbr, int i)
 }
 
 /* assemble badly aligned little endian integer */
-static inline unsigned int __dos_assemble_4le(const unsigned char *p)
+static inline uint32_t __dos_assemble_4le(const unsigned char *p)
 {
-	return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
+	uint32_t last_byte = p[3];
+
+	return p[0] | (p[1] << 8) | (p[2] << 16) | (last_byte << 24);
 }
 
 static inline void __dos_store_4le(unsigned char *p, unsigned int val)
