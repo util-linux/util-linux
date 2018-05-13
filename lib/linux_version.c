@@ -1,22 +1,32 @@
 #include <stdio.h>
 #include <sys/utsname.h>
+#include <inttypes.h>
+#include <stdint.h>
 
 #include "c.h"
 #include "linux_version.h"
 
-int get_linux_version (void)
+uint32_t get_linux_version (void)
 {
-	static int kver = -1;
+	static uint32_t kver = UINT32_MAX;
 	struct utsname uts;
-	int x = 0, y = 0, z = 0;
+	/* The KERNEL_VERSION macro makes assumption these are 8 bit
+	 * variables, see bit shift in linux/version.h system header */
+	uint8_t x = 0, y = 0, z = 0;
 	int n;
 
-	if (kver != -1)
+	if (kver != UINT32_MAX)
 		return kver;
 	if (uname(&uts))
 		return kver = 0;
 
-	n = sscanf(uts.release, "%d.%d.%d", &x, &y, &z);
+	/*
+	 * uts.release values come from linux kernel Makefile where
+	 *   VERSION is x
+	 *   PATCHLEVEL is y
+	 *   SUBLEVEL and is z in here
+	 */
+	n = sscanf(uts.release, "%" SCNu8 ".%" SCNu8 ".%" SCNu8, &x, &y, &z);
 	if (n < 1 || n > 3)
 		return kver = 0;
 
