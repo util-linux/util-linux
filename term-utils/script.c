@@ -182,6 +182,36 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+static void typescript_message_start(const struct script_control *ctl, time_t *tvec)
+{
+	char buf[FORMAT_TIMESTAMP_MAX];
+	int cols = 0, lines = 0;
+	const char *tty = NULL, *term = NULL;
+
+	if (!ctl->typescriptfp)
+		return;
+
+	strtime_iso(tvec, ISO_TIMESTAMP, buf, sizeof(buf));
+
+	fprintf(ctl->typescriptfp, _("Script started on %s ["), buf);
+
+	if (ctl->isterm) {
+		get_terminal_dimension(&cols, &lines);
+		get_terminal_name(&tty, NULL, NULL);
+		get_terminal_type(&term);
+
+		if (term)
+			fprintf(ctl->typescriptfp, "TERM=\"%s\" ", term);
+		if (tty)
+			fprintf(ctl->typescriptfp, "TTY=\"%s\" ", tty);
+
+		fprintf(ctl->typescriptfp, "COLS=\"%d\" LINES=\"%d\"", cols, lines);
+	} else
+		fprintf(ctl->typescriptfp, _("<not executed on terminal>"));
+
+	fputs("]\n", ctl->typescriptfp);
+}
+
 static void die_if_link(const struct script_control *ctl)
 {
 	struct stat s;
@@ -496,11 +526,9 @@ static void do_io(struct script_control *ctl)
 	}
 
 
-	if (ctl->typescriptfp) {
-		char buf[FORMAT_TIMESTAMP_MAX];
-		strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
-		fprintf(ctl->typescriptfp, _("Script started on %s\n"), buf);
-	}
+	if (ctl->typescriptfp)
+		typescript_message_start(ctl, &tvec);
+
 	gettime_monotonic(&ctl->oldtime);
 
 	while (!ctl->die) {

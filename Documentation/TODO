@@ -15,12 +15,6 @@ column
 
 script
 ------
-   - (!) add terminal type ($TERM), columns and lines to the header line, something like:
-
-		Script started on 2018-03-05 13:02:08+0100 [term="xterm-256color", lines=53, columns=190]
-
-     see https://github.com/karelzak/util-linux/issues/583
-
    - (!) add [exit=<command-exit-code>] to the "done" typescript message
 
    - think about optional "event" records in timing file to save information

@@ -113,6 +113,13 @@ int get_terminal_name(const char **path,
 	return 0;
 }
 
+int get_terminal_type(const char **type)
+{
+	*type = getenv("TERM");
+	if (*type)
+		return -EINVAL;
+	return 0;
+}
 
 #ifdef TEST_PROGRAM_TTYUTILS
 # include <stdlib.h>
