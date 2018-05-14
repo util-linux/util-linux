@@ -15,8 +15,6 @@ column
 
 script
 ------
-   - (!) add [exit=<command-exit-code>] to the "done" typescript message
-
    - think about optional "event" records in timing file to save information
      about non-data changes like signals (SIGWINCH, SIGSTOP, SIGCONT, etc.)
      in format:

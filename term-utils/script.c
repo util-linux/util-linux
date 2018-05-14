@@ -212,6 +212,24 @@ static void typescript_message_start(const struct script_control *ctl, time_t *t
 	fputs("]\n", ctl->typescriptfp);
 }
 
+static void typescript_message_done(const struct script_control *ctl, int status, const char *msg)
+{
+	char buf[FORMAT_TIMESTAMP_MAX];
+	time_t tvec;
+
+	if (!ctl->typescriptfp)
+		return;
+
+	tvec = script_time((time_t *)NULL);
+
+	strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
+
+	if (msg)
+		fprintf(ctl->typescriptfp, _("\nScript done on %s [<%s>]\n"), buf, msg);
+	else
+		fprintf(ctl->typescriptfp, _("\nScript done on %s [COMMAND_EXIT_CODE=\"%d\"]\n"), buf, status);
+}
+
 static void die_if_link(const struct script_control *ctl)
 {
 	struct stat s;
@@ -249,22 +267,24 @@ static void enable_rawmode_tty(struct script_control *ctl)
 	tcsetattr(STDIN_FILENO, TCSANOW, &rtt);
 }
 
-static void __attribute__((__noreturn__)) done(struct script_control *ctl)
+static void __attribute__((__noreturn__)) done_log(struct script_control *ctl, const char *log_msg)
 {
+	int childstatus;
+
 	DBG(MISC, ul_debug("done!"));
 
 	restore_tty(ctl, TCSADRAIN);
 
+	if (WIFSIGNALED(ctl->childstatus))
+		childstatus = WTERMSIG(ctl->childstatus) + 0x80;
+	else
+		childstatus = WEXITSTATUS(ctl->childstatus);
+
 	if (ctl->typescriptfp) {
-		char buf[FORMAT_TIMESTAMP_MAX];
-		time_t tvec = script_time((time_t *)NULL);
-
-		strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
-		fprintf(ctl->typescriptfp, _("\nScript done on %s\n"), buf);
+		typescript_message_done(ctl, childstatus, log_msg);
+		if (!ctl->quiet)
+			printf(_("Script done, file is %s\n"), ctl->fname);
 	}
-
-	if (!ctl->quiet && ctl->typescriptfp)
-		printf(_("Script done, file is %s\n"), ctl->fname);
 #ifdef HAVE_LIBUTEMPTER
 	if (ctl->master >= 0)
 		utempter_remove_record(ctl->master);
@@ -276,13 +296,12 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 	if (ctl->typescriptfp && close_stream(ctl->typescriptfp) != 0)
 		err(EXIT_FAILURE, "write failed: %s", ctl->fname);
 
-	if (ctl->rc_wanted) {
-		if (WIFSIGNALED(ctl->childstatus))
-			exit(WTERMSIG(ctl->childstatus) + 0x80);
-		else
-			exit(WEXITSTATUS(ctl->childstatus));
-	}
-	exit(EXIT_SUCCESS);
+	exit(ctl->rc_wanted ? childstatus : EXIT_SUCCESS);
+}
+
+static void __attribute__((__noreturn__)) done(struct script_control *ctl)
+{
+	done_log(ctl, NULL);
 }
 
 static void __attribute__((__noreturn__)) fail(struct script_control *ctl)
@@ -437,7 +456,7 @@ static void handle_io(struct script_control *ctl, int fd, int *eof)
 			if (!ctl->quiet)
 				printf(_("Script terminated, max output file size %zd exceeded.\n"), ctl->maxsz);
 			DBG(IO, ul_debug("output size %zd, exceeded limit %zd", ctl->outsz, ctl->maxsz));
-			done(ctl);
+			done_log(ctl, _("max output size exceeded"));
 		}
 	}
 }
