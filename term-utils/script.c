@@ -225,6 +225,14 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 
 	restore_tty(ctl, TCSADRAIN);
 
+	if (ctl->typescriptfp) {
+		char buf[FORMAT_TIMESTAMP_MAX];
+		time_t tvec = script_time((time_t *)NULL);
+
+		strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
+		fprintf(ctl->typescriptfp, _("\nScript done on %s\n"), buf);
+	}
+
 	if (!ctl->quiet && ctl->typescriptfp)
 		printf(_("Script done, file is %s\n"), ctl->fname);
 #ifdef HAVE_LIBUTEMPTER
@@ -457,7 +465,6 @@ static void do_io(struct script_control *ctl)
 {
 	int ret, eof = 0;
 	time_t tvec = script_time((time_t *)NULL);
-	char buf[128];
 	enum {
 		POLLFD_SIGNAL = 0,
 		POLLFD_MASTER,
@@ -490,6 +497,7 @@ static void do_io(struct script_control *ctl)
 
 
 	if (ctl->typescriptfp) {
+		char buf[FORMAT_TIMESTAMP_MAX];
 		strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
 		fprintf(ctl->typescriptfp, _("Script started on %s\n"), buf);
 	}
@@ -560,11 +568,6 @@ static void do_io(struct script_control *ctl)
 	if (!ctl->die)
 		wait_for_child(ctl, 1);
 
-	if (ctl->typescriptfp) {
-		tvec = script_time((time_t *)NULL);
-		strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
-		fprintf(ctl->typescriptfp, _("\nScript done on %s\n"), buf);
-	}
 	done(ctl);
 }
 
