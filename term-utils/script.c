@@ -105,8 +105,8 @@ struct script_control {
 	FILE *typescriptfp;	/* output file pointer */
 	char *tname;		/* timing file path */
 	FILE *timingfp;		/* timing file pointer */
-	ssize_t outsz;          /* current output file size */
-	ssize_t maxsz;		/* maximum output file size */
+	uint64_t outsz;         /* current output file size */
+	uint64_t maxsz;		/* maximum output file size */
 	struct timeval oldtime;	/* previous write or command start time */
 	int master;		/* pseudoterminal master file descriptor */
 	int slave;		/* pseudoterminal slave file descriptor */
