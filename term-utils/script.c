@@ -205,7 +205,7 @@ static void typescript_message_start(const struct script_control *ctl, time_t *t
 		if (tty)
 			fprintf(ctl->typescriptfp, "TTY=\"%s\" ", tty);
 
-		fprintf(ctl->typescriptfp, "COLS=\"%d\" LINES=\"%d\"", cols, lines);
+		fprintf(ctl->typescriptfp, "COLUMNS=\"%d\" LINES=\"%d\"", cols, lines);
 	} else
 		fprintf(ctl->typescriptfp, _("<not executed on terminal>"));
 
