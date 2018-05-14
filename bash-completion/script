@@ -25,6 +25,7 @@ _script_module()
 				--flush
 				--force
 				--quiet
+				--output-limit
 				--timing=
 				--version
 				--help"
