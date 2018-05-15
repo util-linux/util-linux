@@ -52,7 +52,6 @@ UL_DEBUG_DEFINE_MASKNAMES(loopdev) = UL_DEBUG_EMPTY_MASKNAMES;
 #define LOOPDEV_DEBUG_CXT	(1 << 2)
 #define LOOPDEV_DEBUG_ITER	(1 << 3)
 #define LOOPDEV_DEBUG_SETUP	(1 << 4)
-#define SFDISKPROG_DEBUG_ALL	0xFFFF
 
 #define DBG(m, x)       __UL_DBG(loopdev, LOOPDEV_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(loopdev, LOOPDEV_DEBUG_, m, x)
