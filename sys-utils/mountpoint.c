@@ -76,8 +76,7 @@ static int dir_to_device(struct mountpoint_control *ctl)
 		if (stat(buf, &pst) !=0)
 			return -1;
 
-		if ((ctl->st.st_dev != pst.st_dev) ||
-		    (ctl->st.st_dev == pst.st_dev && ctl->st.st_ino == pst.st_ino)) {
+		if (ctl->st.st_dev != pst.st_dev || ctl->st.st_ino == pst.st_ino) {
 			ctl->dev = ctl->st.st_dev;
 			return 0;
 		}
