@@ -1880,7 +1880,7 @@ int main(int argc, char *argv[])
 					 &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;
 
-	if (nexcludes == 0 && nincludes == 0)
+	if (lsblk->all_devices == 0 && nexcludes == 0 && nincludes == 0)
 		excludes[nexcludes++] = 1;	/* default: ignore RAM disks */
 
 	if (lsblk->sort_id < 0)
