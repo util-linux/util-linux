@@ -505,6 +505,10 @@ int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 	if (rc < 0 || !str)
 		return rc;;
 
+	/* Remove tailing newline (usuall in sysfs) */
+	if (rc > 0 && *(buf + rc - 1) == '\n')
+		--rc;
+
 	buf[rc] = '\0';
 	*str = strdup(buf);
 	if (!*str)
