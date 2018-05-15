@@ -733,6 +733,9 @@ int main(int argc, char **argv)
 		}
 	}
 
+	ul_path_init_debug();
+	ul_sysfs_init_debug();
+
 	/* default is --list --all */
 	if (argc == 1) {
 		act = A_SHOW;

@@ -25,6 +25,8 @@ struct path_cxt *ul_new_path(const char *dir);
 void ul_unref_path(struct path_cxt *pc);
 void ul_ref_path(struct path_cxt *pc);
 
+void ul_path_init_debug(void);
+
 int ul_path_set_prefix(struct path_cxt *pc, const char *prefix);
 const char *ul_path_get_prefix(struct path_cxt *pc);
 

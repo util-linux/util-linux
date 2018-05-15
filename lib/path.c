@@ -18,6 +18,29 @@
 #include "fileutils.h"
 #include "all-io.h"
 #include "path.h"
+#include "debug.h"
+
+/*
+ * Debug stuff (based on include/debug.h)
+ */
+static UL_DEBUG_DEFINE_MASK(ulpath);
+UL_DEBUG_DEFINE_MASKNAMES(ulpath) = UL_DEBUG_EMPTY_MASKNAMES;
+
+#define ULPATH_DEBUG_INIT	(1 << 1)
+#define ULPATH_DEBUG_CXT	(1 << 2)
+
+#define DBG(m, x)       __UL_DBG(ulpath, ULPATH_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(ulpath, ULPATH_DEBUG_, m, x)
+
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(ulpath)
+#include "debugobj.h"
+
+void ul_path_init_debug(void)
+{
+	if (ulpath_debug_mask)
+		return;
+	__UL_INIT_DEBUG_FROM_ENV(ulpath, ULPATH_DEBUG_, 0, ULPATH_DEBUG);
+}
 
 struct path_cxt *ul_new_path(const char *dir)
 {
@@ -25,6 +48,8 @@ struct path_cxt *ul_new_path(const char *dir)
 
 	if (!pc)
 		return NULL;
+
+	DBG(CXT, ul_debugobj(pc, "alloc"));
 
 	pc->refcount = 1;
 	pc->dir_fd = -1;
@@ -54,6 +79,7 @@ void ul_unref_path(struct path_cxt *pc)
 	pc->refcount--;
 
 	if (pc->refcount <= 0) {
+		DBG(CXT, ul_debugobj(pc, "dealloc"));
 		if (pc->dialect)
 			pc->free_dialect(pc);
 		if (pc->dir_fd >= 0)
@@ -78,6 +104,7 @@ int ul_path_set_prefix(struct path_cxt *pc, const char *prefix)
 
 	free(pc->prefix);
 	pc->prefix = p;
+	DBG(CXT, ul_debugobj(pc, "new prefix: '%s'", p));
 	return 0;
 }
 
@@ -103,6 +130,7 @@ int ul_path_set_dir(struct path_cxt *pc, const char *dir)
 
 	free(pc->dir_path);
 	pc->dir_path = p;
+	DBG(CXT, ul_debugobj(pc, "new dir: '%s'", p));
 	return 0;
 }
 
@@ -115,6 +143,7 @@ int ul_path_set_dialect(struct path_cxt *pc, void *data, void free_data(struct p
 {
 	pc->dialect = data;
 	pc->free_dialect = free_data;
+	DBG(CXT, ul_debugobj(pc, "new dialect"));
 	return 0;
 }
 
@@ -157,6 +186,8 @@ int ul_path_get_dirfd(struct path_cxt *pc)
 		const char *path = get_absdir(pc);
 		if (!path)
 			return -errno;
+
+		DBG(CXT, ul_debugobj(pc, "opening dir: '%s'", path));
 		pc->dir_fd = open(path, O_RDONLY|O_CLOEXEC);
 	}
 
@@ -223,6 +254,7 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 	    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 		fd = openat(dir, path, flags);
 
+	DBG(CXT, ul_debugobj(pc, "opening '%s'", path));
 	return fd;
 }
 
@@ -327,8 +359,10 @@ DIR *ul_path_opendir(struct path_cxt *pc, const char *path)
 
 	if (path)
 		fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, path);
-	else if (pc->dir_path)
+	else if (pc->dir_path) {
+		DBG(CXT, ul_debugobj(pc, "duplicate dir path"));
 		fd = dup_fd_cloexec(ul_path_get_dirfd(pc), STDERR_FILENO + 1);
+	}
 
 	if (fd < 0)
 		return NULL;
@@ -894,6 +928,8 @@ int main(int argc, char *argv[])
 	if (optind == argc)
 		errx(EXIT_FAILURE, "<dir> not defined");
 	dir = argv[optind++];
+
+	ul_path_init_debug();
 
 	pc = ul_new_path(dir);
 	if (!pc)

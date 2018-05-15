@@ -15,10 +15,33 @@
 #include "sysfs.h"
 #include "fileutils.h"
 #include "all-io.h"
+#include "debug.h"
 
 static void sysfs_blkdev_deinit_path(struct path_cxt *pc);
 static int  sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, int *dirfd);
 static dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent);
+
+/*
+ * Debug stuff (based on include/debug.h)
+ */
+static UL_DEBUG_DEFINE_MASK(ulsysfs);
+UL_DEBUG_DEFINE_MASKNAMES(ulsysfs) = UL_DEBUG_EMPTY_MASKNAMES;
+
+#define ULSYSFS_DEBUG_INIT	(1 << 1)
+#define ULSYSFS_DEBUG_CXT	(1 << 2)
+
+#define DBG(m, x)       __UL_DBG(ulsysfs, ULSYSFS_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(ulsysfs, ULSYSFS_DEBUG_, m, x)
+
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(ulsysfs)
+#include "debugobj.h"
+
+void ul_sysfs_init_debug(void)
+{
+	if (ulsysfs_debug_mask)
+		return;
+	__UL_INIT_DEBUG_FROM_ENV(ulsysfs, ULSYSFS_DEBUG_, 0, ULSYSFS_DEBUG);
+}
 
 struct path_cxt *ul_new_sysfs_path(dev_t devno, struct path_cxt *parent, const char *prefix)
 {
@@ -34,6 +57,7 @@ struct path_cxt *ul_new_sysfs_path(dev_t devno, struct path_cxt *parent, const c
 		return NULL;
 	}
 
+	DBG(CXT, ul_debugobj(pc, "alloc"));
 	return pc;
 }
 
@@ -65,12 +89,15 @@ int sysfs_blkdev_init_path(struct path_cxt *pc, dev_t devno, struct path_cxt *pa
 	if (!blk)
 		return -ENOMEM;
 
+	DBG(CXT, ul_debugobj(pc, "init for sysfs"));
+
 	blk->devno = devno;
 	ul_path_set_dialect(pc, blk, sysfs_blkdev_deinit_path);
 
 	sysfs_blkdev_set_parent(pc, parent);
 
 	ul_path_set_enoent_redirect(pc, sysfs_blkdev_enoent_redirect);
+
 	return 0;
 }
 
@@ -80,6 +107,9 @@ static void sysfs_blkdev_deinit_path(struct path_cxt *pc)
 
 	if (!pc)
 		return;
+
+	DBG(CXT, ul_debugobj(pc, "deinit"));
+
 	blk = ul_path_get_dialect(pc);
 	if (!blk)
 		return;
@@ -106,6 +136,7 @@ int sysfs_blkdev_set_parent(struct path_cxt *pc, struct path_cxt *parent)
 	} else
 		blk->parent = NULL;
 
+	DBG(CXT, ul_debugobj(pc, "new parent"));
 	return 0;
 }
 
@@ -122,8 +153,10 @@ static int sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, i
 
 	if (blk && blk->parent && strncmp(path, "queue/", 6) == 0) {
 		*dirfd = ul_path_get_dirfd(blk->parent);
-		if (*dirfd >= 0)
+		if (*dirfd >= 0) {
+			DBG(CXT, ul_debugobj(pc, "%s redirected to parent", path));
 			return 0;
+		}
 	}
 	return 1;	/* no redirect */
 }
@@ -261,6 +294,7 @@ dev_t sysfs_blkdev_partno_to_devno(struct path_cxt *pc, int partno)
 	}
 
 	closedir(dir);
+	DBG(CXT, ul_debugobj(pc, "partno (%d) -> devno (%d)", (int) partno, (int) devno));
 	return devno;
 }
 
@@ -969,6 +1003,8 @@ int main(int argc, char *argv[])
 
 	if (argc != 2)
 		errx(EXIT_FAILURE, "usage: %s <devname>", argv[0]);
+
+	ul_sysfs_init_debug();
 
 	devname = argv[1];
 	devno = sysfs_devname_to_devno(devname);
