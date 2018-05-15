@@ -103,12 +103,12 @@ struct loopdev_cxt {
 	unsigned int	info_failed:1;	/* LOOP_GET_STATUS ioctl failed */
 	unsigned int    control_ok:1;	/* /dev/loop-control success */
 
-	struct sysfs_cxt	sysfs;	/* pointer to /sys/dev/block/<maj:min>/ */
+	struct path_cxt		*sysfs; /* pointer to /sys/dev/block/<maj:min>/ */
 	struct loop_info64	info;	/* for GET/SET ioctl */
 	struct loopdev_iter	iter;	/* scans /sys or /dev for used/free devices */
 };
 
-#define UL_LOOPDEVCXT_EMPTY { .fd = -1, .sysfs = UL_SYSFSCXT_EMPTY }
+#define UL_LOOPDEVCXT_EMPTY { .fd = -1  }
 
 /*
  * loopdev_cxt.flags
@@ -154,7 +154,6 @@ extern int loopcxt_has_device(struct loopdev_cxt *lc);
 extern int loopcxt_add_device(struct loopdev_cxt *lc);
 extern char *loopcxt_strdup_device(struct loopdev_cxt *lc);
 extern const char *loopcxt_get_device(struct loopdev_cxt *lc);
-extern struct sysfs_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc);
 extern struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc);
 
 extern int loopcxt_get_fd(struct loopdev_cxt *lc);
