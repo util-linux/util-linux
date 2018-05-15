@@ -20,6 +20,23 @@ static void sysfs_blkdev_deinit_path(struct path_cxt *pc);
 static int  sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, int *dirfd);
 static dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent);
 
+struct path_cxt *ul_new_sysfs_path(dev_t devno, struct path_cxt *parent, const char *prefix)
+{
+	struct path_cxt *pc = ul_new_path(NULL);
+
+	if (!pc)
+		return NULL;
+	if (prefix)
+		ul_path_set_prefix(pc, prefix);
+
+	if (sysfs_blkdev_init_path(pc, devno, parent) != 0) {
+		ul_unref_path(pc);
+		return NULL;
+	}
+
+	return pc;
+}
+
 /*
  * sysfs_blkdev_* is sysfs extension to ul_path_* API for block devices.
  *
@@ -556,13 +573,11 @@ int sysfs_devno_to_wholedisk(dev_t devno, char *diskname,
 
 	if (!devno)
 		return -EINVAL;
-	pc = ul_new_path(NULL);
+	pc = ul_new_sysfs_path(devno, NULL, NULL);
 	if (!pc)
 		return -ENOMEM;
 
-	rc = sysfs_blkdev_init_path(pc, devno, NULL);
-	if (!rc)
-		rc = sysfs_blkdev_get_wholedisk(pc, diskname, len, diskdevno);
+	rc = sysfs_blkdev_get_wholedisk(pc, diskname, len, diskdevno);
 	ul_unref_path(pc);
 	return rc;
 }
@@ -577,10 +592,8 @@ int sysfs_devno_is_dm_private(dev_t devno, char **uuid)
 	char *id = NULL;
 	int rc = 0;
 
-	pc = ul_new_path(NULL);
+	pc = ul_new_sysfs_path(devno, NULL, NULL);
 	if (!pc)
-		goto done;
-	if (sysfs_blkdev_init_path(pc, devno, NULL) != 0)
 		goto done;
 	if (ul_path_read_string(pc, &id, "dm/uuid") <= 0 || !id)
 		goto done;
@@ -915,25 +928,25 @@ dev_t sysfs_blkdev_get_devno(struct path_cxt *pc)
  */
 char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz)
 {
-	struct path_cxt *pc = ul_new_path(NULL);
+	struct path_cxt *pc = ul_new_sysfs_path(devno, NULL, NULL);
 	char *res = NULL;
 
-	if (sysfs_blkdev_init_path(pc, devno, NULL) == 0)
+	if (pc) {
 		res = sysfs_blkdev_get_path(pc, buf, bufsiz);
-
-	ul_unref_path(pc);
+		ul_unref_path(pc);
+	}
 	return res;
 }
 
 char *sysfs_devno_to_devname(dev_t devno, char *buf, size_t bufsiz)
 {
-	struct path_cxt *pc = ul_new_path(NULL);
+	struct path_cxt *pc = ul_new_sysfs_path(devno, NULL, NULL);
 	char *res = NULL;
 
-	if (sysfs_blkdev_init_path(pc, devno, NULL) == 0)
+	if (pc) {
 		res = sysfs_blkdev_get_name(pc, buf, bufsiz);
-
-	ul_unref_path(pc);
+		ul_unref_path(pc);
+	}
 	return res;
 }
 
@@ -972,8 +985,8 @@ int main(int argc, char *argv[])
 	printf(" WHOLEDISK-DEVNO:   %u (%d:%d)\n", (unsigned int) disk_devno, major(disk_devno), minor(disk_devno));
 	printf(" WHOLEDISK-DEVNAME: %s\n", diskname);
 
-	pc = ul_new_path(NULL);
-	if (sysfs_blkdev_init_path(pc, devno, NULL) != 0)
+	pc = ul_new_sysfs_path(devno, NULL, NULL);
+	if (!pc)
 		goto done;
 
 	printf("context based:\n");
@@ -990,10 +1003,10 @@ int main(int argc, char *argv[])
 	printf(" PARTITION: %s\n", is_part ? "YES" : "NOT");
 
 	if (is_part && disk_devno) {
-		struct path_cxt *disk_pc =  ul_new_path(NULL);
-
-		sysfs_blkdev_init_path(disk_pc, disk_devno, NULL);
+		struct path_cxt *disk_pc =  ul_new_sysfs_path(disk_devno, NULL, NULL);
 		sysfs_blkdev_set_parent(pc, disk_pc);
+
+		ul_unref_path(disk_pc);
 	}
 
 	printf(" HOTPLUG: %s\n", sysfs_blkdev_is_hotpluggable(pc) ? "yes" : "no");
