@@ -42,55 +42,61 @@ static struct topology_val {
 static int probe_sysfs_tp(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
-	dev_t dev, disk = 0;
-	int rc;
-	struct sysfs_cxt sysfs = UL_SYSFSCXT_EMPTY,
-			 parent = UL_SYSFSCXT_EMPTY;
+	dev_t dev;
+	int rc, set_parent = 1;
+	struct path_cxt *pc;
 	size_t i, count = 0;
 
 	dev = blkid_probe_get_devno(pr);
-	if (!dev || sysfs_init(&sysfs, dev, NULL) != 0)
+	if (!dev)
+		return 1;
+	pc = ul_new_sysfs_path(dev, NULL, NULL);
+	if (!pc)
 		return 1;
 
 	rc = 1;		/* nothing (default) */
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];
-		int ok = sysfs_has_attribute(&sysfs, val->attr);
+		int ok = ul_path_access(pc, F_OK, val->attr) == 0;
 
 		rc = 1;	/* nothing */
 
-		if (!ok) {
-			if (!disk) {
-				/*
-				 * Read attributes from "disk" if the current
-				 * device is a partition.
-				 */
-				disk = blkid_probe_get_wholedisk_devno(pr);
-				if (disk && disk != dev) {
-					if (sysfs_init(&parent, disk, NULL) != 0)
-						goto done;
+		if (!ok && set_parent) {
+			dev_t disk = blkid_probe_get_wholedisk_devno(pr);
+			set_parent = 0;
 
-					sysfs.parent = &parent;
-					ok = sysfs_has_attribute(&sysfs,
-								 val->attr);
-				}
+			/*
+			 * Read attributes from "disk" if the current device is
+			 * a partition. Note that sysfs ul_path_* API is able
+			 * to redirect requests to attributes if parent is set.
+			 */
+			if (disk && disk != dev) {
+				struct path_cxt *parent = ul_new_sysfs_path(disk, NULL, NULL);
+				if (!parent)
+					goto done;
+
+				sysfs_blkdev_set_parent(pc, parent);
+				ul_unref_path(parent);
+
+				/* try it again */
+				ok = ul_path_access(pc, F_OK, val->attr) == 0;
 			}
-			if (!ok)
-				continue;	/* attribute does not exist */
 		}
+		if (!ok)
+			continue;	/* attribute does not exist */
 
 		if (val->set_ulong) {
 			uint64_t data;
 
-			if (sysfs_read_u64(&sysfs, val->attr, &data) != 0)
+			if (ul_path_read_u64(pc, &data, val->attr) != 0)
 				continue;
 			rc = val->set_ulong(pr, (unsigned long) data);
 
 		} else if (val->set_int) {
 			int64_t data;
 
-			if (sysfs_read_s64(&sysfs, val->attr, &data) != 0)
+			if (ul_path_read_s64(pc, &data, val->attr) != 0)
 				continue;
 			rc = val->set_int(pr, (int) data);
 		}
@@ -102,9 +108,7 @@ static int probe_sysfs_tp(blkid_probe pr,
 	}
 
 done:
-	sysfs_deinit(&sysfs);
-	sysfs_deinit(&parent);
-
+	ul_unref_path(pc);		/* unref pc and parent */
 	if (count)
 		return 0;		/* success */
 	return rc;			/* error or nothing */

@@ -565,6 +565,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
  */
 static int probe_all_removable(blkid_cache cache)
 {
+	struct path_cxt *pc;
 	DIR *dir;
 	struct dirent *d;
 
@@ -575,8 +576,9 @@ static int probe_all_removable(blkid_cache cache)
 	if (!dir)
 		return -BLKID_ERR_PROC;
 
+	pc = ul_new_path(NULL);
+
 	while((d = readdir(dir))) {
-		struct sysfs_cxt sysfs = UL_SYSFSCXT_EMPTY;
 		int removable = 0;
 		dev_t devno;
 
@@ -589,20 +591,19 @@ static int probe_all_removable(blkid_cache cache)
 		     ((d->d_name[1] == '.') && (d->d_name[2] == 0))))
 			continue;
 
-		devno = sysfs_devname_to_devno(d->d_name, NULL);
+		devno = sysfs_devname_to_devno(d->d_name);
 		if (!devno)
 			continue;
 
-		if (sysfs_init(&sysfs, devno, NULL) == 0) {
-			if (sysfs_read_int(&sysfs, "removable", &removable) != 0)
+		if (sysfs_blkdev_init_path(pc, devno, NULL) == 0
+		    && ul_path_read_s32(pc, &removable, "removable") != 0)
 				removable = 0;
-			sysfs_deinit(&sysfs);
-		}
 
 		if (removable)
 			probe_one(cache, d->d_name, devno, 0, 0, 1);
 	}
 
+	ul_unref_path(pc);
 	closedir(dir);
 	return 0;
 }

@@ -1008,26 +1008,30 @@ blkid_partition blkid_partlist_get_partition_by_partno(blkid_partlist ls, int n)
  */
 blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno)
 {
-	struct sysfs_cxt sysfs;
+	struct path_cxt *pc;
 	uint64_t start, size;
 	int i, rc, partno = 0;
 
 	DBG(LOWPROBE, ul_debug("trying to convert devno 0x%llx to partition",
 			(long long) devno));
 
-	if (sysfs_init(&sysfs, devno, NULL)) {
+
+	pc = ul_new_sysfs_path(devno, NULL, NULL);
+	if (!pc) {
 		DBG(LOWPROBE, ul_debug("failed t init sysfs context"));
 		return NULL;
 	}
-	rc = sysfs_read_u64(&sysfs, "size", &size);
+	rc = ul_path_read_u64(pc, &size, "size");
 	if (!rc) {
-		rc = sysfs_read_u64(&sysfs, "start", &start);
+		rc = ul_path_read_u64(pc, &start, "start");
 		if (rc) {
 			/* try to get partition number from DM uuid.
 			 */
-			char *uuid = sysfs_strdup(&sysfs, "dm/uuid");
-			char *tmp = uuid;
-			char *prefix = uuid ? strsep(&tmp, "-") : NULL;
+			char *uuid = NULL, *tmp, *prefix;
+
+			ul_path_read_string(pc, &uuid, "dm/uuid");
+			tmp = uuid;
+			prefix = uuid ? strsep(&tmp, "-") : NULL;
 
 			if (prefix && strncasecmp(prefix, "part", 4) == 0) {
 				char *end = NULL;
@@ -1042,7 +1046,7 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 		}
 	}
 
-	sysfs_deinit(&sysfs);
+	ul_unref_path(pc);
 
 	if (rc)
 		return NULL;
