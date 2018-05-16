@@ -111,7 +111,7 @@ static const char *mm_stat_names[] = {
 
 struct zram {
 	char	devname[32];
-	struct sysfs_cxt sysfs;
+	struct	path_cxt *sysfs;	/* device specific sysfs directory */
 	char	**mm_stat;
 
 	unsigned int mm_stat_probed : 1,
@@ -120,6 +120,7 @@ struct zram {
 };
 
 static unsigned int raw, no_headings, inbytes;
+static struct path_cxt *__control;
 
 static int get_column_id(int num)
 {
@@ -168,7 +169,8 @@ static void zram_set_devname(struct zram *z, const char *devname, size_t n)
 	}
 
 	DBG(fprintf(stderr, "set devname: %s", z->devname));
-	sysfs_deinit(&z->sysfs);
+	ul_unref_path(z->sysfs);
+	z->sysfs = NULL;
 	zram_reset_stat(z);
 }
 
@@ -198,30 +200,28 @@ static void free_zram(struct zram *z)
 	if (!z)
 		return;
 	DBG(fprintf(stderr, "free: %p", z));
-	sysfs_deinit(&z->sysfs);
+	ul_unref_path(z->sysfs);
 	zram_reset_stat(z);
 	free(z);
 }
 
-static struct sysfs_cxt *zram_get_sysfs(struct zram *z)
+static struct path_cxt *zram_get_sysfs(struct zram *z)
 {
 	assert(z);
 
-	if (!z->sysfs.devno) {
-		dev_t devno = sysfs_devname_to_devno(z->devname, NULL);
+	if (!z->sysfs) {
+		dev_t devno = sysfs_devname_to_devno(z->devname);
 		if (!devno)
 			return NULL;
-		if (sysfs_init(&z->sysfs, devno, NULL))
+		z->sysfs = ul_new_sysfs_path(devno, NULL, NULL);
+		if (!z->sysfs)
 			return NULL;
-		if (*z->devname != '/') {
+		if (*z->devname != '/')
 			/* canonicalize the device name according to /sys */
-			char name[sizeof(z->devname) - sizeof(_PATH_DEV)];
-			if (sysfs_get_devname(&z->sysfs, name, sizeof(name)))
-				snprintf(z->devname, sizeof(z->devname), _PATH_DEV "%s", name);
-		}
+			sysfs_blkdev_get_path(z->sysfs, z->devname, sizeof(z->devname));
 	}
 
-	return &z->sysfs;
+	return z->sysfs;
 }
 
 static inline int zram_exist(struct zram *z)
@@ -240,30 +240,30 @@ static inline int zram_exist(struct zram *z)
 
 static int zram_set_u64parm(struct zram *z, const char *attr, uint64_t num)
 {
-	struct sysfs_cxt *sysfs = zram_get_sysfs(z);
+	struct path_cxt *sysfs = zram_get_sysfs(z);
 	if (!sysfs)
 		return -EINVAL;
 	DBG(fprintf(stderr, "%s writing %ju to %s", z->devname, num, attr));
-	return sysfs_write_u64(sysfs, attr, num);
+	return ul_path_write_u64(sysfs, num, attr);
 }
 
 static int zram_set_strparm(struct zram *z, const char *attr, const char *str)
 {
-	struct sysfs_cxt *sysfs = zram_get_sysfs(z);
+	struct path_cxt *sysfs = zram_get_sysfs(z);
 	if (!sysfs)
 		return -EINVAL;
 	DBG(fprintf(stderr, "%s writing %s to %s", z->devname, str, attr));
-	return sysfs_write_string(sysfs, attr, str);
+	return ul_path_write_string(sysfs, str, attr);
 }
 
 
 static int zram_used(struct zram *z)
 {
 	uint64_t size;
-	struct sysfs_cxt *sysfs = zram_get_sysfs(z);
+	struct path_cxt *sysfs = zram_get_sysfs(z);
 
 	if (sysfs &&
-	    sysfs_read_u64(sysfs, "disksize", &size) == 0 &&
+	    ul_path_read_u64(sysfs, &size, "disksize") == 0 &&
 	    size > 0) {
 
 		DBG(fprintf(stderr, "%s used", z->devname));
@@ -284,15 +284,22 @@ static int zram_has_control(struct zram *z)
 	return z->has_control;
 }
 
+static struct path_cxt *zram_get_control(void)
+{
+	if (!__control)
+		__control = ul_new_path(_PATH_SYS_CLASS "/zram-control");
+	return __control;
+}
+
 static int zram_control_add(struct zram *z)
 {
 	int n;
+	struct path_cxt *ctl;
 
-	if (!zram_has_control(z))
+	if (!zram_has_control(z) || !(ctl = zram_get_control()))
 		return -ENOSYS;
 
-	n = path_read_s32(_PATH_SYS_CLASS "/zram-control/hot_add");
-	if (n < 0)
+	if (ul_path_read_s32(ctl, &n, "hot_add") != 0 || n < 0)
 		return n;
 
 	DBG(fprintf(stderr, "hot-add: %d", n));
@@ -302,10 +309,10 @@ static int zram_control_add(struct zram *z)
 
 static int zram_control_remove(struct zram *z)
 {
-	char str[sizeof stringify_value(INT_MAX)];
+	struct path_cxt *ctl;
 	int n;
 
-	if (!zram_has_control(z))
+	if (!zram_has_control(z) || !(ctl = zram_get_control()))
 		return -ENOSYS;
 
 	n = zram_get_devnum(z);
@@ -313,8 +320,7 @@ static int zram_control_remove(struct zram *z)
 		return n;
 
 	DBG(fprintf(stderr, "hot-remove: %d", n));
-	snprintf(str, sizeof(str), "%d", n);
-	return path_write_str(str, _PATH_SYS_CLASS "/zram-control/hot_remove");
+	return ul_path_write_u64(ctl, n, "hot_remove");
 }
 
 static struct zram *find_free_zram(void)
@@ -339,8 +345,9 @@ static struct zram *find_free_zram(void)
 
 static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 {
-	struct sysfs_cxt *sysfs;
+	struct path_cxt *sysfs;
 	const char *name;
+	char *str = NULL;
 	uint64_t num;
 
 	assert(idx < ARRAY_SIZE(mm_stat_names));
@@ -352,10 +359,7 @@ static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 
 	/* Linux >= 4.1 uses /sys/block/zram<id>/mm_stat */
 	if (!z->mm_stat && !z->mm_stat_probed) {
-		char *str;
-
-		str = sysfs_strdup(sysfs, "mm_stat");
-		if (str) {
+		if (ul_path_read_string(sysfs, &str, "mm_stat") > 0 && str) {
 			z->mm_stat = strv_split(str, " ");
 
 			/* make sure kernel provides mm_stat as expected */
@@ -366,7 +370,7 @@ static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 		}
 		z->mm_stat_probed = 1;
 		free(str);
-
+		str = NULL;
 	}
 
 	if (z->mm_stat) {
@@ -379,17 +383,20 @@ static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 
 	/* Linux < 4.1 uses /sys/block/zram<id>/<attrname> */
 	name = mm_stat_names[idx];
-	if (bytes)
-		return sysfs_strdup(sysfs, name);
-	else if (sysfs_read_u64(sysfs, name, &num) == 0)
+	if (bytes) {
+		ul_path_read_string(sysfs, &str, name);
+		return str;
+
+	} else if (ul_path_read_u64(sysfs, &num, name) == 0)
 		return size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+
 	return NULL;
 }
 
 static void fill_table_row(struct libscols_table *tb, struct zram *z)
 {
 	static struct libscols_line *ln;
-	struct sysfs_cxt *sysfs;
+	struct path_cxt *sysfs;
 	size_t i;
 	uint64_t num;
 
@@ -415,15 +422,17 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 			break;
 		case COL_DISKSIZE:
 			if (inbytes)
-				str = sysfs_strdup(sysfs, "disksize");
-			else if (sysfs_read_u64(sysfs, "disksize", &num) == 0)
+				ul_path_read_string(sysfs, &str, "disksize");
+
+			else if (ul_path_read_u64(sysfs, &num, "disksize") == 0)
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, num);
 			break;
 		case COL_ALGORITHM:
 		{
-			char *alg = sysfs_strdup(sysfs, "comp_algorithm");
+			char *alg = NULL;
 
-			if (alg != NULL) {
+			ul_path_read_string(sysfs, &alg, "comp_algorithm");
+			if (alg) {
 				char* lbr = strrchr(alg, '[');
 				char* rbr = strrchr(alg, ']');
 
@@ -444,7 +453,7 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 			break;
 		}
 		case COL_STREAMS:
-			str = sysfs_strdup(sysfs, "max_comp_streams");
+			ul_path_read_string(sysfs, &str, "max_comp_streams");
 			break;
 		case COL_ZEROPAGES:
 			str = get_mm_stat(z, MM_ZERO_PAGES, 1);
@@ -673,6 +682,9 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("options --algorithm and --streams "
 				     "must be combined with --size"));
 
+	ul_path_init_debug();
+	ul_sysfs_init_debug();
+
 	switch (act) {
 	case A_STATUS:
 		if (!ncolumns) {		/* default columns */
@@ -748,5 +760,6 @@ int main(int argc, char **argv)
 		break;
 	}
 
+	ul_unref_path(__control);
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
