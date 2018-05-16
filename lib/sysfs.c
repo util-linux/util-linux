@@ -148,6 +148,12 @@ int sysfs_blkdev_set_parent(struct path_cxt *pc, struct path_cxt *parent)
 	return 0;
 }
 
+struct path_cxt *sysfs_blkdev_get_parent(struct path_cxt *pc)
+{
+	struct sysfs_blkdev *blk = ul_path_get_dialect(pc);
+	return blk ? blk->parent : NULL;
+}
+
 /*
  * Redirects ENOENT errors to the parent, if the path is to the queue/
  * sysfs directory. For example

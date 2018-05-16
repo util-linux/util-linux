@@ -68,7 +68,9 @@ void ul_sysfs_init_debug(void);
 
 struct path_cxt *ul_new_sysfs_path(dev_t devno, struct path_cxt *parent, const char *prefix);
 int sysfs_blkdev_init_path(struct path_cxt *pc, dev_t devno, struct path_cxt *parent);
+
 int sysfs_blkdev_set_parent(struct path_cxt *pc, struct path_cxt *parent);
+struct path_cxt *sysfs_blkdev_get_parent(struct path_cxt *pc);
 
 char *sysfs_blkdev_get_name(struct path_cxt *pc, char *buf, size_t bufsiz);
 int sysfs_blkdev_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_name);
