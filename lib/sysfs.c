@@ -64,6 +64,9 @@ struct path_cxt *ul_new_sysfs_path(dev_t devno, struct path_cxt *parent, const c
 /*
  * sysfs_blkdev_* is sysfs extension to ul_path_* API for block devices.
  *
+ * The function is possible to call in loop and without sysfs_blkdev_deinit_path().
+ * The sysfs_blkdev_deinit_path() is automatically called by ul_unref_path().
+ *
  */
 int sysfs_blkdev_init_path(struct path_cxt *pc, dev_t devno, struct path_cxt *parent)
 {
@@ -85,18 +88,21 @@ int sysfs_blkdev_init_path(struct path_cxt *pc, dev_t devno, struct path_cxt *pa
 		return rc;
 
 	/* initialize sysfs blkdev specific stuff */
-	blk = calloc(1, sizeof(struct sysfs_blkdev));
-	if (!blk)
-		return -ENOMEM;
+	blk = ul_path_get_dialect(pc);
+	if (!blk) {
+		DBG(CXT, ul_debugobj(pc, "alloc new sysfs handler"));
+		blk = calloc(1, sizeof(struct sysfs_blkdev));
+		if (!blk)
+			return -ENOMEM;
 
-	DBG(CXT, ul_debugobj(pc, "init for sysfs"));
+		ul_path_set_dialect(pc, blk, sysfs_blkdev_deinit_path);
+		ul_path_set_enoent_redirect(pc, sysfs_blkdev_enoent_redirect);
+	}
+
+	DBG(CXT, ul_debugobj(pc, "init sysfs stuff"));
 
 	blk->devno = devno;
-	ul_path_set_dialect(pc, blk, sysfs_blkdev_deinit_path);
-
 	sysfs_blkdev_set_parent(pc, parent);
-
-	ul_path_set_enoent_redirect(pc, sysfs_blkdev_enoent_redirect);
 
 	return 0;
 }
@@ -116,6 +122,8 @@ static void sysfs_blkdev_deinit_path(struct path_cxt *pc)
 
 	ul_ref_path(blk->parent);
 	free(blk);
+
+	ul_path_set_dialect(pc, NULL, NULL);
 }
 
 int sysfs_blkdev_set_parent(struct path_cxt *pc, struct path_cxt *parent)

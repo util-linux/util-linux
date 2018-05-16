@@ -143,7 +143,7 @@ int ul_path_set_dialect(struct path_cxt *pc, void *data, void free_data(struct p
 {
 	pc->dialect = data;
 	pc->free_dialect = free_data;
-	DBG(CXT, ul_debugobj(pc, "new dialect"));
+	DBG(CXT, ul_debugobj(pc, "(re)set dialect"));
 	return 0;
 }
 
