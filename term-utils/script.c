@@ -454,8 +454,8 @@ static void handle_io(struct script_control *ctl, int fd, int *eof)
 		/* check output limit */
 		if (ctl->maxsz != 0 && ctl->outsz >= ctl->maxsz) {
 			if (!ctl->quiet)
-				printf(_("Script terminated, max output file size %zd exceeded.\n"), ctl->maxsz);
-			DBG(IO, ul_debug("output size %zd, exceeded limit %zd", ctl->outsz, ctl->maxsz));
+				printf(_("Script terminated, max output file size %"PRIu64" exceeded.\n"), ctl->maxsz);
+			DBG(IO, ul_debug("output size %"PRIu64", exceeded limit %"PRIu64, ctl->outsz, ctl->maxsz));
 			done_log(ctl, _("max output size exceeded"));
 		}
 	}
