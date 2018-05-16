@@ -330,7 +330,7 @@ char *next_proc_partition(FILE **f)
 		if (sscanf(line, " %*d %*d %*d %128[^\n ]", buf) != 1)
 			continue;
 
-		devno = sysfs_devname_to_devno(buf, NULL);
+		devno = sysfs_devname_to_devno(buf);
 		if (devno <= 0)
 			continue;
 
