@@ -493,6 +493,7 @@ int ul_path_readf(struct path_cxt *pc, char *buf, size_t len, const char *path, 
  * Returns newly allocated buffer with data from file. Maximal size is BUFSIZ
  * (send patch if you need something bigger;-)
  *
+ * Returns size of the string!
  */
 int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 {
