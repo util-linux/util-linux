@@ -38,7 +38,10 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static int get_cad(void)
 {
-	uint64_t val = path_read_u64(_PATH_PROC_CTRL_ALT_DEL);
+	uint64_t val;
+
+	if (ul_path_read_u64(NULL, &val, _PATH_PROC_CTRL_ALT_DEL) != 0)
+		err(EXIT_FAILURE, _("cannot read %s"), _PATH_PROC_CTRL_ALT_DEL);
 
 	switch (val) {
 	case 0:
