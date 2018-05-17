@@ -565,6 +565,35 @@ int ul_path_readf_string(struct path_cxt *pc, char **str, const char *path, ...)
 	return ul_path_read_string(pc, str, p);
 }
 
+int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path)
+{
+	int rc = ul_path_read(pc, buf, bufsz - 1, path);
+	if (rc < 0)
+		return rc;;
+
+	/* Remove tailing newline (usuall in sysfs) */
+	if (rc > 0 && *(buf + rc - 1) == '\n')
+		--rc;
+
+	buf[rc] = '\0';
+	return rc;
+}
+
+int ul_path_readf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = ul_path_mkpath(pc, path, ap);
+	va_end(ap);
+
+	if (!p)
+		return -EINVAL;
+
+	return ul_path_read_buffer(pc, buf, bufsz, p);
+}
+
 int ul_path_scanf(struct path_cxt *pc, const char *path, const char *fmt, ...)
 {
 	FILE *f;
