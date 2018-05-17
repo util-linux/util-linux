@@ -2,9 +2,15 @@
  * Simple functions to access files. Paths can be globally prefixed to read
  * data from an alternative source (e.g. a /proc dump for regression tests).
  *
+ * The paths is possible to format by printf-like way for functions with "f"
+ * postfix in the name (e.g. readf, openf, ... ul_path_readf_u64()).
+ *
+ * The ul_path_read_* API is possible to use without path_cxt handler. In this
+ * case is not possible to use global prefix and printf-like formatting.
+ *
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
-
+ *
  * Written by Karel Zak <kzak@redhat.com> [February 2018]
  */
 #include <stdarg.h>
@@ -273,20 +279,25 @@ int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 
 int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 {
-	int dir, fd;
+	int fd;
 
-	dir = ul_path_get_dirfd(pc);
-	if (dir < 0)
-		return dir;
+	if (!pc) {
+		fd = open(path, flags);
+		DBG(CXT, ul_debug("opening '%s'", path));
+	} else {
+		int dir = ul_path_get_dirfd(pc);
+		if (dir < 0)
+			return dir;
 
-	fd = openat(dir, path, flags);
-
-	if (fd < 0 && errno == ENOENT
-	    && pc->redirect_on_enoent
-	    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 		fd = openat(dir, path, flags);
 
-	DBG(CXT, ul_debugobj(pc, "opening '%s'", path));
+		if (fd < 0 && errno == ENOENT
+		    && pc->redirect_on_enoent
+		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
+			fd = openat(dir, path, flags);
+
+		DBG(CXT, ul_debugobj(pc, "opening '%s'", path));
+	}
 	return fd;
 }
 
