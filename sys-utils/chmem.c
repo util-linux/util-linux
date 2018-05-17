@@ -37,9 +37,9 @@
 #define CHMEM_EXIT_SOMEOK		64
 
 #define _PATH_SYS_MEMORY		"/sys/devices/system/memory"
-#define _PATH_SYS_MEMORY_BLOCK_SIZE	_PATH_SYS_MEMORY "/block_size_bytes"
 
 struct chmem_desc {
+	struct path_cxt	*sysmem;	/* _PATH_SYS_MEMORY handler */
 	struct dirent	**dirs;
 	int		ndirs;
 	uint64_t	block_size;
@@ -122,13 +122,13 @@ static int chmem_size(struct chmem_desc *desc, int enable, int zone_id)
 	for (; i >= 0 && i < desc->ndirs && size; i += enable ? 1 : -1) {
 		name = desc->dirs[i]->d_name;
 		index = strtou64_or_err(name + 6, _("Failed to parse index"));
-		path_read_str(line, sizeof(line), _PATH_SYS_MEMORY "/%s/state", name);
-		if (strncmp(onoff, line, 6) == 0)
+
+		if (ul_path_readf_buffer(desc->sysmem, line, sizeof(line), "%s/state", name) > 0
+		    && strncmp(onoff, line, 6) == 0)
 			continue;
 
 		if (desc->have_zones) {
-			path_read_str(line, sizeof(line),
-				      _PATH_SYS_MEMORY "/%s/valid_zones", name);
+			ul_path_readf_buffer(desc->sysmem, line, sizeof(line), "%s/valid_zones", name);
 			if (zone_id >= 0) {
 				zn = zone_names[zone_id];
 				if (enable && !strcasestr(line, zn))
@@ -145,8 +145,8 @@ static int chmem_size(struct chmem_desc *desc, int enable, int zone_id)
 		}
 
 		idxtostr(desc, index, str, sizeof(str));
-		rc = path_write_str(onoff, _PATH_SYS_MEMORY"/%s/state", name);
-		if (rc == -1 && desc->verbose) {
+		rc = ul_path_writef_string(desc->sysmem, onoff, "%s/state", name);
+		if (rc != 0 && desc->verbose) {
 			if (enable)
 				fprintf(stdout, _("%s enable failed\n"), str);
 			else
@@ -200,8 +200,8 @@ static int chmem_range(struct chmem_desc *desc, int enable, int zone_id)
 		if (index > desc->end)
 			break;
 		idxtostr(desc, index, str, sizeof(str));
-		path_read_str(line, sizeof(line), _PATH_SYS_MEMORY "/%s/state", name);
-		if (strncmp(onoff, line, 6) == 0) {
+		if (ul_path_readf_buffer(desc->sysmem, line, sizeof(line), "%s/state", name) > 0
+		    && strncmp(onoff, line, 6) == 0) {
 			if (desc->verbose && enable)
 				fprintf(stdout, _("%s already enabled\n"), str);
 			else if (desc->verbose && !enable)
@@ -211,8 +211,7 @@ static int chmem_range(struct chmem_desc *desc, int enable, int zone_id)
 		}
 
 		if (desc->have_zones) {
-			path_read_str(line, sizeof(line),
-				      _PATH_SYS_MEMORY "/%s/valid_zones", name);
+			ul_path_readf_buffer(desc->sysmem, line, sizeof(line), "%s/valid_zones", name);
 			if (zone_id >= 0) {
 				zn = zone_names[zone_id];
 				if (enable && !strcasestr(line, zn)) {
@@ -232,8 +231,8 @@ static int chmem_range(struct chmem_desc *desc, int enable, int zone_id)
 			}
 		}
 
-		rc = path_write_str(onoff, _PATH_SYS_MEMORY"/%s/state", name);
-		if (rc == -1) {
+		rc = ul_path_writef_string(desc->sysmem, onoff, "%s/state", name);
+		if (rc != 0) {
 			if (enable)
 				warn(_("%s enable failed"), str);
 			else
@@ -259,12 +258,12 @@ static int filter(const struct dirent *de)
 
 static void read_info(struct chmem_desc *desc)
 {
-	char line[BUFSIZ];
+	char line[128];
 
 	desc->ndirs = scandir(_PATH_SYS_MEMORY, &desc->dirs, filter, versionsort);
 	if (desc->ndirs <= 0)
 		err(EXIT_FAILURE, _("Failed to read %s"), _PATH_SYS_MEMORY);
-	path_read_str(line, sizeof(line), _PATH_SYS_MEMORY_BLOCK_SIZE);
+	ul_path_read_buffer(desc->sysmem, line, sizeof(line), "block_size_bytes");
 	desc->block_size = strtoumax(line, NULL, 16);
 }
 
@@ -382,6 +381,11 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	ul_path_init_debug();
+	desc->sysmem = ul_new_path(_PATH_SYS_MEMORY);
+	if (!desc->sysmem)
+		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMORY);
+
 	read_info(desc);
 
 	while ((c = getopt_long(argc, argv, "bdehvVz:", longopts, NULL)) != -1) {
@@ -422,8 +426,9 @@ int main(int argc, char **argv)
 
 	parse_parameter(desc, argv[optind]);
 
+
 	/* The valid_zones sysfs attribute was introduced with kernel 3.18 */
-	if (path_exist(_PATH_SYS_MEMORY "/memory0/valid_zones"))
+	if (ul_path_access(desc->sysmem, F_OK, "memory0/valid_zones"))
 		desc->have_zones = 1;
 	else if (zone)
 		warnx(_("zone ignored, no valid_zones sysfs attribute present"));
@@ -440,6 +445,8 @@ int main(int argc, char **argv)
 		rc = chmem_size(desc, cmd == CMD_MEMORY_ENABLE ? 1 : 0, zone_id);
 	else
 		rc = chmem_range(desc, cmd == CMD_MEMORY_ENABLE ? 1 : 0, zone_id);
+
+	ul_unref_path(desc->sysmem);
 
 	return rc == 0 ? EXIT_SUCCESS :
 		rc < 0 ? EXIT_FAILURE : CHMEM_EXIT_SOMEOK;
