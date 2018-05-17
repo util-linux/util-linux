@@ -35,7 +35,6 @@
 #include <libsmartcols.h>
 
 #define _PATH_SYS_MEMORY		"/sys/devices/system/memory"
-#define _PATH_SYS_MEMORY_BLOCK_SIZE	_PATH_SYS_MEMORY "/block_size_bytes"
 
 #define MEMORY_STATE_ONLINE		0
 #define MEMORY_STATE_OFFLINE		1
@@ -65,6 +64,7 @@ struct memory_block {
 };
 
 struct lsmem {
+	struct path_cxt		*sysmem;		/* _PATH_SYS_MEMORY directory handler */
 	struct dirent		**dirs;
 	int			ndirs;
 	struct memory_block	*blocks;
@@ -332,16 +332,15 @@ static void print_summary(struct lsmem *lsmem)
 	}
 }
 
-static int memory_block_get_node(char *name)
+static int memory_block_get_node(struct lsmem *lsmem, char *name)
 {
 	struct dirent *de;
-	const char *path;
 	DIR *dir;
 	int node;
 
-	path = path_get(_PATH_SYS_MEMORY"/%s", name);
-	if (!path || !(dir= opendir(path)))
-		err(EXIT_FAILURE, _("Failed to open %s"), path ? path : name);
+	dir = ul_path_opendir(lsmem->sysmem, name);
+	if (!dir)
+		err(EXIT_FAILURE, _("Failed to open %s"), name);
 
 	node = -1;
 	while ((de = readdir(dir)) != NULL) {
@@ -359,37 +358,44 @@ static int memory_block_get_node(char *name)
 static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
 				    struct memory_block *blk)
 {
-	char *token = NULL;
-	char line[BUFSIZ];
-	int i;
+	char *line = NULL;
+	int i, x = 0;
+
+	memset(blk, 0, sizeof(*blk));
 
 	blk->count = 1;
-	blk->index = strtoumax(name + 6, NULL, 10); /* get <num> of "memory<num>" */
-	blk->removable = path_read_u64(_PATH_SYS_MEMORY"/%s/removable", name);
 	blk->state = MEMORY_STATE_UNKNOWN;
+	blk->index = strtoumax(name + 6, NULL, 10); /* get <num> of "memory<num>" */
 
-	path_read_str(line, sizeof(line), _PATH_SYS_MEMORY"/%s/state", name);
-	if (strcmp(line, "offline") == 0)
-		blk->state = MEMORY_STATE_OFFLINE;
-	else if (strcmp(line, "online") == 0)
-		blk->state = MEMORY_STATE_ONLINE;
-	else if (strcmp(line, "going-offline") == 0)
-		blk->state = MEMORY_STATE_GOING_OFFLINE;
+	if (ul_path_readf_s32(lsmem->sysmem, &x, "%s/removable", name) == 0)
+		blk->removable = x == 1;
+
+	if (ul_path_readf_string(lsmem->sysmem, &line, "%s/state", name) > 0) {
+		if (strcmp(line, "offline") == 0)
+			blk->state = MEMORY_STATE_OFFLINE;
+		else if (strcmp(line, "online") == 0)
+			blk->state = MEMORY_STATE_ONLINE;
+		else if (strcmp(line, "going-offline") == 0)
+			blk->state = MEMORY_STATE_GOING_OFFLINE;
+		free(line);
+	}
 
 	if (lsmem->have_nodes)
-		blk->node = memory_block_get_node(name);
+		blk->node = memory_block_get_node(lsmem, name);
 
 	blk->nr_zones = 0;
-	if (lsmem->have_zones) {
-		path_read_str(line, sizeof(line), _PATH_SYS_MEMORY"/%s/valid_zones", name);
-		token = strtok(line, " ");
-	}
-	for (i = 0; i < MAX_NR_ZONES; i++) {
-		if (token) {
+	if (lsmem->have_zones &&
+	    ul_path_readf_string(lsmem->sysmem, &line, "%s/valid_zones", name) > 0) {
+
+		char *token = strtok(line, " ");
+
+		for (i = 0; token && i < MAX_NR_ZONES; i++) {
 			blk->zones[i] = zone_name_to_id(token);
 			blk->nr_zones++;
 			token = strtok(NULL, " ");
 		}
+
+		free(line);
 	}
 }
 
@@ -428,11 +434,12 @@ static int is_mergeable(struct lsmem *lsmem, struct memory_block *blk)
 static void read_info(struct lsmem *lsmem)
 {
 	struct memory_block blk;
-	char line[BUFSIZ];
+	char buf[128];
 	int i;
 
-	path_read_str(line, sizeof(line), _PATH_SYS_MEMORY_BLOCK_SIZE);
-	lsmem->block_size = strtoumax(line, NULL, 16);
+	if (ul_path_read_buffer(lsmem->sysmem, buf, sizeof(buf), "block_size_bytes") <= 0)
+		err(EXIT_FAILURE, _("failed to read memory block size"));
+	lsmem->block_size = strtoumax(buf, NULL, 16);
 
 	for (i = 0; i < lsmem->ndirs; i++) {
 		memory_block_read_attrs(lsmem, lsmem->dirs[i]->d_name, &blk);
@@ -459,24 +466,22 @@ static int memory_block_filter(const struct dirent *de)
 
 static void read_basic_info(struct lsmem *lsmem)
 {
-	const char *dir;
+	char dir[PATH_MAX];
 
-	if (!path_exist(_PATH_SYS_MEMORY_BLOCK_SIZE))
+	if (ul_path_access(lsmem->sysmem, F_OK, "block_size_bytes") != 0)
 		errx(EXIT_FAILURE, _("This system does not support memory blocks"));
 
-	dir = path_get(_PATH_SYS_MEMORY);
-	if (!dir)
-		err(EXIT_FAILURE, _("Failed to read %s"), _PATH_SYS_MEMORY);
+	ul_path_get_abspath(lsmem->sysmem, dir, sizeof(dir), NULL);
 
 	lsmem->ndirs = scandir(dir, &lsmem->dirs, memory_block_filter, versionsort);
 	if (lsmem->ndirs <= 0)
-		err(EXIT_FAILURE, _("Failed to read %s"), _PATH_SYS_MEMORY);
+		err(EXIT_FAILURE, _("Failed to read %s"), dir);
 
-	if (memory_block_get_node(lsmem->dirs[0]->d_name) != -1)
+	if (memory_block_get_node(lsmem, lsmem->dirs[0]->d_name) != -1)
 		lsmem->have_nodes = 1;
 
-	/* The valid_zones sysfs attribute was introduced with kernel 3.18 */
-	if (path_exist(_PATH_SYS_MEMORY "/memory0/valid_zones"))
+	/* The valid_zones sysmem attribute was introduced with kernel 3.18 */
+	if (ul_path_access(lsmem->sysmem, F_OK, "memory0/valid_zones") == 0)
 		lsmem->have_zones = 1;
 }
 
@@ -523,7 +528,7 @@ int main(int argc, char **argv)
 			.want_summary = 1
 		}, *lsmem = &_lsmem;
 
-	const char *outarg = NULL, *splitarg = NULL;
+	const char *outarg = NULL, *splitarg = NULL, *prefix = NULL;
 	int c;
 	size_t i;
 
@@ -597,8 +602,7 @@ int main(int argc, char **argv)
 			lsmem->want_summary = 0;
 			break;
 		case 's':
-			if(path_set_prefix(optarg))
-				err(EXIT_FAILURE, _("invalid argument to %s"), "--sysroot");
+			prefix = optarg;
 			break;
 		case 'S':
 			splitarg = optarg;
@@ -631,6 +635,14 @@ int main(int argc, char **argv)
 
 	if (lsmem->want_table + lsmem->want_summary == 0)
 		errx(EXIT_FAILURE, _("options --{raw,json,pairs} and --summary=only are mutually exclusive"));
+
+	ul_path_init_debug();
+
+	lsmem->sysmem = ul_new_path(_PATH_SYS_MEMORY);
+	if (!lsmem->sysmem)
+		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMORY);
+	if (prefix && ul_path_set_prefix(lsmem->sysmem, prefix) != 0)
+		err(EXIT_FAILURE, _("invalid argument to --sysroot"));
 
 	/* Shortcut to avoid scols machinery on --summary=only */
 	if (lsmem->want_table == 0 && lsmem->want_summary) {
@@ -730,5 +742,6 @@ int main(int argc, char **argv)
 		print_summary(lsmem);
 
 	scols_unref_table(lsmem->table);
+	ul_unref_path(lsmem->sysmem);
 	return 0;
 }
