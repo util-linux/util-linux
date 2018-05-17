@@ -48,7 +48,6 @@
 #include "procutils.h"
 #include "strutils.h"
 #include "namespace.h"
-#include "path.h"
 #include "idcache.h"
 
 #include "debug.h"
