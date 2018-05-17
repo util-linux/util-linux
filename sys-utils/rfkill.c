@@ -37,7 +37,6 @@
 #include "timeutils.h"
 #include "widechar.h"
 #include "xalloc.h"
-#include "path.h"
 
 
 /*
@@ -274,9 +273,12 @@ failed:
 static const char *get_sys_attr(uint32_t idx, const char *attr)
 {
 	static char name[128];
-	FILE *f = path_fopen("r", 0, _PATH_SYS_RFKILL "/rfkill%u/%s", idx, attr);
+	char path[PATH_MAX];
+	FILE *f;
 	char *p;
 
+	snprintf(path, sizeof(path), _PATH_SYS_RFKILL "/rfkill%u/%s", idx, attr);
+	f = fopen(path, "r");
 	if (!f)
 		goto done;
 	if (!fgets(name, sizeof(name), f))
