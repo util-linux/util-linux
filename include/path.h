@@ -39,6 +39,9 @@ void *ul_path_get_dialect(struct path_cxt *pc);
 int ul_path_set_enoent_redirect(struct path_cxt *pc, int (*func)(struct path_cxt *, const char *, int *));
 int ul_path_get_dirfd(struct path_cxt *pc);
 
+char *ul_path_get_abspath(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
+				__attribute__ ((__format__ (__printf__, 4, 5)));
+
 int ul_path_access(struct path_cxt *pc, int mode, const char *path);
 int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 3, 4)));

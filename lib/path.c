@@ -176,7 +176,6 @@ static const char *get_absdir(struct path_cxt *pc)
 	return pc->path_buffer;
 }
 
-
 int ul_path_get_dirfd(struct path_cxt *pc)
 {
 	assert(pc);
@@ -208,6 +207,39 @@ static const char *ul_path_mkpath(struct path_cxt *pc, const char *path, va_list
 
 	return pc->path_buffer;
 }
+
+char *ul_path_get_abspath(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
+{
+	if (path) {
+		int rc;
+		va_list ap;
+		const char *tail = NULL;
+
+		va_start(ap, path);
+		tail = ul_path_mkpath(pc, path, ap);
+		va_end(ap);
+
+		rc = snprintf(buf, bufsz, "%s/%s/%s",
+				pc->prefix ? pc->prefix : "",
+				pc->dir_path,
+				tail);
+
+		if ((size_t)rc >= bufsz) {
+			errno = ENAMETOOLONG;
+			return NULL;
+		}
+	} else {
+		const char *tmp = get_absdir(pc);
+
+		if (!tmp)
+			return NULL;
+		strncpy(buf, tmp, bufsz);
+		buf[bufsz - 1] = '\0';
+	}
+
+	return buf;
+}
+
 
 int ul_path_access(struct path_cxt *pc, int mode, const char *path)
 {
