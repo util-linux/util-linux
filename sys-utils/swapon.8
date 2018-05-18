@@ -35,7 +35,7 @@
 .SH NAME
 swapon, swapoff \- enable/disable devices and files for paging and swapping
 .SH SYNOPSIS
-.BR swapon
+.B swapon
 [options]
 .RI [ specialfile ...]
 .br
@@ -83,10 +83,10 @@ Enable swap discards, if the swap backing device supports the discard or
 trim operation.  This may improve performance on some Solid State Devices,
 but often it does not.  The option allows one to select between two
 available swap discard policies:
-.BI \-\-discard=once
+.B \-\-discard=once
 to perform a single-time discard operation for the whole swap area at swapon;
 or
-.BI \-\-discard=pages
+.B \-\-discard=pages
 to asynchronously discard freed swap pages before they are available for reuse.
 If no policy is selected, the default behavior is to enable both discard types.
 The

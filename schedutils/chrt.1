@@ -68,7 +68,7 @@ Set scheduling policy to
 .TP
 .BR -d ,\  --deadline
 Set scheduling policy to
-.BR SCHED_DEADLINE
+.B SCHED_DEADLINE
 (Linux-specific, supported since 3.14).  The priority argument has to be set to zero.
 See also \fB\-\-sched\-runtime\fR, \fB\-\-sched\-deadline\fR and
 \fB\-\-sched\-period\fR.  The relation between the options required by the kernel is
@@ -136,16 +136,16 @@ Or set them:
 .I priority pid
 .SH PERMISSIONS
 A user must possess
-.BR CAP_SYS_NICE
+.B CAP_SYS_NICE
 to change the scheduling attributes of a process.  Any user can retrieve the
 scheduling information.
 
 .SH NOTES
 Only
 .BR SCHED_FIFO ,
-.BR SCHED_OTHER
+.B SCHED_OTHER
 and
-.BR SCHED_RR
+.B SCHED_RR
 are part of POSIX 1003.1b Process Scheduling.  The other scheduling attributes
 may be ignored on some systems.
 .P

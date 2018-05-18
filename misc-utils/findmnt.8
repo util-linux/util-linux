@@ -12,22 +12,22 @@ findmnt \- find a filesystem
 .B findmnt
 [options]
 .RB [ \-\-source ]
-.IR device
+.I device
 .RB [ \-\-target | \-\-mountpoint ]
-.IR mountpoint
+.I mountpoint
 .SH DESCRIPTION
 .B findmnt
 will list all mounted filesystems or search for a filesystem.  The
 .B \%findmnt
 command is able to search in
 .IR /etc/fstab ,
-.IR /etc/mtab
+.I /etc/mtab
 or
 .IR /proc/self/mountinfo .
 If
-.IR device
+.I device
 or
-.IR mountpoint
+.I mountpoint
 is not given, all filesystems are shown.
 .PP
 The device may be specified by device name, major:minor numbers,
@@ -140,7 +140,7 @@ by "+" prefix.
 .BR \-o , " \-\-output \fIlist\fP"
 Define output columns.  See the \fB\-\-help\fP output to get a list of the
 currently supported columns.  The
-.BR TARGET
+.B TARGET
 column contains tree formatting if the
 .B \-\-list
 or
@@ -183,7 +183,7 @@ available for umount and move actions
 available for umount and remount actions
 .RE
 .TP
-.BR "\-\-pseudo"
+.B \-\-pseudo
 Print only pseudo filesystems.
 .TP
 .BR \-R , " \-\-submounts"
@@ -196,7 +196,7 @@ default.  This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
 .BR \-r , " \-\-raw"
 Use raw output format.  All potentially unsafe characters are hex-escaped (\\x<code>).
 .TP
-.BR "\-\-real"
+.B \-\-real
 Print only real filesystems.
 .TP
 .BR \-S , " \-\-source \fIspec\fP"
@@ -227,7 +227,7 @@ to specify the filesystem types on which no action should be taken.  For
 more details see
 .BR mount (8).
 .TP
-.BR "\-\-tree"
+.B \-\-tree
 Enable tree-like output if possible.  The options is silently ignored for
 tables where is missing child-parent relation (e.g. fstab).
 .TP
@@ -242,7 +242,7 @@ Do not truncate text in columns.  The default is to not truncate the
 .BR UUID ,
 .BR LABEL ,
 .BR PARTUUID ,
-.BR PARTLABEL
+.B PARTLABEL
 columns.  This option disables text truncation also in all other columns.
 .TP
 .BR \-v , " \-\-nofsroot"
@@ -253,12 +253,12 @@ Specify an upper limit on the time for which \fB\-\-poll\fR will block, in milli
 .TP
 .BR \-x , " \-\-verify"
 Check mount table content. The default is to verify
-.IR /etc/fstab
+.I /etc/fstab
 parsability and usability. It's possible to use this option also with \fB\-\-tab\-file\fP.
 It's possible to specify source (device) or target (mountpoint) to filter mount table. The option
 \fB\-\-verbose\fP forces findmnt to print more details.
 .TP
-.BR "\-\-verbose"
+.B \-\-verbose
 Force findmnt to print more information (\fB\-\-verify\fP only for now).
 .SH EXAMPLES
 .IP "\fBfindmnt \-\-fstab \-t nfs\fP"
@@ -266,16 +266,16 @@ Prints all NFS filesystems defined in
 .IR /etc/fstab .
 .IP "\fBfindmnt \-\-fstab /mnt/foo\fP"
 Prints all
-.IR /etc/fstab
+.I /etc/fstab
 filesystems where the mountpoint directory is /mnt/foo.  It also prints bind mounts where /mnt/foo
 is a source.
 .IP "\fBfindmnt \-\-fstab \-\-target /mnt/foo\fP"
 Prints all
-.IR /etc/fstab
+.I /etc/fstab
 filesystems where the mountpoint directory is /mnt/foo.
 .IP "\fBfindmnt \-\-fstab \-\-evaluate\fP"
 Prints all
-.IR /etc/fstab
+.I /etc/fstab
 filesystems and converts LABEL= and UUID= tags to the real device names.
 .IP "\fBfindmnt \-n \-\-raw \-\-evaluate \-\-output=target LABEL=/boot\fP"
 Prints only the mountpoint where the filesystem with label "/boot" is mounted.

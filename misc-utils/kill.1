@@ -37,7 +37,7 @@ Most modern shells have a builtin kill command, with a usage rather similar to
 that of the command described here.  The
 .BR \-\-all ,
 .BR \-\-pid ", and"
-.BR \-\-queue
+.B \-\-queue
 options, and the possibility to specify processes by command name, are local extensions.
 .PP
 If \fIsignal\fR is 0, then no actual signal is sent, but error checking is still performed.
@@ -135,7 +135,7 @@ in the target process that is not blocking the signal.
 For more details, see
 .BR signal (7)
 and the description of
-.BR CLONE_THREAD
+.B CLONE_THREAD
 in
 .BR clone (2).
 
@@ -143,13 +143,13 @@ in
 .B kill
 has the following return codes:
 .TP
-.BR 0
+.B 0
 success
 .TP
-.BR 1
+.B 1
 failure
 .TP
-.BR 64
+.B 64
 partial success (when more than one process specified)
 
 .SH SEE ALSO

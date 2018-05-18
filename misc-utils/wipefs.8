@@ -11,13 +11,13 @@ wipefs \- wipe a signature from a device
 .sp
 .B wipefs
 .RB [ \-\-backup ]
-.RB  \-o
-.IR offset
+.B \-o
+.I offset
 .IR device ...
 .sp
 .B wipefs
 .RB [ \-\-backup ]
-.RB \-a
+.B \-a
 .IR device ...
 .SH DESCRIPTION
 .B wipefs
@@ -113,14 +113,14 @@ taken.  For more details see mount(8).
 Display version information and exit.
 .SH EXAMPLES
 .TP
-.BR "wipefs /dev/sda*"
+.B wipefs /dev/sda*
 Prints information about sda and all partitions on sda.
 .TP
-.BR "wipefs --all --backup /dev/sdb"
+.B wipefs --all --backup /dev/sdb
 Erases all signatures from the device /dev/sdb and creates a signature backup
 file ~/wipefs-sdb-<offset>.bak for each signature.
 .TP
-.BR "dd if=~/wipefs-sdb-0x00000438.bak of=/dev/sdb seek=$((0x00000438)) bs=1 conv=notrunc"
+.B dd if=~/wipefs-sdb-0x00000438.bak of=/dev/sdb seek=$((0x00000438)) bs=1 conv=notrunc
 Restores an ext2 signature from the backup file  ~/wipefs-sdb-0x00000438.bak.
 .SH AUTHOR
 Karel Zak <kzak@redhat.com>

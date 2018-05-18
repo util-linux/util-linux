@@ -74,11 +74,11 @@ Preserve supplementary groups.  Only useful in conjunction with
 Initialize supplementary groups using
 .BR initgroups "(3)."
 Only useful in conjunction with
-.BR \-\-ruid
+.B \-\-ruid
 or
 .BR \-\-reuid .
 .TP
-.BR \-\-list\-caps
+.B \-\-list\-caps
 List all known capabilities.  This option must be specified alone.
 .TP
 .B \-\-no\-new\-privs
@@ -94,7 +94,7 @@ AppArmor, may result in failures to execute certain programs.)  This bit is
 inherited by child processes and cannot be unset.  See
 .BR prctl (2)
 and
-.IR Documentation/\:prctl/\:no_\:new_\:privs.txt
+.I Documentation/\:prctl/\:no_\:new_\:privs.txt
 in the Linux kernel source.
 .sp
 The no_new_privs bit is supported since Linux 3.5.
@@ -107,7 +107,7 @@ For safety, you must specify one of
 .BR \-\-clear\-groups ,
 .BR \-\-groups ,
 .BR \-\-keep\-groups ", or"
-.BR \-\-init\-groups
+.B \-\-init\-groups
 if you set any primary
 .IR gid .
 .TP

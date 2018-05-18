@@ -97,11 +97,11 @@ refers to the root of the filesystem on
 If only the directory or the device is given, for example:
 .RS
 .sp
-.BI "mount /dir"
+.B mount /dir
 .sp
 .RE
 then \fBmount\fR looks for a mountpoint (and if not found then for a device) in the
-.IR /etc/fstab
+.I /etc/fstab
 file.  It's possible to use the
 .B \-\-target
 or
@@ -109,7 +109,7 @@ or
 options to avoid ambivalent interpretation of the given argument.  For example:
 .RS
 .sp
-.BI "mount \-\-target /mountpoint"
+.B mount \-\-target /mountpoint
 .sp
 .RE
 
@@ -526,7 +526,7 @@ For example:
 
 .RS
 .nf
-.BI "mount \-\-make\-private \-\-make\-unbindable /dev/sda1 /foo"
+.B mount \-\-make\-private \-\-make\-unbindable /dev/sda1 /foo
 .fi
 .RE
 
@@ -534,9 +534,9 @@ is the same as:
 
 .RS
 .nf
-.BI "mount /dev/sda1 /foo"
-.BI "mount \-\-make\-private /foo"
-.BI "mount \-\-make\-unbindable /foo"
+.B mount /dev/sda1 /foox
+.B mount \-\-make\-private /foo
+.B mount \-\-make\-unbindable /foo
 .fi
 .RE
 
@@ -573,7 +573,7 @@ already mounted filesystems is cached during \fBmount \-\-all\fR. It means
 that all duplicated fstab entries will be mounted.
 .sp
 Note that it is a bad practice to use \fBmount \-a\fR for
-.IR fstab
+.I fstab
 checking. The recommended solution is \fBfindmnt \-\-verify\fR.
 .TP
 .BR \-B , " \-\-bind"
@@ -722,7 +722,7 @@ and disables \fB\-\-options\-source\-force\fR.
 Default value is \fBfstab,mtab\fR.
 
 .TP
-.BR \-\-options\-source\-force
+.B \-\-options\-source\-force
 Use options from fstab/mtab even if both \fIdevice\fR and \fIdir\fR are specified.
 
 .TP
@@ -1577,7 +1577,7 @@ To maintain backward compatibility, '-o nfs' is also accepted,
 defaulting to
 .BR stale_rw .
 .TP
-.BI tz=UTC
+.B tz=UTC
 This option disables the conversion of timestamps
 between local time (as used by Windows on FAT) and UTC
 (which Linux uses internally).  This is particularly

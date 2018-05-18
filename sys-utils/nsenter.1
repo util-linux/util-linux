@@ -20,7 +20,7 @@ except for filesystems which are explicitly marked as shared (with
 For further details, see
 .BR mount_namespaces (7)
 and the discussion of the
-.BR CLONE_NEWNS
+.B CLONE_NEWNS
 flag in
 .BR clone (2).
 .TP
@@ -29,7 +29,7 @@ Setting hostname or domainname will not affect the rest of the system.
 For further details, see
 .BR namespaces (7)
 and the discussion of the
-.BR CLONE_NEWUTS
+.B CLONE_NEWUTS
 flag in
 .BR clone (2).
 .TP
@@ -40,7 +40,7 @@ semaphore sets and shared memory segments.
 For further details, see
 .BR namespaces (7)
 and the discussion of the
-.BR CLONE_NEWIPC
+.B CLONE_NEWIPC
 flag in
 .BR clone (2).
 .TP
@@ -54,7 +54,7 @@ directory trees, sockets, etc.
 For further details, see
 .BR namespaces (7)
 and the discussion of the
-.BR CLONE_NEWNET
+.B CLONE_NEWNET
 flag in
 .BR clone (2).
 .TP
@@ -66,7 +66,7 @@ For further details, see
 .BR pid_namespaces (7)
 and
 the discussion of the
-.BR CLONE_NEWPID
+.B CLONE_NEWPID
 flag in
 .B nsenter
 will fork by default if changing the PID namespace, so that the new program
@@ -78,7 +78,7 @@ The process will have a distinct set of UIDs, GIDs and capabilities.
 For further details, see
 .BR user_namespaces (7)
 and the discussion of the
-.BR CLONE_NEWUSER
+.B CLONE_NEWUSER
 flag in
 .BR clone (2).
 .TP
@@ -88,7 +88,7 @@ cgroup mounts will be rooted at the namespace cgroup root.
 For further details, see
 .BR cgroup_namespaces (7)
 and the discussion of the
-.BR CLONE_NEWCGROUP
+.B CLONE_NEWCGROUP
 flag in
 .BR clone (2).
 .TP
@@ -98,13 +98,13 @@ Various of the options below that relate to namespaces take an optional
 .I file
 argument.
 This should be one of the
-.IR /proc/[pid]/ns/*
+.I /proc/[pid]/ns/*
 files described in
 .BR namespaces (7).
 .TP
 \fB\-a\fR, \fB\-\-all\fR
 Enter all namespaces of the target process by the default
-.IR /proc/[pid]/ns/*
+.I /proc/[pid]/ns/*
 namespace paths. The default paths to the target process namespaces may be
 overwritten by namespace specific options (e.g. --all --mount=[path]).
 
