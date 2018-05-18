@@ -255,6 +255,7 @@ int ul_path_access(struct path_cxt *pc, int mode, const char *path)
 	if (dir < 0)
 		return dir;
 
+	DBG(CXT, ul_debugobj(pc, "access: '%s'", path));
 	rc = faccessat(dir, path, mode, 0);
 
 	if (rc && errno == ENOENT
@@ -283,7 +284,7 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 
 	if (!pc) {
 		fd = open(path, flags);
-		DBG(CXT, ul_debug("opening '%s'", path));
+		DBG(CXT, ul_debug("opening [%d] '%s'", flags, path));
 	} else {
 		int dir = ul_path_get_dirfd(pc);
 		if (dir < 0)
@@ -296,7 +297,7 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 			fd = openat(dir, path, flags);
 
-		DBG(CXT, ul_debugobj(pc, "opening '%s'", path));
+		DBG(CXT, ul_debugobj(pc, "opening [%d] '%s'", flags, path));
 	}
 	return fd;
 }
@@ -500,6 +501,7 @@ int ul_path_read(struct path_cxt *pc, char *buf, size_t len, const char *path)
 	if (fd < 0)
 		return -errno;
 
+	DBG(CXT, ul_debug(" reading '%s'", path));
 	rc = read_all(fd, buf, len);
 
 	errsv = errno;
@@ -614,6 +616,8 @@ int ul_path_scanf(struct path_cxt *pc, const char *path, const char *fmt, ...)
 	f = ul_path_fopen(pc, "r" UL_CLOEXECSTR, path);
 	if (!f)
 		return -EINVAL;
+
+	DBG(CXT, ul_debug(" fscanf [%s] '%s'", fmt, path));
 
 	va_start(fmt_ap, fmt);
 	rc = vfscanf(f, fmt, fmt_ap);
