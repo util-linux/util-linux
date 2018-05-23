@@ -283,7 +283,7 @@ static struct libscols_table *tb;
  * column twice. That's enough, dynamically allocated array of the columns is
  * unnecessary overkill and over-engineering in this case */
 static int columns[ARRAY_SIZE(coldescs) * 2];
-static int ncolumns;
+static size_t ncolumns;
 
 static inline size_t err_columns_index(size_t arysz, size_t idx)
 {
@@ -432,7 +432,7 @@ static struct utmpx *get_last_wtmp(struct lslogins_control *ctl, const char *use
 static int require_wtmp(void)
 {
 	size_t i;
-	for (i = 0; i < (size_t) ncolumns; i++)
+	for (i = 0; i < ncolumns; i++)
 		if (is_wtmp_col(columns[i]))
 			return 1;
 	return 0;
@@ -441,7 +441,7 @@ static int require_wtmp(void)
 static int require_btmp(void)
 {
 	size_t i;
-	for (i = 0; i < (size_t) ncolumns; i++)
+	for (i = 0; i < ncolumns; i++)
 		if (is_btmp_col(columns[i]))
 			return 1;
 	return 0;
@@ -651,7 +651,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	struct group *grp;
 	struct spwd *shadow;
 	struct utmpx *user_wtmp = NULL, *user_btmp = NULL;
-	int n = 0;
+	size_t n = 0;
 	time_t time;
 	uid_t uid;
 	errno = 0;
@@ -992,7 +992,7 @@ static int create_usertree(struct lslogins_control *ctl)
 static struct libscols_table *setup_table(struct lslogins_control *ctl)
 {
 	struct libscols_table *table = scols_new_table();
-	int n = 0;
+	size_t n = 0;
 
 	if (!table)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
@@ -1046,7 +1046,7 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 {
 	struct libscols_line *ln;
 	struct lslogins_user *user = *(struct lslogins_user **)u;
-	int n = 0;
+	size_t n = 0;
 
 	if (which == preorder || which == endorder)
 		return;
@@ -1350,8 +1350,8 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char *argv[])
 {
-	int c, opt_o = 0;
-	char *logins = NULL, *groups = NULL;
+	int c;
+	char *logins = NULL, *groups = NULL, *outarg = NULL;
 	char *path_wtmp = _PATH_WTMP, *path_btmp = _PATH_BTMP;
 	struct lslogins_control *ctl = xcalloc(1, sizeof(struct lslogins_control));
 	size_t i;
@@ -1467,14 +1467,10 @@ int main(int argc, char *argv[])
 		case 'o':
 			if (*optarg == '=')
 				optarg++;
-			ncolumns = string_to_idarray(optarg, columns,
-					ARRAY_SIZE(columns), column_name_to_id);
-			if (ncolumns < 0)
-				return EXIT_FAILURE;
-			opt_o = 1;
+			outarg = optarg;
 			break;
 		case OPT_OUTPUT_ALL:
-			for (ncolumns = 0; (size_t)ncolumns < ARRAY_SIZE(coldescs); ncolumns++)
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(coldescs); ncolumns++)
 				columns[ncolumns] = ncolumns;
 			break;
 		case 'r':
@@ -1496,6 +1492,7 @@ int main(int argc, char *argv[])
 			add_column(columns, ncolumns++, COL_PWDDENY);
 			add_column(columns, ncolumns++, COL_NOLOGIN);
 			add_column(columns, ncolumns++, COL_HUSH_STATUS);
+			add_column(columns, ncolumns++, COL_PWDMETHOD);
 			break;
 		case 'z':
 			outmode = OUT_NUL;
@@ -1549,12 +1546,12 @@ int main(int argc, char *argv[])
 	if (lslogins_flag & F_USRAC && lslogins_flag & F_SYSAC)
 		lslogins_flag &= ~(F_USRAC | F_SYSAC);
 
-	if (outmode == OUT_PRETTY && !opt_o) {
+	if (outmode == OUT_PRETTY) {
 		/* all columns for lslogins <username> */
 		for (ncolumns = 0, i = 0; i < ARRAY_SIZE(coldescs); i++)
 			 columns[ncolumns++] = i;
 
-	} else if (ncolumns == 2 && !opt_o) {
+	} else if (ncolumns == 2) {
 		/* default colummns */
 		add_column(columns, ncolumns++, COL_NPROCS);
 		add_column(columns, ncolumns++, COL_PWDLOCK);
@@ -1562,6 +1559,10 @@ int main(int argc, char *argv[])
 		add_column(columns, ncolumns++, COL_LAST_LOGIN);
 		add_column(columns, ncolumns++, COL_GECOS);
 	}
+
+	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+					 &ncolumns, column_name_to_id) < 0)
+		return EXIT_FAILURE;
 
 	if (require_wtmp())
 		parse_wtmp(ctl, path_wtmp);
