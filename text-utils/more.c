@@ -306,6 +306,36 @@ static void cleareol(void)
 	putstring(eraseln);
 }
 
+/* magic --
+ *	check for file magic numbers.  This code would best be shared
+ *	with the file(1) program or, perhaps, more should not try to be
+ *	so smart. */
+static int magic(FILE *f, char *fs)
+{
+	signed char twobytes[2];
+
+	/* don't try to look ahead if the input is unseekable */
+	if (fseek(f, 0L, SEEK_SET))
+		return 0;
+
+	if (fread(twobytes, 2, 1, f) == 1) {
+		switch (twobytes[0] + (twobytes[1] << 8)) {
+		case 0407:	/* a.out obj */
+		case 0410:	/* a.out exec */
+		case 0413:	/* a.out demand exec */
+		case 0405:
+		case 0411:
+		case 0177545:
+		case 0x457f:	/* simple ELF detection */
+			printf(_("\n******** %s: Not a text file ********\n\n"),
+			       fs);
+			return 1;
+		}
+	}
+	fseek(f, 0L, SEEK_SET);	/* rewind() not necessary */
+	return 0;
+}
+
 /* Check whether the file named by fs is an ASCII file which the user may
  * access.  If it is, return the opened file.  Otherwise return NULL. */
 static FILE *checkf(register char *fs, int *clearfirst)
@@ -341,36 +371,6 @@ static FILE *checkf(register char *fs, int *clearfirst)
 	if ((file_size = stbuf.st_size) == 0)
 		file_size = LONG_MAX;
 	return (f);
-}
-
-/* magic --
- *	check for file magic numbers.  This code would best be shared
- *	with the file(1) program or, perhaps, more should not try to be
- *	so smart. */
-static int magic(FILE *f, char *fs)
-{
-	signed char twobytes[2];
-
-	/* don't try to look ahead if the input is unseekable */
-	if (fseek(f, 0L, SEEK_SET))
-		return 0;
-
-	if (fread(twobytes, 2, 1, f) == 1) {
-		switch (twobytes[0] + (twobytes[1] << 8)) {
-		case 0407:	/* a.out obj */
-		case 0410:	/* a.out exec */
-		case 0413:	/* a.out demand exec */
-		case 0405:
-		case 0411:
-		case 0177545:
-		case 0x457f:	/* simple ELF detection */
-			printf(_("\n******** %s: Not a text file ********\n\n"),
-			       fs);
-			return 1;
-		}
-	}
-	fseek(f, 0L, SEEK_SET);	/* rewind() not necessary */
-	return 0;
 }
 
 static void prepare_line_buffer(void)
@@ -737,6 +737,53 @@ static void prompt(char *filename)
 	inwait++;
 }
 
+static int ourputch(int c)
+{
+	return putc(c, stdout);
+}
+
+static void reset_tty(void)
+{
+	if (no_tty)
+		return;
+	if (pstate) {
+		/* putchar - if that isn't a macro */
+		tputs(ULexit, fileno(stdout), ourputch);
+		fflush(stdout);
+		pstate = 0;
+	}
+	otty.c_lflag |= ICANON | ECHO;
+	otty.c_cc[VMIN] = savetty0.c_cc[VMIN];
+	otty.c_cc[VTIME] = savetty0.c_cc[VTIME];
+	stty(fileno(stderr), &savetty0);
+}
+
+/* Clean up terminal state and exit. Also come here if interrupt signal received */
+static void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unused__)))
+{
+	/* May be executed as a signal handler as well as by main process.
+	 *
+	 * The _exit() may wait for pending I/O for really long time, be sure
+	 * that signal handler is not executed in this time to avoid double
+	 * de-initialization (free() calls, etc.).
+	 */
+	signal(SIGINT, SIG_IGN);
+
+	reset_tty();
+	if (clreol) {
+		putchar('\r');
+		clreos();
+		fflush(stdout);
+	} else if (!clreol && (promptlen > 0)) {
+		kill_line();
+		fflush(stdout);
+	} else
+		putcerr('\n');
+	free(previousre);
+	free(Line);
+	_exit(EXIT_SUCCESS);
+}
+
 static int readch(void)
 {
 	unsigned char c;
@@ -1011,33 +1058,60 @@ static int expand(char **outbuf, char *inbuf)
 	return (changed);
 }
 
-static int ourputch(int c)
-{
-	return putc(c, stdout);
-}
-
-static void reset_tty(void)
-{
-	if (no_tty)
-		return;
-	if (pstate) {
-		/* putchar - if that isn't a macro */
-		tputs(ULexit, fileno(stdout), ourputch);
-		fflush(stdout);
-		pstate = 0;
-	}
-	otty.c_lflag |= ICANON | ECHO;
-	otty.c_cc[VMIN] = savetty0.c_cc[VMIN];
-	otty.c_cc[VTIME] = savetty0.c_cc[VTIME];
-	stty(fileno(stderr), &savetty0);
-}
-
 static void set_tty(void)
 {
 	otty.c_lflag &= ~(ICANON | ECHO);
 	otty.c_cc[VMIN] = 1;	/* read at least 1 char */
 	otty.c_cc[VTIME] = 0;	/* no timeout */
 	stty(fileno(stderr), &otty);
+}
+
+/* Come here if a quit signal is received */
+static void onquit(int dummy __attribute__((__unused__)))
+{
+	signal(SIGQUIT, SIG_IGN);
+	if (!inwait) {
+		putchar('\n');
+		if (!startup) {
+			signal(SIGQUIT, onquit);
+			siglongjmp(restore, 1);
+		} else
+			Pause++;
+	} else if (!dum_opt && notell) {
+		promptlen += fprintf(stderr, _("[Use q or Q to quit]"));
+		notell = 0;
+	}
+	signal(SIGQUIT, onquit);
+}
+
+/* Come here when we get a suspend signal from the terminal */
+static void onsusp(int dummy __attribute__((__unused__)))
+{
+	sigset_t signals, oldmask;
+
+	/* ignore SIGTTOU so we don't get stopped if csh grabs the tty */
+	signal(SIGTTOU, SIG_IGN);
+	reset_tty();
+	fflush(stdout);
+	signal(SIGTTOU, SIG_DFL);
+	/* Send the TSTP signal to suspend our process group */
+	signal(SIGTSTP, SIG_DFL);
+
+	/* unblock SIGTSTP or we won't be able to suspend ourself */
+	sigemptyset(&signals);
+	sigaddset(&signals, SIGTSTP);
+	sigprocmask(SIG_UNBLOCK, &signals, &oldmask);
+
+	kill(0, SIGTSTP);
+	/* Pause for station break */
+
+	sigprocmask(SIG_SETMASK, &oldmask, NULL);
+
+	/* We're back */
+	signal(SIGTSTP, onsusp);
+	set_tty();
+	if (inwait)
+		siglongjmp(restore, 1);
 }
 
 static void execute(char *filename, char *cmd, ...)
@@ -1688,24 +1762,6 @@ static void screen(register FILE *f, register int num_lines)
 	}
 }
 
-/* Come here if a quit signal is received */
-static void onquit(int dummy __attribute__((__unused__)))
-{
-	signal(SIGQUIT, SIG_IGN);
-	if (!inwait) {
-		putchar('\n');
-		if (!startup) {
-			signal(SIGQUIT, onquit);
-			siglongjmp(restore, 1);
-		} else
-			Pause++;
-	} else if (!dum_opt && notell) {
-		promptlen += fprintf(stderr, _("[Use q or Q to quit]"));
-		notell = 0;
-	}
-	signal(SIGQUIT, onquit);
-}
-
 /* Come here if a signal for a window size change is received */
 #ifdef SIGWINCH
 static void chgwinsz(int dummy __attribute__((__unused__)))
@@ -1727,32 +1783,6 @@ static void chgwinsz(int dummy __attribute__((__unused__)))
 	signal(SIGWINCH, chgwinsz);
 }
 #endif				/* SIGWINCH */
-
-/* Clean up terminal state and exit. Also come here if interrupt signal received */
-static void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unused__)))
-{
-	/* May be executed as a signal handler as well as by main process.
-	 *
-	 * The _exit() may wait for pending I/O for really long time, be sure
-	 * that signal handler is not executed in this time to avoid double
-	 * de-initialization (free() calls, etc.).
-	 */
-	signal(SIGINT, SIG_IGN);
-
-	reset_tty();
-	if (clreol) {
-		putchar('\r');
-		clreos();
-		fflush(stdout);
-	} else if (!clreol && (promptlen > 0)) {
-		kill_line();
-		fflush(stdout);
-	} else
-		putcerr('\n');
-	free(previousre);
-	free(Line);
-	_exit(EXIT_SUCCESS);
-}
 
 static void copy_file(register FILE *f)
 {
@@ -1894,36 +1924,6 @@ static void initterm(void)
 		otty.c_cc[VMIN] = 1;
 		otty.c_cc[VTIME] = 0;
 	}
-}
-
-/* Come here when we get a suspend signal from the terminal */
-static void onsusp(int dummy __attribute__((__unused__)))
-{
-	sigset_t signals, oldmask;
-
-	/* ignore SIGTTOU so we don't get stopped if csh grabs the tty */
-	signal(SIGTTOU, SIG_IGN);
-	reset_tty();
-	fflush(stdout);
-	signal(SIGTTOU, SIG_DFL);
-	/* Send the TSTP signal to suspend our process group */
-	signal(SIGTSTP, SIG_DFL);
-
-	/* unblock SIGTSTP or we won't be able to suspend ourself */
-	sigemptyset(&signals);
-	sigaddset(&signals, SIGTSTP);
-	sigprocmask(SIG_UNBLOCK, &signals, &oldmask);
-
-	kill(0, SIGTSTP);
-	/* Pause for station break */
-
-	sigprocmask(SIG_SETMASK, &oldmask, NULL);
-
-	/* We're back */
-	signal(SIGTSTP, onsusp);
-	set_tty();
-	if (inwait)
-		siglongjmp(restore, 1);
 }
 
 int main(int argc, char **argv)
