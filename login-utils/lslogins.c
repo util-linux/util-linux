@@ -115,6 +115,7 @@ struct lslogins_user {
 	char *pwd_expire;
 	char *pwd_ctime_min;
 	char *pwd_ctime_max;
+	const char *pwd_method;
 
 	char *last_login;
 	char *last_tty;
@@ -166,6 +167,7 @@ enum {
 	COL_PWDLOCK,
 	COL_PWDEMPTY,
 	COL_PWDDENY,
+	COL_PWDMETHOD,
 	COL_GROUP,
 	COL_GID,
 	COL_SGROUPS,
@@ -219,6 +221,7 @@ static const struct lslogins_coldesc coldescs[] =
 	[COL_PWDEMPTY]      = { "PWD-EMPTY",	N_("password not required"), N_("Password not required"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDDENY]       = { "PWD-DENY",	N_("login by password disabled"), N_("Login by password disabled"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDLOCK]       = { "PWD-LOCK",	N_("password defined, but locked"), N_("Password is locked"), 1, SCOLS_FL_RIGHT },
+	[COL_PWDMETHOD]     = { "PWD-METHOD",   N_("password encryption method"), N_("Password encryption method"), 0.1 },
 	[COL_NOLOGIN]       = { "NOLOGIN",	N_("log in disabled by nologin(8) or pam_nologin(8)"), N_("No login"), 1, SCOLS_FL_RIGHT },
 	[COL_GROUP]         = { "GROUP",	N_("primary group name"), N_("Primary group"), 0.1 },
 	[COL_GID]           = { "GID",		N_("primary group ID"), "GID", 1, SCOLS_FL_RIGHT },
@@ -766,13 +769,22 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			} else
 				user->pwd_deny = STATUS_UNKNOWN;
 			break;
-
 		case COL_PWDLOCK:
 			if (shadow) {
 				if (*shadow->sp_pwdp == '!' && valid_pwd(shadow->sp_pwdp + 1))
 					user->pwd_lock = STATUS_TRUE;
 			} else
 				user->pwd_lock = STATUS_UNKNOWN;
+			break;
+		case COL_PWDMETHOD:
+			if (shadow) {
+				const char *p = shadow->sp_pwdp;
+
+				if (*p == '!' || *p == '*')
+					p++;
+				user->pwd_method = get_pwd_method(p, NULL, NULL);
+			} else
+				user->pwd_method = NULL;
 			break;
 		case COL_NOLOGIN:
 			if (strstr(pwd->pw_shell, "nologin"))
@@ -1064,6 +1076,9 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 			break;
 		case COL_PWDDENY:
 			rc = scols_line_set_data(ln, n, get_status(user->pwd_deny));
+			break;
+		case COL_PWDMETHOD:
+			rc = scols_line_set_data(ln, n, user->pwd_method);
 			break;
 		case COL_GROUP:
 			rc = scols_line_set_data(ln, n, user->group);
