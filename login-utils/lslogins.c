@@ -561,14 +561,84 @@ static int get_nprocs(const uid_t uid)
 	return nprocs;
 }
 
+static const char *get_pwd_method(const char *str, const char **next, unsigned int *sz)
+{
+	const char *p = str;
+	const char *res = NULL;
+
+	if (!p || *p++ != '$')
+		return NULL;
+
+	if (sz)
+		*sz = 0;
+
+	switch (*p) {
+	case '1':
+		res = "MD5";
+		if (sz)
+			*sz = 22;
+		break;
+	case '2':
+		p++;
+		if (*p == 'a' || *p == 'y')
+			res = "Blowfish";
+		break;
+	case '5':
+		res = "SHA-256";
+		if (sz)
+			*sz = 43;
+		break;
+	case '6':
+		res = "SHA-512";
+		if (sz)
+			*sz = 86;
+		break;
+	default:
+		return NULL;
+	}
+	p++;
+
+	if (!*p || *p != '$')
+		return NULL;
+	if (next)
+		*next = ++p;
+	return res;
+}
+
+#define is_valid_pwd_char(x)	(isalnum((unsigned char) (x)) || (x) ==  '.' || (x) == '/')
+
 static int valid_pwd(const char *str)
 {
-	const char *p;
+	const char *p = str;
+	unsigned int sz = 0, n;
 
-	for (p = str; p && *p; p++)
-		if (!isalnum((unsigned char) *p))
+	/* $id$ */
+	if (get_pwd_method(str, &p, &sz) == NULL)
+		return 0;
+	if (!*p)
+		return 0;
+
+	/* salt$ */
+	for (; p && *p; p++) {
+		if (*p == '$') {
+			p++;
+			break;
+		}
+		if (!is_valid_pwd_char(*p))
 			return 0;
-	return p > str ? 1 : 0;
+	}
+	if (!*p)
+		return 0;
+
+	/* encrypted */
+	for (n = 0; p && *p; p++, n++) {
+		if (!is_valid_pwd_char(*p))
+			return 0;
+	}
+
+	if (sz && n != sz)
+		return 0;
+	return 1;
 }
 
 static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const char *username)
