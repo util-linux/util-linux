@@ -143,8 +143,8 @@ static void ui_draw_menu(struct cfdisk *cf);
 static int ui_menu_move(struct cfdisk *cf, int key);
 static void ui_menu_resize(struct cfdisk *cf);
 
-static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
-		       uintmax_t low, uintmax_t up, int *expsize);
+static int ui_get_size(struct cfdisk *cf, const char *prompt, uint64_t *res,
+		       uint64_t low, uint64_t up, int *expsize);
 
 static int ui_enabled;
 static volatile sig_atomic_t sig_resize;
@@ -1707,7 +1707,7 @@ static int ui_refresh(struct cfdisk *cf)
 	attron(A_BOLD);
 	ui_center(0, _("Disk: %s"), fdisk_get_devname(cf->cxt));
 	attroff(A_BOLD);
-	ui_center(1, _("Size: %s, %ju bytes, %ju sectors"),
+	ui_center(1, _("Size: %s, %"PRIu64" bytes, %ju sectors"),
 			strsz, bytes, (uintmax_t) fdisk_get_nsectors(cf->cxt));
 	if (fdisk_get_disklabel_id(cf->cxt, &id) == 0 && id)
 		ui_center(2, _("Label: %s, identifier: %s"),
@@ -1843,13 +1843,13 @@ done:
 
 static int ui_get_size(struct cfdisk *cf,	/* context */
 		       const char *prompt,	/* UI dialog string */
-		       uintmax_t *res,		/* result in bytes */
-		       uintmax_t low,		/* minimal size */
-		       uintmax_t up,		/* maximal size */
+		       uint64_t *res,		/* result in bytes */
+		       uint64_t low,		/* minimal size */
+		       uint64_t up,		/* maximal size */
 		       int *expsize)		/* explicitly specified size */
 {
 	char buf[128];
-	uintmax_t user = 0;
+	uint64_t user = 0;
 	ssize_t rc;
 	char *dflt = size_to_human_string(0, *res);
 
@@ -1886,12 +1886,12 @@ static int ui_get_size(struct cfdisk *cf,	/* context */
 		}
 
 		if (rc == 0) {
-			DBG(UI, ul_debug("get_size user=%ju, power=%d, in-sectors=%s",
+			DBG(UI, ul_debug("get_size user=%"PRIu64", power=%d, in-sectors=%s",
 						user, pwr, insec ? "yes" : "no"));
 			if (insec)
 				user *= fdisk_get_sector_size(cf->cxt);
 			if (user < low) {
-				ui_warnx(_("Minimum size is %ju bytes."), low);
+				ui_warnx(_("Minimum size is %"PRIu64" bytes."), low);
 				rc = -ERANGE;
 			}
 			if (user > up && pwr && user < up + (1ULL << pwr * 10))
@@ -1900,7 +1900,7 @@ static int ui_get_size(struct cfdisk *cf,	/* context */
 				user = up;
 
 			if (user > up) {
-				ui_warnx(_("Maximum size is %ju bytes."), up);
+				ui_warnx(_("Maximum size is %"PRIu64" bytes."), up);
 				rc = -ERANGE;
 			}
 			if (rc == 0 && insec && expsize)
@@ -1914,7 +1914,7 @@ static int ui_get_size(struct cfdisk *cf,	/* context */
 		*res = user;
 	free(dflt);
 
-	DBG(UI, ul_debug("get_size (result=%ju, rc=%zd)", *res, rc));
+	DBG(UI, ul_debug("get_size (result=%"PRIu64", rc=%zd)", *res, rc));
 	return rc;
 }
 
