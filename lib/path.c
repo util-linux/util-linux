@@ -167,11 +167,18 @@ int ul_path_set_enoent_redirect(struct path_cxt *pc, int (*func)(struct path_cxt
 static const char *get_absdir(struct path_cxt *pc)
 {
 	int rc;
+	const char *dirpath;
 
 	if (!pc->prefix)
 		return pc->dir_path;
 
-	rc = snprintf(pc->path_buffer, sizeof(pc->path_buffer), "%s/%s", pc->prefix, pc->dir_path);
+	dirpath = pc->dir_path;
+	if (!dirpath)
+		return pc->prefix;
+	if (*dirpath == '/')
+		dirpath++;
+
+	rc = snprintf(pc->path_buffer, sizeof(pc->path_buffer), "%s/%s", pc->prefix, dirpath);
 	if (rc < 0)
 		return NULL;
 	if ((size_t)rc >= sizeof(pc->path_buffer)) {
@@ -219,16 +226,21 @@ char *ul_path_get_abspath(struct path_cxt *pc, char *buf, size_t bufsz, const ch
 	if (path) {
 		int rc;
 		va_list ap;
-		const char *tail = NULL;
+		const char *tail = NULL, *dirpath = pc->dir_path;
 
 		va_start(ap, path);
 		tail = ul_path_mkpath(pc, path, ap);
 		va_end(ap);
 
+		if (dirpath && *dirpath == '/')
+			dirpath++;
+		if (tail && *tail == '/')
+			tail++;
+
 		rc = snprintf(buf, bufsz, "%s/%s/%s",
 				pc->prefix ? pc->prefix : "",
-				pc->dir_path,
-				tail);
+				dirpath ? dirpath : "",
+				tail ? tail : "");
 
 		if ((size_t)rc >= bufsz) {
 			errno = ENAMETOOLONG;
