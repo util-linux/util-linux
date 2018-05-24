@@ -18,13 +18,13 @@
 
 int ipc_msg_get_limits(struct ipc_limits *lim)
 {
-	if (path_exist(_PATH_PROC_IPC_MSGMNI) &&
-	    path_exist(_PATH_PROC_IPC_MSGMNB) &&
-	    path_exist(_PATH_PROC_IPC_MSGMAX)) {
+	if (access(_PATH_PROC_IPC_MSGMNI, F_OK) &&
+	    access(_PATH_PROC_IPC_MSGMNB, F_OK) &&
+	    access(_PATH_PROC_IPC_MSGMAX, F_OK)) {
 
-		lim->msgmni = path_read_s32(_PATH_PROC_IPC_MSGMNI);
-		lim->msgmnb = path_read_s32(_PATH_PROC_IPC_MSGMNB);
-		lim->msgmax = path_read_s32(_PATH_PROC_IPC_MSGMAX);
+		ul_path_read_s32(NULL, &lim->msgmni, _PATH_PROC_IPC_MSGMNI);
+		ul_path_read_s32(NULL, &lim->msgmnb, _PATH_PROC_IPC_MSGMNB);
+		ul_path_read_u64(NULL, &lim->msgmax, _PATH_PROC_IPC_MSGMAX);
 	} else {
 		struct msginfo msginfo;
 
@@ -45,12 +45,11 @@ int ipc_sem_get_limits(struct ipc_limits *lim)
 
 	lim->semvmx = SEMVMX;
 
-	f = path_fopen("r", 0, _PATH_PROC_IPC_SEM);
+	f = fopen(_PATH_PROC_IPC_SEM, "r");
 	if (f) {
 		rc = fscanf(f, "%d\t%d\t%d\t%d",
 		       &lim->semmsl, &lim->semmns, &lim->semopm, &lim->semmni);
 		fclose(f);
-
 	}
 
 	if (rc != 4) {
@@ -72,13 +71,13 @@ int ipc_shm_get_limits(struct ipc_limits *lim)
 {
 	lim->shmmin = SHMMIN;
 
-	if (path_exist(_PATH_PROC_IPC_SHMALL) &&
-	    path_exist(_PATH_PROC_IPC_SHMMAX) &&
-	    path_exist(_PATH_PROC_IPC_SHMMNI)) {
+	if (access(_PATH_PROC_IPC_SHMALL, F_OK) &&
+	    access(_PATH_PROC_IPC_SHMMAX, F_OK) &&
+	    access(_PATH_PROC_IPC_SHMMNI, F_OK)) {
 
-		lim->shmall = path_read_u64(_PATH_PROC_IPC_SHMALL);
-		lim->shmmax = path_read_u64(_PATH_PROC_IPC_SHMMAX);
-		lim->shmmni = path_read_u64(_PATH_PROC_IPC_SHMMNI);
+		ul_path_read_u64(NULL, &lim->shmall, _PATH_PROC_IPC_SHMALL);
+		ul_path_read_u64(NULL, &lim->shmmax, _PATH_PROC_IPC_SHMMAX);
+		ul_path_read_u64(NULL, &lim->shmmni, _PATH_PROC_IPC_SHMMNI);
 
 	} else {
 		struct shminfo *shminfo;
@@ -106,7 +105,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 	p = *shmds = xcalloc(1, sizeof(struct shm_data));
 	p->next = NULL;
 
-	f = path_fopen("r", 0, _PATH_PROC_SYSV_SHM);
+	f = fopen(_PATH_PROC_SYSV_SHM, "r");
 	if (!f)
 		goto shm_fallback;
 
@@ -254,7 +253,7 @@ int ipc_sem_get_info(int id, struct sem_data **semds)
 	p = *semds = xcalloc(1, sizeof(struct sem_data));
 	p->next = NULL;
 
-	f = path_fopen("r", 0, _PATH_PROC_SYSV_SEM);
+	f = fopen(_PATH_PROC_SYSV_SEM, "r");
 	if (!f)
 		goto sem_fallback;
 
@@ -362,7 +361,7 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 	p = *msgds = xcalloc(1, sizeof(struct msg_data));
 	p->next = NULL;
 
-	f = path_fopen("r", 0, _PATH_PROC_SYSV_MSG);
+	f = fopen(_PATH_PROC_SYSV_MSG, "r");
 	if (!f)
 		goto msg_fallback;
 

@@ -100,7 +100,7 @@ struct ipc_limits {
 	unsigned int	semvmx;		/* semaphore max value (constant) */
 
 	int		msgmni;		/* max queues system wide */
-	size_t		msgmax;		/* max size of message */
+	uint64_t	msgmax;		/* max size of message */
 	int		msgmnb;		/* default max size of queue */
 };
 
