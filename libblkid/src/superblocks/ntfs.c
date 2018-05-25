@@ -114,7 +114,7 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 	}
 
 	if ((uint16_t) le16_to_cpu(ns->bpb.sector_size) *
-			ns->bpb.sectors_per_cluster > NTFS_MAX_CLUSTER_SIZE)
+			sectors_per_cluster > NTFS_MAX_CLUSTER_SIZE)
 		return 1;
 
 	/* Unused fields must be zero */
