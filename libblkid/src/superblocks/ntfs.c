@@ -72,7 +72,8 @@ struct file_attribute {
 } __attribute__((__packed__));
 
 #define MFT_RECORD_VOLUME	3
-#define NTFS_MAX_CLUSTER_SIZE	(64 * 1024)
+/* Windows 10 Creators edition has extended the cluster size limit to 2MB */
+#define NTFS_MAX_CLUSTER_SIZE	(2 * 1024 * 1024)
 
 enum {
 	MFT_RECORD_ATTR_VOLUME_NAME		= 0x60,
@@ -97,16 +98,19 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 	 * Check bios parameters block
 	 */
 	sector_size = le16_to_cpu(ns->bpb.sector_size);
-	sectors_per_cluster = ns->bpb.sectors_per_cluster;
 
 	if (sector_size < 256 || sector_size > 4096)
 		return 1;
 
-	switch (sectors_per_cluster) {
+	switch (ns->bpb.sectors_per_cluster) {
 	case 1: case 2: case 4: case 8: case 16: case 32: case 64: case 128:
+		sectors_per_cluster = ns->bpb.sectors_per_cluster;
 		break;
 	default:
-		return 1;
+		if ((ns->bpb.sectors_per_cluster < 240)
+		    || (ns->bpb.sectors_per_cluster > 249))
+			return 1;
+		sectors_per_cluster = 1 << (256 - ns->bpb.sectors_per_cluster);
 	}
 
 	if ((uint16_t) le16_to_cpu(ns->bpb.sector_size) *
