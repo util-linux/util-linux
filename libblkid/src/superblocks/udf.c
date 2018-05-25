@@ -446,6 +446,16 @@ real_blksz:
 			lvidiu_udf_rev = le16_to_cpu(lvidiu->min_udf_read_rev);
 			if (lvidiu_udf_rev)
 				udf_rev = lvidiu_udf_rev;
+			/* UDF-2.60: 2. Basic Restrictions & Requirements:
+			 * The Minimum UDF Read Revision value shall be at most #0250
+			 * for all media with a UDF 2.60 file system.
+			 * So in this case use Minimum UDF Write Revision as ID_FS_VERSION
+			 * to distinguish between UDF 2.50 and UDF 2.60 discs. */
+			if (lvidiu_udf_rev == 0x250) {
+				lvidiu_udf_rev = le16_to_cpu(lvidiu->min_udf_write_rev);
+				if (lvidiu_udf_rev > 0x250)
+					udf_rev = lvidiu_udf_rev;
+			}
 		}
 	}
 
