@@ -67,20 +67,9 @@
 
 /* /sys paths */
 #define _PATH_SYS_SYSTEM	"/sys/devices/system"
-#define _PATH_SYS_HYP_FEATURES "/sys/hypervisor/properties/features"
+#define _PATH_SYS_HYP_FEATURES	"/sys/hypervisor/properties/features"
 #define _PATH_SYS_CPU		_PATH_SYS_SYSTEM "/cpu"
 #define _PATH_SYS_NODE		_PATH_SYS_SYSTEM "/node"
-#define _PATH_PROC_XEN		"/proc/xen"
-#define _PATH_PROC_XENCAP	_PATH_PROC_XEN "/capabilities"
-#define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
-#define _PATH_PROC_PCIDEVS	"/proc/bus/pci/devices"
-#define _PATH_PROC_SYSINFO	"/proc/sysinfo"
-#define _PATH_PROC_STATUS	"/proc/self/status"
-#define _PATH_PROC_VZ	"/proc/vz"
-#define _PATH_PROC_BC	"/proc/bc"
-#define _PATH_PROC_DEVICETREE	"/proc/device-tree"
-#define _PATH_DEV_MEM 		"/dev/mem"
-#define _PATH_PROC_OSRELEASE	"/proc/sys/kernel/osrelease"
 
 /* Xen Domain feature flag used for /sys/hypervisor/properties/features */
 #define XENFEAT_supervisor_mode_kernel		3
@@ -389,14 +378,19 @@ static void read_physical_info_powerpc(
 static void
 read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
-	FILE *fp = path_fopen("r", 1, _PATH_PROC_CPUINFO);
+	FILE *fp;
 	char buf[BUFSIZ];
 	struct utsname utsbuf;
 	size_t setsize;
+	cpu_set_t *cpuset = NULL;
 
 	/* architecture */
 	if (uname(&utsbuf) == -1)
 		err(EXIT_FAILURE, _("error: uname failed"));
+
+	fp = ul_path_fopen(desc->procfs, "r", "cpuinfo");
+	if (!fp)
+		err(EXIT_FAILURE, _("cannot open %s"), "/proc/cpuinfo");
 	desc->arch = xstrdup(utsbuf.machine);
 
 	/* details */
@@ -455,9 +449,9 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	fclose(fp);
 
-	if (path_exist(_PATH_SYS_CPU "/kernel_max"))
+	if (ul_path_read_s32(desc->syscpu, &maxcpus, "kernel_max") == 0)
 		/* note that kernel_max is maximum index [NR_CPUS-1] */
-		maxcpus = path_read_s32(_PATH_SYS_CPU "/kernel_max") + 1;
+		maxcpus += 1;
 
 	else if (mod->system == SYSTEM_LIVE)
 		/* the root is '/' so we are working with data from the current kernel */
@@ -470,45 +464,39 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	setsize = CPU_ALLOC_SIZE(maxcpus);
 
-	if (path_exist(_PATH_SYS_CPU "/possible")) {
-		cpu_set_t *tmp = path_read_cpulist(maxcpus, _PATH_SYS_CPU "/possible");
+	if (ul_path_readf_cpulist(desc->syscpu, &cpuset, maxcpus, "possible") == 0) {
 		int num, idx;
 
-		desc->ncpuspos = CPU_COUNT_S(setsize, tmp);
+		desc->ncpuspos = CPU_COUNT_S(setsize, cpuset);
 		desc->idx2cpunum = xcalloc(desc->ncpuspos, sizeof(int));
 
 		for (num = 0, idx = 0; num < maxcpus; num++) {
-			if (CPU_ISSET_S(num, setsize, tmp))
+			if (CPU_ISSET_S(num, setsize, cpuset))
 				desc->idx2cpunum[idx++] = num;
 		}
-		cpuset_free(tmp);
+		cpuset_free(cpuset);
+		cpuset = NULL;
 	} else
 		err(EXIT_FAILURE, _("failed to determine number of CPUs: %s"),
 				_PATH_SYS_CPU "/possible");
 
 
 	/* get mask for present CPUs */
-	if (path_exist(_PATH_SYS_CPU "/present")) {
-		desc->present = path_read_cpulist(maxcpus, _PATH_SYS_CPU "/present");
+	if (ul_path_readf_cpulist(desc->syscpu, &desc->present, maxcpus, "present") == 0)
 		desc->ncpus = CPU_COUNT_S(setsize, desc->present);
-	}
 
 	/* get mask for online CPUs */
-	if (path_exist(_PATH_SYS_CPU "/online")) {
-		desc->online = path_read_cpulist(maxcpus, _PATH_SYS_CPU "/online");
+	if (ul_path_readf_cpulist(desc->syscpu, &desc->online, maxcpus, "online") == 0)
 		desc->nthreads = CPU_COUNT_S(setsize, desc->online);
-	}
 
 	/* get dispatching mode */
-	if (path_exist(_PATH_SYS_CPU "/dispatching"))
-		desc->dispatching = path_read_s32(_PATH_SYS_CPU "/dispatching");
-	else
+	if (ul_path_read_s32(desc->syscpu, &desc->dispatching, "dispatching") != 0)
 		desc->dispatching = -1;
 
 	if (mod->system == SYSTEM_LIVE)
 		read_physical_info_powerpc(desc);
 
-	if ((fp = path_fopen("r", 0, _PATH_PROC_SYSINFO))) {
+	if ((fp = ul_path_fopen(desc->procfs, "r", "sysinfo"))) {
 		while (fgets(buf, sizeof(buf), fp) != NULL && !desc->machinetype)
 			lookup(buf, "Type", &desc->machinetype);
 		fclose(fp);
@@ -516,13 +504,13 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 }
 
 static int
-has_pci_device(unsigned int vendor, unsigned int device)
+has_pci_device(struct lscpu_desc *desc, unsigned int vendor, unsigned int device)
 {
 	FILE *f;
 	unsigned int num, fn, ven, dev;
 	int res = 1;
 
-	f = path_fopen("r", 0, _PATH_PROC_PCIDEVS);
+	f = ul_path_fopen(desc->procfs, "r", "bus/pci/devices");
 	if (!f)
 		return 0;
 
@@ -608,9 +596,9 @@ read_hypervisor_cpuid(struct lscpu_desc *desc __attribute__((__unused__)))
 }
 #endif
 
-static int is_compatible(const char *path, const char *str)
+static int is_devtree_compatible(struct lscpu_desc *desc, const char *str)
 {
-	FILE *fd = path_fopen("r", 0, "%s", path);
+	FILE *fd = ul_path_fopen(desc->procfs, "r", "device-tree/compatible");
 
 	if (fd) {
 		char buf[256];
@@ -637,23 +625,25 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 	assert(!desc->hyper);
 
 	 /* IBM iSeries: legacy, para-virtualized on top of OS/400 */
-	if (path_exist("/proc/iSeries")) {
+	if (ul_path_access(desc->procfs, F_OK, "iSeries") == 0) {
 		desc->hyper = HYPER_OS400;
 		desc->virtype = VIRT_PARA;
 
 	/* PowerNV (POWER Non-Virtualized, bare-metal) */
-	} else if (is_compatible(_PATH_PROC_DEVICETREE "/compatible", "ibm,powernv")) {
+	} else if (is_devtree_compatible(desc, "ibm,powernv")) {
 		desc->hyper = HYPER_NONE;
 		desc->virtype = VIRT_NONE;
 
 	/* PowerVM (IBM's proprietary hypervisor, aka pHyp) */
-	} else if (path_exist(_PATH_PROC_DEVICETREE "/ibm,partition-name")
-		   && path_exist(_PATH_PROC_DEVICETREE "/hmc-managed?")
-		   && !path_exist(_PATH_PROC_DEVICETREE "/chosen/qemu,graphic-width")) {
+	} else if (ul_path_access(desc->procfs, F_OK, "device-tree/ibm,partition-name") == 0
+		   && ul_path_access(desc->procfs, F_OK, "device-tree/hmc-managed?") == 0
+		   && ul_path_access(desc->procfs, F_OK, "device-tree/chosen/qemu,graphic-width") != 0) {
+
 		FILE *fd;
 		desc->hyper = HYPER_PHYP;
 		desc->virtype = VIRT_PARA;
-		fd = path_fopen("r", 0, _PATH_PROC_DEVICETREE "/ibm,partition-name");
+
+		fd = ul_path_fopen(desc->procfs, "r", "device-tree/ibm,partition-name");
 		if (fd) {
 			char buf[256];
 			if (fscanf(fd, "%255s", buf) == 1 && !strcmp(buf, "full"))
@@ -662,7 +652,7 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 		}
 
 	/* Qemu */
-	} else if (is_compatible(_PATH_PROC_DEVICETREE "/compatible", "qemu,pseries")) {
+	} else if (is_devtree_compatible(desc, "qemu,pseries")) {
 		desc->hyper = HYPER_KVM;
 		desc->virtype = VIRT_PARA;
 	}
@@ -767,7 +757,7 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	/* We have to detect WSL first. is_vmware_platform() crashes on Windows 10. */
 
-	if ((fd = path_fopen("r", 0, _PATH_PROC_OSRELEASE))) {
+	if ((fd = ul_path_fopen(desc->procfs, "r", "sys/kernel/osrelease"))) {
 		char buf[256];
 
 		if (fgets(buf, sizeof(buf), fd) != NULL) {
@@ -795,7 +785,8 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		if (desc->hyper == HYPER_XEN) {
 			uint32_t features;
 
-			fd = path_fopen("r", 0, _PATH_SYS_HYP_FEATURES);
+			fd = ul_prefix_fopen(desc->prefix, "r", _PATH_SYS_HYP_FEATURES);
+
 			if (fd && fscanf(fd, "%x", &features) == 1) {
 				/* Xen PV domain */
 				if (features & XEN_FEATURES_PV_MASK)
@@ -810,10 +801,10 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	} else if (read_hypervisor_powerpc(desc) > 0) {}
 
 	/* Xen para-virt or dom0 */
-	else if (path_exist(_PATH_PROC_XEN)) {
+	else if (ul_path_access(desc->procfs, F_OK, "xen") == 0) {
 		int dom0 = 0;
-		fd = path_fopen("r", 0, _PATH_PROC_XENCAP);
 
+		fd = ul_path_fopen(desc->procfs, "r", "xen/capabilities");
 		if (fd) {
 			char buf[256];
 
@@ -826,18 +817,18 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		desc->hyper = HYPER_XEN;
 
 	/* Xen full-virt on non-x86_64 */
-	} else if (has_pci_device( hv_vendor_pci[HYPER_XEN], hv_graphics_pci[HYPER_XEN])) {
+	} else if (has_pci_device(desc, hv_vendor_pci[HYPER_XEN], hv_graphics_pci[HYPER_XEN])) {
 		desc->hyper = HYPER_XEN;
 		desc->virtype = VIRT_FULL;
-	} else if (has_pci_device( hv_vendor_pci[HYPER_VMWARE], hv_graphics_pci[HYPER_VMWARE])) {
+	} else if (has_pci_device(desc, hv_vendor_pci[HYPER_VMWARE], hv_graphics_pci[HYPER_VMWARE])) {
 		desc->hyper = HYPER_VMWARE;
 		desc->virtype = VIRT_FULL;
-	} else if (has_pci_device( hv_vendor_pci[HYPER_VBOX], hv_graphics_pci[HYPER_VBOX])) {
+	} else if (has_pci_device(desc, hv_vendor_pci[HYPER_VBOX], hv_graphics_pci[HYPER_VBOX])) {
 		desc->hyper = HYPER_VBOX;
 		desc->virtype = VIRT_FULL;
 
 	/* IBM PR/SM */
-	} else if ((fd = path_fopen("r", 0, _PATH_PROC_SYSINFO))) {
+	} else if ((fd = ul_path_fopen(desc->procfs, "r", "sysinfo"))) {
 		char buf[BUFSIZ];
 
 		desc->hyper = HYPER_IBM;
@@ -872,7 +863,8 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	/* OpenVZ/Virtuozzo - /proc/vz dir should exist
 	 *		      /proc/bc should not */
-	else if (path_exist(_PATH_PROC_VZ) && !path_exist(_PATH_PROC_BC)) {
+	else if (ul_path_access(desc->procfs, F_OK, "vz") == 0 &&
+		 ul_path_access(desc->procfs, F_OK, "bc") != 0) {
 		desc->hyper = HYPER_PARALLELS;
 		desc->virtype = VIRT_CONT;
 
@@ -889,7 +881,7 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		desc->virtype = VIRT_PARA;
 
 	/* Linux-VServer */
-	} else if ((fd = path_fopen("r", 0, _PATH_PROC_STATUS))) {
+	} else if ((fd = ul_path_fopen(desc->procfs, "r", "self/status"))) {
 		char buf[BUFSIZ];
 		char *val = NULL;
 
@@ -943,37 +935,29 @@ read_topology(struct lscpu_desc *desc, int idx)
 	int coreid, socketid, bookid, drawerid;
 	int i, num = real_cpu_num(desc, idx);
 
-	if (!path_exist(_PATH_SYS_CPU "/cpu%d/topology/thread_siblings", num))
+	if (ul_path_accessf(desc->syscpu, F_OK, "cpu%d/topology/thread_siblings", num) != 0)
 		return;
 
-	thread_siblings = path_read_cpuset(maxcpus, _PATH_SYS_CPU
-					"/cpu%d/topology/thread_siblings", num);
-	core_siblings = path_read_cpuset(maxcpus, _PATH_SYS_CPU
-					"/cpu%d/topology/core_siblings", num);
-	book_siblings = NULL;
-	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/book_siblings", num))
-		book_siblings = path_read_cpuset(maxcpus, _PATH_SYS_CPU
-					    "/cpu%d/topology/book_siblings", num);
-	drawer_siblings = NULL;
-	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/drawer_siblings", num))
-		drawer_siblings = path_read_cpuset(maxcpus, _PATH_SYS_CPU
-					    "/cpu%d/topology/drawer_siblings", num);
-	coreid = -1;
-	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/core_id", num))
-		coreid = path_read_s32(_PATH_SYS_CPU
-				       "/cpu%d/topology/core_id", num);
-	socketid = -1;
-	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/physical_package_id", num))
-		socketid = path_read_s32(_PATH_SYS_CPU
-				       "/cpu%d/topology/physical_package_id", num);
-	bookid = -1;
-	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/book_id", num))
-		bookid = path_read_s32(_PATH_SYS_CPU
-				       "/cpu%d/topology/book_id", num);
-	drawerid = -1;
-	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/drawer_id", num))
-		drawerid = path_read_s32(_PATH_SYS_CPU
-				       "/cpu%d/topology/drawer_id", num);
+	ul_path_readf_cpuset(desc->syscpu, &thread_siblings, maxcpus,
+					"cpu%d/topology/thread_siblings", num);
+	ul_path_readf_cpuset(desc->syscpu, &core_siblings, maxcpus,
+					"cpu%d/topology/core_siblings", num);
+	ul_path_readf_cpuset(desc->syscpu, &book_siblings, maxcpus,
+					"cpu%d/topology/book_siblings", num);
+	ul_path_readf_cpuset(desc->syscpu, &drawer_siblings, maxcpus,
+					"cpu%d/topology/drawer_siblings", num);
+
+	if (ul_path_readf_s32(desc->syscpu, &coreid, "cpu%d/topology/core_id", num) != 0)
+		coreid = -1;
+
+	if (ul_path_readf_s32(desc->syscpu, &socketid, "cpu%d/topology/physical_package_id", num) != 0)
+		socketid = -1;
+
+	if (ul_path_readf_s32(desc->syscpu, &bookid, "cpu%d/topology/book_id", num) != 0)
+		bookid = -1;
+
+	if (ul_path_readf_s32(desc->syscpu, &drawerid, "cpu%d/topology/drawer_id", num) != 0)
+		drawerid = -1;
 
 	if (!desc->coremaps) {
 		int ndrawers, nbooks, nsockets, ncores, nthreads;
@@ -1062,11 +1046,13 @@ read_polarization(struct lscpu_desc *desc, int idx)
 
 	if (desc->dispatching < 0)
 		return;
-	if (!path_exist(_PATH_SYS_CPU "/cpu%d/polarization", num))
+	if (ul_path_accessf(desc->syscpu, F_OK, "cpu%d/polarization", num) != 0)
 		return;
 	if (!desc->polarization)
 		desc->polarization = xcalloc(desc->ncpuspos, sizeof(int));
-	path_read_str(mode, sizeof(mode), _PATH_SYS_CPU "/cpu%d/polarization", num);
+
+	ul_path_readf_buffer(desc->syscpu, mode, sizeof(mode), "cpu%d/polarization", num);
+
 	if (strncmp(mode, "vertical:low", sizeof(mode)) == 0)
 		desc->polarization[idx] = POLAR_VLOW;
 	else if (strncmp(mode, "vertical:medium", sizeof(mode)) == 0)
@@ -1084,11 +1070,11 @@ read_address(struct lscpu_desc *desc, int idx)
 {
 	int num = real_cpu_num(desc, idx);
 
-	if (!path_exist(_PATH_SYS_CPU "/cpu%d/address", num))
+	if (ul_path_accessf(desc->syscpu, F_OK, "cpu%d/address", num) != 0)
 		return;
 	if (!desc->addresses)
 		desc->addresses = xcalloc(desc->ncpuspos, sizeof(int));
-	desc->addresses[idx] = path_read_s32(_PATH_SYS_CPU "/cpu%d/address", num);
+	ul_path_readf_s32(desc->syscpu, &desc->addresses[idx], "cpu%d/address", num);
 }
 
 static void
@@ -1096,11 +1082,11 @@ read_configured(struct lscpu_desc *desc, int idx)
 {
 	int num = real_cpu_num(desc, idx);
 
-	if (!path_exist(_PATH_SYS_CPU "/cpu%d/configure", num))
+	if (ul_path_accessf(desc->syscpu, F_OK, "cpu%d/configure", num) != 0)
 		return;
 	if (!desc->configured)
 		desc->configured = xcalloc(desc->ncpuspos, sizeof(int));
-	desc->configured[idx] = path_read_s32(_PATH_SYS_CPU "/cpu%d/configure", num);
+	ul_path_readf_s32(desc->syscpu, &desc->configured[idx], "cpu%d/configure", num);
 }
 
 /* Read overall maximum frequency of cpu */
@@ -1154,28 +1140,26 @@ static void
 read_max_mhz(struct lscpu_desc *desc, int idx)
 {
 	int num = real_cpu_num(desc, idx);
+	int mhz;
 
-	if (!path_exist(_PATH_SYS_CPU "/cpu%d/cpufreq/cpuinfo_max_freq", num))
+	if (ul_path_readf_s32(desc->syscpu, &mhz, "cpu%d/cpufreq/cpuinfo_max_freq", num) != 0)
 		return;
 	if (!desc->maxmhz)
 		desc->maxmhz = xcalloc(desc->ncpuspos, sizeof(char *));
-	xasprintf(&(desc->maxmhz[idx]), "%.4f",
-		  (float)path_read_s32(_PATH_SYS_CPU
-				       "/cpu%d/cpufreq/cpuinfo_max_freq", num) / 1000);
+	xasprintf(&desc->maxmhz[idx], "%.4f", (float) mhz / 1000);
 }
 
 static void
 read_min_mhz(struct lscpu_desc *desc, int idx)
 {
 	int num = real_cpu_num(desc, idx);
+	int mhz;
 
-	if (!path_exist(_PATH_SYS_CPU "/cpu%d/cpufreq/cpuinfo_min_freq", num))
+	if (ul_path_readf_s32(desc->syscpu, &mhz, "cpu%d/cpufreq/cpuinfo_min_freq", num) != 0)
 		return;
 	if (!desc->minmhz)
 		desc->minmhz = xcalloc(desc->ncpuspos, sizeof(char *));
-	xasprintf(&(desc->minmhz[idx]), "%.4f",
-		  (float)path_read_s32(_PATH_SYS_CPU
-				       "/cpu%d/cpufreq/cpuinfo_min_freq", num) / 1000);
+	xasprintf(&desc->minmhz[idx], "%.4f", (float) mhz / 1000);
 }
 
 static int
@@ -1195,39 +1179,37 @@ read_cache(struct lscpu_desc *desc, int idx)
 	int num = real_cpu_num(desc, idx);
 
 	if (!desc->ncaches) {
-		while(path_exist(_PATH_SYS_CPU "/cpu%d/cache/index%d",
-					num, desc->ncaches))
+		while (ul_path_accessf(desc->syscpu, F_OK,
+					"cpu%d/cache/index%d",
+					num, desc->ncaches) == 0)
 			desc->ncaches++;
 
 		if (!desc->ncaches)
 			return;
-
 		desc->caches = xcalloc(desc->ncaches, sizeof(*desc->caches));
 	}
 	for (i = 0; i < desc->ncaches; i++) {
 		struct cpu_cache *ca = &desc->caches[i];
 		cpu_set_t *map;
 
-		if (!path_exist(_PATH_SYS_CPU "/cpu%d/cache/index%d",
-				num, i))
+		if (ul_path_accessf(desc->syscpu, F_OK,
+					"cpu%d/cache/index%d", num, i) != 0)
 			continue;
 		if (!ca->name) {
-			int type, level;
+			int type = 0, level;
 
 			/* cache type */
-			path_read_str(buf, sizeof(buf),
-					_PATH_SYS_CPU "/cpu%d/cache/index%d/type",
-					num, i);
-			if (!strcmp(buf, "Data"))
-				type = 'd';
-			else if (!strcmp(buf, "Instruction"))
-				type = 'i';
-			else
-				type = 0;
+			if (ul_path_readf_buffer(desc->syscpu, buf, sizeof(buf),
+					"cpu%d/cache/index%d/type", num, i) > 0) {
+				if (!strcmp(buf, "Data"))
+					type = 'd';
+				else if (!strcmp(buf, "Instruction"))
+					type = 'i';
+			}
 
 			/* cache level */
-			level = path_read_s32(_PATH_SYS_CPU "/cpu%d/cache/index%d/level",
-					num, i);
+			ul_path_readf_s32(desc->syscpu, &level,
+					"cpu%d/cache/index%d/level", num, i);
 			if (type)
 				snprintf(buf, sizeof(buf), "L%d%c", level, type);
 			else
@@ -1236,19 +1218,14 @@ read_cache(struct lscpu_desc *desc, int idx)
 			ca->name = xstrdup(buf);
 
 			/* cache size */
-			if (path_exist(_PATH_SYS_CPU "/cpu%d/cache/index%d/size",num, i)) {
-				path_read_str(buf, sizeof(buf),
-					_PATH_SYS_CPU "/cpu%d/cache/index%d/size", num, i);
-				ca->size = xstrdup(buf);
-			} else {
+			if (ul_path_readf_string(desc->syscpu, &ca->size,
+					"cpu%d/cache/index%d/size", num, i) < 0)
 				ca->size = xstrdup("unknown size");
-			}
 		}
 
 		/* information about how CPUs share different caches */
-		map = path_read_cpuset(maxcpus,
-				  _PATH_SYS_CPU "/cpu%d/cache/index%d/shared_cpu_map",
-				  num, i);
+		ul_path_readf_cpuset(desc->syscpu, &map, maxcpus,
+				  "cpu%d/cache/index%d/shared_cpu_map", num, i);
 
 		if (!ca->sharedmaps)
 			ca->sharedmaps = xcalloc(desc->ncpuspos, sizeof(cpu_set_t *));
@@ -1280,15 +1257,19 @@ read_nodes(struct lscpu_desc *desc)
 	int i = 0;
 	DIR *dir;
 	struct dirent *d;
-	const char *path;
+	struct path_cxt *sysnode;
 
 	desc->nnodes = 0;
 
-	/* number of NUMA node */
-	if (!(path = path_get(_PATH_SYS_NODE)))
-		return;
-	if (!(dir = opendir(path)))
-		return;
+	sysnode = ul_new_path(_PATH_SYS_NODE);
+	if (!sysnode)
+		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_NODE);
+	ul_path_set_prefix(sysnode, desc->prefix);
+
+	dir = ul_path_opendir(sysnode, NULL);
+	if (!dir)
+		goto done;
+
 	while ((d = readdir(dir))) {
 		if (is_node_dirent(d))
 			desc->nnodes++;
@@ -1296,7 +1277,7 @@ read_nodes(struct lscpu_desc *desc)
 
 	if (!desc->nnodes) {
 		closedir(dir);
-		return;
+		goto done;
 	}
 
 	desc->nodemaps = xcalloc(desc->nnodes, sizeof(cpu_set_t *));
@@ -1313,9 +1294,10 @@ read_nodes(struct lscpu_desc *desc)
 
 	/* information about how nodes share different CPUs */
 	for (i = 0; i < desc->nnodes; i++)
-		desc->nodemaps[i] = path_read_cpuset(maxcpus,
-					_PATH_SYS_NODE "/node%d/cpumap",
-					desc->idx2nodenum[i]);
+		ul_path_readf_cpuset(sysnode, &desc->nodemaps[i], maxcpus,
+				"node%d/cpumap", desc->idx2nodenum[i]);
+done:
+	ul_unref_path(sysnode);
 }
 
 static char *
@@ -1787,7 +1769,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		 * If the cpu topology is not exported (e.g. 2nd level guest)
 		 * fall back to old calculation scheme.
 		 */
-		if ((fd = path_fopen("r", 0, _PATH_PROC_SYSINFO))) {
+		if ((fd = ul_path_fopen(desc->procfs, "r", "sysinfo"))) {
 			int t0, t1;
 
 			while (fd && fgets(buf, sizeof(buf), fd) != NULL) {
@@ -2002,8 +1984,7 @@ int main(int argc, char *argv[])
 			mod->mode = c == 'p' ? OUTPUT_PARSABLE : OUTPUT_READABLE;
 			break;
 		case 's':
-			if(path_set_prefix(optarg))
-				err(EXIT_FAILURE, _("invalid argument to %s"), "--sysroot");
+			desc->prefix = optarg;
 			mod->system = SYSTEM_SNAPSHOT;
 			break;
 		case 'x':
@@ -2045,6 +2026,22 @@ int main(int argc, char *argv[])
 		mod->online = 1;
 		mod->offline = mod->mode == OUTPUT_READABLE ? 1 : 0;
 	}
+
+	ul_path_init_debug();
+
+	/* /sys/devices/system/cpu */
+	desc->syscpu = ul_new_path(_PATH_SYS_CPU);
+	if (!desc->syscpu)
+		err(EXIT_FAILURE, _("failed to initialize CPUs sysfs handler"));
+	if (desc->prefix)
+		ul_path_set_prefix(desc->syscpu, desc->prefix);
+
+	/* /proc */
+	desc->procfs = ul_new_path("/proc");
+	if (!desc->procfs)
+		err(EXIT_FAILURE, _("failed to initialize procfs handler"));
+	if (desc->prefix)
+		ul_path_set_prefix(desc->procfs, desc->prefix);
 
 	read_basicinfo(desc, mod);
 
@@ -2124,5 +2121,7 @@ int main(int argc, char *argv[])
 		break;
 	}
 
+	ul_unref_path(desc->syscpu);
+	ul_unref_path(desc->procfs);
 	return EXIT_SUCCESS;
 }

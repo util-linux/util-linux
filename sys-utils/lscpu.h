@@ -77,6 +77,11 @@ struct polarization_modes {
 
 /* global description */
 struct lscpu_desc {
+	const char *prefix;	 /* path to /sys and /proc snapshot or NULL */
+
+	struct path_cxt	*syscpu; /* _PATH_SYS_CPU path handler */
+	struct path_cxt *procfs; /* /proc path handler */
+
 	char	*arch;
 	char	*vendor;
 	char	*machinetype;	/* s390 */
