@@ -296,7 +296,7 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 
 	if (!pc) {
 		fd = open(path, flags);
-		DBG(CXT, ul_debug("opening [%d] '%s'", flags, path));
+		DBG(CXT, ul_debug("opening '%s'", path));
 	} else {
 		int dir = ul_path_get_dirfd(pc);
 		if (dir < 0)
@@ -309,7 +309,7 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 			fd = openat(dir, path, flags);
 
-		DBG(CXT, ul_debugobj(pc, "opening [%d] '%s'", flags, path));
+		DBG(CXT, ul_debugobj(pc, "opening '%s'", path));
 	}
 	return fd;
 }
