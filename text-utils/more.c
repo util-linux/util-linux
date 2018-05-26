@@ -46,8 +46,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdlib.h>		/* for alloca() */
-#include <stdarg.h>		/* for va_start() etc */
+#include <stdlib.h>
+#include <stdarg.h>
 #include <sys/param.h>
 #include <ctype.h>
 #include <signal.h>
@@ -79,10 +79,6 @@
 # define NON_INTERACTIVE_MORE 1
 #endif
 
-#ifndef XTABS
-# define XTABS	TAB3
-#endif
-
 #define VI	"vi"	/* found on the user's path */
 
 #define BS		"\b"
@@ -90,7 +86,6 @@
 #define CARAT		"^"
 #define RINGBELL	'\007'
 
-#define TBUFSIZ		1024
 #define LINSIZ		256	/* minimal Line buffer size */
 #define ctrl(letter)	(letter & 077)
 #define RUBOUT		'\177'
@@ -104,7 +99,6 @@
 #define SHELL_LINE	1000
 #define COMMAND_BUF	200
 #define REGERR_BUF	NUM_COLUMNS
-#define STOP		-10
 
 #define TERM_AUTO_RIGHT_MARGIN    "am"
 #define TERM_CEOL                 "xhp"
@@ -165,12 +159,10 @@ struct more_control {
 		long line;		/* line number */
 	} context,
 	  screen_start;
-	char ch;
 	int lastcmd;			/* previous more key command */
 	int lastarg;			/* previous key command argument */
 	int lastcolon;			/* is a colon-prefixed key command */
 	char shell_line[SHELL_LINE];
-	char PC;			/* pad character */
 	unsigned int
 		bad_so:1,		/* true if overwriting does not turn off standout */
 		catch_susp:1,		/* we should catch the SIGTSTP signal */
@@ -395,7 +387,6 @@ static FILE *checkf(struct more_control *ctl, register char *fs, int *clearfirst
 
 static void prepare_line_buffer(struct more_control *ctl)
 {
-	char *nline;
 	size_t nsz = ctl->Mcol * 4;
 
 	if (ctl->LineLen >= nsz)
@@ -405,8 +396,7 @@ static void prepare_line_buffer(struct more_control *ctl)
 		nsz = LINSIZ;
 
 	/* alloc nsz and extra space for \n\0 */
-	nline = xrealloc(ctl->Line, nsz + 2);
-	ctl->Line = nline;
+	ctl->Line = xrealloc(ctl->Line, nsz + 2);
 	ctl->LineLen = nsz;
 }
 
@@ -511,20 +501,6 @@ static int get_line(struct more_control *ctl, register FILE *f, int *length)
 		}
 
 		*p++ = c;
-#if 0
-		if (c == '\033') {	/* ESC */
-			c = more_getc(ctl, f);
-			while (c > ' ' && c < '0' && p < &Line[LineLen - 1]) {
-				*p++ = c;
-				c = more_getc(ctl, f);
-			}
-			if (c >= '0' && c < '\177' && p < &Line[LineLen - 1]) {
-				*p++ = c;
-				c = more_getc(ctl, f);
-				continue;
-			}
-		}
-#endif	/* 0 */
 		if (c == '\t') {
 			if (!ctl->hardtabs || (column < ctl->promptlen && !ctl->hard)) {
 				if (ctl->hardtabs && ctl->eraseln && !ctl->dumb) {
@@ -773,7 +749,6 @@ static void reset_tty(void)
 	if (global_ctl->no_tty)
 		return;
 	if (global_ctl->pstate) {
-		/* putchar - if that isn't a macro */
 		tputs(global_ctl->ULexit, fileno(stdout), ourputch);
 		fflush(stdout);
 		global_ctl->pstate = 0;
@@ -829,17 +804,18 @@ static int readch(struct more_control *ctl)
 static int number(struct more_control *ctl, char *cmd)
 {
 	register int i;
+	char ch;
 
 	i = 0;
-	ctl->ch = ctl->otty.c_cc[VKILL];
+	ch = ctl->otty.c_cc[VKILL];
 	for (;;) {
-		ctl->ch = readch(ctl);
-		if (isdigit(ctl->ch))
-			i = i * 10 + ctl->ch - '0';
-		else if ((cc_t) ctl->ch == ctl->otty.c_cc[VKILL])
+		ch = readch(ctl);
+		if (isdigit(ch))
+			i = i * 10 + ch - '0';
+		else if ((cc_t) ch == ctl->otty.c_cc[VKILL])
 			i = 0;
 		else {
-			*cmd = ctl->ch;
+			*cmd = ch;
 			break;
 		}
 	}
@@ -1038,7 +1014,6 @@ static void ttyin(struct more_control *ctl, char buf[], register int nmax, char 
 		more_error(ctl, _("Line too long"));
 }
 
-/* return: 0 - unchanged, 1 - changed, -1 - overflow (unchanged) */
 static int expand(struct more_control *ctl, char **outbuf, char *inbuf)
 {
 	char *inpstr;
@@ -1163,8 +1138,8 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 		sleep(5);
 	if (id == 0) {
 		int errsv;
-		if (!isatty(0)) {
-			close(0);
+		if (!isatty(STDIN_FILENO)) {
+			close(STDIN_FILENO);
 			open("/dev/tty", 0);
 		}
 
@@ -1200,7 +1175,8 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 		signal(SIGQUIT, SIG_IGN);
 		if (ctl->catch_susp)
 			signal(SIGTSTP, SIG_DFL);
-		while (wait(NULL) > 0) ;
+		while (wait(NULL) > 0)
+			/* nothing */ ;
 		signal(SIGINT, end_it);
 		signal(SIGQUIT, onquit);
 		if (ctl->catch_susp)
@@ -1255,12 +1231,14 @@ static void do_shell(struct more_control *ctl, char *filename)
  * should cause more of the file to be printed. */
 static int colon(struct more_control *ctl, char *filename, int cmd, int nlines)
 {
+	char ch;
+
 	if (cmd == 0)
-		ctl->ch = readch(ctl);
+		ch = readch(ctl);
 	else
-		ctl->ch = cmd;
-	ctl->lastcolon = ctl->ch;
-	switch (ctl->ch) {
+		ch = cmd;
+	ctl->lastcolon = ch;
+	switch (ch) {
 	case 'f':
 		kill_line(ctl);
 		if (!ctl->no_intty)
@@ -1768,14 +1746,8 @@ static void screen(struct more_control *ctl, register FILE *f, register int num_
 				erasep(ctl, nchars);	/* erasep () sets promptlen to 0 */
 			else
 				ctl->promptlen = 0;
-			/* is this needed?
-			 * if (clreol)
-			 *	cleareol();     * must clear again in case we wrapped *
-			 */
 			if (nchars < ctl->Mcol || !ctl->fold_opt)
 				prbuf(ctl, "\n", 1);	/* will turn off UL if necessary */
-			if (nchars == STOP)
-				break;
 			num_lines--;
 		}
 		if (ctl->pstate) {
@@ -1823,7 +1795,7 @@ static void chgwinsz(int dummy __attribute__((__unused__)))
 			global_ctl->nscroll = global_ctl->Lpp / 2 - 1;
 			if (global_ctl->nscroll <= 0)
 				global_ctl->nscroll = 1;
-			global_ctl->dlines = global_ctl->Lpp - 1;	/* was: Lpp - (noscroll ? 1 : 2) */
+			global_ctl->dlines = global_ctl->Lpp - 1;
 		}
 		if (win.ws_col != 0)
 			global_ctl->Mcol = win.ws_col;
@@ -1842,17 +1814,11 @@ static void copy_file(register FILE *f)
 }
 
 
-/*----------------------------- Terminal I/O -------------------------------*/
 static void initterm(struct more_control *ctl)
 {
 	int ret;
-	char *padstr;
 	char *term;
 	struct winsize win;
-
-#ifdef do_SIGTTOU
- retry:
-#endif
 
 #ifndef NON_INTERACTIVE_MORE
 	ctl->no_tty = tcgetattr(fileno(stdout), &ctl->otty);
@@ -1860,19 +1826,6 @@ static void initterm(struct more_control *ctl)
 	if (!ctl->no_tty) {
 		ctl->docrterase = (ctl->otty.c_cc[VERASE] != 255);
 		ctl->docrtkill = (ctl->otty.c_cc[VKILL] != 255);
-#ifdef do_SIGTTOU
-		{
-			int tgrp;
-			/* Wait until we're in the foreground before we
-			 * save the terminal modes. */
-			if ((tgrp = tcgetpgrp(fileno(stdout))) < 0)
-				err(EXIT_FAILURE, "tcgetpgrp");
-			if (tgrp != getpgrp(0)) {
-				kill(0, SIGTTOU);
-				goto retry;
-			}
-		}
-#endif	/* do_SIGTTOU */
 		if ((term = getenv("TERM")) == NULL) {
 			ctl->dumb = 1;
 			ctl->ul_opt = 0;
@@ -1896,7 +1849,7 @@ static void initterm(struct more_control *ctl)
 			}
 #endif
 			if ((ctl->Lpp <= 0) || tigetflag(TERM_HARD_COPY)) {
-				ctl->hard = 1;	/* Hard copy terminal */
+				ctl->hard = 1;
 				ctl->Lpp = LINES_PER_PAGE;
 			}
 
@@ -1940,9 +1893,6 @@ static void initterm(struct more_control *ctl)
 			} else {
 				ctl->ulglitch = 0;
 			}
-
-			if ((padstr = tigetstr(TERM_PAD_CHAR)) != NULL)
-				ctl->PC = *padstr;
 			ctl->Home = tigetstr(TERM_HOME);
 			if (ctl->Home == NULL || *ctl->Home == '\0') {
 				if ((ctl->cursorm =
@@ -1966,7 +1916,7 @@ static void initterm(struct more_control *ctl)
 	ctl->no_intty = tcgetattr(fileno(stdin), &ctl->otty);
 	tcgetattr(fileno(stderr), &ctl->otty);
 	ctl->savetty0 = ctl->otty;
-	ctl->hardtabs = (ctl->otty.c_oflag & TABDLY) != XTABS;
+	ctl->hardtabs = (ctl->otty.c_oflag & TABDLY) != TAB3;
 	if (!ctl->no_tty) {
 		ctl->otty.c_lflag &= ~(ICANON | ECHO);
 		ctl->otty.c_cc[VMIN] = 1;
@@ -2064,7 +2014,7 @@ int main(int argc, char **argv)
 			ctl.noscroll = 1;
 	}
 	if (ctl.dlines == 0)
-		ctl.dlines = ctl.Lpp - 1;	/* was: Lpp - (noscroll ? 1 : 2) */
+		ctl.dlines = ctl.Lpp - 1;
 	left = ctl.dlines;
 	if (ctl.nfiles > 1)
 		prnames++;
