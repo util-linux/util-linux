@@ -1756,7 +1756,6 @@ static void screen(struct more_control *ctl, FILE *f, int num_lines)
 }
 
 /* Come here if a signal for a window size change is received */
-#ifdef SIGWINCH
 static void chgwinsz(int dummy __attribute__((__unused__)))
 {
 	struct winsize win;
@@ -1775,7 +1774,6 @@ static void chgwinsz(int dummy __attribute__((__unused__)))
 	}
 	signal(SIGWINCH, chgwinsz);
 }
-#endif				/* SIGWINCH */
 
 static void copy_file(FILE *f)
 {
@@ -1808,19 +1806,15 @@ static void initterm(struct more_control *ctl)
 			ctl->dumb = 1;
 			ctl->ul_opt = 0;
 		} else {
-#ifdef TIOCGWINSZ
 			if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) < 0) {
-#endif
 				ctl->Lpp = tigetnum(TERM_LINES);
 				ctl->Mcol = tigetnum(TERM_COLS);
-#ifdef TIOCGWINSZ
 			} else {
 				if ((ctl->Lpp = win.ws_row) == 0)
 					ctl->Lpp = tigetnum(TERM_LINES);
 				if ((ctl->Mcol = win.ws_col) == 0)
 					ctl->Mcol = tigetnum(TERM_COLS);
 			}
-#endif
 			if ((ctl->Lpp <= 0) || tigetflag(TERM_HARD_COPY)) {
 				ctl->hard = 1;
 				ctl->Lpp = LINES_PER_PAGE;
@@ -1999,9 +1993,7 @@ int main(int argc, char **argv)
 	if (!ctl.no_tty) {
 		signal(SIGQUIT, onquit);
 		signal(SIGINT, end_it);
-#ifdef SIGWINCH
 		signal(SIGWINCH, chgwinsz);
-#endif
 		if (signal(SIGTSTP, SIG_IGN) == SIG_DFL) {
 			signal(SIGTSTP, onsusp);
 			ctl.catch_susp++;
