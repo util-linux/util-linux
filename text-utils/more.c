@@ -198,11 +198,6 @@ struct more_control {
 /* FIXME: global_ctl is used in signal handlers. */
 struct more_control *global_ctl;
 
-static void putstring(char *s)
-{
-	tputs(s, fileno(stdout), putchar);	/* putp(s); */
-}
-
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -310,12 +305,6 @@ static int more_ungetc(struct more_control *ctl, int c, FILE *stream)
 	return ungetc(c, stream);
 }
 
-/* force clear to end of line */
-static void cleareol(struct more_control *ctl)
-{
-	putstring(ctl->eraseln);
-}
-
 /* magic --
  *	check for file magic numbers.  This code would best be shared
  *	with the file(1) program or, perhaps, more should not try to be
@@ -357,7 +346,7 @@ static FILE *checkf(struct more_control *ctl, register char *fs, int *clearfirst
 	if (stat(fs, &stbuf) == -1) {
 		fflush(stdout);
 		if (ctl->clreol)
-			cleareol(ctl);
+			putp(ctl->eraseln);
 		warn(_("stat of %s failed"), fs);
 		return NULL;
 	}
@@ -597,11 +586,6 @@ static int get_line(struct more_control *ctl, register FILE *f, int *length)
 	return column;
 }
 
-static void clreos(struct more_control *ctl)
-{
-	putstring(ctl->EodClr);
-}
-
 /* Erase the rest of the prompt, assuming we are starting at column col. */
 static void erasep(struct more_control *ctl, register int col)
 {
@@ -614,7 +598,7 @@ static void erasep(struct more_control *ctl, register int col)
 		if (col == 0)
 			putchar('\r');
 		if (!ctl->dumb && ctl->eraseln)
-			putstring(ctl->eraseln);
+			putp(ctl->eraseln);
 		else
 			printf("%*s", ctl->promptlen - col, "");
 	}
@@ -689,7 +673,7 @@ static void prbuf(struct more_control *ctl, register char *s, register int n)
 #endif				/* HAVE_WIDECHAR */
 			if (state && *ctl->chUL) {
 				fputs(ctl->chBS, stdout);
-				putstring(ctl->chUL);
+				putp(ctl->chUL);
 			}
 			ctl->pstate = state;
 		}
@@ -706,17 +690,17 @@ static void kill_line(struct more_control *ctl)
 static void prompt(struct more_control *ctl, char *filename)
 {
 	if (ctl->clreol)
-		cleareol(ctl);
+		putp(ctl->eraseln);
 	else if (ctl->promptlen > 0)
 		kill_line(ctl);
 	if (!ctl->hard) {
 		ctl->promptlen = 0;
 		if (ctl->Senter && ctl->Sexit) {
-			putstring(ctl->Senter);
+			putp(ctl->Senter);
 			ctl->promptlen += (2 * ctl->soglitch);
 		}
 		if (ctl->clreol)
-			cleareol(ctl);
+			putp(ctl->eraseln);
 		ctl->promptlen += printf(_("--More--"));
 		if (filename != NULL) {
 			ctl->promptlen += printf(_("(Next file: %s)"), filename);
@@ -730,18 +714,13 @@ static void prompt(struct more_control *ctl, char *filename)
 			    printf(_("[Press space to continue, 'q' to quit.]"));
 		}
 		if (ctl->Senter && ctl->Sexit)
-			putstring(ctl->Sexit);
+			putp(ctl->Sexit);
 		if (ctl->clreol)
-			clreos(ctl);
+			putp(ctl->EodClr);
 		fflush(stdout);
 	} else
 		fputc(RINGBELL, stderr);
 	ctl->inwait++;
-}
-
-static int ourputch(int c)
-{
-	return putc(c, stdout);
 }
 
 static void reset_tty(void)
@@ -749,7 +728,7 @@ static void reset_tty(void)
 	if (global_ctl->no_tty)
 		return;
 	if (global_ctl->pstate) {
-		tputs(global_ctl->ULexit, fileno(stdout), ourputch);
+		putp(global_ctl->ULexit);
 		fflush(stdout);
 		global_ctl->pstate = 0;
 	}
@@ -773,7 +752,7 @@ static void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unus
 	reset_tty();
 	if (global_ctl->clreol) {
 		putchar('\r');
-		clreos(global_ctl);
+		putp(global_ctl->eraseln);
 		fflush(stdout);
 	} else if (!global_ctl->clreol && (global_ctl->promptlen > 0)) {
 		kill_line(global_ctl);
@@ -838,14 +817,14 @@ static void skipf(struct more_control *ctl, register int nskip)
 		ctl->fnum = 0;
 	puts(_("\n...Skipping "));
 	if (ctl->clreol)
-		cleareol(ctl);
+		putp(ctl->eraseln);
 	if (nskip > 0)
 		fputs(_("...Skipping to file "), stdout);
 	else
 		fputs(_("...Skipping back to file "), stdout);
 	puts(ctl->fnames[ctl->fnum]);
 	if (ctl->clreol)
-		cleareol(ctl);
+		putp(ctl->eraseln);
 	putchar('\n');
 	ctl->fnum--;
 }
@@ -864,7 +843,7 @@ static void show(struct more_control *ctl, char c)
 static void more_error(struct more_control *ctl, char *mess)
 {
 	if (ctl->clreol)
-		cleareol(ctl);
+		putp(ctl->eraseln);
 	else
 		kill_line(ctl);
 	ctl->promptlen += strlen(mess);
@@ -1323,12 +1302,6 @@ static void rdline(struct more_control *ctl, register FILE *f)
 	*p = '\0';
 }
 
-/* Go to home position */
-static void home(struct more_control *ctl)
-{
-	putp(ctl->Home);
-}
-
 /* Search for nth occurrence of regular expression contained in buf in
  * the file */
 static void search(struct more_control *ctl, char buf[], FILE *file, register int n)
@@ -1362,7 +1335,7 @@ static void search(struct more_control *ctl, char buf[], FILE *file, register in
 				if (lncount > 3 || (lncount > 1 && ctl->no_intty)) {
 					putchar('\n');
 					if (ctl->clreol)
-						cleareol(ctl);
+						putp(ctl->eraseln);
 					fputs(_("...skipping\n"), stdout);
 				}
 				if (!ctl->no_intty) {
@@ -1371,8 +1344,8 @@ static void search(struct more_control *ctl, char buf[], FILE *file, register in
 					more_fseek(ctl, file, line3);
 					if (ctl->noscroll) {
 						if (ctl->clreol) {
-							home(ctl);
-							cleareol(ctl);
+							putp(ctl->Home);
+							putp(ctl->eraseln);
 						} else
 							doclear(ctl);
 					}
@@ -1380,8 +1353,8 @@ static void search(struct more_control *ctl, char buf[], FILE *file, register in
 					kill_line(ctl);
 					if (ctl->noscroll) {
 						if (ctl->clreol) {
-							home(ctl);
-							cleareol(ctl);
+							putp(ctl->Home);
+							putp(ctl->eraseln);
 						} else
 							doclear(ctl);
 					}
@@ -1465,12 +1438,12 @@ static int command(struct more_control *ctl, char *filename, register FILE *f)
 				erasep(ctl, 0);
 				putchar('\n');
 				if (ctl->clreol)
-					cleareol(ctl);
+					putp(ctl->eraseln);
 				printf(P_("...back %d page",
 					"...back %d pages", nlines),
 					nlines);
 				if (ctl->clreol)
-					cleareol(ctl);
+					putp(ctl->eraseln);
 				putchar('\n');
 
 				initline = ctl->Currline - ctl->dlines * (nlines + 1);
@@ -1519,13 +1492,13 @@ static int command(struct more_control *ctl, char *filename, register FILE *f)
 			erasep(ctl, 0);
 			putchar('\n');
 			if (ctl->clreol)
-				cleareol(ctl);
+				putp(ctl->eraseln);
 			printf(P_("...skipping %d line",
 				"...skipping %d lines", nlines),
 				nlines);
 
 			if (ctl->clreol)
-				cleareol(ctl);
+				putp(ctl->eraseln);
 			putchar('\n');
 
 			while (nlines > 0) {
@@ -1690,12 +1663,12 @@ static int command(struct more_control *ctl, char *filename, register FILE *f)
 			if (ctl->dum_opt) {
 				kill_line(ctl);
 				if (ctl->Senter && ctl->Sexit) {
-					putstring(ctl->Senter);
+					putp(ctl->Senter);
 					ctl->promptlen =
 					    printf(_
 						   ("[Press 'h' for instructions.]"))
 					    + 2 * ctl->soglitch;
-					putstring(ctl->Sexit);
+					putp(ctl->Sexit);
 				} else
 					ctl->promptlen =
 					    printf(_
@@ -1727,7 +1700,7 @@ static void screen(struct more_control *ctl, register FILE *f, register int num_
 		while (num_lines > 0 && !ctl->Pause) {
 			if ((nchars = get_line(ctl, f, &length)) == EOF) {
 				if (ctl->clreol)
-					clreos(ctl);
+					putp(ctl->EodClr);
 				return;
 			}
 			if (ctl->ssp_opt && length == 0 && prev_len == 0)
@@ -1740,7 +1713,7 @@ static void screen(struct more_control *ctl, register FILE *f, register int num_
 			 * some terminals do not erase what they tab
 			 * over. */
 			if (ctl->clreol)
-				cleareol(ctl);
+				putp(ctl->eraseln);
 			prbuf(ctl, ctl->Line, length);
 			if (nchars < ctl->promptlen)
 				erasep(ctl, nchars);	/* erasep () sets promptlen to 0 */
@@ -1757,12 +1730,12 @@ static void screen(struct more_control *ctl, register FILE *f, register int num_
 		fflush(stdout);
 		if ((c = more_getc(ctl, f)) == EOF) {
 			if (ctl->clreol)
-				clreos(ctl);
+				putp(ctl->EodClr);
 			return;
 		}
 
 		if (ctl->Pause && ctl->clreol)
-			clreos(ctl);
+			putp(ctl->EodClr);
 		more_ungetc(ctl, c, f);
 		sigsetjmp(ctl->restore, 1);
 		ctl->Pause = 0;
@@ -1773,7 +1746,7 @@ static void screen(struct more_control *ctl, register FILE *f, register int num_
 			erasep(ctl, 0);
 		if (ctl->noscroll && num_lines >= ctl->dlines) {
 			if (ctl->clreol)
-				home(ctl);
+				putp(ctl->Home);
 			else
 				doclear(ctl);
 		}
@@ -2045,7 +2018,7 @@ int main(int argc, char **argv)
 				ungetc(chr, f);
 				if (ctl.noscroll && (chr != EOF)) {
 					if (ctl.clreol)
-						home(&ctl);
+						putp(ctl.Home);
 					else
 						doclear(&ctl);
 				}
@@ -2089,7 +2062,7 @@ int main(int argc, char **argv)
 				if ((ctl.noscroll || clearit)
 				    && (ctl.file_size != LONG_MAX)) {
 					if (ctl.clreol)
-						home(&ctl);
+						putp(ctl.Home);
 					else
 						doclear(&ctl);
 				}
@@ -2097,16 +2070,16 @@ int main(int argc, char **argv)
 					if (ctl.bad_so)
 						erasep(&ctl, 0);
 					if (ctl.clreol)
-						cleareol(&ctl);
+						putp(ctl.eraseln);
 					fputs("::::::::::::::", stdout);
 					if (ctl.promptlen > 14)
 						erasep(&ctl, 14);
 					putchar('\n');
 					if (ctl.clreol)
-						cleareol(&ctl);
+						putp(ctl.eraseln);
 					puts(ctl.fnames[ctl.fnum]);
 					if (ctl.clreol)
-						cleareol(&ctl);
+						putp(ctl.eraseln);
 					fputs("::::::::::::::\n", stdout);
 					if (left > ctl.Lpp - 4)
 						left = ctl.Lpp - 4;
