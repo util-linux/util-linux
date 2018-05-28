@@ -227,7 +227,7 @@ static void __attribute__((__noreturn__)) usage(void)
 }
 
 
-static void argscan(struct more_control *ctl, char *s)
+static void arg_parser(struct more_control *ctl, char *s)
 {
 	int seen_num = 0;
 
@@ -309,7 +309,7 @@ static int more_ungetc(struct more_control *ctl, int c, FILE *stream)
  *	check for file magic numbers.  This code would best be shared
  *	with the file(1) program or, perhaps, more should not try to be
  *	so smart. */
-static int magic(FILE *f, char *fs)
+static int check_magic(FILE *f, char *fs)
 {
 	signed char twobytes[2];
 
@@ -361,7 +361,7 @@ static FILE *checkf(struct more_control *ctl, char *fs, int *clearfirst)
 		warn(_("cannot open %s"), fs);
 		return NULL;
 	}
-	if (magic(f, fs)) {
+	if (check_magic(f, fs)) {
 		fclose(f);
 		return NULL;
 	}
@@ -585,7 +585,7 @@ static int get_line(struct more_control *ctl, FILE *f, int *length)
 }
 
 /* Erase the rest of the prompt, assuming we are starting at column col. */
-static void erasep(struct more_control *ctl, int col)
+static void erase_prompt(struct more_control *ctl, int col)
 {
 
 	if (ctl->prompt_len == 0)
@@ -614,7 +614,7 @@ static UL_ASAN_BLACKLIST size_t xmbrtowc(wchar_t *wc, const char *s, size_t n,
 }
 #endif
 
-static int wouldul(char *s, int n)
+static int would_underline(char *s, int n)
 {
 	if (n < 2)
 		return 0;
@@ -624,7 +624,7 @@ static int wouldul(char *s, int n)
 }
 
 /* Print a buffer of n characters */
-static void prbuf(struct more_control *ctl, char *s, int n)
+static void print_buf(struct more_control *ctl, char *s, int n)
 {
 	char c;	/* next output character */
 	int state;	/* next output char's UL state */
@@ -634,11 +634,11 @@ static void prbuf(struct more_control *ctl, char *s, int n)
 			putchar(*s++);
 		else {
 			if (*s == ' ' && ctl->underline_state == 0 && ctl->underline_glitch
-			    && wouldul(s + 1, n - 1)) {
+			    && would_underline(s + 1, n - 1)) {
 				s++;
 				continue;
 			}
-			if ((state = wouldul(s, n)) != 0) {
+			if ((state = would_underline(s, n)) != 0) {
 				c = (*s == '_') ? s[2] : *s;
 				n -= 2;
 				s += 3;
@@ -646,7 +646,7 @@ static void prbuf(struct more_control *ctl, char *s, int n)
 				c = *s++;
 			if (state != ctl->underline_state) {
 				if (c == ' ' && state == 0 && ctl->underline_glitch
-				    && wouldul(s, n - 1))
+				    && would_underline(s, n - 1))
 					state = 1;
 				else
 					putp(state ? ctl->enter_underline : ctl->exit_underline);
@@ -680,12 +680,12 @@ static void prbuf(struct more_control *ctl, char *s, int n)
 /* Erase the current line entirely */
 static void kill_line(struct more_control *ctl)
 {
-	erasep(ctl, 0);
+	erase_prompt(ctl, 0);
 	if (!ctl->erase_line || ctl->dumb_tty)
 		putchar('\r');
 }
 
-static void prompt(struct more_control *ctl, char *filename)
+static void output_prompt(struct more_control *ctl, char *filename)
 {
 	if (ctl->clear_line_ends)
 		putp(ctl->erase_line);
@@ -737,7 +737,7 @@ static void reset_tty(void)
 }
 
 /* Clean up terminal state and exit. Also come here if interrupt signal received */
-static void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unused__)))
+static void __attribute__((__noreturn__)) more_exit(int dummy __attribute__((__unused__)))
 {
 	/* May be executed as a signal handler as well as by main process.
 	 *
@@ -762,14 +762,14 @@ static void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unus
 	_exit(EXIT_SUCCESS);
 }
 
-static int readch(struct more_control *ctl)
+static int read_user_input(struct more_control *ctl)
 {
 	unsigned char c;
 
 	errno = 0;
 	if (read(STDERR_FILENO, &c, 1) <= 0) {
 		if (errno != EINTR)
-			end_it(0);
+			more_exit(0);
 		else
 			c = ctl->output_tty.c_cc[VKILL];
 	}
@@ -778,7 +778,7 @@ static int readch(struct more_control *ctl)
 
 /* Read a decimal number from the terminal.  Set cmd to the non-digit
  * which terminates the number. */
-static int number(struct more_control *ctl, char *cmd)
+static int read_number(struct more_control *ctl, char *cmd)
 {
 	int i;
 	char ch;
@@ -786,7 +786,7 @@ static int number(struct more_control *ctl, char *cmd)
 	i = 0;
 	ch = ctl->output_tty.c_cc[VKILL];
 	for (;;) {
-		ch = readch(ctl);
+		ch = read_user_input(ctl);
 		if (isdigit(ch))
 			i = i * 10 + ch - '0';
 		else if ((cc_t) ch == ctl->output_tty.c_cc[VKILL])
@@ -799,9 +799,10 @@ static int number(struct more_control *ctl, char *cmd)
 	return i;
 }
 
-/* Skip nskip files in the file list (from the command line).  Nskip may
- * be negative. */
-static void skipf(struct more_control *ctl, int nskip)
+/* Change displayed file from command line list to next nskip, where nskip
+ * is relative position in argv and can be negative, that is a previous
+ * file.  */
+static void change_file(struct more_control *ctl, int nskip)
 {
 	if (nskip == 0)
 		return;
@@ -876,7 +877,7 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 	while (sp - buf < nmax) {
 		if (ctl->prompt_len > maxlen)
 			maxlen = ctl->prompt_len;
-		c = readch(ctl);
+		c = read_user_input(ctl);
 		if (c == '\\') {
 			slash++;
 		} else if (((cc_t) c == ctl->output_tty.c_cc[VERASE]) && !slash) {
@@ -955,7 +956,7 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 				putchar('\r');
 				putchar(pchar);
 				if (ctl->erase_line)
-					erasep(ctl, 1);
+					erase_prompt(ctl, 1);
 				else if (ctl->erase_input_ok)
 					while (ctl->prompt_len-- > 1)
 						fputs(BSB, stderr);
@@ -1053,13 +1054,13 @@ static void set_tty(struct more_control *ctl)
 }
 
 /* Come here if a quit signal is received */
-static void onquit(int dummy __attribute__((__unused__)))
+static void sigquit_handler(int dummy __attribute__((__unused__)))
 {
 	signal(SIGQUIT, SIG_IGN);
 	if (!global_ctl->waiting_input) {
 		putchar('\n');
 		if (!global_ctl->starting_up) {
-			signal(SIGQUIT, onquit);
+			signal(SIGQUIT, sigquit_handler);
 			siglongjmp(global_ctl->destination, 1);
 		} else
 			global_ctl->is_paused = 1;
@@ -1067,11 +1068,11 @@ static void onquit(int dummy __attribute__((__unused__)))
 		global_ctl->prompt_len += fprintf(stderr, _("[Use q or Q to quit]"));
 		global_ctl->no_quit_dialog = 0;
 	}
-	signal(SIGQUIT, onquit);
+	signal(SIGQUIT, sigquit_handler);
 }
 
 /* Come here when we get a suspend signal from the terminal */
-static void onsusp(int dummy __attribute__((__unused__)))
+static void sigtstp_handler(int dummy __attribute__((__unused__)))
 {
 	sigset_t signals, oldmask;
 
@@ -1094,7 +1095,7 @@ static void onsusp(int dummy __attribute__((__unused__)))
 	sigprocmask(SIG_SETMASK, &oldmask, NULL);
 
 	/* We're back */
-	signal(SIGTSTP, onsusp);
+	signal(SIGTSTP, sigtstp_handler);
 	set_tty(global_ctl);
 	if (global_ctl->waiting_input)
 		siglongjmp(global_ctl->destination, 1);
@@ -1154,18 +1155,18 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 			signal(SIGTSTP, SIG_DFL);
 		while (wait(NULL) > 0)
 			/* nothing */ ;
-		signal(SIGINT, end_it);
-		signal(SIGQUIT, onquit);
+		signal(SIGINT, more_exit);
+		signal(SIGQUIT, sigquit_handler);
 		if (ctl->catch_suspend)
-			signal(SIGTSTP, onsusp);
+			signal(SIGTSTP, sigtstp_handler);
 	} else
 		fputs(_("can't fork\n"), stderr);
 	set_tty(ctl);
 	puts("------------------------");
-	prompt(ctl, filename);
+	output_prompt(ctl, filename);
 }
 
-static void do_shell(struct more_control *ctl, char *filename)
+static void run_shell(struct more_control *ctl, char *filename)
 {
 	char cmdbuf[COMMAND_BUF];
 	int rc;
@@ -1190,7 +1191,7 @@ static void do_shell(struct more_control *ctl, char *filename)
 		}
 		if (rc < 0) {
 			fputs(_("  Overflow\n"), stderr);
-			prompt(ctl, filename);
+			output_prompt(ctl, filename);
 			return;
 		} else if (rc > 0) {
 			kill_line(ctl);
@@ -1206,12 +1207,12 @@ static void do_shell(struct more_control *ctl, char *filename)
 
 /* Execute a colon-prefixed command.  Returns <0 if not a command that
  * should cause more of the file to be printed. */
-static int colon(struct more_control *ctl, char *filename, int cmd, int nlines)
+static int colon_command(struct more_control *ctl, char *filename, int cmd, int nlines)
 {
 	char ch;
 
 	if (cmd == 0)
-		ch = readch(ctl);
+		ch = read_user_input(ctl);
 	else
 		ch = cmd;
 	ctl->last_colon_command = ch;
@@ -1228,12 +1229,12 @@ static int colon(struct more_control *ctl, char *filename, int cmd, int nlines)
 	case 'n':
 		if (nlines == 0) {
 			if (ctl->argv_position >= ctl->num_files - 1)
-				end_it(0);
+				more_exit(0);
 			nlines++;
 		}
 		putchar('\r');
-		erasep(ctl, 0);
-		skipf(ctl, nlines);
+		erase_prompt(ctl, 0);
+		change_file(ctl, nlines);
 		return 0;
 	case 'p':
 		if (ctl->no_tty_in) {
@@ -1241,17 +1242,17 @@ static int colon(struct more_control *ctl, char *filename, int cmd, int nlines)
 			return -1;
 		}
 		putchar('\r');
-		erasep(ctl, 0);
+		erase_prompt(ctl, 0);
 		if (nlines == 0)
 			nlines++;
-		skipf(ctl, -nlines);
+		change_file(ctl, -nlines);
 		return 0;
 	case '!':
-		do_shell(ctl, filename);
+		run_shell(ctl, filename);
 		return -1;
 	case 'q':
 	case 'Q':
-		end_it(0);
+		more_exit(0);
 	default:
 		fputc(RINGBELL, stderr);
 		return -1;
@@ -1259,7 +1260,7 @@ static int colon(struct more_control *ctl, char *filename, int cmd, int nlines)
 }
 
 /* Skip n lines in the file f */
-static void skiplns(struct more_control *ctl, int n, FILE *f)
+static void skip_lines(struct more_control *ctl, int n, FILE *f)
 {
 	int c;
 
@@ -1273,7 +1274,7 @@ static void skiplns(struct more_control *ctl, int n, FILE *f)
 }
 
 /*  Clear the screen */
-static void doclear(struct more_control *ctl)
+static void more_clear_screen(struct more_control *ctl)
 {
 	if (ctl->clear && !ctl->hard_tty) {
 		putp(ctl->clear);
@@ -1284,7 +1285,7 @@ static void doclear(struct more_control *ctl)
 	}
 }
 
-static void rdline(struct more_control *ctl, FILE *f)
+static void read_line(struct more_control *ctl, FILE *f)
 {
 	int c;
 	char *p;
@@ -1326,7 +1327,7 @@ static void search(struct more_control *ctl, char buf[], FILE *file, int n)
 		line3 = line2;
 		line2 = line1;
 		line1 = ctl->file_position;
-		rdline(ctl, file);
+		read_line(ctl, file);
 		lncount++;
 		if (regexec(&re, ctl->line_buf, 0, NULL, 0) == 0) {
 			if (--n == 0) {
@@ -1345,7 +1346,7 @@ static void search(struct more_control *ctl, char buf[], FILE *file, int n)
 							putp(ctl->go_home);
 							putp(ctl->erase_line);
 						} else
-							doclear(ctl);
+							more_clear_screen(ctl);
 					}
 				} else {
 					kill_line(ctl);
@@ -1354,7 +1355,7 @@ static void search(struct more_control *ctl, char buf[], FILE *file, int n)
 							putp(ctl->go_home);
 							putp(ctl->erase_line);
 						} else
-							doclear(ctl);
+							more_clear_screen(ctl);
 					}
 					puts(ctl->line_buf);
 				}
@@ -1369,7 +1370,7 @@ static void search(struct more_control *ctl, char buf[], FILE *file, int n)
 			more_fseek(ctl, file, startline);
 		} else {
 			fputs(_("\nPattern not found\n"), stdout);
-			end_it(0);
+			more_exit(0);
 		}
 		free(ctl->previous_search);
 		ctl->previous_search = NULL;
@@ -1382,7 +1383,7 @@ notfound:
  * argument followed by the command character.  Return the number of
  * lines to display in the next screenful.  If there is nothing more to
  * display in the current file, zero is returned. */
-static int command(struct more_control *ctl, char *filename, FILE *f)
+static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 {
 	int nlines;
 	int retval = 0;
@@ -1393,11 +1394,11 @@ static int command(struct more_control *ctl, char *filename, FILE *f)
 
 	done = 0;
 	if (!ctl->report_errors)
-		prompt(ctl, filename);
+		output_prompt(ctl, filename);
 	else
 		ctl->report_errors = 0;
 	for (;;) {
-		nlines = number(ctl, &comchar);
+		nlines = read_number(ctl, &comchar);
 		ctl->run_previous_command = colonch = 0;
 		if (comchar == '.') {	/* Repeat last command */
 			ctl->run_previous_command++;
@@ -1410,12 +1411,12 @@ static int command(struct more_control *ctl, char *filename, FILE *f)
 		ctl->last_key_arg = nlines;
 		if ((cc_t) comchar == ctl->output_tty.c_cc[VERASE]) {
 			kill_line(ctl);
-			prompt(ctl, filename);
+			output_prompt(ctl, filename);
 			continue;
 		}
 		switch (comchar) {
 		case ':':
-			retval = colon(ctl, filename, colonch, nlines);
+			retval = colon_command(ctl, filename, colonch, nlines);
 			if (retval >= 0)
 				done++;
 			break;
@@ -1433,7 +1434,7 @@ static int command(struct more_control *ctl, char *filename, FILE *f)
 					nlines++;
 
 				putchar('\r');
-				erasep(ctl, 0);
+				erase_prompt(ctl, 0);
 				putchar('\n');
 				if (ctl->clear_line_ends)
 					putp(ctl->erase_line);
@@ -1450,8 +1451,8 @@ static int command(struct more_control *ctl, char *filename, FILE *f)
 				if (initline < 0)
 					initline = 0;
 				more_fseek(ctl, f, 0L);
-				ctl->current_line = 0;	/* skiplns() will make current_line correct */
-				skiplns(ctl, initline, f);
+				ctl->current_line = 0;	/* skip_lines() will make current_line correct */
+				skip_lines(ctl, initline, f);
 				if (!ctl->no_scroll) {
 					retval = ctl->lines_per_screen + 1;
 				} else {
@@ -1478,7 +1479,7 @@ static int command(struct more_control *ctl, char *filename, FILE *f)
 			break;
 		case 'q':
 		case 'Q':
-			end_it(0);
+			more_exit(0);
 		case 's':
 		case 'f':
 		case ctrl('F'):
@@ -1487,7 +1488,7 @@ static int command(struct more_control *ctl, char *filename, FILE *f)
 			if (comchar == 'f')
 				nlines *= ctl->lines_per_screen;
 			putchar('\r');
-			erasep(ctl, 0);
+			erase_prompt(ctl, 0);
 			putchar('\n');
 			if (ctl->clear_line_ends)
 				putp(ctl->erase_line);
@@ -1522,7 +1523,7 @@ static int command(struct more_control *ctl, char *filename, FILE *f)
 			break;
 		case '\f':
 			if (!ctl->no_tty_in) {
-				doclear(ctl);
+				more_clear_screen(ctl);
 				more_fseek(ctl, f, ctl->screen_start.row_num);
 				ctl->current_line = ctl->screen_start.line_num;
 				retval = ctl->lines_per_screen;
@@ -1578,12 +1579,12 @@ static int command(struct more_control *ctl, char *filename, FILE *f)
 			done = 1;
 			break;
 		case '!':
-			do_shell(ctl, filename);
+			run_shell(ctl, filename);
 			break;
 		case '?':
 		case 'h':
 			if (ctl->no_scroll)
-				doclear(ctl);
+				more_clear_screen(ctl);
 			fputs(_("\n"
 				  "Most commands optionally preceded by integer argument k.  "
 				  "Defaults in brackets.\n"
@@ -1612,7 +1613,7 @@ static int command(struct more_control *ctl, char *filename, FILE *f)
 				 ".                       Repeat previous command\n"), stdout);
 			puts("---------------------------------------"
 			     "----------------------------------------");
-			prompt(ctl, filename);
+			output_prompt(ctl, filename);
 			break;
 		case 'v':	/* This case should go right before default */
 			if (!ctl->no_tty_in) {
@@ -1706,19 +1707,19 @@ static void screen(struct more_control *ctl, FILE *f, int num_lines)
 			prev_len = length;
 			if (ctl->bad_stdout
 			    || ((ctl->enter_std && *ctl->enter_std == ' ') && (ctl->prompt_len > 0)))
-				erasep(ctl, 0);
+				erase_prompt(ctl, 0);
 			/* must clear before drawing line since tabs on
 			 * some terminals do not erase what they tab
 			 * over. */
 			if (ctl->clear_line_ends)
 				putp(ctl->erase_line);
-			prbuf(ctl, ctl->line_buf, length);
+			print_buf(ctl, ctl->line_buf, length);
 			if (nchars < ctl->prompt_len)
-				erasep(ctl, nchars);	/* erasep () sets prompt_len to 0 */
+				erase_prompt(ctl, nchars);	/* erase_prompt () sets prompt_len to 0 */
 			else
 				ctl->prompt_len = 0;
 			if (nchars < ctl->num_columns || !ctl->fold_long_lines)
-				prbuf(ctl, "\n", 1);	/* will turn off UL if necessary */
+				print_buf(ctl, "\n", 1);	/* will turn off UL if necessary */
 			num_lines--;
 		}
 		if (ctl->underline_state) {
@@ -1738,15 +1739,15 @@ static void screen(struct more_control *ctl, FILE *f, int num_lines)
 		sigsetjmp(ctl->destination, 1);
 		ctl->is_paused = 0;
 		ctl->starting_up = 0;
-		if ((num_lines = command(ctl, NULL, f)) == 0)
+		if ((num_lines = more_key_command(ctl, NULL, f)) == 0)
 			return;
 		if (ctl->hard_tty && ctl->prompt_len > 0)
-			erasep(ctl, 0);
+			erase_prompt(ctl, 0);
 		if (ctl->no_scroll && num_lines >= ctl->lines_per_screen) {
 			if (ctl->clear_line_ends)
 				putp(ctl->go_home);
 			else
-				doclear(ctl);
+				more_clear_screen(ctl);
 		}
 		ctl->screen_start.line_num = ctl->current_line;
 		ctl->screen_start.row_num = ctl->file_position;
@@ -1754,7 +1755,7 @@ static void screen(struct more_control *ctl, FILE *f, int num_lines)
 }
 
 /* Come here if a signal for a window size change is received */
-static void chgwinsz(int dummy __attribute__((__unused__)))
+static void sigwinch_handler(int dummy __attribute__((__unused__)))
 {
 	struct winsize win;
 
@@ -1770,7 +1771,7 @@ static void chgwinsz(int dummy __attribute__((__unused__)))
 		if (win.ws_col != 0)
 			global_ctl->num_columns = win.ws_col;
 	}
-	signal(SIGWINCH, chgwinsz);
+	signal(SIGWINCH, sigwinch_handler);
 }
 
 static void copy_file(FILE *f)
@@ -1947,11 +1948,11 @@ int main(int argc, char **argv)
 		ctl.d_scroll_len = 1;
 
 	if ((s = getenv("MORE")) != NULL)
-		argscan(&ctl, s);
+		arg_parser(&ctl, s);
 
 	while (--ctl.num_files > 0) {
 		if ((chr = (*++ctl.file_names)[0]) == '-') {
-			argscan(&ctl, *ctl.file_names + 1);
+			arg_parser(&ctl, *ctl.file_names + 1);
 		} else if (chr == '+') {
 			s = *ctl.file_names;
 			if (*++s == '/') {
@@ -1989,11 +1990,11 @@ int main(int argc, char **argv)
 	} else
 		f = stdin;
 	if (!ctl.no_tty_out) {
-		signal(SIGQUIT, onquit);
-		signal(SIGINT, end_it);
-		signal(SIGWINCH, chgwinsz);
+		signal(SIGQUIT, sigquit_handler);
+		signal(SIGINT, more_exit);
+		signal(SIGWINCH, sigwinch_handler);
 		if (signal(SIGTSTP, SIG_IGN) == SIG_DFL) {
-			signal(SIGTSTP, onsusp);
+			signal(SIGTSTP, sigtstp_handler);
 			ctl.catch_suspend++;
 		}
 		tcsetattr(STDERR_FILENO, TCSANOW, &ctl.output_tty);
@@ -2003,14 +2004,14 @@ int main(int argc, char **argv)
 			copy_file(stdin);
 		else {
 			if ((chr = getc(f)) == '\f')
-				doclear(&ctl);
+				more_clear_screen(&ctl);
 			else {
 				ungetc(chr, f);
 				if (ctl.no_scroll && (chr != EOF)) {
 					if (ctl.clear_line_ends)
 						putp(ctl.go_home);
 					else
-						doclear(&ctl);
+						more_clear_screen(&ctl);
 				}
 			}
 			if (search_at_start) {
@@ -2020,7 +2021,7 @@ int main(int argc, char **argv)
 				if (ctl.no_scroll)
 					left--;
 			} else if (init)
-				skiplns(&ctl, start_at_line, stdin);
+				skip_lines(&ctl, start_at_line, stdin);
 			screen(&ctl, stdin, left);
 		}
 		ctl.no_tty_in = 0;
@@ -2043,10 +2044,10 @@ int main(int argc, char **argv)
 					if (ctl.no_scroll)
 						left--;
 				} else if (init)
-					skiplns(&ctl, start_at_line, f);
+					skip_lines(&ctl, start_at_line, f);
 			} else if (ctl.argv_position < ctl.num_files && !ctl.no_tty_out) {
 				sigsetjmp(ctl.destination, 1);
-				left = command(&ctl, ctl.file_names[ctl.argv_position], f);
+				left = more_key_command(&ctl, ctl.file_names[ctl.argv_position], f);
 			}
 			if (left != 0) {
 				if ((ctl.no_scroll || skip_file)
@@ -2054,16 +2055,16 @@ int main(int argc, char **argv)
 					if (ctl.clear_line_ends)
 						putp(ctl.go_home);
 					else
-						doclear(&ctl);
+						more_clear_screen(&ctl);
 				}
 				if (print_names) {
 					if (ctl.bad_stdout)
-						erasep(&ctl, 0);
+						erase_prompt(&ctl, 0);
 					if (ctl.clear_line_ends)
 						putp(ctl.erase_line);
 					fputs("::::::::::::::", stdout);
 					if (ctl.prompt_len > 14)
-						erasep(&ctl, 14);
+						erase_prompt(&ctl, 14);
 					putchar('\n');
 					if (ctl.clear_line_ends)
 						putp(ctl.erase_line);
