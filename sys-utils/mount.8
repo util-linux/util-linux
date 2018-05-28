@@ -417,8 +417,9 @@ will be writable, but the
 will be read-only.
 
 It's also possible to change nosuid, nodev, noexec, noatime, nodiratime and
-relatime VFS entry flags by "remount,bind" operation. It's impossible to change
-mount options recursively (for example with \fB-o rbind,ro\fR).
+relatime VFS entry flags by "remount,bind" operation.  The another (for example
+filesystem specific flags) are silently ignored.  It's impossible to change mount
+options recursively (for example with \fB-o rbind,ro\fR).
 
 .BR mount (8)
 since v2.31 ignores the \fBbind\fR flag from

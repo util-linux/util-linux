@@ -107,22 +107,16 @@ static int init_propagation(struct libmnt_context *cxt)
 }
 
 /*
- * add additional mount(2) syscall request to implement "ro,bind", the first regular
- * mount(2) is the "bind" operation, the second is "remount,ro,bind" call.
- *
- * Note that we don't remove "ro" from the first syscall (kernel silently
- * ignores this flags for bind operation) -- maybe one day kernel will support
- * read-only binds in one step and then all will be done by the first mount(2) and the
- * second remount will be noop...
+ * add additional mount(2) syscall request to implement "bind,<flags>", the first regular
+ * mount(2) is the "bind" operation, the second is "remount,bind,<flags>" call.
  */
-static int init_robind(struct libmnt_context *cxt)
+static int init_bind_remount(struct libmnt_context *cxt)
 {
 	struct libmnt_addmount *ad;
 	int rc;
 
 	assert(cxt);
 	assert(cxt->mountflags & MS_BIND);
-	assert(cxt->mountflags & MS_RDONLY);
 	assert(!(cxt->mountflags & MS_REMOUNT));
 
 	DBG(CXT, ul_debugobj(cxt, "mount: initialize additional ro,bind mount"));
@@ -131,9 +125,9 @@ static int init_robind(struct libmnt_context *cxt)
 	if (!ad)
 		return -ENOMEM;
 
-	ad->mountflags = MS_REMOUNT | MS_BIND | MS_RDONLY;
-	if (cxt->mountflags & MS_REC)
-		ad->mountflags |= MS_REC;
+	ad->mountflags = cxt->mountflags;
+	ad->mountflags |= (MS_REMOUNT | MS_BIND);
+
 	rc = mnt_context_append_additional_mount(cxt, ad);
 	if (rc)
 		return rc;
@@ -254,9 +248,9 @@ static int fix_optstr(struct libmnt_context *cxt)
 			return rc;
 	}
 	if ((cxt->mountflags & MS_BIND)
-	    && (cxt->mountflags & MS_RDONLY)
+	    && (cxt->mountflags & MNT_BIND_SETTABLE)
 	    && !(cxt->mountflags & MS_REMOUNT)) {
-		rc = init_robind(cxt);
+		rc = init_bind_remount(cxt);
 		if (rc)
 			return rc;
 	}

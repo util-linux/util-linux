@@ -361,6 +361,9 @@ struct libmnt_context
 /* default flags */
 #define MNT_FL_DEFAULT		0
 
+/* Flags usable with MS_BIND|MS_REMOUNT */
+#define MNT_BIND_SETTABLE	(MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_NOATIME|MS_NODIRATIME|MS_RELATIME|MS_RDONLY)
+
 /* lock.c */
 extern int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable);
 
