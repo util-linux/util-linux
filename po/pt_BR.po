@@ -14586,7 +14586,7 @@ msgstr "Lista de CPU(s) off-line:"
 
 #: sys-utils/lscpu.c:1803
 msgid "Thread(s) per core:"
-msgstr "Thread(s) per núcleo:"
+msgstr "Thread(s) por núcleo:"
 
 #: sys-utils/lscpu.c:1805
 msgid "Core(s) per socket:"
