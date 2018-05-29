@@ -274,7 +274,6 @@ int ul_path_access(struct path_cxt *pc, int mode, const char *path)
 	    && pc->redirect_on_enoent
 	    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 		rc = faccessat(dir, path, mode, 0);
-
 	return rc;
 }
 
@@ -298,18 +297,19 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 		fd = open(path, flags);
 		DBG(CXT, ul_debug("opening '%s'", path));
 	} else {
+		int fdx;
 		int dir = ul_path_get_dirfd(pc);
 		if (dir < 0)
 			return dir;
 
-		fd = openat(dir, path, flags);
+		fdx = fd = openat(dir, path, flags);
 
 		if (fd < 0 && errno == ENOENT
 		    && pc->redirect_on_enoent
 		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 			fd = openat(dir, path, flags);
 
-		DBG(CXT, ul_debugobj(pc, "opening '%s'", path));
+		DBG(CXT, ul_debugobj(pc, "opening '%s'%s", path, fdx != fd ? " [redirected]" : ""));
 	}
 	return fd;
 }
