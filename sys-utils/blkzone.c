@@ -114,10 +114,10 @@ static int init_device(struct blkzone_control *ctl, int mode)
  */
 static unsigned long blkdev_chunk_sectors(const char *dname)
 {
-	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
-	dev_t devno = sysfs_devname_to_devno(dname, NULL);
+	struct path_cxt *pc = NULL;
+	dev_t devno = sysfs_devname_to_devno(dname);
 	dev_t disk;
-	uint64_t sz;
+	uint64_t sz = 0;
 	int rc;
 
 	/*
@@ -125,15 +125,24 @@ static unsigned long blkdev_chunk_sectors(const char *dname)
 	 * This method masks off the partition specified by the minor device
 	 * component.
 	 */
-	if (sysfs_devno_to_wholedisk(devno, NULL, 0, &disk) != 0)
+	pc = ul_new_sysfs_path(devno, NULL, NULL);
+	if (!pc)
 		return 0;
 
-	if (sysfs_init(&cxt, disk, NULL))
-		return 0;
+	rc = sysfs_blkdev_get_wholedisk(pc, NULL, 0, &disk);
+	if (rc != 0)
+		goto done;
 
-	rc = sysfs_read_u64(&cxt, "queue/chunk_sectors", &sz);
+	/* if @pc is not while-disk device, switch to disk */
+	if (devno != disk) {
+		rc = sysfs_blkdev_init_path(pc, disk, NULL);
+		if (rc != 0)
+			goto done;
+	}
 
-	sysfs_deinit(&cxt);
+	rc = ul_path_read_u64(pc, &sz, "queue/chunk_sectors");
+done:
+	ul_unref_path(pc);
 	return rc == 0 ? sz : 0;
 }
 
