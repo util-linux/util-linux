@@ -58,7 +58,7 @@ struct fstrim_range {
 
 /* returns: 0 = success, 1 = unsupported, < 0 = error */
 static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
-			    int verbose)
+			    int verbose, int dryrun)
 {
 	int fd, rc;
 	struct stat sb;
@@ -83,6 +83,13 @@ static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
 		rc = -EINVAL;
 		goto done;
 	}
+
+	if (dryrun) {
+		printf(_("%s (dry run)\n"), path);
+		rc = 0;
+		goto done;
+	}
+
 	errno = 0;
 	if (ioctl(fd, FITRIM, &range)) {
 		rc = errno == EOPNOTSUPP || errno == ENOTTY ? 1 : -errno;
@@ -188,7 +195,7 @@ static int uniq_fs_source_cmp(
  * 32 = all failed
  * 64 = some failed, some success
  */
-static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
+static int fstrim_all(struct fstrim_range *rangetpl, int verbose, int dryrun)
 {
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr;
@@ -197,6 +204,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	int cnt = 0, cnt_err = 0;
 
 	mnt_init_debug(0);
+	ul_path_init_debug();
 
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
 	if (!itr)
@@ -244,7 +252,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 		 * This is reason why we ignore EOPNOTSUPP and ENOTTY errors
 		 * from discard ioctl.
 		 */
-		if (fstrim_filesystem(tgt, rangetpl, verbose) < 0)
+		if (fstrim_filesystem(tgt, rangetpl, verbose, dryrun) < 0)
 		       cnt_err++;
 	}
 
@@ -276,6 +284,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --length <num>  the number of bytes to discard\n"), out);
 	fputs(_(" -m, --minimum <num> the minimum extent length to discard\n"), out);
 	fputs(_(" -v, --verbose       print number of discarded bytes\n"), out);
+	fputs(_(" -d, --dry-run       does everything, but trim\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(21));
@@ -286,7 +295,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	char *path = NULL;
-	int c, rc, verbose = 0, all = 0;
+	int c, rc, verbose = 0, all = 0, dryrun = 0;
 	struct fstrim_range range;
 
 	static const struct option longopts[] = {
@@ -297,6 +306,7 @@ int main(int argc, char **argv)
 	    { "length",    required_argument, NULL, 'l' },
 	    { "minimum",   required_argument, NULL, 'm' },
 	    { "verbose",   no_argument,       NULL, 'v' },
+	    { "dry-run",   no_argument,       NULL, 'd' },
 	    { NULL, 0, NULL, 0 }
 	};
 
@@ -308,10 +318,13 @@ int main(int argc, char **argv)
 	memset(&range, 0, sizeof(range));
 	range.len = ULLONG_MAX;
 
-	while ((c = getopt_long(argc, argv, "ahVo:l:m:v", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "adhVo:l:m:v", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			all = 1;
+			break;
+		case 'd':
+			dryrun = 1;
 			break;
 		case 'h':
 			usage();
@@ -352,9 +365,9 @@ int main(int argc, char **argv)
 	}
 
 	if (all)
-		return fstrim_all(&range, verbose);	/* MNT_EX_* codes */
+		return fstrim_all(&range, verbose, dryrun);	/* MNT_EX_* codes */
 
-	rc = fstrim_filesystem(path, &range, verbose);
+	rc = fstrim_filesystem(path, &range, verbose, dryrun);
 	if (rc == 1)
 		warnx(_("%s: the discard operation is not supported"), path);
 
