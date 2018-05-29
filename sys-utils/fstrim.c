@@ -109,39 +109,55 @@ done:
 	return rc;
 }
 
-static int has_discard(const char *devname, struct sysfs_cxt *wholedisk)
+static int has_discard(const char *devname, struct path_cxt **wholedisk)
 {
-	struct sysfs_cxt cxt, *parent = NULL;
+	struct path_cxt *pc = NULL;
 	uint64_t dg = 0;
 	dev_t disk = 0, dev;
-	int rc;
+	int rc = -1;
 
-	dev = sysfs_devname_to_devno(devname, NULL);
+	dev = sysfs_devname_to_devno(devname);
 	if (!dev)
-		return 1;
+		goto fail;
+
+	pc = ul_new_sysfs_path(dev, NULL, NULL);
+	if (!pc)
+		goto fail;
+
 	/*
 	 * This is tricky to read the info from sys/, because the queue
 	 * attributes are provided for whole devices (disk) only. We're trying
 	 * to reuse the whole-disk sysfs context to optimize this stuff (as
 	 * system usually have just one disk only).
 	 */
-	if (sysfs_devno_to_wholedisk(dev, NULL, 0, &disk) || !disk)
-		return 1;
+	rc = sysfs_blkdev_get_wholedisk(pc, NULL, 0, &disk);
+	if (rc != 0 || !disk)
+		goto fail;
+
 	if (dev != disk) {
-		if (wholedisk->devno != disk) {
-			sysfs_deinit(wholedisk);
-			if (sysfs_init(wholedisk, disk, NULL))
-				return 1;
+		/* Partition, try reuse whole-disk context if valid for the
+		 * current device, otherwise create new context for the
+		 * whole-disk.
+		 */
+		if (*wholedisk && sysfs_blkdev_get_devno(*wholedisk) != disk) {
+			ul_unref_path(*wholedisk);
+			*wholedisk = NULL;
 		}
-		parent = wholedisk;
+		if (!*wholedisk) {
+			*wholedisk = ul_new_sysfs_path(disk, NULL, NULL);
+			if (!*wholedisk)
+				goto fail;
+		}
+		sysfs_blkdev_set_parent(pc, *wholedisk);
 	}
 
-	rc = sysfs_init(&cxt, dev, parent);
-	if (!rc)
-		rc = sysfs_read_u64(&cxt, "queue/discard_granularity", &dg);
+	rc = ul_path_read_u64(pc, &dg, "queue/discard_granularity");
 
-	sysfs_deinit(&cxt);
+	ul_unref_path(pc);
 	return rc == 0 && dg > 0;
+fail:
+	ul_unref_path(pc);
+	return 1;
 }
 
 
@@ -177,7 +193,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr;
 	struct libmnt_table *tab;
-	struct sysfs_cxt wholedisk = UL_SYSFSCXT_EMPTY;
+	struct path_cxt *wholedisk = NULL;
 	int cnt = 0, cnt_err = 0;
 
 	mnt_init_debug(0);
@@ -232,7 +248,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 		       cnt_err++;
 	}
 
-	sysfs_deinit(&wholedisk);
+	ul_unref_path(wholedisk);
 	mnt_unref_table(tab);
 	mnt_free_iter(itr);
 
