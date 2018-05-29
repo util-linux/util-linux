@@ -33,7 +33,7 @@ extern "C" {
  * may be already defined by linux/fs.h or another file -- in this case we
  * don't want to include sys/mount.h at all to avoid collisions.
  */
-#ifndef MS_RDONLY
+#if defined(__linux__) && !defined(MS_RDONLY)
 # include <sys/mount.h>
 #endif
 
