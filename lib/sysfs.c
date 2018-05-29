@@ -601,7 +601,7 @@ int sysfs_blkdev_get_wholedisk(	struct path_cxt *pc,
         }
 
         if (diskdevno) {
-            *diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), diskname, NULL);
+            *diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), name, NULL);
             if (!*diskdevno)
                 goto err;
         }
@@ -867,6 +867,8 @@ static dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, cons
 
 	if (!prefix)
 		prefix = "";
+
+	assert(name);
 
 	if (strncmp("/dev/", name, 5) == 0) {
 		/*
