@@ -759,18 +759,20 @@ static char *get_disk_devname(const char *device)
 
 static int umount_partitions(struct eject_control *ctl)
 {
-	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
+	struct path_cxt *pc = NULL;
 	dev_t devno;
 	DIR *dir = NULL;
 	struct dirent *d;
 	int count = 0;
 
-	devno = sysfs_devname_to_devno(ctl->device, NULL);
-	if (sysfs_init(&cxt, devno, NULL) != 0)
+	devno = sysfs_devname_to_devno(ctl->device);
+	if (devno)
+		pc = ul_new_sysfs_path(devno, NULL, NULL);
+	if (!pc)
 		return 0;
 
 	/* open /sys/block/<wholedisk> */
-	if (!(dir = sysfs_opendir(&cxt, NULL)))
+	if (!(dir = ul_path_opendir(pc, NULL)))
 		goto done;
 
 	/* scan for partition subdirs */
@@ -778,7 +780,7 @@ static int umount_partitions(struct eject_control *ctl)
 		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
 			continue;
 
-		if (sysfs_is_partition_dirent(dir, d, ctl->device)) {
+		if (sysfs_blkdev_is_partition_dirent(dir, d, ctl->device)) {
 			char *mnt = NULL;
 			char *dev = find_device(d->d_name);
 
@@ -796,24 +798,25 @@ static int umount_partitions(struct eject_control *ctl)
 done:
 	if (dir)
 		closedir(dir);
-	sysfs_deinit(&cxt);
+	ul_unref_path(pc);
 
 	return count;
 }
 
 static int is_hotpluggable(const struct eject_control *ctl)
 {
-	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
+	struct path_cxt *pc = NULL;
 	dev_t devno;
 	int rc = 0;
 
-	devno = sysfs_devname_to_devno(ctl->device, NULL);
-	if (sysfs_init(&cxt, devno, NULL) != 0)
+	devno = sysfs_devname_to_devno(ctl->device);
+	if (devno)
+		pc = ul_new_sysfs_path(devno, NULL, NULL);
+	if (!pc)
 		return 0;
 
-	rc = sysfs_is_hotpluggable(&cxt);
-
-	sysfs_deinit(&cxt);
+	rc = sysfs_blkdev_is_hotpluggable(pc);
+	ul_unref_path(pc);
 	return rc;
 }
 
