@@ -177,14 +177,15 @@ static int get_partno_from_device(char *partition, dev_t devno)
 	assert(partition);
 
 	if (devno) {
-		struct sysfs_cxt cxt;
+		struct path_cxt *pc;
 		int rc;
 
-		if (sysfs_init(&cxt, devno, NULL))
+		pc = ul_new_sysfs_path(devno, NULL, NULL);
+		if (!pc)
 			goto err;
 
-		rc = sysfs_read_int(&cxt, "partition", &partno);
-		sysfs_deinit(&cxt);
+		rc = ul_path_read_s32(pc, &partno, "partition");
+		ul_unref_path(pc);
 
 		if (rc == 0)
 			return partno;
