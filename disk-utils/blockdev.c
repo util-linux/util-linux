@@ -468,18 +468,21 @@ static void report_device(char *device, int quiet)
 
 	ro = ssz = bsz = 0;
 	ra = 0;
-	if (fstat(fd, &st) == 0 && !sysfs_devno_is_wholedisk(st.st_rdev)) {
-		struct sysfs_cxt cxt;
+	if (fstat(fd, &st) == 0) {
+		dev_t disk;
+		struct path_cxt *pc;
 
-		if (sysfs_init(&cxt, st.st_rdev, NULL))
-			err(EXIT_FAILURE,
-				_("%s: failed to initialize sysfs handler"),
-				device);
-		if (sysfs_read_u64(&cxt, "start", &start))
-			err(EXIT_FAILURE,
-				_("%s: failed to read partition start from sysfs"),
-				device);
-		sysfs_deinit(&cxt);
+		pc = ul_new_sysfs_path(st.st_rdev, NULL, NULL);
+		if (pc &&
+		    sysfs_blkdev_get_wholedisk(pc, NULL, 0, &disk) == 0 &&
+		    disk != st.st_rdev) {
+
+			if (ul_path_read_u64(pc, &start, "start") != 0)
+				err(EXIT_FAILURE,
+					_("%s: failed to read partition start from sysfs"),
+					device);
+		}
+		ul_unref_path(pc);
 	}
 	if (ioctl(fd, BLKROGET, &ro) == 0 &&
 	    ioctl(fd, BLKRAGET, &ra) == 0 &&
