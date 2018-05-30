@@ -32,8 +32,7 @@ static void __attribute__((__noreturn__)) usage(void)
 static int get_partition_start(int fd, int partno, uint64_t *start)
 {
 	struct stat st;
-	struct sysfs_cxt disk = UL_SYSFSCXT_EMPTY,
-			 part = UL_SYSFSCXT_EMPTY;
+	struct path_cxt *disk = NULL, *part = NULL;
 	dev_t devno = 0;
 	int rc = -1;
 
@@ -43,23 +42,26 @@ static int get_partition_start(int fd, int partno, uint64_t *start)
 	if (fstat(fd, &st) || !S_ISBLK(st.st_mode))
 		goto done;
 	devno = st.st_rdev;
-	if (sysfs_init(&disk, devno, NULL))
+	disk = ul_new_sysfs_path(devno, NULL, NULL);
+	if (!disk)
 		goto done;
 	/*
 	 * partition
 	 */
-	devno = sysfs_partno_to_devno(&disk, partno);
+	devno = sysfs_blkdev_partno_to_devno(disk, partno);
 	if (!devno)
 		goto done;
-	if (sysfs_init(&part, devno, &disk))
+
+	part = ul_new_sysfs_path(devno, disk, NULL);
+	if (!part)
 		goto done;
-	if (sysfs_read_u64(&part, "start", start))
+	if (ul_path_read_u64(part, start, "start"))
 		goto done;
 
 	rc = 0;
 done:
-	sysfs_deinit(&part);
-	sysfs_deinit(&disk);
+	ul_unref_path(part);
+	ul_unref_path(disk);
 	return rc;
 }
 
