@@ -800,14 +800,17 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 					if (rc)
 						goto err;
 				}
-				if (!(ent->mask & MNT_INVERT))
+				if (!(ent->mask & MNT_INVERT)) {
 					fl &= ~ent->id;
+					if (ent->id & MS_REC)
+						fl |= MS_REC;
+				}
 			}
 		}
 	}
 
-	/* add missing options */
-	if (fl) {
+	/* add missing options (but ignore fl if contains MS_REC only) */
+	if (fl && fl != MS_REC) {
 		const struct libmnt_optmap *ent;
 		char *p;
 

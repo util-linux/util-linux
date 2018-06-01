@@ -1375,6 +1375,11 @@ struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
  *
  * both of these calls have the same effect.
  *
+ * Be careful if you want to use MS_REC flag -- in this case the bit is applied
+ * to all bind/slave/etc. options. If you want to mix more propadation flags
+ * and/or bind, move operations than it's better to specify mount options by
+ * strings.
+ *
  * Returns: 0 on success, negative number in case of error.
  */
 int mnt_context_set_mflags(struct libmnt_context *cxt, unsigned long flags)

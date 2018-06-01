@@ -73,6 +73,7 @@ static int init_propagation(struct libmnt_context *cxt)
 	char *opts = (char *) mnt_fs_get_vfs_options(cxt->fs);
 	size_t namesz;
 	struct libmnt_optmap const *maps[1];
+	int rec_count = 0;
 
 	if (!opts)
 		return 0;
@@ -86,9 +87,19 @@ static int init_propagation(struct libmnt_context *cxt)
 		struct libmnt_addmount *ad;
 		int rc;
 
-		if (!mnt_optmap_get_entry(maps, 1, name, namesz, &ent)
-		    || !ent
-		    || !(ent->id & MS_PROPAGATION))
+		if (!mnt_optmap_get_entry(maps, 1, name, namesz, &ent) || !ent)
+			continue;
+
+		DBG(CXT, ul_debugobj(cxt, " checking %s", ent->name));
+
+		/* Note that MS_REC may be used for more flags, so we have to keep
+		 * track about number of recursive options to keep the MS_REC in the
+		 * mountflags if necessary.
+		 */
+		if (ent->id & MS_REC)
+			rec_count++;
+
+		if (!(ent->id & MS_PROPAGATION))
 			continue;
 
 		ad = mnt_new_addmount();
@@ -96,12 +107,20 @@ static int init_propagation(struct libmnt_context *cxt)
 			return -ENOMEM;
 
 		ad->mountflags = ent->id;
+		DBG(CXT, ul_debugobj(cxt, " adding extra mount(2) call for %s", ent->name));
 		rc = mnt_context_append_additional_mount(cxt, ad);
 		if (rc)
 			return rc;
 
+		DBG(CXT, ul_debugobj(cxt, " removing %s from primary mount(2) call", ent->name));
 		cxt->mountflags &= ~ent->id;
+
+		if (ent->id & MS_REC)
+			rec_count--;
 	}
+
+	if (rec_count)
+		cxt->mountflags |= MS_REC;
 
 	return 0;
 }
