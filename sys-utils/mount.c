@@ -517,7 +517,7 @@ int main(int argc, char **argv)
 	struct libmnt_table *fstab = NULL;
 	char *srcbuf = NULL;
 	char *types = NULL;
-	int oper = 0;
+	int oper = 0, is_move = 0;
 	int propa = 0;
 	int optmode = 0, optmode_mode = 0, optmode_src = 0;
 
@@ -684,7 +684,7 @@ int main(int argc, char **argv)
 			break;
 		case 'M':
 			oper = 1;
-			append_option(cxt, "move");
+			is_move = 1;
 			break;
 		case 'R':
 			oper = 1;
@@ -869,6 +869,10 @@ int main(int argc, char **argv)
 
 	if (mnt_context_is_restricted(cxt))
 		sanitize_paths(cxt);
+
+	if (is_move)
+		/* "move" as option string is not supported by libmount */
+		mnt_context_set_mflags(cxt, MS_MOVE);
 
 	if ((oper && !has_remount_flag(cxt)) || propa)
 		/* For --make-* or --bind is fstab/mtab unnecessary */
