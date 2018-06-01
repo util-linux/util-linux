@@ -517,7 +517,7 @@ int main(int argc, char **argv)
 	struct libmnt_table *fstab = NULL;
 	char *srcbuf = NULL;
 	char *types = NULL;
-	unsigned long oper = 0;
+	int oper = 0;
 	int propa = 0;
 	int optmode = 0, optmode_mode = 0, optmode_src = 0;
 
@@ -679,13 +679,16 @@ int main(int argc, char **argv)
 			mnt_context_enable_sloppy(cxt, TRUE);
 			break;
 		case 'B':
-			oper |= MS_BIND;
+			oper = 1;
+			append_option(cxt, "bind");
 			break;
 		case 'M':
-			oper |= MS_MOVE;
+			oper = 1;
+			append_option(cxt, "move");
 			break;
 		case 'R':
-			oper |= (MS_BIND | MS_REC);
+			oper = 1;
+			append_option(cxt, "rbind");
 			break;
 		case MOUNT_OPT_SHARED:
 			append_option(cxt, "shared");
@@ -866,10 +869,6 @@ int main(int argc, char **argv)
 
 	if (mnt_context_is_restricted(cxt))
 		sanitize_paths(cxt);
-
-	if (oper)
-		/* BIND/MOVE operations, let's set the mount flags */
-		mnt_context_set_mflags(cxt, oper);
 
 	if ((oper && !has_remount_flag(cxt)) || propa)
 		/* For --make-* or --bind is fstab/mtab unnecessary */
