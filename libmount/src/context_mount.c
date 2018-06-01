@@ -764,8 +764,6 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	}
 	type = try_type ? : mnt_fs_get_fstype(cxt->fs);
 
-	if (!(flags & MS_MGC_MSK))
-		flags |= MS_MGC_VAL;
 	if (try_type)
 		flags |= MS_SILENT;
 

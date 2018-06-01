@@ -938,7 +938,8 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 
 
 /*
- * Magic mount flag number. Had to be or-ed to the flag values.
+ * Magic mount flag number. Had to be or-ed to the flag values.  Deprecated and
+ * no more used since libmount v2.33; required for Linux <= 2.4.
  */
 #ifndef MS_MGC_VAL
 #define MS_MGC_VAL 0xC0ED0000	/* magic flag number to indicate "new" flags */

@@ -737,7 +737,7 @@ static int do_umount(struct libmnt_context *cxt)
 			-cxt->syscall_status));
 
 		rc = mount(src, mnt_fs_get_target(cxt->fs), NULL,
-			    MS_MGC_VAL | MS_REMOUNT | MS_RDONLY, NULL);
+			    MS_REMOUNT | MS_RDONLY, NULL);
 		if (rc < 0) {
 			cxt->syscall_status = -errno;
 			DBG(CXT, ul_debugobj(cxt,
