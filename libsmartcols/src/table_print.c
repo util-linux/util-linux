@@ -1051,7 +1051,7 @@ static int count_column_width(struct libscols_table *tb,
 {
 	struct libscols_line *ln;
 	struct libscols_iter itr;
-	int count = 0, rc = 0;
+	int count = 0, rc = 0, no_header = 0;
 	size_t sum = 0;
 
 	assert(tb);
@@ -1067,7 +1067,9 @@ static int count_column_width(struct libscols_table *tb,
 		if (scols_cell_get_data(&cl->header)) {
 			size_t len = mbs_safe_width(scols_cell_get_data(&cl->header));
 			cl->width_min = max(cl->width_min, len);
-		}
+		} else
+			no_header = 1;
+
 		if (!cl->width_min)
 			cl->width_min = 1;
 	}
@@ -1122,6 +1124,11 @@ static int count_column_width(struct libscols_table *tb,
 		 && cl->width_min < (size_t) cl->width_hint)
 
 		cl->width = (size_t) cl->width_hint;
+
+
+	/* Column without header and data, set minimal size to zero (default is 1) */
+	if (cl->width_max == 0 && no_header && cl->width_min == 1 && cl->width <= 1)
+		cl->width = cl->width_min = 0;
 
 done:
 	ON_DBG(COL, dbg_column(tb, cl));
