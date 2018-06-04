@@ -104,4 +104,8 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 		>> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+ts_init_subtest "empty-column"
+printf ':a:b\n' | $TS_CMD_COLUMN --table --separator ':' --output-separator  ':' >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
 ts_finalize
