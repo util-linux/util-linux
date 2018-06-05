@@ -1730,6 +1730,7 @@ AM_CONDITIONAL([BUILD_BLKDISCARD], [test "x$build_blkdiscard" = xyes])
 
 UL_BUILD_INIT([blkzone], [check])
 UL_REQUIRES_LINUX([blkzone])
+UL_REQUIRES_BUILD([blkzone], [libblkid])
 UL_REQUIRES_HAVE([blkzone], [linux_blkzoned_h], [linux/blkzoned.h header])
 AM_CONDITIONAL([BUILD_BLKZONE], [test "x$build_blkzone" = xyes])
 

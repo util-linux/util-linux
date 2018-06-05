@@ -145,7 +145,8 @@ if BUILD_BLKZONE
 sbin_PROGRAMS += blkzone
 dist_man_MANS += sys-utils/blkzone.8
 blkzone_SOURCES = sys-utils/blkzone.c
-blkzone_LDADD = $(LDADD) libcommon.la
+blkzone_LDADD = $(LDADD) libblkid.la libcommon.la
+blkzone_CFLAGS = $(AMFLAGS) -I$(ul_libblkid_incdir)
 endif
 
 if BUILD_LDATTACH
