@@ -93,6 +93,10 @@ Automatically log in the specified user without asking for a username or passwor
 Using this option causes an \fB\-f \fIusername\fR option and argument to be
 added to the \fB/bin/login\fP command line.  See \fB\-\-login\-options\fR, which
 can be used to modify this option's behavior.
+
+Note that \fB\-\-autologin\fP may affect the way how agetty initializes the
+serial line, because on auto-login agetty does not read from the line and it
+has no opportunity optimize the line setting.
 .TP
 \-c, \-\-noreset
 Do not reset terminal cflags (control modes).  See \fBtermios\fP(3) for more
