@@ -762,6 +762,9 @@ int main(int argc, char **argv)
 		 */
 		act = A_CREATE;
 		file = argv[optind++];
+
+		if (optind < argc)
+			errx(EXIT_FAILURE, _("unexpected arguments"));
 	}
 
 	if (list && !act && optind == argc)
