@@ -28,6 +28,7 @@
 #include <limits.h>
 #include <getopt.h>
 #include <time.h>
+#include <blkid.h>
 
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -115,24 +116,24 @@ static int init_device(struct blkzone_control *ctl, int mode)
 static unsigned long blkdev_chunk_sectors(const char *dname)
 {
 	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
-	dev_t devno = sysfs_devname_to_devno(dname, NULL);
-	int major_no = major(devno);
-	int block_no = minor(devno) & ~0x0f;
+	blkid_probe pr;
+	dev_t devno;
 	uint64_t sz;
 	int rc;
 
-	/*
-	 * Mapping /dev/sdXn -> /sys/block/sdX to read the chunk_size entry.
-	 * This method masks off the partition specified by the minor device
-	 * component.
-	 */
-	devno = makedev(major_no, block_no);
-	if (sysfs_init(&cxt, devno, NULL))
+	pr = blkid_new_probe_from_filename(dname);
+	if (!pr)
+		return -1;
+
+	devno = blkid_probe_get_wholedisk_devno(pr);
+	if (sysfs_init(&cxt, devno, NULL)) {
+		blkid_free_probe(pr);
 		return 0;
+	}
 
 	rc = sysfs_read_u64(&cxt, "queue/chunk_sectors", &sz);
-
 	sysfs_deinit(&cxt);
+	blkid_free_probe(pr);
 	return rc == 0 ? sz : 0;
 }
 
