@@ -116,8 +116,7 @@ static unsigned long blkdev_chunk_sectors(const char *dname)
 {
 	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
 	dev_t devno = sysfs_devname_to_devno(dname, NULL);
-	int major_no = major(devno);
-	int block_no = minor(devno) & ~0x0f;
+	dev_t disk;
 	uint64_t sz;
 	int rc;
 
@@ -126,8 +125,10 @@ static unsigned long blkdev_chunk_sectors(const char *dname)
 	 * This method masks off the partition specified by the minor device
 	 * component.
 	 */
-	devno = makedev(major_no, block_no);
-	if (sysfs_init(&cxt, devno, NULL))
+	if (sysfs_devno_to_wholedisk(devno, NULL, 0, &disk) != 0)
+		return 0;
+
+	if (sysfs_init(&cxt, disk, NULL))
 		return 0;
 
 	rc = sysfs_read_u64(&cxt, "queue/chunk_sectors", &sz);
