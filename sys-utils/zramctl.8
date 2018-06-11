@@ -42,13 +42,18 @@ is used to quickly set up zram device parameters, to reset zram devices, and to
 query the status of used zram devices.
 .PP
 If no option is given, all non-zero size zram devices are shown.
+.PP
+Note that \fIzramdev\fP node specified on command line has to already exist. The command
+.B zramctl
+creates a new /dev/zram<N> nodes only when \fB\-\-find\fR option specified. It's possible
+(and common) that after system boot /dev/zram<N> nodes are not created yet.
 .SH OPTIONS
 .TP
 .BR \-a , " \-\-algorithm lzo" | lz4 | lz4hc | deflate | 842
 Set the compression algorithm to be used for compressing data in the zram device.
 .TP
 .BR \-f , " \-\-find"
-Find the first unused zram device.  If a \fB--size\fR argument is present, then
+Find the first unused zram device.  If a \fB\-\-size\fR argument is present, then
 initialize the device.
 .TP
 .BR \-n , " \-\-noheadings"
