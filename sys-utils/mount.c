@@ -692,14 +692,9 @@ int main(int argc, char **argv)
 			append_option(cxt, "rbind");
 			break;
 		case 'N':
-		{
-			int tmp;
-			if ((tmp = mnt_context_set_target_ns(cxt, optarg))) {
-				errno = -tmp;
+			if (mnt_context_set_target_ns(cxt, optarg))
 				err(MNT_EX_SYSERR, _("failed to set target namespace"));
-			}
 			break;
-		}
 		case MOUNT_OPT_SHARED:
 			append_option(cxt, "shared");
 			propa = 1;

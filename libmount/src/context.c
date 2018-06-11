@@ -2617,9 +2617,9 @@ static void close_ns(struct libmnt_ns *ns)
  */
 int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path)
 {
-	int rc = 0;
-
+	int errsv = 0;
 	int tmp;
+
 	if (!cxt)
 		return -EINVAL;
 
@@ -2631,6 +2631,8 @@ int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path)
 		close_ns(&cxt->ns_tgt);
 		return 0;
 	}
+
+	errno = 0;
 
 	/* open original namespace */
 	if (cxt->ns_orig.fd == -1) {
@@ -2649,7 +2651,7 @@ int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path)
 	DBG(CXT, ul_debugobj(cxt, "Trying whether namespace is valid"));
 	if (setns(tmp, CLONE_NEWNS)
 	    || setns(cxt->ns_orig.fd, CLONE_NEWNS)) {
-		rc = -errno;
+		errsv = errno;
 		DBG(CXT, ul_debugobj(cxt, "setns(2) failed [errno=%d %m]", errno));
 		goto err;
 	}
@@ -2662,7 +2664,8 @@ int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path)
 	return 0;
 err:
 	close(tmp);
-	return rc;
+	errno = errsv;
+	return -errno;
 }
 
 /**

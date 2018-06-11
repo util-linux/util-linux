@@ -511,13 +511,9 @@ int main(int argc, char **argv)
 			print_version();
 			break;
 		case 'N':
-		{
-			int tmp;
-			if ((tmp = mnt_context_set_target_ns(cxt, optarg))) {
-				errno = -tmp;
+			if (mnt_context_set_target_ns(cxt, optarg))
 				err(MNT_EX_SYSERR, _("failed to set target namespace"));
-			}
-	 		break;
+			break;
 		}
 		default:
 			errtryhelp(MNT_EX_USAGE);
