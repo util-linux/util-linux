@@ -102,19 +102,6 @@ libmount (mount/umount)
    set and allow to use it for simple tasks where no another operation is
    necessary.
 
- - allow to execute mount(2) in another namespace, something like:
-	mount --namespace=/proc/$n/ns/mnt  /dev/sda2 /bar
-   see https://bugzilla.redhat.com/show_bug.cgi?id=1199554 for more details.
-
- - add options to control fstab/mtab mount options usage, something like:
-
-   --options-mode={ignore,append,prepend,replace}      MNT_OMODE_{IGNORE, ...}
-   --options-source={fstab,mtab,disable}               MNT_OMODE_{FSTAB,MTAB,NOTAB}
-   --options-source-force                              MNT_OMODE_FORCE
-
-   (all this already supported by libmount)
-
-
 partx
 -----
 
