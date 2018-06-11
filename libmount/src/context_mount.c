@@ -184,6 +184,7 @@ static int is_option(const char *name, size_t namesz,
 static int fix_optstr(struct libmnt_context *cxt)
 {
 	int rc = 0;
+	struct libmnt_ns *ns_old;
 	char *next;
 	char *name, *val;
 	size_t namesz, valsz;
@@ -342,8 +343,17 @@ static int fix_optstr(struct libmnt_context *cxt)
 			goto done;
 	}
 
-	if (!rc && cxt->restricted && (cxt->user_mountflags & MNT_MS_USER))
+
+	if (!rc && cxt->restricted && (cxt->user_mountflags & MNT_MS_USER)) {
+		ns_old = mnt_context_switch_origin_ns(cxt);
+		if (!ns_old)
+			return -MNT_ERR_NAMESPACE;
+
 		rc = mnt_optstr_fix_user(&fs->user_optstr);
+
+		if (!mnt_context_switch_ns(cxt, ns_old))
+			return -MNT_ERR_NAMESPACE;
+	}
 
 	/* refresh merged optstr */
 	free(fs->optstr);
@@ -578,6 +588,10 @@ int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg)
 		if (arg)
 			rc = mnt_context_set_fstype(cxt, arg);
 		break;
+	case 'N':
+		if (arg)
+			rc = mnt_context_set_target_ns(cxt, arg);
+		break;
 	default:
 		return 1;
 	}
@@ -587,7 +601,8 @@ int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg)
 
 static int exec_helper(struct libmnt_context *cxt)
 {
-	char *o = NULL;
+	char *o = NULL, *namespace = NULL;
+	struct libmnt_ns *ns_tgt = mnt_context_get_target_ns(cxt);
 	int rc;
 	pid_t pid;
 
@@ -602,19 +617,29 @@ static int exec_helper(struct libmnt_context *cxt)
 	if (rc)
 		return -EINVAL;
 
+	if (ns_tgt->fd != -1
+	    && asprintf(&namespace, "/proc/%i/fd/%i",
+			getpid(), ns_tgt->fd) == -1) {
+		free(o);
+		return -ENOMEM;
+	}
+
 	DBG_FLUSH;
 
 	pid = fork();
 	switch (pid) {
 	case 0:
 	{
-		const char *args[12], *type;
+		const char *args[14], *type;
 		int i = 0;
 
 		if (setgid(getgid()) < 0)
 			_exit(EXIT_FAILURE);
 
 		if (setuid(getuid()) < 0)
+			_exit(EXIT_FAILURE);
+
+		if (!mnt_context_switch_origin_ns(cxt))
 			_exit(EXIT_FAILURE);
 
 		type = mnt_fs_get_fstype(cxt->fs);
@@ -641,7 +666,11 @@ static int exec_helper(struct libmnt_context *cxt)
 			args[i++] = "-t";		/* 10 */
 			args[i++] = type;		/* 11 */
 		}
-		args[i] = NULL;				/* 12 */
+		if (namespace) {
+			args[i++] = "-N";		/* 11 */
+			args[i++] = namespace;		/* 12 */
+		}
+		args[i] = NULL;				/* 13 */
 		for (i = 0; args[i]; i++)
 			DBG(CXT, ul_debugobj(cxt, "argv[%d] = \"%s\"",
 							i, args[i]));
@@ -871,6 +900,7 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	int neg = pattern && strncmp(pattern, "no", 2) == 0;
 	int rc = -EINVAL;
 	char **filesystems, **fp;
+	struct libmnt_ns *ns_old;
 
 	assert(cxt);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
@@ -888,7 +918,12 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	/*
 	 * Apply pattern to /etc/filesystems and /proc/filesystems
 	 */
+	ns_old = mnt_context_switch_origin_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
 	rc = mnt_get_filesystems(&filesystems, neg ? pattern : NULL);
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
 	if (rc)
 		return rc;
 
@@ -918,6 +953,7 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 int mnt_context_prepare_mount(struct libmnt_context *cxt)
 {
 	int rc = -EINVAL;
+	struct libmnt_ns *ns_old;
 
 	if (!cxt || !cxt->fs || mnt_fs_is_swaparea(cxt->fs))
 		return -EINVAL;
@@ -930,6 +966,10 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 	assert(cxt->syscall_status == 1);
 
 	cxt->action = MNT_ACT_MOUNT;
+
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
 
 	DBG(CXT, ul_debugobj(cxt, "mount: preparing"));
 
@@ -950,9 +990,14 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 		rc = mnt_context_prepare_helper(cxt, "mount", NULL);
 	if (rc) {
 		DBG(CXT, ul_debugobj(cxt, "mount: preparing failed"));
-		return rc;
+		goto end;
 	}
 	cxt->flags |= MNT_FL_PREPARED;
+
+end:
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
+
 	return rc;
 }
 
@@ -983,6 +1028,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 {
 	const char *type;
 	int res;
+	struct libmnt_ns *ns_old;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -996,6 +1042,10 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 
 	if (!(cxt->flags & MNT_FL_MOUNTDATA))
 		cxt->mountdata = (char *) mnt_fs_get_fs_options(cxt->fs);
+
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
 
 	type = mnt_fs_get_fstype(cxt->fs);
 	if (type) {
@@ -1048,6 +1098,8 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 		}
 	}
 #endif
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
 
 	return res;
 }
@@ -1132,11 +1184,16 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
 int mnt_context_mount(struct libmnt_context *cxt)
 {
 	int rc;
+	struct libmnt_ns *ns_old;
 
 	assert(cxt);
 	assert(cxt->fs);
 	assert(cxt->helper_exec_status == 1);
 	assert(cxt->syscall_status == 1);
+
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
 
 again:
 	rc = mnt_context_prepare_mount(cxt);
@@ -1172,6 +1229,8 @@ again:
 			goto again;
 		}
 	}
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
 	return rc;
 }
 
@@ -1328,6 +1387,11 @@ static int is_shared_tree(struct libmnt_context *cxt, const char *dir)
 	unsigned long mflags = 0;
 	char *mnt = NULL, *p;
 	int rc = 0;
+	struct libmnt_ns *ns_old;
+
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
 
 	if (!dir)
 		return 0;
@@ -1349,6 +1413,8 @@ static int is_shared_tree(struct libmnt_context *cxt, const char *dir)
 		&& (mflags & MS_SHARED);
 done:
 	free(mnt);
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
 	return rc;
 }
 
@@ -1452,6 +1518,10 @@ int mnt_context_get_mount_excode(
 			if (buf)
 				snprintf(buf, bufsz, _("locking failed"));
 			return MNT_EX_FILEIO;
+		case -MNT_ERR_NAMESPACE:
+			if (buf)
+				snprintf(buf, bufsz, _("failed to switch namespace"));
+			return MNT_EX_SYSERR;
 		default:
 			return mnt_context_get_generic_excode(rc, buf, bufsz, _("mount failed: %m"));
 		}
@@ -1465,6 +1535,10 @@ int mnt_context_get_mount_excode(
 			if (buf)
 				snprintf(buf, bufsz, _("filesystem was mounted, but failed to update userspace mount table"));
 			return MNT_EX_FILEIO;
+		} else if (rc == -MNT_ERR_NAMESPACE) {
+			if (buf)
+				snprintf(buf, bufsz, _("filesystem was mounted, but failed to switch namespace back"));
+			return MNT_EX_SYSERR;
 
 		} else if (rc < 0)
 			return mnt_context_get_generic_excode(rc, buf, bufsz,

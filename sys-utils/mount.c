@@ -431,6 +431,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	" -v, --verbose           say what is being done\n"));
 	fprintf(out, _(
 	" -w, --rw, --read-write  mount the filesystem read-write (default)\n"));
+	fprintf(out, _(
+	" -N, --namespace <ns>    perform mount in another namespace\n"));
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(25));
@@ -510,6 +512,19 @@ static long osrc2mask(const char *str, size_t len)
 	return -EINVAL;
 }
 
+static pid_t parse_pid(const char *str)
+{
+	char *end;
+	pid_t ret;
+
+	errno = 0;
+	ret = strtoul(str, &end, 10);
+
+	if (ret < 0 || errno || end == str || (end && *end))
+		return 0;
+	return ret;
+}
+
 int main(int argc, char **argv)
 {
 	int c, rc = MNT_EX_SUCCESS, all = 0, show_labels = 0;
@@ -574,6 +589,7 @@ int main(int argc, char **argv)
 		{ "options-mode",     required_argument, NULL, MOUNT_OPT_OPTMODE     },
 		{ "options-source",   required_argument, NULL, MOUNT_OPT_OPTSRC      },
 		{ "options-source-force",   no_argument, NULL, MOUNT_OPT_OPTSRC_FORCE},
+		{ "namespace",        required_argument, NULL, 'N'                   },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -599,7 +615,7 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:rRsU:vVwt:T:",
+	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:rRsU:vVwt:T:N:",
 					longopts, NULL)) != -1) {
 
 		/* only few options are allowed for non-root users */
@@ -690,6 +706,21 @@ int main(int argc, char **argv)
 			oper = 1;
 			append_option(cxt, "rbind");
 			break;
+		case 'N':
+		{
+			int tmp;
+			char path[PATH_MAX];
+			pid_t pid = parse_pid(optarg);
+
+			if (pid)
+				snprintf(path, sizeof(path), "/proc/%i/ns/mnt", pid);
+
+			if ((tmp = mnt_context_set_target_ns(cxt, pid ? path : optarg))) {
+				errno = -tmp;
+				err(MNT_EX_SYSERR, _("failed to set target namespace to %s"), pid ? path : optarg);
+			}
+	 		break;
+		}
 		case MOUNT_OPT_SHARED:
 			append_option(cxt, "shared");
 			propa = 1;

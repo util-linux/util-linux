@@ -100,6 +100,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --read-only         in case unmounting fails, try to remount read-only\n"), out);
 	fputs(_(" -t, --types <list>      limit the set of filesystem types\n"), out);
 	fputs(_(" -v, --verbose           say what is being done\n"), out);
+	fputs(_(" -N, --namespace <ns>    perform umount in another namespace\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(25));
@@ -218,7 +219,12 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 
 static struct libmnt_table *new_mountinfo(struct libmnt_context *cxt)
 {
-	struct libmnt_table *tb = mnt_new_table();
+	struct libmnt_table *tb;
+	struct libmnt_ns *ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		err(MNT_EX_SYSERR, _("failed to switch namespace"));
+
+	tb = mnt_new_table();
 	if (!tb)
 		err(MNT_EX_SYSERR, _("libmount table allocation failed"));
 
@@ -230,6 +236,9 @@ static struct libmnt_table *new_mountinfo(struct libmnt_context *cxt)
 		mnt_unref_table(tb);
 		tb = NULL;
 	}
+
+	if (!(mnt_context_switch_ns(cxt, ns_old)))
+		err(MNT_EX_SYSERR, _("failed to switch namespace"));
 
 	return tb;
 }
@@ -397,6 +406,19 @@ static char *sanitize_path(const char *path)
 	return p;
 }
 
+static pid_t parse_pid(const char *str)
+{
+	char *end;
+	pid_t ret;
+
+	errno = 0;
+	ret = strtoul(str, &end, 10);
+
+	if (ret < 0 || errno || end == str || (end && *end))
+		return 0;
+	return ret;
+}
+
 int main(int argc, char **argv)
 {
 	int c, rc = 0, all = 0, recursive = 0, alltargets = 0;
@@ -424,6 +446,7 @@ int main(int argc, char **argv)
 		{ "types",           required_argument, NULL, 't'             },
 		{ "verbose",         no_argument,       NULL, 'v'             },
 		{ "version",         no_argument,       NULL, 'V'             },
+		{ "namespace",       required_argument, NULL, 'N'             },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -449,7 +472,7 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aAcdfhilnRrO:t:vV",
+	while ((c = getopt_long(argc, argv, "aAcdfhilnRrO:t:vVN:",
 					longopts, NULL)) != -1) {
 
 
@@ -509,6 +532,21 @@ int main(int argc, char **argv)
 		case 'V':
 			print_version();
 			break;
+		case 'N':
+		{
+			int tmp;
+			char path[PATH_MAX];
+			pid_t pid = parse_pid(optarg);
+
+			if (pid)
+				snprintf(path, sizeof(path), "/proc/%i/ns/mnt", pid);
+
+			if ((tmp = mnt_context_set_target_ns(cxt, pid ? path : optarg))) {
+				errno = -tmp;
+				err(MNT_EX_SYSERR, _("failed to set target namespace to %s"), pid ? path : optarg);
+			}
+	 		break;
+		}
 		default:
 			errtryhelp(MNT_EX_USAGE);
 		}
