@@ -38,7 +38,8 @@ in environments where a stable output is required.
 
 .B wipefs
 calls the BLKRRPART ioctl when it has erased a partition-table signature
-to inform the kernel about the change.
+to inform the kernel about the change. The ioctl is called as the last step
+and when all specified signatures from all specified devices are already erased.
 
 Note that some filesystems and some partition tables store more magic strings on
 the device (e.g. FAT, ZFS, GPT).  The

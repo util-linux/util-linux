@@ -62,11 +62,16 @@ struct wipe_desc {
 };
 
 struct wipe_control {
-	const char	*devname;
+	char		*devname;
 	const char	*type_pattern;		/* -t <pattern> */
 
 	struct libscols_table *outtab;
 	struct wipe_desc *offsets;		/* -o <offset> -o <offset> ... */
+
+	size_t		ndevs;			/* number of devices to probe */
+
+	char		**reread;		/* devices to BLKRRPART */
+	size_t		nrereads;		/* size of reread */
 
 	unsigned int	noact : 1,
 			all : 1,
@@ -504,12 +509,25 @@ err:
 static void rereadpt(int fd, const char *devname)
 {
 	struct stat st;
+	int try = 0;
 
 	if (fstat(fd, &st) || !S_ISBLK(st.st_mode))
 		return;
 
-	errno = 0;
-	ioctl(fd, BLKRRPART);
+	do {
+		/*
+		 * Unfortunately, it's pretty common that the first re-read
+		 * without delay is uncuccesful. The reason is probably kernel
+		 * and/or udevd.  Let's wait a moment and try more attempts.
+		 */
+		xusleep(25000);
+
+		errno = 0;
+		ioctl(fd, BLKRRPART);
+		if (errno != EBUSY)
+			break;
+	} while (try++ < 4);
+
 	printf(_("%s: calling ioctl to re-read partition table: %m\n"), devname);
 }
 #endif
@@ -590,8 +608,21 @@ static int do_wipe(struct wipe_control *ctl)
 	fsync(blkid_probe_get_fd(pr));
 
 #ifdef BLKRRPART
-	if (reread && (mode & O_EXCL))
-		rereadpt(blkid_probe_get_fd(pr), ctl->devname);
+	if (reread && (mode & O_EXCL)) {
+		if (ctl->ndevs > 1) {
+			/*
+			 * We're going to probe more device, let's postpone
+			 * re-read PT ioctl until all is erased to avoid
+			 * situation we erase PT on /dev/sda before /dev/sdaN
+			 * devices are processed.
+			 */
+			if (!ctl->reread)
+				ctl->reread = xcalloc(ctl->ndevs, sizeof(char *));
+
+			ctl->reread[ctl->nrereads++] = ctl->devname;
+		} else
+			rereadpt(blkid_probe_get_fd(pr), ctl->devname);
+	}
 #endif
 
 	close(blkid_probe_get_fd(pr));
@@ -771,11 +802,28 @@ main(int argc, char **argv)
 		/*
 		 * Erase
 		 */
+		size_t i;
+		ctl.ndevs = argc - optind;
+
 		while (optind < argc) {
 			ctl.devname = argv[optind++];
 			do_wipe(&ctl);
+			ctl.ndevs--;
 		}
-	}
 
+		/* Re-read partition tables on whole-disk devices. This is
+		 * postponed until all is done to avoid conflicts.
+		 */
+		for (i = 0; i < ctl.nrereads; i++) {
+			char *devname = ctl.reread[i];
+			int fd = open(devname, O_RDONLY);
+
+			if (fd >= 0) {
+				rereadpt(fd, devname);
+				close(fd);
+			}
+		}
+		free(ctl.reread);
+	}
 	return EXIT_SUCCESS;
 }
