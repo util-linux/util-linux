@@ -2418,13 +2418,15 @@ The syntax of external mount helpers is:
 .BI /sbin/mount. suffix
 .I spec dir
 .RB [ \-sfnv ]
+.RB [ \-N
+.IR namespace ]
 .RB [ \-o
 .IR options ]
 .RB [ \-t
 .IR type \fB. subtype ]
 .in
 .sp
-where the \fIsuffix\fR is the filesystem type and the \fB\-sfnvo\fR options have
+where the \fIsuffix\fR is the filesystem type and the \fB\-sfnvoN\fR options have
 the same meaning as the normal mount options.  The \fB\-t\fR option is used for
 filesystems with subtypes support (for example
 .BR "/sbin/mount.fuse \-t fuse.sshfs" ).
