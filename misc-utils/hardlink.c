@@ -19,7 +19,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#define _GNU_SOURCE
 #include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -77,13 +76,13 @@ typedef struct _f {
 } f;
 
 __attribute__ ((always_inline))
-inline unsigned int hash(off_t size, time_t mtime)
+static inline unsigned int hash(off_t size, time_t mtime)
 {
 	return (size ^ mtime) & (NHASH - 1);
 }
 
 __attribute__ ((always_inline))
-inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
+static inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
 {
 	if (content_only)
 		return st1->st_size != st2->st_size;
@@ -94,7 +93,7 @@ inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
 
 long long ndirs, nobjects, nregfiles, ncomp, nlinks, nsaved;
 
-void doexit(int i)
+static void doexit(int i)
 {
 	if (verbose) {
 		fprintf(stderr, "\n\n");
@@ -110,7 +109,7 @@ void doexit(int i)
 	exit(i);
 }
 
-void usage(char *prog)
+static void usage(char *prog)
 {
 	fprintf(stderr, "Usage: %s [-cnvhf] [-x pat] directories...\n", prog);
 	fprintf(stderr,
@@ -130,7 +129,7 @@ unsigned int buf[NBUF];
 char iobuf1[NIOBUF], iobuf2[NIOBUF];
 
 __attribute__ ((always_inline))
-inline size_t add2(size_t a, size_t b)
+static inline size_t add2(size_t a, size_t b)
 {
 	size_t sum = a + b;
 	if (sum < a) {
@@ -141,7 +140,7 @@ inline size_t add2(size_t a, size_t b)
 }
 
 __attribute__ ((always_inline))
-inline size_t add3(size_t a, size_t b, size_t c)
+static inline size_t add3(size_t a, size_t b, size_t c)
 {
 	return add2(add2(a, b), c);
 }
@@ -151,7 +150,7 @@ typedef struct {
 	size_t alloc;
 } dynstr;
 
-void growstr(dynstr * str, size_t newlen)
+static void growstr(dynstr * str, size_t newlen)
 {
 	if (newlen < str->alloc)
 		return;
@@ -163,7 +162,7 @@ void growstr(dynstr * str, size_t newlen)
 }
 
 dev_t dev = 0;
-void rf(const char *name)
+static void rf(const char *name)
 {
 	struct stat st, st2, st3;
 	const size_t namelen = strlen(name);
@@ -204,7 +203,7 @@ void rf(const char *name)
 		fd = open(name, O_RDONLY);
 		if (fd < 0)
 			return;
-		if (st.st_size < sizeof(buf)) {
+		if ((size_t)st.st_size < sizeof(buf)) {
 			cksumsize = st.st_size;
 			memset(((char *)buf) + cksumsize, 0,
 			       (sizeof(buf) - cksumsize) % sizeof(buf[0]));
@@ -356,7 +355,7 @@ void rf(const char *name)
 					    ((st.st_size + 4095) / 4096) * 4096;
 					if (verbose > 1)
 						fprintf(stderr,
-							"\r%*s\r%s %s to %s, %s %ld\n",
+							"\r%*s\r%s %s to %s, %s %jd\n",
 							(int)(((namelen >
 								NAMELEN) ? 0 :
 							       namelen) + 2),
@@ -365,7 +364,7 @@ void rf(const char *name)
 							 : "Linked"), n1, n2,
 							(no_link ? "would save"
 							 : "saved"),
-							st.st_size);
+							(intmax_t)st.st_size);
 				}
 				close(fd);
 				return;
