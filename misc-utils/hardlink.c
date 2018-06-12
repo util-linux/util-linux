@@ -22,7 +22,6 @@
 /*  Changes by Todd Lewis that adds option -x to exclude files with pcre lib */
 
 #define _GNU_SOURCE
-#define PCRE2_CODE_UNIT_WIDTH 8
 #include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -33,16 +32,21 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <pcre2.h>
+#ifdef HAVE_PCRE
+# define PCRE2_CODE_UNIT_WIDTH 8
+# include <pcre2.h>
+#endif
 
 #define NHASH	(1<<17)	/* Must be a power of 2! */
 #define NIOBUF	(1<<12)
 #define NAMELEN	4096
 #define NBUF	64
 
+#ifdef HAVE_PCRE
 pcre2_code *re;
 PCRE2_SPTR exclude_pattern;
 pcre2_match_data *match_data;
+#endif
 
 struct _f;
 typedef struct _h {
@@ -336,8 +340,10 @@ int main(int argc, char **argv)
 {
   int ch;
   int i;
+#ifdef HAVE_PCRE
   int errornumber;
   PCRE2_SIZE erroroffset;
+#endif
   dynstr nam1 = {NULL, 0};
   while ((ch = getopt (argc, argv, "cnvhfx:")) != -1) {
     switch (ch) {
@@ -354,7 +360,12 @@ int main(int argc, char **argv)
       force=1;
       break;
     case 'x':
+#ifdef HAVE_PCRE
     	exclude_pattern = (PCRE2_SPTR)optarg;
+#else
+		fprintf(stderr, "option x not supported (built without pcre2)\n");
+		exit(1);
+#endif
     	break;
     case 'h':
     default:
@@ -363,6 +374,7 @@ int main(int argc, char **argv)
   }
   if (optind >= argc)
     usage(argv[0]);
+#ifdef HAVE_PCRE
   if (exclude_pattern) {
     re = pcre2_compile(
           exclude_pattern,       /* the pattern */
@@ -379,6 +391,7 @@ int main(int argc, char **argv)
     }
     match_data = pcre2_match_data_create_from_pattern(re, NULL);
   }
+#endif
   for (i = optind; i < argc; i++)
     rf(argv[i]);
   while (dirs) {
@@ -403,6 +416,7 @@ int main(int argc, char **argv)
         if (!di->d_name[1] || !strcmp(di->d_name, ".."))
           continue;
       }
+#ifdef HAVE_PCRE
       if (re && pcre2_match(
                   re,                 /* compiled regex */
                   (PCRE2_SPTR)di->d_name,
@@ -418,6 +432,7 @@ int main(int argc, char **argv)
         }
         continue; 
       }
+#endif
       {
         size_t subdirlen;
         growstr(&nam1, add2(nam1baselen, subdirlen = strlen(di->d_name)));

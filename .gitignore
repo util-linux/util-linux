@@ -96,6 +96,7 @@ ylwrap
 /fsfreeze
 /fstrim
 /getopt
+/hardlink
 /hexdump
 /hwclock
 /ionice
