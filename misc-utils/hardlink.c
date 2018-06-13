@@ -21,6 +21,7 @@
 
 #include <sys/types.h>
 #include <stdlib.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -33,6 +34,10 @@
 # define PCRE2_CODE_UNIT_WIDTH 8
 # include <pcre2.h>
 #endif
+
+#include "c.h"
+#include "nls.h"
+#include "closestream.h"
 
 #define NHASH   (1<<17)  /* Must be a power of 2! */
 #define NIOBUF  (1<<12)
@@ -109,21 +114,27 @@ static void doexit(int i)
 	exit(i);
 }
 
-static void usage(char *prog)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fprintf(stderr, "Usage: %s [-cnvhf] [-x pat] directories...\n", prog);
-	fprintf(stderr,
-		"  -c    When finding candidates for linking, compare only file contents.\n");
-	fprintf(stderr,
-		"  -n    Don't actually link anything, just report what would be done.\n");
-	fprintf(stderr, "  -v    Print summary after hardlinking.\n");
-	fprintf(stderr,
-		"  -vv   Print every hardlinked file and bytes saved + summary.\n");
-	fprintf(stderr, "  -f    Force hardlinking across filesystems.\n");
-	fprintf(stderr, "  -x pat Exclude files matching pattern.\n");
-	fprintf(stderr, "  -h    Show help.\n");
-	exit(255);
+	fputs(USAGE_HEADER, stdout);
+	printf(_(" %s [options] directory...\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, stdout);
+	puts(_("Consolidate duplicate files using hardlinks."));
+
+	fputs(USAGE_OPTIONS, stdout);
+	puts(_(" -c             when finding candidates for linking, compare only file contents"));
+	puts(_(" -n             don't actually link anything, just report what would be done"));
+	puts(_(" -v             print summary after hardlinking"));
+	puts(_(" -vv            print every hardlinked file and bytes saved + summary"));
+	puts(_(" -f             force hardlinking across filesystems"));
+	puts(_(" -x <regex>     exclude files matching pattern"));
+	fputs(USAGE_SEPARATOR, stdout);
+	printf(USAGE_HELP_OPTIONS(16)); /* char offset to align option descriptions */
+	printf(USAGE_MAN_TAIL("hardlink(1)"));
+	exit(EXIT_SUCCESS);
 }
+
 
 unsigned int buf[NBUF];
 char iobuf1[NIOBUF], iobuf2[NIOBUF];
@@ -401,7 +412,19 @@ int main(int argc, char **argv)
 	PCRE2_SIZE erroroffset;
 #endif
 	dynstr nam1 = { NULL, 0 };
-	while ((ch = getopt(argc, argv, "cnvhfx:")) != -1) {
+
+	static const struct option longopts[] = {
+		{ "version",    no_argument, NULL, 'V' },
+		{ "help",       no_argument, NULL, 'h' },
+		{ NULL, 0, NULL, 0 },
+	};
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
+
+	while ((ch = getopt_long(argc, argv, "cnvfx:Vh", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'n':
 			no_link++;
@@ -419,17 +442,26 @@ int main(int argc, char **argv)
 #ifdef HAVE_PCRE
 			exclude_pattern = (PCRE2_SPTR) optarg;
 #else
-			fprintf(stderr, "option x not supported (built without pcre2)\n");
+			errx(EXIT_FAILURE,
+			     _("option -x not supported (built without pcre2)"));
 			exit(1);
 #endif
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'h':
+			usage();
 		default:
-			usage(argv[0]);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
-	if (optind >= argc)
-		usage(argv[0]);
+
+	if (optind == argc) {
+		warnx(_("no directory specified"));
+		errtryhelp(EXIT_FAILURE);
+	}
+
 #ifdef HAVE_PCRE
 	if (exclude_pattern) {
 		re = pcre2_compile(exclude_pattern, /* the pattern */
@@ -440,9 +472,8 @@ int main(int argc, char **argv)
 			PCRE2_UCHAR buffer[256];
 			pcre2_get_error_message(errornumber, buffer,
 						sizeof(buffer));
-			fprintf(stderr, "pattern error at offset %d: %s\n",
+			errx(EXIT_FAILURE, _("pattern error at offset %d: %s"),
 				(int)erroroffset, buffer);
-			usage(argv[0]);
 		}
 		match_data = pcre2_match_data_create_from_pattern(re, NULL);
 	}
