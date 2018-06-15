@@ -54,6 +54,15 @@ lscpu
 
 lsblk
 -----
+  - add --sysroot to read sysfs data from dumps rather than from a real sysfs
+  - add regression tests based on --sysroot
+
+  - re-write the way how lsblk internally holds info about devices. Now we
+    compose only output (by libsmartcols). It would be better to have in memory
+    complete tree of the devices and generate the output from this tree. It will
+    make code more readable and allow to generate output in more ways -- for
+    example for RAIDs (https://github.com/karelzak/util-linux/issues/616)
+
   - currently it does not show mountpoint for all devices in btrfs RAID. It's because
     /proc/#/mountinfo contains reference to the one device only. Maybe we can add some
     btrfs specific code to provide a better output for FS based stacks. Not sure.
