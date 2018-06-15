@@ -19,7 +19,6 @@
 
 static void sysfs_blkdev_deinit_path(struct path_cxt *pc);
 static int  sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, int *dirfd);
-static dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent);
 
 /*
  * Debug stuff (based on include/debug.h)
@@ -811,7 +810,7 @@ static char *scsi_attribute_path(struct path_cxt *pc,
 	return (len < 0 || (size_t) len >= bufsz) ? NULL : buf;
 }
 
-int sysfs_scsi_has_attribute(struct path_cxt *pc, const char *attr)
+int sysfs_blkdev_scsi_has_attribute(struct path_cxt *pc, const char *attr)
 {
 	char path[PATH_MAX];
 	struct stat st;
@@ -822,7 +821,7 @@ int sysfs_scsi_has_attribute(struct path_cxt *pc, const char *attr)
 	return stat(path, &st) == 0;
 }
 
-int sysfs_scsi_path_contains(struct path_cxt *pc, const char *pattern)
+int sysfs_blkdev_scsi_path_contains(struct path_cxt *pc, const char *pattern)
 {
 	char path[PATH_MAX], linkc[PATH_MAX];
 	struct stat st;
@@ -858,7 +857,7 @@ static dev_t read_devno(const char *path)
 	return dev;
 }
 
-static dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent)
+dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent)
 {
 	char buf[PATH_MAX];
 	char *_name = NULL;	/* name as encoded in sysfs */
