@@ -1047,7 +1047,9 @@ int main(int argc, char **argv)
 			default:
 				abort();
 			}
-		}
+		} else
+			rc = 1;
+
 		blkid_free_probe(pr);
 	}
 
