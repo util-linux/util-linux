@@ -222,6 +222,7 @@ struct lsblk {
 	struct libscols_column *sort_col;/* sort output by this column */
 	int sort_id;
 
+	const char *sysroot;
 	int flags;			/* LSBLK_* */
 
 	unsigned int all_devices:1;	/* print all devices, including empty */
@@ -1232,7 +1233,7 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	}
 	DBG(CXT, ul_debugobj(cxt, "%s: filename=%s", cxt->name, cxt->filename));
 
-	devno = __sysfs_devname_to_devno(NULL, cxt->name, wholedisk ? wholedisk->name : NULL);
+	devno = __sysfs_devname_to_devno(lsblk->sysroot, cxt->name, wholedisk ? wholedisk->name : NULL);
 
 	if (!devno) {
 		DBG(CXT, ul_debugobj(cxt, "%s: unknown device name", cxt->name));
@@ -1240,7 +1241,7 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	}
 
 	if (lsblk->inverse) {
-		cxt->sysfs = ul_new_sysfs_path(devno, wholedisk ? wholedisk->sysfs : NULL, NULL);
+		cxt->sysfs = ul_new_sysfs_path(devno, wholedisk ? wholedisk->sysfs : NULL, lsblk->sysroot);
 		if (!cxt->sysfs) {
 			DBG(CXT, ul_debugobj(cxt, "%s: failed to initialize sysfs handler", cxt->name));
 			return -1;
@@ -1248,7 +1249,7 @@ static int set_cxt(struct blkdev_cxt *cxt,
 		if (parent)
 			sysfs_blkdev_set_parent(parent->sysfs, cxt->sysfs);
 	} else {
-		cxt->sysfs = ul_new_sysfs_path(devno, parent ? parent->sysfs : NULL, NULL);
+		cxt->sysfs = ul_new_sysfs_path(devno, parent ? parent->sysfs : NULL, lsblk->sysroot);
 		if (!cxt->sysfs) {
 			DBG(CXT, ul_debugobj(cxt, "%s: failed to initialize sysfs handler", cxt->name));
 			return -1;
@@ -1706,6 +1707,10 @@ int main(int argc, char *argv[])
 	size_t i;
 	int force_tree = 0;
 
+	enum {
+		OPT_SYSROOT = CHAR_MAX + 1
+	};
+
 	static const struct option longopts[] = {
 		{ "all",	no_argument,       NULL, 'a' },
 		{ "bytes",      no_argument,       NULL, 'b' },
@@ -1730,6 +1735,7 @@ int main(int argc, char *argv[])
 		{ "pairs",      no_argument,       NULL, 'P' },
 		{ "scsi",       no_argument,       NULL, 'S' },
 		{ "sort",	required_argument, NULL, 'x' },
+		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
 		{ "tree",       no_argument,       NULL, 'T' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ NULL, 0, NULL, 0 },
@@ -1865,6 +1871,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'T':
 			force_tree = 1;
+			break;
+
+		case OPT_SYSROOT:
+			lsblk->sysroot = optarg;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
