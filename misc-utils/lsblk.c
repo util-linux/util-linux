@@ -446,7 +446,7 @@ static char *get_device_path(struct blkdev_cxt *cxt)
 	assert(cxt->name);
 
 	if (is_dm(cxt->name))
-		return canonicalize_dm_name(cxt->name);
+		return __canonicalize_dm_name(lsblk->sysroot, cxt->name);
 
 	snprintf(path, sizeof(path), "/dev/%s", cxt->name);
 	sysfs_devname_sys_to_dev(path);
@@ -1473,9 +1473,17 @@ static int iterate_block_devices(void)
 	DIR *dir;
 	struct dirent *d;
 	struct blkdev_cxt cxt = { NULL };
+	struct path_cxt *pc = ul_new_path(_PATH_SYS_BLOCK);
 
-	if (!(dir = opendir(_PATH_SYS_BLOCK)))
-		return -errno;
+	if (!pc)
+		err(EXIT_FAILURE, _("failed to allocate /sys handler"));
+
+	ul_path_set_prefix(pc, lsblk->sysroot);
+
+	/* TODO: reuse @pc in set_cxt(), etc. */
+	dir = ul_path_opendir(pc, NULL);
+	if (!dir)
+		goto done;
 
 	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK));
 
@@ -1499,7 +1507,8 @@ static int iterate_block_devices(void)
 	}
 
 	closedir(dir);
-
+done:
+	ul_unref_path(pc);
 	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK " -- done"));
 	return 0;
 }
@@ -1929,6 +1938,7 @@ int main(int argc, char *argv[])
 
 	mnt_init_debug(0);
 	scols_init_debug(0);
+	ul_path_init_debug();
 
 	/*
 	 * initialize output columns

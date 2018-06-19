@@ -24,7 +24,7 @@
  * Since 2.6.29 (patch 784aae735d9b0bba3f8b9faef4c8b30df3bf0128) kernel sysfs
  * provides the real DM device names in /sys/block/<ptname>/dm/name
  */
-char *canonicalize_dm_name(const char *ptname)
+char *__canonicalize_dm_name(const char *prefix, const char *ptname)
 {
 	FILE	*f;
 	size_t	sz;
@@ -33,7 +33,10 @@ char *canonicalize_dm_name(const char *ptname)
 	if (!ptname || !*ptname)
 		return NULL;
 
-	snprintf(path, sizeof(path), "/sys/block/%s/dm/name", ptname);
+	if (!prefix)
+		prefix = "";
+
+	snprintf(path, sizeof(path), "%s/sys/block/%s/dm/name", prefix, ptname);
 	if (!(f = fopen(path, "r" UL_CLOEXECSTR)))
 		return NULL;
 
@@ -42,11 +45,16 @@ char *canonicalize_dm_name(const char *ptname)
 		name[sz - 1] = '\0';
 		snprintf(path, sizeof(path), _PATH_DEV_MAPPER "/%s", name);
 
-		if (access(path, F_OK) == 0)
+		if (prefix || access(path, F_OK) == 0)
 			res = strdup(path);
 	}
 	fclose(f);
 	return res;
+}
+
+char *canonicalize_dm_name(const char *ptname)
+{
+	return __canonicalize_dm_name(NULL, ptname);
 }
 
 static int is_dm_devname(char *canonical, char **name)
