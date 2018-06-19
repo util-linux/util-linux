@@ -134,6 +134,12 @@ Display version information and exit.
 Sort output lines by \fIcolumn\fP. This option enables \fB\-\-list\fR output format by default.
 It is possible to use the option \fI\-\-tree\fP to force tree-like output and
 than the tree branches are sorted by the \fIcolumn\fP.
+.TP
+.BR " \-\-sysroot " \fIdirectory\fP
+Gather data for a Linux instance other than the instance from which the lsblk
+command is issued.  The specified directory is the system root of the Linux
+instance to be inspected.  This option is designed for the testing purpose.
+
 .SH NOTES
 For partitions, some information (e.g. queue attributes) is inherited from the
 parent device.

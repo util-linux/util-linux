@@ -1703,6 +1703,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -t, --topology       output info about topology\n"), out);
 	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
+	fputs(_("     --sysroot <dir>  use specified directory as system root\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(22));
 
