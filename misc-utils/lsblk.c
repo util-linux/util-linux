@@ -1549,6 +1549,7 @@ static int process_one_device(char *devname)
 		warn(_("%s: failed to get sysfs name"), devname);
 		goto leave;
 	}
+	name = xstrdup(name);
 
 	if (!strncmp(name, "dm-", 3)) {
 		/* dm mapping is never a real partition! */
