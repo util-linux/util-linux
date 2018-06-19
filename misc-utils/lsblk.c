@@ -92,6 +92,8 @@ enum {
 	COL_TARGET,
 	COL_LABEL,
 	COL_UUID,
+	COL_PTUUID,
+	COL_PTTYPE,
 	COL_PARTTYPE,
 	COL_PARTLABEL,
 	COL_PARTUUID,
@@ -171,6 +173,9 @@ static struct colinfo infos[] = {
 	[COL_TARGET] = { "MOUNTPOINT", 0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
 	[COL_LABEL]  = { "LABEL",   0.1, 0, N_("filesystem LABEL") },
 	[COL_UUID]   = { "UUID",    36,  0, N_("filesystem UUID") },
+
+	[COL_PTUUID] = { "PTUUID",  36,  0, N_("partition table identifier (usually UUID)") },
+	[COL_PTTYPE] = { "PTTYPE",  0.1, 0, N_("partition table type") },
 
 	[COL_PARTTYPE]  = { "PARTTYPE",  36,  0, N_("partition type UUID") },
 	[COL_PARTLABEL] = { "PARTLABEL", 0.1, 0, N_("partition LABEL") },
@@ -285,6 +290,8 @@ struct blkdev_cxt {
 	int probed;		/* already probed */
 	char *fstype;		/* detected fs, NULL or "?" if cannot detect */
 	char *uuid;		/* filesystem UUID (or stack uuid) */
+	char *ptuuid;		/* partition table UUID */
+	char *pttype;		/* partition table type */
 	char *label;		/* filesystem label */
 	char *parttype;		/* partition type UUID */
 	char *partuuid;		/* partition UUID */
@@ -394,6 +401,8 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->filename);
 	free(cxt->fstype);
 	free(cxt->uuid);
+	free(cxt->ptuuid);
+	free(cxt->pttype);
 	free(cxt->label);
 	free(cxt->parttype);
 	free(cxt->partuuid);
@@ -552,6 +561,10 @@ static int get_udev_properties(struct blkdev_cxt *cxt)
 			cxt->uuid = xstrdup(data);
 			unhexmangle_string(cxt->uuid);
 		}
+		if ((data = udev_device_get_property_value(dev, "ID_PART_TABLE_UUID")))
+			cxt->ptuuid = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_PART_TABLE_TYPE")))
+			cxt->pttype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME"))) {
 			cxt->partlabel = xstrdup(data);
 			unhexmangle_string(cxt->partlabel);
@@ -621,6 +634,10 @@ static void probe_device(struct blkdev_cxt *cxt)
 			cxt->fstype = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "UUID", &data, NULL))
 			cxt->uuid = xstrdup(data);
+		if (!blkid_probe_lookup_value(pr, "PTUUID", &data, NULL))
+			cxt->ptuuid = xstrdup(data);
+		if (!blkid_probe_lookup_value(pr, "PTTYPE", &data, NULL))
+			cxt->pttype = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "LABEL", &data, NULL))
 			cxt->label = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_TYPE", &data, NULL))
@@ -963,6 +980,16 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		probe_device(cxt);
 		if (cxt->uuid)
 			str = xstrdup(cxt->uuid);
+		break;
+	case COL_PTUUID:
+		probe_device(cxt);
+		if (cxt->ptuuid)
+			str = xstrdup(cxt->ptuuid);
+		break;
+	case COL_PTTYPE:
+		probe_device(cxt);
+		if (cxt->pttype)
+			str = xstrdup(cxt->pttype);
 		break;
 	case COL_PARTTYPE:
 		probe_device(cxt);
