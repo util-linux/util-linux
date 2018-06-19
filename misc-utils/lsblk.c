@@ -472,7 +472,14 @@ static int is_active_swap(const char *filename)
 
 		mnt_table_set_parser_errcb(swaps, table_parser_errcb);
 		mnt_table_set_cache(swaps, mntcache);
-		mnt_table_parse_swaps(swaps, NULL);
+
+		if (!lsblk->sysroot)
+			mnt_table_parse_swaps(swaps, NULL);
+		else {
+			char buf[PATH_MAX];
+			snprintf(buf, sizeof(buf), "%s" _PATH_PROC_SWAPS, lsblk->sysroot);
+			mnt_table_parse_swaps(swaps, buf);
+		}
 	}
 
 	return mnt_table_find_srcpath(swaps, filename, MNT_ITER_BACKWARD) != NULL;
@@ -495,7 +502,14 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 
 		mnt_table_set_parser_errcb(mtab, table_parser_errcb);
 		mnt_table_set_cache(mtab, mntcache);
-		mnt_table_parse_mtab(mtab, NULL);
+
+		if (!lsblk->sysroot)
+			mnt_table_parse_mtab(mtab, NULL);
+		else {
+			char buf[PATH_MAX];
+			snprintf(buf, sizeof(buf), "%s" _PATH_PROC_MOUNTINFO, lsblk->sysroot);
+			mnt_table_parse_mtab(mtab, buf);
+		}
 	}
 
 	/* Note that maj:min in /proc/self/mountinfo does not have to match with
