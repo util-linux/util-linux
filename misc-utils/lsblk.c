@@ -692,7 +692,7 @@ static char *get_scheduler(struct blkdev_cxt *cxt)
 	char buf[128];
 	char *p, *res = NULL;
 
-	if (ul_path_read_buffer(cxt->sysfs, buf, sizeof(buf), "queue/scheduler"))
+	if (ul_path_read_buffer(cxt->sysfs, buf, sizeof(buf), "queue/scheduler") == 0)
 		return NULL;
 	p = strchr(buf, '[');
 	if (p) {
