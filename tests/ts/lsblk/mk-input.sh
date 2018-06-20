@@ -3,7 +3,7 @@
 # Copyright (C) 2018 Karel Zak <kzak@redhat.com>
 #
 # This script makes a copy of relevant files from /sys and /proc.
-# The files are useful for lscpu(1) regression tests.
+# The files are useful for lsblk(1) regression tests.
 #
 progname=$(basename $0)
 
@@ -13,6 +13,8 @@ if [ -z "$1" ]; then
 fi
 
 TS_DUMP="$1"
+TS_NAME=$(basename ${TS_DUMP})
+TS_TARBALL="$TS_DUMP.tar.xz"
 TS_CMD_LSBLK=${TS_CMD_LSBLK:-"lsblk"}
 
 #
@@ -70,11 +72,20 @@ done
 
 
 function mk_output {
-	cols="$2"
-	name="$1"
+	local cols="NAME,${2}"
+	local subname="$1"
 
-	$TS_CMD_LSBLK -o NAME,${cols} > ${TS_DUMP}/lsblk.${name}
+	echo "$cols" > ${TS_DUMP}/${subname}.cols
+	$TS_CMD_LSBLK -o ${cols} > ${TS_DUMP}/lsblk-${TS_NAME}-${subname}
 }
+
+
+LANG="POSIX"
+LANGUAGE="POSIX"
+LC_ALL="POSIX"
+CHARSET="UTF-8"
+
+export LANG LANGUAGE LC_ALL CHARSET
 
 #
 # lsblk info
@@ -90,9 +101,9 @@ mk_output discard DISC-ALN,DISC-GRAN,DISC-MAX,DISC-ZERO
 mk_output zone ZONED
 
 
-tar zcvf lsblk-$TS_DUMP.tar.gz $TS_DUMP
+tar --xz -cvf ${TS_TARBALL} $TS_DUMP
 rm -rf $TS_DUMP
 
-echo -e "\nPlease, send lsblk-$TS_DUMP.tar.gz to util-linux upstream. Thanks!\n"
+echo -e "\nPlease, send ${TS_TARBALL} to util-linux upstream. Thanks!\n"
 
 
