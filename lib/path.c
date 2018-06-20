@@ -1141,12 +1141,12 @@ int main(int argc, char *argv[])
 			errx(EXIT_FAILURE, "<file> not defined");
 		file = argv[optind++];
 
-		if (ul_path_read_string(pc, &res, file) != 0)
-			err(EXIT_FAILURE, "read u64 failed");
+		if (ul_path_read_string(pc, &res, file) < 0)
+			err(EXIT_FAILURE, "read string failed");
 		printf("read:  %s: %s\n", file, res);
 
-		if (ul_path_readf_string(pc, &res, "%s", file) != 0)
-			err(EXIT_FAILURE, "readf u64 failed");
+		if (ul_path_readf_string(pc, &res, "%s", file) < 0)
+			err(EXIT_FAILURE, "readf string failed");
 		printf("readf: %s: %s\n", file, res);
 
 	} else if (strcmp(command, "read-link") == 0) {

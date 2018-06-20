@@ -716,7 +716,7 @@ static char *get_type(struct blkdev_cxt *cxt)
 
 		/* The DM_UUID prefix should be set to subsystem owning
 		 * the device - LVM, CRYPT, DMRAID, MPATH, PART */
-		if (ul_path_read_string(cxt->sysfs, &dm_uuid, "dm/uuid") == 0
+		if (ul_path_read_string(cxt->sysfs, &dm_uuid, "dm/uuid") > 0
 		    && dm_uuid) {
 			char *tmp = dm_uuid;
 			char *dm_uuid_prefix = strsep(&tmp, "-");
