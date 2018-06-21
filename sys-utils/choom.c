@@ -52,31 +52,36 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static int get_score(const pid_t pid)
+static int get_score(struct path_cxt *pc)
 {
-	return path_read_s32("/proc/%d/oom_score", (int) pid);
+	int ret;
+
+	if (ul_path_read_s32(pc, &ret, "oom_score") != 0)
+		err(EXIT_FAILURE, _("failed to read OOM score value"));
+
+	return ret;
 }
 
-static int get_score_adj(const pid_t pid)
+static int get_score_adj(struct path_cxt *pc)
 {
-	return path_read_s32("/proc/%d/oom_score_adj", (int) pid);
+	int ret;
+
+	if (ul_path_read_s32(pc, &ret, "oom_score_adj") != 0)
+		err(EXIT_FAILURE, _("failed to read OOM score adjust value"));
+
+	return ret;
 }
 
-static int set_score_adj(const pid_t pid, int adj)
+static int set_score_adj(struct path_cxt *pc, int adj)
 {
-	char buf[sizeof(stringify_value(INT_MAX))];
-
-	snprintf(buf, sizeof(buf), "%d", adj);
-
-	if (path_write_str(buf, "/proc/%d/oom_score_adj", (int) pid) < 0)
-		return -1;
-	return 0;
+	return ul_path_write_u64(pc, adj, "oom_score_adj");
 }
 
 int main(int argc, char **argv)
 {
 	pid_t pid = 0;
 	int c, adj = 0, has_adj = 0;
+	struct path_cxt *pc = NULL;
 
 	static const struct option longopts[] = {
 		{ "adjust",  required_argument, NULL, 'n' },
@@ -123,28 +128,32 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
+	pc = ul_new_path("/proc/%d", (int) (pid ? pid : getpid()));
+
 	/* Show */
 	if (!has_adj) {
-		printf(_("pid %d's current OOM score: %d\n"), pid, get_score(pid));
-		printf(_("pid %d's current OOM score adjust value: %d\n"), pid, get_score_adj(pid));
+		printf(_("pid %d's current OOM score: %d\n"), pid, get_score(pc));
+		printf(_("pid %d's current OOM score adjust value: %d\n"), pid, get_score_adj(pc));
 
 	/* Change */
 	} else if (pid) {
-		int old = get_score_adj(pid);
+		int old = get_score_adj(pc);
 
-		if (set_score_adj(pid, adj))
+		if (set_score_adj(pc, adj))
 			err(EXIT_FAILURE, _("failed to set score adjust value"));
 
 		printf(_("pid %d's OOM score adjust value changed from %d to %d\n"), pid, old, adj);
 
 	/* Start new process */
 	} else {
-		if (set_score_adj(getpid(), adj))
+		if (set_score_adj(pc, adj))
 			err(EXIT_FAILURE, _("failed to set score adjust value"));
+		ul_unref_path(pc);
 		argv += optind;
 		execvp(argv[0], argv);
 		errexec(argv[0]);
 	}
 
+	ul_unref_path(pc);
 	return EXIT_SUCCESS;
 }
