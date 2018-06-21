@@ -48,7 +48,7 @@ void ul_path_init_debug(void)
 	__UL_INIT_DEBUG_FROM_ENV(ulpath, ULPATH_DEBUG_, 0, ULPATH_DEBUG);
 }
 
-struct path_cxt *ul_new_path(const char *dir)
+struct path_cxt *ul_new_path(const char *dir, ...)
 {
 	struct path_cxt *pc = calloc(1, sizeof(*pc));
 
@@ -61,8 +61,14 @@ struct path_cxt *ul_new_path(const char *dir)
 	pc->dir_fd = -1;
 
 	if (dir) {
-		pc->dir_path = strdup(dir);
-		if (!pc->dir_path)
+		int rc;
+		va_list ap;
+
+		va_start(ap, dir);
+		rc = vasprintf(&pc->dir_path, dir, ap);
+		va_end(ap);
+
+		if (rc < 0 || !pc->dir_path)
 			goto fail;
 	}
 	return pc;

@@ -21,7 +21,7 @@ struct path_cxt {
 	int	(*redirect_on_enoent)(struct path_cxt *, const char *, int *);
 };
 
-struct path_cxt *ul_new_path(const char *dir);
+struct path_cxt *ul_new_path(const char *dir, ...);
 void ul_unref_path(struct path_cxt *pc);
 void ul_ref_path(struct path_cxt *pc);
 
