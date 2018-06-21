@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#include "c.h"
+
 struct path_cxt {
 	int	dir_fd;
 	char	*dir_path;
