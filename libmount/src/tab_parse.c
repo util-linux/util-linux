@@ -173,13 +173,36 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 		fs->opt_fields = strndup(s + 1, p - s - 1);
 	s = p + 3;
 
-	rc += sscanf(s,	UL_SCNsA" "	/* (8) FS type */
-			UL_SCNsA" "	/* (9) source */
-			UL_SCNsA,	/* (10) fs options (fs specific) */
+	end = 0;
+	rc += sscanf(s,	UL_SCNsA"%n",	/* (8) FS type */
 
 			&fstype,
-			&src,
-			&fs->fs_optstr);
+			&end);
+
+	if (rc >= 8 && end > 0)
+		s += end;
+	if (s[0] == ' ')
+		s++;
+
+	/* (9) source can unfortunately be an empty string "" and scanf does
+	 * not work well with empty string. Test with:
+	 *     $ sudo mount -t tmpfs "" /tmp/bb
+	 *     $ mountpoint /tmp/bb
+	 * */
+	if (s[0] == ' ') {
+		src = strdup("");
+		s++;
+		rc++;
+		rc += sscanf(s,	UL_SCNsA,	/* (10) fs options (fs specific) */
+
+				&fs->fs_optstr);
+	} else {
+		rc += sscanf(s,	UL_SCNsA" "	/* (9) source */
+				UL_SCNsA,	/* (10) fs options (fs specific) */
+
+				&src,
+				&fs->fs_optstr);
+	}
 
 	if (rc >= 10) {
 		size_t sz;
