@@ -18,9 +18,9 @@
 
 int ipc_msg_get_limits(struct ipc_limits *lim)
 {
-	if (access(_PATH_PROC_IPC_MSGMNI, F_OK) &&
-	    access(_PATH_PROC_IPC_MSGMNB, F_OK) &&
-	    access(_PATH_PROC_IPC_MSGMAX, F_OK)) {
+	if (access(_PATH_PROC_IPC_MSGMNI, F_OK) == 0 &&
+	    access(_PATH_PROC_IPC_MSGMNB, F_OK) == 0 &&
+	    access(_PATH_PROC_IPC_MSGMAX, F_OK) == 0) {
 
 		ul_path_read_s32(NULL, &lim->msgmni, _PATH_PROC_IPC_MSGMNI);
 		ul_path_read_s32(NULL, &lim->msgmnb, _PATH_PROC_IPC_MSGMNB);
@@ -71,9 +71,9 @@ int ipc_shm_get_limits(struct ipc_limits *lim)
 {
 	lim->shmmin = SHMMIN;
 
-	if (access(_PATH_PROC_IPC_SHMALL, F_OK) &&
-	    access(_PATH_PROC_IPC_SHMMAX, F_OK) &&
-	    access(_PATH_PROC_IPC_SHMMNI, F_OK)) {
+	if (access(_PATH_PROC_IPC_SHMALL, F_OK) == 0 &&
+	    access(_PATH_PROC_IPC_SHMMAX, F_OK) == 0 &&
+	    access(_PATH_PROC_IPC_SHMMNI, F_OK) == 0) {
 
 		ul_path_read_u64(NULL, &lim->shmall, _PATH_PROC_IPC_SHMALL);
 		ul_path_read_u64(NULL, &lim->shmmax, _PATH_PROC_IPC_SHMMAX);

@@ -428,7 +428,7 @@ int main(int argc, char **argv)
 
 
 	/* The valid_zones sysfs attribute was introduced with kernel 3.18 */
-	if (ul_path_access(desc->sysmem, F_OK, "memory0/valid_zones"))
+	if (ul_path_access(desc->sysmem, F_OK, "memory0/valid_zones") == 0)
 		desc->have_zones = 1;
 	else if (zone)
 		warnx(_("zone ignored, no valid_zones sysfs attribute present"));
