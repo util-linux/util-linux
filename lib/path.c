@@ -1039,7 +1039,7 @@ int main(int argc, char *argv[])
 	while((c = getopt_long(argc, argv, "p:h", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'p':
-			prefix = optarg, "failed to parse range start";
+			prefix = optarg;
 			break;
 		case 'h':
 			usage();
