@@ -802,7 +802,6 @@ main(int argc, char **argv)
 		/*
 		 * Erase
 		 */
-		size_t i;
 		ctl.ndevs = argc - optind;
 
 		while (optind < argc) {
@@ -811,10 +810,11 @@ main(int argc, char **argv)
 			ctl.ndevs--;
 		}
 
+#ifdef BLKRRPART
 		/* Re-read partition tables on whole-disk devices. This is
 		 * postponed until all is done to avoid conflicts.
 		 */
-		for (i = 0; i < ctl.nrereads; i++) {
+		for (size_t i = 0; i < ctl.nrereads; i++) {
 			char *devname = ctl.reread[i];
 			int fd = open(devname, O_RDONLY);
 
@@ -824,6 +824,7 @@ main(int argc, char **argv)
 			}
 		}
 		free(ctl.reread);
+#endif
 	}
 	return EXIT_SUCCESS;
 }
