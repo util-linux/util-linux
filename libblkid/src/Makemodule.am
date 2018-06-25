@@ -44,6 +44,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/partitions/unixware.c \
 	\
 	libblkid/src/superblocks/adaptec_raid.c \
+	libblkid/src/superblocks/apfs.c \
 	libblkid/src/superblocks/bcache.c \
 	libblkid/src/superblocks/befs.c \
 	libblkid/src/superblocks/bfs.c \
