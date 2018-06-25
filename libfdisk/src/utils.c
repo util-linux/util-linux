@@ -153,7 +153,20 @@ char *fdisk_partname(const char *dev, size_t partno)
 	if ((strncmp(dev, _PATH_DEV_BYID, sizeof(_PATH_DEV_BYID) - 1) == 0) ||
 	     strncmp(dev, _PATH_DEV_BYPATH, sizeof(_PATH_DEV_BYPATH) - 1) == 0 ||
 	     strncmp(dev, "/dev/mapper", sizeof("/dev/mapper") - 1) == 0) {
-	       p = "-part";
+		asprintf(&res, "%.*s%zu", w, dev, partno);
+		if (access(res, F_OK) == 0){
+			p = "";
+		} else {
+			/* check for partition seperator "p" */
+			p = "p";
+			free(res);
+			asprintf(&res, "%.*s%s%zu", w, dev, p, partno);
+			if (access(res, F_OK) != 0){
+				/* otherwise, default to "-path" */
+				p = "-part";
+			}
+		}
+		free(res);
 	}
 
 	if (asprintf(&res, "%.*s%s%zu", w, dev, p, partno) <= 0)
