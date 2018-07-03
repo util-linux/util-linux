@@ -121,6 +121,9 @@ static loff_t cvtnum(char *s)
 static void xfallocate(int fd, int mode, off_t offset, off_t length)
 {
 	int error;
+
+fprintf(stderr, "KZAK>>> %d\n", mode);
+
 #ifdef HAVE_FALLOCATE
 	error = fallocate(fd, mode, offset, length);
 #else
