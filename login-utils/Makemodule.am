@@ -239,7 +239,7 @@ if MAKEINSTALL_DO_CHOWN
 	chown root:root $(DESTDIR)$(bindir)/su
 endif
 if MAKEINSTALL_DO_SETUID
-	chmod 4755 $(DESTDIR)$(bindir)/su
+	chmod 6755 $(DESTDIR)$(bindir)/su
 endif
 endif
 if BUILD_VIPW
