@@ -2,6 +2,7 @@
 #include "fdiskP.h"
 #include "strutils.h"
 #include "carefulputc.h"
+#include "mangle.h"
 
 /**
  * SECTION: script
@@ -650,8 +651,10 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 
 		if (pa->uuid)
 			fprintf(f, ", uuid=%s", pa->uuid);
-		if (pa->name && *pa->name)
-			fprintf(f, ", name=\"%s\"", pa->name);
+		if (pa->name && *pa->name) {
+			fputs(", name=", f);
+			fputs_quoted(pa->name, f);
+		}
 
 		/* for MBR attr=80 means bootable */
 		if (pa->attrs) {
@@ -948,6 +951,7 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 		} else if (!strncasecmp(p, "name=", 5)) {
 			p += 5;
 			rc = next_string(&p, &pa->name);
+			unhexmangle_string(pa->name);
 
 		} else if (!strncasecmp(p, "type=", 5) ||
 			   !strncasecmp(p, "Id=", 3)) {		/* backward compatibility */
