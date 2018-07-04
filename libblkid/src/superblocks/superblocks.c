@@ -163,7 +163,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&nilfs2_idinfo,
 	&exfat_idinfo,
 	&f2fs_idinfo,
-	&mpool_idinfo
+	&mpool_idinfo,
+	&apfs_idinfo
 };
 
 /*
