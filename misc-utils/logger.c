@@ -68,6 +68,7 @@
 #include <syslog.h>
 
 #ifdef HAVE_LIBSYSTEMD
+# define SD_JOURNAL_SUPPRESS_LOCATION
 # include <systemd/sd-daemon.h>
 # include <systemd/sd-journal.h>
 #endif
