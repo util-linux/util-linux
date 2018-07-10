@@ -173,13 +173,42 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 		fs->opt_fields = strndup(s + 1, p - s - 1);
 	s = p + 3;
 
-	rc += sscanf(s,	UL_SCNsA" "	/* (8) FS type */
-			UL_SCNsA" "	/* (9) source */
-			UL_SCNsA,	/* (10) fs options (fs specific) */
-
-			&fstype,
-			&src,
-			&fs->fs_optstr);
+    /* source may be empty dummy string (e.g. mount -t "" /mnt/tmpfs), split by
+     * one space */
+    char *s2 = s;
+    char *found = NULL;
+    for (;;) {
+        if (rc >= 10) {
+            break;
+        }
+        char *token = NULL;
+        found = strchr(s2, ' ');
+        if (found != NULL) {
+            rc++;
+            token = strndup(s2, found - s2);
+        } else {
+            if (s2 != '\0') {
+                // last field if not empty
+                rc++;
+                token = strdup(s2);
+            }
+        }
+        if (rc == 8) {
+            // (8) FS type
+            fstype = token;
+        } else if (rc == 9) {
+            // (9) source
+            src = token;
+        } else if (rc == 10) {
+            // (10) fs options (fs specific)
+            fs->fs_optstr = token;
+        }
+        if (found != NULL) {
+            s2 = found + 1;
+        } else {
+            break;
+        }
+    }
 
 	if (rc >= 10) {
 		size_t sz;
