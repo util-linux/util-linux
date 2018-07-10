@@ -87,6 +87,7 @@ static int column_id_to_number(int id);
 enum {
 	COL_NAME = 0,
 	COL_KNAME,
+	COL_PATH,
 	COL_MAJMIN,
 	COL_FSTYPE,
 	COL_TARGET,
@@ -168,6 +169,7 @@ static struct colinfo infos[] = {
 	[COL_NAME]   = { "NAME",    0.25, SCOLS_FL_TREE | SCOLS_FL_NOEXTREMES, N_("device name") },
 	[COL_KNAME]  = { "KNAME",   0.3, 0, N_("internal kernel device name") },
 	[COL_PKNAME] = { "PKNAME",   0.3, 0, N_("internal parent kernel device name") },
+	[COL_PATH]   = { "PATH",    0.3,  0, N_("path to the device node") },
 	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number"), COLTYPE_SORTNUM },
 	[COL_FSTYPE] = { "FSTYPE",  0.1, SCOLS_FL_TRUNC, N_("filesystem type") },
 	[COL_TARGET] = { "MOUNTPOINT", 0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
@@ -947,6 +949,10 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 	case COL_PKNAME:
 		if (cxt->parent)
 			str = mk_name(cxt->parent->name);
+		break;
+	case COL_PATH:
+		if (cxt->filename)
+			str = xstrdup(cxt->filename);
 		break;
 	case COL_OWNER:
 	{
