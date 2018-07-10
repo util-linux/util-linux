@@ -37,6 +37,11 @@ ts_run $TESTPROG --parse "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "parse-mountinfo-nosrc"
+ts_run $TESTPROG --parse "$TS_SELF/files/mountinfo_nosrc" &> $TS_OUTPUT
+sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
+ts_finalize_subtest
+
 ts_init_subtest "parse-swaps"
 ts_run $TESTPROG --parse "$TS_SELF/files/swaps" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
