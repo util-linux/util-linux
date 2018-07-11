@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2018 Milan Broz <gmazyland@gmail.com>
  *
  * Inspired by libvolume_id by
  *     Kay Sievers <kay.sievers@vrfy.org>
@@ -28,6 +29,15 @@
 #define LUKS2_SALT_L			64
 #define LUKS2_CHECKSUM_ALG_L		32
 #define LUKS2_CHECKSUM_L		64
+
+#define LUKS_MAGIC	"LUKS\xba\xbe"
+#define LUKS_MAGIC_2	"SKUL\xba\xbe"
+
+/* Offsets for secondary header (for scan if primary header is corrupted). */
+#define LUKS2_HDR2_OFFSETS { 0x04000, 0x008000, 0x010000, 0x020000, \
+                             0x40000, 0x080000, 0x100000, 0x200000, 0x400000 }
+
+static const uint64_t secondary_offsets[] = LUKS2_HDR2_OFFSETS;
 
 struct luks_phdr {
 	uint8_t		magic[LUKS_MAGIC_L];
@@ -59,18 +69,16 @@ struct luks2_phdr {
 	/* Padding to 4k, then JSON area */
 } __attribute__ ((packed));
 
-static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag)
+static int luks_attributes(blkid_probe pr, struct luks2_phdr *header, uint64_t offset)
 {
-	struct luks_phdr *header_v1;
-	struct luks2_phdr *header;
 	int version;
+	struct luks_phdr *header_v1;
 
-	header = blkid_probe_get_sb(pr, mag, struct luks2_phdr);
-	if (header == NULL)
-		return errno ? -errno : 1;
+	if (blkid_probe_set_magic(pr, offset, LUKS_MAGIC_L, (unsigned char *) &header->magic))
+		return BLKID_PROBE_NONE;
 
 	version = be16_to_cpu(header->version);
-	blkid_probe_sprintf_version(pr, "%u", be16_to_cpu(header->version));
+	blkid_probe_sprintf_version(pr, "%u", version);
 
 	if (version == 1) {
 		header_v1 = (struct luks_phdr *)header;
@@ -84,7 +92,37 @@ static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_set_id_label(pr, "SUBSYSTEM",
 			(unsigned char *) header->subsystem, LUKS2_LABEL_L);
 	}
-	return 0;
+
+	return BLKID_PROBE_OK;
+}
+
+static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag __attribute__((__unused__)))
+{
+	struct luks2_phdr *header;
+	size_t i;
+
+	header = (struct luks2_phdr *) blkid_probe_get_buffer(pr, 0, sizeof(struct luks2_phdr));
+	if (!header)
+		return errno ? -errno : BLKID_PROBE_NONE;
+
+	if (!memcmp(header->magic, LUKS_MAGIC, LUKS_MAGIC_L)) {
+		/* LUKS primary header was found. */
+		return luks_attributes(pr, header, 0);
+	} else {
+		/* No primary header, scan for known offsets of LUKS2 secondary header. */
+		for (i = 0; i < ARRAY_SIZE(secondary_offsets); i++) {
+			header = (struct luks2_phdr *) blkid_probe_get_buffer(pr,
+				  secondary_offsets[i], sizeof(struct luks2_phdr));
+
+			if (!header)
+				return errno ? -errno : BLKID_PROBE_NONE;
+
+			if (!memcmp(header->magic, LUKS_MAGIC_2, LUKS_MAGIC_L))
+				return luks_attributes(pr, header, secondary_offsets[i]);
+		}
+	}
+
+	return BLKID_PROBE_NONE;
 }
 
 const struct blkid_idinfo luks_idinfo =
@@ -92,9 +130,5 @@ const struct blkid_idinfo luks_idinfo =
 	.name		= "crypto_LUKS",
 	.usage		= BLKID_USAGE_CRYPTO,
 	.probefunc	= probe_luks,
-	.magics		=
-	{
-		{ .magic = "LUKS\xba\xbe", .len = 6 },
-		{ NULL }
-	}
+	.magics		= BLKID_NONE_MAGIC
 };
