@@ -54,6 +54,12 @@ location \fIoffset\fR, and the file will be \fIlength\fR bytes smaller.  The opt
 \fB\-\-keep\-size\fR may not be specified for the collapse-range operation.
 .sp
 Available since Linux 3.15 for ext4 (only for extent-based files) and XFS.
+.sp
+A filesystem may place limitations on the granularity of the operation, in
+order to ensure efficient implementation.  Typically, offset and len must be a
+multiple of the filesystem logical block size, which varies according to the
+filesystem type and configuration.  If a filesystem has such a requirement,
+the operation will fail with the error EINVAL if this requirement is violated.
 .TP
 .BR \-d , " \-\-dig\-holes"
 Detect and dig holes.  This makes the file sparse in-place, without using extra
