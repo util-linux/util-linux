@@ -63,32 +63,62 @@ static PyObject *Fs_get_devno(FsObject *self)
 	return PyObjectResultInt(mnt_fs_get_devno(self->fs));
 }
 
+static void _dump_debug_string(const char *lead, const char *s, char quote)
+{
+	/* PySys_WriteStdout() will automatically truncate any '%s' token
+	 * longer than a certain length (documented as 1000 bytes, but we
+	 * give ourselves some margin here just in case).  The only way I
+	 * know to get around this is to print such strings in bite-sized
+	 * chunks.
+	 */
+	static const unsigned int _PY_MAX_LEN = 900;
+	static const char *_PY_MAX_LEN_FMT = "%.900s";
+	unsigned int len;
+
+	if (lead != NULL)
+		PySys_WriteStdout("%s", lead);
+
+	if (quote != 0)
+		PySys_WriteStdout("%c", quote);
+
+	for (len = strlen(s); len > _PY_MAX_LEN; len -= _PY_MAX_LEN, s += _PY_MAX_LEN) 
+		PySys_WriteStdout(_PY_MAX_LEN_FMT, s);
+
+	if (len > 0)
+		PySys_WriteStdout(_PY_MAX_LEN_FMT, s);
+
+	if (quote != 0)
+		PySys_WriteStdout("%c\n", quote);
+	else
+		PySys_WriteStdout("\n");
+}
+
 #define Fs_print_debug_HELP "print_debug()\n\n"
 static PyObject *Fs_print_debug(FsObject *self)
 {
 	PySys_WriteStdout("------ fs: %p\n", self->fs);
-	PySys_WriteStdout("source: %s\n", mnt_fs_get_source(self->fs));
-	PySys_WriteStdout("target: %s\n", mnt_fs_get_target(self->fs));
-	PySys_WriteStdout("fstype: %s\n", mnt_fs_get_fstype(self->fs));
+	_dump_debug_string("source: ", mnt_fs_get_source(self->fs), 0);
+	_dump_debug_string("target: ", mnt_fs_get_target(self->fs), 0);
+	_dump_debug_string("fstype: ", mnt_fs_get_fstype(self->fs), 0);
 
 	if (mnt_fs_get_options(self->fs))
-		PySys_WriteStdout("optstr: %s\n", mnt_fs_get_options(self->fs));
+		_dump_debug_string("optstr: ", mnt_fs_get_options(self->fs), 0);
 	if (mnt_fs_get_vfs_options(self->fs))
-		PySys_WriteStdout("VFS-optstr: %s\n", mnt_fs_get_vfs_options(self->fs));
+		_dump_debug_string("VFS-optstr: ", mnt_fs_get_vfs_options(self->fs), 0);
 	if (mnt_fs_get_fs_options(self->fs))
-		PySys_WriteStdout("FS-opstr: %s\n", mnt_fs_get_fs_options(self->fs));
+		_dump_debug_string("FS-opstr: ", mnt_fs_get_fs_options(self->fs), 0);
 	if (mnt_fs_get_user_options(self->fs))
-		PySys_WriteStdout("user-optstr: %s\n", mnt_fs_get_user_options(self->fs));
+		_dump_debug_string("user-optstr: ", mnt_fs_get_user_options(self->fs), 0);
 	if (mnt_fs_get_optional_fields(self->fs))
-		PySys_WriteStdout("optional-fields: '%s'\n", mnt_fs_get_optional_fields(self->fs));
+		_dump_debug_string("optional-fields: ", mnt_fs_get_optional_fields(self->fs), '\'');
 	if (mnt_fs_get_attributes(self->fs))
-		PySys_WriteStdout("attributes: %s\n", mnt_fs_get_attributes(self->fs));
+		_dump_debug_string("attributes: ", mnt_fs_get_attributes(self->fs), 0);
 
 	if (mnt_fs_get_root(self->fs))
-		PySys_WriteStdout("root:   %s\n", mnt_fs_get_root(self->fs));
+		_dump_debug_string("root:   ", mnt_fs_get_root(self->fs), 0);
 
 	if (mnt_fs_get_swaptype(self->fs))
-		PySys_WriteStdout("swaptype: %s\n", mnt_fs_get_swaptype(self->fs));
+		_dump_debug_string("swaptype: ", mnt_fs_get_swaptype(self->fs), 0);
 	if (mnt_fs_get_size(self->fs))
 		PySys_WriteStdout("size: %jd\n", mnt_fs_get_size(self->fs));
 	if (mnt_fs_get_usedsize(self->fs))
@@ -97,7 +127,7 @@ static PyObject *Fs_print_debug(FsObject *self)
 		PySys_WriteStdout("priority: %d\n", mnt_fs_get_priority(self->fs));
 
 	if (mnt_fs_get_bindsrc(self->fs))
-		PySys_WriteStdout("bindsrc: %s\n", mnt_fs_get_bindsrc(self->fs));
+		_dump_debug_string("bindsrc: ", mnt_fs_get_bindsrc(self->fs), 0);
 	if (mnt_fs_get_freq(self->fs))
 		PySys_WriteStdout("freq:   %d\n", mnt_fs_get_freq(self->fs));
 	if (mnt_fs_get_passno(self->fs))
@@ -112,7 +142,7 @@ static PyObject *Fs_print_debug(FsObject *self)
 	if (mnt_fs_get_tid(self->fs))
 		PySys_WriteStdout("tid:    %d\n", mnt_fs_get_tid(self->fs));
 	if (mnt_fs_get_comment(self->fs))
-		PySys_WriteStdout("comment: '%s'\n", mnt_fs_get_comment(self->fs));
+		_dump_debug_string("comment: ", mnt_fs_get_comment(self->fs), '\'');
 	return UL_IncRef(self);
 }
 /*
