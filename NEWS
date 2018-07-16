@@ -1,3 +1,7 @@
+util-linux 2.32.1: Jul 16 2018
+* see Documentation/releases/v2.32-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.32/v2.32.1-ChangeLog
+
 util-linux 2.32: Mar 21 2018
 * see Documentation/releases/v2.32-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.32/v2.32-ChangeLog
