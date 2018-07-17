@@ -149,6 +149,13 @@ libfdisk
  - add support for Apple Partition Map (see libblkid/src/partitions/mac.c)
    http://en.wikipedia.org/wiki/Apple_Partition_Map
 
+fdisk
+-----
+ 
+ - When creating a new partition, it would be helpful if the "Last sector"
+   dialog accepted negative numbers, to be able to specify how far from the
+   end of the drive you would like the partition to end.
+
 misc
 ----
 
