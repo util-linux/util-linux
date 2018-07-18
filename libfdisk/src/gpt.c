@@ -945,7 +945,7 @@ static ssize_t read_lba(struct fdisk_context *cxt, uint64_t lba,
 static unsigned char *gpt_read_entries(struct fdisk_context *cxt,
 					 struct gpt_header *header)
 {
-	size_t sz;
+	size_t sz = 0;
 	ssize_t ssz;
 
 	unsigned char *ret = NULL;
@@ -1971,7 +1971,7 @@ static int gpt_write_partitions(struct fdisk_context *cxt,
 				struct gpt_header *header, unsigned char *ents)
 {
 	off_t offset = (off_t) le64_to_cpu(header->partition_entry_lba) * cxt->sector_size;
-	size_t towrite;
+	size_t towrite = 0;
 	ssize_t ssz;
 	int rc;
 
