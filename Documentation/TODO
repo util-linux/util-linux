@@ -65,8 +65,6 @@ hwlock
  - use /etc/adjtime as read-only for UTC/LOCAL information only
  - the /var/lib/hwclock/drift should be implemented backwardly compatible,
    it means use the file only if exists, otherwise follow /etc/adjtime 
- - add --delay-on-set <ms> to make possible to by-pass default 500ms delay on --set
-   https://marc.info/?l=util-linux-ng&m=146675599623002&w=2
 
 bash completion
 ---------------

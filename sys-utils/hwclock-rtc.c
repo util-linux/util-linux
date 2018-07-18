@@ -369,12 +369,18 @@ static int get_permissions_rtc(void)
 	return 0;
 }
 
+static const char *get_device_path(void)
+{
+	return rtc_dev_name;
+}
+
 static struct clock_ops rtc_interface = {
 	N_("Using the rtc interface to the clock."),
 	get_permissions_rtc,
 	read_hardware_clock_rtc,
 	set_hardware_clock_rtc,
 	synchronize_to_clock_tick_rtc,
+	get_device_path,
 };
 
 /* return &rtc if /dev/rtc can be opened, NULL otherwise */

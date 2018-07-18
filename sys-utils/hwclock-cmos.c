@@ -393,12 +393,18 @@ static int get_permissions_cmos(void)
 	return rc;
 }
 
+static get_device_path(void)
+{
+	return NULL;
+}
+
 static struct clock_ops cmos_interface = {
 	N_("Using direct ISA access to the clock"),
 	get_permissions_cmos,
 	read_hardware_clock_cmos,
 	set_hardware_clock_cmos,
 	synchronize_to_clock_tick_cmos,
+	get_device_path,
 };
 
 /*

@@ -78,6 +78,8 @@
 #include "timeutils.h"
 #include "env.h"
 #include "xalloc.h"
+#include "path.h"
+#include "strutils.h"
 
 #ifdef HAVE_LIBAUDIT
 #include <libaudit.h>
@@ -409,6 +411,47 @@ set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 		ur->set_hardware_clock(ctl, &new_broken_time);
 }
 
+static double
+get_hardware_delay(const struct hwclock_control *ctl)
+{
+	const char *devpath, *rtcname;
+	char name[128 + 1];
+	struct path_cxt *pc;
+	int rc;
+
+	devpath = ur->get_device_path();
+	if (!devpath)
+		goto unknown;
+
+	rtcname = strrchr(devpath, '/');
+	if (!rtcname || !*(rtcname + 1))
+		goto unknown;
+	rtcname++;
+
+	pc = ul_new_path("/sys/class/rtc/%s", rtcname);
+	if (!pc)
+		goto unknown;
+	rc = ul_path_scanf(pc, "name", "%128[^\n ]", &name);
+	ul_unref_path(pc);
+
+	if (rc != 1 || !*name)
+		goto unknown;
+
+	if (ctl->verbose)
+		printf(_("RTC type: '%s'\n"), name);
+
+	/* MC146818A-compatible (x86) */
+	if (strcmp(name, "rtc_cmos") == 0)
+		return 0.5;
+
+	/* Another HW */
+	return 0;
+unknown:
+	/* Let's be backwardly compatible */
+	return 0.5;
+}
+
+
 /*
  * Set the Hardware Clock to the time "sethwtime", in local time zone or
  * UTC, according to "universal".
@@ -418,7 +461,8 @@ set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
  * example, if "sethwtime" is 14:03:05 and "refsystime" is 12:10:04.5 and
  * the current system time is 12:10:06.0: Wait .5 seconds (to make exactly 2
  * seconds since "refsystime") and then set the Hardware Clock to 14:03:07,
- * thus getting a precise and retroactive setting of the clock.
+ * thus getting a precise and retroactive setting of the clock. The .5 delay is
+ * default on x86, see --delay and get_hardware_delay().
  *
  * (Don't be confused by the fact that the system clock and the Hardware
  * Clock differ by two hours in the above example. That's just to remind you
@@ -480,15 +524,26 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 	time_t newhwtime = sethwtime;
 	double target_time_tolerance_secs = 0.001;  /* initial value */
 	double tolerance_incr_secs = 0.001;	    /* initial value */
-	const double RTC_SET_DELAY_SECS = 0.5;	    /* 500 ms */
-	const struct timeval RTC_SET_DELAY_TV = { 0, RTC_SET_DELAY_SECS * 1E6 };
+	double delay;
+	struct timeval rtc_set_delay_tv;
 
 	struct timeval targetsystime;
 	struct timeval nowsystime;
 	struct timeval prevsystime = refsystime;
 	double deltavstarget;
 
-	timeradd(&refsystime, &RTC_SET_DELAY_TV, &targetsystime);
+	if (ctl->rtc_delay != -1.0)        /* --delay specified */
+		delay = ctl->rtc_delay;
+	else
+		delay = get_hardware_delay(ctl);
+
+	if (ctl->verbose)
+		printf(_("Using delay: %.6f seconds\n"), delay);
+
+	rtc_set_delay_tv.tv_sec = 0;
+	rtc_set_delay_tv.tv_usec = delay * 1E6;
+
+	timeradd(&refsystime, &rtc_set_delay_tv, &targetsystime);
 
 	while (1) {
 		double ticksize;
@@ -549,7 +604,7 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 
 	newhwtime = sethwtime
 		    + (int)(time_diff(nowsystime, refsystime)
-			    - RTC_SET_DELAY_SECS /* don't count this */
+			    - delay /* don't count this */
 			    + 0.5 /* for rounding */);
 	if (ctl->verbose)
 		printf(_("%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
@@ -1082,6 +1137,7 @@ usage(void)
 	printf(_(
 	       "     --directisa      use the ISA bus instead of %1$s access\n"), _PATH_RTC_DEV);
 	puts(_("     --date <time>    date/time input for --set and --predict"));
+	puts(_("     --delay <sec>    delay used when set new RTC time"));
 #if defined(__linux__) && defined(__alpha__)
 	puts(_("     --epoch <year>   epoch input for --setepoch"));
 #endif
@@ -1100,7 +1156,10 @@ usage(void)
 
 int main(int argc, char **argv)
 {
-	struct hwclock_control ctl = { .show = 1 }; /* default op is show */
+	struct hwclock_control ctl = {
+			.show = 1,		/* default op is show */
+			.rtc_delay = -1.0	/* unspecified */
+	};
 	struct timeval startup_time;
 	struct adjtime adjtime = { 0 };
 	struct timespec when = { 0 };
@@ -1115,6 +1174,7 @@ int main(int argc, char **argv)
 	enum {
 		OPT_ADJFILE = CHAR_MAX + 1,
 		OPT_DATE,
+		OPT_DELAY,
 		OPT_DIRECTISA,
 		OPT_EPOCH,
 		OPT_GET,
@@ -1150,6 +1210,7 @@ int main(int argc, char **argv)
 		{ "directisa",    no_argument,       NULL, OPT_DIRECTISA  },
 		{ "test",         no_argument,       NULL, OPT_TEST       },
 		{ "date",         required_argument, NULL, OPT_DATE       },
+		{ "delay",        required_argument, NULL, OPT_DELAY      },
 #ifdef __linux__
 		{ "rtc",          required_argument, NULL, 'f'            },
 #endif
@@ -1270,6 +1331,9 @@ int main(int argc, char **argv)
 			break;
 		case OPT_DATE:
 			ctl.date_opt = optarg;	/* --date */
+			break;
+		case OPT_DELAY:
+			ctl.rtc_delay = strtod_or_err(optarg, "invalid --delay argument");
 			break;
 		case OPT_ADJFILE:
 			ctl.adj_file_name = optarg;	/* --adjfile */

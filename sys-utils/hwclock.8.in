@@ -280,6 +280,24 @@ parameters should be observed.
 .RE
 .
 .TP
+.BI \%\-\-delay= seconds
+This option allows to overwrite internally used delay when set clock time. The
+default is 0.5 (500ms) for rtc_cmos, for another RTC types the delay is 0. If
+RTC type is impossible to determine (from sysfs) then it defaults also to 0.5
+to be backwardly compatible.
+.RS
+.PP
+The 500ms default is based on commonly used MC146818A-compatible (x86) hardware clock. This
+Hardware Clock can only be set to any integer time plus one half second.  The
+integer time is required because there is no interface to set or get a
+fractional second.  The additional half second delay is because the Hardware
+Clock updates to the following second precisely 500 ms after setting the new
+time. Unfortunately, this behavior is hardware specific and in same cases
+another delay is required.
+.RE
+.
+.TP
+.TP
 .BR \-D ", " \-\-debug
 .RB Use\  \-\-verbose .
 .RB The\  \%\-\-debug\  option

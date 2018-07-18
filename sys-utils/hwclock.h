@@ -22,6 +22,7 @@ UL_DEBUG_DECLARE_MASK(hwclock);
 struct hwclock_control {
 	char *date_opt;
 	char *adj_file_name;
+	double rtc_delay;	/* --delay <seconds> */
 #if defined(__linux__) && defined(__alpha__)
 	char *epoch_option;
 #endif
@@ -58,6 +59,7 @@ struct clock_ops {
 	int (*read_hardware_clock) (const struct hwclock_control *ctl, struct tm * tm);
 	int (*set_hardware_clock) (const struct hwclock_control *ctl, const struct tm * tm);
 	int (*synchronize_to_clock_tick) (const struct hwclock_control *ctl);
+	const char *(*get_device_path) (void);
 };
 
 extern struct clock_ops *probe_for_cmos_clock(void);
