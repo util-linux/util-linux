@@ -61,7 +61,8 @@ information about the sda device only.
 .BR \-e , " \-\-exclude " \fIlist\fP
 Exclude the devices specified by the comma-separated \fIlist\fR of major device numbers.
 Note that RAM disks (major=1) are excluded by default if \fB\-\-all\fR is no specified.
-The filter is applied to the top-level devices only.
+The filter is applied to the top-level devices only. This maybe be confusing for
+\fB\-\-list\fR output format where hierarchy of the devices is not obvious.
 .TP
 .BR \-f , " \-\-fs"
 Output info about filesystems.  This option is equivalent to
@@ -75,7 +76,8 @@ Display help text and exit.
 .TP
 .BR \-I , " \-\-include " \fIlist\fP
 Include devices specified by the comma-separated \fIlist\fR of major device numbers.
-The filter is applied to the top-level devices only.
+The filter is applied to the top-level devices only. This maybe be confusing for
+\fB\-\-list\fR output format where hierarchy of the devices is not obvious.
 .TP
 .BR \-i , " \-\-ascii"
 Use ASCII characters for tree formatting.
