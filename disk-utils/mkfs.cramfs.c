@@ -359,7 +359,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			entry->size = parse_directory(root_entry, path, &entry->child, fslen_ub);
 		} else if (S_ISREG(st.st_mode)) {
 			entry->path = xstrdup(path);
-			if (entry->size && entry->size >= (1 << CRAMFS_SIZE_WIDTH)) {
+			if (entry->size >= (1 << CRAMFS_SIZE_WIDTH)) {
 				warn_size = 1;
 				entry->size = (1 << CRAMFS_SIZE_WIDTH) - 1;
 			}
