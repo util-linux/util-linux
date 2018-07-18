@@ -119,7 +119,7 @@ check_suffix:
 		if (frac == 0 && *p && dp && strncmp(dp, p, dpsz) == 0) {
 			char *fstr = p + dpsz;
 
-			for (p = fstr; *p && *p == '0'; p++)
+			for (p = fstr; *p == '0'; p++)
 				frac_zeros++;
 			errno = 0, p = NULL;
 			frac = strtoumax(fstr, &p, 0);
