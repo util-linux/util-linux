@@ -601,7 +601,7 @@ static const char *get_pwd_method(const char *str, const char **next, unsigned i
 	}
 	p++;
 
-	if (!*p || *p != '$')
+	if (*p != '$')
 		return NULL;
 	if (next)
 		*next = ++p;
