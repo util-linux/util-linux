@@ -21,7 +21,7 @@ pylibmount_la_LIBADD = libmount.la $(PYTHON_LIBS)
 
 pylibmount_la_CFLAGS = \
 	$(AM_CFLAGS) \
-	$(PYTHON_CFLAGS) \
+	$(PYTHON_CFLAGS) $(PYTHON_WARN_CFLAGS) \
 	-I$(ul_libmount_incdir) \
 	-fno-strict-aliasing #-ggdb3 -O0
 
