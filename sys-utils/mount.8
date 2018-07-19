@@ -238,11 +238,15 @@ and
 .B umount
 traditionally maintained a list of currently mounted filesystems in the file
 .IR /etc/mtab .
-This real mtab file is still supported, but on current Linux systems it is
-better to make it a symlink to
+The support for regular classic
+.IR /etc/mtab
+is completely disabled in compile time by default, because on current Linux
+systems it is better to make it a symlink to
 .I /proc/mounts
-instead, because a regular mtab file maintained in userspace cannot reliably
+instead. The regular mtab file maintained in userspace cannot reliably
 work with namespaces, containers and other advanced Linux features.
+If the regular mtab support is enabled than it's possible to
+use the file as well as the symlink.
 .sp
 If no arguments are given to
 .BR mount ,
@@ -648,6 +652,15 @@ is on a read-only filesystem.
 Perform mount in namespace specified by \fIns\fR.
 \fIns\fR is either PID of process running in that namespace
 or special file representing that namespace.
+.sp
+.BR mount (8)
+switches to the namespace when it reads /etc/fstab, writes /etc/mtab (or writes to /run/mount) and calls
+.BR mount(2)
+system call, otherwise it runs in the original namespace. It means that the target namespace does not have
+to contain any libraries or another requirements necessary to execute
+.BR mount(2)
+command.
+.sp
 See \fBnamespaces\fR(7) for more information.
 .TP
 .BR \-O , " \-\-test\-opts " \fIopts
@@ -2452,18 +2465,22 @@ to the mount.<suffix> helpers.  All other options are used in a
 comma-separated list as argument to the \fB\-o\fR option.
 
 .SH FILES
+See also "\fBThe files /etc/fstab, /etc/mtab and /proc/mounts\fR" section above.
 .TP 18n
 .I /etc/fstab
 filesystem table
 .TP
+.I /run/mount
+libmount private runtime directory
+.TP
 .I /etc/mtab
-table of mounted filesystems
+table of mounted filesystems or symlink to /proc/mounts
 .TP
 .I /etc/mtab\s+3~\s0
-lock file
+lock file (unused on systems with mtab symlink)
 .TP
 .I /etc/mtab.tmp
-temporary file
+temporary file (unused on systems with mtab symlink)
 .TP
 .I /etc/filesystems
 a list of filesystem types to try

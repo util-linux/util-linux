@@ -132,6 +132,15 @@ server or a network partition. Remounts of the share will not be possible.
 Perform umount in namespace specified by \fIns\fR.
 \fIns\fR is either PID of process running in that namespace
 or special file representing that namespace.
+.sp
+.BR umount (8)
+switches to the namespace when it reads /etc/fstab, writes /etc/mtab (or writes to /run/mount) and calls
+.BR umount(2)
+system call, otherwise it runs in the original namespace. It means that the target namespace does not have
+to contain any libraries or another requirements necessary to execute
+.BR umount(2)
+command.
+.sp
 See \fBnamespaces\fR(7) for more information.
 .TP
 .BR \-n , " \-\-no\-mtab"
