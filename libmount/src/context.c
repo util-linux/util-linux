@@ -2731,6 +2731,8 @@ static void close_ns(struct libmnt_ns *ns)
  * target namespace is cleared.
  *
  * Returns: 0 on success, negative number in case of error.
+ *
+ * Since: 2.33
  */
 int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path)
 {
@@ -2790,6 +2792,8 @@ err:
  * @cxt: mount context
  *
  * Returns: pointer to target namespace
+ *
+ * Since: 2.33
  */
 struct libmnt_ns *mnt_context_get_target_ns(struct libmnt_context *cxt)
 {
@@ -2801,6 +2805,8 @@ struct libmnt_ns *mnt_context_get_target_ns(struct libmnt_context *cxt)
  * @cxt: mount context
  *
  * Returns: pointer to original namespace
+ *
+ * Since: 2.33
  */
 struct libmnt_ns *mnt_context_get_origin_ns(struct libmnt_context *cxt)
 {
@@ -2826,6 +2832,8 @@ struct libmnt_ns *mnt_context_get_origin_ns(struct libmnt_context *cxt)
  * </informalexample>
  *
  * Returns: pointer to previous namespace or NULL on error
+ *
+ * Since: 2.33
  */
 struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmnt_ns *ns)
 {
@@ -2883,6 +2891,8 @@ struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmn
  * </informalexample>
  *
  * Returns: pointer to previous namespace or NULL on error
+ *
+ * Since: 2.33
  */
 struct libmnt_ns *mnt_context_switch_origin_ns(struct libmnt_context *cxt)
 {
@@ -2903,6 +2913,8 @@ struct libmnt_ns *mnt_context_switch_origin_ns(struct libmnt_context *cxt)
  * </informalexample>
  *
  * Returns: pointer to previous namespace or NULL on error
+ *
+ * Since: 2.33
  */
 struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt)
 {
