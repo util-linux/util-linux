@@ -557,7 +557,7 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 		}
 		if (rc == BLKID_PROBE_OK && mag && chn && !chn->binary)
 			rc = blkid_probe_set_magic(pr, off, mag->len,
-					(unsigned char *) mag->magic);
+					(const unsigned char *) mag->magic);
 
 		DBG(LOWPROBE, ul_debug("%s: <--- (rc = %d)", id->name, rc));
 	}
@@ -620,7 +620,7 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 			 * functions.
 			 */
 			blkid_probe_set_value(pr, "PTTYPE",
-						(unsigned char *) name,
+						(const unsigned char *) name,
 						strlen(name) + 1);
 
 		DBG(LOWPROBE, ul_debug("<-- leaving probing loop (type=%s) [PARTS idx=%d]",
@@ -755,24 +755,24 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 			v = blkid_parttable_get_type(tab);
 			if (v)
 				blkid_probe_set_value(pr, "PART_ENTRY_SCHEME",
-					(unsigned char *) v, strlen(v) + 1);
+					(const unsigned char *) v, strlen(v) + 1);
 		}
 
 		v = blkid_partition_get_name(par);
 		if (v)
 			blkid_probe_set_value(pr, "PART_ENTRY_NAME",
-				(unsigned char *) v, strlen(v) + 1);
+				(const unsigned char *) v, strlen(v) + 1);
 
 		v = blkid_partition_get_uuid(par);
 		if (v)
 			blkid_probe_set_value(pr, "PART_ENTRY_UUID",
-				(unsigned char *) v, strlen(v) + 1);
+				(const unsigned char *) v, strlen(v) + 1);
 
 		/* type */
 		v = blkid_partition_get_type_string(par);
 		if (v)
 			blkid_probe_set_value(pr, "PART_ENTRY_TYPE",
-				(unsigned char *) v, strlen(v) + 1);
+				(const unsigned char *) v, strlen(v) + 1);
 		else
 			blkid_probe_sprintf_value(pr, "PART_ENTRY_TYPE",
 				"0x%x", blkid_partition_get_type(par));

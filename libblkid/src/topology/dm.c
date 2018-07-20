@@ -35,7 +35,7 @@ static int probe_dm_tp(blkid_probe pr,
 		"/sbin/dmsetup"
 	};
 	int dmpipe[] = { -1, -1 }, stripes, stripesize;
-	char *cmd = NULL;
+	const char *cmd = NULL;
 	FILE *stream = NULL;
 	long long  offset, size;
 	size_t i;
@@ -49,7 +49,7 @@ static int probe_dm_tp(blkid_probe pr,
 	for (i = 0; i < ARRAY_SIZE(paths); i++) {
 		struct stat sb;
 		if (stat(paths[i], &sb) == 0) {
-			cmd = (char *) paths[i];
+			cmd = paths[i];
 			break;
 		}
 	}
@@ -64,7 +64,8 @@ static int probe_dm_tp(blkid_probe pr,
 	switch (fork()) {
 	case 0:
 	{
-		char *dmargv[7], maj[16], min[16];
+		const char *dmargv[7];
+	        char maj[16], min[16];
 
 		/* Plumbing */
 		close(dmpipe[0]);
@@ -89,7 +90,7 @@ static int probe_dm_tp(blkid_probe pr,
 		dmargv[5] = min;
 		dmargv[6] = NULL;
 
-		execv(dmargv[0], dmargv);
+		execv(dmargv[0], (char * const *) dmargv);
 
 		DBG(LOWPROBE, ul_debug("Failed to execute %s: errno=%d", cmd, errno));
 		exit(1);

@@ -426,10 +426,10 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	}
 
 	if (boot_label && memcmp(boot_label, no_name, 11))
-		blkid_probe_set_id_label(pr, "LABEL_FATBOOT", (unsigned char *) boot_label, 11);
+		blkid_probe_set_id_label(pr, "LABEL_FATBOOT", boot_label, 11);
 
 	if (vol_label)
-		blkid_probe_set_label(pr, (unsigned char *) vol_label, 11);
+		blkid_probe_set_label(pr, vol_label, 11);
 
 	/* We can't just print them as %04X, because they are unaligned */
 	if (vol_serno)

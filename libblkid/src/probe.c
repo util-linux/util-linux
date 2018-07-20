@@ -1468,7 +1468,7 @@ struct blkid_prval *blkid_probe_assign_value(blkid_probe pr, const char *name)
  * for binary data it's without terminator).
  */
 int blkid_probe_value_set_data(struct blkid_prval *v,
-		unsigned char *data, size_t len)
+		const unsigned char *data, size_t len)
 {
 	v->data = calloc(1, len + 1);	/* always terminate by \0 */
 
@@ -1480,7 +1480,7 @@ int blkid_probe_value_set_data(struct blkid_prval *v,
 }
 
 int blkid_probe_set_value(blkid_probe pr, const char *name,
-		unsigned char *data, size_t len)
+		const unsigned char *data, size_t len)
 {
 	struct blkid_prval *v;
 
@@ -1525,7 +1525,7 @@ int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
 }
 
 int blkid_probe_set_magic(blkid_probe pr, uint64_t offset,
-			size_t len, unsigned char *magic)
+			size_t len, const unsigned char *magic)
 {
 	int rc = 0;
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);

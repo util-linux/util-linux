@@ -186,12 +186,12 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 static int find_uberblocks(const void *label, loff_t *ub_offset, int *swap_endian)
 {
 	uint64_t swab_magic = swab64((uint64_t)UBERBLOCK_MAGIC);
-	struct zfs_uberblock *ub;
+	const struct zfs_uberblock *ub;
 	int i, found = 0;
 	loff_t offset = VDEV_LABEL_UBERBLOCK;
 
 	for (i = 0; i < UBERBLOCKS_COUNT; i++, offset += UBERBLOCK_SIZE) {
-		ub = (struct zfs_uberblock *)((char *) label + offset);
+		ub = (const struct zfs_uberblock *)((const char *) label + offset);
 
 		if (ub->ub_magic == UBERBLOCK_MAGIC) {
 			*ub_offset = offset;

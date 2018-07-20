@@ -18,8 +18,8 @@
 
 static int get_minix_version(const unsigned char *data, int *other_endian)
 {
-	struct minix_super_block *sb = (struct minix_super_block *) data;
-	struct minix3_super_block *sb3 = (struct minix3_super_block *) data;
+	const struct minix_super_block *sb = (const struct minix_super_block *) data;
+	const struct minix3_super_block *sb3 = (const struct minix3_super_block *) data;
 	int version = 0;
 	char *endian;
 
@@ -90,7 +90,7 @@ static int probe_minix(blkid_probe pr,
 	switch (version) {
 	case 1:
 	case 2: {
-		struct minix_super_block *sb = (struct minix_super_block *) data;
+		const struct minix_super_block *sb = (const struct minix_super_block *) data;
 
 		uint16_t state = minix_swab16(swabme, sb->s_state);
 		if ((state & (MINIX_VALID_FS | MINIX_ERROR_FS)) != state)
@@ -106,7 +106,7 @@ static int probe_minix(blkid_probe pr,
 		break;
 	}
 	case 3: {
-		struct minix3_super_block *sb = (struct minix3_super_block *) data;
+		const struct minix3_super_block *sb = (const struct minix3_super_block *) data;
 
 		zones = minix_swab32(swabme, sb->s_zones);
 		ninodes = minix_swab32(swabme, sb->s_ninodes);

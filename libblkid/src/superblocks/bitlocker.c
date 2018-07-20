@@ -82,7 +82,7 @@ static int get_bitlocker_headers(blkid_probe pr,
 {
 
 	const unsigned char *buf;
-	struct bde_fve_metadata *fve;
+	const struct bde_fve_metadata *fve;
 	uint64_t off = 0;
 	int kind;
 
@@ -102,10 +102,10 @@ static int get_bitlocker_headers(blkid_probe pr,
 	/* Check BitLocker header */
 	switch (kind) {
 	case BDE_VERSION_WIN7:
-		off = le64_to_cpu(((struct bde_header_win7 *) buf)->fve_metadata_offset);
+		off = le64_to_cpu(((const struct bde_header_win7 *) buf)->fve_metadata_offset);
 		break;
 	case BDE_VERSION_TOGO:
-		off = le64_to_cpu(((struct bde_header_togo *) buf)->fve_metadata_offset);
+		off = le64_to_cpu(((const struct bde_header_togo *) buf)->fve_metadata_offset);
 		break;
 	case BDE_VERSION_VISTA:
 		goto done;
@@ -123,7 +123,7 @@ static int get_bitlocker_headers(blkid_probe pr,
 	if (!buf)
 		return errno ? -errno : 1;
 
-	fve = (struct bde_fve_metadata *) buf;
+	fve = (const struct bde_fve_metadata *) buf;
 	if (memcmp(fve->signature, BDE_MAGIC_FVE, sizeof(fve->signature)) != 0)
 		goto nothing;
 	if (buf_fve)
@@ -156,17 +156,17 @@ static int probe_bitlocker(blkid_probe pr,
 		return rc;
 
 	if (kind == BDE_VERSION_WIN7) {
-		struct bde_header_win7 *hdr = (struct bde_header_win7 *) buf_hdr;
+		const struct bde_header_win7 *hdr = (const struct bde_header_win7 *) buf_hdr;
 
 		/* Unfortunately, it seems volume_serial is always zero */
 		blkid_probe_sprintf_uuid(pr,
-				(unsigned char *) &hdr->volume_serial,
+				(const unsigned char *) &hdr->volume_serial,
 				sizeof(hdr->volume_serial),
 				"%016d", le32_to_cpu(hdr->volume_serial));
 	}
 
 	if (buf_fve) {
-		struct bde_fve_metadata *fve = (struct bde_fve_metadata *) buf_fve;
+		const struct bde_fve_metadata *fve = (const struct bde_fve_metadata *) buf_fve;
 
 		blkid_probe_sprintf_version(pr, "%d", fve->version);
 	}

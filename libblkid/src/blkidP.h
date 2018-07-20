@@ -484,10 +484,10 @@ extern void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn
 extern struct blkid_prval *blkid_probe_new_val(void)
 			__attribute__((warn_unused_result));
 extern int blkid_probe_set_value(blkid_probe pr, const char *name,
-				unsigned char *data, size_t len)
+				const unsigned char *data, size_t len)
 			__attribute__((nonnull));
 extern int blkid_probe_value_set_data(struct blkid_prval *v,
-				unsigned char *data, size_t len)
+				const unsigned char *data, size_t len)
 			__attribute__((nonnull));
 
 extern int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
@@ -500,7 +500,7 @@ extern int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
 			__attribute__ ((__format__ (__printf__, 3, 4)));
 
 extern int blkid_probe_set_magic(blkid_probe pr, uint64_t offset,
-				size_t len, unsigned char *magic)
+				size_t len, const unsigned char *magic)
 			__attribute__((nonnull));
 
 extern int blkid_probe_verify_csum(blkid_probe pr, uint64_t csum, uint64_t expected)

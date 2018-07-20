@@ -76,10 +76,10 @@ static int probe_stratis(blkid_probe pr,
 				(buf + SECOND_COPY_OFFSET);
 	}
 
-	blkid_probe_strncpy_uuid(pr, (unsigned char *)stratis->dev_uuid,
+	blkid_probe_strncpy_uuid(pr, stratis->dev_uuid,
 					sizeof(stratis->dev_uuid));
 	blkid_probe_set_value(pr, "POOL_UUID",
-				(unsigned char *)stratis->pool_uuid,
+				stratis->pool_uuid,
 				sizeof(stratis->pool_uuid));
 
 	blkid_probe_sprintf_value(pr, "BLOCKDEV_SECTORS", "%" PRIu64,
