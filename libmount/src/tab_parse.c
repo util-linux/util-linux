@@ -39,32 +39,34 @@ static void parser_cleanup(struct libmnt_parser *pa)
 	memset(pa, 0, sizeof(*pa));
 }
 
-static int next_number(char **s, int *num)
+static const char *next_number(const char *s, int *num, int *ok)
 {
 	char *end = NULL;
 
 	assert(num);
 	assert(s);
+	assert(ok);
 
-	*s = (char *) skip_blank(*s);
-	if (!**s)
-		return -1;
-	*num = strtol(*s, &end, 10);
-	if (end == NULL || *s == end)
-	       return -1;
+	*ok = 0;
+	s = skip_blank(s);
+	if (!s || !*s)
+		return s;
 
-	*s = end;
+	*num = strtol(s, &end, 10);
+	if (end == NULL || s == end)
+	       return s;
 
 	/* valid end of number is a space or a terminator */
 	if (*end == ' ' || *end == '\t' || *end == '\0')
-		return 0;
-	return -1;
+		*ok = 1;
+
+	return end;
 }
 
 /*
  * Parses one line from {fs,m}tab
  */
-static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
+static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 {
 	int rc, n = 0, xrc;
 	char *src = NULL, *fstype = NULL, *optstr = NULL;
@@ -119,16 +121,22 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 	fs->passno = fs->freq = 0;
 
 	if (xrc == 4 && n)
-		s = (char *) skip_blank(s + n);
+		s = skip_blank(s + n);
 	if (xrc == 4 && *s) {
-		if (next_number(&s, &fs->freq) != 0) {
-			if (*s) {
+		int ok = 0;
+
+		s = next_number(s, &fs->freq, &ok);
+		if (!ok) {
+			if (s && *s) {
 				DBG(TAB, ul_debug("tab parse error: [freq]"));
 				rc = -EINVAL;
 			}
-		} else if (next_number(&s, &fs->passno) != 0 && *s) {
-			DBG(TAB, ul_debug("tab parse error: [passno]"));
-			rc = -EINVAL;
+		} else {
+			s = next_number(s, &fs->passno, &ok);
+			if (!ok && s && *s) {
+				DBG(TAB, ul_debug("tab parse error: [passno]"));
+				rc = -EINVAL;
+			}
 		}
 	}
 
@@ -389,9 +397,9 @@ static int guess_table_format(char *line)
 	return MNT_FMT_FSTAB;		/* fstab, mtab or /proc/mounts */
 }
 
-static int is_comment_line(char *line)
+static int is_comment_line(const char *line)
 {
-	char *p	= (char *) skip_blank(line);
+	const char *p = skip_blank(line);
 
 	if (p && (*p == '#' || *p == '\n'))
 		return 1;
