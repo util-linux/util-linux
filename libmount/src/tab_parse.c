@@ -383,7 +383,7 @@ static int mnt_parse_swaps_line(struct libmnt_fs *fs, const char *s)
  *
  * mountinfo: "<number> <number> ... "
  */
-static int guess_table_format(char *line)
+static int guess_table_format(const char *line)
 {
 	unsigned int a, b;
 
