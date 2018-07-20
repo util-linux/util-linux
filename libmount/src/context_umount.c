@@ -326,8 +326,8 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 static int is_associated_fs(const char *devname, struct libmnt_fs *fs)
 {
 	uintmax_t offset = 0;
-	const char *src;
-	char *val, *optstr;
+	const char *src, *optstr;
+	char *val;
 	size_t valsz;
 	int flags = 0;
 
@@ -340,7 +340,7 @@ static int is_associated_fs(const char *devname, struct libmnt_fs *fs)
 		return 0;
 
 	/* check for the offset option in @fs */
-	optstr = (char *) mnt_fs_get_user_options(fs);
+	optstr = mnt_fs_get_user_options(fs);
 
 	if (optstr &&
 	    mnt_optstr_get_option(optstr, "offset", &val, &valsz) == 0) {
@@ -597,7 +597,7 @@ static int exec_helper(struct libmnt_context *cxt)
 		    && strchr(type, '.')
 		    && !endswith(cxt->helper, type)) {
 			args[i++] = "-t";			/* 8 */
-			args[i++] = (char *) type;		/* 9 */
+			args[i++] = type;			/* 9 */
 		}
 		if (namespace) {
 			args[i++] = "-N";			/* 10 */
