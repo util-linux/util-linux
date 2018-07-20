@@ -326,7 +326,7 @@ enomem:
 /*
  * Parses one line from /proc/swaps
  */
-static int mnt_parse_swaps_line(struct libmnt_fs *fs, char *s)
+static int mnt_parse_swaps_line(struct libmnt_fs *fs, const char *s)
 {
 	uintmax_t fsz, usz;
 	int rc;
