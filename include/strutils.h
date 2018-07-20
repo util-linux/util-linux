@@ -149,12 +149,12 @@ static inline const char *endswith(const char *s, const char *postfix)
 	size_t pl = postfix ? strlen(postfix) : 0;
 
 	if (pl == 0)
-		return (char *)s + sl;
+		return s + sl;
 	if (sl < pl)
 		return NULL;
 	if (memcmp(s + sl - pl, postfix, pl) != 0)
 		return NULL;
-	return (char *)s + sl - pl;
+	return s + sl - pl;
 }
 
 /*
