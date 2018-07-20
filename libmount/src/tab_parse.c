@@ -146,11 +146,12 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 /*
  * Parses one line from a mountinfo file
  */
-static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
+static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 {
 	int rc, end = 0;
 	unsigned int maj, min;
-	char *fstype = NULL, *src = NULL, *p;
+	char *fstype = NULL, *src = NULL;
+	const char *p;
 
 	rc = sscanf(s,	"%d "		/* (1) id */
 			"%d "		/* (2) parent */
