@@ -62,7 +62,8 @@ static int do_scale_by_power (uintmax_t *x, int base, int power)
  */
 int parse_size(const char *str, uintmax_t *res, int *power)
 {
-	char *p;
+	const char *p;
+	char *end;
 	uintmax_t x, frac = 0;
 	int base = 1024, rc = 0, pwr = 0, frac_zeros = 0;
 
@@ -83,25 +84,25 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 	 * use lconv->negative_sign. But coreutils use the same solution,
 	 * so it's probably good enough...
 	 */
-	p = (char *) str;
+	p = str;
 	while (isspace((unsigned char) *p))
 		p++;
 	if (*p == '-') {
 		rc = -EINVAL;
 		goto err;
 	}
-	p = NULL;
 
-	errno = 0;
-	x = strtoumax(str, &p, 0);
+	errno = 0, end = NULL;
+	x = strtoumax(str, &end, 0);
 
-	if (p == str ||
+	if (end == str ||
 	    (errno != 0 && (x == UINTMAX_MAX || x == 0))) {
 		rc = errno ? -errno : -EINVAL;
 		goto err;
 	}
-	if (!p || !*p)
+	if (!end || !*end)
 		goto done;			/* without suffix */
+	p = end;
 
 	/*
 	 * Check size suffixes
@@ -113,25 +114,26 @@ check_suffix:
 		base = 1000;			/* XB, 10^N */
 	else if (*(p + 1)) {
 		struct lconv const *l = localeconv();
-		char *dp = l ? l->decimal_point : NULL;
+		const char *dp = l ? l->decimal_point : NULL;
 		size_t dpsz = dp ? strlen(dp) : 0;
 
 		if (frac == 0 && *p && dp && strncmp(dp, p, dpsz) == 0) {
-			char *fstr = p + dpsz;
+			const char *fstr = p + dpsz;
 
 			for (p = fstr; *p == '0'; p++)
 				frac_zeros++;
-			errno = 0, p = NULL;
-			frac = strtoumax(fstr, &p, 0);
-			if (p == fstr ||
+			errno = 0, end = NULL;
+			frac = strtoumax(fstr, &end, 0);
+			if (end == fstr ||
 			    (errno != 0 && (frac == UINTMAX_MAX || frac == 0))) {
 				rc = errno ? -errno : -EINVAL;
 				goto err;
 			}
-			if (frac && (!p  || !*p)) {
+			if (frac && (!end  || !*end)) {
 				rc = -EINVAL;
 				goto err;		/* without suffix, but with frac */
 			}
+			p = end;
 			goto check_suffix;
 		}
 		rc = -EINVAL;
