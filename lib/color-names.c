@@ -12,8 +12,9 @@ struct ul_color_name {
  */
 static int cmp_color_name(const void *a0, const void *b0)
 {
-	struct ul_color_name	*a = (struct ul_color_name *) a0,
-				*b = (struct ul_color_name *) b0;
+	const struct ul_color_name
+		*a = (const struct ul_color_name *) a0,
+		*b = (const struct ul_color_name *) b0;
 	return strcmp(a->name, b->name);
 }
 
@@ -45,7 +46,7 @@ const char *color_sequence_from_colorname(const char *str)
 		{ "reverse",    UL_COLOR_REVERSE         },
 		{ "yellow",	UL_COLOR_BOLD_YELLOW     },
 	};
-	struct ul_color_name key = { .name = (char *) str }, *res;
+	struct ul_color_name key = { .name = str }, *res;
 
 	if (!str)
 		return NULL;
