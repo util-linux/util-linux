@@ -393,7 +393,7 @@ static int get_permissions_cmos(void)
 	return rc;
 }
 
-static get_device_path(void)
+static const char *get_device_path(void)
 {
 	return NULL;
 }
