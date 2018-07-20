@@ -272,7 +272,7 @@ static int mnt_parse_utab_line(struct libmnt_fs *fs, const char *s)
 	assert(!fs->target);
 
 	while (p && *p) {
-		char *end = NULL;
+		const char *end = NULL;
 
 		while (*p == ' ') p++;
 		if (!*p)

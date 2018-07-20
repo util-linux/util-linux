@@ -94,20 +94,20 @@ size_t unhexmangle_to_buffer(const char *s, char *buf, size_t len)
 	return buf - buf0 + 1;
 }
 
-static inline char *skip_nonspaces(const char *s)
+static inline const char *skip_nonspaces(const char *s)
 {
 	while (*s && !(*s == ' ' || *s == '\t'))
 		s++;
-	return (char *) s;
+	return s;
 }
 
 /*
  * Returns mallocated buffer or NULL in case of error.
  */
-char *unmangle(const char *s, char **end)
+char *unmangle(const char *s, const char **end)
 {
 	char *buf;
-	char *e;
+	const char *e;
 	size_t sz;
 
 	if (!s)
