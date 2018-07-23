@@ -105,7 +105,9 @@ struct login_context {
 	const char	*tty_number;	/* end of the tty_path */
 	mode_t		tty_mode;	/* chmod() mode */
 
-	char		*username;	/* from command line or PAM */
+	const char	*username;	/* points to PAM, pwd or cmd_username */
+	char            *cmd_username;	/* username specified on command line */
+
 
 	struct passwd	*pwd;		/* user info */
 	char		*pwdbuf;	/* pwd strings */
@@ -655,12 +657,12 @@ static void log_syslog(struct login_context *cxt)
 }
 
 /* encapsulate stupid "void **" pam_get_item() API */
-static int loginpam_get_username(pam_handle_t *pamh, char **name)
+static int loginpam_get_username(pam_handle_t *pamh, const char **name)
 {
-	const void *item = (void *)*name;
+	const void *item = (const void *)*name;
 	int rc;
 	rc = pam_get_item(pamh, PAM_USER, &item);
-	*name = (char *)item;
+	*name = (const char *)item;
 	return rc;
 }
 
@@ -740,7 +742,6 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 		loginpam_err(pamh, rc);
 
 	/* We don't need the original username. We have to follow PAM. */
-	free(cxt->username);
 	cxt->username = NULL;
 	cxt->pamh = pamh;
 
@@ -1204,7 +1205,11 @@ int main(int argc, char **argv)
 
 	if (*argv) {
 		char *p = *argv;
-		cxt.username = xstrdup(p);
+
+		/* username from command line */
+		cxt.cmd_username = xstrdup(p);
+		/* used temporary, it'll be replaced by username from PAM or/and cxt->pwd */
+		cxt.username = cxt.cmd_username;
 
 		/* Wipe the name - some people mistype their password here. */
 		/* (Of course we are too late, but perhaps this helps a little...) */
