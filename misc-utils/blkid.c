@@ -530,8 +530,8 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 			continue;
 		if (ctl->show[0] && !has_item(ctl, name))
 			continue;
-		len = strnlen((char *) data, len);
-		print_value(ctl, num++, devname, (char *) data, name, len);
+		len = strnlen(data, len);
+		print_value(ctl, num++, devname, data, name, len);
 	}
 
 	if (first)
