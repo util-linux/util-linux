@@ -462,12 +462,12 @@ static unsigned long long swap_get_size(const struct swap_device *dev,
 {
 	unsigned int last_page = 0;
 	const unsigned int swap_version = SWAP_VERSION;
-	struct swap_header_v1_2 *s;
+	const struct swap_header_v1_2 *s;
 
 	assert(dev);
 	assert(dev->pagesize > 0);
 
-	s = (struct swap_header_v1_2 *) hdr;
+	s = (const struct swap_header_v1_2 *) hdr;
 
 	if (s->version == swap_version)
 		last_page = s->last_page;
@@ -479,7 +479,7 @@ static unsigned long long swap_get_size(const struct swap_device *dev,
 
 static void swap_get_info(struct swap_device *dev, const char *hdr)
 {
-	struct swap_header_v1_2 *s = (struct swap_header_v1_2 *) hdr;
+	const struct swap_header_v1_2 *s = (const struct swap_header_v1_2 *) hdr;
 
 	assert(dev);
 
