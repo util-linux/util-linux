@@ -1745,7 +1745,7 @@ static ssize_t ui_get_string(const char *prompt,
 	clrtoeol();
 
 	if (prompt) {
-		mvaddstr(ln, cl, (char *) prompt);
+		mvaddstr(ln, cl, prompt);
 		cl += mbs_safe_width(prompt);
 	}
 
