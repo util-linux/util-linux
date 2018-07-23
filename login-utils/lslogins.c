@@ -965,8 +965,8 @@ static int get_user(struct lslogins_control *ctl, struct lslogins_user **user,
 
 static int cmp_uid(const void *a, const void *b)
 {
-	uid_t x = ((struct lslogins_user *)a)->uid;
-	uid_t z = ((struct lslogins_user *)b)->uid;
+	uid_t x = ((const struct lslogins_user *)a)->uid;
+	uid_t z = ((const struct lslogins_user *)b)->uid;
 	return x > z ? 1 : (x < z ? -1 : 0);
 }
 
@@ -1045,7 +1045,7 @@ fail:
 static void fill_table(const void *u, const VISIT which, const int depth __attribute__((unused)))
 {
 	struct libscols_line *ln;
-	struct lslogins_user *user = *(struct lslogins_user **)u;
+	const struct lslogins_user *user = *(struct lslogins_user * const *)u;
 	size_t n = 0;
 
 	if (which == preorder || which == endorder)
