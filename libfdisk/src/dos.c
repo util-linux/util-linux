@@ -2153,8 +2153,8 @@ static void print_chain_of_logicals(struct fdisk_context *cxt)
 
 static int cmp_ebr_offsets(const void *a, const void *b)
 {
-	struct pte *ae = (struct pte *) a,
-		   *be = (struct pte *) b;
+	const struct pte *ae = (const struct pte *) a,
+			 *be = (const struct pte *) b;
 
 	if (ae->offset == 0 && be->offset == 0)
 		return 0;

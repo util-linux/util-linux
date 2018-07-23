@@ -3000,8 +3000,8 @@ static int gpt_toggle_partition_flag(
 
 static int gpt_entry_cmp_start(const void *a, const void *b)
 {
-	struct gpt_entry *ae = (struct gpt_entry *) a,
-			 *be = (struct gpt_entry *) b;
+	const struct gpt_entry  *ae = (const struct gpt_entry *) a,
+				*be = (const struct gpt_entry *) b;
 	int au = gpt_entry_is_used(ae),
 	    bu = gpt_entry_is_used(be);
 

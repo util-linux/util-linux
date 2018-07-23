@@ -510,8 +510,8 @@ static int compare_start(struct fdisk_context *cxt,
 	 * Sort according to start sectors and prefer the largest partition:
 	 * entry zero is the entire-disk entry.
 	 */
-	unsigned int i = *(int *) x;
-	unsigned int j = *(int *) y;
+	const unsigned int i = *(const int *) x;
+	const unsigned int j = *(const int *) y;
 	unsigned int a = sgi_get_start_sector(cxt, i);
 	unsigned int b = sgi_get_start_sector(cxt, j);
 	unsigned int c = sgi_get_num_sectors(cxt, i);
