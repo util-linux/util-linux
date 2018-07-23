@@ -120,8 +120,8 @@ static int colors_read_schemes(struct ul_color_ctl *cc);
  */
 static int cmp_scheme_name(const void *a0, const void *b0)
 {
-	struct ul_color_scheme	*a = (struct ul_color_scheme *) a0,
-				*b = (struct ul_color_scheme *) b0;
+	const struct ul_color_scheme *a = (const struct ul_color_scheme *) a0,
+				     *b = (const struct ul_color_scheme *) b0;
 	return strcmp(a->name, b->name);
 }
 
