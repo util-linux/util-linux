@@ -840,7 +840,7 @@ int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr)
 	if (!optstr)
 		return 0;
 
-	rc = mnt_split_optstr((char *) optstr, &u, &v, &f, 0, 0);
+	rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
 	if (rc)
 		return rc;
 
@@ -882,7 +882,7 @@ int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
 	if (!optstr)
 		return 0;
 
-	rc = mnt_split_optstr((char *) optstr, &u, &v, &f, 0, 0);
+	rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
 	if (rc)
 		return rc;
 
