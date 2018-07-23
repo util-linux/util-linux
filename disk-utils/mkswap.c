@@ -259,6 +259,8 @@ static void wipe_device(struct mkswap_control *ctl)
 	blkid_probe pr = NULL;
 #endif
 	if (!ctl->force) {
+		const char *v = NULL;
+
 		if (lseek(ctl->fd, 0, SEEK_SET) != 0)
 			errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
@@ -268,9 +270,8 @@ static void wipe_device(struct mkswap_control *ctl)
 		blkid_probe_enable_superblocks(pr, 0);
 
 		if (blkid_do_fullprobe(pr) == 0 &&
-		    blkid_probe_lookup_value(pr, "PTTYPE",
-				(const char **) &type, NULL) == 0 && type) {
-			type = xstrdup(type);
+		    blkid_probe_lookup_value(pr, "PTTYPE", &v, NULL) == 0 && v) {
+			type = xstrdup(v);
 			zap = 0;
 		}
 #else
