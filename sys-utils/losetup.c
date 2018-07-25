@@ -141,8 +141,7 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 
 		if (loopcxt_get_sizelimit(lc, &x) == 0 && x)
 				printf(_(", sizelimit %ju"), x);
-		printf("\n");
-		return 0;
+		goto done;
 	}
 
 	printf("%s: [%04d]:%" PRIu64 " (%s)",
@@ -162,6 +161,9 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 		if (e && *e)
 			printf(_(", encryption %s (type %u)"), e, type);
 	}
+
+done:
+	free(fname);
 	printf("\n");
 	return 0;
 }
