@@ -795,8 +795,9 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 				else if ((features & XEN_FEATURES_PVH_MASK)
 								== XEN_FEATURES_PVH_MASK)
 					desc->virtype = VIRT_PARA;
-				fclose(fd);
 			}
+			if (fd)
+				fclose(fd);
 		}
 	} else if (read_hypervisor_powerpc(desc) > 0) {}
 
