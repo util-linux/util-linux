@@ -357,6 +357,8 @@ static int ask_offset(struct fdisk_context *cxt,
 		}
 		if (sig == '+')
 			num += base;
+		else if (sig == '-' && fdisk_ask_number_should_wrap_negative(ask))
+			num = high - num;
 		else if (sig == '-')
 			num = base - num;
 

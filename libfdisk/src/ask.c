@@ -319,6 +319,13 @@ int fdisk_ask_number_is_relative(struct fdisk_ask *ask)
 	return ask->data.num.relative;
 }
 
+int fdisk_ask_number_should_wrap_negative(struct fdisk_ask *ask)
+{
+	assert(ask);
+	assert(is_number_ask(ask));
+	return ask->data.num.wrap_negative;
+}
+
 /**
  * fdisk_ask_number_set_relative
  * @ask: ask instance
@@ -352,6 +359,20 @@ int fdisk_ask_number_inchars(struct fdisk_ask *ask)
 	assert(ask);
 	assert(is_number_ask(ask));
 	return ask->data.num.inchars;
+}
+
+/**
+ * fdisk_ask_number_set_wrap_negative:
+ * @ask: ask instance
+ *
+ * If true, and user input negative value, the value is subtracted from the
+ * high value of the limit.
+ */
+int fdisk_ask_number_set_wrap_negative(struct fdisk_ask *ask, int wrap_negative)
+{
+	assert(ask);
+	ask->data.num.wrap_negative = wrap_negative ? 1 : 0;
+	return 0;
 }
 
 /*
