@@ -320,6 +320,24 @@ int fdisk_ask_number_is_relative(struct fdisk_ask *ask)
 }
 
 /**
+ * fdisk_ask_number_is_wrap_negative:
+ * @ask: ask instance
+ *
+ * The wrap-negative flag allows to accept negative number from user. In this
+ * case the dialog result is calculated as "high - num" (-N from high limit).
+ *
+ * Returns: 1 or 0.
+ *
+ * Since: 2.33
+ */
+int fdisk_ask_number_is_wrap_negative(struct fdisk_ask *ask)
+{
+	assert(ask);
+	assert(is_number_ask(ask));
+	return ask->data.num.wrap_negative;
+}
+
+/**
  * fdisk_ask_number_set_relative
  * @ask: ask instance
  * @relative: 0 or 1
@@ -352,6 +370,13 @@ int fdisk_ask_number_inchars(struct fdisk_ask *ask)
 	assert(ask);
 	assert(is_number_ask(ask));
 	return ask->data.num.inchars;
+}
+
+int fdisk_ask_number_set_wrap_negative(struct fdisk_ask *ask, int wrap_negative)
+{
+	assert(ask);
+	ask->data.num.wrap_negative = wrap_negative ? 1 : 0;
+	return 0;
 }
 
 /*

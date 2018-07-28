@@ -297,3 +297,7 @@ FDISK_2.32 {
 	fdisk_label_get_geomrange_heads;
 	fdisk_label_get_geomrange_cylinders;
 } FDISK_2.31;
+
+FDISK_2.33 {
+	fdisk_ask_number_is_wrap_negative;
+} FDISK_2.32;

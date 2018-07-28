@@ -2444,13 +2444,14 @@ static int gpt_add_partition(
 			if (!ask)
 				return -ENOMEM;
 
-			fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
+			fdisk_ask_set_query(ask, _("Last sector, +/-sectors or +/-size{K,M,G,T,P}"));
 			fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 			fdisk_ask_number_set_low(ask,     user_f);	/* minimal */
 			fdisk_ask_number_set_default(ask, dflt_l);	/* default */
 			fdisk_ask_number_set_high(ask,    dflt_l);	/* maximal */
 			fdisk_ask_number_set_base(ask,    user_f);	/* base for relative input */
 			fdisk_ask_number_set_unit(ask,    cxt->sector_size);
+			fdisk_ask_number_set_wrap_negative(ask, 1);	/* wrap negative around high */
 
 			rc = fdisk_do_ask(cxt, ask);
 			if (rc)

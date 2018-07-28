@@ -33,7 +33,7 @@ All partitioning is driven by device I/O limits (the topology) by default.
 is able to optimize the disk layout for a 4K-sector size and use an alignment offset on
 modern devices for MBR and GPT.  It is always a good idea to follow \fBfdisk\fR's defaults
 as the default values (e.g. first and last partition sectors) and partition
-sizes specified by the +<size>{M,G,...} notation are always aligned according
+sizes specified by the +/-<size>{M,G,...} notation are always aligned according
 to the device properties.
 
 Note that
@@ -161,16 +161,19 @@ documentation (the Documentation/devices.txt file).
 
 .SH SIZES
 The "last sector" dialog accepts partition size specified by number of sectors
-or by +<size>{K,B,M,G,...} notation. 
+or by +/-<size>{K,B,M,G,...} notation.
 
 If the size is prefixed by  '+' then it is interpreted as relative to the
-partition first sector. In this case the size is expected in bytes and the
-number may be followed by the multiplicative suffixes KiB=1024, MiB=1024*1024,
-and so on for GiB, TiB, PiB, EiB, ZiB and YiB. The "iB" is optional, e.g. "K"
-has the same meaning as "KiB". 
+partition first sector.  If the size is prefixed by  '-' then it is interpreted
+as relative to the high limit (last available sector for the partition).
+
+In the case the size is specified in bytes than the number may be followed by
+the multiplicative suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB,
+PiB, EiB, ZiB and YiB. The "iB" is optional, e.g. "K" has the same meaning as
+"KiB".
 
 The relative sizes are always aligned according to device I/O limits.  The
-+<size>{K,B,M,G,...} notation is recommended.
++/-<size>{K,B,M,G,...} notation is recommended.
 
 For backward compatibility fdisk also accepts the suffixes KB=1000,
 MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB. These 10^N suffixes

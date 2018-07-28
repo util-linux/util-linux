@@ -647,7 +647,7 @@ static int sun_add_partition(
 			return -ENOMEM;
 
 		snprintf(mesg, sizeof(mesg),
-			 _("Last %s or +%s or +size{K,M,G,T,P}"),
+			 _("Last %s or +/-%s or +/-size{K,M,G,T,P}"),
 			 fdisk_get_unit(cxt, FDISK_SINGULAR),
 			 fdisk_get_unit(cxt, FDISK_PLURAL));
 		fdisk_ask_set_query(ask, mesg);
@@ -669,6 +669,8 @@ static int sun_add_partition(
 			fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, stop));	/* maximal */
 			fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
 		}
+
+		fdisk_ask_number_set_wrap_negative(ask, 1); /* wrap negative around high */
 
 		if (fdisk_use_cylinders(cxt))
 			fdisk_ask_number_set_unit(ask,

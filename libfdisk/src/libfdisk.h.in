@@ -794,6 +794,7 @@ int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result);
 uint64_t fdisk_ask_number_get_base(struct fdisk_ask *ask);
 uint64_t fdisk_ask_number_get_unit(struct fdisk_ask *ask);
 int fdisk_ask_number_set_relative(struct fdisk_ask *ask, int relative);
+int fdisk_ask_number_is_wrap_negative(struct fdisk_ask *ask);
 int fdisk_ask_number_inchars(struct fdisk_ask *ask);
 int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
 

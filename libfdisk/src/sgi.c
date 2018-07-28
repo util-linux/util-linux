@@ -925,6 +925,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		fdisk_ask_number_set_default(ask, fdisk_scround(cxt, last) - 1);/* default */
 		fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, last) - 1);/* maximal */
 		fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
+		fdisk_ask_number_set_wrap_negative(ask, 1); /* wrap negative around high */
 
 		if (fdisk_use_cylinders(cxt))
 			fdisk_ask_number_set_unit(ask,
