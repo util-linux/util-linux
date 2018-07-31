@@ -56,16 +56,22 @@ struct fstrim_range {
 #define FITRIM		_IOWR('X', 121, struct fstrim_range)
 #endif
 
+struct fstrim_control {
+	struct fstrim_range range;
+
+	unsigned int verbose : 1,
+		     dryrun : 1;
+};
+
 /* returns: 0 = success, 1 = unsupported, < 0 = error */
-static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
-			    int verbose, int dryrun)
+static int fstrim_filesystem(struct fstrim_control *ctl, const char *path)
 {
 	int fd, rc;
 	struct stat sb;
 	struct fstrim_range range;
 
 	/* kernel modifies the range */
-	memcpy(&range, rangetpl, sizeof(range));
+	memcpy(&range, &ctl->range, sizeof(range));
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0) {
@@ -84,7 +90,7 @@ static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
 		goto done;
 	}
 
-	if (dryrun) {
+	if (ctl->dryrun) {
 		printf(_("%s (dry run)\n"), path);
 		rc = 0;
 		goto done;
@@ -99,7 +105,7 @@ static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
 		goto done;
 	}
 
-	if (verbose) {
+	if (ctl->verbose) {
 		char *str = size_to_human_string(
 				SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
 				(uint64_t) range.len);
@@ -195,7 +201,7 @@ static int uniq_fs_source_cmp(
  * 32 = all failed
  * 64 = some failed, some success
  */
-static int fstrim_all(struct fstrim_range *rangetpl, int verbose, int dryrun)
+static int fstrim_all(struct fstrim_control *ctl)
 {
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr;
@@ -252,7 +258,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose, int dryrun)
 		 * This is reason why we ignore EOPNOTSUPP and ENOTTY errors
 		 * from discard ioctl.
 		 */
-		if (fstrim_filesystem(tgt, rangetpl, verbose, dryrun) < 0)
+		if (fstrim_filesystem(ctl, tgt) < 0)
 		       cnt_err++;
 	}
 
@@ -295,8 +301,10 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	char *path = NULL;
-	int c, rc, verbose = 0, all = 0, dryrun = 0;
-	struct fstrim_range range;
+	int c, rc, all = 0;
+	struct fstrim_control ctl = {
+			.range = { .len = ULLONG_MAX }
+	};
 
 	static const struct option longopts[] = {
 	    { "all",       no_argument,       NULL, 'a' },
@@ -315,16 +323,13 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	memset(&range, 0, sizeof(range));
-	range.len = ULLONG_MAX;
-
 	while ((c = getopt_long(argc, argv, "adhVo:l:m:v", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			all = 1;
 			break;
 		case 'd':
-			dryrun = 1;
+			ctl.dryrun = 1;
 			break;
 		case 'h':
 			usage();
@@ -333,19 +338,19 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'l':
-			range.len = strtosize_or_err(optarg,
+			ctl.range.len = strtosize_or_err(optarg,
 					_("failed to parse length"));
 			break;
 		case 'o':
-			range.start = strtosize_or_err(optarg,
+			ctl.range.start = strtosize_or_err(optarg,
 					_("failed to parse offset"));
 			break;
 		case 'm':
-			range.minlen = strtosize_or_err(optarg,
+			ctl.range.minlen = strtosize_or_err(optarg,
 					_("failed to parse minimum extent length"));
 			break;
 		case 'v':
-			verbose = 1;
+			ctl.verbose = 1;
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
@@ -365,9 +370,9 @@ int main(int argc, char **argv)
 	}
 
 	if (all)
-		return fstrim_all(&range, verbose, dryrun);	/* MNT_EX_* codes */
+		return fstrim_all(&ctl);	/* MNT_EX_* codes */
 
-	rc = fstrim_filesystem(path, &range, verbose, dryrun);
+	rc = fstrim_filesystem(&ctl, path);
 	if (rc == 1)
 		warnx(_("%s: the discard operation is not supported"), path);
 
