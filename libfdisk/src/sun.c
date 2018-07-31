@@ -670,6 +670,8 @@ static int sun_add_partition(
 			fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
 		}
 
+		fdisk_ask_number_set_wrap_negative(ask, 1); /* wrap negative around high */
+
 		if (fdisk_use_cylinders(cxt))
 			fdisk_ask_number_set_unit(ask,
 				     cxt->sector_size *

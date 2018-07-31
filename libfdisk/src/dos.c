@@ -1223,6 +1223,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			fdisk_ask_number_set_default(ask, fdisk_cround(cxt, limit));
 			fdisk_ask_number_set_high(ask, fdisk_cround(cxt, limit));
 			fdisk_ask_number_set_base(ask, fdisk_cround(cxt, start));	/* base for relative input */
+			fdisk_ask_number_set_wrap_negative(ask, 1); /* wrap negative around high */
 
 			rc = fdisk_do_ask(cxt, ask);
 			if (rc)

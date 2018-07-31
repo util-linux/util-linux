@@ -301,6 +301,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 		fdisk_ask_number_set_default(ask, fdisk_cround(cxt, end));
 		fdisk_ask_number_set_high(ask, fdisk_cround(cxt, end));
 		fdisk_ask_number_set_base(ask, fdisk_cround(cxt, begin));
+		fdisk_ask_number_set_wrap_negative(ask, 1); /* wrap negative around high */
 
 		rc = fdisk_do_ask(cxt, ask);
 		end = fdisk_ask_number_get_result(ask);

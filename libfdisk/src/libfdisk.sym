@@ -31,6 +31,8 @@ global:
 	fdisk_ask_number_get_unit;
 	fdisk_ask_number_inchars;
 	fdisk_ask_number_set_relative;
+	fdisk_ask_number_should_wrap_negative;
+	fdisk_ask_number_set_wrap_negative;
 	fdisk_ask_number_set_result;
 	fdisk_ask_partnum;
 	fdisk_ask_print_get_errno;

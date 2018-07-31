@@ -2451,6 +2451,7 @@ static int gpt_add_partition(
 			fdisk_ask_number_set_high(ask,    dflt_l);	/* maximal */
 			fdisk_ask_number_set_base(ask,    user_f);	/* base for relative input */
 			fdisk_ask_number_set_unit(ask,    cxt->sector_size);
+			fdisk_ask_number_set_wrap_negative(ask, 1); /* wrap negative around high */
 
 			rc = fdisk_do_ask(cxt, ask);
 			if (rc)
