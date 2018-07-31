@@ -28,7 +28,7 @@ Be careful before using the write command.
 GPT PMBR size mismatch (20479 != 40959) will be corrected by write.
 The backup GPT table is not on the end of the device. This problem will be corrected by write.
 
-Command (m for help): Partition number (2-128, default 2): First sector (20447-40926, default 20480): Last sector, +sectors or +size{K,M,G,T,P} (20480-40926, default 40926): 
+Command (m for help): Partition number (2-128, default 2): First sector (20447-40926, default 20480): Last sector, +/-sectors or +/-size{K,M,G,T,P} (20480-40926, default 40926): 
 Created a new <removed>.
 
 Command (m for help): The partition table has been altered.

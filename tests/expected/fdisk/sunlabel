@@ -59,7 +59,7 @@ Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
 
 
-Command (m for help): Partition number (2-8, default 2): First cylinder (128-325, default 128): Last cylinder or +cylinders or +size{K,M,G,T,P} (128-325, default 325): 
+Command (m for help): Partition number (2-8, default 2): First cylinder (128-325, default 128): Last cylinder or +/-cylinders or +/-size{K,M,G,T,P} (128-325, default 325): 
 Created a new <removed>.
 
 Command (m for help): The partition table has been altered.

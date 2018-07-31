@@ -12,13 +12,13 @@ Created a new <removed>.
 Command (m for help): Partition type
    p   primary (0 primary, 0 extended, 4 free)
    e   extended (container for logical partitions)
-Select (default p): Partition number (1-4, default 1): First sector (2048-102271, default 2048): Last sector, +sectors or +size{K,M,G,T,P} (2048-102271, default 102271): 
+Select (default p): Partition number (1-4, default 1): First sector (2048-102271, default 2048): Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-102271, default 102271): 
 Created a new <removed>.
 
 Command (m for help): Partition type
    p   primary (1 primary, 0 extended, 3 free)
    e   extended (container for logical partitions)
-Select (default p): Partition number (2-4, default 2): First sector (22528-102271, default 22528): Last sector, +sectors or +size{K,M,G,T,P} (22528-102271, default 102271): 
+Select (default p): Partition number (2-4, default 2): First sector (22528-102271, default 22528): Last sector, +/-sectors or +/-size{K,M,G,T,P} (22528-102271, default 102271): 
 Created a new <removed>.
 
 Command (m for help): Disk /dev/md8: 50 MiB, 52363264 bytes, 102272 sectors

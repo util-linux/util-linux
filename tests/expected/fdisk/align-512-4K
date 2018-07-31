@@ -10,19 +10,19 @@ Created a new <removed>.
 Command (m for help): Partition type
    p   primary (0 primary, 0 extended, 4 free)
    e   extended (container for logical partitions)
-Select (default p): Partition number (1-4, default 1): First sector (2048-102399, default 2048): Last sector, +sectors or +size{K,M,G,T,P} (2048-102399, default 102399): 
+Select (default p): Partition number (1-4, default 1): First sector (2048-102399, default 2048): Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-102399, default 102399): 
 Created a new <removed>.
 
 Command (m for help): Partition type
    p   primary (1 primary, 0 extended, 3 free)
    e   extended (container for logical partitions)
-Select (default p): Partition number (2-4, default 2): First sector (22528-102399, default 22528): Last sector, +sectors or +size{K,M,G,T,P} (22528-102399, default 102399): 
+Select (default p): Partition number (2-4, default 2): First sector (22528-102399, default 22528): Last sector, +/-sectors or +/-size{K,M,G,T,P} (22528-102399, default 102399): 
 Created a new <removed>.
 
 Command (m for help): Partition type
    p   primary (2 primary, 0 extended, 2 free)
    e   extended (container for logical partitions)
-Select (default p): Partition number (3,4, default 3): First sector (43008-102399, default 43008): Last sector, +sectors or +size{K,M,G,T,P} (43008-102399, default 102399): 
+Select (default p): Partition number (3,4, default 3): First sector (43008-102399, default 43008): Last sector, +/-sectors or +/-size{K,M,G,T,P} (43008-102399, default 102399): 
 Created a new <removed>.
 
 Command (m for help): Partition type
@@ -30,22 +30,22 @@ Command (m for help): Partition type
    e   extended (container for logical partitions)
 Select (default e): 
 Selected partition 4
-First sector (63488-102399, default 63488): Last sector, +sectors or +size{K,M,G,T,P} (63488-102399, default 102399): 
+First sector (63488-102399, default 63488): Last sector, +/-sectors or +/-size{K,M,G,T,P} (63488-102399, default 102399): 
 Created a new <removed>.
 
 Command (m for help): All primary partitions are in use.
 Adding logical partition 5
-First sector (65536-102399, default 65536): Last sector, +sectors or +size{K,M,G,T,P} (65536-102399, default 102399): 
+First sector (65536-102399, default 65536): Last sector, +/-sectors or +/-size{K,M,G,T,P} (65536-102399, default 102399): 
 Created a new <removed>.
 
 Command (m for help): All primary partitions are in use.
 Adding logical partition 6
-First sector (77824-102399, default 77824): Last sector, +sectors or +size{K,M,G,T,P} (77824-102399, default 102399): 
+First sector (77824-102399, default 77824): Last sector, +/-sectors or +/-size{K,M,G,T,P} (77824-102399, default 102399): 
 Created a new <removed>.
 
 Command (m for help): All primary partitions are in use.
 Adding logical partition 7
-First sector (90112-102399, default 90112): Last sector, +sectors or +size{K,M,G,T,P} (90112-102399, default 102399): 
+First sector (90112-102399, default 90112): Last sector, +/-sectors or +/-size{K,M,G,T,P} (90112-102399, default 102399): 
 Created a new <removed>.
 
 Command (m for help): Disk <removed>: 50 MiB, 52428800 bytes, 102400 sectors

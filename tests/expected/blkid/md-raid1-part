@@ -10,13 +10,13 @@ Created a new <removed>.
 Command (m for help): Partition type
    p   primary (0 primary, 0 extended, 4 free)
    e   extended (container for logical partitions)
-Select (default p): Partition number (1-4, default 1): First sector (2048-104447, default 2048): Last sector, +sectors or +size{K,M,G,T,P} (2048-104447, default 104447): 
+Select (default p): Partition number (1-4, default 1): First sector (2048-104447, default 2048): Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-104447, default 104447): 
 Created a new <removed>.
 
 Command (m for help): Partition type
    p   primary (1 primary, 0 extended, 3 free)
    e   extended (container for logical partitions)
-Select (default p): Partition number (2-4, default 2): First sector (53248-104447, default 53248): Last sector, +sectors or +size{K,M,G,T,P} (53248-104447, default 104447): 
+Select (default p): Partition number (2-4, default 2): First sector (53248-104447, default 53248): Last sector, +/-sectors or +/-size{K,M,G,T,P} (53248-104447, default 104447): 
 Created a new <removed>.
 
 Command (m for help): Disk <removed>: 51 MiB, 53477376 bytes, 104448 sectors
