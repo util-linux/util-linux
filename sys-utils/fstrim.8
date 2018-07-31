@@ -3,7 +3,7 @@
 fstrim \- discard unused blocks on a mounted filesystem
 .SH SYNOPSIS
 .B fstrim
-.RB [ \-a ]
+.RB [ \-Aa ]
 .RB [ \-o
 .IR offset ]
 .RB [ \-l
@@ -45,6 +45,14 @@ followed by the multiplicative suffixes KiB (=1024),
 MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB"
 is optional, e.g., "K" has the same meaning as "KiB") or the suffixes
 KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
+
+.IP "\fB\-A, \-\-fstab\fP"
+Trim all mounted filesystems mentioned in \fI/etc/fstab\fR on devices that support the
+discard operation.
+The other supplied options, like \fB\-\-offset\fR, \fB\-\-length\fR and
+\fB-\-minimum\fR, are applied to all these devices.
+Errors from filesystems that do not support the discard operation are silently
+ignored.
 
 .IP "\fB\-a, \-\-all\fP"
 Trim all mounted filesystems on devices that support the discard operation.

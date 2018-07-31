@@ -60,11 +60,12 @@ struct fstrim_control {
 	struct fstrim_range range;
 
 	unsigned int verbose : 1,
+		     fstab   : 1,
 		     dryrun : 1;
 };
 
 /* returns: 0 = success, 1 = unsupported, < 0 = error */
-static int fstrim_filesystem(struct fstrim_control *ctl, const char *path)
+static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const char *devname)
 {
 	int fd, rc;
 	struct stat sb;
@@ -91,7 +92,10 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path)
 	}
 
 	if (ctl->dryrun) {
-		printf(_("%s (dry run)\n"), path);
+		if (devname)
+			printf(_("%s: 0 B (dry run) trimmed on %s\n"), path, devname);
+		else
+			printf(_("%s: 0 B (dry run) trimmed\n"), path);
 		rc = 0;
 		goto done;
 	}
@@ -109,9 +113,15 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path)
 		char *str = size_to_human_string(
 				SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
 				(uint64_t) range.len);
-		/* TRANSLATORS: The standard value here is a very large number. */
-		printf(_("%s: %s (%" PRIu64 " bytes) trimmed\n"),
+		if (devname)
+			/* TRANSLATORS: The standard value here is a very large number. */
+			printf(_("%s: %s (%" PRIu64 " bytes) trimmed on %s\n"),
+				path, str, (uint64_t) range.len, devname);
+		else
+			/* TRANSLATORS: The standard value here is a very large number. */
+			printf(_("%s: %s (%" PRIu64 " bytes) trimmed\n"),
 				path, str, (uint64_t) range.len);
+
 		free(str);
 	}
 
@@ -206,8 +216,10 @@ static int fstrim_all(struct fstrim_control *ctl)
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr;
 	struct libmnt_table *tab;
+	struct libmnt_cache *cache = NULL;
 	struct path_cxt *wholedisk = NULL;
 	int cnt = 0, cnt_err = 0;
+	const char *filename = _PATH_PROC_MOUNTINFO;
 
 	mnt_init_debug(0);
 	ul_path_init_debug();
@@ -216,9 +228,12 @@ static int fstrim_all(struct fstrim_control *ctl)
 	if (!itr)
 		err(MNT_EX_FAIL, _("failed to initialize libmount iterator"));
 
-	tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
+	if (ctl->fstab)
+		filename = mnt_get_fstab_path();
+
+	tab = mnt_new_table_from_file(filename);
 	if (!tab)
-		err(MNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
+		err(MNT_EX_FAIL, _("failed to parse %s"), filename);
 
 	/* de-duplicate by mountpoints */
 	mnt_table_uniq_fs(tab, 0, uniq_fs_target_cmp);
@@ -226,15 +241,31 @@ static int fstrim_all(struct fstrim_control *ctl)
 	/* de-duplicate by source */
 	mnt_table_uniq_fs(tab, MNT_UNIQ_FORWARD, uniq_fs_source_cmp);
 
+	if (ctl->fstab) {
+		cache = mnt_new_cache();
+		if (!cache)
+			err(MNT_EX_FAIL, _("failed to initialize libmount cache"));
+	}
+
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
 		const char *src = mnt_fs_get_srcpath(fs),
 			   *tgt = mnt_fs_get_target(fs);
 		char *path;
 		int rc = 1;
 
-		if (!src || !tgt || *src != '/' ||
-		    mnt_fs_is_pseudofs(fs) ||
-		    mnt_fs_is_netfs(fs))
+		if (!tgt || mnt_fs_is_pseudofs(fs) || mnt_fs_is_netfs(fs))
+			continue;
+
+		if (!src && cache) {
+			/* convert LABEL= (etc.) from fstab to paths */
+			const char *spec = mnt_fs_get_source(fs);
+
+			if (!spec)
+				continue;
+			src = mnt_resolve_spec(spec, cache);
+		}
+
+		if (!src || *src != '/')
 			continue;
 
 		/* Is it really accessible mountpoint? Not all mountpoints are
@@ -258,13 +289,14 @@ static int fstrim_all(struct fstrim_control *ctl)
 		 * This is reason why we ignore EOPNOTSUPP and ENOTTY errors
 		 * from discard ioctl.
 		 */
-		if (fstrim_filesystem(ctl, tgt) < 0)
+		if (fstrim_filesystem(ctl, tgt, src) < 0)
 		       cnt_err++;
 	}
 
 	ul_unref_path(wholedisk);
 	mnt_unref_table(tab);
 	mnt_free_iter(itr);
+	mnt_unref_cache(cache);
 
 	if (cnt && cnt == cnt_err)
 		return MNT_EX_FAIL;		/* all failed */
@@ -285,7 +317,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Discard unused blocks on a mounted filesystem.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all           trim all mounted filesystems that are supported\n"), out);
+	fputs(_(" -a, --all           trim all supported mounted filesystems\n"), out);
+	fputs(_(" -A, --fstab         trim all supported mounted filesystems from /etc/fstab\n"), out);
 	fputs(_(" -o, --offset <num>  the offset in bytes to start discarding from\n"), out);
 	fputs(_(" -l, --length <num>  the number of bytes to discard\n"), out);
 	fputs(_(" -m, --minimum <num> the minimum extent length to discard\n"), out);
@@ -308,6 +341,7 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 	    { "all",       no_argument,       NULL, 'a' },
+	    { "fstab",     no_argument,       NULL, 'A' },
 	    { "help",      no_argument,       NULL, 'h' },
 	    { "version",   no_argument,       NULL, 'V' },
 	    { "offset",    required_argument, NULL, 'o' },
@@ -323,8 +357,11 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhVo:l:m:v", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "AadhVo:l:m:v", longopts, NULL)) != -1) {
 		switch(c) {
+		case 'A':
+			ctl.fstab = 1;
+			/* fallthrough */
 		case 'a':
 			all = 1;
 			break;
@@ -372,7 +409,7 @@ int main(int argc, char **argv)
 	if (all)
 		return fstrim_all(&ctl);	/* MNT_EX_* codes */
 
-	rc = fstrim_filesystem(&ctl, path);
+	rc = fstrim_filesystem(&ctl, path, NULL);
 	if (rc == 1)
 		warnx(_("%s: the discard operation is not supported"), path);
 
