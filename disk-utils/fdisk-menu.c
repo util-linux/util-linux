@@ -650,8 +650,10 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 	switch (ent->key) {
 	case 'd':
 		rc = fdisk_ask_partnum(cxt, &n, FALSE);
-		if (!rc)
-			rc = fdisk_delete_partition(cxt, n);
+		if (rc)
+			break; /* no partitions yet (or ENOMEM, ...) */
+
+		rc = fdisk_delete_partition(cxt, n);
 		if (rc)
 			fdisk_warnx(cxt, _("Could not delete partition %zu"), n + 1);
 		else
