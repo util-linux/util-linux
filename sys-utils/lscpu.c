@@ -419,6 +419,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "revision", &desc->revision)) ;
 		else if (lookup(buf, "CPU revision", &desc->revision)) ; /* aarch64 */
 		else if (lookup(buf, "max thread id", &desc->mtid)) ; /* s390 */
+		else if (lookup(buf, "address sizes", &desc->addrsz)) ; /* x86 */
 		else if (lookup_cache(buf, desc)) ;
 		else
 			continue;
@@ -1726,6 +1727,10 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 #else
 	add_summary_s(tb, _("Byte Order:"), "Big Endian");
 #endif
+
+	if (desc->addrsz)
+		add_summary_s(tb, _("Address sizes:"), desc->addrsz);
+
 	add_summary_n(tb, _("CPU(s):"), desc->ncpus);
 
 	if (desc->online)

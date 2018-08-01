@@ -103,6 +103,7 @@ struct lscpu_desc {
 	char    *bogomips;
 	char	*flags;
 	char	*mtid;		/* maximum thread id (s390) */
+	char	*addrsz;	/* address sizes */
 	int	dispatching;	/* none, horizontal or vertical */
 	int	mode;		/* rm, lm or/and tm */
 
