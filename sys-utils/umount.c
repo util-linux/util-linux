@@ -42,6 +42,8 @@
 #define OPTUTILS_EXIT_CODE MNT_EX_USAGE
 #include "optutils.h"
 
+static int quiet;
+
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
 			const char *filename, int line)
 {
@@ -100,6 +102,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --read-only         in case unmounting fails, try to remount read-only\n"), out);
 	fputs(_(" -t, --types <list>      limit the set of filesystem types\n"), out);
 	fputs(_(" -v, --verbose           say what is being done\n"), out);
+	fputs(_(" -q, --quiet             suppress 'not mounted' error messages\n"), out);
 	fputs(_(" -N, --namespace <ns>    perform umount in another namespace\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -153,6 +156,15 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 	char buf[BUFSIZ] = { 0 };
 
 	rc = mnt_context_get_excode(cxt, rc, buf, sizeof(buf));
+
+	/* suppress "not mounted" error message */
+	if (quiet &&
+	    rc == MNT_EX_FAIL &&
+	    mnt_context_syscall_called(cxt) &&
+	    mnt_context_get_syscall_errno(cxt) == EINVAL)
+		return rc;
+
+	/* print errors/warnings */
 	if (*buf) {
 		const char *spec = mnt_context_get_target(cxt);
 		if (!spec)
@@ -315,7 +327,8 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 		rc = umount_do_recurse(cxt, tb, fs);
 	else {
 		rc = MNT_EX_USAGE;
-		warnx(access(spec, F_OK) == 0 ?
+		if (!quiet)
+			warnx(access(spec, F_OK) == 0 ?
 				_("%s: not mounted") :
 				_("%s: not found"), spec);
 	}
@@ -338,7 +351,8 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 	rc = mnt_context_find_umount_fs(cxt, spec, &fs);
 	if (rc == 1) {
 		rc = MNT_EX_USAGE;
-		warnx(access(spec, F_OK) == 0 ?
+		if (!quiet)
+			warnx(access(spec, F_OK) == 0 ?
 				_("%s: not mounted") :
 				_("%s: not found"), spec);
 		return rc;
@@ -441,6 +455,7 @@ int main(int argc, char **argv)
 		{ "lazy",            no_argument,       NULL, 'l'             },
 		{ "no-canonicalize", no_argument,       NULL, 'c'             },
 		{ "no-mtab",         no_argument,       NULL, 'n'             },
+		{ "quiet",           no_argument,       NULL, 'q'             },
 		{ "read-only",       no_argument,       NULL, 'r'             },
 		{ "recursive",       no_argument,       NULL, 'R'             },
 		{ "test-opts",       required_argument, NULL, 'O'             },
@@ -478,7 +493,7 @@ int main(int argc, char **argv)
 
 
 		/* only few options are allowed for non-root users */
-		if (mnt_context_is_restricted(cxt) && !strchr("hdilVv", c))
+		if (mnt_context_is_restricted(cxt) && !strchr("hdilqVv", c))
 			exit_non_root(option_to_longopt(c, longopts));
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -513,6 +528,9 @@ int main(int argc, char **argv)
 			break;
 		case 'n':
 			mnt_context_disable_mtab(cxt, TRUE);
+			break;
+		case 'q':
+			quiet = 1;
 			break;
 		case 'r':
 			mnt_context_enable_rdonly_umount(cxt, TRUE);
