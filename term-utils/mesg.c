@@ -121,6 +121,11 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
+	if (!isatty(STDERR_FILENO)) {
+		if (verbose)
+			warnx(_("no tty"));
+		exit(MESG_EXIT_FAILURE);
+	}
 	if ((tty = ttyname(STDERR_FILENO)) == NULL)
 		err(MESG_EXIT_FAILURE, _("ttyname failed"));
 	if ((fd = open(tty, O_RDONLY)) < 0)

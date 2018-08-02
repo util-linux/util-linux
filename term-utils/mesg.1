@@ -55,6 +55,15 @@ write access by default, at least for the primary login shell.  To make
 sure your ttys are set the way you want them to be set,
 .B mesg
 should be executed in your login scripts.
+.PP
+The
+.B mesg
+utility silently exits with error status 2 if the current standard error output does
+not refer to the terminal.  In this case execute
+.B mesg
+is pointless.  The command line option \fB\-\-verbose\fR forces
+mesg to print a warning in this situation.  This behaviour has been introduced
+in version 2.33.
 .SH ARGUMENTS
 .TP
 .B n
