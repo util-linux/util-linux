@@ -165,8 +165,9 @@ Upon receiving either
 or
 .BR SIGTERM ,
 .B su
-terminates its child and afterwards terminates itself with
-the received signal.
+terminates its child and afterwards terminates itself with the received signal.
+The child is terminated by SIGTERM, after unsuccessful attempt and 2 seconds of
+delay the child is killed by SIGKILL.
 .SH CONFIG FILES
 .B su
 reads the
