@@ -69,7 +69,7 @@ Set the wakeup time to the value of the timestamp.  Format of the
 timestamp can be any of the following:
 .TS
 tab(|);
-left l2 l.
+l2 l.
 YYYYMMDDhhmmss
 YYYY-MM-DD hh:mm:ss
 YYYY-MM-DD hh:mm|(seconds will be set to 00)
