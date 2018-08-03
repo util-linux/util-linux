@@ -253,18 +253,9 @@ static int synchronize_to_clock_tick_rtc(const struct hwclock_control *ctl)
 		warn(_("cannot open rtc device"));
 		return ret;
 	} else {
-		int rc;		/* Return code from ioctl */
 		/* Turn on update interrupts (one per second) */
-#if defined(__alpha__) || defined(__sparc__)
-		/*
-		 * Not all alpha kernels reject RTC_UIE_ON, but probably
-		 * they should.
-		 */
-		rc = -1;
-		errno = EINVAL;
-#else
-		rc = ioctl(rtc_fd, RTC_UIE_ON, 0);
-#endif
+		int rc = ioctl(rtc_fd, RTC_UIE_ON, 0);
+
 		if (rc != -1) {
 			/*
 			 * Just reading rtc_fd fails on broken hardware: no
