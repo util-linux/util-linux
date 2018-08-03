@@ -14639,7 +14639,7 @@ msgstr "Processeurs / cœurs matériels :"
 
 #: sys-utils/lscpu.c:1888
 msgid "Flags:"
-msgstr "Drapaux :"
+msgstr "Drapeaux :"
 
 #: sys-utils/lscpu.c:1903
 msgid "Display information about the CPU architecture.\n"
