@@ -12,13 +12,22 @@ This command will parse unique identifier inputs from either command line
 arguments or standard input.  The inputs are white-space separated.
 .SH OUTPUT
 .SS Variants
+.nr WI \n(.lu-\n(.iu-\w'Microsoft'u-3n
 .TS
 tab(:);
-l l.
-NCS:Network Computing System identifier.  These were the original UUIDs.
-DCE:The Open Software Foundation's (OSF) Distributed Computing Environment UUIDs.
-Microsoft:Microsoft Windows platform globally unique identifier (GUID).
-other:Unknown variant.  Usually invalid input data.
+l lw(\n(WIu).
+NCS:T{
+Network Computing System identifier.  These were the original UUIDs.
+T}
+DCE:T{
+The Open Software Foundation's (OSF) Distributed Computing Environment UUIDs.
+T}
+Microsoft:T{
+Microsoft Windows platform globally unique identifier (GUID).
+T}
+other:T{
+Unknown variant.  Usually invalid input data.
+T}
 .TE
 .SS Types
 .TS

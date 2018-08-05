@@ -293,15 +293,18 @@ utility exits 0 on success, and >0 if an error occurs.
 .SH FACILITIES AND LEVELS
 Valid facility names are:
 .IP
+.nr WI \n(.lu-\n(.iu-\w'\fBauthpriv\fR'u-3n
 .TS
 tab(:);
-l l.
+l lw(\n(WIu).
 \fBauth
 \fBauthpriv\fR:for security information of a sensitive nature
 \fBcron
 \fBdaemon
 \fBftp
-\fBkern\fR:cannot be generated from userspace process, automatically converted to \fBuser
+\fBkern\fR:T{
+cannot be generated from userspace process, automatically converted to \fBuser
+T}
 \fBlpr
 \fBmail
 \fBnews
