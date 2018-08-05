@@ -193,7 +193,7 @@ the Hardware Clock while its Linux instance is not running.
 .TP
 .B \-\-set
 Set the Hardware Clock to the time given by the
-.BR \-\-date
+.B \-\-date
 option, and update the timestamps in
 .IR @ADJTIME_PATH@ .
 With the
@@ -824,7 +824,7 @@ cold drift should yield better results.
 .PP
 .B Steps to calculate cold drift:
 .IP 1 2
-.RB "Ensure that NTP daemon will not be launched at startup."
+.B "Ensure that NTP daemon will not be launched at startup."
 .IP 2 2
 .RI The " System Clock " "time must be correct at shutdown!"
 .IP 3 2

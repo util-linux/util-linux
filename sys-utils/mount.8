@@ -239,7 +239,7 @@ and
 traditionally maintained a list of currently mounted filesystems in the file
 .IR /etc/mtab .
 The support for regular classic
-.IR /etc/mtab
+.I /etc/mtab
 is completely disabled in compile time by default, because on current Linux
 systems it is better to make it a symlink to
 .I /proc/mounts
@@ -655,10 +655,10 @@ or special file representing that namespace.
 .sp
 .BR mount (8)
 switches to the namespace when it reads /etc/fstab, writes /etc/mtab (or writes to /run/mount) and calls
-.BR mount(2)
+.BR mount (2)
 system call, otherwise it runs in the original namespace. It means that the target namespace does not have
 to contain any libraries or another requirements necessary to execute
-.BR mount(2)
+.BR mount (2)
 command.
 .sp
 See \fBnamespaces\fR(7) for more information.
