@@ -83,6 +83,13 @@
 #endif
 
 
+struct arch_domain {
+	int		perval;		/* PER_* */
+	const char	*target_arch;
+	const char	*result_arch;
+};
+
+
 static void __attribute__((__noreturn__)) usage(int archwrapper)
 {
 	fputs(USAGE_HEADER, stdout);
@@ -119,16 +126,16 @@ static void __attribute__((__noreturn__)) usage(int archwrapper)
 	exit(EXIT_SUCCESS);
 }
 
-static int set_arch(const char *pers, unsigned long options, int list)
+/*
+ * Returns inilialized list of all available execution domains.
+ */
+static struct arch_domain *init_arch_domains(void)
 {
 	struct utsname un;
-	int i;
-	unsigned long pers_value;
+	size_t i;
 
-	struct {
-		int perval;
-		const char *target_arch, *result_arch;
-	} transitions[] = {
+	static struct arch_domain transitions[] =
+	{
 		{UNAME26,	"uname26",	NULL},
 		{PER_LINUX32,	"linux32",	NULL},
 		{PER_LINUX,	"linux64",	NULL},
@@ -207,39 +214,49 @@ static int set_arch(const char *pers, unsigned long options, int list)
 			transitions[i].result_arch = un.machine;
 		}
 	}
-	if (list) {
-		for (i = 0; transitions[i].target_arch != NULL; i++)
-			printf("%s\n", transitions[i].target_arch);
-		return 0;
-	}
-	for (i = 0; transitions[i].perval >= 0; i++)
-		if (!strcmp(pers, transitions[i].target_arch))
+
+	return transitions;
+}
+
+/*
+ * List all execution domains from transitions
+ */
+static void list_arch_domains(struct arch_domain *doms)
+{
+	struct arch_domain *d;
+
+	for (d = doms; d->target_arch != NULL; d++)
+		printf("%s\n", d->target_arch);
+}
+
+static struct arch_domain *get_arch_domain(struct arch_domain *doms, const char *pers)
+{
+	struct arch_domain *d;
+
+	for (d = doms; d->perval >= 0; d++) {
+		if (!strcmp(pers, d->target_arch))
 			break;
-	if (transitions[i].perval < 0)
-		errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), pers);
-	pers_value = transitions[i].perval | options;
-	if (personality(pers_value) < 0) {
-		/*
-		 * Depending on architecture and kernel version, personality
-		 * syscall is either capable or incapable of returning an error.
-		 * If the return value is not an error, then it's the previous
-		 * personality value, which can be an arbitrary value
-		 * undistinguishable from an error value.
-		 * To make things clear, a second call is needed.
-		 */
-		if (personality(pers_value) < 0)
-			return 1;
 	}
+
+	return !d || d->perval < 0 ? NULL : d;
+}
+
+static void verify_arch_domain(struct arch_domain *dom, const char *wanted)
+{
+	struct utsname un;
+
+	if (!dom || !dom->result_arch)
+		return;
+
 	uname(&un);
-	if (transitions[i].result_arch && strcmp(un.machine, transitions[i].result_arch)) {
-		if (strcmp(transitions[i].result_arch, "i386")
+	if (strcmp(un.machine, dom->result_arch)) {
+		if (strcmp(dom->result_arch, "i386")
 		    || (strcmp(un.machine, "i486")
 			&& strcmp(un.machine, "i586")
 			&& strcmp(un.machine, "i686")
 			&& strcmp(un.machine, "athlon")))
-			errx(EXIT_FAILURE, _("Kernel cannot set architecture to %s"), pers);
+			errx(EXIT_FAILURE, _("Kernel cannot set architecture to %s"), wanted);
 	}
-	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -249,6 +266,8 @@ int main(int argc, char *argv[])
 	int verbose = 0;
 	int archwrapper;
 	int c;
+	struct arch_domain *doms, *target;
+	unsigned long pers_value = 0;
 
 	/* Options without equivalent short options */
 	enum {
@@ -356,7 +375,7 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_LIST:
 			if (!archwrapper) {
-				set_arch(NULL, 0, 1);
+				list_arch_domains(init_arch_domains());
 				return EXIT_SUCCESS;
 			} else
 				warnx(_("unrecognized option '--list'"));
@@ -372,8 +391,27 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-	if (set_arch(arch, options, 0))
-		err(EXIT_FAILURE, _("failed to set personality to %s"), arch);
+	doms = init_arch_domains();
+
+	target = get_arch_domain(doms, arch);
+	if (!target)
+		errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), arch);
+
+	pers_value = target->perval | options;
+	if (personality(pers_value) < 0) {
+		/*
+		 * Depending on architecture and kernel version, personality
+		 * syscall is either capable or incapable of returning an error.
+		 * If the return value is not an error, then it's the previous
+		 * personality value, which can be an arbitrary value
+		 * undistinguishable from an error value.
+		 * To make things clear, a second call is needed.
+		 */
+		if (personality(pers_value) < 0)
+			err(EXIT_FAILURE, _("failed to set personality to %s"), arch);
+	}
+
+	verify_arch_domain(target, arch);
 
 	if (verbose) {
 		printf(_("Execute command `%s'.\n"), argc ? argv[0] : "/bin/sh");
