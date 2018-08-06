@@ -326,7 +326,8 @@ For a Hayes modem with a fixed 115200 bps interface to the machine
 modem/computer DCD track modem/modem DCD, makes a DTR drop cause a
 disconnection, and turns on auto-answer after 1 ring):
 
-.RS
+.ie n .RS 0
+.el .RS
 .B /sbin/agetty\ \-\-wait\-cr\ \-\-init\-string\ 'ATE0Q1&D2&C1S0=1\\015'\ 115200\ ttyS1
 .RE
 
