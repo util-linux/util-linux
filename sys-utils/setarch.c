@@ -94,7 +94,7 @@ static void __attribute__((__noreturn__)) usage(int archwrapper)
 {
 	fputs(USAGE_HEADER, stdout);
 	if (!archwrapper)
-		printf(_(" %s <arch> [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
+		printf(_(" %s [<arch>] [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
 	else
 		printf(_(" %s [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
 
@@ -385,19 +385,26 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!arch)
-		errx(EXIT_FAILURE, _("no architecture argument specified"));
+	if (!arch && !options)
+		errx(EXIT_FAILURE, _("no architecture argument or personality flags specified"));
 
 	argc -= optind;
 	argv += optind;
 
-	doms = init_arch_domains();
+	/* get execution domain (architecture) */
+	if (arch) {
+		doms = init_arch_domains();
+		target = get_arch_domain(doms, arch);
 
-	target = get_arch_domain(doms, arch);
-	if (!target)
-		errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), arch);
+		if (!target)
+			errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), arch);
+		pers_value = target->perval;
+	}
 
-	pers_value = target->perval | options;
+	/* add personality flags */
+	pers_value |= options;
+
+	/* call kernel */
 	if (personality(pers_value) < 0) {
 		/*
 		 * Depending on architecture and kernel version, personality
@@ -411,7 +418,9 @@ int main(int argc, char *argv[])
 			err(EXIT_FAILURE, _("failed to set personality to %s"), arch);
 	}
 
-	verify_arch_domain(target, arch);
+	/* make sure architecture is set as expected */
+	if (arch)
+		verify_arch_domain(target, arch);
 
 	if (verbose) {
 		printf(_("Execute command `%s'.\n"), argc ? argv[0] : "/bin/sh");
