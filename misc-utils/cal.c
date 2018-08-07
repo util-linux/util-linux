@@ -739,19 +739,19 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 
 	if (ctl->header_hint || ctl->header_year) {
 		for (i = month; i; i = i->next) {
-			sprintf(out, "%s", ctl->full_month[i->month - 1]);
+			snprintf(out, sizeof(out), "%s", ctl->full_month[i->month - 1]);
 			center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
 		}
 		if (!ctl->header_year) {
 			my_putstring("\n");
 			for (i = month; i; i = i->next) {
-				sprintf(out, "%04d", i->year);
+				snprintf(out, sizeof(out), "%04d", i->year);
 				center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
 			}
 		}
 	} else {
 		for (i = month; i; i = i->next) {
-			sprintf(out, "%s %04d", ctl->full_month[i->month - 1], i->year);
+			snprintf(out, sizeof(out), "%s %04d", ctl->full_month[i->month - 1], i->year);
 			center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
 		}
 	}
@@ -759,14 +759,14 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 	for (i = month; i; i = i->next) {
 		if (ctl->weektype) {
 			if (ctl->julian)
-				sprintf(out, "%*s%s", (int)ctl->day_width - 1, "", day_headings);
+				snprintf(out, sizeof(out), "%*s%s", (int)ctl->day_width - 1, "", day_headings);
 			else
-				sprintf(out, "%*s%s", (int)ctl->day_width, "", day_headings);
+				snprintf(out, sizeof(out), "%*s%s", (int)ctl->day_width, "", day_headings);
 			my_putstring(out);
 		} else
 			my_putstring(day_headings);
 		if (i->next != NULL) {
-			sprintf(out, "%*s", ctl->gutter_width, "");
+			snprintf(out, sizeof(out), "%*s", ctl->gutter_width, "");
 			my_putstring(out);
 		}
 	}
@@ -797,12 +797,13 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 				if (0 < i->weeks[week_line]) {
 					if ((ctl->weektype & WEEK_NUM_MASK) ==
 					    i->weeks[week_line])
-						sprintf(out, "%s%2d%s", Senter, i->weeks[week_line],
-						       Sexit);
+						snprintf(out, sizeof(out), "%s%2d%s",
+								Senter, i->weeks[week_line],
+								Sexit);
 					else
-						sprintf(out, "%2d", i->weeks[week_line]);
+						snprintf(out, sizeof(out), "%2d", i->weeks[week_line]);
 				} else
-					sprintf(out, "%2s", "");
+					snprintf(out, sizeof(out), "%2s", "");
 				my_putstring(out);
 				skip = ctl->day_width;
 			} else
@@ -814,19 +815,20 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 			     d < DAYS_IN_WEEK * week_line + DAYS_IN_WEEK; d++) {
 				if (0 < i->days[d]) {
 					if (reqday == i->days[d])
-						sprintf(out, "%*s%s%*d%s", skip - (ctl->julian ? 3 : 2),
+						snprintf(out, sizeof(out), "%*s%s%*d%s",
+						       skip - (ctl->julian ? 3 : 2),
 						       "", Senter, (ctl->julian ? 3 : 2),
 						       i->days[d], Sexit);
 					else
-						sprintf(out, "%*d", skip, i->days[d]);
+						snprintf(out, sizeof(out), "%*d", skip, i->days[d]);
 				} else
-					sprintf(out, "%*s", skip, "");
+					snprintf(out, sizeof(out), "%*s", skip, "");
 				my_putstring(out);
 				if (skip < (int)ctl->day_width)
 					skip++;
 			}
 			if (i->next != NULL) {
-				sprintf(out, "%*s", ctl->gutter_width, "");
+				snprintf(out, sizeof(out), "%*s", ctl->gutter_width, "");
 				my_putstring(out);
 			}
 		}
@@ -892,7 +894,7 @@ static void yearly(const struct cal_control *ctl)
 		year_width--;
 
 	if (ctl->header_year) {
-		sprintf(out, "%04d", ctl->req.year);
+		snprintf(out, sizeof(out), "%04d", ctl->req.year);
 		center(out, year_width, 0);
 		my_putstring("\n\n");
 	}
