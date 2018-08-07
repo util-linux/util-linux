@@ -33,7 +33,7 @@ CAL_TEST_TIME=1516562739  # 21st January 2018
 export CAL_TEST_TIME
 
 function call_cal {
-	local testname=$(echo "$2" | sed 's/-//g')
+	local testname=$(echo "$2" | sed 's/-//g; s/ //g')
 
 	ts_init_subtest "$testname"
 	ts_log "$1"
@@ -62,6 +62,11 @@ call_cal "Gregorian - Monday-based week with week numbers" -3mw $MYTIME
 call_cal "Gregorian - Sunday-based week with week numbers" -3sw $MYTIME
 call_cal "Julian - Monday-based week with week numbers" -3mjw $MYTIME
 call_cal "Julian - Sunday-based week with week numbers" -3sjw $MYTIME
+
+call_cal "Normal span" "-Sn 3" $MYTIME
+call_cal "Large span" "-Sn 21" $MYTIME
+call_cal "Very Large span" "-Sn 51" $MYTIME
+call_cal "Extreme span" "-Sn 201" $MYTIME
 
 ts_finalize
 
