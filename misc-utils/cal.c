@@ -840,17 +840,20 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 static void monthly(const struct cal_control *ctl)
 {
 	struct cal_month m1,m2,m3, *m;
-	int i, rows, new_month, month = ctl->req.start_month ? ctl->req.start_month : ctl->req.month;
+	int i, rows, month = ctl->req.start_month ? ctl->req.start_month : ctl->req.month;
 	int32_t year = ctl->req.year;
 
 	/* cal -3, cal -Y --span, etc. */
 	if (ctl->span_months) {
-		new_month = month - ctl->num_months / 2;
+		int new_month = month - ctl->num_months / 2;
 		if (new_month < 1) {
-			month = new_month + MONTHS_IN_YEAR;
-			year--;
-		}
-		else
+			new_month *= -1;
+			year -= (new_month / MONTHS_IN_YEAR) + 1;
+
+			if (new_month > MONTHS_IN_YEAR)
+				new_month %= MONTHS_IN_YEAR;
+			month = MONTHS_IN_YEAR - new_month;
+		} else
 			month = new_month;
 	}
 
