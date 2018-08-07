@@ -18,7 +18,7 @@ TS_DESC="Year 2147483646"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_CAL"
+ts_check_test_command "$TS_HELPER_CAL"
 
 export TERM=linux
 
