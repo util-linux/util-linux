@@ -108,9 +108,11 @@ makes sense only with \fB\-\-find\fP.
 Show the status of all loop devices associated with the given \fIfile\fR.
 .TP
 .BR \-o , " \-\-offset " \fIoffset
-The data start is moved \fIoffset\fP bytes into the specified file or device.
+The data start is moved \fIoffset\fP bytes into the specified file or device.  The \fIoffset\fP
+may be followed by the multiplicative suffixes; see above.
 .IP "\fB\-\-sizelimit \fIsize\fP"
-The data end is set to no more than \fIsize\fP bytes after the data start.
+The data end is set to no more than \fIsize\fP bytes after the data start.  The \fIsize\fP
+may be followed by the multiplicative suffixes; see above.
 .TP
 .BR \-b , " \-\-sector-size " \fIsize
 Set the logical sector size of the loop device in bytes (since Linux 4.14). The
