@@ -55,9 +55,11 @@
 #include "pathnames.h"
 #include "env.h"
 #include "closestream.h"
+#include "strv.h"
 #include "strutils.h"
 #include "ttyutils.h"
 #include "pwdutils.h"
+#include "optutils.h"
 
 #include "logindefs.h"
 #include "su-common.h"
@@ -129,6 +131,9 @@ struct su_context {
 
 	pid_t		child;			/* fork() baby */
 	int		childstatus;		/* wait() status */
+
+	char		**env_whitelist_names;	/* environment whitelist */
+	char		**env_whitelist_vals;
 
 	struct sigaction oldact[SIGNALS_IDX_COUNT];	/* original sigactions indexed by SIG*_IDX */
 
@@ -925,6 +930,56 @@ static void create_watching_parent(struct su_context *su)
 	exit(status);
 }
 
+/* Adds @name from the current environment to the whitelist. If @name is not
+ * set then nothing is added to the whitelist and returns 1.
+ */
+static int env_whitelist_add(struct su_context *su, const char *name)
+{
+	const char *env = getenv(name);
+
+	if (!env)
+		return 1;
+	if (strv_extend(&su->env_whitelist_names, name))
+                err_oom();
+	if (strv_extend(&su->env_whitelist_vals, env))
+                err_oom();
+	return 0;
+}
+
+static int env_whitelist_setenv(struct su_context *su, int overwrite)
+{
+	char **one;
+	size_t i = 0;
+	int rc;
+
+	STRV_FOREACH(one, su->env_whitelist_names) {
+		rc = setenv(*one, su->env_whitelist_vals[i], overwrite);
+		if (rc)
+			return rc;
+		i++;
+	}
+
+	return 0;
+}
+
+/* Creates (add to) whitelist from comma delimited string */
+static int env_whitelist_from_string(struct su_context *su, const char *str)
+{
+	char **all = strv_split(str, ",");
+	char **one;
+
+	if (!all) {
+		if (errno == ENOMEM)
+			err_oom();
+		return -EINVAL;
+	}
+
+	STRV_FOREACH(one, all)
+		env_whitelist_add(su, *one);
+	strv_free(all);
+	return 0;
+}
+
 static void setenv_path(const struct passwd *pw)
 {
 	int rc;
@@ -949,26 +1004,38 @@ static void modify_environment(struct su_context *su, const char *shell)
 	DBG(MISC, ul_debug("modify environ[]"));
 
 	/* Leave TERM unchanged.  Set HOME, SHELL, USER, LOGNAME, PATH.
-	 * Unset all other environment variables.
+	 *
+	 * Unset all other environment variables, but follow
+	 * --whitelist-environment if specified.
 	 */
 	if (su->simulate_login) {
-		char *term = getenv("TERM");
-		if (term)
-			term = xstrdup(term);
+		/* leave TERM unchanged */
+		env_whitelist_add(su, "TERM");
 
-		environ = xmalloc((6 + ! !term) * sizeof(char *));
-		environ[0] = NULL;
-		if (term) {
-			xsetenv("TERM", term, 1);
-			free(term);
-		}
-
-		xsetenv("HOME", pw->pw_dir, 1);
+		/* Note that original su(1) has allocated environ[] by malloc
+		 * to the number of expected variables. This seems unnecessary
+		 * optimization as libc later realloc(current_size+2) and for
+		 * empty environ[] the curren_size is zero. It seems better to
+		 * keep all logic around environment in glibc's hands.
+		 *                                           --kzak [Aug 2018]
+		 */
+#ifdef HAVE_CLEARENV
+		clearenv();
+#else
+		environ = NULL;
+#endif
+		/* always reset */
 		if (shell)
 			xsetenv("SHELL", shell, 1);
+
+		setenv_path(pw);
+
+		xsetenv("HOME", pw->pw_dir, 1);
 		xsetenv("USER", pw->pw_name, 1);
 		xsetenv("LOGNAME", pw->pw_name, 1);
-		setenv_path(pw);
+
+		/* apply all from whitelist, but no overwrite */
+		env_whitelist_setenv(su, 0);
 
 	/* Set HOME, SHELL, and (if not becoming a superuser) USER and LOGNAME.
 	 */
@@ -1089,7 +1156,10 @@ static bool is_restricted_shell(const char *shell)
 
 static void usage_common(void)
 {
-	fputs(_(" -m, -p, --preserve-environment  do not reset environment variables\n"), stdout);
+	fputs(_(" -m, -p, --preserve-environment      do not reset environment variables\n"), stdout);
+	fputs(_(" -w, --whitelist-environment <list>  don't reset specified variables\n"), stdout);
+	fputs(USAGE_SEPARATOR, stdout);
+
 	fputs(_(" -g, --group <group>             specify the primary group\n"), stdout);
 	fputs(_(" -G, --supp-group <group>        specify a supplemental group\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
@@ -1234,10 +1304,17 @@ int su_main(int argc, char **argv, int mode)
 		{"group", required_argument, NULL, 'g'},
 		{"supp-group", required_argument, NULL, 'G'},
 		{"user", required_argument, NULL, 'u'},	/* runuser only */
+		{"whitelist-environment", required_argument, NULL, 'w'},
 		{"help", no_argument, 0, 'h'},
 		{"version", no_argument, 0, 'V'},
 		{NULL, 0, NULL, 0}
 	};
+	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+		{ 'm', 'w' },			/* preserve-environment, whitelist-environment */
+		{ 'p', 'w' },			/* preserve-environment, whitelist-environment */
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1248,8 +1325,11 @@ int su_main(int argc, char **argv, int mode)
 	su->conv.appdata_ptr = (void *) su;
 
 	while ((optc =
-		getopt_long(argc, argv, "c:fg:G:lmpPs:u:hV", longopts,
+		getopt_long(argc, argv, "c:fg:G:lmpPs:u:hVw:", longopts,
 			    NULL)) != -1) {
+
+		err_exclusive_options(optc, longopts, excl, excl_st);
+
 		switch (optc) {
 		case 'c':
 			command = optarg;
@@ -1281,6 +1361,10 @@ int su_main(int argc, char **argv, int mode)
 		case 'm':
 		case 'p':
 			su->change_environment = false;
+			break;
+
+		case 'w':
+			env_whitelist_from_string(su, optarg);
 			break;
 
 		case 'P':

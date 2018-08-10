@@ -82,6 +82,7 @@ login:
 o
 clears all the environment variables except for
 .B TERM
+and variables specified by \fB\-\-whitelist\-environment\fR
 .TP
 o
 initializes the environment variables
@@ -143,6 +144,15 @@ environment variables are ignored unless the calling user is root.
 Same as
 .B \-c ,
 but do not create a new session.  (Discouraged.)
+.TP
+.BR \-w , " \-\-whitelist\-environment" = \fIlist
+Don't reset environment variables specified in comma separated \fIlist\fR when clears
+environment for \fB\-\-login\fR. The whitelist is ignored for the environment variables
+.BR HOME ,
+.BR SHELL ,
+.BR USER ,
+.BR LOGNAME ", and"
+.BR PATH "."
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
