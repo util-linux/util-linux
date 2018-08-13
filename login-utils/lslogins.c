@@ -269,6 +269,7 @@ struct lslogins_control {
 	const char *journal_path;
 
 	unsigned int selinux_enabled : 1,
+		     fail_on_unknown : 1,		/* fail if user does not exist */
 		     ulist_on : 1,
 		     noheadings : 1,
 		     notrunc : 1;
@@ -656,6 +657,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	uid_t uid;
 	errno = 0;
 
+	errno = 0;
 	pwd = username ? getpwnam(username) : getpwent();
 	if (!pwd)
 		return NULL;
@@ -678,6 +680,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 		return NULL;
 	}
 
+	errno = 0;
 	grp = getgrgid(pwd->pw_gid);
 	if (!grp)
 		return NULL;
@@ -977,10 +980,16 @@ static int create_usertree(struct lslogins_control *ctl)
 
 	if (ctl->ulist_on) {
 		for (n = 0; n < ctl->ulsiz; n++) {
-			if (get_user(ctl, &user, ctl->ulist[n]))
+			int rc = get_user(ctl, &user, ctl->ulist[n]);
+
+			if (ctl->fail_on_unknown && !user) {
+				warnx(_("cannot found '%s'"), ctl->ulist[n]);
+				return -1;
+			}
+			if (rc || !user)
 				continue;
-			if (user) /* otherwise an invalid user name has probably been given */
-				tsearch(user, &ctl->usertree, cmp_uid);
+
+			tsearch(user, &ctl->usertree, cmp_uid);
 		}
 	} else {
 		while ((user = get_next_user(ctl)))
@@ -1537,6 +1546,7 @@ int main(int argc, char *argv[])
 			errx(EXIT_FAILURE, _("Only one user may be specified. Use -l for multiple users."));
 		logins = argv[optind];
 		outmode = OUT_PRETTY;
+		ctl->fail_on_unknown = 1;
 	} else if (argc != optind)
 		errx(EXIT_FAILURE, _("Only one user may be specified. Use -l for multiple users."));
 
