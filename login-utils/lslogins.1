@@ -9,10 +9,17 @@ lslogins \- display information about known users in the system
 .RB [ \-s | \-u [ =\fIUID ]]
 .RB [ \-g " \fIgroups\fR]"
 .RB [ \-l " \fIlogins\fR]"
+.RB [\fIusername\fR]
 .SH DESCRIPTION
 .PP
 Examine the wtmp and btmp logs, /etc/shadow (if necessary) and /etc/passwd
 and output the desired data.
+
+The optional argument \fIusername\fR forces
+.BR lslogins
+to print all available details about the specified user only. In this case the
+output format is different than in case of \fB\-l\fR or \fB\-g\fR.
+
 .PP
 The default action is to list info about all the users in the system.
 .SH OPTIONS
@@ -39,7 +46,8 @@ Show information about supplementary groups.
 .TP
 \fB\-g\fR, \fB\-\-groups\fR=\fIgroups\fR
 Only show data of users belonging to \fIgroups\fR.  More than one group
-may be specified; the list has to be comma-separated.
+may be specified; the list has to be comma-separated.  The unknown group
+names are ignored.
 
 Note that relation between user and group may be invisible for primary group if
 the user is not explicitly specify as group member (e.g. in /etc/group). If the
@@ -55,6 +63,7 @@ Display data containing information about the users' last login sessions.
 \fB\-l\fR, \fB\-\-logins\fR=\fIlogins\fR
 Only show data of users with a login specified in \fIlogins\fR (user names or user
 IDS).  More than one login may be specified; the list has to be comma-separated.
+The unknown login names are ignored.
 .TP
 \fB\-n\fR, \fB\-\-newline\fR
 Display each piece of information on a separate line.

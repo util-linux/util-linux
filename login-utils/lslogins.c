@@ -1308,7 +1308,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [<username>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Display information about known users in the system.\n"), out);
