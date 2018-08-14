@@ -445,7 +445,9 @@ endif
 
 if BUILD_HWCLOCK
 sbin_PROGRAMS += hwclock
-dist_man_MANS += sys-utils/hwclock.8
+dist_man_MANS += \
+	sys-utils/hwclock.8 \
+	sys-utils/fstab.5
 PATHFILES += sys-utils/hwclock.8
 hwclock_SOURCES = \
 	sys-utils/hwclock.c \

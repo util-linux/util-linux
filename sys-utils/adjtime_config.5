@@ -1,0 +1,64 @@
+.TH ADJTIME_CONFIG 5 "August 2018" "util-linux" "File Formats"
+.SH NAME
+adjtime \- information about hardware clock setting and drift factor
+.SH SYNOPSIS
+.I /etc/adjtime
+.SH DESCRIPTION
+The file
+.B /etc/adjtime
+contains descriptive information about the hardware mode clock setting and clock drift factor.
+The file is read and write by hwclock; and read by programs like rtcwake to get RTC time mode.
+.PP
+The file is usually located in /etc, but tools like
+.BR hwclock (8)
+or
+.BR rtcwake (8)
+allow to use alternative location by command line options if write access to
+/etc is unwanted.  The default clock mode is "UTC" if the file is missing.
+.PP
+The Hardware Clock is usually not very accurate.  However, much of its inaccuracy is completely predictable - it gains 
+or loses the same amount of time every day.  This is called systematic drift.  The util hwclock keeps the file /etc/adjtime,
+that keeps some historical information.
+For more details see "\fBThe Adjust Function\fR" and  "\fBThe Adjtime File\fR" sections from
+.BR hwckock (8)
+man page.
+.PP
+
+The format of the adjtime file is, in ASCII.
+.sp
+.SS First line
+Three numbers, separated by blanks:
+.TP
+.B "drift factor"
+the systematic drift rate in seconds per day (floating point decimal)
+.TP
+.B last adjust time
+the resulting number of seconds since  1969  UTC  of  most recent adjustment or calibration (decimal integer)
+.TP
+.B "adjustment status"
+zero (for compatibility with clock(8)) as a decimal integer.
+
+.SS Second line
+.TP
+.B "last calibration time"
+The resulting number of seconds since 1969 UTC of most recent calibration.
+Zero if there has been no calibration yet or it is known that any previous
+calibration is moot (for example, because the Hardware Clock has been found,
+since that calibration, not to contain a valid time).  This is a decimal
+integer.
+
+.SS Third line
+.TP
+.B "clock mode"
+Supported values are "UTC" or "LOCAL".  Tells whether the Hardware Clock is set
+to Coordinated Universal Time or local time.  You can always override this
+value with options on the hwclock command line.
+
+.SH FILES
+.IR /etc/adjtime
+.SH "SEE ALSO"
+.BR hwclock (8),
+.BR rtcwake (8)
+.SH AVAILABILITY
+This man page is part of the util-linux package and is available from
+https://www.kernel.org/pub/linux/utils/util-linux/.
