@@ -218,11 +218,15 @@ static int context_init_paths(struct libmnt_context *cxt, int writable)
 	assert(cxt);
 
 #ifdef USE_LIBMOUNT_SUPPORT_MTAB
-	if (!cxt->mtab_path)
+	if (!cxt->mtab_path) {
 		cxt->mtab_path = mnt_get_mtab_path();
+		DBG(CXT, ul_debugobj(cxt, "mtab path initialized to: %s", cxt->mtab_path));
+	}
 #endif
-	if (!cxt->utab_path)
+	if (!cxt->utab_path) {
 		cxt->utab_path = mnt_get_utab_path();
+		DBG(CXT, ul_debugobj(cxt, "utab path initialized to: %s", cxt->utab_path));
+	}
 
 	if (!writable)
 		return 0;		/* only paths wanted */
