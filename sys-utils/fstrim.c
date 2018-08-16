@@ -348,7 +348,7 @@ int main(int argc, char **argv)
 	    { "length",    required_argument, NULL, 'l' },
 	    { "minimum",   required_argument, NULL, 'm' },
 	    { "verbose",   no_argument,       NULL, 'v' },
-	    { "dry-run",   no_argument,       NULL, 'd' },
+	    { "dry-run",   no_argument,       NULL, 'n' },
 	    { NULL, 0, NULL, 0 }
 	};
 
@@ -357,7 +357,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "AadhVo:l:m:v", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Aahl:m:no:Vv", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'A':
 			ctl.fstab = 1;
@@ -365,7 +365,7 @@ int main(int argc, char **argv)
 		case 'a':
 			all = 1;
 			break;
-		case 'd':
+		case 'n':
 			ctl.dryrun = 1;
 			break;
 		case 'h':
