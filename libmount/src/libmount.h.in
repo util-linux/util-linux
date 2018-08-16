@@ -1,7 +1,10 @@
+/* SPDX-License-Identifier: LGPL-2.1-or-later */
 /*
- * mount.h - libmount API
+ * libmount.h - libmount API
  *
- * Copyright (C) 2008-2009 Karel Zak <kzak@redhat.com>
+ * This file is part of libmount from util-linux project.
+ *
+ * Copyright (C) 2008-2018 Karel Zak <kzak@redhat.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
