@@ -112,7 +112,7 @@ Create pseudo-terminal for the session. The independent terminal provides
 better security as user does not share terminal with the original
 session.  This allow to avoid TIOCSTI ioctl terminal injection and another
 security attacks against terminal file descriptors. The all session is also
-possible to move to background (e.g. "su --pty - usename -c
+possible to move to background (e.g. "su --pty - username -c
 application &"). If the pseudo-terminal is enabled then su command works
 as a proxy between the sessions (copy stdin and stdout).
 
