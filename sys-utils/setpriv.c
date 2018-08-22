@@ -129,12 +129,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --ambient-caps <caps,...>   set ambient capabilities\n"), out);
 	fputs(_(" --inh-caps <caps,...>       set inheritable capabilities\n"), out);
 	fputs(_(" --bounding-set <caps>       set capability bounding set\n"), out);
-	fputs(_(" --ruid <uid>                set real uid\n"), out);
-	fputs(_(" --euid <uid>                set effective uid\n"), out);
-	fputs(_(" --rgid <gid>                set real gid\n"), out);
-	fputs(_(" --egid <gid>                set effective gid\n"), out);
-	fputs(_(" --reuid <uid>               set real and effective uid\n"), out);
-	fputs(_(" --regid <gid>               set real and effective gid\n"), out);
+	fputs(_(" --ruid <uid|user>           set real uid\n"), out);
+	fputs(_(" --euid <uid|user>           set effective uid\n"), out);
+	fputs(_(" --rgid <gid|user>           set real gid\n"), out);
+	fputs(_(" --egid <gid|group>          set effective gid\n"), out);
+	fputs(_(" --reuid <uid|user>          set real and effective uid\n"), out);
+	fputs(_(" --regid <gid|group>         set real and effective gid\n"), out);
 	fputs(_(" --clear-groups              clear supplementary groups\n"), out);
 	fputs(_(" --keep-groups               keep supplementary groups\n"), out);
 	fputs(_(" --init-groups               initialize supplementary groups\n"), out);
