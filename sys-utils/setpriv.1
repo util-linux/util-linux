@@ -165,6 +165,15 @@ to abort if AppArmor is not in use, and the transition may be ignored or cause
 .BR execve (2)
 to fail at AppArmor's whim.
 .TP
+.BI \-\-reset\-env
+Clears all the environment variables except TERM; initializes the environment variables HOME, SHELL, USER, LOGNAME
+according to the user's passwd entry; sets PATH to \fI/usr/local/bin:/bin:/usr/bin\fR for a regual user and to
+\fI/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\fR for root.
+.sp
+The environment variable PATH may be different on systems where /bin and /sbin
+are merged into /usr.  The environment variable SHELL defaults to \fI/bin/sh\fR if none is given in the user's
+passwd entry.
+.TP
 .BR \-V , " \-\-version"
 Display version information and exit.
 .TP

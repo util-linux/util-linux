@@ -39,6 +39,7 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "signames.h"
+#include "env.h"
 
 #ifndef PR_SET_NO_NEW_PRIVS
 # define PR_SET_NO_NEW_PRIVS 38
@@ -55,6 +56,9 @@
 #endif
 
 #define SETPRIV_EXIT_PRIVERR 127	/* how we exit when we fail to set privs */
+
+/* The shell to set SHELL env.variable if none is given in the user's passwd entry.  */
+#define DEFAULT_SHELL "/bin/sh"
 
 static gid_t get_group(const char *s, const char *err);
 
@@ -85,6 +89,7 @@ struct privctx {
 		keep_groups:1,		/* keep groups */
 		clear_groups:1,		/* remove groups */
 		init_groups:1,		/* initialize groups */
+		reset_env:1,		/* reset environment */
 		have_securebits:1;	/* remove groups */
 
 	/* uids and gids */
@@ -140,10 +145,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --init-groups               initialize supplementary groups\n"), out);
 	fputs(_(" --groups <group,...>        set supplementary groups by UID or name\n"), out);
 	fputs(_(" --securebits <bits>         set securebits\n"), out);
+	fputs(_(" --reset-env                 reset environment variables\n"), out);
 	fputs(_(" --pdeathsig keep|clear|<signame>\n"
 	        "                             set or clear parent death signal\n"), out);
 	fputs(_(" --selinux-label <label>     set SELinux label\n"), out);
 	fputs(_(" --apparmor-profile <pr>     set AppArmor profile\n"), out);
+	fputs(_(" --reset-env                 clear all environment and initialize\n"
+		"                               HOME, SHELL, USER, LOGNAME and PATH\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(29));
@@ -681,6 +689,36 @@ static void do_apparmor_profile(const char *label)
 		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
 }
 
+
+static void do_reset_environ(struct passwd *pw)
+{
+	char *term = getenv("TERM");
+
+	if (term)
+		term = xstrdup(term);
+#ifdef HAVE_CLEARENV
+	clearenv();
+#else
+	environ = NULL;
+#endif
+	if (term)
+		xsetenv("TERM", term, 1);
+
+	if (pw->pw_shell && *pw->pw_shell)
+		xsetenv("SHELL", pw->pw_shell, 1);
+	else
+		xsetenv("SHELL", DEFAULT_SHELL, 1);
+
+	xsetenv("HOME", pw->pw_dir, 1);
+	xsetenv("USER", pw->pw_name, 1);
+	xsetenv("LOGNAME", pw->pw_name, 1);
+
+	if (pw->pw_uid)
+		xsetenv("PATH", _PATH_DEFPATH, 1);
+	else
+		xsetenv("PATH", _PATH_DEFPATH_ROOT, 1);
+}
+
 static uid_t get_user(const char *s, const char *err)
 {
 	struct passwd *pw;
@@ -751,7 +789,8 @@ int main(int argc, char **argv)
 		SECUREBITS,
 		PDEATHSIG,
 		SELINUX_LABEL,
-		APPARMOR_PROFILE
+		APPARMOR_PROFILE,
+		RESET_ENV
 	};
 
 	static const struct option longopts[] = {
@@ -777,6 +816,7 @@ int main(int argc, char **argv)
 		{ "selinux-label",    required_argument, NULL, SELINUX_LABEL    },
 		{ "apparmor-profile", required_argument, NULL, APPARMOR_PROFILE },
 		{ "help",             no_argument,       NULL, 'h'              },
+		{ "reset-env",        no_argument,       NULL, RESET_ENV,       },
 		{ "version",          no_argument,       NULL, 'V'              },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -929,6 +969,9 @@ int main(int argc, char **argv)
 				     _("duplicate --apparmor-profile option"));
 			opts.apparmor_profile = optarg;
 			break;
+		case RESET_ENV:
+			opts.reset_env = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -973,6 +1016,16 @@ int main(int argc, char **argv)
 		     _("uid %ld not found, --init-groups requires an user that "
 		       "can be found on the system"),
 		     (long) opts.ruid);
+
+	if (opts.reset_env) {
+		if (opts.have_passwd)
+			/* pwd according to --ruid or --reuid */
+			pw = &opts.passwd;
+		else
+			/* pwd for the current user */
+			pw = getpwuid(getuid());
+		do_reset_environ(pw);
+	}
 
 	if (opts.nnp && prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == -1)
 		err(EXIT_FAILURE, _("disallow granting new privileges failed"));
