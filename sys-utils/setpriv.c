@@ -56,6 +56,8 @@
 
 #define SETPRIV_EXIT_PRIVERR 127	/* how we exit when we fail to set privs */
 
+static gid_t get_group(const char *s, const char *err);
+
 enum cap_type {
 	CAP_TYPE_EFFECTIVE   = CAPNG_EFFECTIVE,
 	CAP_TYPE_PERMITTED   = CAPNG_PERMITTED,
@@ -136,7 +138,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --clear-groups              clear supplementary groups\n"), out);
 	fputs(_(" --keep-groups               keep supplementary groups\n"), out);
 	fputs(_(" --init-groups               initialize supplementary groups\n"), out);
-	fputs(_(" --groups <group,...>        set supplementary groups\n"), out);
+	fputs(_(" --groups <group,...>        set supplementary groups by UID or name\n"), out);
 	fputs(_(" --securebits <bits>         set securebits\n"), out);
 	fputs(_(" --pdeathsig keep|clear|<signame>\n"
 	        "                             set or clear parent death signal\n"), out);
@@ -456,8 +458,7 @@ static void parse_groups(struct privctx *opts, const char *str)
 
 	opts->groups = xcalloc(opts->num_groups, sizeof(gid_t));
 	while ((c = strsep(&groups, ",")))
-		opts->groups[i++] = (gid_t) strtol_or_err(c,
-						  _("Invalid supplementary group id"));
+		opts->groups[i++] = get_group(c, _("Invalid supplementary group id"));
 
 	free(groups);
 }
