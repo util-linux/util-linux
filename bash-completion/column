@@ -5,11 +5,19 @@ _column_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-c'|'--columns')
+		'-c'|'--output-width')
 			COMPREPLY=( $(compgen -W "number" -- $cur) )
 			return 0
 			;;
-		'-s'|'--separator'|'-o'|'--output-separator')
+		'-s'|'--separator'|'-o'|'--output-separator'|'-n'|'--table-name'|'-O')
+			COMPREPLY=( $(compgen -W "string" -- $cur) )
+			return 0
+			;;
+		'-O'|'--table-order'|'-N'|'--table-columns'|'-E'|'--table-noextreme'|'-H'|'--table-hide'|'-R'|'--table-right'|'-T'|'--table-truncate'|'-W'|'--table-wrap')
+			COMPREPLY=( $(compgen -W "string" -- $cur) )
+			return 0
+			;;
+		'-r'|'--tree'|'-i'|'--tree-id'|'-p'|'--tree-parent')
 			COMPREPLY=( $(compgen -W "string" -- $cur) )
 			return 0
 			;;
@@ -21,6 +29,22 @@ _column_module()
 		-*)
 			OPTS="--columns
 				--table
+				--table-name
+				--table-order
+				--table-columns
+				--table-noextreme
+				--table-noheadings
+				--table-header-repeat
+				--table-hide
+				--table-right
+				--table-truncate
+				--table-wrap
+				--table-empty-lines
+				--json
+				--tree
+				--tree-id
+				--tree-parent
+				--output-width
 				--separator
 				--output-separator
 				--fillrows
