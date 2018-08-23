@@ -548,7 +548,7 @@ struct libscols_column *scols_table_get_column(struct libscols_table *tb,
  */
 int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln)
 {
-	if (!tb || !ln || tb->ncols == 0)
+	if (!tb || !ln)
 		return -EINVAL;
 
 	if (tb->ncols > ln->ncells) {
@@ -657,7 +657,7 @@ struct libscols_line *scols_table_new_line(struct libscols_table *tb,
 {
 	struct libscols_line *ln;
 
-	if (!tb || !tb->ncols)
+	if (!tb)
 		return NULL;
 
 	ln = scols_new_line();
