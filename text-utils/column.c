@@ -95,6 +95,7 @@ struct column_control {
 	unsigned int greedy :1,
 		     json :1,
 		     header_repeat :1,
+		     tab_empty_lines :1,	/* --table-empty-lines */
 		     tab_noheadings :1;
 };
 
@@ -463,6 +464,17 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
 	return 0;
 }
 
+static int add_emptyline_to_table(struct column_control *ctl)
+{
+	if (!ctl->tab)
+		init_table(ctl);
+
+	if (!scols_table_new_line(ctl->tab, NULL))
+		err(EXIT_FAILURE, _("failed to allocate output line"));
+
+	return 0;
+}
+
 static int read_input(struct column_control *ctl, FILE *fp)
 {
 	char *buf = NULL;
@@ -487,8 +499,11 @@ static int read_input(struct column_control *ctl, FILE *fp)
 			if (p)
 				*p = '\0';
 		}
-		if (!str || !*str)
+		if (!str || !*str) {
+			if (ctl->mode == COLUMN_MODE_TABLE && ctl->tab_empty_lines)
+				add_emptyline_to_table(ctl);
 			continue;
+		}
 
 		wcs = mbs_to_wcs(buf);
 		if (!wcs) {
@@ -621,6 +636,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
+	fputs(_(" -L, --table-empty-lines          don't ignore empty lines\n"), out);
 	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -672,6 +688,7 @@ int main(int argc, char **argv)
 		{ "table-right",         required_argument, NULL, 'R' },
 		{ "table-truncate",      required_argument, NULL, 'T' },
 		{ "table-wrap",          required_argument, NULL, 'W' },
+		{ "table-empty-lines",   no_argument,       NULL, 'L' },
 		{ "table-header-repeat", no_argument,       NULL, 'e' },
 		{ "tree",                required_argument, NULL, 'r' },
 		{ "tree-id",             required_argument, NULL, 'i' },
@@ -694,7 +711,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "c:dE:eH:hi:JN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c:dE:eH:hi:JLN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -723,6 +740,9 @@ int main(int argc, char **argv)
 		case 'J':
 			ctl.json = 1;
 			ctl.mode = COLUMN_MODE_TABLE;
+			break;
+		case 'L':
+			ctl.tab_empty_lines = 1;
 			break;
 		case 'N':
 			ctl.tab_colnames = split_or_error(optarg, _("failed to parse column names"));
