@@ -167,6 +167,7 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
 			cl->table->ntreecols--;
 	}
 
+	DBG(COL, ul_debugobj(cl, "setting flags from 0%x to 0%x", cl->flags, flags));
 	cl->flags = flags;
 	return 0;
 }
