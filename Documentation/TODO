@@ -10,25 +10,21 @@ cal
 
 script
 ------
-   - think about optional "event" records in timing file to save information
-     about non-data changes like signals (SIGWINCH, SIGSTOP, SIGCONT, etc.)
-     in format:
+   - introduce a new timing file format to record information about multiple
+     streams (stdout, stdin) and events (signals)
 
-             <time> 0 <name>[: var=data, ...]
+   - add support for stdin loggin -- separated log file with raw input and timing
+     records in the timing file
 
-     for example:
+   - for example timing file format:
+              
+             <type> <timestamp> [<offset> | <signal> ...]
 
-	     0.001296 256
-	     0.001297   0 SIGWINCH: columns=50, lines=20
-	     0.000010 275
+	     O 0.001296 256
+	     S 0.001297 SIGWINCH: columns=50, lines=20
+	     I 0.000010 10
 
-lsblk
------
-   - rewrite lsblk to read all devices tree to memory to make it more extendable. Now
-     it always keep in memory just one device (only final output is buffered by
-     libsmartcols, but this stuff are output strings, nothing else).
-
-     See fopr example: https://github.com/karelzak/util-linux/issues/616
+     O - output, S - signal, I - input
 
 
 lscpu
