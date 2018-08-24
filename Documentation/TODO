@@ -45,6 +45,10 @@ lsblk
     btrfs specific code to provide a better output for FS based stacks. Not sure.
     https://bugzilla.redhat.com/show_bug.cgi?id=1084453
 
+  - think about free/used space columns; the problem is that such info is about FS
+    and it may be confusing for end-users when FS to DEV mapping is not 1:1 (RAIDs, btrfs, 
+    ...)
+
 nsenter(1)
 ----------
  - read the default UID and GID from the target process.
