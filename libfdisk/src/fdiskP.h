@@ -365,6 +365,7 @@ struct fdisk_ask {
 struct fdisk_context {
 	int dev_fd;         /* device descriptor */
 	char *dev_path;     /* device path */
+	char *dev_model;    /* on linux /sys/block/<name>/device/model or NULL */
 	struct stat dev_st; /* stat(2) result */
 
 	int refcount;
@@ -387,6 +388,7 @@ struct fdisk_context {
 		     protect_bootbits : 1,	/* don't zeroize first sector */
 		     pt_collision : 1,		/* another PT detected by libblkid */
 		     no_disalogs : 1,		/* disable dialog-driven partititoning */
+		     dev_model_probed : 1,	/* tried to read from sys */
 		     listonly : 1;		/* list partition, nothing else */
 
 	char *collision;			/* name of already existing FS/PT */

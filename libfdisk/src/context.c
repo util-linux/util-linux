@@ -112,6 +112,10 @@ static int init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 		cxt->protect_bootbits = parent->protect_bootbits;
 	}
 
+	free(cxt->dev_model);
+	cxt->dev_model = NULL;
+	cxt->dev_model_probed = 0;
+
 	free(cxt->dev_path);
 	cxt->dev_path = NULL;
 
@@ -540,6 +544,10 @@ static void reset_context(struct fdisk_context *cxt)
 
 	free(cxt->dev_path);
 	cxt->dev_path = NULL;
+
+	free(cxt->dev_model);
+	cxt->dev_model = NULL;
+	cxt->dev_model_probed = 0;
 
 	free(cxt->collision);
 	cxt->collision = NULL;
@@ -1323,6 +1331,48 @@ const char *fdisk_get_devname(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->dev_path;
+}
+
+/**
+ * fdisk_get_devno:
+ * @cxt: context
+ *
+ * Returns: device number or zero for non-block devices
+ */
+dev_t fdisk_get_devno(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return S_ISBLK(cxt->dev_st.st_mode) ? cxt->dev_st.st_rdev : 0;
+}
+
+/**
+ * fdisk_get_devmodel:
+ * @cxt: context
+ *
+ * Returns: device model string or NULL.
+ */
+const char *fdisk_get_devmodel(struct fdisk_context *cxt)
+{
+#ifdef __linux__
+	assert(cxt);
+
+	if (cxt->dev_model_probed)
+		return cxt->dev_model;
+
+	if (fdisk_get_devno(cxt)) {
+		struct path_cxt *pc = ul_new_sysfs_path(fdisk_get_devno(cxt), NULL, NULL);
+
+		if (pc) {
+			ul_path_read_string(pc, &cxt->dev_model, "device/model");
+			ul_unref_path(pc);
+		}
+	}
+	cxt->dev_model_probed = 1;
+	return cxt->dev_model;
+#else
+	return NULL;
+#endif
+
 }
 
 /**

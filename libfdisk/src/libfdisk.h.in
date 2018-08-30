@@ -28,6 +28,7 @@ extern "C" {
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include <sys/types.h>
 
 /**
  * LIBFDISK_VERSION:
@@ -231,8 +232,12 @@ fdisk_sector_t fdisk_set_first_lba(struct fdisk_context *cxt, fdisk_sector_t lba
 fdisk_sector_t fdisk_get_last_lba(struct fdisk_context *cxt);
 fdisk_sector_t fdisk_set_last_lba(struct fdisk_context *cxt, fdisk_sector_t lba);
 fdisk_sector_t fdisk_get_nsectors(struct fdisk_context *cxt);
+
 const char *fdisk_get_devname(struct fdisk_context *cxt);
 int fdisk_get_devfd(struct fdisk_context *cxt);
+dev_t fdisk_get_devno(struct fdisk_context *cxt);
+const char *fdisk_get_devmodel(struct fdisk_context *cxt);
+
 
 unsigned int fdisk_get_geom_heads(struct fdisk_context *cxt);
 fdisk_sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt);

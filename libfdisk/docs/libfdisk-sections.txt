@@ -300,7 +300,9 @@ fdisk_disable_dialogs
 fdisk_get_alignment_offset
 fdisk_get_collision
 fdisk_get_devfd
+fdisk_get_devmodel
 fdisk_get_devname
+fdisk_get_devno
 fdisk_get_disklabel_item
 fdisk_get_first_lba
 fdisk_get_geom_cylinders

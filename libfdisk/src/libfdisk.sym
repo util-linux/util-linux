@@ -300,4 +300,6 @@ FDISK_2.32 {
 
 FDISK_2.33 {
 	fdisk_ask_number_is_wrap_negative;
+	fdisk_get_devmodel;
+	fdisk_get_devno;
 } FDISK_2.32;
