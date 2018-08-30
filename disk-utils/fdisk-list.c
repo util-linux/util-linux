@@ -63,6 +63,9 @@ void list_disk_geometry(struct fdisk_context *cxt)
 	color_disable();
 	free(strsz);
 
+	if (fdisk_get_devmodel(cxt))
+		fdisk_info(cxt, _("Disk model: %s"), fdisk_get_devmodel(cxt));
+
 	if (lb && (fdisk_label_require_geometry(lb) || fdisk_use_cylinders(cxt)))
 		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
 			       fdisk_get_geom_heads(cxt),
