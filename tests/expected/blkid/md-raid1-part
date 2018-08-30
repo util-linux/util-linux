@@ -20,6 +20,7 @@ Select (default p): Partition number (2-4, default 2): First sector (53248-10444
 Created a new <removed>.
 
 Command (m for help): Disk <removed>: 51 MiB, 53477376 bytes, 104448 sectors
+Disk model: scsi_debug      
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / <removed> bytes

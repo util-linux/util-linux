@@ -1,4 +1,5 @@
 Disk <removed>: 100 MiB, 104857600 bytes, 204800 sectors
+Disk model: scsi_debug      
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / <removed> bytes
@@ -34,6 +35,7 @@ The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Syncing disks.
 Disk <removed>: 100 MiB, 104857600 bytes, 204800 sectors
+Disk model: scsi_debug      
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / <removed> bytes
