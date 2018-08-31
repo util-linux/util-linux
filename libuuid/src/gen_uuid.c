@@ -96,9 +96,6 @@
 #define THREAD_LOCAL static
 #endif
 
-/* index with UUID_VARIANT_xxx and shift 5 bits */
-static unsigned char variant_bits[] = { 0x00, 0x04, 0x06, 0x07 };
-
 #ifdef _WIN32
 static void gettimeofday (struct timeval *tv, void *dummy)
 {
@@ -566,21 +563,22 @@ void uuid_generate_md5(uuid_t out, const uuid_t ns, const char *name, size_t len
 {
 	UL_MD5_CTX ctx;
 	char hash[UL_MD5LENGTH];
+	uuid_t buf;
+	struct uuid uu;
 
 	ul_MD5Init(&ctx);
-	/* hash concatenation of well-known UUID with name */
 	ul_MD5Update(&ctx, ns, sizeof(uuid_t));
 	ul_MD5Update(&ctx, (const unsigned char *)name, len);
-
 	ul_MD5Final((unsigned char *)hash, &ctx);
 
-	memcpy(out, hash, sizeof(uuid_t));
+	assert(sizeof(buf) <= sizeof(hash));
 
-	out[6] &= ~(UUID_TYPE_MASK << UUID_TYPE_SHIFT);
-	out[6] |= (UUID_TYPE_DCE_MD5 << UUID_TYPE_SHIFT);
+	memcpy(buf, hash, sizeof(buf));
+	uuid_unpack(buf, &uu);
 
-	out[8] &= ~(UUID_VARIANT_MASK << UUID_VARIANT_SHIFT);
-	out[8] |= (variant_bits[UUID_VARIANT_DCE] << UUID_VARIANT_SHIFT);
+	uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
+	uu.time_hi_and_version = (uu.time_hi_and_version & 0x0FFF) | 0x3000;
+	uuid_pack(&uu, out);
 }
 
 /*
@@ -591,20 +589,20 @@ void uuid_generate_sha1(uuid_t out, const uuid_t ns, const char *name, size_t le
 {
 	UL_SHA1_CTX ctx;
 	char hash[UL_SHA1LENGTH];
+	uuid_t buf;
+	struct uuid uu;
 
 	ul_SHA1Init(&ctx);
-	/* hash concatenation of well-known UUID with name */
 	ul_SHA1Update(&ctx, ns, sizeof(uuid_t));
 	ul_SHA1Update(&ctx, (const unsigned char *)name, len);
-
 	ul_SHA1Final((unsigned char *)hash, &ctx);
 
-	memcpy(out, hash, sizeof(uuid_t));
+	assert(sizeof(buf) <= sizeof(hash));
 
-	out[6] &= ~(UUID_TYPE_MASK << UUID_TYPE_SHIFT);
-	out[6] |= (UUID_TYPE_DCE_SHA1 << UUID_TYPE_SHIFT);
+	memcpy(buf, hash, sizeof(buf));
+	uuid_unpack(buf, &uu);
 
-	out[8] &= ~(UUID_VARIANT_MASK << UUID_VARIANT_SHIFT);
-	out[8] |= (variant_bits[UUID_VARIANT_DCE] << UUID_VARIANT_SHIFT);
+	uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
+	uu.time_hi_and_version = (uu.time_hi_and_version & 0x0FFF) | 0x5000;
+	uuid_pack(&uu, out);
 }
-
