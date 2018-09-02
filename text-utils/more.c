@@ -54,12 +54,14 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <termios.h>
-#include <setjmp.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/wait.h>
 #include <regex.h>
+#include <assert.h>
+#include <poll.h>
+#include <sys/signalfd.h>
 
 #if defined(HAVE_NCURSESW_TERM_H)
 # include <ncursesw/term.h>
@@ -74,6 +76,7 @@
 #include "xalloc.h"
 #include "widechar.h"
 #include "closestream.h"
+#include "rpmatch.h"
 
 #ifdef TEST_PROGRAM
 # define NON_INTERACTIVE_MORE 1
@@ -136,7 +139,8 @@ struct more_control {
 	int num_files;			/* Number of files left to process */
 	char *shell;			/* name of the shell to use */
 	int previous_shell;		/* does previous shell command exist */
-	sigjmp_buf destination;		/* siglongjmp() destination */
+	int sigfd;			/* signalfd() file descriptor */
+	sigset_t sigset;		/* signal operations */
 	char *line_buf;			/* line buffer */
 	size_t line_sz;			/* size of line_buf buffer */
 	int lines_per_page;		/* lines per page */
@@ -183,20 +187,17 @@ struct more_control {
 		no_tty_out:1,		/* is output in interactive mode */
 		report_errors:1,	/* is an error reported */
 		run_previous_command:1,	/* run previous key command */
+		search_called:1,	/* previous more command was a search */
 		squeeze_spaces:1,	/* suppress white space */
-		starting_up:1,		/* is startup completed */
 		stdout_glitch:1,	/* terminal has standout mode glitch */
 		stop_after_formfeed:1,	/* stop after form feeds */
 		suppress_bell:1,	/* suppress bell */
 		underline_glitch:1,	/* terminal has underline mode glitch */
 		underline_state:1,	/* current UL state */
-		waiting_input:1,	/* is waiting user input */
-		within_file:1,		/* true if we are within a file, false if we are between files */
 		wrap_margin:1;		/* set if automargins */
 };
 
-/* FIXME: global_ctl is used in signal handlers. */
-struct more_control *global_ctl;
+sig_atomic_t stop_searching;
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -718,47 +719,38 @@ static void output_prompt(struct more_control *ctl, char *filename)
 		fflush(stdout);
 	} else
 		fputc(RINGBELL, stderr);
-	ctl->waiting_input++;
 }
 
-static void reset_tty(void)
+static void reset_tty(struct more_control *ctl)
 {
-	if (global_ctl->no_tty_out)
+	if (ctl->no_tty_out)
 		return;
-	if (global_ctl->underline_state) {
-		putp(global_ctl->exit_underline);
+	if (ctl->underline_state) {
+		putp(ctl->exit_underline);
 		fflush(stdout);
-		global_ctl->underline_state = 0;
+		ctl->underline_state = 0;
 	}
-	global_ctl->output_tty.c_lflag |= ICANON | ECHO;
-	global_ctl->output_tty.c_cc[VMIN] = global_ctl->original_tty.c_cc[VMIN];
-	global_ctl->output_tty.c_cc[VTIME] = global_ctl->original_tty.c_cc[VTIME];
-	tcsetattr(STDERR_FILENO, TCSANOW, &global_ctl->original_tty);
+	ctl->output_tty.c_lflag |= ICANON | ECHO;
+	ctl->output_tty.c_cc[VMIN] = ctl->original_tty.c_cc[VMIN];
+	ctl->output_tty.c_cc[VTIME] = ctl->original_tty.c_cc[VTIME];
+	tcsetattr(STDERR_FILENO, TCSANOW, &ctl->original_tty);
 }
 
 /* Clean up terminal state and exit. Also come here if interrupt signal received */
-static void __attribute__((__noreturn__)) more_exit(int dummy __attribute__((__unused__)))
+static void __attribute__((__noreturn__)) more_exit(struct more_control *ctl)
 {
-	/* May be executed as a signal handler as well as by main process.
-	 *
-	 * The _exit() may wait for pending I/O for really long time, be sure
-	 * that signal handler is not executed in this time to avoid double
-	 * de-initialization (free() calls, etc.).
-	 */
-	signal(SIGINT, SIG_IGN);
-
-	reset_tty();
-	if (global_ctl->clear_line_ends) {
+	reset_tty(ctl);
+	if (ctl->clear_line_ends) {
 		putchar('\r');
-		putp(global_ctl->erase_line);
+		putp(ctl->erase_line);
 		fflush(stdout);
-	} else if (!global_ctl->clear_line_ends && (global_ctl->prompt_len > 0)) {
-		kill_line(global_ctl);
+	} else if (!ctl->clear_line_ends && (ctl->prompt_len > 0)) {
+		kill_line(ctl);
 		fflush(stdout);
 	} else
 		fputc('\n', stderr);
-	free(global_ctl->previous_search);
-	free(global_ctl->line_buf);
+	free(ctl->previous_search);
+	free(ctl->line_buf);
 	_exit(EXIT_SUCCESS);
 }
 
@@ -769,7 +761,7 @@ static int read_user_input(struct more_control *ctl)
 	errno = 0;
 	if (read(STDERR_FILENO, &c, 1) <= 0) {
 		if (errno != EINTR)
-			more_exit(0);
+			more_exit(ctl);
 		else
 			c = ctl->output_tty.c_cc[VKILL];
 	}
@@ -809,8 +801,7 @@ static void change_file(struct more_control *ctl, int nskip)
 	if (nskip > 0) {
 		if (ctl->argv_position + nskip > ctl->num_files - 1)
 			nskip = ctl->num_files - ctl->argv_position - 1;
-	} else if (ctl->within_file)
-		ctl->argv_position++;
+	}
 	ctl->argv_position += nskip;
 	if (ctl->argv_position < 0)
 		ctl->argv_position = 0;
@@ -854,7 +845,6 @@ static void more_error(struct more_control *ctl, char *mess)
 		fputs(mess, stdout);
 	fflush(stdout);
 	ctl->report_errors++;
-	siglongjmp(ctl->destination, 1);
 }
 
 static void erase_one_column(struct more_control *ctl)
@@ -945,7 +935,6 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 			} else {
 				if (!ctl->erase_line)
 					ctl->prompt_len = maxlen;
-				siglongjmp(ctl->destination, 1);
 			}
 		} else if (((cc_t) c == ctl->output_tty.c_cc[VKILL]) && !slash) {
 			if (ctl->hard_tty) {
@@ -1054,51 +1043,46 @@ static void set_tty(struct more_control *ctl)
 }
 
 /* Come here if a quit signal is received */
-static void sigquit_handler(int dummy __attribute__((__unused__)))
+static void sigquit_handler(struct more_control *ctl)
 {
-	signal(SIGQUIT, SIG_IGN);
-	if (!global_ctl->waiting_input) {
-		putchar('\n');
-		if (!global_ctl->starting_up) {
-			signal(SIGQUIT, sigquit_handler);
-			siglongjmp(global_ctl->destination, 1);
-		} else
-			global_ctl->is_paused = 1;
-	} else if (!global_ctl->suppress_bell && global_ctl->no_quit_dialog) {
-		global_ctl->prompt_len += fprintf(stderr, _("[Use q or Q to quit]"));
-		global_ctl->no_quit_dialog = 0;
-	}
-	signal(SIGQUIT, sigquit_handler);
+	if (!ctl->dumb_tty && ctl->no_quit_dialog) {
+		ctl->prompt_len += fprintf(stderr, _("[Use q or Q to quit]"));
+		ctl->no_quit_dialog = 0;
+	} else
+		more_exit(ctl);
 }
 
 /* Come here when we get a suspend signal from the terminal */
-static void sigtstp_handler(int dummy __attribute__((__unused__)))
+static void sigtstp_handler(struct more_control *ctl)
 {
-	sigset_t signals, oldmask;
-
-	/* ignore SIGTTOU so we don't get stopped if csh grabs the tty */
-	signal(SIGTTOU, SIG_IGN);
-	reset_tty();
+	reset_tty(ctl);
 	fflush(stdout);
-	signal(SIGTTOU, SIG_DFL);
-	/* Send the TSTP signal to suspend our process group */
-	signal(SIGTSTP, SIG_DFL);
-
-	/* unblock SIGTSTP or we won't be able to suspend ourself */
-	sigemptyset(&signals);
-	sigaddset(&signals, SIGTSTP);
-	sigprocmask(SIG_UNBLOCK, &signals, &oldmask);
-
-	kill(0, SIGTSTP);
-	/* Pause for station break */
-
-	sigprocmask(SIG_SETMASK, &oldmask, NULL);
-
+	kill(0, SIGSTOP);
 	/* We're back */
-	signal(SIGTSTP, sigtstp_handler);
-	set_tty(global_ctl);
-	if (global_ctl->waiting_input)
-		siglongjmp(global_ctl->destination, 1);
+	set_tty(ctl);
+}
+
+/* Come here if a signal for a window size change is received */
+static void sigwinch_handler(struct more_control *ctl)
+{
+	struct winsize win;
+
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) != -1) {
+		if (win.ws_row != 0) {
+			ctl->lines_per_page = win.ws_row;
+			ctl->d_scroll_len = ctl->lines_per_page / 2 - 1;
+			if (ctl->d_scroll_len < 1)
+				ctl->d_scroll_len = 1;
+			ctl->lines_per_screen = ctl->lines_per_page - 1;
+		}
+		if (win.ws_col != 0)
+			ctl->num_columns = win.ws_col;
+	}
+}
+
+static void search_sig_handler(int sig __attribute__((__unused__)))
+{
+	stop_searching = 1;
 }
 
 static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
@@ -1111,7 +1095,7 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 	int argcount;
 
 	fflush(stdout);
-	reset_tty();
+	reset_tty(ctl);
 	for (n = 10; (id = fork()) < 0 && n > 0; n--)
 		sleep(5);
 	if (id == 0) {
@@ -1149,16 +1133,8 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 		exit(errsv == ENOENT ? EX_EXEC_ENOENT : EX_EXEC_FAILED);
 	}
 	if (id > 0) {
-		signal(SIGINT, SIG_IGN);
-		signal(SIGQUIT, SIG_IGN);
-		if (ctl->catch_suspend)
-			signal(SIGTSTP, SIG_DFL);
 		while (wait(NULL) > 0)
 			/* nothing */ ;
-		signal(SIGINT, more_exit);
-		signal(SIGQUIT, sigquit_handler);
-		if (ctl->catch_suspend)
-			signal(SIGTSTP, sigtstp_handler);
 	} else
 		fputs(_("can't fork\n"), stderr);
 	set_tty(ctl);
@@ -1229,7 +1205,7 @@ static int colon_command(struct more_control *ctl, char *filename, int cmd, int 
 	case 'n':
 		if (nlines == 0) {
 			if (ctl->argv_position >= ctl->num_files - 1)
-				more_exit(0);
+				more_exit(ctl);
 			nlines++;
 		}
 		putchar('\r');
@@ -1252,7 +1228,7 @@ static int colon_command(struct more_control *ctl, char *filename, int cmd, int 
 		return -1;
 	case 'q':
 	case 'Q':
-		more_exit(0);
+		more_exit(ctl);
 	default:
 		fputc(RINGBELL, stderr);
 		return -1;
@@ -1322,8 +1298,20 @@ static void search(struct more_control *ctl, char buf[], FILE *file, int n)
 		char s[REGERR_BUF];
 		regerror(rc, &re, s, sizeof s);
 		more_error(ctl, s);
+		return;
 	}
+	/*
+	 * Take over ctrl+c signal handling during time of regexec().  This
+	 * is needed for user to be able to stop searching when input file
+	 * is very big, or an infinite stream like /dev/zero.
+	 */
+	sigdelset(&ctl->sigset, SIGINT);
+	sigprocmask(SIG_SETMASK, &ctl->sigset, NULL);
+	stop_searching = 0;
+	signal(SIGINT, search_sig_handler);
 	while (!feof(file)) {
+		if (stop_searching)
+			break;
 		line3 = line2;
 		line2 = line1;
 		line1 = ctl->file_position;
@@ -1363,6 +1351,10 @@ static void search(struct more_control *ctl, char buf[], FILE *file, int n)
 			}
 		}
 	}
+	/* Move ctrl+c signal handling back to more_key_command(). */
+	signal(SIGINT, SIG_DFL);
+	sigaddset(&ctl->sigset, SIGINT);
+	sigprocmask(SIG_BLOCK, &ctl->sigset, NULL);
 	regfree(&re);
 	if (feof(file)) {
 		if (!ctl->no_tty_in) {
@@ -1370,7 +1362,7 @@ static void search(struct more_control *ctl, char buf[], FILE *file, int n)
 			more_fseek(ctl, file, startline);
 		} else {
 			fputs(_("\nPattern not found\n"), stdout);
-			more_exit(0);
+			more_exit(ctl);
 		}
 		free(ctl->previous_search);
 		ctl->previous_search = NULL;
@@ -1389,15 +1381,51 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 	int retval = 0;
 	int c;
 	char colonch;
-	int done;
+	int done = 0;
 	char comchar, cmdbuf[INIT_BUF];
+	struct pollfd pfd[2];
 
-	done = 0;
+	pfd[0].fd = ctl->sigfd;
+	pfd[0].events = POLLIN | POLLERR | POLLHUP;
+	pfd[1].fd = STDIN_FILENO;
+	pfd[1].events = POLLIN;
 	if (!ctl->report_errors)
 		output_prompt(ctl, filename);
 	else
 		ctl->report_errors = 0;
+	ctl->search_called = 0;
 	for (;;) {
+		if (poll(pfd, 2, -1) < 0) {
+			if (errno == EAGAIN)
+				continue;
+			more_error(ctl, _("poll failed"));
+			continue;
+		}
+		if (pfd[0].revents != 0) {
+			struct signalfd_siginfo info;
+			ssize_t sz;
+
+			sz = read(pfd[0].fd, &info, sizeof(info));
+			assert(sz == sizeof(info));
+			switch (info.ssi_signo) {
+			case SIGINT:
+				more_exit(ctl);
+				break;
+			case SIGQUIT:
+				sigquit_handler(ctl);
+				break;
+			case SIGTSTP:
+				sigtstp_handler(ctl);
+				break;
+			case SIGWINCH:
+				sigwinch_handler(ctl);
+				break;
+			default:
+				abort();
+			}
+		}
+		if (pfd[1].revents == 0)
+			continue;
 		nlines = read_number(ctl, &comchar);
 		ctl->run_previous_command = colonch = 0;
 		if (comchar == '.') {	/* Repeat last command */
@@ -1479,7 +1507,7 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 			break;
 		case 'q':
 		case 'Q':
-			more_exit(0);
+			more_exit(ctl);
 		case 's':
 		case 'f':
 		case ctrl('F'):
@@ -1559,6 +1587,7 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 			ctl->run_previous_command++;
 			/* fallthrough */
 		case '/':
+			ctl->search_called = 1;
 			if (nlines == 0)
 				nlines++;
 			kill_line(ctl);
@@ -1682,7 +1711,6 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 	}
 	putchar('\r');
  endsw:
-	ctl->waiting_input = 0;
 	ctl->no_quit_dialog = 1;
 	return retval;
 }
@@ -1736,11 +1764,11 @@ static void screen(struct more_control *ctl, FILE *f, int num_lines)
 		if (ctl->is_paused && ctl->clear_line_ends)
 			putp(ctl->clear_rest);
 		more_ungetc(ctl, c, f);
-		sigsetjmp(ctl->destination, 1);
 		ctl->is_paused = 0;
-		ctl->starting_up = 0;
-		if ((num_lines = more_key_command(ctl, NULL, f)) == 0)
-			return;
+		do {
+			if ((num_lines = more_key_command(ctl, NULL, f)) == 0)
+				return;
+		} while (ctl->search_called && !ctl->previous_search);
 		if (ctl->hard_tty && ctl->prompt_len > 0)
 			erase_prompt(ctl, 0);
 		if (ctl->no_scroll && num_lines >= ctl->lines_per_screen) {
@@ -1752,26 +1780,6 @@ static void screen(struct more_control *ctl, FILE *f, int num_lines)
 		ctl->screen_start.line_num = ctl->current_line;
 		ctl->screen_start.row_num = ctl->file_position;
 	}
-}
-
-/* Come here if a signal for a window size change is received */
-static void sigwinch_handler(int dummy __attribute__((__unused__)))
-{
-	struct winsize win;
-
-	signal(SIGWINCH, SIG_IGN);
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) != -1) {
-		if (win.ws_row != 0) {
-			global_ctl->lines_per_page = win.ws_row;
-			global_ctl->d_scroll_len = global_ctl->lines_per_page / 2 - 1;
-			if (global_ctl->d_scroll_len <= 0)
-				global_ctl->d_scroll_len = 1;
-			global_ctl->lines_per_screen = global_ctl->lines_per_page - 1;
-		}
-		if (win.ws_col != 0)
-			global_ctl->num_columns = win.ws_col;
-	}
-	signal(SIGWINCH, sigwinch_handler);
 }
 
 static void copy_file(FILE *f)
@@ -1906,7 +1914,6 @@ int main(int argc, char **argv)
 		.first_file = 1,
 		.fold_long_lines = 1,
 		.no_quit_dialog = 1,
-		.starting_up = 1,
 		.stop_after_formfeed = 1,
 		.enable_underlining = 1,
 		.wrap_margin = 1,
@@ -1915,7 +1922,6 @@ int main(int argc, char **argv)
 		.d_scroll_len = SCROLL_LEN,
 		0
 	};
-	global_ctl = &ctl;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1990,15 +1996,18 @@ int main(int argc, char **argv)
 	} else
 		f = stdin;
 	if (!ctl.no_tty_out) {
-		signal(SIGQUIT, sigquit_handler);
-		signal(SIGINT, more_exit);
-		signal(SIGWINCH, sigwinch_handler);
 		if (signal(SIGTSTP, SIG_IGN) == SIG_DFL) {
-			signal(SIGTSTP, sigtstp_handler);
 			ctl.catch_suspend++;
 		}
 		tcsetattr(STDERR_FILENO, TCSANOW, &ctl.output_tty);
 	}
+	sigemptyset(&ctl.sigset);
+	sigaddset(&ctl.sigset, SIGINT);
+	sigaddset(&ctl.sigset, SIGQUIT);
+	sigaddset(&ctl.sigset, SIGTSTP);
+	sigaddset(&ctl.sigset, SIGWINCH);
+	sigprocmask(SIG_BLOCK, &ctl.sigset, NULL);
+	ctl.sigfd = signalfd(-1, &ctl.sigset, SFD_CLOEXEC);
 	if (ctl.no_tty_in) {
 		if (ctl.no_tty_out)
 			copy_file(stdin);
@@ -2033,8 +2042,6 @@ int main(int argc, char **argv)
 		if ((f = checkf(&ctl, ctl.file_names[ctl.argv_position], &skip_file)) != NULL) {
 			ctl.context.line_num = ctl.context.row_num = 0;
 			ctl.current_line = 0;
-			if (ctl.first_file)
-				sigsetjmp(ctl.destination, 1);
 			if (ctl.first_file) {
 				ctl.first_file = 0;
 				if (search_at_start) {
@@ -2045,10 +2052,8 @@ int main(int argc, char **argv)
 						left--;
 				} else if (init)
 					skip_lines(&ctl, start_at_line, f);
-			} else if (ctl.argv_position < ctl.num_files && !ctl.no_tty_out) {
-				sigsetjmp(ctl.destination, 1);
+			} else if (ctl.argv_position < ctl.num_files && !ctl.no_tty_out)
 				left = more_key_command(&ctl, ctl.file_names[ctl.argv_position], f);
-			}
 			if (left != 0) {
 				if ((ctl.no_scroll || skip_file)
 				    && (ctl.file_size != LONG_MAX)) {
@@ -2077,13 +2082,9 @@ int main(int argc, char **argv)
 				}
 				if (ctl.no_tty_out)
 					copy_file(f);
-				else {
-					ctl.within_file = 1;
+				else
 					screen(&ctl, f, left);
-					ctl.within_file = 0;
-				}
 			}
-			sigsetjmp(ctl.destination, 1);
 			fflush(stdout);
 			fclose(f);
 			ctl.screen_start.line_num = ctl.screen_start.row_num = 0L;
@@ -2095,6 +2096,6 @@ int main(int argc, char **argv)
 	free(ctl.previous_search);
 	free(initbuf);
 	free(ctl.line_buf);
-	reset_tty();
+	reset_tty(&ctl);
 	exit(EXIT_SUCCESS);
 }
