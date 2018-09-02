@@ -99,7 +99,6 @@
 #define NUM_COLUMNS	80
 #define TERMINAL_BUF	4096
 #define INIT_BUF	80
-#define SHELL_LINE	1000
 #define COMMAND_BUF	200
 #define REGERR_BUF	NUM_COLUMNS
 
@@ -138,7 +137,6 @@ struct more_control {
 	char **file_names;		/* The list of file names */
 	int num_files;			/* Number of files left to process */
 	char *shell;			/* name of the shell to use */
-	int previous_shell;		/* does previous shell command exist */
 	int sigfd;			/* signalfd() file descriptor */
 	sigset_t sigset;		/* signal operations */
 	char *line_buf;			/* line buffer */
@@ -166,7 +164,7 @@ struct more_control {
 	int last_key_command;		/* previous more key command */
 	int last_key_arg;		/* previous key command argument */
 	int last_colon_command;		/* is a colon-prefixed key command */
-	char shell_line[SHELL_LINE];
+	char *shell_line;		/* line to execute in subshell */
 	unsigned int
 		bad_stdout:1,		/* true if overwriting does not turn off standout */
 		catch_suspend:1,	/* we should catch the SIGTSTP signal */
@@ -750,6 +748,7 @@ static void __attribute__((__noreturn__)) more_exit(struct more_control *ctl)
 	} else
 		fputc('\n', stderr);
 	free(ctl->previous_search);
+	free(ctl->shell_line);
 	free(ctl->line_buf);
 	_exit(EXIT_SUCCESS);
 }
@@ -981,24 +980,24 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 		more_error(ctl, _("Line too long"));
 }
 
-static int expand(struct more_control *ctl, char **outbuf, char *inbuf)
+/* Expand shell command line. */
+static void expand(struct more_control *ctl, char *inbuf)
 {
 	char *inpstr;
 	char *outstr;
 	char c;
 	char *temp;
-	int changed = 0;
 	int tempsz, xtra, offset;
 
 	xtra = strlen(ctl->file_names[ctl->argv_position]) + strlen(ctl->shell_line) + 1;
-	tempsz = 200 + xtra;
+	tempsz = COMMAND_BUF + xtra;
 	temp = xmalloc(tempsz);
 	inpstr = inbuf;
 	outstr = temp;
 	while ((c = *inpstr++) != '\0') {
 		offset = outstr - temp;
 		if (tempsz - offset - 1 < xtra) {
-			tempsz += 200 + xtra;
+			tempsz += COMMAND_BUF + xtra;
 			temp = xrealloc(temp, tempsz);
 			outstr = temp + offset;
 		}
@@ -1007,17 +1006,16 @@ static int expand(struct more_control *ctl, char **outbuf, char *inbuf)
 			if (!ctl->no_tty_in) {
 				strcpy(outstr, ctl->file_names[ctl->argv_position]);
 				outstr += strlen(ctl->file_names[ctl->argv_position]);
-				changed++;
 			} else
 				*outstr++ = c;
 			break;
 		case '!':
-			if (!ctl->previous_shell)
+			if (ctl->shell_line) {
+				strcpy(outstr, ctl->shell_line);
+				outstr += strlen(ctl->shell_line);
+			} else
 				more_error(ctl, _
 					   ("No previous command to substitute for"));
-			strcpy(outstr, ctl->shell_line);
-			outstr += strlen(ctl->shell_line);
-			changed++;
 			break;
 		case '\\':
 			if (*inpstr == '%' || *inpstr == '!') {
@@ -1030,8 +1028,8 @@ static int expand(struct more_control *ctl, char **outbuf, char *inbuf)
 		}
 	}
 	*outstr++ = '\0';
-	*outbuf = temp;
-	return changed;
+	free(ctl->shell_line);
+	ctl->shell_line = temp;
 }
 
 static void set_tty(struct more_control *ctl)
@@ -1145,39 +1143,27 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 static void run_shell(struct more_control *ctl, char *filename)
 {
 	char cmdbuf[COMMAND_BUF];
-	int rc;
-	char *expanded;
 
 	kill_line(ctl);
 	putchar('!');
 	fflush(stdout);
 	ctl->prompt_len = 1;
-	if (ctl->run_previous_command)
+	if (ctl->run_previous_command && ctl->shell_line)
 		fputs(ctl->shell_line, stdout);
 	else {
 		ttyin(ctl, cmdbuf, sizeof(cmdbuf) - 2, '!');
-		expanded = NULL;
-		rc = expand(ctl, &expanded, cmdbuf);
-		if (expanded) {
-			if (strlen(expanded) < sizeof(ctl->shell_line))
-				strcpy(ctl->shell_line, expanded);
-			else
-				rc = -1;
-			free(expanded);
+		if (strpbrk(cmdbuf, "%!\\"))
+			expand(ctl, cmdbuf);
+		else {
+			free(ctl->shell_line);
+			ctl->shell_line = xstrdup(cmdbuf);
 		}
-		if (rc < 0) {
-			fputs(_("  Overflow\n"), stderr);
-			output_prompt(ctl, filename);
-			return;
-		} else if (rc > 0) {
-			kill_line(ctl);
-			ctl->prompt_len = printf("!%s", ctl->shell_line);
-		}
+		kill_line(ctl);
+		ctl->prompt_len = printf("!%s", ctl->shell_line);
 	}
 	fflush(stdout);
 	fputc('\n', stderr);
 	ctl->prompt_len = 0;
-	ctl->previous_shell = 1;
 	execute(ctl, filename, ctl->shell, ctl->shell, "-c", ctl->shell_line, 0);
 }
 
