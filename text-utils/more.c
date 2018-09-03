@@ -1083,13 +1083,18 @@ static void search_sig_handler(int sig __attribute__((__unused__)))
 	stop_searching = 1;
 }
 
+static void free_args(char ***args)
+{
+	free(*args);
+}
+
 static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 {
 	int id;
 	int n;
 	va_list argp;
 	char *arg;
-	char **args;
+	char **args __attribute__((__cleanup__(free_args))) = NULL;;
 	int argcount;
 
 	fflush(stdout);
@@ -1112,7 +1117,7 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 		}
 		va_end(argp);
 
-		args = alloca(sizeof(char *) * (argcount + 1));
+		args = xmalloc(sizeof(char *) * (argcount + 1));
 		args[argcount] = NULL;
 
 		va_start(argp, cmd);
