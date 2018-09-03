@@ -1412,6 +1412,104 @@ static void runtime_usage(void)
 	puts("-------------------------------------------------------------------------------");
 }
 
+static void execute_editor(struct more_control *ctl, char *cmdbuf, char *filename)
+{
+	char *editor, *p;
+	int n = (ctl->current_line - ctl->lines_per_screen <= 0 ? 1 :
+		 ctl->current_line - (ctl->lines_per_screen + 1) / 2);
+	int split = 0;
+
+	editor = find_editor();
+	p = strrchr(editor, '/');
+	if (p)
+		p++;
+	else
+		p = editor;
+	/*
+	 * Earlier: call vi +n file. This also works for emacs.
+	 * POSIX: call vi -c n file (when editor is vi or ex).
+	 */
+	if (!strcmp(p, "vi") || !strcmp(p, "ex")) {
+		sprintf(cmdbuf, "-c %d", n);
+		split = 1;
+	} else
+		sprintf(cmdbuf, "+%d", n);
+
+	kill_line(ctl);
+	printf("%s %s %s", editor, cmdbuf, ctl->file_names[ctl->argv_position]);
+	if (split) {
+		cmdbuf[2] = 0;
+		execute(ctl, filename, editor, editor,
+			cmdbuf, cmdbuf + 3,
+			ctl->file_names[ctl->argv_position], (char *)0);
+	} else
+		execute(ctl, filename, editor, editor,
+			cmdbuf, ctl->file_names[ctl->argv_position], (char *)0);
+}
+
+static int skip_backwards(struct more_control *ctl, FILE *f, int nlines)
+{
+	int initline;
+	int retval;
+
+	if (nlines == 0)
+		nlines++;
+
+	putchar('\r');
+	erase_prompt(ctl, 0);
+	putchar('\n');
+	if (ctl->clear_line_ends)
+		putp(ctl->erase_line);
+	printf(P_("...back %d page", "...back %d pages", nlines), nlines);
+	if (ctl->clear_line_ends)
+		putp(ctl->erase_line);
+	putchar('\n');
+
+	initline = ctl->current_line - ctl->lines_per_screen * (nlines + 1);
+	if (!ctl->no_scroll)
+		initline--;
+	if (initline < 0)
+		initline = 0;
+	more_fseek(ctl, f, 0L);
+	ctl->current_line = 0;	/* skip_lines() will make current_line correct */
+	skip_lines(ctl, initline, f);
+	if (!ctl->no_scroll)
+		retval = ctl->lines_per_screen + 1;
+	else
+		retval = ctl->lines_per_screen;
+	return retval;
+}
+
+static int skip_forwards(struct more_control *ctl, FILE *f, int nlines, char comchar)
+{
+	int c;
+
+	if (nlines == 0)
+		nlines++;
+	if (comchar == 'f')
+		nlines *= ctl->lines_per_screen;
+	putchar('\r');
+	erase_prompt(ctl, 0);
+	putchar('\n');
+	if (ctl->clear_line_ends)
+		putp(ctl->erase_line);
+	printf(P_("...skipping %d line",
+		  "...skipping %d lines", nlines), nlines);
+
+	if (ctl->clear_line_ends)
+		putp(ctl->erase_line);
+	putchar('\n');
+
+	while (nlines > 0) {
+		while ((c = more_getc(ctl, f)) != '\n')
+			if (c == EOF)
+				return 0;
+		ctl->current_line++;
+		nlines--;
+	}
+	return 1;
+}
+
 /* Read a command and do it.  A command consists of an optional integer
  * argument followed by the command character.  Return the number of
  * lines to display in the next screenful.  If there is nothing more to
@@ -1420,7 +1518,6 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 {
 	int nlines;
 	int retval = 0;
-	int c;
 	char colonch;
 	int done = 0;
 	char comchar, cmdbuf[INIT_BUF];
@@ -1491,45 +1588,13 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 			break;
 		case 'b':
 		case ctrl('B'):
-			{
-				int initline;
-
-				if (ctl->no_tty_in) {
-					fputc(RINGBELL, stderr);
-					return -1;
-				}
-
-				if (nlines == 0)
-					nlines++;
-
-				putchar('\r');
-				erase_prompt(ctl, 0);
-				putchar('\n');
-				if (ctl->clear_line_ends)
-					putp(ctl->erase_line);
-				printf(P_("...back %d page",
-					"...back %d pages", nlines),
-					nlines);
-				if (ctl->clear_line_ends)
-					putp(ctl->erase_line);
-				putchar('\n');
-
-				initline = ctl->current_line - ctl->lines_per_screen * (nlines + 1);
-				if (!ctl->no_scroll)
-					--initline;
-				if (initline < 0)
-					initline = 0;
-				more_fseek(ctl, f, 0L);
-				ctl->current_line = 0;	/* skip_lines() will make current_line correct */
-				skip_lines(ctl, initline, f);
-				if (!ctl->no_scroll) {
-					retval = ctl->lines_per_screen + 1;
-				} else {
-					retval = ctl->lines_per_screen;
-				}
-				done = 1;
-				break;
+			if (ctl->no_tty_in) {
+				fputc(RINGBELL, stderr);
+				return -1;
 			}
+			retval = skip_backwards(ctl, f, nlines);
+			done = 1;
+			break;
 		case ' ':
 		case 'z':
 			if (nlines == 0)
@@ -1552,34 +1617,8 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 		case 's':
 		case 'f':
 		case ctrl('F'):
-			if (nlines == 0)
-				nlines++;
-			if (comchar == 'f')
-				nlines *= ctl->lines_per_screen;
-			putchar('\r');
-			erase_prompt(ctl, 0);
-			putchar('\n');
-			if (ctl->clear_line_ends)
-				putp(ctl->erase_line);
-			printf(P_("...skipping %d line",
-				"...skipping %d lines", nlines),
-				nlines);
-
-			if (ctl->clear_line_ends)
-				putp(ctl->erase_line);
-			putchar('\n');
-
-			while (nlines > 0) {
-				while ((c = more_getc(ctl, f)) != '\n')
-					if (c == EOF) {
-						retval = 0;
-						done++;
-						goto endsw;
-					}
-				ctl->current_line++;
-				nlines--;
-			}
-			retval = ctl->lines_per_screen;
+			if (skip_forwards(ctl, f, nlines, comchar))
+				retval = ctl->lines_per_screen;
 			done = 1;
 			break;
 		case '\n':
@@ -1661,39 +1700,7 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 			break;
 		case 'v':	/* This case should go right before default */
 			if (!ctl->no_tty_in) {
-				/* Earlier: call vi +n file. This also
-				 * works for emacs.  POSIX: call vi -c n
-				 * file (when editor is vi or ex). */
-				char *editor, *p;
-				int n = (ctl->current_line - ctl->lines_per_screen <= 0 ? 1 :
-					 ctl->current_line - (ctl->lines_per_screen + 1) / 2);
-				int split = 0;
-
-				editor = find_editor();
-				p = strrchr(editor, '/');
-				if (p)
-					p++;
-				else
-					p = editor;
-				if (!strcmp(p, "vi") || !strcmp(p, "ex")) {
-					sprintf(cmdbuf, "-c %d", n);
-					split = 1;
-				} else {
-					sprintf(cmdbuf, "+%d", n);
-				}
-
-				kill_line(ctl);
-				printf("%s %s %s", editor, cmdbuf,
-				       ctl->file_names[ctl->argv_position]);
-				if (split) {
-					cmdbuf[2] = 0;
-					execute(ctl, filename, editor, editor,
-						cmdbuf, cmdbuf + 3,
-						ctl->file_names[ctl->argv_position], (char *)0);
-				} else
-					execute(ctl, filename, editor, editor,
-						cmdbuf, ctl->file_names[ctl->argv_position],
-						(char *)0);
+				execute_editor(ctl, cmdbuf, filename);
 				break;
 			}
 			/* fallthrough */
@@ -1720,7 +1727,6 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 			break;
 	}
 	putchar('\r');
- endsw:
 	ctl->no_quit_dialog = 1;
 	return retval;
 }
