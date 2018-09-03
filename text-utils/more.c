@@ -1130,6 +1130,13 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 		}
 		va_end(argp);
 
+		if (geteuid() != getuid() || getegid() != getgid()) {
+			if (setuid(getuid()) < 0)
+				err(EXIT_FAILURE, _("setuid failed"));
+			if (setgid(getgid()) < 0)
+				err(EXIT_FAILURE, _("setgid failed"));
+		}
+
 		execvp(cmd, args);
 		errsv = errno;
 		fputs(_("exec failed\n"), stderr);
