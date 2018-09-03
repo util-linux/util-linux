@@ -624,55 +624,56 @@ static int would_underline(char *s, int n)
 /* Print a buffer of n characters */
 static void print_buf(struct more_control *ctl, char *s, int n)
 {
-	char c;	/* next output character */
+	char c;		/* next output character */
 	int state;	/* next output char's UL state */
 
-	while (--n >= 0)
-		if (!ctl->enable_underlining)
+	while (--n >= 0) {
+		if (!ctl->enable_underlining) {
 			putchar(*s++);
-		else {
-			if (*s == ' ' && ctl->underline_state == 0 && ctl->underline_glitch
-			    && would_underline(s + 1, n - 1)) {
-				s++;
-				continue;
-			}
-			if ((state = would_underline(s, n)) != 0) {
-				c = (*s == '_') ? s[2] : *s;
-				n -= 2;
-				s += 3;
-			} else
-				c = *s++;
-			if (state != ctl->underline_state) {
-				if (c == ' ' && state == 0 && ctl->underline_glitch
-				    && would_underline(s, n - 1))
-					state = 1;
-				else
-					putp(state ? ctl->enter_underline : ctl->exit_underline);
-			}
-			if (c != ' ' || ctl->underline_state == 0 || state != 0
-			    || ctl->underline_glitch == 0)
-#ifdef HAVE_WIDECHAR
-			{
-				wchar_t wc;
-				size_t mblength;
-				mbstate_t mbstate;
-				memset(&mbstate, '\0', sizeof(mbstate_t));
-				s--;
-				n++;
-				mblength = xmbrtowc(&wc, s, n, &mbstate);
-				while (mblength--)
-					putchar(*s++);
-				n += mblength;
-			}
-#else
-				putchar(c);
-#endif				/* HAVE_WIDECHAR */
-			if (state && *ctl->underline_ch) {
-				fputs(ctl->backspace_ch, stdout);
-				putp(ctl->underline_ch);
-			}
-			ctl->underline_state = state;
+			continue;
 		}
+		if (*s == ' ' && ctl->underline_state == 0 && ctl->underline_glitch
+		    && would_underline(s + 1, n - 1)) {
+			s++;
+			continue;
+		}
+		if ((state = would_underline(s, n)) != 0) {
+			c = (*s == '_') ? s[2] : *s;
+			n -= 2;
+			s += 3;
+		} else
+			c = *s++;
+		if (state != ctl->underline_state) {
+			if (c == ' ' && state == 0 && ctl->underline_glitch
+			    && would_underline(s, n - 1))
+				state = 1;
+			else
+				putp(state ? ctl->enter_underline : ctl->exit_underline);
+		}
+		if (c != ' ' || ctl->underline_state == 0 || state != 0
+		    || ctl->underline_glitch == 0) {
+#ifdef HAVE_WIDECHAR
+			wchar_t wc;
+			size_t mblength;
+			mbstate_t mbstate;
+
+			memset(&mbstate, '\0', sizeof(mbstate_t));
+			s--;
+			n++;
+			mblength = xmbrtowc(&wc, s, n, &mbstate);
+			while (mblength--)
+				putchar(*s++);
+			n += mblength;
+#else
+			putchar(c);
+#endif
+		}
+		if (state && *ctl->underline_ch) {
+			fputs(ctl->backspace_ch, stdout);
+			putp(ctl->underline_ch);
+		}
+		ctl->underline_state = state;
+	}
 }
 
 /* Erase the current line entirely */
