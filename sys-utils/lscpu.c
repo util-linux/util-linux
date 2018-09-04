@@ -837,7 +837,7 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		desc->hypervisor = "PR/SM";
 		desc->virtype = VIRT_FULL;
 		while (fgets(buf, sizeof(buf), fd) != NULL) {
-			char *str;
+			char *str, *p;
 
 			if (!strstr(buf, "Control Program:"))
 				continue;
@@ -845,10 +845,10 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 				desc->hyper = HYPER_IBM;
 			else
 				desc->hyper = HYPER_KVM;
-			str = strchr(buf, ':');
-			if (!str)
+			p = strchr(buf, ':');
+			if (!p)
 				continue;
-			xasprintf(&str, "%s", str + 1);
+			xasprintf(&str, "%s", p + 1);
 
 			/* remove leading, trailing and repeating whitespace */
 			while (*str == ' ')
