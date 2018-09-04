@@ -167,6 +167,7 @@ struct more_control {
 		bad_stdout:1,		/* true if overwriting does not turn off standout */
 		catch_suspend:1,	/* we should catch the SIGTSTP signal */
 		clear_line_ends:1,	/* do not scroll, paint each screen from the top */
+		clear_first:1,		/* is first character in file \f */
 		dumb_tty:1,		/* is terminal type known */
 		eat_newline:1,		/* is newline ignored after 80 cols */
 		enable_underlining:1,	/* underline as best we can */
@@ -176,13 +177,16 @@ struct more_control {
 		fold_long_lines:1,	/* fold long lines */
 		hard_tabs:1,		/* print spaces instead of '\t' */
 		hard_tty:1,		/* is this hard copy terminal (a printer or such) */
+		jump_at_start:1,	/* jump to line N defined at start up */
 		is_paused:1,		/* is output paused */
 		no_quit_dialog:1,	/* suppress quit dialog */
 		no_scroll:1,		/* do not scroll, clear the screen and then display text */
 		no_tty_in:1,		/* is input in interactive mode */
 		no_tty_out:1,		/* is output in interactive mode */
+		print_banner:1,		/* print file name banner */
 		report_errors:1,	/* is an error reported */
 		run_previous_command:1,	/* run previous key command */
+		search_at_start:1,	/* search pattern defined at start up */
 		search_called:1,	/* previous more command was a search */
 		squeeze_spaces:1,	/* suppress white space */
 		stdout_glitch:1,	/* terminal has standout mode glitch */
@@ -334,7 +338,7 @@ static int check_magic(FILE *f, char *fs)
 
 /* Check whether the file named by fs is an ASCII file which the user may
  * access.  If it is, return the opened file.  Otherwise return NULL. */
-static void checkf(struct more_control *ctl, char *fs, int *clearfirst)
+static void checkf(struct more_control *ctl, char *fs)
 {
 	struct stat st;
 	int c;
@@ -366,7 +370,7 @@ static void checkf(struct more_control *ctl, char *fs, int *clearfirst)
 	}
 	fcntl(fileno(ctl->current_file), F_SETFD, FD_CLOEXEC);
 	c = more_getc(ctl);
-	*clearfirst = (c == '\f');
+	ctl->clear_first = (c == '\f');
 	more_ungetc(ctl, c);
 	if ((ctl->file_size = st.st_size) == 0)
 		ctl->file_size = LONG_MAX;
@@ -1808,6 +1812,64 @@ static void copy_file(FILE *f)
 		fwrite(&buf, sizeof(char), sz, stdout);
 }
 
+
+static void display_file(struct more_control *ctl, char *initbuf, int left)
+{
+	if (!ctl->current_file)
+		return;
+	ctl->context.line_num = ctl->context.row_num = 0;
+	ctl->current_line = 0;
+	if (ctl->first_file) {
+		ctl->first_file = 0;
+		if (ctl->search_at_start) {
+			free(ctl->previous_search);
+			ctl->previous_search = xstrdup(initbuf);
+			search(ctl, initbuf, 1);
+			if (ctl->no_scroll)
+				left--;
+		} else if (ctl->jump_at_start)
+			skip_lines(ctl, ctl->search_at_start);
+	} else if (ctl->argv_position < ctl->num_files && !ctl->no_tty_out)
+		left =
+		    more_key_command(ctl, ctl->file_names[ctl->argv_position]);
+	if (left != 0) {
+		if ((ctl->no_scroll || ctl->clear_first)
+		    && (ctl->file_size != LONG_MAX)) {
+			if (ctl->clear_line_ends)
+				putp(ctl->go_home);
+			else
+				more_clear_screen(ctl);
+		}
+		if (ctl->print_banner) {
+			if (ctl->bad_stdout)
+				erase_prompt(ctl, 0);
+			if (ctl->clear_line_ends)
+				putp(ctl->erase_line);
+			fputs("::::::::::::::", stdout);
+			if (ctl->prompt_len > 14)
+				erase_prompt(ctl, 14);
+			putchar('\n');
+			if (ctl->clear_line_ends)
+				putp(ctl->erase_line);
+			puts(ctl->file_names[ctl->argv_position]);
+			if (ctl->clear_line_ends)
+				putp(ctl->erase_line);
+			fputs("::::::::::::::\n", stdout);
+			if (left > ctl->lines_per_page - 4)
+				left = ctl->lines_per_page - 4;
+		}
+		if (ctl->no_tty_out)
+			copy_file(ctl->current_file);
+		else
+			screen(ctl, left);
+	}
+	fflush(stdout);
+	fclose(ctl->current_file);
+	ctl->current_file = NULL;
+	ctl->screen_start.line_num = ctl->screen_start.row_num = 0L;
+	ctl->context.line_num = ctl->context.row_num = 0L;
+}
+
 static void initterm(struct more_control *ctl)
 {
 	int ret;
@@ -1917,10 +1979,6 @@ int main(int argc, char **argv)
 	char *s;
 	int chr;
 	int left;
-	int print_names = 0;
-	int init = 0;
-	int search_at_start = 0;
-	int skip_file = 0;
 	int start_at_line = 0;
 	char *initbuf = NULL;
 	struct more_control ctl = {
@@ -1975,10 +2033,10 @@ int main(int argc, char **argv)
 		} else if (chr == '+') {
 			s = *ctl.file_names;
 			if (*++s == '/') {
-				search_at_start++;
+				ctl.search_at_start = 1;
 				initbuf = xstrdup(s + 1);
 			} else {
-				init++;
+				ctl.jump_at_start = 1;
 				for (start_at_line = 0; *s != '\0'; s++)
 					if (isdigit(*s))
 						start_at_line =
@@ -2002,7 +2060,7 @@ int main(int argc, char **argv)
 		ctl.lines_per_screen = ctl.lines_per_page - 1;
 	left = ctl.lines_per_screen;
 	if (ctl.num_files > 1)
-		print_names++;
+		ctl.print_banner = 1;
 	if (!ctl.no_tty_in && ctl.num_files == 0) {
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);
@@ -2025,88 +2083,17 @@ int main(int argc, char **argv)
 		if (ctl.no_tty_out)
 			copy_file(stdin);
 		else {
-			if ((chr = getc(ctl.current_file)) == '\f')
-				more_clear_screen(&ctl);
-			else {
-				ungetc(chr, ctl.current_file);
-				if (ctl.no_scroll && (chr != EOF)) {
-					if (ctl.clear_line_ends)
-						putp(ctl.go_home);
-					else
-						more_clear_screen(&ctl);
-				}
-			}
 			ctl.current_file = stdin;
-			if (search_at_start) {
-				free(ctl.previous_search);
-				ctl.previous_search = xstrdup(initbuf);
-				search(&ctl, initbuf, 1);
-				if (ctl.no_scroll)
-					left--;
-			} else if (init)
-				skip_lines(&ctl, start_at_line);
-			screen(&ctl, left);
+			display_file(&ctl, initbuf, left);
 		}
 		ctl.no_tty_in = 0;
-		print_names++;
+		ctl.print_banner = 1;
 		ctl.first_file = 0;
 	}
 
-	while (ctl.argv_position < ctl.num_files) {
-		checkf(&ctl, ctl.file_names[ctl.argv_position], &skip_file);
-		if (ctl.current_file != NULL) {
-			ctl.context.line_num = ctl.context.row_num = 0;
-			ctl.current_line = 0;
-			if (ctl.first_file) {
-				ctl.first_file = 0;
-				if (search_at_start) {
-					free(ctl.previous_search);
-					ctl.previous_search = xstrdup(initbuf);
-					search(&ctl, initbuf, 1);
-					if (ctl.no_scroll)
-						left--;
-				} else if (init)
-					skip_lines(&ctl, start_at_line);
-			} else if (ctl.argv_position < ctl.num_files && !ctl.no_tty_out)
-				left = more_key_command(&ctl, ctl.file_names[ctl.argv_position]);
-			if (left != 0) {
-				if ((ctl.no_scroll || skip_file)
-				    && (ctl.file_size != LONG_MAX)) {
-					if (ctl.clear_line_ends)
-						putp(ctl.go_home);
-					else
-						more_clear_screen(&ctl);
-				}
-				if (print_names) {
-					if (ctl.bad_stdout)
-						erase_prompt(&ctl, 0);
-					if (ctl.clear_line_ends)
-						putp(ctl.erase_line);
-					fputs("::::::::::::::", stdout);
-					if (ctl.prompt_len > 14)
-						erase_prompt(&ctl, 14);
-					putchar('\n');
-					if (ctl.clear_line_ends)
-						putp(ctl.erase_line);
-					puts(ctl.file_names[ctl.argv_position]);
-					if (ctl.clear_line_ends)
-						putp(ctl.erase_line);
-					fputs("::::::::::::::\n", stdout);
-					if (left > ctl.lines_per_page - 4)
-						left = ctl.lines_per_page - 4;
-				}
-				if (ctl.no_tty_out)
-					copy_file(ctl.current_file);
-				else
-					screen(&ctl, left);
-			}
-			fflush(stdout);
-			fclose(ctl.current_file);
-			ctl.current_file = NULL;
-			ctl.screen_start.line_num = ctl.screen_start.row_num = 0L;
-			ctl.context.line_num = ctl.context.row_num = 0L;
-		}
-		ctl.argv_position++;
+	for (/*nothing*/; ctl.argv_position < ctl.num_files; ctl.argv_position++) {
+		checkf(&ctl, ctl.file_names[ctl.argv_position]);
+		display_file(&ctl, initbuf, left);
 		ctl.first_file = 0;
 	}
 	free(ctl.previous_search);
