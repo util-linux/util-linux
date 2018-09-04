@@ -478,7 +478,11 @@ static void handle_signal(struct script_control *ctl, int fd)
 	switch (info.ssi_signo) {
 	case SIGCHLD:
 		DBG(SIGNAL, ul_debug(" get signal SIGCHLD"));
-		if (info.ssi_code == CLD_EXITED) {
+		int child_exited =
+			info.ssi_code == CLD_EXITED ||
+			info.ssi_code == CLD_KILLED ||
+			info.ssi_code == CLD_DUMPED;
+		if (child_exited) {
 			wait_for_child(ctl, 0);
 			ctl->poll_timeout = 10;
 		} else if (info.ssi_status == SIGSTOP && ctl->child) {
