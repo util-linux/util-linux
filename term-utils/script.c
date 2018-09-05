@@ -477,10 +477,15 @@ static void handle_signal(struct script_control *ctl, int fd)
 
 	switch (info.ssi_signo) {
 	case SIGCHLD:
-		DBG(SIGNAL, ul_debug(" get signal SIGCHLD"));
-		if (info.ssi_code == CLD_EXITED) {
+		DBG(SIGNAL, ul_debug(" get signal SIGCHLD [ssi_code=%d, ssi_status=%d]",
+							info.ssi_code, info.ssi_status));
+		if (info.ssi_code == CLD_EXITED
+		    || info.ssi_code == CLD_KILLED
+		    || info.ssi_code == CLD_DUMPED) {
 			wait_for_child(ctl, 0);
 			ctl->poll_timeout = 10;
+
+		/* In case of ssi_code is CLD_TRAPPED, CLD_STOPPED, or CLD_CONTINUED */
 		} else if (info.ssi_status == SIGSTOP && ctl->child) {
 			DBG(SIGNAL, ul_debug(" child stop by SIGSTOP -- stop parent too"));
 			kill(getpid(), SIGSTOP);
@@ -508,6 +513,7 @@ static void handle_signal(struct script_control *ctl, int fd)
 	default:
 		abort();
 	}
+	DBG(SIGNAL, ul_debug("signal handle on FD %d done", fd));
 }
 
 static void do_io(struct script_control *ctl)
