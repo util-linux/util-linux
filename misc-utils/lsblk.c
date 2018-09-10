@@ -302,6 +302,7 @@ struct blkdev_cxt {
 	char *partflags;	/* partition flags */
 	char *wwn;		/* storage WWN */
 	char *serial;		/* disk serial number */
+	char *model;		/* disk model */
 
 	int npartitions;	/* # of partitions this device has */
 	int nholders;		/* # of devices mapped directly to this device
@@ -412,6 +413,7 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->partlabel);
 	free(cxt->wwn);
 	free(cxt->serial);
+	free(cxt->model);
 
 	ul_unref_path(cxt->sysfs);
 
@@ -603,6 +605,9 @@ static int get_udev_properties(struct blkdev_cxt *cxt)
 
 		if ((data = udev_device_get_property_value(dev, "ID_SERIAL_SHORT")))
 			cxt->serial = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_MODEL")))
+			cxt->model = xstrdup(data);
+
 		udev_device_unref(dev);
 		cxt->probed = 1;
 		DBG(DEV, ul_debugobj(cxt, "%s: found udev properties", cxt->name));
@@ -1064,8 +1069,13 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		ul_path_read_string(cxt->sysfs, &str, "queue/add_random");
 		break;
 	case COL_MODEL:
-		if (!cxt->partition && cxt->nslaves == 0)
-			ul_path_read_string(cxt->sysfs, &str, "device/model");
+		if (!cxt->partition && cxt->nslaves == 0) {
+			get_udev_properties(cxt);
+			if (cxt->model)
+				str = xstrdup(cxt->model);
+			else
+				ul_path_read_string(cxt->sysfs, &str, "device/model");
+		}
 		break;
 	case COL_SERIAL:
 		if (!cxt->partition && cxt->nslaves == 0) {
