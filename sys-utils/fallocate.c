@@ -352,7 +352,7 @@ int main(int argc, char **argv)
 			posix = 1;
 			break;
 #else
-			errx(EXIT_FAILURE, _("posix_fallocate support is not compiled"))
+			errx(EXIT_FAILURE, _("posix_fallocate support is not compiled"));
 #endif
 		case 'v':
 			verbose++;
