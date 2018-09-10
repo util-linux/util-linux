@@ -279,7 +279,6 @@ int main(int argc, char *argv[])
 	enum {
 		OPT_MOUNTPROC = CHAR_MAX + 1,
 		OPT_PROPAGATION,
-		OPT_SETGROUPS,
 		OPT_KILLCHILD
 	};
 	static const struct option longopts[] = {
@@ -299,7 +298,7 @@ int main(int argc, char *argv[])
 		{ "mount-proc",    optional_argument, NULL, OPT_MOUNTPROC   },
 		{ "map-root-user", no_argument,       NULL, 'r'             },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
-		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
+		{ "setgroups",     required_argument, NULL, 's'             },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -320,7 +319,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "+fhVmuinpCUr", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+fhVmuinpCUrs:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			forkit = 1;
@@ -373,7 +372,7 @@ int main(int argc, char *argv[])
 			unshare_flags |= CLONE_NEWUSER;
 			maproot = 1;
 			break;
-		case OPT_SETGROUPS:
+		case 's':
 			setgrpcmd = setgroups_str2id(optarg);
 			break;
 		case OPT_PROPAGATION:
