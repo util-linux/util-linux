@@ -259,13 +259,16 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid[=<file>]        unshare pid namespace\n"), out);
 	fputs(_(" -U, --user[=<file>]       unshare user namespace\n"), out);
 	fputs(_(" -C, --cgroup[=<file>]     unshare cgroup namespace\n"), out);
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
-	fputs(_("     --kill-child[=<signame>]  when dying, kill the forked child (implies --fork); defaults to SIGKILL\n"), out);
-	fputs(_("     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
-	fputs(_("     --propagation slave|shared|private|unchanged\n"
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
+		"                             defaults to SIGKILL\n"), out);
+	fputs(_(" --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"), out);
+	fputs(_(" --propagation slave|shared|private|unchanged\n"
 	        "                           modify mount propagation in mount namespace\n"), out);
-	fputs(_(" -s, --setgroups allow|deny  control the setgroups syscall in user namespaces\n"), out);
+	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(27));
