@@ -562,6 +562,8 @@ static int get_udev_properties(struct blkdev_cxt *cxt)
 
 	if (cxt->probed)
 		return 0;		/* already done */
+	if (lsblk->sysroot)
+		return -1;		/* don't ask udev when read from data from dump */
 
 	if (!udev)
 		udev = udev_new();
