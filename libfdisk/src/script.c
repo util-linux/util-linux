@@ -241,7 +241,6 @@ const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name)
 	return fi ? fi->data : NULL;
 }
 
-
 /**
  * fdisk_script_set_header:
  * @dp: script instance
@@ -446,6 +445,14 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 			}
 		}
 	}
+
+	if (!rc && fdisk_get_grain_size(cxt) != 2048 * 512) {
+		char buf[64];
+
+		snprintf(buf, sizeof(buf), "%zu", fdisk_get_grain_size(cxt));
+		rc = fdisk_script_set_header(dp, "grain", buf);
+	}
+
 
 	DBG(SCRIPT, ul_debugobj(dp, "read context done [rc=%d]", rc));
 	return rc;
@@ -759,6 +766,7 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 			goto done;			/* only "sectors" supported */
 	} else if (strcmp(name, "label-id") == 0
 		   || strcmp(name, "device") == 0
+		   || strcmp(name, "grain") == 0
 		   || strcmp(name, "first-lba") == 0
 		   || strcmp(name, "last-lba") == 0
 		   || strcmp(name, "table-length") == 0) {
@@ -1431,6 +1439,20 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 
 	DBG(SCRIPT, ul_debugobj(dp, "applying script headers"));
 	fdisk_set_script(cxt, dp);
+
+	str = fdisk_script_get_header(dp, "grain");
+	if (str) {
+		uintmax_t sz;
+
+		rc = parse_size(str, &sz, NULL);
+		if (rc == 0)
+			rc = fdisk_save_user_grain(cxt, sz);
+		if (rc)
+			return rc;
+	}
+
+	if (fdisk_has_user_device_properties(cxt))
+		fdisk_apply_user_device_properties(cxt);
 
 	/* create empty label */
 	name = fdisk_script_get_header(dp, "label");

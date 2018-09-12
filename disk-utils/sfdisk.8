@@ -322,6 +322,11 @@ Specify the last usable sector for GPT partitions.
 .TP
 .B table-length
 Specify the maximal number of GPT partitions.
+.TP
+.B grain
+Specify minimal size in bytes used to calculate partitions alignment.  The
+default is 1MiB and it's strongly recommended to use the default.  Do not
+modify this variable if you're not sure.
 .RE
 .sp
 Note that it is only possible to use header lines before the first partition

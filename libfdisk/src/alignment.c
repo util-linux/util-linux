@@ -338,6 +338,7 @@ int fdisk_save_user_grain(struct fdisk_context *cxt, unsigned long grain)
 	if (!cxt || grain % 512)
 		return -EINVAL;
 
+	DBG(CXT, ul_debugobj(cxt, "user grain size: %lu", grain));
 	cxt->user_grain = grain;
 	return 0;
 }
