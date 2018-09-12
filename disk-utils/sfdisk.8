@@ -313,6 +313,15 @@ Specify the partition table type.  For example \fBdos\fR or \fBgpt\fR.
 .B label-id
 Specify the partition table identifier.  It should be a  hexadecimal number
 (with a 0x prefix) for MBR and a UUID for GPT.
+.TP
+.B first-lba
+Specify the first usable sector for GPT partitions.
+.TP
+.B last-lba
+Specify the last usable sector for GPT partitions.
+.TP
+.B table-length
+Specify the maximal number of GPT partitions.
 .RE
 .sp
 Note that it is only possible to use header lines before the first partition
