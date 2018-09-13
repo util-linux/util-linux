@@ -38,6 +38,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <ctype.h>
+#include <sys/statvfs.h>
 
 #include <blkid.h>
 #include <libmount.h>
@@ -89,7 +90,11 @@ enum {
 	COL_KNAME,
 	COL_PATH,
 	COL_MAJMIN,
+	COL_FSAVAIL,
+	COL_FSSIZE,
 	COL_FSTYPE,
+	COL_FSUSED,
+	COL_FSUSEPERC,
 	COL_TARGET,
 	COL_LABEL,
 	COL_UUID,
@@ -168,10 +173,16 @@ struct colinfo {
 static struct colinfo infos[] = {
 	[COL_NAME]   = { "NAME",    0.25, SCOLS_FL_TREE | SCOLS_FL_NOEXTREMES, N_("device name") },
 	[COL_KNAME]  = { "KNAME",   0.3, 0, N_("internal kernel device name") },
-	[COL_PKNAME] = { "PKNAME",   0.3, 0, N_("internal parent kernel device name") },
+	[COL_PKNAME] = { "PKNAME",  0.3, 0, N_("internal parent kernel device name") },
 	[COL_PATH]   = { "PATH",    0.3,  0, N_("path to the device node") },
 	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number"), COLTYPE_SORTNUM },
-	[COL_FSTYPE] = { "FSTYPE",  0.1, SCOLS_FL_TRUNC, N_("filesystem type") },
+
+	[COL_FSAVAIL]   = { "FSAVAIL", 5, SCOLS_FL_RIGHT, N_("filesystem size available") },
+	[COL_FSSIZE]    = { "FSSIZE", 5, SCOLS_FL_RIGHT, N_("filesystem size") },
+	[COL_FSTYPE]    = { "FSTYPE", 0.1, SCOLS_FL_TRUNC, N_("filesystem type") },
+	[COL_FSUSED]    = { "FSUSED", 5, SCOLS_FL_RIGHT, N_("filesystem size used") },
+	[COL_FSUSEPERC] = { "FSUSE%", 3, SCOLS_FL_RIGHT, N_("filesystem use percentage") },
+
 	[COL_TARGET] = { "MOUNTPOINT", 0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
 	[COL_LABEL]  = { "LABEL",   0.1, 0, N_("filesystem LABEL") },
 	[COL_UUID]   = { "UUID",    36,  0, N_("filesystem UUID") },
@@ -304,6 +315,9 @@ struct blkdev_cxt {
 	char *serial;		/* disk serial number */
 	char *model;		/* disk model */
 
+	char *mountpoint;	/* device mountpoint */
+	struct statvfs fsstat;	/* statvfs() result */
+
 	int npartitions;	/* # of partitions this device has */
 	int nholders;		/* # of devices mapped directly to this device
 				 * /sys/block/.../holders */
@@ -312,6 +326,8 @@ struct blkdev_cxt {
 	int discard;		/* supports discard */
 
 	uint64_t size;		/* device size */
+
+	unsigned int	is_mounted : 1;
 };
 
 static void lsblk_init_debug(void)
@@ -414,6 +430,7 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->wwn);
 	free(cxt->serial);
 	free(cxt->model);
+	free(cxt->mountpoint);
 
 	ul_unref_path(cxt->sysfs);
 
@@ -497,6 +514,9 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 	assert(cxt);
 	assert(cxt->filename);
 
+	if (cxt->is_mounted)
+		return cxt->mountpoint;
+
 	if (!mtab) {
 		mtab = mnt_new_table();
 		if (!mtab)
@@ -522,8 +542,11 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 	fs = mnt_table_find_devno(mtab, makedev(cxt->maj, cxt->min), MNT_ITER_BACKWARD);
 	if (!fs)
 		fs = mnt_table_find_srcpath(mtab, cxt->filename, MNT_ITER_BACKWARD);
-	if (!fs)
-		return is_active_swap(cxt->filename) ? xstrdup("[SWAP]") : NULL;
+	if (!fs) {
+		cxt->mountpoint = is_active_swap(cxt->filename) ? xstrdup("[SWAP]") : NULL;
+		cxt->is_mounted = 1;
+		return cxt->mountpoint;
+	}
 
 	/* found */
 	fsroot = mnt_fs_get_root(fs);
@@ -546,7 +569,9 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 	}
 
 	DBG(DEV, ul_debugobj(cxt, "mountpoint: %s", mnt_fs_get_target(fs)));
-	return xstrdup(mnt_fs_get_target(fs));
+	cxt->mountpoint = xstrdup(mnt_fs_get_target(fs));
+	cxt->is_mounted = 1;
+	return cxt->mountpoint;
 }
 
 #ifndef HAVE_LIBUDEV
@@ -934,6 +959,51 @@ static void unref_sortdata(struct libscols_table *tb)
 	scols_free_iter(itr);
 }
 
+static char *get_vfs_attribute(struct blkdev_cxt *cxt, int id)
+{
+	char *sizestr;
+	uint64_t vfs_attr = 0;
+	char *mnt;
+
+	if (!cxt->fsstat.f_blocks) {
+		mnt = get_device_mountpoint(cxt);
+		if (!mnt)
+			return NULL;
+		if (statvfs(mnt, &cxt->fsstat) != 0)
+			return NULL;
+	}
+
+	switch(id) {
+	case COL_FSSIZE:
+		vfs_attr = cxt->fsstat.f_frsize * cxt->fsstat.f_blocks;
+		break;
+	case COL_FSAVAIL:
+		vfs_attr = cxt->fsstat.f_frsize * cxt->fsstat.f_bavail;
+		break;
+	case COL_FSUSED:
+		vfs_attr = cxt->fsstat.f_frsize * (cxt->fsstat.f_blocks - cxt->fsstat.f_bfree);
+		break;
+	case COL_FSUSEPERC:
+		if (cxt->fsstat.f_blocks == 0)
+			return xstrdup("-");
+
+		xasprintf(&sizestr, "%.0f%%",
+				(double)(cxt->fsstat.f_blocks - cxt->fsstat.f_bfree) /
+				cxt->fsstat.f_blocks * 100);
+		return sizestr;
+	}
+
+	if (!vfs_attr)
+		sizestr = xstrdup("0");
+	else if (lsblk->bytes)
+		xasprintf(&sizestr, "%ju", vfs_attr);
+	else
+		sizestr = size_to_human_string(SIZE_SUFFIX_1LETTER, vfs_attr);
+
+	return sizestr;
+}
+
+
 static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libscols_line *ln)
 {
 	int sort = 0, st_rc = 0;
@@ -998,8 +1068,14 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		if (cxt->fstype)
 			str = xstrdup(cxt->fstype);
 		break;
+	case COL_FSSIZE:
+	case COL_FSAVAIL:
+	case COL_FSUSED:
+	case COL_FSUSEPERC:
+		str = get_vfs_attribute(cxt, id);
+		break;
 	case COL_TARGET:
-		str = get_device_mountpoint(cxt);
+		str = xstrdup(get_device_mountpoint(cxt));
 		break;
 	case COL_LABEL:
 		probe_device(cxt);
@@ -1879,6 +1955,8 @@ int main(int argc, char *argv[])
 			add_uniq_column(COL_FSTYPE);
 			add_uniq_column(COL_LABEL);
 			add_uniq_column(COL_UUID);
+			add_uniq_column(COL_FSAVAIL);
+			add_uniq_column(COL_FSUSEPERC);
 			add_uniq_column(COL_TARGET);
 			break;
 		case 'm':
