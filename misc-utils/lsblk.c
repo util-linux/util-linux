@@ -786,7 +786,7 @@ static char *get_vfs_attribute(struct blkdev_cxt *cxt, int id)
 
 	if (!cxt->fsstat.f_blocks) {
 		mnt = lsblk_device_get_mountpoint(cxt);
-		if (!mnt)
+		if (!mnt || cxt->is_swap)
 			return NULL;
 		if (statvfs(mnt, &cxt->fsstat) != 0)
 			return NULL;

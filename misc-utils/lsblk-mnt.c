@@ -50,7 +50,7 @@ char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt)
 	assert(cxt);
 	assert(cxt->filename);
 
-	if (cxt->is_mounted)
+	if (cxt->is_mounted || cxt->is_swap)
 		return cxt->mountpoint;
 
 	if (!mtab) {
@@ -79,8 +79,12 @@ char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt)
 	if (!fs)
 		fs = mnt_table_find_srcpath(mtab, cxt->filename, MNT_ITER_BACKWARD);
 	if (!fs) {
-		cxt->mountpoint = is_active_swap(cxt->filename) ? xstrdup("[SWAP]") : NULL;
-		cxt->is_mounted = 1;
+		if (is_active_swap(cxt->filename)) {
+			cxt->mountpoint = xstrdup("[SWAP]");
+			cxt->is_swap = 1;
+		} else
+			cxt->mountpoint = NULL;
+
 		return cxt->mountpoint;
 	}
 

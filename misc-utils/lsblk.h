@@ -89,7 +89,8 @@ struct blkdev_cxt {
 
 	uint64_t size;		/* device size */
 
-	unsigned int	is_mounted : 1;
+	unsigned int	is_mounted : 1,
+			is_swap : 1;
 };
 
 /* lsblk-mnt.c */
