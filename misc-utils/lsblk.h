@@ -92,4 +92,6 @@ struct blkdev_cxt {
 	unsigned int	is_mounted : 1;
 };
 
+extern char *get_device_mountpoint(struct blkdev_cxt *cxt);
+
 #endif /* UTIL_LINUX_LSBLK_H */

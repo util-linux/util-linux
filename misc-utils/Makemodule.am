@@ -79,6 +79,7 @@ bin_PROGRAMS += lsblk
 dist_man_MANS += misc-utils/lsblk.8
 lsblk_SOURCES = \
 	misc-utils/lsblk.c \
+	misc-utils/lsblk-mnt.c \
 	misc-utils/lsblk.h
 lsblk_LDADD = $(LDADD) libblkid.la libmount.la libcommon.la libsmartcols.la
 lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir) -I$(ul_libsmartcols_incdir)
