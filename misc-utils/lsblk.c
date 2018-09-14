@@ -1867,6 +1867,7 @@ int main(int argc, char *argv[])
 		lsblk->sort_hidden = 1;
 	}
 
+	lsblk_mnt_init();
 	scols_init_debug(0);
 	ul_path_init_debug();
 
@@ -1958,5 +1959,6 @@ leave:
 #ifdef HAVE_LIBUDEV
 	udev_unref(udev);
 #endif
+	lsblk_mnt_deinit();
 	return status;
 }

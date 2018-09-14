@@ -109,3 +109,15 @@ char *get_device_mountpoint(struct blkdev_cxt *cxt)
 	cxt->is_mounted = 1;
 	return cxt->mountpoint;
 }
+
+void lsblk_mnt_init(void)
+{
+	mnt_init_debug(0);
+}
+
+void lsblk_mnt_deinit(void)
+{
+	mnt_unref_table(mtab);
+	mnt_unref_table(swaps);
+	mnt_unref_cache(mntcache);
+}
