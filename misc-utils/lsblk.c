@@ -822,15 +822,18 @@ static char *get_vfs_attribute(struct blkdev_cxt *cxt, int id)
 	return sizestr;
 }
 
+static struct stat *device_get_stat(struct blkdev_cxt *cxt)
+{
+	if (!cxt->st.st_rdev)
+		stat(cxt->filename, &cxt->st);
+
+	return &cxt->st;
+}
 
 static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libscols_line *ln)
 {
-	int sort = 0, st_rc = 0;
+	int sort = 0;
 	char *str = NULL;
-
-	if (!cxt->st.st_rdev && (id == COL_OWNER || id == COL_GROUP ||
-				 id == COL_MODE))
-		st_rc = stat(cxt->filename, &cxt->st);
 
 	if (lsblk->sort_id == id)
 		sort = 1;
@@ -852,26 +855,27 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		break;
 	case COL_OWNER:
 	{
-		struct passwd *pw = st_rc ? NULL : getpwuid(cxt->st.st_uid);
+		struct stat *st = device_get_stat(cxt);
+		struct passwd *pw = st ? NULL : getpwuid(st->st_uid);
 		if (pw)
 			str = xstrdup(pw->pw_name);
 		break;
 	}
 	case COL_GROUP:
 	{
-		struct group *gr = st_rc ? NULL : getgrgid(cxt->st.st_gid);
+		struct stat *st = device_get_stat(cxt);
+		struct group *gr = st ? NULL : getgrgid(st->st_gid);
 		if (gr)
 			str = xstrdup(gr->gr_name);
 		break;
 	}
 	case COL_MODE:
 	{
-		char md[11];
+		struct stat *st = device_get_stat(cxt);
+		char md[11] = { '\0' };
 
-		if (!st_rc) {
-			xstrmode(cxt->st.st_mode, md);
-			str = xstrdup(md);
-		}
+		if (st)
+			str = xstrdup(xstrmode(st->st_mode, md));
 		break;
 	}
 	case COL_MAJMIN:
