@@ -92,10 +92,10 @@ struct blkdev_cxt {
 	unsigned int	is_mounted : 1;
 };
 
-
+/* lsblk-mnt.c */
 extern void lsblk_mnt_init(void);
 extern void lsblk_mnt_deinit(void);
 
-extern char *get_device_mountpoint(struct blkdev_cxt *cxt);
+extern char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt);
 
 #endif /* UTIL_LINUX_LSBLK_H */

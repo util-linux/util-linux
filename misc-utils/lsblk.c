@@ -785,7 +785,7 @@ static char *get_vfs_attribute(struct blkdev_cxt *cxt, int id)
 	char *mnt;
 
 	if (!cxt->fsstat.f_blocks) {
-		mnt = get_device_mountpoint(cxt);
+		mnt = lsblk_device_get_mountpoint(cxt);
 		if (!mnt)
 			return NULL;
 		if (statvfs(mnt, &cxt->fsstat) != 0)
@@ -894,7 +894,7 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		str = get_vfs_attribute(cxt, id);
 		break;
 	case COL_TARGET:
-		str = xstrdup(get_device_mountpoint(cxt));
+		str = xstrdup(lsblk_device_get_mountpoint(cxt));
 		break;
 	case COL_LABEL:
 		probe_device(cxt);

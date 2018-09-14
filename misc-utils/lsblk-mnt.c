@@ -42,7 +42,7 @@ static int is_active_swap(const char *filename)
 	return mnt_table_find_srcpath(swaps, filename, MNT_ITER_BACKWARD) != NULL;
 }
 
-char *get_device_mountpoint(struct blkdev_cxt *cxt)
+char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt)
 {
 	struct libmnt_fs *fs;
 	const char *fsroot;
