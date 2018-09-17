@@ -27,7 +27,7 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>3        6144  8191    2048   1M 83 Linux
 <removed>4        8192 28671   20480  10M  5 Extended
 <removed>5       10240 12287    2048   1M 83 Linux
-<removed>6       14336 26623   12288   6M 83 Linux
+<removed>6       14336 28671   14336   7M 83 Linux
 
 The partition table has been altered.
 Calling ioctl() to re-read partition table.
