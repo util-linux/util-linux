@@ -1113,7 +1113,7 @@ static int resize_get_last_possible(
 			break;
 		} else {
 			last = pa;
-			*maxsz += pa->size;
+			*maxsz = pa->size - (start - pa->start);
 			DBG(TAB, ul_debugobj(tb, "  new max=%ju (last updated)", (uintmax_t) *maxsz));
 		}
 	}
