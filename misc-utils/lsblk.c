@@ -328,6 +328,26 @@ static int column_id_to_number(int id)
 	return -1;
 }
 
+static void free_device_properties(struct lsblk_devprop *p)
+{
+	if (!p)
+		return;
+
+	free(p->fstype);
+	free(p->uuid);
+	free(p->ptuuid);
+	free(p->pttype);
+	free(p->label);
+	free(p->parttype);
+	free(p->partuuid);
+	free(p->partlabel);
+	free(p->wwn);
+	free(p->serial);
+	free(p->model);
+
+	free(p);
+}
+
 static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 {
 	if (!cxt)
@@ -338,19 +358,9 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->name);
 	free(cxt->dm_name);
 	free(cxt->filename);
-	free(cxt->fstype);
-	free(cxt->uuid);
-	free(cxt->ptuuid);
-	free(cxt->pttype);
-	free(cxt->label);
-	free(cxt->parttype);
-	free(cxt->partuuid);
-	free(cxt->partlabel);
-	free(cxt->wwn);
-	free(cxt->serial);
-	free(cxt->model);
 	free(cxt->mountpoint);
 
+	free_device_properties(cxt->properties);
 	ul_unref_path(cxt->sysfs);
 
 	memset(cxt, 0, sizeof(*cxt));
@@ -394,99 +404,96 @@ static char *get_device_path(struct blkdev_cxt *cxt)
 }
 
 #ifndef HAVE_LIBUDEV
-static int get_udev_properties(struct blkdev_cxt *cxt
+static struct lsblk_devprop *get_properties_by_udev(struct blkdev_cxt *cxt
 				__attribute__((__unused__)))
 {
-	return -1;
+	return NULL;
 }
 #else
-static int get_udev_properties(struct blkdev_cxt *cxt)
+static struct lsblk_devprop *get_properties_by_udev(struct blkdev_cxt *cxt)
 {
 	struct udev_device *dev;
 
-	if (cxt->probed)
-		return 0;		/* already done */
-	if (lsblk->sysroot)
-		return -1;		/* don't ask udev when read from data from dump */
+	if (cxt->udev_requested)
+		return cxt->properties;
 
+	if (lsblk->sysroot)
+		goto done;
 	if (!udev)
-		udev = udev_new();
+		udev = udev_new();	/* global handler */
 	if (!udev)
-		return -1;
+		goto done;
 
 	dev = udev_device_new_from_subsystem_sysname(udev, "block", cxt->name);
 	if (dev) {
 		const char *data;
+		struct lsblk_devprop *prop;
+
+		if (cxt->properties)
+			free_device_properties(cxt->properties);
+		prop = cxt->properties = xcalloc(1, sizeof(*cxt->properties));
 
 		if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL_ENC"))) {
-			cxt->label = xstrdup(data);
-			unhexmangle_string(cxt->label);
+			prop->label = xstrdup(data);
+			unhexmangle_string(prop->label);
 		}
 		if ((data = udev_device_get_property_value(dev, "ID_FS_UUID_ENC"))) {
-			cxt->uuid = xstrdup(data);
-			unhexmangle_string(cxt->uuid);
+			prop->uuid = xstrdup(data);
+			unhexmangle_string(prop->uuid);
 		}
 		if ((data = udev_device_get_property_value(dev, "ID_PART_TABLE_UUID")))
-			cxt->ptuuid = xstrdup(data);
+			prop->ptuuid = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_TABLE_TYPE")))
-			cxt->pttype = xstrdup(data);
+			prop->pttype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME"))) {
-			cxt->partlabel = xstrdup(data);
-			unhexmangle_string(cxt->partlabel);
+			prop->partlabel = xstrdup(data);
+			unhexmangle_string(prop->partlabel);
 		}
 		if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
-			cxt->fstype = xstrdup(data);
+			prop->fstype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_TYPE")))
-			cxt->parttype = xstrdup(data);
+			prop->parttype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
-			cxt->partuuid = xstrdup(data);
+			prop->partuuid = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_FLAGS")))
-			cxt->partflags = xstrdup(data);
+			prop->partflags = xstrdup(data);
 
 		data = udev_device_get_property_value(dev, "ID_WWN_WITH_EXTENSION");
 		if (!data)
 			data = udev_device_get_property_value(dev, "ID_WWN");
 		if (data)
-			cxt->wwn = xstrdup(data);
+			prop->wwn = xstrdup(data);
 
 		if ((data = udev_device_get_property_value(dev, "ID_SERIAL_SHORT")))
-			cxt->serial = xstrdup(data);
+			prop->serial = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_MODEL")))
-			cxt->model = xstrdup(data);
+			prop->model = xstrdup(data);
 
 		udev_device_unref(dev);
-		cxt->probed = 1;
 		DBG(DEV, ul_debugobj(cxt, "%s: found udev properties", cxt->name));
 	}
 
-	return cxt->probed == 1 ? 0 : -1;
-
+done:
+	cxt->udev_requested = 1;
+	return cxt->properties;
 }
 #endif /* HAVE_LIBUDEV */
 
-static void probe_device(struct blkdev_cxt *cxt)
+static struct lsblk_devprop *get_properties_by_blkid(struct blkdev_cxt *cxt)
 {
 	blkid_probe pr = NULL;
 
-	if (cxt->probed)
-		return;
+	if (cxt->blkid_requested)
+		return cxt->properties;
 
 	if (!cxt->size)
-		return;
-
-	/* try udev DB */
-	if (get_udev_properties(cxt) == 0)
-		return;				/* success */
-
-	cxt->probed = 1;
-
-	/* try libblkid (fallback) */
+		goto done;
 	if (getuid() != 0)
-		return;				/* no permissions to read from the device */
+		goto done;;				/* no permissions to read from the device */
 
 	pr = blkid_new_probe_from_filename(cxt->filename);
 	if (!pr)
-		return;
+		goto done;
 
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_LABEL |
@@ -497,30 +504,48 @@ static void probe_device(struct blkdev_cxt *cxt)
 
 	if (!blkid_do_safeprobe(pr)) {
 		const char *data = NULL;
+		struct lsblk_devprop *prop;
+
+		if (cxt->properties)
+			free_device_properties(cxt->properties);
+		prop = cxt->properties = xcalloc(1, sizeof(*cxt->properties));
 
 		if (!blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
-			cxt->fstype = xstrdup(data);
+			prop->fstype = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "UUID", &data, NULL))
-			cxt->uuid = xstrdup(data);
+			prop->uuid = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PTUUID", &data, NULL))
-			cxt->ptuuid = xstrdup(data);
+			prop->ptuuid = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PTTYPE", &data, NULL))
-			cxt->pttype = xstrdup(data);
+			prop->pttype = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "LABEL", &data, NULL))
-			cxt->label = xstrdup(data);
+			prop->label = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_TYPE", &data, NULL))
-			cxt->parttype = xstrdup(data);
+			prop->parttype = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_UUID", &data, NULL))
-			cxt->partuuid = xstrdup(data);
+			prop->partuuid = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_NAME", &data, NULL))
-			cxt->partlabel = xstrdup(data);
+			prop->partlabel = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_FLAGS", &data, NULL))
-			cxt->partflags = xstrdup(data);
+			prop->partflags = xstrdup(data);
+
 		DBG(DEV, ul_debugobj(cxt, "%s: found blkid properties", cxt->name));
 	}
 
+done:
 	blkid_free_probe(pr);
-	return;
+
+	cxt->blkid_requested = 1;
+	return cxt->properties;
+}
+
+static struct lsblk_devprop *get_device_properties(struct blkdev_cxt *cxt)
+{
+	struct lsblk_devprop *p = get_properties_by_udev(cxt);
+
+	if (!p)
+		p = get_properties_by_blkid(cxt);
+	return p;
 }
 
 static int is_readonly_device(struct blkdev_cxt *cxt)
@@ -832,6 +857,7 @@ static struct stat *device_get_stat(struct blkdev_cxt *cxt)
 
 static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libscols_line *ln)
 {
+	struct lsblk_devprop *prop;
 	int sort = 0;
 	char *str = NULL;
 
@@ -887,9 +913,9 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 			set_sortdata_u64(ln, col, makedev(cxt->maj, cxt->min));
 		break;
 	case COL_FSTYPE:
-		probe_device(cxt);
-		if (cxt->fstype)
-			str = xstrdup(cxt->fstype);
+		prop = get_device_properties(cxt);
+		if (prop && prop->fstype)
+			str = xstrdup(prop->fstype);
 		break;
 	case COL_FSSIZE:
 	case COL_FSAVAIL:
@@ -901,49 +927,49 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		str = xstrdup(lsblk_device_get_mountpoint(cxt));
 		break;
 	case COL_LABEL:
-		probe_device(cxt);
-		if (cxt->label)
-			str = xstrdup(cxt->label);
+		prop = get_device_properties(cxt);
+		if (prop && prop->label)
+			str = xstrdup(prop->label);
 		break;
 	case COL_UUID:
-		probe_device(cxt);
-		if (cxt->uuid)
-			str = xstrdup(cxt->uuid);
+		prop = get_device_properties(cxt);
+		if (prop && prop->uuid)
+			str = xstrdup(prop->uuid);
 		break;
 	case COL_PTUUID:
-		probe_device(cxt);
-		if (cxt->ptuuid)
-			str = xstrdup(cxt->ptuuid);
+		prop = get_device_properties(cxt);
+		if (prop && prop->ptuuid)
+			str = xstrdup(prop->ptuuid);
 		break;
 	case COL_PTTYPE:
-		probe_device(cxt);
-		if (cxt->pttype)
-			str = xstrdup(cxt->pttype);
+		prop = get_device_properties(cxt);
+		if (prop && prop->pttype)
+			str = xstrdup(prop->pttype);
 		break;
 	case COL_PARTTYPE:
-		probe_device(cxt);
-		if (cxt->parttype)
-			str = xstrdup(cxt->parttype);
+		prop = get_device_properties(cxt);
+		if (prop && prop->parttype)
+			str = xstrdup(prop->parttype);
 		break;
 	case COL_PARTLABEL:
-		probe_device(cxt);
-		if (cxt->partlabel)
-			str = xstrdup(cxt->partlabel);
+		prop = get_device_properties(cxt);
+		if (prop && prop->partlabel)
+			str = xstrdup(prop->partlabel);
 		break;
 	case COL_PARTUUID:
-		probe_device(cxt);
-		if (cxt->partuuid)
-			str = xstrdup(cxt->partuuid);
+		prop = get_device_properties(cxt);
+		if (prop && prop->partuuid)
+			str = xstrdup(prop->partuuid);
 		break;
 	case COL_PARTFLAGS:
-		probe_device(cxt);
-		if (cxt->partflags)
-			str = xstrdup(cxt->partflags);
+		prop = get_device_properties(cxt);
+		if (prop && prop->partflags)
+			str = xstrdup(prop->partflags);
 		break;
 	case COL_WWN:
-		get_udev_properties(cxt);
-		if (cxt->wwn)
-			str = xstrdup(cxt->wwn);
+		prop = get_properties_by_udev(cxt);
+		if (prop && prop->wwn)
+			str = xstrdup(prop->wwn);
 		break;
 	case COL_RA:
 		ul_path_read_string(cxt->sysfs, &str, "queue/read_ahead_kb");
@@ -971,18 +997,18 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		break;
 	case COL_MODEL:
 		if (!cxt->partition && cxt->nslaves == 0) {
-			get_udev_properties(cxt);
-			if (cxt->model)
-				str = xstrdup(cxt->model);
+			prop = get_properties_by_udev(cxt);
+			if (prop && prop->model)
+				str = xstrdup(prop->model);
 			else
 				ul_path_read_string(cxt->sysfs, &str, "device/model");
 		}
 		break;
 	case COL_SERIAL:
 		if (!cxt->partition && cxt->nslaves == 0) {
-			get_udev_properties(cxt);
-			if (cxt->serial)
-				str = xstrdup(cxt->serial);
+			prop = get_properties_by_udev(cxt);
+			if (prop && prop->serial)
+				str = xstrdup(prop->serial);
 			else
 				ul_path_read_string(cxt->sysfs, &str, "device/serial");
 		}

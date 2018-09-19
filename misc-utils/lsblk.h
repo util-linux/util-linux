@@ -48,22 +48,7 @@ struct lsblk {
 
 extern struct lsblk *lsblk;     /* global handler */
 
-struct blkdev_cxt {
-	struct blkdev_cxt *parent;
-
-	struct libscols_line *scols_line;
-	struct stat	st;
-
-	char *name;		/* kernel name in /sys/block */
-	char *dm_name;		/* DM name (dm/block) */
-
-	char *filename;		/* path to device node */
-
-	struct path_cxt	*sysfs;
-
-	int partition;		/* is partition? TRUE/FALSE */
-
-	int probed;		/* already probed */
+struct lsblk_devprop {
 	char *fstype;		/* detected fs, NULL or "?" if cannot detect */
 	char *uuid;		/* filesystem UUID (or stack uuid) */
 	char *ptuuid;		/* partition table UUID */
@@ -76,6 +61,23 @@ struct blkdev_cxt {
 	char *wwn;		/* storage WWN */
 	char *serial;		/* disk serial number */
 	char *model;		/* disk model */
+};
+
+struct blkdev_cxt {
+	struct blkdev_cxt *parent;
+	struct lsblk_devprop *properties;
+
+	struct libscols_line *scols_line;
+	struct stat	st;
+
+	char *name;		/* kernel name in /sys/block */
+	char *dm_name;		/* DM name (dm/block) */
+
+	char *filename;		/* path to device node */
+
+	struct path_cxt	*sysfs;
+
+	int partition;		/* is partition? TRUE/FALSE */
 
 	char *mountpoint;	/* device mountpoint */
 	struct statvfs fsstat;	/* statvfs() result */
@@ -90,7 +92,9 @@ struct blkdev_cxt {
 	uint64_t size;		/* device size */
 
 	unsigned int	is_mounted : 1,
-			is_swap : 1;
+			is_swap : 1,
+			udev_requested : 1,
+			blkid_requested : 1;
 };
 
 /* lsblk-mnt.c */
