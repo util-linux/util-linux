@@ -103,4 +103,9 @@ extern void lsblk_mnt_deinit(void);
 
 extern char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt);
 
+/* lsblk-properties.c */
+extern void lsblk_device_free_properties(struct lsblk_devprop *p);
+extern struct lsblk_devprop *lsblk_device_get_properties(struct blkdev_cxt *cxt);
+extern void lsblk_properties_deinit(void);
+
 #endif /* UTIL_LINUX_LSBLK_H */
