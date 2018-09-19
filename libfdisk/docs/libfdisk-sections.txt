@@ -39,6 +39,7 @@ fdisk_ask_number_get_range
 fdisk_ask_number_get_result
 fdisk_ask_number_get_unit
 fdisk_ask_number_inchars
+fdisk_ask_number_is_wrap_negative
 fdisk_ask_number_set_relative
 fdisk_ask_number_set_result
 fdisk_ask_partnum
