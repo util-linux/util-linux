@@ -48,6 +48,7 @@ cal:  libtinfo
 chcpu:  
 chfn:  libpam libpam_misc libpthread libreadline libselinux libuser 
 chmem:  
+choom:  
 chrt:  
 chsh:  libpam libpam_misc libpthread libreadline libselinux libuser 
 col:  
