@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: LGPL-2.1-or-later */
-/**
+
+/*
  * This file is part of libmount from util-linux project.
  *
  * Copyright (C) 2009-2018 Karel Zak <kzak@redhat.com>
