@@ -1351,9 +1351,9 @@ dev_t fdisk_get_devno(struct fdisk_context *cxt)
  *
  * Returns: device model string or NULL.
  */
+#ifdef __linux__
 const char *fdisk_get_devmodel(struct fdisk_context *cxt)
 {
-#ifdef __linux__
 	assert(cxt);
 
 	if (cxt->dev_model_probed)
@@ -1369,11 +1369,13 @@ const char *fdisk_get_devmodel(struct fdisk_context *cxt)
 	}
 	cxt->dev_model_probed = 1;
 	return cxt->dev_model;
-#else
-	return NULL;
-#endif
-
 }
+#else
+const char *fdisk_get_devmodel(struct fdisk_context *cxt __attribute__((__unused__)))
+{
+	return NULL;
+}
+#endif
 
 /**
  * fdisk_get_devfd:
