@@ -449,7 +449,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 	if (!rc && fdisk_get_grain_size(cxt) != 2048 * 512) {
 		char buf[64];
 
-		snprintf(buf, sizeof(buf), "%zu", fdisk_get_grain_size(cxt));
+		snprintf(buf, sizeof(buf), "%lu", fdisk_get_grain_size(cxt));
 		rc = fdisk_script_set_header(dp, "grain", buf);
 	}
 
