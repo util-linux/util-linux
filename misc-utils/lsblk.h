@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <inttypes.h>
+#include <sys/stat.h>
 #include <sys/statvfs.h>
 
 #include <libsmartcols.h>
