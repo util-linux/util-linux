@@ -17,9 +17,11 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #ifdef HAVE_STDIO_EXT_H
 #	include <stdio_ext.h>
 #endif
-#ifdef HAVE_FPURGE
+#ifndef HAVE___FPURGE
+# ifdef HAVE_FPURGE
 #	define HAVE___FPURGE 1
 #	define __fpurge fpurge
+# endif
 #endif
 #include <string.h>
 #include <stdlib.h>
