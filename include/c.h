@@ -29,6 +29,10 @@
 # define LOGIN_NAME_MAX 256
 #endif
 
+#ifndef NAME_MAX
+# define NAME_MAX PATH_MAX
+#endif
+
 /*
  * Compiler-specific stuff
  */
