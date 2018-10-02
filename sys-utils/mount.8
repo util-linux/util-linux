@@ -383,8 +383,11 @@ a second place by using:
 .I olddir newdir
 .RE
 
-Note that the filesystem mount options will remain the same as those
-on the original mount point.
+Note that the filesystem mount options maintained by kernel will remain the same as those
+on the original mount point.  The userspace mount options (e.g. _netdev) will not be copied
+by
+.BR mount (8)
+and it's necessary explicitly specify the options on mount command line.
 
 .BR mount (8)
 since v2.27 allows to change the mount options by passing the
