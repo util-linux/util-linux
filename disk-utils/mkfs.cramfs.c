@@ -418,9 +418,9 @@ static unsigned int write_superblock(struct entry *root, char *base, int size)
 
 	memset(super->name, 0x00, sizeof(super->name));
 	if (opt_name)
-		strncpy((char *)super->name, opt_name, sizeof(super->name));
+		str2memcpy((char *)super->name, opt_name, sizeof(super->name));
 	else
-		strncpy((char *)super->name, "Compressed", sizeof(super->name));
+		str2memcpy((char *)super->name, "Compressed", sizeof(super->name));
 
 	super->root.mode = root->mode;
 	super->root.uid = root->uid;
