@@ -65,6 +65,34 @@ static inline void xstrncpy(char *dest, const char *src, size_t n)
 	dest[n-1] = 0;
 }
 
+/* This is like strncpy(), but based on memcpy(), so compilers and static
+ * analyzers do not complain when sizeof(destination) is the same as 'n' and
+ * result is not terminated by zero.
+ *
+ * Use this function to copy string to logs with fixed sizes (wtmp/utmp. ...)
+ * where string terminator is optional.
+ */
+static inline void *str2memcpy(void *dest, const char *src, size_t n)
+{
+	size_t bytes = strlen(src) + 1;
+
+	if (bytes > n)
+		bytes = n;
+
+	memcpy(dest, src, bytes);
+	return dest;
+}
+
+static inline char *mem2strcpy(char *dest, const void *src, size_t n, size_t nmax)
+{
+	if (n + 1 > nmax)
+		n = nmax - 1;
+
+	memcpy(dest, src, n);
+	dest[nmax-1] = '\0';
+	return dest;
+}
+
 static inline int strdup_to_offset(void *stru, size_t offset, const char *str)
 {
 	char *n = NULL;
