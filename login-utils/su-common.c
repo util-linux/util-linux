@@ -609,14 +609,14 @@ static void log_btmp(struct su_context *su)
 	DBG(LOG, ul_debug("btmp logging"));
 
 	memset(&ut, 0, sizeof(ut));
-	strncpy(ut.ut_user,
+	str2memcpy(ut.ut_user,
 		su->pwd && su->pwd->pw_name ? su->pwd->pw_name : "(unknown)",
 		sizeof(ut.ut_user));
 
 	if (su->tty_number)
-		xstrncpy(ut.ut_id, su->tty_number, sizeof(ut.ut_id));
+		str2memcpy(ut.ut_id, su->tty_number, sizeof(ut.ut_id));
 	if (su->tty_name)
-		xstrncpy(ut.ut_line, su->tty_name, sizeof(ut.ut_line));
+		str2memcpy(ut.ut_line, su->tty_name, sizeof(ut.ut_line));
 
 	gettimeofday(&tv, NULL);
 	ut.ut_tv.tv_sec = tv.tv_sec;
