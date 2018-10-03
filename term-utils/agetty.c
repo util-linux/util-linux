@@ -957,7 +957,7 @@ static void update_utmp(struct options *op)
 		memset(&ut, 0, sizeof(ut));
 		if (vcline && *vcline)
 			/* Standard virtual console devices */
-			strncpy(ut.ut_id, vcline, sizeof(ut.ut_id));
+			str2memcpy(ut.ut_id, vcline, sizeof(ut.ut_id));
 		else {
 			size_t len = strlen(line);
 			char * ptr;
@@ -965,14 +965,14 @@ static void update_utmp(struct options *op)
 				ptr = line + len - sizeof(ut.ut_id);
 			else
 				ptr = line;
-			strncpy(ut.ut_id, ptr, sizeof(ut.ut_id));
+			str2memcpy(ut.ut_id, ptr, sizeof(ut.ut_id));
 		}
 	}
 
-	strncpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
-	strncpy(ut.ut_line, line, sizeof(ut.ut_line));
+	str2memcpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
+	str2memcpy(ut.ut_line, line, sizeof(ut.ut_line));
 	if (fakehost)
-		strncpy(ut.ut_host, fakehost, sizeof(ut.ut_host));
+		str2memcpy(ut.ut_host, fakehost, sizeof(ut.ut_host));
 	time(&t);
 	ut.ut_tv.tv_sec = t;
 	ut.ut_type = LOGIN_PROCESS;
