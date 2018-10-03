@@ -259,7 +259,7 @@ int main(int argc, char **argv)
 		if (group_buf && !is_gr_member(utmpptr->ut_user, group_buf))
 			continue;
 
-		xstrncpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line));
+		mem2strcpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line), sizeof(line));
 		if ((p = ttymsg(&iov, 1, line, timeout)) != NULL)
 			warnx("%s", p);
 	}
