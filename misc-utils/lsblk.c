@@ -413,6 +413,9 @@ static char *get_type(struct blkdev_cxt *cxt)
 {
 	char *res = NULL, *p;
 
+	if (cxt->partition)
+		return xstrdup("part");
+
 	if (is_dm(cxt->name)) {
 		char *dm_uuid = NULL;
 
@@ -453,7 +456,7 @@ static char *get_type(struct blkdev_cxt *cxt)
 		if (ul_path_read_s32(cxt->sysfs, &x, "device/type") == 0)
 			type = blkdev_scsi_type_to_name(x);
 		if (!type)
-			type = cxt->partition ? "part" : "disk";
+			type = "disk";
 		res = xstrdup(type);
 	}
 
