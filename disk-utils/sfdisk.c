@@ -828,6 +828,8 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 		sf->cxt = fdisk_new_nested_context(sf->cxt, "dos");
 		if (!sf->cxt)
 			err(EXIT_FAILURE, _("cannot switch to PMBR"));
+		fdisk_info(sf->cxt, _("Activation is unsupported for GPT -- entering nested PMBR."));
+
 	} else if (!fdisk_is_label(sf->cxt, DOS))
 		errx(EXIT_FAILURE, _("toggle boot flags is supported for MBR or PMBR only"));
 
