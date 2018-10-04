@@ -824,6 +824,9 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
 	if (fdisk_is_label(sf->cxt, GPT)) {
+		if (fdisk_gpt_is_hybrid(sf->cxt))
+			errx(EXIT_FAILURE, _("toggle boot flags is unsupported for Hybrid GPT/MBR"));
+
 		/* Switch from GPT to PMBR */
 		sf->cxt = fdisk_new_nested_context(sf->cxt, "dos");
 		if (!sf->cxt)
