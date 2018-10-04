@@ -21,13 +21,13 @@ _setpriv_module()
 			;;
 		'--ruid'|'--euid'|'--reuid')
 			local UIDS
-			UIDS=$(getent passwd | awk -F: '{print $3}')
+			UIDS=$(getent passwd | awk -F: '{print $1}')
 			COMPREPLY=( $(compgen -W "$UIDS" -- $cur) )
 			return 0
 			;;
 		'--rgid'|'--egid'|'--regid')
 			local GIDS
-			GIDS=$(getent group | awk -F: '{print $3}')
+			GIDS=$(getent group | awk -F: '{print $1}')
 			COMPREPLY=( $(compgen -W "$GIDS" -- $cur) )
 			return 0
 			;;
@@ -65,6 +65,18 @@ _setpriv_module()
 			COMPREPLY=( $(compgen -P "$prefix" -W "$SBITS" -S ',' -- $realcur) )
 			return 0
 			;;
+		'--pdeathsig')
+			local i signals
+			for i in $(kill -l); do
+				case $i in
+					SIG*)
+						signals+="$i "
+					;;
+				esac
+			done
+			COMPREPLY=( $(compgen -W "keep clear $signals" -- $cur) )
+			return 0
+			;;
 		'--selinux-label')
 			# FIXME: how to list selinux labels?
 			COMPREPLY=( $(compgen -W "label" -- $cur) )
@@ -96,6 +108,8 @@ _setpriv_module()
 				--keep-groupskeep
 				--groups
 				--securebits
+				--pdeathsig
+				--reset-env
 				--selinux-label
 				--apparmor-profile
 				--help

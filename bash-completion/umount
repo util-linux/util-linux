@@ -33,6 +33,7 @@ _umount_module()
 				--recursive
 				--read-only
 				--types
+				--quiet
 				--verbose
 				--help
 				--version"
