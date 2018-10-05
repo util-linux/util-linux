@@ -269,6 +269,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --propagation slave|shared|private|unchanged\n"
 	        "                           modify mount propagation in mount namespace\n"), out);
 	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -R, --root=<dir>	    run the command with root directory set to <dir>\n"), out);
+	fputs(_(" -w, --wd=<dir>	    change working directory to <dir>\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(27));
@@ -283,7 +286,7 @@ int main(int argc, char *argv[])
 		OPT_MOUNTPROC = CHAR_MAX + 1,
 		OPT_PROPAGATION,
 		OPT_SETGROUPS,
-		OPT_KILLCHILD
+		OPT_KILLCHILD,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -303,6 +306,8 @@ int main(int argc, char *argv[])
 		{ "map-root-user", no_argument,       NULL, 'r'             },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
 		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
+		{ "root",	   required_argument, NULL, 'R'		    },
+		{ "wd",		   required_argument, NULL, 'w'		    },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -311,6 +316,8 @@ int main(int argc, char *argv[])
 	int c, forkit = 0, maproot = 0;
 	int kill_child_signo = 0; /* 0 means --kill-child was not used */
 	const char *procmnt = NULL;
+	const char *newroot = NULL;
+	const char *newdir = NULL;
 	pid_t pid = 0;
 	int fds[2];
 	int status;
@@ -323,7 +330,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "+fhVmuinpCUr", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+fhVmuinpCUrR:w:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			forkit = 1;
@@ -391,6 +398,12 @@ int main(int argc, char *argv[])
 			} else {
 				kill_child_signo = SIGKILL;
 			}
+			break;
+		case 'R':
+			newroot = optarg;
+			break;
+		case 'w':
+			newdir = optarg;
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
@@ -471,10 +484,21 @@ int main(int argc, char *argv[])
 	if ((unshare_flags & CLONE_NEWNS) && propagation)
 		set_propagation(propagation);
 
-	if (procmnt &&
-	    (mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL) != 0 ||
-	     mount("proc", procmnt, "proc", MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0))
+	if (newroot) {
+		if (chroot(newroot) != 0)
+			err(EXIT_FAILURE,
+			    _("cannot change root directory to '%s'"), newroot);
+		newdir = newdir ?: "/";
+	}
+	if (newdir && chdir(newdir))
+		err(EXIT_FAILURE, _("cannot chdir to '%s'"), newdir);
+
+	if (procmnt) {
+		if (!newroot && mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL) != 0)
+			err(EXIT_FAILURE, _("umount %s failed"), procmnt);
+		if (mount("proc", procmnt, "proc", MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0)
 			err(EXIT_FAILURE, _("mount %s failed"), procmnt);
+	}
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);

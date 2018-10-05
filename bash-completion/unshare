@@ -33,7 +33,9 @@ _unshare_module()
 				--propagation
 				--setgroups
 				--help
-				--version"
+				--version
+				--root
+				--wd"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
