@@ -520,6 +520,11 @@ AC_CHECK_FUNCS([getusershell], [have_getusershell=yes],[have_getusershell=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 
+have_setns_syscall="yes"
+UL_CHECK_SYSCALL([setns])
+AS_IF([test "x$ul_cv_syscall_setns" = xno], [
+   have_setns_syscall="no"
+])
 
 AC_CHECK_FUNCS([isnan], [],
 	[AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]
@@ -1084,7 +1089,12 @@ UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifie
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
 AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes -a "x$enable_static" = xyes])
 AS_IF([test "x$build_libmount" = xyes], [
-	AC_DEFINE(HAVE_LIBMOUNT, 1, [Define if libmount available.])
+  AC_DEFINE(HAVE_LIBMOUNT, 1, [Define if libmount available.])
+  AS_IF([test "x$have_setns_syscall" = "xyes"], [
+    AC_DEFINE([USE_LIBMOUNT_SUPPORT_NAMESPACES], [1], [Define to 1 if want to support namepaces.])
+  ],[
+    AC_MSG_WARN([libmount will be compiled without namespaces support])
+  ])
 ])
 
 AC_SUBST([LIBMOUNT_VERSION])
@@ -1102,7 +1112,6 @@ AC_ARG_ENABLE([libmount-support-mtab],
 AS_IF([test "x$enable_libmount_support_mtab" = xyes], [
   AC_DEFINE([USE_LIBMOUNT_SUPPORT_MTAB], [1], [Define to 1 if want to support mtab.])
 ])
-
 
 dnl
 dnl libsmartcols
@@ -1352,7 +1361,7 @@ AC_ARG_ENABLE([nsenter],
 )
 UL_BUILD_INIT([nsenter])
 UL_REQUIRES_LINUX([nsenter])
-UL_REQUIRES_SYSCALL_CHECK([nsenter], [UL_CHECK_SYSCALL([setns])], [setns])
+UL_REQUIRES_HAVE([nsenter], [setns_syscall], [setns syscall])
 AM_CONDITIONAL([BUILD_NSENTER], [test "x$build_nsenter" = xyes])
 AC_CHECK_FUNCS([setns])
 
