@@ -2739,15 +2739,15 @@ static void close_ns(struct libmnt_ns *ns)
  * Sets target namespace to namespace represented by @path. If @path is NULL,
  * target namespace is cleared.
  *
+ * This function sets errno to ENOSYS and returns error if libmount is
+ * compiled without namespaces support.
+*
  * Returns: 0 on success, negative number in case of error.
  *
  * Since: 2.33
  */
 int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path)
 {
-	int errsv = 0;
-	int tmp;
-
 	if (!cxt)
 		return -EINVAL;
 
@@ -2759,6 +2759,10 @@ int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path)
 		close_ns(&cxt->ns_tgt);
 		return 0;
 	}
+
+#ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
+	int errsv = 0;
+	int tmp;
 
 	errno = 0;
 
@@ -2793,6 +2797,10 @@ int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path)
 err:
 	close(tmp);
 	errno = errsv;
+
+#else /* ! USE_LIBMOUNT_SUPPORT_NAMESPACES */
+	errno = ENOSYS;
+#endif
 	return -errno;
 }
 
@@ -2846,15 +2854,20 @@ struct libmnt_ns *mnt_context_get_origin_ns(struct libmnt_context *cxt)
  */
 struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmnt_ns *ns)
 {
-	struct libmnt_ns *old;
+	struct libmnt_ns *old = NULL;
 
 	if (!cxt || !ns)
 		return NULL;
 
+	/*
+	 * If mnt_context_set_target_ns() has never been used than @ns file
+	 * descriptor is -1 and this function is noop.
+	 */
 	old = cxt->ns_cur;
 	if (ns == old || ns->fd == -1)
 		return old;
 
+#ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
 	/* remember the curremt cache */
 	if (old->cache != cxt->cache) {
 		mnt_unref_cache(old->cache);
@@ -2882,6 +2895,7 @@ struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmn
 	mnt_unref_cache(cxt->cache);
 	cxt->cache = ns->cache;
 	mnt_ref_cache(cxt->cache);
+#endif /* USE_LIBMOUNT_SUPPORT_NAMESPACES */
 
 	return old;
 }

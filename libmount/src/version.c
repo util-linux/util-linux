@@ -34,6 +34,9 @@ static const char *lib_features[] = {
 #ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	"mtab",
 #endif
+#ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
+	"namespaces",
+#endif
 #if !defined(NDEBUG)
 	"assert",	/* libc assert.h stuff */
 #endif
