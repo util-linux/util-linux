@@ -16,10 +16,12 @@ _fstrim_module()
 	case $cur in
 		-*)
 			OPTS="--all
+				--fstab
 				--offset
 				--length
 				--minimum
 				--verbose
+				--dry-run
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

@@ -25,6 +25,7 @@ _su_module()
 		-*)
 			OPTS="	--user
 				--preserve-environment
+				--whitelist-environment
 				--group
 				--supp-group
 				--login

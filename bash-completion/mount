@@ -34,6 +34,20 @@ _mount_module()
 			COMPREPLY=( $(compgen -W "$UUIDS" -- $cur) )
 			return 0
 			;;
+		'-N'|'--namespace')
+			local NAMESPACE
+			NAMESPACE="$(lsns --type mnt --output PATH,PID --noheadings)"
+			COMPREPLY=( $(compgen -W "$NAMESPACE" -- $cur) )
+			return 0
+			;;
+		'--options-mode')
+			COMPREPLY=( $(compgen -W "ignore append prepend replace" -- $cur) )
+			return 0
+			;;
+		'--options-source')
+			COMPREPLY=( $(compgen -W "fstab mtab disable" -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -50,6 +64,9 @@ _mount_module()
 				--show-labels
 				--no-mtab
 				--options
+				--options-mode
+				--options-source
+				--options-source-force
 				--test-opts
 				--read-only
 				--types
@@ -58,6 +75,7 @@ _mount_module()
 				--verbose
 				--version
 				--read-write
+				--namespace
 				--label
 				--uuid
 				--bind
