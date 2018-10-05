@@ -35,7 +35,9 @@ _unshare_module()
 				--help
 				--version
 				--root
-				--wd"
+				--wd
+				--setuid
+				--setgid"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

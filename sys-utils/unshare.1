@@ -192,6 +192,13 @@ run the command with root directory set to \fIdir\fP.
 .BR \-w, "\-\-wd=\fIdir"
 change working directory to \fIdir\fP.
 .TP
+.BR \-S, "\-\-setuid \fIuid"
+Set the user ID which will be used in the entered namespace.
+.TP
+.BR \-G, "\-\-setgid \fIgid"
+Set the group ID which will be used in the entered namespace and drop
+supplementary groups.
+.TP
 .BR \-V , " \-\-version"
 Display version information and exit.
 .TP
