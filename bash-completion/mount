@@ -36,7 +36,7 @@ _mount_module()
 			;;
 		'-N'|'--namespace')
 			local NAMESPACE
-			NAMESPACE="$(lsns --type mnt --output PATH,PID --noheadings)"
+			NAMESPACE="$(lsns --type mnt --output PATH --noheadings)"
 			COMPREPLY=( $(compgen -W "$NAMESPACE" -- $cur) )
 			return 0
 			;;

@@ -17,6 +17,12 @@ _umount_module()
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
+		'-N'|'--namespace')
+			local NAMESPACE
+			NAMESPACE="$(lsns --type mnt --output PATH --noheadings)"
+			COMPREPLY=( $(compgen -W "$NAMESPACE" -- $cur) )
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)
@@ -27,6 +33,7 @@ _umount_module()
 				--fake
 				--force
 				--internal-only
+				--namespace
 				--no-mtab
 				--lazy
 				--test-opts
