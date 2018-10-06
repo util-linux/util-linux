@@ -26,7 +26,7 @@ static inline void __err_oom(const char *file, unsigned int line)
 
 #define err_oom()	__err_oom(__FILE__, __LINE__)
 
-static inline __ul_alloc_size(1)
+static inline __ul_alloc_size(1) __ul_returns_nonnull
 void *xmalloc(const size_t size)
 {
         void *ret = malloc(size);
@@ -36,7 +36,7 @@ void *xmalloc(const size_t size)
         return ret;
 }
 
-static inline __ul_alloc_size(2)
+static inline __ul_alloc_size(2) __ul_returns_nonnull
 void *xrealloc(void *ptr, const size_t size)
 {
         void *ret = realloc(ptr, size);
@@ -46,7 +46,7 @@ void *xrealloc(void *ptr, const size_t size)
         return ret;
 }
 
-static inline __ul_calloc_size(1, 2)
+static inline __ul_calloc_size(1, 2) __ul_returns_nonnull
 void *xcalloc(const size_t nelems, const size_t size)
 {
         void *ret = calloc(nelems, size);
@@ -56,7 +56,8 @@ void *xcalloc(const size_t nelems, const size_t size)
         return ret;
 }
 
-static inline char __attribute__((warn_unused_result)) *xstrdup(const char *str)
+static inline char __attribute__((warn_unused_result)) __ul_returns_nonnull
+*xstrdup(const char *str)
 {
         char *ret;
 
@@ -70,7 +71,8 @@ static inline char __attribute__((warn_unused_result)) *xstrdup(const char *str)
         return ret;
 }
 
-static inline char * __attribute__((warn_unused_result)) xstrndup(const char *str, size_t size)
+static inline char * __attribute__((warn_unused_result)) __ul_returns_nonnull
+xstrndup(const char *str, size_t size)
 {
         char *ret;
 
