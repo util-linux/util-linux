@@ -64,8 +64,8 @@ struct lsblk_devprop {
 	char *model;		/* disk model */
 };
 
-struct blkdev_cxt {
-	struct blkdev_cxt *parent;
+struct lsblk_device {
+	struct lsblk_device *parent;
 	struct lsblk_devprop *properties;
 
 	struct libscols_line *scols_line;
@@ -102,11 +102,11 @@ struct blkdev_cxt {
 extern void lsblk_mnt_init(void);
 extern void lsblk_mnt_deinit(void);
 
-extern char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt);
+extern char *lsblk_device_get_mountpoint(struct lsblk_device *dev);
 
 /* lsblk-properties.c */
 extern void lsblk_device_free_properties(struct lsblk_devprop *p);
-extern struct lsblk_devprop *lsblk_device_get_properties(struct blkdev_cxt *cxt);
+extern struct lsblk_devprop *lsblk_device_get_properties(struct lsblk_device *dev);
 extern void lsblk_properties_deinit(void);
 
 #endif /* UTIL_LINUX_LSBLK_H */

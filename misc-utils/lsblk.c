@@ -317,22 +317,22 @@ static int column_id_to_number(int id)
 	return -1;
 }
 
-static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
+static void reset_lsblk_device(struct lsblk_device *dev)
 {
-	if (!cxt)
+	if (!dev)
 		return;
 
-	DBG(CXT, ul_debugobj(cxt, "reset"));
+	DBG(CXT, ul_debugobj(dev, "reset"));
 
-	free(cxt->name);
-	free(cxt->dm_name);
-	free(cxt->filename);
-	free(cxt->mountpoint);
+	free(dev->name);
+	free(dev->dm_name);
+	free(dev->filename);
+	free(dev->mountpoint);
 
-	lsblk_device_free_properties(cxt->properties);
-	ul_unref_path(cxt->sysfs);
+	lsblk_device_free_properties(dev->properties);
+	ul_unref_path(dev->sysfs);
 
-	memset(cxt, 0, sizeof(*cxt));
+	memset(dev, 0, sizeof(*dev));
 }
 
 static int is_dm(const char *name)
@@ -357,30 +357,30 @@ static struct dirent *xreaddir(DIR *dp)
 	return d;
 }
 
-static char *get_device_path(struct blkdev_cxt *cxt)
+static char *get_device_path(struct lsblk_device *dev)
 {
 	char path[PATH_MAX];
 
-	assert(cxt);
-	assert(cxt->name);
+	assert(dev);
+	assert(dev->name);
 
-	if (is_dm(cxt->name))
-		return __canonicalize_dm_name(lsblk->sysroot, cxt->name);
+	if (is_dm(dev->name))
+		return __canonicalize_dm_name(lsblk->sysroot, dev->name);
 
-	snprintf(path, sizeof(path), "/dev/%s", cxt->name);
+	snprintf(path, sizeof(path), "/dev/%s", dev->name);
 	sysfs_devname_sys_to_dev(path);
 	return xstrdup(path);
 }
 
-static int is_readonly_device(struct blkdev_cxt *cxt)
+static int is_readonly_device(struct lsblk_device *dev)
 {
 	int fd, ro = 0;
 
-	if (ul_path_scanf(cxt->sysfs, "ro", "%d", &ro) == 1)
+	if (ul_path_scanf(dev->sysfs, "ro", "%d", &ro) == 1)
 		return ro;
 
 	/* fallback if "ro" attribute does not exist */
-	fd = open(cxt->filename, O_RDONLY);
+	fd = open(dev->filename, O_RDONLY);
 	if (fd != -1) {
 		if (ioctl(fd, BLKROGET, &ro) != 0)
 			ro = 0;
@@ -389,12 +389,12 @@ static int is_readonly_device(struct blkdev_cxt *cxt)
 	return ro;
 }
 
-static char *get_scheduler(struct blkdev_cxt *cxt)
+static char *get_scheduler(struct lsblk_device *dev)
 {
 	char buf[128];
 	char *p, *res = NULL;
 
-	if (ul_path_read_buffer(cxt->sysfs, buf, sizeof(buf), "queue/scheduler") == 0)
+	if (ul_path_read_buffer(dev->sysfs, buf, sizeof(buf), "queue/scheduler") == 0)
 		return NULL;
 	p = strchr(buf, '[');
 	if (p) {
@@ -409,19 +409,19 @@ static char *get_scheduler(struct blkdev_cxt *cxt)
 	return res;
 }
 
-static char *get_type(struct blkdev_cxt *cxt)
+static char *get_type(struct lsblk_device *dev)
 {
 	char *res = NULL, *p;
 
 	if (cxt->partition)
 		return xstrdup("part");
 
-	if (is_dm(cxt->name)) {
+	if (is_dm(dev->name)) {
 		char *dm_uuid = NULL;
 
 		/* The DM_UUID prefix should be set to subsystem owning
 		 * the device - LVM, CRYPT, DMRAID, MPATH, PART */
-		if (ul_path_read_string(cxt->sysfs, &dm_uuid, "dm/uuid") > 0
+		if (ul_path_read_string(dev->sysfs, &dm_uuid, "dm/uuid") > 0
 		    && dm_uuid) {
 			char *tmp = dm_uuid;
 			char *dm_uuid_prefix = strsep(&tmp, "-");
@@ -440,20 +440,20 @@ static char *get_type(struct blkdev_cxt *cxt)
 			/* No UUID or no prefix - just mark it as DM device */
 			res = xstrdup("dm");
 
-	} else if (!strncmp(cxt->name, "loop", 4)) {
+	} else if (!strncmp(dev->name, "loop", 4)) {
 		res = xstrdup("loop");
 
-	} else if (!strncmp(cxt->name, "md", 2)) {
+	} else if (!strncmp(dev->name, "md", 2)) {
 		char *md_level = NULL;
 
-		ul_path_read_string(cxt->sysfs, &md_level, "md/level");
+		ul_path_read_string(dev->sysfs, &md_level, "md/level");
 		res = md_level ? md_level : xstrdup("md");
 
 	} else {
 		const char *type = NULL;
 		int x = 0;
 
-		if (ul_path_read_s32(cxt->sysfs, &x, "device/type") == 0)
+		if (ul_path_read_s32(dev->sysfs, &x, "device/type") == 0)
 			type = blkdev_scsi_type_to_name(x);
 		if (!type)
 			type = "disk";
@@ -466,9 +466,9 @@ static char *get_type(struct blkdev_cxt *cxt)
 }
 
 /* Thanks to lsscsi code for idea of detection logic used here */
-static char *get_transport(struct blkdev_cxt *cxt)
+static char *get_transport(struct lsblk_device *dev)
 {
-	struct path_cxt *sysfs = cxt->sysfs;
+	struct path_cxt *sysfs = dev->sysfs;
 	char *attr = NULL;
 	const char *trans = NULL;
 
@@ -515,23 +515,23 @@ static char *get_transport(struct blkdev_cxt *cxt)
 			trans = "ata";
 		free(attr);
 
-	} else if (strncmp(cxt->name, "nvme", 4) == 0)
+	} else if (strncmp(dev->name, "nvme", 4) == 0)
 		trans = "nvme";
 
 	return trans ? xstrdup(trans) : NULL;
 }
 
-static char *get_subsystems(struct blkdev_cxt *cxt)
+static char *get_subsystems(struct lsblk_device *dev)
 {
 	char path[PATH_MAX];
 	char *sub, *chain, *res = NULL;
 	size_t len = 0, last = 0;
 
-	chain = sysfs_blkdev_get_devchain(cxt->sysfs, path, sizeof(path));
+	chain = sysfs_blkdev_get_devchain(dev->sysfs, path, sizeof(path));
 	if (!chain)
 		return NULL;
 
-	while (sysfs_blkdev_next_subsystem(cxt->sysfs, chain, &sub) == 0) {
+	while (sysfs_blkdev_next_subsystem(dev->sysfs, chain, &sub) == 0) {
 		size_t sz;
 
 		/* don't create "block:scsi:scsi", but "block:scsi" */
@@ -630,37 +630,37 @@ static void unref_sortdata(struct libscols_table *tb)
 	scols_free_iter(itr);
 }
 
-static char *get_vfs_attribute(struct blkdev_cxt *cxt, int id)
+static char *get_vfs_attribute(struct lsblk_device *dev, int id)
 {
 	char *sizestr;
 	uint64_t vfs_attr = 0;
 	char *mnt;
 
-	if (!cxt->fsstat.f_blocks) {
-		mnt = lsblk_device_get_mountpoint(cxt);
-		if (!mnt || cxt->is_swap)
+	if (!dev->fsstat.f_blocks) {
+		mnt = lsblk_device_get_mountpoint(dev);
+		if (!mnt || dev->is_swap)
 			return NULL;
-		if (statvfs(mnt, &cxt->fsstat) != 0)
+		if (statvfs(mnt, &dev->fsstat) != 0)
 			return NULL;
 	}
 
 	switch(id) {
 	case COL_FSSIZE:
-		vfs_attr = cxt->fsstat.f_frsize * cxt->fsstat.f_blocks;
+		vfs_attr = dev->fsstat.f_frsize * dev->fsstat.f_blocks;
 		break;
 	case COL_FSAVAIL:
-		vfs_attr = cxt->fsstat.f_frsize * cxt->fsstat.f_bavail;
+		vfs_attr = dev->fsstat.f_frsize * dev->fsstat.f_bavail;
 		break;
 	case COL_FSUSED:
-		vfs_attr = cxt->fsstat.f_frsize * (cxt->fsstat.f_blocks - cxt->fsstat.f_bfree);
+		vfs_attr = dev->fsstat.f_frsize * (dev->fsstat.f_blocks - dev->fsstat.f_bfree);
 		break;
 	case COL_FSUSEPERC:
-		if (cxt->fsstat.f_blocks == 0)
+		if (dev->fsstat.f_blocks == 0)
 			return xstrdup("-");
 
 		xasprintf(&sizestr, "%.0f%%",
-				(double)(cxt->fsstat.f_blocks - cxt->fsstat.f_bfree) /
-				cxt->fsstat.f_blocks * 100);
+				(double)(dev->fsstat.f_blocks - dev->fsstat.f_bfree) /
+				dev->fsstat.f_blocks * 100);
 		return sizestr;
 	}
 
@@ -674,15 +674,15 @@ static char *get_vfs_attribute(struct blkdev_cxt *cxt, int id)
 	return sizestr;
 }
 
-static struct stat *device_get_stat(struct blkdev_cxt *cxt)
+static struct stat *device_get_stat(struct lsblk_device *dev)
 {
-	if (!cxt->st.st_rdev)
-		stat(cxt->filename, &cxt->st);
+	if (!dev->st.st_rdev)
+		stat(dev->filename, &dev->st);
 
-	return &cxt->st;
+	return &dev->st;
 }
 
-static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libscols_line *ln)
+static void set_scols_data(struct lsblk_device *dev, int col, int id, struct libscols_line *ln)
 {
 	struct lsblk_devprop *prop;
 	int sort = 0;
@@ -693,22 +693,22 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 
 	switch(id) {
 	case COL_NAME:
-		str = cxt->dm_name ? mk_dm_name(cxt->dm_name) :	mk_name(cxt->name);
+		str = dev->dm_name ? mk_dm_name(dev->dm_name) :	mk_name(dev->name);
 		break;
 	case COL_KNAME:
-		str = mk_name(cxt->name);
+		str = mk_name(dev->name);
 		break;
 	case COL_PKNAME:
-		if (cxt->parent)
-			str = mk_name(cxt->parent->name);
+		if (dev->parent)
+			str = mk_name(dev->parent->name);
 		break;
 	case COL_PATH:
-		if (cxt->filename)
-			str = xstrdup(cxt->filename);
+		if (dev->filename)
+			str = xstrdup(dev->filename);
 		break;
 	case COL_OWNER:
 	{
-		struct stat *st = device_get_stat(cxt);
+		struct stat *st = device_get_stat(dev);
 		struct passwd *pw = st ? NULL : getpwuid(st->st_uid);
 		if (pw)
 			str = xstrdup(pw->pw_name);
@@ -716,7 +716,7 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 	}
 	case COL_GROUP:
 	{
-		struct stat *st = device_get_stat(cxt);
+		struct stat *st = device_get_stat(dev);
 		struct group *gr = st ? NULL : getgrgid(st->st_gid);
 		if (gr)
 			str = xstrdup(gr->gr_name);
@@ -724,7 +724,7 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 	}
 	case COL_MODE:
 	{
-		struct stat *st = device_get_stat(cxt);
+		struct stat *st = device_get_stat(dev);
 		char md[11] = { '\0' };
 
 		if (st)
@@ -733,14 +733,14 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 	}
 	case COL_MAJMIN:
 		if (is_parsable(lsblk))
-			xasprintf(&str, "%u:%u", cxt->maj, cxt->min);
+			xasprintf(&str, "%u:%u", dev->maj, dev->min);
 		else
-			xasprintf(&str, "%3u:%-3u", cxt->maj, cxt->min);
+			xasprintf(&str, "%3u:%-3u", dev->maj, dev->min);
 		if (sort)
-			set_sortdata_u64(ln, col, makedev(cxt->maj, cxt->min));
+			set_sortdata_u64(ln, col, makedev(dev->maj, dev->min));
 		break;
 	case COL_FSTYPE:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->fstype)
 			str = xstrdup(prop->fstype);
 		break;
@@ -748,177 +748,177 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 	case COL_FSAVAIL:
 	case COL_FSUSED:
 	case COL_FSUSEPERC:
-		str = get_vfs_attribute(cxt, id);
+		str = get_vfs_attribute(dev, id);
 		break;
 	case COL_TARGET:
-		str = xstrdup(lsblk_device_get_mountpoint(cxt));
+		str = xstrdup(lsblk_device_get_mountpoint(dev));
 		break;
 	case COL_LABEL:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->label)
 			str = xstrdup(prop->label);
 		break;
 	case COL_UUID:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->uuid)
 			str = xstrdup(prop->uuid);
 		break;
 	case COL_PTUUID:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->ptuuid)
 			str = xstrdup(prop->ptuuid);
 		break;
 	case COL_PTTYPE:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->pttype)
 			str = xstrdup(prop->pttype);
 		break;
 	case COL_PARTTYPE:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->parttype)
 			str = xstrdup(prop->parttype);
 		break;
 	case COL_PARTLABEL:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->partlabel)
 			str = xstrdup(prop->partlabel);
 		break;
 	case COL_PARTUUID:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->partuuid)
 			str = xstrdup(prop->partuuid);
 		break;
 	case COL_PARTFLAGS:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->partflags)
 			str = xstrdup(prop->partflags);
 		break;
 	case COL_WWN:
-		prop = lsblk_device_get_properties(cxt);
+		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->wwn)
 			str = xstrdup(prop->wwn);
 		break;
 	case COL_RA:
-		ul_path_read_string(cxt->sysfs, &str, "queue/read_ahead_kb");
+		ul_path_read_string(dev->sysfs, &str, "queue/read_ahead_kb");
 		if (sort)
 			set_sortdata_u64_from_string(ln, col, str);
 		break;
 	case COL_RO:
-		str = xstrdup(is_readonly_device(cxt) ? "1" : "0");
+		str = xstrdup(is_readonly_device(dev) ? "1" : "0");
 		break;
 	case COL_RM:
-		ul_path_read_string(cxt->sysfs, &str, "removable");
-		if (!str && sysfs_blkdev_get_parent(cxt->sysfs))
-			ul_path_read_string(sysfs_blkdev_get_parent(cxt->sysfs),
+		ul_path_read_string(dev->sysfs, &str, "removable");
+		if (!str && sysfs_blkdev_get_parent(dev->sysfs))
+			ul_path_read_string(sysfs_blkdev_get_parent(dev->sysfs),
 					    &str,
 					    "removable");
 		break;
 	case COL_HOTPLUG:
-		str = sysfs_blkdev_is_hotpluggable(cxt->sysfs) ? xstrdup("1") : xstrdup("0");
+		str = sysfs_blkdev_is_hotpluggable(dev->sysfs) ? xstrdup("1") : xstrdup("0");
 		break;
 	case COL_ROTA:
-		ul_path_read_string(cxt->sysfs, &str, "queue/rotational");
+		ul_path_read_string(dev->sysfs, &str, "queue/rotational");
 		break;
 	case COL_RAND:
-		ul_path_read_string(cxt->sysfs, &str, "queue/add_random");
+		ul_path_read_string(dev->sysfs, &str, "queue/add_random");
 		break;
 	case COL_MODEL:
-		if (!cxt->partition && cxt->nslaves == 0) {
-			prop = lsblk_device_get_properties(cxt);
+		if (!dev->partition && dev->nslaves == 0) {
+			prop = lsblk_device_get_properties(dev);
 			if (prop && prop->model)
 				str = xstrdup(prop->model);
 			else
-				ul_path_read_string(cxt->sysfs, &str, "device/model");
+				ul_path_read_string(dev->sysfs, &str, "device/model");
 		}
 		break;
 	case COL_SERIAL:
-		if (!cxt->partition && cxt->nslaves == 0) {
-			prop = lsblk_device_get_properties(cxt);
+		if (!dev->partition && dev->nslaves == 0) {
+			prop = lsblk_device_get_properties(dev);
 			if (prop && prop->serial)
 				str = xstrdup(prop->serial);
 			else
-				ul_path_read_string(cxt->sysfs, &str, "device/serial");
+				ul_path_read_string(dev->sysfs, &str, "device/serial");
 		}
 		break;
 	case COL_REV:
-		if (!cxt->partition && cxt->nslaves == 0)
-			ul_path_read_string(cxt->sysfs, &str, "device/rev");
+		if (!dev->partition && dev->nslaves == 0)
+			ul_path_read_string(dev->sysfs, &str, "device/rev");
 		break;
 	case COL_VENDOR:
-		if (!cxt->partition && cxt->nslaves == 0)
-			ul_path_read_string(cxt->sysfs, &str, "device/vendor");
+		if (!dev->partition && dev->nslaves == 0)
+			ul_path_read_string(dev->sysfs, &str, "device/vendor");
 		break;
 	case COL_SIZE:
-		if (!cxt->size)
+		if (!dev->size)
 			break;
 		if (lsblk->bytes)
-			xasprintf(&str, "%ju", cxt->size);
+			xasprintf(&str, "%ju", dev->size);
 		else
-			str = size_to_human_string(SIZE_SUFFIX_1LETTER, cxt->size);
+			str = size_to_human_string(SIZE_SUFFIX_1LETTER, dev->size);
 		if (sort)
-			set_sortdata_u64(ln, col, cxt->size);
+			set_sortdata_u64(ln, col, dev->size);
 		break;
 	case COL_STATE:
-		if (!cxt->partition && !cxt->dm_name)
-			ul_path_read_string(cxt->sysfs, &str, "device/state");
-		else if (cxt->dm_name) {
+		if (!dev->partition && !dev->dm_name)
+			ul_path_read_string(dev->sysfs, &str, "device/state");
+		else if (dev->dm_name) {
 			int x = 0;
-			if (ul_path_read_s32(cxt->sysfs, &x, "dm/suspended") == 0)
+			if (ul_path_read_s32(dev->sysfs, &x, "dm/suspended") == 0)
 				str = xstrdup(x ? "suspended" : "running");
 		}
 		break;
 	case COL_ALIOFF:
-		ul_path_read_string(cxt->sysfs, &str, "alignment_offset");
+		ul_path_read_string(dev->sysfs, &str, "alignment_offset");
 		if (sort)
 			set_sortdata_u64_from_string(ln, col, str);
 		break;
 	case COL_MINIO:
-		ul_path_read_string(cxt->sysfs, &str, "queue/minimum_io_size");
+		ul_path_read_string(dev->sysfs, &str, "queue/minimum_io_size");
 		if (sort)
 			set_sortdata_u64_from_string(ln, col, str);
 		break;
 	case COL_OPTIO:
-		ul_path_read_string(cxt->sysfs, &str, "queue/optimal_io_size");
+		ul_path_read_string(dev->sysfs, &str, "queue/optimal_io_size");
 		if (sort)
 			set_sortdata_u64_from_string(ln, col, str);
 		break;
 	case COL_PHYSEC:
-		ul_path_read_string(cxt->sysfs, &str, "queue/physical_block_size");
+		ul_path_read_string(dev->sysfs, &str, "queue/physical_block_size");
 		if (sort)
 			set_sortdata_u64_from_string(ln, col, str);
 		break;
 	case COL_LOGSEC:
-		ul_path_read_string(cxt->sysfs, &str, "queue/logical_block_size");
+		ul_path_read_string(dev->sysfs, &str, "queue/logical_block_size");
 		if (sort)
 			set_sortdata_u64_from_string(ln, col, str);
 		break;
 	case COL_SCHED:
-		str = get_scheduler(cxt);
+		str = get_scheduler(dev);
 		break;
 	case COL_RQ_SIZE:
-		ul_path_read_string(cxt->sysfs, &str, "queue/nr_requests");
+		ul_path_read_string(dev->sysfs, &str, "queue/nr_requests");
 		if (sort)
 			set_sortdata_u64_from_string(ln, col, str);
 		break;
 	case COL_TYPE:
-		str = get_type(cxt);
+		str = get_type(dev);
 		break;
 	case COL_HCTL:
 	{
 		int h, c, t, l;
-		if (sysfs_blkdev_scsi_get_hctl(cxt->sysfs, &h, &c, &t, &l) == 0)
+		if (sysfs_blkdev_scsi_get_hctl(dev->sysfs, &h, &c, &t, &l) == 0)
 			xasprintf(&str, "%d:%d:%d:%d", h, c, t, l);
 		break;
 	}
 	case COL_TRANSPORT:
-		str = get_transport(cxt);
+		str = get_transport(dev);
 		break;
 	case COL_SUBSYS:
-		str = get_subsystems(cxt);
+		str = get_subsystems(dev);
 		break;
 	case COL_DALIGN:
-		if (cxt->discard)
-			ul_path_read_string(cxt->sysfs, &str, "discard_alignment");
+		if (dev->discard)
+			ul_path_read_string(dev->sysfs, &str, "discard_alignment");
 		if (!str)
 			str = xstrdup("0");
 		if (sort)
@@ -926,12 +926,12 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		break;
 	case COL_DGRAN:
 		if (lsblk->bytes) {
-			ul_path_read_string(cxt->sysfs, &str, "queue/discard_granularity");
+			ul_path_read_string(dev->sysfs, &str, "queue/discard_granularity");
 			if (sort)
 				set_sortdata_u64_from_string(ln, col, str);
 		} else {
 			uint64_t x;
-			if (ul_path_read_u64(cxt->sysfs, &x, "queue/discard_granularity") == 0) {
+			if (ul_path_read_u64(dev->sysfs, &x, "queue/discard_granularity") == 0) {
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
 				if (sort)
 					set_sortdata_u64(ln, col, x);
@@ -940,12 +940,12 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		break;
 	case COL_DMAX:
 		if (lsblk->bytes) {
-			ul_path_read_string(cxt->sysfs, &str, "queue/discard_max_bytes");
+			ul_path_read_string(dev->sysfs, &str, "queue/discard_max_bytes");
 			if (sort)
 				set_sortdata_u64_from_string(ln, col, str);
 		} else {
 			uint64_t x;
-			if (ul_path_read_u64(cxt->sysfs, &x, "queue/discard_max_bytes") == 0) {
+			if (ul_path_read_u64(dev->sysfs, &x, "queue/discard_max_bytes") == 0) {
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
 				if (sort)
 					set_sortdata_u64(ln, col, x);
@@ -953,20 +953,20 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		}
 		break;
 	case COL_DZERO:
-		if (cxt->discard)
-			ul_path_read_string(cxt->sysfs, &str, "queue/discard_zeroes_data");
+		if (dev->discard)
+			ul_path_read_string(dev->sysfs, &str, "queue/discard_zeroes_data");
 		if (!str)
 			str = xstrdup("0");
 		break;
 	case COL_WSAME:
 		if (lsblk->bytes) {
-			ul_path_read_string(cxt->sysfs, &str, "queue/write_same_max_bytes");
+			ul_path_read_string(dev->sysfs, &str, "queue/write_same_max_bytes");
 			if (sort)
 				set_sortdata_u64_from_string(ln, col, str);
 		} else {
 			uint64_t x;
 
-			if (ul_path_read_u64(cxt->sysfs, &x, "queue/write_same_max_bytes") == 0) {
+			if (ul_path_read_u64(dev->sysfs, &x, "queue/write_same_max_bytes") == 0) {
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
 				if (sort)
 					set_sortdata_u64(ln, col, x);
@@ -976,7 +976,7 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 			str = xstrdup("0");
 		break;
 	case COL_ZONED:
-		ul_path_read_string(cxt->sysfs, &str, "queue/zoned");
+		ul_path_read_string(dev->sysfs, &str, "queue/zoned");
 		break;
 	};
 
@@ -984,129 +984,129 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		err(EXIT_FAILURE, _("failed to add output data"));
 }
 
-static void fill_table_line(struct blkdev_cxt *cxt, struct libscols_line *scols_parent)
+static void fill_table_line(struct lsblk_device *dev, struct libscols_line *scols_parent)
 {
 	size_t i;
 
-	cxt->scols_line = scols_table_new_line(lsblk->table, scols_parent);
-	if (!cxt->scols_line)
+	dev->scols_line = scols_table_new_line(lsblk->table, scols_parent);
+	if (!dev->scols_line)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (i = 0; i < ncolumns; i++)
-		set_scols_data(cxt, i, get_column_id(i), cxt->scols_line);
+		set_scols_data(dev, i, get_column_id(i), dev->scols_line);
 }
 
-static int set_cxt(struct blkdev_cxt *cxt,
-		    struct blkdev_cxt *parent,
-		    struct blkdev_cxt *wholedisk,
+static int set_device(struct lsblk_device *dev,
+		    struct lsblk_device *parent,
+		    struct lsblk_device *wholedisk,
 		    const char *name)
 {
 	dev_t devno;
 
-	DBG(CXT, ul_debugobj(cxt, "setting context for %s [parent=%p, wholedisk=%p]",
+	DBG(CXT, ul_debugobj(dev, "setting context for %s [parent=%p, wholedisk=%p]",
 				name, parent, wholedisk));
 
-	cxt->parent = parent;
-	cxt->name = xstrdup(name);
-	cxt->partition = wholedisk != NULL;
+	dev->parent = parent;
+	dev->name = xstrdup(name);
+	dev->partition = wholedisk != NULL;
 
-	cxt->filename = get_device_path(cxt);
-	if (!cxt->filename) {
-		DBG(CXT, ul_debugobj(cxt, "%s: failed to get device path", cxt->name));
+	dev->filename = get_device_path(dev);
+	if (!dev->filename) {
+		DBG(CXT, ul_debugobj(dev, "%s: failed to get device path", dev->name));
 		return -1;
 	}
-	DBG(CXT, ul_debugobj(cxt, "%s: filename=%s", cxt->name, cxt->filename));
+	DBG(CXT, ul_debugobj(dev, "%s: filename=%s", dev->name, dev->filename));
 
-	devno = __sysfs_devname_to_devno(lsblk->sysroot, cxt->name, wholedisk ? wholedisk->name : NULL);
+	devno = __sysfs_devname_to_devno(lsblk->sysroot, dev->name, wholedisk ? wholedisk->name : NULL);
 
 	if (!devno) {
-		DBG(CXT, ul_debugobj(cxt, "%s: unknown device name", cxt->name));
+		DBG(CXT, ul_debugobj(dev, "%s: unknown device name", dev->name));
 		return -1;
 	}
 
 	if (lsblk->inverse) {
-		cxt->sysfs = ul_new_sysfs_path(devno, wholedisk ? wholedisk->sysfs : NULL, lsblk->sysroot);
-		if (!cxt->sysfs) {
-			DBG(CXT, ul_debugobj(cxt, "%s: failed to initialize sysfs handler", cxt->name));
+		dev->sysfs = ul_new_sysfs_path(devno, wholedisk ? wholedisk->sysfs : NULL, lsblk->sysroot);
+		if (!dev->sysfs) {
+			DBG(CXT, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
 			return -1;
 		}
 		if (parent)
-			sysfs_blkdev_set_parent(parent->sysfs, cxt->sysfs);
+			sysfs_blkdev_set_parent(parent->sysfs, dev->sysfs);
 	} else {
-		cxt->sysfs = ul_new_sysfs_path(devno, parent ? parent->sysfs : NULL, lsblk->sysroot);
-		if (!cxt->sysfs) {
-			DBG(CXT, ul_debugobj(cxt, "%s: failed to initialize sysfs handler", cxt->name));
+		dev->sysfs = ul_new_sysfs_path(devno, parent ? parent->sysfs : NULL, lsblk->sysroot);
+		if (!dev->sysfs) {
+			DBG(CXT, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
 			return -1;
 		}
 	}
 
-	cxt->maj = major(devno);
-	cxt->min = minor(devno);
-	cxt->size = 0;
+	dev->maj = major(devno);
+	dev->min = minor(devno);
+	dev->size = 0;
 
-	if (ul_path_read_u64(cxt->sysfs, &cxt->size, "size") == 0)	/* in sectors */
-		cxt->size <<= 9;					/* in bytes */
+	if (ul_path_read_u64(dev->sysfs, &dev->size, "size") == 0)	/* in sectors */
+		dev->size <<= 9;					/* in bytes */
 
-	if (ul_path_read_s32(cxt->sysfs, &cxt->discard,
+	if (ul_path_read_s32(dev->sysfs, &dev->discard,
 			   "queue/discard_granularity") != 0)
-		cxt->discard = 0;
+		dev->discard = 0;
 
 	/* Ignore devices of zero size */
-	if (!lsblk->all_devices && cxt->size == 0) {
-		DBG(CXT, ul_debugobj(cxt, "zero size device -- ignore"));
+	if (!lsblk->all_devices && dev->size == 0) {
+		DBG(CXT, ul_debugobj(dev, "zero size device -- ignore"));
 		return -1;
 	}
-	if (is_dm(cxt->name)) {
-		ul_path_read_string(cxt->sysfs, &cxt->dm_name, "dm/name");
-		if (!cxt->dm_name) {
-			DBG(CXT, ul_debugobj(cxt, "%s: failed to get dm name", cxt->name));
+	if (is_dm(dev->name)) {
+		ul_path_read_string(dev->sysfs, &dev->dm_name, "dm/name");
+		if (!dev->dm_name) {
+			DBG(CXT, ul_debugobj(dev, "%s: failed to get dm name", dev->name));
 			return -1;
 		}
 	}
 
-	cxt->npartitions = sysfs_blkdev_count_partitions(cxt->sysfs, cxt->name);
-	cxt->nholders = ul_path_count_dirents(cxt->sysfs, "holders");
-	cxt->nslaves = ul_path_count_dirents(cxt->sysfs, "slaves");
+	dev->npartitions = sysfs_blkdev_count_partitions(dev->sysfs, dev->name);
+	dev->nholders = ul_path_count_dirents(dev->sysfs, "holders");
+	dev->nslaves = ul_path_count_dirents(dev->sysfs, "slaves");
 
-	DBG(CXT, ul_debugobj(cxt, "%s: npartitions=%d, nholders=%d, nslaves=%d",
-			cxt->name, cxt->npartitions, cxt->nholders, cxt->nslaves));
+	DBG(CXT, ul_debugobj(dev, "%s: npartitions=%d, nholders=%d, nslaves=%d",
+			dev->name, dev->npartitions, dev->nholders, dev->nslaves));
 
 	/* ignore non-SCSI devices */
-	if (lsblk->scsi && sysfs_blkdev_scsi_get_hctl(cxt->sysfs, NULL, NULL, NULL, NULL)) {
-		DBG(CXT, ul_debugobj(cxt, "non-scsi device -- ignore"));
+	if (lsblk->scsi && sysfs_blkdev_scsi_get_hctl(dev->sysfs, NULL, NULL, NULL, NULL)) {
+		DBG(CXT, ul_debugobj(dev, "non-scsi device -- ignore"));
 		return -1;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "%s: context successfully initialized", cxt->name));
+	DBG(CXT, ul_debugobj(dev, "%s: context successfully initialized", dev->name));
 	return 0;
 }
 
-static int process_blkdev(struct blkdev_cxt *cxt, struct blkdev_cxt *parent,
+static int process_blkdev(struct lsblk_device *dev, struct lsblk_device *parent,
 			  int do_partitions, const char *part_name);
 
 /*
  * List device partitions if any.
  */
-static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *parent_cxt,
+static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_device *parent_dev,
 			   const char *part_name)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt part_cxt = { NULL };
+	struct lsblk_device part_dev = { NULL };
 	int r = -1;
 
-	assert(wholedisk_cxt);
+	assert(wholedisk_dev);
 
 	/*
 	 * Do not process further if there are no partitions for
 	 * this device or the device itself is a partition.
 	 */
-	if (!wholedisk_cxt->npartitions || wholedisk_cxt->partition)
+	if (!wholedisk_dev->npartitions || wholedisk_dev->partition)
 		return -1;
 
-	DBG(CXT, ul_debugobj(wholedisk_cxt, "probe whole-disk for partitions"));
+	DBG(CXT, ul_debugobj(wholedisk_dev, "probe whole-disk for partitions"));
 
-	dir = ul_path_opendir(wholedisk_cxt->sysfs, NULL);
+	dir = ul_path_opendir(wholedisk_dev->sysfs, NULL);
 	if (!dir)
 		err(EXIT_FAILURE, _("failed to open device directory in sysfs"));
 
@@ -1115,55 +1115,55 @@ static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *
 		if (part_name && strcmp(part_name, d->d_name))
 			continue;
 
-		if (!(sysfs_blkdev_is_partition_dirent(dir, d, wholedisk_cxt->name)))
+		if (!(sysfs_blkdev_is_partition_dirent(dir, d, wholedisk_dev->name)))
 			continue;
 
-		DBG(CXT, ul_debugobj(wholedisk_cxt, "  checking %s", d->d_name));
+		DBG(CXT, ul_debugobj(wholedisk_dev, "  checking %s", d->d_name));
 
 		if (lsblk->inverse) {
 			/*
-			 * <parent_cxt>
-			 * `-<part_cxt>
-			 *   `-<wholedisk_cxt>
+			 * <parent_dev>
+			 * `-<part_dev>
+			 *   `-<wholedisk_dev>
 			 *    `-...
 			 */
-			if (set_cxt(&part_cxt, parent_cxt, wholedisk_cxt, d->d_name))
+			if (set_device(&part_dev, parent_dev, wholedisk_dev, d->d_name))
 				goto next;
 
-			if (!parent_cxt && part_cxt.nholders)
+			if (!parent_dev && part_dev.nholders)
 				goto next;
 
-			wholedisk_cxt->parent = &part_cxt;
-			fill_table_line(&part_cxt, parent_cxt ? parent_cxt->scols_line : NULL);
+			wholedisk_dev->parent = &part_dev;
+			fill_table_line(&part_dev, parent_dev ? parent_dev->scols_line : NULL);
 			if (!lsblk->nodeps)
-				process_blkdev(wholedisk_cxt, &part_cxt, 0, NULL);
+				process_blkdev(wholedisk_dev, &part_dev, 0, NULL);
 		} else {
 			/*
-			 * <parent_cxt>
-			 * `-<wholedisk_cxt>
-			 *   `-<part_cxt>
+			 * <parent_dev>
+			 * `-<wholedisk_dev>
+			 *   `-<part_dev>
 			 *    `-...
 			 */
-			int ps = set_cxt(&part_cxt, wholedisk_cxt, wholedisk_cxt, d->d_name);
+			int ps = set_device(&part_dev, wholedisk_dev, wholedisk_dev, d->d_name);
 
 			/* Print whole disk only once */
 			if (r)
-				fill_table_line(wholedisk_cxt, parent_cxt ? parent_cxt->scols_line : NULL);
+				fill_table_line(wholedisk_dev, parent_dev ? parent_dev->scols_line : NULL);
 			if (ps == 0 && !lsblk->nodeps)
-				process_blkdev(&part_cxt, wholedisk_cxt, 0, NULL);
+				process_blkdev(&part_dev, wholedisk_dev, 0, NULL);
 		}
 	next:
-		reset_blkdev_cxt(&part_cxt);
+		reset_lsblk_device(&part_dev);
 		r = 0;
 	}
 
-	DBG(CXT, ul_debugobj(wholedisk_cxt, "probe whole-disk for partitions -- done"));
+	DBG(CXT, ul_debugobj(wholedisk_dev, "probe whole-disk for partitions -- done"));
 	closedir(dir);
 	return r;
 }
 
 static int get_wholedisk_from_partition_dirent(DIR *dir,
-				struct dirent *d, struct blkdev_cxt *cxt)
+				struct dirent *d, struct lsblk_device *dev)
 {
 	char path[PATH_MAX];
 	char *p;
@@ -1185,70 +1185,70 @@ static int get_wholedisk_from_partition_dirent(DIR *dir,
 		return 0;
 	p++;
 
-	return set_cxt(cxt, NULL, NULL, p);
+	return set_device(dev, NULL, NULL, p);
 }
 
 /*
  * List device dependencies: partitions, holders (inverse = 0) or slaves (inverse = 1).
  */
-static int list_deps(struct blkdev_cxt *cxt)
+static int list_deps(struct lsblk_device *dev)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt dep = { NULL };
+	struct lsblk_device dep = { NULL };
 	const char *depname;
 
-	assert(cxt);
+	assert(dev);
 
 	if (lsblk->nodeps)
 		return 0;
 
-	DBG(CXT, ul_debugobj(cxt, "%s: list dependencies", cxt->name));
+	DBG(CXT, ul_debugobj(dev, "%s: list dependencies", dev->name));
 
-	if (!(lsblk->inverse ? cxt->nslaves : cxt->nholders))
+	if (!(lsblk->inverse ? dev->nslaves : dev->nholders))
 		return 0;
 
 	depname = lsblk->inverse ? "slaves" : "holders";
-	dir = ul_path_opendir(cxt->sysfs, depname);
+	dir = ul_path_opendir(dev->sysfs, depname);
 	if (!dir)
 		return 0;
 
-	DBG(CXT, ul_debugobj(cxt, "%s: checking for '%s' dependence", cxt->name, depname));
+	DBG(CXT, ul_debugobj(dev, "%s: checking for '%s' dependence", dev->name, depname));
 
 	while ((d = xreaddir(dir))) {
 		/* Is the dependency a partition? */
 		if (sysfs_blkdev_is_partition_dirent(dir, d, NULL)) {
 			if (!get_wholedisk_from_partition_dirent(dir, d, &dep)) {
-				DBG(CXT, ul_debugobj(cxt, "%s: %s: dependence is partition",
-								cxt->name, d->d_name));
-				process_blkdev(&dep, cxt, 1, d->d_name);
+				DBG(CXT, ul_debugobj(dev, "%s: %s: dependence is partition",
+								dev->name, d->d_name));
+				process_blkdev(&dep, dev, 1, d->d_name);
 			}
 		}
 		/* The dependency is a whole device. */
-		else if (!set_cxt(&dep, cxt, NULL, d->d_name)) {
-			DBG(CXT, ul_debugobj(cxt, "%s: %s: dependence is whole-disk",
-								cxt->name, d->d_name));
+		else if (!set_device(&dep, dev, NULL, d->d_name)) {
+			DBG(CXT, ul_debugobj(dev, "%s: %s: dependence is whole-disk",
+								dev->name, d->d_name));
 			/* For inverse tree we don't want to show partitions
 			 * if the dependence is on whole-disk */
-			process_blkdev(&dep, cxt, lsblk->inverse ? 0 : 1, NULL);
+			process_blkdev(&dep, dev, lsblk->inverse ? 0 : 1, NULL);
 		}
-		reset_blkdev_cxt(&dep);
+		reset_lsblk_device(&dep);
 	}
 	closedir(dir);
 
-	DBG(CXT, ul_debugobj(cxt, "%s: checking for '%s' -- done", cxt->name, depname));
+	DBG(CXT, ul_debugobj(dev, "%s: checking for '%s' -- done", dev->name, depname));
 	return 0;
 }
 
-static int process_blkdev(struct blkdev_cxt *cxt, struct blkdev_cxt *parent,
+static int process_blkdev(struct lsblk_device *dev, struct lsblk_device *parent,
 			  int do_partitions, const char *part_name)
 {
-	if (do_partitions && cxt->npartitions)
-		list_partitions(cxt, parent, part_name);		/* partitions + whole-disk */
+	if (do_partitions && dev->npartitions)
+		list_partitions(dev, parent, part_name);		/* partitions + whole-disk */
 	else
-		fill_table_line(cxt, parent ? parent->scols_line : NULL); /* whole-disk only */
+		fill_table_line(dev, parent ? parent->scols_line : NULL); /* whole-disk only */
 
-	return list_deps(cxt);
+	return list_deps(dev);
 }
 
 /* Iterate devices in sysfs */
@@ -1256,7 +1256,7 @@ static int iterate_block_devices(void)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt cxt = { NULL };
+	struct lsblk_device dev = { NULL };
 	struct path_cxt *pc = ul_new_path(_PATH_SYS_BLOCK);
 
 	if (!pc)
@@ -1264,7 +1264,7 @@ static int iterate_block_devices(void)
 
 	ul_path_set_prefix(pc, lsblk->sysroot);
 
-	/* TODO: reuse @pc in set_cxt(), etc. */
+	/* TODO: reuse @pc in set_device(), etc. */
 	dir = ul_path_opendir(pc, NULL);
 	if (!dir)
 		goto done;
@@ -1275,19 +1275,19 @@ static int iterate_block_devices(void)
 
 		DBG(DEV, ul_debug(" %s dentry", d->d_name));
 
-		if (set_cxt(&cxt, NULL, NULL, d->d_name))
+		if (set_device(&dev, NULL, NULL, d->d_name))
 			goto next;
 
-		if (is_maj_excluded(cxt.maj) || !is_maj_included(cxt.maj))
+		if (is_maj_excluded(dev.maj) || !is_maj_included(dev.maj))
 			goto next;
 
 		/* Skip devices in the middle of dependency tree. */
-		if ((lsblk->inverse ? cxt.nholders : cxt.nslaves) > 0)
+		if ((lsblk->inverse ? dev.nholders : dev.nslaves) > 0)
 			goto next;
 
-		process_blkdev(&cxt, NULL, 1, NULL);
+		process_blkdev(&dev, NULL, 1, NULL);
 	next:
-		reset_blkdev_cxt(&cxt);
+		reset_lsblk_device(&dev);
 	}
 
 	closedir(dir);
@@ -1299,7 +1299,7 @@ done:
 
 static int process_one_device(char *devname)
 {
-	struct blkdev_cxt parent = { NULL }, cxt = { NULL };
+	struct lsblk_device parent = { NULL }, dev = { NULL };
 	struct stat st;
 	char buf[PATH_MAX + 1], *name = NULL, *diskname = NULL;
 	dev_t disk = 0;
@@ -1312,7 +1312,7 @@ static int process_one_device(char *devname)
 
 	/* TODO: sysfs_devno_to_devname() internally initializes path_cxt, it
 	 * would be better to use ul_new_sysfs_path() + sysfs_blkdev_get_name()
-	 * and reuse path_cxt for set_cxt()
+	 * and reuse path_cxt for set_device()
 	 */
 	name = sysfs_devno_to_devname(st.st_rdev, buf, sizeof(buf));
 	if (!name) {
@@ -1337,31 +1337,31 @@ static int process_one_device(char *devname)
 		/*
 		 * Device is not a partition.
 		 */
-		if (set_cxt(&cxt, NULL, NULL, name))
+		if (set_device(&dev, NULL, NULL, name))
 			goto leave;
-		process_blkdev(&cxt, NULL, !lsblk->inverse, NULL);
+		process_blkdev(&dev, NULL, !lsblk->inverse, NULL);
 	} else {
 		/*
 		 * Partition, read sysfs name of the device.
 		 */
-		if (set_cxt(&parent, NULL, NULL, diskname))
+		if (set_device(&parent, NULL, NULL, diskname))
 			goto leave;
-		if (set_cxt(&cxt, &parent, &parent, name))
+		if (set_device(&dev, &parent, &parent, name))
 			goto leave;
 
 		if (lsblk->inverse)
-			process_blkdev(&parent, &cxt, 1, cxt.name);
+			process_blkdev(&parent, &dev, 1, dev.name);
 		else
-			process_blkdev(&cxt, &parent, 1, NULL);
+			process_blkdev(&dev, &parent, 1, NULL);
 	}
 
 	rc = 0;
 leave:
 	free(name);
-	reset_blkdev_cxt(&cxt);
+	reset_lsblk_device(&dev);
 
 	if (real_part)
-		reset_blkdev_cxt(&parent);
+		reset_lsblk_device(&parent);
 
 	return rc;
 }

@@ -42,16 +42,16 @@ static int is_active_swap(const char *filename)
 	return mnt_table_find_srcpath(swaps, filename, MNT_ITER_BACKWARD) != NULL;
 }
 
-char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt)
+char *lsblk_device_get_mountpoint(struct lsblk_device *dev)
 {
 	struct libmnt_fs *fs;
 	const char *fsroot;
 
-	assert(cxt);
-	assert(cxt->filename);
+	assert(dev);
+	assert(dev->filename);
 
-	if (cxt->is_mounted || cxt->is_swap)
-		return cxt->mountpoint;
+	if (dev->is_mounted || dev->is_swap)
+		return dev->mountpoint;
 
 	if (!mtab) {
 		mtab = mnt_new_table();
@@ -75,17 +75,17 @@ char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt)
 	/* Note that maj:min in /proc/self/mountinfo does not have to match with
 	 * devno as returned by stat(), so we have to try devname too
 	 */
-	fs = mnt_table_find_devno(mtab, makedev(cxt->maj, cxt->min), MNT_ITER_BACKWARD);
+	fs = mnt_table_find_devno(mtab, makedev(dev->maj, dev->min), MNT_ITER_BACKWARD);
 	if (!fs)
-		fs = mnt_table_find_srcpath(mtab, cxt->filename, MNT_ITER_BACKWARD);
+		fs = mnt_table_find_srcpath(mtab, dev->filename, MNT_ITER_BACKWARD);
 	if (!fs) {
-		if (is_active_swap(cxt->filename)) {
-			cxt->mountpoint = xstrdup("[SWAP]");
-			cxt->is_swap = 1;
+		if (is_active_swap(dev->filename)) {
+			dev->mountpoint = xstrdup("[SWAP]");
+			dev->is_swap = 1;
 		} else
-			cxt->mountpoint = NULL;
+			dev->mountpoint = NULL;
 
-		return cxt->mountpoint;
+		return dev->mountpoint;
 	}
 
 	/* found */
@@ -100,7 +100,7 @@ char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt)
 		while (mnt_table_next_fs(mtab, itr, &rfs) == 0) {
 			fsroot = mnt_fs_get_root(rfs);
 			if ((!fsroot || strcmp(fsroot, "/") == 0)
-			    && mnt_fs_match_source(rfs, cxt->filename, mntcache)) {
+			    && mnt_fs_match_source(rfs, dev->filename, mntcache)) {
 				fs = rfs;
 				break;
 			}
@@ -108,10 +108,10 @@ char *lsblk_device_get_mountpoint(struct blkdev_cxt *cxt)
 		mnt_free_iter(itr);
 	}
 
-	DBG(DEV, ul_debugobj(cxt, "mountpoint: %s", mnt_fs_get_target(fs)));
-	cxt->mountpoint = xstrdup(mnt_fs_get_target(fs));
-	cxt->is_mounted = 1;
-	return cxt->mountpoint;
+	DBG(DEV, ul_debugobj(dev, "mountpoint: %s", mnt_fs_get_target(fs)));
+	dev->mountpoint = xstrdup(mnt_fs_get_target(fs));
+	dev->is_mounted = 1;
+	return dev->mountpoint;
 }
 
 void lsblk_mnt_init(void)
