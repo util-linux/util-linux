@@ -317,7 +317,7 @@ static int column_id_to_number(int id)
 	return -1;
 }
 
-static void reset_lsblk_device(struct lsblk_device *dev)
+static void reset_device(struct lsblk_device *dev)
 {
 	if (!dev)
 		return;
@@ -1153,7 +1153,7 @@ static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_devi
 				process_blkdev(&part_dev, wholedisk_dev, 0, NULL);
 		}
 	next:
-		reset_lsblk_device(&part_dev);
+		reset_device(&part_dev);
 		r = 0;
 	}
 
@@ -1232,7 +1232,7 @@ static int list_deps(struct lsblk_device *dev)
 			 * if the dependence is on whole-disk */
 			process_blkdev(&dep, dev, lsblk->inverse ? 0 : 1, NULL);
 		}
-		reset_lsblk_device(&dep);
+		reset_device(&dep);
 	}
 	closedir(dir);
 
@@ -1287,7 +1287,7 @@ static int iterate_block_devices(void)
 
 		process_blkdev(&dev, NULL, 1, NULL);
 	next:
-		reset_lsblk_device(&dev);
+		reset_device(&dev);
 	}
 
 	closedir(dir);
@@ -1358,10 +1358,10 @@ static int process_one_device(char *devname)
 	rc = 0;
 leave:
 	free(name);
-	reset_lsblk_device(&dev);
+	reset_device(&dev);
 
 	if (real_part)
-		reset_lsblk_device(&parent);
+		reset_device(&parent);
 
 	return rc;
 }
