@@ -1563,7 +1563,7 @@ static void open_netlink(void)
 	}
 }
 
-static int process_netlink_msg(int *changed)
+static int process_netlink_msg(int *triggered)
 {
 	char buf[4096];
 	struct sockaddr_nl snl;
@@ -1603,7 +1603,7 @@ static int process_netlink_msg(int *changed)
 			return 0;
 		}
 
-		*changed = 1;
+		*triggered = 1;
 		break;
 	}
 
@@ -1612,9 +1612,9 @@ static int process_netlink_msg(int *changed)
 
 static int process_netlink(void)
 {
-	int changed = 0;
-	while (process_netlink_msg(&changed));
-	return changed;
+	int triggered = 0;
+	while (process_netlink_msg(&triggered));
+	return triggered;
 }
 
 static int wait_for_term_input(int fd)
