@@ -153,6 +153,7 @@
 # define AGETTY_RELOAD_FDNONE	-2			/* uninitialized fd */
 static int inotify_fd = AGETTY_RELOAD_FDNONE;
 static int netlink_fd = AGETTY_RELOAD_FDNONE;
+static __u32 netlink_groups;
 #endif
 
 /*
@@ -1555,7 +1556,7 @@ static void open_netlink(void)
 	if (sock >= 0) {
 		addr.nl_family = AF_NETLINK;
 		addr.nl_pid = getpid();
-		addr.nl_groups = RTMGRP_IPV4_IFADDR | RTMGRP_IPV6_IFADDR;
+		addr.nl_groups = netlink_groups;
 		if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
 			close(sock);
 		else
@@ -1739,6 +1740,9 @@ static void print_issue_file(struct options *op, struct termios *tp)
 	int dd = -1, nfiles = 0, i;
 	struct dirent **namelist = NULL;
 #endif
+#ifdef AGETTY_RELOAD
+	netlink_groups = 0;
+#endif
 	if ((op->flags & F_NONL) == 0) {
 		/* Issue not in use, start with a new line. */
 		write_all(STDOUT_FILENO, "\r\n", 2);
@@ -1828,6 +1832,10 @@ static void print_issue_file(struct options *op, struct termios *tp)
 	free(namelist);
 	if (dd >= 0)
 		close(dd);
+#endif
+#ifdef AGETTY_RELOAD
+	if (netlink_groups != 0)
+		open_netlink();
 #endif
 }
 #endif /* ISSUE_SUPPORT */
@@ -2633,10 +2641,6 @@ static void output_special_char(unsigned char c, struct options *op,
 		struct ifaddrs *addrs = NULL;
 		char iface[128];
 
-#ifdef AGETTY_RELOAD
-		open_netlink();
-#endif
-
 		if (getifaddrs(&addrs))
 			break;
 
@@ -2646,6 +2650,11 @@ static void output_special_char(unsigned char c, struct options *op,
 			output_iface_ip(addrs, NULL, family);
 
 		freeifaddrs(addrs);
+
+		if (c == '4')
+			netlink_groups |= RTMGRP_IPV4_IFADDR;
+		else
+			netlink_groups |= RTMGRP_IPV6_IFADDR;
 		break;
 	}
 	default:
