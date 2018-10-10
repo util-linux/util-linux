@@ -28,6 +28,7 @@
 #include <utmpx.h>
 #include <getopt.h>
 #include <time.h>
+#include <stdbool.h>
 #include <sys/socket.h>
 #include <langinfo.h>
 #include <grp.h>
@@ -328,6 +329,7 @@ static void check_username (const char* nm);
 static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
 static void reload_agettys(void);
 static void print_issue_file(struct options *op, struct termios *tp);
+static void eval_issue_file(struct options *op, struct termios *tp);
 
 /* Fake hostname for ut_host specified on command line. */
 static char *fakehost;
@@ -463,10 +465,12 @@ int main(int argc, char **argv)
 	}
 
 	if (options.flags & F_NOPROMPT) {	/* --skip-login */
+		eval_issue_file(&options, &termios);
 		print_issue_file(&options, &termios);
 	} else {				/* regular (auto)login */
 		if (options.autolog) {
 			/* Autologin prompt */
+			eval_issue_file(&options, &termios);
 			do_prompt(&options, &termios);
 			printf(_("%s%s (automatic login)\n"), LOGIN, options.autolog);
 		} else {
@@ -1730,9 +1734,66 @@ static void print_issue_file(struct options *op, struct termios *tp __attribute_
 		write_all(STDOUT_FILENO, "\r\n", 2);
 	}
 }
+static void eval_issue_file(struct options *op __attribute__((__unused__)), struct termios *tp __attribute__((__unused__)))
+{
+}
 #else /* ISSUE_SUPPORT */
 
+static FILE *issue_f;
+static char *issue_mem = NULL;
+static size_t issue_mem_sz;
+static bool do_tcsetattr;
+static bool do_tcrestore;
+#ifdef AGETTY_RELOAD
+static char *issue_mem_old = NULL;
+#endif
+static bool cmp_issue_file(void) {
+	if (issue_mem_old && issue_mem) {
+		if (!strcmp(issue_mem_old, issue_mem)) {
+			free(issue_mem_old);
+			issue_mem_old = issue_mem;
+			issue_mem = NULL;
+			return false;
+		}
+	} else
+		return true;
+	return true;
+}
 static void print_issue_file(struct options *op, struct termios *tp)
+{
+	int oflag = tp->c_oflag;	    /* Save current setting. */
+
+	if ((op->flags & F_NONL) == 0) {
+		/* Issue not in use, start with a new line. */
+		write_all(STDOUT_FILENO, "\r\n", 2);
+	}
+
+	if (do_tcsetattr) {
+		if ((op->flags & F_VCONSOLE) == 0) {
+			/* Map new line in output to carriage return & new line. */
+			tp->c_oflag |= (ONLCR | OPOST);
+			tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
+		}
+	}
+
+	write_all(STDOUT_FILENO, issue_mem, issue_mem_sz);
+	if (do_tcrestore) {
+		/* Restore settings. */
+		tp->c_oflag = oflag;
+		/* Wait till output is gone. */
+		tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
+	}
+#ifdef AGETTY_RELOAD
+	free(issue_mem_old);
+	issue_mem_old = issue_mem;
+	issue_mem = NULL;
+#else
+	free(issue_mem);
+	issue_mem = NULL;
+#endif
+}
+
+static void eval_issue_file(struct options *op, struct termios *tp)
 {
 	const char *filename, *dirname = NULL;
 	FILE *f = NULL;
@@ -1743,10 +1804,6 @@ static void print_issue_file(struct options *op, struct termios *tp)
 #ifdef AGETTY_RELOAD
 	netlink_groups = 0;
 #endif
-	if ((op->flags & F_NONL) == 0) {
-		/* Issue not in use, start with a new line. */
-		write_all(STDOUT_FILENO, "\r\n", 2);
-	}
 
 	if (!(op->flags & F_ISSUE))
 		return;
@@ -1777,6 +1834,7 @@ static void print_issue_file(struct options *op, struct termios *tp)
 		dirname = _PATH_ISSUEDIR;
 	}
 
+	issue_f = open_memstream(&issue_mem, &issue_mem_sz);
 #ifdef ISSUEDIR_SUPPORT
 	if (dirname) {
 		dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
@@ -1791,13 +1849,9 @@ static void print_issue_file(struct options *op, struct termios *tp)
 		f = fopen(filename, "r");
 
 	if (f || dirname) {
-		int c, oflag = tp->c_oflag;	    /* Save current setting. */
+		int c;
 
-		if ((op->flags & F_VCONSOLE) == 0) {
-			/* Map new line in output to carriage return & new line. */
-			tp->c_oflag |= (ONLCR | OPOST);
-			tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
-		}
+		do_tcsetattr = true;
 
 		do {
 #ifdef ISSUEDIR_SUPPORT
@@ -1810,7 +1864,7 @@ static void print_issue_file(struct options *op, struct termios *tp)
 				if (c == '\\')
 					output_special_char(getc(f), op, tp, f);
 				else
-					putchar(c);
+					putc(c, issue_f);
 			}
 			fclose(f);
 			f = NULL;
@@ -1818,12 +1872,8 @@ static void print_issue_file(struct options *op, struct termios *tp)
 
 		fflush(stdout);
 
-		if ((op->flags & F_VCONSOLE) == 0) {
-			/* Restore settings. */
-			tp->c_oflag = oflag;
-			/* Wait till output is gone. */
-			tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
-		}
+		if ((op->flags & F_VCONSOLE) == 0)
+			do_tcrestore = true;
 	}
 
 #ifdef ISSUEDIR_SUPPORT
@@ -1837,6 +1887,7 @@ static void print_issue_file(struct options *op, struct termios *tp)
 	if (netlink_groups != 0)
 		open_netlink();
 #endif
+	fclose(issue_f);
 }
 #endif /* ISSUE_SUPPORT */
 
@@ -1851,11 +1902,14 @@ again:
 	if (op->flags & F_LOGINPAUSE) {
 		puts(_("[press ENTER to login]"));
 #ifdef AGETTY_RELOAD
+		/* reload issue */
 		if (!wait_for_term_input(STDIN_FILENO)) {
-			/* reload issue */
-			if (op->flags & F_VCONSOLE)
-				termio_clear(STDOUT_FILENO);
-			goto again;
+			eval_issue_file(op, tp);
+			if (cmp_issue_file()) {
+				if (op->flags & F_VCONSOLE)
+					termio_clear(STDOUT_FILENO);
+				goto again;
+			}
 		}
 #endif
 		getc(stdin);
@@ -1976,17 +2030,22 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 	bp = logname;
 	*bp = '\0';
 
+	eval_issue_file(op, tp);
 	while (*logname == '\0') {
 		/* Write issue file and prompt */
 		do_prompt(op, tp);
 
 #ifdef AGETTY_RELOAD
+	no_reload:
 		if (!wait_for_term_input(STDIN_FILENO)) {
 			/* refresh prompt -- discard input data, clear terminal
 			 * and call do_prompt() again
 			 */
 			if ((op->flags & F_VCONSOLE) == 0)
 				sleep(1);
+			eval_issue_file(op, tp);
+			if (!cmp_issue_file())
+				goto no_reload;
 			tcflush(STDIN_FILENO, TCIFLUSH);
 			if (op->flags & F_VCONSOLE)
 				termio_clear(STDOUT_FILENO);
@@ -2374,7 +2433,7 @@ static void print_addr(sa_family_t family, void *addr)
 	char buff[INET6_ADDRSTRLEN + 1];
 
 	inet_ntop(family, addr, buff, sizeof(buff));
-	printf("%s", buff);
+	fprintf(issue_f, "%s", buff);
 }
 
 /*
@@ -2496,36 +2555,36 @@ static void output_special_char(unsigned char c, struct options *op,
 		if (get_escape_argument(fp, escname, sizeof(escname))) {
 			const char *esc = color_sequence_from_colorname(escname);
 			if (esc)
-				fputs(esc, stdout);
+				fputs(esc, issue_f);
 		} else
-			fputs("\033", stdout);
+			fputs("\033", issue_f);
 		break;
 	}
 	case 's':
 		uname(&uts);
-		printf("%s", uts.sysname);
+		fprintf(issue_f, "%s", uts.sysname);
 		break;
 	case 'n':
 		uname(&uts);
-		printf("%s", uts.nodename);
+		fprintf(issue_f, "%s", uts.nodename);
 		break;
 	case 'r':
 		uname(&uts);
-		printf("%s", uts.release);
+		fprintf(issue_f, "%s", uts.release);
 		break;
 	case 'v':
 		uname(&uts);
-		printf("%s", uts.version);
+		fprintf(issue_f, "%s", uts.version);
 		break;
 	case 'm':
 		uname(&uts);
-		printf("%s", uts.machine);
+		fprintf(issue_f, "%s", uts.machine);
 		break;
 	case 'o':
 	{
 		char *dom = xgetdomainname();
 
-		fputs(dom ? dom : "unknown_domain", stdout);
+		fputs(dom ? dom : "unknown_domain", issue_f);
 		free(dom);
 		break;
 	}
@@ -2545,7 +2604,7 @@ static void output_special_char(unsigned char c, struct options *op,
 			    (canon = strchr(info->ai_canonname, '.')))
 				dom = canon + 1;
 		}
-		fputs(dom ? dom : "unknown_domain", stdout);
+		fputs(dom ? dom : "unknown_domain", issue_f);
 		if (info)
 			freeaddrinfo(info);
 		free(host);
@@ -2564,19 +2623,19 @@ static void output_special_char(unsigned char c, struct options *op,
 			break;
 
 		if (c == 'd') /* ISO 8601 */
-			printf("%s %s %d  %d",
+			fprintf(issue_f, "%s %s %d  %d",
 				      nl_langinfo(ABDAY_1 + tm->tm_wday),
 				      nl_langinfo(ABMON_1 + tm->tm_mon),
 				      tm->tm_mday,
 				      tm->tm_year < 70 ? tm->tm_year + 2000 :
 				      tm->tm_year + 1900);
 		else
-			printf("%02d:%02d:%02d",
+			fprintf(issue_f, "%02d:%02d:%02d",
 				      tm->tm_hour, tm->tm_min, tm->tm_sec);
 		break;
 	}
 	case 'l':
-		printf ("%s", op->tty);
+		fprintf (issue_f, "%s", op->tty);
 		break;
 	case 'b':
 	{
@@ -2585,7 +2644,7 @@ static void output_special_char(unsigned char c, struct options *op,
 
 		for (i = 0; speedtab[i].speed; i++) {
 			if (speedtab[i].code == speed) {
-				printf("%ld", speedtab[i].speed);
+				fprintf(issue_f, "%ld", speedtab[i].speed);
 				break;
 			}
 		}
@@ -2600,18 +2659,18 @@ static void output_special_char(unsigned char c, struct options *op,
 			var = read_os_release(op, varname);
 			if (var) {
 				if (strcmp(varname, "ANSI_COLOR") == 0)
-					printf("\033[%sm", var);
+					fprintf(issue_f, "\033[%sm", var);
 				else
-					fputs(var, stdout);
+					fputs(var, issue_f);
 			}
 		/* \S */
 		} else if ((var = read_os_release(op, "PRETTY_NAME"))) {
-			fputs(var, stdout);
+			fputs(var, issue_f);
 
 		/* \S and PRETTY_NAME not found */
 		} else {
 			uname(&uts);
-			fputs(uts.sysname, stdout);
+			fputs(uts.sysname, issue_f);
 		}
 
 		free(var);
@@ -2629,9 +2688,9 @@ static void output_special_char(unsigned char c, struct options *op,
 				users++;
 		endutxent();
 		if (c == 'U')
-			printf(P_("%d user", "%d users", users), users);
+			fprintf(issue_f, P_("%d user", "%d users", users), users);
 		else
-			printf ("%d ", users);
+			fprintf (issue_f, "%d ", users);
 		break;
 	}
 	case '4':
