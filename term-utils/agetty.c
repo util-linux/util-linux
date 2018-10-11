@@ -153,7 +153,7 @@
 # define AGETTY_RELOAD_FDNONE	-2			/* uninitialized fd */
 static int inotify_fd = AGETTY_RELOAD_FDNONE;
 static int netlink_fd = AGETTY_RELOAD_FDNONE;
-static __u32 netlink_groups;
+static uint32_t netlink_groups;
 #endif
 
 struct issue {
