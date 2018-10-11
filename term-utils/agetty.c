@@ -28,7 +28,6 @@
 #include <utmpx.h>
 #include <getopt.h>
 #include <time.h>
-#include <stdbool.h>
 #include <sys/socket.h>
 #include <langinfo.h>
 #include <grp.h>
@@ -1759,18 +1758,17 @@ static void eval_issue_file(struct issue *ie __attribute__((__unused__)),
 }
 #else /* ISSUE_SUPPORT */
 
-static bool cmp_issue_file(struct issue *ie)
+static int issue_is_changed(struct issue *ie)
 {
-	if (ie->mem_old && ie->mem) {
-		if (!strcmp(ie->mem_old, ie->mem)) {
-			free(ie->mem_old);
-			ie->mem_old = ie->mem;
-			ie->mem = NULL;
-			return false;
-		}
-	} else
-		return true;
-	return true;
+	if (ie->mem_old && ie->mem
+	    && strcmp(ie->mem_old, ie->mem) == 0) {
+		free(ie->mem_old);
+		ie->mem_old = ie->mem;
+		ie->mem = NULL;
+		return 0;
+	}
+
+	return 1;
 }
 
 static void print_issue_file(struct issue *ie,
@@ -1869,7 +1867,7 @@ static void eval_issue_file(struct issue *ie,
 	if (f || dirname) {
 		int c;
 
-		ie->do_tcsetattr = true;
+		ie->do_tcsetattr = 1;
 
 		do {
 #ifdef ISSUEDIR_SUPPORT
@@ -1891,7 +1889,7 @@ static void eval_issue_file(struct issue *ie,
 		fflush(stdout);
 
 		if ((op->flags & F_VCONSOLE) == 0)
-			ie->do_tcrestore = true;
+			ie->do_tcrestore = 1;
 	}
 
 #ifdef ISSUEDIR_SUPPORT
@@ -1923,7 +1921,7 @@ again:
 		/* reload issue */
 		if (!wait_for_term_input(STDIN_FILENO)) {
 			eval_issue_file(ie, op, tp);
-			if (cmp_issue_file(ie)) {
+			if (issue_is_changed(ie)) {
 				if (op->flags & F_VCONSOLE)
 					termio_clear(STDOUT_FILENO);
 				goto again;
@@ -2062,7 +2060,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 			if ((op->flags & F_VCONSOLE) == 0)
 				sleep(1);
 			eval_issue_file(ie, op, tp);
-			if (!cmp_issue_file(ie))
+			if (!issue_is_changed(ie))
 				goto no_reload;
 			tcflush(STDIN_FILENO, TCIFLUSH);
 			if (op->flags & F_VCONSOLE)
