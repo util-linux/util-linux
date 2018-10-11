@@ -1790,20 +1790,25 @@ static void print_issue_file(struct issue *ie,
 		}
 	}
 
-	write_all(STDOUT_FILENO, ie->mem, ie->mem_sz);
+	if (ie->mem_sz)
+		write_all(STDOUT_FILENO, ie->mem, ie->mem_sz);
+
 	if (ie->do_tcrestore) {
 		/* Restore settings. */
 		tp->c_oflag = oflag;
 		/* Wait till output is gone. */
 		tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
 	}
+
 #ifdef AGETTY_RELOAD
 	free(ie->mem_old);
 	ie->mem_old = ie->mem;
 	ie->mem = NULL;
+	ie->mem_sz = 0;
 #else
 	free(ie->mem);
 	ie->mem = NULL;
+	ie->mem_sz = 0;
 #endif
 }
 
