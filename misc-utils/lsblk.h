@@ -14,12 +14,14 @@
 #include <libsmartcols.h>
 
 #include "c.h"
+#include "list.h"
 #include "debug.h"
 
 #define LSBLK_DEBUG_INIT	(1 << 1)
 #define LSBLK_DEBUG_FILTER	(1 << 2)
 #define LSBLK_DEBUG_DEV		(1 << 3)
 #define LSBLK_DEBUG_CXT		(1 << 4)
+#define LSBLK_DEBUG_TREE	(1 << 5)
 #define LSBLK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(lsblk);
@@ -64,11 +66,29 @@ struct lsblk_devprop {
 	char *model;		/* disk model */
 };
 
-struct lsblk_device {
-	struct lsblk_device *parent;
-	struct lsblk_devprop *properties;
+/* Device dependence
+ *
+ * Note that the same device may be slave/holder for more another devices. It
+ * means we need to allocate list member rather than use @child directly.
+ */
+struct lsblk_devdep {
+	struct list_head        ls_deps;	/* item in parent->deps */
+	struct lsblk_device	*child;
+};
 
-	struct libscols_line *scols_line;
+struct lsblk_device {
+	int	refcount;
+
+	struct list_head	deps;		/* list with lsblk_devdep */
+	struct list_head	ls_roots;	/* item in devtree->roots list */
+	struct list_head	ls_devices;	/* item in devtree->devices list */
+
+	struct lsblk_devtree	*tree;
+
+	struct lsblk_devprop	*properties;
+	struct libscols_line	*scols_line;
+
+	struct lsblk_device	*parent;	/* obsolete */
 	struct stat	st;
 
 	char *name;		/* kernel name in /sys/block */
@@ -98,6 +118,55 @@ struct lsblk_device {
 			blkid_requested : 1;
 };
 
+
+/*
+ * Note that lsblk tree uses botton devices (devices without slaves) as root
+ * of the tree, and partitions are interpreted as a dependence too; it means:
+ *    sda -> sda1 -> md0
+ *
+ * The flag 'is_inverted' turns the tree over (root is device without holders):
+ *    md0 -> sda1 -> sda
+ */
+struct lsblk_devtree {
+	int	refcount;
+
+	struct list_head	roots;		/* tree root devices */
+	struct list_head	devices;	/* all devices */
+
+	unsigned int	is_inverse : 1;		/* inverse tree */
+};
+
+
+/*
+ * Generic iterator
+ */
+struct lsblk_iter {
+	struct list_head        *p;		/* current position */
+	struct list_head        *head;		/* start position */
+	int			direction;	/* LSBLK_ITER_{FOR,BACK}WARD */
+};
+
+#define LSBLK_ITER_FORWARD	0
+#define LSBLK_ITER_BACKWARD	1
+
+#define IS_ITER_FORWARD(_i)	((_i)->direction == LSBLK_ITER_FORWARD)
+#define IS_ITER_BACKWARD(_i)	((_i)->direction == LSBLK_ITER_BACKWARD)
+
+#define LSBLK_ITER_INIT(itr, list) \
+	do { \
+		(itr)->p = IS_ITER_FORWARD(itr) ? \
+				(list)->next : (list)->prev; \
+		(itr)->head = (list); \
+	} while(0)
+
+#define LSBLK_ITER_ITERATE(itr, res, restype, member) \
+	do { \
+		res = list_entry((itr)->p, restype, member); \
+		(itr)->p = IS_ITER_FORWARD(itr) ? \
+				(itr)->p->next : (itr)->p->prev; \
+	} while(0)
+
+
 /* lsblk-mnt.c */
 extern void lsblk_mnt_init(void);
 extern void lsblk_mnt_deinit(void);
@@ -108,5 +177,29 @@ extern char *lsblk_device_get_mountpoint(struct lsblk_device *dev);
 extern void lsblk_device_free_properties(struct lsblk_devprop *p);
 extern struct lsblk_devprop *lsblk_device_get_properties(struct lsblk_device *dev);
 extern void lsblk_properties_deinit(void);
+
+/* lsblk-devtree.c */
+void lsblk_reset_iter(struct lsblk_iter *itr, int direction);
+struct lsblk_device *lsblk_new_device(struct lsblk_devtree *tree);
+void lsblk_ref_device(struct lsblk_device *dev);
+void lsblk_unref_device(struct lsblk_device *dev);
+struct lsblk_devdep *lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device *child);
+int lsblk_device_next_child(struct lsblk_device *dev,
+                          struct lsblk_iter *itr,
+                          struct lsblk_device **child);
+
+struct lsblk_devtree *lsblk_new_devtree(void);
+void lsblk_ref_devtree(struct lsblk_devtree *tr);
+void lsblk_unref_devtree(struct lsblk_devtree *tr);
+int lsblk_devtree_add_root(struct lsblk_devtree *tr, struct lsblk_device *dev);
+int lsblk_devtree_next_root(struct lsblk_devtree *tr,
+                            struct lsblk_iter *itr,
+                            struct lsblk_device **dev);
+int lsblk_devtree_add_device(struct lsblk_devtree *tr, struct lsblk_device *dev);
+int lsblk_devtree_next_device(struct lsblk_devtree *tr,
+                            struct lsblk_iter *itr,
+                            struct lsblk_device **dev);
+struct lsblk_device *lsblk_devtree_get_device(struct lsblk_devtree *tr, const char *name);
+
 
 #endif /* UTIL_LINUX_LSBLK_H */
