@@ -20,8 +20,7 @@
 #define LSBLK_DEBUG_INIT	(1 << 1)
 #define LSBLK_DEBUG_FILTER	(1 << 2)
 #define LSBLK_DEBUG_DEV		(1 << 3)
-#define LSBLK_DEBUG_CXT		(1 << 4)
-#define LSBLK_DEBUG_TREE	(1 << 5)
+#define LSBLK_DEBUG_TREE	(1 << 4)
 #define LSBLK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(lsblk);

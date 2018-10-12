@@ -322,7 +322,7 @@ static void reset_device(struct lsblk_device *dev)
 	if (!dev)
 		return;
 
-	DBG(CXT, ul_debugobj(dev, "reset"));
+	DBG(DEV, ul_debugobj(dev, "reset"));
 
 	free(dev->name);
 	free(dev->dm_name);
@@ -1003,7 +1003,7 @@ static int set_device(struct lsblk_device *dev,
 {
 	dev_t devno;
 
-	DBG(CXT, ul_debugobj(dev, "setting context for %s [parent=%p, wholedisk=%p]",
+	DBG(DEV, ul_debugobj(dev, "setting context for %s [parent=%p, wholedisk=%p]",
 				name, parent, wholedisk));
 
 	dev->parent = parent;
@@ -1012,22 +1012,22 @@ static int set_device(struct lsblk_device *dev,
 
 	dev->filename = get_device_path(dev);
 	if (!dev->filename) {
-		DBG(CXT, ul_debugobj(dev, "%s: failed to get device path", dev->name));
+		DBG(DEV, ul_debugobj(dev, "%s: failed to get device path", dev->name));
 		return -1;
 	}
-	DBG(CXT, ul_debugobj(dev, "%s: filename=%s", dev->name, dev->filename));
+	DBG(DEV, ul_debugobj(dev, "%s: filename=%s", dev->name, dev->filename));
 
 	devno = __sysfs_devname_to_devno(lsblk->sysroot, dev->name, wholedisk ? wholedisk->name : NULL);
 
 	if (!devno) {
-		DBG(CXT, ul_debugobj(dev, "%s: unknown device name", dev->name));
+		DBG(DEV, ul_debugobj(dev, "%s: unknown device name", dev->name));
 		return -1;
 	}
 
 	if (lsblk->inverse) {
 		dev->sysfs = ul_new_sysfs_path(devno, wholedisk ? wholedisk->sysfs : NULL, lsblk->sysroot);
 		if (!dev->sysfs) {
-			DBG(CXT, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
+			DBG(DEV, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
 			return -1;
 		}
 		if (parent)
@@ -1035,7 +1035,7 @@ static int set_device(struct lsblk_device *dev,
 	} else {
 		dev->sysfs = ul_new_sysfs_path(devno, parent ? parent->sysfs : NULL, lsblk->sysroot);
 		if (!dev->sysfs) {
-			DBG(CXT, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
+			DBG(DEV, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
 			return -1;
 		}
 	}
@@ -1053,13 +1053,13 @@ static int set_device(struct lsblk_device *dev,
 
 	/* Ignore devices of zero size */
 	if (!lsblk->all_devices && dev->size == 0) {
-		DBG(CXT, ul_debugobj(dev, "zero size device -- ignore"));
+		DBG(DEV, ul_debugobj(dev, "zero size device -- ignore"));
 		return -1;
 	}
 	if (is_dm(dev->name)) {
 		ul_path_read_string(dev->sysfs, &dev->dm_name, "dm/name");
 		if (!dev->dm_name) {
-			DBG(CXT, ul_debugobj(dev, "%s: failed to get dm name", dev->name));
+			DBG(DEV, ul_debugobj(dev, "%s: failed to get dm name", dev->name));
 			return -1;
 		}
 	}
@@ -1068,16 +1068,16 @@ static int set_device(struct lsblk_device *dev,
 	dev->nholders = ul_path_count_dirents(dev->sysfs, "holders");
 	dev->nslaves = ul_path_count_dirents(dev->sysfs, "slaves");
 
-	DBG(CXT, ul_debugobj(dev, "%s: npartitions=%d, nholders=%d, nslaves=%d",
+	DBG(DEV, ul_debugobj(dev, "%s: npartitions=%d, nholders=%d, nslaves=%d",
 			dev->name, dev->npartitions, dev->nholders, dev->nslaves));
 
 	/* ignore non-SCSI devices */
 	if (lsblk->scsi && sysfs_blkdev_scsi_get_hctl(dev->sysfs, NULL, NULL, NULL, NULL)) {
-		DBG(CXT, ul_debugobj(dev, "non-scsi device -- ignore"));
+		DBG(DEV, ul_debugobj(dev, "non-scsi device -- ignore"));
 		return -1;
 	}
 
-	DBG(CXT, ul_debugobj(dev, "%s: context successfully initialized", dev->name));
+	DBG(DEV, ul_debugobj(dev, "%s: context successfully initialized", dev->name));
 	return 0;
 }
 
@@ -1105,7 +1105,7 @@ static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_devi
 	if (!wholedisk_dev->npartitions || wholedisk_dev->partition)
 		return -1;
 
-	DBG(CXT, ul_debugobj(wholedisk_dev, "probe whole-disk for partitions"));
+	DBG(DEV, ul_debugobj(wholedisk_dev, "probe whole-disk for partitions"));
 
 	dir = ul_path_opendir(wholedisk_dev->sysfs, NULL);
 	if (!dir)
@@ -1119,7 +1119,7 @@ static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_devi
 		if (!(sysfs_blkdev_is_partition_dirent(dir, d, wholedisk_dev->name)))
 			continue;
 
-		DBG(CXT, ul_debugobj(wholedisk_dev, "  checking %s", d->d_name));
+		DBG(DEV, ul_debugobj(wholedisk_dev, "  checking %s", d->d_name));
 
 		if (lsblk->inverse) {
 			/*
@@ -1158,7 +1158,7 @@ static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_devi
 		r = 0;
 	}
 
-	DBG(CXT, ul_debugobj(wholedisk_dev, "probe whole-disk for partitions -- done"));
+	DBG(DEV, ul_debugobj(wholedisk_dev, "probe whole-disk for partitions -- done"));
 	closedir(dir);
 	return r;
 }
@@ -1204,7 +1204,7 @@ static int list_deps(struct lsblk_device *dev)
 	if (lsblk->nodeps)
 		return 0;
 
-	DBG(CXT, ul_debugobj(dev, "%s: list dependencies", dev->name));
+	DBG(DEV, ul_debugobj(dev, "%s: list dependencies", dev->name));
 
 	if (!(lsblk->inverse ? dev->nslaves : dev->nholders))
 		return 0;
@@ -1214,20 +1214,20 @@ static int list_deps(struct lsblk_device *dev)
 	if (!dir)
 		return 0;
 
-	DBG(CXT, ul_debugobj(dev, "%s: checking for '%s' dependence", dev->name, depname));
+	DBG(DEV, ul_debugobj(dev, "%s: checking for '%s' dependence", dev->name, depname));
 
 	while ((d = xreaddir(dir))) {
 		/* Is the dependency a partition? */
 		if (sysfs_blkdev_is_partition_dirent(dir, d, NULL)) {
 			if (!get_wholedisk_from_partition_dirent(dir, d, &dep)) {
-				DBG(CXT, ul_debugobj(dev, "%s: %s: dependence is partition",
+				DBG(DEV, ul_debugobj(dev, "%s: %s: dependence is partition",
 								dev->name, d->d_name));
 				process_blkdev(&dep, dev, 1, d->d_name);
 			}
 		}
 		/* The dependency is a whole device. */
 		else if (!set_device(&dep, dev, NULL, d->d_name)) {
-			DBG(CXT, ul_debugobj(dev, "%s: %s: dependence is whole-disk",
+			DBG(DEV, ul_debugobj(dev, "%s: %s: dependence is whole-disk",
 								dev->name, d->d_name));
 			/* For inverse tree we don't want to show partitions
 			 * if the dependence is on whole-disk */
@@ -1237,7 +1237,7 @@ static int list_deps(struct lsblk_device *dev)
 	}
 	closedir(dir);
 
-	DBG(CXT, ul_debugobj(dev, "%s: checking for '%s' -- done", dev->name, depname));
+	DBG(DEV, ul_debugobj(dev, "%s: checking for '%s' -- done", dev->name, depname));
 	return 0;
 }
 
