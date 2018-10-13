@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 #include "canonicalize.h"
 #include "pathnames.h"
@@ -142,25 +143,94 @@ char *canonicalize_path_restricted(const char *path)
 {
 	char *canonical, *dmname;
 	int errsv;
-	uid_t euid;
-	gid_t egid;
+	int pipes[2], ret, pid;
+	ssize_t write_ret;
 
 	if (!path || !*path)
 		return NULL;
 
-	euid = geteuid();
-	egid = getegid();
-
-	/* drop permissions */
-	if (setegid(getgid()) < 0 || seteuid(getuid()) < 0)
+	ret = pipe(pipes);
+	if (ret < 0)
 		return NULL;
 
-	errsv = errno = 0;
+	/*
+	 * To accurately assume identity of getuid() we must use setuid()
+	 * but if we do that, we lose ability to reassume euid of 0, so
+	 * we fork to do the check to keep euid intact.
+	 */
+
+	pid = fork();
+	if (pid < 0) {
+		close(pipes[0]);
+		close(pipes[1]);
+		return NULL;
+	} else if (pid) {
+		size_t amt;
+		ssize_t read_ret;
+		int len;
+
+		canonical = NULL;
+		errsv = 0;
+
+		read_ret = read(pipes[0], &len, sizeof(len));
+		if (read_ret == 0) {
+			errsv = EIO;
+			goto error;
+		}
+		if (read_ret < 0)
+			goto serror;
+
+		if (len < 0) {
+			errsv = -len;
+			goto error;
+		}
+
+		canonical = malloc(len + 1);
+		if (!canonical)
+			goto serror;
+
+		amt = 0;
+		while (amt < (size_t) len) {
+			read_ret = read(pipes[0], canonical + amt, len - amt);
+			if (read_ret == 0) {
+				errsv = EIO;
+				goto error;
+			}
+			if (read_ret < 0)
+				goto serror;
+
+			amt += read_ret;
+		}
+
+		canonical[len] = '\0';
+
+		if (0) {
+		serror:
+			errsv = errno;
+		error:
+			if (canonical) {
+				free(canonical);
+				canonical = NULL;
+			}
+		}
+
+		close(pipes[0]);
+		close(pipes[1]);
+
+		/* We make a best effort to reap child */
+		waitpid(pid, NULL, 0);
+
+		errno = errsv;
+
+		return canonical;
+	}
+
+	/* drop permissions */
+	if (setgid(getgid()) < 0 || setuid(getuid()) < 0)
+		goto cerror;
 
 	canonical = realpath(path, NULL);
-	if (!canonical)
-		errsv = errno;
-	else if (is_dm_devname(canonical, &dmname)) {
+	if (canonical && is_dm_devname(canonical, &dmname)) {
 		char *dm = canonicalize_dm_name(dmname);
 		if (dm) {
 			free(canonical);
@@ -168,14 +238,30 @@ char *canonicalize_path_restricted(const char *path)
 		}
 	}
 
-	/* restore */
-	if (setegid(egid) < 0 || seteuid(euid) < 0) {
-		free(canonical);
-		return NULL;
+	if (!canonical) {
+ cerror:
+		errsv = -errno;
+		write_ret = write(pipes[1], &errsv, sizeof(errsv));
+		/* Doesn't matter if this fails */
+		(void) write_ret;
+	} else {
+		errsv = strlen(canonical);
+
+		write_ret = write(pipes[1], &errsv, sizeof(errsv));
+		if (write_ret >= 0) {
+			size_t amt;
+			amt = 0;
+			while (amt < (size_t) errsv) {
+				write_ret = write(pipes[1], canonical + amt,
+						  errsv - amt);
+				if (write_ret < 0)
+					break;
+				amt += write_ret;
+			}
+		}
 	}
 
-	errno = errsv;
-	return canonical;
+	exit(0);
 }
 
 
