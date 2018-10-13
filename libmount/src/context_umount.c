@@ -388,6 +388,50 @@ static int prepare_helper_from_options(struct libmnt_context *cxt,
 	return rc;
 }
 
+static int is_fuse_mount(const struct libmnt_fs *fs)
+{
+	int found;
+	char *user;
+	char uidstr[32];
+	unsigned uidlen = 0;
+
+	user = mnt_get_username(getuid());
+	if (!user)
+		return -1;
+
+	uidlen = sprintf(uidstr, "%u", getuid());
+
+	found = 0;
+
+	if (strcmp(fs->fstype, "fuse") == 0 ||
+	    strcmp(fs->fstype, "fuseblk") == 0 ||
+	    strncmp(fs->fstype, "fuse.", 5) == 0 ||
+	    strncmp(fs->fstype, "fuseblk.", 8) == 0) {
+
+		char *p = strstr(fs->optstr, "user=");
+		if (p &&
+		    (p == fs->optstr || *(p-1) == ',') &&
+		    strcmp(p + 5, user) == 0) {
+			found = 1;
+		}
+		/* /etc/mtab is a link pointing to
+		   /proc/mounts: */
+		else if ((p =
+			  strstr(fs->optstr, "user_id=")) &&
+			 (p == fs->optstr ||
+			  *(p-1) == ',') &&
+			 strncmp(p + 8, uidstr, uidlen) == 0 &&
+			 (*(p+8+uidlen) == ',' ||
+			  *(p+8+uidlen) == '\0')) {
+			found = 1;
+		}
+	}
+
+	if (!found)
+		return -1;
+	return 0;
+}
+
 /*
  * Note that cxt->fs contains relevant mtab entry!
  */
@@ -423,6 +467,14 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		if (cxt->helper)
 			return 0;	/* we'll call /sbin/umount.<uhelper> */
 	}
+
+	/*
+	 * Check if this is a fuse mount for the current user,
+	 * if so then unmounting is allowed
+	 */
+        if (!is_fuse_mount(cxt->fs)) {
+		return 0;
+        }
 
 	/*
 	 * User mounts have to be in /etc/fstab
