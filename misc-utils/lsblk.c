@@ -984,16 +984,34 @@ static void set_scols_data(struct lsblk_device *dev, int col, int id, struct lib
 		err(EXIT_FAILURE, _("failed to add output data"));
 }
 
-static void fill_table_line(struct lsblk_device *dev, struct libscols_line *scols_parent)
+static void device_to_scols(struct lsblk_device *dev, struct lsblk_device *parent, struct libscols_table *tab)
 {
 	size_t i;
+	struct lsblk_iter itr;
+	struct lsblk_device *child = NULL;
 
-	dev->scols_line = scols_table_new_line(lsblk->table, scols_parent);
+	dev->scols_line = scols_table_new_line(tab, parent ? parent->scols_line : NULL);
 	if (!dev->scols_line)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (i = 0; i < ncolumns; i++)
 		set_scols_data(dev, i, get_column_id(i), dev->scols_line);
+
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	while (lsblk_device_next_child(dev, &itr, &child) == 0)
+		device_to_scols(child, dev, tab);
+}
+
+static void devtree_to_scols(struct lsblk_devtree *tr, struct libscols_table *tab)
+{
+	struct lsblk_iter itr;
+	struct lsblk_device *dev = NULL;
+
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	while (lsblk_devtree_next_root(tr, &itr, &dev) == 0)
+		device_to_scols(dev, NULL, tab);
 }
 
 static int set_device(struct lsblk_device *dev,
@@ -1135,7 +1153,6 @@ static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_devi
 				goto next;
 
 			wholedisk_dev->parent = &part_dev;
-			fill_table_line(&part_dev, parent_dev ? parent_dev->scols_line : NULL);
 			if (!lsblk->nodeps)
 				process_blkdev(wholedisk_dev, &part_dev, 0, NULL);
 		} else {
@@ -1147,9 +1164,6 @@ static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_devi
 			 */
 			int ps = set_device(&part_dev, wholedisk_dev, wholedisk_dev, d->d_name);
 
-			/* Print whole disk only once */
-			if (r)
-				fill_table_line(wholedisk_dev, parent_dev ? parent_dev->scols_line : NULL);
 			if (ps == 0 && !lsblk->nodeps)
 				process_blkdev(&part_dev, wholedisk_dev, 0, NULL);
 		}
@@ -1244,20 +1258,20 @@ static int list_deps(struct lsblk_device *dev)
 static int process_blkdev(struct lsblk_device *dev, struct lsblk_device *parent,
 			  int do_partitions, const char *part_name)
 {
+#ifdef SUCK
 	if (do_partitions && dev->npartitions)
 		list_partitions(dev, parent, part_name);		/* partitions + whole-disk */
-	else
-		fill_table_line(dev, parent ? parent->scols_line : NULL); /* whole-disk only */
 
 	return list_deps(dev);
+#endif
+	return 0;
 }
 
 /* Iterate devices in sysfs */
-static int iterate_block_devices(void)
+static int iterate_block_devices(struct lsblk_devtree *tr)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct lsblk_device dev = { .parent = NULL };
 	struct path_cxt *pc = ul_new_path(_PATH_SYS_BLOCK);
 
 	if (!pc)
@@ -1273,22 +1287,35 @@ static int iterate_block_devices(void)
 	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK));
 
 	while ((d = xreaddir(dir))) {
+		struct lsblk_device *dev;
 
 		DBG(DEV, ul_debug(" %s dentry", d->d_name));
 
-		if (set_device(&dev, NULL, NULL, d->d_name))
-			goto next;
+		dev = lsblk_devtree_get_device(tr, d->d_name);
+		if (!dev) {
+			dev = lsblk_new_device(tr);
+			if (!dev)
+				err(EXIT_FAILURE, _("failed to allocate device"));
+			if (set_device(dev, NULL, NULL, d->d_name) != 0) {
+				lsblk_unref_device(dev);
+				continue;
+			}
+			lsblk_devtree_add_device(tr, dev);
+			lsblk_unref_device(dev);
+		} else
+			DBG(DEV, ul_debug(" %s: already processed", d->d_name));
 
-		if (is_maj_excluded(dev.maj) || !is_maj_included(dev.maj))
-			goto next;
+		/* remove unwanted devices */
+		if (is_maj_excluded(dev->maj) || !is_maj_included(dev->maj)) {
+			DBG(DEV, ul_debug(" %s: ignore (by filter)", d->d_name));
+			lsblk_devtree_remove_device(tr, dev);
+			continue;
+		}
 
-		/* Skip devices in the middle of dependency tree. */
-		if ((lsblk->inverse ? dev.nholders : dev.nslaves) > 0)
-			goto next;
-
-		process_blkdev(&dev, NULL, 1, NULL);
-	next:
-		reset_device(&dev);
+		/* process dependencies for top level devices */
+		if ((lsblk->inverse ? dev->nholders : dev->nslaves) <= 0
+		    && process_blkdev(dev, NULL, 1, NULL) == 0)
+			lsblk_devtree_add_root(tr, dev);
 	}
 
 	closedir(dir);
@@ -1498,6 +1525,7 @@ static void check_sysdevblock(void)
 int main(int argc, char *argv[])
 {
 	struct lsblk _ls = { .sort_id = -1, .flags = LSBLK_TREE };
+	struct lsblk_devtree *tr;
 	int c, status = EXIT_FAILURE;
 	char *outarg = NULL;
 	size_t i;
@@ -1785,8 +1813,12 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	tr = lsblk_new_devtree();
+	if (!tr)
+		err(EXIT_FAILURE, _("failed to allocate device tree"));
+
 	if (optind == argc)
-		status = iterate_block_devices() == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+		status = iterate_block_devices(tr) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 	else {
 		int cnt = 0, cnt_err = 0;
 
@@ -1800,6 +1832,8 @@ int main(int argc, char *argv[])
 			 cnt_err	? LSBLK_EXIT_SOMEOK :	/* some ok */
 					  EXIT_SUCCESS;		/* all success */
 	}
+
+	devtree_to_scols(tr, lsblk->table);
 
 	if (lsblk->sort_col)
 		scols_sort_table(lsblk->table, lsblk->sort_col);
