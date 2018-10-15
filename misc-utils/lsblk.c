@@ -1081,6 +1081,29 @@ static int set_device(struct lsblk_device *dev,
 	return 0;
 }
 
+struct lsblk_device *devtree_get_device_or_new(struct lsblk_devtree *tr,
+					       struct lsblk_device *parent,
+					       struct lsblk_device *disk,
+					       const char *name)
+{
+	struct lsblk_device *dev = lsblk_devtree_get_device(tr, name);
+
+	if (!dev) {
+		dev = lsblk_new_device(tr);
+		if (!dev)
+			err(EXIT_FAILURE, _("failed to allocate device"));
+
+		if (set_device(dev, parent, disk, name) != 0) {
+			lsblk_unref_device(dev);
+			return NULL;
+		}
+		lsblk_devtree_add_device(tr, dev);
+		lsblk_unref_device(dev);		/* keep it referenced by devtree only */
+	} else
+		DBG(DEV, ul_debugobj(dev, "%s: already processed", name));
+
+	return dev;
+}
 
 static int process_dependencies(struct lsblk_device *dev, struct lsblk_device *parent,
 			  int do_partitions, const char *part_name);
@@ -1271,19 +1294,9 @@ static int process_all_devices(struct lsblk_devtree *tr)
 
 		DBG(DEV, ul_debug(" %s dentry", d->d_name));
 
-		dev = lsblk_devtree_get_device(tr, d->d_name);
-		if (!dev) {
-			dev = lsblk_new_device(tr);
-			if (!dev)
-				err(EXIT_FAILURE, _("failed to allocate device"));
-			if (set_device(dev, NULL, NULL, d->d_name) != 0) {
-				lsblk_unref_device(dev);
-				continue;
-			}
-			lsblk_devtree_add_device(tr, dev);
-			lsblk_unref_device(dev);		/* keep it referenced by devtree only */
-		} else
-			DBG(DEV, ul_debug(" %s: already processed", d->d_name));
+		dev = devtree_get_device_or_new(tr, NULL, NULL, d->d_name);
+		if (!dev)
+			continue;
 
 		/* remove unwanted devices */
 		if (is_maj_excluded(dev->maj) || !is_maj_included(dev->maj)) {
