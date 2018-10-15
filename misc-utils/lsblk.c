@@ -317,24 +317,6 @@ static int column_id_to_number(int id)
 	return -1;
 }
 
-static void reset_device(struct lsblk_device *dev)
-{
-	if (!dev)
-		return;
-
-	DBG(DEV, ul_debugobj(dev, "reset"));
-
-	free(dev->name);
-	free(dev->dm_name);
-	free(dev->filename);
-	free(dev->mountpoint);
-
-	lsblk_device_free_properties(dev->properties);
-	ul_unref_path(dev->sysfs);
-
-	memset(dev, 0, sizeof(*dev));
-}
-
 static int is_dm(const char *name)
 {
 	return strncmp(name, "dm-", 3) ? 0 : 1;
@@ -1168,7 +1150,6 @@ static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_devi
 				process_blkdev(&part_dev, wholedisk_dev, 0, NULL);
 		}
 	next:
-		reset_device(&part_dev);
 		r = 0;
 	}
 
@@ -1247,7 +1228,6 @@ static int list_deps(struct lsblk_device *dev)
 			 * if the dependence is on whole-disk */
 			process_blkdev(&dep, dev, lsblk->inverse ? 0 : 1, NULL);
 		}
-		reset_device(&dep);
 	}
 	closedir(dir);
 
@@ -1386,11 +1366,6 @@ static int process_one_device(char *devname)
 	rc = 0;
 leave:
 	free(name);
-	reset_device(&dev);
-
-	if (real_part)
-		reset_device(&parent);
-
 	return rc;
 }
 
