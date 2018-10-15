@@ -23,7 +23,6 @@ struct lsblk_device *lsblk_new_device(struct lsblk_devtree *tree)
 	dev->refcount = 1;
 
 	dev->tree = tree;
-	lsblk_ref_devtree(dev->tree);
 
         INIT_LIST_HEAD(&dev->deps);
 	INIT_LIST_HEAD(&dev->ls_roots);
@@ -68,7 +67,7 @@ static int device_remove_dependences(struct lsblk_device *dev)
 
 void lsblk_unref_device(struct lsblk_device *dev)
 {
-	if (dev)
+	if (!dev)
 		return;
 
 	if (--dev->refcount <= 0) {
@@ -77,16 +76,12 @@ void lsblk_unref_device(struct lsblk_device *dev)
 		device_remove_dependences(dev);
 		lsblk_device_free_properties(dev->properties);
 
-		if (dev->tree)
-			lsblk_devtree_remove_device(dev->tree, dev);
-
 		free(dev->name);
 		free(dev->dm_name);
 		free(dev->filename);
 		free(dev->mountpoint);
 
 		ul_unref_path(dev->sysfs);
-		lsblk_ref_devtree(dev->tree);
 
 		free(dev);
 	}
@@ -165,21 +160,16 @@ void lsblk_ref_devtree(struct lsblk_devtree *tr)
 
 void lsblk_unref_devtree(struct lsblk_devtree *tr)
 {
-	if (tr)
+	if (!tr)
 		return;
 
 	if (--tr->refcount <= 0) {
 		DBG(TREE, ul_debugobj(tr, "dealloc"));
 
-		while (!list_empty(&tr->roots)) {
-			struct lsblk_device *dev = list_entry(tr->roots.next,
-						struct lsblk_device, ls_roots);
-			lsblk_unref_device(dev);
-		}
 		while (!list_empty(&tr->devices)) {
 			struct lsblk_device *dev = list_entry(tr->devices.next,
 						struct lsblk_device, ls_devices);
-			lsblk_unref_device(dev);
+			lsblk_devtree_remove_device(tr, dev);
 		}
 		free(tr);
 	}
