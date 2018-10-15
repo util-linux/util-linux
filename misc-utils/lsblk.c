@@ -1263,7 +1263,7 @@ static int process_dependencies(struct lsblk_device *dev, struct lsblk_device *p
 {
 #ifdef SUCK
 	if (do_partitions && dev->npartitions)
-		list_partitions(dev, parent, part_name);		/* partitions + whole-disk */
+		process_partitions(dev, parent, part_name);		/* partitions + whole-disk */
 
 	return list_deps(dev);
 #endif
@@ -1318,9 +1318,9 @@ done:
 	return 0;
 }
 
-static int process_one_device(char *devname)
+static int process_one_device(struct lsblk_devtree *tr, char *devname)
 {
-	struct lsblk_device parent = { .parent = NULL }, dev = { .parent = NULL };
+	struct lsblk_device *dev = NULL;
 	struct stat st;
 	char buf[PATH_MAX + 1], *name = NULL, *diskname = NULL;
 	dev_t disk = 0;
@@ -1358,22 +1358,35 @@ static int process_one_device(char *devname)
 		/*
 		 * Device is not a partition.
 		 */
-		if (set_device(&dev, NULL, NULL, name))
-			goto leave;
-		process_dependencies(&dev, NULL, !lsblk->inverse, NULL);
-	} else {
-		/*
-		 * Partition, read sysfs name of the device.
-		 */
-		if (set_device(&parent, NULL, NULL, diskname))
-			goto leave;
-		if (set_device(&dev, &parent, &parent, name))
+		dev = devtree_get_device_or_new(tr, NULL, NULL, name);
+		if (!dev)
 			goto leave;
 
+		if (process_dependencies(dev, NULL, !lsblk->inverse, NULL) == 0)
+			lsblk_devtree_add_root(tr, dev);
+	} else {
+		/*
+		 * Partition, read sysfs name of the disk device
+		 */
+		struct lsblk_device *parent;
+
+		parent = devtree_get_device_or_new(tr, NULL, NULL, diskname);
+		if (!parent)
+			goto leave;
+
+		dev = devtree_get_device_or_new(tr, parent, parent, name);
+		if (!dev)
+			goto leave;
+
+		if (process_dependencies(dev, NULL, 1, NULL) == 0)
+			lsblk_devtree_add_root(tr, dev);
+
+/*
 		if (lsblk->inverse)
-			process_dependencies(&parent, &dev, 1, dev.name);
+			process_dependencies(parent, dev, 1, dev->name);
 		else
-			process_dependencies(&dev, &parent, 1, NULL);
+			process_dependencies(dev, parent, 1, NULL);
+*/
 	}
 
 	rc = 0;
@@ -1811,7 +1824,7 @@ int main(int argc, char *argv[])
 		int cnt = 0, cnt_err = 0;
 
 		while (optind < argc) {
-			if (process_one_device(argv[optind++]) != 0)
+			if (process_one_device(tr, argv[optind++]) != 0)
 				cnt_err++;
 			cnt++;
 		}
