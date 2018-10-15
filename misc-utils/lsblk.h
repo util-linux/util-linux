@@ -198,7 +198,8 @@ int lsblk_devtree_add_device(struct lsblk_devtree *tr, struct lsblk_device *dev)
 int lsblk_devtree_next_device(struct lsblk_devtree *tr,
                             struct lsblk_iter *itr,
                             struct lsblk_device **dev);
+int lsblk_devtree_has_device(struct lsblk_devtree *tr, struct lsblk_device *dev);
 struct lsblk_device *lsblk_devtree_get_device(struct lsblk_devtree *tr, const char *name);
-
+int lsblk_devtree_remove_device(struct lsblk_devtree *tr, struct lsblk_device *dev);
 
 #endif /* UTIL_LINUX_LSBLK_H */

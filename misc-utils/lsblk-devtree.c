@@ -77,8 +77,8 @@ void lsblk_unref_device(struct lsblk_device *dev)
 		device_remove_dependences(dev);
 		lsblk_device_free_properties(dev->properties);
 
-		list_del_init(&dev->ls_roots);
-		list_del_init(&dev->ls_devices);
+		if (dev->tree)
+			lsblk_devtree_remove_device(dev->tree, dev);
 
 		free(dev->name);
 		free(dev->dm_name);
@@ -187,7 +187,11 @@ void lsblk_unref_devtree(struct lsblk_devtree *tr)
 
 int lsblk_devtree_add_root(struct lsblk_devtree *tr, struct lsblk_device *dev)
 {
-	lsblk_ref_device(dev);
+	if (!lsblk_devtree_has_device(tr, dev))
+		lsblk_devtree_add_device(tr, dev);
+
+	/* We don't increment reference counter for tr->roots list. The primary
+	 * reference is tr->devices */
 
         DBG(TREE, ul_debugobj(tr, "add root device 0x%p [%s]", dev, dev->name));
         list_add_tail(&dev->ls_roots, &tr->roots);
@@ -239,6 +243,21 @@ int lsblk_devtree_next_device(struct lsblk_devtree *tr,
 	return rc;
 }
 
+int lsblk_devtree_has_device(struct lsblk_devtree *tr, struct lsblk_device *dev)
+{
+	struct lsblk_device *x = NULL;
+	struct lsblk_iter itr;
+
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	while (lsblk_devtree_next_device(tr, &itr, &x) == 0) {
+		if (x == dev)
+			return 1;
+	}
+
+	return 0;
+}
+
 struct lsblk_device *lsblk_devtree_get_device(struct lsblk_devtree *tr, const char *name)
 {
 	struct lsblk_device *dev = NULL;
@@ -254,4 +273,17 @@ struct lsblk_device *lsblk_devtree_get_device(struct lsblk_devtree *tr, const ch
 	return NULL;
 }
 
+int lsblk_devtree_remove_device(struct lsblk_devtree *tr, struct lsblk_device *dev)
+{
+        DBG(TREE, ul_debugobj(tr, "remove device 0x%p [%s]", dev, dev->name));
+
+	if (!lsblk_devtree_has_device(tr, dev))
+		return 1;
+
+	list_del_init(&dev->ls_roots);
+	list_del_init(&dev->ls_devices);
+	lsblk_unref_device(dev);
+
+	return 0;
+}
 
