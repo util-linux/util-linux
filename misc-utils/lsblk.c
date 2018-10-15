@@ -1082,7 +1082,7 @@ static int set_device(struct lsblk_device *dev,
 }
 
 
-static int process_blkdev(struct lsblk_device *dev, struct lsblk_device *parent,
+static int process_dependencies(struct lsblk_device *dev, struct lsblk_device *parent,
 			  int do_partitions, const char *part_name);
 
 /*
@@ -1136,7 +1136,7 @@ static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_devi
 
 			wholedisk_dev->parent = &part_dev;
 			if (!lsblk->nodeps)
-				process_blkdev(wholedisk_dev, &part_dev, 0, NULL);
+				process_dependencies(wholedisk_dev, &part_dev, 0, NULL);
 		} else {
 			/*
 			 * <parent_dev>
@@ -1147,7 +1147,7 @@ static int list_partitions(struct lsblk_device *wholedisk_dev, struct lsblk_devi
 			int ps = set_device(&part_dev, wholedisk_dev, wholedisk_dev, d->d_name);
 
 			if (ps == 0 && !lsblk->nodeps)
-				process_blkdev(&part_dev, wholedisk_dev, 0, NULL);
+				process_dependencies(&part_dev, wholedisk_dev, 0, NULL);
 		}
 	next:
 		r = 0;
@@ -1217,7 +1217,7 @@ static int list_deps(struct lsblk_device *dev)
 			if (!get_wholedisk_from_partition_dirent(dir, d, &dep)) {
 				DBG(DEV, ul_debugobj(dev, "%s: %s: dependence is partition",
 								dev->name, d->d_name));
-				process_blkdev(&dep, dev, 1, d->d_name);
+				process_dependencies(&dep, dev, 1, d->d_name);
 			}
 		}
 		/* The dependency is a whole device. */
@@ -1226,7 +1226,7 @@ static int list_deps(struct lsblk_device *dev)
 								dev->name, d->d_name));
 			/* For inverse tree we don't want to show partitions
 			 * if the dependence is on whole-disk */
-			process_blkdev(&dep, dev, lsblk->inverse ? 0 : 1, NULL);
+			process_dependencies(&dep, dev, lsblk->inverse ? 0 : 1, NULL);
 		}
 	}
 	closedir(dir);
@@ -1235,7 +1235,7 @@ static int list_deps(struct lsblk_device *dev)
 	return 0;
 }
 
-static int process_blkdev(struct lsblk_device *dev, struct lsblk_device *parent,
+static int process_dependencies(struct lsblk_device *dev, struct lsblk_device *parent,
 			  int do_partitions, const char *part_name)
 {
 #ifdef SUCK
@@ -1248,7 +1248,7 @@ static int process_blkdev(struct lsblk_device *dev, struct lsblk_device *parent,
 }
 
 /* Iterate devices in sysfs */
-static int iterate_block_devices(struct lsblk_devtree *tr)
+static int process_all_devices(struct lsblk_devtree *tr)
 {
 	DIR *dir;
 	struct dirent *d;
@@ -1294,7 +1294,7 @@ static int iterate_block_devices(struct lsblk_devtree *tr)
 
 		/* process dependencies for top level devices */
 		if ((lsblk->inverse ? dev->nholders : dev->nslaves) <= 0
-		    && process_blkdev(dev, NULL, 1, NULL) == 0)
+		    && process_dependencies(dev, NULL, 1, NULL) == 0)
 			lsblk_devtree_add_root(tr, dev);
 	}
 
@@ -1347,7 +1347,7 @@ static int process_one_device(char *devname)
 		 */
 		if (set_device(&dev, NULL, NULL, name))
 			goto leave;
-		process_blkdev(&dev, NULL, !lsblk->inverse, NULL);
+		process_dependencies(&dev, NULL, !lsblk->inverse, NULL);
 	} else {
 		/*
 		 * Partition, read sysfs name of the device.
@@ -1358,9 +1358,9 @@ static int process_one_device(char *devname)
 			goto leave;
 
 		if (lsblk->inverse)
-			process_blkdev(&parent, &dev, 1, dev.name);
+			process_dependencies(&parent, &dev, 1, dev.name);
 		else
-			process_blkdev(&dev, &parent, 1, NULL);
+			process_dependencies(&dev, &parent, 1, NULL);
 	}
 
 	rc = 0;
@@ -1793,7 +1793,7 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("failed to allocate device tree"));
 
 	if (optind == argc)
-		status = iterate_block_devices(tr) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+		status = process_all_devices(tr) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 	else {
 		int cnt = 0, cnt_err = 0;
 
