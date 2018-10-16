@@ -1104,43 +1104,43 @@ static int process_dependencies(
 /*
  * Read devices from whole-disk device into tree
  */
-static int process_partitions(struct lsblk_devtree *tr, struct lsblk_device *wholedisk_dev)
+static int process_partitions(struct lsblk_devtree *tr, struct lsblk_device *disk)
 {
 	DIR *dir;
 	struct dirent *d;
 
-	assert(wholedisk_dev);
+	assert(disk);
 
 	/*
 	 * Do not process further if there are no partitions for
 	 * this device or the device itself is a partition.
 	 */
-	if (!wholedisk_dev->npartitions || wholedisk_dev->partition)
-		return -1;
+	if (!disk->npartitions || disk->partition)
+		return -EINVAL;
 
-	DBG(DEV, ul_debugobj(wholedisk_dev, "probe whole-disk for partitions"));
+	DBG(DEV, ul_debugobj(disk, "%s: probe whole-disk for partitions", disk->name));
 
-	dir = ul_path_opendir(wholedisk_dev->sysfs, NULL);
+	dir = ul_path_opendir(disk->sysfs, NULL);
 	if (!dir)
 		err(EXIT_FAILURE, _("failed to open device directory in sysfs"));
 
 	while ((d = xreaddir(dir))) {
 		struct lsblk_device *part;
 
-		if (!(sysfs_blkdev_is_partition_dirent(dir, d, wholedisk_dev->name)))
+		if (!(sysfs_blkdev_is_partition_dirent(dir, d, disk->name)))
 			continue;
 
-		DBG(DEV, ul_debugobj(wholedisk_dev, "  checking %s", d->d_name));
+		DBG(DEV, ul_debugobj(disk, "  checking %s", d->d_name));
 
-		part = devtree_get_device_or_new(tr, wholedisk_dev, d->d_name);
+		part = devtree_get_device_or_new(tr, disk, d->d_name);
 		if (!part)
 			continue;
 
-		if (lsblk_device_new_dependence(wholedisk_dev, part) == 0)
+		if (lsblk_device_new_dependence(disk, part) == 0)
 			process_dependencies(tr, part, 0);
 	}
 
-	DBG(DEV, ul_debugobj(wholedisk_dev, "probe whole-disk for partitions -- done"));
+	DBG(DEV, ul_debugobj(disk, "probe whole-disk for partitions -- done"));
 	closedir(dir);
 	return 0;
 }
