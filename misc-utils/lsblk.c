@@ -1260,30 +1260,35 @@ static int process_dependencies(
 }
 
 
-/* Iterate devices in sysfs */
-
-static int process_one_device(struct lsblk_devtree *tr, char *devname)
+static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t devno)
 {
 	struct lsblk_device *dev = NULL;
-	struct stat st;
 	char buf[PATH_MAX + 1], *name = NULL, *diskname = NULL;
 	dev_t disk = 0;
 	int real_part = 0, rc = -EINVAL;
 
-	DBG(DEV, ul_debug("%s: reading alone device", devname));
 
-	if (stat(devname, &st) || !S_ISBLK(st.st_mode)) {
-		warnx(_("%s: not a block device"), devname);
-		goto leave;
-	}
+	if (devno == 0) {
+		struct stat st;
+
+		DBG(DEV, ul_debug("%s: reading alone device", devname));
+
+		if (stat(devname, &st) || !S_ISBLK(st.st_mode)) {
+			warnx(_("%s: not a block device"), devname);
+			goto leave;
+		}
+		devno = st.st_rdev;
+	} else
+		DBG(DEV, ul_debug("%d:%d: reading alone device", major(devno), minor(devno)));
 
 	/* TODO: sysfs_devno_to_devname() internally initializes path_cxt, it
 	 * would be better to use ul_new_sysfs_path() + sysfs_blkdev_get_name()
 	 * and reuse path_cxt for set_device()
 	 */
-	name = sysfs_devno_to_devname(st.st_rdev, buf, sizeof(buf));
+	name = sysfs_devno_to_devname(devno, buf, sizeof(buf));
 	if (!name) {
-		warn(_("%s: failed to get sysfs name"), devname);
+		if (devname)
+			warn(_("%s: failed to get sysfs name"), devname);
 		goto leave;
 	}
 	name = xstrdup(name);
@@ -1292,12 +1297,12 @@ static int process_one_device(struct lsblk_devtree *tr, char *devname)
 		/* dm mapping is never a real partition! */
 		real_part = 0;
 	} else {
-		if (blkid_devno_to_wholedisk(st.st_rdev, buf, sizeof(buf), &disk)) {
-			warn(_("%s: failed to get whole-disk device number"), devname);
+		if (blkid_devno_to_wholedisk(devno, buf, sizeof(buf), &disk)) {
+			warn(_("%s: failed to get whole-disk device number"), name);
 			goto leave;
 		}
 		diskname = buf;
-		real_part = st.st_rdev != disk;
+		real_part = devno != disk;
 	}
 
 	if (!real_part) {
@@ -1342,29 +1347,83 @@ leave:
 	return rc;
 }
 
-static int process_all_devices(struct lsblk_devtree *tr)
+static int process_one_device(struct lsblk_devtree *tr, char *devname)
+{
+	return __process_one_device(tr, devname, 0);
+}
+
+/*
+ * The /sys/block contains only root devices, and no partitions. It seems more
+ * simple to scan /sys/dev/block where are all devices without exceptions to get
+ * top-level devices for the reverse tree.
+ */
+static int process_all_devices_inverse(struct lsblk_devtree *tr)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct path_cxt *pc = ul_new_path(_PATH_SYS_BLOCK);
+	struct path_cxt *pc = ul_new_path(_PATH_SYS_DEVBLOCK);
+
+	assert(lsblk->inverse);
 
 	if (!pc)
 		err(EXIT_FAILURE, _("failed to allocate /sys handler"));
 
 	ul_path_set_prefix(pc, lsblk->sysroot);
-
-	/* TODO: reuse @pc in set_device(), etc. */
 	dir = ul_path_opendir(pc, NULL);
 	if (!dir)
 		goto done;
 
-	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK "%s", lsblk->inverse ? " [inverse]" : ""));
+	DBG(DEV, ul_debug("iterate on " _PATH_SYS_DEVBLOCK));
+
+	while ((d = xreaddir(dir))) {
+		dev_t devno;
+		int maj, min;
+
+		DBG(DEV, ul_debug(" %s dentry", d->d_name));
+
+		if (sscanf(d->d_name, "%d:%d", &maj, &min) != 2)
+			continue;
+		devno = makedev(maj, min);
+
+		if (is_maj_excluded(maj) || !is_maj_included(maj))
+			continue;
+		if (ul_path_countf_dirents(pc, "%s/holders", d->d_name) != 0)
+			continue;
+		if (sysfs_devno_count_partitions(devno) != 0)
+			continue;
+		__process_one_device(tr, NULL, devno);
+	}
+
+	closedir(dir);
+done:
+	ul_unref_path(pc);
+	DBG(DEV, ul_debug("iterate on " _PATH_SYS_DEVBLOCK " -- done"));
+	return 0;
+}
+
+static int process_all_devices(struct lsblk_devtree *tr)
+{
+	DIR *dir;
+	struct dirent *d;
+	struct path_cxt *pc;
+
+	assert(lsblk->inverse == 0);
+
+	pc = ul_new_path(_PATH_SYS_BLOCK);
+	if (!pc)
+		err(EXIT_FAILURE, _("failed to allocate /sys handler"));
+
+	ul_path_set_prefix(pc, lsblk->sysroot);
+	dir = ul_path_opendir(pc, NULL);
+	if (!dir)
+		goto done;
+
+	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK));
 
 	while ((d = xreaddir(dir))) {
 		struct lsblk_device *dev;
 
 		DBG(DEV, ul_debug(" %s dentry", d->d_name));
-
 		dev = devtree_get_device_or_new(tr, NULL, d->d_name);
 		if (!dev)
 			continue;
@@ -1376,20 +1435,12 @@ static int process_all_devices(struct lsblk_devtree *tr)
 			continue;
 		}
 
-		/*
-		 * ignore devices in the midle of the tree
-		 */
-		if (!lsblk->inverse) {
-			if (dev->nslaves) {
-				DBG(DEV, ul_debug(" %s: ignore (in-middle)", d->d_name));
-				continue;
-			}
-			lsblk_devtree_add_root(tr, dev);
-			process_dependencies(tr, dev, 1);
-		} else {
-			/* not implemented yet */
-			;
+		if (dev->nslaves) {
+			DBG(DEV, ul_debug(" %s: ignore (in-middle)", d->d_name));
+			continue;
 		}
+		lsblk_devtree_add_root(tr, dev);
+		process_dependencies(tr, dev, 1);
 	}
 
 	closedir(dir);
@@ -1822,9 +1873,13 @@ int main(int argc, char *argv[])
 	if (!tr)
 		err(EXIT_FAILURE, _("failed to allocate device tree"));
 
-	if (optind == argc)
-		status = process_all_devices(tr) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
-	else {
+	if (optind == argc) {
+		int rc = lsblk->inverse ?
+			process_all_devices_inverse(tr) :
+			process_all_devices(tr);
+
+		status = rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+	} else {
 		int cnt = 0, cnt_err = 0;
 
 		while (optind < argc) {
