@@ -97,6 +97,7 @@ dev_t sysfs_devname_to_devno(const char *name);
 dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent);
 char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz);
 char *sysfs_devno_to_devname(dev_t devno, char *buf, size_t bufsiz);
+int sysfs_devno_count_partitions(dev_t devno);
 
 int sysfs_blkdev_scsi_get_hctl(struct path_cxt *pc, int *h, int *c, int *t, int *l);
 char *sysfs_blkdev_scsi_host_strdup_attribute(struct path_cxt *pc,

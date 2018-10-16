@@ -999,6 +999,20 @@ char *sysfs_devno_to_devname(dev_t devno, char *buf, size_t bufsiz)
 	return res;
 }
 
+int sysfs_devno_count_partitions(dev_t devno)
+{
+	struct path_cxt *pc = ul_new_sysfs_path(devno, NULL, NULL);
+	int n = 0;
+
+	if (pc) {
+		char buf[PATH_MAX + 1];
+		char *name = sysfs_blkdev_get_name(pc, buf, sizeof(buf));
+
+		n = sysfs_blkdev_count_partitions(pc, name);
+		ul_unref_path(pc);
+	}
+	return n;
+}
 
 
 #ifdef TEST_PROGRAM_SYSFS
