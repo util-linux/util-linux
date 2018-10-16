@@ -41,10 +41,10 @@ void lsblk_ref_device(struct lsblk_device *dev)
 
 static int device_remove_dependence(struct lsblk_device *dev, struct lsblk_devdep *dep)
 {
-	if (!dev || !dep || !list_empty(&dev->deps))
+	if (!dev || !dep || list_empty(&dev->deps))
 		return -EINVAL;
 
-	DBG(DEV, ul_debugobj(dev, "  remove-deallocate dependence 0x%p", dep));
+	DBG(DEV, ul_debugobj(dev, "  %s: deallocate dependence 0x%p [%s]", dev->name, dep, dep->child->name));
 	list_del_init(&dep->ls_deps);
 	lsblk_unref_device(dep->child);
 	free(dep);
@@ -56,7 +56,7 @@ static int device_remove_dependences(struct lsblk_device *dev)
 	if (!dev)
 		return -EINVAL;
 
-	DBG(DEV, ul_debugobj(dev, "remove all depencences"));
+	DBG(DEV, ul_debugobj(dev, "%s: remove all depencences", dev->name));
 	while (!list_empty(&dev->deps)) {
 		struct lsblk_devdep *dp = list_entry(dev->deps.next,
 					struct lsblk_devdep, ls_deps);
@@ -87,18 +87,34 @@ void lsblk_unref_device(struct lsblk_device *dev)
 	}
 }
 
-struct lsblk_devdep *lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device *child)
+int lsblk_device_has_dependence(struct lsblk_device *dev, struct lsblk_device *child)
+{
+	struct lsblk_device *x = NULL;
+	struct lsblk_iter itr;
+
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	while (lsblk_device_next_child(dev, &itr, &x) == 0) {
+		if (x == child)
+			return 1;
+	}
+
+	return 0;
+}
+
+int lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device *child)
 {
 	struct lsblk_devdep *dp;
 
-	if (!parent || !child) {
-		errno = EINVAL;
-		return NULL;
-	}
+	if (!parent || !child)
+		return -EINVAL;
+
+	if (lsblk_device_has_dependence(parent, child))
+		return 1;
 
 	dp = calloc(1, sizeof(*dp));
 	if (!dp)
-		return NULL;
+		return -ENOMEM;
 
 	INIT_LIST_HEAD(&dp->ls_deps);
 
@@ -108,7 +124,7 @@ struct lsblk_devdep *lsblk_device_new_dependence(struct lsblk_device *parent, st
         DBG(DEV, ul_debugobj(parent, "add dependence 0x%p [%s->%s]", dp, parent->name, child->name));
         list_add_tail(&dp->ls_deps, &parent->deps);
 
-	return dp;
+	return 0;
 }
 
 int lsblk_device_next_child(struct lsblk_device *dev,
@@ -134,6 +150,7 @@ int lsblk_device_next_child(struct lsblk_device *dev,
 
 	return rc;
 }
+
 
 struct lsblk_devtree *lsblk_new_devtree()
 {

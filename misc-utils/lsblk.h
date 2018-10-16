@@ -182,7 +182,8 @@ void lsblk_reset_iter(struct lsblk_iter *itr, int direction);
 struct lsblk_device *lsblk_new_device(struct lsblk_devtree *tree);
 void lsblk_ref_device(struct lsblk_device *dev);
 void lsblk_unref_device(struct lsblk_device *dev);
-struct lsblk_devdep *lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device *child);
+int lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device *child);
+int lsblk_device_has_dependence(struct lsblk_device *dev, struct lsblk_device *child);
 int lsblk_device_next_child(struct lsblk_device *dev,
                           struct lsblk_iter *itr,
                           struct lsblk_device **child);
