@@ -87,7 +87,6 @@ struct lsblk_device {
 	struct lsblk_devprop	*properties;
 	struct libscols_line	*scols_line;
 
-	struct lsblk_device	*parent;	/* obsolete */
 	struct stat	st;
 
 	char *name;		/* kernel name in /sys/block */

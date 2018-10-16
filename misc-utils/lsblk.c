@@ -1002,16 +1002,13 @@ static void devtree_to_scols(struct lsblk_devtree *tr, struct libscols_table *ta
 }
 
 static int set_device(struct lsblk_device *dev,
-		    struct lsblk_device *parent,
 		    struct lsblk_device *wholedisk,
 		    const char *name)
 {
 	dev_t devno;
 
-	DBG(DEV, ul_debugobj(dev, "setting context for %s [parent=%p, wholedisk=%p]",
-				name, parent, wholedisk));
+	DBG(DEV, ul_debugobj(dev, "setting context for %s [wholedisk=%p]", name, wholedisk));
 
-	dev->parent = parent;
 	dev->name = xstrdup(name);
 	dev->partition = wholedisk != NULL;
 
@@ -1029,20 +1026,10 @@ static int set_device(struct lsblk_device *dev,
 		return -1;
 	}
 
-	if (lsblk->inverse) {
-		dev->sysfs = ul_new_sysfs_path(devno, wholedisk ? wholedisk->sysfs : NULL, lsblk->sysroot);
-		if (!dev->sysfs) {
-			DBG(DEV, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
-			return -1;
-		}
-		if (parent)
-			sysfs_blkdev_set_parent(parent->sysfs, dev->sysfs);
-	} else {
-		dev->sysfs = ul_new_sysfs_path(devno, parent ? parent->sysfs : NULL, lsblk->sysroot);
-		if (!dev->sysfs) {
-			DBG(DEV, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
-			return -1;
-		}
+	dev->sysfs = ul_new_sysfs_path(devno, wholedisk ? wholedisk->sysfs : NULL, lsblk->sysroot);
+	if (!dev->sysfs) {
+		DBG(DEV, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
+		return -1;
 	}
 
 	dev->maj = major(devno);
@@ -1087,7 +1074,6 @@ static int set_device(struct lsblk_device *dev,
 }
 
 static struct lsblk_device *devtree_get_device_or_new(struct lsblk_devtree *tr,
-					       struct lsblk_device *parent,
 					       struct lsblk_device *disk,
 					       const char *name)
 {
@@ -1098,7 +1084,7 @@ static struct lsblk_device *devtree_get_device_or_new(struct lsblk_devtree *tr,
 		if (!dev)
 			err(EXIT_FAILURE, _("failed to allocate device"));
 
-		if (set_device(dev, parent, disk, name) != 0) {
+		if (set_device(dev, disk, name) != 0) {
 			lsblk_unref_device(dev);
 			return NULL;
 		}
@@ -1146,7 +1132,7 @@ static int process_partitions(struct lsblk_devtree *tr, struct lsblk_device *who
 
 		DBG(DEV, ul_debugobj(wholedisk_dev, "  checking %s", d->d_name));
 
-		part = devtree_get_device_or_new(tr, wholedisk_dev, wholedisk_dev, d->d_name);
+		part = devtree_get_device_or_new(tr, wholedisk_dev, d->d_name);
 		if (!part)
 			continue;
 
@@ -1234,13 +1220,13 @@ static int process_dependencies(
 
 			diskname = get_wholedisk_from_partition_dirent(dir, d, buf, sizeof(buf));
 			if (diskname)
-				disk = devtree_get_device_or_new(tr, NULL, NULL, diskname);
+				disk = devtree_get_device_or_new(tr, NULL, diskname);
 			if (!disk) {
 				DBG(DEV, ul_debugobj(dev, "  ignore no wholedisk ???"));
 				continue;
 			}
 
-			dep = devtree_get_device_or_new(tr, dev, disk, d->d_name);
+			dep = devtree_get_device_or_new(tr, disk, d->d_name);
 			if (!dep)
 				continue;
 
@@ -1257,7 +1243,7 @@ static int process_dependencies(
 			DBG(DEV, ul_debugobj(dev, " %s: %s: dependence is whole-disk",
 								dev->name, d->d_name));
 
-			dep = devtree_get_device_or_new(tr, dev, NULL, d->d_name);
+			dep = devtree_get_device_or_new(tr, NULL, d->d_name);
 			if (!dep)
 				continue;
 
@@ -1298,7 +1284,7 @@ static int process_all_devices(struct lsblk_devtree *tr)
 
 		DBG(DEV, ul_debug(" %s dentry", d->d_name));
 
-		dev = devtree_get_device_or_new(tr, NULL, NULL, d->d_name);
+		dev = devtree_get_device_or_new(tr, NULL, d->d_name);
 		if (!dev)
 			continue;
 
@@ -1376,7 +1362,7 @@ static int process_one_device(struct lsblk_devtree *tr, char *devname)
 		 */
 		DBG(DEV, ul_debug(" non-partition"));
 
-		dev = devtree_get_device_or_new(tr, NULL, NULL, name);
+		dev = devtree_get_device_or_new(tr, NULL, name);
 		if (!dev)
 			goto leave;
 
@@ -1386,15 +1372,15 @@ static int process_one_device(struct lsblk_devtree *tr, char *devname)
 		/*
 		 * Partition, read sysfs name of the disk device
 		 */
-		struct lsblk_device *parent;
+		struct lsblk_device *disk;
 
 		DBG(DEV, ul_debug(" partition"));
 
-		parent = devtree_get_device_or_new(tr, NULL, NULL, diskname);
-		if (!parent)
+		disk = devtree_get_device_or_new(tr, NULL, diskname);
+		if (!disk)
 			goto leave;
 
-		dev = devtree_get_device_or_new(tr, parent, parent, name);
+		dev = devtree_get_device_or_new(tr, disk, name);
 		if (!dev)
 			goto leave;
 
@@ -1402,8 +1388,8 @@ static int process_one_device(struct lsblk_devtree *tr, char *devname)
 		process_dependencies(tr, dev, 1);
 
 		if (lsblk->inverse
-		    && lsblk_device_new_dependence(dev, parent) == 0)
-			process_dependencies(tr, parent, 0);
+		    && lsblk_device_new_dependence(dev, disk) == 0)
+			process_dependencies(tr, disk, 0);
 	}
 
 	rc = 0;
