@@ -1261,62 +1261,6 @@ static int process_dependencies(
 
 
 /* Iterate devices in sysfs */
-static int process_all_devices(struct lsblk_devtree *tr)
-{
-	DIR *dir;
-	struct dirent *d;
-	struct path_cxt *pc = ul_new_path(_PATH_SYS_BLOCK);
-
-	if (!pc)
-		err(EXIT_FAILURE, _("failed to allocate /sys handler"));
-
-	ul_path_set_prefix(pc, lsblk->sysroot);
-
-	/* TODO: reuse @pc in set_device(), etc. */
-	dir = ul_path_opendir(pc, NULL);
-	if (!dir)
-		goto done;
-
-	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK "%s", lsblk->inverse ? " [inverse]" : ""));
-
-	while ((d = xreaddir(dir))) {
-		struct lsblk_device *dev;
-
-		DBG(DEV, ul_debug(" %s dentry", d->d_name));
-
-		dev = devtree_get_device_or_new(tr, NULL, d->d_name);
-		if (!dev)
-			continue;
-
-		/* remove unwanted devices */
-		if (is_maj_excluded(dev->maj) || !is_maj_included(dev->maj)) {
-			DBG(DEV, ul_debug(" %s: ignore (by filter)", d->d_name));
-			lsblk_devtree_remove_device(tr, dev);
-			continue;
-		}
-
-		/*
-		 * ignore devices in the midle of the tree
-		 */
-		if (!lsblk->inverse) {
-			if (dev->nslaves) {
-				DBG(DEV, ul_debug(" %s: ignore (in-middle)", d->d_name));
-				continue;
-			}
-			lsblk_devtree_add_root(tr, dev);
-			process_dependencies(tr, dev, 1);
-		} else {
-			/* not implemented yet */
-			;
-		}
-	}
-
-	closedir(dir);
-done:
-	ul_unref_path(pc);
-	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK " -- done"));
-	return 0;
-}
 
 static int process_one_device(struct lsblk_devtree *tr, char *devname)
 {
@@ -1396,6 +1340,63 @@ static int process_one_device(struct lsblk_devtree *tr, char *devname)
 leave:
 	free(name);
 	return rc;
+}
+
+static int process_all_devices(struct lsblk_devtree *tr)
+{
+	DIR *dir;
+	struct dirent *d;
+	struct path_cxt *pc = ul_new_path(_PATH_SYS_BLOCK);
+
+	if (!pc)
+		err(EXIT_FAILURE, _("failed to allocate /sys handler"));
+
+	ul_path_set_prefix(pc, lsblk->sysroot);
+
+	/* TODO: reuse @pc in set_device(), etc. */
+	dir = ul_path_opendir(pc, NULL);
+	if (!dir)
+		goto done;
+
+	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK "%s", lsblk->inverse ? " [inverse]" : ""));
+
+	while ((d = xreaddir(dir))) {
+		struct lsblk_device *dev;
+
+		DBG(DEV, ul_debug(" %s dentry", d->d_name));
+
+		dev = devtree_get_device_or_new(tr, NULL, d->d_name);
+		if (!dev)
+			continue;
+
+		/* remove unwanted devices */
+		if (is_maj_excluded(dev->maj) || !is_maj_included(dev->maj)) {
+			DBG(DEV, ul_debug(" %s: ignore (by filter)", d->d_name));
+			lsblk_devtree_remove_device(tr, dev);
+			continue;
+		}
+
+		/*
+		 * ignore devices in the midle of the tree
+		 */
+		if (!lsblk->inverse) {
+			if (dev->nslaves) {
+				DBG(DEV, ul_debug(" %s: ignore (in-middle)", d->d_name));
+				continue;
+			}
+			lsblk_devtree_add_root(tr, dev);
+			process_dependencies(tr, dev, 1);
+		} else {
+			/* not implemented yet */
+			;
+		}
+	}
+
+	closedir(dir);
+done:
+	ul_unref_path(pc);
+	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK " -- done"));
+	return 0;
 }
 
 static void parse_excludes(const char *str0)
