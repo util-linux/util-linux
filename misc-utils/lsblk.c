@@ -664,7 +664,12 @@ static struct stat *device_get_stat(struct lsblk_device *dev)
 	return &dev->st;
 }
 
-static void set_scols_data(struct lsblk_device *dev, int col, int id, struct libscols_line *ln)
+static void set_scols_data(
+		struct lsblk_device *dev,
+		struct lsblk_device *parent,
+		int col,
+		int id,
+		struct libscols_line *ln)
 {
 	struct lsblk_devprop *prop;
 	int sort = 0;
@@ -681,8 +686,8 @@ static void set_scols_data(struct lsblk_device *dev, int col, int id, struct lib
 		str = mk_name(dev->name);
 		break;
 	case COL_PKNAME:
-		if (dev->parent)
-			str = mk_name(dev->parent->name);
+		if (parent)
+			str = mk_name(parent->name);
 		break;
 	case COL_PATH:
 		if (dev->filename)
@@ -977,7 +982,7 @@ static void device_to_scols(struct lsblk_device *dev, struct lsblk_device *paren
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (i = 0; i < ncolumns; i++)
-		set_scols_data(dev, i, get_column_id(i), dev->scols_line);
+		set_scols_data(dev, parent, i, get_column_id(i), dev->scols_line);
 
 	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
 
