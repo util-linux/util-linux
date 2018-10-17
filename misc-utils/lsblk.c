@@ -993,6 +993,8 @@ static void device_to_scols(struct lsblk_device *dev, struct lsblk_device *paren
 	struct lsblk_iter itr;
 	struct lsblk_device *child = NULL;
 
+	ON_DBG(DEV, if (ul_path_isopen_dirfd(dev->sysfs)) ul_debugobj(dev, "%s ---> is open!", dev->name));
+
 	dev->scols_line = scols_table_new_line(tab, parent ? parent->scols_line : NULL);
 	if (!dev->scols_line)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
@@ -1000,10 +1002,18 @@ static void device_to_scols(struct lsblk_device *dev, struct lsblk_device *paren
 	for (i = 0; i < ncolumns; i++)
 		set_scols_data(dev, parent, i, get_column_id(i), dev->scols_line);
 
+	if (dev->npartitions == 0)
+		/* For partitions we often read from parental whole-disk sysfs,
+		 * otherwise we can close */
+		ul_path_close_dirfd(dev->sysfs);
+
 	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
 
 	while (lsblk_device_next_child(dev, &itr, &child) == 0)
 		device_to_scols(child, dev, tab);
+
+	/* Let's be careful with number of open files */
+	ul_path_close_dirfd(dev->sysfs);
 }
 
 /*
@@ -1160,7 +1170,13 @@ static int process_partitions(struct lsblk_devtree *tr, struct lsblk_device *dis
 
 		if (lsblk_device_new_dependence(disk, part) == 0)
 			process_dependencies(tr, part, 0);
+
+		ul_path_close_dirfd(part->sysfs);
 	}
+
+	/* For partitions we need parental (whole-disk) sysfs directory pretty
+	 * often, so close it now when all is done */
+	ul_path_close_dirfd(disk->sysfs);
 
 	DBG(DEV, ul_debugobj(disk, "probe whole-disk for partitions -- done"));
 	closedir(dir);
@@ -1225,18 +1241,19 @@ static int process_dependencies(
 		DBG(DEV, ul_debugobj(dev, " ignore (no slaves/holders directory)"));
 		return 0;
 	}
+	ul_path_close_dirfd(dev->sysfs);
 
 	DBG(DEV, ul_debugobj(dev, " %s: checking for '%s' dependence", dev->name, depname));
 
 	while ((d = xreaddir(dir))) {
-		struct lsblk_device *dep;
+		struct lsblk_device *dep = NULL;
+		struct lsblk_device *disk = NULL;
 
 		/* Is the dependency a partition? */
 		if (sysfs_blkdev_is_partition_dirent(dir, d, NULL)) {
 
 			char buf[PATH_MAX];
 			char *diskname;
-			struct lsblk_device *disk = NULL;
 
 			DBG(DEV, ul_debugobj(dev, " %s: dependence is partition", d->d_name));
 
@@ -1245,12 +1262,12 @@ static int process_dependencies(
 				disk = devtree_get_device_or_new(tr, NULL, diskname);
 			if (!disk) {
 				DBG(DEV, ul_debugobj(dev, "  ignore no wholedisk ???"));
-				continue;
+				goto next;
 			}
 
 			dep = devtree_get_device_or_new(tr, disk, d->d_name);
 			if (!dep)
-				continue;
+				goto next;
 
 			if (lsblk_device_new_dependence(dev, dep) == 0)
 				process_dependencies(tr, dep, 1);
@@ -1258,7 +1275,6 @@ static int process_dependencies(
 			if (lsblk->inverse
 			    && lsblk_device_new_dependence(dep, disk) == 0)
 				process_dependencies(tr, disk, 0);
-
 		}
 		/* The dependency is a whole device. */
 		else {
@@ -1267,13 +1283,18 @@ static int process_dependencies(
 
 			dep = devtree_get_device_or_new(tr, NULL, d->d_name);
 			if (!dep)
-				continue;
+				goto next;
 
 			if (lsblk_device_new_dependence(dev, dep) == 0)
 				/* For inverse tree we don't want to show partitions
 				 * if the dependence is on whole-disk */
 				process_dependencies(tr, dep, lsblk->inverse ? 0 : 1);
 		}
+next:
+		if (dep && dep->sysfs)
+			ul_path_close_dirfd(dep->sysfs);
+		if (disk && disk->sysfs)
+			ul_path_close_dirfd(disk->sysfs);
 	}
 	closedir(dir);
 
@@ -1287,10 +1308,9 @@ static int process_dependencies(
 static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t devno)
 {
 	struct lsblk_device *dev = NULL;
+	struct lsblk_device *disk = NULL;
 	char buf[PATH_MAX + 1], *name = NULL, *diskname = NULL;
-	dev_t disk = 0;
 	int real_part = 0, rc = -EINVAL;
-
 
 	if (devno == 0) {
 		struct stat st;
@@ -1321,12 +1341,14 @@ static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t d
 		/* dm mapping is never a real partition! */
 		real_part = 0;
 	} else {
-		if (blkid_devno_to_wholedisk(devno, buf, sizeof(buf), &disk)) {
+		dev_t diskno = 0;
+
+		if (blkid_devno_to_wholedisk(devno, buf, sizeof(buf), &diskno)) {
 			warn(_("%s: failed to get whole-disk device number"), name);
 			goto leave;
 		}
 		diskname = buf;
-		real_part = devno != disk;
+		real_part = devno != diskno;
 	}
 
 	if (!real_part) {
@@ -1345,8 +1367,6 @@ static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t d
 		/*
 		 * Partition, read sysfs name of the disk device
 		 */
-		struct lsblk_device *disk;
-
 		DBG(DEV, ul_debug(" partition"));
 
 		disk = devtree_get_device_or_new(tr, NULL, diskname);
@@ -1363,10 +1383,16 @@ static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t d
 		if (lsblk->inverse
 		    && lsblk_device_new_dependence(dev, disk) == 0)
 			process_dependencies(tr, disk, 0);
+		else
+			ul_path_close_dirfd(disk->sysfs);
 	}
 
 	rc = 0;
 leave:
+	if (dev && dev->sysfs)
+		ul_path_close_dirfd(dev->sysfs);
+	if (disk && disk->sysfs)
+		ul_path_close_dirfd(disk->sysfs);
 	free(name);
 	return rc;
 }
@@ -1448,26 +1474,30 @@ static int process_all_devices(struct lsblk_devtree *tr)
 	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK));
 
 	while ((d = xreaddir(dir))) {
-		struct lsblk_device *dev;
+		struct lsblk_device *dev = NULL;
 
 		DBG(DEV, ul_debug(" %s dentry", d->d_name));
 		dev = devtree_get_device_or_new(tr, NULL, d->d_name);
 		if (!dev)
-			continue;
+			goto next;
 
 		/* remove unwanted devices */
 		if (is_maj_excluded(dev->maj) || !is_maj_included(dev->maj)) {
 			DBG(DEV, ul_debug(" %s: ignore (by filter)", d->d_name));
 			lsblk_devtree_remove_device(tr, dev);
-			continue;
+			goto next;
 		}
 
 		if (dev->nslaves) {
 			DBG(DEV, ul_debug(" %s: ignore (in-middle)", d->d_name));
-			continue;
+			goto next;
 		}
 		lsblk_devtree_add_root(tr, dev);
 		process_dependencies(tr, dev, 1);
+next:
+		/* Let's be careful with number of open files */
+		if (dev && dev->sysfs)
+			ul_path_close_dirfd(dev->sysfs);
 	}
 
 	closedir(dir);
