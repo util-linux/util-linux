@@ -348,7 +348,7 @@ static struct dirent *xreaddir(DIR *dp)
 	return d;
 }
 
-/* Returns dull pat to the device node (TODO: what about sysfs_blkdev_get_path()) */
+/* Returns full pat to the device node (TODO: what about sysfs_blkdev_get_path()) */
 static char *get_device_path(struct lsblk_device *dev)
 {
 	char path[PATH_MAX];
@@ -1023,13 +1023,14 @@ static void devtree_to_scols(struct lsblk_devtree *tr, struct libscols_table *ta
 /*
  * Reads very basic information about the device from sysfs into the device struct
  */
-static int set_device(struct lsblk_device *dev,
+static int initialize_device(struct lsblk_device *dev,
 		    struct lsblk_device *wholedisk,
 		    const char *name)
 {
 	dev_t devno;
 
-	DBG(DEV, ul_debugobj(dev, "setting context for %s [wholedisk=%p]", name, wholedisk));
+	DBG(DEV, ul_debugobj(dev, "initialize %s [wholedisk=%p %s]",
+			name, wholedisk, wholedisk ? wholedisk->name : ""));
 
 	dev->name = xstrdup(name);
 	dev->partition = wholedisk != NULL;
@@ -1042,7 +1043,6 @@ static int set_device(struct lsblk_device *dev,
 	DBG(DEV, ul_debugobj(dev, "%s: filename=%s", dev->name, dev->filename));
 
 	devno = __sysfs_devname_to_devno(lsblk->sysroot, dev->name, wholedisk ? wholedisk->name : NULL);
-
 	if (!devno) {
 		DBG(DEV, ul_debugobj(dev, "%s: unknown device name", dev->name));
 		return -1;
@@ -1106,7 +1106,7 @@ static struct lsblk_device *devtree_get_device_or_new(struct lsblk_devtree *tr,
 		if (!dev)
 			err(EXIT_FAILURE, _("failed to allocate device"));
 
-		if (set_device(dev, disk, name) != 0) {
+		if (initialize_device(dev, disk, name) != 0) {
 			lsblk_unref_device(dev);
 			return NULL;
 		}
@@ -1307,7 +1307,7 @@ static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t d
 
 	/* TODO: sysfs_devno_to_devname() internally initializes path_cxt, it
 	 * would be better to use ul_new_sysfs_path() + sysfs_blkdev_get_name()
-	 * and reuse path_cxt for set_device()
+	 * and reuse path_cxt for initialize_device()
 	 */
 	name = sysfs_devno_to_devname(devno, buf, sizeof(buf));
 	if (!name) {
