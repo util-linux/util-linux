@@ -1250,12 +1250,12 @@ static int process_dependencies(
 
 	assert(dev);
 
+	if (lsblk->nodeps)
+		return 0;
+
 	/* read all or specified partition */
 	if (do_partitions && dev->npartitions)
 		process_partitions(tr, dev);
-
-	if (lsblk->nodeps)
-		return 0;
 
 	DBG(DEV, ul_debugobj(dev, "%s: reading dependencies", dev->name));
 
