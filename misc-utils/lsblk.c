@@ -674,6 +674,34 @@ static struct stat *device_get_stat(struct lsblk_device *dev)
 	return &dev->st;
 }
 
+static int is_removable_device(struct lsblk_device *dev, struct lsblk_device *parent)
+{
+	struct path_cxt *pc;
+
+	if (dev->removable != -1)
+		goto done;
+	if (ul_path_scanf(dev->sysfs, "removable", "%d", &dev->removable) == 1)
+		goto done;
+
+	if (parent) {
+		pc = sysfs_blkdev_get_parent(dev->sysfs);
+		if (!pc)
+			goto done;
+
+		if (pc == parent->sysfs)
+			/* dev is partition and parent is whole-disk  */
+			dev->removable = is_removable_device(parent, NULL);
+		else
+			/* parent is something else, use sysfs parent */
+			ul_path_scanf(pc, "removable", "%d", &dev->removable);
+	}
+
+done:
+	if (dev->removable == -1)
+		dev->removable = 0;
+	return dev->removable;
+}
+
 /*
  * Generates data (string) for column specified by column ID for specified device
  */
@@ -807,11 +835,7 @@ static void set_scols_data(
 		str = xstrdup(is_readonly_device(dev) ? "1" : "0");
 		break;
 	case COL_RM:
-		ul_path_read_string(dev->sysfs, &str, "removable");
-		if (!str && sysfs_blkdev_get_parent(dev->sysfs))
-			ul_path_read_string(sysfs_blkdev_get_parent(dev->sysfs),
-					    &str,
-					    "removable");
+		str = xstrdup(is_removable_device(dev, parent) ? "1" : "0");
 		break;
 	case COL_HOTPLUG:
 		str = sysfs_blkdev_is_hotpluggable(dev->sysfs) ? xstrdup("1") : xstrdup("0");

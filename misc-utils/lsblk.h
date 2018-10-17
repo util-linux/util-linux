@@ -109,6 +109,7 @@ struct lsblk_device {
 	int discard;		/* supports discard */
 
 	uint64_t size;		/* device size */
+	int removable;		/* unknown:-1, yes:1, not:0 */
 
 	unsigned int	is_mounted : 1,
 			is_swap : 1,
