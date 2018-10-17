@@ -1,7 +1,7 @@
 /*
  * lsblk(8) - list block devices
  *
- * Copyright (C) 2010,2011,2012 Red Hat, Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Red Hat, Inc. All rights reserved.
  * Written by Milan Broz <mbroz@redhat.com>
  *            Karel Zak <kzak@redhat.com>
  *
@@ -19,7 +19,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 #include <stdio.h>
 #include <errno.h>
 #include <getopt.h>
@@ -209,10 +208,12 @@ static struct colinfo infos[] = {
 
 struct lsblk *lsblk;	/* global handler */
 
-/* columns[] array specifies all currently wanted output column. The columns
+/*
+ * columns[] array specifies all currently wanted output column. The columns
  * are defined by infos[] array and you can specify (on command line) each
  * column twice. That's enough, dynamically allocated array of the columns is
- * unnecessary overkill and over-engineering in this case */
+ * unnecessary overkill and over-engineering in this case
+ */
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
@@ -232,16 +233,19 @@ static inline void add_uniq_column(int id)
 		add_column(id);
 }
 
+static void lsblk_init_debug(void)
+{
+	__UL_INIT_DEBUG_FROM_ENV(lsblk, LSBLK_DEBUG_, 0, LSBLK_DEBUG);
+}
+
+/*
+ * exclude/include devices filter based on major device numbers
+ */
 static int excludes[256];
 static size_t nexcludes;
 
 static int includes[256];
 static size_t nincludes;
-
-static void lsblk_init_debug(void)
-{
-	__UL_INIT_DEBUG_FROM_ENV(lsblk, LSBLK_DEBUG_, 0, LSBLK_DEBUG);
-}
 
 static int is_maj_excluded(int maj)
 {
@@ -279,7 +283,7 @@ static int is_maj_included(int maj)
 	return 0;
 }
 
-/* array with IDs of enabled columns */
+/* Converts column sequential number to column ID (COL_*) */
 static int get_column_id(int num)
 {
 	assert(num >= 0);
@@ -288,11 +292,13 @@ static int get_column_id(int num)
 	return columns[num];
 }
 
+/* Returns column description for the column sequential number */
 static struct colinfo *get_column_info(int num)
 {
 	return &infos[ get_column_id(num) ];
 }
 
+/* Converts column name (as defined in the infos[] to the column ID */
 static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
@@ -307,6 +313,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
+/* Converts column ID (COL_*) to column sequential number */
 static int column_id_to_number(int id)
 {
 	size_t i;
@@ -317,11 +324,13 @@ static int column_id_to_number(int id)
 	return -1;
 }
 
+/* Checks for DM prefix in the device name */
 static int is_dm(const char *name)
 {
 	return strncmp(name, "dm-", 3) ? 0 : 1;
 }
 
+/* This is readdir()-like function, but skips "." and ".." directory entries */
 static struct dirent *xreaddir(DIR *dp)
 {
 	struct dirent *d;
@@ -339,6 +348,7 @@ static struct dirent *xreaddir(DIR *dp)
 	return d;
 }
 
+/* Returns dull pat to the device node (TODO: what about sysfs_blkdev_get_path()) */
 static char *get_device_path(struct lsblk_device *dev)
 {
 	char path[PATH_MAX];
@@ -664,6 +674,9 @@ static struct stat *device_get_stat(struct lsblk_device *dev)
 	return &dev->st;
 }
 
+/*
+ * Generates data (string) for column specified by column ID for specified device
+ */
 static void set_scols_data(
 		struct lsblk_device *dev,
 		struct lsblk_device *parent,
@@ -971,6 +984,9 @@ static void set_scols_data(
 		err(EXIT_FAILURE, _("failed to add output data"));
 }
 
+/*
+ * Adds data for all wanted columns about the device to the smartcols table
+ */
 static void device_to_scols(struct lsblk_device *dev, struct lsblk_device *parent, struct libscols_table *tab)
 {
 	size_t i;
@@ -990,6 +1006,9 @@ static void device_to_scols(struct lsblk_device *dev, struct lsblk_device *paren
 		device_to_scols(child, dev, tab);
 }
 
+/*
+ * Walks on tree and adds one line for each device to the smartcols table
+ */
 static void devtree_to_scols(struct lsblk_devtree *tr, struct libscols_table *tab)
 {
 	struct lsblk_iter itr;
@@ -1001,6 +1020,9 @@ static void devtree_to_scols(struct lsblk_devtree *tr, struct libscols_table *ta
 		device_to_scols(dev, NULL, tab);
 }
 
+/*
+ * Reads very basic information about the device from sysfs into the device struct
+ */
 static int set_device(struct lsblk_device *dev,
 		    struct lsblk_device *wholedisk,
 		    const char *name)
@@ -1170,7 +1192,7 @@ static char *get_wholedisk_from_partition_dirent(DIR *dir, struct dirent *d, cha
 }
 
 /*
- * List device dependencies: partitions, holders (inverse = 0) or slaves (inverse = 1).
+ * Reads slaves/holders and partitions for specified device into device tree
  */
 static int process_dependencies(
 			struct lsblk_devtree *tr,
@@ -1259,7 +1281,9 @@ static int process_dependencies(
 	return 0;
 }
 
-
+/*
+ * Defines the device as root node in the device tree and walks on all dependencies of the device.
+ */
 static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t devno)
 {
 	struct lsblk_device *dev = NULL;
@@ -1401,6 +1425,9 @@ done:
 	return 0;
 }
 
+/*
+ * Reads root nodes (devices) from /sys/block into devices tree
+ */
 static int process_all_devices(struct lsblk_devtree *tr)
 {
 	DIR *dir;
@@ -1450,6 +1477,9 @@ done:
 	return 0;
 }
 
+/*
+ * Parses major numbers as specified on lsblk command line
+ */
 static void parse_excludes(const char *str0)
 {
 	const char *str = str0;
@@ -1477,6 +1507,10 @@ static void parse_excludes(const char *str0)
 	}
 }
 
+/*
+ * Parses major numbers as specified on lsblk command line
+ * (TODO: what about refactor and merge parse_excludes() and parse_includes().)
+ */
 static void parse_includes(const char *str0)
 {
 	const char *str = str0;
