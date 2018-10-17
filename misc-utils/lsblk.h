@@ -106,7 +106,8 @@ struct lsblk_device {
 				 * /sys/block/.../holders */
 	int nslaves;		/* # of devices this device maps to */
 	int maj, min;		/* devno */
-	int discard;		/* supports discard */
+
+	uint64_t discard_granularity;	/* sunknown:-1, yes:1, not:0 */
 
 	uint64_t size;		/* device size */
 	int removable;		/* unknown:-1, yes:1, not:0 */

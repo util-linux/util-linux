@@ -702,6 +702,17 @@ done:
 	return dev->removable;
 }
 
+static uint64_t device_get_discard_granularity(struct lsblk_device *dev)
+{
+	if (dev->discard_granularity == (uint64_t) -1
+	    && ul_path_read_u64(dev->sysfs, &dev->discard_granularity,
+			        "queue/discard_granularity") != 0)
+		dev->discard_granularity = 0;
+
+	return dev->discard_granularity;
+}
+
+
 /*
  * Generates data (string) for column specified by column ID for specified device
  */
@@ -941,7 +952,7 @@ static void set_scols_data(
 		str = get_subsystems(dev);
 		break;
 	case COL_DALIGN:
-		if (dev->discard)
+		if (device_get_discard_granularity(dev) > 0)
 			ul_path_read_string(dev->sysfs, &str, "discard_alignment");
 		if (!str)
 			str = xstrdup("0");
@@ -954,12 +965,10 @@ static void set_scols_data(
 			if (sort)
 				set_sortdata_u64_from_string(ln, col, str);
 		} else {
-			uint64_t x;
-			if (ul_path_read_u64(dev->sysfs, &x, "queue/discard_granularity") == 0) {
-				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
-				if (sort)
-					set_sortdata_u64(ln, col, x);
-			}
+			uint64_t x = device_get_discard_granularity(dev);
+			str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
+			if (sort)
+				set_sortdata_u64(ln, col, x);
 		}
 		break;
 	case COL_DMAX:
@@ -977,7 +986,7 @@ static void set_scols_data(
 		}
 		break;
 	case COL_DZERO:
-		if (dev->discard)
+		if (device_get_discard_granularity(dev) > 0)
 			ul_path_read_string(dev->sysfs, &str, "queue/discard_zeroes_data");
 		if (!str)
 			str = xstrdup("0");
@@ -1094,10 +1103,6 @@ static int initialize_device(struct lsblk_device *dev,
 
 	if (ul_path_read_u64(dev->sysfs, &dev->size, "size") == 0)	/* in sectors */
 		dev->size <<= 9;					/* in bytes */
-
-	if (ul_path_read_s32(dev->sysfs, &dev->discard,
-			   "queue/discard_granularity") != 0)
-		dev->discard = 0;
 
 	/* Ignore devices of zero size */
 	if (!lsblk->all_devices && dev->size == 0) {
