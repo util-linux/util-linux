@@ -94,8 +94,7 @@ void ul_unref_path(struct path_cxt *pc)
 		DBG(CXT, ul_debugobj(pc, "dealloc"));
 		if (pc->dialect)
 			pc->free_dialect(pc);
-		if (pc->dir_fd >= 0)
-			close(pc->dir_fd);
+		ul_path_close_dirfd(pc);
 		free(pc->dir_path);
 		free(pc->prefix);
 		free(pc);
@@ -212,6 +211,23 @@ int ul_path_get_dirfd(struct path_cxt *pc)
 	return pc->dir_fd;
 }
 
+/* Note that next ul_path_get_dirfd() will reopen the directory */
+void ul_path_close_dirfd(struct path_cxt *pc)
+{
+	assert(pc);
+
+	if (pc->dir_fd >= 0) {
+		DBG(CXT, ul_debugobj(pc, "closing dir: '%s'", pc->dir_path));
+		close(pc->dir_fd);
+		pc->dir_fd = -1;
+	}
+}
+
+int ul_path_isopen_dirfd(struct path_cxt *pc)
+{
+	return pc && pc->dir_fd >= 0;
+}
+
 static const char *ul_path_mkpath(struct path_cxt *pc, const char *path, va_list ap)
 {
 	int rc = vsnprintf(pc->path_buffer, sizeof(pc->path_buffer), path, ap);
@@ -301,7 +317,7 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 
 	if (!pc) {
 		fd = open(path, flags);
-		DBG(CXT, ul_debug("opening '%s'", path));
+		DBG(CXT, ul_debug("opening '%s' [no context]", path));
 	} else {
 		int fdx;
 		int dir = ul_path_get_dirfd(pc);
