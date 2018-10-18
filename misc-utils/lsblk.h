@@ -82,7 +82,7 @@ struct lsblk_device {
 	struct list_head	ls_roots;	/* item in devtree->roots list */
 	struct list_head	ls_devices;	/* item in devtree->devices list */
 
-	struct lsblk_devtree	*tree;
+	struct lsblk_device	*wholedisk;	/* for partitions */
 
 	struct lsblk_devprop	*properties;
 	struct stat	st;
@@ -93,8 +93,6 @@ struct lsblk_device {
 	char *filename;		/* path to device node */
 
 	struct path_cxt	*sysfs;
-
-	int partition;		/* is partition? TRUE/FALSE */
 
 	char *mountpoint;	/* device mountpoint */
 	struct statvfs fsstat;	/* statvfs() result */
@@ -116,6 +114,7 @@ struct lsblk_device {
 			blkid_requested : 1;
 };
 
+#define device_is_partition(_x)		((_x)->wholedisk != NULL)
 
 /*
  * Note that lsblk tree uses botton devices (devices without slaves) as root
@@ -178,7 +177,7 @@ extern void lsblk_properties_deinit(void);
 
 /* lsblk-devtree.c */
 void lsblk_reset_iter(struct lsblk_iter *itr, int direction);
-struct lsblk_device *lsblk_new_device(struct lsblk_devtree *tree);
+struct lsblk_device *lsblk_new_device(void);
 void lsblk_ref_device(struct lsblk_device *dev);
 void lsblk_unref_device(struct lsblk_device *dev);
 int lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device *child);

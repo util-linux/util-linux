@@ -12,7 +12,7 @@ void lsblk_reset_iter(struct lsblk_iter *itr, int direction)
 	itr->direction = direction;
 }
 
-struct lsblk_device *lsblk_new_device(struct lsblk_devtree *tree)
+struct lsblk_device *lsblk_new_device()
 {
 	struct lsblk_device *dev;
 
@@ -23,7 +23,6 @@ struct lsblk_device *lsblk_new_device(struct lsblk_devtree *tree)
 	dev->refcount = 1;
 	dev->removable = -1;
 	dev->discard_granularity = (uint64_t) -1;
-	dev->tree = tree;
 
         INIT_LIST_HEAD(&dev->deps);
 	INIT_LIST_HEAD(&dev->ls_roots);
@@ -76,6 +75,8 @@ void lsblk_unref_device(struct lsblk_device *dev)
 
 		device_remove_dependences(dev);
 		lsblk_device_free_properties(dev->properties);
+
+		lsblk_unref_device(dev->wholedisk);
 
 		free(dev->name);
 		free(dev->dm_name);

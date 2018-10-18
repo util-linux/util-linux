@@ -861,7 +861,7 @@ static char *device_get_data(
 		ul_path_read_string(dev->sysfs, &str, "queue/add_random");
 		break;
 	case COL_MODEL:
-		if (!dev->partition && dev->nslaves == 0) {
+		if (!device_is_partition(dev) && dev->nslaves == 0) {
 			prop = lsblk_device_get_properties(dev);
 			if (prop && prop->model)
 				str = xstrdup(prop->model);
@@ -870,7 +870,7 @@ static char *device_get_data(
 		}
 		break;
 	case COL_SERIAL:
-		if (!dev->partition && dev->nslaves == 0) {
+		if (!device_is_partition(dev) && dev->nslaves == 0) {
 			prop = lsblk_device_get_properties(dev);
 			if (prop && prop->serial)
 				str = xstrdup(prop->serial);
@@ -879,11 +879,11 @@ static char *device_get_data(
 		}
 		break;
 	case COL_REV:
-		if (!dev->partition && dev->nslaves == 0)
+		if (!device_is_partition(dev) && dev->nslaves == 0)
 			ul_path_read_string(dev->sysfs, &str, "device/rev");
 		break;
 	case COL_VENDOR:
-		if (!dev->partition && dev->nslaves == 0)
+		if (!device_is_partition(dev) && dev->nslaves == 0)
 			ul_path_read_string(dev->sysfs, &str, "device/vendor");
 		break;
 	case COL_SIZE:
@@ -897,7 +897,7 @@ static char *device_get_data(
 			*sortdata = dev->size;
 		break;
 	case COL_STATE:
-		if (!dev->partition && !dev->dm_name)
+		if (!device_is_partition(dev) && !dev->dm_name)
 			ul_path_read_string(dev->sysfs, &str, "device/state");
 		else if (dev->dm_name) {
 			int x = 0;
@@ -1098,7 +1098,11 @@ static int initialize_device(struct lsblk_device *dev,
 			name, wholedisk, wholedisk ? wholedisk->name : ""));
 
 	dev->name = xstrdup(name);
-	dev->partition = wholedisk != NULL;
+
+	if (wholedisk) {
+		dev->wholedisk = wholedisk;
+		lsblk_ref_device(wholedisk);
+	}
 
 	dev->filename = get_device_path(dev);
 	if (!dev->filename) {
@@ -1163,7 +1167,7 @@ static struct lsblk_device *devtree_get_device_or_new(struct lsblk_devtree *tr,
 	struct lsblk_device *dev = lsblk_devtree_get_device(tr, name);
 
 	if (!dev) {
-		dev = lsblk_new_device(tr);
+		dev = lsblk_new_device();
 		if (!dev)
 			err(EXIT_FAILURE, _("failed to allocate device"));
 
@@ -1198,7 +1202,7 @@ static int process_partitions(struct lsblk_devtree *tr, struct lsblk_device *dis
 	 * Do not process further if there are no partitions for
 	 * this device or the device itself is a partition.
 	 */
-	if (!disk->npartitions || disk->partition)
+	if (!disk->npartitions || device_is_partition(disk))
 		return -EINVAL;
 
 	DBG(DEV, ul_debugobj(disk, "%s: probe whole-disk for partitions", disk->name));
