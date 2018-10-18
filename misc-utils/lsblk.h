@@ -85,8 +85,6 @@ struct lsblk_device {
 	struct lsblk_devtree	*tree;
 
 	struct lsblk_devprop	*properties;
-	struct libscols_line	*scols_line;
-
 	struct stat	st;
 
 	char *name;		/* kernel name in /sys/block */
