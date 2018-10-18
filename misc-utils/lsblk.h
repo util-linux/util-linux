@@ -32,8 +32,11 @@ UL_DEBUG_DECLARE_MASK(lsblk);
 
 struct lsblk {
 	struct libscols_table *table;	/* output table */
+
 	struct libscols_column *sort_col;/* sort output by this column */
 	int sort_id;
+
+	int dedup_id;
 
 	const char *sysroot;
 	int flags;			/* LSBLK_* */
@@ -45,6 +48,7 @@ struct lsblk {
 	unsigned int scsi:1;		/* print only device with HCTL (SCSI) */
 	unsigned int paths:1;		/* print devnames with "/dev" prefix */
 	unsigned int sort_hidden:1;	/* sort column not between output columns */
+	unsigned int dedup_hidden :1;	/* deduplication column not between output columns */
 	unsigned int force_tree_order:1;/* sort lines by parent->tree relation */
 };
 
@@ -91,6 +95,7 @@ struct lsblk_device {
 	char *dm_name;		/* DM name (dm/block) */
 
 	char *filename;		/* path to device node */
+	char *dedupkey;		/* de-duplication key */
 
 	struct path_cxt	*sysfs;
 
@@ -200,5 +205,6 @@ int lsblk_devtree_next_device(struct lsblk_devtree *tr,
 int lsblk_devtree_has_device(struct lsblk_devtree *tr, struct lsblk_device *dev);
 struct lsblk_device *lsblk_devtree_get_device(struct lsblk_devtree *tr, const char *name);
 int lsblk_devtree_remove_device(struct lsblk_devtree *tr, struct lsblk_device *dev);
+int lsblk_devtree_deduplicate_devices(struct lsblk_devtree *tr);
 
 #endif /* UTIL_LINUX_LSBLK_H */

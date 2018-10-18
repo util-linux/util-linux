@@ -82,6 +82,7 @@ void lsblk_unref_device(struct lsblk_device *dev)
 		free(dev->dm_name);
 		free(dev->filename);
 		free(dev->mountpoint);
+		free(dev->dedupkey);
 
 		ul_unref_path(dev->sysfs);
 
@@ -129,27 +130,37 @@ int lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device
 	return 0;
 }
 
-int lsblk_device_next_child(struct lsblk_device *dev,
+static int device_next_dependence(struct lsblk_device *dev,
 			  struct lsblk_iter *itr,
-			  struct lsblk_device **child)
+			  struct lsblk_devdep **dp)
 {
 	int rc = 1;
 
-	if (!dev || !itr || !child)
+	if (!dev || !itr || !dp)
 		return -EINVAL;
-	*child = NULL;
+	*dp = NULL;
 
 	if (!itr->head)
 		LSBLK_ITER_INIT(itr, &dev->deps);
 	if (itr->p != itr->head) {
-		struct lsblk_devdep *dp = NULL;
-
-		LSBLK_ITER_ITERATE(itr, dp, struct lsblk_devdep, ls_deps);
-
-		*child = dp->child;
+		LSBLK_ITER_ITERATE(itr, *dp, struct lsblk_devdep, ls_deps);
 		rc = 0;
 	}
 
+	return rc;
+}
+
+int lsblk_device_next_child(struct lsblk_device *dev,
+			  struct lsblk_iter *itr,
+			  struct lsblk_device **child)
+{
+	struct lsblk_devdep *dp = NULL;
+	int rc = device_next_dependence(dev, itr, &dp);
+
+	if (!child)
+		return -EINVAL;
+
+	*child = rc == 0 ? dp->child : NULL;
 	return rc;
 }
 
@@ -296,3 +307,97 @@ int lsblk_devtree_remove_device(struct lsblk_devtree *tr, struct lsblk_device *d
 	return 0;
 }
 
+static int device_dedupkey_is_equal(
+			struct lsblk_device *dev,
+			struct lsblk_device *pattern)
+{
+	assert(pattern->dedupkey);
+
+	if (!dev->dedupkey || dev == pattern)
+		return 0;
+	if (strcmp(dev->dedupkey, pattern->dedupkey) == 0) {
+		if (!device_is_partition(dev) ||
+		     strcmp(dev->dedupkey, dev->wholedisk->dedupkey) != 0) {
+			DBG(DEV, ul_debugobj(dev, "%s: match deduplication pattern", dev->name));
+			return 1;
+		}
+	}
+	return 0;
+}
+
+static void device_dedup_dependencies(
+			struct lsblk_device *dev,
+			struct lsblk_device *pattern)
+{
+	struct lsblk_iter itr;
+	struct lsblk_devdep *dp;
+
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	while (device_next_dependence(dev, &itr, &dp) == 0) {
+		struct lsblk_device *child = dp->child;
+
+		if (device_dedupkey_is_equal(child, pattern)) {
+			DBG(DEV, ul_debugobj(dev, "remove duplicate dependence: 0x%p [%s]",
+						dp->child, dp->child->name));
+			device_remove_dependence(dev, dp);
+		} else
+			device_dedup_dependencies(child, pattern);
+	}
+}
+
+static void devtree_dedup(struct lsblk_devtree *tr, struct lsblk_device *pattern)
+{
+	struct lsblk_iter itr;
+	struct lsblk_device *dev = NULL;
+
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	DBG(TREE, ul_debugobj(tr, "de-duplicate by key: %s", pattern->dedupkey));
+
+	while (lsblk_devtree_next_root(tr, &itr, &dev) == 0) {
+		if (device_dedupkey_is_equal(dev, pattern)) {
+			DBG(TREE, ul_debugobj(tr, "remove duplicate device: 0x%p [%s]",
+						dev, dev->name));
+			/* Note that root list does not use ref-counting; the
+			 * primary reference is ls_devices */
+			list_del_init(&dev->ls_roots);
+		} else
+			device_dedup_dependencies(dev, pattern);
+	}
+}
+
+static int cmp_devices_devno(struct list_head *a, struct list_head *b,
+			  __attribute__((__unused__)) void *data)
+{
+	struct lsblk_device *ax = list_entry(a, struct lsblk_device, ls_devices),
+			    *bx = list_entry(b, struct lsblk_device, ls_devices);
+
+	return cmp_numbers(makedev(ax->maj, ax->min),
+			   makedev(bx->maj, bx->min));
+}
+
+/* Note that dev->dedupkey has to be already set */
+int lsblk_devtree_deduplicate_devices(struct lsblk_devtree *tr)
+{
+	struct lsblk_device *pattern = NULL;
+	struct lsblk_iter itr;
+	char *last = NULL;
+
+	list_sort(&tr->devices, cmp_devices_devno, NULL);
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	while (lsblk_devtree_next_device(tr, &itr, &pattern) == 0) {
+		if (!pattern->dedupkey)
+			continue;
+		if (device_is_partition(pattern) &&
+		    strcmp(pattern->dedupkey, pattern->wholedisk->dedupkey) == 0)
+			continue;
+		if (last && strcmp(pattern->dedupkey, last) == 0)
+			continue;
+
+		devtree_dedup(tr, pattern);
+		last = pattern->dedupkey;
+	}
+	return 0;
+}

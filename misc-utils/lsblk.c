@@ -1641,6 +1641,43 @@ static int cmp_u64_cells(struct libscols_cell *a,
 	return *adata == *bdata ? 0 : *adata >= *bdata ? 1 : -1;
 }
 
+static void device_set_dedupkey(
+			struct lsblk_device *dev,
+			struct lsblk_device *parent,
+			int id)
+{
+	struct lsblk_iter itr;
+	struct lsblk_device *child = NULL;
+
+	dev->dedupkey = device_get_data(dev, parent, id, NULL);
+	if (dev->dedupkey)
+		DBG(DEV, ul_debugobj(dev, "%s: de-duplication key: %s", dev->name, dev->dedupkey));
+
+	if (dev->npartitions == 0)
+		/* For partitions we often read from parental whole-disk sysfs,
+		 * otherwise we can close */
+		ul_path_close_dirfd(dev->sysfs);
+
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	while (lsblk_device_next_child(dev, &itr, &child) == 0)
+		device_set_dedupkey(child, dev, id);
+
+	/* Let's be careful with number of open files */
+	ul_path_close_dirfd(dev->sysfs);
+}
+
+static void devtree_set_dedupkeys(struct lsblk_devtree *tr, int id)
+{
+	struct lsblk_iter itr;
+	struct lsblk_device *dev = NULL;
+
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	while (lsblk_devtree_next_root(tr, &itr, &dev) == 0)
+		device_set_dedupkey(dev, NULL, id);
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -1665,6 +1702,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -J, --json           use JSON output format\n"), out);
 	fputs(_(" -l, --list           use list format output\n"), out);
 	fputs(_(" -T, --tree           use tree format output\n"), out);
+	fputs(_(" -M, --dedup <column> de-duplicate output by <column>\n"), out);
 	fputs(_(" -m, --perms          output info about permissions\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -o, --output <list>  output columns\n"), out);
@@ -1699,7 +1737,11 @@ static void check_sysdevblock(void)
 
 int main(int argc, char *argv[])
 {
-	struct lsblk _ls = { .sort_id = -1, .flags = LSBLK_TREE };
+	struct lsblk _ls = {
+		.sort_id = -1,
+		.dedup_id = -1,
+		.flags = LSBLK_TREE
+	};
 	struct lsblk_devtree *tr = NULL;
 	int c, status = EXIT_FAILURE;
 	char *outarg = NULL;
@@ -1715,6 +1757,7 @@ int main(int argc, char *argv[])
 		{ "bytes",      no_argument,       NULL, 'b' },
 		{ "nodeps",     no_argument,       NULL, 'd' },
 		{ "discard",    no_argument,       NULL, 'D' },
+		{ "dedup",      required_argument, NULL, 'M' },
 		{ "zoned",      no_argument,       NULL, 'z' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "json",       no_argument,       NULL, 'J' },
@@ -1763,7 +1806,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-			       "abdDze:fhJlnmo:OpPiI:rstVSTx:", longopts, NULL)) != -1) {
+			       "abdDze:fhJlnmM:o:OpPiI:rstVSTx:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1880,6 +1923,12 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		case 'M':
+			lsblk->dedup_id = column_name_to_id(optarg, strlen(optarg));
+			if (lsblk->dedup_id >= 0)
+				break;
+			errtryhelp(EXIT_FAILURE);
+			break;
 		case 'x':
 			lsblk->flags &= ~LSBLK_TREE; /* disable the default */
 			lsblk->sort_id = column_name_to_id(optarg, strlen(optarg));
@@ -1928,6 +1977,12 @@ int main(int argc, char *argv[])
 		lsblk->sort_hidden = 1;
 	}
 
+	if (lsblk->dedup_id >= 0 && column_id_to_number(lsblk->dedup_id) < 0) {
+		/* the deduplication column is not between output columns -- add as hidden */
+		add_column(lsblk->dedup_id);
+		lsblk->dedup_hidden = 1;
+	}
+
 	lsblk_mnt_init();
 	scols_init_debug(0);
 	ul_path_init_debug();
@@ -1954,6 +2009,8 @@ int main(int argc, char *argv[])
 		if (!(lsblk->flags & LSBLK_TREE) && id == COL_NAME)
 			fl &= ~SCOLS_FL_TREE;
 		if (lsblk->sort_hidden && lsblk->sort_id == id)
+			fl |= SCOLS_FL_HIDDEN;
+		if (lsblk->dedup_hidden && lsblk->dedup_id == id)
 			fl |= SCOLS_FL_HIDDEN;
 
 		cl = scols_table_new_column(lsblk->table, ci->name, ci->whint, fl);
@@ -2010,6 +2067,11 @@ int main(int argc, char *argv[])
 			 cnt == cnt_err	? LSBLK_EXIT_ALLFAILED :/* all failed */
 			 cnt_err	? LSBLK_EXIT_SOMEOK :	/* some ok */
 					  EXIT_SUCCESS;		/* all success */
+	}
+
+	if (lsblk->dedup_id > -1) {
+		devtree_set_dedupkeys(tr, lsblk->dedup_id);
+		lsblk_devtree_deduplicate_devices(tr);
 	}
 
 	devtree_to_scols(tr, lsblk->table);

@@ -88,6 +88,14 @@ Use JSON output format.
 .BR \-l , " \-\-list"
 Produce output in the form of a list.
 .TP
+.BR \-M , " \-\-dedup " \fIcolumn\fP
+Use \fIcolumn\fP as a de-duplication key to de-duplicate output tree. If the
+key is not available for the device, or the device is a partition and parental
+whole-disk device provides the same key than the device is always printed.
+
+The usual use case is to de-duplicate output on system multi-path devices, for
+example by \fB\-M WWN\fR.
+.TP
 .BR \-m , " \-\-perms"
 Output info about device owner, group and mode.  This option is equivalent to
 .BR -o\ NAME,SIZE,OWNER,GROUP,MODE .
