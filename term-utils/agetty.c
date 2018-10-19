@@ -316,7 +316,7 @@ static void parse_speeds(struct options *op, char *arg);
 static void update_utmp(struct options *op);
 static void open_tty(char *tty, struct termios *tp, struct options *op);
 static void termio_init(struct options *op, struct termios *tp);
-static void reset_vc (const struct options *op, struct termios *tp);
+static void reset_vc(const struct options *op, struct termios *tp, int canon);
 static void auto_baud(struct termios *tp);
 static void list_speeds(void);
 static void output_special_char (struct issue *ie, unsigned char c, struct options *op,
@@ -501,13 +501,14 @@ int main(int argc, char **argv)
 	if (options.timeout)
 		alarm(0);
 
-	if ((options.flags & F_VCONSOLE) == 0) {
-		/* Finalize the termios settings. */
+	/* Finalize the termios settings. */
+	if ((options.flags & F_VCONSOLE) == 0)
 		termio_final(&options, &termios, &chardata);
+	else
+		reset_vc(&options, &termios, 1);
 
-		/* Now the newline character should be properly written. */
-		write_all(STDOUT_FILENO, "\r\n", 2);
-	}
+	/* Now the newline character should be properly written. */
+	write_all(STDOUT_FILENO, "\r\n", 2);
 
 	sigaction(SIGQUIT, &sa_quit, NULL);
 	sigaction(SIGINT, &sa_int, NULL);
@@ -1250,7 +1251,7 @@ static void termio_init(struct options *op, struct termios *tp)
 		setlocale(LC_CTYPE, "POSIX");
 		op->flags &= ~F_UTF8;
 #endif
-		reset_vc(op, tp);
+		reset_vc(op, tp, 0);
 
 		if ((tp->c_cflag & (CS8|PARODD|PARENB)) == CS8)
 			op->flags |= F_EIGHTBITS;
@@ -1360,7 +1361,7 @@ static void termio_init(struct options *op, struct termios *tp)
 }
 
 /* Reset virtual console on stdin to its defaults */
-static void reset_vc(const struct options *op, struct termios *tp)
+static void reset_vc(const struct options *op, struct termios *tp, int canon)
 {
 	int fl = 0;
 
@@ -1368,6 +1369,15 @@ static void reset_vc(const struct options *op, struct termios *tp)
 	fl |= (op->flags & F_UTF8)       == 0 ? 0 : UL_TTY_UTF8;
 
 	reset_virtual_console(tp, fl);
+
+#ifdef AGETTY_RELOAD
+	/*
+	 * Discard all the flags that makes the line go canonical with echoing.
+	 * We need to know when the user starts typing.
+	 */
+	if (canon == 0)
+		tp->c_lflag = 0;
+#endif
 
 	if (tcsetattr(STDIN_FILENO, TCSADRAIN, tp))
 		log_warn(_("setting terminal attributes failed: %m"));
