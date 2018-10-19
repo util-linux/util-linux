@@ -88,11 +88,21 @@ Changes between v2.32 and v2.33
 -------------------------------
 
 agetty:
+   - Reload only if it is really needed  [Stanislav Brabec]
+   - Watch only protocol requested by issue escapes  [Stanislav Brabec]
    - agetty.8 Avoid a warning about an unbreakable line  [Bjarni Ingi Gislason]
+   - cleanup code to copy to log strings  [Karel Zak]
+   - cleanup issue output change, remove bool  [Karel Zak]
+   - don't use __u32  [Karel Zak]
    - keep c_iflags unmodified on --autologin  [Karel Zak]
+   - make output more robust  [Karel Zak]
+   - move all issue variables to struct  [Karel Zak]
+   - rename variable changed to triggered  [Stanislav Brabec]
 bash-completion:
    - add findmnt --real --pseudo  [Karel Zak]
    - add swapon specifiers to completion  [Sami Kerola]
+   - catch up with option changes  [Sami Kerola]
+   - cleanup mount and umount --namespace  [Karel Zak]
    - do not print eject --cdspeed error messages  [Sami Kerola]
    - fix few bash set -u issues  [Sami Kerola]
    - fix typo in blockdev file  [Sami Kerola]
@@ -115,11 +125,13 @@ build-sys:
    - --without-systemd disables --with-systemdsystemunitdir  [Karel Zak]
    - add -Wdiscarded-qualifiers  [Karel Zak]
    - add -Wno-cast-function-type for python  [Karel Zak]
+   - add USE_LIBMOUNT_SUPPORT_NAMESPACES  [Karel Zak]
    - cleanup --with/--without help strings  [Karel Zak]
    - default to /lib64 for ${exec_prefix}/lib64  [Karel Zak]
    - extend "Could not locate the pkg-config" error message  [Karel Zak]
    - fix typo in man install  [Karel Zak]
    - improve bison version detection  [Karel Zak]
+   - release++ (v2.33-rc1)  [Karel Zak]
 cal:
    - fix --span for large numbers of months  [Karel Zak]
    - use snprintf everywhere  [Karel Zak]
@@ -153,6 +165,7 @@ docs:
    - add cal(1) TODO items  [Karel Zak]
    - add choom to TODO  [Karel Zak]
    - add fdisk to TODO  [Karel Zak]
+   - add getopt to TODO  [Karel Zak]
    - add hint about script  [Karel Zak]
    - add hwclock to TODO  [Karel Zak]
    - add note about --disable-all-programs  [Karel Zak]
@@ -160,11 +173,13 @@ docs:
    - add note about lsblk usage/free cols  [Karel Zak]
    - add to column(1) TODO  [Karel Zak]
    - cleanup TODO  [Karel Zak]
+   - fix gtkdoc warning  [Karel Zak]
    - remove obsolete entry from TODO  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
    - update TODO  [Karel Zak]
    - update TODO (libblkid)  [Karel Zak]
    - update TODO (lsblk)  [Karel Zak]
+   - update v2.33-ReleaseNotes  [Karel Zak]
    - use SPDX license names  [Karel Zak]
 exec_shell:
    - prevent ".  applet not found" error when SHELL env is not set.  [osexp2000]
@@ -200,6 +215,9 @@ hwclock:
    - remove ntpd from man page  [Karel Zak]
 include/all-io:
    - const cleanup  [Karel Zak]
+include/c:
+   - add NAME_MAX compat  [Sevan Janiyan]
+   - add str2memcpy() and mem2strcpy()  [Karel Zak]
 include/list, include/c:
    - update and container_of()  [Karel Zak]
 include/path:
@@ -208,6 +226,8 @@ include/pt-mbr.h:
    - fix integer overflow  [Sami Kerola]
 include/strutils:
    - remove unnecessary cast  [Karel Zak]
+include/ttyutils:
+   - define values if missing.  [Sevan Janiyan]
 ipcs:
    - use new ul_path_* API  [Karel Zak]
 ipcs,chmem:
@@ -216,6 +236,7 @@ iscript:
    - s/COLS/COLUMNS/ in start message  [Karel Zak]
 last:
    - fix false positive compiler warning  [Sami Kerola]
+   - make sure domain is zero terminated  [Karel Zak]
 lib/canonicalize:
    - fix truncation warning  [Sami Kerola]
 lib/color-names:
@@ -280,10 +301,12 @@ libfdisk:
    - accept grain script header  [Karel Zak]
    - add fdisk_get_devmodel() and fdisk_get_devno()  [Karel Zak]
    - count gaps to possible size when resize  [Karel Zak]
+   - fix OSX compiler warning  [Ruediger Meier]
    - fix compiler warning [-Wmaybe-uninitialized]  [Karel Zak]
    - fix compiler warning [-Wunused-parameter]  [Karel Zak]
    - fix compiler warnings [-Wcast-qual]  [Karel Zak]
    - fix list_del after partition reset  [Vaclav Dolezal]
+   - fix printf format modifier  [Ruediger Meier]
    - improve JSON output  [Karel Zak]
    - reduce number of asprintf() calls, check return value  [Karel Zak]
    - use \x<hex> to read/write partition name  [Karel Zak]
@@ -306,6 +329,7 @@ libmount:
    - improve docs about mnt_context_mount() return codes  [Karel Zak]
    - include sys/mount.h on Linux only  [Karel Zak]
    - include sys/mount.h only if necessary  [Karel Zak]
+   - keep namespaces support optional  [Karel Zak]
    - make errno usable after mnt_context_set_target_ns()  [Karel Zak]
    - note namespaces in mnt_reset_context() docs  [Vaclav Dolezal]
    - report context paths on debug  [Karel Zak]
@@ -327,6 +351,7 @@ logger:
    - Define SD_JOURNAL_SUPPRESS_LOCATION.  [YmrDtnJu]
    - add -S to the man page  [Karel Zak]
 login:
+   - cleanup code to copy to log strings  [Karel Zak]
    - use const qualifier for username from PAM or struct passwd [-Wcast-qual]  [Karel Zak]
 losetup:
    - add --output-all option  [Sami Kerola]
@@ -341,6 +366,7 @@ lsblk:
    - add lsblk.h  [Karel Zak]
    - add note about --list -I <maj,...>  [Karel Zak]
    - add partition table UUID and type fields.  [Milan Broz]
+   - always use "part" as TYPE for partitions  [Karel Zak]
    - cleanup udev/blkid properties code  [Karel Zak]
    - consolidate column types for JSON and qsort()  [Karel Zak]
    - differentiate between swap and mount  [Karel Zak]
@@ -352,6 +378,7 @@ lsblk:
    - fix notes about RAM disks  [Karel Zak]
    - fix sysfs_devno_to_devname() usage  [Karel Zak]
    - fix ul_path_read_string() usage  [Karel Zak]
+   - fix unknown type `stat` caused by missing header  [Patrick Steinhardt]
    - follow --sysroot when read mountpoints  [Karel Zak]
    - init/deinit libmount stuff  [Karel Zak]
    - move mount stuff to lsblk-mnt.c  [Karel Zak]
@@ -415,6 +442,7 @@ misc-utils/findmnt:
 misc-utils/getopt:
    - misc-utils/getopt.1 minor corrections to the manual  [Bjarni Ingi Gislason]
 mkfs.cramfs:
+   - properly copy disk name  [Karel Zak]
    - remove redundant condition  [Karel Zak]
 mkswap:
    - fix compiler warnings [-Wcast-qual]  [Karel Zak]
@@ -436,6 +464,7 @@ mount:
    - add -N to man page helpers section  [Karel Zak]
    - add details about mtab and --namespace to mount.8  [Karel Zak]
    - add ext4 to some places to the man page  [Karel Zak]
+   - add note about MS_BIND and _netdev  [Karel Zak]
    - add support for namespaces  [Vaclav Dolezal]
    - added options exposing libmount's optsmode  [Vaclav Dolezal]
    - allow PID as --namespace argument  [Vaclav Dolezal]
@@ -468,6 +497,7 @@ rename:
    - add option --interactive to ask before overwriting  [G.raud Meyer]
    - ask()  call __fpurge() to cater for multi-byte characters  [G.raud Meyer]
    - ask()  print n when EOF on input  [G.raud Meyer]
+   - avoid undefined function prototype for `fpurge`  [Patrick Steinhardt]
    - check source file access early  [G.raud Meyer]
    - consolidate printing the symlink in addition to its target  [G.raud Meyer]
    - detect tty in cbreak mode to make ask() read a single byte  [G.raud Meyer]
@@ -508,11 +538,14 @@ setpriv:
 setterm:
    - fix compiler warnings [-Wcast-qual]  [Karel Zak]
 sfdisk:
+   - be more verbose about PMBR on --activate  [Karel Zak]
+   - disable --activate for Hybrid GPT/MBR  [Karel Zak]
    - document script GPT headers  [Karel Zak]
 su:
    - add --whitelist-environment  [Karel Zak]
    - add note about SIGKILL to the man page  [Karel Zak]
    - add note about merged /usr  [Karel Zak]
+   - cleanup code to copy to log strings  [Karel Zak]
 sulogin:
    - do not use plain 0 as NULL  [Karel Zak]
    - restore signals after failed exec() only  [Karel Zak]
@@ -526,6 +559,7 @@ test:
 tests:
    - Add tests for FAT32 labels  [Pali Rohár]
    - add cal --span tests  [Karel Zak]
+   - add choom to build-sys test  [Karel Zak]
    - add column --table-empty-lines test  [Karel Zak]
    - add empty column test  [Karel Zak]
    - add lsblk test script  [Karel Zak]
@@ -554,6 +588,8 @@ umount:
    - fix behaviour of -A and -R with --namespace  [Vaclav Dolezal]
 unshare:
    - remove -s from --help output  [Karel Zak]
+wall:
+   - make sure line is zero terminated  [Karel Zak]
 wipefs:
    - add missing ifdef  [Ruediger Meier]
    - postpone BLKRRPART until all is done  [Karel Zak]
