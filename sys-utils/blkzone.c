@@ -179,8 +179,9 @@ static int blkzone_report(struct blkzone_control *ctl)
 
 	fd = init_device(ctl, O_RDONLY);
 
-	if (ctl->offset > ctl->total_sectors)
-		errx(EXIT_FAILURE, _("%s: offset is greater than device size"), ctl->devname);
+	if (ctl->offset >= ctl->total_sectors)
+		errx(EXIT_FAILURE,
+		     _("%s: offset is greater than or equal to device size"), ctl->devname);
 
 	zonesize = blkdev_chunk_sectors(ctl->devname);
 	if (!zonesize)
