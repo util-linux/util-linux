@@ -21,6 +21,7 @@
 #define LSBLK_DEBUG_FILTER	(1 << 2)
 #define LSBLK_DEBUG_DEV		(1 << 3)
 #define LSBLK_DEBUG_TREE	(1 << 4)
+#define LSBLK_DEBUG_DEP		(1 << 5)
 #define LSBLK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(lsblk);
@@ -75,14 +76,18 @@ struct lsblk_devprop {
  * means we need to allocate list member rather than use @child directly.
  */
 struct lsblk_devdep {
-	struct list_head        ls_deps;	/* item in parent->deps */
+	struct list_head        ls_childs;	/* item in parent->childs */
+	struct list_head	ls_parents;	/* item in child->parents */
+
 	struct lsblk_device	*child;
+	struct lsblk_device	*parent;
 };
 
 struct lsblk_device {
 	int	refcount;
 
-	struct list_head	deps;		/* list with lsblk_devdep */
+	struct list_head	childs;		/* list with lsblk_devdep */
+	struct list_head	parents;
 	struct list_head	ls_roots;	/* item in devtree->roots list */
 	struct list_head	ls_devices;	/* item in devtree->devices list */
 
@@ -186,7 +191,7 @@ struct lsblk_device *lsblk_new_device(void);
 void lsblk_ref_device(struct lsblk_device *dev);
 void lsblk_unref_device(struct lsblk_device *dev);
 int lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device *child);
-int lsblk_device_has_dependence(struct lsblk_device *dev, struct lsblk_device *child);
+int lsblk_device_has_child(struct lsblk_device *dev, struct lsblk_device *child);
 int lsblk_device_next_child(struct lsblk_device *dev,
                           struct lsblk_iter *itr,
                           struct lsblk_device **child);

@@ -1,4 +1,21 @@
-
+/*
+ * These functions implement tree of block devices. The devtree struct contains
+ * two basic lists:
+ *
+ * 1) devtree->devices -- This is simple list without any hierarchy. We use
+ * reference counting here.
+ *
+ * 2) devtree->roots -- The root nodes of the trees. The code does not use
+ * reference counting here due to complexity and it's unnecessary.
+ *
+ * Note that the same device maybe have more parents and more children. The
+ * device is allocated only once and shared within the tree. The dependence
+ * (devdep struct) contains reference to child as well as to parent and the
+ * dependence is reference by ls_childs from parent device and by ls_parents
+ * from child. (Yes, "childs" is used for children ;-)
+ *
+ * Copyright (C) 2018 Karel Zak <kzak@redhat.com>
+ */
 #include "lsblk.h"
 #include "sysfs.h"
 
@@ -24,7 +41,8 @@ struct lsblk_device *lsblk_new_device()
 	dev->removable = -1;
 	dev->discard_granularity = (uint64_t) -1;
 
-        INIT_LIST_HEAD(&dev->deps);
+	INIT_LIST_HEAD(&dev->childs);
+	INIT_LIST_HEAD(&dev->parents);
 	INIT_LIST_HEAD(&dev->ls_roots);
 	INIT_LIST_HEAD(&dev->ls_devices);
 
@@ -38,15 +56,17 @@ void lsblk_ref_device(struct lsblk_device *dev)
 		dev->refcount++;
 }
 
-
-static int device_remove_dependence(struct lsblk_device *dev, struct lsblk_devdep *dep)
+/* removes dependence from child as well as from parent */
+static int remove_dependence(struct lsblk_devdep *dep)
 {
-	if (!dev || !dep || list_empty(&dev->deps))
+	if (!dep)
 		return -EINVAL;
 
-	DBG(DEV, ul_debugobj(dev, "  %s: deallocate dependence 0x%p [%s]", dev->name, dep, dep->child->name));
-	list_del_init(&dep->ls_deps);
-	lsblk_unref_device(dep->child);
+	DBG(DEP, ul_debugobj(dep, "   dealloc"));
+
+	list_del_init(&dep->ls_childs);
+	list_del_init(&dep->ls_parents);
+
 	free(dep);
 	return 0;
 }
@@ -56,12 +76,22 @@ static int device_remove_dependences(struct lsblk_device *dev)
 	if (!dev)
 		return -EINVAL;
 
-	DBG(DEV, ul_debugobj(dev, "%s: remove all depencences", dev->name));
-	while (!list_empty(&dev->deps)) {
-		struct lsblk_devdep *dp = list_entry(dev->deps.next,
-					struct lsblk_devdep, ls_deps);
-		device_remove_dependence(dev, dp);
+	if (!list_empty(&dev->childs))
+		DBG(DEV, ul_debugobj(dev, "  %s: remove all children deps", dev->name));
+	while (!list_empty(&dev->childs)) {
+		struct lsblk_devdep *dp = list_entry(dev->childs.next,
+					struct lsblk_devdep, ls_childs);
+		remove_dependence(dp);
 	}
+
+	if (!list_empty(&dev->parents))
+		DBG(DEV, ul_debugobj(dev, "  %s: remove all parents deps", dev->name));
+	while (!list_empty(&dev->parents)) {
+		struct lsblk_devdep *dp = list_entry(dev->parents.next,
+					struct lsblk_devdep, ls_parents);
+		remove_dependence(dp);
+	}
+
 	return 0;
 }
 
@@ -71,14 +101,13 @@ void lsblk_unref_device(struct lsblk_device *dev)
 		return;
 
 	if (--dev->refcount <= 0) {
-		DBG(DEV, ul_debugobj(dev, "dealloc"));
+		DBG(DEV, ul_debugobj(dev, " freeing [%s] <<", dev->name));
 
 		device_remove_dependences(dev);
 		lsblk_device_free_properties(dev->properties);
 
 		lsblk_unref_device(dev->wholedisk);
 
-		free(dev->name);
 		free(dev->dm_name);
 		free(dev->filename);
 		free(dev->mountpoint);
@@ -86,11 +115,13 @@ void lsblk_unref_device(struct lsblk_device *dev)
 
 		ul_unref_path(dev->sysfs);
 
+		DBG(DEV, ul_debugobj(dev, " >> dealloc [%s]", dev->name));
+		free(dev->name);
 		free(dev);
 	}
 }
 
-int lsblk_device_has_dependence(struct lsblk_device *dev, struct lsblk_device *child)
+int lsblk_device_has_child(struct lsblk_device *dev, struct lsblk_device *child)
 {
 	struct lsblk_device *x = NULL;
 	struct lsblk_iter itr;
@@ -112,25 +143,28 @@ int lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device
 	if (!parent || !child)
 		return -EINVAL;
 
-	if (lsblk_device_has_dependence(parent, child))
+	if (lsblk_device_has_child(parent, child))
 		return 1;
 
 	dp = calloc(1, sizeof(*dp));
 	if (!dp)
 		return -ENOMEM;
 
-	INIT_LIST_HEAD(&dp->ls_deps);
+	INIT_LIST_HEAD(&dp->ls_childs);
+	INIT_LIST_HEAD(&dp->ls_parents);
 
-	lsblk_ref_device(child);
 	dp->child = child;
+	list_add_tail(&dp->ls_childs, &parent->childs);
+
+	dp->parent = parent;
+	list_add_tail(&dp->ls_parents, &parent->parents);
 
         DBG(DEV, ul_debugobj(parent, "add dependence 0x%p [%s->%s]", dp, parent->name, child->name));
-        list_add_tail(&dp->ls_deps, &parent->deps);
 
 	return 0;
 }
 
-static int device_next_dependence(struct lsblk_device *dev,
+static int device_next_child(struct lsblk_device *dev,
 			  struct lsblk_iter *itr,
 			  struct lsblk_devdep **dp)
 {
@@ -141,9 +175,9 @@ static int device_next_dependence(struct lsblk_device *dev,
 	*dp = NULL;
 
 	if (!itr->head)
-		LSBLK_ITER_INIT(itr, &dev->deps);
+		LSBLK_ITER_INIT(itr, &dev->childs);
 	if (itr->p != itr->head) {
-		LSBLK_ITER_ITERATE(itr, *dp, struct lsblk_devdep, ls_deps);
+		LSBLK_ITER_ITERATE(itr, *dp, struct lsblk_devdep, ls_childs);
 		rc = 0;
 	}
 
@@ -155,7 +189,7 @@ int lsblk_device_next_child(struct lsblk_device *dev,
 			  struct lsblk_device **child)
 {
 	struct lsblk_devdep *dp = NULL;
-	int rc = device_next_dependence(dev, itr, &dp);
+	int rc = device_next_child(dev, itr, &dp);
 
 	if (!child)
 		return -EINVAL;
@@ -334,13 +368,13 @@ static void device_dedup_dependencies(
 
 	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
 
-	while (device_next_dependence(dev, &itr, &dp) == 0) {
+	while (device_next_child(dev, &itr, &dp) == 0) {
 		struct lsblk_device *child = dp->child;
 
 		if (device_dedupkey_is_equal(child, pattern)) {
 			DBG(DEV, ul_debugobj(dev, "remove duplicate dependence: 0x%p [%s]",
 						dp->child, dp->child->name));
-			device_remove_dependence(dev, dp);
+			remove_dependence(dp);
 		} else
 			device_dedup_dependencies(child, pattern);
 	}
