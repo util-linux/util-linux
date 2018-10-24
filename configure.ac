@@ -600,10 +600,7 @@ AS_IF([test x"$have_dirfd" = xno], [
 		 #include <dirent.h>])
 ])
 
-AS_CASE([$have_dirfd:$have_ddfd],
-  [no:no],
-    [AC_MSG_ERROR([cannot find a method to get filedescriptor of directory])]
-)
+AM_CONDITIONAL([HAVE_DIRFD], [test "x$have_dirfd" = xyes -o "x$have_ddfd" = xyes])
 
 
 AC_MSG_CHECKING([whether program_invocation_short_name is defined])
@@ -1071,6 +1068,7 @@ AC_ARG_ENABLE([libblkid],
 )
 UL_BUILD_INIT([libblkid])
 UL_REQUIRES_HAVE([libblkid], [openat], [openat functions])
+UL_REQUIRES_HAVE([libblkid], [dirfd,ddfd], [dirfd or ddfd function])
 AC_SUBST([LIBBLKID_DATE])
 AC_SUBST([LIBBLKID_VERSION])
 AC_SUBST([LIBBLKID_VERSION_INFO])
@@ -1092,6 +1090,7 @@ AC_ARG_ENABLE([libmount],
 UL_BUILD_INIT([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
 UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifier])
+UL_REQUIRES_HAVE([libmount], [dirfd,ddfd], [dirfd or ddfd function])
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
 AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes -a "x$enable_static" = xyes])
 AS_IF([test "x$build_libmount" = xyes], [
@@ -1168,6 +1167,7 @@ enable_cfdisk=$enable_fdisks
 
 UL_BUILD_INIT([fdisk])
 UL_REQUIRES_HAVE([fdisk], [openat], [openat functions])
+UL_REQUIRES_HAVE([fdisk], [dirfd,ddfd], [dirfd or ddfd function])
 UL_REQUIRES_BUILD([fdisk], [libfdisk])
 UL_REQUIRES_BUILD([fdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
@@ -1175,6 +1175,7 @@ AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
 
 UL_BUILD_INIT([sfdisk])
 UL_REQUIRES_HAVE([sfdisk], [openat], [openat functions])
+UL_REQUIRES_HAVE([sfdisk], [dirfd,ddfd], [dirfd or ddfd function])
 UL_REQUIRES_BUILD([sfdisk], [libfdisk])
 UL_REQUIRES_BUILD([sfdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
@@ -1642,6 +1643,7 @@ AC_ARG_ENABLE([switch_root],
 UL_BUILD_INIT([switch_root])
 UL_REQUIRES_LINUX([switch_root])
 UL_REQUIRES_HAVE([switch_root], [openat], [openat function])
+UL_REQUIRES_HAVE([switch_root], [dirfd,ddfd], [dirfd or ddfd function])
 AM_CONDITIONAL([BUILD_SWITCH_ROOT], [test "x$build_switch_root" = xyes])
 
 

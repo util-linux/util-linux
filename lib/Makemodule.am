@@ -48,9 +48,11 @@ libcommon_la_SOURCES += lib/cpuset.c
 endif
 
 if HAVE_OPENAT
+if HAVE_DIRFD
 libcommon_la_SOURCES += lib/path.c
 libcommon_la_SOURCES += lib/procutils.c
 libcommon_la_SOURCES += lib/sysfs.c
+endif
 endif
 
 noinst_LTLIBRARIES += libtcolors.la
@@ -96,8 +98,10 @@ check_PROGRAMS += \
 endif
 
 if HAVE_OPENAT
+if HAVE_DIRFD
 check_PROGRAMS += test_procutils
 check_PROGRAMS += test_path
+endif
 endif
 
 test_ttyutils_SOURCES = lib/ttyutils.c
@@ -126,17 +130,17 @@ test_randutils_SOURCES = lib/randutils.c
 test_randutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_RANDUTILS
 
 if HAVE_OPENAT
+if HAVE_DIRFD
 test_procutils_SOURCES = lib/procutils.c
 test_procutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PROCUTILS
-endif
 
-if HAVE_OPENAT
 test_path_SOURCES = lib/path.c lib/fileutils.c
 if HAVE_CPU_SET_T
 test_path_SOURCES += lib/cpuset.c
 endif
 test_path_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PATH
 test_path_LDADD = $(LDADD)
+endif
 endif
 
 if LINUX
