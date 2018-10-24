@@ -27,7 +27,9 @@
  * The applications need to ensure that they can tolerate multiple signal
  * deliveries.
  */
-int setup_timer(timer_t * t_id, struct itimerval *timeout,
+#ifdef HAVE_TIMER_CREATE
+int setup_timer(struct ul_timer *timer,
+		struct itimerval *timeout,
 		void (*timeout_handler)(int, siginfo_t *, void *))
 {
 	time_t sec = timeout->it_value.tv_sec;
@@ -52,14 +54,42 @@ int setup_timer(timer_t * t_id, struct itimerval *timeout,
 
 	if (sigaction(SIGALRM, &sig_a, NULL))
 		return 1;
-	if (timer_create(CLOCK_MONOTONIC, &sig_e, t_id))
+	if (timer_create(CLOCK_MONOTONIC, &sig_e, &timer->t_id))
 		return 1;
-	if (timer_settime(*t_id, 0, &val, NULL))
+	if (timer_settime(timer->t_id, 0, &val, NULL))
+		return 1;
+	return 0;
+}
+void cancel_timer(struct ul_timer *timer)
+{
+	timer_delete(timer->t_id);
+}
+
+#else /* !HAVE_TIMER_CREATE */
+
+int setup_timer(struct ul_timer *timer,
+		struct itimerval *timeout,
+		void (*timeout_handler)(int, siginfo_t *, void *))
+{
+	struct sigaction sa;
+
+	memset(&sa, 0, sizeof sa);
+	memset(timer, 0, sizeof(*timer));
+
+	sa.sa_flags = SA_SIGINFO | SA_RESETHAND;
+	sa.sa_sigaction = timeout_handler;
+
+	if (sigaction(SIGALRM, &sa, &timer->old_sa))
+		return 1;
+	if (setitimer(ITIMER_REAL, timeout, &timer->old_timer) != 0)
 		return 1;
 	return 0;
 }
 
-void cancel_timer(timer_t *t_id)
+void cancel_timer(struct ul_timer *timer)
 {
-	timer_delete(*t_id);
+	setitimer(ITIMER_REAL, &timer->old_timer, NULL);
+        sigaction(SIGALRM, &timer->old_sa, NULL);
+
 }
+#endif /* !HAVE_TIMER_CREATE */

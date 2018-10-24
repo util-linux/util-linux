@@ -81,7 +81,9 @@ static void timeout_handler(int sig __attribute__((__unused__)),
 			    siginfo_t *info,
 			    void *context __attribute__((__unused__)))
 {
+#ifdef HAVE_TIMER_CREATE
 	if (info->si_code == SI_TIMER)
+#endif
 		timeout_expired = 1;
 }
 
@@ -124,7 +126,7 @@ static void __attribute__((__noreturn__)) run_program(char **cmd_argv)
 
 int main(int argc, char *argv[])
 {
-	static timer_t t_id;
+	struct ul_timer timer;
 	struct itimerval timeout;
 	int have_timeout = 0;
 	int type = LOCK_EX;
@@ -268,7 +270,7 @@ int main(int argc, char *argv[])
 			have_timeout = 0;
 			block = LOCK_NB;
 		} else
-			if (setup_timer(&t_id, &timeout, &timeout_handler))
+			if (setup_timer(&timer, &timeout, &timeout_handler))
 				err(EX_OSERR, _("cannot set up timer"));
 	}
 
@@ -321,7 +323,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (have_timeout)
-		cancel_timer(&t_id);
+		cancel_timer(&timer);
 	if (verbose) {
 		struct timeval delta;
 

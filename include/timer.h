@@ -4,8 +4,19 @@
 #include <signal.h>
 #include <sys/time.h>
 
-extern int setup_timer(timer_t * t_id, struct itimerval *timeout,
+#ifdef HAVE_TIMER_CREATE
+struct ul_timer {
+	timer_t t_id;
+};
+#else
+struct ul_timer {
+	struct itimerval old_timer;
+	struct sigaction old_sa;
+};
+#endif
+
+extern int setup_timer(struct ul_timer *timer, struct itimerval *timeout,
 		       void (*timeout_handler)(int, siginfo_t *, void *));
-extern void cancel_timer(timer_t * t_id);
+extern void cancel_timer(struct ul_timer *timer);
 
 #endif /* UTIL_LINUX_TIMER_H */

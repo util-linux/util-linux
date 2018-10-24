@@ -558,6 +558,10 @@ AC_CHECK_FUNCS([timer_create],
 
 AC_SUBST([REALTIME_LIBS])
 
+AS_IF([test x"$have_timer" = xno], [
+       AC_CHECK_FUNCS([setitimer], [have_timer="yes"], [have_timer="no"])
+])
+
 
 AC_CHECK_LIB([rtas], [rtas_get_sysparm], [
 	RTAS_LIBS="-lrtas"
