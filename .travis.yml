@@ -29,7 +29,9 @@ matrix:
 branches:
   only:
     - master
+    - next
     - /^stable.*/
+    - /^topic.*/
     - /^travis.*/
 
 before_install:

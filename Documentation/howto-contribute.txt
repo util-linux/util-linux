@@ -35,6 +35,29 @@ Sending Patches
 	  Packages like RPMs, DEBs, and the rest, are not provided. They should
 	  be available from the distribution.
 
+Repositories & Branches
+
+	* Primary repository is on kernel.org:
+          git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
+
+	  We use this repository for master and stable branches only.
+
+	* Backup repository at github.com:
+	  git clone git://github.com/karelzak/util-linux.git
+
+	  We use this repository to backup kernel.org and for pull requests,
+	  issues tracking and topic branches. The master and stable branches are
+	  always pushed to the both repositories in the same time.
+
+	  It's recommended to use github.com for development.
+
+	* Branches:
+
+	  master	- development for the next release
+	  next		- optionally used when master branch is frozen due to -rcN releases
+	  topic/*	- long time development
+	  stable/*	- stable maintenance releases
+
 Patching Process
 
 	* announce it on the mailing list when you are going to work with some
