@@ -544,14 +544,16 @@ AC_CHECK_FUNCS([timer_create],
 	[AC_CHECK_LIB([rt], [timer_create], [
 		have_timer="yes"
 		REALTIME_LIBS="-lrt"
+		AC_DEFINE_UNQUOTED([HAVE_TIMER_CREATE], [1], [Define if timer_create exist in -lrt])
 	],[
 		AC_SEARCH_LIBS([timer_create], [rt], [
 			AC_MSG_RESULT(yes)
 			have_timer="yes"
 			REALTIME_LIBS="-lrt -lpthread"
+			AC_DEFINE_UNQUOTED([HAVE_TIMER_CREATE], [1], [Define if timer_create exist in -lrt -lpthread])
 		],[], [-lpthread]
 		)
-		])]
+	])]
 )
 
 AC_SUBST([REALTIME_LIBS])
