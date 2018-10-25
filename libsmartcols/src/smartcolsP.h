@@ -115,6 +115,9 @@ struct libscols_column {
 	struct libscols_table	*table;
 };
 
+#define colsep(tb)	((tb)->colsep ? (tb)->colsep : " ")
+#define linesep(tb)	((tb)->linesep ? (tb)->linesep : "\n")
+
 /*
  * Table line
  */
@@ -214,6 +217,8 @@ static inline int scols_iter_is_last(const struct libscols_iter *itr)
 	return itr->p == itr->head;
 }
 
+
+
 /*
  * buffer.c
  */
@@ -232,6 +237,18 @@ extern char *buffer_get_safe_data(struct libscols_table *tb,
 				  const char *safechars);
 extern size_t buffer_get_safe_art_size(struct libscols_buffer *buf);
 
+/*
+ * calculate.c
+ */
+extern int __scols_calculate(struct libscols_table *tb, struct libscols_buffer *buf);
+
+/*
+ * print.c
+ */
+extern int __cell_to_buffer(struct libscols_table *tb,
+                          struct libscols_line *ln,
+                          struct libscols_column *cl,
+                          struct libscols_buffer *buf);
 
 static inline int is_last_child(struct libscols_line *ln)
 {

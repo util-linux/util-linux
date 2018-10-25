@@ -18,6 +18,7 @@ libsmartcols_la_SOURCES= \
 	libsmartcols/src/print.c \
 	libsmartcols/src/version.c \
 	libsmartcols/src/buffer.c \
+	libsmartcols/src/calculate.c \
 	libsmartcols/src/init.c
 
 libsmartcols_la_LIBADD = $(LDADD) libcommon.la
