@@ -196,28 +196,13 @@ static int line_ascii_art_to_buffer(struct libscols_table *tb,
 	if (rc)
 		return rc;
 
-	if (list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
+	if (is_last_child(ln))
 		art = "  ";
 	else
 		art = vertical_symbol(tb);
 
 	return buffer_append_data(buf, art);
 }
-
-static int is_last_column(struct libscols_column *cl)
-{
-	int rc = list_entry_is_last(&cl->cl_columns, &cl->table->tb_columns);
-	struct libscols_column *next;
-
-	if (rc)
-		return 1;
-
-	next = list_entry(cl->cl_columns.next, struct libscols_column, cl_columns);
-	if (next && scols_column_is_hidden(next) && is_last_column(next))
-		return 1;
-	return 0;
-}
-
 
 static int has_pending_data(struct libscols_table *tb)
 {
@@ -613,7 +598,7 @@ static int cell_to_buffer(struct libscols_table *tb,
 	if (ln->parent && !scols_table_is_json(tb)) {
 		rc = line_ascii_art_to_buffer(tb, ln->parent, buf);
 
-		if (!rc && list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
+		if (!rc && is_last_child(ln))
 			rc = buffer_append_data(buf, right_symbol(tb));
 		else if (!rc)
 			rc = buffer_append_data(buf, branch_symbol(tb));

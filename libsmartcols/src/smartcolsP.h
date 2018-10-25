@@ -213,4 +213,26 @@ static inline int scols_iter_is_last(const struct libscols_iter *itr)
 	return itr->p == itr->head;
 }
 
+static inline int is_last_child(struct libscols_line *ln)
+{
+	if (!ln || !ln->parent)
+		return 1;
+
+	return list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch);
+}
+
+
+static inline int is_last_column(struct libscols_column *cl)
+{
+	struct libscols_column *next;
+
+	if (list_entry_is_last(&cl->cl_columns, &cl->table->tb_columns))
+		return 1;
+
+	next = list_entry(cl->cl_columns.next, struct libscols_column, cl_columns);
+	if (next && scols_column_is_hidden(next) && is_last_column(next))
+		return 1;
+	return 0;
+}
+
 #endif /* _LIBSMARTCOLS_PRIVATE_H */
