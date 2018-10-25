@@ -46,138 +46,6 @@
 #define want_repeat_header(tb)	(!(tb)->header_repeat || (tb)->header_next <= (tb)->termlines_used)
 
 
-/* This is private struct to work with output data */
-struct libscols_buffer {
-	char	*begin;		/* begin of the buffer */
-	char	*cur;		/* current end of  the buffer */
-	char	*encdata;	/* encoded buffer mbs_safe_encode() */
-
-	size_t	bufsz;		/* size of the buffer */
-	size_t	art_idx;	/* begin of the tree ascii art or zero */
-};
-
-static struct libscols_buffer *new_buffer(size_t sz)
-{
-	struct libscols_buffer *buf = malloc(sz + sizeof(struct libscols_buffer));
-
-	if (!buf)
-		return NULL;
-
-	buf->cur = buf->begin = ((char *) buf) + sizeof(struct libscols_buffer);
-	buf->encdata = NULL;
-	buf->bufsz = sz;
-
-	DBG(BUFF, ul_debugobj(buf, "alloc (size=%zu)", sz));
-	return buf;
-}
-
-static void free_buffer(struct libscols_buffer *buf)
-{
-	if (!buf)
-		return;
-	DBG(BUFF, ul_debugobj(buf, "dealloc"));
-	free(buf->encdata);
-	free(buf);
-}
-
-static int buffer_reset_data(struct libscols_buffer *buf)
-{
-	if (!buf)
-		return -EINVAL;
-
-	/*DBG(BUFF, ul_debugobj(buf, "reset data"));*/
-	buf->begin[0] = '\0';
-	buf->cur = buf->begin;
-	buf->art_idx = 0;
-	return 0;
-}
-
-static int buffer_append_data(struct libscols_buffer *buf, const char *str)
-{
-	size_t maxsz, sz;
-
-	if (!buf)
-		return -EINVAL;
-	if (!str || !*str)
-		return 0;
-
-	sz = strlen(str);
-	maxsz = buf->bufsz - (buf->cur - buf->begin);
-
-	if (maxsz <= sz)
-		return -EINVAL;
-	memcpy(buf->cur, str, sz + 1);
-	buf->cur += sz;
-	return 0;
-}
-
-static int buffer_set_data(struct libscols_buffer *buf, const char *str)
-{
-	int rc = buffer_reset_data(buf);
-	return rc ? rc : buffer_append_data(buf, str);
-}
-
-/* save the current buffer position to art_idx */
-static void buffer_set_art_index(struct libscols_buffer *buf)
-{
-	if (buf) {
-		buf->art_idx = buf->cur - buf->begin;
-		/*DBG(BUFF, ul_debugobj(buf, "art index: %zu", buf->art_idx));*/
-	}
-}
-
-static char *buffer_get_data(struct libscols_buffer *buf)
-{
-	return buf ? buf->begin : NULL;
-}
-
-/* encode data by mbs_safe_encode() to avoid control and non-printable chars */
-static char *buffer_get_safe_data(struct libscols_table *tb,
-				  struct libscols_buffer *buf,
-				  size_t *cells,
-				  const char *safechars)
-{
-	char *data = buffer_get_data(buf);
-	char *res = NULL;
-
-	if (!data)
-		goto nothing;
-
-	if (!buf->encdata) {
-		buf->encdata = malloc(mbs_safe_encode_size(buf->bufsz) + 1);
-		if (!buf->encdata)
-			goto nothing;
-	}
-
-	if (tb->no_encode) {
-		*cells = mbs_safe_width(data);
-		strcpy(buf->encdata, data);
-		res = buf->encdata;
-	} else {
-		res = mbs_safe_encode_to_buffer(data, cells, buf->encdata, safechars);
-	}
-
-	if (!res || !*cells || *cells == (size_t) -1)
-		goto nothing;
-	return res;
-nothing:
-	*cells = 0;
-	return NULL;
-}
-
-/* returns size in bytes of the ascii art (according to art_idx) in safe encoding */
-static size_t buffer_get_safe_art_size(struct libscols_buffer *buf)
-{
-	char *data = buffer_get_data(buf);
-	size_t bytes = 0;
-
-	if (!data || !buf->art_idx)
-		return 0;
-
-	mbs_safe_nwidth(data, buf->art_idx, &bytes);
-	return bytes;
-}
-
 /* returns pointer to the end of used data */
 static int line_ascii_art_to_buffer(struct libscols_table *tb,
 				    struct libscols_line *ln,
@@ -560,7 +428,7 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	if (len > width && !scols_column_is_trunc(cl))
-		print_newline_padding(tb, cl, ln, buf->bufsz);	/* next column starts on next line */
+		print_newline_padding(tb, cl, ln, buffer_get_size(buf));	/* next column starts on next line */
 	else
 		fputs(colsep(tb), tb->out);		/* columns separator */
 
@@ -750,7 +618,7 @@ static int print_line(struct libscols_table *tb,
 				if (rc == 0 && cl->pending_data)
 					pending = 1;
 			} else
-				print_empty_cell(tb, cl, ln, buf->bufsz);
+				print_empty_cell(tb, cl, ln, buffer_get_size(buf));
 		}
 	}
 

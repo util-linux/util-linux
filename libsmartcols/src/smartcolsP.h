@@ -131,6 +131,7 @@ struct libscols_line {
 	struct list_head	ln_lines;	/* table lines */
 	struct list_head	ln_branch;	/* begin of branch (head of ln_children) */
 	struct list_head	ln_children;
+	struct list_head	ln_group;
 
 	struct libscols_line	*parent;
 };
@@ -212,6 +213,25 @@ static inline int scols_iter_is_last(const struct libscols_iter *itr)
 
 	return itr->p == itr->head;
 }
+
+/*
+ * buffer.c
+ */
+struct libscols_buffer;
+extern struct libscols_buffer *new_buffer(size_t sz);
+extern void free_buffer(struct libscols_buffer *buf);
+extern int buffer_reset_data(struct libscols_buffer *buf);
+extern int buffer_append_data(struct libscols_buffer *buf, const char *str);
+extern int buffer_set_data(struct libscols_buffer *buf, const char *str);
+extern void buffer_set_art_index(struct libscols_buffer *buf);
+extern char *buffer_get_data(struct libscols_buffer *buf);
+extern size_t buffer_get_size(struct libscols_buffer *buf);
+extern char *buffer_get_safe_data(struct libscols_table *tb,
+				  struct libscols_buffer *buf,
+				  size_t *cells,
+				  const char *safechars);
+extern size_t buffer_get_safe_art_size(struct libscols_buffer *buf);
+
 
 static inline int is_last_child(struct libscols_line *ln)
 {
