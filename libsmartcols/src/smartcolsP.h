@@ -250,6 +250,28 @@ extern int __cell_to_buffer(struct libscols_table *tb,
                           struct libscols_column *cl,
                           struct libscols_buffer *buf);
 
+void __scols_cleanup_printing(struct libscols_table *tb, struct libscols_buffer *buf);
+int __scols_initialize_printing(struct libscols_table *tb, struct libscols_buffer **buf);
+int __scols_print_tree(struct libscols_table *tb, struct libscols_buffer *buf);
+int __scols_print_table(struct libscols_table *tb, struct libscols_buffer *buf);
+int __scols_print_header(struct libscols_table *tb, struct libscols_buffer *buf);
+int __scols_print_title(struct libscols_table *tb);
+int __scols_print_range(struct libscols_table *tb,
+                        struct libscols_buffer *buf,
+                        struct libscols_iter *itr,
+                        struct libscols_line *end);
+
+/*
+ * fput.c
+ */
+extern void fput_indent(struct libscols_table *tb);
+extern void fput_table_open(struct libscols_table *tb);
+extern void fput_table_close(struct libscols_table *tb);
+extern void fput_children_open(struct libscols_table *tb);
+extern void fput_children_close(struct libscols_table *tb);
+extern void fput_line_open(struct libscols_table *tb);
+extern void fput_line_close(struct libscols_table *tb, int last, int last_in_table);
+
 static inline int is_last_child(struct libscols_line *ln)
 {
 	if (!ln || !ln->parent)
