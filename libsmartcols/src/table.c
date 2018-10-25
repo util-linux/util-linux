@@ -29,10 +29,13 @@
 #include "smartcolsP.h"
 
 #ifdef HAVE_WIDECHAR
-#define UTF_V	"\342\224\202"	/* U+2502, Vertical line drawing char */
-#define UTF_VR	"\342\224\234"	/* U+251C, Vertical and right */
-#define UTF_H	"\342\224\200"	/* U+2500, Horizontal */
-#define UTF_UR	"\342\224\224"	/* U+2514, Up and right */
+#define UTF_V	"\342\224\202"	/* U+2502, Vertical line drawing char |  */
+#define UTF_VR	"\342\224\234"	/* U+251C, Vertical and right         |- */
+#define UTF_VL  "\342\224\244"  /* U+2524  Vertical and left         -|  */
+#define UTF_H	"\342\224\200"	/* U+2500, Horizontal                 -  */
+#define UTF_UR	"\342\224\224"	/* U+2514, Up and right              '-  */
+#define UTF_UL  "\342\224\230"  /* U+2518, Up and left                -' */
+#define UTF_DL  "\342\224\220"  /* U+2510, Down and left              -, */
 #endif /* !HAVE_WIDECHAR */
 
 #define is_last_column(_tb, _cl) \
