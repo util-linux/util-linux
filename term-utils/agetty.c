@@ -2182,6 +2182,9 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				*bp++ = ascval;			/* and store it */
 				break;
 			}
+			/* Everything was erased. */
+			if (bp == logname)
+				goto no_reload;
 		}
 	}
 
