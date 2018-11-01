@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <termios.h>
@@ -582,18 +583,32 @@ int main(int argc, char **argv)
 		char *arg[5];
 		int i = 0;
 
-		if (ctl.verbose)
-			printf(_("suspend mode: off; executing %s\n"),
-						_PATH_SHUTDOWN);
-		arg[i++] = _PATH_SHUTDOWN;
-		arg[i++] = "-h";
-		arg[i++] = "-P";
-		arg[i++] = "now";
-		arg[i]   = NULL;
-		if (!ctl.dryrun) {
-			execv(arg[0], arg);
-			warn(_("failed to execute %s"), _PATH_SHUTDOWN);
-			rc = EXIT_FAILURE;
+		if (!access(_PATH_SHUTDOWN, X_OK)) {
+			arg[i++] = _PATH_SHUTDOWN;
+			arg[i++] = "-h";
+			arg[i++] = "-P";
+			arg[i++] = "now";
+			arg[i]   = NULL;
+		} else if (!access(_PATH_POWEROFF, X_OK)) {
+			arg[i++] = _PATH_POWEROFF;
+			arg[i]   = NULL;
+		} else {
+			arg[i] 	 = NULL;
+		}
+
+		if (arg[0]) {
+			if (ctl.verbose)
+				printf(_("suspend mode: off; executing %s\n"),
+						arg[0]);
+			if (!ctl.dryrun) {
+				execv(arg[0], arg);
+				warn(_("failed to execute %s"), arg[0]);
+				rc = EX_EXEC_ENOENT;
+			}
+		} else {
+			/* Failed to find shutdown command */
+			warn(_("failed to find shutdown command"));
+			rc = EX_EXEC_ENOENT;
 		}
 		break;
 	}

@@ -53,6 +53,7 @@
 # define _PATH_LOGIN		"/bin/login"
 #endif
 #define _PATH_SHUTDOWN		"/sbin/shutdown"
+#define _PATH_POWEROFF		"/sbin/poweroff"
 
 #define _PATH_TERMCOLORS_DIRNAME "terminal-colors.d"
 #define _PATH_TERMCOLORS_DIR	"/etc/" _PATH_TERMCOLORS_DIRNAME
