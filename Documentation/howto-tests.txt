@@ -80,7 +80,7 @@ TS_OPT_testdir_[testscript_]fake="<yes|no>"
 
     Evaluated by any test script to skip certain tests.
     Examples:
-      - skip all the tests within "fdisk" test-direcrory:
+      - skip all the tests within "fdisk" test-directory:
         $ make check TS_OPT_fdisk_fake="yes"
 
       - skip only "fdisk/bsd" test:
