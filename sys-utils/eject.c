@@ -438,7 +438,7 @@ static void toggle_tray(int fd)
 		warnx(_("CD-ROM drive is not ready"));
 		return;
 	default:
-		abort();
+		err(EXIT_FAILURE, _("CD-ROM status command failed"));
 	}
 #else
 	struct timeval time_start, time_stop;
