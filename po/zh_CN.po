@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-10-19 12:10+0200\n"
+"POT-Creation-Date: 2018-11-06 11:44+0100\n"
 "PO-Revision-Date: 2016-11-07 05:25-0500\n"
 "Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -36,8 +36,8 @@ msgstr "通知内核，存在某个指定分区。\n"
 #: misc-utils/kill.c:311 misc-utils/rename.c:280 misc-utils/whereis.c:518
 #: sys-utils/flock.c:175 sys-utils/ipcrm.c:160 sys-utils/ldattach.c:368
 #: sys-utils/renice.c:146 sys-utils/switch_root.c:241 sys-utils/tunelp.c:152
-#: term-utils/agetty.c:878 term-utils/agetty.c:879 term-utils/agetty.c:887
-#: term-utils/agetty.c:888
+#: term-utils/agetty.c:879 term-utils/agetty.c:880 term-utils/agetty.c:888
+#: term-utils/agetty.c:889
 msgid "not enough arguments"
 msgstr "参数不够"
 
@@ -70,7 +70,7 @@ msgstr "参数不够"
 #: sys-utils/setpriv.c:683 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
 #: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2854 term-utils/mesg.c:132 term-utils/script.c:540
+#: term-utils/agetty.c:2867 term-utils/mesg.c:132 term-utils/script.c:540
 #: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
@@ -215,7 +215,7 @@ msgstr " %-25s 获得 512-字节扇区的大小\n"
 #: disk-utils/fsck.minix.c:1341 disk-utils/isosize.c:205
 #: disk-utils/mkfs.bfs.c:181 disk-utils/mkfs.c:116 disk-utils/mkfs.minix.c:813
 #: disk-utils/swaplabel.c:181 misc-utils/wipefs.c:757
-#: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:404 sys-utils/tunelp.c:242
+#: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:405 sys-utils/tunelp.c:242
 #: sys-utils/zramctl.c:710 sys-utils/zramctl.c:736
 msgid "no device specified"
 msgstr "未指定设备"
@@ -4651,7 +4651,7 @@ msgid "colors are disabled by default"
 msgstr "默认禁用颜色"
 
 #: include/env.h:18 lib/pager.c:153 login-utils/login.c:1027
-#: login-utils/login.c:1031 term-utils/agetty.c:1188
+#: login-utils/login.c:1031 term-utils/agetty.c:1189
 #, c-format
 msgid "failed to set the %s environment variable"
 msgstr "设置环境变量 %s 失败"
@@ -8413,7 +8413,7 @@ msgstr ""
 " -e, --force              如果 getpwnam(3) 失败，直接检查密码文件\n"
 
 #: login-utils/sulogin.c:864 misc-utils/findmnt.c:1491 sys-utils/wdctl.c:524
-#: term-utils/agetty.c:836 term-utils/wall.c:216
+#: term-utils/agetty.c:837 term-utils/wall.c:216
 msgid "invalid timeout argument"
 msgstr "无效的 timeout 超时参数"
 
@@ -11462,7 +11462,7 @@ msgstr "解析偏移失败"
 msgid "failed to parse step"
 msgstr "解析步长失败"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:408 sys-utils/fallocate.c:374
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:409 sys-utils/fallocate.c:374
 #: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:405
 msgid "unexpected number of arguments"
 msgstr "参数数量异常"
@@ -11482,7 +11482,7 @@ msgstr "%s：BLKSSZGET ioctl 失败"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: 偏移量 %<PRIu64> 未与扇区大小 %i 对齐"
 
-#: sys-utils/blkdiscard.c:201 sys-utils/blkzone.c:183 sys-utils/blkzone.c:271
+#: sys-utils/blkdiscard.c:201 sys-utils/blkzone.c:272
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s：偏移量超过设备大小"
@@ -11521,95 +11521,100 @@ msgstr ""
 msgid "%s: blkdev_get_sectors ioctl failed"
 msgstr "%s︰ 设置直接 io 失败"
 
-#: sys-utils/blkzone.c:187 sys-utils/blkzone.c:261
+#: sys-utils/blkzone.c:184
+#, fuzzy, c-format
+msgid "%s: offset is greater than or equal to device size"
+msgstr "%s：偏移量超过设备大小"
+
+#: sys-utils/blkzone.c:188 sys-utils/blkzone.c:262
 #, fuzzy, c-format
 msgid "%s: unable to determine zone size"
 msgstr "%s：无法写 zone map"
 
-#: sys-utils/blkzone.c:205
+#: sys-utils/blkzone.c:206
 #, fuzzy, c-format
 msgid "%s: BLKREPORTZONE ioctl failed"
 msgstr "%s：BLKGETSIZE64 ioctl 失败"
 
-#: sys-utils/blkzone.c:208
+#: sys-utils/blkzone.c:209
 #, c-format
 msgid "Found %d zones from 0x%<PRIx64>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:229
+#: sys-utils/blkzone.c:230
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:266
+#: sys-utils/blkzone.c:267
 #, fuzzy, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: 偏移量 %<PRIu64> 未与扇区大小 %i 对齐"
 
-#: sys-utils/blkzone.c:285
+#: sys-utils/blkzone.c:286
 #, fuzzy, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: 偏移量 %<PRIu64> 未与扇区大小 %i 对齐"
 
-#: sys-utils/blkzone.c:293
+#: sys-utils/blkzone.c:294
 #, fuzzy, c-format
 msgid "%s: BLKRESETZONE ioctl failed"
 msgstr "%s：BLKSSZGET ioctl 失败"
 
-#: sys-utils/blkzone.c:295
+#: sys-utils/blkzone.c:296
 #, fuzzy, c-format
 msgid "%s: successfully reset in range from %<PRIu64>, to %<PRIu64>"
 msgstr "分区表长度已从 %<PRIu32> 改为 %<PRIu64>。"
 
-#: sys-utils/blkzone.c:309
+#: sys-utils/blkzone.c:310
 #, fuzzy, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr " %s [选项] <设备>\n"
 
-#: sys-utils/blkzone.c:312
+#: sys-utils/blkzone.c:313
 msgid "Run zone command on the given block device.\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:319
+#: sys-utils/blkzone.c:320
 #, fuzzy
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <数字>  范围操作的偏移量(字节数)\n"
 
-#: sys-utils/blkzone.c:320
+#: sys-utils/blkzone.c:321
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:321
+#: sys-utils/blkzone.c:322
 #, fuzzy
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -t, --streams <数字>      压缩流数量\n"
 
-#: sys-utils/blkzone.c:322
+#: sys-utils/blkzone.c:323
 #, fuzzy
 msgid " -v, --verbose          display more details\n"
 msgstr "     --verbose          打印更多细节\n"
 
-#: sys-utils/blkzone.c:364
+#: sys-utils/blkzone.c:365
 #, fuzzy, c-format
 msgid "%s is not valid command name"
 msgstr "%s 不是一个有效的块设备"
 
-#: sys-utils/blkzone.c:379
+#: sys-utils/blkzone.c:380
 #, fuzzy
 msgid "failed to parse number of zones"
 msgstr "解析行数失败"
 
-#: sys-utils/blkzone.c:383
+#: sys-utils/blkzone.c:384
 #, fuzzy
 msgid "failed to parse number of sectors"
 msgstr "解析行数失败"
 
-#: sys-utils/blkzone.c:387
+#: sys-utils/blkzone.c:388
 #, fuzzy
 msgid "failed to parse zone offset"
 msgstr "解析偏移失败"
 
-#: sys-utils/blkzone.c:401 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:402 sys-utils/setsid.c:92
 #, fuzzy
 msgid "no command specified"
 msgstr "没有指定命令"
@@ -12456,6 +12461,11 @@ msgstr "没有可用的 CD-ROM 信息"
 #: sys-utils/eject.c:438
 msgid "CD-ROM drive is not ready"
 msgstr "CD-ROM 驱动器未就绪"
+
+#: sys-utils/eject.c:441
+#, fuzzy
+msgid "CD-ROM status command failed"
+msgstr "CD-ROM 弹出命令失败"
 
 #: sys-utils/eject.c:481
 msgid "CD-ROM select speed command failed"
@@ -18291,139 +18301,139 @@ msgstr "%s：设置磁盘大小失败(%ju 个字节)"
 msgid "%s%s (automatic login)\n"
 msgstr "%s%s (自动登录)\n"
 
-#: term-utils/agetty.c:545
+#: term-utils/agetty.c:546
 #, c-format
 msgid "%s: can't change root directory %s: %m"
 msgstr "%s：无法更改根目录 %s：%m"
 
-#: term-utils/agetty.c:548
+#: term-utils/agetty.c:549
 #, c-format
 msgid "%s: can't change working directory %s: %m"
 msgstr "%s：无法更改工作目录 %s：%m"
 
-#: term-utils/agetty.c:551
+#: term-utils/agetty.c:552
 #, c-format
 msgid "%s: can't change process priority: %m"
 msgstr "%s：无法更改进程优先级：%m"
 
-#: term-utils/agetty.c:562
+#: term-utils/agetty.c:563
 #, c-format
 msgid "%s: can't exec %s: %m"
 msgstr "%s：无法执行 %s：%m"
 
-#: term-utils/agetty.c:593 term-utils/agetty.c:920 term-utils/agetty.c:1447
-#: term-utils/agetty.c:1465 term-utils/agetty.c:1502 term-utils/agetty.c:1512
-#: term-utils/agetty.c:1554 term-utils/agetty.c:2190 term-utils/agetty.c:2757
+#: term-utils/agetty.c:594 term-utils/agetty.c:921 term-utils/agetty.c:1457
+#: term-utils/agetty.c:1475 term-utils/agetty.c:1512 term-utils/agetty.c:1522
+#: term-utils/agetty.c:1564 term-utils/agetty.c:2203 term-utils/agetty.c:2770
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "分配内存失败：%m"
 
-#: term-utils/agetty.c:683
+#: term-utils/agetty.c:684
 #, fuzzy, c-format
 msgid "%s from %s"
 msgstr "%s，来自 %s\n"
 
-#: term-utils/agetty.c:767
+#: term-utils/agetty.c:768
 msgid "invalid delay argument"
 msgstr "无效的延迟参数"
 
-#: term-utils/agetty.c:805
+#: term-utils/agetty.c:806
 msgid "invalid argument of --local-line"
 msgstr "--local-line 选项参数无效"
 
-#: term-utils/agetty.c:824
+#: term-utils/agetty.c:825
 msgid "invalid nice argument"
 msgstr "无效的 nice 参数"
 
-#: term-utils/agetty.c:925
+#: term-utils/agetty.c:926
 #, c-format
 msgid "bad speed: %s"
 msgstr "速度有误：%s"
 
-#: term-utils/agetty.c:927
+#: term-utils/agetty.c:928
 msgid "too many alternate speeds"
 msgstr "备选速度过多"
 
-#: term-utils/agetty.c:1034 term-utils/agetty.c:1038 term-utils/agetty.c:1091
+#: term-utils/agetty.c:1035 term-utils/agetty.c:1039 term-utils/agetty.c:1092
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s：无法以标准输入打开：%m"
 
-#: term-utils/agetty.c:1057
+#: term-utils/agetty.c:1058
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s：不是字符设备"
 
-#: term-utils/agetty.c:1059
+#: term-utils/agetty.c:1060
 #, c-format
 msgid "/dev/%s: not a tty"
 msgstr "/dev/%s：不是终端"
 
-#: term-utils/agetty.c:1063 term-utils/agetty.c:1095
+#: term-utils/agetty.c:1064 term-utils/agetty.c:1096
 #, c-format
 msgid "/dev/%s: cannot get controlling tty: %m"
 msgstr "/dev/%s：无法获取控制 tty：%m"
 
-#: term-utils/agetty.c:1085
+#: term-utils/agetty.c:1086
 #, c-format
 msgid "/dev/%s: vhangup() failed: %m"
 msgstr "/dev/%s：vhangup() 失败：%m"
 
-#: term-utils/agetty.c:1106
+#: term-utils/agetty.c:1107
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s：未打开(就)读/写"
 
-#: term-utils/agetty.c:1111
+#: term-utils/agetty.c:1112
 #, c-format
 msgid "/dev/%s: cannot set process group: %m"
 msgstr "/dev/%s：无法设置进程组：%m"
 
-#: term-utils/agetty.c:1125
+#: term-utils/agetty.c:1126
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s：dup 问题：%m"
 
-#: term-utils/agetty.c:1142
+#: term-utils/agetty.c:1143
 #, c-format
 msgid "%s: failed to get terminal attributes: %m"
 msgstr "%s：获取终端属性失败：%m"
 
-#: term-utils/agetty.c:1353 term-utils/agetty.c:1373
+#: term-utils/agetty.c:1354 term-utils/agetty.c:1383
 #, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr "设置终端属性失败：%m"
 
-#: term-utils/agetty.c:1492
+#: term-utils/agetty.c:1502
 msgid "cannot open os-release file"
 msgstr "无法打开 os-release 文件"
 
-#: term-utils/agetty.c:1659
+#: term-utils/agetty.c:1669
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "未能创建 reload 文件︰%s：%m"
 
-#: term-utils/agetty.c:1924
+#: term-utils/agetty.c:1934
 msgid "[press ENTER to login]"
 msgstr "[按 ENTER 键登录]"
 
-#: term-utils/agetty.c:1951
+#: term-utils/agetty.c:1961
 msgid "Num Lock off"
 msgstr "Num Lock 关"
 
-#: term-utils/agetty.c:1954
+#: term-utils/agetty.c:1964
 msgid "Num Lock on"
 msgstr "Num Lock 开"
 
-#: term-utils/agetty.c:1957
+#: term-utils/agetty.c:1967
 msgid "Caps Lock on"
 msgstr "Caps Lock 开"
 
-#: term-utils/agetty.c:1960
+#: term-utils/agetty.c:1970
 msgid "Scroll Lock on"
 msgstr "Scroll Lock 开"
 
-#: term-utils/agetty.c:1963
+#: term-utils/agetty.c:1973
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -18432,32 +18442,32 @@ msgstr ""
 "提示：%s\n"
 "\n"
 
-#: term-utils/agetty.c:2105
+#: term-utils/agetty.c:2115
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s：read：%m"
 
-#: term-utils/agetty.c:2169
+#: term-utils/agetty.c:2179
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s：输入过载"
 
-#: term-utils/agetty.c:2186 term-utils/agetty.c:2194
+#: term-utils/agetty.c:2199 term-utils/agetty.c:2207
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s：登录名字符转换无效"
 
-#: term-utils/agetty.c:2200
+#: term-utils/agetty.c:2213
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s：登录名中的字符 0x%x 无效"
 
-#: term-utils/agetty.c:2285
+#: term-utils/agetty.c:2298
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s：设置终端属性失败：%m"
 
-#: term-utils/agetty.c:2323
+#: term-utils/agetty.c:2336
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18466,160 +18476,160 @@ msgstr ""
 " %1$s [选项] <线路> [<波特率>,...] [<终端类型>]\n"
 " %1$s [选项] <波特率>,... <线路> [<终端类型>]\n"
 
-#: term-utils/agetty.c:2327
+#: term-utils/agetty.c:2340
 msgid "Open a terminal and set its mode.\n"
 msgstr "打开一个终端并设置其模式。\n"
 
-#: term-utils/agetty.c:2330
+#: term-utils/agetty.c:2343
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                采用 8 位 tty\n"
 
-#: term-utils/agetty.c:2331
+#: term-utils/agetty.c:2344
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <用户>     以指定用户自动登录\n"
 
-#: term-utils/agetty.c:2332
+#: term-utils/agetty.c:2345
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              不重置控制模式\n"
 
-#: term-utils/agetty.c:2333
+#: term-utils/agetty.c:2346
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               使用 -r <主机名> 选项调用 login(1)\n"
 
-#: term-utils/agetty.c:2334
+#: term-utils/agetty.c:2347
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <文件>    指定要显示的预登录消息(issue)文件\n"
 
-#: term-utils/agetty.c:2335
+#: term-utils/agetty.c:2348
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         启用硬件流控制\n"
 
-#: term-utils/agetty.c:2336
+#: term-utils/agetty.c:2349
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <主机名>        指定登录主机\n"
 
-#: term-utils/agetty.c:2337
+#: term-utils/agetty.c:2350
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              不显示预登录消息(issue)文件\n"
 
-#: term-utils/agetty.c:2338
+#: term-utils/agetty.c:2351
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <字符串> 设置初始字符串\n"
 
-#: term-utils/agetty.c:2339
+#: term-utils/agetty.c:2352
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              提示之前不清屏\n"
 
-#: term-utils/agetty.c:2340
+#: term-utils/agetty.c:2353
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <文件> 指定登录程序\n"
 
-#: term-utils/agetty.c:2341
+#: term-utils/agetty.c:2354
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<模式>]  控制本地线路标志\n"
 
-#: term-utils/agetty.c:2342
+#: term-utils/agetty.c:2355
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         连接过程中提取波特率\n"
 
-#: term-utils/agetty.c:2343
+#: term-utils/agetty.c:2356
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           不提示登录\n"
 
-#: term-utils/agetty.c:2344
+#: term-utils/agetty.c:2357
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            预登录消息(issue)前不打印换行(newline)\n"
 
-#: term-utils/agetty.c:2345
+#: term-utils/agetty.c:2358
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <选项> 传递给登录程序的选项\n"
 
-#: term-utils/agetty.c:2346
+#: term-utils/agetty.c:2359
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          登录前等待按下任意键来继续\n"
 
-#: term-utils/agetty.c:2347
+#: term-utils/agetty.c:2360
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <目录>        将根目录更改为指定目录\n"
 
-#: term-utils/agetty.c:2348
+#: term-utils/agetty.c:2361
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               对 tty 执行虚拟挂起(virtual hangup)\n"
 
-#: term-utils/agetty.c:2349
+#: term-utils/agetty.c:2362
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            中断(break)后尝试保持波特率\n"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2363
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <数字>       登录进程超时(秒)\n"
 
-#: term-utils/agetty.c:2351
+#: term-utils/agetty.c:2364
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          检测纯大写终端\n"
 
-#: term-utils/agetty.c:2352
+#: term-utils/agetty.c:2365
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              等待回车\n"
 
-#: term-utils/agetty.c:2353
+#: term-utils/agetty.c:2366
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              不打印提示信息\n"
 
-#: term-utils/agetty.c:2354
+#: term-utils/agetty.c:2367
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           将完全不显示主机名\n"
 
-#: term-utils/agetty.c:2355
+#: term-utils/agetty.c:2368
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        显示完全限定主机名\n"
 
-#: term-utils/agetty.c:2356
+#: term-utils/agetty.c:2369
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <字符串> 附加的退格字符\n"
 
-#: term-utils/agetty.c:2357
+#: term-utils/agetty.c:2370
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <字符串>  附加的杀死(kill)字符\n"
 
-#: term-utils/agetty.c:2358
+#: term-utils/agetty.c:2371
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <目录>         登录前切换目录(chdir)\n"
 
-#: term-utils/agetty.c:2359
+#: term-utils/agetty.c:2372
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <数字>         提示前睡眠的秒数\n"
 
-#: term-utils/agetty.c:2360
+#: term-utils/agetty.c:2373
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <数字>          以指定优先级运行 login\n"
 
-#: term-utils/agetty.c:2361
+#: term-utils/agetty.c:2374
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               在运行 agetty 实例时重新载入提示\n"
 
-#: term-utils/agetty.c:2362
+#: term-utils/agetty.c:2375
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list               列出可设置的架构并退出\n"
 
-#: term-utils/agetty.c:2716
+#: term-utils/agetty.c:2729
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d 位用户"
 
-#: term-utils/agetty.c:2845
+#: term-utils/agetty.c:2858
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname 失败：%m"
 
-#: term-utils/agetty.c:2857
+#: term-utils/agetty.c:2870
 #, c-format
 msgid "cannot touch file %s"
 msgstr "无法 touch 文件 %s"
 
-#: term-utils/agetty.c:2861
+#: term-utils/agetty.c:2874
 msgid "--reload is unsupported on your system"
 msgstr "您的系统不支持 --reload"
 
