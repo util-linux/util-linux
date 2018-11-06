@@ -93,11 +93,13 @@ agetty:
    - agetty.8 Avoid a warning about an unbreakable line  [Bjarni Ingi Gislason]
    - cleanup code to copy to log strings  [Karel Zak]
    - cleanup issue output change, remove bool  [Karel Zak]
+   - don't put the VC into canonical mode  [Lubomir Rintel]
    - don't use __u32  [Karel Zak]
    - keep c_iflags unmodified on --autologin  [Karel Zak]
    - make output more robust  [Karel Zak]
    - move all issue variables to struct  [Karel Zak]
    - rename variable changed to triggered  [Stanislav Brabec]
+   - when logname is erased, re-enable reloads  [Stanislav Brabec]
 bash-completion:
    - add findmnt --real --pseudo  [Karel Zak]
    - add swapon specifiers to completion  [Sami Kerola]
@@ -113,6 +115,7 @@ blkid:
    - Encode any field which starts with LABEL in same way as LABEL field  [Pali Rohár]
    - fix compiler warnings [-Wcast-qual]  [Karel Zak]
 blkzone:
+   - fix report zones sector offset check  [Masato Suzuki]
    - fix whole device detection  [Karel Zak]
    - use new ul_path_* API  [Karel Zak]
 blockdev:
@@ -132,6 +135,7 @@ build-sys:
    - fix typo in man install  [Karel Zak]
    - improve bison version detection  [Karel Zak]
    - release++ (v2.33-rc1)  [Karel Zak]
+   - release++ (v2.33-rc2)  [Karel Zak]
 cal:
    - fix --span for large numbers of months  [Karel Zak]
    - use snprintf everywhere  [Karel Zak]
@@ -168,12 +172,14 @@ docs:
    - add getopt to TODO  [Karel Zak]
    - add hint about script  [Karel Zak]
    - add hwclock to TODO  [Karel Zak]
+   - add info about branches; update travis.yml  [Karel Zak]
    - add note about --disable-all-programs  [Karel Zak]
    - add note about lsblk to TODO  [Karel Zak]
    - add note about lsblk usage/free cols  [Karel Zak]
    - add to column(1) TODO  [Karel Zak]
    - cleanup TODO  [Karel Zak]
    - fix gtkdoc warning  [Karel Zak]
+   - fix typos  [Jakub Wilk]
    - remove obsolete entry from TODO  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
    - update TODO  [Karel Zak]
@@ -181,6 +187,8 @@ docs:
    - update TODO (lsblk)  [Karel Zak]
    - update v2.33-ReleaseNotes  [Karel Zak]
    - use SPDX license names  [Karel Zak]
+eject:
+   - use err() rather than abort()  [Karel Zak]
 exec_shell:
    - prevent ".  applet not found" error when SHELL env is not set.  [osexp2000]
 fallocate:
@@ -490,9 +498,14 @@ po:
    - fix lsblk translation  [Karel Zak]
    - merge changes  [Karel Zak]
    - pt_BR  fix fallocate '-l' help msg  [Luiz Angelo Daros de Luca]
+   - update cs.po (from translationproject.org)  [Petr Písař]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
    - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
    - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
 rename:
    - add option --interactive to ask before overwriting  [G.raud Meyer]
    - ask()  call __fpurge() to cater for multi-byte characters  [G.raud Meyer]
