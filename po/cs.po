@@ -46,10 +46,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.32-rc2\n"
+"Project-Id-Version: util-linux 2.33-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-10-19 12:10+0200\n"
-"PO-Revision-Date: 2018-03-02 19:43+01:00\n"
+"POT-Creation-Date: 2018-10-19 12:48+0200\n"
+"PO-Revision-Date: 2018-11-03 17:19+01:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -94,21 +94,21 @@ msgstr "málo argumentů"
 #: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
 #: login-utils/islocal.c:87 login-utils/last.c:667 login-utils/sulogin.c:443
 #: login-utils/sulogin.c:480 login-utils/utmpdump.c:134
-#: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374 login-utils/vipw.c:261
-#: login-utils/vipw.c:279 misc-utils/findmnt.c:1105 misc-utils/logger.c:1224
-#: misc-utils/mcookie.c:115 misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182
-#: sys-utils/blkzone.c:96 sys-utils/dmesg.c:524 sys-utils/eject.c:499
-#: sys-utils/eject.c:695 sys-utils/fallocate.c:397 sys-utils/fsfreeze.c:117
-#: sys-utils/fstrim.c:79 sys-utils/hwclock.c:229 sys-utils/hwclock.c:869
-#: sys-utils/hwclock-rtc.c:397 sys-utils/hwclock-rtc.c:432
-#: sys-utils/ldattach.c:392 sys-utils/lscpu.c:393 sys-utils/nsenter.c:129
-#: sys-utils/rfkill.c:192 sys-utils/rfkill.c:553 sys-utils/rtcwake.c:136
-#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:291 sys-utils/setpriv.c:660
-#: sys-utils/setpriv.c:683 sys-utils/swapon.c:375 sys-utils/swapon.c:518
-#: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
-#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2854 term-utils/mesg.c:132 term-utils/script.c:540
-#: term-utils/script.c:548 term-utils/script.c:633
+#: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374
+#: login-utils/vipw.c:261 login-utils/vipw.c:279 misc-utils/findmnt.c:1105
+#: misc-utils/logger.c:1224 misc-utils/mcookie.c:115 misc-utils/uuidd.c:198
+#: sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96 sys-utils/dmesg.c:524
+#: sys-utils/eject.c:499 sys-utils/eject.c:695 sys-utils/fallocate.c:397
+#: sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:79 sys-utils/hwclock.c:229
+#: sys-utils/hwclock.c:869 sys-utils/hwclock-rtc.c:397
+#: sys-utils/hwclock-rtc.c:432 sys-utils/ldattach.c:392 sys-utils/lscpu.c:393
+#: sys-utils/nsenter.c:129 sys-utils/rfkill.c:192 sys-utils/rfkill.c:553
+#: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:286 sys-utils/setpriv.c:291
+#: sys-utils/setpriv.c:660 sys-utils/setpriv.c:683 sys-utils/swapon.c:375
+#: sys-utils/swapon.c:518 sys-utils/switch_root.c:167 sys-utils/unshare.c:108
+#: sys-utils/unshare.c:123 sys-utils/wdctl.c:322 sys-utils/wdctl.c:378
+#: sys-utils/zramctl.c:517 term-utils/agetty.c:2854 term-utils/mesg.c:132
+#: term-utils/script.c:540 term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:140 text-utils/ul.c:230
@@ -426,9 +426,9 @@ msgid "Disk: %s"
 msgstr "Disk: %s"
 
 #: disk-utils/cfdisk.c:1714
-#, fuzzy, c-format
+#, c-format
 msgid "Size: %s, %<PRIu64> bytes, %ju sectors"
-msgstr "Velikost: %s, %'ju bajtů, %'ju sektorů"
+msgstr "Velikost: %s, %'<PRIu64> bajtů, %'ju sektorů"
 
 #: disk-utils/cfdisk.c:1717
 #, c-format
@@ -449,14 +449,14 @@ msgid "Please, specify size."
 msgstr "Prosím, zadejte velikost."
 
 #: disk-utils/cfdisk.c:1898
-#, fuzzy, c-format
+#, c-format
 msgid "Minimum size is %<PRIu64> bytes."
-msgstr "Nejmenší velikost je %ju bajtů."
+msgstr "Nejmenší velikost je %<PRIu64> bajtů."
 
 #: disk-utils/cfdisk.c:1907
-#, fuzzy, c-format
+#, c-format
 msgid "Maximum size is %<PRIu64> bytes."
-msgstr "Největší velikost je %ju bajtů."
+msgstr "Největší velikost je %<PRIu64> bajtů."
 
 #: disk-utils/cfdisk.c:1914
 msgid "Failed to parse size."
@@ -515,7 +515,8 @@ msgstr "Zápis skriptu %s selhal."
 msgid "Select label type"
 msgstr "Vybrat druh popisu"
 
-#: disk-utils/cfdisk.c:2123 disk-utils/fdisk.c:1076 disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2123 disk-utils/fdisk.c:1076
+#: disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "Zařízení neobsahuje známou tabulku rozdělení disku."
 
@@ -776,8 +777,8 @@ msgstr ""
 "Pokračuje se…"
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641 sys-utils/blkdiscard.c:85
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641
+#: sys-utils/blkdiscard.c:85 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [přepínače] <zařízení>\n"
@@ -1120,21 +1121,21 @@ msgstr "nepodporovaný režim výmazu"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Vlastnosti zařízení (velikost sektoru a geometrie) by měly být použity jen s jedním zadaným zařízením."
 
-#: disk-utils/fdisk.c:1035 disk-utils/fdisk.c:1050 disk-utils/fsck.cramfs.c:695
-#: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:787
-#: disk-utils/partx.c:975 disk-utils/raw.c:137 disk-utils/raw.c:150
-#: disk-utils/raw.c:162 disk-utils/raw.c:203 misc-utils/cal.c:520
-#: misc-utils/findfs.c:58 misc-utils/look.c:150 misc-utils/whereis.c:573
-#: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
-#: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
-#: sys-utils/chcpu.c:354 sys-utils/chmem.c:423 sys-utils/dmesg.c:1468
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:909
-#: sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632 sys-utils/mount.c:764
-#: sys-utils/mount.c:772 sys-utils/mount.c:812 sys-utils/mount.c:825
-#: sys-utils/mount.c:894 sys-utils/mountpoint.c:180 sys-utils/pivot_root.c:72
-#: sys-utils/swapoff.c:230 sys-utils/swapon.c:994 sys-utils/switch_root.c:250
-#: sys-utils/umount.c:582 term-utils/setterm.c:1176 text-utils/col.c:233
-#: text-utils/more.c:1988
+#: disk-utils/fdisk.c:1035 disk-utils/fdisk.c:1050
+#: disk-utils/fsck.cramfs.c:695 disk-utils/mkfs.bfs.c:198
+#: disk-utils/mkfs.cramfs.c:787 disk-utils/partx.c:975 disk-utils/raw.c:137
+#: disk-utils/raw.c:150 disk-utils/raw.c:162 disk-utils/raw.c:203
+#: misc-utils/cal.c:520 misc-utils/findfs.c:58 misc-utils/look.c:150
+#: misc-utils/whereis.c:573 misc-utils/whereis.c:584 misc-utils/whereis.c:595
+#: misc-utils/whereis.c:637 schedutils/chrt.c:504 schedutils/ionice.c:262
+#: schedutils/taskset.c:189 sys-utils/chcpu.c:354 sys-utils/chmem.c:423
+#: sys-utils/dmesg.c:1468 sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:909 sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632
+#: sys-utils/mount.c:764 sys-utils/mount.c:772 sys-utils/mount.c:812
+#: sys-utils/mount.c:825 sys-utils/mount.c:894 sys-utils/mountpoint.c:180
+#: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:994
+#: sys-utils/switch_root.c:250 sys-utils/umount.c:582
+#: term-utils/setterm.c:1176 text-utils/col.c:233 text-utils/more.c:1988
 msgid "bad usage"
 msgstr "chybný způsob použití"
 
@@ -1171,9 +1172,9 @@ msgid "Disk %s: %s, %ju bytes, %ju sectors"
 msgstr "Disk %s: %s, %'ju bajtů, %'ju sektorů"
 
 #: disk-utils/fdisk-list.c:67
-#, fuzzy, c-format
+#, c-format
 msgid "Disk model: %s"
-msgstr "Disk: %s"
+msgstr "Model disku: %s"
 
 #: disk-utils/fdisk-list.c:70
 #, c-format
@@ -3778,9 +3779,8 @@ msgstr ""
 "                      určuje, které výstupní sloupce se použijí\n"
 
 #: disk-utils/partx.c:769 sys-utils/lsmem.c:506
-#, fuzzy
 msgid "     --output-all     output all columns\n"
-msgstr " -O, --output-all     vypíše všechny sloupce\n"
+msgstr "     --output-all     vypíše všechny sloupce\n"
 
 #: disk-utils/partx.c:770 misc-utils/lsblk.c:1470 sys-utils/lsmem.c:501
 msgid " -P, --pairs          use key=\"value\" output format\n"
@@ -4067,9 +4067,8 @@ msgid "no disk device specified"
 msgstr "žádné diskové zařízení nebylo zadáno"
 
 #: disk-utils/sfdisk.c:828
-#, fuzzy
 msgid "toggle boot flags is unsupported for Hybrid GPT/MBR"
-msgstr "přepínání příznaku zaveditelnosti je podporováno jen na MBR a PMBR"
+msgstr "přepínání příznaku zaveditelnosti není na hybridním GPT/MBR podporováno"
 
 #: disk-utils/sfdisk.c:833
 msgid "cannot switch to PMBR"
@@ -4077,7 +4076,7 @@ msgstr "nelze přepnout do PMBR"
 
 #: disk-utils/sfdisk.c:834
 msgid "Activation is unsupported for GPT -- entering nested PMBR."
-msgstr ""
+msgstr "Aktivace není na GPT podporována – vstupuje se do zanořené PMBR."
 
 #: disk-utils/sfdisk.c:837
 msgid "toggle boot flags is supported for MBR or PMBR only"
@@ -5187,14 +5186,12 @@ msgid "First cylinder"
 msgstr "První cylindr"
 
 #: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1213
-#, fuzzy
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
-msgstr "Poslední sektor, +cylindrů nebo +velikost{K,M,G,T,P}"
+msgstr "Poslední cylindr, +/-cylindrů nebo +/-velikost{K,M,G,T,P}"
 
 #: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2447
-#, fuzzy
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
-msgstr "Poslední sektor, +sektorů nebo +velikost{K,M,G,T,P}"
+msgstr "Poslední sektor, +/-sektorů nebo +/-velikost{K,M,G,T,P}"
 
 #: libfdisk/src/bsd.c:381
 #, c-format
@@ -6744,9 +6741,9 @@ msgid "Sector %d is already allocated"
 msgstr "Sektor %d je již alokován"
 
 #: libfdisk/src/sun.c:650
-#, fuzzy, c-format
+#, c-format
 msgid "Last %s or +/-%s or +/-size{K,M,G,T,P}"
-msgstr "Poslední %s, +%s nebo +velikost{K,M,G,T,P}"
+msgstr "Poslední %s, +/-%s nebo +/-velikost{K,M,G,T,P}"
 
 #: libfdisk/src/sun.c:698
 #, c-format
@@ -6909,9 +6906,9 @@ msgstr "uzamčení selhalo"
 
 #: libmount/src/context_mount.c:1528 libmount/src/context_umount.c:1149
 #: sys-utils/umount.c:238 sys-utils/umount.c:254
-#, fuzzy, c-format
+#, c-format
 msgid "failed to switch namespace"
-msgstr "cesta ke jmennému prostoru"
+msgstr "přepnutí jmenného prostoru selhalo"
 
 #: libmount/src/context_mount.c:1531
 #, c-format
@@ -6924,9 +6921,9 @@ msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "souborový systém byl připojen, ale aktualizace tabulky připojení v uživatelském prostoru selhala"
 
 #: libmount/src/context_mount.c:1545
-#, fuzzy, c-format
+#, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
-msgstr "souborový systém byl připojen, ale aktualizace tabulky připojení v uživatelském prostoru selhala"
+msgstr "souborový systém byl připojen, ale přepnutí jmenného prostoru zpět selhalo"
 
 #: libmount/src/context_mount.c:1550
 #, c-format
@@ -7105,9 +7102,9 @@ msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "souborový systém byl odpojen, ale aktualizace tabulky připojení v uživatelském prostoru selhala"
 
 #: libmount/src/context_umount.c:1166
-#, fuzzy, c-format
+#, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
-msgstr "souborový systém byl odpojen, ale aktualizace tabulky připojení v uživatelském prostoru selhala"
+msgstr "souborový systém byl odpojen, ale přepnutí jmenného prostoru zpět selhala"
 
 #: libmount/src/context_umount.c:1171
 #, c-format
@@ -7815,14 +7812,12 @@ msgid "Password is locked"
 msgstr "Heslo je zamknuto"
 
 #: login-utils/lslogins.c:224
-#, fuzzy
 msgid "password encryption method"
-msgstr "datum vypršení hesla"
+msgstr "způsob šifrování hesla"
 
 #: login-utils/lslogins.c:224
-#, fuzzy
 msgid "Password encryption method"
-msgstr "Vypršení hesla"
+msgstr "Způsob šifrování hesla"
 
 #: login-utils/lslogins.c:225
 msgid "log in disabled by nologin(8) or pam_nologin(8)"
@@ -8008,9 +8003,9 @@ msgid "failed to get supplementary groups"
 msgstr "získání doplňkových skupin selhalo"
 
 #: login-utils/lslogins.c:986
-#, fuzzy, c-format
+#, c-format
 msgid "cannot found '%s'"
-msgstr "%s nelze otevřít"
+msgstr "„%s“ nelze nalézt"
 
 #: login-utils/lslogins.c:1162
 msgid "internal error: unknown column"
@@ -8078,9 +8073,8 @@ msgid " -o, --output[=<list>]    define the columns to output\n"
 msgstr " -o, --output[=<seznam>]  určuje, které výstupní sloupce se použijí\n"
 
 #: login-utils/lslogins.c:1338
-#, fuzzy
 msgid "     --output-all         output all columns\n"
-msgstr " -O, --output-all     vypíše všechny sloupce\n"
+msgstr "     --output-all         vypíše všechny sloupce\n"
 
 # FIXME: Remove trailing period
 #: login-utils/lslogins.c:1339
@@ -8291,14 +8285,12 @@ msgid "cannot set user id"
 msgstr "číslo uživatele (UID) nelze nastavit"
 
 #: login-utils/su-common.c:1159
-#, fuzzy
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
-msgstr " -m, -p, --preserve-environment  neresetuje proměnné prostředí\n"
+msgstr " -m, -p, --preserve-environment      neresetuje proměnné prostředí\n"
 
 #: login-utils/su-common.c:1160
-#, fuzzy
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
-msgstr " -m, -p, --preserve-environment  neresetuje proměnné prostředí\n"
+msgstr " -w, --whitelist-environment <seznam> neresetuje zadané proměnné\n"
 
 #: login-utils/su-common.c:1163
 msgid " -g, --group <group>             specify the primary group\n"
@@ -9332,18 +9324,16 @@ msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr " -o, --output <seznam>  zobrazí dané sloupce\n"
 
 #: misc-utils/findmnt.c:1236
-#, fuzzy
 msgid "     --output-all       output all available columns\n"
-msgstr " -O, --output-all     vypíše všechny sloupce\n"
+msgstr "     --output-all       vypíše všechny dostupné sloupce\n"
 
 #: misc-utils/findmnt.c:1237
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr " -P, --pairs            výstup ve formátu klíč=\"hodnota\"\n"
 
 #: misc-utils/findmnt.c:1238
-#, fuzzy
 msgid "     --pseudo           print only pseudo-filesystems\n"
-msgstr "     --verbose          vypíše více podrobností\n"
+msgstr "     --pseudo           vypíše více pseudosouborové systémy\n"
 
 #: misc-utils/findmnt.c:1239
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
@@ -9356,9 +9346,8 @@ msgid " -r, --raw              use raw output format\n"
 msgstr " -r, --raw              neformátovaný výstup\n"
 
 #: misc-utils/findmnt.c:1241
-#, fuzzy
 msgid "     --real             print only real filesystems\n"
-msgstr " -a, --all               odpojí všechny souborové systémy\n"
+msgstr "     --real             vypíše pouze skutečné souborové systémy\n"
 
 #: misc-utils/findmnt.c:1242
 msgid ""
@@ -10044,9 +10033,8 @@ msgid "internal parent kernel device name"
 msgstr "vnitřní jaderný název nadřazeného zařízení"
 
 #: misc-utils/lsblk.c:154
-#, fuzzy
 msgid "path to the device node"
-msgstr "stav zařízení"
+msgstr "cesta k uzlu se zařízením"
 
 #: misc-utils/lsblk.c:163 sys-utils/zramctl.c:86
 msgid "where the device is mounted"
@@ -10058,12 +10046,11 @@ msgstr "jmenovka souborového systému"
 
 #: misc-utils/lsblk.c:167
 msgid "partition table identifier (usually UUID)"
-msgstr ""
+msgstr "identifikátor tabulky rozdělení disku (obvykle UUID)"
 
 #: misc-utils/lsblk.c:168
-#, fuzzy
 msgid "partition table type"
-msgstr "Neznámý typ tabulky rozdělení disku"
+msgstr "typ tabulky rozdělení disku"
 
 #: misc-utils/lsblk.c:170
 msgid "partition type UUID"
@@ -10206,9 +10193,8 @@ msgid "failed to open device directory in sysfs"
 msgstr "adresář zařízení v sysfs se nepodařilo otevřít"
 
 #: misc-utils/lsblk.c:1263
-#, fuzzy
 msgid "failed to allocate /sys handler"
-msgstr "alokace obsluhy skriptu selhala"
+msgstr "alokace deskriptoru pro /sys selhala"
 
 #: misc-utils/lsblk.c:1319
 #, c-format
@@ -10334,9 +10320,8 @@ msgid " -x, --sort <column>  sort output by <column>\n"
 msgstr " -x, --sort <sloupec> výstup seřadí podle <sloupce>\n"
 
 #: misc-utils/lsblk.c:1476
-#, fuzzy
 msgid "     --sysroot <dir>  use specified directory as system root\n"
-msgstr " -s, --sysroot <adresář>  jako kořen systému použije <adresář>\n"
+msgstr "     --sysroot <adresář>  jako kořen systému použije <adresář>\n"
 
 #: misc-utils/lsblk.c:1493
 #, c-format
@@ -10398,7 +10383,7 @@ msgstr "(neznámý)"
 
 #: misc-utils/lslocks.c:287
 msgid "(undefined)"
-msgstr ""
+msgstr "(nedefinováno)"
 
 #: misc-utils/lslocks.c:296
 msgid "failed to parse start"
@@ -10413,11 +10398,10 @@ msgid "List local system locks.\n"
 msgstr "Vypíše zámky na místním systému.\n"
 
 #: misc-utils/lslocks.c:534
-#, fuzzy
 msgid " -b, --bytes            print SIZE in bytes rather than in human readable format\n"
 msgstr ""
-" -b, --bytes              velikosti vypisuje v bajtech namísto podobě vhodné\n"
-"                          pro člověka\n"
+" -b, --bytes            velikosti vypisuje v bajtech namísto v podobě vhodné\n"
+"                        pro člověka\n"
 
 #: misc-utils/lslocks.c:536
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
@@ -10434,9 +10418,8 @@ msgstr ""
 "                        určuje, které výstupní sloupce se použijí\n"
 
 #: misc-utils/lslocks.c:539 sys-utils/lsns.c:908 sys-utils/rfkill.c:584
-#, fuzzy
 msgid "     --output-all       output all columns\n"
-msgstr " -O, --output-all     vypíše všechny sloupce\n"
+msgstr "     --output-all       vypíše všechny sloupce\n"
 
 #: misc-utils/lslocks.c:540
 msgid " -p, --pid <pid>        display only locks held by this process\n"
@@ -10548,14 +10531,14 @@ msgid "%s: exceeded limit of symlinks"
 msgstr "%s: omezení symbolických odkazů překročeno"
 
 #: misc-utils/rename.c:74
-#, fuzzy, c-format
+#, c-format
 msgid "%s: overwrite `%s'? "
-msgstr "%s: chyba zápisu: %s\n"
+msgstr "%s: přepsat „%s“? "
 
 #: misc-utils/rename.c:115 misc-utils/rename.c:172
-#, fuzzy, c-format
+#, c-format
 msgid "%s: not accessible"
-msgstr "%s: není souborem"
+msgstr "%s: není přístupný"
 
 #: misc-utils/rename.c:124
 #, c-format
@@ -10568,9 +10551,9 @@ msgid "%s: readlink failed"
 msgstr "%s: volání readlink selhalo"
 
 #: misc-utils/rename.c:144
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping existing link: `%s' -> `%s'\n"
-msgstr "Přeskakuje se existující odkaz: „%s“\n"
+msgstr "Přeskakuje se existující odkaz: „%s“ → „%s“\n"
 
 #: misc-utils/rename.c:150
 #, c-format
@@ -10619,7 +10602,7 @@ msgstr " -o, --no-overwrite  nepřepisuje existující soubory\n"
 
 #: misc-utils/rename.c:217
 msgid " -i, --interactive   prompt before overwrite\n"
-msgstr ""
+msgstr " -i, --interactive   před přepsáním se zeptá\n"
 
 #: misc-utils/uuidd.c:64
 msgid "A daemon for generating UUIDs.\n"
@@ -10824,9 +10807,9 @@ msgid "failed to parse --timeout"
 msgstr "nezdařilo se rozebrat hodnotu --timeout"
 
 #: misc-utils/uuidd.c:640
-#, fuzzy, c-format
+#, c-format
 msgid "socket name too long: %s"
-msgstr "název svazku je příliš dlouhý"
+msgstr "název socketu je příliš dlouhý: %s"
 
 #: misc-utils/uuidd.c:647
 msgid "Both --socket-activation and --socket specified. Ignoring --socket."
@@ -11594,8 +11577,8 @@ msgstr "nezdařilo se rozebrat začátek oblasti"
 msgid "failed to parse step"
 msgstr "krok se nezdařilo rozebrat"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:408 sys-utils/fallocate.c:374
-#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:405
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:408
+#: sys-utils/fallocate.c:374 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:405
 msgid "unexpected number of arguments"
 msgstr "neočekávaný počet argumentů"
 
@@ -11903,9 +11886,8 @@ msgstr ""
 " -r, --rescan                    spustí hledání CPU\n"
 
 #: sys-utils/chcpu.c:296
-#, fuzzy
 msgid "failed to initialize sysfs handler"
-msgstr "%s: nepodařilo inicializovat deskriptor sysfs"
+msgstr "nepodařilo inicializovat deskriptor sysfs"
 
 #: sys-utils/chcpu.c:339
 #, c-format
@@ -12078,9 +12060,9 @@ msgstr ""
 "Podporované zóny:\n"
 
 #: sys-utils/chmem.c:387 sys-utils/lscpu.c:1269 sys-utils/lsmem.c:643
-#, fuzzy, c-format
+#, c-format
 msgid "failed to initialize %s handler"
-msgstr "%s: nepodařilo inicializovat deskriptor sysfs"
+msgstr "nepodařilo inicializovat deskriptor %s"
 
 #: sys-utils/chmem.c:434
 msgid "zone ignored, no valid_zones sysfs attribute present"
@@ -12092,45 +12074,39 @@ msgid "unknown memory zone: %s"
 msgstr "neznámá zóna paměti: %s"
 
 #: sys-utils/choom.c:38
-#, fuzzy, c-format
+#, c-format
 msgid ""
 " %1$s [options] -p pid\n"
 " %1$s [options] -n number -p pid\n"
 " %1$s [options] -n number command [args...]]\n"
 msgstr ""
-" %1$s [přepínače] -p <PID>…\n"
-" %1$s [přepínače] -P <PGID>…\n"
-" %1$s [přepínače] -u <UID>…\n"
-" %1$s [přepínače] <příkaz>\n"
+" %1$s [přepínače] -p PID\n"
+" %1$s [přepínače] -n číslo -p PID\n"
+" %1$s [přepínače] -n číslo příkaz [argumenty…]]\n"
 
 #: sys-utils/choom.c:44
 msgid "Display and adjust OOM-killer score.\n"
-msgstr ""
+msgstr "Zobrazí a změní skóre zabijáka OOM.\n"
 
 #: sys-utils/choom.c:47
-#, fuzzy
 msgid " -n, --adjust <num>     specify the adjust score value\n"
-msgstr " -n, --priority <číslo> určuje přírůstek hodnoty nice\n"
+msgstr " -n, --adjust <číslo>   určuje hodnotu úpravy skóre\n"
 
 #: sys-utils/choom.c:48
-#, fuzzy
 msgid " -p, --pid <num>        process ID\n"
-msgstr " -p, --task <PID>       vypíše jmenný prostor procesu\n"
+msgstr " -p, --pid <číslo>      ID procesu\n"
 
 #: sys-utils/choom.c:60
-#, fuzzy
 msgid "failed to read OOM score value"
-msgstr "nezdařilo se rozebrat hodnotu sekund"
+msgstr "nezdařilo se přečíst hodnou skóre OOM"
 
 #: sys-utils/choom.c:70
-#, fuzzy
 msgid "failed to read OOM score adjust value"
-msgstr "nezdařilo se rozebrat hodnotu sekund"
+msgstr "nezdařilo se přečíst hodnotu úpravy skóre OOM"
 
 #: sys-utils/choom.c:105
-#, fuzzy
 msgid "invalid adjust argument"
-msgstr "neplatný argument hlav"
+msgstr "neplatný argument přepínače --adjust"
 
 #: sys-utils/choom.c:119 term-utils/mesg.c:166
 #, c-format
@@ -12138,34 +12114,31 @@ msgid "invalid argument: %s"
 msgstr "neplatný argument: %s"
 
 #: sys-utils/choom.c:123
-#, fuzzy
 msgid "no PID or COMMAND specified"
-msgstr "nezadán žádný PŘÍKAZ."
+msgstr "nezadán žádný PID ani PŘÍKAZ"
 
 #: sys-utils/choom.c:127
-#, fuzzy
 msgid "no OOM score adjust value specified"
-msgstr "zadána neplatná hodnota pozice"
+msgstr "nezadána žádná hodnota úpravy skóre OOM"
 
 #: sys-utils/choom.c:135
-#, fuzzy, c-format
+#, c-format
 msgid "pid %d's current OOM score: %d\n"
-msgstr "stávající plánovací priorita procesu %d: %d\n"
+msgstr "stávající OOM skóre procesu %d: %d\n"
 
 #: sys-utils/choom.c:136
-#, fuzzy, c-format
+#, c-format
 msgid "pid %d's current OOM score adjust value: %d\n"
-msgstr "stávající plánovací priorita procesu %d: %d\n"
+msgstr "stávající hodnota úpravy OOM skóre procesu %d: %d\n"
 
 #: sys-utils/choom.c:143 sys-utils/choom.c:150
-#, fuzzy
 msgid "failed to set score adjust value"
-msgstr "nezdařilo se rozebrat hodnotu sekund"
+msgstr "nezdařilo se nastavit hodnotu úpravy skóre"
 
 #: sys-utils/choom.c:145
 #, c-format
 msgid "pid %d's OOM score adjust value changed from %d to %d\n"
-msgstr ""
+msgstr "hodnota úpravy OOM skóre procesu %d změněna z %d na %d\n"
 
 #: sys-utils/ctrlaltdel.c:28
 #, c-format
@@ -13011,14 +12984,14 @@ msgid "%s: not a directory"
 msgstr "%s: není adresářem"
 
 #: sys-utils/fstrim.c:96
-#, fuzzy, c-format
+#, c-format
 msgid "%s: 0 B (dry run) trimmed on %s\n"
-msgstr "%s: %s připojeno do %s.\n"
+msgstr "%s: zahozeno 0 B (zkušební režim) v %s\n"
 
 #: sys-utils/fstrim.c:98
 #, c-format
 msgid "%s: 0 B (dry run) trimmed\n"
-msgstr ""
+msgstr "%s: 0 B (zkušební režim) zahozeno\n"
 
 #: sys-utils/fstrim.c:108
 #, c-format
@@ -13027,15 +13000,15 @@ msgstr "%s: IOCTL volání FITRIM selhalo"
 
 #. TRANSLATORS: The standard value here is a very large number.
 #: sys-utils/fstrim.c:118
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed on %s\n"
-msgstr "%s: %s (%<PRIu64> bajtů) byl zahozen\n"
+msgstr "%s: %s (%'<PRIu64> bajtů) zahozeno v %s\n"
 
 #. TRANSLATORS: The standard value here is a very large number.
 #: sys-utils/fstrim.c:122
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
-msgstr "%s: %s (%<PRIu64> bajtů) byl zahozen\n"
+msgstr "%s: %s (%'<PRIu64> bajtů) zahozeno\n"
 
 #: sys-utils/fstrim.c:236 sys-utils/lsns.c:1078 sys-utils/swapon.c:733
 #: sys-utils/umount.c:248
@@ -13053,18 +13026,14 @@ msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr "Zahodí nepoužívané bloky připojeného souborového systému.\n"
 
 #: sys-utils/fstrim.c:320
-#, fuzzy
 msgid " -a, --all           trim all supported mounted filesystems\n"
-msgstr ""
-" -a, --all           uklidí všechny připojené souborové systémy, které\n"
-"                     podporují „trim“\n"
+msgstr " -a, --all           uklidí všechny podporované připojené souborové systémy\n"
 
 #: sys-utils/fstrim.c:321
-#, fuzzy
 msgid " -A, --fstab         trim all supported mounted filesystems from /etc/fstab\n"
 msgstr ""
-" -a, --all           uklidí všechny připojené souborové systémy, které\n"
-"                     podporují „trim“\n"
+" -A, --fstab         uklidí všechny podporované připojené souborové systémy\n"
+"                     v /etc/fstab\n"
 
 #: sys-utils/fstrim.c:322
 msgid " -o, --offset <num>  the offset in bytes to start discarding from\n"
@@ -13089,9 +13058,8 @@ msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose       vypíše počet zahozených bajtů\n"
 
 #: sys-utils/fstrim.c:326
-#, fuzzy
 msgid " -d, --dry-run       does everything, but trim\n"
-msgstr " -n, --dry-run            provede vše až na uspání\n"
+msgstr " -d, --dry-run       provede vše až na úklid\n"
 
 #: sys-utils/fstrim.c:387
 msgid "failed to parse minimum extent length"
@@ -13178,14 +13146,14 @@ msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "Nastavuji hodiny reálného času na %.2d:%.2d:%.2d = %ld sekund od roku 1969\n"
 
 #: sys-utils/hwclock.c:441
-#, fuzzy, c-format
+#, c-format
 msgid "RTC type: '%s'\n"
-msgstr "typ: %d"
+msgstr "Druh RTC: „%s“\n"
 
 #: sys-utils/hwclock.c:541
-#, fuzzy, c-format
+#, c-format
 msgid "Using delay: %.6f seconds\n"
-msgstr "%s  0,%06d sekundy\n"
+msgstr "Použije se zpoždění: %.6f sekundy\n"
 
 #: sys-utils/hwclock.c:560
 #, c-format
@@ -13435,7 +13403,7 @@ msgstr "     --date <čas>     vstup času/data pro --set a --predict"
 
 #: sys-utils/hwclock.c:1140
 msgid "     --delay <sec>    delay used when set new RTC time"
-msgstr ""
+msgstr "     --delay <sekundy>  zpoždění při nastavování nového času RTC"
 
 #: sys-utils/hwclock.c:1142
 msgid "     --epoch <year>   epoch input for --setepoch"
@@ -14652,9 +14620,8 @@ msgid " -O, --output <cols>           specify columns to output for --list\n"
 msgstr " -O, --output <sloupce>        určuje sloupce ve výstupu přepínače --list\n"
 
 #: sys-utils/losetup.c:435
-#, fuzzy
 msgid "     --output-all              output all columns\n"
-msgstr " -O, --output-all     vypíše všechny sloupce\n"
+msgstr "     --output-all              vypíše všechny sloupce\n"
 
 #: sys-utils/losetup.c:436
 msgid "     --raw                     use raw --list output format\n"
@@ -14879,7 +14846,7 @@ msgstr "Pořadí bajtů:"
 
 #: sys-utils/lscpu.c:1733
 msgid "Address sizes:"
-msgstr ""
+msgstr "Velikost adresy:"
 
 #: sys-utils/lscpu.c:1735
 msgid "CPU(s):"
@@ -15080,14 +15047,12 @@ msgstr ""
 "s přepínači --extended nebo --parse.\n"
 
 #: sys-utils/lscpu.c:2042
-#, fuzzy
 msgid "failed to initialize CPUs sysfs handler"
-msgstr "%s: nepodařilo inicializovat deskriptor sysfs"
+msgstr "nepodařilo inicializovat deskriptor sysfs pro CPU"
 
 #: sys-utils/lscpu.c:2049
-#, fuzzy
 msgid "failed to initialize procfs handler"
-msgstr "%s: nepodařilo inicializovat deskriptor sysfs"
+msgstr "nepodařilo inicializovat deskriptor procfs"
 
 #: sys-utils/lsipc.c:149
 msgid "Resource key"
@@ -15532,9 +15497,8 @@ msgid "Failed to open %s"
 msgstr "%s se nepodařilo otevřít"
 
 #: sys-utils/lsmem.c:441
-#, fuzzy
 msgid "failed to read memory block size"
-msgstr "velikost logického bloku se nepodařilo rozebrat"
+msgstr "přečtení velikosti bloku paměti se nepodařilo"
 
 #: sys-utils/lsmem.c:472
 msgid "This system does not support memory blocks"
@@ -15573,9 +15537,8 @@ msgid "options --{raw,json,pairs} and --summary=only are mutually exclusive"
 msgstr "přepínače --{raw,json,pairs} a --summary=only se vzájemně vylučují"
 
 #: sys-utils/lsmem.c:645
-#, fuzzy
 msgid "invalid argument to --sysroot"
-msgstr "neplatný argument za %s"
+msgstr "neplatný argument za --sysroot"
 
 #: sys-utils/lsmem.c:676 sys-utils/lsns.c:781
 msgid "failed to initialize output table"
@@ -15823,6 +15786,12 @@ msgid ""
 "     --options-source-force\n"
 "                         force use of options from fstab/mtab\n"
 msgstr ""
+"     --options-mode <režim>\n"
+"                         co dělat s volbami načtenými ze souboru fstab\n"
+"     --options-source <zdroj>\n"
+"                         zdroj voleb pro připojení\n"
+"     --options-source-force\n"
+"                         vynutí použití voleb ze souborů fstab/mtab\n"
 
 #: sys-utils/mount.c:423
 #, c-format
@@ -15859,9 +15828,9 @@ msgid " -w, --rw, --read-write  mount the filesystem read-write (default)\n"
 msgstr " -w, --rw, --read-write  připojí souborový systém pro čtení i zápis (výchozí)\n"
 
 #: sys-utils/mount.c:435
-#, fuzzy, c-format
+#, c-format
 msgid " -N, --namespace <ns>    perform mount in another namespace\n"
-msgstr " -n, --namespace jp  vytvoří UUID založené na otisku v tomto jmenném prostoru\n"
+msgstr " -N, --namespace <jp>    připojí souborový systém v jiném jmenném prostoru\n"
 
 #: sys-utils/mount.c:441
 #, c-format
@@ -15946,9 +15915,9 @@ msgid "failed to set options pattern"
 msgstr "nepodařilo se nastavit vzorek voleb"
 
 #: sys-utils/mount.c:718 sys-utils/umount.c:563
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set target namespace to %s"
-msgstr "volání stat nad adresářem %s selhalo"
+msgstr "nastavení cílového jmenného prostoru na %s selhalo"
 
 #: sys-utils/mount.c:871
 msgid "source specified more than once"
@@ -16822,9 +16791,9 @@ msgid "Switching on %s.\n"
 msgstr "Zapíná se %s.\n"
 
 #: sys-utils/setarch.c:97
-#, fuzzy, c-format
+#, c-format
 msgid " %s [<arch>] [options] [<program> [<argument>...]]\n"
-msgstr " %s <architektura> [přepínače] <program> [<argument>…]\n"
+msgstr " %s [<architektura>] [přepínače] [<program> [<argument>…]]\n"
 
 #: sys-utils/setarch.c:102
 msgid "Change the reported architecture and set personality flags.\n"
@@ -16906,9 +16875,8 @@ msgid "unrecognized option '--list'"
 msgstr "nerozpoznaný přepínač „--list“"
 
 #: sys-utils/setarch.c:389
-#, fuzzy
 msgid "no architecture argument or personality flags specified"
-msgstr "nezadán argument s architekturou"
+msgstr "nezadán argument s architekturou nebo charakteristikou architektury"
 
 #: sys-utils/setarch.c:400
 #, c-format
@@ -16960,34 +16928,29 @@ msgstr ""
 "                             nastaví ohraničující množinu\n"
 
 #: sys-utils/setpriv.c:137
-#, fuzzy
 msgid " --ruid <uid|user>           set real uid\n"
-msgstr " --ruid <UID>                nastaví reálné UID\n"
+msgstr " --ruid <UID|uživatel>       nastaví reálné UID\n"
 
 #: sys-utils/setpriv.c:138
-#, fuzzy
 msgid " --euid <uid|user>           set effective uid\n"
-msgstr " --euid <UID>                nastaví efektivní UID\n"
+msgstr " --euid <UID|uživatel>       nastaví efektivní UID\n"
 
+# FIXME user should read group
 #: sys-utils/setpriv.c:139
-#, fuzzy
 msgid " --rgid <gid|user>           set real gid\n"
-msgstr " --rgid <GID>                nastaví reálné GID\n"
+msgstr " --rgid <GID|uživatel>       nastaví reálné GID\n"
 
 #: sys-utils/setpriv.c:140
-#, fuzzy
 msgid " --egid <gid|group>          set effective gid\n"
-msgstr " --egid <GID>                nastaví efektivní GID\n"
+msgstr " --egid <GID|skupina>        nastaví efektivní GID\n"
 
 #: sys-utils/setpriv.c:141
-#, fuzzy
 msgid " --reuid <uid|user>          set real and effective uid\n"
-msgstr " --reuid <UID>               nastaví reálné a efektivní UID\n"
+msgstr " --reuid <UID|uživatel>      nastaví reálné a efektivní UID\n"
 
 #: sys-utils/setpriv.c:142
-#, fuzzy
 msgid " --regid <gid|group>         set real and effective gid\n"
-msgstr " --regid <GID>               nastaví reálné a efektivní GID\n"
+msgstr " --regid <GID|skupina>       nastaví reálné a efektivní GID\n"
 
 #: sys-utils/setpriv.c:143
 msgid " --clear-groups              clear supplementary groups\n"
@@ -17002,27 +16965,24 @@ msgid " --init-groups               initialize supplementary groups\n"
 msgstr " --init-groups               inicializuje doplňkové skupiny\n"
 
 #: sys-utils/setpriv.c:146
-#, fuzzy
 msgid " --groups <group,...>        set supplementary groups by UID or name\n"
-msgstr " --groups <skupina,…>        nastaví doplňkové skupiny\n"
+msgstr " --groups <skupina,…>        nastaví doplňkové skupiny podle UID nebo jména\n"
 
 #: sys-utils/setpriv.c:147
 msgid " --securebits <bits>         set securebits\n"
 msgstr " --securebits <bity>         nastaví bezpečnostní bity\n"
 
 #: sys-utils/setpriv.c:148
-#, fuzzy
 msgid " --reset-env                 reset environment variables\n"
-msgstr " -m, -p, --preserve-environment  neresetuje proměnné prostředí\n"
+msgstr " --reset-env                 resetuje proměnné prostředí\n"
 
 #: sys-utils/setpriv.c:149
-#, fuzzy
 msgid ""
 " --pdeathsig keep|clear|<signame>\n"
 "                             set or clear parent death signal\n"
 msgstr ""
-" --store                           uloží současné nastavení terminálu jako\n"
-"                                   výchozí\n"
+" --pdeathsig keep|clear|<signame>\n"
+"                             nastaví nebo zruší signál při úmrtí rodiče\n"
 
 #: sys-utils/setpriv.c:151
 msgid " --selinux-label <label>     set SELinux label\n"
@@ -17039,6 +16999,8 @@ msgid ""
 " --reset-env                 clear all environment and initialize\n"
 "                               HOME, SHELL, USER, LOGNAME and PATH\n"
 msgstr ""
+" --reset-env                 clear all environment and initialize\n"
+"                               HOME, SHELL, USER, LOGNAME and PATH\n"
 
 #: sys-utils/setpriv.c:159
 msgid " This tool can be dangerous.  Read the manpage, and be careful.\n"
@@ -17083,9 +17045,8 @@ msgid "[none]"
 msgstr "[nic]"
 
 #: sys-utils/setpriv.c:352
-#, fuzzy
 msgid "get pdeathsig failed"
-msgstr "volání getresuid selhalo"
+msgstr "nepodařilo se získat hodnotu signálu při úmrtí rodiče"
 
 #: sys-utils/setpriv.c:372
 #, c-format
@@ -17158,9 +17119,8 @@ msgid "Invalid supplementary group id"
 msgstr "Chybné číslo doplňkové skupiny"
 
 #: sys-utils/setpriv.c:479
-#, fuzzy
 msgid "failed to get parent death signal"
-msgstr "nezdařilo rozebrat hodnotu signálu"
+msgstr "nezdařilo získat hodnotu signálu při úmrtí rodiče"
 
 #: sys-utils/setpriv.c:499
 msgid "setresuid failed"
@@ -17278,7 +17238,7 @@ msgstr "násobný přepínač --clear-groups"
 
 #: sys-utils/setpriv.c:912
 msgid "duplicate --keep-groups option"
-msgstr "násobný přepínače --keep-groups"
+msgstr "násobný přepínač --keep-groups"
 
 #: sys-utils/setpriv.c:918
 msgid "duplicate --init-groups option"
@@ -17289,9 +17249,8 @@ msgid "duplicate --groups option"
 msgstr "násobný přepínač --groups"
 
 #: sys-utils/setpriv.c:930
-#, fuzzy
 msgid "duplicate --keep-pdeathsig option"
-msgstr "násobný přepínače --keep-groups"
+msgstr "násobný přepínač --keep-pdeathsig"
 
 #: sys-utils/setpriv.c:939
 msgid "duplicate --inh-caps option"
@@ -17375,9 +17334,8 @@ msgid "apply capabilities"
 msgstr "aplikovat kvalifikace"
 
 #: sys-utils/setpriv.c:1093
-#, fuzzy
 msgid "set parent death signal failed"
-msgstr "nastavení budíku RTC pro probuzení selhalo"
+msgstr "nastavení signálu při úmrtí rodiče selhalo"
 
 #: sys-utils/setsid.c:33
 #, c-format
@@ -17940,14 +17898,12 @@ msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgstr " -t, --types <seznam>    omezí množinu typů souborových systémů\n"
 
 #: sys-utils/umount.c:105
-#, fuzzy
 msgid " -q, --quiet             suppress 'not mounted' error messages\n"
-msgstr " -q, --quiet               potlačí informační hlášky\n"
+msgstr " -q, --quiet             potlačí chybovou hlášku „nepřipojeno“\n"
 
 #: sys-utils/umount.c:106
-#, fuzzy
 msgid " -N, --namespace <ns>    perform umount in another namespace\n"
-msgstr " -n, --namespace jp  vytvoří UUID založené na otisku v tomto jmenném prostoru\n"
+msgstr " -N, --namespace <jp>    odpojí souborový systém v jiném jmenném prostoru\n"
 
 #: sys-utils/umount.c:149
 #, c-format
@@ -18066,41 +18022,36 @@ msgstr ""
 "                           (znamená --user)\n"
 
 #: sys-utils/unshare.c:266
-#, fuzzy
 msgid ""
 " --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
 "                             defaults to SIGKILL\n"
 msgstr ""
-"     --kill-child[=<název_signálu>]\n"
-"                               při ukončení zabije potomky (zapne --fork);\n"
-"                               výchozí je SIGKILL\n"
+" --kill-child[=<název_signálu>]\n"
+"                           při ukončení zabije potomky (zapne --fork);\n"
+"                           výchozí je SIGKILL\n"
 
 #: sys-utils/unshare.c:268
-#, fuzzy
 msgid " --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"
 msgstr ""
-"     --mount-proc[=<adresář>]\n"
-"                           nejprve připojí souborový systém proc\n"
+" --mount-proc[=<adresář>]  nejprve připojí souborový systém proc\n"
 "                           (znamená --mount)\n"
 
 #: sys-utils/unshare.c:269
-#, fuzzy
 msgid ""
 " --propagation slave|shared|private|unchanged\n"
 "                           modify mount propagation in mount namespace\n"
 msgstr ""
-"     --propagation slave|shared|private|unchanged\n"
+" --propagation slave|shared|private|unchanged\n"
 "                           změní propagaci připojení ve jmenném prostoru\n"
 "                           přípojných bodů („slave“ podřízená,\n"
 "                           „shared“ sdílená, „private“ soukromá,\n"
 "                           „unchanged“ nezměněná\n"
 
 #: sys-utils/unshare.c:271
-#, fuzzy
 msgid " --setgroups allow|deny    control the setgroups syscall in user namespaces\n"
 msgstr ""
-" -s, --setgroups allow|deny  řídí volání setgroups ve jmenných prostorech\n"
-"                             uživatele („allow“ povolí, „deny“ zakáže)\n"
+" --setgroups allow|deny    řídí volání setgroups ve jmenných prostorech\n"
+"                           uživatele („allow“ povolí, „deny“ zakáže)\n"
 
 #: sys-utils/unshare.c:404
 msgid "unshare failed"
@@ -18381,9 +18332,8 @@ msgid " -o, --output <list>       columns to use for status output\n"
 msgstr " -o, --output <seznam>     určuje, které výstupní sloupce se použijí\n"
 
 #: sys-utils/zramctl.c:555
-#, fuzzy
 msgid "     --output-all          output all columns\n"
-msgstr " -O, --output-all     vypíše všechny sloupce\n"
+msgstr "     --output-all          vypíše všechny sloupce\n"
 
 #: sys-utils/zramctl.c:556
 msgid "     --raw                 use raw status output format\n"
@@ -18805,7 +18755,7 @@ msgstr " -v, --verbose  vysvětlí, co se děje\n"
 
 #: term-utils/mesg.c:126
 msgid "no tty"
-msgstr ""
+msgstr "žádné TTY"
 
 #: term-utils/mesg.c:130
 msgid "ttyname failed"
@@ -18842,7 +18792,6 @@ msgid "Make a typescript of a terminal session.\n"
 msgstr "Zaznamená, co se dělo v relaci s terminálem.\n"
 
 #: term-utils/script.c:170
-#, fuzzy
 msgid ""
 " -a, --append                  append the output\n"
 " -c, --command <command>       run command rather than interactive shell\n"
@@ -18858,6 +18807,9 @@ msgstr ""
 " -e, --return                  vrátí návratový kód potomka\n"
 " -f, --flush                   po každém zápisu vyprázdní buffer\n"
 "     --force                   použije výstupní soubor, i když se jedná o odkaz\n"
+" -o, --output-limit <velikost>\n"
+"                               ukončí se, když výstupní soubory přesáhnou\n"
+"                               zadanou velikost\n"
 " -q, --quiet                   bude zticha\n"
 " -t[<soubor>], --timing[=<soubor>]\n"
 "                               časovací údaje vypíše na chybový výstup nebo\n"
@@ -18865,32 +18817,32 @@ msgstr ""
 
 # The argument is a full date-time
 #: term-utils/script.c:196
-#, fuzzy, c-format
+#, c-format
 msgid "Script started on %s ["
-msgstr "Script spuštěn v %s\n"
+msgstr "Script spuštěn v %s ["
 
 #: term-utils/script.c:210
 #, c-format
 msgid "<not executed on terminal>"
-msgstr ""
+msgstr "<nespuštěn na terminálu>"
 
 #: term-utils/script.c:228
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Script done on %s [<%s>]\n"
 msgstr ""
 "\n"
-"Script ukončen v %s\n"
+"Script ukončen v %s [<%s>]\n"
 
 #: term-utils/script.c:230
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Script done on %s [COMMAND_EXIT_CODE=\"%d\"]\n"
 msgstr ""
 "\n"
-"Script ukončen v %s\n"
+"Script ukončen v %s [NÁVRATOVÝ_KÓD_PŘÍKAZU=„%d“]\n"
 
 #: term-utils/script.c:241
 #, c-format
@@ -18915,12 +18867,11 @@ msgstr "skript soubor nelze zapsat"
 #: term-utils/script.c:457
 #, c-format
 msgid "Script terminated, max output file size %<PRIu64> exceeded.\n"
-msgstr ""
+msgstr "Skript ukončen, překročena maximální velikost výstupního souboru %<PRIu64>.\n"
 
 #: term-utils/script.c:459
-#, fuzzy
 msgid "max output size exceeded"
-msgstr "předalokovaná velikost překročena"
+msgstr "maximální velikost výstupu překročena"
 
 #: term-utils/script.c:509
 #, c-format
@@ -18940,9 +18891,8 @@ msgid "out of pty's"
 msgstr "nedostatek PTY"
 
 #: term-utils/script.c:818
-#, fuzzy
 msgid "failed to parse output limit size"
-msgstr "nezdařilo se rozebrat omezení na %s"
+msgstr "nezdařilo se rozebrat omezení velikosti výstupu"
 
 #: term-utils/script.c:854
 #, c-format
@@ -19578,9 +19528,8 @@ msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary
 msgstr " -W, --table-wrap <sloupce>       v těchto sloupcích zalomí text, bude-li třeba\n"
 
 #: text-utils/column.c:639
-#, fuzzy
 msgid " -L, --table-empty-lines          don't ignore empty lines\n"
-msgstr " -d, --table-noheadings           nevypíše záhlaví\n"
+msgstr " -L, --table-empty-lines          neignoruje prázdné řádky\n"
 
 #: text-utils/column.c:640
 msgid " -J, --json                       use JSON output format for table\n"
