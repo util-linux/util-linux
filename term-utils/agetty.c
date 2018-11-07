@@ -2755,7 +2755,7 @@ static void output_special_char(struct issue *ie,
 		break;
 	}
 	default:
-		putchar(c);
+		putc(c, ie->output);
 		break;
 	}
 }
