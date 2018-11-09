@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
 
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "+Vh", longopts, NULL)) != -1)
 		switch (c) {
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
