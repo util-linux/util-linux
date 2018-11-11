@@ -20,12 +20,14 @@ ts_init "$*"
 
 : . > $TS_OUTPUT
 
-uuidgen --md5 --namespace @dns --name "www.widgets.com" >> $TS_OUTPUT
+ts_check_test_command "$TS_CMD_UUIDGEN"
 
-uuidgen --md5 --namespace @dns --name "www.example.com" >> $TS_OUTPUT
+$TS_CMD_UUIDGEN --md5 --namespace @dns --name "www.widgets.com" >> $TS_OUTPUT
 
-uuidgen --sha1 --namespace @dns --name "www.example.com" >> $TS_OUTPUT
+$TS_CMD_UUIDGEN --md5 --namespace @dns --name "www.example.com" >> $TS_OUTPUT
 
-uuidgen --sha1 --namespace @oid --hex --name "525400fc0f5e" >> $TS_OUTPUT
+$TS_CMD_UUIDGEN --sha1 --namespace @dns --name "www.example.com" >> $TS_OUTPUT
+
+$TS_CMD_UUIDGEN --sha1 --namespace @oid --hex --name "525400fc0f5e" >> $TS_OUTPUT
 
 ts_finalize
