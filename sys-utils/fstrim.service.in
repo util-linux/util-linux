@@ -1,5 +1,6 @@
 [Unit]
 Description=Discard unused blocks on filesystems from /etc/fstab
+Documentation=man:fstrim(8)
 
 [Service]
 Type=oneshot
