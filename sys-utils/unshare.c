@@ -29,6 +29,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/prctl.h>
+#include <grp.h>
 
 /* we only need some defines missing in sys/mount.h, no libmount linkage */
 #include <libmount.h>
@@ -42,6 +43,7 @@
 #include "pathnames.h"
 #include "all-io.h"
 #include "signames.h"
+#include "strutils.h"
 
 /* synchronize parent and child by pipe */
 #define PIPE_SYNC_BYTE	0x06
@@ -269,6 +271,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --propagation slave|shared|private|unchanged\n"
 	        "                           modify mount propagation in mount namespace\n"), out);
 	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -R, --root=<dir>	    run the command with root directory set to <dir>\n"), out);
+	fputs(_(" -w, --wd=<dir>	    change working directory to <dir>\n"), out);
+	fputs(_(" -S, --setuid <uid>	    set uid in entered namespace\n"), out);
+	fputs(_(" -G, --setgid <gid>	    set gid in entered namespace\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(27));
@@ -283,7 +290,7 @@ int main(int argc, char *argv[])
 		OPT_MOUNTPROC = CHAR_MAX + 1,
 		OPT_PROPAGATION,
 		OPT_SETGROUPS,
-		OPT_KILLCHILD
+		OPT_KILLCHILD,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -303,6 +310,10 @@ int main(int argc, char *argv[])
 		{ "map-root-user", no_argument,       NULL, 'r'             },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
 		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
+		{ "setuid",	   required_argument, NULL, 'S'		    },
+		{ "setgid",	   required_argument, NULL, 'G'		    },
+		{ "root",	   required_argument, NULL, 'R'		    },
+		{ "wd",		   required_argument, NULL, 'w'		    },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -311,19 +322,22 @@ int main(int argc, char *argv[])
 	int c, forkit = 0, maproot = 0;
 	int kill_child_signo = 0; /* 0 means --kill-child was not used */
 	const char *procmnt = NULL;
+	const char *newroot = NULL;
+	const char *newdir = NULL;
 	pid_t pid = 0;
 	int fds[2];
 	int status;
 	unsigned long propagation = UNSHARE_PROPAGATION_DEFAULT;
-	uid_t real_euid = geteuid();
-	gid_t real_egid = getegid();
+	int force_uid = 0, force_gid = 0;
+	uid_t uid = 0, real_euid = geteuid();
+	gid_t gid = 0, real_egid = getegid();
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "+fhVmuinpCUr", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+fhVmuinpCUrR:w:S:G:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			forkit = 1;
@@ -391,6 +405,20 @@ int main(int argc, char *argv[])
 			} else {
 				kill_child_signo = SIGKILL;
 			}
+			break;
+		case 'S':
+			uid = strtoul_or_err(optarg, _("failed to parse uid"));
+			force_uid = 1;
+			break;
+		case 'G':
+			gid = strtoul_or_err(optarg, _("failed to parse gid"));
+			force_gid = 1;
+			break;
+		case 'R':
+			newroot = optarg;
+			break;
+		case 'w':
+			newdir = optarg;
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
@@ -471,10 +499,30 @@ int main(int argc, char *argv[])
 	if ((unshare_flags & CLONE_NEWNS) && propagation)
 		set_propagation(propagation);
 
-	if (procmnt &&
-	    (mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL) != 0 ||
-	     mount("proc", procmnt, "proc", MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0))
+	if (newroot) {
+		if (chroot(newroot) != 0)
+			err(EXIT_FAILURE,
+			    _("cannot change root directory to '%s'"), newroot);
+		newdir = newdir ?: "/";
+	}
+	if (newdir && chdir(newdir))
+		err(EXIT_FAILURE, _("cannot chdir to '%s'"), newdir);
+
+	if (procmnt) {
+		if (!newroot && mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL) != 0)
+			err(EXIT_FAILURE, _("umount %s failed"), procmnt);
+		if (mount("proc", procmnt, "proc", MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0)
 			err(EXIT_FAILURE, _("mount %s failed"), procmnt);
+	}
+
+	if (force_gid) {
+		if (setgroups(0, NULL) != 0)	/* drop supplementary groups */
+			err(EXIT_FAILURE, _("setgroups failed"));
+		if (setgid(gid) < 0)		/* change GID */
+			err(EXIT_FAILURE, _("setgid failed"));
+	}
+	if (force_uid && setuid(uid) < 0)	/* change UID */
+		err(EXIT_FAILURE, _("setuid failed"));
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);

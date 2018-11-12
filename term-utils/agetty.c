@@ -1768,6 +1768,7 @@ static void eval_issue_file(struct issue *ie __attribute__((__unused__)),
 }
 #else /* ISSUE_SUPPORT */
 
+#ifdef AGETTY_RELOAD
 static int issue_is_changed(struct issue *ie)
 {
 	if (ie->mem_old && ie->mem
@@ -1780,6 +1781,7 @@ static int issue_is_changed(struct issue *ie)
 
 	return 1;
 }
+#endif
 
 static void print_issue_file(struct issue *ie,
 			     struct options *op,
@@ -2066,8 +2068,8 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 		/* Write issue file and prompt */
 		do_prompt(ie, op, tp);
 
-#ifdef AGETTY_RELOAD
 	no_reload:
+#ifdef AGETTY_RELOAD
 		if (!wait_for_term_input(STDIN_FILENO)) {
 			/* refresh prompt -- discard input data, clear terminal
 			 * and call do_prompt() again
@@ -2731,6 +2733,7 @@ static void output_special_char(struct issue *ie,
 			fprintf (ie->output, "%d ", users);
 		break;
 	}
+#if defined(RTMGRP_IPV4_IFADDR) && defined(RTMGRP_IPV6_IFADDR)
 	case '4':
 	case '6':
 	{
@@ -2754,8 +2757,9 @@ static void output_special_char(struct issue *ie,
 			netlink_groups |= RTMGRP_IPV6_IFADDR;
 		break;
 	}
+#endif
 	default:
-		putchar(c);
+		putc(c, ie->output);
 		break;
 	}
 }
