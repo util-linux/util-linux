@@ -1,5 +1,6 @@
 [Unit]
 Description=Daemon for generating UUIDs
+Documentation=man:uuidd(8)
 Requires=uuidd.socket
 
 [Service]
