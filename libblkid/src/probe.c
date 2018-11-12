@@ -625,7 +625,7 @@ static int hide_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 
 			data = real_off ? x->data + (real_off - x->off) : x->data;
 
-			DBG(BUFFER, ul_debug("\thidding: off=%"PRIu64" len=%"PRIu64,
+			DBG(BUFFER, ul_debug("\thiding: off=%"PRIu64" len=%"PRIu64,
 						off, len));
 			memset(data, 0, len);
 			ct++;
