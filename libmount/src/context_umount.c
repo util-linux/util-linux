@@ -393,10 +393,10 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 	struct libmnt_ns *ns_old;
 	const char *type = mnt_fs_get_fstype(cxt->fs);
 	const char *optstr;
-	char *user = NULL, *user_id = NULL, *curr_user = NULL;
+	char *user_id = NULL;
 	size_t sz;
 	uid_t uid;
-	int ok = 0;
+	char uidstr[sizeof(stringify_value(ULONG_MAX))];
 
 	*errsv = 0;
 
@@ -409,16 +409,15 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 	    strncmp(type, "fuseblk.", 8) != 0)
 		return 0;
 
-	/* get user= or user_id= from mtab/mountinfo */
-	optstr = mnt_fs_get_user_options(cxt->fs);
+	/* get user_id= from mount table */
+	optstr = mnt_fs_get_fs_options(cxt->fs);
 	if (!optstr)
 		return 0;
 
-	if (mnt_optstr_get_option(optstr, "user", &user, &sz) != 0 &&
-	    mnt_optstr_get_option(optstr, "user_id", &user_id, &sz) != 0)
+	if (mnt_optstr_get_option(optstr, "user_id", &user_id, &sz) != 0)
 		return 0;
 
-	if (sz == 0 || (user == NULL && user_id == NULL))
+	if (sz == 0 || user_id == NULL)
 		return 0;
 
 	/* get current user */
@@ -429,32 +428,14 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 	}
 
 	uid = getuid();
-	if (user)
-		curr_user = mnt_get_username(uid);
 
 	if (!mnt_context_switch_ns(cxt, ns_old)) {
 		*errsv = -MNT_ERR_NAMESPACE;
 		return 0;
 	}
 
-	if (user && !curr_user) {
-		DBG(CXT, ul_debugobj(cxt, "umount (fuse): cannot "
-				"convert %d to username", uid));
-		return 0;
-	}
-
-	if (user)
-		ok = strncmp(curr_user, user, sz) == 0;
-
-	else if (user_id) {
-		char uidstr[sizeof(stringify_value(ULONG_MAX))];
-		snprintf(uidstr, sizeof(uidstr), "%lu", (unsigned long) uid);
-
-		ok = strncmp(user_id, uidstr, sz) == 0;
-	}
-
-	free(curr_user);
-	return ok;
+	snprintf(uidstr, sizeof(uidstr), "%lu", (unsigned long) uid);
+	return strncmp(user_id, uidstr, sz) == 0;
 }
 
 /*
