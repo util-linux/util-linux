@@ -2185,7 +2185,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				break;
 			}
 			/* Everything was erased. */
-			if (bp == logname)
+			if (bp == logname && cp->eol == '\0')
 				goto no_reload;
 		}
 	}
