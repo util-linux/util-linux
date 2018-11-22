@@ -781,6 +781,7 @@ AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
 # on Solaris, you can't mix and match standards, since we use c99
 # aparently at this stage, XOPEN_SOURCE will conflict.  As workaround,
 # check for crypt.h and use that without XOPEN_SOURCE.
+have_crypt=no
 AC_CHECK_HEADERS([crypt.h])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #ifdef HAVE_CRYPT_H
@@ -805,8 +806,9 @@ char *c = crypt("abc","pw");
   ]])],[
   AC_DEFINE([HAVE_LIBCRYPT], [1], [Do we need -lcrypt?])
   have_libcrypt=yes
+  have_crypt=yes
   ],[
-  AC_MSG_ERROR([crypt() is not available])
+  AC_MSG_WARN([crypt() is not available])
   ])
 ])
 AM_CONDITIONAL([HAVE_LIBCRYPT], [test "x$have_libcrypt" = xyes])
@@ -1884,6 +1886,7 @@ AC_ARG_ENABLE([newgrp],
   [], [UL_DEFAULT_ENABLE([newgrp], [no])]
 )
 UL_BUILD_INIT([newgrp])
+UL_REQUIRES_HAVE([newgrp], [crypt], [crypt function])
 AM_CONDITIONAL([BUILD_NEWGRP], [test "x$build_newgrp" = xyes])
 
 
@@ -1980,6 +1983,7 @@ AC_ARG_ENABLE([sulogin],
   [], [UL_DEFAULT_ENABLE([sulogin], [check])]
 )
 UL_BUILD_INIT([sulogin])
+UL_REQUIRES_HAVE([sulogin], [crypt], [crypt function])
 UL_REQUIRES_HAVE([sulogin], [shadow_h], [shadow.h header])
 AM_CONDITIONAL([BUILD_SULOGIN], [test "x$build_sulogin" = xyes])
 
