@@ -5,3 +5,13 @@ Documentation=man:fstrim(8)
 [Service]
 Type=oneshot
 ExecStart=@sbindir@/fstrim --fstab --verbose
+ProtectSystem=strict
+ProtectHome=yes
+PrivateDevices=no
+PrivateNetwork=yes
+PrivateUsers=no
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+MemoryDenyWriteExecute=yes
+SystemCallFilter=@default @file-system @basic-io @system-service
