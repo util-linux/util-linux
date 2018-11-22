@@ -80,6 +80,12 @@
 # endif
 #endif
 
+#if (__GNUC__ >= 5) || ((__GNUC__ >= 4) && (__GNUC_MINOR__ >= 9))
+# define __ul_returns_nonnull __attribute__((returns_nonnull))
+#else
+# define __ul_returns_nonnull
+#endif
+
 /*
  * Force a compilation error if condition is true, but also produce a
  * result (of value 0 and type size_t), so the expression can be used
