@@ -1152,21 +1152,29 @@ AC_SUBST([LIBFDISK_VERSION_INFO])
 AC_DEFINE_UNQUOTED([LIBFDISK_VERSION], ["$LIBFDISK_VERSION"], [libfdisk version string])
 
 
-UL_BUILD_INIT([fdisk], [check])
+AC_ARG_ENABLE([fdisks],
+  AS_HELP_STRING([--disable-fdisks], [do not build fdisk(8), sfdisk(8) and cfdisk(8)]),
+  [], [UL_DEFAULT_ENABLE([fdisks], [check])]
+)
+enable_fdisk=$enable_fdisks
+enable_sfdisk=$enable_fdisks
+enable_cfdisk=$enable_fdisks
+
+UL_BUILD_INIT([fdisk])
 UL_REQUIRES_HAVE([fdisk], [openat], [openat functions])
 UL_REQUIRES_BUILD([fdisk], [libfdisk])
 UL_REQUIRES_BUILD([fdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
 
 
-UL_BUILD_INIT([sfdisk], [check])
+UL_BUILD_INIT([sfdisk])
 UL_REQUIRES_HAVE([sfdisk], [openat], [openat functions])
 UL_REQUIRES_BUILD([sfdisk], [libfdisk])
 UL_REQUIRES_BUILD([sfdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
 
 
-UL_BUILD_INIT([cfdisk], [check])
+UL_BUILD_INIT([cfdisk])
 UL_REQUIRES_BUILD([cfdisk], [libfdisk])
 UL_REQUIRES_BUILD([cfdisk], [libsmartcols])
 UL_REQUIRES_HAVE([cfdisk], [open_memstream], [open_memstream function])
