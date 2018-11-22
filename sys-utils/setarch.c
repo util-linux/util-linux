@@ -268,6 +268,7 @@ int main(int argc, char *argv[])
 	int c;
 	struct arch_domain *doms, *target;
 	unsigned long pers_value = 0;
+	char *shell = NULL, *shell_arg = NULL;
 
 	/* Options without equivalent short options */
 	enum {
@@ -310,14 +311,14 @@ int main(int argc, char *argv[])
 	archwrapper = strcmp(program_invocation_short_name, "setarch") != 0;
 	if (archwrapper) {
 		arch = program_invocation_short_name;	/* symlinks to setarch */
-#if defined(__sparc64__) || defined(__sparc__)
+
+		/* Don't use ifdef sparc here, we get "Unrecognized architecture"
+		 * error message later if necessary */
 		if (strcmp(arch, "sparc32bash") == 0) {
-			if (set_arch(arch, 0L, 0))
-				err(EXIT_FAILURE, _("Failed to set personality to %s"), arch);
-			execl("/bin/bash", "", NULL);
-			errexec("/bin/bash");
+			shell = "/bin/bash";
+			shell_arg = "";
+			goto set_arch;
 		}
-#endif
 	} else {
 		if (1 < argc && *argv[1] != '-') {
 			arch = argv[1];
@@ -391,6 +392,7 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
+set_arch:
 	/* get execution domain (architecture) */
 	if (arch) {
 		doms = init_arch_domains();
@@ -422,17 +424,23 @@ int main(int argc, char *argv[])
 	if (arch)
 		verify_arch_domain(target, arch);
 
+	if (!argc) {
+		shell = "/bin/sh";
+		shell_arg = "-sh";
+	}
 	if (verbose) {
-		printf(_("Execute command `%s'.\n"), argc ? argv[0] : "/bin/sh");
+		printf(_("Execute command `%s'.\n"), shell ? shell : argv[0]);
 		/* flush all output streams before exec */
 		fflush(NULL);
 	}
 
-	if (!argc) {
-		execl("/bin/sh", "-sh", NULL);
-		errexec("/bin/sh");
+	/* Execute shell */
+	if (shell) {
+		execl(shell, shell_arg, NULL);
+		errexec(shell);
 	}
 
+	/* Execute on command line specified command */
 	execvp(argv[0], argv);
 	errexec(argv[0]);
 }
