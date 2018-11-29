@@ -82,7 +82,7 @@ static void init_signature_page(struct mkswap_control *ctl)
 		if (ctl->user_pagesize != kernel_pagesize)
 			warnx(_("Using user-specified page size %d, "
 				"instead of the system value %d"),
-				ctl->pagesize, kernel_pagesize);
+				ctl->user_pagesize, kernel_pagesize);
 		ctl->pagesize = ctl->user_pagesize;
 	} else
 		ctl->pagesize = kernel_pagesize;
