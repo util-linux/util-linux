@@ -35,6 +35,7 @@ blkid \- locate/print block device attributes
 .IR list ]
 .RB [ \-\-usages
 .IR list ]
+.RB [ \-\-no\-part\-details ]
 .IR device " ..."
 
 .IP \fBblkid\fR
@@ -113,6 +114,9 @@ devices previously scanned but not necessarily available at this time), specify
 Don't encode non-printing characters.  The non-printing characters are encoded
 by ^ and M- notation by default.  Note that the \fB\-\-output udev\fR output format uses
 a different encoding which cannot be disabled.
+.TP
+\fB\-D\fR, \fB\-\-no\-part\-details\fR 
+Don't print information (PART_ENTRY_* tags) from partition table in low-level probing mode.
 .TP
 \fB\-g\fR, \fB\-\-garbage\-collect\fR
 Perform a garbage collection pass on the blkid cache to remove
@@ -224,7 +228,7 @@ Note that low-level probing also returns information about partition table type
 (PTTYPE tag) and partitions (PART_ENTRY_* tags). The tag names produced by
 low-level probing are based on names used internally by libblkid and it may be
 different than when executed without \fB\-\-probe\fR (for example PART_ENTRY_UUID= vs
-PARTUUID=).
+PARTUUID=). See also \fB\-\-no\-part\-details\fR.
 .TP
 \fB\-s\fR, \fB\-\-match\-tag\fR \fItag\fR
 For each (specified) device, show only the tags that match
