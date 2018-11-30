@@ -36,6 +36,7 @@ vethb=lsns-vethb
 NS=LSNS-TEST-NETNSID-NS
 FIFO=$TS_OUTDIR/FIFO-NETNSID
 NULL=/dev/null
+LOG=/dev/null #/root/foo.log
 
 function cleanup {
 	ip link delete $vetha 2> $NULL || :
@@ -43,24 +44,47 @@ function cleanup {
 	rm -f $FIFO
 }
 
+echo "==Cleanup" >> $LOG
 cleanup
+
+echo "==Create FIFO" >> $LOG
 mkfifo $FIFO
 
+echo "==Netns ADD" >> $LOG
 if ip netns add $NS &&
 	ip link add name $vetha type veth peer name $vethb &&
 	ip link set $vethb netns $NS; then
+    echo "===Netns EXEC" >> $LOG
     ip netns exec $NS dd if=$FIFO bs=1 count=2 of=$NULL 2> $NULL &
     PID=$!
+    echo "====PID=$PID" >> $LOG
 else
     cleanup
     ts_skip "failed to initialize"
 fi
 {
+    echo "==Write to FIFO" >> $LOG
     dd if=/dev/zero bs=1 count=1 2> $NULL
     {
-	ip -o link show dev $vetha > $NULL
+	echo "===IP output" >> $LOG
+	ip -o link show dev $vetha >> $LOG
+
 	IP_ID=$(ip -o link show dev $vetha | sed -ne 's/.* *link-netnsid *\([0-9]*\)/\1/p')
+	echo "====ip show: IP_ID=$IP_ID" >> $LOG
+
+	if [ "x$IP_ID" = "x" ]; then
+		echo "===IP output list id" >> $LOG
+		ip netns list-id >> $LOG
+
+		IP_ID=$(ip netns list-id | awk "/name: $NS/ { print \$2 }")
+		echo "====ip list-id: IP_ID=$IP_ID" >> $LOG
+	fi
+
+	echo "===LSNS output" >> $LOG
+	$TS_CMD_LSNS -o+NETNSID,NSFS --type net >> $LOG
+
 	LSNS_ID=$($TS_CMD_LSNS -n -o NETNSID --type net --task $PID | { read VAL; echo $VAL; } )
+	echo "===LSNS_ID=$LSNS_ID" >> $LOG
     }
     dd if=/dev/zero bs=1 count=1 2> $NULL
 } > $FIFO
