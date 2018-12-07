@@ -137,6 +137,16 @@ _INLINE_ int list_entry_is_last(struct list_head *entry, struct list_head *head)
 }
 
 /**
+ * list_entry_is_first - tests whether is entry first in the list
+ * @entry:	the entry to test.
+ * @head:	the list to test.
+ */
+_INLINE_ int list_entry_is_first(struct list_head *entry, struct list_head *head)
+{
+	return head->next == entry;
+}
+
+/**
  * list_splice - join two lists
  * @list:	the new list to add.
  * @head:	the place to add it in the first list.
@@ -197,6 +207,17 @@ _INLINE_ void list_splice(struct list_head *list, struct list_head *head)
 #define list_for_each_safe(pos, pnext, head) \
 	for (pos = (head)->next, pnext = pos->next; pos != (head); \
 	     pos = pnext, pnext = pos->next)
+
+_INLINE_ size_t list_count_entries(struct list_head *head)
+{
+	struct list_head *pos;
+	size_t ct = 0;
+
+	list_for_each(pos, head)
+		ct++;
+
+	return ct;
+}
 
 #define MAX_LIST_LENGTH_BITS 20
 
