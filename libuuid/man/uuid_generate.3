@@ -70,14 +70,14 @@ The
 .B uuid_generate_time
 function forces the use of the alternative algorithm which uses the
 current time and the local ethernet MAC address (if available).
-This algorithm used to be the default one used to generate UUID, but
+This algorithm used to be the default one used to generate UUIDs, but
 because of the use of the ethernet MAC address, it can leak
 information about when and where the UUID was generated.  This can cause
 privacy problems in some applications, so the
 .B uuid_generate
 function only uses this algorithm if a high-quality source of
 randomness is not available.  To guarantee uniqueness of UUIDs generated
-by concurrently running processes, the uuid library uses global
+by concurrently running processes, the uuid library uses a global
 clock state counter (if the process has permissions to gain exclusive access
 to this file) and/or the
 .B uuidd
@@ -90,7 +90,7 @@ whether the UUID has been generated in a safe manner, use
 .sp
 The
 .B uuid_generate_time_safe
-is similar to
+function is similar to
 .BR uuid_generate_time ,
 except that it returns a value which denotes whether any of the synchronization
 mechanisms (see above) has been used.
@@ -116,8 +116,8 @@ The newly created UUID is returned in the memory location pointed to by
 .B uuid_generate_time_safe
 returns zero if the UUID has been generated in a safe manner, \-1 otherwise.
 .SH "CONFORMING TO"
-This library generates UUIDs compatible OSF DCE 1.1, and hash based UUIDs V3 and
-V5 compatible with RFC-4122.
+This library generates UUIDs compatible with OSF DCE 1.1, and hash based UUIDs
+V3 and V5 compatible with RFC-4122.
 .SH AUTHOR
 Theodore Y.\& Ts'o
 .SH AVAILABILITY
