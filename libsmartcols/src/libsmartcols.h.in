@@ -129,6 +129,14 @@ extern int scols_symbols_set_right(struct libscols_symbols *sy, const char *str)
 extern int scols_symbols_set_title_padding(struct libscols_symbols *sy, const char *str);
 extern int scols_symbols_set_cell_padding(struct libscols_symbols *sy, const char *str);
 
+extern int scols_symbols_set_group_vertical(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_group_horizontal(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_group_first_member(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_group_last_member(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_group_middle_member(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_group_last_child(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_group_middle_child(struct libscols_symbols *sy, const char *str);
+
 /* cell.c */
 extern int scols_reset_cell(struct libscols_cell *ce);
 extern int scols_cell_copy_content(struct libscols_cell *dest,
@@ -314,6 +322,10 @@ extern int scols_table_print_range_to_string(	struct libscols_table *tb,
 						struct libscols_line *end,
 						char **data);
 
+/* grouping.c */
+int scols_line_link_group(struct libscols_line *ln, struct libscols_line *member, int id);
+int scols_table_group_lines(struct libscols_table *tb, struct libscols_line *ln,
+                            struct libscols_line *member, int id);
 #ifdef __cplusplus
 }
 #endif

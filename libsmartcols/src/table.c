@@ -29,13 +29,17 @@
 #include "smartcolsP.h"
 
 #ifdef HAVE_WIDECHAR
-#define UTF_V	"\342\224\202"	/* U+2502, Vertical line drawing char |  */
-#define UTF_VR	"\342\224\234"	/* U+251C, Vertical and right         |- */
-#define UTF_VL  "\342\224\244"  /* U+2524  Vertical and left         -|  */
-#define UTF_H	"\342\224\200"	/* U+2500, Horizontal                 -  */
-#define UTF_UR	"\342\224\224"	/* U+2514, Up and right              '-  */
-#define UTF_UL  "\342\224\230"  /* U+2518, Up and left                -' */
-#define UTF_DL  "\342\224\220"  /* U+2510, Down and left              -, */
+#define UTF_V	"\342\224\202"	/* U+2502, Vertical line drawing char  |   */
+#define UTF_VR	"\342\224\234"	/* U+251C, Vertical and right          |-  */
+#define UTF_H	"\342\224\200"	/* U+2500, Horizontal                  -   */
+#define UTF_UR	"\342\224\224"	/* U+2514, Up and right                '-  */
+
+#define UTF_V3  "\342\224\206"  /* U+2506 Triple Dash Vertical          |  */
+#define UTF_H3  "\342\224\210"  /* U+2504 Triple Dash Horizontal        -  */
+#define UTF_DR  "\342\224\214"  /* U+250C Down and Right                ,- */
+#define UTF_DH  "\342\224\254"  /* U+252C Down and Horizontal           |' */
+
+#define UTF_TR  "\342\226\266"  /* U+25B6 Black Right-Pointing Triangle  >  */
 #endif /* !HAVE_WIDECHAR */
 
 #define is_last_column(_tb, _cl) \
@@ -79,6 +83,7 @@ struct libscols_table *scols_new_table(void)
 
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
+	INIT_LIST_HEAD(&tb->tb_groups);
 
 	DBG(TAB, ul_debugobj(tb, "alloc"));
 	ON_DBG(INIT, check_padding_debug(tb));
@@ -98,6 +103,17 @@ void scols_ref_table(struct libscols_table *tb)
 		tb->refcount++;
 }
 
+static void scols_table_remove_groups(struct libscols_table *tb)
+{
+	while (!list_empty(&tb->tb_groups)) {
+		struct libscols_group *gr = list_entry(tb->tb_groups.next,
+							struct libscols_group, gr_groups);
+		scols_group_remove_children(gr);
+		scols_group_remove_members(gr);
+		scols_unref_group(gr);
+	}
+}
+
 /**
  * scols_unref_table:
  * @tb: a pointer to a struct libscols_table instance
@@ -108,16 +124,40 @@ void scols_ref_table(struct libscols_table *tb)
 void scols_unref_table(struct libscols_table *tb)
 {
 	if (tb && (--tb->refcount <= 0)) {
-		DBG(TAB, ul_debugobj(tb, "dealloc"));
+		DBG(TAB, ul_debugobj(tb, "dealloc <-"));
+		scols_table_remove_groups(tb);
 		scols_table_remove_lines(tb);
 		scols_table_remove_columns(tb);
 		scols_unref_symbols(tb->symbols);
 		scols_reset_cell(&tb->title);
+		free(tb->grpset);
 		free(tb->linesep);
 		free(tb->colsep);
 		free(tb->name);
 		free(tb);
+		DBG(TAB, ul_debug("<- done"));
 	}
+}
+
+/* Private API */
+int scols_table_next_group(struct libscols_table *tb,
+			  struct libscols_iter *itr,
+			  struct libscols_group **gr)
+{
+	int rc = 1;
+
+	if (!tb || !itr || !gr)
+		return -EINVAL;
+	*gr = NULL;
+
+	if (!itr->head)
+		SCOLS_ITER_INIT(itr, &tb->tb_groups);
+	if (itr->p != itr->head) {
+		SCOLS_ITER_ITERATE(itr, *gr, struct libscols_group, gr_groups);
+		rc = 0;
+	}
+
+	return rc;
 }
 
 /**
@@ -801,15 +841,35 @@ int scols_table_set_default_symbols(struct libscols_table *tb)
 #if defined(HAVE_WIDECHAR)
 	if (!scols_table_is_ascii(tb) &&
 	    !strcmp(nl_langinfo(CODESET), "UTF-8")) {
+		/* tree chart */
 		scols_symbols_set_branch(sy, UTF_VR UTF_H);
 		scols_symbols_set_vertical(sy, UTF_V " ");
 		scols_symbols_set_right(sy, UTF_UR UTF_H);
+		/* groups chart */
+		scols_symbols_set_group_horizontal(sy, UTF_H3);
+		scols_symbols_set_group_vertical(sy, UTF_V3);
+
+		scols_symbols_set_group_first_member(sy,  UTF_DR UTF_H3 UTF_TR);
+		scols_symbols_set_group_last_member(sy,   UTF_UR UTF_DH UTF_TR);
+		scols_symbols_set_group_middle_member(sy, UTF_VR UTF_H3 UTF_TR);
+		scols_symbols_set_group_last_child(sy,    UTF_UR UTF_H3);
+		scols_symbols_set_group_middle_child(sy,  UTF_VR UTF_H3);
 	} else
 #endif
 	{
+		/* tree chart */
 		scols_symbols_set_branch(sy, "|-");
 		scols_symbols_set_vertical(sy, "| ");
 		scols_symbols_set_right(sy, "`-");
+		/* groups chart */
+		scols_symbols_set_group_horizontal(sy, "-");
+		scols_symbols_set_group_vertical(sy, "|");
+
+		scols_symbols_set_group_first_member(sy, ",->");
+		scols_symbols_set_group_last_member(sy, "'->");
+		scols_symbols_set_group_middle_member(sy, "|->");
+		scols_symbols_set_group_last_child(sy, "`-");
+		scols_symbols_set_group_middle_child(sy, "|-");
 	}
 	scols_symbols_set_title_padding(sy, " ");
 	scols_symbols_set_cell_padding(sy, " ");
@@ -1352,16 +1412,26 @@ static int sort_line_children(struct libscols_line *ln, struct libscols_column *
 {
 	struct list_head *p;
 
-	if (list_empty(&ln->ln_branch))
-		return 0;
+	if (!list_empty(&ln->ln_branch)) {
+		list_for_each(p, &ln->ln_branch) {
+			struct libscols_line *chld =
+					list_entry(p, struct libscols_line, ln_children);
+			sort_line_children(chld, cl);
+		}
 
-	list_for_each(p, &ln->ln_branch) {
-		struct libscols_line *chld =
-				list_entry(p, struct libscols_line, ln_children);
-		sort_line_children(chld, cl);
+		list_sort(&ln->ln_branch, cells_cmp_wrapper_children, cl);
 	}
 
-	list_sort(&ln->ln_branch, cells_cmp_wrapper_children, cl);
+	if (is_first_group_member(ln)) {
+		list_for_each(p, &ln->group->gr_children) {
+			struct libscols_line *chld =
+					list_entry(p, struct libscols_line, ln_children);
+			sort_line_children(chld, cl);
+		}
+
+		list_sort(&ln->group->gr_children, cells_cmp_wrapper_children, cl);
+	}
+
 	return 0;
 }
 

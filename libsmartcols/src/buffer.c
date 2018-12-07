@@ -67,6 +67,18 @@ int buffer_append_data(struct libscols_buffer *buf, const char *str)
 	return 0;
 }
 
+int buffer_append_ntimes(struct libscols_buffer *buf, size_t n, const char *str)
+{
+	size_t i;
+
+	for (i = 0; i < n; i++) {
+		int rc = buffer_append_data(buf, str);
+		if (rc)
+			return rc;
+	}
+	return 0;
+}
+
 int buffer_set_data(struct libscols_buffer *buf, const char *str)
 {
 	int rc = buffer_reset_data(buf);

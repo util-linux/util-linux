@@ -110,6 +110,7 @@ struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 	ret->width_hint	= cl->width_hint;
 	ret->flags	= cl->flags;
 	ret->is_extreme = cl->is_extreme;
+	ret->is_groups  = cl->is_groups;
 
 	return ret;
 err:

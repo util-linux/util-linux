@@ -29,6 +29,7 @@
 #define SCOLS_DEBUG_TAB		(1 << 4)
 #define SCOLS_DEBUG_COL		(1 << 5)
 #define SCOLS_DEBUG_BUFF	(1 << 6)
+#define SCOLS_DEBUG_GROUP	(1 << 7)
 #define SCOLS_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libsmartcols);
@@ -53,9 +54,19 @@ struct libscols_iter {
  */
 struct libscols_symbols {
 	int	refcount;
-	char	*branch;
-	char	*vert;
-	char	*right;
+
+	char	*tree_branch;
+	char	*tree_vert;
+	char	*tree_right;
+
+	char	*group_vert;
+	char	*group_horz;
+	char    *group_first_member;
+	char	*group_last_member;
+	char	*group_middle_member;
+	char	*group_last_child;
+	char	*group_middle_child;
+
 	char	*title_padding;
 	char	*cell_padding;
 };
@@ -89,7 +100,6 @@ struct libscols_column {
 	int	json_type;	/* SCOLS_JSON_* */
 
 	int	flags;
-	int	is_extreme;
 	char	*color;		/* default column color */
 	char	*safechars;	/* do not encode this bytes */
 
@@ -113,10 +123,37 @@ struct libscols_column {
 	struct list_head	cl_columns;
 
 	struct libscols_table	*table;
+
+	unsigned int	is_extreme : 1,		/* extreme width in the column */
+			is_groups  : 1;		/* print group chart */
+
 };
 
 #define colsep(tb)	((tb)->colsep ? (tb)->colsep : " ")
 #define linesep(tb)	((tb)->linesep ? (tb)->linesep : "\n")
+
+enum {
+	SCOLS_GSTATE_NONE = 0,		/* not activate yet */
+	SCOLS_GSTATE_FIRST_MEMBER,
+	SCOLS_GSTATE_MIDDLE_MEMBER,
+	SCOLS_GSTATE_LAST_MEMBER,
+	SCOLS_GSTATE_MIDDLE_CHILD,
+	SCOLS_GSTATE_LAST_CHILD,
+	SCOLS_GSTATE_CONT_MEMBERS,
+	SCOLS_GSTATE_CONT_CHILDREN
+};
+
+struct libscols_group {
+	int     refcount;
+
+	size_t  nmembers;
+
+	struct list_head gr_members;	/* head of line->ln_group */
+	struct list_head gr_children;	/* head of line->ln_children */
+	struct list_head gr_groups;	/* member of table->tb_groups */
+
+	int	state;			/* SCOLS_GSTATE_* */
+};
 
 /*
  * Table line
@@ -131,12 +168,14 @@ struct libscols_line {
 	struct libscols_cell	*cells;		/* array with data */
 	size_t			ncells;		/* number of cells */
 
-	struct list_head	ln_lines;	/* table lines */
-	struct list_head	ln_branch;	/* begin of branch (head of ln_children) */
-	struct list_head	ln_children;
-	struct list_head	ln_group;
+	struct list_head	ln_lines;	/* member of table->tb_lines */
+	struct list_head	ln_branch;	/* head of line->ln_children */
+	struct list_head	ln_children;	/* member of line->ln_children or group->gr_children */
+	struct list_head	ln_groups;	/* member of group->gr_groups */
 
 	struct libscols_line	*parent;
+	struct libscols_group	*parent_group;	/* for group childs */
+	struct libscols_group	*group;		/* for group members */
 };
 
 enum {
@@ -166,6 +205,11 @@ struct libscols_table {
 
 	struct list_head	tb_columns;
 	struct list_head	tb_lines;
+
+	struct list_head	tb_groups;	/* all defined groups */
+	struct libscols_group	**grpset;
+	size_t			grpset_size;
+
 	struct libscols_symbols	*symbols;
 	struct libscols_cell	title;		/* optional table title (for humans) */
 
@@ -217,7 +261,20 @@ static inline int scols_iter_is_last(const struct libscols_iter *itr)
 	return itr->p == itr->head;
 }
 
+/*
+ * line.c
+ */
+int scols_line_next_group_child(struct libscols_line *ln,
+                          struct libscols_iter *itr,
+                          struct libscols_line **chld);
 
+
+/*
+ * table.c
+ */
+int scols_table_next_group(struct libscols_table *tb,
+                          struct libscols_iter *itr,
+                          struct libscols_group **gr);
 
 /*
  * buffer.c
@@ -227,6 +284,7 @@ extern struct libscols_buffer *new_buffer(size_t sz);
 extern void free_buffer(struct libscols_buffer *buf);
 extern int buffer_reset_data(struct libscols_buffer *buf);
 extern int buffer_append_data(struct libscols_buffer *buf, const char *str);
+extern int buffer_append_ntimes(struct libscols_buffer *buf, size_t n, const char *str);
 extern int buffer_set_data(struct libscols_buffer *buf, const char *str);
 extern void buffer_set_art_index(struct libscols_buffer *buf);
 extern char *buffer_get_data(struct libscols_buffer *buf);
@@ -236,6 +294,18 @@ extern char *buffer_get_safe_data(struct libscols_table *tb,
 				  size_t *cells,
 				  const char *safechars);
 extern size_t buffer_get_safe_art_size(struct libscols_buffer *buf);
+
+/*
+ * grouping.c
+ */
+void scols_ref_group(struct libscols_group *gr);
+void scols_group_remove_children(struct libscols_group *gr);
+void scols_group_remove_members(struct libscols_group *gr);
+void scols_unref_group(struct libscols_group *gr);
+void scols_groups_fix_members_order(struct libscols_table *tb);
+int scols_groups_calculate_grpset(struct libscols_table *tb);
+int scols_groups_update_grpset(struct libscols_table *tb, struct libscols_line *ln);
+void scols_groups_reset_state(struct libscols_table *tb);
 
 /*
  * calculate.c
@@ -292,6 +362,55 @@ static inline int is_last_column(struct libscols_column *cl)
 	if (next && scols_column_is_hidden(next) && is_last_column(next))
 		return 1;
 	return 0;
+}
+
+static inline int is_last_group_member(struct libscols_line *ln)
+{
+	if (!ln || !ln->group)
+		return 0;
+
+	return list_entry_is_last(&ln->ln_groups, &ln->group->gr_members);
+}
+
+static inline int is_first_group_member(struct libscols_line *ln)
+{
+	if (!ln || !ln->group)
+		return 0;
+
+	return list_entry_is_first(&ln->ln_groups, &ln->group->gr_members);
+}
+
+static inline int is_group_member(struct libscols_line *ln)
+{
+	return ln && ln->group;
+}
+
+static inline int is_last_group_child(struct libscols_line *ln)
+{
+	if (!ln || !ln->parent_group)
+		return 0;
+
+	return list_entry_is_last(&ln->ln_children, &ln->parent_group->gr_children);
+}
+
+static inline int is_group_child(struct libscols_line *ln)
+{
+	return ln && ln->parent_group;
+}
+
+static inline int has_groups(struct libscols_table *tb)
+{
+	return tb && !list_empty(&tb->tb_groups);
+}
+
+static inline int has_children(struct libscols_line *ln)
+{
+	return ln && !list_empty(&ln->ln_branch);
+}
+
+static inline int has_group_children(struct libscols_line *ln)
+{
+	return ln && ln->group && !list_empty(&ln->group->gr_children);
 }
 
 #endif /* _LIBSMARTCOLS_PRIVATE_H */

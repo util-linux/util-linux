@@ -59,9 +59,16 @@ void scols_ref_symbols(struct libscols_symbols *sy)
 void scols_unref_symbols(struct libscols_symbols *sy)
 {
 	if (sy && --sy->refcount <= 0) {
-		free(sy->branch);
-		free(sy->vert);
-		free(sy->right);
+		free(sy->tree_branch);
+		free(sy->tree_vert);
+		free(sy->tree_right);
+		free(sy->group_last_member);
+		free(sy->group_middle_member);
+		free(sy->group_first_member);
+		free(sy->group_vert);
+		free(sy->group_horz);
+		free(sy->group_last_child);
+		free(sy->group_middle_child);
 		free(sy->title_padding);
 		free(sy->cell_padding);
 		free(sy);
@@ -77,7 +84,7 @@ void scols_unref_symbols(struct libscols_symbols *sy)
  */
 int scols_symbols_set_branch(struct libscols_symbols *sy, const char *str)
 {
-	return strdup_to_struct_member(sy, branch, str);
+	return strdup_to_struct_member(sy, tree_branch, str);
 }
 
 /**
@@ -89,7 +96,7 @@ int scols_symbols_set_branch(struct libscols_symbols *sy, const char *str)
  */
 int scols_symbols_set_vertical(struct libscols_symbols *sy, const char *str)
 {
-	return strdup_to_struct_member(sy, vert, str);
+	return strdup_to_struct_member(sy, tree_vert, str);
 }
 
 /**
@@ -101,7 +108,7 @@ int scols_symbols_set_vertical(struct libscols_symbols *sy, const char *str)
  */
 int scols_symbols_set_right(struct libscols_symbols *sy, const char *str)
 {
-	return strdup_to_struct_member(sy, right, str);
+	return strdup_to_struct_member(sy, tree_right, str);
 }
 
 /**
@@ -137,6 +144,105 @@ int scols_symbols_set_cell_padding(struct libscols_symbols *sy, const char *str)
 	return strdup_to_struct_member(sy, cell_padding, str);
 }
 
+
+/**
+ * scols_symbols_set_group_vertical:
+ * @sy: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent the vertival line
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.34
+ */
+int scols_symbols_set_group_vertical(struct libscols_symbols *sy, const char *str)
+{
+	return strdup_to_struct_member(sy, group_vert, str);
+}
+
+/**
+ * scols_symbols_set_group_horizontal:
+ * @sy: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent the horizontal line
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.34
+ */
+int scols_symbols_set_group_horizontal(struct libscols_symbols *sy, const char *str)
+{
+	return strdup_to_struct_member(sy, group_horz, str);
+}
+
+/**
+ * scols_symbols_set_group_first_member:
+ * @sy: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent first member
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.34
+ */
+int scols_symbols_set_group_first_member(struct libscols_symbols *sy, const char *str)
+{
+	return strdup_to_struct_member(sy, group_first_member, str);
+}
+
+/**
+ * scols_symbols_set_group_last_member:
+ * @sy: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent last member
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.34
+ */
+int scols_symbols_set_group_last_member(struct libscols_symbols *sy, const char *str)
+{
+	return strdup_to_struct_member(sy, group_last_member, str);
+}
+
+/**
+ * scols_symbols_set_group_middle:
+ * @sy: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent middle member
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.34
+ */
+int scols_symbols_set_group_middle_member(struct libscols_symbols *sy, const char *str)
+{
+	return strdup_to_struct_member(sy, group_middle_member, str);
+}
+
+/**
+ * scols_symbols_set_group_last_child:
+ * @sy: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent last child
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.34
+ */
+int scols_symbols_set_group_last_child(struct libscols_symbols *sy, const char *str)
+{
+	return strdup_to_struct_member(sy, group_last_child, str);
+}
+
+/**
+ * scols_symbols_set_group_middle_child:
+ * @sy: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent last child
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.34
+ */
+int scols_symbols_set_group_middle_child(struct libscols_symbols *sy, const char *str)
+{
+	return strdup_to_struct_member(sy, group_middle_child, str);
+}
+
 /**
  * scols_copy_symbols:
  * @sy: a pointer to a struct libscols_symbols instance
@@ -156,11 +262,25 @@ struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sy)
 	if (!ret)
 		return NULL;
 
-	rc = scols_symbols_set_branch(ret, sy->branch);
+	rc = scols_symbols_set_branch(ret, sy->tree_branch);
 	if (!rc)
-		rc = scols_symbols_set_vertical(ret, sy->vert);
+		rc = scols_symbols_set_vertical(ret, sy->tree_vert);
 	if (!rc)
-		rc = scols_symbols_set_right(ret, sy->right);
+		rc = scols_symbols_set_right(ret, sy->tree_right);
+	if (!rc)
+		rc = scols_symbols_set_group_vertical(ret, sy->group_vert);
+	if (!rc)
+		rc = scols_symbols_set_group_horizontal(ret, sy->group_horz);
+	if (!rc)
+		rc = scols_symbols_set_group_first_member(ret, sy->group_first_member);
+	if (!rc)
+		rc = scols_symbols_set_group_last_member(ret, sy->group_last_member);
+	if (!rc)
+		rc = scols_symbols_set_group_middle_member(ret, sy->group_middle_member);
+	if (!rc)
+		rc = scols_symbols_set_group_middle_child(ret, sy->group_middle_child);
+	if (!rc)
+		rc = scols_symbols_set_group_last_child(ret, sy->group_last_child);
 	if (!rc)
 		rc = scols_symbols_set_title_padding(ret, sy->title_padding);
 	if (!rc)

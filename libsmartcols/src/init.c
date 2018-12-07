@@ -25,6 +25,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libsmartcols) =
 	{ "cell", SCOLS_DEBUG_CELL,	"table cell utils" },
 	{ "col", SCOLS_DEBUG_COL,	"cols utils" },
 	{ "help", SCOLS_DEBUG_HELP,	"this help" },
+	{ "group", SCOLS_DEBUG_GROUP,	"lines grouping utils" },
 	{ "line", SCOLS_DEBUG_LINE,	"table line utils" },
 	{ "tab", SCOLS_DEBUG_TAB,	"table utils" },
 	{ NULL, 0, NULL }

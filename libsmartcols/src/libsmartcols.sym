@@ -182,3 +182,15 @@ SMARTCOLS_2.33 {
 	scols_column_set_json_type;
 	scols_column_get_json_type;
 } SMARTCOLS_2.31;
+
+SMARTCOLS_2.34 {
+	scols_table_group_lines;
+	scols_line_link_group;
+	scols_symbols_set_group_vertical;
+	scols_symbols_set_group_horizontal;
+	scols_symbols_set_group_first_member;
+	scols_symbols_set_group_last_member;
+	scols_symbols_set_group_middle_member;
+	scols_symbols_set_group_last_child;
+	scols_symbols_set_group_middle_child;
+} SMARTCOLS_2.33;

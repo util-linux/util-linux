@@ -47,6 +47,7 @@ struct libscols_line *scols_new_line(void)
 	INIT_LIST_HEAD(&ln->ln_lines);
 	INIT_LIST_HEAD(&ln->ln_children);
 	INIT_LIST_HEAD(&ln->ln_branch);
+	INIT_LIST_HEAD(&ln->ln_groups);
 	return ln;
 }
 
@@ -75,6 +76,8 @@ void scols_unref_line(struct libscols_line *ln)
 		DBG(CELL, ul_debugobj(ln, "dealloc"));
 		list_del(&ln->ln_lines);
 		list_del(&ln->ln_children);
+		list_del(&ln->ln_groups);
+		scols_unref_group(ln->group);
 		scols_line_free_cells(ln);
 		free(ln->color);
 		free(ln);
@@ -309,6 +312,26 @@ int scols_line_next_child(struct libscols_line *ln,
 	return rc;
 }
 
+/* private API */
+int scols_line_next_group_child(struct libscols_line *ln,
+			  struct libscols_iter *itr,
+			  struct libscols_line **chld)
+{
+	int rc = 1;
+
+	if (!ln || !itr || !chld || !ln->group)
+		return -EINVAL;
+	*chld = NULL;
+
+	if (!itr->head)
+		SCOLS_ITER_INIT(itr, &ln->group->gr_children);
+	if (itr->p != itr->head) {
+		SCOLS_ITER_ITERATE(itr, *chld, struct libscols_line, ln_children);
+		rc = 0;
+	}
+
+	return rc;
+}
 
 /**
  * scols_line_is_ancestor:
