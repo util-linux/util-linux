@@ -88,6 +88,12 @@ scols_unref_line
 </SECTION>
 
 <SECTION>
+<FILE>grouping</FILE>
+scols_line_link_group
+scols_table_group_lines
+</SECTION>
+
+<SECTION>
 <FILE>symbols</FILE>
 libscols_symbols
 scols_copy_symbols
@@ -98,6 +104,13 @@ scols_symbols_set_right
 scols_symbols_set_vertical
 scols_symbols_set_title_padding
 scols_symbols_set_cell_padding
+scols_symbols_set_group_vertical
+scols_symbols_set_group_horizontal
+scols_symbols_set_group_first_member
+scols_symbols_set_group_last_member
+scols_symbols_set_group_middle_member
+scols_symbols_set_group_last_child
+scols_symbols_set_group_middle_child
 scols_unref_symbols
 </SECTION>
 
