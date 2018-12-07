@@ -141,7 +141,6 @@ struct colinfo {
 	double		whint;		/* width hint (N < 1 is in percent of termwidth) */
 	int		flags;		/* SCOLS_FL_* */
 	const char      *help;
-
 	int		type;		/* COLTYPE_* */
 };
 
@@ -216,7 +215,6 @@ struct lsblk *lsblk;	/* global handler */
  */
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
-
 
 static inline void add_column(int id)
 {
@@ -405,7 +403,7 @@ static char *get_type(struct lsblk_device *dev)
 {
 	char *res = NULL, *p;
 
-	if (cxt->partition)
+	if (device_is_partition(dev))
 		return xstrdup("part");
 
 	if (is_dm(dev->name)) {
@@ -701,7 +699,6 @@ static int is_removable_device(struct lsblk_device *dev, struct lsblk_device *pa
 			/* parent is something else, use sysfs parent */
 			ul_path_scanf(pc, "removable", "%d", &dev->removable);
 	}
-
 done:
 	if (dev->removable == -1)
 		dev->removable = 0;
@@ -717,7 +714,6 @@ static uint64_t device_get_discard_granularity(struct lsblk_device *dev)
 
 	return dev->discard_granularity;
 }
-
 
 /*
  * Generates data (string) for column specified by column ID for specified device. If sortdata
@@ -1032,12 +1028,41 @@ static void device_to_scols(
 	struct libscols_line *ln;
 	struct lsblk_iter itr;
 	struct lsblk_device *child = NULL;
+	int link_group = 0;
 
 	ON_DBG(DEV, if (ul_path_isopen_dirfd(dev->sysfs)) ul_debugobj(dev, "%s ---> is open!", dev->name));
 
-	ln = scols_table_new_line(tab, parent_line);
+	/* Do not print device more than one in --list mode */
+	if (!(lsblk->flags & LSBLK_TREE) && dev->is_printed)
+		return;
+
+	if (lsblk->merge && list_count_entries(&dev->parents) > 1) {
+		if (!lsblk_device_is_last_parent(dev, parent))
+			return;
+		link_group = 1;
+	}
+
+	ln = scols_table_new_line(tab, link_group ? NULL : parent_line);
 	if (!ln)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
+
+	dev->is_printed = 1;
+
+	if (link_group) {
+		struct lsblk_device *p;
+		struct libscols_line *gr = parent_line;
+
+		/* Merge all my parents to the one group */
+		lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+		while (lsblk_device_next_parent(dev, &itr, &p) == 0) {
+			if (!p->scols_line)
+				continue;
+			scols_table_group_lines(tab, gr, p->scols_line, 0);
+		}
+
+		/* Link the group -- this makes group->child connection */
+		scols_line_link_group(ln, gr, 0);
+	}
 
 	/* read column specific data and set it to smartcols table line */
 	for (i = 0; i < ncolumns; i++) {
@@ -1057,13 +1082,15 @@ static void device_to_scols(
 			err(EXIT_FAILURE, _("failed to add output data"));
 	}
 
+	dev->scols_line = ln;
+
 	if (dev->npartitions == 0)
 		/* For partitions we often read from parental whole-disk sysfs,
 		 * otherwise we can close */
 		ul_path_close_dirfd(dev->sysfs);
 
-	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
 
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
 	while (lsblk_device_next_child(dev, &itr, &child) == 0)
 		device_to_scols(child, dev, tab, ln);
 
@@ -1547,6 +1574,7 @@ static int process_all_devices(struct lsblk_devtree *tr)
 			DBG(DEV, ul_debug(" %s: ignore (in-middle)", d->d_name));
 			goto next;
 		}
+
 		lsblk_devtree_add_root(tr, dev);
 		process_dependencies(tr, dev, 1);
 next:
@@ -1690,29 +1718,30 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("List information about block devices.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -D, --discard        print discard capabilities\n"), out);
+	fputs(_(" -E, --dedup <column> de-duplicate output by <column>\n"), out);
+	fputs(_(" -I, --include <list> show only devices with specified major numbers\n"), out);
+	fputs(_(" -J, --json           use JSON output format\n"), out);
+	fputs(_(" -O, --output-all     output all columns\n"), out);
+	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
+	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
+	fputs(_(" -T, --tree           use tree format output\n"), out);
 	fputs(_(" -a, --all            print all devices\n"), out);
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -d, --nodeps         don't print slaves or holders\n"), out);
-	fputs(_(" -D, --discard        print discard capabilities\n"), out);
-	fputs(_(" -z, --zoned          print zone model\n"), out);
 	fputs(_(" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"), out);
 	fputs(_(" -f, --fs             output info about filesystems\n"), out);
 	fputs(_(" -i, --ascii          use ascii characters only\n"), out);
-	fputs(_(" -I, --include <list> show only devices with specified major numbers\n"), out);
-	fputs(_(" -J, --json           use JSON output format\n"), out);
 	fputs(_(" -l, --list           use list format output\n"), out);
-	fputs(_(" -T, --tree           use tree format output\n"), out);
-	fputs(_(" -M, --dedup <column> de-duplicate output by <column>\n"), out);
+	fputs(_(" -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"), out);
 	fputs(_(" -m, --perms          output info about permissions\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -o, --output <list>  output columns\n"), out);
-	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -p, --paths          print complete device path\n"), out);
-	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -s, --inverse        inverse dependencies\n"), out);
-	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -t, --topology       output info about topology\n"), out);
+	fputs(_(" -z, --zoned          print zone model\n"), out);
 	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
 	fputs(_("     --sysroot <dir>  use specified directory as system root\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -1757,12 +1786,13 @@ int main(int argc, char *argv[])
 		{ "bytes",      no_argument,       NULL, 'b' },
 		{ "nodeps",     no_argument,       NULL, 'd' },
 		{ "discard",    no_argument,       NULL, 'D' },
-		{ "dedup",      required_argument, NULL, 'M' },
+		{ "dedup",      required_argument, NULL, 'E' },
 		{ "zoned",      no_argument,       NULL, 'z' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "output",     required_argument, NULL, 'o' },
 		{ "output-all", no_argument,       NULL, 'O' },
+		{ "merge",      no_argument,       NULL, 'M' },
 		{ "perms",      no_argument,       NULL, 'm' },
 		{ "noheadings",	no_argument,       NULL, 'n' },
 		{ "list",       no_argument,       NULL, 'l' },
@@ -1806,7 +1836,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-			       "abdDze:fhJlnmM:o:OpPiI:rstVSTx:", longopts, NULL)) != -1) {
+			       "abdDzE:e:fhJlnMmo:OpPiI:rstVSTx:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1842,6 +1872,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'l':
 			lsblk->flags &= ~LSBLK_TREE; /* disable the default */
+			break;
+		case 'M':
+			lsblk->merge = 1;
 			break;
 		case 'n':
 			lsblk->flags |= LSBLK_NOHEADINGS;
@@ -1923,7 +1956,7 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
-		case 'M':
+		case 'E':
 			lsblk->dedup_id = column_name_to_id(optarg, strlen(optarg));
 			if (lsblk->dedup_id >= 0)
 				break;

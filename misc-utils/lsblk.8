@@ -51,12 +51,17 @@ Print the SIZE column in bytes rather than in a human-readable format.
 .BR \-D , " \-\-discard"
 Print information about the discarding capabilities (TRIM, UNMAP) for each device.
 .TP
-.BR \-z , " \-\-zoned"
-Print the zone model for each device.
-.TP
 .BR \-d , " \-\-nodeps"
 Do not print holder devices or slaves.  For example, \fBlsblk --nodeps /dev/sda\fR prints
 information about the sda device only.
+.TP
+.BR \-E , " \-\-dedup " \fIcolumn\fP
+Use \fIcolumn\fP as a de-duplication key to de-duplicate output tree. If the
+key is not available for the device, or the device is a partition and parental
+whole-disk device provides the same key than the device is always printed.
+
+The usual use case is to de-duplicate output on system multi-path devices, for
+example by \fB\-E WWN\fR.
 .TP
 .BR \-e , " \-\-exclude " \fIlist\fP
 Exclude the devices specified by the comma-separated \fIlist\fR of major device numbers.
@@ -86,15 +91,13 @@ Use ASCII characters for tree formatting.
 Use JSON output format.
 .TP
 .BR \-l , " \-\-list"
-Produce output in the form of a list.
+Produce output in the form of a list. The output does not provide information
+about relationships between devices and since version 2.34 every device is
+printed only once.
 .TP
-.BR \-M , " \-\-dedup " \fIcolumn\fP
-Use \fIcolumn\fP as a de-duplication key to de-duplicate output tree. If the
-key is not available for the device, or the device is a partition and parental
-whole-disk device provides the same key than the device is always printed.
-
-The usual use case is to de-duplicate output on system multi-path devices, for
-example by \fB\-M WWN\fR.
+.BR \-M , " \-\-merge"
+Group parents of sub-trees to provide more readable output for RAIDs and
+Multi-path devices. The tree-like output is required.
 .TP
 .BR \-m , " \-\-perms"
 Output info about device owner, group and mode.  This option is equivalent to
@@ -144,6 +147,9 @@ Display version information and exit.
 Sort output lines by \fIcolumn\fP. This option enables \fB\-\-list\fR output format by default.
 It is possible to use the option \fI\-\-tree\fP to force tree-like output and
 than the tree branches are sorted by the \fIcolumn\fP.
+.TP
+.BR \-z , " \-\-zoned"
+Print the zone model for each device.
 .TP
 .BR " \-\-sysroot " \fIdirectory\fP
 Gather data for a Linux instance other than the instance from which the lsblk

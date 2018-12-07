@@ -43,22 +43,6 @@ lsblk
     and it may be confusing for end-users when FS to DEV mapping is not 1:1 (RAIDs, btrfs, 
     ...)
 
-  - add --merge option to merge the same trees
-	sdb       8:16   0   204M  0 disk  
-	 └─md127   9:127  0 611.5M  0 raid0 
-	sdc       8:32   0   204M  0 disk  
-	 └─md127   9:127  0 611.5M  0 raid0 
-	sdd       8:48   0   204M  0 disk  
-	 └─md127   9:127  0 611.5M  0 raid0 
-    to
-	sdb|       8:16   0   204M  0 disk  
-	sdc|       8:32   0   204M  0 disk  
-	sdd|       8:48   0   204M  0 disk  
-	   └─md127   9:127  0 611.5M  0 raid0 
-
-    This feature will require change to libsmartcols to support "multi-parent"
-    output formatting (more than one parent).
-
 nsenter(1)
 ----------
  - read the default UID and GID from the target process.

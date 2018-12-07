@@ -157,7 +157,7 @@ int lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device
 	list_add_tail(&dp->ls_childs, &parent->childs);
 
 	dp->parent = parent;
-	list_add_tail(&dp->ls_parents, &parent->parents);
+	list_add_tail(&dp->ls_parents, &child->parents);
 
         DBG(DEV, ul_debugobj(parent, "add dependence 0x%p [%s->%s]", dp, parent->name, child->name));
 
@@ -198,6 +198,38 @@ int lsblk_device_next_child(struct lsblk_device *dev,
 	return rc;
 }
 
+int lsblk_device_is_last_parent(struct lsblk_device *dev, struct lsblk_device *parent)
+{
+	struct lsblk_devdep *dp = list_last_entry(
+					&dev->parents,
+					struct lsblk_devdep, ls_parents);
+
+	return dp->parent == parent;
+}
+
+int lsblk_device_next_parent(
+			struct lsblk_device *dev,
+			struct lsblk_iter *itr,
+			struct lsblk_device **parent)
+{
+	int rc = 1;
+
+	if (!dev || !itr || !parent)
+		return -EINVAL;
+	*parent = NULL;
+
+	if (!itr->head)
+		LSBLK_ITER_INIT(itr, &dev->parents);
+	if (itr->p != itr->head) {
+		struct lsblk_devdep *dp = NULL;
+		LSBLK_ITER_ITERATE(itr, dp, struct lsblk_devdep, ls_parents);
+		if (dp)
+			*parent = dp->parent;
+		rc = 0;
+	}
+
+	return rc;
+}
 
 struct lsblk_devtree *lsblk_new_devtree()
 {

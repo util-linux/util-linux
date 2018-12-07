@@ -45,6 +45,7 @@ struct lsblk {
 	unsigned int all_devices:1;	/* print all devices, including empty */
 	unsigned int bytes:1;		/* print SIZE in bytes */
 	unsigned int inverse:1;		/* print inverse dependencies */
+	unsigned int merge:1;           /* merge sub-trees */
 	unsigned int nodeps:1;		/* don't print slaves/holders */
 	unsigned int scsi:1;		/* print only device with HCTL (SCSI) */
 	unsigned int paths:1;		/* print devnames with "/dev" prefix */
@@ -93,6 +94,8 @@ struct lsblk_device {
 
 	struct lsblk_device	*wholedisk;	/* for partitions */
 
+	struct libscols_line	*scols_line;
+
 	struct lsblk_devprop	*properties;
 	struct stat	st;
 
@@ -120,6 +123,7 @@ struct lsblk_device {
 
 	unsigned int	is_mounted : 1,
 			is_swap : 1,
+			is_printed : 1,
 			udev_requested : 1,
 			blkid_requested : 1;
 };
@@ -195,6 +199,12 @@ int lsblk_device_has_child(struct lsblk_device *dev, struct lsblk_device *child)
 int lsblk_device_next_child(struct lsblk_device *dev,
                           struct lsblk_iter *itr,
                           struct lsblk_device **child);
+
+int lsblk_device_is_last_parent(struct lsblk_device *dev, struct lsblk_device *parent);
+int lsblk_device_next_parent(
+                        struct lsblk_device *dev,
+                        struct lsblk_iter *itr,
+                        struct lsblk_device **parent);
 
 struct lsblk_devtree *lsblk_new_devtree(void);
 void lsblk_ref_devtree(struct lsblk_devtree *tr);
