@@ -488,7 +488,7 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aAcdfhilnRrO:t:vVN:",
+	while ((c = getopt_long(argc, argv, "aAcdfhilnqRrO:t:vVN:",
 					longopts, NULL)) != -1) {
 
 
