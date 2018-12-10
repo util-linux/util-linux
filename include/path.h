@@ -108,6 +108,7 @@ int ul_path_write_string(struct path_cxt *pc, const char *str, const char *path)
 int ul_path_writef_string(struct path_cxt *pc, const char *str, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 3, 4)));
 
+int ul_path_write_s64(struct path_cxt *pc, int64_t num, const char *path);
 int ul_path_write_u64(struct path_cxt *pc, uint64_t num, const char *path);
 int ul_path_writef_u64(struct path_cxt *pc, uint64_t num, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 3, 4)));

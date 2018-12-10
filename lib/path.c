@@ -834,6 +834,28 @@ int ul_path_writef_string(struct path_cxt *pc, const char *str, const char *path
 	return ul_path_write_string(pc, str, p);
 }
 
+int ul_path_write_s64(struct path_cxt *pc, int64_t num, const char *path)
+{
+	char buf[sizeof(stringify_value(LLONG_MAX))];
+	int rc, errsv;
+	int fd, len;
+
+	fd = ul_path_open(pc, O_WRONLY|O_CLOEXEC, path);
+	if (fd < 0)
+		return -errno;
+
+	len = snprintf(buf, sizeof(buf), "%" PRId64, num);
+	if (len < 0 || (size_t) len >= sizeof(buf))
+		rc = len < 0 ? -errno : -E2BIG;
+	else
+		rc = write_all(fd, buf, len);
+
+	errsv = errno;
+	close(fd);
+	errno = errsv;
+	return rc;
+}
+
 int ul_path_write_u64(struct path_cxt *pc, uint64_t num, const char *path)
 {
 	char buf[sizeof(stringify_value(ULLONG_MAX))];
