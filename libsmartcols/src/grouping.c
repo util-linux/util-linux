@@ -112,9 +112,9 @@ void scols_groups_fix_members_order(struct libscols_table *tb)
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (scols_table_next_group(tb, &itr, &gr) == 0) {
 		while (!list_empty(&gr->gr_members)) {
-			struct libscols_line *ln = list_entry(gr->gr_members.next,
+			struct libscols_line *line = list_entry(gr->gr_members.next,
 						struct libscols_line, ln_groups);
-			list_del_init(&ln->ln_groups);
+			list_del_init(&line->ln_groups);
 		}
 	}
 
