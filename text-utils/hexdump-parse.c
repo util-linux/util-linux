@@ -128,8 +128,8 @@ void add_fmt(const char *fmt, struct hexdump *hex)
 		/* If leading digit, repetition count. */
 		if (isdigit(*p)) {
 			savep = p;
-			while (isdigit(*p) && ++p)
-				;
+			while (isdigit(*p))
+				p++;
 			if (!isspace(*p) && *p != '/')
 				badfmt(fmt);
 			/* may overwrite either white space or slash */
@@ -146,8 +146,8 @@ void add_fmt(const char *fmt, struct hexdump *hex)
 		/* byte count */
 		if (isdigit(*p)) {
 			savep = p;
-			while (isdigit(*p) && ++p)
-				;
+			while (isdigit(*p))
+				p++;
 			if (!isspace(*p))
 				badfmt(fmt);
 			tfu->bcnt = atoi(savep);
@@ -261,7 +261,7 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 			if (fu->bcnt) {
 				sokay = USEBCNT;
 				/* skip to conversion character */
-				while (++p1 && strchr(spec, *p1))
+				for (p1++; strchr(spec, *p1); p1++)
 					;
 			} else {
 				/* skip any special chars, field width */
@@ -462,6 +462,8 @@ isint:				cs[3] = '\0';
 				fu->reps += (hex->blocksize - fs->bcnt) / fu->bcnt;
 		if (fu->reps > 1 && !list_empty(&fu->prlist)) {
 			pr = list_last_entry(&fu->prlist, struct hexdump_pr, prlist);
+			if (!pr)
+				continue;
 			for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
 				p2 = isspace(*p1) ? p1 : NULL;
 			if (p2)
