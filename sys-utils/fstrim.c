@@ -242,9 +242,26 @@ static int fstrim_all(struct fstrim_control *ctl)
 	mnt_table_uniq_fs(tab, MNT_UNIQ_FORWARD, uniq_fs_source_cmp);
 
 	if (ctl->fstab) {
+		char *rootdev = NULL;
+
 		cache = mnt_new_cache();
 		if (!cache)
 			err(MNT_EX_FAIL, _("failed to initialize libmount cache"));
+
+		/* Make sure we trim also root FS on --fstab */
+		if (mnt_table_find_target(tab, "/", MNT_ITER_FORWARD) == NULL &&
+		    mnt_guess_system_root(0, cache, &rootdev) == 0) {
+
+			fs = mnt_new_fs();
+			if (!fs)
+				err(MNT_EX_FAIL, _("failed to allocate FS handler"));
+			mnt_fs_set_target(fs, "/");
+			mnt_fs_set_source(fs, rootdev);
+			mnt_fs_set_fstype(fs, "auto");
+			mnt_table_add_fs(tab, fs);
+			mnt_unref_fs(fs);
+			fs = NULL;
+		}
 	}
 
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {

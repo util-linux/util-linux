@@ -48,7 +48,8 @@ KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 .IP "\fB\-A, \-\-fstab\fP"
 Trim all mounted filesystems mentioned in \fI/etc/fstab\fR on devices that support the
-discard operation.
+discard operation.  The root filesystem is determined from kernel command line if missing
+in the file.
 The other supplied options, like \fB\-\-offset\fR, \fB\-\-length\fR and
 \fB-\-minimum\fR, are applied to all these devices.
 Errors from filesystems that do not support the discard operation are silently
