@@ -80,7 +80,7 @@
 # endif
 #endif
 
-#if (__GNUC__ >= 5) || ((__GNUC__ >= 4) && (__GNUC_MINOR__ >= 9))
+#if __GNUC_PREREQ (4, 9)
 # define __ul_returns_nonnull __attribute__((returns_nonnull))
 #else
 # define __ul_returns_nonnull
