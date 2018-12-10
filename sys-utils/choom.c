@@ -74,7 +74,7 @@ static int get_score_adj(struct path_cxt *pc)
 
 static int set_score_adj(struct path_cxt *pc, int adj)
 {
-	return ul_path_write_u64(pc, adj, "oom_score_adj");
+	return ul_path_write_s64(pc, adj, "oom_score_adj");
 }
 
 int main(int argc, char **argv)
