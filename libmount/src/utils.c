@@ -1037,7 +1037,12 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 	return res;
 }
 
-/*
+/**
+ * mnt_guess_system_root:
+ * @devno: device number or zero
+ * @cache: paths cache or NULL
+ * @path: returns allocated path
+ *
  * Converts @devno to the real device name if devno major number is greater
  * than zero, otherwise use root= kernel cmdline option to get device name.
  *

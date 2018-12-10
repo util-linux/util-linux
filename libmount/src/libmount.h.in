@@ -326,6 +326,8 @@ extern const char *mnt_get_mtab_path(void);
 extern int mnt_has_regular_mtab(const char **mtab, int *writable);
 extern char *mnt_get_mountpoint(const char *path)
 			__ul_attribute__((warn_unused_result));
+extern int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char **path)
+			__ul_attribute__((nonnull(3)));
 
 /* cache.c */
 extern struct libmnt_cache *mnt_new_cache(void)

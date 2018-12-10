@@ -398,6 +398,7 @@ mnt_get_fstab_path
 mnt_get_mountpoint
 mnt_get_mtab_path
 mnt_get_swaps_path
+mnt_guess_system_root
 mnt_has_regular_mtab
 mnt_mangle
 mnt_match_fstype

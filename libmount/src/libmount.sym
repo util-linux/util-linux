@@ -341,3 +341,7 @@ MOUNT_2.33 {
 	mnt_context_switch_origin_ns;
 	mnt_context_switch_target_ns;
 } MOUNT_2.30;
+
+MOUNT_2.34 {
+	mnt_guess_system_root;
+} MOUNT_2.33;
