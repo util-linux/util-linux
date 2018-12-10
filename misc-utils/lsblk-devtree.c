@@ -203,7 +203,8 @@ int lsblk_device_is_last_parent(struct lsblk_device *dev, struct lsblk_device *p
 	struct lsblk_devdep *dp = list_last_entry(
 					&dev->parents,
 					struct lsblk_devdep, ls_parents);
-
+	if (!dp)
+		return 0;
 	return dp->parent == parent;
 }
 
