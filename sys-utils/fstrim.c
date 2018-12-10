@@ -323,7 +323,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --length <num>  the number of bytes to discard\n"), out);
 	fputs(_(" -m, --minimum <num> the minimum extent length to discard\n"), out);
 	fputs(_(" -v, --verbose       print number of discarded bytes\n"), out);
-	fputs(_(" -d, --dry-run       does everything, but trim\n"), out);
+	fputs(_(" -n, --dry-run       does everything, but trim\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(21));
