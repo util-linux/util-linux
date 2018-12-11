@@ -611,15 +611,21 @@ static const char *get_pwd_method(const char *str, const char **next, unsigned i
 
 #define is_valid_pwd_char(x)	(isalnum((unsigned char) (x)) || (x) ==  '.' || (x) == '/')
 
+/*
+ * This function do not accept empty passwords or locked accouns.
+ */
 static int valid_pwd(const char *str)
 {
 	const char *p = str;
 	unsigned int sz = 0, n;
 
+	if (!str || !*str)
+		return 0;
+
 	/* $id$ */
 	if (get_pwd_method(str, &p, &sz) == NULL)
 		return 0;
-	if (!*p)
+	if (!p || !*p)
 		return 0;
 
 	/* salt$ */
@@ -635,7 +641,7 @@ static int valid_pwd(const char *str)
 		return 0;
 
 	/* encrypted */
-	for (n = 0; p && *p; p++, n++) {
+	for (n = 0; *p; p++, n++) {
 		if (!is_valid_pwd_char(*p))
 			return 0;
 	}
