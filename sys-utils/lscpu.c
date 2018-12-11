@@ -33,6 +33,7 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/personality.h>
 
 #if (defined(__x86_64__) || defined(__i386__))
 # if !defined( __SANITIZE_ADDRESS__)
@@ -331,6 +332,19 @@ init_mode(struct lscpu_modifier *mod)
 #if defined(__i386__) || defined(__x86_64__) || \
     defined(__s390x__) || defined(__s390__) || defined(__sparc_v9__)
 	m |= MODE_32BIT;
+#endif
+
+#if defined(__aarch64__)
+	{
+		/* personality() is the most reliable way (since 4.7)
+		 * to determine aarch32 support */
+		int pers = personality(PER_LINUX32);
+		if (pers != -1) {
+			personality(pers);
+			m |= MODE_32BIT;
+		}
+		m |= MODE_64BIT;
+	}
 #endif
 	return m;
 }
