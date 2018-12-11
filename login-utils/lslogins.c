@@ -623,7 +623,7 @@ static int valid_pwd(const char *str)
 		return 0;
 
 	/* salt$ */
-	for (; p && *p; p++) {
+	for (; *p; p++) {
 		if (*p == '$') {
 			p++;
 			break;

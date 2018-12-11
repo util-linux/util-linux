@@ -747,7 +747,7 @@ static char *device_get_data(
 	case COL_OWNER:
 	{
 		struct stat *st = device_get_stat(dev);
-		struct passwd *pw = st ? NULL : getpwuid(st->st_uid);
+		struct passwd *pw = st ? getpwuid(st->st_uid) : NULL;
 		if (pw)
 			str = xstrdup(pw->pw_name);
 		break;
@@ -755,7 +755,7 @@ static char *device_get_data(
 	case COL_GROUP:
 	{
 		struct stat *st = device_get_stat(dev);
-		struct group *gr = st ? NULL : getgrgid(st->st_gid);
+		struct group *gr = st ? getgrgid(st->st_gid) : NULL;
 		if (gr)
 			str = xstrdup(gr->gr_name);
 		break;
