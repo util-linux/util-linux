@@ -124,9 +124,11 @@ e.g.\& using a command like
 
 .nf
 .RS
-# fallocate \-\-length 8GiB swapfile
+# dd if=/dev/zero of=swapfile bs=1MiB count=$((8*1024))
 .RE
 .fi
+
+to create 8GiB swapfile.
 
 Note that a swap file must not contain any holes.  Using
 .BR cp (1)
