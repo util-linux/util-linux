@@ -156,7 +156,7 @@ static inline const char *group_state_to_string(int state)
 	assert((size_t) state < ARRAY_SIZE(grpstates));
 
 	return grpstates[state];
-};
+}
 
 static void grpset_debug(struct libscols_table *tb, struct libscols_line *ln)
 {
