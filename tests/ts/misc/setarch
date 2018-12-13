@@ -20,6 +20,8 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SETARCH"
 
+ts_skip_nonroot
+
 ARCH=$(uname -m)
 
 ts_init_subtest options
