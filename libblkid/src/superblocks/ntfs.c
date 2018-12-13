@@ -75,10 +75,8 @@ struct file_attribute {
 /* Windows 10 Creators edition has extended the cluster size limit to 2MB */
 #define NTFS_MAX_CLUSTER_SIZE	(2 * 1024 * 1024)
 
-enum {
-	MFT_RECORD_ATTR_VOLUME_NAME		= 0x60,
-	MFT_RECORD_ATTR_END			= 0xffffffff
-};
+static const uint32_t MFT_RECORD_ATTR_VOLUME_NAME = 0x60;
+static const uint32_t MFT_RECORD_ATTR_END = 0xffffffff;
 
 static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
