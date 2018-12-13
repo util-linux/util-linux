@@ -83,9 +83,9 @@ static int probe_stratis(blkid_probe pr,
 				sizeof(stratis->pool_uuid));
 
 	blkid_probe_sprintf_value(pr, "BLOCKDEV_SECTORS", "%" PRIu64,
-					stratis->sectors);
+				le64_to_cpu(stratis->sectors));
 	blkid_probe_sprintf_value(pr, "BLOCKDEV_INITTIME", "%" PRIu64,
-					stratis->initialization_time);
+				le64_to_cpu(stratis->initialization_time));
 
 	return 0;
 }
