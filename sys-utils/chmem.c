@@ -354,7 +354,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char **argv)
 {
-	struct chmem_desc _desc = { }, *desc = &_desc;
+	struct chmem_desc _desc = { 0 }, *desc = &_desc;
 	int cmd = CMD_NONE, zone_id = -1;
 	char *zone = NULL;
 	int c, rc;
