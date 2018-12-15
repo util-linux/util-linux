@@ -7,8 +7,9 @@
 
 MAILING LIST:
 
-      E-MAIL: util-linux@vger.kernel.org
-      URL:    http://vger.kernel.org/vger-lists.html#util-linux
+      E-MAIL:  util-linux@vger.kernel.org
+      URL:     http://vger.kernel.org/vger-lists.html#util-linux
+      ARCHIVE: https://lore.kernel.org/util-linux/
 
       The mailing list will reject email messages that contain:
        - more than 100K characters
