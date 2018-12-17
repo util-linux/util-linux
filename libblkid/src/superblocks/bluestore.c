@@ -49,6 +49,7 @@ const struct blkid_idinfo bluestore_idinfo =
 	.probefunc	= probe_bluestore,
 	.magics		=
 	{
-		{ .magic = "bluestore block device", .len = 22 }
+		{ .magic = "bluestore block device", .len = 22 },
+		{ NULL }
 	}
 };
