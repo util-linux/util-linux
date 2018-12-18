@@ -27,7 +27,6 @@
 
 struct bluestore_phdr {
 	uint8_t		magic[BLUESTORE_MAGIC_L];
-	uint32_t	version;
 } __attribute__((packed));
 
 static int probe_bluestore(blkid_probe pr, const struct blkid_idmag *mag)
@@ -38,7 +37,6 @@ static int probe_bluestore(blkid_probe pr, const struct blkid_idmag *mag)
 	if (header == NULL)
 		return errno ? -errno : 1;
 
-	blkid_probe_sprintf_version(pr, "%u", le32_to_cpu(header->version));
 	return 0;
 }
 
