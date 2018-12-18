@@ -145,7 +145,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --init-groups               initialize supplementary groups\n"), out);
 	fputs(_(" --groups <group,...>        set supplementary groups by UID or name\n"), out);
 	fputs(_(" --securebits <bits>         set securebits\n"), out);
-	fputs(_(" --reset-env                 reset environment variables\n"), out);
 	fputs(_(" --pdeathsig keep|clear|<signame>\n"
 	        "                             set or clear parent death signal\n"), out);
 	fputs(_(" --selinux-label <label>     set SELinux label\n"), out);
