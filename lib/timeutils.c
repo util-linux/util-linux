@@ -503,34 +503,37 @@ int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz)
 }
 
 /* relative time functions */
-int time_is_today(const time_t *t, struct timeval *now)
+static inline int time_is_thisyear(struct tm const *const tm,
+				   struct tm const *const tmnow)
 {
-	if (now->tv_sec == 0)
-		gettimeofday(now, NULL);
-	return *t / (3600 * 24) == now->tv_sec / (3600 * 24);
+	return tm->tm_year == tmnow->tm_year;
 }
 
-int time_is_thisyear(const time_t *t, struct timeval *now)
+static inline int time_is_today(struct tm const *const tm,
+				struct tm const *const tmnow)
 {
-	if (now->tv_sec == 0)
-		gettimeofday(now, NULL);
-	return *t / (3600 * 24 * 365) == now->tv_sec / (3600 * 24 * 365);
+	return (tm->tm_yday == tmnow->tm_yday &&
+		time_is_thisyear(tm, tmnow));
 }
 
 int strtime_short(const time_t *t, struct timeval *now, int flags, char *buf, size_t bufsz)
 {
-        struct tm tm;
+	struct tm tm, tmnow;
 	int rc = 0;
 
-        localtime_r(t, &tm);
+	if (now->tv_sec == 0)
+		gettimeofday(now, NULL);
 
-	if (time_is_today(t, now)) {
+	localtime_r(t, &tm);
+	localtime_r(&now->tv_sec, &tmnow);
+
+	if (time_is_today(&tm, &tmnow)) {
 		rc = snprintf(buf, bufsz, "%02d:%02d", tm.tm_hour, tm.tm_min);
 		if (rc < 0 || (size_t) rc > bufsz)
 			return -1;
 		rc = 1;
 
-	} else if (time_is_thisyear(t, now)) {
+	} else if (time_is_thisyear(&tm, &tmnow)) {
 		if (flags & UL_SHORTTIME_THISYEAR_HHMM)
 			rc = strftime(buf, bufsz, "%b%d/%H:%M", &tm);
 		else
