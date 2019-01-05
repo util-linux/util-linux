@@ -242,7 +242,7 @@ static int my_cfsetspeed(struct termios *ts, int speed)
 	 * -- we have to bypass glibc and set the speed manually (because glibc
 	 *    checks for speed and supports Bxxx bit rates only)...
 	 */
-#ifdef _HAVE_STRUCT_TERMIOS_C_ISPEED
+#if _HAVE_STRUCT_TERMIOS_C_ISPEED
 # define BOTHER 0010000		/* non standard rate */
 	dbg("using non-standard speeds");
 	ts->c_ospeed = ts->c_ispeed = speed;
