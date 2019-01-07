@@ -454,7 +454,9 @@ hwclock_SOURCES = \
 	sys-utils/hwclock.h \
 	sys-utils/hwclock-cmos.c
 if LINUX
-hwclock_SOURCES += sys-utils/hwclock-rtc.c
+hwclock_SOURCES += \
+	sys-utils/hwclock-rtc.c \
+	lib/monotonic.c
 endif
 hwclock_LDADD = $(LDADD) libcommon.la -lm
 if HAVE_AUDIT
