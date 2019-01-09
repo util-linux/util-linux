@@ -1,0 +1,51 @@
+util-linux 2.33.1 Release Notes
+===============================
+
+agetty:
+   - Return old behavior with empty logname  [Stanislav Brabec]
+   - fix output of escaped characters  [Christian Hesse]
+   - fix portability issues  [Samuel Thibault]
+build-sys:
+   - do not require crypt()  [Karel Zak]
+   - do not require dirfd()  [Karel Zak]
+   - make fdisk, sfdisk, cfdisk optional (enabled by default)  [Carlos Santos]
+chmem:
+   - add initilizer [clang]  [Sami Kerola]
+choom:
+   - fix negative adjust score usage  [Karel Zak]
+dmesg:
+   - correct "-n, --console-level level" example in manual page  [Jean-Philippe ROMAIN]
+docs:
+   - add link to mail list archive  [Sami Kerola]
+   - update AUTHORS file  [Karel Zak]
+fstrim:
+   - Add Documentation key to fstrim.service  [Andreas Henriksson]
+   - fix usage()  [Karel Zak]
+include/c:
+   - re-add type checking in container_of()  [Ruediger Meier]
+libblkid:
+   - (ntfs) fix compiler warning [-Wpedantic]  [Karel Zak]
+   - fix detection of dm-integrity superblock  [Milan Broz]
+   - stratis  correct byte order  [Tony Asleson]
+libmount:
+   - (umount) make mnt_stat_mountpoin() usable for relative paths  [Karel Zak]
+libuuid:
+   - fix man page typos  [Seth Girvan]
+mkswap:
+   - fix page size warning message  [Noel Cragg]
+   - use dd(1) in example rather than fallocate(1)  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
+setarch:
+   - fix obscure sparc32bash use-case  [Karel Zak]
+tests:
+   - check for tar and {b,g}zip  [Karel Zak]
+   - enlarge backing file for fstab-btrfs  [Karel Zak]
+   - make lsns-netnsid portable  [Karel Zak]
+   - run oids test only when uuidgen tool was built  [Thomas Deutschmann]
+umount:
+   - fix --quiet  [Karel Zak]
+uuidd:
+   - Add Documentation key to uuidd.service  [Andreas Henriksson]
