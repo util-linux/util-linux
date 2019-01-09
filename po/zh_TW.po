@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-11-06 11:44+0100\n"
+"POT-Creation-Date: 2019-01-09 11:05+0100\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -62,11 +62,11 @@ msgstr "不足引數"
 #: sys-utils/hwclock-rtc.c:397 sys-utils/hwclock-rtc.c:432
 #: sys-utils/ldattach.c:392 sys-utils/lscpu.c:393 sys-utils/nsenter.c:129
 #: sys-utils/rfkill.c:192 sys-utils/rfkill.c:553 sys-utils/rtcwake.c:136
-#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:291 sys-utils/setpriv.c:660
-#: sys-utils/setpriv.c:683 sys-utils/swapon.c:375 sys-utils/swapon.c:518
+#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:290 sys-utils/setpriv.c:659
+#: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
 #: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2867 term-utils/mesg.c:132 term-utils/script.c:540
+#: term-utils/agetty.c:2871 term-utils/mesg.c:132 term-utils/script.c:540
 #: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
@@ -1828,7 +1828,7 @@ msgstr "%s 未被掛載\n"
 #: disk-utils/fsck.cramfs.c:178 disk-utils/fsck.cramfs.c:234
 #: disk-utils/fsck.cramfs.c:255 disk-utils/sfdisk.c:298 libfdisk/src/bsd.c:646
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:656
-#: sys-utils/ctrlaltdel.c:44 sys-utils/rfkill.c:213 sys-utils/setpriv.c:300
+#: sys-utils/ctrlaltdel.c:44 sys-utils/rfkill.c:213 sys-utils/setpriv.c:299
 #: term-utils/setterm.c:723 term-utils/setterm.c:780 term-utils/setterm.c:784
 #: term-utils/setterm.c:791
 #, fuzzy, c-format
@@ -2253,7 +2253,7 @@ msgstr "非大小 (%ld vs %ld) 位元組"
 
 #: disk-utils/fsck.cramfs.c:415 disk-utils/fsck.cramfs.c:518
 #: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:366 sys-utils/fallocate.c:409
-#: sys-utils/rfkill.c:560 sys-utils/setpriv.c:666 sys-utils/setpriv.c:689
+#: sys-utils/rfkill.c:560 sys-utils/setpriv.c:665 sys-utils/setpriv.c:688
 #: sys-utils/swapon.c:393 term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
@@ -10311,7 +10311,7 @@ msgstr ""
 msgid "     --verbose          print pids that will be signaled\n"
 msgstr " -v, --verbose              解釋什麼正在是已完成\n"
 
-#: misc-utils/kill.c:240 misc-utils/kill.c:249 sys-utils/setpriv.c:483
+#: misc-utils/kill.c:240 misc-utils/kill.c:249 sys-utils/setpriv.c:482
 #: sys-utils/unshare.c:389
 #, fuzzy, c-format
 msgid "unknown signal: %s"
@@ -13931,8 +13931,9 @@ msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose             列印詳細的資料\n"
 
 #: sys-utils/fstrim.c:326
-msgid " -d, --dry-run       does everything, but trim\n"
-msgstr ""
+#, fuzzy
+msgid " -n, --dry-run       does everything, but trim\n"
+msgstr " -n, --noparity          設定同位到無\n"
 
 #: sys-utils/fstrim.c:387
 #, fuzzy
@@ -17166,7 +17167,7 @@ msgstr "掛載失敗"
 msgid "change directory by working directory file descriptor failed"
 msgstr "變更目錄到系統根失敗"
 
-#: sys-utils/nsenter.c:472 sys-utils/setpriv.c:1061 sys-utils/setpriv.c:1068
+#: sys-utils/nsenter.c:472 sys-utils/setpriv.c:1060 sys-utils/setpriv.c:1067
 #, fuzzy
 msgid "setgroups failed"
 msgstr "strdup 失敗"
@@ -18014,36 +18015,31 @@ msgstr ""
 msgid "Kernel cannot set architecture to %s"
 msgstr "無法設定逾時用於 %s"
 
-#: sys-utils/setarch.c:307
+#: sys-utils/setarch.c:308
 msgid "Not enough arguments"
 msgstr "引數不足"
 
-#: sys-utils/setarch.c:316
-#, c-format
-msgid "Failed to set personality to %s"
-msgstr "設定身分為 %s 時失敗"
-
-#: sys-utils/setarch.c:381
+#: sys-utils/setarch.c:382
 #, fuzzy
 msgid "unrecognized option '--list'"
 msgstr "無法辨識的輸入：%s"
 
-#: sys-utils/setarch.c:389
+#: sys-utils/setarch.c:390
 #, fuzzy
 msgid "no architecture argument or personality flags specified"
 msgstr "未指定任何長度引數"
 
-#: sys-utils/setarch.c:400
+#: sys-utils/setarch.c:402
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s：無法辨識的架構"
 
-#: sys-utils/setarch.c:418
+#: sys-utils/setarch.c:420
 #, fuzzy, c-format
 msgid "failed to set personality to %s"
 msgstr "設定身分為 %s 時失敗"
 
-#: sys-utils/setarch.c:426
+#: sys-utils/setarch.c:432
 #, fuzzy, c-format
 msgid "Execute command `%s'.\n"
 msgstr "執行日期命令：%s\n"
@@ -18135,382 +18131,377 @@ msgstr " -7, --sevenbits         設定字元大小到 7 位元\n"
 
 #: sys-utils/setpriv.c:148
 #, fuzzy
-msgid " --reset-env                 reset environment variables\n"
-msgstr " -r, --reset                  重置通訊埠\n"
-
-#: sys-utils/setpriv.c:149
-#, fuzzy
 msgid ""
 " --pdeathsig keep|clear|<signame>\n"
 "                             set or clear parent death signal\n"
 msgstr " -q, --stats                        顯示統計關於 tty\n"
 
-#: sys-utils/setpriv.c:151
+#: sys-utils/setpriv.c:150
 #, fuzzy
 msgid " --selinux-label <label>     set SELinux label\n"
 msgstr " -o, --office <office>        辦公室數字\n"
 
-#: sys-utils/setpriv.c:152
+#: sys-utils/setpriv.c:151
 msgid " --apparmor-profile <pr>     set AppArmor profile\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:153
+#: sys-utils/setpriv.c:152
 msgid ""
 " --reset-env                 clear all environment and initialize\n"
 "                               HOME, SHELL, USER, LOGNAME and PATH\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:159
+#: sys-utils/setpriv.c:158
 msgid " This tool can be dangerous.  Read the manpage, and be careful.\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:202
+#: sys-utils/setpriv.c:201
 #, fuzzy
 msgid "invalid capability type"
 msgstr "無效的分割區類型『%c』\n"
 
-#: sys-utils/setpriv.c:254 sys-utils/setpriv.c:598
+#: sys-utils/setpriv.c:253 sys-utils/setpriv.c:597
 msgid "getting process secure bits failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:258
+#: sys-utils/setpriv.c:257
 #, c-format
 msgid "Securebits: "
 msgstr ""
 
-#: sys-utils/setpriv.c:278
+#: sys-utils/setpriv.c:277
 #, fuzzy, c-format
 msgid "[none]\n"
 msgstr "無"
 
-#: sys-utils/setpriv.c:304
+#: sys-utils/setpriv.c:303
 #, fuzzy, c-format
 msgid "%s: too long"
 msgstr "列太長"
 
-#: sys-utils/setpriv.c:332
+#: sys-utils/setpriv.c:331
 #, c-format
 msgid "Supplementary groups: "
 msgstr ""
 
-#: sys-utils/setpriv.c:334 sys-utils/setpriv.c:400 sys-utils/setpriv.c:405
-#: sys-utils/setpriv.c:411 sys-utils/setpriv.c:417 sys-utils/setpriv.c:424
+#: sys-utils/setpriv.c:333 sys-utils/setpriv.c:399 sys-utils/setpriv.c:404
+#: sys-utils/setpriv.c:410 sys-utils/setpriv.c:416 sys-utils/setpriv.c:423
 #, fuzzy, c-format
 msgid "[none]"
 msgstr "無"
 
-#: sys-utils/setpriv.c:352
+#: sys-utils/setpriv.c:351
 #, fuzzy
 msgid "get pdeathsig failed"
 msgstr "setuid 失敗"
 
-#: sys-utils/setpriv.c:372
+#: sys-utils/setpriv.c:371
 #, c-format
 msgid "uid: %u\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:373
+#: sys-utils/setpriv.c:372
 #, c-format
 msgid "euid: %u\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:376
+#: sys-utils/setpriv.c:375
 #, c-format
 msgid "suid: %u\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:378 sys-utils/setpriv.c:491
+#: sys-utils/setpriv.c:377 sys-utils/setpriv.c:490
 #, fuzzy
 msgid "getresuid failed"
 msgstr "setuid 失敗"
 
-#: sys-utils/setpriv.c:387 sys-utils/setpriv.c:506
+#: sys-utils/setpriv.c:386 sys-utils/setpriv.c:505
 #, fuzzy
 msgid "getresgid failed"
 msgstr "setgid 失敗"
 
-#: sys-utils/setpriv.c:398
+#: sys-utils/setpriv.c:397
 #, c-format
 msgid "Effective capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:403
+#: sys-utils/setpriv.c:402
 #, c-format
 msgid "Permitted capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:409
+#: sys-utils/setpriv.c:408
 #, c-format
 msgid "Inheritable capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:414
+#: sys-utils/setpriv.c:413
 #, c-format
 msgid "Ambient capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:419
+#: sys-utils/setpriv.c:418
 #, fuzzy, c-format
 msgid "[unsupported]"
 msgstr "不受支援的命令"
 
-#: sys-utils/setpriv.c:422
+#: sys-utils/setpriv.c:421
 #, c-format
 msgid "Capability bounding set: "
 msgstr ""
 
-#: sys-utils/setpriv.c:431
+#: sys-utils/setpriv.c:430
 #, fuzzy
 msgid "SELinux label"
 msgstr "Linux 純文字"
 
-#: sys-utils/setpriv.c:434
+#: sys-utils/setpriv.c:433
 msgid "AppArmor profile"
 msgstr ""
 
-#: sys-utils/setpriv.c:447
+#: sys-utils/setpriv.c:446
 #, c-format
 msgid "cap %d: libcap-ng is broken"
 msgstr ""
 
-#: sys-utils/setpriv.c:469
+#: sys-utils/setpriv.c:468
 msgid "Invalid supplementary group id"
 msgstr ""
 
-#: sys-utils/setpriv.c:479
+#: sys-utils/setpriv.c:478
 #, fuzzy
 msgid "failed to get parent death signal"
 msgstr "剖析掛載表時失敗"
 
-#: sys-utils/setpriv.c:499
+#: sys-utils/setpriv.c:498
 #, fuzzy
 msgid "setresuid failed"
 msgstr "setuid 失敗"
 
-#: sys-utils/setpriv.c:514
+#: sys-utils/setpriv.c:513
 #, fuzzy
 msgid "setresgid failed"
 msgstr "setgid 失敗"
 
-#: sys-utils/setpriv.c:546
+#: sys-utils/setpriv.c:545
 #, fuzzy
 msgid "unsupported capability type"
 msgstr "不受支援的引數：%s"
 
-#: sys-utils/setpriv.c:563
+#: sys-utils/setpriv.c:562
 msgid "bad capability string"
 msgstr ""
 
-#: sys-utils/setpriv.c:571
+#: sys-utils/setpriv.c:570
 msgid "libcap-ng is too old for \"all\" caps"
 msgstr ""
 
-#: sys-utils/setpriv.c:583
+#: sys-utils/setpriv.c:582
 #, fuzzy, c-format
 msgid "unknown capability \"%s\""
 msgstr "不明機能『%s』"
 
-#: sys-utils/setpriv.c:607
+#: sys-utils/setpriv.c:606
 #, fuzzy
 msgid "unrecognized securebit set -- refusing to adjust"
 msgstr "無法辨識的格式 - 使用磁區數\n"
 
-#: sys-utils/setpriv.c:611
+#: sys-utils/setpriv.c:610
 msgid "bad securebits string"
 msgstr ""
 
-#: sys-utils/setpriv.c:618
+#: sys-utils/setpriv.c:617
 #, fuzzy
 msgid "+all securebits is not allowed"
 msgstr "『%c』未被允許"
 
-#: sys-utils/setpriv.c:631
+#: sys-utils/setpriv.c:630
 #, fuzzy
 msgid "adjusting keep_caps does not make sense"
 msgstr "指定的範圍<%d:%d>不具任何意義"
 
-#: sys-utils/setpriv.c:635
+#: sys-utils/setpriv.c:634
 #, fuzzy
 msgid "unrecognized securebit"
 msgstr "無法辨識的輸入：%s"
 
-#: sys-utils/setpriv.c:655
+#: sys-utils/setpriv.c:654
 msgid "SELinux is not running"
 msgstr ""
 
-#: sys-utils/setpriv.c:670
+#: sys-utils/setpriv.c:669
 #, fuzzy, c-format
 msgid "close failed: %s"
 msgstr "搜尋失敗"
 
-#: sys-utils/setpriv.c:678
+#: sys-utils/setpriv.c:677
 msgid "AppArmor is not running"
 msgstr ""
 
-#: sys-utils/setpriv.c:855
+#: sys-utils/setpriv.c:854
 msgid "duplicate --no-new-privs option"
 msgstr ""
 
-#: sys-utils/setpriv.c:860
+#: sys-utils/setpriv.c:859
 msgid "duplicate ruid"
 msgstr ""
 
-#: sys-utils/setpriv.c:862
+#: sys-utils/setpriv.c:861
 #, fuzzy
 msgid "failed to parse ruid"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/setpriv.c:870
+#: sys-utils/setpriv.c:869
 msgid "duplicate euid"
 msgstr ""
 
-#: sys-utils/setpriv.c:872
+#: sys-utils/setpriv.c:871
 #, fuzzy
 msgid "failed to parse euid"
 msgstr "剖析結束時失敗"
 
-#: sys-utils/setpriv.c:876
+#: sys-utils/setpriv.c:875
 msgid "duplicate ruid or euid"
 msgstr ""
 
-#: sys-utils/setpriv.c:878
+#: sys-utils/setpriv.c:877
 #, fuzzy
 msgid "failed to parse reuid"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/setpriv.c:887
+#: sys-utils/setpriv.c:886
 msgid "duplicate rgid"
 msgstr ""
 
-#: sys-utils/setpriv.c:889
+#: sys-utils/setpriv.c:888
 #, fuzzy
 msgid "failed to parse rgid"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/setpriv.c:893
+#: sys-utils/setpriv.c:892
 msgid "duplicate egid"
 msgstr ""
 
-#: sys-utils/setpriv.c:895
+#: sys-utils/setpriv.c:894
 #, fuzzy
 msgid "failed to parse egid"
 msgstr "剖析結束時失敗"
 
-#: sys-utils/setpriv.c:899
+#: sys-utils/setpriv.c:898
 msgid "duplicate rgid or egid"
 msgstr ""
 
-#: sys-utils/setpriv.c:901
+#: sys-utils/setpriv.c:900
 #, fuzzy
 msgid "failed to parse regid"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/setpriv.c:906
+#: sys-utils/setpriv.c:905
 msgid "duplicate --clear-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:912
+#: sys-utils/setpriv.c:911
 msgid "duplicate --keep-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:918
+#: sys-utils/setpriv.c:917
 msgid "duplicate --init-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:924
+#: sys-utils/setpriv.c:923
 msgid "duplicate --groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:930
+#: sys-utils/setpriv.c:929
 msgid "duplicate --keep-pdeathsig option"
 msgstr ""
 
-#: sys-utils/setpriv.c:939
+#: sys-utils/setpriv.c:938
 msgid "duplicate --inh-caps option"
 msgstr ""
 
-#: sys-utils/setpriv.c:945
+#: sys-utils/setpriv.c:944
 msgid "duplicate --ambient-caps option"
 msgstr ""
 
-#: sys-utils/setpriv.c:951
+#: sys-utils/setpriv.c:950
 msgid "duplicate --bounding-set option"
 msgstr ""
 
-#: sys-utils/setpriv.c:957
+#: sys-utils/setpriv.c:956
 msgid "duplicate --securebits option"
 msgstr ""
 
-#: sys-utils/setpriv.c:963
+#: sys-utils/setpriv.c:962
 msgid "duplicate --selinux-label option"
 msgstr ""
 
-#: sys-utils/setpriv.c:969
+#: sys-utils/setpriv.c:968
 msgid "duplicate --apparmor-profile option"
 msgstr ""
 
-#: sys-utils/setpriv.c:988
+#: sys-utils/setpriv.c:987
 msgid "--dump is incompatible with all other options"
 msgstr ""
 
-#: sys-utils/setpriv.c:996
+#: sys-utils/setpriv.c:995
 #, fuzzy
 msgid "--list-caps must be specified alone"
 msgstr "選項 --pid 也許會被指定的只一次"
 
-#: sys-utils/setpriv.c:1002
+#: sys-utils/setpriv.c:1001
 #, fuzzy
 msgid "No program specified"
 msgstr "未指定任何檔名"
 
-#: sys-utils/setpriv.c:1008
+#: sys-utils/setpriv.c:1007
 msgid "--[re]gid requires --keep-groups, --clear-groups, --init-groups, or --groups"
 msgstr ""
 
-#: sys-utils/setpriv.c:1012
+#: sys-utils/setpriv.c:1011
 msgid "--init-groups requires --ruid or --reuid"
 msgstr ""
 
-#: sys-utils/setpriv.c:1016
+#: sys-utils/setpriv.c:1015
 #, c-format
 msgid "uid %ld not found, --init-groups requires an user that can be found on the system"
 msgstr ""
 
-#: sys-utils/setpriv.c:1031
+#: sys-utils/setpriv.c:1030
 msgid "disallow granting new privileges failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:1039
+#: sys-utils/setpriv.c:1038
 msgid "keep process capabilities failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:1047
+#: sys-utils/setpriv.c:1046
 msgid "activate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1053
+#: sys-utils/setpriv.c:1052
 msgid "reactivate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1064
+#: sys-utils/setpriv.c:1063
 #, fuzzy
 msgid "initgroups failed"
 msgstr "strdup 失敗"
 
-#: sys-utils/setpriv.c:1072
+#: sys-utils/setpriv.c:1071
 #, fuzzy
 msgid "set process securebits failed"
 msgstr "setuid 失敗"
 
-#: sys-utils/setpriv.c:1078
+#: sys-utils/setpriv.c:1077
 msgid "apply bounding set"
 msgstr ""
 
-#: sys-utils/setpriv.c:1084
+#: sys-utils/setpriv.c:1083
 msgid "apply capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1093
+#: sys-utils/setpriv.c:1092
 #, fuzzy
 msgid "set parent death signal failed"
 msgstr "設定 rtc 喚醒警示失敗"
@@ -19647,7 +19638,7 @@ msgstr "%s：無法 exec %s: %m"
 
 #: term-utils/agetty.c:594 term-utils/agetty.c:921 term-utils/agetty.c:1457
 #: term-utils/agetty.c:1475 term-utils/agetty.c:1512 term-utils/agetty.c:1522
-#: term-utils/agetty.c:1564 term-utils/agetty.c:2203 term-utils/agetty.c:2770
+#: term-utils/agetty.c:1564 term-utils/agetty.c:2205 term-utils/agetty.c:2774
 #, fuzzy, c-format
 msgid "failed to allocate memory: %m"
 msgstr "配置記憶體時失敗：%m"
@@ -19741,31 +19732,31 @@ msgstr "無法開啟鎖定檔案 %s"
 msgid "failed to create reload file: %s: %m"
 msgstr "讀取 typescript 檔案 %s 時失敗"
 
-#: term-utils/agetty.c:1934
+#: term-utils/agetty.c:1936
 msgid "[press ENTER to login]"
 msgstr ""
 
-#: term-utils/agetty.c:1961
+#: term-utils/agetty.c:1963
 #, fuzzy
 msgid "Num Lock off"
 msgstr "Num 鎖定關閉"
 
-#: term-utils/agetty.c:1964
+#: term-utils/agetty.c:1966
 #, fuzzy
 msgid "Num Lock on"
 msgstr "Num 鎖定開"
 
-#: term-utils/agetty.c:1967
+#: term-utils/agetty.c:1969
 #, fuzzy
 msgid "Caps Lock on"
 msgstr "大寫鍵開"
 
-#: term-utils/agetty.c:1970
+#: term-utils/agetty.c:1972
 #, fuzzy
 msgid "Scroll Lock on"
 msgstr "捲動鎖定開"
 
-#: term-utils/agetty.c:1973
+#: term-utils/agetty.c:1975
 #, fuzzy, c-format
 msgid ""
 "Hint: %s\n"
@@ -19774,32 +19765,32 @@ msgstr ""
 "提示：%s\n"
 "\n"
 
-#: term-utils/agetty.c:2115
+#: term-utils/agetty.c:2117
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s：讀取：%m"
 
-#: term-utils/agetty.c:2179
+#: term-utils/agetty.c:2181
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s：輸入超出"
 
-#: term-utils/agetty.c:2199 term-utils/agetty.c:2207
+#: term-utils/agetty.c:2201 term-utils/agetty.c:2209
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr ""
 
-#: term-utils/agetty.c:2213
+#: term-utils/agetty.c:2215
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr ""
 
-#: term-utils/agetty.c:2298
+#: term-utils/agetty.c:2300
 #, fuzzy, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "無法設定終端機屬性用於 %s"
 
-#: term-utils/agetty.c:2336
+#: term-utils/agetty.c:2338
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -19810,180 +19801,180 @@ msgstr ""
 " %1$s [選項] 列 baud_rate ,...[termtype]\n"
 " %1$s [選項] baud_rate ,...列 [termtype]\n"
 
-#: term-utils/agetty.c:2340
+#: term-utils/agetty.c:2342
 msgid "Open a terminal and set its mode.\n"
-msgstr ""
-
-#: term-utils/agetty.c:2343
-#, fuzzy
-msgid " -8, --8bits                assume 8-bit tty\n"
-msgstr " -s, --status                 查詢印表機狀態\n"
-
-#: term-utils/agetty.c:2344
-msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr ""
 
 #: term-utils/agetty.c:2345
 #, fuzzy
+msgid " -8, --8bits                assume 8-bit tty\n"
+msgstr " -s, --status                 查詢印表機狀態\n"
+
+#: term-utils/agetty.c:2346
+msgid " -a, --autologin <user>     login the specified user automatically\n"
+msgstr ""
+
+#: term-utils/agetty.c:2347
+#, fuzzy
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -r, --reset                  重置通訊埠\n"
 
-#: term-utils/agetty.c:2346
+#: term-utils/agetty.c:2348
 #, fuzzy
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -r, --reset               重置所有計數器 (只限 root)\n"
 
-#: term-utils/agetty.c:2347
+#: term-utils/agetty.c:2349
 #, fuzzy
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -h, --help     顯示這份說明然後離開\n"
 
-#: term-utils/agetty.c:2348
+#: term-utils/agetty.c:2350
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr ""
 
-#: term-utils/agetty.c:2349
+#: term-utils/agetty.c:2351
 #, fuzzy
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -s, --shell <shell>  指定登入命令殼\n"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2352
 #, fuzzy
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -q, --stats                        顯示統計關於 tty\n"
 
-#: term-utils/agetty.c:2351
-msgid " -I, --init-string <string> set init string\n"
-msgstr ""
-
-#: term-utils/agetty.c:2352
-#, fuzzy
-msgid " -J  --noclear              do not clear the screen before prompt\n"
-msgstr " -c           清空螢幕之前顯示\n"
-
 #: term-utils/agetty.c:2353
-msgid " -l, --login-program <file> specify login program\n"
+msgid " -I, --init-string <string> set init string\n"
 msgstr ""
 
 #: term-utils/agetty.c:2354
 #, fuzzy
-msgid " -L, --local-line[=<mode>]  control the local line flag\n"
-msgstr " -u  --unlock             移除鎖定\n"
+msgid " -J  --noclear              do not clear the screen before prompt\n"
+msgstr " -c           清空螢幕之前顯示\n"
 
 #: term-utils/agetty.c:2355
-msgid " -m, --extract-baud         extract baud rate during connect\n"
+msgid " -l, --login-program <file> specify login program\n"
 msgstr ""
 
 #: term-utils/agetty.c:2356
 #, fuzzy
+msgid " -L, --local-line[=<mode>]  control the local line flag\n"
+msgstr " -u  --unlock             移除鎖定\n"
+
+#: term-utils/agetty.c:2357
+msgid " -m, --extract-baud         extract baud rate during connect\n"
+msgstr ""
+
+#: term-utils/agetty.c:2358
+#, fuzzy
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -f           不分割長列\n"
 
-#: term-utils/agetty.c:2357
+#: term-utils/agetty.c:2359
 #, fuzzy
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -e           不暫停於結束的檔案\n"
 
-#: term-utils/agetty.c:2358
+#: term-utils/agetty.c:2360
 #, fuzzy
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -l, --longoptions <longopts> 長選項為辨識的\n"
 
-#: term-utils/agetty.c:2359
+#: term-utils/agetty.c:2361
 #, fuzzy
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -f           不分割長列\n"
 
-#: term-utils/agetty.c:2360
+#: term-utils/agetty.c:2362
 #, fuzzy
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -a, --abort <on|off>         放棄於錯誤\n"
 
-#: term-utils/agetty.c:2361
+#: term-utils/agetty.c:2363
 #, fuzzy
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -u, --unquote                不引言輸出\n"
 
-#: term-utils/agetty.c:2362
+#: term-utils/agetty.c:2364
 #, fuzzy
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
 
-#: term-utils/agetty.c:2363
+#: term-utils/agetty.c:2365
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr ""
 
-#: term-utils/agetty.c:2364
+#: term-utils/agetty.c:2366
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr ""
 
-#: term-utils/agetty.c:2365
+#: term-utils/agetty.c:2367
 #, fuzzy
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait <us>              strobe 等待在中 micro 秒\n"
 
-#: term-utils/agetty.c:2366
+#: term-utils/agetty.c:2368
 #, fuzzy
 msgid "     --nohints              do not print hints\n"
 msgstr " -f           不分割長列\n"
 
-#: term-utils/agetty.c:2367
+#: term-utils/agetty.c:2369
 #, fuzzy
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr " -e           不暫停於結束的檔案\n"
 
-#: term-utils/agetty.c:2368
+#: term-utils/agetty.c:2370
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr ""
 
-#: term-utils/agetty.c:2369
+#: term-utils/agetty.c:2371
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2370
+#: term-utils/agetty.c:2372
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2371
-msgid "     --chdir <directory>    chdir before the login\n"
-msgstr ""
-
-#: term-utils/agetty.c:2372
-#, fuzzy
-msgid "     --delay <number>       sleep seconds before prompt\n"
-msgstr " -c           清空螢幕之前顯示\n"
-
 #: term-utils/agetty.c:2373
-msgid "     --nice <number>        run login with this priority\n"
+msgid "     --chdir <directory>    chdir before the login\n"
 msgstr ""
 
 #: term-utils/agetty.c:2374
 #, fuzzy
+msgid "     --delay <number>       sleep seconds before prompt\n"
+msgstr " -c           清空螢幕之前顯示\n"
+
+#: term-utils/agetty.c:2375
+msgid "     --nice <number>        run login with this priority\n"
+msgstr ""
+
+#: term-utils/agetty.c:2376
+#, fuzzy
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr " -f           不分割長列\n"
 
-#: term-utils/agetty.c:2375
+#: term-utils/agetty.c:2377
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "    -T [或 --list-types]：列出已知分割區類型"
 
-#: term-utils/agetty.c:2729
+#: term-utils/agetty.c:2731
 #, fuzzy, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "使用者"
 
-#: term-utils/agetty.c:2858
+#: term-utils/agetty.c:2862
 #, fuzzy, c-format
 msgid "checkname failed: %m"
 msgstr "chown 失敗：%s"
 
-#: term-utils/agetty.c:2870
+#: term-utils/agetty.c:2874
 #, fuzzy, c-format
 msgid "cannot touch file %s"
 msgstr "無法關閉檔案 %s"
 
-#: term-utils/agetty.c:2874
+#: term-utils/agetty.c:2878
 msgid "--reload is unsupported on your system"
 msgstr ""
 
@@ -21470,6 +21461,13 @@ msgstr "不明的退出序列在中輸入：%o，%o"
 #, fuzzy
 msgid "Input line too long."
 msgstr "輸入列太長。"
+
+#~ msgid "Failed to set personality to %s"
+#~ msgstr "設定身分為 %s 時失敗"
+
+#, fuzzy
+#~ msgid " --reset-env                 reset environment variables\n"
+#~ msgstr " -r, --reset                  重置通訊埠\n"
 
 #, fuzzy
 #~ msgid "%15s: %s"

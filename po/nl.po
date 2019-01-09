@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-11-06 11:44+0100\n"
+"POT-Creation-Date: 2019-01-09 11:05+0100\n"
 "PO-Revision-Date: 2016-10-30 17:01+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -89,11 +89,11 @@ msgstr "te weinig argumenten"
 #: sys-utils/hwclock-rtc.c:397 sys-utils/hwclock-rtc.c:432
 #: sys-utils/ldattach.c:392 sys-utils/lscpu.c:393 sys-utils/nsenter.c:129
 #: sys-utils/rfkill.c:192 sys-utils/rfkill.c:553 sys-utils/rtcwake.c:136
-#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:291 sys-utils/setpriv.c:660
-#: sys-utils/setpriv.c:683 sys-utils/swapon.c:375 sys-utils/swapon.c:518
+#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:290 sys-utils/setpriv.c:659
+#: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
 #: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2867 term-utils/mesg.c:132 term-utils/script.c:540
+#: term-utils/agetty.c:2871 term-utils/mesg.c:132 term-utils/script.c:540
 #: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
@@ -1708,7 +1708,7 @@ msgstr "%s is niet aangekoppeld\n"
 #: disk-utils/fsck.cramfs.c:178 disk-utils/fsck.cramfs.c:234
 #: disk-utils/fsck.cramfs.c:255 disk-utils/sfdisk.c:298 libfdisk/src/bsd.c:646
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:656
-#: sys-utils/ctrlaltdel.c:44 sys-utils/rfkill.c:213 sys-utils/setpriv.c:300
+#: sys-utils/ctrlaltdel.c:44 sys-utils/rfkill.c:213 sys-utils/setpriv.c:299
 #: term-utils/setterm.c:723 term-utils/setterm.c:780 term-utils/setterm.c:784
 #: term-utils/setterm.c:791
 #, c-format
@@ -2115,7 +2115,7 @@ msgstr "onjuiste grootte (%ld i.p.v. %ld bytes)"
 
 #: disk-utils/fsck.cramfs.c:415 disk-utils/fsck.cramfs.c:518
 #: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:366 sys-utils/fallocate.c:409
-#: sys-utils/rfkill.c:560 sys-utils/setpriv.c:666 sys-utils/setpriv.c:689
+#: sys-utils/rfkill.c:560 sys-utils/setpriv.c:665 sys-utils/setpriv.c:688
 #: sys-utils/swapon.c:393 term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
@@ -9770,7 +9770,7 @@ msgstr "  -L, --table               tabel van signaalnamen en -nummers tonen\n"
 msgid "     --verbose          print pids that will be signaled\n"
 msgstr "      --verbose             tonen welke PID's een signaal zullen krijgen\n"
 
-#: misc-utils/kill.c:240 misc-utils/kill.c:249 sys-utils/setpriv.c:483
+#: misc-utils/kill.c:240 misc-utils/kill.c:249 sys-utils/setpriv.c:482
 #: sys-utils/unshare.c:389
 #, c-format
 msgid "unknown signal: %s"
@@ -13127,7 +13127,7 @@ msgstr " -v, --verbose          het aantal verworpen bytes weergeven\n"
 
 #: sys-utils/fstrim.c:326
 #, fuzzy
-msgid " -d, --dry-run       does everything, but trim\n"
+msgid " -n, --dry-run       does everything, but trim\n"
 msgstr "  -n, --dry-run            doet alles, behalve gaan slapen\n"
 
 #: sys-utils/fstrim.c:387
@@ -16151,7 +16151,7 @@ msgstr "'chroot' is mislukt"
 msgid "change directory by working directory file descriptor failed"
 msgstr "wijzigen van huidige map via werkmap-bestandsdescriptor is mislukt"
 
-#: sys-utils/nsenter.c:472 sys-utils/setpriv.c:1061 sys-utils/setpriv.c:1068
+#: sys-utils/nsenter.c:472 sys-utils/setpriv.c:1060 sys-utils/setpriv.c:1067
 msgid "setgroups failed"
 msgstr "'setgroups' is mislukt"
 
@@ -16923,35 +16923,30 @@ msgstr "      --list                instelbare architecturen tonen en stoppen\n"
 msgid "Kernel cannot set architecture to %s"
 msgstr "kernel kan architectuur niet op %s instellen"
 
-#: sys-utils/setarch.c:307
+#: sys-utils/setarch.c:308
 msgid "Not enough arguments"
 msgstr "Te weinig argumenten"
 
-#: sys-utils/setarch.c:316
-#, c-format
-msgid "Failed to set personality to %s"
-msgstr "instellen van persoonlijkheid op %s is mislukt"
-
-#: sys-utils/setarch.c:381
+#: sys-utils/setarch.c:382
 msgid "unrecognized option '--list'"
 msgstr "niet-toegestane optie '--list'"
 
-#: sys-utils/setarch.c:389
+#: sys-utils/setarch.c:390
 #, fuzzy
 msgid "no architecture argument or personality flags specified"
 msgstr "geen architectuur opgegeven"
 
-#: sys-utils/setarch.c:400
+#: sys-utils/setarch.c:402
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s: Onbekende architectuur"
 
-#: sys-utils/setarch.c:418
+#: sys-utils/setarch.c:420
 #, c-format
 msgid "failed to set personality to %s"
 msgstr "instellen van persoonlijkheid op %s is mislukt"
 
-#: sys-utils/setarch.c:426
+#: sys-utils/setarch.c:432
 #, c-format
 msgid "Execute command `%s'.\n"
 msgstr "Uitvoering van opdracht '%s'.\n"
@@ -17049,370 +17044,365 @@ msgid " --securebits <bits>         set securebits\n"
 msgstr "  --securebits <bits>      deze 'securebits' instellen\n"
 
 #: sys-utils/setpriv.c:148
-#, fuzzy
-msgid " --reset-env                 reset environment variables\n"
-msgstr "  -m, -p, --preserve-environment  omgevingsvariabelen niet wissen\n"
-
-#: sys-utils/setpriv.c:149
 msgid ""
 " --pdeathsig keep|clear|<signame>\n"
 "                             set or clear parent death signal\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:151
+#: sys-utils/setpriv.c:150
 #, fuzzy
 msgid " --selinux-label <label>     set SELinux label\n"
 msgstr "  --selinux-label <label>  SELinux-label instellen\n"
 
-#: sys-utils/setpriv.c:152
+#: sys-utils/setpriv.c:151
 #, fuzzy
 msgid " --apparmor-profile <pr>     set AppArmor profile\n"
 msgstr "  --apparmor-profile <profiel>  AppArmor-profiel instellen\n"
 
-#: sys-utils/setpriv.c:153
+#: sys-utils/setpriv.c:152
 msgid ""
 " --reset-env                 clear all environment and initialize\n"
 "                               HOME, SHELL, USER, LOGNAME and PATH\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:159
+#: sys-utils/setpriv.c:158
 msgid " This tool can be dangerous.  Read the manpage, and be careful.\n"
 msgstr "Dit gereedschap kan gevaarlijk zijn.  Lees de handleiding, en wees voorzichtig.\n"
 
-#: sys-utils/setpriv.c:202
+#: sys-utils/setpriv.c:201
 #, fuzzy
 msgid "invalid capability type"
 msgstr "ongeldige capability-tekenreeks"
 
-#: sys-utils/setpriv.c:254 sys-utils/setpriv.c:598
+#: sys-utils/setpriv.c:253 sys-utils/setpriv.c:597
 msgid "getting process secure bits failed"
 msgstr "het verkrijgen van de 'securebits' van proces is mislukt"
 
-#: sys-utils/setpriv.c:258
+#: sys-utils/setpriv.c:257
 #, c-format
 msgid "Securebits: "
 msgstr "Securebits: "
 
-#: sys-utils/setpriv.c:278
+#: sys-utils/setpriv.c:277
 #, c-format
 msgid "[none]\n"
 msgstr "[geen]\n"
 
-#: sys-utils/setpriv.c:304
+#: sys-utils/setpriv.c:303
 #, c-format
 msgid "%s: too long"
 msgstr "%s: te lang"
 
-#: sys-utils/setpriv.c:332
+#: sys-utils/setpriv.c:331
 #, c-format
 msgid "Supplementary groups: "
 msgstr "Supplementaire groepen: "
 
-#: sys-utils/setpriv.c:334 sys-utils/setpriv.c:400 sys-utils/setpriv.c:405
-#: sys-utils/setpriv.c:411 sys-utils/setpriv.c:417 sys-utils/setpriv.c:424
+#: sys-utils/setpriv.c:333 sys-utils/setpriv.c:399 sys-utils/setpriv.c:404
+#: sys-utils/setpriv.c:410 sys-utils/setpriv.c:416 sys-utils/setpriv.c:423
 #, c-format
 msgid "[none]"
 msgstr "[geen]"
 
-#: sys-utils/setpriv.c:352
+#: sys-utils/setpriv.c:351
 #, fuzzy
 msgid "get pdeathsig failed"
 msgstr "getresuid() is mislukt"
 
-#: sys-utils/setpriv.c:372
+#: sys-utils/setpriv.c:371
 #, c-format
 msgid "uid: %u\n"
 msgstr "UID: %u\n"
 
-#: sys-utils/setpriv.c:373
+#: sys-utils/setpriv.c:372
 #, c-format
 msgid "euid: %u\n"
 msgstr "EUID: %u\n"
 
-#: sys-utils/setpriv.c:376
+#: sys-utils/setpriv.c:375
 #, c-format
 msgid "suid: %u\n"
 msgstr "SUID: %u\n"
 
-#: sys-utils/setpriv.c:378 sys-utils/setpriv.c:491
+#: sys-utils/setpriv.c:377 sys-utils/setpriv.c:490
 msgid "getresuid failed"
 msgstr "getresuid() is mislukt"
 
-#: sys-utils/setpriv.c:387 sys-utils/setpriv.c:506
+#: sys-utils/setpriv.c:386 sys-utils/setpriv.c:505
 msgid "getresgid failed"
 msgstr "getresgid() is mislukt"
 
-#: sys-utils/setpriv.c:398
+#: sys-utils/setpriv.c:397
 #, c-format
 msgid "Effective capabilities: "
 msgstr "Effectieve capabilities: "
 
-#: sys-utils/setpriv.c:403
+#: sys-utils/setpriv.c:402
 #, c-format
 msgid "Permitted capabilities: "
 msgstr "Toegestane capabilities: "
 
-#: sys-utils/setpriv.c:409
+#: sys-utils/setpriv.c:408
 #, c-format
 msgid "Inheritable capabilities: "
 msgstr "Overerfbare capabilities: "
 
-#: sys-utils/setpriv.c:414
+#: sys-utils/setpriv.c:413
 #, fuzzy, c-format
 msgid "Ambient capabilities: "
 msgstr "Toegestane capabilities: "
 
-#: sys-utils/setpriv.c:419
+#: sys-utils/setpriv.c:418
 #, fuzzy, c-format
 msgid "[unsupported]"
 msgstr "niet-ondersteunde opdracht"
 
-#: sys-utils/setpriv.c:422
+#: sys-utils/setpriv.c:421
 #, c-format
 msgid "Capability bounding set: "
 msgstr "Beperkende set van capabilities: "
 
-#: sys-utils/setpriv.c:431
+#: sys-utils/setpriv.c:430
 msgid "SELinux label"
 msgstr "SELinux-label"
 
-#: sys-utils/setpriv.c:434
+#: sys-utils/setpriv.c:433
 msgid "AppArmor profile"
 msgstr "AppArmor-profiel"
 
-#: sys-utils/setpriv.c:447
+#: sys-utils/setpriv.c:446
 #, c-format
 msgid "cap %d: libcap-ng is broken"
 msgstr "cap %d: 'libcap-ng' misfunctioneert"
 
 # FIXME: start with lowercase
-#: sys-utils/setpriv.c:469
+#: sys-utils/setpriv.c:468
 msgid "Invalid supplementary group id"
 msgstr "Ongeldig ID van supplementaire groep"
 
-#: sys-utils/setpriv.c:479
+#: sys-utils/setpriv.c:478
 #, fuzzy
 msgid "failed to get parent death signal"
 msgstr "ontleden van signaalwaarde is mislukt"
 
-#: sys-utils/setpriv.c:499
+#: sys-utils/setpriv.c:498
 msgid "setresuid failed"
 msgstr "setresuid() is mislukt"
 
-#: sys-utils/setpriv.c:514
+#: sys-utils/setpriv.c:513
 msgid "setresgid failed"
 msgstr "setresgid() is mislukt"
 
-#: sys-utils/setpriv.c:546
+#: sys-utils/setpriv.c:545
 #, fuzzy
 msgid "unsupported capability type"
 msgstr "niet-ondersteunde tijdssoort"
 
-#: sys-utils/setpriv.c:563
+#: sys-utils/setpriv.c:562
 msgid "bad capability string"
 msgstr "ongeldige capability-tekenreeks"
 
-#: sys-utils/setpriv.c:571
+#: sys-utils/setpriv.c:570
 msgid "libcap-ng is too old for \"all\" caps"
 msgstr "'libcap-ng' is te oud voor capability \"all\""
 
-#: sys-utils/setpriv.c:583
+#: sys-utils/setpriv.c:582
 #, c-format
 msgid "unknown capability \"%s\""
 msgstr "onbekende capability \"%s\""
 
-#: sys-utils/setpriv.c:607
+#: sys-utils/setpriv.c:606
 msgid "unrecognized securebit set -- refusing to adjust"
 msgstr "onbekende set van 'securebits' -- niet aangepast"
 
-#: sys-utils/setpriv.c:611
+#: sys-utils/setpriv.c:610
 msgid "bad securebits string"
 msgstr "ongeldige 'securebits'-tekenreeks"
 
-#: sys-utils/setpriv.c:618
+#: sys-utils/setpriv.c:617
 msgid "+all securebits is not allowed"
 msgstr "'+all securebits' is niet toegestaan"
 
-#: sys-utils/setpriv.c:631
+#: sys-utils/setpriv.c:630
 msgid "adjusting keep_caps does not make sense"
 msgstr "het aanpassen van 'keep_caps' is onzinnig"
 
-#: sys-utils/setpriv.c:635
+#: sys-utils/setpriv.c:634
 msgid "unrecognized securebit"
 msgstr "onbekende 'securebit'"
 
-#: sys-utils/setpriv.c:655
+#: sys-utils/setpriv.c:654
 msgid "SELinux is not running"
 msgstr "SELinux draait niet"
 
-#: sys-utils/setpriv.c:670
+#: sys-utils/setpriv.c:669
 #, c-format
 msgid "close failed: %s"
 msgstr "sluiten is mislukt: %s"
 
-#: sys-utils/setpriv.c:678
+#: sys-utils/setpriv.c:677
 msgid "AppArmor is not running"
 msgstr "AppArmor draait niet"
 
-#: sys-utils/setpriv.c:855
+#: sys-utils/setpriv.c:854
 msgid "duplicate --no-new-privs option"
 msgstr "dubbele optie '--no-new-privs'"
 
-#: sys-utils/setpriv.c:860
+#: sys-utils/setpriv.c:859
 msgid "duplicate ruid"
 msgstr "dubbele RUID"
 
-#: sys-utils/setpriv.c:862
+#: sys-utils/setpriv.c:861
 msgid "failed to parse ruid"
 msgstr "ontleden van RUID is mislukt"
 
-#: sys-utils/setpriv.c:870
+#: sys-utils/setpriv.c:869
 msgid "duplicate euid"
 msgstr "dubbele EUID"
 
-#: sys-utils/setpriv.c:872
+#: sys-utils/setpriv.c:871
 msgid "failed to parse euid"
 msgstr "ontleden van EUID is mislukt"
 
-#: sys-utils/setpriv.c:876
+#: sys-utils/setpriv.c:875
 msgid "duplicate ruid or euid"
 msgstr "dubbele RUID of EUID"
 
-#: sys-utils/setpriv.c:878
+#: sys-utils/setpriv.c:877
 msgid "failed to parse reuid"
 msgstr "ontleden van REUID is mislukt"
 
-#: sys-utils/setpriv.c:887
+#: sys-utils/setpriv.c:886
 msgid "duplicate rgid"
 msgstr "dubbele RGID"
 
-#: sys-utils/setpriv.c:889
+#: sys-utils/setpriv.c:888
 msgid "failed to parse rgid"
 msgstr "ontleden van RGID is mislukt"
 
-#: sys-utils/setpriv.c:893
+#: sys-utils/setpriv.c:892
 msgid "duplicate egid"
 msgstr "dubbele EGID"
 
-#: sys-utils/setpriv.c:895
+#: sys-utils/setpriv.c:894
 msgid "failed to parse egid"
 msgstr "ontleden van EGID is mislukt"
 
-#: sys-utils/setpriv.c:899
+#: sys-utils/setpriv.c:898
 msgid "duplicate rgid or egid"
 msgstr "dubbele RGID of EGID"
 
-#: sys-utils/setpriv.c:901
+#: sys-utils/setpriv.c:900
 msgid "failed to parse regid"
 msgstr "ontleden van REGID is mislukt"
 
-#: sys-utils/setpriv.c:906
+#: sys-utils/setpriv.c:905
 msgid "duplicate --clear-groups option"
 msgstr "dubbele optie '--clear-groups'"
 
-#: sys-utils/setpriv.c:912
+#: sys-utils/setpriv.c:911
 msgid "duplicate --keep-groups option"
 msgstr "dubbele optie '--keep-groups'"
 
-#: sys-utils/setpriv.c:918
+#: sys-utils/setpriv.c:917
 #, fuzzy
 msgid "duplicate --init-groups option"
 msgstr "dubbele optie '--groups'"
 
-#: sys-utils/setpriv.c:924
+#: sys-utils/setpriv.c:923
 msgid "duplicate --groups option"
 msgstr "dubbele optie '--groups'"
 
-#: sys-utils/setpriv.c:930
+#: sys-utils/setpriv.c:929
 #, fuzzy
 msgid "duplicate --keep-pdeathsig option"
 msgstr "dubbele optie '--keep-groups'"
 
-#: sys-utils/setpriv.c:939
+#: sys-utils/setpriv.c:938
 msgid "duplicate --inh-caps option"
 msgstr "dubbele optie '--inh-caps'"
 
-#: sys-utils/setpriv.c:945
+#: sys-utils/setpriv.c:944
 #, fuzzy
 msgid "duplicate --ambient-caps option"
 msgstr "dubbele optie '--inh-caps'"
 
-#: sys-utils/setpriv.c:951
+#: sys-utils/setpriv.c:950
 msgid "duplicate --bounding-set option"
 msgstr "dubbele optie '--bounding-set'"
 
-#: sys-utils/setpriv.c:957
+#: sys-utils/setpriv.c:956
 msgid "duplicate --securebits option"
 msgstr "dubbele optie '--securebits'"
 
-#: sys-utils/setpriv.c:963
+#: sys-utils/setpriv.c:962
 msgid "duplicate --selinux-label option"
 msgstr "dubbele optie '--selinux-label'"
 
-#: sys-utils/setpriv.c:969
+#: sys-utils/setpriv.c:968
 msgid "duplicate --apparmor-profile option"
 msgstr "dubbele optie '--apparmor-profile'"
 
-#: sys-utils/setpriv.c:988
+#: sys-utils/setpriv.c:987
 msgid "--dump is incompatible with all other options"
 msgstr "optie '--dump' is incompatibel met alle andere opties"
 
-#: sys-utils/setpriv.c:996
+#: sys-utils/setpriv.c:995
 msgid "--list-caps must be specified alone"
 msgstr "optie '--list-caps' moet alléén gegeven worden"
 
-#: sys-utils/setpriv.c:1002
+#: sys-utils/setpriv.c:1001
 msgid "No program specified"
 msgstr "geen programma aangegeven"
 
-#: sys-utils/setpriv.c:1008
+#: sys-utils/setpriv.c:1007
 #, fuzzy
 msgid "--[re]gid requires --keep-groups, --clear-groups, --init-groups, or --groups"
 msgstr "optie '--[re]gid' vereist '--groups', '--keep-groups', of '--clear-groups'"
 
-#: sys-utils/setpriv.c:1012
+#: sys-utils/setpriv.c:1011
 msgid "--init-groups requires --ruid or --reuid"
 msgstr ""
 
-#: sys-utils/setpriv.c:1016
+#: sys-utils/setpriv.c:1015
 #, c-format
 msgid "uid %ld not found, --init-groups requires an user that can be found on the system"
 msgstr ""
 
-#: sys-utils/setpriv.c:1031
+#: sys-utils/setpriv.c:1030
 msgid "disallow granting new privileges failed"
 msgstr "het verbieden van het toekennen van nieuwe privileges is mislukt"
 
-#: sys-utils/setpriv.c:1039
+#: sys-utils/setpriv.c:1038
 msgid "keep process capabilities failed"
 msgstr "het behouden van capabilities van proces is mislukt"
 
-#: sys-utils/setpriv.c:1047
+#: sys-utils/setpriv.c:1046
 msgid "activate capabilities"
 msgstr "capabilities activeren"
 
-#: sys-utils/setpriv.c:1053
+#: sys-utils/setpriv.c:1052
 msgid "reactivate capabilities"
 msgstr "capabilities heractiveren"
 
-#: sys-utils/setpriv.c:1064
+#: sys-utils/setpriv.c:1063
 #, fuzzy
 msgid "initgroups failed"
 msgstr "'setgroups' is mislukt"
 
-#: sys-utils/setpriv.c:1072
+#: sys-utils/setpriv.c:1071
 msgid "set process securebits failed"
 msgstr "het instellen van de 'securebits' van proces is mislukt"
 
-#: sys-utils/setpriv.c:1078
+#: sys-utils/setpriv.c:1077
 msgid "apply bounding set"
 msgstr "de beperkende set toepassen"
 
-#: sys-utils/setpriv.c:1084
+#: sys-utils/setpriv.c:1083
 msgid "apply capabilities"
 msgstr "capabilities toepassen"
 
-#: sys-utils/setpriv.c:1093
+#: sys-utils/setpriv.c:1092
 #, fuzzy
 msgid "set parent death signal failed"
 msgstr "zetten van de wekker is mislukt"
@@ -18474,7 +18464,7 @@ msgstr "%s: kan %s niet uitvoeren: %m"
 
 #: term-utils/agetty.c:594 term-utils/agetty.c:921 term-utils/agetty.c:1457
 #: term-utils/agetty.c:1475 term-utils/agetty.c:1512 term-utils/agetty.c:1522
-#: term-utils/agetty.c:1564 term-utils/agetty.c:2203 term-utils/agetty.c:2770
+#: term-utils/agetty.c:1564 term-utils/agetty.c:2205 term-utils/agetty.c:2774
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "reserveren van geheugen is mislukt: %m"
@@ -18564,27 +18554,27 @@ msgstr "kan os-release-bestand niet openen"
 msgid "failed to create reload file: %s: %m"
 msgstr "aanmaken van herlaadbestand  is mislukt: %s: %m"
 
-#: term-utils/agetty.c:1934
+#: term-utils/agetty.c:1936
 msgid "[press ENTER to login]"
 msgstr "[druk op Enter om in te loggen]"
 
-#: term-utils/agetty.c:1961
+#: term-utils/agetty.c:1963
 msgid "Num Lock off"
 msgstr "NumLock uit"
 
-#: term-utils/agetty.c:1964
+#: term-utils/agetty.c:1966
 msgid "Num Lock on"
 msgstr "NumLock aan"
 
-#: term-utils/agetty.c:1967
+#: term-utils/agetty.c:1969
 msgid "Caps Lock on"
 msgstr "CapsLock aan"
 
-#: term-utils/agetty.c:1970
+#: term-utils/agetty.c:1972
 msgid "Scroll Lock on"
 msgstr "ScrollLock aan"
 
-#: term-utils/agetty.c:1973
+#: term-utils/agetty.c:1975
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -18593,32 +18583,32 @@ msgstr ""
 "Hint: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2115
+#: term-utils/agetty.c:2117
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: gelezen: %m"
 
-#: term-utils/agetty.c:2179
+#: term-utils/agetty.c:2181
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: invoeroverloop"
 
-#: term-utils/agetty.c:2199 term-utils/agetty.c:2207
+#: term-utils/agetty.c:2201 term-utils/agetty.c:2209
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ongeldige tekenconversie in gebruikersnaam"
 
-#: term-utils/agetty.c:2213
+#: term-utils/agetty.c:2215
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ongeldig teken 0x%x in gebruikersnaam"
 
-#: term-utils/agetty.c:2298
+#: term-utils/agetty.c:2300
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: kan terminaleigenschappen niet instellen: %m"
 
-#: term-utils/agetty.c:2336
+#: term-utils/agetty.c:2338
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18627,163 +18617,163 @@ msgstr ""
 "  %1$s [opties] <lijn> <baudrate>,... [<terminaltype>]\n"
 "  %1$s [opties] <baudrate>,... <lijn> [<terminaltype>]\n"
 
-#: term-utils/agetty.c:2340
+#: term-utils/agetty.c:2342
 msgid "Open a terminal and set its mode.\n"
 msgstr "Opent een terminal en stelt diens modus in.\n"
 
-#: term-utils/agetty.c:2343
+#: term-utils/agetty.c:2345
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr "  -8, --8bits               een 8-bits terminal aannemen\n"
 
-#: term-utils/agetty.c:2344
+#: term-utils/agetty.c:2346
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr "  -a, --autologin <gebruiker>   deze <gebruiker> automatisch inloggen\n"
 
-#: term-utils/agetty.c:2345
+#: term-utils/agetty.c:2347
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr "  -c, --noreset             besturingsmodus niet resetten\n"
 
-#: term-utils/agetty.c:2346
+#: term-utils/agetty.c:2348
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr "  -E, --remote              optie '-r <hostnaam>' gebruiken bij 'login'(1)\n"
 
-#: term-utils/agetty.c:2347
+#: term-utils/agetty.c:2349
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr "  -f, --issue-file <bestand>    dit <bestand> als 'issue'-bestand weergeven\n"
 
-#: term-utils/agetty.c:2348
+#: term-utils/agetty.c:2350
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr "  -h, --flow-control        hardware-flow-control inschakelen\n"
 
-#: term-utils/agetty.c:2349
+#: term-utils/agetty.c:2351
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr "  -H, --host <hostnaam>     naam van host waarop in te loggen\n"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2352
 msgid " -i, --noissue              do not display issue file\n"
 msgstr "  -i, --noissue             het 'issue'-bestand niet weergeven\n"
 
-#: term-utils/agetty.c:2351
+#: term-utils/agetty.c:2353
 msgid " -I, --init-string <string> set init string\n"
 msgstr "  -I, --init-string <tekenreeks>  te gebruiken initialisatietekenreeks\n"
 
 # FIXME: comma
-#: term-utils/agetty.c:2352
+#: term-utils/agetty.c:2354
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr "  -J, --noclear             scherm niet wissen voor tonen van prompt\n"
 
-#: term-utils/agetty.c:2353
+#: term-utils/agetty.c:2355
 msgid " -l, --login-program <file> specify login program\n"
 msgstr "  -l, --login-program <bestand>   te gebruiken 'login'-programma\n"
 
-#: term-utils/agetty.c:2354
+#: term-utils/agetty.c:2356
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr "  -L, --local-line[=<modus>]    een lokale lijn afdwingen (of uitschakelen)\n"
 
-#: term-utils/agetty.c:2355
+#: term-utils/agetty.c:2357
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr "  -m, --extract-baud        baudrate bepalen tijdens verbinden\n"
 
-#: term-utils/agetty.c:2356
+#: term-utils/agetty.c:2358
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr "  -n, --skip-login          niet om login prompten\n"
 
 # FIXME: comma
-#: term-utils/agetty.c:2357
+#: term-utils/agetty.c:2359
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr "  -N, --nonewline           geen nieuwe regel weergeven voor 'issue'\n"
 
-#: term-utils/agetty.c:2358
+#: term-utils/agetty.c:2360
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr "  -o, --login-options <opties>  opties die aan 'login' doorgegeven worden\n"
 
-#: term-utils/agetty.c:2359
+#: term-utils/agetty.c:2361
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr "  -p, --login-pause         met login wachten tot een toetsaanslag\n"
 
-#: term-utils/agetty.c:2360
+#: term-utils/agetty.c:2362
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr "  -r, --chroot <map>        hoofdmap wijzigen naar deze <map>\n"
 
-#: term-utils/agetty.c:2361
+#: term-utils/agetty.c:2363
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr "  -R, --hangup              een virtuele 'hangup' doen op de terminal\n"
 
-#: term-utils/agetty.c:2362
+#: term-utils/agetty.c:2364
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr "  -s, --keep-baud           baudrate proberen te behouden na een 'break'\n"
 
-#: term-utils/agetty.c:2363
+#: term-utils/agetty.c:2365
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr "  -t, --timeout <getal>     tijdslimiet voor login-proces\n"
 
-#: term-utils/agetty.c:2364
+#: term-utils/agetty.c:2366
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr "  -U, --detect-case         een terminal met alleen hoofdletters detecteren\n"
 
-#: term-utils/agetty.c:2365
+#: term-utils/agetty.c:2367
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr "  -w, --wait-cr             wachten op CR-teken (carriage-return)\n"
 
-#: term-utils/agetty.c:2366
+#: term-utils/agetty.c:2368
 msgid "     --nohints              do not print hints\n"
 msgstr "      --nohints             geen hints over Lock-toetsen geven\n"
 
-#: term-utils/agetty.c:2367
+#: term-utils/agetty.c:2369
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "      --nohostname          geen hostnaam tonen\n"
 
-#: term-utils/agetty.c:2368
+#: term-utils/agetty.c:2370
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "      --long-hostname       volledige hostnaam tonen\n"
 
-#: term-utils/agetty.c:2369
+#: term-utils/agetty.c:2371
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "      --erase-chars <tekens>    extra backspace-tekens\n"
 
-#: term-utils/agetty.c:2370
+#: term-utils/agetty.c:2372
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "      --kill-chars <tekens>     extra regelwis-tekens\n"
 
-#: term-utils/agetty.c:2371
+#: term-utils/agetty.c:2373
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "      --chdir <map>         vóór de aanmelding naar deze map gaan\n"
 
-#: term-utils/agetty.c:2372
+#: term-utils/agetty.c:2374
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "      --delay <getal>       dit aantal seconden slapen vóór tonen van prompt\n"
 
-#: term-utils/agetty.c:2373
+#: term-utils/agetty.c:2375
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "      --nice <getal>        'login' draaien met deze prioriteit\n"
 
-#: term-utils/agetty.c:2374
+#: term-utils/agetty.c:2376
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "      --reload              prompts hernieuwen op reeds draaiende agetty's\n"
 
-#: term-utils/agetty.c:2375
+#: term-utils/agetty.c:2377
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "  -T, --list-types    bekende partitietypen opsommen"
 
-#: term-utils/agetty.c:2729
+#: term-utils/agetty.c:2731
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d gebruiker"
 msgstr[1] "%d gebruikers"
 
-#: term-utils/agetty.c:2858
+#: term-utils/agetty.c:2862
 #, c-format
 msgid "checkname failed: %m"
 msgstr "'checkname' is mislukt: %m"
 
-#: term-utils/agetty.c:2870
+#: term-utils/agetty.c:2874
 #, c-format
 msgid "cannot touch file %s"
 msgstr "kan bestand %s niet aanraken"
 
-#: term-utils/agetty.c:2874
+#: term-utils/agetty.c:2878
 msgid "--reload is unsupported on your system"
 msgstr "optie '--reload' wordt niet ondersteund op uw systeem"
 
@@ -20205,6 +20195,13 @@ msgstr "onbekende stuurcode in invoer: %o, %o"
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "Invoerregel is te lang."
+
+#~ msgid "Failed to set personality to %s"
+#~ msgstr "instellen van persoonlijkheid op %s is mislukt"
+
+#, fuzzy
+#~ msgid " --reset-env                 reset environment variables\n"
+#~ msgstr "  -m, -p, --preserve-environment  omgevingsvariabelen niet wissen\n"
 
 # FIXME: don't gettextize
 #~ msgid "%15s: %s"
