@@ -175,6 +175,7 @@ CONTRIBUTORS:
       Chris MacGregor <chrismacgregor@google.com>
       Chris Metcalf <cmetcalf@mellanox.com>
       Chris Morin <chris.morin2@gmail.com>
+      Christian Hesse <mail@eworm.de>
       Christian von Roques <roques@juliet.ka.sub.org>
       Christian Wiese <chris@opensde.org>
       Christophe Blaess <Christophe@Blaess.fr>
@@ -333,6 +334,7 @@ CONTRIBUTORS:
       Jason Borden <jborden@bluehost.com>
       Jason Vas Dias <jvdias@redhat.com>
       Jean-Loup 'clippix' Bogalho <clippix@lse.epita.fr>
+      Jean-Philippe ROMAIN <jean-philippe.romain@st.com>
       Jeff Mahoney <jeffm@suse.com>
       Jens Kristian Søgaard <jens@mermaidconsulting.dk>
       Jeremy Fitzhardinge <jeremy@suite.sw.oz.au>
@@ -350,6 +352,7 @@ CONTRIBUTORS:
       John Keeping <john.keeping@lineone.net>
       John Lindgren <john.lindgren@tds.net>
       John Paul Morrison <jmorriso@rflab.ee.ubc.ca>
+      John W Higgins <wishdev@gmail.com>
       John W. Linville <linville@tuxdriver.com>
       Jonathan Liu <net147@gmail.com>
       Jon Grant <jg@jguk.org>
@@ -473,6 +476,7 @@ CONTRIBUTORS:
       Nik Nyby <nikolas@gnu.org>
       Nikolay Sivov <nsivov@codeweavers.com>
       Nilgün Belma Bugüner <nilgun@buguner.name.tr>
+      Noel Cragg <noel@squeezehead.com>
       Norbert Buchmuller <norbi@nix.hu>
       OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
       Oliver Falk <oliver@linux-kernel.at>
@@ -487,6 +491,7 @@ CONTRIBUTORS:
       Patrice Dumas <pertusus@free.fr>
       Patrick Plagwitz <patrick.plagwitz@fau.de>
       Patrick Steinhardt <ps@pks.im>
+      Paul Asmuth <paul@asmuth.com>
       Paul Eggert <eggert@cs.ucla.edu>
       Paul Fox <pgf@laptop.org>
       Paulius Zaleckas <paulius.zaleckas@teltonika.lt>
@@ -584,6 +589,7 @@ CONTRIBUTORS:
       Serge Hallyn <serge.hallyn@ubuntu.com>
       Sergei Antonov <saproj@gmail.com>
       Sergey Gusarov <laborer2008@gmail.com>
+      Seth Girvan <snth@snthhacks.com>
       Sevan Janiyan <venture37@geeklan.co.uk>
       sgargel <sgargel@yahoo.it>
       Shachar Shemesh <shachar@debian.org>
@@ -621,6 +627,7 @@ CONTRIBUTORS:
       Thierry Reding <thierry.reding@avionic-design.de>
       Thierry Vignaud <thierry.vignaud@gmail.com>
       Thomas Bächler <thomas@archlinux.org>
+      Thomas Deutschmann <whissi@gentoo.org>
       Thomas Fehr <fehr@suse.de>
       Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
       Thomas Schwinge <thomas@codesourcery.com>
