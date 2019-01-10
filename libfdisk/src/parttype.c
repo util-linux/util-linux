@@ -313,8 +313,10 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 				str, lb->name));
 	types = lb->parttypes;
 
-	if (types[0].typestr == NULL && isxdigit(*str)) {
+	if (types[0].typestr == NULL) {
 		unsigned int code = 0;
+
+		DBG(LABEL, ul_debugobj(lb, " parsing hex"));
 
 		errno = 0;
 		code = strtol(str, &end, 16);
@@ -330,6 +332,8 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 		ret = fdisk_new_unknown_parttype(code, NULL);
 	} else {
 		int i;
+
+		DBG(LABEL, ul_debugobj(lb, " parsing string"));
 
 		/* maybe specified by type string (e.g. UUID) */
 		ret = fdisk_label_get_parttype_from_string(lb, str);

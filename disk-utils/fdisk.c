@@ -493,8 +493,13 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 
 		if (buf[1] == '\0' && toupper(*buf) == 'L')
 			list_partition_types(cxt);
-		else if (*buf)
-			return fdisk_label_parse_parttype(lb, buf);
+		else if (*buf) {
+			struct fdisk_parttype *t = fdisk_label_parse_parttype(lb, buf);
+
+			if (!t)
+				fdisk_info(cxt, _("Failed to parse '%s' partition type."), buf);
+			return t;
+		}
         } while (1);
 
 	return NULL;
@@ -621,7 +626,7 @@ void change_partition_type(struct fdisk_context *cxt)
 			break;
 	} while (!t);
 
-	if (canceled == 0 && fdisk_set_partition_type(cxt, i, t) == 0)
+	if (canceled == 0 && t && fdisk_set_partition_type(cxt, i, t) == 0)
 		fdisk_info(cxt,
 			_("Changed type of partition '%s' to '%s'."),
 			old, t ? fdisk_parttype_get_name(t) : _("Unknown"));
