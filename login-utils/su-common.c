@@ -989,8 +989,8 @@ static void setenv_path(const struct passwd *pw)
 	if (pw->pw_uid)
 		rc = logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
 
-	else if ((rc = logindefs_setenv("PATH", "ENV_ROOTPATH", NULL)) != 0)
-		rc = logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT);
+	else if ((rc = logindefs_setenv("PATH", "ENV_SUPATH", NULL)) != 0)
+		rc = logindefs_setenv("PATH", "ENV_ROOTPATH", _PATH_DEFPATH_ROOT);
 
 	if (rc)
 		err(EXIT_FAILURE, _("failed to set the PATH environment variable"));
