@@ -466,7 +466,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 	return rc;
 }
 
-static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
+static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int *canceled)
 {
 	const char *q;
 	struct fdisk_label *lb;
@@ -477,6 +477,7 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 	if (!lb)
 		return NULL;
 
+	*canceled = 0;
         q = fdisk_label_has_code_parttypes(lb) ?
 		_("Hex code (type L to list all codes): ") :
 		_("Partition type (type L to list all types): ");
@@ -484,8 +485,11 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 		char buf[256];
 		int rc = get_user_reply(q, buf, sizeof(buf));
 
-		if (rc)
+		if (rc) {
+			if (rc == -ECANCELED)
+				*canceled = 1;
 			break;
+		}
 
 		if (buf[1] == '\0' && toupper(*buf) == 'L')
 			list_partition_types(cxt);
@@ -596,6 +600,7 @@ void change_partition_type(struct fdisk_context *cxt)
 	struct fdisk_parttype *t = NULL;
 	struct fdisk_partition *pa = NULL;
 	const char *old = NULL;
+	int canceled = 0;
 
 	assert(cxt);
 
@@ -611,10 +616,12 @@ void change_partition_type(struct fdisk_context *cxt)
 	old = t ? fdisk_parttype_get_name(t) : _("Unknown");
 
 	do {
-		t = ask_partition_type(cxt);
+		t = ask_partition_type(cxt, &canceled);
+		if (canceled)
+			break;
 	} while (!t);
 
-	if (fdisk_set_partition_type(cxt, i, t) == 0)
+	if (canceled == 0 && fdisk_set_partition_type(cxt, i, t) == 0)
 		fdisk_info(cxt,
 			_("Changed type of partition '%s' to '%s'."),
 			old, t ? fdisk_parttype_get_name(t) : _("Unknown"));
