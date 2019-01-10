@@ -1229,8 +1229,8 @@ static void load_config(void *data)
 	struct su_context *su = (struct su_context *) data;
 
 	DBG(MISC, ul_debug("loading logindefs"));
-	logindefs_load_file(su->runuser ? _PATH_LOGINDEFS_RUNUSER : _PATH_LOGINDEFS_SU);
 	logindefs_load_file(_PATH_LOGINDEFS);
+	logindefs_load_file(su->runuser ? _PATH_LOGINDEFS_RUNUSER : _PATH_LOGINDEFS_SU);
 }
 
 /*
