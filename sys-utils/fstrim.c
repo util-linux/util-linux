@@ -137,7 +137,7 @@ static int has_discard(const char *devname, struct path_cxt **wholedisk)
 	struct path_cxt *pc = NULL;
 	uint64_t dg = 0;
 	dev_t disk = 0, dev;
-	int rc = -1;
+	int rc = -1, rdonly = 0;
 
 	dev = sysfs_devname_to_devno(devname);
 	if (!dev)
@@ -175,9 +175,11 @@ static int has_discard(const char *devname, struct path_cxt **wholedisk)
 	}
 
 	rc = ul_path_read_u64(pc, &dg, "queue/discard_granularity");
+	if (!rc)
+		ul_path_scanf(pc, "ro", "%d", &rdonly);
 
 	ul_unref_path(pc);
-	return rc == 0 && dg > 0;
+	return rc == 0 && dg > 0 && rdonly == 0;
 fail:
 	ul_unref_path(pc);
 	return 1;
