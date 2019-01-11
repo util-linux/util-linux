@@ -256,6 +256,17 @@ to change directory to her home.  The default value is
 .IR yes .
 .RE
 .PP
+.B LASTLOG_UID_MAX
+(unsigned number)
+.RS 4
+Highest user ID number for which the lastlog entries should be
+updated.  As higher user IDs are usually tracked by remote user
+identity and authentication services there is no need to create
+a huge sparse lastlog file for them.  No LASTLOG_UID_MAX option
+present in the configuration means that there is no user ID limit
+for writing lastlog entries.
+.RE
+.PP
 .B LOG_UNKFAIL_ENAB
 (boolean)
 .RS 4

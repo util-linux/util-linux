@@ -503,6 +503,9 @@ static void log_lastlog(struct login_context *cxt)
 	if (!cxt->pwd)
 		return;
 
+	if (cxt->pwd->pw_uid > (uid_t) getlogindefs_num("LASTLOG_UID_MAX", ULONG_MAX))
+		return;
+
 	/* lastlog is huge on systems with large UIDs, ignore SIGXFSZ */
 	memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = SIG_IGN;
