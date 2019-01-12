@@ -51,7 +51,25 @@ _umount_module()
 
 	local oldifs=$IFS
 	IFS=$'\n'
-	COMPREPLY=( $( compgen -W '$(findmnt -lno TARGET | sed "s/\([[:blank:]]\)/\\\\\1/g")' -- "$cur" ) )
+	COMPREPLY=( $( compgen -W "$(findmnt -lno TARGET | awk \
+		'{
+			if ($0 ~ ENVIRON["HOME"]) {
+				homeless = $0
+				homeless = gensub(ENVIRON["HOME"], "\\\\~", "g", homeless)
+				homeless = gensub(/(\s)/, "\\\\\\1", "g", homeless)
+				print homeless
+			}
+			if ($0 ~ ENVIRON["PWD"]) {
+				reldir = $0
+				reldir = gensub(ENVIRON["PWD"]"/", "", "g", reldir)
+				reldir = gensub(/(\s)/, "\\\\\\1", "g", reldir)
+				print "./" reldir
+				print reldir
+			}
+			gsub(/\s/, "\\\\&")
+			print $0
+		}'
+	)" -- "$cur" ) )
 	IFS=$oldifs
 }
 complete -F _umount_module umount
