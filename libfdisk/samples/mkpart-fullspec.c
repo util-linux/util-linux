@@ -6,7 +6,7 @@
  *
  *
  * Libfdisk sample to create partitions by specify all required partition
- * properties (partno, start and size). The defauls is only partition type
+ * properties (partno, start and size). The default is only partition type
  * (except MBR where 4th partition is extended).
  */
 #include <stdlib.h>

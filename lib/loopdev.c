@@ -363,7 +363,7 @@ int loopcxt_deinit_iterator(struct loopdev_cxt *lc)
 
 /*
  * Same as loopcxt_set_device, but also checks if the device is
- * associeted with any file.
+ * associated with any file.
  *
  * Returns: <0 on error, 0 on success, 1 device does not match with
  *         LOOPITER_FL_{USED,FREE} flags.
@@ -692,7 +692,7 @@ char *loopcxt_get_backing_file(struct loopdev_cxt *lc)
 
 	if (sysfs)
 		/*
-		 * This is always preffered, the loop_info64
+		 * This is always preferred, the loop_info64
 		 * has too small buffer for the filename.
 		 */
 		ul_path_read_string(sysfs, &res, "loop/backing_file");
@@ -1776,7 +1776,7 @@ char *loopdev_find_by_backing_file(const char *filename, uint64_t offset, uint64
 
 /*
  * Returns number of loop devices associated with @file, if only one loop
- * device is associeted with the given @filename and @loopdev is not NULL then
+ * device is associated with the given @filename and @loopdev is not NULL then
  * @loopdev returns name of the device.
  */
 int loopdev_count_by_backing_file(const char *filename, char **loopdev)

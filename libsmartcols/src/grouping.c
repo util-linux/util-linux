@@ -126,7 +126,7 @@ void scols_groups_fix_members_order(struct libscols_table *tb)
 		groups_fix_members_order(ln);
 	}
 
-	/* If group child is memeber of another group *
+	/* If group child is member of another group *
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (scols_table_next_group(tb, &itr, &gr) == 0) {
 		struct libscols_iter xitr;
@@ -223,7 +223,7 @@ static int group_state_for_line(struct libscols_group *gr, struct libscols_line 
  */
 static void grpset_apply_group_state(struct libscols_group **xx, int state, struct libscols_group *gr)
 {
-	DBG(GROUP, ul_debugobj(gr, "   appling state to grpset"));
+	DBG(GROUP, ul_debugobj(gr, "   applying state to grpset"));
 
 	/* gr->state holds the old state, @state is the new state
 	 */

@@ -661,7 +661,7 @@ int fdisk_apply_label_device_properties(struct fdisk_context *cxt)
 	int rc = 0;
 
 	if (cxt->label && cxt->label->op->reset_alignment) {
-		DBG(CXT, ul_debugobj(cxt, "appling label device properties..."));
+		DBG(CXT, ul_debugobj(cxt, "applying label device properties..."));
 		rc = cxt->label->op->reset_alignment(cxt);
 	}
 	return rc;

@@ -585,7 +585,7 @@ int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 	if (rc < 0 || !str)
 		return rc;;
 
-	/* Remove tailing newline (usuall in sysfs) */
+	/* Remove tailing newline (usual in sysfs) */
 	if (rc > 0 && *(buf + rc - 1) == '\n')
 		--rc;
 
@@ -618,7 +618,7 @@ int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char
 	if (rc < 0)
 		return rc;;
 
-	/* Remove tailing newline (usuall in sysfs) */
+	/* Remove tailing newline (usual in sysfs) */
 	if (rc > 0 && *(buf + rc - 1) == '\n')
 		--rc;
 

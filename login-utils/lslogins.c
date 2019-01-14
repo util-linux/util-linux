@@ -1568,7 +1568,7 @@ int main(int argc, char *argv[])
 			 columns[ncolumns++] = i;
 
 	} else if (ncolumns == 2) {
-		/* default colummns */
+		/* default columns */
 		add_column(columns, ncolumns++, COL_NPROCS);
 		add_column(columns, ncolumns++, COL_PWDLOCK);
 		add_column(columns, ncolumns++, COL_PWDDENY);

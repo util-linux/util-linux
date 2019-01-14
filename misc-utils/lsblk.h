@@ -131,7 +131,7 @@ struct lsblk_device {
 #define device_is_partition(_x)		((_x)->wholedisk != NULL)
 
 /*
- * Note that lsblk tree uses botton devices (devices without slaves) as root
+ * Note that lsblk tree uses bottom devices (devices without slaves) as root
  * of the tree, and partitions are interpreted as a dependence too; it means:
  *    sda -> sda1 -> md0
  *

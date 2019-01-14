@@ -1282,7 +1282,7 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	/* user overwrites build-in SD-ELEMENT */
+	/* user overwrites built-in SD-ELEMENT */
 	if (has_structured_data_id(get_user_structured_data(&ctl), "timeQuality"))
 		ctl.rfc5424_tq = 0;
 

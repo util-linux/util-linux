@@ -547,7 +547,7 @@ int main(int argc, char **argv)
 			lookup(arg, ls, want);
 			/*
 			 * The lookup mask ("want") is cumulative and it's
-			 * resetable only when it has been already used.
+			 * resettable only when it has been already used.
 			 *
 			 *  whereis -b -m foo     :'foo' mask=BIN|MAN
 			 *  whereis -b foo bar    :'foo' and 'bar' mask=BIN|MAN

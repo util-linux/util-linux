@@ -254,7 +254,7 @@ const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name)
  * and @data is specified then a new header is added.
  *
  * Note that libfdisk allows to specify arbitrary custom header, the default
- * build-in headers are "unit" and "label", and some label specific headers
+ * built-in headers are "unit" and "label", and some label specific headers
  * (for example "uuid" and "name" for GPT).
  *
  * Returns: 0 on success, <0 on error
