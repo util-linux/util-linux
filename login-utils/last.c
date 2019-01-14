@@ -600,6 +600,7 @@ static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 
 	if (ut->ut_tv.tv_sec < ctl->boot_time.tv_sec)
 		return 1;
+	ut->ut_user[__UT_NAMESIZE - 1] = '\0';
 	pw = getpwnam(ut->ut_user);
 	if (!pw)
 		return 1;
