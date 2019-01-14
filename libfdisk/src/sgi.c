@@ -689,7 +689,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 		add_to_freelist(cxt, start, lastblock);
 	}
 	/*
-	 * Done with arithmetics. Go for details now.
+	 * Done with arithmetic. Go for details now.
 	 */
 	if (verbose) {
 		if (sgi_get_bootpartition(cxt) < 0

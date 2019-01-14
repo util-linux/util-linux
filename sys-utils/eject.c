@@ -444,7 +444,7 @@ static void toggle_tray(int fd)
 	struct timeval time_start, time_stop;
 	int time_elapsed;
 
-	/* Try to open the CDROM tray and measure the time therefor
+	/* Try to open the CDROM tray and measure the time therefore
 	 * needed.  In my experience the function needs less than 0.05
 	 * seconds if the tray was already open, and at least 1.5 seconds
 	 * if it was closed.  */

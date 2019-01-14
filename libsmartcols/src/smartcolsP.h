@@ -213,7 +213,7 @@ struct libscols_table {
 	struct libscols_symbols	*symbols;
 	struct libscols_cell	title;		/* optional table title (for humans) */
 
-	int	indent;		/* indention counter */
+	int	indent;		/* indentation counter */
 	int	indent_last_sep;/* last printed has been line separator */
 	int	format;		/* SCOLS_FMT_* */
 

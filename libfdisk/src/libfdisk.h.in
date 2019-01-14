@@ -144,7 +144,7 @@ struct fdisk_labelitem;
  * @FDISK_ASKTYPE_OFFSET:  ask for offset
  * @FDISK_ASKTYPE_WARN:  print warning message and errno
  * @FDISK_ASKTYPE_WARNX: print warning message
- * @FDISK_ASKTYPE_INFO: print infor message
+ * @FDISK_ASKTYPE_INFO: print info message
  * @FDISK_ASKTYPE_YESNO: ask Yes/No question
  * @FDISK_ASKTYPE_STRING: ask for string
  * @FDISK_ASKTYPE_MENU: ask for menu item
@@ -619,7 +619,7 @@ extern int fdisk_bsd_link_partition(struct fdisk_context *cxt);
  * @BSD_LABELITEM_TYPE: type
  * @BSD_LABELITEM_DISK: disk
  * @BSD_LABELITEM_PACKNAME: packname
- * @BSD_LABELITEM_FLAGS: flags (removeable, ecc, badsect)
+ * @BSD_LABELITEM_FLAGS: flags (removable, ecc, badsect)
  * @BSD_LABELITEM_SECSIZE: Bytes/Sector
  * @BSD_LABELITEM_NTRACKS: Tracks/Cylinder
  * @BSD_LABELITEM_SECPERCYL: Sectors/Cylinder
@@ -731,7 +731,7 @@ extern int fdisk_gpt_set_partition_attrs(struct fdisk_context *cxt, size_t partn
  * @GPT_LABELITEM_FIRSTLBA: First Usable LBA
  * @GPT_LABELITEM_LASTLBA: Usable LBA
  * @GPT_LABELITEM_ALTLBA: Alternative LBA (backup header LBA)
- * @GPT_LABELITEM_ENTRIESLBA: Partitions entires array LBA
+ * @GPT_LABELITEM_ENTRIESLBA: Partitions entries array LBA
  * @GPT_LABELITEM_ENTRIESALLOC: Number of allocated entries in entries array
  *
  * GPT specific label items.

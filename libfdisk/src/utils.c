@@ -162,7 +162,7 @@ char *fdisk_partname(const char *dev, size_t partno)
 
 		free(res);
 
-		/* check for partition seperator "p" */
+		/* check for partition separator "p" */
 		if (asprintf(&res, "%.*sp%zu", w, dev, partno) <= 0)
 			res = NULL;
 		if (res && access(res, F_OK) == 0)

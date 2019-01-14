@@ -991,7 +991,7 @@ int __scols_initialize_printing(struct libscols_table *tb, struct libscols_buffe
 		break;
 	case SCOLS_FMT_JSON:
 		if (tb->format == SCOLS_FMT_JSON)
-			extra_bufsz += tb->nlines * 3;		/* indention */
+			extra_bufsz += tb->nlines * 3;		/* indentation */
 		/* fallthrough */
 	case SCOLS_FMT_EXPORT:
 	{

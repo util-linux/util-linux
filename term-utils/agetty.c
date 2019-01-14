@@ -1284,7 +1284,7 @@ static void termio_init(struct options *op, struct termios *tp)
 	 * later on.
 	 */
 
-	/* The defaul is set c_iflag in termio_final() according to chardata.
+	/* The default is set c_iflag in termio_final() according to chardata.
 	 * Unfortunately, the chardata are not set according to the serial line
 	 * if --autolog is enabled. In this case we do not read from the line
 	 * at all. The best what we can do in this case is to keep c_iflag
