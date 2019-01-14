@@ -12,6 +12,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "monotonic.h"
 #include "nls.h"
 
 #include "hwclock.h"
@@ -223,12 +224,12 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 	 * something weird happens, we have a time limit (1.5s) on this loop
 	 * to reduce the impact of this failure.
 	 */
-	gettimeofday(&begin, NULL);
+	gettime_monotonic(&begin);
 	do {
 		rc = do_rtc_read_ioctl(rtc_fd, &nowtime);
 		if (rc || start_time.tm_sec != nowtime.tm_sec)
 			break;
-		gettimeofday(&now, NULL);
+		gettime_monotonic(&now);
 		if (time_diff(now, begin) > 1.5) {
 			warnx(_("Timed out waiting for time change."));
 			return 1;
