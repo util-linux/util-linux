@@ -416,10 +416,10 @@ static void do_uncompress(char *path, int outfd, unsigned long offset,
 		curr = next;
 	} while (size);
 }
-
+#include <utime.h>
 static void change_file_status(char *path, struct cramfs_inode *i)
 {
-	const struct timeval epoch = { 0, 0 };
+	const struct timeval epoch[] = { {0,0}, {0,0} };
 
 	if (euid == 0) {
 		if (lchown(path, i->uid, i->gid) < 0)
@@ -431,7 +431,7 @@ static void change_file_status(char *path, struct cramfs_inode *i)
 	}
 	if (S_ISLNK(i->mode))
 		return;
-	if (utimes(path, &epoch) < 0)
+	if (utimes(path, epoch) < 0)
 		err(FSCK_EX_ERROR, _("utimes failed: %s"), path);
 }
 
