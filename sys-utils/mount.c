@@ -231,6 +231,57 @@ static int mount_all(struct libmnt_context *cxt)
 	return rc;
 }
 
+
+/*
+ * mount -a -o remount
+ */
+static int remount_all(struct libmnt_context *cxt)
+{
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs;
+	int mntrc, ignored, rc = MNT_EX_SUCCESS;
+
+	int nsucc = 0, nerrs = 0;
+
+	itr = mnt_new_iter(MNT_ITER_FORWARD);
+	if (!itr) {
+		warn(_("failed to initialize libmount iterator"));
+		return MNT_EX_SYSERR;
+	}
+
+	while (mnt_context_next_remount(cxt, itr, &fs, &mntrc, &ignored) == 0) {
+
+		const char *tgt = mnt_fs_get_target(fs);
+
+		if (ignored) {
+			if (mnt_context_is_verbose(cxt))
+				printf(_("%-25s: ignored\n"), tgt);
+		} else {
+			if (mk_exit_code(cxt, mntrc) == MNT_EX_SUCCESS) {
+				nsucc++;
+
+				/* Note that MNT_EX_SUCCESS return code does
+				 * not mean that FS has been really mounted
+				 * (e.g. nofail option) */
+				if (mnt_context_get_status(cxt)
+				    && mnt_context_is_verbose(cxt))
+					printf("%-25s: successfully remounted\n", tgt);
+			} else
+				nerrs++;
+		}
+	}
+
+	if (nerrs == 0)
+		rc = MNT_EX_SUCCESS;		/* all success */
+	else if (nsucc == 0)
+		rc = MNT_EX_FAIL;		/* all failed */
+	else
+		rc = MNT_EX_SOMEOK;		/* some success, some failed */
+
+	mnt_free_iter(itr);
+	return rc;
+}
+
 static void success_message(struct libmnt_context *cxt)
 {
 	unsigned long mflags = 0;
@@ -836,7 +887,10 @@ int main(int argc, char **argv)
 		/*
 		 * A) Mount all
 		 */
-		rc = mount_all(cxt);
+		if (has_remount_flag(cxt))
+			rc = remount_all(cxt);
+		else
+			rc = mount_all(cxt);
 		goto done;
 
 	} else if (argc == 0 && (mnt_context_get_source(cxt) ||

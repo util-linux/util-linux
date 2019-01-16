@@ -344,4 +344,5 @@ MOUNT_2.33 {
 
 MOUNT_2.34 {
 	mnt_guess_system_root;
+	mnt_context_next_remount;
 } MOUNT_2.33;

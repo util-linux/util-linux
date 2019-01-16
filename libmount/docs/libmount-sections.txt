@@ -135,6 +135,7 @@ mnt_context_do_mount
 mnt_context_finalize_mount
 mnt_context_mount
 mnt_context_next_mount
+mnt_context_next_remount
 mnt_context_prepare_mount
 <SUBSECTION>
 MNT_MS_COMMENT

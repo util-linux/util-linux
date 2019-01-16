@@ -65,11 +65,6 @@ bash completion
 libmount (mount/umount)
 -----------------------
 
- - remount all filesystems given their type, for example:
-        mount -a -t tmpfs -o remount
-   It should be probably enough to add remount_all() to mount(8) in way we
-   already have mount_all().  https://github.com/karelzak/util-linux/issues/589
-
  - add --onlyonce to force mount(8) to check if mountpoint is already used. Now
    "already mounted" detection is used for --all only. The problem is if you
    call "mount <mountpoint>" more than once for in fstab defined tmpfs (or network

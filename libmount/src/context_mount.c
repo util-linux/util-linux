@@ -1382,6 +1382,112 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	return 0;
 }
 
+
+/**
+ * mnt_context_next_remount:
+ * @cxt: context
+ * @itr: iterator
+ * @fs: returns the current filesystem
+ * @mntrc: returns the return code from mnt_context_mount()
+ * @ignored: returns 1 for non-matching
+ *
+ * This function tries to remount the next mounted filesystem (as returned by
+ * mnt_context_get_mtab()).
+ *
+ * You can filter out filesystems by:
+ *	mnt_context_set_options_pattern() to simulate mount -a -O pattern
+ *	mnt_context_set_fstype_pattern()  to simulate mount -a -t pattern
+ *
+ * If the filesystem does not match defined criteria, then the
+ * mnt_context_next_remount() function returns zero, but the @ignored is
+ * non-zero.
+ *
+ * If mount(2) syscall or mount.type helper failed, then the
+ * mnt_context_renext_mount() function returns zero, but the @mntrc is non-zero.
+ * Use also mnt_context_get_status() to check if the filesystem was
+ * successfully mounted.
+ *
+ * See mnt_context_mount() for more details about errors and warnings.
+ *
+ * Returns: 0 on success,
+ *         <0 in case of error (!= mount(2) errors)
+ *          1 at the end of the list.
+ */
+int mnt_context_next_remount(struct libmnt_context *cxt,
+			   struct libmnt_iter *itr,
+			   struct libmnt_fs **fs,
+			   int *mntrc,
+			   int *ignored)
+{
+	struct libmnt_context *remount_cxt = NULL;
+	struct libmnt_table *mtab;
+	const char *tgt;
+	int rc;
+
+	if (ignored)
+		*ignored = 0;
+	if (mntrc)
+		*mntrc = 0;
+
+	if (!cxt || !fs || !itr)
+		return -EINVAL;
+
+	rc = mnt_context_get_mtab(cxt, &mtab);
+	if (rc)
+		return rc;
+
+	rc = mnt_table_next_fs(mtab, itr, fs);
+	if (rc != 0)
+		return rc;	/* more filesystems (or error) */
+
+	tgt = mnt_fs_get_target(*fs);
+
+	DBG(CXT, ul_debugobj(cxt, "next-remount: trying %s", tgt));
+
+	/* ignore filesystems which don't match options patterns */
+	if ((cxt->fstype_pattern && !mnt_fs_match_fstype(*fs,
+					cxt->fstype_pattern)) ||
+
+	/* ignore filesystems which don't match type patterns */
+	   (cxt->optstr_pattern && !mnt_fs_match_options(*fs,
+					cxt->optstr_pattern))) {
+		if (ignored)
+			*ignored = 1;
+		DBG(CXT, ul_debugobj(cxt, "next-remount: not-match "
+				"[fstype: %s, t-pattern: %s, options: %s, O-pattern: %s]",
+				mnt_fs_get_fstype(*fs),
+				cxt->fstype_pattern,
+				mnt_fs_get_options(*fs),
+				cxt->optstr_pattern));
+		return 0;
+	}
+
+	/* make sure fstab is already read to avoid fstab parsing in cloned context */
+	mnt_context_get_fstab(cxt, NULL);
+
+	/* clone context */
+	remount_cxt = mnt_copy_context(cxt);
+	if (!remount_cxt)
+		return -ENOMEM;
+
+	rc = mnt_context_set_target(remount_cxt, tgt);
+	if (!rc) {
+		/*
+		 * "-t <pattern>" is used to filter out fstab entries, but for ordinary
+		 * mount operation -t means "-t <type>". We have to zeroize the pattern
+		 * to avoid misinterpretation.
+		 */
+		remount_cxt->fstype_pattern = NULL;
+		rc = mnt_context_mount(remount_cxt);
+
+		if (mntrc)
+			*mntrc = rc;
+	}
+
+	mnt_free_context(remount_cxt);
+	return 0;
+}
+
 /*
  * Returns 1 if @dir parent is shared
  */

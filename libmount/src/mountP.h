@@ -403,6 +403,7 @@ extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 			__attribute__((nonnull(1)));
 
 /* context.c */
+extern struct libmnt_context *mnt_copy_context(struct libmnt_context *o);
 extern int mnt_context_mtab_writable(struct libmnt_context *cxt);
 extern int mnt_context_utab_writable(struct libmnt_context *cxt);
 extern const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt);

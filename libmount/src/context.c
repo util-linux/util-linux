@@ -193,6 +193,49 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	return 0;
 }
 
+struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
+{
+	struct libmnt_context *n;
+
+	n = mnt_new_context();
+	if (!n)
+		return NULL;
+
+	DBG(CXT, ul_debugobj(n, "<---- clone ---->"));
+
+	n->flags = o->flags;
+
+	if (o->fs) {
+		n->fs = mnt_copy_fs(NULL, o->fs);
+		if (!n->fs)
+			goto failed;
+	}
+
+	n->mtab = o->mtab;
+	mnt_ref_table(n->mtab);
+
+	n->mtab = o->utab;
+	mnt_ref_table(n->utab);
+
+	if (o->helper)
+		n->helper = strdup(o->helper);
+	if (o->orig_user)
+		n->orig_user = strdup(o->orig_user);
+
+	n->mountflags = o->mountflags;
+	n->mountdata = o->mountdata;
+
+	mnt_context_reset_status(n);
+
+	n->table_fltrcb = o->table_fltrcb;
+	n->table_fltrcb_data = o->table_fltrcb_data;
+
+	return n;
+failed:
+	mnt_free_context(n);
+	return NULL;
+}
+
 /**
  * mnt_context_reset_status:
  * @cxt: context
