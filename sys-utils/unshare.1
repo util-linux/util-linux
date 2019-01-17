@@ -138,6 +138,10 @@ by bind mount.
 Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather than
 running it directly.  This is useful when creating a new PID namespace.
 .TP
+.BR \-\-keep\-caps
+When the \fB--user\fP option is given, ensure that capabilities granted
+in the user namespace are preserved in the child process.
+.TP
 .BR \-\-kill\-child [ =\fIsigname ]
 When \fBunshare\fR terminates, have \fIsigname\fP be sent to the forked child process.
 Combined with \fB--pid\fR this allows for an easy and reliable killing of the entire

@@ -36,6 +36,7 @@
 
 #include "nls.h"
 #include "c.h"
+#include "caputils.h"
 #include "closestream.h"
 #include "namespace.h"
 #include "exec_shell.h"
@@ -68,7 +69,6 @@ static struct namespace_file {
 };
 
 static int npersists;	/* number of persistent namespaces */
-
 
 enum {
 	SETGROUPS_NONE = -1,
@@ -278,6 +278,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --propagation slave|shared|private|unchanged\n"
 	        "                           modify mount propagation in mount namespace\n"), out);
 	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
+	fputs(_(" --keep-caps               retain capabilities granted in user namespaces\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -R, --root=<dir>	    run the command with root directory set to <dir>\n"), out);
 	fputs(_(" -w, --wd=<dir>	    change working directory to <dir>\n"), out);
@@ -298,6 +299,7 @@ int main(int argc, char *argv[])
 		OPT_PROPAGATION,
 		OPT_SETGROUPS,
 		OPT_KILLCHILD,
+		OPT_KEEPCAPS,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -318,6 +320,7 @@ int main(int argc, char *argv[])
 		{ "map-current-user", no_argument,    NULL, 'c'             },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
 		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
+		{ "keep-caps",     no_argument,       NULL, OPT_KEEPCAPS    },
 		{ "setuid",	   required_argument, NULL, 'S'		    },
 		{ "setgid",	   required_argument, NULL, 'G'		    },
 		{ "root",	   required_argument, NULL, 'R'		    },
@@ -339,6 +342,7 @@ int main(int argc, char *argv[])
 	int force_uid = 0, force_gid = 0;
 	uid_t uid = 0, real_euid = geteuid();
 	gid_t gid = 0, real_egid = getegid();
+	int keepcaps = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -420,6 +424,10 @@ int main(int argc, char *argv[])
 			} else {
 				kill_child_signo = SIGKILL;
 			}
+			break;
+                case OPT_KEEPCAPS:
+			keepcaps = 1;
+			cap_last_cap(); /* Force last cap to be cached before we fork. */
 			break;
 		case 'S':
 			uid = strtoul_or_err(optarg, _("failed to parse uid"));
@@ -555,6 +563,47 @@ int main(int argc, char *argv[])
 	}
 	if (force_uid && setuid(uid) < 0)	/* change UID */
 		err(EXIT_FAILURE, _("setuid failed"));
+
+	/* We use capabilities system calls to propagate the permitted
+	 * capabilities into the ambient set because we have already
+	 * forked so are in async-signal-safe context. */
+	if (keepcaps && (unshare_flags & CLONE_NEWUSER)) {
+		struct __user_cap_header_struct header = {
+			.version = _LINUX_CAPABILITY_VERSION_3,
+			.pid = 0,
+		};
+
+		struct __user_cap_data_struct payload[_LINUX_CAPABILITY_U32S_3] = { 0 };
+
+		if (capget(&header, payload) < 0) {
+			err(EXIT_FAILURE, _("capget failed"));
+		}
+
+		/* In order the make capabilities ambient, we first need to ensure
+		 * that they are all inheritable. */
+		payload[0].inheritable = payload[0].permitted;
+		payload[1].inheritable = payload[1].permitted;
+
+		if (capset(&header, payload) < 0) {
+			err(EXIT_FAILURE, _("capset failed"));
+		}
+
+		uint64_t effective = ((uint64_t)payload[1].effective << 32) |  (uint64_t)payload[0].effective;
+
+		for (int cap = 0; cap < 64; cap++) {
+			/* This is the same check as cap_valid(), but using
+			 * the runtime value for the last valid cap. */
+			if (cap < 0 || cap > cap_last_cap()) {
+				continue;
+			}
+
+			if (effective & (1 << cap)) {
+				if (prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE, cap, 0, 0) < 0) {
+					err(EXIT_FAILURE, _("prctl(PR_CAP_AMBIENT) failed"));
+				}
+			}
+                }
+        }
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);
