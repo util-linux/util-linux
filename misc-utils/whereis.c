@@ -99,6 +99,8 @@ struct wh_dirlist {
 static const char *bindirs[] = {
 	"/usr/bin",
 	"/usr/sbin",
+	"/bin",
+	"/sbin",
 #if defined(MULTIARCHTRIPLET)
 	"/lib/" MULTIARCHTRIPLET,
 	"/usr/lib/" MULTIARCHTRIPLET,
@@ -106,8 +108,6 @@ static const char *bindirs[] = {
 #endif
 	"/usr/lib",
 	"/usr/lib64",
-	"/bin",
-	"/sbin",
 	"/etc",
 	"/usr/etc",
 	"/lib",
