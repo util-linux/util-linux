@@ -1230,6 +1230,11 @@ fdisk_sector_t fdisk_get_first_lba(struct fdisk_context *cxt)
  * partition tables like GPT protective MBR or hybrid partition tables on
  * bootable media where the first partition may start on very crazy offsets.
  *
+ * Note that this function changes only runtime information. It does not update
+ * any range in on-disk partition table. For example GPT Header contains First
+ * and Last usable LBA fields. These fields are not updated by this function.
+ * Be careful.
+ *
  * Returns: 0 on success, <0 on error.
  */
 fdisk_sector_t fdisk_set_first_lba(struct fdisk_context *cxt, fdisk_sector_t lba)
