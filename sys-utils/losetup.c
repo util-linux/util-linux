@@ -447,7 +447,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void warn_size(const char *filename, uint64_t size)
+static void warn_size(const char *filename, uint64_t size, uint64_t offset, int flags)
 {
 	struct stat st;
 
@@ -455,6 +455,9 @@ static void warn_size(const char *filename, uint64_t size)
 		if (stat(filename, &st) || S_ISBLK(st.st_mode))
 			return;
 		size = st.st_size;
+
+		if (flags & LOOPDEV_FL_OFFSET)
+			size -= offset;
 	}
 
 	if (size < 512)
@@ -835,7 +838,7 @@ int main(int argc, char **argv)
 		if (res == 0) {
 			if (showdev)
 				printf("%s\n", loopcxt_get_device(&lc));
-			warn_size(file, sizelimit);
+			warn_size(file, sizelimit, offset, flags);
 			if (set_dio || set_blocksize)
 				goto lo_set_post;
 		}
