@@ -131,7 +131,7 @@ static void __attribute__((__noreturn__)) usage(int archwrapper)
  */
 static struct arch_domain *init_arch_domains(void)
 {
-	struct utsname un;
+	static struct utsname un;
 	size_t i;
 
 	static struct arch_domain transitions[] =
