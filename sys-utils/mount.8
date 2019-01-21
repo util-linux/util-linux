@@ -1218,6 +1218,18 @@ After this call, mount reads fstab and merges these options with
 the options from the command line (\fB\-o\fR).
 If no mountpoint is found in fstab, then a remount with unspecified source is
 allowed.
+.sp
+mount(8) allows to use \fB\-\-all\fR to remount all already mounted filesystems
+which match a specified filter (\fB\-O\fR and \fB\-t\fR).  For example:
+.sp
+.in +4
+.B "mount \-\-all \-o remount,ro -t vfat"
+.in
+.sp
+remounts all already mounted vfat filesystems in read-only mode. The each of the
+filesystems is remounted by "mount \-o remount,ro /dir" semantic. It means the
+mount command reads fstab or mtab and merges these options with the options
+from the command line.
 .TP
 .B ro
 Mount the filesystem read-only.
