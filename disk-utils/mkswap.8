@@ -137,7 +137,7 @@ without the assistance of the filesystem.  This is a problem on files with holes
 or another commands), or on files on copy-on-write filesystems like
 .BR btrfs .
 In some cases preallocated files (e.g. fallocate(1) on XFS) maybe interpreted
-by kernel as files with holes too.  The most portable solution is to use
+by old kernel versions as files with holes too.  The most portable solution is to use
 .BR dd (1)
 and /dev/zero in these cases.
 .sp
