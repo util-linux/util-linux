@@ -195,18 +195,16 @@ This can be seen in the system log as
 .B "swapon: swapfile has holes."
 .sp
 .RE
-The swap file implementation in the kernel expects to be able to write to the
-file directly, without the assistance of the filesystem.  This is a problem on
-preallocated files (e.g.
-.BR fallocate (1))
-on filesystems like \fBXFS\fR or \fBext4\fR, and on copy-on-write
-filesystems like \fBbtrfs\fR.
-.PP
-It is recommended to use
+The swap file implementation in the kernel expects to be able to write to the file directly,
+without the assistance of the filesystem.  This is a problem on files with holes
+(e.g. created by
+.BR cp (1)
+or another commands), or on files on copy-on-write filesystems like
+.BR btrfs .
+In some cases preallocated files (e.g. fallocate(1) on XFS) maybe interpreted
+by kernel as files with holes too.  The most portable solution is to use
 .BR dd (1)
-and
-.I /dev/zero
-to avoid holes on XFS and ext4.
+and /dev/zero in these cases.
 .PP
 .B swapon
 may not work correctly when using a swap file with some versions of
