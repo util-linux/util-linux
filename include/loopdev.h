@@ -96,6 +96,7 @@ struct loopdev_cxt {
 	char		*filename;	/* backing file for loopcxt_set_... */
 	int		fd;		/* open(/dev/looo<N>) */
 	int		mode;		/* fd mode O_{RDONLY,RDWR} */
+	uint64_t	blocksize;	/* used by loopcxt_setup_device() */
 
 	int		flags;		/* LOOPDEV_FL_* flags */
 	unsigned int	has_info:1;	/* .info contains data */
@@ -173,6 +174,7 @@ extern int loopcxt_ioctl_blocksize(struct loopdev_cxt *lc, uint64_t blocksize);
 
 int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset);
 int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit);
+int loopcxt_set_blocksize(struct loopdev_cxt *lc, uint64_t blocksize);
 int loopcxt_set_flags(struct loopdev_cxt *lc, uint32_t flags);
 int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename);
 

@@ -96,6 +96,7 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 	}
 	lc->fd = -1;
 	lc->mode = 0;
+	lc->blocksize = 0;
 	lc->has_info = 0;
 	lc->info_failed = 0;
 	*lc->device = '\0';
@@ -1107,6 +1108,22 @@ int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit)
 }
 
 /*
+ * The blocksize will be used by loopcxt_set_device(). For already exiting
+ * devices use  loopcxt_ioctl_blocksize().
+ *
+ * The setting is removed by loopcxt_set_device() loopcxt_next()!
+ */
+int loopcxt_set_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
+{
+	if (!lc)
+		return -EINVAL;
+	lc->blocksize = blocksize;
+
+	DBG(CXT, ul_debugobj(lc, "set blocksize=%jd", blocksize));
+	return 0;
+}
+
+/*
  * @lc: context
  * @flags: kernel LO_FLAGS_{READ_ONLY,USE_AOPS,AUTOCLEAR} flags
  *
@@ -1330,6 +1347,12 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	}
 
 	DBG(SETUP, ul_debugobj(lc, "LOOP_SET_FD: OK"));
+
+	if (lc->blocksize > 0
+	    && (rc = loopcxt_ioctl_blocksize(lc, lc->blocksize)) < 0) {
+		errsv = -rc;
+		goto err;
+	}
 
 	if (ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info)) {
 		rc = -errno;
