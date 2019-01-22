@@ -1886,13 +1886,6 @@ struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name)
 
 /* converts DCE UUID (uuid[16]) to human readable string
  * - the @len should be always 37 */
-#ifdef HAVE_LIBUUID
-void blkid_unparse_uuid(const unsigned char *uuid, char *str,
-			size_t len __attribute__((__unused__)))
-{
-	uuid_unparse(uuid, str);
-}
-#else
 void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
 {
 	snprintf(str, len,
@@ -1903,7 +1896,6 @@ void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
 		uuid[8], uuid[9],
 		uuid[10], uuid[11], uuid[12], uuid[13], uuid[14],uuid[15]);
 }
-#endif
 
 /* like uuid_is_null() from libuuid, but works with arbitrary size of UUID */
 int blkid_uuid_is_empty(const unsigned char *buf, size_t len)

@@ -126,11 +126,6 @@ libblkid_la_CFLAGS = \
 	-I$(ul_libblkid_incdir) \
 	-I$(top_srcdir)/libblkid/src
 
-if BUILD_LIBUUID
-libblkid_la_LIBADD += libuuid.la
-libblkid_la_CFLAGS += -I$(ul_libuuid_incdir)
-endif
-
 libblkid_la_LDFLAGS = $(SOLIB_LDFLAGS)
 if HAVE_VSCRIPT
 libblkid_la_LDFLAGS += $(VSCRIPT_LDFLAGS),$(top_srcdir)/libblkid/src/libblkid.sym
@@ -157,12 +152,6 @@ check_PROGRAMS += \
 blkid_tests_cflags  = -DTEST_PROGRAM $(libblkid_la_CFLAGS)
 blkid_tests_ldflags =
 blkid_tests_ldadd   = libblkid.la
-
-if BUILD_LIBUUID
-blkid_tests_ldflags += libuuid.la
-blkid_tests_ldadd   += $(LDADD)
-endif
-
 blkid_tests_ldflags += -static
 
 test_blkid_cache_SOURCES = libblkid/src/cache.c

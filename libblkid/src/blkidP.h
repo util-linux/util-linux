@@ -23,9 +23,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-#ifdef HAVE_LIBUUID
-# include <uuid.h>
-#else
+#ifndef UUID_STR_LEN
 # define UUID_STR_LEN   37
 #endif
 
