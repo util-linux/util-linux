@@ -336,11 +336,13 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 	struct iovec *iovec;
 	char *buf = NULL;
 	ssize_t sz;
-	int n, lines, vectors = 8, ret = 0;
+	int n, lines = 1, vectors = 8, ret = 0;
 	size_t dummy = 0;
+        int skip = 0;
 
 	iovec = xmalloc(vectors * sizeof(struct iovec));
-	for (lines = 0; /* nothing */ ; lines++) {
+        iovec[0].iov_base = NULL; /* reserved for MESSAGE */
+        while (1) {
 		buf = NULL;
 		sz = getline(&buf, &dummy, fp);
 		if (sz == -1 ||
@@ -348,6 +350,23 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 			free(buf);
 			break;
 		}
+                if (strncmp(buf, "MESSAGE=", 8) == 0) {
+                        if (iovec[0].iov_base) {
+                                char *extend = xmalloc(iovec[0].iov_len + sz - 8 + 2);
+                                strcpy(extend, iovec[0].iov_base);
+                                strcpy(extend + iovec[0].iov_len, "\n");
+                                strcpy(extend + iovec[0].iov_len + 1, buf + 8);
+                                free(iovec[0].iov_base);
+                                iovec[0].iov_base = extend;
+                                iovec[0].iov_len += sz - 8 + 1;
+                                free(buf);
+                        } else {
+                                iovec[0].iov_base = buf;
+                                iovec[0].iov_len = sz;
+                        }
+                        continue;
+                }
+
 		if (lines == vectors) {
 			vectors *= 2;
 			if (IOV_MAX < vectors)
@@ -356,12 +375,15 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 		}
 		iovec[lines].iov_base = buf;
 		iovec[lines].iov_len = sz;
+                ++lines;
 	}
+        if (!iovec[0].iov_base) /* no MESSAGE */
+                skip = 1;
 
 	if (!ctl->noact)
-		ret = sd_journal_sendv(iovec, lines);
+		ret = sd_journal_sendv(iovec + skip, lines - skip);
 	if (ctl->stderr_printout) {
-		for (n = 0; n < lines; n++)
+		for (n = skip; n < lines; n++)
 			fprintf(stderr, "%s\n", (char *) iovec[n].iov_base);
 	}
 	for (n = 0; n < lines; n++)
