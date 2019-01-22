@@ -508,7 +508,7 @@ static int create_loop(struct loopdev_cxt *lc,
 			}
 
 			lc->info.lo_flags &= ~LO_FLAGS_AUTOCLEAR;
-			if (loopcxt_set_status(lc)) {
+			if (loopcxt_ioctl_status(lc)) {
 				loopcxt_deinit(lc);
 				errx(EXIT_FAILURE, _("%s: failed to re-use loop device"), file);
 			}
@@ -887,7 +887,7 @@ int main(int argc, char **argv)
 			warn("%s", loopcxt_get_device(&lc));
 		break;
 	case A_SET_CAPACITY:
-		res = loopcxt_set_capacity(&lc);
+		res = loopcxt_ioctl_capacity(&lc);
 		if (res)
 			warn(_("%s: set capacity failed"),
 			        loopcxt_get_device(&lc));
@@ -896,13 +896,13 @@ int main(int argc, char **argv)
 	case A_SET_BLOCKSIZE:
  lo_set_post:
 		if (set_dio) {
-			res = loopcxt_set_dio(&lc, use_dio);
+			res = loopcxt_ioctl_dio(&lc, use_dio);
 			if (res)
 				warn(_("%s: set direct io failed"),
 				        loopcxt_get_device(&lc));
 		}
 		if (set_blocksize) {
-			res = loopcxt_set_blocksize(&lc, blocksize);
+			res = loopcxt_ioctl_blocksize(&lc, blocksize);
 			if (res)
 				warn(_("%s: set logical block size failed"),
 				        loopcxt_get_device(&lc));

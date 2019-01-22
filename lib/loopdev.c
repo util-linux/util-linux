@@ -1216,7 +1216,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 				      "size mismatch (%ju/%ju)",
 				      size, expected_size));
 
-		if (loopcxt_set_capacity(lc)) {
+		if (loopcxt_ioctl_capacity(lc)) {
 			/* ioctl not available */
 			if (errno == ENOTTY || errno == EINVAL)
 				errno = ERANGE;
@@ -1374,7 +1374,7 @@ err:
  *
  * Returns: <0 on error, 0 on success.
  */
-int loopcxt_set_status(struct loopdev_cxt *lc)
+int loopcxt_ioctl_status(struct loopdev_cxt *lc)
 {
 	int dev_fd, rc = -1;
 
@@ -1397,7 +1397,7 @@ int loopcxt_set_status(struct loopdev_cxt *lc)
 	return 0;
 }
 
-int loopcxt_set_capacity(struct loopdev_cxt *lc)
+int loopcxt_ioctl_capacity(struct loopdev_cxt *lc)
 {
 	int fd = loopcxt_get_fd(lc);
 
@@ -1415,7 +1415,7 @@ int loopcxt_set_capacity(struct loopdev_cxt *lc)
 	return 0;
 }
 
-int loopcxt_set_dio(struct loopdev_cxt *lc, unsigned long use_dio)
+int loopcxt_ioctl_dio(struct loopdev_cxt *lc, unsigned long use_dio)
 {
 	int fd = loopcxt_get_fd(lc);
 
@@ -1437,7 +1437,7 @@ int loopcxt_set_dio(struct loopdev_cxt *lc, unsigned long use_dio)
  * Kernel uses "unsigned long" as ioctl arg, but we use u64 for all sizes to
  * keep loopdev internal API simple.
  */
-int loopcxt_set_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
+int loopcxt_ioctl_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
 {
 	int fd = loopcxt_get_fd(lc);
 
