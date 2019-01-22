@@ -188,42 +188,39 @@ Be verbose.
 .BR \-V , " \-\-version"
 Display version information and exit.
 .SH NOTES
-You should not use \fBswapon\fR on a file with holes.
-This can be seen in the system log as
-.RS
-.sp
-.B "swapon: swapfile has holes."
-.sp
-.RE
+.SS Files with holes
 The swap file implementation in the kernel expects to be able to write to the file directly,
 without the assistance of the filesystem.  This is a problem on files with holes
-(e.g. created by
+or on copy-on-write files on filesystems like btrfs.
+.sp
+The commands like
 .BR cp (1)
-or another commands), or on files on copy-on-write filesystems like
-.BR btrfs .
+or
+.BR truncate (1)
+create files with holes.  These files will be rejected by swapon.
+.sp
 In some cases preallocated files (e.g. fallocate(1) on XFS) maybe interpreted
-by kernel as files with holes too.  The most portable solution is to use
+by old kernel versions as files with holes too.  The preallocated swap files on XFS are
+supported since Linux 4.18.
+.sp
+The most portable solution to create a swap file is to use
 .BR dd (1)
 and /dev/zero in these cases.
-.PP
-.B swapon
-may not work correctly when using a swap file with some versions of
-\fBbtrfs\fR.  This is due to btrfs being a copy-on-write filesystem: the
-file location may not be static and corruption can result.  Btrfs actively
-disallows the use of swap files on its filesystems by refusing to map the file.
-.PP
-One possible workaround is to map the swap
-file to a loopback device.  This will allow the filesystem to determine the
-mapping properly but may come with a performance impact.
-.PP
+.SS Btrfs
+The swap files on btrfs are supported since Linux 5.0.  The previous versions use
+copy-on-write semantic for the swap files, it means that the file location is may not be static
+and corruption can result.
+.sp
+One possible workaround is to map the swap file to a loopback device.  This will allow the filesystem
+to determine the mapping properly but may come with a performance impact.
+.SS NFS
 Swap over \fBNFS\fR may not work.
-.PP
+.SS Suspend
 .B swapon
 automatically detects and rewrites a swap space signature with old software
 suspend data (e.g. S1SUSPEND, S2SUSPEND, ...). The problem is that if we don't
 do it, then we get data corruption the next time an attempt at unsuspending is
 made.
-
 .SH ENVIRONMENT
 .IP LIBMOUNT_DEBUG=all
 enables libmount debug output.
