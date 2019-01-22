@@ -207,9 +207,10 @@ The most portable solution to create a swap file is to use
 .BR dd (1)
 and /dev/zero in these cases.
 .SS Btrfs
-The swap files on btrfs are supported since Linux 5.0.  The previous versions use
-copy-on-write semantic for the swap files, it means that the file location is may not be static
-and corruption can result.
+The swap files on btrfs are supported since Linux 5.0 on files with nocow and
+nodatasum attributes and without compression.  The previous versions may use
+copy-on-write semantic for the swap files, it means that the file location is
+may not be static and corruption can result.
 .sp
 One possible workaround is to map the swap file to a loopback device.  This will allow the filesystem
 to determine the mapping properly but may come with a performance impact.
