@@ -826,7 +826,7 @@ int main(int argc, char **argv)
 	    (sizelimit || lo_flags || showdev))
 		errx(EXIT_FAILURE,
 			_("the options %s are allowed during loop device setup only"),
-			"--{sizelimit,read-only,show}");
+			"--{sizelimit,partscan,read-only,show}");
 
 	if ((flags & LOOPDEV_FL_OFFSET) &&
 	    act != A_CREATE && (act != A_SHOW || !file))
