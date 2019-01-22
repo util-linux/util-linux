@@ -792,7 +792,10 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #endif
 ]], [[
 char *c = crypt("abc","pw");
-]])],[],[
+]])],[
+  have_libcrypt=no
+  have_crypt=yes
+],[
   LIBS="$LIBS -lcrypt"
   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
   #ifdef HAVE_CRYPT_H
