@@ -108,6 +108,10 @@ execution of
 will display MESSAGE field.  Use
 .B journalctl \-\-output json-pretty
 to see rest of the fields.
+.sp
+To include newlines in MESSAGE, specify MESSAGE several times.  This is
+handled as a special case, other fields will be stored as an array in
+the journal if they appear multiple times.
 .TP
 .BR \-\-msgid " \fImsgid
 Sets the RFC5424 MSGID field.  Note that the space character is not permitted

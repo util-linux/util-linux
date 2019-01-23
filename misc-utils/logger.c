@@ -336,11 +336,11 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 	struct iovec *iovec;
 	char *buf = NULL;
 	ssize_t sz;
-	int n, lines, vectors = 8, ret = 0;
+	int n, lines = 0, vectors = 8, ret = 0, msgline = -1;
 	size_t dummy = 0;
 
 	iovec = xmalloc(vectors * sizeof(struct iovec));
-	for (lines = 0; /* nothing */ ; lines++) {
+	while (1) {
 		buf = NULL;
 		sz = getline(&buf, &dummy, fp);
 		if (sz == -1 ||
@@ -348,6 +348,25 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 			free(buf);
 			break;
 		}
+
+		if (strncmp(buf, "MESSAGE=", 8) == 0) {
+			if (msgline == -1)
+				msgline = lines;	/* remember the first message */
+			else {
+				char *p = xrealloc(iovec[msgline].iov_base,
+						   iovec[msgline].iov_len + sz - 8 + 2);
+
+				iovec[msgline].iov_base = p;
+				p += iovec[msgline].iov_len;
+				*p++ = '\n';
+				memcpy(p, buf + 8, sz - 8);
+				free(buf);
+
+				iovec[msgline].iov_len += sz - 8 + 1;
+				continue;
+			}
+		}
+
 		if (lines == vectors) {
 			vectors *= 2;
 			if (IOV_MAX < vectors)
@@ -356,6 +375,7 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 		}
 		iovec[lines].iov_base = buf;
 		iovec[lines].iov_len = sz;
+		++lines;
 	}
 
 	if (!ctl->noact)
