@@ -284,7 +284,11 @@ static struct fdisk_parttype gpt_parttypes[] =
 	DEF_GUID("CEF5A9AD-73BC-4601-89F3-CDEEEEE321A1", N_("QNX6 file system")),
 
 	/* Plan 9 */
-	DEF_GUID("C91818F9-8025-47AF-89D2-F030D7000C2C", N_("Plan 9 partition"))
+	DEF_GUID("C91818F9-8025-47AF-89D2-F030D7000C2C", N_("Plan 9 partition")),
+
+	/* HiFive Unleased bootloaders */
+	DEF_GUID("5B193300-FC78-40CD-8002-E86C45580B47", N_("HiFive Unleashed FSBL")),
+	DEF_GUID("2E54B353-1271-4842-806F-E436D6AF6985", N_("HiFive Unleashed BBL")),
 };
 
 #define alignment_required(_x)  ((_x)->grain != (_x)->sector_size)
