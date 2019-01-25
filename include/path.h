@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <stdint.h>
 #include <sys/types.h>
 #include <dirent.h>
 
