@@ -50,6 +50,8 @@ given either, then standard input is logged.
 .BR \-d , " \-\-udp"
 Use datagrams (UDP) only.  By default the connection is tried to the
 syslog port defined in /etc/services, which is often 514 .
+.sp
+See also \fB\-\-server\fR and \fB\-\-socket\fR to specify where to connect.
 .TP
 .BR \-e , " \-\-skip-empty"
 Ignore empty lines when processing files.  An empty line
@@ -265,6 +267,8 @@ Use stream (TCP) only.  By default the connection is tried to the
 .I syslog-conn
 port defined in /etc/services, which is often
 .IR 601 .
+.sp
+See also \fB\-\-server\fR and \fB\-\-socket\fR to specify where to connect.
 .TP
 .BR \-t , " \-\-tag " \fItag
 Mark every line to be logged with the specified
