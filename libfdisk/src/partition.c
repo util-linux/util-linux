@@ -1019,7 +1019,9 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 }
 
 static struct fdisk_partition *resize_get_by_offset(
-			struct fdisk_table *tb, fdisk_sector_t off)
+			struct fdisk_table *tb,
+			struct fdisk_partition *cur,
+			fdisk_sector_t off)
 {
 	struct fdisk_partition *pa = NULL;
 	struct fdisk_iter itr;
@@ -1028,6 +1030,9 @@ static struct fdisk_partition *resize_get_by_offset(
 
 	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
 		if (!fdisk_partition_has_start(pa) || !fdisk_partition_has_size(pa))
+			continue;
+		if (fdisk_partition_is_nested(cur) &&
+		    pa->parent_partno != cur->parent_partno)
 			continue;
 		if (off >= pa->start && off < pa->start + pa->size)
 			return pa;
@@ -1183,15 +1188,18 @@ static int recount_resize(
 
 	/* 2) verify that start is within the current partition or any freespace area */
 	if (!FDISK_IS_UNDEF(start)) {
-		struct fdisk_partition *area = resize_get_by_offset(tb, start);
+		struct fdisk_partition *area = resize_get_by_offset(tb, cur, start);
+
 		if (area == cur)
 			DBG(PART, ul_debugobj(tpl, "resize: start points to the current partition"));
 		else if (area && fdisk_partition_is_freespace(area))
 			DBG(PART, ul_debugobj(tpl, "resize: start points to freespace"));
 		else if (!area && start >= cxt->first_lba && start < cxt->first_lba + (cxt->grain / cxt->sector_size))
 			DBG(PART, ul_debugobj(tpl, "resize: start points before first partition"));
-		else
+		else {
+			DBG(PART, ul_debugobj(tpl, "resize: start verification failed"));
 			goto erange;
+		}
 	} else {
 		/* no change, start points to the current partition */
 		DBG(PART, ul_debugobj(tpl, "resize: start unchanged"));
