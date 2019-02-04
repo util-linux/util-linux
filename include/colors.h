@@ -38,6 +38,9 @@ extern int colors_init(int mode, const char *util_name);
 /* Returns 1 or 0 */
 extern int colors_wanted(void);
 
+/* Returns UL_COLORMODE_* */
+extern int colors_mode(void);
+
 /* temporary enable/disable colors */
 extern void colors_off(void);
 extern void colors_on(void);

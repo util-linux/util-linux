@@ -653,9 +653,6 @@ static int colors_terminal_is_ready(void)
 {
 	int ncolors = -1;
 
-	if (isatty(STDOUT_FILENO) != 1)
-		goto none;
-
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 	{
 		int ret;
@@ -692,11 +689,16 @@ int colors_init(int mode, const char *name)
 	struct ul_color_ctl *cc = &ul_colors;
 
 	cc->utilname = name;
-	cc->mode = mode;
 
 	termcolors_init_debug();
 
-	if (mode == UL_COLORMODE_UNDEF && (ready = colors_terminal_is_ready())) {
+	if (mode != UL_COLORMODE_ALWAYS && !isatty(STDOUT_FILENO))
+		cc->mode = UL_COLORMODE_NEVER;
+	else
+		cc->mode = mode;
+
+	if (cc->mode == UL_COLORMODE_UNDEF
+	    && (ready = colors_terminal_is_ready())) {
 		int rc = colors_read_configuration(cc);
 		if (rc)
 			cc->mode = UL_COLORMODE_DEFAULT;
@@ -752,6 +754,14 @@ void colors_on(void)
 int colors_wanted(void)
 {
 	return ul_colors.has_colors;
+}
+
+/*
+ * Returns mode
+ */
+int colors_mode(void)
+{
+	return ul_colors.mode;
 }
 
 /*
