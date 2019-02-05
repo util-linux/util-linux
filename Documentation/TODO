@@ -1,6 +1,13 @@
 
  Note that items with (!) have high priority.
 
+col
+---
+  - use unsigned sizes for columns and lines
+  - check for limits to avoid segfaults
+  - make it more robust
+  https://github.com/karelzak/util-linux/issues/749
+
 cal
 ---
    - add option to print calendar in vertical way
