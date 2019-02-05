@@ -143,7 +143,7 @@ static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 		if (type && pattern && !mnt_match_fstype(type, pattern))
 			continue;
 
-		if (!mnt_fs_is_pseudofs(fs))
+		if (!mnt_fs_is_pseudofs(fs) && !mnt_fs_is_netfs(fs))
 			xsrc = mnt_pretty_path(src, cache);
 		printf ("%s on ", xsrc ? xsrc : src);
 		safe_fputs(mnt_fs_get_target(fs));
