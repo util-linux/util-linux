@@ -243,7 +243,7 @@ int main(int argc, char **argv)
 		errno = 0;
 		if ((ch = getwchar()) == WEOF) {
 			if (errno == EILSEQ) {
-				warn(_("failed on line %d"), max_line);
+				warn(_("failed on line %d"), max_line + 1);
 				ret = EXIT_FAILURE;
 			}
 			break;
