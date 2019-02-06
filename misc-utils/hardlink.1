@@ -44,9 +44,7 @@ is checked, not its path. Excluded directories' contents will not be examined.
 .PP
 \fBhardlink\fP was written by Jakub Jelinek <jakub@redhat.com>.
 .PP
-Man page written by Brian Long.
-.PP
-Man page updated by Jindrich Novy <jnovy@redhat.com>
+Man page written by Brian Long and later updated by Jindrich Novy <jnovy@redhat.com>
 .SH "BUGS"
 .PP
 \fBhardlink\fP assumes that its target directory trees do not change from under
@@ -60,3 +58,6 @@ Historically \fBhardlink\fP silently excluded any names beginning with
 other characters. That prior behavior can be achieved by specifying
 .br
 -x '^(\\.in\\.|\\.[^.]{6}$)'
+.SH AVAILABILITY
+The hardlink command is part of the util-linux package and is available from
+https://www.kernel.org/pub/linux/utils/util-linux/.
