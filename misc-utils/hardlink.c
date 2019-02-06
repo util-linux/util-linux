@@ -101,15 +101,18 @@ long long ndirs, nobjects, nregfiles, ncomp, nlinks, nsaved;
 static void doexit(int i)
 {
 	if (verbose) {
-		fprintf(stderr, "\n\n");
-		fprintf(stderr, "Directories %lld\n", ndirs);
-		fprintf(stderr, "Objects %lld\n", nobjects);
-		fprintf(stderr, "IFREG %lld\n", nregfiles);
-		fprintf(stderr, "Comparisons %lld\n", ncomp);
-		fprintf(stderr, "%s %lld\n",
-			(no_link ? "Would link" : "Linked"), nlinks);
-		fprintf(stderr, "%s %lld\n", (no_link ? "Would save" : "saved"),
-			nsaved);
+		if (verbose > 1 && nlinks)
+			fputc('\n', stdout);
+		printf(_("Directories:   %9lld\n"), ndirs);
+		printf(_("Objects:       %9lld\n"), nobjects);
+		printf(_("Regular files: %9lld\n"), nregfiles);
+		printf(_("Comparisons:   %9lld\n"), ncomp);
+		printf("%s%9lld\n", (no_link ?
+		       _("Would link:    ") :
+		       _("Linked:        ")), nlinks);
+		printf("%s %9lld\n", (no_link ?
+			_("Would save:   ") :
+			_("Saved:        ")), nsaved);
 	}
 	exit(i);
 }
@@ -210,7 +213,7 @@ static void rf(const char *name)
 		off_t fsize;
 		nregfiles++;
 		if (verbose > 1)
-			fprintf(stderr, "  %s", name);
+			printf("  %s", name);
 		fd = open(name, O_RDONLY);
 		if (fd < 0)
 			return;
@@ -222,8 +225,7 @@ static void rf(const char *name)
 		if (read(fd, buf, cksumsize) != cksumsize) {
 			close(fd);
 			if (verbose > 1 && namelen <= NAMELEN)
-				fprintf(stderr, "\r%*s\r", (int)(namelen + 2),
-					"");
+				printf("\r%*s\r", (int)(namelen + 2), "");
 			return;
 		}
 		cksumsize = (cksumsize + sizeof(buf[0]) - 1) / sizeof(buf[0]);
@@ -255,8 +257,7 @@ static void rf(const char *name)
 			if (fp2->ino == st.st_ino && fp2->dev == st.st_dev) {
 				close(fd);
 				if (verbose > 1 && namelen <= NAMELEN)
-					fprintf(stderr, "\r%*s\r",
-						(int)(namelen + 2), "");
+					printf("\r%*s\r", (int)(namelen + 2), "");
 				return;
 			}
 		for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next)
@@ -276,15 +277,17 @@ static void rf(const char *name)
 				lseek(fd, 0, SEEK_SET);
 				for (fsize = st.st_size; fsize > 0;
 				     fsize -= NIOBUF) {
-					off_t rsize =
-					    fsize >= NIOBUF ? NIOBUF : fsize;
-					if (read(fd, iobuf1, rsize) != rsize
-					    || read(fd2, iobuf2,
-						    rsize) != rsize) {
+					ssize_t xsz;
+					off_t rsize = fsize >= NIOBUF ? NIOBUF : fsize;
+
+					if ((xsz = read(fd, iobuf1, rsize)) != rsize)
+						warn(_("cannot read %s"), name);
+					else if ((xsz = read(fd2, iobuf2, rsize)) != rsize)
+						warn(_("cannot read %s"), fp2->name);
+
+					if (xsz != rsize) {
 						close(fd);
 						close(fd2);
-						fprintf(stderr,
-							"\nReading error\n");
 						return;
 					}
 					if (memcmp(iobuf1, iobuf2, rsize))
@@ -294,17 +297,13 @@ static void rf(const char *name)
 				if (fsize > 0)
 					continue;
 				if (lstat(name, &st3)) {
-					fprintf(stderr,
-						"\nCould not stat %s again\n",
-						name);
+					warn(_("cannot stat %s"), name);
 					close(fd);
 					return;
 				}
 				st3.st_atime = st.st_atime;
 				if (stcmp(&st, &st3, 0)) {
-					fprintf(stderr,
-						"\nFile %s changed underneath us\n",
-						name);
+					warnx(_("file %s changed underneath us"), name);
 					close(fd);
 					return;
 				}
@@ -322,27 +321,18 @@ static void rf(const char *name)
 					       suffixlen + 1);
 					/* First create a temporary link to n1 under a new name */
 					if (link(n1, nam2.buf)) {
-						fprintf(stderr,
-							"\nFailed to hardlink %s to %s (create temporary link as %s failed - %s)\n",
-							n1, n2, nam2.buf,
-							strerror(errno));
+						warn(_("failed to hardlink %s to %s (create temporary link as %s failed)"),
+							n1, n2, nam2.buf);
 						free(nam2.buf);
 						continue;
 					}
 					/* Then rename into place over the existing n2 */
 					if (rename(nam2.buf, n2)) {
-						fprintf(stderr,
-							"\nFailed to hardlink %s to %s (rename temporary link to %s failed - %s)\n",
-							n1, n2, n2,
-							strerror(errno));
+						warn(_("failed to hardlink %s to %s (rename temporary link to %s failed)"),
+							n1, n2, n2);
 						/* Something went wrong, try to remove the now redundant temporary link */
-						if (unlink(nam2.buf)) {
-							fprintf(stderr,
-								"\nFailed to remove temporary link %s - %s\n",
-								nam2.buf,
-								strerror
-								(errno));
-						}
+						if (unlink(nam2.buf))
+							warn(_("failed to remove temporary link %s"), nam2.buf);
 						free(nam2.buf);
 						continue;
 					}
@@ -353,28 +343,21 @@ static void rf(const char *name)
 					/* We actually did not save anything this time, since the link second argument
 					   had some other links as well.  */
 					if (verbose > 1)
-						fprintf(stderr,
-							"\r%*s\r%s %s to %s\n",
-							(int)(((namelen >
-								NAMELEN) ? 0 :
-							       namelen) + 2),
+						printf(_("\r%*s\r%s %s to %s\n"),
+							(int)(((namelen > NAMELEN) ? 0 : namelen) + 2),
 							"",
-							(no_link ? "Would link"
-							 : "Linked"), n1, n2);
+							(no_link ? _("Would link") : _("Linked")),
+							n1, n2);
 				} else {
 					nsaved +=
 					    ((st.st_size + 4095) / 4096) * 4096;
 					if (verbose > 1)
-						fprintf(stderr,
-							"\r%*s\r%s %s to %s, %s %jd\n",
-							(int)(((namelen >
-								NAMELEN) ? 0 :
-							       namelen) + 2),
+						printf(_("\r%*s\r%s %s to %s, %s %jd\n"),
+							(int)(((namelen > NAMELEN) ? 0 : namelen) + 2),
 							"",
-							(no_link ? "Would link"
-							 : "Linked"), n1, n2,
-							(no_link ? "would save"
-							 : "saved"),
+							(no_link ? _("Would link") : _("Linked")),
+							n1, n2,
+							(no_link ? _("would save") : _("saved")),
 							(intmax_t)st.st_size);
 				}
 				close(fd);
@@ -398,7 +381,7 @@ static void rf(const char *name)
 			hp->chain = fp2;
 		}
 		if (verbose > 1 && namelen <= NAMELEN)
-			fprintf(stderr, "\r%*s\r", (int)(namelen + 2), "");
+			printf("\r%*s\r", (int)(namelen + 2), "");
 		return;
 	}
 }
@@ -511,8 +494,7 @@ int main(int argc, char **argv)
 			    >=0) {
 				if (verbose) {
 					nam1.buf[nam1baselen] = 0;
-					fprintf(stderr, "Skipping %s%s\n",
-						nam1.buf, di->d_name);
+					printf(_("Skipping %s%s\n"), nam1.buf, di->d_name);
 				}
 				continue;
 			}
