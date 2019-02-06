@@ -61,6 +61,7 @@ TS_CMD_FINDMNT=${TS_CMD_FINDMNT-"$top_builddir/findmnt"}
 TS_CMD_FSCKCRAMFS=${TS_CMD_FSCKCRAMFS:-"$top_builddir/fsck.cramfs"}
 TS_CMD_FSCKMINIX=${TS_CMD_FSCKMINIX:-"$top_builddir/fsck.minix"}
 TS_CMD_GETOPT=${TS_CMD_GETOPT-"$top_builddir/getopt"}
+TS_CMD_HARDLINK=${TS_CMD_HARDLINK-"$top_builddir/hardlink"}
 TS_CMD_HEXDUMP=${TS_CMD_HEXDUMP-"$top_builddir/hexdump"}
 TS_CMD_HWCLOCK=${TS_CMD_HWCLOCK-"$top_builddir/hwclock"}
 TS_CMD_IONICE=${TS_CMD_IONICE-"$top_builddir/ionice"}

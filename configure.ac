@@ -1408,6 +1408,18 @@ UL_REQUIRES_HAVE([setpriv], [linux_securebits_h], [securebits.h header file])
 UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng library])
 AM_CONDITIONAL([BUILD_SETPRIV], [test "x$build_setpriv" = xyes])
 
+PKG_CHECK_MODULES([PCRE], [libpcre2-8], [have_pcre=yes], [have_pcre=no])
+AS_IF([test "x$have_pcre" = xyes ], [
+    AC_DEFINE([HAVE_PCRE], [1], [Define if libpcre2 is available])
+])
+AM_CONDITIONAL([HAVE_PCRE], [test "x$have_pcre" = xyes])
+
+AC_ARG_ENABLE([hardlink],
+  AS_HELP_STRING([--disable-hardlink], [do not build hardlink]),
+  [], [UL_DEFAULT_ENABLE([hardlink], [check])]
+)
+UL_BUILD_INIT([hardlink])
+AM_CONDITIONAL([BUILD_HARDLINK], [test "x$build_hardlink" = xyes])
 
 AC_ARG_ENABLE([eject],
   AS_HELP_STRING([--disable-eject], [do not build eject]),

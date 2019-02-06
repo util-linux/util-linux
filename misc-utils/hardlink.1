@@ -1,0 +1,62 @@
+.TH "hardlink" "1"
+.SH "NAME"
+hardlink \- Consolidate duplicate files via hardlinks
+.SH "SYNOPSIS"
+.PP
+\fBhardlink\fP [\fB-c\fP] [\fB-n\fP] [\fB-v\fP] [\fB-vv\fP] [\fB-x pattern\fP] [\fB-h\fP] directory1 [ directory2 ... ]
+.SH "DESCRIPTION"
+.PP
+This manual page documents \fBhardlink\fP, a
+program which consolidates duplicate files in one or more directories
+using hardlinks.
+.PP
+\fBhardlink\fP traverses one
+or more directories searching for duplicate files.  When it finds duplicate
+files, it uses one of them as the master.  It then removes all other
+duplicates and places a hardlink for each one pointing to the master file.
+This allows for conservation of disk space where multiple directories
+on a single filesystem contain many duplicate files.
+.PP
+Since hard links can only span a single filesystem, \fBhardlink\fP
+is only useful when all directories specified are on the same filesystem.
+.SH "OPTIONS"
+.PP
+.IP "\fB-c\fP" 10
+Compare only the contents of the files being considered for consolidation.
+Disregards permission, ownership and other differences.
+.IP "\fB-f\fP" 10
+Force hardlinking across file systems.
+.IP "\fB-n\fP" 10
+Do not perform the consolidation; only print what would be changed.
+.IP "\fB-v\fP" 10
+Print summary after hardlinking.
+.IP "\fB-vv\fP" 10
+Print every hardlinked file and bytes saved. Also print summary after hardlinking.
+.IP "\fB-x pattern\fP" 10
+Exclude files and directories matching pattern from hardlinking.
+.IP "\fB-h\fP" 10
+Show help.
+.PP
+The optional pattern for excluding files and directories must be a PCRE2
+compatible regular expression. Only the basename of the file or directory
+is checked, not its path. Excluded directories' contents will not be examined.
+.SH "AUTHOR"
+.PP
+\fBhardlink\fP was written by Jakub Jelinek <jakub@redhat.com>.
+.PP
+Man page written by Brian Long.
+.PP
+Man page updated by Jindrich Novy <jnovy@redhat.com>
+.SH "BUGS"
+.PP
+\fBhardlink\fP assumes that its target directory trees do not change from under
+it.  If a directory tree does change, this may result in \fBhardlink\fP
+accessing files and/or directories outside of the intended directory tree.
+Thus, you must avoid running \fBhardlink\fP on potentially changing directory
+trees, and especially on directory trees under control of another user.
+.PP
+Historically \fBhardlink\fP silently excluded any names beginning with
+".in.", as well as any names beginning with "." followed by exactly 6
+other characters. That prior behavior can be achieved by specifying
+.br
+-x '^(\\.in\\.|\\.[^.]{6}$)'
