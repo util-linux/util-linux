@@ -36,6 +36,7 @@
 #endif
 
 #include "c.h"
+#include "xalloc.h"
 #include "nls.h"
 #include "closestream.h"
 
@@ -98,23 +99,23 @@ static inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
 
 long long ndirs, nobjects, nregfiles, ncomp, nlinks, nsaved;
 
-static void doexit(int i)
+static void print_summary(void)
 {
-	if (verbose) {
-		if (verbose > 1 && nlinks)
-			fputc('\n', stdout);
-		printf(_("Directories:   %9lld\n"), ndirs);
-		printf(_("Objects:       %9lld\n"), nobjects);
-		printf(_("Regular files: %9lld\n"), nregfiles);
-		printf(_("Comparisons:   %9lld\n"), ncomp);
-		printf("%s%9lld\n", (no_link ?
-		       _("Would link:    ") :
-		       _("Linked:        ")), nlinks);
-		printf("%s %9lld\n", (no_link ?
-			_("Would save:   ") :
-			_("Saved:        ")), nsaved);
-	}
-	exit(i);
+	if (!verbose)
+		return;
+
+	if (verbose > 1 && nlinks)
+		fputc('\n', stdout);
+	printf(_("Directories:   %9lld\n"), ndirs);
+	printf(_("Objects:       %9lld\n"), nobjects);
+	printf(_("Regular files: %9lld\n"), nregfiles);
+	printf(_("Comparisons:   %9lld\n"), ncomp);
+	printf("%s%9lld\n", (no_link ?
+	       _("Would link:    ") :
+	       _("Linked:        ")), nlinks);
+	printf("%s %9lld\n", (no_link ?
+		_("Would save:   ") :
+		_("Saved:        ")), nsaved);
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -146,10 +147,8 @@ __attribute__ ((always_inline))
 static inline size_t add2(size_t a, size_t b)
 {
 	size_t sum = a + b;
-	if (sum < a) {
-		fprintf(stderr, "\nInteger overflow\n");
-		doexit(5);
-	}
+	if (sum < a)
+		errx(EXIT_FAILURE, _("integer overflow"));
 	return sum;
 }
 
@@ -168,11 +167,7 @@ static void growstr(dynstr * str, size_t newlen)
 {
 	if (newlen < str->alloc)
 		return;
-	str->buf = realloc(str->buf, str->alloc = add2(newlen, 1));
-	if (!str->buf) {
-		fprintf(stderr, "\nOut of memory 4\n");
-		doexit(4);
-	}
+	str->buf = xrealloc(str->buf, str->alloc = add2(newlen, 1));
 }
 
 dev_t dev = 0;
@@ -184,20 +179,14 @@ static void rf(const char *name)
 	if (lstat(name, &st))
 		return;
 	if (st.st_dev != dev && !force) {
-		if (dev) {
-			fprintf(stderr,
-				"%s is on different filesystem than the rest.\nUse -f option to override.\n",
-				name);
-			doexit(6);
-		}
+		if (dev)
+			errx(EXIT_FAILURE,
+			     _("%s is on different filesystem than the rest "
+			       "(use -f option to override)."), name);
 		dev = st.st_dev;
 	}
 	if (S_ISDIR(st.st_mode)) {
-		d *dp = malloc(add3(sizeof(d), namelen, 1));
-		if (!dp) {
-			fprintf(stderr, "\nOut of memory 3\n");
-			doexit(3);
-		}
+		d *dp = xmalloc(add3(sizeof(d), namelen, 1));
 		memcpy(dp->name, name, namelen + 1);
 		dp->next = dirs;
 		dirs = dp;
@@ -239,11 +228,7 @@ static void rf(const char *name)
 			if (hp->size == st.st_size && hp->mtime == mtime)
 				break;
 		if (!hp) {
-			hp = malloc(sizeof(h));
-			if (!hp) {
-				fprintf(stderr, "\nOut of memory 1\n");
-				doexit(1);
-			}
+			hp = xmalloc(sizeof(h));
 			hp->size = st.st_size;
 			hp->mtime = mtime;
 			hp->chain = NULL;
@@ -363,11 +348,7 @@ static void rf(const char *name)
 				close(fd);
 				return;
 			}
-		fp2 = malloc(add3(sizeof(f), namelen, 1));
-		if (!fp2) {
-			fprintf(stderr, "\nOut of memory 2\n");
-			doexit(2);
-		}
+		fp2 = xmalloc(add3(sizeof(f), namelen, 1));
 		close(fd);
 		fp2->ino = st.st_ino;
 		fp2->dev = st.st_dev;
@@ -427,7 +408,6 @@ int main(int argc, char **argv)
 #else
 			errx(EXIT_FAILURE,
 			     _("option -x not supported (built without pcre2)"));
-			exit(1);
 #endif
 			break;
 		case 'V':
@@ -461,6 +441,8 @@ int main(int argc, char **argv)
 		match_data = pcre2_match_data_create_from_pattern(re, NULL);
 	}
 #endif
+	atexit(print_summary);
+
 	for (i = optind; i < argc; i++)
 		rf(argv[i]);
 	while (dirs) {
@@ -511,6 +493,6 @@ int main(int argc, char **argv)
 		}
 		closedir(dh);
 	}
-	doexit(0);
+
 	return 0;
 }
