@@ -19,7 +19,8 @@
 # define XALLOC_EXIT_CODE EXIT_FAILURE
 #endif
 
-static inline void __err_oom(const char *file, unsigned int line)
+static inline void __attribute__((__noreturn__))
+__err_oom(const char *file, unsigned int line)
 {
 	err(XALLOC_EXIT_CODE, "%s: %u: cannot allocate memory", file, line);
 }
