@@ -218,7 +218,7 @@ static int probe_zfs(blkid_probe pr,
 	const struct blkid_idmag *mag  __attribute__((__unused__)))
 {
 	int swab_endian = 0;
-	struct zfs_uberblock *ub;
+	struct zfs_uberblock *ub = NULL;
 	loff_t offset = 0, ub_offset = 0;
 	int label_no, found = 0, found_in_label;
 	void *label;

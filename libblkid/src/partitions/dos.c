@@ -55,7 +55,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 
 	while (1) {
 		struct dos_partition *p, *p0;
-		uint32_t start, size;
+		uint32_t start = 0, size;
 
 		if (++ct_nodata > 100)
 			return BLKID_PROBE_OK;

@@ -144,7 +144,7 @@ static void fill_table_row(struct libscols_table *tb, char const *const uuid)
 	size_t i;
 	uuid_t buf;
 	int invalid = 0;
-	int variant, type;
+	int variant = -1, type = -1;
 
 	assert(tb);
 	assert(uuid);

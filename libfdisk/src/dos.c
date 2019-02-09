@@ -1708,7 +1708,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	} else {
 		char hint[BUFSIZ];
 		struct fdisk_ask *ask;
-		int c;
+		int c = 0;
 
 		/* the default layout for scripts is to create primary partitions */
 		if (cxt->script || !fdisk_has_dialogs(cxt)) {
