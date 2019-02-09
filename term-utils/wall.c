@@ -111,26 +111,26 @@ struct group_workspace {
 #endif
 };
 
-static gid_t get_group_gid(const char *optarg)
+static gid_t get_group_gid(const char *group)
 {
 	struct group *gr;
 	gid_t gid;
 
-	if ((gr = getgrnam(optarg)))
+	if ((gr = getgrnam(group)))
 		return gr->gr_gid;
 
-	gid = strtou32_or_err(optarg, _("invalid group argument"));
+	gid = strtou32_or_err(group, _("invalid group argument"));
 	if (!getgrgid(gid))
-		errx(EXIT_FAILURE, _("%s: unknown gid"), optarg);
+		errx(EXIT_FAILURE, _("%s: unknown gid"), group);
 
 	return gid;
 }
 
-static struct group_workspace *init_group_workspace(const char *optarg)
+static struct group_workspace *init_group_workspace(const char *group)
 {
 	struct group_workspace *buf = xmalloc(sizeof(struct group_workspace));
 
-	buf->requested_group = get_group_gid(optarg);
+	buf->requested_group = get_group_gid(group);
 	buf->ngroups = sysconf(_SC_NGROUPS_MAX) + 1;  /* room for the primary gid */
 	buf->groups = xcalloc(sizeof(*buf->groups), buf->ngroups);
 
