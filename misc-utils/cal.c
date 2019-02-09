@@ -561,7 +561,7 @@ int main(int argc, char **argv)
 			;
 		} else {
 			/* disable */
-			Senter = Sexit = '\0';
+			Senter = Sexit = NULL;
 			ctl.req.day = 0;
 			ctl.weektype &= ~WEEK_NUM_MASK;
 		}
