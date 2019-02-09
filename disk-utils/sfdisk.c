@@ -1722,7 +1722,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 		nparts = fdisk_table_get_nents(tb);
 		if (nparts) {
-			size_t cur_partno;
+			size_t cur_partno = (size_t) -1;
 			struct fdisk_partition *pa = fdisk_table_get_partition(tb, nparts - 1);
 
 			assert(pa);

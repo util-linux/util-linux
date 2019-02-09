@@ -313,7 +313,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	uuid_t			uu;
 	char			reply_buf[1024], *cp;
 	char			op, str[UUID_STR_LEN];
-	int			i, ns, len, num;
+	int			i, ns, len;
+	int			num;		/* intentionally uninitialized */
 	int			s = 0;
 	int			fd_pidfile = -1;
 	int			ret;

@@ -954,7 +954,7 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 		 const struct timeval startup_time, struct adjtime *adjtime)
 {
 	/* The time at which we read the Hardware Clock */
-	struct timeval read_time;
+	struct timeval read_time = { 0 };
 	/*
 	 * The Hardware Clock gives us a valid time, or at
 	 * least something close enough to fool mktime().

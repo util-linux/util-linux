@@ -685,7 +685,7 @@ static int find_super_magic(const struct fs_control *ctl)
 
 static void determine_device_blocks(struct fs_control *ctl, const struct stat *statbuf)
 {
-	unsigned long long dev_blocks;
+	unsigned long long dev_blocks = 0;
 
 	if (S_ISBLK(statbuf->st_mode)) {
 		int sectorsize;

@@ -1010,7 +1010,7 @@ blkid_partition blkid_partlist_get_partition_by_partno(blkid_partlist ls, int n)
 blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno)
 {
 	struct path_cxt *pc;
-	uint64_t start, size;
+	uint64_t start = 0, size;
 	int i, rc, partno = 0;
 
 	DBG(LOWPROBE, ul_debug("trying to convert devno 0x%llx to partition",

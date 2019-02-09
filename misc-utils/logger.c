@@ -237,7 +237,7 @@ static int pencode(char *s)
 
 static int unix_socket(struct logger_ctl *ctl, const char *path, int *socket_type)
 {
-	int fd, i, type = -1;
+	int fd = -1, i, type = -1;
 	static struct sockaddr_un s_addr;	/* AF_UNIX address of local logger */
 
 	if (strlen(path) >= sizeof(s_addr.sun_path))

@@ -78,7 +78,7 @@ static int probe_ddf(blkid_probe pr,
 	size_t i;
 	struct ddf_header *ddf = NULL;
 	char version[DDF_REV_LENGTH + 1];
-	uint64_t off, lba;
+	uint64_t off = 0, lba;
 
 	if (pr->size < 0x30000)
 		return 1;

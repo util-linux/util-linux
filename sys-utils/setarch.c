@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
 	int verbose = 0;
 	int archwrapper;
 	int c;
-	struct arch_domain *doms, *target;
+	struct arch_domain *doms, *target = NULL;
 	unsigned long pers_value = 0;
 	char *shell = NULL, *shell_arg = NULL;
 

@@ -191,7 +191,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	unsigned int off = 0;
 	unsigned int blocksize;
 	unsigned int cat_block;
-	unsigned int ext_block_start;
+	unsigned int ext_block_start = 0;
 	unsigned int ext_block_count;
 	unsigned int record_count;
 	unsigned int leaf_node_head;
