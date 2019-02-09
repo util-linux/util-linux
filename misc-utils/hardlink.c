@@ -100,9 +100,9 @@ static inline unsigned int hash(off_t size, time_t mtime)
 }
 
 __attribute__ ((always_inline))
-static inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
+static inline int stcmp(struct stat *st1, struct stat *st2, int content_scope)
 {
-	if (content_only)
+	if (content_scope)
 		return st1->st_size != st2->st_size;
 
 	return st1->st_mode != st2->st_mode
