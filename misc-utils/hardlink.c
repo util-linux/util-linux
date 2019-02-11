@@ -4,6 +4,8 @@
  * Copyright (C) 2018 Red Hat, Inc. All rights reserved.
  * Written by Jakub Jelinek <jakub@redhat.com>
  *
+ * Copyright (C) 2019 Karel Zak <kzak@redhat.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +20,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 #include <sys/types.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -42,7 +43,6 @@
 
 #define NHASH   (1<<17)  /* Must be a power of 2! */
 #define NIOBUF  (1<<12)
-#define NAMELEN 4096
 #define NBUF    64
 
 #ifdef HAVE_PCRE
@@ -78,13 +78,20 @@ struct hardlink_dynstr {
 	size_t alloc;
 };
 
-struct hardlink_dir *dirs;
-struct hardlink_hash *hps[NHASH];
+static struct hardlink_dir *dirs;
+static struct hardlink_hash *hps[NHASH];
 
-int no_link = 0;
-int verbose = 0;
-int content_only = 0;
-int force = 0;
+static int no_link = 0;
+static int verbose = 0;
+static int content_only = 0;
+static int force = 0;
+static dev_t dev = 0;
+
+/* summary counters */
+static unsigned long long ndirs, nobjects, nregfiles, ncomp, nlinks, nsaved;
+
+static unsigned int buf[NBUF];
+static char iobuf1[NIOBUF], iobuf2[NIOBUF];
 
 __attribute__ ((always_inline))
 static inline unsigned int hash(off_t size, time_t mtime)
@@ -97,12 +104,11 @@ static inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
 {
 	if (content_only)
 		return st1->st_size != st2->st_size;
+
 	return st1->st_mode != st2->st_mode || st1->st_uid != st2->st_uid ||
 	    st1->st_gid != st2->st_gid || st1->st_size != st2->st_size ||
 	    st1->st_mtime != st2->st_mtime;
 }
-
-long long ndirs, nobjects, nregfiles, ncomp, nlinks, nsaved;
 
 static void print_summary(void)
 {
@@ -138,15 +144,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	puts(_(" -vv            print every hardlinked file and bytes saved + summary"));
 	puts(_(" -f             force hardlinking across filesystems"));
 	puts(_(" -x <regex>     exclude files matching pattern"));
+
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(16)); /* char offset to align option descriptions */
 	printf(USAGE_MAN_TAIL("hardlink(1)"));
 	exit(EXIT_SUCCESS);
 }
-
-
-unsigned int buf[NBUF];
-char iobuf1[NIOBUF], iobuf2[NIOBUF];
 
 __attribute__ ((always_inline))
 static inline size_t add2(size_t a, size_t b)
@@ -170,11 +173,11 @@ static void growstr(struct hardlink_dynstr *str, size_t newlen)
 	str->buf = xrealloc(str->buf, str->alloc = add2(newlen, 1));
 }
 
-dev_t dev = 0;
 static void rf(const char *name)
 {
 	struct stat st, st2, st3;
 	const size_t namelen = strlen(name);
+
 	nobjects++;
 	if (lstat(name, &st))
 		return;
@@ -214,7 +217,7 @@ static void rf(const char *name)
 		}
 		if (read(fd, buf, cksumsize) != cksumsize) {
 			close(fd);
-			if (verbose > 1 && namelen <= NAMELEN)
+			if (verbose > 1 && namelen <= PATH_MAX)
 				printf("\r%*s\r", (int)(namelen + 2), "");
 			return;
 		}
@@ -242,7 +245,7 @@ static void rf(const char *name)
 		for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next)
 			if (fp2->ino == st.st_ino && fp2->dev == st.st_dev) {
 				close(fd);
-				if (verbose > 1 && namelen <= NAMELEN)
+				if (verbose > 1 && namelen <= PATH_MAX)
 					printf("\r%*s\r", (int)(namelen + 2), "");
 				return;
 			}
@@ -330,7 +333,7 @@ static void rf(const char *name)
 					   had some other links as well.  */
 					if (verbose > 1)
 						printf(_("\r%*s\r%s %s to %s\n"),
-							(int)(((namelen > NAMELEN) ? 0 : namelen) + 2),
+							(int)(((namelen > PATH_MAX) ? 0 : namelen) + 2),
 							"",
 							(no_link ? _("Would link") : _("Linked")),
 							n1, n2);
@@ -339,7 +342,7 @@ static void rf(const char *name)
 					    ((st.st_size + 4095) / 4096) * 4096;
 					if (verbose > 1)
 						printf(_("\r%*s\r%s %s to %s, %s %jd\n"),
-							(int)(((namelen > NAMELEN) ? 0 : namelen) + 2),
+							(int)(((namelen > PATH_MAX) ? 0 : namelen) + 2),
 							"",
 							(no_link ? _("Would link") : _("Linked")),
 							n1, n2,
@@ -362,7 +365,7 @@ static void rf(const char *name)
 			fp2->next = hp->chain;
 			hp->chain = fp2;
 		}
-		if (verbose > 1 && namelen <= NAMELEN)
+		if (verbose > 1 && namelen <= PATH_MAX)
 			printf("\r%*s\r", (int)(namelen + 2), "");
 		return;
 	}
