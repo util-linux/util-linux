@@ -141,12 +141,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	puts(_("Consolidate duplicate files using hardlinks."));
 
 	fputs(USAGE_OPTIONS, stdout);
-	puts(_(" -c             when finding candidates for linking, compare only file contents"));
-	puts(_(" -n             don't actually link anything, just report what would be done"));
-	puts(_(" -v             print summary after hardlinking"));
-	puts(_(" -vv            print every hardlinked file and bytes saved + summary"));
-	puts(_(" -f             force hardlinking across filesystems"));
-	puts(_(" -x <regex>     exclude files matching pattern"));
+	puts(_(" -c, --content          compare only contents, ignore permission, etc."));
+	puts(_(" -n, --dry-run          don't actually link anything"));
+	puts(_(" -v, --verbose          print summary after hardlinking"));
+	puts(_(" -vv                    print every hardlinked file and summary"));
+	puts(_(" -f, --force            force hardlinking across filesystems"));
+	puts(_(" -x, --exclude <regex>  exclude files matching pattern"));
 
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(16)); /* char offset to align option descriptions */
@@ -400,8 +400,13 @@ int main(int argc, char **argv)
 	struct hardlink_dynstr nam1 = { NULL, 0 };
 
 	static const struct option longopts[] = {
-		{ "version",    no_argument, NULL, 'V' },
+		{ "content",    no_argument, NULL, 'c' },
+		{ "dry-run",    no_argument, NULL, 'n' },
+		{ "exclude",    required_argument, NULL, 'x' },
+		{ "force",      no_argument, NULL, 'f' },
 		{ "help",       no_argument, NULL, 'h' },
+		{ "verbose",    no_argument, NULL, 'v' },
+		{ "version",    no_argument, NULL, 'V' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -429,7 +434,7 @@ int main(int argc, char **argv)
 			exclude_pattern = (PCRE2_SPTR) optarg;
 #else
 			errx(EXIT_FAILURE,
-			     _("option -x not supported (built without pcre2)"));
+			     _("option --exclude not supported (built without pcre2)"));
 #endif
 			break;
 		case 'V':
