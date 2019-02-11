@@ -177,7 +177,7 @@ static void growstr(struct hardlink_dynstr *str, size_t newlen)
 	str->buf = xrealloc(str->buf, str->alloc = add2(newlen, 1));
 }
 
-static void rf(const char *name)
+static void process_path(const char *name)
 {
 	struct stat st, st2, st3;
 	const size_t namelen = strlen(name);
@@ -466,7 +466,7 @@ int main(int argc, char **argv)
 	atexit(print_summary);
 
 	for (i = optind; i < argc; i++)
-		rf(argv[i]);
+		process_path(argv[i]);
 
 	while (dirs) {
 		DIR *dh;
@@ -515,7 +515,7 @@ int main(int argc, char **argv)
 				memcpy(&nam1.buf[nam1baselen], di->d_name,
 				       add2(subdirlen, 1));
 			}
-			rf(nam1.buf);
+			process_path(nam1.buf);
 		}
 		closedir(dh);
 	}
