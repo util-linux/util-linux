@@ -51,35 +51,40 @@ PCRE2_SPTR exclude_pattern;
 pcre2_match_data *match_data;
 #endif
 
-struct _f;
-typedef struct _h {
-	struct _h *next;
-	struct _f *chain;
+struct hardlink_file;
+
+struct hardlink_hash {
+	struct hardlink_hash *next;
+	struct hardlink_file *chain;
 	off_t size;
 	time_t mtime;
-} h;
+};
 
-typedef struct _d {
-	struct _d *next;
+struct hardlink_dir {
+	struct hardlink_dir *next;
 	char name[0];
-} d;
+};
 
-d *dirs;
+struct hardlink_file {
+	struct hardlink_file *next;
+	ino_t ino;
+	dev_t dev;
+	unsigned int cksum;
+	char name[0];
+};
 
-h *hps[NHASH];
+struct hardlink_dynstr {
+	char *buf;
+	size_t alloc;
+};
+
+struct hardlink_dir *dirs;
+struct hardlink_hash *hps[NHASH];
 
 int no_link = 0;
 int verbose = 0;
 int content_only = 0;
 int force = 0;
-
-typedef struct _f {
-	struct _f *next;
-	ino_t ino;
-	dev_t dev;
-	unsigned int cksum;
-	char name[0];
-} f;
 
 __attribute__ ((always_inline))
 static inline unsigned int hash(off_t size, time_t mtime)
@@ -158,12 +163,7 @@ static inline size_t add3(size_t a, size_t b, size_t c)
 	return add2(add2(a, b), c);
 }
 
-typedef struct {
-	char *buf;
-	size_t alloc;
-} dynstr;
-
-static void growstr(dynstr * str, size_t newlen)
+static void growstr(struct hardlink_dynstr *str, size_t newlen)
 {
 	if (newlen < str->alloc)
 		return;
@@ -186,20 +186,21 @@ static void rf(const char *name)
 		dev = st.st_dev;
 	}
 	if (S_ISDIR(st.st_mode)) {
-		d *dp = xmalloc(add3(sizeof(d), namelen, 1));
+		struct hardlink_dir *dp = xmalloc(add3(sizeof(*dp), namelen, 1));
 		memcpy(dp->name, name, namelen + 1);
 		dp->next = dirs;
 		dirs = dp;
 	} else if (S_ISREG(st.st_mode)) {
 		int fd, i;
-		f *fp, *fp2;
-		h *hp;
+		struct hardlink_file *fp, *fp2;
+		struct hardlink_hash *hp;
 		const char *n1, *n2;
 		int cksumsize = sizeof(buf);
 		unsigned int cksum;
 		time_t mtime = content_only ? 0 : st.st_mtime;
 		unsigned int hsh = hash(st.st_size, mtime);
 		off_t fsize;
+
 		nregfiles++;
 		if (verbose > 1)
 			printf("  %s", name);
@@ -228,7 +229,7 @@ static void rf(const char *name)
 			if (hp->size == st.st_size && hp->mtime == mtime)
 				break;
 		if (!hp) {
-			hp = xmalloc(sizeof(h));
+			hp = xmalloc(sizeof(*hp));
 			hp->size = st.st_size;
 			hp->mtime = mtime;
 			hp->chain = NULL;
@@ -299,7 +300,7 @@ static void rf(const char *name)
 					    ".$$$___cleanit___$$$";
 					const size_t suffixlen = strlen(suffix);
 					size_t n2len = strlen(n2);
-					dynstr nam2 = { NULL, 0 };
+					struct hardlink_dynstr nam2 = { NULL, 0 };
 					growstr(&nam2, add2(n2len, suffixlen));
 					memcpy(nam2.buf, n2, n2len);
 					memcpy(&nam2.buf[n2len], suffix,
@@ -348,7 +349,7 @@ static void rf(const char *name)
 				close(fd);
 				return;
 			}
-		fp2 = xmalloc(add3(sizeof(f), namelen, 1));
+		fp2 = xmalloc(add3(sizeof(*fp2), namelen, 1));
 		close(fd);
 		fp2->ino = st.st_ino;
 		fp2->dev = st.st_dev;
@@ -375,7 +376,7 @@ int main(int argc, char **argv)
 	int errornumber;
 	PCRE2_SIZE erroroffset;
 #endif
-	dynstr nam1 = { NULL, 0 };
+	struct hardlink_dynstr nam1 = { NULL, 0 };
 
 	static const struct option longopts[] = {
 		{ "version",    no_argument, NULL, 'V' },
@@ -448,7 +449,7 @@ int main(int argc, char **argv)
 	while (dirs) {
 		DIR *dh;
 		struct dirent *di;
-		d *dp = dirs;
+		struct hardlink_dir *dp = dirs;
 		size_t nam1baselen = strlen(dp->name);
 		dirs = dp->next;
 		growstr(&nam1, add2(nam1baselen, 1));
