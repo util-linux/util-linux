@@ -105,9 +105,11 @@ static inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
 	if (content_only)
 		return st1->st_size != st2->st_size;
 
-	return st1->st_mode != st2->st_mode || st1->st_uid != st2->st_uid ||
-	    st1->st_gid != st2->st_gid || st1->st_size != st2->st_size ||
-	    st1->st_mtime != st2->st_mtime;
+	return st1->st_mode != st2->st_mode
+		|| st1->st_uid != st2->st_uid
+		|| st1->st_gid != st2->st_gid
+		|| st1->st_size != st2->st_size
+		|| st1->st_mtime != st2->st_mtime;
 }
 
 static void print_summary(void)
@@ -117,6 +119,7 @@ static void print_summary(void)
 
 	if (verbose > 1 && nlinks)
 		fputc('\n', stdout);
+
 	printf(_("Directories:   %9lld\n"), ndirs);
 	printf(_("Objects:       %9lld\n"), nobjects);
 	printf(_("Regular files: %9lld\n"), nregfiles);
@@ -155,6 +158,7 @@ __attribute__ ((always_inline))
 static inline size_t add2(size_t a, size_t b)
 {
 	size_t sum = a + b;
+
 	if (sum < a)
 		errx(EXIT_FAILURE, _("integer overflow"));
 	return sum;
@@ -181,6 +185,7 @@ static void rf(const char *name)
 	nobjects++;
 	if (lstat(name, &st))
 		return;
+
 	if (st.st_dev != dev && !force) {
 		if (dev)
 			errx(EXIT_FAILURE,
@@ -193,6 +198,7 @@ static void rf(const char *name)
 		memcpy(dp->name, name, namelen + 1);
 		dp->next = dirs;
 		dirs = dp;
+
 	} else if (S_ISREG(st.st_mode)) {
 		int fd, i;
 		struct hardlink_file *fp, *fp2;
@@ -207,9 +213,11 @@ static void rf(const char *name)
 		nregfiles++;
 		if (verbose > 1)
 			printf("  %s", name);
+
 		fd = open(name, O_RDONLY);
 		if (fd < 0)
 			return;
+
 		if ((size_t)st.st_size < sizeof(buf)) {
 			cksumsize = st.st_size;
 			memset(((char *)buf) + cksumsize, 0,
@@ -228,9 +236,10 @@ static void rf(const char *name)
 			else
 				cksum += buf[i];
 		}
-		for (hp = hps[hsh]; hp; hp = hp->next)
+		for (hp = hps[hsh]; hp; hp = hp->next) {
 			if (hp->size == st.st_size && hp->mtime == mtime)
 				break;
+		}
 		if (!hp) {
 			hp = xmalloc(sizeof(*hp));
 			hp->size = st.st_size;
@@ -239,24 +248,29 @@ static void rf(const char *name)
 			hp->next = hps[hsh];
 			hps[hsh] = hp;
 		}
-		for (fp = hp->chain; fp; fp = fp->next)
+		for (fp = hp->chain; fp; fp = fp->next) {
 			if (fp->cksum == cksum)
 				break;
-		for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next)
+		}
+		for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next) {
 			if (fp2->ino == st.st_ino && fp2->dev == st.st_dev) {
 				close(fd);
 				if (verbose > 1 && namelen <= PATH_MAX)
 					printf("\r%*s\r", (int)(namelen + 2), "");
 				return;
 			}
-		for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next)
+		}
+		for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next) {
+
 			if (!lstat(fp2->name, &st2) && S_ISREG(st2.st_mode) &&
 			    !stcmp(&st, &st2, content_only) &&
 			    st2.st_ino != st.st_ino &&
 			    st2.st_dev == st.st_dev) {
+
 				int fd2 = open(fp2->name, O_RDONLY);
 				if (fd2 < 0)
 					continue;
+
 				if (fstat(fd2, &st2) || !S_ISREG(st2.st_mode)
 				    || st2.st_size == 0) {
 					close(fd2);
@@ -264,6 +278,7 @@ static void rf(const char *name)
 				}
 				ncomp++;
 				lseek(fd, 0, SEEK_SET);
+
 				for (fsize = st.st_size; fsize > 0;
 				     fsize -= NIOBUF) {
 					ssize_t xsz;
@@ -298,12 +313,14 @@ static void rf(const char *name)
 				}
 				n1 = fp2->name;
 				n2 = name;
+
 				if (!no_link) {
 					const char *suffix =
 					    ".$$$___cleanit___$$$";
 					const size_t suffixlen = strlen(suffix);
 					size_t n2len = strlen(n2);
 					struct hardlink_dynstr nam2 = { NULL, 0 };
+
 					growstr(&nam2, add2(n2len, suffixlen));
 					memcpy(nam2.buf, n2, n2len);
 					memcpy(&nam2.buf[n2len], suffix,
@@ -338,8 +355,7 @@ static void rf(const char *name)
 							(no_link ? _("Would link") : _("Linked")),
 							n1, n2);
 				} else {
-					nsaved +=
-					    ((st.st_size + 4095) / 4096) * 4096;
+					nsaved += ((st.st_size + 4095) / 4096) * 4096;
 					if (verbose > 1)
 						printf(_("\r%*s\r%s %s to %s, %s %jd\n"),
 							(int)(((namelen > PATH_MAX) ? 0 : namelen) + 2),
@@ -352,12 +368,14 @@ static void rf(const char *name)
 				close(fd);
 				return;
 			}
+		}
 		fp2 = xmalloc(add3(sizeof(*fp2), namelen, 1));
 		close(fd);
 		fp2->ino = st.st_ino;
 		fp2->dev = st.st_dev;
 		fp2->cksum = cksum;
 		memcpy(fp2->name, name, namelen + 1);
+
 		if (fp) {
 			fp2->next = fp->next;
 			fp->next = fp2;
@@ -449,11 +467,13 @@ int main(int argc, char **argv)
 
 	for (i = optind; i < argc; i++)
 		rf(argv[i]);
+
 	while (dirs) {
 		DIR *dh;
 		struct dirent *di;
 		struct hardlink_dir *dp = dirs;
 		size_t nam1baselen = strlen(dp->name);
+
 		dirs = dp->next;
 		growstr(&nam1, add2(nam1baselen, 1));
 		memcpy(nam1.buf, dp->name, nam1baselen);
@@ -461,9 +481,11 @@ int main(int argc, char **argv)
 		nam1.buf[nam1baselen++] = '/';
 		nam1.buf[nam1baselen] = 0;
 		dh = opendir(nam1.buf);
+
 		if (dh == NULL)
 			continue;
 		ndirs++;
+
 		while ((di = readdir(dh)) != NULL) {
 			if (!di->d_name[0])
 				continue;
