@@ -551,6 +551,7 @@ char *size_to_human_string(int options, uint64_t bytes)
 	if (options & SIZE_SUFFIX_SPACE)
 		*psuf++ = ' ';
 
+
 	exp  = get_exp(bytes);
 	c    = *(letters + (exp ? exp / 10 : 0));
 	dec  = exp ? bytes / (1ULL << exp) : bytes;
@@ -569,11 +570,17 @@ char *size_to_human_string(int options, uint64_t bytes)
 	 *                 exp, suffix[0], dec, frac);
 	 */
 
+	/* round */
 	if (frac) {
-		/* round */
-		frac = (frac / (1ULL << (exp - 10)) + 50) / 100;
-		if (frac == 10)
-			dec++, frac = 0;
+		if (options & SIZE_DECIMAL_2DIGITS) {
+			frac = (frac / (1ULL << (exp - 10)) + 5) / 10;
+			if (frac % 10 == 0)
+				frac /= 10;	/* convert N.90 to N.9 */
+		} else {
+			frac = (frac / (1ULL << (exp - 10)) + 50) / 100;
+			if (frac == 10)
+				dec++, frac = 0;
+		}
 	}
 
 	if (frac) {

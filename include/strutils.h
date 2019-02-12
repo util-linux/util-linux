@@ -121,9 +121,10 @@ extern char *xstrmode(mode_t mode, char *str);
 /* Options for size_to_human_string() */
 enum
 {
-        SIZE_SUFFIX_1LETTER = 0,
-        SIZE_SUFFIX_3LETTER = 1,
-        SIZE_SUFFIX_SPACE   = 2
+	SIZE_SUFFIX_1LETTER  = 0,
+	SIZE_SUFFIX_3LETTER  = (1 << 0),
+	SIZE_SUFFIX_SPACE    = (1 << 1),
+	SIZE_DECIMAL_2DIGITS = (1 << 2)
 };
 
 extern char *size_to_human_string(int options, uint64_t bytes);
