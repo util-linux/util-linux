@@ -1699,7 +1699,8 @@ static int ui_refresh(struct cfdisk *cf)
 	if (!ui_enabled)
 		return -EINVAL;
 
-	strsz = size_to_human_string(SIZE_SUFFIX_SPACE
+	strsz = size_to_human_string(SIZE_DECIMAL_2DIGITS
+				| SIZE_SUFFIX_SPACE
 				| SIZE_SUFFIX_3LETTER, bytes);
 
 	lb = fdisk_get_label(cf->cxt, NULL);

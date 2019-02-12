@@ -53,7 +53,8 @@ void list_disk_geometry(struct fdisk_context *cxt)
 {
 	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
 	uint64_t bytes = fdisk_get_nsectors(cxt) * fdisk_get_sector_size(cxt);
-	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
+	char *strsz = size_to_human_string(SIZE_DECIMAL_2DIGITS
+					   | SIZE_SUFFIX_SPACE
 					   | SIZE_SUFFIX_3LETTER, bytes);
 
 	color_scheme_enable("header", UL_COLOR_BOLD);
@@ -283,8 +284,9 @@ void list_freespace(struct fdisk_context *cxt)
 	}
 
 	bytes = sumsize * fdisk_get_sector_size(cxt);
-	strsz = size_to_human_string(SIZE_SUFFIX_SPACE
-					   | SIZE_SUFFIX_3LETTER, bytes);
+	strsz = size_to_human_string(SIZE_DECIMAL_2DIGITS
+				     | SIZE_SUFFIX_SPACE
+				     | SIZE_SUFFIX_3LETTER, bytes);
 
 	color_scheme_enable("header", UL_COLOR_BOLD);
 	fdisk_info(cxt,	_("Unpartitioned space %s: %s, %ju bytes, %ju sectors"),
