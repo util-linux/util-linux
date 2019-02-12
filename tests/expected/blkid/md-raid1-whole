@@ -21,7 +21,7 @@ Command (m for help): Partition type
 Select (default p): Partition number (2-4, default 2): First sector (22528-102271, default 22528): Last sector, +/-sectors or +/-size{K,M,G,T,P} (22528-102271, default 102271): 
 Created a new <removed>.
 
-Command (m for help): Disk /dev/md8: 50 MiB, 52363264 bytes, 102272 sectors
+Command (m for help): Disk /dev/md8: 49.96 MiB, 52363264 bytes, 102272 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): <removed> bytes / <removed> bytes

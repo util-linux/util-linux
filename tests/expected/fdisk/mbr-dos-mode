@@ -98,7 +98,7 @@ Create logical partitions
 a1cd6708e4a6d2e5f6bc9d5c0da0cf3b mbr-dos-mode.img
 
 ---layout----------
-Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Disk <removed>: 54.93 MiB, 57577472 bytes, 112456 sectors
 Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -119,7 +119,7 @@ Delete logical partitions
 4c6937d529ace5661fb82efb9394154a mbr-dos-mode.img
 
 ---layout----------
-Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Disk <removed>: 54.93 MiB, 57577472 bytes, 112456 sectors
 Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -137,7 +137,7 @@ Create another logical partition
 9589eaaed698d2402945ab3e513c1eb4 mbr-dos-mode.img
 
 ---layout----------
-Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Disk <removed>: 54.93 MiB, 57577472 bytes, 112456 sectors
 Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -158,7 +158,7 @@ Delete primary partition
 1e6d646e5df66a2664cfbbb13fa9a08a mbr-dos-mode.img
 
 ---layout----------
-Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Disk <removed>: 54.93 MiB, 57577472 bytes, 112456 sectors
 Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -178,7 +178,7 @@ Delete extended partition
 fc3cdb12326656d7996b09b6f76973e7 mbr-dos-mode.img
 
 ---layout----------
-Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Disk <removed>: 54.93 MiB, 57577472 bytes, 112456 sectors
 Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
