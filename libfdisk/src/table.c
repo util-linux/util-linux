@@ -575,7 +575,7 @@ done:
  *
  * Note that free space smaller than grain (see fdisk_get_grain_size()) is
  * ignored.
-
+ *
  * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
@@ -632,7 +632,12 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 		/* add gaps between logical partitions */
 		if (fdisk_partition_is_container(pa))
 			rc = check_container_freespace(cxt, parts, *tb, pa);
-		last = fdisk_partition_get_end(pa);
+
+		if (fdisk_partition_has_end(pa)) {
+			fdisk_sector_t pa_end = fdisk_partition_get_end(pa);
+			if (pa_end > last)
+				last = fdisk_partition_get_end(pa);
+		}
 		nparts++;
 	}
 
