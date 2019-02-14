@@ -359,7 +359,6 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		where = ttyname(STDOUT_FILENO);
 		if (!where) {
 			where = "somewhere";
-			warn(_("cannot get tty name"));
 		} else if (strncmp(where, "/dev/", 5) == 0)
 			where += 5;
 
