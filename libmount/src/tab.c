@@ -411,6 +411,9 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	if (!tb || !fs)
 		return -EINVAL;
 
+	if (!list_empty(&fs->ents))
+		return -EBUSY;
+
 	mnt_ref_fs(fs);
 	list_add_tail(&fs->ents, &tb->ents);
 	tb->nents++;
