@@ -133,7 +133,9 @@ static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 		p = readline(prompt);
 		if (!p)
 			return 1;
-		memcpy(buf, p, bufsz);
+		strncpy(buf, p, bufsz);
+		if (bufsz != 0)
+			buf[bufsz - 1] = '\0';
 		free(p);
 	} else
 #endif
