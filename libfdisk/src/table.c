@@ -225,6 +225,9 @@ int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa
 	if (!tb || !pa)
 		return -EINVAL;
 
+	if (!list_empty(&pa->parts))
+		return -EBUSY;
+
 	fdisk_ref_partition(pa);
 	list_add_tail(&pa->parts, &tb->parts);
 	tb->nents++;
