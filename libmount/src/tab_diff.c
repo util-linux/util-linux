@@ -136,7 +136,7 @@ static int tabdiff_reset(struct libmnt_tabdiff *df)
 		struct tabdiff_entry *de = list_entry(df->changes.next,
 			                  struct tabdiff_entry, changes);
 
-		list_del(&de->changes);
+		list_del_init(&de->changes);
 		list_add_tail(&de->changes, &df->unused);
 
 		mnt_unref_fs(de->new_fs);

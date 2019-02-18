@@ -60,6 +60,9 @@ static int mnt_context_append_additional_mount(struct libmnt_context *cxt,
 	assert(cxt);
 	assert(ad);
 
+	if (!list_empty(&ad->mounts))
+		return -EINVAL;
+
 	DBG(CXT, ul_debugobj(cxt,
 			"mount: add additional flag: 0x%08lx",
 			ad->mountflags));
