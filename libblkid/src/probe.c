@@ -311,9 +311,7 @@ int blkid_probe_chain_save_values(blkid_probe pr, struct blkid_chain *chn,
 		if (v->chain != chn)
 			continue;
 
-		list_del(&v->prvals);
-		INIT_LIST_HEAD(&v->prvals);
-
+		list_del_init(&v->prvals);
 		list_add_tail(&v->prvals, vals);
 	}
 	return 0;
