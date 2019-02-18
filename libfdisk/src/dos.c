@@ -913,6 +913,13 @@ static fdisk_sector_t get_unused_start(struct fdisk_context *cxt,
 {
 	size_t i;
 
+	if (part_n >= 4) {
+		struct fdisk_dos_label *l = self_label(cxt);
+		fdisk_sector_t ex_start = l->ext_offset + cxt->first_lba;
+		if (start < ex_start)
+			start = ex_start;
+	}
+
 	for (i = 0; i < cxt->label->nparts_max; i++) {
 		fdisk_sector_t lastplusoff;
 		struct pte *pe = self_pte(cxt, i);
@@ -925,6 +932,8 @@ static fdisk_sector_t get_unused_start(struct fdisk_context *cxt,
 			start = lastplusoff + 1;
 	}
 
+	DBG(LABEL, ul_debug("DOS: fist unused start for #%d is %ju",
+				part_n, (uintmax_t) start));
 	return start;
 }
 
@@ -939,7 +948,7 @@ static void fill_bounds(struct fdisk_context *cxt,
 	for (i = 0; i < cxt->label->nparts_max; pe++,i++) {
 		p = pe->pt_entry;
 		if (is_cleared_partition(p) || IS_EXTENDED (p->sys_ind)) {
-			first[i] = 0xffffffff;
+			first[i] = SIZE_MAX;
 			last[i] = 0;
 		} else {
 			first[i] = get_abs_partition_start(pe);
