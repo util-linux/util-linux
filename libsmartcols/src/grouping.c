@@ -77,6 +77,7 @@ static void groups_fix_members_order(struct libscols_line *ln)
 	struct libscols_line *child;
 
 	if (ln->group) {
+		INIT_LIST_HEAD(&ln->ln_groups);
 		list_add_tail(&ln->ln_groups, &ln->group->gr_members);
 		DBG(GROUP, ul_debugobj(ln->group, "fixing member line=%p [%zu/%zu]",
 					ln, ln->group->nmembers,
@@ -477,10 +478,12 @@ void scols_groups_reset_state(struct libscols_table *tb)
 static void add_member(struct libscols_group *gr, struct libscols_line *ln)
 {
 	DBG(GROUP, ul_debugobj(gr, "add member"));
+
 	ln->group = gr;
 	gr->nmembers++;
 	scols_ref_group(gr);
 
+	INIT_LIST_HEAD(&ln->ln_groups);
 	list_add_tail(&ln->ln_groups, &gr->gr_members);
 	scols_ref_line(ln);
 }
@@ -573,6 +576,9 @@ int scols_line_link_group(struct libscols_line *ln, struct libscols_line *member
 		 __attribute__((__unused__)) int id)
 {
 	if (!ln || !member || !member->group || ln->parent)
+		return -EINVAL;
+
+	if (!list_empty(&ln->ln_children))
 		return -EINVAL;
 
 	DBG(GROUP, ul_debugobj(member->group, "add child"));

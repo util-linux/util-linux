@@ -225,6 +225,9 @@ int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl
 	if (!tb || !cl || cl->table)
 		return -EINVAL;
 
+	if (!list_empty(&cl->cl_columns))
+		return -EINVAL;
+
 	if (cl->flags & SCOLS_FL_TREE)
 		tb->ntreecols++;
 
@@ -592,6 +595,9 @@ struct libscols_column *scols_table_get_column(struct libscols_table *tb,
 int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln)
 {
 	if (!tb || !ln)
+		return -EINVAL;
+
+	if (!list_empty(&ln->ln_lines))
 		return -EINVAL;
 
 	if (tb->ncols > ln->ncells) {
