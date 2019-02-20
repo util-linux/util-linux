@@ -146,7 +146,7 @@ struct colinfo {
 
 /* columns descriptions */
 static struct colinfo infos[] = {
-	[COL_NAME]   = { "NAME",    0.25, SCOLS_FL_TREE | SCOLS_FL_NOEXTREMES, N_("device name") },
+	[COL_NAME]   = { "NAME",    0.25, SCOLS_FL_NOEXTREMES, N_("device name") },
 	[COL_KNAME]  = { "KNAME",   0.3, 0, N_("internal kernel device name") },
 	[COL_PKNAME] = { "PKNAME",  0.3, 0, N_("internal parent kernel device name") },
 	[COL_PATH]   = { "PATH",    0.3,  0, N_("path to the device node") },
@@ -1725,7 +1725,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
-	fputs(_(" -T, --tree           use tree format output\n"), out);
+	fputs(_(" -T, --tree[=<column>] use tree format output\n"), out);
 	fputs(_(" -a, --all            print all devices\n"), out);
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -d, --nodeps         don't print slaves or holders\n"), out);
@@ -1769,13 +1769,14 @@ int main(int argc, char *argv[])
 	struct lsblk _ls = {
 		.sort_id = -1,
 		.dedup_id = -1,
-		.flags = LSBLK_TREE
+		.flags = LSBLK_TREE,
+		.tree_id = COL_NAME
 	};
 	struct lsblk_devtree *tr = NULL;
 	int c, status = EXIT_FAILURE;
 	char *outarg = NULL;
 	size_t i;
-	int force_tree = 0;
+	int force_tree = 0, has_tree_col = 0;
 
 	enum {
 		OPT_SYSROOT = CHAR_MAX + 1
@@ -1808,7 +1809,7 @@ int main(int argc, char *argv[])
 		{ "scsi",       no_argument,       NULL, 'S' },
 		{ "sort",	required_argument, NULL, 'x' },
 		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
-		{ "tree",       no_argument,       NULL, 'T' },
+		{ "tree",       optional_argument, NULL, 'T' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ NULL, 0, NULL, 0 },
 	};
@@ -1836,7 +1837,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-			       "abdDzE:e:fhJlnMmo:OpPiI:rstVSTx:", longopts, NULL)) != -1) {
+			       "abdDzE:e:fhJlnMmo:OpPiI:rstVST:x:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1948,8 +1949,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'T':
 			force_tree = 1;
+			if (optarg)
+				lsblk->tree_id = column_name_to_id(optarg, strlen(optarg));
 			break;
-
 		case OPT_SYSROOT:
 			lsblk->sysroot = optarg;
 			break;
@@ -2039,8 +2041,14 @@ int main(int argc, char *argv[])
 		struct libscols_column *cl;
 		int id = get_column_id(i), fl = ci->flags;
 
-		if (!(lsblk->flags & LSBLK_TREE) && id == COL_NAME)
-			fl &= ~SCOLS_FL_TREE;
+		if ((lsblk->flags & LSBLK_TREE)
+		    && has_tree_col == 0
+		    && id == lsblk->tree_id) {
+			fl |= SCOLS_FL_TREE;
+			fl &= ~SCOLS_FL_RIGHT;
+			has_tree_col = 1;
+		}
+
 		if (lsblk->sort_hidden && lsblk->sort_id == id)
 			fl |= SCOLS_FL_HIDDEN;
 		if (lsblk->dedup_hidden && lsblk->dedup_id == id)

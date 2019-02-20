@@ -35,7 +35,9 @@ struct lsblk {
 	struct libscols_table *table;	/* output table */
 
 	struct libscols_column *sort_col;/* sort output by this column */
-	int sort_id;
+
+	int sort_id;			/* id of the sort column */
+	int tree_id;			/* od of column used for tree */
 
 	int dedup_id;
 

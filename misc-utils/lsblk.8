@@ -30,6 +30,8 @@ is subject to change.  So whenever possible, you should avoid using default
 outputs in your scripts.  Always explicitly define expected columns by using
 .B \-\-output
 .I columns-list
+and
+.B \-\-list
 in environments where a stable output is required.
 .PP
 Note that
@@ -134,6 +136,10 @@ Output info about SCSI devices only.  All partitions, slaves and holder devices 
 .BR \-s , " \-\-inverse"
 Print dependencies in inverse order. If the \fB\-\-list\fR output is requested then
 the lines are still ordered by dependencies.
+.TP
+.BR \-T , " \-\-tree" [ =\fIcolumn ]
+Force tree-like output format.  If \fIcolumn\fP is specified, then a tree is printed in the column.
+The default is NAME column.
 .TP
 .BR \-t , " \-\-topology"
 Output info about block-device topology.
