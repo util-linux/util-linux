@@ -406,7 +406,7 @@ struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
  */
 int mnt_table_contains_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 {
-	struct list_head *ent;
+	struct libmnt_fs *ent;
 
 	if (!tb || !fs)
 		return -EINVAL;
