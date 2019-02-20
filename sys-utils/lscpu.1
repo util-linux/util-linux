@@ -145,8 +145,9 @@ Gather CPU data for a Linux instance other than the instance from which the
 of the Linux instance to be inspected.
 .TP
 .BR \-x , " \-\-hex"
-Use hexadecimal masks for CPU sets (for example 0x3).  The default is to print
-the sets in list format (for example 0,1).
+Use hexadecimal masks for CPU sets (for example "ff").  The default is to print
+the sets in list format (for example 0,1).  Note that before version 2.30 the mask
+has been printed with 0x prefix.
 .TP
 .BR \-y , " \-\-physical"
 Display physical IDs for all columns with topology elements (core, socket, etc.).
