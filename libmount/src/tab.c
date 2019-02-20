@@ -396,6 +396,30 @@ struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
 }
 
 /**
+ * mnt_table_contains_fs:
+ * @tb: tab pointer
+ * @fs: potential tab entry
+ *
+ * Checks if @fs is part of table @tb.
+ *
+ * Returns: negative number in case of error, 1 if @fs is part of @tb, otherwise 0.
+ */
+int mnt_table_contains_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
+{
+	struct list_head *ent;
+
+	if (!tb || !fs)
+		return -EINVAL;
+
+	list_for_each(ent, &tb-ents) {
+		if (list_entry(ent, struct libmnt_fs, ents) == fs)
+			return 1;
+	}
+
+	return 0;
+}
+
+/**
  * mnt_table_add_fs:
  * @tb: tab pointer
  * @fs: new entry
@@ -439,11 +463,40 @@ int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	if (!tb || !fs)
 		return -EINVAL;
 
+	if (!mnt_table_contains_fs(tb, fs))
+		return -ENOENT;
+
 	list_del(&fs->ents);
 	INIT_LIST_HEAD(&fs->ents);	/* otherwise FS still points to the list */
 
 	mnt_unref_fs(fs);
 	tb->nents--;
+
+	return 0;
+}
+
+/**
+ * mnt_table_move_fs:
+ * @src: tab pointer of source table
+ * @dst: tab pointer of destination table
+ * @fs: entry to move
+ *
+ * Removes @fs from @src table and adds it to the end of @dst table.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst, struct libmnt_fs *fs)
+{
+	if (!src || !dst || !fs)
+		return -EINVAL;
+
+	if (!mnt_table_contains_fs(src, fs))
+		return -ENOENT;
+
+	src->nents--;
+	list_move_tail(&fs->ents, &dst->ents);
+	dst->nents++;	
+
 	return 0;
 }
 
