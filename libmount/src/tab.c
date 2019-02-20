@@ -396,6 +396,30 @@ struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
 }
 
 /**
+ * mnt_table_find_fs:
+ * @tb: tab pointer
+ * @fs: entry to look for
+ *
+ * Checks if @fs is part of table @tb.
+ *
+ * Returns: negative number in case of error, 1 if @fs is part of @tb, otherwise 0.
+ */
+int mnt_table_find_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
+{
+	struct list_head *p;
+
+	if (!tb || !fs)
+		return -EINVAL;
+
+	list_for_each(p, &tb->ents) {
+		if (list_entry(p, struct libmnt_fs, ents) == fs)
+			return 1;
+	}
+
+	return 0;
+}
+
+/**
  * mnt_table_add_fs:
  * @tb: tab pointer
  * @fs: new entry
@@ -414,12 +438,68 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	if (!list_empty(&fs->ents))
 		return -EBUSY;
 
-	mnt_ref_fs(fs);
-	list_add_tail(&fs->ents, &tb->ents);
-	tb->nents++;
+	if (!mnt_table_find_fs(tb, fs)) {
+		mnt_ref_fs(fs);
+		list_add_tail(&fs->ents, &tb->ents);
+		tb->nents++;
+	}
 
 	DBG(TAB, ul_debugobj(tb, "add entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
+	return 0;
+}
+
+/**
+ * mnt_table_add_fs_after:
+ * @tb: tab pointer
+ * @pos: entry to add after
+ * @fs: new entry
+ *
+ * Adds a new entry to @tb after a specific table entry @pos.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_add_fs_after(struct libmnt_table *tb, struct libmnt_fs *pos, struct libmnt_fs *fs)
+{
+	if (!tb || !pos || !fs)
+		return -EINVAL;
+
+	if (!list_empty(&fs->ents))
+		return -EBUSY;
+
+	if (list_empty(&pos->ents) || !mnt_table_find_fs(tb, pos))
+		return -ENOENT;
+
+	list_add(&fs->ents, &pos->ents);
+	tb->nents++;
+
+	return 0;
+}
+
+/**
+ * mnt_table_add_fs_before:
+ * @tb: tab pointer
+ * @pos: entry to add before
+ * @fs: new entry
+ *
+ * Adds a new entry to @tb before a specific table entry @pos.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_add_fs_before(struct libmnt_table *tb, struct libmnt_fs *pos, struct libmnt_fs *fs)
+{
+	if (!tb || !pos || !fs)
+		return -EINVAL;
+
+	if (!list_empty(&fs->ents))
+		return -EBUSY;
+
+	if (list_empty(&pos->ents) || !mnt_table_find_fs(tb, pos))
+		return -ENOENT;
+
+	list_add_tail(&fs->ents, &pos->ents);
+	tb->nents++;
+
 	return 0;
 }
 
@@ -439,11 +519,110 @@ int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	if (!tb || !fs)
 		return -EINVAL;
 
+	if (!mnt_table_find_fs(tb, fs))
+		return -ENOENT;
+
 	list_del(&fs->ents);
 	INIT_LIST_HEAD(&fs->ents);	/* otherwise FS still points to the list */
 
 	mnt_unref_fs(fs);
 	tb->nents--;
+	return 0;
+}
+
+/**
+ * mnt_table_move_fs:
+ * @src: tab pointer of source table
+ * @dst: tab pointer of destination table
+ * @fs: entry to move
+ *
+ * Removes @fs from @src table and adds it to the end of @dst table.
+ * If @fs is not part of any table, it does the same as mnt_table_add_fs();
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst, struct libmnt_fs *fs)
+{
+	if (!src || !dst || !fs)
+		return -EINVAL;
+
+	if (!mnt_table_find_fs(src, fs)) { 
+		if (!list_empty(&fs->ents))
+			return -ENOENT;
+	} else {
+		list_del(&fs->ents);
+		src->nents--;
+	}
+
+	list_add_tail(&fs->ents, &dst->ents);
+	dst->nents++;		
+
+	return 0;
+}
+
+/**
+ * mnt_table_move_fs_after:
+ * @src: tab pointer of source table
+ * @dst: tab pointer of destination table
+ * @pos: entry to add after
+ * @fs: entry to move
+ *
+ * Removes @fs from @src table and adds it after a specific entry @pos of @dst table.
+ * If @fs is not part of @src table, it does the same as mnt_table_add_fs_after();
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_move_fs_after(struct libmnt_table *src, struct libmnt_table *dst,
+				struct libmnt_fs *pos, struct libmnt_fs *fs)
+{
+	if (!src || !dst || !pos || !fs)
+		return -EINVAL;
+
+	if (!mnt_table_find_fs(src, fs) && !list_empty(&fs->ents))
+		return -ENOENT;
+	else if (list_empty(&pos->ents) || !mnt_table_find_fs(dst, pos))
+		return -ENOENT;
+	else {
+		list_del(&fs->ents);
+		src->nents--;
+	}
+
+	list_add(&fs->ents, &pos->ents);
+	dst->nents++;
+
+	return 0;
+}
+
+/**
+ * mnt_table_move_fs_before:
+ * @src: tab pointer of source table
+ * @dst: tab pointer of destination table
+ * @pos: entry to add after
+ * @fs: entry to move
+ *
+ * Removes @fs from @src table and adds it before a specific entry @pos of @dst table.
+ * If @fs is not part of @src table, it does the same as mnt_table_add_fs_before();
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_move_fs_before(struct libmnt_table *src, struct libmnt_table *dst,
+				struct libmnt_fs *pos, struct libmnt_fs *fs)
+{
+	if (!src || !dst || !pos || !fs)
+		return -EINVAL;
+
+	if (!mnt_table_find_fs(src, fs) && !list_empty(&fs->ents))
+		return -ENOENT;
+	else if (list_empty(&pos->ents) || !mnt_table_find_fs(dst, pos))
+		return -ENOENT;
+	else {
+		list_del(&fs->ents);
+		src->nents--;
+	}
+
+	list_add_tail(&fs->ents, &pos->ents);
+	dst->nents++;
+
 	return 0;
 }
 
