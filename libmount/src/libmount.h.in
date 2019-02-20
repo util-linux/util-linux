@@ -560,8 +560,8 @@ extern int mnt_table_append_trailing_comment(struct libmnt_table *tb, const char
 extern int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc);
 extern struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb);
 extern int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
-extern int mnt_table_add_fs_after(struct libmnt_table *tb, struct libmnt_fs *fs, struct libmnt_fs *new);
-extern int mnt_table_add_fs_before(struct libmnt_table *tb, struct libmnt_fs *fs, struct libmnt_fs *new);
+extern int mnt_table_add_fs_after(struct libmnt_table *tb, struct libmnt_fs *pos, struct libmnt_fs *fs);
+extern int mnt_table_add_fs_before(struct libmnt_table *tb, struct libmnt_fs *pos, struct libmnt_fs *fs);
 extern int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst, struct libmnt_fs *fs);
 extern int mnt_table_move_fs_before(struct libmnt_table *src, struct libmnt_table *dst,
