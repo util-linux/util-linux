@@ -438,9 +438,11 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	if (!list_empty(&fs->ents))
 		return -EBUSY;
 
-	mnt_ref_fs(fs);
-	list_add_tail(&fs->ents, &tb->ents);
-	tb->nents++;
+	if (!mnt_table_contains_fs(tb, fs)) {
+		mnt_ref_fs(fs);
+		list_add_tail(&fs->ents, &tb->ents);
+		tb->nents++;
+	}
 
 	DBG(TAB, ul_debugobj(tb, "add entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
