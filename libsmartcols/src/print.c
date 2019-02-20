@@ -548,11 +548,9 @@ int __cell_to_buffer(struct libscols_table *tb,
 
 	ce = scols_line_get_cell(ln, cl->seqnum);
 	data = ce ? scols_cell_get_data(ce) : NULL;
-	if (!data)
-		return 0;
 
 	if (!scols_column_is_tree(cl))
-		return buffer_set_data(buf, data);
+		return data ? buffer_set_data(buf, data) : 0;
 
 	/*
 	 * Group stuff
@@ -575,7 +573,7 @@ int __cell_to_buffer(struct libscols_table *tb,
 	if (!rc && (ln->parent || cl->is_groups) && !scols_table_is_json(tb))
 		buffer_set_art_index(buf);
 
-	if (!rc)
+	if (!rc && data)
 		rc = buffer_append_data(buf, data);
 	return rc;
 }
