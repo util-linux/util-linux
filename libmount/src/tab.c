@@ -492,11 +492,16 @@ int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst, struct
 	if (!src || !dst || !fs)
 		return -EINVAL;
 
-	if (!mnt_table_contains_fs(src, fs))
-		return -ENOENT;
+	if (!mnt_table_contains_fs(src, fs)) {
+		if (!list_empty(&fs->ents))
+			return -ENOENT;
 
-	src->nents--;
-	list_move_tail(&fs->ents, &dst->ents);
+		list_add_tail(&fs->ents, &dst->ents);
+	} else {
+		src->nents--;
+		list_move_tail(&fs->ents, &dst->ents);
+	}
+	
 	dst->nents++;	
 
 	return 0;
