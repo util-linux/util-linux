@@ -402,18 +402,22 @@ struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
  *
  * Checks if @fs is part of table @tb.
  *
- * Returns: negative number in case of error, 1 if @fs is part of @tb, otherwise 0.
+ * Returns: index of @fs in table, 0 if not found or negative number in case of error.
  */
 int mnt_table_find_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 {
 	struct list_head *p;
+	int i;
 
 	if (!tb || !fs)
 		return -EINVAL;
 
+	i = 0;
 	list_for_each(p, &tb->ents) {
+		++i;
+
 		if (list_entry(p, struct libmnt_fs, ents) == fs)
-			return 1;
+			return i;
 	}
 
 	return 0;
