@@ -343,6 +343,9 @@ MOUNT_2.33 {
 } MOUNT_2.30;
 
 MOUNT_2.34 {
-	mnt_guess_system_root;
 	mnt_context_next_remount;
+	mnt_guess_system_root;
+	mnt_table_find_fs;
+	mnt_table_insert_fs;
+	mnt_table_move_fs;
 } MOUNT_2.33;

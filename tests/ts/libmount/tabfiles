@@ -77,4 +77,9 @@ ts_run $TESTPROG --find-pair "$TS_SELF/files/mtab" /dev/mapper/kzak-home /home/k
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "find-fs"
+ts_run $TESTPROG --find-fs "$TS_SELF/files/mountinfo" /home/kzak &> $TS_OUTPUT
+sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
+ts_finalize_subtest
+
 ts_finalize

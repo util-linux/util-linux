@@ -329,6 +329,7 @@ mnt_table_append_intro_comment
 mnt_table_append_trailing_comment
 mnt_table_enable_comments
 mnt_table_find_devno
+mnt_table_find_fs
 mnt_table_find_mountpoint
 mnt_table_find_next_fs
 mnt_table_find_pair
@@ -344,9 +345,11 @@ mnt_table_get_nents
 mnt_table_get_root_fs
 mnt_table_get_trailing_comment
 mnt_table_get_userdata
+mnt_table_insert_fs
 mnt_table_is_empty
 mnt_table_is_fs_mounted
 mnt_table_last_fs
+mnt_table_move_fs
 mnt_table_next_child_fs
 mnt_table_next_fs
 mnt_table_parse_dir
@@ -362,8 +365,8 @@ mnt_table_set_iter
 mnt_table_set_parser_errcb
 mnt_table_set_trailing_comment
 mnt_table_set_userdata
-mnt_table_with_comments
 mnt_table_uniq_fs
+mnt_table_with_comments
 </SECTION>
 
 <SECTION>

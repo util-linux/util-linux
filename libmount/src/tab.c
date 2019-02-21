@@ -396,6 +396,38 @@ struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
 }
 
 /**
+ * mnt_table_find_fs:
+ * @tb: tab pointer
+ * @fs: entry to look for
+ *
+ * Checks if @fs is part of table @tb.
+ *
+ * Returns: index of @fs in table, 0 if not found or negative number in case of error.
+ */
+int mnt_table_find_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
+{
+	struct list_head *p;
+	int i = 0;
+
+	if (!tb || !fs)
+		return -EINVAL;
+
+	if (list_empty(&fs->ents))
+		return 0;
+
+	/* Let's use directly list rather than mnt_table_next_fs() as we
+	 * compare list entry with fs only.
+	 */
+	list_for_each(p, &tb->ents) {
+		++i;
+		if (list_entry(p, struct libmnt_fs, ents) == fs)
+			return i;
+	}
+
+	return 0;
+}
+
+/**
  * mnt_table_add_fs:
  * @tb: tab pointer
  * @fs: new entry
@@ -423,6 +455,95 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	return 0;
 }
 
+static int __table_insert_fs(
+			struct libmnt_table *tb, int before,
+			struct libmnt_fs *pos, struct libmnt_fs *fs)
+{
+	struct list_head *head = pos ? &pos->ents : &tb->ents;
+
+	if (before)
+		list_add(&fs->ents, head);
+	else
+		list_add_tail(&fs->ents, head);
+
+	tb->nents++;
+
+	DBG(TAB, ul_debugobj(tb, "insert entry: %s %s",
+			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
+	return 0;
+}
+
+/**
+ * mnt_table_insert_fs:
+ * @tb: tab pointer
+ * @before: 1 to insert before pos, 0 to insert after pos
+ * @pos: entry to specify position or NULL
+ * @fs: new entry
+ *
+ * Adds a new entry to @tb before or after a specific table entry @pos. If the
+ * @pos is NULL than add the begin of the @tab if @before is 1; or to the tail
+ * of the @tb if @before is 0.
+ *
+ * This function inncrements reference to @fs. Don't forget to use
+ * mnt_unref_fs() after mnt_table_insert_fs() if you want to keep the @fs
+ * referenced by the table only.
+
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_insert_fs(struct libmnt_table *tb, int before,
+			struct libmnt_fs *pos, struct libmnt_fs *fs)
+{
+	if (!tb || !fs)
+		return -EINVAL;
+
+	if (!list_empty(&fs->ents))
+		return -EBUSY;
+
+	if (pos && mnt_table_find_fs(tb, pos) < 1)
+		return -ENOENT;
+
+	mnt_ref_fs(fs);
+	return __table_insert_fs(tb, before, pos, fs);
+}
+
+/**
+ * mnt_table_move_fs:
+ * @src: tab pointer of source table
+ * @dst: tab pointer of destination table
+ * @before: 1 to move before position, 0 to move after position
+ * @pos: entry to specify position or NULL
+ * @fs: entry to move
+ *
+ * Removes @fs from @src table and adds it before/after a specific entry @pos
+ * of @dst table. If the @pos is NULL than add the begin of the @dst if @before
+ * is 1; or to the tail of the @dst if @before is 0.
+ *
+ * The reference counter of @fs is not modified.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst,
+                      int before, struct libmnt_fs *pos, struct libmnt_fs *fs)
+{
+	if (!src || !dst || !fs)
+		return -EINVAL;
+
+	if (mnt_table_find_fs(src, fs) < 1)
+		return -ENOENT;
+
+	if (pos && mnt_table_find_fs(dst, pos) < 1)
+		return -ENOENT;
+
+	/* remove from source */
+	list_del_init(&fs->ents);
+	src->nents--;
+
+	/* insert to the destination */
+	return __table_insert_fs(dst, before, pos, fs);
+}
+
+
 /**
  * mnt_table_remove_fs:
  * @tb: tab pointer
@@ -436,11 +557,10 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
  */
 int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 {
-	if (!tb || !fs)
+	if (!tb || !fs || mnt_table_find_fs(tb, fs) < 1)
 		return -EINVAL;
 
-	list_del(&fs->ents);
-	INIT_LIST_HEAD(&fs->ents);	/* otherwise FS still points to the list */
+	list_del_init(&fs->ents);
 
 	mnt_unref_fs(fs);
 	tb->nents--;
@@ -1788,6 +1908,51 @@ done:
 	return rc;
 }
 
+static int test_find_idx(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_table *tb;
+	struct libmnt_fs *fs = NULL;
+	struct libmnt_cache *mpc = NULL;
+	const char *file, *what;
+	int rc = -1;
+
+	if (argc != 3) {
+		fprintf(stderr, "try --help\n");
+		return -EINVAL;
+	}
+
+	file = argv[1], what = argv[2];
+
+	tb = create_table(file, FALSE);
+	if (!tb)
+		goto done;
+
+	/* create a cache for canonicalized paths */
+	mpc = mnt_new_cache();
+	if (!mpc)
+		goto done;
+	mnt_table_set_cache(tb, mpc);
+	mnt_unref_cache(mpc);
+
+	fs = mnt_table_find_target(tb, what, MNT_ITER_BACKWARD);
+
+	if (!fs)
+		fprintf(stderr, "%s: not found '%s'\n", file, what);
+	else {
+		int idx = mnt_table_find_fs(tb, fs);
+
+		if (idx < 1)
+			fprintf(stderr, "%s: not found '%s' fs pointer", file, what);
+		else {
+			printf("%s index is %d\n", what, idx);
+			rc = 0;
+		}
+	}
+done:
+	mnt_unref_table(tb);
+	return rc;
+}
+
 static int test_find(struct libmnt_test *ts, int argc, char *argv[], int dr)
 {
 	struct libmnt_table *tb;
@@ -1994,6 +2159,7 @@ int main(int argc, char *argv[])
 	{ "--find-backward", test_find_bw, "<file> <source|target> <string>" },
 	{ "--uniq-target",   test_uniq,    "<file>" },
 	{ "--find-pair",     test_find_pair, "<file> <source> <target>" },
+	{ "--find-fs",       test_find_idx, "<file> <target>" },
 	{ "--find-mountpoint", test_find_mountpoint, "<path>" },
 	{ "--copy-fs",       test_copy_fs, "<file>  copy root FS from the file" },
 	{ "--is-mounted",    test_is_mounted, "<fstab> check what from fstab is already mounted" },
