@@ -669,7 +669,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 
 		if (s) {
 			errno = 0;
-			id = strtol(s, &end, 16);
+			id = strtoul(s, &end, 16);
 			if (!errno && end && s < end) {
 				has_id = 1;
 				DBG(LABEL, ul_debug("DOS: re-use ID from script (0x%08x)", id));
