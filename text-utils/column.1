@@ -31,7 +31,7 @@
 .\"
 .\"     @(#)column.1	8.1 (Berkeley) 6/6/93
 .\"
-.TH COLUMN 1 "January 2017" "util-linux" "User Commands"
+.TH COLUMN 1 "February 2019" "util-linux" "User Commands"
 .SH NAME
 column \- columnate lists
 .SH SYNOPSIS
@@ -168,6 +168,15 @@ New output (since util-linux 2.23):
 a  b  c
 1     3
 .EE
+.PP
+Historical versions of this tool indicated that "rows are filled before
+columns" by default, and that the
+.B \-x
+option reverses this. This wording did not reflect the actual behavior, and it
+has since been corrected (see above). Other implementations of
+.B column
+may continue to use the older documentation, but the behavior should be
+identical in any case.
 .SH "SEE ALSO"
 .BR colrm (1),
 .BR ls (1),
