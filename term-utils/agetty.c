@@ -2059,7 +2059,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 		sleep(1);
 	tcflush(STDIN_FILENO, TCIFLUSH);
 
-	eightbit = (op->flags & F_EIGHTBITS);
+	eightbit = (op->flags & (F_EIGHTBITS|F_UTF8));
 	bp = logname;
 	*bp = '\0';
 
