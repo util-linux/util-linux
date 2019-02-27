@@ -149,6 +149,24 @@ ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
+# Create a new layout
+#
+ts_log "Create new DOS partition table (again)"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_INIT}${FDISK_CMD_WRITE_CLOSE}" \
+	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+
+ts_log "Create 1st primary at the end of device"
+echo -e "n\np\n1\n20000\n\n${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+
+print_layout
+
+ts_log "Create 2nd primary at the begin of device"
+echo -e "n\np\n2\n\n\n${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+
+print_layout
+
 ts_fdisk_clean ${TEST_IMAGE_NAME}
 
 ts_finalize
