@@ -1,0 +1,19 @@
+Delete primary partition
+7b29a3cda33e990e8a7877b81988b933 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: dos
+Disk identifier: <removed>
+
+Device     Boot Start   End Sectors Size Id Type
+<removed>3      12288 40959   28672  14M  5 Extended
+<removed>5      26624 30719    4096   2M 83 Linux
+<removed>6      14336 18431    4096   2M 83 Linux
+
+Partition table entries are not in disk order.
+-------------------
+

@@ -1,0 +1,21 @@
+Create logical partitions
+db4406e7bc0773f234fd1db1b58b5997 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: dos
+Disk identifier: <removed>
+
+Device     Boot Start   End Sectors Size Id Type
+<removed>1       2048  8191    6144   3M 83 Linux
+<removed>2       8192 12287    4096   2M 83 Linux
+<removed>3      12288 40959   28672  14M  5 Extended
+<removed>5      14336 18431    4096   2M 83 Linux
+<removed>6      20480 24575    4096   2M 83 Linux
+<removed>7      26624 30719    4096   2M 83 Linux
+<removed>8      32768 36863    4096   2M 83 Linux
+-------------------
+
