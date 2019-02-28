@@ -44,7 +44,9 @@ Flush buffers.
 .IP "\fB\-\-getalignoff\fP"
 Get alignment offset.
 .IP "\fB\-\-getbsz\fP"
-Print blocksize in bytes.
+Print blocksize in bytes.  This size does not describe device topology.  It's
+size used internally by kernel and it maybe modified (for example) by
+filesystem driver on mount.
 .IP "\fB\-\-getdiscardzeroes\fP"
 Get discard zeroes support status.
 .IP "\fB\-\-getfra\fP"
