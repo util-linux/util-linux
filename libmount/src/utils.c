@@ -283,7 +283,14 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"devtmpfs",
 		"dlmfs",
 		"efivarfs",
-		"fuse.gvfs-fuse-daemon",
+		"fuse", /* Fallback name of fuse used by many poorly written drivers. */
+		"fuse.archivemount", /* Not a true pseudofs (has source), but source is not reported. */
+		"fuse.dumpfs", /* In fact, it is a netfs, but source is not reported. */
+		"fuse.encfs", /* Not a true pseudofs (has source), but source is not reported. */
+		"fuse.gvfs-fuse-daemon", /* Old name, not used by gvfs any more. */
+		"fuse.gvfsd-fuse",
+		"fuse.rofiles-fuse",
+		"fuse.xwmfs",
 		"fusectl",
 		"hugetlbfs",
 		"mqueue",
@@ -323,6 +330,8 @@ int mnt_fstype_is_netfs(const char *type)
 	    strncmp(type,"nfs", 3) == 0 ||
 	    strcmp(type, "afs")    == 0 ||
 	    strcmp(type, "ncpfs")  == 0 ||
+	    strcmp(type, "fuse.curlftpfs") == 0 ||
+	    strcmp(type, "fuse.sshfs") == 0 ||
 	    strncmp(type,"9p", 2)  == 0)
 		return 1;
 	return 0;
