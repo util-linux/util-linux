@@ -563,9 +563,14 @@ extern int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_find_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_insert_fs(struct libmnt_table *tb, int before,
 				struct libmnt_fs *pos, struct libmnt_fs *fs);
+extern int mnt_table_insert_fs_safe(struct libmnt_table *tb, int before,
+				struct libmnt_fs *pos, struct libmnt_fs *fs);
 extern int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst,
                       int before, struct libmnt_fs *pos, struct libmnt_fs *fs);
+extern int mnt_table_move_fs_safe(struct libmnt_table *src, struct libmnt_table *dst,
+                      int before, struct libmnt_fs *pos, struct libmnt_fs *fs);
 extern int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
+extern int mnt_table_remove_fs_safe(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_first_fs(struct libmnt_table *tb, struct libmnt_fs **fs);
 extern int mnt_table_last_fs(struct libmnt_table *tb, struct libmnt_fs **fs);
 extern int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
