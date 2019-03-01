@@ -500,6 +500,38 @@ int mnt_table_insert_fs(struct libmnt_table *tb, int before,
 	if (!list_empty(&fs->ents))
 		return -EBUSY;
 
+	mnt_ref_fs(fs);
+	return __table_insert_fs(tb, before, pos, fs);
+}
+
+/**
+ * mnt_table_insert_fs_safe:
+ * @tb: tab pointer
+ * @before: 1 to insert before pos, 0 to insert after pos
+ * @pos: entry to specify position or NULL
+ * @fs: new entry
+ *
+ * Adds a new entry to @tb before or after a specific table entry @pos. If the
+ * @pos is NULL than add the begin of the @tab if @before is 1; or to the tail
+ * of the @tb if @before is 0. Safe version of mnt_table_insert_fs() that
+ * checks for table membership of @pos in @tb.
+ *
+ * This function inncrements reference to @fs. Don't forget to use
+ * mnt_unref_fs() after mnt_table_insert_fs() if you want to keep the @fs
+ * referenced by the table only.
+
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_insert_fs_safe(struct libmnt_table *tb, int before,
+			struct libmnt_fs *pos, struct libmnt_fs *fs)
+{
+	if (!tb || !fs)
+		return -EINVAL;
+
+	if (!list_empty(&fs->ents))
+		return -EBUSY;
+
 	if (pos && mnt_table_find_fs(tb, pos) < 1)
 		return -ENOENT;
 
@@ -529,6 +561,38 @@ int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst,
 	if (!src || !dst || !fs)
 		return -EINVAL;
 
+	/* remove from source */
+	list_del_init(&fs->ents);
+	src->nents--;
+
+	/* insert to the destination */
+	return __table_insert_fs(dst, before, pos, fs);
+}
+
+/**
+ * mnt_table_move_fs_safe:
+ * @src: tab pointer of source table
+ * @dst: tab pointer of destination table
+ * @before: 1 to move before position, 0 to move after position
+ * @pos: entry to specify position or NULL
+ * @fs: entry to move
+ *
+ * Removes @fs from @src table and adds it before/after a specific entry @pos
+ * of @dst table. If the @pos is NULL than add the begin of the @dst if @before
+ * is 1; or to the tail of the @dst if @before is 0. Safe version of
+ * mnt_table_move_fs() that checks for table memberships of @fs in @src and @pos
+ * in @dst.
+ *
+ * The reference counter of @fs is not modified.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_move_fs_safe(struct libmnt_table *src, struct libmnt_table *dst,
+                      int before, struct libmnt_fs *pos, struct libmnt_fs *fs)
+{
+	if (!src || !dst || !fs)
+		return -EINVAL;
+
 	if (mnt_table_find_fs(src, fs) < 1)
 		return -ENOENT;
 
@@ -543,7 +607,6 @@ int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst,
 	return __table_insert_fs(dst, before, pos, fs);
 }
 
-
 /**
  * mnt_table_remove_fs:
  * @tb: tab pointer
@@ -556,6 +619,31 @@ int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst,
  * Returns: 0 on success or negative number in case of error.
  */
 int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
+{
+	if (!tb || !fs)
+		return -EINVAL;
+
+	list_del_init(&fs->ents);
+
+	mnt_unref_fs(fs);
+	tb->nents--;
+	return 0;
+}
+
+/**
+ * mnt_table_remove_fs_safe:
+ * @tb: tab pointer
+ * @fs: new entry
+ *
+ * Removes the @fs from the table and de-increment reference counter of the @fs. The
+ * filesystem with zero reference counter will be deallocated. Don't forget to use
+ * mnt_ref_fs() before call mnt_table_remove_fs_safe() if you want to use @fs later.
+ * Safe version of mnt_table_remove_fs() that check for table membership of @fs in
+ * @tb.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_remove_fs_safe(struct libmnt_table *tb, struct libmnt_fs *fs)
 {
 	if (!tb || !fs || mnt_table_find_fs(tb, fs) < 1)
 		return -EINVAL;
