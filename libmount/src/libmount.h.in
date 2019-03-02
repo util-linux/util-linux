@@ -575,6 +575,8 @@ extern int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *
 extern int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root);
 extern int mnt_table_set_iter(struct libmnt_table *tb, struct libmnt_iter *itr,
 			      struct libmnt_fs *fs);
+extern int mnt_table_set_iter_safe(struct libmnt_table *tb, struct libmnt_iter *itr,
+			      struct libmnt_fs *fs);
 
 enum {
 	MNT_UNIQ_FORWARD  = (1 << 1),	/* default is backward */

@@ -727,14 +727,18 @@ int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr, struct l
 
 	if (!tb || !itr || !fs)
 		return -EINVAL;
-	*fs = NULL;
 
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
+	else if (*fs == list_entry(iter->p, struct libmnt_fs, ents))
+		mnt_unref_fs(*fs);
+
 	if (itr->p != itr->head) {
 		MNT_ITER_ITERATE(itr, *fs, struct libmnt_fs, ents);
+		mnt_ref_fs(*fs);
 		rc = 0;
-	}
+	} else
+		*fs = NULL;
 
 	return rc;
 }
@@ -753,6 +757,7 @@ int mnt_table_first_fs(struct libmnt_table *tb, struct libmnt_fs **fs)
 	if (list_empty(&tb->ents))
 		return 1;
 	*fs = list_first_entry(&tb->ents, struct libmnt_fs, ents);
+	mnt_ref_fs(*fs);
 	return 0;
 }
 
@@ -770,6 +775,7 @@ int mnt_table_last_fs(struct libmnt_table *tb, struct libmnt_fs **fs)
 	if (list_empty(&tb->ents))
 		return 1;
 	*fs = list_last_entry(&tb->ents, struct libmnt_fs, ents);
+	mnt_ref_fs(*fs);
 	return 0;
 }
 
@@ -912,6 +918,32 @@ int mnt_table_set_iter(struct libmnt_table *tb, struct libmnt_iter *itr, struct 
 {
 	if (!tb || !itr || !fs)
 		return -EINVAL;
+
+	MNT_ITER_INIT(itr, &tb->ents);
+	itr->p = &fs->ents;
+
+	return 0;
+}
+
+/**
+ * mnt_table_set_iter_safe:
+ * @tb: tab pointer
+ * @itr: iterator
+ * @fs: tab entry
+ *
+ * Sets @iter to the position of @fs in the file @tb. Safe version of
+ * mnt_table_set_iter() that checks if @fs is member of @tb.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_table_set_iter_safe(struct libmnt_table *tb, struct libmnt_iter *itr, struct libmnt_fs *fs)
+{
+	if (!tb || !itr || !fs)
+		return -EINVAL;
+
+	if (list_empty(&fs->ents) || 
+		list_empty(&tb->ents) || list_table_find_fs(tb, fs) < 1)
+		return -ENOENT;
 
 	MNT_ITER_INIT(itr, &tb->ents);
 	itr->p = &fs->ents;
