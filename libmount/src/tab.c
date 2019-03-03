@@ -730,7 +730,7 @@ int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr, struct l
 
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
-	else if (*fs == list_entry(iter->p, struct libmnt_fs, ents))
+	else if (*fs == list_entry(itr->p, struct libmnt_fs, ents))
 		mnt_unref_fs(*fs);
 
 	if (itr->p != itr->head) {
@@ -942,7 +942,7 @@ int mnt_table_set_iter_safe(struct libmnt_table *tb, struct libmnt_iter *itr, st
 		return -EINVAL;
 
 	if (list_empty(&fs->ents) || 
-		list_empty(&tb->ents) || list_table_find_fs(tb, fs) < 1)
+		list_empty(&tb->ents) || mnt_table_find_fs(tb, fs) < 1)
 		return -ENOENT;
 
 	MNT_ITER_INIT(itr, &tb->ents);
