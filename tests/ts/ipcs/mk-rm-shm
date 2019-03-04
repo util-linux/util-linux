@@ -21,6 +21,7 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_IPCS"
 ts_check_test_command "$TS_CMD_IPCMK"
 ts_check_test_command "$TS_CMD_IPCRM"
+ts_check_test_command "$TS_HELPER_SYSINFO"
 
 . $TS_SELF/functions.sh
 
