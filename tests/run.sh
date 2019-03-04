@@ -20,6 +20,7 @@ TS_TOPDIR=$(cd ${0%/*} && pwd)
 SUBTESTS=
 EXCLUDETESTS=
 OPTS=
+SYSCOMMANDS=
 
 top_srcdir=
 top_builddir=
@@ -68,6 +69,11 @@ while [ -n "$1" ]; do
 		# these options are simply forwarded to the test scripts
 		OPTS="$OPTS $1"
 		;;
+	--use-system-commands)
+		OPTS="$OPTS $1"
+		SYSCOMMANDS="yes"
+		;;
+
 	--nonroot)
 		if [ $(id -ru) -eq 0 ]; then
 			echo "Ignore util-linux test suite [non-root UID expected]."
@@ -98,18 +104,19 @@ while [ -n "$1" ]; do
 		echo "Usage: "
 		echo "  $(basename $0) [options] [<component> ...]"
 		echo "Options:"
-		echo "  --force              execute demanding tests"
-		echo "  --fake               do not run, setup tests only"
-		echo "  --memcheck-valgrind  run with valgrind"
-		echo "  --memcheck-asan      enable ASAN (requires ./configure --enable-asan)"
-		echo "  --nolocks            don't use flock to lock resources"
-		echo "  --verbose            verbose mode"
-		echo "  --show-diff          show diff from failed tests"
-		echo "  --nonroot            ignore test suite if user is root"
-		echo "  --srcdir=<path>      autotools top source directory"
-		echo "  --builddir=<path>    autotools top build directory"
-		echo "  --parallel=<num>     number of parallel test jobs, default: num cpus"
-		echo "  --exclude=<list>     exclude tests by list '<utilname>/<testname> ..'"
+		echo "  --force               execute demanding tests"
+		echo "  --fake                do not run, setup tests only"
+		echo "  --memcheck-valgrind   run with valgrind"
+		echo "  --memcheck-asan       enable ASAN (requires ./configure --enable-asan)"
+		echo "  --nolocks             don't use flock to lock resources"
+		echo "  --verbose             verbose mode"
+		echo "  --show-diff           show diff from failed tests"
+		echo "  --nonroot             ignore test suite if user is root"
+		echo "  --use-system-commands use PATH rather than builddir"
+		echo "  --srcdir=<path>       autotools top source directory"
+		echo "  --builddir=<path>     autotools top build directory"
+		echo "  --parallel=<num>      number of parallel test jobs, default: num cpus"
+		echo "  --exclude=<list>      exclude tests by list '<utilname>/<testname> ..'"
 		echo
 		exit 1
 		;;
@@ -148,7 +155,7 @@ if [ -n "$SUBTESTS" ]; then
 		fi
 	done
 else
-	if [ ! -f "$top_builddir/test_ttyutils" ]; then
+	if [ -z "$SYSCOMMANDS" -a ! -f "$top_builddir/test_ttyutils" ]; then
 		echo "Tests not compiled! Run 'make check' to fix the problem."
 		exit 1
 	fi
