@@ -23,6 +23,7 @@ TS_DESC="losetup-loop"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_LOSETUP"
 
