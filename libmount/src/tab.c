@@ -467,6 +467,7 @@ static int __table_insert_fs(
 	else
 		list_add_tail(&fs->ents, head);
 
+	fs->tab = tb;
 	tb->nents++;
 
 	DBG(TAB, ul_debugobj(tb, "insert entry: %s %s",
@@ -561,6 +562,7 @@ int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	list_del_init(&fs->ents);
 
 	mnt_unref_fs(fs);
+	fs->tab = NULL;
 	tb->nents--;
 	return 0;
 }
