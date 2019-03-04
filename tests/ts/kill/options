@@ -18,6 +18,11 @@ TS_DESC="options"
 . "$TS_TOPDIR/functions.sh"
 ts_init "$*"
 
+# make sure we do not use shell built-in command
+if [ "$TS_USE_SYSTEM_COMMANDS" == "yes" ]; then
+	TS_CMD_KILL="/bin/kill"
+fi
+
 ts_check_test_command "$TS_CMD_KILL"
 ts_check_test_command "$TS_HELPER_SIGRECEIVE"
 
