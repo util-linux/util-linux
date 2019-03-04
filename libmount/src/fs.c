@@ -446,6 +446,23 @@ int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
 }
 
 /**
+ * mnt_fs_get_table:
+ * @fs: table entry
+ * @tb: table that contains @fs
+ *
+ * Returns: 0 or negative number on error (if @fs or @tb is NULL).
+ */
+int mnt_fs_get_table(struct libmnt_fs *fs, struct libmnt_table **tb)
+{
+	if (!fs || !tb)
+		return -EINVAL;
+
+	*tb = fs->tab;
+
+	return 0;
+}
+
+/**
  * mnt_fs_streq_target:
  * @fs: fs
  * @path: mount point

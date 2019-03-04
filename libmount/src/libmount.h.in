@@ -439,6 +439,7 @@ extern int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data);
 extern const char *mnt_fs_get_source(struct libmnt_fs *fs);
 extern int mnt_fs_set_source(struct libmnt_fs *fs, const char *source);
 extern const char *mnt_fs_get_srcpath(struct libmnt_fs *fs);
+extern int mnt_fs_get_table(struct libmnt_fs *fs, struct libmnt_table **tb);
 
 extern int mnt_fs_get_tag(struct libmnt_fs *fs, const char **name,
 			  const char **value);
