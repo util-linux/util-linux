@@ -170,6 +170,7 @@ struct libmnt_iter {
  */
 struct libmnt_fs {
 	struct list_head ents;
+	struct libmnt_table *tab;
 
 	int		refcount;	/* reference counter */
 	int		id;		/* mountinfo[1]: ID */

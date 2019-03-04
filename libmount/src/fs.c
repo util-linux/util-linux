@@ -190,6 +190,7 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 			return NULL;
 	}
 
+	dest->tab	 = NULL;
 	dest->id         = src->id;
 	dest->parent     = src->parent;
 	dest->devno      = src->devno;
@@ -443,6 +444,22 @@ int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
 		return 1;
 
 	return p && path && strcmp(p, path) == 0;
+}
+
+/**
+ * mnt_fs_get_table:
+ * @fs: table entry
+ * @tb: table that contains @fs
+ *
+ * Returns: 0 or negative number on error (if @fs or @tb is NULL).
+ */
+int mnt_fs_get_table(struct libmnt_fs *fs, struct libmnt_table **tb)
+{
+	if (!fs || !tb)
+		return -EINVAL;
+
+	*tb = fs->tab;
+	return 0;
 }
 
 /**

@@ -227,6 +227,7 @@ mnt_fs_get_source
 mnt_fs_get_srcpath
 mnt_fs_get_swaptype
 mnt_fs_get_tag
+mnt_fs_get_table
 mnt_fs_get_target
 mnt_fs_get_tid
 mnt_fs_get_usedsize

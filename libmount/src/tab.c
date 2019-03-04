@@ -443,11 +443,12 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	if (!tb || !fs)
 		return -EINVAL;
 
-	if (!list_empty(&fs->ents))
+	if (fs->tab)
 		return -EBUSY;
 
 	mnt_ref_fs(fs);
 	list_add_tail(&fs->ents, &tb->ents);
+	fs->tab = tb;
 	tb->nents++;
 
 	DBG(TAB, ul_debugobj(tb, "add entry: %s %s",
@@ -466,6 +467,7 @@ static int __table_insert_fs(
 	else
 		list_add_tail(&fs->ents, head);
 
+	fs->tab = tb;
 	tb->nents++;
 
 	DBG(TAB, ul_debugobj(tb, "insert entry: %s %s",
@@ -487,7 +489,6 @@ static int __table_insert_fs(
  * This function inncrements reference to @fs. Don't forget to use
  * mnt_unref_fs() after mnt_table_insert_fs() if you want to keep the @fs
  * referenced by the table only.
-
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -497,10 +498,10 @@ int mnt_table_insert_fs(struct libmnt_table *tb, int before,
 	if (!tb || !fs)
 		return -EINVAL;
 
-	if (!list_empty(&fs->ents))
+	if (fs->tab)
 		return -EBUSY;
 
-	if (pos && mnt_table_find_fs(tb, pos) < 1)
+	if (pos && pos->tab != tb)
 		return -ENOENT;
 
 	mnt_ref_fs(fs);
@@ -529,10 +530,7 @@ int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst,
 	if (!src || !dst || !fs)
 		return -EINVAL;
 
-	if (mnt_table_find_fs(src, fs) < 1)
-		return -ENOENT;
-
-	if (pos && mnt_table_find_fs(dst, pos) < 1)
+	if (fs->tab != src || (pos && pos->tab != dst))
 		return -ENOENT;
 
 	/* remove from source */
@@ -557,9 +555,10 @@ int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst,
  */
 int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 {
-	if (!tb || !fs || mnt_table_find_fs(tb, fs) < 1)
+	if (!tb || !fs || fs->tab != tb)
 		return -EINVAL;
 
+	fs->tab = NULL;
 	list_del_init(&fs->ents);
 
 	mnt_unref_fs(fs);
@@ -912,6 +911,9 @@ int mnt_table_set_iter(struct libmnt_table *tb, struct libmnt_iter *itr, struct 
 {
 	if (!tb || !itr || !fs)
 		return -EINVAL;
+
+	if (fs->tab != tb)
+		return -ENOENT;
 
 	MNT_ITER_INIT(itr, &tb->ents);
 	itr->p = &fs->ents;
