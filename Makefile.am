@@ -221,6 +221,8 @@ $(CHANGELOG_FILE):
 checksmatch:
 	$(MAKE) CHECK="smatch --data=$(abs_top_srcdir)/tools/smatch-data" CC=cgcc
 
+check-programs: $(check_PROGRAMS)
+
 changelog: $(CHANGELOG_FILE)
 
 install-exec-hook: $(INSTALL_EXEC_HOOKS)
