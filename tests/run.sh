@@ -65,6 +65,7 @@ while [ -n "$1" ]; do
 	--show-diff |\
 	--verbose  |\
 	--skip-loopdevs |\
+	--noskip-commands |\
 	--parsable)
 		# these options are simply forwarded to the test scripts
 		OPTS="$OPTS $1"
@@ -113,6 +114,7 @@ while [ -n "$1" ]; do
 		echo "  --show-diff           show diff from failed tests"
 		echo "  --nonroot             ignore test suite if user is root"
 		echo "  --use-system-commands use PATH rather than builddir"
+		echo "  --noskip-commands     fail on missing commands"
 		echo "  --srcdir=<path>       autotools top source directory"
 		echo "  --builddir=<path>     autotools top build directory"
 		echo "  --parallel=<num>      number of parallel test jobs, default: num cpus"

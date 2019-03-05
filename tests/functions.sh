@@ -85,7 +85,13 @@ function ts_check_test_command {
 	*)
 		# just command names (e.g. --use-system-commands)
 		local cmd=$1
-		type "$cmd" >/dev/null 2>&1 || ts_skip "missing in PATH: $cmd"
+		type "$cmd" >/dev/null 2>&1
+	        if [ $? -ne 0 ]; then
+			if [ "$TS_NOSKIP_COMMANDS" = "yes" ]; then
+				ts_failed "missing in PATH: $cmd"
+			fi
+			ts_skip "missing in PATH: $cmd"
+		fi
 		;;
 	esac
 }
@@ -301,6 +307,7 @@ function ts_init_env {
 
 	ts_init_core_env
 
+	TS_NOSKIP_COMMANDS=$(ts_has_option "noskip-commands" "$*")
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
 	TS_SHOWDIFF=$(ts_has_option "show-diff" "$*")
 	TS_PARALLEL=$(ts_has_option "parallel" "$*")
