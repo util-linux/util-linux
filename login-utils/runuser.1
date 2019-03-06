@@ -109,6 +109,10 @@ security attacks against terminal file descriptors. The all session is also
 possible to move to background (e.g. "runuser --pty -u username -- command &").
 If the pseudo-terminal is enabled then runuser command works
 as a proxy between the sessions (copy stdin and stdout).
+.sp
+This feature is mostly designed for interactive sessions. If the standard input
+is not a terminal, but for example pipe (e.g. echo "date" | runuser --pty -u user)
+than ECHO flag for the pseudo-terminal is disabled to avoid messy output.
 .TP
 .BR \-m , " \-p" , " \-\-preserve\-environment"
 Preserve the entire environment, i.e. it does not set

@@ -115,6 +115,10 @@ security attacks against terminal file descriptors. The all session is also
 possible to move to background (e.g. "su --pty - username -c
 application &"). If the pseudo-terminal is enabled then su command works
 as a proxy between the sessions (copy stdin and stdout).
+.sp
+This feature is mostly designed for interactive sessions. If the standard input
+is not a terminal, but for example pipe (e.g. echo "date" | su --pty) than ECHO
+flag for the pseudo-terminal is disabled to avoid messy output.
 .TP
 .BR \-s , " \-\-shell" = \fIshell
 Run the specified \fIshell\fR instead of the default.  The shell to run is
