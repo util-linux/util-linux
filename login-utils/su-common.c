@@ -276,29 +276,26 @@ static void pty_create(struct su_context *su)
 
 	if (su->isterm) {
 	        DBG(PTY, ul_debug("create for terminal"));
-		struct winsize win;
 
 		/* original setting of the current terminal */
 		if (tcgetattr(STDIN_FILENO, &su->stdin_attrs) != 0)
 			err(EXIT_FAILURE, _("failed to get terminal attributes"));
+		ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&su->win);
+		/* create master+slave */
+		rc = openpty(&su->pty_master, &su->pty_slave, NULL, &su->stdin_attrs, &su->win);
 
-		/* reuse the current terminal setting for slave */
+		/* set the current terminal to raw mode; pty_cleanup() reverses this change on exit */
 		slave_attrs = su->stdin_attrs;
 		cfmakeraw(&slave_attrs);
-
-		ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&su->win);
-
-		/* create master+slave */
-		rc = openpty(&su->pty_master, &su->pty_slave, NULL, &slave_attrs, &win);
-
+		slave_attrs.c_lflag &= ~ECHO;
+		tcsetattr(STDIN_FILENO, TCSANOW, &slave_attrs);
 	} else {
 	        DBG(PTY, ul_debug("create for non-terminal"));
 		rc = openpty(&su->pty_master, &su->pty_slave, NULL, NULL, NULL);
 
-		/* set slave attributes */
 		if (!rc) {
 			tcgetattr(su->pty_slave, &slave_attrs);
-			cfmakeraw(&slave_attrs);
+			slave_attrs.c_lflag &= ~ECHO;
 			tcsetattr(su->pty_slave, TCSANOW, &slave_attrs);
 		}
 	}
@@ -311,12 +308,14 @@ static void pty_create(struct su_context *su)
 
 static void pty_cleanup(struct su_context *su)
 {
-	if (su->pty_master == -1)
+	struct termios rtt;
+
+	if (su->pty_master == -1 || !su->isterm)
 		return;
 
 	DBG(PTY, ul_debug("cleanup"));
-	if (su->isterm)
-		tcsetattr(STDIN_FILENO, TCSADRAIN, &su->stdin_attrs);
+	rtt = su->stdin_attrs;
+	tcsetattr(STDIN_FILENO, TCSADRAIN, &rtt);
 }
 
 static int write_output(char *obuf, ssize_t bytes)
