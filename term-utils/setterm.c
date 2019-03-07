@@ -976,11 +976,11 @@ static void perform_sequence(struct setterm_control *ctl)
 	if (ctl->opt_background)
 		printf("\033[4%c%s", '0' + ctl->opt_ba_color, "m");
 
-	/* -ulcolor black|red|green|yellow|blue|magenta|cyan|white|default. */
+	/* -ulcolor [bright] black|red|green|yellow|blue|magenta|cyan|white. */
 	if (ctl->opt_ulcolor && vc_only(ctl, "--ulcolor"))
 		printf("\033[1;%d]", ctl->opt_ul_color);
 
-	/* -hbcolor black|red|green|yellow|blue|magenta|cyan|white|default. */
+	/* -hbcolor [bright] black|red|green|yellow|blue|magenta|cyan|white. */
 	if (ctl->opt_hbcolor)
 		printf("\033[2;%d]", ctl->opt_hb_color);
 
