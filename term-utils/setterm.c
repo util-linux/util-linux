@@ -399,7 +399,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --foreground    default|<color>   set foreground color\n"), out);
 	fputs(_(" --background    default|<color>   set background color\n"), out);
 	fputs(_(" --ulcolor       [bright] <color>  set underlined text color\n"), out);
-	fputs(_(" --hbcolor       [bright] <color>  set bold text color\n"), out);
+	fputs(_(" --hbcolor       [bright] <color>  set half-bright text color\n"), out);
 	fputs(_("                 <color>: black blue cyan green grey magenta red white yellow\n"), out);
 	fputs(_(" --bold          [on|off]          bold\n"), out);
 	fputs(_(" --half-bright   [on|off]          dim\n"), out);
