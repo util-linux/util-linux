@@ -231,10 +231,13 @@ static int parse_ulhb_color(char **av, int *oi)
 	color = parse_color(color_name);
 	if (color < 0)
 		color = strtos32_or_err(color_name, _("argument error"));
-	if (!is_valid_color(color))
+	if (!is_valid_color(color) || color == DEFAULT)
 		errx(EXIT_FAILURE, "%s: %s", _("argument error"), color_name);
 	if (bright && (color == BLACK || color == GREY))
 		errx(EXIT_FAILURE, _("argument error: bright %s is not supported"), color_name);
+
+	if (bright)
+		color |= 8;
 
 	return color;
 }
@@ -973,11 +976,11 @@ static void perform_sequence(struct setterm_control *ctl)
 	if (ctl->opt_background)
 		printf("\033[4%c%s", '0' + ctl->opt_ba_color, "m");
 
-	/* -ulcolor black|red|green|yellow|blue|magenta|cyan|white|default. */
+	/* -ulcolor [bright] black|red|green|yellow|blue|magenta|cyan|white. */
 	if (ctl->opt_ulcolor && vc_only(ctl, "--ulcolor"))
 		printf("\033[1;%d]", ctl->opt_ul_color);
 
-	/* -hbcolor black|red|green|yellow|blue|magenta|cyan|white|default. */
+	/* -hbcolor [bright] black|red|green|yellow|blue|magenta|cyan|white. */
 	if (ctl->opt_hbcolor)
 		printf("\033[2;%d]", ctl->opt_hb_color);
 
