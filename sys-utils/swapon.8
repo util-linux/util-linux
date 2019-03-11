@@ -189,31 +189,29 @@ Be verbose.
 Display version information and exit.
 .SH NOTES
 .SS Files with holes
-The swap file implementation in the kernel expects to be able to write to the file directly,
-without the assistance of the filesystem.  This is a problem on files with holes
-or on copy-on-write files on filesystems like btrfs.
+The swap file implementation in the kernel expects to be able to write to the
+file directly, without the assistance of the filesystem.  This is a problem on
+files with holes or on copy-on-write files on filesystems like Btrfs.
 .sp
-The commands like
+Commands like
 .BR cp (1)
 or
 .BR truncate (1)
 create files with holes.  These files will be rejected by swapon.
 .sp
-In some cases preallocated files (e.g. fallocate(1) on XFS) maybe interpreted
-by old kernel versions as files with holes too.  The preallocated swap files on XFS are
-supported since Linux 4.18.
+Preallocated files created by
+.BR fallocate (1)
+may be interpreted as files with holes too depending of the filesystem.
+Preallocated swap files are supported on XFS since Linux 4.18.
 .sp
 The most portable solution to create a swap file is to use
 .BR dd (1)
-and /dev/zero in these cases.
+and /dev/zero.
 .SS Btrfs
-The swap files on btrfs are supported since Linux 5.0 on files with nocow and
-nodatasum attributes and without compression.  The previous versions may use
-copy-on-write semantic for the swap files, it means that the file location is
-may not be static and corruption can result.
-.sp
-One possible workaround is to map the swap file to a loopback device.  This will allow the filesystem
-to determine the mapping properly but may come with a performance impact.
+Swap files on Btrfs are supported since Linux 5.0 on files with nocow attribute.
+See the
+.BR btrfs (5)
+manual page for more details.
 .SS NFS
 Swap over \fBNFS\fR may not work.
 .SS Suspend
@@ -233,6 +231,7 @@ enables libblkid debug output.
 .BR swapon (2),
 .BR fstab (5),
 .BR init (8),
+.BR fallocate (1),
 .BR mkswap (8),
 .BR mount (8),
 .BR rc (8)
