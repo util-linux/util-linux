@@ -11,6 +11,7 @@ CPU family:          23
 Model:               1
 Model name:          AMD EPYC 7451 24-Core Processor
 Stepping:            2
+Frequency boost:     enabled
 CPU MHz:             2894.214
 CPU max MHz:         2300.0000
 CPU min MHz:         1200.0000

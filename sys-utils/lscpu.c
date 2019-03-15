@@ -508,6 +508,10 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	if (ul_path_read_s32(desc->syscpu, &desc->dispatching, "dispatching") != 0)
 		desc->dispatching = -1;
 
+	/* get cpufreq boost mode */
+	if (ul_path_read_s32(desc->syscpu, &desc->freqboost, "cpufreq/boost") != 0)
+		desc->freqboost = -1;
+
 	if (mod->system == SYSTEM_LIVE)
 		read_physical_info_powerpc(desc);
 
@@ -1837,6 +1841,9 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		add_summary_s(tb, _("Model name:"), desc->cpu ? desc->cpu : desc->modelname);
 	if (desc->stepping)
 		add_summary_s(tb, _("Stepping:"), desc->stepping);
+	if (desc->freqboost >= 0)
+		add_summary_s(tb, _("Frequency boost:"), desc->freqboost ?
+				_("enabled") : _("disabled"));
 	if (desc->mhz)
 		add_summary_s(tb, _("CPU MHz:"), desc->mhz);
 	if (desc->dynamic_mhz)

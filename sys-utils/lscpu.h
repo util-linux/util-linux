@@ -105,6 +105,7 @@ struct lscpu_desc {
 	char	*mtid;		/* maximum thread id (s390) */
 	char	*addrsz;	/* address sizes */
 	int	dispatching;	/* none, horizontal or vertical */
+	int	freqboost;	/* -1 if not evailable */
 	int	mode;		/* rm, lm or/and tm */
 
 	int		ncpuspos;	/* maximal possible CPUs */
