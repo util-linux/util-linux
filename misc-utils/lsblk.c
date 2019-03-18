@@ -2054,6 +2054,15 @@ int main(int argc, char *argv[])
 		if (lsblk->dedup_hidden && lsblk->dedup_id == id)
 			fl |= SCOLS_FL_HIDDEN;
 
+		if (force_tree
+		    && lsblk->flags & LSBLK_JSON
+		    && has_tree_col == 0
+		    && i + 1 == ncolumns)
+			/* The "--tree --json" specified, but no column with
+			 * SCOLS_FL_TREE yet; force it for the last column
+			 */
+			fl |= SCOLS_FL_TREE;
+
 		cl = scols_table_new_column(lsblk->table, ci->name, ci->whint, fl);
 		if (!cl) {
 			warn(_("failed to allocate output column"));

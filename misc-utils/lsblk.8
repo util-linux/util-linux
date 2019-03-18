@@ -90,7 +90,8 @@ The filter is applied to the top-level devices only. This maybe be confusing for
 Use ASCII characters for tree formatting.
 .TP
 .BR \-J , " \-\-json"
-Use JSON output format.
+Use JSON output format.  It's strongly recommended to use \fB\-\-output\fR and
+also \fB\-\-tree\fR if necessary.
 .TP
 .BR \-l , " \-\-list"
 Produce output in the form of a list. The output does not provide information
@@ -111,7 +112,8 @@ Do not print a header line.
 .BR \-o , " \-\-output " \fIlist\fP
 Specify which output columns to print.  Use
 .B \-\-help
-to get a list of all supported columns.
+to get a list of all supported columns.  The columns may affect tree-like output.
+The default is to use tree for the column 'NAME' (see also \fB\-\-tree\fR).
 
 The default list of columns may be extended if \fIlist\fP is
 specified in the format \fI+list\fP (e.g. \fBlsblk -o +UUID\fP).
