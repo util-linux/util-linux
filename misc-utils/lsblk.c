@@ -1821,6 +1821,7 @@ int main(int argc, char *argv[])
 		{ 'O','S' },
 		{ 'O','f' },
 		{ 'O','m' },
+		{ 'O','o' },
 		{ 'O','t' },
 		{ 'P','T', 'l','r' },
 		{ 0 }

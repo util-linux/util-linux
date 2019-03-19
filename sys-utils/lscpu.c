@@ -2164,8 +2164,8 @@ int main(int argc, char *argv[])
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'a','b','c' },
 		{ 'C','e','p' },
+		{ 'a','b','c' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
