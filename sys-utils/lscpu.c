@@ -1575,7 +1575,7 @@ print_caches_readable(struct lscpu_desc *desc, int cols[], int ncols,
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
-	for (i = 0; i < desc->ncaches; i++) {
+	for (i = desc->ncaches - 1; i >= 0; i--) {
 		struct cpu_cache *ca = &desc->caches[i];
 		struct libscols_line *line;
 		int c;
