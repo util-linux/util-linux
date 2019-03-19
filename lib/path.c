@@ -583,7 +583,7 @@ int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 
 	rc = ul_path_read(pc, buf, sizeof(buf) - 1, path);
 	if (rc < 0 || !str)
-		return rc;;
+		return rc;
 
 	/* Remove tailing newline (usual in sysfs) */
 	if (rc > 0 && *(buf + rc - 1) == '\n')
@@ -616,7 +616,7 @@ int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char
 {
 	int rc = ul_path_read(pc, buf, bufsz - 1, path);
 	if (rc < 0)
-		return rc;;
+		return rc;
 
 	/* Remove tailing newline (usual in sysfs) */
 	if (rc > 0 && *(buf + rc - 1) == '\n')
@@ -703,7 +703,7 @@ int ul_path_readf_s64(struct path_cxt *pc, int64_t *res, const char *path, ...)
 	va_end(ap);
 
 	if (!p)
-		return -EINVAL;;
+		return -EINVAL;
 
 	return ul_path_read_s64(pc, res, p);
 }
