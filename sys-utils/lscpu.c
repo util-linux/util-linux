@@ -2039,14 +2039,19 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		for (i = desc->ncaches - 1; i >= 0; i--) {
 			uint64_t sz = 0;
 			char *tmp;
+			struct cpu_cache *ca = &desc->caches[i];
 
-			if (get_cache_full_size(desc, &desc->caches[i], &sz) != 0 || sz == 0)
+			if (ca->size == 0)
 				continue;
-			tmp = size_to_human_string(
+			if (get_cache_full_size(desc, ca, &sz) != 0 || sz == 0)
+				continue;
+			if (mod->bytes)
+				xasprintf(&tmp, "%" PRIu64, sz);
+			else
+				tmp = size_to_human_string(
 					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
 					sz);
-			snprintf(buf, sizeof(buf),
-					_("%s cache: "), desc->caches[i].name);
+			snprintf(buf, sizeof(buf), _("%s cache: "), ca->name);
 			add_summary_s(tb, buf, tmp);
 			free(tmp);
 		}
@@ -2054,14 +2059,17 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	if (desc->necaches) {
 		for (i = desc->necaches - 1; i >= 0; i--) {
 			char *tmp;
+			struct cpu_cache *ca = &desc->ecaches[i];
 
-			if (desc->ecaches[i].size == 0)
+			if (ca->size == 0)
 				continue;
-			tmp = size_to_human_string(
+			if (mod->bytes)
+				xasprintf(&tmp, "%" PRIu64, ca->size);
+			else
+				tmp = size_to_human_string(
 					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-					desc->ecaches[i].size);
-			snprintf(buf, sizeof(buf),
-					_("%s cache: "), desc->ecaches[i].name);
+					ca->size);
+			snprintf(buf, sizeof(buf), _("%s cache: "), ca->name);
 			add_summary_s(tb, buf, tmp);
 			free(tmp);
 		}
@@ -2099,6 +2107,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               print both online and offline CPUs (default for -e)\n"), out);
 	fputs(_(" -b, --online            print online CPUs only (default for -p)\n"), out);
+	fputs(_(" -B, --bytes             print sizes in bytes rather than in human readable format\n"), out);
 	fputs(_(" -C, --caches[=<list>]   info about caches in extended readable format\n"), out);
 	fputs(_(" -c, --offline           print offline CPUs only\n"), out);
 	fputs(_(" -J, --json              use JSON for default or extended format\n"), out);
@@ -2138,6 +2147,7 @@ int main(int argc, char *argv[])
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       NULL, 'a' },
 		{ "online",     no_argument,       NULL, 'b' },
+		{ "bytes",      no_argument,       NULL, 'B' },
 		{ "caches",     optional_argument, NULL, 'C' },
 		{ "offline",    no_argument,       NULL, 'c' },
 		{ "help",	no_argument,       NULL, 'h' },
@@ -2164,7 +2174,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "abC::ce::hJp::s:xyV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "aBbC::ce::hJp::s:xyV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -2172,6 +2182,9 @@ int main(int argc, char *argv[])
 		case 'a':
 			mod->online = mod->offline = 1;
 			cpu_modifier_specified = 1;
+			break;
+		case 'B':
+			mod->bytes = 1;
 			break;
 		case 'b':
 			mod->online = 1;
