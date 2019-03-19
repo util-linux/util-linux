@@ -2116,6 +2116,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --sysroot <dir>     use specified directory as system root\n"), out);
 	fputs(_(" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
 	fputs(_(" -y, --physical          print physical instead of logical IDs\n"), out);
+	fputs(_("     --output-all        print all available columns for -e, -p or -C\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(25));
 
@@ -2245,13 +2246,13 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (all) {
+	if (all && ncolumns == 0) {
 		size_t sz, maxsz = mod->mode == OUTPUT_CACHES ?
 				ARRAY_SIZE(coldescs_cache) :
 				ARRAY_SIZE(coldescs_cpu);
 
 		for (sz = 0; sz < maxsz; sz++)
-			columns[sz] = 1;
+			columns[ncolumns++] = sz;
 	}
 
 	if (cpu_modifier_specified && mod->mode == OUTPUT_SUMMARY) {
