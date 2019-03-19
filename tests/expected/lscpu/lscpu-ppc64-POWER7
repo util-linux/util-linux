@@ -6,8 +6,8 @@ Socket(s):           4
 NUMA node(s):        1
 Model:               2.1 (pvr 003f 0201)
 Model name:          POWER7 (architected), altivec supported
-L1d cache:           32K
-L1i cache:           32K
+L1d cache:           128 KiB
+L1i cache:           128 KiB
 NUMA node0 CPU(s):   0-15
 
 # The following is the parsable format, which can be fed to other

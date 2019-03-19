@@ -8,8 +8,8 @@ Model:               2.1 (pvr 003f 0201)
 Model name:          POWER7 (architected), altivec supported
 Hypervisor vendor:   pHyp
 Virtualization type: para
-L1d cache:           32K
-L1i cache:           32K
+L1d cache:           512 KiB
+L1i cache:           512 KiB
 NUMA node0 CPU(s):   0-63
 NUMA node1 CPU(s):   
 

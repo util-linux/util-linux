@@ -16,10 +16,10 @@ Hypervisor:          PR/SM
 Hypervisor vendor:   IBM
 Virtualization type: full
 Dispatching mode:    horizontal
-L1d cache:           128K
-L1i cache:           96K
-L2d cache:           2048K
-L2i cache:           2048K
+L1d cache:           1 MiB
+L1i cache:           768 KiB
+L2d cache:           16 MiB
+L2i cache:           16 MiB
 L3 cache:            65536K
 L4 cache:            491520K
 NUMA node0 CPU(s):   0-140
