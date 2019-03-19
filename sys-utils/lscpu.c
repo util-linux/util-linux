@@ -192,19 +192,19 @@ struct lscpu_coldesc {
 
 static struct lscpu_coldesc coldescs_cpu[] =
 {
-	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), 0, 1 },
-	[COL_CPU_CORE]         = { "CORE", N_("logical core number") },
-	[COL_CPU_SOCKET]       = { "SOCKET", N_("logical socket number") },
-	[COL_CPU_NODE]         = { "NODE", N_("logical NUMA node number") },
-	[COL_CPU_BOOK]         = { "BOOK", N_("logical book number") },
-	[COL_CPU_DRAWER]       = { "DRAWER", N_("logical drawer number") },
+	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), SCOLS_FL_RIGHT, 1 },
+	[COL_CPU_CORE]         = { "CORE", N_("logical core number"), SCOLS_FL_RIGHT },
+	[COL_CPU_SOCKET]       = { "SOCKET", N_("logical socket number"), SCOLS_FL_RIGHT },
+	[COL_CPU_NODE]         = { "NODE", N_("logical NUMA node number"), SCOLS_FL_RIGHT },
+	[COL_CPU_BOOK]         = { "BOOK", N_("logical book number"), SCOLS_FL_RIGHT },
+	[COL_CPU_DRAWER]       = { "DRAWER", N_("logical drawer number"), SCOLS_FL_RIGHT },
 	[COL_CPU_CACHE]        = { "CACHE", N_("shows how caches are shared between CPUs") },
 	[COL_CPU_POLARIZATION] = { "POLARIZATION", N_("CPU dispatching mode on virtual hardware") },
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU") },
-	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU") },
-	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU") },
-	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU") }
+	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT },
+	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT },
+	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT }
 };
 
 static struct lscpu_coldesc coldescs_cache[] =
@@ -1760,7 +1760,7 @@ print_cpus_readable(struct lscpu_desc *desc, int cols[], int ncols,
 
 	for (i = 0; i < ncols; i++) {
 		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
-		if (!scols_table_new_column(table, data, 0, 0))
+		if (!scols_table_new_column(table, data, 0, coldescs_cpu[cols[i]].flags))
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
