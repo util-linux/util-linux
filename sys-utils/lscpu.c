@@ -1699,6 +1699,36 @@ print_cpuset(struct libscols_table *tb,
 	}
 }
 
+static int get_cache_full_size(struct lscpu_desc *desc, int idx, uint64_t *res)
+{
+	struct cpu_cache *ca = &desc->caches[idx];
+	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
+	int i, nshares = 0, rc;
+	uint64_t sz;
+
+	/* Convert size to number */
+	rc = parse_size(ca->size, &sz, NULL);
+	if (rc)
+		return rc;
+
+	/* Count number of CPUs which shares the cache */
+	for (i = 0; i < desc->ncpuspos; i++) {
+		int cpu = real_cpu_num(desc, i);
+
+		if (desc->present && !is_cpu_present(desc, cpu))
+			continue;
+		if (CPU_ISSET_S(cpu, setsize, ca->sharedmaps[0]))
+			nshares++;
+	}
+
+	/* Correction for CPU threads */
+	if (desc->nthreads > desc->ncores)
+		nshares /= (desc->nthreads / desc->ncores);
+
+	*res = (desc->ncores / nshares) * sz;
+	return 0;
+}
+
 /*
  * default output
  */
@@ -1872,9 +1902,18 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		add_summary_s(tb, _("Dispatching mode:"), _(disp_modes[desc->dispatching]));
 	if (desc->ncaches) {
 		for (i = desc->ncaches - 1; i >= 0; i--) {
+			uint64_t sz = 0;
+			char *tmp;
+
+			if (get_cache_full_size(desc, i, &sz) != 0)
+				continue;
+			tmp = size_to_human_string(
+					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
+					sz);
 			snprintf(buf, sizeof(buf),
-					_("%s cache:"), desc->caches[i].name);
-			add_summary_s(tb, buf, desc->caches[i].size);
+					_("%s cache: "), desc->caches[i].name);
+			add_summary_s(tb, buf, tmp);
+			free(tmp);
 		}
 	}
 	if (desc->necaches) {
