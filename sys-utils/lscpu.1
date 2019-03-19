@@ -106,6 +106,17 @@ This option may only be specified together with option \fB-e\fR or \fB-p\fR.
 Limit the output to online CPUs (default for \fB-p\fR).
 This option may only be specified together with option \fB-e\fR or \fB-p\fR.
 .TP
+.BR \-C , " \-\-caches" [=\fIlist\fP]
+Display details about CPU caches.  For details about available information see \fB\-\-help\fR
+output.
+
+If the \fIlist\fP argument is omitted, all columns for which data is available
+are included in the command output.
+
+When specifying the \fIlist\fP argument, the string of option, equal sign (=), and
+\fIlist\fP must not contain any blanks or other whitespace.
+Examples: '\fB-C=NAME,ONE-SIZE\fP' or '\fB--caches=NAME,ONE-SIZE\fP'.
+.TP
 .BR \-c , " \-\-offline"
 Limit the output to offline CPUs.
 This option may only be specified together with option \fB-e\fR or \fB-p\fR.

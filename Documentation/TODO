@@ -36,15 +36,6 @@ script
 
 lscpu
 -----
-  - add --list-caches to print details from /sys/devices/system/cpu/cpu0/cache/index*/*
-    about caches, for example:
-
-    NAME SIZE  ITEM-SIZE   TYPE          Ways
-    L3   126M         8M   Data             8
-    L2    22M       512K   Instruction      4
-
-    See https://github.com/karelzak/util-linux/issues/663
-
   - read cpuid and uname information from file if --sysroot is specified, then
     we can prepare regression tests completely independent on hw and architecture.
 

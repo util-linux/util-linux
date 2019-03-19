@@ -48,7 +48,10 @@ enum {
 /* cache(s) description */
 struct cpu_cache {
 	char		*name;
-	char		*size;
+	char		*type;
+	int		level;
+	int		ways;
+	uint64_t	size;
 
 	int		nsharedmaps;
 	cpu_set_t	**sharedmaps;
@@ -171,6 +174,7 @@ enum {
 	OUTPUT_SUMMARY	= 0,	/* default */
 	OUTPUT_PARSABLE,	/* -p */
 	OUTPUT_READABLE,	/* -e */
+	OUTPUT_CACHES           /* -C */
 };
 
 enum {
@@ -186,6 +190,7 @@ struct lscpu_modifier {
 			online:1,	/* print online CPUs */
 			offline:1,	/* print offline CPUs */
 			json:1,		/* JSON output format */
+			bytes:1,        /* output sizes in bytes */
 			physical:1;	/* use physical numbers */
 };
 

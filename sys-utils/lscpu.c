@@ -170,18 +170,29 @@ enum {
 	COL_CPU_MINMHZ,
 };
 
+enum {
+	COL_CACHE_ALLSIZE,
+	COL_CACHE_LEVEL,
+	COL_CACHE_NAME,
+	COL_CACHE_ONESIZE,
+	COL_CACHE_TYPE,
+	COL_CACHE_WAYS,
+};
+
+
 /* column description
  */
 struct lscpu_coldesc {
 	const char *name;
 	const char *help;
 
+	int flags;
 	unsigned int  is_abbr:1;	/* name is abbreviation */
 };
 
 static struct lscpu_coldesc coldescs_cpu[] =
 {
-	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), 1 },
+	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), 0, 1 },
 	[COL_CPU_CORE]         = { "CORE", N_("logical core number") },
 	[COL_CPU_SOCKET]       = { "SOCKET", N_("logical socket number") },
 	[COL_CPU_NODE]         = { "NODE", N_("logical NUMA node number") },
@@ -192,9 +203,22 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU") },
 	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU") },
-	[COL_CPU_MAXMHZ]	   = { "MAXMHZ", N_("shows the maximum MHz of the CPU") },
-	[COL_CPU_MINMHZ]	   = { "MINMHZ", N_("shows the minimum MHz of the CPU") }
+	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU") },
+	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU") }
 };
+
+static struct lscpu_coldesc coldescs_cache[] =
+{
+	[COL_CACHE_ALLSIZE]    = { "ALL-SIZE", N_("size of all system caches"), SCOLS_FL_RIGHT },
+	[COL_CACHE_LEVEL]      = { "LEVEL", N_("cache level"), SCOLS_FL_RIGHT },
+	[COL_CACHE_NAME]       = { "NAME", N_("cache name") },
+	[COL_CACHE_ONESIZE]    = { "ONE-SIZE", N_("size of one cache"), SCOLS_FL_RIGHT },
+	[COL_CACHE_TYPE]       = { "TYPE", N_("cache type") },
+	[COL_CACHE_WAYS]       = { "WAYS", N_("ways of associativity"), SCOLS_FL_RIGHT }
+};
+
+
+static int get_cache_full_size(struct lscpu_desc *desc, struct cpu_cache *ca, uint64_t *res);
 
 static int
 cpu_column_name_to_id(const char *name, size_t namesz)
@@ -203,6 +227,21 @@ cpu_column_name_to_id(const char *name, size_t namesz)
 
 	for (i = 0; i < ARRAY_SIZE(coldescs_cpu); i++) {
 		const char *cn = coldescs_cpu[i].name;
+
+		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+			return i;
+	}
+	warnx(_("unknown column: %s"), name);
+	return -1;
+}
+
+static int
+cache_column_name_to_id(const char *name, size_t namesz)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(coldescs_cache); i++) {
+		const char *cn = coldescs_cache[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
@@ -292,8 +331,10 @@ lookup_cache(char *line, struct lscpu_desc *desc)
 	type = 0;
 	if (strncmp(p, "Data", 4) == 0)
 		type = 'd';
-	if (strncmp(p, "Instruction", 11) == 0)
+	else if (strncmp(p, "Instruction", 11) == 0)
 		type = 'i';
+	else if (strncmp(p, "Unified", 7) == 0)
+		type = 'u';
 	p = strstr(line, "size=");
 	if (!p || sscanf(p, "size=%lld", &size) != 1)
 	       return 0;
@@ -303,11 +344,18 @@ lookup_cache(char *line, struct lscpu_desc *desc)
 				 desc->necaches * sizeof(struct cpu_cache));
 	cache = &desc->ecaches[desc->necaches - 1];
 	memset(cache, 0 , sizeof(*cache));
-	if (type)
+
+	if (type == 'i' || type == 'd')
 		xasprintf(&cache->name, "L%d%c", level, type);
 	else
 		xasprintf(&cache->name, "L%d", level);
-	xasprintf(&cache->size, "%lldK", size);
+
+	cache->level = level;
+	cache->size = size * 1024;
+
+	cache->type = type == 'i' ? xstrdup("Instruction") :
+		      type == 'd' ? xstrdup("Data") :
+		      type == 'u' ? xstrdup("Unified") : NULL;
 	return 1;
 }
 
@@ -1217,31 +1265,37 @@ read_cache(struct lscpu_desc *desc, int idx)
 					"cpu%d/cache/index%d", num, i) != 0)
 			continue;
 		if (!ca->name) {
-			int type = 0, level;
+			int type = 0;
 
 			/* cache type */
-			if (ul_path_readf_buffer(desc->syscpu, buf, sizeof(buf),
+			if (ul_path_readf_string(desc->syscpu, &ca->type,
 					"cpu%d/cache/index%d/type", num, i) > 0) {
-				if (!strcmp(buf, "Data"))
+				if (!strcmp(ca->type, "Data"))
 					type = 'd';
-				else if (!strcmp(buf, "Instruction"))
+				else if (!strcmp(ca->type, "Instruction"))
 					type = 'i';
 			}
 
 			/* cache level */
-			ul_path_readf_s32(desc->syscpu, &level,
+			ul_path_readf_s32(desc->syscpu, &ca->level,
 					"cpu%d/cache/index%d/level", num, i);
 			if (type)
-				snprintf(buf, sizeof(buf), "L%d%c", level, type);
+				snprintf(buf, sizeof(buf), "L%d%c", ca->level, type);
 			else
-				snprintf(buf, sizeof(buf), "L%d", level);
+				snprintf(buf, sizeof(buf), "L%d", ca->level);
 
 			ca->name = xstrdup(buf);
 
+			/* cache ways */
+			ul_path_readf_s32(desc->syscpu, &ca->ways,
+					"cpu%d/cache/index%d/ways_of_associativity", num, i);
+
 			/* cache size */
-			if (ul_path_readf_string(desc->syscpu, &ca->size,
-					"cpu%d/cache/index%d/size", num, i) < 0)
-				ca->size = xstrdup("unknown size");
+			if (ul_path_readf_buffer(desc->syscpu, buf, sizeof(buf),
+					"cpu%d/cache/index%d/size", num, i) > 0)
+				parse_size(buf, &ca->size, NULL);
+			else
+				ca->size = 0;
 		}
 
 		/* information about how CPUs share different caches */
@@ -1496,6 +1550,93 @@ get_cell_header(struct lscpu_desc *desc, int col,
 }
 
 /*
+ * [-C] backend
+ */
+static void
+print_caches_readable(struct lscpu_desc *desc, int cols[], int ncols,
+	       struct lscpu_modifier *mod)
+{
+	int i;
+	struct libscols_table *table;
+
+	scols_init_debug(0);
+
+	table = scols_new_table();
+	if (!table)
+		 err(EXIT_FAILURE, _("failed to allocate output table"));
+	if (mod->json) {
+		scols_table_enable_json(table, 1);
+		scols_table_set_name(table, "caches");
+	}
+
+	for (i = 0; i < ncols; i++) {
+		struct lscpu_coldesc *cd = &coldescs_cache[cols[i]];
+		if (!scols_table_new_column(table, cd->name, 0, cd->flags))
+			err(EXIT_FAILURE, _("failed to allocate output column"));
+	}
+
+	for (i = 0; i < desc->ncaches; i++) {
+		struct cpu_cache *ca = &desc->caches[i];
+		struct libscols_line *line;
+		int c;
+
+		line = scols_table_new_line(table, NULL);
+		if (!line)
+			err(EXIT_FAILURE, _("failed to allocate output line"));
+
+		for (c = 0; c < ncols; c++) {
+			char *data = NULL;
+			int col = cols[c];
+
+			switch (col) {
+			case COL_CACHE_NAME:
+				if (ca->name)
+					data = xstrdup(ca->name);
+				break;
+			case COL_CACHE_ONESIZE:
+				if (!ca->size)
+					break;
+				if (mod->bytes)
+					xasprintf(&data, "%" PRIu64, ca->size);
+				else
+					data = size_to_human_string(SIZE_SUFFIX_1LETTER, ca->size);
+				break;
+			case COL_CACHE_ALLSIZE:
+			{
+				uint64_t sz = 0;
+
+				if (get_cache_full_size(desc, ca, &sz) != 0)
+					break;
+				if (mod->bytes)
+					xasprintf(&data, "%" PRIu64, sz);
+				else
+					data = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
+				break;
+			}
+			case COL_CACHE_WAYS:
+				if (ca->ways)
+					xasprintf(&data, "%d", ca->ways);
+				break;
+			case COL_CACHE_TYPE:
+				if (ca->type)
+					data = xstrdup(ca->type);
+				break;
+			case COL_CACHE_LEVEL:
+				if (ca->level)
+					xasprintf(&data, "%d", ca->level);
+				break;
+			}
+
+			if (data && scols_line_refer_data(line, c, data))
+				err(EXIT_FAILURE, _("failed to add output data"));
+		}
+	}
+
+	scols_print_table(table);
+	scols_unref_table(table);
+}
+
+/*
  * [-p] backend, we support two parsable formats:
  *
  * 1) "compatible" -- this format is compatible with the original lscpu(1)
@@ -1699,17 +1840,11 @@ print_cpuset(struct libscols_table *tb,
 	}
 }
 
-static int get_cache_full_size(struct lscpu_desc *desc, int idx, uint64_t *res)
+static int get_cache_full_size(struct lscpu_desc *desc,
+		struct cpu_cache *ca, uint64_t *res)
 {
-	struct cpu_cache *ca = &desc->caches[idx];
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
-	int i, nshares = 0, rc;
-	uint64_t sz;
-
-	/* Convert size to number */
-	rc = parse_size(ca->size, &sz, NULL);
-	if (rc)
-		return rc;
+	int i, nshares = 0;
 
 	/* Count number of CPUs which shares the cache */
 	for (i = 0; i < desc->ncpuspos; i++) {
@@ -1725,7 +1860,7 @@ static int get_cache_full_size(struct lscpu_desc *desc, int idx, uint64_t *res)
 	if (desc->nthreads > desc->ncores)
 		nshares /= (desc->nthreads / desc->ncores);
 
-	*res = (desc->ncores / nshares) * sz;
+	*res = (desc->ncores / nshares) * ca->size;
 	return 0;
 }
 
@@ -1905,7 +2040,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			uint64_t sz = 0;
 			char *tmp;
 
-			if (get_cache_full_size(desc, i, &sz) != 0)
+			if (get_cache_full_size(desc, &desc->caches[i], &sz) != 0 || sz == 0)
 				continue;
 			tmp = size_to_human_string(
 					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
@@ -1918,9 +2053,17 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	}
 	if (desc->necaches) {
 		for (i = desc->necaches - 1; i >= 0; i--) {
+			char *tmp;
+
+			if (desc->ecaches[i].size == 0)
+				continue;
+			tmp = size_to_human_string(
+					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
+					desc->ecaches[i].size);
 			snprintf(buf, sizeof(buf),
-					_("%s cache:"), desc->ecaches[i].name);
-			add_summary_s(tb, buf, desc->ecaches[i].size);
+					_("%s cache: "), desc->ecaches[i].name);
+			add_summary_s(tb, buf, tmp);
+			free(tmp);
 		}
 	}
 
@@ -1956,6 +2099,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               print both online and offline CPUs (default for -e)\n"), out);
 	fputs(_(" -b, --online            print online CPUs only (default for -p)\n"), out);
+	fputs(_(" -C, --caches[=<list>]   info about caches in extended readable format\n"), out);
 	fputs(_(" -c, --offline           print offline CPUs only\n"), out);
 	fputs(_(" -J, --json              use JSON for default or extended format\n"), out);
 	fputs(_(" -e, --extended[=<list>] print out an extended readable format\n"), out);
@@ -1970,6 +2114,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = 0; i < ARRAY_SIZE(coldescs_cpu); i++)
 		fprintf(out, " %13s  %s\n", coldescs_cpu[i].name, _(coldescs_cpu[i].help));
 
+	fputs(_("\nAvailable output columns for -C:\n"), out);
+	for (i = 0; i < ARRAY_SIZE(coldescs_cache); i++)
+		fprintf(out, " %13s  %s\n", coldescs_cache[i].name, _(coldescs_cache[i].help));
+
 	printf(USAGE_MAN_TAIL("lscpu(1)"));
 
 	exit(EXIT_SUCCESS);
@@ -1979,7 +2127,7 @@ int main(int argc, char *argv[])
 {
 	struct lscpu_modifier _mod = { .mode = OUTPUT_SUMMARY }, *mod = &_mod;
 	struct lscpu_desc _desc = { .flags = NULL }, *desc = &_desc;
-	int c, i;
+	int c, i, all = 0;
 	int columns[ARRAY_SIZE(coldescs_cpu)], ncolumns = 0;
 	int cpu_modifier_specified = 0;
 	size_t setsize;
@@ -1990,6 +2138,7 @@ int main(int argc, char *argv[])
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       NULL, 'a' },
 		{ "online",     no_argument,       NULL, 'b' },
+		{ "caches",     optional_argument, NULL, 'C' },
 		{ "offline",    no_argument,       NULL, 'c' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "extended",	optional_argument, NULL, 'e' },
@@ -2005,7 +2154,7 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'a','b','c' },
-		{ 'e','p' },
+		{ 'C','e','p' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -2015,7 +2164,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "abce::hJp::s:xyV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "abC::ce::hJp::s:xyV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -2031,6 +2180,18 @@ int main(int argc, char *argv[])
 		case 'c':
 			mod->offline = 1;
 			cpu_modifier_specified = 1;
+			break;
+		case 'C':
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
+				ncolumns = string_to_idarray(optarg,
+						columns, ARRAY_SIZE(columns),
+						cache_column_name_to_id);
+				if (ncolumns < 0)
+					return EXIT_FAILURE;
+			}
+			mod->mode = OUTPUT_CACHES;
 			break;
 		case 'h':
 			usage();
@@ -2064,15 +2225,20 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case OPT_OUTPUT_ALL:
-		{
-			size_t sz;
-			for (sz = 0; sz < ARRAY_SIZE(coldescs_cpu); sz++)
-				columns[sz] = 1;
+			all = 1;
 			break;
-		}
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
+
+	if (all) {
+		size_t sz, maxsz = mod->mode == OUTPUT_CACHES ?
+				ARRAY_SIZE(coldescs_cache) :
+				ARRAY_SIZE(coldescs_cpu);
+
+		for (sz = 0; sz < maxsz; sz++)
+			columns[sz] = 1;
 	}
 
 	if (cpu_modifier_specified && mod->mode == OUTPUT_SUMMARY) {
@@ -2143,6 +2309,17 @@ int main(int argc, char *argv[])
 	switch(mod->mode) {
 	case OUTPUT_SUMMARY:
 		print_summary(desc, mod);
+		break;
+	case OUTPUT_CACHES:
+		if (!ncolumns) {
+			columns[ncolumns++] = COL_CACHE_NAME;
+			columns[ncolumns++] = COL_CACHE_ONESIZE;
+			columns[ncolumns++] = COL_CACHE_ALLSIZE;
+			columns[ncolumns++] = COL_CACHE_WAYS;
+			columns[ncolumns++] = COL_CACHE_TYPE;
+			columns[ncolumns++] = COL_CACHE_LEVEL;
+		}
+		print_caches_readable(desc, columns, ncolumns, mod);
 		break;
 	case OUTPUT_PARSABLE:
 		if (!ncolumns) {
