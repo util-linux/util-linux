@@ -260,6 +260,19 @@ int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize)
 	return 0;
 }
 
+static int nextnumber(const char *str, char **end, unsigned int *result)
+{
+	errno = 0;
+	if (str == NULL || *str == '\0' || !isdigit(*str))
+		return -EINVAL;
+	*result = (unsigned int) strtoul(str, end, 10);
+	if (errno)
+		return -errno;
+	if (str == *end)
+		return -EINVAL;
+	return 0;
+}
+
 /*
  * Parses string with list of CPU ranges.
  * Returns 0 on success.
@@ -272,7 +285,7 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 {
 	size_t max = cpuset_nbits(setsize);
 	const char *p, *q;
-	int r = 0;
+	char *end = NULL;
 
 	q = str;
 	CPU_ZERO_S(setsize, set);
@@ -282,21 +295,24 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 		unsigned int b;	/* end of range */
 		unsigned int s;	/* stride */
 		const char *c1, *c2;
-		char c;
 
-		if ((r = sscanf(p, "%u%c", &a, &c)) < 1)
+		if (nextnumber(p, &end, &a) != 0)
 			return 1;
 		b = a;
 		s = 1;
+		p = end;
 
 		c1 = nexttoken(p, '-');
 		c2 = nexttoken(p, ',');
+
 		if (c1 != NULL && (c2 == NULL || c1 < c2)) {
-			if ((r = sscanf(c1, "%u%c", &b, &c)) < 1)
+			if (nextnumber(c1, &end, &b) != 0)
 				return 1;
-			c1 = nexttoken(c1, ':');
+
+			c1 = end && *end ? nexttoken(end, ':') : NULL;
+
 			if (c1 != NULL && (c2 == NULL || c1 < c2)) {
-				if ((r = sscanf(c1, "%u%c", &s, &c)) < 1)
+				if (nextnumber(c1, &end, &s) != 0)
 					return 1;
 				if (s == 0)
 					return 1;
@@ -313,7 +329,7 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 		}
 	}
 
-	if (r == 2)
+	if (end && *end)
 		return 1;
 	return 0;
 }
@@ -390,7 +406,7 @@ int main(int argc, char *argv[])
 
 usage_err:
 	fprintf(stderr,
-		"usage: %s [--ncpus <num>] --mask <mask> | --range <list>",
+		"usage: %s [--ncpus <num>] --mask <mask> | --range <list>\n",
 		program_invocation_short_name);
 	exit(EXIT_FAILURE);
 }
