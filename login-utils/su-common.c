@@ -735,7 +735,7 @@ static void supam_authenticate(struct su_context *su)
 		msg = pam_strerror(su->pamh, rc);
 		pam_end(su->pamh, rc);
 		sleep(getlogindefs_num("FAIL_DELAY", 1));
-		errx(EXIT_FAILURE, "%s", msg ? msg : _("incorrect password"));
+		errx(EXIT_FAILURE, "%s", msg ? msg : _("authentication failed"));
 	}
 }
 
