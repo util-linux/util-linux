@@ -1769,6 +1769,9 @@ UL_REQUIRES_LINUX([fincore])
 UL_REQUIRES_BUILD([fincore], [libsmartcols])
 AM_CONDITIONAL([BUILD_FINCORE], [test "x$build_fincore" = xyes])
 
+UL_BUILD_INIT([fiemap], [yes])
+AM_CONDITIONAL([BUILD_FIEMAP], [test "x$build_fiemap" = xyes])
+
 UL_BUILD_INIT([fsfreeze], [check])
 UL_REQUIRES_LINUX([fsfreeze])
 AM_CONDITIONAL([BUILD_FSFREEZE], [test "x$build_fsfreeze" = xyes])

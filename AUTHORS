@@ -20,6 +20,7 @@ AUTHORS (merged projects & commands):
       fallocate:       Eric Sandeen <sandeen@redhat.com>
                        Karel Zak <kzak@redhat.com>
                        Matěj Cepl <mcepl@redhat.com>
+      fiemap:          zhenwei pi <pizhenwei@bytedance.com>
       fincore:         Masatake YAMATO <yamato@redhat.com>
       findmnt:         Karel Zak <kzak@redhat.com>
       flock:           H. Peter Anvin <hpa@zytor.com>

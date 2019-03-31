@@ -228,3 +228,8 @@ hardlink_CFLAGS += $(PCRE_CFLAGS)
 endif
 dist_man_MANS += misc-utils/hardlink.1
 endif
+
+if BUILD_FIEMAP
+usrbin_exec_PROGRAMS += fiemap
+fiemap_SOURCES = misc-utils/fiemap.c
+endif
