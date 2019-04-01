@@ -284,7 +284,7 @@ static int fstrim_all(struct fstrim_control *ctl)
 		/*
 		 * We're able to detect that the device supports discard, but
 		 * things also depend on filesystem or device mapping, for
-		 * example vfat or LUKS (by default) does not support FSTRIM.
+		 * example LUKS (by default) does not support FSTRIM.
 		 *
 		 * This is reason why we ignore EOPNOTSUPP and ENOTTY errors
 		 * from discard ioctl.
