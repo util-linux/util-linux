@@ -85,7 +85,7 @@ Why:	the option -s is in collision with the Loop-AES losetup dialect that is use
 
 What:   losetup output format without --list
 
-        deprecated format"
+        deprecated format:
 
           # losetup -a
           /dev/loop0: []: (/home/fs-images/swap.img)
