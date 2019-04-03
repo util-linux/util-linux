@@ -934,6 +934,8 @@ int main(int argc, char **argv)
 			ctl.quiet = 1;
 			break;
 		case 't':
+			if (optarg && *optarg == '=')
+				optarg++;
 			log_associate(&ctl, &ctl.out,
 				optarg ? optarg : "/dev/stderr",
 				SCRIPT_FMT_TIMING_SIMPLE);
