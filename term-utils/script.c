@@ -242,7 +242,7 @@ static struct script_log *log_associate(struct script_control *ctl,
 	return log;
 }
 
-static void log_close(struct script_control *ctl,
+static void log_close(struct script_control *ctl __attribute__((unused)),
 		      struct script_log *log,
 		      const char *msg,
 		      int status)
@@ -260,8 +260,6 @@ static void log_close(struct script_control *ctl,
 			fprintf(log->fp, _("\nScript done on %s [<%s>]\n"), buf, msg);
 		else
 			fprintf(log->fp, _("\nScript done on %s [COMMAND_EXIT_CODE=\"%d\"]\n"), buf, status);
-		if (!ctl->quiet)
-			printf(_("Script done, file is %s\n"), log->filename);
 		break;
 	}
 	case SCRIPT_FMT_TIMING_SIMPLE:
@@ -446,6 +444,9 @@ static void __attribute__((__noreturn__)) done_log(struct script_control *ctl, c
 	/* close all input logs */
 	for (i = 0; i < ctl->in.nlogs; i++)
 		log_close(ctl, &ctl->in.logs[i], msg, status);
+
+	if (!ctl->quiet)
+		printf(_("Script done.\n"));
 
 #ifdef HAVE_LIBUTEMPTER
 	if (ctl->master >= 0)
@@ -878,6 +879,7 @@ int main(int argc, char **argv)
 	};
 	int ch;
 	const char *typescript = DEFAULT_TYPESCRIPT_FILENAME;
+	const char *timingfile = NULL;
 
 	enum { FORCE_OPTION = CHAR_MAX + 1 };
 
@@ -939,6 +941,8 @@ int main(int argc, char **argv)
 			log_associate(&ctl, &ctl.out,
 				optarg ? optarg : "/dev/stderr",
 				SCRIPT_FMT_TIMING_SIMPLE);
+			/* used for message only */
+			timingfile = optarg ? optarg : "stderr";
 			break;
 
 		case 'V':
@@ -964,8 +968,13 @@ int main(int argc, char **argv)
 		ctl.shell = _PATH_BSHELL;
 
 	getmaster(&ctl);
-	if (!ctl.quiet)
-		printf(_("Script started, file is %s\n"), typescript);
+	if (!ctl.quiet) {
+		if (!timingfile)
+			printf(_("Script started, log file is '%s'.\n"), typescript);
+		else
+			printf(_("Script started, log file is '%s', timing file is '%s'.\n"),
+					typescript, timingfile);
+	}
 	enable_rawmode_tty(&ctl);
 
 #ifdef HAVE_LIBUTEMPTER
