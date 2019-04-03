@@ -5,6 +5,7 @@ Documentation=man:fstrim(8)
 [Service]
 Type=oneshot
 ExecStart=@sbindir@/fstrim --fstab --verbose
+IOSchedulingClass=idle
 ProtectSystem=strict
 ProtectHome=yes
 PrivateDevices=no
