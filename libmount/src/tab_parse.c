@@ -43,25 +43,35 @@ static void parser_cleanup(struct libmnt_parser *pa)
 	memset(pa, 0, sizeof(*pa));
 }
 
-static const char *next_number(const char *s, int *num, int *rc)
+static const char *next_s32(const char *s, int *num, int *rc)
 {
 	char *end = NULL;
 
 	if (!s || !*s)
 		return s;
 
-	assert(num);
-	assert(rc);
-
 	*rc = -EINVAL;
 	*num = strtol(s, &end, 10);
 	if (end == NULL || s == end)
 	       return s;
-
-	/* valid end of number is a space or a terminator */
 	if (*end == ' ' || *end == '\t' || *end == '\0')
 		*rc = 0;
+	return end;
+}
 
+static const char *next_u64(const char *s, uint64_t *num, int *rc)
+{
+	char *end = NULL;
+
+	if (!s || !*s)
+		return s;
+
+	*rc = -EINVAL;
+	*num = (uint64_t) strtoumax(s, &end, 10);
+	if (end == NULL || s == end)
+	       return s;
+	if (*end == ' ' || *end == '\t' || *end == '\0')
+		*rc = 0;
 	return end;
 }
 
@@ -130,7 +140,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 		goto done;
 
 	/* (5) freq (optional) */
-	s = next_number(s, &fs->freq, &rc);
+	s = next_s32(s, &fs->freq, &rc);
 	if (s && *s && rc) {
 		DBG(TAB, ul_debug("tab parse error: [freq]"));
 		goto fail;
@@ -141,7 +151,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 		goto done;
 
 	/* (6) freq (optional) */
-	s = next_number(s, &fs->passno, &rc);
+	s = next_s32(s, &fs->passno, &rc);
 	if (s && *s && rc) {
 		DBG(TAB, ul_debug("tab parse error: [passno]"));
 		goto fail;
@@ -169,7 +179,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 	fs->flags |= MNT_FS_KERNEL;
 
 	/* (1) id */
-	s = next_number(s, &fs->id, &rc);
+	s = next_s32(s, &fs->id, &rc);
 	if (!s || !*s || rc) {
 		DBG(TAB, ul_debug("tab parse error: [id]"));
 		goto fail;
@@ -178,7 +188,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 	s = skip_separator(s);
 
 	/* (2) parent */
-	s = next_number(s, &fs->parent, &rc);
+	s = next_s32(s, &fs->parent, &rc);
 	if (!s || !*s || rc) {
 		DBG(TAB, ul_debug("tab parse error: [parent]"));
 		goto fail;
@@ -355,48 +365,66 @@ enomem:
  */
 static int mnt_parse_swaps_line(struct libmnt_fs *fs, const char *s)
 {
-	uintmax_t fsz, usz;
+	uint64_t num;
 	int rc;
-	char *src = NULL;
+	char *p;
 
-	rc = sscanf(s,	UL_SCNsA" "	/* (1) source */
-			UL_SCNsA" "	/* (2) type */
-			"%ju"		/* (3) size */
-			"%ju"		/* (4) used */
-			"%d",		/* priority */
-
-			&src,
-			&fs->swaptype,
-			&fsz,
-			&usz,
-			&fs->priority);
-
-	if (rc == 5) {
-		size_t sz;
-
-		fs->size = fsz;
-		fs->usedsize = usz;
-
-		/* remove "\040(deleted)" suffix */
-		sz = strlen(src);
-		if (sz > PATH_DELETED_SUFFIX_SZ) {
-			char *p = src + (sz - PATH_DELETED_SUFFIX_SZ);
-			if (strcmp(p, PATH_DELETED_SUFFIX) == 0)
-				*p = '\0';
-		}
-
-		unmangle_string(src);
-
-		rc = mnt_fs_set_source(fs, src);
-		if (!rc)
-			mnt_fs_set_fstype(fs, "swap");
-	} else {
-		DBG(TAB, ul_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
-		rc = -EINVAL;
+	/* (1) source */
+	p = unmangle(s, &s);
+	if (p) {
+		char *x = (char *) endswith(p, PATH_DELETED_SUFFIX);
+		if (x && *x)
+			*x = '\0';
+	}
+	if (!p || (rc = __mnt_fs_set_source_ptr(fs, p))) {
+		DBG(TAB, ul_debug("tab parse error: [source]"));
+		goto fail;
 	}
 
-	free(src);
+	s = skip_separator(s);
 
+	/* (2) type */
+	fs->swaptype = unmangle(s, &s);
+	if (!fs->swaptype) {
+		DBG(TAB, ul_debug("tab parse error: [swaptype]"));
+		goto fail;
+	}
+
+	s = skip_separator(s);
+
+	/* (3) size */
+	s = next_u64(s, &num, &rc);
+	if (!s || !*s || rc) {
+		DBG(TAB, ul_debug("tab parse error: [size]"));
+		goto fail;
+	}
+	fs->size = num;
+
+	s = skip_separator(s);
+
+	/* (4) size */
+	s = next_u64(s, &num, &rc);
+	if (!s || !*s || rc) {
+		DBG(TAB, ul_debug("tab parse error: [used size]"));
+		goto fail;
+	}
+	fs->usedsize = num;
+
+	s = skip_separator(s);
+
+	/* (5) priority */
+	s = next_s32(s, &fs->priority, &rc);
+	if (rc) {
+		DBG(TAB, ul_debug("tab parse error: [priority]"));
+		goto fail;
+	}
+
+	mnt_fs_set_fstype(fs, "swap");
+	return 0;
+fail:
+	if (rc == 0)
+		rc = -EINVAL;
+	DBG(TAB, ul_debug("tab parse error on: '%s' [rc=%d]", s, rc));
 	return rc;
 }
 
