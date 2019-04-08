@@ -47,8 +47,10 @@ static const char *next_number(const char *s, int *num, int *rc)
 {
 	char *end = NULL;
 
+	if (!s || !*s)
+		return s;
+
 	assert(num);
-	assert(s);
 	assert(rc);
 
 	*rc = -EINVAL;
@@ -70,6 +72,13 @@ static inline const char *skip_separator(const char *p)
 	return p;
 }
 
+static inline const char *skip_nonspearator(const char *p)
+{
+	while (p && *p && !(*p == ' ' || *p == '\t'))
+		p++;
+	return p;
+}
+
 /*
  * Parses one line from {fs,m}tab
  */
@@ -82,7 +91,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 
 	/* (1) source */
 	p = unmangle(s, &s);
-		if (!p || (rc = __mnt_fs_set_source_ptr(fs, p))) {
+	if (!p || (rc = __mnt_fs_set_source_ptr(fs, p))) {
 		DBG(TAB, ul_debug("tab parse error: [source]"));
 		goto fail;
 	}
@@ -153,29 +162,68 @@ fail:
  */
 static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 {
-	int rc, end = 0;
+	int rc = 0;
 	unsigned int maj, min;
-	char *fstype = NULL, *src = NULL;
-	const char *p;
+	char *p;
 
-	rc = sscanf(s,	"%d "		/* (1) id */
-			"%d "		/* (2) parent */
-			"%u:%u "	/* (3) maj:min */
-			UL_SCNsA" "	/* (4) mountroot */
-			UL_SCNsA" "	/* (5) target */
-			UL_SCNsA	/* (6) vfs options (fs-independent) */
-			"%n",		/* number of read bytes */
+	fs->flags |= MNT_FS_KERNEL;
 
-			&fs->id,
-			&fs->parent,
-			&maj, &min,
-			&fs->root,
-			&fs->target,
-			&fs->vfs_optstr,
-			&end);
+	/* (1) id */
+	s = next_number(s, &fs->id, &rc);
+	if (!s || !*s || rc) {
+		DBG(TAB, ul_debug("tab parse error: [id]"));
+		goto fail;
+	}
 
-	if (rc >= 7 && end > 0)
-		s += end;
+	s = skip_separator(s);
+
+	/* (2) parent */
+	s = next_number(s, &fs->parent, &rc);
+	if (!s || !*s || rc) {
+		DBG(TAB, ul_debug("tab parse error: [parent]"));
+		goto fail;
+	}
+
+	s = skip_separator(s);
+
+	/* (3) maj:min */
+	if (sscanf(s, "%u:%u", &maj, &min) != 2) {
+		DBG(TAB, ul_debug("tab parse error: [maj:min]"));
+		goto fail;
+	}
+	fs->devno = makedev(maj, min);
+	s = skip_nonspearator(s);
+	s = skip_separator(s);
+
+	/* (4) mountroot */
+	fs->root = unmangle(s, &s);
+	if (!fs->root) {
+		DBG(TAB, ul_debug("tab parse error: [mountroot]"));
+		goto fail;
+	}
+
+	s = skip_separator(s);
+
+	/* (5) target */
+	fs->target = unmangle(s, &s);
+	if (!fs->target) {
+		DBG(TAB, ul_debug("tab parse error: [target]"));
+		goto fail;
+	}
+
+	/* remove "\040(deleted)" suffix */
+	p = (char *) endswith(fs->target, PATH_DELETED_SUFFIX);
+	if (p && *p)
+		*p = '\0';
+
+	s = skip_separator(s);
+
+	/* (6) vfs options (fs-independent) */
+	fs->vfs_optstr = unmangle(s, &s);
+	if (!fs->vfs_optstr) {
+		DBG(TAB, ul_debug("tab parse error: [VFS options]"));
+		goto fail;
+	}
 
 	/* (7) optional fields, terminated by " - " */
 	p = strstr(s, " - ");
@@ -185,82 +233,56 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 	}
 	if (p > s + 1)
 		fs->opt_fields = strndup(s + 1, p - s - 1);
-	s = p + 3;
 
-	end = 0;
-	rc += sscanf(s,	UL_SCNsA"%n",	/* (8) FS type */
+	s = skip_separator(p + 3);
 
-			&fstype,
-			&end);
-
-	if (rc >= 8 && end > 0)
-		s += end;
-	if (s[0] == ' ')
-		s++;
-
-	/* (9) source can unfortunately be an empty string "" and scanf does
-	 * not work well with empty string. Test with:
-	 *     $ sudo mount -t tmpfs "" /tmp/bb
-	 *     $ mountpoint /tmp/bb
-	 * */
-	if (s[0] == ' ') {
-		src = strdup("");
-		s++;
-		rc++;
-		rc += sscanf(s,	UL_SCNsA,	/* (10) fs options (fs specific) */
-
-				&fs->fs_optstr);
-	} else {
-		rc += sscanf(s,	UL_SCNsA" "	/* (9) source */
-				UL_SCNsA,	/* (10) fs options (fs specific) */
-
-				&src,
-				&fs->fs_optstr);
+	/* (8) FS type */
+	p = unmangle(s, &s);
+	if (!p || (rc = __mnt_fs_set_fstype_ptr(fs, p))) {
+		DBG(TAB, ul_debug("tab parse error: [fstype]"));
+		goto fail;
 	}
 
-	if (rc >= 10) {
-		size_t sz;
-
-		fs->flags |= MNT_FS_KERNEL;
-		fs->devno = makedev(maj, min);
-
-		/* remove "\040(deleted)" suffix */
-		sz = strlen(fs->target);
-		if (sz > PATH_DELETED_SUFFIX_SZ) {
-			char *ptr = fs->target + (sz - PATH_DELETED_SUFFIX_SZ);
-
-			if (strcmp(ptr, PATH_DELETED_SUFFIX) == 0)
-				*ptr = '\0';
+	/* (9) source -- maybe empty string */
+	if (!s || !*s) {
+		DBG(TAB, ul_debug("tab parse error: [source]"));
+		goto fail;
+	} else if (*s == ' ' && *(s+1) == ' ') {
+		if ((rc = mnt_fs_set_source(fs, ""))) {
+			DBG(TAB, ul_debug("tab parse error: [empty source]"));
+			goto fail;
 		}
-
-		unmangle_string(fs->root);
-		unmangle_string(fs->target);
-		unmangle_string(fs->vfs_optstr);
-		unmangle_string(fstype);
-		unmangle_string(src);
-		unmangle_string(fs->fs_optstr);
-
-		rc = __mnt_fs_set_fstype_ptr(fs, fstype);
-		if (!rc) {
-			fstype = NULL;
-			rc = __mnt_fs_set_source_ptr(fs, src);
-			if (!rc)
-				src = NULL;
-		}
-
-		/* merge VFS and FS options to one string */
-		fs->optstr = mnt_fs_strdup_options(fs);
-		if (!fs->optstr)
-			rc = -ENOMEM;
 	} else {
-		DBG(TAB, ul_debug(
-			"mountinfo parse error [sscanf rc=%d]: '%s'", rc, s));
+		s = skip_separator(s);
+		p = unmangle(s, &s);
+		if (!p || (rc = __mnt_fs_set_source_ptr(fs, p))) {
+			DBG(TAB, ul_debug("tab parse error: [regular source]"));
+			goto fail;
+		}
+	}
+
+	s = skip_separator(s);
+
+	/* (10) fs options (fs specific) */
+	fs->fs_optstr = unmangle(s, &s);
+	if (!fs->fs_optstr) {
+		DBG(TAB, ul_debug("tab parse error: [FS options]"));
+		goto fail;
+	}
+
+	/* merge VFS and FS options to one string */
+	fs->optstr = mnt_fs_strdup_options(fs);
+	if (!fs->optstr) {
+		rc = -ENOMEM;
+		DBG(TAB, ul_debug("tab parse error: [merge VFS and FS options]"));
+		goto fail;
+	}
+
+	return 0;
+fail:
+	if (rc == 0)
 		rc = -EINVAL;
-	}
-
-	free(fstype);
-	free(src);
-
+	DBG(TAB, ul_debug("tab parse error on: '%s' [rc=%d]", s, rc));
 	return rc;
 }
 
