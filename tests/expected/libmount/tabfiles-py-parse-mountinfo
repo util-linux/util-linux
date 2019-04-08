@@ -361,3 +361,15 @@ root:   /
 id:     48
 parent: 20
 devno:  0:39
+------ fs:
+source: tmpfs
+target: /mnt/test/foobar
+fstype: tmpfs
+optstr: rw,relatime
+VFS-optstr: rw,relatime
+FS-opstr: rw
+optional-fields: 'shared:323'
+root:   /
+id:     49
+parent: 20
+devno:  0:56

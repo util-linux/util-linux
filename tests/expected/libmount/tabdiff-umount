@@ -1,2 +1,3 @@
 /dev/mapper/kzak-home on /home/kzak: UMOUNTED
 /fooooo on /mnt/foo: UMOUNTED
+tmpfs on /mnt/test/foobar: UMOUNTED
