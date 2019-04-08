@@ -43,28 +43,31 @@ static void parser_cleanup(struct libmnt_parser *pa)
 	memset(pa, 0, sizeof(*pa));
 }
 
-static const char *next_number(const char *s, int *num, int *ok)
+static const char *next_number(const char *s, int *num, int *rc)
 {
 	char *end = NULL;
 
 	assert(num);
 	assert(s);
-	assert(ok);
+	assert(rc);
 
-	*ok = 0;
-	s = skip_blank(s);
-	if (!s || !*s)
-		return s;
-
+	*rc = -EINVAL;
 	*num = strtol(s, &end, 10);
 	if (end == NULL || s == end)
 	       return s;
 
 	/* valid end of number is a space or a terminator */
 	if (*end == ' ' || *end == '\t' || *end == '\0')
-		*ok = 1;
+		*rc = 0;
 
 	return end;
+}
+
+static inline const char *skip_separator(const char *p)
+{
+	while (p && (*p == ' ' || *p == '\t'))
+		++p;
+	return p;
 }
 
 /*
@@ -72,80 +75,78 @@ static const char *next_number(const char *s, int *num, int *ok)
  */
 static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 {
-	int rc, n = 0, xrc;
-	char *src = NULL, *fstype = NULL, *optstr = NULL;
-
-	rc = sscanf(s,	UL_SCNsA" "	/* (1) source */
-			UL_SCNsA" "	/* (2) target */
-			UL_SCNsA" "	/* (3) FS type */
-			UL_SCNsA" "	/* (4) options */
-			"%n",		/* byte count */
-
-			&src,
-			&fs->target,
-			&fstype,
-			&optstr,
-			&n);
-	xrc = rc;
-
-	if (rc == 3 || rc == 4) {			/* options are optional */
-		unmangle_string(src);
-		unmangle_string(fs->target);
-		unmangle_string(fstype);
-
-		if (optstr && *optstr)
-			unmangle_string(optstr);
-
-		/* note that __foo functions do not reallocate the string
-		 */
-		rc = __mnt_fs_set_source_ptr(fs, src);
-		if (!rc) {
-			src = NULL;
-			rc = __mnt_fs_set_fstype_ptr(fs, fstype);
-			if (!rc)
-				fstype = NULL;
-		}
-		if (!rc && optstr)
-			rc = mnt_fs_set_options(fs, optstr);
-		free(optstr);
-		optstr = NULL;
-	} else {
-		DBG(TAB, ul_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
-		rc = -EINVAL;
-	}
-
-	if (rc) {
-		free(src);
-		free(fstype);
-		free(optstr);
-		DBG(TAB, ul_debug("tab parse error: [set vars, rc=%d]\n", rc));
-		return rc;	/* error */
-	}
+	int rc = 0;
+	char *p;
 
 	fs->passno = fs->freq = 0;
 
-	if (xrc == 4 && n)
-		s = skip_blank(s + n);
-	if (xrc == 4 && *s) {
-		int ok = 0;
-
-		s = next_number(s, &fs->freq, &ok);
-		if (!ok) {
-			if (s && *s) {
-				DBG(TAB, ul_debug("tab parse error: [freq]"));
-				rc = -EINVAL;
-			}
-		} else {
-			s = next_number(s, &fs->passno, &ok);
-			if (!ok && s && *s) {
-				DBG(TAB, ul_debug("tab parse error: [passno]"));
-				rc = -EINVAL;
-			}
-		}
+	/* (1) source */
+	p = unmangle(s, &s);
+		if (!p || (rc = __mnt_fs_set_source_ptr(fs, p))) {
+		DBG(TAB, ul_debug("tab parse error: [source]"));
+		goto fail;
 	}
 
+	s = skip_separator(s);
+
+	/* (2) target */
+	fs->target = unmangle(s, &s);
+	if (!fs->target) {
+		DBG(TAB, ul_debug("tab parse error: [target]"));
+		goto fail;
+	}
+
+	s = skip_separator(s);
+
+	/* (3) FS type */
+	p = unmangle(s, &s);
+	if (!p || (rc = __mnt_fs_set_fstype_ptr(fs, p))) {
+		DBG(TAB, ul_debug("tab parse error: [fstype]"));
+		goto fail;
+	}
+
+	s = skip_separator(s);
+
+	/* (4) options (optional) */
+	p = unmangle(s, &s);
+	if (p && (rc = mnt_fs_set_options(fs, p))) {
+		DBG(TAB, ul_debug("tab parse error: [options]"));
+		goto fail;
+	}
+
+	if (!p)
+		goto done;
+	s = skip_separator(s);
+	if (!s || !*s)
+		goto done;
+
+	/* (5) freq (optional) */
+	s = next_number(s, &fs->freq, &rc);
+	if (s && *s && rc) {
+		DBG(TAB, ul_debug("tab parse error: [freq]"));
+		goto fail;
+	}
+
+	s = skip_separator(s);
+	if (!s || !*s)
+		goto done;
+
+	/* (6) freq (optional) */
+	s = next_number(s, &fs->passno, &rc);
+	if (s && *s && rc) {
+		DBG(TAB, ul_debug("tab parse error: [passno]"));
+		goto fail;
+	}
+
+done:
+	return 0;
+fail:
+	if (rc == 0)
+		rc = -EINVAL;
+	DBG(TAB, ul_debug("tab parse error on: '%s' [rc=%d]", s, rc));
 	return rc;
 }
+
 
 /*
  * Parses one line from a mountinfo file

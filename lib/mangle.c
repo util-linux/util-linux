@@ -96,7 +96,7 @@ size_t unhexmangle_to_buffer(const char *s, char *buf, size_t len)
 
 static inline const char *skip_nonspaces(const char *s)
 {
-	while (*s && !(*s == ' ' || *s == '\t'))
+	while (s && *s && !(*s == ' ' || *s == '\t'))
 		s++;
 	return s;
 }
