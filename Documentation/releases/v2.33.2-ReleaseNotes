@@ -1,0 +1,63 @@
+util-linux 2.33.2 Release Notes
+===============================
+
+agetty:
+   - Fix input of non-ASCII characters in get_logname()  [Stanislav Brabec]
+   - Switch to 8-bit processing in get_logname() for UTF-8 terminals  [Stanislav Brabec]
+bash-completion:
+   - umount support relative path and ~ as home shorthands  [Sami Kerola]
+blkid:
+   - (man) cleanup return code section  [Karel Zak]
+build-sys:
+   - fix crypt() detection without -lcrypt  [Johannes Nixdorf]
+column:
+   - Address fill-order confusion in documentation  [dana]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fstrim:
+   - Remove commnet about vfat not supporting fstrim  [Marcos Paulo de Souza]
+include:
+   - add no return function attribute  [Sami Kerola]
+include/path.h:
+   - remove duplicate header inclusion  [Sami Kerola]
+last:
+   - do not use non-standard __UT_NAMESIZE  [Patrick Steinhardt]
+   - fix wtmp user name buffer overflow [asan]  [Sami Kerola]
+libfdisk:
+   - (dos) Use strtoul to parse the label-id  [Juerg Haefliger]
+   - (gpt) add HiFive Unleashed bootloader partition UUIDs  [Icenowy Zheng]
+   - sanity check, to prevent overlapping partitions from being partly reported as free  [Fabian.Kirsch@dlr.de]
+libmount:
+   - Recognize more fuse filesystems as pseudofs and netfs  [Stanislav Brabec]
+   - don't use sscanf() for fstab parsing  [Karel Zak]
+   - don't use sscanf() for mountinfo parsing  [Karel Zak]
+   - don't use sscanf() for swaps parsing  [Karel Zak]
+logger:
+   - (man) make more obvious that --server/socket is required  [Karel Zak]
+losetup:
+   - use offset in warn_size() calculation  [Karel Zak]
+lscpu:
+   - document --hex output regression (since v2.30)  [Karel Zak]
+mount:
+   - Do not call mnt_pretty_path() on net file systems.  [Stanislav Brabec]
+   - mount.8 clarify (no)suid behavior on file capabilities  [Peter Wu]
+po:
+   - merge changes  [Karel Zak]
+   - update de.po (from translationproject.org)  [Mario Blättermann]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+readprofile:
+   - check input file is not empty [asan]  [Sami Kerola]
+setarch:
+   - don't return address of automatic variable  [Andreas Schwab]
+sfdisk:
+   - fix logical partition resize when start specified  [Karel Zak]
+su:
+   - be sensitive to another SIGCHLD ssi_codes  [Karel Zak]
+   - change error message  [Karel Zak]
+tests:
+   - add /mnt/test/foo^Mbar to mountinfo tests  [Karel Zak]
+wall:
+   - remove unnecessary warning  [Karel Zak]
+whereis:
+   - search in /(s)bin before /usr/lib  [Karel Zak]
