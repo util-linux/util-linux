@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.33-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-10-19 12:48+0200\n"
+"POT-Creation-Date: 2019-04-09 14:30+0200\n"
 "PO-Revision-Date: 2019-04-08 19:48-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -38,8 +38,8 @@ msgstr "Informira jezgru o postojanju specificirane particije.\n"
 #: misc-utils/kill.c:311 misc-utils/rename.c:280 misc-utils/whereis.c:518
 #: sys-utils/flock.c:175 sys-utils/ipcrm.c:160 sys-utils/ldattach.c:368
 #: sys-utils/renice.c:146 sys-utils/switch_root.c:241 sys-utils/tunelp.c:152
-#: term-utils/agetty.c:878 term-utils/agetty.c:879 term-utils/agetty.c:887
-#: term-utils/agetty.c:888
+#: term-utils/agetty.c:879 term-utils/agetty.c:880 term-utils/agetty.c:888
+#: term-utils/agetty.c:889
 msgid "not enough arguments"
 msgstr "nema dovoljno argumenata"
 
@@ -57,25 +57,25 @@ msgstr "nema dovoljno argumenata"
 #: disk-utils/sfdisk.c:765 disk-utils/sfdisk.c:824 disk-utils/sfdisk.c:903
 #: disk-utils/sfdisk.c:944 disk-utils/sfdisk.c:974 disk-utils/sfdisk.c:1011
 #: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
-#: login-utils/islocal.c:87 login-utils/last.c:667 login-utils/sulogin.c:443
+#: login-utils/islocal.c:87 login-utils/last.c:668 login-utils/sulogin.c:443
 #: login-utils/sulogin.c:480 login-utils/utmpdump.c:134
-#: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374
-#: login-utils/vipw.c:261 login-utils/vipw.c:279 misc-utils/findmnt.c:1105
-#: misc-utils/logger.c:1224 misc-utils/mcookie.c:115 misc-utils/uuidd.c:198
-#: sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96 sys-utils/dmesg.c:524
-#: sys-utils/eject.c:499 sys-utils/eject.c:695 sys-utils/fallocate.c:397
-#: sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:79 sys-utils/hwclock.c:229
-#: sys-utils/hwclock.c:869 sys-utils/hwclock-rtc.c:397
-#: sys-utils/hwclock-rtc.c:432 sys-utils/ldattach.c:392 sys-utils/lscpu.c:393
-#: sys-utils/nsenter.c:129 sys-utils/rfkill.c:192 sys-utils/rfkill.c:553
-#: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:286 sys-utils/setpriv.c:291
-#: sys-utils/setpriv.c:660 sys-utils/setpriv.c:683 sys-utils/swapon.c:375
-#: sys-utils/swapon.c:518 sys-utils/switch_root.c:167 sys-utils/unshare.c:108
-#: sys-utils/unshare.c:123 sys-utils/wdctl.c:322 sys-utils/wdctl.c:378
-#: sys-utils/zramctl.c:517 term-utils/agetty.c:2854 term-utils/mesg.c:132
-#: term-utils/script.c:540 term-utils/script.c:548 term-utils/script.c:633
+#: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374 login-utils/vipw.c:261
+#: login-utils/vipw.c:279 misc-utils/findmnt.c:1105 misc-utils/logger.c:1224
+#: misc-utils/mcookie.c:115 misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182
+#: sys-utils/blkzone.c:96 sys-utils/dmesg.c:524 sys-utils/eject.c:499
+#: sys-utils/eject.c:695 sys-utils/fallocate.c:397 sys-utils/fsfreeze.c:117
+#: sys-utils/fstrim.c:79 sys-utils/hwclock.c:229 sys-utils/hwclock.c:869
+#: sys-utils/hwclock-rtc.c:397 sys-utils/hwclock-rtc.c:432
+#: sys-utils/ldattach.c:392 sys-utils/lscpu.c:393 sys-utils/nsenter.c:129
+#: sys-utils/rfkill.c:192 sys-utils/rfkill.c:553 sys-utils/rtcwake.c:136
+#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:290 sys-utils/setpriv.c:659
+#: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
+#: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
+#: term-utils/agetty.c:2869 term-utils/mesg.c:132 term-utils/script.c:540
+#: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
+#: term-utils/wall.c:418 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:140 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
@@ -218,7 +218,7 @@ msgstr " %-25s pokaže veličinu u sektorima od 512 bajta\n"
 #: disk-utils/fsck.minix.c:1341 disk-utils/isosize.c:205
 #: disk-utils/mkfs.bfs.c:181 disk-utils/mkfs.c:116 disk-utils/mkfs.minix.c:813
 #: disk-utils/swaplabel.c:181 misc-utils/wipefs.c:757
-#: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:404 sys-utils/tunelp.c:242
+#: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:405 sys-utils/tunelp.c:242
 #: sys-utils/zramctl.c:710 sys-utils/zramctl.c:736
 msgid "no device specified"
 msgstr "nijedan uređaj nije specificiran"
@@ -303,7 +303,7 @@ msgid "Quit program without writing changes"
 msgstr "Q = zatvaranje (izlaz iz) programa bez zapisivanja promjena"
 
 #: disk-utils/cfdisk.c:195 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1023
-#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3137 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1128
 msgid "Type"
 msgstr "Tip"
@@ -481,8 +481,7 @@ msgstr "Nije uspjelo zapisati skriptu %s"
 msgid "Select label type"
 msgstr "Odaberite vrstu oznake"
 
-#: disk-utils/cfdisk.c:2123 disk-utils/fdisk.c:1076
-#: disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2123 disk-utils/fdisk.c:1076 disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "Uređaj ne sadrži prepoznatljivu particijsku tablicu."
 
@@ -743,8 +742,8 @@ msgstr ""
 "Nastavlja se... "
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641
-#: sys-utils/blkdiscard.c:85 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641 sys-utils/blkdiscard.c:85
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcije] <uređaj>\n"
@@ -789,7 +788,7 @@ msgstr "nevaljani argument - repair"
 #: disk-utils/mkfs.bfs.c:188 disk-utils/mkfs.cramfs.c:337
 #: disk-utils/mkfs.cramfs.c:758 disk-utils/mkfs.cramfs.c:797
 #: disk-utils/mkfs.minix.c:821 disk-utils/mkswap.c:243 disk-utils/partx.c:959
-#: login-utils/last.c:681 login-utils/utmpdump.c:137 misc-utils/namei.c:135
+#: login-utils/last.c:682 login-utils/utmpdump.c:137 misc-utils/namei.c:135
 #: misc-utils/rename.c:120 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
 #: sys-utils/dmesg.c:526 sys-utils/fallocate.c:198 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:84 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
@@ -850,7 +849,7 @@ msgid "Using default response %c."
 msgstr "Koristi se zadani odgovor %c."
 
 #: disk-utils/fdisk.c:222 disk-utils/fdisk.c:296 disk-utils/fdisk.c:373
-#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2470
+#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2474
 msgid "Value out of range."
 msgstr "Vrijednost je izvan raspona."
 
@@ -941,7 +940,7 @@ msgid "cannot read"
 msgstr "nije moguće čitati"
 
 #: disk-utils/fdisk.c:743 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:982
-#: libfdisk/src/gpt.c:2398
+#: libfdisk/src/gpt.c:2402
 msgid "First sector"
 msgstr "Prvi sektor"
 
@@ -1078,21 +1077,21 @@ msgstr ""
 "Svojstva uređaja (veličina sektora i geometrija) treba koristiti\n"
 "samo s jednim specificiranim uređajem."
 
-#: disk-utils/fdisk.c:1035 disk-utils/fdisk.c:1050
-#: disk-utils/fsck.cramfs.c:695 disk-utils/mkfs.bfs.c:198
-#: disk-utils/mkfs.cramfs.c:787 disk-utils/partx.c:975 disk-utils/raw.c:137
-#: disk-utils/raw.c:150 disk-utils/raw.c:162 disk-utils/raw.c:203
-#: misc-utils/cal.c:520 misc-utils/findfs.c:58 misc-utils/look.c:150
-#: misc-utils/whereis.c:573 misc-utils/whereis.c:584 misc-utils/whereis.c:595
-#: misc-utils/whereis.c:637 schedutils/chrt.c:504 schedutils/ionice.c:262
-#: schedutils/taskset.c:189 sys-utils/chcpu.c:354 sys-utils/chmem.c:423
-#: sys-utils/dmesg.c:1468 sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:909 sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632
-#: sys-utils/mount.c:764 sys-utils/mount.c:772 sys-utils/mount.c:812
-#: sys-utils/mount.c:825 sys-utils/mount.c:894 sys-utils/mountpoint.c:180
-#: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:994
-#: sys-utils/switch_root.c:250 sys-utils/umount.c:582
-#: term-utils/setterm.c:1176 text-utils/col.c:233 text-utils/more.c:1988
+#: disk-utils/fdisk.c:1035 disk-utils/fdisk.c:1050 disk-utils/fsck.cramfs.c:695
+#: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:787
+#: disk-utils/partx.c:975 disk-utils/raw.c:137 disk-utils/raw.c:150
+#: disk-utils/raw.c:162 disk-utils/raw.c:203 misc-utils/cal.c:520
+#: misc-utils/findfs.c:58 misc-utils/look.c:150 misc-utils/whereis.c:573
+#: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
+#: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
+#: sys-utils/chcpu.c:354 sys-utils/chmem.c:423 sys-utils/dmesg.c:1468
+#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:912
+#: sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632 sys-utils/mount.c:764
+#: sys-utils/mount.c:772 sys-utils/mount.c:812 sys-utils/mount.c:825
+#: sys-utils/mount.c:894 sys-utils/mountpoint.c:180 sys-utils/pivot_root.c:72
+#: sys-utils/swapoff.c:230 sys-utils/swapon.c:994 sys-utils/switch_root.c:250
+#: sys-utils/umount.c:582 term-utils/setterm.c:1176 text-utils/col.c:233
+#: text-utils/more.c:1988
 msgid "bad usage"
 msgstr "pogrešna uporaba"
 
@@ -1214,22 +1213,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "Stavke particijske tablice nisu u poretku kao na disku."
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2426
-#: libfdisk/src/gpt.c:3129 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
+#: libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
 msgid "Start"
 msgstr "Početak"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2427
-#: libfdisk/src/gpt.c:3130 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
+#: libfdisk/src/gpt.c:3134 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
 msgid "End"
 msgstr "Kraj"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2428
-#: libfdisk/src/gpt.c:3131 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
+#: libfdisk/src/gpt.c:3135 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
 msgid "Sectors"
 msgstr "Sektori"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1022 libfdisk/src/dos.c:2430
-#: libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
+#: libfdisk/src/gpt.c:3136 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
 msgid "Size"
 msgstr "Veličina"
 
@@ -1681,7 +1680,7 @@ msgstr "%s nije montiran\n"
 #: disk-utils/fsck.cramfs.c:178 disk-utils/fsck.cramfs.c:234
 #: disk-utils/fsck.cramfs.c:255 disk-utils/sfdisk.c:298 libfdisk/src/bsd.c:646
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:656
-#: sys-utils/ctrlaltdel.c:44 sys-utils/rfkill.c:213 sys-utils/setpriv.c:300
+#: sys-utils/ctrlaltdel.c:44 sys-utils/rfkill.c:213 sys-utils/setpriv.c:299
 #: term-utils/setterm.c:723 term-utils/setterm.c:780 term-utils/setterm.c:784
 #: term-utils/setterm.c:791
 #, c-format
@@ -2094,7 +2093,7 @@ msgstr "pogrešna veličina (%ld umjesto %ld) bajta"
 
 #: disk-utils/fsck.cramfs.c:415 disk-utils/fsck.cramfs.c:518
 #: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:366 sys-utils/fallocate.c:409
-#: sys-utils/rfkill.c:560 sys-utils/setpriv.c:666 sys-utils/setpriv.c:689
+#: sys-utils/rfkill.c:560 sys-utils/setpriv.c:665 sys-utils/setpriv.c:688
 #: sys-utils/swapon.c:393 term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
@@ -2881,7 +2880,7 @@ msgstr ""
 " -V, --verbose      objašnjava što se radi;\n"
 "                      više od jedan V (npr. -VV) izvrši probu (dry-run)\n"
 
-#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1519
+#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1522
 #: login-utils/sulogin.c:792 login-utils/sulogin.c:796 sys-utils/flock.c:121
 #: sys-utils/rtcwake.c:595 term-utils/script.c:692
 #, c-format
@@ -3536,7 +3535,7 @@ msgstr "particijski flazi (flags)"
 msgid "partition type (a string, a UUID, or hex)"
 msgstr "vrsta particije (string, UUID ili hex)"
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:530 sys-utils/losetup.c:641
+#: disk-utils/partx.c:114 sys-utils/losetup.c:533 sys-utils/losetup.c:644
 msgid "failed to initialize loopcxt"
 msgstr "nije uspjelo inicijalizirati loopcxt"
 
@@ -3555,7 +3554,7 @@ msgstr "Pokušava se koristiti „%s“ za loop-uređaj\n"
 msgid "%s: failed to set backing file"
 msgstr "%s: nije uspjelo postaviti osnovnu datoteku"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:574
+#: disk-utils/partx.c:131 sys-utils/losetup.c:577
 #, c-format
 msgid "%s: failed to set up loop device"
 msgstr "%s: nije uspjelo postaviti loop-uređaj"
@@ -4092,7 +4091,7 @@ msgid "no partition number specified"
 msgstr "nije specificiran broj particije"
 
 #: disk-utils/sfdisk.c:1047 disk-utils/sfdisk.c:1111 disk-utils/sfdisk.c:1166
-#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:772
+#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:775
 msgid "unexpected arguments"
 msgstr "neočekivani argumenti"
 
@@ -4704,7 +4703,7 @@ msgid "colors are disabled by default"
 msgstr "boje su onemogućene (zadano)"
 
 #: include/env.h:18 lib/pager.c:153 login-utils/login.c:1027
-#: login-utils/login.c:1031 term-utils/agetty.c:1188
+#: login-utils/login.c:1031 term-utils/agetty.c:1189
 #, c-format
 msgid "failed to set the %s environment variable"
 msgstr "nije uspjelo postaviti varijablu okružja %s"
@@ -5141,7 +5140,7 @@ msgstr "Prvi cilindar"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Zadnji cilindar, +/-cilindri ili +/-veličina{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2447
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2451
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Zadnji sektor, +/-sektori ili +/-veličina{K,M,G,T,P}"
 
@@ -5478,7 +5477,7 @@ msgstr "Nevaljani flag 0x%02x%02x od EBR (za particiju %zu) bit će ispravljen p
 msgid "Start sector %ju out of range."
 msgstr "Početni sektor %ju je izvan raspona."
 
-#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2321 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2325 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5489,7 +5488,7 @@ msgstr "Particija %zu je već definirana. Izbrišite ju prije ponovnog dodavanja
 msgid "Sector %llu is already allocated."
 msgstr "Sektor %llu je već dodijeljen."
 
-#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2330
+#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2334
 msgid "No free sectors available."
 msgstr "Nema dostupnih slobodnih sektora."
 
@@ -5636,7 +5635,7 @@ msgstr "Nevaljana vrsta particije „%c“."
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Sektor %jd nije moguće pisati: seek nije uspio (greška pozicioniranja)"
 
-#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1221
+#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1225
 msgid "Disk identifier"
 msgstr "Identifikator diska"
 
@@ -5652,7 +5651,7 @@ msgstr ""
 "Nije moguće promijeniti vrstu proširene particije ako ju već koriste logičke\n"
 "particije. Izbrišite prvo logičke particije."
 
-#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3038
+#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3042
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Nema ništa za raditi. Particije su već u ispravnom poretku."
 
@@ -5680,7 +5679,7 @@ msgstr "Pokretački (bootable) flag na particiji %zu je sad aktiviran."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Pokretački flag na particiji %zu je sad deaktiviran."
 
-#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3128 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1121
 msgid "Device"
 msgstr "Uređaj"
@@ -5701,7 +5700,7 @@ msgstr "Početak-C/H/S"
 msgid "End-C/H/S"
 msgstr "Kraj-C/H/S"
 
-#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3138 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3142 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr "Atributi"
 
@@ -6041,182 +6040,190 @@ msgstr "QNX6 file system"
 msgid "Plan 9 partition"
 msgstr "Plan 9 partition"
 
-#: libfdisk/src/gpt.c:661
+#: libfdisk/src/gpt.c:290
+msgid "HiFive Unleashed FSBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:291
+msgid "HiFive Unleashed BBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:665
 msgid "failed to allocate GPT header"
 msgstr "failed to allocate GPT header"
 
-#: libfdisk/src/gpt.c:744
+#: libfdisk/src/gpt.c:748
 msgid "First LBA specified by script is out of range."
 msgstr "Prvi LBA specificiran skriptom je izvan raspona."
 
-#: libfdisk/src/gpt.c:756
+#: libfdisk/src/gpt.c:760
 msgid "Last LBA specified by script is out of range."
 msgstr "Zadnji LBA specificiran skriptom je izvan raspona."
 
-#: libfdisk/src/gpt.c:895
+#: libfdisk/src/gpt.c:899
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr "Neusklađenost veličina GPT PMBR (%<PRIu64> != %<PRIu64>) bit će korigirana s „write“ (zapisivanjem)."
 
-#: libfdisk/src/gpt.c:917
+#: libfdisk/src/gpt.c:921
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() nije uspjelo"
 
-#: libfdisk/src/gpt.c:927
+#: libfdisk/src/gpt.c:931
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: nije moguće rukovati s datotekama u %o mȏdu"
 
-#: libfdisk/src/gpt.c:1191
+#: libfdisk/src/gpt.c:1195
 msgid "GPT Header"
 msgstr "Zaglavlje GPT"
 
-#: libfdisk/src/gpt.c:1196
+#: libfdisk/src/gpt.c:1200
 msgid "GPT Entries"
 msgstr "Stavke GPT"
 
-#: libfdisk/src/gpt.c:1228
+#: libfdisk/src/gpt.c:1232
 msgid "First LBA"
 msgstr "Prvi LBA"
 
-#: libfdisk/src/gpt.c:1233
+#: libfdisk/src/gpt.c:1237
 msgid "Last LBA"
 msgstr "Zadnji LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1239
+#: libfdisk/src/gpt.c:1243
 msgid "Alternative LBA"
 msgstr "Alternativni LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1245
+#: libfdisk/src/gpt.c:1249
 msgid "Partition entries LBA"
 msgstr "LBA stavki particija"
 
-#: libfdisk/src/gpt.c:1250
+#: libfdisk/src/gpt.c:1254
 msgid "Allocated partition entries"
 msgstr "Rezervirane particijske stavke"
 
-#: libfdisk/src/gpt.c:1595
+#: libfdisk/src/gpt.c:1599
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Osiguranje (backup) GPT tablice je oštećeno. Primarna tablica izgleda dobro, pa će se ona koristiti."
 
-#: libfdisk/src/gpt.c:1605
+#: libfdisk/src/gpt.c:1609
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Primarna GPT tablica je oštećena. Osiguranje (backup) izgleda dobro, pa će se ono koristiti."
 
-#: libfdisk/src/gpt.c:1618
+#: libfdisk/src/gpt.c:1622
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr "Osiguranje (backup) GPT tablice nije na kraju uređaja. Taj problem bit će korigiran s „write“ (zapisivanjem)."
 
-#: libfdisk/src/gpt.c:1800
+#: libfdisk/src/gpt.c:1804
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "nepodržani bit „%s“ GPT atributa"
 
-#: libfdisk/src/gpt.c:1805
+#: libfdisk/src/gpt.c:1809
 #, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "nije uspjelo raščlaniti string „%s“ GPT atributa"
 
-#: libfdisk/src/gpt.c:1905
+#: libfdisk/src/gpt.c:1909
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "UUID particije je promijenjen od %s u %s."
 
-#: libfdisk/src/gpt.c:1914
+#: libfdisk/src/gpt.c:1918
 msgid "Failed to translate partition name, name not changed."
 msgstr "Nije uspjelo prevesti ime particije -- ime nije promijenjeno."
 
-#: libfdisk/src/gpt.c:1916
+#: libfdisk/src/gpt.c:1920
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Ime particije je promijenjeno od „%s“ u „%.*s“."
 
-#: libfdisk/src/gpt.c:1945
+#: libfdisk/src/gpt.c:1949
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Početak particije je manji od FirstUsableLBA."
 
-#: libfdisk/src/gpt.c:1952
+#: libfdisk/src/gpt.c:1956
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "Kraj particije je veći od LastUsableLBA."
 
-#: libfdisk/src/gpt.c:2114
+#: libfdisk/src/gpt.c:2118
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr ""
 "Ovaj uređaj sadrži hibridni MBR -- samo će GPT biti zapisan.\n"
 "Morate sami ručno sinkronizirati MBR. (M naredba za eksperte)"
 
-#: libfdisk/src/gpt.c:2151
+#: libfdisk/src/gpt.c:2155
 msgid "Disk does not contain a valid backup header."
 msgstr "Disk ne sadrži valjano osiguranje (backup) zaglavlja."
 
-#: libfdisk/src/gpt.c:2156
+#: libfdisk/src/gpt.c:2160
 msgid "Invalid primary header CRC checksum."
 msgstr "Nevaljani kontrolni zbroj CRC primarnog zaglavlja."
 
-#: libfdisk/src/gpt.c:2160
+#: libfdisk/src/gpt.c:2164
 msgid "Invalid backup header CRC checksum."
 msgstr "Nevaljani kontrolni zbroj CRC osiguranja (backup) zaglavlja."
 
-#: libfdisk/src/gpt.c:2165
+#: libfdisk/src/gpt.c:2169
 msgid "Invalid partition entry checksum."
 msgstr "Nevaljani kontrolni zbroj stavke particije."
 
-#: libfdisk/src/gpt.c:2170
+#: libfdisk/src/gpt.c:2174
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Provjera „zdravlja“ LBA primarnog zaglavlja nije prošla."
 
-#: libfdisk/src/gpt.c:2174
+#: libfdisk/src/gpt.c:2178
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Provjera „zdravlja“ LBA osiguranja (backup) zaglavlja nije prošla."
 
-#: libfdisk/src/gpt.c:2179
+#: libfdisk/src/gpt.c:2183
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA nije u skladu sa stvarnom pozicijom u primarnom zaglavlju."
 
-#: libfdisk/src/gpt.c:2183
+#: libfdisk/src/gpt.c:2187
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA nije u skladu sa stvarnom pozicijom u osiguranju (backup) zaglavlja."
 
-#: libfdisk/src/gpt.c:2188
+#: libfdisk/src/gpt.c:2192
 msgid "Disk is too small to hold all data."
 msgstr "Disk je premalen da sadrži sve podatke."
 
-#: libfdisk/src/gpt.c:2198
+#: libfdisk/src/gpt.c:2202
 msgid "Primary and backup header mismatch."
 msgstr "Primarno zaglavlje se ne podudara s osiguranjem (backup) zaglavlja."
 
-#: libfdisk/src/gpt.c:2204
+#: libfdisk/src/gpt.c:2208
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Particija %u preklapa se s particijom %u."
 
-#: libfdisk/src/gpt.c:2211
+#: libfdisk/src/gpt.c:2215
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Particija %u je prevelika za disk."
 
-#: libfdisk/src/gpt.c:2218
+#: libfdisk/src/gpt.c:2222
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Particija %u završava prije nego započinje."
 
-#: libfdisk/src/gpt.c:2227
+#: libfdisk/src/gpt.c:2231
 msgid "No errors detected."
 msgstr "Nema grešaka."
 
-#: libfdisk/src/gpt.c:2228
+#: libfdisk/src/gpt.c:2232
 #, c-format
 msgid "Header version: %s"
 msgstr "Verzija zaglavlja: %s"
 
-#: libfdisk/src/gpt.c:2229
+#: libfdisk/src/gpt.c:2233
 #, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "Koristi se %zu od %zu particija."
 
-#: libfdisk/src/gpt.c:2239
+#: libfdisk/src/gpt.c:2243
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
@@ -6224,7 +6231,7 @@ msgstr[0] "Ukupno %ju slobodnih sektora je dostupno u %u segmentu (najveći je %
 msgstr[1] "Ukupno %ju slobodnih sektora je dostupno u %u segmenta (najveći je %s)."
 msgstr[2] "Ukupno %ju slobodnih sektora je dostupno u %u segmenata (najveći je %s)."
 
-#: libfdisk/src/gpt.c:2247
+#: libfdisk/src/gpt.c:2251
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -6232,119 +6239,119 @@ msgstr[0] "Otkrivena je %d greška"
 msgstr[1] "Otkrivene su %d greške"
 msgstr[2] "Otkriveno je %d grešaka"
 
-#: libfdisk/src/gpt.c:2326
+#: libfdisk/src/gpt.c:2330
 msgid "All partitions are already in use."
 msgstr "Sve particije su već iskorištene."
 
-#: libfdisk/src/gpt.c:2383 libfdisk/src/gpt.c:2410
+#: libfdisk/src/gpt.c:2387 libfdisk/src/gpt.c:2414
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Sector %ju je već iskorišten."
 
-#: libfdisk/src/gpt.c:2476
+#: libfdisk/src/gpt.c:2480
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Nije (bilo) moguće kreirati particiju %zu"
 
-#: libfdisk/src/gpt.c:2483
+#: libfdisk/src/gpt.c:2487
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "Zadnji upotrebljivi sektor GPT je %ju, ali zatražen je %ju."
 
-#: libfdisk/src/gpt.c:2490
+#: libfdisk/src/gpt.c:2494
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "Prvi upotrebljivi sektor GPT je %ju, ali zatražen je %ju."
 
-#: libfdisk/src/gpt.c:2629
+#: libfdisk/src/gpt.c:2633
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Kreirana je nova oznaka diska GPT (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2647
+#: libfdisk/src/gpt.c:2651
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Unesite novi UUID diska (u 8-4-4-4-12 formatu)"
 
-#: libfdisk/src/gpt.c:2654
+#: libfdisk/src/gpt.c:2658
 msgid "Failed to parse your UUID."
 msgstr "Nije uspjelo razabrati vaš UUID."
 
-#: libfdisk/src/gpt.c:2668
+#: libfdisk/src/gpt.c:2672
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Identifikator diska promijenjen je od %s na %s."
 
-#: libfdisk/src/gpt.c:2688
+#: libfdisk/src/gpt.c:2692
 msgid "Not enough space for new partition table!"
 msgstr "Nema dovoljno prostora za novu particijsku tablicu!"
 
-#: libfdisk/src/gpt.c:2699
+#: libfdisk/src/gpt.c:2703
 #, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Particija #%zu je izvan raspona (minimalni početak u sektorima je %<PRIu64>)"
 
-#: libfdisk/src/gpt.c:2704
+#: libfdisk/src/gpt.c:2708
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Particija #%zu je izvan raspona (maksimalni kraj u sektorima je %<PRIu64>)"
 
-#: libfdisk/src/gpt.c:2747
+#: libfdisk/src/gpt.c:2751
 #, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Broj particije mora biti manji od %zu."
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2774
 msgid "Cannot allocate memory!"
 msgstr "Nije moguće rezervirati memoriju!"
 
-#: libfdisk/src/gpt.c:2800
+#: libfdisk/src/gpt.c:2804
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Duljina particijske tablice je promijenjena od %<PRIu32> na %<PRIu64>."
 
-#: libfdisk/src/gpt.c:2909
+#: libfdisk/src/gpt.c:2913
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Atributi particije %zu promijenjeni su na 0x%016<PRIx64>."
 
-#: libfdisk/src/gpt.c:2959
+#: libfdisk/src/gpt.c:2963
 msgid "Enter GUID specific bit"
 msgstr "Unesite GUID-specifični bit"
 
-#: libfdisk/src/gpt.c:2974
+#: libfdisk/src/gpt.c:2978
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "nije uspjelo preklopiti nepodržani bit %lu"
 
-#: libfdisk/src/gpt.c:2987
+#: libfdisk/src/gpt.c:2991
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "GUID-specifični bit %d na particiji %zu je sad aktiviran."
 
-#: libfdisk/src/gpt.c:2988
+#: libfdisk/src/gpt.c:2992
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "GUID-specifične bit %d na particiji %zu je sad deaktiviran."
 
-#: libfdisk/src/gpt.c:2992
+#: libfdisk/src/gpt.c:2996
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Flag %s na particiji %zu je sad aktiviran."
 
-#: libfdisk/src/gpt.c:2993
+#: libfdisk/src/gpt.c:2997
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Flag %s na particiji %zu je sad deaktiviran."
 
-#: libfdisk/src/gpt.c:3135
+#: libfdisk/src/gpt.c:3139
 msgid "Type-UUID"
 msgstr "Vrsta-UUID"
 
-#: libfdisk/src/gpt.c:3136
+#: libfdisk/src/gpt.c:3140
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3137 login-utils/chfn.c:156 login-utils/chfn.c:158
+#: libfdisk/src/gpt.c:3141 login-utils/chfn.c:156 login-utils/chfn.c:158
 #: login-utils/chfn.c:324
 msgid "Name"
 msgstr "Ime"
@@ -6353,7 +6360,7 @@ msgstr "Ime"
 msgid "Free space"
 msgstr "Slobodni prostor"
 
-#: libfdisk/src/partition.c:1255
+#: libfdisk/src/partition.c:1263
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Nije uspjelo promijeniti veličinu particije #%zu."
@@ -7430,7 +7437,7 @@ msgstr "nepoznati format za vrijeme: %s"
 msgid "Interrupted %s"
 msgstr "Prekinuto %s"
 
-#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:885
+#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:886
 msgid "preallocation size exceeded"
 msgstr "rezervirana veličina je prekoračena"
 
@@ -7504,7 +7511,7 @@ msgstr ""
 "     --time-format <format>  vremenske žigove pokaže u danom <formatu>\n"
 "                               format je jedan od: notime, short, full ili iso\n"
 
-#: login-utils/last.c:886
+#: login-utils/last.c:887
 #, c-format
 msgid ""
 "\n"
@@ -7513,12 +7520,12 @@ msgstr ""
 "\n"
 "%s počinje %s\n"
 
-#: login-utils/last.c:965 term-utils/scriptreplay.c:65
+#: login-utils/last.c:966 term-utils/scriptreplay.c:65
 #: term-utils/scriptreplay.c:69
 msgid "failed to parse number"
 msgstr "nije uspjelo razabrati broj"
 
-#: login-utils/last.c:986 login-utils/last.c:991 login-utils/last.c:996
+#: login-utils/last.c:987 login-utils/last.c:992 login-utils/last.c:997
 #: sys-utils/rtcwake.c:503
 #, c-format
 msgid "invalid time value \"%s\""
@@ -8192,62 +8199,63 @@ msgstr "nije uspjelo dobiti atribute terminala"
 msgid "failed to create pseudo-terminal"
 msgstr "nije uspjelo kreirati pseudo-terminal"
 
-#: login-utils/su-common.c:493 login-utils/su-common.c:767
+#: login-utils/su-common.c:496 login-utils/su-common.c:770
 msgid "cannot block signals"
 msgstr "nije moguće blokirati signale"
 
-#: login-utils/su-common.c:529 misc-utils/uuidd.c:411 term-utils/script.c:573
+#: login-utils/su-common.c:532 misc-utils/uuidd.c:411 term-utils/script.c:573
 msgid "poll failed"
 msgstr "poll() nije uspjela"
 
-#: login-utils/su-common.c:675
+#: login-utils/su-common.c:678
 msgid "failed to modify environment"
 msgstr "nije uspjelo modificirati okružje"
 
-#: login-utils/su-common.c:711
+#: login-utils/su-common.c:714
 msgid "may not be used by non-root users"
 msgstr "obični korisnici to ne mogu koristiti"
 
-#: login-utils/su-common.c:735
-msgid "incorrect password"
-msgstr "pogrešna lozinka"
+#: login-utils/su-common.c:738
+#, fuzzy
+msgid "authentication failed"
+msgstr "tcgetattr() nije uspjela"
 
-#: login-utils/su-common.c:748
+#: login-utils/su-common.c:751
 #, c-format
 msgid "cannot open session: %s"
 msgstr "nije moguće otvoriti sesiju: %s"
 
-#: login-utils/su-common.c:784
+#: login-utils/su-common.c:787
 msgid "cannot initialize signal mask for session"
 msgstr "nije moguće inicijalizirati signalnu masku za sesiju"
 
-#: login-utils/su-common.c:792
+#: login-utils/su-common.c:795
 msgid "cannot initialize signal mask"
 msgstr "nije moguće inicijalizirati signalnu masku"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:805
 msgid "cannot set signal handler for session"
 msgstr "nije moguće postaviti rukovatelja signala za sesiju"
 
-#: login-utils/su-common.c:810 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
+#: login-utils/su-common.c:813 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
 #: term-utils/script.c:873
 msgid "cannot set signal handler"
 msgstr "nije moguće postaviti rukovatelja signala"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:821
 msgid "cannot set signal mask"
 msgstr "nije moguće postaviti signalnu masku"
 
-#: login-utils/su-common.c:846
+#: login-utils/su-common.c:849
 msgid "cannot create child process"
 msgstr "nije moguće kreirati potomka (dijete-proces)"
 
-#: login-utils/su-common.c:865
+#: login-utils/su-common.c:868
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "nije moguće promijeniti direktorij u %s"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:887
 #, c-format
 msgid ""
 "\n"
@@ -8256,57 +8264,57 @@ msgstr ""
 "\n"
 "Sesija završava, ubijamo ljusku..."
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:898
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...ubijena.\n"
 
-#: login-utils/su-common.c:996
+#: login-utils/su-common.c:999
 msgid "failed to set the PATH environment variable"
 msgstr "nije uspjelo postaviti varijablu okoline PATH (staza)"
 
-#: login-utils/su-common.c:1073
+#: login-utils/su-common.c:1076
 msgid "cannot set groups"
 msgstr "nije moguće postaviti grupe"
 
-#: login-utils/su-common.c:1079
+#: login-utils/su-common.c:1082
 #, c-format
 msgid "failed to user credentials: %s"
 msgstr "nije uspjelo obraditi korisničke vjerodajnice: %s"
 
-#: login-utils/su-common.c:1089 sys-utils/eject.c:660
+#: login-utils/su-common.c:1092 sys-utils/eject.c:660
 msgid "cannot set group id"
 msgstr "nije moguće postaviti ID grupe (GID)"
 
-#: login-utils/su-common.c:1091 sys-utils/eject.c:663
+#: login-utils/su-common.c:1094 sys-utils/eject.c:663
 msgid "cannot set user id"
 msgstr "nije moguće postaviti ID korisnika (UID)"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1162
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      ne resetira varijable okružja\n"
 
-#: login-utils/su-common.c:1160
+#: login-utils/su-common.c:1163
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <popis>  ne resetira popisane varijable\n"
 
-#: login-utils/su-common.c:1163
+#: login-utils/su-common.c:1166
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <grupa>             specifikacija primarne grupe\n"
 
-#: login-utils/su-common.c:1164
+#: login-utils/su-common.c:1167
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <grupa>        specifikacija dodatnih grupa\n"
 
-#: login-utils/su-common.c:1167
+#: login-utils/su-common.c:1170
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  učini ljusku prijavnom ljuskom\n"
 
-#: login-utils/su-common.c:1168
+#: login-utils/su-common.c:1171
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <naredba>         preda jednu naredbu ljusci s -c\n"
 
-#: login-utils/su-common.c:1169
+#: login-utils/su-common.c:1172
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -8314,19 +8322,19 @@ msgstr ""
 " --session-command <naredna>     preda jednu naredbu ljusci s -c\n"
 "                                   bez kreiranja nove sesije\n"
 
-#: login-utils/su-common.c:1171
+#: login-utils/su-common.c:1174
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      preda -f ljusci (za csh ili tcsh)\n"
 
-#: login-utils/su-common.c:1172
+#: login-utils/su-common.c:1175
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>             pokrene <shell> ako to /etc/shells dopušta\n"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1176
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       kreira novi pseudo-terminal\n"
 
-#: login-utils/su-common.c:1183
+#: login-utils/su-common.c:1186
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -8335,7 +8343,7 @@ msgstr ""
 " %1$s [opcije] -u <korisnik> [[--] <naredba>]\n"
 " %1$s [opcije] [-] [<korisnik> [<argument>...]]\n"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1191
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -8345,16 +8353,16 @@ msgstr ""
 "Ako -u nije dȃn, vrati se na kompatibilnu sa su(1) semantiku\n"
 "i pokrene standardnu ljusku.\n"
 
-#: login-utils/su-common.c:1193
+#: login-utils/su-common.c:1196
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <korisnik>           ime korisnika\n"
 
-#: login-utils/su-common.c:1204
+#: login-utils/su-common.c:1207
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [opcije] [-] [<korisnik> [<argument>...]]\n"
 
-#: login-utils/su-common.c:1208
+#: login-utils/su-common.c:1211
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -8362,7 +8370,7 @@ msgstr ""
 "Promijeni efektivni ID korisnika i ID grupe na one od navedenog <korisnika>\n"
 "Samo - (crtica) implicira -l. Ako <user> nije dȃn, pretpostavlja se root.\n"
 
-#: login-utils/su-common.c:1254
+#: login-utils/su-common.c:1257
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
@@ -8370,42 +8378,42 @@ msgstr[0] "specificiranje više od %d dodatne grupe nije moguće"
 msgstr[1] "specificiranje više od %d dodatne grupe nije moguće"
 msgstr[2] "specificiranje više od %d dodatnih grupa nije moguće"
 
-#: login-utils/su-common.c:1260
+#: login-utils/su-common.c:1263
 #, c-format
 msgid "group %s does not exist"
 msgstr "grupa %s ne postoji"
 
-#: login-utils/su-common.c:1374
+#: login-utils/su-common.c:1377
 msgid "--pty is not supported for your system"
 msgstr "opcija --pty nije podržana na vašem sustavu"
 
-#: login-utils/su-common.c:1410
+#: login-utils/su-common.c:1413
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "opcija --preserve-environment se ignorira; međusobno se isključuje s --login"
 
-#: login-utils/su-common.c:1424
+#: login-utils/su-common.c:1427
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "opcije --{shell,fast,command,session-command,login} i --user se međusobno isključuju"
 
-#: login-utils/su-common.c:1427
+#: login-utils/su-common.c:1430
 msgid "no command was specified"
 msgstr "nije dȃna nijedna naredba"
 
-#: login-utils/su-common.c:1439
+#: login-utils/su-common.c:1442
 msgid "only root can specify alternative groups"
 msgstr "samo root može specificirati alternativne grupe"
 
-#: login-utils/su-common.c:1449
+#: login-utils/su-common.c:1452
 #, c-format
 msgid "user %s does not exist"
 msgstr "korisnik %s ne postoji"
 
-#: login-utils/su-common.c:1482
+#: login-utils/su-common.c:1485
 #, c-format
 msgid "using restricted shell %s"
 msgstr "koristi se restriktivna ljuska %s"
 
-#: login-utils/su-common.c:1513
+#: login-utils/su-common.c:1516
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "upozorenje: nije moguće promijeniti direktorij na %s"
@@ -8503,7 +8511,7 @@ msgstr ""
 "                             ako funkcija getpwnam(3) ne uspije\n"
 
 #: login-utils/sulogin.c:864 misc-utils/findmnt.c:1491 sys-utils/wdctl.c:524
-#: term-utils/agetty.c:836 term-utils/wall.c:216
+#: term-utils/agetty.c:837 term-utils/wall.c:216
 msgid "invalid timeout argument"
 msgstr "nevaljani argument za --timeout"
 
@@ -9025,7 +9033,7 @@ msgstr " -o, --output <popis>   izlaz u stupcima\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             koristi sirovi (neformatirani) izlaz\n"
 
-#: misc-utils/fincore.c:343 sys-utils/losetup.c:814
+#: misc-utils/fincore.c:343 sys-utils/losetup.c:817
 msgid "no file specified"
 msgstr "nije dana nijedna datoteka"
 
@@ -9670,7 +9678,7 @@ msgstr ""
 msgid "     --verbose          print pids that will be signaled\n"
 msgstr "     --verbose          ispiše PID-ove na koji će biti poslan signal\n"
 
-#: misc-utils/kill.c:240 misc-utils/kill.c:249 sys-utils/setpriv.c:483
+#: misc-utils/kill.c:240 misc-utils/kill.c:249 sys-utils/setpriv.c:482
 #: sys-utils/unshare.c:389
 #, c-format
 msgid "unknown signal: %s"
@@ -9683,7 +9691,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr ""
 
 #: misc-utils/kill.c:287 sys-utils/eject.c:205 sys-utils/eject.c:230
-#: sys-utils/losetup.c:722 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
+#: sys-utils/losetup.c:725 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
 #: sys-utils/tunelp.c:181 sys-utils/tunelp.c:188 sys-utils/tunelp.c:195
 #: sys-utils/tunelp.c:201 sys-utils/tunelp.c:205 sys-utils/tunelp.c:212
 #: term-utils/setterm.c:211 term-utils/setterm.c:214 term-utils/setterm.c:233
@@ -11462,7 +11470,7 @@ msgstr ""
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose       duljina poravnanja i odmak\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:702
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:705
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "nije uspjelo raščlaniti odmak"
@@ -11471,8 +11479,8 @@ msgstr "nije uspjelo raščlaniti odmak"
 msgid "failed to parse step"
 msgstr "nije uspjelo raščlaniti korak"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:408
-#: sys-utils/fallocate.c:374 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:405
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:409 sys-utils/fallocate.c:374
+#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:405
 msgid "unexpected number of arguments"
 msgstr "neočekivan broj argumenata"
 
@@ -11491,7 +11499,7 @@ msgstr ""
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:201 sys-utils/blkzone.c:183 sys-utils/blkzone.c:271
+#: sys-utils/blkdiscard.c:201 sys-utils/blkzone.c:272
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s: odmak (offset) je veći od od veličine uređaja"
@@ -11529,89 +11537,94 @@ msgstr ""
 msgid "%s: blkdev_get_sectors ioctl failed"
 msgstr ""
 
-#: sys-utils/blkzone.c:187 sys-utils/blkzone.c:261
+#: sys-utils/blkzone.c:184
+#, fuzzy, c-format
+msgid "%s: offset is greater than or equal to device size"
+msgstr "%s: odmak (offset) je veći od od veličine uređaja"
+
+#: sys-utils/blkzone.c:188 sys-utils/blkzone.c:262
 #, c-format
 msgid "%s: unable to determine zone size"
 msgstr "%s: nije moguće utvrditi veličinu zone"
 
-#: sys-utils/blkzone.c:205
+#: sys-utils/blkzone.c:206
 #, c-format
 msgid "%s: BLKREPORTZONE ioctl failed"
 msgstr ""
 
-#: sys-utils/blkzone.c:208
+#: sys-utils/blkzone.c:209
 #, c-format
 msgid "Found %d zones from 0x%<PRIx64>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:229
+#: sys-utils/blkzone.c:230
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:266
+#: sys-utils/blkzone.c:267
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr ""
 
-#: sys-utils/blkzone.c:285
+#: sys-utils/blkzone.c:286
 #, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr ""
 
-#: sys-utils/blkzone.c:293
+#: sys-utils/blkzone.c:294
 #, c-format
 msgid "%s: BLKRESETZONE ioctl failed"
 msgstr ""
 
-#: sys-utils/blkzone.c:295
+#: sys-utils/blkzone.c:296
 #, c-format
 msgid "%s: successfully reset in range from %<PRIu64>, to %<PRIu64>"
 msgstr ""
 
-#: sys-utils/blkzone.c:309
+#: sys-utils/blkzone.c:310
 #, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr " %s <naredba> [opcije] <uređaj>\n"
 
-#: sys-utils/blkzone.c:312
+#: sys-utils/blkzone.c:313
 msgid "Run zone command on the given block device.\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:319
+#: sys-utils/blkzone.c:320
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:320
+#: sys-utils/blkzone.c:321
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:321
+#: sys-utils/blkzone.c:322
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:322
+#: sys-utils/blkzone.c:323
 msgid " -v, --verbose          display more details\n"
 msgstr " -v, --verbose          pokaže više informacija\n"
 
-#: sys-utils/blkzone.c:364
+#: sys-utils/blkzone.c:365
 #, c-format
 msgid "%s is not valid command name"
 msgstr ""
 
-#: sys-utils/blkzone.c:379
+#: sys-utils/blkzone.c:380
 msgid "failed to parse number of zones"
 msgstr "nije uspjelo razabrati broj zona"
 
-#: sys-utils/blkzone.c:383
+#: sys-utils/blkzone.c:384
 msgid "failed to parse number of sectors"
 msgstr "nije uspjelo razabrati broj sektora"
 
-#: sys-utils/blkzone.c:387
+#: sys-utils/blkzone.c:388
 msgid "failed to parse zone offset"
 msgstr "nije uspjelo razabrati odmak zone"
 
-#: sys-utils/blkzone.c:401 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:402 sys-utils/setsid.c:92
 msgid "no command specified"
 msgstr "nije dana nijedna naredba"
 
@@ -12399,6 +12412,10 @@ msgstr ""
 msgid "CD-ROM drive is not ready"
 msgstr ""
 
+#: sys-utils/eject.c:441
+msgid "CD-ROM status command failed"
+msgstr ""
+
 #: sys-utils/eject.c:481
 msgid "CD-ROM select speed command failed"
 msgstr ""
@@ -12894,8 +12911,9 @@ msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose       ispiše broj odbačenih bajtova\n"
 
 #: sys-utils/fstrim.c:326
-msgid " -d, --dry-run       does everything, but trim\n"
-msgstr ""
+#, fuzzy
+msgid " -n, --dry-run       does everything, but trim\n"
+msgstr " -n, --no-act              izvrši sve osim pisanja na uređaj\n"
 
 #: sys-utils/fstrim.c:387
 msgid "failed to parse minimum extent length"
@@ -13435,7 +13453,7 @@ msgstr " -Q, --queue              kreira red čekanja\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <mȏd>         prava pristupa resursa (zadano 0644)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:730 sys-utils/zramctl.c:647
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:733 sys-utils/zramctl.c:647
 msgid "failed to parse size"
 msgstr "nije uspjelo raščlaniti veličinu"
 
@@ -14464,88 +14482,88 @@ msgstr "     --output-all              ispiše sve stupce\n"
 msgid "     --raw                     use raw --list output format\n"
 msgstr "     --raw                     za --list koristi sirovi format izlaza\n"
 
-#: sys-utils/losetup.c:461
+#: sys-utils/losetup.c:464
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr ""
 
-#: sys-utils/losetup.c:465
+#: sys-utils/losetup.c:468
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr ""
 
-#: sys-utils/losetup.c:486 sys-utils/losetup.c:538
+#: sys-utils/losetup.c:489 sys-utils/losetup.c:541
 #, c-format
 msgid "%s: overlapping loop device exists"
 msgstr ""
 
-#: sys-utils/losetup.c:497
+#: sys-utils/losetup.c:500
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
 msgstr ""
 
-#: sys-utils/losetup.c:504
+#: sys-utils/losetup.c:507
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
 msgstr ""
 
-#: sys-utils/losetup.c:510
+#: sys-utils/losetup.c:513
 #, c-format
 msgid "%s: failed to re-use loop device"
 msgstr "%s: nije uspjelo ponovno koristiti loop uređaj"
 
-#: sys-utils/losetup.c:516
+#: sys-utils/losetup.c:519
 msgid "failed to inspect loop devices"
 msgstr "nije uspjelo provjeriti loop uređaj"
 
-#: sys-utils/losetup.c:539
+#: sys-utils/losetup.c:542
 #, c-format
 msgid "%s: failed to check for conflicting loop devices"
 msgstr ""
 
-#: sys-utils/losetup.c:551 sys-utils/losetup.c:868
+#: sys-utils/losetup.c:554 sys-utils/losetup.c:871
 msgid "cannot find an unused loop device"
 msgstr ""
 
-#: sys-utils/losetup.c:561
+#: sys-utils/losetup.c:564
 #, c-format
 msgid "%s: failed to use backing file"
 msgstr ""
 
-#: sys-utils/losetup.c:654
+#: sys-utils/losetup.c:657
 msgid "failed to parse logical block size"
 msgstr "nije uspjelo raščlaniti veličinu logičkih blokova"
 
-#: sys-utils/losetup.c:660 sys-utils/losetup.c:670 sys-utils/losetup.c:795
-#: sys-utils/losetup.c:809 sys-utils/losetup.c:848
+#: sys-utils/losetup.c:663 sys-utils/losetup.c:673 sys-utils/losetup.c:798
+#: sys-utils/losetup.c:812 sys-utils/losetup.c:851
 #, c-format
 msgid "%s: failed to use device"
 msgstr ""
 
-#: sys-utils/losetup.c:806
+#: sys-utils/losetup.c:809
 msgid "no loop device specified"
 msgstr ""
 
-#: sys-utils/losetup.c:821
+#: sys-utils/losetup.c:824
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr ""
 
-#: sys-utils/losetup.c:826
+#: sys-utils/losetup.c:829
 msgid "the option --offset is not allowed in this context"
 msgstr ""
 
-#: sys-utils/losetup.c:889
+#: sys-utils/losetup.c:892
 #, c-format
 msgid "%s: set capacity failed"
 msgstr ""
 
-#: sys-utils/losetup.c:898
+#: sys-utils/losetup.c:901
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: postaviti izravni U/I (IO) nije uspjelo"
 
-#: sys-utils/losetup.c:904
+#: sys-utils/losetup.c:907
 #, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: postaviti veličinu logičkog sektora nije uspjelo"
@@ -15898,7 +15916,7 @@ msgstr "chroot nije uspio"
 msgid "change directory by working directory file descriptor failed"
 msgstr ""
 
-#: sys-utils/nsenter.c:472 sys-utils/setpriv.c:1061 sys-utils/setpriv.c:1068
+#: sys-utils/nsenter.c:472 sys-utils/setpriv.c:1060 sys-utils/setpriv.c:1067
 msgid "setgroups failed"
 msgstr "setgroups nije uspio"
 
@@ -16184,30 +16202,35 @@ msgstr ""
 msgid "error writing %s"
 msgstr ""
 
-#: sys-utils/readprofile.c:270
+#: sys-utils/readprofile.c:250
+#, fuzzy
+msgid "input file is empty"
+msgstr "Linux datotečni sustav"
+
+#: sys-utils/readprofile.c:272
 msgid "Assuming reversed byte order. Use -n to force native byte order."
 msgstr ""
 
-#: sys-utils/readprofile.c:285
+#: sys-utils/readprofile.c:287
 #, c-format
 msgid "Sampling_step: %u\n"
 msgstr ""
 
-#: sys-utils/readprofile.c:301 sys-utils/readprofile.c:322
+#: sys-utils/readprofile.c:303 sys-utils/readprofile.c:324
 #, c-format
 msgid "%s(%i): wrong map line"
 msgstr ""
 
-#: sys-utils/readprofile.c:312
+#: sys-utils/readprofile.c:314
 #, c-format
 msgid "can't find \"_stext\" in %s"
 msgstr ""
 
-#: sys-utils/readprofile.c:345
+#: sys-utils/readprofile.c:347
 msgid "profile address out of range. Wrong map file?"
 msgstr ""
 
-#: sys-utils/readprofile.c:403
+#: sys-utils/readprofile.c:405
 msgid "total"
 msgstr ""
 
@@ -16640,34 +16663,29 @@ msgstr ""
 msgid "Kernel cannot set architecture to %s"
 msgstr ""
 
-#: sys-utils/setarch.c:307
+#: sys-utils/setarch.c:308
 msgid "Not enough arguments"
 msgstr ""
 
-#: sys-utils/setarch.c:316
-#, c-format
-msgid "Failed to set personality to %s"
-msgstr ""
-
-#: sys-utils/setarch.c:381
+#: sys-utils/setarch.c:382
 msgid "unrecognized option '--list'"
 msgstr ""
 
-#: sys-utils/setarch.c:389
+#: sys-utils/setarch.c:390
 msgid "no architecture argument or personality flags specified"
 msgstr ""
 
-#: sys-utils/setarch.c:400
+#: sys-utils/setarch.c:402
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr ""
 
-#: sys-utils/setarch.c:418
+#: sys-utils/setarch.c:420
 #, c-format
 msgid "failed to set personality to %s"
 msgstr "nije uspjelo postaviti karakteristike (osobnost) na %s"
 
-#: sys-utils/setarch.c:426
+#: sys-utils/setarch.c:432
 #, c-format
 msgid "Execute command `%s'.\n"
 msgstr ""
@@ -16746,357 +16764,353 @@ msgid " --securebits <bits>         set securebits\n"
 msgstr ""
 
 #: sys-utils/setpriv.c:148
-msgid " --reset-env                 reset environment variables\n"
-msgstr ""
-
-#: sys-utils/setpriv.c:149
 msgid ""
 " --pdeathsig keep|clear|<signame>\n"
 "                             set or clear parent death signal\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:151
+#: sys-utils/setpriv.c:150
 msgid " --selinux-label <label>     set SELinux label\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:152
+#: sys-utils/setpriv.c:151
 msgid " --apparmor-profile <pr>     set AppArmor profile\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:153
+#: sys-utils/setpriv.c:152
 msgid ""
 " --reset-env                 clear all environment and initialize\n"
 "                               HOME, SHELL, USER, LOGNAME and PATH\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:159
+#: sys-utils/setpriv.c:158
 msgid " This tool can be dangerous.  Read the manpage, and be careful.\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:202
+#: sys-utils/setpriv.c:201
 msgid "invalid capability type"
 msgstr ""
 
-#: sys-utils/setpriv.c:254 sys-utils/setpriv.c:598
+#: sys-utils/setpriv.c:253 sys-utils/setpriv.c:597
 msgid "getting process secure bits failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:258
+#: sys-utils/setpriv.c:257
 #, c-format
 msgid "Securebits: "
 msgstr ""
 
-#: sys-utils/setpriv.c:278
+#: sys-utils/setpriv.c:277
 #, c-format
 msgid "[none]\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:304
+#: sys-utils/setpriv.c:303
 #, c-format
 msgid "%s: too long"
 msgstr "%s: predug"
 
-#: sys-utils/setpriv.c:332
+#: sys-utils/setpriv.c:331
 #, c-format
 msgid "Supplementary groups: "
 msgstr ""
 
-#: sys-utils/setpriv.c:334 sys-utils/setpriv.c:400 sys-utils/setpriv.c:405
-#: sys-utils/setpriv.c:411 sys-utils/setpriv.c:417 sys-utils/setpriv.c:424
+#: sys-utils/setpriv.c:333 sys-utils/setpriv.c:399 sys-utils/setpriv.c:404
+#: sys-utils/setpriv.c:410 sys-utils/setpriv.c:416 sys-utils/setpriv.c:423
 #, c-format
 msgid "[none]"
 msgstr ""
 
-#: sys-utils/setpriv.c:352
+#: sys-utils/setpriv.c:351
 msgid "get pdeathsig failed"
 msgstr "dobiti pdeathsig (signal o smrti pretka) nije uspjelo"
 
-#: sys-utils/setpriv.c:372
+#: sys-utils/setpriv.c:371
 #, c-format
 msgid "uid: %u\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:373
+#: sys-utils/setpriv.c:372
 #, c-format
 msgid "euid: %u\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:376
+#: sys-utils/setpriv.c:375
 #, c-format
 msgid "suid: %u\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:378 sys-utils/setpriv.c:491
+#: sys-utils/setpriv.c:377 sys-utils/setpriv.c:490
 msgid "getresuid failed"
 msgstr "getresuid() nije uspjelo"
 
-#: sys-utils/setpriv.c:387 sys-utils/setpriv.c:506
+#: sys-utils/setpriv.c:386 sys-utils/setpriv.c:505
 msgid "getresgid failed"
 msgstr "getresgid() nije uspjelo"
 
-#: sys-utils/setpriv.c:398
+#: sys-utils/setpriv.c:397
 #, c-format
 msgid "Effective capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:403
+#: sys-utils/setpriv.c:402
 #, c-format
 msgid "Permitted capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:409
+#: sys-utils/setpriv.c:408
 #, c-format
 msgid "Inheritable capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:414
+#: sys-utils/setpriv.c:413
 #, c-format
 msgid "Ambient capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:419
+#: sys-utils/setpriv.c:418
 #, c-format
 msgid "[unsupported]"
 msgstr ""
 
-#: sys-utils/setpriv.c:422
+#: sys-utils/setpriv.c:421
 #, c-format
 msgid "Capability bounding set: "
 msgstr ""
 
-#: sys-utils/setpriv.c:431
+#: sys-utils/setpriv.c:430
 msgid "SELinux label"
 msgstr ""
 
-#: sys-utils/setpriv.c:434
+#: sys-utils/setpriv.c:433
 msgid "AppArmor profile"
 msgstr ""
 
-#: sys-utils/setpriv.c:447
+#: sys-utils/setpriv.c:446
 #, c-format
 msgid "cap %d: libcap-ng is broken"
 msgstr ""
 
-#: sys-utils/setpriv.c:469
+#: sys-utils/setpriv.c:468
 msgid "Invalid supplementary group id"
 msgstr ""
 
-#: sys-utils/setpriv.c:479
+#: sys-utils/setpriv.c:478
 msgid "failed to get parent death signal"
 msgstr "nije uspjelo dobiti signal da je roditelj mrtav"
 
-#: sys-utils/setpriv.c:499
+#: sys-utils/setpriv.c:498
 msgid "setresuid failed"
 msgstr "setresuid() nije uspjelo"
 
-#: sys-utils/setpriv.c:514
+#: sys-utils/setpriv.c:513
 msgid "setresgid failed"
 msgstr "setresgid() nije uspjelo"
 
-#: sys-utils/setpriv.c:546
+#: sys-utils/setpriv.c:545
 msgid "unsupported capability type"
 msgstr "nepodržana vrsta sposobnosti"
 
-#: sys-utils/setpriv.c:563
+#: sys-utils/setpriv.c:562
 msgid "bad capability string"
 msgstr ""
 
-#: sys-utils/setpriv.c:571
+#: sys-utils/setpriv.c:570
 msgid "libcap-ng is too old for \"all\" caps"
 msgstr ""
 
-#: sys-utils/setpriv.c:583
+#: sys-utils/setpriv.c:582
 #, c-format
 msgid "unknown capability \"%s\""
 msgstr ""
 
-#: sys-utils/setpriv.c:607
+#: sys-utils/setpriv.c:606
 msgid "unrecognized securebit set -- refusing to adjust"
 msgstr ""
 
-#: sys-utils/setpriv.c:611
+#: sys-utils/setpriv.c:610
 msgid "bad securebits string"
 msgstr ""
 
-#: sys-utils/setpriv.c:618
+#: sys-utils/setpriv.c:617
 msgid "+all securebits is not allowed"
 msgstr ""
 
-#: sys-utils/setpriv.c:631
+#: sys-utils/setpriv.c:630
 msgid "adjusting keep_caps does not make sense"
 msgstr ""
 
-#: sys-utils/setpriv.c:635
+#: sys-utils/setpriv.c:634
 msgid "unrecognized securebit"
 msgstr ""
 
-#: sys-utils/setpriv.c:655
+#: sys-utils/setpriv.c:654
 msgid "SELinux is not running"
 msgstr ""
 
-#: sys-utils/setpriv.c:670
+#: sys-utils/setpriv.c:669
 #, c-format
 msgid "close failed: %s"
 msgstr "zatvaranje nije uspjelo: %s"
 
-#: sys-utils/setpriv.c:678
+#: sys-utils/setpriv.c:677
 msgid "AppArmor is not running"
 msgstr ""
 
-#: sys-utils/setpriv.c:855
+#: sys-utils/setpriv.c:854
 msgid "duplicate --no-new-privs option"
 msgstr ""
 
-#: sys-utils/setpriv.c:860
+#: sys-utils/setpriv.c:859
 msgid "duplicate ruid"
 msgstr ""
 
-#: sys-utils/setpriv.c:862
+#: sys-utils/setpriv.c:861
 msgid "failed to parse ruid"
 msgstr "nije uspjelo raščlaniti RUID"
 
-#: sys-utils/setpriv.c:870
+#: sys-utils/setpriv.c:869
 msgid "duplicate euid"
 msgstr ""
 
-#: sys-utils/setpriv.c:872
+#: sys-utils/setpriv.c:871
 msgid "failed to parse euid"
 msgstr "nije uspjelo raščlaniti EUID"
 
-#: sys-utils/setpriv.c:876
+#: sys-utils/setpriv.c:875
 msgid "duplicate ruid or euid"
 msgstr ""
 
-#: sys-utils/setpriv.c:878
+#: sys-utils/setpriv.c:877
 msgid "failed to parse reuid"
 msgstr "nije uspjelo raščlaniti REUID"
 
-#: sys-utils/setpriv.c:887
+#: sys-utils/setpriv.c:886
 msgid "duplicate rgid"
 msgstr ""
 
-#: sys-utils/setpriv.c:889
+#: sys-utils/setpriv.c:888
 msgid "failed to parse rgid"
 msgstr "nije uspjelo raščlaniti RGID"
 
-#: sys-utils/setpriv.c:893
+#: sys-utils/setpriv.c:892
 msgid "duplicate egid"
 msgstr ""
 
-#: sys-utils/setpriv.c:895
+#: sys-utils/setpriv.c:894
 msgid "failed to parse egid"
 msgstr "nije uspjelo raščlaniti EGID"
 
-#: sys-utils/setpriv.c:899
+#: sys-utils/setpriv.c:898
 msgid "duplicate rgid or egid"
 msgstr ""
 
-#: sys-utils/setpriv.c:901
+#: sys-utils/setpriv.c:900
 msgid "failed to parse regid"
 msgstr "nije uspjelo raščlaniti REGID"
 
-#: sys-utils/setpriv.c:906
+#: sys-utils/setpriv.c:905
 msgid "duplicate --clear-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:912
+#: sys-utils/setpriv.c:911
 msgid "duplicate --keep-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:918
+#: sys-utils/setpriv.c:917
 msgid "duplicate --init-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:924
+#: sys-utils/setpriv.c:923
 msgid "duplicate --groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:930
+#: sys-utils/setpriv.c:929
 msgid "duplicate --keep-pdeathsig option"
 msgstr ""
 
-#: sys-utils/setpriv.c:939
+#: sys-utils/setpriv.c:938
 msgid "duplicate --inh-caps option"
 msgstr ""
 
-#: sys-utils/setpriv.c:945
+#: sys-utils/setpriv.c:944
 msgid "duplicate --ambient-caps option"
 msgstr ""
 
-#: sys-utils/setpriv.c:951
+#: sys-utils/setpriv.c:950
 msgid "duplicate --bounding-set option"
 msgstr ""
 
-#: sys-utils/setpriv.c:957
+#: sys-utils/setpriv.c:956
 msgid "duplicate --securebits option"
 msgstr ""
 
-#: sys-utils/setpriv.c:963
+#: sys-utils/setpriv.c:962
 msgid "duplicate --selinux-label option"
 msgstr ""
 
-#: sys-utils/setpriv.c:969
+#: sys-utils/setpriv.c:968
 msgid "duplicate --apparmor-profile option"
 msgstr ""
 
-#: sys-utils/setpriv.c:988
+#: sys-utils/setpriv.c:987
 msgid "--dump is incompatible with all other options"
 msgstr "--dump nije kompatibilan s nijednom drugom opcijom"
 
-#: sys-utils/setpriv.c:996
+#: sys-utils/setpriv.c:995
 msgid "--list-caps must be specified alone"
 msgstr ""
 
-#: sys-utils/setpriv.c:1002
+#: sys-utils/setpriv.c:1001
 msgid "No program specified"
 msgstr ""
 
-#: sys-utils/setpriv.c:1008
+#: sys-utils/setpriv.c:1007
 msgid "--[re]gid requires --keep-groups, --clear-groups, --init-groups, or --groups"
 msgstr ""
 
-#: sys-utils/setpriv.c:1012
+#: sys-utils/setpriv.c:1011
 msgid "--init-groups requires --ruid or --reuid"
 msgstr ""
 
-#: sys-utils/setpriv.c:1016
+#: sys-utils/setpriv.c:1015
 #, c-format
 msgid "uid %ld not found, --init-groups requires an user that can be found on the system"
 msgstr ""
 
-#: sys-utils/setpriv.c:1031
+#: sys-utils/setpriv.c:1030
 msgid "disallow granting new privileges failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:1039
+#: sys-utils/setpriv.c:1038
 msgid "keep process capabilities failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:1047
+#: sys-utils/setpriv.c:1046
 msgid "activate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1053
+#: sys-utils/setpriv.c:1052
 msgid "reactivate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1064
+#: sys-utils/setpriv.c:1063
 msgid "initgroups failed"
 msgstr "initgroups() nije uspjelo"
 
-#: sys-utils/setpriv.c:1072
+#: sys-utils/setpriv.c:1071
 msgid "set process securebits failed"
 msgstr "postavljanje „securebits“ procesa nije uspjelo"
 
-#: sys-utils/setpriv.c:1078
+#: sys-utils/setpriv.c:1077
 msgid "apply bounding set"
 msgstr ""
 
-#: sys-utils/setpriv.c:1084
+#: sys-utils/setpriv.c:1083
 msgid "apply capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1093
+#: sys-utils/setpriv.c:1092
 msgid "set parent death signal failed"
 msgstr "postavljanje signala o smrti roditelja nije uspjelo"
 
@@ -18115,314 +18129,314 @@ msgstr "%s: nije uspjelo postaviti veličinu diska (%ju bajtova)"
 msgid "%s%s (automatic login)\n"
 msgstr ""
 
-#: term-utils/agetty.c:545
+#: term-utils/agetty.c:546
 #, c-format
 msgid "%s: can't change root directory %s: %m"
 msgstr ""
 
-#: term-utils/agetty.c:548
+#: term-utils/agetty.c:549
 #, c-format
 msgid "%s: can't change working directory %s: %m"
 msgstr ""
 
-#: term-utils/agetty.c:551
+#: term-utils/agetty.c:552
 #, c-format
 msgid "%s: can't change process priority: %m"
 msgstr ""
 
-#: term-utils/agetty.c:562
+#: term-utils/agetty.c:563
 #, c-format
 msgid "%s: can't exec %s: %m"
 msgstr ""
 
-#: term-utils/agetty.c:593 term-utils/agetty.c:920 term-utils/agetty.c:1447
-#: term-utils/agetty.c:1465 term-utils/agetty.c:1502 term-utils/agetty.c:1512
-#: term-utils/agetty.c:1554 term-utils/agetty.c:2190 term-utils/agetty.c:2757
+#: term-utils/agetty.c:594 term-utils/agetty.c:921 term-utils/agetty.c:1457
+#: term-utils/agetty.c:1475 term-utils/agetty.c:1512 term-utils/agetty.c:1522
+#: term-utils/agetty.c:1564 term-utils/agetty.c:2203 term-utils/agetty.c:2772
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "nije uspjelo rezervirati memoriju: %m"
 
-#: term-utils/agetty.c:683
+#: term-utils/agetty.c:684
 #, c-format
 msgid "%s from %s"
 msgstr "%s iz %s"
 
-#: term-utils/agetty.c:767
+#: term-utils/agetty.c:768
 msgid "invalid delay argument"
 msgstr "nevaljani argument opcije --delay"
 
-#: term-utils/agetty.c:805
+#: term-utils/agetty.c:806
 msgid "invalid argument of --local-line"
 msgstr "nevaljani argument opcije --local-line"
 
-#: term-utils/agetty.c:824
+#: term-utils/agetty.c:825
 msgid "invalid nice argument"
 msgstr "nevaljani argument opcije --nice"
 
-#: term-utils/agetty.c:925
+#: term-utils/agetty.c:926
 #, c-format
 msgid "bad speed: %s"
 msgstr ""
 
-#: term-utils/agetty.c:927
+#: term-utils/agetty.c:928
 msgid "too many alternate speeds"
 msgstr ""
 
-#: term-utils/agetty.c:1034 term-utils/agetty.c:1038 term-utils/agetty.c:1091
+#: term-utils/agetty.c:1035 term-utils/agetty.c:1039 term-utils/agetty.c:1092
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr ""
 
-#: term-utils/agetty.c:1057
+#: term-utils/agetty.c:1058
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr ""
 
-#: term-utils/agetty.c:1059
+#: term-utils/agetty.c:1060
 #, c-format
 msgid "/dev/%s: not a tty"
 msgstr ""
 
-#: term-utils/agetty.c:1063 term-utils/agetty.c:1095
+#: term-utils/agetty.c:1064 term-utils/agetty.c:1096
 #, c-format
 msgid "/dev/%s: cannot get controlling tty: %m"
 msgstr ""
 
-#: term-utils/agetty.c:1085
+#: term-utils/agetty.c:1086
 #, c-format
 msgid "/dev/%s: vhangup() failed: %m"
 msgstr ""
 
-#: term-utils/agetty.c:1106
+#: term-utils/agetty.c:1107
 #, c-format
 msgid "%s: not open for read/write"
 msgstr ""
 
-#: term-utils/agetty.c:1111
+#: term-utils/agetty.c:1112
 #, c-format
 msgid "/dev/%s: cannot set process group: %m"
 msgstr ""
 
-#: term-utils/agetty.c:1125
+#: term-utils/agetty.c:1126
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr ""
 
-#: term-utils/agetty.c:1142
+#: term-utils/agetty.c:1143
 #, c-format
 msgid "%s: failed to get terminal attributes: %m"
 msgstr ""
 
-#: term-utils/agetty.c:1353 term-utils/agetty.c:1373
+#: term-utils/agetty.c:1354 term-utils/agetty.c:1383
 #, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr ""
 
-#: term-utils/agetty.c:1492
+#: term-utils/agetty.c:1502
 msgid "cannot open os-release file"
 msgstr "nije moguće otvoriti datoteku os-release"
 
-#: term-utils/agetty.c:1659
+#: term-utils/agetty.c:1669
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "nije uspjelo kreirati datoteku za ponovno pokretanje: %s: %m"
 
-#: term-utils/agetty.c:1924
+#: term-utils/agetty.c:1936
 msgid "[press ENTER to login]"
 msgstr ""
 
-#: term-utils/agetty.c:1951
+#: term-utils/agetty.c:1963
 msgid "Num Lock off"
 msgstr ""
 
-#: term-utils/agetty.c:1954
+#: term-utils/agetty.c:1966
 msgid "Num Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:1957
+#: term-utils/agetty.c:1969
 msgid "Caps Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:1960
+#: term-utils/agetty.c:1972
 msgid "Scroll Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:1963
+#: term-utils/agetty.c:1975
 #, c-format
 msgid ""
 "Hint: %s\n"
 "\n"
 msgstr ""
 
-#: term-utils/agetty.c:2105
+#: term-utils/agetty.c:2117
 #, c-format
 msgid "%s: read: %m"
 msgstr ""
 
-#: term-utils/agetty.c:2169
+#: term-utils/agetty.c:2179
 #, c-format
 msgid "%s: input overrun"
 msgstr ""
 
-#: term-utils/agetty.c:2186 term-utils/agetty.c:2194
+#: term-utils/agetty.c:2199 term-utils/agetty.c:2207
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr ""
 
-#: term-utils/agetty.c:2200
+#: term-utils/agetty.c:2213
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr ""
 
-#: term-utils/agetty.c:2285
+#: term-utils/agetty.c:2298
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: nije uspjelo postaviti atribute terminala: %m"
 
-#: term-utils/agetty.c:2323
+#: term-utils/agetty.c:2336
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"
 msgstr ""
 
-#: term-utils/agetty.c:2327
+#: term-utils/agetty.c:2340
 msgid "Open a terminal and set its mode.\n"
 msgstr ""
 
-#: term-utils/agetty.c:2330
+#: term-utils/agetty.c:2343
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr ""
 
-#: term-utils/agetty.c:2331
+#: term-utils/agetty.c:2344
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr ""
 
-#: term-utils/agetty.c:2332
+#: term-utils/agetty.c:2345
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr ""
 
-#: term-utils/agetty.c:2333
+#: term-utils/agetty.c:2346
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr ""
 
-#: term-utils/agetty.c:2334
+#: term-utils/agetty.c:2347
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr ""
 
-#: term-utils/agetty.c:2335
+#: term-utils/agetty.c:2348
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr ""
 
-#: term-utils/agetty.c:2336
+#: term-utils/agetty.c:2349
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr ""
 
-#: term-utils/agetty.c:2337
+#: term-utils/agetty.c:2350
 msgid " -i, --noissue              do not display issue file\n"
 msgstr ""
 
-#: term-utils/agetty.c:2338
+#: term-utils/agetty.c:2351
 msgid " -I, --init-string <string> set init string\n"
 msgstr ""
 
-#: term-utils/agetty.c:2339
+#: term-utils/agetty.c:2352
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr ""
 
-#: term-utils/agetty.c:2340
+#: term-utils/agetty.c:2353
 msgid " -l, --login-program <file> specify login program\n"
 msgstr ""
 
-#: term-utils/agetty.c:2341
+#: term-utils/agetty.c:2354
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr ""
 
-#: term-utils/agetty.c:2342
+#: term-utils/agetty.c:2355
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr ""
 
-#: term-utils/agetty.c:2343
+#: term-utils/agetty.c:2356
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2344
+#: term-utils/agetty.c:2357
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr ""
 
-#: term-utils/agetty.c:2345
+#: term-utils/agetty.c:2358
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2346
+#: term-utils/agetty.c:2359
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2347
+#: term-utils/agetty.c:2360
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr ""
 
-#: term-utils/agetty.c:2348
+#: term-utils/agetty.c:2361
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr ""
 
-#: term-utils/agetty.c:2349
+#: term-utils/agetty.c:2362
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr ""
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2363
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr ""
 
-#: term-utils/agetty.c:2351
+#: term-utils/agetty.c:2364
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr ""
 
-#: term-utils/agetty.c:2352
+#: term-utils/agetty.c:2365
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr ""
 
-#: term-utils/agetty.c:2353
+#: term-utils/agetty.c:2366
 msgid "     --nohints              do not print hints\n"
 msgstr ""
 
-#: term-utils/agetty.c:2354
+#: term-utils/agetty.c:2367
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr ""
 
-#: term-utils/agetty.c:2355
+#: term-utils/agetty.c:2368
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr ""
 
-#: term-utils/agetty.c:2356
+#: term-utils/agetty.c:2369
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2357
+#: term-utils/agetty.c:2370
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2358
+#: term-utils/agetty.c:2371
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2359
+#: term-utils/agetty.c:2372
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr ""
 
-#: term-utils/agetty.c:2360
+#: term-utils/agetty.c:2373
 msgid "     --nice <number>        run login with this priority\n"
 msgstr ""
 
-#: term-utils/agetty.c:2361
+#: term-utils/agetty.c:2374
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr ""
 
-#: term-utils/agetty.c:2362
+#: term-utils/agetty.c:2375
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          prikaže podržane brzine transmisije u baud\n"
 
-#: term-utils/agetty.c:2716
+#: term-utils/agetty.c:2729
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
@@ -18430,17 +18444,17 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: term-utils/agetty.c:2845
+#: term-utils/agetty.c:2860
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname nije uspio: %m"
 
-#: term-utils/agetty.c:2857
+#: term-utils/agetty.c:2872
 #, c-format
 msgid "cannot touch file %s"
 msgstr "nije moguće taknuti (touch) datoteku %s"
 
-#: term-utils/agetty.c:2861
+#: term-utils/agetty.c:2876
 msgid "--reload is unsupported on your system"
 msgstr ""
 
@@ -18930,16 +18944,12 @@ msgstr ""
 msgid "cannot get passwd uid"
 msgstr ""
 
-#: term-utils/wall.c:362
-msgid "cannot get tty name"
-msgstr ""
-
-#: term-utils/wall.c:382
+#: term-utils/wall.c:381
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr ""
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:414
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr ""
@@ -19794,6 +19804,9 @@ msgstr ""
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr ""
+
+#~ msgid "incorrect password"
+#~ msgstr "pogrešna lozinka"
 
 #~ msgid "set blocksize"
 #~ msgstr "postavi veličinu bloka"

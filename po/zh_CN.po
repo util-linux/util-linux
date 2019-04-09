@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-01-09 11:05+0100\n"
+"POT-Creation-Date: 2019-04-09 14:30+0200\n"
 "PO-Revision-Date: 2016-11-07 05:25-0500\n"
 "Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -55,7 +55,7 @@ msgstr "参数不够"
 #: disk-utils/sfdisk.c:765 disk-utils/sfdisk.c:824 disk-utils/sfdisk.c:903
 #: disk-utils/sfdisk.c:944 disk-utils/sfdisk.c:974 disk-utils/sfdisk.c:1011
 #: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
-#: login-utils/islocal.c:87 login-utils/last.c:667 login-utils/sulogin.c:443
+#: login-utils/islocal.c:87 login-utils/last.c:668 login-utils/sulogin.c:443
 #: login-utils/sulogin.c:480 login-utils/utmpdump.c:134
 #: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374 login-utils/vipw.c:261
 #: login-utils/vipw.c:279 misc-utils/findmnt.c:1105 misc-utils/logger.c:1224
@@ -70,10 +70,10 @@ msgstr "参数不够"
 #: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
 #: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2871 term-utils/mesg.c:132 term-utils/script.c:540
+#: term-utils/agetty.c:2869 term-utils/mesg.c:132 term-utils/script.c:540
 #: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
+#: term-utils/wall.c:418 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:140 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
@@ -302,7 +302,7 @@ msgid "Quit program without writing changes"
 msgstr "退出程序而不写入更改"
 
 #: disk-utils/cfdisk.c:195 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1023
-#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3137 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1128
 msgid "Type"
 msgstr "类型"
@@ -790,7 +790,7 @@ msgstr "无效参数 - repair"
 #: disk-utils/mkfs.bfs.c:188 disk-utils/mkfs.cramfs.c:337
 #: disk-utils/mkfs.cramfs.c:758 disk-utils/mkfs.cramfs.c:797
 #: disk-utils/mkfs.minix.c:821 disk-utils/mkswap.c:243 disk-utils/partx.c:959
-#: login-utils/last.c:681 login-utils/utmpdump.c:137 misc-utils/namei.c:135
+#: login-utils/last.c:682 login-utils/utmpdump.c:137 misc-utils/namei.c:135
 #: misc-utils/rename.c:120 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
 #: sys-utils/dmesg.c:526 sys-utils/fallocate.c:198 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:84 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
@@ -851,7 +851,7 @@ msgid "Using default response %c."
 msgstr "将使用默认回应 %c。"
 
 #: disk-utils/fdisk.c:222 disk-utils/fdisk.c:296 disk-utils/fdisk.c:373
-#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2470
+#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2474
 msgid "Value out of range."
 msgstr "值超出范围。"
 
@@ -942,7 +942,7 @@ msgid "cannot read"
 msgstr "不能读"
 
 #: disk-utils/fdisk.c:743 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:982
-#: libfdisk/src/gpt.c:2398
+#: libfdisk/src/gpt.c:2402
 msgid "First sector"
 msgstr "第一个扇区"
 
@@ -1082,7 +1082,7 @@ msgstr "设备属性(扇区大小和几何属性)只能用于某个指定的设�
 #: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
 #: sys-utils/chcpu.c:354 sys-utils/chmem.c:423 sys-utils/dmesg.c:1468
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:909
+#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:912
 #: sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632 sys-utils/mount.c:764
 #: sys-utils/mount.c:772 sys-utils/mount.c:812 sys-utils/mount.c:825
 #: sys-utils/mount.c:894 sys-utils/mountpoint.c:180 sys-utils/pivot_root.c:72
@@ -1210,22 +1210,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "分区表记录没有按磁盘顺序。"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2426
-#: libfdisk/src/gpt.c:3129 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
+#: libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
 msgid "Start"
 msgstr "起点"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2427
-#: libfdisk/src/gpt.c:3130 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
+#: libfdisk/src/gpt.c:3134 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
 msgid "End"
 msgstr "末尾"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2428
-#: libfdisk/src/gpt.c:3131 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
+#: libfdisk/src/gpt.c:3135 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
 msgid "Sectors"
 msgstr "扇区"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1022 libfdisk/src/dos.c:2430
-#: libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
+#: libfdisk/src/gpt.c:3136 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
 msgid "Size"
 msgstr "大小"
 
@@ -2862,7 +2862,7 @@ msgstr ""
 " -V, --verbose      解释正在进行的操作；\n"
 "                      多次指定 -V 将导致空运行(dry-run)\n"
 
-#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1519
+#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1522
 #: login-utils/sulogin.c:792 login-utils/sulogin.c:796 sys-utils/flock.c:121
 #: sys-utils/rtcwake.c:595 term-utils/script.c:692
 #, c-format
@@ -3497,7 +3497,7 @@ msgstr "分区标志"
 msgid "partition type (a string, a UUID, or hex)"
 msgstr "分区类型(字符串，UUID 或十六进制数)"
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:530 sys-utils/losetup.c:641
+#: disk-utils/partx.c:114 sys-utils/losetup.c:533 sys-utils/losetup.c:644
 msgid "failed to initialize loopcxt"
 msgstr "初始化 loopcxt 失败"
 
@@ -3516,7 +3516,7 @@ msgstr "尝试将“%s”用作回环设备\n"
 msgid "%s: failed to set backing file"
 msgstr "%s：设置后备文件失败"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:574
+#: disk-utils/partx.c:131 sys-utils/losetup.c:577
 #, c-format
 msgid "%s: failed to set up loop device"
 msgstr "%s：设置回环设备失败"
@@ -4057,7 +4057,7 @@ msgid "no partition number specified"
 msgstr "未指定分区号"
 
 #: disk-utils/sfdisk.c:1047 disk-utils/sfdisk.c:1111 disk-utils/sfdisk.c:1166
-#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:772
+#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:775
 msgid "unexpected arguments"
 msgstr "参数异常"
 
@@ -5089,7 +5089,7 @@ msgstr "第一个柱面"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "最后一个柱面, +cylinders 或 +size{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2447
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2451
 #, fuzzy
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "上个扇区，+sectors 或 +size{K,M,G,T,P}"
@@ -5413,7 +5413,7 @@ msgstr "分区表 %3$zu 的无效标志 0x%1$02x%2$02x 将通过写入来更正"
 msgid "Start sector %ju out of range."
 msgstr "起始扇区 %ju 超出范围。"
 
-#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2321 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2325 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5424,7 +5424,7 @@ msgstr "分区 %zu 已经定义过。请删除后再重新添加它。"
 msgid "Sector %llu is already allocated."
 msgstr "扇区 %llu 已经分配."
 
-#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2330
+#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2334
 msgid "No free sectors available."
 msgstr "无空闲扇区可用。"
 
@@ -5571,7 +5571,7 @@ msgstr "无效的分区类型“%c”。"
 msgid "Cannot write sector %jd: seek failed"
 msgstr "写扇区 %jd 失败：定位失败"
 
-#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1221
+#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1225
 msgid "Disk identifier"
 msgstr "磁盘标识符"
 
@@ -5583,7 +5583,7 @@ msgstr "很多系统将类型 0 视为空闲空间。不建议设置类型为 0 
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "无法更改已被逻辑分区使用的扩展分区的类型。请先删除逻辑分区。"
 
-#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3038
+#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3042
 msgid "Nothing to do. Ordering is correct already."
 msgstr "无须操作。顺序已经是正确的了。"
 
@@ -5611,7 +5611,7 @@ msgstr "分区 %zu 的 可启动 标志已启用。"
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "分区 %zu 的 可启动 标志已禁用。"
 
-#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3128 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1121
 msgid "Device"
 msgstr "设备"
@@ -5632,7 +5632,7 @@ msgstr "起始-C/H/S"
 msgid "End-C/H/S"
 msgstr "终-C/H/S"
 
-#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3138 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3142 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr "属性"
 
@@ -5976,305 +5976,313 @@ msgstr "QNX6 文件系统"
 msgid "Plan 9 partition"
 msgstr "Plan 9 分区"
 
-#: libfdisk/src/gpt.c:661
+#: libfdisk/src/gpt.c:290
+msgid "HiFive Unleashed FSBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:291
+msgid "HiFive Unleashed BBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:665
 msgid "failed to allocate GPT header"
 msgstr "分配 GPT 头失败"
 
-#: libfdisk/src/gpt.c:744
+#: libfdisk/src/gpt.c:748
 msgid "First LBA specified by script is out of range."
 msgstr "脚本指定的第一个 LBA 超出范围。"
 
-#: libfdisk/src/gpt.c:756
+#: libfdisk/src/gpt.c:760
 msgid "Last LBA specified by script is out of range."
 msgstr "脚本指定的最后一个 LBA 超出范围。"
 
-#: libfdisk/src/gpt.c:895
+#: libfdisk/src/gpt.c:899
 #, fuzzy, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr "GPT PMBR 大小不符(%<PRIu64> != %<PRIu64>)，将用 w(写) 予以更正。"
 
-#: libfdisk/src/gpt.c:917
+#: libfdisk/src/gpt.c:921
 msgid "gpt: stat() failed"
 msgstr "gpt：stat() 失败"
 
-#: libfdisk/src/gpt.c:927
+#: libfdisk/src/gpt.c:931
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt：无法操作模式为 %o 的文件"
 
-#: libfdisk/src/gpt.c:1191
+#: libfdisk/src/gpt.c:1195
 msgid "GPT Header"
 msgstr "GPT 头"
 
-#: libfdisk/src/gpt.c:1196
+#: libfdisk/src/gpt.c:1200
 msgid "GPT Entries"
 msgstr "GPT 记录项"
 
-#: libfdisk/src/gpt.c:1228
+#: libfdisk/src/gpt.c:1232
 msgid "First LBA"
 msgstr "第一个 LBA"
 
-#: libfdisk/src/gpt.c:1233
+#: libfdisk/src/gpt.c:1237
 msgid "Last LBA"
 msgstr "最后一个 LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1239
+#: libfdisk/src/gpt.c:1243
 msgid "Alternative LBA"
 msgstr "替代 LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1245
+#: libfdisk/src/gpt.c:1249
 msgid "Partition entries LBA"
 msgstr "分区记录项 LBA"
 
-#: libfdisk/src/gpt.c:1250
+#: libfdisk/src/gpt.c:1254
 msgid "Allocated partition entries"
 msgstr "已分配的分区项"
 
-#: libfdisk/src/gpt.c:1595
+#: libfdisk/src/gpt.c:1599
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "备份 GPT 表损坏，但主表似乎正常，将使用它。"
 
-#: libfdisk/src/gpt.c:1605
+#: libfdisk/src/gpt.c:1609
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "主 GPT 表损坏，但备份似乎正常，将使用它。"
 
-#: libfdisk/src/gpt.c:1618
+#: libfdisk/src/gpt.c:1622
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1800
+#: libfdisk/src/gpt.c:1804
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "不支持的 GPT 属性位“%s”"
 
-#: libfdisk/src/gpt.c:1805
+#: libfdisk/src/gpt.c:1809
 #, fuzzy, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "解析列表“%s”失败"
 
-#: libfdisk/src/gpt.c:1905
+#: libfdisk/src/gpt.c:1909
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "分区 UUID 已从 %s 更改为 %s。"
 
-#: libfdisk/src/gpt.c:1914
+#: libfdisk/src/gpt.c:1918
 #, fuzzy
 msgid "Failed to translate partition name, name not changed."
 msgstr "分配分区名失败"
 
-#: libfdisk/src/gpt.c:1916
+#: libfdisk/src/gpt.c:1920
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "分区名已由“%s”改为“%.*s”。"
 
-#: libfdisk/src/gpt.c:1945
+#: libfdisk/src/gpt.c:1949
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "分区起点未到首个可用 LBA。"
 
-#: libfdisk/src/gpt.c:1952
+#: libfdisk/src/gpt.c:1956
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "分区终点超过了最后可用 LBA。"
 
-#: libfdisk/src/gpt.c:2114
+#: libfdisk/src/gpt.c:2118
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "该设备包含混合 MBR -- 将只写入 GPT。您需要手动同步 MBR。"
 
-#: libfdisk/src/gpt.c:2151
+#: libfdisk/src/gpt.c:2155
 msgid "Disk does not contain a valid backup header."
 msgstr "磁盘不含有效的备用磁头。"
 
-#: libfdisk/src/gpt.c:2156
+#: libfdisk/src/gpt.c:2160
 msgid "Invalid primary header CRC checksum."
 msgstr "无效的主磁头 CRC 校验和。"
 
-#: libfdisk/src/gpt.c:2160
+#: libfdisk/src/gpt.c:2164
 msgid "Invalid backup header CRC checksum."
 msgstr "无效的备份磁头 CRC 校验和。"
 
-#: libfdisk/src/gpt.c:2165
+#: libfdisk/src/gpt.c:2169
 msgid "Invalid partition entry checksum."
 msgstr "无效的分区记录校验和。"
 
-#: libfdisk/src/gpt.c:2170
+#: libfdisk/src/gpt.c:2174
 msgid "Invalid primary header LBA sanity checks."
 msgstr "无效的主磁头 LBA 完整性检查。"
 
-#: libfdisk/src/gpt.c:2174
+#: libfdisk/src/gpt.c:2178
 msgid "Invalid backup header LBA sanity checks."
 msgstr "无效的备用磁头 LBA 完整性检查。"
 
-#: libfdisk/src/gpt.c:2179
+#: libfdisk/src/gpt.c:2183
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA 不匹配，真正位置在主磁头。"
 
-#: libfdisk/src/gpt.c:2183
+#: libfdisk/src/gpt.c:2187
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA 不匹配，真正位置在备份磁头。"
 
-#: libfdisk/src/gpt.c:2188
+#: libfdisk/src/gpt.c:2192
 msgid "Disk is too small to hold all data."
 msgstr "磁盘太小，放不下所有数据。"
 
-#: libfdisk/src/gpt.c:2198
+#: libfdisk/src/gpt.c:2202
 msgid "Primary and backup header mismatch."
 msgstr "主磁头和备份磁头不匹配。"
 
-#: libfdisk/src/gpt.c:2204
+#: libfdisk/src/gpt.c:2208
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "分区 %u 与 %u 重叠。"
 
-#: libfdisk/src/gpt.c:2211
+#: libfdisk/src/gpt.c:2215
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "分区 %u 对于该磁盘而言过大。"
 
-#: libfdisk/src/gpt.c:2218
+#: libfdisk/src/gpt.c:2222
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "分区 %u 结束于起点之前。"
 
-#: libfdisk/src/gpt.c:2227
+#: libfdisk/src/gpt.c:2231
 msgid "No errors detected."
 msgstr "未检测到错误。"
 
-#: libfdisk/src/gpt.c:2228
+#: libfdisk/src/gpt.c:2232
 #, c-format
 msgid "Header version: %s"
 msgstr "磁头版本：%s"
 
-#: libfdisk/src/gpt.c:2229
+#: libfdisk/src/gpt.c:2233
 #, fuzzy, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "使用着 %2$d 个分区中的 %1$u 个。"
 
-#: libfdisk/src/gpt.c:2239
+#: libfdisk/src/gpt.c:2243
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "%2$u 个片段中共有 %1$ju 个空闲扇区(最大的是 %3$s)。"
 
-#: libfdisk/src/gpt.c:2247
+#: libfdisk/src/gpt.c:2251
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "检测到 %d 个错误。"
 
-#: libfdisk/src/gpt.c:2326
+#: libfdisk/src/gpt.c:2330
 msgid "All partitions are already in use."
 msgstr "所有分区均已占用。"
 
-#: libfdisk/src/gpt.c:2383 libfdisk/src/gpt.c:2410
+#: libfdisk/src/gpt.c:2387 libfdisk/src/gpt.c:2414
 #, c-format
 msgid "Sector %ju already used."
 msgstr "扇区 %ju 已使用。"
 
-#: libfdisk/src/gpt.c:2476
+#: libfdisk/src/gpt.c:2480
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "无法创建分区 %zu"
 
-#: libfdisk/src/gpt.c:2483
+#: libfdisk/src/gpt.c:2487
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "最后一个可用的 GPT 扇区是 %ju，但请求了 %ju。"
 
-#: libfdisk/src/gpt.c:2490
+#: libfdisk/src/gpt.c:2494
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "第一个可用的 GPT 扇区是 %ju，但请求了 %ju。"
 
-#: libfdisk/src/gpt.c:2629
+#: libfdisk/src/gpt.c:2633
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "已创建新的 GPT 磁盘标签(GUID: %s)。"
 
-#: libfdisk/src/gpt.c:2647
+#: libfdisk/src/gpt.c:2651
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "输入新磁盘 UUID(以 8-4-4-4-12 格式)"
 
-#: libfdisk/src/gpt.c:2654
+#: libfdisk/src/gpt.c:2658
 msgid "Failed to parse your UUID."
 msgstr "解析您的 UUID 失败。"
 
-#: libfdisk/src/gpt.c:2668
+#: libfdisk/src/gpt.c:2672
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "将磁盘标识从 %s 更改为 %s 失败。"
 
-#: libfdisk/src/gpt.c:2688
+#: libfdisk/src/gpt.c:2692
 msgid "Not enough space for new partition table!"
 msgstr "创建新分区表的空闲空间不够！"
 
-#: libfdisk/src/gpt.c:2699
+#: libfdisk/src/gpt.c:2703
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "分区 #%u 超出范围(最小起点是 %<PRIu64> 扇区)"
 
-#: libfdisk/src/gpt.c:2704
+#: libfdisk/src/gpt.c:2708
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "分区 #%u 超出范围(最小终点是 %<PRIu64> 扇区)"
 
-#: libfdisk/src/gpt.c:2747
+#: libfdisk/src/gpt.c:2751
 #, fuzzy, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "已创建分区达到最大数量。"
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2774
 msgid "Cannot allocate memory!"
 msgstr "无法分配内存！"
 
-#: libfdisk/src/gpt.c:2800
+#: libfdisk/src/gpt.c:2804
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "分区表长度已从 %<PRIu32> 改为 %<PRIu64>。"
 
-#: libfdisk/src/gpt.c:2909
+#: libfdisk/src/gpt.c:2913
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "分区 %zu 的属性已改为 0x%016<PRIx64>。"
 
-#: libfdisk/src/gpt.c:2959
+#: libfdisk/src/gpt.c:2963
 msgid "Enter GUID specific bit"
 msgstr "输入 GUID 特定位"
 
-#: libfdisk/src/gpt.c:2974
+#: libfdisk/src/gpt.c:2978
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "开/关不支持的位 %lu 失败"
 
-#: libfdisk/src/gpt.c:2987
+#: libfdisk/src/gpt.c:2991
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "分区 %2$zu 上的 GUID 特定位 %1$d 现已启用。"
 
-#: libfdisk/src/gpt.c:2988
+#: libfdisk/src/gpt.c:2992
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "分区 %2$zu 上的 GUID 特定位 %1$d 现已禁用。"
 
-#: libfdisk/src/gpt.c:2992
+#: libfdisk/src/gpt.c:2996
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "分区 %2$zu 上的标志 %1$s 现已启用。"
 
-#: libfdisk/src/gpt.c:2993
+#: libfdisk/src/gpt.c:2997
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "分区 %2$zu 上的标志 %1$s 现已禁用。"
 
-#: libfdisk/src/gpt.c:3135
+#: libfdisk/src/gpt.c:3139
 msgid "Type-UUID"
 msgstr "类型-UUID"
 
-#: libfdisk/src/gpt.c:3136
+#: libfdisk/src/gpt.c:3140
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3137 login-utils/chfn.c:156 login-utils/chfn.c:158
+#: libfdisk/src/gpt.c:3141 login-utils/chfn.c:156 login-utils/chfn.c:158
 #: login-utils/chfn.c:324
 msgid "Name"
 msgstr "名称"
@@ -6283,7 +6291,7 @@ msgstr "名称"
 msgid "Free space"
 msgstr "剩余空间"
 
-#: libfdisk/src/partition.c:1255
+#: libfdisk/src/partition.c:1263
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "调整分区 #%zu 的大小失败。"
@@ -7323,7 +7331,7 @@ msgstr "未知时间格式: %s"
 msgid "Interrupted %s"
 msgstr "中断的 %s"
 
-#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:885
+#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:886
 msgid "preallocation size exceeded"
 msgstr "超过了预分配大小"
 
@@ -7397,7 +7405,7 @@ msgstr ""
 "     --time-format <格式>    以指定<格式>显示时间戳：\n"
 "                               notime|short|full|iso\n"
 
-#: login-utils/last.c:886
+#: login-utils/last.c:887
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7406,12 +7414,12 @@ msgstr ""
 "\n"
 "%s 开始 %s"
 
-#: login-utils/last.c:965 term-utils/scriptreplay.c:65
+#: login-utils/last.c:966 term-utils/scriptreplay.c:65
 #: term-utils/scriptreplay.c:69
 msgid "failed to parse number"
 msgstr "解析数字失败"
 
-#: login-utils/last.c:986 login-utils/last.c:991 login-utils/last.c:996
+#: login-utils/last.c:987 login-utils/last.c:992 login-utils/last.c:997
 #: sys-utils/rtcwake.c:503
 #, c-format
 msgid "invalid time value \"%s\""
@@ -8089,66 +8097,67 @@ msgstr "取终端属性失败"
 msgid "failed to create pseudo-terminal"
 msgstr "分配输出表失败"
 
-#: login-utils/su-common.c:493 login-utils/su-common.c:767
+#: login-utils/su-common.c:496 login-utils/su-common.c:770
 msgid "cannot block signals"
 msgstr "无法阻塞信号"
 
-#: login-utils/su-common.c:529 misc-utils/uuidd.c:411 term-utils/script.c:573
+#: login-utils/su-common.c:532 misc-utils/uuidd.c:411 term-utils/script.c:573
 msgid "poll failed"
 msgstr "轮询失败"
 
-#: login-utils/su-common.c:675
+#: login-utils/su-common.c:678
 #, fuzzy
 msgid "failed to modify environment"
 msgstr "打开目录失败"
 
-#: login-utils/su-common.c:711
+#: login-utils/su-common.c:714
 msgid "may not be used by non-root users"
 msgstr "非 root 用户不能使用"
 
-#: login-utils/su-common.c:735
-msgid "incorrect password"
-msgstr "密码错误"
+#: login-utils/su-common.c:738
+#, fuzzy
+msgid "authentication failed"
+msgstr "tcgetattr 失败"
 
-#: login-utils/su-common.c:748
+#: login-utils/su-common.c:751
 #, c-format
 msgid "cannot open session: %s"
 msgstr "无法打开会话：%s"
 
-#: login-utils/su-common.c:784
+#: login-utils/su-common.c:787
 msgid "cannot initialize signal mask for session"
 msgstr ""
 
-#: login-utils/su-common.c:792
+#: login-utils/su-common.c:795
 #, fuzzy
 msgid "cannot initialize signal mask"
 msgstr "无法阻塞信号"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:805
 #, fuzzy
 msgid "cannot set signal handler for session"
 msgstr "无法设置信号处理函数"
 
-#: login-utils/su-common.c:810 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
+#: login-utils/su-common.c:813 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
 #: term-utils/script.c:873
 msgid "cannot set signal handler"
 msgstr "无法设置信号处理函数"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:821
 #, fuzzy
 msgid "cannot set signal mask"
 msgstr "无法设置信号处理函数"
 
-#: login-utils/su-common.c:846
+#: login-utils/su-common.c:849
 msgid "cannot create child process"
 msgstr "无法创建子进程"
 
-#: login-utils/su-common.c:865
+#: login-utils/su-common.c:868
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "无法更改到 %s 目录"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:887
 #, c-format
 msgid ""
 "\n"
@@ -8157,63 +8166,63 @@ msgstr ""
 "\n"
 "会话已终止，正在杀死 shell..."
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:898
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...已杀死。\n"
 
-#: login-utils/su-common.c:996
+#: login-utils/su-common.c:999
 #, fuzzy
 msgid "failed to set the PATH environment variable"
 msgstr "设置环境变量 %s 失败"
 
-#: login-utils/su-common.c:1073
+#: login-utils/su-common.c:1076
 msgid "cannot set groups"
 msgstr "无法设置 组"
 
-#: login-utils/su-common.c:1079
+#: login-utils/su-common.c:1082
 #, fuzzy, c-format
 msgid "failed to user credentials: %s"
 msgstr "解析级别“%s”失败"
 
-#: login-utils/su-common.c:1089 sys-utils/eject.c:660
+#: login-utils/su-common.c:1092 sys-utils/eject.c:660
 msgid "cannot set group id"
 msgstr "无法设置 组 id"
 
-#: login-utils/su-common.c:1091 sys-utils/eject.c:663
+#: login-utils/su-common.c:1094 sys-utils/eject.c:663
 msgid "cannot set user id"
 msgstr "无法设置 用户 id"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1162
 #, fuzzy
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment  不重置环境变量\n"
 
-#: login-utils/su-common.c:1160
+#: login-utils/su-common.c:1163
 #, fuzzy
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -m, -p, --preserve-environment  不重置环境变量\n"
 
-#: login-utils/su-common.c:1163
+#: login-utils/su-common.c:1166
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <组>                指定主组\n"
 
-#: login-utils/su-common.c:1164
+#: login-utils/su-common.c:1167
 #, fuzzy
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr ""
 " -G, --supp-group <组>        指定一个辅助组\n"
 "\n"
 
-#: login-utils/su-common.c:1167
+#: login-utils/su-common.c:1170
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  使 shell 成为登录 shell\n"
 
-#: login-utils/su-common.c:1168
+#: login-utils/su-common.c:1171
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <命令>            使用 -c 向 shell 传递一条命令\n"
 
-#: login-utils/su-common.c:1169
+#: login-utils/su-common.c:1172
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -8221,20 +8230,20 @@ msgstr ""
 " --session-command <命令>        使用 -c 向 shell 传递一条命令\n"
 "                                   而不创建新会话\n"
 
-#: login-utils/su-common.c:1171
+#: login-utils/su-common.c:1174
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      向shell 传递 -f 选项(csh 或 tcsh)\n"
 
-#: login-utils/su-common.c:1172
+#: login-utils/su-common.c:1175
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>             若 /etc/shells 允许，运行<shell>\n"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1176
 #, fuzzy
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -t, --table              创建表格\n"
 
-#: login-utils/su-common.c:1183
+#: login-utils/su-common.c:1186
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -8243,7 +8252,7 @@ msgstr ""
 " %1$s [选项] <设备> [[-N] <分区>]\n"
 " %1$s [选项] <命令>\n"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1191
 #, fuzzy
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -8255,17 +8264,17 @@ msgstr ""
 "将退而使用与 su(1) 兼容的语法并执行标准 shell。\n"
 "选项 -c、-f、-l 及 -s 与 -u 相互排斥。\n"
 
-#: login-utils/su-common.c:1193
+#: login-utils/su-common.c:1196
 #, fuzzy
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <用户>             用户名\n"
 
-#: login-utils/su-common.c:1204
+#: login-utils/su-common.c:1207
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [选项] [-] [<用户> [<参数>...]]\n"
 
-#: login-utils/su-common.c:1208
+#: login-utils/su-common.c:1211
 #, fuzzy
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
@@ -8275,49 +8284,49 @@ msgstr ""
 "将有效用户 id 和组 id 更改为<用户>的 id。\n"
 "单个 - 视为 -l。如果未指定<用户>，将假定为 root。\n"
 
-#: login-utils/su-common.c:1254
+#: login-utils/su-common.c:1257
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "不能指定多于 %d 个补充组"
 
-#: login-utils/su-common.c:1260
+#: login-utils/su-common.c:1263
 #, c-format
 msgid "group %s does not exist"
 msgstr "组 %s 不存在"
 
-#: login-utils/su-common.c:1374
+#: login-utils/su-common.c:1377
 #, fuzzy
 msgid "--pty is not supported for your system"
 msgstr "您的系统不支持 --reload"
 
-#: login-utils/su-common.c:1410
+#: login-utils/su-common.c:1413
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "将忽略 --preserve-environment，它与 --login 互斥。"
 
-#: login-utils/su-common.c:1424
+#: login-utils/su-common.c:1427
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "选项 --{shell,fast,command,session-command,login} 和 --user 互斥"
 
-#: login-utils/su-common.c:1427
+#: login-utils/su-common.c:1430
 msgid "no command was specified"
 msgstr "没有指定命令"
 
-#: login-utils/su-common.c:1439
+#: login-utils/su-common.c:1442
 msgid "only root can specify alternative groups"
 msgstr "只有 root 用户能指定替代组"
 
-#: login-utils/su-common.c:1449
+#: login-utils/su-common.c:1452
 #, c-format
 msgid "user %s does not exist"
 msgstr "用户 %s 不存在"
 
-#: login-utils/su-common.c:1482
+#: login-utils/su-common.c:1485
 #, c-format
 msgid "using restricted shell %s"
 msgstr "将使用受限 shell %s"
 
-#: login-utils/su-common.c:1513
+#: login-utils/su-common.c:1516
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "警告：无法更改到 %s 目录"
@@ -8946,7 +8955,7 @@ msgstr " -o, --output <列表>  输出列\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw              使用原生输出格式\n"
 
-#: misc-utils/fincore.c:343 sys-utils/losetup.c:814
+#: misc-utils/fincore.c:343 sys-utils/losetup.c:817
 msgid "no file specified"
 msgstr "未指定文件"
 
@@ -9620,7 +9629,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr "%s 和 %s 相互排斥"
 
 #: misc-utils/kill.c:287 sys-utils/eject.c:205 sys-utils/eject.c:230
-#: sys-utils/losetup.c:722 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
+#: sys-utils/losetup.c:725 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
 #: sys-utils/tunelp.c:181 sys-utils/tunelp.c:188 sys-utils/tunelp.c:195
 #: sys-utils/tunelp.c:201 sys-utils/tunelp.c:205 sys-utils/tunelp.c:212
 #: term-utils/setterm.c:211 term-utils/setterm.c:214 term-utils/setterm.c:233
@@ -11453,7 +11462,7 @@ msgstr " -z, --zeroout       用 零填充而非丢弃\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose       打印对齐的长度和偏移\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:702
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:705
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "解析偏移失败"
@@ -13508,7 +13517,7 @@ msgstr " -Q, --queue              创建消息队列\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <模式>        资源的权限模式掩码(默认为 0644)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:730 sys-utils/zramctl.c:647
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:733 sys-utils/zramctl.c:647
 msgid "failed to parse size"
 msgstr "解析大小失败"
 
@@ -14546,89 +14555,89 @@ msgstr " -O, --output-all     输出所有列\n"
 msgid "     --raw                     use raw --list output format\n"
 msgstr "     --raw                     使用原生 --list 输出格式\n"
 
-#: sys-utils/losetup.c:461
+#: sys-utils/losetup.c:464
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr "%s：警告，文件小于 512 个字节，回环设备可能无用或在系统工具中看不到。"
 
-#: sys-utils/losetup.c:465
+#: sys-utils/losetup.c:468
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr "%s：警告，文件未对齐 512 字节扇区，其末尾将被忽略。"
 
-#: sys-utils/losetup.c:486 sys-utils/losetup.c:538
+#: sys-utils/losetup.c:489 sys-utils/losetup.c:541
 #, c-format
 msgid "%s: overlapping loop device exists"
 msgstr "%s: 重叠的回环设备已存在"
 
-#: sys-utils/losetup.c:497
+#: sys-utils/losetup.c:500
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
 msgstr "%s: 存在重叠的只读回环设备"
 
-#: sys-utils/losetup.c:504
+#: sys-utils/losetup.c:507
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
 msgstr "%s：存在重叠的加密回环设备"
 
-#: sys-utils/losetup.c:510
+#: sys-utils/losetup.c:513
 #, c-format
 msgid "%s: failed to re-use loop device"
 msgstr "%s︰ 未能重新使用回环设备"
 
-#: sys-utils/losetup.c:516
+#: sys-utils/losetup.c:519
 msgid "failed to inspect loop devices"
 msgstr "审查回环设备失败"
 
-#: sys-utils/losetup.c:539
+#: sys-utils/losetup.c:542
 #, c-format
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s︰ 检查冲突的循环设备失败"
 
-#: sys-utils/losetup.c:551 sys-utils/losetup.c:868
+#: sys-utils/losetup.c:554 sys-utils/losetup.c:871
 msgid "cannot find an unused loop device"
 msgstr "找不到未使用的回环设备"
 
-#: sys-utils/losetup.c:561
+#: sys-utils/losetup.c:564
 #, c-format
 msgid "%s: failed to use backing file"
 msgstr "%s：使用后备文件失败"
 
-#: sys-utils/losetup.c:654
+#: sys-utils/losetup.c:657
 #, fuzzy
 msgid "failed to parse logical block size"
 msgstr "解析大小失败"
 
-#: sys-utils/losetup.c:660 sys-utils/losetup.c:670 sys-utils/losetup.c:795
-#: sys-utils/losetup.c:809 sys-utils/losetup.c:848
+#: sys-utils/losetup.c:663 sys-utils/losetup.c:673 sys-utils/losetup.c:798
+#: sys-utils/losetup.c:812 sys-utils/losetup.c:851
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s：使用设备失败"
 
-#: sys-utils/losetup.c:806
+#: sys-utils/losetup.c:809
 msgid "no loop device specified"
 msgstr "未指定回环设备"
 
-#: sys-utils/losetup.c:821
+#: sys-utils/losetup.c:824
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "选项 %s 只允许在设置回环设备时使用"
 
-#: sys-utils/losetup.c:826
+#: sys-utils/losetup.c:829
 msgid "the option --offset is not allowed in this context"
 msgstr "此环境下不允许使用 --offset 选项"
 
-#: sys-utils/losetup.c:889
+#: sys-utils/losetup.c:892
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s：设置容量失败"
 
-#: sys-utils/losetup.c:898
+#: sys-utils/losetup.c:901
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s︰ 设置直接 io 失败"
 
-#: sys-utils/losetup.c:904
+#: sys-utils/losetup.c:907
 #, fuzzy, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s：获取大小失败"
@@ -16304,30 +16313,35 @@ msgstr " -n, --no-auto             禁用字节顺序自动检测\n"
 msgid "error writing %s"
 msgstr "写 %s 出错"
 
-#: sys-utils/readprofile.c:270
+#: sys-utils/readprofile.c:250
+#, fuzzy
+msgid "input file is empty"
+msgstr "Linux 文件系统"
+
+#: sys-utils/readprofile.c:272
 msgid "Assuming reversed byte order. Use -n to force native byte order."
 msgstr "将假设为反向字节顺序。可使用 -n 强制为原生字节顺序。"
 
-#: sys-utils/readprofile.c:285
+#: sys-utils/readprofile.c:287
 #, c-format
 msgid "Sampling_step: %u\n"
 msgstr "采样步长：%u\n"
 
-#: sys-utils/readprofile.c:301 sys-utils/readprofile.c:322
+#: sys-utils/readprofile.c:303 sys-utils/readprofile.c:324
 #, c-format
 msgid "%s(%i): wrong map line"
 msgstr "%s(%i)：错误的 map 行"
 
-#: sys-utils/readprofile.c:312
+#: sys-utils/readprofile.c:314
 #, c-format
 msgid "can't find \"_stext\" in %s"
 msgstr "在 %s 中找不到“_stext”"
 
-#: sys-utils/readprofile.c:345
+#: sys-utils/readprofile.c:347
 msgid "profile address out of range. Wrong map file?"
 msgstr "配置(profile)地址超出范围。map 文件错误？"
 
-#: sys-utils/readprofile.c:403
+#: sys-utils/readprofile.c:405
 msgid "total"
 msgstr "总计"
 
@@ -18313,7 +18327,7 @@ msgstr "%s：无法执行 %s：%m"
 
 #: term-utils/agetty.c:594 term-utils/agetty.c:921 term-utils/agetty.c:1457
 #: term-utils/agetty.c:1475 term-utils/agetty.c:1512 term-utils/agetty.c:1522
-#: term-utils/agetty.c:1564 term-utils/agetty.c:2205 term-utils/agetty.c:2774
+#: term-utils/agetty.c:1564 term-utils/agetty.c:2203 term-utils/agetty.c:2772
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "分配内存失败：%m"
@@ -18437,27 +18451,27 @@ msgstr ""
 msgid "%s: read: %m"
 msgstr "%s：read：%m"
 
-#: term-utils/agetty.c:2181
+#: term-utils/agetty.c:2179
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s：输入过载"
 
-#: term-utils/agetty.c:2201 term-utils/agetty.c:2209
+#: term-utils/agetty.c:2199 term-utils/agetty.c:2207
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s：登录名字符转换无效"
 
-#: term-utils/agetty.c:2215
+#: term-utils/agetty.c:2213
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s：登录名中的字符 0x%x 无效"
 
-#: term-utils/agetty.c:2300
+#: term-utils/agetty.c:2298
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s：设置终端属性失败：%m"
 
-#: term-utils/agetty.c:2338
+#: term-utils/agetty.c:2336
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18466,160 +18480,160 @@ msgstr ""
 " %1$s [选项] <线路> [<波特率>,...] [<终端类型>]\n"
 " %1$s [选项] <波特率>,... <线路> [<终端类型>]\n"
 
-#: term-utils/agetty.c:2342
+#: term-utils/agetty.c:2340
 msgid "Open a terminal and set its mode.\n"
 msgstr "打开一个终端并设置其模式。\n"
 
-#: term-utils/agetty.c:2345
+#: term-utils/agetty.c:2343
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                采用 8 位 tty\n"
 
-#: term-utils/agetty.c:2346
+#: term-utils/agetty.c:2344
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <用户>     以指定用户自动登录\n"
 
-#: term-utils/agetty.c:2347
+#: term-utils/agetty.c:2345
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              不重置控制模式\n"
 
-#: term-utils/agetty.c:2348
+#: term-utils/agetty.c:2346
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               使用 -r <主机名> 选项调用 login(1)\n"
 
-#: term-utils/agetty.c:2349
+#: term-utils/agetty.c:2347
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <文件>    指定要显示的预登录消息(issue)文件\n"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2348
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         启用硬件流控制\n"
 
-#: term-utils/agetty.c:2351
+#: term-utils/agetty.c:2349
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <主机名>        指定登录主机\n"
 
-#: term-utils/agetty.c:2352
+#: term-utils/agetty.c:2350
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              不显示预登录消息(issue)文件\n"
 
-#: term-utils/agetty.c:2353
+#: term-utils/agetty.c:2351
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <字符串> 设置初始字符串\n"
 
-#: term-utils/agetty.c:2354
+#: term-utils/agetty.c:2352
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              提示之前不清屏\n"
 
-#: term-utils/agetty.c:2355
+#: term-utils/agetty.c:2353
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <文件> 指定登录程序\n"
 
-#: term-utils/agetty.c:2356
+#: term-utils/agetty.c:2354
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<模式>]  控制本地线路标志\n"
 
-#: term-utils/agetty.c:2357
+#: term-utils/agetty.c:2355
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         连接过程中提取波特率\n"
 
-#: term-utils/agetty.c:2358
+#: term-utils/agetty.c:2356
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           不提示登录\n"
 
-#: term-utils/agetty.c:2359
+#: term-utils/agetty.c:2357
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            预登录消息(issue)前不打印换行(newline)\n"
 
-#: term-utils/agetty.c:2360
+#: term-utils/agetty.c:2358
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <选项> 传递给登录程序的选项\n"
 
-#: term-utils/agetty.c:2361
+#: term-utils/agetty.c:2359
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          登录前等待按下任意键来继续\n"
 
-#: term-utils/agetty.c:2362
+#: term-utils/agetty.c:2360
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <目录>        将根目录更改为指定目录\n"
 
-#: term-utils/agetty.c:2363
+#: term-utils/agetty.c:2361
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               对 tty 执行虚拟挂起(virtual hangup)\n"
 
-#: term-utils/agetty.c:2364
+#: term-utils/agetty.c:2362
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            中断(break)后尝试保持波特率\n"
 
-#: term-utils/agetty.c:2365
+#: term-utils/agetty.c:2363
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <数字>       登录进程超时(秒)\n"
 
-#: term-utils/agetty.c:2366
+#: term-utils/agetty.c:2364
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          检测纯大写终端\n"
 
-#: term-utils/agetty.c:2367
+#: term-utils/agetty.c:2365
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              等待回车\n"
 
-#: term-utils/agetty.c:2368
+#: term-utils/agetty.c:2366
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              不打印提示信息\n"
 
-#: term-utils/agetty.c:2369
+#: term-utils/agetty.c:2367
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           将完全不显示主机名\n"
 
-#: term-utils/agetty.c:2370
+#: term-utils/agetty.c:2368
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        显示完全限定主机名\n"
 
-#: term-utils/agetty.c:2371
+#: term-utils/agetty.c:2369
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <字符串> 附加的退格字符\n"
 
-#: term-utils/agetty.c:2372
+#: term-utils/agetty.c:2370
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <字符串>  附加的杀死(kill)字符\n"
 
-#: term-utils/agetty.c:2373
+#: term-utils/agetty.c:2371
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <目录>         登录前切换目录(chdir)\n"
 
-#: term-utils/agetty.c:2374
+#: term-utils/agetty.c:2372
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <数字>         提示前睡眠的秒数\n"
 
-#: term-utils/agetty.c:2375
+#: term-utils/agetty.c:2373
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <数字>          以指定优先级运行 login\n"
 
-#: term-utils/agetty.c:2376
+#: term-utils/agetty.c:2374
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               在运行 agetty 实例时重新载入提示\n"
 
-#: term-utils/agetty.c:2377
+#: term-utils/agetty.c:2375
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list               列出可设置的架构并退出\n"
 
-#: term-utils/agetty.c:2731
+#: term-utils/agetty.c:2729
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d 位用户"
 
-#: term-utils/agetty.c:2862
+#: term-utils/agetty.c:2860
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname 失败：%m"
 
-#: term-utils/agetty.c:2874
+#: term-utils/agetty.c:2872
 #, c-format
 msgid "cannot touch file %s"
 msgstr "无法 touch 文件 %s"
 
-#: term-utils/agetty.c:2878
+#: term-utils/agetty.c:2876
 msgid "--reload is unsupported on your system"
 msgstr "您的系统不支持 --reload"
 
@@ -19142,16 +19156,12 @@ msgstr "无效的超时参数：%s"
 msgid "cannot get passwd uid"
 msgstr "无法获取 passwd uid"
 
-#: term-utils/wall.c:362
-msgid "cannot get tty name"
-msgstr "无法获得 tty 名称"
-
-#: term-utils/wall.c:382
+#: term-utils/wall.c:381
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "来自 %s@%s (%s) (%s) 的广播消息："
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:414
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "将不读 %s - 使用 stdin。"
@@ -20035,6 +20045,12 @@ msgstr "输入中有未知转义序列：%o，%o"
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "输入行过长。"
+
+#~ msgid "incorrect password"
+#~ msgstr "密码错误"
+
+#~ msgid "cannot get tty name"
+#~ msgstr "无法获得 tty 名称"
 
 #~ msgid "Failed to set personality to %s"
 #~ msgstr "无法将人格(personality)设置为 %s"

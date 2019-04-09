@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-01-09 11:05+0100\n"
+"POT-Creation-Date: 2019-04-09 14:30+0200\n"
 "PO-Revision-Date: 2017-05-29 20:16+0000\n"
 "Last-Translator: Mesutcan Kurt <mesutcank@gmail.com>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -59,7 +59,7 @@ msgstr "yeterli argüman yok"
 #: disk-utils/sfdisk.c:765 disk-utils/sfdisk.c:824 disk-utils/sfdisk.c:903
 #: disk-utils/sfdisk.c:944 disk-utils/sfdisk.c:974 disk-utils/sfdisk.c:1011
 #: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
-#: login-utils/islocal.c:87 login-utils/last.c:667 login-utils/sulogin.c:443
+#: login-utils/islocal.c:87 login-utils/last.c:668 login-utils/sulogin.c:443
 #: login-utils/sulogin.c:480 login-utils/utmpdump.c:134
 #: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374 login-utils/vipw.c:261
 #: login-utils/vipw.c:279 misc-utils/findmnt.c:1105 misc-utils/logger.c:1224
@@ -74,10 +74,10 @@ msgstr "yeterli argüman yok"
 #: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
 #: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2871 term-utils/mesg.c:132 term-utils/script.c:540
+#: term-utils/agetty.c:2869 term-utils/mesg.c:132 term-utils/script.c:540
 #: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
+#: term-utils/wall.c:418 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:140 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
@@ -306,7 +306,7 @@ msgid "Quit program without writing changes"
 msgstr "Değişiklikleri yazmadan uygulamadan çık"
 
 #: disk-utils/cfdisk.c:195 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1023
-#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3137 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1128
 msgid "Type"
 msgstr "Türü"
@@ -792,7 +792,7 @@ msgstr "geçersiz argüman - repair"
 #: disk-utils/mkfs.bfs.c:188 disk-utils/mkfs.cramfs.c:337
 #: disk-utils/mkfs.cramfs.c:758 disk-utils/mkfs.cramfs.c:797
 #: disk-utils/mkfs.minix.c:821 disk-utils/mkswap.c:243 disk-utils/partx.c:959
-#: login-utils/last.c:681 login-utils/utmpdump.c:137 misc-utils/namei.c:135
+#: login-utils/last.c:682 login-utils/utmpdump.c:137 misc-utils/namei.c:135
 #: misc-utils/rename.c:120 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
 #: sys-utils/dmesg.c:526 sys-utils/fallocate.c:198 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:84 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
@@ -853,7 +853,7 @@ msgid "Using default response %c."
 msgstr "Öntanımlı cevap %c kullanılıyor"
 
 #: disk-utils/fdisk.c:222 disk-utils/fdisk.c:296 disk-utils/fdisk.c:373
-#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2470
+#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2474
 msgid "Value out of range."
 msgstr "Değer aralık dışında."
 
@@ -944,7 +944,7 @@ msgid "cannot read"
 msgstr "okunamıyor"
 
 #: disk-utils/fdisk.c:743 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:982
-#: libfdisk/src/gpt.c:2398
+#: libfdisk/src/gpt.c:2402
 msgid "First sector"
 msgstr "İlk sektör"
 
@@ -1084,7 +1084,7 @@ msgstr "Aygıt özellikleri (sektör boyutu ve geometri) sadece belirtilen aygı
 #: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
 #: sys-utils/chcpu.c:354 sys-utils/chmem.c:423 sys-utils/dmesg.c:1468
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:909
+#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:912
 #: sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632 sys-utils/mount.c:764
 #: sys-utils/mount.c:772 sys-utils/mount.c:812 sys-utils/mount.c:825
 #: sys-utils/mount.c:894 sys-utils/mountpoint.c:180 sys-utils/pivot_root.c:72
@@ -1212,22 +1212,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "Disk bölümleme tablosu girdileri disk sırasında değil."
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2426
-#: libfdisk/src/gpt.c:3129 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
+#: libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
 msgid "Start"
 msgstr "Başlangıç"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2427
-#: libfdisk/src/gpt.c:3130 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
+#: libfdisk/src/gpt.c:3134 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
 msgid "End"
 msgstr "Son"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2428
-#: libfdisk/src/gpt.c:3131 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
+#: libfdisk/src/gpt.c:3135 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
 msgid "Sectors"
 msgstr "Sektör"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1022 libfdisk/src/dos.c:2430
-#: libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
+#: libfdisk/src/gpt.c:3136 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
 msgid "Size"
 msgstr "Boyut"
 
@@ -2865,7 +2865,7 @@ msgstr ""
 " -V, --verbose      ne yapıldığını açıkla;\n"
 "                      birden fazla -V belirtilirse uygulama gerçekten çalışmayacak\n"
 
-#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1519
+#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1522
 #: login-utils/sulogin.c:792 login-utils/sulogin.c:796 sys-utils/flock.c:121
 #: sys-utils/rtcwake.c:595 term-utils/script.c:692
 #, c-format
@@ -3506,7 +3506,7 @@ msgstr "disk bölümü bayrakları"
 msgid "partition type (a string, a UUID, or hex)"
 msgstr "disk bölümü tipi (a karakter dizisi, a UUID ya da hex)"
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:530 sys-utils/losetup.c:641
+#: disk-utils/partx.c:114 sys-utils/losetup.c:533 sys-utils/losetup.c:644
 msgid "failed to initialize loopcxt"
 msgstr "loopcxt başlatılamadı"
 
@@ -3525,7 +3525,7 @@ msgstr "'%s' döngü aygıtı olarak kullanılmaya çalışılıyor\n"
 msgid "%s: failed to set backing file"
 msgstr "%s: yedek dosyası ayarlanamadı"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:574
+#: disk-utils/partx.c:131 sys-utils/losetup.c:577
 #, c-format
 msgid "%s: failed to set up loop device"
 msgstr "%s: döngü aygıtı ayarlanamadı"
@@ -4067,7 +4067,7 @@ msgid "no partition number specified"
 msgstr "hiç disk bölümü sayısı belirtilmedi"
 
 #: disk-utils/sfdisk.c:1047 disk-utils/sfdisk.c:1111 disk-utils/sfdisk.c:1166
-#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:772
+#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:775
 msgid "unexpected arguments"
 msgstr "beklenmeyen argüman"
 
@@ -5100,7 +5100,7 @@ msgstr "İlk silindir"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Son silindir, +silindirler ya da +boyut{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2447
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2451
 #, fuzzy
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Son sektör, +sektörler ya da +boyut{K,M,G,T,P}"
@@ -5426,7 +5426,7 @@ msgstr "EBR için geçersiz bayrak  0x%02x%02x (disk bölümü %zu için) w(yaz)
 msgid "Start sector %ju out of range."
 msgstr "Başlangıç sektörü %ju aralık dışında."
 
-#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2321 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2325 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5437,7 +5437,7 @@ msgstr "Disk bölümü %zu zaten tanımlı.  Yeniden eklemeden önce silin."
 msgid "Sector %llu is already allocated."
 msgstr "Sektör %llu zaten ayrıldı."
 
-#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2330
+#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2334
 msgid "No free sectors available."
 msgstr "Kullanılabilir boş sektör yok."
 
@@ -5584,7 +5584,7 @@ msgstr "Geçersiz disk bölümü tipi `%c'."
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Sektör yazılamıyor %jd: arama başarısız"
 
-#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1221
+#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1225
 msgid "Disk identifier"
 msgstr "Disk belirleyicisi"
 
@@ -5596,7 +5596,7 @@ msgstr "Tip 0 bir çok sisteme boş alan anlamına gelir. Tipi 0 olan disk böl�
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Halihazırda mantıksal disk bölümlerince kullanılan genişletilmiş disk bölümünün tipi değiştirilemiyor. Önce mantıksal disk bölümlerini silin."
 
-#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3038
+#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3042
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Yapılacak bir şey yok. Sıralama zaten doğru."
 
@@ -5624,7 +5624,7 @@ msgstr "Disk bölümü %zu'de önyüklenebilir bayrağı artık etkin."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Disk bölümü %zu'de önyüklenebilir bayrağı artık kapatıldı."
 
-#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3128 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1121
 msgid "Device"
 msgstr "Aygıt"
@@ -5645,7 +5645,7 @@ msgstr "Başlangıç-C/H/S"
 msgid "End-C/H/S"
 msgstr "Bitiş-C/H/S"
 
-#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3138 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3142 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr "Öznitelikler"
 
@@ -5989,307 +5989,315 @@ msgstr "QNX6 dosya sistemi"
 msgid "Plan 9 partition"
 msgstr "Plan 9 disk bölümü"
 
-#: libfdisk/src/gpt.c:661
+#: libfdisk/src/gpt.c:290
+msgid "HiFive Unleashed FSBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:291
+msgid "HiFive Unleashed BBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:665
 msgid "failed to allocate GPT header"
 msgstr "GPT başlığı tahsis edilemedi"
 
-#: libfdisk/src/gpt.c:744
+#: libfdisk/src/gpt.c:748
 msgid "First LBA specified by script is out of range."
 msgstr "Betik tarafından belirtilen ilk LBA aralık dışında."
 
-#: libfdisk/src/gpt.c:756
+#: libfdisk/src/gpt.c:760
 msgid "Last LBA specified by script is out of range."
 msgstr "Betik tarafından belirtilen son LBA aralık dışında."
 
-#: libfdisk/src/gpt.c:895
+#: libfdisk/src/gpt.c:899
 #, fuzzy, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr "Eşleşmeyen GPT PMBR boyutu (%<PRIu64> != %<PRIu64>) y(az) tarafından düzeltilecek."
 
-#: libfdisk/src/gpt.c:917
+#: libfdisk/src/gpt.c:921
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() başarısız"
 
-#: libfdisk/src/gpt.c:927
+#: libfdisk/src/gpt.c:931
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: %o modundaki dosyalar işlenemedi"
 
-#: libfdisk/src/gpt.c:1191
+#: libfdisk/src/gpt.c:1195
 msgid "GPT Header"
 msgstr "GPT Başlığı"
 
-#: libfdisk/src/gpt.c:1196
+#: libfdisk/src/gpt.c:1200
 msgid "GPT Entries"
 msgstr "GPT Girdileri"
 
-#: libfdisk/src/gpt.c:1228
+#: libfdisk/src/gpt.c:1232
 msgid "First LBA"
 msgstr "İlk LBA"
 
-#: libfdisk/src/gpt.c:1233
+#: libfdisk/src/gpt.c:1237
 msgid "Last LBA"
 msgstr "Son LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1239
+#: libfdisk/src/gpt.c:1243
 msgid "Alternative LBA"
 msgstr "Alternatif LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1245
+#: libfdisk/src/gpt.c:1249
 msgid "Partition entries LBA"
 msgstr "Disk bölümü girdileri LBA"
 
-#: libfdisk/src/gpt.c:1250
+#: libfdisk/src/gpt.c:1254
 msgid "Allocated partition entries"
 msgstr "Tahsis edilen disk bölümü girdileri"
 
-#: libfdisk/src/gpt.c:1595
+#: libfdisk/src/gpt.c:1599
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Yedek GPT tablosu bozuk ama birincil tabloda sorun görünmüyor, bu yüzden o kullanılacak."
 
-#: libfdisk/src/gpt.c:1605
+#: libfdisk/src/gpt.c:1609
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Birincil GPT tablosu bozuk ama yedek tabloda sorun görünmüyor, bu yüzden o kullanılacak."
 
-#: libfdisk/src/gpt.c:1618
+#: libfdisk/src/gpt.c:1622
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1800
+#: libfdisk/src/gpt.c:1804
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "desteklenmeyen GPT öznitelik biti '%s'"
 
-#: libfdisk/src/gpt.c:1805
+#: libfdisk/src/gpt.c:1809
 #, fuzzy, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "liste '%s' ayrıştırılamadı"
 
-#: libfdisk/src/gpt.c:1905
+#: libfdisk/src/gpt.c:1909
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "Disk bölümü UUID'si %s den %s e değiştirildi."
 
-#: libfdisk/src/gpt.c:1914
+#: libfdisk/src/gpt.c:1918
 #, fuzzy
 msgid "Failed to translate partition name, name not changed."
 msgstr "disk bölümü ismi tahsis edilemedi"
 
-#: libfdisk/src/gpt.c:1916
+#: libfdisk/src/gpt.c:1920
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Disk bölümü ismi '%s' den '%.*s' e değiştirildi."
 
-#: libfdisk/src/gpt.c:1945
+#: libfdisk/src/gpt.c:1949
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Disk bölümü başlangıcı İlkKullanılabilirLBA'nın aşağısında kalıyor."
 
-#: libfdisk/src/gpt.c:1952
+#: libfdisk/src/gpt.c:1956
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "Disk bölümü sonu SonKullanılabilirLBA'nın yukarısında kalıyor."
 
-#: libfdisk/src/gpt.c:2114
+#: libfdisk/src/gpt.c:2118
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "Aygıt karma MBR içeriyor -- sadece GPT yazılıyor. MBR'ı elle eşitlemeniz gerekiyor."
 
-#: libfdisk/src/gpt.c:2151
+#: libfdisk/src/gpt.c:2155
 msgid "Disk does not contain a valid backup header."
 msgstr "Disk geçerli bir yedek başlık içermiyor."
 
-#: libfdisk/src/gpt.c:2156
+#: libfdisk/src/gpt.c:2160
 msgid "Invalid primary header CRC checksum."
 msgstr "Geçersiz birincil başlık CRC sağlama toplamı."
 
-#: libfdisk/src/gpt.c:2160
+#: libfdisk/src/gpt.c:2164
 msgid "Invalid backup header CRC checksum."
 msgstr "Geçersiz yedek başlık CRC sağlama toplamı."
 
-#: libfdisk/src/gpt.c:2165
+#: libfdisk/src/gpt.c:2169
 msgid "Invalid partition entry checksum."
 msgstr "Geçersiz disk bölümü girdisi sağlama toplamı."
 
-#: libfdisk/src/gpt.c:2170
+#: libfdisk/src/gpt.c:2174
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Geçersiz birincil başlık LBA sağlamlık kontrolü."
 
-#: libfdisk/src/gpt.c:2174
+#: libfdisk/src/gpt.c:2178
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Geçersiz yedek başlık LBA sağlamlık kontrolü."
 
-#: libfdisk/src/gpt.c:2179
+#: libfdisk/src/gpt.c:2183
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA birincil başlıktaki gerçek konum ile eşleşmiyor."
 
-#: libfdisk/src/gpt.c:2183
+#: libfdisk/src/gpt.c:2187
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA yedek başlıktaki gerçek konum ile eşleşmiyor."
 
-#: libfdisk/src/gpt.c:2188
+#: libfdisk/src/gpt.c:2192
 msgid "Disk is too small to hold all data."
 msgstr "Disk bütün veriyi tutmak için çok küçük."
 
-#: libfdisk/src/gpt.c:2198
+#: libfdisk/src/gpt.c:2202
 msgid "Primary and backup header mismatch."
 msgstr "Birincil ve yedek başlık eşleşmiyor."
 
-#: libfdisk/src/gpt.c:2204
+#: libfdisk/src/gpt.c:2208
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Disk bölümü %u disk bölümü %u ile çakışıyor."
 
-#: libfdisk/src/gpt.c:2211
+#: libfdisk/src/gpt.c:2215
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Disk bölümü %u disk için çok büyük."
 
-#: libfdisk/src/gpt.c:2218
+#: libfdisk/src/gpt.c:2222
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Disk bölümü %u başlamadan bitiyor."
 
-#: libfdisk/src/gpt.c:2227
+#: libfdisk/src/gpt.c:2231
 msgid "No errors detected."
 msgstr "Hiçbir hata tespit edilemedi."
 
-#: libfdisk/src/gpt.c:2228
+#: libfdisk/src/gpt.c:2232
 #, c-format
 msgid "Header version: %s"
 msgstr "Başlık sürümü: %s"
 
-#: libfdisk/src/gpt.c:2229
+#: libfdisk/src/gpt.c:2233
 #, fuzzy, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "Kullanılan %u, %d disk bölümü arasıdan."
 
-#: libfdisk/src/gpt.c:2239
+#: libfdisk/src/gpt.c:2243
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Taplam %ju boş sektör kullanılabilir durumda %u segment içinden."
 msgstr[1] "Toplam %ju boş sektör kullanılabilir durumda %u segment içinden (en büyüğü %s)."
 
-#: libfdisk/src/gpt.c:2247
+#: libfdisk/src/gpt.c:2251
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "%d hata tespit edildi."
 msgstr[1] "%d hata tespit edildi."
 
-#: libfdisk/src/gpt.c:2326
+#: libfdisk/src/gpt.c:2330
 msgid "All partitions are already in use."
 msgstr "Bütün disk bölümleri zaten kullanılıyor."
 
-#: libfdisk/src/gpt.c:2383 libfdisk/src/gpt.c:2410
+#: libfdisk/src/gpt.c:2387 libfdisk/src/gpt.c:2414
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Sektör %ju zaten kullanılıyor."
 
-#: libfdisk/src/gpt.c:2476
+#: libfdisk/src/gpt.c:2480
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Disk bölümü %zu oluşturulamadı"
 
-#: libfdisk/src/gpt.c:2483
+#: libfdisk/src/gpt.c:2487
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "Son kullanılabilir GPT sektörü %ju ancak %ju istendi."
 
-#: libfdisk/src/gpt.c:2490
+#: libfdisk/src/gpt.c:2494
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "İlk kullanılabilir GPT sektörü %ju ancak %ju istendi."
 
-#: libfdisk/src/gpt.c:2629
+#: libfdisk/src/gpt.c:2633
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Yeni bir GPT disketiketi oluşturuldu (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2647
+#: libfdisk/src/gpt.c:2651
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Yeni disk UUID'sini girin (8-4-4-4-14 formatında)"
 
-#: libfdisk/src/gpt.c:2654
+#: libfdisk/src/gpt.c:2658
 msgid "Failed to parse your UUID."
 msgstr "Girilen UUID ayrıştırılamadı."
 
-#: libfdisk/src/gpt.c:2668
+#: libfdisk/src/gpt.c:2672
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Disk belirticisi %s den %s e değiştirildi."
 
-#: libfdisk/src/gpt.c:2688
+#: libfdisk/src/gpt.c:2692
 msgid "Not enough space for new partition table!"
 msgstr "Yeni disk bölümü tablosu için yeterli alan yok!"
 
-#: libfdisk/src/gpt.c:2699
+#: libfdisk/src/gpt.c:2703
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Disk bölümü #%u aralık dışında (en düşük başlangıç %<PRIu64> sektör)"
 
-#: libfdisk/src/gpt.c:2704
+#: libfdisk/src/gpt.c:2708
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Disk bölümü #%u aralık dışında (en yüksek bitiş %<PRIu64> sektör)"
 
-#: libfdisk/src/gpt.c:2747
+#: libfdisk/src/gpt.c:2751
 #, fuzzy, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Azami sayıda disk bölümü oluşturuldu."
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2774
 msgid "Cannot allocate memory!"
 msgstr "Bellek tahsis edilemedi!"
 
-#: libfdisk/src/gpt.c:2800
+#: libfdisk/src/gpt.c:2804
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Disk bölümü boyutu %<PRIu32> den %<PRIu64> e değiştirildi."
 
-#: libfdisk/src/gpt.c:2909
+#: libfdisk/src/gpt.c:2913
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Disk bölümü %zu'daki öznitelikler 0x%016<PRIx64>'a değiştirildi."
 
-#: libfdisk/src/gpt.c:2959
+#: libfdisk/src/gpt.c:2963
 msgid "Enter GUID specific bit"
 msgstr "GUID'ye özel biti gir"
 
-#: libfdisk/src/gpt.c:2974
+#: libfdisk/src/gpt.c:2978
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "desteklenmeyen bit %lu değiştirilemedi"
 
-#: libfdisk/src/gpt.c:2987
+#: libfdisk/src/gpt.c:2991
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "GUID'ye özel bit %d disk bölümü %zu'da etkinleştirildi."
 
-#: libfdisk/src/gpt.c:2988
+#: libfdisk/src/gpt.c:2992
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "GUID'ye özel bit %d disk bölümü %zu'da kapatıldı."
 
-#: libfdisk/src/gpt.c:2992
+#: libfdisk/src/gpt.c:2996
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Bayrak %s disk bölümü %zu'da etkinleştirildi."
 
-#: libfdisk/src/gpt.c:2993
+#: libfdisk/src/gpt.c:2997
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Bayrak %s disk bölümü %zu'da kapatıldı."
 
-#: libfdisk/src/gpt.c:3135
+#: libfdisk/src/gpt.c:3139
 msgid "Type-UUID"
 msgstr "Tip-UUID"
 
-#: libfdisk/src/gpt.c:3136
+#: libfdisk/src/gpt.c:3140
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3137 login-utils/chfn.c:156 login-utils/chfn.c:158
+#: libfdisk/src/gpt.c:3141 login-utils/chfn.c:156 login-utils/chfn.c:158
 #: login-utils/chfn.c:324
 msgid "Name"
 msgstr "İsim"
@@ -6298,7 +6306,7 @@ msgstr "İsim"
 msgid "Free space"
 msgstr "Boş alan"
 
-#: libfdisk/src/partition.c:1255
+#: libfdisk/src/partition.c:1263
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Disk bölümü #%zu yeniden boyutlandırılamadı."
@@ -7345,7 +7353,7 @@ msgstr "bilinmeyen zaman formatı: %s"
 msgid "Interrupted %s"
 msgstr "Durduruldu %s"
 
-#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:885
+#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:886
 msgid "preallocation size exceeded"
 msgstr "önayırma boyutu sınırı aştı"
 
@@ -7419,7 +7427,7 @@ msgstr ""
 "     --time-format <format>  zaman damgalarını belirtilen <format>ta göster:\n"
 "                               zamanyok|kısa|tam|iso\n"
 
-#: login-utils/last.c:886
+#: login-utils/last.c:887
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7428,12 +7436,12 @@ msgstr ""
 "\n"
 "%s %s'te başlıyor"
 
-#: login-utils/last.c:965 term-utils/scriptreplay.c:65
+#: login-utils/last.c:966 term-utils/scriptreplay.c:65
 #: term-utils/scriptreplay.c:69
 msgid "failed to parse number"
 msgstr "sayı ayrıştırılamadı"
 
-#: login-utils/last.c:986 login-utils/last.c:991 login-utils/last.c:996
+#: login-utils/last.c:987 login-utils/last.c:992 login-utils/last.c:997
 #: sys-utils/rtcwake.c:503
 #, c-format
 msgid "invalid time value \"%s\""
@@ -8111,66 +8119,67 @@ msgstr "uç birim öznitelikleri alınamadı"
 msgid "failed to create pseudo-terminal"
 msgstr "yeni bir disketiketi oluşturulamadı"
 
-#: login-utils/su-common.c:493 login-utils/su-common.c:767
+#: login-utils/su-common.c:496 login-utils/su-common.c:770
 msgid "cannot block signals"
 msgstr "sinyaller bloklanamıyor"
 
-#: login-utils/su-common.c:529 misc-utils/uuidd.c:411 term-utils/script.c:573
+#: login-utils/su-common.c:532 misc-utils/uuidd.c:411 term-utils/script.c:573
 msgid "poll failed"
 msgstr "poll başarısız"
 
-#: login-utils/su-common.c:675
+#: login-utils/su-common.c:678
 #, fuzzy
 msgid "failed to modify environment"
 msgstr "dizin açılamadı"
 
-#: login-utils/su-common.c:711
+#: login-utils/su-common.c:714
 msgid "may not be used by non-root users"
 msgstr "root olmayan kullanıcılar tarafından kullanılamaz"
 
-#: login-utils/su-common.c:735
-msgid "incorrect password"
-msgstr "hatalı parola"
+#: login-utils/su-common.c:738
+#, fuzzy
+msgid "authentication failed"
+msgstr "tcgetattr başarısız"
 
-#: login-utils/su-common.c:748
+#: login-utils/su-common.c:751
 #, c-format
 msgid "cannot open session: %s"
 msgstr "oturum açılamıyor: %s"
 
-#: login-utils/su-common.c:784
+#: login-utils/su-common.c:787
 msgid "cannot initialize signal mask for session"
 msgstr ""
 
-#: login-utils/su-common.c:792
+#: login-utils/su-common.c:795
 #, fuzzy
 msgid "cannot initialize signal mask"
 msgstr "sinyaller bloklanamıyor"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:805
 #, fuzzy
 msgid "cannot set signal handler for session"
 msgstr "sinyal işleyicisi ayarlanamıyor"
 
-#: login-utils/su-common.c:810 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
+#: login-utils/su-common.c:813 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
 #: term-utils/script.c:873
 msgid "cannot set signal handler"
 msgstr "sinyal işleyicisi ayarlanamıyor"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:821
 #, fuzzy
 msgid "cannot set signal mask"
 msgstr "sinyal işleyicisi ayarlanamıyor"
 
-#: login-utils/su-common.c:846
+#: login-utils/su-common.c:849
 msgid "cannot create child process"
 msgstr "alt süreç oluşturulamadı"
 
-#: login-utils/su-common.c:865
+#: login-utils/su-common.c:868
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "%s dizinine girilemiyor"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:887
 #, c-format
 msgid ""
 "\n"
@@ -8179,63 +8188,63 @@ msgstr ""
 "\n"
 "Oturum sonlandırılıyor, kabuk kapatılıyor..."
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:898
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...kapatıldı.\n"
 
-#: login-utils/su-common.c:996
+#: login-utils/su-common.c:999
 #, fuzzy
 msgid "failed to set the PATH environment variable"
 msgstr "Ortam değişkeni %s ayarlanamadı"
 
-#: login-utils/su-common.c:1073
+#: login-utils/su-common.c:1076
 msgid "cannot set groups"
 msgstr "gruplar ayarlanamadı"
 
-#: login-utils/su-common.c:1079
+#: login-utils/su-common.c:1082
 #, fuzzy, c-format
 msgid "failed to user credentials: %s"
 msgstr "seviye '%s' ayrıştırılamadı"
 
-#: login-utils/su-common.c:1089 sys-utils/eject.c:660
+#: login-utils/su-common.c:1092 sys-utils/eject.c:660
 msgid "cannot set group id"
 msgstr "grup id'si ayarlanamadı"
 
-#: login-utils/su-common.c:1091 sys-utils/eject.c:663
+#: login-utils/su-common.c:1094 sys-utils/eject.c:663
 msgid "cannot set user id"
 msgstr "kullanıcı id'si ayarlanamadı"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1162
 #, fuzzy
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment  ortam değişkenlerini sıfırlama\n"
 
-#: login-utils/su-common.c:1160
+#: login-utils/su-common.c:1163
 #, fuzzy
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -m, -p, --preserve-environment  ortam değişkenlerini sıfırlama\n"
 
-#: login-utils/su-common.c:1163
+#: login-utils/su-common.c:1166
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <group>             birincil grubu belirt\n"
 
-#: login-utils/su-common.c:1164
+#: login-utils/su-common.c:1167
 #, fuzzy
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr ""
 " -G, --supp-group <group>        tamamlayıcı bir grup belirt\n"
 "\n"
 
-#: login-utils/su-common.c:1167
+#: login-utils/su-common.c:1170
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  kabuğu giriş kabuğu yap\n"
 
-#: login-utils/su-common.c:1168
+#: login-utils/su-common.c:1171
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <command>         kabuğa -c ile tek bir komut geçir\n"
 
-#: login-utils/su-common.c:1169
+#: login-utils/su-common.c:1172
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -8243,20 +8252,20 @@ msgstr ""
 " --session-command <command>     kabuğa -c ile tek bir komut geçir\n"
 "                                   ve yeni bir oturum oluşturma\n"
 
-#: login-utils/su-common.c:1171
+#: login-utils/su-common.c:1174
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      kabuğa -f parametresini geçirin (csh ya da tcsh için)\n"
 
-#: login-utils/su-common.c:1172
+#: login-utils/su-common.c:1175
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <kabuk>             /etc/shells izin veriyorsa kabuğu çalıştır\n"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1176
 #, fuzzy
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -t, --table              bir tablo oluştur\n"
 
-#: login-utils/su-common.c:1183
+#: login-utils/su-common.c:1186
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -8265,7 +8274,7 @@ msgstr ""
 " %1$s [seçenekler] <aygıt> [[-N] <bölüm>]\n"
 " %1$s [seçenekler] <komut>\n"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1191
 #, fuzzy
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -8277,17 +8286,17 @@ msgstr ""
 "verilmediyse, su(1)-uyumlu yapıya geri dön ve standart kabuğu çalıştır.\n"
 "Paramatreler -c, -f, -l ve -s, -u ile karşılıklı dışlayandır.\n"
 
-#: login-utils/su-common.c:1193
+#: login-utils/su-common.c:1196
 #, fuzzy
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <user>             kullanıcı ismi\n"
 
-#: login-utils/su-common.c:1204
+#: login-utils/su-common.c:1207
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [seçenekler] [-] [<user> [<argument>...]]\n"
 
-#: login-utils/su-common.c:1208
+#: login-utils/su-common.c:1211
 #, fuzzy
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
@@ -8297,50 +8306,50 @@ msgstr ""
 "<user> için etkin kullanıcı ve grup kimliğini değiştir.\n"
 "Tek bir -, -l anlamına gelir. Eğer <user> verilmez ise root kullanıcısı varsayılır.\n"
 
-#: login-utils/su-common.c:1254
+#: login-utils/su-common.c:1257
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "%d'den fazla tamamlayıcı grup belirtilemez"
 msgstr[1] "%d'den fazla tamamlayıcı grup belirtilemez"
 
-#: login-utils/su-common.c:1260
+#: login-utils/su-common.c:1263
 #, c-format
 msgid "group %s does not exist"
 msgstr "grup %s yok"
 
-#: login-utils/su-common.c:1374
+#: login-utils/su-common.c:1377
 #, fuzzy
 msgid "--pty is not supported for your system"
 msgstr "--reload sisteminiz tarafından desteklenmiyor"
 
-#: login-utils/su-common.c:1410
+#: login-utils/su-common.c:1413
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "--preserve-environment yoksayılıyor, --login ile karşılıklı dışlayanlar"
 
-#: login-utils/su-common.c:1424
+#: login-utils/su-common.c:1427
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "seçenekler --{shell,fast,command,session-command,login} ve --user karşılıklı dışlayandır"
 
-#: login-utils/su-common.c:1427
+#: login-utils/su-common.c:1430
 msgid "no command was specified"
 msgstr "herhangi bir komut belirtilmedi"
 
-#: login-utils/su-common.c:1439
+#: login-utils/su-common.c:1442
 msgid "only root can specify alternative groups"
 msgstr "sadece root kullanıcısı alternatif gruplar belirtebilir"
 
-#: login-utils/su-common.c:1449
+#: login-utils/su-common.c:1452
 #, c-format
 msgid "user %s does not exist"
 msgstr "kullanıcı %s mevcut değil"
 
-#: login-utils/su-common.c:1482
+#: login-utils/su-common.c:1485
 #, c-format
 msgid "using restricted shell %s"
 msgstr "kısıtlı kabuk %s kullanılıyor"
 
-#: login-utils/su-common.c:1513
+#: login-utils/su-common.c:1516
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "uyarı: %s dizinine girilemiyor"
@@ -8968,7 +8977,7 @@ msgstr " -o, --output <liste>  çıktı sütunları\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw              ham çıktı biçimini kullan\n"
 
-#: misc-utils/fincore.c:343 sys-utils/losetup.c:814
+#: misc-utils/fincore.c:343 sys-utils/losetup.c:817
 msgid "no file specified"
 msgstr "hiçbir dosya belirtilmedi"
 
@@ -9645,7 +9654,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr "%s ve %s karşılıklı dışlanandır"
 
 #: misc-utils/kill.c:287 sys-utils/eject.c:205 sys-utils/eject.c:230
-#: sys-utils/losetup.c:722 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
+#: sys-utils/losetup.c:725 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
 #: sys-utils/tunelp.c:181 sys-utils/tunelp.c:188 sys-utils/tunelp.c:195
 #: sys-utils/tunelp.c:201 sys-utils/tunelp.c:205 sys-utils/tunelp.c:212
 #: term-utils/setterm.c:211 term-utils/setterm.c:214 term-utils/setterm.c:233
@@ -11484,7 +11493,7 @@ msgstr " -z, --zeroout       çıkarmak yerine sıfır ile doldur\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose       hizalı uzunluğu ve ofseti göster\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:702
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:705
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "ofset ayrıştırılamadı"
@@ -13542,7 +13551,7 @@ msgstr " -Q, --queue              ileti kuyruğu oluştur\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <kip>        kaynak için izin (varsayılan 0644)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:730 sys-utils/zramctl.c:647
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:733 sys-utils/zramctl.c:647
 msgid "failed to parse size"
 msgstr "boyut ayrıştırılamadı"
 
@@ -14580,89 +14589,89 @@ msgstr " -O, --output-all     bütün sütunları çıktıla\n"
 msgid "     --raw                     use raw --list output format\n"
 msgstr "     --raw                     ham --list çıktı biçimini kullan\n"
 
-#: sys-utils/losetup.c:461
+#: sys-utils/losetup.c:464
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr "%s: Uyarı: dosya 512 bayttan daha küçük; döngü aygıtı kullanışsız veya sistem araçları tarafından görünmez olabilir."
 
-#: sys-utils/losetup.c:465
+#: sys-utils/losetup.c:468
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr "%s: Uyarı: dosya 512-bayt bir sektöre sığmıyor; dosyanın sonu yoksayılacak."
 
-#: sys-utils/losetup.c:486 sys-utils/losetup.c:538
+#: sys-utils/losetup.c:489 sys-utils/losetup.c:541
 #, c-format
 msgid "%s: overlapping loop device exists"
 msgstr "%s: örtüşen döngü aygıtı var"
 
-#: sys-utils/losetup.c:497
+#: sys-utils/losetup.c:500
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
 msgstr "%s: örtüşen salt-okunur döngü aygıtı var"
 
-#: sys-utils/losetup.c:504
+#: sys-utils/losetup.c:507
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
 msgstr "%s: örtüşen şifreli döngü aygıtı var"
 
-#: sys-utils/losetup.c:510
+#: sys-utils/losetup.c:513
 #, c-format
 msgid "%s: failed to re-use loop device"
 msgstr "%s: döngü aygıtı yeniden kullanılamadı"
 
-#: sys-utils/losetup.c:516
+#: sys-utils/losetup.c:519
 msgid "failed to inspect loop devices"
 msgstr "döngü aygıtı incelenemedi"
 
-#: sys-utils/losetup.c:539
+#: sys-utils/losetup.c:542
 #, c-format
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: çakışan döngü aygıtları kontrol edilemedi"
 
-#: sys-utils/losetup.c:551 sys-utils/losetup.c:868
+#: sys-utils/losetup.c:554 sys-utils/losetup.c:871
 msgid "cannot find an unused loop device"
 msgstr "kullanılmayan bir döngü aygıtı bulunamadı"
 
-#: sys-utils/losetup.c:561
+#: sys-utils/losetup.c:564
 #, c-format
 msgid "%s: failed to use backing file"
 msgstr "%s: yedek dosyası kullanılamadı"
 
-#: sys-utils/losetup.c:654
+#: sys-utils/losetup.c:657
 #, fuzzy
 msgid "failed to parse logical block size"
 msgstr "boyut ayrıştırılamadı"
 
-#: sys-utils/losetup.c:660 sys-utils/losetup.c:670 sys-utils/losetup.c:795
-#: sys-utils/losetup.c:809 sys-utils/losetup.c:848
+#: sys-utils/losetup.c:663 sys-utils/losetup.c:673 sys-utils/losetup.c:798
+#: sys-utils/losetup.c:812 sys-utils/losetup.c:851
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: aygıt kullanılamadı"
 
-#: sys-utils/losetup.c:806
+#: sys-utils/losetup.c:809
 msgid "no loop device specified"
 msgstr "hiçbir döngü aygıtı belirtilmedi"
 
-#: sys-utils/losetup.c:821
+#: sys-utils/losetup.c:824
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "döngü aygıtı kurulumu sırasında sadece %s seçenekleri kullanılabilir"
 
-#: sys-utils/losetup.c:826
+#: sys-utils/losetup.c:829
 msgid "the option --offset is not allowed in this context"
 msgstr "--offset seçeneği bu içerikte kullanılamaz"
 
-#: sys-utils/losetup.c:889
+#: sys-utils/losetup.c:892
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: kapasite ayarlanamadı"
 
-#: sys-utils/losetup.c:898
+#: sys-utils/losetup.c:901
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: doğrudan gç ayarlanamadı"
 
-#: sys-utils/losetup.c:904
+#: sys-utils/losetup.c:907
 #, fuzzy, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: boyut alınamadı"
@@ -16341,30 +16350,35 @@ msgstr " -n, --no-auto             bayt sıralaması otomatik algılanmasını k
 msgid "error writing %s"
 msgstr "%s yazılırken hata"
 
-#: sys-utils/readprofile.c:270
+#: sys-utils/readprofile.c:250
+#, fuzzy
+msgid "input file is empty"
+msgstr "Linux dosya sistemi"
+
+#: sys-utils/readprofile.c:272
 msgid "Assuming reversed byte order. Use -n to force native byte order."
 msgstr "Ters bayt sıralaması göz önüne alınıyor. Yerel bayt sıralamasını zorlamak için -f kullanın"
 
-#: sys-utils/readprofile.c:285
+#: sys-utils/readprofile.c:287
 #, c-format
 msgid "Sampling_step: %u\n"
 msgstr "Örnekleme_adımı: %u\n"
 
-#: sys-utils/readprofile.c:301 sys-utils/readprofile.c:322
+#: sys-utils/readprofile.c:303 sys-utils/readprofile.c:324
 #, c-format
 msgid "%s(%i): wrong map line"
 msgstr "%s(%i): eşlem satırı yanlış"
 
-#: sys-utils/readprofile.c:312
+#: sys-utils/readprofile.c:314
 #, c-format
 msgid "can't find \"_stext\" in %s"
 msgstr "\"_stext\" %s içinde bulunamıyor"
 
-#: sys-utils/readprofile.c:345
+#: sys-utils/readprofile.c:347
 msgid "profile address out of range. Wrong map file?"
 msgstr "profil adresi kapsamdışı. Eşlem dosyası yanlış olabilir mi?"
 
-#: sys-utils/readprofile.c:403
+#: sys-utils/readprofile.c:405
 msgid "total"
 msgstr "toplam"
 
@@ -18352,7 +18366,7 @@ msgstr "%s: %s çalıştırılamıyor: %m"
 
 #: term-utils/agetty.c:594 term-utils/agetty.c:921 term-utils/agetty.c:1457
 #: term-utils/agetty.c:1475 term-utils/agetty.c:1512 term-utils/agetty.c:1522
-#: term-utils/agetty.c:1564 term-utils/agetty.c:2205 term-utils/agetty.c:2774
+#: term-utils/agetty.c:1564 term-utils/agetty.c:2203 term-utils/agetty.c:2772
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "bellek tahsis edilemedi: %m"
@@ -18476,27 +18490,27 @@ msgstr ""
 msgid "%s: read: %m"
 msgstr "%s: okunan: %m"
 
-#: term-utils/agetty.c:2181
+#: term-utils/agetty.c:2179
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: girdi geçersiz"
 
-#: term-utils/agetty.c:2201 term-utils/agetty.c:2209
+#: term-utils/agetty.c:2199 term-utils/agetty.c:2207
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: giriş ismi için geçersiz karakter dönüşümü"
 
-#: term-utils/agetty.c:2215
+#: term-utils/agetty.c:2213
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: giriş isminde geçersiz karakter 0x%x"
 
-#: term-utils/agetty.c:2300
+#: term-utils/agetty.c:2298
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: uç birim öznitelikleri ayarlanamadı: %m"
 
-#: term-utils/agetty.c:2338
+#: term-utils/agetty.c:2336
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18505,161 +18519,161 @@ msgstr ""
 " %1$s [seçenekler] <satır> [<baud_rate>,...] [<termtype>]\n"
 " %1$s [seçenekler] <baud_rate>,... <satır> [<termtype>]\n"
 
-#: term-utils/agetty.c:2342
+#: term-utils/agetty.c:2340
 msgid "Open a terminal and set its mode.\n"
 msgstr "Bir uç birim aç ve modunu ayarla.\n"
 
-#: term-utils/agetty.c:2345
+#: term-utils/agetty.c:2343
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                8-bit tty olduğunu varsay\n"
 
-#: term-utils/agetty.c:2346
+#: term-utils/agetty.c:2344
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <kullanıcı>     belirtilen kullanıcı için otomatik giriş yap\n"
 
-#: term-utils/agetty.c:2347
+#: term-utils/agetty.c:2345
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              kontrol modunu sıfırlama\n"
 
-#: term-utils/agetty.c:2348
+#: term-utils/agetty.c:2346
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               login(1) için -r <hostname>  kullan\n"
 
-#: term-utils/agetty.c:2349
+#: term-utils/agetty.c:2347
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <dosya>    issue dosyasını göster\n"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2348
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         donanım akış kontrolünü etkinleştir\n"
 
-#: term-utils/agetty.c:2351
+#: term-utils/agetty.c:2349
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <makinaadı>      giriş makinasını belirt\n"
 
-#: term-utils/agetty.c:2352
+#: term-utils/agetty.c:2350
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              issue dosyasını gösterme\n"
 
-#: term-utils/agetty.c:2353
+#: term-utils/agetty.c:2351
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <karakterdizisi> başlangıç karakter dizisini ayarla\n"
 
-#: term-utils/agetty.c:2354
+#: term-utils/agetty.c:2352
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              prompt öncesi ekranı temizleme\n"
 
-#: term-utils/agetty.c:2355
+#: term-utils/agetty.c:2353
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <dosya> giriş programını belirt\n"
 
-#: term-utils/agetty.c:2356
+#: term-utils/agetty.c:2354
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<kip>]  yerel hat bayrağını kontrol et\n"
 
-#: term-utils/agetty.c:2357
+#: term-utils/agetty.c:2355
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         bağlantı sırasında baud değerini çıkar\n"
 
-#: term-utils/agetty.c:2358
+#: term-utils/agetty.c:2356
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           giriş için sorma\n"
 
-#: term-utils/agetty.c:2359
+#: term-utils/agetty.c:2357
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            düzenleme öncesi yeni satır yazdırma\n"
 
-#: term-utils/agetty.c:2360
+#: term-utils/agetty.c:2358
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <seçenekler> girişe geçilen seçenekler\n"
 
-#: term-utils/agetty.c:2361
+#: term-utils/agetty.c:2359
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          giriş öncesi herhangi bir tuş için bekle\n"
 
-#: term-utils/agetty.c:2362
+#: term-utils/agetty.c:2360
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <dizin>         kökü dizine değiştir\n"
 
-#: term-utils/agetty.c:2363
+#: term-utils/agetty.c:2361
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               tty'de sanal olarak kapatma yap\n"
 
-#: term-utils/agetty.c:2364
+#: term-utils/agetty.c:2362
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            baud değerini kırılımdan sonra korumayı dene\n"
 
-#: term-utils/agetty.c:2365
+#: term-utils/agetty.c:2363
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <sayı>     giriş süreci zaman aşımı\n"
 
-#: term-utils/agetty.c:2366
+#: term-utils/agetty.c:2364
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          büyük karakter uç birimi algıla\n"
 
-#: term-utils/agetty.c:2367
+#: term-utils/agetty.c:2365
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              carriage-return bekle\n"
 
-#: term-utils/agetty.c:2368
+#: term-utils/agetty.c:2366
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              ipuçlarını gösterme\n"
 
-#: term-utils/agetty.c:2369
+#: term-utils/agetty.c:2367
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           hiç makina ismi gösterilmeyecek\n"
 
-#: term-utils/agetty.c:2370
+#: term-utils/agetty.c:2368
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        tam nitelikli makina ismi kullan\n"
 
-#: term-utils/agetty.c:2371
+#: term-utils/agetty.c:2369
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <karakterdizisi> ek backspace karakterleri\n"
 
-#: term-utils/agetty.c:2372
+#: term-utils/agetty.c:2370
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <karakterdizisi>  ek sonlandırma karakterleri\n"
 
-#: term-utils/agetty.c:2373
+#: term-utils/agetty.c:2371
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <dizin>    giriş öncesi dizin değiştir\n"
 
-#: term-utils/agetty.c:2374
+#: term-utils/agetty.c:2372
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <sayı>       girdi öncesi uyuma saniyesi\n"
 
-#: term-utils/agetty.c:2375
+#: term-utils/agetty.c:2373
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <sayı>        login'i bu öncelik ile çalıştır\n"
 
-#: term-utils/agetty.c:2376
+#: term-utils/agetty.c:2374
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               girdileri agetty örneklerini çalıştırmadan önce yeniden yükle\n"
 
-#: term-utils/agetty.c:2377
+#: term-utils/agetty.c:2375
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "    -T  --list-types    bilinen disk bölümü türlerini listeler"
 
-#: term-utils/agetty.c:2731
+#: term-utils/agetty.c:2729
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d kullanıcı"
 msgstr[1] "%d kullanıcı"
 
-#: term-utils/agetty.c:2862
+#: term-utils/agetty.c:2860
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname başarısız: %m"
 
-#: term-utils/agetty.c:2874
+#: term-utils/agetty.c:2872
 #, c-format
 msgid "cannot touch file %s"
 msgstr "%s dosyasına erişilemiyor"
 
-#: term-utils/agetty.c:2878
+#: term-utils/agetty.c:2876
 msgid "--reload is unsupported on your system"
 msgstr "--reload sisteminiz tarafından desteklenmiyor"
 
@@ -19183,16 +19197,12 @@ msgstr "zaman aşımı değeri hatalı: %s"
 msgid "cannot get passwd uid"
 msgstr "parola uid'si alınamadı"
 
-#: term-utils/wall.c:362
-msgid "cannot get tty name"
-msgstr "tty ismi alınamadı"
-
-#: term-utils/wall.c:382
+#: term-utils/wall.c:381
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "%s@%s (%s) (%s)'den yayın iletisi:"
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:414
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "%s okunmayacak - standart çıktı kullan."
@@ -20078,6 +20088,12 @@ msgstr "girdide bilinmeyen kaçış dizisi: %o, %o"
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "Girdi satırı çok uzun."
+
+#~ msgid "incorrect password"
+#~ msgstr "hatalı parola"
+
+#~ msgid "cannot get tty name"
+#~ msgstr "tty ismi alınamadı"
 
 #~ msgid "Failed to set personality to %s"
 #~ msgstr "Kişisellik %s olarak ayarlanamadı"

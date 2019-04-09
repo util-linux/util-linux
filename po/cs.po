@@ -48,7 +48,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.33-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-01-09 11:05+0100\n"
+"POT-Creation-Date: 2019-04-09 14:30+0200\n"
 "PO-Revision-Date: 2018-11-03 17:19+01:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -92,7 +92,7 @@ msgstr "málo argumentů"
 #: disk-utils/sfdisk.c:765 disk-utils/sfdisk.c:824 disk-utils/sfdisk.c:903
 #: disk-utils/sfdisk.c:944 disk-utils/sfdisk.c:974 disk-utils/sfdisk.c:1011
 #: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
-#: login-utils/islocal.c:87 login-utils/last.c:667 login-utils/sulogin.c:443
+#: login-utils/islocal.c:87 login-utils/last.c:668 login-utils/sulogin.c:443
 #: login-utils/sulogin.c:480 login-utils/utmpdump.c:134
 #: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374 login-utils/vipw.c:261
 #: login-utils/vipw.c:279 misc-utils/findmnt.c:1105 misc-utils/logger.c:1224
@@ -107,10 +107,10 @@ msgstr "málo argumentů"
 #: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
 #: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2871 term-utils/mesg.c:132 term-utils/script.c:540
+#: term-utils/agetty.c:2869 term-utils/mesg.c:132 term-utils/script.c:540
 #: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
+#: term-utils/wall.c:418 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:140 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
@@ -337,7 +337,7 @@ msgid "Quit program without writing changes"
 msgstr "Ukončí program bez uložení změn"
 
 #: disk-utils/cfdisk.c:195 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1023
-#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3137 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1128
 msgid "Type"
 msgstr "Druh"
@@ -822,7 +822,7 @@ msgstr "neplatný argument – repair"
 #: disk-utils/mkfs.bfs.c:188 disk-utils/mkfs.cramfs.c:337
 #: disk-utils/mkfs.cramfs.c:758 disk-utils/mkfs.cramfs.c:797
 #: disk-utils/mkfs.minix.c:821 disk-utils/mkswap.c:243 disk-utils/partx.c:959
-#: login-utils/last.c:681 login-utils/utmpdump.c:137 misc-utils/namei.c:135
+#: login-utils/last.c:682 login-utils/utmpdump.c:137 misc-utils/namei.c:135
 #: misc-utils/rename.c:120 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
 #: sys-utils/dmesg.c:526 sys-utils/fallocate.c:198 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:84 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
@@ -883,7 +883,7 @@ msgid "Using default response %c."
 msgstr "Použije se výchozí odpověď %c."
 
 #: disk-utils/fdisk.c:222 disk-utils/fdisk.c:296 disk-utils/fdisk.c:373
-#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2470
+#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2474
 msgid "Value out of range."
 msgstr "Hodnota je mimo meze."
 
@@ -974,7 +974,7 @@ msgid "cannot read"
 msgstr "nelze číst"
 
 #: disk-utils/fdisk.c:743 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:982
-#: libfdisk/src/gpt.c:2398
+#: libfdisk/src/gpt.c:2402
 msgid "First sector"
 msgstr "První sektor"
 
@@ -1128,7 +1128,7 @@ msgstr "Vlastnosti zařízení (velikost sektoru a geometrie) by měly být pou�
 #: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
 #: sys-utils/chcpu.c:354 sys-utils/chmem.c:423 sys-utils/dmesg.c:1468
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:909
+#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:912
 #: sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632 sys-utils/mount.c:764
 #: sys-utils/mount.c:772 sys-utils/mount.c:812 sys-utils/mount.c:825
 #: sys-utils/mount.c:894 sys-utils/mountpoint.c:180 sys-utils/pivot_root.c:72
@@ -1254,22 +1254,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "Diskové oddíly jsou chybně seřazeny."
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2426
-#: libfdisk/src/gpt.c:3129 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
+#: libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
 msgid "Start"
 msgstr "Začátek"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2427
-#: libfdisk/src/gpt.c:3130 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
+#: libfdisk/src/gpt.c:3134 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
 msgid "End"
 msgstr "Konec"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2428
-#: libfdisk/src/gpt.c:3131 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
+#: libfdisk/src/gpt.c:3135 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
 msgid "Sectors"
 msgstr "Sektory"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1022 libfdisk/src/dos.c:2430
-#: libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
+#: libfdisk/src/gpt.c:3136 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
 msgid "Size"
 msgstr "Velikost"
 
@@ -2916,7 +2916,7 @@ msgstr ""
 " -V, --verbose      vysvětlí prováděné úkony\n"
 "                    násobné použití -V způsobí bezzápisový běh\n"
 
-#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1519
+#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1522
 #: login-utils/sulogin.c:792 login-utils/sulogin.c:796 sys-utils/flock.c:121
 #: sys-utils/rtcwake.c:595 term-utils/script.c:692
 #, c-format
@@ -3574,7 +3574,7 @@ msgstr "příznaky oddílu"
 msgid "partition type (a string, a UUID, or hex)"
 msgstr "druh oddílu (řetězec, UUID nebo šestnáctkové číslo)"
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:530 sys-utils/losetup.c:641
+#: disk-utils/partx.c:114 sys-utils/losetup.c:533 sys-utils/losetup.c:644
 msgid "failed to initialize loopcxt"
 msgstr "loopctx se nepodařilo inicializovat"
 
@@ -3593,7 +3593,7 @@ msgstr "Pro zařízení loop se zkusí použít „%s“\n"
 msgid "%s: failed to set backing file"
 msgstr "%s: nastavení podkladového souboru selhalo"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:574
+#: disk-utils/partx.c:131 sys-utils/losetup.c:577
 #, c-format
 msgid "%s: failed to set up loop device"
 msgstr "%s: zařízení loop se nepodařilo nastavit"
@@ -4133,7 +4133,7 @@ msgid "no partition number specified"
 msgstr "žádné číslo oddílu nebylo zadáno"
 
 #: disk-utils/sfdisk.c:1047 disk-utils/sfdisk.c:1111 disk-utils/sfdisk.c:1166
-#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:772
+#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:775
 msgid "unexpected arguments"
 msgstr "neočekávané argumenty"
 
@@ -5188,7 +5188,7 @@ msgstr "První cylindr"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Poslední cylindr, +/-cylindrů nebo +/-velikost{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2447
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2451
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Poslední sektor, +/-sektorů nebo +/-velikost{K,M,G,T,P}"
 
@@ -5518,7 +5518,7 @@ msgstr "Chybný příznak 0x%02x%02x EBR (pro oddíl %zu) bude opraven zápisem(
 msgid "Start sector %ju out of range."
 msgstr "Začáteční sektoru%ju je mimo meze."
 
-#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2321 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2325 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5529,7 +5529,7 @@ msgstr "Oddíl %zu je již definován. Před opětovným vytvořením jej musít
 msgid "Sector %llu is already allocated."
 msgstr "Sektor %llu je již alokován."
 
-#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2330
+#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2334
 msgid "No free sectors available."
 msgstr "Nejsou žádné volné sektory."
 
@@ -5676,7 +5676,7 @@ msgstr "Chybný typ oddílu „%c“."
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Sektor %jd nelze zapsat: změna pozice selhala"
 
-#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1221
+#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1225
 msgid "Disk identifier"
 msgstr "Identifikátor disku"
 
@@ -5688,7 +5688,7 @@ msgstr "Na mnoha systémech typ 0 označuje volný prostor. Mít oddíly typu 0 
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Typ rozšířeného oddílu, který se již používá logickým oddílem, nelze změnit. Nejprve smažte logický oddíl."
 
-#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3038
+#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3042
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Diskové oddíly jsou již seřazeny."
 
@@ -5716,7 +5716,7 @@ msgstr "Příznak zaveditelnosti oddílu %zu je nyní zapnut."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Příznak zaveditelnosti oddílu %zu je nyní vypnut."
 
-#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3128 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1121
 msgid "Device"
 msgstr "Zařízení"
@@ -5737,7 +5737,7 @@ msgstr "Začátek-C/H/S"
 msgid "End-C/H/S"
 msgstr "Konec-C/H/S"
 
-#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3138 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3142 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr "Atr"
 
@@ -6079,180 +6079,188 @@ msgstr "Souborový systém QNX6"
 msgid "Plan 9 partition"
 msgstr "Oddíl Plan 9"
 
-#: libfdisk/src/gpt.c:661
+#: libfdisk/src/gpt.c:290
+msgid "HiFive Unleashed FSBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:291
+msgid "HiFive Unleashed BBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:665
 msgid "failed to allocate GPT header"
 msgstr "alokace hlavičky GPT selhala"
 
-#: libfdisk/src/gpt.c:744
+#: libfdisk/src/gpt.c:748
 msgid "First LBA specified by script is out of range."
 msgstr "První adresa LBA uvedená skriptem je mimo rozsah."
 
-#: libfdisk/src/gpt.c:756
+#: libfdisk/src/gpt.c:760
 msgid "Last LBA specified by script is out of range."
 msgstr "Poslední adresa LBA uvedená skriptem je mimo rozsah."
 
-#: libfdisk/src/gpt.c:895
+#: libfdisk/src/gpt.c:899
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr "Velikost GPT PMBR nesouhlasí (%<PRIu64> != %<PRIu64>), bude opravena při zápisu."
 
-#: libfdisk/src/gpt.c:917
+#: libfdisk/src/gpt.c:921
 msgid "gpt: stat() failed"
 msgstr "GPT: volání stat() selhalo"
 
-#: libfdisk/src/gpt.c:927
+#: libfdisk/src/gpt.c:931
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "GPT: soubory s módem %o nelze zpracovat"
 
-#: libfdisk/src/gpt.c:1191
+#: libfdisk/src/gpt.c:1195
 msgid "GPT Header"
 msgstr "Hlavička GPT"
 
-#: libfdisk/src/gpt.c:1196
+#: libfdisk/src/gpt.c:1200
 msgid "GPT Entries"
 msgstr "Záznamy GPT"
 
-#: libfdisk/src/gpt.c:1228
+#: libfdisk/src/gpt.c:1232
 msgid "First LBA"
 msgstr "První LBA"
 
-#: libfdisk/src/gpt.c:1233
+#: libfdisk/src/gpt.c:1237
 msgid "Last LBA"
 msgstr "Poslední LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1239
+#: libfdisk/src/gpt.c:1243
 msgid "Alternative LBA"
 msgstr "LBA náhrady"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1245
+#: libfdisk/src/gpt.c:1249
 msgid "Partition entries LBA"
 msgstr "LBA záznamů oddílů"
 
-#: libfdisk/src/gpt.c:1250
+#: libfdisk/src/gpt.c:1254
 msgid "Allocated partition entries"
 msgstr "Alokované záznamy oddílů"
 
-#: libfdisk/src/gpt.c:1595
+#: libfdisk/src/gpt.c:1599
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Záložní tabulka GPT je poškozená, avšak hlavní se zdá být v pořádku, takže ta bude použita."
 
-#: libfdisk/src/gpt.c:1605
+#: libfdisk/src/gpt.c:1609
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Hlavní tabulka GPT je poškozená, avšak záložní se zdá být v pořádku, takže ta bude použita."
 
-#: libfdisk/src/gpt.c:1618
+#: libfdisk/src/gpt.c:1622
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr "Záložní tabulka GPT není na konci zařízení. Problém bude opraven při zápisu."
 
-#: libfdisk/src/gpt.c:1800
+#: libfdisk/src/gpt.c:1804
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "nepodporovaný bit „%s“ atributu GPT"
 
-#: libfdisk/src/gpt.c:1805
+#: libfdisk/src/gpt.c:1809
 #, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "nezdařilo se rozebrat řetězec atributů GPT „%s“"
 
-#: libfdisk/src/gpt.c:1905
+#: libfdisk/src/gpt.c:1909
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "UUID oddílu změněno z %s na %s."
 
-#: libfdisk/src/gpt.c:1914
+#: libfdisk/src/gpt.c:1918
 msgid "Failed to translate partition name, name not changed."
 msgstr "Název oddílu se nepodařilo přeložit, název nezměněn."
 
-#: libfdisk/src/gpt.c:1916
+#: libfdisk/src/gpt.c:1920
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Název oddílu změněn z „%s“ na „%.*s“."
 
-#: libfdisk/src/gpt.c:1945
+#: libfdisk/src/gpt.c:1949
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Začátek oddílu nedosahuje FirstUsableLBA (první použitelné LBA)."
 
-#: libfdisk/src/gpt.c:1952
+#: libfdisk/src/gpt.c:1956
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "Konec oddílu překračuje LastUsableLBA (poslední použitelné LBA)."
 
-#: libfdisk/src/gpt.c:2114
+#: libfdisk/src/gpt.c:2118
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "Zařízení obsahuje hybridní MBR – zapisuje se pouze GPT. MBR musíte synchronizovat ručně."
 
-#: libfdisk/src/gpt.c:2151
+#: libfdisk/src/gpt.c:2155
 msgid "Disk does not contain a valid backup header."
 msgstr "Disk neobsahuje korektní záložní hlavičku."
 
-#: libfdisk/src/gpt.c:2156
+#: libfdisk/src/gpt.c:2160
 msgid "Invalid primary header CRC checksum."
 msgstr "Chybný kontrolní součet primární hlavičky."
 
-#: libfdisk/src/gpt.c:2160
+#: libfdisk/src/gpt.c:2164
 msgid "Invalid backup header CRC checksum."
 msgstr "Chybný kontrolní součet záložní hlavičky."
 
-#: libfdisk/src/gpt.c:2165
+#: libfdisk/src/gpt.c:2169
 msgid "Invalid partition entry checksum."
 msgstr "Chybný kontrolní součet záznamu oddílu."
 
-#: libfdisk/src/gpt.c:2170
+#: libfdisk/src/gpt.c:2174
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Kontrola správnosti primární hlavičky LBA neprošla."
 
-#: libfdisk/src/gpt.c:2174
+#: libfdisk/src/gpt.c:2178
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Kontrola správnosti záložní hlavičky LBA neprošla."
 
-#: libfdisk/src/gpt.c:2179
+#: libfdisk/src/gpt.c:2183
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA se neshoduje se skutečnou pozicí v primární hlavičce."
 
-#: libfdisk/src/gpt.c:2183
+#: libfdisk/src/gpt.c:2187
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA se neshoduje se skutečnou pozicí v záložní hlavičce."
 
-#: libfdisk/src/gpt.c:2188
+#: libfdisk/src/gpt.c:2192
 msgid "Disk is too small to hold all data."
 msgstr "Disk je příliš malý, aby udržel všechna data."
 
-#: libfdisk/src/gpt.c:2198
+#: libfdisk/src/gpt.c:2202
 msgid "Primary and backup header mismatch."
 msgstr "Primární a záložní hlavička se neshodují."
 
-#: libfdisk/src/gpt.c:2204
+#: libfdisk/src/gpt.c:2208
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Oddíl %u přesahuje do oddílu %u."
 
-#: libfdisk/src/gpt.c:2211
+#: libfdisk/src/gpt.c:2215
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Oddíl %u je pro disk příliš velký."
 
-#: libfdisk/src/gpt.c:2218
+#: libfdisk/src/gpt.c:2222
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Oddíl %u končí před svým začátkem."
 
-#: libfdisk/src/gpt.c:2227
+#: libfdisk/src/gpt.c:2231
 msgid "No errors detected."
 msgstr "Žádné chyby neobjeveny."
 
-#: libfdisk/src/gpt.c:2228
+#: libfdisk/src/gpt.c:2232
 #, c-format
 msgid "Header version: %s"
 msgstr "Verze hlavičky: %s"
 
-#: libfdisk/src/gpt.c:2229
+#: libfdisk/src/gpt.c:2233
 #, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "Používá se %zu z %zu oddílů."
 
-#: libfdisk/src/gpt.c:2239
+#: libfdisk/src/gpt.c:2243
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
@@ -6260,7 +6268,7 @@ msgstr[0] "Celkem %ju volných sektorů je dostupných v %u oblasti."
 msgstr[1] "Celkem %ju volných sektorů je dostupných v %u oblastech (největší je %s)."
 msgstr[2] "Celkem %ju volných sektorů je dostupných v %u oblastech (největší je %s)."
 
-#: libfdisk/src/gpt.c:2247
+#: libfdisk/src/gpt.c:2251
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -6268,119 +6276,119 @@ msgstr[0] "Objevena %d chyba."
 msgstr[1] "Objeveny %d chyby."
 msgstr[2] "Objeveno %d chyb."
 
-#: libfdisk/src/gpt.c:2326
+#: libfdisk/src/gpt.c:2330
 msgid "All partitions are already in use."
 msgstr "Všechny oddíly se již používají."
 
-#: libfdisk/src/gpt.c:2383 libfdisk/src/gpt.c:2410
+#: libfdisk/src/gpt.c:2387 libfdisk/src/gpt.c:2414
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Sektor %ju je již alokován."
 
-#: libfdisk/src/gpt.c:2476
+#: libfdisk/src/gpt.c:2480
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Oddíl %zu nebylo možné vytvořit"
 
-#: libfdisk/src/gpt.c:2483
+#: libfdisk/src/gpt.c:2487
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "Poslední použitelný sektor GPT je %ju, ale požadováno bylo %ju."
 
-#: libfdisk/src/gpt.c:2490
+#: libfdisk/src/gpt.c:2494
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "První použitelný sektor GPT je %ju, ale požadováno bylo %ju"
 
-#: libfdisk/src/gpt.c:2629
+#: libfdisk/src/gpt.c:2633
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Vytvořena nový popis disku GPT (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2647
+#: libfdisk/src/gpt.c:2651
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Zadejte nové UUID disku (formát 8-4-4-4-12)"
 
-#: libfdisk/src/gpt.c:2654
+#: libfdisk/src/gpt.c:2658
 msgid "Failed to parse your UUID."
 msgstr "Vaše UUID se nepodařilo rozebrat."
 
-#: libfdisk/src/gpt.c:2668
+#: libfdisk/src/gpt.c:2672
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Identifikátor disku změněn z %s na %s."
 
-#: libfdisk/src/gpt.c:2688
+#: libfdisk/src/gpt.c:2692
 msgid "Not enough space for new partition table!"
 msgstr "Nedostatek místa pro novou tabulku rozdělení disku!"
 
-#: libfdisk/src/gpt.c:2699
+#: libfdisk/src/gpt.c:2703
 #, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Oddíl č. %zu je mimo rozsah (nejmenší počátek je %<PRIu64> sektorů)"
 
-#: libfdisk/src/gpt.c:2704
+#: libfdisk/src/gpt.c:2708
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Oddíl č. %zu je mimo rozsah (nejzazší konec je %<PRIu64> sektorů)"
 
-#: libfdisk/src/gpt.c:2747
+#: libfdisk/src/gpt.c:2751
 #, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Číslo oddílu musí být menší než %zu."
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2774
 msgid "Cannot allocate memory!"
 msgstr "Paměť nelze alokovat!"
 
-#: libfdisk/src/gpt.c:2800
+#: libfdisk/src/gpt.c:2804
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Délka tabulky rozdělení disku změněna z %<PRIu32> na %<PRIu64>."
 
-#: libfdisk/src/gpt.c:2909
+#: libfdisk/src/gpt.c:2913
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Atributy oddílu %zu se změnily na 0x%016<PRIx64>."
 
-#: libfdisk/src/gpt.c:2959
+#: libfdisk/src/gpt.c:2963
 msgid "Enter GUID specific bit"
 msgstr "Zadejte bit specifický pro GUID"
 
-#: libfdisk/src/gpt.c:2974
+#: libfdisk/src/gpt.c:2978
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "nepodporovaný bit %lu se nepodařilo přepnout"
 
-#: libfdisk/src/gpt.c:2987
+#: libfdisk/src/gpt.c:2991
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "Bit specifický pro GUID %d na oddílu %zu je nyní nastaven."
 
-#: libfdisk/src/gpt.c:2988
+#: libfdisk/src/gpt.c:2992
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "Bit specifický pro GUID %d na oddílu %zu je nyní vypnut."
 
-#: libfdisk/src/gpt.c:2992
+#: libfdisk/src/gpt.c:2996
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Příznak %s oddílu %zu je nyní zapnut."
 
-#: libfdisk/src/gpt.c:2993
+#: libfdisk/src/gpt.c:2997
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Příznak %s oddílu %zu je nyní vypnut."
 
-#: libfdisk/src/gpt.c:3135
+#: libfdisk/src/gpt.c:3139
 msgid "Type-UUID"
 msgstr "Druh-UUID"
 
-#: libfdisk/src/gpt.c:3136
+#: libfdisk/src/gpt.c:3140
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3137 login-utils/chfn.c:156 login-utils/chfn.c:158
+#: libfdisk/src/gpt.c:3141 login-utils/chfn.c:156 login-utils/chfn.c:158
 #: login-utils/chfn.c:324
 msgid "Name"
 msgstr "Název"
@@ -6389,7 +6397,7 @@ msgstr "Název"
 msgid "Free space"
 msgstr "Volný prostor"
 
-#: libfdisk/src/partition.c:1255
+#: libfdisk/src/partition.c:1263
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Změnit velikost oddílu č. %zu se nepodařilo."
@@ -7427,7 +7435,7 @@ msgstr "neznámý formát času: %s"
 msgid "Interrupted %s"
 msgstr "Přerušeno %s"
 
-#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:885
+#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:886
 msgid "preallocation size exceeded"
 msgstr "předalokovaná velikost překročena"
 
@@ -7502,7 +7510,7 @@ msgstr ""
 "                             notime, short, full, iso\n"
 "                             (žádný, krátký, celý, ISO)\n"
 
-#: login-utils/last.c:886
+#: login-utils/last.c:887
 #, c-format
 msgid ""
 "\n"
@@ -7511,12 +7519,12 @@ msgstr ""
 "\n"
 "%s začíná %s\n"
 
-#: login-utils/last.c:965 term-utils/scriptreplay.c:65
+#: login-utils/last.c:966 term-utils/scriptreplay.c:65
 #: term-utils/scriptreplay.c:69
 msgid "failed to parse number"
 msgstr "číslo se nezdařilo rozebrat"
 
-#: login-utils/last.c:986 login-utils/last.c:991 login-utils/last.c:996
+#: login-utils/last.c:987 login-utils/last.c:992 login-utils/last.c:997
 #: sys-utils/rtcwake.c:503
 #, c-format
 msgid "invalid time value \"%s\""
@@ -8193,62 +8201,63 @@ msgstr "nelze zjistit vlastnosti terminálu"
 msgid "failed to create pseudo-terminal"
 msgstr "vytvoření pseudoterminálu selhalo"
 
-#: login-utils/su-common.c:493 login-utils/su-common.c:767
+#: login-utils/su-common.c:496 login-utils/su-common.c:770
 msgid "cannot block signals"
 msgstr "signály nelze zablokovat"
 
-#: login-utils/su-common.c:529 misc-utils/uuidd.c:411 term-utils/script.c:573
+#: login-utils/su-common.c:532 misc-utils/uuidd.c:411 term-utils/script.c:573
 msgid "poll failed"
 msgstr "volání poll() selhalo"
 
-#: login-utils/su-common.c:675
+#: login-utils/su-common.c:678
 msgid "failed to modify environment"
 msgstr "nepodařilo se změnit prostředí"
 
-#: login-utils/su-common.c:711
+#: login-utils/su-common.c:714
 msgid "may not be used by non-root users"
 msgstr "nelze použít nesuperuživatelem"
 
-#: login-utils/su-common.c:735
-msgid "incorrect password"
-msgstr "chybné heslo"
+#: login-utils/su-common.c:738
+#, fuzzy
+msgid "authentication failed"
+msgstr "funkce tcgetattr selhala"
 
-#: login-utils/su-common.c:748
+#: login-utils/su-common.c:751
 #, c-format
 msgid "cannot open session: %s"
 msgstr "relaci nelze otevřít: %s"
 
-#: login-utils/su-common.c:784
+#: login-utils/su-common.c:787
 msgid "cannot initialize signal mask for session"
 msgstr "nelze inicializovat masku signálů pro relaci"
 
-#: login-utils/su-common.c:792
+#: login-utils/su-common.c:795
 msgid "cannot initialize signal mask"
 msgstr "nelze inicializovat masku signálů"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:805
 msgid "cannot set signal handler for session"
 msgstr "obsluhu signálu pro relaci nelze nastavit"
 
-#: login-utils/su-common.c:810 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
+#: login-utils/su-common.c:813 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
 #: term-utils/script.c:873
 msgid "cannot set signal handler"
 msgstr "obsluhu signálu nelze nastavit"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:821
 msgid "cannot set signal mask"
 msgstr "masku signálů nelze nastavit"
 
-#: login-utils/su-common.c:846
+#: login-utils/su-common.c:849
 msgid "cannot create child process"
 msgstr "nelze vytvořit proces pro potomka"
 
-#: login-utils/su-common.c:865
+#: login-utils/su-common.c:868
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "nelze přejít do adresáře %s"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:887
 #, c-format
 msgid ""
 "\n"
@@ -8257,57 +8266,57 @@ msgstr ""
 "\n"
 "Relace ukončena, shell bude zabit…"
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:898
 #, c-format
 msgid " ...killed.\n"
 msgstr " …zabit.\n"
 
-#: login-utils/su-common.c:996
+#: login-utils/su-common.c:999
 msgid "failed to set the PATH environment variable"
 msgstr "nepodařilo se nastavit proměnnou prostředí PATH"
 
-#: login-utils/su-common.c:1073
+#: login-utils/su-common.c:1076
 msgid "cannot set groups"
 msgstr "skupiny nelze nastavit"
 
-#: login-utils/su-common.c:1079
+#: login-utils/su-common.c:1082
 #, c-format
 msgid "failed to user credentials: %s"
 msgstr "nezdařila se uživatelská oprávnění: %s"
 
-#: login-utils/su-common.c:1089 sys-utils/eject.c:660
+#: login-utils/su-common.c:1092 sys-utils/eject.c:660
 msgid "cannot set group id"
 msgstr "číslo skupiny (GID) nelze nastavit"
 
-#: login-utils/su-common.c:1091 sys-utils/eject.c:663
+#: login-utils/su-common.c:1094 sys-utils/eject.c:663
 msgid "cannot set user id"
 msgstr "číslo uživatele (UID) nelze nastavit"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1162
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      neresetuje proměnné prostředí\n"
 
-#: login-utils/su-common.c:1160
+#: login-utils/su-common.c:1163
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <seznam> neresetuje zadané proměnné\n"
 
-#: login-utils/su-common.c:1163
+#: login-utils/su-common.c:1166
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <skupina>           určuje hlavní skupinu\n"
 
-#: login-utils/su-common.c:1164
+#: login-utils/su-common.c:1167
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <skupina>      určuje doplňkovou skupinu\n"
 
-#: login-utils/su-common.c:1167
+#: login-utils/su-common.c:1170
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  učiní shell přihlašovacím shellem\n"
 
-#: login-utils/su-common.c:1168
+#: login-utils/su-common.c:1171
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c  --command <příkaz>          předá jediný příkaz shellu přes -c\n"
 
-#: login-utils/su-common.c:1169
+#: login-utils/su-common.c:1172
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -8315,19 +8324,19 @@ msgstr ""
 " --session-command <příkaz>      předá jediný příkaz shellu přes -c\n"
 "                                 a nevytvoří novou relaci\n"
 
-#: login-utils/su-common.c:1171
+#: login-utils/su-common.c:1174
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      předá shellu -f (pro csh nebo tcsh)\n"
 
-#: login-utils/su-common.c:1172
+#: login-utils/su-common.c:1175
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>             spustí <shell>, pokud jej /etc/shells dovoluje\n"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1176
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       vytvoří nový pseudoterminál\n"
 
-#: login-utils/su-common.c:1183
+#: login-utils/su-common.c:1186
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -8336,7 +8345,7 @@ msgstr ""
 " %1$s [přepínače] -u <uživatel> [[--] <příkaz>]\n"
 " %1$s [přepínače] [-] [<uživatel> [<argument>…]]\n"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1191
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -8346,16 +8355,16 @@ msgstr ""
 "přejde se do režimu kompatibilního s su(1) a spustí standardní shell.\n"
 "Přepínače -c, -f, -l a -s se vzájemně vylučují s přepínačem -u.\n"
 
-#: login-utils/su-common.c:1193
+#: login-utils/su-common.c:1196
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <uživatel>           jméno uživatele\n"
 
-#: login-utils/su-common.c:1204
+#: login-utils/su-common.c:1207
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [přepínače] [-] [<uživatel> [argument…]]\n"
 
-#: login-utils/su-common.c:1208
+#: login-utils/su-common.c:1211
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -8363,7 +8372,7 @@ msgstr ""
 "Změní efektivní ID uživatele a skupiny na ID daného <uživatele>.\n"
 "Samotné „-“ znamená též „-l“. Není-li <uživatel> zadán, předpokládá se root.\n"
 
-#: login-utils/su-common.c:1254
+#: login-utils/su-common.c:1257
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
@@ -8371,42 +8380,42 @@ msgstr[0] "nelze zadat více jak %d doplňkovou skupinu"
 msgstr[1] "nelze zadat více jak %d doplňkové skupiny"
 msgstr[2] "nelze zadat více jak %d doplňkových skupin"
 
-#: login-utils/su-common.c:1260
+#: login-utils/su-common.c:1263
 #, c-format
 msgid "group %s does not exist"
 msgstr "skupina %s neexistuje"
 
-#: login-utils/su-common.c:1374
+#: login-utils/su-common.c:1377
 msgid "--pty is not supported for your system"
 msgstr "přepínač --pty není na vašem systému podporován"
 
-#: login-utils/su-common.c:1410
+#: login-utils/su-common.c:1413
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "ignoruje se --preserve-environment, vzájemně se vylučuje s přepínačem --login"
 
-#: login-utils/su-common.c:1424
+#: login-utils/su-common.c:1427
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "přepínače --{shell,fast,command,session-command,login} a --user se vzájemně vylučují"
 
-#: login-utils/su-common.c:1427
+#: login-utils/su-common.c:1430
 msgid "no command was specified"
 msgstr "nezadán žádný příkaz"
 
-#: login-utils/su-common.c:1439
+#: login-utils/su-common.c:1442
 msgid "only root can specify alternative groups"
 msgstr "pouze superuživatel může určit náhradní skupiny"
 
-#: login-utils/su-common.c:1449
+#: login-utils/su-common.c:1452
 #, c-format
 msgid "user %s does not exist"
 msgstr "uživatel %s neexistuje"
 
-#: login-utils/su-common.c:1482
+#: login-utils/su-common.c:1485
 #, c-format
 msgid "using restricted shell %s"
 msgstr "použije se omezený shell %s"
 
-#: login-utils/su-common.c:1513
+#: login-utils/su-common.c:1516
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "pozor: nelze přejít do adresáře %s"
@@ -9028,7 +9037,7 @@ msgstr ""
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             neformátovaný výstup\n"
 
-#: misc-utils/fincore.c:343 sys-utils/losetup.c:814
+#: misc-utils/fincore.c:343 sys-utils/losetup.c:817
 msgid "no file specified"
 msgstr "nezadán žádný soubor"
 
@@ -9732,7 +9741,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr "%s a %s se vzájemně vylučují"
 
 #: misc-utils/kill.c:287 sys-utils/eject.c:205 sys-utils/eject.c:230
-#: sys-utils/losetup.c:722 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
+#: sys-utils/losetup.c:725 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
 #: sys-utils/tunelp.c:181 sys-utils/tunelp.c:188 sys-utils/tunelp.c:195
 #: sys-utils/tunelp.c:201 sys-utils/tunelp.c:205 sys-utils/tunelp.c:212
 #: term-utils/setterm.c:211 term-utils/setterm.c:214 term-utils/setterm.c:233
@@ -11567,7 +11576,7 @@ msgstr " -z, --zeroout       namísto zahození vyplní nulami\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose       vypíše zarovnanou délku a pozici\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:702
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:705
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "nezdařilo se rozebrat začátek oblasti"
@@ -13596,7 +13605,7 @@ msgstr " -Q, --queue              vytvoří frontu zpráv\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <mód>         práva pro zdroj (výchozí jsou 0644)\n"
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:730 sys-utils/zramctl.c:647
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:733 sys-utils/zramctl.c:647
 msgid "failed to parse size"
 msgstr "velikost se nezdařilo rozebrat"
 
@@ -14637,88 +14646,88 @@ msgstr "     --output-all              vypíše všechny sloupce\n"
 msgid "     --raw                     use raw --list output format\n"
 msgstr "     --raw                     neformátovaný výstup --list\n"
 
-#: sys-utils/losetup.c:461
+#: sys-utils/losetup.c:464
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr "%s: Pozor: soubor je menší než 512 bajtů, loop zařízení možná bude nepoužitelné nebo neviditelné pro systémové nástroje."
 
-#: sys-utils/losetup.c:465
+#: sys-utils/losetup.c:468
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr "%s: Pozor: soubor není zarovnán na 512bajtové sektory, konec souboru bude ignorován."
 
-#: sys-utils/losetup.c:486 sys-utils/losetup.c:538
+#: sys-utils/losetup.c:489 sys-utils/losetup.c:541
 #, c-format
 msgid "%s: overlapping loop device exists"
 msgstr "%s: existuje překrývající se loop zařízení"
 
-#: sys-utils/losetup.c:497
+#: sys-utils/losetup.c:500
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
 msgstr "%s: existuje překrývající se loop zařízení jen pro čtení"
 
-#: sys-utils/losetup.c:504
+#: sys-utils/losetup.c:507
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
 msgstr "%s: existuje šifrované loop zařízení"
 
-#: sys-utils/losetup.c:510
+#: sys-utils/losetup.c:513
 #, c-format
 msgid "%s: failed to re-use loop device"
 msgstr "%s: loop zařízení se nepodařilo znovu použít"
 
-#: sys-utils/losetup.c:516
+#: sys-utils/losetup.c:519
 msgid "failed to inspect loop devices"
 msgstr "loop zařízení se nepodařilo prozkoumat"
 
-#: sys-utils/losetup.c:539
+#: sys-utils/losetup.c:542
 #, c-format
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: nepodařilo zkontrolovat, jestli loop zařízení nejsou ve sporu"
 
-#: sys-utils/losetup.c:551 sys-utils/losetup.c:868
+#: sys-utils/losetup.c:554 sys-utils/losetup.c:871
 msgid "cannot find an unused loop device"
 msgstr "nelze nalézt nepoužité loop zařízení"
 
-#: sys-utils/losetup.c:561
+#: sys-utils/losetup.c:564
 #, c-format
 msgid "%s: failed to use backing file"
 msgstr "%s: podkladový soubor se nepodařilo použít"
 
-#: sys-utils/losetup.c:654
+#: sys-utils/losetup.c:657
 msgid "failed to parse logical block size"
 msgstr "velikost logického bloku se nepodařilo rozebrat"
 
-#: sys-utils/losetup.c:660 sys-utils/losetup.c:670 sys-utils/losetup.c:795
-#: sys-utils/losetup.c:809 sys-utils/losetup.c:848
+#: sys-utils/losetup.c:663 sys-utils/losetup.c:673 sys-utils/losetup.c:798
+#: sys-utils/losetup.c:812 sys-utils/losetup.c:851
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: zařízení nebylo možné použít"
 
-#: sys-utils/losetup.c:806
+#: sys-utils/losetup.c:809
 msgid "no loop device specified"
 msgstr "žádné loop zařízení nebylo zadáno"
 
-#: sys-utils/losetup.c:821
+#: sys-utils/losetup.c:824
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "přepínače %s jsou dovoleny jen při nastavování loop zařízení"
 
-#: sys-utils/losetup.c:826
+#: sys-utils/losetup.c:829
 msgid "the option --offset is not allowed in this context"
 msgstr "v tomto kontextu není přepínač --offset dovolen"
 
-#: sys-utils/losetup.c:889
+#: sys-utils/losetup.c:892
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: nepodařilo se nastavit kapacitu"
 
-#: sys-utils/losetup.c:898
+#: sys-utils/losetup.c:901
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: nepodařilo se nastavit přímé IO"
 
-#: sys-utils/losetup.c:904
+#: sys-utils/losetup.c:907
 #, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: nepodařilo se nastavit velikost logické bloku"
@@ -16404,30 +16413,35 @@ msgstr " -n, --no-auto             vypne automatické rozpoznávání pořadí b
 msgid "error writing %s"
 msgstr "chyba při zápisu %s"
 
-#: sys-utils/readprofile.c:270
+#: sys-utils/readprofile.c:250
+#, fuzzy
+msgid "input file is empty"
+msgstr "Souborový systém Linuxu"
+
+#: sys-utils/readprofile.c:272
 msgid "Assuming reversed byte order. Use -n to force native byte order."
 msgstr "Předpokládá se opačné pořadí bajtů. Systémové pořadí lze vynutit pomocí -n."
 
-#: sys-utils/readprofile.c:285
+#: sys-utils/readprofile.c:287
 #, c-format
 msgid "Sampling_step: %u\n"
 msgstr "Profilovací_krok: %u\n"
 
-#: sys-utils/readprofile.c:301 sys-utils/readprofile.c:322
+#: sys-utils/readprofile.c:303 sys-utils/readprofile.c:324
 #, c-format
 msgid "%s(%i): wrong map line"
 msgstr "%s(%i): chybný řádek v mapě"
 
-#: sys-utils/readprofile.c:312
+#: sys-utils/readprofile.c:314
 #, c-format
 msgid "can't find \"_stext\" in %s"
 msgstr "„_stext“ nelze v %s nalézt"
 
-#: sys-utils/readprofile.c:345
+#: sys-utils/readprofile.c:347
 msgid "profile address out of range. Wrong map file?"
 msgstr "adresa profilu je mimo rozsah. Chybný mapovací soubor?"
 
-#: sys-utils/readprofile.c:403
+#: sys-utils/readprofile.c:405
 msgid "total"
 msgstr "celkem"
 
@@ -18419,7 +18433,7 @@ msgstr "%s: %s nelze spustit: %m"
 
 #: term-utils/agetty.c:594 term-utils/agetty.c:921 term-utils/agetty.c:1457
 #: term-utils/agetty.c:1475 term-utils/agetty.c:1512 term-utils/agetty.c:1522
-#: term-utils/agetty.c:1564 term-utils/agetty.c:2205 term-utils/agetty.c:2774
+#: term-utils/agetty.c:1564 term-utils/agetty.c:2203 term-utils/agetty.c:2772
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "paměť nelze alokovat: %m"
@@ -18543,27 +18557,27 @@ msgstr ""
 msgid "%s: read: %m"
 msgstr "%s: přečteno: %m"
 
-#: term-utils/agetty.c:2181
+#: term-utils/agetty.c:2179
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: přetečení vstupu"
 
-#: term-utils/agetty.c:2201 term-utils/agetty.c:2209
+#: term-utils/agetty.c:2199 term-utils/agetty.c:2207
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: chyba při převodu znaku v přihlašovacím jméně"
 
-#: term-utils/agetty.c:2215
+#: term-utils/agetty.c:2213
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: neplatný znak 0x%x v přihlašovacím jméně"
 
-#: term-utils/agetty.c:2300
+#: term-utils/agetty.c:2298
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: vlastnosti terminálu nelze nastavit: %m"
 
-#: term-utils/agetty.c:2338
+#: term-utils/agetty.c:2336
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18572,153 +18586,153 @@ msgstr ""
 " %1$s [přepínače] <linka> [<baud_rate>,…] [<druh_terminálu>]\n"
 " %1$s [přepínače] <baud_rate>,… <linka> [<druh_terminálu>]\n"
 
-#: term-utils/agetty.c:2342
+#: term-utils/agetty.c:2340
 msgid "Open a terminal and set its mode.\n"
 msgstr "Otevře terminál a nastaví jeho režim.\n"
 
-#: term-utils/agetty.c:2345
+#: term-utils/agetty.c:2343
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                předpokládá 8bitové TTY\n"
 
-#: term-utils/agetty.c:2346
+#: term-utils/agetty.c:2344
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <uživatel> automaticky přihlásí zadaného uživatele\n"
 
-#: term-utils/agetty.c:2347
+#: term-utils/agetty.c:2345
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              neresetuje řídicí režim\n"
 
-#: term-utils/agetty.c:2348
+#: term-utils/agetty.c:2346
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               programu login(1) předá -r <název_stroje>\n"
 
-#: term-utils/agetty.c:2349
+#: term-utils/agetty.c:2347
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <soubor>  zobrazí soubor s vydáním\n"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2348
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         povolí hardwarové řízení toku\n"
 
-#: term-utils/agetty.c:2351
+#: term-utils/agetty.c:2349
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <název_stroje>  určí název stroje při přihlášení\n"
 
-#: term-utils/agetty.c:2352
+#: term-utils/agetty.c:2350
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              nezobrazí soubor s vydáním\n"
 
-#: term-utils/agetty.c:2353
+#: term-utils/agetty.c:2351
 msgid " -I, --init-string <string> set init string\n"
 msgstr ""
 " -I, --init-string <řetězec>\n"
 "                            nastaví inicializační řetězec\n"
 
 # FIXME: Missing comma
-#: term-utils/agetty.c:2354
+#: term-utils/agetty.c:2352
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J, --noclear              před výzvou nesmaže obrazovku\n"
 
-#: term-utils/agetty.c:2355
+#: term-utils/agetty.c:2353
 msgid " -l, --login-program <file> specify login program\n"
 msgstr ""
 " -l, --login-program <soubor>\n"
 "                            určí program login\n"
 
-#: term-utils/agetty.c:2356
+#: term-utils/agetty.c:2354
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<režim>] řídí příznak místní linky\n"
 
-#: term-utils/agetty.c:2357
+#: term-utils/agetty.c:2355
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         získá baud rate z připojující se fáze\n"
 
-#: term-utils/agetty.c:2358
+#: term-utils/agetty.c:2356
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           neptá se na přihlašovací jméno\n"
 
 # FIXME: Missing comma
-#: term-utils/agetty.c:2359
+#: term-utils/agetty.c:2357
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N, --nonewline            neodřádkuje před výpisem vydání\n"
 
-#: term-utils/agetty.c:2360
+#: term-utils/agetty.c:2358
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr ""
 " -o, --login-options <argumenty>\n"
 "                            argumenty, které budou předány programu login\n"
 
-#: term-utils/agetty.c:2361
+#: term-utils/agetty.c:2359
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          před výzvou k přihlášení počká na stisk klávesy\n"
 
-#: term-utils/agetty.c:2362
+#: term-utils/agetty.c:2360
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <adresář>     změní kořenový adresář na zadaný\n"
 
-#: term-utils/agetty.c:2363
+#: term-utils/agetty.c:2361
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               provede virtuální zavěšení linky na TTY\n"
 
-#: term-utils/agetty.c:2364
+#: term-utils/agetty.c:2362
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            pokusí se udržet baud rate i po znaku break\n"
 
-#: term-utils/agetty.c:2365
+#: term-utils/agetty.c:2363
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <číslo>      časový limit pro přihlášení\n"
 
-#: term-utils/agetty.c:2366
+#: term-utils/agetty.c:2364
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          rozpozná terminál podporující jen velká písmena\n"
 
-#: term-utils/agetty.c:2367
+#: term-utils/agetty.c:2365
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              čeká na carriage-return\n"
 
-#: term-utils/agetty.c:2368
+#: term-utils/agetty.c:2366
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              nezobrazí upozornění\n"
 
-#: term-utils/agetty.c:2369
+#: term-utils/agetty.c:2367
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           nezobrazí název stroje\n"
 
-#: term-utils/agetty.c:2370
+#: term-utils/agetty.c:2368
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        zobrazí plně kvalifikované jméno stroje\n"
 
-#: term-utils/agetty.c:2371
+#: term-utils/agetty.c:2369
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr ""
 "     --erase-chars <řetězec>\n"
 "                            další znaky fungující jako backspace\n"
 
-#: term-utils/agetty.c:2372
+#: term-utils/agetty.c:2370
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <řetězec> další znaky, které mažou celý řádek\n"
 
-#: term-utils/agetty.c:2373
+#: term-utils/agetty.c:2371
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <adresář>      před spuštěním loginu změní pracovní adresář\n"
 
-#: term-utils/agetty.c:2374
+#: term-utils/agetty.c:2372
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <počet>        před výzvou počká počet sekund\n"
 
-#: term-utils/agetty.c:2375
+#: term-utils/agetty.c:2373
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <číslo>         spustí login s touto prioritou\n"
 
-#: term-utils/agetty.c:2376
+#: term-utils/agetty.c:2374
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               běžící instance agetty znovu načtou výzvy\n"
 
-#: term-utils/agetty.c:2377
+#: term-utils/agetty.c:2375
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          vypíše podporované rychlosti baud rate\n"
 
-#: term-utils/agetty.c:2731
+#: term-utils/agetty.c:2729
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
@@ -18726,17 +18740,17 @@ msgstr[0] "%d uživatel"
 msgstr[1] "%d uživatelé"
 msgstr[2] "%d uživatelů"
 
-#: term-utils/agetty.c:2862
+#: term-utils/agetty.c:2860
 #, c-format
 msgid "checkname failed: %m"
 msgstr "kontrola jména neuspěla: %m"
 
-#: term-utils/agetty.c:2874
+#: term-utils/agetty.c:2872
 #, c-format
 msgid "cannot touch file %s"
 msgstr "souboru %s nelze změnit časové razítko"
 
-#: term-utils/agetty.c:2878
+#: term-utils/agetty.c:2876
 msgid "--reload is unsupported on your system"
 msgstr "přepínač --reload není na vašem systému podporován"
 
@@ -19271,16 +19285,12 @@ msgstr "chybný argument s časovým limitem: %s"
 msgid "cannot get passwd uid"
 msgstr "pro UID nelze získat záznam z databáze uživatelů"
 
-#: term-utils/wall.c:362
-msgid "cannot get tty name"
-msgstr "název TTY nelze zjistit"
-
-#: term-utils/wall.c:382
+#: term-utils/wall.c:381
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Všeobecná zpráva od %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:414
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "nebude se číst z %s – použijte standardní vstup."
@@ -20150,6 +20160,12 @@ msgstr "neznámá posloupnost řídicích znaků na vstupu: %o, %o"
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "Vstupní řádek je příliš dlouhý."
+
+#~ msgid "incorrect password"
+#~ msgstr "chybné heslo"
+
+#~ msgid "cannot get tty name"
+#~ msgstr "název TTY nelze zjistit"
 
 # personality – charakteristika architektury
 #~ msgid "Failed to set personality to %s"

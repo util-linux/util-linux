@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.27-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-01-09 11:05+0100\n"
+"POT-Creation-Date: 2019-04-09 14:30+0200\n"
 "PO-Revision-Date: 2015-12-29 22:55+0300\n"
 "Last-Translator: Evgeniy Yakushev <yen81@mail.ru>\n"
 "Language-Team: Russian <gnu@d07.ru>\n"
@@ -52,7 +52,7 @@ msgstr "недостаточно аргументов"
 #: disk-utils/sfdisk.c:765 disk-utils/sfdisk.c:824 disk-utils/sfdisk.c:903
 #: disk-utils/sfdisk.c:944 disk-utils/sfdisk.c:974 disk-utils/sfdisk.c:1011
 #: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
-#: login-utils/islocal.c:87 login-utils/last.c:667 login-utils/sulogin.c:443
+#: login-utils/islocal.c:87 login-utils/last.c:668 login-utils/sulogin.c:443
 #: login-utils/sulogin.c:480 login-utils/utmpdump.c:134
 #: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374 login-utils/vipw.c:261
 #: login-utils/vipw.c:279 misc-utils/findmnt.c:1105 misc-utils/logger.c:1224
@@ -67,10 +67,10 @@ msgstr "недостаточно аргументов"
 #: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
 #: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2871 term-utils/mesg.c:132 term-utils/script.c:540
+#: term-utils/agetty.c:2869 term-utils/mesg.c:132 term-utils/script.c:540
 #: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
+#: term-utils/wall.c:418 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:140 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
@@ -300,7 +300,7 @@ msgid "Quit program without writing changes"
 msgstr "Выйти из программы без записи таблицы разделов"
 
 #: disk-utils/cfdisk.c:195 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1023
-#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2432 libfdisk/src/gpt.c:3137 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1128
 msgid "Type"
 msgstr "Тип"
@@ -788,7 +788,7 @@ msgstr "недопустимый аргумент - repair"
 #: disk-utils/mkfs.bfs.c:188 disk-utils/mkfs.cramfs.c:337
 #: disk-utils/mkfs.cramfs.c:758 disk-utils/mkfs.cramfs.c:797
 #: disk-utils/mkfs.minix.c:821 disk-utils/mkswap.c:243 disk-utils/partx.c:959
-#: login-utils/last.c:681 login-utils/utmpdump.c:137 misc-utils/namei.c:135
+#: login-utils/last.c:682 login-utils/utmpdump.c:137 misc-utils/namei.c:135
 #: misc-utils/rename.c:120 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
 #: sys-utils/dmesg.c:526 sys-utils/fallocate.c:198 sys-utils/fsfreeze.c:120
 #: sys-utils/fstrim.c:84 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
@@ -849,7 +849,7 @@ msgid "Using default response %c."
 msgstr "Используется ответ по умолчанию %c"
 
 #: disk-utils/fdisk.c:222 disk-utils/fdisk.c:296 disk-utils/fdisk.c:373
-#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2470
+#: libfdisk/src/dos.c:1242 libfdisk/src/gpt.c:2474
 msgid "Value out of range."
 msgstr "Значение за пределами диапазона."
 
@@ -940,7 +940,7 @@ msgid "cannot read"
 msgstr "ошибка чтения"
 
 #: disk-utils/fdisk.c:743 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:982
-#: libfdisk/src/gpt.c:2398
+#: libfdisk/src/gpt.c:2402
 msgid "First sector"
 msgstr "Первый сектор"
 
@@ -1085,7 +1085,7 @@ msgstr "Параметры устройства (размера сектора �
 #: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
 #: sys-utils/chcpu.c:354 sys-utils/chmem.c:423 sys-utils/dmesg.c:1468
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:909
+#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:912
 #: sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632 sys-utils/mount.c:764
 #: sys-utils/mount.c:772 sys-utils/mount.c:812 sys-utils/mount.c:825
 #: sys-utils/mount.c:894 sys-utils/mountpoint.c:180 sys-utils/pivot_root.c:72
@@ -1216,22 +1216,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "Элементы таблицы разделов упорядочены не так, как на диске."
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2426
-#: libfdisk/src/gpt.c:3129 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
+#: libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
 msgid "Start"
 msgstr "начало"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2427
-#: libfdisk/src/gpt.c:3130 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
+#: libfdisk/src/gpt.c:3134 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
 msgid "End"
 msgstr "Конец"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2428
-#: libfdisk/src/gpt.c:3131 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
+#: libfdisk/src/gpt.c:3135 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
 msgid "Sectors"
 msgstr "Секторы"
 
 #: disk-utils/fdisk-list.c:231 libfdisk/src/bsd.c:1022 libfdisk/src/dos.c:2430
-#: libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
+#: libfdisk/src/gpt.c:3136 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
 msgid "Size"
 msgstr "Размер"
 
@@ -2873,7 +2873,7 @@ msgstr ""
 " -V, --verbose      подробная информация о выполняемых действиях;\n"
 "                      указание параметра -V более одного раза приведет к тестовому запуску\n"
 
-#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1519
+#: disk-utils/mkfs.c:139 include/c.h:233 login-utils/su-common.c:1522
 #: login-utils/sulogin.c:792 login-utils/sulogin.c:796 sys-utils/flock.c:121
 #: sys-utils/rtcwake.c:595 term-utils/script.c:692
 #, c-format
@@ -3519,7 +3519,7 @@ msgstr "флаги разделов"
 msgid "partition type (a string, a UUID, or hex)"
 msgstr "тип раздела (строка, UUID или в hex-формате)"
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:530 sys-utils/losetup.c:641
+#: disk-utils/partx.c:114 sys-utils/losetup.c:533 sys-utils/losetup.c:644
 msgid "failed to initialize loopcxt"
 msgstr "не удалось инициализировать loopcxt"
 
@@ -3538,7 +3538,7 @@ msgstr "Попытка использовать '%s' как устройство
 msgid "%s: failed to set backing file"
 msgstr "%s: не удалось установить файл поддержки"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:574
+#: disk-utils/partx.c:131 sys-utils/losetup.c:577
 #, c-format
 msgid "%s: failed to set up loop device"
 msgstr "%s: не удалось настроить устройство обратной связи"
@@ -4091,7 +4091,7 @@ msgid "no partition number specified"
 msgstr "не указан номер раздела"
 
 #: disk-utils/sfdisk.c:1047 disk-utils/sfdisk.c:1111 disk-utils/sfdisk.c:1166
-#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:772
+#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:775
 msgid "unexpected arguments"
 msgstr "непредвиденные аргументы"
 
@@ -5146,7 +5146,7 @@ msgstr "Первый цилиндр"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Последний цилиндр + число цилиндров или + размер{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2447
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2451
 #, fuzzy
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Последний сектор + число секторов или + размер{K,M,G,T,P}"
@@ -5474,7 +5474,7 @@ msgstr "Неверный флаг 0x%02x%02x расширенной загруз
 msgid "Start sector %ju out of range."
 msgstr "Значение за пределами диапазона.\n"
 
-#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2321 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1076 libfdisk/src/gpt.c:2325 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5485,7 +5485,7 @@ msgstr "Раздел %zu уже определен.  Удалите его пе�
 msgid "Sector %llu is already allocated."
 msgstr "Сектор %llu уже выделен"
 
-#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2330
+#: libfdisk/src/dos.c:1185 libfdisk/src/gpt.c:2334
 msgid "No free sectors available."
 msgstr "Отсутствуют доступные свободные секторы."
 
@@ -5632,7 +5632,7 @@ msgstr "Неверный тип раздела `%c'."
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Невозможно записать сектор %jd: поиск завершился неудачей"
 
-#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1221
+#: libfdisk/src/dos.c:1955 libfdisk/src/gpt.c:1225
 msgid "Disk identifier"
 msgstr "Идентификатор диска"
 
@@ -5645,7 +5645,7 @@ msgstr "Тип 0 означает свободное пространство д
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Не удается изменить тип расширенного раздела, в котором уже есть логические разделы. Сначала удалите их."
 
-#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3038
+#: libfdisk/src/dos.c:2260 libfdisk/src/gpt.c:3042
 #, fuzzy
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Нечего выполнять. Очередность уже правильная."
@@ -5674,7 +5674,7 @@ msgstr "Флаг загрузки раздела %zu включен."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Флаг загрузки раздела %zu выключен."
 
-#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3128 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2424 libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1121
 msgid "Device"
 msgstr "Устр-во"
@@ -5695,7 +5695,7 @@ msgstr "Начало-C/H/S"
 msgid "End-C/H/S"
 msgstr "Конец-C/H/S"
 
-#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3138 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2437 libfdisk/src/gpt.c:3142 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr "Атрибуты"
 
@@ -6060,184 +6060,192 @@ msgstr "Файловая система QNX6"
 msgid "Plan 9 partition"
 msgstr "   d   удаление раздела"
 
-#: libfdisk/src/gpt.c:661
+#: libfdisk/src/gpt.c:290
+msgid "HiFive Unleashed FSBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:291
+msgid "HiFive Unleashed BBL"
+msgstr ""
+
+#: libfdisk/src/gpt.c:665
 msgid "failed to allocate GPT header"
 msgstr "не удалось определить заголовок GPT"
 
-#: libfdisk/src/gpt.c:744
+#: libfdisk/src/gpt.c:748
 msgid "First LBA specified by script is out of range."
 msgstr "Начальный адрес LBA, указанный в скрипте, вне допустимого диапазона."
 
-#: libfdisk/src/gpt.c:756
+#: libfdisk/src/gpt.c:760
 msgid "Last LBA specified by script is out of range."
 msgstr "Конечный адрес LBA, указанный в скрипте, вне допустимого диапазона."
 
-#: libfdisk/src/gpt.c:895
+#: libfdisk/src/gpt.c:899
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr ""
 
-#: libfdisk/src/gpt.c:917
+#: libfdisk/src/gpt.c:921
 msgid "gpt: stat() failed"
 msgstr "gpt: выполнение stat() завершилось неудачно"
 
-#: libfdisk/src/gpt.c:927
+#: libfdisk/src/gpt.c:931
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1191
+#: libfdisk/src/gpt.c:1195
 msgid "GPT Header"
 msgstr "Заголовок GPT"
 
-#: libfdisk/src/gpt.c:1196
+#: libfdisk/src/gpt.c:1200
 msgid "GPT Entries"
 msgstr "Записи GPT"
 
-#: libfdisk/src/gpt.c:1228
+#: libfdisk/src/gpt.c:1232
 msgid "First LBA"
 msgstr "Начальный адрес LBA"
 
-#: libfdisk/src/gpt.c:1233
+#: libfdisk/src/gpt.c:1237
 msgid "Last LBA"
 msgstr "Конечный адрес LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1239
+#: libfdisk/src/gpt.c:1243
 msgid "Alternative LBA"
 msgstr "Альтернативный адрес LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1245
+#: libfdisk/src/gpt.c:1249
 #, fuzzy
 msgid "Partition entries LBA"
 msgstr "Раздел (a-%c): "
 
-#: libfdisk/src/gpt.c:1250
+#: libfdisk/src/gpt.c:1254
 msgid "Allocated partition entries"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1595
+#: libfdisk/src/gpt.c:1599
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Резервная таблица GPT повреждена, но с основной, кажется, все в порядке, поэтому она будет использована."
 
-#: libfdisk/src/gpt.c:1605
+#: libfdisk/src/gpt.c:1609
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Основная таблица GPT повреждена, но с резервной, кажется, все в порядке, поэтому она будет использована."
 
-#: libfdisk/src/gpt.c:1618
+#: libfdisk/src/gpt.c:1622
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1800
+#: libfdisk/src/gpt.c:1804
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "неподдерживаемый бит атрибута GPT '%s'"
 
-#: libfdisk/src/gpt.c:1805
+#: libfdisk/src/gpt.c:1809
 #, fuzzy, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: libfdisk/src/gpt.c:1905
+#: libfdisk/src/gpt.c:1909
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "UUID раздела изменен с %s на %s."
 
-#: libfdisk/src/gpt.c:1914
+#: libfdisk/src/gpt.c:1918
 #, fuzzy
 msgid "Failed to translate partition name, name not changed."
 msgstr "не удалось определить имя раздела"
 
-#: libfdisk/src/gpt.c:1916
+#: libfdisk/src/gpt.c:1920
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Имя раздела изменено с '%s' на '%.*s'."
 
-#: libfdisk/src/gpt.c:1945
+#: libfdisk/src/gpt.c:1949
 #, fuzzy
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Загрузочный раздел не существует."
 
-#: libfdisk/src/gpt.c:1952
+#: libfdisk/src/gpt.c:1956
 #, fuzzy
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "конец раздела в секторах"
 
-#: libfdisk/src/gpt.c:2114
+#: libfdisk/src/gpt.c:2118
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2151
+#: libfdisk/src/gpt.c:2155
 msgid "Disk does not contain a valid backup header."
 msgstr "На диске отсутствует допустимый резервный заголовок."
 
-#: libfdisk/src/gpt.c:2156
+#: libfdisk/src/gpt.c:2160
 msgid "Invalid primary header CRC checksum."
 msgstr "Недопустимая контрольная сумма CRC первичного заголовка."
 
-#: libfdisk/src/gpt.c:2160
+#: libfdisk/src/gpt.c:2164
 msgid "Invalid backup header CRC checksum."
 msgstr "Недопустимая контрольная сумма CRC резервного заголовка."
 
-#: libfdisk/src/gpt.c:2165
+#: libfdisk/src/gpt.c:2169
 msgid "Invalid partition entry checksum."
 msgstr "Недопустимая контрольная сумма записи раздела."
 
-#: libfdisk/src/gpt.c:2170
+#: libfdisk/src/gpt.c:2174
 msgid "Invalid primary header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2174
+#: libfdisk/src/gpt.c:2178
 msgid "Invalid backup header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2179
+#: libfdisk/src/gpt.c:2183
 msgid "MyLBA mismatch with real position at primary header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2183
+#: libfdisk/src/gpt.c:2187
 msgid "MyLBA mismatch with real position at backup header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2188
+#: libfdisk/src/gpt.c:2192
 msgid "Disk is too small to hold all data."
 msgstr "Размер диска слишком мал, чтобы вместить все данные."
 
-#: libfdisk/src/gpt.c:2198
+#: libfdisk/src/gpt.c:2202
 msgid "Primary and backup header mismatch."
 msgstr "Первичный и резервный заголовки не совпадают."
 
-#: libfdisk/src/gpt.c:2204
+#: libfdisk/src/gpt.c:2208
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Предупреждение: раздел %u перекрывает раздел %u."
 
-#: libfdisk/src/gpt.c:2211
+#: libfdisk/src/gpt.c:2215
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Раздел %u слишком большой для диска."
 
-#: libfdisk/src/gpt.c:2218
+#: libfdisk/src/gpt.c:2222
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Конец раздела %u находится раньше его начала."
 
-#: libfdisk/src/gpt.c:2227
+#: libfdisk/src/gpt.c:2231
 msgid "No errors detected."
 msgstr "Ошибок не обраружено."
 
-#: libfdisk/src/gpt.c:2228
+#: libfdisk/src/gpt.c:2232
 #, c-format
 msgid "Header version: %s"
 msgstr "Версия заголовка: %s"
 
-#: libfdisk/src/gpt.c:2229
+#: libfdisk/src/gpt.c:2233
 #, fuzzy, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "Используются %u разделов из %d."
 
-#: libfdisk/src/gpt.c:2239
+#: libfdisk/src/gpt.c:2243
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
@@ -6245,7 +6253,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: libfdisk/src/gpt.c:2247
+#: libfdisk/src/gpt.c:2251
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -6253,121 +6261,121 @@ msgstr[0] "Обраружена %d ошибка."
 msgstr[1] "Обнаружены %d ошибки."
 msgstr[2] "Обнаружено %d ошибок."
 
-#: libfdisk/src/gpt.c:2326
+#: libfdisk/src/gpt.c:2330
 msgid "All partitions are already in use."
 msgstr "Все разделы уже используются."
 
-#: libfdisk/src/gpt.c:2383 libfdisk/src/gpt.c:2410
+#: libfdisk/src/gpt.c:2387 libfdisk/src/gpt.c:2414
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Сектор %ju уже используется."
 
-#: libfdisk/src/gpt.c:2476
+#: libfdisk/src/gpt.c:2480
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Не удалось создать раздел %zu"
 
-#: libfdisk/src/gpt.c:2483
+#: libfdisk/src/gpt.c:2487
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2490
+#: libfdisk/src/gpt.c:2494
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2629
+#: libfdisk/src/gpt.c:2633
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2647
+#: libfdisk/src/gpt.c:2651
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Введите новый UUID диска (в формате 8-4-4-4-12)"
 
-#: libfdisk/src/gpt.c:2654
+#: libfdisk/src/gpt.c:2658
 msgid "Failed to parse your UUID."
 msgstr "Не удалось обработать ваш UUID."
 
-#: libfdisk/src/gpt.c:2668
+#: libfdisk/src/gpt.c:2672
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Идендификатор диска изменен с %s на %s."
 
-#: libfdisk/src/gpt.c:2688
+#: libfdisk/src/gpt.c:2692
 #, fuzzy
 msgid "Not enough space for new partition table!"
 msgstr "Нет свободных доступных разделов!"
 
-#: libfdisk/src/gpt.c:2699
+#: libfdisk/src/gpt.c:2703
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Раздел %zd содержит неверный начальный нулевой сектор."
 
-#: libfdisk/src/gpt.c:2704
+#: libfdisk/src/gpt.c:2708
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2747
+#: libfdisk/src/gpt.c:2751
 #, fuzzy, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Было создано максимально возможное количество разделов."
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2774
 #, fuzzy
 msgid "Cannot allocate memory!"
 msgstr "Невозможно выделить буфер.\n"
 
-#: libfdisk/src/gpt.c:2800
+#: libfdisk/src/gpt.c:2804
 #, fuzzy, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Имя раздела изменено с '%s' на '%.*s'."
 
-#: libfdisk/src/gpt.c:2909
+#: libfdisk/src/gpt.c:2913
 #, fuzzy, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Системный тип раздела %d изменен на %x (%s)\n"
 
-#: libfdisk/src/gpt.c:2959
+#: libfdisk/src/gpt.c:2963
 msgid "Enter GUID specific bit"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2974
+#: libfdisk/src/gpt.c:2978
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "не удалось переключить неподдерживаемый бит %lu"
 
-#: libfdisk/src/gpt.c:2987
+#: libfdisk/src/gpt.c:2991
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2988
+#: libfdisk/src/gpt.c:2992
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2992
+#: libfdisk/src/gpt.c:2996
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Флаг %s раздела %zu теперь включен."
 
-#: libfdisk/src/gpt.c:2993
+#: libfdisk/src/gpt.c:2997
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Флаг %s раздела %zu теперь выключен."
 
-#: libfdisk/src/gpt.c:3135
+#: libfdisk/src/gpt.c:3139
 msgid "Type-UUID"
 msgstr "Тип UUID"
 
-#: libfdisk/src/gpt.c:3136
+#: libfdisk/src/gpt.c:3140
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3137 login-utils/chfn.c:156 login-utils/chfn.c:158
+#: libfdisk/src/gpt.c:3141 login-utils/chfn.c:156 login-utils/chfn.c:158
 #: login-utils/chfn.c:324
 msgid "Name"
 msgstr "Имя"
@@ -6376,7 +6384,7 @@ msgstr "Имя"
 msgid "Free space"
 msgstr "Свободное пространство"
 
-#: libfdisk/src/partition.c:1255
+#: libfdisk/src/partition.c:1263
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Не удалось изменить размер раздела #%zu."
@@ -7454,7 +7462,7 @@ msgstr "Неизвестный формат времени: %s"
 msgid "Interrupted %s"
 msgstr "Прерван %s"
 
-#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:885
+#: login-utils/last.c:435 login-utils/last.c:446 login-utils/last.c:886
 msgid "preallocation size exceeded"
 msgstr ""
 
@@ -7526,7 +7534,7 @@ msgid ""
 "                               notime|short|full|iso\n"
 msgstr ""
 
-#: login-utils/last.c:886
+#: login-utils/last.c:887
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7535,12 +7543,12 @@ msgstr ""
 "\n"
 "%s начался %s"
 
-#: login-utils/last.c:965 term-utils/scriptreplay.c:65
+#: login-utils/last.c:966 term-utils/scriptreplay.c:65
 #: term-utils/scriptreplay.c:69
 msgid "failed to parse number"
 msgstr "не удалось разобрать номер"
 
-#: login-utils/last.c:986 login-utils/last.c:991 login-utils/last.c:996
+#: login-utils/last.c:987 login-utils/last.c:992 login-utils/last.c:997
 #: sys-utils/rtcwake.c:503
 #, c-format
 msgid "invalid time value \"%s\""
@@ -8222,67 +8230,68 @@ msgstr "невозможно получить размер %s"
 msgid "failed to create pseudo-terminal"
 msgstr "Невозможно выделить буфер.\n"
 
-#: login-utils/su-common.c:493 login-utils/su-common.c:767
+#: login-utils/su-common.c:496 login-utils/su-common.c:770
 msgid "cannot block signals"
 msgstr "не могу заблокировать сигналы"
 
-#: login-utils/su-common.c:529 misc-utils/uuidd.c:411 term-utils/script.c:573
+#: login-utils/su-common.c:532 misc-utils/uuidd.c:411 term-utils/script.c:573
 #, fuzzy
 msgid "poll failed"
 msgstr "ошибка poll()"
 
-#: login-utils/su-common.c:675
+#: login-utils/su-common.c:678
 #, fuzzy
 msgid "failed to modify environment"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: login-utils/su-common.c:711
+#: login-utils/su-common.c:714
 msgid "may not be used by non-root users"
 msgstr "не может быть использовано не суперпользователями"
 
-#: login-utils/su-common.c:735
-msgid "incorrect password"
-msgstr "неверный пароль"
+#: login-utils/su-common.c:738
+#, fuzzy
+msgid "authentication failed"
+msgstr "(Следующий файл: %s)"
 
-#: login-utils/su-common.c:748
+#: login-utils/su-common.c:751
 #, c-format
 msgid "cannot open session: %s"
 msgstr "не могу открыть сессию: %s"
 
-#: login-utils/su-common.c:784
+#: login-utils/su-common.c:787
 msgid "cannot initialize signal mask for session"
 msgstr ""
 
-#: login-utils/su-common.c:792
+#: login-utils/su-common.c:795
 #, fuzzy
 msgid "cannot initialize signal mask"
 msgstr "не могу заблокировать сигналы"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:805
 #, fuzzy
 msgid "cannot set signal handler for session"
 msgstr "Невозможно установить обработчик сигнала"
 
-#: login-utils/su-common.c:810 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
+#: login-utils/su-common.c:813 misc-utils/uuidd.c:398 sys-utils/lscpu.c:734
 #: term-utils/script.c:873
 msgid "cannot set signal handler"
 msgstr "Невозможно установить обработчик сигнала"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:821
 #, fuzzy
 msgid "cannot set signal mask"
 msgstr "Невозможно установить обработчик сигнала"
 
-#: login-utils/su-common.c:846
+#: login-utils/su-common.c:849
 msgid "cannot create child process"
 msgstr "не могу создать дочерний процесс"
 
-#: login-utils/su-common.c:865
+#: login-utils/su-common.c:868
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "не могу сменить каталог на %s"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:887
 #, c-format
 msgid ""
 "\n"
@@ -8291,90 +8300,90 @@ msgstr ""
 "\n"
 "Сессия завершена, завершение работы шелла..."
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:898
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...завершен.\n"
 
-#: login-utils/su-common.c:996
+#: login-utils/su-common.c:999
 #, fuzzy
 msgid "failed to set the PATH environment variable"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: login-utils/su-common.c:1073
+#: login-utils/su-common.c:1076
 msgid "cannot set groups"
 msgstr "не мог задать группы"
 
-#: login-utils/su-common.c:1079
+#: login-utils/su-common.c:1082
 #, fuzzy, c-format
 msgid "failed to user credentials: %s"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: login-utils/su-common.c:1089 sys-utils/eject.c:660
+#: login-utils/su-common.c:1092 sys-utils/eject.c:660
 msgid "cannot set group id"
 msgstr "не мог задать ID группы"
 
-#: login-utils/su-common.c:1091 sys-utils/eject.c:663
+#: login-utils/su-common.c:1094 sys-utils/eject.c:663
 msgid "cannot set user id"
 msgstr "не мог задать ID пользователя"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1162
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:1160
+#: login-utils/su-common.c:1163
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:1163
+#: login-utils/su-common.c:1166
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <group>             указать первичную группу\n"
 
-#: login-utils/su-common.c:1164
+#: login-utils/su-common.c:1167
 #, fuzzy
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr ""
 " -G, --supp-group <group>        указать дополнительную группу\n"
 "\n"
 
-#: login-utils/su-common.c:1167
+#: login-utils/su-common.c:1170
 #, fuzzy
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: login-utils/su-common.c:1168
+#: login-utils/su-common.c:1171
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
 
-#: login-utils/su-common.c:1169
+#: login-utils/su-common.c:1172
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
 msgstr ""
 
-#: login-utils/su-common.c:1171
+#: login-utils/su-common.c:1174
 #, fuzzy
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr "  -T, --test                   Проверка версии getopt(1)\n"
 
-#: login-utils/su-common.c:1172
+#: login-utils/su-common.c:1175
 #, fuzzy
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr "  -s, --shell=шелл             Установка условий закл. в кавычки для шелла\n"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1176
 #, fuzzy
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr "              параметры\n"
 
-#: login-utils/su-common.c:1183
+#: login-utils/su-common.c:1186
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
 " %1$s [options] [-] [<user> [<argument>...]]\n"
 msgstr "Использование: mkfs [-V] [-t тип_фс] [опции_фс] устройство [размер]\n"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1191
 #, fuzzy
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -8386,23 +8395,23 @@ msgstr ""
 "-u не задан, вернуться к su(1)-совместимому значению и запустить стандартный шелл.\n"
 "Параметры -c, -f, -l и -s являются взаимоисклющающими с -u.\n"
 
-#: login-utils/su-common.c:1193
+#: login-utils/su-common.c:1196
 #, fuzzy
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <user>             имя пользователя\n"
 
-#: login-utils/su-common.c:1204
+#: login-utils/su-common.c:1207
 #, fuzzy, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr "использование: %s программа [аргумент ...]\n"
 
-#: login-utils/su-common.c:1208
+#: login-utils/su-common.c:1211
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
 msgstr ""
 
-#: login-utils/su-common.c:1254
+#: login-utils/su-common.c:1257
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
@@ -8410,43 +8419,43 @@ msgstr[0] "указание более, чем %d дополнительной �
 msgstr[1] "указание более, чем %d дополнительных групп невозможно"
 msgstr[2] "указание более, чем %d дополнительных групп невозможно"
 
-#: login-utils/su-common.c:1260
+#: login-utils/su-common.c:1263
 #, c-format
 msgid "group %s does not exist"
 msgstr "группа %s не существует"
 
-#: login-utils/su-common.c:1374
+#: login-utils/su-common.c:1377
 #, fuzzy
 msgid "--pty is not supported for your system"
 msgstr "--reload не поддерживается на вашей системе"
 
-#: login-utils/su-common.c:1410
+#: login-utils/su-common.c:1413
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr ""
 
-#: login-utils/su-common.c:1424
+#: login-utils/su-common.c:1427
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "параметры --{shell,fast,command,session-command,login} и --user - взаимоисключающие"
 
-#: login-utils/su-common.c:1427
+#: login-utils/su-common.c:1430
 msgid "no command was specified"
 msgstr "не указана команда"
 
-#: login-utils/su-common.c:1439
+#: login-utils/su-common.c:1442
 msgid "only root can specify alternative groups"
 msgstr ""
 
-#: login-utils/su-common.c:1449
+#: login-utils/su-common.c:1452
 #, c-format
 msgid "user %s does not exist"
 msgstr "пользователь %s не существует"
 
-#: login-utils/su-common.c:1482
+#: login-utils/su-common.c:1485
 #, c-format
 msgid "using restricted shell %s"
 msgstr ""
 
-#: login-utils/su-common.c:1513
+#: login-utils/su-common.c:1516
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "предупреждение: не могу поменять каталог на %s"
@@ -9075,7 +9084,7 @@ msgstr "  -Q, --quiet-output           Без обычных выходных д
 msgid " -r, --raw             use raw output format\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: misc-utils/fincore.c:343 sys-utils/losetup.c:814
+#: misc-utils/fincore.c:343 sys-utils/losetup.c:817
 #, fuzzy
 msgid "no file specified"
 msgstr "Не указана опция --date.\n"
@@ -9772,7 +9781,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr "%s и %s являются взаимно исключающими"
 
 #: misc-utils/kill.c:287 sys-utils/eject.c:205 sys-utils/eject.c:230
-#: sys-utils/losetup.c:722 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
+#: sys-utils/losetup.c:725 sys-utils/tunelp.c:167 sys-utils/tunelp.c:174
 #: sys-utils/tunelp.c:181 sys-utils/tunelp.c:188 sys-utils/tunelp.c:195
 #: sys-utils/tunelp.c:201 sys-utils/tunelp.c:205 sys-utils/tunelp.c:212
 #: term-utils/setterm.c:211 term-utils/setterm.c:214 term-utils/setterm.c:233
@@ -11637,7 +11646,7 @@ msgstr "              параметры\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose         разъяснение выполняемых действий\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:702
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:383 sys-utils/losetup.c:705
 #: text-utils/hexdump.c:124
 #, fuzzy
 msgid "failed to parse offset"
@@ -13695,7 +13704,7 @@ msgstr "  -Q, --quiet-output           Без обычных выходных д
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr ""
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:730 sys-utils/zramctl.c:647
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:733 sys-utils/zramctl.c:647
 #, fuzzy
 msgid "failed to parse size"
 msgstr "%s: невозможно открыть : %s\n"
@@ -14767,92 +14776,92 @@ msgstr " -O, --output-all     выводить все столбцы\n"
 msgid "     --raw                     use raw --list output format\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: sys-utils/losetup.c:461
+#: sys-utils/losetup.c:464
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr ""
 
-#: sys-utils/losetup.c:465
+#: sys-utils/losetup.c:468
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr ""
 
-#: sys-utils/losetup.c:486 sys-utils/losetup.c:538
+#: sys-utils/losetup.c:489 sys-utils/losetup.c:541
 #, fuzzy, c-format
 msgid "%s: overlapping loop device exists"
 msgstr "%s не lp-устройство"
 
-#: sys-utils/losetup.c:497
+#: sys-utils/losetup.c:500
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
 msgstr ""
 
-#: sys-utils/losetup.c:504
+#: sys-utils/losetup.c:507
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
 msgstr ""
 
-#: sys-utils/losetup.c:510
+#: sys-utils/losetup.c:513
 #, fuzzy, c-format
 msgid "%s: failed to re-use loop device"
 msgstr "mount: установка устройства обратной связи завершилась неудачей\n"
 
-#: sys-utils/losetup.c:516
+#: sys-utils/losetup.c:519
 #, fuzzy
 msgid "failed to inspect loop devices"
 msgstr "mount: установка устройства обратной связи завершилась неудачей\n"
 
-#: sys-utils/losetup.c:539
+#: sys-utils/losetup.c:542
 #, fuzzy, c-format
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "mount: установка устройства обратной связи завершилась неудачей\n"
 
-#: sys-utils/losetup.c:551 sys-utils/losetup.c:868
+#: sys-utils/losetup.c:554 sys-utils/losetup.c:871
 #, fuzzy
 msgid "cannot find an unused loop device"
 msgstr "%s: невозможно найти ни одного свободного устройства обратной связи"
 
-#: sys-utils/losetup.c:561
+#: sys-utils/losetup.c:564
 #, fuzzy, c-format
 msgid "%s: failed to use backing file"
 msgstr "ioctl() завершился неудачей при чтении времени из %s"
 
-#: sys-utils/losetup.c:654
+#: sys-utils/losetup.c:657
 #, fuzzy
 msgid "failed to parse logical block size"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: sys-utils/losetup.c:660 sys-utils/losetup.c:670 sys-utils/losetup.c:795
-#: sys-utils/losetup.c:809 sys-utils/losetup.c:848
+#: sys-utils/losetup.c:663 sys-utils/losetup.c:673 sys-utils/losetup.c:798
+#: sys-utils/losetup.c:812 sys-utils/losetup.c:851
 #, fuzzy, c-format
 msgid "%s: failed to use device"
 msgstr "невозможно перемотать устройство для свопинга"
 
-#: sys-utils/losetup.c:806
+#: sys-utils/losetup.c:809
 #, fuzzy
 msgid "no loop device specified"
 msgstr "mount: устройство обратной связи указано дважды"
 
-#: sys-utils/losetup.c:821
+#: sys-utils/losetup.c:824
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr ""
 
-#: sys-utils/losetup.c:826
+#: sys-utils/losetup.c:829
 msgid "the option --offset is not allowed in this context"
 msgstr ""
 
-#: sys-utils/losetup.c:889
+#: sys-utils/losetup.c:892
 #, fuzzy, c-format
 msgid "%s: set capacity failed"
 msgstr "%s состояние - %d"
 
-#: sys-utils/losetup.c:898
+#: sys-utils/losetup.c:901
 #, fuzzy, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: не удалось перейти в каталог"
 
-#: sys-utils/losetup.c:904
+#: sys-utils/losetup.c:907
 #, fuzzy, c-format
 msgid "%s: set logical block size failed"
 msgstr "поиск завершился неудачей"
@@ -16549,31 +16558,36 @@ msgstr ""
 msgid "error writing %s"
 msgstr "ошибка записи %s"
 
-#: sys-utils/readprofile.c:270
+#: sys-utils/readprofile.c:250
+#, fuzzy
+msgid "input file is empty"
+msgstr "Файловая система Linux"
+
+#: sys-utils/readprofile.c:272
 msgid "Assuming reversed byte order. Use -n to force native byte order."
 msgstr ""
 
-#: sys-utils/readprofile.c:285
+#: sys-utils/readprofile.c:287
 #, fuzzy, c-format
 msgid "Sampling_step: %u\n"
 msgstr "Шаг_дискретизации: %i\n"
 
-#: sys-utils/readprofile.c:301 sys-utils/readprofile.c:322
+#: sys-utils/readprofile.c:303 sys-utils/readprofile.c:324
 #, fuzzy, c-format
 msgid "%s(%i): wrong map line"
 msgstr "%s: %s(%i): неверная строка map\n"
 
-#: sys-utils/readprofile.c:312
+#: sys-utils/readprofile.c:314
 #, fuzzy, c-format
 msgid "can't find \"_stext\" in %s"
 msgstr "%s: невозможно найти \"_stext\" в %s\n"
 
-#: sys-utils/readprofile.c:345
+#: sys-utils/readprofile.c:347
 #, fuzzy
 msgid "profile address out of range. Wrong map file?"
 msgstr "%s: адрес profile за пределами диапазона. Неверный файл map?\n"
 
-#: sys-utils/readprofile.c:403
+#: sys-utils/readprofile.c:405
 msgid "total"
 msgstr "всего"
 
@@ -18572,7 +18586,7 @@ msgstr "%s: невозможно выполнить %s: %m"
 
 #: term-utils/agetty.c:594 term-utils/agetty.c:921 term-utils/agetty.c:1457
 #: term-utils/agetty.c:1475 term-utils/agetty.c:1512 term-utils/agetty.c:1522
-#: term-utils/agetty.c:1564 term-utils/agetty.c:2205 term-utils/agetty.c:2774
+#: term-utils/agetty.c:1564 term-utils/agetty.c:2203 term-utils/agetty.c:2772
 #, fuzzy, c-format
 msgid "failed to allocate memory: %m"
 msgstr "Невозможно выделить буфер.\n"
@@ -18699,172 +18713,172 @@ msgstr ""
 msgid "%s: read: %m"
 msgstr "%s: чтение: %m"
 
-#: term-utils/agetty.c:2181
+#: term-utils/agetty.c:2179
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: переполнение ввода"
 
-#: term-utils/agetty.c:2201 term-utils/agetty.c:2209
+#: term-utils/agetty.c:2199 term-utils/agetty.c:2207
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr ""
 
-#: term-utils/agetty.c:2215
+#: term-utils/agetty.c:2213
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr ""
 
-#: term-utils/agetty.c:2300
+#: term-utils/agetty.c:2298
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: не удалось установить атрибуты терминала: %m"
 
-#: term-utils/agetty.c:2338
+#: term-utils/agetty.c:2336
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"
 msgstr ""
 
-#: term-utils/agetty.c:2342
+#: term-utils/agetty.c:2340
 msgid "Open a terminal and set its mode.\n"
 msgstr ""
 
-#: term-utils/agetty.c:2345
+#: term-utils/agetty.c:2343
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                8-битный tty\n"
 
-#: term-utils/agetty.c:2346
+#: term-utils/agetty.c:2344
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr ""
 
-#: term-utils/agetty.c:2347
+#: term-utils/agetty.c:2345
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              не сбрасывать режим управления\n"
 
-#: term-utils/agetty.c:2348
+#: term-utils/agetty.c:2346
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               использовать -r <имя компьютера> для login(1)\n"
 
-#: term-utils/agetty.c:2349
+#: term-utils/agetty.c:2347
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr ""
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2348
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr ""
 
-#: term-utils/agetty.c:2351
+#: term-utils/agetty.c:2349
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr ""
 
-#: term-utils/agetty.c:2352
+#: term-utils/agetty.c:2350
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              не показывать файл issue\n"
 
-#: term-utils/agetty.c:2353
+#: term-utils/agetty.c:2351
 msgid " -I, --init-string <string> set init string\n"
 msgstr ""
 
-#: term-utils/agetty.c:2354
+#: term-utils/agetty.c:2352
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              не очищать экран до строки приглашения\n"
 
-#: term-utils/agetty.c:2355
+#: term-utils/agetty.c:2353
 msgid " -l, --login-program <file> specify login program\n"
 msgstr ""
 
-#: term-utils/agetty.c:2356
+#: term-utils/agetty.c:2354
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr ""
 
-#: term-utils/agetty.c:2357
+#: term-utils/agetty.c:2355
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr ""
 
-#: term-utils/agetty.c:2358
+#: term-utils/agetty.c:2356
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           не показывать приглашение для входа\n"
 
-#: term-utils/agetty.c:2359
+#: term-utils/agetty.c:2357
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr ""
 
-#: term-utils/agetty.c:2360
+#: term-utils/agetty.c:2358
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <парам> параметры, передаваемые в login\n"
 
-#: term-utils/agetty.c:2361
+#: term-utils/agetty.c:2359
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2362
+#: term-utils/agetty.c:2360
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr ""
 
-#: term-utils/agetty.c:2363
+#: term-utils/agetty.c:2361
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               виртуальный сброс соединения в tty\n"
 
-#: term-utils/agetty.c:2364
+#: term-utils/agetty.c:2362
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr ""
 
-#: term-utils/agetty.c:2365
+#: term-utils/agetty.c:2363
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr ""
 
-#: term-utils/agetty.c:2366
+#: term-utils/agetty.c:2364
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr ""
 
-#: term-utils/agetty.c:2367
+#: term-utils/agetty.c:2365
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr ""
 
-#: term-utils/agetty.c:2368
+#: term-utils/agetty.c:2366
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              не показывать советы\n"
 
-#: term-utils/agetty.c:2369
+#: term-utils/agetty.c:2367
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr ""
 
-#: term-utils/agetty.c:2370
+#: term-utils/agetty.c:2368
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr ""
 
-#: term-utils/agetty.c:2371
+#: term-utils/agetty.c:2369
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2372
+#: term-utils/agetty.c:2370
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2373
+#: term-utils/agetty.c:2371
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2374
+#: term-utils/agetty.c:2372
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr ""
 
-#: term-utils/agetty.c:2375
+#: term-utils/agetty.c:2373
 msgid "     --nice <number>        run login with this priority\n"
 msgstr ""
 
-#: term-utils/agetty.c:2376
+#: term-utils/agetty.c:2374
 #, fuzzy
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --nohints              не показывать советы\n"
 
-#: term-utils/agetty.c:2377
+#: term-utils/agetty.c:2375
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr " -l, --list-shells    вывести список шеллов и выйти\n"
 
-#: term-utils/agetty.c:2731
+#: term-utils/agetty.c:2729
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
@@ -18872,17 +18886,17 @@ msgstr[0] "%d пользователь"
 msgstr[1] "%d пользователя"
 msgstr[2] "%d пользователей"
 
-#: term-utils/agetty.c:2862
+#: term-utils/agetty.c:2860
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname завершился неудачей: %m"
 
-#: term-utils/agetty.c:2874
+#: term-utils/agetty.c:2872
 #, fuzzy, c-format
 msgid "cannot touch file %s"
 msgstr "Невозможно открыть файл '%s'"
 
-#: term-utils/agetty.c:2878
+#: term-utils/agetty.c:2876
 msgid "--reload is unsupported on your system"
 msgstr "--reload не поддерживается на вашей системе"
 
@@ -19402,17 +19416,12 @@ msgstr "неверное значение тайм-аута: %s"
 msgid "cannot get passwd uid"
 msgstr "невозможно получить размер %s"
 
-#: term-utils/wall.c:362
-#, fuzzy
-msgid "cannot get tty name"
-msgstr "Невозможно получить размер диска"
-
-#: term-utils/wall.c:382
+#: term-utils/wall.c:381
 #, fuzzy, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Широковещательное сообщение от %s@%s"
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:414
 #, fuzzy, c-format
 msgid "will not read %s - use stdin."
 msgstr "%s: не будет прочитан %s - используйте стандартный ввод.\n"
@@ -20268,6 +20277,13 @@ msgstr "неизвестная escape-последовательность во 
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "Строка входных данных слишком длинная."
+
+#~ msgid "incorrect password"
+#~ msgstr "неверный пароль"
+
+#, fuzzy
+#~ msgid "cannot get tty name"
+#~ msgstr "Невозможно получить размер диска"
 
 #, fuzzy
 #~ msgid "Failed to set personality to %s"
