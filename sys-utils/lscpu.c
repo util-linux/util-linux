@@ -61,6 +61,7 @@
 
 #include "closestream.h"
 #include "optutils.h"
+#include "fileutils.h"
 
 #include "lscpu.h"
 
@@ -436,6 +437,67 @@ static void read_physical_info_powerpc(
 }
 #endif
 
+static int cmp_vulnerability_name(const void *a0, const void *b0)
+{
+	const struct cpu_vulnerability *a = (const struct cpu_vulnerability *) a0,
+				       *b = (const struct cpu_vulnerability *) b0;
+	return strcmp(a->name, b->name);
+}
+
+static void read_vulnerabilities(struct lscpu_desc *desc)
+{
+	struct dirent *d;
+	DIR *dir = ul_path_opendir(desc->syscpu, "vulnerabilities");
+	int n = 0;
+
+	if (!dir)
+		return;
+
+	desc->nvuls = n = 0;
+
+	while (xreaddir(dir))
+		n++;
+	if (!n)
+		return;
+
+	rewinddir(dir);
+	desc->vuls = xcalloc(n, sizeof(struct cpu_vulnerability));
+
+	while (desc->nvuls < n && (d = xreaddir(dir))) {
+		char *str, *p;
+		struct cpu_vulnerability *vu;
+
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (d->d_type == DT_DIR || d->d_type == DT_UNKNOWN)
+			continue;
+#endif
+		if (ul_path_readf_string(desc->syscpu, &str,
+					"vulnerabilities/%s", d->d_name) <= 0)
+			continue;
+
+		vu = &desc->vuls[desc->nvuls++];
+
+		/* Name */
+		vu->name = xstrdup(d->d_name);
+		*vu->name = toupper(*vu->name);
+		strrep(vu->name, '_', ' ');
+
+		/* Description */
+		vu->text = str;
+		p = (char *) startswith(vu->text, "Mitigation");
+		if (p) {
+			*p = ';';
+			strrem(vu->text, ':');
+		}
+	}
+	closedir(dir);
+
+	qsort(desc->vuls, desc->nvuls,
+	      sizeof(struct cpu_vulnerability), cmp_vulnerability_name);
+}
+
+
+
 
 static void
 read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
@@ -568,6 +630,10 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			lookup(buf, "Type", &desc->machinetype);
 		fclose(fp);
 	}
+
+	/* vulnerabilities */
+	if (ul_path_access(desc->syscpu, F_OK, "vulnerabilities") == 0)
+		read_vulnerabilities(desc);
 }
 
 static int
@@ -2084,6 +2150,13 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		add_summary_n(tb, _("Physical sockets:"), desc->physsockets);
 		add_summary_n(tb, _("Physical chips:"), desc->physchips);
 		add_summary_n(tb, _("Physical cores/chip:"), desc->physcoresperchip);
+	}
+
+	if (desc->vuls) {
+		for (i = 0; i < desc->nvuls; i++) {
+			snprintf(buf, sizeof(buf), ("Vulnerability %s: "), desc->vuls[i].name);
+			add_summary_s(tb, buf, desc->vuls[i].text);
+		}
 	}
 
 	if (desc->flags)

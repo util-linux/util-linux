@@ -77,6 +77,10 @@ struct polarization_modes {
 	char *readable;
 };
 
+struct cpu_vulnerability {
+	char	*name;
+	char	*text;
+};
 
 /* global description */
 struct lscpu_desc {
@@ -123,6 +127,9 @@ struct lscpu_desc {
 
 	int		necaches;	/* extra caches (s390) */
 	struct cpu_cache *ecaches;
+
+	struct cpu_vulnerability *vuls;	/* array of CPU vulnerabilities */
+	int			 nvuls;	/* number of CPU vulnerabilities */
 
 	/*
 	 * All maps are sequentially indexed (0..ncpuspos), the array index
