@@ -1954,7 +1954,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	}
 
 	if (scols_table_new_column(tb, "field", 0, 0) == NULL ||
-	    scols_table_new_column(tb, "data", 0, SCOLS_FL_NOEXTREMES) == NULL)
+	    scols_table_new_column(tb, "data", 0, SCOLS_FL_NOEXTREMES | SCOLS_FL_WRAP) == NULL)
 		err(EXIT_FAILURE, _("failed to initialize output column"));
 
 	add_summary_s(tb, _("Architecture:"), desc->arch);

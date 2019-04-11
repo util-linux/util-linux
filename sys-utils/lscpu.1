@@ -29,7 +29,10 @@ column labels are not case sensitive.
 .sp
 Not all columns are supported on all architectures.  If an unsupported column is
 specified, \fBlscpu\fP prints the column but does not provide any data for it.
-
+.sp
+The default output formatting on terminal maybe optimized for better
+readability.  The output for non-terminals (e.g. pipes) is never affected by
+this optimization and it is always in "Field: data\\n" format.
 .SS COLUMNS
 Note that topology elements (core, socket, etc.) use a sequential unique ID
 starting from zero, but CPU logical numbers follow the kernel where there is
