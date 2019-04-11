@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <dirent.h>
 #include <sys/stat.h>
 
 #include "c.h"
@@ -56,5 +57,19 @@ extern int get_fd_tabsize(void);
 
 extern int mkdir_p(const char *path, mode_t mode);
 extern char *stripoff_last_component(char *path);
+
+/* This is readdir()-like function, but skips "." and ".." directory entries */
+static inline struct dirent *xreaddir(DIR *dp)
+{
+	struct dirent *d;
+
+	while ((d = readdir(dp))) {
+		if (!strcmp(d->d_name, ".") ||
+		    !strcmp(d->d_name, ".."))
+			continue;
+		break;
+	}
+	return d;
+}
 
 #endif /* UTIL_LINUX_FILEUTILS */

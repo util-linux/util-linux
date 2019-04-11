@@ -49,6 +49,7 @@
 #include "sysfs.h"
 #include "closestream.h"
 #include "optutils.h"
+#include "fileutils.h"
 
 #include "lsblk.h"
 
@@ -326,24 +327,6 @@ static int column_id_to_number(int id)
 static int is_dm(const char *name)
 {
 	return strncmp(name, "dm-", 3) ? 0 : 1;
-}
-
-/* This is readdir()-like function, but skips "." and ".." directory entries */
-static struct dirent *xreaddir(DIR *dp)
-{
-	struct dirent *d;
-
-	assert(dp);
-
-	while ((d = readdir(dp))) {
-		if (!strcmp(d->d_name, ".") ||
-		    !strcmp(d->d_name, ".."))
-			continue;
-
-		/* blacklist here? */
-		break;
-	}
-	return d;
 }
 
 /* Returns full pat to the device node (TODO: what about sysfs_blkdev_get_path()) */

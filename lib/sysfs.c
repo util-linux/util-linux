@@ -200,21 +200,6 @@ char *sysfs_blkdev_get_name(struct path_cxt *pc, char *buf, size_t bufsiz)
 	return buf;
 }
 
-static struct dirent *xreaddir(DIR *dp)
-{
-	struct dirent *d;
-
-	while ((d = readdir(dp))) {
-		if (!strcmp(d->d_name, ".") ||
-		    !strcmp(d->d_name, ".."))
-			continue;
-
-		/* blacklist here? */
-		break;
-	}
-	return d;
-}
-
 int sysfs_blkdev_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_name)
 {
 	char path[NAME_MAX + 6 + 1];

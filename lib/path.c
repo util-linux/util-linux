@@ -910,21 +910,6 @@ int ul_path_writef_u64(struct path_cxt *pc, uint64_t num, const char *path, ...)
 
 }
 
-static struct dirent *xreaddir(DIR *dp)
-{
-	struct dirent *d;
-
-	while ((d = readdir(dp))) {
-		if (!strcmp(d->d_name, ".") ||
-		    !strcmp(d->d_name, ".."))
-			continue;
-
-		/* blacklist here? */
-		break;
-	}
-	return d;
-}
-
 int ul_path_count_dirents(struct path_cxt *pc, const char *path)
 {
 	DIR *dir;
