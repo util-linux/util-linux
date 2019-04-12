@@ -188,18 +188,19 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Make a typescript of a terminal session.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --append                  append the output\n"
-		" -c, --command <command>       run command rather than interactive shell\n"
-		" -e, --return                  return exit code of the child process\n"
-		" -f, --flush                   run flush after each write\n"
-		"     --force                   use output file even when it is a link\n"
-		" -o, --output-limit <size>     terminate if output files exceed size\n"
-		" -q, --quiet                   be quiet\n"
-		" -t[<file>], --timing[=<file>] output timing data to stderr or to FILE\n"
-		), out);
-	printf(USAGE_HELP_OPTIONS(31));
+	fputs(_(" -a, --append                  append the output\n"), out);
+	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"), out);
+	fputs(_(" -e, --return                  return exit code of the child process\n"), out);
+	fputs(_(" -f, --flush                   run flush after each write\n"), out);
+	fputs(_("     --force                   use output file even when it is a link\n"), out);
+	fputs(_(" -o, --output-limit <size>     terminate if output files exceed size\n"), out);
+	fputs(_(" -q, --quiet                   be quiet\n"), out);
+	fputs(_(" -t[<file>], --timing[=<file>] output timing data to stderr or to FILE\n"), out);
 
+	fputs(USAGE_SEPARATOR, out);
+	printf(USAGE_HELP_OPTIONS(31));
 	printf(USAGE_MAN_TAIL("script(1)"));
+
 	exit(EXIT_SUCCESS);
 }
 
