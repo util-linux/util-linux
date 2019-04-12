@@ -113,7 +113,7 @@ struct script_log {
 
 struct script_stream {
 	struct timeval oldtime;		/* last update */
-	struct script_log *logs;	/* logs where to write data from stream */
+	struct script_log **logs;	/* logs where to write data from stream */
 	size_t nlogs;			/* number of logs */
 };
 
@@ -209,9 +209,8 @@ static struct script_log *get_log_by_name(struct script_stream *stream,
 	size_t i;
 
 	for (i = 0; i < stream->nlogs; i++) {
-		struct script_log *log = &stream->logs[i];
-
-		if (strcmp(stream->logs[i].filename, name) == 0)
+		struct script_log *log = stream->logs[i];
+		if (strcmp(log->filename, name) == 0)
 			return log;
 	}
 	return NULL;
@@ -223,21 +222,27 @@ static struct script_log *log_associate(struct script_control *ctl,
 {
 	struct script_log *log;
 
-	log = get_log_by_name(&ctl->out, filename);
-	if (!log)
-		log = get_log_by_name(&ctl->in, filename);
+	assert(ctl);
+	assert(filename);
+	assert(stream);
+
+	log = get_log_by_name(stream, filename);
+	if (log)
+		return log;	/* already defined */
+
+	log = get_log_by_name(stream == &ctl->out ? &ctl->in : &ctl->out, filename);
 	if (!log) {
 		/* create a new log */
-		stream->logs = xrealloc(stream->logs,
-					(stream->nlogs + 1) * sizeof(*log));
-		log = &stream->logs[stream->nlogs];
-		stream->nlogs++;
-
-		memset(log, 0, sizeof(*log));
-		if (filename)
-			log->filename = xstrdup(filename);
+		log = xcalloc(1, sizeof(*log));
+		log->filename = xstrdup(filename);
 		log->format = format;
 	}
+
+	/* add log to the stream */
+	stream->logs = xrealloc(stream->logs,
+			(stream->nlogs + 1) * sizeof(log));
+	stream->logs[stream->nlogs] = log;
+	stream->nlogs++;
 
 	return log;
 }
@@ -377,7 +382,7 @@ static uint64_t log_stream_activity(
 	uint64_t outsz = 0;
 
 	for (i = 0; i < stream->nlogs; i++)
-		outsz += log_write(ctl, &stream->logs[i], buf, bytes);
+		outsz += log_write(ctl, stream->logs[i], buf, bytes);
 
 	return outsz;
 }
@@ -439,11 +444,11 @@ static void __attribute__((__noreturn__)) done_log(struct script_control *ctl, c
 
 	/* close all output logs */
 	for (i = 0; i < ctl->out.nlogs; i++)
-		log_close(ctl, &ctl->out.logs[i], msg, status);
+		log_close(ctl, ctl->out.logs[i], msg, status);
 
 	/* close all input logs */
 	for (i = 0; i < ctl->in.nlogs; i++)
-		log_close(ctl, &ctl->in.logs[i], msg, status);
+		log_close(ctl, ctl->in.logs[i], msg, status);
 
 	if (!ctl->quiet)
 		printf(_("Script done.\n"));
@@ -661,11 +666,11 @@ static void do_io(struct script_control *ctl)
 
 	/* start all output logs */
 	for (i = 0; i < ctl->out.nlogs; i++)
-		log_start(ctl, &ctl->out.logs[i]);
+		log_start(ctl, ctl->out.logs[i]);
 
 	/* start all input logs */
 	for (i = 0; i < ctl->in.nlogs; i++)
-		log_start(ctl, &ctl->in.logs[i]);
+		log_start(ctl, ctl->in.logs[i]);
 
 	while (!ctl->die) {
 		size_t i;
