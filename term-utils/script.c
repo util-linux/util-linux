@@ -188,6 +188,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Make a typescript of a terminal session.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -O, --log-out <file>          log stdout to file (default)\n"), out);
 	fputs(_(" -a, --append                  append the output\n"), out);
 	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"), out);
 	fputs(_(" -e, --return                  return exit code of the child process\n"), out);
@@ -895,6 +896,7 @@ int main(int argc, char **argv)
 		{"return", no_argument, NULL, 'e'},
 		{"flush", no_argument, NULL, 'f'},
 		{"force", no_argument, NULL, FORCE_OPTION,},
+		{"log-out", required_argument, NULL, 'O'},
 		{"output-limit", required_argument, NULL, 'o'},
 		{"quiet", no_argument, NULL, 'q'},
 		{"timing", optional_argument, NULL, 't'},
@@ -918,7 +920,7 @@ int main(int argc, char **argv)
 
 	script_init_debug();
 
-	while ((ch = getopt_long(argc, argv, "ac:efo:qt::Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "ac:efO:o:qt::Vh", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'a':
 			ctl.append = 1;
@@ -934,6 +936,9 @@ int main(int argc, char **argv)
 			break;
 		case FORCE_OPTION:
 			ctl.force = 1;
+			break;
+		case 'O':
+			typescript = optarg;
 			break;
 		case 'o':
 			ctl.maxsz = strtosize_or_err(optarg, _("failed to parse output limit size"));
@@ -961,10 +966,12 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (argc > 0)
-		typescript = argv[0];
-	else
-		die_if_link(&ctl, DEFAULT_TYPESCRIPT_FILENAME);
+	if (!typescript) {
+		if (argc > 0)
+			typescript = argv[0];
+		else
+			die_if_link(&ctl, DEFAULT_TYPESCRIPT_FILENAME);
+	}
 
 	/* associate stdout with typescript file */
 	log_associate(&ctl, &ctl.out, typescript, SCRIPT_FMT_RAW);

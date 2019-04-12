@@ -47,7 +47,7 @@ assignment, as the typescript file can be printed out later with
 .PP
 If the argument
 .I file
-is given,
+or option \fB\-\-log\-out\fR \fIfile\fR is given,
 .B script
 saves the dialogue in this
 .IR file .
@@ -86,6 +86,10 @@ being done using `cat foo'.
 \fB\-\-force\fR
 Allow the default output destination, i.e. the typescript file, to be a hard
 or symbolic link.  The command will follow a symbolic link.
+.TP
+\fB\-O\fR, \fB\-\-log\-out\fR \fIfile\fR
+Log output to the \fIfile\fR. The default is to log the file with name 'typescript'
+if the option is not given.
 .TP
 \fB\-o\fR, \fB\-\-output-limit\fR \fIsize\fR
 Limit the size of the typescript and timing files to
