@@ -102,7 +102,8 @@ UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
 
 enum {
 	SCRIPT_FMT_RAW = 1,		/* raw slave/master data */
-	SCRIPT_FMT_TIMING_SIMPLE,	/* timing info in classic "<time> <delta>" format */
+	SCRIPT_FMT_TIMING_SIMPLE,	/* timing info in classic "<delta> <offset>" format */
+	SCRIPT_FMT_TIMING_MULTI,	/* multiple streams in format "<type> <delta> <offset|etc> */
 };
 
 struct script_log {
@@ -110,12 +111,15 @@ struct script_log {
 	int	format;			/* SCRIPT_FMT_* */
 	char	*filename;		/* on command line specified name */
 	struct timeval oldtime;		/* previous entry log time */
+
+	unsigned int	initialized : 1;
 };
 
 struct script_stream {
 	struct timeval oldtime;		/* last update */
 	struct script_log **logs;	/* logs where to write data from stream */
 	size_t nlogs;			/* number of logs */
+	char ident;			/* stream identifier */
 };
 
 struct script_control {
@@ -191,6 +195,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -I, --log-in <file>           log stdin to file\n"), out);
 	fputs(_(" -O, --log-out <file>          log stdout to file (default)\n"), out);
+	fputs(_(" -B, --log-io <file>           log stdin and stdout to file\n"), out);
 	fputs(_(" -T, --log-timing <file>       log timing information to file\n"), out);
 	fputs(_(" -a, --append                  append the output\n"), out);
 	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"), out);
@@ -227,6 +232,8 @@ static struct script_log *log_associate(struct script_control *ctl,
 {
 	struct script_log *log;
 
+	DBG(MISC, ul_debug("associate %s with stream", filename));
+
 	assert(ctl);
 	assert(filename);
 	assert(stream);
@@ -257,6 +264,9 @@ static void log_close(struct script_control *ctl __attribute__((unused)),
 		      const char *msg,
 		      int status)
 {
+	if (!log->initialized)
+		return;
+
 	DBG(MISC, ul_debug("closing %s", log->filename));
 
 	switch (log->format) {
@@ -280,21 +290,24 @@ static void log_close(struct script_control *ctl __attribute__((unused)),
 		err(EXIT_FAILURE, "write failed: %s", log->filename);
 
 	log->fp = NULL;
+	log->initialized = 0;
 }
 
 static void log_start(struct script_control *ctl,
 		      struct script_log *log)
 {
-
-	assert(log->fp == NULL);
+	if (log->initialized)
+		return;
 
 	DBG(MISC, ul_debug("opening %s", log->filename));
+
+	assert(log->fp == NULL);
 
 	/* open the log */
 	log->fp = fopen(log->filename,
 			ctl->append && log->format == SCRIPT_FMT_RAW ?
-				"a" UL_CLOEXECSTR :
-				"w" UL_CLOEXECSTR);
+			"a" UL_CLOEXECSTR :
+			"w" UL_CLOEXECSTR);
 	if (!log->fp) {
 		restore_tty(ctl, TCSANOW);
 		warn(_("cannot open %s"), log->filename);
@@ -335,9 +348,12 @@ static void log_start(struct script_control *ctl,
 		gettime_monotonic(&log->oldtime);
 		break;
 	}
+
+	log->initialized = 1;
 }
 
 static size_t log_write(struct script_control *ctl,
+		      struct script_stream *stream,
 		      struct script_log *log,
 		      char *obuf, size_t bytes)
 {
@@ -368,6 +384,21 @@ static size_t log_write(struct script_control *ctl,
 		bytes = sz > 0 ? sz : 0;
 		break;
 	}
+	case SCRIPT_FMT_TIMING_MULTI:
+	{
+		struct timeval now, delta;
+		int sz;
+
+		DBG(IO, ul_debug("  writing multi-stream timing info"));
+
+		gettime_monotonic(&now);
+		timersub(&now, &log->oldtime, &delta);
+		sz = fprintf(log->fp, "%c %ld.%06ld %zd\n",
+			stream->ident,
+			(long)delta.tv_sec, (long)delta.tv_usec, bytes);
+		log->oldtime = now;
+		bytes = sz > 0 ? sz : 0;
+	}
 	default:
 		break;
 	}
@@ -387,7 +418,7 @@ static uint64_t log_stream_activity(
 	uint64_t outsz = 0;
 
 	for (i = 0; i < stream->nlogs; i++)
-		outsz += log_write(ctl, stream->logs[i], buf, bytes);
+		outsz += log_write(ctl, stream, stream->logs[i], buf, bytes);
 
 	return outsz;
 }
@@ -885,9 +916,12 @@ int main(int argc, char **argv)
 		.master = -1,
 		.slave  = -1,
 
+		.out = { .ident = 'O' },
+		.in  = { .ident = 'I' },
+
 		.poll_timeout = -1
 	};
-	int ch;
+	int ch, format = 0;
 	const char *outfile = NULL, *infile = NULL;
 	const char *timingfile = NULL;
 
@@ -901,6 +935,7 @@ int main(int argc, char **argv)
 		{"force", no_argument, NULL, FORCE_OPTION,},
 		{"log-in", required_argument, NULL, 'I'},
 		{"log-out", required_argument, NULL, 'O'},
+		{"log-io", required_argument, NULL, 'B'},
 		{"log-timing", required_argument, NULL, 'T'},
 		{"output-limit", required_argument, NULL, 'o'},
 		{"quiet", no_argument, NULL, 'q'},
@@ -929,7 +964,7 @@ int main(int argc, char **argv)
 
 	script_init_debug();
 
-	while ((ch = getopt_long(argc, argv, "ac:efI:O:o:qT:t::Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "aB:c:efI:O:o:qT:t::Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -948,6 +983,11 @@ int main(int argc, char **argv)
 			break;
 		case FORCE_OPTION:
 			ctl.force = 1;
+			break;
+		case 'B':
+			log_associate(&ctl, &ctl.in, optarg, SCRIPT_FMT_RAW);
+			log_associate(&ctl, &ctl.out, optarg, SCRIPT_FMT_RAW);
+			infile = outfile = optarg;
 			break;
 		case 'I':
 			log_associate(&ctl, &ctl.in, optarg, SCRIPT_FMT_RAW);
@@ -973,7 +1013,6 @@ int main(int argc, char **argv)
 			timingfile = optarg ? optarg : "stderr";
 			break;
 		case 'T' :
-			log_associate(&ctl, &ctl.out, optarg, SCRIPT_FMT_TIMING_SIMPLE);
 			timingfile = optarg;
 			break;
 		case 'V':
@@ -998,6 +1037,17 @@ int main(int argc, char **argv)
 
 		/* associate stdout with typescript file */
 		log_associate(&ctl, &ctl.out, outfile, SCRIPT_FMT_RAW);
+	}
+
+	if (timingfile) {
+		if (!format)
+			format = outfile && infile ?
+					SCRIPT_FMT_TIMING_MULTI :
+					SCRIPT_FMT_TIMING_SIMPLE;
+		if (outfile)
+			log_associate(&ctl, &ctl.out, timingfile, format);
+		if (infile)
+			log_associate(&ctl, &ctl.in, timingfile, format);
 	}
 
 	ctl.shell = getenv("SHELL");

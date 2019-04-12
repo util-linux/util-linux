@@ -44,6 +44,10 @@ makes a typescript of everything displayed on your terminal.  It is useful for
 students who need a hardcopy record of an interactive session as proof of an
 assignment, as the typescript file can be printed out later with
 .BR lpr (1).
+Since version 2.35
+.B script
+supports multiple streams and allows to log input and output to separate
+files or all the one file.
 .PP
 If the argument
 .I file
@@ -87,6 +91,12 @@ being done using `cat foo'.
 Allow the default output destination, i.e. the typescript file, to be a hard
 or symbolic link.  The command will follow a symbolic link.
 .TP
+\fB\-B\fR, \fB\-\-log\-io\fR \fIfile\fR
+Log input and output to the same
+\fIfile\fR.  Note, this option makes sense only if \fB\-\-log\-timing\fR is
+also specified, otherwise it's impossible to separate output and input streams from
+the log \fIfile\fR.
+.TP
 \fB\-I\fR, \fB\-\-log\-in\fR \fIfile\fR
 Log input to the \fIfile\fR.  The log output is disabled if only \fB\-\-log\-in\fR
 specified.
@@ -100,12 +110,23 @@ name 'typescript' if the option \fB\-\-log\-out\fR or \fB\-\-log\-in\fR is not
 given.  The log output is disabled if only \fB\-\-log\-in\fR specified.
 .TP
 \fB\-T\fR, \fB\-\-log\-timing\fR \fIfile\fR
-Log timing information to the \fIfile\fR.
+Log timing information to the \fIfile\fR. Two timing file formats are supporte
+now.  The classic format is used when only one stream (input or output) logging
+is enabled. The multi-stream format is used on \fB\-\-log\-io\fR or when
+\fB\-\-log\-in\fR and \fB\-\-log\-out\fR are used together.
 .sp
-This log data contains two fields, separated by a space.  The first
+.RS
+.B Classic format
+.PP
+The log contains two fields, separated by a space.  The first
 field indicates how much time elapsed since the previous output.  The second
-field indicates how many characters were output this time.  This information
-can be used to replay typescripts with realistic typing and output delays.
+field indicates how many characters were output this time.
+.sp
+.B Multi-stream format
+.PP
+The first field is entry type itentifier ('I'nput, 'O'utput, 'H'eader, 'S'ignal).
+The socond field is how much time elapsed since the previous entry, and rest of the entry is type specific data.
+.RE
 .TP
 \fB\-o\fR, \fB\-\-output-limit\fR \fIsize\fR
 Limit the size of the typescript and timing files to
