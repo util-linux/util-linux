@@ -73,6 +73,7 @@
 #include "timeutils.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "optutils.h"
 
 #include "debug.h"
 
@@ -189,6 +190,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -O, --log-out <file>          log stdout to file (default)\n"), out);
+	fputs(_(" -T, --log-timing <file>       log timing information to file\n"), out);
 	fputs(_(" -a, --append                  append the output\n"), out);
 	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"), out);
 	fputs(_(" -e, --return                  return exit code of the child process\n"), out);
@@ -196,7 +198,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --force                   use output file even when it is a link\n"), out);
 	fputs(_(" -o, --output-limit <size>     terminate if output files exceed size\n"), out);
 	fputs(_(" -q, --quiet                   be quiet\n"), out);
-	fputs(_(" -t[<file>], --timing[=<file>] output timing data to stderr or to FILE\n"), out);
+	fputs(_(" -t[<file>], --timing[=<file>] deprecated alias to -T (default file is stderr)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(31));
@@ -897,6 +899,7 @@ int main(int argc, char **argv)
 		{"flush", no_argument, NULL, 'f'},
 		{"force", no_argument, NULL, FORCE_OPTION,},
 		{"log-out", required_argument, NULL, 'O'},
+		{"log-timing", required_argument, NULL, 'T'},
 		{"output-limit", required_argument, NULL, 'o'},
 		{"quiet", no_argument, NULL, 'q'},
 		{"timing", optional_argument, NULL, 't'},
@@ -904,7 +907,11 @@ int main(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
-
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'T', 't' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 	setlocale(LC_ALL, "");
 	/*
 	 * script -t prints time delays as floating point numbers.  The example
@@ -920,7 +927,10 @@ int main(int argc, char **argv)
 
 	script_init_debug();
 
-	while ((ch = getopt_long(argc, argv, "ac:efO:o:qt::Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "ac:efO:o:qT:t::Vh", longopts, NULL)) != -1) {
+
+		err_exclusive_options(ch, longopts, excl, excl_st);
+
 		switch (ch) {
 		case 'a':
 			ctl.append = 1;
@@ -955,7 +965,10 @@ int main(int argc, char **argv)
 			/* used for message only */
 			timingfile = optarg ? optarg : "stderr";
 			break;
-
+		case 'T' :
+			log_associate(&ctl, &ctl.out, optarg, SCRIPT_FMT_TIMING_SIMPLE);
+			timingfile = optarg;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -963,6 +976,7 @@ int main(int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
 	argc -= optind;
 	argv += optind;
 
