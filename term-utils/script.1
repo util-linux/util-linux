@@ -87,9 +87,17 @@ being done using `cat foo'.
 Allow the default output destination, i.e. the typescript file, to be a hard
 or symbolic link.  The command will follow a symbolic link.
 .TP
+\fB\-I\fR, \fB\-\-log\-in\fR \fIfile\fR
+Log input to the \fIfile\fR.  The log output is disabled if only \fB\-\-log\-in\fR
+specified.
+.sp
+Use this logging functionality carefully as it logs all input, including input 
+when terminal has disabled echo flag (for example it log passwords in the input).
+.TP
 \fB\-O\fR, \fB\-\-log\-out\fR \fIfile\fR
-Log output to the \fIfile\fR. The default is to log the file with name 'typescript'
-if the option is not given.
+Log output to the \fIfile\fR. The default is to log output to the file with
+name 'typescript' if the option \fB\-\-log\-out\fR or \fB\-\-log\-in\fR is not
+given.  The log output is disabled if only \fB\-\-log\-in\fR specified.
 .TP
 \fB\-T\fR, \fB\-\-log\-timing\fR \fIfile\fR
 Log timing information to the \fIfile\fR.
