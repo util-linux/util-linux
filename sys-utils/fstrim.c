@@ -67,14 +67,20 @@ struct fstrim_control {
 /* returns: 0 = success, 1 = unsupported, < 0 = error */
 static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const char *devname)
 {
-	int fd, rc;
+	int fd = -1, rc;
 	struct stat sb;
 	struct fstrim_range range;
+	char *rpath = realpath(path, NULL);
 
+	if (!rpath) {
+		warn(_("cannot get realpath: %s"), path);
+		rc = -errno;
+		goto done;
+	}
 	/* kernel modifies the range */
 	memcpy(&range, &ctl->range, sizeof(range));
 
-	fd = open(path, O_RDONLY);
+	fd = open(rpath, O_RDONLY);
 	if (fd < 0) {
 		warn(_("cannot open %s"), path);
 		rc = -errno;
@@ -129,6 +135,7 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const
 done:
 	if (fd >= 0)
 		close(fd);
+	free(rpath);
 	return rc;
 }
 
