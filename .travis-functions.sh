@@ -49,9 +49,10 @@ function make_checkusage
 
 function check_nonroot
 {
-	local opts="$MAKE_CHECK_OPTS --show-diff"
+	local opts="$MAKE_CHECK_OPTS --show-diff --memcheck-asan"
 
 	xconfigure \
+		--enable-asan \
 		--disable-use-tty-group \
 		--disable-makeinstall-chown \
 		--enable-all-programs \
@@ -68,9 +69,10 @@ function check_nonroot
 
 function check_root
 {
-	local opts="$MAKE_CHECK_OPTS --show-diff"
+	local opts="$MAKE_CHECK_OPTS --show-diff --memcheck-asan"
 
 	xconfigure \
+		--enable-asan \
 		--enable-all-programs \
 		|| return
 	$MAKE || return
