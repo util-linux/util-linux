@@ -19,6 +19,10 @@ ts_check_prog "mkfs.ext4"
 
 ts_init_py libmount
 
+if [ "$TS_ENABLE_ASAN" == "yes" ]; then
+	TS_KNOWN_FAIL="yes"
+fi
+
 TESTPROG="$TS_HELPER_PYLIBMOUNT_CONTEXT"
 [ -x $TESTPROG ] || ts_die "test script missing"
 

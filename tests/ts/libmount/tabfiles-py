@@ -9,7 +9,7 @@ TS_DESC="tab files-py"
 ts_init "$*"
 ts_init_py libmount
 
-if [ -f "$ASAN_SYMBOLIZER_PATH" ]; then
+if [ "$TS_ENABLE_ASAN" == "yes" ]; then
 	TS_KNOWN_FAIL="yes"
 fi
 

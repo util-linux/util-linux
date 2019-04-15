@@ -10,7 +10,7 @@ ts_init "$*"
 ts_init_py libmount
 ts_skip_nonroot
 
-if [ -f "$ASAN_SYMBOLIZER_PATH" ]; then
+if [ "$TS_ENABLE_ASAN" == "yes" ]; then
 	TS_KNOWN_FAIL="yes"
 fi
 
