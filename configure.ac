@@ -155,9 +155,10 @@ AC_ARG_ENABLE([asan],
 )
 AS_IF([test "x$enable_asan" = xyes], [
   UL_WARN_ADD([-fsanitize=address])
+  ASAN_LDFLAGS="-fsanitize=address"
 ])
 
-
+AC_SUBST([ASAN_LDFLAGS])
 
 dnl libtool-2
 LT_INIT
