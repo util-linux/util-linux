@@ -373,7 +373,7 @@ enomem:
 static int mnt_parse_swaps_line(struct libmnt_fs *fs, const char *s)
 {
 	uint64_t num;
-	int rc;
+	int rc = 0;
 	char *p;
 
 	/* (1) source */
