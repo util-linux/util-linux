@@ -95,7 +95,7 @@ static inline const char *skip_nonspearator(const char *p)
 static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 {
 	int rc = 0;
-	char *p;
+	char *p = NULL;
 
 	fs->passno = fs->freq = 0;
 
@@ -103,6 +103,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 	p = unmangle(s, &s);
 	if (!p || (rc = __mnt_fs_set_source_ptr(fs, p))) {
 		DBG(TAB, ul_debug("tab parse error: [source]"));
+		free(p);
 		goto fail;
 	}
 
@@ -121,6 +122,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 	p = unmangle(s, &s);
 	if (!p || (rc = __mnt_fs_set_fstype_ptr(fs, p))) {
 		DBG(TAB, ul_debug("tab parse error: [fstype]"));
+		free(p);
 		goto fail;
 	}
 
@@ -130,11 +132,13 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 	p = unmangle(s, &s);
 	if (p && (rc = mnt_fs_set_options(fs, p))) {
 		DBG(TAB, ul_debug("tab parse error: [options]"));
+		free(p);
 		goto fail;
 	}
-
 	if (!p)
 		goto done;
+	free(p);
+
 	s = skip_separator(s);
 	if (!s || !*s)
 		goto done;
@@ -250,6 +254,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 	p = unmangle(s, &s);
 	if (!p || (rc = __mnt_fs_set_fstype_ptr(fs, p))) {
 		DBG(TAB, ul_debug("tab parse error: [fstype]"));
+		free(p);
 		goto fail;
 	}
 
@@ -267,6 +272,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 		p = unmangle(s, &s);
 		if (!p || (rc = __mnt_fs_set_source_ptr(fs, p))) {
 			DBG(TAB, ul_debug("tab parse error: [regular source]"));
+			free(p);
 			goto fail;
 		}
 	}
@@ -319,7 +325,8 @@ static int mnt_parse_utab_line(struct libmnt_fs *fs, const char *s)
 			char *v = unmangle(p + 4, &end);
 			if (!v)
 				goto enomem;
-			__mnt_fs_set_source_ptr(fs, v);
+			if (__mnt_fs_set_source_ptr(fs, v))
+				free(v);
 
 		} else if (!fs->target && !strncmp(p, "TARGET=", 7)) {
 			fs->target = unmangle(p + 7, &end);
@@ -378,6 +385,7 @@ static int mnt_parse_swaps_line(struct libmnt_fs *fs, const char *s)
 	}
 	if (!p || (rc = __mnt_fs_set_source_ptr(fs, p))) {
 		DBG(TAB, ul_debug("tab parse error: [source]"));
+		free(p);
 		goto fail;
 	}
 
