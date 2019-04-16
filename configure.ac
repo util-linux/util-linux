@@ -156,6 +156,8 @@ AC_ARG_ENABLE([asan],
 AS_IF([test "x$enable_asan" = xyes], [
   UL_WARN_ADD([-fsanitize=address])
   ASAN_LDFLAGS="-fsanitize=address"
+],[
+  AC_DEFINE([USE_CLOSE_ATEXIT], [1], [close stdout at exit])
 ])
 
 AC_SUBST([ASAN_LDFLAGS])

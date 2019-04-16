@@ -51,6 +51,17 @@ close_stdout(void)
 		_exit(CLOSE_EXIT_CODE);
 }
 
+static inline void
+close_stdout_atexit(void)
+{
+	/*
+	 * Note that close stdout at exit disables ASAN to report memory leaks
+	 */
+#ifdef USE_CLOSE_ATEXIT
+	atexit(close_stdout);
+#endif
+}
+
 #ifndef HAVE_FSYNC
 static inline int
 fsync(int fd __attribute__((__unused__)))
