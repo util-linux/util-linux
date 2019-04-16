@@ -61,12 +61,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__ ((__noreturn__)) print_version(void)
-{
-	printf(UTIL_LINUX_VERSION);
-	exit(EXIT_SUCCESS);
-}
-
 int main(int argc, char **argv)
 {
 	char *progname;		/* name of executable to be called */
@@ -89,7 +83,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	if (argc == 2 && !strcmp(argv[1], "-V"))
-		print_version();
+		print_version(EXIT_SUCCESS);
 
 	/* Check commandline options. */
 	opterr = 0;
@@ -106,7 +100,7 @@ int main(int argc, char **argv)
 		case 'h':
 			usage();
 		case VERSION_OPTION:
-			print_version();
+			print_version(EXIT_SUCCESS);
 		default:
 			optind--;
 			more = 1;

@@ -62,13 +62,6 @@ struct blkid_control {
 		raw_chars:1;
 };
 
-static void print_version(FILE *out)
-{
-	fprintf(out, _("%s from %s  (libblkid %s, %s)\n"),
-		program_invocation_short_name, PACKAGE_STRING,
-		LIBBLKID_VERSION, LIBBLKID_DATE);
-}
-
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -793,7 +786,9 @@ int main(int argc, char **argv)
 			break;
 		case 'V':
 		case 'v':
-			print_version(stdout);
+			fprintf(stdout, _("%s from %s  (libblkid %s, %s)\n"),
+				program_invocation_short_name, PACKAGE_STRING,
+				LIBBLKID_VERSION, LIBBLKID_DATE);
 			err = 0;
 			goto exit;
 		case 'w':

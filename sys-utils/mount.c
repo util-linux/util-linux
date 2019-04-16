@@ -73,7 +73,7 @@ static void __attribute__((__noreturn__)) exit_non_root(const char *option)
 	errx(MNT_EX_USAGE, _("only root can do that"));
 }
 
-static void __attribute__((__noreturn__)) print_version(void)
+static void __attribute__((__noreturn__)) mount_print_version(void)
 {
 	const char *ver = NULL;
 	const char **features = NULL, **p;
@@ -708,7 +708,7 @@ int main(int argc, char **argv)
 			mnt_context_enable_verbose(cxt, TRUE);
 			break;
 		case 'V':
-			print_version();
+			mount_print_version();
 			break;
 		case 'w':
 			append_option(cxt, "rw");
