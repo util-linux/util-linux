@@ -1321,7 +1321,7 @@ int su_main(int argc, char **argv, int mode)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	su_init_debug();
 	su->conv.appdata_ptr = (void *) su;
@@ -1392,9 +1392,7 @@ int su_main(int argc, char **argv, int mode)
 			usage(mode);
 
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

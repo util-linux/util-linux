@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	ul_path_init_debug();
 	sys = ul_new_path(_PATH_SYS_CPU);
@@ -329,8 +329,6 @@ int main(int argc, char *argv[])
 			cmd = CMD_CPU_DECONFIGURE;
 			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
-		case 'h':
-			usage();
 		case 'p':
 			if (strcmp("horizontal", argv[optind - 1]) == 0)
 				cmd = CMD_CPU_DISPATCH_HORIZONTAL;
@@ -343,9 +341,11 @@ int main(int argc, char *argv[])
 		case 'r':
 			cmd = CMD_CPU_RESCAN;
 			break;
+
+		case 'h':
+			usage();
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

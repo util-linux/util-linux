@@ -1994,7 +1994,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "aAbcdfFgGhJlLo:O:nN:qrsTu:vVX:Y:w:W:",
 					longopts, &longidx)) != -1) {
@@ -2079,9 +2079,7 @@ int main(int argc, char *argv[])
 				errx(EXIT_FAILURE, _("unsupported unit '%c'"), *optarg);
 			break;
 		case 'v':
-			printf(_("%s from %s\n"), program_invocation_short_name,
-						  PACKAGE_STRING);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'V':
 			sf->verify = 1;
 			break;

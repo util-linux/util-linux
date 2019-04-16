@@ -1814,7 +1814,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	lsblk = &_ls;
 
@@ -1848,9 +1848,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'e':
 			parse_excludes(optarg);
-			break;
-		case 'h':
-			usage();
 			break;
 		case 'J':
 			lsblk->flags |= LSBLK_JSON;
@@ -1939,9 +1936,6 @@ int main(int argc, char *argv[])
 		case OPT_SYSROOT:
 			lsblk->sysroot = optarg;
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'E':
 			lsblk->dedup_id = column_name_to_id(optarg, strlen(optarg));
 			if (lsblk->dedup_id >= 0)
@@ -1953,7 +1947,13 @@ int main(int argc, char *argv[])
 			lsblk->sort_id = column_name_to_id(optarg, strlen(optarg));
 			if (lsblk->sort_id >= 0)
 				break;
-			/* fallthrough */
+			errtryhelp(EXIT_FAILURE);
+			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

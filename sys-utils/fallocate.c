@@ -312,7 +312,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "hvVncpdizxl:o:", longopts, NULL))
 			!= -1) {
@@ -320,9 +320,6 @@ int main(int argc, char **argv)
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
-		case 'h':
-			usage();
-			break;
 		case 'c':
 			mode |= FALLOC_FL_COLLAPSE_RANGE;
 			break;
@@ -357,9 +354,11 @@ int main(int argc, char **argv)
 		case 'v':
 			verbose++;
 			break;
+
+		case 'h':
+			usage();
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

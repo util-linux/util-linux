@@ -512,7 +512,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (argc <= 1) {
 		warnx(_("not enough arguments"));
@@ -521,10 +521,8 @@ int main(int argc, char **argv)
 		/* first arg may be one of our standard longopts */
 		if (!strcmp(argv[1], "--help"))
 			usage();
-		if (!strcmp(argv[1], "--version")) {
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-		}
+		if (!strcmp(argv[1], "--version"))
+			print_version(EXIT_SUCCESS);
 	}
 
 	whereis_init_debug();
@@ -628,9 +626,9 @@ int main(int argc, char **argv)
 			case 'l':
 				list_dirlist(ls);
 				break;
+
 			case 'V':
-				printf(UTIL_LINUX_VERSION);
-				return EXIT_SUCCESS;
+				print_version(EXIT_SUCCESS);
 			case 'h':
 				usage();
 			default:

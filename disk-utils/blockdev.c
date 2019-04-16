@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (argc < 2) {
 		warnx(_("not enough arguments"));
@@ -246,10 +246,8 @@ int main(int argc, char **argv)
 	}
 
 	/* -V not together with commands */
-	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-		printf(UTIL_LINUX_VERSION);
-		return EXIT_SUCCESS;
-	}
+	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))
+		print_version(EXIT_SUCCESS);
 	if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
 		usage();
 

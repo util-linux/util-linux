@@ -54,10 +54,8 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 'h':
 			usage();
-			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_FAILURE;
+			print_version(EXIT_FAILURE);	/* yes FAILURE! */
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

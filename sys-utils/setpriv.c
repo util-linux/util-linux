@@ -837,7 +837,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	memset(&opts, 0, sizeof(opts));
 
@@ -971,11 +971,11 @@ int main(int argc, char **argv)
 		case RESET_ENV:
 			opts.reset_env = 1;
 			break;
+
 		case 'h':
 			usage();
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

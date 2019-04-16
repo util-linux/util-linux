@@ -41,8 +41,7 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch (c) {
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
 		default:

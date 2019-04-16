@@ -335,18 +335,13 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "+fhVmuinpCUrR:w:S:G:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			forkit = 1;
 			break;
-		case 'h':
-			usage();
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'm':
 			unshare_flags |= CLONE_NEWNS;
 			if (optarg)
@@ -420,6 +415,11 @@ int main(int argc, char *argv[])
 		case 'w':
 			newdir = optarg;
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

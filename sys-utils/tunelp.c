@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	strutils_set_exitcode(EXIT_LP_BADVAL);
 
@@ -159,9 +159,6 @@ int main(int argc, char **argv)
 	show_irq = 1;
 	while ((c = getopt_long(argc, argv, "t:c:w:a:i:ho:C:sq:rT:vV", longopts, NULL)) != -1) {
 		switch (c) {
-		case 'h':
-			usage();
-			break;
 		case 'i':
 			cmds->op = LPSETIRQ;
 			cmds->val = strtol_or_err(optarg, _("argument error"));
@@ -229,10 +226,12 @@ int main(int argc, char **argv)
 			cmds = cmds->next;
 			cmds->next = NULL;
 			break;
+
+		case 'h':
+			usage();
 		case 'v':
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

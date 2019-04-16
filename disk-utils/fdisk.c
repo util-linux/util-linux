@@ -891,7 +891,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	fdisk_init_debug(0);
 	scols_init_debug(0);
@@ -990,8 +990,7 @@ int main(int argc, char **argv)
 			break;
 		case 'V': /* preferred for util-linux */
 		case 'v': /* for backward compatibility only */
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'w':
 			wipemode = wipemode_from_string(optarg);
 			if (wipemode < 0)

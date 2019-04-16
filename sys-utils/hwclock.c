@@ -1259,7 +1259,7 @@ int main(int argc, char **argv)
 #endif
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv,
 				"hvVDd:alrsuwf:", longopts, NULL)) != -1) {
@@ -1359,9 +1359,9 @@ int main(int argc, char **argv)
 			ctl.rtc_dev_name = optarg;	/* --rtc */
 			break;
 #endif
+
 		case 'V':			/* --version */
-			out_version();
-			return 0;
+			print_version(EXIT_SUCCESS);
 		case 'h':			/* --help */
 			usage();
 		default:

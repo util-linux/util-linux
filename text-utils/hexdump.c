@@ -130,12 +130,11 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 			add_fmt(hex_offt, hex);
 			add_fmt("\"%07.7_ax \" 8/2 \"   %04x \" \"\\n\"", hex);
 			break;
+
 		case 'h':
 			usage();
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-			break;
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -193,7 +192,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	argv += parse_args(argc, argv, hex);
 

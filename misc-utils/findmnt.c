@@ -1348,7 +1348,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	/* default output format */
 	flags |= FL_TREE;
@@ -1390,9 +1390,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'e':
 			flags |= FL_EVALUATE;
-			break;
-		case 'h':
-			usage();
 			break;
 		case 'i':
 			flags |= FL_INVERT;
@@ -1490,9 +1487,6 @@ int main(int argc, char *argv[])
 		case 'w':
 			timeout = strtos32_or_err(optarg, _("invalid timeout argument"));
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'x':
 			verify = 1;
 			break;
@@ -1508,6 +1502,11 @@ int main(int argc, char *argv[])
 		case FINDMNT_OPT_REAL:
 			flags |= FL_REAL;
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

@@ -585,7 +585,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv,
 				"biJp:o:nruhV", long_opts, NULL)) != -1) {
@@ -612,11 +612,6 @@ int main(int argc, char *argv[])
 			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
 				columns[ncolumns] = ncolumns;
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
-		case 'h':
-			usage();
 		case 'n':
 			no_headings = 1;
 			break;
@@ -626,6 +621,11 @@ int main(int argc, char *argv[])
 		case 'u':
 			disable_columns_truncate();
 			break;
+
+		case 'V':
+			print_version(EXIT_SUCCESS);
+		case 'h':
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

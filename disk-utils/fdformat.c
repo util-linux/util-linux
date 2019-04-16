@@ -186,7 +186,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((ch = getopt_long(argc, argv, "f:t:r:nVh", longopts, NULL)) != -1)
 		switch (ch) {
@@ -204,8 +204,7 @@ int main(int argc, char **argv)
 			verify = 0;
 			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
 		default:

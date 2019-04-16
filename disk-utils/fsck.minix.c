@@ -1291,7 +1291,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	strutils_set_exitcode(FSCK_EX_USAGE);
 
@@ -1326,8 +1326,7 @@ main(int argc, char **argv) {
 			force = 1;
 			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return FSCK_EX_OK;
+			print_version(FSCK_EX_OK);
 		case 'h':
 			usage();
 		default:

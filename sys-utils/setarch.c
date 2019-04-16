@@ -315,7 +315,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (argc < 1) {
 		warnx(_("Not enough arguments"));
@@ -343,12 +343,6 @@ int main(int argc, char *argv[])
 
 	while ((c = getopt_long(argc, argv, "+hVv3BFILRSTXZ", longopts, NULL)) != -1) {
 		switch (c) {
-		case 'h':
-			usage(archwrapper);
-			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'v':
 			verbose = 1;
 			break;
@@ -394,8 +388,13 @@ int main(int argc, char *argv[])
 			} else
 				warnx(_("unrecognized option '--list'"));
 			/* fallthrough */
+
 		default:
 			errtryhelp(EXIT_FAILURE);
+		case 'h':
+			usage(archwrapper);
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		}
 	}
 

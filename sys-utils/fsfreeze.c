@@ -84,18 +84,17 @@ int main(int argc, char **argv)
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
-		case 'h':
-			usage();
-			break;
 		case 'f':
 			action = FREEZE;
 			break;
 		case 'u':
 			action = UNFREEZE;
 			break;
+
+		case 'h':
+			usage();
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

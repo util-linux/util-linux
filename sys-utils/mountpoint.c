@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	mnt_init_debug(0);
 
@@ -165,12 +165,11 @@ int main(int argc, char **argv)
 		case 'x':
 			ctl.dev_devno = 1;
 			break;
+
 		case 'h':
 			usage();
-			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

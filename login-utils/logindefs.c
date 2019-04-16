@@ -403,7 +403,7 @@ int get_hushlogin_status(struct passwd *pwd, int force_check)
 int main(int argc, char *argv[])
 {
 	char *name, *type;
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (argc <= 1)
 		errx(EXIT_FAILURE, "usage: %s <filename> "

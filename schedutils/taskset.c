@@ -157,7 +157,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	memset(&ts, 0, sizeof(ts));
 
@@ -173,12 +173,11 @@ int main(int argc, char **argv)
 		case 'c':
 			ts.use_list = 1;
 			break;
+
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
-			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

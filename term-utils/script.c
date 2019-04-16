@@ -793,7 +793,7 @@ int main(int argc, char **argv)
 	setlocale(LC_NUMERIC, "C");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	script_init_debug();
 
@@ -825,13 +825,11 @@ int main(int argc, char **argv)
 				ctl.tname = optarg;
 			ctl.timing = 1;
 			break;
+
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-			break;
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
-			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

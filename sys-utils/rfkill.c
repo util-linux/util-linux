@@ -637,7 +637,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "Jno:rVh", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -657,9 +657,9 @@ int main(int argc, char **argv)
 		case 'r':
 			ctrl.raw = 1;
 			break;
+
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
 		default:

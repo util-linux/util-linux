@@ -673,9 +673,9 @@ static void parse_option(struct setterm_control *ctl, int ac, char **av)
 			ctl->opt_bfreq = set_opt_flag(ctl->opt_bfreq);
 			ctl->opt_bfreq_f = parse_bfreq(av, optarg, &optind);
 			break;
+
 		case OPT_VERSION:
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
+			print_version(EXIT_SUCCESS);
 		case OPT_HELP:
 			usage();
 		default:
@@ -1173,7 +1173,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (argc < 2) {
 		warnx(_("bad usage"));

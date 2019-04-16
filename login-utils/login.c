@@ -1196,8 +1196,7 @@ int main(int argc, char **argv)
 			break;
 
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case HELP_OPTION:
 			usage();
 		default:

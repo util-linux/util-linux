@@ -1232,11 +1232,11 @@ int main(int argc, char *argv[])
 		case 'c':
 			show_creat = 1;
 			break;
+
 		case 'h':
 			usage();
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

@@ -505,7 +505,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv,
 				"d:f:hFnITo:s:OrVx", long_opts, NULL)) != -1) {
@@ -527,11 +527,6 @@ int main(int argc, char *argv[])
 			if (string_to_bitmask(optarg, (unsigned long *) &wanted, name2bit) != 0)
 				return EXIT_FAILURE;
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
-		case 'h':
-			usage();
 		case 'F':
 			noflags = 1;
 			break;
@@ -554,6 +549,11 @@ int main(int argc, char *argv[])
 			noident = 1;
 			notimeouts = 1;
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

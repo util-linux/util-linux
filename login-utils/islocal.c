@@ -91,7 +91,7 @@ int is_local(const char *user)
 #ifdef TEST_PROGRAM
 int main(int argc, char *argv[])
 {
-	atexit(close_stdout);
+	close_stdout_atexit();
 	if (argc <= 2) {
 		fprintf(stderr, _("Usage: %s <passwordfile> <username>...\n"),
 			argv[0]);

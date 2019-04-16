@@ -683,9 +683,6 @@ int main(int argc, char **argv)
 		case 'f':
 			act = A_FIND_FREE;
 			break;
-		case 'h':
-			usage();
-			break;
 		case 'J':
 			json = 1;
 			break;
@@ -730,13 +727,15 @@ int main(int argc, char **argv)
 			break;
 		case 'v':
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case OPT_SIZELIMIT:			/* --sizelimit */
 			sizelimit = strtosize_or_err(optarg, _("failed to parse size"));
 			flags |= LOOPDEV_FL_SIZELIMIT;
                         break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

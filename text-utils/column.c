@@ -706,7 +706,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
@@ -730,9 +730,6 @@ int main(int argc, char **argv)
 			break;
 		case 'H':
 			ctl.tab_colhide = optarg;
-			break;
-		case 'h':
-			usage();
 			break;
 		case 'i':
 			ctl.tree_id = optarg;
@@ -776,15 +773,17 @@ int main(int argc, char **argv)
 		case 't':
 			ctl.mode = COLUMN_MODE_TABLE;
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'W':
 			ctl.tab_colwrap = optarg;
 			break;
 		case 'x':
 			ctl.mode = COLUMN_MODE_FILLROWS;
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

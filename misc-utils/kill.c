@@ -213,10 +213,8 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			break;
 		}
 		if (!strcmp(arg, "-v") || !strcmp(arg, "-V") ||
-		    !strcmp(arg, "--version")) {
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-		}
+		    !strcmp(arg, "--version"))
+			print_version(EXIT_SUCCESS);
 		if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 			usage();
 		if (!strcmp(arg, "--verbose")) {
@@ -343,7 +341,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	argv = parse_arguments(argc, argv, &ctl);
 

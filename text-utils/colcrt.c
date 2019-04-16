@@ -239,7 +239,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	/* Take care of lonely hyphen option. */
 	for (opt = 0; opt < argc; opt++) {
@@ -260,9 +260,9 @@ int main(int argc, char **argv)
 		case '2':
 			ctl.half_lines = 1;
 			break;
+
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
 		default:

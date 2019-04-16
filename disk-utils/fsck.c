@@ -1450,10 +1450,8 @@ static void parse_argv(int argc, char *argv[])
 		/* the only two longopts to satisfy UL standards */
 		if (!opts_for_fsck && !strcmp(arg, "--help"))
 			usage();
-		if (!opts_for_fsck && !strcmp(arg, "--version")) {
-			printf(UTIL_LINUX_VERSION);
-			exit(FSCK_EX_OK);
-		}
+		if (!opts_for_fsck && !strcmp(arg, "--version"))
+			print_version(FSCK_EX_OK);
 
 		if ((arg[0] == '/' && !opts_for_fsck) || strchr(arg, '=')) {
 			if (num_devices >= MAX_DEVICES)
@@ -1621,7 +1619,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_CTYPE, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	strutils_set_exitcode(FSCK_EX_USAGE);
 	mnt_init_debug(0);		/* init libmount debug mask */

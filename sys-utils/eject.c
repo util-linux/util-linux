@@ -222,9 +222,6 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 		case 'F':
 			ctl->F_option = 1;
 			break;
-		case 'h':
-			usage();
-			break;
 		case 'i':
 			ctl->i_option = 1;
 			ctl->i_arg = parse_switch(optarg, _("argument error"),
@@ -263,10 +260,11 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 		case 'v':
 			ctl->v_option = 1;
 			break;
+
+		case 'h':
+			usage();
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-			break;
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 			break;
@@ -849,7 +847,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	/* parse the command line arguments */
 	parse_args(&ctl, argc, argv);

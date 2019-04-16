@@ -1425,7 +1425,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	ctl->time_mode = TIME_SHORT;
 
@@ -1528,8 +1528,7 @@ int main(int argc, char *argv[])
 			ctl->time_mode = parse_time_mode(optarg);
 			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'Z':
 		{
 #ifdef HAVE_LIBSELINUX

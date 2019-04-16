@@ -758,7 +758,7 @@ int main(int argc, char ** argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	strutils_set_exitcode(MKFS_EX_USAGE);
 
@@ -792,8 +792,7 @@ int main(int argc, char ** argv)
 			listfile = optarg;
 			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return MKFS_EX_OK;
+			print_version(MKFS_EX_OK);
 		case 'h':
 			usage();
 		default:

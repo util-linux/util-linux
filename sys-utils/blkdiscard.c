@@ -127,7 +127,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	range[0] = 0;
 	range[1] = ULLONG_MAX;
@@ -135,12 +135,6 @@ int main(int argc, char **argv)
 
 	while ((c = getopt_long(argc, argv, "hVsvo:l:p:z", longopts, NULL)) != -1) {
 		switch(c) {
-		case 'h':
-			usage();
-			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'l':
 			range[1] = strtosize_or_err(optarg,
 					_("failed to parse length"));
@@ -162,6 +156,11 @@ int main(int argc, char **argv)
 		case 'z':
 			act = ACT_ZEROOUT;
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

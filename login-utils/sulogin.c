@@ -815,6 +815,8 @@ static void usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(26));
 	printf(USAGE_MAN_TAIL("sulogin(8)"));
+
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -853,7 +855,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout); /* XXX */
+	close_stdout_atexit();
 
 	/*
 	 * See if we have a timeout flag.
@@ -870,11 +872,9 @@ int main(int argc, char **argv)
 			opt_e = 1;
 			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
-			return EXIT_SUCCESS;
 		default:
 			/* Do not exit! getopt prints a warning. */
 			break;

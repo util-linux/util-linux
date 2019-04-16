@@ -1544,7 +1544,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (tcgetattr(STDOUT_FILENO, &otio) == 0) {
 		ontty = 1;
@@ -1570,7 +1570,7 @@ int main(int argc, char **argv)
 		}
 
 		if (!strcmp(argv[arg], "--version")) {
-		    printf(UTIL_LINUX_VERSION);
+		    print_version(EXIT_SUCCESS);
 		    return EXIT_SUCCESS;
 		}
 
@@ -1621,11 +1621,11 @@ int main(int argc, char **argv)
 			case 's':
 				sflag = 1;
 				break;
+
 			case 'h':
 				usage();
 			case 'V':
-				printf(UTIL_LINUX_VERSION);
-				return EXIT_SUCCESS;
+				print_version(EXIT_SUCCESS);
 			default:
 				invopt(&argv[arg][i]);
 			}

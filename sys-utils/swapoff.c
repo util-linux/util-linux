@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "ahvVL:U:",
 				 long_opts, NULL)) != -1) {
@@ -205,21 +205,20 @@ int main(int argc, char *argv[])
 		case 'a':		/* all */
 			++all;
 			break;
-		case 'h':		/* help */
-			usage();
-			break;
 		case 'v':		/* be chatty */
 			++verbose;
 			break;
-		case 'V':		/* version */
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'L':
 			add_label(optarg);
 			break;
 		case 'U':
 			add_uuid(optarg);
 			break;
+
+		case 'h':		/* help */
+			usage();
+		case 'V':		/* version */
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

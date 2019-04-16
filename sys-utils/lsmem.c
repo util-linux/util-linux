@@ -518,7 +518,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	printf(USAGE_MAN_TAIL("lsmem(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -563,7 +563,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "abhJno:PrS:s:V", longopts, NULL)) != -1) {
 
@@ -575,9 +575,6 @@ int main(int argc, char **argv)
 			break;
 		case 'b':
 			lsmem->bytes = 1;
-			break;
-		case 'h':
-			usage();
 			break;
 		case 'J':
 			lsmem->json = 1;
@@ -607,9 +604,6 @@ int main(int argc, char **argv)
 		case 'S':
 			splitarg = optarg;
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return 0;
 		case LSMEM_OPT_SUMARRY:
 			if (optarg) {
 				if (strcmp(optarg, "never") == 0)
@@ -623,6 +617,11 @@ int main(int argc, char **argv)
 			} else
 				lsmem->want_table = 0;
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

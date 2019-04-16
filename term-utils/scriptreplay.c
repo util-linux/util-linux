@@ -151,7 +151,7 @@ main(int argc, char *argv[])
 
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((ch = getopt_long(argc, argv, "t:s:d:m:Vh", longopts, NULL)) != -1)
 		switch(ch) {
@@ -169,9 +169,9 @@ main(int argc, char *argv[])
 			maxdelayopt = TRUE;
 			maxdelay = getnum(optarg);
 			break;
+
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
 		default:

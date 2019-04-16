@@ -275,7 +275,7 @@ static void arg_parser(struct more_control *ctl, char *s)
 		case '\t':
 			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
+			print_version(EXIT_SUCCESS);
 			exit(EXIT_SUCCESS);
 			break;
 		default:
@@ -1920,16 +1920,14 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (argc > 1) {
 		/* first arg may be one of our standard longopts */
 		if (!strcmp(argv[1], "--help"))
 			usage();
-		if (!strcmp(argv[1], "--version")) {
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-		}
+		if (!strcmp(argv[1], "--version"))
+			print_version(EXIT_SUCCESS);
 	}
 
 	ctl.num_files = argc;

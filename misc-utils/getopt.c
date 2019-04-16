@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (getenv("GETOPT_COMPATIBLE"))
 		ctl.compatible = 1;
@@ -413,8 +413,6 @@ int main(int argc, char *argv[])
 		case 'a':
 			getopt_long_fp = getopt_long_only;
 			break;
-		case 'h':
-			usage();
 		case 'o':
 			free(ctl.optstr);
 			ctl.optstr = xstrdup(optarg);
@@ -441,12 +439,14 @@ int main(int argc, char *argv[])
 		case 'u':
 			ctl.quote = 0;
 			break;
+
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case '?':
 		case ':':
 			parse_error(NULL);
+		case 'h':
+			usage();
 		default:
 			parse_error(_("internal error, contact the author."));
 		}

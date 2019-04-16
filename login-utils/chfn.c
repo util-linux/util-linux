@@ -176,8 +176,7 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 			status += check_gecos_string(_("Home Phone"), optarg);
 			break;
 		case 'v':
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
+			print_version(EXIT_SUCCESS);
 		case 'u':
 			usage();
 		default:
@@ -412,7 +411,8 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");	/* both for messages and for iscntrl() below */
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
+
 	uid = getuid();
 
 	/* check /etc/login.defs CHFN_RESTRICT */

@@ -354,9 +354,9 @@ int main(int argc, char **argv)
 		case 'i':
 			parse_iflag(optarg, &set_iflag, &clr_iflag);
 			break;
+
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
 		default:

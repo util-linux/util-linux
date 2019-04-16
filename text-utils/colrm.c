@@ -173,8 +173,7 @@ int main(int argc, char **argv)
 			    NULL)) != -1)
 		switch (opt) {
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
 		default:

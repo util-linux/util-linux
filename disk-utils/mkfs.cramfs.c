@@ -714,14 +714,14 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (argc > 1) {
 		/* first arg may be one of our standard longopts */
 		if (!strcmp(argv[1], "--help"))
 			usage();
 		if (!strcmp(argv[1], "--version")) {
-			printf(UTIL_LINUX_VERSION);
+			print_version(EXIT_SUCCESS);
 			exit(MKFS_EX_OK);
 		}
 	}
@@ -770,8 +770,7 @@ int main(int argc, char **argv)
 			/* old option, ignored */
 			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			exit(MKFS_EX_OK);
+			print_version(MKFS_EX_OK);
 		case 'v':
 			verbose = 1;
 			break;

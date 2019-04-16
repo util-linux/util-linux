@@ -2280,8 +2280,6 @@ int main(int argc, char *argv[])
 			}
 			mod->mode = OUTPUT_CACHES;
 			break;
-		case 'h':
-			usage();
 		case 'J':
 			mod->json = 1;
 			break;
@@ -2308,12 +2306,14 @@ int main(int argc, char *argv[])
 		case 'y':
 			mod->physical = 1;
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case OPT_OUTPUT_ALL:
 			all = 1;
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

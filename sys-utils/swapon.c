@@ -883,7 +883,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	memset(&ctl, 0, sizeof(struct swapon_ctl));
 	ctl.props.priority = -1;
@@ -899,9 +899,6 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 'a':		/* all */
 			ctl.all = 1;
-			break;
-		case 'h':		/* help */
-			usage();
 			break;
 		case 'o':
 			options = optarg;
@@ -966,11 +963,13 @@ int main(int argc, char *argv[])
 		case BYTES_OPTION:
 			ctl.bytes = 1;
 			break;
-		case 'V':		/* version */
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 0:
 			break;
+
+		case 'h':		/* help */
+			usage();
+		case 'V':		/* version */
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

@@ -1354,7 +1354,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkL::l:n:iPprSs:TtuVwx",
 				longopts, NULL)) != -1) {
@@ -1394,9 +1394,6 @@ int main(int argc, char *argv[])
 			ctl.time_fmt = DMESG_TIMEFTM_RELTIME;
 			colormode = UL_COLORMODE_AUTO;
 			ctl.pager = 1;
-			break;
-		case 'h':
-			usage();
 			break;
 		case 'k':
 			ctl.fltr_fac = 1;
@@ -1447,9 +1444,6 @@ int main(int argc, char *argv[])
 			for (n = 1; (size_t) n < ARRAY_SIZE(facility_names); n++)
 				setbit(ctl.facilities, n);
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'w':
 			ctl.follow = 1;
 			break;
@@ -1459,6 +1453,11 @@ int main(int argc, char *argv[])
 		case OPT_TIME_FORMAT:
 			ctl.time_fmt = which_time_format(optarg);
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

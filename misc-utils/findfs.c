@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	if (argc != 2) {
 		/* we return '2' for backward compatibility
@@ -62,8 +62,7 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch (c) {
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return FINDFS_SUCCESS;
+			print_version(FINDFS_SUCCESS);
 		case 'h':
 			usage();
 		default:

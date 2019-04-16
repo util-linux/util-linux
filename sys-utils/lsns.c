@@ -960,7 +960,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	lsns_init_debug();
 	memset(&ls, 0, sizeof(ls));
@@ -988,14 +988,9 @@ int main(int argc, char *argv[])
 			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
 				columns[ncolumns] = ncolumns;
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'p':
 			ls.fltr_pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
-		case 'h':
-			usage();
 		case 'n':
 			ls.no_headings = 1;
 			break;
@@ -1019,6 +1014,11 @@ int main(int argc, char *argv[])
 		case 'W':
 			ls.no_wrap = 1;
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

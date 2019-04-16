@@ -660,7 +660,7 @@ int main(int argc, char **argv)
 	setlocale(LC_CTYPE, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	strutils_set_exitcode(FSCK_EX_USAGE);
 
@@ -674,8 +674,7 @@ int main(int argc, char **argv)
 			usage();
 			break;
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return FSCK_EX_OK;
+			print_version(FSCK_EX_OK);
 		case 'x':
 			opt_extract = 1;
 			if(optarg)

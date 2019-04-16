@@ -379,7 +379,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	ul_path_init_debug();
 	desc->sysmem = ul_new_path(_PATH_SYS_MEMORY);
@@ -402,18 +402,17 @@ int main(int argc, char **argv)
 		case 'b':
 			desc->use_blocks = 1;
 			break;
-		case 'h':
-			usage();
-			break;
 		case 'v':
 			desc->verbose = 1;
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'z':
 			zone = xstrdup(optarg);
 			break;
+
+		case 'h':
+			usage();
+		case 'V':
+			print_version(EXIT_SUCCESS);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

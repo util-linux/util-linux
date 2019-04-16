@@ -1155,7 +1155,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	INIT_LIST_HEAD(&ctl.user_sds);
 	INIT_LIST_HEAD(&ctl.reserved_sds);
@@ -1212,11 +1212,6 @@ int main(int argc, char **argv)
 		case 'P':
 			ctl.port = optarg;
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-		case 'h':
-			usage();
 		case OPT_OCTET_COUNT:
 			ctl.octet_count = 1;
 			break;
@@ -1263,6 +1258,11 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("invalid structured data parameter: '%s'"), optarg);
 			add_structured_data_param(get_user_structured_data(&ctl), optarg);
 			break;
+
+		case 'V':
+			print_version(EXIT_SUCCESS);
+		case 'h':
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

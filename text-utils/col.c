@@ -190,7 +190,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
+	close_stdout_atexit();
 
 	max_bufd_lines = 128 * 2;
 	compress_spaces = 1;		/* compress spaces into tabs */
@@ -220,9 +220,9 @@ int main(int argc, char **argv)
 		case 'x':		/* do not compress spaces into tabs */
 			compress_spaces = 0;
 			break;
+
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'H':
 			usage();
 		default:
