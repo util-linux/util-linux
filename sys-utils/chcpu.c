@@ -262,7 +262,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	struct path_cxt *sys = NULL;	/* _PATH_SYS_CPU handler */
-	cpu_set_t *cpu_set;
+	cpu_set_t *cpu_set = NULL;
 	size_t setsize;
 	int cmd = -1;
 	int c, rc;
@@ -301,11 +301,12 @@ int main(int argc, char *argv[])
 
 	if (ul_path_access(sys, F_OK, "online") == 0)
 		ul_path_readf_cpulist(sys, &cpu_set, maxcpus, "online");
-
-	setsize = CPU_ALLOC_SIZE(maxcpus);
-	cpu_set = CPU_ALLOC(maxcpus);
+	else
+		cpu_set = CPU_ALLOC(maxcpus);
 	if (!cpu_set)
 		err(EXIT_FAILURE, _("cpuset_alloc failed"));
+
+	setsize = CPU_ALLOC_SIZE(maxcpus);
 
 	while ((c = getopt_long(argc, argv, "c:d:e:g:hp:rV", longopts, NULL)) != -1) {
 
