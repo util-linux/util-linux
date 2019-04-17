@@ -8,7 +8,7 @@ ts_init "$*"
 
 ts_skip_nonroot
 
-if [ -f "$TS_ENABLE_ASAN" ]; then
+if [ "$TS_ENABLE_ASAN" == "yes" ]; then
 	TS_KNOWN_FAIL="yes"
 fi
 
