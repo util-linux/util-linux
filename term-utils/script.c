@@ -110,13 +110,12 @@ struct script_log {
 	FILE	*fp;			/* file pointer (handler) */
 	int	format;			/* SCRIPT_FMT_* */
 	char	*filename;		/* on command line specified name */
-	struct timeval oldtime;		/* previous entry log time */
+	struct timeval oldtime;		/* previous entry log time (SCRIPT_FMT_TIMING_* only) */
 
 	unsigned int	initialized : 1;
 };
 
 struct script_stream {
-	struct timeval oldtime;		/* last update */
 	struct script_log **logs;	/* logs where to write data from stream */
 	size_t nlogs;			/* number of logs */
 	char ident;			/* stream identifier */
