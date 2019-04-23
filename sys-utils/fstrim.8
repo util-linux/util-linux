@@ -76,10 +76,11 @@ the end of the filesystem.
 .IP "\fB\-m, \-\-minimum\fP \fIminimum-size\fP"
 Minimum contiguous free range to discard, in bytes. (This value is internally
 rounded up to a multiple of the filesystem block size.)  Free ranges smaller
-than this will be ignored.  By increasing this value, the fstrim operation
-will complete more quickly for filesystems with badly fragmented freespace,
-although not all blocks will be discarded.  The default value is zero,
-discarding every free block.
+than this will be ignored and fstrim will adjust the minimum if it's smaller than
+the device's minimum, and report that (fstrim_range.minlen) back to userspace.
+By increasing this value, the fstrim operation will complete more quickly for
+filesystems with badly fragmented freespace, although not all blocks will be
+discarded.  The default value is zero, discarding every free block.
 .IP "\fB\-v, \-\-verbose\fP"
 Verbose execution.  With this option
 .B fstrim
