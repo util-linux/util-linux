@@ -353,6 +353,7 @@ static void log_start(struct script_control *ctl,
 		break;
 	}
 	case SCRIPT_FMT_TIMING_SIMPLE:
+	case SCRIPT_FMT_TIMING_MULTI:
 		gettime_monotonic(&log->oldtime);
 		break;
 	}
