@@ -205,8 +205,27 @@ static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 		break;
 	}
 
-	DBG(TIMING, ul_debug("  read step delay & size [rc=%d]", rc));
+	DBG(TIMING, ul_debug(" read step delay & size [rc=%d]", rc));
 	return rc;
+}
+
+static struct replay_log *replay_get_stream_log(struct replay_setup *stp, char stream)
+{
+	size_t i;
+
+	for (i = 0; i < stp->nlogs; i++) {
+		struct replay_log *log = &stp->logs[i];
+
+		if (is_wanted_stream(stream, log->streams))
+			return log;
+	}
+	return NULL;
+}
+
+static int replay_seek_log(struct replay_log *log, size_t move)
+{
+	DBG(LOG, ul_debug(" %s: seek ++ %zu", log->filename, move));
+	return fseek(log->fp, move, SEEK_CUR) == (off_t) -1 ? -errno : 0;
 }
 
 /* returns next step with pointer to the right log file for specified streams (e.g.
@@ -218,6 +237,7 @@ static int replay_get_next_step(struct replay_setup *stp, char *streams, struct 
 {
 	struct replay_step *step;
 	int rc;
+	double ignored_delay = 0;
 
 	assert(stp);
 	assert(stp->timing_fp);
@@ -228,18 +248,20 @@ static int replay_get_next_step(struct replay_setup *stp, char *streams, struct 
 	    !is_wanted_stream('O', streams))
 		return 1;
 
-	DBG(TIMING, ul_debug("reading next step"));
 
 	step = &stp->step;
-	memset(step, 0, sizeof(*step));
 	*xstep = NULL;
 
 	do {
-		size_t i;
+		struct replay_log *log = NULL;
 
 		rc = 1;	/* done */
 		if (feof(stp->timing_fp))
 			break;
+
+		DBG(TIMING, ul_debug("reading next step"));
+
+		memset(step, 0, sizeof(*step));
 		stp->timing_line++;
 
 		switch (stp->timing_format) {
@@ -254,38 +276,44 @@ static int replay_get_next_step(struct replay_setup *stp, char *streams, struct 
 			rc = fscanf(stp->timing_fp, "%c ", &step->type);
 			if (rc != 1)
 				rc = -EINVAL;
-			else if (is_wanted_stream(step->type, streams))
+			else
 				rc = read_multistream_step(step,
 						stp->timing_fp,
 						step->type);
-			else {
-				rc = ignore_line(stp->timing_fp);
-				step->type = 0;
-			}
 			break;
 		}
 
 		if (rc)
 			break;;		/* error */
-		if (!step->type)
-			continue;	/* ignore this entry */
 
-		/* points step to the right log */
-		for (i = 0; i < stp->nlogs; i++) {
-			struct replay_log *log = &stp->logs[i];
+		DBG(TIMING, ul_debug(" step entry is '%c'", step->type));
 
-			assert(log->streams);
-
-			if (is_wanted_stream(step->type, log->streams)) {
+		log = replay_get_stream_log(stp, step->type);
+		if (log) {
+			if (is_wanted_stream(step->type, streams)) {
 				step->data = log;
 				*xstep = step;
-				break;
+				DBG(LOG, ul_debug(" use %s as data source", log->filename));
+				goto done;
 			}
-		}
-	} while (rc == 0 && *xstep == NULL);
+			/* The step entry is unwanted, but we keep the right
+			 * position in the log file although the data are ignored.
+			 */
+			replay_seek_log(log, step->size);
+		} else
+			DBG(TIMING, ul_debug(" not found log for '%c' stream", step->type));
 
-	DBG(TIMING, ul_debug(" reading next step done [rc=%d delay=%g size=%zu]",
-				rc, step->delay, step->size));
+		DBG(TIMING, ul_debug(" ignore step '%c' [delay=%f]",
+					step->type, step->delay));
+		ignored_delay += step->delay;
+	} while (rc == 0);
+
+done:
+	if (ignored_delay)
+		step->delay += ignored_delay;
+
+	DBG(TIMING, ul_debug("reading next step done [rc=%d delay=%f (ignored=%f) size=%zu]",
+				rc, step->delay, ignored_delay, step->size));
 	return rc;
 }
 
@@ -307,12 +335,16 @@ static int replay_emit_step_data(struct replay_step *step, int fd)
 		cc = ct > sizeof(buf) ? sizeof(buf): ct;
 		len = fread(buf, 1, cc, step->data->fp);
 
-		if (!len)
+		if (!len) {
+			DBG(LOG, ul_debug("log data emit: failed to read log %m"));
 			break;
+		}
+
 		ct -= len;
 		cc = write(fd, buf, len);
 		if (cc != len) {
 			rc = -errno;
+			DBG(LOG, ul_debug("log data emit: failed write data %m"));
 			break;
 		}
 	}
@@ -322,7 +354,7 @@ static int replay_emit_step_data(struct replay_step *step, int fd)
 	if (ct && feof(step->data->fp))
 		rc = 1;
 
-	DBG(LOG, ul_debug(" log data emited [rc=%d]", rc));
+	DBG(LOG, ul_debug("log data emited [rc=%d size=%zu]", rc, step->size));
 	return rc;
 }
 
@@ -369,6 +401,8 @@ delay_for(double delay)
 	struct timespec ts, remainder;
 	ts.tv_sec = (time_t) delay;
 	ts.tv_nsec = (delay - ts.tv_sec) * 1.0e9;
+
+	DBG(TIMING, ul_debug("going to sleep for %fs", delay));
 
 	while (-1 == nanosleep(&ts, &remainder)) {
 		if (EINTR == errno)
