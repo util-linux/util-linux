@@ -100,6 +100,15 @@ UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define DEFAULT_TYPESCRIPT_FILENAME "typescript"
 
+/*
+ * Script is driven by stream (stdout/stdin) activity. It's possible to
+ * associate arbitrary number of log files with the stream. We have two basic
+ * types of log files: "timing file" (simple or multistream) and "data file"
+ * (raw).
+ *
+ * The same log file maybe be shared between both streams. For exmaple
+ * multi-stream timing file is possible to use for stdin as well as for stdout.
+ */
 enum {
 	SCRIPT_FMT_RAW = 1,		/* raw slave/master data */
 	SCRIPT_FMT_TIMING_SIMPLE,	/* timing info in classic "<delta> <offset>" format */

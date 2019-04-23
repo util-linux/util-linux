@@ -28,12 +28,303 @@
 #include <unistd.h>
 #include <getopt.h>
 
+
+#include "c.h"
+#include "debug.h"
+#include "xalloc.h"
 #include "closestream.h"
 #include "nls.h"
 #include "strutils.h"
-#include "c.h"
+
+static UL_DEBUG_DEFINE_MASK(scriptreplay);
+UL_DEBUG_DEFINE_MASKNAMES(scriptreplay) = UL_DEBUG_EMPTY_MASKNAMES;
+
+#define SCRIPTREPLAY_DEBUG_INIT	(1 << 1)
+#define SCRIPTREPLAY_DEBUG_TIMING (1 << 2)
+#define SCRIPTREPLAY_DEBUG_LOG	(1 << 3)
+#define SCRIPTREPLAY_DEBUG_MISC	(1 << 4)
+#define SCRIPTREPLAY_DEBUG_ALL	0xFFFF
+
+#define DBG(m, x)       __UL_DBG(scriptreplay, SCRIPTREPLAY_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(scriptreplay, SCRIPTREPLAY_DEBUG_, m, x)
 
 #define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
+
+/*
+ * The script replay is driven by timing file where each entry describes one
+ * step in the replay. The timing step may refer input or output (or
+ * signal, extra informations, etc.)
+ *
+ * The step data are stored in log files, the right log file for the step is
+ * selected from replay_setup.
+ *
+ * TODO: move struct replay_{log,step,setup} to script-playutils.c to make it
+ * usable for scriptlive(1) code.
+ */
+
+enum {
+	REPLAY_TIMING_SIMPLE,		/* timing info in classic "<delta> <offset>" format */
+	REPLAY_TIMING_MULTI		/* multiple streams in format "<type> <delta> <offset|etc> */
+};
+
+struct replay_log {
+	const char	*streams;		/* 'I'nput, 'O'utput or both */
+	const char	*filename;
+	FILE		*fp;
+};
+
+struct replay_step {
+	char	type;		/* 'I'nput, 'O'utput, ... */
+	double	delay;
+	size_t	size;
+
+	struct replay_log *data;
+};
+
+struct replay_setup {
+	struct replay_log	*logs;
+	size_t			nlogs;
+
+	struct replay_step	step;	/* current step */
+
+	FILE			*timing_fp;
+	const char		*timing_filename;
+	int			timing_format;
+	int			timing_line;
+};
+
+static void scriptreplay_init_debug(void)
+{
+	__UL_INIT_DEBUG_FROM_ENV(scriptreplay, SCRIPTREPLAY_DEBUG_, 0, SCRIPTREPLAY_DEBUG);
+}
+
+static int ignore_line(FILE *f)
+{
+	int c;
+
+	while((c = fgetc(f)) != EOF && c != '\n');
+	if (ferror(f))
+		return -errno;
+
+	DBG(LOG, ul_debug("  ignore line"));
+	return 0;
+}
+
+static int replay_set_timing_file(struct replay_setup *stp, const char *filename)
+{
+	int c, rc = 0;
+
+	assert(stp);
+	assert(filename);
+
+	stp->timing_filename = filename;
+	stp->timing_line = 0;
+
+	stp->timing_fp = fopen(filename, "r");
+	if (!stp->timing_fp)
+		rc = -errno;
+	else {
+		/* detect timing file format */
+		c = fgetc(stp->timing_fp);
+		if (c != EOF) {
+			if (isdigit((unsigned int) c))
+				stp->timing_format = REPLAY_TIMING_SIMPLE;
+			else
+				stp->timing_format = REPLAY_TIMING_MULTI;
+			ungetc(c, stp->timing_fp);
+		} else if (ferror(stp->timing_fp))
+			rc = -errno;
+	}
+
+	if (rc) {
+		fclose(stp->timing_fp);
+		stp->timing_fp = NULL;
+	}
+
+	DBG(TIMING, ul_debug("timing file set to %s [rc=%d]", filename, rc));
+	return rc;
+}
+
+static int replay_associate_log(struct replay_setup *stp,
+				const char *streams, const char *filename)
+{
+	struct replay_log *log;
+	int rc;
+
+	assert(stp);
+	assert(streams);
+	assert(filename);
+
+	stp->logs = xrealloc(stp->logs, (stp->nlogs + 1) *  sizeof(*log));
+	log = &stp->logs[stp->nlogs];
+	stp->nlogs++;
+
+	log->filename = filename;
+	log->streams = streams;
+
+	/* open the file and skip the first line */
+	log->fp = fopen(filename, "r");
+	rc = log->fp == NULL ? -errno : ignore_line(log->fp);
+
+	DBG(LOG, ul_debug("accociate log file %s with '%s' [rc=%d]", filename, streams, rc));
+	return rc;
+}
+
+static int is_wanted_stream(char type, const char *streams)
+{
+	if (streams == NULL)
+		return 1;
+	if (strchr(streams, type))
+		return 1;
+	return 0;
+}
+
+static int read_multistream_step(struct replay_step *step, FILE *f, char type)
+{
+	int rc = 0;
+	char nl;
+
+	switch (type) {
+	case 'O': /* output */
+	case 'I': /* input */
+		rc = fscanf(f, "%lf %zu%c\n", &step->delay, &step->size, &nl);
+		if (rc != 3 || nl != '\n')
+			rc = -EINVAL;
+		else
+			rc = 0;
+		break;
+
+	case 'S': /* signal */
+		rc = ignore_line(f);	/* not implemnted yet */
+		break;
+
+	case 'H': /* header */
+		rc = ignore_line(f);	/* not implemnted yet */
+		break;
+	default:
+		break;
+	}
+
+	DBG(TIMING, ul_debug("  read step delay & size [rc=%d]", rc));
+	return rc;
+}
+
+/* returns next step with pointer to the right log file for specified streams (e.g.
+ * "IOS" for in/out/signals) or all streams if stream is NULL.
+ *
+ * returns: 0 = success, <0 = error, 1 = done (EOF)
+ */
+static int replay_get_next_step(struct replay_setup *stp, char *streams, struct replay_step **xstep)
+{
+	struct replay_step *step;
+	int rc;
+
+	assert(stp);
+	assert(stp->timing_fp);
+	assert(xstep && *xstep);
+
+	/* old format supports only 'O'utput */
+	if (stp->timing_format == REPLAY_TIMING_SIMPLE &&
+	    !is_wanted_stream('O', streams))
+		return 1;
+
+	DBG(TIMING, ul_debug("reading next step"));
+
+	step = &stp->step;
+	memset(step, 0, sizeof(*step));
+	*xstep = NULL;
+
+	do {
+		size_t i;
+
+		rc = 1;	/* done */
+		if (feof(stp->timing_fp))
+			break;
+		stp->timing_line++;
+
+		switch (stp->timing_format) {
+		case REPLAY_TIMING_SIMPLE:
+			/* old format supports only output entries and format is the same
+			 * as new format, but without <type> prefix */
+			rc = read_multistream_step(step, stp->timing_fp, 'O');
+			if (rc == 0)
+				step->type = 'O';	/* 'O'utput */
+			break;
+		case REPLAY_TIMING_MULTI:
+			rc = fscanf(stp->timing_fp, "%c ", &step->type);
+			if (rc != 1)
+				rc = -EINVAL;
+			else if (is_wanted_stream(step->type, streams))
+				rc = read_multistream_step(step,
+						stp->timing_fp,
+						step->type);
+			else {
+				rc = ignore_line(stp->timing_fp);
+				step->type = 0;
+			}
+			break;
+		}
+
+		if (rc)
+			break;;		/* error */
+		if (!step->type)
+			continue;	/* ignore this entry */
+
+		/* points step to the right log */
+		for (i = 0; i < stp->nlogs; i++) {
+			struct replay_log *log = &stp->logs[i];
+
+			assert(log->streams);
+
+			if (is_wanted_stream(step->type, log->streams)) {
+				step->data = log;
+				*xstep = step;
+				break;
+			}
+		}
+	} while (rc == 0 && *xstep == NULL);
+
+	DBG(TIMING, ul_debug(" reading next step done [rc=%d delay=%g size=%zu]",
+				rc, step->delay, step->size));
+	return rc;
+}
+
+/* return: 0 = success, <0 = error, 1 = done (EOF) */
+static int replay_emit_step_data(struct replay_step *step, int fd)
+{
+	size_t ct;
+	int rc = 0;
+	char buf[BUFSIZ];
+
+	assert(step);
+	assert(step->size);
+	assert(step->data);
+	assert(step->data->fp);
+
+	for (ct = step->size; ct > 0; ) {
+		size_t len, cc;
+
+		cc = ct > sizeof(buf) ? sizeof(buf): ct;
+		len = fread(buf, 1, cc, step->data->fp);
+
+		if (!len)
+			break;
+		ct -= len;
+		cc = write(fd, buf, len);
+		if (cc != len) {
+			rc = -errno;
+			break;
+		}
+	}
+
+	if (ct && ferror(step->data->fp))
+		rc = -errno;
+	if (ct && feof(step->data->fp))
+		rc = 1;
+
+	DBG(LOG, ul_debug(" log data emited [rc=%d]", rc));
+	return rc;
+}
 
 static void __attribute__((__noreturn__))
 usage(void)
@@ -93,43 +384,16 @@ delay_for(double delay)
 #endif
 }
 
-static void
-emit(FILE *fd, const char *filename, size_t ct)
-{
-	char buf[BUFSIZ];
-
-	while(ct) {
-		size_t len, cc;
-
-		cc = ct > sizeof(buf) ? sizeof(buf) : ct;
-		len = fread(buf, 1, cc, fd);
-
-		if (!len)
-		       break;
-
-		ct -= len;
-		cc = write(STDOUT_FILENO, buf, len);
-		if (cc != len)
-			err(EXIT_FAILURE, _("write to stdout failed"));
-	}
-
-	if (!ct)
-		return;
-	if (feof(fd))
-		errx(EXIT_FAILURE, _("unexpected end of file on %s"), filename);
-
-	err(EXIT_FAILURE, _("failed to read typescript file %s"), filename);
-}
-
-
 int
 main(int argc, char *argv[])
 {
-	FILE *tfile, *sfile;
+	struct replay_setup setup = { .nlogs = 0 };
+	struct replay_step *step;
+	int rc;
+
 	const char *sname = NULL, *tname = NULL;
 	double divi = 1, maxdelay = 0;
-	int c, diviopt = FALSE, maxdelayopt = FALSE, idx;
-	unsigned long line;
+	int diviopt = FALSE, maxdelayopt = FALSE, idx;
 	int ch;
 
 	static const struct option longopts[] = {
@@ -152,6 +416,8 @@ main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
+
+	scriptreplay_init_debug();
 
 	while ((ch = getopt_long(argc, argv, "t:s:d:m:Vh", longopts, NULL)) != -1)
 		switch(ch) {
@@ -193,44 +459,33 @@ main(int argc, char *argv[])
 		divi = idx < argc ? getnum(argv[idx]) : 1;
 	if (maxdelay < 0)
 		maxdelay = 0;
-	tfile = fopen(tname, "r");
-	if (!tfile)
+
+	if (replay_set_timing_file(&setup, tname) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), tname);
-	sfile = fopen(sname, "r");
-	if (!sfile)
+
+	if (replay_associate_log(&setup, "O", sname) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), sname);
 
-	/* ignore the first typescript line */
-	while((c = fgetc(sfile)) != EOF && c != '\n');
+	do {
+		rc = replay_get_next_step(&setup, "O", &step);
+		if (rc)
+			break;
 
-	for(line = 1; ; line++) {
-		double delay;
-		size_t blk;
-		char nl;
-		if (fscanf(tfile, "%lf %zu%c\n", &delay, &blk, &nl) != 3 ||
-				                                 nl != '\n') {
-			if (feof(tfile))
-				break;
-			if (ferror(tfile))
-				err(EXIT_FAILURE,
-					_("failed to read timing file %s"), tname);
-			errx(EXIT_FAILURE,
-				_("timing file %s: line %lu: unexpected format"),
-				tname, line);
-		}
-		delay /= divi;
+		step->delay /= divi;
+		if (maxdelayopt && step->delay > maxdelay)
+			step->delay = maxdelay;
+		if (step->delay > SCRIPT_MIN_DELAY)
+			delay_for(step->delay);
 
-		if (maxdelayopt && delay > maxdelay)
-			delay = maxdelay;
+		rc = replay_emit_step_data(step, STDOUT_FILENO);
+	} while (rc == 0);
 
-		if (delay > SCRIPT_MIN_DELAY)
-			delay_for(delay);
-
-		emit(sfile, sname, blk);
-	}
-
-	fclose(sfile);
-	fclose(tfile);
+	if (step && rc < 0)
+		err(EXIT_FAILURE, _("%s: log file error"), step->data->filename);
+	else if (rc < 0)
+		err(EXIT_FAILURE, _("%s: line %d: timing file error"),
+				setup.timing_filename,
+				setup.timing_line);
 	printf("\n");
 	exit(EXIT_SUCCESS);
 }
