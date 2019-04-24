@@ -25,6 +25,7 @@ SYSCOMMANDS=
 top_srcdir=
 top_builddir=
 paraller_jobs=1
+has_asan_opt=
 
 function num_cpus()
 {
@@ -60,7 +61,6 @@ while [ -n "$1" ]; do
 	--force |\
 	--fake |\
 	--memcheck-valgrind |\
-	--memcheck-asan |\
 	--nolocks |\
 	--show-diff |\
 	--verbose  |\
@@ -69,6 +69,10 @@ while [ -n "$1" ]; do
 	--parsable)
 		# these options are simply forwarded to the test scripts
 		OPTS="$OPTS $1"
+		;;
+	--memcheck-asan)
+		OPTS="$OPTS $1"
+		has_asan_opt="yes"
 		;;
 	--use-system-commands)
 		OPTS="$OPTS $1"
@@ -145,6 +149,14 @@ fi
 
 OPTS="$OPTS --srcdir=$top_srcdir --builddir=$top_builddir"
 
+# Auto-enable ASAN to avoid conflicts between tests and binaries
+if [ -z "$has_asan_opt" ]; then
+	asan=$(awk '/^ASAN_LDFLAGS/ { print $3 }' $top_builddir/Makefile)
+	if [ -n "$asan" ]; then
+		OPTS="$OPTS --memcheck-asan"
+	fi
+fi
+
 declare -a comps
 if [ -n "$SUBTESTS" ]; then
 	# selected tests only
@@ -195,6 +207,8 @@ echo
 # TODO: add more information about system
 printf "%13s: %-30s    " "kernel" "$(uname -r)"
 echo
+echo
+echo "      options: $(echo $OPTS | sed 's/ / \\\n               /g')"
 echo
 
 if [ "$paraller_jobs" -ne 1 ]; then
