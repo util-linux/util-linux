@@ -1016,7 +1016,7 @@ static void modify_environment(struct su_context *su, const char *shell)
 
 		/* Note that original su(1) has allocated environ[] by malloc
 		 * to the number of expected variables. This seems unnecessary
-		 * optimization as libc later realloc(current_size+2) and for
+		 * optimization as libc later re-alloc(current_size+2) and for
 		 * empty environ[] the curren_size is zero. It seems better to
 		 * keep all logic around environment in glibc's hands.
 		 *                                           --kzak [Aug 2018]
