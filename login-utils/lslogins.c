@@ -74,7 +74,7 @@ static int lslogins_flag;
 
 #define UL_UID_MIN 1000
 #define UL_UID_MAX 60000
-#define UL_SYS_UID_MIN 201
+#define UL_SYS_UID_MIN 101
 #define UL_SYS_UID_MAX 999
 
 /* we use the value of outmode to determine

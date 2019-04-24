@@ -92,9 +92,9 @@ Display information related to login by password (see also \fB\-afL).
 Raw output (no columnation).
 .TP
 \fB\-s\fR, \fB\-\-system\-accs\fR
-Show system accounts.  These are by default all accounts with a UID below 1000
-(non-inclusive), with the exception of either nobody or nfsnobody (UID 65534).
-This hardcoded default maybe overwritten by parameters SYS_UID_MIN and SYS_UID_MAX in
+Show system accounts.  These are by default all accounts with a UID between 101 and 999
+(inclusive), with the exception of either nobody or nfsnobody (UID 65534).
+This hardcoded default may be overwritten by parameters SYS_UID_MIN and SYS_UID_MAX in
 the file /etc/login.defs.
 .TP
 \fB\-\-time\-format\fR \fItype\fP
