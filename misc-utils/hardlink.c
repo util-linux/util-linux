@@ -212,7 +212,7 @@ static void process_path(const char *name)
 
 		nregfiles++;
 		if (verbose > 1)
-			printf("  %s", name);
+			printf("%s\n", name);
 
 		fd = open(name, O_RDONLY);
 		if (fd < 0)
@@ -225,8 +225,6 @@ static void process_path(const char *name)
 		}
 		if (read(fd, buf, cksumsize) != cksumsize) {
 			close(fd);
-			if (verbose > 1 && namelen <= PATH_MAX)
-				printf("\r%*s\r", (int)(namelen + 2), "");
 			return;
 		}
 		cksumsize = (cksumsize + sizeof(buf[0]) - 1) / sizeof(buf[0]);
@@ -255,8 +253,6 @@ static void process_path(const char *name)
 		for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next) {
 			if (fp2->ino == st.st_ino && fp2->dev == st.st_dev) {
 				close(fd);
-				if (verbose > 1 && namelen <= PATH_MAX)
-					printf("\r%*s\r", (int)(namelen + 2), "");
 				return;
 			}
 		}
@@ -349,17 +345,13 @@ static void process_path(const char *name)
 					/* We actually did not save anything this time, since the link second argument
 					   had some other links as well.  */
 					if (verbose > 1)
-						printf(_("\r%*s\r%s %s to %s\n"),
-							(int)(((namelen > PATH_MAX) ? 0 : namelen) + 2),
-							"",
+						printf(_(" %s %s to %s\n"),
 							(no_link ? _("Would link") : _("Linked")),
 							n1, n2);
 				} else {
 					nsaved += ((st.st_size + 4095) / 4096) * 4096;
 					if (verbose > 1)
-						printf(_("\r%*s\r%s %s to %s, %s %jd\n"),
-							(int)(((namelen > PATH_MAX) ? 0 : namelen) + 2),
-							"",
+						printf(_(" %s %s to %s, %s %jd\n"),
 							(no_link ? _("Would link") : _("Linked")),
 							n1, n2,
 							(no_link ? _("would save") : _("saved")),
@@ -383,8 +375,6 @@ static void process_path(const char *name)
 			fp2->next = hp->chain;
 			hp->chain = fp2;
 		}
-		if (verbose > 1 && namelen <= PATH_MAX)
-			printf("\r%*s\r", (int)(namelen + 2), "");
 		return;
 	}
 }
