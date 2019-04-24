@@ -12,10 +12,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.32-rc2\n"
+"Project-Id-Version: util-linux 2.33-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-11-06 11:44+0100\n"
-"PO-Revision-Date: 2018-07-25 20:28+0800\n"
+"POT-Creation-Date: 2018-10-19 12:48+0200\n"
+"PO-Revision-Date: 2018-11-10 15:07+0100\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -24,7 +24,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.9\n"
+"X-Generator: Poedit 2.2\n"
 
 #: disk-utils/addpart.c:15
 #, c-format
@@ -40,8 +40,8 @@ msgstr "Säg till kärnan om att en angiven partition existerar.\n"
 #: misc-utils/kill.c:311 misc-utils/rename.c:280 misc-utils/whereis.c:518
 #: sys-utils/flock.c:175 sys-utils/ipcrm.c:160 sys-utils/ldattach.c:368
 #: sys-utils/renice.c:146 sys-utils/switch_root.c:241 sys-utils/tunelp.c:152
-#: term-utils/agetty.c:879 term-utils/agetty.c:880 term-utils/agetty.c:888
-#: term-utils/agetty.c:889
+#: term-utils/agetty.c:878 term-utils/agetty.c:879 term-utils/agetty.c:887
+#: term-utils/agetty.c:888
 msgid "not enough arguments"
 msgstr "inte tillräckligt många argument"
 
@@ -61,21 +61,21 @@ msgstr "inte tillräckligt många argument"
 #: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
 #: login-utils/islocal.c:87 login-utils/last.c:667 login-utils/sulogin.c:443
 #: login-utils/sulogin.c:480 login-utils/utmpdump.c:134
-#: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374 login-utils/vipw.c:261
-#: login-utils/vipw.c:279 misc-utils/findmnt.c:1105 misc-utils/logger.c:1224
-#: misc-utils/mcookie.c:115 misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182
-#: sys-utils/blkzone.c:96 sys-utils/dmesg.c:524 sys-utils/eject.c:499
-#: sys-utils/eject.c:695 sys-utils/fallocate.c:397 sys-utils/fsfreeze.c:117
-#: sys-utils/fstrim.c:79 sys-utils/hwclock.c:229 sys-utils/hwclock.c:869
-#: sys-utils/hwclock-rtc.c:397 sys-utils/hwclock-rtc.c:432
-#: sys-utils/ldattach.c:392 sys-utils/lscpu.c:393 sys-utils/nsenter.c:129
-#: sys-utils/rfkill.c:192 sys-utils/rfkill.c:553 sys-utils/rtcwake.c:136
-#: sys-utils/rtcwake.c:286 sys-utils/setpriv.c:291 sys-utils/setpriv.c:660
-#: sys-utils/setpriv.c:683 sys-utils/swapon.c:375 sys-utils/swapon.c:518
-#: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
-#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2867 term-utils/mesg.c:132 term-utils/script.c:540
-#: term-utils/script.c:548 term-utils/script.c:633
+#: login-utils/utmpdump.c:352 login-utils/utmpdump.c:374
+#: login-utils/vipw.c:261 login-utils/vipw.c:279 misc-utils/findmnt.c:1105
+#: misc-utils/logger.c:1224 misc-utils/mcookie.c:115 misc-utils/uuidd.c:198
+#: sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96 sys-utils/dmesg.c:524
+#: sys-utils/eject.c:499 sys-utils/eject.c:695 sys-utils/fallocate.c:397
+#: sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:79 sys-utils/hwclock.c:229
+#: sys-utils/hwclock.c:869 sys-utils/hwclock-rtc.c:397
+#: sys-utils/hwclock-rtc.c:432 sys-utils/ldattach.c:392 sys-utils/lscpu.c:393
+#: sys-utils/nsenter.c:129 sys-utils/rfkill.c:192 sys-utils/rfkill.c:553
+#: sys-utils/rtcwake.c:136 sys-utils/rtcwake.c:286 sys-utils/setpriv.c:291
+#: sys-utils/setpriv.c:660 sys-utils/setpriv.c:683 sys-utils/swapon.c:375
+#: sys-utils/swapon.c:518 sys-utils/switch_root.c:167 sys-utils/unshare.c:108
+#: sys-utils/unshare.c:123 sys-utils/wdctl.c:322 sys-utils/wdctl.c:378
+#: sys-utils/zramctl.c:517 term-utils/agetty.c:2854 term-utils/mesg.c:132
+#: term-utils/script.c:540 term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:140 text-utils/ul.c:230
@@ -219,7 +219,7 @@ msgstr " %-25s hämta storlek i 512-byte sektorer\n"
 #: disk-utils/fsck.minix.c:1341 disk-utils/isosize.c:205
 #: disk-utils/mkfs.bfs.c:181 disk-utils/mkfs.c:116 disk-utils/mkfs.minix.c:813
 #: disk-utils/swaplabel.c:181 misc-utils/wipefs.c:757
-#: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:405 sys-utils/tunelp.c:242
+#: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:404 sys-utils/tunelp.c:242
 #: sys-utils/zramctl.c:710 sys-utils/zramctl.c:736
 msgid "no device specified"
 msgstr "ingen enhet angiven"
@@ -393,9 +393,9 @@ msgid "Disk: %s"
 msgstr "Disk: %s"
 
 #: disk-utils/cfdisk.c:1714
-#, fuzzy, c-format
+#, c-format
 msgid "Size: %s, %<PRIu64> bytes, %ju sectors"
-msgstr "Storlek: %s, %ju byte, %ju sektorer"
+msgstr "Storlek: %s, %<PRIu64> byte, %ju sektorer"
 
 #: disk-utils/cfdisk.c:1717
 #, c-format
@@ -416,14 +416,14 @@ msgid "Please, specify size."
 msgstr "Ange storlek."
 
 #: disk-utils/cfdisk.c:1898
-#, fuzzy, c-format
+#, c-format
 msgid "Minimum size is %<PRIu64> bytes."
-msgstr "Minsta storlek är %ju byte."
+msgstr "Minsta storlek är %<PRIu64> byte."
 
 #: disk-utils/cfdisk.c:1907
-#, fuzzy, c-format
+#, c-format
 msgid "Maximum size is %<PRIu64> bytes."
-msgstr "Största storlek är %ju byte."
+msgstr "Största storlek är %<PRIu64> byte."
 
 #: disk-utils/cfdisk.c:1914
 msgid "Failed to parse size."
@@ -482,7 +482,8 @@ msgstr "Misslyckades att skriva skript %s"
 msgid "Select label type"
 msgstr "Välj etikettstyp"
 
-#: disk-utils/cfdisk.c:2123 disk-utils/fdisk.c:1076 disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2123 disk-utils/fdisk.c:1076
+#: disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "Enheten innehåller inte en igenkänd partitionstabell."
 
@@ -743,8 +744,8 @@ msgstr ""
 "Fortsätter… "
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641 sys-utils/blkdiscard.c:85
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641
+#: sys-utils/blkdiscard.c:85 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [flaggor] <enhet>\n"
@@ -1072,21 +1073,21 @@ msgstr "raderingsläge stöds ej"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Enhetsegenskaperna (sektorstorlek och geometri) bör endast användas med en enhet."
 
-#: disk-utils/fdisk.c:1035 disk-utils/fdisk.c:1050 disk-utils/fsck.cramfs.c:695
-#: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:787
-#: disk-utils/partx.c:975 disk-utils/raw.c:137 disk-utils/raw.c:150
-#: disk-utils/raw.c:162 disk-utils/raw.c:203 misc-utils/cal.c:520
-#: misc-utils/findfs.c:58 misc-utils/look.c:150 misc-utils/whereis.c:573
-#: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
-#: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
-#: sys-utils/chcpu.c:354 sys-utils/chmem.c:423 sys-utils/dmesg.c:1468
-#: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:909
-#: sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632 sys-utils/mount.c:764
-#: sys-utils/mount.c:772 sys-utils/mount.c:812 sys-utils/mount.c:825
-#: sys-utils/mount.c:894 sys-utils/mountpoint.c:180 sys-utils/pivot_root.c:72
-#: sys-utils/swapoff.c:230 sys-utils/swapon.c:994 sys-utils/switch_root.c:250
-#: sys-utils/umount.c:582 term-utils/setterm.c:1176 text-utils/col.c:233
-#: text-utils/more.c:1988
+#: disk-utils/fdisk.c:1035 disk-utils/fdisk.c:1050
+#: disk-utils/fsck.cramfs.c:695 disk-utils/mkfs.bfs.c:198
+#: disk-utils/mkfs.cramfs.c:787 disk-utils/partx.c:975 disk-utils/raw.c:137
+#: disk-utils/raw.c:150 disk-utils/raw.c:162 disk-utils/raw.c:203
+#: misc-utils/cal.c:520 misc-utils/findfs.c:58 misc-utils/look.c:150
+#: misc-utils/whereis.c:573 misc-utils/whereis.c:584 misc-utils/whereis.c:595
+#: misc-utils/whereis.c:637 schedutils/chrt.c:504 schedutils/ionice.c:262
+#: schedutils/taskset.c:189 sys-utils/chcpu.c:354 sys-utils/chmem.c:423
+#: sys-utils/dmesg.c:1468 sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:909 sys-utils/lscpu.c:2027 sys-utils/lsmem.c:632
+#: sys-utils/mount.c:764 sys-utils/mount.c:772 sys-utils/mount.c:812
+#: sys-utils/mount.c:825 sys-utils/mount.c:894 sys-utils/mountpoint.c:180
+#: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:994
+#: sys-utils/switch_root.c:250 sys-utils/umount.c:582
+#: term-utils/setterm.c:1176 text-utils/col.c:233 text-utils/more.c:1988
 msgid "bad usage"
 msgstr "felaktig användning"
 
@@ -1123,9 +1124,9 @@ msgid "Disk %s: %s, %ju bytes, %ju sectors"
 msgstr "Disk %s: %s, %ju byte, %ju sektorer"
 
 #: disk-utils/fdisk-list.c:67
-#, fuzzy, c-format
+#, c-format
 msgid "Disk model: %s"
-msgstr "Disk: %s"
+msgstr "Disk-modell: %s"
 
 #: disk-utils/fdisk-list.c:70
 #, c-format
@@ -3695,9 +3696,8 @@ msgid " -o, --output <list>  define which output columns to use\n"
 msgstr " -o, --output <lista>  definiera vilka utmatningskolumner som ska användas\n"
 
 #: disk-utils/partx.c:769 sys-utils/lsmem.c:506
-#, fuzzy
 msgid "     --output-all     output all columns\n"
-msgstr " -O, --output-all      skriv ut alla kolumner\n"
+msgstr "     --output-all     skriv ut alla kolumner\n"
 
 #: disk-utils/partx.c:770 misc-utils/lsblk.c:1470 sys-utils/lsmem.c:501
 msgid " -P, --pairs          use key=\"value\" output format\n"
@@ -3984,9 +3984,8 @@ msgid "no disk device specified"
 msgstr "ingen diskenhet angavs"
 
 #: disk-utils/sfdisk.c:828
-#, fuzzy
 msgid "toggle boot flags is unsupported for Hybrid GPT/MBR"
-msgstr "att växla startflaggorna stöds enbart för MBR eller PMBR"
+msgstr "att växla startflaggorna stöds inte för hybrid-GPT/MBR"
 
 #: disk-utils/sfdisk.c:833
 msgid "cannot switch to PMBR"
@@ -3994,7 +3993,7 @@ msgstr "kan inte växla till PMBR"
 
 #: disk-utils/sfdisk.c:834
 msgid "Activation is unsupported for GPT -- entering nested PMBR."
-msgstr ""
+msgstr "Aktivering stöds inte för GPT -- går in i nästlad PMBR."
 
 #: disk-utils/sfdisk.c:837
 msgid "toggle boot flags is supported for MBR or PMBR only"
@@ -4640,7 +4639,7 @@ msgid "colors are disabled by default"
 msgstr "färger är inaktiverade som standard"
 
 #: include/env.h:18 lib/pager.c:153 login-utils/login.c:1027
-#: login-utils/login.c:1031 term-utils/agetty.c:1189
+#: login-utils/login.c:1031 term-utils/agetty.c:1188
 #, c-format
 msgid "failed to set the %s environment variable"
 msgstr "misslyckades med att ställa in miljövariabeln %s"
@@ -5074,14 +5073,12 @@ msgid "First cylinder"
 msgstr "Första cylindern"
 
 #: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1213
-#, fuzzy
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
-msgstr "Sista cylinder, +cylindrar eller +storlek{K,M,G,T,P}"
+msgstr "Sista cylinder, +/-cylindrar eller +/-storlek{K,M,G,T,P}"
 
 #: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1218 libfdisk/src/gpt.c:2447
-#, fuzzy
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
-msgstr "Sista sektorn, +sektorer eller +storlek{K,M,G,T,P}"
+msgstr "Sista sektorn, +/-sektorer eller +/-storlek{K,M,G,T,P}"
 
 #: libfdisk/src/bsd.c:381
 #, c-format
@@ -5293,7 +5290,7 @@ msgstr "Misslyckades med att lägga till partition %zu till systemet"
 
 #: libfdisk/src/context.c:882
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
-msgstr "Kärnan använder fortfarande de gamla partitionerna. Den nya tabellen kommer att användas vid nästa omstart."
+msgstr "Kärnan använder fortfarande de gamla partitionerna. Den nya tabellen kommer att användas vid nästa omstart. "
 
 #: libfdisk/src/context.c:1092
 msgid "cylinder"
@@ -6617,9 +6614,9 @@ msgid "Sector %d is already allocated"
 msgstr "Sektor %d är redan allokerad"
 
 #: libfdisk/src/sun.c:650
-#, fuzzy, c-format
+#, c-format
 msgid "Last %s or +/-%s or +/-size{K,M,G,T,P}"
-msgstr "Sista %s eller +%s eller +storlek{K,M,G,T,P}"
+msgstr "Sista %s eller +/-%s eller +/-storlek{K,M,G,T,P}"
 
 #: libfdisk/src/sun.c:698
 #, c-format
@@ -6778,9 +6775,9 @@ msgstr "låsning misslyckades"
 
 #: libmount/src/context_mount.c:1528 libmount/src/context_umount.c:1149
 #: sys-utils/umount.c:238 sys-utils/umount.c:254
-#, fuzzy, c-format
+#, c-format
 msgid "failed to switch namespace"
-msgstr "sökväg till namnrymden"
+msgstr "misslyckades med att växla namnrymd"
 
 #: libmount/src/context_mount.c:1531
 #, c-format
@@ -6793,9 +6790,9 @@ msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "filsystemet monterades, men misslyckades med att uppdatera monteringstabell i användarrymd"
 
 #: libmount/src/context_mount.c:1545
-#, fuzzy, c-format
+#, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
-msgstr "filsystemet monterades, men misslyckades med att uppdatera monteringstabell i användarrymd"
+msgstr "filsystemet monterades, men misslyckades med att växla tillbaka namnrymden"
 
 #: libmount/src/context_mount.c:1550
 #, c-format
@@ -6974,9 +6971,9 @@ msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "filsystemet avmonterades, men misslyckades med att uppdatera monteringstabell i användarrymd"
 
 #: libmount/src/context_umount.c:1166
-#, fuzzy, c-format
+#, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
-msgstr "filsystemet avmonterades, men misslyckades med att uppdatera monteringstabell i användarrymd"
+msgstr "filsystemet avmonterades, men misslyckades med att växla tillbaka namnrymden"
 
 #: libmount/src/context_umount.c:1171
 #, c-format
@@ -7682,14 +7679,12 @@ msgid "Password is locked"
 msgstr "Lösenordet är låst"
 
 #: login-utils/lslogins.c:224
-#, fuzzy
 msgid "password encryption method"
-msgstr "datum för lösenordsutgång"
+msgstr "krypteringsmetod för lösenord"
 
 #: login-utils/lslogins.c:224
-#, fuzzy
 msgid "Password encryption method"
-msgstr "Lösenordsutgång"
+msgstr "Krypteringsmetod för lösenord"
 
 #: login-utils/lslogins.c:225
 msgid "log in disabled by nologin(8) or pam_nologin(8)"
@@ -7875,9 +7870,9 @@ msgid "failed to get supplementary groups"
 msgstr "misslyckades med att hämta tilläggsgrupper"
 
 #: login-utils/lslogins.c:986
-#, fuzzy, c-format
+#, c-format
 msgid "cannot found '%s'"
-msgstr "kan inte öppna %s"
+msgstr "kan inte hitta ”%s”"
 
 #: login-utils/lslogins.c:1162
 msgid "internal error: unknown column"
@@ -7945,9 +7940,8 @@ msgid " -o, --output[=<list>]    define the columns to output\n"
 msgstr " -o, --output[=<lista>]      definiera kolumnerna som ska matas ut\n"
 
 #: login-utils/lslogins.c:1338
-#, fuzzy
 msgid "     --output-all         output all columns\n"
-msgstr " -O, --output-all      skriv ut alla kolumner\n"
+msgstr "     --output-all         skriv ut alla kolumner\n"
 
 #: login-utils/lslogins.c:1339
 msgid " -p, --pwd                display information related to login by password.\n"
@@ -8156,11 +8150,13 @@ msgstr "kan inte ställa in användar-ID"
 
 #: login-utils/su-common.c:1159
 #, fuzzy
+#| msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment  återställ inte miljövariabler\n"
 
 #: login-utils/su-common.c:1160
 #, fuzzy
+#| msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -m, -p, --preserve-environment  återställ inte miljövariabler\n"
 
@@ -8374,7 +8370,7 @@ msgstr ""
 " -e, --force              undersök lösenordsfiler direkt om getpwnam(3) misslyckas\n"
 
 #: login-utils/sulogin.c:864 misc-utils/findmnt.c:1491 sys-utils/wdctl.c:524
-#: term-utils/agetty.c:837 term-utils/wall.c:216
+#: term-utils/agetty.c:836 term-utils/wall.c:216
 msgid "invalid timeout argument"
 msgstr "ogiltigt tidsgränsargument"
 
@@ -9168,18 +9164,16 @@ msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr " -o, --output <lista>    utmatningskolumner som ska visas\n"
 
 #: misc-utils/findmnt.c:1236
-#, fuzzy
 msgid "     --output-all       output all available columns\n"
-msgstr " -O, --output-all      skriv ut alla kolumner\n"
+msgstr "     --output-all       skriv ut alla tillgängliga kolumner\n"
 
 #: misc-utils/findmnt.c:1237
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr " -P, --pairs             använd utmatningsformat med nyckel=\"värde\"\n"
 
 #: misc-utils/findmnt.c:1238
-#, fuzzy
 msgid "     --pseudo           print only pseudo-filesystems\n"
-msgstr "     --verbose           skriv ut utförlig information\n"
+msgstr "     --pseudo           skriv endast ut pseudofilsystem\n"
 
 #: misc-utils/findmnt.c:1239
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
@@ -9190,9 +9184,8 @@ msgid " -r, --raw              use raw output format\n"
 msgstr " -r, --raw               använd rått utmatningsformat\n"
 
 #: misc-utils/findmnt.c:1241
-#, fuzzy
 msgid "     --real             print only real filesystems\n"
-msgstr " -a, --all               avmontera alla filsystem\n"
+msgstr "     --real             skriv endast ut riktiga filsystem\n"
 
 #: misc-utils/findmnt.c:1242
 msgid ""
@@ -9856,9 +9849,8 @@ msgid "internal parent kernel device name"
 msgstr "kärninternt överordnat enhetsnamn"
 
 #: misc-utils/lsblk.c:154
-#, fuzzy
 msgid "path to the device node"
-msgstr "tillstånd för enhet"
+msgstr "sökväg till enhetsnod"
 
 #: misc-utils/lsblk.c:163 sys-utils/zramctl.c:86
 msgid "where the device is mounted"
@@ -9870,12 +9862,11 @@ msgstr "filsystems ETIKETT"
 
 #: misc-utils/lsblk.c:167
 msgid "partition table identifier (usually UUID)"
-msgstr ""
+msgstr "identifierare för partitionstabell (vanligtvis UUID)"
 
 #: misc-utils/lsblk.c:168
-#, fuzzy
 msgid "partition table type"
-msgstr "Okänd typ av partitionstabell"
+msgstr "partitionstabellstyp"
 
 #: misc-utils/lsblk.c:170
 msgid "partition type UUID"
@@ -10018,9 +10009,8 @@ msgid "failed to open device directory in sysfs"
 msgstr "misslyckades med att öppna enhetskatalog i sysfs"
 
 #: misc-utils/lsblk.c:1263
-#, fuzzy
 msgid "failed to allocate /sys handler"
-msgstr "misslyckades med att allokera skripthanterare"
+msgstr "misslyckades med att allokera /sys-hanterare"
 
 #: misc-utils/lsblk.c:1319
 #, c-format
@@ -10140,9 +10130,8 @@ msgid " -x, --sort <column>  sort output by <column>\n"
 msgstr " -x, --sort <kolumn>   sortera utmatning efter <kolumn>\n"
 
 #: misc-utils/lsblk.c:1476
-#, fuzzy
 msgid "     --sysroot <dir>  use specified directory as system root\n"
-msgstr " -s, --sysroot <kat>      använd angiven katalog som systemrot\n"
+msgstr "     --sysroot <kat>  använd angiven katalog som systemrot\n"
 
 #: misc-utils/lsblk.c:1493
 #, c-format
@@ -10203,7 +10192,7 @@ msgstr "(okänd)"
 
 #: misc-utils/lslocks.c:287
 msgid "(undefined)"
-msgstr ""
+msgstr "(odefinierad)"
 
 #: misc-utils/lslocks.c:296
 msgid "failed to parse start"
@@ -10219,6 +10208,7 @@ msgstr "Lista lokala systemlås.\n"
 
 #: misc-utils/lslocks.c:534
 #, fuzzy
+#| msgid " -b, --bytes              print SIZE in bytes rather than in human readable format\n"
 msgid " -b, --bytes            print SIZE in bytes rather than in human readable format\n"
 msgstr " -b, --bytes              skriv ut STORLEK i byte snarare än i format läsligt för människor\n"
 
@@ -10235,9 +10225,8 @@ msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --output <lista>    definiera vilka utmatningskolumner som ska användas\n"
 
 #: misc-utils/lslocks.c:539 sys-utils/lsns.c:908 sys-utils/rfkill.c:584
-#, fuzzy
 msgid "     --output-all       output all columns\n"
-msgstr " -O, --output-all      skriv ut alla kolumner\n"
+msgstr "     --output-all       skriv ut alla kolumner\n"
 
 #: misc-utils/lslocks.c:540
 msgid " -p, --pid <pid>        display only locks held by this process\n"
@@ -10345,14 +10334,14 @@ msgid "%s: exceeded limit of symlinks"
 msgstr "%s: begränsning för symboliska länkar överskreds"
 
 #: misc-utils/rename.c:74
-#, fuzzy, c-format
+#, c-format
 msgid "%s: overwrite `%s'? "
-msgstr "skrivfel på %s\n"
+msgstr "%s: skriv över ”%s”? "
 
 #: misc-utils/rename.c:115 misc-utils/rename.c:172
-#, fuzzy, c-format
+#, c-format
 msgid "%s: not accessible"
-msgstr "%s: är inte en fil"
+msgstr "%s: inte tillgänglig"
 
 #: misc-utils/rename.c:124
 #, c-format
@@ -10365,9 +10354,9 @@ msgid "%s: readlink failed"
 msgstr "%s: readlink misslyckades"
 
 #: misc-utils/rename.c:144
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping existing link: `%s' -> `%s'\n"
-msgstr "Hoppar över existerande länk ”%s”\n"
+msgstr "Hoppar över existerande länk: ”%s” -> ”%s”\n"
 
 #: misc-utils/rename.c:150
 #, c-format
@@ -10416,7 +10405,7 @@ msgstr " -o, --no-overwrite  skriv inte över existerande filer\n"
 
 #: misc-utils/rename.c:217
 msgid " -i, --interactive   prompt before overwrite\n"
-msgstr ""
+msgstr " -i, --interactive   fråga innan överskrivning\n"
 
 #: misc-utils/uuidd.c:64
 msgid "A daemon for generating UUIDs.\n"
@@ -10619,9 +10608,9 @@ msgid "failed to parse --timeout"
 msgstr "misslyckades med att tolka --timeout"
 
 #: misc-utils/uuidd.c:640
-#, fuzzy, c-format
+#, c-format
 msgid "socket name too long: %s"
-msgstr "volymnamnet är för långt"
+msgstr "kontaktnamnet är för långt: %s"
 
 #: misc-utils/uuidd.c:647
 msgid "Both --socket-activation and --socket specified. Ignoring --socket."
@@ -11372,8 +11361,8 @@ msgstr "misslyckades med att tolka position"
 msgid "failed to parse step"
 msgstr "misslyckades med att tolka steg"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:409 sys-utils/fallocate.c:374
-#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:405
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:408
+#: sys-utils/fallocate.c:374 sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:405
 msgid "unexpected number of arguments"
 msgstr "oväntat antal argument"
 
@@ -11392,7 +11381,7 @@ msgstr "%s: BLKSSZGET ioctl misslyckades"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: position %<PRIu64> är inte justerad till sektorstorlek %i"
 
-#: sys-utils/blkdiscard.c:201 sys-utils/blkzone.c:272
+#: sys-utils/blkdiscard.c:201 sys-utils/blkzone.c:183 sys-utils/blkzone.c:271
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s: positionen är större än enhetsstorlek"
@@ -11430,95 +11419,90 @@ msgstr "Återställ ett intervall av zoner."
 msgid "%s: blkdev_get_sectors ioctl failed"
 msgstr "%s: blkdev_get_sectors ioctl misslyckades"
 
-#: sys-utils/blkzone.c:184
-#, fuzzy, c-format
-msgid "%s: offset is greater than or equal to device size"
-msgstr "%s: positionen är större än enhetsstorlek"
-
-#: sys-utils/blkzone.c:188 sys-utils/blkzone.c:262
+#: sys-utils/blkzone.c:187 sys-utils/blkzone.c:261
 #, c-format
 msgid "%s: unable to determine zone size"
 msgstr "%s: kan inte avgöra zonstorlek"
 
-#: sys-utils/blkzone.c:206
+#: sys-utils/blkzone.c:205
 #, c-format
 msgid "%s: BLKREPORTZONE ioctl failed"
 msgstr "%s: BLKREPORTZONE ioctl misslyckades"
 
-#: sys-utils/blkzone.c:209
+#: sys-utils/blkzone.c:208
 #, c-format
 msgid "Found %d zones from 0x%<PRIx64>\n"
 msgstr "Hittade %d zoner från 0x%<PRIx64>\n"
 
-#: sys-utils/blkzone.c:230
+#: sys-utils/blkzone.c:229
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr "  start: 0x%09<PRIx64>, lgd 0x%06<PRIx64>, spek 0x%06<PRIx64> åter:%u icke-sekv:%u, zkond:%2u(%s) [typ: %u(%s)]\n"
 
-#: sys-utils/blkzone.c:267
+#: sys-utils/blkzone.c:266
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: position %<PRIu64> är inte justerad till zonstorlek %lu"
 
-#: sys-utils/blkzone.c:286
+#: sys-utils/blkzone.c:285
 #, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: antal sektorer %<PRIu64> är inte justerat till zonstorlek %lu"
 
-#: sys-utils/blkzone.c:294
+#: sys-utils/blkzone.c:293
 #, c-format
 msgid "%s: BLKRESETZONE ioctl failed"
 msgstr "%s: BLKRESETZONE ioctl misslyckades"
 
-#: sys-utils/blkzone.c:296
+#: sys-utils/blkzone.c:295
 #, c-format
 msgid "%s: successfully reset in range from %<PRIu64>, to %<PRIu64>"
 msgstr "%s: framgångsrikt återställd i intervall från %<PRIu64> till %<PRIu64>"
 
-#: sys-utils/blkzone.c:310
+#: sys-utils/blkzone.c:309
 #, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr " %s <kommando> [flaggor] <enhet>\n"
 
-#: sys-utils/blkzone.c:313
+#: sys-utils/blkzone.c:312
 msgid "Run zone command on the given block device.\n"
 msgstr "Kör zonkommando på den givna blockenheten.\n"
 
-#: sys-utils/blkzone.c:320
+#: sys-utils/blkzone.c:319
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <sektor>  startsektor för zone att agera på (i 512-byte sektorer)\n"
 
 # sebras: what does act mean here?
-#: sys-utils/blkzone.c:321
+#: sys-utils/blkzone.c:320
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr " -l, --length <sektorer> största sektorstorlek att aktivera (i 512-byte sektorer)\n"
 
-#: sys-utils/blkzone.c:322
+#: sys-utils/blkzone.c:321
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -c, --count <antal>    maximalt antal zoner\n"
 
-#: sys-utils/blkzone.c:323
+#: sys-utils/blkzone.c:322
 msgid " -v, --verbose          display more details\n"
 msgstr " -v, --verbose          visa ytterligare detaljer\n"
 
-#: sys-utils/blkzone.c:365
+#: sys-utils/blkzone.c:364
 #, c-format
 msgid "%s is not valid command name"
 msgstr "%s är inte ett giltigt kommandonamn"
 
-#: sys-utils/blkzone.c:380
+#: sys-utils/blkzone.c:379
 msgid "failed to parse number of zones"
 msgstr "misslyckades med att tolk antal zoner"
 
-#: sys-utils/blkzone.c:384
+#: sys-utils/blkzone.c:383
 msgid "failed to parse number of sectors"
 msgstr "misslyckades med att tolka antal sektorer"
 
-#: sys-utils/blkzone.c:388
+#: sys-utils/blkzone.c:387
 msgid "failed to parse zone offset"
 msgstr "misslyckades med att tolka zonposition"
 
-#: sys-utils/blkzone.c:402 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:401 sys-utils/setsid.c:92
 msgid "no command specified"
 msgstr "inget kommando angivet"
 
@@ -11684,9 +11668,8 @@ msgstr ""
 "  -r, --rescan                  utlös omdetektering av CPU:er\n"
 
 #: sys-utils/chcpu.c:296
-#, fuzzy
 msgid "failed to initialize sysfs handler"
-msgstr "%s: misslyckades med att initiera sysfs-hanterare"
+msgstr "misslyckades med att initiera sysfs-hanterare"
 
 #: sys-utils/chcpu.c:339
 #, c-format
@@ -11861,9 +11844,9 @@ msgstr ""
 "Zoner som stöds:\n"
 
 #: sys-utils/chmem.c:387 sys-utils/lscpu.c:1269 sys-utils/lsmem.c:643
-#, fuzzy, c-format
+#, c-format
 msgid "failed to initialize %s handler"
-msgstr "%s: misslyckades med att initiera sysfs-hanterare"
+msgstr "misslyckades med att initiera %s-hanterare"
 
 #: sys-utils/chmem.c:434
 msgid "zone ignored, no valid_zones sysfs attribute present"
@@ -11875,45 +11858,42 @@ msgid "unknown memory zone: %s"
 msgstr "okänt minneszon: %s"
 
 #: sys-utils/choom.c:38
-#, fuzzy, c-format
+#, c-format
 msgid ""
 " %1$s [options] -p pid\n"
 " %1$s [options] -n number -p pid\n"
 " %1$s [options] -n number command [args...]]\n"
 msgstr ""
-" %1$s [flaggor] -p <pid>…\n"
-" %1$s [flaggor] -P <pgid>…\n"
-" %1$s [flaggor] -u <uid>…\n"
-" %1$s [flaggor] <kommando>\n"
+" %1$s [flaggor] -p pid\n"
+" %1$s [flaggor] -n nummer -p pid\n"
+" %1$s [flaggor] -n nummer kommando [argument…]]\n"
+"\n"
 
 #: sys-utils/choom.c:44
 msgid "Display and adjust OOM-killer score.\n"
-msgstr ""
+msgstr "Visa och justera OOM-dödarpoäng.\n"
 
 #: sys-utils/choom.c:47
 #, fuzzy
+#| msgid " -n, --priority <num>   specify the nice increment value\n"
 msgid " -n, --adjust <num>     specify the adjust score value\n"
 msgstr " -n, --priority <num>   ange nice-ökningsvärdet\n"
 
 #: sys-utils/choom.c:48
-#, fuzzy
 msgid " -p, --pid <num>        process ID\n"
-msgstr " -p, --task <pid>        skriv ut processnamnrymd\n"
+msgstr " -p, --pid <num>        process-ID\n"
 
 #: sys-utils/choom.c:60
-#, fuzzy
 msgid "failed to read OOM score value"
-msgstr "misslyckades med att läsa hastighet"
+msgstr "misslyckades med att läsa OOM-poängvärde"
 
 #: sys-utils/choom.c:70
-#, fuzzy
 msgid "failed to read OOM score adjust value"
-msgstr "misslyckades med att läsa hastighet"
+msgstr "misslyckades med att läsa OOM-poängjusteringsvärde"
 
 #: sys-utils/choom.c:105
-#, fuzzy
 msgid "invalid adjust argument"
-msgstr "ogiltigt argument för huvuden"
+msgstr "ogiltigt justeringsargument"
 
 #: sys-utils/choom.c:119 term-utils/mesg.c:166
 #, c-format
@@ -11921,34 +11901,31 @@ msgid "invalid argument: %s"
 msgstr "ogiltigt argument: %s"
 
 #: sys-utils/choom.c:123
-#, fuzzy
 msgid "no PID or COMMAND specified"
-msgstr "ingen monteringspunkt angiven"
+msgstr "varken PID eller kommando angivet"
 
 #: sys-utils/choom.c:127
-#, fuzzy
 msgid "no OOM score adjust value specified"
-msgstr "ogiltigt positionsvärde angivet"
+msgstr "inget OOM-poängjusteringsvärde angivet"
 
 #: sys-utils/choom.c:135
-#, fuzzy, c-format
+#, c-format
 msgid "pid %d's current OOM score: %d\n"
-msgstr "pid %d:s aktuella schemaläggningspolicy %d\n"
+msgstr "pid %d:s aktuella OOM-poäng: %d\n"
 
 #: sys-utils/choom.c:136
-#, fuzzy, c-format
+#, c-format
 msgid "pid %d's current OOM score adjust value: %d\n"
-msgstr "pid %d:s aktuella schemaläggningspolicy %d\n"
+msgstr "pid %d:s aktuella OOM-poängjusteringsvärde: %d\n"
 
 #: sys-utils/choom.c:143 sys-utils/choom.c:150
-#, fuzzy
 msgid "failed to set score adjust value"
-msgstr "misslyckades med att ställa in data"
+msgstr "misslyckades med att ställa in poängjusteringsvärde"
 
 #: sys-utils/choom.c:145
 #, c-format
 msgid "pid %d's OOM score adjust value changed from %d to %d\n"
-msgstr ""
+msgstr "pid %d's OOM-poängjusteringsvärde ändrat från %d till %d\n"
 
 #: sys-utils/ctrlaltdel.c:28
 #, c-format
@@ -12349,11 +12326,6 @@ msgstr "ingen CD-ROM-information tillgänglig"
 #: sys-utils/eject.c:438
 msgid "CD-ROM drive is not ready"
 msgstr "CD-ROM-enhet är inte redo"
-
-#: sys-utils/eject.c:441
-#, fuzzy
-msgid "CD-ROM status command failed"
-msgstr "kommando för att mata ut CD-ROM misslyckades"
 
 #: sys-utils/eject.c:481
 msgid "CD-ROM select speed command failed"
@@ -12787,14 +12759,14 @@ msgid "%s: not a directory"
 msgstr "%s: är inte en katalog"
 
 #: sys-utils/fstrim.c:96
-#, fuzzy, c-format
+#, c-format
 msgid "%s: 0 B (dry run) trimmed on %s\n"
-msgstr "%s: %s monterad på %s.\n"
+msgstr "%s: 0 B (testkörning) trimmad på %s\n"
 
 #: sys-utils/fstrim.c:98
 #, c-format
 msgid "%s: 0 B (dry run) trimmed\n"
-msgstr ""
+msgstr "%s: 0 B (testkörning) trimmat\n"
 
 #: sys-utils/fstrim.c:108
 #, c-format
@@ -12803,9 +12775,9 @@ msgstr "%s: FITRIM ioctl misslyckades"
 
 #. TRANSLATORS: The standard value here is a very large number.
 #: sys-utils/fstrim.c:118
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed on %s\n"
-msgstr "%s: %s (%<PRIu64> byte) trimmade\n"
+msgstr "%s: %s (%<PRIu64> byte) trimmad på %s\n"
 
 #. TRANSLATORS: The standard value here is a very large number.
 #: sys-utils/fstrim.c:122
@@ -12829,14 +12801,12 @@ msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr "Kassera oanvända block för ett monterat filsystem.\n"
 
 #: sys-utils/fstrim.c:320
-#, fuzzy
 msgid " -a, --all           trim all supported mounted filesystems\n"
 msgstr " -a, --all           trimma alla monterade filsystem som stöds\n"
 
 #: sys-utils/fstrim.c:321
-#, fuzzy
 msgid " -A, --fstab         trim all supported mounted filesystems from /etc/fstab\n"
-msgstr " -a, --all           trimma alla monterade filsystem som stöds\n"
+msgstr " -A, --fstab         trimma alla monterade filsystem från /etc/fstab som stöds\n"
 
 #: sys-utils/fstrim.c:322
 msgid " -o, --offset <num>  the offset in bytes to start discarding from\n"
@@ -12855,9 +12825,8 @@ msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose       skriv ut antalet kasserade byte\n"
 
 #: sys-utils/fstrim.c:326
-#, fuzzy
 msgid " -d, --dry-run       does everything, but trim\n"
-msgstr " -n, --dry-run            gör allting, förutom att gå i viloläge\n"
+msgstr " -d, --dry-run       gör allting förutom att trimma\n"
 
 #: sys-utils/fstrim.c:387
 msgid "failed to parse minimum extent length"
@@ -12944,14 +12913,14 @@ msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "Ställer hårdvaruklockan till %.2d:%.2d:%.2d = %ld sekunder sedan 1969\n"
 
 #: sys-utils/hwclock.c:441
-#, fuzzy, c-format
+#, c-format
 msgid "RTC type: '%s'\n"
-msgstr "typ: %d\n"
+msgstr "RTC-typ: ”%s”\n"
 
 #: sys-utils/hwclock.c:541
 #, c-format
 msgid "Using delay: %.6f seconds\n"
-msgstr ""
+msgstr "Använder fördröjning: %.6f sekunder\n"
 
 #: sys-utils/hwclock.c:560
 #, c-format
@@ -13201,7 +13170,7 @@ msgstr "     --date <tid>     datum/tid-indata för --set och --predict"
 
 #: sys-utils/hwclock.c:1140
 msgid "     --delay <sec>    delay used when set new RTC time"
-msgstr ""
+msgstr "     --delay <sek>    fördröjning när ny RTC-tid ställs in"
 
 #: sys-utils/hwclock.c:1142
 msgid "     --epoch <year>   epoch input for --setepoch"
@@ -14413,9 +14382,8 @@ msgid " -O, --output <cols>           specify columns to output for --list\n"
 msgstr " -O, --output <kolumner>       ange kolumner att skriva ut för --list\n"
 
 #: sys-utils/losetup.c:435
-#, fuzzy
 msgid "     --output-all              output all columns\n"
-msgstr " -O, --output-all      skriv ut alla kolumner\n"
+msgstr "     --output-all               skriv ut alla kolumner\n"
 
 #: sys-utils/losetup.c:436
 msgid "     --raw                     use raw --list output format\n"
@@ -14633,7 +14601,7 @@ msgstr "Byteordning:"
 
 #: sys-utils/lscpu.c:1733
 msgid "Address sizes:"
-msgstr ""
+msgstr "Adresstorlekar:"
 
 #: sys-utils/lscpu.c:1735
 msgid "CPU(s):"
@@ -14831,14 +14799,12 @@ msgid "%s: options --all, --online and --offline may only be used with options -
 msgstr "%s: flaggorna --all, --online och --offline kan endast användas med flaggorna --extended eller --parse.\n"
 
 #: sys-utils/lscpu.c:2042
-#, fuzzy
 msgid "failed to initialize CPUs sysfs handler"
-msgstr "%s: misslyckades med att initiera sysfs-hanterare"
+msgstr "misslyckades med att initiera CPU:ns sysfs-hanterare"
 
 #: sys-utils/lscpu.c:2049
-#, fuzzy
 msgid "failed to initialize procfs handler"
-msgstr "%s: misslyckades med att initiera sysfs-hanterare"
+msgstr "misslyckades med att initiera procfs-hanterare"
 
 #: sys-utils/lsipc.c:149
 msgid "Resource key"
@@ -15281,9 +15247,8 @@ msgid "Failed to open %s"
 msgstr "Misslyckades med att öppna %s"
 
 #: sys-utils/lsmem.c:441
-#, fuzzy
 msgid "failed to read memory block size"
-msgstr "misslyckades med att tolka logisk blockstorlek"
+msgstr "misslyckades med att läsa minnesblockstorlek"
 
 #: sys-utils/lsmem.c:472
 msgid "This system does not support memory blocks"
@@ -15318,9 +15283,8 @@ msgid "options --{raw,json,pairs} and --summary=only are mutually exclusive"
 msgstr "flaggorna --{raw,json,pairs} och --summary=only är ömsesidigt uteslutande"
 
 #: sys-utils/lsmem.c:645
-#, fuzzy
 msgid "invalid argument to --sysroot"
-msgstr "ogiltigt argument to %s"
+msgstr "ogiltigt argument to --sysroot"
 
 #: sys-utils/lsmem.c:676 sys-utils/lsns.c:781
 msgid "failed to initialize output table"
@@ -15564,6 +15528,12 @@ msgid ""
 "     --options-source-force\n"
 "                         force use of options from fstab/mtab\n"
 msgstr ""
+"     --options-mode <läge>\n"
+"                         vad som ska göras med flaggor inlästa från fstab\n"
+"     --options-source <källa>\n"
+"                         källa för monteringsflaggor\n"
+"     --options-source-force\n"
+"                         tvinga användning av flaggor från fstab/mtab\n"
 
 #: sys-utils/mount.c:423
 #, c-format
@@ -15599,6 +15569,7 @@ msgstr " -w, --rw, --read-write  montera filsystemet skrivbart (standard)\n"
 
 #: sys-utils/mount.c:435
 #, fuzzy, c-format
+#| msgid " -n, --namespace ns  generate hash-based uuid in this namespace\n"
 msgid " -N, --namespace <ns>    perform mount in another namespace\n"
 msgstr " -n, --namespace nr  generera hash-baserat uuid i denna namnrymd\n"
 
@@ -15684,9 +15655,9 @@ msgid "failed to set options pattern"
 msgstr "misslyckades med att ställa in flaggmönster"
 
 #: sys-utils/mount.c:718 sys-utils/umount.c:563
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set target namespace to %s"
-msgstr "misslyckades med att ställa in personlighet till %s"
+msgstr "misslyckades med att ställa in namnrymd till %s"
 
 #: sys-utils/mount.c:871
 msgid "source specified more than once"
@@ -16551,9 +16522,9 @@ msgid "Switching on %s.\n"
 msgstr "Slår på %s.\n"
 
 #: sys-utils/setarch.c:97
-#, fuzzy, c-format
+#, c-format
 msgid " %s [<arch>] [options] [<program> [<argument>...]]\n"
-msgstr " %s <ark> [flaggor] [<program> [<argument>…]]\n"
+msgstr " %s [<ark>] [flaggor] [<program> [<argument>…]]\n"
 
 #: sys-utils/setarch.c:102
 msgid "Change the reported architecture and set personality flags.\n"
@@ -16634,9 +16605,8 @@ msgid "unrecognized option '--list'"
 msgstr "okänd flagga ”--list”"
 
 #: sys-utils/setarch.c:389
-#, fuzzy
 msgid "no architecture argument or personality flags specified"
-msgstr "inget arkitekturargument angivet"
+msgstr "inget arkitekturargument eller personlighetsflaggor angivna"
 
 #: sys-utils/setarch.c:400
 #, c-format
@@ -16684,31 +16654,37 @@ msgstr " --bounding-set <förm>       ställ in begränsningsuppsättning för f
 
 #: sys-utils/setpriv.c:137
 #, fuzzy
+#| msgid " --ruid <uid>                set real uid\n"
 msgid " --ruid <uid|user>           set real uid\n"
 msgstr " --ruid <uid>                ställ in verkligt uid\n"
 
 #: sys-utils/setpriv.c:138
 #, fuzzy
+#| msgid " --euid <uid>                set effective uid\n"
 msgid " --euid <uid|user>           set effective uid\n"
 msgstr " --euid <uid>                ställ in effektivt uid\n"
 
 #: sys-utils/setpriv.c:139
 #, fuzzy
+#| msgid " --rgid <gid>                set real gid\n"
 msgid " --rgid <gid|user>           set real gid\n"
 msgstr " --rgid <gid>                ställ in verkligt gid\n"
 
 #: sys-utils/setpriv.c:140
 #, fuzzy
+#| msgid " --egid <gid>                set effective gid\n"
 msgid " --egid <gid|group>          set effective gid\n"
 msgstr " --egid <gid>                ställ in effektivt gid\n"
 
 #: sys-utils/setpriv.c:141
 #, fuzzy
+#| msgid " --reuid <uid>               set real and effective uid\n"
 msgid " --reuid <uid|user>          set real and effective uid\n"
 msgstr " --reuid <uid>               ställ in verkligt och effektivt uid\n"
 
 #: sys-utils/setpriv.c:142
 #, fuzzy
+#| msgid " --regid <gid>               set real and effective gid\n"
 msgid " --regid <gid|group>         set real and effective gid\n"
 msgstr " --regid <gid>               ställ in verkligt och effektivt gid\n"
 
@@ -16726,6 +16702,7 @@ msgstr " --init-groups               initialisera tilläggsgrupper\n"
 
 #: sys-utils/setpriv.c:146
 #, fuzzy
+#| msgid " --groups <group,...>        set supplementary groups\n"
 msgid " --groups <group,...>        set supplementary groups by UID or name\n"
 msgstr " --groups <grupp,…>          ställ in tilläggsgrupper\n"
 
@@ -16735,11 +16712,13 @@ msgstr " --securebits <bitar>        ställ in säkra bitar\n"
 
 #: sys-utils/setpriv.c:148
 #, fuzzy
+#| msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgid " --reset-env                 reset environment variables\n"
 msgstr " -m, -p, --preserve-environment  återställ inte miljövariabler\n"
 
 #: sys-utils/setpriv.c:149
 #, fuzzy
+#| msgid " --store                           save current terminal settings as default\n"
 msgid ""
 " --pdeathsig keep|clear|<signame>\n"
 "                             set or clear parent death signal\n"
@@ -16758,6 +16737,8 @@ msgid ""
 " --reset-env                 clear all environment and initialize\n"
 "                               HOME, SHELL, USER, LOGNAME and PATH\n"
 msgstr ""
+" --reset-env                 rensa all miljö och initialisera\n"
+"                               HOME, SHELL, USER, LOGNAME och PATH\n"
 
 #: sys-utils/setpriv.c:159
 msgid " This tool can be dangerous.  Read the manpage, and be careful.\n"
@@ -16798,9 +16779,8 @@ msgid "[none]"
 msgstr "[ingen]"
 
 #: sys-utils/setpriv.c:352
-#, fuzzy
 msgid "get pdeathsig failed"
-msgstr "getresuid misslyckades"
+msgstr "att hämta pdeathsig misslyckades"
 
 #: sys-utils/setpriv.c:372
 #, c-format
@@ -16873,9 +16853,8 @@ msgid "Invalid supplementary group id"
 msgstr "Ogiltigt ID för tilläggsgrupp"
 
 #: sys-utils/setpriv.c:479
-#, fuzzy
 msgid "failed to get parent death signal"
-msgstr "misslyckades med att tolka monteringstabell"
+msgstr "misslyckades med att få tag i dödssignal för förälder"
 
 #: sys-utils/setpriv.c:499
 msgid "setresuid failed"
@@ -17004,9 +16983,8 @@ msgid "duplicate --groups option"
 msgstr "flaggan --groups duplicerad"
 
 #: sys-utils/setpriv.c:930
-#, fuzzy
 msgid "duplicate --keep-pdeathsig option"
-msgstr "flaggan --keep-groups duplicerad"
+msgstr "flaggan --keep-pdeathsig duplicerad"
 
 #: sys-utils/setpriv.c:939
 msgid "duplicate --inh-caps option"
@@ -17090,9 +17068,8 @@ msgid "apply capabilities"
 msgstr "tillämpar förmågor"
 
 #: sys-utils/setpriv.c:1093
-#, fuzzy
 msgid "set parent death signal failed"
-msgstr "inställning av rtc-uppvakningsalarm misslyckades"
+msgstr "inställning av förälders dödssignal misslyckades"
 
 #: sys-utils/setsid.c:33
 #, c-format
@@ -17646,12 +17623,12 @@ msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgstr " -t, --types <lista>     begränsa uppsättningen av filsystemstyper\n"
 
 #: sys-utils/umount.c:105
-#, fuzzy
 msgid " -q, --quiet             suppress 'not mounted' error messages\n"
-msgstr " -q, --quiet                undertryck extra informationsmeddelanden\n"
+msgstr " -q, --quiet             undertryck ”ej monterad”-felmeddelanden\n"
 
 #: sys-utils/umount.c:106
 #, fuzzy
+#| msgid " -n, --namespace ns  generate hash-based uuid in this namespace\n"
 msgid " -N, --namespace <ns>    perform umount in another namespace\n"
 msgstr " -n, --namespace nr  generera hash-baserat uuid i denna namnrymd\n"
 
@@ -17771,29 +17748,27 @@ msgstr " -r, --map-root-user       mappa aktuell användare till root (medför -
 
 #: sys-utils/unshare.c:266
 #, fuzzy
+#| msgid "     --kill-child[=<signame>]  when dying, kill the forked child (implies --fork); defaults to SIGKILL\n"
 msgid ""
 " --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
 "                             defaults to SIGKILL\n"
 msgstr "     --kill-child[=<signamn>]  vid död, döda det grenade barnet (implicerar --fork); standardvärdet är SIGKILL\n"
 
 #: sys-utils/unshare.c:268
-#, fuzzy
 msgid " --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"
-msgstr "     --mount-proc[=<kat>]  montera proc-filsystem först (medför --mount)\n"
+msgstr " --mount-proc[=<dir>]      montera proc-filsystem först (medför --mount)\n"
 
 #: sys-utils/unshare.c:269
-#, fuzzy
 msgid ""
 " --propagation slave|shared|private|unchanged\n"
 "                           modify mount propagation in mount namespace\n"
 msgstr ""
-"     --propagation slave|shared|private|unchanged\n"
+" --propagation slave|shared|private|unchanged\n"
 "                           modifiera monteringspropagering i namnrymd för montering\n"
 
 #: sys-utils/unshare.c:271
-#, fuzzy
 msgid " --setgroups allow|deny    control the setgroups syscall in user namespaces\n"
-msgstr " -s, --setgroups allow|deny  styr systemanropet setgroups i namnrymden för användare\n"
+msgstr " --setgroups allow|deny    styr systemanropet setgroups i användarnamnrymder\n"
 
 #: sys-utils/unshare.c:404
 msgid "unshare failed"
@@ -18065,9 +18040,8 @@ msgid " -o, --output <list>       columns to use for status output\n"
 msgstr " -o, --output <lista>      kolumner att använda för statusutmatning\n"
 
 #: sys-utils/zramctl.c:555
-#, fuzzy
 msgid "     --output-all          output all columns\n"
-msgstr " -O, --output-all      skriv ut alla kolumner\n"
+msgstr "     --output-all          skriv ut alla kolumner\n"
 
 #: sys-utils/zramctl.c:556
 msgid "     --raw                 use raw status output format\n"
@@ -18130,139 +18104,139 @@ msgstr "%s: misslyckades med att ställa diskstorlek (%ju byte)"
 msgid "%s%s (automatic login)\n"
 msgstr "%s%s (automatisk inloggning)\n"
 
-#: term-utils/agetty.c:546
+#: term-utils/agetty.c:545
 #, c-format
 msgid "%s: can't change root directory %s: %m"
 msgstr "%s: kan inte ändra rotkatalog %s: %m"
 
-#: term-utils/agetty.c:549
+#: term-utils/agetty.c:548
 #, c-format
 msgid "%s: can't change working directory %s: %m"
 msgstr "%s: kan inte ändra arbetskatalog %s: %m"
 
-#: term-utils/agetty.c:552
+#: term-utils/agetty.c:551
 #, c-format
 msgid "%s: can't change process priority: %m"
 msgstr "%s: kan inte ändra processprioritet: %m"
 
-#: term-utils/agetty.c:563
+#: term-utils/agetty.c:562
 #, c-format
 msgid "%s: can't exec %s: %m"
 msgstr "%s: kan inte köra %s: %m"
 
-#: term-utils/agetty.c:594 term-utils/agetty.c:921 term-utils/agetty.c:1457
-#: term-utils/agetty.c:1475 term-utils/agetty.c:1512 term-utils/agetty.c:1522
-#: term-utils/agetty.c:1564 term-utils/agetty.c:2203 term-utils/agetty.c:2770
+#: term-utils/agetty.c:593 term-utils/agetty.c:920 term-utils/agetty.c:1447
+#: term-utils/agetty.c:1465 term-utils/agetty.c:1502 term-utils/agetty.c:1512
+#: term-utils/agetty.c:1554 term-utils/agetty.c:2190 term-utils/agetty.c:2757
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "misslyckades med att allokera minne: %m"
 
-#: term-utils/agetty.c:684
+#: term-utils/agetty.c:683
 #, c-format
 msgid "%s from %s"
 msgstr "%s från %s"
 
-#: term-utils/agetty.c:768
+#: term-utils/agetty.c:767
 msgid "invalid delay argument"
 msgstr "ogiltigt fördröjningsargument"
 
-#: term-utils/agetty.c:806
+#: term-utils/agetty.c:805
 msgid "invalid argument of --local-line"
 msgstr "ogiltigt argument till --local-line"
 
-#: term-utils/agetty.c:825
+#: term-utils/agetty.c:824
 msgid "invalid nice argument"
 msgstr "ogiltigt nice-argument"
 
-#: term-utils/agetty.c:926
+#: term-utils/agetty.c:925
 #, c-format
 msgid "bad speed: %s"
 msgstr "felaktig hastighet: %s"
 
-#: term-utils/agetty.c:928
+#: term-utils/agetty.c:927
 msgid "too many alternate speeds"
 msgstr "för många alternativa hastigheter"
 
-#: term-utils/agetty.c:1035 term-utils/agetty.c:1039 term-utils/agetty.c:1092
+#: term-utils/agetty.c:1034 term-utils/agetty.c:1038 term-utils/agetty.c:1091
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: kan inte öppna som standard in: %m"
 
-#: term-utils/agetty.c:1058
+#: term-utils/agetty.c:1057
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: ingen teckenenhet"
 
-#: term-utils/agetty.c:1060
+#: term-utils/agetty.c:1059
 #, c-format
 msgid "/dev/%s: not a tty"
 msgstr "/dev/%s: inte en tty"
 
-#: term-utils/agetty.c:1064 term-utils/agetty.c:1096
+#: term-utils/agetty.c:1063 term-utils/agetty.c:1095
 #, c-format
 msgid "/dev/%s: cannot get controlling tty: %m"
 msgstr "/dev/%s: kan inte öppna kontrollerande tty: %m"
 
-#: term-utils/agetty.c:1086
+#: term-utils/agetty.c:1085
 #, c-format
 msgid "/dev/%s: vhangup() failed: %m"
 msgstr "/dev/%s: vhangup() misslyckades: %m"
 
-#: term-utils/agetty.c:1107
+#: term-utils/agetty.c:1106
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: inte öppen för läsning/skrivning"
 
-#: term-utils/agetty.c:1112
+#: term-utils/agetty.c:1111
 #, c-format
 msgid "/dev/%s: cannot set process group: %m"
 msgstr "/dev/%s: kan inte ställa in processgrupp: %m"
 
-#: term-utils/agetty.c:1126
+#: term-utils/agetty.c:1125
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: dupliceringsproblem: %m"
 
-#: term-utils/agetty.c:1143
+#: term-utils/agetty.c:1142
 #, c-format
 msgid "%s: failed to get terminal attributes: %m"
 msgstr "%s: misslyckades med att hämta terminalattribut: %m"
 
-#: term-utils/agetty.c:1354 term-utils/agetty.c:1383
+#: term-utils/agetty.c:1353 term-utils/agetty.c:1373
 #, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr "inställning av terminalattribut misslyckades: %m"
 
-#: term-utils/agetty.c:1502
+#: term-utils/agetty.c:1492
 msgid "cannot open os-release file"
 msgstr "kan inte öppna os-release-fil"
 
-#: term-utils/agetty.c:1669
+#: term-utils/agetty.c:1659
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "misslyckades med att skapa återinläsningsfil: %s: %m"
 
-#: term-utils/agetty.c:1934
+#: term-utils/agetty.c:1924
 msgid "[press ENTER to login]"
 msgstr "[tryck på RETUR för att logga in]"
 
-#: term-utils/agetty.c:1961
+#: term-utils/agetty.c:1951
 msgid "Num Lock off"
 msgstr "Num Lock är av"
 
-#: term-utils/agetty.c:1964
+#: term-utils/agetty.c:1954
 msgid "Num Lock on"
 msgstr "Num Lock är på"
 
-#: term-utils/agetty.c:1967
+#: term-utils/agetty.c:1957
 msgid "Caps Lock on"
 msgstr "Caps Lock är på"
 
-#: term-utils/agetty.c:1970
+#: term-utils/agetty.c:1960
 msgid "Scroll Lock on"
 msgstr "Scroll Lock är på"
 
-#: term-utils/agetty.c:1973
+#: term-utils/agetty.c:1963
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -18271,32 +18245,32 @@ msgstr ""
 "Tips: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2115
+#: term-utils/agetty.c:2105
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: läste: %m"
 
-#: term-utils/agetty.c:2179
+#: term-utils/agetty.c:2169
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: indataspill"
 
-#: term-utils/agetty.c:2199 term-utils/agetty.c:2207
+#: term-utils/agetty.c:2186 term-utils/agetty.c:2194
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ogiltig teckenkonvertering för inloggningsnamn"
 
-#: term-utils/agetty.c:2213
+#: term-utils/agetty.c:2200
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ogiltigt tecken 0x%x i inloggningsnamn"
 
-#: term-utils/agetty.c:2298
+#: term-utils/agetty.c:2285
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s misslyckades med att ställa in terminalattribut: %m"
 
-#: term-utils/agetty.c:2336
+#: term-utils/agetty.c:2323
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18305,164 +18279,164 @@ msgstr ""
 " %1$s [flaggor] <linje> [<baud_hastighet>,…] [<termtyp>]\n"
 " %1$s [flaggor] <baud_hastighet>,… <linje> [<termtyp>]\n"
 
-#: term-utils/agetty.c:2340
+#: term-utils/agetty.c:2327
 msgid "Open a terminal and set its mode.\n"
 msgstr "Öppna en terminal och ställ in dess läge.\n"
 
-#: term-utils/agetty.c:2343
+#: term-utils/agetty.c:2330
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                   antag att det är en 8-bitars tty\n"
 
-#: term-utils/agetty.c:2344
+#: term-utils/agetty.c:2331
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <användare>   logga in den angivna användaren automatiskt\n"
 
-#: term-utils/agetty.c:2345
+#: term-utils/agetty.c:2332
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset                 återställ inte kontrolläge\n"
 
-#: term-utils/agetty.c:2346
+#: term-utils/agetty.c:2333
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote                  använd -r <värdnamn> för login(1)\n"
 
-#: term-utils/agetty.c:2347
+#: term-utils/agetty.c:2334
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <fil>        visa issue-fil\n"
 
-#: term-utils/agetty.c:2348
+#: term-utils/agetty.c:2335
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control            aktivera hårdvarubaserad flödeskontroll\n"
 
-#: term-utils/agetty.c:2349
+#: term-utils/agetty.c:2336
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <värdnamn>         ange inloggningsvärd\n"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2337
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue                 visa inte issue-fil\n"
 
-#: term-utils/agetty.c:2351
+#: term-utils/agetty.c:2338
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <sträng>    ställ in initierings-sträng\n"
 
-#: term-utils/agetty.c:2352
+#: term-utils/agetty.c:2339
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear                 rensa inte skärmen innan prompt\n"
 
-#: term-utils/agetty.c:2353
+#: term-utils/agetty.c:2340
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <fil>     ange inloggningsprogram\n"
 
-#: term-utils/agetty.c:2354
+#: term-utils/agetty.c:2341
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<läge>]     styr flaggan för den lokala linjen\n"
 
-#: term-utils/agetty.c:2355
+#: term-utils/agetty.c:2342
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud            extrahera baud-hastighet under anslutning\n"
 
-#: term-utils/agetty.c:2356
+#: term-utils/agetty.c:2343
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login              fråga inte efter inloggning\n"
 
-#: term-utils/agetty.c:2357
+#: term-utils/agetty.c:2344
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline               skriv inte ut nyrad innan issue-fil\n"
 
-#: term-utils/agetty.c:2358
+#: term-utils/agetty.c:2345
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <flaggor> flaggor som skickas vidare till login\n"
 
-#: term-utils/agetty.c:2359
+#: term-utils/agetty.c:2346
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause             vänta på valfri tangent innan inloggning\n"
 
 # sebras: change root to the given directory
-#: term-utils/agetty.c:2360
+#: term-utils/agetty.c:2347
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <kat>            ändra rot till angiven katalog\n"
 
-#: term-utils/agetty.c:2361
+#: term-utils/agetty.c:2348
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup                  avring tty:n virtuellt\n"
 
-#: term-utils/agetty.c:2362
+#: term-utils/agetty.c:2349
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud               försök att behålla baud-hastighet efter avbrott\n"
 
-#: term-utils/agetty.c:2363
+#: term-utils/agetty.c:2350
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <nummer>        tidsgräns för inloggningsprocess\n"
 
-#: term-utils/agetty.c:2364
+#: term-utils/agetty.c:2351
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case             identifiera terminal som använder versaler\n"
 
-#: term-utils/agetty.c:2365
+#: term-utils/agetty.c:2352
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr                 vänta på vagnretur\n"
 
-#: term-utils/agetty.c:2366
+#: term-utils/agetty.c:2353
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints                 skriv inte ut tips\n"
 
 # sebras: hostname will not be shown at all
-#: term-utils/agetty.c:2367
+#: term-utils/agetty.c:2354
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname              värdnamnet kommer inte att visas alls\n"
 
-#: term-utils/agetty.c:2368
+#: term-utils/agetty.c:2355
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname           visa fullständigt värdnamn\n"
 
-#: term-utils/agetty.c:2369
+#: term-utils/agetty.c:2356
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <sträng>    ytterligare backstegstecken\n"
 
-#: term-utils/agetty.c:2370
+#: term-utils/agetty.c:2357
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <sträng>     ytterligare tecken som ignorerar alla tidigare tecken\n"
 
 # sebras: change directory before login
-#: term-utils/agetty.c:2371
+#: term-utils/agetty.c:2358
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <katalog>         byt katalog innan inloggning\n"
 
 # sebras: <seconds> seconds of delay before prompt
-#: term-utils/agetty.c:2372
+#: term-utils/agetty.c:2359
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <nummer>          antal sekunder fördröjning innan prompt\n"
 
-#: term-utils/agetty.c:2373
+#: term-utils/agetty.c:2360
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <nummer>           kör inloggning med denna prioritet\n"
 
-#: term-utils/agetty.c:2374
+#: term-utils/agetty.c:2361
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload                  återinläs prompt i körande agetty-instanser\n"
 
-#: term-utils/agetty.c:2375
+#: term-utils/agetty.c:2362
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-types      visa baud-hastigheter som stöds\n"
 
-#: term-utils/agetty.c:2729
+#: term-utils/agetty.c:2716
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d användare"
 msgstr[1] "%d användare"
 
-#: term-utils/agetty.c:2858
+#: term-utils/agetty.c:2845
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname misslyckades: %m"
 
-#: term-utils/agetty.c:2870
+#: term-utils/agetty.c:2857
 #, c-format
 msgid "cannot touch file %s"
 msgstr "kan inte röra filen %s"
 
-#: term-utils/agetty.c:2874
+#: term-utils/agetty.c:2861
 msgid "--reload is unsupported on your system"
 msgstr "--reload stöds inte på ditt system"
 
@@ -18481,7 +18455,7 @@ msgstr " -v, --verbose  förklara vad som händer\n"
 
 #: term-utils/mesg.c:126
 msgid "no tty"
-msgstr ""
+msgstr "ingen tty"
 
 #: term-utils/mesg.c:130
 msgid "ttyname failed"
@@ -18519,6 +18493,14 @@ msgstr "Skapa ett inmatningsskript från en terminalsession.\n"
 
 #: term-utils/script.c:170
 #, fuzzy
+#| msgid ""
+#| " -a, --append                  append the output\n"
+#| " -c, --command <command>       run command rather than interactive shell\n"
+#| " -e, --return                  return exit code of the child process\n"
+#| " -f, --flush                   run flush after each write\n"
+#| "     --force                   use output file even when it is a link\n"
+#| " -q, --quiet                   be quiet\n"
+#| " -t[<file>], --timing[=<file>] output timing data to stderr or to FILE\n"
 msgid ""
 " -a, --append                  append the output\n"
 " -c, --command <command>       run command rather than interactive shell\n"
@@ -18538,32 +18520,33 @@ msgstr ""
 " -t[<fil>], --timing[=<fil>] mata ut tidmätningsdata till standard fel (eller till FIL)\n"
 
 #: term-utils/script.c:196
-#, fuzzy, c-format
+#, c-format
 msgid "Script started on %s ["
-msgstr "Skriptet startades %s\n"
+msgstr "Skriptet startade på %s ["
 
 #: term-utils/script.c:210
 #, c-format
 msgid "<not executed on terminal>"
-msgstr ""
+msgstr "<inte körd på terminal>"
 
 #: term-utils/script.c:228
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Script done on %s [<%s>]\n"
 msgstr ""
 "\n"
-"Skriptet färdigt %s\n"
+"Skriptet färdigt %s [<%s]>\n"
 
 #: term-utils/script.c:230
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Script done on %s [COMMAND_EXIT_CODE=\"%d\"]\n"
 msgstr ""
 "\n"
-"Skriptet färdigt %s\n"
+"Skriptet färdigt %s [COMMAND_EXIT_CODE=”%d”]\n"
+"\n"
 
 #: term-utils/script.c:241
 #, c-format
@@ -18588,12 +18571,11 @@ msgstr "kan inte skriva skriptfil"
 #: term-utils/script.c:457
 #, c-format
 msgid "Script terminated, max output file size %<PRIu64> exceeded.\n"
-msgstr ""
+msgstr "Skript avslutat, maximal utdata filstorlek %<PRIu64> överskriden.\n"
 
 #: term-utils/script.c:459
-#, fuzzy
 msgid "max output size exceeded"
-msgstr "förallokeringsstorlek överskreds"
+msgstr "maximal utdatastorlek överskreds"
 
 #: term-utils/script.c:509
 #, c-format
@@ -18613,9 +18595,8 @@ msgid "out of pty's"
 msgstr "slut på pty:er"
 
 #: term-utils/script.c:818
-#, fuzzy
 msgid "failed to parse output limit size"
-msgstr "misslyckades med att tolka %s-begränsning"
+msgstr "misslyckades med att tolka utdata begränsningsstorlek"
 
 #: term-utils/script.c:854
 #, c-format
@@ -19230,9 +19211,8 @@ msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary
 msgstr " -W, --table-wrap <kolumner>      radbryt text i kolumnerna när nödvändigt\n"
 
 #: text-utils/column.c:639
-#, fuzzy
 msgid " -L, --table-empty-lines          don't ignore empty lines\n"
-msgstr " -d, --table-noheadings           skriv inte ut rubriker\n"
+msgstr " -L, --table-empty-lines          hoppa inte över tomma rader\n"
 
 #: text-utils/column.c:640
 msgid " -J, --json                       use JSON output format for table\n"
