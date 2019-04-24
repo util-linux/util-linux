@@ -187,6 +187,19 @@ checkusage:
 	@ $(top_srcdir)/tools/checkusage.sh \
 		$(bin_PROGRAMS) $(sbin_PROGRAMS) \
 		$(usrbin_exec_PROGRAMS) $(usrsbin_exec_PROGRAMS)
+checklibdoc:
+	@ $(top_srcdir)/tools/checklibdocs.sh \
+		$(top_srcdir)/libmount/src/libmount.sym \
+		$(top_srcdir)/libmount/docs/libmount-sections.txt
+	@ $(top_srcdir)/tools/checklibdocs.sh \
+		$(top_srcdir)/libfdisk/src/libfdisk.sym \
+		$(top_srcdir)/libfdisk/docs/libfdisk-sections.txt
+	@ $(top_srcdir)/tools/checklibdocs.sh \
+		$(top_srcdir)/libsmartcols/src/libsmartcols.sym \
+		$(top_srcdir)/libsmartcols/docs/libsmartcols-sections.txt
+	@ $(top_srcdir)/tools/checklibdocs.sh \
+		$(top_srcdir)/libblkid/src/libblkid.sym \
+		$(top_srcdir)/libblkid/docs/libblkid-sections.txt
 
 DISTCHECK_CONFIGURE_FLAGS = \
 	--disable-use-tty-group \
