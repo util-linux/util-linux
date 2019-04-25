@@ -49,18 +49,22 @@ function make_checkusage
 
 function check_nonroot
 {
-	local opts="$MAKE_CHECK_OPTS --show-diff --memcheck-asan"
-
-	xconfigure \
-		--enable-asan \
+	local make_opts="$MAKE_CHECK_OPTS --show-diff"
+	local conf_opts="\
 		--disable-use-tty-group \
 		--disable-makeinstall-chown \
-		--enable-all-programs \
-		|| return
+		--enable-all-programs"
+
+	if [ "$TRAVIS_OS_NAME" != "osx" ]; then
+		conf_opts="$conf_opts --enable-asan"
+		make_opts="$make_opts --memcheck-asan"
+	fi
+
+	xconfigure $conf_opts || return
 	$MAKE || return
 
 	osx_prepare_check
-	$MAKE check TS_OPTS="$opts" || return
+	$MAKE check TS_OPTS="$make_opts" || return
 
 	make_checkusage || return
 
@@ -69,17 +73,20 @@ function check_nonroot
 
 function check_root
 {
-	local opts="$MAKE_CHECK_OPTS --show-diff --memcheck-asan"
+	local make_opts="$MAKE_CHECK_OPTS --show-diff"
+	local conf_opts="--enable-all-programs"
 
-	xconfigure \
-		--enable-asan \
-		--enable-all-programs \
-		|| return
+	if [ "$TRAVIS_OS_NAME" != "osx" ]; then
+		conf_opts="$conf_opts --enable-asan"
+		make_opts="$make_opts --memcheck-asan"
+	fi
+
+	xconfigure $conf_opts || return
 	$MAKE || return
 
 	$MAKE check TS_COMMAND="true" || return
 	osx_prepare_check
-	sudo -E $MAKE check TS_OPTS="$opts" || return
+	sudo -E $MAKE check TS_OPTS="$make_opts" || return
 
 	# root on osx has not enough permission for make install ;)
 	[ "$TRAVIS_OS_NAME" = "osx" ] && return
