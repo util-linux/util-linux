@@ -62,7 +62,7 @@ struct hardlink_hash {
 
 struct hardlink_dir {
 	struct hardlink_dir *next;
-	char name[0];
+	char name[];
 };
 
 struct hardlink_file {
@@ -70,7 +70,7 @@ struct hardlink_file {
 	ino_t ino;
 	dev_t dev;
 	unsigned int cksum;
-	char name[0];
+	char name[];
 };
 
 struct hardlink_dynstr {
