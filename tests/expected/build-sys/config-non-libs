@@ -21,8 +21,9 @@ fsck.cramfs:  libz
 fsck.minix:  
 fsfreeze:  
 getopt:  
+hardlink:  libpcre2-8 
 hexdump:  libtinfo 
-hwclock:  libm 
+hwclock:  libm librt 
 ionice:  
 ipcmk:  
 ipcrm:  

@@ -1,4 +1,4 @@
-cfdisk:  libfdisk libncursesw libsmartcols libtinfo libuuid 
+cfdisk:  libdl libfdisk libncursesw libsmartcols libtinfo libuuid 
 column:  libsmartcols 
 fdisk:  libfdisk libreadline libsmartcols libtinfo libuuid 
 fincore:  libsmartcols 
@@ -42,8 +42,9 @@ fsck.cramfs:  libz
 fsck.minix:  
 fsfreeze:  
 getopt:  
+hardlink:  libpcre2-8 
 hexdump:  libtinfo 
-hwclock:  libm 
+hwclock:  libm librt 
 ionice:  
 ipcmk:  
 ipcrm:  

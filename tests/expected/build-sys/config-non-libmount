@@ -1,10 +1,10 @@
-blkid:  libblkid libuuid 
-cfdisk:  libblkid libfdisk libncursesw libsmartcols libtinfo libuuid 
+blkid:  libblkid 
+cfdisk:  libblkid libdl libfdisk libncursesw libsmartcols libtinfo libuuid 
 column:  libsmartcols 
 fdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 fincore:  libsmartcols 
-findfs:  libblkid libuuid 
-libblkid.so.1.1.0:  libuuid 
+findfs:  libblkid 
+libblkid.so.1.1.0:  
 libfdisk.so.1.1.0:  libblkid libuuid 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
@@ -14,7 +14,7 @@ lsipc:  libsmartcols
 lslogins:  libsmartcols libsystemd 
 lsmem:  libsmartcols 
 mkswap:  libblkid libuuid 
-partx:  libblkid libsmartcols libuuid 
+partx:  libblkid libsmartcols 
 prlimit:  libsmartcols 
 rfkill:  libsmartcols 
 sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
@@ -23,7 +23,7 @@ uuidd:  librt libsystemd libuuid
 uuidgen:  libuuid 
 uuidparse:  libsmartcols libuuid 
 wdctl:  libsmartcols 
-wipefs:  libblkid libsmartcols libuuid 
+wipefs:  libblkid libsmartcols 
 zramctl:  libsmartcols 
 addpart:  
 agetty:  
@@ -50,8 +50,9 @@ fsck.cramfs:  libz
 fsck.minix:  
 fsfreeze:  
 getopt:  
+hardlink:  libpcre2-8 
 hexdump:  libtinfo 
-hwclock:  libm 
+hwclock:  libm librt 
 ionice:  
 ipcmk:  
 ipcrm:  

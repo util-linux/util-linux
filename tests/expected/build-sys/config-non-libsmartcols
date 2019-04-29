@@ -1,18 +1,18 @@
-blkid:  libblkid libuuid 
-eject:  libblkid libmount librt libuuid 
-findfs:  libblkid libuuid 
-fsck:  libblkid libmount librt libuuid 
-fstrim:  libblkid libmount librt libuuid 
-libblkid.so.1.1.0:  libuuid 
+blkid:  libblkid 
+eject:  libblkid libmount librt 
+findfs:  libblkid 
+fsck:  libblkid libmount librt 
+fstrim:  libblkid libmount librt 
+libblkid.so.1.1.0:  
 libfdisk.so.1.1.0:  libblkid libuuid 
-libmount.so.1.1.0:  libblkid librt libuuid 
+libmount.so.1.1.0:  libblkid librt 
 libuuid.so.1.3.0:  
 mkswap:  libblkid libuuid 
-mount:  libblkid libmount librt libuuid 
-mountpoint:  libblkid libmount librt libuuid 
-pylibmount.so:  libblkid libmount libpython2 librt libuuid 
+mount:  libblkid libmount librt 
+mountpoint:  libblkid libmount librt 
+pylibmount.so:  libblkid libmount libpython2 librt 
 swaplabel:  libblkid libuuid 
-umount:  libblkid libmount librt libuuid 
+umount:  libblkid libmount librt 
 uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
 agetty:  
@@ -38,8 +38,9 @@ fsck.cramfs:  libz
 fsck.minix:  
 fsfreeze:  
 getopt:  
+hardlink:  libpcre2-8 
 hexdump:  libtinfo 
-hwclock:  libm 
+hwclock:  libm librt 
 ionice:  
 ipcmk:  
 ipcrm:  

@@ -1,43 +1,43 @@
-blkid:  libblkid libuuid 
-cfdisk:  libblkid libfdisk libmount libncursesw librt libselinux libsmartcols libtinfo libuuid 
+blkid:  libblkid 
+cfdisk:  libblkid libdl libfdisk libmount libncursesw librt libselinux libsmartcols libtinfo libuuid 
 column:  libsmartcols 
-eject:  libblkid libmount librt libselinux libuuid 
+eject:  libblkid libmount librt libselinux 
 fdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 fincore:  libsmartcols 
-findfs:  libblkid libuuid 
-findmnt:  libblkid libmount librt libselinux libsmartcols libudev libuuid 
-fsck:  libblkid libmount librt libselinux libuuid 
-fstrim:  libblkid libmount librt libselinux libuuid 
-libblkid.so.1.1.0:  libuuid 
+findfs:  libblkid 
+findmnt:  libblkid libmount librt libselinux libsmartcols libudev 
+fsck:  libblkid libmount librt libselinux 
+fstrim:  libblkid libmount librt libselinux 
+libblkid.so.1.1.0:  
 libfdisk.so.1.1.0:  libblkid libuuid 
-libmount.so.1.1.0:  libblkid librt libselinux libuuid 
+libmount.so.1.1.0:  libblkid librt libselinux 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
 losetup:  libsmartcols 
-lsblk:  libblkid libmount librt libselinux libsmartcols libudev libuuid 
+lsblk:  libblkid libmount librt libselinux libsmartcols libudev 
 lscpu:  libsmartcols 
 lsipc:  libsmartcols 
-lslocks:  libblkid libmount librt libselinux libsmartcols libuuid 
+lslocks:  libblkid libmount librt libselinux libsmartcols 
 lslogins:  libselinux libsmartcols libsystemd 
 lsmem:  libsmartcols 
-lsns:  libblkid libmount librt libselinux libsmartcols libuuid 
+lsns:  libblkid libmount librt libselinux libsmartcols 
 mkswap:  libblkid libselinux libuuid 
-mount:  libblkid libmount librt libselinux libuuid 
-mountpoint:  libblkid libmount librt libselinux libuuid 
-partx:  libblkid libsmartcols libuuid 
+mount:  libblkid libmount librt libselinux 
+mountpoint:  libblkid libmount librt libselinux 
+partx:  libblkid libsmartcols 
 prlimit:  libsmartcols 
-pylibmount.so:  libblkid libmount libpython2 librt libselinux libuuid 
+pylibmount.so:  libblkid libmount libpython2 librt libselinux 
 rfkill:  libsmartcols 
 sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 swaplabel:  libblkid libuuid 
-swapoff:  libblkid libmount librt libselinux libuuid 
-swapon:  libblkid libmount librt libselinux libsmartcols libuuid 
-umount:  libblkid libmount librt libselinux libuuid 
+swapoff:  libblkid libmount librt libselinux 
+swapon:  libblkid libmount librt libselinux libsmartcols 
+umount:  libblkid libmount librt libselinux 
 uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
 uuidparse:  libsmartcols libuuid 
 wdctl:  libsmartcols 
-wipefs:  libblkid libsmartcols libuuid 
+wipefs:  libblkid libsmartcols 
 zramctl:  libsmartcols 
 addpart:  
 agetty:  
@@ -64,8 +64,9 @@ fsck.cramfs:  libz
 fsck.minix:  
 fsfreeze:  
 getopt:  
+hardlink:  libpcre2-8 
 hexdump:  libtinfo 
-hwclock:  libaudit libm 
+hwclock:  libaudit libm librt 
 ionice:  
 ipcmk:  
 ipcrm:  
