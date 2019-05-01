@@ -42,7 +42,6 @@
 #include "closestream.h"
 
 #define NHASH   (1<<17)  /* Must be a power of 2! */
-#define NIOBUF  (1<<12)
 #define NBUF    64
 
 struct hardlink_file;
@@ -75,8 +74,8 @@ struct hardlink_dynstr {
 struct hardlink_ctl {
 	struct hardlink_dir *dirs;
 	struct hardlink_hash *hps[NHASH];
-	char iobuf1[NIOBUF];
-	char iobuf2[NIOBUF];
+	char iobuf1[BUFSIZ];
+	char iobuf2[BUFSIZ];
 	/* summary counters */
 	unsigned long long ndirs;
 	unsigned long long nobjects;
@@ -282,9 +281,10 @@ static void process_path(struct hardlink_ctl *ctl, const char *name)
 				lseek(fd, 0, SEEK_SET);
 
 				for (fsize = st.st_size; fsize > 0;
-				     fsize -= NIOBUF) {
+				     fsize -= (off_t)sizeof(ctl->iobuf1)) {
 					ssize_t xsz;
-					off_t rsize = fsize >= NIOBUF ? NIOBUF : fsize;
+					ssize_t rsize = fsize > (ssize_t)sizeof(ctl->iobuf1) ?
+							sizeof(ctl->iobuf1) : fsize;
 
 					if ((xsz = read(fd, ctl->iobuf1, rsize)) != rsize)
 						warn(_("cannot read %s"), name);
