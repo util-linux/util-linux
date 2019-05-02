@@ -1013,7 +1013,9 @@ static void device_to_scols(
 	struct lsblk_device *child = NULL;
 	int link_group = 0;
 
-	ON_DBG(DEV, if (ul_path_isopen_dirfd(dev->sysfs)) ul_debugobj(dev, "%s ---> is open!", dev->name));
+
+	DBG(DEV, ul_debugobj(dev, "add '%s' to scols", dev->name));
+	ON_DBG(DEV, if (ul_path_isopen_dirfd(dev->sysfs)) ul_debugobj(dev, " %s ---> is open!", dev->name));
 
 	/* Do not print device more than one in --list mode */
 	if (!(lsblk->flags & LSBLK_TREE) && dev->is_printed)
@@ -1036,14 +1038,19 @@ static void device_to_scols(
 		struct libscols_line *gr = parent_line;
 
 		/* Merge all my parents to the one group */
+		DBG(DEV, ul_debugobj(dev, " grouping parents [--merge]"));
 		lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
 		while (lsblk_device_next_parent(dev, &itr, &p) == 0) {
-			if (!p->scols_line)
+			if (!p->scols_line) {
+				DBG(DEV, ul_debugobj(dev, " *** ignore '%s' no scols line yet", p->name));
 				continue;
-			scols_table_group_lines(tab, gr, p->scols_line, 0);
+			}
+			DBG(DEV, ul_debugobj(dev, " group '%s'", p->name));
+			scols_table_group_lines(tab, p->scols_line, gr, 0);
 		}
 
 		/* Link the group -- this makes group->child connection */
+		DBG(DEV, ul_debugobj(dev, " linking the group [--merge]"));
 		scols_line_link_group(ln, gr, 0);
 	}
 
@@ -1061,6 +1068,7 @@ static void device_to_scols(
 			if (data && sortdata != (uint64_t) -1)
 				set_sortdata_u64(ln, i, sortdata);
 		}
+		DBG(DEV, ul_debugobj(dev, " refer data[%zu]=\"%s\"", i, data));
 		if (data && scols_line_refer_data(ln, i, data))
 			err(EXIT_FAILURE, _("failed to add output data"));
 	}
@@ -1072,10 +1080,12 @@ static void device_to_scols(
 		 * otherwise we can close */
 		ul_path_close_dirfd(dev->sysfs);
 
-
 	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
-	while (lsblk_device_next_child(dev, &itr, &child) == 0)
+	while (lsblk_device_next_child(dev, &itr, &child) == 0) {
+		DBG(DEV, ul_debugobj(dev, "%s -> continue to child", dev->name));
 		device_to_scols(child, dev, tab, ln);
+		DBG(DEV, ul_debugobj(dev, "%s <- child done", dev->name));
+	}
 
 	/* Let's be careful with number of open files */
 	ul_path_close_dirfd(dev->sysfs);
