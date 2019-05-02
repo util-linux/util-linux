@@ -246,6 +246,9 @@ static struct libscols_group **grpset_locate_freespace(struct libscols_table *tb
 	if (!tb->grpset_size)
 		prepend = 0;
 
+	DBG(TAB, ul_debugobj(tb, "orig grpset:"));
+	grpset_debug(tb, NULL);
+
 	if (prepend) {
 		for (i = tb->grpset_size - 1; ; i--) {
 			if (tb->grpset[i] == NULL) {
@@ -295,8 +298,9 @@ static struct libscols_group **grpset_locate_freespace(struct libscols_table *tb
 	memset(first, 0, wanted * sizeof(struct libscols_group *));
 	tb->grpset_size += wanted;
 
-	grpset_debug(tb, NULL);
 done:
+	DBG(TAB, ul_debugobj(tb, "new grpset:"));
+	grpset_debug(tb, NULL);
 	return first;
 }
 
@@ -327,11 +331,11 @@ static int grpset_update(struct libscols_table *tb, struct libscols_line *ln, st
 			group_state_to_string(state)));
 
 	if (state == SCOLS_GSTATE_FIRST_MEMBER && gr->state != SCOLS_GSTATE_NONE) {
-		DBG(LINE, ul_debugobj(ln, "wrong group initialization"));
+		DBG(LINE, ul_debugobj(ln, "wrong group initialization (%s)", group_state_to_string(gr->state)));
 		abort();
 	}
 	if (state != SCOLS_GSTATE_NONE && gr->state == SCOLS_GSTATE_LAST_CHILD) {
-		DBG(LINE, ul_debugobj(ln, "wrong group termination"));
+		DBG(LINE, ul_debugobj(ln, "wrong group termination (%s)", group_state_to_string(gr->state)));
 		abort();
 	}
 	if (gr->state == SCOLS_GSTATE_LAST_MEMBER &&
@@ -443,7 +447,7 @@ int scols_groups_calculate_grpset(struct libscols_table *tb)
 	struct libscols_line *ln;
 	int rc = 0;
 
-	DBG(TAB, ul_debugobj(tb, "grpset calculate [top-level]"));
+	DBG(TAB, ul_debugobj(tb, "grpset calculate [top-level] ->"));
 
 	scols_groups_reset_state(tb);
 
@@ -457,6 +461,7 @@ int scols_groups_calculate_grpset(struct libscols_table *tb)
 	}
 
 	scols_groups_reset_state(tb);
+	DBG(TAB, ul_debugobj(tb, "<- done grpset calculate [top-level]"));
 	return rc;
 }
 
@@ -468,16 +473,20 @@ void scols_groups_reset_state(struct libscols_table *tb)
 	DBG(TAB, ul_debugobj(tb, "reset groups states"));
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_group(tb, &itr, &gr) == 0)
+	while (scols_table_next_group(tb, &itr, &gr) == 0) {
+		DBG(GROUP, ul_debugobj(gr, " reset to NONE"));
 		gr->state = SCOLS_GSTATE_NONE;
+	}
 
-	if (tb->grpset)
-		memset(tb->grpset, 0, tb->grpset_size);
+	if (tb->grpset) {
+		DBG(TAB, ul_debugobj(tb, " zeroize grpset"));
+		memset(tb->grpset, 0, tb->grpset_size * sizeof(struct libscols_group *));
+	}
 }
 
 static void add_member(struct libscols_group *gr, struct libscols_line *ln)
 {
-	DBG(GROUP, ul_debugobj(gr, "add member"));
+	DBG(GROUP, ul_debugobj(gr, "add member %p", ln));
 
 	ln->group = gr;
 	gr->nmembers++;
@@ -519,13 +528,19 @@ int scols_table_group_lines(	struct libscols_table *tb,
 {
 	struct libscols_group *gr = NULL;
 
-	if (!tb || (!ln && !member))
+	if (!tb || (!ln && !member)) {
+		DBG(GROUP, ul_debugobj(gr, "failed group lines (no table, line or member)"));
 		return -EINVAL;
+	}
 	if (ln && member)  {
-		if (ln->group && !member->group)
+		if (ln->group && !member->group) {
+			DBG(GROUP, ul_debugobj(gr, "failed group lines (new group, line member of another)"));
 			return -EINVAL;
-		if (ln->group && member->group && ln->group != member->group)
+		}
+		if (ln->group && member->group && ln->group != member->group) {
+			DBG(GROUP, ul_debugobj(gr, "failed group lines (groups mismatch bwteen member and line"));
 			return -EINVAL;
+		}
 	}
 
 	gr = member->group;

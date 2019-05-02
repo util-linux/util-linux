@@ -893,6 +893,8 @@ int __scols_print_tree(struct libscols_table *tb, struct libscols_buffer *buf)
 
 	DBG(TAB, ul_debugobj(tb, "----printing-tree-----"));
 
+	if (has_groups(tb))
+		scols_groups_reset_state(tb);
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 
 	while (scols_table_next_line(tb, &itr, &ln) == 0) {

@@ -398,7 +398,7 @@ int __scols_calculate(struct libscols_table *tb, struct libscols_buffer *buf)
 		}
 	}
 done:
-	DBG(TAB, ul_debugobj(tb, " final width: %zu (rc=%d)", width, rc));
+	DBG(TAB, ul_debugobj(tb, "-----final width: %zu (rc=%d)-----", width, rc));
 	ON_DBG(TAB, dbg_columns(tb));
 
 	return rc;
