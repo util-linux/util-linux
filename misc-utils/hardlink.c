@@ -283,8 +283,8 @@ static void process_path(struct hardlink_ctl *ctl, const char *name)
 				for (fsize = st.st_size; fsize > 0;
 				     fsize -= (off_t)sizeof(ctl->iobuf1)) {
 					ssize_t xsz;
-					ssize_t rsize = fsize > (ssize_t)sizeof(ctl->iobuf1) ?
-							sizeof(ctl->iobuf1) : fsize;
+					ssize_t rsize = fsize > (ssize_t) sizeof(ctl->iobuf1) ?
+							(ssize_t) sizeof(ctl->iobuf1) : fsize;
 
 					if ((xsz = read(fd, ctl->iobuf1, rsize)) != rsize)
 						warn(_("cannot read %s"), name);
@@ -393,7 +393,7 @@ int main(int argc, char **argv)
 	int errornumber;
 	PCRE2_SIZE erroroffset;
 	pcre2_code *re;
-	PCRE2_SPTR exclude_pattern;
+	PCRE2_SPTR exclude_pattern = NULL;
 	pcre2_match_data *match_data;
 #endif
 	struct hardlink_dynstr nam1 = { NULL, 0 };
