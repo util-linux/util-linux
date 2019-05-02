@@ -143,6 +143,11 @@ enum {
 	SCOLS_GSTATE_CONT_CHILDREN
 };
 
+/*
+ * Every group needs at least 3 columns
+ */
+#define SCOLS_GRPSET_CHUNKSIZ	3
+
 struct libscols_group {
 	int     refcount;
 

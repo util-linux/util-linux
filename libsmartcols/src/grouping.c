@@ -220,25 +220,28 @@ static int group_state_for_line(struct libscols_group *gr, struct libscols_line 
 	return SCOLS_GSTATE_NONE;
 }
 
-/* For now we assume that each active group is just 3 columns width. Later we can make it dynamic... 
+/*
+ * apply new @state to the chunk (addresesd by @xx) of grpset used for the group (@gr)
  */
 static void grpset_apply_group_state(struct libscols_group **xx, int state, struct libscols_group *gr)
 {
+	size_t i;
+
 	DBG(GROUP, ul_debugobj(gr, "   applying state to grpset"));
 
 	/* gr->state holds the old state, @state is the new state
 	 */
-	if (state == SCOLS_GSTATE_NONE)
-		xx[0] = xx[1] = xx[2] = NULL;
-	else
-		xx[0] = xx[1] = xx[2] = gr;
+	for (i = 0; i < SCOLS_GRPSET_CHUNKSIZ; i++)
+		xx[i] = state == SCOLS_GSTATE_NONE ? NULL : gr;
+
 	gr->state = state;
 }
 
-static struct libscols_group **grpset_locate_freespace(struct libscols_table *tb, size_t wanted, int prepend)
+static struct libscols_group **grpset_locate_freespace(struct libscols_table *tb, int chunks, int prepend)
 {
 	size_t i, avail = 0;
 	struct libscols_group **tmp, **first = NULL;
+	const size_t wanted = chunks * SCOLS_GRPSET_CHUNKSIZ;
 
 	if (!tb->grpset_size)
 		prepend = 0;
@@ -268,8 +271,8 @@ static struct libscols_group **grpset_locate_freespace(struct libscols_table *tb
 		}
 	}
 
-	DBG(TAB, ul_debugobj(tb, "   realocate grpset [sz: old=%zu, new=%zu]",
-				tb->grpset_size, tb->grpset_size + wanted));
+	DBG(TAB, ul_debugobj(tb, "   realocate grpset [sz: old=%zu, new=%zu, new_chunks=%d]",
+				tb->grpset_size, tb->grpset_size + wanted, chunks));
 
 	tmp = realloc(tb->grpset, (tb->grpset_size + wanted) * sizeof(struct libscols_group *));
 	if (!tmp)
@@ -310,9 +313,6 @@ static struct libscols_group **grpset_locate_group(struct libscols_table *tb, st
 }
 
 
-
-#define SCOLS_GRPSET_MINSZ	3
-
 static int grpset_update(struct libscols_table *tb, struct libscols_line *ln, struct libscols_group *gr)
 {
 	struct libscols_group **xx;
@@ -349,7 +349,7 @@ static int grpset_update(struct libscols_table *tb, struct libscols_line *ln, st
 
 	/* locate place in grpset where we draw the group */
 	if (!tb->grpset || gr->state == SCOLS_GSTATE_NONE)
-		xx = grpset_locate_freespace(tb, SCOLS_GRPSET_MINSZ, 1);
+		xx = grpset_locate_freespace(tb, 1, 1);
 	else
 		xx = grpset_locate_group(tb, gr);
 	if (!xx) {

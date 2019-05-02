@@ -110,11 +110,11 @@ static int groups_ascii_art_to_buffer(	struct libscols_table *tb,
 	if (rc)
 		return rc;
 
-	for (i = 0; i < tb->grpset_size; i+=3) {
+	for (i = 0; i < tb->grpset_size; i += SCOLS_GRPSET_CHUNKSIZ) {
 		struct libscols_group *gr = tb->grpset[i];
 
 		if (!gr) {
-			buffer_append_ntimes(buf, 3, cellpadding_symbol(tb));
+			buffer_append_ntimes(buf, SCOLS_GRPSET_CHUNKSIZ, cellpadding_symbol(tb));
 			continue;
 		}
 
@@ -144,7 +144,7 @@ static int groups_ascii_art_to_buffer(	struct libscols_table *tb,
 		case SCOLS_GSTATE_LAST_CHILD:
 			buffer_append_data(buf, cellpadding_symbol(tb));
 			buffer_append_data(buf, grp_c_last_symbol(tb));
-			if (grpset_is_empty(tb, i + 3, &rest)) {
+			if (grpset_is_empty(tb, i + SCOLS_GRPSET_CHUNKSIZ, &rest)) {
 				buffer_append_ntimes(buf, rest+1, grp_horizontal_symbol(tb));
 				filled = 1;
 			}
