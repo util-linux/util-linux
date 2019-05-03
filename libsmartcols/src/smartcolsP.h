@@ -231,6 +231,7 @@ struct libscols_table {
 			colors_wanted	:1,	/* enable colors */
 			is_term		:1,	/* isatty() */
 			padding_debug	:1,	/* output visible padding chars */
+			is_dummy_print	:1,	/* printing used for width calcualion only */
 			maxout		:1,	/* maximize output */
 			header_repeat   :1,     /* print header after libscols_table->termheight */
 			header_printed  :1,	/* header already printed */
@@ -309,7 +310,6 @@ void scols_group_remove_children(struct libscols_group *gr);
 void scols_group_remove_members(struct libscols_group *gr);
 void scols_unref_group(struct libscols_group *gr);
 void scols_groups_fix_members_order(struct libscols_table *tb);
-int scols_groups_calculate_grpset(struct libscols_table *tb);
 int scols_groups_update_grpset(struct libscols_table *tb, struct libscols_line *ln);
 void scols_groups_reset_state(struct libscols_table *tb);
 struct libscols_group *scols_grpset_get_printable_children(struct libscols_table *tb);

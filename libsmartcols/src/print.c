@@ -101,7 +101,7 @@ static int groups_ascii_art_to_buffer(	struct libscols_table *tb,
 	size_t i, rest = 0;
 	const char *filler = cellpadding_symbol(tb);
 
-	if (!has_groups(tb) || !tb->grpset)
+	if (!has_groups(tb))
 		return 0;
 
 	DBG(LINE, ul_debugobj(ln, "printing groups chart"));
@@ -109,6 +109,8 @@ static int groups_ascii_art_to_buffer(	struct libscols_table *tb,
 	rc = scols_groups_update_grpset(tb, ln);
 	if (rc)
 		return rc;
+	if (tb->is_dummy_print)
+		return 0;		/* allocate grpset[] only */
 
 	for (i = 0; i < tb->grpset_size; i += SCOLS_GRPSET_CHUNKSIZ) {
 		struct libscols_group *gr = tb->grpset[i];

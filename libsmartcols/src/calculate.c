@@ -88,6 +88,7 @@ static int count_column_width(struct libscols_table *tb,
 		else
 			len = mbs_safe_width(data);
 
+
 		if (len == (size_t) -1)		/* ignore broken multibyte strings */
 			len = 0;
 		cl->width_max = max(len, cl->width_max);
@@ -103,6 +104,19 @@ static int count_column_width(struct libscols_table *tb,
 			size_t treewidth = buffer_get_safe_art_size(buf);
 			cl->width_treeart = max(cl->width_treeart, treewidth);
 		}
+	}
+
+	if (scols_column_is_tree(cl) && has_groups(tb)) {
+		/* We don't fill buffer with groups tree ascii art during width
+		 * calcualtion. The print function only enlarge grpset[] and we
+		 * calculate final width from grpset_size.
+		 */
+		size_t gprwidth = tb->grpset_size + 1;
+		cl->width_treeart += gprwidth;
+		cl->width_max += gprwidth;
+		cl->width += gprwidth;
+		if (extreme_count)
+			extreme_sum += gprwidth;
 	}
 
 	if (extreme_count && cl->width_avg == 0) {
@@ -145,15 +159,12 @@ int __scols_calculate(struct libscols_table *tb, struct libscols_buffer *buf)
 
 
 	DBG(TAB, ul_debugobj(tb, "-----calculate-(termwidth=%zu)-----", tb->termwidth));
+	tb->is_dummy_print = 1;
 
 	colsepsz = mbs_safe_width(colsep(tb));
 
-	if (has_groups(tb)) {
-		rc = scols_groups_calculate_grpset(tb);
-		if (rc)
-			goto done;
+	if (has_groups(tb))
 		group_ncolumns = 1;
-	}
 
 	/* set basic columns width
 	 */
@@ -398,6 +409,7 @@ int __scols_calculate(struct libscols_table *tb, struct libscols_buffer *buf)
 		}
 	}
 done:
+	tb->is_dummy_print = 0;
 	DBG(TAB, ul_debugobj(tb, "-----final width: %zu (rc=%d)-----", width, rc));
 	ON_DBG(TAB, dbg_columns(tb));
 
