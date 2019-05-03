@@ -830,7 +830,7 @@ static int print_tree_line(struct libscols_table *tb,
 {
 	int rc, children = 0, gr_children = 0;
 
-	DBG(LINE, ul_debugobj(ln, "printing line"));
+	DBG(LINE, ul_debugobj(ln, "---printing tree line->"));
 
 	/* print the line */
 	fput_line_open(tb);
@@ -848,6 +848,8 @@ static int print_tree_line(struct libscols_table *tb,
 	if (children) {
 		struct list_head *p;
 
+		DBG(LINE, ul_debugobj(ln, " printing children"));
+
 		list_for_each(p, &ln->ln_branch) {
 			struct libscols_line *chld =
 					list_entry(p, struct libscols_line, ln_children);
@@ -862,6 +864,8 @@ static int print_tree_line(struct libscols_table *tb,
 	/* print group's children */
 	if (gr_children) {
 		struct list_head *p;
+
+		DBG(LINE, ul_debugobj(ln, " printing group children"));
 
 		list_for_each(p, &ln->group->gr_children) {
 			struct libscols_line *chld =
@@ -880,6 +884,7 @@ static int print_tree_line(struct libscols_table *tb,
 	if ((!children && !gr_children) || scols_table_is_json(tb))
 		fput_line_close(tb, last, last_in_table);
 done:
+	DBG(LINE, ul_debugobj(ln, "<- print tree line [rc=%d]", rc));
 	return rc;
 }
 

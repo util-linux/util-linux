@@ -159,6 +159,7 @@ static inline const char *group_state_to_string(int state)
 	return grpstates[state];
 }
 
+/*
 static void grpset_debug(struct libscols_table *tb, struct libscols_line *ln)
 {
 	size_t i;
@@ -179,6 +180,8 @@ static void grpset_debug(struct libscols_table *tb, struct libscols_line *ln)
 			DBG(LINE, ul_debug("grpset[%zu]: free", i));
 	}
 }
+*/
+
 static int group_state_for_line(struct libscols_group *gr, struct libscols_line *ln)
 {
 	if (gr->state == SCOLS_GSTATE_NONE &&
@@ -246,8 +249,10 @@ static struct libscols_group **grpset_locate_freespace(struct libscols_table *tb
 	if (!tb->grpset_size)
 		prepend = 0;
 
+	/*
 	DBG(TAB, ul_debugobj(tb, "orig grpset:"));
 	grpset_debug(tb, NULL);
+	*/
 
 	if (prepend) {
 		for (i = tb->grpset_size - 1; ; i--) {
@@ -299,8 +304,10 @@ static struct libscols_group **grpset_locate_freespace(struct libscols_table *tb
 	tb->grpset_size += wanted;
 
 done:
+	/*
 	DBG(TAB, ul_debugobj(tb, "new grpset:"));
 	grpset_debug(tb, NULL);
+	*/
 	return first;
 }
 
@@ -362,7 +369,7 @@ static int grpset_update(struct libscols_table *tb, struct libscols_line *ln, st
 	}
 
 	grpset_apply_group_state(xx, state, gr);
-	ON_DBG(LINE, grpset_debug(tb, ln));
+	/*ON_DBG(LINE, grpset_debug(tb, ln));*/
 	return 0;
 }
 
