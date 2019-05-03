@@ -97,6 +97,9 @@ struct libscols_column {
 	size_t	width_treeart;	/* size of the tree ascii art */
 	double	width_hint;	/* hint (N < 1 is in percent of termwidth) */
 
+	size_t	extreme_sum;
+	int	extreme_count;
+
 	int	json_type;	/* SCOLS_JSON_* */
 
 	int	flags;

@@ -32,6 +32,46 @@ static void dbg_columns(struct libscols_table *tb)
 		dbg_column(tb, cl);
 }
 
+static int count_cell_width(struct libscols_table *tb,
+		struct libscols_line *ln,
+		struct libscols_column *cl,
+		struct libscols_buffer *buf)
+{
+	size_t len;
+	char *data;
+	int rc;
+
+	rc = __cell_to_buffer(tb, ln, cl, buf);
+	if (rc)
+		return rc;
+
+	data = buffer_get_data(buf);
+	if (!data)
+		len = 0;
+	else if (scols_column_is_customwrap(cl))
+		len = cl->wrap_chunksize(cl, data, cl->wrapfunc_data);
+	else
+		len = mbs_safe_width(data);
+
+	if (len == (size_t) -1)		/* ignore broken multibyte strings */
+		len = 0;
+	cl->width_max = max(len, cl->width_max);
+
+	if (cl->is_extreme && cl->width_avg && len > cl->width_avg * 2)
+		return 0;
+
+	else if (scols_column_is_noextremes(cl)) {
+		cl->extreme_sum += len;
+		cl->extreme_count++;
+	}
+	cl->width = max(len, cl->width);
+	if (scols_column_is_tree(cl)) {
+		size_t treewidth = buffer_get_safe_art_size(buf);
+		cl->width_treeart = max(cl->width_treeart, treewidth);
+	}
+	return 0;
+}
+
 /*
  * This function counts column width.
  *
@@ -47,8 +87,7 @@ static int count_column_width(struct libscols_table *tb,
 {
 	struct libscols_line *ln;
 	struct libscols_iter itr;
-	int extreme_count = 0, rc = 0, no_header = 0;
-	size_t extreme_sum = 0;
+	int rc = 0, no_header = 0;
 
 	assert(tb);
 	assert(cl);
@@ -72,38 +111,9 @@ static int count_column_width(struct libscols_table *tb,
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (scols_table_next_line(tb, &itr, &ln) == 0) {
-		size_t len;
-		char *data;
-
-		rc = __cell_to_buffer(tb, ln, cl, buf);
+		rc = count_cell_width(tb, ln, cl, buf);
 		if (rc)
 			goto done;
-
-		data = buffer_get_data(buf);
-
-		if (!data)
-			len = 0;
-		else if (scols_column_is_customwrap(cl))
-			len = cl->wrap_chunksize(cl, data, cl->wrapfunc_data);
-		else
-			len = mbs_safe_width(data);
-
-
-		if (len == (size_t) -1)		/* ignore broken multibyte strings */
-			len = 0;
-		cl->width_max = max(len, cl->width_max);
-
-		if (cl->is_extreme && cl->width_avg && len > cl->width_avg * 2)
-			continue;
-		else if (scols_column_is_noextremes(cl)) {
-			extreme_sum += len;
-			extreme_count++;
-		}
-		cl->width = max(len, cl->width);
-		if (scols_column_is_tree(cl)) {
-			size_t treewidth = buffer_get_safe_art_size(buf);
-			cl->width_treeart = max(cl->width_treeart, treewidth);
-		}
 	}
 
 	if (scols_column_is_tree(cl) && has_groups(tb)) {
@@ -115,12 +125,12 @@ static int count_column_width(struct libscols_table *tb,
 		cl->width_treeart += gprwidth;
 		cl->width_max += gprwidth;
 		cl->width += gprwidth;
-		if (extreme_count)
-			extreme_sum += gprwidth;
+		if (cl->extreme_count)
+			cl->extreme_sum += gprwidth;
 	}
 
-	if (extreme_count && cl->width_avg == 0) {
-		cl->width_avg = extreme_sum / extreme_count;
+	if (cl->extreme_count && cl->width_avg == 0) {
+		cl->width_avg = cl->extreme_sum / cl->extreme_count;
 		if (cl->width_avg && cl->width_max > cl->width_avg * 2)
 			cl->is_extreme = 1;
 	}
