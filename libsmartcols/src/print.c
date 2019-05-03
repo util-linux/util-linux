@@ -839,49 +839,33 @@ static int print_tree_line(struct libscols_table *tb,
 		goto done;
 
 	children = has_children(ln);
+
+	/* we print group children in __scols_print_tree() after tree is printed */
 	gr_children = is_last_group_member(ln) && has_group_children(ln);
+	if (gr_children) {
+		last_in_table = 0;
+		tb->ngrpchlds_pending++;
+	}
 
-	if (children || gr_children)
-		fput_children_open(tb);
-
-	/* print children */
 	if (children) {
 		struct list_head *p;
 
 		DBG(LINE, ul_debugobj(ln, " printing children"));
 
+		fput_children_open(tb);
 		list_for_each(p, &ln->ln_branch) {
 			struct libscols_line *chld =
 					list_entry(p, struct libscols_line, ln_children);
-			int last_child = !gr_children && p->next == &ln->ln_branch;
+			int last_child = p->next == &ln->ln_branch;
 
 			rc = print_tree_line(tb, chld, buf, last_child, last_in_table && last_child);
 			if (rc)
 				goto done;
 		}
-	}
-
-	/* print group's children */
-	if (gr_children) {
-		struct list_head *p;
-
-		DBG(LINE, ul_debugobj(ln, " printing group children"));
-
-		list_for_each(p, &ln->group->gr_children) {
-			struct libscols_line *chld =
-					list_entry(p, struct libscols_line, ln_children);
-			int last_child = p->next == &ln->group->gr_children;
-
-			rc = print_tree_line(tb, chld, buf, last_child, last_in_table && last_child);
-			if (rc)
-				goto done;
-		}
-	}
-
-	if (children || gr_children)
 		fput_children_close(tb);
+	}
 
-	if ((!children && !gr_children) || scols_table_is_json(tb))
+	if (!children || scols_table_is_json(tb))
 		fput_line_close(tb, last, last_in_table);
 done:
 	DBG(LINE, ul_debugobj(ln, "<- print tree line [rc=%d]", rc));
@@ -912,8 +896,40 @@ int __scols_print_tree(struct libscols_table *tb, struct libscols_buffer *buf)
 		if (ln->parent || ln->parent_group)
 			continue;
 		rc = print_tree_line(tb, ln, buf, ln == last, ln == last);
-	}
+		if (rc)
+			break;
 
+		DBG(LINE, ul_debugobj(ln, " pending groups: %zu", tb->ngrpchlds_pending));
+
+		/* print group's children */
+		while (tb->ngrpchlds_pending) {
+			struct libscols_group *gr = scols_grpset_get_printable_children(tb);
+			struct list_head *p;
+
+			DBG(LINE, ul_debugobj(ln, " printing group children [pending=%zu]", tb->ngrpchlds_pending));
+			if (!gr) {
+				DBG(LINE, ul_debugobj(ln, " *** ngrpchlds_pending counter invalid"));
+				tb->ngrpchlds_pending = 0;
+				break;
+			}
+
+			DBG(LINE, ul_debugobj(ln, " printing group children"));
+			tb->ngrpchlds_pending--;
+			list_for_each(p, &gr->gr_children) {
+				struct libscols_line *chld =
+					list_entry(p, struct libscols_line, ln_children);
+				int last_child = p->next == &gr->gr_children;
+
+				rc = print_tree_line(tb, chld, buf, last_child,
+							last_child
+							&& ln == last
+							&& tb->ngrpchlds_pending == 0);
+				if (rc)
+					goto done;
+			}
+		}
+	}
+done:
 	return rc;
 }
 

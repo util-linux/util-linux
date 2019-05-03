@@ -468,7 +468,8 @@ int scols_groups_calculate_grpset(struct libscols_table *tb)
 	}
 
 	scols_groups_reset_state(tb);
-	DBG(TAB, ul_debugobj(tb, "<- done grpset calculate [top-level]"));
+	DBG(TAB, ul_debugobj(tb, "<- done grpset calculate [top-level, rc=%d, size=%zu]",
+				rc, tb->grpset_size));
 	return rc;
 }
 
@@ -489,6 +490,7 @@ void scols_groups_reset_state(struct libscols_table *tb)
 		DBG(TAB, ul_debugobj(tb, " zeroize grpset"));
 		memset(tb->grpset, 0, tb->grpset_size * sizeof(struct libscols_group *));
 	}
+	tb->ngrpchlds_pending = 0;
 }
 
 static void add_member(struct libscols_group *gr, struct libscols_line *ln)
@@ -503,6 +505,30 @@ static void add_member(struct libscols_group *gr, struct libscols_line *ln)
 	list_add_tail(&ln->ln_groups, &gr->gr_members);
 	scols_ref_line(ln);
 }
+
+/*
+ * Returns first group which is ready to print group children.
+ *
+ * This function scans grpset[] in backward order and returns first group
+ * with SCOLS_GSTATE_CONT_CHILDREN or SCOLS_GSTATE_LAST_MEMBER state.
+ */
+struct libscols_group *scols_grpset_get_printable_children(struct libscols_table *tb)
+{
+	size_t i;
+
+	for (i = tb->grpset_size; i > 0; i -= SCOLS_GRPSET_CHUNKSIZ) {
+		struct libscols_group *gr = tb->grpset[i-1];
+
+		if (gr == NULL)
+			continue;
+		if (gr->state == SCOLS_GSTATE_CONT_CHILDREN ||
+		    gr->state == SCOLS_GSTATE_LAST_MEMBER)
+			return gr;
+	}
+
+	return NULL;
+}
+
 
 /**
  * scols_table_group_lines:

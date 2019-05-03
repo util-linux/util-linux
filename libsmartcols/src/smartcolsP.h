@@ -214,6 +214,7 @@ struct libscols_table {
 	struct list_head	tb_groups;	/* all defined groups */
 	struct libscols_group	**grpset;
 	size_t			grpset_size;
+	size_t			ngrpchlds_pending;	/* groups with not yet printed children */
 
 	struct libscols_symbols	*symbols;
 	struct libscols_cell	title;		/* optional table title (for humans) */
@@ -311,6 +312,7 @@ void scols_groups_fix_members_order(struct libscols_table *tb);
 int scols_groups_calculate_grpset(struct libscols_table *tb);
 int scols_groups_update_grpset(struct libscols_table *tb, struct libscols_line *ln);
 void scols_groups_reset_state(struct libscols_table *tb);
+struct libscols_group *scols_grpset_get_printable_children(struct libscols_table *tb);
 
 /*
  * calculate.c
