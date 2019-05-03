@@ -1275,7 +1275,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
  */
 int loopcxt_setup_device(struct loopdev_cxt *lc)
 {
-	int file_fd, dev_fd, mode = O_RDWR, rc = -1, cnt = 0;
+	int file_fd, dev_fd, mode = O_RDWR, rc = -1, cnt = 0, err, again;
 	int errsv = 0;
 
 	if (!lc || !*lc->device || !lc->filename)
@@ -1354,7 +1354,13 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 		goto err;
 	}
 
-	if (ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info)) {
+	do {
+		err = ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info);
+		again = err && errno == EAGAIN;
+		if (again)
+			xusleep(250000);
+	} while (again);
+	if (err) {
 		rc = -errno;
 		errsv = errno;
 		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64 failed: %m"));
@@ -1399,7 +1405,7 @@ err:
  */
 int loopcxt_ioctl_status(struct loopdev_cxt *lc)
 {
-	int dev_fd, rc = -1;
+	int dev_fd, rc = -1, err, again;
 
 	errno = 0;
 	dev_fd = loopcxt_get_fd(lc);
@@ -1410,7 +1416,13 @@ int loopcxt_ioctl_status(struct loopdev_cxt *lc)
 	}
 	DBG(SETUP, ul_debugobj(lc, "device open: OK"));
 
-	if (ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info)) {
+	do {
+		err = ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info);
+		again = err && errno == EAGAIN;
+		if (again)
+			xusleep(250000);
+	} while (again);
+	if (err) {
 		rc = -errno;
 		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64 failed: %m"));
 		return rc;
