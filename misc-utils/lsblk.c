@@ -1560,6 +1560,7 @@ static int process_all_devices(struct lsblk_devtree *tr)
 		if (is_maj_excluded(dev->maj) || !is_maj_included(dev->maj)) {
 			DBG(DEV, ul_debug(" %s: ignore (by filter)", d->d_name));
 			lsblk_devtree_remove_device(tr, dev);
+			dev = NULL;
 			goto next;
 		}
 
