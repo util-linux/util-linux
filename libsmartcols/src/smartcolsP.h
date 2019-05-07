@@ -217,7 +217,9 @@ struct libscols_table {
 	struct list_head	tb_groups;	/* all defined groups */
 	struct libscols_group	**grpset;
 	size_t			grpset_size;
+
 	size_t			ngrpchlds_pending;	/* groups with not yet printed children */
+	struct libscols_line	*walk_last_tree_root;	/* last root, used by scols_walk_() */
 
 	struct libscols_symbols	*symbols;
 	struct libscols_cell	title;		/* optional table title (for humans) */
@@ -239,6 +241,7 @@ struct libscols_table {
 			header_repeat   :1,     /* print header after libscols_table->termheight */
 			header_printed  :1,	/* header already printed */
 			priv_symbols	:1,	/* default private symbols */
+			walk_last_done	:1,	/* last tree root walked */
 			no_headings	:1,	/* don't print header */
 			no_encode	:1,	/* don't care about control and non-printable chars */
 			no_linesep	:1,	/* don't print line separator */
@@ -318,6 +321,18 @@ void scols_groups_reset_state(struct libscols_table *tb);
 struct libscols_group *scols_grpset_get_printable_children(struct libscols_table *tb);
 
 /*
+ * walk.c
+ */
+extern int scols_walk_tree(struct libscols_table *tb,
+                    struct libscols_column *cl,
+                    int (*callback)(struct libscols_table *,
+                                    struct libscols_line *,
+                                    struct libscols_column *,
+                                    void *),
+                    void *data);
+extern int scols_walk_is_last(struct libscols_table *tb, struct libscols_line *ln);
+
+/*
  * calculate.c
  */
 extern int __scols_calculate(struct libscols_table *tb, struct libscols_buffer *buf);
@@ -352,12 +367,38 @@ extern void fput_children_close(struct libscols_table *tb);
 extern void fput_line_open(struct libscols_table *tb);
 extern void fput_line_close(struct libscols_table *tb, int last, int last_in_table);
 
+static inline int is_tree_root(struct libscols_line *ln)
+{
+	return ln && !ln->parent && !ln->parent_group;
+}
+
+static inline int is_last_tree_root(struct libscols_table *tb, struct libscols_line *ln)
+{
+	if (!ln || !tb || tb->walk_last_tree_root != ln)
+		return 0;
+
+	return 1;
+}
+
+static inline int is_child(struct libscols_line *ln)
+{
+	return ln && ln->parent;
+}
+
 static inline int is_last_child(struct libscols_line *ln)
 {
 	if (!ln || !ln->parent)
-		return 1;
+		return 0;
 
 	return list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch);
+}
+
+static inline int is_first_child(struct libscols_line *ln)
+{
+	if (!ln || !ln->parent)
+		return 0;
+
+	return list_entry_is_first(&ln->ln_children, &ln->parent->ln_branch);
 }
 
 
