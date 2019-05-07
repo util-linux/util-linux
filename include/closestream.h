@@ -57,7 +57,7 @@ close_stdout_atexit(void)
 	/*
 	 * Note that close stdout at exit disables ASAN to report memory leaks
 	 */
-#ifdef USE_CLOSE_ATEXIT
+#if !defined(__SANITIZE_ADDRESS__)
 	atexit(close_stdout);
 #endif
 }
