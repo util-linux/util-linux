@@ -72,6 +72,15 @@ static int count_cell_width(struct libscols_table *tb,
 	return 0;
 }
 
+
+static int walk_count_cell_width(struct libscols_table *tb,
+		struct libscols_line *ln,
+		struct libscols_column *cl,
+		void *data)
+{
+	return count_cell_width(tb, ln, cl, (struct libscols_buffer *) data);
+}
+
 /*
  * This function counts column width.
  *
@@ -85,8 +94,6 @@ static int count_column_width(struct libscols_table *tb,
 			      struct libscols_column *cl,
 			      struct libscols_buffer *buf)
 {
-	struct libscols_line *ln;
-	struct libscols_iter itr;
 	int rc = 0, no_header = 0;
 
 	assert(tb);
@@ -109,11 +116,22 @@ static int count_column_width(struct libscols_table *tb,
 			cl->width_min = 1;
 	}
 
-	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_line(tb, &itr, &ln) == 0) {
-		rc = count_cell_width(tb, ln, cl, buf);
+	if (scols_table_is_tree(tb)) {
+		/* Count width for tree */
+		rc = scols_walk_tree(tb, cl, walk_count_cell_width, (void *) buf);
 		if (rc)
 			goto done;
+	} else {
+		/* Count width for list */
+		struct libscols_iter itr;
+		struct libscols_line *ln;
+
+		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+		while (scols_table_next_line(tb, &itr, &ln) == 0) {
+			rc = count_cell_width(tb, ln, cl, buf);
+			if (rc)
+				goto done;
+		}
 	}
 
 	if (scols_column_is_tree(cl) && has_groups(tb)) {
