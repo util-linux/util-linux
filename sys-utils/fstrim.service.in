@@ -4,7 +4,7 @@ Documentation=man:fstrim(8)
 
 [Service]
 Type=oneshot
-ExecStart=@sbindir@/fstrim --fstab --verbose
+ExecStart=@sbindir@/fstrim --fstab --verbose --quiet
 ProtectSystem=strict
 ProtectHome=yes
 PrivateDevices=no

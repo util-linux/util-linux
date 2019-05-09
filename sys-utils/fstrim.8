@@ -1,4 +1,4 @@
-.TH FSTRIM 8 "July 2014" "util-linux" "System Administration"
+.TH FSTRIM 8 "May 2019" "util-linux" "System Administration"
 .SH NAME
 fstrim \- discard unused blocks on a mounted filesystem
 .SH SYNOPSIS
@@ -99,6 +99,14 @@ LVM setup, etc.  These reductions would not be reflected in fstrim_range.len
 (the
 .B --length
 option).
+.TP
+.B \-\-quiet
+Suppress error messages.  This option is meant to be used in systemd service
+file to hide warnings that are result of known problems, such as NTFS driver
+reporting
+.I Bad file descriptor
+when device is mounted read-only, or lack of file system support for ioctl
+FITRIM call.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.

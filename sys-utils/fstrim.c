@@ -60,6 +60,7 @@ struct fstrim_control {
 	struct fstrim_range range;
 
 	unsigned int verbose : 1,
+		     quiet   : 1,
 		     fstab   : 1,
 		     dryrun : 1;
 };
@@ -108,9 +109,18 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const
 
 	errno = 0;
 	if (ioctl(fd, FITRIM, &range)) {
-		rc = errno == EOPNOTSUPP || errno == ENOTTY ? 1 : -errno;
-
-		if (rc != 1)
+		switch (errno) {
+		case EBADF:
+		case ENOTTY:
+		case EOPNOTSUPP:
+			if (ctl->quiet) {
+				rc = 1;
+				break;
+			}
+		default:
+			rc = -errno;
+		}
+		if (rc < 0)
 			warn(_("%s: FITRIM ioctl failed"), path);
 		goto done;
 	}
@@ -349,6 +359,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --length <num>  the number of bytes to discard\n"), out);
 	fputs(_(" -m, --minimum <num> the minimum extent length to discard\n"), out);
 	fputs(_(" -v, --verbose       print number of discarded bytes\n"), out);
+	fputs(_("     --quiet         suppress error messages\n"), out);
 	fputs(_(" -n, --dry-run       does everything, but trim\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -364,6 +375,9 @@ int main(int argc, char **argv)
 	struct fstrim_control ctl = {
 			.range = { .len = ULLONG_MAX }
 	};
+	enum {
+		OPT_QUIET = CHAR_MAX + 1
+	};
 
 	static const struct option longopts[] = {
 	    { "all",       no_argument,       NULL, 'a' },
@@ -374,6 +388,7 @@ int main(int argc, char **argv)
 	    { "length",    required_argument, NULL, 'l' },
 	    { "minimum",   required_argument, NULL, 'm' },
 	    { "verbose",   no_argument,       NULL, 'v' },
+	    { "quiet",     no_argument,       NULL, OPT_QUIET },
 	    { "dry-run",   no_argument,       NULL, 'n' },
 	    { NULL, 0, NULL, 0 }
 	};
@@ -409,7 +424,9 @@ int main(int argc, char **argv)
 		case 'v':
 			ctl.verbose = 1;
 			break;
-
+		case OPT_QUIET:
+			ctl.quiet = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
