@@ -1086,9 +1086,10 @@ int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename)
 		return -EINVAL;
 	if (!filename)
 		filename = mnt_get_fstab_path();
-
-	if (!filename || stat(filename, &st))
+	if (!filename)
 		return -EINVAL;
+	if (stat(filename, &st) != 0)
+		return -errno;
 
 	tb->fmt = MNT_FMT_FSTAB;
 
