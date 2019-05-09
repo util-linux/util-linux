@@ -32,6 +32,10 @@ The command unshare(1) now allows set user ID and group ID by new command line
 options -S/--setuid and -G/--setgid; and new options -R/--root and -w/--wd
 allows to set root and working directory (like nsenter(1)).
 
+The command fstrim(8) does not suppress some well known trimming warnings by
+default anymore.  It's necessary to explicitly use a new command line option
+--quiet (recommended for crond or systemd).
+
 The command lscpu(1) now prints 'Frequency boost' and 'Vulnerability' fields.
 The caches calculation has been modified to print summary from all system caches
 rather than per code numbers.

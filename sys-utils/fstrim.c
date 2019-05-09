@@ -113,10 +113,8 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const
 		case EBADF:
 		case ENOTTY:
 		case EOPNOTSUPP:
-			if (ctl->quiet) {
-				rc = 1;
-				break;
-			}
+			rc = 1;
+			break;
 		default:
 			rc = -errno;
 		}
@@ -325,8 +323,11 @@ static int fstrim_all(struct fstrim_control *ctl)
 		 * This is reason why we ignore EOPNOTSUPP and ENOTTY errors
 		 * from discard ioctl.
 		 */
-		if (fstrim_filesystem(ctl, tgt, src) < 0)
+		rc = fstrim_filesystem(ctl, tgt, src);
+		if (rc < 0)
 		       cnt_err++;
+		else if (rc == 1 && !ctl->quiet)
+			warnx(_("%s: the discard operation is not supported"), tgt);
 	}
 
 	ul_unref_path(wholedisk);
@@ -451,7 +452,7 @@ int main(int argc, char **argv)
 		return fstrim_all(&ctl);	/* MNT_EX_* codes */
 
 	rc = fstrim_filesystem(&ctl, path, NULL);
-	if (rc == 1)
+	if (rc == 1 && !ctl.quiet)
 		warnx(_("%s: the discard operation is not supported"), path);
 
 	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
