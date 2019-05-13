@@ -67,8 +67,8 @@ example by \fB\-E WWN\fR.
 .TP
 .BR \-e , " \-\-exclude " \fIlist\fP
 Exclude the devices specified by the comma-separated \fIlist\fR of major device numbers.
-Note that RAM disks (major=1) are excluded by default if \fB\-\-all\fR is no specified.
-The filter is applied to the top-level devices only. This maybe be confusing for
+Note that RAM disks (major=1) are excluded by default if \fB\-\-all\fR is not specified.
+The filter is applied to the top-level devices only. This may be confusing for
 \fB\-\-list\fR output format where hierarchy of the devices is not obvious.
 .TP
 .BR \-f , " \-\-fs"
@@ -83,7 +83,7 @@ Display help text and exit.
 .TP
 .BR \-I , " \-\-include " \fIlist\fP
 Include devices specified by the comma-separated \fIlist\fR of major device numbers.
-The filter is applied to the top-level devices only. This maybe be confusing for
+The filter is applied to the top-level devices only. This may be confusing for
 \fB\-\-list\fR output format where hierarchy of the devices is not obvious.
 .TP
 .BR \-i , " \-\-ascii"
