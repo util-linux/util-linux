@@ -43,10 +43,10 @@ On some systems, this can also be used like \fBnvram-wakeup\fP, waking from stat
 like ACPI S4 (suspend to disk).  Not all systems have persistent media that are
 appropriate for such suspend modes.
 .PP
-Note that alarm functionality depends on hardware; not every RTC is able to setup 
+Note that alarm functionality depends on hardware; not every RTC is able to setup
 an alarm up to 24 hours in the future.
 .PP
-The suspend setup maybe be interrupted by active hardware; for example wireless USB
+The suspend setup may be interrupted by active hardware; for example wireless USB
 input devices that continue to send events for some fraction of a second after the
 return key is pressed.
 .B rtcwake
