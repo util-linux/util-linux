@@ -162,17 +162,39 @@ check_suffix:
 	if (power)
 		*power = pwr;
 	if (frac && pwr) {
-		int zeros_in_pwr = frac_zeros % 3;
-		int frac_pwr = pwr - (frac_zeros / 3) - 1;
-		uintmax_t y = frac * (zeros_in_pwr == 0 ? 100 :
-				      zeros_in_pwr == 1 ?  10 : 1);
+		int i;
+		uintmax_t frac_div = 10, frac_poz = 1, frac_base = 1;
 
-		if (frac_pwr < 0) {
-			rc = -EINVAL;
-			goto err;
-		}
-		do_scale_by_power(&y, base, frac_pwr);
-		x += y;
+		/* mega, giga, ... */
+		do_scale_by_power(&frac_base, base, pwr);
+
+		/* maximal divisor for last digit (e.g. for 0.05 is
+		 * frac_div=100, for 0.054 is frac_div=1000, etc.)
+		 */
+		while (frac_div < frac)
+			frac_div *= 10;
+
+		/* 'frac' is without zeros (5 means 0.5 as well as 0.05) */
+		for (i = 0; i < frac_zeros; i++)
+			frac_div *= 10;
+
+		/*
+		 * Go backwardly from last digit and add to result what the
+		 * digit represents in the frac_base. For example 0.25G
+		 *
+		 *  5 means 1GiB / (100/5)
+		 *  2 means 1GiB / (10/2)
+		 */
+		do {
+			unsigned int seg = frac % 10;		 /* last digit of the frac */
+			uintmax_t seg_div = frac_div / frac_poz; /* what represents the segment 1000, 100, .. */
+
+			frac /= 10;	/* remove last digit from frac */
+			frac_poz *= 10;
+
+			if (seg)
+				x += frac_base / (seg_div / seg);
+		} while (frac);
 	}
 done:
 	*res = x;
