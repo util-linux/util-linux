@@ -95,9 +95,10 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 #else
 	    st.st_mtime <= dev->bid_time &&
 #endif
-	    (diff < BLKID_PROBE_MIN ||
-		dev->bid_flags & BLKID_BID_FL_VERIFIED))
+	    diff < BLKID_PROBE_MIN) {
+		dev->bid_flags |= BLKID_BID_FL_VERIFIED;
 		return dev;
+	}
 
 #ifndef HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC
 	DBG(PROBE, ul_debug("need to revalidate %s (cache time %lu, stat time %lu,\t"
