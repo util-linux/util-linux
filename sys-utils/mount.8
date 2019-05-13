@@ -114,10 +114,10 @@ options to avoid ambivalent interpretation of the given argument.  For example:
 .RE
 
 The same filesystem may be mounted more than once, and in some cases (e.g.
-network filesystems) the same filesystem maybe be mounted on the same
+network filesystems) the same filesystem may be mounted on the same
 mountpoint more times. The mount command does not implement any policy to
-control this behavior. All behavior is controlled by kernel and it is usually
-specific to filesystem driver. The exception is \fB\-\-all\fR, in this case
+control this behavior. All behavior is controlled bythe  kernel and it is usually
+specific to the filesystem driver. The exception is \fB\-\-all\fR, in this case
 already mounted filesystems are ignored (see \fB\-\-all\fR below for more details).
 
 .SS Listing the mounts
@@ -362,7 +362,7 @@ It is important to understand that "bind" does not to create any second-class
 or special node in the kernel VFS. The "bind" is just another operation to
 attach a filesystem. There is nowhere stored information that the filesystem
 has been attached by "bind" operation. The \fIolddir\fR and \fInewdir\fR are
-independent and the \fIolddir\fR maybe be umounted.
+independent and the \fIolddir\fR may be umounted.
 
 One can also remount a single file (on a single file).  It's also
 possible to use the bind mount to create a mountpoint from a regular
