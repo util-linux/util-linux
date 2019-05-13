@@ -122,13 +122,18 @@ check_suffix:
 
 			for (p = fstr; *p == '0'; p++)
 				frac_zeros++;
-			errno = 0, end = NULL;
-			frac = strtoumax(fstr, &end, 0);
-			if (end == fstr ||
-			    (errno != 0 && (frac == UINTMAX_MAX || frac == 0))) {
-				rc = errno ? -errno : -EINVAL;
-				goto err;
-			}
+			fstr = p;
+			if (isdigit(*fstr)) {
+				errno = 0, end = NULL;
+				frac = strtoumax(fstr, &end, 0);
+				if (end == fstr ||
+				    (errno != 0 && (frac == UINTMAX_MAX || frac == 0))) {
+					rc = errno ? -errno : -EINVAL;
+					goto err;
+				}
+			} else
+				end = (char *) p;
+
 			if (frac && (!end  || !*end)) {
 				rc = -EINVAL;
 				goto err;		/* without suffix, but with frac */
