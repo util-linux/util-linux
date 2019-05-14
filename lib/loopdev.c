@@ -1034,8 +1034,8 @@ int loopcxt_is_used(struct loopdev_cxt *lc,
 		    uint64_t sizelimit,
 		    int flags)
 {
-	ino_t ino;
-	dev_t dev;
+	ino_t ino = 0;
+	dev_t dev = 0;
 
 	if (!lc)
 		return 0;
@@ -1067,12 +1067,12 @@ int loopcxt_is_used(struct loopdev_cxt *lc,
 	return 0;
 found:
 	if (flags & LOOPDEV_FL_OFFSET) {
-		uint64_t off;
+		uint64_t off = 0;
 
 		int rc = loopcxt_get_offset(lc, &off) == 0 && off == offset;
 
 		if (rc && flags & LOOPDEV_FL_SIZELIMIT) {
-			uint64_t sz;
+			uint64_t sz = 0;
 
 			return loopcxt_get_sizelimit(lc, &sz) == 0 && sz == sizelimit;
 		} else
