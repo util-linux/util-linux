@@ -172,6 +172,7 @@ m4_ifndef([PKG_PROG_PKG_CONFIG],
     environment variable AL_OPTS="-I/other/macro/dir" before running
     ./autogen.sh or autoreconf again. Make sure pkg-config is installed.])])
 PKG_PROG_PKG_CONFIG
+PKG_INSTALLDIR(['${usrlib_execdir}/pkgconfig'])
 
 GTK_DOC_CHECK([1.10])
 AC_PATH_PROG([XSLTPROC], [xsltproc])

@@ -28,8 +28,6 @@ ul_libfdisk_incdir  = $(top_builddir)/libfdisk/src
 
 ul_libuuid_incdir  = $(top_srcdir)/libuuid/src
 
-pkgconfigdir = $(usrlib_execdir)/pkgconfig
-
 bashcompletiondir = @bashcompletiondir@
 
 dist_noinst_HEADERS =
