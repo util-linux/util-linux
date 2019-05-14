@@ -47,7 +47,7 @@ char *__canonicalize_dm_name(const char *prefix, const char *ptname)
 		name[sz - 1] = '\0';
 		snprintf(path, sizeof(path), _PATH_DEV_MAPPER "/%s", name);
 
-		if (prefix || access(path, F_OK) == 0)
+		if ((prefix && *prefix) || access(path, F_OK) == 0)
 			res = strdup(path);
 	}
 	fclose(f);
