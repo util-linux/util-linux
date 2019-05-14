@@ -397,7 +397,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		    void *data __attribute__((__unused__)))
 {
 	int rc = 0;
-	char buf[BUFSIZ];
+	char buf[BUFSIZ] = { '\0' };
 
 	assert(cxt);
 	assert(ask);
@@ -482,7 +482,7 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 		_("Hex code (type L to list all codes): ") :
 		_("Partition type (type L to list all types): ");
 	do {
-		char buf[256];
+		char buf[256] = { '\0' };
 		int rc = get_user_reply(q, buf, sizeof(buf));
 
 		if (rc) {

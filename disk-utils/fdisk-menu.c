@@ -417,7 +417,7 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 	const struct menu *menu;
 	int key, rc;
 	const char *prompt;
-	char buf[BUFSIZ];
+	char buf[BUFSIZ] = { '\0' };
 
 	if (fdisk_is_details(cxt))
 		prompt = _("Expert command (m for help): ");
