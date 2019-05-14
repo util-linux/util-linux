@@ -424,8 +424,10 @@ static int cn_sequence(const char *str, char **seq)
 		in++;
 	}
 
-	assert ((out - *seq) <= len);
-	*out = '\0';
+	if (out) {
+		assert ((out - *seq) <= len);
+		*out = '\0';
+	}
 
 	return 0;
 }
