@@ -1741,7 +1741,6 @@ static int dos_add_partition(struct fdisk_context *cxt,
 				  "been created."));
 		return -EINVAL;
 	}
-	rc = 1;
 
 	if (!free_primary || !free_sectors) {
 		DBG(LABEL, ul_debug("DOS: primary impossible, add logical"));
