@@ -846,7 +846,8 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 			break;
 		case FDISK_DIFF_MOVED:
 			rc = add_to_partitions_array(&rem, pa, &nrems, nparts);
-			rc = add_to_partitions_array(&add, pa, &nadds, nparts);
+			if (!rc)
+				rc = add_to_partitions_array(&add, pa, &nadds, nparts);
 			break;
 		}
 		if (rc != 0)
