@@ -1152,8 +1152,10 @@ static int recount_resize(
 	rc = fdisk_get_partitions(cxt, &tb);
 	if (!rc)
 		rc = fdisk_get_freespaces(cxt, &tb);
-	if (rc)
+	if (rc) {
+		fdisk_unref_table(tb);
 		return rc;
+	}
 
 	fdisk_table_sort_partitions(tb, fdisk_partition_cmp_start);
 
