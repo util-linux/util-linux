@@ -574,9 +574,10 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 		curr_user = mnt_get_username(getuid());
 
-		if (!mnt_context_switch_ns(cxt, ns_old))
+		if (!mnt_context_switch_ns(cxt, ns_old)) {
+			free(curr_user);
 			return -MNT_ERR_NAMESPACE;
-
+		}
 		if (!curr_user) {
 			DBG(CXT, ul_debugobj(cxt, "umount %s: cannot "
 				"convert %d to username", tgt, getuid()));
