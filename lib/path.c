@@ -308,6 +308,9 @@ int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 	p = ul_path_mkpath(pc, path, ap);
 	va_end(ap);
 
+	if (!p)
+		return -errno;
+
 	return ul_path_access(pc, mode, p);
 }
 
