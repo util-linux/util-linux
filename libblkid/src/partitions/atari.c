@@ -205,10 +205,11 @@ static int probe_atari_pt(blkid_probe pr,
 			goto nothing;
 
 		if (IS_PARTDEF_VALID(rs->part[i], hdsize)) {
-			blkid_probe_set_magic(pr,
-				offsetof(struct atari_rootsector, part[i]),
-				sizeof(rs->part[i].flags) + sizeof(rs->part[i].id),
-				(unsigned char *) &rs->part[i]);
+			if (blkid_probe_set_magic(pr,
+					offsetof(struct atari_rootsector, part[i]),
+					sizeof(rs->part[i].flags) + sizeof(rs->part[i].id),
+					(unsigned char *) &rs->part[i]))
+				goto err;
 			break;
 		}
 	}
