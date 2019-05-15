@@ -928,6 +928,7 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 	FILE *f;
 	size_t setsize, len = maxcpus * 7;
 	char buf[len];
+	int rc;
 
 	*set = NULL;
 
@@ -935,9 +936,11 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 	if (!f)
 		return -errno;
 
-	if (!fgets(buf, len, f))
-		return -errno;
+	rc = fgets(buf, len, f) == NULL ? -errno : 0;
 	fclose(f);
+
+	if (rc)
+		return rc;
 
 	len = strlen(buf);
 	if (buf[len - 1] == '\n')
