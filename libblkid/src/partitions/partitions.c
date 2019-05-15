@@ -313,13 +313,16 @@ static void blkid_probe_set_partlist(blkid_probe pr, blkid_partlist ls)
 
 static void ref_parttable(blkid_parttable tab)
 {
-	tab->nparts++;
+	if (tab)
+		tab->nparts++;
 }
 
 static void unref_parttable(blkid_parttable tab)
 {
-	tab->nparts--;
+	if (!tab)
+		return;
 
+	tab->nparts--;
 	if (tab->nparts <= 0) {
 		list_del(&tab->t_tabs);
 		free(tab);
