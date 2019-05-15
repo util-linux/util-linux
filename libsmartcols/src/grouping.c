@@ -495,11 +495,11 @@ int scols_table_group_lines(	struct libscols_table *tb,
 {
 	struct libscols_group *gr = NULL;
 
-	if (!tb || (!ln && !member)) {
-		DBG(GROUP, ul_debugobj(gr, "failed group lines (no table, line or member)"));
+	if (!tb || !member) {
+		DBG(GROUP, ul_debugobj(gr, "failed group lines (no table or member)"));
 		return -EINVAL;
 	}
-	if (ln && member)  {
+	if (ln)  {
 		if (ln->group && !member->group) {
 			DBG(GROUP, ul_debugobj(gr, "failed group lines (new group, line member of another)"));
 			return -EINVAL;
