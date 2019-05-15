@@ -436,8 +436,12 @@ DIR *ul_path_opendir(struct path_cxt *pc, const char *path)
 	if (path)
 		fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, path);
 	else if (pc->dir_path) {
+		int dirfd;
+
 		DBG(CXT, ul_debugobj(pc, "duplicate dir path"));
-		fd = dup_fd_cloexec(ul_path_get_dirfd(pc), STDERR_FILENO + 1);
+		dirfd = ul_path_get_dirfd(pc);
+		if (dirfd >= 0)
+			fd = dup_fd_cloexec(dirfd, STDERR_FILENO + 1);
 	}
 
 	if (fd < 0)
