@@ -451,7 +451,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 	char line[1024];
 	char ptname0[128 + 1], ptname1[128 + 1], *ptname = NULL;
 	char *ptnames[2];
-	dev_t devs[2];
+	dev_t devs[2] = { 0, 0 };
 	int iswhole[2] = { 0, 0 };
 	int ma, mi;
 	unsigned long long sz;
