@@ -570,10 +570,12 @@ int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 	char buf[BUFSIZ];
 	int rc;
 
-	*str = NULL;
+	if (!str)
+		return -EINVAL;
 
+	*str = NULL;
 	rc = ul_path_read(pc, buf, sizeof(buf) - 1, path);
-	if (rc < 0 || !str)
+	if (rc < 0)
 		return rc;
 
 	/* Remove tailing newline (usual in sysfs) */
