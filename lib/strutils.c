@@ -869,8 +869,10 @@ int streq_paths(const char *a, const char *b)
 		    ((a_seg && *a_seg == '/') || (b_seg && *b_seg == '/')))
 			return 1;
 
+		if (!a_seg || !b_seg)
+			break;
 		if (a_sz != b_sz || strncmp(a_seg, b_seg, a_sz) != 0)
-			return 0;
+			break;
 
 		a = a_seg + a_sz;
 		b = b_seg + b_sz;
