@@ -97,7 +97,9 @@ static int verify_order(struct verify_context *vfy)
 
 	/* set iterator position to 'fs' */
 	mnt_table_set_iter(vfy->tb, itr, vfy->fs);
-	mnt_table_next_fs(vfy->tb, itr, &next);
+
+	if (mnt_table_next_fs(vfy->tb, itr, &next) != 0)
+		goto done;
 
 	/* scan all next filesystems */
 	while (mnt_table_next_fs(vfy->tb, itr, &next) == 0) {
