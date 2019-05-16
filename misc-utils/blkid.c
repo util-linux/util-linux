@@ -225,13 +225,18 @@ static void pretty_print_dev(blkid_dev dev)
 	mtpt[0] = 0;
 	retval = check_mount_point(devname, &mount_flags, mtpt, sizeof(mtpt));
 	if (retval == 0) {
+		const char *msg = NULL;
+
 		if (mount_flags & MF_MOUNTED) {
 			if (!mtpt[0])
-				strcpy(mtpt, _("(mounted, mtpt unknown)"));
+				msg = _("(mounted, mtpt unknown)");
 		} else if (mount_flags & MF_BUSY)
-			strcpy(mtpt, _("(in use)"));
+			msg = _("(in use)");
 		else
-			strcpy(mtpt, _("(not mounted)"));
+			msg = _("(not mounted)");
+
+		if (msg)
+			xstrncpy(mtpt, msg, sizeof(mtpt));
 	}
 
 	pretty_print_line(devname, fs_type, label, mtpt, uuid);
