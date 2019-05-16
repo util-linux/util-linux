@@ -258,7 +258,9 @@ static inline void strrem(char *s, int rem)
 {
 	char *p;
 
-	for (p = s; s && *s; s++) {
+	if (!s)
+		return;
+	for (p = s; *s; s++) {
 		if (*s != rem)
 			*p++ = *s;
 	}
