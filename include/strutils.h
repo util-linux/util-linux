@@ -262,6 +262,7 @@ static inline void strrem(char *s, int rem)
 		if (*s != rem)
 			*p++ = *s;
 	}
+	*p = '\0';
 }
 
 extern char *strnappend(const char *s, const char *suffix, size_t b);
