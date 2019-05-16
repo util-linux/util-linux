@@ -1,40 +1,40 @@
-CPU op-mode(s):                   32-bit, 64-bit
-Address sizes:                    48 bits physical, 48 bits virtual
-CPU(s):                           96
-On-line CPU(s) list:              0-95
-Thread(s) per core:               2
-Core(s) per socket:               24
-Socket(s):                        2
-NUMA node(s):                     8
-Vendor ID:                        AuthenticAMD
-CPU family:                       23
-Model:                            1
-Model name:                       AMD EPYC 7451 24-Core Processor
-Stepping:                         2
-Frequency boost:                  enabled
-CPU MHz:                          2894.214
-CPU max MHz:                      2300.0000
-CPU min MHz:                      1200.0000
-BogoMIPS:                         4590.83
-Virtualization:                   AMD-V
-L1d cache:                        1.5 MiB
-L1i cache:                        3 MiB
-L2 cache:                         24 MiB
-L3 cache:                         128 MiB
-NUMA node0 CPU(s):                0-5,48-53
-NUMA node1 CPU(s):                6-11,54-59
-NUMA node2 CPU(s):                12-17,60-65
-NUMA node3 CPU(s):                18-23,66-71
-NUMA node4 CPU(s):                24-29,72-77
-NUMA node5 CPU(s):                30-35,78-83
-NUMA node6 CPU(s):                36-41,84-89
-NUMA node7 CPU(s):                42-47,90-95
-Vulnerability L1tf:               Not affected
-Vulnerability Meltdown:           Not affected
-Vulnerability Spec store bypass:  Mitigation; Speculative Store Bypass disabled via prctl and seccomp
-Vulnerability Spectre v1:         Mitigation; __user pointer sanitization
-Vulnerability Spectre v2:         Mitigation; Full AMD retpoline, IBPB conditional, STIBP disabled, RSB filling
-Flags:                            fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid amd_dcm aperfmperf pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb hw_pstate ssbd ibpb vmmcall fsgsbase bmi1 avx2 smep bmi2 rdseed adx smap clflushopt sha_ni xsaveopt xsavec xgetbv1 xsaves clzero irperf xsaveerptr arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif overflow_recov succor smca
+CPU op-mode(s):                  32-bit, 64-bit
+Address sizes:                   48 bits physical, 48 bits virtual
+CPU(s):                          96
+On-line CPU(s) list:             0-95
+Thread(s) per core:              2
+Core(s) per socket:              24
+Socket(s):                       2
+NUMA node(s):                    8
+Vendor ID:                       AuthenticAMD
+CPU family:                      23
+Model:                           1
+Model name:                      AMD EPYC 7451 24-Core Processor
+Stepping:                        2
+Frequency boost:                 enabled
+CPU MHz:                         2894.214
+CPU max MHz:                     2300.0000
+CPU min MHz:                     1200.0000
+BogoMIPS:                        4590.83
+Virtualization:                  AMD-V
+L1d cache:                       1.5 MiB
+L1i cache:                       3 MiB
+L2 cache:                        24 MiB
+L3 cache:                        128 MiB
+NUMA node0 CPU(s):               0-5,48-53
+NUMA node1 CPU(s):               6-11,54-59
+NUMA node2 CPU(s):               12-17,60-65
+NUMA node3 CPU(s):               18-23,66-71
+NUMA node4 CPU(s):               24-29,72-77
+NUMA node5 CPU(s):               30-35,78-83
+NUMA node6 CPU(s):               36-41,84-89
+NUMA node7 CPU(s):               42-47,90-95
+Vulnerability L1tf:              Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Full AMD retpoline, IBPB conditional, STIBP disabled, RSB filling
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid amd_dcm aperfmperf pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb hw_pstate ssbd ibpb vmmcall fsgsbase bmi1 avx2 smep bmi2 rdseed adx smap clflushopt sha_ni xsaveopt xsavec xgetbv1 xsaves clzero irperf xsaveerptr arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif overflow_recov succor smca
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID
