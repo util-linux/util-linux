@@ -580,13 +580,19 @@ int main(int argc, char **argv)
 		ctl.months_in_row = MONTHS_IN_YEAR_ROW;		/* default */
 
 		if (isatty(STDOUT_FILENO)) {
-			int w = get_terminal_width(STDOUT_FILENO);
-			int mw = ctl.julian ? DOY_MONTH_WIDTH : DOM_MONTH_WIDTH;
-			int extra = ((w / mw) - 1) * ctl.gutter_width;
-			int new_n = (w - extra) / mw;
+			int w, mw, extra, new_n;
+
+			w = get_terminal_width(80);
+			mw = ctl.julian ? DOY_MONTH_WIDTH : DOM_MONTH_WIDTH;
+
+			if (w < mw)
+				w = mw;
+
+			extra = ((w / mw) - 1) * ctl.gutter_width;
+			new_n = (w - extra) / mw;
 
 			if (new_n < MONTHS_IN_YEAR_ROW)
-				ctl.months_in_row = new_n;
+				ctl.months_in_row = new_n > 0 ? new_n : 1;
 		}
 	} else if (!ctl.months_in_row)
 		ctl.months_in_row = 1;
