@@ -989,7 +989,8 @@ struct libmnt_fs *get_next_fs(struct libmnt_table *tb,
 		 *    findmnt [-l] <spec> [-O <options>] [-t <types>]
 		 */
 again:
-		mnt_table_find_next_fs(tb, itr, match_func,  NULL, &fs);
+		if (mnt_table_find_next_fs(tb, itr, match_func,  NULL, &fs) != 0)
+			fs = NULL;
 
 		if (!fs &&
 		    !(flags & FL_NOSWAPMATCH) &&
