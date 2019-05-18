@@ -155,9 +155,9 @@ int main(int argc, char *argv[])
 		}
 
 		x = strdup(argv[2]);
-		unmangle_to_buffer(x, x, strlen(x) + 1);
-
 		if (x) {
+			unmangle_to_buffer(x, x, strlen(x) + 1);
+
 			printf("self-unmangled: '%s'\n", x);
 			free(x);
 		}
