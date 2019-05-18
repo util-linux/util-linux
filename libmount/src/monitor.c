@@ -794,14 +794,17 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 			me = NULL;
 	}
 
-	me->changed = 0;
+	if (me) {
+		me->changed = 0;
 
-	if (filename)
-		*filename = me->path;
-	if (type)
-		*type = me->type;
+		if (filename)
+			*filename = me->path;
+		if (type)
+			*type = me->type;
 
-	DBG(MONITOR, ul_debugobj(mn, " *** success [changed: %s]", me->path));
+		DBG(MONITOR, ul_debugobj(mn, " *** success [changed: %s]", me->path));
+	} else
+		return -EINVAL;
 	return 0;				/* success */
 }
 
