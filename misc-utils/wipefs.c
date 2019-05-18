@@ -307,7 +307,7 @@ static struct wipe_desc *get_desc_for_probe(struct wipe_control *ctl,
 					    loff_t *offset,
 					    size_t *len)
 {
-	const char *off, *type, *mag, *p, *usage = NULL;
+	const char *off, *type, *mag, *p, *use = NULL;
 	struct wipe_desc *wp;
 	int rc, ispt = 0;
 
@@ -328,7 +328,7 @@ static struct wipe_desc *get_desc_for_probe(struct wipe_control *ctl,
 			rc = blkid_probe_lookup_value(pr, "PTMAGIC", &mag, len);
 		if (rc)
 			return NULL;
-		usage = N_("partition-table");
+		use = N_("partition-table");
 		ispt = 1;
 	} else
 		return NULL;
@@ -357,8 +357,8 @@ static struct wipe_desc *get_desc_for_probe(struct wipe_control *ctl,
 	if (!wp)
 		return NULL;
 
-	if (usage || blkid_probe_lookup_value(pr, "USAGE", &usage, NULL) == 0)
-		wp->usage = xstrdup(usage);
+	if (use || blkid_probe_lookup_value(pr, "USAGE", &use, NULL) == 0)
+		wp->usage = xstrdup(use);
 
 	wp->type = xstrdup(type);
 	wp->on_disk = 1;
