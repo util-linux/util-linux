@@ -1925,6 +1925,8 @@ static int get_cache_full_size(struct lscpu_desc *desc,
 	/* Correction for CPU threads */
 	if (desc->nthreads > desc->ncores)
 		nshares /= (desc->nthreads / desc->ncores);
+	if (nshares < 1)
+		nshares = 1;
 
 	*res = (desc->ncores / nshares) * ca->size;
 	return 0;
