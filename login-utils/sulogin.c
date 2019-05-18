@@ -168,16 +168,17 @@ static void tcinit(struct console *con)
 		tio->c_cc[VMIN]     = 1;
 
 		if (ioctl(fd, TIOCGWINSZ, &ws) == 0) {
-			int set = 0;
+			int update = 0;
+
 			if (ws.ws_row == 0) {
 				ws.ws_row = 24;
-				set++;
+				update++;
 			}
 			if (ws.ws_col == 0) {
 				ws.ws_col = 80;
-				set++;
+				update++;
 			}
-			if (set)
+			if (update)
 				ignore_result( ioctl(fd, TIOCSWINSZ, &ws) );
 		}
 
