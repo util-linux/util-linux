@@ -116,10 +116,9 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 			}
 			snprintf(lc->device, sizeof(lc->device), "%s%s",
 				dir, device);
-		} else {
-			strncpy(lc->device, device, sizeof(lc->device));
-			lc->device[sizeof(lc->device) - 1] = '\0';
-		}
+		} else
+			xstrncpy(lc->device, device, sizeof(lc->device));
+
 		DBG(CXT, ul_debugobj(lc, "%s name assigned", device));
 	}
 
@@ -1158,8 +1157,7 @@ int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename)
 	if (!lc->filename)
 		return -errno;
 
-	strncpy((char *)lc->info.lo_file_name, lc->filename, LO_NAME_SIZE);
-	lc->info.lo_file_name[LO_NAME_SIZE- 1] = '\0';
+	xstrncpy((char *)lc->info.lo_file_name, lc->filename, LO_NAME_SIZE);
 
 	DBG(CXT, ul_debugobj(lc, "set backing file=%s", lc->info.lo_file_name));
 	return 0;
