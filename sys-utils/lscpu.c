@@ -1925,6 +1925,8 @@ static int get_cache_full_size(struct lscpu_desc *desc,
 	/* Correction for CPU threads */
 	if (desc->nthreads > desc->ncores)
 		nshares /= (desc->nthreads / desc->ncores);
+	if (nshares < 1)
+		nshares = 1;
 
 	*res = (desc->ncores / nshares) * ca->size;
 	return 0;
@@ -2117,7 +2119,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 				tmp = size_to_human_string(
 					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
 					sz);
-			snprintf(buf, sizeof(buf), _("%s cache: "), ca->name);
+			snprintf(buf, sizeof(buf), _("%s cache:"), ca->name);
 			add_summary_s(tb, buf, tmp);
 			free(tmp);
 		}
@@ -2135,7 +2137,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 				tmp = size_to_human_string(
 					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
 					ca->size);
-			snprintf(buf, sizeof(buf), _("%s cache: "), ca->name);
+			snprintf(buf, sizeof(buf), _("%s cache:"), ca->name);
 			add_summary_s(tb, buf, tmp);
 			free(tmp);
 		}
@@ -2154,7 +2156,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	if (desc->vuls) {
 		for (i = 0; i < desc->nvuls; i++) {
-			snprintf(buf, sizeof(buf), ("Vulnerability %s: "), desc->vuls[i].name);
+			snprintf(buf, sizeof(buf), ("Vulnerability %s:"), desc->vuls[i].name);
 			add_summary_s(tb, buf, desc->vuls[i].text);
 		}
 	}
