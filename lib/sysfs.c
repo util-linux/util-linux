@@ -16,6 +16,7 @@
 #include "fileutils.h"
 #include "all-io.h"
 #include "debug.h"
+#include "strutils.h"
 
 static void sysfs_blkdev_deinit_path(struct path_cxt *pc);
 static int  sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, int *dirfd);
@@ -489,10 +490,8 @@ static int get_dm_wholedisk(struct path_cxt *pc, char *diskname,
     if (!name)
         return -1;
 
-    if (diskname && len) {
-        strncpy(diskname, name, len);
-        diskname[len - 1] = '\0';
-    }
+    if (diskname && len)
+        xstrncpy(diskname, name, len);
 
     if (diskdevno) {
         *diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), name, NULL);
@@ -579,10 +578,8 @@ int sysfs_blkdev_get_wholedisk(	struct path_cxt *pc,
             goto err;
 
 	sysfs_devname_sys_to_dev(name);
-        if (diskname && len) {
-            strncpy(diskname, name, len);
-            diskname[len - 1] = '\0';
-        }
+        if (diskname && len)
+            xstrncpy(diskname, name, len);
 
         if (diskdevno) {
             *diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), name, NULL);
