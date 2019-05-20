@@ -264,8 +264,7 @@ static void dirlist_add_subdir(struct wh_dirlist **ls, int type, const char *dir
 	DIR *dirp;
 	struct dirent *dp;
 
-	strncpy(buf, dir, PATH_MAX);
-	buf[PATH_MAX - 1] = '\0';
+	xstrncpy(buf, dir, PATH_MAX);
 
 	d = strchr(buf, '*');
 	if (!d)
@@ -452,8 +451,7 @@ static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
 	/* canonicalize pattern -- remove path suffix etc. */
 	p = strrchr(pattern, '/');
 	p = p ? p + 1 : (char *) pattern;
-	strncpy(patbuf, p, PATH_MAX);
-	patbuf[PATH_MAX - 1] = '\0';
+	xstrncpy(patbuf, p, PATH_MAX);
 
 	DBG(SEARCH, ul_debug("lookup dirs for '%s' (%s), want: %s %s %s",
 				patbuf, pattern,
