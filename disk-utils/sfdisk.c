@@ -134,8 +134,6 @@ static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 		if (!p)
 			return 1;
 		strncpy(buf, p, bufsz - 1);
-		if (bufsz != 0)
-			buf[bufsz - 1] = '\0';
 		free(p);
 	} else
 #endif

@@ -1778,10 +1778,12 @@ print_cpus_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 		int c;
 		int cpu = real_cpu_num(desc, i);
 
-		if (!mod->offline && desc->online && !is_cpu_online(desc, cpu))
-			continue;
-		if (!mod->online && desc->online && is_cpu_online(desc, cpu))
-			continue;
+		if (desc->online) {
+			if (!mod->offline && !is_cpu_online(desc, cpu))
+				continue;
+			if (!mod->online && is_cpu_online(desc, cpu))
+				continue;
+		}
 		if (desc->present && !is_cpu_present(desc, cpu))
 			continue;
 		for (c = 0; c < ncols; c++) {
@@ -1835,10 +1837,12 @@ print_cpus_readable(struct lscpu_desc *desc, int cols[], int ncols,
 		struct libscols_line *line;
 		int cpu = real_cpu_num(desc, i);
 
-		if (!mod->offline && desc->online && !is_cpu_online(desc, cpu))
-			continue;
-		if (!mod->online && desc->online && is_cpu_online(desc, cpu))
-			continue;
+		if (desc->online) {
+			if (!mod->offline && !is_cpu_online(desc, cpu))
+				continue;
+			if (!mod->online && is_cpu_online(desc, cpu))
+				continue;
+		}
 		if (desc->present && !is_cpu_present(desc, cpu))
 			continue;
 
