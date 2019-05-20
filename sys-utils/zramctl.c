@@ -163,10 +163,8 @@ static void zram_set_devname(struct zram *z, const char *devname, size_t n)
 
 	if (!devname)
 		snprintf(z->devname, sizeof(z->devname), "/dev/zram%zu", n);
-	else {
-		strncpy(z->devname, devname, sizeof(z->devname));
-		z->devname[sizeof(z->devname) - 1] = '\0';
-	}
+	else
+		xstrncpy(z->devname, devname, sizeof(z->devname));
 
 	DBG(fprintf(stderr, "set devname: %s", z->devname));
 	ul_unref_path(z->sysfs);
