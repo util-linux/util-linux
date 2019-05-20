@@ -659,17 +659,16 @@ static int colors_terminal_is_ready(void)
 	{
 		int ret;
 
-		if (setupterm(NULL, STDOUT_FILENO, &ret) != 0 || ret != 1)
-			goto none;
-		ncolors = tigetnum("colors");
+		if (setupterm(NULL, STDOUT_FILENO, &ret) == 0 && ret == 1)
+			ncolors = tigetnum("colors");
 	}
 #endif
 	if (1 < ncolors) {
 		DBG(CONF, ul_debug("terminal is ready (supports %d colors)", ncolors));
 		return 1;
 	}
-none:
-	DBG(CONF, ul_debug("terminal is NOT ready"));
+
+	DBG(CONF, ul_debug("terminal is NOT ready (no colors)"));
 	return 0;
 }
 
