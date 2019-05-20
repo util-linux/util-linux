@@ -29,6 +29,7 @@
 #endif
 
 #include "pathnames.h"
+#include "strutils.h"
 #include "ismounted.h"
 #include "c.h"
 #ifdef __linux__
@@ -109,7 +110,7 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 		    st_buf.st_dev == file_rdev) {
 			*mount_flags = MF_MOUNTED;
 			if (mtpt)
-				strncpy(mtpt, "/", mtlen);
+				xstrncpy(mtpt, "/", mtlen);
 			goto is_root;
 		}
 #endif	/* __GNU__ */
@@ -150,7 +151,7 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 #endif
 
 	if (mtpt)
-		strncpy(mtpt, mnt->mnt_dir, mtlen);
+		xstrncpy(mtpt, mnt->mnt_dir, mtlen);
 	/*
 	 * Check to see if we're referring to the root filesystem.
 	 * If so, do a manual check to see if we can open /etc/mtab
@@ -242,7 +243,7 @@ static int check_getmntinfo(const char *file, int *mount_flags,
                 ++mp;
 	}
 	if (mtpt)
-		strncpy(mtpt, mp->f_mntonname, mtlen);
+		xstrncpy(mtpt, mp->f_mntonname, mtlen);
 	return 0;
 }
 #endif /* HAVE_GETMNTINFO */
@@ -321,7 +322,7 @@ int check_mount_point(const char *device, int *mount_flags,
 	if (is_swap_device(device)) {
 		*mount_flags = MF_MOUNTED | MF_SWAP;
 		if (mtpt && mtlen)
-			strncpy(mtpt, "[SWAP]", mtlen);
+			xstrncpy(mtpt, "[SWAP]", mtlen);
 	} else {
 #ifdef HAVE_MNTENT_H
 		retval = check_mntent(device, mount_flags, mtpt, mtlen);
