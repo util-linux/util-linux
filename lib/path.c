@@ -25,6 +25,7 @@
 #include "all-io.h"
 #include "path.h"
 #include "debug.h"
+#include "strutils.h"
 
 /*
  * Debug stuff (based on include/debug.h)
@@ -279,8 +280,7 @@ char *ul_path_get_abspath(struct path_cxt *pc, char *buf, size_t bufsz, const ch
 
 		if (!tmp)
 			return NULL;
-		strncpy(buf, tmp, bufsz);
-		buf[bufsz - 1] = '\0';
+		xstrncpy(buf, tmp, bufsz);
 	}
 
 	return buf;
