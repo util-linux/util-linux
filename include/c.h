@@ -34,7 +34,8 @@
 #endif
 
 /*
- * Compiler-specific stuff
+ * __GNUC_PREREQ is deprecated in favour of __has_attribute() and
+ * __has_feature(). The __has macros are supported by clang and gcc>=5.
  */
 #ifndef __GNUC_PREREQ
 # if defined __GNUC__ && defined __GNUC_MINOR__
@@ -62,10 +63,22 @@
 #endif /* !__GNUC__ */
 
 /*
+ * It evaluates to 1 if the attribute/feature is supported by the current
+ * compilation targed. Fallback for old compilers.
+ */
+#ifndef __has_attribute
+  #define __has_attribute(x) 0
+#endif
+
+#ifndef __has_feature
+  #define __has_feature(x) 0
+#endif
+
+/*
  * Function attributes
  */
 #ifndef __ul_alloc_size
-# if __GNUC_PREREQ (4, 3)
+# if (__has_attribute(alloc_size) && __has_attribute(warn_unused_result)) || __GNUC_PREREQ (4, 3)
 #  define __ul_alloc_size(s) __attribute__((alloc_size(s), warn_unused_result))
 # else
 #  define __ul_alloc_size(s)
@@ -73,14 +86,14 @@
 #endif
 
 #ifndef __ul_calloc_size
-# if __GNUC_PREREQ (4, 3)
+# if (__has_attribute(alloc_size) && __has_attribute(warn_unused_result)) || __GNUC_PREREQ (4, 3)
 #  define __ul_calloc_size(n, s) __attribute__((alloc_size(n, s), warn_unused_result))
 # else
 #  define __ul_calloc_size(n, s)
 # endif
 #endif
 
-#if __GNUC_PREREQ (4, 9)
+#if __has_attribute(returns_nonnull) || __GNUC_PREREQ (4, 9)
 # define __ul_returns_nonnull __attribute__((returns_nonnull))
 #else
 # define __ul_returns_nonnull
@@ -391,17 +404,11 @@ static inline int xusleep(useconds_t usec)
  * inlining the function because inlining currently breaks the blacklisting
  * mechanism of AddressSanitizer.
  */
-#if defined(__has_feature)
-# if __has_feature(address_sanitizer)
-#  define UL_ASAN_BLACKLIST __attribute__((noinline)) __attribute__((no_sanitize_memory)) __attribute__((no_sanitize_address))
-# else
-#  define UL_ASAN_BLACKLIST	/* nothing */
-# endif
+#if __has_feature(address_sanitizer) && __has_attribute(no_sanitize_memory) && __has_attribute(no_sanitize_address)
+# define UL_ASAN_BLACKLIST __attribute__((noinline)) __attribute__((no_sanitize_memory)) __attribute__((no_sanitize_address))
 #else
 # define UL_ASAN_BLACKLIST	/* nothing */
 #endif
-
-
 
 /*
  * Note that sysconf(_SC_GETPW_R_SIZE_MAX) returns *initial* suggested size for
