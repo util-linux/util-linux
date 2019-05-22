@@ -978,6 +978,8 @@ static int find_last_free_sector_in_range(
 		last_moved = 0;
 		for ( ; i < cxt->label->nparts_max; i++) {
 			struct pte *pe = self_pte(cxt, i);
+
+			assert(pe);
 			fdisk_sector_t p_start = get_abs_partition_start(pe);
 			fdisk_sector_t p_end = get_abs_partition_end(pe);
 
@@ -1025,6 +1027,8 @@ static int find_first_free_sector_in_range(
 		first_moved = 0;
 		for (; i < cxt->label->nparts_max; i++) {
 			struct pte *pe = self_pte(cxt, i);
+
+			assert(pe);
 			fdisk_sector_t p_start = get_abs_partition_start(pe);
 			fdisk_sector_t p_end = get_abs_partition_end(pe);
 
