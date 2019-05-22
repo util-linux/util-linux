@@ -93,15 +93,20 @@ struct sgi_disklabel {
 
 static inline uint32_t sgi_pt_checksum(struct sgi_disklabel *label)
 {
-	int i;
-	uint32_t *ptr = (uint32_t *) label;
+	int count;
 	uint32_t sum = 0;
+	unsigned char *ptr = (unsigned char *) label;
 
-	i = sizeof(*label) / sizeof(*ptr);
+	count = sizeof(*label) / sizeof(uint32_t);
+	ptr += sizeof(uint32_t) * (count - 1);
 
-	while (i) {
-		i--;
-		sum -= be32_to_cpu(ptr[i]);
+	while (count--) {
+		uint32_t val;
+
+		memcpy(&val, ptr, sizeof(uint32_t));
+		sum -= be32_to_cpu(val);
+
+		ptr -= sizeof(uint32_t);
 	}
 
 	return sum;
