@@ -71,11 +71,15 @@ static uint16_t silraid_checksum(struct silicon_metadata *sil)
 {
 	int sum = 0;
 	unsigned short count = offsetof(struct silicon_metadata, checksum1) / 2;
-	uint16_t *p = (uint16_t *) sil;
+	unsigned char *ptr = (unsigned char *) sil;
 
 	while (count--) {
-		uint16_t x = *p++;
-		sum += le16_to_cpu(x);
+		uint16_t val;
+
+		memcpy(&val, ptr, sizeof(uint16_t));
+		sum += le16_to_cpu(val);
+
+		ptr += sizeof(uint16_t);
 	}
 
 	return (-sum & 0xFFFF);
