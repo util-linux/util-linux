@@ -736,13 +736,20 @@ done:
 
 static unsigned short bsd_dkcksum (struct bsd_disklabel *lp)
 {
-	unsigned short *start, *end;
+	unsigned char *ptr, *end;
 	unsigned short sum = 0;
 
-	start = (unsigned short *) lp;
-	end = (unsigned short *) &lp->d_partitions[lp->d_npartitions];
-	while (start < end)
-		sum ^= *start++;
+	ptr = (unsigned char *) lp;
+	end = (unsigned char *) &lp->d_partitions[lp->d_npartitions];
+
+	while (ptr < end) {
+		unsigned short val;
+
+		memcpy(&val, ptr, sizeof(unsigned short));
+		sum ^= val;
+
+		ptr += sizeof(unsigned short);
+	}
 	return sum;
 }
 
