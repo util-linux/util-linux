@@ -126,8 +126,10 @@ int main(int argc, char *argv[])
 			warnx(_("no tty"));
 		exit(MESG_EXIT_FAILURE);
 	}
-	if ((tty = ttyname(STDERR_FILENO)) == NULL)
-		err(MESG_EXIT_FAILURE, _("ttyname failed"));
+	if ((tty = ttyname(STDIN_FILENO)) == NULL) {
+		tty = "/proc/self/fd/0";
+		warnx(_("ttyname() failed, attempting to go around using: %s"), tty);
+	}
 	if ((fd = open(tty, O_RDONLY)) < 0)
 		err(MESG_EXIT_FAILURE, _("cannot open %s"), tty);
 	if (fstat(fd, &sb))
