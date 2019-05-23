@@ -392,9 +392,9 @@ int main(int argc, char **argv)
 #ifdef HAVE_PCRE
 	int errornumber;
 	PCRE2_SIZE erroroffset;
-	pcre2_code *re;
+	pcre2_code *re = NULL;
 	PCRE2_SPTR exclude_pattern = NULL;
-	pcre2_match_data *match_data;
+	pcre2_match_data *match_data = NULL;
 #endif
 	struct hardlink_dynstr nam1 = { NULL, 0 };
 	struct hardlink_ctl *ctl = &global_ctl;
