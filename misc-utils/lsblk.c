@@ -1389,7 +1389,7 @@ static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t d
 	char buf[PATH_MAX + 1], *name = NULL, *diskname = NULL;
 	int real_part = 0, rc = -EINVAL;
 
-	if (devno == 0) {
+	if (devno == 0 && devname) {
 		struct stat st;
 
 		DBG(DEV, ul_debug("%s: reading alone device", devname));
@@ -1399,8 +1399,12 @@ static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t d
 			goto leave;
 		}
 		devno = st.st_rdev;
-	} else
+	} else if (devno) {
 		DBG(DEV, ul_debug("%d:%d: reading alone device", major(devno), minor(devno)));
+	} else {
+		assert(devno || devname);
+		return -EINVAL;
+	}
 
 	/* TODO: sysfs_devno_to_devname() internally initializes path_cxt, it
 	 * would be better to use ul_new_sysfs_path() + sysfs_blkdev_get_name()
@@ -1476,6 +1480,7 @@ leave:
 
 static int process_one_device(struct lsblk_devtree *tr, char *devname)
 {
+	assert(devname);
 	return __process_one_device(tr, devname, 0);
 }
 
