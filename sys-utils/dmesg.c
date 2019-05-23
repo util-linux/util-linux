@@ -1017,6 +1017,8 @@ full_output:
 		if (!line) {
 			mesg_copy = xstrdup(rec->mesg);
 			line = strtok(mesg_copy, "\n");
+			if (!line)
+				goto done;	/* only when something is wrong */
 			mesg_size = strlen(line);
 		}
 	} else {
@@ -1057,6 +1059,7 @@ full_output:
 		free(mesg_copy);
 	}
 
+done:
 	putchar('\n');
 }
 
