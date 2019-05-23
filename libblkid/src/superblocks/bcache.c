@@ -19,55 +19,16 @@
 #define node(i, j)         ((i)->d + (j))
 #define end(i)             node(i, le16_to_cpu((i)->keys))
 
+/*
+ * The bcache_super_block is heavily simplified version of struct cache_sb in kernel.
+ * https://github.com/torvalds/linux/blob/master/include/uapi/linux/bcache.h
+ */
 struct bcache_super_block {
 	uint64_t		csum;
-	uint64_t		offset;	/* sector where this sb was written */
+	uint64_t		offset;		/* where this super block was written */
 	uint64_t		version;
-
-	uint8_t			magic[16];
-
-	uint8_t			uuid[16];
-	union {
-		uint8_t		set_uuid[16];
-		uint64_t	set_magic;
-	};
-	uint8_t			label[SB_LABEL_SIZE];
-
-	uint64_t		flags;
-	uint64_t		seq;
-	uint64_t		pad[8];
-
-	union {
-	struct {
-		/* Cache devices */
-		uint64_t	nbuckets;	/* device size */
-
-		uint16_t	block_size;	/* sectors */
-		uint16_t	bucket_size;	/* sectors */
-
-		uint16_t	nr_in_set;
-		uint16_t	nr_this_dev;
-	};
-	struct {
-		/* Backing devices */
-		uint64_t	data_offset;
-
-		/*
-		 * block_size from the cache device section is still used by
-		 * backing devices, so don't add anything here until we fix
-		 * things to not need it for backing devices anymore
-		 */
-	};
-	};
-
-	uint32_t		last_mount;	/* time_t */
-
-	uint16_t		first_bucket;
-	union {
-		uint16_t	njournal_buckets;
-		uint16_t	keys;
-	};
-	uint64_t		d[SB_JOURNAL_BUCKETS];	/* journal buckets */
+	uint8_t			magic[16];	/* bcache file system identifier */
+	uint8_t			uuid[16];	/* device identifier */
 };
 
 /* magic string */
