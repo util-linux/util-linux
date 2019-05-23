@@ -655,8 +655,9 @@ static char *get_vfs_attribute(struct lsblk_device *dev, int id)
 
 static struct stat *device_get_stat(struct lsblk_device *dev)
 {
-	if (!dev->st.st_rdev)
-		stat(dev->filename, &dev->st);
+	if (!dev->st.st_rdev
+	    && stat(dev->filename, &dev->st) != 0)
+		return NULL;
 
 	return &dev->st;
 }
