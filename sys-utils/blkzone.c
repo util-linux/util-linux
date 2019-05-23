@@ -209,10 +209,8 @@ static int blkzone_report(struct blkzone_control *ctl)
 			printf(_("Found %d zones from 0x%"PRIx64"\n"),
 				zi->nr_zones, ctl->offset);
 
-		if (!zi->nr_zones) {
-			nr_zones = 0;
+		if (!zi->nr_zones)
 			break;
-		}
 
 		for (i = 0; i < zi->nr_zones; i++) {
 			const struct blk_zone *entry = &zi->zones[i];
