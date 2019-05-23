@@ -218,6 +218,8 @@ static int pencode(char *s)
 	int facility, level;
 	char *separator;
 
+	assert(s);
+
 	separator = strchr(s, '.');
 	if (separator) {
 		*separator = '\0';
