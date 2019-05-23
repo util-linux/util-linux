@@ -219,8 +219,11 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 		if (file_end && end > file_end)
 			end = file_end;
 
+		if (off < 0 || end < 0)
+			break;
+
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
-		posix_fadvise(fd, off, end, POSIX_FADV_SEQUENTIAL);
+		(void) posix_fadvise(fd, off, end, POSIX_FADV_SEQUENTIAL);
 #endif
 		/*
 		 * Dig holes in the area
@@ -251,7 +254,7 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 				size_t clen = off - cache_start;
 
 				clen = (clen / cachesz) * cachesz;
-				posix_fadvise(fd, cache_start, clen, POSIX_FADV_DONTNEED);
+				(void) posix_fadvise(fd, cache_start, clen, POSIX_FADV_DONTNEED);
 				cache_start = cache_start + clen;
 			}
 #endif
