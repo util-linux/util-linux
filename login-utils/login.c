@@ -836,6 +836,8 @@ static void loginpam_auth(struct login_context *cxt)
 static void loginpam_acct(struct login_context *cxt)
 {
 	int rc;
+	char *original_username;
+
 	pam_handle_t *pamh = cxt->pamh;
 
 	rc = pam_acct_mgmt(pamh, 0);
@@ -850,17 +852,21 @@ static void loginpam_acct(struct login_context *cxt)
 	 * Grab the user information out of the password file for future use.
 	 * First get the username that we are actually using, though.
 	 */
+	original_username = xstrdup(cxt->username);
 	rc = loginpam_get_username(pamh, &cxt->username);
-	if (is_pam_failure(rc))
+	if (is_pam_failure(rc)) {
+		free(original_username);
 		loginpam_err(pamh, rc);
+	}
 
 	if (!cxt->username || !*cxt->username) {
-		warnx(_("\nSession setup problem, abort."));
-		syslog(LOG_ERR, _("NULL user name in %s:%d. Abort."),
-		       __FUNCTION__, __LINE__);
+		warnx(_("NULL user name %s. Abort."), original_username);
+		syslog(LOG_ERR, _("NULL user name %s. Abort."), original_username);
+		free(original_username);
 		pam_end(pamh, PAM_SYSTEM_ERR);
 		sleepexit(EXIT_FAILURE);
 	}
+	free(original_username);
 }
 
 /*
@@ -1246,8 +1252,7 @@ int main(int argc, char **argv)
 	cxt.pwd = xgetpwnam(cxt.username, &cxt.pwdbuf);
 	if (!cxt.pwd) {
 		warnx(_("\nSession setup problem, abort."));
-		syslog(LOG_ERR, _("Invalid user name \"%s\" in %s:%d. Abort."),
-		       cxt.username, __FUNCTION__, __LINE__);
+		syslog(LOG_ERR, _("Invalid user name \"%s\". Abort."), cxt.username);
 		pam_end(cxt.pamh, PAM_SYSTEM_ERR);
 		sleepexit(EXIT_FAILURE);
 	}
