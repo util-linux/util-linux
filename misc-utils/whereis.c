@@ -263,30 +263,47 @@ static void dirlist_add_subdir(struct wh_dirlist **ls, int type, const char *dir
 	char buf[PATH_MAX], *d;
 	DIR *dirp;
 	struct dirent *dp;
+	char *postfix;
+	size_t len;
 
-	xstrncpy(buf, dir, PATH_MAX);
+	postfix = strchr(dir, '*');
+	if (!postfix)
+		goto ignore;
 
-	d = strchr(buf, '*');
-	if (!d)
-		return;
-	*d = 0;
+	/* copy begin of the path to the buffer (part before '*') */
+	len = (postfix - dir) + 1;
+	xstrncpy(buf, dir, len);
 
+	/* remember place where to append subdirs */
+	d = buf + len - 1;
+
+	/* skip '*' */
+	postfix++;
+	if (!*postfix)
+		postfix = NULL;
+
+	/* open parental dir t scan */
 	dirp = opendir(buf);
 	if (!dirp)
-		return;
+		goto ignore;
 
-	DBG(LIST, ul_debugobj(*ls, " scanning subdir: %s", dir));
+	DBG(LIST, ul_debugobj(*ls, " scanning subdirs: %s [%s<subdir>%s]",
+				dir, buf, postfix ? postfix : ""));
 
 	while ((dp = readdir(dirp)) != NULL) {
 		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
 			continue;
-		snprintf(d, PATH_MAX - (d - buf), "%s", dp->d_name);
-		/* a dir definition can have a star in middle of path */
-		strcat(buf, strchr(dir, '*') + 1);
+		if (postfix)
+			snprintf(d, PATH_MAX - len, "%s%s", dp->d_name, postfix);
+		else
+			snprintf(d, PATH_MAX - len, "%s", dp->d_name);
+
 		dirlist_add_dir(ls, type, buf);
 	}
 	closedir(dirp);
 	return;
+ignore:
+	DBG(LIST, ul_debugobj(*ls, " ignore path: %s", dir));
 }
 
 static void construct_dirlist_from_env(const char *env,
