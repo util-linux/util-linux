@@ -856,8 +856,7 @@ static void loginpam_acct(struct login_context *cxt)
 
 	if (!cxt->username || !*cxt->username) {
 		warnx(_("\nSession setup problem, abort."));
-		syslog(LOG_ERR, _("NULL user name in %s:%d. Abort."),
-		       __FUNCTION__, __LINE__);
+		syslog(LOG_ERR, _("NULL user name. Abort."));
 		pam_end(pamh, PAM_SYSTEM_ERR);
 		sleepexit(EXIT_FAILURE);
 	}
@@ -1246,8 +1245,8 @@ int main(int argc, char **argv)
 	cxt.pwd = xgetpwnam(cxt.username, &cxt.pwdbuf);
 	if (!cxt.pwd) {
 		warnx(_("\nSession setup problem, abort."));
-		syslog(LOG_ERR, _("Invalid user name \"%s\" in %s:%d. Abort."),
-		       cxt.username, __FUNCTION__, __LINE__);
+		syslog(LOG_ERR, _("Invalid user name \"%s\". Abort."),
+		       cxt.username);
 		pam_end(cxt.pamh, PAM_SYSTEM_ERR);
 		sleepexit(EXIT_FAILURE);
 	}
