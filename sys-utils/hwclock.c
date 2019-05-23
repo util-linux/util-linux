@@ -971,7 +971,7 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	 */
 	struct timeval startup_hclocktime = { 0 };
 	/* Total Hardware Clock drift correction needed. */
-	struct timeval tdrift;
+	struct timeval tdrift = { 0 };
 
 	if ((ctl->set || ctl->systohc || ctl->adjust) &&
 	    (adjtime->local_utc == UTC) != ctl->universal) {
