@@ -81,6 +81,7 @@ struct chardata {
 extern int get_terminal_dimension(int *cols, int *lines);
 extern int get_terminal_width(int default_width);
 extern int get_terminal_type(const char **type);
+extern int get_terminal_stdfd(void);
 extern int get_terminal_name(const char **path, const char **name,
 			     const char **number);
 

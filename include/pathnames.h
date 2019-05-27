@@ -95,6 +95,8 @@
 #define _PATH_PROC_GIDMAP	"/proc/self/gid_map"
 #define _PATH_PROC_SETGROUPS	"/proc/self/setgroups"
 
+#define _PATH_PROC_FDDIR	"/proc/self/fd"
+
 #define _PATH_PROC_ATTR_CURRENT	"/proc/self/attr/current"
 #define _PATH_PROC_ATTR_EXEC	"/proc/self/attr/exec"
 #define _PATH_PROC_CAPLASTCAP	"/proc/sys/kernel/cap_last_cap"
