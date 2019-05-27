@@ -59,6 +59,8 @@
 #include "nls.h"
 #include "c.h"
 #include "rpmatch.h"
+#include "ttyutils.h"
+#include "pathnames.h"
 
 /* exit codes */
 
@@ -90,6 +92,7 @@ int main(int argc, char *argv[])
 {
 	struct stat sb;
 	char *tty;
+	char ttybuf[sizeof(_PATH_PROC_FDDIR) + sizeof(stringify_value(INT_MAX))];
 	int ch, fd, verbose = FALSE, ret;
 
 	static const struct option longopts[] = {
@@ -121,13 +124,21 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-	if (!isatty(STDERR_FILENO)) {
+	fd = get_terminal_stdfd();
+	if (fd < 0) {
 		if (verbose)
 			warnx(_("no tty"));
 		exit(MESG_EXIT_FAILURE);
 	}
-	if ((tty = ttyname(STDERR_FILENO)) == NULL)
-		err(MESG_EXIT_FAILURE, _("ttyname failed"));
+
+	tty = ttyname(fd);
+	if (!tty) {
+		snprintf(ttybuf, sizeof(ttybuf), "%s/%d", _PATH_PROC_FDDIR, fd);
+		tty = ttybuf;
+		if (verbose)
+			warnx(_("ttyname() failed, attempting to go around using: %s"), tty);
+	}
+
 	if ((fd = open(tty, O_RDONLY)) < 0)
 		err(MESG_EXIT_FAILURE, _("cannot open %s"), tty);
 	if (fstat(fd, &sb))

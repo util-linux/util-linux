@@ -58,8 +58,8 @@ should be executed in your login scripts.
 .PP
 The
 .B mesg
-utility silently exits with error status 2 if the current standard error output does
-not refer to the terminal.  In this case execute
+utility silently exits with error status 2 if not executed on terminal.  In this
+case execute
 .B mesg
 is pointless.  The command line option \fB\-\-verbose\fR forces
 mesg to print a warning in this situation.  This behaviour has been introduced
