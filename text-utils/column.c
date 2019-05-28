@@ -538,6 +538,9 @@ static int read_input(struct column_control *ctl, FILE *fp)
 				ctl->maxlength = len;
 			ctl->nents++;
 			break;
+		default:
+			free(wcs);
+			break;
 		}
 	} while (rc == 0);
 
