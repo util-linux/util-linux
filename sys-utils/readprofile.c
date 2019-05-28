@@ -263,9 +263,9 @@ int main(int argc, char **argv)
 		size_t i;
 
 		for (p = buf + 1; p < buf + entries; p++) {
-			if (*p & ~0U << (sizeof(*buf) * 4))
+			if (*p & ~0U << ((unsigned) sizeof(*buf) * 4U))
 				big++;
-			if (*p & ((1 << (sizeof(*buf) * 4)) - 1))
+			if (*p & ((1U << ((unsigned) sizeof(*buf) * 4U)) - 1U))
 				small++;
 		}
 		if (big > small) {
