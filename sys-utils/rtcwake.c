@@ -247,12 +247,15 @@ static char **get_sys_power_states(struct rtcwake_control *ctl)
 
 	if (!ctl->possible_modes) {
 		char buf[256] = { 0 };
+		ssize_t ss;
 
 		fd = open(SYS_POWER_STATE_PATH, O_RDONLY);
 		if (fd < 0)
 			goto nothing;
-		if (read(fd, &buf, sizeof(buf) - 1) <= 0)
+		ss = read(fd, &buf, sizeof(buf) - 1);
+		if (ss <= 0)
 			goto nothing;
+		buf[ss] = '\0';
 		ctl->possible_modes = strv_split(buf, " \n");
 		close(fd);
 	}
@@ -451,6 +454,7 @@ int main(int argc, char **argv)
 	static const ul_excl_t excl[] = {
 		{ 'a', 'l', 'u' },
 		{ 's', 't', OPT_DATE },
+		{ 0 },
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
