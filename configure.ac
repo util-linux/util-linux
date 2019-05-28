@@ -2453,6 +2453,7 @@ AC_MSG_RESULT([
 	suid cflags:       ${SUID_CFLAGS}
 	ldflags:           ${LDFLAGS}
 	suid ldflags:      ${SUID_LDFLAGS}
+	ASAN enabled:      ${enable_asan}
 
 	Python:            ${PYTHON}
 	Python version:    ${PYTHON_VERSION}
