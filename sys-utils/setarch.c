@@ -246,7 +246,7 @@ static struct arch_domain *get_arch_domain(struct arch_domain *doms, const char 
 {
 	struct arch_domain *d;
 
-	for (d = doms; d->perval >= 0; d++) {
+	for (d = doms; d && d->perval >= 0; d++) {
 		if (!strcmp(pers, d->target_arch))
 			break;
 	}
