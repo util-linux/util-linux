@@ -1881,7 +1881,8 @@ static void __attribute__ ((__format__(printf, 3, 4)))
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	/* description column */
-	scols_line_set_data(ln, 0, txt);
+	if (txt && scols_line_set_data(ln, 0, txt))
+		err(EXIT_FAILURE, _("failed to add output data"));
 
 	/* data column */
 	va_start(args, fmt);
