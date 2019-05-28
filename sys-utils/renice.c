@@ -140,7 +140,7 @@ int main(int argc, char **argv)
 		argv++;
 	}
 
-	if (argc < 2) {
+	if (argc < 2 || !*argv) {
 		warnx(_("not enough arguments"));
 		errtryhelp(EXIT_FAILURE);
 	}
