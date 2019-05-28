@@ -407,7 +407,7 @@ static void flushln(void)
 static void overstrike(void)
 {
 	register int i;
-	register wchar_t *lbuf = xmalloc((maxcol + 1) * sizeof(wchar_t));
+	register wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
 	register wchar_t *cp = lbuf;
 	int hadbold=0;
 
@@ -446,7 +446,7 @@ static void overstrike(void)
 static void iattr(void)
 {
 	register int i;
-	register wchar_t *lbuf = xmalloc((maxcol + 1) * sizeof(wchar_t));
+	register wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
 	register wchar_t *cp = lbuf;
 
 	for (i = 0; i < maxcol; i++)
