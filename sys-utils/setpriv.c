@@ -700,8 +700,10 @@ static void do_reset_environ(struct passwd *pw)
 #else
 	environ = NULL;
 #endif
-	if (term)
+	if (term) {
 		xsetenv("TERM", term, 1);
+		free(term);
+	}
 
 	if (pw->pw_shell && *pw->pw_shell)
 		xsetenv("SHELL", pw->pw_shell, 1);
