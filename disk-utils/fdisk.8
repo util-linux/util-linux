@@ -36,6 +36,10 @@ as the default values (e.g. first and last partition sectors) and partition
 sizes specified by the +/-<size>{M,G,...} notation are always aligned according
 to the device properties.
 
+CHS (Cylinder-Head-Sector) addressing is deprecated and not used by default.
+Please, do not follow old articles and recommendations with "fdisk -S <n> -H
+<n>" advices for SSD or 4K-sector devices.
+
 Note that
 .BR partx (8)
 provides a rich interface for scripts to print disk layouts,
