@@ -626,8 +626,10 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		read_physical_info_powerpc(desc);
 
 	if ((fp = ul_path_fopen(desc->procfs, "r", "sysinfo"))) {
-		while (fgets(buf, sizeof(buf), fp) != NULL && !desc->machinetype)
-			lookup(buf, "Type", &desc->machinetype);
+		while (fgets(buf, sizeof(buf), fp) != NULL) {
+			if (lookup(buf, "Type", &desc->machinetype))
+				break;
+		}
 		fclose(fp);
 	}
 
