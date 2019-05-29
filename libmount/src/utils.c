@@ -306,6 +306,7 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"rootfs",
 		"rpc_pipefs",
 		"securityfs",
+		"selinuxfs",
 		"sockfs",
 		"spufs",
 		"sysfs",
