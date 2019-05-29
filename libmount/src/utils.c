@@ -273,6 +273,7 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"autofs",
 		"bdev",
 		"binfmt_misc",
+		"bpf",
 		"cgroup",
 		"cgroup2",
 		"configfs",
