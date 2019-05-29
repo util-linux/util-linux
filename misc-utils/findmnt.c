@@ -292,7 +292,7 @@ static int is_tabdiff_column(int id)
  */
 int is_listall_mode(void)
 {
-	if ((flags & FL_DF) && !(flags & FL_ALL))
+	if ((flags & FL_DF || flags & FL_REAL || flags & FL_PSEUDO) && !(flags & FL_ALL))
 		return 0;
 
 	return (!get_match(COL_SOURCE) &&
