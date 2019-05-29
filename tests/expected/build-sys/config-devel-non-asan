@@ -1,0 +1,120 @@
+blkid:  libblkid 
+cfdisk:  libblkid libdl libfdisk libmount libncursesw librt libselinux libsmartcols libtinfo libuuid 
+column:  libsmartcols 
+eject:  libblkid libmount librt libselinux 
+fdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
+fincore:  libsmartcols 
+findfs:  libblkid 
+findmnt:  libblkid libmount librt libselinux libsmartcols libudev 
+fsck:  libblkid libmount librt libselinux 
+fstrim:  libblkid libmount librt libselinux 
+libblkid.so.1.1.0:  
+libfdisk.so.1.1.0:  libblkid libuuid 
+libmount.so.1.1.0:  libblkid librt libselinux 
+libsmartcols.so.1.1.0:  
+libuuid.so.1.3.0:  
+losetup:  libsmartcols 
+lsblk:  libblkid libmount librt libselinux libsmartcols libudev 
+lscpu:  libsmartcols 
+lsipc:  libsmartcols 
+lslocks:  libblkid libmount librt libselinux libsmartcols 
+lslogins:  libselinux libsmartcols libsystemd 
+lsmem:  libsmartcols 
+lsns:  libblkid libmount librt libselinux libsmartcols 
+mkswap:  libblkid libselinux libuuid 
+mount:  libblkid libmount librt libselinux 
+mountpoint:  libblkid libmount librt libselinux 
+partx:  libblkid libsmartcols 
+prlimit:  libsmartcols 
+pylibmount.so:  libblkid libmount libpython2 librt libselinux 
+rfkill:  libsmartcols 
+sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
+swaplabel:  libblkid libuuid 
+swapoff:  libblkid libmount librt libselinux 
+swapon:  libblkid libmount librt libselinux libsmartcols 
+umount:  libblkid libmount librt libselinux 
+uuidd:  librt libsystemd libuuid 
+uuidgen:  libuuid 
+uuidparse:  libsmartcols libuuid 
+wdctl:  libsmartcols 
+wipefs:  libblkid libsmartcols 
+zramctl:  libsmartcols 
+addpart:  
+agetty:  
+blkdiscard:  librt 
+blkzone:  
+blockdev:  
+cal:  libtinfo 
+chcpu:  
+chfn:  libpam libpam_misc libpthread libreadline libselinux libuser 
+chmem:  
+choom:  
+chrt:  
+chsh:  libpam libpam_misc libpthread libreadline libselinux libuser 
+col:  
+colcrt:  
+colrm:  
+ctrlaltdel:  
+delpart:  
+dmesg:  librt libtinfo 
+fallocate:  
+fdformat:  
+flock:  librt 
+fsck.cramfs:  libz 
+fsck.minix:  
+fsfreeze:  
+getopt:  
+hardlink:  libpcre2-8 
+hexdump:  libtinfo 
+hwclock:  libaudit libm librt 
+ionice:  
+ipcmk:  
+ipcrm:  
+ipcs:  
+isosize:  
+kill:  
+last:  librt 
+ldattach:  
+line:  
+logger:  libsystemd 
+login:  libaudit libpam libpam_misc libselinux 
+look:  
+mcookie:  
+mesg:  
+mkfs:  
+mkfs.bfs:  
+mkfs.cramfs:  libz 
+mkfs.minix:  
+more:  libtinfo 
+namei:  
+newgrp:  rypt 
+nologin:  
+nsenter:  libselinux 
+pg:  libdl libncursesw libtinfo 
+pivot_root:  
+raw:  
+readprofile:  
+rename:  
+renice:  
+resizepart:  
+rev:  
+rtcwake:  
+runuser:  libpam libpam_misc libutil 
+script:  librt libutempter libutil 
+scriptreplay:  
+setarch:  
+setpriv:  ap-ng 
+setsid:  
+setterm:  libtinfo 
+su:  libpam libpam_misc libutil 
+sulogin:  libselinux rypt 
+switch_root:  
+taskset:  
+tunelp:  
+ul:  libtinfo 
+unshare:  
+utmpdump:  
+vipw:  libselinux 
+wall:  
+whereis:  
+write:  
