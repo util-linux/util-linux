@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-04-24 18:34+0200\n"
+"POT-Creation-Date: 2019-05-30 11:50+0200\n"
 "PO-Revision-Date: 2010-02-16 19:58+0100\n"
 "Last-Translator: Mikel Olasagasti Uranga <hey_neken@mundurat.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
@@ -29,7 +29,7 @@ msgstr ""
 
 #: disk-utils/addpart.c:52 disk-utils/blockdev.c:244 disk-utils/delpart.c:52
 #: disk-utils/mkfs.bfs.c:127 disk-utils/resizepart.c:96 misc-utils/kill.c:267
-#: misc-utils/kill.c:309 misc-utils/rename.c:280 misc-utils/whereis.c:518
+#: misc-utils/kill.c:309 misc-utils/rename.c:280 misc-utils/whereis.c:533
 #: sys-utils/flock.c:177 sys-utils/ipcrm.c:160 sys-utils/ldattach.c:368
 #: sys-utils/renice.c:144 sys-utils/switch_root.c:240 sys-utils/tunelp.c:152
 #: term-utils/agetty.c:879 term-utils/agetty.c:880 term-utils/agetty.c:888
@@ -48,26 +48,26 @@ msgstr "%s: argumentu gehiegi\n"
 #: disk-utils/mkfs.cramfs.c:171 disk-utils/mkfs.cramfs.c:660
 #: disk-utils/mkfs.cramfs.c:799 disk-utils/mkfs.minix.c:823
 #: disk-utils/mkswap.c:217 disk-utils/mkswap.c:246 disk-utils/partx.c:1020
-#: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:657 disk-utils/sfdisk.c:713
-#: disk-utils/sfdisk.c:767 disk-utils/sfdisk.c:826 disk-utils/sfdisk.c:905
-#: disk-utils/sfdisk.c:946 disk-utils/sfdisk.c:976 disk-utils/sfdisk.c:1013
-#: disk-utils/sfdisk.c:1572 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
-#: login-utils/islocal.c:87 login-utils/last.c:668 login-utils/sulogin.c:443
-#: login-utils/sulogin.c:480 login-utils/utmpdump.c:134
-#: login-utils/utmpdump.c:352 login-utils/utmpdump.c:372 login-utils/vipw.c:261
-#: login-utils/vipw.c:279 misc-utils/findmnt.c:1105 misc-utils/logger.c:1239
+#: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:655 disk-utils/sfdisk.c:711
+#: disk-utils/sfdisk.c:765 disk-utils/sfdisk.c:824 disk-utils/sfdisk.c:903
+#: disk-utils/sfdisk.c:944 disk-utils/sfdisk.c:974 disk-utils/sfdisk.c:1011
+#: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
+#: login-utils/islocal.c:87 login-utils/last.c:668 login-utils/sulogin.c:444
+#: login-utils/sulogin.c:481 login-utils/utmpdump.c:134
+#: login-utils/utmpdump.c:355 login-utils/utmpdump.c:375 login-utils/vipw.c:261
+#: login-utils/vipw.c:279 misc-utils/findmnt.c:1106 misc-utils/logger.c:1241
 #: misc-utils/mcookie.c:115 misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:181
 #: sys-utils/blkzone.c:96 sys-utils/dmesg.c:524 sys-utils/eject.c:497
-#: sys-utils/eject.c:693 sys-utils/fallocate.c:396 sys-utils/fsfreeze.c:116
-#: sys-utils/fstrim.c:85 sys-utils/hwclock.c:229 sys-utils/hwclock.c:869
+#: sys-utils/eject.c:693 sys-utils/fallocate.c:399 sys-utils/fsfreeze.c:116
+#: sys-utils/fstrim.c:86 sys-utils/hwclock.c:229 sys-utils/hwclock.c:869
 #: sys-utils/hwclock-rtc.c:398 sys-utils/hwclock-rtc.c:433
 #: sys-utils/ldattach.c:392 sys-utils/lscpu.c:517 sys-utils/nsenter.c:129
 #: sys-utils/rfkill.c:192 sys-utils/rfkill.c:553 sys-utils/rtcwake.c:137
-#: sys-utils/rtcwake.c:287 sys-utils/setpriv.c:290 sys-utils/setpriv.c:659
+#: sys-utils/rtcwake.c:290 sys-utils/setpriv.c:290 sys-utils/setpriv.c:659
 #: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:110 sys-utils/unshare.c:125
-#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:517
-#: term-utils/agetty.c:2869 term-utils/mesg.c:132 term-utils/script.c:540
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:515
+#: term-utils/agetty.c:2869 term-utils/mesg.c:143 term-utils/script.c:540
 #: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:418 text-utils/colcrt.c:282 text-utils/more.c:361
@@ -220,8 +220,8 @@ msgstr "lortu tamainua 512 byte-eko sektoreetan"
 #: disk-utils/fsck.minix.c:1340 disk-utils/isosize.c:204
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:812
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:756
-#: sys-utils/blkdiscard.c:170 sys-utils/blkzone.c:404 sys-utils/tunelp.c:241
-#: sys-utils/zramctl.c:710 sys-utils/zramctl.c:736
+#: sys-utils/blkdiscard.c:170 sys-utils/blkzone.c:402 sys-utils/tunelp.c:241
+#: sys-utils/zramctl.c:708 sys-utils/zramctl.c:734
 #, fuzzy
 msgid "no device specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
@@ -308,8 +308,8 @@ msgstr "Irten"
 msgid "Quit program without writing changes"
 msgstr "Irten programatik partizio taula idatzi gabe"
 
-#: disk-utils/cfdisk.c:195 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1023
-#: libfdisk/src/dos.c:2504 libfdisk/src/gpt.c:3137 libfdisk/src/sgi.c:1160
+#: disk-utils/cfdisk.c:195 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1030
+#: libfdisk/src/dos.c:2507 libfdisk/src/gpt.c:3142 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1128
 msgid "Type"
 msgstr "Moeta"
@@ -681,8 +681,8 @@ msgstr "  W          Partizio taula diskoan idatzi (W letra larriz)"
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2444 login-utils/lslogins.c:211 sys-utils/lscpu.c:1561
-#: sys-utils/lscpu.c:1571 sys-utils/lsmem.c:266
+#: disk-utils/cfdisk.c:2444 login-utils/lslogins.c:211 sys-utils/lscpu.c:1563
+#: sys-utils/lscpu.c:1573 sys-utils/lsmem.c:266
 msgid "yes"
 msgstr "bai"
 
@@ -726,7 +726,7 @@ msgstr "berirakurri partizio taula"
 msgid " %1$s [options] <disk>\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: disk-utils/cfdisk.c:2637 disk-utils/fdisk.c:822 disk-utils/sfdisk.c:1850
+#: disk-utils/cfdisk.c:2637 disk-utils/fdisk.c:822 disk-utils/sfdisk.c:1848
 #, fuzzy
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "berirakurri partizio taula"
@@ -741,13 +741,13 @@ msgstr "Inprimatu taula sektore bidez ordenatua"
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/cfdisk.c:2681 disk-utils/fdisk.c:964 disk-utils/sfdisk.c:2125
-#: misc-utils/cal.c:429 sys-utils/dmesg.c:1406 text-utils/hexdump.c:114
+#: disk-utils/cfdisk.c:2681 disk-utils/fdisk.c:964 disk-utils/sfdisk.c:2123
+#: misc-utils/cal.c:429 sys-utils/dmesg.c:1409 text-utils/hexdump.c:114
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: disk-utils/cfdisk.c:2700 disk-utils/fdisk.c:902 disk-utils/sfdisk.c:226
+#: disk-utils/cfdisk.c:2700 disk-utils/fdisk.c:902 disk-utils/sfdisk.c:224
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
@@ -848,14 +848,14 @@ msgstr "baliogabeko id-a: %s\n"
 #: login-utils/last.c:682 login-utils/utmpdump.c:137 misc-utils/namei.c:135
 #: misc-utils/rename.c:120 sys-utils/blkdiscard.c:184 sys-utils/blkzone.c:99
 #: sys-utils/dmesg.c:526 sys-utils/fallocate.c:198 sys-utils/fsfreeze.c:119
-#: sys-utils/fstrim.c:90 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
+#: sys-utils/fstrim.c:91 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
 #: sys-utils/swapon.c:523 sys-utils/switch_root.c:94
-#: sys-utils/switch_root.c:137 term-utils/mesg.c:134 text-utils/more.c:350
+#: sys-utils/switch_root.c:137 term-utils/mesg.c:145 text-utils/more.c:350
 #, fuzzy, c-format
 msgid "stat of %s failed"
 msgstr "stat-ek huts egin du: %s"
 
-#: disk-utils/fdformat.c:225 disk-utils/partx.c:1017 misc-utils/lsblk.c:1386
+#: disk-utils/fdformat.c:225 disk-utils/partx.c:1017 misc-utils/lsblk.c:1398
 #: sys-utils/blkdiscard.c:186 sys-utils/blkzone.c:101
 #: sys-utils/mountpoint.c:106
 #, fuzzy, c-format
@@ -891,7 +891,7 @@ msgstr ""
 msgid "user defined start track exceeds the user defined end track"
 msgstr ""
 
-#: disk-utils/fdformat.c:252 misc-utils/logger.c:1043
+#: disk-utils/fdformat.c:252 misc-utils/logger.c:1045
 #, fuzzy
 msgid "close failed"
 msgstr "seek-ek huts egin du"
@@ -907,7 +907,7 @@ msgid "Using default response %c."
 msgstr "Baliogabeko zilindro baloreak"
 
 #: disk-utils/fdisk.c:222 disk-utils/fdisk.c:296 disk-utils/fdisk.c:373
-#: libfdisk/src/dos.c:1294 libfdisk/src/gpt.c:2474
+#: libfdisk/src/dos.c:1298 libfdisk/src/gpt.c:2474
 #, fuzzy
 msgid "Value out of range."
 msgstr "memoriatik kanpo"
@@ -942,7 +942,7 @@ msgstr "%s (%s)\n"
 msgid "%s (%<PRIu64>-%<PRIu64>): "
 msgstr "%s (%s)\n"
 
-#: disk-utils/fdisk.c:440 disk-utils/sfdisk.c:200
+#: disk-utils/fdisk.c:440 disk-utils/sfdisk.c:198
 msgid " [Y]es/[N]o: "
 msgstr ""
 
@@ -1020,7 +1020,7 @@ msgstr "Lehenengo %s"
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "KDGHWCLK ioctl-ek huts egin du"
 
-#: disk-utils/fdisk.c:800 disk-utils/sfdisk.c:1481
+#: disk-utils/fdisk.c:800 disk-utils/sfdisk.c:1479
 #, c-format
 msgid "The old %s signature will be removed by a write command."
 msgstr ""
@@ -1089,7 +1089,7 @@ msgstr "Inprimatu taula sektore bidez ordenatua"
 msgid " -w, --wipe <mode>             wipe signatures (auto, always or never)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/fdisk.c:838 disk-utils/sfdisk.c:1893
+#: disk-utils/fdisk.c:838 disk-utils/sfdisk.c:1891
 #, fuzzy
 msgid " -W, --wipe-partitions <mode>  wipe signatures from new partitions (auto, always or never)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
@@ -1151,8 +1151,8 @@ msgstr "%s: Komando ezezaguna: %s\n"
 msgid "unsupported unit"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: disk-utils/fdisk.c:997 disk-utils/fdisk.c:1002 disk-utils/sfdisk.c:2089
-#: disk-utils/sfdisk.c:2094
+#: disk-utils/fdisk.c:997 disk-utils/fdisk.c:1002 disk-utils/sfdisk.c:2087
+#: disk-utils/sfdisk.c:2092
 #, fuzzy
 msgid "unsupported wipe mode"
 msgstr "%s: Komando ezezaguna: %s\n"
@@ -1165,12 +1165,12 @@ msgstr ""
 #: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:786
 #: disk-utils/partx.c:974 disk-utils/raw.c:136 disk-utils/raw.c:149
 #: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:519
-#: misc-utils/findfs.c:58 misc-utils/look.c:149 misc-utils/whereis.c:571
-#: misc-utils/whereis.c:582 misc-utils/whereis.c:593 misc-utils/whereis.c:635
+#: misc-utils/findfs.c:58 misc-utils/look.c:149 misc-utils/whereis.c:586
+#: misc-utils/whereis.c:597 misc-utils/whereis.c:608 misc-utils/whereis.c:650
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:188
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1467
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1470
 #: sys-utils/ipcmk.c:134 sys-utils/ldattach.c:321 sys-utils/losetup.c:913
-#: sys-utils/lscpu.c:2340 sys-utils/lsmem.c:631 sys-utils/mount.c:809
+#: sys-utils/lscpu.c:2349 sys-utils/lsmem.c:631 sys-utils/mount.c:809
 #: sys-utils/mount.c:817 sys-utils/mount.c:864 sys-utils/mount.c:877
 #: sys-utils/mount.c:949 sys-utils/mountpoint.c:179 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:229 sys-utils/swapon.c:993 sys-utils/switch_root.c:249
@@ -1185,7 +1185,7 @@ msgstr "renice: %s: balio okerra\n"
 msgid "Welcome to fdisk (%s)."
 msgstr ""
 
-#: disk-utils/fdisk.c:1069 disk-utils/sfdisk.c:1623
+#: disk-utils/fdisk.c:1069 disk-utils/sfdisk.c:1621
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
 "Be careful before using the write command.\n"
@@ -1247,12 +1247,12 @@ msgid "failed to allocate iterator"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:246
-#: disk-utils/partx.c:668 login-utils/lslogins.c:1013 misc-utils/fincore.c:360
-#: misc-utils/findmnt.c:1624 misc-utils/lsblk.c:2013 misc-utils/lslocks.c:456
+#: disk-utils/partx.c:668 login-utils/lslogins.c:1013 misc-utils/fincore.c:356
+#: misc-utils/findmnt.c:1625 misc-utils/lsblk.c:2031 misc-utils/lslocks.c:456
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:156 sys-utils/losetup.c:325
-#: sys-utils/lscpu.c:1632 sys-utils/lscpu.c:1821 sys-utils/lscpu.c:1948
+#: sys-utils/lscpu.c:1634 sys-utils/lscpu.c:1825 sys-utils/lscpu.c:1957
 #: sys-utils/lsipc.c:351 sys-utils/prlimit.c:297 sys-utils/rfkill.c:459
-#: sys-utils/swapon.c:284 sys-utils/wdctl.c:260 sys-utils/zramctl.c:496
+#: sys-utils/swapon.c:284 sys-utils/wdctl.c:260 sys-utils/zramctl.c:494
 #: text-utils/column.c:208
 #, fuzzy
 msgid "failed to allocate output table"
@@ -1260,13 +1260,13 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
 #: disk-utils/fdisk-list.c:167 disk-utils/fdisk-list.c:270
 #: disk-utils/partx.c:582 login-utils/lslogins.c:1071 misc-utils/fincore.c:123
-#: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1030
+#: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1034
 #: misc-utils/lslocks.c:393 misc-utils/uuidparse.c:154 misc-utils/wipefs.c:223
-#: sys-utils/losetup.c:348 sys-utils/losetup.c:377 sys-utils/lscpu.c:1651
-#: sys-utils/lscpu.c:1847 sys-utils/lscpu.c:1875 sys-utils/lsipc.c:480
+#: sys-utils/losetup.c:348 sys-utils/losetup.c:377 sys-utils/lscpu.c:1653
+#: sys-utils/lscpu.c:1853 sys-utils/lscpu.c:1881 sys-utils/lsipc.c:480
 #: sys-utils/lsipc.c:555 sys-utils/lsipc.c:657 sys-utils/lsipc.c:749
 #: sys-utils/lsipc.c:910 sys-utils/prlimit.c:229 sys-utils/rfkill.c:376
-#: sys-utils/swapon.c:179 sys-utils/wdctl.c:214 sys-utils/zramctl.c:414
+#: sys-utils/swapon.c:179 sys-utils/wdctl.c:214 sys-utils/zramctl.c:412
 #: text-utils/column.c:452 text-utils/column.c:473
 #, fuzzy
 msgid "failed to allocate output line"
@@ -1274,12 +1274,13 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
 #: disk-utils/fdisk-list.c:177 disk-utils/fdisk-list.c:277
 #: disk-utils/partx.c:645 login-utils/lslogins.c:1172 misc-utils/fincore.c:159
-#: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1065
+#: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1075
 #: misc-utils/lslocks.c:443 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:263
-#: sys-utils/losetup.c:305 sys-utils/lscpu.c:1697 sys-utils/lscpu.c:1855
-#: sys-utils/lscpu.c:1886 sys-utils/lsipc.c:514 sys-utils/lsipc.c:639
-#: sys-utils/prlimit.c:261 sys-utils/rfkill.c:404 sys-utils/swapon.c:227
-#: sys-utils/wdctl.c:242 sys-utils/zramctl.c:481 text-utils/column.c:459
+#: sys-utils/losetup.c:305 sys-utils/lscpu.c:1699 sys-utils/lscpu.c:1861
+#: sys-utils/lscpu.c:1885 sys-utils/lscpu.c:1893 sys-utils/lsipc.c:514
+#: sys-utils/lsipc.c:639 sys-utils/prlimit.c:261 sys-utils/rfkill.c:404
+#: sys-utils/swapon.c:227 sys-utils/wdctl.c:242 sys-utils/zramctl.c:479
+#: text-utils/column.c:459
 #, fuzzy
 msgid "failed to add output data"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
@@ -1299,24 +1300,24 @@ msgstr ""
 msgid "Partition table entries are not in disk order."
 msgstr "partizio logikoak ez daude disko ordenean"
 
-#: disk-utils/fdisk-list.c:232 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2498
-#: libfdisk/src/gpt.c:3133 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
+#: disk-utils/fdisk-list.c:232 libfdisk/src/bsd.c:1025 libfdisk/src/dos.c:2501
+#: libfdisk/src/gpt.c:3138 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1122
 #, fuzzy
 msgid "Start"
 msgstr "hasiera"
 
-#: disk-utils/fdisk-list.c:232 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2499
-#: libfdisk/src/gpt.c:3134 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
+#: disk-utils/fdisk-list.c:232 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2502
+#: libfdisk/src/gpt.c:3139 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1123
 msgid "End"
 msgstr "Amaiera"
 
-#: disk-utils/fdisk-list.c:232 libfdisk/src/bsd.c:1020 libfdisk/src/dos.c:2500
-#: libfdisk/src/gpt.c:3135 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
+#: disk-utils/fdisk-list.c:232 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2503
+#: libfdisk/src/gpt.c:3140 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1124
 msgid "Sectors"
 msgstr "Sektoreak"
 
-#: disk-utils/fdisk-list.c:232 libfdisk/src/bsd.c:1022 libfdisk/src/dos.c:2502
-#: libfdisk/src/gpt.c:3136 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
+#: disk-utils/fdisk-list.c:232 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2505
+#: libfdisk/src/gpt.c:3141 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1126
 msgid "Size"
 msgstr ""
 
@@ -1676,7 +1677,7 @@ msgid ""
 "Help (expert commands):\n"
 msgstr ""
 
-#: disk-utils/fdisk-menu.c:373 disk-utils/sfdisk.c:1290
+#: disk-utils/fdisk-menu.c:373 disk-utils/sfdisk.c:1288
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -1730,17 +1731,17 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "Script successfully saved."
 msgstr ""
 
-#: disk-utils/fdisk-menu.c:555 disk-utils/sfdisk.c:1511
+#: disk-utils/fdisk-menu.c:555 disk-utils/sfdisk.c:1509
 #, fuzzy, c-format
 msgid "Partition #%zu contains a %s signature."
 msgstr "Partizioa 0 sektorea baina lehenago hasten da"
 
-#: disk-utils/fdisk-menu.c:558 disk-utils/sfdisk.c:1514
+#: disk-utils/fdisk-menu.c:558 disk-utils/sfdisk.c:1512
 #, fuzzy
 msgid "Do you want to remove the signature?"
 msgstr "  W          Partizio taula diskoan idatzi (W letra larriz)"
 
-#: disk-utils/fdisk-menu.c:563 disk-utils/sfdisk.c:1519
+#: disk-utils/fdisk-menu.c:563 disk-utils/sfdisk.c:1517
 msgid "The signature will be removed by a write command."
 msgstr ""
 
@@ -1826,9 +1827,9 @@ msgstr "fsck: %s: ez da aurkitu\n"
 
 #: disk-utils/fsck.c:329 disk-utils/fsck.cramfs.c:171
 #: disk-utils/fsck.cramfs.c:178 disk-utils/fsck.cramfs.c:234
-#: disk-utils/fsck.cramfs.c:255 disk-utils/sfdisk.c:300 libfdisk/src/bsd.c:646
-#: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:656
-#: misc-utils/hardlink.c:284 misc-utils/hardlink.c:286
+#: disk-utils/fsck.cramfs.c:255 disk-utils/sfdisk.c:298 libfdisk/src/bsd.c:646
+#: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:657
+#: misc-utils/hardlink.c:290 misc-utils/hardlink.c:292
 #: sys-utils/ctrlaltdel.c:44 sys-utils/rfkill.c:213 sys-utils/setpriv.c:299
 #: term-utils/setterm.c:726 term-utils/setterm.c:783 term-utils/setterm.c:787
 #: term-utils/setterm.c:794
@@ -1887,7 +1888,7 @@ msgstr "crc errorea"
 msgid "%s: failed to parse fstab"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/fsck.c:687 login-utils/login.c:944 login-utils/sulogin.c:1023
+#: disk-utils/fsck.c:687 login-utils/login.c:943 login-utils/sulogin.c:1024
 #: login-utils/vipw.c:208 sys-utils/flock.c:348 sys-utils/nsenter.c:180
 #: sys-utils/swapon.c:320 sys-utils/unshare.c:223 sys-utils/unshare.c:466
 #: term-utils/script.c:880
@@ -2133,7 +2134,7 @@ msgid "file length too short"
 msgstr "fitxategi luzeera motxegia"
 
 #: disk-utils/fsck.cramfs.c:176 disk-utils/fsck.cramfs.c:231
-#: disk-utils/fsck.cramfs.c:251 libfdisk/src/bsd.c:718 libfdisk/src/bsd.c:893
+#: disk-utils/fsck.cramfs.c:251 libfdisk/src/bsd.c:718 libfdisk/src/bsd.c:900
 #: login-utils/last.c:203 login-utils/last.c:237 sys-utils/fallocate.c:203
 #, fuzzy, c-format
 msgid "seek on %s failed"
@@ -2239,7 +2240,7 @@ msgid "non-size (%ld vs %ld) bytes"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:415 disk-utils/fsck.cramfs.c:518
-#: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:369 sys-utils/fallocate.c:408
+#: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:369 sys-utils/fallocate.c:411
 #: sys-utils/rfkill.c:560 sys-utils/setpriv.c:665 sys-utils/setpriv.c:688
 #: sys-utils/swapon.c:393 term-utils/ttymsg.c:175
 #, c-format
@@ -2807,7 +2808,7 @@ msgstr ""
 #: disk-utils/fsck.minix.c:1431 disk-utils/mkfs.minix.c:837
 #: disk-utils/mkswap.c:541 disk-utils/partx.c:1067 disk-utils/resizepart.c:115
 #: login-utils/su-common.c:327 login-utils/su-common.c:404
-#: login-utils/utmpdump.c:389 sys-utils/dmesg.c:661 sys-utils/wdctl.c:347
+#: login-utils/utmpdump.c:392 sys-utils/dmesg.c:661 sys-utils/wdctl.c:347
 #: sys-utils/wdctl.c:412 term-utils/script.c:363 term-utils/script.c:442
 #: term-utils/setterm.c:890 text-utils/pg.c:1256
 #, fuzzy
@@ -3022,9 +3023,9 @@ msgid ""
 "                      specifying -V more than once will cause a dry-run\n"
 msgstr ""
 
-#: disk-utils/mkfs.c:133 include/c.h:239 login-utils/su-common.c:1519
-#: login-utils/sulogin.c:792 login-utils/sulogin.c:796 sys-utils/flock.c:123
-#: sys-utils/rtcwake.c:605 term-utils/script.c:692
+#: disk-utils/mkfs.c:133 include/c.h:252 login-utils/su-common.c:1519
+#: login-utils/sulogin.c:793 login-utils/sulogin.c:797 sys-utils/flock.c:123
+#: sys-utils/rtcwake.c:609 term-utils/script.c:692
 #, c-format
 msgid "failed to execute %s"
 msgstr "huts egin da %s exekutatzen"
@@ -3788,9 +3789,9 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: disk-utils/partx.c:679 misc-utils/fincore.c:374 misc-utils/findmnt.c:1652
-#: misc-utils/lsblk.c:2052 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
-#: sys-utils/lscpu.c:1641 sys-utils/lscpu.c:1830 sys-utils/prlimit.c:306
+#: disk-utils/partx.c:679 misc-utils/fincore.c:370 misc-utils/findmnt.c:1653
+#: misc-utils/lsblk.c:2070 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
+#: sys-utils/lscpu.c:1643 sys-utils/lscpu.c:1834 sys-utils/prlimit.c:306
 #: sys-utils/rfkill.c:471 sys-utils/swapon.c:293 sys-utils/wdctl.c:271
 #, fuzzy
 msgid "failed to allocate output column"
@@ -3844,7 +3845,7 @@ msgid ""
 "\n"
 msgstr "  d          Uneko partizioa ezabatu"
 
-#: disk-utils/partx.c:765 misc-utils/lsblk.c:1713 sys-utils/lsmem.c:503
+#: disk-utils/partx.c:765 misc-utils/lsblk.c:1731 sys-utils/lsmem.c:503
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr ""
 
@@ -3865,11 +3866,11 @@ msgstr ""
 msgid "     --output-all     output all columns\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: disk-utils/partx.c:770 misc-utils/lsblk.c:1709 sys-utils/lsmem.c:501
+#: disk-utils/partx.c:770 misc-utils/lsblk.c:1727 sys-utils/lsmem.c:501
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr ""
 
-#: disk-utils/partx.c:771 misc-utils/lsblk.c:1724 sys-utils/lsmem.c:507
+#: disk-utils/partx.c:771 misc-utils/lsblk.c:1742 sys-utils/lsmem.c:507
 #, fuzzy
 msgid " -r, --raw            use raw output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
@@ -4024,120 +4025,120 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "failed to resize partition"
 msgstr "berirakurri partizio taula"
 
-#: disk-utils/sfdisk.c:234
+#: disk-utils/sfdisk.c:232
 #, fuzzy
 msgid "failed to allocate nested libfdisk context"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:294
+#: disk-utils/sfdisk.c:292
 #, fuzzy, c-format
 msgid "cannot seek %s"
 msgstr "ezin da fork egin"
 
-#: disk-utils/sfdisk.c:305 libfdisk/src/bsd.c:723 libfdisk/src/bsd.c:897
+#: disk-utils/sfdisk.c:303 libfdisk/src/bsd.c:723 libfdisk/src/bsd.c:904
 #, fuzzy, c-format
 msgid "cannot write %s"
 msgstr "ezin da %s ireki"
 
-#: disk-utils/sfdisk.c:312
+#: disk-utils/sfdisk.c:310
 #, c-format
 msgid "%12s (offset %5ju, size %5ju): %s"
 msgstr ""
 
-#: disk-utils/sfdisk.c:318
+#: disk-utils/sfdisk.c:316
 #, fuzzy, c-format
 msgid "%s: failed to create a backup"
 msgstr "%s: get size egiterakoan huts egin da"
 
-#: disk-utils/sfdisk.c:331
+#: disk-utils/sfdisk.c:329
 #, fuzzy
 msgid "failed to create a backup file, $HOME undefined"
 msgstr "%s: get size egiterakoan huts egin da"
 
-#: disk-utils/sfdisk.c:357
+#: disk-utils/sfdisk.c:355
 msgid "Backup files:"
 msgstr ""
 
-#: disk-utils/sfdisk.c:382
+#: disk-utils/sfdisk.c:380
 #, fuzzy
 msgid "failed to read new partition from device; ignoring --move-data"
 msgstr "berirakurri partizio taula"
 
-#: disk-utils/sfdisk.c:384
+#: disk-utils/sfdisk.c:382
 #, fuzzy
 msgid "failed to get size of the new partition; ignoring --move-data"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:386
+#: disk-utils/sfdisk.c:384
 #, fuzzy
 msgid "failed to get start of the new partition; ignoring --move-data"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:388
+#: disk-utils/sfdisk.c:386
 #, fuzzy
 msgid "failed to get size of the old partition; ignoring --move-data"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:390
+#: disk-utils/sfdisk.c:388
 #, fuzzy
 msgid "failed to get start of the old partition; ignoring --move-data"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:392
+#: disk-utils/sfdisk.c:390
 #, fuzzy
 msgid "start of the partition has not been moved; ignoring --move-data"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:394
+#: disk-utils/sfdisk.c:392
 msgid "new partition is smaller than original; ignoring --move-data"
 msgstr ""
 
-#: disk-utils/sfdisk.c:444
+#: disk-utils/sfdisk.c:442
 msgid "Data move:"
 msgstr ""
 
-#: disk-utils/sfdisk.c:446
+#: disk-utils/sfdisk.c:444
 #, fuzzy, c-format
 msgid " typescript file: %s"
 msgstr "ezin da %s `typescript' fitxategia ireki"
 
-#: disk-utils/sfdisk.c:447
+#: disk-utils/sfdisk.c:445
 #, c-format
 msgid " old start: %ju, new start: %ju (move %ju sectors)\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:454
+#: disk-utils/sfdisk.c:452
 #, fuzzy
 msgid "Do you want to move partition data?"
 msgstr "  W          Partizio taula diskoan idatzi (W letra larriz)"
 
-#: disk-utils/sfdisk.c:456 disk-utils/sfdisk.c:1821
+#: disk-utils/sfdisk.c:454 disk-utils/sfdisk.c:1819
 msgid "Leaving."
 msgstr ""
 
-#: disk-utils/sfdisk.c:529
+#: disk-utils/sfdisk.c:527
 #, fuzzy, c-format
 msgid "%s: failed to move data"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:544
+#: disk-utils/sfdisk.c:542
 #, fuzzy
 msgid "The partition table is unchanged (--no-act)."
 msgstr "Partizio taula moeta ezezaguna"
 
-#: disk-utils/sfdisk.c:550
+#: disk-utils/sfdisk.c:548
 #, fuzzy
 msgid ""
 "\n"
 "The partition table has been altered."
 msgstr "Partizio taula moeta ezezaguna"
 
-#: disk-utils/sfdisk.c:633
+#: disk-utils/sfdisk.c:631
 #, fuzzy, c-format
 msgid "unsupported label '%s'"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: disk-utils/sfdisk.c:636
+#: disk-utils/sfdisk.c:634
 msgid ""
 "Id  Name\n"
 "\n"
@@ -4145,311 +4146,311 @@ msgstr ""
 "Id  Izena\n"
 "\n"
 
-#: disk-utils/sfdisk.c:666
+#: disk-utils/sfdisk.c:664
 #, fuzzy
 msgid "unrecognized partition table type"
 msgstr "Partizio taula moeta ezezaguna"
 
-#: disk-utils/sfdisk.c:719
+#: disk-utils/sfdisk.c:717
 #, fuzzy, c-format
 msgid "Cannot get size of %s"
 msgstr "Ezin da diskoaren tamainua lortu"
 
-#: disk-utils/sfdisk.c:756
+#: disk-utils/sfdisk.c:754
 #, fuzzy, c-format
 msgid "total: %ju blocks\n"
 msgstr "guztira: %llu bloke\n"
 
-#: disk-utils/sfdisk.c:818 disk-utils/sfdisk.c:901 disk-utils/sfdisk.c:942
-#: disk-utils/sfdisk.c:972 disk-utils/sfdisk.c:1039 disk-utils/sfdisk.c:1103
-#: disk-utils/sfdisk.c:1158 disk-utils/sfdisk.c:1214 disk-utils/sfdisk.c:1568
+#: disk-utils/sfdisk.c:816 disk-utils/sfdisk.c:899 disk-utils/sfdisk.c:940
+#: disk-utils/sfdisk.c:970 disk-utils/sfdisk.c:1037 disk-utils/sfdisk.c:1101
+#: disk-utils/sfdisk.c:1156 disk-utils/sfdisk.c:1212 disk-utils/sfdisk.c:1566
 #, fuzzy
 msgid "no disk device specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: disk-utils/sfdisk.c:830
+#: disk-utils/sfdisk.c:828
 msgid "toggle boot flags is unsupported for Hybrid GPT/MBR"
 msgstr ""
 
-#: disk-utils/sfdisk.c:835
+#: disk-utils/sfdisk.c:833
 #, fuzzy
 msgid "cannot switch to PMBR"
 msgstr "ezin da `stat' egin \"%s\"-(r)engan"
 
-#: disk-utils/sfdisk.c:836
+#: disk-utils/sfdisk.c:834
 msgid "Activation is unsupported for GPT -- entering nested PMBR."
 msgstr ""
 
-#: disk-utils/sfdisk.c:839
+#: disk-utils/sfdisk.c:837
 msgid "toggle boot flags is supported for MBR or PMBR only"
 msgstr ""
 
-#: disk-utils/sfdisk.c:874 disk-utils/sfdisk.c:921 disk-utils/sfdisk.c:1044
-#: disk-utils/sfdisk.c:1108 disk-utils/sfdisk.c:1163 disk-utils/sfdisk.c:1219
-#: disk-utils/sfdisk.c:1566 disk-utils/sfdisk.c:2063
+#: disk-utils/sfdisk.c:872 disk-utils/sfdisk.c:919 disk-utils/sfdisk.c:1042
+#: disk-utils/sfdisk.c:1106 disk-utils/sfdisk.c:1161 disk-utils/sfdisk.c:1217
+#: disk-utils/sfdisk.c:1564 disk-utils/sfdisk.c:2061
 #, fuzzy
 msgid "failed to parse partition number"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:879
+#: disk-utils/sfdisk.c:877
 #, c-format
 msgid "%s: partition %d: failed to toggle bootable flag"
 msgstr ""
 
-#: disk-utils/sfdisk.c:916 disk-utils/sfdisk.c:924
+#: disk-utils/sfdisk.c:914 disk-utils/sfdisk.c:922
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to delete"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:979
+#: disk-utils/sfdisk.c:977
 #, fuzzy, c-format
 msgid "%s: does not contain a recognized partition table"
 msgstr "%s diskak ez dauka partizio taula zuzena\n"
 
-#: disk-utils/sfdisk.c:983
+#: disk-utils/sfdisk.c:981
 #, fuzzy
 msgid "failed to allocate dump struct"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:987
+#: disk-utils/sfdisk.c:985
 #, fuzzy, c-format
 msgid "%s: failed to dump partition table"
 msgstr "berirakurri partizio taula"
 
-#: disk-utils/sfdisk.c:1017
+#: disk-utils/sfdisk.c:1015
 #, fuzzy, c-format
 msgid "%s: no partition table found"
 msgstr "Ez dago partizio taularik.\n"
 
-#: disk-utils/sfdisk.c:1021
+#: disk-utils/sfdisk.c:1019
 #, fuzzy, c-format
 msgid "%s: partition %zu: partition table contains only %zu partitions"
 msgstr "%s diskak ez dauka partizio taula zuzena\n"
 
-#: disk-utils/sfdisk.c:1024
+#: disk-utils/sfdisk.c:1022
 #, fuzzy, c-format
 msgid "%s: partition %zu: partition is unused"
 msgstr "berirakurri partizio taula"
 
-#: disk-utils/sfdisk.c:1043 disk-utils/sfdisk.c:1107 disk-utils/sfdisk.c:1162
-#: disk-utils/sfdisk.c:1218
+#: disk-utils/sfdisk.c:1041 disk-utils/sfdisk.c:1105 disk-utils/sfdisk.c:1160
+#: disk-utils/sfdisk.c:1216
 #, fuzzy
 msgid "no partition number specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: disk-utils/sfdisk.c:1049 disk-utils/sfdisk.c:1113 disk-utils/sfdisk.c:1168
-#: disk-utils/sfdisk.c:1224 sys-utils/losetup.c:778
+#: disk-utils/sfdisk.c:1047 disk-utils/sfdisk.c:1111 disk-utils/sfdisk.c:1166
+#: disk-utils/sfdisk.c:1222 sys-utils/losetup.c:778
 #, fuzzy
 msgid "unexpected arguments"
 msgstr "Ezin da '%s' fitxategia ireki"
 
-#: disk-utils/sfdisk.c:1064
+#: disk-utils/sfdisk.c:1062
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to get partition type"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:1083
+#: disk-utils/sfdisk.c:1081
 #, fuzzy, c-format
 msgid "failed to parse %s partition type '%s'"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:1087
+#: disk-utils/sfdisk.c:1085
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to set partition type"
 msgstr "%s diskak ez dauka partizio taula zuzena\n"
 
-#: disk-utils/sfdisk.c:1125
+#: disk-utils/sfdisk.c:1123
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to get partition UUID"
 msgstr "%s diskak ez dauka partizio taula zuzena\n"
 
-#: disk-utils/sfdisk.c:1138 disk-utils/sfdisk.c:1193 disk-utils/sfdisk.c:1247
+#: disk-utils/sfdisk.c:1136 disk-utils/sfdisk.c:1191 disk-utils/sfdisk.c:1245
 #, fuzzy
 msgid "failed to allocate partition object"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:1142
+#: disk-utils/sfdisk.c:1140
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to set partition UUID"
 msgstr "%s diskak ez dauka partizio taula zuzena\n"
 
-#: disk-utils/sfdisk.c:1180
+#: disk-utils/sfdisk.c:1178
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to get partition name"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:1197
+#: disk-utils/sfdisk.c:1195
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to set partition name"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:1251
+#: disk-utils/sfdisk.c:1249
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to set partition attributes"
 msgstr "%s diskak ez dauka partizio taula zuzena\n"
 
-#: disk-utils/sfdisk.c:1294
+#: disk-utils/sfdisk.c:1292
 #, fuzzy
 msgid " Commands:\n"
 msgstr "Erabilgarri dauden komandoak:\n"
 
-#: disk-utils/sfdisk.c:1296
+#: disk-utils/sfdisk.c:1294
 #, fuzzy
 msgid "   write    write table to disk and exit\n"
 msgstr "  W          Partizio taula diskoan idatzi (W letra larriz)"
 
-#: disk-utils/sfdisk.c:1297
+#: disk-utils/sfdisk.c:1295
 msgid "   quit     show new situation and wait for user's feedback before write\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1298
+#: disk-utils/sfdisk.c:1296
 msgid "   abort    exit sfdisk shell\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1299
+#: disk-utils/sfdisk.c:1297
 #, fuzzy
 msgid "   print    display the partition table\n"
 msgstr "   p   BSD partizio taula erakutsi"
 
-#: disk-utils/sfdisk.c:1300
+#: disk-utils/sfdisk.c:1298
 #, fuzzy
 msgid "   help     show this help text\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1302
+#: disk-utils/sfdisk.c:1300
 msgid "   Ctrl-D   the same as 'quit'\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1306
+#: disk-utils/sfdisk.c:1304
 msgid " Input format:\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1308
+#: disk-utils/sfdisk.c:1306
 msgid "   <start>, <size>, <type>, <bootable>\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1311
+#: disk-utils/sfdisk.c:1309
 msgid ""
 "   <start>  Beginning of the partition in sectors, or bytes if\n"
 "            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
 "            The default is the first free space.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1316
+#: disk-utils/sfdisk.c:1314
 msgid ""
 "   <size>   Size of the partition in sectors, or bytes if\n"
 "            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
 "            The default is all available space.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1321
+#: disk-utils/sfdisk.c:1319
 msgid "   <type>   The partition type.  Default is a Linux data partition.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1322
+#: disk-utils/sfdisk.c:1320
 msgid "            MBR: hex or L,S,E,X,U,R,V shortcuts.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1323
+#: disk-utils/sfdisk.c:1321
 msgid "            GPT: UUID or L,S,H,U,R,V shortcuts.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1326
+#: disk-utils/sfdisk.c:1324
 msgid "   <bootable>  Use '*' to mark an MBR partition as bootable.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1330
+#: disk-utils/sfdisk.c:1328
 msgid " Example:\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1332
+#: disk-utils/sfdisk.c:1330
 #, fuzzy
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "  n          Sortu partizio berria libre dagoen espaziotik"
 
-#: disk-utils/sfdisk.c:1364 sys-utils/dmesg.c:1537
+#: disk-utils/sfdisk.c:1362 sys-utils/dmesg.c:1540
 #, fuzzy
 msgid "unsupported command"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: disk-utils/sfdisk.c:1366
+#: disk-utils/sfdisk.c:1364
 #, fuzzy, c-format
 msgid "line %d: unsupported command"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: disk-utils/sfdisk.c:1487
+#: disk-utils/sfdisk.c:1485
 #, c-format
 msgid "The old %s signature may remain on the device. It is recommended to wipe the device with wipefs(8) or sfdisk --wipe, in order to avoid possible collisions."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1535
+#: disk-utils/sfdisk.c:1533
 #, fuzzy
 msgid "failed to allocate partition name"
 msgstr "berirakurri partizio taula"
 
-#: disk-utils/sfdisk.c:1576
+#: disk-utils/sfdisk.c:1574
 #, fuzzy
 msgid "failed to allocate script handler"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:1592
+#: disk-utils/sfdisk.c:1590
 #, fuzzy, c-format
 msgid "%s: cannot modify partition %d: no partition table was found"
 msgstr "berirakurri partizio taula"
 
-#: disk-utils/sfdisk.c:1597
+#: disk-utils/sfdisk.c:1595
 #, fuzzy, c-format
 msgid "%s: cannot modify partition %d: partition table contains only %zu partitions"
 msgstr "%s diskak ez dauka partizio taula zuzena\n"
 
-#: disk-utils/sfdisk.c:1603
+#: disk-utils/sfdisk.c:1601
 #, fuzzy, c-format
 msgid "warning: %s: partition %d is not defined yet"
 msgstr "Ez dago *BSD partiziorik %s-(e)n.\n"
 
-#: disk-utils/sfdisk.c:1621
+#: disk-utils/sfdisk.c:1619
 #, c-format
 msgid ""
 "\n"
 "Welcome to sfdisk (%s)."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1629
+#: disk-utils/sfdisk.c:1627
 msgid "Checking that no-one is using this disk right now ..."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1632
+#: disk-utils/sfdisk.c:1630
 msgid ""
 " FAILED\n"
 "\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1635
+#: disk-utils/sfdisk.c:1633
 msgid ""
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
 "Umount all file systems, and swapoff all swap partitions on this disk.\n"
 "Use the --no-reread flag to suppress this check.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1640
+#: disk-utils/sfdisk.c:1638
 msgid "Use the --force flag to overrule all checks."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1642
+#: disk-utils/sfdisk.c:1640
 #, fuzzy
 msgid ""
 " OK\n"
 "\n"
 msgstr "%s: OK\n"
 
-#: disk-utils/sfdisk.c:1654
+#: disk-utils/sfdisk.c:1652
 #, fuzzy
 msgid ""
 "\n"
 "Old situation:"
 msgstr "Egoera zaharra:\n"
 
-#: disk-utils/sfdisk.c:1672
+#: disk-utils/sfdisk.c:1670
 #, c-format
 msgid ""
 "\n"
@@ -4458,260 +4459,260 @@ msgid ""
 "to override the default."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1675
+#: disk-utils/sfdisk.c:1673
 msgid ""
 "\n"
 "Type 'help' to get more information.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1693
+#: disk-utils/sfdisk.c:1691
 #, fuzzy
 msgid "All partitions used."
 msgstr "Ez dago partizio gehiago"
 
-#: disk-utils/sfdisk.c:1721
+#: disk-utils/sfdisk.c:1719
 #, fuzzy
 msgid "Done.\n"
 msgstr "Eginda.\n"
 
-#: disk-utils/sfdisk.c:1733
+#: disk-utils/sfdisk.c:1731
 #, fuzzy
 msgid "Ignoring partition."
 msgstr "Ez sortu partizio bat"
 
-#: disk-utils/sfdisk.c:1742 disk-utils/sfdisk.c:1802
+#: disk-utils/sfdisk.c:1740 disk-utils/sfdisk.c:1800
 #, fuzzy
 msgid "Failed to apply script headers, disk label not created."
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: disk-utils/sfdisk.c:1761
+#: disk-utils/sfdisk.c:1759
 #, fuzzy, c-format
 msgid "Failed to add #%d partition"
 msgstr "berirakurri partizio taula"
 
-#: disk-utils/sfdisk.c:1784
+#: disk-utils/sfdisk.c:1782
 msgid "Script header accepted."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1809
+#: disk-utils/sfdisk.c:1807
 #, fuzzy
 msgid ""
 "\n"
 "New situation:"
 msgstr "Egoera berria:\n"
 
-#: disk-utils/sfdisk.c:1819
+#: disk-utils/sfdisk.c:1817
 #, fuzzy
 msgid "Do you want to write this to disk?"
 msgstr "  W          Partizio taula diskoan idatzi (W letra larriz)"
 
-#: disk-utils/sfdisk.c:1832
+#: disk-utils/sfdisk.c:1830
 msgid "Leaving.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1846
+#: disk-utils/sfdisk.c:1844
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] <dev> [[-N] <part>]\n"
 " %1$s [options] <command>\n"
 msgstr "Erabilera: %s LABEL=<etiketa>|UUID=<uuid>\n"
 
-#: disk-utils/sfdisk.c:1853
+#: disk-utils/sfdisk.c:1851
 msgid " -A, --activate <dev> [<part> ...] list or set bootable (P)MBR partitions\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1854
+#: disk-utils/sfdisk.c:1852
 #, fuzzy
 msgid " -d, --dump <dev>                  dump partition table (usable for later input)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1855
+#: disk-utils/sfdisk.c:1853
 #, fuzzy
 msgid " -J, --json <dev>                  dump partition table in JSON format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1856
+#: disk-utils/sfdisk.c:1854
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1857
+#: disk-utils/sfdisk.c:1855
 #, fuzzy
 msgid " -l, --list [<dev> ...]            list partitions of each device\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1858
+#: disk-utils/sfdisk.c:1856
 #, fuzzy
 msgid " -F, --list-free [<dev> ...]       list unpartitioned free areas of each device\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1859
+#: disk-utils/sfdisk.c:1857
 #, fuzzy
 msgid " -r, --reorder <dev>               fix partitions order (by start offset)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1860
+#: disk-utils/sfdisk.c:1858
 #, fuzzy
 msgid " -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1861
+#: disk-utils/sfdisk.c:1859
 #, fuzzy
 msgid " -T, --list-types                  print the recognized types (see -X)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1862
+#: disk-utils/sfdisk.c:1860
 #, fuzzy
 msgid " -V, --verify [<dev> ...]          test whether partitions seem correct\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1863
+#: disk-utils/sfdisk.c:1861
 msgid "     --delete <dev> [<part> ...]   delete all or specified partitions\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1866
+#: disk-utils/sfdisk.c:1864
 msgid " --part-label <dev> <part> [<str>] print or change partition label\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1867
+#: disk-utils/sfdisk.c:1865
 msgid " --part-type <dev> <part> [<type>] print or change partition type\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1868
+#: disk-utils/sfdisk.c:1866
 #, fuzzy
 msgid " --part-uuid <dev> <part> [<uuid>] print or change partition uuid\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: disk-utils/sfdisk.c:1869
+#: disk-utils/sfdisk.c:1867
 msgid " --part-attrs <dev> <part> [<str>] print or change partition attributes\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1872
+#: disk-utils/sfdisk.c:1870
 #, fuzzy
 msgid " <dev>                     device (usually disk) path\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1873
+#: disk-utils/sfdisk.c:1871
 #, fuzzy
 msgid " <part>                    partition number\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1874
+#: disk-utils/sfdisk.c:1872
 msgid " <type>                    partition type, GUID for GPT, hex for MBR\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1877
+#: disk-utils/sfdisk.c:1875
 #, fuzzy
 msgid " -a, --append              append partitions to existing partition table\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1878
+#: disk-utils/sfdisk.c:1876
 #, fuzzy
 msgid " -b, --backup              backup partition table sectors (see -O)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1879
+#: disk-utils/sfdisk.c:1877
 #, fuzzy
 msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1880
+#: disk-utils/sfdisk.c:1878
 msgid "     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1881
+#: disk-utils/sfdisk.c:1879
 #, fuzzy
 msgid " -f, --force               disable all consistency checking\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1882
+#: disk-utils/sfdisk.c:1880
 #, fuzzy
 msgid "     --color[=<when>]      colorize output (auto, always or never)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1885
+#: disk-utils/sfdisk.c:1883
 #, fuzzy
 msgid " -N, --partno <num>        specify partition number\n"
 msgstr "Sartu buru kopurua:"
 
-#: disk-utils/sfdisk.c:1886
+#: disk-utils/sfdisk.c:1884
 #, fuzzy
 msgid " -n, --no-act              do everything except write to device\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1887
+#: disk-utils/sfdisk.c:1885
 #, fuzzy
 msgid "     --no-reread           do not check whether the device is in use\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1888
+#: disk-utils/sfdisk.c:1886
 #, fuzzy
 msgid "     --no-tell-kernel      do not tell kernel about changes\n"
 msgstr "               Lehena     Azkena\n"
 
-#: disk-utils/sfdisk.c:1889
+#: disk-utils/sfdisk.c:1887
 msgid " -O, --backup-file <path>  override default backup file name\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1890
+#: disk-utils/sfdisk.c:1888
 #, fuzzy
 msgid " -o, --output <list>       output columns\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: disk-utils/sfdisk.c:1891
+#: disk-utils/sfdisk.c:1889
 #, fuzzy
 msgid " -q, --quiet               suppress extra info messages\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1892
+#: disk-utils/sfdisk.c:1890
 #, fuzzy
 msgid " -w, --wipe <mode>         wipe signatures (auto, always or never)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1894
+#: disk-utils/sfdisk.c:1892
 msgid " -X, --label <name>        specify label type (dos, gpt, ...)\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1895
+#: disk-utils/sfdisk.c:1893
 msgid " -Y, --label-nested <name> specify nested label type (dos, bsd)\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1897
+#: disk-utils/sfdisk.c:1895
 msgid " -G, --show-pt-geometry    deprecated, alias to --show-geometry\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1898
+#: disk-utils/sfdisk.c:1896
 #, fuzzy
 msgid " -L, --Linux               deprecated, only for backward compatibility\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:1899
+#: disk-utils/sfdisk.c:1897
 #, fuzzy
 msgid " -u, --unit S              deprecated, only sector unit is supported\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/sfdisk.c:2017
+#: disk-utils/sfdisk.c:2015
 #, c-format
 msgid "%s is deprecated in favour of --part-type"
 msgstr ""
 
-#: disk-utils/sfdisk.c:2022
+#: disk-utils/sfdisk.c:2020
 msgid "--id is deprecated in favour of --part-type"
 msgstr ""
 
-#: disk-utils/sfdisk.c:2038
+#: disk-utils/sfdisk.c:2036
 msgid "--show-pt-geometry is no more implemented. Using --show-geometry."
 msgstr ""
 
-#: disk-utils/sfdisk.c:2050
+#: disk-utils/sfdisk.c:2048
 msgid "--Linux option is unnecessary and deprecated"
 msgstr ""
 
-#: disk-utils/sfdisk.c:2079
+#: disk-utils/sfdisk.c:2077
 #, fuzzy, c-format
 msgid "unsupported unit '%c'"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: disk-utils/sfdisk.c:2157
+#: disk-utils/sfdisk.c:2155
 msgid "--movedata requires -N"
 msgstr ""
 
@@ -4759,66 +4760,66 @@ msgstr ""
 msgid "ignore -U (UUIDs are unsupported)"
 msgstr ""
 
-#: include/c.h:230
+#: include/c.h:243
 #, fuzzy, c-format
 msgid "Try '%s --help' for more information.\n"
 msgstr "Irteten - ez da ezer aldatu\n"
 
-#: include/c.h:334
+#: include/c.h:347
 #, fuzzy
 msgid ""
 "\n"
 "Usage:\n"
 msgstr "Erabilera:\n"
 
-#: include/c.h:335
+#: include/c.h:348
 msgid ""
 "\n"
 "Options:\n"
 msgstr ""
 
-#: include/c.h:336
+#: include/c.h:349
 msgid ""
 "\n"
 "Functions:\n"
 msgstr ""
 
-#: include/c.h:337
+#: include/c.h:350
 msgid ""
 "\n"
 "Commands:\n"
 msgstr ""
 
-#: include/c.h:338
+#: include/c.h:351
 #, fuzzy
 msgid ""
 "\n"
 "Available output columns:\n"
 msgstr "Erabilgarri dauden komandoak:\n"
 
-#: include/c.h:341
+#: include/c.h:354
 msgid "display this help"
 msgstr ""
 
-#: include/c.h:342
+#: include/c.h:355
 #, fuzzy
 msgid "display version"
 msgstr "[ --help ] [ --version ]\n"
 
-#: include/c.h:350
+#: include/c.h:363
 #, fuzzy, c-format
 msgid ""
 "\n"
 "For more details see %s.\n"
 msgstr "Irteten - ez da ezer aldatu\n"
 
-#: include/c.h:352
+#: include/c.h:365
 #, fuzzy, c-format
 msgid "%s from %s\n"
 msgstr "%s-(e)tik renice-ea\n"
 
 #: include/closestream.h:44 include/closestream.h:46 login-utils/vipw.c:276
-#: login-utils/vipw.c:295 sys-utils/rtcwake.c:299 term-utils/setterm.c:814
+#: login-utils/vipw.c:295 sys-utils/rtcwake.c:302 term-utils/setterm.c:814
 #: text-utils/col.c:160
 #, fuzzy
 msgid "write error"
@@ -4832,8 +4833,8 @@ msgstr ""
 msgid "colors are disabled by default"
 msgstr ""
 
-#: include/env.h:18 lib/pager.c:153 login-utils/login.c:1030
-#: login-utils/login.c:1034 term-utils/agetty.c:1189
+#: include/env.h:18 lib/pager.c:153 login-utils/login.c:1029
+#: login-utils/login.c:1033 term-utils/agetty.c:1189
 #, fuzzy, c-format
 msgid "failed to set the %s environment variable"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
@@ -5275,12 +5276,12 @@ msgstr "Ez dago *BSD partiziorik %s-(e)n.\n"
 msgid "First cylinder"
 msgstr "zilindroa"
 
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1265
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1269
 #, fuzzy
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Azken %s-(e)a edo +tamainua edo +tamainuaM edo +tamainuaK"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1270 libfdisk/src/gpt.c:2451
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1274 libfdisk/src/gpt.c:2451
 #, fuzzy
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Azken %s-(e)a edo +tamainua edo +tamainuaM edo +tamainuaK"
@@ -5334,7 +5335,7 @@ msgstr "pistak zilindroko"
 msgid "Sectors/Cylinder"
 msgstr "sektoreak zilindroko"
 
-#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1021 libfdisk/src/dos.c:2501
+#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2504
 #: libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:197 libfdisk/src/sun.c:1125
 msgid "Cylinders"
 msgstr "Zilindroak"
@@ -5437,43 +5438,43 @@ msgstr ""
 msgid "Bootstrap installed on %s."
 msgstr "        disko guztian. "
 
-#: libfdisk/src/bsd.c:903
+#: libfdisk/src/bsd.c:910
 #, c-format
 msgid "Disklabel written to %s.  (Don't forget to write the %s disklabel too.)"
 msgstr ""
 
-#: libfdisk/src/bsd.c:906
+#: libfdisk/src/bsd.c:913
 #, fuzzy, c-format
 msgid "Disklabel written to %s."
 msgstr "Disko unitatea: %s\n"
 
-#: libfdisk/src/bsd.c:912 libfdisk/src/context.c:696
+#: libfdisk/src/bsd.c:919 libfdisk/src/context.c:696
 #, fuzzy
 msgid "Syncing disks."
 msgstr "Diskak sinkronizatzen.\n"
 
-#: libfdisk/src/bsd.c:953
+#: libfdisk/src/bsd.c:960
 msgid "BSD label is not nested within a DOS partition."
 msgstr ""
 
-#: libfdisk/src/bsd.c:981
+#: libfdisk/src/bsd.c:988
 #, fuzzy, c-format
 msgid "BSD partition '%c' linked to DOS partition %zu."
 msgstr "   x   estekatu BSD partizioa BSD ez den partizio bati"
 
-#: libfdisk/src/bsd.c:1017
+#: libfdisk/src/bsd.c:1024
 msgid "Slice"
 msgstr ""
 
-#: libfdisk/src/bsd.c:1024
+#: libfdisk/src/bsd.c:1031
 msgid "Fsize"
 msgstr ""
 
-#: libfdisk/src/bsd.c:1025
+#: libfdisk/src/bsd.c:1032
 msgid "Bsize"
 msgstr ""
 
-#: libfdisk/src/bsd.c:1026
+#: libfdisk/src/bsd.c:1033
 msgid "Cpg"
 msgstr ""
 
@@ -5496,40 +5497,40 @@ msgstr "Partizio taula berriz irakurtzen ...\n"
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or kpartx(8)."
 msgstr ""
 
-#: libfdisk/src/context.c:860
+#: libfdisk/src/context.c:861
 #, fuzzy, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "berirakurri partizio taula"
 
-#: libfdisk/src/context.c:868
+#: libfdisk/src/context.c:869
 #, fuzzy, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: libfdisk/src/context.c:876
+#: libfdisk/src/context.c:877
 #, fuzzy, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "berirakurri partizio taula"
 
-#: libfdisk/src/context.c:882
+#: libfdisk/src/context.c:883
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr ""
 
-#: libfdisk/src/context.c:1092
+#: libfdisk/src/context.c:1093
 #, fuzzy
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "zilindroa"
 msgstr[1] "zilindroa"
 
-#: libfdisk/src/context.c:1093
+#: libfdisk/src/context.c:1094
 #, fuzzy
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektorea"
 msgstr[1] "sektorea"
 
-#: libfdisk/src/context.c:1445
+#: libfdisk/src/context.c:1446
 msgid "Incomplete geometry setting."
 msgstr ""
 
@@ -5629,246 +5630,246 @@ msgstr ""
 msgid "Start sector %ju out of range."
 msgstr "memoriatik kanpo"
 
-#: libfdisk/src/dos.c:1130 libfdisk/src/gpt.c:2325 libfdisk/src/sgi.c:838
+#: libfdisk/src/dos.c:1134 libfdisk/src/gpt.c:2325 libfdisk/src/sgi.c:838
 #: libfdisk/src/sun.c:520
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr ""
 
-#: libfdisk/src/dos.c:1138 libfdisk/src/dos.c:1174 libfdisk/src/dos.c:1236
+#: libfdisk/src/dos.c:1142 libfdisk/src/dos.c:1178 libfdisk/src/dos.c:1240
 #: libfdisk/src/gpt.c:2334
 #, fuzzy
 msgid "No free sectors available."
 msgstr "Sartu fitxategi sistema moeta: "
 
-#: libfdisk/src/dos.c:1198
+#: libfdisk/src/dos.c:1202
 #, fuzzy, c-format
 msgid "Sector %llu is already allocated."
 msgstr "Partizio hau dagoeneko erabilita dago"
 
-#: libfdisk/src/dos.c:1394
+#: libfdisk/src/dos.c:1398
 #, fuzzy, c-format
 msgid "Adding logical partition %zu"
 msgstr "Partizio logiko txarra"
 
-#: libfdisk/src/dos.c:1425
+#: libfdisk/src/dos.c:1429
 #, fuzzy, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Partizioa 0 sektorea baina lehenago hasten da"
 
-#: libfdisk/src/dos.c:1427
+#: libfdisk/src/dos.c:1431
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr ""
 
-#: libfdisk/src/dos.c:1430
+#: libfdisk/src/dos.c:1434
 #, c-format
 msgid "Partition %zu: sector %d greater than maximum %llu"
 msgstr ""
 
-#: libfdisk/src/dos.c:1433
+#: libfdisk/src/dos.c:1437
 #, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgstr ""
 
-#: libfdisk/src/dos.c:1439
+#: libfdisk/src/dos.c:1443
 #, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr ""
 
-#: libfdisk/src/dos.c:1492
+#: libfdisk/src/dos.c:1496
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr ""
 
-#: libfdisk/src/dos.c:1503
+#: libfdisk/src/dos.c:1507
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr ""
 
-#: libfdisk/src/dos.c:1512
+#: libfdisk/src/dos.c:1516
 #, fuzzy, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "%s partizioak hasierako 0 sektore baliogabea dauka.\n"
 
-#: libfdisk/src/dos.c:1559
+#: libfdisk/src/dos.c:1563
 #, fuzzy, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr ""
 "\n"
 "Swap partizioak ez da swap moetakoa.\n"
 
-#: libfdisk/src/dos.c:1572
+#: libfdisk/src/dos.c:1576
 #, fuzzy, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "berirakurri partizio taula"
 
-#: libfdisk/src/dos.c:1600
+#: libfdisk/src/dos.c:1604
 #, fuzzy, c-format
 msgid "Partition %zu: empty."
 msgstr "Ezin da partizu huts bat ezabatu"
 
-#: libfdisk/src/dos.c:1605
+#: libfdisk/src/dos.c:1609
 #, fuzzy, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "partizio logikoak ez daude disko ordenean"
 
-#: libfdisk/src/dos.c:1613
+#: libfdisk/src/dos.c:1617
 #, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgstr ""
 
-#: libfdisk/src/dos.c:1616
+#: libfdisk/src/dos.c:1620
 #, c-format
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr ""
 
-#: libfdisk/src/dos.c:1674 libfdisk/src/dos.c:1689 libfdisk/src/dos.c:2136
+#: libfdisk/src/dos.c:1678 libfdisk/src/dos.c:1693 libfdisk/src/dos.c:2139
 #, fuzzy
 msgid "Extended partition already exists."
 msgstr "Partizio hau dagoeneko erabilita dago"
 
-#: libfdisk/src/dos.c:1704
+#: libfdisk/src/dos.c:1708
 msgid "Extended partition does not exists. Failed to add logical partition."
 msgstr ""
 
-#: libfdisk/src/dos.c:1740
+#: libfdisk/src/dos.c:1744
 #, fuzzy
 msgid "The maximum number of partitions has been created."
 msgstr "Gehienezko partizio kopurua sortu da\n"
 
-#: libfdisk/src/dos.c:1754
+#: libfdisk/src/dos.c:1757
 #, fuzzy
 msgid "All primary partitions are in use."
 msgstr "Partizio hau dagoeneko erabilita dago"
 
-#: libfdisk/src/dos.c:1756 libfdisk/src/dos.c:1767
+#: libfdisk/src/dos.c:1759 libfdisk/src/dos.c:1770
 #, fuzzy
 msgid "All space for primary partitions is in use."
 msgstr "Partizio hau dagoeneko erabilita dago"
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:1770
+#: libfdisk/src/dos.c:1773
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr ""
 
-#: libfdisk/src/dos.c:1775
+#: libfdisk/src/dos.c:1778
 #, fuzzy
 msgid "All logical partitions are in use. Adding a primary partition."
 msgstr "partizio logikoak ez daude disko ordenean"
 
-#: libfdisk/src/dos.c:1797
+#: libfdisk/src/dos.c:1800
 #, fuzzy
 msgid "Partition type"
 msgstr "Partizio zenbakia"
 
-#: libfdisk/src/dos.c:1801
+#: libfdisk/src/dos.c:1804
 #, c-format
 msgid "%zu primary, %d extended, %zu free"
 msgstr ""
 
-#: libfdisk/src/dos.c:1806
+#: libfdisk/src/dos.c:1809
 #, fuzzy
 msgid "primary"
 msgstr "Primarioa"
 
-#: libfdisk/src/dos.c:1808
+#: libfdisk/src/dos.c:1811
 #, fuzzy
 msgid "extended"
 msgstr "Extended"
 
-#: libfdisk/src/dos.c:1808
+#: libfdisk/src/dos.c:1811
 #, fuzzy
 msgid "container for logical partitions"
 msgstr "Partizio logiko txarra"
 
-#: libfdisk/src/dos.c:1810
+#: libfdisk/src/dos.c:1813
 #, fuzzy
 msgid "logical"
 msgstr "Logikoa"
 
-#: libfdisk/src/dos.c:1810
+#: libfdisk/src/dos.c:1813
 #, fuzzy
 msgid "numbered from 5"
 msgstr "partizio logikoen teilakapena"
 
-#: libfdisk/src/dos.c:1849
+#: libfdisk/src/dos.c:1852
 #, fuzzy, c-format
 msgid "Invalid partition type `%c'."
 msgstr "%d baliogabeko ekintza\n"
 
-#: libfdisk/src/dos.c:1867
+#: libfdisk/src/dos.c:1870
 #, fuzzy, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "ezin da %s `typescript' fitxategia ireki"
 
-#: libfdisk/src/dos.c:2027 libfdisk/src/gpt.c:1225
+#: libfdisk/src/dos.c:2030 libfdisk/src/gpt.c:1225
 #, fuzzy
 msgid "Disk identifier"
 msgstr "Disko identifikatzailea: 0x%08x\n"
 
-#: libfdisk/src/dos.c:2141
+#: libfdisk/src/dos.c:2144
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr ""
 
-#: libfdisk/src/dos.c:2146
+#: libfdisk/src/dos.c:2149
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr ""
 
-#: libfdisk/src/dos.c:2332 libfdisk/src/gpt.c:3042
+#: libfdisk/src/dos.c:2335 libfdisk/src/gpt.c:3047
 msgid "Nothing to do. Ordering is correct already."
 msgstr ""
 
-#: libfdisk/src/dos.c:2387
+#: libfdisk/src/dos.c:2390
 #, fuzzy, c-format
 msgid "Partition %zu: no data area."
 msgstr ""
 "\n"
 "Swap partizioak ez da swap moetakoa.\n"
 
-#: libfdisk/src/dos.c:2420
+#: libfdisk/src/dos.c:2423
 #, fuzzy
 msgid "New beginning of data"
 msgstr "   e   diskoaren data editatu"
 
-#: libfdisk/src/dos.c:2476
+#: libfdisk/src/dos.c:2479
 #, fuzzy, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "Partizio hau ezin da erabili"
 
-#: libfdisk/src/dos.c:2482
+#: libfdisk/src/dos.c:2485
 #, fuzzy, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "Uneko partizioaren abiarazgarri adierazlea aldatu"
 
-#: libfdisk/src/dos.c:2483
+#: libfdisk/src/dos.c:2486
 #, fuzzy, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Uneko partizioaren abiarazgarri adierazlea aldatu"
 
-#: libfdisk/src/dos.c:2496 libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2499 libfdisk/src/gpt.c:3137 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1121
 msgid "Device"
 msgstr "Gailua"
 
-#: libfdisk/src/dos.c:2497 libfdisk/src/sun.c:40
+#: libfdisk/src/dos.c:2500 libfdisk/src/sun.c:40
 msgid "Boot"
 msgstr "Abio"
 
-#: libfdisk/src/dos.c:2503 libfdisk/src/sgi.c:1159 libfdisk/src/sun.c:1127
+#: libfdisk/src/dos.c:2506 libfdisk/src/sgi.c:1159 libfdisk/src/sun.c:1127
 msgid "Id"
 msgstr ""
 
-#: libfdisk/src/dos.c:2507
+#: libfdisk/src/dos.c:2510
 #, fuzzy
 msgid "Start-C/H/S"
 msgstr "hasiera"
 
-#: libfdisk/src/dos.c:2508
+#: libfdisk/src/dos.c:2511
 msgid "End-C/H/S"
 msgstr ""
 
-#: libfdisk/src/dos.c:2509 libfdisk/src/gpt.c:3142 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2512 libfdisk/src/gpt.c:3147 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr ""
 
@@ -6519,65 +6520,72 @@ msgstr "%s partizioak hasierako 0 sektore baliogabea dauka.\n"
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2751
+#: libfdisk/src/gpt.c:2754
+#, fuzzy
+msgid "The partition entry size is zero."
+msgstr ""
+"\n"
+"Ez da swap partiziorik existitzen.\n"
+
+#: libfdisk/src/gpt.c:2756
 #, fuzzy, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Gehienezko partizio kopurua sortu da\n"
 
-#: libfdisk/src/gpt.c:2774
+#: libfdisk/src/gpt.c:2779
 #, fuzzy
 msgid "Cannot allocate memory!"
 msgstr "ezin da fork egin"
 
-#: libfdisk/src/gpt.c:2804
+#: libfdisk/src/gpt.c:2809
 #, fuzzy, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: libfdisk/src/gpt.c:2913
+#: libfdisk/src/gpt.c:2918
 #, fuzzy, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Partizio taula diskoan idazten..."
 
-#: libfdisk/src/gpt.c:2963
+#: libfdisk/src/gpt.c:2968
 msgid "Enter GUID specific bit"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2978
+#: libfdisk/src/gpt.c:2983
 #, fuzzy, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: libfdisk/src/gpt.c:2991
+#: libfdisk/src/gpt.c:2996
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2992
+#: libfdisk/src/gpt.c:2997
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2996
+#: libfdisk/src/gpt.c:3001
 #, fuzzy, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Partizio hau ezin da erabili"
 
-#: libfdisk/src/gpt.c:2997
+#: libfdisk/src/gpt.c:3002
 #, fuzzy, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Partizio hau ezin da erabili"
 
-#: libfdisk/src/gpt.c:3139
+#: libfdisk/src/gpt.c:3144
 #, fuzzy
 msgid "Type-UUID"
 msgstr "Moeta"
 
-#: libfdisk/src/gpt.c:3140
+#: libfdisk/src/gpt.c:3145
 msgid "UUID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:3141 login-utils/chfn.c:156 login-utils/chfn.c:158
+#: libfdisk/src/gpt.c:3146 login-utils/chfn.c:156 login-utils/chfn.c:158
 #: login-utils/chfn.c:323
 msgid "Name"
 msgstr "Izena"
@@ -6587,7 +6595,7 @@ msgstr "Izena"
 msgid "Free space"
 msgstr "Leku librea"
 
-#: libfdisk/src/partition.c:1263
+#: libfdisk/src/partition.c:1265
 #, fuzzy, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "berirakurri partizio taula"
@@ -7116,12 +7124,12 @@ msgstr "ezin dira bootbit sektoreak ezabatu"
 msgid "overlapping loop device exists for %s"
 msgstr "%s: %s ez da lp gailua.\n"
 
-#: libmount/src/context_mount.c:1633 libmount/src/context_umount.c:1206
+#: libmount/src/context_mount.c:1633 libmount/src/context_umount.c:1207
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "exec %s-(e)k huts egin du"
 
-#: libmount/src/context_mount.c:1637 libmount/src/context_umount.c:1210
+#: libmount/src/context_mount.c:1637 libmount/src/context_umount.c:1211
 #: sys-utils/umount.c:238 sys-utils/umount.c:254
 #, fuzzy, c-format
 msgid "failed to switch namespace"
@@ -7305,62 +7313,62 @@ msgstr ""
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "   t   aldatu paritzioaren fitxategi sistema IDa"
 
-#: libmount/src/context_umount.c:1202 libmount/src/context_umount.c:1248
+#: libmount/src/context_umount.c:1203 libmount/src/context_umount.c:1249
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "fsck: %s: ez da aurkitu\n"
 
-#: libmount/src/context_umount.c:1214
+#: libmount/src/context_umount.c:1215
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "mount-ek huts egin du"
 
-#: libmount/src/context_umount.c:1223
+#: libmount/src/context_umount.c:1224
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_umount.c:1227
+#: libmount/src/context_umount.c:1228
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_umount.c:1232
+#: libmount/src/context_umount.c:1233
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_umount.c:1245
+#: libmount/src/context_umount.c:1246
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: libmount/src/context_umount.c:1251
+#: libmount/src/context_umount.c:1252
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "hexdump: ezin da %s  irakurri.\n"
 
-#: libmount/src/context_umount.c:1254
+#: libmount/src/context_umount.c:1255
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "mount: %s okupatua dago"
 
-#: libmount/src/context_umount.c:1257
+#: libmount/src/context_umount.c:1258
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: libmount/src/context_umount.c:1260
+#: libmount/src/context_umount.c:1261
 #, c-format
 msgid "must be superuser to unmount"
 msgstr ""
 
-#: libmount/src/context_umount.c:1263
+#: libmount/src/context_umount.c:1264
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr ""
 
-#: libmount/src/context_umount.c:1266
+#: libmount/src/context_umount.c:1267
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount-ek huts egin du"
@@ -7648,7 +7656,7 @@ msgstr "Irteten - ez da ezer aldatu\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "erabilera: %s [fitxategia]\n"
 
-#: login-utils/last.c:169 login-utils/lslogins.c:1317 sys-utils/dmesg.c:1268
+#: login-utils/last.c:169 login-utils/lslogins.c:1317 sys-utils/dmesg.c:1271
 #: sys-utils/lsipc.c:282
 #, fuzzy, c-format
 msgid "unknown time format: %s"
@@ -7748,7 +7756,7 @@ msgid "failed to parse number"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
 #: login-utils/last.c:986 login-utils/last.c:991 login-utils/last.c:996
-#: sys-utils/rtcwake.c:504
+#: sys-utils/rtcwake.c:508
 #, fuzzy, c-format
 msgid "invalid time value \"%s\""
 msgstr "baliogabeko aukera"
@@ -7866,7 +7874,7 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr ""
 
-#: login-utils/login.c:801 login-utils/sulogin.c:1012
+#: login-utils/login.c:801 login-utils/sulogin.c:1013
 #, fuzzy, c-format
 msgid ""
 "Login incorrect\n"
@@ -7890,103 +7898,102 @@ msgid ""
 "Login incorrect\n"
 msgstr "Pasahitz okerra."
 
-#: login-utils/login.c:858 login-utils/login.c:1248 login-utils/login.c:1271
+#: login-utils/login.c:858 login-utils/login.c:1247 login-utils/login.c:1270
 msgid ""
 "\n"
 "Session setup problem, abort."
 msgstr ""
 
 #: login-utils/login.c:859
-#, c-format
-msgid "NULL user name in %s:%d. Abort."
+msgid "NULL user name. Abort."
 msgstr ""
 
-#: login-utils/login.c:998
+#: login-utils/login.c:997
 #, fuzzy, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "stat-ek huts egin du: %s"
 
-#: login-utils/login.c:1102
+#: login-utils/login.c:1101
 #, fuzzy, c-format
 msgid " %s [-p] [-h <host>] [-H] [[-f] <username>]\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: login-utils/login.c:1104
+#: login-utils/login.c:1103
 msgid "Begin a session on the system.\n"
 msgstr ""
 
-#: login-utils/login.c:1107
+#: login-utils/login.c:1106
 #, fuzzy
 msgid " -p             do not destroy the environment"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: login-utils/login.c:1108
+#: login-utils/login.c:1107
 msgid " -f             skip a second login authentication"
 msgstr ""
 
-#: login-utils/login.c:1109
+#: login-utils/login.c:1108
 msgid " -h <host>      hostname to be used for utmp logging"
 msgstr ""
 
-#: login-utils/login.c:1110
+#: login-utils/login.c:1109
 #, fuzzy
 msgid " -H             suppress hostname in the login prompt"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: login-utils/login.c:1155
+#: login-utils/login.c:1154
 #, fuzzy, c-format
 msgid "%s: timed out after %u seconds"
 msgstr "Baliogabeko zilindro baloreak"
 
-#: login-utils/login.c:1188
+#: login-utils/login.c:1187
 #, c-format
 msgid "login: -h is for superuser only\n"
 msgstr ""
 
-#: login-utils/login.c:1249
-#, c-format
-msgid "Invalid user name \"%s\" in %s:%d. Abort."
-msgstr ""
+#: login-utils/login.c:1248
+#, fuzzy, c-format
+msgid "Invalid user name \"%s\". Abort."
+msgstr "baliogabeko aukera"
 
-#: login-utils/login.c:1270
+#: login-utils/login.c:1269
 #, fuzzy, c-format
 msgid "groups initialization failed: %m"
 msgstr "%s: get size egiterakoan huts egin da"
 
-#: login-utils/login.c:1295
+#: login-utils/login.c:1294
 #, fuzzy
 msgid "setgid() failed"
 msgstr "setuid()-k huts egin du"
 
-#: login-utils/login.c:1325
+#: login-utils/login.c:1324
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Posta elektroniko berria duzu.\n"
 
-#: login-utils/login.c:1327
+#: login-utils/login.c:1326
 #, c-format
 msgid "You have mail.\n"
 msgstr ""
 
-#: login-utils/login.c:1341
+#: login-utils/login.c:1340
 msgid "setuid() failed"
 msgstr "setuid()-k huts egin du"
 
-#: login-utils/login.c:1347 login-utils/sulogin.c:730
+#: login-utils/login.c:1346 login-utils/sulogin.c:731
 #, fuzzy, c-format
 msgid "%s: change directory failed"
 msgstr "%s: get size egiterakoan huts egin da"
 
-#: login-utils/login.c:1354 login-utils/sulogin.c:731
+#: login-utils/login.c:1353 login-utils/sulogin.c:732
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr ""
 
-#: login-utils/login.c:1383
+#: login-utils/login.c:1382
 msgid "couldn't exec shell script"
 msgstr ""
 
-#: login-utils/login.c:1385
+#: login-utils/login.c:1384
 #, fuzzy
 msgid "no shell"
 msgstr "<i> (ez dago iradokizunik) </i>"
@@ -8000,7 +8007,7 @@ msgstr "Baliogabeko zilindro baloreak"
 msgid "hush login status: restore original IDs failed"
 msgstr ""
 
-#: login-utils/lslogins.c:210 sys-utils/lscpu.c:1561 sys-utils/lscpu.c:1571
+#: login-utils/lslogins.c:210 sys-utils/lscpu.c:1563 sys-utils/lscpu.c:1573
 #: sys-utils/lsmem.c:266
 msgid "no"
 msgstr "ez"
@@ -8407,7 +8414,7 @@ msgstr "setuid()-k huts egin du"
 msgid "Password: "
 msgstr "Pasahitza: "
 
-#: login-utils/newgrp.c:160 login-utils/sulogin.c:996
+#: login-utils/newgrp.c:160 login-utils/sulogin.c:997
 #, fuzzy
 msgid "crypt failed"
 msgstr "malloc()-ek huts egin du"
@@ -8443,7 +8450,7 @@ msgstr "setuid()-k huts egin du"
 
 #: login-utils/nologin.c:27 misc-utils/lslocks.c:528 misc-utils/mcookie.c:83
 #: misc-utils/uuidd.c:62 misc-utils/uuidgen.c:26 sys-utils/dmesg.c:266
-#: sys-utils/ipcmk.c:67 sys-utils/lscpu.c:2175 sys-utils/lsipc.c:291
+#: sys-utils/ipcmk.c:67 sys-utils/lscpu.c:2184 sys-utils/lsipc.c:291
 #: sys-utils/lsmem.c:494 sys-utils/readprofile.c:104 sys-utils/rtcwake.c:99
 #: term-utils/setterm.c:382 text-utils/line.c:31
 #, fuzzy, c-format
@@ -8516,7 +8523,7 @@ msgstr "Ezin da '%s' fitxategia ireki"
 msgid "cannot set signal handler for session"
 msgstr "ezin da lerroaren disziplina ezarri"
 
-#: login-utils/su-common.c:812 misc-utils/uuidd.c:401 sys-utils/lscpu.c:866
+#: login-utils/su-common.c:812 misc-utils/uuidd.c:401 sys-utils/lscpu.c:868
 #: term-utils/script.c:871
 #, fuzzy
 msgid "cannot set signal handler"
@@ -8707,27 +8714,27 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "tcgetattr failed"
 msgstr "%s: stat-ek huts egin du"
 
-#: login-utils/sulogin.c:207
+#: login-utils/sulogin.c:208
 #, fuzzy
 msgid "tcsetattr failed"
 msgstr "%s: stat-ek huts egin du"
 
-#: login-utils/sulogin.c:469
+#: login-utils/sulogin.c:470
 #, fuzzy, c-format
 msgid "%s: no entry for root\n"
 msgstr "%s: ezin da fork egin\n"
 
-#: login-utils/sulogin.c:496
+#: login-utils/sulogin.c:497
 #, c-format
 msgid "%s: no entry for root"
 msgstr ""
 
-#: login-utils/sulogin.c:501
+#: login-utils/sulogin.c:502
 #, c-format
 msgid "%s: root password garbled"
 msgstr ""
 
-#: login-utils/sulogin.c:530
+#: login-utils/sulogin.c:531
 #, c-format
 msgid ""
 "\n"
@@ -8737,145 +8744,150 @@ msgid ""
 "Press Enter to continue.\n"
 msgstr ""
 
-#: login-utils/sulogin.c:536
+#: login-utils/sulogin.c:537
 #, c-format
 msgid "Give root password for login: "
 msgstr ""
 
-#: login-utils/sulogin.c:538
+#: login-utils/sulogin.c:539
 #, c-format
 msgid "Press Enter for login: "
 msgstr ""
 
-#: login-utils/sulogin.c:541
+#: login-utils/sulogin.c:542
 #, c-format
 msgid "Give root password for maintenance\n"
 msgstr ""
 
-#: login-utils/sulogin.c:543
+#: login-utils/sulogin.c:544
 #, c-format
 msgid "Press Enter for maintenance\n"
 msgstr ""
 
-#: login-utils/sulogin.c:544
+#: login-utils/sulogin.c:545
 #, c-format
 msgid "(or press Control-D to continue): "
 msgstr ""
 
-#: login-utils/sulogin.c:734
+#: login-utils/sulogin.c:735
 #, fuzzy
 msgid "change directory to system root failed"
 msgstr "%s: get size egiterakoan huts egin da"
 
-#: login-utils/sulogin.c:783
+#: login-utils/sulogin.c:784
 #, fuzzy
 msgid "setexeccon failed"
 msgstr "execv-ek huts egin du"
 
-#: login-utils/sulogin.c:804
+#: login-utils/sulogin.c:805
 #, fuzzy, c-format
 msgid " %s [options] [tty device]\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: login-utils/sulogin.c:807
+#: login-utils/sulogin.c:808
 msgid "Single-user login.\n"
 msgstr ""
 
-#: login-utils/sulogin.c:810
+#: login-utils/sulogin.c:811
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
 " -e, --force              examine password files directly if getpwnam(3) fails\n"
 msgstr ""
 
-#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1488 sys-utils/wdctl.c:524
+#: login-utils/sulogin.c:867 misc-utils/findmnt.c:1489 sys-utils/wdctl.c:524
 #: term-utils/agetty.c:837 term-utils/wall.c:216
 #, fuzzy
 msgid "invalid timeout argument"
 msgstr "baliogabeko aukera"
 
-#: login-utils/sulogin.c:885
+#: login-utils/sulogin.c:886
 #, fuzzy
 msgid "only superuser can run this program"
 msgstr "mount: ezin da %s ireki: %s"
 
-#: login-utils/sulogin.c:928
+#: login-utils/sulogin.c:929
 #, fuzzy
 msgid "cannot open console"
 msgstr "ezin da %s ireki"
 
-#: login-utils/sulogin.c:935
+#: login-utils/sulogin.c:936
 #, fuzzy
 msgid "cannot open password database"
 msgstr "Ezin da diskoaren tamainua lortu"
 
-#: login-utils/sulogin.c:1009
+#: login-utils/sulogin.c:1010
 #, fuzzy, c-format
 msgid ""
 "cannot execute su shell\n"
 "\n"
 msgstr "Ezin da diskoaren tamainua lortu"
 
-#: login-utils/sulogin.c:1016
+#: login-utils/sulogin.c:1017
 #, fuzzy
 msgid ""
 "Timed out\n"
 "\n"
 msgstr "%s: Memoriaz kanpo!\n"
 
-#: login-utils/sulogin.c:1048
+#: login-utils/sulogin.c:1049
 #, fuzzy
 msgid ""
 "cannot wait on su shell\n"
 "\n"
 msgstr "Ezin da diskoaren tamainua lortu"
 
-#: login-utils/utmpdump.c:174
+#: login-utils/utmpdump.c:173
+#, fuzzy, c-format
+msgid "%s: cannot get file position"
+msgstr "Ezin da partizu huts bat ezabatu"
+
+#: login-utils/utmpdump.c:177
 #, c-format
 msgid "%s: cannot add inotify watch."
 msgstr ""
 
-#: login-utils/utmpdump.c:183
+#: login-utils/utmpdump.c:186
 #, c-format
 msgid "%s: cannot read inotify events"
 msgstr "%s: ezin dira inotify gertaerak irakurri"
 
-#: login-utils/utmpdump.c:244 login-utils/utmpdump.c:249
+#: login-utils/utmpdump.c:247 login-utils/utmpdump.c:252
 msgid "Extraneous newline in file. Exiting."
 msgstr ""
 
-#: login-utils/utmpdump.c:303
+#: login-utils/utmpdump.c:306
 #, fuzzy, c-format
 msgid " %s [options] [filename]\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: login-utils/utmpdump.c:306
+#: login-utils/utmpdump.c:309
 msgid "Dump UTMP and WTMP files in raw format.\n"
 msgstr ""
 
-#: login-utils/utmpdump.c:309
+#: login-utils/utmpdump.c:312
 #, fuzzy
 msgid " -f, --follow         output appended data as the file grows\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: login-utils/utmpdump.c:310
+#: login-utils/utmpdump.c:313
 msgid " -r, --reverse        write back dumped data into utmp file\n"
 msgstr ""
 
-#: login-utils/utmpdump.c:311
+#: login-utils/utmpdump.c:314
 msgid " -o, --output <file>  write to file instead of standard output\n"
 msgstr ""
 
-#: login-utils/utmpdump.c:375
+#: login-utils/utmpdump.c:378
 msgid "following standard input is unsupported"
 msgstr ""
 
-#: login-utils/utmpdump.c:381
+#: login-utils/utmpdump.c:384
 #, c-format
 msgid "Utmp undump of %s\n"
 msgstr ""
 
-#: login-utils/utmpdump.c:384
+#: login-utils/utmpdump.c:387
 #, c-format
 msgid "Utmp dump of %s\n"
 msgstr ""
@@ -9060,81 +9072,81 @@ msgstr "   l   zerrendatu ezagutzen diren fitxategi sistema moetak"
 msgid " -D, --no-part-details      don't print info from partition table\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/blkid.c:230
+#: misc-utils/blkid.c:232
 msgid "(mounted, mtpt unknown)"
 msgstr ""
 
-#: misc-utils/blkid.c:232
+#: misc-utils/blkid.c:234
 #, fuzzy
 msgid "(in use)"
 msgstr "Markatu erabilia dagoela"
 
-#: misc-utils/blkid.c:234
+#: misc-utils/blkid.c:236
 #, fuzzy
 msgid "(not mounted)"
 msgstr "fsck: %s: ez da aurkitu\n"
 
-#: misc-utils/blkid.c:499
+#: misc-utils/blkid.c:504
 #, c-format
 msgid "error: %s"
 msgstr "errorea: %s"
 
-#: misc-utils/blkid.c:544
+#: misc-utils/blkid.c:549
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
 msgstr ""
 
-#: misc-utils/blkid.c:590
+#: misc-utils/blkid.c:595
 #, fuzzy, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: misc-utils/blkid.c:607
+#: misc-utils/blkid.c:612
 msgid "error: -u <list> argument is empty"
 msgstr ""
 
-#: misc-utils/blkid.c:756
+#: misc-utils/blkid.c:761
 #, fuzzy, c-format
 msgid "unsupported output format %s"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: misc-utils/blkid.c:759 misc-utils/wipefs.c:733
+#: misc-utils/blkid.c:764 misc-utils/wipefs.c:733
 #, fuzzy
 msgid "invalid offset argument"
 msgstr "baliogabeko aukera"
 
-#: misc-utils/blkid.c:766
+#: misc-utils/blkid.c:771
 #, fuzzy
 msgid "Too many tags specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: misc-utils/blkid.c:772
+#: misc-utils/blkid.c:777
 #, fuzzy
 msgid "invalid size argument"
 msgstr "baliogabeko aukera"
 
-#: misc-utils/blkid.c:776
+#: misc-utils/blkid.c:781
 msgid "Can only search for one NAME=value pair"
 msgstr ""
 
-#: misc-utils/blkid.c:783
+#: misc-utils/blkid.c:788
 msgid "-t needs NAME=value pair"
 msgstr ""
 
-#: misc-utils/blkid.c:789
+#: misc-utils/blkid.c:794
 #, fuzzy, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s-(e)tik renice-ea\n"
 
-#: misc-utils/blkid.c:835
+#: misc-utils/blkid.c:840
 msgid "The low-level probing mode does not support 'list' output format"
 msgstr ""
 
-#: misc-utils/blkid.c:848
+#: misc-utils/blkid.c:853
 msgid "The low-level probing mode requires a device"
 msgstr ""
 
-#: misc-utils/blkid.c:898
+#: misc-utils/blkid.c:903
 msgid "The lookup option requires a search type specified using -t"
 msgstr ""
 
@@ -9192,81 +9204,81 @@ msgstr "baliogabeko egun balorea: erabili 1-%d"
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "baliogabeko egun balorea: erabili 1-%d"
 
-#: misc-utils/cal.c:1110
+#: misc-utils/cal.c:1116
 #, fuzzy, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: misc-utils/cal.c:1111
+#: misc-utils/cal.c:1117
 #, fuzzy, c-format
 msgid " %s [options] <timestamp|monthname>\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: misc-utils/cal.c:1114
+#: misc-utils/cal.c:1120
 msgid "Display a calendar, or some part of it.\n"
 msgstr ""
 
-#: misc-utils/cal.c:1115
-msgid "Without any arguments, display the current month.\n"
-msgstr ""
-
-#: misc-utils/cal.c:1118
-#, fuzzy
-msgid " -1, --one             show only a single month (default)\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
-#: misc-utils/cal.c:1119
-#, fuzzy
-msgid " -3, --three           show three months spanning the date\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
-#: misc-utils/cal.c:1120
-#, fuzzy
-msgid " -n, --months <num>    show num months starting with date's month\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
 #: misc-utils/cal.c:1121
-#, fuzzy
-msgid " -S, --span            span the date when displaying multiple months\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
-#: misc-utils/cal.c:1122
-msgid " -s, --sunday          Sunday as first day of week\n"
-msgstr ""
-
-#: misc-utils/cal.c:1123
-msgid " -m, --monday          Monday as first day of week\n"
+msgid "Without any arguments, display the current month.\n"
 msgstr ""
 
 #: misc-utils/cal.c:1124
 #, fuzzy
+msgid " -1, --one             show only a single month (default)\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: misc-utils/cal.c:1125
+#, fuzzy
+msgid " -3, --three           show three months spanning the date\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: misc-utils/cal.c:1126
+#, fuzzy
+msgid " -n, --months <num>    show num months starting with date's month\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: misc-utils/cal.c:1127
+#, fuzzy
+msgid " -S, --span            span the date when displaying multiple months\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: misc-utils/cal.c:1128
+msgid " -s, --sunday          Sunday as first day of week\n"
+msgstr ""
+
+#: misc-utils/cal.c:1129
+msgid " -m, --monday          Monday as first day of week\n"
+msgstr ""
+
+#: misc-utils/cal.c:1130
+#, fuzzy
 msgid " -j, --julian          use day-of-year for all calendars\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/cal.c:1125
+#: misc-utils/cal.c:1131
 msgid "     --reform <val>    Gregorian reform date (1752|gregorian|iso|julian)\n"
 msgstr ""
 
-#: misc-utils/cal.c:1126
+#: misc-utils/cal.c:1132
 #, fuzzy
 msgid "     --iso             alias for --reform=iso\n"
 msgstr "Inprimatu taula raw datu formatua erabiliz"
 
-#: misc-utils/cal.c:1127
+#: misc-utils/cal.c:1133
 #, fuzzy
 msgid " -y, --year            show the whole year\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/cal.c:1128
+#: misc-utils/cal.c:1134
 #, fuzzy
 msgid " -Y, --twelve          show the next twelve months\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/cal.c:1129
+#: misc-utils/cal.c:1135
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr ""
 
-#: misc-utils/cal.c:1130
+#: misc-utils/cal.c:1136
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr ""
 
@@ -9295,52 +9307,52 @@ msgstr "Baliogabeko tekla"
 msgid "failed to do mincore: %s"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/fincore.c:212
+#: misc-utils/fincore.c:210
 #, fuzzy, c-format
 msgid "failed to do mmap: %s"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/fincore.c:240
+#: misc-utils/fincore.c:236
 #, fuzzy, c-format
 msgid "failed to open: %s"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/fincore.c:245
+#: misc-utils/fincore.c:241
 #, fuzzy, c-format
 msgid "failed to do fstat: %s"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/fincore.c:266
+#: misc-utils/fincore.c:262
 #, fuzzy, c-format
 msgid " %s [options] file...\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: misc-utils/fincore.c:269
+#: misc-utils/fincore.c:265
 #, fuzzy
 msgid " -J, --json            use JSON output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/fincore.c:270
+#: misc-utils/fincore.c:266
 #, fuzzy
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/fincore.c:271
+#: misc-utils/fincore.c:267
 #, fuzzy
 msgid " -n, --noheadings      don't print headings\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/fincore.c:272
+#: misc-utils/fincore.c:268
 #, fuzzy
 msgid " -o, --output <list>   output columns\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/fincore.c:273
+#: misc-utils/fincore.c:269
 #, fuzzy
 msgid " -r, --raw             use raw output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/fincore.c:342 sys-utils/losetup.c:820
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:820
 #, fuzzy
 msgid "no file specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
@@ -9495,7 +9507,7 @@ msgstr "read-ek huts egin du: %s"
 msgid "move"
 msgstr " Ezabatu"
 
-#: misc-utils/findmnt.c:814 misc-utils/findmnt.c:1083 sys-utils/eject.c:712
+#: misc-utils/findmnt.c:814 misc-utils/findmnt.c:1084 sys-utils/eject.c:712
 #: sys-utils/mount.c:375
 #, fuzzy
 msgid "failed to initialize libmount table"
@@ -9506,9 +9518,9 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "can't read %s"
 msgstr "hexdump: ezin da %s  irakurri.\n"
 
-#: misc-utils/findmnt.c:1023 misc-utils/findmnt.c:1089
-#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:481
-#: sys-utils/fstrim.c:238 sys-utils/mount.c:133 sys-utils/mount.c:181
+#: misc-utils/findmnt.c:1024 misc-utils/findmnt.c:1090
+#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:483
+#: sys-utils/fstrim.c:246 sys-utils/mount.c:133 sys-utils/mount.c:181
 #: sys-utils/mount.c:248 sys-utils/swapoff.c:55 sys-utils/swapoff.c:154
 #: sys-utils/swapon.c:248 sys-utils/swapon.c:278 sys-utils/swapon.c:737
 #: sys-utils/umount.c:187
@@ -9516,17 +9528,17 @@ msgstr "hexdump: ezin da %s  irakurri.\n"
 msgid "failed to initialize libmount iterator"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/findmnt.c:1095
+#: misc-utils/findmnt.c:1096
 #, fuzzy
 msgid "failed to initialize libmount tabdiff"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/findmnt.c:1123
+#: misc-utils/findmnt.c:1124
 #, fuzzy
 msgid "poll() failed"
 msgstr "malloc()-ek huts egin du"
 
-#: misc-utils/findmnt.c:1198
+#: misc-utils/findmnt.c:1199
 #, c-format
 msgid ""
 " %1$s [options]\n"
@@ -9535,399 +9547,399 @@ msgid ""
 " %1$s [options] [--source <device>] [--target <path> | --mountpoint <dir>]\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1205
+#: misc-utils/findmnt.c:1206
 #, fuzzy
 msgid "Find a (mounted) filesystem.\n"
 msgstr "Sartu fitxategi sistema moeta: "
 
-#: misc-utils/findmnt.c:1208
+#: misc-utils/findmnt.c:1209
 #, fuzzy
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1209
+#: misc-utils/findmnt.c:1210
 #, fuzzy
 msgid ""
 " -m, --mtab             search in table of mounted filesystems\n"
 "                          (includes user space mount options)\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1211
+#: misc-utils/findmnt.c:1212
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1214
+#: misc-utils/findmnt.c:1215
 #, fuzzy
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr "   l   zerrendatu ezagutzen diren fitxategi sistema moetak"
 
-#: misc-utils/findmnt.c:1215
+#: misc-utils/findmnt.c:1216
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1218
+#: misc-utils/findmnt.c:1219
 #, fuzzy
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1219
+#: misc-utils/findmnt.c:1220
 #, fuzzy
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1220
+#: misc-utils/findmnt.c:1221
 #, fuzzy
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1221
+#: misc-utils/findmnt.c:1222
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1222
+#: misc-utils/findmnt.c:1223
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1223
+#: misc-utils/findmnt.c:1224
 #, fuzzy
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1224
+#: misc-utils/findmnt.c:1225
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1225
+#: misc-utils/findmnt.c:1226
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1227
+#: misc-utils/findmnt.c:1228
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1228
+#: misc-utils/findmnt.c:1229
 #, fuzzy
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr "   l   zerrendatu ezagutzen diren fitxategi sistema moetak"
 
-#: misc-utils/findmnt.c:1229
+#: misc-utils/findmnt.c:1230
 #, fuzzy
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1230 misc-utils/lslocks.c:535 sys-utils/lsns.c:904
+#: misc-utils/findmnt.c:1231 misc-utils/lslocks.c:535 sys-utils/lsns.c:904
 #: sys-utils/rfkill.c:581
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1231 sys-utils/lsns.c:905
+#: misc-utils/findmnt.c:1232 sys-utils/lsns.c:905
 #, fuzzy
 msgid " -l, --list             use list format output\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1232
+#: misc-utils/findmnt.c:1233
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1233
+#: misc-utils/findmnt.c:1234
 #, fuzzy
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1234
+#: misc-utils/findmnt.c:1235
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1235
+#: misc-utils/findmnt.c:1236
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1236
+#: misc-utils/findmnt.c:1237
 #, fuzzy
 msgid "     --output-all       output all available columns\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1237
+#: misc-utils/findmnt.c:1238
 #, fuzzy
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1238
+#: misc-utils/findmnt.c:1239
 #, fuzzy
 msgid "     --pseudo           print only pseudo-filesystems\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1239
+#: misc-utils/findmnt.c:1240
 #, fuzzy
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1240
+#: misc-utils/findmnt.c:1241
 #, fuzzy
 msgid " -r, --raw              use raw output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1241
+#: misc-utils/findmnt.c:1242
 #, fuzzy
 msgid "     --real             print only real filesystems\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1242
+#: misc-utils/findmnt.c:1243
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1244
+#: misc-utils/findmnt.c:1245
 #, fuzzy
 msgid " -T, --target <path>    the path to the filesystem to use\n"
 msgstr "   l   zerrendatu ezagutzen diren fitxategi sistema moetak"
 
-#: misc-utils/findmnt.c:1245
+#: misc-utils/findmnt.c:1246
 #, fuzzy
 msgid "     --tree             enable tree format output is possible\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1246
+#: misc-utils/findmnt.c:1247
 #, fuzzy
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
 msgstr "erro inodoa ez da direktorioa"
 
-#: misc-utils/findmnt.c:1247
+#: misc-utils/findmnt.c:1248
 #, fuzzy
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr "   l   zerrendatu ezagutzen diren fitxategi sistema moetak"
 
-#: misc-utils/findmnt.c:1248
+#: misc-utils/findmnt.c:1249
 #, fuzzy
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1249 misc-utils/lslocks.c:542 sys-utils/lsns.c:911
+#: misc-utils/findmnt.c:1250 misc-utils/lslocks.c:542 sys-utils/lsns.c:911
 #, fuzzy
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1250
+#: misc-utils/findmnt.c:1251
 #, fuzzy
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1253
+#: misc-utils/findmnt.c:1254
 #, fuzzy
 msgid " -x, --verify           verify mount table content (default is fstab)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1254
+#: misc-utils/findmnt.c:1255
 #, fuzzy
 msgid "     --verbose          print more details\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1389
+#: misc-utils/findmnt.c:1390
 #, fuzzy, c-format
 msgid "unknown direction '%s'"
 msgstr "<i> (ez dago iradokizunik) </i>"
 
-#: misc-utils/findmnt.c:1465
+#: misc-utils/findmnt.c:1466
 #, fuzzy
 msgid "invalid TID argument"
 msgstr "baliogabeko id-a: %s\n"
 
-#: misc-utils/findmnt.c:1544
+#: misc-utils/findmnt.c:1545
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr ""
 
-#: misc-utils/findmnt.c:1548
+#: misc-utils/findmnt.c:1549
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr ""
 
-#: misc-utils/findmnt.c:1601 sys-utils/fstrim.c:258
+#: misc-utils/findmnt.c:1602 sys-utils/fstrim.c:266
 #, fuzzy
 msgid "failed to initialize libmount cache"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/findmnt.c:1645
+#: misc-utils/findmnt.c:1646
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:116
+#: misc-utils/findmnt-verify.c:118
 msgid "target specified more than once"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:118
+#: misc-utils/findmnt-verify.c:120
 #, c-format
 msgid "wrong order: %s specified before %s"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:132
+#: misc-utils/findmnt-verify.c:134
 msgid "undefined target (fs_file)"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:139
+#: misc-utils/findmnt-verify.c:141
 #, c-format
 msgid "non-canonical target path (real: %s)"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:144
+#: misc-utils/findmnt-verify.c:146
 #, c-format
 msgid "unreachable on boot required target: %m"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:146
+#: misc-utils/findmnt-verify.c:148
 #, fuzzy, c-format
 msgid "unreachable target: %m"
 msgstr "ezin dira bootbit sektoreak ezabatu"
 
-#: misc-utils/findmnt-verify.c:150
+#: misc-utils/findmnt-verify.c:152
 #, fuzzy
 msgid "target is not a directory"
 msgstr "erro inodoa ez da direktorioa"
 
-#: misc-utils/findmnt-verify.c:152
+#: misc-utils/findmnt-verify.c:154
 msgid "target exists"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:164
+#: misc-utils/findmnt-verify.c:166
 #, c-format
 msgid "unreachable on boot required source: %s=%s"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:166
+#: misc-utils/findmnt-verify.c:168
 #, fuzzy, c-format
 msgid "unreachable: %s=%s"
 msgstr "read-ek huts egin du: %s"
 
-#: misc-utils/findmnt-verify.c:168
+#: misc-utils/findmnt-verify.c:170
 #, fuzzy, c-format
 msgid "%s=%s translated to %s"
 msgstr "fsck: %s: ez da aurkitu\n"
 
-#: misc-utils/findmnt-verify.c:189
+#: misc-utils/findmnt-verify.c:191
 msgid "undefined source (fs_spec)"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:198
+#: misc-utils/findmnt-verify.c:200
 #, fuzzy, c-format
 msgid "unsupported source tag: %s"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: misc-utils/findmnt-verify.c:205
+#: misc-utils/findmnt-verify.c:207
 #, c-format
 msgid "do not check %s source (pseudo/net)"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:208
+#: misc-utils/findmnt-verify.c:210
 #, fuzzy, c-format
 msgid "unreachable source: %s: %m"
 msgstr "ezin dira bootbit sektoreak ezabatu"
 
-#: misc-utils/findmnt-verify.c:211
+#: misc-utils/findmnt-verify.c:213
 #, c-format
 msgid "non-bind mount source %s is a directory or regular file"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:214
+#: misc-utils/findmnt-verify.c:216
 #, fuzzy, c-format
 msgid "source %s is not a block device"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: misc-utils/findmnt-verify.c:216
+#: misc-utils/findmnt-verify.c:218
 #, fuzzy, c-format
 msgid "source %s exists"
 msgstr "bloke gailua"
 
-#: misc-utils/findmnt-verify.c:229
+#: misc-utils/findmnt-verify.c:231
 #, fuzzy, c-format
 msgid "VFS options: %s"
 msgstr "Erabilera: %s [aukera]\n"
 
-#: misc-utils/findmnt-verify.c:233
+#: misc-utils/findmnt-verify.c:235
 #, fuzzy, c-format
 msgid "FS options: %s"
 msgstr "Erabilera: %s [aukera]\n"
 
-#: misc-utils/findmnt-verify.c:237
+#: misc-utils/findmnt-verify.c:239
 #, fuzzy, c-format
 msgid "userspace options: %s"
 msgstr "aukera baliogarriak:"
 
-#: misc-utils/findmnt-verify.c:251
+#: misc-utils/findmnt-verify.c:253
 #, fuzzy, c-format
 msgid "unsupported swaparea discard policy: %s"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: misc-utils/findmnt-verify.c:259
+#: misc-utils/findmnt-verify.c:261
 #, fuzzy
 msgid "failed to parse swaparea priority option"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/findmnt-verify.c:395
+#: misc-utils/findmnt-verify.c:397
 #, c-format
 msgid "do not check %s FS type (pseudo/net)"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:405
+#: misc-utils/findmnt-verify.c:407
 msgid "\"none\" FS type is recommended for bind or move oprations only"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:413
+#: misc-utils/findmnt-verify.c:415
 #, c-format
 msgid "%s seems unsupported by the current kernel"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:419 misc-utils/findmnt-verify.c:420
+#: misc-utils/findmnt-verify.c:421 misc-utils/findmnt-verify.c:422
 #, fuzzy
 msgid "cannot detect on-disk filesystem type"
 msgstr "Partizio taula moeta ezezaguna"
 
-#: misc-utils/findmnt-verify.c:427
+#: misc-utils/findmnt-verify.c:429
 #, c-format
 msgid "%s does not match with on-disk %s"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:430
+#: misc-utils/findmnt-verify.c:432
 #, c-format
 msgid "on-disk %s seems unsupported by the current kernel"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:432
+#: misc-utils/findmnt-verify.c:434
 #, fuzzy, c-format
 msgid "FS type is %s"
 msgstr "moeta: %s\n"
 
-#: misc-utils/findmnt-verify.c:444
+#: misc-utils/findmnt-verify.c:446
 #, c-format
 msgid "recommended root FS passno is 1 (current is %d)"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:511
+#: misc-utils/findmnt-verify.c:513
 #, fuzzy, c-format
 msgid "%d parse error"
 msgid_plural "%d parse errors"
 msgstr[0] "crc errorea"
 msgstr[1] "crc errorea"
 
-#: misc-utils/findmnt-verify.c:512
+#: misc-utils/findmnt-verify.c:514
 #, fuzzy, c-format
 msgid ", %d error"
 msgid_plural ", %d errors"
 msgstr[0] ", errorea"
 msgstr[1] ", errorea"
 
-#: misc-utils/findmnt-verify.c:513
+#: misc-utils/findmnt-verify.c:515
 #, c-format
 msgid ", %d warning"
 msgid_plural ", %d warnings"
 msgstr[0] ""
 msgstr[1] ""
 
-#: misc-utils/findmnt-verify.c:516
+#: misc-utils/findmnt-verify.c:518
 #, c-format
 msgid "Success, no errors or warnings detected\n"
 msgstr ""
@@ -10003,157 +10015,157 @@ msgstr "col: -l baliogabeko argumentua %s.\n"
 msgid "internal error, contact the author."
 msgstr ""
 
-#: misc-utils/hardlink.c:123
+#: misc-utils/hardlink.c:127
 #, fuzzy, c-format
 msgid "Directories:   %9lld\n"
 msgstr "%6.2f%% (%+ld bytes)\t%s\n"
 
-#: misc-utils/hardlink.c:124
+#: misc-utils/hardlink.c:128
 #, c-format
 msgid "Objects:       %9lld\n"
 msgstr ""
 
-#: misc-utils/hardlink.c:125
+#: misc-utils/hardlink.c:129
 #, c-format
 msgid "Regular files: %9lld\n"
 msgstr ""
 
-#: misc-utils/hardlink.c:126
+#: misc-utils/hardlink.c:130
 #, fuzzy, c-format
 msgid "Comparisons:   %9lld\n"
 msgstr ""
 "\n"
 "%d partizio:\n"
 
-#: misc-utils/hardlink.c:128
+#: misc-utils/hardlink.c:132
 msgid "Would link:    "
 msgstr ""
 
-#: misc-utils/hardlink.c:129
+#: misc-utils/hardlink.c:133
 msgid "Linked:        "
 msgstr ""
 
-#: misc-utils/hardlink.c:131
+#: misc-utils/hardlink.c:135
 msgid "Would save:   "
 msgstr ""
 
-#: misc-utils/hardlink.c:132
+#: misc-utils/hardlink.c:136
 msgid "Saved:        "
 msgstr ""
 
-#: misc-utils/hardlink.c:138
+#: misc-utils/hardlink.c:142
 #, fuzzy, c-format
 msgid " %s [options] directory...\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: misc-utils/hardlink.c:141
+#: misc-utils/hardlink.c:145
 msgid "Consolidate duplicate files using hardlinks."
 msgstr ""
 
-#: misc-utils/hardlink.c:144
+#: misc-utils/hardlink.c:148
 msgid " -c, --content          compare only contents, ignore permission, etc."
 msgstr ""
 
-#: misc-utils/hardlink.c:145
+#: misc-utils/hardlink.c:149
 #, fuzzy
 msgid " -n, --dry-run          don't actually link anything"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/hardlink.c:146
+#: misc-utils/hardlink.c:150
 #, fuzzy
 msgid " -v, --verbose          print summary after hardlinking"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/hardlink.c:147
+#: misc-utils/hardlink.c:151
 #, fuzzy
 msgid " -vv                    print every hardlinked file and summary"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/hardlink.c:148
+#: misc-utils/hardlink.c:152
 #, fuzzy
 msgid " -f, --force            force hardlinking across filesystems"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/hardlink.c:149
+#: misc-utils/hardlink.c:153
 msgid " -x, --exclude <regex>  exclude files matching pattern"
 msgstr ""
 
-#: misc-utils/hardlink.c:163
+#: misc-utils/hardlink.c:167
 #, fuzzy
 msgid "integer overflow"
 msgstr "barne errorea"
 
-#: misc-utils/hardlink.c:192
+#: misc-utils/hardlink.c:196
 #, c-format
 msgid "%s is on different filesystem than the rest (use -f option to override)."
 msgstr ""
 
-#: misc-utils/hardlink.c:300 sys-utils/unshare.c:206
+#: misc-utils/hardlink.c:306 sys-utils/unshare.c:206
 #, fuzzy, c-format
 msgid "cannot stat %s"
 msgstr "ezin da `stat' egin \"%s\"-(r)engan"
 
-#: misc-utils/hardlink.c:306
+#: misc-utils/hardlink.c:312
 #, fuzzy, c-format
 msgid "file %s changed underneath us"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/hardlink.c:326
+#: misc-utils/hardlink.c:332
 #, c-format
 msgid "failed to hardlink %s to %s (create temporary link as %s failed)"
 msgstr ""
 
-#: misc-utils/hardlink.c:333
+#: misc-utils/hardlink.c:339
 #, c-format
 msgid "failed to hardlink %s to %s (rename temporary link to %s failed)"
 msgstr ""
 
-#: misc-utils/hardlink.c:337
+#: misc-utils/hardlink.c:343
 #, fuzzy, c-format
 msgid "failed to remove temporary link %s"
 msgstr "berirakurri partizio taula"
 
-#: misc-utils/hardlink.c:348
+#: misc-utils/hardlink.c:354
 #, fuzzy, c-format
 msgid " %s %s to %s\n"
 msgstr "fsck: %s: ez da aurkitu\n"
 
-#: misc-utils/hardlink.c:349 misc-utils/hardlink.c:355
+#: misc-utils/hardlink.c:355 misc-utils/hardlink.c:361
 msgid "Would link"
 msgstr ""
 
-#: misc-utils/hardlink.c:349 misc-utils/hardlink.c:355
+#: misc-utils/hardlink.c:355 misc-utils/hardlink.c:361
 msgid "Linked"
 msgstr ""
 
-#: misc-utils/hardlink.c:354
+#: misc-utils/hardlink.c:360
 #, c-format
 msgid " %s %s to %s, %s %jd\n"
 msgstr ""
 
-#: misc-utils/hardlink.c:357
+#: misc-utils/hardlink.c:363
 msgid "would save"
 msgstr ""
 
-#: misc-utils/hardlink.c:357 text-utils/pg.c:1263
+#: misc-utils/hardlink.c:363 text-utils/pg.c:1263
 msgid "saved"
 msgstr "gordeta"
 
-#: misc-utils/hardlink.c:427
+#: misc-utils/hardlink.c:437
 msgid "option --exclude not supported (built without pcre2)"
 msgstr ""
 
-#: misc-utils/hardlink.c:440
+#: misc-utils/hardlink.c:450
 #, fuzzy
 msgid "no directory specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: misc-utils/hardlink.c:454
+#: misc-utils/hardlink.c:464
 #, fuzzy, c-format
 msgid "pattern error at offset %d: %s"
 msgstr "crc errorea"
 
-#: misc-utils/hardlink.c:499
+#: misc-utils/hardlink.c:509
 #, fuzzy, c-format
 msgid "Skipping %s%s\n"
 msgstr ""
@@ -10255,229 +10267,229 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "cannot find process \"%s\""
 msgstr "%s: ezin da \"%s\" prozesua aurkitu\n"
 
-#: misc-utils/logger.c:226
+#: misc-utils/logger.c:228
 #, fuzzy, c-format
 msgid "unknown facility name: %s"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: misc-utils/logger.c:232
+#: misc-utils/logger.c:234
 #, fuzzy, c-format
 msgid "unknown priority name: %s"
 msgstr "Partizio taula moeta ezezaguna"
 
-#: misc-utils/logger.c:244
+#: misc-utils/logger.c:246
 #, fuzzy, c-format
 msgid "openlog %s: pathname too long"
 msgstr "--date argumentua luzeegia da\n"
 
-#: misc-utils/logger.c:271
+#: misc-utils/logger.c:273
 #, fuzzy, c-format
 msgid "socket %s"
 msgstr "socket: %s.\n"
 
-#: misc-utils/logger.c:308
+#: misc-utils/logger.c:310
 #, fuzzy, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/logger.c:325
+#: misc-utils/logger.c:327
 #, fuzzy, c-format
 msgid "failed to connect to %s port %s"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/logger.c:373
+#: misc-utils/logger.c:375
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr ""
 
-#: misc-utils/logger.c:526
+#: misc-utils/logger.c:528
 #, fuzzy
 msgid "send message failed"
 msgstr "setuid()-k huts egin du"
 
-#: misc-utils/logger.c:596
+#: misc-utils/logger.c:598
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr ""
 
-#: misc-utils/logger.c:610
+#: misc-utils/logger.c:612
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr ""
 
-#: misc-utils/logger.c:789
+#: misc-utils/logger.c:791
 #, fuzzy
 msgid "localtime() failed"
 msgstr "%s: fallocate-k huts egin du"
 
-#: misc-utils/logger.c:799
+#: misc-utils/logger.c:801
 #, fuzzy, c-format
 msgid "hostname '%s' is too long"
 msgstr "eremua luzeegia da.\n"
 
-#: misc-utils/logger.c:805
+#: misc-utils/logger.c:807
 #, fuzzy, c-format
 msgid "tag '%s' is too long"
 msgstr "eremua luzeegia da.\n"
 
-#: misc-utils/logger.c:868
+#: misc-utils/logger.c:870
 #, fuzzy, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: misc-utils/logger.c:880
+#: misc-utils/logger.c:882
 #, fuzzy, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "baliogabeko id-a: %s\n"
 
-#: misc-utils/logger.c:1051
+#: misc-utils/logger.c:1053
 #, fuzzy, c-format
 msgid " %s [options] [<message>]\n"
 msgstr "aukera baliogarriak:"
 
-#: misc-utils/logger.c:1054
+#: misc-utils/logger.c:1056
 msgid "Enter messages into the system log.\n"
-msgstr ""
-
-#: misc-utils/logger.c:1057
-#, fuzzy
-msgid " -i                       log the logger command's PID\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
-#: misc-utils/logger.c:1058
-msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr ""
 
 #: misc-utils/logger.c:1059
 #, fuzzy
-msgid " -f, --file <file>        log the contents of this file\n"
+msgid " -i                       log the logger command's PID\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
 #: misc-utils/logger.c:1060
-msgid " -e, --skip-empty         do not log empty lines when processing files\n"
+msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr ""
 
 #: misc-utils/logger.c:1061
 #, fuzzy
-msgid "     --no-act             do everything except the write the log\n"
+msgid " -f, --file <file>        log the contents of this file\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
 #: misc-utils/logger.c:1062
-msgid " -p, --priority <prio>    mark given message with this priority\n"
+msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr ""
 
 #: misc-utils/logger.c:1063
-msgid "     --octet-count        use rfc6587 octet counting\n"
-msgstr ""
+#, fuzzy
+msgid "     --no-act             do everything except the write the log\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
 
 #: misc-utils/logger.c:1064
-msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
+msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr ""
 
 #: misc-utils/logger.c:1065
+msgid "     --octet-count        use rfc6587 octet counting\n"
+msgstr ""
+
+#: misc-utils/logger.c:1066
+msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
+msgstr ""
+
+#: misc-utils/logger.c:1067
 #, fuzzy
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/logger.c:1066
+#: misc-utils/logger.c:1068
 #, fuzzy
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/logger.c:1067
+#: misc-utils/logger.c:1069
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr ""
 
-#: misc-utils/logger.c:1068
+#: misc-utils/logger.c:1070
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr ""
 
-#: misc-utils/logger.c:1069
+#: misc-utils/logger.c:1071
 #, fuzzy
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr "Sartu buru kopurua:"
 
-#: misc-utils/logger.c:1070
+#: misc-utils/logger.c:1072
 #, fuzzy
 msgid " -T, --tcp                use TCP only\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/logger.c:1071
+#: misc-utils/logger.c:1073
 #, fuzzy
 msgid " -d, --udp                use UDP only\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/logger.c:1072
+#: misc-utils/logger.c:1074
 #, fuzzy
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/logger.c:1073
+#: misc-utils/logger.c:1075
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
 msgstr ""
 
-#: misc-utils/logger.c:1075
+#: misc-utils/logger.c:1077
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr ""
 
-#: misc-utils/logger.c:1076
+#: misc-utils/logger.c:1078
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr ""
 
-#: misc-utils/logger.c:1077
+#: misc-utils/logger.c:1079
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr ""
 
-#: misc-utils/logger.c:1078
+#: misc-utils/logger.c:1080
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr ""
 
-#: misc-utils/logger.c:1079
+#: misc-utils/logger.c:1081
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
 msgstr ""
 
-#: misc-utils/logger.c:1082
+#: misc-utils/logger.c:1084
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr ""
 
-#: misc-utils/logger.c:1168
+#: misc-utils/logger.c:1170
 #, fuzzy, c-format
 msgid "file %s"
 msgstr "(Hurrengo fitxategia: %s)"
 
-#: misc-utils/logger.c:1183
+#: misc-utils/logger.c:1185
 #, fuzzy
 msgid "failed to parse id"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/logger.c:1201
+#: misc-utils/logger.c:1203
 #, fuzzy
 msgid "failed to parse message size"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/logger.c:1231
+#: misc-utils/logger.c:1233
 msgid "--msgid cannot contain space"
 msgstr ""
 
-#: misc-utils/logger.c:1253
+#: misc-utils/logger.c:1255
 #, fuzzy, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "baliogabeko id-a: %s\n"
 
-#: misc-utils/logger.c:1258
+#: misc-utils/logger.c:1260
 #, fuzzy, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "renice: %s: balio okerra\n"
 
-#: misc-utils/logger.c:1273
+#: misc-utils/logger.c:1275
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr ""
 
-#: misc-utils/logger.c:1280
+#: misc-utils/logger.c:1282
 msgid "journald entry could not be written"
 msgstr ""
 
@@ -10694,166 +10706,166 @@ msgstr "Hypervisor-earen fabrikatzailea:"
 msgid "zone model"
 msgstr ""
 
-#: misc-utils/lsblk.c:1182
+#: misc-utils/lsblk.c:1194
 #, fuzzy
 msgid "failed to allocate device"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/lsblk.c:1222
+#: misc-utils/lsblk.c:1234
 msgid "failed to open device directory in sysfs"
 msgstr ""
 
-#: misc-utils/lsblk.c:1400
+#: misc-utils/lsblk.c:1416
 #, fuzzy, c-format
 msgid "%s: failed to get sysfs name"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/lsblk.c:1412
+#: misc-utils/lsblk.c:1428
 #, fuzzy, c-format
 msgid "%s: failed to get whole-disk device number"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/lsblk.c:1484 misc-utils/lsblk.c:1532
+#: misc-utils/lsblk.c:1501 misc-utils/lsblk.c:1549
 #, fuzzy
 msgid "failed to allocate /sys handler"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/lsblk.c:1591 misc-utils/lsblk.c:1593 misc-utils/lsblk.c:1622
-#: misc-utils/lsblk.c:1624
+#: misc-utils/lsblk.c:1609 misc-utils/lsblk.c:1611 misc-utils/lsblk.c:1640
+#: misc-utils/lsblk.c:1642
 #, fuzzy, c-format
 msgid "failed to parse list '%s'"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1598
+#: misc-utils/lsblk.c:1616
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr ""
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1629
+#: misc-utils/lsblk.c:1647
 #, c-format
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr ""
 
-#: misc-utils/lsblk.c:1698 sys-utils/wdctl.c:175
+#: misc-utils/lsblk.c:1716 sys-utils/wdctl.c:175
 #, fuzzy, c-format
 msgid " %s [options] [<device> ...]\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: misc-utils/lsblk.c:1701
+#: misc-utils/lsblk.c:1719
 #, fuzzy
 msgid "List information about block devices.\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: misc-utils/lsblk.c:1704
+#: misc-utils/lsblk.c:1722
 msgid " -D, --discard        print discard capabilities\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1705
-#, fuzzy
-msgid " -E, --dedup <column> de-duplicate output by <column>\n"
-msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
-
-#: misc-utils/lsblk.c:1706
-msgid " -I, --include <list> show only devices with specified major numbers\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1707 sys-utils/lsmem.c:500
-#, fuzzy
-msgid " -J, --json           use JSON output format\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
-#: misc-utils/lsblk.c:1708
-msgid " -O, --output-all     output all columns\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1710
-msgid " -S, --scsi           output info about SCSI devices\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1711
-#, fuzzy
-msgid " -T, --tree[=<column>] use tree format output\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
-#: misc-utils/lsblk.c:1712
-msgid " -a, --all            print all devices\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1714
-msgid " -d, --nodeps         don't print slaves or holders\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1715
-msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1716
-#, fuzzy
-msgid " -f, --fs             output info about filesystems\n"
-msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
-
-#: misc-utils/lsblk.c:1717
-msgid " -i, --ascii          use ascii characters only\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1718
-#, fuzzy
-msgid " -l, --list           use list format output\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
-#: misc-utils/lsblk.c:1719
-#, fuzzy
-msgid " -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
-#: misc-utils/lsblk.c:1720
-#, fuzzy
-msgid " -m, --perms          output info about permissions\n"
-msgstr "Inprimatu taula sektore bidez ordenatua"
-
-#: misc-utils/lsblk.c:1721 sys-utils/lsmem.c:504
-msgid " -n, --noheadings     don't print headings\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1722 sys-utils/lsmem.c:505
-msgid " -o, --output <list>  output columns\n"
 msgstr ""
 
 #: misc-utils/lsblk.c:1723
 #, fuzzy
+msgid " -E, --dedup <column> de-duplicate output by <column>\n"
+msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
+
+#: misc-utils/lsblk.c:1724
+msgid " -I, --include <list> show only devices with specified major numbers\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1725 sys-utils/lsmem.c:500
+#, fuzzy
+msgid " -J, --json           use JSON output format\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: misc-utils/lsblk.c:1726
+msgid " -O, --output-all     output all columns\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1728
+msgid " -S, --scsi           output info about SCSI devices\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1729
+#, fuzzy
+msgid " -T, --tree[=<column>] use tree format output\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: misc-utils/lsblk.c:1730
+msgid " -a, --all            print all devices\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1732
+msgid " -d, --nodeps         don't print slaves or holders\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1733
+msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1734
+#, fuzzy
+msgid " -f, --fs             output info about filesystems\n"
+msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
+
+#: misc-utils/lsblk.c:1735
+msgid " -i, --ascii          use ascii characters only\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1736
+#, fuzzy
+msgid " -l, --list           use list format output\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: misc-utils/lsblk.c:1737
+#, fuzzy
+msgid " -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: misc-utils/lsblk.c:1738
+#, fuzzy
+msgid " -m, --perms          output info about permissions\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: misc-utils/lsblk.c:1739 sys-utils/lsmem.c:504
+msgid " -n, --noheadings     don't print headings\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1740 sys-utils/lsmem.c:505
+msgid " -o, --output <list>  output columns\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1741
+#, fuzzy
 msgid " -p, --paths          print complete device path\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/lsblk.c:1725
+#: misc-utils/lsblk.c:1743
 #, fuzzy
 msgid " -s, --inverse        inverse dependencies\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/lsblk.c:1726
+#: misc-utils/lsblk.c:1744
 msgid " -t, --topology       output info about topology\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1727
+#: misc-utils/lsblk.c:1745
 #, fuzzy
 msgid " -z, --zoned          print zone model\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/lsblk.c:1728
+#: misc-utils/lsblk.c:1746
 msgid " -x, --sort <column>  sort output by <column>\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1729
+#: misc-utils/lsblk.c:1747
 msgid "     --sysroot <dir>  use specified directory as system root\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1746
+#: misc-utils/lsblk.c:1764
 #, fuzzy, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/lsblk.c:2084
+#: misc-utils/lsblk.c:2102
 #, fuzzy
 msgid "failed to allocate device tree"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
@@ -11004,7 +11016,7 @@ msgstr[1] "%6.2f%% (%+ld bytes)\t%s\n"
 msgid "closing %s failed"
 msgstr "exec %s-(e)k huts egin du"
 
-#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:140 sys-utils/fstrim.c:399
+#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:140 sys-utils/fstrim.c:415
 #: text-utils/hexdump.c:117
 #, fuzzy
 msgid "failed to parse length"
@@ -11519,8 +11531,8 @@ msgstr ""
 msgid "sha1-based"
 msgstr ""
 
-#: misc-utils/uuidparse.c:267 misc-utils/wipefs.c:177 sys-utils/lscpu.c:1958
-#: sys-utils/lsns.c:806 sys-utils/zramctl.c:505
+#: misc-utils/uuidparse.c:267 misc-utils/wipefs.c:177 sys-utils/lscpu.c:1967
+#: sys-utils/lsns.c:806 sys-utils/zramctl.c:503
 #, fuzzy
 msgid "failed to initialize output column"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
@@ -11571,7 +11583,7 @@ msgstr ""
 msgid " -l         output effective lookup paths\n"
 msgstr ""
 
-#: misc-utils/whereis.c:646
+#: misc-utils/whereis.c:661
 #, fuzzy
 msgid "option -f is missing"
 msgstr "--date argumentua luzeegia da\n"
@@ -12149,7 +12161,7 @@ msgstr "Inprimatu taula sektore bidez ordenatua"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/blkdiscard.c:144 sys-utils/fstrim.c:403 sys-utils/losetup.c:706
+#: sys-utils/blkdiscard.c:144 sys-utils/fstrim.c:419 sys-utils/losetup.c:706
 #: text-utils/hexdump.c:124
 #, fuzzy
 msgid "failed to parse offset"
@@ -12160,8 +12172,8 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "failed to parse step"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkdiscard.c:175 sys-utils/blkzone.c:408 sys-utils/fallocate.c:373
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:429
+#: sys-utils/blkdiscard.c:175 sys-utils/blkzone.c:406 sys-utils/fallocate.c:376
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:447
 #, fuzzy
 msgid "unexpected number of arguments"
 msgstr "Ezin da '%s' fitxategia ireki"
@@ -12181,7 +12193,7 @@ msgstr " %s: write-k huts egin du"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:200 sys-utils/blkzone.c:272
+#: sys-utils/blkdiscard.c:200 sys-utils/blkzone.c:270
 #, fuzzy, c-format
 msgid "%s: offset is greater than device size"
 msgstr "Ezin da diskoaren tamainua lortu"
@@ -12225,7 +12237,7 @@ msgstr "%s: get size egiterakoan huts egin da"
 msgid "%s: offset is greater than or equal to device size"
 msgstr "Ezin da diskoaren tamainua lortu"
 
-#: sys-utils/blkzone.c:188 sys-utils/blkzone.c:262
+#: sys-utils/blkzone.c:188 sys-utils/blkzone.c:260
 #, fuzzy, c-format
 msgid "%s: unable to determine zone size"
 msgstr "   w   idatzi diskoaren etiketa diskoan"
@@ -12240,79 +12252,79 @@ msgstr "KDGHWCLK ioctl-ek huts egin du"
 msgid "Found %d zones from 0x%<PRIx64>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:230
+#: sys-utils/blkzone.c:228
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:267
+#: sys-utils/blkzone.c:265
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr ""
 
-#: sys-utils/blkzone.c:286
+#: sys-utils/blkzone.c:284
 #, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr ""
 
-#: sys-utils/blkzone.c:294
+#: sys-utils/blkzone.c:292
 #, fuzzy, c-format
 msgid "%s: BLKRESETZONE ioctl failed"
 msgstr " %s: write-k huts egin du"
 
-#: sys-utils/blkzone.c:296
+#: sys-utils/blkzone.c:294
 #, fuzzy, c-format
 msgid "%s: successfully reset in range from %<PRIu64>, to %<PRIu64>"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkzone.c:310
+#: sys-utils/blkzone.c:308
 #, fuzzy, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: sys-utils/blkzone.c:313
+#: sys-utils/blkzone.c:311
 msgid "Run zone command on the given block device.\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:320
+#: sys-utils/blkzone.c:318
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:321
+#: sys-utils/blkzone.c:319
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:322
+#: sys-utils/blkzone.c:320
 #, fuzzy
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/blkzone.c:323
+#: sys-utils/blkzone.c:321
 #, fuzzy
 msgid " -v, --verbose          display more details\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/blkzone.c:365
+#: sys-utils/blkzone.c:363
 #, fuzzy, c-format
 msgid "%s is not valid command name"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: sys-utils/blkzone.c:377
+#: sys-utils/blkzone.c:375
 #, fuzzy
 msgid "failed to parse number of zones"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkzone.c:381
+#: sys-utils/blkzone.c:379
 #, fuzzy
 msgid "failed to parse number of sectors"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkzone.c:385
+#: sys-utils/blkzone.c:383
 #, fuzzy
 msgid "failed to parse zone offset"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkzone.c:401 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:399 sys-utils/setsid.c:92
 #, fuzzy
 msgid "no command specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
@@ -12656,7 +12668,7 @@ msgid ""
 "Supported zones:\n"
 msgstr ""
 
-#: sys-utils/chmem.c:387 sys-utils/lscpu.c:1407 sys-utils/lsmem.c:642
+#: sys-utils/chmem.c:387 sys-utils/lscpu.c:1409 sys-utils/lsmem.c:642
 #, fuzzy, c-format
 msgid "failed to initialize %s handler"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
@@ -12707,7 +12719,7 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "invalid adjust argument"
 msgstr "baliogabeko aukera"
 
-#: sys-utils/choom.c:119 term-utils/mesg.c:166
+#: sys-utils/choom.c:119 term-utils/mesg.c:177
 #, fuzzy, c-format
 msgid "invalid argument: %s"
 msgstr "baliogabeko id-a: %s\n"
@@ -13008,25 +13020,25 @@ msgstr "<i> (ez dago iradokizunik) </i>"
 msgid "cannot mmap: %s"
 msgstr "ezin da %s ireki"
 
-#: sys-utils/dmesg.c:1432
+#: sys-utils/dmesg.c:1435
 #, fuzzy
 msgid "invalid buffer size argument"
 msgstr "baliogabeko aukera"
 
-#: sys-utils/dmesg.c:1486
+#: sys-utils/dmesg.c:1489
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr ""
 
-#: sys-utils/dmesg.c:1509
+#: sys-utils/dmesg.c:1512
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr ""
 
-#: sys-utils/dmesg.c:1524
+#: sys-utils/dmesg.c:1527
 #, fuzzy
 msgid "read kernel buffer failed"
 msgstr "irakurri rtc ordua"
 
-#: sys-utils/dmesg.c:1543
+#: sys-utils/dmesg.c:1546
 #, fuzzy
 msgid "klogctl failed"
 msgstr "msgctl-ek huts egin du"
@@ -13225,7 +13237,7 @@ msgstr ""
 msgid "using default device `%s'"
 msgstr "Baliogabeko zilindro baloreak"
 
-#: sys-utils/eject.c:882 sys-utils/rtcwake.c:395
+#: sys-utils/eject.c:882 sys-utils/rtcwake.c:398
 #, fuzzy, c-format
 msgid "%s: unable to find device"
 msgstr "ezin dira bootbit sektoreak ezabatu"
@@ -13416,35 +13428,35 @@ msgstr ""
 msgid "fallocate failed"
 msgstr "%s: fallocate-k huts egin du"
 
-#: sys-utils/fallocate.c:231
+#: sys-utils/fallocate.c:234
 #, fuzzy, c-format
 msgid "%s: read failed"
 msgstr "%s: open-ek huts egin du"
 
-#: sys-utils/fallocate.c:272
+#: sys-utils/fallocate.c:275
 #, c-format
 msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
 msgstr ""
 
-#: sys-utils/fallocate.c:352
+#: sys-utils/fallocate.c:355
 msgid "posix_fallocate support is not compiled"
 msgstr ""
 
-#: sys-utils/fallocate.c:368 sys-utils/fsfreeze.c:106
+#: sys-utils/fallocate.c:371 sys-utils/fsfreeze.c:106
 #, fuzzy
 msgid "no filename specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: sys-utils/fallocate.c:380 sys-utils/fallocate.c:386
+#: sys-utils/fallocate.c:383 sys-utils/fallocate.c:389
 msgid "invalid length value specified"
 msgstr ""
 
-#: sys-utils/fallocate.c:384
+#: sys-utils/fallocate.c:387
 #, fuzzy
 msgid "no length argument specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: sys-utils/fallocate.c:389
+#: sys-utils/fallocate.c:392
 msgid "invalid offset value specified"
 msgstr ""
 
@@ -13601,55 +13613,60 @@ msgstr " %s: write-k huts egin du"
 msgid "%s: unfreeze failed"
 msgstr " %s: write-k huts egin du"
 
-#: sys-utils/fstrim.c:76
+#: sys-utils/fstrim.c:77
 #, fuzzy, c-format
 msgid "cannot get realpath: %s"
 msgstr "hexdump: ezin da %s  irakurri.\n"
 
-#: sys-utils/fstrim.c:95
+#: sys-utils/fstrim.c:96
 #, fuzzy, c-format
 msgid "%s: not a directory"
 msgstr "erro inodoa ez da direktorioa"
 
-#: sys-utils/fstrim.c:102
+#: sys-utils/fstrim.c:103
 #, fuzzy, c-format
 msgid "%s: 0 B (dry run) trimmed on %s\n"
 msgstr "fsck: %s: ez da aurkitu\n"
 
-#: sys-utils/fstrim.c:104
+#: sys-utils/fstrim.c:105
 #, c-format
 msgid "%s: 0 B (dry run) trimmed\n"
 msgstr ""
 
-#: sys-utils/fstrim.c:114
+#: sys-utils/fstrim.c:122
 #, fuzzy, c-format
 msgid "%s: FITRIM ioctl failed"
 msgstr " %s: write-k huts egin du"
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/fstrim.c:124
+#: sys-utils/fstrim.c:132
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed on %s\n"
 msgstr ""
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/fstrim.c:128
+#: sys-utils/fstrim.c:136
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr ""
 
-#: sys-utils/fstrim.c:245 sys-utils/lsns.c:1078 sys-utils/swapon.c:733
+#: sys-utils/fstrim.c:253 sys-utils/lsns.c:1078 sys-utils/swapon.c:733
 #: sys-utils/umount.c:248
 #, fuzzy, c-format
 msgid "failed to parse %s"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/fstrim.c:266
+#: sys-utils/fstrim.c:274
 #, fuzzy
 msgid "failed to allocate FS handler"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/fstrim.c:340
+#: sys-utils/fstrim.c:330 sys-utils/fstrim.c:456
+#, fuzzy, c-format
+msgid "%s: the discard operation is not supported"
+msgstr "%d abiadurak ez du euskarririk"
+
+#: sys-utils/fstrim.c:351
 #, fuzzy, c-format
 msgid " %s [options] <mount point>\n"
 msgstr ""
@@ -13657,57 +13674,57 @@ msgstr ""
 "\n"
 "Aukerak:\n"
 
-#: sys-utils/fstrim.c:343
+#: sys-utils/fstrim.c:354
 msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr ""
 
-#: sys-utils/fstrim.c:346
+#: sys-utils/fstrim.c:357
 #, fuzzy
 msgid " -a, --all           trim all supported mounted filesystems\n"
 msgstr "  t          Aldatu fitxategi sistema moeta"
 
-#: sys-utils/fstrim.c:347
+#: sys-utils/fstrim.c:358
 #, fuzzy
 msgid " -A, --fstab         trim all supported mounted filesystems from /etc/fstab\n"
 msgstr "  t          Aldatu fitxategi sistema moeta"
 
-#: sys-utils/fstrim.c:348
+#: sys-utils/fstrim.c:359
 msgid " -o, --offset <num>  the offset in bytes to start discarding from\n"
 msgstr ""
 
-#: sys-utils/fstrim.c:349
+#: sys-utils/fstrim.c:360
 #, fuzzy
 msgid " -l, --length <num>  the number of bytes to discard\n"
 msgstr "Sartu zilindro kopurua:"
 
-#: sys-utils/fstrim.c:350
+#: sys-utils/fstrim.c:361
 msgid " -m, --minimum <num> the minimum extent length to discard\n"
 msgstr ""
 
-#: sys-utils/fstrim.c:351
+#: sys-utils/fstrim.c:362
 #, fuzzy
 msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/fstrim.c:352
+#: sys-utils/fstrim.c:363
+#, fuzzy
+msgid "     --quiet         suppress error messages\n"
+msgstr "Inprimatu taula sektore bidez ordenatua"
+
+#: sys-utils/fstrim.c:364
 #, fuzzy
 msgid " -n, --dry-run       does everything, but trim\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/fstrim.c:407
+#: sys-utils/fstrim.c:423
 #, fuzzy
 msgid "failed to parse minimum extent length"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/fstrim.c:424
+#: sys-utils/fstrim.c:442
 #, fuzzy
 msgid "no mountpoint specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
-
-#: sys-utils/fstrim.c:438
-#, fuzzy, c-format
-msgid "%s: the discard operation is not supported"
-msgstr "%d abiadurak ez du euskarririk"
 
 #: sys-utils/hwclock.c:205
 #, c-format
@@ -14220,7 +14237,7 @@ msgstr ""
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr ""
 
-#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:731 sys-utils/zramctl.c:647
+#: sys-utils/ipcmk.c:110 sys-utils/losetup.c:731 sys-utils/zramctl.c:645
 #, fuzzy
 msgid "failed to parse size"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
@@ -14968,18 +14985,18 @@ msgstr ""
 msgid "pid"
 msgstr ""
 
-#: sys-utils/ipcutils.c:229 sys-utils/ipcutils.c:233 sys-utils/ipcutils.c:237
-#: sys-utils/ipcutils.c:241
+#: sys-utils/ipcutils.c:232 sys-utils/ipcutils.c:236 sys-utils/ipcutils.c:240
+#: sys-utils/ipcutils.c:244
 #, fuzzy, c-format
 msgid "%s failed"
 msgstr "%s-(e)k huts egin du.\n"
 
-#: sys-utils/ipcutils.c:502
+#: sys-utils/ipcutils.c:505
 #, fuzzy, c-format
 msgid "%s (bytes) = "
 msgstr "%zd byte ["
 
-#: sys-utils/ipcutils.c:504
+#: sys-utils/ipcutils.c:507
 #, fuzzy, c-format
 msgid "%s (kbytes) = "
 msgstr "%zd byte ["
@@ -15495,26 +15512,26 @@ msgstr "errorea: uname-k huts egin du"
 msgid "failed to determine number of CPUs: %s"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/lscpu.c:871
+#: sys-utils/lscpu.c:873
 #, fuzzy
 msgid "cannot restore signal handler"
 msgstr "ezin da lerroaren disziplina ezarri"
 
-#: sys-utils/lscpu.c:1431
+#: sys-utils/lscpu.c:1433
 #, fuzzy
 msgid "Failed to extract the node number"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/lscpu.c:1558 sys-utils/lscpu.c:1568
+#: sys-utils/lscpu.c:1560 sys-utils/lscpu.c:1570
 msgid "Y"
 msgstr ""
 
-#: sys-utils/lscpu.c:1558 sys-utils/lscpu.c:1568
+#: sys-utils/lscpu.c:1560 sys-utils/lscpu.c:1570
 #, fuzzy
 msgid "N"
 msgstr "NC"
 
-#: sys-utils/lscpu.c:1739
+#: sys-utils/lscpu.c:1741
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -15522,283 +15539,283 @@ msgid ""
 "# starting from zero.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1960
+#: sys-utils/lscpu.c:1969
 msgid "Architecture:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1973
+#: sys-utils/lscpu.c:1982
 msgid "CPU op-mode(s):"
 msgstr "CPUaren op-modua(k):"
 
-#: sys-utils/lscpu.c:1976 sys-utils/lscpu.c:1978
+#: sys-utils/lscpu.c:1985 sys-utils/lscpu.c:1987
 msgid "Byte Order:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1982
+#: sys-utils/lscpu.c:1991
 msgid "Address sizes:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1984
+#: sys-utils/lscpu.c:1993
 #, fuzzy
 msgid "CPU(s):"
 msgstr "CPU socketak:"
 
-#: sys-utils/lscpu.c:1987
+#: sys-utils/lscpu.c:1996
 msgid "On-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1988
+#: sys-utils/lscpu.c:1997
 msgid "On-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2000
+#: sys-utils/lscpu.c:2009
 #, fuzzy
 msgid "failed to callocate cpu set"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/lscpu.c:2007
+#: sys-utils/lscpu.c:2016
 msgid "Off-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2008
+#: sys-utils/lscpu.c:2017
 msgid "Off-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2043
+#: sys-utils/lscpu.c:2052
 msgid "Thread(s) per core:"
 msgstr "Core bakoitzeko hari kopurua:"
 
-#: sys-utils/lscpu.c:2045
+#: sys-utils/lscpu.c:2054
 msgid "Core(s) per socket:"
 msgstr "Socket bakoitzeko core kopurua:"
 
-#: sys-utils/lscpu.c:2048
+#: sys-utils/lscpu.c:2057
 #, fuzzy
 msgid "Socket(s) per book:"
 msgstr "Socket bakoitzeko core kopurua:"
 
-#: sys-utils/lscpu.c:2051
+#: sys-utils/lscpu.c:2060
 msgid "Book(s) per drawer:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2053
+#: sys-utils/lscpu.c:2062
 msgid "Drawer(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:2055
+#: sys-utils/lscpu.c:2064
 msgid "Book(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:2058
+#: sys-utils/lscpu.c:2067
 #, fuzzy
 msgid "Socket(s):"
 msgstr "CPU socketak:"
 
-#: sys-utils/lscpu.c:2062
+#: sys-utils/lscpu.c:2071
 msgid "NUMA node(s):"
 msgstr "NUMA noduak:"
 
-#: sys-utils/lscpu.c:2064
+#: sys-utils/lscpu.c:2073
 msgid "Vendor ID:"
 msgstr "Fabrikatzailearen IDa:"
 
-#: sys-utils/lscpu.c:2066
+#: sys-utils/lscpu.c:2075
 #, fuzzy
 msgid "Machine type:"
 msgstr "Partizio zenbakia"
 
-#: sys-utils/lscpu.c:2068
+#: sys-utils/lscpu.c:2077
 msgid "CPU family:"
 msgstr "CPU familia:"
 
-#: sys-utils/lscpu.c:2070
+#: sys-utils/lscpu.c:2079
 msgid "Model:"
 msgstr "Modeloa:"
 
-#: sys-utils/lscpu.c:2072
+#: sys-utils/lscpu.c:2081
 #, fuzzy
 msgid "Model name:"
 msgstr "Modeloa:"
 
-#: sys-utils/lscpu.c:2074
+#: sys-utils/lscpu.c:2083
 msgid "Stepping:"
 msgstr "Stepping-a:"
 
-#: sys-utils/lscpu.c:2076
+#: sys-utils/lscpu.c:2085
 #, fuzzy
 msgid "Frequency boost:"
 msgstr "FreeBSD"
 
-#: sys-utils/lscpu.c:2077
+#: sys-utils/lscpu.c:2086
 #, fuzzy
 msgid "enabled"
 msgstr "Partizio hau dagoeneko erabilita dago"
 
-#: sys-utils/lscpu.c:2077
+#: sys-utils/lscpu.c:2086
 #, fuzzy
 msgid "disabled"
 msgstr "Partizio hau dagoeneko erabilita dago"
 
-#: sys-utils/lscpu.c:2079
+#: sys-utils/lscpu.c:2088
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:2081
+#: sys-utils/lscpu.c:2090
 #, fuzzy
 msgid "CPU dynamic MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:2083
+#: sys-utils/lscpu.c:2092
 #, fuzzy
 msgid "CPU static MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:2085
+#: sys-utils/lscpu.c:2094
 #, fuzzy
 msgid "CPU max MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:2087
+#: sys-utils/lscpu.c:2096
 #, fuzzy
 msgid "CPU min MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:2089
+#: sys-utils/lscpu.c:2098
 msgid "BogoMIPS:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2092 sys-utils/lscpu.c:2094
+#: sys-utils/lscpu.c:2101 sys-utils/lscpu.c:2103
 msgid "Virtualization:"
 msgstr "Birtualizazioa:"
 
-#: sys-utils/lscpu.c:2097
+#: sys-utils/lscpu.c:2106
 #, fuzzy
 msgid "Hypervisor:"
 msgstr "Hypervisor-earen fabrikatzailea:"
 
-#: sys-utils/lscpu.c:2099
+#: sys-utils/lscpu.c:2108
 msgid "Hypervisor vendor:"
 msgstr "Hypervisor-earen fabrikatzailea:"
 
-#: sys-utils/lscpu.c:2100
+#: sys-utils/lscpu.c:2109
 msgid "Virtualization type:"
 msgstr "Birtualizazio moeta:"
 
-#: sys-utils/lscpu.c:2103
+#: sys-utils/lscpu.c:2112
 msgid "Dispatching mode:"
 msgstr ""
 
-#: sys-utils/lscpu.c:2120 sys-utils/lscpu.c:2138
+#: sys-utils/lscpu.c:2129 sys-utils/lscpu.c:2147
 #, fuzzy, c-format
-msgid "%s cache: "
+msgid "%s cache:"
 msgstr "%s cachea:"
 
-#: sys-utils/lscpu.c:2145
+#: sys-utils/lscpu.c:2154
 #, fuzzy, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA noduak:"
 
-#: sys-utils/lscpu.c:2150
+#: sys-utils/lscpu.c:2159
 #, fuzzy
 msgid "Physical sockets:"
 msgstr "Sartu zilindro kopurua:"
 
-#: sys-utils/lscpu.c:2151
+#: sys-utils/lscpu.c:2160
 #, fuzzy
 msgid "Physical chips:"
 msgstr "Sartu zilindro kopurua:"
 
-#: sys-utils/lscpu.c:2152
+#: sys-utils/lscpu.c:2161
 #, fuzzy
 msgid "Physical cores/chip:"
 msgstr "lortu bloke fisikoaren (sektorea) tamainua"
 
-#: sys-utils/lscpu.c:2163
+#: sys-utils/lscpu.c:2172
 #, fuzzy
 msgid "Flags:"
 msgstr "Banderak"
 
-#: sys-utils/lscpu.c:2178
+#: sys-utils/lscpu.c:2187
 msgid "Display information about the CPU architecture.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2181
+#: sys-utils/lscpu.c:2190
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2182
+#: sys-utils/lscpu.c:2191
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2183
+#: sys-utils/lscpu.c:2192
 #, fuzzy
 msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/lscpu.c:2184
+#: sys-utils/lscpu.c:2193
 msgid " -C, --caches[=<list>]   info about caches in extended readable format\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2185
+#: sys-utils/lscpu.c:2194
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2186
+#: sys-utils/lscpu.c:2195
 #, fuzzy
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/lscpu.c:2187
+#: sys-utils/lscpu.c:2196
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2188
+#: sys-utils/lscpu.c:2197
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2189
+#: sys-utils/lscpu.c:2198
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2190
+#: sys-utils/lscpu.c:2199
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2191
+#: sys-utils/lscpu.c:2200
 #, fuzzy
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/lscpu.c:2192
+#: sys-utils/lscpu.c:2201
 #, fuzzy
 msgid "     --output-all        print all available columns for -e, -p or -C\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: sys-utils/lscpu.c:2196
+#: sys-utils/lscpu.c:2205
 #, fuzzy
 msgid ""
 "\n"
 "Available output columns for -e or -p:\n"
 msgstr "Erabilgarri dauden komandoak:\n"
 
-#: sys-utils/lscpu.c:2200
+#: sys-utils/lscpu.c:2209
 #, fuzzy
 msgid ""
 "\n"
 "Available output columns for -C:\n"
 msgstr "Erabilgarri dauden komandoak:\n"
 
-#: sys-utils/lscpu.c:2333
+#: sys-utils/lscpu.c:2342
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:2355
+#: sys-utils/lscpu.c:2364
 #, fuzzy
 msgid "failed to initialize CPUs sysfs handler"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/lscpu.c:2362
+#: sys-utils/lscpu.c:2371
 #, fuzzy
 msgid "failed to initialize procfs handler"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
@@ -16844,7 +16861,7 @@ msgstr "mount-ek huts egin du"
 msgid "change directory by working directory file descriptor failed"
 msgstr "%s: get size egiterakoan huts egin da"
 
-#: sys-utils/nsenter.c:471 sys-utils/setpriv.c:1060 sys-utils/setpriv.c:1067
+#: sys-utils/nsenter.c:471 sys-utils/setpriv.c:1062 sys-utils/setpriv.c:1069
 #: sys-utils/unshare.c:520
 #, fuzzy
 msgid "setgroups failed"
@@ -17429,139 +17446,139 @@ msgstr "%s: baliogabeko %s time_t balorea\n"
 msgid "set rtc wake alarm failed"
 msgstr "ezarri rtc alarma"
 
-#: sys-utils/rtcwake.c:275
+#: sys-utils/rtcwake.c:278
 #, fuzzy
 msgid "discarding stdin"
 msgstr "lortu irakurketa soilik"
 
-#: sys-utils/rtcwake.c:326
+#: sys-utils/rtcwake.c:329
 #, c-format
 msgid "unexpected third line in: %s: %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:339 sys-utils/rtcwake.c:657
+#: sys-utils/rtcwake.c:342 sys-utils/rtcwake.c:661
 #, fuzzy
 msgid "read rtc alarm failed"
 msgstr "ezarri rtc alarma"
 
-#: sys-utils/rtcwake.c:344
+#: sys-utils/rtcwake.c:347
 #, c-format
 msgid "alarm: off\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:357
+#: sys-utils/rtcwake.c:360
 #, fuzzy
 msgid "convert time failed"
 msgstr "%s: baliogabeko %s time_t balorea\n"
 
-#: sys-utils/rtcwake.c:362
+#: sys-utils/rtcwake.c:365
 #, c-format
 msgid "alarm: on  %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:406
+#: sys-utils/rtcwake.c:409
 #, fuzzy, c-format
 msgid "could not read: %s"
 msgstr "read-ek huts egin du: %s"
 
-#: sys-utils/rtcwake.c:486
+#: sys-utils/rtcwake.c:490
 #, fuzzy, c-format
 msgid "unrecognized suspend state '%s'"
 msgstr "sarrera okerra\n"
 
-#: sys-utils/rtcwake.c:494
+#: sys-utils/rtcwake.c:498
 #, fuzzy
 msgid "invalid seconds argument"
 msgstr "baliogabeko aukera"
 
-#: sys-utils/rtcwake.c:498
+#: sys-utils/rtcwake.c:502
 #, fuzzy
 msgid "invalid time argument"
 msgstr "baliogabeko aukera"
 
-#: sys-utils/rtcwake.c:525
+#: sys-utils/rtcwake.c:529
 #, c-format
 msgid "%s: assuming RTC uses UTC ...\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:530
+#: sys-utils/rtcwake.c:534
 msgid "Using UTC time.\n"
 msgstr "UTC ordua erabiltzen.\n"
 
-#: sys-utils/rtcwake.c:531
+#: sys-utils/rtcwake.c:535
 msgid "Using local time.\n"
 msgstr "Ordu lokala erabiltzen.\n"
 
-#: sys-utils/rtcwake.c:534
+#: sys-utils/rtcwake.c:538
 msgid "must provide wake time (see --seconds, --time and --date options)"
 msgstr ""
 
-#: sys-utils/rtcwake.c:540
+#: sys-utils/rtcwake.c:544
 #, fuzzy, c-format
 msgid "%s not enabled for wakeup events"
 msgstr "%s: ezin dira inotify gertaerak irakurri"
 
-#: sys-utils/rtcwake.c:547
+#: sys-utils/rtcwake.c:551
 #, c-format
 msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:554
+#: sys-utils/rtcwake.c:558
 #, c-format
 msgid "time doesn't go backward to %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:564
+#: sys-utils/rtcwake.c:568
 #, c-format
 msgid "%s: wakeup using %s at %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:568
+#: sys-utils/rtcwake.c:572
 #, c-format
 msgid "%s: wakeup from \"%s\" using %s at %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:578
+#: sys-utils/rtcwake.c:582
 #, c-format
 msgid "suspend mode: no; leaving\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:601
+#: sys-utils/rtcwake.c:605
 #, c-format
 msgid "suspend mode: off; executing %s\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:610
+#: sys-utils/rtcwake.c:614
 #, fuzzy
 msgid "failed to find shutdown command"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/rtcwake.c:620
+#: sys-utils/rtcwake.c:624
 #, c-format
 msgid "suspend mode: on; reading rtc\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:625
+#: sys-utils/rtcwake.c:629
 #, fuzzy
 msgid "rtc read failed"
 msgstr "read-ek huts egin du: %s"
 
-#: sys-utils/rtcwake.c:637
+#: sys-utils/rtcwake.c:641
 #, c-format
 msgid "suspend mode: disable; disabling alarm\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:641
+#: sys-utils/rtcwake.c:645
 #, c-format
 msgid "suspend mode: show; printing alarm info\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:648
+#: sys-utils/rtcwake.c:652
 #, c-format
 msgid "suspend mode: %s; suspending system\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:662
+#: sys-utils/rtcwake.c:666
 msgid "disable rtc alarm interrupt failed"
 msgstr ""
 
@@ -17961,169 +17978,169 @@ msgstr "seek-ek huts egin du"
 msgid "AppArmor is not running"
 msgstr ""
 
-#: sys-utils/setpriv.c:854
+#: sys-utils/setpriv.c:856
 msgid "duplicate --no-new-privs option"
 msgstr ""
 
-#: sys-utils/setpriv.c:859
+#: sys-utils/setpriv.c:861
 msgid "duplicate ruid"
 msgstr ""
 
-#: sys-utils/setpriv.c:861
+#: sys-utils/setpriv.c:863
 #, fuzzy
 msgid "failed to parse ruid"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/setpriv.c:869
+#: sys-utils/setpriv.c:871
 msgid "duplicate euid"
 msgstr ""
 
-#: sys-utils/setpriv.c:871
+#: sys-utils/setpriv.c:873
 #, fuzzy
 msgid "failed to parse euid"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/setpriv.c:875
+#: sys-utils/setpriv.c:877
 msgid "duplicate ruid or euid"
 msgstr ""
 
-#: sys-utils/setpriv.c:877
+#: sys-utils/setpriv.c:879
 #, fuzzy
 msgid "failed to parse reuid"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/setpriv.c:886
+#: sys-utils/setpriv.c:888
 msgid "duplicate rgid"
 msgstr ""
 
-#: sys-utils/setpriv.c:888
+#: sys-utils/setpriv.c:890
 #, fuzzy
 msgid "failed to parse rgid"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/setpriv.c:892
+#: sys-utils/setpriv.c:894
 msgid "duplicate egid"
 msgstr ""
 
-#: sys-utils/setpriv.c:894
+#: sys-utils/setpriv.c:896
 #, fuzzy
 msgid "failed to parse egid"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/setpriv.c:898
+#: sys-utils/setpriv.c:900
 msgid "duplicate rgid or egid"
 msgstr ""
 
-#: sys-utils/setpriv.c:900
+#: sys-utils/setpriv.c:902
 #, fuzzy
 msgid "failed to parse regid"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/setpriv.c:905
+#: sys-utils/setpriv.c:907
 msgid "duplicate --clear-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:911
+#: sys-utils/setpriv.c:913
 msgid "duplicate --keep-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:917
+#: sys-utils/setpriv.c:919
 msgid "duplicate --init-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:923
+#: sys-utils/setpriv.c:925
 msgid "duplicate --groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:929
+#: sys-utils/setpriv.c:931
 msgid "duplicate --keep-pdeathsig option"
 msgstr ""
 
-#: sys-utils/setpriv.c:938
+#: sys-utils/setpriv.c:940
 msgid "duplicate --inh-caps option"
 msgstr ""
 
-#: sys-utils/setpriv.c:944
+#: sys-utils/setpriv.c:946
 msgid "duplicate --ambient-caps option"
 msgstr ""
 
-#: sys-utils/setpriv.c:950
+#: sys-utils/setpriv.c:952
 msgid "duplicate --bounding-set option"
 msgstr ""
 
-#: sys-utils/setpriv.c:956
+#: sys-utils/setpriv.c:958
 msgid "duplicate --securebits option"
 msgstr ""
 
-#: sys-utils/setpriv.c:962
+#: sys-utils/setpriv.c:964
 msgid "duplicate --selinux-label option"
 msgstr ""
 
-#: sys-utils/setpriv.c:968
+#: sys-utils/setpriv.c:970
 msgid "duplicate --apparmor-profile option"
 msgstr ""
 
-#: sys-utils/setpriv.c:987
+#: sys-utils/setpriv.c:989
 msgid "--dump is incompatible with all other options"
 msgstr ""
 
-#: sys-utils/setpriv.c:995
+#: sys-utils/setpriv.c:997
 msgid "--list-caps must be specified alone"
 msgstr ""
 
-#: sys-utils/setpriv.c:1001
+#: sys-utils/setpriv.c:1003
 #, fuzzy
 msgid "No program specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: sys-utils/setpriv.c:1007
+#: sys-utils/setpriv.c:1009
 msgid "--[re]gid requires --keep-groups, --clear-groups, --init-groups, or --groups"
 msgstr ""
 
-#: sys-utils/setpriv.c:1011
+#: sys-utils/setpriv.c:1013
 msgid "--init-groups requires --ruid or --reuid"
 msgstr ""
 
-#: sys-utils/setpriv.c:1015
+#: sys-utils/setpriv.c:1017
 #, c-format
 msgid "uid %ld not found, --init-groups requires an user that can be found on the system"
 msgstr ""
 
-#: sys-utils/setpriv.c:1030
+#: sys-utils/setpriv.c:1032
 msgid "disallow granting new privileges failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:1038
+#: sys-utils/setpriv.c:1040
 msgid "keep process capabilities failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:1046
+#: sys-utils/setpriv.c:1048
 msgid "activate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1052
+#: sys-utils/setpriv.c:1054
 msgid "reactivate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1063
+#: sys-utils/setpriv.c:1065
 #, fuzzy
 msgid "initgroups failed"
 msgstr "strdup-ek huts egin du"
 
-#: sys-utils/setpriv.c:1071
+#: sys-utils/setpriv.c:1073
 #, fuzzy
 msgid "set process securebits failed"
 msgstr "setuid()-k huts egin du"
 
-#: sys-utils/setpriv.c:1077
+#: sys-utils/setpriv.c:1079
 msgid "apply bounding set"
 msgstr ""
 
-#: sys-utils/setpriv.c:1083
+#: sys-utils/setpriv.c:1085
 msgid "apply capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1092
+#: sys-utils/setpriv.c:1094
 #, fuzzy
 msgid "set parent death signal failed"
 msgstr "ezarri rtc alarma"
@@ -19097,12 +19114,12 @@ msgstr ""
 msgid "number of objects migrated by compaction"
 msgstr ""
 
-#: sys-utils/zramctl.c:380
+#: sys-utils/zramctl.c:378
 #, fuzzy
 msgid "Failed to parse mm_stat"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/zramctl.c:541
+#: sys-utils/zramctl.c:539
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] <device>\n"
@@ -19110,96 +19127,96 @@ msgid ""
 " %1$s [options] -f | <device> -s <size>\n"
 msgstr "Erabilera: mkfs [-V] [-t fitxategi sistema moeta] [fitxategi sistemaren aukerak] gailua [tamainua]\n"
 
-#: sys-utils/zramctl.c:547
+#: sys-utils/zramctl.c:545
 msgid "Set up and control zram devices.\n"
 msgstr ""
 
-#: sys-utils/zramctl.c:550
+#: sys-utils/zramctl.c:548
 msgid " -a, --algorithm lzo|lz4|lz4hc|deflate|842   compression algorithm to use\n"
 msgstr ""
 
-#: sys-utils/zramctl.c:551
+#: sys-utils/zramctl.c:549
 #, fuzzy
 msgid " -b, --bytes               print sizes in bytes rather than in human readable format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/zramctl.c:552
+#: sys-utils/zramctl.c:550
 #, fuzzy
 msgid " -f, --find                find a free device\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/zramctl.c:553
+#: sys-utils/zramctl.c:551
 #, fuzzy
 msgid " -n, --noheadings          don't print headings\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/zramctl.c:554
+#: sys-utils/zramctl.c:552
 #, fuzzy
 msgid " -o, --output <list>       columns to use for status output\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/zramctl.c:555
+#: sys-utils/zramctl.c:553
 #, fuzzy
 msgid "     --output-all          output all columns\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: sys-utils/zramctl.c:556
+#: sys-utils/zramctl.c:554
 #, fuzzy
 msgid "     --raw                 use raw status output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/zramctl.c:557
+#: sys-utils/zramctl.c:555
 #, fuzzy
 msgid " -r, --reset               reset all specified devices\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/zramctl.c:558
+#: sys-utils/zramctl.c:556
 #, fuzzy
 msgid " -s, --size <size>         device size\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/zramctl.c:559
+#: sys-utils/zramctl.c:557
 #, fuzzy
 msgid " -t, --streams <number>    number of compression streams\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/zramctl.c:651
+#: sys-utils/zramctl.c:649
 #, fuzzy
 msgid "failed to parse streams"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/zramctl.c:673
+#: sys-utils/zramctl.c:671
 msgid "option --find is mutually exclusive with <device>"
 msgstr ""
 
-#: sys-utils/zramctl.c:679
+#: sys-utils/zramctl.c:677
 msgid "only one <device> at a time is allowed"
 msgstr ""
 
-#: sys-utils/zramctl.c:682
+#: sys-utils/zramctl.c:680
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr ""
 
-#: sys-utils/zramctl.c:715 sys-utils/zramctl.c:744
+#: sys-utils/zramctl.c:713 sys-utils/zramctl.c:742
 #, fuzzy, c-format
 msgid "%s: failed to reset"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/zramctl.c:726 sys-utils/zramctl.c:734
+#: sys-utils/zramctl.c:724 sys-utils/zramctl.c:732
 msgid "no free zram device found"
 msgstr ""
 
-#: sys-utils/zramctl.c:748
+#: sys-utils/zramctl.c:746
 #, fuzzy, c-format
 msgid "%s: failed to set number of streams"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/zramctl.c:752
+#: sys-utils/zramctl.c:750
 #, fuzzy, c-format
 msgid "%s: failed to set algorithm"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/zramctl.c:755
+#: sys-utils/zramctl.c:753
 #, fuzzy, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
@@ -19552,49 +19569,49 @@ msgstr "Ezin da '%s' fitxategia ireki"
 msgid "--reload is unsupported on your system"
 msgstr ""
 
-#: term-utils/mesg.c:76
+#: term-utils/mesg.c:78
 #, fuzzy, c-format
 msgid " %s [options] [y | n]\n"
 msgstr "aukera baliogarriak:"
 
-#: term-utils/mesg.c:79
+#: term-utils/mesg.c:81
 msgid "Control write access of other users to your terminal.\n"
 msgstr ""
 
-#: term-utils/mesg.c:82
+#: term-utils/mesg.c:84
 #, fuzzy
 msgid " -v, --verbose  explain what is being done\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: term-utils/mesg.c:126
+#: term-utils/mesg.c:130
 msgid "no tty"
 msgstr ""
 
-#: term-utils/mesg.c:130
-#, fuzzy
-msgid "ttyname failed"
-msgstr "unshared-ek huts egin du"
-
 #: term-utils/mesg.c:139
+#, c-format
+msgid "ttyname() failed, attempting to go around using: %s"
+msgstr ""
+
+#: term-utils/mesg.c:150
 #, fuzzy
 msgid "is y"
 msgstr "%s montatua dago.\t"
 
-#: term-utils/mesg.c:142
+#: term-utils/mesg.c:153
 #, fuzzy
 msgid "is n"
 msgstr "%s montatua dago.\t"
 
-#: term-utils/mesg.c:153 term-utils/mesg.c:160
+#: term-utils/mesg.c:164 term-utils/mesg.c:171
 #, fuzzy, c-format
 msgid "change %s mode failed"
 msgstr "%s: get size egiterakoan huts egin da"
 
-#: term-utils/mesg.c:155
+#: term-utils/mesg.c:166
 msgid "write access to your terminal is allowed"
 msgstr ""
 
-#: term-utils/mesg.c:162
+#: term-utils/mesg.c:173
 msgid "write access to your terminal is denied"
 msgstr ""
 
@@ -20192,7 +20209,7 @@ msgstr "lehen lerroaren ondoren"
 msgid "-- line already flushed"
 msgstr "-- lerroa dagoeneko garbituta"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:622
+#: text-utils/colcrt.c:82 text-utils/column.c:625
 #, fuzzy, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
@@ -20282,122 +20299,122 @@ msgstr ""
 msgid "failed to allocate output data"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: text-utils/column.c:625
+#: text-utils/column.c:628
 msgid "Columnate lists.\n"
 msgstr ""
 
-#: text-utils/column.c:628
+#: text-utils/column.c:631
 #, fuzzy
 msgid " -t, --table                      create a table\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: text-utils/column.c:629
+#: text-utils/column.c:632
 #, fuzzy
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: text-utils/column.c:630
+#: text-utils/column.c:633
 #, fuzzy
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: text-utils/column.c:631
+#: text-utils/column.c:634
 #, fuzzy
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: text-utils/column.c:632
+#: text-utils/column.c:635
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 
-#: text-utils/column.c:633
+#: text-utils/column.c:636
 #, fuzzy
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: text-utils/column.c:634
+#: text-utils/column.c:637
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr ""
 
-#: text-utils/column.c:635
+#: text-utils/column.c:638
 #, fuzzy
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: text-utils/column.c:636
+#: text-utils/column.c:639
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr ""
 
-#: text-utils/column.c:637
+#: text-utils/column.c:640
 #, fuzzy
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: text-utils/column.c:638
+#: text-utils/column.c:641
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr ""
 
-#: text-utils/column.c:639
+#: text-utils/column.c:642
 #, fuzzy
 msgid " -L, --table-empty-lines          don't ignore empty lines\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: text-utils/column.c:640
+#: text-utils/column.c:643
 #, fuzzy
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: text-utils/column.c:643
+#: text-utils/column.c:646
 #, fuzzy
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: text-utils/column.c:644
+#: text-utils/column.c:647
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr ""
 
-#: text-utils/column.c:645
+#: text-utils/column.c:648
 #, fuzzy
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr "Sartu buru kopurua:"
 
-#: text-utils/column.c:648
+#: text-utils/column.c:651
 #, fuzzy
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: text-utils/column.c:649
+#: text-utils/column.c:652
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 
-#: text-utils/column.c:650
+#: text-utils/column.c:653
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr ""
 
-#: text-utils/column.c:651
+#: text-utils/column.c:654
 #, fuzzy
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: text-utils/column.c:720
+#: text-utils/column.c:723
 #, fuzzy
 msgid "invalid columns argument"
 msgstr "baliogabeko aukera"
 
-#: text-utils/column.c:745
+#: text-utils/column.c:748
 #, fuzzy
 msgid "failed to parse column names"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: text-utils/column.c:800
+#: text-utils/column.c:803
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr ""
 
-#: text-utils/column.c:808
+#: text-utils/column.c:811
 msgid "option --table required for all --table-*"
 msgstr ""
 
-#: text-utils/column.c:811
+#: text-utils/column.c:814
 msgid "option --table-columns required for --json"
 msgstr ""
 
@@ -20918,6 +20935,10 @@ msgstr ""
 #, fuzzy
 msgid "Input line too long."
 msgstr "Sarrera lerro luzeegia.\n"
+
+#, fuzzy
+#~ msgid "ttyname failed"
+#~ msgstr "unshared-ek huts egin du"
 
 #, fuzzy
 #~ msgid "incorrect password"
