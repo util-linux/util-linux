@@ -1,6 +1,10 @@
-util-linux 2.34: Apr 30 2018
+util-linux 2.34-rc2: Apr 30 2018
 * see Documentation/releases/v2.34-ReleaseNotes or the complete changelog at
-  https://www.kernel.org/pub/linux/utils/util-linux/v2.34/v2.34-ChangeLog
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.34/v2.34-rc2-ChangeLog
+
+util-linux 2.34-rc1: Apr 30 2018
+* see Documentation/releases/v2.34-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.34/v2.34-rc1-ChangeLog
 
 util-linux 2.33: Nov 6 2018
 * see Documentation/releases/v2.33-ReleaseNotes or the complete changelog at
