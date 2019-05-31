@@ -420,6 +420,19 @@ static int read_watchdog(struct wd_device *wd)
 	return 0;
 }
 
+static void show_timeouts(struct wd_device *wd)
+{
+	if (wd->has_timeout)
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeout),
+			  _("Timeout:"), wd->timeout);
+	if (wd->has_pretimeout)
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->pretimeout),
+			  _("Pre-timeout:"), wd->pretimeout);
+	if (wd->has_timeleft)
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeleft),
+			  _("Timeleft:"), wd->timeleft);
+}
+
 static void print_oneline(struct wd_control *ctl, struct wd_device *wd, uint32_t wanted)
 {
 	printf("%s:", wd->devpath);
@@ -463,17 +476,28 @@ static void print_oneline(struct wd_control *ctl, struct wd_device *wd, uint32_t
 	fputc('\n', stdout);
 }
 
-static void show_timeouts(struct wd_device *wd)
+static void print_device(struct wd_control *ctl, struct wd_device *wd, uint32_t wanted)
 {
-	if (wd->has_timeout)
-		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeout),
-			  _("Timeout:"), wd->timeout);
-	if (wd->has_pretimeout)
-		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->pretimeout),
-			  _("Pre-timeout:"), wd->pretimeout);
-	if (wd->has_timeleft)
-		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeleft),
-			  _("Timeleft:"), wd->timeleft);
+	/* NAME=value one line output */
+	if (ctl->show_oneline) {
+		print_oneline(ctl, wd, wanted);
+		return;
+	}
+
+	/* pretty output */
+	if (!ctl->hide_ident) {
+		printf("%-15s%s\n", _("Device:"), wd->devpath);
+		printf("%-15s%s [%s %x]\n",
+				_("Identity:"),
+				wd->ident.identity,
+				_("version"),
+				wd->ident.firmware_version);
+	}
+	if (!ctl->hide_timeouts)
+		show_timeouts(wd);
+
+	if (!ctl->hide_flags)
+		show_flags(ctl, wd, wanted);
 }
 
 int main(int argc, char *argv[])
@@ -598,24 +622,8 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		if (ctl.show_oneline) {
-			print_oneline(&ctl, &wd, wanted);
-			continue;
-		}
+		print_device(&ctl, &wd, wanted);
 
-		/* pretty output */
-		if (!ctl.hide_ident) {
-			printf("%-15s%s\n", _("Device:"), wd.devpath);
-			printf("%-15s%s [%s %x]\n",
-					_("Identity:"),
-					wd.ident.identity,
-					_("version"),
-					wd.ident.firmware_version);
-		}
-		if (!ctl.hide_timeouts)
-			show_timeouts(&wd);
-		if (!ctl.hide_flags)
-			show_flags(&ctl, &wd, wanted);
 	} while (optind < argc);
 
 	return res;
