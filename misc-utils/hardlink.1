@@ -7,18 +7,18 @@ hardlink \- Consolidate duplicate files via hardlinks
 .RI [ directory ...]
 .SH "DESCRIPTION"
 .PP
-This manual page documents \fBhardlink\fP, a
+This manual page documents \fBhardlink\fR, a
 program which consolidates duplicate files in one or more directories
 using hardlinks.
 .PP
-\fBhardlink\fP traverses one
+\fBhardlink\fR traverses one
 or more directories searching for duplicate files.  When it finds duplicate
 files, it uses one of them as the master.  It then removes all other
 duplicates and places a hardlink for each one pointing to the master file.
 This allows for conservation of disk space where multiple directories
 on a single filesystem contain many duplicate files.
 .PP
-Since hard links can only span a single filesystem, \fBhardlink\fP
+Since hard links can only span a single filesystem, \fBhardlink\fR
 is only useful when all directories specified are on the same filesystem.
 .SH "OPTIONS"
 .TP
@@ -34,9 +34,9 @@ Do not perform the consolidation; only print what would be changed.
 .TP
 .BR \-v , " \-\-verbose"
 Print summary after hardlinking. The option may be specified more than once. In
-this case (e.g. \fB-vv\fP) it prints every hardlinked file and bytes saved.
+this case (e.g. \fB-vv\fR) it prints every hardlinked file and bytes saved.
 .TP
-.BR \-x , " \-\-exclude " \fIregex\f
+.BR \-x , " \-\-exclude " \fIregex\fR
 Exclude files and directories matching pattern from hardlinking.
 .sp
 The optional pattern for excluding files and directories must be a PCRE2
@@ -50,19 +50,19 @@ Display help text and exit.
 Display version information and exit.
 .SH "AUTHOR"
 .PP
-\fBhardlink\fP was written by Jakub Jelinek <jakub@redhat.com> and later modified by
+\fBhardlink\fR was written by Jakub Jelinek <jakub@redhat.com> and later modified by
 Ruediger Meier <ruediger.meier@ga-group.nl> and Karel Zak <kzak@redhat.com> for util-linux.
 .PP
 Man page written by Brian Long and later updated by Jindrich Novy <jnovy@redhat.com>
 .SH "BUGS"
 .PP
-\fBhardlink\fP assumes that its target directory trees do not change from under
-it.  If a directory tree does change, this may result in \fBhardlink\fP
+\fBhardlink\fR assumes that its target directory trees do not change from under
+it.  If a directory tree does change, this may result in \fBhardlink\fR
 accessing files and/or directories outside of the intended directory tree.
-Thus, you must avoid running \fBhardlink\fP on potentially changing directory
+Thus, you must avoid running \fBhardlink\fR on potentially changing directory
 trees, and especially on directory trees under control of another user.
 .PP
-Historically \fBhardlink\fP silently excluded any names beginning with
+Historically \fBhardlink\fR silently excluded any names beginning with
 ".in.", as well as any names beginning with "." followed by exactly 6
 other characters. That prior behavior can be achieved by specifying
 .br
