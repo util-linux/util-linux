@@ -105,7 +105,7 @@ static int columns[ARRAY_SIZE(infos) * 2];
 static int ncolumns;
 
 struct wd_device {
-	char		*devpath;
+	const char	*devpath;
 
 	int		timeout;
 	int		timeleft;
@@ -170,10 +170,32 @@ static struct colinfo *get_column_info(unsigned num)
 	return &infos[ get_column_id(num) ];
 }
 
+/* We preffer cdev /dev/watchdog0 as this device has node in
+ * /sys/class/watchdog/. The old miscdev /dev/watchdog is fallback for old
+ * systemds only.
+ */
+static const char *get_default_device(void)
+{
+	const char **p;
+	static const char *devs[] = {
+		"/dev/watchdog0",
+		"/dev/watchdog",
+		NULL
+	};
+
+	for (p = devs; *p; p++) {
+		if (access(*p, F_OK) == 0)
+			return *p;
+	}
+
+	return NULL;
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
 	size_t i;
+	const char *dflt = get_default_device();
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
@@ -198,7 +220,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(USAGE_HELP_OPTIONS(24));
 	fputs(USAGE_SEPARATOR, out);
 
-	fprintf(out, _("The default device is %s.\n"), _PATH_WATCHDOG_DEV);
+	if (dflt)
+		fprintf(out, _("The default device is %s.\n"), dflt);
+	else
+		fprintf(out, _("No default device is available.\n"));
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
@@ -507,6 +532,7 @@ int main(int argc, char *argv[])
 	int c, res = EXIT_SUCCESS, count = 0;
 	uint32_t wanted = 0;
 	int timeout = 0;
+	const char *dflt_device = NULL;
 
 	static const struct option long_opts[] = {
 		{ "flags",      required_argument, NULL, 'f' },
@@ -595,15 +621,18 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_BSTATUS;
 	}
 
+	/* Device no specified, use default. */
+	if (optind == argc) {
+		dflt_device = get_default_device();
+		if (!dflt_device)
+			err(EXIT_FAILURE, _("No default device is available."));
+	}
+
 	do {
 		int rc;
 
 		memset(&wd, 0, sizeof(wd));
-
-		if (optind == argc)
-			wd.devpath = _PATH_WATCHDOG_DEV;
-		else
-			wd.devpath = argv[optind++];
+		wd.devpath = dflt_device ? dflt_device : argv[optind++];
 
 		if (count)
 			fputc('\n', stdout);

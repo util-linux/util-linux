@@ -167,9 +167,6 @@
 /* deprecated */
 #define _PATH_RAWDEVCTL_OLD	"/dev/rawctl"
 
-/* wdctl path */
-#define _PATH_WATCHDOG_DEV	"/dev/watchdog"
-
 /* ipc paths */
 #define _PATH_PROC_SYSV_MSG	"/proc/sysvipc/msg"
 #define _PATH_PROC_SYSV_SEM	"/proc/sysvipc/sem"
