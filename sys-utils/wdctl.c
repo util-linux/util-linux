@@ -59,10 +59,6 @@
 					   other external alarm not a reboot */
 #endif
 
-/* basic output flags */
-static int no_headings;
-static int raw;
-
 struct wdflag {
 	uint32_t	flag;
 	const char	*name;
@@ -123,6 +119,15 @@ struct wd_device {
 	unsigned int	has_timeout : 1,
 			has_timeleft : 1,
 			has_pretimeout : 1;
+};
+
+struct wd_control {
+	unsigned int	show_oneline : 1,
+			show_raw : 1,
+			hide_headings : 1,
+			hide_flags : 1,
+			hide_ident : 1,
+			hide_timeouts : 1;
 };
 
 /* converts flag name to flag bit */
@@ -245,7 +250,7 @@ static void add_flag_line(struct libscols_table *table, struct wd_device *wd, co
 	}
 }
 
-static int show_flags(struct wd_device *wd, uint32_t wanted)
+static int show_flags(struct wd_control *ctl, struct wd_device *wd, uint32_t wanted)
 {
 	size_t i;
 	int rc = -1;
@@ -260,8 +265,8 @@ static int show_flags(struct wd_device *wd, uint32_t wanted)
 		warn(_("failed to allocate output table"));
 		return -1;
 	}
-	scols_table_enable_raw(table, raw);
-	scols_table_enable_noheadings(table, no_headings);
+	scols_table_enable_raw(table, ctl->show_raw);
+	scols_table_enable_noheadings(table, ctl->hide_headings);
 
 	/* define columns */
 	for (i = 0; i < (size_t) ncolumns; i++) {
@@ -415,18 +420,17 @@ static int read_watchdog(struct wd_device *wd)
 	return 0;
 }
 
-static void print_oneline(struct wd_device *wd, uint32_t wanted,
-		int noident, int notimeouts, int noflags)
+static void print_oneline(struct wd_control *ctl, struct wd_device *wd, uint32_t wanted)
 {
 	printf("%s:", wd->devpath);
 
-	if (!noident) {
+	if (!ctl->hide_ident) {
 		printf(" VERSION=\"%x\"", wd->ident.firmware_version);
 
 		printf(" IDENTITY=");
 		fputs_quoted((char *) wd->ident.identity, stdout);
 	}
-	if (!notimeouts) {
+	if (!ctl->hide_timeouts) {
 		if (wd->has_timeout)
 			printf(" TIMEOUT=\"%i\"", wd->timeout);
 		if (wd->has_pretimeout)
@@ -435,7 +439,7 @@ static void print_oneline(struct wd_device *wd, uint32_t wanted,
 			printf(" TIMELEFT=\"%i\"", wd->timeleft);
 	}
 
-	if (!noflags) {
+	if (!ctl->hide_flags) {
 		size_t i;
 		uint32_t flags = wd->ident.options;
 
@@ -475,8 +479,8 @@ static void show_timeouts(struct wd_device *wd)
 int main(int argc, char *argv[])
 {
 	struct wd_device wd;
+	struct wd_control ctl = { .hide_headings = 0 };
 	int c, res = EXIT_SUCCESS, count = 0;
-	char noflags = 0, noident = 0, notimeouts = 0, oneline = 0;
 	uint32_t wanted = 0;
 	int timeout = 0;
 
@@ -528,26 +532,26 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'F':
-			noflags = 1;
+			ctl.hide_flags = 1;
 			break;
 		case 'I':
-			noident = 1;
+			ctl.hide_ident = 1;
 			break;
 		case 'T':
-			notimeouts = 1;
+			ctl.hide_timeouts = 1;
 			break;
 		case 'n':
-			no_headings = 1;
+			ctl.hide_headings = 1;
 			break;
 		case 'r':
-			raw = 1;
+			ctl.show_raw = 1;
 			break;
 		case 'O':
-			oneline = 1;
+			ctl.show_oneline = 1;
 			break;
 		case 'x':
-			noident = 1;
-			notimeouts = 1;
+			ctl.hide_ident = 1;
+			ctl.hide_timeouts = 1;
 			break;
 
 		case 'h':
@@ -594,13 +598,13 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		if (oneline) {
-			print_oneline(&wd, wanted, noident, notimeouts, noflags);
+		if (ctl.show_oneline) {
+			print_oneline(&ctl, &wd, wanted);
 			continue;
 		}
 
 		/* pretty output */
-		if (!noident) {
+		if (!ctl.hide_ident) {
 			printf("%-15s%s\n", _("Device:"), wd.devpath);
 			printf("%-15s%s [%s %x]\n",
 					_("Identity:"),
@@ -608,10 +612,10 @@ int main(int argc, char *argv[])
 					_("version"),
 					wd.ident.firmware_version);
 		}
-		if (!notimeouts)
+		if (!ctl.hide_timeouts)
 			show_timeouts(&wd);
-		if (!noflags)
-			show_flags(&wd, wanted);
+		if (!ctl.hide_flags)
+			show_flags(&ctl, &wd, wanted);
 	} while (optind < argc);
 
 	return res;
