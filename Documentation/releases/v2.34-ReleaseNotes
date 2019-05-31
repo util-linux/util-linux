@@ -38,7 +38,8 @@ default anymore.  It's necessary to explicitly use a new command line option
 
 The command lscpu(1) now prints 'Frequency boost' and 'Vulnerability' fields.
 The caches calculation has been modified to print summary from all system caches
-rather than per code numbers.
+rather than per code numbers; and new command line option --caches lists details
+about changes.
 
 The command logger(1) merges multiple MESSAGE= lines into one journald message.
 
