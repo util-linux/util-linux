@@ -193,7 +193,7 @@ static int probe_integrity(blkid_probe pr, const struct blkid_idmag *mag)
 	if (sb == NULL)
 		return errno ? -errno : 1;
 
-	if (sb->version !=1 && sb->version != 2)
+	if (!sb->version)
 		return 1;
 
 	blkid_probe_sprintf_version(pr, "%u", sb->version);
