@@ -25,6 +25,9 @@
 #include <signal.h>
 #include <assert.h>
 #include <linux/watchdog.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <libsmartcols.h>
 
@@ -36,6 +39,7 @@
 #include "pathnames.h"
 #include "strutils.h"
 #include "carefulputc.h"
+#include "path.h"
 
 /*
  * since 2.6.18
@@ -113,12 +117,14 @@ struct wd_device {
 
 	uint32_t	status;
 	uint32_t	bstatus;
+	int		nowayout;
 
 	struct watchdog_info ident;
 
 	unsigned int	has_timeout : 1,
 			has_timeleft : 1,
-			has_pretimeout : 1;
+			has_pretimeout : 1,
+			has_nowayout : 1;
 };
 
 struct wd_control {
@@ -282,6 +288,10 @@ static int show_flags(struct wd_control *ctl, struct wd_device *wd, uint32_t wan
 	struct libscols_table *table;
 	uint32_t flags;
 
+	/* information about supported bits is probably missing in /sys */
+	if (!wd->ident.options)
+		return 0;
+
 	scols_init_debug(0);
 
 	/* create output table */
@@ -388,7 +398,7 @@ static int set_watchdog(struct wd_device *wd, int timeout)
  *
  * Don't use err() or exit() here!
  */
-static int read_watchdog(struct wd_device *wd)
+static int read_watchdog_from_device(struct wd_device *wd)
 {
 	int fd;
 	sigset_t sigs, oldsigs;
@@ -401,13 +411,8 @@ static int read_watchdog(struct wd_device *wd)
 
 	fd = open(wd->devpath, O_WRONLY|O_CLOEXEC);
 
-	if (fd < 0) {
-		if (errno == EBUSY)
-			warnx(_("%s: watchdog already in use, terminating."),
-					wd->devpath);
-		warn(_("cannot open %s"), wd->devpath);
-		return -1;
-	}
+	if (fd < 0)
+		return -errno;
 
 	if (ioctl(fd, WDIOC_GETSUPPORT, &wd->ident) < 0)
 		warn(_("%s: failed to get information about watchdog"), wd->devpath);
@@ -441,6 +446,64 @@ static int read_watchdog(struct wd_device *wd)
 	if (close(fd))
 		warn(_("write failed"));
 	sigprocmask(SIG_SETMASK, &oldsigs, NULL);
+
+	return 0;
+}
+
+/* Returns: <0 error, 0 success, 1 unssuported */
+static int read_watchdog_from_sysfs(struct wd_device *wd)
+{
+	struct path_cxt *sys;
+	struct stat st;
+	int rc;
+
+	rc = stat(wd->devpath, &st);
+	if (rc != 0)
+		return rc;
+
+	sys = ul_new_path(_PATH_SYS_DEVCHAR "/%u:%u",
+			major(st.st_rdev), minor(st.st_rdev));
+	if (!sys)
+		return -ENOMEM;
+
+	if (ul_path_get_dirfd(sys) < 0)
+		goto nosysfs;		/* device not in /sys */
+
+	if (ul_path_access(sys, F_OK, "identity") != 0)
+		goto nosysfs;		/* no info in /sys (old miscdev?) */
+
+	ul_path_read_buffer(sys, (char *) wd->ident.identity, sizeof(wd->ident.identity), "identity");
+
+	ul_path_scanf(sys, "status", "%x", &wd->status);
+	ul_path_read_u32(sys, &wd->bstatus, "bootstatus");
+
+	if (ul_path_read_s32(sys, &wd->nowayout, "nowayout") == 0)
+		wd->has_nowayout = 1;
+	if (ul_path_read_s32(sys, &wd->timeout, "timeout") == 0)
+		wd->has_timeout = 1;
+	if (ul_path_read_s32(sys, &wd->pretimeout, "pretimeout") == 0)
+		wd->has_pretimeout = 1;
+	if (ul_path_read_s32(sys, &wd->timeleft, "timeleft") == 0)
+		wd->has_timeleft = 1;
+
+	ul_unref_path(sys);
+	return 0;
+nosysfs:
+	ul_unref_path(sys);
+	return 1;
+}
+
+static int read_watchdog(struct wd_device *wd)
+{
+	int rc = read_watchdog_from_device(wd);
+
+	if (rc == -EBUSY || rc == -EACCES || rc == -EPERM)
+		rc = read_watchdog_from_sysfs(wd);
+
+	if (rc) {
+		warn(_("cannot read information about %s"), wd->devpath);
+		return -1;
+	}
 
 	return 0;
 }

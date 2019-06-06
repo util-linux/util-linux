@@ -104,6 +104,7 @@
 
 #define _PATH_SYS_BLOCK		"/sys/block"
 #define _PATH_SYS_DEVBLOCK	"/sys/dev/block"
+#define _PATH_SYS_DEVCHAR	"/sys/dev/char"
 #define _PATH_SYS_CLASS		"/sys/class"
 #define _PATH_SYS_SCSI		"/sys/bus/scsi"
 
