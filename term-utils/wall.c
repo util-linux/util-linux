@@ -250,10 +250,12 @@ int main(int argc, char **argv)
 		if (utmpptr->ut_type != USER_PROCESS)
 			continue;
 #endif
-		/* Joey Hess reports that use-sessreg in /etc/X11/wdm/
-		   produces ut_line entries like :0, and a write
-		   to /dev/:0 fails. */
-		if (utmpptr->ut_line[0] == ':')
+		/* Joey Hess reports that use-sessreg in /etc/X11/wdm/ produces
+		 * ut_line entries like :0, and a write to /dev/:0 fails.
+		 *
+		 * It also seems that some login manager may produce empty ut_line.
+		 */
+		if (!*utmpptr->ut_line || *utmpptr->ut_line == ':')
 			continue;
 
 		if (group_buf && !is_gr_member(utmpptr->ut_user, group_buf))
