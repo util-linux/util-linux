@@ -573,6 +573,10 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (all) {
+		if (argc) {
+			warnx(_("unexpected number of arguments"));
+			errtryhelp(MNT_EX_USAGE);
+		}
 		if (!types)
 			types = "noproc,nodevfs,nodevpts,nosysfs,norpc_pipefs,nonfsd,noselinuxfs";
 
