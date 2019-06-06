@@ -49,9 +49,16 @@ enum {
 struct cpu_cache {
 	char		*name;
 	char		*type;
+	char		*allocation_policy;
+	char		*write_policy;
+
 	int		level;
-	int		ways;
 	uint64_t	size;
+
+	unsigned int	ways_of_associativity;
+	unsigned int	physical_line_partition;
+	unsigned int	number_of_sets;
+	unsigned int	coherency_line_size;
 
 	int		nsharedmaps;
 	cpu_set_t	**sharedmaps;
