@@ -132,6 +132,7 @@ fdisk_ref_script
 fdisk_script_enable_json
 fdisk_script_get_header
 fdisk_script_get_nlines
+fdisk_script_set_table
 fdisk_script_get_table
 fdisk_script_has_force_label
 fdisk_script_read_context

@@ -7,13 +7,33 @@
 /**
  * SECTION: script
  * @title: Script
- * @short_description: text based sfdisk compatible description of partition table
+ * @short_description: complex way to create and dump partition table
  *
- * The libfdisk scripts are based on original sfdisk script (dumps).  Each
+ * This interface allows to compose in-memory partition table with all details,
+ * write all partition table description to human readable text file, read it
+ * from the file, and apply the script to on-disk label.
+ *
+ * The libfdisk scripts are based on original sfdisk script (dumps). Each
  * script has two parts: script headers and partition table entries
- * (partitions).
+ * (partitions). The script is possible to dump in JSON too (read JSON is not
+ * implemented yet).
  *
  * For more details about script format see sfdisk man page.
+ *
+ * There are four ways how to build the script:
+ *
+ * - read the current on-disk partition table by fdisk_script_read_context())
+ * - read it from text file by fdisk_script_read_file()
+ * - read it interactively from user by fdisk_script_read_line() and fdisk_script_set_fgets()
+ * - manually in code by fdisk_script_set_header() and fdisk_script_set_table()
+ *
+ * The read functions fdisk_script_read_context() and fdisk_script_read_file()
+ * creates always a new script partition table. The table (see
+ * fdisk_script_get_table()) is possible to modify by standard
+ * fdisk_table_...() functions and than apply by fdisk_apply_script().
+ *
+ * Note that script API is fully non-interactive and forces libfdisk to not use
+ * standard dialog driven partitioning as we have in fdisk(8).
  */
 
 /* script header (e.g. unit: sectors) */
@@ -75,12 +95,6 @@ struct fdisk_script *fdisk_new_script(struct fdisk_context *cxt)
 	dp->refcount = 1;
 	dp->cxt = cxt;
 	fdisk_ref_context(cxt);
-
-	dp->table = fdisk_new_table();
-	if (!dp->table) {
-		fdisk_unref_script(dp);
-		return NULL;
-	}
 
 	INIT_LIST_HEAD(&dp->headers);
 	return dp;
@@ -317,16 +331,50 @@ int fdisk_script_set_header(struct fdisk_script *dp,
  * fdisk_script_get_table:
  * @dp: script
  *
- * The table (container with partitions) is possible to create by
- * fdisk_script_read_context() or fdisk_script_read_file(), otherwise
- * this function returns NULL.
+ * The table represents partitions holded by the script. The table is possible to
+ * fill by fdisk_script_read_context() or fdisk_script_read_file(). All the "read"
+ * functions reset the table. See also fdisk_script_set_table().
  *
- * Returns: NULL or script.
+ * Returns: NULL or script table.
  */
 struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp)
 {
 	assert(dp);
 	return dp ? dp->table : NULL;
+}
+
+/**
+ * fdisk_script_set_table:
+ * @dp: script
+ * @tb: table
+ *
+ * Replaces table used by script and creates a new reference to @tb. This
+ * function allows to generate a new script table independently on the current
+ * context and without any file reading.
+ *
+ * This is useful for example to create partition table with the same basic
+ * settings (e.g. label-id, ...) but with different partitions -- just call
+ * fdisk_script_read_context() to get current settings and than
+ * fdisk_script_set_table() to set a different layout.
+ *
+ * If @tb is NULL than the current script table is unreferenced.
+ *
+ * Note that script read_ functions (e.g. fdisk_script_read_context()) create
+ * always a new script table.
+ *
+ * Returns: 0 on success, <0 on error
+ */
+int fdisk_script_set_table(struct fdisk_script *dp, struct fdisk_table *tb)
+{
+	if (!dp)
+		return -EINVAL;
+
+	fdisk_ref_table(tb);
+	fdisk_unref_table(dp->table);
+	dp->table = tb;
+
+	DBG(SCRIPT, ul_debugobj(dp, "table replaced"));
+	return 0;
 }
 
 static struct fdisk_label *script_get_label(struct fdisk_script *dp)
@@ -911,6 +959,7 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 
 	assert(dp);
 	assert(s);
+	assert(dp->table);
 
 	DBG(SCRIPT, ul_debugobj(dp, "   parse script line: '%s'", s));
 
@@ -1106,6 +1155,7 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 
 	assert(dp);
 	assert(s);
+	assert(dp->table);
 
 	pa = fdisk_new_partition();
 	if (!pa)

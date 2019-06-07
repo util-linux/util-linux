@@ -303,3 +303,7 @@ FDISK_2.33 {
 	fdisk_get_devmodel;
 	fdisk_get_devno;
 } FDISK_2.32;
+
+FDISK_2.35 {
+	fdisk_script_set_table;
+} FDISK_2.33;
