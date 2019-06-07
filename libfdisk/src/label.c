@@ -247,7 +247,8 @@ const struct fdisk_field *fdisk_label_get_field_by_name(
  * fdisk_write_disklabel:
  * @cxt: fdisk context
  *
- * Write in-memory changes to disk. Be careful!
+ * This function wipes the device (if eanbled by fdisk_enable_wipe() and than
+ * it writes in-memory changes to disk. Be careful!
  *
  * Returns: 0 on success, otherwise, a corresponding error.
  */

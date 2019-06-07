@@ -17,13 +17,13 @@
  *
  * The library distinguish between three types of partitioning objects.
  *
- * on-disk data
+ * on-disk lebel data
  *    - disk label specific
  *    - probed and read  by disklabel drivers when assign device to the context
  *      or when switch to another disk label type
  *    - only fdisk_write_disklabel() modify on-disk data
  *
- * in-memory data
+ * in-memory label data
  *    - generic data and disklabel specific data stored in struct fdisk_label
  *    - all partitioning operations are based on in-memory data only
  *
@@ -31,8 +31,12 @@
  *    - provides abstraction to present partitions to users
  *    - fdisk_partition is possible to gather to fdisk_table container
  *    - used as unified template for new partitions
+ *    - used (with fdisk_table) in fdisk scripts
  *    - the struct fdisk_partition is always completely independent object and
  *      any change to the object has no effect to in-memory (or on-disk) label data
+ *
+ * Don't forget to inform kernel about changes by fdisk_reread_partition_table()
+ * or more smart fdisk_reread_changes().
  */
 
 /**
@@ -574,14 +578,23 @@ static void reset_context(struct fdisk_context *cxt)
  * @fname: path to the device to be handled
  * @readonly: how to open the device
  *
- * Open the device, discovery topology, geometry, detect disklabel and switch
- * the current label driver to reflect the probing result.
+ * Open the device, discovery topology, geometry, detect disklabel, check for
+ * collisions and switch the current label driver to reflect the probing
+ * result.
  *
- * Note that this function resets all generic setting in context. If the @cxt
- * is nested context then the device is assigned to the parental context and
- * necessary properties are copied to the @cxt. The change is propagated in
- * child->parent direction only. It's impossible to use a different device for
- * primary and nested contexts.
+ * If in standard mode (!= non-listonly mode) than also detects for collisions.
+ * The result is accessible by fdisk_get_collision() and
+ * fdisk_is_ptcollision().  The collision (e.g. old obsolete PT) may be removed
+ * by fdisk_enable_wipe().  Note that new PT and old PT may be on different
+ * locations.
+ *
+ * Note that this function resets all generic setting in context.
+ *
+ * If the @cxt is nested context (necessary for example to edit BSD or PMBR)
+ * then the device is assigned to the parental context and necessary properties
+ * are copied to the @cxt. The change is propagated in child->parent direction
+ * only. It's impossible to use a different device for primary and nested
+ * contexts.
  *
  * Returns: 0 on success, < 0 on error.
  */
