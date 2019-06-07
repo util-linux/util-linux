@@ -1415,6 +1415,8 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
  * Returns: 0 on success,
  *         <0 in case of error (!= mount(2) errors)
  *          1 at the end of the list.
+ *
+ * Since: 2.34
  */
 int mnt_context_next_remount(struct libmnt_context *cxt,
 			   struct libmnt_iter *itr,

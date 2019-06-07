@@ -1060,6 +1060,8 @@ char *mnt_get_kernel_cmdline_option(const char *name)
  * The function uses /sys to convert devno to device name.
  *
  * Returns: 0 = success, 1 = not found, <0 = error
+ *
+ * Since: 2.34
  */
 int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char **path)
 {

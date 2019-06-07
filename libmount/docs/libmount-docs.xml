@@ -71,9 +71,16 @@ available from https://www.kernel.org/pub/linux/utils/util-linux/.
     <title>Index of new symbols in 2.29</title>
     <xi:include href="xml/api-index-2.29.xml"><xi:fallback /></xi:include>
   </index>
-
   <index role="2.30">
     <title>Index of new symbols in 2.30</title>
     <xi:include href="xml/api-index-2.30.xml"><xi:fallback /></xi:include>
+  </index>
+  <index role="2.33">
+    <title>Index of new symbols in 2.33</title>
+    <xi:include href="xml/api-index-2.33.xml"><xi:fallback /></xi:include>
+  </index>
+  <index role="2.34">
+    <title>Index of new symbols in 2.34</title>
+    <xi:include href="xml/api-index-2.34.xml"><xi:fallback /></xi:include>
   </index>
 </book>

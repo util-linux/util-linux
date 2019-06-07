@@ -403,6 +403,8 @@ struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
  * Checks if @fs is part of table @tb.
  *
  * Returns: index of @fs in table, 0 if not found or negative number in case of error.
+ *
+ * Since: 2.34
  */
 int mnt_table_find_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 {
@@ -491,6 +493,8 @@ static int __table_insert_fs(
  * referenced by the table only.
  *
  * Returns: 0 on success or negative number in case of error.
+ *
+ * Since: 2.34
  */
 int mnt_table_insert_fs(struct libmnt_table *tb, int before,
 			struct libmnt_fs *pos, struct libmnt_fs *fs)
@@ -523,6 +527,8 @@ int mnt_table_insert_fs(struct libmnt_table *tb, int before,
  * The reference counter of @fs is not modified.
  *
  * Returns: 0 on success or negative number in case of error.
+ *
+ * Since: 2.34
  */
 int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst,
                       int before, struct libmnt_fs *pos, struct libmnt_fs *fs)
