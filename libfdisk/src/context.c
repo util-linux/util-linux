@@ -1344,6 +1344,8 @@ const char *fdisk_get_devname(struct fdisk_context *cxt)
  * @cxt: context
  *
  * Returns: device number or zero for non-block devices
+ *
+ * Since: 2.33
  */
 dev_t fdisk_get_devno(struct fdisk_context *cxt)
 {
@@ -1356,6 +1358,8 @@ dev_t fdisk_get_devno(struct fdisk_context *cxt)
  * @cxt: context
  *
  * Returns: device model string or NULL.
+ *
+ * Since: 2.33
  */
 #ifdef __linux__
 const char *fdisk_get_devmodel(struct fdisk_context *cxt)
