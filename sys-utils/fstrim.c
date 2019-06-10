@@ -290,8 +290,8 @@ static int fstrim_all(struct fstrim_control *ctl)
 		if (!tgt || mnt_fs_is_pseudofs(fs) || mnt_fs_is_netfs(fs))
 			continue;
 
+		/* convert LABEL= (etc.) from fstab to paths */
 		if (!src && cache) {
-			/* convert LABEL= (etc.) from fstab to paths */
 			const char *spec = mnt_fs_get_source(fs);
 
 			if (!spec)
