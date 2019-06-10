@@ -303,7 +303,7 @@ int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition 
  * @tb: returns table
  *
  * This function adds partitions from disklabel to @table, it allocates a new
- * table if if @table points to NULL.
+ * table if @table points to NULL.
  *
  * Returns: 0 on success, otherwise, a corresponding error.
  */

@@ -162,8 +162,9 @@ static void fdisk_reset_script(struct fdisk_script *dp)
 	assert(dp);
 
 	DBG(SCRIPT, ul_debugobj(dp, "reset"));
-	fdisk_unref_table(dp->table);
-	dp->table = NULL;
+
+	if (dp->table)
+		fdisk_reset_table(dp->table);
 
 	while (!list_empty(&dp->headers)) {
 		struct fdisk_scriptheader *fi = list_entry(dp->headers.next,
@@ -333,14 +334,22 @@ int fdisk_script_set_header(struct fdisk_script *dp,
  *
  * The table represents partitions holded by the script. The table is possible to
  * fill by fdisk_script_read_context() or fdisk_script_read_file(). All the "read"
- * functions reset the table. See also fdisk_script_set_table().
+ * functions remove old partitions from the table. See also fdisk_script_set_table().
  *
  * Returns: NULL or script table.
  */
 struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp)
 {
 	assert(dp);
-	return dp ? dp->table : NULL;
+
+	if (!dp->table)
+		/*
+		 * Make sure user has access to the same table as script. If
+		 * there is no table than create a new and reuse it later.
+		 */
+		dp->table = fdisk_new_table();
+
+	return dp->table;
 }
 
 /**
@@ -448,7 +457,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 	if (!lb)
 		return -EINVAL;
 
-	/* allocate and fill new table */
+	/* allocate (if not yet) and fill table */
 	rc = fdisk_get_partitions(cxt, &dp->table);
 	if (rc)
 		return rc;
@@ -590,7 +599,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 	}
 
 
-	if (!dp->table) {
+	if (!dp->table || fdisk_table_is_empty(dp->table)) {
 		DBG(SCRIPT, ul_debugobj(dp, "script table empty"));
 		goto done;
 	}
@@ -699,7 +708,7 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 			devname = fi->data;
 	}
 
-	if (!dp->table) {
+	if (!dp->table || fdisk_table_is_empty(dp->table)) {
 		DBG(SCRIPT, ul_debugobj(dp, "script table empty"));
 		return 0;
 	}
@@ -1290,11 +1299,8 @@ static int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 	if (!s || !*s)
 		return 0;	/* nothing baby, ignore */
 
-	if (!dp->table) {
-		dp->table = fdisk_new_table();
-		if (!dp->table)
-			return -ENOMEM;
-	}
+	if (!dp->table && fdisk_script_get_table(dp) == NULL)
+		return -ENOMEM;
 
 	/* parse header lines only if no partition specified yet */
 	if (fdisk_table_is_empty(dp->table) && is_header_line(s))
@@ -1619,7 +1625,7 @@ static int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 	printf("<start>, <size>, <type>, <bootable: *|->\n");
 	do {
 		struct fdisk_partition *pa;
-		size_t n = fdisk_table_get_nents(dp->table);
+		size_t n = dp->table ? fdisk_table_get_nents(dp->table) : 0;
 
 		printf(" #%zu :\n", n + 1);
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
