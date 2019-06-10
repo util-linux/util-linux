@@ -241,10 +241,6 @@ static int fstrim_all(struct fstrim_control *ctl)
 	mnt_init_debug(0);
 	ul_path_init_debug();
 
-	itr = mnt_new_iter(MNT_ITER_BACKWARD);
-	if (!itr)
-		err(MNT_EX_FAIL, _("failed to initialize libmount iterator"));
-
 	if (ctl->fstab)
 		filename = mnt_get_fstab_path();
 
@@ -254,9 +250,6 @@ static int fstrim_all(struct fstrim_control *ctl)
 
 	/* de-duplicate by mountpoints */
 	mnt_table_uniq_fs(tab, 0, uniq_fs_target_cmp);
-
-	/* de-duplicate by source */
-	mnt_table_uniq_fs(tab, MNT_UNIQ_FORWARD, uniq_fs_source_cmp);
 
 	if (ctl->fstab) {
 		char *rootdev = NULL;
@@ -281,26 +274,50 @@ static int fstrim_all(struct fstrim_control *ctl)
 		}
 	}
 
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	if (!itr)
+		err(MNT_EX_FAIL, _("failed to initialize libmount iterator"));
+
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
 		const char *src = mnt_fs_get_srcpath(fs),
 			   *tgt = mnt_fs_get_target(fs);
-		char *path;
-		int rc = 1;
 
-		if (!tgt || mnt_fs_is_pseudofs(fs) || mnt_fs_is_netfs(fs))
+		if (!tgt || mnt_fs_is_pseudofs(fs) || mnt_fs_is_netfs(fs)) {
+			mnt_table_remove_fs(tab, fs);
 			continue;
+		}
 
 		/* convert LABEL= (etc.) from fstab to paths */
 		if (!src && cache) {
 			const char *spec = mnt_fs_get_source(fs);
 
-			if (!spec)
+			if (!spec) {
+				mnt_table_remove_fs(tab, fs);
 				continue;
+			}
 			src = mnt_resolve_spec(spec, cache);
+			mnt_fs_set_source(fs, src);
 		}
 
-		if (!src || *src != '/')
+		if (!src || *src != '/') {
+			mnt_table_remove_fs(tab, fs);
 			continue;
+		}
+	}
+	mnt_free_iter(itr);
+
+	/* de-duplicate by source */
+	mnt_table_uniq_fs(tab, MNT_UNIQ_FORWARD, uniq_fs_source_cmp);
+
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	if (!itr)
+		err(MNT_EX_FAIL, _("failed to initialize libmount iterator"));
+
+	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
+		const char *src = mnt_fs_get_srcpath(fs),
+			   *tgt = mnt_fs_get_target(fs);
+		char *path;
+		int rc = 1;
 
 		/* Is it really accessible mountpoint? Not all mountpoints are
 		 * accessible (maybe over mounted by another filesystem) */
@@ -337,10 +354,10 @@ static int fstrim_all(struct fstrim_control *ctl)
 		else if (rc == 1 && !ctl->quiet)
 			warnx(_("%s: the discard operation is not supported"), tgt);
 	}
+	mnt_free_iter(itr);
 
 	ul_unref_path(wholedisk);
 	mnt_unref_table(tab);
-	mnt_free_iter(itr);
 	mnt_unref_cache(cache);
 
 	if (cnt && cnt == cnt_err)
