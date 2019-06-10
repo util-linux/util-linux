@@ -311,6 +311,14 @@ static int fstrim_all(struct fstrim_control *ctl)
 		if (rc)
 			continue;	/* overlaying mount */
 
+		/* FSTRIM on read-only filesystem can fail, and it can fail */
+		if (access(path, W_OK) != 0) {
+			if (errno == EROFS)
+				continue;
+			if (errno == EACCES)
+				continue;
+		}
+
 		if (!has_discard(src, &wholedisk))
 			continue;
 		cnt++;
