@@ -186,7 +186,8 @@ char *canonicalize_path_restricted(const char *path)
 			}
 		}
 
-		len = canonical ? strlen(canonical) : errno ? -errno : -EINVAL;
+		len = canonical ? (ssize_t) strlen(canonical) :
+		          errno ? -errno : -EINVAL;
 
 		/* send length or errno */
 		write_all(pipes[1], (char *) &len, sizeof(len));
