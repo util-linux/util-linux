@@ -120,7 +120,7 @@ static void sysfs_blkdev_deinit_path(struct path_cxt *pc)
 	if (!blk)
 		return;
 
-	ul_ref_path(blk->parent);
+	ul_unref_path(blk->parent);
 	free(blk);
 
 	ul_path_set_dialect(pc, NULL, NULL);
