@@ -436,9 +436,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	 * parno stored within struct fdisk_partition)  */
 
 	/* remove all */
-	fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
-	while (fdisk_table_next_partition(tb, itr, &pa) == 0)
-		fdisk_table_remove_partition(tb, pa);
+	fdisk_reset_table(tb);
 
 	s_itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	if (!s_itr)
