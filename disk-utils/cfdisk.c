@@ -2731,6 +2731,7 @@ int main(int argc, char *argv[])
 
 	cfdisk_free_lines(cf);
 	free(cf->linesbuf);
+	free(cf->fields);
 
 	fdisk_unref_table(cf->table);
 #ifdef HAVE_LIBMOUNT
