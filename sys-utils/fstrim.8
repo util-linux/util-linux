@@ -52,15 +52,14 @@ discard operation.  The root filesystem is determined from kernel command line i
 in the file.
 The other supplied options, like \fB\-\-offset\fR, \fB\-\-length\fR and
 \fB-\-minimum\fR, are applied to all these devices.
-Errors from filesystems that do not support the discard operation are silently
-ignored.
-
+Errors from filesystems that do not support the discard operation,
+read-only devices and read-only filesystems are silently ignored.
 .IP "\fB\-a, \-\-all\fP"
 Trim all mounted filesystems on devices that support the discard operation.
 The other supplied options, like \fB\-\-offset\fR, \fB\-\-length\fR and
 \fB-\-minimum\fR, are applied to all these devices.
-Errors from filesystems that do not support the discard operation are silently
-ignored.
+Errors from filesystems that do not support the discard operation,
+read-only devices and read-only filesystems are silently ignored.
 .IP "\fB\-n, \-\-dry\-run\fP"
 This option does everything apart from actually call FITRIM ioctl.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP"
@@ -102,7 +101,8 @@ option).
 .TP
 .B \-\-quiet
 Suppress error messages.  This option is meant to be used in systemd service
-file to hide warnings that are result of known problems, such as NTFS driver
+file or in cron scripts to hide warnings that are result of known problems,
+such as NTFS driver
 reporting
 .I Bad file descriptor
 when device is mounted read-only, or lack of file system support for ioctl

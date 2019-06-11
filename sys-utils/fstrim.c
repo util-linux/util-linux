@@ -278,6 +278,7 @@ static int fstrim_all(struct fstrim_control *ctl)
 	if (!itr)
 		err(MNT_EX_FAIL, _("failed to initialize libmount iterator"));
 
+	/* Remove useless entries and canonicalize the table */
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
 		const char *src = mnt_fs_get_srcpath(fs),
 			   *tgt = mnt_fs_get_target(fs);
@@ -304,15 +305,13 @@ static int fstrim_all(struct fstrim_control *ctl)
 			continue;
 		}
 	}
-	mnt_free_iter(itr);
 
 	/* de-duplicate by source */
 	mnt_table_uniq_fs(tab, MNT_UNIQ_FORWARD, uniq_fs_source_cmp);
 
-	itr = mnt_new_iter(MNT_ITER_BACKWARD);
-	if (!itr)
-		err(MNT_EX_FAIL, _("failed to initialize libmount iterator"));
+	mnt_reset_iter(itr, MNT_ITER_BACKWARD);
 
+	/* Do FITRIM */
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
 		const char *src = mnt_fs_get_srcpath(fs),
 			   *tgt = mnt_fs_get_target(fs);
@@ -328,7 +327,7 @@ static int fstrim_all(struct fstrim_control *ctl)
 		if (rc)
 			continue;	/* overlaying mount */
 
-		/* FSTRIM on read-only filesystem can fail, and it can fail */
+		/* FITRIM on read-only filesystem can fail, and it can fail */
 		if (access(path, W_OK) != 0) {
 			if (errno == EROFS)
 				continue;
