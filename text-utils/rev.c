@@ -173,7 +173,8 @@ int main(int argc, char *argv[])
 			warn("%s", filename);
 			rval = EXIT_FAILURE;
 		}
-		fclose(fp);
+		if (fp != stdin)
+			fclose(fp);
 	} while(*argv);
 
 	free(buf);
