@@ -39,7 +39,7 @@ close_stream(FILE * stream)
 static inline void
 close_stdout(void)
 {
-	if (close_stream(stdout) != 0 && !(errno == EPIPE)) {
+	if (stdout && close_stream(stdout) != 0 && !(errno == EPIPE)) {
 		if (errno)
 			warn(_("write error"));
 		else
@@ -47,8 +47,11 @@ close_stdout(void)
 		_exit(CLOSE_EXIT_CODE);
 	}
 
-	if (close_stream(stderr) != 0)
+	if (stderr && close_stream(stderr) != 0)
 		_exit(CLOSE_EXIT_CODE);
+
+	stdout = NULL;
+	stderr = NULL;
 }
 
 static inline void
