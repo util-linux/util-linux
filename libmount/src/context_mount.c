@@ -1406,7 +1406,7 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
  * non-zero.
  *
  * If mount(2) syscall or mount.type helper failed, then the
- * mnt_context_renext_mount() function returns zero, but the @mntrc is non-zero.
+ * mnt_context_next_mount() function returns zero, but the @mntrc is non-zero.
  * Use also mnt_context_get_status() to check if the filesystem was
  * successfully mounted.
  *
