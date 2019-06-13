@@ -538,7 +538,7 @@ int scols_table_group_lines(	struct libscols_table *tb,
 }
 
 /**
- * scols_line_link_groups:
+ * scols_line_link_group:
  * @ln: line instance
  * @member: group member
  * @id: group identifier (unused, not implemented yet))

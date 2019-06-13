@@ -34,6 +34,7 @@ available from https://www.kernel.org/pub/linux/utils/util-linux/.
     <xi:include href="xml/line.xml"/>
     <xi:include href="xml/cell.xml"/>
     <xi:include href="xml/symbols.xml"/>
+    <xi:include href="xml/grouping.xml"/>
   </part>
   <part>
     <title>Printing</title>
