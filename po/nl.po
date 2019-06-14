@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-05-30 11:50+0200\n"
+"POT-Creation-Date: 2019-06-14 12:14+0200\n"
 "PO-Revision-Date: 2016-10-30 17:01+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -65,7 +65,7 @@ msgid "not enough arguments"
 msgstr "te weinig argumenten"
 
 #: disk-utils/addpart.c:57 disk-utils/blockdev.c:293 disk-utils/blockdev.c:437
-#: disk-utils/blockdev.c:463 disk-utils/cfdisk.c:2722 disk-utils/delpart.c:58
+#: disk-utils/blockdev.c:463 disk-utils/cfdisk.c:2720 disk-utils/delpart.c:58
 #: disk-utils/fdformat.c:228 disk-utils/fdisk.c:778 disk-utils/fdisk.c:1079
 #: disk-utils/fdisk-list.c:326 disk-utils/fdisk-list.c:366
 #: disk-utils/fdisk-list.c:385 disk-utils/fsck.c:1468
@@ -96,7 +96,7 @@ msgstr "te weinig argumenten"
 #: term-utils/agetty.c:2869 term-utils/mesg.c:143 term-utils/script.c:540
 #: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:418 text-utils/colcrt.c:282 text-utils/more.c:361
+#: term-utils/wall.c:420 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:139 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
@@ -366,360 +366,360 @@ msgstr "dumpen"
 msgid "Dump partition table to sfdisk compatible script file"
 msgstr "U = partitietabel opslaan als een sfdisk-compatibel script"
 
-#: disk-utils/cfdisk.c:646 disk-utils/fdisk.c:463
+#: disk-utils/cfdisk.c:644 disk-utils/fdisk.c:463
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr "**interne programmafout**: niet-ondersteund dialoogtype %d"
 
-#: disk-utils/cfdisk.c:1281
+#: disk-utils/cfdisk.c:1279
 #, c-format
 msgid "%s (mounted)"
 msgstr "%s (aangekoppeld)"
 
-#: disk-utils/cfdisk.c:1301
+#: disk-utils/cfdisk.c:1299
 msgid "Partition name:"
 msgstr "Partitienaam:"
 
-#: disk-utils/cfdisk.c:1308
+#: disk-utils/cfdisk.c:1306
 msgid "Partition UUID:"
 msgstr "Partitie-UUID:"
 
-#: disk-utils/cfdisk.c:1320
+#: disk-utils/cfdisk.c:1318
 msgid "Partition type:"
 msgstr "Partitietype:"
 
-#: disk-utils/cfdisk.c:1327
+#: disk-utils/cfdisk.c:1325
 msgid "Attributes:"
 msgstr "Eigenschappen:"
 
-#: disk-utils/cfdisk.c:1351
+#: disk-utils/cfdisk.c:1349
 msgid "Filesystem UUID:"
 msgstr "Bestandssysteem-UUID:"
 
-#: disk-utils/cfdisk.c:1358
+#: disk-utils/cfdisk.c:1356
 msgid "Filesystem LABEL:"
 msgstr "Bestandssysteemlabel:"
 
-#: disk-utils/cfdisk.c:1364
+#: disk-utils/cfdisk.c:1362
 msgid "Filesystem:"
 msgstr "Bestandssysteem:"
 
-#: disk-utils/cfdisk.c:1369
+#: disk-utils/cfdisk.c:1367
 msgid "Mountpoint:"
 msgstr "Aankoppelingspunt:"
 
-#: disk-utils/cfdisk.c:1713
+#: disk-utils/cfdisk.c:1711
 #, c-format
 msgid "Disk: %s"
 msgstr "Schijf: %s"
 
-#: disk-utils/cfdisk.c:1715
+#: disk-utils/cfdisk.c:1713
 #, fuzzy, c-format
 msgid "Size: %s, %<PRIu64> bytes, %ju sectors"
 msgstr "Grootte: %s, %ju bytes, %ju sectoren"
 
-#: disk-utils/cfdisk.c:1718
+#: disk-utils/cfdisk.c:1716
 #, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "Label: %s,  ID: %s"
 
-#: disk-utils/cfdisk.c:1721
+#: disk-utils/cfdisk.c:1719
 #, c-format
 msgid "Label: %s"
 msgstr "Label: %s"
 
-#: disk-utils/cfdisk.c:1871
+#: disk-utils/cfdisk.c:1869
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
 msgstr "Kan gevolgd worden door M voor MiB, G for GiB, T voor TiB, of S voor sectoren."
 
-#: disk-utils/cfdisk.c:1877
+#: disk-utils/cfdisk.c:1875
 msgid "Please, specify size."
 msgstr "Geen grootte opgegeven."
 
-#: disk-utils/cfdisk.c:1899
+#: disk-utils/cfdisk.c:1897
 #, fuzzy, c-format
 msgid "Minimum size is %<PRIu64> bytes."
 msgstr "Minimum grootte is %ju bytes."
 
-#: disk-utils/cfdisk.c:1908
+#: disk-utils/cfdisk.c:1906
 #, fuzzy, c-format
 msgid "Maximum size is %<PRIu64> bytes."
 msgstr "Maximum grootte is %ju bytes."
 
-#: disk-utils/cfdisk.c:1915
+#: disk-utils/cfdisk.c:1913
 msgid "Failed to parse size."
 msgstr "Ontleden van grootte is mislukt."
 
-#: disk-utils/cfdisk.c:1973
+#: disk-utils/cfdisk.c:1971
 msgid "Select partition type"
 msgstr "Kies een partitietype"
 
-#: disk-utils/cfdisk.c:2023 disk-utils/cfdisk.c:2053
+#: disk-utils/cfdisk.c:2021 disk-utils/cfdisk.c:2051
 msgid "Enter script file name: "
 msgstr "Voer naam van scriptbestand in: "
 
-#: disk-utils/cfdisk.c:2024
+#: disk-utils/cfdisk.c:2022
 msgid "The script file will be applied to in-memory partition table."
 msgstr "Het script zal worden toegepast op een partitietabel in het geheugen."
 
-#: disk-utils/cfdisk.c:2033 disk-utils/cfdisk.c:2075
+#: disk-utils/cfdisk.c:2031 disk-utils/cfdisk.c:2073
 #: disk-utils/fdisk-menu.c:480 disk-utils/fdisk-menu.c:524
 #, c-format
 msgid "Cannot open %s"
 msgstr "Kan %s niet openen"
 
 # FIXME: capital + period
-#: disk-utils/cfdisk.c:2035 disk-utils/fdisk-menu.c:482
+#: disk-utils/cfdisk.c:2033 disk-utils/fdisk-menu.c:482
 #, c-format
 msgid "Failed to parse script file %s"
 msgstr "Ontleden van scriptbestand %s is mislukt."
 
 # FIXME: capital + period
-#: disk-utils/cfdisk.c:2037 disk-utils/fdisk-menu.c:484
+#: disk-utils/cfdisk.c:2035 disk-utils/fdisk-menu.c:484
 #, c-format
 msgid "Failed to apply script %s"
 msgstr "Toepassen van script %s is mislukt."
 
-#: disk-utils/cfdisk.c:2054
+#: disk-utils/cfdisk.c:2052
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr "De huidige partitietabel in het geheugen zal worden opgeslagen in het bestand."
 
 # FIXME: capital + period
-#: disk-utils/cfdisk.c:2062 disk-utils/fdisk-menu.c:512
+#: disk-utils/cfdisk.c:2060 disk-utils/fdisk-menu.c:512
 msgid "Failed to allocate script handler"
 msgstr "Reserveren van geheugen voor script-verwerker is mislukt."
 
-#: disk-utils/cfdisk.c:2068
+#: disk-utils/cfdisk.c:2066
 msgid "Failed to read disk layout into script."
 msgstr "Omzetten van schijfindeling naar een script is mislukt."
 
-#: disk-utils/cfdisk.c:2082
+#: disk-utils/cfdisk.c:2080
 msgid "Disk layout successfully dumped."
 msgstr "Schijfindeling is met succes opgeslagen."
 
 # FIXME: capital + period
-#: disk-utils/cfdisk.c:2085 disk-utils/fdisk-menu.c:530
+#: disk-utils/cfdisk.c:2083 disk-utils/fdisk-menu.c:530
 #, c-format
 msgid "Failed to write script %s"
 msgstr "Schrijven van scriptbestand %s is mislukt."
 
-#: disk-utils/cfdisk.c:2121
+#: disk-utils/cfdisk.c:2119
 msgid "Select label type"
 msgstr "Kies een labeltype"
 
-#: disk-utils/cfdisk.c:2124 disk-utils/fdisk.c:1087 disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2122 disk-utils/fdisk.c:1087 disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "Apparaat bevat geen herkenbare partitietabel."
 
-#: disk-utils/cfdisk.c:2132
+#: disk-utils/cfdisk.c:2130
 msgid "Select a type to create a new label or press 'L' to load script file."
 msgstr "Kies hierboven een labeltype, of toets 'L' om een scriptbestand te laden."
 
-#: disk-utils/cfdisk.c:2181
+#: disk-utils/cfdisk.c:2179
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "Dit is 'cfdisk', een menu-gestuurd schijfpartitioneringsprogramma."
 
-#: disk-utils/cfdisk.c:2182
+#: disk-utils/cfdisk.c:2180
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "U kunt ermee op een blok-apparaat partities aanmaken, aanpassen of verwijderen."
 
-#: disk-utils/cfdisk.c:2184
+#: disk-utils/cfdisk.c:2182
 msgid "Command      Meaning"
 msgstr "Toets    Betekenis"
 
-#: disk-utils/cfdisk.c:2185
+#: disk-utils/cfdisk.c:2183
 msgid "-------      -------"
 msgstr "-----    ---------"
 
-#: disk-utils/cfdisk.c:2186
+#: disk-utils/cfdisk.c:2184
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b      'opstartbaar'-vlag voor huidige partitie aan/uitzetten"
 
-#: disk-utils/cfdisk.c:2187
+#: disk-utils/cfdisk.c:2185
 msgid "  d          Delete the current partition"
 msgstr "  d      huidige partitie verwijderen"
 
-#: disk-utils/cfdisk.c:2188
+#: disk-utils/cfdisk.c:2186
 msgid "  h          Print this screen"
 msgstr "  h      dit hulpscherm tonen"
 
-#: disk-utils/cfdisk.c:2189
+#: disk-utils/cfdisk.c:2187
 msgid "  n          Create new partition from free space"
 msgstr "  n      nieuwe partitie maken in de vrije ruimte"
 
-#: disk-utils/cfdisk.c:2190
+#: disk-utils/cfdisk.c:2188
 msgid "  q          Quit program without writing partition table"
 msgstr "  q      programma afsluiten zonder de partitietabel te schrijven"
 
-#: disk-utils/cfdisk.c:2191
+#: disk-utils/cfdisk.c:2189
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s      partitievolgorde corrigeren (wanneer in wanorde)"
 
-#: disk-utils/cfdisk.c:2192
+#: disk-utils/cfdisk.c:2190
 msgid "  t          Change the partition type"
 msgstr "  t      partitietype wijzigen"
 
-#: disk-utils/cfdisk.c:2193
+#: disk-utils/cfdisk.c:2191
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u      schijfindeling opslaan als sfdisk-compatibel scriptbestand"
 
-#: disk-utils/cfdisk.c:2194
+#: disk-utils/cfdisk.c:2192
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W      partitietabel naar schijf schrijven (moet met hoofdletter);"
 
-#: disk-utils/cfdisk.c:2195
+#: disk-utils/cfdisk.c:2193
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "           omdat dit mogelijk gegevens op de schijf wist, dient u het"
 
-#: disk-utils/cfdisk.c:2196
+#: disk-utils/cfdisk.c:2194
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "           schrijven te bevestigen met 'ja' of te weigeren met 'nee'"
 
-#: disk-utils/cfdisk.c:2197
+#: disk-utils/cfdisk.c:2195
 msgid "  x          Display/hide extra information about a partition"
 msgstr "  x      extra informatie over partitie tonen/verbergen"
 
-#: disk-utils/cfdisk.c:2198
+#: disk-utils/cfdisk.c:2196
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "omhoog   aanwijzer naar vorige partitie verplaatsen"
 
-#: disk-utils/cfdisk.c:2199
+#: disk-utils/cfdisk.c:2197
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "omlaag   aanwijzer naar volgende partitie verplaatsen"
 
-#: disk-utils/cfdisk.c:2200
+#: disk-utils/cfdisk.c:2198
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "links    aanwijzer naar vorige menu-item verplaatsen"
 
-#: disk-utils/cfdisk.c:2201
+#: disk-utils/cfdisk.c:2199
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "rechts   aanwijzer naar volgende menu-item verplaatsen"
 
-#: disk-utils/cfdisk.c:2203
+#: disk-utils/cfdisk.c:2201
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Opmerking: alle opdrachten kunnen zowel met hoofdletter als kleine letter"
 
-#: disk-utils/cfdisk.c:2204
+#: disk-utils/cfdisk.c:2202
 msgid "case letters (except for Write)."
 msgstr "worden ingevoerd -- behalve W."
 
-#: disk-utils/cfdisk.c:2206
+#: disk-utils/cfdisk.c:2204
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr "Gebruik lsblk(8) of partx(8) om meer details over het apparaat te zien."
 
-#: disk-utils/cfdisk.c:2216 disk-utils/cfdisk.c:2519
+#: disk-utils/cfdisk.c:2214 disk-utils/cfdisk.c:2517
 msgid "Press a key to continue."
 msgstr "Druk op een toets om verder te gaan."
 
-#: disk-utils/cfdisk.c:2302
+#: disk-utils/cfdisk.c:2300
 msgid "Could not toggle the flag."
 msgstr "Kan vlag niet omzetten."
 
-#: disk-utils/cfdisk.c:2312
+#: disk-utils/cfdisk.c:2310
 #, c-format
 msgid "Could not delete partition %zu."
 msgstr "Kan partitie %zu niet verwijderen."
 
-#: disk-utils/cfdisk.c:2314 disk-utils/fdisk-menu.c:660
+#: disk-utils/cfdisk.c:2312 disk-utils/fdisk-menu.c:660
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Partitie %zu is verwijderd."
 
-#: disk-utils/cfdisk.c:2335
+#: disk-utils/cfdisk.c:2333
 msgid "Partition size: "
 msgstr "Partitiegrootte: "
 
-#: disk-utils/cfdisk.c:2376
+#: disk-utils/cfdisk.c:2374
 #, c-format
 msgid "Changed type of partition %zu."
 msgstr "Het type van partitie %zu is gewijzigd."
 
-#: disk-utils/cfdisk.c:2378
+#: disk-utils/cfdisk.c:2376
 #, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "Het type van partitie %zu is onveranderd."
 
-#: disk-utils/cfdisk.c:2399
+#: disk-utils/cfdisk.c:2397
 #, fuzzy
 msgid "New size: "
 msgstr "Nieuwe shell"
 
-#: disk-utils/cfdisk.c:2414
+#: disk-utils/cfdisk.c:2412
 #, fuzzy, c-format
 msgid "Partition %zu resized."
 msgstr "%s: partitie #%d is van grootte gewijzigd\n"
 
-#: disk-utils/cfdisk.c:2432 disk-utils/cfdisk.c:2548 disk-utils/fdisk.c:1076
+#: disk-utils/cfdisk.c:2430 disk-utils/cfdisk.c:2546 disk-utils/fdisk.c:1076
 #: disk-utils/fdisk-menu.c:591
 msgid "Device is open in read-only mode."
 msgstr "Apparaat is geopend in alleenlezen-modus."
 
-#: disk-utils/cfdisk.c:2437
+#: disk-utils/cfdisk.c:2435
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Weet u zeker dat u de partitietabel naar schijf wilt schrijven? "
 
-#: disk-utils/cfdisk.c:2439
+#: disk-utils/cfdisk.c:2437
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Typ \"ja\" of \"nee\", of druk op Esc om deze dialoog te verlaten."
 
-#: disk-utils/cfdisk.c:2444 login-utils/lslogins.c:211 sys-utils/lscpu.c:1563
+#: disk-utils/cfdisk.c:2442 login-utils/lslogins.c:211 sys-utils/lscpu.c:1563
 #: sys-utils/lscpu.c:1573 sys-utils/lsmem.c:266
 msgid "yes"
 msgstr "ja"
 
-#: disk-utils/cfdisk.c:2445
+#: disk-utils/cfdisk.c:2443
 msgid "Did not write partition table to disk."
 msgstr "Partitietabel is NIET naar schijf geschreven."
 
-#: disk-utils/cfdisk.c:2450
+#: disk-utils/cfdisk.c:2448
 msgid "Failed to write disklabel."
 msgstr "Schrijven van schijflabel is mislukt."
 
-#: disk-utils/cfdisk.c:2456 disk-utils/fdisk-menu.c:599
+#: disk-utils/cfdisk.c:2454 disk-utils/fdisk-menu.c:599
 msgid "The partition table has been altered."
 msgstr "De partitietabel is gewijzigd."
 
-#: disk-utils/cfdisk.c:2479 disk-utils/cfdisk.c:2550
+#: disk-utils/cfdisk.c:2477 disk-utils/cfdisk.c:2548
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Merk op dat partitietabel-items nu niet in schijfvolgorde liggen."
 
-#: disk-utils/cfdisk.c:2516
+#: disk-utils/cfdisk.c:2514
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr "Apparaat bevat al een %s-vingerafdruk; deze zal gewist worden door een schrijfopdracht."
 
-#: disk-utils/cfdisk.c:2527
+#: disk-utils/cfdisk.c:2525
 msgid "failed to create a new disklabel"
 msgstr "aanmaken van nieuw schijflabel is mislukt"
 
-#: disk-utils/cfdisk.c:2535
+#: disk-utils/cfdisk.c:2533
 msgid "failed to read partitions"
 msgstr "lezen van partities is mislukt"
 
-#: disk-utils/cfdisk.c:2634
+#: disk-utils/cfdisk.c:2632
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr "  %1$s [opties] <apparaat>\n"
 
-#: disk-utils/cfdisk.c:2637 disk-utils/fdisk.c:822 disk-utils/sfdisk.c:1848
+#: disk-utils/cfdisk.c:2635 disk-utils/fdisk.c:822 disk-utils/sfdisk.c:1848
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Toont of wijzigt een partitietabel.\n"
 
-#: disk-utils/cfdisk.c:2640
+#: disk-utils/cfdisk.c:2638
 msgid " -L, --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr "  -L, --color[=<wanneer>]    de uitvoer kleuren ('auto', 'always', of 'never')\n"
 
 # COMMA
-#: disk-utils/cfdisk.c:2643
+#: disk-utils/cfdisk.c:2641
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr "  -z, --zero                 met een lege partitietabel beginnen\n"
 
-#: disk-utils/cfdisk.c:2681 disk-utils/fdisk.c:964 disk-utils/sfdisk.c:2123
+#: disk-utils/cfdisk.c:2679 disk-utils/fdisk.c:964 disk-utils/sfdisk.c:2123
 #: misc-utils/cal.c:429 sys-utils/dmesg.c:1409 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "ongeldige kleurmodus"
 
-#: disk-utils/cfdisk.c:2700 disk-utils/fdisk.c:902 disk-utils/sfdisk.c:224
+#: disk-utils/cfdisk.c:2698 disk-utils/fdisk.c:902 disk-utils/sfdisk.c:224
 msgid "failed to allocate libfdisk context"
 msgstr "reserveren van geheugen voor 'libfdisk'-context is mislukt"
 
@@ -1125,7 +1125,7 @@ msgstr ""
 #: sys-utils/mount.c:817 sys-utils/mount.c:864 sys-utils/mount.c:877
 #: sys-utils/mount.c:949 sys-utils/mountpoint.c:179 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:229 sys-utils/swapon.c:993 sys-utils/switch_root.c:249
-#: sys-utils/umount.c:583 term-utils/setterm.c:1179 text-utils/col.c:233
+#: sys-utils/umount.c:587 term-utils/setterm.c:1179 text-utils/col.c:233
 #: text-utils/more.c:1986
 #, fuzzy
 msgid "bad usage"
@@ -5409,7 +5409,7 @@ msgid_plural "sectors"
 msgstr[0] "sector"
 msgstr[1] "sectoren"
 
-#: libfdisk/src/context.c:1446
+#: libfdisk/src/context.c:1450
 msgid "Incomplete geometry setting."
 msgstr "Onvolledige geometrie-instelling."
 
@@ -6859,231 +6859,231 @@ msgstr ""
 msgid "operation failed: %m"
 msgstr "openen van %s is mislukt"
 
-#: libmount/src/context_mount.c:1554
+#: libmount/src/context_mount.c:1556
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "WAARSCHUWING: toepassen van doorgavevlaggen is mislukt"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1566
 #, fuzzy, c-format
 msgid "WARNING: device write-protected, mounted read-only"
 msgstr "%s is schrijfbeveiligd en wordt als alleen-lezen aangekoppeld"
 
-#: libmount/src/context_mount.c:1578
+#: libmount/src/context_mount.c:1580
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1582
+#: libmount/src/context_mount.c:1584
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s is al aangekoppeld"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1590
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "kan %s niet vinden in %s"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1593
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "kan aankoppelingspunt %s niet vinden in %s"
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1596
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "kan aankoppelingsbron %s niet vinden in %s"
 
-#: libmount/src/context_mount.c:1599
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1604
+#: libmount/src/context_mount.c:1606
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s: bepalen van bron is mislukt"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1607
 #, fuzzy, c-format
 msgid "no filesystem type specified"
 msgstr "geen bestandsnaam gegeven"
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1614
 #, c-format
 msgid "can't find %s"
 msgstr "kan %s niet vinden"
 
-#: libmount/src/context_mount.c:1614
+#: libmount/src/context_mount.c:1616
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "geen aankoppelingspunt opgegeven"
 
-#: libmount/src/context_mount.c:1620
+#: libmount/src/context_mount.c:1622
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1623
 #, c-format
 msgid "failed to parse mount options"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1625
+#: libmount/src/context_mount.c:1627
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s: instellen van lus-apparaat is mislukt"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1631
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s: er is een overlappend lus-apparaat"
 
-#: libmount/src/context_mount.c:1633 libmount/src/context_umount.c:1207
+#: libmount/src/context_mount.c:1635 libmount/src/context_umount.c:1207
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "sluiten van %s is mislukt"
 
-#: libmount/src/context_mount.c:1637 libmount/src/context_umount.c:1211
+#: libmount/src/context_mount.c:1639 libmount/src/context_umount.c:1211
 #: sys-utils/umount.c:238 sys-utils/umount.c:254
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "pad naar de naamsruimte"
 
-#: libmount/src/context_mount.c:1640
+#: libmount/src/context_mount.c:1642
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "aankoppelen is mislukt"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1652
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1654
+#: libmount/src/context_mount.c:1656
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1661
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1677 libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1679 libmount/src/context_mount.c:1736
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "aankoppelingspunt %s is geen map"
 
-#: libmount/src/context_mount.c:1679 login-utils/newgrp.c:226
+#: libmount/src/context_mount.c:1681 login-utils/newgrp.c:226
 #, c-format
 msgid "permission denied"
 msgstr "toegang geweigerd"
 
-#: libmount/src/context_mount.c:1681
+#: libmount/src/context_mount.c:1683
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "u moet root zijn om aan te kunnen koppelen"
 
-#: libmount/src/context_mount.c:1691
+#: libmount/src/context_mount.c:1693
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount: %s is bezig"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1706
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount: %s is al aangekoppeld op %s\n"
 
-#: libmount/src/context_mount.c:1710
+#: libmount/src/context_mount.c:1712
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s is al aangekoppeld of %s is bezig"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1718
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "aankoppelingspunt %s bestaat niet"
 
-#: libmount/src/context_mount.c:1719
+#: libmount/src/context_mount.c:1721
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "aankoppelingspunt %s is een symbolische koppeling die nergens naar wijst"
 
-#: libmount/src/context_mount.c:1724
+#: libmount/src/context_mount.c:1726
 #, c-format
 msgid "special device %s does not exist"
 msgstr "apparaat %s bestaat niet"
 
-#: libmount/src/context_mount.c:1727 libmount/src/context_mount.c:1743
-#: libmount/src/context_mount.c:1827 libmount/src/context_mount.c:1850
+#: libmount/src/context_mount.c:1729 libmount/src/context_mount.c:1745
+#: libmount/src/context_mount.c:1829 libmount/src/context_mount.c:1852
 #, fuzzy, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) is mislukt"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1741
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "apparaat %s bestaat niet  (het pad bevat iets dat geen map is)"
 
-#: libmount/src/context_mount.c:1751
+#: libmount/src/context_mount.c:1753
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "mount: %s is nog niet aangekoppeld, of een ongeldige optie"
 
-#: libmount/src/context_mount.c:1753
+#: libmount/src/context_mount.c:1755
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "%s is geen aankoppelingspunt of een ongeldige optie"
 
-#: libmount/src/context_mount.c:1756
+#: libmount/src/context_mount.c:1758
 #, fuzzy, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 "ongeldige optie -- het verplaatsen van een aankoppeling\n"
 "onder een gedeelde aankoppeling wordt niet ondersteund"
 
-#: libmount/src/context_mount.c:1760
+#: libmount/src/context_mount.c:1762
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (voor sommige bestandssystemen (bijvoorbeeld nfs of cifs) kan\n"
 "       een /sbin/mount.<type> hulpprogramma nodig zijn)"
 
-#: libmount/src/context_mount.c:1764
+#: libmount/src/context_mount.c:1766
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "onjuiste bestandssysteemsoort, ongeldige optie, ontbrekende codepagina,\n"
 "       ontbrekend hulpprogramma, slecht superblok op %s, of een andere fout"
 
-#: libmount/src/context_mount.c:1771
+#: libmount/src/context_mount.c:1773
 #, c-format
 msgid "mount table full"
 msgstr "aankoppelingstabel is vol"
 
-#: libmount/src/context_mount.c:1776
+#: libmount/src/context_mount.c:1778
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "%s: kan superblok niet lezen"
 
-#: libmount/src/context_mount.c:1783
+#: libmount/src/context_mount.c:1785
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "onbekende bestandssysteemsoort '%s'"
 
-#: libmount/src/context_mount.c:1786
+#: libmount/src/context_mount.c:1788
 #, c-format
 msgid "unknown filesystem type"
 msgstr "onbekende bestandssysteemsoort"
 
-#: libmount/src/context_mount.c:1795
+#: libmount/src/context_mount.c:1797
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s is geen blok-apparaat, en stat(2) is mislukt... heel vreemd"
 
 # FIXME: backtick
-#: libmount/src/context_mount.c:1798
+#: libmount/src/context_mount.c:1800
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
@@ -7091,48 +7091,48 @@ msgstr ""
 "       (misschien is 'modprobe stuurprogramma' nodig?)"
 
 # FIXME: backtick
-#: libmount/src/context_mount.c:1801
+#: libmount/src/context_mount.c:1803
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s is geen blok-apparaat  (misschien '-o loop' proberen?)"
 
-#: libmount/src/context_mount.c:1803
+#: libmount/src/context_mount.c:1805
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr " %s is geen blok-apparaat"
 
-#: libmount/src/context_mount.c:1810
+#: libmount/src/context_mount.c:1812
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s is geen geldig blok-apparaat"
 
-#: libmount/src/context_mount.c:1818
+#: libmount/src/context_mount.c:1820
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "kan %s niet aankoppelen voor alleen-lezen"
 
 # FIXME: backtick
-#: libmount/src/context_mount.c:1820
+#: libmount/src/context_mount.c:1822
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s is schrijfbeveiligd, maar expliciete optie '-w' is gegeven"
 
-#: libmount/src/context_mount.c:1822
+#: libmount/src/context_mount.c:1824
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "kan %s niet heraankoppelen als lezen-en-schrijven, want is schrijfbeveiligd"
 
-#: libmount/src/context_mount.c:1824
+#: libmount/src/context_mount.c:1826
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "'%s' is mislukt"
 
-#: libmount/src/context_mount.c:1835
+#: libmount/src/context_mount.c:1837
 #, c-format
 msgid "no medium found on %s"
 msgstr "geen medium gevonden op %s"
 
-#: libmount/src/context_mount.c:1842
+#: libmount/src/context_mount.c:1844
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "zal niet proberen een bestandssysteem te maken op '%s'"
@@ -9276,8 +9276,8 @@ msgid "can't read %s"
 msgstr "kan %s niet lezen"
 
 #: misc-utils/findmnt.c:1024 misc-utils/findmnt.c:1090
-#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:483
-#: sys-utils/fstrim.c:246 sys-utils/mount.c:133 sys-utils/mount.c:181
+#: misc-utils/findmnt-verify.c:95 misc-utils/findmnt-verify.c:487
+#: sys-utils/fstrim.c:279 sys-utils/mount.c:133 sys-utils/mount.c:181
 #: sys-utils/mount.c:248 sys-utils/swapoff.c:55 sys-utils/swapoff.c:154
 #: sys-utils/swapon.c:248 sys-utils/swapon.c:278 sys-utils/swapon.c:737
 #: sys-utils/umount.c:187
@@ -9510,7 +9510,7 @@ msgstr "optie '--poll' accepteert slechts één bestand, maar '--tab-file' geeft
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "opties '--target' en '--source' gaan niet samen met andere argumenten"
 
-#: misc-utils/findmnt.c:1602 sys-utils/fstrim.c:266
+#: misc-utils/findmnt.c:1602 sys-utils/fstrim.c:259
 msgid "failed to initialize libmount cache"
 msgstr "initialiseren van libmount-cache is mislukt"
 
@@ -9519,176 +9519,176 @@ msgstr "initialiseren van libmount-cache is mislukt"
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "kolom %s wordt gevraagd, maar '--poll' is niet gegeven"
 
-#: misc-utils/findmnt-verify.c:118
+#: misc-utils/findmnt-verify.c:119
 msgid "target specified more than once"
 msgstr "doel is meer dan eens gegeven"
 
-#: misc-utils/findmnt-verify.c:120
+#: misc-utils/findmnt-verify.c:121
 #, c-format
 msgid "wrong order: %s specified before %s"
 msgstr "verkeerde volgorde: %s is gegeven voor %s"
 
-#: misc-utils/findmnt-verify.c:134
+#: misc-utils/findmnt-verify.c:135
 msgid "undefined target (fs_file)"
 msgstr "ongedefinieerd doel (fs_file)"
 
-#: misc-utils/findmnt-verify.c:141
+#: misc-utils/findmnt-verify.c:142
 #, c-format
 msgid "non-canonical target path (real: %s)"
 msgstr "niet-canoniek doelpad (werkelijk pad: %s)"
 
-#: misc-utils/findmnt-verify.c:146
+#: misc-utils/findmnt-verify.c:147
 #, c-format
 msgid "unreachable on boot required target: %m"
 msgstr "onbereikbaar bij-opstarten-vereist doel: %m"
 
-#: misc-utils/findmnt-verify.c:148
+#: misc-utils/findmnt-verify.c:149
 #, c-format
 msgid "unreachable target: %m"
 msgstr "onbereikbaar doel: %m"
 
-#: misc-utils/findmnt-verify.c:152
+#: misc-utils/findmnt-verify.c:153
 msgid "target is not a directory"
 msgstr "doel is geen map"
 
-#: misc-utils/findmnt-verify.c:154
+#: misc-utils/findmnt-verify.c:155
 msgid "target exists"
 msgstr "doel bestaat"
 
-#: misc-utils/findmnt-verify.c:166
+#: misc-utils/findmnt-verify.c:167
 #, c-format
 msgid "unreachable on boot required source: %s=%s"
 msgstr "onbereikbare bij-opstarten-vereiste bron %s=%s"
 
-#: misc-utils/findmnt-verify.c:168
+#: misc-utils/findmnt-verify.c:169
 #, c-format
 msgid "unreachable: %s=%s"
 msgstr "onbereikbaar: %s=%s"
 
-#: misc-utils/findmnt-verify.c:170
+#: misc-utils/findmnt-verify.c:171
 #, c-format
 msgid "%s=%s translated to %s"
 msgstr "%s=%s is vertaald naar %s"
 
-#: misc-utils/findmnt-verify.c:191
+#: misc-utils/findmnt-verify.c:192
 msgid "undefined source (fs_spec)"
 msgstr "ongedefinieerde bron (fs_spec)"
 
-#: misc-utils/findmnt-verify.c:200
+#: misc-utils/findmnt-verify.c:201
 #, c-format
 msgid "unsupported source tag: %s"
 msgstr "niet-ondersteunde bron-tag: %s"
 
-#: misc-utils/findmnt-verify.c:207
+#: misc-utils/findmnt-verify.c:208
 #, c-format
 msgid "do not check %s source (pseudo/net)"
 msgstr "%s-bron niet controleren (pseudo/net)"
 
-#: misc-utils/findmnt-verify.c:210
+#: misc-utils/findmnt-verify.c:211
 #, c-format
 msgid "unreachable source: %s: %m"
 msgstr "onbereikbare bron %s: %m"
 
-#: misc-utils/findmnt-verify.c:213
+#: misc-utils/findmnt-verify.c:214
 #, c-format
 msgid "non-bind mount source %s is a directory or regular file"
 msgstr "non-bind aankoppelingsbron %s is een map of gewoon bestand"
 
-#: misc-utils/findmnt-verify.c:216
+#: misc-utils/findmnt-verify.c:217
 #, c-format
 msgid "source %s is not a block device"
 msgstr "bron %s is geen blok-apparaat"
 
-#: misc-utils/findmnt-verify.c:218
+#: misc-utils/findmnt-verify.c:219
 #, c-format
 msgid "source %s exists"
 msgstr "bron %s bestaat"
 
-#: misc-utils/findmnt-verify.c:231
+#: misc-utils/findmnt-verify.c:232
 #, c-format
 msgid "VFS options: %s"
 msgstr "VFS-opties: %s"
 
-#: misc-utils/findmnt-verify.c:235
+#: misc-utils/findmnt-verify.c:236
 #, c-format
 msgid "FS options: %s"
 msgstr "Bestandssysteemopties: %s"
 
-#: misc-utils/findmnt-verify.c:239
+#: misc-utils/findmnt-verify.c:240
 #, c-format
 msgid "userspace options: %s"
 msgstr "Gebruikersopties: %s"
 
-#: misc-utils/findmnt-verify.c:253
+#: misc-utils/findmnt-verify.c:254
 #, fuzzy, c-format
 msgid "unsupported swaparea discard policy: %s"
 msgstr "ongeldig verwerpingsbeleid: %s"
 
-#: misc-utils/findmnt-verify.c:261
+#: misc-utils/findmnt-verify.c:262
 #, fuzzy
 msgid "failed to parse swaparea priority option"
 msgstr "ontleden van prioriteit is mislukt"
 
-#: misc-utils/findmnt-verify.c:397
+#: misc-utils/findmnt-verify.c:398
 #, c-format
 msgid "do not check %s FS type (pseudo/net)"
 msgstr "%s-bestandssysteemsoort niet controleren (pseudo/net)"
 
-#: misc-utils/findmnt-verify.c:407
+#: misc-utils/findmnt-verify.c:408
 msgid "\"none\" FS type is recommended for bind or move oprations only"
 msgstr "bestandssysteemsoort \"none\" wordt alleen aangeraden voor 'bind' of 'move'"
 
-#: misc-utils/findmnt-verify.c:415
+#: misc-utils/findmnt-verify.c:418
 #, fuzzy, c-format
 msgid "%s seems unsupported by the current kernel"
 msgstr "CD-ROM-snelheidskeuzecommando wordt niet ondersteund door deze kernel"
 
-#: misc-utils/findmnt-verify.c:421 misc-utils/findmnt-verify.c:422
+#: misc-utils/findmnt-verify.c:424 misc-utils/findmnt-verify.c:425
 msgid "cannot detect on-disk filesystem type"
 msgstr "kan bestandssysteemsoort op schijf niet determineren"
 
-#: misc-utils/findmnt-verify.c:429
+#: misc-utils/findmnt-verify.c:433
 #, c-format
 msgid "%s does not match with on-disk %s"
 msgstr "%s komt niet overeen met %s op schijf"
 
-#: misc-utils/findmnt-verify.c:432
+#: misc-utils/findmnt-verify.c:436
 #, fuzzy, c-format
 msgid "on-disk %s seems unsupported by the current kernel"
 msgstr "CD-ROM-snelheidskeuzecommando wordt niet ondersteund door deze kernel"
 
-#: misc-utils/findmnt-verify.c:434
+#: misc-utils/findmnt-verify.c:438
 #, c-format
 msgid "FS type is %s"
 msgstr "Bestandssysteemsoort is %s"
 
-#: misc-utils/findmnt-verify.c:446
+#: misc-utils/findmnt-verify.c:450
 #, c-format
 msgid "recommended root FS passno is 1 (current is %d)"
 msgstr "het aangeraden fsck-volgordenummer voor het hoofdbestandssysteem is 1 (momenteel is het %d)"
 
-#: misc-utils/findmnt-verify.c:513
+#: misc-utils/findmnt-verify.c:519
 #, c-format
 msgid "%d parse error"
 msgid_plural "%d parse errors"
 msgstr[0] "%d ontledingsfout"
 msgstr[1] "%d ontledingsfouten"
 
-#: misc-utils/findmnt-verify.c:514
+#: misc-utils/findmnt-verify.c:520
 #, c-format
 msgid ", %d error"
 msgid_plural ", %d errors"
 msgstr[0] ", %d fout"
 msgstr[1] ", %d fouten"
 
-#: misc-utils/findmnt-verify.c:515
+#: misc-utils/findmnt-verify.c:521
 #, c-format
 msgid ", %d warning"
 msgid_plural ", %d warnings"
 msgstr[0] ", %d waarschuwing"
 msgstr[1] ", %d waarschuwingen"
 
-#: misc-utils/findmnt-verify.c:518
+#: misc-utils/findmnt-verify.c:524
 #, c-format
 msgid "Success, no errors or warnings detected\n"
 msgstr "Gelukt -- geen fouten of waarschuwingen gevonden\n"
@@ -10713,7 +10713,7 @@ msgstr[1] "%zu bytes ontvangen van %s\n"
 msgid "closing %s failed"
 msgstr "sluiten van %s is mislukt"
 
-#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:140 sys-utils/fstrim.c:415
+#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:140 sys-utils/fstrim.c:439
 #: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "ontleden van lengte is mislukt"
@@ -11840,7 +11840,7 @@ msgstr "  -z, --zeroout          met nullen vullen in plaats van verwerpen\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr "  -v, --verbose          uitgelijnde lengtes en posities vermelden\n"
 
-#: sys-utils/blkdiscard.c:144 sys-utils/fstrim.c:419 sys-utils/losetup.c:706
+#: sys-utils/blkdiscard.c:144 sys-utils/fstrim.c:443 sys-utils/losetup.c:706
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "ontleden van positie is mislukt"
@@ -11850,7 +11850,7 @@ msgid "failed to parse step"
 msgstr "ontleden van stapgrootte is mislukt"
 
 #: sys-utils/blkdiscard.c:175 sys-utils/blkzone.c:406 sys-utils/fallocate.c:376
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:447
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:471 sys-utils/umount.c:577
 msgid "unexpected number of arguments"
 msgstr "onverwacht aantal argumenten"
 
@@ -13299,72 +13299,72 @@ msgstr "%s: %s (%<PRIu64> bytes) is getrimd\n"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> bytes) is getrimd\n"
 
-#: sys-utils/fstrim.c:253 sys-utils/lsns.c:1078 sys-utils/swapon.c:733
+#: sys-utils/fstrim.c:249 sys-utils/lsns.c:1078 sys-utils/swapon.c:733
 #: sys-utils/umount.c:248
 #, c-format
 msgid "failed to parse %s"
 msgstr "ontleden van %s is mislukt"
 
-#: sys-utils/fstrim.c:274
+#: sys-utils/fstrim.c:267
 #, fuzzy
 msgid "failed to allocate FS handler"
 msgstr "reserveren van geheugen voor script-verwerker is mislukt"
 
-#: sys-utils/fstrim.c:330 sys-utils/fstrim.c:456
+#: sys-utils/fstrim.c:354 sys-utils/fstrim.c:480
 #, c-format
 msgid "%s: the discard operation is not supported"
 msgstr "%s: verwerpen wordt niet ondersteund"
 
-#: sys-utils/fstrim.c:351
+#: sys-utils/fstrim.c:375
 #, c-format
 msgid " %s [options] <mount point>\n"
 msgstr "  %s [opties] <aankoppelingspunt>\n"
 
-#: sys-utils/fstrim.c:354
+#: sys-utils/fstrim.c:378
 msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr "Verwerpt ongebruikte blokken op een aangekoppeld bestandssysteem.\n"
 
-#: sys-utils/fstrim.c:357
+#: sys-utils/fstrim.c:381
 #, fuzzy
 msgid " -a, --all           trim all supported mounted filesystems\n"
 msgstr " -a, --all              alle ondersteunde aangekoppelde bestandssystemen trimmen\n"
 
-#: sys-utils/fstrim.c:358
+#: sys-utils/fstrim.c:382
 #, fuzzy
 msgid " -A, --fstab         trim all supported mounted filesystems from /etc/fstab\n"
 msgstr " -a, --all              alle ondersteunde aangekoppelde bestandssystemen trimmen\n"
 
-#: sys-utils/fstrim.c:359
+#: sys-utils/fstrim.c:383
 msgid " -o, --offset <num>  the offset in bytes to start discarding from\n"
 msgstr " -o, --offset <getal>   de positie vanaf waar met verwerpen te beginnen\n"
 
-#: sys-utils/fstrim.c:360
+#: sys-utils/fstrim.c:384
 msgid " -l, --length <num>  the number of bytes to discard\n"
 msgstr " -l, --length <getal>   het aantal te verwerpen bytes\n"
 
-#: sys-utils/fstrim.c:361
+#: sys-utils/fstrim.c:385
 msgid " -m, --minimum <num> the minimum extent length to discard\n"
 msgstr " -m, --minimum <getal>  de minimum lengte van de te verwerpen extents\n"
 
-#: sys-utils/fstrim.c:362
+#: sys-utils/fstrim.c:386
 msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose          het aantal verworpen bytes weergeven\n"
 
-#: sys-utils/fstrim.c:363
+#: sys-utils/fstrim.c:387
 #, fuzzy
 msgid "     --quiet         suppress error messages\n"
 msgstr "  -q, --quiet              extra informatie onderdrukken\n"
 
-#: sys-utils/fstrim.c:364
+#: sys-utils/fstrim.c:388
 #, fuzzy
 msgid " -n, --dry-run       does everything, but trim\n"
 msgstr "  -n, --dry-run            doet alles, behalve gaan slapen\n"
 
-#: sys-utils/fstrim.c:423
+#: sys-utils/fstrim.c:447
 msgid "failed to parse minimum extent length"
 msgstr "ontleden van minimum-extent-lengte is mislukt"
 
-#: sys-utils/fstrim.c:442
+#: sys-utils/fstrim.c:466
 msgid "no mountpoint specified"
 msgstr "geen aankoppelingspunt opgegeven"
 
@@ -19639,16 +19639,16 @@ msgstr "optie '--nobanner' is alleen beschikbaar voor root"
 msgid "invalid timeout argument: %s"
 msgstr "ongeldige tijdslimiet: %s"
 
-#: term-utils/wall.c:357
+#: term-utils/wall.c:359
 msgid "cannot get passwd uid"
 msgstr "kan gebruikers-ID niet achterhalen"
 
-#: term-utils/wall.c:381
+#: term-utils/wall.c:383
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Bericht aan allen van %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:414
+#: term-utils/wall.c:416
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "zal %s niet lezen;  gebruik standaardinvoer"

@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-05-30 12:09+0200\n"
+"POT-Creation-Date: 2019-06-14 12:14+0200\n"
 "PO-Revision-Date: 2019-06-05 16:38+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -46,7 +46,7 @@ msgid "not enough arguments"
 msgstr "inte tillräckligt många argument"
 
 #: disk-utils/addpart.c:57 disk-utils/blockdev.c:293 disk-utils/blockdev.c:437
-#: disk-utils/blockdev.c:463 disk-utils/cfdisk.c:2722 disk-utils/delpart.c:58
+#: disk-utils/blockdev.c:463 disk-utils/cfdisk.c:2720 disk-utils/delpart.c:58
 #: disk-utils/fdformat.c:228 disk-utils/fdisk.c:778 disk-utils/fdisk.c:1079
 #: disk-utils/fdisk-list.c:326 disk-utils/fdisk-list.c:366
 #: disk-utils/fdisk-list.c:385 disk-utils/fsck.c:1468
@@ -61,23 +61,23 @@ msgstr "inte tillräckligt många argument"
 #: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
 #: login-utils/islocal.c:87 login-utils/last.c:668 login-utils/sulogin.c:444
 #: login-utils/sulogin.c:481 login-utils/utmpdump.c:134
-#: login-utils/utmpdump.c:355 login-utils/utmpdump.c:375
-#: login-utils/vipw.c:261 login-utils/vipw.c:279 misc-utils/findmnt.c:1106
-#: misc-utils/logger.c:1241 misc-utils/mcookie.c:115 misc-utils/uuidd.c:198
-#: sys-utils/blkdiscard.c:181 sys-utils/blkzone.c:96 sys-utils/dmesg.c:524
-#: sys-utils/eject.c:497 sys-utils/eject.c:693 sys-utils/fallocate.c:399
-#: sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:86 sys-utils/hwclock.c:229
-#: sys-utils/hwclock.c:869 sys-utils/hwclock-rtc.c:398
-#: sys-utils/hwclock-rtc.c:433 sys-utils/ldattach.c:392 sys-utils/lscpu.c:517
-#: sys-utils/nsenter.c:129 sys-utils/rfkill.c:192 sys-utils/rfkill.c:553
-#: sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:290 sys-utils/setpriv.c:290
-#: sys-utils/setpriv.c:659 sys-utils/setpriv.c:682 sys-utils/swapon.c:375
-#: sys-utils/swapon.c:518 sys-utils/switch_root.c:167 sys-utils/unshare.c:110
-#: sys-utils/unshare.c:125 sys-utils/wdctl.c:322 sys-utils/wdctl.c:378
-#: sys-utils/zramctl.c:515 term-utils/agetty.c:2869 term-utils/mesg.c:143
-#: term-utils/script.c:540 term-utils/script.c:548 term-utils/script.c:633
+#: login-utils/utmpdump.c:355 login-utils/utmpdump.c:375 login-utils/vipw.c:261
+#: login-utils/vipw.c:279 misc-utils/findmnt.c:1106 misc-utils/logger.c:1241
+#: misc-utils/mcookie.c:115 misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:181
+#: sys-utils/blkzone.c:96 sys-utils/dmesg.c:524 sys-utils/eject.c:497
+#: sys-utils/eject.c:693 sys-utils/fallocate.c:399 sys-utils/fsfreeze.c:116
+#: sys-utils/fstrim.c:86 sys-utils/hwclock.c:229 sys-utils/hwclock.c:869
+#: sys-utils/hwclock-rtc.c:398 sys-utils/hwclock-rtc.c:433
+#: sys-utils/ldattach.c:392 sys-utils/lscpu.c:517 sys-utils/nsenter.c:129
+#: sys-utils/rfkill.c:192 sys-utils/rfkill.c:553 sys-utils/rtcwake.c:137
+#: sys-utils/rtcwake.c:290 sys-utils/setpriv.c:290 sys-utils/setpriv.c:659
+#: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
+#: sys-utils/switch_root.c:167 sys-utils/unshare.c:110 sys-utils/unshare.c:125
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:515
+#: term-utils/agetty.c:2869 term-utils/mesg.c:143 term-utils/script.c:540
+#: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:418 text-utils/colcrt.c:282 text-utils/more.c:361
+#: term-utils/wall.c:420 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:139 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
@@ -345,355 +345,354 @@ msgstr "Dumpa"
 msgid "Dump partition table to sfdisk compatible script file"
 msgstr "Dumpa partitionstabellen till en sfdisk-kompatibel skriptfil"
 
-#: disk-utils/cfdisk.c:646 disk-utils/fdisk.c:463
+#: disk-utils/cfdisk.c:644 disk-utils/fdisk.c:463
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr "internt fel: dialogtyp %d stöds ej"
 
-#: disk-utils/cfdisk.c:1281
+#: disk-utils/cfdisk.c:1279
 #, c-format
 msgid "%s (mounted)"
 msgstr "%s (monterad)"
 
-#: disk-utils/cfdisk.c:1301
+#: disk-utils/cfdisk.c:1299
 msgid "Partition name:"
 msgstr "Partitionsnamn:"
 
-#: disk-utils/cfdisk.c:1308
+#: disk-utils/cfdisk.c:1306
 msgid "Partition UUID:"
 msgstr "Partitions-UUID:"
 
-#: disk-utils/cfdisk.c:1320
+#: disk-utils/cfdisk.c:1318
 msgid "Partition type:"
 msgstr "Partitionstyp:"
 
-#: disk-utils/cfdisk.c:1327
+#: disk-utils/cfdisk.c:1325
 msgid "Attributes:"
 msgstr "Attribut:"
 
-#: disk-utils/cfdisk.c:1351
+#: disk-utils/cfdisk.c:1349
 msgid "Filesystem UUID:"
 msgstr "Filsystems-UUID:"
 
-#: disk-utils/cfdisk.c:1358
+#: disk-utils/cfdisk.c:1356
 msgid "Filesystem LABEL:"
 msgstr "Filsystems-ETIKETT:"
 
-#: disk-utils/cfdisk.c:1364
+#: disk-utils/cfdisk.c:1362
 msgid "Filesystem:"
 msgstr "Filsystem:"
 
-#: disk-utils/cfdisk.c:1369
+#: disk-utils/cfdisk.c:1367
 msgid "Mountpoint:"
 msgstr "Monteringspunkt:"
 
-#: disk-utils/cfdisk.c:1713
+#: disk-utils/cfdisk.c:1711
 #, c-format
 msgid "Disk: %s"
 msgstr "Disk: %s"
 
-#: disk-utils/cfdisk.c:1715
+#: disk-utils/cfdisk.c:1713
 #, c-format
 msgid "Size: %s, %<PRIu64> bytes, %ju sectors"
 msgstr "Storlek: %s, %<PRIu64> byte, %ju sektorer"
 
-#: disk-utils/cfdisk.c:1718
+#: disk-utils/cfdisk.c:1716
 #, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "Etikett: %s, identifierare: %s"
 
-#: disk-utils/cfdisk.c:1721
+#: disk-utils/cfdisk.c:1719
 #, c-format
 msgid "Label: %s"
 msgstr "Etikett: %s"
 
-#: disk-utils/cfdisk.c:1871
+#: disk-utils/cfdisk.c:1869
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
 msgstr "Kan efterföljas av M för MiB, G för GiB, T för TiB eller S för sektorer."
 
-#: disk-utils/cfdisk.c:1877
+#: disk-utils/cfdisk.c:1875
 msgid "Please, specify size."
 msgstr "Ange storlek."
 
-#: disk-utils/cfdisk.c:1899
+#: disk-utils/cfdisk.c:1897
 #, c-format
 msgid "Minimum size is %<PRIu64> bytes."
 msgstr "Minsta storlek är %<PRIu64> byte."
 
-#: disk-utils/cfdisk.c:1908
+#: disk-utils/cfdisk.c:1906
 #, c-format
 msgid "Maximum size is %<PRIu64> bytes."
 msgstr "Största storlek är %<PRIu64> byte."
 
-#: disk-utils/cfdisk.c:1915
+#: disk-utils/cfdisk.c:1913
 msgid "Failed to parse size."
 msgstr "Misslyckades med att tolka storlek."
 
-#: disk-utils/cfdisk.c:1973
+#: disk-utils/cfdisk.c:1971
 msgid "Select partition type"
 msgstr "Välj partitionstyp"
 
-#: disk-utils/cfdisk.c:2023 disk-utils/cfdisk.c:2053
+#: disk-utils/cfdisk.c:2021 disk-utils/cfdisk.c:2051
 msgid "Enter script file name: "
 msgstr "Skriv in filnamn för skript: "
 
-#: disk-utils/cfdisk.c:2024
+#: disk-utils/cfdisk.c:2022
 msgid "The script file will be applied to in-memory partition table."
 msgstr "Skriptfilen kommer att tillämpas för partitionstabellen i minnet."
 
-#: disk-utils/cfdisk.c:2033 disk-utils/cfdisk.c:2075
+#: disk-utils/cfdisk.c:2031 disk-utils/cfdisk.c:2073
 #: disk-utils/fdisk-menu.c:480 disk-utils/fdisk-menu.c:524
 #, c-format
 msgid "Cannot open %s"
 msgstr "Kan inte öppna %s"
 
-#: disk-utils/cfdisk.c:2035 disk-utils/fdisk-menu.c:482
+#: disk-utils/cfdisk.c:2033 disk-utils/fdisk-menu.c:482
 #, c-format
 msgid "Failed to parse script file %s"
 msgstr "Misslyckades att tolka skriptfil %s"
 
-#: disk-utils/cfdisk.c:2037 disk-utils/fdisk-menu.c:484
+#: disk-utils/cfdisk.c:2035 disk-utils/fdisk-menu.c:484
 #, c-format
 msgid "Failed to apply script %s"
 msgstr "Misslyckades med att tillämpa skript %s"
 
-#: disk-utils/cfdisk.c:2054
+#: disk-utils/cfdisk.c:2052
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr "Partitionstabellen i minne kommer att dumpas till filen."
 
-#: disk-utils/cfdisk.c:2062 disk-utils/fdisk-menu.c:512
+#: disk-utils/cfdisk.c:2060 disk-utils/fdisk-menu.c:512
 msgid "Failed to allocate script handler"
 msgstr "Misslyckades med att allokera skript-hanterare"
 
-#: disk-utils/cfdisk.c:2068
+#: disk-utils/cfdisk.c:2066
 msgid "Failed to read disk layout into script."
 msgstr "Misslyckades med att läsa in disklayout i skript."
 
-#: disk-utils/cfdisk.c:2082
+#: disk-utils/cfdisk.c:2080
 msgid "Disk layout successfully dumped."
 msgstr "Disklayout dumpades framgångsrikt."
 
-#: disk-utils/cfdisk.c:2085 disk-utils/fdisk-menu.c:530
+#: disk-utils/cfdisk.c:2083 disk-utils/fdisk-menu.c:530
 #, c-format
 msgid "Failed to write script %s"
 msgstr "Misslyckades att skriva skript %s"
 
-#: disk-utils/cfdisk.c:2121
+#: disk-utils/cfdisk.c:2119
 msgid "Select label type"
 msgstr "Välj etikettstyp"
 
-#: disk-utils/cfdisk.c:2124 disk-utils/fdisk.c:1087
-#: disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2122 disk-utils/fdisk.c:1087 disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "Enheten innehåller inte en igenkänd partitionstabell."
 
-#: disk-utils/cfdisk.c:2132
+#: disk-utils/cfdisk.c:2130
 msgid "Select a type to create a new label or press 'L' to load script file."
 msgstr "Välj en typ att skapa och en ny etikett eller tryck ”L” för att läsa in skriptfil."
 
-#: disk-utils/cfdisk.c:2181
+#: disk-utils/cfdisk.c:2179
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "Det här är cfdisk, ett curses-baserat diskpartitioneringsprogram."
 
-#: disk-utils/cfdisk.c:2182
+#: disk-utils/cfdisk.c:2180
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "Det låter dig skapa, ta bort och ändra partitioner på en blockenhet."
 
-#: disk-utils/cfdisk.c:2184
+#: disk-utils/cfdisk.c:2182
 msgid "Command      Meaning"
 msgstr "Kommando     Betydelse"
 
-#: disk-utils/cfdisk.c:2185
+#: disk-utils/cfdisk.c:2183
 msgid "-------      -------"
 msgstr "--------     ---------"
 
-#: disk-utils/cfdisk.c:2186
+#: disk-utils/cfdisk.c:2184
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Slå på/av startbarhetsflaggan på aktuell partition"
 
-#: disk-utils/cfdisk.c:2187
+#: disk-utils/cfdisk.c:2185
 msgid "  d          Delete the current partition"
 msgstr "  d          Ta bort aktuell partition"
 
-#: disk-utils/cfdisk.c:2188
+#: disk-utils/cfdisk.c:2186
 msgid "  h          Print this screen"
 msgstr "  h          Visa denna hjälpskärm"
 
-#: disk-utils/cfdisk.c:2189
+#: disk-utils/cfdisk.c:2187
 msgid "  n          Create new partition from free space"
 msgstr "  n          Skapa en ny partition från ledigt utrymme"
 
-#: disk-utils/cfdisk.c:2190
+#: disk-utils/cfdisk.c:2188
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Avsluta programmet utan att skriva partitionstabellen"
 
-#: disk-utils/cfdisk.c:2191
+#: disk-utils/cfdisk.c:2189
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s          Fixa partitionsordning (bara när de är i oordning)"
 
-#: disk-utils/cfdisk.c:2192
+#: disk-utils/cfdisk.c:2190
 msgid "  t          Change the partition type"
 msgstr "  t          Byt partitionstypen"
 
-#: disk-utils/cfdisk.c:2193
+#: disk-utils/cfdisk.c:2191
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u          Dumpa disklayout till sfdisk-kompatibel skriptfil"
 
-#: disk-utils/cfdisk.c:2194
+#: disk-utils/cfdisk.c:2192
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W          Skriv partitionstabellen till disk (måste vara ett versalt W);"
 
-#: disk-utils/cfdisk.c:2195
+#: disk-utils/cfdisk.c:2193
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "             eftersom detta kan förstöra data på disken måste du antingen"
 
-#: disk-utils/cfdisk.c:2196
+#: disk-utils/cfdisk.c:2194
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "             bekräfta eller avvisa skrivningen genom att skriva in ”ja” eller ”nej”"
 
-#: disk-utils/cfdisk.c:2197
+#: disk-utils/cfdisk.c:2195
 msgid "  x          Display/hide extra information about a partition"
 msgstr "  x          Visa/dölj extra information om en partition"
 
-#: disk-utils/cfdisk.c:2198
+#: disk-utils/cfdisk.c:2196
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Pil upp      Flytta markören till föregående partition"
 
-#: disk-utils/cfdisk.c:2199
+#: disk-utils/cfdisk.c:2197
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Pil ned      Flytta markören till nästa partition"
 
-#: disk-utils/cfdisk.c:2200
+#: disk-utils/cfdisk.c:2198
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "Pil vänster  Flytta markör till föregående menyobjekt"
 
-#: disk-utils/cfdisk.c:2201
+#: disk-utils/cfdisk.c:2199
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "Pil höger    Flytta markör till nästa menyobjekt"
 
-#: disk-utils/cfdisk.c:2203
+#: disk-utils/cfdisk.c:2201
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Obs: Alla kommandon kan anges antingen med små eller stora bokstäver"
 
-#: disk-utils/cfdisk.c:2204
+#: disk-utils/cfdisk.c:2202
 msgid "case letters (except for Write)."
 msgstr "(förutom Skriv)."
 
-#: disk-utils/cfdisk.c:2206
+#: disk-utils/cfdisk.c:2204
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr "Använd lsblk(8) eller partx(8) för att se fler detaljer om enheten."
 
-#: disk-utils/cfdisk.c:2216 disk-utils/cfdisk.c:2519
+#: disk-utils/cfdisk.c:2214 disk-utils/cfdisk.c:2517
 msgid "Press a key to continue."
 msgstr "Tryck på en tangent för att fortsätta."
 
-#: disk-utils/cfdisk.c:2302
+#: disk-utils/cfdisk.c:2300
 msgid "Could not toggle the flag."
 msgstr "Kunde inte växla flaggan."
 
-#: disk-utils/cfdisk.c:2312
+#: disk-utils/cfdisk.c:2310
 #, c-format
 msgid "Could not delete partition %zu."
 msgstr "Kunde inte ta bort partition %zu."
 
-#: disk-utils/cfdisk.c:2314 disk-utils/fdisk-menu.c:660
+#: disk-utils/cfdisk.c:2312 disk-utils/fdisk-menu.c:660
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Partition %zu har tagits bort."
 
-#: disk-utils/cfdisk.c:2335
+#: disk-utils/cfdisk.c:2333
 msgid "Partition size: "
 msgstr "Partitionsstorlek: "
 
-#: disk-utils/cfdisk.c:2376
+#: disk-utils/cfdisk.c:2374
 #, c-format
 msgid "Changed type of partition %zu."
 msgstr "Ändrade typen för partition %zu."
 
-#: disk-utils/cfdisk.c:2378
+#: disk-utils/cfdisk.c:2376
 #, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "Typen för partition %zu är oförändrad."
 
-#: disk-utils/cfdisk.c:2399
+#: disk-utils/cfdisk.c:2397
 msgid "New size: "
 msgstr "Ny storlek: "
 
-#: disk-utils/cfdisk.c:2414
+#: disk-utils/cfdisk.c:2412
 #, c-format
 msgid "Partition %zu resized."
 msgstr "Partition %zu har ändrat storlek."
 
-#: disk-utils/cfdisk.c:2432 disk-utils/cfdisk.c:2548 disk-utils/fdisk.c:1076
+#: disk-utils/cfdisk.c:2430 disk-utils/cfdisk.c:2546 disk-utils/fdisk.c:1076
 #: disk-utils/fdisk-menu.c:591
 msgid "Device is open in read-only mode."
 msgstr "Enheten är öppen i skrivskyddat läge."
 
-#: disk-utils/cfdisk.c:2437
+#: disk-utils/cfdisk.c:2435
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Är du säker på att du vill skriva partitionstabellen till disk? "
 
-#: disk-utils/cfdisk.c:2439
+#: disk-utils/cfdisk.c:2437
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Skriv in ”ja” eller ”nej” eller tryck ESC för att lämna denna dialog."
 
-#: disk-utils/cfdisk.c:2444 login-utils/lslogins.c:211 sys-utils/lscpu.c:1563
+#: disk-utils/cfdisk.c:2442 login-utils/lslogins.c:211 sys-utils/lscpu.c:1563
 #: sys-utils/lscpu.c:1573 sys-utils/lsmem.c:266
 msgid "yes"
 msgstr "ja"
 
-#: disk-utils/cfdisk.c:2445
+#: disk-utils/cfdisk.c:2443
 msgid "Did not write partition table to disk."
 msgstr "Skrev inte partitionstabellen till disk."
 
-#: disk-utils/cfdisk.c:2450
+#: disk-utils/cfdisk.c:2448
 msgid "Failed to write disklabel."
 msgstr "Misslyckades med att skriva disketikett."
 
-#: disk-utils/cfdisk.c:2456 disk-utils/fdisk-menu.c:599
+#: disk-utils/cfdisk.c:2454 disk-utils/fdisk-menu.c:599
 msgid "The partition table has been altered."
 msgstr "Partitionstabellen har ändrats."
 
-#: disk-utils/cfdisk.c:2479 disk-utils/cfdisk.c:2550
+#: disk-utils/cfdisk.c:2477 disk-utils/cfdisk.c:2548
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Notera att posterna i partitionstabellen inte är i diskordning nu."
 
-#: disk-utils/cfdisk.c:2516
+#: disk-utils/cfdisk.c:2514
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr "Enheten innehåller redan en %s-signatur; den kommer att tas bort genom ett skrivkommando."
 
-#: disk-utils/cfdisk.c:2527
+#: disk-utils/cfdisk.c:2525
 msgid "failed to create a new disklabel"
 msgstr "misslyckades med att skapa en ny disketikett"
 
-#: disk-utils/cfdisk.c:2535
+#: disk-utils/cfdisk.c:2533
 msgid "failed to read partitions"
 msgstr "misslyckades med att läsa partitioner"
 
-#: disk-utils/cfdisk.c:2634
+#: disk-utils/cfdisk.c:2632
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [flaggor] <disk>\n"
 
-#: disk-utils/cfdisk.c:2637 disk-utils/fdisk.c:822 disk-utils/sfdisk.c:1848
+#: disk-utils/cfdisk.c:2635 disk-utils/fdisk.c:822 disk-utils/sfdisk.c:1848
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Visa eller manipulera en diskpartitionstabell.\n"
 
-#: disk-utils/cfdisk.c:2640
+#: disk-utils/cfdisk.c:2638
 msgid " -L, --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr " -L, --color[=<när>]      färglägg utmatning (auto, always eller never)\n"
 
-#: disk-utils/cfdisk.c:2643
+#: disk-utils/cfdisk.c:2641
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               börja med en nollställd partitionstabell\n"
 
-#: disk-utils/cfdisk.c:2681 disk-utils/fdisk.c:964 disk-utils/sfdisk.c:2123
+#: disk-utils/cfdisk.c:2679 disk-utils/fdisk.c:964 disk-utils/sfdisk.c:2123
 #: misc-utils/cal.c:429 sys-utils/dmesg.c:1409 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "färgläge stöds ej"
 
-#: disk-utils/cfdisk.c:2700 disk-utils/fdisk.c:902 disk-utils/sfdisk.c:224
+#: disk-utils/cfdisk.c:2698 disk-utils/fdisk.c:902 disk-utils/sfdisk.c:224
 msgid "failed to allocate libfdisk context"
 msgstr "misslyckades med att allokera libfdisk-kontext"
 
@@ -744,8 +743,8 @@ msgstr ""
 "Fortsätter… "
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641
-#: sys-utils/blkdiscard.c:85 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641 sys-utils/blkdiscard.c:85
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [flaggor] <enhet>\n"
@@ -1078,21 +1077,21 @@ msgstr "raderingsläge stöds ej"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Enhetsegenskaperna (sektorstorlek och geometri) bör endast användas med en enhet."
 
-#: disk-utils/fdisk.c:1046 disk-utils/fdisk.c:1061
-#: disk-utils/fsck.cramfs.c:694 disk-utils/mkfs.bfs.c:192
-#: disk-utils/mkfs.cramfs.c:786 disk-utils/partx.c:974 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:519 misc-utils/findfs.c:58 misc-utils/look.c:149
-#: misc-utils/whereis.c:586 misc-utils/whereis.c:597 misc-utils/whereis.c:608
-#: misc-utils/whereis.c:650 schedutils/chrt.c:504 schedutils/ionice.c:262
-#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:422
-#: sys-utils/dmesg.c:1470 sys-utils/ipcmk.c:134 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:913 sys-utils/lscpu.c:2349 sys-utils/lsmem.c:631
-#: sys-utils/mount.c:809 sys-utils/mount.c:817 sys-utils/mount.c:864
-#: sys-utils/mount.c:877 sys-utils/mount.c:949 sys-utils/mountpoint.c:179
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:229 sys-utils/swapon.c:993
-#: sys-utils/switch_root.c:249 sys-utils/umount.c:583
-#: term-utils/setterm.c:1179 text-utils/col.c:233 text-utils/more.c:1986
+#: disk-utils/fdisk.c:1046 disk-utils/fdisk.c:1061 disk-utils/fsck.cramfs.c:694
+#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:786
+#: disk-utils/partx.c:974 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:519
+#: misc-utils/findfs.c:58 misc-utils/look.c:149 misc-utils/whereis.c:586
+#: misc-utils/whereis.c:597 misc-utils/whereis.c:608 misc-utils/whereis.c:650
+#: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:188
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1470
+#: sys-utils/ipcmk.c:134 sys-utils/ldattach.c:321 sys-utils/losetup.c:913
+#: sys-utils/lscpu.c:2349 sys-utils/lsmem.c:631 sys-utils/mount.c:809
+#: sys-utils/mount.c:817 sys-utils/mount.c:864 sys-utils/mount.c:877
+#: sys-utils/mount.c:949 sys-utils/mountpoint.c:179 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:229 sys-utils/swapon.c:993 sys-utils/switch_root.c:249
+#: sys-utils/umount.c:587 term-utils/setterm.c:1179 text-utils/col.c:233
+#: text-utils/more.c:1986
 msgid "bad usage"
 msgstr "felaktig användning"
 
@@ -5313,7 +5312,7 @@ msgid_plural "sectors"
 msgstr[0] "sektor"
 msgstr[1] "sektorer"
 
-#: libfdisk/src/context.c:1446
+#: libfdisk/src/context.c:1450
 msgid "Incomplete geometry setting."
 msgstr "Ofullständig geometriinställning."
 
@@ -6710,269 +6709,269 @@ msgstr ""
 msgid "operation failed: %m"
 msgstr "åtgärd misslyckades: %m"
 
-#: libmount/src/context_mount.c:1554
+#: libmount/src/context_mount.c:1556
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "VARNING: misslyckades med att tillämpa propageringsflaggor"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1566
 #, c-format
 msgid "WARNING: device write-protected, mounted read-only"
 msgstr "VARNING: enhet skrivskyddad, monterad som endast läsbar"
 
-#: libmount/src/context_mount.c:1578
+#: libmount/src/context_mount.c:1580
 #, c-format
 msgid "operation permitted for root only"
 msgstr "åtgärd endast tillåten för root"
 
-#: libmount/src/context_mount.c:1582
+#: libmount/src/context_mount.c:1584
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s är redan monterad"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1590
 #, c-format
 msgid "can't find in %s"
 msgstr "kan inte hitta i %s"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1593
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "kan inte hitta monteringspunkt i %s"
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1596
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "kan inte hitta monteringskälla %s i %s"
 
-#: libmount/src/context_mount.c:1599
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "ytterligare filsystemsdetektering för %s; använd -t <typ> eller wipefs(8)"
 
-#: libmount/src/context_mount.c:1604
+#: libmount/src/context_mount.c:1606
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "misslyckades med att identifiera filsystemstyp"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1607
 #, c-format
 msgid "no filesystem type specified"
 msgstr "ingen filsystemstyp angiven"
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1614
 #, c-format
 msgid "can't find %s"
 msgstr "kan inte hitta %s"
 
-#: libmount/src/context_mount.c:1614
+#: libmount/src/context_mount.c:1616
 #, c-format
 msgid "no mount source specified"
 msgstr "ingen monteringspunkt angiven"
 
-#: libmount/src/context_mount.c:1620
+#: libmount/src/context_mount.c:1622
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "misslyckades med att tolka monteringsflaggor: %m"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1623
 #, c-format
 msgid "failed to parse mount options"
 msgstr "misslyckades med att tolka monteringsflaggor"
 
-#: libmount/src/context_mount.c:1625
+#: libmount/src/context_mount.c:1627
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "misslyckades med att ställa in loopenhet för %s"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1631
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "överlappande loopenhet existerar för %s"
 
-#: libmount/src/context_mount.c:1633 libmount/src/context_umount.c:1207
+#: libmount/src/context_mount.c:1635 libmount/src/context_umount.c:1207
 #, c-format
 msgid "locking failed"
 msgstr "låsning misslyckades"
 
-#: libmount/src/context_mount.c:1637 libmount/src/context_umount.c:1211
+#: libmount/src/context_mount.c:1639 libmount/src/context_umount.c:1211
 #: sys-utils/umount.c:238 sys-utils/umount.c:254
 #, c-format
 msgid "failed to switch namespace"
 msgstr "misslyckades med att växla namnrymd"
 
-#: libmount/src/context_mount.c:1640
+#: libmount/src/context_mount.c:1642
 #, c-format
 msgid "mount failed: %m"
 msgstr "mount misslyckades: %m"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1652
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "filsystemet monterades, men misslyckades med att uppdatera monteringstabell i användarrymd"
 
-#: libmount/src/context_mount.c:1654
+#: libmount/src/context_mount.c:1656
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "filsystemet monterades, men misslyckades med att växla tillbaka namnrymden"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1661
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "filsystemet monterades, men efterföljande åtgärd misslyckades: %m"
 
-#: libmount/src/context_mount.c:1677 libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1679 libmount/src/context_mount.c:1736
 #, c-format
 msgid "mount point is not a directory"
 msgstr "monteringspunkt är inte en katalog"
 
-#: libmount/src/context_mount.c:1679 login-utils/newgrp.c:226
+#: libmount/src/context_mount.c:1681 login-utils/newgrp.c:226
 #, c-format
 msgid "permission denied"
 msgstr "åtkomst nekas"
 
-#: libmount/src/context_mount.c:1681
+#: libmount/src/context_mount.c:1683
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "måste vara superanvändare för att använda mount"
 
-#: libmount/src/context_mount.c:1691
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "mount point is busy"
 msgstr "monteringspunkt är upptagen"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1706
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s är redan monterad på %s"
 
-#: libmount/src/context_mount.c:1710
+#: libmount/src/context_mount.c:1712
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s är redan monterad eller så är monteringspunkten upptagen"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1718
 #, c-format
 msgid "mount point does not exist"
 msgstr "monteringspunkt finns inte"
 
-#: libmount/src/context_mount.c:1719
+#: libmount/src/context_mount.c:1721
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "monteringspunkt är en symbolisk länk till ingenstans"
 
-#: libmount/src/context_mount.c:1724
+#: libmount/src/context_mount.c:1726
 #, c-format
 msgid "special device %s does not exist"
 msgstr "specialenhet %s finns inte"
 
-#: libmount/src/context_mount.c:1727 libmount/src/context_mount.c:1743
-#: libmount/src/context_mount.c:1827 libmount/src/context_mount.c:1850
+#: libmount/src/context_mount.c:1729 libmount/src/context_mount.c:1745
+#: libmount/src/context_mount.c:1829 libmount/src/context_mount.c:1852
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) systemanrop misslyckades: %m"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1741
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specialenhet %s finns inte (ett sökvägsprefix är inte en katalog)"
 
-#: libmount/src/context_mount.c:1751
+#: libmount/src/context_mount.c:1753
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "monteringspunkt inte monterad eller felaktig flagga"
 
-#: libmount/src/context_mount.c:1753
+#: libmount/src/context_mount.c:1755
 #, c-format
 msgid "not mount point or bad option"
 msgstr "inte en monteringspunkt eller felaktig flagga"
 
-#: libmount/src/context_mount.c:1756
+#: libmount/src/context_mount.c:1758
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "felaktig flagga; att flytta en montering som finns under en delad montering stöds inte"
 
-#: libmount/src/context_mount.c:1760
+#: libmount/src/context_mount.c:1762
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "felaktig flagga; för flera filsystem (t.ex. nfs, cifs) kan du behöva ett hjälpprogram /sbin/mount.<typ>"
 
-#: libmount/src/context_mount.c:1764
+#: libmount/src/context_mount.c:1766
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "fel filsystemstyp, felaktig flagga, felaktigt superblock på %s, teckentabell eller hjälpprogram saknas, eller annat fel"
 
-#: libmount/src/context_mount.c:1771
+#: libmount/src/context_mount.c:1773
 #, c-format
 msgid "mount table full"
 msgstr "monteringstabellen full"
 
-#: libmount/src/context_mount.c:1776
+#: libmount/src/context_mount.c:1778
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "kan inte läsa superblock på %s"
 
-#: libmount/src/context_mount.c:1783
+#: libmount/src/context_mount.c:1785
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "okänd filsystemstyp ”%s”"
 
-#: libmount/src/context_mount.c:1786
+#: libmount/src/context_mount.c:1788
 #, c-format
 msgid "unknown filesystem type"
 msgstr "okänd filsystemstyp"
 
-#: libmount/src/context_mount.c:1795
+#: libmount/src/context_mount.c:1797
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s är inte en blockenhet, och stat(2) misslyckas?"
 
-#: libmount/src/context_mount.c:1798
+#: libmount/src/context_mount.c:1800
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "kärnan känner inte igen %s som en blockenhet; kanske ”modprobe drivrutin” är nödvändigt"
 
-#: libmount/src/context_mount.c:1801
+#: libmount/src/context_mount.c:1803
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s är inte en blockenhet, prova med ”-o loop”"
 
-#: libmount/src/context_mount.c:1803
+#: libmount/src/context_mount.c:1805
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s är inte en blockenhet"
 
-#: libmount/src/context_mount.c:1810
+#: libmount/src/context_mount.c:1812
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s är inte en giltig blockenhet"
 
-#: libmount/src/context_mount.c:1818
+#: libmount/src/context_mount.c:1820
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "kan inte montera %s som endast läsbar"
 
-#: libmount/src/context_mount.c:1820
+#: libmount/src/context_mount.c:1822
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s är skrivskyddad men en explicit skrivbart läge begärdes"
 
-#: libmount/src/context_mount.c:1822
+#: libmount/src/context_mount.c:1824
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "kan inte återmontera %s för läsning/skrivning, den är skrivskyddad"
 
-#: libmount/src/context_mount.c:1824
+#: libmount/src/context_mount.c:1826
 #, c-format
 msgid "bind %s failed"
 msgstr "bind %s misslyckades"
 
-#: libmount/src/context_mount.c:1835
+#: libmount/src/context_mount.c:1837
 #, c-format
 msgid "no medium found on %s"
 msgstr "inget media hittat på %s"
 
-#: libmount/src/context_mount.c:1842
+#: libmount/src/context_mount.c:1844
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "kan inte montera; förmodligen korrupt filsystem på %s"
@@ -9057,8 +9056,8 @@ msgid "can't read %s"
 msgstr "kan inte läsa %s"
 
 #: misc-utils/findmnt.c:1024 misc-utils/findmnt.c:1090
-#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:483
-#: sys-utils/fstrim.c:246 sys-utils/mount.c:133 sys-utils/mount.c:181
+#: misc-utils/findmnt-verify.c:95 misc-utils/findmnt-verify.c:487
+#: sys-utils/fstrim.c:279 sys-utils/mount.c:133 sys-utils/mount.c:181
 #: sys-utils/mount.c:248 sys-utils/swapoff.c:55 sys-utils/swapoff.c:154
 #: sys-utils/swapon.c:248 sys-utils/swapon.c:278 sys-utils/swapon.c:737
 #: sys-utils/umount.c:187
@@ -9277,7 +9276,7 @@ msgstr "--poll accepterar bara en fil, men fler angivna av --tab-file"
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "flaggorna --target och --source kan inte användas tillsammans med kommandoradselement som inte är en flagga"
 
-#: misc-utils/findmnt.c:1602 sys-utils/fstrim.c:266
+#: misc-utils/findmnt.c:1602 sys-utils/fstrim.c:259
 msgid "failed to initialize libmount cache"
 msgstr "misslyckades med att initiera libmount-cachen"
 
@@ -9286,176 +9285,176 @@ msgstr "misslyckades med att initiera libmount-cachen"
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "%s-kolumnen är begärd, men --poll är inte aktiverad"
 
-#: misc-utils/findmnt-verify.c:118
+#: misc-utils/findmnt-verify.c:119
 msgid "target specified more than once"
 msgstr "mål angivet mer än en gång"
 
-#: misc-utils/findmnt-verify.c:120
+#: misc-utils/findmnt-verify.c:121
 #, c-format
 msgid "wrong order: %s specified before %s"
 msgstr "felaktig ordning: %s angavs före %s"
 
-#: misc-utils/findmnt-verify.c:134
+#: misc-utils/findmnt-verify.c:135
 msgid "undefined target (fs_file)"
 msgstr "odefinierat mål (fs_file)"
 
-#: misc-utils/findmnt-verify.c:141
+#: misc-utils/findmnt-verify.c:142
 #, c-format
 msgid "non-canonical target path (real: %s)"
 msgstr "icke-kanonisk målsökväg (verklig: %s)"
 
-#: misc-utils/findmnt-verify.c:146
+#: misc-utils/findmnt-verify.c:147
 #, c-format
 msgid "unreachable on boot required target: %m"
 msgstr "nåbart mål som krävs vid uppstart: %m"
 
-#: misc-utils/findmnt-verify.c:148
+#: misc-utils/findmnt-verify.c:149
 #, c-format
 msgid "unreachable target: %m"
 msgstr "onåbart mål: %m"
 
-#: misc-utils/findmnt-verify.c:152
+#: misc-utils/findmnt-verify.c:153
 msgid "target is not a directory"
 msgstr "mål är inte en katalog"
 
-#: misc-utils/findmnt-verify.c:154
+#: misc-utils/findmnt-verify.c:155
 msgid "target exists"
 msgstr "mål existerar"
 
-#: misc-utils/findmnt-verify.c:166
+#: misc-utils/findmnt-verify.c:167
 #, c-format
 msgid "unreachable on boot required source: %s=%s"
 msgstr "onåbar källa som krävs vid uppstart: %s=%s"
 
-#: misc-utils/findmnt-verify.c:168
+#: misc-utils/findmnt-verify.c:169
 #, c-format
 msgid "unreachable: %s=%s"
 msgstr "onåbar: %s=%s"
 
-#: misc-utils/findmnt-verify.c:170
+#: misc-utils/findmnt-verify.c:171
 #, c-format
 msgid "%s=%s translated to %s"
 msgstr "%s= %s översatt till %s"
 
-#: misc-utils/findmnt-verify.c:191
+#: misc-utils/findmnt-verify.c:192
 msgid "undefined source (fs_spec)"
 msgstr "odefinierat mål (fs_spec)"
 
-#: misc-utils/findmnt-verify.c:200
+#: misc-utils/findmnt-verify.c:201
 #, c-format
 msgid "unsupported source tag: %s"
 msgstr "källtagg stöds inte: %s"
 
-#: misc-utils/findmnt-verify.c:207
+#: misc-utils/findmnt-verify.c:208
 #, c-format
 msgid "do not check %s source (pseudo/net)"
 msgstr "kontrollera inte %s-källa (pseudo/net)"
 
-#: misc-utils/findmnt-verify.c:210
+#: misc-utils/findmnt-verify.c:211
 #, c-format
 msgid "unreachable source: %s: %m"
 msgstr "onåbar enhet: %s: %m"
 
-#: misc-utils/findmnt-verify.c:213
+#: misc-utils/findmnt-verify.c:214
 #, c-format
 msgid "non-bind mount source %s is a directory or regular file"
 msgstr "källa %s för icke-bindningsmontering är en katalog eller en vanlig fil"
 
-#: misc-utils/findmnt-verify.c:216
+#: misc-utils/findmnt-verify.c:217
 #, c-format
 msgid "source %s is not a block device"
 msgstr "källa %s är inte en blockenhet"
 
-#: misc-utils/findmnt-verify.c:218
+#: misc-utils/findmnt-verify.c:219
 #, c-format
 msgid "source %s exists"
 msgstr "källa %s existerar"
 
-#: misc-utils/findmnt-verify.c:231
+#: misc-utils/findmnt-verify.c:232
 #, c-format
 msgid "VFS options: %s"
 msgstr "VFS-flaggor: %s"
 
-#: misc-utils/findmnt-verify.c:235
+#: misc-utils/findmnt-verify.c:236
 #, c-format
 msgid "FS options: %s"
 msgstr "FS-flaggor: %s"
 
-#: misc-utils/findmnt-verify.c:239
+#: misc-utils/findmnt-verify.c:240
 #, c-format
 msgid "userspace options: %s"
 msgstr "flaggor för användarrymd: %s"
 
-#: misc-utils/findmnt-verify.c:253
+#: misc-utils/findmnt-verify.c:254
 #, c-format
 msgid "unsupported swaparea discard policy: %s"
 msgstr "kasseringspolicy för växlingsområde stöds ej: %s"
 
-#: misc-utils/findmnt-verify.c:261
+#: misc-utils/findmnt-verify.c:262
 msgid "failed to parse swaparea priority option"
 msgstr "misslyckades med att tolka flagga för växlingsområdesprioritet"
 
-#: misc-utils/findmnt-verify.c:397
+#: misc-utils/findmnt-verify.c:398
 #, c-format
 msgid "do not check %s FS type (pseudo/net)"
 msgstr "kontrollera inte %s-FS-typ (pseudo/net)"
 
 # sebras: typo in the english text
-#: misc-utils/findmnt-verify.c:407
+#: misc-utils/findmnt-verify.c:408
 msgid "\"none\" FS type is recommended for bind or move oprations only"
 msgstr "FS-typen ”none” rekommenderas endast för eller bindnings- eller förflyttningsåtgärder"
 
-#: misc-utils/findmnt-verify.c:415
+#: misc-utils/findmnt-verify.c:418
 #, c-format
 msgid "%s seems unsupported by the current kernel"
 msgstr "%s verkar sakna stöd hos den aktuella kärnan"
 
-#: misc-utils/findmnt-verify.c:421 misc-utils/findmnt-verify.c:422
+#: misc-utils/findmnt-verify.c:424 misc-utils/findmnt-verify.c:425
 msgid "cannot detect on-disk filesystem type"
 msgstr "kan inte identifiera filsystemstyp på disk"
 
-#: misc-utils/findmnt-verify.c:429
+#: misc-utils/findmnt-verify.c:433
 #, c-format
 msgid "%s does not match with on-disk %s"
 msgstr "%s matchar inte den på disk: %s"
 
-#: misc-utils/findmnt-verify.c:432
+#: misc-utils/findmnt-verify.c:436
 #, c-format
 msgid "on-disk %s seems unsupported by the current kernel"
 msgstr "%s på disk verkar sakna stöd hos den aktuella kärnan"
 
-#: misc-utils/findmnt-verify.c:434
+#: misc-utils/findmnt-verify.c:438
 #, c-format
 msgid "FS type is %s"
 msgstr "FS-typ är %s"
 
-#: misc-utils/findmnt-verify.c:446
+#: misc-utils/findmnt-verify.c:450
 #, c-format
 msgid "recommended root FS passno is 1 (current is %d)"
 msgstr "rekommenderat root-FS passno är 1 (är %d nu)"
 
-#: misc-utils/findmnt-verify.c:513
+#: misc-utils/findmnt-verify.c:519
 #, c-format
 msgid "%d parse error"
 msgid_plural "%d parse errors"
 msgstr[0] "%d tolkningsfel"
 msgstr[1] "%d tolkningsfel"
 
-#: misc-utils/findmnt-verify.c:514
+#: misc-utils/findmnt-verify.c:520
 #, c-format
 msgid ", %d error"
 msgid_plural ", %d errors"
 msgstr[0] ", %d fel"
 msgstr[1] ", %d fel"
 
-#: misc-utils/findmnt-verify.c:515
+#: misc-utils/findmnt-verify.c:521
 #, c-format
 msgid ", %d warning"
 msgid_plural ", %d warnings"
 msgstr[0] ", %d varning"
 msgstr[1] ", %d varningar"
 
-#: misc-utils/findmnt-verify.c:518
+#: misc-utils/findmnt-verify.c:524
 #, c-format
 msgid "Success, no errors or warnings detected\n"
 msgstr "Framgång, inga fel eller varningar detekterade\n"
@@ -10459,7 +10458,7 @@ msgstr[1] "Fick %zu byte från %s\n"
 msgid "closing %s failed"
 msgstr "stängning av %s misslyckades"
 
-#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:140 sys-utils/fstrim.c:415
+#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:140 sys-utils/fstrim.c:439
 #: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "misslyckades med att tolka längd"
@@ -11541,7 +11540,7 @@ msgstr " -z, --zeroout       fyll med nollor istället för att kassera\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose       skriv ut justerad längd och position\n"
 
-#: sys-utils/blkdiscard.c:144 sys-utils/fstrim.c:419 sys-utils/losetup.c:706
+#: sys-utils/blkdiscard.c:144 sys-utils/fstrim.c:443 sys-utils/losetup.c:706
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "misslyckades med att tolka position"
@@ -11550,8 +11549,8 @@ msgstr "misslyckades med att tolka position"
 msgid "failed to parse step"
 msgstr "misslyckades med att tolka steg"
 
-#: sys-utils/blkdiscard.c:175 sys-utils/blkzone.c:406
-#: sys-utils/fallocate.c:376 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:447
+#: sys-utils/blkdiscard.c:175 sys-utils/blkzone.c:406 sys-utils/fallocate.c:376
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:471 sys-utils/umount.c:577
 msgid "unexpected number of arguments"
 msgstr "oväntat antal argument"
 
@@ -12986,67 +12985,67 @@ msgstr "%s: %s (%<PRIu64> byte) trimmad på %s\n"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> byte) trimmade\n"
 
-#: sys-utils/fstrim.c:253 sys-utils/lsns.c:1078 sys-utils/swapon.c:733
+#: sys-utils/fstrim.c:249 sys-utils/lsns.c:1078 sys-utils/swapon.c:733
 #: sys-utils/umount.c:248
 #, c-format
 msgid "failed to parse %s"
 msgstr "misslyckades med att tolka %s"
 
-#: sys-utils/fstrim.c:274
+#: sys-utils/fstrim.c:267
 msgid "failed to allocate FS handler"
 msgstr "misslyckades med att allokera FS-hanterare"
 
-#: sys-utils/fstrim.c:330 sys-utils/fstrim.c:456
+#: sys-utils/fstrim.c:354 sys-utils/fstrim.c:480
 #, c-format
 msgid "%s: the discard operation is not supported"
 msgstr "%s: kasseringsoperationen stöds inte"
 
-#: sys-utils/fstrim.c:351
+#: sys-utils/fstrim.c:375
 #, c-format
 msgid " %s [options] <mount point>\n"
 msgstr " %s [flaggor] <monteringspunkt>\n"
 
-#: sys-utils/fstrim.c:354
+#: sys-utils/fstrim.c:378
 msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr "Kassera oanvända block för ett monterat filsystem.\n"
 
-#: sys-utils/fstrim.c:357
+#: sys-utils/fstrim.c:381
 msgid " -a, --all           trim all supported mounted filesystems\n"
 msgstr " -a, --all           trimma alla monterade filsystem som stöds\n"
 
-#: sys-utils/fstrim.c:358
+#: sys-utils/fstrim.c:382
 msgid " -A, --fstab         trim all supported mounted filesystems from /etc/fstab\n"
 msgstr " -A, --fstab         trimma alla monterade filsystem från /etc/fstab som stöds\n"
 
-#: sys-utils/fstrim.c:359
+#: sys-utils/fstrim.c:383
 msgid " -o, --offset <num>  the offset in bytes to start discarding from\n"
 msgstr " -o, --offset <num>  positionen i byte att börja kassera från\n"
 
-#: sys-utils/fstrim.c:360
+#: sys-utils/fstrim.c:384
 msgid " -l, --length <num>  the number of bytes to discard\n"
 msgstr " -l, --length <num>  antalet byte att kassera\n"
 
-#: sys-utils/fstrim.c:361
+#: sys-utils/fstrim.c:385
 msgid " -m, --minimum <num> the minimum extent length to discard\n"
 msgstr " -m, --minimum <num> minsta utsträckningslängd att kassera\n"
 
-#: sys-utils/fstrim.c:362
+#: sys-utils/fstrim.c:386
 msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose       skriv ut antalet kasserade byte\n"
 
-#: sys-utils/fstrim.c:363
+#: sys-utils/fstrim.c:387
 msgid "     --quiet         suppress error messages\n"
 msgstr "     --quiet         undertryck felmeddelanden\n"
 
-#: sys-utils/fstrim.c:364
+#: sys-utils/fstrim.c:388
 msgid " -n, --dry-run       does everything, but trim\n"
 msgstr " -n, --dry-run       gör allting förutom att trimma\n"
 
-#: sys-utils/fstrim.c:423
+#: sys-utils/fstrim.c:447
 msgid "failed to parse minimum extent length"
 msgstr "misslyckades med att tolka minsta utsträckning"
 
-#: sys-utils/fstrim.c:442
+#: sys-utils/fstrim.c:466
 msgid "no mountpoint specified"
 msgstr "ingen monteringspunkt angavs"
 
@@ -19223,16 +19222,16 @@ msgstr "--nobanner är endast tillgänglig för root"
 msgid "invalid timeout argument: %s"
 msgstr "ogiltigt tidsgränsargument: %s"
 
-#: term-utils/wall.c:357
+#: term-utils/wall.c:359
 msgid "cannot get passwd uid"
 msgstr "kan inte hämta passwd uid"
 
-#: term-utils/wall.c:381
+#: term-utils/wall.c:383
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Meddelande till alla från %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:414
+#: term-utils/wall.c:416
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "kommer inte att läsa %s - använd standard in."

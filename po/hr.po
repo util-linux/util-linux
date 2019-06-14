@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-05-30 12:09+0200\n"
+"POT-Creation-Date: 2019-06-14 12:14+0200\n"
 "PO-Revision-Date: 2019-05-30 18:20-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -44,7 +44,7 @@ msgid "not enough arguments"
 msgstr "nema dovoljno argumenata"
 
 #: disk-utils/addpart.c:57 disk-utils/blockdev.c:293 disk-utils/blockdev.c:437
-#: disk-utils/blockdev.c:463 disk-utils/cfdisk.c:2722 disk-utils/delpart.c:58
+#: disk-utils/blockdev.c:463 disk-utils/cfdisk.c:2720 disk-utils/delpart.c:58
 #: disk-utils/fdformat.c:228 disk-utils/fdisk.c:778 disk-utils/fdisk.c:1079
 #: disk-utils/fdisk-list.c:326 disk-utils/fdisk-list.c:366
 #: disk-utils/fdisk-list.c:385 disk-utils/fsck.c:1468
@@ -59,23 +59,23 @@ msgstr "nema dovoljno argumenata"
 #: disk-utils/sfdisk.c:1570 disk-utils/swaplabel.c:65 libfdisk/src/bsd.c:641
 #: login-utils/islocal.c:87 login-utils/last.c:668 login-utils/sulogin.c:444
 #: login-utils/sulogin.c:481 login-utils/utmpdump.c:134
-#: login-utils/utmpdump.c:355 login-utils/utmpdump.c:375
-#: login-utils/vipw.c:261 login-utils/vipw.c:279 misc-utils/findmnt.c:1106
-#: misc-utils/logger.c:1241 misc-utils/mcookie.c:115 misc-utils/uuidd.c:198
-#: sys-utils/blkdiscard.c:181 sys-utils/blkzone.c:96 sys-utils/dmesg.c:524
-#: sys-utils/eject.c:497 sys-utils/eject.c:693 sys-utils/fallocate.c:399
-#: sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:86 sys-utils/hwclock.c:229
-#: sys-utils/hwclock.c:869 sys-utils/hwclock-rtc.c:398
-#: sys-utils/hwclock-rtc.c:433 sys-utils/ldattach.c:392 sys-utils/lscpu.c:517
-#: sys-utils/nsenter.c:129 sys-utils/rfkill.c:192 sys-utils/rfkill.c:553
-#: sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:290 sys-utils/setpriv.c:290
-#: sys-utils/setpriv.c:659 sys-utils/setpriv.c:682 sys-utils/swapon.c:375
-#: sys-utils/swapon.c:518 sys-utils/switch_root.c:167 sys-utils/unshare.c:110
-#: sys-utils/unshare.c:125 sys-utils/wdctl.c:322 sys-utils/wdctl.c:378
-#: sys-utils/zramctl.c:515 term-utils/agetty.c:2869 term-utils/mesg.c:143
-#: term-utils/script.c:540 term-utils/script.c:548 term-utils/script.c:633
+#: login-utils/utmpdump.c:355 login-utils/utmpdump.c:375 login-utils/vipw.c:261
+#: login-utils/vipw.c:279 misc-utils/findmnt.c:1106 misc-utils/logger.c:1241
+#: misc-utils/mcookie.c:115 misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:181
+#: sys-utils/blkzone.c:96 sys-utils/dmesg.c:524 sys-utils/eject.c:497
+#: sys-utils/eject.c:693 sys-utils/fallocate.c:399 sys-utils/fsfreeze.c:116
+#: sys-utils/fstrim.c:86 sys-utils/hwclock.c:229 sys-utils/hwclock.c:869
+#: sys-utils/hwclock-rtc.c:398 sys-utils/hwclock-rtc.c:433
+#: sys-utils/ldattach.c:392 sys-utils/lscpu.c:517 sys-utils/nsenter.c:129
+#: sys-utils/rfkill.c:192 sys-utils/rfkill.c:553 sys-utils/rtcwake.c:137
+#: sys-utils/rtcwake.c:290 sys-utils/setpriv.c:290 sys-utils/setpriv.c:659
+#: sys-utils/setpriv.c:682 sys-utils/swapon.c:375 sys-utils/swapon.c:518
+#: sys-utils/switch_root.c:167 sys-utils/unshare.c:110 sys-utils/unshare.c:125
+#: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:515
+#: term-utils/agetty.c:2869 term-utils/mesg.c:143 term-utils/script.c:540
+#: term-utils/script.c:548 term-utils/script.c:633
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
-#: term-utils/wall.c:418 text-utils/colcrt.c:282 text-utils/more.c:361
+#: term-utils/wall.c:420 text-utils/colcrt.c:282 text-utils/more.c:361
 #: text-utils/rev.c:139 text-utils/ul.c:230
 #, c-format
 msgid "cannot open %s"
@@ -344,355 +344,354 @@ msgstr "Dump"
 msgid "Dump partition table to sfdisk compatible script file"
 msgstr "U = sprema particijsku tablicu kao kompatibilnu sfdisk skriptu"
 
-#: disk-utils/cfdisk.c:646 disk-utils/fdisk.c:463
+#: disk-utils/cfdisk.c:644 disk-utils/fdisk.c:463
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr "**interna programska greška**: nepodržana vrsta dijaloga %d"
 
-#: disk-utils/cfdisk.c:1281
+#: disk-utils/cfdisk.c:1279
 #, c-format
 msgid "%s (mounted)"
 msgstr "%s (montiran)"
 
-#: disk-utils/cfdisk.c:1301
+#: disk-utils/cfdisk.c:1299
 msgid "Partition name:"
 msgstr "Ime particije:"
 
-#: disk-utils/cfdisk.c:1308
+#: disk-utils/cfdisk.c:1306
 msgid "Partition UUID:"
 msgstr "UUID particije:"
 
-#: disk-utils/cfdisk.c:1320
+#: disk-utils/cfdisk.c:1318
 msgid "Partition type:"
 msgstr "Tip particije:"
 
-#: disk-utils/cfdisk.c:1327
+#: disk-utils/cfdisk.c:1325
 msgid "Attributes:"
 msgstr "Atribut(i):"
 
-#: disk-utils/cfdisk.c:1351
+#: disk-utils/cfdisk.c:1349
 msgid "Filesystem UUID:"
 msgstr "UUID datotečnog sustava:"
 
-#: disk-utils/cfdisk.c:1358
+#: disk-utils/cfdisk.c:1356
 msgid "Filesystem LABEL:"
 msgstr "Oznaka datotečnog sustava:"
 
-#: disk-utils/cfdisk.c:1364
+#: disk-utils/cfdisk.c:1362
 msgid "Filesystem:"
 msgstr "Datotečni sustav:"
 
-#: disk-utils/cfdisk.c:1369
+#: disk-utils/cfdisk.c:1367
 msgid "Mountpoint:"
 msgstr "Točka montiranja:"
 
-#: disk-utils/cfdisk.c:1713
+#: disk-utils/cfdisk.c:1711
 #, c-format
 msgid "Disk: %s"
 msgstr "Disk: %s"
 
-#: disk-utils/cfdisk.c:1715
+#: disk-utils/cfdisk.c:1713
 #, c-format
 msgid "Size: %s, %<PRIu64> bytes, %ju sectors"
 msgstr "Veličina: %s, %<PRIu64> bajt(a/ova), %ju sektora"
 
-#: disk-utils/cfdisk.c:1718
+#: disk-utils/cfdisk.c:1716
 #, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "Oznaka: %s, identifikator: %s"
 
-#: disk-utils/cfdisk.c:1721
+#: disk-utils/cfdisk.c:1719
 #, c-format
 msgid "Label: %s"
 msgstr "Oznaka: %s"
 
-#: disk-utils/cfdisk.c:1871
+#: disk-utils/cfdisk.c:1869
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
 msgstr "Broju možete dopisati M za MiB, G za GiB, T za TiB ili S za sektore."
 
-#: disk-utils/cfdisk.c:1877
+#: disk-utils/cfdisk.c:1875
 msgid "Please, specify size."
 msgstr "Niste specificirali veličinu."
 
-#: disk-utils/cfdisk.c:1899
+#: disk-utils/cfdisk.c:1897
 #, c-format
 msgid "Minimum size is %<PRIu64> bytes."
 msgstr "Minimalna veličina je %<PRIu64> bajt(a/ova)."
 
-#: disk-utils/cfdisk.c:1908
+#: disk-utils/cfdisk.c:1906
 #, c-format
 msgid "Maximum size is %<PRIu64> bytes."
 msgstr "Maksimalna veličina je %<PRIu64> bajt(a/ova)."
 
-#: disk-utils/cfdisk.c:1915
+#: disk-utils/cfdisk.c:1913
 msgid "Failed to parse size."
 msgstr "Veličina nije razumljiva."
 
-#: disk-utils/cfdisk.c:1973
+#: disk-utils/cfdisk.c:1971
 msgid "Select partition type"
 msgstr "Odaberite vrstu particije"
 
-#: disk-utils/cfdisk.c:2023 disk-utils/cfdisk.c:2053
+#: disk-utils/cfdisk.c:2021 disk-utils/cfdisk.c:2051
 msgid "Enter script file name: "
 msgstr "Unesite ime datoteke za skriptu: "
 
-#: disk-utils/cfdisk.c:2024
+#: disk-utils/cfdisk.c:2022
 msgid "The script file will be applied to in-memory partition table."
 msgstr "Skripta će se primijeniti na tablicu particija u memoriji."
 
-#: disk-utils/cfdisk.c:2033 disk-utils/cfdisk.c:2075
+#: disk-utils/cfdisk.c:2031 disk-utils/cfdisk.c:2073
 #: disk-utils/fdisk-menu.c:480 disk-utils/fdisk-menu.c:524
 #, c-format
 msgid "Cannot open %s"
 msgstr "Nije moguće otvoriti %s"
 
-#: disk-utils/cfdisk.c:2035 disk-utils/fdisk-menu.c:482
+#: disk-utils/cfdisk.c:2033 disk-utils/fdisk-menu.c:482
 #, c-format
 msgid "Failed to parse script file %s"
 msgstr "Nije uspjelo raščlaniti skriptu u datoteci %s"
 
-#: disk-utils/cfdisk.c:2037 disk-utils/fdisk-menu.c:484
+#: disk-utils/cfdisk.c:2035 disk-utils/fdisk-menu.c:484
 #, c-format
 msgid "Failed to apply script %s"
 msgstr "Nije uspjelo primijeniti skriptu %s"
 
-#: disk-utils/cfdisk.c:2054
+#: disk-utils/cfdisk.c:2052
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr "Trenutačna tablica particija u memoriji bit će spremljena u datoteku."
 
-#: disk-utils/cfdisk.c:2062 disk-utils/fdisk-menu.c:512
+#: disk-utils/cfdisk.c:2060 disk-utils/fdisk-menu.c:512
 msgid "Failed to allocate script handler"
 msgstr "Nije uspjelo rezervirati memoriju za procesiranje skripte"
 
-#: disk-utils/cfdisk.c:2068
+#: disk-utils/cfdisk.c:2066
 msgid "Failed to read disk layout into script."
 msgstr "Nije uspjelo pretvoriti sliku (layout) diska u skriptu."
 
-#: disk-utils/cfdisk.c:2082
+#: disk-utils/cfdisk.c:2080
 msgid "Disk layout successfully dumped."
 msgstr "Slika (layout) diska je uspješno spremljena."
 
-#: disk-utils/cfdisk.c:2085 disk-utils/fdisk-menu.c:530
+#: disk-utils/cfdisk.c:2083 disk-utils/fdisk-menu.c:530
 #, c-format
 msgid "Failed to write script %s"
 msgstr "Nije uspjelo zapisati skriptu %s"
 
-#: disk-utils/cfdisk.c:2121
+#: disk-utils/cfdisk.c:2119
 msgid "Select label type"
 msgstr "Odaberite vrstu oznake"
 
-#: disk-utils/cfdisk.c:2124 disk-utils/fdisk.c:1087
-#: disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2122 disk-utils/fdisk.c:1087 disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "Uređaj ne sadrži prepoznatljivu particijsku tablicu."
 
-#: disk-utils/cfdisk.c:2132
+#: disk-utils/cfdisk.c:2130
 msgid "Select a type to create a new label or press 'L' to load script file."
 msgstr "Odaberite vrstu za novu oznaku ili pritisnite „L“ za učitavanje skripte iz datoteke."
 
-#: disk-utils/cfdisk.c:2181
+#: disk-utils/cfdisk.c:2179
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "Ovo je cfdisk, program za particioniranje diska."
 
-#: disk-utils/cfdisk.c:2182
+#: disk-utils/cfdisk.c:2180
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "Omogućuje stvaranje, brisanje i izmjenu particija na blok-uređaju."
 
-#: disk-utils/cfdisk.c:2184
+#: disk-utils/cfdisk.c:2182
 msgid "Command      Meaning"
 msgstr "Naredba    Značenje"
 
-#: disk-utils/cfdisk.c:2185
+#: disk-utils/cfdisk.c:2183
 msgid "-------      -------"
 msgstr "-------    --------"
 
-#: disk-utils/cfdisk.c:2186
+#: disk-utils/cfdisk.c:2184
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b        aktivira/deaktivira pokretački (bootable) flag ove particije"
 
-#: disk-utils/cfdisk.c:2187
+#: disk-utils/cfdisk.c:2185
 msgid "  d          Delete the current partition"
 msgstr "  d        izbriše aktualnu particiju"
 
-#: disk-utils/cfdisk.c:2188
+#: disk-utils/cfdisk.c:2186
 msgid "  h          Print this screen"
 msgstr "  h        ispiše ovu pomoć koju sada čitate"
 
-#: disk-utils/cfdisk.c:2189
+#: disk-utils/cfdisk.c:2187
 msgid "  n          Create new partition from free space"
 msgstr "  n        kreira novu particiju iz slobodnog prostora"
 
-#: disk-utils/cfdisk.c:2190
+#: disk-utils/cfdisk.c:2188
 msgid "  q          Quit program without writing partition table"
 msgstr "  q        izlaz iz programa bez zapisivanja promjena"
 
-#: disk-utils/cfdisk.c:2191
+#: disk-utils/cfdisk.c:2189
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s        korigira poredak particija (ako nisu u korektno poredane)"
 
-#: disk-utils/cfdisk.c:2192
+#: disk-utils/cfdisk.c:2190
 msgid "  t          Change the partition type"
 msgstr "  t        promijeni vrstu particije"
 
-#: disk-utils/cfdisk.c:2193
+#: disk-utils/cfdisk.c:2191
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u        sliku (layout) diska spremi kao sfdisk kompatibilnu skriptu"
 
-#: disk-utils/cfdisk.c:2194
+#: disk-utils/cfdisk.c:2192
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W        zapiše particijsku tablicu na disk (veliko slovo W);"
 
-#: disk-utils/cfdisk.c:2195
+#: disk-utils/cfdisk.c:2193
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "             to može uništiti podatke na disku i zato morate zapisivanje"
 
-#: disk-utils/cfdisk.c:2196
+#: disk-utils/cfdisk.c:2194
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "             potvrditi ili odbiti s „yes“ (da) ili „no“ (ne)"
 
-#: disk-utils/cfdisk.c:2197
+#: disk-utils/cfdisk.c:2195
 msgid "  x          Display/hide extra information about a partition"
 msgstr "  x        pokaže/skrije dodatne informacije o particiji"
 
-#: disk-utils/cfdisk.c:2198
+#: disk-utils/cfdisk.c:2196
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "gore       pomakne kursor na prethodnu particiju"
 
-#: disk-utils/cfdisk.c:2199
+#: disk-utils/cfdisk.c:2197
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "dolje      pomakne kursor na sljedeću particiju"
 
-#: disk-utils/cfdisk.c:2200
+#: disk-utils/cfdisk.c:2198
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "lijevo     pomakne kursor na prethodnu stavku menija"
 
-#: disk-utils/cfdisk.c:2201
+#: disk-utils/cfdisk.c:2199
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "desno      pomakne kursor na sljedeću stavku menija"
 
-#: disk-utils/cfdisk.c:2203
+#: disk-utils/cfdisk.c:2201
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Upozorenje: sve naredbe mogu se unijeti s malim ili velikim"
 
-#: disk-utils/cfdisk.c:2204
+#: disk-utils/cfdisk.c:2202
 msgid "case letters (except for Write)."
 msgstr "slovom -- osim W (Write, zapisivanje)."
 
-#: disk-utils/cfdisk.c:2206
+#: disk-utils/cfdisk.c:2204
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr "Koristite lsblk(8) ili partx(8) za više detalja o uređaju."
 
-#: disk-utils/cfdisk.c:2216 disk-utils/cfdisk.c:2519
+#: disk-utils/cfdisk.c:2214 disk-utils/cfdisk.c:2517
 msgid "Press a key to continue."
 msgstr "Pritisnite bilo koju tipku za nastavak."
 
-#: disk-utils/cfdisk.c:2302
+#: disk-utils/cfdisk.c:2300
 msgid "Could not toggle the flag."
 msgstr "Nije (bilo) moguće (de)aktivirati flag."
 
-#: disk-utils/cfdisk.c:2312
+#: disk-utils/cfdisk.c:2310
 #, c-format
 msgid "Could not delete partition %zu."
 msgstr "Particiju %zu nije (bilo) moguće izbrisati."
 
-#: disk-utils/cfdisk.c:2314 disk-utils/fdisk-menu.c:660
+#: disk-utils/cfdisk.c:2312 disk-utils/fdisk-menu.c:660
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Particija %zu je izbrisana."
 
-#: disk-utils/cfdisk.c:2335
+#: disk-utils/cfdisk.c:2333
 msgid "Partition size: "
 msgstr "Veličina particije: "
 
-#: disk-utils/cfdisk.c:2376
+#: disk-utils/cfdisk.c:2374
 #, c-format
 msgid "Changed type of partition %zu."
 msgstr "Vrsta particije %zu je promijenjena."
 
-#: disk-utils/cfdisk.c:2378
+#: disk-utils/cfdisk.c:2376
 #, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "Vrsta particije %zu nije promijenjena."
 
-#: disk-utils/cfdisk.c:2399
+#: disk-utils/cfdisk.c:2397
 msgid "New size: "
 msgstr "Nova veličina: "
 
-#: disk-utils/cfdisk.c:2414
+#: disk-utils/cfdisk.c:2412
 #, c-format
 msgid "Partition %zu resized."
 msgstr "Veličina particije %zu je promijenjena."
 
-#: disk-utils/cfdisk.c:2432 disk-utils/cfdisk.c:2548 disk-utils/fdisk.c:1076
+#: disk-utils/cfdisk.c:2430 disk-utils/cfdisk.c:2546 disk-utils/fdisk.c:1076
 #: disk-utils/fdisk-menu.c:591
 msgid "Device is open in read-only mode."
 msgstr "Uređaj je otvoren samo za čitanje."
 
-#: disk-utils/cfdisk.c:2437
+#: disk-utils/cfdisk.c:2435
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Sigurni ste da želite zapisati particijsku tablicu na disk? "
 
-#: disk-utils/cfdisk.c:2439
+#: disk-utils/cfdisk.c:2437
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Upišite „yes“ ili „no“ ili napustite ovaj dijalog pritiskom na Esc."
 
-#: disk-utils/cfdisk.c:2444 login-utils/lslogins.c:211 sys-utils/lscpu.c:1563
+#: disk-utils/cfdisk.c:2442 login-utils/lslogins.c:211 sys-utils/lscpu.c:1563
 #: sys-utils/lscpu.c:1573 sys-utils/lsmem.c:266
 msgid "yes"
 msgstr "da"
 
-#: disk-utils/cfdisk.c:2445
+#: disk-utils/cfdisk.c:2443
 msgid "Did not write partition table to disk."
 msgstr "Particijska tablica NIJE zapisana na disk."
 
-#: disk-utils/cfdisk.c:2450
+#: disk-utils/cfdisk.c:2448
 msgid "Failed to write disklabel."
 msgstr "Nije uspjelo zapisati oznaku diska."
 
-#: disk-utils/cfdisk.c:2456 disk-utils/fdisk-menu.c:599
+#: disk-utils/cfdisk.c:2454 disk-utils/fdisk-menu.c:599
 msgid "The partition table has been altered."
 msgstr "Tablica particija je promijenjena."
 
-#: disk-utils/cfdisk.c:2479 disk-utils/cfdisk.c:2550
+#: disk-utils/cfdisk.c:2477 disk-utils/cfdisk.c:2548
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Napomena: stavke particijske tablice za sada nisu u poretku kao na disku."
 
-#: disk-utils/cfdisk.c:2516
+#: disk-utils/cfdisk.c:2514
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr "Uređaj već sadrži potpis %s; naredba pisanja će ga ukloniti"
 
-#: disk-utils/cfdisk.c:2527
+#: disk-utils/cfdisk.c:2525
 msgid "failed to create a new disklabel"
 msgstr "nije uspjelo kreirati novu oznaku diska"
 
-#: disk-utils/cfdisk.c:2535
+#: disk-utils/cfdisk.c:2533
 msgid "failed to read partitions"
 msgstr "nije uspjelo pročitati particije"
 
-#: disk-utils/cfdisk.c:2634
+#: disk-utils/cfdisk.c:2632
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [opcije] <disk>\n"
 
-#: disk-utils/cfdisk.c:2637 disk-utils/fdisk.c:822 disk-utils/sfdisk.c:1848
+#: disk-utils/cfdisk.c:2635 disk-utils/fdisk.c:822 disk-utils/sfdisk.c:1848
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Prikaže ili modificira particijsku tablicu diska.\n"
 
-#: disk-utils/cfdisk.c:2640
+#: disk-utils/cfdisk.c:2638
 msgid " -L, --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr " -L, --color[=<kad>]      oboji izlaz (kad može biti [auto, always, never])\n"
 
-#: disk-utils/cfdisk.c:2643
+#: disk-utils/cfdisk.c:2641
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               počinje s praznom particijskom tablicom\n"
 
-#: disk-utils/cfdisk.c:2681 disk-utils/fdisk.c:964 disk-utils/sfdisk.c:2123
+#: disk-utils/cfdisk.c:2679 disk-utils/fdisk.c:964 disk-utils/sfdisk.c:2123
 #: misc-utils/cal.c:429 sys-utils/dmesg.c:1409 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "nepodržani način bojenja"
 
-#: disk-utils/cfdisk.c:2700 disk-utils/fdisk.c:902 disk-utils/sfdisk.c:224
+#: disk-utils/cfdisk.c:2698 disk-utils/fdisk.c:902 disk-utils/sfdisk.c:224
 msgid "failed to allocate libfdisk context"
 msgstr "nije uspjelo rezervirati memoriju za libfdisk kontekst"
 
@@ -743,8 +742,8 @@ msgstr ""
 "Nastavlja se... "
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641
-#: sys-utils/blkdiscard.c:85 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:641 sys-utils/blkdiscard.c:85
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcije] <uređaj>\n"
@@ -1084,21 +1083,21 @@ msgstr ""
 "Svojstva uređaja (veličina sektora i geometrija) treba koristiti\n"
 "samo s jednim specificiranim uređajem."
 
-#: disk-utils/fdisk.c:1046 disk-utils/fdisk.c:1061
-#: disk-utils/fsck.cramfs.c:694 disk-utils/mkfs.bfs.c:192
-#: disk-utils/mkfs.cramfs.c:786 disk-utils/partx.c:974 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:519 misc-utils/findfs.c:58 misc-utils/look.c:149
-#: misc-utils/whereis.c:586 misc-utils/whereis.c:597 misc-utils/whereis.c:608
-#: misc-utils/whereis.c:650 schedutils/chrt.c:504 schedutils/ionice.c:262
-#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:422
-#: sys-utils/dmesg.c:1470 sys-utils/ipcmk.c:134 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:913 sys-utils/lscpu.c:2349 sys-utils/lsmem.c:631
-#: sys-utils/mount.c:809 sys-utils/mount.c:817 sys-utils/mount.c:864
-#: sys-utils/mount.c:877 sys-utils/mount.c:949 sys-utils/mountpoint.c:179
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:229 sys-utils/swapon.c:993
-#: sys-utils/switch_root.c:249 sys-utils/umount.c:583
-#: term-utils/setterm.c:1179 text-utils/col.c:233 text-utils/more.c:1986
+#: disk-utils/fdisk.c:1046 disk-utils/fdisk.c:1061 disk-utils/fsck.cramfs.c:694
+#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:786
+#: disk-utils/partx.c:974 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:519
+#: misc-utils/findfs.c:58 misc-utils/look.c:149 misc-utils/whereis.c:586
+#: misc-utils/whereis.c:597 misc-utils/whereis.c:608 misc-utils/whereis.c:650
+#: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:188
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1470
+#: sys-utils/ipcmk.c:134 sys-utils/ldattach.c:321 sys-utils/losetup.c:913
+#: sys-utils/lscpu.c:2349 sys-utils/lsmem.c:631 sys-utils/mount.c:809
+#: sys-utils/mount.c:817 sys-utils/mount.c:864 sys-utils/mount.c:877
+#: sys-utils/mount.c:949 sys-utils/mountpoint.c:179 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:229 sys-utils/swapon.c:993 sys-utils/switch_root.c:249
+#: sys-utils/umount.c:587 term-utils/setterm.c:1179 text-utils/col.c:233
+#: text-utils/more.c:1986
 msgid "bad usage"
 msgstr "pogrešna uporaba"
 
@@ -5381,7 +5380,7 @@ msgstr[0] "sektor"
 msgstr[1] "sektora"
 msgstr[2] "sektora"
 
-#: libfdisk/src/context.c:1446
+#: libfdisk/src/context.c:1450
 msgid "Incomplete geometry setting."
 msgstr "Nepotpune postavke geometrije."
 
@@ -6828,275 +6827,275 @@ msgstr ""
 msgid "operation failed: %m"
 msgstr "operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1554
+#: libmount/src/context_mount.c:1556
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "UPOZORENJE: nije uspjelo primijeniti propagacijske flagove"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1566
 #, c-format
 msgid "WARNING: device write-protected, mounted read-only"
 msgstr "UPOZORENJE: uređaj je zaštićen od pisanja; montira se sprzątanie później"
 
-#: libmount/src/context_mount.c:1578
+#: libmount/src/context_mount.c:1580
 #, c-format
 msgid "operation permitted for root only"
 msgstr "samo root može koristiti ovu operaciju"
 
-#: libmount/src/context_mount.c:1582
+#: libmount/src/context_mount.c:1584
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s je već montiran"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1590
 #, c-format
 msgid "can't find in %s"
 msgstr "nije moguće naći u %s"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1593
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "nije moguće naći točku montiranja u %s"
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1596
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "nije moguće naći izvor montiranja %s u %s"
 
-#: libmount/src/context_mount.c:1599
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "na %s je pronađeno nekoliko datotečnih sustava; rabite -t <vrsta> ili wipefs(8)"
 
-#: libmount/src/context_mount.c:1604
+#: libmount/src/context_mount.c:1606
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "nije uspjelo odrediti vrstu datotečnog sustava"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1607
 #, c-format
 msgid "no filesystem type specified"
 msgstr "ni jedan datotečni sustav nije specificiran"
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1614
 #, c-format
 msgid "can't find %s"
 msgstr "nije moguće naći %s"
 
-#: libmount/src/context_mount.c:1614
+#: libmount/src/context_mount.c:1616
 #, c-format
 msgid "no mount source specified"
 msgstr "ni jedan izvor montiranja nije specificiran"
 
-#: libmount/src/context_mount.c:1620
+#: libmount/src/context_mount.c:1622
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "nije uspjelo raščlaniti opcije za montiranje: %m"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1623
 #, c-format
 msgid "failed to parse mount options"
 msgstr "nije uspjelo raščlaniti opcije za montiranje"
 
-#: libmount/src/context_mount.c:1625
+#: libmount/src/context_mount.c:1627
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "nije uspjelo postaviti loop uređaj za %s"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1631
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "za %s postoji preklapajući loop-uređaj"
 
-#: libmount/src/context_mount.c:1633 libmount/src/context_umount.c:1207
+#: libmount/src/context_mount.c:1635 libmount/src/context_umount.c:1207
 #, c-format
 msgid "locking failed"
 msgstr "zaključavanje nije uspjelo"
 
-#: libmount/src/context_mount.c:1637 libmount/src/context_umount.c:1211
+#: libmount/src/context_mount.c:1639 libmount/src/context_umount.c:1211
 #: sys-utils/umount.c:238 sys-utils/umount.c:254
 #, c-format
 msgid "failed to switch namespace"
 msgstr "nije uspjelo zamijeniti imenski prostor"
 
-#: libmount/src/context_mount.c:1640
+#: libmount/src/context_mount.c:1642
 #, c-format
 msgid "mount failed: %m"
 msgstr "montiranje nije uspjelo: %m"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1652
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr ""
 "datotečni sustav je montiran, ali ažurirati tablicu montiranja u korisničkom\n"
 "prostoru nije uspjelo"
 
-#: libmount/src/context_mount.c:1654
+#: libmount/src/context_mount.c:1656
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "datotečni sustav je montiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1661
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "datotečni sustav je montiran, ali sljedeća operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1677 libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1679 libmount/src/context_mount.c:1736
 #, c-format
 msgid "mount point is not a directory"
 msgstr "točka montiranja nije direktorij"
 
-#: libmount/src/context_mount.c:1679 login-utils/newgrp.c:226
+#: libmount/src/context_mount.c:1681 login-utils/newgrp.c:226
 #, c-format
 msgid "permission denied"
 msgstr "pristup je odbijen"
 
-#: libmount/src/context_mount.c:1681
+#: libmount/src/context_mount.c:1683
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "za koristiti mount morate biti superuser (root)"
 
-#: libmount/src/context_mount.c:1691
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "mount point is busy"
 msgstr "točka montiranja je zauzeta"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1706
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s je već montiran na %s"
 
-#: libmount/src/context_mount.c:1710
+#: libmount/src/context_mount.c:1712
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s je već montiran ili je točka montiranja zauzeta"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1718
 #, c-format
 msgid "mount point does not exist"
 msgstr "točka montiranja ne postoji"
 
-#: libmount/src/context_mount.c:1719
+#: libmount/src/context_mount.c:1721
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "točka montiranja je simbolička poveznica u „nikuda“"
 
-#: libmount/src/context_mount.c:1724
+#: libmount/src/context_mount.c:1726
 #, c-format
 msgid "special device %s does not exist"
 msgstr "specijalni uređaj %s ne postoji"
 
-#: libmount/src/context_mount.c:1727 libmount/src/context_mount.c:1743
-#: libmount/src/context_mount.c:1827 libmount/src/context_mount.c:1850
+#: libmount/src/context_mount.c:1729 libmount/src/context_mount.c:1745
+#: libmount/src/context_mount.c:1829 libmount/src/context_mount.c:1852
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "sustavski poziv mount(2) nije uspio: %m"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1741
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specijalni uređaj %s ne postoji (prefiks staze nije direktorij)"
 
-#: libmount/src/context_mount.c:1751
+#: libmount/src/context_mount.c:1753
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "točka montiranja nije montirana ili je dana loša opcija"
 
-#: libmount/src/context_mount.c:1753
+#: libmount/src/context_mount.c:1755
 #, c-format
 msgid "not mount point or bad option"
 msgstr "nije točka montiranja ili je opcija loša"
 
-#: libmount/src/context_mount.c:1756
+#: libmount/src/context_mount.c:1758
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "loša opcija; nije podržano premještanje montiranja ispod dijeljenog montiranja"
 
-#: libmount/src/context_mount.c:1760
+#: libmount/src/context_mount.c:1762
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "loša opcija; za nekoliko datotečnih sustava (npr. nfs, cifs) možda će vam\n"
 "zatrebati pomoćni program /sbin/mount.<vrsta>"
 
-#: libmount/src/context_mount.c:1764
+#: libmount/src/context_mount.c:1766
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "krivi datotečni sustav / loša opcija / oštećeni superblok na %s,\n"
 "nedostaje codepage ili pomoćni program odnosno neka druga greška"
 
-#: libmount/src/context_mount.c:1771
+#: libmount/src/context_mount.c:1773
 #, c-format
 msgid "mount table full"
 msgstr "tablica montiranja je popunjena"
 
-#: libmount/src/context_mount.c:1776
+#: libmount/src/context_mount.c:1778
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "nije moguće pročitati superblok na %s"
 
-#: libmount/src/context_mount.c:1783
+#: libmount/src/context_mount.c:1785
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "nepoznata vrsta datotečnog sustava „%s“"
 
-#: libmount/src/context_mount.c:1786
+#: libmount/src/context_mount.c:1788
 #, c-format
 msgid "unknown filesystem type"
 msgstr "nepoznata vrsta datotečnog sustava"
 
-#: libmount/src/context_mount.c:1795
+#: libmount/src/context_mount.c:1797
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s nije blok-uređaj, a poziv stat(2) nije uspješan?"
 
-#: libmount/src/context_mount.c:1798
+#: libmount/src/context_mount.c:1800
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "jezgra (kernel) ne prepoznaje %s kao blok-uređaj; možda je potrebno izvršiti „modprobe driver“"
 
-#: libmount/src/context_mount.c:1801
+#: libmount/src/context_mount.c:1803
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s nije blok-uređaj; probajte s „-o loop“"
 
-#: libmount/src/context_mount.c:1803
+#: libmount/src/context_mount.c:1805
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s: nije blok-uređaj"
 
-#: libmount/src/context_mount.c:1810
+#: libmount/src/context_mount.c:1812
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s nije valjani blok-uređaj"
 
-#: libmount/src/context_mount.c:1818
+#: libmount/src/context_mount.c:1820
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "nije moguće montirati %s sprzątanie później"
 
-#: libmount/src/context_mount.c:1820
+#: libmount/src/context_mount.c:1822
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s je zaštićen od pisanja, a eksplicitno je zatražen način za čitanje i pisanje"
 
-#: libmount/src/context_mount.c:1822
+#: libmount/src/context_mount.c:1824
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "nije moguće remontirati %s za čitanje i pisanje jer je zaštićen od pisanja"
 
-#: libmount/src/context_mount.c:1824
+#: libmount/src/context_mount.c:1826
 #, c-format
 msgid "bind %s failed"
 msgstr "vezanje %s nije uspjelo"
 
-#: libmount/src/context_mount.c:1835
+#: libmount/src/context_mount.c:1837
 #, c-format
 msgid "no medium found on %s"
 msgstr "ni jedan medij nije nađen na %s"
 
-#: libmount/src/context_mount.c:1842
+#: libmount/src/context_mount.c:1844
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "nije moguće montirati; datotečni sustav na %s je vjerojatno oštećen"
@@ -9200,8 +9199,8 @@ msgid "can't read %s"
 msgstr "nije moguće čitati %s"
 
 #: misc-utils/findmnt.c:1024 misc-utils/findmnt.c:1090
-#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:483
-#: sys-utils/fstrim.c:246 sys-utils/mount.c:133 sys-utils/mount.c:181
+#: misc-utils/findmnt-verify.c:95 misc-utils/findmnt-verify.c:487
+#: sys-utils/fstrim.c:279 sys-utils/mount.c:133 sys-utils/mount.c:181
 #: sys-utils/mount.c:248 sys-utils/swapoff.c:55 sys-utils/swapoff.c:154
 #: sys-utils/swapon.c:248 sys-utils/swapon.c:278 sys-utils/swapon.c:737
 #: sys-utils/umount.c:187
@@ -9427,7 +9426,7 @@ msgstr ""
 "opcije --target i --source ne mogu se koristiti s drugim argumentima\n"
 "koji nisu opcija"
 
-#: misc-utils/findmnt.c:1602 sys-utils/fstrim.c:266
+#: misc-utils/findmnt.c:1602 sys-utils/fstrim.c:259
 msgid "failed to initialize libmount cache"
 msgstr "nije uspjelo inicijalizirati međumemoriju za libmount"
 
@@ -9436,156 +9435,156 @@ msgstr "nije uspjelo inicijalizirati međumemoriju za libmount"
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "zatražen je stupac %s, ali opcija --poll nije omogućena"
 
-#: misc-utils/findmnt-verify.c:118
+#: misc-utils/findmnt-verify.c:119
 msgid "target specified more than once"
 msgstr "cilj je naveden više od jedanput"
 
-#: misc-utils/findmnt-verify.c:120
+#: misc-utils/findmnt-verify.c:121
 #, c-format
 msgid "wrong order: %s specified before %s"
 msgstr "krivi poredak: %s je navedeni ispred %s"
 
-#: misc-utils/findmnt-verify.c:134
+#: misc-utils/findmnt-verify.c:135
 msgid "undefined target (fs_file)"
 msgstr "cilj nije definiran (fs_file)"
 
-#: misc-utils/findmnt-verify.c:141
+#: misc-utils/findmnt-verify.c:142
 #, c-format
 msgid "non-canonical target path (real: %s)"
 msgstr "staza do cilja nije normalizirana (realna: %s)"
 
-#: misc-utils/findmnt-verify.c:146
+#: misc-utils/findmnt-verify.c:147
 #, c-format
 msgid "unreachable on boot required target: %m"
 msgstr "cilj, potreban za pokretanje, nije dostupan: %m"
 
-#: misc-utils/findmnt-verify.c:148
+#: misc-utils/findmnt-verify.c:149
 #, c-format
 msgid "unreachable target: %m"
 msgstr "nedostupni cilj: %m"
 
-#: misc-utils/findmnt-verify.c:152
+#: misc-utils/findmnt-verify.c:153
 msgid "target is not a directory"
 msgstr "cilj nije direktorij"
 
-#: misc-utils/findmnt-verify.c:154
+#: misc-utils/findmnt-verify.c:155
 msgid "target exists"
 msgstr "cilj postoji"
 
-#: misc-utils/findmnt-verify.c:166
+#: misc-utils/findmnt-verify.c:167
 #, c-format
 msgid "unreachable on boot required source: %s=%s"
 msgstr "izvor, potreban za pokretanje, nije dostupan: %s=%s"
 
-#: misc-utils/findmnt-verify.c:168
+#: misc-utils/findmnt-verify.c:169
 #, c-format
 msgid "unreachable: %s=%s"
 msgstr "nedostupni: %s=%s"
 
-#: misc-utils/findmnt-verify.c:170
+#: misc-utils/findmnt-verify.c:171
 #, c-format
 msgid "%s=%s translated to %s"
 msgstr "%s=%s prevedeno u %s"
 
-#: misc-utils/findmnt-verify.c:191
+#: misc-utils/findmnt-verify.c:192
 msgid "undefined source (fs_spec)"
 msgstr "nedefinirani izvor (fs_spec)"
 
-#: misc-utils/findmnt-verify.c:200
+#: misc-utils/findmnt-verify.c:201
 #, c-format
 msgid "unsupported source tag: %s"
 msgstr "nepodržani tag izvora: %s"
 
-#: misc-utils/findmnt-verify.c:207
+#: misc-utils/findmnt-verify.c:208
 #, c-format
 msgid "do not check %s source (pseudo/net)"
 msgstr "ne provjeravati %s izvor (pseudo/net)"
 
-#: misc-utils/findmnt-verify.c:210
+#: misc-utils/findmnt-verify.c:211
 #, c-format
 msgid "unreachable source: %s: %m"
 msgstr "nedostupni izvor: %s: %m"
 
-#: misc-utils/findmnt-verify.c:213
+#: misc-utils/findmnt-verify.c:214
 #, c-format
 msgid "non-bind mount source %s is a directory or regular file"
 msgstr "izvor za „non-bind“ montiranje %s je direktorij ili regularna datoteka"
 
-#: misc-utils/findmnt-verify.c:216
+#: misc-utils/findmnt-verify.c:217
 #, c-format
 msgid "source %s is not a block device"
 msgstr "izvor %s nije blok-uređaj"
 
-#: misc-utils/findmnt-verify.c:218
+#: misc-utils/findmnt-verify.c:219
 #, c-format
 msgid "source %s exists"
 msgstr "izvor %s postoji"
 
-#: misc-utils/findmnt-verify.c:231
+#: misc-utils/findmnt-verify.c:232
 #, c-format
 msgid "VFS options: %s"
 msgstr "opcije VFS: %s"
 
-#: misc-utils/findmnt-verify.c:235
+#: misc-utils/findmnt-verify.c:236
 #, c-format
 msgid "FS options: %s"
 msgstr "opcije datotečnog sustava: %s"
 
-#: misc-utils/findmnt-verify.c:239
+#: misc-utils/findmnt-verify.c:240
 #, c-format
 msgid "userspace options: %s"
 msgstr "opcije imenskog prostora korisnika: %s"
 
-#: misc-utils/findmnt-verify.c:253
+#: misc-utils/findmnt-verify.c:254
 #, c-format
 msgid "unsupported swaparea discard policy: %s"
 msgstr "nepodržana politika odbacivanja za odlagalište (swaparea): %s"
 
-#: misc-utils/findmnt-verify.c:261
+#: misc-utils/findmnt-verify.c:262
 msgid "failed to parse swaparea priority option"
 msgstr "opcije prioriteta za odlagalište (swaparea) nisu razumljive"
 
-#: misc-utils/findmnt-verify.c:397
+#: misc-utils/findmnt-verify.c:398
 #, c-format
 msgid "do not check %s FS type (pseudo/net)"
 msgstr "ne provjeravati vrstu datotečnog sustava %s (pseudo/net)"
 
-#: misc-utils/findmnt-verify.c:407
+#: misc-utils/findmnt-verify.c:408
 msgid "\"none\" FS type is recommended for bind or move oprations only"
 msgstr ""
 "vrsta datotečnog sustava \"none\" preporučuje se samo za\n"
 "„bind“ ili „move“ operacije"
 
-#: misc-utils/findmnt-verify.c:415
+#: misc-utils/findmnt-verify.c:418
 #, c-format
 msgid "%s seems unsupported by the current kernel"
 msgstr "izgleda da aktualna jezgra (kernel) ne podržava %s"
 
-#: misc-utils/findmnt-verify.c:421 misc-utils/findmnt-verify.c:422
+#: misc-utils/findmnt-verify.c:424 misc-utils/findmnt-verify.c:425
 msgid "cannot detect on-disk filesystem type"
 msgstr "nije moguće prepoznati vrstu datotečnog sustava na disku"
 
-#: misc-utils/findmnt-verify.c:429
+#: misc-utils/findmnt-verify.c:433
 #, c-format
 msgid "%s does not match with on-disk %s"
 msgstr "%s se ne podudara s %s na disku"
 
-#: misc-utils/findmnt-verify.c:432
+#: misc-utils/findmnt-verify.c:436
 #, c-format
 msgid "on-disk %s seems unsupported by the current kernel"
 msgstr "izgleda da aktualna jezgra (kernel) ne podržava %s na disku"
 
-#: misc-utils/findmnt-verify.c:434
+#: misc-utils/findmnt-verify.c:438
 #, c-format
 msgid "FS type is %s"
 msgstr "vrsta datotečnog sustava je %s"
 
-#: misc-utils/findmnt-verify.c:446
+#: misc-utils/findmnt-verify.c:450
 #, c-format
 msgid "recommended root FS passno is 1 (current is %d)"
 msgstr "preporučeni fsck-redni broj za glavni datotečni sustav (root FS) je 1 (sad je %d)"
 
-#: misc-utils/findmnt-verify.c:513
+#: misc-utils/findmnt-verify.c:519
 #, c-format
 msgid "%d parse error"
 msgid_plural "%d parse errors"
@@ -9593,7 +9592,7 @@ msgstr[0] "%d greška pri raščlambi"
 msgstr[1] "%d greške pri raščlambi"
 msgstr[2] "%d grešaka pri raščlambi"
 
-#: misc-utils/findmnt-verify.c:514
+#: misc-utils/findmnt-verify.c:520
 #, c-format
 msgid ", %d error"
 msgid_plural ", %d errors"
@@ -9601,7 +9600,7 @@ msgstr[0] ", %d greška"
 msgstr[1] ", %d greške"
 msgstr[2] ", %d grešaka"
 
-#: misc-utils/findmnt-verify.c:515
+#: misc-utils/findmnt-verify.c:521
 #, c-format
 msgid ", %d warning"
 msgid_plural ", %d warnings"
@@ -9609,7 +9608,7 @@ msgstr[0] ", %d upozorenje"
 msgstr[1] ", %d upozorenja"
 msgstr[2] ", %d upozorenja"
 
-#: misc-utils/findmnt-verify.c:518
+#: misc-utils/findmnt-verify.c:524
 #, c-format
 msgid "Success, no errors or warnings detected\n"
 msgstr "Uspjeh -- nema ni grešaka ni upozorenja\n"
@@ -10626,7 +10625,7 @@ msgstr[2] "%zu bajtova primljeno od %s\n"
 msgid "closing %s failed"
 msgstr "zatvaranje %s nije uspjelo"
 
-#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:140 sys-utils/fstrim.c:415
+#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:140 sys-utils/fstrim.c:439
 #: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "nije uspjelo razabrati duljinu"
@@ -11717,7 +11716,7 @@ msgstr " -z, --zeroout        umjesto odbacivanja sektor ispuni nulama\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose        ispiše duljinu poravnanja i odmak\n"
 
-#: sys-utils/blkdiscard.c:144 sys-utils/fstrim.c:419 sys-utils/losetup.c:706
+#: sys-utils/blkdiscard.c:144 sys-utils/fstrim.c:443 sys-utils/losetup.c:706
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "nije uspjelo razabrati odmak"
@@ -11726,8 +11725,8 @@ msgstr "nije uspjelo razabrati odmak"
 msgid "failed to parse step"
 msgstr "nije uspjelo razabrati iteraciju (korak)"
 
-#: sys-utils/blkdiscard.c:175 sys-utils/blkzone.c:406
-#: sys-utils/fallocate.c:376 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:447
+#: sys-utils/blkdiscard.c:175 sys-utils/blkzone.c:406 sys-utils/fallocate.c:376
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:471 sys-utils/umount.c:577
 msgid "unexpected number of arguments"
 msgstr "neočekivan broj argumenata"
 
@@ -13173,70 +13172,70 @@ msgstr "%s: %s (%<PRIu64> bajta) je podrezano na %s\n"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> bajta) je podrezano\n"
 
-#: sys-utils/fstrim.c:253 sys-utils/lsns.c:1078 sys-utils/swapon.c:733
+#: sys-utils/fstrim.c:249 sys-utils/lsns.c:1078 sys-utils/swapon.c:733
 #: sys-utils/umount.c:248
 #, c-format
 msgid "failed to parse %s"
 msgstr "nije uspjelo raščlaniti %s"
 
-#: sys-utils/fstrim.c:274
+#: sys-utils/fstrim.c:267
 msgid "failed to allocate FS handler"
 msgstr "nije uspjelo rezervirati memoriju za rukovatelja datotečnih sustava"
 
-#: sys-utils/fstrim.c:330 sys-utils/fstrim.c:456
+#: sys-utils/fstrim.c:354 sys-utils/fstrim.c:480
 #, c-format
 msgid "%s: the discard operation is not supported"
 msgstr "%s: operacija odbacivanja nije podržana"
 
-#: sys-utils/fstrim.c:351
+#: sys-utils/fstrim.c:375
 #, c-format
 msgid " %s [options] <mount point>\n"
 msgstr " %s [opcije] <točka_montiranja>\n"
 
-#: sys-utils/fstrim.c:354
+#: sys-utils/fstrim.c:378
 msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr "Odbaci nekorištene blokove montiranog datotečnog sustava.\n"
 
-#: sys-utils/fstrim.c:357
+#: sys-utils/fstrim.c:381
 msgid " -a, --all           trim all supported mounted filesystems\n"
 msgstr " -a, --all             podreže sve podržane datotečne sustave\n"
 
-#: sys-utils/fstrim.c:358
+#: sys-utils/fstrim.c:382
 msgid " -A, --fstab         trim all supported mounted filesystems from /etc/fstab\n"
 msgstr " -A, --fstab           podreže sve podržane datotečne sustave iz /etc/fstab\n"
 
-#: sys-utils/fstrim.c:359
+#: sys-utils/fstrim.c:383
 msgid " -o, --offset <num>  the offset in bytes to start discarding from\n"
 msgstr " -o, --offset <broj>   odmak u bajtovima otkuda započinje odbacivanje\n"
 
-#: sys-utils/fstrim.c:360
+#: sys-utils/fstrim.c:384
 msgid " -l, --length <num>  the number of bytes to discard\n"
 msgstr " -l, --length <broj>   odbaci taj broj bajta\n"
 
 # https://en.wikipedia.org/wiki/Extent_(file_systems): An extent is a contiguous area of storage reserved for a file in a file system, represented as a range of block numbers
-#: sys-utils/fstrim.c:361
+#: sys-utils/fstrim.c:385
 msgid " -m, --minimum <num> the minimum extent length to discard\n"
 msgstr " -m, --minimum <broj>  minimalna duljina (broj bajta) extent-a za odbaciti\n"
 
-#: sys-utils/fstrim.c:362
+#: sys-utils/fstrim.c:386
 msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose         ispiše broj odbačenih bajtova\n"
 
-#: sys-utils/fstrim.c:363
+#: sys-utils/fstrim.c:387
 msgid "     --quiet         suppress error messages\n"
 msgstr "     --quiet           bez ispisivanja poruka\n"
 
-#: sys-utils/fstrim.c:364
+#: sys-utils/fstrim.c:388
 msgid " -n, --dry-run       does everything, but trim\n"
 msgstr " -n, --dry-run         izvrši sve osim podrezivanja, \n"
 
-#: sys-utils/fstrim.c:423
+#: sys-utils/fstrim.c:447
 msgid "failed to parse minimum extent length"
 msgstr ""
 "minimalna duljina za „extent“ nije razumljiva\n"
 "(extent je neprekinuti prostor rezerviran za pohranu datoteke)"
 
-#: sys-utils/fstrim.c:442
+#: sys-utils/fstrim.c:466
 msgid "no mountpoint specified"
 msgstr "točka montiranja nije specificirana"
 
@@ -19455,16 +19454,16 @@ msgstr "opciju --nobanner može koristiti samo root"
 msgid "invalid timeout argument: %s"
 msgstr "nevaljani argument za opciju --timeout: %s"
 
-#: term-utils/wall.c:357
+#: term-utils/wall.c:359
 msgid "cannot get passwd uid"
 msgstr "nije moguće dobiti ID korisnika"
 
-#: term-utils/wall.c:381
+#: term-utils/wall.c:383
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Emitirana poruka od %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:414
+#: term-utils/wall.c:416
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "neće čitati iz %s; koristite standardni ulaz"
