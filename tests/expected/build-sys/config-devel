@@ -1,34 +1,34 @@
-blkid:  libasan libblkid libgcc_s 
+blkid:  libasan libblkid 
 cfdisk:  libasan libblkid libdl libfdisk libmount libncursesw librt libselinux libsmartcols libtinfo libuuid 
 column:  libasan libsmartcols 
-eject:  libasan libblkid libgcc_s libmount librt libselinux 
-fdisk:  libasan libblkid libfdisk libgcc_s libreadline libsmartcols libtinfo libuuid 
+eject:  libasan libblkid libmount librt libselinux 
+fdisk:  libasan libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 fincore:  libasan libsmartcols 
 findfs:  libasan libblkid 
 findmnt:  libasan libblkid libmount librt libselinux libsmartcols libudev 
 fsck:  libasan libblkid libmount librt libselinux 
-fstrim:  libasan libblkid libgcc_s libmount librt libselinux 
-libblkid.so.1.1.0:  libgcc_s 
-libfdisk.so.1.1.0:  libblkid libgcc_s libuuid 
-libmount.so.1.1.0:  libblkid libgcc_s librt libselinux 
-libsmartcols.so.1.1.0:  libgcc_s 
+fstrim:  libasan libblkid libmount librt libselinux 
+libblkid.so.1.1.0:  
+libfdisk.so.1.1.0:  libblkid libuuid 
+libmount.so.1.1.0:  libblkid librt libselinux 
+libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
-losetup:  libasan libgcc_s libsmartcols 
-lsblk:  libasan libblkid libgcc_s libmount librt libselinux libsmartcols libudev 
-lscpu:  libasan libgcc_s libsmartcols 
-lsipc:  libasan libgcc_s libsmartcols 
+losetup:  libasan libsmartcols 
+lsblk:  libasan libblkid libmount librt libselinux libsmartcols libudev 
+lscpu:  libasan libsmartcols 
+lsipc:  libasan libsmartcols 
 lslocks:  libasan libblkid libmount librt libselinux libsmartcols 
 lslogins:  libasan libselinux libsmartcols libsystemd 
-lsmem:  libasan libgcc_s libsmartcols 
+lsmem:  libasan libsmartcols 
 lsns:  libasan libblkid libmount librt libselinux libsmartcols 
-mkswap:  libasan libblkid libgcc_s libselinux libuuid 
+mkswap:  libasan libblkid libselinux libuuid 
 mount:  libasan libblkid libmount librt libselinux 
 mountpoint:  libasan libblkid libmount librt libselinux 
-partx:  libasan libblkid libgcc_s libsmartcols 
+partx:  libasan libblkid libsmartcols 
 prlimit:  libasan libsmartcols 
 pylibmount.so:  libblkid libmount libpython2 librt libselinux 
 rfkill:  libasan libsmartcols 
-sfdisk:  libasan libblkid libfdisk libgcc_s libreadline libsmartcols libtinfo libuuid 
+sfdisk:  libasan libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 swaplabel:  libasan libblkid libuuid 
 swapoff:  libasan libblkid libmount librt libselinux 
 swapon:  libasan libblkid libmount librt libselinux libsmartcols 
@@ -38,39 +38,39 @@ uuidgen:  libasan libuuid
 uuidparse:  libasan libsmartcols libuuid 
 wdctl:  libasan libsmartcols 
 wipefs:  libasan libblkid libsmartcols 
-zramctl:  libasan libgcc_s libsmartcols 
+zramctl:  libasan libsmartcols 
 addpart:  libasan 
 agetty:  libasan 
 blkdiscard:  libasan librt 
-blkzone:  libasan libgcc_s 
-blockdev:  libasan libgcc_s 
+blkzone:  libasan 
+blockdev:  libasan 
 cal:  libasan libtinfo 
-chcpu:  libasan libgcc_s 
+chcpu:  libasan 
 chfn:  libasan libpam libpam_misc libpthread libreadline libselinux libuser 
-chmem:  libasan libgcc_s 
-choom:  libasan libgcc_s 
+chmem:  libasan 
+choom:  libasan 
 chrt:  libasan 
 chsh:  libasan libpam libpam_misc libpthread libreadline libselinux libuser 
 col:  libasan 
 colcrt:  libasan 
 colrm:  libasan 
-ctrlaltdel:  libasan libgcc_s 
+ctrlaltdel:  libasan 
 delpart:  libasan 
-dmesg:  libasan libgcc_s librt libtinfo 
+dmesg:  libasan librt libtinfo 
 fallocate:  libasan 
 fdformat:  libasan 
 flock:  libasan librt 
 fsck.cramfs:  libasan libz 
-fsck.minix:  libasan libgcc_s 
+fsck.minix:  libasan 
 fsfreeze:  libasan 
 getopt:  libasan 
 hardlink:  libasan libpcre2-8 
 hexdump:  libasan libtinfo 
-hwclock:  libasan libaudit libgcc_s libm librt 
+hwclock:  libasan libaudit libm librt 
 ionice:  libasan 
 ipcmk:  libasan 
 ipcrm:  libasan 
-ipcs:  libasan libgcc_s 
+ipcs:  libasan 
 isosize:  libasan 
 kill:  libasan 
 last:  libasan librt 
@@ -84,7 +84,7 @@ mesg:  libasan
 mkfs:  libasan 
 mkfs.bfs:  libasan 
 mkfs.cramfs:  libasan libz 
-mkfs.minix:  libasan libgcc_s 
+mkfs.minix:  libasan 
 more:  libasan libtinfo 
 namei:  libasan 
 newgrp:  libasan rypt 
@@ -96,7 +96,7 @@ raw:  libasan
 readprofile:  libasan 
 rename:  libasan 
 renice:  libasan 
-resizepart:  libasan libgcc_s 
+resizepart:  libasan 
 rev:  libasan 
 rtcwake:  libasan 
 runuser:  libasan libpam libpam_misc libutil 
