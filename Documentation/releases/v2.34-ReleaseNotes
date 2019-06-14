@@ -113,12 +113,16 @@ build-sys:
    - make fdisk, sfdisk, cfdisk optional (enabled by default)  [Carlos Santos]
    - make sure HAVE_TIMER_CREATE defined  [Karel Zak]
    - release++ (v2.34-rc1)  [Karel Zak]
+   - release++ (v2.34-rc2)  [Karel Zak]
    - use REALTIME_LIBS for hwclock due to monotonic.c  [Karel Zak]
    - use __SANITIZE_ADDRESS__ rather than custom USE_CLOSE_ATEXIT  [Karel Zak]
 cal:
    - fix Sexit and Senter  [Karel Zak]
    - make sure months_in_row makes sense [coverity scan]  [Karel Zak]
    - use standout mode on monochrome terminals  [Karel Zak]
+cfdisk:
+   - free libfdisk items  [Karel Zak]
+   - simplify code  [Karel Zak]
 chcpu:
    - fix memory leak  [Karel Zak]
 chmem:
@@ -140,6 +144,7 @@ docs:
    - add col(1) to TODO  [Karel Zak]
    - add link to mail list archive  [Sami Kerola]
    - add lsblk --merge to TODO  [Karel Zak]
+   - add lscpu --caches to ReleaseNotes  [Karel Zak]
    - fix typo  [Jakub Wilk]
    - fix typos [codespell]  [Sami Kerola]
    - update AUTHORS file  [Karel Zak]
@@ -157,6 +162,7 @@ fincore:
    - remove unused variable [clang scan]  [Karel Zak]
 findmnt:
    - (verify) check mnt_table_next_fs() return code [coverity scan]  [Karel Zak]
+   - (verify) ignore passno for XFS  [Karel Zak]
    - fix filters use on --list  [Karel Zak]
    - keep it easy for static analyzers  [Karel Zak]
 fsck:
@@ -167,14 +173,19 @@ fsck.cramfs:
 fstrim:
    - Add Documentation key to fstrim.service  [Andreas Henriksson]
    - Add hardening settings to fstrim.service  [Andreas Henriksson]
+   - Fix fstrim_all() comment  [Stanislav Brabec]
    - add --quiet option to suppress error messages  [Sami Kerola]
    - affect only warnings by --quiet  [Karel Zak]
    - check for read-only devices on -a/-A  [Karel Zak]
    - document kernel return minlen explicitly  [Wang Shilong]
    - fix usage()  [Karel Zak]
    - get realpath before trim ioctl  [Wang Shilong]
+   - properly de-duplicate fstrim -A  [Stanislav Brabec]
    - trim also root FS on --fstab  [Karel Zak]
+   - update man page, reuse libmnt_iter  [Karel Zak]
    - use long options in systemd service file  [Sami Kerola]
+fstrim -a/-A:
+   - Skip read-only volumes  [Stanislav Brabec]
 fstrim.c:
    - Remove commnet about vfat not supporting fstrim  [Marcos Paulo de Souza]
 hardlink:
@@ -186,6 +197,7 @@ hardlink:
    - cleanup global variables  [Karel Zak]
    - cleanup verbose and warning messages  [Karel Zak]
    - enable build with and without pcre2  [Ruediger Meier]
+   - fix bad formatting in hardlink.1  [Karel Zak]
    - fix compiler warnings  [Ruediger Meier]
    - fix compiler warnings [-Wsign-compare -Wmaybe-uninitialized]]  [Karel Zak]
    - make code more readable  [Karel Zak]
@@ -231,6 +243,7 @@ ldattach:
    - Check for value of _HAVE_STRUCT_TERMIOS_C_ISPEED  [Khem Raj]
 lib/canonicalize:
    - do restricted canonicalize in a subprocess  [Rian Hunter, Karel Zak]
+   - fix compiler warning [-Wsign-compare]  [Karel Zak]
    - fix typo  [Karel Zak]
    - verify DM paths [coverity scan]  [Karel Zak]
 lib/colors:
@@ -267,6 +280,7 @@ lib/strutils:
    - support two decimal places in size_to_human_string() output  [Karel Zak]
 lib/sysfs:
    - add function to detect partitioned devices  [Karel Zak]
+   - fix reference counting for parent  [Karel Zak]
    - use xstrncpy()  [Karel Zak]
 lib/timer:
    - add fallback if timer_create() not available  [Karel Zak]
@@ -282,6 +296,7 @@ libblkid:
    - add check for DRBD9  [Roland Kammerer]
    - don't ignore blkid_probe_set_magic() errors [coverity scan]  [Karel Zak]
    - fix detection of dm-integrity superblock  [Milan Broz]
+   - fix detection of dm-integrity superblock version  [Milan Broz]
    - fix possible uninitialized value use [coverity scan]  [Karel Zak]
    - improve whole-disk detection when read /proc/partitions  [Karel Zak]
    - make partitions reference counting more robust [coverity scan]  [Karel Zak]
@@ -291,6 +306,7 @@ libblkid:
    - tiny code simplification  [Karel Zak]
 libfdisk:
    - (bsd) improve checksum calculation [-Waddress-of-packed-member]  [Karel Zak]
+   - (docs) add reference to v2.33  [Karel Zak]
    - (dos) Use strtoul to parse the label-id  [Juerg Haefliger]
    - (dos) improve first unused sector for logical partitions  [Karel Zak]
    - (dos) rewrite fist/last free sector functions  [Karel Zak]
@@ -305,6 +321,7 @@ libfdisk:
    - sanity check, to prevent overlapping partitions from being partly reported as free  [Fabian.Kirsch@dlr.de]
    - use list_add_tail() in more robust way  [Karel Zak]
 libmount:
+   - (docs) add reference to v2.33 and v2.34  [Karel Zak]
    - (fuse) follow only user_id= on umount  [Karel Zak]
    - (tabdiff) use list_add_tail() in more robust way  [Karel Zak]
    - (umount) make mnt_stat_mountpoin() usable for relative paths  [Karel Zak]
@@ -322,11 +339,13 @@ libmount:
    - export mnt_guess_system_root() by API  [Karel Zak]
    - fix "maybe be" duplication  [Austin English]
    - fix compiler warning [-Wsometimes-uninitialized]  [Karel Zak]
+   - fix docs typo  [Karel Zak]
    - fix memleak on parse errors  [Karel Zak]
    - fix memory leak on error [coverity scan]  [Karel Zak]
    - improve fs referencing in tables  [Tim Hildering]
    - return errno on failed fstab stat()  [Karel Zak]
 libsmartcols:
+   - (docs) add reference to v2.33 and v2.34  [Karel Zak]
    - (groups) improve debug messages  [Karel Zak]
    - (groups) improve scols_table_group_lines() args check [coverity scan]  [Karel Zak]
    - (groups) print group childrent after regualr tree  [Karel Zak]
@@ -340,6 +359,7 @@ libsmartcols:
    - add lines grouping support  [Karel Zak]
    - cell width calulation cleanup  [Karel Zak]
    - fix  variable shadowing  [Sami Kerola]
+   - fix docs  [Karel Zak]
    - fix groups reset, add debugs  [Karel Zak]
    - move buffer stuff to buffer.c  [Karel Zak]
    - move width calculation to separate file  [Karel Zak]
@@ -451,16 +471,25 @@ mount:
    - mount.8 clarify (no)suid behavior on file capabilities  [Peter Wu]
 po:
    - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Písař]
+   - update da.po (from translationproject.org)  [Joe Hansen]
    - update de.po (from translationproject.org)  [Mario Blättermann]
    - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
    - update fr.po (from translationproject.org)  [Frédéric Marchal]
    - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
    - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+   - update zh_CN.po (from translationproject.org)  [Boyuan Yang]
 readprofile:
    - be more explicit with used types [cppcheck]  [Karel Zak]
    - check input file is not empty [asan]  [Sami Kerola]
 renice:
    - make code more readable for static analyzer [coverity scan]  [Karel Zak]
+rev:
+   - be careful with close()  [Karel Zak]
 rtcwake:
    - fix "maybe be" duplication  [Austin English]
    - terminate mode and excl[]  [Karel Zak]
@@ -529,6 +558,7 @@ tests:
    - make lsns-netnsid portable  [Karel Zak]
    - make sure TS_HELPER_MBSENCODE compiled  [Karel Zak]
    - run oids test only when uuidgen tool was built  [Thomas Deutschmann]
+   - update build-sys output  [Karel Zak]
    - update fdisk outputs  [Karel Zak]
    - update lscpu due to 'Vulnerability' fields  [Karel Zak]
    - update lscpu output  [Karel Zak]
@@ -539,6 +569,7 @@ timeutils:
 ul:
    - make sure buffers are zeroized [coverity scan]  [Karel Zak]
 umount:
+   - be more strict about --all  [Karel Zak]
    - fix --quiet  [Karel Zak]
 unshare:
    - allow to set a new root  [Laurent Vivier]
@@ -554,6 +585,7 @@ various:
 vipw:
    - use xstrncpy()  [Karel Zak]
 wall:
+   - make sure ut_line is not empty  [Karel Zak]
    - remove unnecessary warning  [Karel Zak]
 whereis:
    - make subdirs scan more robust  [Karel Zak]
