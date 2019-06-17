@@ -610,9 +610,10 @@ int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char
 
 	/* Remove tailing newline (usual in sysfs) */
 	if (rc > 0 && *(buf + rc - 1) == '\n')
-		--rc;
+		buf[--rc] = '\0';
+	else
+		buf[rc - 1] = '\0';
 
-	buf[rc] = '\0';
 	return rc;
 }
 

@@ -25,6 +25,9 @@
 #include <signal.h>
 #include <assert.h>
 #include <linux/watchdog.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <libsmartcols.h>
 
@@ -36,6 +39,7 @@
 #include "pathnames.h"
 #include "strutils.h"
 #include "carefulputc.h"
+#include "path.h"
 
 /*
  * since 2.6.18
@@ -58,10 +62,6 @@
 # define WDIOF_ALARMONLY	0x0400	/* Watchdog triggers a management or
 					   other external alarm not a reboot */
 #endif
-
-/* basic output flags */
-static int no_headings;
-static int raw;
 
 struct wdflag {
 	uint32_t	flag;
@@ -108,8 +108,8 @@ static struct colinfo infos[] = {
 static int columns[ARRAY_SIZE(infos) * 2];
 static int ncolumns;
 
-struct wdinfo {
-	char		*device;
+struct wd_device {
+	const char	*devpath;
 
 	int		timeout;
 	int		timeleft;
@@ -117,12 +117,23 @@ struct wdinfo {
 
 	uint32_t	status;
 	uint32_t	bstatus;
+	int		nowayout;
 
 	struct watchdog_info ident;
 
 	unsigned int	has_timeout : 1,
 			has_timeleft : 1,
-			has_pretimeout : 1;
+			has_pretimeout : 1,
+			has_nowayout : 1;
+};
+
+struct wd_control {
+	unsigned int	show_oneline : 1,
+			show_raw : 1,
+			hide_headings : 1,
+			hide_flags : 1,
+			hide_ident : 1,
+			hide_timeouts : 1;
 };
 
 /* converts flag name to flag bit */
@@ -165,10 +176,32 @@ static struct colinfo *get_column_info(unsigned num)
 	return &infos[ get_column_id(num) ];
 }
 
+/* We preffer cdev /dev/watchdog0 as this device has node in
+ * /sys/class/watchdog/. The old miscdev /dev/watchdog is fallback for old
+ * systemds only.
+ */
+static const char *get_default_device(void)
+{
+	const char **p;
+	static const char *devs[] = {
+		"/dev/watchdog0",
+		"/dev/watchdog",
+		NULL
+	};
+
+	for (p = devs; *p; p++) {
+		if (access(*p, F_OK) == 0)
+			return *p;
+	}
+
+	return NULL;
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
 	size_t i;
+	const char *dflt = get_default_device();
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
@@ -193,7 +226,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(USAGE_HELP_OPTIONS(24));
 	fputs(USAGE_SEPARATOR, out);
 
-	fprintf(out, _("The default device is %s.\n"), _PATH_WATCHDOG_DEV);
+	if (dflt)
+		fprintf(out, _("The default device is %s.\n"), dflt);
+	else
+		fprintf(out, _("No default device is available.\n"));
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
@@ -204,7 +240,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void add_flag_line(struct libscols_table *table, struct wdinfo *wd, const struct wdflag *fl)
+static void add_flag_line(struct libscols_table *table, struct wd_device *wd, const struct wdflag *fl)
 {
 	int i;
 	struct libscols_line *line;
@@ -232,7 +268,7 @@ static void add_flag_line(struct libscols_table *table, struct wdinfo *wd, const
 			str = wd->bstatus & fl->flag ? "1" : "0";
 			break;
 		case COL_DEVICE:
-			str = wd->device;
+			str = wd->devpath;
 			break;
 		default:
 			break;
@@ -245,12 +281,16 @@ static void add_flag_line(struct libscols_table *table, struct wdinfo *wd, const
 	}
 }
 
-static int show_flags(struct wdinfo *wd, uint32_t wanted)
+static int show_flags(struct wd_control *ctl, struct wd_device *wd, uint32_t wanted)
 {
 	size_t i;
 	int rc = -1;
 	struct libscols_table *table;
 	uint32_t flags;
+
+	/* information about supported bits is probably missing in /sys */
+	if (!wd->ident.options)
+		return 0;
 
 	scols_init_debug(0);
 
@@ -260,8 +300,8 @@ static int show_flags(struct wdinfo *wd, uint32_t wanted)
 		warn(_("failed to allocate output table"));
 		return -1;
 	}
-	scols_table_enable_raw(table, raw);
-	scols_table_enable_noheadings(table, no_headings);
+	scols_table_enable_raw(table, ctl->show_raw);
+	scols_table_enable_noheadings(table, ctl->hide_headings);
 
 	/* define columns */
 	for (i = 0; i < (size_t) ncolumns; i++) {
@@ -287,7 +327,7 @@ static int show_flags(struct wdinfo *wd, uint32_t wanted)
 	}
 
 	if (flags)
-		warnx(_("%s: unknown flags 0x%x\n"), wd->device, flags);
+		warnx(_("%s: unknown flags 0x%x\n"), wd->devpath, flags);
 
 	scols_print_table(table);
 	rc = 0;
@@ -301,25 +341,25 @@ done:
  *
  * Don't use err() or exit() here!
  */
-static int set_watchdog(struct wdinfo *wd, int timeout)
+static int set_watchdog(struct wd_device *wd, int timeout)
 {
 	int fd;
 	sigset_t sigs, oldsigs;
 	int rc = 0;
 
-	assert(wd->device);
+	assert(wd->devpath);
 
 	sigemptyset(&oldsigs);
 	sigfillset(&sigs);
 	sigprocmask(SIG_BLOCK, &sigs, &oldsigs);
 
-	fd = open(wd->device, O_WRONLY|O_CLOEXEC);
+	fd = open(wd->devpath, O_WRONLY|O_CLOEXEC);
 
 	if (fd < 0) {
 		if (errno == EBUSY)
 			warnx(_("%s: watchdog already in use, terminating."),
-					wd->device);
-		warn(_("cannot open %s"), wd->device);
+					wd->devpath);
+		warn(_("cannot open %s"), wd->devpath);
 		return -1;
 	}
 
@@ -331,7 +371,7 @@ static int set_watchdog(struct wdinfo *wd, int timeout)
 		if (write(fd, &v, 1) >= 0)
 			break;
 		if (errno != EINTR) {
-			warn(_("%s: failed to disarm watchdog"), wd->device);
+			warn(_("%s: failed to disarm watchdog"), wd->devpath);
 			break;
 		}
 		/* Let's try hard, since if we don't get this right
@@ -340,7 +380,7 @@ static int set_watchdog(struct wdinfo *wd, int timeout)
 
 	if (ioctl(fd, WDIOC_SETTIMEOUT, &timeout) != 0) {
 		rc = errno;
-		warn(_("cannot set timeout for %s"), wd->device);
+		warn(_("cannot set timeout for %s"), wd->devpath);
 	}
 
 	if (close(fd))
@@ -358,29 +398,24 @@ static int set_watchdog(struct wdinfo *wd, int timeout)
  *
  * Don't use err() or exit() here!
  */
-static int read_watchdog(struct wdinfo *wd)
+static int read_watchdog_from_device(struct wd_device *wd)
 {
 	int fd;
 	sigset_t sigs, oldsigs;
 
-	assert(wd->device);
+	assert(wd->devpath);
 
 	sigemptyset(&oldsigs);
 	sigfillset(&sigs);
 	sigprocmask(SIG_BLOCK, &sigs, &oldsigs);
 
-	fd = open(wd->device, O_WRONLY|O_CLOEXEC);
+	fd = open(wd->devpath, O_WRONLY|O_CLOEXEC);
 
-	if (fd < 0) {
-		if (errno == EBUSY)
-			warnx(_("%s: watchdog already in use, terminating."),
-					wd->device);
-		warn(_("cannot open %s"), wd->device);
-		return -1;
-	}
+	if (fd < 0)
+		return -errno;
 
 	if (ioctl(fd, WDIOC_GETSUPPORT, &wd->ident) < 0)
-		warn(_("%s: failed to get information about watchdog"), wd->device);
+		warn(_("%s: failed to get information about watchdog"), wd->devpath);
 	else {
 		ioctl(fd, WDIOC_GETSTATUS, &wd->status);
 		ioctl(fd, WDIOC_GETBOOTSTATUS, &wd->bstatus);
@@ -401,7 +436,7 @@ static int read_watchdog(struct wdinfo *wd)
 		if (write(fd, &v, 1) >= 0)
 			break;
 		if (errno != EINTR) {
-			warn(_("%s: failed to disarm watchdog"), wd->device);
+			warn(_("%s: failed to disarm watchdog"), wd->devpath);
 			break;
 		}
 		/* Let's try hard, since if we don't get this right
@@ -415,18 +450,88 @@ static int read_watchdog(struct wdinfo *wd)
 	return 0;
 }
 
-static void print_oneline(struct wdinfo *wd, uint32_t wanted,
-		int noident, int notimeouts, int noflags)
+/* Returns: <0 error, 0 success, 1 unssuported */
+static int read_watchdog_from_sysfs(struct wd_device *wd)
 {
-	printf("%s:", wd->device);
+	struct path_cxt *sys;
+	struct stat st;
+	int rc;
 
-	if (!noident) {
+	rc = stat(wd->devpath, &st);
+	if (rc != 0)
+		return rc;
+
+	sys = ul_new_path(_PATH_SYS_DEVCHAR "/%u:%u",
+			major(st.st_rdev), minor(st.st_rdev));
+	if (!sys)
+		return -ENOMEM;
+
+	if (ul_path_get_dirfd(sys) < 0)
+		goto nosysfs;		/* device not in /sys */
+
+	if (ul_path_access(sys, F_OK, "identity") != 0)
+		goto nosysfs;		/* no info in /sys (old miscdev?) */
+
+	ul_path_read_buffer(sys, (char *) wd->ident.identity, sizeof(wd->ident.identity), "identity");
+
+	ul_path_scanf(sys, "status", "%x", &wd->status);
+	ul_path_read_u32(sys, &wd->bstatus, "bootstatus");
+
+	if (ul_path_read_s32(sys, &wd->nowayout, "nowayout") == 0)
+		wd->has_nowayout = 1;
+	if (ul_path_read_s32(sys, &wd->timeout, "timeout") == 0)
+		wd->has_timeout = 1;
+	if (ul_path_read_s32(sys, &wd->pretimeout, "pretimeout") == 0)
+		wd->has_pretimeout = 1;
+	if (ul_path_read_s32(sys, &wd->timeleft, "timeleft") == 0)
+		wd->has_timeleft = 1;
+
+	ul_unref_path(sys);
+	return 0;
+nosysfs:
+	ul_unref_path(sys);
+	return 1;
+}
+
+static int read_watchdog(struct wd_device *wd)
+{
+	int rc = read_watchdog_from_device(wd);
+
+	if (rc == -EBUSY || rc == -EACCES || rc == -EPERM)
+		rc = read_watchdog_from_sysfs(wd);
+
+	if (rc) {
+		warn(_("cannot read information about %s"), wd->devpath);
+		return -1;
+	}
+
+	return 0;
+}
+
+static void show_timeouts(struct wd_device *wd)
+{
+	if (wd->has_timeout)
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeout),
+			  _("Timeout:"), wd->timeout);
+	if (wd->has_pretimeout)
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->pretimeout),
+			  _("Pre-timeout:"), wd->pretimeout);
+	if (wd->has_timeleft)
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeleft),
+			  _("Timeleft:"), wd->timeleft);
+}
+
+static void print_oneline(struct wd_control *ctl, struct wd_device *wd, uint32_t wanted)
+{
+	printf("%s:", wd->devpath);
+
+	if (!ctl->hide_ident) {
 		printf(" VERSION=\"%x\"", wd->ident.firmware_version);
 
 		printf(" IDENTITY=");
 		fputs_quoted((char *) wd->ident.identity, stdout);
 	}
-	if (!notimeouts) {
+	if (!ctl->hide_timeouts) {
 		if (wd->has_timeout)
 			printf(" TIMEOUT=\"%i\"", wd->timeout);
 		if (wd->has_pretimeout)
@@ -435,7 +540,7 @@ static void print_oneline(struct wdinfo *wd, uint32_t wanted,
 			printf(" TIMELEFT=\"%i\"", wd->timeleft);
 	}
 
-	if (!noflags) {
+	if (!ctl->hide_flags) {
 		size_t i;
 		uint32_t flags = wd->ident.options;
 
@@ -459,26 +564,38 @@ static void print_oneline(struct wdinfo *wd, uint32_t wanted,
 	fputc('\n', stdout);
 }
 
-static void show_timeouts(struct wdinfo *wd)
+static void print_device(struct wd_control *ctl, struct wd_device *wd, uint32_t wanted)
 {
-	if (wd->has_timeout)
-		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeout),
-			  _("Timeout:"), wd->timeout);
-	if (wd->has_pretimeout)
-		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->pretimeout),
-			  _("Pre-timeout:"), wd->pretimeout);
-	if (wd->has_timeleft)
-		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeleft),
-			  _("Timeleft:"), wd->timeleft);
+	/* NAME=value one line output */
+	if (ctl->show_oneline) {
+		print_oneline(ctl, wd, wanted);
+		return;
+	}
+
+	/* pretty output */
+	if (!ctl->hide_ident) {
+		printf("%-15s%s\n", _("Device:"), wd->devpath);
+		printf("%-15s%s [%s %x]\n",
+				_("Identity:"),
+				wd->ident.identity,
+				_("version"),
+				wd->ident.firmware_version);
+	}
+	if (!ctl->hide_timeouts)
+		show_timeouts(wd);
+
+	if (!ctl->hide_flags)
+		show_flags(ctl, wd, wanted);
 }
 
 int main(int argc, char *argv[])
 {
-	struct wdinfo wd;
+	struct wd_device wd;
+	struct wd_control ctl = { .hide_headings = 0 };
 	int c, res = EXIT_SUCCESS, count = 0;
-	char noflags = 0, noident = 0, notimeouts = 0, oneline = 0;
 	uint32_t wanted = 0;
 	int timeout = 0;
+	const char *dflt_device = NULL;
 
 	static const struct option long_opts[] = {
 		{ "flags",      required_argument, NULL, 'f' },
@@ -528,26 +645,26 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'F':
-			noflags = 1;
+			ctl.hide_flags = 1;
 			break;
 		case 'I':
-			noident = 1;
+			ctl.hide_ident = 1;
 			break;
 		case 'T':
-			notimeouts = 1;
+			ctl.hide_timeouts = 1;
 			break;
 		case 'n':
-			no_headings = 1;
+			ctl.hide_headings = 1;
 			break;
 		case 'r':
-			raw = 1;
+			ctl.show_raw = 1;
 			break;
 		case 'O':
-			oneline = 1;
+			ctl.show_oneline = 1;
 			break;
 		case 'x':
-			noident = 1;
-			notimeouts = 1;
+			ctl.hide_ident = 1;
+			ctl.hide_timeouts = 1;
 			break;
 
 		case 'h':
@@ -567,15 +684,18 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_BSTATUS;
 	}
 
+	/* Device no specified, use default. */
+	if (optind == argc) {
+		dflt_device = get_default_device();
+		if (!dflt_device)
+			err(EXIT_FAILURE, _("No default device is available."));
+	}
+
 	do {
 		int rc;
 
 		memset(&wd, 0, sizeof(wd));
-
-		if (optind == argc)
-			wd.device = _PATH_WATCHDOG_DEV;
-		else
-			wd.device = argv[optind++];
+		wd.devpath = dflt_device ? dflt_device : argv[optind++];
 
 		if (count)
 			fputc('\n', stdout);
@@ -594,24 +714,8 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		if (oneline) {
-			print_oneline(&wd, wanted, noident, notimeouts, noflags);
-			continue;
-		}
+		print_device(&ctl, &wd, wanted);
 
-		/* pretty output */
-		if (!noident) {
-			printf("%-15s%s\n", _("Device:"), wd.device);
-			printf("%-15s%s [%s %x]\n",
-					_("Identity:"),
-					wd.ident.identity,
-					_("version"),
-					wd.ident.firmware_version);
-		}
-		if (!notimeouts)
-			show_timeouts(&wd);
-		if (!noflags)
-			show_flags(&wd, wanted);
 	} while (optind < argc);
 
 	return res;

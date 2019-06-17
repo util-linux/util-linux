@@ -104,6 +104,7 @@
 
 #define _PATH_SYS_BLOCK		"/sys/block"
 #define _PATH_SYS_DEVBLOCK	"/sys/dev/block"
+#define _PATH_SYS_DEVCHAR	"/sys/dev/char"
 #define _PATH_SYS_CLASS		"/sys/class"
 #define _PATH_SYS_SCSI		"/sys/bus/scsi"
 
@@ -166,9 +167,6 @@
 #define _PATH_RAWDEVCTL		_PATH_RAWDEVDIR "rawctl"
 /* deprecated */
 #define _PATH_RAWDEVCTL_OLD	"/dev/rawctl"
-
-/* wdctl path */
-#define _PATH_WATCHDOG_DEV	"/dev/watchdog"
 
 /* ipc paths */
 #define _PATH_PROC_SYSV_MSG	"/proc/sysvipc/msg"
