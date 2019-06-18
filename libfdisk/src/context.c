@@ -541,7 +541,7 @@ static void reset_context(struct fdisk_context *cxt)
 			free(cxt->firstsector);
 	} else {
 		/* we close device only in primary context */
-		if (cxt->dev_fd > -1)
+		if (cxt->dev_fd > -1 && cxt->private_fd)
 			close(cxt->dev_fd);
 		free(cxt->firstsector);
 	}
@@ -559,6 +559,7 @@ static void reset_context(struct fdisk_context *cxt)
 	memset(&cxt->dev_st, 0, sizeof(cxt->dev_st));
 
 	cxt->dev_fd = -1;
+	cxt->private_fd = 0;
 	cxt->firstsector = NULL;
 	cxt->firstsector_bufsz = 0;
 
@@ -570,6 +571,72 @@ static void reset_context(struct fdisk_context *cxt)
 	cxt->label = NULL;
 
 	fdisk_free_wipe_areas(cxt);
+}
+
+/* fdisk_assign_device() body */
+static int fdisk_assign_fd(struct fdisk_context *cxt, int fd,
+			const char *fname, int readonly, int privfd)
+{
+	assert(cxt);
+	assert(fd >= 0);
+
+	/* redirect request to parent */
+	if (cxt->parent) {
+		int rc, org = fdisk_is_listonly(cxt->parent);
+
+		/* assign_device() is sensitive to "listonly" mode, so let's
+		 * follow the current context setting for the parent to avoid
+		 * unwanted extra warnings. */
+		fdisk_enable_listonly(cxt->parent, fdisk_is_listonly(cxt));
+
+		rc = fdisk_assign_fd(cxt->parent, fd, fname, readonly, privfd);
+		fdisk_enable_listonly(cxt->parent, org);
+
+		if (!rc)
+			rc = init_nested_from_parent(cxt, 0);
+		if (!rc)
+			fdisk_probe_labels(cxt);
+		return rc;
+	}
+
+	reset_context(cxt);
+
+	if (fstat(fd, &cxt->dev_st) != 0)
+		goto fail;
+
+	cxt->readonly = readonly;
+	cxt->dev_fd = fd;
+	cxt->private_fd = privfd;
+	cxt->dev_path = fname ? strdup(fname) : NULL;
+	if (!cxt->dev_path)
+		goto fail;
+
+	fdisk_discover_topology(cxt);
+	fdisk_discover_geometry(cxt);
+
+	fdisk_apply_user_device_properties(cxt);
+
+	if (fdisk_read_firstsector(cxt) < 0)
+		goto fail;
+
+	fdisk_probe_labels(cxt);
+	fdisk_apply_label_device_properties(cxt);
+
+	/* warn about obsolete stuff on the device if we aren't in
+	 * list-only mode and there is not PT yet */
+	if (!fdisk_is_listonly(cxt) && !fdisk_has_label(cxt)
+	    && fdisk_check_collisions(cxt) < 0)
+		goto fail;
+
+	DBG(CXT, ul_debugobj(cxt, "initialized for %s [%s]",
+			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));
+	return 0;
+fail:
+	{
+		int rc = -errno;
+		DBG(CXT, ul_debugobj(cxt, "failed to assign device [rc=%d]", rc));
+		return rc;
+	}
 }
 
 /**
@@ -601,74 +668,42 @@ static void reset_context(struct fdisk_context *cxt)
 int fdisk_assign_device(struct fdisk_context *cxt,
 			const char *fname, int readonly)
 {
-	int fd;
+	int fd, rc;
 
 	DBG(CXT, ul_debugobj(cxt, "assigning device %s", fname));
 	assert(cxt);
 
-	/* redirect request to parent */
-	if (cxt->parent) {
-		int rc, org = fdisk_is_listonly(cxt->parent);
-
-		/* assign_device() is sensitive to "listonly" mode, so let's
-		 * follow the current context setting for the parent to avoid
-		 * unwanted extra warnings. */
-		fdisk_enable_listonly(cxt->parent, fdisk_is_listonly(cxt));
-
-		rc = fdisk_assign_device(cxt->parent, fname, readonly);
-		fdisk_enable_listonly(cxt->parent, org);
-
-		if (!rc)
-			rc = init_nested_from_parent(cxt, 0);
-		if (!rc)
-			fdisk_probe_labels(cxt);
-		return rc;
-	}
-
-	reset_context(cxt);
-
 	fd = open(fname, (readonly ? O_RDONLY : O_RDWR ) | O_CLOEXEC);
-	if (fd < 0)
-		goto fail;
-
-	if (fstat(fd, &cxt->dev_st) != 0)
-		goto fail;
-
-	cxt->readonly = readonly;
-	cxt->dev_fd = fd;
-	cxt->dev_path = strdup(fname);
-	if (!cxt->dev_path)
-		goto fail;
-
-	fdisk_discover_topology(cxt);
-	fdisk_discover_geometry(cxt);
-
-	fdisk_apply_user_device_properties(cxt);
-
-	if (fdisk_read_firstsector(cxt) < 0)
-		goto fail;
-
-	fdisk_probe_labels(cxt);
-
-	fdisk_apply_label_device_properties(cxt);
-
-	/* warn about obsolete stuff on the device if we aren't in
-	 * list-only mode and there is not PT yet */
-	if (!fdisk_is_listonly(cxt) && !fdisk_has_label(cxt)
-	    && fdisk_check_collisions(cxt) < 0)
-		goto fail;
-
-	DBG(CXT, ul_debugobj(cxt, "initialized for %s [%s]",
-			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));
-	return 0;
-fail:
-	{
+	if (fd < 0) {
 		int rc = -errno;
-		if (fd >= 0)
-			close(fd);
 		DBG(CXT, ul_debugobj(cxt, "failed to assign device [rc=%d]", rc));
 		return rc;
 	}
+
+	rc = fdisk_assign_fd(cxt, fd, fname, readonly, 1);
+	if (rc)
+		close(fd);
+	return rc;
+}
+
+/**
+ * fdisk_assign_device_by_fd:
+ * @cxt: context
+ * @fd: device file descriptor
+ * @fname: path to the device (used for dialogs, debugging, partition names, ...)
+ * @readonly: how to use the device
+ *
+ * Like fdisk_assign_device(), but caller is responsible to open and close the
+ * device. The library only fsync() the device on fdisk_deassign_device().
+ *
+ * The device has to be open O_RDWR on @readonly=0.
+ *
+ * Returns: 0 on success, < 0 on error.
+ */
+int fdisk_assign_device_by_fd(struct fdisk_context *cxt, int fd,
+			const char *fname, int readonly)
+{
+	return fdisk_assign_fd(cxt, fd, fname, readonly, 0);
 }
 
 /**
@@ -696,15 +731,19 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 
 	DBG(CXT, ul_debugobj(cxt, "de-assigning device %s", cxt->dev_path));
 
-	if (cxt->readonly)
+	if (cxt->readonly && cxt->private_fd)
 		close(cxt->dev_fd);
 	else {
-		if (fsync(cxt->dev_fd) || close(cxt->dev_fd)) {
+		if (fsync(cxt->dev_fd)) {
+			fdisk_warn(cxt, _("%s: fsync device failed"),
+					cxt->dev_path);
+			return -errno;
+		}
+		if (cxt->private_fd && close(cxt->dev_fd)) {
 			fdisk_warn(cxt, _("%s: close device failed"),
 					cxt->dev_path);
 			return -errno;
 		}
-
 		if (!nosync) {
 			fdisk_info(cxt, _("Syncing disks."));
 			sync();
@@ -713,7 +752,6 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 
 	free(cxt->dev_path);
 	cxt->dev_path = NULL;
-
 	cxt->dev_fd = -1;
 
 	return 0;
@@ -733,7 +771,7 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 int fdisk_reassign_device(struct fdisk_context *cxt)
 {
 	char *devname;
-	int rdonly, rc;
+	int rdonly, rc, fd, privfd;
 
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
@@ -745,11 +783,19 @@ int fdisk_reassign_device(struct fdisk_context *cxt)
 		return -ENOMEM;
 
 	rdonly = cxt->readonly;
+	fd = cxt->dev_fd;
+	privfd = cxt->private_fd;
 
 	fdisk_deassign_device(cxt, 1);
-	rc = fdisk_assign_device(cxt, devname, rdonly);
-	free(devname);
 
+	if (privfd)
+		/* reopen and assign */
+		rc = fdisk_assign_device(cxt, devname, rdonly);
+	else
+		/* assign only */
+		rc = fdisk_assign_fd(cxt, fd, devname, rdonly, privfd);
+
+	free(devname);
 	return rc;
 }
 

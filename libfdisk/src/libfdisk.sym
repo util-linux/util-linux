@@ -306,4 +306,5 @@ FDISK_2.33 {
 
 FDISK_2.35 {
 	fdisk_script_set_table;
+	fdisk_assign_device_by_fd;
 } FDISK_2.33;

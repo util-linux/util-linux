@@ -291,6 +291,7 @@ fdisk_unref_table
 <FILE>context</FILE>
 fdisk_context
 fdisk_assign_device
+fdisk_assign_device_by_fd
 fdisk_deassign_device
 fdisk_reassign_device
 fdisk_device_is_used
