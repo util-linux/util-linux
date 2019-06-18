@@ -1446,7 +1446,9 @@ int su_main(int argc, char **argv, int mode)
 	    || !su->pwd->pw_passwd
 	    || !su->pwd->pw_name || !*su->pwd->pw_name
 	    || !su->pwd->pw_dir  || !*su->pwd->pw_dir)
-		errx(EXIT_FAILURE, _("user %s does not exist"), su->new_user);
+		errx(EXIT_FAILURE,
+		     _("user %s does not exist or the user entry does not "
+		       "contain all the required fields"), su->new_user);
 
 	su->new_user = su->pwd->pw_name;
 	su->old_user = xgetlogin();
