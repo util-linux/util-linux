@@ -127,7 +127,7 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 	return 0;
 }
 
-inline int loopcxt_has_device(struct loopdev_cxt *lc)
+int loopcxt_has_device(struct loopdev_cxt *lc)
 {
 	return lc && *lc->device;
 }
