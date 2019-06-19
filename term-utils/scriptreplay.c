@@ -371,11 +371,10 @@ usage(void)
 	fputs(_("Play back terminal typescripts, using timing information.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -t, --timing <file>     script timing output file\n"
-		" -s, --typescript <file> script terminal session output file\n"
-		" -d, --divisor <num>     speed up or slow down execution with time divisor\n"
-		" -m, --maxdelay <num>    wait at most this many seconds between updates\n"
-		), out);
+	fputs(_(" -t, --timing <file>     script timing log file\n"), out);
+	fputs(_(" -s, --typescript <file> script data log file\n"), out);
+	fputs(_(" -d, --divisor <num>     speed up or slow down execution with time divisor\n"), out);
+	fputs(_(" -m, --maxdelay <num>    wait at most this many seconds between updates\n"), out);
 	printf(USAGE_HELP_OPTIONS(25));
 
 	printf(USAGE_MAN_TAIL("scriptreplay(1)"));
