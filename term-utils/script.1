@@ -40,10 +40,13 @@ script \- make typescript of terminal session
 .RI [ file ]
 .SH DESCRIPTION
 .B script
-makes a typescript of everything displayed on your terminal.  It is useful for
-students who need a hardcopy record of an interactive session as proof of an
-assignment, as the typescript file can be printed out later with
-.BR lpr (1).
+makes a typescript of everything on your terminal session.  The terminal
+data are stored in raw form to the log file and information about timing
+to another (optional) structured log file.  The timing log file is necessary to replay
+the session later by
+.B scriptreplay (1)
+and to store additional information about the session.
+.PP
 Since version 2.35
 .B script
 supports multiple streams and allows to log input and output to separate
@@ -118,6 +121,12 @@ Log timing information to the \fIfile\fR. Two timing file formats are supporte
 now.  The classic format is used when only one stream (input or output) logging
 is enabled. The multi-stream format is used on \fB\-\-log\-io\fR or when
 \fB\-\-log\-in\fR and \fB\-\-log\-out\fR are used together.
+See also \fB\-\-log\-format\fR.
+.TP
+\fB\-m\fR, \fB\-\-log\-format\fR \fIformat\fR
+Force use 'advanced' or 'classic' format.  The default is the classic format to
+log only output and the advanced format when input as well as output logging is
+requested.
 .sp
 .RS
 .B Classic format
@@ -126,7 +135,7 @@ The log contains two fields, separated by a space.  The first
 field indicates how much time elapsed since the previous output.  The second
 field indicates how many characters were output this time.
 .sp
-.B Multi-stream format
+.B Advanced (multi-stream) format
 .PP
 The first field is entry type itentifier ('I'nput, 'O'utput, 'H'eader, 'S'ignal).
 The socond field is how much time elapsed since the previous entry, and rest of the entry is type specific data.

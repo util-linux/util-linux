@@ -111,8 +111,8 @@ UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
  */
 enum {
 	SCRIPT_FMT_RAW = 1,		/* raw slave/master data */
-	SCRIPT_FMT_TIMING_SIMPLE,	/* timing info in classic "<delta> <offset>" format */
-	SCRIPT_FMT_TIMING_MULTI,	/* multiple streams in format "<type> <delta> <offset|etc> */
+	SCRIPT_FMT_TIMING_SIMPLE,	/* (classic) in format "<delta> <offset>" */
+	SCRIPT_FMT_TIMING_MULTI,	/* (advanced) multiple streams in format "<type> <delta> <offset|etc> */
 };
 
 struct script_log {
@@ -208,6 +208,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(_(" -T, --log-timing <file>       log timing information to file\n"), out);
 	fputs(_(" -t[<file>], --timing[=<file>] deprecated alias to -T (default file is stderr)\n"), out);
+	fputs(_(" -m, --logging-format <name>   force to 'classic' or 'advanced' format\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 
 	fputs(_(" -a, --append                  append to the log file\n"), out);
@@ -950,6 +951,7 @@ int main(int argc, char **argv)
 		{"log-out", required_argument, NULL, 'O'},
 		{"log-io", required_argument, NULL, 'B'},
 		{"log-timing", required_argument, NULL, 'T'},
+		{"logging-format", required_argument, NULL, 'm'},
 		{"output-limit", required_argument, NULL, 'o'},
 		{"quiet", no_argument, NULL, 'q'},
 		{"timing", optional_argument, NULL, 't'},
@@ -977,7 +979,7 @@ int main(int argc, char **argv)
 
 	script_init_debug();
 
-	while ((ch = getopt_long(argc, argv, "aB:c:efI:O:o:qT:t::Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "aB:c:efI:O:o:qm:T:t::Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -1015,6 +1017,14 @@ int main(int argc, char **argv)
 			break;
 		case 'q':
 			ctl.quiet = 1;
+			break;
+		case 'm':
+			if (strcasecmp(optarg, "classic") == 0)
+				format = SCRIPT_FMT_TIMING_SIMPLE;
+			else if (strcasecmp(optarg, "advanced") == 0)
+				format = SCRIPT_FMT_TIMING_MULTI;
+			else
+				errx(EXIT_FAILURE, _("unssuported logging format: '%s'"), optarg);
 			break;
 		case 't':
 			if (optarg && *optarg == '=')
@@ -1057,6 +1067,10 @@ int main(int argc, char **argv)
 			format = outfile && infile ?
 					SCRIPT_FMT_TIMING_MULTI :
 					SCRIPT_FMT_TIMING_SIMPLE;
+
+		else if (format == SCRIPT_FMT_TIMING_SIMPLE && outfile && infile)
+			errx(EXIT_FAILURE, _("log multiple streams is mutually "
+					     "exclusive with 'classic' format"));
 		if (outfile)
 			log_associate(&ctl, &ctl.out, timingfile, format);
 		if (infile)
