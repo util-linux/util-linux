@@ -204,15 +204,19 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -I, --log-in <file>           log stdin to file\n"), out);
 	fputs(_(" -O, --log-out <file>          log stdout to file (default)\n"), out);
 	fputs(_(" -B, --log-io <file>           log stdin and stdout to file\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
 	fputs(_(" -T, --log-timing <file>       log timing information to file\n"), out);
-	fputs(_(" -a, --append                  append the output\n"), out);
+	fputs(_(" -t[<file>], --timing[=<file>] deprecated alias to -T (default file is stderr)\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" -a, --append                  append to the log file\n"), out);
 	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"), out);
 	fputs(_(" -e, --return                  return exit code of the child process\n"), out);
 	fputs(_(" -f, --flush                   run flush after each write\n"), out);
 	fputs(_("     --force                   use output file even when it is a link\n"), out);
 	fputs(_(" -o, --output-limit <size>     terminate if output files exceed size\n"), out);
 	fputs(_(" -q, --quiet                   be quiet\n"), out);
-	fputs(_(" -t[<file>], --timing[=<file>] deprecated alias to -T (default file is stderr)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(31));
