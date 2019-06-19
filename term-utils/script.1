@@ -57,6 +57,10 @@ saves the dialogue in this
 .IR file .
 If no filename is given, the dialogue is saved in the file
 .BR typescript .
+.PP
+Note that log input by \fB\-\-log\-in\fR or \fB\-\-log\-io\fR may be security
+sensitive operation as the log file contains all terminal session input (it
+means also passwords) independently on the terminal echo flag setting.
 .SH OPTIONS
 Below, the \fIsize\fR argument may be followed by the multiplicative
 suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
