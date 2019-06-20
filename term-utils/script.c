@@ -1063,8 +1063,11 @@ int main(int argc, char **argv)
 	}
 
 	if (timingfile) {
+		/* the old SCRIPT_FMT_TIMING_SIMPLE should be used when
+		 * recoding output only (just for backward compatibility),
+		 * otherwise switch to new format. */
 		if (!format)
-			format = outfile && infile ?
+			format = infile || (outfile && infile) ?
 					SCRIPT_FMT_TIMING_MULTI :
 					SCRIPT_FMT_TIMING_SIMPLE;
 
