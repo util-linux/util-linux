@@ -68,6 +68,13 @@ enum {
 	REPLAY_TIMING_MULTI		/* multiple streams in format "<type> <delta> <offset|etc> */
 };
 
+/* CR to '\n' mode */
+enum {
+	REPLAY_CRMODE_AUTO	= 0,
+	REPLAY_CRMODE_NEVER,
+	REPLAY_CRMODE_ALWAYS
+};
+
 struct replay_log {
 	const char	*streams;		/* 'I'nput, 'O'utput or both */
 	const char	*filename;
@@ -94,6 +101,7 @@ struct replay_setup {
 	int			timing_line;
 
 	char			default_type;	/* type for REPLAY_TIMING_SIMPLE */
+	int			crmode;
 };
 
 static void scriptreplay_init_debug(void)
@@ -119,6 +127,14 @@ static int replay_set_default_type(struct replay_setup *stp, char type)
 {
 	assert(stp);
 	stp->default_type = type;
+
+	return 0;
+}
+
+static int replay_set_crmode(struct replay_setup *stp, int mode)
+{
+	assert(stp);
+	stp->crmode = mode;
 
 	return 0;
 }
@@ -324,16 +340,30 @@ done:
 }
 
 /* return: 0 = success, <0 = error, 1 = done (EOF) */
-static int replay_emit_step_data(struct replay_step *step, int fd)
+static int replay_emit_step_data(struct replay_setup *stp, struct replay_step *step, int fd)
 {
 	size_t ct;
-	int rc = 0;
+	int rc = 0, cr2nl = 0;
 	char buf[BUFSIZ];
 
+	assert(stp);
 	assert(step);
 	assert(step->size);
 	assert(step->data);
 	assert(step->data->fp);
+
+	switch (stp->crmode) {
+	case REPLAY_CRMODE_AUTO:
+		if (step->type == 'I')
+			cr2nl = 1;
+		break;
+	case REPLAY_CRMODE_NEVER:
+		cr2nl = 0;
+		break;
+	case REPLAY_CRMODE_ALWAYS:
+		cr2nl = 1;
+		break;
+	}
 
 	for (ct = step->size; ct > 0; ) {
 		size_t len, cc;
@@ -344,6 +374,15 @@ static int replay_emit_step_data(struct replay_step *step, int fd)
 		if (!len) {
 			DBG(LOG, ul_debug("log data emit: failed to read log %m"));
 			break;
+		}
+
+		if (cr2nl) {
+			size_t i;
+
+			for (i = 0; i < len; i++) {
+				if (buf[i] == 0x0D)
+					buf[i] = '\n';
+			}
 		}
 
 		ct -= len;
@@ -390,6 +429,7 @@ usage(void)
 	fputs(_(" -d, --divisor <num>     speed up or slow down execution with time divisor\n"), out);
 	fputs(_(" -m, --maxdelay <num>    wait at most this many seconds between updates\n"), out);
 	fputs(_(" -x, --stream <name>     stream type (out, in or signal)\n"), out);
+	fputs(_(" -c, --cr-mode <type>    CR char mode (auto, never, always)\n"), out);
 	printf(USAGE_HELP_OPTIONS(25));
 
 	printf(USAGE_MAN_TAIL("scriptreplay(1)"));
@@ -456,9 +496,10 @@ main(int argc, char *argv[])
 		   *log_tm = NULL;
 	double divi = 1, maxdelay = 0;
 	int diviopt = FALSE, maxdelayopt = FALSE, idx;
-	int ch, rc;
+	int ch, rc, crmode = REPLAY_CRMODE_AUTO;
 
 	static const struct option longopts[] = {
+		{ "cr-mode",    required_argument,	0, 'c' },
 		{ "timing",	required_argument,	0, 't' },
 		{ "log-in",     required_argument,      0, 'I'},
 		{ "log-out",    required_argument,      0, 'O'},
@@ -489,11 +530,21 @@ main(int argc, char *argv[])
 
 	scriptreplay_init_debug();
 
-	while ((ch = getopt_long(argc, argv, "B:I:O:t:s:d:m:x:Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "B:c:I:O:t:s:d:m:x:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
 		switch(ch) {
+		case 'c':
+			if (strcmp("auto", optarg) == 0)
+				crmode = REPLAY_CRMODE_AUTO;
+			else if (strcmp("never", optarg) == 0)
+				crmode = REPLAY_CRMODE_NEVER;
+			else if (strcmp("always", optarg) == 0)
+				crmode = REPLAY_CRMODE_ALWAYS;
+			else
+				errx(EXIT_FAILURE, _("unsupported mode name: '%s'"), optarg);
+			break;
 		case 't':
 			log_tm = optarg;
 			break;
@@ -573,6 +624,7 @@ main(int argc, char *argv[])
 
 	replay_set_default_type(&setup,
 			*streams && streams[1] == '\0' ? *streams : 'O');
+	replay_set_crmode(&setup, crmode);
 
 	do {
 		rc = replay_get_next_step(&setup, streams, &step);
@@ -585,7 +637,7 @@ main(int argc, char *argv[])
 		if (step->delay > SCRIPT_MIN_DELAY)
 			delay_for(step->delay);
 
-		rc = replay_emit_step_data(step, STDOUT_FILENO);
+		rc = replay_emit_step_data(&setup, step, STDOUT_FILENO);
 	} while (rc == 0);
 
 	if (step && rc < 0)

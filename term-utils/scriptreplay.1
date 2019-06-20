@@ -59,6 +59,12 @@ File containing \fBscript\fR's timing output.  This option overrides old-style a
 File containing \fBscript\fR's terminal output.  Deprecated alias to \fB\-\-log-out\fR.
 This option overrides old-style arguments.
 .TP
+.BR \-c , " \-\-cr\-mode " \fImode\fR
+Specifies how to use CR (0x0D, carriage return) character from log files.
+The default mode is "auto", in this case CR is replaced with line break for
+stdin log, because otherwise scriptreplay will overwrite the same line.
+The another modes are "never" and "always".
+.TP
 .BR \-d , " \-\-divisor " \fInumber\fR
 Speed up the replay displaying this
 .I number
