@@ -149,7 +149,7 @@ static int replay_set_timing_file(struct replay_setup *stp, const char *filename
 			rc = -errno;
 	}
 
-	if (rc) {
+	if (rc && stp->timing_fp) {
 		fclose(stp->timing_fp);
 		stp->timing_fp = NULL;
 	}
