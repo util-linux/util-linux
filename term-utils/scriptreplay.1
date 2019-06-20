@@ -77,6 +77,11 @@ Set the maximum delay between transcript updates to
 of seconds.  The argument is a floating point number.  This can be used to
 avoid long pauses in the transcript replay.
 .TP
+.BR \-x , " \-\-stream " \fItype\fR
+Forces scriptreplay to print only specified stream.  The supported stream types
+are 'in' or 'out'.  This option is recommended for multi-stream logs (e.g. --log-io)
+to print only specified data.
+.TP
 .BR \-V , " \-\-version"
 Display version information and exit.
 .TP
