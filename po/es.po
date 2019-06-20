@@ -14577,7 +14577,7 @@ msgid "     --sizelimit <num>         device is limited to <num> bytes of the fi
 msgstr "     --sizelimit <núm>         el dispositivo está limitado a <núm> bytes del fichero\n"
 
 #: sys-utils/losetup.c:422
-msgid " -b  --sector-size <num>       set the logical sector size to <num>\n"
+msgid " -b, --sector-size <num>       set the logical sector size to <num>\n"
 msgstr " -b, --sector-size <núm>       establece el tamaño de sector lógico en <núm>\n"
 
 #: sys-utils/losetup.c:423

@@ -14702,7 +14702,7 @@ msgid "     --sizelimit <num>         device is limited to <num> bytes of the fi
 msgstr "     --sizelimit <num>         enhed er begrænset til <num> byte af filen\n"
 
 #: sys-utils/losetup.c:422
-msgid " -b  --sector-size <num>       set the logical sector size to <num>\n"
+msgid " -b, --sector-size <num>       set the logical sector size to <num>\n"
 msgstr " -b, --sector-size <num>       angiv den logiske sektorstørrelse til <num>\n"
 
 #: sys-utils/losetup.c:423

@@ -14721,8 +14721,8 @@ msgid "     --sizelimit <num>         device is limited to <num> bytes of the fi
 msgstr "     --sizelimit <núm>         dispositivo limitado a <núm> bytes do arquivo\n"
 
 #: sys-utils/losetup.c:422
-msgid " -b  --sector-size <num>       set the logical sector size to <num>\n"
-msgstr " -b  --sector-size <núm>       define o tamanho de setor lógico para <núm>\n"
+msgid " -b, --sector-size <num>       set the logical sector size to <num>\n"
+msgstr " -b, --sector-size <núm>       define o tamanho de setor lógico para <núm>\n"
 
 #: sys-utils/losetup.c:423
 msgid " -P, --partscan                create a partitioned loop device\n"
