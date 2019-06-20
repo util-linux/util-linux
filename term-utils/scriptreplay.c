@@ -92,6 +92,8 @@ struct replay_setup {
 	const char		*timing_filename;
 	int			timing_format;
 	int			timing_line;
+
+	char			default_type;	/* type for REPLAY_TIMING_SIMPLE */
 };
 
 static void scriptreplay_init_debug(void)
@@ -108,6 +110,16 @@ static int ignore_line(FILE *f)
 		return -errno;
 
 	DBG(LOG, ul_debug("  ignore line"));
+	return 0;
+}
+
+/* if timing file does not contains types of entries (old format) than use this
+ * type as the default */
+static int replay_set_default_type(struct replay_setup *stp, char type)
+{
+	assert(stp);
+	stp->default_type = type;
+
 	return 0;
 }
 
@@ -142,7 +154,7 @@ static int replay_set_timing_file(struct replay_setup *stp, const char *filename
 		stp->timing_fp = NULL;
 	}
 
-	DBG(TIMING, ul_debug("timing file set to %s [rc=%d]", filename, rc));
+	DBG(TIMING, ul_debug("timing file set to '%s' [rc=%d]", filename, rc));
 	return rc;
 }
 
@@ -167,7 +179,7 @@ static int replay_associate_log(struct replay_setup *stp,
 	log->fp = fopen(filename, "r");
 	rc = log->fp == NULL ? -errno : ignore_line(log->fp);
 
-	DBG(LOG, ul_debug("accociate log file %s with '%s' [rc=%d]", filename, streams, rc));
+	DBG(LOG, ul_debug("accociate log file '%s' with '%s' [rc=%d]", filename, streams, rc));
 	return rc;
 }
 
@@ -244,12 +256,6 @@ static int replay_get_next_step(struct replay_setup *stp, char *streams, struct 
 	assert(stp->timing_fp);
 	assert(xstep && *xstep);
 
-	/* old format supports only 'O'utput */
-	if (stp->timing_format == REPLAY_TIMING_SIMPLE &&
-	    !is_wanted_stream('O', streams))
-		return 1;
-
-
 	step = &stp->step;
 	*xstep = NULL;
 
@@ -267,11 +273,10 @@ static int replay_get_next_step(struct replay_setup *stp, char *streams, struct 
 
 		switch (stp->timing_format) {
 		case REPLAY_TIMING_SIMPLE:
-			/* old format supports only output entries and format is the same
-			 * as new format, but without <type> prefix */
-			rc = read_multistream_step(step, stp->timing_fp, 'O');
+			/* old format is the same as new format, but without <type> prefix */
+			rc = read_multistream_step(step, stp->timing_fp, stp->default_type);
 			if (rc == 0)
-				step->type = 'O';	/* 'O'utput */
+				step->type = stp->default_type;
 			break;
 		case REPLAY_TIMING_MULTI:
 			rc = fscanf(stp->timing_fp, "%c ", &step->type);
@@ -384,6 +389,7 @@ usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -d, --divisor <num>     speed up or slow down execution with time divisor\n"), out);
 	fputs(_(" -m, --maxdelay <num>    wait at most this many seconds between updates\n"), out);
+	fputs(_(" -x, --stream <name>     stream type (out, in or signal)\n"), out);
 	printf(USAGE_HELP_OPTIONS(25));
 
 	printf(USAGE_MAN_TAIL("scriptreplay(1)"));
@@ -426,11 +432,24 @@ delay_for(double delay)
 #endif
 }
 
+static void appendchr(char *buf, size_t bufsz, int c)
+{
+	size_t sz;
+
+	if (strchr(buf, c))
+		return;		/* already in */
+
+	sz = strlen(buf);
+	if (sz + 1 < bufsz)
+		buf[sz] = c;
+}
+
 int
 main(int argc, char *argv[])
 {
 	struct replay_setup setup = { .nlogs = 0 };
 	struct replay_step *step;
+	char streams[6] = {0};		/* IOSI - in, out, signal,info */
 	const char *log_out = NULL,
 	           *log_in = NULL,
 		   *log_io = NULL,
@@ -447,6 +466,7 @@ main(int argc, char *argv[])
 		{ "typescript",	required_argument,	0, 's' },
 		{ "divisor",	required_argument,	0, 'd' },
 		{ "maxdelay",	required_argument,	0, 'm' },
+		{ "stream",     required_argument,	0, 'x' },
 		{ "version",	no_argument,		0, 'V' },
 		{ "help",	no_argument,		0, 'h' },
 		{ NULL,		0, 0, 0 }
@@ -469,7 +489,7 @@ main(int argc, char *argv[])
 
 	scriptreplay_init_debug();
 
-	while ((ch = getopt_long(argc, argv, "B:I:O:t:s:d:m:Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "B:I:O:t:s:d:m:x:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -495,7 +515,16 @@ main(int argc, char *argv[])
 			maxdelayopt = TRUE;
 			maxdelay = getnum(optarg);
 			break;
-
+		case 'x':
+			if (strcmp("in", optarg) == 0)
+				appendchr(streams, sizeof(streams), 'I');
+			else if (strcmp("out", optarg) == 0)
+				appendchr(streams, sizeof(streams), 'O');
+			else if (strcmp("signal", optarg) == 0)
+				appendchr(streams, sizeof(streams), 'S');
+			else
+				errx(EXIT_FAILURE, _("unsupported stream name: '%s'"), optarg);
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -534,8 +563,19 @@ main(int argc, char *argv[])
 	if (log_io && replay_associate_log(&setup, "IO", log_io) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), log_io);
 
+	if (!*streams) {
+		/* output is prefered default */
+		if (log_out || log_io)
+			appendchr(streams, sizeof(streams), 'O');
+		else if (log_in)
+			appendchr(streams, sizeof(streams), 'I');
+	}
+
+	replay_set_default_type(&setup,
+			*streams && streams[1] == '\0' ? *streams : 'O');
+
 	do {
-		rc = replay_get_next_step(&setup, "O", &step);
+		rc = replay_get_next_step(&setup, streams, &step);
 		if (rc)
 			break;
 
