@@ -324,7 +324,7 @@ int fdisk_save_user_sector_size(struct fdisk_context *cxt,
  *
  * The smallest possible granularity for partitioning is physical sector size
  * (or minimal I/O size; the bigger number win). If the user's @grain size is
- * too small than the smallest possible granularity is used. It means
+ * too small then the smallest possible granularity is used. It means
  * fdisk_save_user_grain(cxt, 512) forces libfdisk to use grain as small as
  * possible.
  *

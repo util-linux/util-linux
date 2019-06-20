@@ -17,7 +17,7 @@
  *
  * The library distinguish between three types of partitioning objects.
  *
- * on-disk lebel data
+ * on-disk label data
  *    - disk label specific
  *    - probed and read  by disklabel drivers when assign device to the context
  *      or when switch to another disk label type
@@ -487,7 +487,7 @@ int fdisk_is_ptcollision(struct fdisk_context *cxt)
  * </informalexample>
  *
  * Note that the recommended way to list partitions is to use
- * fdisk_get_partitions() and struct fdisk_table than ask disk driver for each
+ * fdisk_get_partitions() and struct fdisk_table then ask disk driver for each
  * individual partitions.
  *
  * Returns: maximal number of partitions for the current label.
@@ -649,7 +649,7 @@ fail:
  * collisions and switch the current label driver to reflect the probing
  * result.
  *
- * If in standard mode (!= non-listonly mode) than also detects for collisions.
+ * If in standard mode (!= non-listonly mode) then also detects for collisions.
  * The result is accessible by fdisk_get_collision() and
  * fdisk_is_ptcollision().  The collision (e.g. old obsolete PT) may be removed
  * by fdisk_enable_wipe().  Note that new PT and old PT may be on different
@@ -711,7 +711,7 @@ int fdisk_assign_device_by_fd(struct fdisk_context *cxt, int fd,
  * @cxt: context
  * @nosync: disable fsync()
  *
- * Close device and call fsync(). If the @cxt is nested context than the
+ * Close device and call fsync(). If the @cxt is nested context then the
  * request is redirected to the parent.
  *
  * Returns: 0 on success, < 0 on error.

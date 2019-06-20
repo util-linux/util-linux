@@ -30,7 +30,7 @@
  * The read functions fdisk_script_read_context() and fdisk_script_read_file()
  * creates always a new script partition table. The table (see
  * fdisk_script_get_table()) is possible to modify by standard
- * fdisk_table_...() functions and than apply by fdisk_apply_script().
+ * fdisk_table_...() functions and then apply by fdisk_apply_script().
  *
  * Note that script API is fully non-interactive and forces libfdisk to not use
  * standard dialog driven partitioning as we have in fdisk(8).
@@ -345,7 +345,7 @@ struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp)
 	if (!dp->table)
 		/*
 		 * Make sure user has access to the same table as script. If
-		 * there is no table than create a new and reuse it later.
+		 * there is no table then create a new one and reuse it later.
 		 */
 		dp->table = fdisk_new_table();
 
@@ -363,10 +363,10 @@ struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp)
  *
  * This is useful for example to create partition table with the same basic
  * settings (e.g. label-id, ...) but with different partitions -- just call
- * fdisk_script_read_context() to get current settings and than
+ * fdisk_script_read_context() to get current settings and then
  * fdisk_script_set_table() to set a different layout.
  *
- * If @tb is NULL than the current script table is unreferenced.
+ * If @tb is NULL then the current script table is unreferenced.
  *
  * Note that script read_ functions (e.g. fdisk_script_read_context()) create
  * always a new script table.
@@ -434,7 +434,7 @@ int fdisk_script_has_force_label(struct fdisk_script *dp)
  * @cxt: context
  *
  * Reads data from the @cxt context (on disk partition table) into the script.
- * If the context is no specified than defaults to context used for fdisk_new_script().
+ * If the context is not specified then defaults to context used for fdisk_new_script().
  *
  * Return: 0 on success, <0 on error.
  */
