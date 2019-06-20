@@ -35,6 +35,7 @@
 #include "closestream.h"
 #include "nls.h"
 #include "strutils.h"
+#include "optutils.h"
 
 static UL_DEBUG_DEFINE_MASK(scriptreplay);
 UL_DEBUG_DEFINE_MASKNAMES(scriptreplay) = UL_DEBUG_EMPTY_MASKNAMES;
@@ -364,6 +365,9 @@ usage(void)
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
+	      _(" %s [options]\n"),
+	      program_invocation_short_name);
+	fprintf(out,
 	      _(" %s [-t] timingfile [typescript] [divisor]\n"),
 	      program_invocation_short_name);
 
@@ -372,7 +376,12 @@ usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -t, --timing <file>     script timing log file\n"), out);
-	fputs(_(" -s, --typescript <file> script data log file\n"), out);
+	fputs(_(" -I, --log-in <file>     script stdin log file\n"), out);
+	fputs(_(" -O, --log-out <file>    script stdout log file (default)\n"), out);
+	fputs(_(" -B, --log-io <file>     script stdin and stdout log file\n"), out);
+	fputs(_(" -s, --typescript <file> deprecated alist to -O\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -d, --divisor <num>     speed up or slow down execution with time divisor\n"), out);
 	fputs(_(" -m, --maxdelay <num>    wait at most this many seconds between updates\n"), out);
 	printf(USAGE_HELP_OPTIONS(25));
@@ -422,15 +431,19 @@ main(int argc, char *argv[])
 {
 	struct replay_setup setup = { .nlogs = 0 };
 	struct replay_step *step;
-	int rc;
-
-	const char *sname = NULL, *tname = NULL;
+	const char *log_out = NULL,
+	           *log_in = NULL,
+		   *log_io = NULL,
+		   *log_tm = NULL;
 	double divi = 1, maxdelay = 0;
 	int diviopt = FALSE, maxdelayopt = FALSE, idx;
-	int ch;
+	int ch, rc;
 
 	static const struct option longopts[] = {
 		{ "timing",	required_argument,	0, 't' },
+		{ "log-in",     required_argument,      0, 'I'},
+		{ "log-out",    required_argument,      0, 'O'},
+		{ "log-io",     required_argument,      0, 'B'},
 		{ "typescript",	required_argument,	0, 's' },
 		{ "divisor",	required_argument,	0, 'd' },
 		{ "maxdelay",	required_argument,	0, 'm' },
@@ -438,7 +451,11 @@ main(int argc, char *argv[])
 		{ "help",	no_argument,		0, 'h' },
 		{ NULL,		0, 0, 0 }
 	};
-
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'O', 's' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 	/* Because we use space as a separator, we can't afford to use any
 	 * locale which tolerates a space in a number.  In any case, script.c
 	 * sets the LC_NUMERIC locale to C, anyway.
@@ -452,13 +469,23 @@ main(int argc, char *argv[])
 
 	scriptreplay_init_debug();
 
-	while ((ch = getopt_long(argc, argv, "t:s:d:m:Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "B:I:O:t:s:d:m:Vh", longopts, NULL)) != -1) {
+
+		err_exclusive_options(ch, longopts, excl, excl_st);
+
 		switch(ch) {
 		case 't':
-			tname = optarg;
+			log_tm = optarg;
 			break;
+		case 'O':
 		case 's':
-			sname = optarg;
+			log_out = optarg;
+			break;
+		case 'I':
+			log_in = optarg;
+			break;
+		case 'B':
+			log_io = optarg;
 			break;
 		case 'd':
 			diviopt = TRUE;
@@ -475,29 +502,37 @@ main(int argc, char *argv[])
 			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
-			}
+		}
+	}
 	argc -= optind;
 	argv += optind;
 	idx = 0;
 
-	if ((argc < 1 && !tname) || argc > 3) {
+	if ((argc < 1 && !(log_out || log_in || log_io)) || argc > 3) {
 		warnx(_("wrong number of arguments"));
 		errtryhelp(EXIT_FAILURE);
 	}
-	if (!tname)
-		tname = argv[idx++];
-	if (!sname)
-		sname = idx < argc ? argv[idx++] : "typescript";
+	if (!log_tm)
+		log_tm = argv[idx++];
+	if (!log_out && !log_in && !log_io)
+		log_out = idx < argc ? argv[idx++] : "typescript";
+
 	if (!diviopt)
 		divi = idx < argc ? getnum(argv[idx]) : 1;
 	if (maxdelay < 0)
 		maxdelay = 0;
 
-	if (replay_set_timing_file(&setup, tname) != 0)
-		err(EXIT_FAILURE, _("cannot open %s"), tname);
+	if (replay_set_timing_file(&setup, log_tm) != 0)
+		err(EXIT_FAILURE, _("cannot open %s"), log_tm);
 
-	if (replay_associate_log(&setup, "O", sname) != 0)
-		err(EXIT_FAILURE, _("cannot open %s"), sname);
+	if (log_out && replay_associate_log(&setup, "O", log_out) != 0)
+		err(EXIT_FAILURE, _("cannot open %s"), log_out);
+
+	if (log_in && replay_associate_log(&setup, "I", log_in) != 0)
+		err(EXIT_FAILURE, _("cannot open %s"), log_in);
+
+	if (log_io && replay_associate_log(&setup, "IO", log_io) != 0)
+		err(EXIT_FAILURE, _("cannot open %s"), log_io);
 
 	do {
 		rc = replay_get_next_step(&setup, "O", &step);
