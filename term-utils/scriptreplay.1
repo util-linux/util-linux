@@ -14,7 +14,7 @@ output happens in the same rhythm as it originally appeared when the script
 was recorded.
 .PP
 The replay simply displays the information again; the programs
-that were run when the typescript was being recorded are not run again.
+that were run when the typescript was being recorded are \fBnot run again\fR.
 Since the same information is simply being displayed,
 .B scriptreplay
 is only guaranteed to work properly if run on the same type of
@@ -26,35 +26,44 @@ is sending its output.
 .PP
 The timing information is what
 .BR script (1)
-outputs to standard error if it is
-run with the
-.B \-t
-parameter.
+outputs to file specified by
+.BR \-\-log-timing .
 .PP
 By default, the typescript to display is assumed to be named
 .BR typescript ,
 but other filenames may be specified, as the second parameter or with option
-.BR \-s .
+.BR \-\-log\-out .
 .PP
-If the third parameter is specified, it is used as a speed-up multiplier.
+If the third parameter or
+.BR \-\-divisor
+is specified, it is used as a speed-up multiplier.
 For example, a speed-up of 2 makes
 .B scriptreplay
 go twice as fast, and a speed-up of 0.1 makes it go ten times slower
 than the original session.
 .SH OPTIONS
-The first three options will override old-style arguments.
+.TP
+.BR \-I , " \-\-log-in " \fIfile\fR
+File containing \fBscript\fR's terminal input.
+.TP
+.BR \-O , " \-\-log-out " \fIfile\fR
+File containing \fBscript\fR's terminal output.
+.TP
+.BR \-B , " \-\-log-io " \fIfile\fR
+File containing \fBscript\fR's terminal output and input.
 .TP
 .BR \-t , " \-\-timing " \fIfile\fR
-File containing \fBscript\fR's timing output.
+File containing \fBscript\fR's timing output.  This option overrides old-style arguments.
 .TP
 .BR \-s , " \-\-typescript " \fIfile\fR
-File containing \fBscript\fR's terminal output.
+File containing \fBscript\fR's terminal output.  Deprecated alias to \fB\-\-log-out\fR.
+This option overrides old-style arguments.
 .TP
 .BR \-d , " \-\-divisor " \fInumber\fR
 Speed up the replay displaying this
 .I number
 of times.  The argument is a floating point number.  It's called divisor
-because it divides the timings by this factor.
+because it divides the timings by this factor.  This option overrides old-style arguments.
 .TP
 .BR \-m , " \-\-maxdelay " \fInumber\fR
 Set the maximum delay between transcript updates to
@@ -69,20 +78,20 @@ Display version information and exit.
 Display help text and exit.
 .SH "EXAMPLE"
 .nf
-% script --timing=file.tm script.out
+% script --log-timing file.tm --log-out script.out
 Script started, file is script.out
 % ls
 <etc, etc>
 % exit
 Script done, file is script.out
-% scriptreplay --timing file.tm --typescript script.out
+% scriptreplay --timing file.tm --log-out script.out
 .nf
 .SH "SEE ALSO"
 .BR script (1)
 .SH "COPYRIGHT"
 Copyright \(co 2008 James Youngman
 .br
-Copyright \(co 2008 Karel Zak
+Copyright \(co 2008-2019 Karel Zak
 .PP
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
