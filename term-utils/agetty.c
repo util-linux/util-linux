@@ -1903,8 +1903,6 @@ static void eval_issue_file(struct issue *ie,
 			f = NULL;
 		} while (dirname);
 
-		fflush(stdout);
-
 		if ((op->flags & F_VCONSOLE) == 0)
 			ie->do_tcrestore = 1;
 	}
