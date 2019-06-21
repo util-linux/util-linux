@@ -9344,7 +9344,7 @@ msgstr " -f, --first-only       nur das erste gefundene Dateisystem ausgeben\n"
 
 #: misc-utils/findmnt.c:1230
 msgid " -i, --invert           invert the sense of matching\n"
-msgstr " -s, --invert           Suchkriterien umkehren\n"
+msgstr " -i, --invert           Suchkriterien umkehren\n"
 
 #: misc-utils/findmnt.c:1231 misc-utils/lslocks.c:535 sys-utils/lsns.c:904
 #: sys-utils/rfkill.c:581
