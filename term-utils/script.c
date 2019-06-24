@@ -74,6 +74,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "optutils.h"
+#include "signames.h"
 
 #include "debug.h"
 
@@ -141,6 +142,8 @@ struct script_control {
 
 	struct script_stream	out;	/* output */
 	struct script_stream	in;	/* input */
+
+	struct script_log	*siglog;	/* log for signals */
 
 	int poll_timeout;	/* poll() timeout, used in end of execution */
 	pid_t child;		/* child pid */
@@ -268,6 +271,10 @@ static struct script_log *log_associate(struct script_control *ctl,
 			(stream->nlogs + 1) * sizeof(log));
 	stream->logs[stream->nlogs] = log;
 	stream->nlogs++;
+
+	/* remember where to write info about signals */
+	if (format == SCRIPT_FMT_TIMING_MULTI && !ctl->siglog)
+		ctl->siglog = log;
 
 	return log;
 }
@@ -437,6 +444,48 @@ static uint64_t log_stream_activity(
 	return outsz;
 }
 
+static uint64_t log_signal(struct script_control *ctl, int signum, char *msgfmt, ...)
+{
+	struct script_log *log;
+	struct timeval now, delta;
+	char msg[BUFSIZ] = {0};
+	va_list ap;
+	int sz;
+
+	assert(ctl);
+
+	log = ctl->siglog;
+	if (!log)
+		return 0;
+
+	assert(log->format == SCRIPT_FMT_TIMING_MULTI);
+
+	DBG(IO, ul_debug("  writing signal to multi-stream timing"));
+
+	gettime_monotonic(&now);
+	timersub(&now, &log->oldtime, &delta);
+
+	if (msgfmt) {
+		int rc;
+		va_start(ap, msgfmt);
+		rc = vsnprintf(msg, sizeof(msg), msgfmt, ap);
+		va_end(ap);
+		if (rc < 0)
+			*msg = '\0';;
+	}
+
+	if (*msg)
+		sz = fprintf(log->fp, "S %ld.%06ld SIG%s %s\n",
+			(long)delta.tv_sec, (long)delta.tv_usec,
+			signum_to_signame(signum), msg);
+	else
+		sz = fprintf(log->fp, "S %ld.%06ld SIG%s\n",
+			(long)delta.tv_sec, (long)delta.tv_usec,
+			signum_to_signame(signum));
+
+	log->oldtime = now;
+	return sz > 0 ? sz : 0;
+}
 
 static void die_if_link(struct script_control *ctl, const char *filename)
 {
@@ -679,6 +728,10 @@ static void handle_signal(struct script_control *ctl, int fd)
 		if (ctl->isterm) {
 			ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&ctl->win);
 			ioctl(ctl->slave, TIOCSWINSZ, (char *)&ctl->win);
+			log_signal(ctl, info.ssi_signo,
+					"[ROWS=%d COLS=%d]",
+					ctl->win.ws_row,
+					ctl->win.ws_col);
 		}
 		break;
 	case SIGTERM:
@@ -686,6 +739,7 @@ static void handle_signal(struct script_control *ctl, int fd)
 	case SIGINT:
 		/* fallthrough */
 	case SIGQUIT:
+		log_signal(ctl, info.ssi_signo, NULL);
 		DBG(SIGNAL, ul_debug(" get signal SIG{TERM,INT,QUIT}"));
 		fprintf(stderr, _("\nSession terminated.\n"));
 		/* Child termination is going to generate SIGCHILD (see above) */
