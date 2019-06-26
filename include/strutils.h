@@ -93,6 +93,37 @@ static inline char *mem2strcpy(char *dest, const void *src, size_t n, size_t nma
 	return dest;
 }
 
+/* Reallocate @str according to @newstr and copy @newstr to @str; returns new @str */
+static inline char * __attribute__((warn_unused_result))
+strrealloc(char *str, const char *newstr)
+{
+	size_t nsz, osz;
+
+	if (!str)
+		return newstr ? strdup(newstr) : NULL;
+	if (!newstr) {
+		free(str);
+		goto nothing;
+	}
+
+	osz = strlen(str);
+	nsz = strlen(newstr);
+
+	if (nsz > osz) {
+		char *tmp = realloc(str, nsz + 1);
+		if (!tmp)
+			goto nothing;
+		str = tmp;
+	}
+
+	memcpy(str, newstr, nsz + 1);
+	return str;
+
+nothing:
+	free(str);
+	return NULL;
+}
+
 static inline int strdup_to_offset(void *stru, size_t offset, const char *str)
 {
 	char *n = NULL;
