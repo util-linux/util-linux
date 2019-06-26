@@ -602,7 +602,9 @@ main(int argc, char *argv[])
 	if (maxdelay < 0)
 		maxdelay = 0;
 
-	if (replay_set_timing_file(&setup, log_tm) != 0)
+	if (!log_tm)
+		errx(EXIT_FAILURE, _("timing file not specified"));
+	else if (replay_set_timing_file(&setup, log_tm) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), log_tm);
 
 	if (log_out && replay_associate_log(&setup, "O", log_out) != 0)
