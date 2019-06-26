@@ -76,15 +76,20 @@ enum {
 };
 
 struct replay_log {
-	const char	*streams;		/* 'I'nput, 'O'utput or both */
+	const char	*streams;	/* 'I'nput, 'O'utput or both */
 	const char	*filename;
 	FILE		*fp;
+
+	unsigned int	noseek;		/* do not seek in this log */
 };
 
 struct replay_step {
 	char	type;		/* 'I'nput, 'O'utput, ... */
 	double	delay;
 	size_t	size;
+
+	char	*name;		/* signals / heders */
+	char	*value;
 
 	struct replay_log *data;
 };
@@ -139,6 +144,28 @@ static int replay_set_crmode(struct replay_setup *stp, int mode)
 	return 0;
 }
 
+static struct replay_log *replay_new_log(struct replay_setup *stp,
+					 const char *streams,
+					 const char *filename,
+					 FILE *f)
+{
+	struct replay_log *log;
+
+	assert(stp);
+	assert(streams);
+	assert(filename);
+
+	stp->logs = xrealloc(stp->logs, (stp->nlogs + 1) *  sizeof(*log));
+	log = &stp->logs[stp->nlogs];
+	stp->nlogs++;
+
+	log->filename = filename;
+	log->streams = streams;
+	log->fp = f;
+
+	return log;
+}
+
 static int replay_set_timing_file(struct replay_setup *stp, const char *filename)
 {
 	int c, rc = 0;
@@ -170,30 +197,39 @@ static int replay_set_timing_file(struct replay_setup *stp, const char *filename
 		stp->timing_fp = NULL;
 	}
 
+	/* create quasi-log for signals, headers, etc. */
+	if (rc == 0 && stp->timing_format == REPLAY_TIMING_MULTI) {
+		struct replay_log *log = replay_new_log(stp, "SH",
+						filename, stp->timing_fp);
+		if (!log)
+			rc = -ENOMEM;
+		else {
+			log->noseek = 1;
+			DBG(LOG, ul_debug("accociate log file '%s' with 'SH'", filename));
+		}
+	}
+
 	DBG(TIMING, ul_debug("timing file set to '%s' [rc=%d]", filename, rc));
 	return rc;
 }
 
+
 static int replay_associate_log(struct replay_setup *stp,
 				const char *streams, const char *filename)
 {
-	struct replay_log *log;
+	FILE *f;
 	int rc;
 
 	assert(stp);
 	assert(streams);
 	assert(filename);
 
-	stp->logs = xrealloc(stp->logs, (stp->nlogs + 1) *  sizeof(*log));
-	log = &stp->logs[stp->nlogs];
-	stp->nlogs++;
-
-	log->filename = filename;
-	log->streams = streams;
-
 	/* open the file and skip the first line */
-	log->fp = fopen(filename, "r");
-	rc = log->fp == NULL ? -errno : ignore_line(log->fp);
+	f = fopen(filename, "r");
+	rc = f == NULL ? -errno : ignore_line(f);
+
+	if (rc == 0)
+		replay_new_log(stp, streams, filename, f);
 
 	DBG(LOG, ul_debug("accociate log file '%s' with '%s' [rc=%d]", filename, streams, rc));
 	return rc;
@@ -208,10 +244,21 @@ static int is_wanted_stream(char type, const char *streams)
 	return 0;
 }
 
+static void replay_reset_step(struct replay_step *step)
+{
+	assert(step);
+
+	step->size = 0;
+	step->delay = 0;
+	step->data = NULL;
+	step->type = 0;
+}
+
 static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 {
 	int rc = 0;
 	char nl;
+
 
 	switch (type) {
 	case 'O': /* output */
@@ -224,12 +271,34 @@ static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 		break;
 
 	case 'S': /* signal */
-		rc = ignore_line(f);	/* not implemnted yet */
-		break;
-
 	case 'H': /* header */
-		rc = ignore_line(f);	/* not implemnted yet */
+	{
+		char buf[BUFSIZ];
+
+		rc = fscanf(f, "%lf ", &step->delay);	/* delay */
+		if (rc != 1)
+			break;
+
+		rc = fscanf(f, "%s", buf);		/* name */
+		if (rc != 1)
+			break;
+		step->name = strrealloc(step->name, buf);
+		if (!step->name)
+			err_oom();
+
+		if (!fgets(buf, sizeof(buf), f)) {	/* value */
+			rc = -errno;
+			break;
+		}
+		if (*buf) {
+			strrem(buf, '\n');
+			step->value = strrealloc(step->value, buf);
+			if (!step->value)
+				err_oom();
+		}
+		rc = 0;
 		break;
+	}
 	default:
 		break;
 	}
@@ -253,6 +322,9 @@ static struct replay_log *replay_get_stream_log(struct replay_setup *stp, char s
 
 static int replay_seek_log(struct replay_log *log, size_t move)
 {
+	if (log->noseek)
+		return 0;
+
 	DBG(LOG, ul_debug(" %s: seek ++ %zu", log->filename, move));
 	return fseek(log->fp, move, SEEK_CUR) == (off_t) -1 ? -errno : 0;
 }
@@ -284,7 +356,7 @@ static int replay_get_next_step(struct replay_setup *stp, char *streams, struct 
 
 		DBG(TIMING, ul_debug("reading next step"));
 
-		memset(step, 0, sizeof(*step));
+		replay_reset_step(step);
 		stp->timing_line++;
 
 		switch (stp->timing_format) {
@@ -348,6 +420,23 @@ static int replay_emit_step_data(struct replay_setup *stp, struct replay_step *s
 
 	assert(stp);
 	assert(step);
+	switch (step->type) {
+	case 'S':
+		assert(step->name);
+		assert(step->value);
+		dprintf(fd, "%s %s\n", step->name, step->value);
+		DBG(LOG, ul_debug("log signal emited"));
+		return 0;
+	case 'H':
+		assert(step->name);
+		assert(step->value);
+		dprintf(fd, "%10s: %s\n", step->name, step->value);
+		DBG(LOG, ul_debug("log signal emited"));
+		return 0;
+	default:
+		break;		/* continue with real data */
+	}
+
 	assert(step->size);
 	assert(step->data);
 	assert(step->data->fp);
@@ -428,7 +517,7 @@ usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -d, --divisor <num>     speed up or slow down execution with time divisor\n"), out);
 	fputs(_(" -m, --maxdelay <num>    wait at most this many seconds between updates\n"), out);
-	fputs(_(" -x, --stream <name>     stream type (out, in or signal)\n"), out);
+	fputs(_(" -x, --stream <name>     stream type (out, in, signal or info)\n"), out);
 	fputs(_(" -c, --cr-mode <type>    CR char mode (auto, never, always)\n"), out);
 	printf(USAGE_HELP_OPTIONS(25));
 
@@ -573,6 +662,8 @@ main(int argc, char *argv[])
 				appendchr(streams, sizeof(streams), 'O');
 			else if (strcmp("signal", optarg) == 0)
 				appendchr(streams, sizeof(streams), 'S');
+			else if (strcmp("info", optarg) == 0)
+				appendchr(streams, sizeof(streams), 'H');
 			else
 				errx(EXIT_FAILURE, _("unsupported stream name: '%s'"), optarg);
 			break;
@@ -588,11 +679,7 @@ main(int argc, char *argv[])
 	argv += optind;
 	idx = 0;
 
-	if ((argc < 1 && !(log_out || log_in || log_io)) || argc > 3) {
-		warnx(_("wrong number of arguments"));
-		errtryhelp(EXIT_FAILURE);
-	}
-	if (!log_tm)
+	if (!log_tm && idx < argc)
 		log_tm = argv[idx++];
 	if (!log_out && !log_in && !log_io)
 		log_out = idx < argc ? argv[idx++] : "typescript";
@@ -604,7 +691,10 @@ main(int argc, char *argv[])
 
 	if (!log_tm)
 		errx(EXIT_FAILURE, _("timing file not specified"));
-	else if (replay_set_timing_file(&setup, log_tm) != 0)
+	if (!(log_out || log_in || log_io))
+		errx(EXIT_FAILURE, _("data log file not specified"));
+
+	if (replay_set_timing_file(&setup, log_tm) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), log_tm);
 
 	if (log_out && replay_associate_log(&setup, "O", log_out) != 0)
