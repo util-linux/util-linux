@@ -145,7 +145,6 @@ struct script_control {
 
 	struct script_log	*siglog;	/* log for signal entries */
 	struct script_log	*infolog;	/* log for info entries */
-	struct script_log	*tmlog;		/* timing log */
 
 	const char *ttyname;
 	const char *ttytype;
@@ -296,8 +295,6 @@ static struct script_log *log_associate(struct script_control *ctl,
 			ctl->siglog = log;
 		if (!ctl->infolog)
 			ctl->infolog = log;
-		if (!ctl->tmlog)
-			ctl->tmlog = log;
 	}
 
 	return log;
@@ -390,6 +387,19 @@ static void log_start(struct script_control *ctl,
 	}
 
 	log->initialized = 1;
+}
+
+static void start_logging(struct script_control *ctl)
+{
+	size_t i;
+
+	/* start all output logs */
+	for (i = 0; i < ctl->out.nlogs; i++)
+		log_start(ctl, ctl->out.logs[i]);
+
+	/* start all input logs */
+	for (i = 0; i < ctl->in.nlogs; i++)
+		log_start(ctl, ctl->in.logs[i]);
 }
 
 static size_t log_write(struct script_control *ctl,
@@ -493,7 +503,7 @@ static uint64_t log_signal(struct script_control *ctl, int signum, char *msgfmt,
 	}
 
 	if (*msg)
-		sz = fprintf(log->fp, "S %ld.%06ld SIG%s [%s]\n",
+		sz = fprintf(log->fp, "S %ld.%06ld SIG%s %s\n",
 			(long)delta.tv_sec, (long)delta.tv_usec,
 			signum_to_signame(signum), msg);
 	else
@@ -531,7 +541,7 @@ static uint64_t log_info(struct script_control *ctl, const char *name, const cha
 	}
 
 	if (*msg)
-		sz = fprintf(log->fp, "H 0 %s [%s]\n", name, msg);
+		sz = fprintf(log->fp, "H 0 %s %s\n", name, msg);
 	else
 		sz = fprintf(log->fp, "H 0 %s\n", name);
 
@@ -805,7 +815,6 @@ static void handle_signal(struct script_control *ctl, int fd)
 static void do_io(struct script_control *ctl)
 {
 	int ret, eof = 0;
-	size_t i;
 	enum {
 		POLLFD_SIGNAL = 0,
 		POLLFD_MASTER,
@@ -817,26 +826,6 @@ static void do_io(struct script_control *ctl)
 		[POLLFD_MASTER] = { .fd = ctl->master,  .events = POLLIN | POLLERR | POLLHUP },
 		[POLLFD_STDIN]	= { .fd = STDIN_FILENO, .events = POLLIN | POLLERR | POLLHUP }
 	};
-
-	/* start all output logs */
-	for (i = 0; i < ctl->out.nlogs; i++)
-		log_start(ctl, ctl->out.logs[i]);
-
-	/* start all input logs */
-	for (i = 0; i < ctl->in.nlogs; i++)
-		log_start(ctl, ctl->in.logs[i]);
-
-	/* log basic information */
-	if (ctl->isterm) {
-		init_terminal_info(ctl);
-		log_info(ctl, "TERM", ctl->ttytype);
-		log_info(ctl, "TTY", ctl->ttyname);
-		log_info(ctl, "COLUMNS", "%d", ctl->ttycols);
-		log_info(ctl, "LINES", "%d", ctl->ttylines);
-	}
-	log_info(ctl, "SHELL", ctl->shell);
-	if (ctl->tmlog)
-		log_info(ctl, "TIMING_LOG", ctl->tmlog->filename);
 
 	while (!ctl->die) {
 		size_t i;
@@ -1202,7 +1191,6 @@ int main(int argc, char **argv)
 
 	getmaster(&ctl);
 
-
 	if (!ctl.quiet) {
 		printf(_("Script started"));
 		if (outfile)
@@ -1247,6 +1235,23 @@ int main(int argc, char **argv)
 		do_shell(&ctl);
 		break;
 	default: /* parent */
+		start_logging(&ctl);
+
+		if (timingfile && format == SCRIPT_FMT_TIMING_MULTI) {
+			if (ctl.isterm) {
+				init_terminal_info(&ctl);
+				log_info(&ctl, "TERM", ctl.ttytype);
+				log_info(&ctl, "TTY", ctl.ttyname);
+				log_info(&ctl, "COLUMNS", "%d", ctl.ttycols);
+				log_info(&ctl, "LINES", "%d", ctl.ttylines);
+			}
+			log_info(&ctl, "SHELL", ctl.shell);
+			log_info(&ctl, "TIMING_LOG", timingfile);
+			if (outfile)
+				log_info(&ctl, "OUTPUT_LOG", outfile);
+			if (infile)
+				log_info(&ctl, "INPUT_LOG", infile);
+		}
 		do_io(&ctl);
 		break;
 	}
