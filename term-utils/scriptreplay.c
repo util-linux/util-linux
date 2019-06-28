@@ -377,8 +377,11 @@ static int replay_get_next_step(struct replay_setup *stp, char *streams, struct 
 			break;
 		}
 
-		if (rc)
-			break;;		/* error */
+		if (rc) {
+			if (rc < 0 && feof(stp->timing_fp))
+				rc = 1;
+			break;		/* error or EOF */
+		}
 
 		DBG(TIMING, ul_debug(" step entry is '%c'", step->type));
 
