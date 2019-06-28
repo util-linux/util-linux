@@ -121,6 +121,7 @@ struct script_log {
 	int	format;			/* SCRIPT_FMT_* */
 	char	*filename;		/* on command line specified name */
 	struct timeval oldtime;		/* previous entry log time (SCRIPT_FMT_TIMING_* only) */
+	struct timeval starttime;
 
 	unsigned int	initialized : 1;
 };
@@ -300,7 +301,7 @@ static struct script_log *log_associate(struct script_control *ctl,
 	return log;
 }
 
-static void log_close(struct script_control *ctl __attribute__((unused)),
+static void log_close(struct script_control *ctl,
 		      struct script_log *log,
 		      const char *msg,
 		      int status)
@@ -321,6 +322,18 @@ static void log_close(struct script_control *ctl __attribute__((unused)),
 			fprintf(log->fp, _("\nScript done on %s [<%s>]\n"), buf, msg);
 		else
 			fprintf(log->fp, _("\nScript done on %s [COMMAND_EXIT_CODE=\"%d\"]\n"), buf, status);
+		break;
+	}
+	case SCRIPT_FMT_TIMING_MULTI:
+	{
+		struct timeval now, delta;
+
+		gettime_monotonic(&now);
+		timersub(&now, &log->starttime, &delta);
+
+		log_info(ctl, "DURATION", "%ld.%06ld",
+			(long)delta.tv_sec, (long)delta.tv_usec);
+		log_info(ctl, "EXIT_CODE", "%d", status);
 		break;
 	}
 	case SCRIPT_FMT_TIMING_SIMPLE:
@@ -383,6 +396,7 @@ static void log_start(struct script_control *ctl,
 	case SCRIPT_FMT_TIMING_SIMPLE:
 	case SCRIPT_FMT_TIMING_MULTI:
 		gettime_monotonic(&log->oldtime);
+		gettime_monotonic(&log->starttime);
 		break;
 	}
 
@@ -1238,6 +1252,12 @@ int main(int argc, char **argv)
 		start_logging(&ctl);
 
 		if (timingfile && format == SCRIPT_FMT_TIMING_MULTI) {
+			char buf[FORMAT_TIMESTAMP_MAX];
+			time_t tvec = script_time((time_t *)NULL);
+
+			strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
+			log_info(&ctl, "START_TIME", buf);
+
 			if (ctl.isterm) {
 				init_terminal_info(&ctl);
 				log_info(&ctl, "TERM", ctl.ttytype);
