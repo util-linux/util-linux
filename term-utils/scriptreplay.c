@@ -342,7 +342,7 @@ static int replay_get_next_step(struct replay_setup *stp, char *streams, struct 
 
 	assert(stp);
 	assert(stp->timing_fp);
-	assert(xstep && *xstep);
+	assert(xstep);
 
 	step = &stp->step;
 	*xstep = NULL;
@@ -434,7 +434,7 @@ static int replay_emit_step_data(struct replay_setup *stp, struct replay_step *s
 		assert(step->name);
 		assert(step->value);
 		dprintf(fd, "%10s: %s\n", step->name, step->value);
-		DBG(LOG, ul_debug("log signal emited"));
+		DBG(LOG, ul_debug("log header emited"));
 		return 0;
 	default:
 		break;		/* continue with real data */
@@ -518,6 +518,7 @@ usage(void)
 	fputs(_(" -s, --typescript <file> deprecated alist to -O\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_("     --summary           display overview about recorded session and exit\n"), out);
 	fputs(_(" -d, --divisor <num>     speed up or slow down execution with time divisor\n"), out);
 	fputs(_(" -m, --maxdelay <num>    wait at most this many seconds between updates\n"), out);
 	fputs(_(" -x, --stream <name>     stream type (out, in, signal or info)\n"), out);
@@ -580,7 +581,7 @@ int
 main(int argc, char *argv[])
 {
 	struct replay_setup setup = { .nlogs = 0 };
-	struct replay_step *step;
+	struct replay_step *step = NULL;
 	char streams[6] = {0};		/* IOSI - in, out, signal,info */
 	const char *log_out = NULL,
 	           *log_in = NULL,
@@ -588,7 +589,10 @@ main(int argc, char *argv[])
 		   *log_tm = NULL;
 	double divi = 1, maxdelay = 0;
 	int diviopt = FALSE, maxdelayopt = FALSE, idx;
-	int ch, rc, crmode = REPLAY_CRMODE_AUTO;
+	int ch, rc, crmode = REPLAY_CRMODE_AUTO, summary = 0;
+	enum {
+		OPT_SUMMARY = CHAR_MAX + 1
+	};
 
 	static const struct option longopts[] = {
 		{ "cr-mode",    required_argument,	0, 'c' },
@@ -600,6 +604,7 @@ main(int argc, char *argv[])
 		{ "divisor",	required_argument,	0, 'd' },
 		{ "maxdelay",	required_argument,	0, 'm' },
 		{ "stream",     required_argument,	0, 'x' },
+		{ "summary",    no_argument,            0, OPT_SUMMARY },
 		{ "version",	no_argument,		0, 'V' },
 		{ "help",	no_argument,		0, 'h' },
 		{ NULL,		0, 0, 0 }
@@ -670,6 +675,9 @@ main(int argc, char *argv[])
 			else
 				errx(EXIT_FAILURE, _("unsupported stream name: '%s'"), optarg);
 			break;
+		case OPT_SUMMARY:
+			summary = 1;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -681,6 +689,9 @@ main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 	idx = 0;
+
+	if (summary)
+		streams[0] = 'H', streams[1] = '\0';
 
 	if (!log_tm && idx < argc)
 		log_tm = argv[idx++];
@@ -726,11 +737,13 @@ main(int argc, char *argv[])
 		if (rc)
 			break;
 
-		step->delay /= divi;
-		if (maxdelayopt && step->delay > maxdelay)
-			step->delay = maxdelay;
-		if (step->delay > SCRIPT_MIN_DELAY)
-			delay_for(step->delay);
+		if (!summary) {
+			step->delay /= divi;
+			if (maxdelayopt && step->delay > maxdelay)
+				step->delay = maxdelay;
+			if (step->delay > SCRIPT_MIN_DELAY)
+				delay_for(step->delay);
+		}
 
 		rc = replay_emit_step_data(&setup, step, STDOUT_FILENO);
 	} while (rc == 0);
