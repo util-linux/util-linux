@@ -91,7 +91,8 @@ struct getopt_control {
 		compatible:1,		/* compatibility mode for 'difficult' programs */
 		quiet_errors:1,		/* print errors */
 		quiet_output:1,		/* print output */
-		quote:1;		/* quote output */
+		quote:1,		/* quote output */
+		unknown:1;		/* leave unknown options untouched */
 };
 
 enum { REALLOC_INCREMENT = 8 };
@@ -201,6 +202,8 @@ static int generate_output(struct getopt_control *ctl, char *argv[], int argc)
 		 (argc, argv, ctl->optstr,
 		  (const struct option *)ctl->long_options, &longindex)))
 	       != EOF) {
+		if (ctl->unknown && opt == '?')
+			printf(" %s",argv[optind-1]);
 		if (opt == '?' || opt == ':')
 			exit_code = GETOPT_EXIT_CODE;
 		else if (!ctl->quiet_output) {
@@ -345,6 +348,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --shell <shell>           set quoting conventions to those of <shell>\n"), stdout);
 	fputs(_(" -T, --test                    test for getopt(1) version\n"), stdout);
 	fputs(_(" -u, --unquoted                do not quote the output\n"), stdout);
+	fputs(_(" -U, --unknown                 leave unknown options untouched\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(31));
 	printf(USAGE_MAN_TAIL("getopt(1)"));
@@ -360,7 +364,7 @@ int main(int argc, char *argv[])
 	int opt;
 
 	/* Stop scanning as soon as a non-option argument is found! */
-	static const char *shortopts = "+ao:l:n:qQs:TuhV";
+	static const char *shortopts = "+ao:l:n:qQs:TuUhV";
 	static const struct option longopts[] = {
 		{"options", required_argument, NULL, 'o'},
 		{"longoptions", required_argument, NULL, 'l'},
@@ -369,6 +373,7 @@ int main(int argc, char *argv[])
 		{"shell", required_argument, NULL, 's'},
 		{"test", no_argument, NULL, 'T'},
 		{"unquoted", no_argument, NULL, 'u'},
+		{"unknown", no_argument, NULL, 'U'},
 		{"help", no_argument, NULL, 'h'},
 		{"alternative", no_argument, NULL, 'a'},
 		{"name", required_argument, NULL, 'n'},
@@ -438,6 +443,9 @@ int main(int argc, char *argv[])
 			return TEST_EXIT_CODE;
 		case 'u':
 			ctl.quote = 0;
+			break;
+		case 'U':
+			ctl.unknown = 1;
 			break;
 
 		case 'V':

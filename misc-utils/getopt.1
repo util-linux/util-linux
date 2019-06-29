@@ -172,6 +172,13 @@ do with other
 .BR getopt (1)
 implementations).
 .TP
+.BR \-U , " \-\-unknown"
+Leave unknown options untouched.  While the unknown options are printed they
+still cause
+.BR getopt (1)
+to non-zero return value.  This option is is usually combined with
+.BR \-\-quiet .
+.TP
 .BR \-V , " \-\-version"
 Display version information and exit.  No other output is generated.
 .SH PARSING
