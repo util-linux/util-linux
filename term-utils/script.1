@@ -162,6 +162,12 @@ You should also avoid use of script in command pipes, as
 .B script
 can read more input than you would expect.
 .PP
+.SH SIGNALS
+Upon receiving
+.BR SIGUSR1,
+.B script
+immediately flushes the output file.
+.PP
 .SH ENVIRONMENT
 The following environment variable is utilized by
 .BR script :
