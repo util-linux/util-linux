@@ -500,12 +500,11 @@ static void handle_signal(struct script_control *ctl, int fd)
 			ioctl(ctl->slave, TIOCSWINSZ, (char *)&ctl->win);
 		}
 		break;
-  case SIGUSR1:
-    /* on receiving SIGUSR1 we fflush the output file */
+	case SIGUSR1:
+	  /* on receiving SIGUSR1 we fflush the output file */
+	  fflush(ctl->typescriptfp);
 
-		fflush(ctl->typescriptfp);
-
-    return;
+	  return;
 	case SIGTERM:
 		/* fallthrough */
 	case SIGINT:
