@@ -867,7 +867,7 @@ int main(int argc, char **argv)
 	sigaddset(&ctl.sigset, SIGTERM);
 	sigaddset(&ctl.sigset, SIGINT);
 	sigaddset(&ctl.sigset, SIGQUIT);
-  sigaddset(&ctl.sigset, SIGUSR1);
+	sigaddset(&ctl.sigset, SIGUSR1);
 
 	/* block signals used for signalfd() to prevent the signals being
 	 * handled according to their default dispositions */
