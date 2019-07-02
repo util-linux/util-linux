@@ -632,7 +632,6 @@ static void __attribute__((__noreturn__)) done_log(struct script_control *ctl, c
 		utempter_remove_record(ctl->master);
 #endif
 	kill(ctl->child, SIGTERM);	/* make sure we don't create orphans */
-	exit(ctl->rc_wanted ? status : EXIT_SUCCESS);
 }
 
 static void __attribute__((__noreturn__)) done(struct script_control *ctl)

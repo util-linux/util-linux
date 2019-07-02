@@ -149,6 +149,7 @@ ylwrap
 /sample-*
 /script
 /scriptreplay
+/scriptlive
 /setarch
 /setpriv
 /setsid
