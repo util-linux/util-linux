@@ -202,8 +202,11 @@ static int generate_output(struct getopt_control *ctl, char *argv[], int argc)
 		 (argc, argv, ctl->optstr,
 		  (const struct option *)ctl->long_options, &longindex)))
 	       != EOF) {
-		if (ctl->unknown && opt == '?')
-			printf(" %s",argv[optind-1]);
+		if (ctl->unknown && opt == '?'){
+			printf(" %s", argv[optind-1]);
+			if ((optind < argc) && argv[optind][0] != '-')
+				printf(" %s", argv[optind++]);
+		}
 		if (opt == '?' || opt == ':')
 			exit_code = GETOPT_EXIT_CODE;
 		else if (!ctl->quiet_output) {
