@@ -56,37 +56,13 @@
 #include "pathnames.h"
 
 /* for inb, outb */
-#if defined(__i386__) || defined(__x86_64__)
-# ifdef HAVE_SYS_IO_H
-#  include <sys/io.h>
-# elif defined(HAVE_ASM_IO_H)
-#  include <asm/io.h>
-# else
-#  undef __i386__
-#  undef __x86_64__
-#  warning "disable cmos access - no sys/io.h or asm/io.h"
-static void outb(int a __attribute__((__unused__)),
-		 int b __attribute__((__unused__)))
-{
-}
-
-static int inb(int c __attribute__((__unused__)))
-{
-	return 0;
-}
-# endif				/* __i386__ __x86_64__ */
+#ifdef HAVE_SYS_IO_H
+# include <sys/io.h>
+#elif defined(HAVE_ASM_IO_H)
+# include <asm/io.h>
 #else
-# warning "disable cmos access - not i386 or x86_64"
-static void outb(int a __attribute__((__unused__)),
-		 int b __attribute__((__unused__)))
-{
-}
-
-static int inb(int c __attribute__((__unused__)))
-{
-	return 0;
-}
-#endif				/* for inb, outb */
+# error "no sys/io.h or asm/io.h"
+#endif	/* HAVE_SYS_IO_H, HAVE_ASM_IO_H */
 
 #include "hwclock.h"
 
@@ -360,7 +336,6 @@ static int set_hardware_clock_cmos(const struct hwclock_control *ctl
 	return 0;
 }
 
-#if defined(__i386__) || defined(__x86_64__)
 # if defined(HAVE_IOPL)
 static int i386_iopl(const int level)
 {
@@ -373,12 +348,6 @@ static int i386_iopl(const int level __attribute__ ((__unused__)))
 	return ioperm(clock_ctl_addr, 2, 1);
 }
 # endif
-#else
-static int i386_iopl(const int level __attribute__ ((__unused__)))
-{
-	return IOPL_NOT_IMPLEMENTED;
-}
-#endif
 
 static int get_permissions_cmos(void)
 {
@@ -412,9 +381,5 @@ static struct clock_ops cmos_interface = {
  */
 struct clock_ops *probe_for_cmos_clock(void)
 {
-#if defined(__i386__) || defined(__x86_64__)
 	return &cmos_interface;
-#else
-	return NULL;
-#endif
 }

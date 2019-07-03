@@ -1517,6 +1517,19 @@ UL_REQUIRES_HAVE([hwclock], [io, linuxdummy], [ioperm iopl function or Linux])
 AM_CONDITIONAL([BUILD_HWCLOCK], [test "x$build_hwclock" = xyes])
 
 
+AC_ARG_ENABLE([hwclock-cmos],
+  AS_HELP_STRING([--disable-hwclock-cmos], [do not use CMOS clock]),
+  [], [use_hwclock_cmos="$build_hwclock"]
+)
+
+AS_IF([test "x$use_hwclock_cmos" = xyes], [
+  AM_CONDITIONAL([USE_HWCLOCK_CMOS], [true])
+  AC_DEFINE([USE_HWCLOCK_CMOS], [1], [Define to 1 if want to use CMOS clock.])
+],[
+  AM_CONDITIONAL([USE_HWCLOCK_CMOS], [false])
+])
+
+
 UL_BUILD_INIT([mkfs], [yes])
 AM_CONDITIONAL([BUILD_MKFS], [test "x$build_mkfs" = xyes])
 

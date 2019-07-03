@@ -451,9 +451,12 @@ dist_man_MANS += \
 PATHFILES += sys-utils/hwclock.8
 hwclock_SOURCES = \
 	sys-utils/hwclock.c \
-	sys-utils/hwclock.h \
-	sys-utils/hwclock-cmos.c
+	sys-utils/hwclock.h
 hwclock_LDADD = $(LDADD) libcommon.la -lm
+if USE_HWCLOCK_CMOS
+hwclock_SOURCES += \
+	sys-utils/hwclock-cmos.c
+endif
 if LINUX
 hwclock_SOURCES += \
 	sys-utils/hwclock-rtc.c \
