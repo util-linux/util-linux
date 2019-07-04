@@ -1,0 +1,586 @@
+/*
+ * This is pseudo-terminal container for child process where parent creates a
+ * proxy between the current std{in,out,etrr} and the child's pty. Advantages:
+ *
+ * - child has no access to parent's terminal (e.g. su --pty)
+ * - parent can log all traffic between user and child's terminall (e.g. script(1))
+ * - it's possible to start commands on terminal although parent has no terminal
+ *
+ * This code is in the public domain; do with it what you wish.
+ *
+ * Written by Karel Zak <kzak@redhat.com> in Jul 2019
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <pty.h>
+#include <poll.h>
+#include <sys/signalfd.h>
+#include <paths.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#include "c.h"
+#include "all-io.h"
+#include "ttyutils.h"
+#include "pty-session.h"
+#include "debug.h"
+
+static UL_DEBUG_DEFINE_MASK(ulpty);
+UL_DEBUG_DEFINE_MASKNAMES(ulpty) = UL_DEBUG_EMPTY_MASKNAMES;
+
+#define ULPTY_DEBUG_INIT	(1 << 1)
+#define ULPTY_DEBUG_SETUP	(1 << 2)
+#define ULPTY_DEBUG_SIG		(1 << 3)
+#define ULPTY_DEBUG_IO		(1 << 4)
+#define ULPTY_DEBUG_DONE	(1 << 5)
+#define ULPTY_DEBUG_ALL		0xFFFF
+
+#define DBG(m, x)       __UL_DBG(ulpty, ULPTY_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(ulpty, ULPTY_DEBUG_, m, x)
+
+#define UL_DEBUG_CURRENT_MASK   UL_DEBUG_MASK(ulpty)
+#include "debugobj.h"
+
+void ul_pty_init_debug(int mask)
+{
+	if (ulpty_debug_mask)
+		return;
+	__UL_INIT_DEBUG_FROM_ENV(ulpty, ULPTY_DEBUG_, mask, ULPTY_DEBUG);
+}
+
+struct ul_pty *ul_new_pty(int is_stdin_tty)
+{
+	struct ul_pty *pty = calloc(1, sizeof(*pty));
+
+	if (!pty)
+		return NULL;
+
+	DBG(SETUP, ul_debugobj(pty, "alloc handler"));
+	pty->isterm = is_stdin_tty;
+	pty->master = -1;
+	pty->slave = -1;
+	pty->sigfd = -1;
+	pty->child = (pid_t) -1;
+
+	return pty;
+}
+
+sigset_t *ul_pty_get_orig_sigset(struct ul_pty *pty)
+{
+	assert(pty);
+	return &pty->orgsig;
+}
+
+int ul_pty_get_delivered_signal(struct ul_pty *pty)
+{
+	assert(pty);
+	return pty->delivered_signal;
+}
+
+struct ul_pty_callbacks *ul_pty_get_callbacks(struct ul_pty *pty)
+{
+	assert(pty);
+	return &pty->callbacks;
+}
+
+void ul_pty_set_callback_data(struct ul_pty *pty, void *data)
+{
+	assert(pty);
+	pty->callback_data = data;
+}
+
+void ul_pty_set_child(struct ul_pty *pty, pid_t child)
+{
+	assert(pty);
+	pty->child = child;
+}
+
+/* it's active when signals are redurected to sigfd */
+int ul_pty_is_running(struct ul_pty *pty)
+{
+	assert(pty);
+	return pty->sigfd >= 0;
+}
+
+/* call me before fork() */
+int ul_pty_setup(struct ul_pty *pty)
+{
+	struct termios slave_attrs;
+	int rc;
+
+	if (pty->isterm) {
+	        DBG(SETUP, ul_debugobj(pty, "create for terminal"));
+
+		/* original setting of the current terminal */
+		if (tcgetattr(STDIN_FILENO, &pty->stdin_attrs) != 0)
+			return -errno;
+		ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&pty->win);
+		/* create master+slave */
+		rc = openpty(&pty->master, &pty->slave, NULL, &pty->stdin_attrs, &pty->win);
+
+		/* set the current terminal to raw mode; pty_cleanup() reverses this change on exit */
+		slave_attrs = pty->stdin_attrs;
+		cfmakeraw(&slave_attrs);
+		slave_attrs.c_lflag &= ~ECHO;
+		tcsetattr(STDIN_FILENO, TCSANOW, &slave_attrs);
+	} else {
+	        DBG(SETUP, ul_debugobj(pty, "create for non-terminal"));
+		rc = openpty(&pty->master, &pty->slave, NULL, NULL, NULL);
+
+		if (!rc) {
+			tcgetattr(pty->slave, &slave_attrs);
+			slave_attrs.c_lflag &= ~ECHO;
+			tcsetattr(pty->slave, TCSANOW, &slave_attrs);
+		}
+	}
+
+	DBG(SETUP, ul_debugobj(pty, "pty setup done [master=%d, slave=%d, rc=%d]",
+				pty->master, pty->slave, rc));
+	return rc;
+}
+
+/* cleanup in parent process */
+void ul_pty_cleanup(struct ul_pty *pty)
+{
+	struct termios rtt;
+
+	if (pty->master == -1 || !pty->isterm)
+		return;
+
+	DBG(DONE, ul_debugobj(pty, "cleanup"));
+	rtt = pty->stdin_attrs;
+	tcsetattr(STDIN_FILENO, TCSADRAIN, &rtt);
+}
+
+/* call me in child process */
+void ul_pty_init_slave(struct ul_pty *pty)
+{
+	DBG(SETUP, ul_debugobj(pty, "initialize slave"));
+
+	setsid();
+
+	ioctl(pty->slave, TIOCSCTTY, 1);
+	close(pty->master);
+
+	dup2(pty->slave, STDIN_FILENO);
+	dup2(pty->slave, STDOUT_FILENO);
+	dup2(pty->slave, STDERR_FILENO);
+
+	close(pty->slave);
+
+	if (pty->sigfd >= 0)
+		close(pty->sigfd);
+
+	pty->slave = -1;
+	pty->master = -1;
+	pty->sigfd = -1;
+
+	sigprocmask(SIG_SETMASK, &pty->orgsig, NULL);
+
+	DBG(SETUP, ul_debugobj(pty, "... initialize slave done"));
+}
+
+static int write_output(char *obuf, ssize_t bytes)
+{
+	DBG(IO, ul_debug(" writing output"));
+
+	if (write_all(STDOUT_FILENO, obuf, bytes)) {
+		DBG(IO, ul_debug("  writing output *failed*"));
+		return -errno;
+	}
+
+	return 0;
+}
+
+static int write_to_child(struct ul_pty *pty,
+			  char *buf, size_t bufsz)
+{
+	return write_all(pty->master, buf, bufsz);
+}
+
+/*
+ * The pty is usually faster than shell, so it's a good idea to wait until
+ * the previous message has been already read by shell from slave before we
+ * write to master. This is necessary especially for EOF situation when we can
+ * send EOF to master before shell is fully initialized, to workaround this
+ * problem we wait until slave is empty. For example:
+ *
+ *   echo "date" | su --pty
+ *
+ * Unfortunately, the child (usually shell) can ignore stdin at all, so we
+ * don't wait forever to avoid dead locks...
+ *
+ * Note that su --pty is primarily designed for interactive sessions as it
+ * maintains master+slave tty stuff within the session. Use pipe to write to
+ * pty and assume non-interactive (tee-like) behavior is NOT well supported.
+ */
+static void write_eof_to_child(struct ul_pty *pty)
+{
+	unsigned int tries = 0;
+	struct pollfd fds[] = {
+	           { .fd = pty->slave, .events = POLLIN }
+	};
+	char c = DEF_EOF;
+
+	DBG(IO, ul_debugobj(pty, " waiting for empty slave"));
+	while (poll(fds, 1, 10) == 1 && tries < 8) {
+		DBG(IO, ul_debugobj(pty, "   slave is not empty"));
+		xusleep(250000);
+		tries++;
+	}
+	if (tries < 8)
+		DBG(IO, ul_debugobj(pty, "   slave is empty now"));
+
+	DBG(IO, ul_debugobj(pty, " sending EOF to master"));
+	write_to_child(pty, &c, sizeof(char));
+}
+
+static int handle_io(struct ul_pty *pty, int fd, int *eof)
+{
+	char buf[BUFSIZ];
+	ssize_t bytes;
+
+	DBG(IO, ul_debugobj(pty, "%d FD active", fd));
+	*eof = 0;
+
+	/* read from active FD */
+	bytes = read(fd, buf, sizeof(buf));
+	if (bytes < 0) {
+		if (errno == EAGAIN || errno == EINTR)
+			return 0;
+		return -errno;
+	}
+
+	if (bytes == 0) {
+		*eof = 1;
+		return 0;
+	}
+
+	/* from stdin (user) to command */
+	if (fd == STDIN_FILENO) {
+		DBG(IO, ul_debugobj(pty, " stdin --> master %zd bytes", bytes));
+
+		if (write_to_child(pty, buf, bytes))
+			return -errno;
+
+		/* without sync write_output() will write both input &
+		 * shell output that looks like double echoing */
+		fdatasync(pty->master);
+
+	/* from command (master) to stdout */
+	} else if (fd == pty->master) {
+		DBG(IO, ul_debugobj(pty, " master --> stdout %zd bytes", bytes));
+		write_output(buf, bytes);
+	}
+
+	return 0;
+}
+
+static int handle_signal(struct ul_pty *pty, int fd)
+{
+	struct signalfd_siginfo info;
+	ssize_t bytes;
+
+	DBG(SIG, ul_debugobj(pty, "signal FD %d active", fd));
+
+	bytes = read(fd, &info, sizeof(info));
+	if (bytes != sizeof(info)) {
+		if (bytes < 0 && (errno == EAGAIN || errno == EINTR))
+			return 0;
+		return -errno;
+	}
+
+	switch (info.ssi_signo) {
+	case SIGCHLD:
+		DBG(SIG, ul_debugobj(pty, " get signal SIGCHLD"));
+
+		if (info.ssi_code == CLD_EXITED
+		    || info.ssi_code == CLD_KILLED
+		    || info.ssi_code == CLD_DUMPED)
+			pty->callbacks.child_wait(pty->callback_data);
+
+		else if (info.ssi_status == SIGSTOP && pty->child > 0)
+			pty->callbacks.child_sigstop(pty->callback_data);
+
+		if (pty->child <= 0)
+			pty->poll_timeout = 10;
+		return 0;
+	case SIGWINCH:
+		DBG(SIG, ul_debugobj(pty, " get signal SIGWINCH"));
+		if (pty->isterm) {
+			ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&pty->win);
+			ioctl(pty->slave, TIOCSWINSZ, (char *)&pty->win);
+		}
+		break;
+	case SIGTERM:
+		/* fallthrough */
+	case SIGINT:
+		/* fallthrough */
+	case SIGQUIT:
+		DBG(SIG, ul_debugobj(pty, " get signal SIG{TERM,INT,QUIT}"));
+		pty->delivered_signal = info.ssi_signo;
+                /* Child termination is going to generate SIGCHILD (see above) */
+		if (pty->child > 0)
+	                kill(pty->child, SIGTERM);
+		break;
+	default:
+		abort();
+	}
+
+	return 0;
+}
+
+/* loop in parent */
+int ul_pty_proxy_master(struct ul_pty *pty)
+{
+	sigset_t ourset;
+	int rc = 0, ret, eof = 0;
+	enum {
+		POLLFD_SIGNAL = 0,
+		POLLFD_MASTER,
+		POLLFD_STDIN
+
+	};
+	struct pollfd pfd[] = {
+		[POLLFD_SIGNAL] = { .fd = -1,		.events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_MASTER] = { .fd = pty->master,  .events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_STDIN]	= { .fd = STDIN_FILENO, .events = POLLIN | POLLERR | POLLHUP }
+	};
+
+	/* We use signalfd and standard signals by handlers are blocked
+	 * at all
+	 */
+	sigfillset(&ourset);
+	if (sigprocmask(SIG_BLOCK, &ourset, NULL))
+		return -errno;
+
+	sigemptyset(&ourset);
+	sigaddset(&ourset, SIGCHLD);
+	sigaddset(&ourset, SIGWINCH);
+	sigaddset(&ourset, SIGALRM);
+	sigaddset(&ourset, SIGTERM);
+	sigaddset(&ourset, SIGINT);
+	sigaddset(&ourset, SIGQUIT);
+
+	if ((pty->sigfd = signalfd(-1, &ourset, SFD_CLOEXEC)) < 0) {
+		rc = -errno;
+		goto done;
+	}
+
+	pfd[POLLFD_SIGNAL].fd = pty->sigfd;
+	pty->poll_timeout = -1;
+
+	while (!pty->delivered_signal) {
+		size_t i;
+		int errsv;
+
+		DBG(IO, ul_debugobj(pty, "calling poll()"));
+
+		/* wait for input or signal */
+		ret = poll(pfd, ARRAY_SIZE(pfd), pty->poll_timeout);
+		errsv = errno;
+		DBG(IO, ul_debugobj(pty, "poll() rc=%d", ret));
+
+		if (ret < 0) {
+			if (errsv == EAGAIN)
+				continue;
+			rc = -errno;
+			break;
+		}
+		if (ret == 0) {
+			DBG(IO, ul_debugobj(pty, "leaving poll() loop [timeout=%d]", pty->poll_timeout));
+			rc = 0;
+			break;
+		}
+
+		for (i = 0; i < ARRAY_SIZE(pfd); i++) {
+			rc = 0;
+
+			if (pfd[i].revents == 0)
+				continue;
+
+			DBG(IO, ul_debugobj(pty, " active pfd[%s].fd=%d %s %s %s",
+						i == POLLFD_STDIN  ? "stdin" :
+						i == POLLFD_MASTER ? "master" :
+						i == POLLFD_SIGNAL ? "signal" : "???",
+						pfd[i].fd,
+						pfd[i].revents & POLLIN  ? "POLLIN" : "",
+						pfd[i].revents & POLLHUP ? "POLLHUP" : "",
+						pfd[i].revents & POLLERR ? "POLLERR" : ""));
+			switch (i) {
+			case POLLFD_STDIN:
+			case POLLFD_MASTER:
+				/* data */
+				if (pfd[i].revents & POLLIN)
+					rc = handle_io(pty, pfd[i].fd, &eof);
+				/* EOF maybe detected by two ways:
+				 *	A) poll() return POLLHUP event after close()
+				 *	B) read() returns 0 (no data) */
+				if ((pfd[i].revents & POLLHUP) || eof) {
+					DBG(IO, ul_debugobj(pty, " ignore FD"));
+					pfd[i].fd = -1;
+					if (i == POLLFD_STDIN) {
+						write_eof_to_child(pty);
+						DBG(IO, ul_debugobj(pty, "  ignore STDIN"));
+					}
+				}
+				continue;
+			case POLLFD_SIGNAL:
+				rc = handle_signal(pty, pfd[i].fd);
+				break;
+			}
+			if (rc)
+				break;
+		}
+	}
+
+done:
+	if (pty->sigfd != -1)
+		close(pty->sigfd);
+	pty->sigfd = -1;
+
+	/* restore original setting */
+	sigprocmask(SIG_SETMASK, &pty->orgsig, NULL);
+
+	DBG(IO, ul_debug("poll() done [signal=%d, rc=%d]", pty->delivered_signal, rc));
+	return rc;
+}
+
+#ifdef TEST_PROGRAM_PTY
+/*
+ * $ make test_pty
+ * $ ./test_pty
+ *
+ * ... and see for example tty(1) or "ps afu"
+ */
+struct ptytest {
+	pid_t	child;
+	int	childstatus;
+
+	struct ul_pty *pty;
+};
+
+/* on child exit/dump/... */
+static void wait_for_child(void *data)
+{
+	struct ptytest *ss = (struct ptytest *) data;
+	int status;
+	pid_t pid;
+	int options = 0;
+
+	if (ss->child == (pid_t) -1)
+		return;
+
+	if (ul_pty_is_running(ss->pty)) {
+		/* wait for specific child */
+		options = WNOHANG;
+		for (;;) {
+			pid = waitpid(ss->child, &status, options);
+			if (pid != (pid_t) - 1) {
+				ss->childstatus = status;
+				ss->child = (pid_t) -1;
+				ul_pty_set_child(ss->pty, (pid_t) -1);
+			} else
+				break;
+		}
+	} else {
+		/* final wait */
+		while ((pid = wait3(&status, options, NULL)) > 0) {
+			if (pid == ss->child) {
+				ss->childstatus = status;
+				ss->child = (pid_t) -1;
+				ul_pty_set_child(ss->pty, (pid_t) -1);
+			}
+		}
+	}
+}
+
+static void child_sigstop(void *data)
+{
+	struct ptytest *ss = (struct ptytest *) data;
+	kill(getpid(), SIGSTOP);
+	kill(ss->child, SIGCONT);
+}
+
+int main(int argc, char *argv[])
+{
+	struct ptytest ss = { .child = (pid_t) -1 };
+	struct ul_pty_callbacks *cb;
+	const char *shell, *command = NULL, *shname = NULL;
+	int caught_signal = 0;
+
+	shell = getenv("SHELL");
+	if (shell == NULL)
+		shell = _PATH_BSHELL;
+	if (argc == 2)
+		command = argv[1];
+
+	ul_pty_init_debug(0);
+
+	ss.pty = ul_new_pty(isatty(STDIN_FILENO));
+	if (!ss.pty)
+		err(EXIT_FAILURE, "failed to allocate PTY handler");
+
+	ul_pty_set_callback_data(ss.pty, (void *) &ss);
+	cb = ul_pty_get_callbacks(ss.pty);
+	cb->child_wait = wait_for_child;
+	cb->child_sigstop = child_sigstop;
+
+	sigprocmask(SIG_BLOCK, NULL, ul_pty_get_orig_sigset(ss.pty));
+
+	if (ul_pty_setup(ss.pty))
+		err(EXIT_FAILURE, "failed to create pseudo-terminal");
+
+	fflush(stdout);			/* ??? */
+
+	switch ((int) (ss.child = fork())) {
+	case -1: /* error */
+		ul_pty_cleanup(ss.pty);
+		err(EXIT_FAILURE, "cannot create child process");
+		break;
+
+	case 0: /* child */
+		ul_pty_init_slave(ss.pty);
+
+		signal(SIGTERM, SIG_DFL); /* because /etc/csh.login */
+
+		shname = strrchr(shell, '/');
+		shname = shname ? shname + 1 : shell;
+
+		if (command)
+			execl(shell, shname, "-c", command, NULL);
+		else
+			execl(shell, shname, "-i", NULL);
+		err(EXIT_FAILURE, "failed to execute %s", shell);
+		break;
+
+	default:
+		break;
+	}
+
+	/* parent */
+	ul_pty_set_child(ss.pty, ss.child);
+
+	/* this is the main loop */
+	ul_pty_proxy_master(ss.pty);
+
+	/* all done; cleanup and kill */
+	caught_signal = ul_pty_get_delivered_signal(ss.pty);
+
+	if (!caught_signal && ss.child != (pid_t)-1)
+		wait_for_child(&ss);	/* final wait */
+
+	if (caught_signal && ss.child != (pid_t)-1) {
+		fprintf(stderr, "\nSession terminated, killing shell...");
+		kill(ss.child, SIGTERM);
+		sleep(2);
+		kill(ss.child, SIGKILL);
+		fprintf(stderr, " ...killed.\n");
+	}
+
+	ul_pty_cleanup(ss.pty);
+	return EXIT_SUCCESS;
+}
+
+#endif /* TEST_PROGRAM */
+

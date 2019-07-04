@@ -88,7 +88,6 @@ check_PROGRAMS += \
 	test_timeutils
 
 
-
 if LINUX
 if HAVE_CPU_SET_T
 check_PROGRAMS += test_cpuset
@@ -142,6 +141,14 @@ endif
 test_path_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PATH
 test_path_LDADD = $(LDADD)
 endif
+endif
+
+if HAVE_PTY
+check_PROGRAMS += test_pty
+test_pty_SOURCES = lib/pty-session.c \
+		   include/pty-session.h
+test_pty_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PTY
+test_pty_LDADD = $(LDADD) libcommon.la -lutil
 endif
 
 if LINUX

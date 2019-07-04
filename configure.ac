@@ -391,6 +391,7 @@ have_security_openpam_h=$ac_cv_header_security_openpam_h
 have_shadow_h=$ac_cv_header_shadow_h
 have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmpx_h=$ac_cv_header_utmpx_h
+have_pty_h=$ac_cv_header_pty_h
 
 AS_CASE([$linux_os:$have_linux_version_h],
   [yes:no],
@@ -743,6 +744,12 @@ AS_IF([test "x$with_util" = xno], [
   UL_CHECK_LIB([util], [openpty])
 ])
 
+AS_IF([test "x$have_pty_h" = xyes -a "x$have_sys_signalfd_h" = xyes -a "x$have_util" = xyes], [
+   AM_CONDITIONAL([HAVE_PTY], [true])
+   AC_DEFINE([HAVE_PTY], [1], [have PTY support])
+], [
+   AM_CONDITIONAL([HAVE_PTY], [false])
+])
 
 AC_CHECK_TYPES([union semun], [], [], [[
 #include <sys/sem.h>
