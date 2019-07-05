@@ -756,6 +756,7 @@ UL_REQUIRES_COMPILE([widechar], [[
   #include <wchar.h>
   #include <wctype.h>
   #include <stdio.h>
+  #include <stdlib.h>
   ]], [[
     wchar_t wc;
     wint_t w;
