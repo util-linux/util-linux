@@ -675,7 +675,7 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 
 	fd = open(fname, (readonly ? O_RDONLY : O_RDWR ) | O_CLOEXEC);
 	if (fd < 0) {
-		int rc = -errno;
+		rc = -errno;
 		DBG(CXT, ul_debugobj(cxt, "failed to assign device [rc=%d]", rc));
 		return rc;
 	}
