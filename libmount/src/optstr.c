@@ -351,7 +351,9 @@ int mnt_optstr_deduplicate_option(char **optstr, const char *name)
 			end = ol.end;
 			opt = end && *end ? end + 1 : NULL;
 		}
-	} while (rc == 0 && opt && *opt);
+		if (opt == NULL)
+			break;
+	} while (rc == 0 && *opt);
 
 	return rc < 0 ? rc : begin ? 0 : 1;
 }
