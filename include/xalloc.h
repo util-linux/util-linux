@@ -62,8 +62,7 @@ static inline char __attribute__((warn_unused_result)) __ul_returns_nonnull
 {
         char *ret;
 
-        if (!str)
-                return NULL;
+        assert(str);
 
         ret = strdup(str);
 
@@ -77,8 +76,7 @@ xstrndup(const char *str, size_t size)
 {
         char *ret;
 
-        if (!str)
-                return NULL;
+        assert(str);
 
         ret = strndup(str, size);
 
