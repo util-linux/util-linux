@@ -58,7 +58,7 @@ struct nvuint64 {
 	uint32_t	nvu_type;
 	uint32_t	nvu_elem;
 	uint64_t	nvu_value;
-};
+} __attribute__((packed));
 
 struct nvlist {
 	uint32_t	nvl_unknown[3];

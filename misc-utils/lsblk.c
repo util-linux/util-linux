@@ -774,8 +774,14 @@ static char *device_get_data(
 		str = get_vfs_attribute(dev, id);
 		break;
 	case COL_TARGET:
-		str = xstrdup(lsblk_device_get_mountpoint(dev));
+	{
+		char *s = lsblk_device_get_mountpoint(dev);
+		if (s)
+			str = xstrdup(s);
+		else
+			str = NULL;
 		break;
+	}
 	case COL_LABEL:
 		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->label)

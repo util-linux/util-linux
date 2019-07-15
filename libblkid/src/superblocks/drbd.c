@@ -109,7 +109,7 @@ struct meta_data_on_disk_9 {
 	struct peer_dev_md_on_disk_9 peers[DRBD_PEERS_MAX];
 	uint64_t history_uuids[HISTORY_UUIDS];
 
-	char padding[0] __attribute__((aligned(4096)));
+	uint8_t padding[2704];
 } __attribute__((packed));
 
 

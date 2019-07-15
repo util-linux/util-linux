@@ -47,16 +47,16 @@ int get_terminal_dimension(int *cols, int *lines)
 		l = t_win.ts_lines;
 	}
 #endif
-
-	if (cols && c <= 0)
-		c = get_env_int("COLUMNS");
-	if (lines && l <= 0)
-		l = get_env_int("LINES");
-
-	if (cols)
+	if (cols) {
+		if (c <= 0)
+			c = get_env_int("COLUMNS");
 		*cols = c;
-	if (lines)
+	}
+	if (lines) {
+		if (l <= 0)
+			l = get_env_int("LINES");
 		*lines = l;
+	}
 	return 0;
 }
 

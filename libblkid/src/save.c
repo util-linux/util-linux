@@ -213,7 +213,7 @@ int main(int argc, char **argv)
 	int ret;
 
 	blkid_init_debug(BLKID_DEBUG_ALL);
-	if (argc > 2) {
+	if (argc != 2) {
 		fprintf(stderr, "Usage: %s [filename]\n"
 			"Test loading/saving a cache (filename)\n", argv[0]);
 		exit(1);
