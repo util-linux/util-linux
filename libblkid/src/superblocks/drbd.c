@@ -45,6 +45,13 @@ enum drbd_uuid_index {
 	UI_EXTENDED_SIZE	/* Everything. */
 };
 
+
+/*
+ * Used by libblkid to avoid unnecessary padding at the end of the structs and
+ * too large unused structs in memory.
+ */
+#define DRBD_MD_OFFSET 4096
+
 /*
  * user/shared/drbdmeta.c
  * Minor modifications wrt. types
@@ -63,7 +70,8 @@ struct md_on_disk_08 {
 	uint32_t bm_bytes_per_bit;
 	uint32_t reserved_u32[4];
 
-	char reserved[8 * 512 - (8*(UI_SIZE+3)+4*11)];
+	/** Unnecessary for libblkid **
+	 * char reserved[8 * 512 - (8*(UI_SIZE+3)+4*11)]; */
 };
 
 /*
@@ -109,7 +117,9 @@ struct meta_data_on_disk_9 {
 	struct peer_dev_md_on_disk_9 peers[DRBD_PEERS_MAX];
 	uint64_t history_uuids[HISTORY_UUIDS];
 
-	uint8_t padding[2704];
+	/** Unnecessary for libblkid **
+	 * char padding[0] __attribute__((aligned(4096)));
+	 */
 } __attribute__((packed));
 
 
@@ -118,7 +128,7 @@ static int probe_drbd_84(blkid_probe pr)
 	struct md_on_disk_08 *md;
 	off_t off;
 
-	off = pr->size - sizeof(*md);
+	off = pr->size - DRBD_MD_OFFSET;
 
 	/* Small devices cannot be drbd (?) */
 	if (pr->size < 0x10000)
@@ -159,7 +169,7 @@ static int probe_drbd_90(blkid_probe pr)
 	struct meta_data_on_disk_9 *md;
 	off_t off;
 
-	off = pr->size - sizeof(*md);
+	off = pr->size - DRBD_MD_OFFSET;
 
 	/*
 	 * Smaller ones are certainly not DRBD9 devices.
