@@ -208,6 +208,46 @@ AC_DEFUN([UL_EXCLUDE_ARCH], [
   fi
 ])
 
+
+
+dnl UL_REQUIRES_ARCH(NAME, ARCH, [VARSUFFIX = $1])
+dnl
+dnl Modifies $build_<name>  variable according to $enable_<name> and $host. The
+dnl $enable_<name> could be "yes", "no" and "check". If build_<name> is "no" then
+dnl all checks are skiped.
+dnl
+dnl The <arch> maybe a list, then at least one of the patterns in the list
+dnl have to match.
+dnl
+dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
+dnl
+AC_DEFUN([UL_REQUIRES_ARCH], [
+  m4_define([suffix], m4_default([$3],$1))
+  if test "x$[build_]suffix" != xno; then
+    AC_REQUIRE([AC_CANONICAL_HOST])
+    [ul_archone_]suffix=no
+    m4_foreach([onearch], [$2],  [
+      case "$host" in #(
+      onearch)
+        [ul_archone_]suffix=yes ;;
+      esac
+    ])dnl
+    case $[enable_]suffix:$[ul_archone_]suffix in #(
+    no:*)
+      [build_]suffix=no ;;
+    yes:no)
+      AC_MSG_ERROR([$1 selected for unsupported architecture]);;
+    yes:*)
+      [build_]suffix=yes ;;
+    check:no)
+      AC_MSG_WARN([excluded for $host architecture; not building $1])
+      [build_]suffix=no ;;
+    check:*)
+      [build_]suffix=yes ;;
+    esac
+  fi
+])
+
 dnl UL_REQUIRES_HAVE(NAME, HAVENAME, HAVEDESC, [VARSUFFIX=$1])
 dnl
 dnl Modifies $build_<name> variable according to $enable_<name> and
@@ -248,7 +288,7 @@ AC_DEFUN([UL_REQUIRES_HAVE], [
   fi
 ])
 
-dnl UL_REQUIRES_HAVE(NAME, PROGRAM_PROLOGUE, PROGRAM_BODY, DESC, [VARSUFFIX=$1])
+dnl UL_REQUIRES_COMPILE(NAME, PROGRAM_PROLOGUE, PROGRAM_BODY, DESC, [VARSUFFIX=$1])
 dnl
 dnl Modifies $build_<name> variable according to $enable_<name> and
 dnl ability compile AC_LANG_PROGRAM(<program_prologue>, <program_body>).  
