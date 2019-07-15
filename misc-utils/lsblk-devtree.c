@@ -384,6 +384,7 @@ static int device_dedupkey_is_equal(
 		return 0;
 	if (strcmp(dev->dedupkey, pattern->dedupkey) == 0) {
 		if (!device_is_partition(dev) ||
+		    !dev->wholedisk->dedupkey ||
 		     strcmp(dev->dedupkey, dev->wholedisk->dedupkey) != 0) {
 			DBG(DEV, ul_debugobj(dev, "%s: match deduplication pattern", dev->name));
 			return 1;
@@ -458,6 +459,7 @@ int lsblk_devtree_deduplicate_devices(struct lsblk_devtree *tr)
 		if (!pattern->dedupkey)
 			continue;
 		if (device_is_partition(pattern) &&
+		    pattern->wholedisk->dedupkey &&
 		    strcmp(pattern->dedupkey, pattern->wholedisk->dedupkey) == 0)
 			continue;
 		if (last && strcmp(pattern->dedupkey, last) == 0)
