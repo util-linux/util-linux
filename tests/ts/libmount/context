@@ -146,8 +146,8 @@ is_mounted $MOUNTPOINT && echo "$MOUNTPOINT still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
-# deprecated
-ts_init_subtest "x-mount.mkdir"
+# deprecated (x-* mount option maintained in userspace (e.g. utab)
+ts_init_subtest "x-permanent"
 TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
 [ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
 
@@ -159,7 +159,8 @@ $TS_CMD_UMOUNT $TS_NOEXIST
 rmdir $TS_NOEXIST
 
 
-ts_init_subtest "X-mount.mkdir"
+# X-* comment
+ts_init_subtest "X-comment"
 TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
 [ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
 
