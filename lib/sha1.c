@@ -153,9 +153,13 @@ void ul_SHA1Transform(uint32_t state[5], const unsigned char buffer[64])
 	state[3] += d;
 	state[4] += e;
 	/* Wipe variables */
-	a = b = c = d = e = 0;
+	explicit_bzero(&a, sizeof(a));
+	explicit_bzero(&b, sizeof(b));
+	explicit_bzero(&c, sizeof(c));
+	explicit_bzero(&d, sizeof(d));
+	explicit_bzero(&e, sizeof(e));
 #ifdef UL_SHA1HANDSOFF
-	memset(block, '\0', sizeof(block));
+	explicit_bzero(block, sizeof(block));
 #endif
 }
 
@@ -239,8 +243,8 @@ void ul_SHA1Final(unsigned char digest[20], UL_SHA1_CTX *context)
 		    ((context->state[i >> 2] >> ((3 - (i & 3)) * 8)) & 255);
 	}
 	/* Wipe variables */
-	memset(context, '\0', sizeof(*context));
-	memset(&finalcount, '\0', sizeof(finalcount));
+	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(&finalcount, sizeof(finalcount));
 }
 
 void ul_SHA1(char *hash_out, const char *str, unsigned len)
