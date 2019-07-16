@@ -37,7 +37,8 @@ static inline
 {
 	void *ret = malloc(size);
 
-	if (!ret && size)
+	assert(size);
+	if (!ret)
 		err(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", size);
 	return ret;
 }
@@ -45,7 +46,6 @@ static inline
 static inline
   __ul_alloc_size(2)
   __attribute__((warn_unused_result))
-  __ul_returns_nonnull
   void *xrealloc(void *ptr, const size_t size)
 {
 	void *ret = realloc(ptr, size);
