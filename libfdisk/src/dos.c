@@ -815,7 +815,9 @@ static int dos_probe_label(struct fdisk_context *cxt)
 		return 0;
 
 	/* ignore disks with FAT */
-	if (cxt->collision && strcmp(cxt->collision, "vfat") == 0)
+	if (cxt->collision &&
+	    (strcmp(cxt->collision, "vfat") == 0 ||
+	     strcmp(cxt->collision, "ntfs") == 0))
 		return 0;
 
 	dos_init(cxt);
