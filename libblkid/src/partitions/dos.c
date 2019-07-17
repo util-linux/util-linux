@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 #include "partitions.h"
+#include "superblocks/superblocks.h"
 #include "aix.h"
 
 /* see superblocks/vfat.c */
@@ -219,6 +220,12 @@ static int probe_dos_pt(blkid_probe pr,
 	 */
 	if (blkid_probe_is_vfat(pr) == 1) {
 		DBG(LOWPROBE, ul_debug("probably FAT -- ignore"));
+		goto nothing;
+	}
+
+	/* Another false possitive is NTFS */
+	if (blkid_probe_is_ntfs(pr) == 1) {
+		DBG(LOWPROBE, ul_debug("probably NTFS -- ignore"));
 		goto nothing;
 	}
 
