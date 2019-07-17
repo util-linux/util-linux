@@ -814,6 +814,10 @@ static int dos_probe_label(struct fdisk_context *cxt)
 	if (!mbr_is_valid_magic(cxt->firstsector))
 		return 0;
 
+	/* ignore disks with FAT */
+	if (cxt->collision && strcmp(cxt->collision, "vfat") == 0)
+		return 0;
+
 	dos_init(cxt);
 
 	get_partition_table_geometry(cxt, &h, &s);

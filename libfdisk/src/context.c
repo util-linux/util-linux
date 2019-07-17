@@ -619,14 +619,20 @@ static int fdisk_assign_fd(struct fdisk_context *cxt, int fd,
 	if (fdisk_read_firstsector(cxt) < 0)
 		goto fail;
 
+	/* warn about obsolete stuff on the device if we aren't in list-only */
+	if (!fdisk_is_listonly(cxt) && fdisk_check_collisions(cxt) < 0)
+		goto fail;
+
 	fdisk_probe_labels(cxt);
 	fdisk_apply_label_device_properties(cxt);
 
-	/* warn about obsolete stuff on the device if we aren't in
-	 * list-only mode and there is not PT yet */
-	if (!fdisk_is_listonly(cxt) && !fdisk_has_label(cxt)
-	    && fdisk_check_collisions(cxt) < 0)
-		goto fail;
+	/* Don't report collision if there is already a valid partition table.
+	 * The bootbits are wiped when we create a *new* partition table only. */
+	if (fdisk_is_ptcollision(cxt) && fdisk_has_label(cxt)) {
+		cxt->pt_collision = 0;
+		free(cxt->collision);
+		cxt->collision = NULL;
+	}
 
 	DBG(CXT, ul_debugobj(cxt, "initialized for %s [%s]",
 			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));
