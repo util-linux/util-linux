@@ -20,6 +20,7 @@
 # endif
 
 static inline
+  __attribute__((nonnull (1)))
   __attribute__((__noreturn__))
   void __err_oom(const char *file, unsigned int line)
 {
@@ -30,6 +31,7 @@ static inline
 
 static inline
   __ul_alloc_size(1)
+  __attribute__((warn_unused_result))
   __ul_returns_nonnull
   void *xmalloc(const size_t size)
 {
@@ -42,6 +44,7 @@ static inline
 
 static inline
   __ul_alloc_size(2)
+  __attribute__((warn_unused_result))
   __ul_returns_nonnull
   void *xrealloc(void *ptr, const size_t size)
 {
@@ -54,6 +57,7 @@ static inline
 
 static inline
   __ul_calloc_size(1, 2)
+  __attribute__((warn_unused_result))
   __ul_returns_nonnull
   void *xcalloc(const size_t nelems, const size_t size)
 {
@@ -65,6 +69,7 @@ static inline
 }
 
 static inline
+  __attribute__((nonnull))
   __attribute__((warn_unused_result))
   __ul_returns_nonnull
   char *xstrdup(const char *str)
@@ -81,6 +86,7 @@ static inline
 }
 
 static inline
+  __attribute__((nonnull (1)))
   __attribute__((warn_unused_result))
   __ul_returns_nonnull
   char *xstrndup(const char *str, size_t size)
@@ -98,6 +104,7 @@ static inline
 
 static inline
   __attribute__((__format__(printf, 2, 3)))
+  __attribute__((nonnull))
   int xasprintf(char **strp, const char *fmt, ...)
 {
 	int ret;
