@@ -1355,10 +1355,7 @@ int main(int argc, char **argv)
 
 	/* if the shell field has a space: treat it like a shell script */
 	if (strchr(pwd->pw_shell, ' ')) {
-		buff = xmalloc(strlen(pwd->pw_shell) + 6);
-
-		strcpy(buff, "exec ");
-		strcat(buff, pwd->pw_shell);
+		xasprintf(&buff, "exec %s", pwd->pw_shell);
 		childArgv[childArgc++] = "/bin/sh";
 		childArgv[childArgc++] = "-sh";
 		childArgv[childArgc++] = "-c";
