@@ -2391,46 +2391,40 @@ static void list_speeds(void)
  * Will be used by log_err() and log_warn() therefore
  * it takes a format as well as va_list.
  */
-#define	str2cpy(b,s1,s2)	strcat(strcpy(b,s1),s2)
-
-static void dolog(int priority, const char *fmt, va_list ap)
-{
-#ifndef	USE_SYSLOG
-	int fd;
+static void dolog(int priority
+#ifndef USE_SYSLOG
+		  __attribute__((__unused__))
 #endif
-	char buf[BUFSIZ];
-	char *bp;
-
+		  , const char *fmt, va_list ap)
+{
+#ifdef USE_SYSLOG
 	/*
 	 * If the diagnostic is reported via syslog(3), the process name is
 	 * automatically prepended to the message. If we write directly to
 	 * /dev/console, we must prepend the process name ourselves.
 	 */
-#ifdef USE_SYSLOG
-	buf[0] = '\0';
-	bp = buf;
-#else
-	str2cpy(buf, program_invocation_short_name, ": ");
-	bp = buf + strlen(buf);
-#endif				/* USE_SYSLOG */
-	vsnprintf(bp, sizeof(buf)-strlen(buf), fmt, ap);
-
-	/*
-	 * Write the diagnostic directly to /dev/console if we do not use the
-	 * syslog(3) facility.
-	 */
-#ifdef	USE_SYSLOG
 	openlog(program_invocation_short_name, LOG_PID, LOG_AUTHPRIV);
-	syslog(priority, "%s", buf);
+	vsyslog(priority, fmt, ap);
 	closelog();
 #else
+	/*
+	 * Write the diagnostic directly to /dev/console if we do not use
+	 * the syslog(3) facility.
+	 */
+	char buf[BUFSIZ];
+	char new_fmt[BUFSIZ];
+	int fd;
+
+	snprintf(new_fmt, sizeof(new_fmt), "%s: %s\r\n",
+		 program_invocation_short_name, fmt);
 	/* Terminate with CR-LF since the console mode is unknown. */
-	strcat(bp, "\r\n");
+	vsnprintf(buf, sizeof(buf), new_fmt, ap);
+
 	if ((fd = open("/dev/console", 1)) >= 0) {
 		write_all(fd, buf, strlen(buf));
 		close(fd);
 	}
-#endif				/* USE_SYSLOG */
+#endif	/* USE_SYSLOG */
 }
 
 static void exit_slowly(int code)
