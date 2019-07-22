@@ -85,7 +85,13 @@ static struct fdisk_partition *__copy_partition(struct fdisk_partition *o)
 
 	if (!n)
 		return NULL;
+
 	memcpy(n, o, sizeof(*n));
+
+	/* do not copy reference to lists, etc.*/
+	n->refcount = 1;
+	INIT_LIST_HEAD(&n->parts);
+
 	if (n->type)
 		fdisk_ref_parttype(n->type);
 	if (o->name)
