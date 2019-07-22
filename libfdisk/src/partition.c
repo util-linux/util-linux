@@ -100,6 +100,10 @@ static struct fdisk_partition *__copy_partition(struct fdisk_partition *o)
 		n->fsuuid = strdup(o->fsuuid);
 	if (o->fslabel)
 		n->fslabel = strdup(o->fslabel);
+	if (o->start_chs)
+		n->start_chs = strdup(o->start_chs);
+	if (o->end_chs)
+		n->end_chs = strdup(o->end_chs);
 
 	return n;
 }
