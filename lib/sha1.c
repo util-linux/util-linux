@@ -12,9 +12,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <stdint.h>
 
 #include "sha1.h"
+#include "xalloc.h"
 
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
 

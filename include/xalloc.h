@@ -146,4 +146,16 @@ static inline
 	return name;
 }
 
+#ifndef HAVE_EXPLICIT_BZERO
+static inline void
+  __attribute__((nonnull))
+  explicit_bzero(void *v, size_t sz)
+{
+	volatile unsigned char *p = v;
+
+	while (sz--)
+		*p++ = '\0';
+}
+#endif
+
 #endif /* UTIL_LINUX_XALLOC_H */
