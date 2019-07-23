@@ -151,7 +151,8 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 		if (!ln)
 			break;
 
-		scols_line_set_data(ln, col, str);
+		if (str && *str)
+			scols_line_set_data(ln, col, str);
 	}
 
 	free(str);
@@ -204,6 +205,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"\n %s [options] <column-data-file> ...\n\n", program_invocation_short_name);
 
 	fputs(" -m, --maxout                   fill all terminal width\n", out);
+	fputs(" -M, --minout                   minimize tailing padding\n", out);
 	fputs(" -c, --column <file>            column definition\n", out);
 	fputs(" -n, --nlines <num>             number of lines\n", out);
 	fputs(" -J, --json                     JSON output format\n", out);
@@ -227,6 +229,7 @@ int main(int argc, char *argv[])
 
 	static const struct option longopts[] = {
 		{ "maxout", 0, NULL, 'm' },
+		{ "minout", 0, NULL, 'M' },
 		{ "column", 1, NULL, 'c' },
 		{ "nlines", 1, NULL, 'n' },
 		{ "width",  1, NULL, 'w' },
@@ -242,6 +245,7 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
 		{ 'E', 'J', 'r' },
+		{ 'M', 'm' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -253,7 +257,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "hCc:Ei:Jmn:p:rw:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hCc:Ei:JMmn:p:rw:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -284,6 +288,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':
 			scols_table_enable_maxout(tb, TRUE);
+			break;
+		case 'M':
+			scols_table_enable_minout(tb, TRUE);
 			break;
 		case 'r':
 			scols_table_enable_raw(tb, TRUE);

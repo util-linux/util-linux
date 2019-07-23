@@ -194,3 +194,9 @@ SMARTCOLS_2.34 {
 	scols_symbols_set_group_last_child;
 	scols_symbols_set_group_middle_child;
 } SMARTCOLS_2.33;
+
+SMARTCOLS_2.35 {
+	scols_table_enable_minout;
+	scols_table_is_minout;
+	scols_table_set_columns_iter;
+} SMARTCOLS_2.34;

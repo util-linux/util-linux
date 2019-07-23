@@ -475,6 +475,33 @@ int scols_table_next_column(struct libscols_table *tb,
 }
 
 /**
+ * scols_table_set_columns_iter:
+ * @tb: tab pointer
+ * @itr: iterator
+ * @cl: tab entry
+ *
+ * Sets @iter to the position of @cl in the file @tb.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int scols_table_set_columns_iter(
+			struct libscols_table *tb,
+			struct libscols_iter *itr,
+			struct libscols_column *cl)
+{
+	if (!tb || !itr || !cl)
+		return -EINVAL;
+
+	if (cl->table != tb)
+		return -EINVAL;
+
+	SCOLS_ITER_INIT(itr, &tb->tb_columns);
+	itr->p = &cl->cl_columns;
+
+	return 0;
+}
+
+/**
  * scols_table_get_ncols:
  * @tb: table
  *
@@ -1133,16 +1160,42 @@ int scols_table_enable_header_repeat(struct libscols_table *tb, int enable)
  * @enable: 1 or 0
  *
  * The extra space after last column is ignored by default. The output
- * maximization use the extra space for all columns.
+ * maximization add padding for all columns.
+ *
+ * This setting is mutually exclusive to cols_table_enable_minout().
  *
  * Returns: 0 on success, negative number in case of an error.
  */
 int scols_table_enable_maxout(struct libscols_table *tb, int enable)
 {
-	if (!tb)
+	if (!tb || tb->minout)
 		return -EINVAL;
+
 	DBG(TAB, ul_debugobj(tb, "maxout: %s", enable ? "ENABLE" : "DISABLE"));
 	tb->maxout = enable ? 1 : 0;
+	return 0;
+}
+
+/**
+ * scols_table_enable_minout:
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * Force library to terminate line after last column with data. The extra
+ * padding is not added to the empty cells at the end of the line. The default is fill
+ * tailing empty cells except the last line cell.
+ *
+ * This setting is mutually exclusive to cols_table_enable_maxout().
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ */
+int scols_table_enable_minout(struct libscols_table *tb, int enable)
+{
+	if (!tb || tb->maxout)
+		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "minout: %s", enable ? "ENABLE" : "DISABLE"));
+	tb->minout = enable ? 1 : 0;
 	return 0;
 }
 
@@ -1313,6 +1366,17 @@ int scols_table_is_json(const struct libscols_table *tb)
 int scols_table_is_maxout(const struct libscols_table *tb)
 {
 	return tb->maxout;
+}
+
+/**
+ * scols_table_is_minout
+ * @tb: table
+ *
+ * Returns: 1 if output minimization is enabled or 0
+ */
+int scols_table_is_minout(const struct libscols_table *tb)
+{
+	return tb->minout;
 }
 
 /**

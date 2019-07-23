@@ -238,6 +238,7 @@ struct libscols_table {
 			padding_debug	:1,	/* output visible padding chars */
 			is_dummy_print	:1,	/* printing used for width calcualion only */
 			maxout		:1,	/* maximize output */
+			minout		:1,	/* minimize output (mutually exclusive to maxout) */
 			header_repeat   :1,     /* print header after libscols_table->termheight */
 			header_printed  :1,	/* header already printed */
 			priv_symbols	:1,	/* default private symbols */

@@ -50,6 +50,43 @@
 
 #define want_repeat_header(tb)	(!(tb)->header_repeat || (tb)->header_next <= (tb)->termlines_used)
 
+static int is_next_columns_empty(
+			struct libscols_table *tb,
+			struct libscols_column *cl,
+			struct libscols_line *ln)
+{
+	struct libscols_iter itr;
+
+	if (!tb || !cl)
+		return 0;
+	if (is_last_column(cl))
+		return 1;
+	if (!ln)
+		return 0;
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	scols_table_set_columns_iter(tb, &itr, cl);
+
+	/* skip current column */
+	scols_table_next_column(tb, &itr, &cl);
+
+	while (scols_table_next_column(tb, &itr, &cl) == 0) {
+		struct libscols_cell *ce;
+		const char *data = NULL;
+
+                if (scols_column_is_hidden(cl))
+                        continue;
+		if (scols_column_is_tree(cl))
+			return 0;
+
+		ce = scols_line_get_cell(ln, cl->seqnum);
+		if (ce)
+			data = scols_cell_get_data(ce);
+		if (data && *data)
+			return 0;
+	}
+	return 1;
+}
 
 /* returns pointer to the end of used data */
 static int tree_ascii_art_to_buffer(struct libscols_table *tb,
@@ -216,14 +253,20 @@ static void print_empty_cell(struct libscols_table *tb,
 		}
 	}
 
-	if (is_last_column(cl))
+	/* minout -- don't fill */
+	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln))
+		return;
+
+	/* default -- fill except last column */
+	if (!scols_table_is_maxout(tb) && is_last_column(cl))
 		return;
 
 	/* fill rest of cell with space */
 	for(; len_pad < cl->width; ++len_pad)
 		fputs(cellpadding_symbol(tb), tb->out);
 
-	fputs(colsep(tb), tb->out);
+	if (!is_last_column(cl))
+		fputs(colsep(tb), tb->out);
 }
 
 
@@ -367,13 +410,21 @@ static int print_pending_data(
 		fputs(UL_COLOR_RESET, tb->out);
 	free(data);
 
-	if (is_last_column(cl))
+	/* minout -- don't fill */
+	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln))
 		return 0;
 
-	for (i = len; i < width; i++)
-		fputs(cellpadding_symbol(tb), tb->out);		/* padding */
+	/* default -- fill except last column */
+	if (!scols_table_is_maxout(tb) && is_last_column(cl))
+		return 0;
 
-	fputs(colsep(tb), tb->out);	/* columns separator */
+	/* fill rest of cell with space */
+	for(i = len; i < width; i++)
+		fputs(cellpadding_symbol(tb), tb->out);
+
+	if (!is_last_column(cl))
+		fputs(colsep(tb), tb->out);
+
 	return 0;
 err:
 	free(data);
@@ -491,7 +542,7 @@ static int print_data(struct libscols_table *tb,
 		data = NULL;
 	}
 
-	if (data) {
+	if (data && *data) {
 		if (scols_column_is_right(cl)) {
 			if (color)
 				fputs(color, tb->out);
@@ -518,16 +569,24 @@ static int print_data(struct libscols_table *tb,
 		} else
 			fputs(data, tb->out);
 	}
-	for (i = len; i < width; i++)
-		fputs(cellpadding_symbol(tb), tb->out);	/* padding */
 
-	if (is_last)
+	/* minout -- don't fill */
+	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln))
 		return 0;
+
+	/* default -- fill except last column */
+	if (!scols_table_is_maxout(tb) && is_last)
+		return 0;
+
+	/* fill rest of cell with space */
+	for(i = len; i < width; i++)
+		fputs(cellpadding_symbol(tb), tb->out);
 
 	if (len > width && !scols_column_is_trunc(cl)) {
 		DBG(COL, ul_debugobj(cl, "*** data len=%zu > column width=%zu", len, width));
 		print_newline_padding(tb, cl, ln, buffer_get_size(buf));	/* next column starts on next line */
-	} else
+
+	} else if (!is_last)
 		fputs(colsep(tb), tb->out);		/* columns separator */
 
 	return 0;

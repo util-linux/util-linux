@@ -132,6 +132,7 @@ scols_table_enable_export
 scols_table_enable_header_repeat
 scols_table_enable_json
 scols_table_enable_maxout
+scols_table_enable_minout
 scols_table_enable_noheadings
 scols_table_enable_nolinesep
 scols_table_enable_nowrap
@@ -155,6 +156,7 @@ scols_table_is_export
 scols_table_is_header_repeat
 scols_table_is_json
 scols_table_is_maxout
+scols_table_is_minout
 scols_table_is_noheadings
 scols_table_is_noencoding
 scols_table_is_nolinesep
@@ -165,6 +167,7 @@ scols_table_move_column
 scols_table_new_column
 scols_table_new_line
 scols_table_next_column
+scols_table_set_columns_iter
 scols_table_next_line
 scols_table_reduce_termwidth
 scols_table_remove_column
