@@ -18,7 +18,7 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: sun
 
 Device             Start   End Cylinders Size Id Type         Flags
-<removed>1     1   128       129   4M 83 Linux native      
+<removed>1     1   128       129   4M 83 Linux native 
 Set partition sysid
 df75defdb97fbd56222aed18631a22d0 sunlabel.img
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
@@ -29,7 +29,7 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: sun
 
 Device             Start   End Cylinders Size Id Type      Flags
-<removed>1     1   128       129   4M  4 SunOS usr      
+<removed>1     1   128       129   4M  4 SunOS usr 
 Set first partition readonly
 da23f66698d9a553162887621d4c7490 sunlabel.img
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
@@ -75,6 +75,6 @@ Disklabel type: sun
 
 Device             Start   End Cylinders  Size Id Type         Flags
 <removed>1     1   128       129    4M  4 SunOS usr       ur
-<removed>2   129   325       198  6.1M 83 Linux native      
+<removed>2   129   325       198  6.1M 83 Linux native 
 Delete all partitions
 502ba7a0cfdce2849c3a99881f0590c3 sunlabel.img
