@@ -114,6 +114,52 @@ ts_run $TESTPROG --nlines 10 --maxout --width 80\
 	>> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+ts_init_subtest "padding-default"
+export LIBSMARTCOLS_DEBUG_PADDING=on
+ts_run $TESTPROG --nlines 10 --width 80 \
+	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-number \
+	--column $TS_SELF/files/col-string \
+	--column $TS_SELF/files/col-string \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-number \
+	$TS_SELF/files/data-string-empty \
+	$TS_SELF/files/data-string-empty \
+	>> $TS_OUTPUT 2> /dev/null
+ts_finalize_subtest
+
+ts_init_subtest "padding-maxout"
+export LIBSMARTCOLS_DEBUG_PADDING=on
+ts_run $TESTPROG --nlines 10 --width 80 \
+	--maxout \
+	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-number \
+	--column $TS_SELF/files/col-string \
+	--column $TS_SELF/files/col-string \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-number \
+	$TS_SELF/files/data-string-empty \
+	$TS_SELF/files/data-string-empty \
+	>> $TS_OUTPUT 2> /dev/null
+ts_finalize_subtest
+
+ts_init_subtest "padding-minout"
+export LIBSMARTCOLS_DEBUG_PADDING=on
+ts_run $TESTPROG --nlines 10 --width 80 \
+	--minout \
+	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-number \
+	--column $TS_SELF/files/col-string \
+	--column $TS_SELF/files/col-string \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-number \
+	$TS_SELF/files/data-string-empty \
+	$TS_SELF/files/data-string-empty \
+	>> $TS_OUTPUT 2> /dev/null
+ts_finalize_subtest
+
+unset LIBSMARTCOLS_DEBUG_PADDING
+
 ts_init_subtest "strictwidth"
 ts_run $TESTPROG --nlines 10 \
 	--column $TS_SELF/files/col-name \
