@@ -33,6 +33,11 @@ specified, \fBlscpu\fP prints the column but does not provide any data for it.
 The default output formatting on terminal maybe optimized for better
 readability.  The output for non-terminals (e.g. pipes) is never affected by
 this optimization and it is always in "Field: data\\n" format.
+.sp
+The cache sizes are reported as summary from all CPUs.  The versions before
+v2.34 reported per-core sizes, but this output was confusing due to complicated
+CPUs topology and the way how caches are shared between CPUs. For more details
+about caches see \fB\-\-cache\fP.
 .SS COLUMNS
 Note that topology elements (core, socket, etc.) use a sequential unique ID
 starting from zero, but CPU logical numbers follow the kernel where there is
