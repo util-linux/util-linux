@@ -80,7 +80,7 @@ static void to_dmi_header(struct dmi_header *h, uint8_t *data)
 {
 	h->type = data[0];
 	h->length = data[1];
-	h->handle = WORD(data + 2);
+	memcpy(&h->handle, data + 2, sizeof(h->handle));
 	h->data = data;
 }
 
