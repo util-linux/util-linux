@@ -169,7 +169,7 @@ static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, w
 		return strtok_r(p, separator, state);
 #endif
 	if (!p) {
-		if (!*state || !**state)
+		if (!*state)
 			return NULL;
 		p = *state;
 	}
