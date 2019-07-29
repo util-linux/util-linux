@@ -555,9 +555,9 @@ static uint64_t log_info(struct script_control *ctl, const char *name, const cha
 	}
 
 	if (*msg)
-		sz = fprintf(log->fp, "H 0 %s %s\n", name, msg);
+		sz = fprintf(log->fp, "H %f %s %s\n", 0.0, name, msg);
 	else
-		sz = fprintf(log->fp, "H 0 %s\n", name);
+		sz = fprintf(log->fp, "H %f %s\n", 0.0, name);
 
 	return sz > 0 ? sz : 0;
 }
