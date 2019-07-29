@@ -7,6 +7,7 @@
 #include <limits.h>
 #include <math.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #include "c.h"
 #include "xalloc.h"
@@ -44,12 +45,12 @@ struct replay_log {
 
 struct replay_step {
 	char	type;		/* 'I'nput, 'O'utput, ... */
-	double	delay;
 	size_t	size;
 
 	char	*name;		/* signals / heders */
 	char	*value;
 
+	struct timeval delay;
 	struct replay_log *data;
 };
 
@@ -63,6 +64,10 @@ struct replay_setup {
 	const char		*timing_filename;
 	int			timing_format;
 	int			timing_line;
+
+	struct timeval		delay_max;
+	struct timeval		delay_min;
+	double			delay_div;
 
 	char			default_type;	/* type for REPLAY_TIMING_SIMPLE */
 	int			crmode;
@@ -85,6 +90,16 @@ static int ignore_line(FILE *f)
 	return 0;
 }
 
+/* incretemt @a by @b */
+static inline void timerinc(struct timeval *a, struct timeval *b)
+{
+	struct timeval res;
+
+	timeradd(a, b, &res);
+	a->tv_sec = res.tv_sec;
+	a->tv_usec = res.tv_usec;
+};
+
 struct replay_setup *replay_new_setup(void)
 {
 	return xcalloc(1, sizeof(struct replay_setup));
@@ -105,6 +120,26 @@ int replay_set_crmode(struct replay_setup *stp, int mode)
 	assert(stp);
 	stp->crmode = mode;
 
+	return 0;
+}
+
+int replay_set_delay_min(struct replay_setup *stp, const struct timeval *tv)
+{
+	stp->delay_min.tv_sec = tv->tv_sec;
+	stp->delay_min.tv_usec = tv->tv_usec;
+	return 0;
+}
+
+int replay_set_delay_max(struct replay_setup *stp, const struct timeval *tv)
+{
+	stp->delay_max.tv_sec = tv->tv_sec;
+	stp->delay_max.tv_usec = tv->tv_usec;
+	return 0;
+}
+
+int replay_set_delay_div(struct replay_setup *stp, const double divi)
+{
+	stp->delay_div = divi;
 	return 0;
 }
 
@@ -169,7 +204,7 @@ int replay_set_timing_file(struct replay_setup *stp, const char *filename)
 			rc = -ENOMEM;
 		else {
 			log->noseek = 1;
-			DBG(LOG, ul_debug("accociate log file '%s' with 'SH'", filename));
+			DBG(LOG, ul_debug("accociate file '%s' for streams 'SH'", filename));
 		}
 	}
 
@@ -206,7 +241,7 @@ int replay_associate_log(struct replay_setup *stp,
 	if (rc == 0)
 		replay_new_log(stp, streams, filename, f);
 
-	DBG(LOG, ul_debug("accociate log file '%s' with '%s' [rc=%d]", filename, streams, rc));
+	DBG(LOG, ul_debug("accociate log file '%s', streams '%s' [rc=%d]", filename, streams, rc));
 	return rc;
 }
 
@@ -224,15 +259,15 @@ static void replay_reset_step(struct replay_step *step)
 	assert(step);
 
 	step->size = 0;
-	step->delay = 0;
 	step->data = NULL;
 	step->type = 0;
+	timerclear(&step->delay);
 }
 
-double replay_step_get_delay(struct replay_step *step)
+struct timeval *replay_step_get_delay(struct replay_step *step)
 {
 	assert(step);
-	return step->delay;
+	return &step->delay;
 }
 
 /* current data log file */
@@ -251,8 +286,11 @@ static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 	switch (type) {
 	case 'O': /* output */
 	case 'I': /* input */
-		rc = fscanf(f, "%lf %zu%c\n", &step->delay, &step->size, &nl);
-		if (rc != 3 || nl != '\n')
+		rc = fscanf(f, "%ld.%06ld %zu%c\n",
+				&step->delay.tv_sec,
+				&step->delay.tv_usec,
+				&step->size, &nl);
+		if (rc != 4 || nl != '\n')
 			rc = -EINVAL;
 		else
 			rc = 0;
@@ -263,8 +301,11 @@ static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 	{
 		char buf[BUFSIZ];
 
-		rc = fscanf(f, "%lf ", &step->delay);	/* delay */
-		if (rc != 1)
+		rc = fscanf(f, "%ld.%06ld ",
+				&step->delay.tv_sec,
+				&step->delay.tv_usec);
+
+		if (rc != 2)
 			break;
 
 		rc = fscanf(f, "%s", buf);		/* name */
@@ -326,7 +367,7 @@ int replay_get_next_step(struct replay_setup *stp, char *streams, struct replay_
 {
 	struct replay_step *step;
 	int rc;
-	double ignored_delay = 0;
+	struct timeval ignored_delay;
 
 	assert(stp);
 	assert(stp->timing_fp);
@@ -334,6 +375,8 @@ int replay_get_next_step(struct replay_setup *stp, char *streams, struct replay_
 
 	step = &stp->step;
 	*xstep = NULL;
+
+	timerclear(&ignored_delay);
 
 	do {
 		struct replay_log *log = NULL;
@@ -388,17 +431,42 @@ int replay_get_next_step(struct replay_setup *stp, char *streams, struct replay_
 		} else
 			DBG(TIMING, ul_debug(" not found log for '%c' stream", step->type));
 
-		DBG(TIMING, ul_debug(" ignore step '%c' [delay=%f]",
-					step->type, step->delay));
-		ignored_delay += step->delay;
+		DBG(TIMING, ul_debug(" ignore step '%c' [delay=%ld.%06ld]",
+					step->type,
+					step->delay.tv_sec,
+					step->delay.tv_usec));
+
+		timerinc(&ignored_delay, &step->delay);
 	} while (rc == 0);
 
 done:
-	if (ignored_delay)
-		step->delay += ignored_delay;
+	if (timerisset(&ignored_delay))
+		timerinc(&step->delay, &ignored_delay);
 
-	DBG(TIMING, ul_debug("reading next step done [rc=%d delay=%f (ignored=%f) size=%zu]",
-				rc, step->delay, ignored_delay, step->size));
+	DBG(TIMING, ul_debug("reading next step done [rc=%d delay=%ld.%06ld (ignored=%ld.%06ld) size=%zu]",
+				rc,
+				step->delay.tv_sec, step->delay.tv_usec,
+				ignored_delay.tv_sec, ignored_delay.tv_usec,
+				step->size));
+
+	/* normalize delay */
+	if (stp->delay_div) {
+		DBG(TIMING, ul_debug(" normalize delay: divide"));
+		step->delay.tv_sec /= stp->delay_div;
+		step->delay.tv_usec /= stp->delay_div;
+	}
+	if (timerisset(&stp->delay_max) &&
+	    timercmp(&step->delay, &stp->delay_max, >)) {
+		DBG(TIMING, ul_debug(" normalize delay: align to max"));
+		step->delay.tv_sec = stp->delay_max.tv_sec;
+		step->delay.tv_usec = stp->delay_max.tv_usec;
+	}
+	if (timerisset(&stp->delay_min) &&
+	    timercmp(&step->delay, &stp->delay_min, <)) {
+		DBG(TIMING, ul_debug(" normalize delay: align to min"));
+		timerclear(&step->delay);
+	}
+
 	return rc;
 }
 

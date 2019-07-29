@@ -36,7 +36,11 @@ const char *replay_get_timing_file(struct replay_setup *setup);
 int replay_get_timing_line(struct replay_setup *setup);
 int replay_associate_log(struct replay_setup *stp, const char *streams, const char *filename);
 
-double replay_step_get_delay(struct replay_step *step);
+int replay_set_delay_min(struct replay_setup *stp, const struct timeval *tv);
+int replay_set_delay_max(struct replay_setup *stp, const struct timeval *tv);
+int replay_set_delay_div(struct replay_setup *stp, const double divi);
+
+struct timeval *replay_step_get_delay(struct replay_step *step);
 const char *replay_step_get_filename(struct replay_step *step);
 int replay_get_next_step(struct replay_setup *stp, char *streams, struct replay_step **xstep);
 

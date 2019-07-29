@@ -27,6 +27,7 @@
 #include <sys/select.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <sys/time.h>
 
 #include "c.h"
 #include "xalloc.h"
@@ -35,8 +36,6 @@
 #include "strutils.h"
 #include "optutils.h"
 #include "script-playutils.h"
-
-#define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
 
 static void __attribute__((__noreturn__))
 usage(void)
@@ -85,14 +84,16 @@ getnum(const char *s)
 }
 
 static void
-delay_for(double delay)
+delay_for(struct timeval *delay)
 {
 #ifdef HAVE_NANOSLEEP
 	struct timespec ts, remainder;
-	ts.tv_sec = (time_t) delay;
-	ts.tv_nsec = (delay - ts.tv_sec) * 1.0e9;
+	ts.tv_sec = (time_t) delay->tv_sec;
+	ts.tv_nsec = delay->tv_usec * 1000;
 
-	DBG(TIMING, ul_debug("going to sleep for %fs", delay));
+	DBG(TIMING, ul_debug("going to sleep for %ld.%06ld",
+				delay->tv_sec,
+				delay->tv_usec));
 
 	while (-1 == nanosleep(&ts, &remainder)) {
 		if (EINTR == errno)
@@ -101,10 +102,7 @@ delay_for(double delay)
 			break;
 	}
 #else
-	struct timeval tv;
-	tv.tv_sec = (long) delay;
-	tv.tv_usec = (delay - tv.tv_sec) * 1.0e6;
-	select(0, NULL, NULL, NULL, &tv);
+	select(0, NULL, NULL, NULL, delay);
 #endif
 }
 
@@ -123,6 +121,9 @@ static void appendchr(char *buf, size_t bufsz, int c)
 int
 main(int argc, char *argv[])
 {
+	static const struct timeval mindelay = { .tv_sec = 0, .tv_usec = 100 };
+	struct timeval maxdelay;
+
 	struct replay_setup *setup = NULL;
 	struct replay_step *step = NULL;
 	char streams[6] = {0};		/* IOSI - in, out, signal,info */
@@ -130,8 +131,8 @@ main(int argc, char *argv[])
 	           *log_in = NULL,
 		   *log_io = NULL,
 		   *log_tm = NULL;
-	double divi = 1, maxdelay = 0;
-	int diviopt = FALSE, maxdelayopt = FALSE, idx;
+	double divi = 1;
+	int diviopt = FALSE, idx;
 	int ch, rc, crmode = REPLAY_CRMODE_AUTO, summary = 0;
 	enum {
 		OPT_SUMMARY = CHAR_MAX + 1
@@ -169,6 +170,7 @@ main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	replay_init_debug();
+	timerclear(&maxdelay);
 
 	while ((ch = getopt_long(argc, argv, "B:c:I:O:t:s:d:m:x:Vh", longopts, NULL)) != -1) {
 
@@ -203,8 +205,7 @@ main(int argc, char *argv[])
 			divi = getnum(optarg);
 			break;
 		case 'm':
-			maxdelayopt = TRUE;
-			maxdelay = getnum(optarg);
+			strtotimeval_or_err(optarg, &maxdelay, _("failed to parse maximal delay argument"));
 			break;
 		case 'x':
 			if (strcmp("in", optarg) == 0)
@@ -243,8 +244,6 @@ main(int argc, char *argv[])
 
 	if (!diviopt)
 		divi = idx < argc ? getnum(argv[idx]) : 1;
-	if (maxdelay < 0)
-		maxdelay = 0;
 
 	if (!log_tm)
 		errx(EXIT_FAILURE, _("timing file not specified"));
@@ -277,21 +276,23 @@ main(int argc, char *argv[])
 			*streams && streams[1] == '\0' ? *streams : 'O');
 	replay_set_crmode(setup, crmode);
 
+	if (divi != 1)
+		replay_set_delay_div(setup, divi);
+	if (timerisset(&maxdelay))
+		replay_set_delay_max(setup, &maxdelay);
+	replay_set_delay_min(setup, &mindelay);
+
 	do {
 		rc = replay_get_next_step(setup, streams, &step);
 		if (rc)
 			break;
 
 		if (!summary) {
-			double delay = replay_step_get_delay(step);
+			struct timeval *delay = replay_step_get_delay(step);
 
-			delay /= divi;
-			if (maxdelayopt && delay > maxdelay)
-				delay = maxdelay;
-			if (delay > SCRIPT_MIN_DELAY)
+			if (delay && timerisset(delay))
 				delay_for(delay);
 		}
-
 		rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 	} while (rc == 0);
 
