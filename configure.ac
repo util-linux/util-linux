@@ -733,7 +733,7 @@ AS_CASE([$scanf_cv_alloc_modifier],
    have_scanf_alloc_modifier=no]
 )
 
-
+have_pty=no
 AC_ARG_WITH([util], AS_HELP_STRING([--without-util], [compile without libutil]),
   [], [with_util=auto]
 )
@@ -747,6 +747,7 @@ AS_IF([test "x$with_util" = xno], [
 AS_IF([test "x$have_pty_h" = xyes -a "x$have_sys_signalfd_h" = xyes -a "x$have_util" = xyes], [
    AM_CONDITIONAL([HAVE_PTY], [true])
    AC_DEFINE([HAVE_PTY], [1], [have PTY support])
+   have_pty=yes
 ], [
    AM_CONDITIONAL([HAVE_PTY], [false])
 ])
@@ -1828,6 +1829,7 @@ UL_BUILD_INIT([scriptreplay], [yes])
 AM_CONDITIONAL([BUILD_SCRIPTREPLAY], [test "x$build_scriptreplay" = xyes])
 
 UL_BUILD_INIT([scriptlive], [yes])
+UL_REQUIRES_HAVE([scriptlive], [pty])
 AM_CONDITIONAL([BUILD_SCRIPTLIVE], [test "x$build_scriptlive" = xyes])
 
 UL_BUILD_INIT([col], [yes])

@@ -36,11 +36,21 @@
 #include "nls.h"
 #include "strutils.h"
 #include "optutils.h"
+#include "pty-session.h"
 #include "script-playutils.h"
-#include "rpmatch.h"
+#include "monotonic.h"
 
 
 #define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
+
+struct scriptlive {
+	pid_t	child;		/* shell */
+	int	childstatus;
+
+	struct ul_pty *pty;
+	struct replay_setup *setup;
+	struct replay_step *step;
+};
 
 static void __attribute__((__noreturn__))
 usage(void)
@@ -83,82 +93,111 @@ getnum(const char *s)
 	return d;
 }
 
-static void
-delay_for(double delay)
+/* on child exit/dump/... */
+static void wait_for_child(void *data)
 {
-#ifdef HAVE_NANOSLEEP
-	struct timespec ts, remainder;
-	ts.tv_sec = (time_t) delay;
-	ts.tv_nsec = (delay - ts.tv_sec) * 1.0e9;
+	struct scriptlive *ss = (struct scriptlive *) data;
+	int status;
+	pid_t pid;
+	int options = 0;
 
-	DBG(TIMING, ul_debug("going to sleep for %fs", delay));
+	if (ss->child == (pid_t) -1)
+		return;
 
-	while (-1 == nanosleep(&ts, &remainder)) {
-		if (EINTR == errno)
-			ts = remainder;
-		else
-			break;
+	if (ul_pty_is_running(ss->pty)) {
+		/* wait for specific child */
+		options = WNOHANG;
+		for (;;) {
+			pid = waitpid(ss->child, &status, options);
+			if (pid != (pid_t) - 1) {
+				ss->childstatus = status;
+				ss->child = (pid_t) -1;
+				ul_pty_set_child(ss->pty, (pid_t) -1);
+			} else
+				break;
+		}
+	} else {
+		/* final wait */
+		while ((pid = wait3(&status, options, NULL)) > 0) {
+			if (pid == ss->child) {
+				ss->childstatus = status;
+				ss->child = (pid_t) -1;
+				ul_pty_set_child(ss->pty, (pid_t) -1);
+			}
+		}
 	}
-#else
-	struct timeval tv;
-	tv.tv_sec = (long) delay;
-	tv.tv_usec = (delay - tv.tv_sec) * 1.0e6;
-	select(0, NULL, NULL, NULL, &tv);
-#endif
 }
 
-static int start_shell(const char *shell, pid_t *shell_pid, int *shell_fd)
+static void child_sigstop(void *data)
 {
-	const char *shname;
-	int fds[2];
+	struct scriptlive *ss = (struct scriptlive *) data;
+	kill(getpid(), SIGSTOP);
+	kill(ss->child, SIGCONT);
+}
 
-	assert(shell_pid);
-	assert(shell_fd);
+static int process_next_step(struct scriptlive *ss)
+{
+	int rc = 0, fd = ul_pty_get_childfd(ss->pty);
 
-	if (pipe(fds) < 0)
-		err(EXIT_FAILURE, _("pipe failed"));
+	/* read next step(s) */
+	do {
+		struct timeval *delay;
 
-	*shell_pid  = fork();
+		rc = replay_get_next_step(ss->setup, "I", &ss->step);
+		if (rc)
+			break;
 
-	if (*shell_pid == -1)
-		err(EXIT_FAILURE, _("fork failed"));
-	if (*shell_pid != 0) {
-		/* parent */
-		*shell_fd = fds[1];
-		close(fds[0]);
-		return -errno;
+		delay = replay_step_get_delay(ss->step);
+		if (timerisset(delay)) {
+			/* wait until now+delay in mainloop */
+			struct timeval now, target;
+
+			gettime_monotonic(&now);
+			timeradd(&now, delay, &target);
+
+			ul_pty_set_mainloop_time(ss->pty, &target);
+			break;
+		} else {
+			/* no delay -- immediately write */
+			rc = replay_emit_step_data(ss->setup, ss->step, fd);
+			fdatasync(fd);
+		}
+	} while (rc == 0);
+
+	return rc;
+}
+
+static int mainloop_cb(void *data)
+{
+	struct scriptlive *ss = (struct scriptlive *) data;
+	int rc = 0;
+
+	/* emit previous waiting step */
+	if (ss->step && !replay_step_is_empty(ss->step)) {
+		int fd = ul_pty_get_childfd(ss->pty);;
+
+		rc = replay_emit_step_data(ss->setup, ss->step, fd);
+		fdatasync(fd);
+		if (rc)
+			return rc;
 	}
 
-	/* child */
-	shname = strrchr(shell, '/');
-	if (shname)
-		shname++;
-	else
-		shname = shell;
-
-	dup2(fds[0], STDIN_FILENO);
-	close(fds[0]);
-	close(fds[1]);
-
-	execl(shell, shname, "-i", NULL);
-	errexec(shell);
+	return process_next_step(ss);
 }
 
 int
 main(int argc, char *argv[])
 {
-	struct replay_setup *setup = NULL;
-	struct replay_step *step = NULL;
-	const char *log_in = NULL,
-		   *log_io = NULL,
-		   *log_tm = NULL,
-		   *shell;
-	double divi = 1, maxdelay = 0;
-	int diviopt = FALSE, maxdelayopt = FALSE, idx;
-	int ch, rc;
-	int shell_fd;
-	pid_t shell_pid;
-	struct termios attrs;
+	static const struct timeval mindelay = { .tv_sec = 0, .tv_usec = 100 };
+	struct timeval maxdelay;
+
+	const char *log_in = NULL, *log_io = NULL, *log_tm = NULL,
+		   *shell = NULL, *command = NULL;
+	double divi = 1;
+	int diviopt = FALSE, idx;
+	int ch, caught_signal = 0;
+	struct ul_pty_callbacks *cb;
+	struct scriptlive ss = { .child = 0 };
 
 	static const struct option longopts[] = {
 		{ "timing",	required_argument,	0, 't' },
@@ -187,6 +226,7 @@ main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	replay_init_debug();
+	timerclear(&maxdelay);
 
 	while ((ch = getopt_long(argc, argv, "B:I:t:d:m:Vh", longopts, NULL)) != -1) {
 
@@ -207,8 +247,7 @@ main(int argc, char *argv[])
 			divi = getnum(optarg);
 			break;
 		case 'm':
-			maxdelayopt = TRUE;
-			maxdelay = getnum(optarg);
+			strtotimeval_or_err(optarg, &maxdelay, _("failed to parse maximal delay argument"));
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -232,27 +271,31 @@ main(int argc, char *argv[])
 
 	if (!diviopt)
 		divi = idx < argc ? getnum(argv[idx]) : 1;
-	if (maxdelay < 0)
-		maxdelay = 0;
 
 	if (!log_tm)
 		errx(EXIT_FAILURE, _("timing file not specified"));
 	if (!(log_in || log_io))
 		errx(EXIT_FAILURE, _("stdin typescript file not specified"));
 
-	setup = replay_new_setup();
+	ss.setup = replay_new_setup();
 
-	if (replay_set_timing_file(setup, log_tm) != 0)
+	if (replay_set_timing_file(ss.setup, log_tm) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), log_tm);
 
-	if (log_in && replay_associate_log(setup, "I", log_in) != 0)
+	if (log_in && replay_associate_log(ss.setup, "I", log_in) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), log_in);
 
-	if (log_io && replay_associate_log(setup, "IO", log_io) != 0)
+	if (log_io && replay_associate_log(ss.setup, "IO", log_io) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), log_io);
 
-	replay_set_default_type(setup, 'I');
-	replay_set_crmode(setup, REPLAY_CRMODE_AUTO);
+	replay_set_default_type(ss.setup, 'I');
+	replay_set_crmode(ss.setup, REPLAY_CRMODE_NEVER);
+
+	if (divi != 1)
+		replay_set_delay_div(ss.setup, divi);
+	if (timerisset(&maxdelay))
+		replay_set_delay_max(ss.setup, &maxdelay);
+	replay_set_delay_min(ss.setup, &mindelay);
 
 	shell = getenv("SHELL");
 	if (shell == NULL)
@@ -260,40 +303,79 @@ main(int argc, char *argv[])
 
 	fprintf(stdout, _(">>> scriptlive: Starting your typescript execution by %s. <<<\n"), shell);
 
-	tcgetattr(STDIN_FILENO, &attrs);
-	start_shell(shell, &shell_pid, &shell_fd);
+	ul_pty_init_debug(0);
 
-	do {
-		double delay;
+	ss.pty = ul_new_pty(isatty(STDIN_FILENO));
+	if (!ss.pty)
+		err(EXIT_FAILURE, "failed to allocate PTY handler");
 
-		rc = replay_get_next_step(setup, "I", &step);
-		if (rc)
-			break;
+	ul_pty_set_callback_data(ss.pty, (void *) &ss);
+	cb = ul_pty_get_callbacks(ss.pty);
+	cb->child_wait = wait_for_child;
+	cb->child_sigstop = child_sigstop;
+	cb->mainloop = mainloop_cb;
 
-		delay = replay_step_get_delay(step);
-		delay /= divi;
+	sigprocmask(SIG_BLOCK, NULL, ul_pty_get_orig_sigset(ss.pty));
 
-		if (maxdelayopt && delay > maxdelay)
-			delay = maxdelay;
-		if (delay > SCRIPT_MIN_DELAY)
-			delay_for(delay);
+	if (ul_pty_setup(ss.pty))
+		err(EXIT_FAILURE, "failed to create pseudo-terminal");
 
-		rc = replay_emit_step_data(setup, step, shell_fd);
-	} while (rc == 0);
+	fflush(stdout);			/* ??? */
 
-	kill(shell_pid, SIGTERM);
-	waitpid(shell_pid, 0, 0);
-	tcsetattr(STDIN_FILENO, TCSADRAIN, &attrs);
+	switch ((int) (ss.child = fork())) {
+	case -1: /* error */
+		ul_pty_cleanup(ss.pty);
+		err(EXIT_FAILURE, "cannot create child process");
+		break;
 
-	if (step && rc < 0)
-		err(EXIT_FAILURE, _("%s: log file error"), replay_step_get_filename(step));
-	else if (rc < 0)
-		err(EXIT_FAILURE, _("%s: line %d: timing file error"),
-				replay_get_timing_file(setup),
-				replay_get_timing_line(setup));
+	case 0: /* child */
+	{
+		const char *shname;
 
+		ul_pty_init_slave(ss.pty);
 
-	fprintf(stdout, _(">>> scriptlive: Done. <<<\n"));
+		signal(SIGTERM, SIG_DFL); /* because /etc/csh.login */
 
-	exit(EXIT_SUCCESS);
+		shname = strrchr(shell, '/');
+		shname = shname ? shname + 1 : shell;
+
+		if (command)
+			execl(shell, shname, "-c", command, NULL);
+		else
+			execl(shell, shname, "-i", NULL);
+		err(EXIT_FAILURE, "failed to execute %s", shell);
+		break;
+	}
+	default:
+		break;
+	}
+
+	/* parent */
+	ul_pty_set_child(ss.pty, ss.child);
+
+	/* read the first step and set initial delay for pty main loop; the
+	 * next steps will be processed by mainloop_cb() */
+	process_next_step(&ss);
+
+	/* this is the main loop */
+	ul_pty_proxy_master(ss.pty);
+
+	/* all done; cleanup and kill */
+	caught_signal = ul_pty_get_delivered_signal(ss.pty);
+
+	if (!caught_signal && ss.child != (pid_t)-1)
+		wait_for_child(&ss);	/* final wait */
+
+	if (caught_signal && ss.child != (pid_t)-1) {
+		fprintf(stderr, "\nSession terminated, killing shell...");
+		kill(ss.child, SIGTERM);
+		sleep(2);
+		kill(ss.child, SIGKILL);
+		fprintf(stderr, " ...killed.\n");
+	}
+
+	ul_pty_cleanup(ss.pty);
+	fprintf(stdout, _("\n>>> scriptlive: done. <<<\n"));
+
+	return EXIT_SUCCESS;
 }

@@ -31,8 +31,11 @@ usrbin_exec_PROGRAMS += scriptlive
 dist_man_MANS += term-utils/scriptlive.1
 scriptlive_SOURCES = term-utils/scriptlive.c \
 		       term-utils/script-playutils.c \
-		       term-utils/script-playutils.h
-scriptlive_LDADD = $(LDADD) libcommon.la $(MATH_LIBS)
+		       term-utils/script-playutils.h \
+		       lib/pty-session.c \
+		       nclude/pty-session.h \
+		       lib/monotonic.c
+scriptlive_LDADD = $(LDADD) libcommon.la $(MATH_LIBS) -lutil
 endif # BUILD_SCRIPTLIVE
 
 
