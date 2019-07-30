@@ -277,6 +277,13 @@ const char *replay_step_get_filename(struct replay_step *step)
 	return step->data->filename;
 }
 
+int replay_step_is_empty(struct replay_step *step)
+{
+	assert(step);
+	return step->size == 0 && step->type == 0;
+}
+
+
 static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 {
 	int rc = 0;

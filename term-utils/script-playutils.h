@@ -42,6 +42,7 @@ int replay_set_delay_div(struct replay_setup *stp, const double divi);
 
 struct timeval *replay_step_get_delay(struct replay_step *step);
 const char *replay_step_get_filename(struct replay_step *step);
+int replay_step_is_empty(struct replay_step *step);
 int replay_get_next_step(struct replay_setup *stp, char *streams, struct replay_step **xstep);
 
 int replay_emit_step_data(struct replay_setup *stp, struct replay_step *step, int fd);
