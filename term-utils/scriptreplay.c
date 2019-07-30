@@ -54,9 +54,11 @@ usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -t, --timing <file>     script timing log file\n"), out);
+	fputs(_(" -T, --log-timing <file> aliast to -t\n"), out);
 	fputs(_(" -I, --log-in <file>     script stdin log file\n"), out);
 	fputs(_(" -O, --log-out <file>    script stdout log file (default)\n"), out);
 	fputs(_(" -B, --log-io <file>     script stdin and stdout log file\n"), out);
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -s, --typescript <file> deprecated alist to -O\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -141,9 +143,10 @@ main(int argc, char *argv[])
 	static const struct option longopts[] = {
 		{ "cr-mode",    required_argument,	0, 'c' },
 		{ "timing",	required_argument,	0, 't' },
-		{ "log-in",     required_argument,      0, 'I'},
-		{ "log-out",    required_argument,      0, 'O'},
-		{ "log-io",     required_argument,      0, 'B'},
+		{ "log-timing", required_argument,      0, 'T' },
+		{ "log-in",     required_argument,      0, 'I' },
+		{ "log-out",    required_argument,      0, 'O' },
+		{ "log-io",     required_argument,      0, 'B' },
 		{ "typescript",	required_argument,	0, 's' },
 		{ "divisor",	required_argument,	0, 'd' },
 		{ "maxdelay",	required_argument,	0, 'm' },
@@ -172,7 +175,7 @@ main(int argc, char *argv[])
 	replay_init_debug();
 	timerclear(&maxdelay);
 
-	while ((ch = getopt_long(argc, argv, "B:c:I:O:t:s:d:m:x:Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "B:c:I:O:T:t:s:d:m:x:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -188,6 +191,7 @@ main(int argc, char *argv[])
 				errx(EXIT_FAILURE, _("unsupported mode name: '%s'"), optarg);
 			break;
 		case 't':
+		case 'T':
 			log_tm = optarg;
 			break;
 		case 'O':

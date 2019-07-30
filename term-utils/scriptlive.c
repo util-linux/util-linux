@@ -69,6 +69,7 @@ usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -t, --timing <file>     script timing log file\n"), out);
+	fputs(_(" -T, --log-timing <file> alias to -t\n"), out);
 	fputs(_(" -I, --log-in <file>     script stdin log file\n"), out);
 	fputs(_(" -B, --log-io <file>     script stdin and stdout log file\n"), out);
 
@@ -201,6 +202,7 @@ main(int argc, char *argv[])
 
 	static const struct option longopts[] = {
 		{ "timing",	required_argument,	0, 't' },
+		{ "log-timing",	required_argument,	0, 'T' },
 		{ "log-in",     required_argument,      0, 'I'},
 		{ "log-io",     required_argument,      0, 'B'},
 		{ "divisor",	required_argument,	0, 'd' },
@@ -228,12 +230,13 @@ main(int argc, char *argv[])
 	replay_init_debug();
 	timerclear(&maxdelay);
 
-	while ((ch = getopt_long(argc, argv, "B:I:t:d:m:Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "B:I:T:t:d:m:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
 		switch(ch) {
 		case 't':
+		case 'T':
 			log_tm = optarg;
 			break;
 		case 'I':
