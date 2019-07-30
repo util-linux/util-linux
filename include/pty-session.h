@@ -9,10 +9,13 @@
 #include <pty.h>
 #include <termios.h>
 #include <signal.h>
+#include <sys/time.h>
 
 struct ul_pty_callbacks {
 	void (*child_wait)(void *);
 	void (*child_sigstop)(void *);
+
+	int (*mainloop)(void *);
 };
 
 struct ul_pty {
@@ -30,6 +33,8 @@ struct ul_pty {
 	void			*callback_data;
 
 	pid_t		child;
+
+	struct timeval	next_callback_time;
 
 	unsigned int isterm:1;		/* is stdin terminal? */
 };
@@ -49,5 +54,8 @@ int ul_pty_setup(struct ul_pty *pty);
 void ul_pty_cleanup(struct ul_pty *pty);
 void ul_pty_init_slave(struct ul_pty *pty);
 int ul_pty_proxy_master(struct ul_pty *pty);
+
+void ul_pty_set_mainloop_time(struct ul_pty *pty, struct timeval *tv);
+int ul_pty_get_childfd(struct ul_pty *pty);
 
 #endif /* UTIL_LINUX_PTY_H */

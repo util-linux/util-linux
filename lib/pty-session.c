@@ -23,6 +23,7 @@
 #include "all-io.h"
 #include "ttyutils.h"
 #include "pty-session.h"
+#include "monotonic.h"
 #include "debug.h"
 
 static UL_DEBUG_DEFINE_MASK(ulpty);
@@ -95,11 +96,30 @@ void ul_pty_set_child(struct ul_pty *pty, pid_t child)
 	pty->child = child;
 }
 
+int ul_pty_get_childfd(struct ul_pty *pty)
+{
+	assert(pty);
+	return pty->master;
+}
+
 /* it's active when signals are redurected to sigfd */
 int ul_pty_is_running(struct ul_pty *pty)
 {
 	assert(pty);
 	return pty->sigfd >= 0;
+}
+
+void ul_pty_set_mainloop_time(struct ul_pty *pty, struct timeval *tv)
+{
+	assert(pty);
+	if (!tv) {
+		DBG(IO, ul_debugobj(pty, "mainloop time: clear"));
+		timerclear(&pty->next_callback_time);
+	} else {
+		pty->next_callback_time.tv_sec = tv->tv_sec;
+		pty->next_callback_time.tv_usec = tv->tv_usec;
+		DBG(IO, ul_debugobj(pty, "mainloop time: %ld.%06ld", tv->tv_sec, tv->tv_usec));
+	}
 }
 
 /* call me before fork() */
@@ -192,8 +212,7 @@ static int write_output(char *obuf, ssize_t bytes)
 	return 0;
 }
 
-static int write_to_child(struct ul_pty *pty,
-			  char *buf, size_t bufsz)
+static int write_to_child(struct ul_pty *pty, char *buf, size_t bufsz)
 {
 	return write_all(pty->master, buf, bufsz);
 }
@@ -233,6 +252,15 @@ static void write_eof_to_child(struct ul_pty *pty)
 
 	DBG(IO, ul_debugobj(pty, " sending EOF to master"));
 	write_to_child(pty, &c, sizeof(char));
+}
+
+static int mainloop_callback(struct ul_pty *pty)
+{
+	if (!pty->callbacks.mainloop)
+		return 0;
+
+	DBG(IO, ul_debugobj(pty, "calling mainloop callback"));
+	return pty->callbacks.mainloop(pty->callback_data);
 }
 
 static int handle_io(struct ul_pty *pty, int fd, int *eof)
@@ -372,27 +400,61 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 
 	while (!pty->delivered_signal) {
 		size_t i;
-		int errsv;
+		int errsv, timeout;
 
-		DBG(IO, ul_debugobj(pty, "calling poll()"));
+		DBG(IO, ul_debugobj(pty, "--poll() loop--"));
 
-		/* wait for input or signal */
-		ret = poll(pfd, ARRAY_SIZE(pfd), pty->poll_timeout);
+		/* note, callback usually updates @next_callback_time */
+		if (timerisset(&pty->next_callback_time)) {
+			struct timeval now;
+
+			DBG(IO, ul_debugobj(pty, " callback requested"));
+			gettime_monotonic(&now);
+			if (timercmp(&now, &pty->next_callback_time, >)) {
+				rc = mainloop_callback(pty);
+				if (rc)
+					break;
+			}
+		}
+
+		/* set timeout */
+		if (timerisset(&pty->next_callback_time)) {
+			struct timeval now, rest;
+
+			gettime_monotonic(&now);
+			timersub(&pty->next_callback_time, &now, &rest);
+			timeout = (rest.tv_sec * 1000) +  (rest.tv_usec / 1000);
+		} else
+			timeout = pty->poll_timeout;
+
+		/* wait for input, signal or timeout */
+		DBG(IO, ul_debugobj(pty, "calling poll() [timeout=%dms]", timeout));
+		ret = poll(pfd, ARRAY_SIZE(pfd), timeout);
+
 		errsv = errno;
 		DBG(IO, ul_debugobj(pty, "poll() rc=%d", ret));
 
+		/* error */
 		if (ret < 0) {
 			if (errsv == EAGAIN)
 				continue;
 			rc = -errno;
 			break;
 		}
+
+		/* timeout */
 		if (ret == 0) {
-			DBG(IO, ul_debugobj(pty, "leaving poll() loop [timeout=%d]", pty->poll_timeout));
-			rc = 0;
+			if (timerisset(&pty->next_callback_time)) {
+				rc = mainloop_callback(pty);
+				if (rc == 0)
+					continue;
+			} else
+				rc = 0;
+
+			DBG(IO, ul_debugobj(pty, "leaving poll() loop [timeout=%d, rc=%d]", pty->poll_timeout, rc));
 			break;
 		}
-
+		/* event */
 		for (i = 0; i < ARRAY_SIZE(pfd); i++) {
 			rc = 0;
 
