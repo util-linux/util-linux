@@ -330,8 +330,10 @@ static int handle_signal(struct ul_pty *pty, int fd)
 		else if (info.ssi_status == SIGSTOP && pty->child > 0)
 			pty->callbacks.child_sigstop(pty->callback_data);
 
-		if (pty->child <= 0)
+		if (pty->child <= 0) {
 			pty->poll_timeout = 10;
+			timerclear(&pty->next_callback_time);
+		}
 		return 0;
 	case SIGWINCH:
 		DBG(SIG, ul_debugobj(pty, " get signal SIGWINCH"));
@@ -451,7 +453,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 			} else
 				rc = 0;
 
-			DBG(IO, ul_debugobj(pty, "leaving poll() loop [timeout=%d, rc=%d]", pty->poll_timeout, rc));
+			DBG(IO, ul_debugobj(pty, "leaving poll() loop [timeout=%d, rc=%d]", timeout, rc));
 			break;
 		}
 		/* event */
