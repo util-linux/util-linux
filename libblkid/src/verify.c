@@ -184,9 +184,11 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 			   dev->bid_name, (long long)st.st_rdev, dev->bid_type));
 	}
 
-	blkid_reset_probe(cache->probe);
+	/* reset prober */
 	blkid_probe_reset_superblocks_filter(cache->probe);
+	blkid_probe_set_device(cache->probe, -1, 0, 0);
 	close(fd);
+
 	return dev;
 }
 
