@@ -37,7 +37,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out,
 	      _(" %1$s [options] -p pid\n"
 		" %1$s [options] -n number -p pid\n"
-		" %1$s [options] -n number command [args...]]\n"),
+		" %1$s [options] -n number [--] command [args...]]\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
