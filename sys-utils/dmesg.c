@@ -637,25 +637,29 @@ static void safe_fwrite(const char *buf, size_t size, int indent, FILE *out)
 		if (len == (size_t)-1 || len == (size_t)-2) {		/* invalid sequence */
 			memset(&s, 0, sizeof (s));
 			len = hex = 1;
-		} else if (len > 1 && !iswprint(wc)) {	/* non-printable multibyte */
-			hex = 1;
-		}
-		i += len - 1;
-#else
-		len = 1;
-		if (!isprint((unsigned char) *p) &&
-		    !isspace((unsigned char) *p))        /* non-printable */
-			hex = 1;
+			i += len - 1;
+		} else if (len > 1) {
+			if (!iswprint(wc) && !iswspace(wc))	/* non-printable multibyte */
+				hex = 1;
+			i += len - 1;
+		} else
 #endif
+		{
+			len = 1;
+			if (!isprint((unsigned char) *p) &&
+			    !isspace((unsigned char) *p))        /* non-printable */
+				hex = 1;
+		}
+
 		if (hex)
 			rc = fwrite_hex(p, len, out);
 		else if (*p == '\n' && *(p + 1) && indent) {
 		        rc = fwrite(p, 1, len, out) != len;
 			if (fprintf(out, "%*s", indent, "") != indent)
 				rc |= 1;
-		}
-		else
+		} else
 			rc = fwrite(p, 1, len, out) != len;
+
 		if (rc != 0) {
 			if (errno != EPIPE)
 				err(EXIT_FAILURE, _("write failed"));
