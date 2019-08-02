@@ -1,0 +1,9 @@
+default
+./symlink-to-root is a mountpoint
+0
+try --nofollow
+./symlink-to-root is not a mountpoint
+1
+mutually exclusive
+mountpoint: --devno and --nofollow are mutually exclusive
+1

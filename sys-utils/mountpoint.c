@@ -47,6 +47,7 @@ struct mountpoint_control {
 	unsigned int
 		dev_devno:1,
 		fs_devno:1,
+		nofollow:1,
 		quiet:1;
 };
 
@@ -123,6 +124,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -q, --quiet        quiet mode - don't print anything\n"
+		"     --nofollow     do not follow symlink\n"
 		" -d, --fs-devno     print maj:min device number of the filesystem\n"
 		" -x, --devno        print maj:min device number of the block device\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -137,8 +139,13 @@ int main(int argc, char **argv)
 	int c;
 	struct mountpoint_control ctl = { NULL };
 
+	enum {
+		OPT_NOFOLLOW = CHAR_MAX + 1
+	};
+
 	static const struct option longopts[] = {
 		{ "quiet",    no_argument, NULL, 'q' },
+		{ "nofollow", no_argument, NULL, OPT_NOFOLLOW },
 		{ "fs-devno", no_argument, NULL, 'd' },
 		{ "devno",    no_argument, NULL, 'x' },
 		{ "help",     no_argument, NULL, 'h' },
@@ -158,6 +165,9 @@ int main(int argc, char **argv)
 		switch(c) {
 		case 'q':
 			ctl.quiet = 1;
+			break;
+		case OPT_NOFOLLOW:
+			ctl.nofollow = 1;
 			break;
 		case 'd':
 			ctl.fs_devno = 1;
@@ -179,17 +189,20 @@ int main(int argc, char **argv)
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);
 	}
+	if (ctl.nofollow && ctl.dev_devno)
+		errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"),
+		     "--devno", "--nofollow");
 
 	ctl.path = argv[optind];
-
-	if (stat(ctl.path, &ctl.st)) {
+	c = ctl.nofollow ? lstat(ctl.path, &ctl.st) : stat(ctl.path, &ctl.st);
+	if (c) {
 		if (!ctl.quiet)
 			err(EXIT_FAILURE, "%s", ctl.path);
 		return EXIT_FAILURE;
 	}
 	if (ctl.dev_devno)
 		return print_devno(&ctl) ? EXIT_FAILURE : EXIT_SUCCESS;
-	if (dir_to_device(&ctl)) {
+	if ((ctl.nofollow && S_ISLNK(ctl.st.st_mode)) || dir_to_device(&ctl)) {
 		if (!ctl.quiet)
 			printf(_("%s is not a mountpoint\n"), ctl.path);
 		return EXIT_FAILURE;
