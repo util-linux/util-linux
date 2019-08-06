@@ -839,7 +839,7 @@ int fdisk_reread_partition_table(struct fdisk_context *cxt)
 		fdisk_info(cxt,	_(
 			"The kernel still uses the old table. The "
 			"new table will be used at the next reboot "
-			"or after you run partprobe(8) or kpartx(8)."));
+			"or after you run partprobe(8) or partx(8)."));
 		return -errno;
 	}
 
