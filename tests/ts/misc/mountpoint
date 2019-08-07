@@ -10,18 +10,20 @@ ts_check_test_command "$TS_CMD_MOUNTPOINT"
 
 ln -s / ./symlink-to-root
 
-echo "default" >> $TS_OUTPUT 2>&1
+ts_init_subtest "default"
 $TS_CMD_MOUNTPOINT ./symlink-to-root >> $TS_OUTPUT 2>&1
 echo $? >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
 
-echo "try --nofollow" >> $TS_OUTPUT 2>&1
+ts_init_subtest "nofollow"
 $TS_CMD_MOUNTPOINT --nofollow ./symlink-to-root >> $TS_OUTPUT 2>&1
 echo $? >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
 
-echo "mutually exclusive" >> $TS_OUTPUT 2>&1
+ts_init_subtest "mutually-exclusive"
 $TS_CMD_MOUNTPOINT --devno --nofollow / >> $TS_OUTPUT 2>&1
 echo $? >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
 
 rm -f ./symlink-to-root
-
 ts_finalize
