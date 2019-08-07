@@ -1,4 +1,4 @@
-.TH MOUNTPOINT 1 "July 2014" "util-linux" "User Commands"
+.TH MOUNTPOINT 1 "August 2019" "util-linux" "User Commands"
 .SH NAME
 mountpoint \- see if a directory or file is a mountpoint
 .SH SYNOPSIS
@@ -27,6 +27,11 @@ directory.
 .TP
 .BR \-q , " \-\-quiet"
 Be quiet - don't print anything.
+.TP
+.B "\-\-nofollow"
+Do not follow symbolic link if it the last elemnt of the
+.I directory
+path.
 .TP
 .BR \-x , " \-\-devno"
 Show the major/minor numbers of the given blockdevice on standard output.
