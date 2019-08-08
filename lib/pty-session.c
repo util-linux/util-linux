@@ -66,11 +66,11 @@ struct ul_pty *ul_new_pty(int is_stdin_tty)
 	return pty;
 }
 
-sigset_t *ul_pty_get_orig_sigset(struct ul_pty *pty)
+void ul_free_pty(struct ul_pty *pty)
 {
-	assert(pty);
-	return &pty->orgsig;
+	free(pty);
 }
+
 
 int ul_pty_get_delivered_signal(struct ul_pty *pty)
 {
@@ -127,6 +127,9 @@ int ul_pty_setup(struct ul_pty *pty)
 {
 	struct termios slave_attrs;
 	int rc;
+
+	/* save the current signals setting */
+	sigprocmask(0, NULL, &pty->orgsig);
 
 	if (pty->isterm) {
 	        DBG(SETUP, ul_debugobj(pty, "create for terminal"));
@@ -589,8 +592,6 @@ int main(int argc, char *argv[])
 	cb = ul_pty_get_callbacks(ss.pty);
 	cb->child_wait = wait_for_child;
 	cb->child_sigstop = child_sigstop;
-
-	sigprocmask(SIG_BLOCK, NULL, ul_pty_get_orig_sigset(ss.pty));
 
 	if (ul_pty_setup(ss.pty))
 		err(EXIT_FAILURE, "failed to create pseudo-terminal");

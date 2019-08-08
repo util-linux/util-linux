@@ -41,8 +41,8 @@ struct ul_pty {
 
 void ul_pty_init_debug(int mask);
 struct ul_pty *ul_new_pty(int is_stdin_tty);
+void ul_free_pty(struct ul_pty *pty);
 
-sigset_t *ul_pty_get_orig_sigset(struct ul_pty *pty);
 int ul_pty_get_delivered_signal(struct ul_pty *pty);
 
 void ul_pty_set_callback_data(struct ul_pty *pty, void *data);
