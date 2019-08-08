@@ -68,6 +68,7 @@
 #include "pathnames.h"
 #include "carefulputc.h"
 #include "c.h"
+#include "cctype.h"
 #include "fileutils.h"
 #include "closestream.h"
 
@@ -324,7 +325,7 @@ static void buf_putc_careful(struct buffer *bs, int c)
 	if (isprint(c) || c == '\a' || c == '\t' || c == '\r' || c == '\n') {
 		buf_enlarge(bs, 1);
 		bs->data[bs->used++] = c;
-	} else if (!isascii(c))
+	} else if (!c_isascii(c))
 		buf_printf(bs, "\\%3o", (unsigned char)c);
 	else {
 		char tmp[] = { '^', c ^ 0x40, '\0' };

@@ -42,6 +42,7 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "c.h"
+#include "cctype.h"
 #include "widechar.h"
 #include "ttyutils.h"
 #include "color-names.h"
@@ -1432,7 +1433,7 @@ static void auto_baud(struct termios *tp)
 	if ((nread = read(STDIN_FILENO, buf, sizeof(buf) - 1)) > 0) {
 		buf[nread] = '\0';
 		for (bp = buf; bp < buf + nread; bp++)
-			if (isascii(*bp) && isdigit(*bp)) {
+			if (c_isascii(*bp) && isdigit(*bp)) {
 				if ((speed = bcode(bp))) {
 					cfsetispeed(tp, speed);
 					cfsetospeed(tp, speed);

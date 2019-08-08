@@ -10,13 +10,15 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "cctype.h"
+
 static inline int fputc_careful(int c, FILE *fp, const char fail)
 {
 	int ret;
 
 	if (isprint(c) || c == '\a' || c == '\t' || c == '\r' || c == '\n')
 		ret = putc(c, fp);
-	else if (!isascii(c))
+	else if (!c_isascii(c))
 		ret = fprintf(fp, "\\%3o", (unsigned char)c);
 	else {
 		ret = putc(fail, fp);
