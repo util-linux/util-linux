@@ -27,7 +27,7 @@ struct replay_step;
 
 void replay_init_debug(void);
 struct replay_setup *replay_new_setup(void);
-
+void replay_free_setup(struct replay_setup *stp);
 
 int replay_set_default_type(struct replay_setup *stp, char type);
 int replay_set_crmode(struct replay_setup *stp, int mode);

@@ -318,8 +318,6 @@ main(int argc, char *argv[])
 	cb->child_sigstop = child_sigstop;
 	cb->mainloop = mainloop_cb;
 
-	sigprocmask(SIG_BLOCK, NULL, ul_pty_get_orig_sigset(ss.pty));
-
 	if (ul_pty_setup(ss.pty))
 		err(EXIT_FAILURE, "failed to create pseudo-terminal");
 
@@ -378,7 +376,9 @@ main(int argc, char *argv[])
 	}
 
 	ul_pty_cleanup(ss.pty);
-	fprintf(stdout, _("\n>>> scriptlive: done. <<<\n"));
+	ul_free_pty(ss.pty);
+	replay_free_setup(ss.setup);
 
+	fprintf(stdout, _("\n>>> scriptlive: done. <<<\n"));
 	return EXIT_SUCCESS;
 }

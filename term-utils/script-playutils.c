@@ -102,7 +102,18 @@ static inline void timerinc(struct timeval *a, struct timeval *b)
 
 struct replay_setup *replay_new_setup(void)
 {
-	return xcalloc(1, sizeof(struct replay_setup));
+	return  xcalloc(1, sizeof(struct replay_setup));
+}
+
+void replay_free_setup(struct replay_setup *stp)
+{
+	if (!stp)
+		return;
+
+	free(stp->logs);
+	free(stp->step.name);
+	free(stp->step.value);
+	free(stp);
 }
 
 /* if timing file does not contains types of entries (old format) than use this

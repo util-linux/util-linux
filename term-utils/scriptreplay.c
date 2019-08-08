@@ -307,5 +307,7 @@ main(int argc, char *argv[])
 				replay_get_timing_file(setup),
 				replay_get_timing_line(setup));
 	printf("\n");
+	replay_free_setup(setup);
+
 	exit(EXIT_SUCCESS);
 }
