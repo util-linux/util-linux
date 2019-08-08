@@ -498,9 +498,6 @@ static void create_watching_parent(struct su_context *su)
 	if (su->force_pty) {
 		struct ul_pty_callbacks *cb;
 
-		/* no-op, just save original signal mask to pty */
-		sigprocmask(SIG_BLOCK, NULL, ul_pty_get_orig_sigset(su->pty));
-
 		/* set callbacks */
 		ul_pty_set_callback_data(su->pty, (void *) su);
 
