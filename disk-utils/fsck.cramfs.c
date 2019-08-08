@@ -416,7 +416,6 @@ static void do_uncompress(char *path, int outfd, unsigned long offset,
 		curr = next;
 	} while (size);
 }
-#include <utime.h>
 static void change_file_status(char *path, struct cramfs_inode *i)
 {
 	const struct timeval epoch[] = { {0,0}, {0,0} };
