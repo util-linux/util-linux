@@ -148,8 +148,9 @@ su_LDADD += -lpam_misc
 endif
 if HAVE_PTY
 su_SOURCES += lib/pty-session.c \
-	      include/pty-session.h
-su_LDADD += -lutil
+      include/pty-session.h \
+      lib/monotonic.c
+su_LDADD += -lutil $(REALTIME_LIBS)
 endif
 endif # BUILD_SU
 
@@ -169,8 +170,9 @@ runuser_LDADD += -lpam_misc
 endif
 if HAVE_PTY
 runuser_SOURCES += lib/pty-session.c \
-	      include/pty-session.h
-runuser_LDADD += -lutil
+	include/pty-session.h \
+	lib/monotonic.c
+runuser_LDADD += -lutil $(REALTIME_LIBS)
 endif
 endif # BUILD_RUNUSER
 
