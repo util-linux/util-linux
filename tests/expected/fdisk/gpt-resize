@@ -35,7 +35,7 @@ Command (m for help): The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Re-reading the partition table failed.: Invalid argument
 
-The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or kpartx(8).
+The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8).
 
 
 
