@@ -61,6 +61,8 @@ struct fdisk_script {
 				force_label : 1;	/* label: <name> specified */
 };
 
+static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, char *str);
+
 
 static void fdisk_script_free_header(struct fdisk_scriptheader *fi)
 {
@@ -1054,8 +1056,11 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			rc = next_string(&p, &type);
 			if (rc)
 				break;
-			pa->type = fdisk_label_parse_parttype(
-					script_get_label(dp), type);
+
+			pa->type = translate_type_shortcuts(dp, type);
+			if (!pa->type)
+				pa->type = fdisk_label_parse_parttype(
+						script_get_label(dp), type);
 			free(type);
 
 			if (!pa->type) {
