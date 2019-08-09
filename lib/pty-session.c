@@ -271,7 +271,7 @@ static int handle_io(struct ul_pty *pty, int fd, int *eof)
 	char buf[BUFSIZ];
 	ssize_t bytes;
 
-	DBG(IO, ul_debugobj(pty, "%d FD active", fd));
+	DBG(IO, ul_debugobj(pty, " handle I/O on fd=%d", fd));
 	*eof = 0;
 
 	/* read from active FD */
@@ -312,7 +312,7 @@ static int handle_signal(struct ul_pty *pty, int fd)
 	struct signalfd_siginfo info;
 	ssize_t bytes;
 
-	DBG(SIG, ul_debugobj(pty, "signal FD %d active", fd));
+	DBG(SIG, ul_debugobj(pty, " handle signal on fd=%d", fd));
 
 	bytes = read(fd, &info, sizeof(info));
 	if (bytes != sizeof(info)) {
