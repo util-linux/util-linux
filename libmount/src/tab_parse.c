@@ -154,7 +154,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, const char *s)
 	if (!s || !*s)
 		goto done;
 
-	/* (6) freq (optional) */
+	/* (6) passno (optional) */
 	s = next_s32(s, &fs->passno, &rc);
 	if (s && *s && rc) {
 		DBG(TAB, ul_debug("tab parse error: [passno]"));
