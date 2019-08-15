@@ -21,7 +21,6 @@
 #include <sys/ioctl.h>
 #include <getopt.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <signal.h>
 #include <assert.h>
 #include <linux/watchdog.h>
