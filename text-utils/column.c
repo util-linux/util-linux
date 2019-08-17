@@ -158,15 +158,16 @@ static char *wcs_to_mbs(const wchar_t *s)
 #endif
 }
 
-static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **state)
+static wchar_t *local_wcstok(struct column_control const *const ctl, wchar_t *p,
+			     wchar_t **state)
 {
 	wchar_t *result = NULL;
 
-	if (greedy)
+	if (ctl->greedy)
 #ifdef HAVE_WIDECHAR
-		return wcstok(p, separator, state);
+		return wcstok(p, ctl->input_separator, state);
 #else
-		return strtok_r(p, separator, state);
+		return strtok_r(p, ctl->input_separator, state);
 #endif
 	if (!p) {
 		if (!*state)
@@ -175,9 +176,9 @@ static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, w
 	}
 	result = p;
 #ifdef HAVE_WIDECHAR
-	p = wcspbrk(result, separator);
+	p = wcspbrk(result, ctl->input_separator);
 #else
-	p = strpbrk(result, separator);
+	p = strpbrk(result, ctl->input_separator);
 #endif
 	if (!p)
 		*state = NULL;
@@ -435,7 +436,7 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
 	if (!ctl->tab)
 		init_table(ctl);
 
-	while ((wcdata = local_wcstok(wcs, ctl->input_separator, ctl->greedy, &sv))) {
+	while ((wcdata = local_wcstok(ctl, wcs, &sv))) {
 		char *data;
 
 		if (scols_table_get_ncols(ctl->tab) < n + 1) {
