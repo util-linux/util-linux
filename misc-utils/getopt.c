@@ -100,6 +100,9 @@ enum { REALLOC_INCREMENT = 8 };
 static int (*getopt_long_fp) (int argc, char *const *argv, const char *optstr,
 			      const struct option * longopts, int *longindex);
 
+#define ASTROPHE	"\'"
+#define BACKSLASH	"\\"
+
 /*
  * This function 'normalizes' a single argument: it puts single quotes
  * around it and escapes other special characters. If quote is false, it
@@ -126,53 +129,40 @@ static void print_normalized(const struct getopt_control *ctl, const char *arg)
 	 * and an opening quote! We need also the global opening and closing
 	 * quote, and one extra character for '\0'.
 	 */
-	buf = xmalloc(strlen(arg) * 4 + 3);
-	bufptr = buf;
+	buf = xmalloc(strlen(arg) * 4 + 1);
 
-	for (*bufptr++ = '\''; *argptr; argptr++) {
+	for (bufptr = buf; *argptr; argptr++) {
 		if (ctl->shell == TCSH) {
 			switch (*argptr) {
 			case '\\':
-				/* Backslash: replace it with: '\\' */
-				*bufptr++ = '\\';
-				*bufptr++ = '\\';
+				/* Backslash: replace it with: \\ */
+				bufptr += sprintf(bufptr, BACKSLASH BACKSLASH);
 				continue;
 			case '!':
-				/* Exclamation mark: replace it with: \! */
-				*bufptr++ = '\'';
-				*bufptr++ = '\\';
-				*bufptr++ = '!';
-				*bufptr++ = '\'';
+				/* Exclamation mark: replace it with: '\!' */
+				bufptr += sprintf(bufptr, ASTROPHE BACKSLASH "!" ASTROPHE);
 				continue;
 			case '\n':
 				/* Newline: replace it with: \n */
-				*bufptr++ = '\\';
-				*bufptr++ = 'n';
+				bufptr += sprintf(bufptr, BACKSLASH "n");
 				continue;
 			}
 			if (isspace(*argptr)) {
-				/* Non-newline whitespace: replace it with \<ws> */
-				*bufptr++ = '\'';
-				*bufptr++ = '\\';
-				*bufptr++ = *argptr;
-				*bufptr++ = '\'';
+				/* Non-newline whitespace: replace it with: '\<ws>' */
+				bufptr += sprintf(bufptr, ASTROPHE BACKSLASH "%c" ASTROPHE, *argptr);
 				continue;
 			}
 		}
 		if (*argptr == '\'') {
 			/* Quote: replace it with: '\'' */
-			*bufptr++ = '\'';
-			*bufptr++ = '\\';
-			*bufptr++ = '\'';
-			*bufptr++ = '\'';
+			bufptr += sprintf(bufptr, ASTROPHE BACKSLASH ASTROPHE ASTROPHE);
 		} else
 			/* Just copy */
 			*bufptr++ = *argptr;
 	}
 
-	*bufptr++ = '\'';
-	*bufptr++ = '\0';
-	printf(" %s", buf);
+	*bufptr = '\0';
+	printf(" " ASTROPHE "%s" ASTROPHE, buf);
 	free(buf);
 }
 
