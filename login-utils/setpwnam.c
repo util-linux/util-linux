@@ -74,11 +74,11 @@ static void pw_init(void);
 int setpwnam(struct passwd *pwd, const char *prefix)
 {
 	FILE *fp = NULL, *pwf = NULL;
-	int save_errno;
-	int found;
-	int namelen;
-	int buflen = 256;
-	int contlen, rc;
+	int save_errno, rc;
+	uint8_t found = 0;
+	size_t namelen;
+	size_t contlen;
+	size_t buflen = 256;
 	char *linebuf = NULL;
 	char *tmpname = NULL;
 
@@ -105,8 +105,6 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 		goto fail;
 
 	/* parse the passwd file */
-	found = false;
-
 	/* Do you wonder why I don't use getpwent? Read comments at top of
 	 * file */
 	while (fgets(linebuf, buflen, pwf) != NULL) {
@@ -134,7 +132,7 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 			 * change it!  */
 			if (putpwent(pwd, fp) < 0)
 				goto fail;
-			found = true;
+			found = 1;
 			continue;
 		}
 		/* Nothing in particular happened, copy input to output */
