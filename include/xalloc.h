@@ -19,15 +19,18 @@
 # define XALLOC_EXIT_CODE EXIT_FAILURE
 #endif
 
-static inline void __attribute__((__noreturn__))
-__err_oom(const char *file, unsigned int line)
+static inline
+__attribute__((__noreturn__))
+void __err_oom(const char *file, unsigned int line)
 {
 	err(XALLOC_EXIT_CODE, "%s: %u: cannot allocate memory", file, line);
 }
 
 #define err_oom()	__err_oom(__FILE__, __LINE__)
 
-static inline __ul_alloc_size(1) __ul_returns_nonnull
+static inline
+__ul_alloc_size(1)
+__ul_returns_nonnull
 void *xmalloc(const size_t size)
 {
         void *ret = malloc(size);
@@ -37,7 +40,9 @@ void *xmalloc(const size_t size)
         return ret;
 }
 
-static inline __ul_alloc_size(2) __ul_returns_nonnull
+static inline
+__ul_alloc_size(2)
+__ul_returns_nonnull
 void *xrealloc(void *ptr, const size_t size)
 {
         void *ret = realloc(ptr, size);
@@ -47,7 +52,9 @@ void *xrealloc(void *ptr, const size_t size)
         return ret;
 }
 
-static inline __ul_calloc_size(1, 2) __ul_returns_nonnull
+static inline
+__ul_calloc_size(1, 2)
+__ul_returns_nonnull
 void *xcalloc(const size_t nelems, const size_t size)
 {
         void *ret = calloc(nelems, size);
@@ -57,8 +64,10 @@ void *xcalloc(const size_t nelems, const size_t size)
         return ret;
 }
 
-static inline char __attribute__((warn_unused_result)) __ul_returns_nonnull
-*xstrdup(const char *str)
+static inline
+__attribute__((warn_unused_result))
+__ul_returns_nonnull
+char *xstrdup(const char *str)
 {
         char *ret;
 
@@ -71,8 +80,10 @@ static inline char __attribute__((warn_unused_result)) __ul_returns_nonnull
         return ret;
 }
 
-static inline char * __attribute__((warn_unused_result)) __ul_returns_nonnull
-xstrndup(const char *str, size_t size)
+static inline
+__attribute__((warn_unused_result))
+__ul_returns_nonnull
+char *xstrndup(const char *str, size_t size)
 {
         char *ret;
 
@@ -86,8 +97,9 @@ xstrndup(const char *str, size_t size)
 }
 
 
-static inline int __attribute__ ((__format__(printf, 2, 3)))
-    xasprintf(char **strp, const char *fmt, ...)
+static inline
+__attribute__((__format__(printf, 2, 3)))
+int xasprintf(char **strp, const char *fmt, ...)
 {
 	int ret;
 	va_list args;
@@ -99,8 +111,9 @@ static inline int __attribute__ ((__format__(printf, 2, 3)))
 	return ret;
 }
 
-static inline int  __attribute__ ((__format__(printf, 2, 0)))
-xvasprintf(char **strp, const char *fmt, va_list ap)
+static inline
+__attribute__((__format__(printf, 2, 0)))
+int xvasprintf(char **strp, const char *fmt, va_list ap)
 {
 	int ret = vasprintf(&(*strp), fmt, ap);
 	if (ret < 0)
@@ -109,7 +122,9 @@ xvasprintf(char **strp, const char *fmt, va_list ap)
 }
 
 
-static inline char * __attribute__((warn_unused_result)) xgethostname(void)
+static inline
+__attribute__((warn_unused_result))
+char *xgethostname(void)
 {
 	char *name;
 	size_t sz = get_hostname_max() + 1;
