@@ -188,9 +188,10 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 		dest = mnt_new_fs();
 		if (!dest)
 			return NULL;
+
+		dest->tab	 = NULL;
 	}
 
-	dest->tab	 = NULL;
 	dest->id         = src->id;
 	dest->parent     = src->parent;
 	dest->devno      = src->devno;
