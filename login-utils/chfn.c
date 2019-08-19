@@ -376,7 +376,7 @@ static int save_new_data(struct chfn_control *ctl)
 			ctl->newf.other);
 
 	/* remove trailing empty fields (but not subfields of ctl->newf.other) */
-	if (!ctl->newf.other) {
+	if (!ctl->newf.other || !*ctl->newf.other) {
 		while (len > 0 && gecos[len - 1] == ',')
 			len--;
 		gecos[len] = 0;
