@@ -825,7 +825,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --sector-size <size>      physical and logical sector size\n"), out);
 	fputs(_(" -B, --protect-boot            don't erase bootbits when creating a new label\n"), out);
 	fputs(_(" -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"), out);
-	fputs(_(" -L, --color[=<when>]          colorize output (auto, always or never)\n"), out);
+	fprintf(out,
+	      _(" -L, --color[=<when>]          colorize output (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
 	        "                                 %s\n", USAGE_COLORS_DEFAULT);
 	fputs(_(" -l, --list                    display partitions and exit\n"), out);
@@ -834,8 +835,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"), out);
 	fputs(_(" -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"), out);
 	fputs(_("     --bytes                   print SIZE in bytes rather than in human readable format\n"), out);
-	fputs(_(" -w, --wipe <mode>             wipe signatures (auto, always or never)\n"), out);
-	fputs(_(" -W, --wipe-partitions <mode>  wipe signatures from new partitions (auto, always or never)\n"), out);
+	fprintf(out,
+	      _(" -w, --wipe <mode>             wipe signatures (%s, %s or %s)\n"), "auto", "always", "never");
+	fprintf(out,
+	      _(" -W, --wipe-partitions <mode>  wipe signatures from new partitions (%s, %s or %s)\n"), "auto", "always", "never");
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -C, --cylinders <number>      specify the number of cylinders\n"), out);

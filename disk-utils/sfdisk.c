@@ -1877,7 +1877,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --bytes               print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_("     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
-	fputs(_("     --color[=<when>]      colorize output (auto, always or never)\n"), out);
+	fprintf(out,
+	      _("     --color[=<when>]      colorize output (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
 	        "                             %s\n", USAGE_COLORS_DEFAULT);
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
@@ -1887,8 +1888,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -O, --backup-file <path>  override default backup file name\n"), out);
 	fputs(_(" -o, --output <list>       output columns\n"), out);
 	fputs(_(" -q, --quiet               suppress extra info messages\n"), out);
-	fputs(_(" -w, --wipe <mode>         wipe signatures (auto, always or never)\n"), out);
-	fputs(_(" -W, --wipe-partitions <mode>  wipe signatures from new partitions (auto, always or never)\n"), out);
+	fprintf(out,
+	      _(" -w, --wipe <mode>         wipe signatures (%s, %s or %s)\n"), "auto", "always", "never");
+	fprintf(out,
+	      _(" -W, --wipe-partitions <mode>  wipe signatures from new partitions (%s, %s or %s)\n"), "auto", "always", "never");
 	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
 	fputs(USAGE_SEPARATOR, out);

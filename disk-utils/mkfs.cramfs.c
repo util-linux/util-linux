@@ -124,24 +124,24 @@ struct entry {
 
 static void __attribute__((__noreturn__)) usage(void)
 {
-	printf(
-		_("usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] "
-		  "[-n name] dirname outfile\n"
-		  " -v         be verbose\n"
-		  " -E         make all warnings errors "
-		    "(non-zero exit status)\n"
-		  " -b blksize use this blocksize, must equal page size\n"
-		  " -e edition set edition number (part of fsid)\n"
-		  " -N endian  set cramfs endianness (big|little|host), default host\n"
-		  " -i file    insert a file image into the filesystem\n"
-		  " -n name    set name of cramfs filesystem\n"
-		  " -p         pad by %d bytes for boot code\n"
-		  " -s         sort directory entries (old option, ignored)\n"
-		  " -z         make explicit holes\n"
-		  " dirname    root of the filesystem to be compressed\n"
-		  " outfile    output file\n"),
-		program_invocation_short_name, PAD_SIZE);
-
+	fputs(USAGE_HEADER, stdout);
+	printf(_(" %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"),
+		program_invocation_short_name);
+	fputs(USAGE_SEPARATOR, stdout);
+	puts(_("Make compressed ROM file system."));
+	fputs(USAGE_OPTIONS, stdout);
+	puts(_(  " -v             be verbose"));
+	puts(_(  " -E             make all warnings errors (non-zero exit status)"));
+	puts(_(  " -b blksize     use this blocksize, must equal page size"));
+	puts(_(  " -e edition     set edition number (part of fsid)"));
+	printf(_(" -N endian      set cramfs endianness (%s|%s|%s), default %s\n"), "big", "little", "host", "host");
+	puts(_(  " -i file        insert a file image into the filesystem"));
+	puts(_(  " -n name        set name of cramfs filesystem"));
+	printf(_(" -p             pad by %d bytes for boot code\n"), PAD_SIZE);
+	puts(_(  " -s             sort directory entries (old option, ignored)"));
+	puts(_(  " -z             make explicit holes"));
+	puts(_(  " dirname        root of the filesystem to be compressed"));
+	puts(_(  " outfile        output file"));
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(16));
 	printf(USAGE_MAN_TAIL("mkfs.cramfs(8)"));
