@@ -1,6 +1,7 @@
 [Unit]
 Description=Discard unused blocks once a week
 Documentation=man:fstrim
+ConditionVirtualization=!container
 
 [Timer]
 OnCalendar=weekly
