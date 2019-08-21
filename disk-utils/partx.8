@@ -53,7 +53,10 @@ Add the specified partitions, or read the disk and add all partitions.
 Print the SIZE column in bytes rather than in human-readable format.
 .TP
 .BR \-d , " \-\-delete"
-Delete the specified partitions or all partitions.
+Delete the specified partitions or all partitions.  It is not error to
+remove non-existing partitions, so this option is possible to use together with
+large \fB\-\-nr\fR ranges without care about the current partitions set on
+the device.
 .TP
 .BR \-g , " \-\-noheadings"
 Do not print a header line with \fB\-\-show\fR or \fB\-\-raw\fR.

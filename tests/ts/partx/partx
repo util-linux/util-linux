@@ -137,9 +137,14 @@ udevadm settle
 ts_init_subtest "delete-non-existent"
 #attempt to remove it again
 {
+	# remove non-existing partitions (ENXIO) is not error
+	#
+	# see ab025087f91b66ee8e23a16bc49eb0d9bd421d65 and
+	#     53ae7d60cfeacd4e87bfe6fcc015b58b78ef4555
+	#
 	$TS_CMD_PARTX -d --nr $PARTS $TS_DEVICE &&
-		echo "partx failed: removed non-existing partition" ||
-		echo "partx: OK"
+		echo "partx: OK" ||
+		echo "partx failed: removed non-existing partition"
 } >$TS_OUTPUT 2>&1
 ts_finalize_subtest
 
