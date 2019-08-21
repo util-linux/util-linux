@@ -328,8 +328,7 @@ static int del_parts(int fd, const char *device, dev_t devno,
 	}
 
 	for (i = lower; i <= upper; i++) {
-		rc = partx_del_partition(fd, i);
-		if (rc == 0) {
+		if (partx_del_partition(fd, i) == 0) {
 			if (verbose)
 				printf(_("%s: partition #%d removed\n"), device, i);
 			continue;
