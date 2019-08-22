@@ -1313,8 +1313,6 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	if (isrel && stop - start < (cxt->grain / fdisk_get_sector_size(cxt))) {
 		/* Don't try to be smart on very small partitions and don't align so small sizes */
 		isrel = 0;
-		if (stop > start)
-			stop -= 1;
 		DBG(LABEL, ul_debug("DOS: don't align end of tiny partition [start=%ju, stop=%ju, grain=%lu]",
 			    (uintmax_t)start,  (uintmax_t)stop, cxt->grain));
 	}
@@ -1327,7 +1325,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		 */
 		stop = fdisk_align_lba_in_range(cxt, stop, start, limit);
 		if (stop > start)
-			stop -= 1;
+			stop -= 1;	/* end one sector before aligned offset */
 		if (stop > limit)
 			stop = limit;
 		DBG(LABEL, ul_debug("DOS: aligned stop: %ju", (uintmax_t) stop));
