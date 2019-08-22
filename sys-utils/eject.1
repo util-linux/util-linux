@@ -27,8 +27,12 @@ There are four different methods of ejecting, depending on whether the device
 is a CD-ROM, SCSI device, removable floppy, or tape.  By default \fBeject\fR tries
 all four methods in order until it succeeds.
 .PP
-If a device partition is specified, the whole-disk device is used.  If the device
-or a device partition is currently mounted, it is unmounted before ejecting.
+If a device partition is specified, the whole-disk device is used.
+.PP
+If the device or a device partition is currently mounted, it is unmounted
+before ejecting.  The eject is processed on exclusive open block device
+file descriptor if \fB\-\-no\-unmount\fP or \fB\-\-force\fP are not specified.
+
 .SH OPTIONS
 .TP
 .BR \-a , " \-\-auto on" | off
@@ -45,7 +49,8 @@ is referred to as 0, not 1.
 List the default device name.
 .TP
 .BR \-F , " \-\-force"
-Force eject, don't check device type.
+Force eject, don't check device type, don't open device with exclusive lock.
+The successful result may be false positive on non hot-pluggable devices.
 .TP
 .BR \-f , " \-\-floppy"
 This option specifies that the drive should be ejected using a removable floppy
@@ -67,7 +72,11 @@ to eject the media.  It will attempt to unmount only the device or mountpoint
 given on the command line.
 .TP
 .BR \-m , " \-\-no\-unmount"
-The option tells eject to not try to unmount at all.
+The option tells eject to not try to unmount at all.  If this option is not
+specified than
+.B eject
+opens the device with O_EXCL flag to be sure that the device is not used (since
+v2.35).
 .TP
 .BR \-n , " \-\-noop"
 With this option the selected device is displayed but no action is performed.

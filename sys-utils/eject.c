@@ -96,6 +96,9 @@ struct eject_control {
 		x_option:1,
 		a_arg:1,
 		i_arg:1;
+
+	unsigned int force_exclusive;	/* use O_EXCL */
+
 	long int c_arg;			/* changer slot number */
 	long int x_arg;			/* cd speed */
 };
@@ -686,9 +689,12 @@ static void umount_one(const struct eject_control *ctl, const char *name)
 /* Open a device file. */
 static void open_device(struct eject_control *ctl)
 {
-	ctl->fd = open(ctl->device, O_RDWR | O_NONBLOCK);
+	int extra = ctl->F_option == 0 &&		/* never use O_EXCL on --force */
+		    ctl->force_exclusive ? O_EXCL : 0;
+
+	ctl->fd = open(ctl->device, O_RDWR | O_NONBLOCK | extra);
 	if (ctl->fd < 0)
-		ctl->fd = open(ctl->device, O_RDONLY | O_NONBLOCK);
+		ctl->fd = open(ctl->device, O_RDONLY | O_NONBLOCK | extra);
 	if (ctl->fd == -1)
 		err(EXIT_FAILURE, _("cannot open %s"), ctl->device);
 }
@@ -755,6 +761,9 @@ static char *get_disk_devname(const char *device)
 	return st.st_rdev == diskno ? NULL : find_device(diskname);
 }
 
+/* umount all partitions if -M not specified, otherwise returns
+ * number of the mounted partitions only.
+ */
 static int umount_partitions(struct eject_control *ctl)
 {
 	struct path_cxt *pc = NULL;
@@ -970,7 +979,7 @@ int main(int argc, char **argv)
 	 * partition is mounted.
 	 */
 	if (!ctl.m_option) {
-		int ct = umount_partitions(&ctl);
+		int ct = umount_partitions(&ctl); /* umount all, or count mounted on -M */
 
 		if (ct == 0 && mountpoint)
 			umount_one(&ctl, mountpoint); /* probably whole-device */
@@ -981,6 +990,11 @@ int main(int argc, char **argv)
 			else if (ct)
 				errx(EXIT_FAILURE, _("error: %s: device in use"), ctl.device);
 		}
+		/* Now, we assume the device is no more used, use O_EXCL to be
+		 * resistant against our bugs and possible races (someone else
+		 * remounted the device).
+		 */
+		ctl.force_exclusive = 1;
 	}
 
 	/* handle -c option */
