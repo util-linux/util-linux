@@ -420,26 +420,48 @@ function ts_init_py {
 }
 
 function ts_run {
+	local UNBUFFERED=
+
+	while true; do
+		case "$1" in
+			--unbuffered)
+				UNBUFFERED=1
+				shift;;
+			--)
+				shift
+				break;;
+			*)
+				break;;
+		esac
+	done
+
+	declare -a args
+
+	#
+	# ASAN mode
+	#
+	if [ "$TS_ENABLE_ASAN" == "yes" ]; then
+		args+=(ASAN_OPTIONS='detect_leaks=1')
+	fi
+
+	#
+	# Disable buffering of stdout
+	#
+	if [ -n "$UNBUFFERED" ]; then
+		if type stdbuf >/dev/null 2>&1; then
+			args+=(stdbuf --output=0)
+		fi
+	fi
+
 	#
 	# valgrind mode
 	#
 	if [ -n "$TS_VALGRIND_CMD" ]; then
-		libtool --mode=execute \
-		$TS_VALGRIND_CMD --tool=memcheck --leak-check=full \
-				 --leak-resolution=high --num-callers=20 \
-				 --log-file="$TS_VGDUMP" "$@"
-	#
-	# ASAN mode
-	#
-	elif [ "$TS_ENABLE_ASAN" == "yes" ]; then
-		ASAN_OPTIONS='detect_leaks=1' "$@"
-
-	#
-	# Default mode
-	#
-	else
-		"$@"
+		args+=(libtool --mode=execute "$TS_VALGRIND_CMD" --tool=memcheck --leak-check=full)
+		args+=(--leak-resolution=high --num-callers=20 --log-file="$TS_VGDUMP")
 	fi
+
+	"${args[@]}" "$@"
 }
 
 function ts_gen_diff {
@@ -977,4 +999,3 @@ function ts_has_ncurses_support {
 		echo "no"
 	fi
 }
-

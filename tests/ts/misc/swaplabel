@@ -39,7 +39,7 @@ MIN_SWAP_SIZE_KB=$(( MIN_SWAP_SIZE / 1024 ))
 
 rm -f $IMAGE
 fallocate_or_skip $(( $MIN_SWAP_SIZE - 1 )) $IMAGE
-$TS_CMD_MKSWAP \
+ts_run --unbuffered $TS_CMD_MKSWAP \
 	--label 1234567890abcdef \
 	--uuid 12345678-abcd-abcd-abcd-1234567890ab \
 	$IMAGE 2>&1 |\
@@ -50,7 +50,7 @@ $TS_CMD_MKSWAP \
 
 rm -f $IMAGE
 fallocate_or_skip $MIN_SWAP_SIZE $IMAGE
-$TS_CMD_MKSWAP \
+ts_run --unbuffered $TS_CMD_MKSWAP \
 	--label 1234567890abcdef \
 	--uuid 12345678-abcd-abcd-abcd-1234567890ab \
 	$IMAGE 2>&1 |\
