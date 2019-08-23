@@ -6,6 +6,6 @@ Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Nonexistent file
-fdisk: cannot open _a_file_that_does_not_exist_: No such file or directory
+fdisk: cannot open _a_file_that_does_not_exist_: ENOENT
 Too small file
-fdisk: cannot open oddinput.toosmall: Inappropriate ioctl for device
+fdisk: cannot open oddinput.toosmall: ENOTTY

@@ -18,6 +18,8 @@ static struct {
 	const char *str;
 	int error;
 } errors[] = {
+	E(ENOENT),
+	E(ENOTTY),
 	E(EILSEQ)
 };
 
