@@ -1,19 +1,19 @@
+Created a new <removed>.
 Requested partition: <partno=<default>,start=2048,size=2048>
+Created a new <removed>.
 Requested partition: <partno=<default>,start=4096,size=2048>
+Created a new <removed>.
 Requested partition: <partno=<default>,start=6144,size=2048>
+Created a new <removed>.
 Requested partition: <partno=<default>,start=8192,size=22528>
+Created a new <removed>.
 Requested partition: <partno=<default>,start=10240,size=2048>
-Requested partition: <partno=<default>,start=14336,size=2048>
-Requested partition: <partno=<default>,start=18432,size=12288>
-Created a new <removed>.
-Created a new <removed>.
-Created a new <removed>.
-Created a new <removed>.
-Created a new <removed>.
 Adding logical partition 5
 Created a new <removed>.
+Requested partition: <partno=<default>,start=14336,size=2048>
 Adding logical partition 6
 Created a new <removed>.
+Requested partition: <partno=<default>,start=18432,size=12288>
 Adding logical partition 7
 Created a new <removed>.
 Disk <removed>: 15 MiB, 15728640 bytes, 30720 sectors
