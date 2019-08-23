@@ -24,7 +24,7 @@ ts_check_prog "timeout"
 
 check_input_file() {
 	ts_init_subtest ${1##*/}
-	timeout 2 $TS_CMD_COLCRT < $1 > $TS_OUTPUT 2>&1
+	LC_ALL=C.UTF-8 timeout 2 $TS_CMD_COLCRT < $1 > $TS_OUTPUT 2>&1
 	echo "return value: $?" >> $TS_OUTPUT
 	ts_finalize_subtest
 }
