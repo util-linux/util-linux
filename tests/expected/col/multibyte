@@ -1,1 +1,1 @@
-col: failed on line 1: Invalid or incomplete multibyte or wide character
+col: failed on line 1: EILSEQ

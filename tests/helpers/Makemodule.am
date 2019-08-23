@@ -14,6 +14,9 @@ test_sha1_SOURCES = tests/helpers/test_sha1.c lib/sha1.c
 check_PROGRAMS += test_pathnames
 test_pathnames_SOURCES = tests/helpers/test_pathnames.c
 
+check_PROGRAMS += test_strerror
+test_strerror_SOURCES = tests/helpers/test_strerror.c
+
 check_PROGRAMS += test_sysinfo
 test_sysinfo_SOURCES = tests/helpers/test_sysinfo.c
 
