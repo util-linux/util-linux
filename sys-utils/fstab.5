@@ -73,7 +73,7 @@ remote filesystem to be mounted.
 .LP
 For ordinary mounts, it will hold (a link to) a block special
 device node (as created by
-.BR mknod (8))
+.BR mknod (2))
 for the device to be mounted, like `/dev/cdrom' or `/dev/sdb7'.
 For NFS mounts, this field is <host>:<dir>, e.g., `knuth.aeb.nl:/'.
 For filesystems with no storage, any string can be used, and will show up in

@@ -810,7 +810,7 @@ and a precision timepiece, and then calculate the correction manually.
 .PP
 After setting the tick and frequency values, continue to test and refine the
 adjustments until the System Clock keeps good time.  See
-.BR \%adjtimex (8)
+.BR \%adjtimex (2)
 for more information and the example demonstrating manual drift
 calculations.
 .PP
@@ -983,7 +983,7 @@ may try for Hardware Clock access:
 .BR adjtimex (8),
 .BR gettimeofday (2),
 .BR settimeofday (2),
-.BR crontab (1),
+.BR crontab (1p),
 .BR tzset (3)
 .
 .SH AUTHORS
