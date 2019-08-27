@@ -277,7 +277,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -f, --facility <list>       restrict output to defined facilities\n"), out);
 	fputs(_(" -H, --human                 human readable output\n"), out);
 	fputs(_(" -k, --kernel                display kernel messages\n"), out);
-	fputs(_(" -L, --color[=<when>]        colorize messages (auto, always or never)\n"), out);
+	fprintf(out,
+	      _(" -L, --color[=<when>]        colorize messages (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
 	        "                               %s\n", USAGE_COLORS_DEFAULT);
 	fputs(_(" -l, --level <list>          restrict output to defined levels\n"), out);

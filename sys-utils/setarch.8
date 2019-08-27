@@ -95,14 +95,14 @@ manual page.  Turns on STICKY_TIMEOUTS.
 .TP
 \fB\-X\fR, \fB\-\-read\-implies\-exec\fR
 If this is set then
-.BR mmap (3)
+.BR mmap (3p)
 PROT_READ will also add the PROT_EXEC bit - as expected by legacy x86
 binaries.  Notice that the ELF loader will automatically set this bit when
 it encounters a legacy binary.  Turns on READ_IMPLIES_EXEC.
 .TP
 \fB\-Z\fR, \fB\-\-mmap\-page\-zero\fR
 SVr4 bug emulation that will set
-.BR mmap (3)
+.BR mmap (3p)
 page zero as read-only.  Use when
 .I program
 depends on this behavior, and the source code is not available to be fixed.

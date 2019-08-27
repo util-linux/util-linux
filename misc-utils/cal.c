@@ -1133,7 +1133,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -y, --year            show the whole year\n"), out);
 	fputs(_(" -Y, --twelve          show the next twelve months\n"), out);
 	fputs(_(" -w, --week[=<num>]    show US or ISO-8601 week numbers\n"), out);
-	fputs(_("     --color[=<when>]  colorize messages (auto, always or never)\n"), out);
+	fprintf(out,
+	      _("     --color[=<when>]  colorize messages (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
 	        "                         %s\n", USAGE_COLORS_DEFAULT);
 
