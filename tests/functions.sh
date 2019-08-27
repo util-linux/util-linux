@@ -425,7 +425,7 @@ function ts_run {
 	while true; do
 		case "$1" in
 			--unbuffered)
-				if type stdbuf >/dev/null 2>&1; then
+				if type unbuffer >/dev/null 2>&1; then
 					UNBUFFERED=1
 				fi
 				shift;;

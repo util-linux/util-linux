@@ -27,7 +27,6 @@ TESTPROG="$TS_HELPER_LIBFDISK_MKPART_FULLSPEC"
 ts_check_test_command "$TESTPROG"
 ts_check_test_command "$TS_CMD_SFDISK"
 ts_check_test_command "$TS_CMD_WIPEFS"
-ts_check_prog unbuffer
 
 TEST_IMAGE_NAME=$(ts_image_init 15)
 
