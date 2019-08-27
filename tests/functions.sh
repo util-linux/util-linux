@@ -481,7 +481,7 @@ function ts_gen_diff {
 
 	if [ $? -ne 0 ] || [ -s $TS_DIFF ]; then
 		res=1
-		if [ "$TS_SHOWDIFF" == "yes" ]; then
+		if [ "$TS_SHOWDIFF" == "yes" -a "$TS_KNOWN_FAIL" != "yes" ]; then
 			echo
 			echo "diff-{{{"
 			cat $TS_DIFF
