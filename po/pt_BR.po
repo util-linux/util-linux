@@ -986,7 +986,7 @@ msgstr "A assinatura antiga %s será removida por um comando de escrita."
 msgid "The old %s signature may remain on the device. It is recommended to wipe the device with wipefs(8) or fdisk --wipe, in order to avoid possible collisions."
 msgstr "A assinatura antiga %s pode ser mantida no dispositivo. É recomendado apagar o dispositivo com wipefs(8) ou fdisk --wipe, para evitar possíveis colisões."
 
-# Alinhamento reajustado às demais opções abaixo; vide fdisk --help 
+# Alinhamento reajustado às demais opções abaixo; vide fdisk --help
 #: disk-utils/fdisk.c:817
 #, c-format
 msgid ""

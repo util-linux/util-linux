@@ -6,7 +6,7 @@
  * The original libblkid from e2fsprogs (<=1.41.4) does not to use
  * symbol versioning -- all the original symbols are in BLKID_1.0 now.
  *
- * Copyright (C) 2009-2014 Karel Zak <kzak@redhat.com> 
+ * Copyright (C) 2009-2014 Karel Zak <kzak@redhat.com>
  */
 BLKID_1.0 {
 global:

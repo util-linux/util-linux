@@ -5,11 +5,11 @@ Release highlights
 ------------------
 
 fallocate:
-  - this NEW COMMAND is a command line interface to fallocate 
+  - this NEW COMMAND is a command line interface to fallocate
     Linux syscall and allows to preallocate blocks to a file.
 
 unshare
-  - this NEW COMMAND is a command line interface to unshare Linux syscall 
+  - this NEW COMMAND is a command line interface to unshare Linux syscall
     and allows to run program with some namespaces unshared from parent.
 
 wipefs
@@ -22,14 +22,14 @@ libblkid:
 
       * ioctl - supported since kernel 2.6.32
       * sysfs - supported since kernel 2.6.31
-      * fallback for DM, MD, LVM and EVMS on old kernels (base on code 
+      * fallback for DM, MD, LVM and EVMS on old kernels (base on code
         from xfsprogs/libdisk)
 
     The topology support is mostly designed for mkfs programs or partitioning
     tools (already used in mkfs.xfs, mkex2fs, libparted and fdisk)
-    
+
   - libblkid supports partition tables parsing (currently supported are
-    aix, bsd, dos, mac, gpt, minix, sgi, solaris, sun and unixware). This 
+    aix, bsd, dos, mac, gpt, minix, sgi, solaris, sun and unixware). This
     functionality is designed for mkfs programs, DeviceKits, [k]partx or so.
 
   - libblkid API documentation is available at

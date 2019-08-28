@@ -7,7 +7,7 @@ Stephen Tweedie <sct@dcs.ed.ac.uk>.
 Andries Brouwer <aeb@cwi.nl>
 Adrian Bunk <bunk@stusta.de>
 
-Presently in util-linux maintained by Karel Zak <kzak@redhat.com>. 
+Presently in util-linux maintained by Karel Zak <kzak@redhat.com>.
 
 == Notes to developers ==
 

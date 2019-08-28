@@ -34,17 +34,17 @@ losetup(8):
        table parser
 
 mount(8), umount(8):
-   - new pure libmount based mount(8) and umounts(8) commands are available, 
+   - new pure libmount based mount(8) and umounts(8) commands are available,
      this experimental implementation could be enabled by --enable-new-mount
-     
+
 agetty(8):
    - supports new command line options --nohints to disable hints about Num,
      Caps and Scroll Locks
-   - supports new command line option --remote to add a hostname to the 
+   - supports new command line option --remote to add a hostname to the
      login(1) command line
 
 dmesg(1):
-   - supports new command line options --file to read the log from a file rather 
+   - supports new command line options --file to read the log from a file rather
      than from kernel buffer
 
 fallocate(8):
@@ -62,7 +62,7 @@ lscpu(1):
    - supports s390 topology description (polarization, books, ...)
 
 partx(8):
-   - supports partitioned loop devices (note that since kernel 3.2 partitioned 
+   - supports partitioned loop devices (note that since kernel 3.2 partitioned
      loop devices are usable everywhere (including Fedora))
 
 wipefs(8):

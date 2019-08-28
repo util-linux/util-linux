@@ -3,7 +3,7 @@
  * Revised: Fri Mar 19 07:48:01 1999 by faith@acm.org
  * Public Domain 1995, 1999 Rickard E. Faith (faith@acm.org)
  * This program comes with ABSOLUTELY NO WARRANTY.
- * 
+ *
  * This program gathers some random bits of data and used the MD5
  * message-digest algorithm to generate a 128-bit hexadecimal number for
  * use with xauth(1).

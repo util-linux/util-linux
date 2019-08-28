@@ -28,7 +28,7 @@ test_flag() {
 	$TS_CMD_UUIDGEN $1 > "$OUTPUT_FILE" 2>>$TS_OUTPUT
 	ret=$?
 	$TS_HELPER_UUID_PARSER "$OUTPUT_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
-	if [ $? -ne 0 ] || [ $ret -ne 0 ]; then 
+	if [ $? -ne 0 ] || [ $ret -ne 0 ]; then
 		echo "something wrong with $OUTPUT_FILE" >> $TS_OUTPUT
 		cat $OUTPUT_FILE >> $TS_OUTPUT 2>> $TS_ERRLOG
 	fi

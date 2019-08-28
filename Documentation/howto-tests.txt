@@ -104,7 +104,7 @@ TS_OPT_testdir_[testscript_]memcheck="<yes|no>"
     Run certain tests with valgrind. Similar usage like TS_OPT_*_fake above.
 
 
-External services 
+External services
 -----------------
 
 Travis CI - automatically executed for all github commits.
@@ -132,6 +132,6 @@ Drone.io - automatically executed for all github commits.
 	ret=0
 	travis_script || ret=$?
 	travis_after_script
-	exit $ret  
-	
+	exit $ret
+
     yes, it shares the setup functions with travis-ci.

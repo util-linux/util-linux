@@ -59,7 +59,7 @@ for x in ${DEVS}; do
 	done
 
 	# device/ files
-	if [ -d ${DEV}/device/ ]; then 
+	if [ -d ${DEV}/device/ ]; then
 		for f in $(find ${DEV}/device/ -maxdepth 1 -type f -not -path '*/uevent'); do
 			if [ ! -f ${TS_DUMP}/${f} ]; then
 				SUB=$(dirname $f)

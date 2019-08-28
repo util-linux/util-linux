@@ -89,7 +89,7 @@ ts_finalize_subtest
 # expected is 3 seconds (see "sleep 3" for the general lock), but we should not
 # rely on exact number due to scheduler, machine load, etc. Let's check for
 # inmterval <3,5>.
-# 
+#
 ts_init_subtest "time-check"
 TIMEDIFF=$(( $END - $START ))
 if [ $TIMEDIFF -lt 3 ]; then
@@ -102,5 +102,5 @@ fi
 ts_finalize_subtest "diff ${TIMEDIFF} sec"
 
 
-echo "Unlocked" >> $GEN_OUTPUT 
+echo "Unlocked" >> $GEN_OUTPUT
 ts_finalize

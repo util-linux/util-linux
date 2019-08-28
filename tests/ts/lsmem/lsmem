@@ -33,7 +33,7 @@ function do_lsmem {
 	echo -e "\n---\n" >>${TS_OUTPUT}
 	echo "\$ lsmem $opts" >>${TS_OUTPUT}
 	${TS_CMD_LSMEM} $opts --sysroot "${dumpdir}/${name}" >> $TS_OUTPUT 2>> $TS_ERRLOG
-	
+
 }
 
 for dump in $(ls $TS_SELF/dumps/*.tar.bz2 | sort); do

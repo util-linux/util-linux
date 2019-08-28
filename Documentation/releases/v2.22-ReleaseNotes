@@ -16,7 +16,7 @@ partx(8):
 mount(8), umount(8), swapon(8), blkid(8) and findmnt(8):
   - supports PARTUUID= and PARTLABEL= tags to specify block devices by partition
     UUID or LABEL (for example for UEFI GPT). These tags are filesystem
-    independent and provide persistent configuration (your /etc/fstab setting 
+    independent and provide persistent configuration (your /etc/fstab setting
     will not be affected by mkfs/mkswap changes).
 
 dmesg(1):
@@ -26,7 +26,7 @@ dmesg(1):
 
 su(1):
   - has been merged from coreutils into util-linux
-  - utils-linux version uses /etc/pam.d/su-l PAM config file for --login 
+  - utils-linux version uses /etc/pam.d/su-l PAM config file for --login
     (e.g. "su -") session.
 
 sulogin(8):
@@ -40,9 +40,9 @@ eject(1):
   - supports new options --manualeject, --force and --no-partitions-unmount
 
 lslocks(1)
-  - this NEW COMMAND prints local system locks and it's replacement to very 
+  - this NEW COMMAND prints local system locks and it's replacement to very
     long time unmaintained lslk(1)
- 
+
 wdctl(8):
   - this NEW COMMAND shows hardware watchdog status
 
@@ -65,7 +65,7 @@ fdisk(8)
   - does not print geometry in 'p'rint output in non-DOS mode
 
 libuuid:
-  - does NOT EXECUTE uuidd on demand, the daemon has to be started by 
+  - does NOT EXECUTE uuidd on demand, the daemon has to be started by
     init scripts / systemd
 
 uuidd:
@@ -79,7 +79,7 @@ fsck(8):
   - supports new option -r to report memory and runtime statistics
 
 lsblk(8):
-  - supports inverse trees (new option -s) 
+  - supports inverse trees (new option -s)
 
 losetup(8):
   - supports option --detach-all to detach all loop devices
@@ -90,7 +90,7 @@ build-system changes:
   - partx(8) enabled by default (see --disable-partx)
   - kill(1) enabled by default (see --disable-kill)
   - new non-recursive build-system
-  
+
 
 Stable maintenance releases between v2.21 and v2.22
 ---------------------------------------------------

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011 Karel Zak <kzak@redhat.com> 
+# Copyright (C) 2011 Karel Zak <kzak@redhat.com>
 #
 
 

@@ -13,7 +13,7 @@ foreach $file (@ARGV) {
 			++$includedfiles{$1};
 		}
 	}
-	
+
 	foreach $filename (keys %includedfiles) {
 		if ($includedfiles{$filename} > 1) {
 			print "$file: $filename is included more than once.\n";

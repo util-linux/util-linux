@@ -33,8 +33,8 @@
 # ID -> id
 # implies -> medfører
 # initramfs -> et initramfs (da et filsystem)
-# inode -> inode (en inode er noget som alle filer på ext3 og lignende 
-#                 filsystemer har. Det angiver vist et logisk sted på 
+# inode -> inode (en inode er noget som alle filer på ext3 og lignende
+#                 filsystemer har. Det angiver vist et logisk sted på
 #                 disken hvor den ligger) Flertal inoder
 # label -> etiket (mærke (bruges for tag), mærkat)
 # link -> henvisning (lænke)
@@ -58,9 +58,9 @@
 # tag -> mærke
 # tray -> skuffe (ved cd-rom)
 # uncompressing -> udpakker (se decompression)
-# UTC -> GMT 
-#       (UTC (også kaldet zulutid) er den internationale tidszone, som (næsten) 
-#        er det samme som Greenwich Mean Time. Tidsforskellen mellem dansk tid 
+# UTC -> GMT
+#       (UTC (også kaldet zulutid) er den internationale tidszone, som (næsten)
+#        er det samme som Greenwich Mean Time. Tidsforskellen mellem dansk tid
 #        og UTC er plus én time ved normaltid og plus to timer ved sommertid.
 #        Bruges ofte som synonymer. Dette til trods for, at UTC og GMT kan afvige
 #        få tiendedele af et sekund fra hinanden på grund af Jordens uregelmæssige
@@ -6675,7 +6675,7 @@ msgstr "Opdagede SUN-disketiket med forkert tjeksum. Du er nok nødt til at angi
 msgid "Detected sun disklabel with wrong version [%d]."
 msgstr "Detekterede sun-disketiket med forkert version [%d]."
 
-# måske "sanity" i gåseøjne.  Det er nok en speciel variabel, der 
+# måske "sanity" i gåseøjne.  Det er nok en speciel variabel, der
 # (hvis den er forkert) angiver at der er noget 'sindssygt' galt
 #: libfdisk/src/sun.c:152
 #, c-format
@@ -19282,7 +19282,7 @@ msgid "duplicate use of an option"
 msgstr "dupliker brug af et tilvalg"
 
 # ifølge man-filen gør den "the screen" blank, det lader til at den
-# styrer strømsparetilstand så 'blank skærm' vil nok være rigtigt i 
+# styrer strømsparetilstand så 'blank skærm' vil nok være rigtigt i
 # den her og de omkringstående
 #: term-utils/setterm.c:743
 msgid "cannot force blank"

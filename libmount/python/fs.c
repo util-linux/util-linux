@@ -81,7 +81,7 @@ static void _dump_debug_string(const char *lead, const char *s, char quote)
 	if (quote != 0)
 		PySys_WriteStdout("%c", quote);
 
-	for (len = strlen(s); len > _PY_MAX_LEN; len -= _PY_MAX_LEN, s += _PY_MAX_LEN) 
+	for (len = strlen(s); len > _PY_MAX_LEN; len -= _PY_MAX_LEN, s += _PY_MAX_LEN)
 		PySys_WriteStdout(_PY_MAX_LEN_FMT, s);
 
 	if (len > 0)

@@ -17,7 +17,7 @@
  * application or share the same iterator, for this purpose libfdisk does not
  * provide reference counting for this object. It's recommended to initialize
  * the iterator by fdisk_new_iter() at begin of your function and then
- * fdisk_free_iter() before you return from the function. 
+ * fdisk_free_iter() before you return from the function.
  *
  * Don't forget to call fdisk_reset_iter() if you want to use the iterator more
  * than once.

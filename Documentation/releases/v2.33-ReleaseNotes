@@ -1,6 +1,6 @@
 Util-linux 2.33 Release Notes
 =============================
- 
+
 Release highlights
 ------------------
 
@@ -49,7 +49,7 @@ SELinux and AppArmor, clear the signal when the process' credentials change.
 The commands fdisk(8) and sfdisk(8) print disk model name to simplify device
 identification.
 
-The command "column --table-empty-lines" allows to use empty lines in formatted 
+The command "column --table-empty-lines" allows to use empty lines in formatted
 output.
 
 The command wipefs has been improved to postpone BLKRRPART (re-read partition
@@ -77,13 +77,13 @@ scripts.
 
 Stable maintenance releases between v2.32 and v2.33
 ---------------------------------------------------
- 
+
 util-linux 2.32.1 [Jul 16 2018]
- 
+
  * https://www.kernel.org/pub/linux/utils/util-linux/v2.32/v2.32.1-ReleaseNotes
    https://www.kernel.org/pub/linux/utils/util-linux/v2.32/v2.32.1-ChangeLog
- 
- 
+
+
 Changes between v2.32 and v2.33
 -------------------------------
 

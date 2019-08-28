@@ -17,19 +17,19 @@ libsmartcols:
    been originally developed for lsblk(8) and findmnt(8).
 
 cfdisk(8):
- - the code been completely rewritten, now it uses libfdisk and libsmartcols, 
+ - the code been completely rewritten, now it uses libfdisk and libsmartcols,
    supports GPT, SUN, SGI and BSD disk labels
  - the command is no more based on CHS addressing
 
 fdisk(8):
- - no more print sizes in 1024-byte blocks, but in real sectors or human 
+ - no more print sizes in 1024-byte blocks, but in real sectors or human
    readable sizes (MiB, TiB, etc.)
- - allows to modify GPT partition attributes 
+ - allows to modify GPT partition attributes
 
 lslogins(1):
  - this NEW COMMAND list information about users, groups and system accounts,
    provides  data from last, wtmp, btmp, hust status, password expiration
-   settings, SELinux context, nologin setting, etc. 
+   settings, SELinux context, nologin setting, etc.
 
 terminal-colors.d(5):
  - this new directory controls output colorization for various utilities
@@ -41,7 +41,7 @@ cal(1):
   - supports new option --week to show week numbers
 
 fallocate(1):
-  - supports new option --dig-holes to detect and dig holes, it makes the 
+  - supports new option --dig-holes to detect and dig holes, it makes the
     file sparse in-place, without using extra disk space.
 
 fstrim(1):
@@ -65,10 +65,10 @@ lsblk(8):
 
 kill(1) and setterm(1):
   - the commands have been refactored to be more robust
- 
+
 
 The build system has been improved to support to build only explicitly specified
-utils or libs (e.g. --disable-all-programs --enable-libblkid to build only 
+utils or libs (e.g. --disable-all-programs --enable-libblkid to build only
 libblkid).
 
 The project test suite has been improved to be more portable and robust, project

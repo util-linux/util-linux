@@ -31,7 +31,7 @@ rm -f $LIBMOUNT_MTAB
 #
 has_mtab=$( ts_has_mtab_support )
 if [ "$has_mtab" == "yes" ]; then
-	
+
 	ts_init_subtest "mtab-mount"
 	ts_run $TESTPROG --add /dev/sda1 /mnt/foo ext3 "rw,bbb,ccc,fff=FFF,ddd,noexec"
 	ts_run $TESTPROG --add /dev/sdb1 /mnt/bar ext3 "gg=G,ffff=f,ro,noatime"

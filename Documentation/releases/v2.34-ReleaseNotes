@@ -19,7 +19,7 @@ The new features based on this functionality are:
    http://karelzak.blogspot.com/2018/11/lsblk-merge.html
 
 The command umount(8) now supports user unmount for FUSE mounts. The requirement
-is FUSE specific user_id=<uid> in /proc/self/mountinfo for the filesystem. 
+is FUSE specific user_id=<uid> in /proc/self/mountinfo for the filesystem.
 
 The command mount(8) now allows to use "--all -o remount". In this case all
 filters (-t and -O) are applied to the table of already mounted filesystems.
@@ -52,8 +52,8 @@ tree-like output. This new feature is used by new lsblk --merge output.
 The systemd services for fstrim and uuidd now contains hardening settings to
 improve security and service isolation.
 
-The command fstrim now trims also root filesystem on --fstab and checks for 
-read-only filesystems on --all and --fstab. 
+The command fstrim now trims also root filesystem on --fstab and checks for
+read-only filesystems on --all and --fstab.
 
 The package build-system now accepts --enable-asan to compile commands and
 execute regression tests with addresses sanitizer.
