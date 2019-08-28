@@ -466,6 +466,7 @@ AC_CHECK_FUNCS([ \
 	err \
 	errx \
 	explicit_bzero \
+	fmemopen \
 	fsync \
 	utimensat \
 	getdomainname \

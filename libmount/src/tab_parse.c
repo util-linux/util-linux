@@ -698,15 +698,7 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 	return rc;
 }
 
-/**
- * mnt_table_parse_stream:
- * @tb: tab pointer
- * @f: file stream
- * @filename: filename used for debug and error messages
- *
- * Returns: 0 on success, negative number in case of error.
- */
-int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filename)
+static int __table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filename)
 {
 	int rc = -1;
 	int flags = 0;
@@ -781,6 +773,40 @@ err:
 }
 
 /**
+ * mnt_table_parse_stream:
+ * @tb: tab pointer
+ * @f: file stream
+ * @filename: filename used for debug and error messages
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filename)
+{
+	int fd, rc;
+	FILE *memf = NULL;
+	char *membuf = NULL;
+
+	/*
+	 * For /proc/#/{mountinfo,mount} we read all file to memory and use it
+	 * as memory stream. For more details see mnt_read_procfs_file().
+	 */
+	if ((fd = fileno(f)) >= 0
+	    && (tb->fmt == MNT_FMT_GUESS ||
+		tb->fmt == MNT_FMT_MOUNTINFO ||
+		tb->fmt == MNT_FMT_MTAB)
+	    && is_procfs_fd(fd)
+	    && (memf = mnt_get_procfs_memstream(fd, &membuf))) {
+
+		rc = __table_parse_stream(tb, memf, filename);
+		fclose(memf);
+		free(membuf);
+	} else
+		rc = __table_parse_stream(tb, f, filename);
+
+	return rc;
+}
+
+/**
  * mnt_table_parse_file:
  * @tb: tab pointer
  * @filename: file
@@ -795,18 +821,49 @@ err:
 int mnt_table_parse_file(struct libmnt_table *tb, const char *filename)
 {
 	FILE *f;
-	int rc;
+	int rc, fd = -1;
 
 	if (!filename || !tb)
 		return -EINVAL;
 
-	f = fopen(filename, "r" UL_CLOEXECSTR);
+	/*
+	 * Try to use read()+poll() to realiably read all
+	 * /proc/#/{mount,mountinfo} file to memory
+	 */
+	if (tb->fmt != MNT_FMT_SWAPS
+	    && strncmp(filename, "/proc/", 6) == 0) {
+
+		FILE *memf;
+		char *membuf = NULL;
+
+		fd = open(filename, O_RDONLY|O_CLOEXEC);
+		if (fd < 0) {
+			rc = -errno;
+			goto done;
+		}
+		memf = mnt_get_procfs_memstream(fd, &membuf);
+		if (memf) {
+			rc = __table_parse_stream(tb, memf, filename);
+
+			fclose(memf);
+			free(membuf);
+			close(fd);
+			goto done;
+		}
+		/* else fallback to fopen/fdopen() */
+	}
+
+	if (fd >= 0)
+		f = fdopen(fd, "r" UL_CLOEXECSTR);
+	else
+		f = fopen(filename, "r" UL_CLOEXECSTR);
+
 	if (f) {
-		rc = mnt_table_parse_stream(tb, f, filename);
+		rc = __table_parse_stream(tb, f, filename);
 		fclose(f);
 	} else
 		rc = -errno;
-
+done:
 	DBG(TAB, ul_debugobj(tb, "parsing done [filename=%s, rc=%d]", filename, rc));
 	return rc;
 }
@@ -863,7 +920,7 @@ static int __mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 
 		f = fopen_at(dd, d->d_name, O_RDONLY|O_CLOEXEC, "r" UL_CLOEXECSTR);
 		if (f) {
-			mnt_table_parse_stream(tb, f, d->d_name);
+			__table_parse_stream(tb, f, d->d_name);
 			fclose(f);
 		}
 	}
@@ -904,7 +961,7 @@ static int __mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 		f = fopen_at(dirfd(dir), d->d_name,
 				O_RDONLY|O_CLOEXEC, "r" UL_CLOEXECSTR);
 		if (f) {
-			mnt_table_parse_stream(tb, f, d->d_name);
+			__table_parse_stream(tb, f, d->d_name);
 			fclose(f);
 		}
 	}
