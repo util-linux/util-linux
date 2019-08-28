@@ -1,8 +1,8 @@
 Util-linux-ng 2.18 Release Notes
 ================================
 
-The util-linux-ng package does not contain rdev(8), ramsize(8), 
-vidmode(8) and rootflags(8) anymore. 
+The util-linux-ng package does not contain rdev(8), ramsize(8),
+vidmode(8) and rootflags(8) anymore.
 
 The fdisk(8) command does not use DOS-compatible mode and cylinders as display
 units by default. The old deprecated DOS behavior could be enabled by 'c' and
@@ -17,8 +17,8 @@ libmount:
     projects.
 
   - the library API is still officially unstable. The library provides
-    fstab, mtab and mountinfo parser, routines for work with parsed 
-    data and mount options, mtab locking, etc. The high-level API for 
+    fstab, mtab and mountinfo parser, routines for work with parsed
+    data and mount options, mtab locking, etc. The high-level API for
     mount(2) is planned for the next major release. For more details see:
     http://thread.gmane.org/gmane.linux.utilities.util-linux/3239
 
@@ -26,7 +26,7 @@ libmount:
     yet. This change is planned for util-linux-ng-2.19.
 
 findmnt(8):
-  - this NEW COMMAND is a command line interface to the libmount library 
+  - this NEW COMMAND is a command line interface to the libmount library
     for work with mountinfo, fstab and mtab files
 
 fsfreeze(8):
@@ -38,13 +38,13 @@ swaplabel(8):
 blkid(8):
   - supports new command line option "-i" to print I/O Limits
 
-  - supports new command line option "-n" to restrict probing functions to 
+  - supports new command line option "-n" to restrict probing functions to
     defined list of superblock types (names).
 
   - returns details from partition table (type, flags, uuid, ...)
 
 chrt(1):
-  - supports new command line option "-R/--reset-on-fork" to enable 
+  - supports new command line option "-R/--reset-on-fork" to enable
     SCHED_RESET_ON_FORK flag
 
 fdisk(8):
@@ -53,11 +53,11 @@ fdisk(8):
     (all these changes are already in the release 2.17.2)
 
 hwclock(8):
-  - supports new command line option "--predict" to predict what the RTC will 
+  - supports new command line option "--predict" to predict what the RTC will
     read at time given by the --date option based on the adjtime file.
 
 ldattach(8):
-  - supports new command line option "-i/--iflag" to sets the specified bits 
+  - supports new command line option "-i/--iflag" to sets the specified bits
     in the c_iflag word of the serial line.
 
 fallocate(1), losetup(8) and mount(8):

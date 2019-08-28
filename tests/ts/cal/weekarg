@@ -71,7 +71,7 @@ call_cal "Gregorian - Sunday-based, $PWEEK, 1 month" -s $WEEK $MYTIME
 call_cal "Julian    - Monday-based, $PWEEK, 1 month" -mj $WEEK $MYTIME
 call_cal "Julian    - Sunday-based, $PWEEK, 1 month" -sj $WEEK $MYTIME
 
-call_cal_color "Gregorian - Monday-based, $PWEEK, 3 month" -3m $WEEK $MYTIME 
+call_cal_color "Gregorian - Monday-based, $PWEEK, 3 month" -3m $WEEK $MYTIME
 call_cal_color "Julian    - Monday-based, $PWEEK, 3 month" -3mj $WEEK $MYTIME
 
 # tricky year, starts with a bit of 53 yet ends during 52

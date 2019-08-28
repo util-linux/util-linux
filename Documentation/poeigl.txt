@@ -16,10 +16,10 @@ Version 1.48 (6-Jun-97)
 	After idea by Andries Brouwer.
 
 Version 1.47 (2-Apr-97)
-	Got new version of hostid.c and hostid.1 from 
+	Got new version of hostid.c and hostid.1 from
 	Sander van Malssen <svm@kozmix.ow.nl>.
-	Removed premature endutent() call in login.c, simpleinit.c and 
-	agetty.c to be compatible with the changed semantics of gnu libc2. 
+	Removed premature endutent() call in login.c, simpleinit.c and
+	agetty.c to be compatible with the changed semantics of gnu libc2.
 	Fix by Jesse Thilo <Jesse.Thilo@pobox.com>.
 
 Version 1.46 (28-Jan-97)
@@ -38,7 +38,7 @@ Version 1.45a (16-Dec-96)
 	Some support for the RB-1 Cryptocard token for challenge/response
 	authentication. This needs a DES library, either Eric Young's
 	libdes, or the Koontz implementation, see cryptocard.c.
-	Initial support patch by Randolph Bentson, 
+	Initial support patch by Randolph Bentson,
 	<bentson@grieg.seaslug.org>
 	Changed getpass() to use fputs() instead of fprintf().
 
@@ -75,7 +75,7 @@ Version 1.40a (29-Dec-95):
 	<ear@usfirst.org>, but somewhat butchered by me.
 
 Version 1.39 (25-Oct-95):
-	Lots of testing and bugfixes in agetty. Now the modem init stuff 
+	Lots of testing and bugfixes in agetty. Now the modem init stuff
 	should finally work (for me). Also wrote modem.agetty as an example
 	on how to use agetty with a modem.
 	Agetty now also supports baud rates of 38400, 57600, 115200 and
@@ -85,7 +85,7 @@ Version 1.37 (15-Sep-95):
 	Added -I <initstring> and -w options to agetty.c for those that
 	use agetty with modems.
 
-Version 1.36 (25-Aug-95): 
+Version 1.36 (25-Aug-95):
 	Enhanced /etc/usertty features with group support. Moved this part
 	of login.c to checktty.c. One can now define classes of hosts and
 	ttys and do access checking based on unix-group membership. See
@@ -103,12 +103,12 @@ Version 1.36 (25-Aug-95):
 
 Version 1.35 (7-Aug-95):
 	login.c: Much improved features for the usertty file, allows
-	access control based on both hostnames/addresses and line. See the 
+	access control based on both hostnames/addresses and line. See the
 	about.usertty file and the man-page.
 
 	Fixed agetty so it doesn't fiddle with the ut_id field in the
 	utmp record, this should prevent growing utmps on systems with
-	more than 10 login lines. Fix suggested and checked by Alan Wendt 
+	more than 10 login lines. Fix suggested and checked by Alan Wendt
 	<alan@ezlink.com> in his agetty.1.9.1a.
 
 	Agetty now installs as agetty again, not as getty.
@@ -118,8 +118,8 @@ Version 1.35 (7-Aug-95):
 
 Version 1.33a (20-Jun-95):
 	rchatfie@cavern.nmsu.edu ("rc.") suggested that I should remove
-	the #ifndef linux around the special logging of dial-up 
-	logins. This is now done, so each login via a serial port 
+	the #ifndef linux around the special logging of dial-up
+	logins. This is now done, so each login via a serial port
 	generates a separate DIALUP syslog entry.
 
 Version 1.33 (5-Jun-95):
@@ -153,8 +153,8 @@ Version 1.32
 	should.
 
 Version 1.31b (2-Feb-95):
-	Daniel Quinlan <quinlan@yggdrasil.com> and Ross Biro 
-	<biro@yggdrasil.com> suggested a patch to login.c that allows for 
+	Daniel Quinlan <quinlan@yggdrasil.com> and Ross Biro
+	<biro@yggdrasil.com> suggested a patch to login.c that allows for
 	shell scripts in the shell field of /etc/passwd, so one can now
 	have (as a line in /etc/passwd):
 		bye::1000:1000:Outlogger:/bin:echo Bye
@@ -167,13 +167,13 @@ Version 1.31a (28-Oct-94):
 	the reboot.
 
 Version 1.30 (17-Sep-94):
-	tobias@server.et-inf.fho-emden.de (Peter Tobias) has made a more 
+	tobias@server.et-inf.fho-emden.de (Peter Tobias) has made a more
 	advanced hostname command that understands some options such as
 	-f for FQDN etc. I'll not duplicate his work. Use his hostname
 	package if you wish.
 
 	svm@kozmix.xs4all.nl (Sander van Malssen) provided more features
-	for the /etc/issue file in agetty. \U and \u now expand to the 
+	for the /etc/issue file in agetty. \U and \u now expand to the
 	number of current users.
 
 	It is now possible to state the value of TERM on the agetty command
@@ -210,7 +210,7 @@ Version 1.28a (16-May-94):
 Version 1.27 (10-May-94):
 	Changed login.c, so all bad login attempts are logged, and added
 	usertty security feature. See about.usertty for an explanation.
-	There's no longer a limit of 20 chars in the TERM environment 
+	There's no longer a limit of 20 chars in the TERM environment
 	variable. Suggested by Nicolai Langfeldt <janl@math.uio.no>
 
 	Added #ifdef HAVE_QUOTA around quota checks. Enable them if
@@ -221,7 +221,7 @@ Version 1.27 (10-May-94):
 	Now wtmp is locked and unlocked around writes to avoid mangling.
 	Due to Jaakko Hyv{tti <HYVATTI@cc.helsinki.fi>.
 
-	Wrt. agetty: A \o in /etc/issue now inserts the domainname, as 
+	Wrt. agetty: A \o in /etc/issue now inserts the domainname, as
 	set by domainname(1). Sander van Malssen provided this.
 	This is being used under Linux 1.1.9
 
@@ -229,7 +229,7 @@ Version 1.27 (10-May-94):
 	options. Added man-pages for wall, cage, who.
 
 Version 1.26 alpha (25-Apr-94):
-	Added patch from Bill Reynolds <bill@goshawk.lanl.gov> to 
+	Added patch from Bill Reynolds <bill@goshawk.lanl.gov> to
 	simpleinit, so it will drop into single user if /etc/rc
 	fails, eg. from fsck.
 
@@ -241,13 +241,13 @@ Version 1.25 (9-Feb-94):
 
 Version 1.24 (23-Jan-94): changes since 1.22
 	Christian von Roques <roques@juliet.ka.sub.org> provided a patch
-	that cleans up the handling of the -L option on agetty. 
+	that cleans up the handling of the -L option on agetty.
 	Rik Faith <faith@cs.unc.edu> enhanced several man-pages...
 
 Version 1.23 (11-Dec-93): changes since 1.21
 	Mitchum DSouza provided the hostid(1) code. It needs libc 4.4.4 or
 	later and a Linux 0.99.14 kernel or later. It can set and print
-	the world unique hostid of the machine. This may be used in 
+	the world unique hostid of the machine. This may be used in
 	connection with commercial software licenses. God forbid!
 	I added the -v option, and munged the code a bit, so don't blame
 	Mitch if you don't like it.
@@ -268,7 +268,7 @@ Version 1.21 (30-Oct-93): changes since 1.20
 	/etc/rc is run, to put a correct timestamp on it.
 	Daniel Thumim <dthumim@mit.edu> suggested this fix.
 
-	The source and Makefile is prepared for optional installation of 
+	The source and Makefile is prepared for optional installation of
 	binaries in /sbin instead of /etc, and logfiles in /usr/adm instead
 	of /etc. See and change the Makefile to suit your preferences.
 	Rik Faith and Stephen Tweedie inspired this change.
@@ -366,8 +366,8 @@ Version 1.8a (13-Dec-92): changes since 1.7:
 Version 1.7: 26-Oct-92 changes since 1.6:
 	This is for Linux 0.97PL4 or later.
 
-	Thanks to Werner Almesberger, init now has support for a 
-	singleuser mode. 
+	Thanks to Werner Almesberger, init now has support for a
+	singleuser mode.
 
 	Login now supports the -h <hostname> option, used in connection
 	with TCP/IP. (rlogin/telnet)
@@ -380,7 +380,7 @@ Version 1.7: 26-Oct-92 changes since 1.6:
 
 Version 1.6 (29-Aug-92): changes since 1.5:
 	This is for Linux 0.97P1+ or later.
-	
+
 	Login now uses the newly implemented vhangup() sys-call, to prevent
 	snooping on the tty.
 	An alternative getpass() function is now provided with login, because
@@ -400,7 +400,7 @@ Version 1.4 (4-Jul-92): changes since 1.3:
 	Init now handles the SIGINT signal. When init gets a SIGINT it will
 	call /usr/bin/reboot and thereby gently reboot the machine. This
 	makes sense because after Linux 0.96B-PL1 the key-combination
-	Ctrl-Alt-Del may send a SIGINT to init instead of booting the 
+	Ctrl-Alt-Del may send a SIGINT to init instead of booting the
 	machine the hard way without syncing or anything.
 
 	You may want to get the admutils-1.1 package which includes a program
@@ -411,7 +411,7 @@ Version 1.3 (14-Jun-92): changes since 1.2:
 
 	The ioctl(TIOCSWINSZ) has been removed from login.c because it now
 	works :-).
-	
+
 	login.c now supports a lastlog database.
 
 	Several programs and pieces of source that were included in the 1.2
@@ -439,7 +439,7 @@ Version 1.2 (28-Feb-92): changes since 1.1:
 	This requires a different patch to the kernel than that distributed
 	with version 1.1
 
-	Login no more sends superfluous chars from a password to the 
+	Login no more sends superfluous chars from a password to the
 	shell. It also properly prints a NL after the password.
 
 	Agetty didn't set the erase character properly, it does now.
@@ -459,7 +459,7 @@ Version 1.1 (released 19-Feb-92): Changes since 1.0:
 	I removed the qpl-init stuff. If people want to use it, they should
 	get it from the source. I don't want to hack on it anymore.
 
-	A couple of people reported problems with getty having problems 
+	A couple of people reported problems with getty having problems
 	with serial terminals. That was correct. I borrowed a null-modem
 	from Tommy Thorn, and now the problems should be fixed. It seems
 	that there is kept a lot of garbage in the serial buffers, flush
@@ -478,7 +478,7 @@ agetty.c	The getty program. From comp.sources.misc, by W.Z. Venema.
 		Hacked a bit by me.
 
 write.c		A write(1) command, used to pass messages between users
-		at different terminals. This code doubles as code for 
+		at different terminals. This code doubles as code for
 		a wall(1) command. Make a symlink: /usr/bin/wall ->
 		/usr/bin/write for this.
 
@@ -495,7 +495,7 @@ login. Login doesn't print /etc/motd, and doesn't check for mail if
 
 If /etc/nologin is present then login will print its contents and disallow
 any logins except root.
-It might be a good idea to have a "rm -f /etc/nologin" line in one's 
+It might be a good idea to have a "rm -f /etc/nologin" line in one's
 /etc/rc file.
 
 If /etc/securetty is present it defines which tty's that root can login on.

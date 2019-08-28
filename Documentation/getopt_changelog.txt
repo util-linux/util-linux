@@ -32,7 +32,7 @@
 19980611: Fixed --version bug (was not available, though documented!)
 19980611: Removed compiler warnings.
 19980603: Bumped up version number to 1.0.1
-19980603: Fixed sizeof() bug (should be strlen) in getopt.c, thanks to 
+19980603: Fixed sizeof() bug (should be strlen) in getopt.c, thanks to
           Bob Proulx (rwp@hprwp.fc.hp.com).
 19980505: Changed date field in LSM to proper syntax
 19980505: Released version 1.0

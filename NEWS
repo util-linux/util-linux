@@ -1369,7 +1369,7 @@ HIGHLIGHTS for version 2.8:
 1) New programs:
    - getopt(1) by Frodo Looijaard replaces the older bsd based version.
      Keywords: Backward compatible, supports --long options.
-1) Removed programs: 
+1) Removed programs:
    - chroot: is no longer in util-linux.  Get it free with GNU sh-utils
    - hostid: No-one could figure out the right way for this program to
 		work.  Another hostid program is included in poeigl
@@ -1426,11 +1426,11 @@ See notes for 2.6 for installation instructions.
 
 This is a incremental release containing some fixes.  A new release
 will be made later fixing the outstanding bugs.
-- Things compiles and works better with recent releases of kernel, 
+- Things compiles and works better with recent releases of kernel,
   ncurses, and so forth: fdisk, more
 - Some fixes to make things compile out of the box on alphas.
 - There has been reported a problem with login and /etc/usertty.  It
-  should be fixed.  If you still have problems get a recent MAKEDEV and 
+  should be fixed.  If you still have problems get a recent MAKEDEV and
   use it to make new tty devices.  They were renumbered sometime during
   the 1.3 phase of the kernel.
 - ipcs now displays the key of the structures.
@@ -1456,7 +1456,7 @@ HIGHLIGHTS for version 2.6:
 	tsx-11.mit.edu:/pub/sources/sbin
 	sunsite.unc.edu:/pub/Linux/system/Daemons
 
-2) Bugfixes, additions: 
+2) Bugfixes, additions:
    - SECURITY: All known holes in mount have been fixed.  UPGRADE NOW
      if you haven't already!
    - Portability enhancements to the minix filesystem utils (m68k and
@@ -1464,7 +1464,7 @@ HIGHLIGHTS for version 2.6:
    - passwd/chsh/chfn will not mess up the passwd file on a NIS machine
    - others too numerous to enumerate.
 
-3) New programs: 
+3) New programs:
    - vigr (it's like vipw)
    - Introducing hwclock.  A complete rewrite of the latest available
      clock source.  It supports intel/CMOS, /dev/rtc and linux/m68k
@@ -1514,7 +1514,7 @@ HIGHLIGHTS for version 2.5:
    locking, and several security holes have been patched.  Further, chsh
    and chfn can be configured at compile time to require a password before
    updates and chsh can be configured to only use shells from /etc/shells.
-        
+
 
 HIGHLIGHTS for version 2.4 (2.3 was never released):
 0) Michael K. Johnson <johnsonm@nigel.vnet.net> is the interim maintainer
@@ -1662,7 +1662,7 @@ login-utils:
     simpleinit: Peter Orbaek
                 ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.37.tar.gz
     vipw: 5.16 (Berkeley) 3/3/91, with modifications by Mike Grupenhoff
-          <kashmir@umiacs.UMD.EDU> 
+          <kashmir@umiacs.UMD.EDU>
     wall: 8.2 (Berkeley) 11/16/93 (With changes so that damaging escape
           sequences cannot be sent.)
           ftp.cdrom.com:/pub/bsd-sources/4.4BSD-Lite/usr/src/usr.bin
@@ -1731,7 +1731,7 @@ mount:
     supports NFS stuff.  I have modified the man pages.  I have also added
     a small patch from Hamish Glen Coleman (t933093@minyos.xx.rmit.OZ.AU)
     which restores the -o semantics.
-    
+
     Updated with Rick Sladkey's mount-0.99.14.tar.gz package, and with
     extra patches from Rick.  Adam J. Richter allowed -t option to be
     optional. Patrick J. Volkerding (volkerdi@mhd1.moorhead.msus.edu) and

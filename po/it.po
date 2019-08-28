@@ -882,7 +882,7 @@ msgstr "Impossibile determinare il tipo di formato attuale"
 msgid "%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"
 msgstr "faccia %s, %d tracce, %d sec/traccia. Capacità totale %d kB.\n"
 
-# Questo messaggio e quello successivo concordano con "faccia" del messaggio 
+# Questo messaggio e quello successivo concordano con "faccia" del messaggio
 # sopra.
 #: disk-utils/fdformat.c:233
 msgid "Double"

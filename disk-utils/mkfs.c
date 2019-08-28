@@ -10,7 +10,7 @@
  *	Incorporated fix by Jonathan Kamens <jik@annex-1-slip-jik.cam.ov.com>
  * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
- *	
+ *
  */
 
 /*

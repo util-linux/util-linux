@@ -34,7 +34,7 @@
  *
  * 30.10.94  -  Added support for v2 filesystem
  *		(Andreas Schwab, schwab@issan.informatik.uni-dortmund.de)
- * 
+ *
  * 09.11.94  -	Added test to prevent overwrite of mounted fs adapted
  *		from Theodore Ts'o's (tytso@athena.mit.edu) mke2fs
  *		program.  (Daniel Quinlan, quinlan@yggdrasil.com)
@@ -577,7 +577,7 @@ static void setup_tables(const struct fs_control *ctl) {
  */
 static size_t do_check(const struct fs_control *ctl, char * buffer, int try, unsigned int current_block) {
 	ssize_t got;
-	
+
 	/* Seek to the correct loc. */
 	if (lseek(ctl->device_fd, current_block * MINIX_BLOCK_SIZE, SEEK_SET) !=
 		       current_block * MINIX_BLOCK_SIZE )
@@ -586,7 +586,7 @@ static size_t do_check(const struct fs_control *ctl, char * buffer, int try, uns
 
 	/* Try the read */
 	got = read(ctl->device_fd, buffer, try * MINIX_BLOCK_SIZE);
-	if (got < 0) got = 0;	
+	if (got < 0) got = 0;
 	if (got & (MINIX_BLOCK_SIZE - 1 )) {
 		printf(_("Weird values in do_check: probably bugs\n"));
 	}

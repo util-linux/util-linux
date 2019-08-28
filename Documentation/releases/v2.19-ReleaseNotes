@@ -37,9 +37,9 @@ losetup(8), mount(8):
     (requires kernel >= 2.6.37)
 
 fsck(8):
-  - supports new command line option "-l" to lock whole-disk device by 
+  - supports new command line option "-l" to lock whole-disk device by
     exclusive flock(2). This option is recommended when more fsck(8) instances
-    are executed in the same time. 
+    are executed in the same time.
 
 rtcwake(8):
    - supports new mode "show" to print the current RTC alarm time
@@ -53,7 +53,7 @@ swapon(8):
 
 blkid(8):
    - low-level probing (-p) returns "8" exit code for ambivalent probing results
-      
+
 libmount:
    - include file has been renamed from mount/mount.h to libmount/libmount.h
 

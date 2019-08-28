@@ -3,7 +3,7 @@
 # header is not removed and modified versions are marked
 # as such.
 #
-# Czech translation of util-linux. 
+# Czech translation of util-linux.
 # This file is distributed under the same license as the util-linux package.
 #
 # Jiří Pavlovský <pavlovsk@ff.cuni.cz>, 1999 - 2001.
@@ -27025,7 +27025,7 @@ msgstr "Vstupní řádek je příliš dlouhý."
 #~ msgid "current"
 #~ msgstr "současná"
 
-# pid %d's _new_ scheduling policy 
+# pid %d's _new_ scheduling policy
 #~ msgid "new"
 #~ msgstr "nová"
 

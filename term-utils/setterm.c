@@ -3,7 +3,7 @@
  * Copyright (C) 1990 Gordon Irlam (gordoni@cs.ua.oz.au).  Conditions of use,
  * modification, and redistribution are contained in the file COPYRIGHT that
  * forms part of this distribution.
- * 
+ *
  * Adaption to Linux by Peter MacDonald.
  *
  * Enhancements by Mika Liljeberg (liljeber@cs.Helsinki.FI)
@@ -885,7 +885,7 @@ static int select_wait(void)
 
 static int resizetty(void)
 {
-	/* 
+	/*
 	 * \e7        Save current state (cursor coordinates, attributes,
 	 *                character sets pointed at by G0, G1).
 	 * \e[r       Set scrolling region; parameters are top and bottom row.

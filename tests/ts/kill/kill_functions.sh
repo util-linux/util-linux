@@ -26,4 +26,4 @@ function check_test_sigreceive {
 		sleep $i
 	done
 	return $rc
-}	
+}

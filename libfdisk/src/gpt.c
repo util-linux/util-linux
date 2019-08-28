@@ -610,7 +610,7 @@ static void gpt_mknew_header_common(struct fdisk_context *cxt,
 		header->alternative_lba = cpu_to_le64(cxt->total_sectors - 1ULL);
 		header->partition_entry_lba = cpu_to_le64(2ULL);
 	} else { /* backup */
-		uint64_t esz = (uint64_t) le32_to_cpu(header->npartition_entries) 
+		uint64_t esz = (uint64_t) le32_to_cpu(header->npartition_entries)
 							* sizeof(struct gpt_entry);
 		uint64_t esects = (esz + cxt->sector_size - 1) / cxt->sector_size;
 
@@ -904,7 +904,7 @@ static int valid_pmbr(struct fdisk_context *cxt)
 					   "will be corrected by write."),
 					sz_lba, cxt->total_sectors - 1ULL);
 
-			/* Note that gpt_write_pmbr() overwrites PMBR, but we want to keep it valid already 
+			/* Note that gpt_write_pmbr() overwrites PMBR, but we want to keep it valid already
 			 * in memory too to disable warnings when valid_pmbr() called next time */
 			pmbr->partition_record[part].size_in_lba  =
 				cpu_to_le32((uint32_t) min( cxt->total_sectors - 1ULL, 0xFFFFFFFFULL) );

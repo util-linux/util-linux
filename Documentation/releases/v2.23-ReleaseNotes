@@ -20,7 +20,7 @@ Release highlights
 ------------------
 
 nsenter(1):
-  - this NEW COMMAND provides command line interface to setns() Linux syscall 
+  - this NEW COMMAND provides command line interface to setns() Linux syscall
     and allows to run program with namespaces of other processes
 
 unshare(1):
@@ -30,21 +30,21 @@ fdisk(8):
   - provides experimental support for GUID Partition Table (GPT), the
     implementation is still not complete and some (unimportant) features are missing.
 
-  - ~50% of fdisk code has been refactored, this task is going to be complete 
+  - ~50% of fdisk code has been refactored, this task is going to be complete
     in the next release. The goal is to have libfdisk shared between all fdisks.
 
 partx(8):
   - supports new "update" command (implemented by BLKPG_RESIZE_PARTITION ioctl)
 
 mount(8):
-  - supports new userspace mount option x-mount.mkdir[=<mode>] to create 
+  - supports new userspace mount option x-mount.mkdir[=<mode>] to create
     mountpoints on demand
 
   - the support for propagation flags has been improved, now the flags could be
     specified in /etc/fstab and used together with regular mount options. It's
-    also possible to specify more propagation flags together. This EXPERIMENTAL 
+    also possible to specify more propagation flags together. This EXPERIMENTAL
     feature is implemented by additional mount(2) syscalls, because Linux does
-    not allow to use propagation flags with another options or more flags 
+    not allow to use propagation flags with another options or more flags
     together.
 
 umount(8):
@@ -91,14 +91,14 @@ swapon(8) and losetup(8):
   - the commands prints basic overview by default if no option specified
 
 column(1):
-  - supports new command line option --output-separator to specify table 
+  - supports new command line option --output-separator to specify table
     output delimiter
 
 rename(1):
   - supports new command line option --symlink to rename symlink target
 
 hwclock(8):
-  - supports new command line option --compare to periodically compare 
+  - supports new command line option --compare to periodically compare
     the Hardware Clock to the System Time (based on adjtimex -c)
 
 ipcs(1):

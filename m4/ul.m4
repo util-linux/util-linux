@@ -291,7 +291,7 @@ AC_DEFUN([UL_REQUIRES_HAVE], [
 dnl UL_REQUIRES_COMPILE(NAME, PROGRAM_PROLOGUE, PROGRAM_BODY, DESC, [VARSUFFIX=$1])
 dnl
 dnl Modifies $build_<name> variable according to $enable_<name> and
-dnl ability compile AC_LANG_PROGRAM(<program_prologue>, <program_body>).  
+dnl ability compile AC_LANG_PROGRAM(<program_prologue>, <program_body>).
 dnl
 dnl The <desc> is description used for warning/error dnl message (e.g. "foo support").
 dnl

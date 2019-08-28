@@ -10,7 +10,7 @@ agetty(8):
   - mingetty features have been merged to agetty
 
 chrt(1), taskset(1):
-  - supports new command line option "--all-tasks" to set or retrieve the 
+  - supports new command line option "--all-tasks" to set or retrieve the
     scheduling attributes of all the tasks (threads) for a given PID
 
 dmesg(1):
@@ -22,7 +22,7 @@ fdisk(8):
   - improved dialogs to be more user-friendly
 
 findmnt(8), partx(8), lsblk(8)
-  - support new command line option "--pairs" to enable key="value" 
+  - support new command line option "--pairs" to enable key="value"
     output format
 
 findmnt(8):
@@ -41,7 +41,7 @@ libmount:
   - the API officially stable
 
 lsblk(8):
-  - supports new columns: 
+  - supports new columns:
       TYPE      - device type
       RQ-SIZE   - queue request size
       STATE     - device state (e.g. running, suspended)
@@ -69,7 +69,7 @@ simpleinit:
   - this set of deprecated utils has been REMOVED
 
 wall(1):
-  - support new command line option "--timeout" to specify write timeout to 
+  - support new command line option "--timeout" to specify write timeout to
     terminals in seconds.
 
 It's not supported to link with external (e.g. from e2fsprogs) libblkis and

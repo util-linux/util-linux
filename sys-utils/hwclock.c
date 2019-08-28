@@ -503,7 +503,7 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 	 * in the future) to both the time for which we are waiting and the
 	 * time that we will apply to the Hardware Clock, and start waiting
 	 * again.
-	 * 
+	 *
 	 * For example, the caller requests that we set the Hardware Clock to
 	 * 1:02:03, with reference time (current system time) = 6:07:08.250.
 	 * We want the Hardware Clock to update to 1:02:04 at 6:07:09.250 on

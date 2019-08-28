@@ -79,15 +79,15 @@ compatibility -l is now aliased to --localtime.
 Security issues
 ---------------
 
-CVE-2016-2779 
+CVE-2016-2779
 
  The new experimental "su --pty" feature has been implemented to fix this issue.
  The feature is not enabled by default and the new command line option --pty is
  necessary.
 
  The classic way is to use setsid() to disable the ioctl TIOCSTI. Unfortunately,
- setsid() has well-defined use cases in su(1) and runuser(1) and any changes 
- would introduce regressions. The setsid() also does not fix core of the problem 
+ setsid() has well-defined use cases in su(1) and runuser(1) and any changes
+ would introduce regressions. The setsid() also does not fix core of the problem
  that is terminal file descriptors shared between privileged and unprivileged
  sessions.
 

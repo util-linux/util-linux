@@ -45,7 +45,7 @@ ts_finalize_subtest
 
 
 ts_init_subtest "activate"
-$TS_CMD_SFDISK --activate ${TS_DEVICE} 1 >> $TS_OUTPUT 2>> $TS_ERRLOG 
+$TS_CMD_SFDISK --activate ${TS_DEVICE} 1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 $TS_CMD_SFDISK --unit S --list ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle

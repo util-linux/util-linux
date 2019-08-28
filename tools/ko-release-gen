@@ -70,7 +70,7 @@ add_file() {
 add_html_dir() {
 	local src="$1"		# source dir
 	local tgt="$2"		# target dir
-	
+
 	for fl in $(ls $src/*.html $src/*.css $src/*.png); do
 		add_file $fl $tgt
 	done

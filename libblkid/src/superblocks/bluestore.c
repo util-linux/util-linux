@@ -6,7 +6,7 @@
  *
  *
  * Ceph BlueStore is one of the supported storage
- * methods for Object Storage Devices (OSDs).  
+ * methods for Object Storage Devices (OSDs).
  * This is used to detect the backing block devices
  * used for these types of OSDs in a Ceph Cluster.
  *

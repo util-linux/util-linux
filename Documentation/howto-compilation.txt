@@ -43,7 +43,7 @@ Compile certain portion
 
         It's also possible to disable all the programs and enable only wanted.
         For example:
-	
+
 	./configure --disable-all-programs --enable-fallocate
 
 	Note that the configure script tracks dependencies between libs and

@@ -6,13 +6,13 @@ Release highlights
 ------------------
 
 mkswap(8):
-  - mkswap like many others mkfs-like utils ERASES THE FIRST BLOCKS on 
-    the device to remove old on-disk filesystems. mkswap refuses to 
+  - mkswap like many others mkfs-like utils ERASES THE FIRST BLOCKS on
+    the device to remove old on-disk filesystems. mkswap refuses to
     erase the first block on a device with a disk label (SUN, BSD, ...)
     or on whole disk (e.g. /dev/sda).
 
   - DOES NOT SUPPORT v0 SWAP SPACE any more. The kernel has not
-    supported v0 swap space format since 2.5.22. The new version v1 is 
+    supported v0 swap space format since 2.5.22. The new version v1 is
     supported since 2.1.117.
 
 swapon(8):
@@ -30,25 +30,25 @@ cal(1):
   - determines the first day of week from the locale.
 
 libblkid, blkid(8) and findfs(8):
-  The libblkid library has been moved from e2fsprogs to util-linux-ng. The 
+  The libblkid library has been moved from e2fsprogs to util-linux-ng. The
   library has been extended and now includes:
-  
+
     - low-level probing API that is useful for example for udev rules
       (cmdline: blkid -p -o udev <device>)
 
     - very high-level API that provides portable interface for LABELs and
       UUIDs evaluation on 2.4, 2.6 and udev-based system. It's recommended
-      to use "blkid -L|-U" in your scripts rather than directly read 
+      to use "blkid -L|-U" in your scripts rather than directly read
       /dev/disk/by-* symlinks.
 
     - the old ABI and API is backwardly compatible with the current version
       from e2fsprogs.
 
-  All utils (mount, swapon, fsck, ...) in the package is possible to link 
-  against this new library, or the old version from e2fsprogs, or 
+  All utils (mount, swapon, fsck, ...) in the package is possible to link
+  against this new library, or the old version from e2fsprogs, or
   libvolume_id from udev package.
 
-  The default is still libblkid from e2fsprogs. The new library could be 
+  The default is still libblkid from e2fsprogs. The new library could be
   enabled by "--with-fsprobe=builtin" configure option.
 
   The libvolume_id from udev and vol_id command is deprecated now.
@@ -64,11 +64,11 @@ flock(1):
   - allows lock directory
 
 fsck.cramfs:
-  - automatically detects the image endianness, and can work on images of 
+  - automatically detects the image endianness, and can work on images of
     either endianness.
 
 mkfs.cramfs:
-  - now accepts a new optional parameter (-N) that allows creating 
+  - now accepts a new optional parameter (-N) that allows creating
     the cramfs image in either endianness.
 
 renice(1):
@@ -77,14 +77,14 @@ renice(1):
 hwclock(8)
   - supports new command line option "--systz" to reset the System Time
     based on the current timezone. Since the system clock time is already
-    set from the hardware clock by the kernel (when compiled with 
+    set from the hardware clock by the kernel (when compiled with
     CONFIG_RTC_HCTOSYS), there's no particular need to read the hardware
     clock again.
 
 ionice(1):
   - supports new command line option "-t" option to ignore failure to set
     requested priority.  This might be of use in case something (selinux,
-    old kernel, etc.) does not allow the requested scheduling priority 
+    old kernel, etc.) does not allow the requested scheduling priority
     to be set.
 
   - the command line option "-p" handles multiple PIDs now.
@@ -97,8 +97,8 @@ ipcmk(1):
 
 lscpu(1):
   - this NEW COMMAND gathers CPU architecture information like number
-    of CPUs, threads, cores, sock, NUMA nodes, information about CPU 
-    caches, information about hypervisor and virtualization support, 
+    of CPUs, threads, cores, sock, NUMA nodes, information about CPU
+    caches, information about hypervisor and virtualization support,
     ..etc. and prints it in human-readable or parse-able format.
 
 namei(1):

@@ -42,7 +42,7 @@ the &D2 and &C1 commands may not be entirely standard.
 
 Exit kermit/minicom.
 
-Put the command 
+Put the command
 
 	/sbin/agetty -w 2400 ttyS1
 
@@ -61,11 +61,11 @@ for the same setup as above, use the following agetty command in your
 The final \015 is an octal coding of the carriage return character
 ending the command string.
 
-If you're using simpleinit (part of this package) instead of the SYSV 
+If you're using simpleinit (part of this package) instead of the SYSV
 compatible init (you're most likely using the SYSV one!) then you must
 remove the single quotes from the command line above.
 
-Note that the &W0 command was not used here since the modem will be 
+Note that the &W0 command was not used here since the modem will be
 initialized each time agetty starts.
 
 With a V.34 (28.8 kbps) modem try starting with a command like:
