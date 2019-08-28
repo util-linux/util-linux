@@ -222,7 +222,7 @@ static const struct menu menu_dos = {
 		MENU_XENT('b', N_("move beginning of data in a partition")),
 		MENU_XENT('i', N_("change the disk identifier")),
 
-		MENU_BENT_NEST('M', N_("return from protective/hybrid MBR to GPT"),
+		MENU_BENT_NEST('r', N_("return from protective/hybrid MBR to GPT"),
 					FDISK_DISKLABEL_DOS, FDISK_DISKLABEL_GPT),
 		{ 0, NULL }
 	}
@@ -862,7 +862,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 	case 'i':
 		rc = fdisk_set_disklabel_id(cxt);
 		break;
-	case 'M':
+	case 'r':
 		/* return from nested MBR to GPT */
 		if (fdisk_get_parent(cxt)) {
 			*cxt0 = fdisk_get_parent(cxt);
