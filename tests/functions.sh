@@ -425,9 +425,7 @@ function ts_run {
 	while true; do
 		case "$1" in
 			--unbuffered)
-				if type unbuffer >/dev/null 2>&1; then
-					UNBUFFERED=1
-				fi
+				UNBUFFERED=1
 				shift;;
 			--)
 				shift
@@ -437,34 +435,35 @@ function ts_run {
 		esac
 	done
 
+	declare -a args
+
 	#
 	# ASAN mode
 	#
 	if [ "$TS_ENABLE_ASAN" == "yes" ]; then
-		if [ -n "$UNBUFFERED" ]; then
-			ASAN_OPTIONS='detect_leaks=1' unbuffer "$@"
-		else
-			ASAN_OPTIONS='detect_leaks=1' "$@"
+		args+=(env ASAN_OPTIONS=detect_leaks=1)
+	fi
+
+	#
+	# Disable buffering of stdout
+	#
+	if [ -n "$UNBUFFERED" ]; then
+		if type unbuffer >/dev/null 2>&1; then
+			args+=(unbuffer)
+		elif type stdbuf >/dev/null 2>&1 && [ "$TS_ENABLE_ASAN" != "yes" ]; then
+			args+=(stdbuf --output=0)
 		fi
+	fi
 
 	#
 	# valgrind mode
 	#
-	elif [ -n "$TS_VALGRIND_CMD" ]; then
-                libtool --mode=execute \
-                $TS_VALGRIND_CMD --tool=memcheck --leak-check=full \
-                                 --leak-resolution=high --num-callers=20 \
-                                 --log-file="$TS_VGDUMP" "$@"
-	#
-	# default mode
-	#
-	else
-		if [ -n "$UNBUFFERED" ]; then
-			unbuffer "$@"
-		else
-			"$@"
-		fi
+	if [ -n "$TS_VALGRIND_CMD" ]; then
+		args+=(libtool --mode=execute "$TS_VALGRIND_CMD" --tool=memcheck --leak-check=full)
+		args+=(--leak-resolution=high --num-callers=20 --log-file="$TS_VGDUMP")
 	fi
+
+	"${args[@]}" "$@"
 }
 
 function ts_gen_diff {
