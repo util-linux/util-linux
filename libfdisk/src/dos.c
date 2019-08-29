@@ -1093,18 +1093,6 @@ static int get_disk_ranges(struct fdisk_context *cxt, int logical,
 	return 0;
 }
 
-static int find_last_free_sector(struct fdisk_context *cxt, int logical, fdisk_sector_t *result)
-{
-	fdisk_sector_t first, last;
-	int rc;
-
-	rc = get_disk_ranges(cxt, logical, &first, &last);
-	if (rc)
-		return rc;
-
-	return find_last_free_sector_in_range(cxt, logical, first, last, result);
-}
-
 static int find_first_free_sector(struct fdisk_context *cxt,
 				int logical,
 				fdisk_sector_t start,
@@ -1126,10 +1114,9 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	int sys, read = 0, rc, isrel = 0, is_logical;
 	struct fdisk_dos_label *l = self_label(cxt);
 	struct dos_partition *p = self_partition(cxt, n);
-	struct pte *ext_pe = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL;
 	struct fdisk_ask *ask = NULL;
 
-	fdisk_sector_t start, stop = 0, limit, temp;
+	fdisk_sector_t start, stop, limit, temp;
 
 	DBG(LABEL, ul_debug("DOS: adding partition %zu", n));
 
@@ -1143,32 +1130,28 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		return -EINVAL;
 	}
 
-	rc = find_last_free_sector(cxt, is_logical, &limit);
+	rc = get_disk_ranges(cxt, is_logical, &start, &stop);
+	if (rc)
+		return rc;
+
+	if (!is_logical && cxt->parent && fdisk_is_label(cxt->parent, GPT))
+		start = 1;		/* Bad boy modifies hybrid MBR */
+
+	rc = find_last_free_sector_in_range(cxt, is_logical, start, stop, &limit);
 	if (rc == -ENOSPC)
 		fdisk_warnx(cxt, _("No free sectors available."));
 	if (rc)
 		return rc;
 
-	if (!is_logical) {
-		if (cxt->parent && fdisk_is_label(cxt->parent, GPT))
-			start = 1;		/* Bad boy modifies hybrid MBR */
-		else {
-			if (cxt->script && pa && fdisk_partition_has_start(pa)
-			    && pa->start < cxt->first_lba
-			    && pa->start >= 1)
-				fdisk_set_first_lba(cxt, 1);
+	if ((is_logical || !cxt->parent || !fdisk_is_label(cxt->parent, GPT))
+	    && cxt->script && pa && fdisk_partition_has_start(pa)
+	    && pa->start >= (is_logical ? l->ext_offset : 1)
+	    && pa->start < start) {
+		fdisk_set_first_lba(cxt, 1);
 
-			start = cxt->first_lba;
-		}
-	} else {
-		assert(ext_pe);
-
-		if (cxt->script && pa && fdisk_partition_has_start(pa)
-		    && pa->start >= l->ext_offset
-		    && pa->start < l->ext_offset + cxt->first_lba)
-			fdisk_set_first_lba(cxt, 1);
-
-		start = l->ext_offset + cxt->first_lba;
+		rc = get_disk_ranges(cxt, is_logical, &start, &stop);
+		if (rc) /* won't happen, but checking to be proper */
+			return rc;
 	}
 
 	/*
@@ -1637,7 +1620,8 @@ static int dos_add_partition(struct fdisk_context *cxt,
 			     struct fdisk_partition *pa,
 			     size_t *partno)
 {
-	size_t i, free_primary = 0, free_sectors = 0;
+	size_t i;
+	uint8_t free_primary = 0, free_sectors = 0;
 	fdisk_sector_t last = 0, grain;
 	int rc = 0;
 	struct fdisk_dos_label *l;
@@ -1729,6 +1713,12 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	grain = cxt->grain > cxt->sector_size ? cxt->grain / cxt->sector_size : 1;
 	last = cxt->first_lba;
 
+	if (cxt->parent && fdisk_is_label(cxt->parent, GPT)) {
+		/* modifying a hybrid MBR, which throws out the rules */
+		grain = 1;
+		last = 1;
+	}
+
 	for (i = 0; i < 4; i++) {
 		struct dos_partition *p = self_partition(cxt, i);
 
@@ -1805,7 +1795,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		fdisk_ask_menu_set_default(ask, free_primary == 1
 						&& !l->ext_offset ? 'e' : 'p');
 		snprintf(hint, sizeof(hint),
-				_("%zu primary, %d extended, %zu free"),
+				_("%u primary, %d extended, %u free"),
 				4 - (l->ext_offset ? 1 : 0) - free_primary,
 				l->ext_offset ? 1 : 0,
 				free_primary);
