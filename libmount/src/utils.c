@@ -1162,22 +1162,22 @@ done:
 static int read_procfs_file(int fd, char **buf, size_t *bufsiz)
 {
 	size_t bufmax = 0;
-	int rc = 0, tries = 0;
-	char *bufptr;
+	int rc = 0, tries = 0, ninters = 0;
+	char *bufptr = NULL;;
 
 	assert(buf);
 	assert(bufsiz);
 
 	*bufsiz = 0;
+	*buf = NULL;
 
 	do {
 		ssize_t ret;
 
-		if (bufmax == *bufsiz) {
+		if (!bufptr || bufmax == *bufsiz) {
 			char *tmp;
 
 			bufmax = bufmax ? bufmax * 2 : (16 * 1024);
-
 			tmp = realloc(*buf, bufmax);
 			if (!tmp)
 				break;
@@ -1186,13 +1186,12 @@ static int read_procfs_file(int fd, char **buf, size_t *bufsiz)
 		}
 
 		errno = 0;
-		ret = read(fd, bufptr, bufmax);
+		ret = read(fd, bufptr, bufmax - *bufsiz);
 
 		if (ret < 0) {
 			/* error */
-			if (errno == EAGAIN || errno == EINTR) {
-				xusleep(250000);
-				tries++;
+			if ((errno == EAGAIN || errno == EINTR) && (ninters++ < 5)) {
+				xusleep(200000);
 				continue;
 			}
 			break;
@@ -1213,18 +1212,22 @@ static int read_procfs_file(int fd, char **buf, size_t *bufsiz)
 				*bufsiz = 0;
 				bufptr = *buf;
 				tries++;
+
+				if (tries > 10)
+					/* busy system? -- wait */
+					xusleep(10000);
 				continue;
 			}
 
 			/* successful read() without active poll() */
-			*bufsiz += (size_t) ret;
+			(*bufsiz) += (size_t) ret;
 			bufptr += ret;
-			tries = 0;
+			tries = ninters = 0;
 		} else {
 			/* end-of-file */
 			goto success;
 		}
-	} while (tries <= 5);
+	} while (tries <= 100);
 
 	rc = errno ? -errno : 1;
 	free(*buf);
