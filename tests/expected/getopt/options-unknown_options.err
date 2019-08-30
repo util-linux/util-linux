@@ -1,2 +1,2 @@
-/home/projects/util-linux/util-linux/getopt: invalid option -- 'b'
-/home/projects/util-linux/util-linux/getopt: unrecognized option '--whatever'
+getopt: invalid option -- 'b'
+getopt: unrecognized option '--whatever'

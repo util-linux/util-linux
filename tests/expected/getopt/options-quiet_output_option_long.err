@@ -1,4 +1,4 @@
-/home/projects/util-linux/util-linux/getopt: invalid option -- 'c'
-/home/projects/util-linux/util-linux/getopt: unrecognized option '--unknown'
-/home/projects/util-linux/util-linux/getopt: option '--long' is ambiguous; possibilities: '--long1' '--long2'
-/home/projects/util-linux/util-linux/getopt: option requires an argument -- 'b'
+getopt: invalid option -- 'c'
+getopt: unrecognized option '--unknown'
+getopt: option '--long' is ambiguous; possibilities: '--long1' '--long2'
+getopt: option requires an argument -- 'b'
