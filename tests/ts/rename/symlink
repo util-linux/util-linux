@@ -28,7 +28,7 @@ for i in rename_slink.{1..3}; do
 	ln -s old $i
 done
 
-$TS_CMD_RENAME -s -v old new rename_slink.? >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -s -v old new rename_slink.? >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 for i in rename_slink.{1..3}; do
 	where="$(readlink $i)"

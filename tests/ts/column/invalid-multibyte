@@ -25,6 +25,6 @@ ts_check_test_command "$TS_CMD_COLUMN"
 
 ts_cd "$TS_OUTDIR"
 
-printf "\x94\x7e\n" | LC_ALL=C.UTF-8 $TS_CMD_COLUMN >> $TS_OUTPUT 2>&1
+printf "\x94\x7e\n" | LC_ALL=C.UTF-8 $TS_CMD_COLUMN >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize

@@ -23,36 +23,36 @@ ts_check_test_command "$TS_CMD_HEXDUMP"
 
 ts_log '# usually behave like "head -n 1"'
 printf "a\nb\n" |
-	$TS_CMD_LINE >> $TS_OUTPUT 2>&1
+	$TS_CMD_LINE >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "ret: $?" >> $TS_OUTPUT
 
 ts_log '# never consume more than one line'
 printf "1\n2\n" |
-	($TS_CMD_LINE && $TS_CMD_LINE) >> $TS_OUTPUT 2>&1
+	($TS_CMD_LINE && $TS_CMD_LINE) >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "ret: $?" >> $TS_OUTPUT
 
 ts_log '# add a newline'
 printf "abc" |
-	$TS_CMD_LINE >> $TS_OUTPUT 2>&1
+	$TS_CMD_LINE >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "ret: $?" >> $TS_OUTPUT
 
 ts_log '# print one newline on empty input'
 printf "" |
-	$TS_CMD_LINE >> $TS_OUTPUT 2>&1
+	$TS_CMD_LINE >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "ret: $?" >> $TS_OUTPUT
 
 ts_log '# add a newline, return 1 when EOF'
 (printf "xyz" && cat </dev/null) |
-	$TS_CMD_LINE >> $TS_OUTPUT 2>&1
+	$TS_CMD_LINE >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "ret: $?" >> $TS_OUTPUT
 
 ts_log '# print one newline on empty input, return 1 when EOF'
-$TS_CMD_LINE </dev/null >> $TS_OUTPUT 2>&1
+$TS_CMD_LINE </dev/null >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "ret: $?" >> $TS_OUTPUT
 
 ts_log '# large line of zero bytes'
 dd if=/dev/zero  bs=1k count=1k 2>/dev/null |
-	$TS_CMD_LINE line | $TS_CMD_HEXDUMP -C >> $TS_OUTPUT 2>&1
+	$TS_CMD_LINE line | $TS_CMD_HEXDUMP -C >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "ret: $?" >> $TS_OUTPUT
 
 ts_finalize

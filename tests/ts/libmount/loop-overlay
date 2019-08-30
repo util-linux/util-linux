@@ -42,16 +42,16 @@ dd if="$IMG" of="$IMG" oflag=append bs=1024k count=5 conv=notrunc &>/dev/null
 [ -d "$TS_MOUNTPOINT-2" ] || mkdir -p $TS_MOUNTPOINT-2
 
 echo "second should fail" >>$TS_OUTPUT
-$TS_CMD_MOUNT -oloop "$IMG" "$TS_MOUNTPOINT-1" >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT -oloop "$IMG" "$TS_MOUNTPOINT-1" >> $TS_OUTPUT 2>> $TS_ERRLOG
 $TS_CMD_MOUNT -oloop,offset=$OFFSET "$IMG" "$TS_MOUNTPOINT-2" 2>&1 \
        | sed 's/:.*:/: <target>/; s/for .*/for <source>/' >> $TS_OUTPUT
-$TS_CMD_UMOUNT "$TS_MOUNTPOINT-1" >> $TS_OUTPUT 2>&1
+$TS_CMD_UMOUNT "$TS_MOUNTPOINT-1" >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 echo "should succeed" >>$TS_OUTPUT
-$TS_CMD_MOUNT -oloop,sizelimit=$OFFSET "$IMG" "$TS_MOUNTPOINT-1" >> $TS_OUTPUT 2>&1
-$TS_CMD_MOUNT -oloop,offset=$OFFSET "$IMG" "$TS_MOUNTPOINT-2" >> $TS_OUTPUT 2>&1
-$TS_CMD_UMOUNT "$TS_MOUNTPOINT-1" >> $TS_OUTPUT 2>&1
-$TS_CMD_UMOUNT "$TS_MOUNTPOINT-2" >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT -oloop,sizelimit=$OFFSET "$IMG" "$TS_MOUNTPOINT-1" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -oloop,offset=$OFFSET "$IMG" "$TS_MOUNTPOINT-2" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_UMOUNT "$TS_MOUNTPOINT-1" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_UMOUNT "$TS_MOUNTPOINT-2" >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 echo "both should fail" >>$TS_OUTPUT
 LOOPDEV=$($TS_CMD_LOSETUP --show -f --offset 1 --sizelimit $OFFSET "$IMG")

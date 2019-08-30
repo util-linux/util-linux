@@ -38,12 +38,12 @@ UUID=$(ts_uuid_by_devname "$DEVICE") || ts_die "Cannot find UUID on $DEVICE"
 ts_udevadm_settle "$DEVICE" "UUID"
 
 # variant A)
-$TS_CMD_MOUNT -U $UUID $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT -U $UUID $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_die "A) Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $DEVICE || ts_die "A) Cannot umount $DEVICE"
 
 # variant B)
-$TS_CMD_MOUNT UUID=$UUID $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT UUID=$UUID $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_die "B) Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $DEVICE || ts_die "B) Cannot umount $DEVICE"
 

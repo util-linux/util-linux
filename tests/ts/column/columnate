@@ -26,28 +26,27 @@ ts_cd "$TS_OUTDIR"
 
 
 ts_init_subtest "fill-cols-80"
-$TS_CMD_COLUMN -c 80 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>&1
+$TS_CMD_COLUMN -c 80 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "fill-cols-50"
-$TS_CMD_COLUMN -c 50 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>&1
+$TS_CMD_COLUMN -c 50 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "fill-cols-250"
-$TS_CMD_COLUMN -c 250 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>&1
+$TS_CMD_COLUMN -c 250 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "fill-rows-80"
-$TS_CMD_COLUMN --fillrows -c 80 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>&1
+$TS_CMD_COLUMN --fillrows -c 80 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "fill-rows-50"
-$TS_CMD_COLUMN --fillrows -c 50 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>&1
+$TS_CMD_COLUMN --fillrows -c 50 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "fill-rows-250"
-$TS_CMD_COLUMN --fillrows -c 250 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>&1
+$TS_CMD_COLUMN --fillrows -c 250 $TS_SELF/files/onecolumn >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_finalize
-

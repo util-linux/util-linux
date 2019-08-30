@@ -25,7 +25,7 @@ ts_check_test_command "$TS_CMD_RENAME"
 ts_cd "$TS_OUTDIR"
 
 touch rename_from rename_to
-$TS_CMD_RENAME -v --no-overwrite from to rename_from > $TS_OUTPUT 2>&1
-rm rename_from rename_to >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -v --no-overwrite from to rename_from >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm rename_from rename_to >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize

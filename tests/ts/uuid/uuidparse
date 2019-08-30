@@ -55,7 +55,7 @@ echo '00000000-0000-0000-0000-000000000000
 
 9b274c46-544a-11e7-a972-00037f500001
 
-invalid-input' | $TS_CMD_UUIDPARSE 1>$TS_OUTPUT 2>&1
+invalid-input' | $TS_CMD_UUIDPARSE >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "return value: $?" >> $TS_OUTPUT
 
 ts_finalize

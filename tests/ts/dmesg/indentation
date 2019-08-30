@@ -23,18 +23,18 @@ ts_check_test_command "$TS_HELPER_DMESG"
 export TZ="GMT"
 export DMESG_TEST_BOOTIME="1234567890.123456"
 
-$TS_HELPER_DMESG -F $TS_SELF/newlines > $TS_OUTPUT 2>&1
+$TS_HELPER_DMESG -F $TS_SELF/newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_HELPER_DMESG -F $TS_SELF/newlines -x >> $TS_OUTPUT 2>&1
+$TS_HELPER_DMESG -F $TS_SELF/newlines -x >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_HELPER_DMESG --time-format=delta --file $TS_SELF/newlines >> $TS_OUTPUT 2>&1
+$TS_HELPER_DMESG --time-format=delta --file $TS_SELF/newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_HELPER_DMESG --time-format=notime --file $TS_SELF/newlines >> $TS_OUTPUT 2>&1
+$TS_HELPER_DMESG --time-format=notime --file $TS_SELF/newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_HELPER_DMESG --time-format=reltime --file $TS_SELF/newlines >> $TS_OUTPUT 2>&1
+$TS_HELPER_DMESG --time-format=reltime --file $TS_SELF/newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_HELPER_DMESG --time-format=ctime --file $TS_SELF/newlines >> $TS_OUTPUT 2>&1
+$TS_HELPER_DMESG --time-format=ctime --file $TS_SELF/newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_HELPER_DMESG --time-format=iso --file $TS_SELF/newlines >> $TS_OUTPUT 2>&1
+$TS_HELPER_DMESG --time-format=iso --file $TS_SELF/newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize

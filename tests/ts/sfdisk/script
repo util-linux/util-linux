@@ -16,7 +16,7 @@
 
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="GPT"
+TS_DESC="script"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
@@ -33,7 +33,7 @@ ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3
 ts_init_subtest "type-and-id"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label: gpt
 label-id: 3b8559db-33af-43e9-befc-c331d829b539
@@ -44,14 +44,14 @@ ${TS_DEVICE}3 : start=14336, size=6144, type=44479540-F297-41B2-9AF7-D131D5F0458
 ${TS_DEVICE}4 : start=20480, size=81887,Type=44479540-F297-41B2-9AF7-D131D5F0458A, uuid=d2a29b0a-fdee-40c3-9bae-b9fa782c986c
 EOF
 udevadm settle
-$TS_CMD_SFDISK --list -o START,END,SIZE,UUID,TYPE,NAME ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --list -o START,END,SIZE,UUID,TYPE,NAME ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
 ts_init_subtest "separator"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label: gpt
 label-id: 3b8559db-33af-43e9-befc-c331d829b539
@@ -62,7 +62,7 @@ ${TS_DEVICE}3 : start=14336 , size=6144 ,uuid=643e1d0d-bc02-4ced-b83b-8612106285
 ${TS_DEVICE}4 : start=20480; size=81887 ;     uuid=d2a29b0a-fdee-40c3-9bae-b9fa782c986c
 EOF
 udevadm settle
-$TS_CMD_SFDISK --list -o START,END,SIZE,UUID,TYPE,NAME ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --list -o START,END,SIZE,UUID,TYPE,NAME ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
@@ -70,7 +70,7 @@ ts_finalize_subtest
 ts_init_subtest "quotes"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label: gpt
 label-id: 3b8559db-33af-43e9-befc-c331d829b539
@@ -81,7 +81,7 @@ ${TS_DEVICE}3: start=14336 uuid="643e1d0d-bc02-4ced-b83b-86121062858f",size=6144
 ${TS_DEVICE}4  : start=20480 uuid="d2a29b0a-fdee-40c3-9bae-b9fa782c986c",     size=6144
 EOF
 udevadm settle
-$TS_CMD_SFDISK --list -o START,END,SIZE,UUID,TYPE,NAME ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --list -o START,END,SIZE,UUID,TYPE,NAME ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
@@ -89,7 +89,7 @@ ts_finalize_subtest
 ts_init_subtest "broken-1"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label: gpt
 label-id: 3b8559db-33af-43e9-befc-c331d829b539
@@ -103,7 +103,7 @@ ts_finalize_subtest
 ts_init_subtest "broken-2"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label: gpt
 label-id: 3b8559db-33af-43e9-befc-c331d829b539
@@ -117,7 +117,7 @@ ts_finalize_subtest
 ts_init_subtest "broken-3"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label: gpt
 label-id: 3b8559db-33af-43e9-befc-c331d829b539
@@ -131,7 +131,7 @@ ts_finalize_subtest
 ts_init_subtest "broken-4"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label: gpt
 label-id: 3b8559db-33af-43e9-befc-c331d829b539
@@ -145,7 +145,7 @@ ts_finalize_subtest
 ts_init_subtest "broken-5"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label: gpt
 label-id: 3b8559db-33af-43e9-befc-c331d829b539

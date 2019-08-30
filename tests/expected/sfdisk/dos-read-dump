@@ -29,8 +29,6 @@ Device     Boot Start    End Sectors Size Id Type
 <removed>5       20481  26624    6144   3M 83 Linux
 <removed>6       26626 102399   75774  37M 83 Linux
 
-Partition 5 does not start on physical sector boundary.
-Partition 6 does not start on physical sector boundary.
 
 The partition table has been altered.
 Calling ioctl() to re-read partition table.

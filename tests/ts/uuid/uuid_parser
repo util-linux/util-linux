@@ -20,7 +20,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_HELPER_UUID_PARSER"
 
-$TS_HELPER_UUID_PARSER > $TS_OUTPUT 2>&1
+$TS_HELPER_UUID_PARSER >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "return value: $?" >> $TS_OUTPUT
 
 ts_finalize

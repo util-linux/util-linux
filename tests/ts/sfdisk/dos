@@ -31,7 +31,7 @@ ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3
 
 
 ts_init_subtest "simple-commas"
-$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
  2048,6144,L
 8192, 6144,S
 14336 , 6144 ,
@@ -45,8 +45,8 @@ ts_finalize_subtest
 
 
 ts_init_subtest "activate"
-$TS_CMD_SFDISK --activate ${TS_DEVICE} 1 >> $TS_OUTPUT 2>&1 
-$TS_CMD_SFDISK --unit S --list ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --activate ${TS_DEVICE} 1 >> $TS_OUTPUT 2>> $TS_ERRLOG 
+$TS_CMD_SFDISK --unit S --list ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
@@ -55,7 +55,7 @@ ts_finalize_subtest
 ts_init_subtest "simple-space"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
  2048 6144 L
 8192  6144 S
 ,,
@@ -68,7 +68,7 @@ ts_finalize_subtest
 ts_init_subtest "read-dump-case"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label-id: 0x1ddc8a79
 
@@ -82,7 +82,7 @@ ts_finalize_subtest
 ts_init_subtest "read-dump"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 unit: sectors
 label-id: 0x1ddc8a79
 
@@ -99,13 +99,13 @@ ts_finalize_subtest
 
 
 ts_init_subtest "write-dump"
-$TS_CMD_SFDISK --unit S --dump ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --unit S --dump ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
 
 ts_init_subtest "write-json"
-$TS_CMD_SFDISK --json ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --json ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
@@ -117,7 +117,7 @@ ts_finalize_subtest
 ts_init_subtest "explicit-size"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 label: dos
 1, 1000, L
 1001, 1000, S
@@ -140,7 +140,7 @@ label: dos
 ,10M,S,*
 EOF
 udevadm settle
-echo ',+' | $TS_CMD_SFDISK --no-reread -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo ',+' | $TS_CMD_SFDISK --no-reread -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
@@ -155,7 +155,7 @@ label: dos
 ,2M,E
 EOF
 udevadm settle
-echo ',+' | $TS_CMD_SFDISK --no-reread -N2 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo ',+' | $TS_CMD_SFDISK --no-reread -N2 ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
@@ -170,7 +170,7 @@ label: dos
 ,5M,E
 EOF
 udevadm settle
-echo ',-2M' | $TS_CMD_SFDISK --no-reread -N2 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo ',-2M' | $TS_CMD_SFDISK --no-reread -N2 ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
@@ -188,7 +188,7 @@ label: dos
 ,1M
 EOF
 udevadm settle
-echo ',+' | $TS_CMD_SFDISK --no-reread -N4 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo ',+' | $TS_CMD_SFDISK --no-reread -N4 ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
@@ -207,7 +207,7 @@ label: dos
 ,1M
 EOF
 udevadm settle
-echo ',+' | $TS_CMD_SFDISK --no-reread -N6 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo ',+' | $TS_CMD_SFDISK --no-reread -N6 ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
@@ -216,7 +216,7 @@ ts_finalize_subtest
 ts_init_subtest "dump-old"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} < $TS_SELF/files/dump-old >> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK ${TS_DEVICE} < $TS_SELF/files/dump-old >> $TS_OUTPUT 2>> $TS_ERRLOG
 udevadm settle
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
@@ -226,7 +226,7 @@ ts_finalize_subtest
 ts_init_subtest "dump-gaps"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
-$TS_CMD_SFDISK ${TS_DEVICE} < $TS_SELF/files/dump-gaps >> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK ${TS_DEVICE} < $TS_SELF/files/dump-gaps >> $TS_OUTPUT 2>> $TS_ERRLOG
 udevadm settle
 ts_fdisk_clean $TS_DEVICE
 udevadm settle

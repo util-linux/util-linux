@@ -41,9 +41,9 @@ while true ; do
 		--) shift ; break ;;
 		*) echo "Internal error!"; break;;
 	esac
-done >> $TS_OUTPUT 2>&1
+done >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-echo "Remaining arguments:" >> $TS_OUTPUT 2>&1
-for arg do echo '--> '"\`$arg'" >> $TS_OUTPUT 2>&1; done
+echo "Remaining arguments:" >> $TS_OUTPUT 2>> $TS_ERRLOG
+for arg do echo '--> '"\`$arg'" >> $TS_OUTPUT 2>> $TS_ERRLOG; done
 
 ts_finalize

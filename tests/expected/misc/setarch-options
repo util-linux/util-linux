@@ -1,9 +1,7 @@
 ###### unknown arch
-setarch: qubit: Unrecognized architecture
 exit: 1
 ###### unknown command
 Execute command `/das/gibs/nicht'.
-setarch: failed to execute /das/gibs/nicht: No such file or directory
 exit: 127
 ###### noop uname -a
 Execute command `uname'.

@@ -28,7 +28,7 @@ ts_cd "$TS_OUTDIR"
 
 $TS_CMD_COLUMN -x -c 50 $TS_SELF/files/fivecols \
 			$TS_SELF/files/fivecols \
-			$TS_SELF/files/fivecols >> $TS_OUTPUT 2>&1
+			$TS_SELF/files/fivecols >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize
 

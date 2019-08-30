@@ -23,6 +23,6 @@ ts_check_test_command "$TS_CMD_MCOOKIE"
 $TS_CMD_MCOOKIE -f /etc/services |
 	# The sed will convert only 32 characters long hexadecimal string
 	# to expected string, but nothing else.
-	sed 's/^[0-9a-f]\{32\}$/the string meets expecations/' > $TS_OUTPUT 2>&1
+	sed 's/^[0-9a-f]\{32\}$/the string meets expecations/' >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize

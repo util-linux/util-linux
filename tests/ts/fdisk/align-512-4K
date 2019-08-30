@@ -35,7 +35,7 @@ ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3
 DEVNAME=$(basename $TS_DEVICE)
 
 ts_log "Create partitions"
-$TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 n
 p
 1
@@ -71,7 +71,7 @@ EOF
 
 udevadm settle
 ts_log "Alignment offsets:"
-cat /sys/block/${DEVNAME}/${DEVNAME}{1,2,3,4,5,6,7}/alignment_offset >> $TS_OUTPUT 2>&1
+cat /sys/block/${DEVNAME}/${DEVNAME}{1,2,3,4,5,6,7}/alignment_offset >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_fdisk_clean $TS_DEVICE
 

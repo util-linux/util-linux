@@ -27,7 +27,7 @@ ts_check_test_command "$TS_CMD_SFDISK"
 TEST_IMAGE_NAME=$(ts_image_init 10)
 
 ts_init_subtest "all-defaults"
-$TS_CMD_SFDISK --unit S ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK --unit S ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 label: gpt
 label-id: b181c399-4711-4c52-8b65-9e764541218d
 
@@ -40,7 +40,7 @@ ts_finalize_subtest
 TEST_IMAGE_NAME=$(ts_image_init 10)
 
 ts_init_subtest "all-defaults-with-typo"
-$TS_CMD_SFDISK --unit S ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_SFDISK --unit S ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 label: gpt
 label-id: b181c399-4711-4c52-8b65-9e764541218d
 
@@ -51,15 +51,15 @@ ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize_subtest
 
 ts_init_subtest "getattr"
-ts_run $TESTPROG --getattr ${TEST_IMAGE_NAME} 1 >> $TS_OUTPUT 2>&1
-ts_run $TESTPROG --getattr ${TEST_IMAGE_NAME} 2 >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --getattr ${TEST_IMAGE_NAME} 1 >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_run $TESTPROG --getattr ${TEST_IMAGE_NAME} 2 >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "setattr"
-ts_run $TESTPROG --setattr ${TEST_IMAGE_NAME} 1 0xff00000000000000 >> $TS_OUTPUT 2>&1
-ts_run $TESTPROG --setattr ${TEST_IMAGE_NAME} 2 0x4 >> $TS_OUTPUT 2>&1
-$TS_CMD_SFDISK --part-attrs ${TEST_IMAGE_NAME} 1 >> $TS_OUTPUT 2>&1
-$TS_CMD_SFDISK --part-attrs ${TEST_IMAGE_NAME} 2 >> $TS_OUTPUT 2>&1
+ts_run $TESTPROG --setattr ${TEST_IMAGE_NAME} 1 0xff00000000000000 >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_run $TESTPROG --setattr ${TEST_IMAGE_NAME} 2 0x4 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_SFDISK --part-attrs ${TEST_IMAGE_NAME} 1 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_SFDISK --part-attrs ${TEST_IMAGE_NAME} 2 >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_finalize

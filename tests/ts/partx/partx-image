@@ -36,7 +36,7 @@ for img in $TS_IMGDIR/*.img.xz; do
 		xz -dc $img > $outimg &&
 			$TS_CMD_PARTX $outimg ||
 			echo "failed: $?"
-	} >$TS_OUTPUT 2>&1
+	} >> $TS_OUTPUT 2>> $TS_ERRLOG
 	ts_finalize_subtest
 done
 

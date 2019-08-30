@@ -26,14 +26,14 @@ ts_check_test_command "$TS_CMD_FSCKMINIX"
 mkfs_and_fsck_minix() {
 	local ret
 	ts_log "#####################################"
-	ts_log "$ mkfs.minix $1 image"
-	$TS_CMD_MKMINIX $1 $img >> $TS_OUTPUT 2>&1
+	ts_log_both "$ mkfs.minix $1 image"
+	$TS_CMD_MKMINIX $1 $img >> $TS_OUTPUT 2>> $TS_ERRLOG
 	ret=$?
 	echo "return mkfs: $ret" >> $TS_OUTPUT
 	test $ret = 0 || return $ret
 
-	ts_log "$ fsck.minix -lavsf image"
-	$TS_CMD_FSCKMINIX -lavsf $img >> $TS_OUTPUT 2>&1
+	ts_log_both "$ fsck.minix -lavsf image"
+	$TS_CMD_FSCKMINIX -lavsf $img >> $TS_OUTPUT 2>> $TS_ERRLOG
 	ret=$?
 	echo "return fsck: $ret" >> $TS_OUTPUT
 	return $ret

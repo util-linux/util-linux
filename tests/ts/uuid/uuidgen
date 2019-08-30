@@ -27,10 +27,10 @@ test_flag() {
 	echo "option: $1" >> $TS_OUTPUT
 	$TS_CMD_UUIDGEN $1 > "$OUTPUT_FILE" 2>>$TS_OUTPUT
 	ret=$?
-	$TS_HELPER_UUID_PARSER "$OUTPUT_FILE" >> $TS_OUTPUT 2>&1
+	$TS_HELPER_UUID_PARSER "$OUTPUT_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
 	if [ $? -ne 0 ] || [ $ret -ne 0 ]; then 
 		echo "something wrong with $OUTPUT_FILE" >> $TS_OUTPUT
-		cat $OUTPUT_FILE >> $TS_OUTPUT 2>&1
+		cat $OUTPUT_FILE >> $TS_OUTPUT 2>> $TS_ERRLOG
 	fi
 	echo "return values: $ret and $?" >> $TS_OUTPUT
 }

@@ -36,7 +36,7 @@ ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3
 DEVNAME=$(basename $TS_DEVICE)
 
 ts_log "Create partitions"
-$TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 n
 p
 1
@@ -54,7 +54,7 @@ EOF
 
 udevadm settle
 ts_log "Alignment offsets:"
-cat /sys/block/${DEVNAME}/${DEVNAME}{1,2}/alignment_offset >> $TS_OUTPUT 2>&1
+cat /sys/block/${DEVNAME}/${DEVNAME}{1,2}/alignment_offset >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_lock "md"
 
@@ -65,11 +65,11 @@ mdadm -q -S ${MD_DEVICE} &> /dev/null
 udevadm settle
 
 mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 \
-	    --level=0 --raid-devices=2 ${TS_DEVICE}1 ${TS_DEVICE}2 >> $TS_OUTPUT 2>&1
+	    --level=0 --raid-devices=2 ${TS_DEVICE}1 ${TS_DEVICE}2 >> $TS_OUTPUT 2>> $TS_ERRLOG
 udevadm settle
 
 ts_log "Create partitions (MD)"
-$TS_CMD_FDISK ${MD_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_FDISK ${MD_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 n
 p
 1
@@ -87,9 +87,9 @@ EOF
 
 udevadm settle
 ts_log "Alignment offsets (MD):"
-cat /sys/block/${MD_DEVNAME}/${MD_DEVNAME}p{1,2}/alignment_offset >> $TS_OUTPUT 2>&1
+cat /sys/block/${MD_DEVNAME}/${MD_DEVNAME}p{1,2}/alignment_offset >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
+mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 udevadm settle
 ts_unlock "md"

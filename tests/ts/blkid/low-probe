@@ -36,7 +36,7 @@ for img in $(ls $TS_SELF/images-fs/*.img.xz | sort); do
 
 	xz -dc $img > $outimg
 
-	$TS_CMD_BLKID -p -o udev $outimg 2>&1 | sort > $TS_OUTPUT
+	$TS_CMD_BLKID -p -o udev $outimg 2> $TS_ERRLOG | sort > $TS_OUTPUT
 	ts_finalize_subtest
 done
 

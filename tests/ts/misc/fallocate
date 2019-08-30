@@ -24,8 +24,8 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 IMAGE=${TS_OUTDIR}/${TS_TESTNAME}.file
 rm -f $IMAGE
 
-if $TS_CMD_FALLOCATE -o 128 -l 256 $IMAGE > $TS_OUTPUT 2>&1; then
-	stat -c "%s" $IMAGE >> $TS_OUTPUT 2>&1
+if $TS_CMD_FALLOCATE -o 128 -l 256 $IMAGE >> $TS_OUTPUT 2>> $TS_ERRLOG; then
+	stat -c "%s" $IMAGE >> $TS_OUTPUT 2>> $TS_ERRLOG
 else
 	# fs type of $TS_OUTDIR, could be used to skip this test early
 	fs_type=$(${TS_CMD_FINDMNT} -n -o FSTYPE -T ${TS_OUTDIR})

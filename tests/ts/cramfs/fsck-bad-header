@@ -48,11 +48,11 @@ function fsck_loop_sizes()
 	shift 2          # the rest are sizes to loop over
 
 	for size in "$@"; do
-		ts_log "## size: $size"
+		ts_log_both  "## size: $size"
 		cp -a "$IMAGE_FILE" "$IMAGE_FILE.tmp"
 		num2binary "$size" $endian |
 			dd of="$IMAGE_FILE.tmp" bs=1 seek="$seek" count=4 conv=notrunc &> /dev/null
-		$TS_CMD_FSCKCRAMFS "$IMAGE_FILE.tmp" >> $TS_OUTPUT 2>&1
+		$TS_CMD_FSCKCRAMFS "$IMAGE_FILE.tmp" >> $TS_OUTPUT 2>> $TS_ERRLOG
 		ts_log "ret: $?
 "
 	done

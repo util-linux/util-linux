@@ -11,11 +11,6 @@ ts_check_test_command "$TS_HELPER_SYSINFO"
 # Send patch if you know how to keep it portable and robust. Thanks.
 TS_KNOWN_FAIL="yes"
 
-function header
-{
-    echo "[" "$1" "]"
-}
-
 function footer
 {
     echo "return value: $1"
@@ -105,6 +100,7 @@ WINDOW_SIZE=$(( 32 * 1024 * PAGE_SIZE ))
 # we use PAGE_SIZE dependent output for a few systems
 if test -f "$TS_EXPECTED.$PAGE_SIZE"; then
 	TS_EXPECTED+=".$PAGE_SIZE"
+	TS_EXPECTED_ERR+=".$PAGE_SIZE"
 	OUT_COLUMNS="PAGES,SIZE,FILE"
 else
 	TS_EXPECTED+=".nosize"
@@ -124,108 +120,108 @@ input=
     input=no_such_file
     INPUT="${INPUT} ${input}"
 
-    header "NO EXCITING FILE"
+    ts_log_both "[ NO EXCITING FILE ]"
     $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes --noheadings $input
     footer "$?"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     run_dd_test "EMPTY FILE" 0
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     run_dd_test "PAGESIZE -1 (incore)" $(( PAGE_SIZE - 1 ))
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     run_dd_test "JUST PAGESIZE(incore)" $(( PAGE_SIZE ))
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     run_dd_test "JUST PAGESIZE(directio)" $(( PAGE_SIZE )) "oflag=direct"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     run_dd_test "TWO PAGES(incore)" $(( 2 * PAGE_SIZE ))
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     run_dd_test "TWO PAGES(directio)" $(( 2 * PAGE_SIZE )) "oflag=direct"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     run_dd_dd_test "TWO PAGES(mixed directio/incore)" \
 			    oflag=direct \
 			    "oflag=append seek=1"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     run_dd_dd_test "TWO PAGES(mixed incore/directio)" \
 		   "" \
 		   "oflag=direct,append seek=1"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     hole_count=$(( WINDOW_SIZE / PAGE_SIZE - 2 ))
     run_dd_dd_test "WINDOW SIZE(incore-sparse-incore)" \
 		   "" \
 		   "oflag=append seek=$hole_count"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     hole_count=$(( WINDOW_SIZE / PAGE_SIZE - 2 ))
     run_dd_dd_test "WINDOW SIZE(directio-sparse-directio)" \
 		   "oflag=direct" \
 		   "oflag=append,direct seek=$hole_count"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     hole_count=$(( WINDOW_SIZE / PAGE_SIZE - 2 ))
     run_dd_dd_test "WINDOW SIZE(incore-sparse-directio)" \
 		   "" \
 		   "oflag=append,direct seek=$hole_count"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     hole_count=$(( WINDOW_SIZE / PAGE_SIZE - 2 ))
     run_dd_dd_test "WINDOW SIZE(directio-sparse-incore)" \
 		   "oflag=direct" \
 		   "oflag=append seek=$hole_count"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     hole_count=$(( WINDOW_SIZE / PAGE_SIZE - 1 ))
     run_dd_dd_test "WINDOW SIZE + 1 page(incore-sparse-incore)" \
 		   "" \
 		   "oflag=append seek=$hole_count"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     hole_count=$(( WINDOW_SIZE / PAGE_SIZE - 1 ))
     run_dd_dd_test "WINDOW SIZE + 1 page(directio-sparse-directio)" \
 		   "oflag=direct" \
 		   "oflag=append,direct seek=$hole_count"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     hole_count=$(( WINDOW_SIZE / PAGE_SIZE - 1 ))
     run_dd_dd_test "WINDOW SIZE + 1 page(incore-sparse-directio)" \
 		   "" \
 		   "oflag=append,direct seek=$hole_count"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
     hole_count=$(( WINDOW_SIZE / PAGE_SIZE - 1 ))
     run_dd_dd_test "WINDOW SIZE + 1 page(directio-sparse-incore)" \
 		   "oflag=direct" \
 		   "oflag=append seek=$hole_count"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
-    header "MULTIPLE FILES"
+    ts_log_both "[ MULTIPLE FILES ]"
     $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes $INPUT
     footer "$?"
-} >> $TS_OUTPUT 2>&1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 rm -f $INPUT
 ts_finalize

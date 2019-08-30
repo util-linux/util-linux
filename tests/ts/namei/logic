@@ -28,8 +28,8 @@ ts_cd "$TS_OUTDIR"
 mkdir -p namei1/namei2
 touch namei1/namei2/a namei1/namei2/b
 
-$TS_CMD_NAMEI namei1/namei2/a   >> $TS_OUTPUT 2>&1
-$TS_CMD_NAMEI namei1/namei2/b   >> $TS_OUTPUT 2>&1
+$TS_CMD_NAMEI namei1/namei2/a   >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_NAMEI namei1/namei2/b   >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize
 

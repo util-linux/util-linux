@@ -34,7 +34,7 @@ ts_log "Initialize device"
 echo "0 262144 error" | dmsetup create $DEVNAME
 
 ts_log "Probe device"
-$TS_CMD_BLKID -p -o udev $DEVICE 2>&1 >> $TS_OUTPUT
+$TS_CMD_BLKID -p -o udev $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "Return code: $?" >> $TS_OUTPUT
 
 udevadm settle

@@ -41,7 +41,7 @@ for f in txt-a txt-b txt-ipv6; do
 	$TS_CMD_UTMPDUMP -r $OUT_TXT > $OUT_BIN2 2>/dev/null &&
 	diff -q $OUT_BIN1 $OUT_BIN2 ||
 	echo "circle failed for $f"
-done >> $TS_OUTPUT 2>&1
+done >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 rm -f "$OUT_BIN1" "$OUT_BIN2" "$OUT_TXT"
 

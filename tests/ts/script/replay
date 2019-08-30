@@ -26,12 +26,12 @@ TIMING_FILE="$(mktemp "${TS_OUTDIR}/tmXXXXXXXXXXXXX")"
 
 echo "record script output with timing" >"$TS_OUTPUT"
 "$TS_CMD_SCRIPT" -c "echo hello world; sleep 0.5; echo all done" \
-	--timing="$TIMING_FILE" "$SCRIPT_FILE" >>"$TS_OUTPUT" 2>&1
+	--timing="$TIMING_FILE" "$SCRIPT_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 echo "replay script output" >>"$TS_OUTPUT"
-"$TS_CMD_SCRIPTREPLAY" "$TIMING_FILE" "$SCRIPT_FILE" 1.5 >>"$TS_OUTPUT" 2>&1
+"$TS_CMD_SCRIPTREPLAY" "$TIMING_FILE" "$SCRIPT_FILE" 1.5 >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-sed -i "s|$SCRIPT_FILE|typescript|g; s|$TIMING_FILE|timingfile|g" "$TS_OUTPUT"
+sed -i "s|$SCRIPT_FILE|typescript|g; s|$TIMING_FILE|timingfile|g" $TS_OUTPUT $TS_ERRLOG
 
 rm -f "$SCRIPT_FILE" "$TIMING_FILE"
 

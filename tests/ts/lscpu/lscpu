@@ -37,17 +37,17 @@ for dump in $(ls $TS_SELF/dumps/*.tar.gz | sort); do
 
 	# Architecture information is not applicable with -s.
 	"${TS_CMD_LSCPU}" -s "${dumpdir}/${name}" | \
-		grep -v "Architecture" >"${TS_OUTPUT}" 2>&1
+		grep -v "Architecture" >> ${TS_OUTPUT} 2>> $TS_ERRLOG
 
 	echo >>"${TS_OUTPUT}"
 
 	"${TS_CMD_LSCPU}" -p -s "${dumpdir}/${name}" \
-		 >>"${TS_OUTPUT}" 2>&1
+		 >> ${TS_OUTPUT} 2>> $TS_ERRLOG
 
 	echo >>"${TS_OUTPUT}"
 
 	"${TS_CMD_LSCPU}" -p -y -s "${dumpdir}/${name}" \
-		 >>"${TS_OUTPUT}" 2>&1
+		 >> ${TS_OUTPUT} 2>> $TS_ERRLOG
 
 	# LE/BE depends on binary
 	sed -i -e '/Byte Order:.*/d' $TS_OUTPUT

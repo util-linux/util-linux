@@ -51,12 +51,12 @@ for SIG in $($TS_CMD_KILL -L); do
 		SIG="$SIG-0"
 	fi
 
-	"$HELPER_SYMLINK" >> "$TS_OUTPUT" 2>&1 &
+	"$HELPER_SYMLINK" >> $TS_OUTPUT 2>> $TS_ERRLOG &
 	TEST_PID=$!
 	check_test_sigreceive $TEST_PID
 	[ $? -eq 1 ] || echo "${HELPER_SYMLINK##*/} helper did not start" >> "$TS_OUTPUT"
 
-	"$TS_CMD_KILL" -$SIG ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
+	"$TS_CMD_KILL" -$SIG ${HELPER_SYMLINK##*/} >> $TS_OUTPUT 2>> $TS_ERRLOG
 	wait $TEST_PID
 	if [ $? -ne $EXPECTED ]; then
 		echo "$SIG returned $? while $EXPECTED was expected" >> "$TS_OUTPUT"

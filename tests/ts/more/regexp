@@ -22,6 +22,6 @@ ts_check_test_command "$TS_HELPER_MORE"
 
 export TERM=linux
 printf "abba\nbar\nfoo\nxyzzy\n" |
-	$TS_HELPER_MORE +/foo > $TS_OUTPUT 2>&1
+	$TS_HELPER_MORE +/foo >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize

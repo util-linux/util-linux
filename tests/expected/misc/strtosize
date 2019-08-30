@@ -1,4 +1,3 @@
-test_strutils: invalid size '-1' value
                         0 :                    0 :       0B :          0 B
                         1 :                    1 :       1B :          1 B
                       123 :                  123 :     123B :        123 B
@@ -21,10 +20,7 @@ test_strutils: invalid size '-1' value
                       1TB :        1000000000000 :   931.3G :    931.3 GiB
                       1PB :     1000000000000000 :   909.5T :    909.5 TiB
                       1EB :  1000000000000000000 :   888.2P :    888.2 PiB
-test_strutils: invalid size '' value
-test_strutils: invalid size ' ' value
                         1 :                    1 :       1B :          1 B
-test_strutils: invalid size '1 ' value
                      0x0a :                   10 :      10B :         10 B
                    0xff00 :                65280 :    63.8K :     63.8 KiB
                0x80000000 :           2147483648 :       2G :        2 GiB

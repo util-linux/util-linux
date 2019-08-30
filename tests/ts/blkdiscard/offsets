@@ -38,7 +38,7 @@ ts_register_loop_device "$DEVICE"
 
 function run_tscmd {
 	local ret
-	"$@" >> $TS_OUTPUT 2>&1
+	"$@" >> $TS_OUTPUT 2>> $TS_ERRLOG
 	ret=$?
 	echo "ret: $ret" >> "$TS_OUTPUT"
 	return $ret

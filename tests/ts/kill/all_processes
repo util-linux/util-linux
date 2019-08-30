@@ -33,32 +33,33 @@ ts_check_test_command "$TS_HELPER_SIGRECEIVE"
 HELPER_SYMLINK="$(mktemp "${TS_OUTDIR}/alXXXXXXXXXXXXX")"
 ln -sf "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
 
-"$HELPER_SYMLINK" -s "$TS_TESTUSER" >> "$TS_OUTPUT" 2>&1 &
+"$HELPER_SYMLINK" -s "$TS_TESTUSER" >> $TS_OUTPUT 2>> $TS_ERRLOG &
 TEST_PID=$!
 
 check_test_sigreceive $TEST_PID
 [ $? -eq 1 ] || echo "${HELPER_SYMLINK##*/} helper did not start" >> "$TS_OUTPUT"
 
-echo "test 1" >> "$TS_OUTPUT"
-"$TS_CMD_KILL" ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
+
+ts_log_both "test 1"
+"$TS_CMD_KILL" ${HELPER_SYMLINK##*/} >> $TS_OUTPUT 2>> $TS_ERRLOG
 if [ $? -ne 1 ]; then
 	echo "kill did not return 1" >> "$TS_OUTPUT"
 fi
 
-echo "test 2" >> "$TS_OUTPUT"
-"$TS_CMD_KILL" -a ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
+ts_log_both "test 2"
+"$TS_CMD_KILL" -a ${HELPER_SYMLINK##*/} >> $TS_OUTPUT 2>> $TS_ERRLOG
 if [ $? -ne 0 ]; then
 	echo "kill did not return 0" >> "$TS_OUTPUT"
 fi
 wait $TEST_PID
 
-echo "test 3" >> "$TS_OUTPUT"
-"$TS_CMD_KILL" -a -p ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
+ts_log_both "test 3"
+"$TS_CMD_KILL" -a -p ${HELPER_SYMLINK##*/} >> $TS_OUTPUT 2>> $TS_ERRLOG
 if [ $? -ne 1 ]; then
 	echo "kill -a -p did not return 1" >> "$TS_OUTPUT"
 fi
 
-sed -i "s/${HELPER_SYMLINK##*/}/${TS_HELPER_SIGRECEIVE##*/}/" "$TS_OUTPUT"
+sed -i "s/${HELPER_SYMLINK##*/}/${TS_HELPER_SIGRECEIVE##*/}/" $TS_OUTPUT $TS_ERRLOG
 
 rm -f "$HELPER_SYMLINK"
 

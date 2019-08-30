@@ -174,6 +174,17 @@ function ts_log {
 	[ "$TS_VERBOSE" == "yes" ] && echo "$1"
 }
 
+function ts_logerr {
+	echo "$1" >> $TS_ERRLOG
+	[ "$TS_VERBOSE" == "yes" ] && echo "$1"
+}
+
+function ts_log_both {
+	echo "$1" >> $TS_OUTPUT
+	echo "$1" >> $TS_ERRLOG
+	[ "$TS_VERBOSE" == "yes" ] && echo "$1"
+}
+
 function ts_has_option {
 	NAME="$1"
 	ALL="$2"
@@ -217,24 +228,28 @@ function ts_init_core_env {
 	TS_SUBNAME=""
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME"
+	TS_ERRLOG="$TS_OUTDIR/$TS_TESTNAME.err"
 	TS_VGDUMP="$TS_OUTDIR/$TS_TESTNAME.vgdump"
 	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME"
 	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
+	TS_EXPECTED_ERR="$TS_TOPDIR/expected/$TS_NS.err"
 	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-mnt"
 }
 
 function ts_init_core_subtest_env {
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME-$TS_SUBNAME"
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME"
+	TS_ERRLOG="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME.err"
 	TS_VGDUMP="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME.vgdump"
 	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME-$TS_SUBNAME"
 	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
+	TS_EXPECTED_ERR="$TS_TOPDIR/expected/$TS_NS.err"
 	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-mnt"
 
-	rm -f $TS_OUTPUT $TS_VGDUMP
+	rm -f $TS_OUTPUT $TS_ERRLOG $TS_VGDUMP
 	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
 
-	touch $TS_OUTPUT
+	touch $TS_OUTPUT $TS_ERRLOG
 	[ -n "$TS_VALGRIND_CMD" ] && touch $TS_VGDUMP
 }
 
@@ -339,10 +354,10 @@ function ts_init_env {
 
 	export BLKID_FILE
 
-	rm -f $TS_OUTPUT $TS_VGDUMP
+	rm -f $TS_OUTPUT $TS_ERRLOG $TS_VGDUMP
 	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
 
-	touch $TS_OUTPUT
+	touch $TS_OUTPUT $TS_ERRLOG
 	[ -n "$TS_VALGRIND_CMD" ] && touch $TS_VGDUMP
 
 	if [ "$TS_VERBOSE" == "yes" ]; then
@@ -359,8 +374,9 @@ function ts_init_env {
 		echo "  namespace: $TS_NS"
 		echo "    verbose: $TS_VERBOSE"
 		echo "     output: $TS_OUTPUT"
+		echo "  error log: $TS_ERRLOG"
 		echo "   valgrind: $TS_VGDUMP"
-		echo "   expected: $TS_EXPECTED"
+		echo "   expected: $TS_EXPECTED{.err}"
 		echo " mountpoint: $TS_MOUNTPOINT"
 		echo
 	fi
@@ -466,32 +482,57 @@ function ts_run {
 	"${args[@]}" "$@"
 }
 
-function ts_gen_diff {
+function ts_gen_diff_from {
 	local res=0
+	local expected="$1"
+	local output="$2"
+	local difffile="$3"
+
+	diff -u $expected $output > $difffile
+
+	if [ $? -ne 0 ] || [ -s $difffile ]; then
+		res=1
+		if [ "$TS_SHOWDIFF" == "yes" -a "$TS_KNOWN_FAIL" != "yes" ]; then
+			echo
+			echo "diff-{{{"
+			cat $difffile
+			echo "}}}-diff"
+			echo
+		fi
+	else
+		rm -f $difffile;
+	fi
+
+	return $res
+}
+
+function ts_gen_diff {
+	local status_out=0
+	local status_err=0
 
 	[ -f "$TS_OUTPUT" ] || return 1
 	[ -f "$TS_EXPECTED" ] || TS_EXPECTED=/dev/null
 
 	# remove libtool lt- prefixes
 	sed --in-place 's/^lt\-\(.*\: \)/\1/g' $TS_OUTPUT
+	sed --in-place 's/^lt\-\(.*\: \)/\1/g' $TS_ERRLOG
 
 	[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
-	diff -u $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
 
-	if [ $? -ne 0 ] || [ -s $TS_DIFF ]; then
-		res=1
-		if [ "$TS_SHOWDIFF" == "yes" -a "$TS_KNOWN_FAIL" != "yes" ]; then
-			echo
-			echo "diff-{{{"
-			cat $TS_DIFF
-			echo "}}}-diff"
-			echo
-		fi
-	else
-		rm -f $TS_DIFF;
+	ts_gen_diff_from $TS_EXPECTED $TS_OUTPUT $TS_DIFF
+	status_out=$?
+
+	# error log is fully optional
+	[ -f "$TS_EXPECTED_ERR" ] || TS_EXPECTED_ERR=/dev/null
+	[ -f "$TS_ERRLOG" ] || TS_ERRLOG=/dev/null
+
+	ts_gen_diff_from $TS_EXPECTED_ERR $TS_ERRLOG $TS_DIFF.err
+	status_err=$?
+
+	if [ $status_out -ne 0 -o $status_err -ne 0 ]; then
+		return 1
 	fi
-
-	return $res
+	return 0
 }
 
 function tt_gen_mem_report {
@@ -750,7 +791,7 @@ function ts_fdisk_clean {
 
 	# remove non comparable parts of fdisk output
 	if [ -n "${DEVNAME}" ]; then
-		sed -i -e "s@${DEVNAME}@<removed>@;" $TS_OUTPUT
+		sed -i -e "s@${DEVNAME}@<removed>@;" $TS_OUTPUT $TS_ERRLOG
 	fi
 
 	sed -i \
@@ -761,7 +802,7 @@ function ts_fdisk_clean {
 		-e 's/Welcome to fdisk.*/Welcome to fdisk <removed>./' \
 		-e 's/typescript file.*/typescript file <removed>./' \
 		-e 's@^\(I/O size (minimum/op.* bytes /\) [1-9][0-9]* @\1 <removed> @' \
-		$TS_OUTPUT
+		$TS_OUTPUT $TS_ERRLOG
 }
 
 

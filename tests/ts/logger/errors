@@ -39,7 +39,7 @@ SOCAT_PID="$!"
 function logger_fun {
 	# logger without --no-act to write all data to the socket
 	echo "socket data, ${TS_SUBNAME}:" |socat -u - UNIX-CONNECT:$DEVLOG
-	$TS_HELPER_LOGGER -u $DEVLOG --stderr "$@" >> "$TS_OUTPUT" 2>&1
+	$TS_HELPER_LOGGER -u $DEVLOG --stderr "$@" >> $TS_OUTPUT 2>> $TS_ERRLOG
 	echo "ret: $?" >> "$TS_OUTPUT"
 	echo |socat -u - UNIX-CONNECT:$DEVLOG
 }
@@ -49,7 +49,7 @@ function logger_printf {
 	local fmt="$1"
 	shift
 	echo "socket data, ${TS_SUBNAME}:" |socat -u - UNIX-CONNECT:$DEVLOG
-	printf "$fmt" | $TS_HELPER_LOGGER -u $DEVLOG --stderr "$@" >> "$TS_OUTPUT" 2>&1
+	printf "$fmt" | $TS_HELPER_LOGGER -u $DEVLOG --stderr "$@" >> $TS_OUTPUT 2>> $TS_ERRLOG
 	echo "ret: $?" >> "$TS_OUTPUT"
 	echo |socat -u - UNIX-CONNECT:$DEVLOG
 }
@@ -107,7 +107,7 @@ ts_log "Check written socket data of all subtests."
 sleep 1
 kill $SOCAT_PID
 wait $SOCAT_PID &>/dev/null
-cat "$SOCKIN" >> "$TS_OUTPUT" 2>&1
+cat "$SOCKIN" >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f "$DEVLOG" "$SOCKIN"
 ts_finalize_subtest
 

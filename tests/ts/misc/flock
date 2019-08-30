@@ -30,7 +30,7 @@ function do_lock {
 
 	$TS_CMD_FLOCK $1 $TS_OUTDIR/lockfile \
 		echo "$mesg" \
-		> $TS_OUTPUT 2>&1
+		>> $TS_OUTPUT 2>> $TS_ERRLOG
 
 	local rc="$?"
 

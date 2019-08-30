@@ -23,21 +23,21 @@ ts_check_test_command "$TS_CMD_SETARCH"
 ARCH=$(uname -m)
 
 ts_init_subtest options
-echo "###### unknown arch" >>$TS_OUTPUT
-$TS_CMD_SETARCH qubit -v echo "success" >>$TS_OUTPUT 2>&1
+ts_log_both "###### unknown arch"
+$TS_CMD_SETARCH qubit -v echo "success" >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "exit: $?" >>$TS_OUTPUT
 
-echo "###### unknown command" >>$TS_OUTPUT
-$TS_CMD_SETARCH $ARCH -v /das/gibs/nicht >>$TS_OUTPUT 2>&1
+ts_log_both "###### unknown command"
+$TS_CMD_SETARCH $ARCH -v /das/gibs/nicht >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "exit: $?" >>$TS_OUTPUT
 
 echo "###### noop uname -a" >>$TS_OUTPUT
 uname_a=$(uname -srm)
-$TS_CMD_SETARCH $ARCH -v uname -srm >>$TS_OUTPUT 2>&1
+$TS_CMD_SETARCH $ARCH -v uname -srm >> $TS_OUTPUT 2>> $TS_ERRLOG
 sed -i "$ s@${uname_a}@uname -a unchanged@" $TS_OUTPUT
 
 echo "###### almost all options" >>$TS_OUTPUT
-$TS_CMD_SETARCH $ARCH -vRFZLXBIST3 echo "success" >>$TS_OUTPUT 2>&1
+$TS_CMD_SETARCH $ARCH -vRFZLXBIST3 echo "success" >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 
@@ -45,7 +45,7 @@ ts_init_subtest uname26
 finmsg="" # for debugging 2.6 issues
 
 echo "###### --uname-2.6 echo" >>$TS_OUTPUT
-$TS_CMD_SETARCH $ARCH -v --uname-2.6 echo "2.6 worked" >>$TS_OUTPUT 2>&1
+$TS_CMD_SETARCH $ARCH -v --uname-2.6 echo "2.6 worked" >> $TS_OUTPUT 2>> $TS_ERRLOG
 if [ $? -eq 0 ]; then
 	expected='^2.6 worked$'
 else
@@ -56,7 +56,7 @@ fi
 sed -i "$ s/$expected/2.6 works or kernel too old/" $TS_OUTPUT
 
 echo "###### --uname-2.6 true, non-verbose" >>$TS_OUTPUT
-$TS_CMD_SETARCH $ARCH --uname-2.6 true >>$TS_OUTPUT 2>&1
+$TS_CMD_SETARCH $ARCH --uname-2.6 true >> $TS_OUTPUT 2>> $TS_ERRLOG
 if [ $? -eq 0 ]; then
 	echo "2.6 works or kernel too old" >> $TS_OUTPUT
 else

@@ -47,7 +47,7 @@ function checksum() {
 }
 
 ts_init_subtest "up"
-echo '+1000,' | $TS_CMD_SFDISK --no-reread --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo '+1000,' | $TS_CMD_SFDISK --no-reread --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 checksum ${TS_DEVICE}1
@@ -56,7 +56,7 @@ ts_finalize_subtest
 udevadm settle
 
 ts_init_subtest "down"
-echo "-500," | $TS_CMD_SFDISK --no-reread --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo "-500," | $TS_CMD_SFDISK --no-reread --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 checksum ${TS_DEVICE}1
@@ -65,7 +65,7 @@ ts_finalize_subtest
 udevadm settle
 
 ts_init_subtest "non-overlay"
-echo "+30M," | $TS_CMD_SFDISK --no-reread --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo "+30M," | $TS_CMD_SFDISK --no-reread --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 checksum ${TS_DEVICE}1

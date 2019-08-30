@@ -96,7 +96,6 @@ namelen=30
 return fsck: 0
 #####################################
 $ mkfs.minix  -n 60 image
-mkfs.minix: unsupported name length: 60
 return mkfs: 8
 #####################################
 $ mkfs.minix -1  image
@@ -196,7 +195,6 @@ namelen=30
 return fsck: 0
 #####################################
 $ mkfs.minix -1 -n 60 image
-mkfs.minix: unsupported name length: 60
 return mkfs: 8
 #####################################
 $ mkfs.minix -2  image
@@ -296,7 +294,6 @@ namelen=30
 return fsck: 0
 #####################################
 $ mkfs.minix -2 -n 60 image
-mkfs.minix: unsupported name length: 60
 return mkfs: 8
 #####################################
 $ mkfs.minix -3  image
@@ -331,11 +328,9 @@ namelen=60
 return fsck: 0
 #####################################
 $ mkfs.minix -3 -n 14 image
-mkfs.minix: unsupported name length: 14
 return mkfs: 8
 #####################################
 $ mkfs.minix -3 -n 30 image
-mkfs.minix: unsupported name length: 30
 return mkfs: 8
 #####################################
 $ mkfs.minix -3 -n 60 image

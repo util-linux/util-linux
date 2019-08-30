@@ -26,14 +26,14 @@ ts_check_test_command "$TS_CMD_RENAME"
 ts_cd "$TS_OUTDIR"
 
 touch rename_exit_codes.{1..2}
-$TS_CMD_RENAME -v not_a_match impossible rename_exit_codes.? >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -v not_a_match impossible rename_exit_codes.? >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "RENAME_EXIT_NOTHING: $?" >> $TS_OUTPUT
 
-$TS_CMD_RENAME -v codes values rename_exit_codes.? >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -v codes values rename_exit_codes.? >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "EXIT_SUCCESS: $?" >> $TS_OUTPUT
 
 mkdir rename_exit_codes.2
-ts_run --unbuffered $TS_CMD_RENAME -v values codes rename_exit_values.? >> $TS_OUTPUT 2>&1
+ts_run --unbuffered $TS_CMD_RENAME -v values codes rename_exit_values.? >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "RENAME_EXIT_SOMEOK: $?" >> $TS_OUTPUT
 
 rmdir rename_exit_codes.2

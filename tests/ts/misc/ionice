@@ -20,11 +20,11 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_IONICE"
 
-$TS_CMD_IONICE -p $$ -n 0 -c 0 >> $TS_OUTPUT 2>&1
-$TS_CMD_IONICE -p $$ -n 3 -c 7 >> $TS_OUTPUT 2>&1
-$TS_CMD_IONICE -p $$ -n 4 -c 7 >> $TS_OUTPUT 2>&1
-$TS_CMD_IONICE -p $$ -n 1 -c 8 >> $TS_OUTPUT 2>&1
-$TS_CMD_IONICE -n 3 ls /etc/passwd >> $TS_OUTPUT 2>&1
-$TS_CMD_IONICE -p $$ >> $TS_OUTPUT 2>&1
+$TS_CMD_IONICE -p $$ -n 0 -c 0 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IONICE -p $$ -n 3 -c 7 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IONICE -p $$ -n 4 -c 7 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IONICE -p $$ -n 1 -c 8 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IONICE -n 3 ls /etc/passwd >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IONICE -p $$ >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize

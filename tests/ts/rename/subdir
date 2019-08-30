@@ -27,40 +27,40 @@ ts_cd "$TS_OUTDIR"
 echo "== files ==" >> $TS_OUTPUT
 mkdir rename_a{a,b}
 touch rename_a{a,b}/aa
-$TS_CMD_RENAME -v a x rename_a?/aa >> $TS_OUTPUT 2>&1
-find rename_a{a,b} >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -v a x rename_a?/aa >> $TS_OUTPUT 2>> $TS_ERRLOG
+find rename_a{a,b} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 echo "== symlinks ==" >> $TS_OUTPUT
 for i in rename_a{a,b}/sublink.{1..3}; do
 	ln -s rename/aa $i
 done
-$TS_CMD_RENAME -s -v a x rename_a{a,b}/sublink.? >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -s -v a x rename_a{a,b}/sublink.? >> $TS_OUTPUT 2>> $TS_ERRLOG
 for i in rename_a{a,b}/sublink.?; do
-	readlink $i >> $TS_OUTPUT 2>&1
+	readlink $i >> $TS_OUTPUT 2>> $TS_ERRLOG
 done
 
 rm -rf rename_a{a,b}
 
 echo "== fullpath ==" >> $TS_OUTPUT
 touch rename_path1
-$TS_CMD_RENAME -v ./rename_path1 ./rename_path2 ./rename_path1 >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -v ./rename_path1 ./rename_path2 ./rename_path1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-find . -name 'rename_path*' >> $TS_OUTPUT 2>&1
+find . -name 'rename_path*' >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f ./rename_path*
 
 mkdir rename_path_a
 touch rename_path_test1
 
-$TS_CMD_RENAME -v rename_path_test1 rename_path_a/test1 rename_path_test1 >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -v rename_path_test1 rename_path_a/test1 rename_path_test1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-find . -name '*test1*' >> $TS_OUTPUT 2>&1
+find . -name '*test1*' >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f rename_path_test1 rename_path_a/test1
 
 mkdir rename_path_b
 touch rename_path_a/test2
-$TS_CMD_RENAME -v rename_path_a/test2 rename_path_b/test2 rename_path_a/test2 >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -v rename_path_a/test2 rename_path_b/test2 rename_path_a/test2 >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-find rename_path_a rename_path_b >> $TS_OUTPUT 2>&1
+find rename_path_a rename_path_b >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f rename_path_a/test2 rename_path_b/test2
 
 rmdir rename_path_a rename_path_b

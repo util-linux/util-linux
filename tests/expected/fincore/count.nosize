@@ -1,5 +1,4 @@
 [ NO EXCITING FILE ]
-fincore: failed to open: no_such_file: No such file or directory
 return value: 1
     0 i_EMPTY_FILE
 return value: 0
@@ -34,7 +33,6 @@ return value: 0
     1 i_WINDOW_SIZE_+_1_page_directio-sparse-incore_
 return value: 0
 [ MULTIPLE FILES ]
-fincore: failed to open: no_such_file: No such file or directory
 PAGES FILE
     0 i_EMPTY_FILE
     1 i_PAGESIZE_-1__incore_

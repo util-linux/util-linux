@@ -46,7 +46,7 @@ for dump in $(ls $TS_SELF/dumps/*.tar.xz | sort); do
 		cols=$(cat $cols_file)
 		${TS_CMD_LSBLK} --sysroot "${dumpdir}/${name}" \
 			        --output $cols \
-			        >"${TS_OUTPUT}" 2>&1
+			        >> ${TS_OUTPUT} 2>> $TS_ERRLOG
 
 		ts_finalize_subtest
 	done

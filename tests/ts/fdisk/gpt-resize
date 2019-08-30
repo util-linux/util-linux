@@ -36,7 +36,7 @@ ts_device_init 10
 DEVICE=$TS_LODEV
 
 # create GPT with one partition
-echo ",," | $TS_CMD_SFDISK --no-reread --no-tell-kernel --label gpt $DEVICE >> $TS_OUTPUT 2>&1
+echo ",," | $TS_CMD_SFDISK --no-reread --no-tell-kernel --label gpt $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 udevadm settle
 
 # enlarge the image
@@ -48,16 +48,16 @@ udevadm settle
 $TS_CMD_LOSETUP --set-capacity $DEVICE
 udevadm settle
 
-echo -e "\n\n----- fixing after resize: -----\n\n" >> $TS_OUTPUT
+ts_log_both "----- fixing after resize: -----"
 
 # create another GPT partition on new free space (all default)
-echo -e 'n\n\n\n\nw\n' | $TS_CMD_FDISK $DEVICE >> $TS_OUTPUT 2>&1
+echo -e 'n\n\n\n\nw\n' | $TS_CMD_FDISK $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 udevadm settle
 
 
-echo -e "\n\n----- list result: -----\n\n" >> $TS_OUTPUT
+ts_log "----- list result: -----"
 
-$TS_CMD_FDISK --list $DEVICE 2>&1 >> $TS_OUTPUT
+$TS_CMD_FDISK --list $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_fdisk_clean $DEVICE
 ts_finalize

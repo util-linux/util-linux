@@ -23,6 +23,6 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_COLRM"
 
-printf "a       b\nc\td\nef\b\tg\n" | $TS_CMD_COLRM 2 2 > $TS_OUTPUT 2>&1
+printf "a       b\nc\td\nef\b\tg\n" | $TS_CMD_COLRM 2 2 >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize

@@ -37,11 +37,11 @@ check_minix_fs_type() {
 	TS_EXPECTED+=$BE_EXT
 	img=${TS_OUTPUT}.img
 	dd if=/dev/zero bs=1024 count=16 of=$img >/dev/null 2>&1
-	$TS_HELPER_MKFS_MINIX $2 $img >> $TS_OUTPUT 2>&1
+	$TS_HELPER_MKFS_MINIX $2 $img >> $TS_OUTPUT 2>> $TS_ERRLOG
 	echo "mkfs return value: $?" >> $TS_OUTPUT
-	$TS_CMD_FSCKMINIX $img >> $TS_OUTPUT 2>&1
+	$TS_CMD_FSCKMINIX $img >> $TS_OUTPUT 2>> $TS_ERRLOG
 	echo "fsck return value: $?" >> $TS_OUTPUT
-	$TS_CMD_HEXDUMP -C $img >> $TS_OUTPUT 2>&1
+	$TS_CMD_HEXDUMP -C $img >> $TS_OUTPUT 2>> $TS_ERRLOG
 	rm -f $img
 	ts_finalize_subtest
 }
@@ -71,19 +71,19 @@ fi
 ts_init_subtest "auto-fix"
 img=${TS_OUTPUT}.img
 cp "$TS_SELF/broken-root" $img
-$TS_CMD_FSCKMINIX -sav $img >> $TS_OUTPUT 2>&1
+$TS_CMD_FSCKMINIX -sav $img >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "fsck reports changed and uncorrected: $?" >> $TS_OUTPUT
-$TS_CMD_HEXDUMP -C $img >> $TS_OUTPUT 2>&1
-sed -i 's/Filesystem on .* is dirty/Filesystem auto-fix is dirty/' $TS_OUTPUT
+$TS_CMD_HEXDUMP -C $img >> $TS_OUTPUT 2>> $TS_ERRLOG
+sed -i 's/Filesystem on .* is dirty/Filesystem auto-fix is dirty/' $TS_OUTPUT $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "bug.773892"
-"$TS_CMD_FSCKMINIX" -f "$TS_SELF/debian.bug.773892" >>$TS_OUTPUT 2>&1 >/dev/null
+"$TS_CMD_FSCKMINIX" -f "$TS_SELF/debian.bug.773892" 2>&1 >/dev/null
 echo "fsck reports uncorrected: $?" >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "broken-root"
-"$TS_CMD_FSCKMINIX" "$TS_SELF/broken-root" > $TS_OUTPUT 2>&1
+"$TS_CMD_FSCKMINIX" "$TS_SELF/broken-root" >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "fsck reports uncorrected: $?" >> $TS_OUTPUT
 ts_finalize_subtest
 

@@ -1,3 +1,2 @@
-getopt: option '--long' is ambiguous; possibilities: '--long1' '--long2'
  --
 exit value: 1

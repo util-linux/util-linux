@@ -71,13 +71,13 @@ find . -type f -exec md5sum {} \; | sort >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "create cramfs image"
-$TS_CMD_MKCRAMFS -n $LABEL $IMAGE_SRC $IMAGE_PATH >> $TS_OUTPUT 2>&1
+$TS_CMD_MKCRAMFS -n $LABEL $IMAGE_SRC $IMAGE_PATH >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ -s "$IMAGE_PATH" ] || ts_die "Cannot create $IMAGE_PATH"
 
 ts_cd "$TS_OUTDIR"
 
 ts_log "count MD5 from the image"
-MD5_OUT=$("$TS_HELPER_MD5" < "$IMAGE_NAME") >> $TS_OUTPUT 2>&1
+MD5_OUT=$("$TS_HELPER_MD5" < "$IMAGE_NAME") >> $TS_OUTPUT 2>> $TS_ERRLOG
 if [ "$MD5_EXP" != "$MD5_OUT" -a "$MD5_EXP" != "unknown" ]; then
 	ts_log "is $MD5_OUT, should be $MD5_EXP"
 fi

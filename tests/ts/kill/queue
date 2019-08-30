@@ -33,12 +33,12 @@ all_ok=true
 HELPER_SYMLINK="$(mktemp "${TS_OUTDIR}/quXXXXXXXXXXXXX")"
 ln -sf "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
 
-"$HELPER_SYMLINK" >> "$TS_OUTPUT" 2>&1 &
+"$HELPER_SYMLINK" >> $TS_OUTPUT 2>> $TS_ERRLOG &
 TEST_PID=$!
 check_test_sigreceive $TEST_PID
 [ $? -eq 1 ] || echo "${HELPER_SYMLINK##*/} helper did not start" >> "$TS_OUTPUT"
 
-"$TS_CMD_KILL" -1 --queue 42 $TEST_PID >> "$TS_OUTPUT" 2>&1
+"$TS_CMD_KILL" -1 --queue 42 $TEST_PID >> $TS_OUTPUT 2>> $TS_ERRLOG
 if [ $? -ne 0 ]; then
 	echo "kill --queue 42 failed" >> "$TS_OUTPUT"
 	all_ok=false

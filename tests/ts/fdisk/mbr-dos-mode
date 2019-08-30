@@ -51,82 +51,82 @@ function print_layout {
 #
 ts_log "Initialize empty image"
 TEST_IMAGE_NAME=$(ts_image_init 10)
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_log "Create new DOS partition table"
 echo -e "${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_INIT}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Create primary partition"
 echo -e "${FDISK_CMD_CREATE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Set partition type"
 echo -e "${FDISK_CMD_CHANGE_PARTTYPE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Set primary partition active"
 echo -e "${FDISK_CMD_SET_ACTIVE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Re-create primary partition"
 echo -e "d\n${FDISK_CMD_CREATE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Create extended partition"
 echo -e "${FDISK_CMD_CREATE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Create logical partitions"
 echo -e "${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Delete logical partitions"
 echo -e "${FDISK_CMD_DELETE_LOGICALS}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Create another logical partition"
 echo -e "${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Delete primary partition"
 echo -e "${FDISK_CMD_DELETE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Delete extended partition"
 echo -e "${FDISK_CMD_DELETE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum >> $TS_OUTPUT 2>&1
+ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
