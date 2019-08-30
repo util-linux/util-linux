@@ -143,12 +143,12 @@ int main(int argc, char *argv[])
 		fdisk_partition_set_size(pa, size);
 
 		if (fdisk_partition_has_partno(pa))
-			fprintf(stderr, "Requested partition: <partno=%zu,start=%ju,size=%ju>\n",
+			fprintf(stdout, "Requested partition: <partno=%zu,start=%ju,size=%ju>\n",
 					fdisk_partition_get_partno(pa),
 					(uintmax_t) fdisk_partition_get_start(pa),
 					(uintmax_t) fdisk_partition_get_size(pa));
 		else
-			fprintf(stderr, "Requested partition: <partno=<default>,start=%ju,size=%ju>\n",
+			fprintf(stdout, "Requested partition: <partno=<default>,start=%ju,size=%ju>\n",
 					(uintmax_t) fdisk_partition_get_start(pa),
 					(uintmax_t) fdisk_partition_get_size(pa));
 
