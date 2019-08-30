@@ -4,8 +4,6 @@ Created a new <removed>.
 Requested partition: <partno=1,start=4096,size=2048>
 Created a new <removed>.
 Requested partition: <partno=2,start=4096,size=2048>
-Start sector 4096 out of range.
-sample-fdisk-mkpart-fullspec: failed to add #3 partition
 Disk <removed>: 15 MiB, 15728640 bytes, 30720 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes

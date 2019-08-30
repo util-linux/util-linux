@@ -31,7 +31,7 @@ ts_check_test_command "$TS_CMD_WIPEFS"
 TEST_IMAGE_NAME=$(ts_image_init 15)
 
 ts_init_subtest "mbr-primary"
-ts_run --unbuffered $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,4096,2048 \
 	3,6144,2048 \
@@ -45,7 +45,7 @@ $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 
 ts_init_subtest "mbr-primary-nopartno"
-ts_run --unbuffered $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} -- \
+ts_run $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} -- \
 	-,2048,2048 \
 	-,4096,2048 \
 	-,6144,2048 \
@@ -59,7 +59,7 @@ $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ## no extended but partno > 4 requested
 ts_init_subtest "mbr-err-primary"
-ts_run --unbuffered $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,4096,2048 \
 	7,6144,2048 \
@@ -72,7 +72,7 @@ $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ## no extended but partno > 4 requested
 ts_init_subtest "mbr-err-nospace"
-ts_run --unbuffered $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,4096,2048 \
 	3,4096,2048 \
@@ -85,7 +85,7 @@ $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 
 ts_init_subtest "mbr-logical"
-ts_run --unbuffered $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,4096,2048 \
 	3,6144,2048 \
@@ -101,7 +101,7 @@ ts_finalize_subtest
 $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ts_init_subtest "mbr-nopartno"
-ts_run --unbuffered $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} -- \
+ts_run $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} -- \
 	-,2048,2048 \
 	-,4096,2048 \
 	-,6144,2048 \
@@ -118,7 +118,7 @@ $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ### 6th partition (logical) out of extended
 ts_init_subtest "mbr-err-logical"
-ts_run --unbuffered $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,4096,2048 \
 	3,6144,2048 \
@@ -134,7 +134,7 @@ ts_finalize_subtest
 $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ts_init_subtest "mbr-space-gap"
-ts_run --unbuffered $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label mbr --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,6144,2048 \
 	3,8192,2048 \
@@ -146,7 +146,7 @@ ts_finalize_subtest
 $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ts_init_subtest "gpt"
-ts_run --unbuffered $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,4096,2048 \
 	3,6144,2048 \
@@ -162,7 +162,7 @@ ts_finalize_subtest
 $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ts_init_subtest "gpt-nopartno"
-ts_run --unbuffered $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} -- \
+ts_run $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} -- \
 	-,2048,2048 \
 	-,4096,2048 \
 	-,6144,2048 \
@@ -179,7 +179,7 @@ $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ### 4th partition overlap 4th and 5th
 ts_init_subtest "gpt-err-overlap"
-ts_run --unbuffered $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,4096,2048 \
 	3,6144,2048 \
@@ -195,7 +195,7 @@ ts_finalize_subtest
 $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ts_init_subtest "gpt-partno-gap"
-ts_run --unbuffered $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,4096,2048 \
 	4,6144,2048 \
@@ -211,7 +211,7 @@ ts_finalize_subtest
 $TS_CMD_WIPEFS --all --force ${TEST_IMAGE_NAME} &> /dev/null
 
 ts_init_subtest "gpt-space-gap"
-ts_run --unbuffered $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
+ts_run $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
 	1,2048,2048 \
 	2,6144,2048 \
 	3,8192,2048 \
@@ -221,7 +221,5 @@ ts_run --unbuffered $TESTPROG --label gpt --device ${TEST_IMAGE_NAME} \
 $TS_CMD_SFDISK --list ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize_subtest
-
-
 
 ts_finalize
