@@ -1478,7 +1478,7 @@ static void follow_wipe_mode(struct sfdisk *sf)
 		if (!fdisk_is_ptcollision(sf->cxt)) {
 			fdisk_info(sf->cxt, _("The old %s signature will be removed by a write command."),
 					fdisk_get_collision(sf->cxt));
-			fputc('\n', stderr);
+			fputc('\n', stdout);
 		}
 	} else {
 		fdisk_warnx(sf->cxt, _(
