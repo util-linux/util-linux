@@ -21,10 +21,11 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_COLCRT"
 ts_check_prog "timeout"
+ts_check_prog "env"
 
 check_input_file() {
 	ts_init_subtest ${1##*/}
-	LC_ALL=C.UTF-8 timeout 2 $TS_CMD_COLCRT < $1 >> $TS_OUTPUT 2>> $TS_ERRLOG
+	timeout 2 env LC_ALL=C.UTF-8 $TS_CMD_COLCRT < $1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 	echo "return value: $?" >> $TS_OUTPUT
 	ts_finalize_subtest
 }
