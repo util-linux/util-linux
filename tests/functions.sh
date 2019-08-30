@@ -436,21 +436,6 @@ function ts_init_py {
 }
 
 function ts_run {
-	local UNBUFFERED=
-
-	while true; do
-		case "$1" in
-			--unbuffered)
-				UNBUFFERED=1
-				shift;;
-			--)
-				shift
-				break;;
-			*)
-				break;;
-		esac
-	done
-
 	declare -a args
 
 	#
@@ -458,17 +443,6 @@ function ts_run {
 	#
 	if [ "$TS_ENABLE_ASAN" == "yes" ]; then
 		args+=(env ASAN_OPTIONS=detect_leaks=1)
-	fi
-
-	#
-	# Disable buffering of stdout
-	#
-	if [ -n "$UNBUFFERED" ]; then
-		if type unbuffer >/dev/null 2>&1; then
-			args+=(unbuffer)
-		elif type stdbuf >/dev/null 2>&1 && [ "$TS_ENABLE_ASAN" != "yes" ]; then
-			args+=(stdbuf --output=0)
-		fi
 	fi
 
 	#
