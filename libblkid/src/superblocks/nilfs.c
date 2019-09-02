@@ -157,6 +157,9 @@ static int probe_nilfs2(blkid_probe pr,
 				(unsigned char *) &sb->s_magic))
 		return 1;
 
+	if (le32_to_cpu(sb->s_log_block_size) < 32)
+		blkid_probe_set_block_size(pr, 1024U << le32_to_cpu(sb->s_log_block_size));
+
 	return 0;
 }
 

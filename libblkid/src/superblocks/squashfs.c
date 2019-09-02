@@ -71,6 +71,8 @@ static int probe_squashfs3(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_sprintf_version(pr, "%u.%u", vermaj, vermin);
 
+	blkid_probe_set_block_size(pr, 1024);
+
 	return 0;
 }
 

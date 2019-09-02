@@ -153,6 +153,9 @@ static int probe_ocfs2(blkid_probe pr, const struct blkid_idmag *mag)
 		le16_to_cpu(osb->s_major_rev_level),
 		le16_to_cpu(osb->s_minor_rev_level));
 
+	if (le32_to_cpu(osb->s_blocksize_bits) < 32)
+		blkid_probe_set_block_size(pr, 1U << le32_to_cpu(osb->s_blocksize_bits));
+
 	return 0;
 }
 

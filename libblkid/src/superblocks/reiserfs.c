@@ -32,7 +32,8 @@ struct reiserfs_super_block {
 
 struct reiser4_super_block {
 	unsigned char	rs4_magic[16];
-	uint16_t	rs4_dummy[2];
+	uint8_t		rs4_dummy[3];
+	uint8_t		rs4_blocksize;
 	unsigned char	rs4_uuid[16];
 	unsigned char	rs4_label[16];
 	uint64_t	rs4_dummy2;
@@ -73,21 +74,28 @@ static int probe_reiser(blkid_probe pr, const struct blkid_idmag *mag)
 	else
 		blkid_probe_set_version(pr, "3.5");
 
+	blkid_probe_set_block_size(pr, blocksize);
+
 	return 0;
 }
 
 static int probe_reiser4(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct reiser4_super_block *rs4;
+	unsigned int blocksize;
 
 	rs4 = blkid_probe_get_sb(pr, mag, struct reiser4_super_block);
 	if (!rs4)
 		return errno ? -errno : 1;
 
+	blocksize = rs4->rs4_blocksize * 256;
+
 	if (*rs4->rs4_label)
 		blkid_probe_set_label(pr, rs4->rs4_label, sizeof(rs4->rs4_label));
 	blkid_probe_set_uuid(pr, rs4->rs4_uuid);
 	blkid_probe_set_version(pr, "4");
+
+	blkid_probe_set_block_size(pr, blocksize);
 
 	return 0;
 }

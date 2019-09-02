@@ -137,6 +137,8 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_sprintf_version(pr, "%u.%u",
 			sb->version.vermaj, sb->version.vermin);
 
+	blkid_probe_set_block_size(pr, BLOCK_SIZE(sb));
+
 	return BLKID_PROBE_OK;
 }
 

@@ -74,6 +74,8 @@
  * @APPLICATION_ID: ISO9660 application identifier
  *
  * @BOOT_SYSTEM_ID: ISO9660 boot system identifier
+ *
+ * @BLOCK_SIZE: block size
  */
 
 static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn);
@@ -551,6 +553,11 @@ int blkid_probe_sprintf_version(blkid_probe pr, const char *fmt, ...)
 		va_end(ap);
 	}
 	return rc;
+}
+
+int blkid_probe_set_block_size(blkid_probe pr, unsigned block_size)
+{
+	return blkid_probe_sprintf_value(pr, "BLOCK_SIZE", "%u", block_size);
 }
 
 static int blkid_probe_set_usage(blkid_probe pr, int usage)

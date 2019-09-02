@@ -80,6 +80,7 @@ static int probe_minix(blkid_probe pr,
 	unsigned long zones, ninodes, imaps, zmaps;
 	off_t firstz;
 	size_t zone_size;
+	unsigned block_size;
 
 	data = blkid_probe_get_buffer(pr, 1024,
 			max(sizeof(struct minix_super_block),
@@ -103,6 +104,7 @@ static int probe_minix(blkid_probe pr,
 		zmaps   = minix_swab16(swabme, sb->s_zmap_blocks);
 		firstz  = minix_swab16(swabme, sb->s_firstdatazone);
 		zone_size = sb->s_log_zone_size;
+		block_size = 1024;
 		break;
 	}
 	case 3: {
@@ -114,6 +116,8 @@ static int probe_minix(blkid_probe pr,
 		zmaps   = minix_swab16(swabme, sb->s_zmap_blocks);
 		firstz  = minix_swab16(swabme, sb->s_firstdatazone);
 		zone_size = sb->s_log_zone_size;
+		block_size = minix_swab16(swabme, sb->s_blocksize);
+
 		break;
 	}
 	default:
@@ -143,6 +147,7 @@ static int probe_minix(blkid_probe pr,
 		return 1;
 
 	blkid_probe_sprintf_version(pr, "%d", version);
+	blkid_probe_set_block_size(pr, block_size);
 	return 0;
 }
 
