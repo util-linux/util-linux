@@ -151,7 +151,7 @@ static int rubchars(struct colcrt_control *ctl, int col, int n)
 static void colcrt(struct colcrt_control *ctl)
 {
 	int col;
-	wint_t c;
+	wint_t c = 0;
 	long old_pos;
 
 	ctl->print_nl = 1;
@@ -163,16 +163,18 @@ static void colcrt(struct colcrt_control *ctl)
 			output_lines(ctl, col);
 			errno = 0;
 			old_pos = ftell(ctl->f);
-			while ((c = getwc(ctl->f)) != L'\n') {
-				long new_pos = ftell(ctl->f);
-				if (old_pos == new_pos)
-					fseek(ctl->f, 1, SEEK_CUR);
-				else
-					old_pos = new_pos;
-				if (errno == 0 && c == WEOF)
+
+			while (getwc(ctl->f) != L'\n') {
+				long new_pos;
+
+				if (ferror(ctl->f) || feof(ctl->f))
 					return;
-				else
-					errno = 0;
+				new_pos = ftell(ctl->f);
+				if (old_pos == new_pos) {
+					if (fseek(ctl->f, 1, SEEK_CUR) < 1)
+						return;
+				} else
+					old_pos = new_pos;
 			}
 			col = -1;
 			continue;
