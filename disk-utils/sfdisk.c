@@ -1986,6 +1986,7 @@ int main(int argc, char *argv[])
 		{ NULL, 0, NULL, 0 },
 	};
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+		{ 'F','d'},                     /* --list-free --dump */
 		{ 's','u'},			/* --show-size --unit */
 		{ 0 }
 	};
