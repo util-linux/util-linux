@@ -1,3 +1,4 @@
+ID_FS_BLOCK_SIZE=512
 ID_FS_LABEL=test-xfs
 ID_FS_LABEL_ENC=test-xfs
 ID_FS_TYPE=xfs

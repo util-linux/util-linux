@@ -1,3 +1,4 @@
+ID_FS_BLOCK_SIZE=512
 ID_FS_LABEL=Новый_том
 ID_FS_LABEL_ENC=Новый\x20том
 ID_FS_TYPE=exfat

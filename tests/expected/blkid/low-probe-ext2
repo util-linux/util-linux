@@ -1,3 +1,4 @@
+ID_FS_BLOCK_SIZE=1024
 ID_FS_LABEL=test-ext2
 ID_FS_LABEL_ENC=test-ext2
 ID_FS_TYPE=ext2

@@ -1,3 +1,4 @@
+ID_FS_BLOCK_SIZE=512
 ID_FS_LABEL=My_volume_label
 ID_FS_LABEL_ENC=My\x20volume\x20label
 ID_FS_LOGICAL_VOLUME_ID=My volume label

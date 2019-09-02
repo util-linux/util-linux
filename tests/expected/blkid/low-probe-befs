@@ -1,3 +1,4 @@
+ID_FS_BLOCK_SIZE=1024
 ID_FS_LABEL=befs_test
 ID_FS_LABEL_ENC=befs_test
 ID_FS_TYPE=befs
