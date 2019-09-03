@@ -173,7 +173,7 @@ static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_set_label(pr, (unsigned char *) xs->sb_fname,
 				sizeof(xs->sb_fname));
 	blkid_probe_set_uuid(pr, xs->sb_uuid);
-	blkid_probe_set_block_size(pr, xs->sb_sectsize * 256);
+	blkid_probe_set_block_size(pr, be16_to_cpu(xs->sb_sectsize));
 	return 0;
 }
 
