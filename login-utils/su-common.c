@@ -90,8 +90,13 @@ UL_DEBUG_DEFINE_MASKNAMES(su) = UL_DEBUG_EMPTY_MASKNAMES;
 #define PAM_SRVNAME_RUNUSER "runuser"
 #define PAM_SRVNAME_RUNUSER_L "runuser-l"
 
+#ifdef HAVE_LIBECONF
+#define _PATH_LOGINDEFS_SU	"default/su"
+#define _PATH_LOGINDEFS_RUNUSER "default/runuser"
+#else
 #define _PATH_LOGINDEFS_SU	"/etc/default/su"
 #define _PATH_LOGINDEFS_RUNUSER "/etc/default/runuser"
+#endif
 
 #define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
@@ -1231,7 +1236,9 @@ static void load_config(void *data)
 	struct su_context *su = (struct su_context *) data;
 
 	DBG(MISC, ul_debug("loading logindefs"));
+#ifndef HAVE_LIBECONF
 	logindefs_load_file(_PATH_LOGINDEFS);
+#endif
 	logindefs_load_file(su->runuser ? _PATH_LOGINDEFS_RUNUSER : _PATH_LOGINDEFS_SU);
 }
 
