@@ -1163,7 +1163,7 @@ static int read_procfs_file(int fd, char **buf, size_t *bufsiz)
 {
 	size_t bufmax = 0;
 	int rc = 0, tries = 0, ninters = 0;
-	char *bufptr = NULL;;
+	char *bufptr = NULL;
 
 	assert(buf);
 	assert(bufsiz);
