@@ -270,7 +270,7 @@ static void load_defaults(void)
 
 void logindefs_load_file(const char *filename)
 {
-	econf_file *file_l, *file_m;
+	econf_file *file_l = NULL, *file_m = NULL;
 	char *path;
 
 	logindefs_loader = NULL; /* No recursion */
@@ -332,15 +332,12 @@ int getlogindefs_bool(const char *name, int dflt)
 			       econf_errString(error));
 		return dflt;
 	}
-	if (value == true)
-	        return 0;
-	else
-	        return 1;
+	return value;
 }
 
 unsigned long getlogindefs_num(const char *name, unsigned long dflt)
 {
-	unsigned long value;
+	uint64_t value;
 	econf_err error;
 
 	if (!file)
@@ -381,7 +378,10 @@ const char *getlogindefs_str(const char *name, const char *dflt)
 			 econf_errString(error));
 		return dflt;
 	}
-	return value;
+	if (value)
+		return value;
+	else
+		return strdup("");
 }
 #endif /* !HAVE_LIBECONF */
 
@@ -565,23 +565,18 @@ int main(int argc, char *argv[])
 
 	if (argc != 4) {	/* list all */
 #ifdef HAVE_LIBECONF
-	        econf_err error;
-		size_t key_number;
-		char **keys;
+		int i;
+		char *keys[] = {"END", "EMPTY", "CRAZY3", "CRAZY2", "CRAZY1",
+				"BOOLEAN", "NUMBER", "STRING", "HELLO_WORLD",
+				NULL};
 
-		if ((error = econf_getKeys(file, NULL, &key_number, &keys)))
-	                errx(EXIT_FAILURE, "Couldn't list all keys: %s",
-			     econf_errString(error));
-
-		for (size_t i = 0; i < key_number; i++) {
+		for (i = 0; keys[i] != NULL; i++) {
 		  	char *value = NULL;
 
 			econf_getStringValue(file, NULL, keys[i], &value);
-		        printf ("%s: $%s: '%s'\n", "logindefs.data",
-				keys[i], value);
+		        printf ("%s: $%s: '%s'\n", argv[1], keys[i], value);
 		}
 
-		econf_free (keys);
 		econf_free (file);
 
 #else
