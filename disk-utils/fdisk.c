@@ -797,12 +797,12 @@ void follow_wipe_mode(struct fdisk_context *cxt)
 	fdisk_enable_wipe(cxt, dowipe);
 	if (dowipe)
 		fdisk_warnx(cxt, _(
-			"The old %s signature will be removed by a write command. "
+			"The device contains '%s' signature and it will be removed by a write command. "
 			"See fdisk(8) man page and --wipe option for more details."),
 			fdisk_get_collision(cxt));
 	else
 		fdisk_warnx(cxt, _(
-			"The old %s signature may remain on the device. "
+			"The device contains '%s' signature and it may remain on the device. "
 			"It is recommended to wipe the device with wipefs(8) or "
 			"fdisk --wipe, in order to avoid possible collisions."),
 			fdisk_get_collision(cxt));
