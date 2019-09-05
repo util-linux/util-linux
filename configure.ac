@@ -790,7 +790,7 @@ AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
 ]])
 
 # on Solaris, you can't mix and match standards, since we use c99
-# aparently at this stage, XOPEN_SOURCE will conflict.  As workaround,
+# apparently at this stage, XOPEN_SOURCE will conflict.  As workaround,
 # check for crypt.h and use that without XOPEN_SOURCE.
 have_crypt=no
 AC_CHECK_HEADERS([crypt.h])

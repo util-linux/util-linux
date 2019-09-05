@@ -85,7 +85,7 @@ udevadm settle
 ts_unlock "md"
 
 ts_fdisk_clean $TS_DEVICE
-# substitue UUIDs and major/minor number before comparison
+# substitute UUIDs and major/minor number before comparison
 sed -i \
   -e         's/^\(ID_FS_UUID\)=.*/\1=__ts_uuid__/' \
   -e     's/^\(ID_FS_UUID_ENC\)=.*/\1=__ts_uuid_enc__/' \

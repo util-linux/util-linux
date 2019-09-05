@@ -64,7 +64,7 @@
 
 /*
  * It evaluates to 1 if the attribute/feature is supported by the current
- * compilation targed. Fallback for old compilers.
+ * compilation target. Fallback for old compilers.
  */
 #ifndef __has_attribute
   #define __has_attribute(x) 0

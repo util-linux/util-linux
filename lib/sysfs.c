@@ -861,7 +861,7 @@ dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char 
 			dev = st.st_rdev;
 			goto done;
 		}
-		name += 5;	/* unaccesible, or not node in /dev */
+		name += 5;	/* unaccessible, or not node in /dev */
 	}
 
 	_name = strdup(name);
