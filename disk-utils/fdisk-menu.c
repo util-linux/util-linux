@@ -432,7 +432,7 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 		if (is_interactive
 		    && fdisk_label_is_changed(fdisk_get_label(cxt, NULL))) {
 			rc = get_user_reply(
-				_("\nDo you really want to quit? "),
+				_("\nAll unwritten changes will be lost, do you really want to quit? "),
 				buf, sizeof(buf));
 			if (rc || !rpmatch(buf))
 				return 0;
