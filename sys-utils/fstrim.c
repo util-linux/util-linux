@@ -65,11 +65,27 @@ struct fstrim_control {
 		     dryrun : 1;
 };
 
+static int is_directory(const char *path, int silent)
+{
+	struct stat sb;
+
+	if (stat(path, &sb) == -1) {
+		if (!silent)
+			warn(_("stat of %s failed"), path);
+		return 0;
+	}
+	if (!S_ISDIR(sb.st_mode)) {
+		if (!silent)
+			warnx(_("%s: not a directory"), path);
+		return 0;
+	}
+	return 1;
+}
+
 /* returns: 0 = success, 1 = unsupported, < 0 = error */
 static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const char *devname)
 {
 	int fd = -1, rc;
-	struct stat sb;
 	struct fstrim_range range;
 	char *rpath = realpath(path, NULL);
 
@@ -85,16 +101,6 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const
 	if (fd < 0) {
 		warn(_("cannot open %s"), path);
 		rc = -errno;
-		goto done;
-	}
-	if (fstat(fd, &sb) == -1) {
-		warn(_("stat of %s failed"), path);
-		rc = -errno;
-		goto done;
-	}
-	if (!S_ISDIR(sb.st_mode)) {
-		warnx(_("%s: not a directory"), path);
-		rc = -EINVAL;
 		goto done;
 	}
 
@@ -328,14 +334,15 @@ static int fstrim_all(struct fstrim_control *ctl)
 			continue;	/* overlaying mount */
 
 		/* FITRIM on read-only filesystem can fail, and it can fail */
-		if (access(path, W_OK) != 0) {
+		if (access(tgt, W_OK) != 0) {
 			if (errno == EROFS)
 				continue;
 			if (errno == EACCES)
 				continue;
 		}
 
-		if (!has_discard(src, &wholedisk))
+		if (!is_directory(tgt, 1) ||
+		    !has_discard(src, &wholedisk))
 			continue;
 		cnt++;
 
@@ -384,7 +391,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --length <num>  the number of bytes to discard\n"), out);
 	fputs(_(" -m, --minimum <num> the minimum extent length to discard\n"), out);
 	fputs(_(" -v, --verbose       print number of discarded bytes\n"), out);
-	fputs(_("     --quiet         suppress error messages\n"), out);
+	fputs(_("     --quiet         suppress trim error messages\n"), out);
 	fputs(_(" -n, --dry-run       does everything, but trim\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -474,6 +481,9 @@ int main(int argc, char **argv)
 
 	if (all)
 		return fstrim_all(&ctl);	/* MNT_EX_* codes */
+
+	if (!is_directory(path, 0))
+		return EXIT_FAILURE;
 
 	rc = fstrim_filesystem(&ctl, path, NULL);
 	if (rc == 1 && !ctl.quiet)
