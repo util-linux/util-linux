@@ -109,6 +109,7 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	if (is_interactive)
 		rl_callback_handler_install(prompt, reply_linehandler);
 #endif
+	errno = 0;
 	reply_running = 1;
 	do {
 		int rc;
@@ -158,6 +159,7 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	if (!*buf) {
 		DBG(ASK, ul_debug("cancel by CTRL+D"));
 		ret = -ECANCELED;
+		clearerr(stdin);
 		goto done;
 	}
 
@@ -168,13 +170,13 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	if (sz && *(buf + sz - 1) == '\n')
 		*(buf + sz - 1) = '\0';
 
-	DBG(ASK, ul_debug("user's reply: >>>%s<<<", buf));
 done:
 #ifdef HAVE_LIBREADLINE
 	if (is_interactive)
 		rl_callback_handler_remove();
 #endif
 	sigaction(SIGINT, &oldact, NULL);
+	DBG(ASK, ul_debug("user's reply: >>>%s<<< [rc=%d]", buf, ret));
 	return ret;
 }
 
