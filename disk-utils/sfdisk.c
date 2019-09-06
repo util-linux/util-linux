@@ -439,7 +439,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	if (!sf->quiet) {
 		fdisk_info(sf->cxt,"");
 		color_scheme_enable("header", UL_COLOR_BOLD);
-		fdisk_info(sf->cxt, _("Data move:"));
+		fdisk_info(sf->cxt, sf->noact ? _("Data move: (--no-act)") : _("Data move:"));
 		color_disable();
 		fdisk_info(sf->cxt, _(" typescript file: %s"), typescript);
 		printf(_(" old start: %ju, new start: %ju (move %ju sectors)\n"),
@@ -457,8 +457,10 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	}
 
 	f = fopen(typescript, "w");
-	if (!f)
+	if (!f) {
+		fdisk_warn(sf->cxt, _("cannot open %s"), typescript);
 		goto fail;
+	}
 
 	/* don't translate */
 	fprintf(f, "# sfdisk: " PACKAGE_STRING "\n");
@@ -491,26 +493,29 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 
 		DBG(MISC, ul_debug("#%05zu: src=%ju dst=%ju", cc, src, dst));
 
-		/* read source */
-		if (lseek(fd, src, SEEK_SET) == (off_t) -1)
-			goto fail;
-		rc = read(fd, buf, step_bytes);
-		if (rc < 0 || rc != (ssize_t) step_bytes)
-			goto fail;
+		if (!sf->noact) {
+			/* read source */
+			if (lseek(fd, src, SEEK_SET) == (off_t) -1)
+				goto fail;
+			rc = read(fd, buf, step_bytes);
+			if (rc < 0 || rc != (ssize_t) step_bytes)
+				goto fail;
 
-		/* write target */
-		if (lseek(fd, dst, SEEK_SET) == (off_t) -1)
-			goto fail;
-		rc = write(fd, buf, step_bytes);
-		if (rc < 0 || rc != (ssize_t) step_bytes)
-			goto fail;
-		fsync(fd);
+			/* write target */
+			if (lseek(fd, dst, SEEK_SET) == (off_t) -1)
+				goto fail;
+			rc = write(fd, buf, step_bytes);
+			if (rc < 0 || rc != (ssize_t) step_bytes)
+				goto fail;
+			fsync(fd);
+		}
 
 		/* write log */
 		fprintf(f, "%05zu: %12ju %12ju\n", cc, src, dst);
 
 #if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
-		posix_fadvise(fd, src, step_bytes, POSIX_FADV_DONTNEED);
+		if (!sf->noact)
+			posix_fadvise(fd, src, step_bytes, POSIX_FADV_DONTNEED);
 #endif
 		if (!backward)
 			src += step_bytes, dst += step_bytes;
@@ -520,6 +525,9 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	free(buf);
 	free(devname);
 	free(typescript);
+
+	if (sf->noact)
+		fdisk_info(sf->cxt, _("Your data has not been moved (--no-act)."));
 
 	return 0;
 fail:
@@ -540,23 +548,25 @@ static int write_changes(struct sfdisk *sf)
 
 	if (sf->noact)
 		fdisk_info(sf->cxt, _("The partition table is unchanged (--no-act)."));
-	else {
+	else
 		rc = fdisk_write_disklabel(sf->cxt);
-		if (rc == 0 && sf->movedata && sf->orig_pa)
-			rc = move_partition_data(sf, sf->partno, sf->orig_pa);
-		if (!rc) {
-			fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
-			if (!sf->notell) {
-				/* Let's wait a little bit. It's possible that our
-				 * system is still busy with a previous re-read
-				 * ioctl (on sfdisk start) or with another task
-				 * related to the write to the device.
-				 */
-				xusleep(250000);
-				fdisk_reread_partition_table(sf->cxt);
-			}
+
+	if (rc == 0 && sf->movedata && sf->orig_pa)
+		rc = move_partition_data(sf, sf->partno, sf->orig_pa);
+
+	if (!sf->noact && !rc) {
+		fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
+		if (!sf->notell) {
+			/* Let's wait a little bit. It's possible that our
+			 * system is still busy with a previous re-read
+			 * ioctl (on sfdisk start) or with another task
+			 * related to the write to the device.
+			 */
+			xusleep(250000);
+			fdisk_reread_partition_table(sf->cxt);
 		}
 	}
+
 	if (!rc)
 		rc = fdisk_deassign_device(sf->cxt,
 				sf->noact || sf->notell);	/* no-sync */
