@@ -370,7 +370,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	FILE *f = NULL;
 	int ok = 0, fd, backward = 0;
 	fdisk_sector_t nsectors, from, to, step, i;
-	size_t ss, step_bytes, cc;
+	size_t io, ss, step_bytes, cc;
 	uintmax_t src, dst;
 	int errsv;
 
@@ -399,7 +399,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 
 	fd = fdisk_get_devfd(sf->cxt);
 
-	ss = fdisk_get_sector_size(sf->cxt);
+	/* set move direction and overlay */
 	nsectors = fdisk_partition_get_size(orig_pa);
 	from = fdisk_partition_get_start(orig_pa);
 	to = fdisk_partition_get_start(pa);
@@ -411,22 +411,24 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		DBG(MISC, ul_debug("overlay between source and target"));
 		backward = from < to;
 		DBG(MISC, ul_debug(" copy order: %s", backward ? "backward" : "forward"));
+	}
 
-		step = from > to ? from - to : to - from;
-		if (step > nsectors)
-			step = nsectors;
-	} else
-		step = nsectors;
+	/* set optimal step size -- nearest to 1MiB aligned to optimal I/O */
+	io = fdisk_get_optimal_iosize(sf->cxt);
+	ss = fdisk_get_sector_size(sf->cxt);
+	if (!io)
+		io = ss;
+	if (io < 1024 * 1024)
+		step_bytes = ((1024 * 1024) + io/2) / io * io;
+	else
+		step_bytes = io;
 
-	/* make step usable for malloc() */
-	if (step * ss > (getpagesize() * 256U))
-		step = (getpagesize() * 256) / ss;
+	step = step_bytes / ss;
 
 	/* align the step (note that nsectors does not have to be power of 2) */
 	while (nsectors % step)
 		step--;
 
-	step_bytes = step * ss;
 	DBG(MISC, ul_debug(" step: %ju (%zu bytes)", (uintmax_t)step, step_bytes));
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
