@@ -646,7 +646,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 
 	/* add free-space behind last partition to the end of the table (so
 	 * don't use table_add_freespace()) */
-	if (rc == 0 && last + grain < cxt->total_sectors - 1) {
+	if (rc == 0 && last + grain < cxt->last_lba - 1) {
 		DBG(CXT, ul_debugobj(cxt, "freespace behind last partition detected"));
 		rc = new_freespace(cxt,
 			last + (last > cxt->first_lba || nparts ? 1 : 0),

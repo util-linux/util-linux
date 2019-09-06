@@ -1160,8 +1160,15 @@ static int recount_resize(
 	FDISK_INIT_UNDEF(size);
 
 	rc = fdisk_get_partitions(cxt, &tb);
-	if (!rc)
+	if (!rc) {
+		/* For resize we do not follow grain to detect free-space, but
+		 * we allow to resize with very small granulation. */
+		unsigned long org = cxt->grain;
+
+		cxt->grain = cxt->sector_size;
 		rc = fdisk_get_freespaces(cxt, &tb);
+		cxt->grain = org;
+	}
 	if (rc) {
 		fdisk_unref_table(tb);
 		return rc;
@@ -1258,7 +1265,7 @@ static int recount_resize(
 			goto erange;
 	}
 
-	if (!FDISK_IS_UNDEF(size)) {
+	if (FDISK_IS_UNDEF(size)) {
 		DBG(PART, ul_debugobj(tpl, "resize: size unchanged (undefined)"));
 	}
 
