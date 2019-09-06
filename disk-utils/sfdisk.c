@@ -323,7 +323,7 @@ static char *mk_backup_filename_tpl(const char *filename, const char *devname, c
 
 	name = basename(buf);
 
-	if (!filename) {
+	if (!filename || strcmp(filename, "@default") == 0) {
 		const char *home = getenv ("HOME");
 		if (!home)
 			errx(EXIT_FAILURE, _("failed to create a backup file, $HOME undefined"));
@@ -436,16 +436,20 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		posix_fadvise(fd, from * ss, nsectors * ss, POSIX_FADV_SEQUENTIAL);
 #endif
 	devname = fdisk_partname(fdisk_get_devname(sf->cxt), partno+1);
-	typescript = mk_backup_filename_tpl(sf->move_typescript, devname, ".move");
+	if (sf->move_typescript)
+		typescript = mk_backup_filename_tpl(sf->move_typescript, devname, ".move");
 
 	if (!sf->quiet) {
 		fdisk_info(sf->cxt,"");
 		color_scheme_enable("header", UL_COLOR_BOLD);
 		fdisk_info(sf->cxt, sf->noact ? _("Data move: (--no-act)") : _("Data move:"));
 		color_disable();
-		fdisk_info(sf->cxt, _(" typescript file: %s"), typescript);
-		printf(_(" old start: %ju, new start: %ju (move %ju sectors)\n"),
-			(uintmax_t) from, (uintmax_t) to, (uintmax_t) nsectors);
+		if (typescript)
+			fdisk_info(sf->cxt, _(" typescript file: %s"), typescript);
+		printf(_("  start sector: (from/to) %ju / %ju\n"), (uintmax_t) from, (uintmax_t) to);
+		printf(_("  sectors: %ju\n"), (uintmax_t) nsectors);
+	        printf(_("  step size: %zu bytes\n"), step_bytes);
+		putchar('\n');
 		fflush(stdout);
 	}
 
@@ -458,28 +462,30 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		}
 	}
 
-	f = fopen(typescript, "w");
-	if (!f) {
-		fdisk_warn(sf->cxt, _("cannot open %s"), typescript);
-		goto fail;
-	}
+	if (typescript) {
+		f = fopen(typescript, "w");
+		if (!f) {
+			fdisk_warn(sf->cxt, _("cannot open %s"), typescript);
+			goto fail;
+		}
 
-	/* don't translate */
-	fprintf(f, "# sfdisk: " PACKAGE_STRING "\n");
-	fprintf(f, "# Disk: %s\n", devname);
-	fprintf(f, "# Partition: %zu\n", partno + 1);
-	fprintf(f, "# Operation: move data\n");
-	fprintf(f, "# Original start offset (sectors/bytes): %ju/%ju\n",
-	        (uintmax_t)from, (uintmax_t)from * ss);
-	fprintf(f, "# New start offset (sectors/bytes): %ju/%ju\n",
-	        (uintmax_t)to, (uintmax_t)to * ss);
-	fprintf(f, "# Area size (sectors/bytes): %ju/%ju\n",
-	        (uintmax_t)nsectors, (uintmax_t)nsectors * ss);
-	fprintf(f, "# Sector size: %zu\n", ss);
-	fprintf(f, "# Step size (in bytes): %zu\n", step_bytes);
-	fprintf(f, "# Steps: %ju\n", (uintmax_t)(nsectors / step));
-	fprintf(f, "#\n");
-	fprintf(f, "# <step>: <from> <to> (step offsets in bytes)\n");
+		/* don't translate */
+		fprintf(f, "# sfdisk: " PACKAGE_STRING "\n");
+		fprintf(f, "# Disk: %s\n", devname);
+		fprintf(f, "# Partition: %zu\n", partno + 1);
+		fprintf(f, "# Operation: move data\n");
+		fprintf(f, "# Original start offset (sectors/bytes): %ju/%ju\n",
+			(uintmax_t)from, (uintmax_t)from * ss);
+		fprintf(f, "# New start offset (sectors/bytes): %ju/%ju\n",
+			(uintmax_t)to, (uintmax_t)to * ss);
+		fprintf(f, "# Area size (sectors/bytes): %ju/%ju\n",
+			(uintmax_t)nsectors, (uintmax_t)nsectors * ss);
+		fprintf(f, "# Sector size: %zu\n", ss);
+		fprintf(f, "# Step size (in bytes): %zu\n", step_bytes);
+		fprintf(f, "# Steps: %ju\n", (uintmax_t)(nsectors / step));
+		fprintf(f, "#\n");
+		fprintf(f, "# <step>: <from> <to> (step offsets in bytes)\n");
+	}
 
 	src = (backward ? from + nsectors : from) * ss;
 	dst = (backward ? to + nsectors : to) * ss;
@@ -513,7 +519,8 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		}
 
 		/* write log */
-		fprintf(f, "%05zu: %12ju %12ju\n", cc, src, dst);
+		if (f)
+			fprintf(f, "%05zu: %12ju %12ju\n", cc, src, dst);
 
 #if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
 		if (!sf->noact)
@@ -523,7 +530,8 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			src += step_bytes, dst += step_bytes;
 	}
 
-	fclose(f);
+	if (f)
+		fclose(f);
 	free(buf);
 	free(devname);
 	free(typescript);

@@ -210,9 +210,10 @@ of a partition to another place on the disk.  The size of the partition has
 to remain the same, the new and old location may overlap.  This option requires
 option \fB\-N\fR in order to be processed on one specific partition only.
 
-The \fIpath\fR overrides the default log file name
-(the default is ~/sfdisk-<devname>.move).  The log file contains information
-about all read/write operations on the partition data.
+The optional \fIpath\fR specifies log file name. The log file contains information
+about all read/write operations on the partition data. The word "@default" as
+a \fIpath\fR forces sfdisk to use ~/sfdisk-<devname>.move for the log.  The log is
+optional since v2.35.
 
 Note that this operation is risky and not atomic. \fBDon't forget to backup your data!\fR
 
