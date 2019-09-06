@@ -37,6 +37,7 @@
 # include <readline/readline.h>
 #endif
 #include <libgen.h>
+#include <sys/time.h>
 
 #include "c.h"
 #include "xalloc.h"
@@ -49,6 +50,7 @@
 #include "all-io.h"
 #include "rpmatch.h"
 #include "optutils.h"
+#include "ttyutils.h"
 
 #include "libfdisk.h"
 #include "fdisk-list.h"
@@ -370,10 +372,11 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	char *devname = NULL, *typescript = NULL, *buf = NULL;
 	FILE *f = NULL;
 	int ok = 0, fd, backward = 0;
-	fdisk_sector_t nsectors, from, to, step, i;
+	fdisk_sector_t nsectors, from, to, step, i, prev;
 	size_t io, ss, step_bytes, cc;
 	uintmax_t src, dst;
 	int errsv, progress = 0;
+	struct timeval prev_time;
 
 	assert(sf->movedata);
 
@@ -497,6 +500,9 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 
 	DBG(MISC, ul_debug(" initial: src=%ju dst=%ju", src, dst));
 
+	gettimeofday(&prev_time, NULL);
+	prev = 0;
+
 	for (cc = 1, i = 0; i < nsectors; i += step, cc++) {
 		ssize_t rc;
 
@@ -526,24 +532,38 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		/* write log */
 		if (f)
 			fprintf(f, "%05zu: %12ju %12ju\n", cc, src, dst);
-		if (progress) {
-			fprintf(stdout, _("Moved %ju from %ju sectors (%.3f%%)."),
+
+		if (progress && i % 10 == 0) {
+			unsigned int elapsed;		/* usec */
+			unsigned int bytes;		/* bytes per usec */
+			struct timeval cur_time;
+
+			gettimeofday(&cur_time, NULL);
+			elapsed = (cur_time.tv_sec * 1000000 + cur_time.tv_usec) -
+				  (prev_time.tv_sec * 1000000 + prev_time.tv_usec);
+
+			bytes = ((i - prev) * ss) / elapsed;
+			fprintf(stdout, _("Moved %ju from %ju sectors (%.3f%%, %.1f MiB/s)."),
 					i + 1, nsectors,
-					100.0 / ((double) nsectors/(i+1)));
+					100.0 / ((double) nsectors/(i+1)),
+					(double) (bytes * 1000000) / (1024 * 1024));
 			fflush(stdout);
                         fputc('\r', stdout);
+
+			prev_time = cur_time;
+			prev = i;
 		}
 
-
-#if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
-		if (!sf->noact)
-			posix_fadvise(fd, src, step_bytes, POSIX_FADV_DONTNEED);
-#endif
 		if (!backward)
 			src += step_bytes, dst += step_bytes;
 	}
 
 	if (progress) {
+		int x = get_terminal_width(80);
+		for (; x > 0; x--)
+			fputc(' ', stdout);
+		fflush(stdout);
+		fputc('\r', stdout);
 		fprintf(stdout, _("Moved %ju from %ju sectors (%.3f%%)."),
 				i, nsectors,
 				100.0 / ((double) nsectors/(i+1)));
