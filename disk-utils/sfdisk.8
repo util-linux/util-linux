@@ -217,6 +217,8 @@ optional since v2.35.
 
 Note that this operation is risky and not atomic. \fBDon't forget to backup your data!\fR
 
+See also \fB\-\-move\-use\-fsync\fR.
+
 In the example below, the first command creates a 100MiB free area before
 the first partition and moves the data it contains (e.g. a filesystem),
 the next command creates a new partition from the free space (at offset 2048),
@@ -232,6 +234,10 @@ and the last command reorders partitions to match disk order
 .sp
 .RE
 
+.TP
+.BR \-\-move\-use\-fsync
+Use fsync system call after each write when move dara to a new location by
+\fB\-\-move\-data\fR.
 .TP
 .BR \-o , " \-\-output " \fIlist
 Specify which output columns to print.  Use

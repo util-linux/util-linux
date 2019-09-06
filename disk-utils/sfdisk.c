@@ -111,6 +111,7 @@ struct sfdisk {
 		     append : 1,	/* don't create new PT, append partitions only */
 		     json : 1,		/* JSON dump */
 		     movedata: 1,	/* move data after resize */
+		     movefsync: 1, /* use fsync() afetr each write() */
 		     notell : 1,	/* don't tell kernel aout new PT */
 		     noact  : 1;	/* do not write to device */
 };
@@ -515,7 +516,8 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			rc = write(fd, buf, step_bytes);
 			if (rc < 0 || rc != (ssize_t) step_bytes)
 				goto fail;
-			fsync(fd);
+			if (sf->movefsync)
+				fsync(fd);
 		}
 
 		/* write log */
@@ -1898,6 +1900,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
 	fputs(_("     --bytes               print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_("     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"), out);
+	fputs(_("     --move-use-fsync      use fsync after each write when move data\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
 	fprintf(out,
 	      _("     --color[=<when>]      colorize output (%s, %s or %s)\n"), "auto", "always", "never");
@@ -1956,6 +1959,7 @@ int main(int argc, char *argv[])
 		OPT_BYTES,
 		OPT_COLOR,
 		OPT_MOVEDATA,
+		OPT_MOVEFSYNC,
 		OPT_DELETE,
 		OPT_NOTELL
 	};
@@ -1981,6 +1985,7 @@ int main(int argc, char *argv[])
 		{ "no-reread", no_argument,     NULL, OPT_NOREREAD },
 		{ "no-tell-kernel", no_argument, NULL, OPT_NOTELL },
 		{ "move-data", optional_argument, NULL, OPT_MOVEDATA },
+		{ "move-use-fsync", no_argument, NULL, OPT_MOVEFSYNC },
 		{ "output",  required_argument, NULL, 'o' },
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "reorder", no_argument,       NULL, 'r' },
@@ -2151,6 +2156,9 @@ int main(int argc, char *argv[])
 		case OPT_MOVEDATA:
 			sf->movedata = 1;
 			sf->move_typescript = optarg;
+			break;
+		case OPT_MOVEFSYNC:
+			sf->movefsync = 1;
 			break;
 		case OPT_DELETE:
 			sf->act = ACT_DELETE;
