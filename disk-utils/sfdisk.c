@@ -373,7 +373,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	fdisk_sector_t nsectors, from, to, step, i;
 	size_t io, ss, step_bytes, cc;
 	uintmax_t src, dst;
-	int errsv;
+	int errsv, progress = 0;
 
 	assert(sf->movedata);
 
@@ -452,6 +452,9 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	        printf(_("  step size: %zu bytes\n"), step_bytes);
 		putchar('\n');
 		fflush(stdout);
+
+		if (isatty(fileno(stdout)))
+			progress = 1;
 	}
 
 	if (sf->interactive) {
@@ -523,6 +526,14 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		/* write log */
 		if (f)
 			fprintf(f, "%05zu: %12ju %12ju\n", cc, src, dst);
+		if (progress) {
+			fprintf(stdout, _("Moved %ju from %ju sectors (%.3f%%)."),
+					i + 1, nsectors,
+					100.0 / ((double) nsectors/(i+1)));
+			fflush(stdout);
+                        fputc('\r', stdout);
+		}
+
 
 #if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
 		if (!sf->noact)
@@ -532,6 +543,12 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			src += step_bytes, dst += step_bytes;
 	}
 
+	if (progress) {
+		fprintf(stdout, _("Moved %ju from %ju sectors (%.3f%%)."),
+				i, nsectors,
+				100.0 / ((double) nsectors/(i+1)));
+		fputc('\n', stdout);
+	}
 	if (f)
 		fclose(f);
 	free(buf);
