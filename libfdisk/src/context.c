@@ -715,10 +715,11 @@ int fdisk_assign_device_by_fd(struct fdisk_context *cxt, int fd,
 /**
  * fdisk_deassign_device:
  * @cxt: context
- * @nosync: disable fsync()
+ * @nosync: disable sync() after close().
  *
- * Close device and call fsync(). If the @cxt is nested context then the
- * request is redirected to the parent.
+ * Call fsync(), close() and than sync(), but for read-only handler close the
+ * device only. If the @cxt is nested context then the request is redirected to
+ * the parent.
  *
  * Returns: 0 on success, < 0 on error.
  */
