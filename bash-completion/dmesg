@@ -45,6 +45,7 @@ _dmesg_module()
 		--color
 		--level
 		--console-level
+		--noespace
 		--nopager
 		--raw
 		--syslog
