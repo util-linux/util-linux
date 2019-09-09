@@ -21,7 +21,10 @@ Device     Boot Start   End Sectors Size Id Type
 
 Data move:
  typescript file <removed>.
- old start: 3048, new start: 2548 (move 20480 sectors)
+  start sector: (from/to) 3048 / 2548
+  sectors: 20480
+  step size: 1048576 bytes
+
 
 The partition table has been altered.
 Calling ioctl() to re-read partition table.
