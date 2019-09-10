@@ -623,6 +623,7 @@ static void safe_fwrite(struct dmesg_control *ctl, const char *buf, size_t size,
 	size_t i;
 #ifdef HAVE_WIDECHAR
 	mbstate_t s;
+	wchar_t wc;
 	memset(&s, 0, sizeof (s));
 #endif
 	for (i = 0; i < size; i++) {
@@ -631,8 +632,11 @@ static void safe_fwrite(struct dmesg_control *ctl, const char *buf, size_t size,
 		size_t len = 1;
 
 		if (!ctl->noesc) {
+			if (*p == '\0') {
+				hex = 1;
+				goto doprint;
+			}
 #ifdef HAVE_WIDECHAR
-			wchar_t wc;
 			len = mbrtowc(&wc, p, size - i, &s);
 
 			if (len == 0)				/* L'\0' */
@@ -656,6 +660,7 @@ static void safe_fwrite(struct dmesg_control *ctl, const char *buf, size_t size,
 			}
 		}
 
+doprint:
 		if (hex)
 			rc = fwrite_hex(p, len, out);
 		else if (*p == '\n' && *(p + 1) && indent) {
