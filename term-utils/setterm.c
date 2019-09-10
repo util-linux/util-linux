@@ -385,44 +385,62 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Set the attributes of a terminal.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" --term          <terminal_name>   override TERM environment variable\n"), out);
-	fputs(_(" --reset                           reset terminal to power-on state\n"), out);
-	fputs(_(" --resize                          reset terminal rows and columns\n"), out);
-	fputs(_(" --initialize                      display init string, and use default settings\n"), out);
-	fputs(_(" --default                         use default terminal settings\n"), out);
-	fputs(_(" --store                           save current terminal settings as default\n"), out);
-	fputs(_(" --cursor        [on|off]          display cursor\n"), out);
-	fputs(_(" --repeat        [on|off]          keyboard repeat\n"), out);
-	fputs(_(" --appcursorkeys [on|off]          cursor key application mode\n"), out);
-	fputs(_(" --linewrap      [on|off]          continue on a new line when a line is full\n"), out);
-	fputs(_(" --inversescreen [on|off]          swap colors for the whole screen\n"), out);
-	fputs(_(" --foreground    default|<color>   set foreground color\n"), out);
-	fputs(_(" --background    default|<color>   set background color\n"), out);
-	fputs(_(" --ulcolor       [bright] <color>  set underlined text color\n"), out);
-	fputs(_(" --hbcolor       [bright] <color>  set half-bright text color\n"), out);
-	fputs(_("                 <color>: black blue cyan green grey magenta red white yellow\n"), out);
-	fputs(_(" --bold          [on|off]          bold\n"), out);
-	fputs(_(" --half-bright   [on|off]          dim\n"), out);
-	fputs(_(" --blink         [on|off]          blink\n"), out);
-	fputs(_(" --underline     [on|off]          underline\n"), out);
-	fputs(_(" --reverse       [on|off]          swap foreground and background colors\n"), out);
-	fputs(_(" --clear         [=<all|rest>]        clear screen and set cursor position\n"), out);
-	fputs(_(" --tabs          [<number>...]     set these tab stop positions, or show them\n"), out);
-	fputs(_(" --clrtabs       [<number>...]     clear these tab stop positions, or all\n"), out);
-	fputs(_(" --regtabs       [1-160]           set a regular tab stop interval\n"), out);
-	fputs(_(" --blank         [0-60|force|poke] set time of inactivity before screen blanks\n"), out);
-	fputs(_(" --dump          [<number>]        write vcsa<number> console dump to file\n"), out);
-	fputs(_(" --append        [<number>]        append vcsa<number> console dump to file\n"), out);
-	fputs(_(" --file          <filename>        name of the dump file\n"), out);
-	fputs(_(" --msg           [on|off]          send kernel messages to console\n"), out);
-	fputs(_(" --msglevel      0-8               kernel console log level\n"), out);
-	fputs(_(" --powersave     [on|vsync|hsync|powerdown|off]\n"), out);
-	fputs(_("                                   set vesa powersaving features\n"), out);
-	fputs(_(" --powerdown     [0-60]            set vesa powerdown interval in minutes\n"), out);
-	fputs(_(" --blength       [0-2000]          duration of the bell in milliseconds\n"), out);
-	fputs(_(" --bfreq         <number>          bell frequency in Hertz\n"), out);
-	printf( " --help                            %s\n", USAGE_OPTSTR_HELP);
-	printf( " --version                         %s\n", USAGE_OPTSTR_VERSION);
+	fputs(_(" --term <terminal_name>        override TERM environment variable\n"), out);
+	fputs(_(" --reset                       reset terminal to power-on state\n"), out);
+	fputs(_(" --resize                      reset terminal rows and columns\n"), out);
+	fputs(_(" --initialize                  display init string, and use default settings\n"), out);
+	fputs(_(" --default                     use default terminal settings\n"), out);
+	fputs(_(" --store                       save current terminal settings as default\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" --cursor on|off               display cursor\n"), out);
+	fputs(_(" --repeat on|off               keyboard repeat\n"), out);
+	fputs(_(" --appcursorkeys on|off        cursor key application mode\n"), out);
+	fputs(_(" --linewrap on|off             continue on a new line when a line is full\n"), out);
+	fputs(_(" --inversescreen on|off        swap colors for the whole screen\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" --msg on|off                  send kernel messages to console\n"), out);
+	fputs(_(" --msglevel <0-8>              kernel console log level\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" --foreground default|<color>  set foreground color\n"), out);
+	fputs(_(" --background default|<color>  set background color\n"), out);
+	fputs(_(" --ulcolor [bright] <color>    set underlined text color\n"), out);
+	fputs(_(" --hbcolor [bright] <color>    set half-bright text color\n"), out);
+	fputs(_("        <color>: black blue cyan green grey magenta red white yellow\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" --bold on|off                 bold\n"), out);
+	fputs(_(" --half-bright on|off          dim\n"), out);
+	fputs(_(" --blink on|off                blink\n"), out);
+	fputs(_(" --underline on|off            underline\n"), out);
+	fputs(_(" --reverse  on|off             swap foreground and background colors\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" --clear[=<all|rest>]          clear screen and set cursor position\n"), out);
+	fputs(_(" --tabs[=<number>...]          set these tab stop positions, or show them\n"), out);
+	fputs(_(" --clrtabs[=<number>...]       clear these tab stop positions, or all\n"), out);
+	fputs(_(" --regtabs[=1-160]             set a regular tab stop interval\n"), out);
+	fputs(_(" --blank[=0-60|force|poke]     set time of inactivity before screen blanks\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" --dump[=<number>]             write vcsa<number> console dump to file\n"), out);
+	fputs(_(" --append <number>             append vcsa<number> console dump to file\n"), out);
+	fputs(_(" --file <filename>             name of the dump file\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" --powersave on|vsync|hsync|powerdown|off\n"), out);
+	fputs(_("                               set vesa powersaving features\n"), out);
+	fputs(_(" --powerdown[=<0-60>]          set vesa powerdown interval in minutes\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" --blength[=<0-2000>]          duration of the bell in milliseconds\n"), out);
+	fputs(_(" --bfreq[=<number>]            bell frequency in Hertz\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	printf( " --help                        %s\n", USAGE_OPTSTR_HELP);
+	printf( " --version                     %s\n", USAGE_OPTSTR_VERSION);
 
 	printf(USAGE_MAN_TAIL("setterm(1)"));
 	exit(EXIT_SUCCESS);
