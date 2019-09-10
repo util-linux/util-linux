@@ -406,7 +406,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --blink         [on|off]          blink\n"), out);
 	fputs(_(" --underline     [on|off]          underline\n"), out);
 	fputs(_(" --reverse       [on|off]          swap foreground and background colors\n"), out);
-	fputs(_(" --clear         [all|rest]        clear screen and set cursor position\n"), out);
+	fputs(_(" --clear         [=<all|rest>]        clear screen and set cursor position\n"), out);
 	fputs(_(" --tabs          [<number>...]     set these tab stop positions, or show them\n"), out);
 	fputs(_(" --clrtabs       [<number>...]     clear these tab stop positions, or all\n"), out);
 	fputs(_(" --regtabs       [1-160]           set a regular tab stop interval\n"), out);
@@ -497,7 +497,7 @@ static void parse_option(struct setterm_control *ctl, int ac, char **av)
 		{"reverse", required_argument, NULL, OPT_REVERSE},
 		{"underline", required_argument, NULL, OPT_UNDERLINE},
 		{"store", no_argument, NULL, OPT_STORE},
-		{"clear", required_argument, NULL, OPT_CLEAR},
+		{"clear", optional_argument, NULL, OPT_CLEAR},
 		{"tabs", optional_argument, NULL, OPT_TABS},
 		{"clrtabs", optional_argument, NULL, OPT_CLRTABS},
 		{"regtabs", optional_argument, NULL, OPT_REGTABS},
@@ -613,8 +613,11 @@ static void parse_option(struct setterm_control *ctl, int ac, char **av)
 			break;
 		case OPT_CLEAR:
 			ctl->opt_clear = set_opt_flag(ctl->opt_clear);
-			ctl->opt_cl_all = parse_switch(optarg, _("argument error"),
-						"all", "reset", NULL);
+			if (optarg)
+				ctl->opt_cl_all = parse_switch(optarg, _("argument error"),
+						"all", "rest", NULL);
+			else
+				ctl->opt_cl_all = 1;
 			break;
 		case OPT_TABS:
 			ctl->opt_tabs = set_opt_flag(ctl->opt_tabs);
