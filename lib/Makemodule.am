@@ -31,6 +31,7 @@ libcommon_la_SOURCES = \
 
 if LINUX
 libcommon_la_SOURCES += \
+	lib/caputils.c \
 	lib/linux_version.c \
 	lib/loopdev.c
 endif

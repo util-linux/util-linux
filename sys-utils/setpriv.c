@@ -32,6 +32,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "caputils.h"
 #include "closestream.h"
 #include "nls.h"
 #include "optutils.h"
@@ -46,13 +47,6 @@
 #endif
 #ifndef PR_GET_NO_NEW_PRIVS
 # define PR_GET_NO_NEW_PRIVS 39
-#endif
-
-#ifndef PR_CAP_AMBIENT
-# define PR_CAP_AMBIENT		47
-#  define PR_CAP_AMBIENT_IS_SET	1
-#  define PR_CAP_AMBIENT_RAISE	2
-#  define PR_CAP_AMBIENT_LOWER	3
 #endif
 
 #define SETPRIV_EXIT_PRIVERR 127	/* how we exit when we fail to set privs */
@@ -161,31 +155,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static int real_cap_last_cap(void)
-{
-	/* CAP_LAST_CAP is untrustworthy. */
-	static int ret = -1;
-	int matched;
-	FILE *f;
-
-	if (ret != -1)
-		return ret;
-
-	f = fopen(_PATH_PROC_CAPLASTCAP, "r");
-	if (!f) {
-		ret = CAP_LAST_CAP;	/* guess */
-		return ret;
-	}
-
-	matched = fscanf(f, "%d", &ret);
-	fclose(f);
-
-	if (matched != 1)
-		ret = CAP_LAST_CAP;	/* guess */
-
-	return ret;
-}
-
 static int has_cap(enum cap_type which, unsigned int i)
 {
 	switch (which) {
@@ -206,7 +175,7 @@ static int has_cap(enum cap_type which, unsigned int i)
 /* Returns the number of capabilities printed. */
 static int print_caps(FILE *f, enum cap_type which)
 {
-	int i, n = 0, max = real_cap_last_cap();
+	int i, n = 0, max = cap_last_cap();
 
 	for (i = 0; i <= max; i++) {
 		int ret = has_cap(which, i);
@@ -436,7 +405,7 @@ static void dump(int dumplevel)
 
 static void list_known_caps(void)
 {
-	int i, max = real_cap_last_cap();
+	int i, max = cap_last_cap();
 
 	for (i = 0; i <= max; i++) {
 		const char *name = capng_capability_to_name(i);
@@ -565,7 +534,7 @@ static void do_caps(enum cap_type type, const char *caps)
 			int i;
 			/* It would be really bad if -all didn't drop all
 			 * caps.  It's better to just fail. */
-			if (real_cap_last_cap() > CAP_LAST_CAP)
+			if (cap_last_cap() > CAP_LAST_CAP)
 				errx(SETPRIV_EXIT_PRIVERR,
 				     _("libcap-ng is too old for \"all\" caps"));
 			for (i = 0; i <= CAP_LAST_CAP; i++)
@@ -575,7 +544,7 @@ static void do_caps(enum cap_type type, const char *caps)
 			if (0 <= cap)
 				cap_update(action, type, cap);
 			else if (sscanf(c + 1, "cap_%d", &cap) == 1
-			    && 0 <= cap && cap <= real_cap_last_cap())
+			    && 0 <= cap && cap <= cap_last_cap())
 				cap_update(action, type, cap);
 			else
 				errx(EXIT_FAILURE,
