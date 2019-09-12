@@ -136,11 +136,17 @@ List all known filesystems and RAIDs and exit.
 Look up only one device that matches the search parameter specified with the \fB\-\-match\-token\fR
 option.  If there are multiple devices that match the specified search
 parameter, then the device with the highest priority is returned, and/or
-the first device found at a given priority.  Device types in order of
-decreasing priority are: Device Mapper, EVMS, LVM, MD, and finally regular
-block devices.  If this option is not specified,
+the first device found at a given priority (but see below note about udev).
+Device types in order of decreasing priority are: Device Mapper, EVMS, LVM, MD,
+and finally regular block devices.  If this option is not specified,
 .B blkid
 will print all of the devices that match the search parameter.
+.sp
+This option forces
+.B blkid
+to use udev when used for LABEL or UUID tokens in \fB\-\-match\-token\fR. The
+goal is to provide output consistent with another utils (like mount, etc.)
+on systems where the same tag is used for multiple devices.
 .TP
 \fB\-L\fR, \fB\-\-label\fR \fIlabel\fR
 Look up the device that uses this filesystem \fIlabel\fR; this is equal to
