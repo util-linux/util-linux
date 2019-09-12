@@ -28,6 +28,7 @@ _unshare_module()
 				--cgroup
 				--fork
 				--kill-child
+				--keep-caps
 				--mount-proc
 				--map-current-user
 				--map-root-user
