@@ -243,6 +243,7 @@ AC_CHECK_HEADERS([ \
 	linux/version.h \
 	linux/securebits.h \
 	linux/net_namespace.h \
+	linux/capability.h \
 	locale.h \
 	mntent.h \
 	net/if.h \
@@ -382,6 +383,7 @@ have_linux_blkzoned_h=$ac_cv_header_linux_blkzoned_h
 have_linux_btrfs_h=$ac_cv_header_linux_btrfs_h
 have_linux_raw_h=$ac_cv_header_linux_raw_h
 have_linux_securebits_h=$ac_cv_header_linux_securebits_h
+have_linux_capability_h=$ac_cv_header_linux_capability_h
 have_linux_watchdog_h=$ac_cv_header_linux_watchdog_h
 have_security_pam_appl_h=$ac_cv_header_security_pam_appl_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
@@ -1375,6 +1377,7 @@ AC_ARG_ENABLE([unshare],
 UL_BUILD_INIT([unshare])
 UL_REQUIRES_LINUX([unshare])
 UL_REQUIRES_SYSCALL_CHECK([unshare], [UL_CHECK_SYSCALL([unshare])])
+UL_REQUIRES_HAVE([unshare], [linux_capability_h], [linux/capability.h header file])
 AM_CONDITIONAL([BUILD_UNSHARE], [test "x$build_unshare" = xyes])
 AC_CHECK_FUNCS([unshare])
 
@@ -1407,7 +1410,8 @@ AC_ARG_ENABLE([setpriv],
 )
 UL_BUILD_INIT([setpriv])
 UL_REQUIRES_LINUX([setpriv])
-UL_REQUIRES_HAVE([setpriv], [linux_securebits_h], [securebits.h header file])
+UL_REQUIRES_HAVE([setpriv], [linux_securebits_h], [linux/securebits.h header file])
+UL_REQUIRES_HAVE([setpriv], [linux_capability_h], [linux/capability.h header file])
 UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng library])
 AM_CONDITIONAL([BUILD_SETPRIV], [test "x$build_setpriv" = xyes])
 
