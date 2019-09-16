@@ -445,6 +445,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 	struct fdisk_label *lb;
 	int rc;
 	char *p = NULL;
+	char buf[64];
 
 	if (!dp || (!cxt && !dp->cxt))
 		return -EINVAL;
@@ -478,7 +479,6 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 
 	if (!rc && fdisk_is_label(cxt, GPT)) {
 		struct fdisk_labelitem item = FDISK_LABELITEM_INIT;
-		char buf[64];
 
 		/* first-lba */
 		rc = fdisk_get_disklabel_item(cxt, GPT_LABELITEM_FIRSTLBA, &item);
@@ -506,12 +506,14 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 	}
 
 	if (!rc && fdisk_get_grain_size(cxt) != 2048 * 512) {
-		char buf[64];
-
 		snprintf(buf, sizeof(buf), "%lu", fdisk_get_grain_size(cxt));
 		rc = fdisk_script_set_header(dp, "grain", buf);
 	}
 
+	if (!rc) {
+		snprintf(buf, sizeof(buf), "%lu", fdisk_get_sector_size(cxt));
+		rc = fdisk_script_set_header(dp, "sector-size", buf);
+	}
 
 	DBG(SCRIPT, ul_debugobj(dp, "read context done [rc=%d]", rc));
 	return rc;
@@ -579,6 +581,9 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 			num = 1;
 		} else if (strcmp(name, "last-lba") == 0) {
 			name = "lastlba";
+			num = 1;
+		} else if (strcmp(name, "sector-size") == 0) {
+			name = "sectorsize";
 			num = 1;
 		} else if (strcmp(name, "label-id") == 0)
 			name = "id";

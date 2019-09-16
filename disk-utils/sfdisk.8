@@ -337,6 +337,11 @@ Specify the maximal number of GPT partitions.
 Specify minimal size in bytes used to calculate partitions alignment.  The
 default is 1MiB and it's strongly recommended to use the default.  Do not
 modify this variable if you're not sure.
+.TP
+.B sector-size
+Specify sector size. This header is informative only and it is not used when
+sfdisk creates a new partition table, in this case the real device specific
+value is always used and sector size from the dump is ignored.
 .RE
 .sp
 Note that it is only possible to use header lines before the first partition
