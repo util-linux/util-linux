@@ -4,6 +4,7 @@
       "id":"0x1ddc8a79",
       "device":"<removed>",
       "unit":"sectors",
+      "sectorsize":512,
       "partitions": [
          {"node":"<removed>1", "start":2048, "size":6144, "type":"83", "bootable":true},
          {"node":"<removed>2", "start":8192, "size":6144, "type":"82"},
