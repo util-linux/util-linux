@@ -223,7 +223,7 @@ static int probe_dos_pt(blkid_probe pr,
 		goto nothing;
 	}
 
-	/* Another false possitive is NTFS */
+	/* Another false positive is NTFS */
 	if (blkid_probe_is_ntfs(pr) == 1) {
 		DBG(LOWPROBE, ul_debug("probably NTFS -- ignore"));
 		goto nothing;

@@ -50,7 +50,7 @@ $TS_CMD_MOUNT $LINKNAME >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_die "A) Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $LINKNAME || ts_die "A) Cannot umount $LINKNAME"
 
-# varian B) -- disabled, the $TS_CMD_MOUNT is usually not a real program, but
+# variant B) -- disabled, the $TS_CMD_MOUNT is usually not a real program, but
 #              libtool wrapper and the real mount is exec()ed with
 #              LD_LIBRARY_PATH. This all is bad for suid programs...
 

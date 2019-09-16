@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# This script checkd for #ifdef HAVE_DECL_SYMBOL in code.
+# This script checks for #ifdef HAVE_DECL_SYMBOL in code.
 #
 # Autoconf docs:
 #

@@ -155,7 +155,7 @@ dnl UL_REQUIRES_LINUX(NAME, [VARSUFFIX = $1])
 dnl
 dnl Modifies $build_<name>  variable according to $enable_<name> and OS type. The
 dnl $enable_<name> could be "yes", "no" and "check". If build_<name> is "no" then
-dnl all checks are skiped.
+dnl all checks are skipped.
 dnl
 dnl The default <name> for $build_ and $enable_ could be overwrited by option $2.
 dnl
@@ -184,7 +184,7 @@ dnl UL_EXCLUDE_ARCH(NAME, ARCH, [VARSUFFIX = $1])
 dnl
 dnl Modifies $build_<name>  variable according to $enable_<name> and $host. The
 dnl $enable_<name> could be "yes", "no" and "check". If build_<name> is "no" then
-dnl all checks are skiped.
+dnl all checks are skipped.
 dnl
 dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
 dnl
@@ -214,7 +214,7 @@ dnl UL_REQUIRES_ARCH(NAME, ARCH, [VARSUFFIX = $1])
 dnl
 dnl Modifies $build_<name>  variable according to $enable_<name> and $host. The
 dnl $enable_<name> could be "yes", "no" and "check". If build_<name> is "no" then
-dnl all checks are skiped.
+dnl all checks are skipped.
 dnl
 dnl The <arch> maybe a list, then at least one of the patterns in the list
 dnl have to match.
@@ -386,7 +386,7 @@ dnl UL_REQUIRES_SYSCALL_CHECK(NAME, SYSCALL-TEST, [SYSCALLNAME=$1], [VARSUFFIX=$
 dnl
 dnl Modifies $build_<name> variable according to $enable_<name> and SYSCALL-TEST
 dnl result. The $enable_<name> variable could be "yes", "no" and "check". If build_<name>
-dnl is "no" then all checks are skiped.
+dnl is "no" then all checks are skipped.
 dnl
 dnl Note that SYSCALL-TEST has to define $ul_cv_syscall_<name> variable, see
 dnl also UL_CHECK_SYSCALL().

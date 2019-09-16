@@ -136,7 +136,7 @@ static int count_column_width(struct libscols_table *tb,
 
 	if (scols_column_is_tree(cl) && has_groups(tb)) {
 		/* We don't fill buffer with groups tree ascii art during width
-		 * calcualtion. The print function only enlarge grpset[] and we
+		 * calculation. The print function only enlarge grpset[] and we
 		 * calculate final width from grpset_size.
 		 */
 		size_t gprwidth = tb->grpset_size + 1;
