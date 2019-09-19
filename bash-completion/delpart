@@ -12,6 +12,7 @@ _delpart_module()
 	case $COMP_CWORD in
 		1)
 			OPTS="--help --version $(lsblk -pnro name)"
+			compopt -o bashdefault -o default
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			;;
 		2)

@@ -58,6 +58,7 @@ _eject_module()
 			IFS=$OLD_IFS
 		fi
 	done)"
+	compopt -o bashdefault -o default
 	COMPREPLY=( $(compgen -W "$DEVS" $cur) )
 	return 0
 }

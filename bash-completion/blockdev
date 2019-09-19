@@ -38,6 +38,7 @@ _blockdev_module()
 			return 0
 			;;
 	esac
+	compopt -o bashdefault -o default
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }
