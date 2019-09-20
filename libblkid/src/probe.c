@@ -217,8 +217,7 @@ blkid_probe blkid_new_probe_from_filename(const char *filename)
 	pr->flags |= BLKID_FL_PRIVATE_FD;
 	return pr;
 err:
-	if (fd >= 0)
-		close(fd);
+	close(fd);
 	blkid_free_probe(pr);
 	return NULL;
 }
