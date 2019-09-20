@@ -1242,20 +1242,26 @@ success:
  */
 FILE *mnt_get_procfs_memstream(int fd, char **membuf)
 {
-	FILE *memf;
 	size_t sz = 0;
 	off_t cur;
+
+	*membuf = NULL;
 
 	/* in case of error, rewind to the original position */
 	cur = lseek(fd, 0, SEEK_CUR);
 
-	if (read_procfs_file(fd, membuf, &sz) == 0
-	    && sz > 0
-	    && (memf = fmemopen(*membuf, sz, "r")))
-		return memf;
+	if (read_procfs_file(fd, membuf, &sz) == 0 && sz > 0) {
+		FILE *memf = fmemopen(*membuf, sz, "r");
+		if (memf)
+			return memf;	/* success */
+
+		free(membuf);
+		*membuf = NULL;
+	}
 
 	/* error */
-	lseek(fd, cur, SEEK_SET);
+	if (cur != (off_t) -1)
+		lseek(fd, cur, SEEK_SET);
 	return NULL;
 }
 #else
