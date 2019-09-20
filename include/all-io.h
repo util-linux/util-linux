@@ -70,8 +70,7 @@ static inline ssize_t read_all(int fd, char *buf, size_t count)
 			}
 			return c ? c : -1;
 		}
-		if (ret > 0)
-			tries = 0;
+		tries = 0;
 		count -= ret;
 		buf += ret;
 		c += ret;
