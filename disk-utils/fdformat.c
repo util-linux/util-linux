@@ -43,7 +43,8 @@ static void format_track_head(int ctrl, struct format_descr *descr)
 
 static void seek_track_head(int ctrl, struct format_descr *descr)
 {
-	lseek(ctrl, (descr->track * param.head + descr->head) * param.sect * SECTOR_SIZE, SEEK_SET);
+	lseek(ctrl, ((off_t) descr->track * param.head + descr->head)
+			* param.sect * SECTOR_SIZE, SEEK_SET);
 }
 
 static void format_disk(int ctrl, unsigned int track_from, unsigned int track_to)
