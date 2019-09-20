@@ -508,7 +508,7 @@ static inline int gpt_calculate_sizeof_ents(struct gpt_header *hdr, uint32_t nen
 		return -ERANGE;
 	}
 
-	*sz = nents * esz;
+	*sz = (size_t) nents * esz;
 	return 0;
 }
 
