@@ -615,8 +615,9 @@ int fdisk_bsd_edit_disklabel(struct fdisk_context *cxt)
 	d->d_ntracks = ask_uint32(cxt, d->d_ntracks, _("tracks/cylinder"));
 	d->d_ncylinders = ask_uint32(cxt, d->d_ncylinders  ,_("cylinders"));
 #endif
-	if (fdisk_ask_number(cxt, 1, d->d_nsectors * d->d_ntracks,
-			     d->d_nsectors * d->d_ntracks,
+	if (fdisk_ask_number(cxt, 1,
+			(uintmax_t) d->d_nsectors * d->d_ntracks,
+			(uintmax_t) d->d_nsectors * d->d_ntracks,
 			     _("sectors/cylinder"), &res) == 0)
 		d->d_secpercyl = res;
 
