@@ -191,9 +191,9 @@ static void check_blocks(struct mkswap_control *ctl)
 	buffer = xmalloc(ctl->pagesize);
 	while (current_page < ctl->npages) {
 		ssize_t rc;
+		off_t offset = (off_t) current_page * ctl->pagesize;
 
-		if (do_seek && lseek(ctl->fd, current_page * ctl->pagesize, SEEK_SET) !=
-		    current_page * ctl->pagesize)
+		if (do_seek && lseek(ctl->fd, offset, SEEK_SET) != offset)
 			errx(EXIT_FAILURE, _("seek failed in check_blocks"));
 
 		rc = read(ctl->fd, buffer, ctl->pagesize);
