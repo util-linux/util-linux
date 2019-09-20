@@ -144,8 +144,7 @@ int main(int argc, char **argv)
 
 	rc = EXIT_SUCCESS;
 done:
-	if (fd >= 0)
-		close(fd);
+	close(fd);
 	return rc;
 }
 
