@@ -1,5 +1,5 @@
-#ifndef UTIL_LINUX_PT_SUN_H
-#define UTIL_LINUX_PT_SUN_H
+#ifndef UTIL_LINUX_PT_SGI_H
+#define UTIL_LINUX_PT_SGI_H
 
 #include <stdint.h>
 
@@ -112,4 +112,4 @@ static inline uint32_t sgi_pt_checksum(struct sgi_disklabel *label)
 	return sum;
 }
 
-#endif /* UTIL_LINUX_PT_SUN_H */
+#endif /* UTIL_LINUX_PT_SGI_H */
