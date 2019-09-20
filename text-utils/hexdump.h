@@ -32,6 +32,9 @@
  *
  *	@(#)hexdump.h	5.4 (Berkeley) 6/1/90
  */
+#ifndef UTIL_LINUX_HEXDUMP_H
+#define UTIL_LINUX_HEXDUMP_H
+
 #include "c.h"
 #include "list.h"
 
@@ -106,3 +109,5 @@ void conv_c(struct hexdump_pr *, u_char *);
 void conv_u(struct hexdump_pr *, u_char *);
 int  next(char **, struct hexdump *);
 int parse_args(int, char **, struct hexdump *);
+
+#endif /* UTIL_LINUX_HEXDUMP_H */
