@@ -1255,7 +1255,7 @@ FILE *mnt_get_procfs_memstream(int fd, char **membuf)
 		if (memf)
 			return memf;	/* success */
 
-		free(membuf);
+		free(*membuf);
 		*membuf = NULL;
 	}
 
