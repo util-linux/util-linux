@@ -38,6 +38,7 @@
 #include "islocal.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "pwdutils.h"
 #include "setpwnam.h"
 #include "strutils.h"
 #include "xalloc.h"
@@ -253,7 +254,7 @@ static void check_shell(const char *shell)
 
 int main(int argc, char **argv)
 {
-	char *oldshell;
+	char *oldshell, *pwbuf;
 	int nullshell = 0;
 	const uid_t uid = getuid();
 	struct sinfo info = { NULL };
@@ -267,12 +268,12 @@ int main(int argc, char **argv)
 
 	parse_argv(argc, argv, &info);
 	if (!info.username) {
-		pw = getpwuid(uid);
+		pw = xgetpwuid(uid, &pwbuf);
 		if (!pw)
 			errx(EXIT_FAILURE, _("you (user %d) don't exist."),
 			     uid);
 	} else {
-		pw = getpwnam(info.username);
+		pw = xgetpwnam(info.username, &pwbuf);
 		if (!pw)
 			errx(EXIT_FAILURE, _("user \"%s\" does not exist."),
 			     info.username);
