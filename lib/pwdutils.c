@@ -36,6 +36,34 @@ failed:
 	return NULL;
 }
 
+struct passwd *xgetpwuid(uid_t uid, char **pwdbuf)
+{
+	struct passwd *pwd = NULL, *res = NULL;
+	int rc;
+
+	if (!pwdbuf)
+		return NULL;
+
+	*pwdbuf = xmalloc(UL_GETPW_BUFSIZ);
+	pwd = xcalloc(1, sizeof(struct passwd));
+
+	errno = 0;
+	rc = getpwuid_r(uid, pwd, *pwdbuf, UL_GETPW_BUFSIZ, &res);
+	if (rc != 0) {
+		errno = rc;
+		goto failed;
+	}
+	if (!res) {
+		errno = EINVAL;
+		goto failed;
+	}
+	return pwd;
+failed:
+	free(pwd);
+	free(*pwdbuf);
+	return NULL;
+}
+
 char *xgetlogin(void)
 {
 	struct passwd *pw = NULL;
