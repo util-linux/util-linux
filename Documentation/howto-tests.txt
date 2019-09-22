@@ -5,9 +5,13 @@
  It's expected that for each invasive change or important bugfix you will
  include a test to your patch.
 
- Compile tests & run basic tests:
+ Compile binaries, libs, extra test programs and run the basic tests:
 
 	$ make check
+
+ Compile extra test programs only:
+
+	$ make check-programs
 
  Note that the configure option --disable-static disables many of libmount and
  libblkid unit tests.
@@ -15,11 +19,11 @@
  Run all tests including tests that require root permissions:
 
 	# cd tests
-	# ./run.sh [--verbose] [--memcheck]
+	# ./run.sh [options, see --help]
 
 	Alternatively using sudo and make:
 
-	$ make check TS_COMMAND="true"
+	$ make check-programs
 	$ sudo -E make check TS_OPTS="--parallel=1"
 
  note that as root you have to manually remove output and diff directories
@@ -31,12 +35,17 @@
 
  Run subset of tests:
 
+	$ cd tests
 	$ ./run.sh <test_directory-name>
 
         for example:
 
               $ ./run.sh blkid
               $ ./run.sh libmount
+
+        or individual test script, for example:
+
+	      $ ./ts/cal/year
 
  The tests is possible to exclude by ./run.sh --exclude=<list>  where the
  <list> is blank separated test names in format "testdir/testname", for example:
