@@ -57,7 +57,7 @@ void fdisk_free_iter(struct fdisk_iter *itr)
 /**
  * fdisk_reset_iter:
  * @itr: iterator pointer
- * @direction: FDISK_INTER_{FOR,BACK}WARD or -1 to keep the direction unchanged
+ * @direction: FDISK_ITER_{FOR,BACK}WARD or -1 to keep the direction unchanged
  *
  * Resets the iterator.
  */
