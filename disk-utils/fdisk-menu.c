@@ -87,8 +87,7 @@ DECLARE_MENU_CB(generic_menu_cb);
 #define MENU_BENT_E(k, t, l)	{ .title = t, .key = k, .expert = 1, .normal = 1, .exclude = l }
 
 #define MENU_ENT_NEST(k, t, l, p)	{ .title = t, .key = k, .normal = 1, .label = l, .parent = p }
-#define MENU_XENT_NEST(k, t, l, p)	{ .title = t, .key = k, .expert = 1, .label = l, .parent = p }
-#define MENU_BENT_NEST(k, t, l, p)	{ .title = t, .key = k, .expert = 1, .normal = 1, .label = l, .parent = p }
+#define MENU_BENT_NEST_H(k, t, l, p)	{ .title = t, .key = k, .expert = 1, .normal = 1, .label = l, .parent = p, .hidden = 1 }
 
 /* Generic menu */
 static const struct menu menu_generic = {
@@ -124,6 +123,8 @@ static const struct menu menu_generic = {
 		MENU_XENT ('r', N_("return to main menu")),
 
 		MENU_ENT_NEST('r', N_("return from BSD to DOS"), FDISK_DISKLABEL_BSD, FDISK_DISKLABEL_DOS),
+
+		MENU_ENT_NEST('r', N_("return from protective/hybrid MBR to GPT"), FDISK_DISKLABEL_DOS, FDISK_DISKLABEL_GPT),
 
 		{ 0, NULL }
 	}
@@ -222,8 +223,8 @@ static const struct menu menu_dos = {
 		MENU_XENT('b', N_("move beginning of data in a partition")),
 		MENU_XENT('i', N_("change the disk identifier")),
 
-		MENU_BENT_NEST('M', N_("return from protective/hybrid MBR to GPT"),
-					FDISK_DISKLABEL_DOS, FDISK_DISKLABEL_GPT),
+		MENU_BENT_NEST_H('M', N_("return from protective/hybrid MBR to GPT"), FDISK_DISKLABEL_DOS, FDISK_DISKLABEL_GPT),
+
 		{ 0, NULL }
 	}
 };
@@ -692,7 +693,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		fdisk_enable_details(cxt, 1);
 		break;
 	case 'r':
-		/* return from nested BSD to DOS */
+		/* return from nested BSD to DOS or MBR to GPT */
 		if (fdisk_get_parent(cxt)) {
 			*cxt0 = fdisk_get_parent(cxt);
 
@@ -863,7 +864,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 		rc = fdisk_set_disklabel_id(cxt);
 		break;
 	case 'M':
-		/* return from nested MBR to GPT */
+		/* return from nested MBR to GPT (backward compatibility only) */
 		if (fdisk_get_parent(cxt)) {
 			*cxt0 = fdisk_get_parent(cxt);
 
