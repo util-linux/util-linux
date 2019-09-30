@@ -1,0 +1,71 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2019 Endless Mobile, Inc.
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="iso-partitions"
+
+. $TS_TOPDIR/functions.sh
+
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_BLKID"
+ts_check_test_command "$TS_CMD_PARTX"
+
+ts_skip_nonroot
+
+# set global variable TS_DEVICE
+ts_scsi_debug_init dev_size_mb=50
+
+# This image (created by xorriso) has partition 1 pointing to the ISO
+# area, followed by an unformatted second partition.
+xz -dc ${TS_SELF}/iso-partitions.img.xz > ${TS_DEVICE}
+udevadm settle
+
+ts_init_subtest "partitions"
+$TS_CMD_PARTX -a ${TS_DEVICE} &>/dev/null
+udevadm settle
+
+# Check that the ISO metadata is not shown on the main disk device
+$TS_CMD_BLKID -p -o udev ${TS_DEVICE} >> $TS_OUTPUT
+echo -- >> $TS_OUTPUT
+
+# Check that the ISO metadata is shown on the "ISO partition"
+$TS_CMD_BLKID -p -o udev ${TS_DEVICE}1 >> $TS_OUTPUT
+echo -- >> $TS_OUTPUT
+
+# Check that the ISO metadata is not shown on the other partition
+$TS_CMD_BLKID -p -o udev ${TS_DEVICE}2 >> $TS_OUTPUT
+
+# substitute major/minor number before comparison
+sed -i \
+  -e 's/^\(ID_PART_ENTRY_DISK\)=.*/\1=__ts_majorminor__/' \
+  $TS_OUTPUT
+
+ts_finalize_subtest
+
+# Remove the partition table and check that the ISO metadata is shown on the
+# main disk device.
+ts_init_subtest "no_partitions"
+dd if=/dev/zero of=${TS_DEVICE} bs=512 count=1 &>/dev/null
+udevadm settle
+$TS_CMD_PARTX -d ${TS_DEVICE} &>/dev/null
+udevadm settle
+$TS_CMD_BLKID -p -o udev ${TS_DEVICE} >> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_finalize
