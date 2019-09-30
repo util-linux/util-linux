@@ -377,6 +377,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	uintmax_t src, dst;
 	int errsv, progress = 0;
 	struct timeval prev_time;
+	uint64_t bytes_per_sec = 0;
 
 	assert(sf->movedata);
 
@@ -534,24 +535,33 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			fprintf(f, "%05zu: %12ju %12ju\n", cc, src, dst);
 
 		if (progress && i % 10 == 0) {
-			unsigned int elapsed;		/* usec */
-			unsigned int bytes;		/* bytes per usec */
+			unsigned int elapsed = 0;	/* usec */
 			struct timeval cur_time;
 
 			gettimeofday(&cur_time, NULL);
-			elapsed = (cur_time.tv_sec * 1000000 + cur_time.tv_usec) -
-				  (prev_time.tv_sec * 1000000 + prev_time.tv_usec);
+			if (cur_time.tv_sec - prev_time.tv_sec > 1) {
+				elapsed = ((cur_time.tv_sec - prev_time.tv_sec) * 1000000) +
+					  (cur_time.tv_usec - prev_time.tv_usec);
 
-			bytes = ((i - prev) * ss) / elapsed;
-			fprintf(stdout, _("Moved %ju from %ju sectors (%.3f%%, %.1f MiB/s)."),
+				bytes_per_sec = ((i - prev) * ss) / elapsed;	/* per usec */
+				bytes_per_sec *= 1000000;			/* per sec */
+
+				prev_time = cur_time;
+				prev = i;
+			}
+
+			if (bytes_per_sec)
+				fprintf(stdout, _("Moved %ju from %ju sectors (%.3f%%, %.1f MiB/s)."),
 					i + 1, nsectors,
 					100.0 / ((double) nsectors/(i+1)),
-					(double) (bytes * 1000000) / (1024 * 1024));
+					(double) (bytes_per_sec / (1024 * 1024)));
+			else
+				fprintf(stdout, _("Moved %ju from %ju sectors (%.3f%%)."),
+					i + 1, nsectors,
+					100.0 / ((double) nsectors/(i+1)));
 			fflush(stdout);
                         fputc('\r', stdout);
 
-			prev_time = cur_time;
-			prev = i;
 		}
 
 		if (!backward)
