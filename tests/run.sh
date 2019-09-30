@@ -32,7 +32,7 @@ function num_cpus()
 	local num
 
 	# coreutils
-	if num=$(nproc --all 2>/dev/null); then
+	if num=$(nproc 2>/dev/null); then
 		:
 	# BSD, OSX
 	elif num=$(sysctl -n hw.ncpu 2>/dev/null); then
