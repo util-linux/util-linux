@@ -32,8 +32,8 @@ _fsck_module()
 			return 0
 			;;
 	esac
-	COMPREPLY=( $(compgen -W "$(find -L /dev/ -path /dev/fd -prune \
-		-o -type b -print 2>/dev/null)" -- $cur) )
+	compopt -o bashdefault -o default
+	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _fsck_module fsck

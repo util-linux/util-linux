@@ -24,7 +24,8 @@ _mkfs.bfs_module()
 			return 0
 			;;
 	esac
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name) /path/to/file" -- $cur) )
+	compopt -o bashdefault -o default
+	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _mkfs.bfs_module mkfs.bfs
