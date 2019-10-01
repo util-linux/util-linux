@@ -870,16 +870,19 @@ static int valid_pmbr(struct fdisk_context *cxt)
 	if (ret != GPT_MBR_PROTECTIVE)
 		goto done;
 
+
+	for (i = 0 ; i < 4; i++) {
+		if ((pmbr->partition_record[i].os_type != EFI_PMBR_OSTYPE) &&
+		    (pmbr->partition_record[i].os_type != 0x00)) {
+			ret = GPT_MBR_HYBRID;
+			goto done;
+		}
+	}
+
 	/* LBA of the GPT partition header */
 	if (pmbr->partition_record[part].starting_lba !=
 	    cpu_to_le32(GPT_PRIMARY_PARTITION_TABLE_LBA))
 		goto done;
-
-	for (i = 0 ; i < 4; i++) {
-		if ((pmbr->partition_record[i].os_type != EFI_PMBR_OSTYPE) &&
-		    (pmbr->partition_record[i].os_type != 0x00))
-			ret = GPT_MBR_HYBRID;
-	}
 
 	/*
 	 * Protective MBRs take up the lesser of the whole disk
@@ -909,6 +912,9 @@ static int valid_pmbr(struct fdisk_context *cxt)
 		}
 	}
 done:
+	DBG(LABEL, ul_debug("PMBR type: %s",
+			ret == GPT_MBR_PROTECTIVE ? "protective" :
+			ret == GPT_MBR_HYBRID     ? "hybrid"     : "???" ));
 	return ret;
 }
 
@@ -1576,9 +1582,6 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 	if (!mbr_type)
 		goto failed;
 
-	DBG(LABEL, ul_debug("found a %s MBR", mbr_type == GPT_MBR_PROTECTIVE ?
-			    "protective" : "hybrid"));
-
 	/* primary header */
 	gpt->pheader = gpt_read_header(cxt, GPT_PRIMARY_PARTITION_TABLE_LBA,
 				       &gpt->ents);
@@ -2028,6 +2031,7 @@ static int gpt_write_pmbr(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->firstsector);
 
+	DBG(LABEL, ul_debug("(over)writing PMBR"));
 	pmbr = (struct gpt_legacy_mbr *) cxt->firstsector;
 
 	/* zero out the legacy partitions */
@@ -2116,8 +2120,7 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 		goto err1;
 
 	if (mbr_type == GPT_MBR_HYBRID)
-		fdisk_warnx(cxt, _("The device contains hybrid MBR -- writing GPT only. "
-				   "You have to sync the MBR manually."));
+		fdisk_warnx(cxt, _("The device contains hybrid MBR -- writing GPT only."));
 	else if (gpt_write_pmbr(cxt) != 0)
 		goto err1;
 

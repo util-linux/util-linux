@@ -537,12 +537,15 @@ static void reset_context(struct fdisk_context *cxt)
 
 	if (cxt->parent) {
 		/* the first sector may be independent on parent */
-		if (cxt->parent->firstsector != cxt->firstsector)
+		if (cxt->parent->firstsector != cxt->firstsector) {
+			DBG(CXT, ul_debugobj(cxt, "  firstsector independent on parent (freeing)"));
 			free(cxt->firstsector);
+		}
 	} else {
 		/* we close device only in primary context */
 		if (cxt->dev_fd > -1 && cxt->private_fd)
 			close(cxt->dev_fd);
+		DBG(CXT, ul_debugobj(cxt, "  freeing firstsector"));
 		free(cxt->firstsector);
 	}
 

@@ -595,9 +595,10 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		rc = fdisk_write_disklabel(cxt);
 		if (rc)
 			err(EXIT_FAILURE, _("failed to write disklabel"));
+
+		fdisk_info(cxt, _("The partition table has been altered."));
 		if (fdisk_get_parent(cxt))
 			break; /* nested PT, don't leave */
-		fdisk_info(cxt, _("The partition table has been altered."));
 
 		if (device_is_used)
 			rc = fdisk_reread_changes(cxt, original_layout);
