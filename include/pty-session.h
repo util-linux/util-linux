@@ -11,11 +11,44 @@
 #include <signal.h>
 #include <sys/time.h>
 
+#include <sys/signalfd.h>
+
+/*
+ * Callbacks -- the first argument is always callback data, see
+ * ul_pty_set_callback_data().
+ */
 struct ul_pty_callbacks {
+	/*
+	 * Executed on SIGCHLD when ssi_code is EXITED, KILLED or DUMPED
+	 * @
+	 */
 	void (*child_wait)(void *);
+
+	/*
+	 * Executed on SIGCHLD when ssi_status is SIGSTOP
+	 */
 	void (*child_sigstop)(void *);
 
+	/*
+	 * Executed in master loop before ul_pty enter poll() and in time set by
+	 * ul_pty_set_mainloop_time(). The callback is no used when time is not set.
+	 */
 	int (*mainloop)(void *);
+
+	/*
+	 * Executed on master or stdin activity, arguments:
+	 *   2nd - file descriptor
+	 *   3rd - buffer with data
+	 *   4th - size of the data
+	 */
+	int (*log_stream_activity)(void *, int, char *, size_t);
+
+	/*
+	 * Executed on signal, arguments:
+	 *   2nd - signal info
+	 *   3rd - NULL or signal specific data (e.g. struct winsize on SIGWINCH
+	 */
+	int (*log_signal)(void *, struct signalfd_siginfo, void *);
 };
 
 struct ul_pty {
