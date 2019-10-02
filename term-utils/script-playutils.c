@@ -40,7 +40,7 @@ struct replay_log {
 	const char	*filename;
 	FILE		*fp;
 
-	unsigned int	noseek;		/* do not seek in this log */
+	unsigned int	noseek : 1;	/* do not seek in this log */
 };
 
 struct replay_step {
@@ -169,6 +169,7 @@ static struct replay_log *replay_new_log(struct replay_setup *stp,
 	log = &stp->logs[stp->nlogs];
 	stp->nlogs++;
 
+	memset(log, 0, sizeof(*log));
 	log->filename = filename;
 	log->streams = streams;
 	log->fp = f;
@@ -371,7 +372,6 @@ static int replay_seek_log(struct replay_log *log, size_t move)
 {
 	if (log->noseek)
 		return 0;
-
 	DBG(LOG, ul_debug(" %s: seek ++ %zu", log->filename, move));
 	return fseek(log->fp, move, SEEK_CUR) == (off_t) -1 ? -errno : 0;
 }
