@@ -243,7 +243,7 @@ main(int argc, char *argv[])
 
 	if (!log_tm && idx < argc)
 		log_tm = argv[idx++];
-	if (!log_out && !log_in && !log_io)
+	if (!log_out && !summary && !log_in && !log_io)
 		log_out = idx < argc ? argv[idx++] : "typescript";
 
 	if (!diviopt)
@@ -251,7 +251,7 @@ main(int argc, char *argv[])
 
 	if (!log_tm)
 		errx(EXIT_FAILURE, _("timing file not specified"));
-	if (!(log_out || log_in || log_io))
+	if (!(log_out || log_in || log_io) && !summary)
 		errx(EXIT_FAILURE, _("data log file not specified"));
 
 	setup = replay_new_setup();
