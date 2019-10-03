@@ -1,8 +1,8 @@
 record script output with timing
-Script started, file is typescript
+Script started, output log file is 'typescript', timing file is 'timingfile'.
 hello world
 all done
-Script done, file is typescript
+Script done.
 replay script output
 hello world
 all done
