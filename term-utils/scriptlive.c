@@ -304,13 +304,13 @@ main(int argc, char *argv[])
 	if (shell == NULL)
 		shell = _PATH_BSHELL;
 
-	fprintf(stdout, _(">>> scriptlive: Starting your typescript execution by %s. <<<\n"), shell);
+	fprintf(stdout, _(">>> scriptlive: Starting your typescript execution by %s.\n"), shell);
 
 	ul_pty_init_debug(0);
 
 	ss.pty = ul_new_pty(isatty(STDIN_FILENO));
 	if (!ss.pty)
-		err(EXIT_FAILURE, "failed to allocate PTY handler");
+		err(EXIT_FAILURE, _("failed to allocate PTY handler"));
 
 	ul_pty_set_callback_data(ss.pty, (void *) &ss);
 	cb = ul_pty_get_callbacks(ss.pty);
@@ -319,14 +319,14 @@ main(int argc, char *argv[])
 	cb->mainloop = mainloop_cb;
 
 	if (ul_pty_setup(ss.pty))
-		err(EXIT_FAILURE, "failed to create pseudo-terminal");
+		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
 
 	fflush(stdout);			/* ??? */
 
 	switch ((int) (ss.child = fork())) {
 	case -1: /* error */
 		ul_pty_cleanup(ss.pty);
-		err(EXIT_FAILURE, "cannot create child process");
+		err(EXIT_FAILURE, _("cannot create child process"));
 		break;
 
 	case 0: /* child */
@@ -368,7 +368,7 @@ main(int argc, char *argv[])
 		wait_for_child(&ss);	/* final wait */
 
 	if (caught_signal && ss.child != (pid_t)-1) {
-		fprintf(stderr, "\nSession terminated, killing shell...");
+		fprintf(stderr, _("\nSession terminated, killing shell..."));
 		kill(ss.child, SIGTERM);
 		sleep(2);
 		kill(ss.child, SIGKILL);
@@ -379,6 +379,6 @@ main(int argc, char *argv[])
 	ul_free_pty(ss.pty);
 	replay_free_setup(ss.setup);
 
-	fprintf(stdout, _("\n>>> scriptlive: done. <<<\n"));
+	fprintf(stdout, _("\n>>> scriptlive: done.\n"));
 	return EXIT_SUCCESS;
 }
