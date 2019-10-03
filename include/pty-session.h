@@ -48,7 +48,7 @@ struct ul_pty_callbacks {
 	 *   2nd - signal info
 	 *   3rd - NULL or signal specific data (e.g. struct winsize on SIGWINCH
 	 */
-	int (*log_signal)(void *, struct signalfd_siginfo, void *);
+	int (*log_signal)(void *, struct signalfd_siginfo *, void *);
 };
 
 struct ul_pty {

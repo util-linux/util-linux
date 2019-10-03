@@ -270,6 +270,7 @@ static int handle_io(struct ul_pty *pty, int fd, int *eof)
 {
 	char buf[BUFSIZ];
 	ssize_t bytes;
+	int rc = 0;
 
 	DBG(IO, ul_debugobj(pty, " handle I/O on fd=%d", fd));
 	*eof = 0;
@@ -304,13 +305,18 @@ static int handle_io(struct ul_pty *pty, int fd, int *eof)
 		write_output(buf, bytes);
 	}
 
-	return 0;
+	if (pty->callbacks.log_stream_activity)
+		rc = pty->callbacks.log_stream_activity(
+					pty->callback_data, fd, buf, bytes);
+
+	return rc;
 }
 
 static int handle_signal(struct ul_pty *pty, int fd)
 {
 	struct signalfd_siginfo info;
 	ssize_t bytes;
+	int rc = 0;
 
 	DBG(SIG, ul_debugobj(pty, " handle signal on fd=%d", fd));
 
@@ -343,6 +349,10 @@ static int handle_signal(struct ul_pty *pty, int fd)
 		if (pty->isterm) {
 			ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&pty->win);
 			ioctl(pty->slave, TIOCSWINSZ, (char *)&pty->win);
+
+			if (pty->callbacks.log_signal)
+				rc = pty->callbacks.log_signal(pty->callback_data,
+							&info, (void *) &pty->win);
 		}
 		break;
 	case SIGTERM:
@@ -355,12 +365,16 @@ static int handle_signal(struct ul_pty *pty, int fd)
                 /* Child termination is going to generate SIGCHILD (see above) */
 		if (pty->child > 0)
 	                kill(pty->child, SIGTERM);
+
+		if (pty->callbacks.log_signal)
+			rc = pty->callbacks.log_signal(pty->callback_data,
+					&info, (void *) &pty->win);
 		break;
 	default:
 		abort();
 	}
 
-	return 0;
+	return rc;
 }
 
 /* loop in parent */
