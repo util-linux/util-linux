@@ -287,11 +287,14 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"efivarfs",
 		"fuse", /* Fallback name of fuse used by many poorly written drivers. */
 		"fuse.archivemount", /* Not a true pseudofs (has source), but source is not reported. */
+		"fuse.avfsd", /* Not a true pseudofs (has source), but source is not reported. */
 		"fuse.dumpfs", /* In fact, it is a netfs, but source is not reported. */
 		"fuse.encfs", /* Not a true pseudofs (has source), but source is not reported. */
 		"fuse.gvfs-fuse-daemon", /* Old name, not used by gvfs any more. */
 		"fuse.gvfsd-fuse",
+		"fuse.lxcfs",
 		"fuse.rofiles-fuse",
+		"fuse.vmware-vmblock",
 		"fuse.xwmfs",
 		"fusectl",
 		"hugetlbfs",
