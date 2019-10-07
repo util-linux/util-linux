@@ -585,10 +585,6 @@ done:
  *
  * ... and see for example tty(1) or "ps afu"
  */
-struct ptytest {
-	struct ul_pty *pty;
-};
-
 static void child_sigstop(void *data __attribute__((__unused__)), pid_t child)
 {
 	kill(getpid(), SIGSTOP);
@@ -597,11 +593,11 @@ static void child_sigstop(void *data __attribute__((__unused__)), pid_t child)
 
 int main(int argc, char *argv[])
 {
-	struct ptytest ss = { .pty = NULL };
 	struct ul_pty_callbacks *cb;
 	const char *shell, *command = NULL, *shname = NULL;
 	int caught_signal = 0;
 	pid_t child;
+	struct ul_pty *pty;
 
 	shell = getenv("SHELL");
 	if (shell == NULL)
@@ -611,27 +607,26 @@ int main(int argc, char *argv[])
 
 	ul_pty_init_debug(0);
 
-	ss.pty = ul_new_pty(isatty(STDIN_FILENO));
-	if (!ss.pty)
+	pty = ul_new_pty(isatty(STDIN_FILENO));
+	if (!pty)
 		err(EXIT_FAILURE, "failed to allocate PTY handler");
 
-	ul_pty_set_callback_data(ss.pty, (void *) &ss);
-	cb = ul_pty_get_callbacks(ss.pty);
+	cb = ul_pty_get_callbacks(pty);
 	cb->child_sigstop = child_sigstop;
 
-	if (ul_pty_setup(ss.pty))
+	if (ul_pty_setup(pty))
 		err(EXIT_FAILURE, "failed to create pseudo-terminal");
 
 	fflush(stdout);			/* ??? */
 
 	switch ((int) (child = fork())) {
 	case -1: /* error */
-		ul_pty_cleanup(ss.pty);
+		ul_pty_cleanup(pty);
 		err(EXIT_FAILURE, "cannot create child process");
 		break;
 
 	case 0: /* child */
-		ul_pty_init_slave(ss.pty);
+		ul_pty_init_slave(pty);
 
 		signal(SIGTERM, SIG_DFL); /* because /etc/csh.login */
 
@@ -650,18 +645,18 @@ int main(int argc, char *argv[])
 	}
 
 	/* parent */
-	ul_pty_set_child(ss.pty, child);
+	ul_pty_set_child(pty, child);
 
 	/* this is the main loop */
-	ul_pty_proxy_master(ss.pty);
+	ul_pty_proxy_master(pty);
 
 	/* all done; cleanup and kill */
-	caught_signal = ul_pty_get_delivered_signal(ss.pty);
+	caught_signal = ul_pty_get_delivered_signal(pty);
 
-	if (!caught_signal && ul_pty_get_child(ss.pty) != (pid_t)-1)
-		ul_pty_wait_for_child(ss.pty);	/* final wait */
+	if (!caught_signal && ul_pty_get_child(pty) != (pid_t)-1)
+		ul_pty_wait_for_child(pty);	/* final wait */
 
-	if (caught_signal && ul_pty_get_child(ss.pty) != (pid_t)-1) {
+	if (caught_signal && ul_pty_get_child(pty) != (pid_t)-1) {
 		fprintf(stderr, "\nSession terminated, killing shell...");
 		kill(child, SIGTERM);
 		sleep(2);
@@ -669,8 +664,8 @@ int main(int argc, char *argv[])
 		fprintf(stderr, " ...killed.\n");
 	}
 
-	ul_pty_cleanup(ss.pty);
-	ul_free_pty(ss.pty);
+	ul_pty_cleanup(pty);
+	ul_free_pty(pty);
 	return EXIT_SUCCESS;
 }
 
