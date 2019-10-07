@@ -940,8 +940,10 @@ static void determine_clock_access_method(const struct hwclock_control *ctl)
 	} else {
 		if (ctl->verbose)
 			printf(_("No usable clock interface found.\n"));
+
 		warnx(_("Cannot access the Hardware Clock via "
 			"any known method."));
+
 		if (!ctl->verbose)
 			warnx(_("Use the --verbose option to see the "
 				"details of our search for an access "

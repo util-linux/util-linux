@@ -129,9 +129,12 @@ static int open_rtc(const struct hwclock_control *ctl)
 				printf(_("Trying to open: %s\n"), fls[i]);
 			rtc_dev_fd = open(fls[i], O_RDONLY);
 
-			if (rtc_dev_fd < 0
-			    && (errno == ENOENT || errno == ENODEV))
-				continue;
+			if (rtc_dev_fd < 0) {
+				if (errno == ENOENT || errno == ENODEV)
+					continue;
+				if (ctl->verbose)
+					warn(_("cannot open %s"), fls[i]);
+			}
 			rtc_dev_name = fls[i];
 			break;
 		}
