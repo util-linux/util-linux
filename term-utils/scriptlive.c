@@ -44,9 +44,6 @@
 #define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
 
 struct scriptlive {
-	pid_t	child;		/* shell */
-	int	childstatus;
-
 	struct ul_pty *pty;
 	struct replay_setup *setup;
 	struct replay_step *step;
@@ -92,17 +89,6 @@ getnum(const char *s)
 		err(EXIT_FAILURE, "%s: %s", _("failed to parse number"), s);
 	}
 	return d;
-}
-
-static void callback_child_die(
-			void *data,
-			pid_t child __attribute__((__unused__)),
-			int status)
-{
-	struct scriptlive *ss = (struct scriptlive *) data;
-
-	ss->child = (pid_t) -1;
-	ss->childstatus = status;
 }
 
 static void callback_child_sigstop(
@@ -175,7 +161,8 @@ main(int argc, char *argv[])
 	int diviopt = FALSE, idx;
 	int ch, caught_signal = 0;
 	struct ul_pty_callbacks *cb;
-	struct scriptlive ss = { .child = 0 };
+	struct scriptlive ss = { .pty = NULL };
+	pid_t child;
 
 	static const struct option longopts[] = {
 		{ "timing",	required_argument,	0, 't' },
@@ -291,7 +278,6 @@ main(int argc, char *argv[])
 
 	ul_pty_set_callback_data(ss.pty, (void *) &ss);
 	cb = ul_pty_get_callbacks(ss.pty);
-	cb->child_die = callback_child_die;
 	cb->child_sigstop = callback_child_sigstop;
 	cb->mainloop = mainloop_cb;
 
@@ -300,7 +286,7 @@ main(int argc, char *argv[])
 
 	fflush(stdout);			/* ??? */
 
-	switch ((int) (ss.child = fork())) {
+	switch ((int) (child = fork())) {
 	case -1: /* error */
 		ul_pty_cleanup(ss.pty);
 		err(EXIT_FAILURE, _("cannot create child process"));
@@ -329,7 +315,7 @@ main(int argc, char *argv[])
 	}
 
 	/* parent */
-	ul_pty_set_child(ss.pty, ss.child);
+	ul_pty_set_child(ss.pty, child);
 
 	/* read the first step and set initial delay for pty main loop; the
 	 * next steps will be processed by mainloop_cb() */
@@ -341,14 +327,14 @@ main(int argc, char *argv[])
 	/* all done; cleanup and kill */
 	caught_signal = ul_pty_get_delivered_signal(ss.pty);
 
-	if (!caught_signal && ss.child != (pid_t)-1)
+	if (!caught_signal && ul_pty_get_child(ss.pty) != (pid_t)-1)
 		ul_pty_wait_for_child(ss.pty);	/* final wait */
 
-	if (caught_signal && ss.child != (pid_t)-1) {
+	if (caught_signal && ul_pty_get_child(ss.pty) != (pid_t)-1) {
 		fprintf(stderr, _("\nSession terminated, killing shell..."));
-		kill(ss.child, SIGTERM);
+		kill(child, SIGTERM);
 		sleep(2);
-		kill(ss.child, SIGKILL);
+		kill(child, SIGKILL);
 		fprintf(stderr, " ...killed.\n");
 	}
 
