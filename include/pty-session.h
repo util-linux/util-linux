@@ -19,15 +19,21 @@
  */
 struct ul_pty_callbacks {
 	/*
-	 * Executed on SIGCHLD when ssi_code is EXITED, KILLED or DUMPED
-	 * @
+	 * Optional. Executed on SIGCHLD when ssi_code is EXITED, KILLED or
+	 * DUMPED; The callback has to call ul_pty_set_child(pty, (pid_t) -1)
+	 * if child is no more alive.
 	 */
-	void (*child_wait)(void *);
+	void (*child_wait)(void *, pid_t);
+
+	/*
+	 * Used when child_wait() undefined to informa about child status
+	 */
+	void (*child_die)(void *, pid_t, int);
 
 	/*
 	 * Executed on SIGCHLD when ssi_status is SIGSTOP
 	 */
-	void (*child_sigstop)(void *);
+	void (*child_sigstop)(void *, pid_t);
 
 	/*
 	 * Executed in master loop before ul_pty enter poll() and in time set by
@@ -90,5 +96,7 @@ int ul_pty_proxy_master(struct ul_pty *pty);
 
 void ul_pty_set_mainloop_time(struct ul_pty *pty, struct timeval *tv);
 int ul_pty_get_childfd(struct ul_pty *pty);
+void ul_pty_wait_for_child(struct ul_pty *pty);
+pid_t ul_pty_get_child(struct ul_pty *pty);
 
 #endif /* UTIL_LINUX_PTY_H */

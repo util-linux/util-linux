@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2008-2019, Karel Zak <kzak@redhat.com>
  * Copyright (C) 2008, James Youngman <jay@gnu.org>
  *
  * This file is free software; you can redistribute it and/or modify

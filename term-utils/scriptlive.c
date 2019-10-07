@@ -94,46 +94,23 @@ getnum(const char *s)
 	return d;
 }
 
-/* on child exit/dump/... */
-static void wait_for_child(void *data)
+static void callback_child_die(
+			void *data,
+			pid_t child __attribute__((__unused__)),
+			int status)
 {
 	struct scriptlive *ss = (struct scriptlive *) data;
-	int status;
-	pid_t pid;
-	int options = 0;
 
-	if (ss->child == (pid_t) -1)
-		return;
-
-	if (ul_pty_is_running(ss->pty)) {
-		/* wait for specific child */
-		options = WNOHANG;
-		for (;;) {
-			pid = waitpid(ss->child, &status, options);
-			if (pid != (pid_t) - 1) {
-				ss->childstatus = status;
-				ss->child = (pid_t) -1;
-				ul_pty_set_child(ss->pty, (pid_t) -1);
-			} else
-				break;
-		}
-	} else {
-		/* final wait */
-		while ((pid = wait3(&status, options, NULL)) > 0) {
-			if (pid == ss->child) {
-				ss->childstatus = status;
-				ss->child = (pid_t) -1;
-				ul_pty_set_child(ss->pty, (pid_t) -1);
-			}
-		}
-	}
+	ss->child = (pid_t) -1;
+	ss->childstatus = status;
 }
 
-static void child_sigstop(void *data)
+static void callback_child_sigstop(
+			void *data __attribute__((__unused__)),
+			pid_t child)
 {
-	struct scriptlive *ss = (struct scriptlive *) data;
 	kill(getpid(), SIGSTOP);
-	kill(ss->child, SIGCONT);
+	kill(child, SIGCONT);
 }
 
 static int process_next_step(struct scriptlive *ss)
@@ -314,8 +291,8 @@ main(int argc, char *argv[])
 
 	ul_pty_set_callback_data(ss.pty, (void *) &ss);
 	cb = ul_pty_get_callbacks(ss.pty);
-	cb->child_wait = wait_for_child;
-	cb->child_sigstop = child_sigstop;
+	cb->child_die = callback_child_die;
+	cb->child_sigstop = callback_child_sigstop;
 	cb->mainloop = mainloop_cb;
 
 	if (ul_pty_setup(ss.pty))
@@ -365,7 +342,7 @@ main(int argc, char *argv[])
 	caught_signal = ul_pty_get_delivered_signal(ss.pty);
 
 	if (!caught_signal && ss.child != (pid_t)-1)
-		wait_for_child(&ss);	/* final wait */
+		ul_pty_wait_for_child(ss.pty);	/* final wait */
 
 	if (caught_signal && ss.child != (pid_t)-1) {
 		fprintf(stderr, _("\nSession terminated, killing shell..."));

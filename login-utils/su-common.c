@@ -182,7 +182,7 @@ static void init_tty(struct su_context *su)
  */
 static int wait_for_child(struct su_context *su)
 {
-	pid_t pid = (pid_t) -1;;
+	pid_t pid = (pid_t) -1;
 	int status = 0;
 
 	if (su->child == (pid_t) -1)
@@ -243,7 +243,9 @@ static int wait_for_child(struct su_context *su)
 }
 
 #ifdef USE_PTY
-static void wait_for_child_cb(void *data)
+static void wait_for_child_cb(
+			void *data,
+			pid_t child __attribute__((__unused__)))
 {
 	wait_for_child((struct su_context *) data);
 }

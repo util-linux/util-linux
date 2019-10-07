@@ -102,6 +102,12 @@ int ul_pty_get_childfd(struct ul_pty *pty)
 	return pty->master;
 }
 
+pid_t ul_pty_get_child(struct ul_pty *pty)
+{
+	assert(pty);
+	return pty->child;
+}
+
 /* it's active when signals are redurected to sigfd */
 int ul_pty_is_running(struct ul_pty *pty)
 {
@@ -312,6 +318,45 @@ static int handle_io(struct ul_pty *pty, int fd, int *eof)
 	return rc;
 }
 
+void ul_pty_wait_for_child(struct ul_pty *pty)
+{
+	int status;
+	pid_t pid;
+	int options = 0;
+
+	if (pty->child == (pid_t) -1)
+		return;
+
+	DBG(SIG, ul_debug("waiting for child"));
+
+	if (ul_pty_is_running(pty)) {
+		/* wait for specific child */
+		options = WNOHANG;
+		for (;;) {
+			pid = waitpid(pty->child, &status, options);
+			if (pid != (pid_t) - 1) {
+				if (pty->callbacks.child_die)
+					pty->callbacks.child_die(
+							pty->callback_data,
+							pty->child, status);
+				ul_pty_set_child(pty, (pid_t) -1);
+			} else
+				break;
+		}
+	} else {
+		/* final wait */
+		while ((pid = wait3(&status, options, NULL)) > 0) {
+			if (pid == pty->child) {
+				if (pty->callbacks.child_die)
+					pty->callbacks.child_die(
+							pty->callback_data,
+							pty->child, status);
+				ul_pty_set_child(pty, (pid_t) -1);
+			}
+		}
+	}
+}
+
 static int handle_signal(struct ul_pty *pty, int fd)
 {
 	struct signalfd_siginfo info;
@@ -333,11 +378,17 @@ static int handle_signal(struct ul_pty *pty, int fd)
 
 		if (info.ssi_code == CLD_EXITED
 		    || info.ssi_code == CLD_KILLED
-		    || info.ssi_code == CLD_DUMPED)
-			pty->callbacks.child_wait(pty->callback_data);
+		    || info.ssi_code == CLD_DUMPED) {
 
-		else if (info.ssi_status == SIGSTOP && pty->child > 0)
-			pty->callbacks.child_sigstop(pty->callback_data);
+			if (pty->callbacks.child_wait)
+				pty->callbacks.child_wait(pty->callback_data,
+							  pty->child);
+			else
+				ul_pty_wait_for_child(pty);
+
+		} else if (info.ssi_status == SIGSTOP && pty->child > 0)
+			pty->callbacks.child_sigstop(pty->callback_data,
+						     pty->child);
 
 		if (pty->child <= 0) {
 			pty->poll_timeout = 10;
@@ -535,60 +586,22 @@ done:
  * ... and see for example tty(1) or "ps afu"
  */
 struct ptytest {
-	pid_t	child;
-	int	childstatus;
-
 	struct ul_pty *pty;
 };
 
-/* on child exit/dump/... */
-static void wait_for_child(void *data)
+static void child_sigstop(void *data __attribute__((__unused__)), pid_t child)
 {
-	struct ptytest *ss = (struct ptytest *) data;
-	int status;
-	pid_t pid;
-	int options = 0;
-
-	if (ss->child == (pid_t) -1)
-		return;
-
-	if (ul_pty_is_running(ss->pty)) {
-		/* wait for specific child */
-		options = WNOHANG;
-		for (;;) {
-			pid = waitpid(ss->child, &status, options);
-			if (pid != (pid_t) - 1) {
-				ss->childstatus = status;
-				ss->child = (pid_t) -1;
-				ul_pty_set_child(ss->pty, (pid_t) -1);
-			} else
-				break;
-		}
-	} else {
-		/* final wait */
-		while ((pid = wait3(&status, options, NULL)) > 0) {
-			if (pid == ss->child) {
-				ss->childstatus = status;
-				ss->child = (pid_t) -1;
-				ul_pty_set_child(ss->pty, (pid_t) -1);
-			}
-		}
-	}
-}
-
-static void child_sigstop(void *data)
-{
-	struct ptytest *ss = (struct ptytest *) data;
 	kill(getpid(), SIGSTOP);
-	kill(ss->child, SIGCONT);
+	kill(child, SIGCONT);
 }
 
 int main(int argc, char *argv[])
 {
-	struct ptytest ss = { .child = (pid_t) -1 };
+	struct ptytest ss = { .pty = NULL };
 	struct ul_pty_callbacks *cb;
 	const char *shell, *command = NULL, *shname = NULL;
 	int caught_signal = 0;
+	pid_t child;
 
 	shell = getenv("SHELL");
 	if (shell == NULL)
@@ -604,7 +617,6 @@ int main(int argc, char *argv[])
 
 	ul_pty_set_callback_data(ss.pty, (void *) &ss);
 	cb = ul_pty_get_callbacks(ss.pty);
-	cb->child_wait = wait_for_child;
 	cb->child_sigstop = child_sigstop;
 
 	if (ul_pty_setup(ss.pty))
@@ -612,7 +624,7 @@ int main(int argc, char *argv[])
 
 	fflush(stdout);			/* ??? */
 
-	switch ((int) (ss.child = fork())) {
+	switch ((int) (child = fork())) {
 	case -1: /* error */
 		ul_pty_cleanup(ss.pty);
 		err(EXIT_FAILURE, "cannot create child process");
@@ -638,7 +650,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* parent */
-	ul_pty_set_child(ss.pty, ss.child);
+	ul_pty_set_child(ss.pty, child);
 
 	/* this is the main loop */
 	ul_pty_proxy_master(ss.pty);
@@ -646,18 +658,19 @@ int main(int argc, char *argv[])
 	/* all done; cleanup and kill */
 	caught_signal = ul_pty_get_delivered_signal(ss.pty);
 
-	if (!caught_signal && ss.child != (pid_t)-1)
-		wait_for_child(&ss);	/* final wait */
+	if (!caught_signal && ul_pty_get_child(ss.pty) != (pid_t)-1)
+		ul_pty_wait_for_child(ss.pty);	/* final wait */
 
-	if (caught_signal && ss.child != (pid_t)-1) {
+	if (caught_signal && ul_pty_get_child(ss.pty) != (pid_t)-1) {
 		fprintf(stderr, "\nSession terminated, killing shell...");
-		kill(ss.child, SIGTERM);
+		kill(child, SIGTERM);
 		sleep(2);
-		kill(ss.child, SIGKILL);
+		kill(child, SIGKILL);
 		fprintf(stderr, " ...killed.\n");
 	}
 
 	ul_pty_cleanup(ss.pty);
+	ul_free_pty(ss.pty);
 	return EXIT_SUCCESS;
 }
 

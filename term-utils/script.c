@@ -82,10 +82,6 @@ UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
 #define DBG(m, x)       __UL_DBG(script, SCRIPT_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(script, SCRIPT_DEBUG_, m, x)
 
-#if defined(HAVE_LIBUTIL) && defined(HAVE_PTY_H)
-# include <pty.h>
-#endif
-
 #ifdef HAVE_LIBUTEMPTER
 # include <utempter.h>
 #endif
@@ -138,7 +134,7 @@ struct script_control {
 	int ttycols;
 	int ttylines;
 
-	struct ul_pty *pty;
+	struct ul_pty *pty;	/* pseudo-terminal */
 	pid_t child;		/* child pid */
 	int childstatus;	/* child process exit value */
 
@@ -582,50 +578,25 @@ static void log_done(struct script_control *ctl, const char *msg)
 		log_close(ctl, ctl->in.logs[i], msg, status);
 }
 
-static void wait_for_child(void *data)
+static void callback_child_die(
+			void *data,
+			pid_t child __attribute__((__unused__)),
+			int status)
 {
 	struct script_control *ctl = (struct script_control *) data;
-	int status;
-	pid_t pid;
-	int options = 0;
 
-	if (ctl->child == (pid_t) -1)
-		return;
-
-	DBG(MISC, ul_debug("waiting for child"));
-
-	if (ul_pty_is_running(ctl->pty)) {
-		/* wait for specific child */
-		options = WNOHANG;
-		for (;;) {
-			pid = waitpid(ctl->child, &status, options);
-			if (pid != (pid_t) - 1) {
-				ctl->childstatus = status;
-				ctl->child = (pid_t) -1;
-				ul_pty_set_child(ctl->pty, (pid_t) -1);
-			} else
-				break;
-		}
-	} else {
-		/* final wait */
-		while ((pid = wait3(&status, options, NULL)) > 0) {
-			if (pid == ctl->child) {
-				ctl->childstatus = status;
-				ctl->child = (pid_t) -1;
-				ul_pty_set_child(ctl->pty, (pid_t) -1);
-			}
-		}
-	}
+	ctl->child = (pid_t) -1;
+	ctl->childstatus = status;
 }
 
-static void callback_child_sigstop(void *data)
+static void callback_child_sigstop(
+			void *data __attribute__((__unused__)),
+			pid_t child)
 {
-	struct script_control *ctl = (struct script_control *) data;
-
 	DBG(SIGNAL, ul_debug(" child stop by SIGSTOP -- stop parent too"));
 	kill(getpid(), SIGSTOP);
 	DBG(SIGNAL, ul_debug(" resume"));
-	kill(ctl->child, SIGCONT);
+	kill(child, SIGCONT);
 }
 
 static int callback_log_stream_activity(void *data, int fd, char *buf, size_t bufsz)
@@ -868,7 +839,7 @@ int main(int argc, char **argv)
 
 	ul_pty_set_callback_data(ctl.pty, (void *) &ctl);
 	cb = ul_pty_get_callbacks(ctl.pty);
-	cb->child_wait = wait_for_child;
+	cb->child_die = callback_child_die;
 	cb->child_sigstop = callback_child_sigstop;
 	cb->log_stream_activity = callback_log_stream_activity;
 	cb->log_signal = callback_log_signal;
@@ -932,6 +903,7 @@ int main(int argc, char **argv)
 	if (rc)
 		goto done;
 
+	/* add extra info to advanced timing file */
 	if (timingfile && format == SCRIPT_FMT_TIMING_MULTI) {
 		char buf[FORMAT_TIMESTAMP_MAX];
 		time_t tvec = script_time((time_t *)NULL);
@@ -963,7 +935,7 @@ int main(int argc, char **argv)
 	caught_signal = ul_pty_get_delivered_signal(ctl.pty);
 
 	if (!caught_signal && ctl.child != (pid_t)-1)
-		wait_for_child(&ctl);	/* final wait */
+		ul_pty_wait_for_child(ctl.pty);	/* final wait */
 
 	if (caught_signal && ctl.child != (pid_t)-1) {
 		fprintf(stderr, "\nSession terminated, killing shell...");
