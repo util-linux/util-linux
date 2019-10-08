@@ -279,7 +279,7 @@ static int log_close(struct script_control *ctl,
 {
 	int rc = 0;
 
-	if (!log->initialized)
+	if (!log || !log->initialized)
 		return 0;
 
 	DBG(MISC, ul_debug("closing %s", log->filename));
@@ -318,10 +318,36 @@ static int log_close(struct script_control *ctl,
 		rc = -errno;
 	}
 
-	log->fp = NULL;
-	log->initialized = 0;
+	free(log->filename);
+	memset(log, 0, sizeof(*log));
 
 	return rc;
+}
+
+static void log_free(struct script_control *ctl, struct script_log *log)
+{
+	size_t i;
+
+	if (!log)
+		return;
+
+	/* the same log is possible to reference from more places, remove all
+	 * (TODO: maybe use include/list.h to make it more elegant)
+	 */
+	if (ctl->siglog == log)
+		ctl->siglog = NULL;
+	else if (ctl->infolog == log)
+		ctl->infolog = NULL;
+
+	for (i = 0; i < ctl->out.nlogs; i++) {
+		if (ctl->out.logs[i] == log)
+			ctl->out.logs[i] = NULL;
+	}
+	for (i = 0; i < ctl->in.nlogs; i++) {
+		if (ctl->in.logs[i] == log)
+			ctl->in.logs[i] = NULL;
+	}
+	free(log);
 }
 
 static int log_start(struct script_control *ctl,
@@ -380,7 +406,7 @@ static int log_start(struct script_control *ctl,
 	return 0;
 }
 
-static int start_logging(struct script_control *ctl)
+static int logging_start(struct script_control *ctl)
 {
 	size_t i;
 
@@ -555,7 +581,7 @@ static ssize_t log_info(struct script_control *ctl, const char *name, const char
 }
 
 
-static void log_done(struct script_control *ctl, const char *msg)
+static void logging_done(struct script_control *ctl, const char *msg)
 {
 	int status;
 	size_t i;
@@ -570,12 +596,24 @@ static void log_done(struct script_control *ctl, const char *msg)
 	DBG(MISC, ul_debug(" status=%d", status));
 
 	/* close all output logs */
-	for (i = 0; i < ctl->out.nlogs; i++)
-		log_close(ctl, ctl->out.logs[i], msg, status);
+	for (i = 0; i < ctl->out.nlogs; i++) {
+		struct script_log *log = ctl->out.logs[i];
+		log_close(ctl, log, msg, status);
+		log_free(ctl, log);
+	}
+	free(ctl->out.logs);
+	ctl->out.logs = NULL;
+	ctl->out.nlogs = 0;
 
 	/* close all input logs */
-	for (i = 0; i < ctl->in.nlogs; i++)
-		log_close(ctl, ctl->in.logs[i], msg, status);
+	for (i = 0; i < ctl->in.nlogs; i++) {
+		struct script_log *log = ctl->in.logs[i];
+		log_close(ctl, log, msg, status);
+		log_free(ctl, log);
+	}
+	free(ctl->in.logs);
+	ctl->in.logs = NULL;
+	ctl->in.nlogs = 0;
 }
 
 static void callback_child_die(
@@ -628,7 +666,7 @@ static int callback_log_stream_activity(void *data, int fd, char *buf, size_t bu
 		if (!ctl->quiet)
 			printf(_("Script terminated, max output files size %"PRIu64" exceeded.\n"), ctl->maxsz);
 		DBG(IO, ul_debug("output size %"PRIu64", exceeded limit %"PRIu64, ctl->outsz, ctl->maxsz));
-		log_done(ctl, _("max output size exceeded"));
+		logging_done(ctl, _("max output size exceeded"));
 		return 1;
 	}
 	return 0;
@@ -899,7 +937,7 @@ int main(int argc, char **argv)
 	/* parent */
 	ul_pty_set_child(ctl.pty, ctl.child);
 
-	rc = start_logging(&ctl);
+	rc = logging_start(&ctl);
 	if (rc)
 		goto done;
 
@@ -947,7 +985,7 @@ int main(int argc, char **argv)
 
 done:
 	ul_pty_cleanup(ctl.pty);
-	log_done(&ctl, NULL);
+	logging_done(&ctl, NULL);
 
 	if (!ctl.quiet)
 		printf(_("Script done.\n"));
