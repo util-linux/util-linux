@@ -33,7 +33,7 @@ scriptlive_SOURCES = term-utils/scriptlive.c \
 		       term-utils/script-playutils.c \
 		       term-utils/script-playutils.h \
 		       lib/pty-session.c \
-		       nclude/pty-session.h \
+		       include/pty-session.h \
 		       lib/monotonic.c
 scriptlive_LDADD = $(LDADD) libcommon.la $(MATH_LIBS) $(REALTIME_LIBS) -lutil
 endif # BUILD_SCRIPTLIVE
