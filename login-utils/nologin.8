@@ -18,9 +18,16 @@ The exit code returned by
 is always 1.
 .PP
 .SH OPTIONS
-.IP "\fB\-h, \-\-help\fP"
+
+
+.TP
+.IP "\fB\-c\fR, \fB\-\-command\fR \fIcommand\fR"
+Ignored. For compatibility with
+.I su -c "command" - user
+that would cause error otherwise.
+.IP "\fB\-h\fR, \fB\-\-help\fR"
 Display help text and exit.
-.IP "\fB-V, \-\-version"
+.IP "\fB-V\fR, \fB\-\-version\fR"
 Display version information and exit.
 .SH NOTES
 .B nologin

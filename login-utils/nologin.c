@@ -30,7 +30,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Politely refuse a login.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	printf(USAGE_HELP_OPTIONS(16));
+	fputs(_(" -c, --command <command>  does nothing (for compatibility with su -c)\n"), out);
+	printf(USAGE_HELP_OPTIONS(26));
 
 	printf(USAGE_MAN_TAIL("nologin(8)"));
 	exit(EXIT_FAILURE);
@@ -41,6 +42,7 @@ int main(int argc, char *argv[])
 	int c, fd = -1;
 	struct stat st;
 	static const struct option longopts[] = {
+		{ "command", required_argument, NULL, 'c' },
 		{ "help",    0, NULL, 'h' },
 		{ "version", 0, NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
@@ -50,8 +52,11 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "hV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c:hV", longopts, NULL)) != -1) {
 		switch (c) {
+		case 'c':
+			/* Ignore the command, just don't print unknown option error. */
+			break;
 		case 'h':
 			usage();
 		case 'V':
