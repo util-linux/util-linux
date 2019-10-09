@@ -5,6 +5,20 @@
 #   - helper functions to be sourced from .travis.yml
 #   - designed to respect travis' environment but testing locally is possible
 #
+# Variables:
+#
+#   TS_OPT_<name>_<something>=yes
+#          - forces tests/functions.sh:ts_has_option() to return "yes" for
+#            variable <something> in test <name>
+#
+#   TESTS_OPTIONS=
+#   TESTS_PARALLEL_OPTION=
+#   TESTS_COMMAND=
+#          - overwrites default from tests/Makemodule.am
+#
+#   Do not use TS_* prefix for any travis or build-system stuff. This prefix is
+#   exclusively used by tests/ stuff.
+#
 
 if [ ! -f "configure.ac" ]; then
 	echo ".travis-functions.sh must be sourced from source dir" >&2
@@ -65,8 +79,8 @@ function check_nonroot
 
 	osx_prepare_check
 
-	# TS_OPTS= overwrites default from tests/Makemodule.am
-	$MAKE check TS_OPTS="$make_opts" || return
+	# TESTS_* overwrites default from tests/Makemodule.am
+	$MAKE check TESTS_OPTIONS="$make_opts" || return
 
 	make_checkusage || return
 
@@ -92,8 +106,8 @@ function check_root
 	# Modify environment for OSX
 	osx_prepare_check
 
-	# TS_OPTS= overwrites default from tests/Makemodule.am
-	sudo -E $MAKE check "TS_PARALLEL=--parallel=none" TS_OPTS="$make_opts" || return
+	# TESTS_* overwrites default from tests/Makemodule.am
+	sudo -E $MAKE check "TESTS_PARALLEL_OPTION=--parallel=none" TESTS_OPTIONS="$make_opts" || return
 
 	# root on osx has not enough permission for make install ;)
 	[ "$TRAVIS_OS_NAME" = "osx" ] && return
