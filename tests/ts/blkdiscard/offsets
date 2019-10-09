@@ -92,7 +92,7 @@ run_tscmd $TS_CMD_BLKDISCARD -v -p 511 -l 10240 $DEVICE
 run_tscmd $TS_CMD_BLKDISCARD -v -p 511 -o 1 -l 10240 $DEVICE
 run_tscmd $TS_CMD_BLKDISCARD -v -p 511 -o 511 -l 10240 $DEVICE
 
-sed -i "s#$DEVICE:\s##" $TS_OUTPUT
+sed -i "s#$DEVICE:\s##" $TS_OUTPUT $TS_ERRLOG
 
 ts_log "detach loop device from image"
 
