@@ -93,7 +93,9 @@ while [ -n "$1" ]; do
 		;;
 	--parallel=*)
 		paraller_jobs="${1##--parallel=}"
-		if ! [ "$paraller_jobs" -ge 0 ] 2>/dev/null; then
+		if [ "$paraller_jobs" = "none" ]; then
+			paraller_jobs=1
+		elif ! [ "$paraller_jobs" -ge 0 ] 2>/dev/null; then
 			echo "invalid argument '$paraller_jobs' for --parallel="
 			exit 1
 		fi
@@ -121,7 +123,7 @@ while [ -n "$1" ]; do
 		echo "  --noskip-commands     fail on missing commands"
 		echo "  --srcdir=<path>       autotools top source directory"
 		echo "  --builddir=<path>     autotools top build directory"
-		echo "  --parallel=<num>      number of parallel test jobs, default: num cpus"
+		echo "  --parallel=<num|none> number of parallel test jobs, default: num cpus"
 		echo "  --exclude=<list>      exclude tests by list '<utilname>/<testname> ..'"
 		echo
 		exit 1
