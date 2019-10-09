@@ -14,11 +14,11 @@ clean-local-tests:
 CLEAN_LOCALS += clean-local-tests
 
 TESTS_OPTIONS = --nonroot
-TESTS_PARALLEL_OPTION = --parallel
+TESTS_PARALLEL = --parallel
 TESTS_COMMAND = $(top_srcdir)/tests/run.sh \
 	--srcdir=$(abs_top_srcdir) \
 	--builddir=$(abs_top_builddir) \
-	$(TESTS_PARALLEL_OPTION) \
+	$(TESTS_PARALLEL) \
 	$(TESTS_OPTIONS)
 
 check-local-tests: $(check_PROGRAMS)

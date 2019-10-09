@@ -12,7 +12,7 @@
 #            variable <something> in test <name>
 #
 #   TESTS_OPTIONS=
-#   TESTS_PARALLEL_OPTION=
+#   TESTS_PARALLEL=
 #   TESTS_COMMAND=
 #          - overwrites default from tests/Makemodule.am
 #
@@ -29,7 +29,6 @@ fi
 # travis docs say we get 1.5 CPUs
 MAKE="make -j2"
 DUMP_CONFIG_LOG="short"
-export TS_OPT_parsable="yes"
 
 # workaround ugly warning on travis OSX,
 # see https://github.com/direnv/direnv/issues/210
@@ -63,7 +62,7 @@ function make_checkusage
 
 function check_nonroot
 {
-	local make_opts="$MAKE_CHECK_OPTS --show-diff"
+	local make_opts="$MAKE_CHECK_OPTS --show-diff --parsable"
 	local conf_opts="\
 		--disable-use-tty-group \
 		--disable-makeinstall-chown \
@@ -107,7 +106,7 @@ function check_root
 	osx_prepare_check
 
 	# TESTS_* overwrites default from tests/Makemodule.am
-	sudo -E $MAKE check "TESTS_PARALLEL_OPTION=--parallel=none" TESTS_OPTIONS="$make_opts" || return
+	sudo -E $MAKE check "TESTS_PARALLEL=''" TESTS_OPTIONS="$make_opts" || return
 
 	# root on osx has not enough permission for make install ;)
 	[ "$TRAVIS_OS_NAME" = "osx" ] && return
