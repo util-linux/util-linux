@@ -93,7 +93,7 @@ function check_root
 	osx_prepare_check
 
 	# TS_OPTS= overwrites default from tests/Makemodule.am
-	sudo -E $MAKE check TS_PARALLEL="" TS_OPTS="$make_opts" || return
+	sudo -E $MAKE check TS_PARALLEL=' ' TS_OPTS="$make_opts" || return
 
 	# root on osx has not enough permission for make install ;)
 	[ "$TRAVIS_OS_NAME" = "osx" ] && return
