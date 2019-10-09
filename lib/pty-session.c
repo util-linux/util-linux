@@ -128,11 +128,24 @@ void ul_pty_set_mainloop_time(struct ul_pty *pty, struct timeval *tv)
 	}
 }
 
+static void pty_signals_cleanup(struct ul_pty *pty)
+{
+	if (pty->sigfd != -1)
+		close(pty->sigfd);
+	pty->sigfd = -1;
+
+	/* restore original setting */
+	sigprocmask(SIG_SETMASK, &pty->orgsig, NULL);
+}
+
 /* call me before fork() */
 int ul_pty_setup(struct ul_pty *pty)
 {
 	struct termios slave_attrs;
-	int rc;
+	sigset_t ourset;
+	int rc = 0;
+
+	assert(pty->sigfd == -1);
 
 	/* save the current signals setting */
 	sigprocmask(0, NULL, &pty->orgsig);
@@ -141,11 +154,15 @@ int ul_pty_setup(struct ul_pty *pty)
 	        DBG(SETUP, ul_debugobj(pty, "create for terminal"));
 
 		/* original setting of the current terminal */
-		if (tcgetattr(STDIN_FILENO, &pty->stdin_attrs) != 0)
-			return -errno;
+		if (tcgetattr(STDIN_FILENO, &pty->stdin_attrs) != 0) {
+			rc = -errno;
+			goto done;
+		}
 		ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&pty->win);
 		/* create master+slave */
 		rc = openpty(&pty->master, &pty->slave, NULL, &pty->stdin_attrs, &pty->win);
+		if (rc)
+			goto done;
 
 		/* set the current terminal to raw mode; pty_cleanup() reverses this change on exit */
 		slave_attrs = pty->stdin_attrs;
@@ -160,8 +177,29 @@ int ul_pty_setup(struct ul_pty *pty)
 			tcgetattr(pty->slave, &slave_attrs);
 			slave_attrs.c_lflag &= ~ECHO;
 			tcsetattr(pty->slave, TCSANOW, &slave_attrs);
-		}
+		} else
+			goto done;
 	}
+
+	sigfillset(&ourset);
+	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
+		rc = -errno;
+		goto done;
+	}
+
+	sigemptyset(&ourset);
+	sigaddset(&ourset, SIGCHLD);
+	sigaddset(&ourset, SIGWINCH);
+	sigaddset(&ourset, SIGALRM);
+	sigaddset(&ourset, SIGTERM);
+	sigaddset(&ourset, SIGINT);
+	sigaddset(&ourset, SIGQUIT);
+
+	if ((pty->sigfd = signalfd(-1, &ourset, SFD_CLOEXEC)) < 0)
+		rc = -errno;
+done:
+	if (rc)
+		ul_pty_cleanup(pty);
 
 	DBG(SETUP, ul_debugobj(pty, "pty setup done [master=%d, slave=%d, rc=%d]",
 				pty->master, pty->slave, rc));
@@ -172,6 +210,8 @@ int ul_pty_setup(struct ul_pty *pty)
 void ul_pty_cleanup(struct ul_pty *pty)
 {
 	struct termios rtt;
+
+	pty_signals_cleanup(pty);
 
 	if (pty->master == -1 || !pty->isterm)
 		return;
@@ -434,7 +474,6 @@ static int handle_signal(struct ul_pty *pty, int fd)
 /* loop in parent */
 int ul_pty_proxy_master(struct ul_pty *pty)
 {
-	sigset_t ourset;
 	int rc = 0, ret, eof = 0;
 	enum {
 		POLLFD_SIGNAL = 0,
@@ -451,22 +490,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 	/* We use signalfd and standard signals by handlers are blocked
 	 * at all
 	 */
-	sigfillset(&ourset);
-	if (sigprocmask(SIG_BLOCK, &ourset, NULL))
-		return -errno;
-
-	sigemptyset(&ourset);
-	sigaddset(&ourset, SIGCHLD);
-	sigaddset(&ourset, SIGWINCH);
-	sigaddset(&ourset, SIGALRM);
-	sigaddset(&ourset, SIGTERM);
-	sigaddset(&ourset, SIGINT);
-	sigaddset(&ourset, SIGQUIT);
-
-	if ((pty->sigfd = signalfd(-1, &ourset, SFD_CLOEXEC)) < 0) {
-		rc = -errno;
-		goto done;
-	}
+	assert(pty->sigfd >= 0);
 
 	pfd[POLLFD_SIGNAL].fd = pty->sigfd;
 	pty->poll_timeout = -1;
@@ -569,13 +593,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 		}
 	}
 
-done:
-	if (pty->sigfd != -1)
-		close(pty->sigfd);
-	pty->sigfd = -1;
-
-	/* restore original setting */
-	sigprocmask(SIG_SETMASK, &pty->orgsig, NULL);
+	pty_signals_cleanup(pty);
 
 	DBG(IO, ul_debug("poll() done [signal=%d, rc=%d]", pty->delivered_signal, rc));
 	return rc;

@@ -893,6 +893,10 @@ int main(int argc, char **argv)
 		printf(_(".\n"));
 	}
 
+#ifdef HAVE_LIBUTEMPTER
+	utempter_add_record(ul_pty_get_childfd(ctl.pty), NULL);
+#endif
+
 	if (ul_pty_setup(ctl.pty))
 		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
 
@@ -901,10 +905,6 @@ int main(int argc, char **argv)
 	/*
 	 * We have terminal, do not use err() from now, use "goto done"
 	 */
-
-#ifdef HAVE_LIBUTEMPTER
-	utempter_add_record(ul_pty_get_childfd(ctl.pty), NULL);
-#endif
 
 	switch ((int) (ctl.child = fork())) {
 	case -1: /* error */
