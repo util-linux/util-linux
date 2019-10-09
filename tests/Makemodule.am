@@ -14,9 +14,10 @@ clean-local-tests:
 CLEAN_LOCALS += clean-local-tests
 
 TS_OPTS = --nonroot
+TS_PARALLEL = --parallel
 TS_COMMAND = $(top_srcdir)/tests/run.sh \
 	--srcdir=$(abs_top_srcdir) --builddir=$(abs_top_builddir) \
-	--parallel $(TS_OPTS)
+	$(TS_PARALLEL) $(TS_OPTS)
 
 check-local-tests: $(check_PROGRAMS)
 	$(AM_V_GEN) $(TS_COMMAND)

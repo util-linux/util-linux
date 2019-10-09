@@ -64,6 +64,8 @@ function check_nonroot
 	$MAKE || return
 
 	osx_prepare_check
+
+	# TS_OPTS= overwrites default from tests/Makemodule.am
 	$MAKE check TS_OPTS="$make_opts" || return
 
 	make_checkusage || return
@@ -84,9 +86,14 @@ function check_root
 	xconfigure $conf_opts || return
 	$MAKE || return
 
-	$MAKE check TS_COMMAND="true" || return
+	# compile tests only
+	$MAKE check-programs || return
+
+	# Modify environment for OSX
 	osx_prepare_check
-	sudo -E $MAKE check TS_OPTS="$make_opts" || return
+
+	# TS_OPTS= overwrites default from tests/Makemodule.am
+	sudo -E $MAKE check TS_PARALLEL="" TS_OPTS="$make_opts" || return
 
 	# root on osx has not enough permission for make install ;)
 	[ "$TRAVIS_OS_NAME" = "osx" ] && return
