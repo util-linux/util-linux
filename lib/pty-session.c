@@ -327,13 +327,14 @@ void ul_pty_wait_for_child(struct ul_pty *pty)
 	if (pty->child == (pid_t) -1)
 		return;
 
-	DBG(SIG, ul_debug("waiting for child"));
+	DBG(SIG, ul_debug("waiting for child [child=%d]", (int) pty->child));
 
 	if (ul_pty_is_running(pty)) {
 		/* wait for specific child */
 		options = WNOHANG;
 		for (;;) {
 			pid = waitpid(pty->child, &status, options);
+			DBG(SIG, ul_debug(" waitpid done [rc=%d]", (int) pid));
 			if (pid != (pid_t) - 1) {
 				if (pty->callbacks.child_die)
 					pty->callbacks.child_die(
@@ -346,6 +347,7 @@ void ul_pty_wait_for_child(struct ul_pty *pty)
 	} else {
 		/* final wait */
 		while ((pid = wait3(&status, options, NULL)) > 0) {
+			DBG(SIG, ul_debug(" wait3 done [rc=%d]", (int) pid));
 			if (pid == pty->child) {
 				if (pty->callbacks.child_die)
 					pty->callbacks.child_die(
@@ -391,6 +393,7 @@ static int handle_signal(struct ul_pty *pty, int fd)
 						     pty->child);
 
 		if (pty->child <= 0) {
+			DBG(SIG, ul_debugobj(pty, " no child, setting leaving timeout"));
 			pty->poll_timeout = 10;
 			timerclear(&pty->next_callback_time);
 		}
