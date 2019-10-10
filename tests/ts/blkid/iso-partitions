@@ -25,6 +25,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_BLKID"
 ts_check_test_command "$TS_CMD_PARTX"
+ts_check_prog xz
 
 ts_skip_nonroot
 

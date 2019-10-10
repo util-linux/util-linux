@@ -23,6 +23,8 @@ TS_DESC="options"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_HARDLINK"
+ts_check_prog xz
+ts_check_prog tar
 
 SRCDIR="$TS_OUTDIR/testdir1"
 
