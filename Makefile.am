@@ -136,6 +136,12 @@ edit_cmd = sed \
 	 -e 's|@LIBFDISK_PATCH_VERSION[@]|$(LIBFDISK_PATCH_VERSION)|g' \
 	 -e 's|@LIBBLKID_VERSION[@]|$(LIBBLKID_VERSION)|g'
 
+if HAVE_SELINUX
+edit_cmd += -e 's|@LIBSELINUX[@]|libselinux|g'
+else
+edit_cmd += -e 's|@LIBSELINUX[@]||g'
+endif
+
 CLEANFILES += $(PATHFILES)
 EXTRA_DIST += $(PATHFILES:=.in)
 
