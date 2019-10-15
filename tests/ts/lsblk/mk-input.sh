@@ -70,6 +70,21 @@ for x in ${DEVS}; do
 
 done
 
+#
+# udev a lsblk specific
+#
+mkdir -p $TS_DUMP/dev
+DEVS=$(lsblk --noheadings --output PATH)
+for d in $DEVS; do
+
+	# udev
+	udevadm info --query=property $d > $TS_DUMP/$d
+
+	# lsblk
+	echo "OWNER=$($TS_CMD_LSBLK --noheadings --nodeps --output OWNER $d)" >> $TS_DUMP/$d
+	echo "GROUP=$($TS_CMD_LSBLK --noheadings --nodeps --output GROUP $d)" >> $TS_DUMP/$d
+	echo "MODE=$($TS_CMD_LSBLK  --noheadings --nodeps --output MODE  $d)" >> $TS_DUMP/$d
+done
 
 function mk_output {
 	local cols="NAME,${2}"
