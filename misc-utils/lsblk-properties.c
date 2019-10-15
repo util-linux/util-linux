@@ -8,6 +8,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "mangle.h"
+#include "path.h"
 
 #include "lsblk.h"
 
@@ -31,6 +32,7 @@ void lsblk_device_free_properties(struct lsblk_devprop *p)
 	free(p->wwn);
 	free(p->serial);
 	free(p->model);
+	free(p->partflags);
 
 	free(p);
 }
@@ -111,9 +113,108 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 
 done:
 	ld->udev_requested = 1;
+
+	DBG(DEV, ul_debugobj(ld, " from udev"));
 	return ld->properties;
 }
 #endif /* HAVE_LIBUDEV */
+
+
+static int lookup(char *buf, char *pattern, char **value)
+{
+	char *p, *v;
+	int len;
+
+	/* do not re-fill value */
+	if (!buf || *value)
+		return 0;
+
+	len = strlen(pattern);
+	if (strncmp(buf, pattern, len))
+		return 0;
+
+	p = buf + len;
+	if (*p != '=')
+		return 0;
+	p++;
+	if (!*p || *p == '\n')
+		return 0;
+	v = p;
+	for (; *p && *p != '\n'; p++) ;
+	if (*p == '\n')
+		*p = '\0';
+
+	*value = xstrdup(v);
+	return 1;
+}
+
+/* read device properties from fake text file (used on --sysroot) */
+static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
+{
+	struct lsblk_devprop *prop;
+	struct path_cxt *pc;
+	FILE *fp = NULL;
+	struct stat sb;
+	char buf[BUFSIZ];
+
+	if (ld->file_requested)
+		return ld->properties;
+
+	if (lsblk->sysroot == NULL)
+		return NULL;
+
+	if (ld->properties || ld->filename) {
+		lsblk_device_free_properties(ld->properties);
+		ld->properties = NULL;
+	}
+
+	pc = ul_new_path("/");
+	if (!pc)
+		return NULL;
+	if (ul_path_set_prefix(pc, lsblk->sysroot) != 0)
+		goto done;
+	if (ul_path_stat(pc, &sb, ld->filename) != 0 || !S_ISREG(sb.st_mode))
+		goto done;
+
+	fp = ul_path_fopen(pc, "r", ld->filename);
+	if (!fp)
+		goto done;
+
+	prop = ld->properties;
+	if (!prop)
+		prop = ld->properties = xcalloc(1, sizeof(*ld->properties));
+
+	while (fgets(buf, sizeof(buf), fp) != NULL) {
+		if (lookup(buf, "ID_FS_LABEL_ENC", &prop->label))
+			unhexmangle_string(prop->label);
+		else if (lookup(buf, "ID_FS_UUID_ENC", &prop->uuid))
+			unhexmangle_string(prop->uuid);
+		else if (lookup(buf, "ID_PART_ENTRY_NAME", &prop->partlabel))
+			unhexmangle_string(prop->partlabel);
+		else if (lookup(buf, "ID_PART_TABLE_UUID", &prop->ptuuid)) ;
+		else if (lookup(buf, "ID_PART_TABLE_TYPE", &prop->pttype)) ;
+		else if (lookup(buf, "ID_FS_TYPE", &prop->fstype)) ;
+		else if (lookup(buf, "ID_PART_ENTRY_TYPE", &prop->parttype)) ;
+		else if (lookup(buf, "ID_PART_ENTRY_UUID", &prop->partuuid)) ;
+		else if (lookup(buf, "ID_PART_ENTRY_FLAGS", &prop->partflags)) ;
+		else if (lookup(buf, "ID_MODEL", &prop->model)) ;
+		else if (lookup(buf, "ID_WWN_WITH_EXTENSION", &prop->wwn)) ;
+		else if (lookup(buf, "ID_WWN", &prop->wwn)) ;
+		else if (lookup(buf, "ID_SCSI_SERIAL", &prop->serial)) ;
+		else if (lookup(buf, "ID_SERIAL_SHORT", &prop->serial)) ;
+		else
+			continue;
+	}
+done:
+	if (fp)
+		fclose(fp);
+	ul_unref_path(pc);
+	ld->file_requested = 1;
+
+	DBG(DEV, ul_debugobj(ld, " from fake-file"));
+	return ld->properties;
+}
+
 
 static struct lsblk_devprop *get_properties_by_blkid(struct lsblk_device *dev)
 {
@@ -171,14 +272,20 @@ static struct lsblk_devprop *get_properties_by_blkid(struct lsblk_device *dev)
 done:
 	blkid_free_probe(pr);
 
+	DBG(DEV, ul_debugobj(dev, " from blkid"));
 	dev->blkid_requested = 1;
 	return dev->properties;
 }
 
 struct lsblk_devprop *lsblk_device_get_properties(struct lsblk_device *dev)
 {
-	struct lsblk_devprop *p = get_properties_by_udev(dev);
+	struct lsblk_devprop *p = NULL;
 
+	DBG(DEV, ul_debugobj(dev, "%s: properties requested", dev->filename));
+	if (lsblk->sysroot)
+		p = get_properties_by_file(dev);
+	if (!p)
+		p = get_properties_by_udev(dev);
 	if (!p)
 		p = get_properties_by_blkid(dev);
 	return p;

@@ -127,7 +127,8 @@ struct lsblk_device {
 			is_swap : 1,
 			is_printed : 1,
 			udev_requested : 1,
-			blkid_requested : 1;
+			blkid_requested : 1,
+			file_requested : 1;
 };
 
 #define device_is_partition(_x)		((_x)->wholedisk != NULL)
