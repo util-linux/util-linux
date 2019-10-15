@@ -711,7 +711,7 @@ static char *device_get_data(
 		int id,					/* column ID (COL_*) */
 		uint64_t *sortdata)			/* returns sort data as number */
 {
-	struct lsblk_devprop *prop;
+	struct lsblk_devprop *prop = NULL;
 	char *str = NULL;
 
 	switch(id) {
@@ -730,30 +730,42 @@ static char *device_get_data(
 			str = xstrdup(dev->filename);
 		break;
 	case COL_OWNER:
-	{
-		struct stat *st = device_get_stat(dev);
-		struct passwd *pw = st ? getpwuid(st->st_uid) : NULL;
-		if (pw)
-			str = xstrdup(pw->pw_name);
+		if (lsblk->sysroot)
+			prop = lsblk_device_get_properties(dev);
+		if (prop && prop->owner) {
+			str = xstrdup(prop->owner);
+		} else {
+			struct stat *st = device_get_stat(dev);
+			struct passwd *pw = st ? getpwuid(st->st_uid) : NULL;
+			if (pw)
+				str = xstrdup(pw->pw_name);
+		}
 		break;
-	}
 	case COL_GROUP:
-	{
-		struct stat *st = device_get_stat(dev);
-		struct group *gr = st ? getgrgid(st->st_gid) : NULL;
-		if (gr)
-			str = xstrdup(gr->gr_name);
+		if (lsblk->sysroot)
+			prop = lsblk_device_get_properties(dev);
+		if (prop && prop->group) {
+			str = xstrdup(prop->group);
+		} else {
+			struct stat *st = device_get_stat(dev);
+			struct group *gr = st ? getgrgid(st->st_gid) : NULL;
+			if (gr)
+				str = xstrdup(gr->gr_name);
+		}
 		break;
-	}
 	case COL_MODE:
-	{
-		struct stat *st = device_get_stat(dev);
-		char md[11] = { '\0' };
+		if (lsblk->sysroot)
+			prop = lsblk_device_get_properties(dev);
+		if (prop && prop->mode) {
+			str = xstrdup(prop->mode);
+		} else {
+			struct stat *st = device_get_stat(dev);
+			char md[11] = { '\0' };
 
-		if (st)
-			str = xstrdup(xstrmode(st->st_mode, md));
+			if (st)
+				str = xstrdup(xstrmode(st->st_mode, md));
+		}
 		break;
-	}
 	case COL_MAJMIN:
 		if (is_parsable(lsblk))
 			xasprintf(&str, "%u:%u", dev->maj, dev->min);

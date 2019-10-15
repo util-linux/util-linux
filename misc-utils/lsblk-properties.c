@@ -34,6 +34,10 @@ void lsblk_device_free_properties(struct lsblk_devprop *p)
 	free(p->model);
 	free(p->partflags);
 
+	free(p->mode);
+	free(p->owner);
+	free(p->group);
+
 	free(p);
 }
 
@@ -185,6 +189,7 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 		prop = ld->properties = xcalloc(1, sizeof(*ld->properties));
 
 	while (fgets(buf, sizeof(buf), fp) != NULL) {
+		/* udev based */
 		if (lookup(buf, "ID_FS_LABEL_ENC", &prop->label))
 			unhexmangle_string(prop->label);
 		else if (lookup(buf, "ID_FS_UUID_ENC", &prop->uuid))
@@ -202,6 +207,12 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 		else if (lookup(buf, "ID_WWN", &prop->wwn)) ;
 		else if (lookup(buf, "ID_SCSI_SERIAL", &prop->serial)) ;
 		else if (lookup(buf, "ID_SERIAL_SHORT", &prop->serial)) ;
+
+		/* lsblk specific */
+		else if (lookup(buf, "MODE", &prop->mode)) ;
+		else if (lookup(buf, "OWNER", &prop->owner)) ;
+		else if (lookup(buf, "GROUP", &prop->group)) ;
+
 		else
 			continue;
 	}

@@ -59,6 +59,7 @@ struct lsblk {
 extern struct lsblk *lsblk;     /* global handler */
 
 struct lsblk_devprop {
+	/* udev / blkid based */
 	char *fstype;		/* detected fs, NULL or "?" if cannot detect */
 	char *uuid;		/* filesystem UUID (or stack uuid) */
 	char *ptuuid;		/* partition table UUID */
@@ -71,6 +72,11 @@ struct lsblk_devprop {
 	char *wwn;		/* storage WWN */
 	char *serial;		/* disk serial number */
 	char *model;		/* disk model */
+
+	/* lsblk specific (for --sysroot only)  */
+	char *owner;		/* user name */
+	char *group;		/* group name */
+	char *mode;		/* access mode in ls(1)-like notation */
 };
 
 /* Device dependence
