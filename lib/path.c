@@ -218,7 +218,7 @@ void ul_path_close_dirfd(struct path_cxt *pc)
 	assert(pc);
 
 	if (pc->dir_fd >= 0) {
-		DBG(CXT, ul_debugobj(pc, "closing dir: '%s'", pc->dir_path));
+		DBG(CXT, ul_debugobj(pc, "closing dir"));
 		close(pc->dir_fd);
 		pc->dir_fd = -1;
 	}
@@ -289,19 +289,27 @@ char *ul_path_get_abspath(struct path_cxt *pc, char *buf, size_t bufsz, const ch
 
 int ul_path_access(struct path_cxt *pc, int mode, const char *path)
 {
-	int dir, rc;
+	int rc;
 
-	dir = ul_path_get_dirfd(pc);
-	if (dir < 0)
-		return dir;
+	if (!pc) {
+		rc = access(path, mode);
+		DBG(CXT, ul_debug("access '%s' [no context, rc=%d]", path, rc));
+	} else {
+		int dir = ul_path_get_dirfd(pc);
+		if (dir < 0)
+			return dir;
+		if (*path == '/')
+			path++;
 
-	DBG(CXT, ul_debugobj(pc, "access: '%s'", path));
-	rc = faccessat(dir, path, mode, 0);
-
-	if (rc && errno == ENOENT
-	    && pc->redirect_on_enoent
-	    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 		rc = faccessat(dir, path, mode, 0);
+
+		if (rc && errno == ENOENT
+		    && pc->redirect_on_enoent
+		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
+			rc = faccessat(dir, path, mode, 0);
+
+		DBG(CXT, ul_debugobj(pc, "access: '%s' [rc=%d]", path, rc));
+	}
 	return rc;
 }
 
@@ -317,6 +325,32 @@ int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 	return !p ? -errno : ul_path_access(pc, mode, p);
 }
 
+int ul_path_stat(struct path_cxt *pc, struct stat *sb, const char *path)
+{
+	int rc;
+
+	if (!pc) {
+		rc = stat(path, sb);
+		DBG(CXT, ul_debug("stat '%s' [no context, rc=%d]", path, rc));
+	} else {
+		int dir = ul_path_get_dirfd(pc);
+		if (dir < 0)
+			return dir;
+		if (*path == '/')
+			path++;
+
+		rc = fstatat(dir, path, sb, 0);
+
+		if (rc && errno == ENOENT
+		    && pc->redirect_on_enoent
+		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
+			rc = fstatat(dir, path, sb, 0);
+
+		DBG(CXT, ul_debugobj(pc, "stat '%s' [rc=%d]", path, rc));
+	}
+	return rc;
+}
+
 int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 {
 	int fd;
@@ -329,6 +363,9 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 		int dir = ul_path_get_dirfd(pc);
 		if (dir < 0)
 			return dir;
+
+		if (*path == '/')
+			path++;
 
 		fdx = fd = openat(dir, path, flags);
 
@@ -502,6 +539,9 @@ ssize_t ul_path_readlink(struct path_cxt *pc, char *buf, size_t bufsiz, const ch
 	dirfd = ul_path_get_dirfd(pc);
 	if (dirfd < 0)
 		return dirfd;
+
+	if (*path == '/')
+		path++;
 
 	return readlinkat(dirfd, path, buf, bufsiz);
 }

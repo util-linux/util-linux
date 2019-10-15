@@ -45,6 +45,7 @@ int ul_path_isopen_dirfd(struct path_cxt *pc);
 char *ul_path_get_abspath(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 4, 5)));
 
+int ul_path_stat(struct path_cxt *pc, struct stat *sb, const char *path);
 int ul_path_access(struct path_cxt *pc, int mode, const char *path);
 int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 3, 4)));
