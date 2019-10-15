@@ -1286,7 +1286,11 @@ UL_BUILD_INIT([findfs], [check])
 UL_REQUIRES_BUILD([findfs], [libblkid])
 AM_CONDITIONAL([BUILD_FINDFS], [test "x$build_findfs" = xyes])
 
-UL_BUILD_INIT([wipefs], [check])
+AC_ARG_ENABLE([wipefs],
+  AS_HELP_STRING([--disable-wipefs], [do not build wipefs]),
+  [], [UL_DEFAULT_ENABLE([wipefs], [check])]
+)
+UL_BUILD_INIT([wipefs])
 UL_REQUIRES_BUILD([wipefs], [libblkid])
 UL_REQUIRES_BUILD([wipefs], [libsmartcols])
 AM_CONDITIONAL([BUILD_WIPEFS], [test "x$build_wipefs" = xyes])
