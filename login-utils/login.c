@@ -1116,14 +1116,15 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	int c;
-	int cnt;
 	char *childArgv[10];
 	char *buff;
 	int childArgc = 0;
 	int retcode;
 	struct sigaction act;
 	struct passwd *pwd;
-
+	static const int wanted_fds[] = {
+		STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
+	};
 	struct login_context cxt = {
 		.tty_mode = TTY_MODE,		  /* tty chmod() */
 		.pid = getpid(),		  /* PID */
@@ -1218,8 +1219,7 @@ int main(int argc, char **argv)
 			*p++ = ' ';
 	}
 
-	for (cnt = get_fd_tabsize() - 1; cnt > 2; cnt--)
-		close(cnt);
+	close_all_fds(wanted_fds, ARRAY_SIZE(wanted_fds));
 
 	setpgrp();	 /* set pgid to pid this means that setsid() will fail */
 	init_tty(&cxt);
