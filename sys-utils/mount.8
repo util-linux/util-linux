@@ -149,12 +149,12 @@ or UUID (see the \fB\-L\fR and \fB\-U\fR options below), or its partition label
 or UUID.  Partition identifiers are supported for example for GUID Partition
 Tables (GPT).
 
-The device name of disk partitions are unstable; hardware reconfiguration,
-adding or removing a device can cause change in names. This is reason why it's
-strongly recommended to use filesystem or partition identificators like UUID or
+The device names of disk partitions are unstable; hardware reconfiguration,
+adding or removing a device can cause changes in names. This is the reason why it's
+strongly recommended to use filesystem or partition identifiers like UUID or
 LABEL.
 
-The command \fBlsblk --fs\fR provides overview of filesystems, LABELs and UUIDs
+The command \fBlsblk --fs\fR provides an overview of filesystems, LABELs and UUIDs
 on available block devices.  The command \fBblkid -p <device>\fR provides details about
 a filesystem on the specified device.
 
