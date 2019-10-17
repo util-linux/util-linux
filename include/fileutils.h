@@ -72,4 +72,6 @@ static inline struct dirent *xreaddir(DIR *dp)
 	return d;
 }
 
+extern void close_all_fds(const int exclude[], size_t exsz);
+
 #endif /* UTIL_LINUX_FILEUTILS */

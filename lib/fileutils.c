@@ -124,16 +124,76 @@ int get_fd_tabsize(void)
 	return m;
 }
 
-#ifdef TEST_PROGRAM_FILEUTILS
-int main(void)
+static inline int in_set(int x, const int set[], size_t setsz)
 {
-	FILE *f;
-	char *tmpname;
-	f = xfmkstemp(&tmpname, NULL, "test");
-	unlink(tmpname);
-	free(tmpname);
-	fclose(f);
-	return EXIT_FAILURE;
+	size_t i;
+
+	for (i = 0; i < setsz; i++) {
+		if (set[i] == x)
+			return 1;
+	}
+	return 0;
+}
+
+void close_all_fds(const int exclude[], size_t exsz)
+{
+	struct dirent *d;
+	DIR *dir;
+
+	dir = opendir(_PATH_PROC_FDDIR);
+	if (dir) {
+		while ((d = xreaddir(dir))) {
+			char *end;
+			int fd;
+
+			errno = 0;
+			fd = strtol(d->d_name, &end, 10);
+
+			if (errno || end == d->d_name || !end || *end)
+				continue;
+			if (dirfd(dir) == fd)
+				continue;
+			if (in_set(fd, exclude, exsz))
+				continue;
+			close(fd);
+		}
+		closedir(dir);
+	} else {
+		int fd, tbsz = get_fd_tabsize();
+
+		for (fd = 0; fd < tbsz; fd++) {
+			if (!in_set(fd, exclude, exsz))
+				close(fd);
+		}
+	}
+}
+
+#ifdef TEST_PROGRAM_FILEUTILS
+int main(int argc, char *argv[])
+{
+	if (argc < 2)
+		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds}", argv[0]);
+
+	if (strcmp(argv[1], "--mkstemp") == 0) {
+		FILE *f;
+		char *tmpname;
+		f = xfmkstemp(&tmpname, NULL, "test");
+		unlink(tmpname);
+		free(tmpname);
+		fclose(f);
+
+	} else if (strcmp(argv[1], "--close-fds") == 0) {
+		static const int wanted_fds[] = {
+			STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
+		};
+
+		ignore_result( dup(STDIN_FILENO) );
+		ignore_result( dup(STDIN_FILENO) );
+		ignore_result( dup(STDIN_FILENO) );
+
+		close_all_fds(wanted_fds, ARRAY_SIZE(wanted_fds));
+	}
+	return EXIT_SUCCESS;
 }
 #endif
 
