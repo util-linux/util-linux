@@ -45,13 +45,6 @@
 #define OPTUTILS_EXIT_CODE MNT_EX_USAGE
 #include "optutils.h"
 
-/*** TODO: DOCS:
- *
- *  --options-mode={ignore,append,prepend,replace}	MNT_OMODE_{IGNORE, ...}
- *  --options-source={fstab,mtab,disable}		MNT_OMODE_{FSTAB,MTAB,NOTAB}
- *  --options-source-force				MNT_OMODE_FORCE
- */
-
 static int mk_exit_code(struct libmnt_context *cxt, int rc);
 
 static void __attribute__((__noreturn__)) exit_non_root(const char *option)

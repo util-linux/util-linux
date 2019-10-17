@@ -15,25 +15,6 @@ cal
    - support another --reforms, see for example freebsd version
      https://github.com/freebsd/freebsd/blob/master/usr.bin/ncal/ncal.c#L72
 
-script
-------
-   - introduce a new timing file format to record information about multiple
-     streams (stdout, stdin) and events (signals)
-
-   - add support for stdin loggin -- separated log file with raw input and timing
-     records in the timing file
-
-   - for example timing file format:
-
-             <type> <timestamp> [<offset> | <signal> ...]
-
-	     O 0.001296 256
-	     S 0.001297 SIGWINCH: columns=50, lines=20
-	     I 0.000010 10
-
-     O - output, S - signal, I - input
-
-
 lscpu
 -----
   - read cpuid and uname information from file if --sysroot is specified, then
