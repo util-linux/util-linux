@@ -1653,27 +1653,9 @@ err:
 	return NULL;
 }
 
-/**
- * mnt_table_is_fs_mounted:
- * @tb: /proc/self/mountinfo file
- * @fstab_fs: /etc/fstab entry
- *
- * Checks if the @fstab_fs entry is already in the @tb table. The "swap" is
- * ignored. This function explicitly compares the source, target and root of the
- * filesystems.
- *
- * Note that source and target are canonicalized only if a cache for @tb is
- * defined (see mnt_table_set_cache()). The target canonicalization may
- * trigger automount on autofs mountpoints!
- *
- * Don't use it if you want to know if a device is mounted, just use
- * mnt_table_find_source() on the device.
- *
- * This function is designed mostly for "mount -a".
- *
- * Returns: 0 or 1
- */
-int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
+
+int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs,
+			      const char *tgt_prefix)
 {
 	struct libmnt_iter itr;
 	struct libmnt_fs *fs;
@@ -1681,7 +1663,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	char *root = NULL;
 	char *src2 = NULL;
 	const char *src = NULL, *tgt = NULL;
-	char *xtgt = NULL;
+	char *xtgt = NULL, *tgt_buf = NULL;
 	int rc = 0;
 	dev_t devno = 0;
 
@@ -1799,6 +1781,19 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		 * mountpoints.
 		 */
 		if (!xtgt) {
+			if (tgt_prefix) {
+				const char *p = *tgt == '/' ? tgt + 1 : tgt;
+				if (!*p)
+					tgt = tgt_prefix;	/* target is '/' */
+				else {
+					if (asprintf(&tgt_buf, "%s/%s", tgt_prefix, p) <= 0) {
+						rc = -ENOMEM;
+						goto done;
+					}
+					tgt = tgt_buf;
+				}
+			}
+
 			if (mnt_fs_streq_target(fs, tgt))
 				break;
 			if (tb->cache)
@@ -1812,11 +1807,38 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		rc = 1;		/* success */
 done:
 	free(root);
+	free(tgt_buf);
 
 	DBG(TAB, ul_debugobj(tb, "mnt_table_is_fs_mounted: %s [rc=%d]", src, rc));
 	free(src2);
 	return rc;
 }
+
+/**
+ * mnt_table_is_fs_mounted:
+ * @tb: /proc/self/mountinfo file
+ * @fstab_fs: /etc/fstab entry
+ *
+ * Checks if the @fstab_fs entry is already in the @tb table. The "swap" is
+ * ignored. This function explicitly compares the source, target and root of the
+ * filesystems.
+ *
+ * Note that source and target are canonicalized only if a cache for @tb is
+ * defined (see mnt_table_set_cache()). The target canonicalization may
+ * trigger automount on autofs mountpoints!
+ *
+ * Don't use it if you want to know if a device is mounted, just use
+ * mnt_table_find_source() on the device.
+ *
+ * This function is designed mostly for "mount -a".
+ *
+ * Returns: 0 or 1
+ */
+int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
+{
+	return __mnt_table_is_fs_mounted(tb, fstab_fs, NULL);
+}
+
 
 #ifdef TEST_PROGRAM
 #include "pathnames.h"

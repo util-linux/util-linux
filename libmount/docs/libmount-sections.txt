@@ -61,6 +61,7 @@ mnt_context_get_syscall_errno
 mnt_context_get_table
 mnt_context_get_target
 mnt_context_get_target_ns
+mnt_context_get_target_prefix
 mnt_context_get_user_mflags
 mnt_context_helper_executed
 mnt_context_helper_setopt
@@ -99,6 +100,7 @@ mnt_context_set_syscall_status
 mnt_context_set_tables_errcb
 mnt_context_set_target
 mnt_context_set_target_ns
+mnt_context_set_target_prefix
 mnt_context_set_user_mflags
 mnt_context_strerror
 mnt_context_switch_ns

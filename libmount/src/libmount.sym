@@ -350,3 +350,8 @@ MOUNT_2.34 {
 	mnt_table_insert_fs;
 	mnt_table_move_fs;
 } MOUNT_2.33;
+
+MOUNT_2_35 {
+	mnt_context_get_target_prefix;
+	mnt_context_set_target_prefix;
+} MOUNT_2.34;

@@ -95,6 +95,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 
 	free(cxt->fstype_pattern);
 	free(cxt->optstr_pattern);
+	free(cxt->tgt_prefix);
 
 	mnt_unref_table(cxt->fstab);
 	mnt_unref_cache(cxt->cache);
@@ -118,7 +119,7 @@ void mnt_free_context(struct libmnt_context *cxt)
  * Resets all information in the context that is directly related to
  * the latest mount (spec, source, target, mount options, ...).
  *
- * The match patterns, target namespace, cached fstab, cached canonicalized
+ * The match patterns, target namespace, prefix, cached fstab, cached canonicalized
  * paths and tags and [e]uid are not reset. You have to use
  *
  *	mnt_context_set_fstab(cxt, NULL);
@@ -217,6 +218,8 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 	n->mtab = o->utab;
 	mnt_ref_table(n->utab);
 
+	if (o->tgt_prefix)
+		n->tgt_prefix = strdup(o->tgt_prefix);
 	if (o->helper)
 		n->helper = strdup(o->helper);
 	if (o->orig_user)
@@ -928,6 +931,42 @@ const char *mnt_context_get_target(struct libmnt_context *cxt)
 {
 	return mnt_fs_get_target(mnt_context_get_fs(cxt));
 }
+
+/**
+ * mnt_context_set_target_prefix:
+ * @cxt: mount context
+ * @path: mountpoint prefix
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_set_target_prefix(struct libmnt_context *cxt, const char *path)
+{
+	char *p = NULL;
+
+	if (!cxt)
+		return -EINVAL;
+	if (path) {
+		p = strdup(path);
+		if (!p)
+			return -ENOMEM;
+	}
+	free(cxt->tgt_prefix);
+	cxt->tgt_prefix = p;
+
+	return 0;
+}
+
+/**
+ * mnt_context_get_target_prefix:
+ * @cxt: mount context
+ *
+ * Returns: returns pointer or NULL in case of error or if not set.
+ */
+const char *mnt_context_get_target_prefix(struct libmnt_context *cxt)
+{
+	return cxt ? cxt->tgt_prefix : NULL;
+}
+
 
 /**
  * mnt_context_set_fstype:
@@ -1758,7 +1797,7 @@ static int mkdir_target(const char *tgt, struct libmnt_fs *fs)
 
 int mnt_context_prepare_target(struct libmnt_context *cxt)
 {
-	const char *tgt;
+	const char *tgt, *prefix;
 	struct libmnt_cache *cache;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
@@ -1772,6 +1811,29 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	tgt = mnt_fs_get_target(cxt->fs);
 	if (!tgt)
 		return 0;
+
+	/* apply prefix */
+	prefix = mnt_context_get_target_prefix(cxt);
+	if (prefix) {
+		const char *p = *tgt == '/' ? tgt + 1 : tgt;
+
+		if (!*p)
+			/* target is "/", use "/prefix" */
+			rc = mnt_fs_set_target(cxt->fs, prefix);
+		else {
+			char *path = NULL;
+
+			if (asprintf(&path, "%s/%s", prefix, p) <= 0)
+				rc = -ENOMEM;
+			else {
+				rc = mnt_fs_set_target(cxt->fs, path);
+				free(path);
+			}
+		}
+		if (rc)
+			return rc;
+		tgt = mnt_fs_get_target(cxt->fs);
+	}
 
 	ns_old = mnt_context_switch_target_ns(cxt);
 	if (!ns_old)
@@ -2660,7 +2722,8 @@ int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 	} else if (rc)
 		return rc;
 
-	*mounted = mnt_table_is_fs_mounted(mtab, fs);
+	*mounted = __mnt_table_is_fs_mounted(mtab, fs,
+				mnt_context_get_target_prefix(cxt));
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;

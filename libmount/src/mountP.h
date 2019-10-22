@@ -139,6 +139,10 @@ extern struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 					unsigned long mountflags,
 					char **fsroot);
 
+extern int __mnt_table_is_fs_mounted(	struct libmnt_table *tb,
+					struct libmnt_fs *fstab_fs,
+					const char *tgt_prefix);
+
 /*
  * Generic iterator
  */
@@ -324,6 +328,8 @@ struct libmnt_context
 
 	const char	*utab_path; /* path to utab */
 	int		utab_writable; /* is utab writable */
+
+	char		*tgt_prefix;	/* path used for all targets */
 
 	int	flags;		/* private context flags */
 
