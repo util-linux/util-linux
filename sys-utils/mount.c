@@ -472,6 +472,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	"     --source <src>      explicitly specifies source (path, label, uuid)\n"
 	"     --target <target>   explicitly specifies mountpoint\n"));
 	fprintf(out, _(
+	"     --target-prefix <path>\n"
+	"                         specifies path use for all mountpoints\n"));
+	fprintf(out, _(
 	" -v, --verbose           say what is being done\n"));
 	fprintf(out, _(
 	" -w, --rw, --read-write  mount the filesystem read-write (default)\n"));
@@ -590,6 +593,7 @@ int main(int argc, char **argv)
 		MOUNT_OPT_RPRIVATE,
 		MOUNT_OPT_RUNBINDABLE,
 		MOUNT_OPT_TARGET,
+		MOUNT_OPT_TARGET_PREFIX,
 		MOUNT_OPT_SOURCE,
 		MOUNT_OPT_OPTMODE,
 		MOUNT_OPT_OPTSRC,
@@ -629,6 +633,7 @@ int main(int argc, char **argv)
 		{ "internal-only",    no_argument,       NULL, 'i'                   },
 		{ "show-labels",      no_argument,       NULL, 'l'                   },
 		{ "target",           required_argument, NULL, MOUNT_OPT_TARGET      },
+		{ "target-prefix",    required_argument, NULL, MOUNT_OPT_TARGET_PREFIX },
 		{ "source",           required_argument, NULL, MOUNT_OPT_SOURCE      },
 		{ "options-mode",     required_argument, NULL, MOUNT_OPT_OPTMODE     },
 		{ "options-source",   required_argument, NULL, MOUNT_OPT_OPTSRC      },
@@ -791,6 +796,9 @@ int main(int argc, char **argv)
 		case MOUNT_OPT_TARGET:
 			mnt_context_disable_swapmatch(cxt, 1);
 			mnt_context_set_target(cxt, optarg);
+			break;
+		case MOUNT_OPT_TARGET_PREFIX:
+			mnt_context_set_target_prefix(cxt, optarg);
 			break;
 		case MOUNT_OPT_SOURCE:
 			mnt_context_disable_swapmatch(cxt, 1);
