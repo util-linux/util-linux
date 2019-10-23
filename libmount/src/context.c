@@ -218,12 +218,12 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 	n->mtab = o->utab;
 	mnt_ref_table(n->utab);
 
-	if (o->tgt_prefix)
-		n->tgt_prefix = strdup(o->tgt_prefix);
-	if (o->helper)
-		n->helper = strdup(o->helper);
-	if (o->orig_user)
-		n->orig_user = strdup(o->orig_user);
+	if (o->tgt_prefix && !(n->tgt_prefix = strdup(o->tgt_prefix)))
+		goto failed;
+	if (o->helper && !(n->helper = strdup(o->helper)))
+		goto failed;
+	if (o->orig_user && !(n->orig_user = strdup(o->orig_user)))
+		goto failed;
 
 	n->mountflags = o->mountflags;
 	n->mountdata = o->mountdata;
@@ -1880,12 +1880,16 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
 {
 	int rc = 0;
 	struct libmnt_ns *ns_old;
-	const char *dev = mnt_fs_get_srcpath(cxt->fs);
+	const char *dev;
+
+	assert(type);
+	assert(cxt);
 
 	*type = NULL;
 
+	dev = mnt_fs_get_srcpath(cxt->fs);
 	if (!dev)
-		goto done;
+		return 0;
 
 	ns_old = mnt_context_switch_target_ns(cxt);
 	if (!ns_old)
@@ -1896,22 +1900,30 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
 		int ambi = 0;
 
 		*type = mnt_get_fstype(dev, &ambi, cache);
-		if (cache && *type)
-			*type = strdup(*type);
 		if (ambi)
 			rc = -MNT_ERR_AMBIFS;
+
+		if (cache && *type) {
+			*type = strdup(*type);
+			if (!*type)
+				rc = -ENOMEM;
+		}
 	} else {
 		DBG(CXT, ul_debugobj(cxt, "access(%s) failed [%m]", dev));
-		if (strchr(dev, ':') != NULL)
+		if (strchr(dev, ':') != NULL) {
 			*type = strdup("nfs");
-		else if (!strncmp(dev, "//", 2))
+			if (!*type)
+				rc = -ENOMEM;
+		} else if (!strncmp(dev, "//", 2)) {
 			*type = strdup("cifs");
+			if (!*type)
+				rc = -ENOMEM;
+		}
 	}
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 
-done:
 	return rc;
 }
 
@@ -1973,6 +1985,7 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 	char search_path[] = FS_SEARCH_PATH;		/* from config.h */
 	char *p = NULL, *path;
 	struct libmnt_ns *ns_old;
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -1995,46 +2008,50 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
 
+	/* Ignore errors when search in $PATH and do not modify
+	 * @rc due to stat() etc.
+	 */
 	path = strtok_r(search_path, ":", &p);
 	while (path) {
 		char helper[PATH_MAX];
 		struct stat st;
-		int rc;
+		int xrc;
 
-		rc = snprintf(helper, sizeof(helper), "%s/%s.%s",
+		xrc = snprintf(helper, sizeof(helper), "%s/%s.%s",
 						path, name, type);
 		path = strtok_r(NULL, ":", &p);
 
-		if (rc < 0 || (size_t) rc >= sizeof(helper))
+		if (xrc < 0 || (size_t) xrc >= sizeof(helper))
 			continue;
 
-		rc = stat(helper, &st);
+		xrc = stat(helper, &st);
 		if (rc == -1 && errno == ENOENT && strchr(type, '.')) {
 			/* If type ends with ".subtype" try without it */
 			char *hs = strrchr(helper, '.');
 			if (hs)
 				*hs = '\0';
-			rc = stat(helper, &st);
+			xrc = stat(helper, &st);
 		}
 
 		DBG(CXT, ul_debugobj(cxt, "%-25s ... %s", helper,
-					rc ? "not found" : "found"));
-		if (rc)
+					xrc ? "not found" : "found"));
+		if (xrc)
 			continue;
 
-		if (!mnt_context_switch_ns(cxt, ns_old))
-			return -MNT_ERR_NAMESPACE;
-
-		free(cxt->helper);
-		cxt->helper = strdup(helper);
-		if (!cxt->helper)
-			return -ENOMEM;
-		return 0;
+		/* success */
+		rc = strdup_to_struct_member(cxt, helper, helper);
+		break;
 	}
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
-		return -MNT_ERR_NAMESPACE;
-	return 0;
+		rc = -MNT_ERR_NAMESPACE;
+
+	/* make sure helper is not set on error */
+	if (rc) {
+		free(cxt->helper);
+		cxt->helper = NULL;
+	}
+	return rc;
 }
 
 int mnt_context_merge_mflags(struct libmnt_context *cxt)
@@ -3053,6 +3070,32 @@ struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt)
 
 #ifdef TEST_PROGRAM
 
+static int test_search_helper(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_context *cxt;
+	const char *type;
+	int rc;
+
+	if (argc < 2)
+		return -EINVAL;
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	type = argv[1];
+
+	mnt_context_get_fs(cxt);		/* just to fill cxt->fs */
+	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;	/* fake */
+
+	rc = mnt_context_prepare_helper(cxt, "mount", type);
+	printf("helper is: %s\n", cxt->helper ? cxt->helper : "not found");
+
+	mnt_free_context(cxt);
+	return rc;
+}
+
+
 static struct libmnt_lock *lock;
 
 static void lock_fallback(void)
@@ -3258,6 +3301,7 @@ int main(int argc, char *argv[])
 	{ "--umount", test_umount, "[-t <type>] [-f][-l][-r] <src>|<target>" },
 	{ "--mount-all", test_mountall,  "[-O <pattern>] [-t <pattern] mount all filesystems from fstab" },
 	{ "--flags", test_flags,   "[-o <opts>] <spec>" },
+	{ "--search-helper", test_search_helper, "<fstype>" },
 	{ NULL }};
 
 	umask(S_IWGRP|S_IWOTH);	/* to be compatible with mount(8) */
