@@ -2,6 +2,7 @@
 #include <ctype.h>
 
 #include "fdiskP.h"
+#include "strutils.h"
 
 /**
  * SECTION: parttype
@@ -76,19 +77,9 @@ void fdisk_unref_parttype(struct fdisk_parttype *t)
  */
 int fdisk_parttype_set_name(struct fdisk_parttype *t, const char *str)
 {
-	char *p = NULL;
-
 	if (!t || !fdisk_parttype_is_allocated(t))
 		return -EINVAL;
-	if (str) {
-		p = strdup(str);
-		if (!p)
-			return -ENOMEM;
-	}
-
-	free(t->name);
-	t->name = p;
-	return 0;
+	return strdup_to_struct_member(t, name, str);
 }
 
 /**
@@ -104,19 +95,9 @@ int fdisk_parttype_set_name(struct fdisk_parttype *t, const char *str)
  */
 int fdisk_parttype_set_typestr(struct fdisk_parttype *t, const char *str)
 {
-	char *p = NULL;
-
 	if (!t || !fdisk_parttype_is_allocated(t))
 		return -EINVAL;
-	if (str) {
-		p = strdup(str);
-		if (!p)
-			return -ENOMEM;
-	}
-
-	free(t->typestr);
-	t->typestr = p;
-	return 0;
+	return strdup_to_struct_member(t, typestr, str);
 }
 
 /**

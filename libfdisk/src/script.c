@@ -298,6 +298,8 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 	}
 
 	if (!fi) {
+		int rc;
+
 		DBG(SCRIPT, ul_debugobj(dp, "setting new header %s='%s'", name, data));
 
 		/* new header */
@@ -305,11 +307,13 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 		if (!fi)
 			return -ENOMEM;
 		INIT_LIST_HEAD(&fi->headers);
-		fi->name = strdup(name);
-		fi->data = strdup(data);
-		if (!fi->data || !fi->name) {
+
+		rc = strdup_to_struct_member(fi, name, name);
+		if (!rc)
+			rc = strdup_to_struct_member(fi, data, data);
+		if (rc) {
 			fdisk_script_free_header(fi);
-			return -ENOMEM;
+			return rc;
 		}
 		list_add_tail(&fi->headers, &dp->headers);
 	} else {

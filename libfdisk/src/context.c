@@ -9,6 +9,7 @@
 #include "loopdev.h"
 #include "fdiskP.h"
 
+#include "strutils.h"
 
 /**
  * SECTION: context
@@ -84,6 +85,8 @@ static int init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 
 	parent = cxt->parent;
 
+	INIT_LIST_HEAD(&cxt->wipes);
+
 	cxt->alignment_offset = parent->alignment_offset;
 	cxt->ask_cb =		parent->ask_cb;
 	cxt->ask_data =		parent->ask_data;
@@ -120,18 +123,7 @@ static int init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 	cxt->dev_model = NULL;
 	cxt->dev_model_probed = 0;
 
-	free(cxt->dev_path);
-	cxt->dev_path = NULL;
-
-	if (parent->dev_path) {
-		cxt->dev_path =	strdup(parent->dev_path);
-		if (!cxt->dev_path)
-			return -ENOMEM;
-	}
-
-	INIT_LIST_HEAD(&cxt->wipes);
-
-	return 0;
+	return strdup_between_structs(cxt, parent, dev_path);
 }
 
 /**

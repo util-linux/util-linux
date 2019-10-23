@@ -7,6 +7,7 @@
 #endif
 
 #include "fdiskP.h"
+#include "strutils.h"
 
 /**
  * SECTION: partition
@@ -82,6 +83,7 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 static struct fdisk_partition *__copy_partition(struct fdisk_partition *o)
 {
 	struct fdisk_partition *n = fdisk_new_partition();
+	int rc;
 
 	if (!n)
 		return NULL;
@@ -94,23 +96,27 @@ static struct fdisk_partition *__copy_partition(struct fdisk_partition *o)
 
 	if (n->type)
 		fdisk_ref_parttype(n->type);
-	if (o->name)
-		n->name = strdup(o->name);
-	if (o->uuid)
-		n->uuid = strdup(o->uuid);
-	if (o->attrs)
-		n->attrs = strdup(o->attrs);
-	if (o->fstype)
-		n->fstype = strdup(o->fstype);
-	if (o->fsuuid)
-		n->fsuuid = strdup(o->fsuuid);
-	if (o->fslabel)
-		n->fslabel = strdup(o->fslabel);
-	if (o->start_chs)
-		n->start_chs = strdup(o->start_chs);
-	if (o->end_chs)
-		n->end_chs = strdup(o->end_chs);
 
+	rc = strdup_between_structs(n, o, name);
+	if (!rc)
+		rc = strdup_between_structs(n, o, uuid);
+	if (!rc)
+		rc = strdup_between_structs(n, o, attrs);
+	if (!rc)
+		rc = strdup_between_structs(n, o, fstype);
+	if (!rc)
+		rc = strdup_between_structs(n, o, fsuuid);
+	if (!rc)
+		rc = strdup_between_structs(n, o, fslabel);
+	if (!rc)
+		rc = strdup_between_structs(n, o, start_chs);
+	if (!rc)
+		rc = strdup_between_structs(n, o, end_chs);
+
+	if (rc) {
+		fdisk_unref_partition(n);
+		n = NULL;
+	}
 	return n;
 }
 
@@ -486,18 +492,9 @@ struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa)
 
 int fdisk_partition_set_name(struct fdisk_partition *pa, const char *name)
 {
-	char *p = NULL;
-
 	if (!pa)
 		return -EINVAL;
-	if (name) {
-	       p = strdup(name);
-	       if (!p)
-		       return -ENOMEM;
-	}
-	free(pa->name);
-	pa->name = p;
-	return 0;
+	return strdup_to_struct_member(pa, name, name);
 }
 
 const char *fdisk_partition_get_name(struct fdisk_partition *pa)
@@ -507,18 +504,9 @@ const char *fdisk_partition_get_name(struct fdisk_partition *pa)
 
 int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid)
 {
-	char *p = NULL;
-
 	if (!pa)
 		return -EINVAL;
-	if (uuid) {
-	       p = strdup(uuid);
-	       if (!p)
-		       return -ENOMEM;
-	}
-	free(pa->uuid);
-	pa->uuid = p;
-	return 0;
+	return strdup_to_struct_member(pa, uuid, uuid);
 }
 
 /**
@@ -612,18 +600,9 @@ const char *fdisk_partition_get_attrs(struct fdisk_partition *pa)
  */
 int fdisk_partition_set_attrs(struct fdisk_partition *pa, const char *attrs)
 {
-	char *p = NULL;
-
 	if (!pa)
 		return -EINVAL;
-	if (attrs) {
-	       p = strdup(attrs);
-	       if (!p)
-		       return -ENOMEM;
-	}
-	free(pa->attrs);
-	pa->attrs = p;
-	return 0;
+	return strdup_to_struct_member(pa, attrs, attrs);
 }
 
 /**
