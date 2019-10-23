@@ -124,28 +124,60 @@ nothing:
 	return NULL;
 }
 
+/* Copy string @str to struct @stru to member addressed by @offset */
 static inline int strdup_to_offset(void *stru, size_t offset, const char *str)
 {
-	char *n = NULL;
 	char **o;
+	char *p = NULL;
 
 	if (!stru)
 		return -EINVAL;
 
 	o = (char **) ((char *) stru + offset);
 	if (str) {
-		n = strdup(str);
-		if (!n)
+		p = strdup(str);
+		if (!p)
 			return -ENOMEM;
 	}
 
 	free(*o);
-	*o = n;
+	*o = p;
 	return 0;
 }
 
+/* Copy string __str to struct member _m of the struct _s */
 #define strdup_to_struct_member(_s, _m, _str) \
 		strdup_to_offset((void *) _s, offsetof(__typeof__(*(_s)), _m), _str)
+
+/* Copy string addressed by @offset between two structs */
+static inline int strdup_between_offsets(void *stru_dst, void *stru_src, size_t offset)
+{
+	char **src;
+	char **dst;
+	char *p = NULL;
+
+	if (!stru_src || !stru_dst)
+		return -EINVAL;
+
+	src = (char **) ((char *) stru_src + offset);
+	dst = (char **) ((char *) stru_dst + offset);
+
+	if (*src) {
+		p = strdup(*src);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	free(*dst);
+	*dst = p;
+	return 0;
+}
+
+/* Copy string addressed by struct member between two instances of the same
+ * struct type */
+#define strdup_between_structs(_dst, _src, _m) \
+		strdup_between_offsets((void *)_dst, (void *)_src, offsetof(__typeof__(*(_src)), _m))
+
 
 extern char *xstrmode(mode_t mode, char *str);
 
