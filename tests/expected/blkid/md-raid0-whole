@@ -6,8 +6,6 @@ Welcome to fdisk <removed>.
 Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
 
-Device does not contain a recognized partition table.
-Created a new <removed>.
 
 Command (m for help): Partition type
    p   primary (0 primary, 0 extended, 4 free)

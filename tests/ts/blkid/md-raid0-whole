@@ -48,6 +48,13 @@ ts_log "Create RAID device"
 mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=0 \
 	    --raid-devices=2 ${DEVICE1} ${DEVICE2} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
+# create dos partition table
+$TS_CMD_FDISK ${MD_DEVICE} &>/dev/null <<EOF
+o
+w
+q
+EOF
+
 ts_log "Create partitions on RAID device"
 $TS_CMD_FDISK ${MD_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
 n
