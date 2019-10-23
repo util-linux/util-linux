@@ -218,11 +218,11 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 	n->mtab = o->utab;
 	mnt_ref_table(n->utab);
 
-	if (o->tgt_prefix && !(n->tgt_prefix = strdup(o->tgt_prefix)))
+	if (strdup_between_structs(n, o, tgt_prefix))
 		goto failed;
-	if (o->helper && !(n->helper = strdup(o->helper)))
+	if (strdup_between_structs(n, o, helper))
 		goto failed;
-	if (o->orig_user && !(n->orig_user = strdup(o->orig_user)))
+	if (strdup_between_structs(n, o, orig_user))
 		goto failed;
 
 	n->mountflags = o->mountflags;
