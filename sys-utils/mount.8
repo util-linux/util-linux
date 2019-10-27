@@ -1909,6 +1909,18 @@ Set the file permission on the filesystem.
 The umask value is given in octal.
 By default, the files are owned by root and not readable by somebody else.
 
+.SS "Mount options for proc"
+.TP
+.BR hidepid={ 0 | 1 | 2 }
+With 0, access to /proc/[pid] directories is not restricted.
+With 1, users may only access contents of their own /proc/[pid] directories. Other users' directories are still visible.
+With 2, users may access only their own /proc/[pid] directories and
+also other users' directories are not visible.
+.TP
+.BR gid=
+Group ID of group which can read process information despite
+\fBhidepid=\fP option.
+
 .SS "Mount options for overlay"
 Since Linux 3.18 the overlay pseudo filesystem implements a union mount for
 other filesystems.
