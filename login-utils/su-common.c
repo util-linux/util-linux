@@ -758,7 +758,7 @@ static void init_groups(struct su_context *su, gid_t *groups, size_t ngroups)
 
 	rc = pam_setcred(su->pamh, PAM_ESTABLISH_CRED);
 	if (is_pam_failure(rc))
-		errx(EXIT_FAILURE, _("failed to user credentials: %s"),
+		errx(EXIT_FAILURE, _("failed to establish user credentials: %s"),
 					pam_strerror(su->pamh, rc));
 	su->pam_has_cred = 1;
 }
