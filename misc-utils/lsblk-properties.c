@@ -55,8 +55,6 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 	if (ld->udev_requested)
 		return ld->properties;
 
-	if (lsblk->sysroot)
-		goto done;
 	if (!udev)
 		udev = udev_new();	/* global handler */
 	if (!udev)
@@ -161,11 +159,10 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 	struct stat sb;
 	char buf[BUFSIZ];
 
+	assert(lsblk->sysroot);
+
 	if (ld->file_requested)
 		return ld->properties;
-
-	if (lsblk->sysroot == NULL)
-		return NULL;
 
 	if (ld->properties || ld->filename) {
 		lsblk_device_free_properties(ld->properties);
@@ -294,9 +291,9 @@ struct lsblk_devprop *lsblk_device_get_properties(struct lsblk_device *dev)
 
 	DBG(DEV, ul_debugobj(dev, "%s: properties requested", dev->filename));
 	if (lsblk->sysroot)
-		p = get_properties_by_file(dev);
-	if (!p)
-		p = get_properties_by_udev(dev);
+		return get_properties_by_file(dev);
+
+	p = get_properties_by_udev(dev);
 	if (!p)
 		p = get_properties_by_blkid(dev);
 	return p;
