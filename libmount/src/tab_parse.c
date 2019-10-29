@@ -1222,6 +1222,7 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 			   struct libmnt_table *u_tb)
 {
 	int rc = 0, priv_utab = 0;
+	int explicit_file = filename ? 1 : 0;
 
 	assert(tb);
 
@@ -1258,6 +1259,9 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	rc = mnt_table_parse_file(tb, filename);
 	if (rc) {
+		if (explicit_file)
+			return rc;
+
 		/* hmm, old kernel? ...try /proc/mounts */
 		tb->fmt = MNT_FMT_MTAB;
 		return mnt_table_parse_file(tb, _PATH_PROC_MOUNTS);
