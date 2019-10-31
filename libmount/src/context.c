@@ -99,6 +99,8 @@ void mnt_free_context(struct libmnt_context *cxt)
 
 	mnt_unref_table(cxt->fstab);
 	mnt_unref_cache(cxt->cache);
+	mnt_unref_fs(cxt->fs);
+	mnt_unref_fs(cxt->fs_template);
 
 	mnt_context_clear_loopdev(cxt);
 	mnt_free_lock(cxt->lock);
@@ -191,7 +193,73 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->flags |= (fl & MNT_FL_NOSWAPMATCH);
 	cxt->flags |= (fl & MNT_FL_TABPATHS_CHECKED);
 
+	mnt_context_apply_template(cxt);
+
 	return 0;
+}
+
+/*
+ * Saves the current context FS setting (mount options, etc) to make it usable after
+ * mnt_reset_context() or by mnt_context_apply_template(). This is usable for
+ * example for mnt_context_next_mount() where for the next mount operation we
+ * need to restore to the original context setting.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_save_template(struct libmnt_context *cxt)
+{
+	struct libmnt_fs *fs = NULL;
+
+	if (!cxt)
+		return -EINVAL;
+
+	DBG(CXT, ul_debugobj(cxt, "save FS as template"));
+
+	if (cxt->fs) {
+		fs = mnt_copy_fs(NULL, cxt->fs);
+		if (!fs)
+			return -ENOMEM;
+	}
+
+	mnt_unref_fs(cxt->fs_template);
+	cxt->fs_template = fs;
+
+	return 0;
+}
+
+/*
+ * Restores context FS setting from previously saved template (see
+ * mnt_context_save_template()).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_apply_template(struct libmnt_context *cxt)
+{
+	struct libmnt_fs *fs = NULL;
+	int rc = 0;
+
+	if (!cxt)
+		return -EINVAL;
+
+	if (cxt->fs_template) {
+		DBG(CXT, ul_debugobj(cxt, "copy FS from template"));
+		fs = mnt_copy_fs(NULL, cxt->fs_template);
+		if (!fs)
+			return -ENOMEM;
+		rc = mnt_context_set_fs(cxt, fs);
+		mnt_unref_fs(fs);
+	} else {
+		DBG(CXT, ul_debugobj(cxt, "no FS template, reset only"));
+		mnt_unref_fs(cxt->fs);
+		cxt->fs = NULL;
+	}
+
+	return rc;
+}
+
+int mnt_context_has_template(struct libmnt_context *cxt)
+{
+	return cxt && cxt->fs_template ? 1 : 0;
 }
 
 struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
@@ -823,6 +891,7 @@ int mnt_context_set_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
 	if (!cxt)
 		return -EINVAL;
 
+	DBG(CXT, ul_debugobj(cxt, "setting new FS"));
 	mnt_ref_fs(fs);			/* new */
 	mnt_unref_fs(cxt->fs);		/* old */
 	cxt->fs = fs;

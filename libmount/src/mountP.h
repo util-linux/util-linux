@@ -295,6 +295,7 @@ struct libmnt_context
 	char	*optstr_pattern;	/* for mnt_match_options() */
 
 	struct libmnt_fs *fs;		/* filesystem description (type, mountpoint, device, ...) */
+	struct libmnt_fs *fs_template;	/* used for @fs on mnt_reset_context() */
 
 	struct libmnt_table *fstab;	/* fstab (or mtab for some remounts) entries */
 	struct libmnt_table *mtab;	/* mtab entries */
@@ -455,6 +456,10 @@ extern int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 extern int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, char *fmt, ...);
 extern int mnt_context_get_mount_excode(struct libmnt_context *cxt, int mntrc, char *buf, size_t bufsz);
 extern int mnt_context_get_umount_excode(struct libmnt_context *cxt, int mntrc, char *buf, size_t bufsz);
+
+extern int mnt_context_has_template(struct libmnt_context *cxt);
+extern int mnt_context_apply_template(struct libmnt_context *cxt);
+extern int mnt_context_save_template(struct libmnt_context *cxt);
 
 /* tab_update.c */
 extern int mnt_update_set_filename(struct libmnt_update *upd,
