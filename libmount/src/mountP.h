@@ -461,6 +461,8 @@ extern int mnt_context_has_template(struct libmnt_context *cxt);
 extern int mnt_context_apply_template(struct libmnt_context *cxt);
 extern int mnt_context_save_template(struct libmnt_context *cxt);
 
+extern int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs);
+
 /* tab_update.c */
 extern int mnt_update_set_filename(struct libmnt_update *upd,
 				   const char *filename, int userspace_only);
