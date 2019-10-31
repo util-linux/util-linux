@@ -1291,11 +1291,6 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	if (!cxt || !fs || !itr)
 		return -EINVAL;
 
-	mtab = cxt->mtab;
-	cxt->mtab = NULL;		/* do not reset mtab */
-	mnt_reset_context(cxt);
-	cxt->mtab = mtab;
-
 	rc = mnt_context_get_fstab(cxt, &fstab);
 	if (rc)
 		return rc;
@@ -1346,6 +1341,23 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 		return 0;
 	}
 
+	/* Save mount options, etc. -- this is effective for the first
+	 * mnt_context_next_mount() call only. Make sure that cxt has not set
+	 * source, target or fstype.
+	 */
+	if (!mnt_context_has_template(cxt)) {
+		mnt_context_set_source(cxt, NULL);
+		mnt_context_set_target(cxt, NULL);
+		mnt_context_set_fstype(cxt, NULL);
+		mnt_context_save_template(cxt);
+	}
+
+	/* reset context, but protect mtab */
+	mtab = cxt->mtab;
+	cxt->mtab = NULL;
+	mnt_reset_context(cxt);
+	cxt->mtab = mtab;
+
 	if (mnt_context_is_fork(cxt)) {
 		rc = mnt_fork_context(cxt);
 		if (rc)
@@ -1356,9 +1368,12 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 		}
 	}
 
-	/* child or non-forked */
+	/*
+	 * child or non-forked
+	 */
 
-	rc = mnt_context_set_fs(cxt, *fs);
+	/* copy stuff from fstab to context */
+	rc = mnt_context_apply_fs(cxt, *fs);
 	if (!rc) {
 		/*
 		 * "-t <pattern>" is used to filter out fstab entries, but for ordinary
@@ -1470,8 +1485,16 @@ int mnt_context_next_remount(struct libmnt_context *cxt,
 		return 0;
 	}
 
-	if (!mnt_context_has_template(cxt))
+	/* Save mount options, etc. -- this is effective for the first
+	 * mnt_context_next_remount() call only. Make sure that cxt has not set
+	 * source, target or fstype.
+	 */
+	if (!mnt_context_has_template(cxt)) {
+		mnt_context_set_source(cxt, NULL);
+		mnt_context_set_target(cxt, NULL);
+		mnt_context_set_fstype(cxt, NULL);
 		mnt_context_save_template(cxt);
+	}
 
 	/* restore original, but protect mtab */
 	cxt->mtab = NULL;

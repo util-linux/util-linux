@@ -583,6 +583,9 @@ The option \fB\-\-all\fR is possible to use for remount operation too. In this
 case all filters (\fB\-t\fR and \fB\-O\fR) are applied to the table of already
 mounted filesystems.
 .sp
+Since version 2.35 is possible to use the command line option \fB\-o\fR to
+alter mount options from fstab (see also \fB\-\-options\-mode\fR).
+.sp
 Note that it is a bad practice to use \fBmount \-a\fR for
 .I fstab
 checking. The recommended solution is \fBfindmnt \-\-verify\fR.
