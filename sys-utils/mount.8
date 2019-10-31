@@ -787,6 +787,19 @@ If only one argument for the mount command is given then the argument might be
 interpreted as target (mountpoint) or source (device).  This option allows to
 explicitly define that the argument is the mount target.
 .TP
+.BI \-\-target\-prefix " directory"
+Prepend specified directory to all mount targets.  This option allows to follow
+fstab, but mount operations is done on another place, for example:
+.RS
+.RS
+.sp
+.B "mount \-\-all \-\-target\-prefix /chroot \-o X\-mount.mkdir
+.sp
+.RE
+mounts all from system fstab to /chroot, all missing muontpoint are created
+(due to X-mount.mkdir).  See also \fB\-\-fstab\fP to use an alternative fstab.
+.RE
+.TP
 .BR \-T , " \-\-fstab " \fIpath
 Specifies an alternative fstab file.  If \fIpath\fP is a directory then the files
 in the directory are sorted by
