@@ -1281,7 +1281,6 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 {
 	struct libmnt_table *fstab, *mtab;
 	const char *o, *tgt;
-	char *pattern;
 	int rc, mounted = 0;
 
 	if (ignored)
@@ -1366,7 +1365,7 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 		 * mount operation -t means "-t <type>". We have to zeroize the pattern
 		 * to avoid misinterpretation.
 		 */
-		pattern = cxt->fstype_pattern;
+		char *pattern = cxt->fstype_pattern;
 		cxt->fstype_pattern = NULL;
 
 		rc = mnt_context_mount(cxt);
@@ -1405,6 +1404,11 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
  * mnt_context_next_remount() function returns zero, but the @ignored is
  * non-zero.
  *
+ * IMPORTANT -- the mount operation is performed in the current context.
+ * The context is reset before the next mount (see mnt_reset_context()).
+ * The context setting related to the filesystem (e.g. mount options,
+ * etc.) are protected.
+
  * If mount(2) syscall or mount.type helper failed, then the
  * mnt_context_next_mount() function returns zero, but the @mntrc is non-zero.
  * Use also mnt_context_get_status() to check if the filesystem was
@@ -1424,7 +1428,6 @@ int mnt_context_next_remount(struct libmnt_context *cxt,
 			   int *mntrc,
 			   int *ignored)
 {
-	struct libmnt_context *remount_cxt = NULL;
 	struct libmnt_table *mtab;
 	const char *tgt;
 	int rc;
@@ -1467,30 +1470,34 @@ int mnt_context_next_remount(struct libmnt_context *cxt,
 		return 0;
 	}
 
-	/* make sure fstab is already read to avoid fstab parsing in cloned context */
-	mnt_context_get_fstab(cxt, NULL);
+	if (!mnt_context_has_template(cxt))
+		mnt_context_save_template(cxt);
 
-	/* clone context */
-	remount_cxt = mnt_copy_context(cxt);
-	if (!remount_cxt)
-		return -ENOMEM;
+	/* restore original, but protect mtab */
+	cxt->mtab = NULL;
+	mnt_reset_context(cxt);
+	cxt->mtab = mtab;
 
-	rc = mnt_context_set_target(remount_cxt, tgt);
+	rc = mnt_context_set_target(cxt, tgt);
 	if (!rc) {
 		/*
 		 * "-t <pattern>" is used to filter out fstab entries, but for ordinary
 		 * mount operation -t means "-t <type>". We have to zeroize the pattern
 		 * to avoid misinterpretation.
 		 */
-		remount_cxt->fstype_pattern = NULL;
-		rc = mnt_context_mount(remount_cxt);
+		char *pattern = cxt->fstype_pattern;
+		cxt->fstype_pattern = NULL;
+
+		rc = mnt_context_mount(cxt);
+
+		cxt->fstype_pattern = pattern;
 
 		if (mntrc)
 			*mntrc = rc;
+		rc = 0;
 	}
 
-	mnt_free_context(remount_cxt);
-	return 0;
+	return rc;
 }
 
 /*
