@@ -2284,8 +2284,23 @@ int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
 {
 	int rc;
 
+	if (!cxt->optsmode) {
+		if (mnt_context_is_restricted(cxt)) {
+			DBG(CXT, ul_debugobj(cxt, "force fstab usage for non-root users!"));
+			cxt->optsmode = MNT_OMODE_USER;
+		} else {
+			DBG(CXT, ul_debugobj(cxt, "use default optsmode"));
+			cxt->optsmode = MNT_OMODE_AUTO;
+		}
+	}
+
 	DBG(CXT, ul_debugobj(cxt, "apply entry:"));
 	DBG(CXT, mnt_fs_print_debug(fs, stderr));
+	DBG(CXT, ul_debugobj(cxt, "OPTSMODE (opt-part): ignore=%d, append=%d, prepend=%d, replace=%d",
+				  cxt->optsmode & MNT_OMODE_IGNORE ? 1 : 0,
+				  cxt->optsmode & MNT_OMODE_APPEND ? 1 : 0,
+				  cxt->optsmode & MNT_OMODE_PREPEND ? 1 : 0,
+				  cxt->optsmode & MNT_OMODE_REPLACE ? 1 : 0));
 
 	/* copy from fs to our FS description
 	 */
@@ -2300,7 +2315,7 @@ int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
 		rc = mnt_fs_set_root(cxt->fs, mnt_fs_get_root(fs));
 
 	if (rc)
-		return rc;
+		goto done;
 
 	if (cxt->optsmode & MNT_OMODE_IGNORE)
 		;
@@ -2315,6 +2330,11 @@ int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
 
 	if (!rc)
 		cxt->flags |= MNT_FL_TAB_APPLIED;
+
+done:
+	DBG(CXT, ul_debugobj(cxt, "final entry [rc=%d]:", rc));
+	DBG(CXT, mnt_fs_print_debug(cxt->fs, stderr));
+
 	return rc;
 }
 
@@ -2406,12 +2426,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		tgt = mnt_fs_get_target(cxt->fs);
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "OPTSMODE: ignore=%d, append=%d, prepend=%d, "
-				  "replace=%d, force=%d, fstab=%d, mtab=%d",
-				  cxt->optsmode & MNT_OMODE_IGNORE ? 1 : 0,
-				  cxt->optsmode & MNT_OMODE_APPEND ? 1 : 0,
-				  cxt->optsmode & MNT_OMODE_PREPEND ? 1 : 0,
-				  cxt->optsmode & MNT_OMODE_REPLACE ? 1 : 0,
+	DBG(CXT, ul_debugobj(cxt, "OPTSMODE (file-part): force=%d, fstab=%d, mtab=%d",
 				  cxt->optsmode & MNT_OMODE_FORCE ? 1 : 0,
 				  cxt->optsmode & MNT_OMODE_FSTAB ? 1 : 0,
 				  cxt->optsmode & MNT_OMODE_MTAB ? 1 : 0));
