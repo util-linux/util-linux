@@ -203,7 +203,7 @@ blkid_probe blkid_new_probe_from_filename(const char *filename)
 	int fd;
 	blkid_probe pr = NULL;
 
-	fd = open(filename, O_RDONLY|O_CLOEXEC);
+	fd = open(filename, O_RDONLY|O_CLOEXEC|O_NONBLOCK);
 	if (fd < 0)
 		return NULL;
 

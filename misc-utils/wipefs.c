@@ -386,7 +386,7 @@ new_probe(const char *devname, int mode)
 		return NULL;
 
 	if (mode) {
-		int fd = open(devname, mode);
+		int fd = open(devname, mode | O_NONBLOCK);
 		if (fd < 0)
 			goto error;
 

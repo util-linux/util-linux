@@ -499,7 +499,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 	int rc = 0;
 	static int first = 1;
 
-	fd = open(devname, O_RDONLY|O_CLOEXEC);
+	fd = open(devname, O_RDONLY|O_CLOEXEC|O_NONBLOCK);
 	if (fd < 0) {
 		warn(_("error: %s"), devname);
 		return BLKID_EXIT_NOTFOUND;
