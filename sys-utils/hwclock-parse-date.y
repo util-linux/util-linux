@@ -42,6 +42,7 @@
 
 #include "c.h"
 #include "timeutils.h"
+#include "hwclock.h"
 
 /**
  * There's no need to extend the stack, so there's no need to involve

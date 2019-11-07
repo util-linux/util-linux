@@ -88,6 +88,4 @@ int strtime_short(const time_t *t, struct timeval *now, int flags, char *buf, si
 extern time_t timegm(struct tm *tm);
 #endif
 
-int parse_date(struct timespec *, char const *, struct timespec const *);
-
 #endif /* UTIL_LINUX_TIME_UTIL_H */

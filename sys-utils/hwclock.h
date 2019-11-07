@@ -77,4 +77,6 @@ extern int set_epoch_rtc(const struct hwclock_control *ctl);
 extern void __attribute__((__noreturn__))
 hwclock_exit(const struct hwclock_control *ctl, int status);
 
+extern int parse_date(struct timespec *, char const *, struct timespec const *);
+
 #endif				/* HWCLOCK_CLOCK_H */
