@@ -22,3 +22,4 @@ uname26.8
 x86_64.8
 hwclock.8
 rtcwake.8
+hwclock-parse-date.c
