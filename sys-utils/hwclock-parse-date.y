@@ -1,5 +1,7 @@
 %{
 /**
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
  * Parse a string into an internal timestamp.
  *
  * This file is based on gnulib parse-datetime.y-dd7a871 with

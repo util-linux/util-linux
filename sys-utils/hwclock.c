@@ -1,5 +1,9 @@
 /*
- * hwclock.c
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * Since 7a3000f7ba548cf7d74ac77cc63fe8de228a669e (v2.30) hwclock is linked
+ * with parse_date.y from gnullib. This gnulib code is distributed with GPLv3.
+ *
  *
  * clock.c was written by Charles Hedrick, hedrick@cs.rutgers.edu, Apr 1992
  * Modified for clock adjustments - Rob Hooft <hooft@chem.ruu.nl>, Nov 1992
@@ -24,7 +28,7 @@
  * Change of local time handling, Stefan Ring <e9725446@stud3.tuwien.ac.at>
  * Change of adjtime handling, James P. Rutledge <ao112@rgfn.epcc.edu>.
  *
- * Distributed under GPL
+ *
  */
 /*
  * Explanation of `adjusting' (Rob Hooft):

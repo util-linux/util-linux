@@ -1,4 +1,6 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
  * rtc.c - Use /dev/rtc for clock access
  */
 #include <asm/ioctl.h>

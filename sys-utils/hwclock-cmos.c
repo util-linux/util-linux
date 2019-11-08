@@ -1,4 +1,6 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
  * i386 CMOS starts out with 14 bytes clock data alpha has something
  * similar, but with details depending on the machine type.
  *
