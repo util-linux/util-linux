@@ -179,6 +179,7 @@ int parse_timestamp(const char *t, usec_t *usec)
 	 * Allowed syntaxes:
 	 *
 	 *   2012-09-22 16:34:22
+	 *   2012-09-22T16:34:22
 	 *   2012-09-22 16:34	  (seconds will be set to 0)
 	 *   2012-09-22		  (time will be set to 00:00:00)
 	 *   16:34:22		  (date will be set to today)
@@ -268,6 +269,11 @@ int parse_timestamp(const char *t, usec_t *usec)
 
 	tm = copy;
 	k = strptime(t, "%Y-%m-%d %H:%M:%S", &tm);
+	if (k && *k == 0)
+		goto finish;
+
+	tm = copy;
+	k = strptime(t, "%Y-%m-%dT%H:%M:%S", &tm);
 	if (k && *k == 0)
 		goto finish;
 
@@ -570,13 +576,21 @@ int main(int argc, char *argv[])
 	char buf[ISO_BUFSIZ];
 
 	if (argc < 2) {
-		fprintf(stderr, "usage: %s <time> [<usec>]\n", argv[0]);
+		fprintf(stderr, "usage: %s [<time> [<usec>]] | [--timestamp <str>]\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
-	tv.tv_sec = strtos64_or_err(argv[1], "failed to parse <time>");
-	if (argc == 3)
-		tv.tv_usec = strtos64_or_err(argv[2], "failed to parse <usec>");
+	if (strcmp(argv[1], "--timestamp") == 0) {
+		usec_t usec;
+
+		parse_timestamp(argv[2], &usec);
+		tv.tv_sec = (time_t) (usec / 1000000);
+		tv.tv_usec = usec % 1000000;
+	} else {
+		tv.tv_sec = strtos64_or_err(argv[1], "failed to parse <time>");
+		if (argc == 3)
+			tv.tv_usec = strtos64_or_err(argv[2], "failed to parse <usec>");
+	}
 
 	strtimeval_iso(&tv, ISO_DATE, buf, sizeof(buf));
 	printf("Date: '%s'\n", buf);
