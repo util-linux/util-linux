@@ -179,6 +179,10 @@ static const struct libmnt_optmap userspace_opts_map[] =
 
    { "helper=", MNT_MS_HELPER },			   /* /sbin/mount.<helper> */
 
+   { "verity.hashdevice=", MNT_MS_HASH_DEVICE, MNT_NOHLPS | MNT_NOMTAB },     /* mount a verity device */
+   { "verity.roothash=",   MNT_MS_ROOT_HASH, MNT_NOHLPS | MNT_NOMTAB },		   /* verity device root hash */
+   { "verity.hashoffset=", MNT_MS_HASH_OFFSET, MNT_NOHLPS | MNT_NOMTAB },	   /* verity device hash offset */
+
    { NULL, 0, 0 }
 };
 

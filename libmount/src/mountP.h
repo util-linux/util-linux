@@ -46,6 +46,7 @@
 #define MNT_DEBUG_MONITOR	(1 << 11)
 #define MNT_DEBUG_BTRFS		(1 << 12)
 #define MNT_DEBUG_LOOP		(1 << 13)
+#define MNT_DEBUG_VERITY	(1 << 14)
 
 #define MNT_DEBUG_ALL		0xFFFF
 
@@ -379,6 +380,7 @@ struct libmnt_context
 #define MNT_FL_MOUNTOPTS_FIXED  (1 << 27)
 #define MNT_FL_TABPATHS_CHECKED	(1 << 28)
 #define MNT_FL_FORCED_RDONLY	(1 << 29)	/* mounted read-only on write-protected device */
+#define MNT_FL_VERITYDEV_READY	(1 << 30)	/* /dev/mapper/<FOO> initialized by the library */
 
 /* default flags */
 #define MNT_FL_DEFAULT		0
@@ -462,6 +464,11 @@ extern int mnt_context_apply_template(struct libmnt_context *cxt);
 extern int mnt_context_save_template(struct libmnt_context *cxt);
 
 extern int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs);
+
+extern int mnt_context_is_veritydev(struct libmnt_context *cxt)
+			__attribute__((nonnull));
+extern int mnt_context_setup_veritydev(struct libmnt_context *cxt);
+extern int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt);
 
 /* tab_update.c */
 extern int mnt_update_set_filename(struct libmnt_update *upd,

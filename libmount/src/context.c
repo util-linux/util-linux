@@ -1801,10 +1801,21 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 		goto end;
 	}
 
+
 	/*
-	 * Initialize loop device
+	 * Initialize verity or loop device
+	 * ENOTSUP means verity options were requested, but the library is built without
+	 * libcryptsetup so integrity cannot be enforced, and this should be an error
+	 * rather than a silent fallback to a simple loopdev mount
 	 */
-	if (mnt_context_is_loopdev(cxt)) {
+	rc = mnt_context_is_veritydev(cxt);
+	if (rc == -ENOTSUP) {
+			goto end;
+	} else if (rc) {
+		rc = mnt_context_setup_veritydev(cxt);
+		if (rc)
+			goto end;
+	} else if (mnt_context_is_loopdev(cxt)) {
 		rc = mnt_context_setup_loopdev(cxt);
 		if (rc)
 			goto end;

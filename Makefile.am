@@ -144,6 +144,12 @@ else
 edit_cmd += -e 's|@LIBSELINUX[@]||g'
 endif
 
+if HAVE_CRYPTSETUP
+edit_cmd += -e 's|@LIBCRYPTSETUP[@]|libcryptsetup|g'
+else
+edit_cmd += -e 's|@LIBCRYPTSETUP[@]||g'
+endif
+
 CLEANFILES += $(PATHFILES)
 EXTRA_DIST += $(PATHFILES:=.in)
 

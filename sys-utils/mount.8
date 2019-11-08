@@ -2367,6 +2367,24 @@ Set the owner and group and mode of the file
 .I devices
 (default: uid=gid=0, mode=0444).  The mode is given in octal.
 
+.SS "Mount options for dm-verity""
+Mounting volumes using dm-verity for integrity verification is supported where appropriate
+using the following options. Requires libcryptsetup.
+If libcryptsetup supports extracting the root hash of an already mounted device, existing
+devices will be automatically reused in case of a match.
+.TP
+\fBverity.hashdevice=\fP\,\fIpath\fP
+Path to the hash tree device associated with the source volume to pass to dm-verity.
+.TP
+\fBverity.roothash=\fP\,\fIhex\fP
+Hex-encoded hash of the root of
+.I verity.hashdevice
+.TP
+\fBverity.hashoffset=\fP\,\fIoffset\fP
+If the hash tree device is embedded in the source volume,
+.I offset
+(default: 0) is used by dm-verity to get to the tree.
+
 .SH "THE LOOP DEVICE"
 One further possible type is a mount via the loop device.  For example,
 the command
