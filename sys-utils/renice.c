@@ -69,9 +69,9 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -n, --priority <num>   specify the nice value\n"), out);
-	fputs(_(" -p, --pid <id>         interpret argument as process ID (default)\n"), out);
-	fputs(_(" -g, --pgrp <id>        interpret argument as process group ID\n"), out);
-	fputs(_(" -u, --user <name>|<id> interpret argument as username or user ID\n"), out);
+	fputs(_(" -p, --pid              interpret arguments as process ID (default)\n"), out);
+	fputs(_(" -g, --pgrp             interpret arguments as process group ID\n"), out);
+	fputs(_(" -u, --user             interpret arguments as username or user ID\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(24));
 	printf(USAGE_MAN_TAIL("renice(1)"));
