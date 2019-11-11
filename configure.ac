@@ -101,6 +101,14 @@ AS_CASE([$libdir],
 )
 AC_SUBST([usrlib_execdir])
 
+# static configuration maintaned by packages (e.g. /usr/lib)
+AC_ARG_VAR([SYSCONFSTATICDIR],
+	   [Path to static system configuration, default ${prefix}/lib])
+AS_IF([test "x$SYSCONFSTATICDIR" = x],
+      [sysconfstaticdir='${prefix}/lib'],
+      [sysconfstaticdir=$SYSCONFSTATICDIR])
+AC_SUBST([sysconfstaticdir])
+
 
 AM_PROG_CC_C_O
 AC_PROG_MKDIR_P
