@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: GPLv2+
+#==================================================#
+#                                                  #
+# Make operating system image configuration file   #
+# for Util Linux and the Fedora linux distribution #
+#                                                  #
+#==================================================#
+
+[Distribution]
+Distribution=fedora
+Release=31
+
+[Output]
+Format=raw_gpt
+Bootable=yes
+Output=fedora.raw
+
+[Partitions]
+ESPSize=128M
+RootSize=3G
+SwapSize=256M
+
+BuildPackages=
+        audit-libs-devel
+        autoconf
+        automake
+        bison
+        gcc
+        gettext-devel
+        libcap-ng-devel
+        libselinux-devel
+        libtool
+        libuser-devel
+        libutempter-devel
+        ncurses-devel
+        pam-devel
+        pcre2-devel
+        popt-devel
+        python3-devel
+        readline-devel
+        systemd
+        systemd-devel
+        zlib-devel
+
+Packages=
+
+BuildDirectory=mkosi.builddir
+Cache=mkosi.cache

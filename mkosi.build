@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -ex 
+./build_setup
+./configure \
+--prefix=/usr/ \
+--sysconfdir=/etc \
+--sbindir=/usr/bin \
+--localstatedir=/var \
+--runstatedir=/run \
+--enable-nftables \
+--enable-sha1 \
+
+# Tag that this is built from the util-linux tree
+
+cat > "$DESTDIR"/etc/issue <<EOF
+\S (built from util-linux tree)
+Kernel \r on an \m (\l)
+EOF
