@@ -68,8 +68,11 @@
 # define _PATH_BTMP		"/var/log/btmp"
 #endif
 
-#define _PATH_ISSUE		"/etc/issue"
-#define _PATH_ISSUEDIR		_PATH_ISSUE ".d"
+#define _PATH_ISSUE_FILENAME	"issue"
+#define _PATH_ISSUE_DIRNAME	_PATH_ISSUE_FILENAME ".d"
+
+#define _PATH_ISSUE		"/etc/" _PATH_ISSUE_FILENAME
+#define _PATH_ISSUEDIR		"/etc/" _PATH_ISSUE_DIRNAME
 
 #define _PATH_OS_RELEASE_ETC	"/etc/os-release"
 #define _PATH_OS_RELEASE_USR	"/usr/lib/os-release"

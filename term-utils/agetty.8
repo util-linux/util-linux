@@ -118,7 +118,7 @@ is added to the \fB/bin/login\fP command line.
 See \fB\-\-login\-options\fR.
 .TP
 \-f, \-\-issue\-file \fIfile|directory\fP
-Display the contents of \fIfile\fP instead of \fI/etc/issue\fP.  If the
+Display the contents of \fIfile\fP instead of \fI/etc/issue\fP (or other).  If the
 specified path is a \fIdirectory\fP then displays all files with .issue file
 extension in version-sort order from the directory.  This allows custom
 messages to be displayed on different terminals.  The
@@ -340,7 +340,7 @@ for a leading "\-" and makes sure the logname gets passed as one parameter
 on how the login binary parses the command line that might not be sufficient.
 Check that the used login program cannot be abused this way.
 .PP
-Some  programs use "\-\-" to indicate that the rest of the commandline should
+Some  programs use "\-\-" to indicate that the rest of the command line should
 not be interpreted as options.  Use this feature if available by passing "\-\-"
 before the username gets passed by \\u.
 
@@ -353,9 +353,18 @@ directory is ignored. All files with .issue extension from the directory are
 printed in version-sort order. The directory allow to maintain 3rd-party
 messages independently on the primary system \fI/etc/issue\fP file.
 
+Since version 2.35 additional locations for issue file and directory are
+supported. If the default \fI/etc/issue\fP does not exist than agetty checks
+for \fI/run/issue\fP and \fI/run/issue.d\fP, thereafter for
+\fI/usr/lib/issue\fP and \fI/usr/lib/issue.d\fP.  The directory /etc is
+expected for host specific configuration, /run is expected for generated stuff
+and /usr/lib for static distribution maintained configuration.
+
 The default path maybe overridden by \fB\-\-issue\-file\fP option. In this case
-specified path has to be file or directory and the default \fI/etc/issue\fP as
-well as \fI/etc/issue.d\fP are ignored.
+specified path has to be file or directory and all the default issue file and
+directory locations are ignored.
+
+The issue file feature is possible to completely disable by \fB\-\-noissue\fP option.
 
 The issue files may contain certain escape codes to display the system name, date, time
 etcetera.  All escape codes consist of a backslash (\\) immediately
