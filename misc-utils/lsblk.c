@@ -72,6 +72,7 @@ enum {
 	COL_FSTYPE,
 	COL_FSUSED,
 	COL_FSUSEPERC,
+	COL_FSVERSION,
 	COL_TARGET,
 	COL_LABEL,
 	COL_UUID,
@@ -158,6 +159,7 @@ static struct colinfo infos[] = {
 	[COL_FSTYPE]    = { "FSTYPE", 0.1, SCOLS_FL_TRUNC, N_("filesystem type") },
 	[COL_FSUSED]    = { "FSUSED", 5, SCOLS_FL_RIGHT, N_("filesystem size used") },
 	[COL_FSUSEPERC] = { "FSUSE%", 3, SCOLS_FL_RIGHT, N_("filesystem use percentage") },
+	[COL_FSVERSION] = { "FSVER", 0.1, SCOLS_FL_TRUNC, N_("filesystem version") },
 
 	[COL_TARGET] = { "MOUNTPOINT", 0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
 	[COL_LABEL]  = { "LABEL",   0.1, 0, N_("filesystem LABEL") },
@@ -784,6 +786,11 @@ static char *device_get_data(
 	case COL_FSUSED:
 	case COL_FSUSEPERC:
 		str = get_vfs_attribute(dev, id);
+		break;
+	case COL_FSVERSION:
+		prop = lsblk_device_get_properties(dev);
+		if (prop && prop->fsversion)
+			str = xstrdup(prop->fsversion);
 		break;
 	case COL_TARGET:
 	{

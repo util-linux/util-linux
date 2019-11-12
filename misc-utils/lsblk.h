@@ -61,6 +61,7 @@ extern struct lsblk *lsblk;     /* global handler */
 struct lsblk_devprop {
 	/* udev / blkid based */
 	char *fstype;		/* detected fs, NULL or "?" if cannot detect */
+	char *fsversion;	/* filesystem version */
 	char *uuid;		/* filesystem UUID (or stack uuid) */
 	char *ptuuid;		/* partition table UUID */
 	char *pttype;		/* partition table type */

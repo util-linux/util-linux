@@ -22,6 +22,7 @@ void lsblk_device_free_properties(struct lsblk_devprop *p)
 		return;
 
 	free(p->fstype);
+	free(p->fsversion);
 	free(p->uuid);
 	free(p->ptuuid);
 	free(p->pttype);
@@ -87,6 +88,8 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		}
 		if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
 			prop->fstype = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_FS_VERSION")))
+			prop->fsversion = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_TYPE")))
 			prop->parttype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
@@ -196,6 +199,7 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 		else if (lookup(buf, "ID_PART_TABLE_UUID", &prop->ptuuid)) ;
 		else if (lookup(buf, "ID_PART_TABLE_TYPE", &prop->pttype)) ;
 		else if (lookup(buf, "ID_FS_TYPE", &prop->fstype)) ;
+		else if (lookup(buf, "ID_FS_VERSION", &prop->fsversion)) ;
 		else if (lookup(buf, "ID_PART_ENTRY_TYPE", &prop->parttype)) ;
 		else if (lookup(buf, "ID_PART_ENTRY_UUID", &prop->partuuid)) ;
 		else if (lookup(buf, "ID_PART_ENTRY_FLAGS", &prop->partflags)) ;
@@ -265,6 +269,8 @@ static struct lsblk_devprop *get_properties_by_blkid(struct lsblk_device *dev)
 			prop->pttype = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "LABEL", &data, NULL))
 			prop->label = xstrdup(data);
+		if (!blkid_probe_lookup_value(pr, "VERSION", &data, NULL))
+			prop->fsversion = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_TYPE", &data, NULL))
 			prop->parttype = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_UUID", &data, NULL))
