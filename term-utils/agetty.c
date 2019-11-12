@@ -342,6 +342,8 @@ static void login_options_to_argv(char *argv[], int *argc, char *str, char *user
 static void reload_agettys(void);
 static void print_issue_file(struct issue *ie, struct options *op, struct termios *tp);
 static void eval_issue_file(struct issue *ie, struct options *op, struct termios *tp);
+static void show_issue(struct options *op);
+
 
 /* Fake hostname for ut_host specified on command line. */
 static char *fakehost;
@@ -709,6 +711,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		KILL_CHARS_OPTION,
 		RELOAD_OPTION,
 		LIST_SPEEDS_OPTION,
+		ISSUE_SHOW_OPTION,
 	};
 	const struct option longopts[] = {
 		{  "8bits",	     no_argument,	 NULL,  '8'  },
@@ -718,6 +721,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "delay",	     required_argument,	 NULL,  'd'  },
 		{  "remote",         no_argument,        NULL,  'E'  },
 		{  "issue-file",     required_argument,  NULL,  'f'  },
+		{  "show-issue",     no_argument,        NULL,  ISSUE_SHOW_OPTION },
 		{  "flow-control",   no_argument,	 NULL,  'h'  },
 		{  "host",	     required_argument,  NULL,  'H'  },
 		{  "noissue",	     no_argument,	 NULL,  'i'  },
@@ -864,6 +868,10 @@ static void parse_args(int argc, char **argv, struct options *op)
 		case LIST_SPEEDS_OPTION:
 			list_speeds();
 			exit(EXIT_SUCCESS);
+		case ISSUE_SHOW_OPTION:
+			show_issue(op);
+			exit(EXIT_SUCCESS);
+			break;
 		case VERSION_OPTION:
 			output_version();
 			exit(EXIT_SUCCESS);
@@ -1794,6 +1802,11 @@ static void eval_issue_file(struct issue *ie __attribute__((__unused__)),
 			    struct termios *tp __attribute__((__unused__)))
 {
 }
+
+static void show_issue(struct options *op __attribute__((__unused__)))
+{
+}
+
 #else /* ISSUE_SUPPORT */
 
 static int issuefile_read_stream(
@@ -1816,7 +1829,6 @@ static int issuefile_read_stream(
 			putc(c, ie->output);
 	}
 
-	fclose(f);
 	return 0;
 }
 
@@ -1827,9 +1839,10 @@ static int issuefile_read(
 	FILE *f = fopen(filename, "r" UL_CLOEXECSTR);
 	int rc = 1;
 
-	if (f)
+	if (f) {
 		rc = issuefile_read_stream(ie, f, op, tp);
-	fclose(f);
+		fclose(f);
+	}
 	return rc;
 }
 
@@ -1954,6 +1967,27 @@ done:
 	if (ie->output)
 		fclose(ie->output);
 }
+
+/* This is --show-issue backend, executed by normal user on the current
+ * terminal.
+ */
+static void show_issue(struct options *op)
+{
+	struct issue ie = { .output = NULL };
+	struct termios tp;
+
+	memset(&tp, 0, sizeof(struct termios));
+	if (tcgetattr(STDIN_FILENO, &tp) < 0)
+		err(EXIT_FAILURE, _("failed to get terminal attributes: %m"));
+
+	eval_issue_file(&ie, op, &tp);
+
+	if (ie.mem_sz)
+		write_all(STDOUT_FILENO, ie.mem, ie.mem_sz);
+
+	free(ie.mem);
+}
+
 #endif /* ISSUE_SUPPORT */
 
 /* Show login prompt, optionally preceded by /etc/issue contents. */
@@ -2377,6 +2411,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --noreset              do not reset control mode\n"), out);
 	fputs(_(" -E, --remote               use -r <hostname> for login(1)\n"), out);
 	fputs(_(" -f, --issue-file <file>    display issue file\n"), out);
+	fputs(_("     --show-issue           display issue file and exit\n"), out);
 	fputs(_(" -h, --flow-control         enable hardware flow control\n"), out);
 	fputs(_(" -H, --host <hostname>      specify login host\n"), out);
 	fputs(_(" -i, --noissue              do not display issue file\n"), out);

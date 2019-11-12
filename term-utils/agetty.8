@@ -124,6 +124,12 @@ extension in version-sort order from the directory.  This allows custom
 messages to be displayed on different terminals.  The
 \-\-noissue option will override this option.
 .TP
+\-\-show\-issue
+Display the current issue file (or other) on the current terminal and exit.
+Use this option to review the current setting, it is not designed for any other
+purpose.  Note that output may use some default or incomplete information as 
+proper output depends on terminal and agetty command line.
+.TP
 \-h, \-\-flow\-control
 Enable hardware (RTS/CTS) flow control.  It is left up to the
 application to disable software (XON/XOFF) flow protocol where
@@ -349,7 +355,7 @@ The default issue file is \fI/etc/issue\fP. If the file exists then agetty also
 checks for \fI/etc/issue.d\fP directory. The directory is optional extension to
 the default issue file and content of the directory is printed after
 \fI/etc/issue\fP content. If the \fI/etc/issue\fP does not exist than the
-directory is ignored. All files with .issue extension from the directory are
+directory is ignored. All files \fBwith .issue extension\fP from the directory are
 printed in version-sort order. The directory allow to maintain 3rd-party
 messages independently on the primary system \fI/etc/issue\fP file.
 
@@ -365,6 +371,9 @@ specified path has to be file or directory and all the default issue file and
 directory locations are ignored.
 
 The issue file feature is possible to completely disable by \fB\-\-noissue\fP option.
+
+It is possible to review the current issue file by \fBagetty \-\-show\-issue\fP
+on the current terminal.
 
 The issue files may contain certain escape codes to display the system name, date, time
 etcetera.  All escape codes consist of a backslash (\\) immediately
