@@ -89,7 +89,7 @@ fi
 LIBTOOLIZE=libtoolize
 case `uname` in Darwin*) LIBTOOLIZE=glibtoolize ;; esac
 if ! ($LIBTOOLIZE --version) < /dev/null > /dev/null 2>&1; then
-	echo
+#	echo
 	echo "You must have libtool-2 installed to generate the util-linux build system."
 	echo
 	DIE=1

@@ -13,13 +13,14 @@ Release=31
 [Output]
 Format=raw_gpt
 Bootable=yes
-Output=fedora.raw
+Output=.mkosi.output/fedora.raw
 
 [Partitions]
 ESPSize=128M
-RootSize=3G
+RootSize=2G
 SwapSize=256M
 
+[Packages]
 BuildPackages=
         audit-libs-devel
         autoconf
@@ -43,6 +44,10 @@ BuildPackages=
         zlib-devel
 
 Packages=
+        coreutils
+        diffutils
+        file
+        make
 
-BuildDirectory=mkosi.builddir
-Cache=mkosi.cache
+BuildDirectory=.mkosi.builddir
+Cache=.mkosi.cache

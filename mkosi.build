@@ -1,19 +1,16 @@
 #!/bin/sh
+# SPDX-License-Identifier: GPLv2+
+#========================================================#
+#                                                        #
+# Make operating system image build configuration file   #
+# for Util Linux and the Fedora linux distribution       #
+#                                                        #
+#========================================================#
 
-set -ex 
-./build_setup
-./configure \
---prefix=/usr/ \
---sysconfdir=/etc \
---sbindir=/usr/bin \
---localstatedir=/var \
---runstatedir=/run \
---enable-nftables \
---enable-sha1 \
+./autogen.sh
+./configure --disable-dependency-tracking
 
-# Tag that this is built from the util-linux tree
+make
+make install
 
-cat > "$DESTDIR"/etc/issue <<EOF
-\S (built from util-linux tree)
-Kernel \r on an \m (\l)
-EOF
+exit 0
