@@ -1937,6 +1937,7 @@ int main(int argc, char *argv[])
 		case 'f':
 			add_uniq_column(COL_NAME);
 			add_uniq_column(COL_FSTYPE);
+			add_uniq_column(COL_FSVERSION);
 			add_uniq_column(COL_LABEL);
 			add_uniq_column(COL_UUID);
 			add_uniq_column(COL_FSAVAIL);
