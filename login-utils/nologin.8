@@ -1,4 +1,4 @@
-.TH NOLOGIN 8 "September 2013" "util-linux" "System Administration"
+.TH NOLOGIN 8 "November 2019" "util-linux" "System Administration"
 .SH NAME
 nologin \- politely refuse a login
 .SH SYNOPSIS
@@ -18,13 +18,29 @@ The exit code returned by
 is always 1.
 .PP
 .SH OPTIONS
-
-
-.TP
-.IP "\fB\-c\fR, \fB\-\-command\fR \fIcommand\fR"
-Ignored. For compatibility with
-.I su -c "command" - user
-that would cause error otherwise.
+\fB\-c\fR, \fB\-\-command\fR \fIcommand\fR
+.br
+\fB\-\-init-file\fR
+.br
+\fB\-i\fR \fB\-\-interactive\fR
+.br
+\fB\-\-init-file\fR \fIfile\fR
+.br
+\fB\-i\fR, \fB\-\-interactive\fR
+.br
+\fB\-l\fR, \fB\-\-login\fR
+.br
+\fB\-\-noprofile\fR
+.br
+\fB\-\-norc\fR
+.br
+\fB\-\-posix\fR
+.br
+\fB\-\-rcfile\fR \fIfile\fR
+.br
+\fB\-r\fR, \fB\-\-restricted\fR
+.IP
+These shell command-line options are ignored to avoid nologin error.
 .IP "\fB\-h\fR, \fB\-\-help\fR"
 Display help text and exit.
 .IP "\fB-V\fR, \fB\-\-version\fR"

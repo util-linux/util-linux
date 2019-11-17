@@ -41,10 +41,25 @@ int main(int argc, char *argv[])
 {
 	int c, fd = -1;
 	struct stat st;
+	enum {
+		OPT_INIT_FILE = CHAR_MAX + 1,
+		OPT_NOPROFILE,
+		OPT_NORC,
+		OPT_POSIX,
+		OPT_RCFILE
+	};
 	static const struct option longopts[] = {
-		{ "command", required_argument, NULL, 'c' },
-		{ "help",    0, NULL, 'h' },
-		{ "version", 0, NULL, 'V' },
+		{ "command",     required_argument, NULL, 'c'           },
+		{ "init-file",   required_argument, NULL, OPT_INIT_FILE },
+		{ "interactive", no_argument,       NULL, 'i'           },
+		{ "login",       no_argument,       NULL, 'l'           },
+		{ "noprofile",   no_argument,       NULL, OPT_NOPROFILE },
+		{ "norc",        no_argument,       NULL, OPT_NORC      },
+		{ "posix",       no_argument,       NULL, OPT_POSIX     },
+		{ "rcfile",      required_argument, NULL, OPT_RCFILE    },
+		{ "restricted",  no_argument,       NULL, 'r'           },
+		{ "help",        no_argument,       NULL, 'h'           },
+		{ "version",     no_argument,       NULL, 'V'           },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -52,10 +67,18 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "c:hV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c:ilrhV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'c':
-			/* Ignore the command, just don't print unknown option error. */
+		case OPT_INIT_FILE:
+		case 'i':
+		case 'l':
+		case OPT_NOPROFILE:
+		case OPT_NORC:
+		case OPT_POSIX:
+		case OPT_RCFILE:
+		case 'r':
+			/* Ignore well known shell command-line options */
 			break;
 		case 'h':
 			usage();
