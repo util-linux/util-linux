@@ -354,7 +354,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 	}
 
 
-	if (!rc && cxt->restricted && (cxt->user_mountflags & MNT_MS_USER)) {
+	if (!rc && mnt_context_is_restricted(cxt) && (cxt->user_mountflags & MNT_MS_USER)) {
 		ns_old = mnt_context_switch_origin_ns(cxt);
 		if (!ns_old)
 			return -MNT_ERR_NAMESPACE;

@@ -789,7 +789,7 @@ static int do_umount(struct libmnt_context *cxt)
 
 	DBG(CXT, ul_debugobj(cxt, "do umount"));
 
-	if (cxt->restricted && !mnt_context_is_fake(cxt)) {
+	if (mnt_context_is_restricted(cxt) && !mnt_context_is_fake(cxt)) {
 		/*
 		 * extra paranoia for non-root users
 		 * -- chdir to the parent of the mountpoint and use NOFOLLOW
