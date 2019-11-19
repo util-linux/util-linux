@@ -315,6 +315,12 @@ program is executed. It's strongly recommended to use a valid mountpoint to
 specify filesystem, otherwise \fBmount\fR may fail. For example it's bad idea
 to use NFS or CIFS source on command line.
 .PP
+Since version 2.35 \fBmount\fR command does not exit when user permissions are
+inadequate by internal libmount security rules.  It drops suid permissions
+and continue as regular non-root user. It allows to support use-cases where
+root permissions are not necessary (e.g. fuse filesystems, user namespaces,
+etc).
+.PP
 For more details, see
 .BR fstab (5).
 Only the user that mounted a filesystem can unmount it again.

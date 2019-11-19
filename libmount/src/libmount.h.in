@@ -705,6 +705,7 @@ extern void mnt_free_context(struct libmnt_context *cxt);
 extern int mnt_reset_context(struct libmnt_context *cxt);
 extern int mnt_context_is_restricted(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));
+extern int mnt_context_force_unrestricted(struct libmnt_context *cxt);
 
 extern int mnt_context_init_helper(struct libmnt_context *cxt,
 				   int action, int flags);

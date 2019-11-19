@@ -427,6 +427,31 @@ int mnt_context_is_restricted(struct libmnt_context *cxt)
 }
 
 /**
+ * mnt_context_force_unrestricted:
+ * @cxt: mount context
+ *
+ * This function is DANGEROURS as it disables all security policies in libmount.
+ * Don't use if not sure. It removes "restricted" flag from the context, so
+ * libmount will use the current context as for root user.
+ *
+ * This function is designed for case you have no any suid permissions, so you
+ * can depend on kernel.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ *
+ * Since: 2.35
+ */
+int mnt_context_force_unrestricted(struct libmnt_context *cxt)
+{
+	if (mnt_context_is_restricted(cxt)) {
+		DBG(CXT, ul_debugobj(cxt, "force UNRESTRICTED"));
+		cxt->restricted = 0;
+	}
+
+	return 0;
+}
+
+/**
  * mnt_context_set_optsmode
  * @cxt: mount context
  * @mode: MNT_OMODE_* flags

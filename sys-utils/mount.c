@@ -47,23 +47,24 @@
 
 static int mk_exit_code(struct libmnt_context *cxt, int rc);
 
-static void __attribute__((__noreturn__)) exit_non_root(const char *option)
+static void suid_drop(struct libmnt_context *cxt)
 {
 	const uid_t ruid = getuid();
 	const uid_t euid = geteuid();
 
-	if (ruid == 0 && euid != 0) {
-		/* user is root, but setuid to non-root */
-		if (option)
-			errx(MNT_EX_USAGE, _("only root can use \"--%s\" option "
-					 "(effective UID is %u)"),
-					option, euid);
-		errx(MNT_EX_USAGE, _("only root can do that "
-				 "(effective UID is %u)"), euid);
+	if (ruid != 0 && euid == 0) {
+		if (setgid(getgid()) < 0)
+			err(MNT_EX_FAIL, _("setgid() failed"));
+
+		if (setuid(getuid()) < 0)
+			err(MNT_EX_FAIL, _("setuid() failed"));
 	}
-	if (option)
-		errx(MNT_EX_USAGE, _("only root can use \"--%s\" option"), option);
-	errx(MNT_EX_USAGE, _("only root can do that"));
+
+	/* be paranoid and check it, setuid(0) has to fail */
+	if (ruid != 0 && setuid(0) == 0)
+		errx(MNT_EX_FAIL, _("drop permissions failed."));
+
+	mnt_context_force_unrestricted(cxt);
 }
 
 static void __attribute__((__noreturn__)) mount_print_version(void)
@@ -672,7 +673,7 @@ int main(int argc, char **argv)
 		    !strchr("hlLUVvrist", c) &&
 		    c != MOUNT_OPT_TARGET &&
 		    c != MOUNT_OPT_SOURCE)
-			exit_non_root(option_to_longopt(c, longopts));
+			suid_drop(cxt);
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -872,7 +873,7 @@ int main(int argc, char **argv)
 	/* Non-root users are allowed to use -t to print_all(),
 	   but not to mount */
 	if (mnt_context_is_restricted(cxt) && types)
-		exit_non_root("types");
+		suid_drop(cxt);
 
 	if (oper && (types || all || mnt_context_get_source(cxt))) {
 		warnx(_("bad usage"));
@@ -905,7 +906,7 @@ int main(int argc, char **argv)
 		if (mnt_context_is_restricted(cxt) &&
 		    mnt_context_get_source(cxt) &&
 		    mnt_context_get_target(cxt))
-			exit_non_root(NULL);
+			suid_drop(cxt);
 
 	} else if (argc == 1 && (!mnt_context_get_source(cxt) ||
 				 !mnt_context_get_target(cxt))) {
@@ -933,7 +934,7 @@ int main(int argc, char **argv)
 		if (mnt_context_is_restricted(cxt) &&
 		    mnt_context_get_source(cxt) &&
 		    mnt_context_get_target(cxt))
-			exit_non_root(NULL);
+			suid_drop(cxt);
 
 	} else if (argc == 2 && !mnt_context_get_source(cxt)
 			     && !mnt_context_get_target(cxt)) {
@@ -941,7 +942,7 @@ int main(int argc, char **argv)
 		 * D) mount <source> <target>
 		 */
 		if (mnt_context_is_restricted(cxt))
-			exit_non_root(NULL);
+			suid_drop(cxt);
 
 		mnt_context_set_source(cxt, argv[0]);
 		mnt_context_set_target(cxt, argv[1]);
@@ -963,6 +964,14 @@ int main(int argc, char **argv)
 		mnt_context_set_optsmode(cxt, MNT_OMODE_NOTAB);
 
 	rc = mnt_context_mount(cxt);
+
+	if (rc == -EPERM
+	    && mnt_context_is_restricted(cxt)
+	    && !mnt_context_syscall_called(cxt)) {
+		/* Try it again without permissions */
+		suid_drop(cxt);
+		rc = mnt_context_mount(cxt);
+	}
 	rc = mk_exit_code(cxt, rc);
 
 	if (rc == MNT_EX_SUCCESS && mnt_context_is_verbose(cxt))

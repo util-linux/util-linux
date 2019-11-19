@@ -190,6 +190,25 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
+.SH "NON-SUPERUSER UMOUNTS"
+Normally, only the superuser can umount filesystems.
+However, when
+.I fstab
+contains the
+.B user
+option on a line, anybody can umount the corresponding filesystem.  For more details see
+.BR mount (8)
+man page.
+.PP
+Since version 2.34 \fBumount\fR command allows to perform umount operation also
+for fuse filesystems if kernel mount table contains user's ID.  In this case fstab
+user= mount option is not required.
+.PP
+Since version 2.35 \fBumount\fR command does not exit when user permissions are
+inadequate by internal libmount security rules.  It drops suid permissions
+and continue as regular non-root user. It allows to support use-cases where
+root permissions are not necessary (e.g. fuse filesystems, user namespaces,
+etc).
 .SH "LOOP DEVICE"
 The
 .B umount
