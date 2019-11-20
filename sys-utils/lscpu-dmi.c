@@ -42,16 +42,6 @@ struct dmi_header
 	uint8_t *data;
 };
 
-static int checksum(const uint8_t *buf, size_t len)
-{
-	uint8_t sum = 0;
-	size_t a;
-
-	for (a = 0; a < len; a++)
-		sum += buf[a];
-	return (sum == 0);
-}
-
 static void *get_mem_chunk(size_t base, size_t len, const char *devmem)
 {
 	void *p = NULL;
@@ -167,6 +157,16 @@ done:
 	return rc;
 }
 
+static int checksum(const uint8_t *buf, size_t len)
+{
+	uint8_t sum = 0;
+	size_t a;
+
+	for (a = 0; a < len; a++)
+		sum += buf[a];
+	return (sum == 0);
+}
+
 #if defined(__x86_64__) || defined(__i386__)
 static int hypervisor_decode_legacy(uint8_t *buf, const char *devmem)
 {
@@ -189,18 +189,6 @@ static int hypervisor_decode_smbios(uint8_t *buf, const char *devmem)
 	return hypervisor_from_dmi_table(DWORD(buf + 0x18), WORD(buf + 0x16),
 			 WORD(buf + 0x1C),
 		devmem);
-}
-
-static int hypervisor_decode_sysfw(void)
-{
-	static char const sys_fw_dmi_tables[] = _PATH_SYS_DMI;
-	struct stat st;
-
-	if (stat(sys_fw_dmi_tables, &st))
-		return -1;
-
-	return hypervisor_from_dmi_table(0, st.st_size, st.st_size / 4,
-					 sys_fw_dmi_tables);
 }
 
 /*
@@ -241,25 +229,11 @@ static int address_from_efi(size_t *address)
 	return ret;
 }
 
-int read_hypervisor_dmi(void)
+static int read_hypervisor_dmi_from_devmem(void)
 {
 	int rc = HYPER_NONE;
 	uint8_t *buf = NULL;
 	size_t fp = 0;
-
-	if (sizeof(uint8_t) != 1
-	    || sizeof(uint16_t) != 2
-	    || sizeof(uint32_t) != 4
-	    || '\0' != 0)
-		goto done;
-
-	/* -1 : no DMI in /sys,
-	 *  0 : DMI exist, nothing detected (HYPER_NONE)
-	 * >0 : hypervisor detected
-	 */
-	rc = hypervisor_decode_sysfw();
-	if (rc >= HYPER_NONE)
-		goto done;
 
 	/* First try EFI (ia64, Intel-based Mac) */
 	switch (address_from_efi(&fp)) {
@@ -301,5 +275,38 @@ memory_scan:
 #endif
 done:
 	free(buf);
+	return rc;
+}
+
+static int read_hypervisor_dmi_from_sysfw(void)
+{
+	static char const sys_fw_dmi_tables[] = _PATH_SYS_DMI;
+	struct stat st;
+
+	if (stat(sys_fw_dmi_tables, &st))
+		return -1;
+
+	return hypervisor_from_dmi_table(0, st.st_size, st.st_size / 4,
+					 sys_fw_dmi_tables);
+}
+
+int read_hypervisor_dmi(void)
+{
+	int rc;
+
+	if (sizeof(uint8_t) != 1
+	    || sizeof(uint16_t) != 2
+	    || sizeof(uint32_t) != 4
+	    || '\0' != 0)
+		return HYPER_NONE;
+
+	/* -1 : no DMI in /sys,
+	 *  0 : DMI exist, nothing detected (HYPER_NONE)
+	 * >0 : hypervisor detected
+	 */
+	rc = read_hypervisor_dmi_from_sysfw();
+	if (rc < 0)
+		rc = read_hypervisor_dmi_from_devmem();
+
 	return rc < 0 ? HYPER_NONE : rc;
 }
