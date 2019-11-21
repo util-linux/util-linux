@@ -875,6 +875,13 @@ int main(int argc, char **argv)
 	if (!ctl.pty)
 		err(EXIT_FAILURE, "failed to allocate PTY handler");
 
+	if (!ctl.isterm)
+		/* We keep ECHO flag for 'echo "date" | script' otherwise the
+		 * input is no visible (output is completely comtroled by
+		 * shell/command, we do not write anything there).
+		 */
+		ul_pty_keep_slave_echo(ctl.pty, 1);
+
 	ul_pty_set_callback_data(ctl.pty, (void *) &ctl);
 	cb = ul_pty_get_callbacks(ctl.pty);
 	cb->child_die = callback_child_die;
@@ -923,10 +930,18 @@ int main(int argc, char **argv)
 		shname = strrchr(shell, '/');
 		shname = shname ? shname + 1 : shell;
 
-		if (command)
-			execl(shell, shname, "-c", command, NULL);
-		else
-			execl(shell, shname, "-i", NULL);
+		if (access(shell, X_OK) == 0) {
+			if (command)
+				execl(shell, shname, "-c", command, NULL);
+			else
+				execl(shell, shname, "-i", NULL);
+		} else {
+			if (command)
+				execlp(shname, "-c", command, NULL);
+			else
+				execlp(shname, "-i", NULL);
+		}
+
 		err(EXIT_FAILURE, "failed to execute %s", shell);
 		break;
 	}

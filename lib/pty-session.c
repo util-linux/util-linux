@@ -71,6 +71,11 @@ void ul_free_pty(struct ul_pty *pty)
 	free(pty);
 }
 
+void ul_pty_keep_slave_echo(struct ul_pty *pty, int enable)
+{
+	assert(pty);
+	pty->keep_slave_echo = enable ? 1 : 0;
+}
 
 int ul_pty_get_delivered_signal(struct ul_pty *pty)
 {
@@ -175,8 +180,10 @@ int ul_pty_setup(struct ul_pty *pty)
 
 		if (!rc) {
 			tcgetattr(pty->slave, &slave_attrs);
-			slave_attrs.c_lflag &= ~ECHO;
-			tcsetattr(pty->slave, TCSANOW, &slave_attrs);
+			if (!pty->keep_slave_echo) {
+				slave_attrs.c_lflag &= ~ECHO;
+				tcsetattr(pty->slave, TCSANOW, &slave_attrs);
+			}
 		} else
 			goto done;
 	}

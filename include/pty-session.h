@@ -75,13 +75,15 @@ struct ul_pty {
 
 	struct timeval	next_callback_time;
 
-	unsigned int isterm:1;		/* is stdin terminal? */
+	unsigned int isterm:1,		/* is stdin terminal? */
+		     keep_slave_echo:1;	/* keep ECHO on stdin */
 };
 
 void ul_pty_init_debug(int mask);
 struct ul_pty *ul_new_pty(int is_stdin_tty);
 void ul_free_pty(struct ul_pty *pty);
 
+void ul_pty_keep_slave_echo(struct ul_pty *pty, int enable);
 int ul_pty_get_delivered_signal(struct ul_pty *pty);
 
 void ul_pty_set_callback_data(struct ul_pty *pty, void *data);
