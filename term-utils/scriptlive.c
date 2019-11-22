@@ -71,6 +71,7 @@ usage(void)
 	fputs(_(" -B, --log-io <file>     script stdin and stdout log file\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -c, --command <command> run command rather than interactive shell\n"), out);
 	fputs(_(" -d, --divisor <num>     speed up or slow down execution with time divisor\n"), out);
 	fputs(_(" -m, --maxdelay <num>    wait at most this many seconds between updates\n"), out);
 	printf(USAGE_HELP_OPTIONS(25));
@@ -170,6 +171,7 @@ main(int argc, char *argv[])
 	pid_t child;
 
 	static const struct option longopts[] = {
+		{ "command",    required_argument,      0, 'c' },
 		{ "timing",	required_argument,	0, 't' },
 		{ "log-timing",	required_argument,	0, 'T' },
 		{ "log-in",     required_argument,      0, 'I'},
@@ -199,11 +201,14 @@ main(int argc, char *argv[])
 	replay_init_debug();
 	timerclear(&maxdelay);
 
-	while ((ch = getopt_long(argc, argv, "B:I:T:t:d:m:Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "c:B:I:T:t:d:m:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
 		switch(ch) {
+		case 'c':
+			command = optarg;
+			break;
 		case 't':
 		case 'T':
 			log_tm = optarg;
@@ -308,10 +313,17 @@ main(int argc, char *argv[])
 		shname = strrchr(shell, '/');
 		shname = shname ? shname + 1 : shell;
 
-		if (command)
-			execl(shell, shname, "-c", command, NULL);
-		else
-			execl(shell, shname, "-i", NULL);
+		if (access(shell, X_OK) == 0) {
+			if (command)
+				execl(shell, shname, "-c", command, NULL);
+			else
+				execl(shell, shname, "-i", NULL);
+		} else {
+			if (command)
+				execlp(shname, "-c", command, NULL);
+			else
+				execlp(shname, "-i", NULL);
+		}
 		err(EXIT_FAILURE, "failed to execute %s", shell);
 		break;
 	}
