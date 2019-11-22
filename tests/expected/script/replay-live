@@ -1,7 +1,7 @@
 >>> scriptlive: Starting your typescript execution by sh --posix.
 echo "result is $(($NUMBER + 1))"
-$ echo "result is $(($NUMBER + 1))"
+prompt> echo "result is $(($NUMBER + 1))"
 result is 124
-$ exit
+prompt> exit
 
 >>> scriptlive: done.
