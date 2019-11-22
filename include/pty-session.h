@@ -100,5 +100,6 @@ void ul_pty_set_mainloop_time(struct ul_pty *pty, struct timeval *tv);
 int ul_pty_get_childfd(struct ul_pty *pty);
 void ul_pty_wait_for_child(struct ul_pty *pty);
 pid_t ul_pty_get_child(struct ul_pty *pty);
+void ul_pty_write_eof_to_child(struct ul_pty *pty);
 
 #endif /* UTIL_LINUX_PTY_H */

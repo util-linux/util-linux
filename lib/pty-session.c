@@ -289,7 +289,7 @@ static int write_to_child(struct ul_pty *pty, char *buf, size_t bufsz)
  * maintains master+slave tty stuff within the session. Use pipe to write to
  * pty and assume non-interactive (tee-like) behavior is NOT well supported.
  */
-static void write_eof_to_child(struct ul_pty *pty)
+void ul_pty_write_eof_to_child(struct ul_pty *pty)
 {
 	unsigned int tries = 0;
 	struct pollfd fds[] = {
@@ -596,7 +596,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 					DBG(IO, ul_debugobj(pty, " ignore FD"));
 					pfd[i].fd = -1;
 					if (i == POLLFD_STDIN) {
-						write_eof_to_child(pty);
+						ul_pty_write_eof_to_child(pty);
 						DBG(IO, ul_debugobj(pty, "  ignore STDIN"));
 					}
 				}

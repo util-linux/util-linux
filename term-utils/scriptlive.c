@@ -108,6 +108,11 @@ static int process_next_step(struct scriptlive *ss)
 		struct timeval *delay;
 
 		rc = replay_get_next_step(ss->setup, "I", &ss->step);
+		if (rc == 1) {
+			ul_pty_write_eof_to_child(ss->pty);
+			rc = 0;
+			break;
+		}
 		if (rc)
 			break;
 
