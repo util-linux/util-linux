@@ -20,19 +20,78 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SCRIPT"
 ts_check_test_command "$TS_CMD_SCRIPTREPLAY"
+ts_check_test_command "$TS_CMD_SCRIPTLIVE"
 
-SCRIPT_FILE="$(mktemp "${TS_OUTDIR}/scXXXXXXXXXXXXX")"
-TIMING_FILE="$(mktemp "${TS_OUTDIR}/tmXXXXXXXXXXXXX")"
+LOG_OUT_FILE="${TS_OUTDIR}/${TS_TESTNAME}-logfile-out"
+LOG_IN_FILE="${TS_OUTDIR}/${TS_TESTNAME}-logfile-in"
+LOG_IO_FILE="${TS_OUTDIR}/${TS_TESTNAME}-logfile-io"
+TIMING_FILE="${TS_OUTDIR}/${TS_TESTNAME}-logfile-tm"
 
-echo "record script output with timing" >"$TS_OUTPUT"
-"$TS_CMD_SCRIPT" -c "echo hello world; sleep 0.5; echo all done" \
-	--timing="$TIMING_FILE" "$SCRIPT_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm -f $TIMING_FILE $LOG_IN_FILE $LOG_OUT_FILE $LOG_IO_FILE
 
-echo "replay script output" >>"$TS_OUTPUT"
-"$TS_CMD_SCRIPTREPLAY" "$TIMING_FILE" "$SCRIPT_FILE" 1.5 >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-sed -i "s|$SCRIPT_FILE|typescript|g; s|$TIMING_FILE|timingfile|g" $TS_OUTPUT $TS_ERRLOG
+#
+# Old command line format
+#
+ts_init_subtest "basic"
+echo "===recording" >"$TS_OUTPUT"
+$TS_CMD_SCRIPT \
+	--command "echo hello world; sleep 0.5; echo all done" \
+	--timing="$TIMING_FILE" \
+	"$LOG_OUT_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-rm -f "$SCRIPT_FILE" "$TIMING_FILE"
+echo "===replaying" >>"$TS_OUTPUT"
+$TS_CMD_SCRIPTREPLAY "$TIMING_FILE" "$LOG_OUT_FILE" 1.5 >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+sed -i "s|$TIMING_FILE|timingfile|g; s|$LOG_OUT_FILE|outlog|g" $TS_OUTPUT $TS_ERRLOG
+ts_finalize_subtest
+
+
+#
+# New command line format
+#
+ts_init_subtest "output"
+echo "===recording" >"$TS_OUTPUT"
+NUMBER=1 $TS_CMD_SCRIPT \
+        --command 'echo "result is $(($NUMBER + 1))"' \
+	--log-out "$LOG_OUT_FILE" \
+	--log-timing "$TIMING_FILE"    >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+echo "===replaying" >>"$TS_OUTPUT"
+$TS_CMD_SCRIPTREPLAY \
+	--log-out "$LOG_OUT_FILE" \
+	--log-timing "$TIMING_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+sed -i "s|$TIMING_FILE|timingfile|g; s|$LOG_OUT_FILE|outlog|g" $TS_OUTPUT $TS_ERRLOG
+ts_finalize_subtest
+
+
+#
+# Log input
+#
+ts_init_subtest "input"
+echo "===recording" >"$TS_OUTPUT"
+echo 'echo "result is $(($NUMBER + 1))"' | $TS_CMD_SCRIPT \
+	--command 'sh' \
+	--log-in "$LOG_IN_FILE" \
+	--log-timing "$TIMING_FILE" >> /dev/null 2>> $TS_ERRLOG
+
+echo "===replaying" >>"$TS_OUTPUT"
+$TS_CMD_SCRIPTREPLAY \
+	--log-in "$LOG_IN_FILE" \
+	--log-timing "$TIMING_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+
+#
+# Live replay 
+#
+ts_init_subtest "live"
+NUMBER=123 $TS_CMD_SCRIPTLIVE \
+	--command 'sh --posix' \
+	--log-in "$LOG_IN_FILE" \
+	--log-timing "$TIMING_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
+sed -i 's/sh-[[:alnum:]\.]*//g' $TS_OUTPUT
+ts_finalize_subtest
 
 ts_finalize

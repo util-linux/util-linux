@@ -92,6 +92,7 @@ TS_CMD_RUNUSER=${TS_CMD_RUNUSER-"${ts_commandsdir}runuser"}
 TS_CMD_REV=${TS_CMD_REV:-"${ts_commandsdir}rev"}
 TS_CMD_SCRIPT=${TS_CMD_SCRIPT-"${ts_commandsdir}script"}
 TS_CMD_SCRIPTREPLAY=${TS_CMD_SCRIPTREPLAY-"${ts_commandsdir}scriptreplay"}
+TS_CMD_SCRIPTLIVE=${TS_CMD_SCRIPTLIVE-"${ts_commandsdir}scriptlive"}
 TS_CMD_SETARCH=${TS_CMD_SETARCH-"${ts_commandsdir}setarch"}
 TS_CMD_SETSID=${TS_CMD_SETSID-"${ts_commandsdir}setsid"}
 TS_CMD_SWAPLABEL=${TS_CMD_SWAPLABEL:-"${ts_commandsdir}swaplabel"}

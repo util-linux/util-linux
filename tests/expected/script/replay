@@ -1,9 +1,0 @@
-record script output with timing
-Script started, output log file is 'typescript', timing file is 'timingfile'.
-hello world
-all done
-Script done.
-replay script output
-hello world
-all done
-
