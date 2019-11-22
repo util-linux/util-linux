@@ -238,9 +238,6 @@ main(int argc, char *argv[])
 	argv += optind;
 	idx = 0;
 
-	if (!isatty(STDIN_FILENO))
-		errx(EXIT_FAILURE, _("stdin is not terminal"));
-
 	if (!log_tm && idx < argc)
 		log_tm = argv[idx++];
 	if (!log_in && !log_io && idx < argc)
@@ -278,7 +275,8 @@ main(int argc, char *argv[])
 	if (shell == NULL)
 		shell = _PATH_BSHELL;
 
-	fprintf(stdout, _(">>> scriptlive: Starting your typescript execution by %s.\n"), shell);
+	fprintf(stdout, _(">>> scriptlive: Starting your typescript execution by %s.\n"),
+			command ? command : shell);
 
 	ul_pty_init_debug(0);
 
@@ -290,6 +288,10 @@ main(int argc, char *argv[])
 	cb = ul_pty_get_callbacks(ss.pty);
 	cb->child_sigstop = callback_child_sigstop;
 	cb->mainloop = mainloop_cb;
+
+	if (!isatty(STDIN_FILENO))
+		/* We keep ECHO flag for compatibility with script(1) */
+		ul_pty_keep_slave_echo(ss.pty, 1);
 
 	if (ul_pty_setup(ss.pty))
 		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
