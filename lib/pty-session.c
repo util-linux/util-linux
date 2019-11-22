@@ -312,11 +312,16 @@ static void write_eof_to_child(struct ul_pty *pty)
 
 static int mainloop_callback(struct ul_pty *pty)
 {
+	int rc;
+
 	if (!pty->callbacks.mainloop)
 		return 0;
 
 	DBG(IO, ul_debugobj(pty, "calling mainloop callback"));
-	return pty->callbacks.mainloop(pty->callback_data);
+	rc = pty->callbacks.mainloop(pty->callback_data);
+
+	DBG(IO, ul_debugobj(pty, " callback done [rc=%d]", rc));
+	return rc;
 }
 
 static int handle_io(struct ul_pty *pty, int fd, int *eof)
@@ -565,14 +570,16 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 			if (pfd[i].revents == 0)
 				continue;
 
-			DBG(IO, ul_debugobj(pty, " active pfd[%s].fd=%d %s %s %s",
+			DBG(IO, ul_debugobj(pty, " active pfd[%s].fd=%d %s %s %s %s",
 						i == POLLFD_STDIN  ? "stdin" :
 						i == POLLFD_MASTER ? "master" :
 						i == POLLFD_SIGNAL ? "signal" : "???",
 						pfd[i].fd,
 						pfd[i].revents & POLLIN  ? "POLLIN" : "",
 						pfd[i].revents & POLLHUP ? "POLLHUP" : "",
-						pfd[i].revents & POLLERR ? "POLLERR" : ""));
+						pfd[i].revents & POLLERR ? "POLLERR" : "",
+						pfd[i].revents & POLLNVAL ? "POLLNVAL" : ""));
+
 			switch (i) {
 			case POLLFD_STDIN:
 			case POLLFD_MASTER:
@@ -581,8 +588,11 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 					rc = handle_io(pty, pfd[i].fd, &eof);
 				/* EOF maybe detected by two ways:
 				 *	A) poll() return POLLHUP event after close()
-				 *	B) read() returns 0 (no data) */
-				if ((pfd[i].revents & POLLHUP) || eof) {
+				 *	B) read() returns 0 (no data)
+				 *
+				 * POLLNVAL means that fd is closed.
+				 */
+				if ((pfd[i].revents & POLLHUP) || (pfd[i].revents & POLLNVAL) || eof) {
 					DBG(IO, ul_debugobj(pty, " ignore FD"));
 					pfd[i].fd = -1;
 					if (i == POLLFD_STDIN) {
