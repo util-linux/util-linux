@@ -59,7 +59,7 @@ usage(void)
 	fputs(_(" -O, --log-out <file>    script stdout log file (default)\n"), out);
 	fputs(_(" -B, --log-io <file>     script stdin and stdout log file\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -s, --typescript <file> deprecated alist to -O\n"), out);
+	fputs(_(" -s, --typescript <file> deprecated alias to -O\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("     --summary           display overview about recorded session and exit\n"), out);
