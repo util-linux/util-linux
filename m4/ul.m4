@@ -105,8 +105,8 @@ AC_DEFUN([UL_CHECK_SYSCALL], [
       [syscall=SYS_$1],
       [dnl Our libc failed use, so see if we can get the kernel
       dnl headers to play ball ...
-      _UL_SYSCALL_CHECK_DECL([_NR_$1],
-	[syscall=_NR_$1],
+      _UL_SYSCALL_CHECK_DECL([__NR_$1],
+	[syscall=__NR_$1],
 	[
 	  syscall=no
 	  if test "x$linux_os" = xyes; then
