@@ -454,6 +454,7 @@ hwclock_SOURCES = \
 	sys-utils/hwclock.h \
 	sys-utils/hwclock-parse-date.y
 hwclock_LDADD = $(LDADD) libcommon.la -lm
+hwclock_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/sys-utils
 if USE_HWCLOCK_CMOS
 hwclock_SOURCES += \
 	sys-utils/hwclock-cmos.c
