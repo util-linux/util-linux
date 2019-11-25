@@ -1,7 +1,7 @@
 .\" Copyright 1994 Salvatore Valente (svalente@mit.edu)
 .\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH KILL 1 "July 2014" "util-linux" "User Commands"
+.TH KILL 1 "November 2019" "util-linux" "User Commands"
 .SH NAME
 kill \- terminate a process
 .SH SYNOPSIS
@@ -11,6 +11,7 @@ kill \- terminate a process
 .RB [ \-q
 .IR value ]
 .RB [ \-a ]
+\fR[\fB\-\-timeout \fImilliseconds signal\fR]
 .RB [ \-\- ]
 .IR pid | name ...
 .br
@@ -120,7 +121,26 @@ then it can obtain this data via the
 field of the
 .I siginfo_t
 structure.
-
+.TP
+\fB\-\-timeout\fR \fImilliseconds signal\fR
+Send a signal defined the usual way to a process.
+.B \-\-timeout
+will make
+.B kill
+to wait for a period defined in
+.I milliseconds
+before sending follow-up
+.I signal
+to process.  When timeout is speficified multiple times to a list of
+timeouts and signals that are sent sequentially.  The
+.B \-\-timeout
+option can be combined with
+.B \-\-queue
+option.
+.IP
+Example.  Send signal that does nothing twice, and terminate cat(1).
+.br
+kill --timeout 1000 0 --timeout 1000 TERM --verbose -s 0 cat
 .SH NOTES
 Although it is possible to specify the TID (thread ID, see
 .BR gettid (2))

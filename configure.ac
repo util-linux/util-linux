@@ -497,6 +497,8 @@ AC_CHECK_FUNCS([ \
 	nanosleep \
 	ntp_gettime \
 	personality \
+	pidfd_open \
+	pidfd_send_signal \
 	posix_fadvise \
 	prctl \
 	qsort_r \
@@ -538,6 +540,9 @@ UL_CHECK_SYSCALL([setns])
 AS_IF([test "x$ul_cv_syscall_setns" = xno], [
    have_setns_syscall="no"
 ])
+
+UL_CHECK_SYSCALL([pidfd_open])
+UL_CHECK_SYSCALL([pidfd_send_signal])
 
 AC_CHECK_FUNCS([isnan], [],
 	[AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]
