@@ -291,7 +291,7 @@ main(int argc, char *argv[])
 
 	if (!isatty(STDIN_FILENO))
 		/* We keep ECHO flag for compatibility with script(1) */
-		ul_pty_keep_slave_echo(ss.pty, 1);
+		ul_pty_slave_echo(ss.pty, 1);
 
 	if (ul_pty_setup(ss.pty))
 		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));

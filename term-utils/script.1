@@ -88,6 +88,13 @@ rather than an interactive shell.  This makes it easy for a script to capture
 the output of a program that behaves differently when its stdout is not a
 tty.
 .TP
+\fB\-E\fR, \fB\-\-echo\fR \fIwhen\fR
+This option controls the ECHO flag for pseudoterminal within the session. The
+supported modes are always, never, or auto. The default is "auto" -- in this
+case, ECHO is disabled if the current standard input is a terminal to avoid
+double-echo, and enabled if standard input is not terminal (for example pipe:
+"echo date | script") to avoid missing input in the session log.
+.TP
 \fB\-e\fR, \fB\-\-return\fR
 Return the exit code of the child process.  Uses the same format as bash
 termination on signal termination exit code is 128+n.  The exit code of

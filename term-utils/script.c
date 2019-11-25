@@ -208,6 +208,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -e, --return                  return exit code of the child process\n"), out);
 	fputs(_(" -f, --flush                   run flush after each write\n"), out);
 	fputs(_("     --force                   use output file even when it is a link\n"), out);
+	fputs(_(" -E, --echo <when>             echo input (auto, always or never)\n"), out);
 	fputs(_(" -o, --output-limit <size>     terminate if output files exceed size\n"), out);
 	fputs(_(" -q, --quiet                   be quiet\n"), out);
 
@@ -720,7 +721,7 @@ int main(int argc, char **argv)
 		.in  = { .ident = 'I' },
 	};
 	struct ul_pty_callbacks *cb;
-	int ch, format = 0, caught_signal = 0, rc = 0;
+	int ch, format = 0, caught_signal = 0, rc = 0, echo = 0;
 	const char *outfile = NULL, *infile = NULL;
 	const char *timingfile = NULL, *shell = NULL, *command = NULL;
 
@@ -729,6 +730,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{"append", no_argument, NULL, 'a'},
 		{"command", required_argument, NULL, 'c'},
+		{"echo", required_argument, NULL, 'E'},
 		{"return", no_argument, NULL, 'e'},
 		{"flush", no_argument, NULL, 'f'},
 		{"force", no_argument, NULL, FORCE_OPTION,},
@@ -765,7 +767,14 @@ int main(int argc, char **argv)
 	script_init_debug();
 	ON_DBG(PTY, ul_pty_init_debug(0xFFFF));
 
-	while ((ch = getopt_long(argc, argv, "aB:c:efI:O:o:qm:T:t::Vh", longopts, NULL)) != -1) {
+	/* The default is to keep ECHO flag when stdin is not terminal. We need
+	 * it to make stdin (in case of "echo foo | script") log-able and
+	 * visiable on terminal, and for backward compatibility.
+	 */
+	ctl.isterm = isatty(STDIN_FILENO);
+	echo = ctl.isterm ? 0 : 1;
+
+	while ((ch = getopt_long(argc, argv, "aB:c:eE:fI:O:o:qm:T:t::Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -775,6 +784,16 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			command = optarg;
+			break;
+		case 'E':
+			if (strcmp(optarg, "auto") == 0)
+				; /* keep default */
+			else if (strcmp(optarg, "never") == 0)
+				echo = 0;
+			else if (strcmp(optarg, "always") == 0)
+				echo = 1;
+			else
+				errx(EXIT_FAILURE, _("unssuported echo mode: '%s'"), optarg);
 			break;
 		case 'e':
 			ctl.rc_wanted = 1;
@@ -870,17 +889,11 @@ int main(int argc, char **argv)
 	if (!shell)
 		shell = _PATH_BSHELL;
 
-	ctl.isterm = isatty(STDIN_FILENO);
 	ctl.pty = ul_new_pty(ctl.isterm);
 	if (!ctl.pty)
 		err(EXIT_FAILURE, "failed to allocate PTY handler");
 
-	if (!ctl.isterm)
-		/* We keep ECHO flag for 'echo "date" | script' otherwise the
-		 * input is no visible (output is completely comtroled by
-		 * shell/command, we do not write anything there).
-		 */
-		ul_pty_keep_slave_echo(ctl.pty, 1);
+	ul_pty_slave_echo(ctl.pty, echo);
 
 	ul_pty_set_callback_data(ctl.pty, (void *) &ctl);
 	cb = ul_pty_get_callbacks(ctl.pty);

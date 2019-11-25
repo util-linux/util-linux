@@ -71,10 +71,10 @@ void ul_free_pty(struct ul_pty *pty)
 	free(pty);
 }
 
-void ul_pty_keep_slave_echo(struct ul_pty *pty, int enable)
+void ul_pty_slave_echo(struct ul_pty *pty, int enable)
 {
 	assert(pty);
-	pty->keep_slave_echo = enable ? 1 : 0;
+	pty->slave_echo = enable ? 1 : 0;
 }
 
 int ul_pty_get_delivered_signal(struct ul_pty *pty)
@@ -172,20 +172,28 @@ int ul_pty_setup(struct ul_pty *pty)
 		/* set the current terminal to raw mode; pty_cleanup() reverses this change on exit */
 		slave_attrs = pty->stdin_attrs;
 		cfmakeraw(&slave_attrs);
-		slave_attrs.c_lflag &= ~ECHO;
+
+		if (pty->slave_echo)
+			slave_attrs.c_lflag |= ECHO;
+		else
+			slave_attrs.c_lflag &= ~ECHO;
+
 		tcsetattr(STDIN_FILENO, TCSANOW, &slave_attrs);
 	} else {
 	        DBG(SETUP, ul_debugobj(pty, "create for non-terminal"));
-		rc = openpty(&pty->master, &pty->slave, NULL, NULL, NULL);
 
-		if (!rc) {
-			tcgetattr(pty->slave, &slave_attrs);
-			if (!pty->keep_slave_echo) {
-				slave_attrs.c_lflag &= ~ECHO;
-				tcsetattr(pty->slave, TCSANOW, &slave_attrs);
-			}
-		} else
+		rc = openpty(&pty->master, &pty->slave, NULL, NULL, NULL);
+		if (rc)
 			goto done;
+
+		tcgetattr(pty->slave, &slave_attrs);
+
+		if (pty->slave_echo)
+			slave_attrs.c_lflag |= ECHO;
+		else
+			slave_attrs.c_lflag &= ~ECHO;
+
+		tcsetattr(pty->slave, TCSANOW, &slave_attrs);
 	}
 
 	sigfillset(&ourset);
