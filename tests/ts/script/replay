@@ -88,7 +88,7 @@ ts_finalize_subtest
 #
 ts_init_subtest "live"
 NUMBER=123 $TS_CMD_SCRIPTLIVE \
-	--command 'sh --posix' \
+	--command 'sh' \
 	--log-in "$LOG_IN_FILE" \
 	--log-timing "$TIMING_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
 sed -i 's/sh-[[:alnum:]\.\$\#]*/prompt>/g' $TS_OUTPUT
