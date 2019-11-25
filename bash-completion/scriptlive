@@ -1,4 +1,4 @@
-_scriptreplay_module()
+_scriptlive_module()
 {
 	local cur prev OPTS
 	COMPREPLY=()
@@ -17,13 +17,9 @@ _scriptreplay_module()
 		-*)
 			OPTS="--timing
 				--log-in
-				--log-out
 				--log-io
 				--log-timing
-				--summary
-				--stream
-				--cr-mode
-				--typescript
+				--command
 				--divisor
 				--maxdelay
 				--version
@@ -37,4 +33,4 @@ _scriptreplay_module()
 	COMPREPLY=( $(compgen -f -- $cur) )
 	return 0
 }
-complete -F _scriptreplay_module scriptreplay
+complete -F _scriptlive_module scriptlive

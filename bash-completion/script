@@ -25,6 +25,12 @@ _script_module()
 		-*)
 			OPTS="--append
 				--command
+				--echo
+				--log-in
+				--log-out
+				--log-io
+				--log-timing
+				--logging-format
 				--return
 				--flush
 				--force
