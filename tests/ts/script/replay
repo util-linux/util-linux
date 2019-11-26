@@ -87,6 +87,7 @@ ts_finalize_subtest
 # Live replay 
 #
 ts_init_subtest "live"
+TS_KNOWN_FAIL="yes"
 NUMBER=123 $TS_CMD_SCRIPTLIVE \
 	--command 'sh' \
 	--log-in "$LOG_IN_FILE" \
