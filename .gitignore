@@ -129,6 +129,7 @@ ylwrap
 /more
 /mount
 /mountpoint
+/mountsh
 /namei
 /newgrp
 /nologin

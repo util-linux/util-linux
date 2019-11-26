@@ -1390,6 +1390,19 @@ AS_IF([test "x$build_fallocate" = xyes], [
 ])
 
 
+AC_ARG_ENABLE([mountsh],
+  AS_HELP_STRING([--disable-mountsh], [do not build mountsh]),
+  [], [UL_DEFAULT_ENABLE([mountsh], [check])]
+)
+UL_BUILD_INIT([mountsh])
+UL_REQUIRES_LINUX([mountsh])
+UL_REQUIRES_SYSCALL_CHECK([mountsh], [UL_CHECK_SYSCALL([fsopen])], [fsopen])
+UL_REQUIRES_SYSCALL_CHECK([mountsh], [UL_CHECK_SYSCALL([fsmount])], [fsmount])
+UL_REQUIRES_SYSCALL_CHECK([mountsh], [UL_CHECK_SYSCALL([fsconfig])], [fsconfig])
+UL_REQUIRES_SYSCALL_CHECK([mountsh], [UL_CHECK_SYSCALL([move_mount])], [move_mount])
+AM_CONDITIONAL([BUILD_MOUNTSH], [test "x$build_mountsh" = xyes])
+
+
 AC_ARG_ENABLE([unshare],
   AS_HELP_STRING([--disable-unshare], [do not build unshare]),
   [], [UL_DEFAULT_ENABLE([unshare], [check])]

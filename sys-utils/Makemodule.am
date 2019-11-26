@@ -322,6 +322,14 @@ INSTALL_EXEC_HOOKS += install-exec-hook-mount
 endif # BUILD_MOUNT
 
 
+###if BUILD_MOUNTSH
+bin_PROGRAMS += mountsh
+mountsh_SOURCES = sys-utils/mountsh.c
+mountsh_LDADD = $(LDADD) libcommon.la $(READLINE_LIBS)
+mountsh_CFLAGS = $(AM_CFLAGS)
+###endif # BUILD_MOUNTSH
+
+
 if BUILD_SWAPON
 sbin_PROGRAMS += swapon swapoff
 dist_man_MANS += \
