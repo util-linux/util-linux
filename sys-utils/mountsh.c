@@ -19,6 +19,7 @@
 #include "xalloc.h"
 #include "strv.h"
 #include "strutils.h"
+#include "procutils.h"
 #include "closestream.h"
 
 #ifndef HAVE_FSOPEN
@@ -53,6 +54,11 @@ static int move_mount(int from_dirfd, const char *from_pathname,
 }
 #endif
 
+struct sh_fd {
+	int	fd;
+	const char *type;
+	const char *name;	/* for fsopen() */
+};
 
 struct sh_context {
 	int	cfd;		/* filesystem configuration (fsopen() FD) */
@@ -70,6 +76,7 @@ struct sh_command {
 
 
 static int cmd_help(struct sh_context *sh, int argc, char *argv[]);
+static int cmd_fds(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[]);
 
 static const struct sh_command commands[] =
@@ -81,7 +88,11 @@ static const struct sh_command commands[] =
 	{ "fsopen", cmd_fsopen,
 		N_("creates filesystem context"),
 		N_("<name> [CLOEXEC]")
+	},
+	{ "fds", cmd_fds,
+		N_("list relevant file descritors")
 	}
+
 };
 
 static const struct sh_command *lookup_command(const char *name)
@@ -135,6 +146,33 @@ static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	return 0;
 }
 
+static int cmd_fds(struct sh_context *sh, int argc, char *argv[])
+{
+	char info[PATH_MAX];
+	int fd;
+	struct proc_fds *fds = proc_open_fds(getpid());
+
+	if (!fds) {
+		warn(_("faild to open /proc/self/fd/ directory"));
+		return 0;
+	}
+
+	while (proc_next_fd(fds, &fd, info, sizeof(info)) == 0) {
+		char *type;
+
+		if (!*info || !startswith(info, "anon_inode:"))
+			continue;
+		type = info + 12;
+		strrem(type, ']');
+		printf(" %d : %s\n", fd, type);
+
+		/* TODO: use fsinfo() to get more details about the FD */
+	}
+
+	proc_close_fds(fds);
+	return 0;
+}
+
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
 {
 	char *fsname;
@@ -160,9 +198,10 @@ static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
 	if (fd < 0)
 		warn(_("cannot open %s filesystem"), fsname);
 	else {
-		if (sh->cfd >= 0)
-			close(sh->cfd);
-		sh->cfd = fd;
+		if (sh->cfd < 0)		/* default */
+			sh->cfd = fd;
+
+		printf(_("new FD [fscontext]: %d\n"), fd);
 	}
 	return 0;
 }
@@ -186,7 +225,7 @@ static int cmd_help(struct sh_context *sh __attribute__((__unused__)),
 		if (!cmd)
 			warnx(_("%s: command not found"), name);
 
-		printf("%s %s\n", cmd->name, cmd->syno);
+		printf("%s %s\n", cmd->name, cmd->syno ? : "");
 		printf("  - %s\n", cmd->desc);
 	}
 	return 0;
@@ -272,6 +311,11 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	fputc('\n', stdout);
+	printf(_("Welcome to mountsh, use 'help' for more details.\n"));
+	printf(_("This shell PID is %d.\n"), getpid());
+	fputc('\n', stdout);
 
 	rc = mainloop(&sh);
 	return rc != 0 ? EXIT_FAILURE : EXIT_SUCCESS;
