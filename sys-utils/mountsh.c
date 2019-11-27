@@ -233,7 +233,7 @@ static int cmd_help(struct sh_context *sh __attribute__((__unused__)),
 
 static int mainloop(struct sh_context *sh)
 {
-	const char *prompt = getuid() == 0 ? "mountsh # " : "mountsh $ ";
+	const char *prompt = getuid() == 0 ? ">>> # " : ">>> $ ";
 	char buf[BUFSIZ];
 	int rc = 0;	/* internal status */
 
