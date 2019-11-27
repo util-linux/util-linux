@@ -78,21 +78,25 @@ struct sh_command {
 static int cmd_help(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fds(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[]);
+static int cmd_close(struct sh_context *sh, int argc, char *argv[]);
 
 static const struct sh_command commands[] =
 {
-	{ "help", cmd_help,
-		N_("list commands and help"),
-		N_("[<command>]")
+	{ "close", cmd_close,
+		N_("close file descritor"),
+		N_("<fd>")
+	},
+	{ "fds", cmd_fds,
+		N_("list relevant file descritors")
 	},
 	{ "fsopen", cmd_fsopen,
 		N_("creates filesystem context"),
 		N_("<name> [CLOEXEC]")
 	},
-	{ "fds", cmd_fds,
-		N_("list relevant file descritors")
+	{ "help", cmd_help,
+		N_("list commands and help"),
+		N_("[<command>]")
 	}
-
 };
 
 static const struct sh_command *lookup_command(const char *name)
@@ -146,7 +150,9 @@ static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	return 0;
 }
 
-static int cmd_fds(struct sh_context *sh, int argc, char *argv[])
+static int cmd_fds(struct sh_context *sh __attribute__((__unused__)),
+		int argc __attribute__((__unused__)),
+		char *argv[] __attribute__((__unused__)))
 {
 	char info[PATH_MAX];
 	int fd;
@@ -205,6 +211,36 @@ static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
 	}
 	return 0;
 }
+
+static int cmd_close(struct sh_context *sh __attribute__((__unused__)),
+		     int argc, char *argv[])
+{
+	int fd;
+	char *end = NULL;
+
+	if (argc < 2) {
+		warnx(_("no file descritor specified"));
+		return -EINVAL;
+	}
+
+	errno = 0;
+	fd = (int) strtol(argv[1], &end, 10);
+	if (errno ||argv[1] == end || (end && *end)) {
+		warn(_("cannot use '%s' as file descriptor"), argv[1]);
+		return -EINVAL;
+	}
+	if (fd == STDIN_FILENO || fd == STDOUT_FILENO || fd == STDERR_FILENO) {
+		warnx(_("invalid file descriptor"));
+		return -EINVAL;
+	}
+	if (close(fd) != 0)
+		warn(_("cannot close %d"), fd);
+	else
+		printf(_(" %d closed\n"), fd);
+
+	return 0;
+}
+
 
 static int cmd_help(struct sh_context *sh __attribute__((__unused__)),
 		    int argc, char *argv[])
