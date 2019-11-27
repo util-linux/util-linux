@@ -241,6 +241,90 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 	return 0;
 }
 
+/*
+ * @pid: process ID for which we want to obtain the file descriptors
+ *
+ * Returns: newly allocated fds structure
+ */
+struct proc_fds *proc_open_fds(pid_t pid)
+{
+	DIR *dir = NULL;
+	struct proc_fds *fds = NULL;
+	char path[PATH_MAX];
+
+	sprintf(path, "/proc/%d/fd/", pid);
+	dir = opendir(path);
+	if (!dir)
+		goto fail;
+
+	fds = malloc(sizeof(struct proc_fds));
+	if (!fds)
+		goto fail;
+
+	fds->dir = dir;
+	return fds;
+fail:
+	if (dir)
+		closedir(dir);
+	free(fds);
+	return NULL;
+}
+
+/*
+ * @fds: fds instance
+ *
+ * Close fd/ dir and deallocate the struct.
+ *
+ * Returns: nothing
+ */
+void proc_close_fds(struct proc_fds *fds)
+{
+	if (fds && fds->dir)
+		closedir(fds->dir);
+	free(fds);
+}
+
+/*
+ * @fds: allocated fds structure
+ * @fd: returns next fd
+ *
+ * Returns: 0 on success, 1 on end, -1 on failure or no more threads
+ */
+int proc_next_fd(struct proc_fds *fds, int *fd,
+		 char *info, size_t infosz)
+{
+	char *end;
+
+	if (!fds || !fd)
+		return -EINVAL;
+
+	*fd = -1;
+	errno = 0;
+
+	do {
+		struct dirent *d = readdir(fds->dir);
+		if (!d)
+			return errno ? -1 : 1;		/* error or end-of-dir */
+
+		if (!isdigit((unsigned char) *d->d_name))
+			continue;
+		errno = 0;
+		*fd = (int) strtol(d->d_name, &end, 10);
+		if (errno || d->d_name == end || (end && *end))
+			return -1;
+
+		if (info && infosz) {
+			ssize_t len = readlinkat(dirfd(fds->dir), d->d_name,
+						 info, infosz - 1);
+			if (len < 0)
+			       len = 0;
+			info[len] = '\0';
+		}
+	} while (*fd == -1);
+
+	return 0;
+}
+
 #ifdef TEST_PROGRAM_PROCUTILS
 
 static int test_tasks(int argc, char *argv[])
