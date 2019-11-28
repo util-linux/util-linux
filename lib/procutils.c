@@ -313,6 +313,10 @@ int proc_next_fd(struct proc_fds *fds, int *fd,
 		if (errno || d->d_name == end || (end && *end))
 			return -1;
 
+		if (*fd == dirfd(fds->dir)) {
+			*fd = -1;
+			continue;
+		}
 		if (info && infosz) {
 			ssize_t len = readlinkat(dirfd(fds->dir), d->d_name,
 						 info, infosz - 1);

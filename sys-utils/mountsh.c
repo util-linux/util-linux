@@ -176,10 +176,16 @@ static int cmd_fds(struct sh_context *sh __attribute__((__unused__)),
 	while (proc_next_fd(fds, &fd, info, sizeof(info)) == 0) {
 		char *type;
 
-		if (!*info || !startswith(info, "anon_inode:"))
+		if (!*info)
 			continue;
-		type = info + 12;
-		strrem(type, ']');
+		if (startswith(info, "anon_inode:")) {
+			type = info + 12;
+			strrem(type, ']');
+		} else if (isatty(fd)) {
+			continue;
+		} else if (*info == '/')
+			type = "path";
+
 		printf(" %d : %s\n", fd, type);
 
 		/* TODO: use fsinfo() to get more details about the FD */
