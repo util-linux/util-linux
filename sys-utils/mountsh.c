@@ -192,8 +192,7 @@ static int cmd_fds(struct sh_context *sh __attribute__((__unused__)),
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
 {
 	char *fsname;
-	int flags = 0;
-	int fd;
+	int flags = 0, fd;
 
 	if (argc < 2) {
 		warnx(_("no filesystem name specified"));
@@ -222,41 +221,67 @@ static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
 	return 0;
 }
 
-static int strtofd(const char *str)
+
+/* returns FD specified in argv[] element addressed by idx, on success idx is incremented,
+ * otherwise default df is returned
+ */
+static int get_command_fd(int argc, char *argv[], int *idx, int dflt_fd)
 {
 	int fd;
-	char *end = NULL;
 
-	if (!str || !*str) {
-		warnx(_("no file descritor specified"));
+	if (argc > *idx && isdigit_string(argv[*idx])) {
+		char *end = NULL;
+		char *str = argv[*idx];
+
+		if (!str || !*str) {
+			warnx(_("no file descritor specified"));
+			return -EINVAL;
+		}
+
+		errno = 0;
+		fd = (int) strtol(str, &end, 10);
+		if (errno || str == end || (end && *end)) {
+			warn(_("cannot use '%s' as file descriptor"), str);
+			return -EINVAL;
+		}
+		if (fd < 0 || fd == STDIN_FILENO || fd == STDOUT_FILENO || fd == STDERR_FILENO) {
+			warnx(_("invalid file descriptor"));
+			return -EINVAL;
+		}
+		(*idx)++;
+	} else
+		fd = dflt_fd;
+
+	if (fd < 0) {
+		warnx(_("no FD avalable"));
 		return -EINVAL;
 	}
 
-	errno = 0;
-	fd = (int) strtol(str, &end, 10);
-	if (errno || str == end || (end && *end)) {
-		warn(_("cannot use '%s' as file descriptor"), str);
-		return -EINVAL;
-	}
-	if (fd == STDIN_FILENO || fd == STDOUT_FILENO || fd == STDERR_FILENO) {
-		warnx(_("invalid file descriptor"));
-		return -EINVAL;
-	}
 	return fd;
 }
 
+/* close [FD] */
 static int cmd_close(struct sh_context *sh __attribute__((__unused__)),
 		     int argc, char *argv[])
 {
-	int fd = strtofd(argc < 2 ? NULL : argv[1]);
-	if (fd < 0)
+	int idx = 1, fd, rc;
+
+	if (argc > idx && !isdigit_string(argv[idx])) {
+		warnx(_("cannot use '%s' as file descriptor"), argv[idx]);
 		return -EINVAL;
-	if (close(fd) != 0)
-		warn(_("close failed %d"), fd);
+	}
+
+	fd = get_command_fd(argc, argv, &idx, sh->cfd);
+	if (fd < 0)
+		return fd;
+
+	rc = close(fd);
+	if (rc != 0)
+		warn(_("cannot close %d"), fd);
 	else
 		printf(_(" %d closed\n"), fd);
 
-	return 0;
+	return rc;
 }
 
 struct fsconfig_cmd {
@@ -280,7 +305,7 @@ static const char *fsconfig_command_names[] =
 static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[])
 {
 	size_t i;
-	int fd = sh->cfd;	/* default FD */
+	int fd;
 	int idx = 1;		/* argv[] index */
 	unsigned int cmd = 0;
 	char *key = NULL;
@@ -290,16 +315,9 @@ static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[])
 	int rc = 0;
 
 	/* [<fd>] */
-	if (argc > idx && isdigit_string(argv[idx])) {
-		fd = strtofd(argv[idx]);
-		if (fd < 0)
-			return -EINVAL;
-		idx++;
-	}
-	if (fd < 0) {
-		warnx(_("no FD avalable, see 'help fsopen'"));
-		return -EINVAL;
-	}
+	fd = get_command_fd(argc, argv, &idx, sh->cfd);
+	if (fd < 0)
+		return fd;
 
 	/* <command> */
 	if (idx >= argc) {
@@ -385,9 +403,9 @@ static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[])
 
 	rc = fsconfig(fd, cmd, key, value, aux);
 	if (rc != 0)
-		warn(_("fsconfig failed [%d]"), rc);
+		warn(_("fsconfig failed"));
 
-	return 0;
+	return rc;
 }
 
 
