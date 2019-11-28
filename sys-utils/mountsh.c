@@ -74,6 +74,10 @@ struct sh_command {
 	const char	*syno;	/* synopsis */
 };
 
+struct mask_name {
+	char *name;
+	unsigned int mask;
+};
 
 static int cmd_help(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fds(struct sh_context *sh, int argc, char *argv[]);
@@ -126,6 +130,37 @@ static int execute_command(struct sh_context *sh,
 			   int argc, char **argv)
 {
 	return cmd->func(sh, argc, argv);
+}
+
+static int string_to_mask(const char *str, unsigned int *res,
+		          const struct mask_name *names, size_t nnames)
+{
+	const char *p = str;
+
+	while (p && *p) {
+		size_t i, sz;
+		char *end = strchr(p, ',');
+
+		sz = end ? (size_t) (end - p) : strlen(p);
+
+		for (i = 0; i < nnames; i++) {
+			const struct mask_name *x = &names[i];
+
+			if (strncmp(x->name, p, sz) == 0) {
+				*res |= x->mask;
+				break;
+			}
+		}
+		if (i == nnames) {
+			warnx(_("unsupported mask name %s"), p);
+			return -EINVAL;
+		}
+		p = end;
+		if (p)
+			p++;
+	}
+
+	return 0;
 }
 
 static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
@@ -418,12 +453,7 @@ static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[])
 /* Do not use MS_* (for example from libmount) for fsmount(). Some attributes
  * are fsmount() specified and some anothers have to be set by fsconfig().
  */
-struct fsmount_attr {
-	char *name;
-	unsigned int mask;
-};
-
-static const struct fsmount_attr fsmount_attrs [] =
+static const struct mask_name fsmount_attrs[] =
 {
 	{ "ro",			MOUNT_ATTR_RDONLY },
 	{ "nosuid",		MOUNT_ATTR_NOSUID },
@@ -435,38 +465,6 @@ static const struct fsmount_attr fsmount_attrs [] =
 	{ "strictatime",	MOUNT_ATTR_STRICTATIME },
 	{ "nodiratime",		MOUNT_ATTR_NODIRATIME }
 };
-
-static int string_to_attrs(const char *str, unsigned int *res)
-{
-	const char *p = str;
-
-	while (p && *p) {
-		size_t i, sz;
-		char *end = strchr(p, ',');
-
-		sz = end ? (size_t) (end - p) : strlen(p);
-
-		for (i = 0; i < ARRAY_SIZE(fsmount_attrs); i++) {
-			const struct fsmount_attr *attr = &fsmount_attrs[i];
-
-			if (strncmp(attr->name, p, sz) == 0) {
-				*res |= attr->mask;
-				break;
-			}
-		}
-
-		if (i == ARRAY_SIZE(fsmount_attrs)) {
-			warnx(_("unsupported mount attribute %s"), p);
-			return -EINVAL;
-		}
-
-		p = end;
-		if (p)
-			p++;
-	}
-
-	return 0;
-}
 
 /* fsmount [FD] [CLOEXEC] [<attrs>] */
 static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)),
@@ -488,7 +486,8 @@ static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)),
 
 	/* <attrs> */
 	if (idx < argc) {
-		rc = string_to_attrs(argv[idx], &attrs);
+		rc = string_to_mask(argv[idx], &attrs,
+				fsmount_attrs, ARRAY_SIZE(fsmount_attrs));
 		if (rc)
 			return rc;
 		idx++;
@@ -497,8 +496,11 @@ static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)),
 	rc = fsmount(fd, flags, attrs);
 	if (rc < 0)
 		warn(_("fsmount failed"));
-	else
+	else {
+		if (sh->mfd == -1)
+			sh->mfd = rc;
 		printf(_("new FD [fsmount]: %d\n"), rc);
+	}
 
 	return 0;
 }
