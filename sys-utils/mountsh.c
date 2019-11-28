@@ -79,6 +79,7 @@ static int cmd_help(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fds(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_close(struct sh_context *sh, int argc, char *argv[]);
+static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[]);
 
 static const struct sh_command commands[] =
 {
@@ -88,6 +89,10 @@ static const struct sh_command commands[] =
 	},
 	{ "fds", cmd_fds,
 		N_("list relevant file descritors")
+	},
+	{ "fsconfig", cmd_fsconfig,
+		N_("(re)configure or create filesystem"),
+		N_("[fd] <flag|string|binary|path|path-empty|fd|create|reconf> [<key> [<value>] [<aux>]]")
 	},
 	{ "fsopen", cmd_fsopen,
 		N_("creates filesystem context"),
@@ -179,6 +184,11 @@ static int cmd_fds(struct sh_context *sh __attribute__((__unused__)),
 	return 0;
 }
 
+/* TODO:
+ *
+ * cmd_pathopen() for FSCONFIG_SET_PATH with dir fd
+ */
+
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
 {
 	char *fsname;
@@ -212,31 +222,170 @@ static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
 	return 0;
 }
 
-static int cmd_close(struct sh_context *sh __attribute__((__unused__)),
-		     int argc, char *argv[])
+static int strtofd(const char *str)
 {
 	int fd;
 	char *end = NULL;
 
-	if (argc < 2) {
+	if (!str || !*str) {
 		warnx(_("no file descritor specified"));
 		return -EINVAL;
 	}
 
 	errno = 0;
-	fd = (int) strtol(argv[1], &end, 10);
-	if (errno ||argv[1] == end || (end && *end)) {
-		warn(_("cannot use '%s' as file descriptor"), argv[1]);
+	fd = (int) strtol(str, &end, 10);
+	if (errno || str == end || (end && *end)) {
+		warn(_("cannot use '%s' as file descriptor"), str);
 		return -EINVAL;
 	}
 	if (fd == STDIN_FILENO || fd == STDOUT_FILENO || fd == STDERR_FILENO) {
 		warnx(_("invalid file descriptor"));
 		return -EINVAL;
 	}
+	return fd;
+}
+
+static int cmd_close(struct sh_context *sh __attribute__((__unused__)),
+		     int argc, char *argv[])
+{
+	int fd = strtofd(argc < 2 ? NULL : argv[1]);
+	if (fd < 0)
+		return -EINVAL;
 	if (close(fd) != 0)
-		warn(_("cannot close %d"), fd);
+		warn(_("close failed %d"), fd);
 	else
 		printf(_(" %d closed\n"), fd);
+
+	return 0;
+}
+
+struct fsconfig_cmd {
+	unsigned int	cmd;
+	const char	*name;
+};
+
+static const char *fsconfig_command_names[] =
+{
+	[FSCONFIG_SET_FLAG]	   = "flag",		/* Set parameter, supplying no value */
+	[FSCONFIG_SET_STRING]	   = "string",		/* Set parameter, supplying a string value */
+	[FSCONFIG_SET_BINARY]	   = "binary",		/* Set parameter, supplying a binary blob value */
+	[FSCONFIG_SET_PATH]	   = "path",		/* Set parameter, supplying an object by path */
+	[FSCONFIG_SET_PATH_EMPTY]  = "path-empty",	/* Set parameter, supplying an object by (empty) path */
+	[FSCONFIG_SET_FD]          = "fd",		/* Set parameter, supplying an object by fd */
+	[FSCONFIG_CMD_CREATE]	   = "create",		/* Invoke superblock creation */
+	[FSCONFIG_CMD_RECONFIGURE] = "reconfigure"	/* Invoke superblock reconfiguration */
+};
+
+/* fsconfig [FD] <command> [<key> [<value>] [<aux>]] */
+static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[])
+{
+	size_t i;
+	int fd = sh->cfd;	/* default FD */
+	int idx = 1;		/* argv[] index */
+	unsigned int cmd = 0;
+	char *key = NULL;
+	char *value = NULL;
+	int  aux = 0;
+	const char *cmdname = NULL;
+	int rc = 0;
+
+	/* [<fd>] */
+	if (argc > idx && isdigit_string(argv[idx])) {
+		fd = strtofd(argv[idx]);
+		if (fd < 0)
+			return -EINVAL;
+		idx++;
+	}
+	if (fd < 0) {
+		warnx(_("no FD avalable, see 'help fsopen'"));
+		return -EINVAL;
+	}
+
+	/* <command> */
+	if (idx >= argc) {
+		warnx(_("<command> not specified"));
+		return -EINVAL;
+	}
+	for (i = 0; i < ARRAY_SIZE(fsconfig_command_names); i++) {
+		if (strcmp(fsconfig_command_names[i], argv[idx]) == 0) {
+			cmd = (unsigned int) i;
+			cmdname = argv[idx];
+			break;
+		}
+	}
+	if (!cmdname) {
+		warnx(_("unsupported command '%s'"), argv[idx]);
+		return -EINVAL;
+	}
+	idx++;
+
+	/* <key> */
+	switch (cmd) {
+	case FSCONFIG_SET_FLAG:
+	case FSCONFIG_SET_STRING:
+	case FSCONFIG_SET_BINARY:
+	case FSCONFIG_SET_PATH:
+	case FSCONFIG_SET_PATH_EMPTY:
+	case FSCONFIG_SET_FD:
+		if (idx >= argc) {
+			warnx(_("%s requires <key>"), cmdname);
+			return -EINVAL;
+		}
+		key = argv[idx++];
+		break;
+	default:
+		break;
+	}
+
+	/* <value> */
+	switch (cmd) {
+	case FSCONFIG_SET_STRING:
+	case FSCONFIG_SET_BINARY:
+	case FSCONFIG_SET_PATH:
+	case FSCONFIG_SET_PATH_EMPTY:
+		if (idx >= argc) {
+			warnx(_("%s requires <value>"), cmdname);
+			return -EINVAL;
+		}
+		value = argv[idx++];
+		break;
+	default:
+		break;
+	}
+
+	/* <aux> */
+	switch (cmd) {
+	case FSCONFIG_SET_PATH:
+	case FSCONFIG_SET_BINARY:
+	case FSCONFIG_SET_FD:
+		if (idx < argc) {
+			char *end, *p = argv[idx++];
+
+			errno = 0;
+			aux = (unsigned int) strtoul(p, &end, 10);
+			if (errno || p == end || (end && *end)) {
+				warn(_("cannot use '%s' as aux"), p);
+				return -EINVAL;
+			}
+		} else if (cmd == FSCONFIG_SET_PATH) {
+			aux = AT_FDCWD;
+		} else {
+			warnx(_("%s requires <aux>"), cmdname);
+			return -EINVAL;
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (argc > idx) {
+		warnx(_("wrong number of arguments"));
+		return -EINVAL;
+	}
+
+	rc = fsconfig(fd, cmd, key, value, aux);
+	if (rc != 0)
+		warn(_("fsconfig failed [%d]"), rc);
 
 	return 0;
 }
