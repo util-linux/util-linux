@@ -80,6 +80,7 @@ static int cmd_fds(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_close(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[]);
+static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)), int argc, char *argv[]);
 
 static const struct sh_command commands[] =
 {
@@ -97,6 +98,10 @@ static const struct sh_command commands[] =
 	{ "fsopen", cmd_fsopen,
 		N_("creates filesystem context"),
 		N_("<name> [CLOEXEC]")
+	},
+	{ "fsmount", cmd_fsmount,
+		N_("create mount file descritor"),
+		N_("[fd] [CLOEXEC] [<ro,nosuid,nodev,noexec,atime,realatime,noatime,strictatime,nodiratime>]")
 	},
 	{ "help", cmd_help,
 		N_("list commands and help"),
@@ -189,6 +194,7 @@ static int cmd_fds(struct sh_context *sh __attribute__((__unused__)),
  * cmd_pathopen() for FSCONFIG_SET_PATH with dir fd
  */
 
+/* fsopen <fsname> [CLOEXEC] */
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
 {
 	char *fsname;
@@ -283,11 +289,6 @@ static int cmd_close(struct sh_context *sh __attribute__((__unused__)),
 
 	return rc;
 }
-
-struct fsconfig_cmd {
-	unsigned int	cmd;
-	const char	*name;
-};
 
 static const char *fsconfig_command_names[] =
 {
@@ -408,6 +409,93 @@ static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[])
 	return rc;
 }
 
+/* Do not use MS_* (for example from libmount) for fsmount(). Some attributes
+ * are fsmount() specified and some anothers have to be set by fsconfig().
+ */
+struct fsmount_attr {
+	char *name;
+	unsigned int mask;
+};
+
+static const struct fsmount_attr fsmount_attrs [] =
+{
+	{ "ro",			MOUNT_ATTR_RDONLY },
+	{ "nosuid",		MOUNT_ATTR_NOSUID },
+	{ "nodev",		MOUNT_ATTR_NODEV },
+	{ "noexec",		MOUNT_ATTR_NOEXEC },
+	{ "atime",		MOUNT_ATTR__ATIME },
+	{ "realatime",		MOUNT_ATTR_RELATIME },
+	{ "noatime",		MOUNT_ATTR_NOATIME },
+	{ "strictatime",	MOUNT_ATTR_STRICTATIME },
+	{ "nodiratime",		MOUNT_ATTR_NODIRATIME }
+};
+
+static int string_to_attrs(const char *str, unsigned int *res)
+{
+	const char *p = str;
+
+	while (p && *p) {
+		size_t i, sz;
+		char *end = strchr(p, ',');
+
+		sz = end ? (size_t) (end - p) : strlen(p);
+
+		for (i = 0; i < ARRAY_SIZE(fsmount_attrs); i++) {
+			const struct fsmount_attr *attr = &fsmount_attrs[i];
+
+			if (strncmp(attr->name, p, sz) == 0) {
+				*res |= attr->mask;
+				break;
+			}
+		}
+
+		if (i == ARRAY_SIZE(fsmount_attrs)) {
+			warnx(_("unsupported mount attribute %s"), p);
+			return -EINVAL;
+		}
+
+		p = end;
+		if (p)
+			p++;
+	}
+
+	return 0;
+}
+
+/* fsmount [FD] [CLOEXEC] [<attrs>] */
+static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)),
+		     int argc, char *argv[])
+{
+	int idx = 1, fd, rc;
+	unsigned int flags = 0, attrs = 0;
+
+	/* [FD] */
+	fd = get_command_fd(argc, argv, &idx, sh->cfd);
+	if (fd < 0)
+		return fd;
+
+	/* <flags> */
+	if (idx < argc && strcmp(argv[idx], "CLOEXEC") == 0) {
+		flags = FSMOUNT_CLOEXEC;
+		idx++;
+	}
+
+	/* <attrs> */
+	if (idx < argc) {
+		rc = string_to_attrs(argv[idx], &attrs);
+		if (rc)
+			return rc;
+		idx++;
+	}
+
+	rc = fsmount(fd, flags, attrs);
+	if (rc < 0)
+		warn(_("fsmount failed"));
+	else
+		printf(_("new FD [fsmount]: %d\n"), rc);
+
+	return 0;
+}
 
 static int cmd_help(struct sh_context *sh __attribute__((__unused__)),
 		    int argc, char *argv[])
