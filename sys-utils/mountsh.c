@@ -54,15 +54,17 @@ static int move_mount(int from_dirfd, const char *from_pathname,
 }
 #endif
 
-struct sh_fd {
-	int	fd;
-	const char *type;
-	const char *name;	/* for fsopen() */
+struct sh_named_fd {
+	char *name;
+	int  id;
 };
 
 struct sh_context {
-	int	cfd;		/* filesystem configuration (fsopen() FD) */
-	int	mfd;		/* mount FD */
+	size_t nfds;
+	struct sh_named_fd *fds;
+
+	int     cfd;	/* default fsopen FD */
+	int     mfd;	/* default mount FD */
 };
 
 struct sh_command {
@@ -72,6 +74,8 @@ struct sh_command {
 
 	const char	*desc;	/* description */
 	const char	*syno;	/* synopsis */
+
+	unsigned int	refd : 1;	/* returns FD */
 };
 
 struct mask_name {
@@ -88,28 +92,37 @@ static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)), int ar
 
 static const struct sh_command commands[] =
 {
-	{ "close", cmd_close,
-		N_("close file descritor"),
-		N_("<fd>")
-	},
-	{ "fds", cmd_fds,
-		N_("list relevant file descritors")
-	},
-	{ "fsconfig", cmd_fsconfig,
-		N_("(re)configure or create filesystem"),
-		N_("[fd] <flag|string|binary|path|path-empty|fd|create|reconf> [<key> [<value>] [<aux>]]")
-	},
-	{ "fsopen", cmd_fsopen,
-		N_("creates filesystem context"),
-		N_("<name> [CLOEXEC]")
-	},
-	{ "fsmount", cmd_fsmount,
-		N_("create mount file descritor"),
-		N_("[fd] [CLOEXEC] [<ro,nosuid,nodev,noexec,atime,realatime,noatime,strictatime,nodiratime>]")
-	},
-	{ "help", cmd_help,
-		N_("list commands and help"),
-		N_("[<command>]")
+	{
+		.name = "close",
+		.func = cmd_close,
+		.desc = N_("close file descritor"),
+		.syno = N_("<fd>")
+	},{
+		.name = "fds",
+		.func = cmd_fds,
+		.desc = N_("list relevant file descritors")
+	},{
+		.name = "fsconfig",
+		.func = cmd_fsconfig,
+		.desc = N_("(re)configure or create filesystem"),
+		.syno = N_("[<fd>] <flag|string|binary|path|path-empty|fd|create|reconf> [<key> [<value>] [<aux>]]")
+	},{
+		.name = "fsopen",
+		.func = cmd_fsopen,
+		.desc = N_("creates filesystem context"),
+		.syno = N_("<name> [CLOEXEC]"),
+		.refd = 1,
+	},{
+		.name = "fsmount",
+		.func = cmd_fsmount,
+		.desc = N_("create mount file descritor"),
+		.syno = N_("[<fd>] [CLOEXEC] [<ro,nosuid,nodev,noexec,atime,realatime,noatime,strictatime,nodiratime>]"),
+		.refd = 1
+	},{
+		.name = "help",
+		.func = cmd_help,
+		.desc = N_("list commands and help"),
+		.syno = N_("[<command>]")
 	}
 };
 
@@ -123,6 +136,82 @@ static const struct sh_command *lookup_command(const char *name)
 	}
 
 	return NULL;
+}
+
+static struct sh_named_fd *__get_named_fd(struct sh_context *sh, const char *name, int fd)
+{
+	size_t i;
+	struct sh_named_fd *n = NULL;
+
+	for (i = 0; i < sh->nfds; i++) {
+		if (name) {
+			if (strcmp(sh->fds[i].name, name) == 0)
+				n = &sh->fds[i];
+		} else if (fd >= 0) {
+			if (sh->fds[i].id == fd)
+				n = &sh->fds[i];
+		}
+		if (n)
+			break;
+	}
+
+	return n;
+}
+
+static int get_named_fd(struct sh_context *sh, const char *name)
+{
+	struct sh_named_fd *n = __get_named_fd(sh, name, -1);
+
+	return n ? n->id : -EINVAL;
+}
+
+static int set_named_fd(struct sh_context *sh, const char *name, int fd)
+{
+	struct sh_named_fd *n = __get_named_fd(sh, name, -1);
+
+	if (n) {
+		if (n->id >= 0)
+			close(n->id);
+	} else {
+		sh->fds = xrealloc(sh->fds, sh->nfds + 1);
+		n = &sh->fds[sh->nfds++];
+		n->name = xstrdup(name);
+	}
+
+	n->id = fd;
+	return 0;
+}
+
+static int remove_named_fd_by_id(struct sh_context *sh, int fd)
+{
+	size_t i;
+
+	for (i = 0; i < sh->nfds; i++) {
+		if (sh->fds[i].id == fd)
+			break;
+	}
+	if (i >= sh->nfds)
+		return -EINVAL;
+
+	free(sh->fds[i].name);
+	if (i + 1 < sh->nfds)
+		memmove(sh->fds + i, sh->fds + i + 1, sh->nfds - i - 1);
+	sh->nfds--;
+	return 0;
+}
+
+static void cleanup(struct sh_context *sh)
+{
+	size_t i;
+
+	for (i = 0; i < sh->nfds; i++) {
+		free(sh->fds[i].name);
+		close(sh->fds[i].id);
+	}
+
+	free(sh->fds);
+	free(sh);
+	return;
 }
 
 static int execute_command(struct sh_context *sh,
@@ -210,6 +299,7 @@ static int cmd_fds(struct sh_context *sh __attribute__((__unused__)),
 
 	while (proc_next_fd(fds, &fd, info, sizeof(info)) == 0) {
 		char *type;
+		struct sh_named_fd *n;
 
 		if (!*info)
 			continue;
@@ -221,7 +311,11 @@ static int cmd_fds(struct sh_context *sh __attribute__((__unused__)),
 		} else if (*info == '/')
 			type = "path";
 
-		printf(" %d : %s\n", fd, type);
+		n = __get_named_fd(sh, NULL, fd);
+		if (n)
+			printf(" %d : %s [$%s]\n", fd, type, n->name);
+		else
+			printf(" %d : %s\n", fd, type);
 
 		/* TODO: use fsinfo() to get more details about the FD */
 	}
@@ -265,14 +359,14 @@ static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
 
 		printf(_("new FD [fscontext]: %d\n"), fd);
 	}
-	return 0;
+	return fd;
 }
 
 
 /* returns FD specified in argv[] element addressed by idx, on success idx is incremented,
  * otherwise default df is returned
  */
-static int get_command_fd(int argc, char *argv[], int *idx, int dflt_fd)
+static int get_command_fd(struct sh_context *sh, int argc, char *argv[], int *idx, int dflt_fd)
 {
 	int fd;
 
@@ -296,6 +390,10 @@ static int get_command_fd(int argc, char *argv[], int *idx, int dflt_fd)
 			return -EINVAL;
 		}
 		(*idx)++;
+
+	} else if (argc > *idx && *argv[*idx] == '$') {
+		fd = get_named_fd(sh, argv[*idx] + 1);
+		(*idx)++;
 	} else
 		fd = dflt_fd;
 
@@ -318,7 +416,7 @@ static int cmd_close(struct sh_context *sh __attribute__((__unused__)),
 		return -EINVAL;
 	}
 
-	fd = get_command_fd(argc, argv, &idx, sh->cfd);
+	fd = get_command_fd(sh, argc, argv, &idx, sh->cfd);
 	if (fd < 0)
 		return fd;
 
@@ -327,6 +425,8 @@ static int cmd_close(struct sh_context *sh __attribute__((__unused__)),
 		warn(_("cannot close %d"), fd);
 	else
 		printf(_(" %d closed\n"), fd);
+
+	remove_named_fd_by_id(sh, fd);
 
 	return rc;
 }
@@ -357,7 +457,7 @@ static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[])
 	int rc = 0;
 
 	/* [<fd>] */
-	fd = get_command_fd(argc, argv, &idx, sh->cfd);
+	fd = get_command_fd(sh, argc, argv, &idx, sh->cfd);
 	if (fd < 0)
 		return fd;
 
@@ -474,7 +574,7 @@ static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)),
 	unsigned int flags = 0, attrs = 0;
 
 	/* [FD] */
-	fd = get_command_fd(argc, argv, &idx, sh->cfd);
+	fd = get_command_fd(sh, argc, argv, &idx, sh->cfd);
 	if (fd < 0)
 		return fd;
 
@@ -497,12 +597,12 @@ static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)),
 	if (rc < 0)
 		warn(_("fsmount failed"));
 	else {
-		if (sh->mfd == -1)
+		if (sh->mfd < 0)
 			sh->mfd = rc;
 		printf(_("new FD [fsmount]: %d\n"), rc);
 	}
 
-	return 0;
+	return rc;
 }
 
 static int cmd_help(struct sh_context *sh __attribute__((__unused__)),
@@ -516,7 +616,23 @@ static int cmd_help(struct sh_context *sh __attribute__((__unused__)),
 		for (i = 0; i < ARRAY_SIZE(commands); i++)
 			printf("  %-12s %s\n", commands[i].name, commands[i].desc);
 		printf(_("\nUse \"help <command>\" for more details.\n"));
-		printf(_("All non-mountsh commands will be processed by regular shell.\n\n"));
+		printf(_("All non-mountsh commands will be processed by regular shell.\n"));
+		fputc('\n', stdout);
+		printf(_("The three ways how to use file descritors are supported:\n"));
+		fputc('\n', stdout);
+		printf(_(" 1) default file descritors; initialized by fsopen and fsmount\n"));
+		printf("    >>> fsopen ext4\n");
+		printf("    >>> fsconfig string source /dev/sda1\n");
+		fputc('\n', stdout);
+		printf(_(" 2) explicit file descritors:\n"));
+		printf("    >>> fsopen ext4\n");
+		printf("    new FD [fscontext]: 3\n");
+		printf("    >>> fsconfig 3 flag ro\n");
+		fputc('\n', stdout);
+		printf(_(" 3) named file descritors:\n"));
+		printf("    >>> abc = fsopen ext4\n");
+		printf("    >>> fsconfig $abc flag ro\n");
+		fputc('\n', stdout);
 	} else {
 		const char *name = argv[1];
 		const struct sh_command *cmd = lookup_command(name);
@@ -538,8 +654,8 @@ static int mainloop(struct sh_context *sh)
 
 	do {
 		const struct sh_command *cmd = NULL;
-		int argc = 0;
-		char **argv, *name;
+		int argc, idx = 0;
+		char **argv, *name, *varname = NULL;
 
 		rc = get_user_reply(prompt, buf, sizeof(buf));
 		if (rc)
@@ -550,13 +666,26 @@ static int mainloop(struct sh_context *sh)
 			continue;
 		argc = (int) strv_length(argv);
 
-		name = argv[0];
+		/* <var> = <command> */
+		if (argc >= 3 && strcmp(argv[1], "=") == 0) {
+			varname = argv[idx++];		/* variable name */
+			idx++;				/* skip '=' */
+		}
+
+		/* <command> */
+		name = argv[idx];
 		cmd = lookup_command(name);
 
-		if (!cmd)
+		if (varname && (!cmd || !cmd->refd))
+			warnx(_("command does not support named file descriptors"));
+		else if (!cmd)
 			ignore_result( system(buf) );
-		else
-			execute_command(sh, cmd, argc, argv);
+		else {
+			int res = execute_command(sh, cmd, argc - idx, argv + idx);
+
+			if (varname && res >= 0)
+				set_named_fd(sh, varname, res);
+		}
 
 		add_history(buf);
 		strv_free(argv);
@@ -586,7 +715,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	int rc, c;
-	struct sh_context sh = { .cfd = -1 };
+	struct sh_context *sh;
 
 	static const struct option longopts[] = {
 		{ "help",    no_argument,       NULL, 'h' },
@@ -611,11 +740,17 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	sh = xcalloc(1, sizeof(*sh));
+	sh->mfd = -1;
+	sh->cfd = -1;
+
 	fputc('\n', stdout);
 	printf(_("Welcome to mountsh, use 'help' for more details.\n"));
 	printf(_("This shell PID is %d.\n"), getpid());
 	fputc('\n', stdout);
 
-	rc = mainloop(&sh);
+	rc = mainloop(sh);
+
+	cleanup(sh);
 	return rc != 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
