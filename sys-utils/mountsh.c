@@ -254,12 +254,11 @@ static int string_to_mask(const char *str, unsigned int *res,
 
 static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 {
-	char *p;
 	size_t sz;
 
 #ifdef HAVE_LIBREADLINE
 	if (isatty(STDIN_FILENO)) {
-		p = readline(prompt);
+		char *p = readline(prompt);
 		if (!p)
 			return 1;
 		xstrncpy(buf, p, bufsz);
@@ -274,13 +273,10 @@ static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 			return 1;
 	}
 
-	for (p = buf; *p && !isgraph(*p); p++);	/* get first non-blank */
-
-	if (p > buf)
-		memmove(buf, p, p - buf);	/* remove blank space */
-	sz = strlen(buf);
+	sz = ltrim_whitespace((unsigned char *) buf);
 	if (sz && *(buf + sz - 1) == '\n')
 		*(buf + sz - 1) = '\0';
+
 	return 0;
 }
 
@@ -405,18 +401,12 @@ static int get_command_fd(struct sh_context *sh, int argc, char *argv[], int *id
 	return fd;
 }
 
-/* close [FD] */
-static int cmd_close(struct sh_context *sh __attribute__((__unused__)),
-		     int argc, char *argv[])
+/* close <FD> */
+static int cmd_close(struct sh_context *sh, int argc, char *argv[])
 {
 	int idx = 1, fd, rc;
 
-	if (argc > idx && !isdigit_string(argv[idx])) {
-		warnx(_("cannot use '%s' as file descriptor"), argv[idx]);
-		return -EINVAL;
-	}
-
-	fd = get_command_fd(sh, argc, argv, &idx, sh->cfd);
+	fd = get_command_fd(sh, argc, argv, &idx, -1);
 	if (fd < 0)
 		return fd;
 
@@ -430,6 +420,8 @@ static int cmd_close(struct sh_context *sh __attribute__((__unused__)),
 
 	return rc;
 }
+
+
 
 static const char *fsconfig_command_names[] =
 {
