@@ -138,6 +138,9 @@ static const struct sh_command *lookup_command(const char *name)
 {
 	size_t i;
 
+	if (!name || !*name)
+		return NULL;
+
 	for (i = 0; i < ARRAY_SIZE(commands); i++) {
 		if (strcmp(commands[i].name, name) == 0)
 			return &commands[i];
@@ -813,6 +816,10 @@ static int mainloop(struct sh_context *sh)
 		if (!argv)
 			continue;
 		argc = (int) strv_length(argv);
+		if (!argc) {
+			strv_free(argv);
+			continue;
+		}
 
 		/* <var> = <command> */
 		if (argc >= 3 && strcmp(argv[1], "=") == 0) {
