@@ -89,6 +89,7 @@ static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_close(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)), int argc, char *argv[]);
+static int cmd_move(struct sh_context *sh, int argc, char *argv[]);
 
 static const struct sh_command commands[] =
 {
@@ -96,7 +97,7 @@ static const struct sh_command commands[] =
 		.name = "close",
 		.func = cmd_close,
 		.desc = N_("close file descritor"),
-		.syno = N_("<fd>")
+		.syno = N_("\tclose <fd>")
 	},{
 		.name = "fds",
 		.func = cmd_fds,
@@ -105,20 +106,27 @@ static const struct sh_command commands[] =
 		.name = "fsconfig",
 		.func = cmd_fsconfig,
 		.desc = N_("(re)configure or create filesystem"),
-		.syno = N_("[<fd>] <flag|string|binary|path|path-empty|fd|create|reconf> [<key> [<value>] [<aux>]]")
+		.syno = N_("\tfsconfig [<fd>] <flag|string|binary|path|path-empty|fd|create|reconf> [<key> [<value>] [<aux>]]")
 	},{
 		.name = "fsopen",
 		.func = cmd_fsopen,
 		.desc = N_("creates filesystem context"),
-		.syno = N_("<name> [CLOEXEC]"),
+		.syno = N_("\tfsopen <name> [CLOEXEC]"),
 		.refd = 1,
 	},{
 		.name = "fsmount",
 		.func = cmd_fsmount,
 		.desc = N_("create mount file descritor"),
-		.syno = N_("[<fd>] [CLOEXEC] [<ro,nosuid,nodev,noexec,atime,realatime,noatime,strictatime,nodiratime>]"),
+		.syno = N_("\tfsmount [<fd>] [CLOEXEC] [<ro,nosuid,nodev,noexec,atime,realatime,noatime,strictatime,nodiratime>]"),
 		.refd = 1
 	},{
+		.name = "move_mount",
+		.func = cmd_move,
+		.desc = N_("move mount object around the filesystem topology"),
+		.syno = N_("\tmove_mount <from-dirfd> <to-path> [<{F,T}_(SYMLINKS,AUTOMOUNT}>]\n"
+			   "\tmove_mount <from-dirfd> <from-path>|\"\" <to-dirfd>|AT_FDCWD <to-path>|\"\" [<{F,T}_(SYMLINKS,AUTOMOUNT,EMPTY_PATH}>]")
+	},{
+
 		.name = "help",
 		.func = cmd_help,
 		.desc = N_("list commands and help"),
@@ -214,6 +222,29 @@ static void cleanup(struct sh_context *sh)
 	return;
 }
 
+static const char *get_string(int argc, char **argv, int *idx)
+{
+	char *str;
+
+	if (*idx >= argc)
+		return NULL;
+
+	str = argv[*idx];
+
+	if (strcmp(str, "\"\"") == 0)
+		return "";
+	else if (*str == '"') {
+		int sz = strlen(str) - 1;
+		if (sz > 0 && *(str + sz) == '"') {
+			*(str + sz) = '\0';
+			str++;
+		}
+	}
+	(*idx)++;
+
+	return str;
+}
+
 static int execute_command(struct sh_context *sh,
 			   const struct sh_command *cmd,
 			   int argc, char **argv)
@@ -280,7 +311,7 @@ static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	return 0;
 }
 
-static int cmd_fds(struct sh_context *sh __attribute__((__unused__)),
+static int cmd_fds(struct sh_context *sh,
 		int argc __attribute__((__unused__)),
 		char *argv[] __attribute__((__unused__)))
 {
@@ -443,7 +474,7 @@ static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[])
 	int idx = 1;		/* argv[] index */
 	unsigned int cmd = 0;
 	char *key = NULL;
-	char *value = NULL;
+	const char *value = NULL;
 	int  aux = 0;
 	const char *cmdname = NULL;
 	int rc = 0;
@@ -499,7 +530,7 @@ static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[])
 			warnx(_("%s requires <value>"), cmdname);
 			return -EINVAL;
 		}
-		value = argv[idx++];
+		value = get_string(argc, argv, &idx);
 		break;
 	default:
 		break;
@@ -559,8 +590,7 @@ static const struct mask_name fsmount_attrs[] =
 };
 
 /* fsmount [FD] [CLOEXEC] [<attrs>] */
-static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)),
-		     int argc, char *argv[])
+static int cmd_fsmount(struct sh_context *sh, int argc, char *argv[])
 {
 	int idx = 1, fd, rc;
 	unsigned int flags = 0, attrs = 0;
@@ -585,6 +615,11 @@ static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)),
 		idx++;
 	}
 
+	if (argc > idx) {
+		warnx(_("wrong number of arguments"));
+		return -EINVAL;
+	}
+
 	rc = fsmount(fd, flags, attrs);
 	if (rc < 0)
 		warn(_("fsmount failed"));
@@ -595,6 +630,122 @@ static int cmd_fsmount(struct sh_context *sh __attribute__((__unused__)),
 	}
 
 	return rc;
+}
+
+static const struct mask_name move_flags[] =
+{
+	{ "F_SYMLINKS",		MOVE_MOUNT_F_SYMLINKS },
+	{ "F_AUTOMOUNTS",	MOVE_MOUNT_F_AUTOMOUNTS },
+	{ "F_EMPTY_PATH",	MOVE_MOUNT_F_EMPTY_PATH },
+	{ "T_SYMLINKS",		MOVE_MOUNT_T_SYMLINKS },
+	{ "T_AUTOMOUNTS",	MOVE_MOUNT_T_AUTOMOUNTS },
+	{ "T_EMPTY_PATH",	MOVE_MOUNT_T_EMPTY_PATH }
+};
+
+/* <from-FD> <to-path> [<flags>] */
+static int cmd_move_simple(struct sh_context *sh, int argc, char *argv[])
+{
+	int idx = 1, rc = 0, fd_from = -1;
+	const char *path_to = NULL;
+	unsigned int flags = 0;
+
+	if (argc < 3) {
+		warnx(_("insufficiend number of arguments"));
+		return EINVAL;
+	}
+
+	/* from-dirfd */
+	if ((isdigit_string(argv[idx]) || *argv[idx] == '$'))
+		fd_from = get_command_fd(sh, argc, argv, &idx, -1);
+	else {
+		warnx(_("%s: unsupported from-dirfd"), argv[idx]);
+		return -EINVAL;
+	}
+
+	/* to-PATH */
+	path_to = get_string(argc, argv, &idx);
+
+	/* flags */
+	if (idx < argc) {
+		rc = string_to_mask(argv[idx], &flags,
+				move_flags, ARRAY_SIZE(move_flags));
+		idx++;
+	}
+
+	if (argc > idx)
+		warnx(_("wrong number of arguments"));
+	if (rc == 0) {
+		rc = move_mount(fd_from, "", AT_FDCWD, path_to,
+			flags|MOVE_MOUNT_F_EMPTY_PATH);
+		if (rc < 0)
+			warn(_("move_mount() failed"));
+	}
+	return rc;
+}
+
+/* <from-FD> <from-path> <to-FD> <to-path> [<flags>] */
+static int cmd_move_full(struct sh_context *sh, int argc, char *argv[])
+{
+	int idx = 1, rc = 0, fd_from = -1, fd_to = -1;
+	const char *path_from = NULL, *path_to = NULL;
+	unsigned int flags = 0;
+
+	if (argc < 5) {
+		warnx(_("insufficiend number of arguments"));
+		return EINVAL;
+	}
+
+	/* from-dirfd */
+	if ((isdigit_string(argv[idx]) || *argv[idx] == '$'))
+		fd_from = get_command_fd(sh, argc, argv, &idx, -1);
+	else {
+		warnx(_("%s: unsupported from-dirfd"), argv[idx]);
+		return -EINVAL;
+	}
+
+	/* from-PATH */
+	path_from = get_string(argc, argv, &idx);
+
+	/* to-dirfd */
+	if ((isdigit_string(argv[idx]) || *argv[idx] == '$'))
+		fd_to = get_command_fd(sh, argc, argv, &idx, -1);
+	else if (strcmp("AT_FDCWD", argv[idx]) == 0 ||
+		 strcmp("CWD", argv[idx]) == 0) {
+		fd_to = AT_FDCWD;
+		idx++;
+	} else {
+		warnx(_("%s: unsupported to-dirfd"), argv[idx]);
+		return -EINVAL;
+	}
+
+	/* to-PATH */
+	path_to = get_string(argc, argv, &idx);
+
+	/* flags */
+	if (idx < argc) {
+		rc = string_to_mask(argv[idx], &flags,
+				move_flags, ARRAY_SIZE(move_flags));
+		idx++;
+	}
+
+	if (argc > idx)
+		warnx(_("wrong number of arguments"));
+	if (rc == 0) {
+		rc = move_mount(fd_from, path_from, fd_to, path_to, flags);
+		if (rc < 0)
+			warn(_("move_mount() failed"));
+	}
+	return rc;
+}
+
+
+/* move_mount */
+static int cmd_move(struct sh_context *sh, int argc, char *argv[])
+{
+	if (argc > 4)
+		return cmd_move_full(sh, argc, argv);
+
+	return cmd_move_simple(sh, argc, argv);
 }
 
 static int cmd_help(struct sh_context *sh __attribute__((__unused__)),
@@ -632,8 +783,13 @@ static int cmd_help(struct sh_context *sh __attribute__((__unused__)),
 		if (!cmd)
 			warnx(_("%s: command not found"), name);
 
-		printf("%s %s\n", cmd->name, cmd->syno ? : "");
-		printf("  - %s\n", cmd->desc);
+		fputs("Description:\n", stdout);
+		printf("\t%s - %s\n", cmd->name, cmd->desc);
+		if (cmd->syno) {
+			fputs("Synopsis:\n", stdout);
+			fputs(cmd->syno, stdout);
+		}
+		fputc('\n', stdout);
 	}
 	return 0;
 }
