@@ -944,10 +944,11 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			if (fd)
 				fclose(fd);
 		}
-	} else if (read_hypervisor_powerpc(desc) > 0) {}
-
+	} else if (read_hypervisor_powerpc(desc) > 0) {
+		/* read_hypervisor_powerpc() sets all necessary stuff to @desc */
+		;
 	/* Xen para-virt or dom0 */
-	else if (ul_path_access(desc->procfs, F_OK, "xen") == 0) {
+	} else if (ul_path_access(desc->procfs, F_OK, "xen") == 0) {
 		int dom0 = 0;
 
 		fd = ul_path_fopen(desc->procfs, "r", "xen/capabilities");
