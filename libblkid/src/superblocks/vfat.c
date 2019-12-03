@@ -361,8 +361,8 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		/* Search the FAT32 root dir for the label attribute */
 		uint32_t buf_size = vs->vs_cluster_size * sector_size;
 		uint32_t start_data_sect = reserved + fat_size;
-		uint32_t entries = le32_to_cpu(vs->vs_fat32_length) *
-					sector_size / sizeof(uint32_t);
+		uint32_t entries = ((uint64_t) le32_to_cpu(vs->vs_fat32_length)
+					* sector_size) / sizeof(uint32_t);
 		uint32_t next = le32_to_cpu(vs->vs_root_cluster);
 
 		while (next && next < entries && --maxloop) {
