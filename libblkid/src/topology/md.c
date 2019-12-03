@@ -135,7 +135,7 @@ static int probe_md_tp(blkid_probe pr,
 	}
 
 	blkid_topology_set_minimum_io_size(pr, md.chunk_size);
-	blkid_topology_set_optimal_io_size(pr, md.chunk_size * md.raid_disks);
+	blkid_topology_set_optimal_io_size(pr, (unsigned long) md.chunk_size * md.raid_disks);
 
 	return 0;
 
