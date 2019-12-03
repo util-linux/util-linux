@@ -311,23 +311,28 @@ static inline size_t ltrim_whitespace(unsigned char *str)
 	return len;
 }
 
-static inline void strrep(char *s, int find, int replace)
+static inline char *strrep(char *s, int find, int replace)
 {
+	char *re = s;
+
 	while (s && *s && (s = strchr(s, find)) != NULL)
 		*s++ = replace;
+	return re;
 }
 
-static inline void strrem(char *s, int rem)
+static inline char *strrem(char *s, int rem)
 {
-	char *p;
+	char *p, *re = s;
 
 	if (!s)
-		return;
+		return NULL;
 	for (p = s; *s; s++) {
 		if (*s != rem)
 			*p++ = *s;
 	}
 	*p = '\0';
+
+	return re;
 }
 
 extern char *strnappend(const char *s, const char *suffix, size_t b);
