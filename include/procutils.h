@@ -31,13 +31,4 @@ extern int proc_next_pid(struct proc_processes *ps, pid_t *pid);
 extern char *proc_get_command(pid_t pid);
 extern char *proc_get_command_name(pid_t pid);
 
-struct proc_fds {
-	DIR *dir;
-};
-
-extern int proc_next_fd(struct proc_fds *fds, int *fd, char *info, size_t infosz);
-extern void proc_close_fds(struct proc_fds *fds);
-extern struct proc_fds *proc_open_fds(pid_t pid);
-
-
 #endif /* UTIL_LINUX_PROCUTILS */
