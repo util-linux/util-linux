@@ -76,11 +76,17 @@ static inline struct fdisk_sun_label *self_label(struct fdisk_context *cxt)
 }
 
 static void set_partition(struct fdisk_context *cxt, size_t i,
-		uint32_t start,uint32_t stop, uint16_t sysid)
+		uint64_t start, uint64_t stop, uint16_t sysid)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	struct fdisk_parttype *t =
 			fdisk_label_get_parttype_from_code(cxt->label, sysid);
+
+	if (start / (cxt->geom.heads * cxt->geom.sectors) > UINT32_MAX)
+		fdisk_warnx(cxt, _("%#zu: start cylinder overflows Sun label limits"), i+1);
+
+	if (stop - start > UINT32_MAX)
+		fdisk_warnx(cxt, _("%#zu: number of sectors overflow Sun label limits"), i+1);
 
 	sunlabel->vtoc.infos[i].id = cpu_to_be16(sysid);
 	sunlabel->vtoc.infos[i].flags = cpu_to_be16(0);
@@ -272,15 +278,17 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 
 	/* create the default layout only if no-script defined */
 	if (!cxt->script) {
-		set_partition(cxt, 0, 0, ndiv * cxt->geom.heads * cxt->geom.sectors,
+		set_partition(cxt, 0, 0,
+			  (uint64_t) ndiv * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_LINUX_NATIVE);
-		set_partition(cxt, 1, ndiv * cxt->geom.heads * cxt->geom.sectors,
-			  cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors,
+		set_partition(cxt, 1,
+			  (uint64_t) ndiv * cxt->geom.heads * cxt->geom.sectors,
+			  (uint64_t) cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_LINUX_SWAP);
 		sunlabel->vtoc.infos[1].flags |= cpu_to_be16(SUN_FLAG_UNMNT);
 
 		set_partition(cxt, 2, 0,
-			  cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors,
+			  (uint64_t) cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_WHOLEDISK);
 	}
 
@@ -829,7 +837,7 @@ static int sun_get_partition(struct fdisk_context *cxt, size_t n,
 	struct sun_disklabel *sunlabel;
 	struct sun_partition *part;
 	uint16_t flags;
-	uint32_t start, len;
+	uint64_t start, len;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -846,7 +854,7 @@ static int sun_get_partition(struct fdisk_context *cxt, size_t n,
 		return 0;
 
 	flags = be16_to_cpu(sunlabel->vtoc.infos[n].flags);
-	start = be32_to_cpu(part->start_cylinder)
+	start = (uint64_t) be32_to_cpu(part->start_cylinder)
 			* cxt->geom.heads * cxt->geom.sectors;
 	len = be32_to_cpu(part->num_sectors);
 
