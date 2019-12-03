@@ -184,7 +184,7 @@ static int set_named_fd(struct sh_context *sh, const char *name, int fd)
 		if (n->id >= 0)
 			close(n->id);
 	} else {
-		sh->fds = xrealloc(sh->fds, sh->nfds + 1);
+		sh->fds = xrealloc(sh->fds, (sh->nfds + 1) * sizeof(struct sh_named_fd));
 		n = &sh->fds[sh->nfds++];
 		n->name = xstrdup(name);
 	}
@@ -197,6 +197,9 @@ static int remove_named_fd_by_id(struct sh_context *sh, int fd)
 {
 	size_t i;
 
+	if (sh->nfds == 0)
+		return -EINVAL;
+
 	for (i = 0; i < sh->nfds; i++) {
 		if (sh->fds[i].id == fd)
 			break;
@@ -206,7 +209,8 @@ static int remove_named_fd_by_id(struct sh_context *sh, int fd)
 
 	free(sh->fds[i].name);
 	if (i + 1 < sh->nfds)
-		memmove(sh->fds + i, sh->fds + i + 1, sh->nfds - i - 1);
+		memmove(sh->fds + i, sh->fds + i + 1,
+			(sh->nfds - i - 1) * sizeof(struct sh_named_fd));
 	sh->nfds--;
 	return 0;
 }
