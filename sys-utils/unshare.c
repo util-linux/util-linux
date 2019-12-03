@@ -574,34 +574,31 @@ int main(int argc, char *argv[])
 		};
 
 		struct __user_cap_data_struct payload[_LINUX_CAPABILITY_U32S_3] = { 0 };
+		int cap;
+		uint64_t effective;
 
-		if (capget(&header, payload) < 0) {
+		if (capget(&header, payload) < 0)
 			err(EXIT_FAILURE, _("capget failed"));
-		}
 
 		/* In order the make capabilities ambient, we first need to ensure
 		 * that they are all inheritable. */
 		payload[0].inheritable = payload[0].permitted;
 		payload[1].inheritable = payload[1].permitted;
 
-		if (capset(&header, payload) < 0) {
+		if (capset(&header, payload) < 0)
 			err(EXIT_FAILURE, _("capset failed"));
-		}
 
-		uint64_t effective = ((uint64_t)payload[1].effective << 32) |  (uint64_t)payload[0].effective;
+		effective = ((uint64_t)payload[1].effective << 32) |  (uint64_t)payload[0].effective;
 
-		for (int cap = 0; cap < 64; cap++) {
+		for (cap = 0; cap < 64; cap++) {
 			/* This is the same check as cap_valid(), but using
 			 * the runtime value for the last valid cap. */
-			if (cap < 0 || cap > cap_last_cap()) {
+			if (cap > cap_last_cap())
 				continue;
-			}
 
-			if (effective & (1 << cap)) {
-				if (prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE, cap, 0, 0) < 0) {
+			if ((effective & (1 << cap))
+			    && prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE, cap, 0, 0) < 0)
 					err(EXIT_FAILURE, _("prctl(PR_CAP_AMBIENT) failed"));
-				}
-			}
                 }
         }
 
