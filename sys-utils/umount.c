@@ -112,24 +112,24 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(MNT_EX_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) exit_non_root(const char *option)
+static void suid_drop(struct libmnt_context *cxt)
 {
 	const uid_t ruid = getuid();
 	const uid_t euid = geteuid();
 
-	if (ruid == 0 && euid != 0) {
-		/* user is root, but setuid to non-root */
-		if (option)
-			errx(MNT_EX_USAGE,
-				_("only root can use \"--%s\" option "
-				 "(effective UID is %u)"),
-					option, euid);
-		errx(MNT_EX_USAGE, _("only root can do that "
-				 "(effective UID is %u)"), euid);
+	if (ruid != 0 && euid == 0) {
+		if (setgid(getgid()) < 0)
+			err(MNT_EX_FAIL, _("setgid() failed"));
+
+		if (setuid(getuid()) < 0)
+			err(MNT_EX_FAIL, _("setuid() failed"));
 	}
-	if (option)
-		errx(MNT_EX_USAGE, _("only root can use \"--%s\" option"), option);
-	errx(MNT_EX_USAGE, _("only root can do that"));
+
+	/* be paranoid and check it, setuid(0) has to fail */
+	if (ruid != 0 && setuid(0) == 0)
+		errx(MNT_EX_FAIL, _("drop permissions failed."));
+
+	mnt_context_force_unrestricted(cxt);
 }
 
 static void success_message(struct libmnt_context *cxt)
@@ -220,6 +220,15 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 		err(MNT_EX_SYSERR, _("failed to set umount target"));
 
 	rc = mnt_context_umount(cxt);
+
+	if (rc == -EPERM
+	    && mnt_context_is_restricted(cxt)
+	    && !mnt_context_syscall_called(cxt)) {
+		/* Failed somewhere in libmount, drop perms and try it again */
+		suid_drop(cxt);
+		rc = mnt_context_umount(cxt);
+	}
+
 	rc = mk_exit_code(cxt, rc);
 
 	if (rc == MNT_EX_SUCCESS && mnt_context_is_verbose(cxt))
@@ -494,7 +503,7 @@ int main(int argc, char **argv)
 
 		/* only few options are allowed for non-root users */
 		if (mnt_context_is_restricted(cxt) && !strchr("hdilqVv", c))
-			exit_non_root(option_to_longopt(c, longopts));
+			suid_drop(cxt);
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
