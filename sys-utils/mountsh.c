@@ -322,27 +322,43 @@ static int cmd_fds(struct sh_context *sh,
 		int argc __attribute__((__unused__)),
 		char *argv[] __attribute__((__unused__)))
 {
+	DIR *dir = NULL;
+	struct dirent *d;
 	char info[PATH_MAX];
-	int fd;
-	struct proc_fds *fds = proc_open_fds(getpid());
+	int fd, dfd;
 
-	if (!fds) {
-		warn(_("faild to open /proc/self/fd/ directory"));
-		return 0;
-	}
+	dir = opendir("/proc/self/fd");
+	if (!dir)
+		warn(_("faild to open /proc/self/fd directory"));
 
-	while (proc_next_fd(fds, &fd, info, sizeof(info)) == 0) {
-		char *type;
+	dfd = dirfd(dir);
+
+	while ((d = readdir(dir))) {
 		struct sh_named_fd *n;
+		char *end = NULL;
+		ssize_t len;
+		char *type;
 
-		if (!*info)
+		if (!isdigit_string(d->d_name))
 			continue;
-		if (startswith(info, "anon_inode:")) {
-			type = info + 12;
-			strrem(type, ']');
-		} else if (isatty(fd)) {
+
+		errno = 0;
+		fd = (int) strtol(d->d_name, &end, 10);
+		if (errno || d->d_name == end || (end && *end))
+			return -1;
+		if (fd == dfd)
 			continue;
-		} else if (*info == '/')
+
+		len = readlinkat(dfd, d->d_name, info, sizeof(info) - 1);
+		if (len < 0 || len == 0)
+			continue;
+		info[len] = '\0';
+
+		if (startswith(info, "anon_inode:"))
+			type = strrem(info + 12, ']');
+		else if (isatty(fd))
+			continue;
+		else if (*info == '/')
 			type = "path";
 
 		n = __get_named_fd(sh, NULL, fd);
@@ -354,7 +370,7 @@ static int cmd_fds(struct sh_context *sh,
 		/* TODO: use fsinfo() to get more details about the FD */
 	}
 
-	proc_close_fds(fds);
+	closedir(dir);
 	return 0;
 }
 
