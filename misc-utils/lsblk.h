@@ -199,6 +199,8 @@ extern void lsblk_device_free_properties(struct lsblk_devprop *p);
 extern struct lsblk_devprop *lsblk_device_get_properties(struct lsblk_device *dev);
 extern void lsblk_properties_deinit(void);
 
+extern const char *lsblk_parttype_code_to_string(const char *code, const char *pttype);
+
 /* lsblk-devtree.c */
 void lsblk_reset_iter(struct lsblk_iter *itr, int direction);
 struct lsblk_device *lsblk_new_device(void);

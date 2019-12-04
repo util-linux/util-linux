@@ -79,6 +79,7 @@ enum {
 	COL_PTUUID,
 	COL_PTTYPE,
 	COL_PARTTYPE,
+	COL_PARTTYPENAME,
 	COL_PARTLABEL,
 	COL_PARTUUID,
 	COL_PARTFLAGS,
@@ -168,7 +169,8 @@ static struct colinfo infos[] = {
 	[COL_PTUUID] = { "PTUUID",  36,  0, N_("partition table identifier (usually UUID)") },
 	[COL_PTTYPE] = { "PTTYPE",  0.1, 0, N_("partition table type") },
 
-	[COL_PARTTYPE]  = { "PARTTYPE",  36,  0, N_("partition type UUID") },
+	[COL_PARTTYPE]  = { "PARTTYPE",  36,  0, N_("partition type code or UUID") },
+	[COL_PARTTYPENAME]  = { "PARTTYPENAME",  0.1,  0, N_("partition type name") },
 	[COL_PARTLABEL] = { "PARTLABEL", 0.1, 0, N_("partition LABEL") },
 	[COL_PARTUUID]  = { "PARTUUID",  36,  0, N_("partition UUID") },
 	[COL_PARTFLAGS] = { "PARTFLAGS",  36,  0, N_("partition flags") },
@@ -825,6 +827,15 @@ static char *device_get_data(
 		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->parttype)
 			str = xstrdup(prop->parttype);
+		break;
+	case COL_PARTTYPENAME:
+		prop = lsblk_device_get_properties(dev);
+		if (prop && prop->parttype && prop->pttype) {
+			const char *x = lsblk_parttype_code_to_string(
+						prop->parttype, prop->pttype);
+			if (x)
+				str = xstrdup(x);
+		}
 		break;
 	case COL_PARTLABEL:
 		prop = lsblk_device_get_properties(dev);

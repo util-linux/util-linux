@@ -9,6 +9,7 @@
 #include "xalloc.h"
 #include "mangle.h"
 #include "path.h"
+#include "nls.h"
 
 #include "lsblk.h"
 
@@ -310,4 +311,67 @@ void lsblk_properties_deinit(void)
 #ifdef HAVE_LIBUDEV
 	udev_unref(udev);
 #endif
+}
+
+
+
+/*
+ * Partition types
+ */
+struct lsblk_parttype {
+	unsigned int	code;		/* type as number or zero */
+	char		*name;		/* description */
+	char		*typestr;	/* type as string or NULL */
+};
+
+static const struct lsblk_parttype mbr_types[] =
+{
+	#include "pt-mbr-partnames.h"
+};
+
+#define DEF_GUID(_u, _n) \
+	{ \
+		.typestr = (_u), \
+		.name = (_n),    \
+	}
+static const struct lsblk_parttype gpt_types[] =
+{
+	#include "pt-gpt-partnames.h"
+};
+
+const char *lsblk_parttype_code_to_string(const char *code, const char *pttype)
+{
+	size_t i;
+
+	if (!code || !pttype)
+		return NULL;
+
+	if (strcmp(pttype, "dos") == 0 || strcmp(pttype, "mbr") == 0) {
+		char *end = NULL;
+		unsigned int xcode;
+
+		errno = 0;
+		xcode = strtol(code, &end, 16);
+
+		if (errno || *end != '\0')
+			return NULL;
+
+		for (i = 0; i < ARRAY_SIZE(mbr_types); i++) {
+			const struct lsblk_parttype *t = &mbr_types[i];
+
+			if (t->name && t->code == xcode)
+				return t->name;
+		}
+
+	} else if (strcmp(pttype, "gpt") == 0) {
+		for (i = 0; i < ARRAY_SIZE(gpt_types); i++) {
+			const struct lsblk_parttype *t = &gpt_types[i];
+
+			if (t->name && t->typestr &&
+			    strcasecmp(code, t->typestr) == 0)
+				return t->name;
+		}
+	}
+
+	return NULL;
 }
