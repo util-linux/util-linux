@@ -912,6 +912,7 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 #define MNT_MS_FEC_DEVICE (1 << 22)
 #define MNT_MS_FEC_OFFSET (1 << 23)
 #define MNT_MS_FEC_ROOTS (1 << 24)
+#define MNT_MS_ROOT_HASH_SIG (1 << 25)
 
 /*
  * mount(2) MS_* masks (MNT_MAP_LINUX map)
