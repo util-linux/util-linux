@@ -85,6 +85,7 @@ struct mask_name {
 
 static int cmd_help(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fds(struct sh_context *sh, int argc, char *argv[]);
+static int cmd_open_path(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_close(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[]);
@@ -107,6 +108,12 @@ static const struct sh_command commands[] =
 		.func = cmd_fsconfig,
 		.desc = N_("(re)configure or create filesystem"),
 		.syno = N_("\tfsconfig [<fd>] <flag|string|binary|path|path-empty|fd|create|reconf> [<key> [<value>] [<aux>]]")
+	},{
+		.name = "open_path",
+		.func = cmd_open_path,
+		.desc = N_("open path with O_PATH"),
+		.syno = N_("\topen_path <path>"),
+		.refd = 1,
 	},{
 		.name = "fsopen",
 		.func = cmd_fsopen,
@@ -374,10 +381,23 @@ static int cmd_fds(struct sh_context *sh,
 	return 0;
 }
 
-/* TODO:
- *
- * cmd_pathopen() for FSCONFIG_SET_PATH with dir fd
- */
+/* open_path <path> */
+static int cmd_open_path(struct sh_context *sh __attribute__((__unused__)),
+			int argc, char *argv[])
+{
+	int fd;
+
+	if (argc < 2) {
+		warnx(_("no path specified"));
+		return -EINVAL;
+	}
+	fd = open(argv[1], O_PATH);
+	if (fd < 0)
+		warn(_("cannot open %s"), argv[1]);
+	else
+		printf(_("new FD [path]: %d\n"), fd);
+	return fd;
+}
 
 /* fsopen <fsname> [CLOEXEC] */
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[])
