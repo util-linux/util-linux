@@ -134,7 +134,8 @@ static const struct sh_command commands[] =
 		.name = "open_tree",
 		.func = cmd_open_tree,
 		.desc = N_("attach mount object to fd"),
-		.syno = N_("\topen_tree [<FD>] <path> [<EMPTY_PATH,NO_AUTOMOUNT,NOFOLLOW,CLOEXEC,CLONE,RECURSIVE>]"),
+		.syno = N_("\topen_tree [<FD>] <path> [<flag| ...>]\n"
+			   "\t  flags: EMPTY_PATH,NO_AUTOMOUNT,NOFOLLOW,CLOEXEC,CLONE and RECURSIVE"),
 		.refd = 1,
 	},{
 		.name = "fsopen",
@@ -146,16 +147,18 @@ static const struct sh_command commands[] =
 		.name = "fsmount",
 		.func = cmd_fsmount,
 		.desc = N_("create mount file descritor"),
-		.syno = N_("\tfsmount [<fd>] [CLOEXEC] [<ro,nosuid,nodev,noexec,atime,realatime,noatime,strictatime,nodiratime>]"),
+		.syno = N_("\tfsmount [<fd>] [CLOEXEC] [<attribute, ...>]\n"
+			   "\t  attributes: ro,nosuid,nodev,noexec,atime,realatime,noatime,strictatime and nodiratime"),
 		.refd = 1
 	},{
 		.name = "move_mount",
 		.func = cmd_move,
 		.desc = N_("move mount object around the filesystem topology"),
-		.syno = N_("\tmove_mount <from-dirfd> <to-path> [<{F,T}_(SYMLINKS,AUTOMOUNT}>]\n"
-			   "\tmove_mount <from-dirfd> <from-path>|\"\" <to-dirfd>|AT_FDCWD <to-path>|\"\" [<{F,T}_(SYMLINKS,AUTOMOUNT,EMPTY_PATH}>]")
+		.syno = N_("\tmove_mount <from-dirfd> <to-path> [<flag| ...>]\n"
+			   "\t  flags: {F,T}_{SYMLINKS,AUTOMOUNT}\n"
+			   "\tmove_mount <from-dirfd> <from-path>|\"\" <to-dirfd>|AT_FDCWD <to-path>|\"\" [<flag| ...>]\n"
+			   "\t  flags: {F,T}_{SYMLINKS,AUTOMOUNT,EMPTY_PATH}")
 	},{
-
 		.name = "help",
 		.func = cmd_help,
 		.desc = N_("list commands and help"),
@@ -289,13 +292,14 @@ static int execute_command(struct sh_context *sh,
 }
 
 static int string_to_mask(const char *str, unsigned int *res,
-		          const struct mask_name *names, size_t nnames)
+		          const struct mask_name *names, size_t nnames,
+			  int sep)
 {
 	const char *p = str;
 
 	while (p && *p) {
 		size_t i, sz;
-		char *end = strchr(p, ',');
+		char *end = strchr(p, sep);
 
 		sz = end ? (size_t) (end - p) : strlen(p);
 
@@ -536,7 +540,7 @@ static int cmd_open_tree(struct sh_context *sh,	int argc, char *argv[])
 	if (idx < argc) {
 		if (string_to_mask(argv[idx], &flags,
 				opentree_flags,
-				ARRAY_SIZE(opentree_flags)) != 0)
+				ARRAY_SIZE(opentree_flags), '|') != 0)
 			return -EINVAL;
 		idx++;
 	}
@@ -732,7 +736,7 @@ static int cmd_fsmount(struct sh_context *sh, int argc, char *argv[])
 	/* <attrs> */
 	if (idx < argc) {
 		rc = string_to_mask(argv[idx], &attrs,
-				fsmount_attrs, ARRAY_SIZE(fsmount_attrs));
+				fsmount_attrs, ARRAY_SIZE(fsmount_attrs), ',');
 		if (rc)
 			return rc;
 		idx++;
@@ -791,7 +795,7 @@ static int cmd_move_simple(struct sh_context *sh, int argc, char *argv[])
 	/* flags */
 	if (idx < argc) {
 		rc = string_to_mask(argv[idx], &flags,
-				move_flags, ARRAY_SIZE(move_flags));
+				move_flags, ARRAY_SIZE(move_flags), '|');
 		idx++;
 	}
 
@@ -847,7 +851,7 @@ static int cmd_move_full(struct sh_context *sh, int argc, char *argv[])
 	/* flags */
 	if (idx < argc) {
 		rc = string_to_mask(argv[idx], &flags,
-				move_flags, ARRAY_SIZE(move_flags));
+				move_flags, ARRAY_SIZE(move_flags), '|');
 		idx++;
 	}
 
