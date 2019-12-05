@@ -31,6 +31,9 @@ static const char *lib_features[] = {
 #ifdef HAVE_BTRFS_SUPPORT
 	"btrfs",
 #endif
+#ifdef HAVE_CRYPTSETUP
+	"verity",
+#endif
 #ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	"mtab",
 #endif
