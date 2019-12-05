@@ -1108,6 +1108,11 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 		}
 	}
 #endif
+
+	/* Cleanup will be immediate on failure, and deferred to umount on success */
+	if (mnt_context_is_veritydev(cxt))
+		mnt_context_deferred_delete_veritydev(cxt);
+
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 

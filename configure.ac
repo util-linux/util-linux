@@ -2426,6 +2426,30 @@ AS_IF([test "x$enable_colors_default" = xyes], [
 ])
 
 
+AC_ARG_WITH([cryptsetup],
+  AS_HELP_STRING([--with-cryptsetup], [compile with cryptsetup support]),
+  [], [with_cryptsetup=no]
+)
+
+AS_IF([test "x$with_cryptsetup" = xno], [
+  AM_CONDITIONAL([HAVE_CRYPTSETUP], [false])
+], [
+  PKG_CHECK_MODULES([CRYPTSETUP], [libcryptsetup],
+	[AC_DEFINE([HAVE_CRYPTSETUP], [1], [Define if cryptsetup is available])
+	 UL_PKG_STATIC([CRYPTSETUP_LIBS_STATIC], [libcryptsetup])
+	 AM_CONDITIONAL([HAVE_CRYPTSETUP], [true])
+	 have_cryptsetup=yes],
+	[have_cryptsetup=no
+   AM_CONDITIONAL([HAVE_CRYPTSETUP], [false])])
+
+  AS_CASE([$with_cryptsetup:$have_cryptsetup],
+    [yes:no], [AC_MSG_WARN([cryptsetup selected but libcryptsetup not found])]
+  )
+])
+AC_SUBST([CRYPTSETUP_LIBS])
+AC_SUBST([CRYPTSETUP_LIBS_STATIC])
+
+
 AC_ARG_VAR([SUID_CFLAGS],
 	   [CFLAGS used for binaries which are usually with the suid bit])
 AC_ARG_VAR([SUID_LDFLAGS],

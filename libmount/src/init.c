@@ -37,6 +37,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 	{ "utils", MNT_DEBUG_UTILS,	"misc library utils" },
 	{ "monitor", MNT_DEBUG_MONITOR,	"mount tables monitor" },
 	{ "btrfs", MNT_DEBUG_BTRFS,	"btrfs specific routines" },
+	{ "verity", MNT_DEBUG_VERITY,	"verity specific routines" },
 
 	{ NULL, 0 }
 };

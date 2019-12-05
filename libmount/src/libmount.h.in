@@ -905,6 +905,9 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 #define MNT_MS_SIZELIMIT (1 << 15)
 #define MNT_MS_ENCRYPTION (1 << 16)
 #define MNT_MS_XFSTABCOMM (1 << 17)
+#define MNT_MS_HASH_DEVICE (1 << 18)
+#define MNT_MS_ROOT_HASH (1 << 19)
+#define MNT_MS_HASH_OFFSET (1 << 20)
 
 /*
  * mount(2) MS_* masks (MNT_MAP_LINUX map)
