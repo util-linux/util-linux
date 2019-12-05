@@ -4,6 +4,8 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <sys/mount.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include <linux/mount.h>
 
@@ -21,6 +23,19 @@
 #include "strutils.h"
 #include "procutils.h"
 #include "closestream.h"
+
+/* we cannot directly include linux/fcntl.h due to colision with libc and libc
+ * fcntl.h may not contains AT_RECURSIVE yet */
+#ifndef AT_RECURSIVE
+# define AT_RECURSIVE            0x8000  /* Apply to the entire subtree */
+#endif
+
+#ifndef HAVE_OPEN_TREE
+static int open_tree(int dirfd, const char *path, unsigned int flags)
+{
+	return syscall(SYS_open_tree, dirfd, path, flags);
+}
+#endif
 
 #ifndef HAVE_FSOPEN
 static int fsopen(const char *fsname, unsigned int flags)
@@ -86,6 +101,7 @@ struct mask_name {
 static int cmd_help(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fds(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_open_path(struct sh_context *sh, int argc, char *argv[]);
+static int cmd_open_tree(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsopen(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_close(struct sh_context *sh, int argc, char *argv[]);
 static int cmd_fsconfig(struct sh_context *sh, int argc, char *argv[]);
@@ -113,6 +129,12 @@ static const struct sh_command commands[] =
 		.func = cmd_open_path,
 		.desc = N_("open path with O_PATH"),
 		.syno = N_("\topen_path <path>"),
+		.refd = 1,
+	},{
+		.name = "open_tree",
+		.func = cmd_open_tree,
+		.desc = N_("attach mount object to fd"),
+		.syno = N_("\topen_tree [<FD>] <path> [<EMPTY_PATH,NO_AUTOMOUNT,NOFOLLOW,CLOEXEC,CLONE,RECURSIVE>]"),
 		.refd = 1,
 	},{
 		.name = "fsopen",
@@ -475,6 +497,64 @@ static int get_command_fd(struct sh_context *sh, int argc, char *argv[], int *id
 	return fd;
 }
 
+static const struct mask_name opentree_flags[] =
+{
+	{ "EMPTY_PATH",		AT_EMPTY_PATH },
+	{ "NO_AUTOMOUNT",	AT_NO_AUTOMOUNT },
+	{ "NOFOLLOW",		AT_SYMLINK_NOFOLLOW },
+	{ "CLOEXEC",		OPEN_TREE_CLOEXEC },
+	{ "CLONE",		OPEN_TREE_CLONE },
+	{ "RECURSIVE",		AT_RECURSIVE }
+};
+
+/* open_tree [<dirfd>] <path> [<flags>] */
+static int cmd_open_tree(struct sh_context *sh,	int argc, char *argv[])
+{
+	int dirfd, fd = -1, idx = 1;
+	unsigned int flags = 0;
+	const char *path = "";
+
+	if (argc < 2) {
+		warnx(_("no FD or path specified"));
+		return -EINVAL;
+	}
+
+	/* dirfd */
+	if ((isdigit_string(argv[idx]) || *argv[idx] == '$'))
+		dirfd = get_command_fd(sh, argc, argv, &idx, -1);
+	else
+		dirfd = AT_FDCWD;
+
+	/* path */
+	if (idx < argc) {
+		path = get_string(argc, argv, &idx);
+		if (!path)
+			flags |= AT_EMPTY_PATH;
+	}
+
+	/* flags */
+	if (idx < argc) {
+		if (string_to_mask(argv[idx], &flags,
+				opentree_flags,
+				ARRAY_SIZE(opentree_flags)) != 0)
+			return -EINVAL;
+		idx++;
+	}
+
+	if (argc > idx)
+		warnx(_("wrong number of arguments"));
+	else {
+		fd = open_tree(dirfd, path, flags);
+		if (fd < 0)
+			warn(_("open_tree() failed"));
+		else
+			printf(_("new FD [tree]: %d\n"), fd);
+	}
+
+	return fd;
+}
+
+
 /* close <FD> */
 static int cmd_close(struct sh_context *sh, int argc, char *argv[])
 {
@@ -823,8 +903,10 @@ static int cmd_help(struct sh_context *sh __attribute__((__unused__)),
 		const char *name = argv[1];
 		const struct sh_command *cmd = lookup_command(name);
 
-		if (!cmd)
+		if (!cmd) {
 			warnx(_("%s: command not found"), name);
+			return -EINVAL;
+		}
 
 		fputs("Description:\n", stdout);
 		printf("\t%s - %s\n", cmd->name, cmd->desc);

@@ -1400,6 +1400,7 @@ UL_REQUIRES_SYSCALL_CHECK([mountsh], [UL_CHECK_SYSCALL([fsopen])], [fsopen])
 UL_REQUIRES_SYSCALL_CHECK([mountsh], [UL_CHECK_SYSCALL([fsmount])], [fsmount])
 UL_REQUIRES_SYSCALL_CHECK([mountsh], [UL_CHECK_SYSCALL([fsconfig])], [fsconfig])
 UL_REQUIRES_SYSCALL_CHECK([mountsh], [UL_CHECK_SYSCALL([move_mount])], [move_mount])
+UL_REQUIRES_SYSCALL_CHECK([mountsh], [UL_CHECK_SYSCALL([open_tree])], [open_tree])
 AM_CONDITIONAL([BUILD_MOUNTSH], [test "x$build_mountsh" = xyes])
 
 
