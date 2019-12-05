@@ -78,8 +78,7 @@ struct sh_context {
 	size_t nfds;
 	struct sh_named_fd *fds;
 
-	int     cfd;	/* default fsopen FD */
-	int     mfd;	/* default mount FD */
+	int	cfd;	/* default fsopen FD */
 };
 
 struct sh_command {
@@ -123,7 +122,9 @@ static const struct sh_command commands[] =
 		.name = "fsconfig",
 		.func = cmd_fsconfig,
 		.desc = N_("(re)configure or create filesystem"),
-		.syno = N_("\tfsconfig [<fd>] <flag|string|binary|path|path-empty|fd|create|reconf> [<key> [<value>] [<aux>]]")
+		.syno = N_("\tfsconfig [<fd>] <command> [<key> [<value>] [<aux>]]\n"
+			   "\t * commands: flag,string,binary,path,path-empty,fd,create and reconf\n"
+			   "\t * the default <fd> comes from the first fsopen call")
 	},{
 		.name = "open_path",
 		.func = cmd_open_path,
@@ -134,8 +135,8 @@ static const struct sh_command commands[] =
 		.name = "open_tree",
 		.func = cmd_open_tree,
 		.desc = N_("attach mount object to fd"),
-		.syno = N_("\topen_tree [<FD>] <path> [<flag| ...>]\n"
-			   "\t  flags: EMPTY_PATH,NO_AUTOMOUNT,NOFOLLOW,CLOEXEC,CLONE and RECURSIVE"),
+		.syno = N_("\topen_tree [<fd>] <path> [<flag| ...>]\n"
+			   "\t * flags: EMPTY_PATH,NO_AUTOMOUNT,NOFOLLOW,CLOEXEC,CLONE and RECURSIVE"),
 		.refd = 1,
 	},{
 		.name = "fsopen",
@@ -148,16 +149,17 @@ static const struct sh_command commands[] =
 		.func = cmd_fsmount,
 		.desc = N_("create mount file descritor"),
 		.syno = N_("\tfsmount [<fd>] [CLOEXEC] [<attribute, ...>]\n"
-			   "\t  attributes: ro,nosuid,nodev,noexec,atime,realatime,noatime,strictatime and nodiratime"),
+			   "\t * attributes: ro,nosuid,nodev,noexec,atime,realatime,noatime,strictatime and nodiratime\n"
+			   "\t * the default <fd> comes from the first fsopen call"),
 		.refd = 1
 	},{
 		.name = "move_mount",
 		.func = cmd_move,
 		.desc = N_("move mount object around the filesystem topology"),
 		.syno = N_("\tmove_mount <from-dirfd> <to-path> [<flag| ...>]\n"
-			   "\t  flags: {F,T}_{SYMLINKS,AUTOMOUNT}\n"
+			   "\t * flags: {F,T}_{SYMLINKS,AUTOMOUNT}\n"
 			   "\tmove_mount <from-dirfd> <from-path>|\"\" <to-dirfd>|AT_FDCWD <to-path>|\"\" [<flag| ...>]\n"
-			   "\t  flags: {F,T}_{SYMLINKS,AUTOMOUNT,EMPTY_PATH}")
+			   "\t * flags: {F,T}_{SYMLINKS,AUTOMOUNT,EMPTY_PATH}")
 	},{
 		.name = "help",
 		.func = cmd_help,
@@ -750,11 +752,8 @@ static int cmd_fsmount(struct sh_context *sh, int argc, char *argv[])
 	rc = fsmount(fd, flags, attrs);
 	if (rc < 0)
 		warn(_("fsmount failed"));
-	else {
-		if (sh->mfd < 0)
-			sh->mfd = rc;
+	else
 		printf(_("new FD [fsmount]: %d\n"), rc);
-	}
 
 	return rc;
 }
@@ -1022,7 +1021,6 @@ int main(int argc, char *argv[])
 	}
 
 	sh = xcalloc(1, sizeof(*sh));
-	sh->mfd = -1;
 	sh->cfd = -1;
 
 	fputc('\n', stdout);
