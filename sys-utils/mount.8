@@ -2396,6 +2396,20 @@ If the hash tree device is embedded in the source volume,
 .RE
 .PP
 Supported since util-linux v2.35.
+.PP
+For example commands:
+.sp
+.RS
+.nf
+.B mksquashfs /etc /tmp/etc.squashfs
+.B dd if=/dev/zero of=/tmp/etc.hash bs=1M count=10
+.B veritysetup format /tmp/etc.squashfs /tmp/etc.hash
+.B mount -o verity.hashdevice=/tmp/etc.hash,verity.roothash=<hash> /tmp/etc.squashfs /mnt
+.fi
+.RE
+.sp
+create squashfs image from /etc directory, verity hash device
+and mount verified filesystem image to /mnt.
 
 .SH "LOOP-DEVICE SUPPORT"
 One further possible type is a mount via the loop device.  For example,
