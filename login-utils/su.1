@@ -8,10 +8,17 @@ su \- run a command with substitute user and group ID
 .B su
 allows to run commands with a substitute user and group ID.
 .PP
-When called without arguments,
+When called with no
+.IR user
+specified,
 .B su
 defaults to running an interactive shell as
 .IR root .
+When
+.IR user
+is specified, an additional
+.IR argument
+can be supplied, in which case it is passed to the shell.
 .PP
 For backward compatibility,
 .B su
