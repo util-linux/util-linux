@@ -325,6 +325,18 @@ static int log_close(struct script_control *ctl,
 	return rc;
 }
 
+static int log_flush(struct script_control *ctl __attribute__((__unused__)), struct script_log *log)
+{
+
+	if (!log || !log->initialized)
+		return 0;
+
+	DBG(MISC, ul_debug("flushing %s", log->filename));
+
+	fflush(log->fp);
+	return 0;
+}
+
 static void log_free(struct script_control *ctl, struct script_log *log)
 {
 	size_t i;
@@ -701,6 +713,25 @@ static int callback_log_signal(void *data, struct signalfd_siginfo *info, void *
 	return ssz < 0 ? ssz : 0;
 }
 
+static int callback_flush_logs(void *data)
+{
+	struct script_control *ctl = (struct script_control *) data;
+	size_t i;
+
+	for (i = 0; i < ctl->out.nlogs; i++) {
+		int rc = log_flush(ctl, ctl->out.logs[i]);
+		if (rc)
+			return rc;
+	}
+
+	for (i = 0; i < ctl->in.nlogs; i++) {
+		int rc = log_flush(ctl, ctl->in.logs[i]);
+		if (rc)
+			return rc;
+	}
+	return 0;
+}
+
 static void die_if_link(struct script_control *ctl, const char *filename)
 {
 	struct stat s;
@@ -901,6 +932,7 @@ int main(int argc, char **argv)
 	cb->child_sigstop = callback_child_sigstop;
 	cb->log_stream_activity = callback_log_stream_activity;
 	cb->log_signal = callback_log_signal;
+	cb->flush_logs = callback_flush_logs;
 
 	if (!ctl.quiet) {
 		printf(_("Script started"));

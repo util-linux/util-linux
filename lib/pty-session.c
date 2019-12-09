@@ -210,6 +210,9 @@ int ul_pty_setup(struct ul_pty *pty)
 	sigaddset(&ourset, SIGINT);
 	sigaddset(&ourset, SIGQUIT);
 
+	if (pty->callbacks.flush_logs)
+		sigaddset(&ourset, SIGUSR1);
+
 	if ((pty->sigfd = signalfd(-1, &ourset, SFD_CLOEXEC)) < 0)
 		rc = -errno;
 done:
@@ -483,6 +486,11 @@ static int handle_signal(struct ul_pty *pty, int fd)
 		if (pty->callbacks.log_signal)
 			rc = pty->callbacks.log_signal(pty->callback_data,
 					&info, (void *) &pty->win);
+		break;
+	case SIGUSR1:
+		DBG(SIG, ul_debugobj(pty, " get signal SIGUSR1"));
+		if (pty->callbacks.flush_logs)
+			rc = pty->callbacks.flush_logs(pty->callback_data);
 		break;
 	default:
 		abort();
