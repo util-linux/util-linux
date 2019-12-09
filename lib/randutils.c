@@ -1,10 +1,11 @@
 /*
- * General purpose random utilities
+ * SPDX-License-Identifier: BSD-3-Clause
  *
- * Based on libuuid code.
+ * General purpose random utilities. Based on libuuid code.
  *
- * This file may be redistributed under the terms of the
- * GNU Lesser General Public License.
+ * This code is free software; you can redistribute it and/or modify it under
+ * the terms of the Modified BSD License. The complete text of the license is
+ * available in the Documentation/licenses/COPYING.BSD-3-Clause file.
  */
 #include <stdio.h>
 #include <unistd.h>
