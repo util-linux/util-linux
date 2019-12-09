@@ -103,7 +103,8 @@ the child process is always stored in type script file too.
 \fB\-f\fR, \fB\-\-flush\fR
 Flush output after each write.  This is nice for telecooperation: one person
 does `mkfifo foo; script -f foo', and another can supervise real-time what is
-being done using `cat foo'.
+being done using `cat foo'.  Note that flush has an impact on performance, it's
+possible to use SIGUSR1 to flush logs on demand.
 .TP
 \fB\-\-force\fR
 Allow the default output destination, i.e. the typescript file, to be a hard
@@ -224,6 +225,12 @@ fi
 You should also avoid use of script in command pipes, as
 .B script
 can read more input than you would expect.
+.PP
+.SH SIGNALS
+Upon receiving
+.BR SIGUSR1,
+.B script
+immediately flushes the output files.
 .PP
 .SH ENVIRONMENT
 The following environment variable is utilized by
