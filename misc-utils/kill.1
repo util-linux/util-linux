@@ -131,16 +131,22 @@ to wait for a period defined in
 .I milliseconds
 before sending follow-up
 .I signal
-to process.  When timeout is speficified multiple times to a list of
-timeouts and signals that are sent sequentially.  The
+to process.
+This feature is implemented by PID file-descriptor and guaranties that
+follow-up signals are sent to the same process or not sent if the process no
+more exist.  Note that the operating system may re-use PIDs and implement the
+same feature in a shell by kill and sleep commands sequence may introduce a
+race.  This option can be specified more than once than signals are sent
+sequentially in defined timeouts.  The
 .B \-\-timeout
 option can be combined with
 .B \-\-queue
 option.
 .IP
-Example.  Send signal that does nothing twice, and terminate cat(1).
+Example.  Send signals QUIT, TERM and KILL in sequence and wait for 1000
+milliseconds between the signals
 .br
-kill --timeout 1000 0 --timeout 1000 TERM --verbose -s 0 cat
+kill --verbose --timeout 1000 TERM --timeout 1000 KILL --signal QUIT 12345
 .SH NOTES
 Although it is possible to specify the TID (thread ID, see
 .BR gettid (2))
