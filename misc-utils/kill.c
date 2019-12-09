@@ -218,6 +218,32 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+static void __attribute__((__noreturn__)) print_kill_version(void)
+{
+	static const char *features[] = {
+#ifdef HAVE_SIGQUEUE
+		"sigqueue",
+#endif
+#ifdef UL_HAVE_PIDFD
+		"pidfd",
+#endif
+	};
+
+	printf(_("%s from %s"), program_invocation_short_name, PACKAGE_STRING);
+
+	if (ARRAY_SIZE(features)) {
+		size_t i;
+		fputs(_(" (with: "), stdout);
+		for (i = 0; i < ARRAY_SIZE(features); i++) {
+			fputs(features[i], stdout);
+			if (i + 1 < ARRAY_SIZE(features))
+				fputs(", ", stdout);
+		}
+		fputs(")\n", stdout);
+	}
+	exit(EXIT_SUCCESS);
+}
+
 static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 {
 	char *arg;
@@ -235,7 +261,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 		}
 		if (!strcmp(arg, "-v") || !strcmp(arg, "-V") ||
 		    !strcmp(arg, "--version"))
-			print_version(EXIT_SUCCESS);
+			print_kill_version();
 		if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 			usage();
 		if (!strcmp(arg, "--verbose")) {
@@ -319,6 +345,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			arg = *argv;
 			next = xcalloc(1, sizeof(*next));
 			next->period = strtos32_or_err(arg, _("argument error"));
+			INIT_LIST_HEAD(&next->follow_ups);
 			argc--, argv++;
 			arg = *argv;
 			if ((next->sig = arg_to_signum(arg, 0)) < 0)
