@@ -494,12 +494,14 @@ int main(int argc, char **argv)
 		}
 	}
 
+#ifdef UL_HAVE_PIDFD
 	while (!list_empty(&ctl.follow_ups)) {
 		struct timeouts *x = list_entry(ctl.follow_ups.next,
 				                  struct timeouts, follow_ups);
 		list_del(&x->follow_ups);
 		free(x);
 	}
+#endif
 	if (ct && nerrs == 0)
 		return EXIT_SUCCESS;	/* full success */
 	else if (ct == nerrs)
