@@ -494,6 +494,12 @@ int main(int argc, char **argv)
 		}
 	}
 
+	while (!list_empty(&ctl.follow_ups)) {
+		struct timeouts *x = list_entry(ctl.follow_ups.next,
+				                  struct timeouts, follow_ups);
+		list_del(&x->follow_ups);
+		free(x);
+	}
 	if (ct && nerrs == 0)
 		return EXIT_SUCCESS;	/* full success */
 	else if (ct == nerrs)
