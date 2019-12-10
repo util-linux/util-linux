@@ -183,6 +183,9 @@ static const struct libmnt_optmap userspace_opts_map[] =
    { "verity.roothash=",   MNT_MS_ROOT_HASH, MNT_NOHLPS | MNT_NOMTAB },		   /* verity device root hash */
    { "verity.hashoffset=", MNT_MS_HASH_OFFSET, MNT_NOHLPS | MNT_NOMTAB },	   /* verity device hash offset */
    { "verity.roothashfile=", MNT_MS_ROOT_HASH_FILE, MNT_NOHLPS | MNT_NOMTAB },/* verity device root hash (read from file) */
+   { "verity.fecdevice=",   MNT_MS_FEC_DEVICE, MNT_NOHLPS | MNT_NOMTAB },		/* verity FEC device */
+   { "verity.fecoffset=", MNT_MS_FEC_OFFSET, MNT_NOHLPS | MNT_NOMTAB },	      /* verity FEC area offset */
+   { "verity.fecroots=", MNT_MS_FEC_ROOTS, MNT_NOHLPS | MNT_NOMTAB },	      /* verity FEC roots */
 
    { NULL, 0, 0 }
 };

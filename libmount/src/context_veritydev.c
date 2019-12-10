@@ -50,12 +50,13 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	const char *backing_file, *optstr;
 	char *val = NULL, *key = NULL, *root_hash_binary = NULL, *mapper_device = NULL,
 		*mapper_device_full = NULL, *backing_file_basename = NULL, *root_hash = NULL,
-		*hash_device = NULL, *root_hash_file = NULL;
+		*hash_device = NULL, *root_hash_file = NULL, *fec_device = NULL;
 	size_t len, hash_size, keysize = 0;
 	struct crypt_params_verity crypt_params = {};
 	struct crypt_device *crypt_dev = NULL;
 	int rc = 0;
-	uint64_t offset = 0;
+	/* Use the same default for FEC parity bytes as cryptsetup uses */
+	uint64_t offset = 0, fec_offset = 0, fec_roots = 2;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -119,6 +120,39 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 		rc = root_hash_file ? 0 : -ENOMEM;
 	}
 
+	/*
+	 * verity.fecdevice=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_FEC_DEVICE) &&
+	    mnt_optstr_get_option(optstr, "verity.fecdevice", &val, &len) == 0 && val) {
+		fec_device = strndup(val, len);
+		rc = fec_device ? 0 : -ENOMEM;
+	}
+
+	/*
+	 * verity.fecoffset=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_FEC_OFFSET) &&
+	    mnt_optstr_get_option(optstr, "verity.fecoffset", &val, &len) == 0) {
+		rc = mnt_parse_offset(val, len, &fec_offset);
+		if (rc) {
+			DBG(VERITY, ul_debugobj(cxt, "failed to parse verity.fecoffset="));
+			rc = -MNT_ERR_MOUNTOPT;
+		}
+	}
+
+	/*
+	 * verity.fecroots=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_FEC_ROOTS) &&
+	    mnt_optstr_get_option(optstr, "verity.fecroots", &val, &len) == 0) {
+		rc = mnt_parse_offset(val, len, &fec_roots);
+		if (rc) {
+			DBG(VERITY, ul_debugobj(cxt, "failed to parse verity.fecroots="));
+			rc = -MNT_ERR_MOUNTOPT;
+		}
+	}
+
 	if (root_hash && root_hash_file) {
 		DBG(VERITY, ul_debugobj(cxt, "verity.roothash and verity.roothashfile are mutually exclusive"));
 		rc = -EINVAL;
@@ -141,9 +175,9 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 
 	memset(&crypt_params, 0, sizeof(struct crypt_params_verity));
 	crypt_params.hash_area_offset = offset;
-	crypt_params.fec_area_offset = 0;
-	crypt_params.fec_roots = 0;
-	crypt_params.fec_device = NULL;
+	crypt_params.fec_area_offset = fec_offset;
+	crypt_params.fec_roots = fec_roots;
+	crypt_params.fec_device = fec_device;
 	crypt_params.flags = 0;
 	rc = crypt_load(crypt_dev, CRYPT_VERITY, &crypt_params);
 	if (rc < 0)
@@ -222,6 +256,7 @@ done:
 	free(hash_device);
 	free(root_hash);
 	free(root_hash_file);
+	free(fec_device);
 	free(key);
 	return rc;
 }

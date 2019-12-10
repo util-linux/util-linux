@@ -2401,6 +2401,18 @@ Mutually exclusive with
 If the hash tree device is embedded in the source volume,
 .I offset
 (default: 0) is used by dm-verity to get to the tree.
+.TP
+\fBverity.fecdevice=\fP\,\fIpath\fP
+Path to the Forward Error Correction (FEC) device associated with the source volume to pass to dm-verity.
+Optional. Requires kernel built with CONFIG_DM_VERITY_FEC.
+.TP
+\fBverity.fecoffset=\fP\,\fIoffset\fP
+If the FEC device is embedded in the source volume,
+.I offset
+(default: 0) is used by dm-verity to get to the FEC area. Optional.
+.TP
+\fBverity.fecroots=\fP\,\fIvalue\fP
+Parity bytes for FEC (default: 2). Optional.
 .RE
 .PP
 Supported since util-linux v2.35.
