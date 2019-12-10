@@ -40,6 +40,7 @@ dist_noinst_HEADERS += \
 	include/partx.h \
 	include/path.h \
 	include/pathnames.h \
+	include/pidfd-utils.h \
 	include/plymouth-ctrl.h \
 	include/procutils.h \
 	include/pt-bsd.h \
