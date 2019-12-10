@@ -127,6 +127,11 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 		rc = rc < 1 ? rc : 0;
 	}
 
+	if (!hash_device || !root_hash) {
+		DBG(VERITY, ul_debugobj(cxt, "verity.hashdevice and one of verity.roothash or verity.roothashfile are mandatory"));
+		rc = -EINVAL;
+	}
+
 	if (rc)
 		goto done;
 
