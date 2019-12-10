@@ -182,6 +182,7 @@ static const struct libmnt_optmap userspace_opts_map[] =
    { "verity.hashdevice=", MNT_MS_HASH_DEVICE, MNT_NOHLPS | MNT_NOMTAB },     /* mount a verity device */
    { "verity.roothash=",   MNT_MS_ROOT_HASH, MNT_NOHLPS | MNT_NOMTAB },		   /* verity device root hash */
    { "verity.hashoffset=", MNT_MS_HASH_OFFSET, MNT_NOHLPS | MNT_NOMTAB },	   /* verity device hash offset */
+   { "verity.roothashfile=", MNT_MS_ROOT_HASH_FILE, MNT_NOHLPS | MNT_NOMTAB },/* verity device root hash (read from file) */
 
    { NULL, 0, 0 }
 };

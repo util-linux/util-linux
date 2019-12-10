@@ -2388,6 +2388,14 @@ Path to the hash tree device associated with the source volume to pass to dm-ver
 \fBverity.roothash=\fP\,\fIhex\fP
 Hex-encoded hash of the root of
 .I verity.hashdevice
+Mutually exclusive with
+.I verity.roothashfile.
+.TP
+\fBverity.roothashfile=\fP\,\fIpath\fP
+Path to file containing the hex-encoded hash of the root of
+.I verity.hashdevice.
+Mutually exclusive with
+.I verity.roothash.
 .TP
 \fBverity.hashoffset=\fP\,\fIoffset\fP
 If the hash tree device is embedded in the source volume,

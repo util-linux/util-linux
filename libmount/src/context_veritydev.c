@@ -15,6 +15,7 @@
 #if defined(HAVE_CRYPTSETUP)
 
 #include <libcryptsetup.h>
+#include "path.h"
 
 /* Taken from https://gitlab.com/cryptsetup/cryptsetup/blob/master/lib/utils_crypt.c#L225 */
 static size_t crypt_hex_to_bytes(const char *hex, char **result)
@@ -49,7 +50,7 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	const char *backing_file, *optstr;
 	char *val = NULL, *key = NULL, *root_hash_binary = NULL, *mapper_device = NULL,
 		*mapper_device_full = NULL, *backing_file_basename = NULL, *root_hash = NULL,
-		*hash_device = NULL;
+		*hash_device = NULL, *root_hash_file = NULL;
 	size_t len, hash_size, keysize = 0;
 	struct crypt_params_verity crypt_params = {};
 	struct crypt_device *crypt_dev = NULL;
@@ -107,6 +108,23 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 			DBG(VERITY, ul_debugobj(cxt, "failed to parse verity.hashoffset="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
+	}
+
+	/*
+	 * verity.roothashfile=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ROOT_HASH_FILE) &&
+	    mnt_optstr_get_option(optstr, "verity.roothashfile", &val, &len) == 0 && val) {
+		root_hash_file = strndup(val, len);
+		rc = root_hash_file ? 0 : -ENOMEM;
+	}
+
+	if (root_hash && root_hash_file) {
+		DBG(VERITY, ul_debugobj(cxt, "verity.roothash and verity.roothashfile are mutually exclusive"));
+		rc = -EINVAL;
+	} else if (root_hash_file) {
+		rc = ul_path_read_string(NULL, &root_hash, root_hash_file);
+		rc = rc < 1 ? rc : 0;
 	}
 
 	if (rc)
@@ -198,6 +216,7 @@ done:
 	free(mapper_device);
 	free(hash_device);
 	free(root_hash);
+	free(root_hash_file);
 	free(key);
 	return rc;
 }

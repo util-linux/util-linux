@@ -254,6 +254,7 @@ PyMODINIT_FUNC initpylibmount(void)
 	PyModule_AddIntConstant(m, "MNT_MS_HASH_DEVICE", MNT_MS_HASH_DEVICE);
 	PyModule_AddIntConstant(m, "MNT_MS_ROOT_HASH", MNT_MS_ROOT_HASH);
 	PyModule_AddIntConstant(m, "MNT_MS_HASH_OFFSET", MNT_MS_HASH_OFFSET);
+	PyModule_AddIntConstant(m, "MNT_MS_ROOT_HASH_FILE", MNT_MS_ROOT_HASH_FILE);
 
 	/*
 	 * mount(2) MS_* masks (MNT_MAP_LINUX map)
