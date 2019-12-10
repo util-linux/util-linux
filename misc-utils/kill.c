@@ -456,7 +456,9 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
+#ifdef UL_HAVE_PIDFD
 	INIT_LIST_HEAD(&ctl.follow_ups);
+#endif
 	argv = parse_arguments(argc, argv, &ctl);
 
 	/* The rest of the arguments should be process ids and names. */
