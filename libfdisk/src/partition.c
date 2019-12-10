@@ -7,7 +7,6 @@
 #endif
 
 #include "fdiskP.h"
-#include "strutils.h"
 
 /**
  * SECTION: partition
