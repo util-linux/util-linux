@@ -1845,7 +1845,7 @@ AM_CONDITIONAL([BUILD_SCRIPT], [test "x$build_script" = xyes])
 UL_BUILD_INIT([scriptreplay], [yes])
 AM_CONDITIONAL([BUILD_SCRIPTREPLAY], [test "x$build_scriptreplay" = xyes])
 
-UL_BUILD_INIT([scriptlive], [yes])
+UL_BUILD_INIT([scriptlive], [check])
 UL_REQUIRES_HAVE([scriptlive], [pty])
 AM_CONDITIONAL([BUILD_SCRIPTLIVE], [test "x$build_scriptlive" = xyes])
 
