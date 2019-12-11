@@ -1,4 +1,4 @@
-.TH SCRIPTREPLAY 1 "September 2011" "util-linux" "User Commands"
+.TH SCRIPTREPLAY 1 "October 2019" "util-linux" "User Commands"
 .SH "NAME"
 scriptreplay \- play back typescripts, using timing information
 .SH "SYNOPSIS"
@@ -66,9 +66,13 @@ This option overrides old-style arguments.
 .TP
 .BR \-c , " \-\-cr\-mode " \fImode\fR
 Specifies how to use CR (0x0D, carriage return) character from log files.
-The default mode is "auto", in this case CR is replaced with line break for
-stdin log, because otherwise scriptreplay will overwrite the same line.
-The another modes are "never" and "always".
+The default mode is
+.IR auto ,
+in this case CR is replaced with line break for stdin log, because otherwise
+scriptreplay will overwrite the same line.  The another modes are
+.I never
+and
+.IR always .
 .TP
 .BR \-d , " \-\-divisor " \fInumber\fR
 Speed up the replay displaying this
@@ -84,13 +88,21 @@ avoid long pauses in the transcript replay.
 .TP
 .BR " \-\-summary "
 Display details about session recorded in the specified timing file and exit.  The session has 
-to be recorded by "advanced" format (see
-.B script (1)
+to be recorded by
+.I advanced
+format (see
+.BR script (1))
 option \fB\-\-logging\-format\fR for more details).
 .TP
 .BR \-x , " \-\-stream " \fItype\fR
 Forces scriptreplay to print only specified stream.  The supported stream types
-are 'in' or 'out'.  This option is recommended for multi-stream logs (e.g. --log-io)
+are
+.IR in ,
+.IR out ,
+.IR signal ,
+or
+.IR info .
+This option is recommended for multi-stream logs (e.g. --log-io)
 to print only specified data.
 .TP
 .BR \-V , " \-\-version"
