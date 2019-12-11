@@ -269,7 +269,7 @@ main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("cannot open %s"), log_io);
 
 	if (!*streams) {
-		/* output is prefered default */
+		/* output is preferred default */
 		if (log_out || log_io)
 			appendchr(streams, sizeof(streams), 'O');
 		else if (log_in)

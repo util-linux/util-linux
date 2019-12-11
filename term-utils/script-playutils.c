@@ -25,7 +25,7 @@ UL_DEBUG_DEFINE_MASKNAMES(scriptreplay) = UL_DEBUG_EMPTY_MASKNAMES;
 /*
  * The script replay is driven by timing file where each entry describes one
  * step in the replay. The timing step may refer input or output (or
- * signal, extra informations, etc.)
+ * signal, extra information, etc.)
  *
  * The step data are stored in log files, the right log file for the step is
  * selected from replay_setup.
@@ -502,13 +502,13 @@ int replay_emit_step_data(struct replay_setup *stp, struct replay_step *step, in
 		assert(step->name);
 		assert(step->value);
 		dprintf(fd, "%s %s\n", step->name, step->value);
-		DBG(LOG, ul_debug("log signal emited"));
+		DBG(LOG, ul_debug("log signal emitted"));
 		return 0;
 	case 'H':
 		assert(step->name);
 		assert(step->value);
 		dprintf(fd, "%10s: %s\n", step->name, step->value);
-		DBG(LOG, ul_debug("log header emited"));
+		DBG(LOG, ul_debug("log header emitted"));
 		return 0;
 	default:
 		break;		/* continue with real data */
@@ -565,6 +565,6 @@ int replay_emit_step_data(struct replay_setup *stp, struct replay_step *step, in
 	if (ct && feof(step->data->fp))
 		rc = 1;
 
-	DBG(LOG, ul_debug("log data emited [rc=%d size=%zu]", rc, step->size));
+	DBG(LOG, ul_debug("log data emitted [rc=%d size=%zu]", rc, step->size));
 	return rc;
 }
