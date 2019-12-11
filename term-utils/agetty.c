@@ -1783,6 +1783,7 @@ static int issuedir_read(struct issue *ie __attribute__((__unused__)),
 			struct options *op __attribute__((__unused__)),
 			struct termios *tp __attribute__((__unused__)))
 {
+	return 1;
 }
 #endif /* ISSUEDIR_SUPPORT */
 
