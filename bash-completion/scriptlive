@@ -5,6 +5,11 @@ _scriptlive_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-c'|'--command')
+			compopt -o bashdefault
+			COMPREPLY=( $(compgen -c -- $cur) )
+			return 0
+			;;
 		'-d'|'--divisor'|'-m'|'--maxdelay')
 			COMPREPLY=( $(compgen -W "digit" -- $cur) )
 			return 0

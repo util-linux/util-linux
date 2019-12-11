@@ -5,8 +5,16 @@ _scriptreplay_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-c'|'--cr-mode')
+			COMPREPLY=( $(compgen -W "auto never always" -- $cur) )
+			return 0
+			;;
 		'-d'|'--divisor'|'-m'|'--maxdelay')
 			COMPREPLY=( $(compgen -W "digit" -- $cur) )
+			return 0
+			;;
+		'-x'|'--stream')
+			COMPREPLY=( $(compgen -W "out in signal info" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
