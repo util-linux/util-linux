@@ -94,7 +94,7 @@ UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
  * types of log files: "timing file" (simple or multistream) and "data file"
  * (raw).
  *
- * The same log file maybe be shared between both streams. For exmaple
+ * The same log file maybe be shared between both streams. For example
  * multi-stream timing file is possible to use for stdin as well as for stdout.
  */
 enum {
@@ -800,7 +800,7 @@ int main(int argc, char **argv)
 
 	/* The default is to keep ECHO flag when stdin is not terminal. We need
 	 * it to make stdin (in case of "echo foo | script") log-able and
-	 * visiable on terminal, and for backward compatibility.
+	 * visible on terminal, and for backward compatibility.
 	 */
 	ctl.isterm = isatty(STDIN_FILENO);
 	echo = ctl.isterm ? 0 : 1;

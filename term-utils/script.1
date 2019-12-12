@@ -31,7 +31,7 @@
 .\"
 .\"	@(#)script.1	6.5 (Berkeley) 7/27/91
 .\"
-.TH SCRIPT "1" "June 2014" "util-linux" "User Commands"
+.TH SCRIPT "1" "October 2019" "util-linux" "User Commands"
 .SH NAME
 script \- make typescript of terminal session
 .SH SYNOPSIS
@@ -51,7 +51,7 @@ Since version 2.35
 .B script
 supports multiple streams and allows to log input and output to separate
 files or all the one file.  This version also supports new timing file 
-which records additional information. The command
+which records additional information.  The command
 .B scriptreplay \-\-summary
 then provides all the information.
 
@@ -89,11 +89,19 @@ the output of a program that behaves differently when its stdout is not a
 tty.
 .TP
 \fB\-E\fR, \fB\-\-echo\fR \fIwhen\fR
-This option controls the ECHO flag for pseudoterminal within the session. The
-supported modes are always, never, or auto. The default is "auto" -- in this
-case, ECHO is disabled if the current standard input is a terminal to avoid
-double-echo, and enabled if standard input is not terminal (for example pipe:
-"echo date | script") to avoid missing input in the session log.
+This option controls the ECHO flag for pseudoterminal within the session.  The
+supported modes are
+.IR always ,
+.IR never ,
+or
+.IR auto .
+The default is
+.I auto
+-- in this case, ECHO is disabled if the current standard input is a
+terminal to avoid double-echo, and enabled if standard input is not terminal
+(for example pipe:
+.BR "echo date | script" )
+to avoid missing input in the session log.
 .TP
 \fB\-e\fR, \fB\-\-return\fR
 Return the exit code of the child process.  Uses the same format as bash
@@ -107,8 +115,9 @@ being done using `cat foo'.  Note that flush has an impact on performance, it's
 possible to use SIGUSR1 to flush logs on demand.
 .TP
 \fB\-\-force\fR
-Allow the default output destination, i.e. the typescript file, to be a hard
-or symbolic link.  The command will follow a symbolic link.
+Allow the default output file
+.B typescript
+to be a hard or symbolic link.  The command will follow a symbolic link.
 .TP
 \fB\-B\fR, \fB\-\-log\-io\fR \fIfile\fR
 Log input and output to the same
@@ -121,24 +130,29 @@ Log input to the \fIfile\fR.  The log output is disabled if only \fB\-\-log\-in\
 specified.
 .sp
 Use this logging functionality carefully as it logs all input, including input 
-when terminal has disabled echo flag (for example it log passwords in the input).
+when terminal has disabled echo flag (for example password inputs).
 .TP
 \fB\-O\fR, \fB\-\-log\-out\fR \fIfile\fR
-Log output to the \fIfile\fR. The default is to log output to the file with
-name 'typescript' if the option \fB\-\-log\-out\fR or \fB\-\-log\-in\fR is not
-given.  The log output is disabled if only \fB\-\-log\-in\fR specified.
+Log output to the \fIfile\fR.  The default is to log output to the file with
+name
+.B typescript
+if the option \fB\-\-log\-out\fR or \fB\-\-log\-in\fR is not given.  The log
+output is disabled if only \fB\-\-log\-in\fR specified.
 .TP
 \fB\-T\fR, \fB\-\-log\-timing\fR \fIfile\fR
-Log timing information to the \fIfile\fR. Two timing file formats are supporte
+Log timing information to the \fIfile\fR.  Two timing file formats are supported
 now.  The classic format is used when only one stream (input or output) logging
-is enabled. The multi-stream format is used on \fB\-\-log\-io\fR or when
+is enabled.  The multi-stream format is used on \fB\-\-log\-io\fR or when
 \fB\-\-log\-in\fR and \fB\-\-log\-out\fR are used together.
 See also \fB\-\-logging\-format\fR.
 .TP
 \fB\-m\fR, \fB\-\-logging\-format\fR \fIformat\fR
-Force use 'advanced' or 'classic' format.  The default is the classic format to
-log only output and the advanced format when input as well as output logging is
-requested.
+Force use
+.I advanced
+or
+.I classic
+format.  The default is the classic format to log only output and the
+advanced format when input as well as output logging is requested.
 .sp
 .RS
 .B Classic format
