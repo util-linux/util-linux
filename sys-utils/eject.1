@@ -20,7 +20,7 @@ and close the disc tray of some CD-ROM drives.
 .PP
 The device corresponding to \fIdevice\fP or \fImountpoint\fP is ejected.  If no
 name is specified, the default name \fB/dev/cdrom\fR is used.  The device may be
-addressed by device name (e.g. 'sda'), device path (e.g. '/dev/sda'),
+addressed by device name (e.g., 'sda'), device path (e.g., '/dev/sda'),
 UUID=\fIuuid\fR or LABEL=\fIlabel\fR tags.
 .PP
 There are four different methods of ejecting, depending on whether the device
@@ -122,7 +122,7 @@ correctly report the speed and therefore this option does not work with them.
 .BR \-x , " \-\-cdspeed " \fIspeed
 With this option the drive is given a CD-ROM select speed command.  The
 .I speed
-argument is a number indicating the desired speed (e.g. 8 for 8X speed), or 0
+argument is a number indicating the desired speed (e.g., 8 for 8X speed), or 0
 for maximum data rate.  Not all devices support this command and you can only
 specify speeds that the drive is capable of.  Every time the media is changed
 this option is cleared.  This option can be used alone, or with the
@@ -149,7 +149,7 @@ eject.  More than one method can be specified.  If none of these options are
 specified, it tries all four (this works fine in most cases).
 .PP
 .B eject
-may not always be able to determine if the device is mounted (e.g. if it has
+may not always be able to determine if the device is mounted (e.g., if it has
 several names).  If the device name is a symbolic link,
 .B eject
 will follow the link and use the device that it points to.
@@ -169,7 +169,7 @@ after running this command.  Not all Linux kernel CD-ROM drivers support the
 auto-eject mode.  There is no way to find out the state of the auto-eject mode.
 .PP
 You need appropriate privileges to access the device files.  Running as root is
-required to eject some devices (e.g. SCSI devices).
+required to eject some devices (e.g., SCSI devices).
 .SH AUTHORS
 .MT tranter@\:pobox.com
 Jeff Tranter

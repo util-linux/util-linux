@@ -32,7 +32,7 @@ All partitioning is driven by device I/O limits (the topology) by default.
 .B fdisk
 is able to optimize the disk layout for a 4K-sector size and use an alignment offset on
 modern devices for MBR and GPT.  It is always a good idea to follow \fBfdisk\fR's defaults
-as the default values (e.g. first and last partition sectors) and partition
+as the default values (e.g., first and last partition sectors) and partition
 sizes specified by the +/-<size>{M,G,...} notation are always aligned according
 to the device properties.
 
@@ -89,7 +89,7 @@ Specify which output columns to print.  Use
 to get a list of all supported columns.
 
 The default list of columns may be extended if \fIlist\fP is
-specified in the format \fI+list\fP (e.g. \fB-o +UUID\fP).
+specified in the format \fI+list\fP (e.g., \fB-o +UUID\fP).
 .TP
 \fB\-s\fR, \fB\-\-getsz\fR
 Print the size in 512-byte sectors of each given block device.  This option is DEPRECATED
@@ -173,7 +173,7 @@ as relative to the high limit (last available sector for the partition).
 
 In the case the size is specified in bytes than the number may be followed by
 the multiplicative suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB,
-PiB, EiB, ZiB and YiB. The "iB" is optional, e.g. "K" has the same meaning as
+PiB, EiB, ZiB and YiB. The "iB" is optional, e.g., "K" has the same meaning as
 "KiB".
 
 The relative sizes are always aligned according to device I/O limits.  The

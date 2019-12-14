@@ -113,7 +113,7 @@ options to avoid ambivalent interpretation of the given argument.  For example:
 .sp
 .RE
 
-The same filesystem may be mounted more than once, and in some cases (e.g.
+The same filesystem may be mounted more than once, and in some cases (e.g.,
 network filesystems) the same filesystem may be mounted on the same
 mountpoint more times. The mount command does not implement any policy to
 control this behavior. All behavior is controlled by the kernel and it is usually
@@ -318,7 +318,7 @@ to use NFS or CIFS source on command line.
 Since version 2.35 \fBmount\fR command does not exit when user permissions are
 inadequate by internal libmount security rules.  It drops suid permissions
 and continue as regular non-root user. It allows to support use-cases where
-root permissions are not necessary (e.g. fuse filesystems, user namespaces,
+root permissions are not necessary (e.g., fuse filesystems, user namespaces,
 etc).
 .PP
 For more details, see
@@ -390,7 +390,7 @@ a second place by using:
 .RE
 
 Note that the filesystem mount options maintained by kernel will remain the same as those
-on the original mount point.  The userspace mount options (e.g. _netdev) will not be copied
+on the original mount point.  The userspace mount options (e.g., _netdev) will not be copied
 by
 .BR mount (8)
 and it's necessary explicitly specify the options on mount command line.
@@ -1287,7 +1287,7 @@ This option implies the options
 .TP
 .B X-*
 All options prefixed with "X-" are interpreted as comments or as userspace
-application-specific options.  These options are not stored in the user space (e.g. mtab file),
+application-specific options.  These options are not stored in the user space (e.g., mtab file),
 nor sent to the mount.\fItype\fR helpers nor to the
 .BR mount (2)
 system call.  The suggested format is \fBX-\fIappname\fR.\fIoption\fR.
@@ -1440,7 +1440,7 @@ independent of indices created in other instances of devpts.
 
 All mounts of devpts without this
 .B newinstance
-option share the same set of pty indices (i.e. legacy mode).
+option share the same set of pty indices (i.e., legacy mode).
 Each mount of devpts with the
 .B newinstance
 option has a private set of pty indices.

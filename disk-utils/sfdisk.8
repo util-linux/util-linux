@@ -39,7 +39,7 @@ sense for new devices.
 (since version 2.26)
 .B aligns the start and end of partitions
 to block-device I/O limits when relative sizes are specified, when the default
-values are used or when multiplicative suffixes (e.g. MiB) are used for sizes.
+values are used or when multiplicative suffixes (e.g., MiB) are used for sizes.
 It is possible that partition size will be optimized (reduced or enlarged) due
 to alignment if the start offset is specified exactly in sectors and partition
 size relative or by multiplicative suffixes.
@@ -199,7 +199,7 @@ Do not check through the re-read-partition-table ioctl whether the device is in 
 .B \-\-no\-tell\-kernel
 Don't tell the kernel about partition changes. This option is recommended together
 with \fB\-\-no\-reread\fR to modify a partition on used disk. The modified partition
-should not be used (e.g. mounted).
+should not be used (e.g., mounted).
 .TP
 .BR \-O , " \-\-backup\-file " \fIpath
 Override the default backup file name.  Note that the device name and offset
@@ -221,7 +221,7 @@ Note that this operation is risky and not atomic. \fBDon't forget to backup your
 See also \fB\-\-move\-use\-fsync\fR.
 
 In the example below, the first command creates a 100MiB free area before
-the first partition and moves the data it contains (e.g. a filesystem),
+the first partition and moves the data it contains (e.g., a filesystem),
 the next command creates a new partition from the free space (at offset 2048),
 and the last command reorders partitions to match disk order
 (the original sdc1 will become sdc2).
@@ -246,7 +246,7 @@ Specify which output columns to print.  Use
 to get a list of all supported columns.
 .sp
 The default list of columns may be extended if \fIlist\fP is
-specified in the format \fI+list\fP (e.g. \fB-o +UUID\fP).
+specified in the format \fI+list\fP (e.g., \fB-o +UUID\fP).
 .TP
 .BR \-q , " \-\-quiet"
 Suppress extra info messages.
@@ -256,7 +256,7 @@ Deprecated option.  Only the sector unit is supported. This option is not
 supported when using the --show-size command.
 .TP
 .BR \-X , " \-\-label " \fItype
-Specify the disk label type (e.g. \fBdos\fR, \fBgpt\fR, ...).  If this option
+Specify the disk label type (e.g., \fBdos\fR, \fBgpt\fR, ...).  If this option
 is not given, then \fBsfdisk\fR defaults to the existing label, but if there
 is no label on the device yet, then the type defaults to \fBdos\fR. The default
 or the current label may be overwritten by the "label: <name>" script header
@@ -374,7 +374,7 @@ EiB, ZiB and YiB) then the number is interpreted as offset in bytes.
 .sp
 The default value of
 .I size
-indicates "as much as possible"; i.e. until the next partition or
+indicates "as much as possible"; i.e., until the next partition or
 end-of-device.  A numerical argument is by default interpreted as a
 number of sectors, however if the size is followed by one of the
 multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB)
@@ -430,7 +430,7 @@ loaders and for other operating systems.
 .B Named-fields format
 .RS
 This format is more readable, robust, extensible and allows to specify additional
-information (e.g. a UUID).  It is recommended to use this format to keep your scripts
+information (e.g., a UUID).  It is recommended to use this format to keep your scripts
 more readable.
 .RS
 .sp
@@ -446,7 +446,7 @@ Don't use it if you are not sure.
 
 The
 .I value
-can be between quotation marks (e.g. name="This is partition name").
+can be between quotation marks (e.g., name="This is partition name").
 The currently supported fields are:
 .RS
 .TP

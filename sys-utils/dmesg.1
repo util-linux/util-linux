@@ -114,7 +114,7 @@ will
 .I not
 print or clear the kernel ring buffer.
 .IP "\fB\-\-noescape\fR"
-The unprintable and potentially unsafe characters (e.g. broken multi-byte
+The unprintable and potentially unsafe characters (e.g., broken multi-byte
 sequences, terminal controlling chars, etc.) are escaped in format \\x<hex> for
 security reason by default.  This option disables this feature at all. It's
 usable for example for debugging purpose together with \fB\-\-raw\fR.  Be
@@ -124,7 +124,7 @@ Do not pipe output into a pager.  A pager is enabled by default for \fB\-\-human
 .IP "\fB\-p\fR, \fB\-\-force\-prefix\fR"
 Add facility, level or timestamp information to each line of a multi-line message.
 .IP "\fB\-r\fR, \fB\-\-raw\fR"
-Print the raw message buffer, i.e. do not strip the log-level prefixes, but
+Print the raw message buffer, i.e., do not strip the log-level prefixes, but
 all unprintable characters are still escaped (see also \fB\-\-noescape\fR).
 
 Note that the real raw format depends on the method how
@@ -212,7 +212,7 @@ The logical color names supported by
 are:
 .TP
 .B subsys
-The message sub-system prefix (e.g. "ACPI:").
+The message sub-system prefix (e.g., "ACPI:").
 .TP
 .B time
 The message timestamp.

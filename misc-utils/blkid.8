@@ -50,9 +50,9 @@ The
 .B blkid
 program is the command-line interface to working with the
 .BR libblkid (3)
-library.  It can determine the type of content (e.g. filesystem or swap)
+library.  It can determine the type of content (e.g., filesystem or swap)
 that a block device holds, and also the attributes (tokens, NAME=value pairs)
-from the content metadata (e.g. LABEL or UUID fields).
+from the content metadata (e.g., LABEL or UUID fields).
 .PP
 .B It is recommended to use
 .BR lsblk (8)
@@ -99,14 +99,14 @@ to get a detailed overview and to erase obsolete stuff (magic strings) from the 
 .SH OPTIONS
 The \fIsize\fR and \fIoffset\fR arguments may be followed by the multiplicative
 suffixes like KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
-(the "iB" is optional, e.g. "K" has the same meaning as "KiB"), or the suffixes
+(the "iB" is optional, e.g., "K" has the same meaning as "KiB"), or the suffixes
 KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 .TP
 \fB\-c\fR, \fB\-\-cache\-file\fR \fIcachefile\fR
 Read from
 .I cachefile
 instead of reading from the default cache file (see the CONFIGURATION FILE section
-for more details).  If you want to start with a clean cache (i.e. don't report
+for more details).  If you want to start with a clean cache (i.e., don't report
 devices previously scanned but not necessarily available at this time), specify
 .IR /dev/null .
 .TP
@@ -273,7 +273,7 @@ prefixed with "no" to specify the usage types which should be ignored.  For exam
 .sp
   blkid --probe --usages filesystem,other /dev/sda1
 .sp
-probes for all filesystem and other (e.g. swap) formats, and
+probes for all filesystem and other (e.g., swap) formats, and
 .sp
   blkid --probe --usages noraid /dev/sda1
 .sp
