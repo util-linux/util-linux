@@ -30,10 +30,13 @@ Each manual page needs some sort of description of the command.
 Write such here.
 .SH OPTIONS
 .TP
-\fB\-n\fR, \fB\-\-no\-argument\fR
+.BR \-n ,\  \-\-no\-argument
+.\" \fB\-n\fR, \fB\-\-no\-argument\fR
 This option does not use an argument.
 .TP
-\fB\-\-optional\fR[\fI=argument\fR]
+.BR \-\-optional [ =\c
+.IR argument ]
+.\" \fB\-\-optional\fR[\fI=argument\fR]
 Tell in this description that the
 .I argument
 is optional, and what happens when it is or is not given.  Notice that the word
@@ -59,18 +62,22 @@ to be the same, but in fact the former is two separate options while the
 later will use
 .B n
 as option argument of
-.BR -o .
+.BR \-o .
 So it is best to avoid short forms of optional options altogether.
 .TP
-\fB\-r\fR, \fB\-\-required\fR \fIargument\fR
+.BR \-r ,\  \-\-required\ \c
+.I argument
+.\"\fB\-r\fR, \fB\-\-required\fR \fIargument\fR
 Tell in this description that the
 .I argument
 is required.
 .TP
-\fB\-V\fR, \fB\-\-version\fR
+.BR \-V ", " \-\-version
+.\"\fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP
-\fB\-h\fR, \fB\-\-help\fR
+.BR \-h ,\  \-\-help
+.\"\fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
 .SH NOTES
 Tell details that users might need to know.  For example, kernel feature or
@@ -105,7 +112,8 @@ one.
 .\"
 .PP
 When in the source a new sentence begins somewhere midline, it should use a
-double space before its initial letter.  This is done because \fBgroff\fR
+double space before its initial letter.  This is done because
+.B groff
 uses a double space after a sentence when this sentence ends at the end of
 an input line and the next sentence begins on the next line.
 Unless a double space is used before other sentence starts as well, the
@@ -139,10 +147,10 @@ Another file.
 Write typical and/or clever use examples here.  The below examples are stupid,
 and you should never write them in a real man page.
 .TP
-.B example -h
+.B example \-h
 Output help screen.
 .TP
-.B example -V
+.B example \-V
 Output version information.
 .SH "EXIT STATUS"
 This section can be left out if the command has only two return values,
@@ -171,7 +179,7 @@ etc
 .RE
 .SH AUTHORS
 .MT rjh@\:example.org
-Random J. Hacker
+Random J.\& Hacker
 .ME
 .br
 .MT fred@\:example.com
