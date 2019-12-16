@@ -107,3 +107,4 @@ TS_CMD_UUIDPARSE=${TS_CMD_UUIDPARSE-"${ts_commandsdir}uuidparse"}
 TS_CMD_WHEREIS=${TS_CMD_WHEREIS-"${ts_commandsdir}whereis"}
 TS_CMD_WIPEFS=${TS_CMD_WIPEFS-"${ts_commandsdir}wipefs"}
 TS_CMD_CHRT=${TS_CMD_CHRT-"${ts_commandsdir}chrt"}
+TS_CMD_CHFN=${TS_CMD_CHFN-"${ts_commandsdir}chfn"}
