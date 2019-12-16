@@ -93,12 +93,12 @@ Display help text and exit.
 .SH EXAMPLES
 Browse the profiling buffer ordering by clock ticks:
 .nf
-   readprofile | sort -nr | less
+   readprofile | sort \-nr | less
 
 .fi
 Print the 20 most loaded procedures:
 .nf
-   readprofile | sort -nr +2 | head -20
+   readprofile | sort \-nr +2 | head \-20
 
 .fi
 Print only filesystem profile:
@@ -108,17 +108,17 @@ Print only filesystem profile:
 .fi
 Look at all the kernel information, with ram addresses:
 .nf
-   readprofile -av | less
+   readprofile \-av | less
 
 .fi
 Browse a `frozen' profile buffer for a non current kernel:
 .nf
-   readprofile -p ~/profile.freeze -m /zImage.map.gz
+   readprofile \-p ~/profile.freeze \-m /zImage.map.gz
 
 .fi
 Request profiling at 2kHz per CPU, and reset the profiling buffer:
 .nf
-   sudo readprofile -M 20
+   sudo readprofile \-M 20
 .fi
 .SH BUGS
 .LP

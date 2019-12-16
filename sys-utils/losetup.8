@@ -9,10 +9,10 @@ Get info:
 .B losetup
 [\fIloopdev\fP]
 .sp
-.B losetup -l
+.B losetup \-l
 .RB [ \-a ]
 .sp
-.B losetup -j
+.B losetup \-j
 .I file
 .RB [ \-o
 .IR offset ]
@@ -61,8 +61,8 @@ to detach loop devices, and to query the status of a loop device.  If only the
 \fIloopdev\fP argument is given, the status of the corresponding loop
 device is shown.  If no option is given, all loop devices are shown.
 .sp
-Note that the old output format (i.e., \fBlosetup -a\fR) with comma-delimited
-strings is deprecated in favour of the \fB--list\fR output format.
+Note that the old output format (i.e., \fBlosetup \-a\fR) with comma-delimited
+strings is deprecated in favour of the \fB\-\-list\fR output format.
 .sp
 It's possible to create more independent loop devices for the same backing
 file.
@@ -80,7 +80,7 @@ KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 .BR \-a , " \-\-all"
 Show the status of all loop devices.  Note that not all information is accessible
 for non-root users.  See also \fB\-\-list\fR.  The old output format (as printed
-without \fB--list)\fR is deprecated.
+without \fB\-\-list)\fR is deprecated.
 .TP
 .BR \-d , " \-\-detach " \fIloopdev\fR...
 Detach the file or device associated with the specified loop device(s). Note
@@ -140,7 +140,7 @@ to \fBon\fR.
 Verbose mode.
 .TP
 .BR \-l , " \-\-list"
-If a loop device or the \fB-a\fR option is specified, print the default columns
+If a loop device or the \fB\-a\fR option is specified, print the default columns
 for either the specified loop device or all loop devices; the default is to
 print info about all devices.  See also \fB\-\-output\fP, \fB\-\-noheadings\fP,
 \fB\-\-raw\fP, and \fB\-\-json\fP.
@@ -191,13 +191,13 @@ The following commands can be used as an example of using the loop device.
 .nf
 .IP
 # dd if=/dev/zero of=~/file.img bs=1024k count=10
-# losetup --find --show ~/file.img
+# losetup \-\-find \-\-show ~/file.img
 /dev/loop0
-# mkfs -t ext2 /dev/loop0
+# mkfs \-t ext2 /dev/loop0
 # mount /dev/loop0 /mnt
  ...
 # umount /dev/loop0
-# losetup --detach /dev/loop0
+# losetup \-\-detach /dev/loop0
 .fi
 .SH ENVIRONMENT
 .IP LOOPDEV_DEBUG=all

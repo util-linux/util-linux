@@ -57,11 +57,11 @@ Mount the new root file system over NFS from 10.0.0.1:/my_root and run
 ifconfig lo 127.0.0.1 up   # for portmap
 # configure Ethernet or such
 portmap   # for lockd (implicitly started by mount)
-mount -o ro 10.0.0.1:/my_root /mnt
+mount \-o ro 10.0.0.1:/my_root /mnt
 killall portmap   # portmap keeps old root busy
 cd /mnt
 pivot_root . old_root
-exec chroot . sh -c 'umount /old_root; exec /sbin/init' \\
+exec chroot . sh \-c 'umount /old_root; exec /sbin/init' \\
   <dev/console >dev/console 2>&1
 .fi
 .SH "SEE ALSO"

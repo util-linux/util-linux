@@ -110,7 +110,7 @@ the child process is always stored in type script file too.
 .TP
 \fB\-f\fR, \fB\-\-flush\fR
 Flush output after each write.  This is nice for telecooperation: one person
-does `mkfifo foo; script -f foo', and another can supervise real-time what is
+does `mkfifo foo; script \-f foo', and another can supervise real-time what is
 being done using `cat foo'.  Note that flush has an impact on performance, it's
 possible to use SIGUSR1 to flush logs on demand.
 .TP
@@ -228,7 +228,7 @@ by login shells only:
 .na
 .RS
 .nf
-if test -t 0 ; then
+if test \-t 0 ; then
     script
     exit
 fi

@@ -126,23 +126,23 @@ Display version information and exit.
 Display help text and exit.
 .SH EXAMPLES
 .TP
-shell1> flock /tmp -c cat
+shell1> flock /tmp \-c cat
 .TQ
-shell2> flock -w .007 /tmp -c echo; /bin/echo $?
+shell2> flock \-w .007 /tmp \-c echo; /bin/echo $?
 Set exclusive lock to directory /tmp and the second command will fail.
 .TP
-shell1> flock -s /tmp -c cat
+shell1> flock \-s /tmp \-c cat
 .TQ
-shell2> flock -s -w .007 /tmp -c echo; /bin/echo $?
+shell2> flock \-s \-w .007 /tmp \-c echo; /bin/echo $?
 Set shared lock to directory /tmp and the second command will not fail.
 Notice that attempting to get exclusive lock with second command would fail.
 .TP
-shell> flock -x local-lock-file echo 'a b c'
+shell> flock \-x local-lock-file echo 'a b c'
 Grab the exclusive lock "local-lock-file" before running echo with 'a b c'.
 .TP
 (
 .TQ
-  flock -n 9 || exit 1
+  flock \-n 9 || exit 1
 .TQ
   # ... commands executed under lock ...
 .TQ
@@ -159,7 +159,7 @@ write permission is required.  Using
 .I <
 requires that the file already exists but only read permission is required.
 .TP
-[ "${FLOCKER}" != "$0" ] && exec env FLOCKER="$0" flock -en "$0" "$0" "$@" || :
+[ "${FLOCKER}" != "$0" ] && exec env FLOCKER="$0" flock \-en "$0" "$0" "$@" || :
 This is useful boilerplate code for shell scripts.  Put it at the top of the
 shell script you want to lock and it'll automatically lock itself on the first
 run.  If the env var $FLOCKER is not set to the shell script that is being run,

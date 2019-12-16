@@ -24,15 +24,15 @@ Specify \fIBLOCKRANGE\fP in the form <first>-<last> or <block> as shown in the
 output of the \fBlsmem\fP command. <first> is the number of the first memory block
 and <last> is the number of the last memory block in the memory
 range. Alternatively a single block can be specified. \fIBLOCKRANGE\fP requires
-the \fB--blocks\fP option.
+the \fB\-\-blocks\fP option.
 .
 .IP "\(hy" 2
 Specify \fIZONE\fP as the name of a memory zone, as shown in the output of the
-\fBlsmem -o +ZONES\fP command. The output shows one or more valid memory zones
+\fBlsmem \-o +ZONES\fP command. The output shows one or more valid memory zones
 for each memory range. If multiple zones are shown, then the memory range
 currently belongs to the first zone. By default, chmem will set memory online
 to the zone Movable, if this is among the valid zones. This default can be
-changed by specifying the \fB--zone\fP option with another valid zone.
+changed by specifying the \fB\-\-zone\fP option with another valid zone.
 For memory ballooning, it is recommended to select the zone Movable for memory
 online and offline, if possible. Memory in this zone is much more likely to be
 able to be offlined again, but it cannot be used for arbitrary kernel
@@ -57,7 +57,7 @@ block numbers.
 .TP
 .BR \-b ", " \-\-blocks
 Use a \fIBLOCKRANGE\fP parameter instead of \fIRANGE\fP or \fISIZE\fP for the
-\fB--enable\fP and \fB--disable\fP options.
+\fB\-\-enable\fP and \fB\-\-disable\fP options.
 .TP
 .BR \-d ", " \-\-disable
 Set the specified \fIRANGE\fP, \fISIZE\fP, or \fIBLOCKRANGE\fP of memory offline.
@@ -93,17 +93,17 @@ failure
 partial success
 .SH EXAMPLES
 .TP
-.B chmem --enable 1024
+.B chmem \-\-enable 1024
 This command requests 1024 MiB of memory to be set online.
 .TP
-.B chmem -e 2g
+.B chmem \-e 2g
 This command requests 2 GiB of memory to be set online.
 .TP
-.B chmem --disable 0x00000000e4000000-0x00000000f3ffffff
+.B chmem \-\-disable 0x00000000e4000000-0x00000000f3ffffff
 This command requests the memory range starting with 0x00000000e4000000
 and ending with 0x00000000f3ffffff to be set offline.
 .TP
-.B chmem -b -d 10
+.B chmem \-b \-d 10
 This command requests the memory block number 10 to be set offline.
 .SH SEE ALSO
 .BR lsmem (1)

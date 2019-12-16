@@ -48,7 +48,7 @@ request it to return a random-based UUID.
 .TP
 .BR \-S , " \-\-socket-activation "
 Do not create a socket but instead expect it to be provided by the calling
-process.  This implies \fB--no-fork\fR and \fB--no-pid\fR.  This option is
+process.  This implies \fB\-\-no-fork\fR and \fB\-\-no-pid\fR.  This option is
 intended to be used only with \fBsystemd\fR(1).  It needs to be enabled with
 a configure option.
 .TP
@@ -75,9 +75,9 @@ Start up a daemon, print 42 random keys, and then stop the daemon:
 .PP
 .RS
 .nf
-uuidd -p /tmp/uuidd.pid -s /tmp/uuidd.socket
-uuidd -d -r -n 42 -s /tmp/uuidd.socket
-uuidd -d -k -s /tmp/uuidd.socket
+uuidd \-p /tmp/uuidd.pid \-s /tmp/uuidd.socket
+uuidd \-d \-r \-n 42 \-s /tmp/uuidd.socket
+uuidd \-d \-k \-s /tmp/uuidd.socket
 .nf
 .RE
 .SH AUTHOR

@@ -104,15 +104,15 @@ Minimum megahertz value for the CPU.
 .SH OPTIONS
 .TP
 .BR \-a , " \-\-all"
-Include lines for online and offline CPUs in the output (default for \fB-e\fR).
-This option may only be specified together with option \fB-e\fR or \fB-p\fR.
+Include lines for online and offline CPUs in the output (default for \fB\-e\fR).
+This option may only be specified together with option \fB\-e\fR or \fB\-p\fR.
 .TP
 .BR \-B , " \-\-bytes"
 Print the sizes in bytes rather than in a human-readable format.
 .TP
 .BR \-b , " \-\-online"
-Limit the output to online CPUs (default for \fB-p\fR).
-This option may only be specified together with option \fB-e\fR or \fB-p\fR.
+Limit the output to online CPUs (default for \fB\-p\fR).
+This option may only be specified together with option \fB\-e\fR or \fB\-p\fR.
 .TP
 .BR \-C , " \-\-caches" [=\fIlist\fP]
 Display details about CPU caches.  For details about available information see \fB\-\-help\fR
@@ -123,11 +123,11 @@ are included in the command output.
 
 When specifying the \fIlist\fP argument, the string of option, equal sign (=), and
 \fIlist\fP must not contain any blanks or other whitespace.
-Examples: '\fB-C=NAME,ONE-SIZE\fP' or '\fB--caches=NAME,ONE-SIZE\fP'.
+Examples: '\fB\-C=NAME,ONE-SIZE\fP' or '\fB\-\-caches=NAME,ONE-SIZE\fP'.
 .TP
 .BR \-c , " \-\-offline"
 Limit the output to offline CPUs.
-This option may only be specified together with option \fB-e\fR or \fB-p\fR.
+This option may only be specified together with option \fB\-e\fR or \fB\-p\fR.
 .TP
 .BR \-e , " \-\-extended" [=\fIlist\fP]
 Display the CPU information in human-readable format.
@@ -137,7 +137,7 @@ are included in the command output.
 
 When specifying the \fIlist\fP argument, the string of option, equal sign (=), and
 \fIlist\fP must not contain any blanks or other whitespace.
-Examples: '\fB-e=cpu,node\fP' or '\fB--extended=cpu,node\fP'.
+Examples: '\fB\-e=cpu,node\fP' or '\fB\-\-extended=cpu,node\fP'.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
@@ -156,7 +156,7 @@ If the \fIlist\fP argument is used, cache columns are separated with a colon (:)
 
 When specifying the \fIlist\fP argument, the string of option, equal sign (=), and
 \fIlist\fP must not contain any blanks or other whitespace.
-Examples: '\fB-p=cpu,node\fP' or '\fB--parse=cpu,node\fP'.
+Examples: '\fB\-p=cpu,node\fP' or '\fB\-\-parse=cpu,node\fP'.
 .TP
 .BR \-s , " \-\-sysroot " \fIdirectory\fP
 Gather CPU data for a Linux instance other than the instance from which the

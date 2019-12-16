@@ -123,7 +123,7 @@ anymore.
 
 A system reboot would be expected in near future if you're going to use this
 option for network filesystem or local filesystem with submounts.  The
-recommended use-case for \fBumount -l\fR is to prevent hangs on shutdown due to
+recommended use-case for \fBumount \-l\fR is to prevent hangs on shutdown due to
 an unreachable network share where a normal umount will hang due to a downed
 server or a network partition. Remounts of the share will not be possible.
 
@@ -219,7 +219,7 @@ command independently of /etc/mtab.
 In this case the device is initialized with "autoclear" flag (see
 .BR losetup (8)
 output for more details), otherwise it's necessary to use the option \fB \-\-detach\-loop\fR
-or call \fBlosetup -d <device>\fR. The autoclear feature is supported since Linux 2.6.25.
+or call \fBlosetup \-d <device>\fR. The autoclear feature is supported since Linux 2.6.25.
 .SH EXTERNAL HELPERS
 The syntax of external unmount helpers is:
 .PP

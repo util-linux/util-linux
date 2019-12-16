@@ -19,7 +19,7 @@ are necessary.
 .PP
 The command prints all block devices (except RAM disks) in a tree-like format
 by default.  Use
-.B "lsblk --help"
+.B "lsblk \-\-help"
 to get a list of all available columns.
 .PP
 The default output, as well as the default output from options like
@@ -54,7 +54,7 @@ Print the SIZE column in bytes rather than in a human-readable format.
 Print information about the discarding capabilities (TRIM, UNMAP) for each device.
 .TP
 .BR \-d , " \-\-nodeps"
-Do not print holder devices or slaves.  For example, \fBlsblk --nodeps /dev/sda\fR prints
+Do not print holder devices or slaves.  For example, \fBlsblk \-\-nodeps /dev/sda\fR prints
 information about the sda device only.
 .TP
 .BR \-E , " \-\-dedup " \fIcolumn\fP
@@ -73,7 +73,7 @@ The filter is applied to the top-level devices only. This may be confusing for
 .TP
 .BR \-f , " \-\-fs"
 Output info about filesystems.  This option is equivalent to
-.BR -o\ NAME,FSTYPE,LABEL,UUID,FSAVAIL,FSUSE%,MOUNTPOINT .
+.BR \-o\ NAME,FSTYPE,LABEL,UUID,FSAVAIL,FSUSE%,MOUNTPOINT .
 The authoritative information about filesystems and raids is provided by the
 .BR blkid (8)
 command.
@@ -104,7 +104,7 @@ Multi-path devices. The tree-like output is required.
 .TP
 .BR \-m , " \-\-perms"
 Output info about device owner, group and mode.  This option is equivalent to
-.BR -o\ NAME,SIZE,OWNER,GROUP,MODE .
+.BR \-o\ NAME,SIZE,OWNER,GROUP,MODE .
 .TP
 .BR \-n , " \-\-noheadings"
 Do not print a header line.
@@ -116,7 +116,7 @@ to get a list of all supported columns.  The columns may affect tree-like output
 The default is to use tree for the column 'NAME' (see also \fB\-\-tree\fR).
 
 The default list of columns may be extended if \fIlist\fP is
-specified in the format \fI+list\fP (e.g., \fBlsblk -o +UUID\fP).
+specified in the format \fI+list\fP (e.g., \fBlsblk \-o +UUID\fP).
 .TP
 .BR \-O , " \-\-output\-all "
 Output all available columns.
@@ -146,7 +146,7 @@ The default is NAME column.
 .BR \-t , " \-\-topology"
 Output info about block-device topology.
 This option is equivalent to
-.BR -o\ NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,RA,WSAME .
+.BR \-o\ NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,RA,WSAME .
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.

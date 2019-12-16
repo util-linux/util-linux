@@ -32,7 +32,7 @@ is mounted.
 Running
 .B fstrim
 frequently, or even using
-.BR "mount -o discard" ,
+.BR "mount \-o discard" ,
 might negatively affect the lifetime of poor-quality SSD devices.  For most
 desktop and server systems a sufficient trimming frequency is once a week.
 Note that not all
@@ -96,7 +96,7 @@ storage device.  Further, the kernel block layer reserves the right to adjust
 the discard ranges to fit raid stripe geometry, non-trim capable devices in a
 LVM setup, etc.  These reductions would not be reflected in fstrim_range.len
 (the
-.B --length
+.B \-\-length
 option).
 .TP
 .B \-\-quiet
@@ -125,7 +125,7 @@ all failed
 some filesystem discards have succeeded, some failed
 .PP
 The command
-.B fstrim --all
+.B fstrim \-\-all
 returns 0 (all succeeded), 32 (all failed) or 64 (some failed, some succeeded).
 
 .SH AUTHOR

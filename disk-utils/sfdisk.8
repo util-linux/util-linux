@@ -61,7 +61,7 @@ partitions.
 
 .B sfdisk
 uses BLKRRPART (reread partition table) ioctl to make sure that the device is
-not used by system or another tools (see also --no-reread).  It's possible that
+not used by system or another tools (see also \-\-no-reread).  It's possible that
 this feature or another sfdisk activity races with \fBudevd\fR.  The recommended way
 how to avoid possible collisions is to use exclusive flock for the whole-disk
 device to serialize device access.  The exclusive lock will cause udevd to skip
@@ -97,7 +97,7 @@ unused partition given with \fB\-N\fR.  See also \fB\-\-append\fR.
 .TP
 .BR \-A , " \-\-activate \fIdevice " [ \fIpartition-number...]
 Switch on the bootable flag for the specified partitions and switch off the
-bootable flag on all unspecified partitions. The special placeholder '-'
+bootable flag on all unspecified partitions. The special placeholder '\-'
 may be used instead of the partition numbers to switch off the bootable flag
 on all partitions.
 
@@ -227,11 +227,11 @@ and the last command reorders partitions to match disk order
 (the original sdc1 will become sdc2).
 .RS
 .sp
-.B "echo '+100M,' | sfdisk --move-data /dev/sdc -N 1"
+.B "echo '+100M,' | sfdisk \-\-move-data /dev/sdc \-N 1"
 .br
-.B "echo '2048,' | sfdisk /dev/sdc --append
+.B "echo '2048,' | sfdisk /dev/sdc \-\-append
 .br
-.B sfdisk /dev/sdc --reorder
+.B sfdisk /dev/sdc \-\-reorder
 .sp
 .RE
 
@@ -246,14 +246,14 @@ Specify which output columns to print.  Use
 to get a list of all supported columns.
 .sp
 The default list of columns may be extended if \fIlist\fP is
-specified in the format \fI+list\fP (e.g., \fB-o +UUID\fP).
+specified in the format \fI+list\fP (e.g., \fB\-o +UUID\fP).
 .TP
 .BR \-q , " \-\-quiet"
 Suppress extra info messages.
 .TP
 .BR \-u , " \-\-unit S"
 Deprecated option.  Only the sector unit is supported. This option is not
-supported when using the --show-size command.
+supported when using the \-\-show-size command.
 .TP
 .BR \-X , " \-\-label " \fItype
 Specify the disk label type (e.g., \fBdos\fR, \fBgpt\fR, ...).  If this option
@@ -268,7 +268,7 @@ Force editing of a nested disk label.  The primary disk label has to exist alrea
 This option allows to edit for example a hybrid/protective MBR on devices with GPT.
 
 .TP
-.BR -w , " \-\-wipe "\fIwhen
+.BR \-w , " \-\-wipe "\fIwhen
 Wipe filesystem, RAID and partition-table signatures from the device, in order
 to avoid possible collisions.  The argument \fIwhen\fR can be \fBauto\fR,
 \fBnever\fR or \fBalways\fR.  When this option is not given, the default is
@@ -281,7 +281,7 @@ partition table is created.  See also
 command.
 
 .TP
-.BR -W , " \-\-wipe-partitions "\fIwhen
+.BR \-W , " \-\-wipe-partitions "\fIwhen
 Wipe filesystem, RAID and partition-table signatures from a newly created
 partitions, in order to avoid possible collisions.  The argument \fIwhen\fR can
 be \fBauto\fR, \fBnever\fR or \fBalways\fR.  When this option is not given, the
@@ -361,8 +361,8 @@ where each line fills one partition descriptor.
 Fields are separated by whitespace, comma or semicolon possibly
 followed by whitespace; initial and trailing whitespace is ignored.
 Numbers can be octal, decimal or hexadecimal; decimal is the default.
-When a field is absent, empty or specified as '-' a default value is
-used.  But when the \fB-N\fR option (change a single partition) is
+When a field is absent, empty or specified as '\-' a default value is
+used.  But when the \fB\-N\fR option (change a single partition) is
 given, the default for each field is its previous value.
 .sp
 The default value of
@@ -504,7 +504,7 @@ to a text file.  The dump format is suitable for later \fBsfdisk\fR input.
 For example:
 .RS
 .sp
-.B "sfdisk --dump /dev/sda > sda.dump"
+.B "sfdisk \-\-dump /dev/sda > sda.dump"
 .sp
 .RE
 This can later be restored by:
@@ -524,7 +524,7 @@ Note that the same concept of backup files is used by
 For example:
 .RS
 .sp
-.B "sfdisk --backup /dev/sda"
+.B "sfdisk \-\-backup /dev/sda"
 .sp
 .RE
 The GPT header can later be restored by:

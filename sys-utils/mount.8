@@ -154,8 +154,8 @@ adding or removing a device can cause changes in names. This is the reason why i
 strongly recommended to use filesystem or partition identifiers like UUID or
 LABEL.
 
-The command \fBlsblk --fs\fR provides an overview of filesystems, LABELs and UUIDs
-on available block devices.  The command \fBblkid -p <device>\fR provides details about
+The command \fBlsblk \-\-fs\fR provides an overview of filesystems, LABELs and UUIDs
+on available block devices.  The command \fBblkid \-p <device>\fR provides details about
 a filesystem on the specified device.
 
 Don't forget that there is no guarantee that UUIDs and labels are really
@@ -403,7 +403,7 @@ For example:
 
 .RS
 .br
-.B mount -o bind,ro foo foo
+.B mount \-o bind,ro foo foo
 .RE
 
 This feature is not supported by the Linux kernel; it is implemented in userspace
@@ -432,14 +432,14 @@ will be read-only.
 It's also possible to change nosuid, nodev, noexec, noatime, nodiratime and
 relatime VFS entry flags by "remount,bind" operation.  The another (for example
 filesystem specific flags) are silently ignored.  It's impossible to change mount
-options recursively (for example with \fB-o rbind,ro\fR).
+options recursively (for example with \fB\-o rbind,ro\fR).
 
 .BR mount (8)
 since v2.31 ignores the \fBbind\fR flag from
 .I /etc/fstab
 on
 .B remount operation
-(if "-o remount" specified on command line). This is necessary to fully control
+(if "\-o remount" specified on command line). This is necessary to fully control
 mount options on remount by command line. In the previous versions the bind
 flag has been always applied and it was impossible to re-define mount options
 without interaction with the bind semantic. This
@@ -606,7 +606,7 @@ Don't canonicalize paths.  The mount command canonicalizes all paths
 together with the
 .B \-f
 flag for already canonicalized absolute paths.  The option is designed for mount
-helpers which call \fBmount -i\fR.  It is strongly recommended to not use this
+helpers which call \fBmount \-i\fR.  It is strongly recommended to not use this
 command-line option for normal mount operations.
 .sp
 Note that \fBmount\fR(8) does not pass this option to the
@@ -827,7 +827,7 @@ is used to indicate the filesystem type.  The filesystem types which are
 currently supported depend on the running kernel.  See
 .I /proc/filesystems
 and
-.I /lib/modules/$(uname -r)/kernel/fs
+.I /lib/modules/$(uname \-r)/kernel/fs
 for a complete list of the filesystems.  The most common are ext2, ext3, ext4,
 xfs, btrfs, vfat, sysfs, proc, nfs and cifs.
 .sp
@@ -1244,7 +1244,7 @@ mount(8) allows to use \fB\-\-all\fR to remount all already mounted filesystems
 which match a specified filter (\fB\-O\fR and \fB\-t\fR).  For example:
 .sp
 .in +4
-.B "mount \-\-all \-o remount,ro -t vfat"
+.B "mount \-\-all \-o remount,ro \-t vfat"
 .in
 .sp
 remounts all already mounted vfat filesystems in read-only mode. The each of the
@@ -1634,7 +1634,7 @@ previously pointed at one file to point at a different file,
 potentially causing data corruption.  For this reason, this
 option also mounts the filesystem readonly.
 
-To maintain backward compatibility, '-o nfs' is also accepted,
+To maintain backward compatibility, '\-o nfs' is also accepted,
 defaulting to
 .BR stale_rw .
 .TP
@@ -2144,7 +2144,7 @@ Make all files in the filesystem belong to the given user.
 uid=forget can be specified independently of (or usually in
 addition to) uid=<user> and results in UDF
 not storing uids to the media. In fact the recorded uid
-is the 32-bit overflow uid -1 as defined by the UDF standard.
+is the 32-bit overflow uid \-1 as defined by the UDF standard.
 The value is given as either <user> which is a valid user name or the corresponding
 decimal user id, or the special string "forget".
 .TP
@@ -2153,7 +2153,7 @@ Make all files in the filesystem belong to the given group.
 gid=forget can be specified independently of (or usually in
 addition to) gid=<group> and results in UDF
 not storing gids to the media. In fact the recorded gid
-is the 32-bit overflow gid -1 as defined by the UDF standard.
+is the 32-bit overflow gid \-1 as defined by the UDF standard.
 The value is given as either <group> which is a valid group name or the corresponding
 decimal group id, or the special string "forget".
 .TP
@@ -2423,7 +2423,7 @@ For example commands:
 .B mksquashfs /etc /tmp/etc.squashfs
 .B dd if=/dev/zero of=/tmp/etc.hash bs=1M count=10
 .B veritysetup format /tmp/etc.squashfs /tmp/etc.hash
-.B mount -o verity.hashdevice=/tmp/etc.hash,verity.roothash=<hash> /tmp/etc.squashfs /mnt
+.B mount \-o verity.hashdevice=/tmp/etc.hash,verity.roothash=<hash> /tmp/etc.squashfs /mnt
 .fi
 .RE
 .sp

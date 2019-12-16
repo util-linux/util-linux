@@ -37,7 +37,7 @@ sizes specified by the +/-<size>{M,G,...} notation are always aligned according
 to the device properties.
 
 CHS (Cylinder-Head-Sector) addressing is deprecated and not used by default.
-Please, do not follow old articles and recommendations with "fdisk -S <n> -H
+Please, do not follow old articles and recommendations with "fdisk \-S <n> \-H
 <n>" advices for SSD or 4K-sector devices.
 
 Note that
@@ -65,8 +65,8 @@ feature is supported for GPT and MBR.
 Specify the compatibility mode, 'dos' or 'nondos'.  The default is non-DOS
 mode.  For backward compatibility, it is possible to use the option without
 the \fImode\fR argument -- then the default is used.  Note that the optional
-\fImode\fR argument cannot be separated from the \fB-c\fR option by a space,
-the correct form is for example '-c=dos'.
+\fImode\fR argument cannot be separated from the \fB\-c\fR option by a space,
+the correct form is for example '\-c=dos'.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display a help text and exit.
@@ -89,7 +89,7 @@ Specify which output columns to print.  Use
 to get a list of all supported columns.
 
 The default list of columns may be extended if \fIlist\fP is
-specified in the format \fI+list\fP (e.g., \fB-o +UUID\fP).
+specified in the format \fI+list\fP (e.g., \fB\-o +UUID\fP).
 .TP
 \fB\-s\fR, \fB\-\-getsz\fR
 Print the size in 512-byte sectors of each given block device.  This option is DEPRECATED
@@ -104,8 +104,8 @@ support for all other types.
 When listing partition tables, show sizes in 'sectors' or in 'cylinders'.  The
 default is to show sizes in sectors.  For backward compatibility, it is possible
 to use the option without the \fIunit\fR argument -- then the default is used.
-Note that the optional \fIunit\fR argument cannot be separated from the \fB-u\fR
-option by a space, the correct form is for example '-u=cylinders'.
+Note that the optional \fIunit\fR argument cannot be separated from the \fB\-u\fR
+option by a space, the correct form is for example '\-u=cylinders'.
 
 .TP
 \fB\-C\fR, \fB\-\-cylinders\fR \fInumber\fR
@@ -168,7 +168,7 @@ The "last sector" dialog accepts partition size specified by number of sectors
 or by +/-<size>{K,B,M,G,...} notation.
 
 If the size is prefixed by  '+' then it is interpreted as relative to the
-partition first sector.  If the size is prefixed by  '-' then it is interpreted
+partition first sector.  If the size is prefixed by  '\-' then it is interpreted
 as relative to the high limit (last available sector for the partition).
 
 In the case the size is specified in bytes than the number may be followed by
@@ -270,7 +270,7 @@ are performed before exiting when the partition table has been updated.
 .B Note that all this is deprecated.  You don't have to care about things like
 .B geometry and cylinders on modern operating systems.  If you really want
 .B DOS-compatible partitioning then you have to enable DOS mode and cylinder
-.B units by using the '-c=dos -u=cylinders' fdisk command-line options.
+.B units by using the '\-c=dos \-u=cylinders' fdisk command-line options.
 
 The DOS 6.x FORMAT command looks for some information in the first sector of
 the data area of the partition, and treats this information as more reliable

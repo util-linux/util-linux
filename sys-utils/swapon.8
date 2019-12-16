@@ -129,7 +129,7 @@ For example:
 .RS
 .RS
 .sp
-.B "swapon -o pri=1,discard=pages,nofail /dev/sda2"
+.B "swapon \-o pri=1,discard=pages,nofail /dev/sda2"
 .sp
 .RE
 The \fIopts\fP string is evaluated last and overrides all other
@@ -147,7 +147,7 @@ for a full description of swap priorities.  Add
 to the option field of
 .I /etc/fstab
 for use with
-.BR "swapon -a" .
+.BR "swapon \-a" .
 When no priority is defined, it defaults to \-1.
 .TP
 .BR \-s , " \-\-summary"

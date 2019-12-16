@@ -142,7 +142,7 @@ and is therefore not allowed.
 .BR "\-\-pdeathsig keep" | clear | <signal>
 Keep, clear or set the parent death signal.  Some LSMs, most notably SELinux and
 AppArmor, clear the signal when the process' credentials change.  Using
-\fB--pdeathsig keep\fR will restore the parent death signal after changing
+\fB\-\-pdeathsig keep\fR will restore the parent death signal after changing
 credentials to remedy that situation.
 .TP
 .BI \-\-selinux\-label " label"
@@ -194,7 +194,7 @@ restrictions from taking effect.
 If you're looking for behaviour similar to
 .BR su (1)/ runuser "(1), or " sudo (8)
 (without the
-.B -g
+.B \-g
 option), try something like:
 .sp
 .B "    setpriv \-\-reuid=1000 \-\-regid=1000 \-\-init\-groups"

@@ -26,7 +26,7 @@ The \fIlimits\fP parameter is composed of a soft and a hard value, separated
 by a colon (:), in order to modify the existing values.  If no \fIlimits\fR are
 given, \fBprlimit\fP will display the current values.  If one of the values
 is not given, then the existing one will be used.  To specify the unlimited or
-infinity limit (RLIM_INFINITY), the -1 or 'unlimited' string can be passed.
+infinity limit (RLIM_INFINITY), the \-1 or 'unlimited' string can be passed.
 
 Because of the nature of limits, the soft limit must be lower or equal to the
 high limit (also called the ceiling).  To see all available resource limits,
@@ -92,15 +92,15 @@ Timeout for real-time tasks.
 .SH EXAMPLES
 .IP "\fBprlimit \-\-pid 13134\fP"
 Display limit values for all current resources.
-.IP "\fBprlimit \-\-pid 13134 \--rss --nofile=1024:4095\fP"
+.IP "\fBprlimit \-\-pid 13134 \-\-rss \-\-nofile=1024:4095\fP"
 Display the limits of the RSS, and set the soft and hard limits for the number
 of open files to 1024 and 4095, respectively.
-.IP "\fBprlimit \-\-pid 13134 --nproc=512:\fP"
+.IP "\fBprlimit \-\-pid 13134 \-\-nproc=512:\fP"
 Modify only the soft limit for the number of processes.
-.IP "\fBprlimit \-\-pid $$ --nproc=unlimited\fP"
+.IP "\fBprlimit \-\-pid $$ \-\-nproc=unlimited\fP"
 Set for the current process both the soft and ceiling values for the number of
 processes to unlimited.
-.IP "\fBprlimit --cpu=10 sort -u hugefile\fP"
+.IP "\fBprlimit \-\-cpu=10 sort \-u hugefile\fP"
 Set both the soft and hard CPU time limit to ten seconds and run 'sort'.
 
 .SH "SEE ALSO"

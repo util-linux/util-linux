@@ -46,11 +46,11 @@ utility formats its input into multiple columns.  The util support three modes:
 This is the default mode (required by backward compatibility).
 .TP
 .B rows are filled before columns
-This mode is enabled by option \fB-x, \-\-fillrows\fP
+This mode is enabled by option \fB\-x, \-\-fillrows\fP
 .TP
 .B table
 Determine the number of columns the input contains and create a table.  This
-mode is enabled by option \fB-t, \-\-table\fP and columns formatting is
+mode is enabled by option \fB\-t, \-\-table\fP and columns formatting is
 possible to modify by \fB\-\-table-*\fP options.  Use this mode if not sure.
 .PP
 Input is taken from \fIfile\fR, or otherwise from standard input.  Empty lines
@@ -66,7 +66,7 @@ Use JSON output format to print the table, the option
 \fB\-\-table\-columns\fP is required and the option \fB\-\-table\-name\fP is recommended.
 .IP "\fB\-c, \-\-output\-width\fP \fIwidth\fP"
 Output is formatted to a width specified as number of characters. The original
-name of this option is --columns; this name is deprecated since v2.30. Note that input
+name of this option is \-\-columns; this name is deprecated since v2.30. Note that input
 longer than \fIwidth\fP is not truncated by default.
 .IP "\fB\-d, \-\-table\-noheadings\fP"
 Do not print header. This option allows to use logical column names on command line, but keep the header hidden when print the table.
@@ -100,8 +100,8 @@ Print header line for each page.
 Specify columns where is possible to use multi-line cell for long text when
 necessary.
 .IP "\fB\-H, \-\-table-hide\fP \fIcolumns\fP"
-Don't print specified columns. The special placeholder '-' may be used to
-hide all unnamed columns (see --table-columns).
+Don't print specified columns. The special placeholder '\-' may be used to
+hide all unnamed columns (see \-\-table-columns).
 .IP "\fB\-O, \-\-table-order\fP \fIcolumns\fP"
 Specify columns order on output.
 .IP "\fB\-n, \-\-table-name\fP \fIname\fP"
@@ -129,19 +129,19 @@ the screen if no other information is available.
 .SH EXAMPLES
 Print fstab with header line and align number to the right:
 .EX
-\fBsed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ\fR
+\fBsed 's/#.*//' /etc/fstab | column \-\-table \-\-table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ \-\-table-right PASS,FREQ\fR
 .EE
 .PP
 Print fstab and hide unnamed columns:
 .EX
-\fBsed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE --table-hide -\fR
+\fBsed 's/#.*//' /etc/fstab | column \-\-table \-\-table-columns SOURCE,TARGET,TYPE \-\-table-hide \-\fR
 .EE
 .PP
 
 .PP
 Print a tree:
 .EX
-\fBecho -e '1 0 A\\n2 1 AA\\n3 1 AB\\n4 2 AAA\\n5 2 AAB' | column --tree-id 1 --tree-parent 2 --tree 3\fR
+\fBecho \-e '1 0 A\\n2 1 AA\\n3 1 AB\\n4 2 AAA\\n5 2 AAB' | column \-\-tree-id 1 \-\-tree-parent 2 \-\-tree 3\fR
 1  0  A
 2  1  |-AA
 4  2  | |-AAA
@@ -154,7 +154,7 @@ Version 2.23 changed the
 option to be non-greedy, for example:
 .PP
 .EX
-\fBprintf "a:b:c\\n1::3\\n" | column  -t -s ':'\fR
+\fBprintf "a:b:c\\n1::3\\n" | column \-t \-s ':'\fR
 .EE
 .PP
 Old output:

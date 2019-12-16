@@ -25,8 +25,8 @@ The namespaces to be unshared are indicated via options.  Unshareable namespaces
 .B mount namespace
 Mounting and unmounting filesystems will not affect the rest of the system,
 except for filesystems which are explicitly marked as
-shared (with \fBmount --make-shared\fP; see \fI/proc/self/mountinfo\fP or
-\fBfindmnt -o+PROPAGATION\fP for the \fBshared\fP flags).
+shared (with \fBmount \-\-make-shared\fP; see \fI/proc/self/mountinfo\fP or
+\fBfindmnt \-o+PROPAGATION\fP for the \fBshared\fP flags).
 For further details, see
 .BR mount_namespaces (7)
 and the discussion of the
@@ -110,7 +110,7 @@ namespace is created by a bind mount.
 Unshare the mount namespace.  If \fIfile\fP is specified, then a persistent
 namespace is created by a bind mount.
 Note that \fIfile\fP has to be located on a filesystem with the propagation
-flag set to \fBprivate\fP.  Use the command \fBfindmnt -o+PROPAGATION\fP
+flag set to \fBprivate\fP.  Use the command \fBfindmnt \-o+PROPAGATION\fP
 when not sure about the current setting.  See also the examples below.
 .TP
 .BR \-n , " \-\-net" [ =\fIfile ]
@@ -119,8 +119,8 @@ namespace is created by a bind mount.
 .TP
 .BR \-p , " \-\-pid" [ =\fIfile ]
 Unshare the PID namespace.  If \fIfile\fP is specified then persistent
-namespace is created by a bind mount.  See also the \fB--fork\fP and
-\fB--mount-proc\fP options.
+namespace is created by a bind mount.  See also the \fB\-\-fork\fP and
+\fB\-\-mount-proc\fP options.
 .TP
 .BR \-u , " \-\-uts" [ =\fIfile ]
 Unshare the UTS namespace.  If \fIfile\fP is specified, then a persistent
@@ -139,15 +139,15 @@ Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather than
 running it directly.  This is useful when creating a new PID namespace.
 .TP
 .B \-\-keep\-caps
-When the \fB--user\fP option is given, ensure that capabilities granted
+When the \fB\-\-user\fP option is given, ensure that capabilities granted
 in the user namespace are preserved in the child process.
 .TP
 .BR \-\-kill\-child [ =\fIsigname ]
 When \fBunshare\fR terminates, have \fIsigname\fP be sent to the forked child process.
-Combined with \fB--pid\fR this allows for an easy and reliable killing of the entire
+Combined with \fB\-\-pid\fR this allows for an easy and reliable killing of the entire
 process tree below \fBunshare\fR.
 If not given, \fIsigname\fP defaults to \fBSIGKILL\fR.
-This option implies \fB--fork\fR.
+This option implies \fB\-\-fork\fR.
 .TP
 .BR \-\-mount\-proc [ =\fImountpoint ]
 Just before running the program, mount the proc filesystem at \fImountpoint\fP
@@ -163,12 +163,12 @@ conveniently gain capabilities needed to manage various aspects of the newly cre
 namespaces (such as configuring interfaces in the network namespace or mounting filesystems in
 the mount namespace) even when run unprivileged.  As a mere convenience feature, it does not support
 more sophisticated use cases, such as mapping multiple ranges of UIDs and GIDs.
-This option implies \fB--setgroups=deny\fR and \fB--user\fR.
+This option implies \fB\-\-setgroups=deny\fR and \fB\-\-user\fR.
 .TP
 .BR \-c , " \-\-map\-current\-user"
 Run the program only after the current effective user and group IDs have been mapped to
 the same UID and GID in the newly created user namespace. This option implies
-\fB--setgroups=deny\fR and \fB--user\fR.
+\fB\-\-setgroups=deny\fR and \fB\-\-user\fR.
 .TP
 .BR "\-\-propagation private" | shared | slave | unchanged
 Recursively set the mount propagation flag in the new mount namespace.  The default
@@ -220,14 +220,14 @@ files that a more privileged user made unavailable. In short the rule for proc
 and sysfs is as close to a bind mount as possible.
 .SH EXAMPLES
 .TP
-.B # unshare --fork --pid --mount-proc readlink /proc/self
+.B # unshare \-\-fork \-\-pid \-\-mount-proc readlink /proc/self
 .TQ
 1
 .br
 Establish a PID namespace, ensure we're PID 1 in it against a newly mounted
 procfs instance.
 .TP
-.B $ unshare --map-root-user --user sh -c whoami
+.B $ unshare \-\-map-root-user \-\-user sh \-c whoami
 .TQ
 root
 .br
@@ -235,9 +235,9 @@ Establish a user namespace as an unprivileged user with a root user within it.
 .TP
 .B # touch /root/uts-ns
 .TQ
-.B # unshare --uts=/root/uts-ns hostname FOO
+.B # unshare \-\-uts=/root/uts-ns hostname FOO
 .TQ
-.B # nsenter --uts=/root/uts-ns hostname
+.B # nsenter \-\-uts=/root/uts-ns hostname
 .TQ
 FOO
 .TQ
@@ -247,19 +247,19 @@ Establish a persistent UTS namespace, and modify the hostname.  The namespace
 is then entered with \fBnsenter\fR.  The namespace is destroyed by unmounting
 the bind reference.
 .TP
-.B # mount --bind /root/namespaces /root/namespaces
+.B # mount \-\-bind /root/namespaces /root/namespaces
 .TQ
-.B # mount --make-private /root/namespaces
+.B # mount \-\-make-private /root/namespaces
 .TQ
 .B # touch /root/namespaces/mnt
 .TQ
-.B # unshare --mount=/root/namespaces/mnt
+.B # unshare \-\-mount=/root/namespaces/mnt
 .br
 Establish a persistent mount namespace referenced by the bind mount
 /root/namespaces/mnt.  This example shows a portable solution, because it
 makes sure that the bind mount is created on a shared filesystem.
 .TP
-.B # unshare -pf --kill-child -- bash -c "(sleep 999 &) && sleep 1000" &
+.B # unshare \-pf \-\-kill-child \-\- bash \-c "(sleep 999 &) && sleep 1000" &
 .TQ
 .B # pid=$!
 .TQ

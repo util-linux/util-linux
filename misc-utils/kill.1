@@ -7,7 +7,7 @@ kill \- terminate a process
 .SH SYNOPSIS
 .B kill
 .RB [ \- \fIsignal\fR| \-s
-.IR signal | \fB-p\fP ]
+.IR signal | \fB\-p\fP ]
 .RB [ \-q
 .IR value ]
 .RB [ \-a ]
@@ -62,17 +62,17 @@ is signaled.
 .B 0
 All processes in the current process group are signaled.
 .TP
-.B -1
+.B \-1
 All processes with a PID larger than 1 are signaled.
 .TP
-.BI - n
+.BI \- n
 where
 .I n
 is larger than 1.  All processes in process group
 .I n
-are signaled.  When an argument of the form '-n' is given, and it is meant to
+are signaled.  When an argument of the form '\-n' is given, and it is meant to
 denote a process group, either a signal must be specified first, or the
-argument must be preceded by a '--' option, otherwise it will be taken as the
+argument must be preceded by a '\-\-' option, otherwise it will be taken as the
 signal to send.
 .RE
 .TP
@@ -146,7 +146,7 @@ option.
 Example.  Send signals QUIT, TERM and KILL in sequence and wait for 1000
 milliseconds between the signals
 .br
-kill --verbose --timeout 1000 TERM --timeout 1000 KILL --signal QUIT 12345
+kill \-\-verbose \-\-timeout 1000 TERM \-\-timeout 1000 KILL \-\-signal QUIT 12345
 .SH NOTES
 Although it is possible to specify the TID (thread ID, see
 .BR gettid (2))

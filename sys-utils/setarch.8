@@ -19,7 +19,7 @@ setarch \- change reported architecture in new program environment and/or set pe
 .B setarch
 modifies execution domains and process personality flags.
 .PP
-The execution domains currently only affects the output of \fBuname -m\fR.
+The execution domains currently only affects the output of \fBuname \-m\fR.
 For example, on an AMD64 system, running \fBsetarch i386 \fIprogram\fR
 will cause \fIprogram\fR to see i686 instead of x86_64 as the machine type.
 It also allows to set various personality options.
@@ -114,13 +114,13 @@ Display version information and exit.
 .BR \-h , " \-\-help"
 Display help text and exit.
 .SH EXAMPLES
-setarch --addr-no-randomize mytestprog
+setarch \-\-addr-no-randomize mytestprog
 .br
-setarch ppc32 rpmbuild --target=ppc --rebuild foo.src.rpm
+setarch ppc32 rpmbuild \-\-target=ppc \-\-rebuild foo.src.rpm
 .br
-setarch ppc32 -v -vL3 rpmbuild --target=ppc --rebuild bar.src.rpm
+setarch ppc32 \-v \-vL3 rpmbuild \-\-target=ppc \-\-rebuild bar.src.rpm
 .br
-setarch ppc32 --32bit rpmbuild --target=ppc --rebuild foo.src.rpm
+setarch ppc32 \-\-32bit rpmbuild \-\-target=ppc \-\-rebuild foo.src.rpm
 .SH AUTHOR
 .MT sopwith@redhat.com
 Elliot Lee

@@ -23,7 +23,7 @@ characteristics accordingly.
 specifies the IRQ to use for the parallel port in question.  If this is set
 to something non-zero, \-t and \-c have no effect.  If your port does not use
 interrupts, this option will make printing stop.  The command
-.B tunelp -i 0
+.B tunelp \-i 0
 restores non-interrupt driven (polling) action, and your printer should work
 again.  If your parallel port does support interrupts, interrupt-driven
 printing should be somewhat faster and efficient, and will probably be
