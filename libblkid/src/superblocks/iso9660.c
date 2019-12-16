@@ -19,7 +19,9 @@
 #include <stdint.h>
 #include <ctype.h>
 
+#include "iso9660.h"
 #include "superblocks.h"
+#include "sysfs.h"
 
 struct iso9660_date {
 	unsigned char year[4];
@@ -43,11 +45,13 @@ struct iso_volume_descriptor {
 	unsigned char	unused[8];
 	unsigned char	space_size[8];
 	unsigned char	escape_sequences[8];
-	unsigned char  unused1[222];
+	unsigned char  unused1[32];
+	unsigned char  logical_block_size[4];
+	unsigned char  unused2[186];
 	unsigned char  publisher_id[128];
-	unsigned char  unused2[128];
+	unsigned char  unused3[128];
 	unsigned char  application_id[128];
-	unsigned char  unused3[111];
+	unsigned char  unused4[111];
 	struct iso9660_date created;
 	struct iso9660_date modified;
 } __attribute__((packed));
@@ -169,15 +173,22 @@ static int is_str_empty(const unsigned char *str, size_t len)
 /*
  * The ISO format specifically avoids the first 32kb to allow for a
  * partition table to be added, if desired.
- * When an ISO contains a partition table, the usual thing to do is to
- * have a partition that points at the iso filesystem. In such case,
+ * When an ISO contains a partition table, it is common to have a partition
+ * that points at the iso mani filesystem. In such case,
  * we want to only probe the iso metadata for the corresponding partition
  * device, avoiding returning the metadata for the parent block device.
  */
-static bool isofs_belongs_to_device(blkid_probe pr)
+static bool isofs_belongs_to_device(blkid_probe pr, struct iso_volume_descriptor *iso)
 {
-	dev_t devno;
+	dev_t devno, disk_devno, isopart_devno;
 	blkid_partlist ls;
+	blkid_loff_t pr_offset;
+	int isopart_partno = -1;
+	int nparts, i;
+	int num_sectors, sector_size;
+	long iso_size;
+	blkid_partition par;
+	struct path_cxt *pc;
 
 	/* Get device number, but if that fails, assume we aren't dealing
 	 * with partitions, and continue probing. */
@@ -191,10 +202,49 @@ static bool isofs_belongs_to_device(blkid_probe pr)
 	if (!ls)
 		return true;
 
-	/* Check that the device we're working with corresponds to an
-	 * entry in the partition table. If so, this is the correct
-	 * device to return the iso metadata on. */
-	return blkid_partlist_devno_to_partition(ls, devno) != NULL;
+	/* Calculate size of ISO9660 filesystem */
+	num_sectors = isonum_733(iso->space_size, false);
+	sector_size = isonum_723(iso->logical_block_size, false);
+	iso_size = ((long)num_sectors * (long)sector_size) >> 9;
+
+	/* Look for a partition that matches the ISO9660 filesystem start sector
+	 * and size. */
+	pr_offset = blkid_probe_get_offset(pr);
+	nparts = blkid_partlist_numof_partitions(ls);
+	for (i = 0; i < nparts; i++) {
+		par = blkid_partlist_get_partition(ls, i);
+		if (blkid_partition_get_start(par) == pr_offset &&
+		    blkid_partition_get_size(par) == iso_size) {
+			isopart_partno = blkid_partition_get_partno(par);
+			break;
+		}
+	}
+
+	/* If we didn't find a matching partition, consider the current
+	 * device as an appropriate owner of the ISO9660 filesystem. */
+	if (isopart_partno == -1)
+		return true;
+
+	/* A partition matching the ISO9660 filesystem was found. Look for
+	 * a devno that corresponds to this partition. */
+	disk_devno = blkid_probe_get_wholedisk_devno(pr);
+	pc = ul_new_sysfs_path(disk_devno, NULL, NULL);
+	if (!pc)
+		return true;
+
+	isopart_devno = sysfs_blkdev_partno_to_devno(pc, isopart_partno);
+	ul_unref_path(pc);
+
+	/* If no ISO9660 partition devno was found, consider the current device
+	 * as an appropriate owner of the filesystem. This can happen for CD/DVDs,
+	 * where partitions may exist in the table, but are not usually probed by
+	 * the kernel. */
+	if (!isopart_devno)
+		return true;
+
+	/* We found a partition that matches the ISO9660 filesystem. Check that it
+	 * corresponds to the device that we are probing. */
+	return devno == isopart_devno;
 }
 
 /* iso9660 [+ Microsoft Joliet Extension] */
@@ -214,7 +264,7 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 
 	/* Check if the iso metadata should be returned on a different device
 	 * instead of this one. */
-	if (!isofs_belongs_to_device(pr))
+	if (!isofs_belongs_to_device(pr, iso))
 		return 1;
 
 	memcpy(label, iso->volume_id, sizeof(label));

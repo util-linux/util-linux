@@ -69,4 +69,23 @@ udevadm settle
 $TS_CMD_BLKID -p -o udev ${TS_DEVICE} >> $TS_OUTPUT
 ts_finalize_subtest
 
+# This image (created by grub-mkrescue) has a partition table where the
+# partitions do not point to the ISO9660 filesystem.
+xz -dc ${TS_SELF}/iso-partitions-grub.img.xz > ${TS_DEVICE}
+udevadm settle
+
+ts_init_subtest "grub"
+$TS_CMD_PARTX -a ${TS_DEVICE} &>/dev/null
+udevadm settle
+
+# Check that the ISO metadata is shown on the main disk device
+$TS_CMD_BLKID -p -o udev ${TS_DEVICE} >> $TS_OUTPUT
+
+# substitute major/minor number before comparison
+sed -i \
+  -e 's/^\(ID_PART_ENTRY_DISK\)=.*/\1=__ts_majorminor__/' \
+  $TS_OUTPUT
+
+ts_finalize_subtest
+
 ts_finalize
