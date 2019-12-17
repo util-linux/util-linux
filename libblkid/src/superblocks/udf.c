@@ -367,7 +367,7 @@ real_blksz:
 			}
 			if (!udf_rev) {
 				/* UDF-2.60: 2.1.5.3: UDF revision field shall indicate revision of UDF document
-				 * We use this field as fallback value for ID_FS_VERSION when LVIDIU is missing */
+				 * We use maximal value from this field and from LVIDIU fields for ID_FS_VERSION */
 				if (strncmp(vd->type.logical.domain_id, "*OSTA UDF Compliant", sizeof(vd->type.logical.domain_id)) == 0)
 					udf_rev = le16_to_cpu(vd->type.logical.udf_rev);
 			}
@@ -442,20 +442,19 @@ real_blksz:
 						sizeof(*lvidiu));
 			if (!lvidiu)
 				return errno ? -errno : 1;
-			/* Use Minimum UDF Read Revision as ID_FS_VERSION */
-			lvidiu_udf_rev = le16_to_cpu(lvidiu->min_udf_read_rev);
-			if (lvidiu_udf_rev)
-				udf_rev = lvidiu_udf_rev;
 			/* UDF-2.60: 2. Basic Restrictions & Requirements:
 			 * The Minimum UDF Read Revision value shall be at most #0250
 			 * for all media with a UDF 2.60 file system.
-			 * So in this case use Minimum UDF Write Revision as ID_FS_VERSION
-			 * to distinguish between UDF 2.50 and UDF 2.60 discs. */
-			if (lvidiu_udf_rev == 0x250) {
-				lvidiu_udf_rev = le16_to_cpu(lvidiu->min_udf_write_rev);
-				if (lvidiu_udf_rev > 0x250)
-					udf_rev = lvidiu_udf_rev;
-			}
+			 * Because some 2.60 implementations put 2.50 into both LVIDIU
+			 * fields and 2.60 into LVD, use maximal value from LVD,
+			 * Minimum UDF Read Revision and Minimum UDF Write Revision for
+			 * ID_FS_VERSION to distinguish between UDF 2.50 and UDF 2.60 discs. */
+			lvidiu_udf_rev = le16_to_cpu(lvidiu->min_udf_read_rev);
+			if (lvidiu_udf_rev && udf_rev < lvidiu_udf_rev)
+				udf_rev = lvidiu_udf_rev;
+			lvidiu_udf_rev = le16_to_cpu(lvidiu->min_udf_write_rev);
+			if (lvidiu_udf_rev && udf_rev < lvidiu_udf_rev)
+				udf_rev = lvidiu_udf_rev;
 		}
 	}
 
