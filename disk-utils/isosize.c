@@ -29,6 +29,7 @@
 #include "c.h"
 #include "strutils.h"
 #include "closestream.h"
+#include "iso9660.h"
 
 #define ISOSIZE_EXIT_ALLFAILED	32
 #define ISOSIZE_EXIT_SOMEOK	64
@@ -40,56 +41,6 @@ static int is_iso(int fd)
 	if (pread(fd, &label, 8, 0x8000) == -1)
 		return 1;
 	return memcmp(&label, &"\1CD001\1", 8);
-}
-
-static int isonum_721(unsigned char *p)
-{
-	return ((p[0] & 0xff)
-		| ((p[1] & 0xff) << 8));
-}
-
-static int isonum_722(unsigned char *p)
-{
-	return ((p[1] & 0xff)
-		| ((p[0] & 0xff) << 8));
-}
-
-static int isonum_723(unsigned char *p, int xflag)
-{
-	int le = isonum_721(p);
-	int be = isonum_722(p + 2);
-
-	if (xflag && le != be)
-		/* translation is useless */
-		warnx("723error: le=%d be=%d", le, be);
-	return (le);
-}
-
-static int isonum_731(unsigned char *p)
-{
-	return ((p[0] & 0xff)
-		| ((p[1] & 0xff) << 8)
-		| ((p[2] & 0xff) << 16)
-		| ((p[3] & 0xff) << 24));
-}
-
-static int isonum_732(unsigned char *p)
-{
-	return ((p[3] & 0xff)
-		| ((p[2] & 0xff) << 8)
-		| ((p[1] & 0xff) << 16)
-		| ((p[0] & 0xff) << 24));
-}
-
-static int isonum_733(unsigned char *p, int xflag)
-{
-	int le = isonum_731(p);
-	int be = isonum_732(p + 4);
-
-	if (xflag && le != be)
-		/* translation is useless */
-		warnx("733error: le=%d be=%d", le, be);
-	return (le);
 }
 
 static int isosize(int argc, char *filenamep, int xflag, long divisor)
