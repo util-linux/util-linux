@@ -1820,8 +1820,12 @@ static int issuefile_read_stream(
 	if (fstat(fileno(f), &st) || !S_ISREG(st.st_mode))
 		return 1;
 
-	if (!ie->output)
-	       ie->output = open_memstream(&ie->mem, &ie->mem_sz);
+	if (!ie->output) {
+		free(ie->mem);
+		ie->mem_sz = 0;
+		ie->mem = NULL;
+		ie->output = open_memstream(&ie->mem, &ie->mem_sz);
+	}
 
 	while ((c = getc(f)) != EOF) {
 		if (c == '\\')
@@ -1965,8 +1969,10 @@ done:
 	if (netlink_groups != 0)
 		open_netlink();
 #endif
-	if (ie->output)
+	if (ie->output) {
 		fclose(ie->output);
+		ie->output = NULL;
+	}
 }
 
 /* This is --show-issue backend, executed by normal user on the current
@@ -1985,7 +1991,8 @@ static void show_issue(struct options *op)
 
 	if (ie.mem_sz)
 		write_all(STDOUT_FILENO, ie.mem, ie.mem_sz);
-
+	if (ie.output)
+		fclose(ie.output);
 	free(ie.mem);
 }
 
