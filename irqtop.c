@@ -46,10 +46,10 @@
 #define IRQ_DESC_LEN		64
 #define IRQ_INFO_LEN		64
 #define INTERRUPTS_FILE		"/proc/interrupts"
-#define MIN(x,y)			((x) > (y) ? (y) : (x))
+#define MIN(x,y)		((x) > (y) ? (y) : (x))
 #define RESERVE_ROWS		(1 + 1 + 1)	/* summary + header + last row */
 #define print_line(fmt, ...) if (run_once) printf(fmt, __VA_ARGS__); \
-								else printw(fmt, __VA_ARGS__)
+				else printw(fmt, __VA_ARGS__)
 
 struct irq_info {
 	char irq[IRQ_NAME_LEN+1];       /* name of this irq */
@@ -59,8 +59,8 @@ struct irq_info {
 
 struct irq_stat {
 	unsigned int nr_irq;            /* number of irq vector */
-	unsigned int nr_irq_info;		/* number of irq info */
-	struct irq_info *irq_info;		/* array of irq_info */
+	unsigned int nr_irq_info;	/* number of irq info */
+	struct irq_info *irq_info;	/* array of irq_info */
 	long nr_online_cpu;             /* number of online cpu */
 	long nr_active_cpu;             /* number of active cpu */
 	unsigned long total_irq;        /* total irqs */
@@ -84,7 +84,6 @@ static struct irq_stat *get_irqinfo()
 	long bufferlen;
 	struct irq_stat *stat;
 	struct irq_info *curr;
-	int ret = -1;
 
 	/* NAME + ':' + 11 bytes/cpu + IRQ_DESC_LEN */
 	bufferlen = IRQ_NAME_LEN + 1 + smp_num_cpus * 11 + IRQ_DESC_LEN;
@@ -104,14 +103,12 @@ static struct irq_stat *get_irqinfo()
 	irqfile = fopen(INTERRUPTS_FILE, "r");
 	if (!irqfile) {
 		perror("fopen " INTERRUPTS_FILE);
-		ret = 1;
 		goto free_stat;
 	}
 
 	/* read header firstly */
 	if (!fgets(buffer, bufferlen, irqfile)) {
 		fprintf(stderr, "cannot read from irqinfo\n");
-		ret = 1;
 		goto close_file;
 	}
 
@@ -126,7 +123,6 @@ static struct irq_stat *get_irqinfo()
 	while (fgets(buffer, bufferlen, irqfile)) {
 		unsigned long count;
 		int index, length;
-		char *colon;
 
 		tmp = strchr(buffer, ':');
 		if (!tmp)
@@ -317,7 +313,7 @@ int main(int argc, char *argv[])
 	int is_tty, o;
 	unsigned short old_rows;
 	struct irq_stat *stat, *last_stat = NULL;
-	double uptime_secs;
+	double uptime_secs = 1;
 	int retval = EXIT_SUCCESS;
 
 	static const struct option longopts[] = {
@@ -373,7 +369,10 @@ int main(int argc, char *argv[])
 	signal(SIGINT, sigint_handler);
 
 	smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-	uptime(&uptime_secs, NULL);
+	if (uptime(&uptime_secs, NULL)) {
+		printf("get uptime fail\n");
+		return EXIT_FAILURE;
+	}
 
 	do {
 		struct timeval tv;

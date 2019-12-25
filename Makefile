@@ -1,7 +1,7 @@
 IRQTOP=irqtop
 
 all :
-	gcc *.c -O2 -g -o $(IRQTOP) -I. -lncurses
+	gcc *.c -O2 -g -o $(IRQTOP) -I. -lncurses -Wall
 
 install : all
 	@cp $(IRQTOP) /usr/bin
