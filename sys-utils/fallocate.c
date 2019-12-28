@@ -90,9 +90,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --collapse-range remove a range from the file\n"), out);
 	fputs(_(" -d, --dig-holes      detect zeroes and replace with holes\n"), out);
 	fputs(_(" -i, --insert-range   insert a hole at range, shifting existing data\n"), out);
-	fputs(_(" -l, --length <num>   length for range operations, in bytes\n"), out);
+	fputs(_(" -l, --length <num>   length for range operations, (K,M,G,T,P,E,Z,Y) bytes\n"), out);
 	fputs(_(" -n, --keep-size      maintain the apparent size of the file\n"), out);
-	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
+	fputs(_(" -o, --offset <num>   offset for range operations, (K,M,G,T,P,E,Z,Y) bytes\n"), out);
 	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
 	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
 #ifdef HAVE_POSIX_FALLOCATE
