@@ -13,7 +13,7 @@ compiler:
 env:
   - MAKE_CHECK="nonroot"
   - MAKE_CHECK="root"
-  - MAKE_CHECK="dist"
+  - MAKE_CHECK="distcheck"
 
 matrix:
   include:
