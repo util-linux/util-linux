@@ -662,6 +662,10 @@ usage(void)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(stdout, " %8s  %s\n", infos[i].name, _(infos[i].help));
 
+	fputs(USAGE_SEPARATOR, stdout);
+	puts(_("Where:"));
+	puts(_(" <num> arguments may be followed by the multiplicative suffixes for"));
+	puts(_(" GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)"));
 	printf(USAGE_MAN_TAIL("wipefs(8)"));
 	exit(EXIT_SUCCESS);
 }

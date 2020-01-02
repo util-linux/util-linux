@@ -315,12 +315,16 @@ static void __attribute__((__noreturn__)) usage(void)
 		fprintf(out, " %-11s  %s\n", commands[i].name, _(commands[i].help));
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"), out);
-	fputs(_(" -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"), out);
+	fputs(_(" -o, --offset <num>     start sector of zone to act (in 512-byte sectors)\n"), out);
+	fputs(_(" -l, --length <num>     maximum sectors to act (in 512-byte sectors)\n"), out);
 	fputs(_(" -c, --count <number>   maximum number of zones\n"), out);
 	fputs(_(" -v, --verbose          display more details\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(24));
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Where:\n"), out);
+	fputs(_(" <num> arguments may be followed by the multiplicative suffixes for\n"), out);
+	fputs(_(" GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"), out);
 
 	printf(USAGE_MAN_TAIL("blkzone(8)"));
 	exit(EXIT_SUCCESS);

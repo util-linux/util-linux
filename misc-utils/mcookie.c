@@ -92,6 +92,10 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(23));
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Where:\n"), out);
+	fputs(_(" <num> arguments may be followed by the multiplicative suffixes for\n"), out);
+	fputs(_(" GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"), out);
 	printf(USAGE_MAN_TAIL("mcookie(1)"));
 
 	exit(EXIT_SUCCESS);

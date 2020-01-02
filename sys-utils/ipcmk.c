@@ -70,13 +70,17 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Create various IPC resources.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -M, --shmem <size>       create shared memory segment of size <size>\n"), out);
+	fputs(_(" -M, --shmem <num>        create shared memory segment of size <num>\n"), out);
 	fputs(_(" -S, --semaphore <number> create semaphore array with <number> elements\n"), out);
 	fputs(_(" -Q, --queue              create message queue\n"), out);
 	fputs(_(" -p, --mode <mode>        permission for the resource (default is 0644)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(26));
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Where:\n"), out);
+	fputs(_(" <num> arguments may be followed by the multiplicative suffixes for\n"), out);
+	fputs(_(" GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"), out);
 	printf(USAGE_MAN_TAIL("ipcmk(1)"));
 
 	exit(EXIT_SUCCESS);

@@ -553,7 +553,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --output-all          output all columns\n"), out);
 	fputs(_("     --raw                 use raw status output format\n"), out);
 	fputs(_(" -r, --reset               reset all specified devices\n"), out);
-	fputs(_(" -s, --size <size>         device size\n"), out);
+	fputs(_(" -s, --size <num>          device size\n"), out);
 	fputs(_(" -t, --streams <number>    number of compression streams\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -563,6 +563,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Where:\n"), out);
+	fputs(_(" <num> arguments may be followed by the multiplicative suffixes for\n"), out);
+	fputs(_(" GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"), out);
 	printf(USAGE_MAN_TAIL("zramctl(8)"));
 	exit(EXIT_SUCCESS);
 }

@@ -169,13 +169,17 @@ void __attribute__((__noreturn__)) usage(void)
 	        "                             %s\n", USAGE_COLORS_DEFAULT);
 	fputs(_(" -e, --format <format>     format string to be used for displaying data\n"), out);
 	fputs(_(" -f, --format-file <file>  file that contains format strings\n"), out);
-	fputs(_(" -n, --length <length>     interpret only length bytes of input\n"), out);
-	fputs(_(" -s, --skip <offset>       skip offset bytes from the beginning\n"), out);
+	fputs(_(" -n, --length <num>        interpret only length bytes of input\n"), out);
+	fputs(_(" -s, --skip <num>          skip offset bytes from the beginning\n"), out);
 	fputs(_(" -v, --no-squeezing        output identical lines\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(27));
-	printf(USAGE_MAN_TAIL("hexdump(1)"));
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Where:\n"), out);
+	fputs(_(" <num> arguments may be followed by the multiplicative suffixes for\n"), out);
+	fputs(_(" GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"), out);
 
+	printf(USAGE_MAN_TAIL("hexdump(1)"));
 	exit(EXIT_SUCCESS);
 }
 
