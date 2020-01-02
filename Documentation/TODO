@@ -1,6 +1,10 @@
 
  Note that items with (!) have high priority.
 
+script (lib/pty-session.c)
+--------------------------
+  - (!) add #ifdefs and optional code for non-signalfd() systems
+
 col
 ---
   - use unsigned sizes for columns and lines
