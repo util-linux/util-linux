@@ -1903,7 +1903,6 @@ static int mkdir_target(const char *tgt, struct libmnt_fs *fs)
 int mnt_context_prepare_target(struct libmnt_context *cxt)
 {
 	const char *tgt, *prefix;
-	struct libmnt_cache *cache;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
 
@@ -1944,37 +1943,35 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
 
-	/* mkdir target */
+	/* X-mount.mkdir target */
 	if (cxt->action == MNT_ACT_MOUNT
-	    && !mnt_context_is_restricted(cxt)
 	    && (cxt->user_mountflags & MNT_MS_XCOMMENT ||
 		cxt->user_mountflags & MNT_MS_XFSTABCOMM)) {
 
-		rc = mkdir_target(tgt, cxt->fs);
-		if (rc) {
-			if (!mnt_context_switch_ns(cxt, ns_old))
-				return -MNT_ERR_NAMESPACE;
-			return rc;	/* mkdir or parse error */
-		}
+		/* supported only for root or non-suid mount(8) */
+		if (!mnt_context_is_restricted(cxt))
+			rc = mkdir_target(tgt, cxt->fs);
+		else
+			rc = -EPERM;
 	}
 
 	/* canonicalize the path */
-	cache = mnt_context_get_cache(cxt);
-	if (cache) {
-		char *path = mnt_resolve_path(tgt, cache);
-		if (path && strcmp(path, tgt) != 0)
-			rc = mnt_fs_set_target(cxt->fs, path);
+	if (rc == 0) {
+		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
+
+		if (cache) {
+			char *path = mnt_resolve_path(tgt, cache);
+			if (path && strcmp(path, tgt) != 0)
+				rc = mnt_fs_set_target(cxt->fs, path);
+		}
 	}
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 
-	if (rc)
-		DBG(CXT, ul_debugobj(cxt, "failed to prepare target '%s'", tgt));
-	else
-		DBG(CXT, ul_debugobj(cxt, "final target '%s'",
-					mnt_fs_get_target(cxt->fs)));
-	return 0;
+	DBG(CXT, ul_debugobj(cxt, "final target '%s' [rc=%d]",
+				mnt_fs_get_target(cxt->fs), rc));
+	return rc;
 }
 
 /* Guess type, but not set to cxt->fs, always use free() for the result. It's

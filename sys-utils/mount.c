@@ -384,19 +384,19 @@ static struct libmnt_table *append_fstab(struct libmnt_context *cxt,
  * Check source and target paths -- non-root user should not be able to
  * resolve paths which are unreadable for him.
  */
-static void sanitize_paths(struct libmnt_context *cxt)
+static int sanitize_paths(struct libmnt_context *cxt)
 {
 	const char *p;
 	struct libmnt_fs *fs = mnt_context_get_fs(cxt);
 
 	if (!fs)
-		return;
+		return 0;
 
 	p = mnt_fs_get_target(fs);
 	if (p) {
 		char *np = canonicalize_path_restricted(p);
 		if (!np)
-			err(MNT_EX_USAGE, "%s", p);
+			return -EPERM;
 		mnt_fs_set_target(fs, np);
 		free(np);
 	}
@@ -405,10 +405,11 @@ static void sanitize_paths(struct libmnt_context *cxt)
 	if (p) {
 		char *np = canonicalize_path_restricted(p);
 		if (!np)
-			err(MNT_EX_USAGE, "%s", p);
+			return -EPERM;
 		mnt_fs_set_source(fs, np);
 		free(np);
 	}
+	return 0;
 }
 
 static void append_option(struct libmnt_context *cxt, const char *opt)
@@ -952,8 +953,8 @@ int main(int argc, char **argv)
 		errtryhelp(MNT_EX_USAGE);
 	}
 
-	if (mnt_context_is_restricted(cxt))
-		sanitize_paths(cxt);
+	if (mnt_context_is_restricted(cxt) && sanitize_paths(cxt) != 0)
+		suid_drop(cxt);
 
 	if (is_move)
 		/* "move" as option string is not supported by libmount */
