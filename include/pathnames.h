@@ -186,6 +186,10 @@
 #define _PATH_PROC_IPC_SHMMAX	"/proc/sys/kernel/shmmax"
 #define _PATH_PROC_IPC_SHMMNI	"/proc/sys/kernel/shmmni"
 
+/* irqtop paths */
+#define _PATH_PROC_INTERRUPTS	"/proc/interrupts"
+#define _PATH_PROC_UPTIME	"/proc/uptime"
+
 /* kernel command line */
 #define _PATH_PROC_CMDLINE	"/proc/cmdline"
 

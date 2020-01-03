@@ -20,50 +20,66 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <ctype.h>
+#include <errno.h>
+#include <getopt.h>
 #include <limits.h>
 #include <locale.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
 #include <signal.h>
-#include <ncurses.h>
-#include <termios.h>
-#include <getopt.h>
-#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
-
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <termios.h>
 #include <unistd.h>
-#include <stdlib.h>
 
-#define IRQTOP_VERSION 		"Version 0.1"
-#define IRQTOP_AUTHOR 		"zhenwei pi<pizhenwei@bytedance.com>"
+#ifdef HAVE_SLCURSES_H
+# include <slcurses.h>
+#elif defined(HAVE_SLANG_SLCURSES_H)
+# include <slang/slcurses.h>
+#elif defined(HAVE_NCURSESW_NCURSES_H) && defined(HAVE_WIDECHAR)
+# include <ncursesw/ncurses.h>
+#elif defined(HAVE_NCURSES_H)
+# include <ncurses.h>
+#elif defined(HAVE_NCURSES_NCURSES_H)
+# include <ncurses/ncurses.h>
+#endif
+
+#ifdef HAVE_WIDECHAR
+# include <wctype.h>
+# include <wchar.h>
+#endif
+
+#include "c.h"
+#include "closestream.h"
+#include "nls.h"
+#include "pathnames.h"
+
 #define DEF_SORT_FUNC		sort_count
 #define IRQ_NAME_LEN		4
 #define IRQ_DESC_LEN		64
 #define IRQ_INFO_LEN		64
-#define INTERRUPTS_FILE		"/proc/interrupts"
 #define MIN(x,y)		((x) > (y) ? (y) : (x))
 #define RESERVE_ROWS		(1 + 1 + 1)	/* summary + header + last row */
 #define print_line(fmt, ...) if (run_once) printf(fmt, __VA_ARGS__); \
 				else printw(fmt, __VA_ARGS__)
 
 struct irq_info {
-	char irq[IRQ_NAME_LEN+1];       /* name of this irq */
-	char desc[IRQ_DESC_LEN+1];      /* description of this irq */
-	unsigned long count;            /* count of this irq for all cpu(s) */
+	char irq[IRQ_NAME_LEN + 1];	/* name of this irq */
+	char desc[IRQ_DESC_LEN + 1];	/* description of this irq */
+	unsigned long count;		/* count of this irq for all cpu(s) */
 };
 
 struct irq_stat {
-	unsigned int nr_irq;            /* number of irq vector */
+	unsigned int nr_irq;		/* number of irq vector */
 	unsigned int nr_irq_info;	/* number of irq info */
 	struct irq_info *irq_info;	/* array of irq_info */
-	long nr_online_cpu;             /* number of online cpu */
-	long nr_active_cpu;             /* number of active cpu */
-	unsigned long total_irq;        /* total irqs */
+	long nr_online_cpu;		/* number of online cpu */
+	long nr_active_cpu;		/* number of active cpu */
+	unsigned long total_irq;	/* total irqs */
 };
 
 static int run_once;
@@ -72,12 +88,11 @@ static struct termios saved_tty;
 static long delay = 3;
 static int (*sort_func)(const struct irq_info *, const struct irq_info *);
 static long smp_num_cpus;
-static char *program;
 
 /*
  * irqinfo - parse the system's interrupts
  */
-static struct irq_stat *get_irqinfo()
+static struct irq_stat *get_irqinfo(void)
 {
 	FILE *irqfile;
 	char *buffer, *tmp;
@@ -90,7 +105,7 @@ static struct irq_stat *get_irqinfo()
 	buffer = malloc(bufferlen);
 	if (!buffer)
 		goto out;
-	
+
 	stat = calloc(1, sizeof(*stat));
 	if (!stat)
 		goto free_buf;
@@ -100,15 +115,15 @@ static struct irq_stat *get_irqinfo()
 		goto free_stat;
 	stat->nr_irq_info = IRQ_INFO_LEN;
 
-	irqfile = fopen(INTERRUPTS_FILE, "r");
+	irqfile = fopen(_PATH_PROC_INTERRUPTS, "r");
 	if (!irqfile) {
-		perror("fopen " INTERRUPTS_FILE);
+		warn(_("cannot open %s"), _PATH_PROC_INTERRUPTS);
 		goto free_stat;
 	}
 
 	/* read header firstly */
 	if (!fgets(buffer, bufferlen, irqfile)) {
-		fprintf(stderr, "cannot read from irqinfo\n");
+		warn(_("cannot read %s"), _PATH_PROC_INTERRUPTS);
 		goto close_file;
 	}
 
@@ -119,7 +134,7 @@ static struct irq_stat *get_irqinfo()
 		stat->nr_active_cpu++;
 	}
 
-	/* parse each line of INTERRUPTS_FILE */
+	/* parse each line of _PATH_PROC_INTERRUPTS */
 	while (fgets(buffer, bufferlen, irqfile)) {
 		unsigned long count;
 		int index, length;
@@ -137,8 +152,7 @@ static struct irq_stat *get_irqinfo()
 		memcpy(curr->irq, buffer, tmp - buffer);
 
 		tmp += 1;
-		for (index = 0; (index < stat->nr_active_cpu) &&
-				(tmp - buffer < length); index++) {
+		for (index = 0; (index < stat->nr_active_cpu) && (tmp - buffer < length); index++) {
 			sscanf(tmp, " %10lu", &count);
 			curr->count += count;
 			stat->total_irq += count;
@@ -147,7 +161,7 @@ static struct irq_stat *get_irqinfo()
 
 		if (tmp - buffer < length) {
 			/* strip all space before desc */
-			while(*tmp == ' ')
+			while (*tmp == ' ')
 				tmp++;
 			strcpy(curr->desc, tmp);
 		} else {
@@ -158,21 +172,21 @@ static struct irq_stat *get_irqinfo()
 		if (stat->nr_irq == stat->nr_irq_info) {
 			stat->nr_irq_info *= 2;
 			stat->irq_info = realloc(stat->irq_info,
-					sizeof(*stat->irq_info) * stat->nr_irq_info);
+						 sizeof(*stat->irq_info) * stat->nr_irq_info);
 		}
 	}
 
 	return stat;
 
-close_file:
+ close_file:
 	fclose(irqfile);
-free_stat:
+ free_stat:
 	if (stat)
 		free(stat->irq_info);
 	free(stat);
-free_buf:
+ free_buf:
 	free(buffer);
-out:
+ out:
 	return NULL;
 }
 
@@ -193,18 +207,18 @@ static int sort_count(const struct irq_info *a, const struct irq_info *b)
 	return a->count < b->count;
 }
 
-static int sort_interrupts(const struct irq_info *a, const struct irq_info *b)
+static int sort_interrupts(const struct irq_info *a __attribute__((__unused__)),
+			   const struct irq_info *b __attribute__((__unused__)))
 {
 	return 0;
 }
 
 static void sort_result(struct irq_info *result, size_t nmemb)
 {
-	qsort(result, nmemb, sizeof(*result),
-		(int (*)(const void *, const void *))sort_func);
+	qsort(result, nmemb, sizeof(*result), (int (*)(const void *, const void *))sort_func);
 }
 
-static void term_size(int unusused __attribute__ ((__unused__)))
+static void term_size(int unusused __attribute__((__unused__)))
 {
 	struct winsize ws;
 
@@ -225,15 +239,15 @@ static int uptime(double *uptime_secs, double *idle_secs)
 	FILE *f;
 	char buf[64];
 
-	f = fopen("/proc/uptime", "r");
+	f = fopen(_PATH_PROC_UPTIME, "r");
 	if (!f)
 		return errno;
-	
+
 	if (!fgets(buf, sizeof(buf), f)) {
 		fclose(f);
 		return errno;
 	}
-	
+
 	if (sscanf(buf, "%lf %lf", &up, &idle) < 2) {
 		fclose(f);
 		return errno;
@@ -249,49 +263,50 @@ static int uptime(double *uptime_secs, double *idle_secs)
 	return 0;
 }
 
-static void sigint_handler(int unused __attribute__ ((__unused__)))
+static void sigint_handler(int unused __attribute__((__unused__)))
 {
 	delay = 0;
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out, char *msg)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	if (!msg)
-		fputs("msg", out);
-	fputs("Usage:\n", out);
-	fprintf(out, "  %s [options]\n", program);
-	fputs("Options:", out);
-	fputs(" -d, --delay <secs>  delay updates\n", out);
-	fputs(" -o, --once          only display average irq once, then exit\n", out);
-	fputs(" -s, --sort <char>   specify sort criteria by character (see below)\n", out);
+	fputs(USAGE_HEADER, stdout);
+	printf(_(" %s [options]\n"), program_invocation_short_name);
 
-	fputs("\nThe following are valid sort criteria:\n", out);
-	fputs(" c: sort by increase count of each interrupt\n", out);
-	fputs(" i: sort by default interrupts from proc interrupt\n", out);
-	fputs(" n: sort by name\n", out);
-	fputs("Contact:\n", out);
-	fprintf(out, "  %s\n", IRQTOP_AUTHOR);
+	fputs(USAGE_SEPARATOR, stdout);
+	puts(_("Utility to display kernel interrupt information."));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	fputs(USAGE_OPTIONS, stdout);
+	fputs(_(" -d, --delay <secs>  delay updates\n"), stdout);
+	fputs(_(" -o, --once          only display average irq once, then exit\n"), stdout);
+	fputs(_(" -s, --sort <char>   specify sort criteria by character (see below)\n"), stdout);
+	fputs(USAGE_SEPARATOR, stdout);
+	printf(USAGE_HELP_OPTIONS(21));
+	fputs(_("\nThe following are valid sort criteria:\n"), stdout);
+	fputs(_("  c:   sort by increase count of each interrupt\n"), stdout);
+	fputs(_("  i:   sort by default interrupts from proc interrupt\n"), stdout);
+	fputs(_("  n:   sort by name\n"), stdout);
+	printf(USAGE_MAN_TAIL("irqtop(1)"));
+	exit(EXIT_SUCCESS);
 }
 
-static void * set_sort_func(char key)
+static void *set_sort_func(char key)
 {
 	switch (key) {
 	case 'c':
-		return (void *) sort_count;
+		return (void *)sort_count;
 	case 'i':
-		return (void *) sort_interrupts;
+		return (void *)sort_interrupts;
 	case 'n':
-		return (void *) sort_name;
+		return (void *)sort_name;
 	default:
-		return (void *) DEF_SORT_FUNC;
+		return (void *)DEF_SORT_FUNC;
 	}
 }
 
 static void parse_input(char c)
 {
-	switch(c) {
+	switch (c) {
 	case 'c':
 		sort_func = sort_count;
 		break;
@@ -317,16 +332,15 @@ int main(int argc, char *argv[])
 	int retval = EXIT_SUCCESS;
 
 	static const struct option longopts[] = {
-		{ "delay",	required_argument, NULL, 'd' },
-		{ "sort",	required_argument, NULL, 's' },
-		{ "once",	no_argument,	   NULL, 'o' },
-		{ "help",	no_argument,	   NULL, 'h' },
-		{ "version",	no_argument,   NULL, 'V' },
-		{  NULL, 0, NULL, 0 }
+		{"delay", required_argument, NULL, 'd'},
+		{"sort", required_argument, NULL, 's'},
+		{"once", no_argument, NULL, 'o'},
+		{"help", no_argument, NULL, 'h'},
+		{"version", no_argument, NULL, 'V'},
+		{NULL, 0, NULL, 0}
 	};
 
-	setlocale (LC_ALL, "");
-	program = argv[0];
+	setlocale(LC_ALL, "");
 	sort_func = DEF_SORT_FUNC;
 
 	while ((o = getopt_long(argc, argv, "d:os:hV", longopts, NULL)) != -1) {
@@ -335,29 +349,28 @@ int main(int argc, char *argv[])
 			errno = 0;
 			delay = atol(optarg);
 			if (delay < 1)
-				usage(stderr, "delay must be positive integer\n");
+				errx(EXIT_FAILURE, _("delay must be positive integer"));
 			break;
 		case 's':
-			sort_func = (int (*)(const struct irq_info*,
-				const struct irq_info *)) set_sort_func(optarg[0]);
+			sort_func = (int (*)(const struct irq_info *, const struct irq_info *))
+			    set_sort_func(optarg[0]);
 			break;
 		case 'o':
 			run_once = 1;
 			delay = 0;
 			break;
 		case 'V':
-			printf("%s\n", IRQTOP_VERSION);
-			return EXIT_SUCCESS;
+			print_version(EXIT_SUCCESS);
 		case 'h':
-			usage(stdout, NULL);
+			usage();
 		default:
-			usage(stderr, NULL);
+			usage();
 		}
 	}
 
 	is_tty = isatty(STDIN_FILENO);
 	if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
-		fputs("terminal setting retrieval", stdout);
+		fputs(_("terminal setting retrieval"), stdout);
 
 	old_rows = rows;
 	term_size(0);
@@ -369,10 +382,8 @@ int main(int argc, char *argv[])
 	signal(SIGINT, sigint_handler);
 
 	smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-	if (uptime(&uptime_secs, NULL)) {
-		printf("get uptime fail\n");
-		return EXIT_FAILURE;
-	}
+	if (uptime(&uptime_secs, NULL))
+		errx(EXIT_FAILURE, _("could not read uptime"));
 
 	do {
 		struct timeval tv;
@@ -380,7 +391,7 @@ int main(int argc, char *argv[])
 		size_t size;
 		fd_set readfds;
 		char c;
-		int i;
+		size_t index;
 
 		stat = get_irqinfo();
 		if (!stat) {
@@ -397,8 +408,8 @@ int main(int argc, char *argv[])
 
 		/* summary stat */
 		print_line("irqtop - IRQ : %d, TOTAL : %ld, CPU : %ld, "
-			"ACTIVE CPU : %ld\n", stat->nr_irq, stat->total_irq,
-			stat->nr_online_cpu, stat->nr_active_cpu);
+			   "ACTIVE CPU : %ld\n", stat->nr_irq, stat->total_irq,
+			   stat->nr_online_cpu, stat->nr_active_cpu);
 
 		/* header */
 		attron(A_REVERSE);
@@ -409,13 +420,14 @@ int main(int argc, char *argv[])
 		result = malloc(size);
 		memcpy(result, stat->irq_info, size);
 		if (!last_stat) {
-			for (i = 0; i < stat->nr_irq; i++) {
-				curr = result + i;
+
+			for (index = 0; index < stat->nr_irq; index++) {
+				curr = result + index;
 				curr->count /= uptime_secs;
 			}
 			last_stat = stat;
 		} else {
-			int i, j;
+			size_t i, j;
 
 			for (i = 0; i < stat->nr_irq; i++) {
 				struct irq_info *found = NULL;
@@ -443,10 +455,9 @@ int main(int argc, char *argv[])
 
 		/* okay, sort and show the result */
 		sort_result(result, stat->nr_irq);
-		for (i = 0; i < MIN(rows - RESERVE_ROWS, stat->nr_irq); i++) {
-			curr = result + i;
-			print_line("%4s   %10ld   %s", curr->irq, curr->count,
-					curr->desc);
+		for (index = 0; index < MIN(rows - RESERVE_ROWS, stat->nr_irq); index++) {
+			curr = result + index;
+			print_line("%4s   %10ld   %s", curr->irq, curr->count, curr->desc);
 		}
 		free(result);
 
