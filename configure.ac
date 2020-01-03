@@ -1768,6 +1768,13 @@ AC_ARG_ENABLE([ipcs],
 UL_BUILD_INIT([ipcs])
 AM_CONDITIONAL([BUILD_IPCS], [test "x$build_ipcs" = xyes])
 
+AC_ARG_ENABLE([irqtop],
+  AS_HELP_STRING([--disable-irqtop], [do not build irqtop]),
+  [], [UL_DEFAULT_ENABLE([irqtop], [yes])]
+)
+UL_BUILD_INIT([irqtop])
+AM_CONDITIONAL([BUILD_IRQTOP], [test "x$build_irqtop" = xyes])
+
 UL_BUILD_INIT([choom], [check])
 UL_REQUIRES_LINUX([choom])
 AM_CONDITIONAL([BUILD_CHOOM], [test "x$build_choom" = xyes])

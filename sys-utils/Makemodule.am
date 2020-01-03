@@ -50,6 +50,13 @@ ipcs_SOURCES =	sys-utils/ipcs.c \
 ipcs_LDADD = $(LDADD) libcommon.la
 endif
 
+if BUILD_IRQTOP
+usrbin_exec_PROGRAMS += irqtop
+irqtop_SOURCES = sys-utils/irqtop.c
+irqtop_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
+irqtop_LDADD = $(NCURSES_LIBS)
+endif
+
 if BUILD_LSIPC
 usrbin_exec_PROGRAMS += lsipc
 dist_man_MANS += sys-utils/lsipc.1
