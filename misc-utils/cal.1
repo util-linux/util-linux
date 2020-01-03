@@ -90,7 +90,8 @@ Display Sunday as the first day of the week.
 Display Monday as the first day of the week.
 .TP
 .B \-\-iso
-Display the proleptic Gregorian calendar exclusively.
+Display the proleptic Gregorian calendar exclusively.  This option does not affect
+week numbers and the first day of the week.
 .RB See\  \-\-reform\  below.
 .TP
 \fB\-j\fR, \fB\-\-julian\fR
@@ -151,7 +152,8 @@ Display a calendar for the whole year.
 Display a calendar for the next twelve months.
 .TP
 \fB\-w\fR, \fB\-\-week\fR[=\fInumber\fR]
-Display week numbers in the calendar (US or ISO-8601).
+Display week numbers in the calendar (US or ISO-8601).  See NOTES section
+for more details.
 .TP
 \fB\-\-color\fR[=\fIwhen\fR]
 Colorize the output.  The optional argument \fIwhen\fP
@@ -200,8 +202,8 @@ locale or the
 .PP
 The week numbering depends on the choice of the first day of the week.  If it
 is Sunday then the customary North American numbering is used, where 1 January
-is in week number 1.  If it is Monday then the ISO 8601 standard week numbering
-is used, where the first Thursday is in week number 1.
+is in week number 1.  If it is Monday (\fB\-m\fR) then the ISO 8601 standard week
+numbering is used, where the first Thursday is in week number 1.
 .SH COLORS
 Implicit coloring can be disabled as follows:
 .RS
