@@ -169,6 +169,16 @@ implies creating a new mount namespace since the /proc mount would otherwise
 mess up existing programs on the system.  The new proc filesystem is explicitly
 mounted as private (with MS_PRIVATE|MS_REC).
 .TP
+.BR \-\-map\-user=\fIuid
+Run the program only after the current effective user ID has been mapped to \fIuid\fP.
+If this option is specified multiple times, the last occurrence takes precedence.
+This option implies \fB\-\-user\fR.
+.TP
+.BR \-\-map\-group=\fIgid
+Run the program only after the current effective group ID has been mapped to \fIgid\fP.
+If this option is specified multiple times, the last occurrence takes precedence.
+This option implies \fB\-\-setgroups=deny\fR and \fB\-\-user\fR.
+.TP
 .BR \-r , " \-\-map\-root\-user"
 Run the program only after the current effective user and group IDs have been mapped to
 the superuser UID and GID in the newly created user namespace.  This makes it possible to
@@ -177,11 +187,13 @@ namespaces (such as configuring interfaces in the network namespace or mounting 
 the mount namespace) even when run unprivileged.  As a mere convenience feature, it does not support
 more sophisticated use cases, such as mapping multiple ranges of UIDs and GIDs.
 This option implies \fB\-\-setgroups=deny\fR and \fB\-\-user\fR.
+This option is equivalent to \fB\-\-map-user=0 \-\-map-group=0\fR.
 .TP
 .BR \-c , " \-\-map\-current\-user"
 Run the program only after the current effective user and group IDs have been mapped to
 the same UID and GID in the newly created user namespace. This option implies
 \fB\-\-setgroups=deny\fR and \fB\-\-user\fR.
+This option is equivalent to \fB\-\-map-user=$(id -ru) \-\-map-group=$(id -rg)\fR.
 .TP
 .BR "\-\-propagation private" | shared | slave | unchanged
 Recursively set the mount propagation flag in the new mount namespace.  The default
