@@ -404,8 +404,9 @@ void ul_pty_wait_for_child(struct ul_pty *pty)
 							pty->callback_data,
 							pty->child, status);
 				ul_pty_set_child(pty, (pid_t) -1);
-			} else
+			} else if (errno != EINTR) {
 				break;
+			}
 		}
 	} else {
 		/* final wait */
