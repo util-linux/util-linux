@@ -58,6 +58,7 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "ttyutils.h"
+#include "xalloc.h"
 
 #define DEF_SORT_FUNC		sort_count
 #define IRQ_NAME_LEN		4
@@ -101,17 +102,10 @@ static struct irq_stat *get_irqinfo(void)
 
 	/* NAME + ':' + 11 bytes/cpu + IRQ_DESC_LEN */
 	bufferlen = IRQ_NAME_LEN + 1 + smp_num_cpus * 11 + IRQ_DESC_LEN;
-	buffer = malloc(bufferlen);
-	if (!buffer)
-		goto out;
+	buffer = xmalloc(bufferlen);
+	stat = xcalloc(1, sizeof(*stat));
 
-	stat = calloc(1, sizeof(*stat));
-	if (!stat)
-		goto free_buf;
-
-	stat->irq_info = malloc(sizeof(*stat->irq_info) * IRQ_INFO_LEN);
-	if (!stat->irq_info)
-		goto free_stat;
+	stat->irq_info = xmalloc(sizeof(*stat->irq_info) * IRQ_INFO_LEN);
 	stat->nr_irq_info = IRQ_INFO_LEN;
 
 	irqfile = fopen(_PATH_PROC_INTERRUPTS, "r");
@@ -147,7 +141,7 @@ static struct irq_stat *get_irqinfo(void)
 			continue;
 
 		curr = stat->irq_info + stat->nr_irq++;
-		memset(curr, 0x00, sizeof(*curr));
+		memset(curr, 0, sizeof(*curr));
 		memcpy(curr->irq, buffer, tmp - buffer);
 
 		tmp += 1;
@@ -170,8 +164,8 @@ static struct irq_stat *get_irqinfo(void)
 
 		if (stat->nr_irq == stat->nr_irq_info) {
 			stat->nr_irq_info *= 2;
-			stat->irq_info = realloc(stat->irq_info,
-						 sizeof(*stat->irq_info) * stat->nr_irq_info);
+			stat->irq_info = xrealloc(stat->irq_info,
+						  sizeof(*stat->irq_info) * stat->nr_irq_info);
 		}
 	}
 
@@ -180,12 +174,9 @@ static struct irq_stat *get_irqinfo(void)
  close_file:
 	fclose(irqfile);
  free_stat:
-	if (stat)
-		free(stat->irq_info);
+	free(stat->irq_info);
 	free(stat);
- free_buf:
 	free(buffer);
- out:
 	return NULL;
 }
 
@@ -427,7 +418,7 @@ int main(int argc, char *argv[])
 		attroff(A_REVERSE);
 
 		size = sizeof(*stat->irq_info) * stat->nr_irq;
-		result = malloc(size);
+		result = xmalloc(size);
 		memcpy(result, stat->irq_info, size);
 		if (!last_stat) {
 
