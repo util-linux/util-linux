@@ -58,6 +58,7 @@
 #include "monotonic.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "strutils.h"
 #include "ttyutils.h"
 #include "xalloc.h"
 
@@ -86,10 +87,11 @@ struct irqtop_ctl {
 	WINDOW *win;
 	int cols;
 	int rows;
-	long delay;
+	struct timeval delay;
 	int (*sort_func)(const struct irq_info *, const struct irq_info *);
 	long smp_num_cpus;
 	unsigned int
+		request_exit:1,
 		run_once:1;
 };
 static struct irqtop_ctl *gctl;
@@ -220,7 +222,7 @@ static void term_size(int unusused __attribute__((__unused__)))
 
 static void sigint_handler(int unused __attribute__((__unused__)))
 {
-	gctl->delay = 0;
+	gctl->request_exit = 1;
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -273,7 +275,7 @@ static void parse_input(struct irqtop_ctl *ctl, char c)
 		break;
 	case 'q':
 	case 'Q':
-		ctl->delay = 0;
+		ctl->request_exit = 1;
 		break;
 	}
 }
@@ -306,7 +308,7 @@ int main(int argc, char *argv[])
 	struct timeval uptime_tv;
 	int retval = EXIT_SUCCESS;
 	struct termios saved_tty;
-	struct irqtop_ctl ctl = { .delay = 3 };
+	struct irqtop_ctl ctl = { .delay.tv_sec = 3 };
 
 	static const struct option longopts[] = {
 		{"delay", required_argument, NULL, 'd'},
@@ -326,10 +328,8 @@ int main(int argc, char *argv[])
 	while ((o = getopt_long(argc, argv, "d:os:hV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'd':
-			errno = 0;
-			ctl.delay = atol(optarg);
-			if (ctl.delay < 1)
-				errx(EXIT_FAILURE, _("delay must be positive integer"));
+			strtotimeval_or_err(optarg, &ctl.delay,
+					    _("failed to parse delay argument"));
 			break;
 		case 's':
 			ctl.sort_func = (int (*)(const struct irq_info *, const struct irq_info *))
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'o':
 			ctl.run_once = 1;
-			ctl.delay = 0;
+			ctl.request_exit = 1;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -366,7 +366,6 @@ int main(int argc, char *argv[])
 	gettime_monotonic(&uptime_tv);
 
 	do {
-		struct timeval tv;
 		struct irq_info *result, *curr;
 		size_t size;
 		fd_set readfds;
@@ -444,18 +443,19 @@ int main(int argc, char *argv[])
 		if (ctl.run_once) {
 			break;
 		} else {
+			/* copy timeval, select will overwrite the value */
+			struct timeval tv = ctl.delay;
+
 			refresh();
 			FD_ZERO(&readfds);
 			FD_SET(STDIN_FILENO, &readfds);
-			tv.tv_sec = ctl.delay;
-			tv.tv_usec = 0;
 			if (select(STDOUT_FILENO, &readfds, NULL, NULL, &tv) > 0) {
 				if (read(STDIN_FILENO, &c, 1) != 1)
 					break;
 				parse_input(&ctl, c);
 			}
 		}
-	} while (ctl.delay);
+	} while (!ctl.request_exit);
 
 	put_irqinfo(last_stat);
 
