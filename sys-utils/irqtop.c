@@ -55,6 +55,7 @@
 
 #include "c.h"
 #include "closestream.h"
+#include "monotonic.h"
 #include "nls.h"
 #include "pathnames.h"
 #include "ttyutils.h"
@@ -213,36 +214,6 @@ static void term_size(int unusused __attribute__((__unused__)))
 	get_terminal_dimension(&cols, &rows);
 }
 
-static int uptime(double *uptime_secs, double *idle_secs)
-{
-	double up, idle;
-	FILE *f;
-	char buf[64];
-
-	f = fopen(_PATH_PROC_UPTIME, "r");
-	if (!f)
-		return errno;
-
-	if (!fgets(buf, sizeof(buf), f)) {
-		fclose(f);
-		return errno;
-	}
-
-	if (sscanf(buf, "%lf %lf", &up, &idle) < 2) {
-		fclose(f);
-		return errno;
-	}
-
-	if (uptime_secs)
-		*uptime_secs = up;
-
-	if (idle_secs)
-		*idle_secs = idle;
-
-	fclose(f);
-	return 0;
-}
-
 static void sigint_handler(int unused __attribute__((__unused__)))
 {
 	delay = 0;
@@ -328,7 +299,7 @@ int main(int argc, char *argv[])
 	int is_tty, o;
 	unsigned short old_rows;
 	struct irq_stat *stat, *last_stat = NULL;
-	double uptime_secs = 1;
+	struct timeval uptime_tv;
 	int retval = EXIT_SUCCESS;
 
 	static const struct option longopts[] = {
@@ -383,8 +354,7 @@ int main(int argc, char *argv[])
 	signal(SIGINT, sigint_handler);
 
 	smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-	if (uptime(&uptime_secs, NULL))
-		errx(EXIT_FAILURE, _("could not read uptime"));
+	gettime_monotonic(&uptime_tv);
 
 	do {
 		struct timeval tv;
@@ -424,7 +394,7 @@ int main(int argc, char *argv[])
 
 			for (index = 0; index < stat->nr_irq; index++) {
 				curr = result + index;
-				curr->count /= uptime_secs;
+				curr->count /= uptime_tv.tv_sec;
 			}
 			last_stat = stat;
 		} else {

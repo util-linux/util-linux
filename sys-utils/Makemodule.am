@@ -52,8 +52,9 @@ endif
 
 if BUILD_IRQTOP
 usrbin_exec_PROGRAMS += irqtop
-irqtop_SOURCES = sys-utils/irqtop.c
-irqtop_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS)
+irqtop_SOURCES = sys-utils/irqtop.c \
+		 lib/monotonic.c
+irqtop_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(REALTIME_LIBS)
 irqtop_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
 endif
 
