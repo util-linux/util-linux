@@ -57,15 +57,13 @@
 #include "closestream.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "ttyutils.h"
 
 #define DEF_SORT_FUNC		sort_count
 #define IRQ_NAME_LEN		4
 #define IRQ_DESC_LEN		64
 #define IRQ_INFO_LEN		64
-#define MIN(x,y)		((x) > (y) ? (y) : (x))
 #define RESERVE_ROWS		(1 + 1 + 1)	/* summary + header + last row */
-#define print_line(fmt, ...) if (run_once) printf(fmt, __VA_ARGS__); \
-				else printw(fmt, __VA_ARGS__)
 
 struct irq_info {
 	char irq[IRQ_NAME_LEN + 1];	/* name of this irq */
@@ -82,8 +80,9 @@ struct irq_stat {
 	unsigned long total_irq;	/* total irqs */
 };
 
+static WINDOW *win;
 static int run_once;
-static unsigned short cols, rows;
+static int cols, rows;
 static struct termios saved_tty;
 static long delay = 3;
 static int (*sort_func)(const struct irq_info *, const struct irq_info *);
@@ -220,17 +219,7 @@ static void sort_result(struct irq_info *result, size_t nmemb)
 
 static void term_size(int unusused __attribute__((__unused__)))
 {
-	struct winsize ws;
-
-	if ((ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1) && ws.ws_row > 10) {
-		cols = ws.ws_col;
-		rows = ws.ws_row;
-	} else {
-		cols = 80;
-		rows = 24;
-	}
-	if (run_once)
-		rows = USHRT_MAX;
+	get_terminal_dimension(&cols, &rows);
 }
 
 static int uptime(double *uptime_secs, double *idle_secs)
@@ -323,6 +312,26 @@ static void parse_input(char c)
 	}
 }
 
+static inline size_t choose_smaller(size_t a, size_t b)
+{
+	if (a < b)
+		return a;
+	return b;
+}
+
+static inline void print_line(const char *fmt, ...)
+{
+	va_list args;
+
+	va_start(args, fmt);
+	if (run_once)
+		vprintf(fmt, args);
+	else {
+		vw_printw(win, fmt, args);
+	}
+	va_end(args);
+}
+
 int main(int argc, char *argv[])
 {
 	int is_tty, o;
@@ -373,9 +382,10 @@ int main(int argc, char *argv[])
 		fputs(_("terminal setting retrieval"), stdout);
 
 	old_rows = rows;
-	term_size(0);
+	get_terminal_dimension(&cols, &rows);
 	if (!run_once) {
-		initscr();
+		win = initscr();
+		get_terminal_dimension(&cols, &rows);
 		resizeterm(rows, cols);
 		signal(SIGWINCH, term_size);
 	}
@@ -455,7 +465,7 @@ int main(int argc, char *argv[])
 
 		/* okay, sort and show the result */
 		sort_result(result, stat->nr_irq);
-		for (index = 0; index < MIN(rows - RESERVE_ROWS, stat->nr_irq); index++) {
+		for (index = 0; index < choose_smaller(rows - RESERVE_ROWS, stat->nr_irq); index++) {
 			curr = result + index;
 			print_line("%4s   %10ld   %s", curr->irq, curr->count, curr->desc);
 		}
