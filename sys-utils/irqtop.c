@@ -175,7 +175,8 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 						  sizeof(*stat->irq_info) * stat->nr_irq_info);
 		}
 	}
-
+	fclose(irqfile);
+	free(buffer);
 	return stat;
 
  close_file:
@@ -462,8 +463,9 @@ int main(int argc, char *argv[])
 	if (is_tty)
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
 
-	if (!ctl.run_once)
+	if (ctl.win) {
+		delwin(ctl.win);
 		endwin();
-
+	}
 	return retval;
 }
