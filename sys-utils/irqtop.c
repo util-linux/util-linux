@@ -82,18 +82,22 @@ struct irq_stat {
 	unsigned long total_irq;	/* total irqs */
 };
 
-static WINDOW *win;
-static int run_once;
-static int cols, rows;
-static struct termios saved_tty;
-static long delay = 3;
-static int (*sort_func)(const struct irq_info *, const struct irq_info *);
-static long smp_num_cpus;
+struct irqtop_ctl {
+	WINDOW *win;
+	int cols;
+	int rows;
+	long delay;
+	int (*sort_func)(const struct irq_info *, const struct irq_info *);
+	long smp_num_cpus;
+	unsigned int
+		run_once:1;
+};
+static struct irqtop_ctl *gctl;
 
 /*
  * irqinfo - parse the system's interrupts
  */
-static struct irq_stat *get_irqinfo(void)
+static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 {
 	FILE *irqfile;
 	char *buffer, *tmp;
@@ -102,7 +106,7 @@ static struct irq_stat *get_irqinfo(void)
 	struct irq_info *curr;
 
 	/* NAME + ':' + 11 bytes/cpu + IRQ_DESC_LEN */
-	bufferlen = IRQ_NAME_LEN + 1 + smp_num_cpus * 11 + IRQ_DESC_LEN;
+	bufferlen = IRQ_NAME_LEN + 1 + ctl->smp_num_cpus * 11 + IRQ_DESC_LEN;
 	buffer = xmalloc(bufferlen);
 	stat = xcalloc(1, sizeof(*stat));
 
@@ -121,7 +125,7 @@ static struct irq_stat *get_irqinfo(void)
 		goto close_file;
 	}
 
-	stat->nr_online_cpu = smp_num_cpus;
+	stat->nr_online_cpu = ctl->smp_num_cpus;
 	tmp = buffer;
 	while ((tmp = strstr(tmp, "CPU")) != NULL) {
 		tmp += 3;	/* skip this "CPU", find next */
@@ -204,19 +208,19 @@ static int sort_interrupts(const struct irq_info *a __attribute__((__unused__)),
 	return 0;
 }
 
-static void sort_result(struct irq_info *result, size_t nmemb)
+static void sort_result(struct irqtop_ctl *ctl, struct irq_info *result, size_t nmemb)
 {
-	qsort(result, nmemb, sizeof(*result), (int (*)(const void *, const void *))sort_func);
+	qsort(result, nmemb, sizeof(*result), (int (*)(const void *, const void *))ctl->sort_func);
 }
 
 static void term_size(int unusused __attribute__((__unused__)))
 {
-	get_terminal_dimension(&cols, &rows);
+	get_terminal_dimension(&gctl->cols, &gctl->rows);
 }
 
 static void sigint_handler(int unused __attribute__((__unused__)))
 {
-	delay = 0;
+	gctl->delay = 0;
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -255,21 +259,21 @@ static void *set_sort_func(char key)
 	}
 }
 
-static void parse_input(char c)
+static void parse_input(struct irqtop_ctl *ctl, char c)
 {
 	switch (c) {
 	case 'c':
-		sort_func = sort_count;
+		ctl->sort_func = sort_count;
 		break;
 	case 'i':
-		sort_func = sort_interrupts;
+		ctl->sort_func = sort_interrupts;
 		break;
 	case 'n':
-		sort_func = sort_name;
+		ctl->sort_func = sort_name;
 		break;
 	case 'q':
 	case 'Q':
-		delay = 0;
+		ctl->delay = 0;
 		break;
 	}
 }
@@ -281,15 +285,15 @@ static inline size_t choose_smaller(size_t a, size_t b)
 	return b;
 }
 
-static inline void print_line(const char *fmt, ...)
+static inline void print_line(struct irqtop_ctl *ctl, const char *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	if (run_once)
+	if (ctl->run_once)
 		vprintf(fmt, args);
 	else {
-		vw_printw(win, fmt, args);
+		vw_printw(ctl->win, fmt, args);
 	}
 	va_end(args);
 }
@@ -301,6 +305,8 @@ int main(int argc, char *argv[])
 	struct irq_stat *stat, *last_stat = NULL;
 	struct timeval uptime_tv;
 	int retval = EXIT_SUCCESS;
+	struct termios saved_tty;
+	struct irqtop_ctl ctl = { .delay = 3 };
 
 	static const struct option longopts[] = {
 		{"delay", required_argument, NULL, 'd'},
@@ -311,24 +317,27 @@ int main(int argc, char *argv[])
 		{NULL, 0, NULL, 0}
 	};
 
+	/* FIXME; use signalfd */
+	gctl = &ctl;
+
 	setlocale(LC_ALL, "");
-	sort_func = DEF_SORT_FUNC;
+	ctl.sort_func = DEF_SORT_FUNC;
 
 	while ((o = getopt_long(argc, argv, "d:os:hV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'd':
 			errno = 0;
-			delay = atol(optarg);
-			if (delay < 1)
+			ctl.delay = atol(optarg);
+			if (ctl.delay < 1)
 				errx(EXIT_FAILURE, _("delay must be positive integer"));
 			break;
 		case 's':
-			sort_func = (int (*)(const struct irq_info *, const struct irq_info *))
-			    set_sort_func(optarg[0]);
+			ctl.sort_func = (int (*)(const struct irq_info *, const struct irq_info *))
+					set_sort_func(optarg[0]);
 			break;
 		case 'o':
-			run_once = 1;
-			delay = 0;
+			ctl.run_once = 1;
+			ctl.delay = 0;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -343,17 +352,17 @@ int main(int argc, char *argv[])
 	if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
 		fputs(_("terminal setting retrieval"), stdout);
 
-	old_rows = rows;
-	get_terminal_dimension(&cols, &rows);
-	if (!run_once) {
-		win = initscr();
-		get_terminal_dimension(&cols, &rows);
-		resizeterm(rows, cols);
+	old_rows = ctl.rows;
+	get_terminal_dimension(&ctl.cols, &ctl.rows);
+	if (!ctl.run_once) {
+		ctl.win = initscr();
+		get_terminal_dimension(&ctl.cols, &ctl.rows);
+		resizeterm(ctl.rows, ctl.cols);
 		signal(SIGWINCH, term_size);
 	}
 	signal(SIGINT, sigint_handler);
 
-	smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+	ctl.smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
 	gettime_monotonic(&uptime_tv);
 
 	do {
@@ -364,27 +373,27 @@ int main(int argc, char *argv[])
 		char c;
 		size_t index;
 
-		stat = get_irqinfo();
+		stat = get_irqinfo(&ctl);
 		if (!stat) {
 			retval = EXIT_FAILURE;
 			break;
 		}
 
-		if (!run_once && old_rows != rows) {
-			resizeterm(rows, cols);
-			old_rows = rows;
+		if (!ctl.run_once && old_rows != ctl.rows) {
+			resizeterm(ctl.rows, ctl.cols);
+			old_rows = ctl.rows;
 		}
 
 		move(0, 0);
 
 		/* summary stat */
-		print_line("irqtop - IRQ : %d, TOTAL : %ld, CPU : %ld, "
+		print_line(&ctl, "irqtop - IRQ : %d, TOTAL : %ld, CPU : %ld, "
 			   "ACTIVE CPU : %ld\n", stat->nr_irq, stat->total_irq,
 			   stat->nr_online_cpu, stat->nr_active_cpu);
 
 		/* header */
 		attron(A_REVERSE);
-		print_line("%-80s\n", " IRQ        COUNT   DESC ");
+		print_line(&ctl, "%-80s\n", " IRQ        COUNT   DESC ");
 		attroff(A_REVERSE);
 
 		size = sizeof(*stat->irq_info) * stat->nr_irq;
@@ -425,35 +434,35 @@ int main(int argc, char *argv[])
 		}
 
 		/* okay, sort and show the result */
-		sort_result(result, stat->nr_irq);
-		for (index = 0; index < choose_smaller(rows - RESERVE_ROWS, stat->nr_irq); index++) {
+		sort_result(&ctl, result, stat->nr_irq);
+		for (index = 0; index < choose_smaller(ctl.rows - RESERVE_ROWS, stat->nr_irq); index++) {
 			curr = result + index;
-			print_line("%4s   %10ld   %s", curr->irq, curr->count, curr->desc);
+			print_line(&ctl, "%4s   %10ld   %s", curr->irq, curr->count, curr->desc);
 		}
 		free(result);
 
-		if (run_once) {
+		if (ctl.run_once) {
 			break;
 		} else {
 			refresh();
 			FD_ZERO(&readfds);
 			FD_SET(STDIN_FILENO, &readfds);
-			tv.tv_sec = delay;
+			tv.tv_sec = ctl.delay;
 			tv.tv_usec = 0;
 			if (select(STDOUT_FILENO, &readfds, NULL, NULL, &tv) > 0) {
 				if (read(STDIN_FILENO, &c, 1) != 1)
 					break;
-				parse_input(c);
+				parse_input(&ctl, c);
 			}
 		}
-	} while (delay);
+	} while (ctl.delay);
 
 	put_irqinfo(last_stat);
 
 	if (is_tty)
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
 
-	if (!run_once)
+	if (!ctl.run_once)
 		endwin();
 
 	return retval;
