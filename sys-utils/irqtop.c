@@ -62,6 +62,7 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "strutils.h"
+#include "timeutils.h"
 #include "ttyutils.h"
 #include "xalloc.h"
 
@@ -69,7 +70,7 @@
 #define IRQ_NAME_LEN		4
 #define IRQ_DESC_LEN		64
 #define IRQ_INFO_LEN		64
-#define RESERVE_ROWS		(1 + 1 + 1)	/* summary + header + last row */
+#define RESERVE_ROWS		(1 + 2 + 1)	/* summary + header + last row */
 #define MAX_EVENTS		3
 
 struct irq_info {
@@ -97,6 +98,7 @@ struct irqtop_ctl {
 	int (*sort_func)(const struct irq_info *, const struct irq_info *);
 	long smp_num_cpus;
 	struct irq_stat *last_stat;
+	char *hostname;
 	unsigned int
 		request_exit:1,
 		run_once:1;
@@ -303,6 +305,8 @@ static int update_screen(struct irqtop_ctl *ctl)
 	struct irq_stat *stat;
 	size_t size;
 	size_t index;
+	time_t now;
+	char timestr[64];
 
 	stat = get_irqinfo(ctl);
 	if (!stat) {
@@ -318,9 +322,13 @@ static int update_screen(struct irqtop_ctl *ctl)
 	move(0, 0);
 
 	/* summary stat */
-	print_line(ctl, "irqtop - IRQ : %d, TOTAL : %ld, CPU : %ld, "
-		   "ACTIVE CPU : %ld\n", stat->nr_irq, stat->total_irq,
-		   stat->nr_online_cpu, stat->nr_active_cpu);
+	now = time(NULL);
+	strtime_iso(&now, ISO_TIMESTAMP_T, timestr, sizeof(timestr));
+	print_line(ctl,
+		   "irqtop - IRQ: %d TOTAL: %ld CPU: %ld ACTIVE CPU: %ld\n"
+		   "HOST: %s TIME: %s\n",
+		   stat->nr_irq, stat->total_irq, stat->nr_online_cpu, stat->nr_active_cpu,
+		   ctl->hostname, timestr);
 
 	/* header */
 	attron(A_REVERSE);
@@ -518,6 +526,7 @@ int main(int argc, char **argv)
 	}
 	ctl.smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
 	gettime_monotonic(&ctl.uptime_tv);
+	ctl.hostname = xgethostname();
 
 	if (ctl.run_once)
 		retval = update_screen(&ctl);
@@ -525,6 +534,7 @@ int main(int argc, char **argv)
 		event_loop(&ctl);
 
 	free_irqinfo(ctl.last_stat);
+	free(ctl.hostname);
 
 	if (is_tty)
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
