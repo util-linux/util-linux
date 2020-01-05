@@ -1773,6 +1773,7 @@ AC_ARG_ENABLE([irqtop],
   [], [UL_DEFAULT_ENABLE([irqtop], [yes])]
 )
 UL_BUILD_INIT([irqtop])
+UL_REQUIRES_LINUX([irqtop])
 AM_CONDITIONAL([BUILD_IRQTOP], [test "x$build_irqtop" = xyes])
 
 UL_BUILD_INIT([choom], [check])

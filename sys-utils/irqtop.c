@@ -29,9 +29,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/epoll.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
+#include <sys/signalfd.h>
 #include <sys/time.h>
+#include <sys/timerfd.h>
 #include <sys/types.h>
 #include <termios.h>
 #include <unistd.h>
@@ -67,6 +70,7 @@
 #define IRQ_DESC_LEN		64
 #define IRQ_INFO_LEN		64
 #define RESERVE_ROWS		(1 + 1 + 1)	/* summary + header + last row */
+#define MAX_EVENTS		3
 
 struct irq_info {
 	char irq[IRQ_NAME_LEN + 1];	/* name of this irq */
@@ -88,7 +92,7 @@ struct irqtop_ctl {
 	int cols;
 	int rows;
 	int old_rows;
-	struct timeval delay;
+	struct itimerspec timer;
 	struct timeval uptime_tv;
 	int (*sort_func)(const struct irq_info *, const struct irq_info *);
 	long smp_num_cpus;
@@ -97,7 +101,6 @@ struct irqtop_ctl {
 		request_exit:1,
 		run_once:1;
 };
-static struct irqtop_ctl *gctl;
 
 /*
  * irqinfo - parse the system's interrupts
@@ -217,16 +220,6 @@ static int sort_interrupts(const struct irq_info *a __attribute__((__unused__)),
 static void sort_result(struct irqtop_ctl *ctl, struct irq_info *result, size_t nmemb)
 {
 	qsort(result, nmemb, sizeof(*result), (int (*)(const void *, const void *))ctl->sort_func);
-}
-
-static void term_size(int unusused __attribute__((__unused__)))
-{
-	get_terminal_dimension(&gctl->cols, &gctl->rows);
-}
-
-static void sigint_handler(int unused __attribute__((__unused__)))
-{
-	gctl->request_exit = 1;
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -381,6 +374,79 @@ static int update_screen(struct irqtop_ctl *ctl)
 	return 0;
 }
 
+static int event_loop(struct irqtop_ctl *ctl)
+{
+	int efd, sfd, tfd;
+	sigset_t sigmask;
+	struct signalfd_siginfo siginfo;
+	struct epoll_event ev, events[MAX_EVENTS];
+	long int nr;
+	uint64_t unused;
+	int retval = 0;
+
+	efd = epoll_create1(0);
+
+	if ((tfd = timerfd_create(CLOCK_MONOTONIC, 0)) < 0)
+		err(EXIT_FAILURE, _("cannot not create timerfd"));
+	if (timerfd_settime(tfd, 0, &ctl->timer, NULL) != 0)
+		err(EXIT_FAILURE, _("cannot set timerfd"));
+	ev.events = EPOLLIN;
+	ev.data.fd = tfd;
+	if (epoll_ctl(efd, EPOLL_CTL_ADD, tfd, &ev) != 0)
+		err(EXIT_FAILURE, _("epoll_ctl failed"));
+
+	if (sigfillset(&sigmask) != 0)
+		err(EXIT_FAILURE, _("sigfillset failed"));
+	if (sigprocmask(SIG_BLOCK, &sigmask, NULL) != 0)
+		err(EXIT_FAILURE, _("sigprocmask failed"));
+	if ((sfd = signalfd(-1, &sigmask, 0)) < 0)
+		err(EXIT_FAILURE, _("cannot not create signalfd"));
+	ev.events = EPOLLIN;
+	ev.data.fd = sfd;
+	if (epoll_ctl(efd, EPOLL_CTL_ADD, sfd, &ev) != 0)
+		err(EXIT_FAILURE, _("epoll_ctl failed"));
+
+	ev.events = EPOLLIN;
+	ev.data.fd = STDIN_FILENO;
+	if (epoll_ctl(efd, EPOLL_CTL_ADD, STDIN_FILENO, &ev) != 0)
+		err(EXIT_FAILURE, _("epoll_ctl failed"));
+
+	retval |= update_screen(ctl);
+	refresh();
+
+	while (!ctl->request_exit) {
+		const ssize_t nr_events = epoll_wait(efd, events, MAX_EVENTS, -1);
+
+		for (nr = 0; nr < nr_events; nr++) {
+			if (events[nr].data.fd == tfd) {
+				if (read(tfd, &unused, sizeof(unused)) < 0)
+					warn(_("read failed"));
+			} else if (events[nr].data.fd == sfd) {
+				if (read(sfd, &siginfo, sizeof(siginfo)) < 0) {
+					warn(_("read failed"));
+					continue;
+				}
+				if (siginfo.ssi_signo == SIGWINCH)
+					get_terminal_dimension(&ctl->cols, &ctl->rows);
+				else {
+					ctl->request_exit = 1;
+					break;
+				}
+			} else if (events[nr].data.fd == STDIN_FILENO) {
+				char c;
+
+				if (read(STDIN_FILENO, &c, 1) != 1)
+					warn(_("read failed"));
+				parse_input(ctl, c);
+			} else
+				abort();
+			retval |= update_screen(ctl);
+			refresh();
+		}
+	}
+	return retval;
+}
+
 static void parse_args(struct irqtop_ctl *ctl, int argc, char **argv)
 {
 	static const struct option longopts[] = {
@@ -396,8 +462,14 @@ static void parse_args(struct irqtop_ctl *ctl, int argc, char **argv)
 	while ((o = getopt_long(argc, argv, "d:os:hV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'd':
-			strtotimeval_or_err(optarg, &ctl->delay,
-					    _("failed to parse delay argument"));
+			{
+				struct timeval delay;
+
+				strtotimeval_or_err(optarg, &delay,
+						    _("failed to parse delay argument"));
+				TIMEVAL_TO_TIMESPEC(&delay, &ctl->timer.it_interval);
+				ctl->timer.it_value = ctl->timer.it_interval;
+			}
 			break;
 		case 's':
 			ctl->sort_func = (int (*)(const struct irq_info *, const struct irq_info *))
@@ -422,10 +494,11 @@ int main(int argc, char **argv)
 	int is_tty;
 	int retval = EXIT_SUCCESS;
 	struct termios saved_tty;
-	struct irqtop_ctl ctl = { .delay.tv_sec = 3 };
 
-	/* FIXME; use signalfd */
-	gctl = &ctl;
+	struct irqtop_ctl ctl = {
+		.timer.it_interval = {3, 0},
+		.timer.it_value = {3, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	ctl.sort_func = DEF_SORT_FUNC;
@@ -442,31 +515,14 @@ int main(int argc, char **argv)
 		ctl.win = initscr();
 		get_terminal_dimension(&ctl.cols, &ctl.rows);
 		resizeterm(ctl.rows, ctl.cols);
-		signal(SIGWINCH, term_size);
 	}
-	signal(SIGINT, sigint_handler);
-
 	ctl.smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
 	gettime_monotonic(&ctl.uptime_tv);
 
-	do {
-		retval |= update_screen(&ctl);
-		if (!ctl.run_once) {
-			/* copy timeval, select will overwrite the value */
-			struct timeval tv = ctl.delay;
-			char c;
-			fd_set readfds;
-
-			refresh();
-			FD_ZERO(&readfds);
-			FD_SET(STDIN_FILENO, &readfds);
-			if (select(STDOUT_FILENO, &readfds, NULL, NULL, &tv) > 0) {
-				if (read(STDIN_FILENO, &c, 1) != 1)
-					return 1;
-				parse_input(&ctl, c);
-			}
-		}
-	} while (!ctl.request_exit);
+	if (ctl.run_once)
+		retval = update_screen(&ctl);
+	else
+		event_loop(&ctl);
 
 	free_irqinfo(ctl.last_stat);
 
