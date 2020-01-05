@@ -87,9 +87,12 @@ struct irqtop_ctl {
 	WINDOW *win;
 	int cols;
 	int rows;
+	int old_rows;
 	struct timeval delay;
+	struct timeval uptime_tv;
 	int (*sort_func)(const struct irq_info *, const struct irq_info *);
 	long smp_num_cpus;
+	struct irq_stat *last_stat;
 	unsigned int
 		request_exit:1,
 		run_once:1;
@@ -188,7 +191,7 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 	return NULL;
 }
 
-static void put_irqinfo(struct irq_stat *stat)
+static void free_irqinfo(struct irq_stat *stat)
 {
 	if (stat)
 		free(stat->irq_info);
@@ -301,16 +304,85 @@ static inline void print_line(struct irqtop_ctl *ctl, const char *fmt, ...)
 	va_end(args);
 }
 
-int main(int argc, char *argv[])
+static int update_screen(struct irqtop_ctl *ctl)
 {
-	int is_tty, o;
-	unsigned short old_rows;
-	struct irq_stat *stat, *last_stat = NULL;
-	struct timeval uptime_tv;
-	int retval = EXIT_SUCCESS;
-	struct termios saved_tty;
-	struct irqtop_ctl ctl = { .delay.tv_sec = 3 };
+	struct irq_info *result, *curr;
+	struct irq_stat *stat;
+	size_t size;
+	size_t index;
 
+	stat = get_irqinfo(ctl);
+	if (!stat) {
+		ctl->request_exit = 1;
+		return 1;
+	}
+
+	if (!ctl->run_once && ctl->old_rows != ctl->rows) {
+		resizeterm(ctl->rows, ctl->cols);
+		ctl->old_rows = ctl->rows;
+	}
+
+	move(0, 0);
+
+	/* summary stat */
+	print_line(ctl, "irqtop - IRQ : %d, TOTAL : %ld, CPU : %ld, "
+		   "ACTIVE CPU : %ld\n", stat->nr_irq, stat->total_irq,
+		   stat->nr_online_cpu, stat->nr_active_cpu);
+
+	/* header */
+	attron(A_REVERSE);
+	print_line(ctl, "%-80s\n", " IRQ        COUNT   DESC ");
+	attroff(A_REVERSE);
+
+	size = sizeof(*stat->irq_info) * stat->nr_irq;
+	result = xmalloc(size);
+	memcpy(result, stat->irq_info, size);
+	if (!ctl->last_stat) {
+		for (index = 0; index < stat->nr_irq; index++) {
+			curr = result + index;
+			curr->count /= ctl->uptime_tv.tv_sec;
+		}
+		ctl->last_stat = stat;
+	} else {
+		size_t i, j;
+
+		for (i = 0; i < stat->nr_irq; i++) {
+			struct irq_info *found = NULL;
+			unsigned long diff = 0;
+
+			curr = result + i;
+			for (j = 0; j < ctl->last_stat->nr_irq; j++) {
+				struct irq_info *prev = ctl->last_stat->irq_info + j;
+
+				if (!strcmp(curr->irq, prev->irq))
+					found = prev;
+			}
+
+			if (found && curr->count >= found->count)
+				diff = curr->count - found->count;
+			else
+				diff = curr->count;
+
+			curr->count = diff;
+		}
+		free_irqinfo(ctl->last_stat);
+
+		ctl->last_stat = stat;
+	}
+
+	/* okay, sort and show the result */
+	sort_result(ctl, result, stat->nr_irq);
+	for (index = 0; index < choose_smaller(ctl->rows - RESERVE_ROWS, stat->nr_irq); index++) {
+		curr = result + index;
+		print_line(ctl, "%4s   %10ld   %s", curr->irq, curr->count, curr->desc);
+	}
+	free(result);
+
+	return 0;
+}
+
+static void parse_args(struct irqtop_ctl *ctl, int argc, char **argv)
+{
 	static const struct option longopts[] = {
 		{"delay", required_argument, NULL, 'd'},
 		{"sort", required_argument, NULL, 's'},
@@ -319,6 +391,38 @@ int main(int argc, char *argv[])
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
 	};
+	int o;
+
+	while ((o = getopt_long(argc, argv, "d:os:hV", longopts, NULL)) != -1) {
+		switch (o) {
+		case 'd':
+			strtotimeval_or_err(optarg, &ctl->delay,
+					    _("failed to parse delay argument"));
+			break;
+		case 's':
+			ctl->sort_func = (int (*)(const struct irq_info *, const struct irq_info *))
+					 set_sort_func(optarg[0]);
+			break;
+		case 'o':
+			ctl->run_once = 1;
+			ctl->request_exit = 1;
+			break;
+		case 'V':
+			print_version(EXIT_SUCCESS);
+		case 'h':
+			usage();
+		default:
+			errtryhelp(EXIT_FAILURE);
+		}
+	}
+}
+
+int main(int argc, char **argv)
+{
+	int is_tty;
+	int retval = EXIT_SUCCESS;
+	struct termios saved_tty;
+	struct irqtop_ctl ctl = { .delay.tv_sec = 3 };
 
 	/* FIXME; use signalfd */
 	gctl = &ctl;
@@ -326,34 +430,13 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	ctl.sort_func = DEF_SORT_FUNC;
 
-	while ((o = getopt_long(argc, argv, "d:os:hV", longopts, NULL)) != -1) {
-		switch (o) {
-		case 'd':
-			strtotimeval_or_err(optarg, &ctl.delay,
-					    _("failed to parse delay argument"));
-			break;
-		case 's':
-			ctl.sort_func = (int (*)(const struct irq_info *, const struct irq_info *))
-					set_sort_func(optarg[0]);
-			break;
-		case 'o':
-			ctl.run_once = 1;
-			ctl.request_exit = 1;
-			break;
-		case 'V':
-			print_version(EXIT_SUCCESS);
-		case 'h':
-			usage();
-		default:
-			usage();
-		}
-	}
+	parse_args(&ctl, argc, argv);
 
 	is_tty = isatty(STDIN_FILENO);
 	if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
 		fputs(_("terminal setting retrieval"), stdout);
 
-	old_rows = ctl.rows;
+	ctl.old_rows = ctl.rows;
 	get_terminal_dimension(&ctl.cols, &ctl.rows);
 	if (!ctl.run_once) {
 		ctl.win = initscr();
@@ -364,101 +447,28 @@ int main(int argc, char *argv[])
 	signal(SIGINT, sigint_handler);
 
 	ctl.smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-	gettime_monotonic(&uptime_tv);
+	gettime_monotonic(&ctl.uptime_tv);
 
 	do {
-		struct irq_info *result, *curr;
-		size_t size;
-		fd_set readfds;
-		char c;
-		size_t index;
-
-		stat = get_irqinfo(&ctl);
-		if (!stat) {
-			retval = EXIT_FAILURE;
-			break;
-		}
-
-		if (!ctl.run_once && old_rows != ctl.rows) {
-			resizeterm(ctl.rows, ctl.cols);
-			old_rows = ctl.rows;
-		}
-
-		move(0, 0);
-
-		/* summary stat */
-		print_line(&ctl, "irqtop - IRQ : %d, TOTAL : %ld, CPU : %ld, "
-			   "ACTIVE CPU : %ld\n", stat->nr_irq, stat->total_irq,
-			   stat->nr_online_cpu, stat->nr_active_cpu);
-
-		/* header */
-		attron(A_REVERSE);
-		print_line(&ctl, "%-80s\n", " IRQ        COUNT   DESC ");
-		attroff(A_REVERSE);
-
-		size = sizeof(*stat->irq_info) * stat->nr_irq;
-		result = xmalloc(size);
-		memcpy(result, stat->irq_info, size);
-		if (!last_stat) {
-
-			for (index = 0; index < stat->nr_irq; index++) {
-				curr = result + index;
-				curr->count /= uptime_tv.tv_sec;
-			}
-			last_stat = stat;
-		} else {
-			size_t i, j;
-
-			for (i = 0; i < stat->nr_irq; i++) {
-				struct irq_info *found = NULL;
-				unsigned long diff = 0;
-
-				curr = result + i;
-				for (j = 0; j < last_stat->nr_irq; j++) {
-					struct irq_info *prev = last_stat->irq_info + j;
-
-					if (!strcmp(curr->irq, prev->irq))
-						found = prev;
-				}
-
-				if (found && curr->count >= found->count)
-					diff = curr->count - found->count;
-				else
-					diff = curr->count;
-
-				curr->count = diff;
-			}
-			put_irqinfo(last_stat);
-
-			last_stat = stat;
-		}
-
-		/* okay, sort and show the result */
-		sort_result(&ctl, result, stat->nr_irq);
-		for (index = 0; index < choose_smaller(ctl.rows - RESERVE_ROWS, stat->nr_irq); index++) {
-			curr = result + index;
-			print_line(&ctl, "%4s   %10ld   %s", curr->irq, curr->count, curr->desc);
-		}
-		free(result);
-
-		if (ctl.run_once) {
-			break;
-		} else {
+		retval |= update_screen(&ctl);
+		if (!ctl.run_once) {
 			/* copy timeval, select will overwrite the value */
 			struct timeval tv = ctl.delay;
+			char c;
+			fd_set readfds;
 
 			refresh();
 			FD_ZERO(&readfds);
 			FD_SET(STDIN_FILENO, &readfds);
 			if (select(STDOUT_FILENO, &readfds, NULL, NULL, &tv) > 0) {
 				if (read(STDIN_FILENO, &c, 1) != 1)
-					break;
+					return 1;
 				parse_input(&ctl, c);
 			}
 		}
 	} while (!ctl.request_exit);
 
-	put_irqinfo(last_stat);
+	free_irqinfo(ctl.last_stat);
 
 	if (is_tty)
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
