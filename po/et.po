@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11r\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-12-10 14:00+0100\n"
+"POT-Creation-Date: 2020-01-06 13:22+0100\n"
 "PO-Revision-Date: 2002-05-19 20:04GMT+0300\n"
 "Last-Translator: Meelis Roos <mroos@linux.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -47,7 +47,7 @@ msgstr "Liiga palju argumente\n"
 #: disk-utils/fdisk-list.c:326 disk-utils/fdisk-list.c:366
 #: disk-utils/fdisk-list.c:385 disk-utils/fsck.c:1468
 #: disk-utils/fsck.cramfs.c:152 disk-utils/fsck.cramfs.c:511
-#: disk-utils/isosize.c:102 disk-utils/mkfs.bfs.c:186
+#: disk-utils/isosize.c:53 disk-utils/mkfs.bfs.c:186
 #: disk-utils/mkfs.cramfs.c:171 disk-utils/mkfs.cramfs.c:660
 #: disk-utils/mkfs.cramfs.c:799 disk-utils/mkfs.minix.c:823
 #: disk-utils/mkswap.c:217 disk-utils/mkswap.c:246 disk-utils/partx.c:1019
@@ -70,7 +70,7 @@ msgstr "Liiga palju argumente\n"
 #: sys-utils/rtcwake.c:290 sys-utils/setpriv.c:259 sys-utils/setpriv.c:628
 #: sys-utils/setpriv.c:651 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:116 sys-utils/unshare.c:131
-#: sys-utils/wdctl.c:361 sys-utils/zramctl.c:515 term-utils/agetty.c:2930
+#: sys-utils/wdctl.c:361 sys-utils/zramctl.c:515 term-utils/agetty.c:2938
 #: term-utils/mesg.c:143 term-utils/script.c:382 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:260 term-utils/scriptreplay.c:263
@@ -220,7 +220,7 @@ msgid " %-25s get size in 512-byte sectors\n"
 msgstr ""
 
 #: disk-utils/blockdev.c:286 disk-utils/fdformat.c:219
-#: disk-utils/fsck.minix.c:1340 disk-utils/isosize.c:204
+#: disk-utils/fsck.minix.c:1340 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:812
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:756
 #: sys-utils/blkdiscard.c:170 sys-utils/blkzone.c:402 sys-utils/tunelp.c:241
@@ -1178,9 +1178,9 @@ msgstr "Hoiatus: -b võtit (sektori suuruse seadmine) tuleks kasutada ainult ühe 
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1489
 #: sys-utils/ipcmk.c:134 sys-utils/ldattach.c:321 sys-utils/losetup.c:913
-#: sys-utils/lscpu.c:2391 sys-utils/lsmem.c:631 sys-utils/mount.c:811
-#: sys-utils/mount.c:819 sys-utils/mount.c:866 sys-utils/mount.c:879
-#: sys-utils/mount.c:951 sys-utils/mountpoint.c:189 sys-utils/pivot_root.c:71
+#: sys-utils/lscpu.c:2391 sys-utils/lsmem.c:631 sys-utils/mount.c:812
+#: sys-utils/mount.c:820 sys-utils/mount.c:867 sys-utils/mount.c:880
+#: sys-utils/mount.c:952 sys-utils/mountpoint.c:189 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:229 sys-utils/swapon.c:993 sys-utils/switch_root.c:249
 #: sys-utils/umount.c:596 term-utils/setterm.c:1200 text-utils/col.c:233
 #: text-utils/more.c:1986
@@ -1525,7 +1525,7 @@ msgstr "   h   muuta peade arvu"
 msgid "change number of sectors/track"
 msgstr "   s   muuta sektorite arvu rajal"
 
-#: disk-utils/fdisk-menu.c:167 include/pt-mbr-partnames.h:95
+#: disk-utils/fdisk-menu.c:167 include/pt-mbr-partnames.h:98
 #, fuzzy
 msgid "GPT"
 msgstr "EFI GPT"
@@ -2854,40 +2854,40 @@ msgstr ""
 msgid "write failed"
 msgstr "%s avamine ei õnnestunud"
 
-#: disk-utils/isosize.c:106
+#: disk-utils/isosize.c:57
 #, c-format
 msgid "%s: might not be an ISO filesystem"
 msgstr ""
 
-#: disk-utils/isosize.c:111 disk-utils/isosize.c:113
+#: disk-utils/isosize.c:62 disk-utils/isosize.c:64
 #, fuzzy, c-format
 msgid "read error on %s"
 msgstr "%s: lugemise viga failis %s\n"
 
-#: disk-utils/isosize.c:124
+#: disk-utils/isosize.c:75
 #, c-format
 msgid "sector count: %d, sector size: %d\n"
 msgstr "sektorite arv: %d, sektori suurus: %d\n"
 
-#: disk-utils/isosize.c:148
+#: disk-utils/isosize.c:99
 #, fuzzy, c-format
 msgid " %s [options] <iso9660_image_file> ...\n"
 msgstr "Kasutamine: %s [ võtmed ] seade ...\n"
 
-#: disk-utils/isosize.c:152
+#: disk-utils/isosize.c:103
 msgid "Show the length of an ISO-9660 filesystem.\n"
 msgstr ""
 
-#: disk-utils/isosize.c:155
+#: disk-utils/isosize.c:106
 msgid " -d, --divisor=<number>  divide the amount of bytes by <number>\n"
 msgstr ""
 
-#: disk-utils/isosize.c:156
+#: disk-utils/isosize.c:107
 #, fuzzy
 msgid " -x, --sectors           show sector count and size\n"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: disk-utils/isosize.c:187
+#: disk-utils/isosize.c:138
 msgid "invalid divisor argument"
 msgstr ""
 
@@ -5105,279 +5105,279 @@ msgstr "Linuxi oma"
 msgid "Linux RAID"
 msgstr "Linux RAID"
 
-#: include/pt-gpt-partnames.h:60
-#, fuzzy
-msgid "Linux extended boot"
-msgstr "Linux extended"
-
-#: include/pt-gpt-partnames.h:61 include/pt-mbr-partnames.h:61
+#: include/pt-gpt-partnames.h:60 include/pt-mbr-partnames.h:61
 #: libfdisk/src/sgi.c:62 libfdisk/src/sun.c:53
 msgid "Linux LVM"
 msgstr "Linux LVM"
 
-#: include/pt-gpt-partnames.h:68
+#: include/pt-gpt-partnames.h:66 include/pt-mbr-partnames.h:95
+#, fuzzy
+msgid "Linux extended boot"
+msgstr "Linux extended"
+
+#: include/pt-gpt-partnames.h:69
 #, fuzzy
 msgid "FreeBSD data"
 msgstr "FreeBSD"
 
-#: include/pt-gpt-partnames.h:69
+#: include/pt-gpt-partnames.h:70
 #, fuzzy
 msgid "FreeBSD boot"
 msgstr "FreeBSD"
 
-#: include/pt-gpt-partnames.h:70
+#: include/pt-gpt-partnames.h:71
 #, fuzzy
 msgid "FreeBSD swap"
 msgstr "BSDI swap"
 
-#: include/pt-gpt-partnames.h:71
+#: include/pt-gpt-partnames.h:72
 #, fuzzy
 msgid "FreeBSD UFS"
 msgstr "FreeBSD"
 
-#: include/pt-gpt-partnames.h:72
+#: include/pt-gpt-partnames.h:73
 #, fuzzy
 msgid "FreeBSD ZFS"
 msgstr "FreeBSD"
 
-#: include/pt-gpt-partnames.h:73
+#: include/pt-gpt-partnames.h:74
 #, fuzzy
 msgid "FreeBSD Vinum"
 msgstr "FreeBSD"
 
-#: include/pt-gpt-partnames.h:76
+#: include/pt-gpt-partnames.h:77
 #, fuzzy
 msgid "Apple HFS/HFS+"
 msgstr "OS/2 HPFS"
 
-#: include/pt-gpt-partnames.h:77
+#: include/pt-gpt-partnames.h:78
 #, fuzzy
 msgid "Apple APFS"
 msgstr "OS/2 HPFS"
 
-#: include/pt-gpt-partnames.h:78
+#: include/pt-gpt-partnames.h:79
 msgid "Apple UFS"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:79
+#: include/pt-gpt-partnames.h:80
 msgid "Apple RAID"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:80
+#: include/pt-gpt-partnames.h:81
 msgid "Apple RAID offline"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:81
+#: include/pt-gpt-partnames.h:82
 msgid "Apple boot"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:82
+#: include/pt-gpt-partnames.h:83
 msgid "Apple label"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:83
+#: include/pt-gpt-partnames.h:84
 msgid "Apple TV recovery"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:84
+#: include/pt-gpt-partnames.h:85
 msgid "Apple Core storage"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:87 include/pt-mbr-partnames.h:77
+#: include/pt-gpt-partnames.h:88 include/pt-mbr-partnames.h:77
 msgid "Solaris boot"
 msgstr "Solaris boot"
 
-#: include/pt-gpt-partnames.h:88
+#: include/pt-gpt-partnames.h:89
 #, fuzzy
 msgid "Solaris root"
 msgstr "Solaris boot"
 
-#: include/pt-gpt-partnames.h:90
+#: include/pt-gpt-partnames.h:91
 msgid "Solaris /usr & Apple ZFS"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:91
+#: include/pt-gpt-partnames.h:92
 #, fuzzy
 msgid "Solaris swap"
 msgstr "Solaris boot"
 
-#: include/pt-gpt-partnames.h:92
+#: include/pt-gpt-partnames.h:93
 #, fuzzy
 msgid "Solaris backup"
 msgstr "Solaris boot"
 
-#: include/pt-gpt-partnames.h:93
+#: include/pt-gpt-partnames.h:94
 #, fuzzy
 msgid "Solaris /var"
 msgstr "Solaris boot"
 
-#: include/pt-gpt-partnames.h:94
+#: include/pt-gpt-partnames.h:95
 #, fuzzy
 msgid "Solaris /home"
 msgstr "Solaris boot"
 
-#: include/pt-gpt-partnames.h:95
+#: include/pt-gpt-partnames.h:96
 #, fuzzy
 msgid "Solaris alternate sector"
 msgstr "liiga palju alternatiivseid kiirusi"
 
-#: include/pt-gpt-partnames.h:96
+#: include/pt-gpt-partnames.h:97
 #, fuzzy
 msgid "Solaris reserved 1"
 msgstr "SunOS usr"
 
-#: include/pt-gpt-partnames.h:97
+#: include/pt-gpt-partnames.h:98
 #, fuzzy
 msgid "Solaris reserved 2"
 msgstr "SunOS usr"
 
-#: include/pt-gpt-partnames.h:98
+#: include/pt-gpt-partnames.h:99
 #, fuzzy
 msgid "Solaris reserved 3"
 msgstr "SunOS usr"
 
-#: include/pt-gpt-partnames.h:99
+#: include/pt-gpt-partnames.h:100
 #, fuzzy
 msgid "Solaris reserved 4"
 msgstr "SunOS usr"
 
-#: include/pt-gpt-partnames.h:100
+#: include/pt-gpt-partnames.h:101
 #, fuzzy
 msgid "Solaris reserved 5"
 msgstr "SunOS usr"
 
-#: include/pt-gpt-partnames.h:103
+#: include/pt-gpt-partnames.h:104
 #, fuzzy
 msgid "NetBSD swap"
 msgstr "BSDI swap"
 
-#: include/pt-gpt-partnames.h:104
+#: include/pt-gpt-partnames.h:105
 #, fuzzy
 msgid "NetBSD FFS"
 msgstr "NetBSD"
 
-#: include/pt-gpt-partnames.h:105
+#: include/pt-gpt-partnames.h:106
 #, fuzzy
 msgid "NetBSD LFS"
 msgstr "NetBSD"
 
-#: include/pt-gpt-partnames.h:106
+#: include/pt-gpt-partnames.h:107
 msgid "NetBSD concatenated"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:107
+#: include/pt-gpt-partnames.h:108
 msgid "NetBSD encrypted"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:108
+#: include/pt-gpt-partnames.h:109
 #, fuzzy
 msgid "NetBSD RAID"
 msgstr "NetBSD"
 
-#: include/pt-gpt-partnames.h:111
+#: include/pt-gpt-partnames.h:112
 msgid "ChromeOS kernel"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:112
+#: include/pt-gpt-partnames.h:113
 msgid "ChromeOS root fs"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:113
+#: include/pt-gpt-partnames.h:114
 #, fuzzy
 msgid "ChromeOS reserved"
 msgstr "SunOS usr"
 
-#: include/pt-gpt-partnames.h:116
+#: include/pt-gpt-partnames.h:117
 msgid "MidnightBSD data"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:117
+#: include/pt-gpt-partnames.h:118
 msgid "MidnightBSD boot"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:118
+#: include/pt-gpt-partnames.h:119
 #, fuzzy
 msgid "MidnightBSD swap"
 msgstr "BSDI swap"
 
-#: include/pt-gpt-partnames.h:119
+#: include/pt-gpt-partnames.h:120
 msgid "MidnightBSD UFS"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:120
+#: include/pt-gpt-partnames.h:121
 msgid "MidnightBSD ZFS"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:121
+#: include/pt-gpt-partnames.h:122
 msgid "MidnightBSD Vinum"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:124
+#: include/pt-gpt-partnames.h:125
 msgid "Ceph Journal"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:125
+#: include/pt-gpt-partnames.h:126
 msgid "Ceph Encrypted Journal"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:126
+#: include/pt-gpt-partnames.h:127
 msgid "Ceph OSD"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:127
+#: include/pt-gpt-partnames.h:128
 msgid "Ceph crypt OSD"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:128
+#: include/pt-gpt-partnames.h:129
 msgid "Ceph disk in creation"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:129
+#: include/pt-gpt-partnames.h:130
 msgid "Ceph crypt disk in creation"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:132 include/pt-mbr-partnames.h:101
+#: include/pt-gpt-partnames.h:133 include/pt-mbr-partnames.h:104
 msgid "VMware VMFS"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:133
+#: include/pt-gpt-partnames.h:134
 #, fuzzy
 msgid "VMware Diagnostic"
 msgstr "Compaq diagnostika"
 
-#: include/pt-gpt-partnames.h:134
+#: include/pt-gpt-partnames.h:135
 msgid "VMware Virtual SAN"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:135
+#: include/pt-gpt-partnames.h:136
 msgid "VMware Virsto"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:136
+#: include/pt-gpt-partnames.h:137
 #, fuzzy
 msgid "VMware Reserved"
 msgstr "SunOS usr"
 
-#: include/pt-gpt-partnames.h:139
+#: include/pt-gpt-partnames.h:140
 #, fuzzy
 msgid "OpenBSD data"
 msgstr "FreeBSD"
 
-#: include/pt-gpt-partnames.h:142
+#: include/pt-gpt-partnames.h:143
 #, fuzzy
 msgid "QNX6 file system"
 msgstr "Sisestage failisüsteemi tüübi number: "
 
-#: include/pt-gpt-partnames.h:145
+#: include/pt-gpt-partnames.h:146
 #, fuzzy
 msgid "Plan 9 partition"
 msgstr "   d   kustutada partitsioon"
 
-#: include/pt-gpt-partnames.h:148
+#: include/pt-gpt-partnames.h:149
 msgid "HiFive Unleashed FSBL"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:149
+#: include/pt-gpt-partnames.h:150
 msgid "HiFive Unleashed BBL"
 msgstr ""
 
@@ -5563,7 +5563,7 @@ msgid "Priam Edisk"
 msgstr "Priam Edisk"
 
 #: include/pt-mbr-partnames.h:44 include/pt-mbr-partnames.h:91
-#: include/pt-mbr-partnames.h:98 include/pt-mbr-partnames.h:99
+#: include/pt-mbr-partnames.h:101 include/pt-mbr-partnames.h:102
 msgid "SpeedStor"
 msgstr "SpeedStor"
 
@@ -5728,40 +5728,35 @@ msgstr "DOS access"
 msgid "DOS R/O"
 msgstr "DOS R/O"
 
-#: include/pt-mbr-partnames.h:93
-#, fuzzy
-msgid "Rufus alignment"
-msgstr "%s: Tundmatu argument: %s\n"
-
-#: include/pt-mbr-partnames.h:94
+#: include/pt-mbr-partnames.h:97
 msgid "BeOS fs"
 msgstr "BeOS fs"
 
-#: include/pt-mbr-partnames.h:96
+#: include/pt-mbr-partnames.h:99
 msgid "EFI (FAT-12/16/32)"
 msgstr "EFI (FAT-12/FAT-16)"
 
-#: include/pt-mbr-partnames.h:97
+#: include/pt-mbr-partnames.h:100
 msgid "Linux/PA-RISC boot"
 msgstr "Linux/PA-RISC boot"
 
-#: include/pt-mbr-partnames.h:100
+#: include/pt-mbr-partnames.h:103
 msgid "DOS secondary"
 msgstr "DOS sekundaarne"
 
-#: include/pt-mbr-partnames.h:102
+#: include/pt-mbr-partnames.h:105
 msgid "VMware VMKCORE"
 msgstr ""
 
-#: include/pt-mbr-partnames.h:103 libfdisk/src/sun.c:54
+#: include/pt-mbr-partnames.h:106 libfdisk/src/sun.c:54
 msgid "Linux raid autodetect"
 msgstr "Linuxi iseavastuv raid"
 
-#: include/pt-mbr-partnames.h:106
+#: include/pt-mbr-partnames.h:109
 msgid "LANstep"
 msgstr "LANstep"
 
-#: include/pt-mbr-partnames.h:107
+#: include/pt-mbr-partnames.h:110
 msgid "BBT"
 msgstr "BBT"
 
@@ -7277,7 +7272,7 @@ msgstr ""
 "sisestage YES, kui olete tõdesti kindlad, et tahate partitsiooni tüübiks\n"
 "panna 82 (Linuxi saalimisala):"
 
-#: libmount/src/context.c:2761
+#: libmount/src/context.c:2758
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "vigane kiirus: %s"
@@ -16811,17 +16806,17 @@ msgstr ""
 msgid "%s: failed to parse"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: sys-utils/mount.c:417
+#: sys-utils/mount.c:418
 #, fuzzy, c-format
 msgid "unsupported option format: %s"
 msgstr "%s: Tundmatu argument: %s\n"
 
-#: sys-utils/mount.c:419
+#: sys-utils/mount.c:420
 #, fuzzy, c-format
 msgid "failed to append option '%s'"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: sys-utils/mount.c:437
+#: sys-utils/mount.c:438
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -16831,12 +16826,12 @@ msgid ""
 " %1$s <operation> <mountpoint> [<target>]\n"
 msgstr ""
 
-#: sys-utils/mount.c:445
+#: sys-utils/mount.c:446
 #, fuzzy
 msgid "Mount a filesystem.\n"
 msgstr "Pealesunnitud kontroll failisüsteemil %s\n"
 
-#: sys-utils/mount.c:449
+#: sys-utils/mount.c:450
 #, c-format
 msgid ""
 " -a, --all               mount all filesystems mentioned in fstab\n"
@@ -16846,22 +16841,22 @@ msgid ""
 " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr ""
 
-#: sys-utils/mount.c:455
+#: sys-utils/mount.c:456
 #, c-format
 msgid " -i, --internal-only     don't call the mount.<type> helpers\n"
 msgstr ""
 
-#: sys-utils/mount.c:457
+#: sys-utils/mount.c:458
 #, fuzzy, c-format
 msgid " -l, --show-labels       show also filesystem labels\n"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/mount.c:459 sys-utils/umount.c:98
+#: sys-utils/mount.c:460 sys-utils/umount.c:98
 #, c-format
 msgid " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:461
+#: sys-utils/mount.c:462
 #, c-format
 msgid ""
 "     --options-mode <mode>\n"
@@ -16872,7 +16867,7 @@ msgid ""
 "                         force use of options from fstab/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:468
+#: sys-utils/mount.c:469
 #, c-format
 msgid ""
 " -o, --options <list>    comma-separated list of mount options\n"
@@ -16881,36 +16876,36 @@ msgid ""
 " -t, --types <list>      limit the set of filesystem types\n"
 msgstr ""
 
-#: sys-utils/mount.c:473
+#: sys-utils/mount.c:474
 #, c-format
 msgid ""
 "     --source <src>      explicitly specifies source (path, label, uuid)\n"
 "     --target <target>   explicitly specifies mountpoint\n"
 msgstr ""
 
-#: sys-utils/mount.c:476
+#: sys-utils/mount.c:477
 #, fuzzy, c-format
 msgid ""
 "     --target-prefix <path>\n"
 "                         specifies path use for all mountpoints\n"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/mount.c:479 sys-utils/umount.c:104
+#: sys-utils/mount.c:480 sys-utils/umount.c:104
 #, fuzzy, c-format
 msgid " -v, --verbose           say what is being done\n"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/mount.c:481
+#: sys-utils/mount.c:482
 #, c-format
 msgid " -w, --rw, --read-write  mount the filesystem read-write (default)\n"
 msgstr ""
 
-#: sys-utils/mount.c:483
+#: sys-utils/mount.c:484
 #, fuzzy, c-format
 msgid " -N, --namespace <ns>    perform mount in another namespace\n"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: sys-utils/mount.c:489
+#: sys-utils/mount.c:490
 #, c-format
 msgid ""
 "\n"
@@ -16923,7 +16918,7 @@ msgid ""
 " PARTUUID=<uuid>         specifies device by partition UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:498
+#: sys-utils/mount.c:499
 #, c-format
 msgid ""
 " <device>                specifies device by path\n"
@@ -16931,7 +16926,7 @@ msgid ""
 " <file>                  regular file for loopdev setup\n"
 msgstr ""
 
-#: sys-utils/mount.c:503
+#: sys-utils/mount.c:504
 #, c-format
 msgid ""
 "\n"
@@ -16941,7 +16936,7 @@ msgid ""
 " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr ""
 
-#: sys-utils/mount.c:508
+#: sys-utils/mount.c:509
 #, c-format
 msgid ""
 " --make-shared           mark a subtree as shared\n"
@@ -16950,7 +16945,7 @@ msgid ""
 " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:513
+#: sys-utils/mount.c:514
 #, c-format
 msgid ""
 " --make-rshared          recursively mark a whole subtree as shared\n"
@@ -16959,22 +16954,22 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:664 sys-utils/umount.c:496
+#: sys-utils/mount.c:665 sys-utils/umount.c:496
 msgid "libmount context allocation failed"
 msgstr ""
 
-#: sys-utils/mount.c:715 sys-utils/umount.c:549
+#: sys-utils/mount.c:716 sys-utils/umount.c:549
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
 # XXX stat'ida
-#: sys-utils/mount.c:762 sys-utils/umount.c:566
+#: sys-utils/mount.c:763 sys-utils/umount.c:566
 #, fuzzy, c-format
 msgid "failed to set target namespace to %s"
 msgstr "ei suuda stat'ida seadet %s"
 
-#: sys-utils/mount.c:928
+#: sys-utils/mount.c:929
 #, fuzzy
 msgid "source specified more than once"
 msgstr "Te andiste suurema silindrite arvu kui kettale mahub"
@@ -19583,7 +19578,7 @@ msgstr "%s: ei suuda käivitada programmi %s: %m"
 
 #: term-utils/agetty.c:597 term-utils/agetty.c:930 term-utils/agetty.c:1466
 #: term-utils/agetty.c:1484 term-utils/agetty.c:1521 term-utils/agetty.c:1531
-#: term-utils/agetty.c:1573 term-utils/agetty.c:2269 term-utils/agetty.c:2833
+#: term-utils/agetty.c:1573 term-utils/agetty.c:2277 term-utils/agetty.c:2841
 #, fuzzy, c-format
 msgid "failed to allocate memory: %m"
 msgstr "ei jätku mälu kaartide puhvritele"
@@ -19672,239 +19667,239 @@ msgstr "Ei suuda avada faili `%s'"
 msgid "failed to create reload file: %s: %m"
 msgstr "ioctl() abil kella lugemine %s kaudu ei õnnestunud"
 
-#: term-utils/agetty.c:1981
+#: term-utils/agetty.c:1988
 #, fuzzy, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "ei suuda kindlaks teha seadme %s mahtu"
 
-#: term-utils/agetty.c:2002
+#: term-utils/agetty.c:2010
 msgid "[press ENTER to login]"
 msgstr ""
 
-#: term-utils/agetty.c:2029
+#: term-utils/agetty.c:2037
 msgid "Num Lock off"
 msgstr ""
 
-#: term-utils/agetty.c:2032
+#: term-utils/agetty.c:2040
 msgid "Num Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:2035
+#: term-utils/agetty.c:2043
 msgid "Caps Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:2038
+#: term-utils/agetty.c:2046
 msgid "Scroll Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:2041
+#: term-utils/agetty.c:2049
 #, fuzzy, c-format
 msgid ""
 "Hint: %s\n"
 "\n"
 msgstr "tüüp: %s\n"
 
-#: term-utils/agetty.c:2183
+#: term-utils/agetty.c:2191
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: read: %m"
 
-#: term-utils/agetty.c:2245
+#: term-utils/agetty.c:2253
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: sisendi ületäitumine"
 
-#: term-utils/agetty.c:2265 term-utils/agetty.c:2273
+#: term-utils/agetty.c:2273 term-utils/agetty.c:2281
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr ""
 
-#: term-utils/agetty.c:2279
+#: term-utils/agetty.c:2287
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr ""
 
-#: term-utils/agetty.c:2364
+#: term-utils/agetty.c:2372
 #, fuzzy, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "ei suuda kindlaks teha seadme %s mahtu"
 
-#: term-utils/agetty.c:2402
+#: term-utils/agetty.c:2410
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"
 msgstr ""
 
-#: term-utils/agetty.c:2406
-msgid "Open a terminal and set its mode.\n"
-msgstr ""
-
-#: term-utils/agetty.c:2409
-#, fuzzy
-msgid " -8, --8bits                assume 8-bit tty\n"
-msgstr "                s - Sektorite järgi järjestatud tabel"
-
-#: term-utils/agetty.c:2410
-msgid " -a, --autologin <user>     login the specified user automatically\n"
-msgstr ""
-
-#: term-utils/agetty.c:2411
-#, fuzzy
-msgid " -c, --noreset              do not reset control mode\n"
-msgstr "                s - Sektorite järgi järjestatud tabel"
-
-#: term-utils/agetty.c:2412
-#, fuzzy
-msgid " -E, --remote               use -r <hostname> for login(1)\n"
-msgstr "                s - Sektorite järgi järjestatud tabel"
-
-#: term-utils/agetty.c:2413
-msgid " -f, --issue-file <file>    display issue file\n"
-msgstr ""
-
 #: term-utils/agetty.c:2414
-#, fuzzy
-msgid "     --show-issue           display issue file and exit\n"
-msgstr "  p          Väljastada partitsioonitabel ekraanile või faili"
-
-#: term-utils/agetty.c:2415
-msgid " -h, --flow-control         enable hardware flow control\n"
-msgstr ""
-
-#: term-utils/agetty.c:2416
-msgid " -H, --host <hostname>      specify login host\n"
+msgid "Open a terminal and set its mode.\n"
 msgstr ""
 
 #: term-utils/agetty.c:2417
 #, fuzzy
-msgid " -i, --noissue              do not display issue file\n"
-msgstr "  p          Väljastada partitsioonitabel ekraanile või faili"
+msgid " -8, --8bits                assume 8-bit tty\n"
+msgstr "                s - Sektorite järgi järjestatud tabel"
 
 #: term-utils/agetty.c:2418
-msgid " -I, --init-string <string> set init string\n"
+msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr ""
 
 #: term-utils/agetty.c:2419
 #, fuzzy
-msgid " -J  --noclear              do not clear the screen before prompt\n"
+msgid " -c, --noreset              do not reset control mode\n"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
 #: term-utils/agetty.c:2420
-msgid " -l, --login-program <file> specify login program\n"
-msgstr ""
+#, fuzzy
+msgid " -E, --remote               use -r <hostname> for login(1)\n"
+msgstr "                s - Sektorite järgi järjestatud tabel"
 
 #: term-utils/agetty.c:2421
-msgid " -L, --local-line[=<mode>]  control the local line flag\n"
+msgid " -f, --issue-file <file>    display issue file\n"
 msgstr ""
 
 #: term-utils/agetty.c:2422
-msgid " -m, --extract-baud         extract baud rate during connect\n"
-msgstr ""
+#, fuzzy
+msgid "     --show-issue           display issue file and exit\n"
+msgstr "  p          Väljastada partitsioonitabel ekraanile või faili"
 
 #: term-utils/agetty.c:2423
-msgid " -n, --skip-login           do not prompt for login\n"
+msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr ""
 
 #: term-utils/agetty.c:2424
+msgid " -H, --host <hostname>      specify login host\n"
+msgstr ""
+
+#: term-utils/agetty.c:2425
+#, fuzzy
+msgid " -i, --noissue              do not display issue file\n"
+msgstr "  p          Väljastada partitsioonitabel ekraanile või faili"
+
+#: term-utils/agetty.c:2426
+msgid " -I, --init-string <string> set init string\n"
+msgstr ""
+
+#: term-utils/agetty.c:2427
+#, fuzzy
+msgid " -J  --noclear              do not clear the screen before prompt\n"
+msgstr "                s - Sektorite järgi järjestatud tabel"
+
+#: term-utils/agetty.c:2428
+msgid " -l, --login-program <file> specify login program\n"
+msgstr ""
+
+#: term-utils/agetty.c:2429
+msgid " -L, --local-line[=<mode>]  control the local line flag\n"
+msgstr ""
+
+#: term-utils/agetty.c:2430
+msgid " -m, --extract-baud         extract baud rate during connect\n"
+msgstr ""
+
+#: term-utils/agetty.c:2431
+msgid " -n, --skip-login           do not prompt for login\n"
+msgstr ""
+
+#: term-utils/agetty.c:2432
 #, fuzzy
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr "  p          Väljastada partitsioonitabel ekraanile või faili"
 
-#: term-utils/agetty.c:2425
+#: term-utils/agetty.c:2433
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2426
+#: term-utils/agetty.c:2434
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2427
+#: term-utils/agetty.c:2435
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr ""
 
-#: term-utils/agetty.c:2428
+#: term-utils/agetty.c:2436
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr ""
 
-#: term-utils/agetty.c:2429
+#: term-utils/agetty.c:2437
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr ""
 
-#: term-utils/agetty.c:2430
+#: term-utils/agetty.c:2438
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr ""
 
-#: term-utils/agetty.c:2431
+#: term-utils/agetty.c:2439
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr ""
 
-#: term-utils/agetty.c:2432
-msgid " -w, --wait-cr              wait carriage-return\n"
-msgstr ""
-
-#: term-utils/agetty.c:2433
-#, fuzzy
-msgid "     --nohints              do not print hints\n"
-msgstr "            Esimene  Viimane\n"
-
-#: term-utils/agetty.c:2434
-#, fuzzy
-msgid "     --nohostname           no hostname at all will be shown\n"
-msgstr "  p          Väljastada partitsioonitabel ekraanile või faili"
-
-#: term-utils/agetty.c:2435
-msgid "     --long-hostname        show full qualified hostname\n"
-msgstr ""
-
-#: term-utils/agetty.c:2436
-msgid "     --erase-chars <string> additional backspace chars\n"
-msgstr ""
-
-#: term-utils/agetty.c:2437
-msgid "     --kill-chars <string>  additional kill chars\n"
-msgstr ""
-
-#: term-utils/agetty.c:2438
-msgid "     --chdir <directory>    chdir before the login\n"
-msgstr ""
-
-#: term-utils/agetty.c:2439
-msgid "     --delay <number>       sleep seconds before prompt\n"
-msgstr ""
-
 #: term-utils/agetty.c:2440
-msgid "     --nice <number>        run login with this priority\n"
+msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr ""
 
 #: term-utils/agetty.c:2441
 #, fuzzy
-msgid "     --reload               reload prompts on running agetty instances\n"
+msgid "     --nohints              do not print hints\n"
 msgstr "            Esimene  Viimane\n"
 
 #: term-utils/agetty.c:2442
 #, fuzzy
+msgid "     --nohostname           no hostname at all will be shown\n"
+msgstr "  p          Väljastada partitsioonitabel ekraanile või faili"
+
+#: term-utils/agetty.c:2443
+msgid "     --long-hostname        show full qualified hostname\n"
+msgstr ""
+
+#: term-utils/agetty.c:2444
+msgid "     --erase-chars <string> additional backspace chars\n"
+msgstr ""
+
+#: term-utils/agetty.c:2445
+msgid "     --kill-chars <string>  additional kill chars\n"
+msgstr ""
+
+#: term-utils/agetty.c:2446
+msgid "     --chdir <directory>    chdir before the login\n"
+msgstr ""
+
+#: term-utils/agetty.c:2447
+msgid "     --delay <number>       sleep seconds before prompt\n"
+msgstr ""
+
+#: term-utils/agetty.c:2448
+msgid "     --nice <number>        run login with this priority\n"
+msgstr ""
+
+#: term-utils/agetty.c:2449
+#, fuzzy
+msgid "     --reload               reload prompts on running agetty instances\n"
+msgstr "            Esimene  Viimane\n"
+
+#: term-utils/agetty.c:2450
+#, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "                s - Sektorite järgi järjestatud tabel"
 
-#: term-utils/agetty.c:2790
+#: term-utils/agetty.c:2798
 #, fuzzy, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "kasutaja"
 msgstr[1] "kasutaja"
 
-#: term-utils/agetty.c:2921
+#: term-utils/agetty.c:2929
 #, fuzzy, c-format
 msgid "checkname failed: %m"
 msgstr "chdir () kataloogi /dev ei õnnestunud: %m"
 
-#: term-utils/agetty.c:2933
+#: term-utils/agetty.c:2941
 #, fuzzy, c-format
 msgid "cannot touch file %s"
 msgstr "Ei suuda avada faili `%s'"
 
-#: term-utils/agetty.c:2937
+#: term-utils/agetty.c:2945
 msgid "--reload is unsupported on your system"
 msgstr ""
 
@@ -21424,6 +21419,10 @@ msgstr ""
 #, fuzzy
 msgid "Input line too long."
 msgstr "köite nimi on liiga pikk"
+
+#, fuzzy
+#~ msgid "Rufus alignment"
+#~ msgstr "%s: Tundmatu argument: %s\n"
 
 #, fuzzy
 #~ msgid ""

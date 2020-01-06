@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2019-12-10 14:00+0100\n"
+"POT-Creation-Date: 2020-01-06 13:22+0100\n"
 "PO-Revision-Date: 2019-06-01 12:42+0200\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -53,7 +53,7 @@ msgstr "pas assez d'arguments"
 #: disk-utils/fdisk-list.c:326 disk-utils/fdisk-list.c:366
 #: disk-utils/fdisk-list.c:385 disk-utils/fsck.c:1468
 #: disk-utils/fsck.cramfs.c:152 disk-utils/fsck.cramfs.c:511
-#: disk-utils/isosize.c:102 disk-utils/mkfs.bfs.c:186
+#: disk-utils/isosize.c:53 disk-utils/mkfs.bfs.c:186
 #: disk-utils/mkfs.cramfs.c:171 disk-utils/mkfs.cramfs.c:660
 #: disk-utils/mkfs.cramfs.c:799 disk-utils/mkfs.minix.c:823
 #: disk-utils/mkswap.c:217 disk-utils/mkswap.c:246 disk-utils/partx.c:1019
@@ -76,7 +76,7 @@ msgstr "pas assez d'arguments"
 #: sys-utils/rtcwake.c:290 sys-utils/setpriv.c:259 sys-utils/setpriv.c:628
 #: sys-utils/setpriv.c:651 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:116 sys-utils/unshare.c:131
-#: sys-utils/wdctl.c:361 sys-utils/zramctl.c:515 term-utils/agetty.c:2930
+#: sys-utils/wdctl.c:361 sys-utils/zramctl.c:515 term-utils/agetty.c:2938
 #: term-utils/mesg.c:143 term-utils/script.c:382 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:260 term-utils/scriptreplay.c:263
@@ -220,7 +220,7 @@ msgid " %-25s get size in 512-byte sectors\n"
 msgstr " %-25s afficher la capacité en secteur de 512 octets\n"
 
 #: disk-utils/blockdev.c:286 disk-utils/fdformat.c:219
-#: disk-utils/fsck.minix.c:1340 disk-utils/isosize.c:204
+#: disk-utils/fsck.minix.c:1340 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:812
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:756
 #: sys-utils/blkdiscard.c:170 sys-utils/blkzone.c:402 sys-utils/tunelp.c:241
@@ -1095,9 +1095,9 @@ msgstr "Les propriétés du périphérique (taille de secteur et géométrie) ne
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1489
 #: sys-utils/ipcmk.c:134 sys-utils/ldattach.c:321 sys-utils/losetup.c:913
-#: sys-utils/lscpu.c:2391 sys-utils/lsmem.c:631 sys-utils/mount.c:811
-#: sys-utils/mount.c:819 sys-utils/mount.c:866 sys-utils/mount.c:879
-#: sys-utils/mount.c:951 sys-utils/mountpoint.c:189 sys-utils/pivot_root.c:71
+#: sys-utils/lscpu.c:2391 sys-utils/lsmem.c:631 sys-utils/mount.c:812
+#: sys-utils/mount.c:820 sys-utils/mount.c:867 sys-utils/mount.c:880
+#: sys-utils/mount.c:952 sys-utils/mountpoint.c:189 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:229 sys-utils/swapon.c:993 sys-utils/switch_root.c:249
 #: sys-utils/umount.c:596 term-utils/setterm.c:1200 text-utils/col.c:233
 #: text-utils/more.c:1986
@@ -1395,7 +1395,7 @@ msgstr "modifier le nombre de têtes"
 msgid "change number of sectors/track"
 msgstr "modifier le nombre de secteurs par piste"
 
-#: disk-utils/fdisk-menu.c:167 include/pt-mbr-partnames.h:95
+#: disk-utils/fdisk-menu.c:167 include/pt-mbr-partnames.h:98
 msgid "GPT"
 msgstr "GPT"
 
@@ -2664,39 +2664,39 @@ msgstr ""
 msgid "write failed"
 msgstr "échec d'écriture"
 
-#: disk-utils/isosize.c:106
+#: disk-utils/isosize.c:57
 #, c-format
 msgid "%s: might not be an ISO filesystem"
 msgstr "%s : pourrait ne pas être un système de fichiers ISO"
 
-#: disk-utils/isosize.c:111 disk-utils/isosize.c:113
+#: disk-utils/isosize.c:62 disk-utils/isosize.c:64
 #, c-format
 msgid "read error on %s"
 msgstr "erreur de lecture sur %s"
 
-#: disk-utils/isosize.c:124
+#: disk-utils/isosize.c:75
 #, c-format
 msgid "sector count: %d, sector size: %d\n"
 msgstr "nombre de secteurs : %d, taille de secteur : %d\n"
 
-#: disk-utils/isosize.c:148
+#: disk-utils/isosize.c:99
 #, c-format
 msgid " %s [options] <iso9660_image_file> ...\n"
 msgstr " %s [options] <fichier_image_iso9660> ...\n"
 
-#: disk-utils/isosize.c:152
+#: disk-utils/isosize.c:103
 msgid "Show the length of an ISO-9660 filesystem.\n"
 msgstr "Afficher la taille d’un système de fichiers ISO-9660.\n"
 
-#: disk-utils/isosize.c:155
+#: disk-utils/isosize.c:106
 msgid " -d, --divisor=<number>  divide the amount of bytes by <number>\n"
 msgstr " -d, --divisor=<nombre>  diviser la quantité d'octets par <nombre>\n"
 
-#: disk-utils/isosize.c:156
+#: disk-utils/isosize.c:107
 msgid " -x, --sectors           show sector count and size\n"
 msgstr " -x, --sectors           afficher le nombre et la taille des secteurs\n"
 
-#: disk-utils/isosize.c:187
+#: disk-utils/isosize.c:138
 msgid "invalid divisor argument"
 msgstr "argument de division incorrect"
 
@@ -4863,249 +4863,249 @@ msgstr "Données personnelles Linux"
 msgid "Linux RAID"
 msgstr "RAID Linux"
 
-#: include/pt-gpt-partnames.h:60
-msgid "Linux extended boot"
-msgstr "Amorçage Linux étendu"
-
-#: include/pt-gpt-partnames.h:61 include/pt-mbr-partnames.h:61
+#: include/pt-gpt-partnames.h:60 include/pt-mbr-partnames.h:61
 #: libfdisk/src/sgi.c:62 libfdisk/src/sun.c:53
 msgid "Linux LVM"
 msgstr "LVM Linux"
 
-#: include/pt-gpt-partnames.h:68
+#: include/pt-gpt-partnames.h:66 include/pt-mbr-partnames.h:95
+msgid "Linux extended boot"
+msgstr "Amorçage Linux étendu"
+
+#: include/pt-gpt-partnames.h:69
 msgid "FreeBSD data"
 msgstr "Données FreeBSD"
 
-#: include/pt-gpt-partnames.h:69
+#: include/pt-gpt-partnames.h:70
 msgid "FreeBSD boot"
 msgstr "Amorçage FreeBSD"
 
-#: include/pt-gpt-partnames.h:70
+#: include/pt-gpt-partnames.h:71
 msgid "FreeBSD swap"
 msgstr "Partition d'échange FreeBSD"
 
-#: include/pt-gpt-partnames.h:71
+#: include/pt-gpt-partnames.h:72
 msgid "FreeBSD UFS"
 msgstr "UFS FreeBSD"
 
-#: include/pt-gpt-partnames.h:72
+#: include/pt-gpt-partnames.h:73
 msgid "FreeBSD ZFS"
 msgstr "ZFS FreeBSD"
 
-#: include/pt-gpt-partnames.h:73
+#: include/pt-gpt-partnames.h:74
 msgid "FreeBSD Vinum"
 msgstr "Vinum FreeBSD"
 
-#: include/pt-gpt-partnames.h:76
+#: include/pt-gpt-partnames.h:77
 msgid "Apple HFS/HFS+"
 msgstr "HFS ou HFS+ Apple"
 
-#: include/pt-gpt-partnames.h:77
+#: include/pt-gpt-partnames.h:78
 #, fuzzy
 msgid "Apple APFS"
 msgstr "UFS Apple"
 
-#: include/pt-gpt-partnames.h:78
+#: include/pt-gpt-partnames.h:79
 msgid "Apple UFS"
 msgstr "UFS Apple"
 
-#: include/pt-gpt-partnames.h:79
+#: include/pt-gpt-partnames.h:80
 msgid "Apple RAID"
 msgstr "RAID Apple"
 
-#: include/pt-gpt-partnames.h:80
+#: include/pt-gpt-partnames.h:81
 msgid "Apple RAID offline"
 msgstr "RAID hors ligne Apple"
 
-#: include/pt-gpt-partnames.h:81
+#: include/pt-gpt-partnames.h:82
 msgid "Apple boot"
 msgstr "Amorçage Apple"
 
-#: include/pt-gpt-partnames.h:82
+#: include/pt-gpt-partnames.h:83
 msgid "Apple label"
 msgstr "Étiquette Apple"
 
-#: include/pt-gpt-partnames.h:83
+#: include/pt-gpt-partnames.h:84
 msgid "Apple TV recovery"
 msgstr "Récupération d'Apple TV"
 
-#: include/pt-gpt-partnames.h:84
+#: include/pt-gpt-partnames.h:85
 msgid "Apple Core storage"
 msgstr "Stockage d'Apple Core"
 
-#: include/pt-gpt-partnames.h:87 include/pt-mbr-partnames.h:77
+#: include/pt-gpt-partnames.h:88 include/pt-mbr-partnames.h:77
 msgid "Solaris boot"
 msgstr "Amorçage Solaris"
 
-#: include/pt-gpt-partnames.h:88
+#: include/pt-gpt-partnames.h:89
 msgid "Solaris root"
 msgstr "Racine Solaris"
 
-#: include/pt-gpt-partnames.h:90
+#: include/pt-gpt-partnames.h:91
 msgid "Solaris /usr & Apple ZFS"
 msgstr "/usr Solaris et ZFS Apple"
 
-#: include/pt-gpt-partnames.h:91
+#: include/pt-gpt-partnames.h:92
 msgid "Solaris swap"
 msgstr "Partition d'échange Solaris"
 
-#: include/pt-gpt-partnames.h:92
+#: include/pt-gpt-partnames.h:93
 msgid "Solaris backup"
 msgstr "Sauvegarde Solaris"
 
-#: include/pt-gpt-partnames.h:93
+#: include/pt-gpt-partnames.h:94
 msgid "Solaris /var"
 msgstr "/var Solaris"
 
-#: include/pt-gpt-partnames.h:94
+#: include/pt-gpt-partnames.h:95
 msgid "Solaris /home"
 msgstr "/home Solaris"
 
-#: include/pt-gpt-partnames.h:95
+#: include/pt-gpt-partnames.h:96
 msgid "Solaris alternate sector"
 msgstr "Secteur alternatif Solaris"
 
-#: include/pt-gpt-partnames.h:96
+#: include/pt-gpt-partnames.h:97
 msgid "Solaris reserved 1"
 msgstr "Réservé 1 Solaris"
 
-#: include/pt-gpt-partnames.h:97
+#: include/pt-gpt-partnames.h:98
 msgid "Solaris reserved 2"
 msgstr "Réservé 2 Solaris"
 
-#: include/pt-gpt-partnames.h:98
+#: include/pt-gpt-partnames.h:99
 msgid "Solaris reserved 3"
 msgstr "Réservé 3 Solaris"
 
-#: include/pt-gpt-partnames.h:99
+#: include/pt-gpt-partnames.h:100
 msgid "Solaris reserved 4"
 msgstr "Réservé 4 Solaris"
 
-#: include/pt-gpt-partnames.h:100
+#: include/pt-gpt-partnames.h:101
 msgid "Solaris reserved 5"
 msgstr "Réservé 5 Solaris"
 
-#: include/pt-gpt-partnames.h:103
+#: include/pt-gpt-partnames.h:104
 msgid "NetBSD swap"
 msgstr "Partition d'échange NetBSD"
 
-#: include/pt-gpt-partnames.h:104
+#: include/pt-gpt-partnames.h:105
 msgid "NetBSD FFS"
 msgstr "FFS NetBSD"
 
-#: include/pt-gpt-partnames.h:105
+#: include/pt-gpt-partnames.h:106
 msgid "NetBSD LFS"
 msgstr "LFS NetBSD"
 
-#: include/pt-gpt-partnames.h:106
+#: include/pt-gpt-partnames.h:107
 msgid "NetBSD concatenated"
 msgstr "Concaténé NetBSD"
 
-#: include/pt-gpt-partnames.h:107
+#: include/pt-gpt-partnames.h:108
 msgid "NetBSD encrypted"
 msgstr "Chiffré NetBSD"
 
-#: include/pt-gpt-partnames.h:108
+#: include/pt-gpt-partnames.h:109
 msgid "NetBSD RAID"
 msgstr "RAID NetBSD"
 
-#: include/pt-gpt-partnames.h:111
+#: include/pt-gpt-partnames.h:112
 msgid "ChromeOS kernel"
 msgstr "Noyau ChromeOS"
 
-#: include/pt-gpt-partnames.h:112
+#: include/pt-gpt-partnames.h:113
 msgid "ChromeOS root fs"
 msgstr "Système de fichiers racine ChromeOS"
 
-#: include/pt-gpt-partnames.h:113
+#: include/pt-gpt-partnames.h:114
 msgid "ChromeOS reserved"
 msgstr "Réservé ChromeOS"
 
-#: include/pt-gpt-partnames.h:116
+#: include/pt-gpt-partnames.h:117
 msgid "MidnightBSD data"
 msgstr "Données MidnightBSD"
 
-#: include/pt-gpt-partnames.h:117
+#: include/pt-gpt-partnames.h:118
 msgid "MidnightBSD boot"
 msgstr "Amorçage MidnightBSD"
 
-#: include/pt-gpt-partnames.h:118
+#: include/pt-gpt-partnames.h:119
 msgid "MidnightBSD swap"
 msgstr "Partition d'échange MidnightBSD"
 
-#: include/pt-gpt-partnames.h:119
+#: include/pt-gpt-partnames.h:120
 msgid "MidnightBSD UFS"
 msgstr "UFS MidnightBSD"
 
-#: include/pt-gpt-partnames.h:120
+#: include/pt-gpt-partnames.h:121
 msgid "MidnightBSD ZFS"
 msgstr "ZFS MidnightBSD"
 
-#: include/pt-gpt-partnames.h:121
+#: include/pt-gpt-partnames.h:122
 msgid "MidnightBSD Vinum"
 msgstr "Vinum MidnightBSD"
 
-#: include/pt-gpt-partnames.h:124
+#: include/pt-gpt-partnames.h:125
 msgid "Ceph Journal"
 msgstr "Journal Ceph"
 
-#: include/pt-gpt-partnames.h:125
+#: include/pt-gpt-partnames.h:126
 msgid "Ceph Encrypted Journal"
 msgstr "Journal Ceph chiffré"
 
-#: include/pt-gpt-partnames.h:126
+#: include/pt-gpt-partnames.h:127
 msgid "Ceph OSD"
 msgstr "OSD Ceph"
 
-#: include/pt-gpt-partnames.h:127
+#: include/pt-gpt-partnames.h:128
 msgid "Ceph crypt OSD"
 msgstr "OSD Ceph chiffré"
 
-#: include/pt-gpt-partnames.h:128
+#: include/pt-gpt-partnames.h:129
 msgid "Ceph disk in creation"
 msgstr "Disque Ceph en cours de création"
 
-#: include/pt-gpt-partnames.h:129
+#: include/pt-gpt-partnames.h:130
 msgid "Ceph crypt disk in creation"
 msgstr "Disk Ceph chiffré en cours de création"
 
-#: include/pt-gpt-partnames.h:132 include/pt-mbr-partnames.h:101
+#: include/pt-gpt-partnames.h:133 include/pt-mbr-partnames.h:104
 msgid "VMware VMFS"
 msgstr "VMware VMFS"
 
-#: include/pt-gpt-partnames.h:133
+#: include/pt-gpt-partnames.h:134
 msgid "VMware Diagnostic"
 msgstr "VMware Diagnostic"
 
-#: include/pt-gpt-partnames.h:134
+#: include/pt-gpt-partnames.h:135
 msgid "VMware Virtual SAN"
 msgstr "SAN virtuel VMware"
 
-#: include/pt-gpt-partnames.h:135
+#: include/pt-gpt-partnames.h:136
 msgid "VMware Virsto"
 msgstr "VMware Virsto"
 
-#: include/pt-gpt-partnames.h:136
+#: include/pt-gpt-partnames.h:137
 msgid "VMware Reserved"
 msgstr "Réservé VMware"
 
-#: include/pt-gpt-partnames.h:139
+#: include/pt-gpt-partnames.h:140
 msgid "OpenBSD data"
 msgstr "Données OpenBSD"
 
-#: include/pt-gpt-partnames.h:142
+#: include/pt-gpt-partnames.h:143
 msgid "QNX6 file system"
 msgstr "Système de fichiers QNX6"
 
-#: include/pt-gpt-partnames.h:145
+#: include/pt-gpt-partnames.h:146
 msgid "Plan 9 partition"
 msgstr "Partition Plan 9"
 
-#: include/pt-gpt-partnames.h:148
+#: include/pt-gpt-partnames.h:149
 msgid "HiFive Unleashed FSBL"
 msgstr "HiFive Unleashed FSBL"
 
-#: include/pt-gpt-partnames.h:149
+#: include/pt-gpt-partnames.h:150
 msgid "HiFive Unleashed BBL"
 msgstr "HiFive Unleashed BBL"
 
@@ -5282,7 +5282,7 @@ msgid "Priam Edisk"
 msgstr "Priam Edisk"
 
 #: include/pt-mbr-partnames.h:44 include/pt-mbr-partnames.h:91
-#: include/pt-mbr-partnames.h:98 include/pt-mbr-partnames.h:99
+#: include/pt-mbr-partnames.h:101 include/pt-mbr-partnames.h:102
 msgid "SpeedStor"
 msgstr "SpeedStor"
 
@@ -5442,39 +5442,35 @@ msgstr "DOS access"
 msgid "DOS R/O"
 msgstr "DOS R/W"
 
-#: include/pt-mbr-partnames.h:93
-msgid "Rufus alignment"
-msgstr "Alignement Rufus"
-
-#: include/pt-mbr-partnames.h:94
+#: include/pt-mbr-partnames.h:97
 msgid "BeOS fs"
 msgstr "BeOS fs"
 
-#: include/pt-mbr-partnames.h:96
+#: include/pt-mbr-partnames.h:99
 msgid "EFI (FAT-12/16/32)"
 msgstr "EFI (FAT-12/16/32)"
 
-#: include/pt-mbr-partnames.h:97
+#: include/pt-mbr-partnames.h:100
 msgid "Linux/PA-RISC boot"
 msgstr "Linux/PA-RISC boot"
 
-#: include/pt-mbr-partnames.h:100
+#: include/pt-mbr-partnames.h:103
 msgid "DOS secondary"
 msgstr "DOS secondaire"
 
-#: include/pt-mbr-partnames.h:102
+#: include/pt-mbr-partnames.h:105
 msgid "VMware VMKCORE"
 msgstr "VMware VMKCORE"
 
-#: include/pt-mbr-partnames.h:103 libfdisk/src/sun.c:54
+#: include/pt-mbr-partnames.h:106 libfdisk/src/sun.c:54
 msgid "Linux raid autodetect"
 msgstr "RAID Linux autodétecté"
 
-#: include/pt-mbr-partnames.h:106
+#: include/pt-mbr-partnames.h:109
 msgid "LANstep"
 msgstr "LANstep"
 
-#: include/pt-mbr-partnames.h:107
+#: include/pt-mbr-partnames.h:110
 msgid "BBT"
 msgstr "BBT"
 
@@ -6820,7 +6816,7 @@ msgstr ""
 "d'échange Linux pourrait détruire la table de partitions et le bloc d'amorçage.\n"
 "Faut-il vraiment étiqueter la table de partitions en partition d'échange Linux ?"
 
-#: libmount/src/context.c:2761
+#: libmount/src/context.c:2758
 #, c-format
 msgid "operation failed: %m"
 msgstr "l'opération a échouée : %m"
@@ -15997,17 +15993,17 @@ msgstr ""
 msgid "%s: failed to parse"
 msgstr "%s : échec d'analyse"
 
-#: sys-utils/mount.c:417
+#: sys-utils/mount.c:418
 #, c-format
 msgid "unsupported option format: %s"
 msgstr "format d’option non pris en charge : %s"
 
-#: sys-utils/mount.c:419
+#: sys-utils/mount.c:420
 #, c-format
 msgid "failed to append option '%s'"
 msgstr "échec d'ajout de l'option « %s »"
 
-#: sys-utils/mount.c:437
+#: sys-utils/mount.c:438
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -16022,11 +16018,11 @@ msgstr ""
 " %1$s [options] <source> <répertoire>\n"
 " %1$s <opération> <pointdemontage> [<cible>]\n"
 
-#: sys-utils/mount.c:445
+#: sys-utils/mount.c:446
 msgid "Mount a filesystem.\n"
 msgstr "Monter un système de fichiers.\n"
 
-#: sys-utils/mount.c:449
+#: sys-utils/mount.c:450
 #, c-format
 msgid ""
 " -a, --all               mount all filesystems mentioned in fstab\n"
@@ -16042,22 +16038,22 @@ msgstr ""
 "                          (utiliser avec -a)\n"
 " -T, --fstab <chemin>    autre fichier pour /etc/fstab\n"
 
-#: sys-utils/mount.c:455
+#: sys-utils/mount.c:456
 #, c-format
 msgid " -i, --internal-only     don't call the mount.<type> helpers\n"
 msgstr " -i, --internal-only     ne pas appeler les auxiliaires mount.<type>\n"
 
-#: sys-utils/mount.c:457
+#: sys-utils/mount.c:458
 #, c-format
 msgid " -l, --show-labels       show also filesystem labels\n"
 msgstr " -l, --show-labels       afficher aussi les étiquettes du système de fichier\n"
 
-#: sys-utils/mount.c:459 sys-utils/umount.c:98
+#: sys-utils/mount.c:460 sys-utils/umount.c:98
 #, c-format
 msgid " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr " -n, --no-mtab           ne pas écrire dans /etc/mtab\n"
 
-#: sys-utils/mount.c:461
+#: sys-utils/mount.c:462
 #, c-format
 msgid ""
 "     --options-mode <mode>\n"
@@ -16074,7 +16070,7 @@ msgstr ""
 "     --options-source-force\n"
 "                         forcer l'utilisation des options de fstab/mtab\n"
 
-#: sys-utils/mount.c:468
+#: sys-utils/mount.c:469
 #, c-format
 msgid ""
 " -o, --options <list>    comma-separated list of mount options\n"
@@ -16089,7 +16085,7 @@ msgstr ""
 "                           (identique à -o ro)\n"
 " -t, --types <liste>     limiter l'ensemble de types de systèmes de fichiers\n"
 
-#: sys-utils/mount.c:473
+#: sys-utils/mount.c:474
 #, c-format
 msgid ""
 "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -16098,29 +16094,29 @@ msgstr ""
 "     --source <source>   indiquer explicitement la source (chemin, étiqu., UUID)\n"
 "     --target <cible>    indiquer explicitement le point de montage\n"
 
-#: sys-utils/mount.c:476
+#: sys-utils/mount.c:477
 #, fuzzy, c-format
 msgid ""
 "     --target-prefix <path>\n"
 "                         specifies path use for all mountpoints\n"
 msgstr " --default                         utiliser les réglages par défaut du terminal\n"
 
-#: sys-utils/mount.c:479 sys-utils/umount.c:104
+#: sys-utils/mount.c:480 sys-utils/umount.c:104
 #, c-format
 msgid " -v, --verbose           say what is being done\n"
 msgstr " -v, --verbose           expliquer les actions en cours\n"
 
-#: sys-utils/mount.c:481
+#: sys-utils/mount.c:482
 #, c-format
 msgid " -w, --rw, --read-write  mount the filesystem read-write (default)\n"
 msgstr " -w, --rw, --read-write  monter le système de fichier ne lecture/écriture (par défaut)\n"
 
-#: sys-utils/mount.c:483
+#: sys-utils/mount.c:484
 #, c-format
 msgid " -N, --namespace <ns>    perform mount in another namespace\n"
 msgstr " -N, --namespace <ns>    réaliser le montage dans un autre espace de nom\n"
 
-#: sys-utils/mount.c:489
+#: sys-utils/mount.c:490
 #, c-format
 msgid ""
 "\n"
@@ -16141,7 +16137,7 @@ msgstr ""
 " PARTLABEL=<étiquette>   indiquer le périphérique par étiquette de partition\n"
 " PARTUUID=<uuid>         indiquer le périphérique par UUID de partition\n"
 
-#: sys-utils/mount.c:498
+#: sys-utils/mount.c:499
 #, c-format
 msgid ""
 " <device>                specifies device by path\n"
@@ -16152,7 +16148,7 @@ msgstr ""
 " <répertoire>            pt de montage pour remontages (consultez --bind/rbind)\n"
 " <fichier>               fichier régulier pour configuration de périph. boucle\n"
 
-#: sys-utils/mount.c:503
+#: sys-utils/mount.c:504
 #, c-format
 msgid ""
 "\n"
@@ -16167,7 +16163,7 @@ msgstr ""
 " -M, --move              déplacer un sous-répertoire ailleurs\n"
 " -R, --rbind             monter un sous-rép. et tous les sous-montages ailleurs\n"
 
-#: sys-utils/mount.c:508
+#: sys-utils/mount.c:509
 #, c-format
 msgid ""
 " --make-shared           mark a subtree as shared\n"
@@ -16180,7 +16176,7 @@ msgstr ""
 " --make-private          marquer un sous-répertoire comme privé\n"
 " --make-unbindable       marquer un sous-répertoire comme non remontable\n"
 
-#: sys-utils/mount.c:513
+#: sys-utils/mount.c:514
 #, c-format
 msgid ""
 " --make-rshared          recursively mark a whole subtree as shared\n"
@@ -16193,20 +16189,20 @@ msgstr ""
 " --make-rprivate         marquer récursivement tout un sous-répertoire privé\n"
 " --make-runbindable      marquer récursivement tout un sous-rép. non remontable\n"
 
-#: sys-utils/mount.c:664 sys-utils/umount.c:496
+#: sys-utils/mount.c:665 sys-utils/umount.c:496
 msgid "libmount context allocation failed"
 msgstr "échec d'allocation de contexte libmount"
 
-#: sys-utils/mount.c:715 sys-utils/umount.c:549
+#: sys-utils/mount.c:716 sys-utils/umount.c:549
 msgid "failed to set options pattern"
 msgstr "échec de configuration des options de motif"
 
-#: sys-utils/mount.c:762 sys-utils/umount.c:566
+#: sys-utils/mount.c:763 sys-utils/umount.c:566
 #, c-format
 msgid "failed to set target namespace to %s"
 msgstr "impossible de changer l'espace de noms cible à %s"
 
-#: sys-utils/mount.c:928
+#: sys-utils/mount.c:929
 msgid "source specified more than once"
 msgstr "source indiquée plusieurs fois"
 
@@ -18760,7 +18756,7 @@ msgstr "%s : impossible d'exécuter %s : %m"
 
 #: term-utils/agetty.c:597 term-utils/agetty.c:930 term-utils/agetty.c:1466
 #: term-utils/agetty.c:1484 term-utils/agetty.c:1521 term-utils/agetty.c:1531
-#: term-utils/agetty.c:1573 term-utils/agetty.c:2269 term-utils/agetty.c:2833
+#: term-utils/agetty.c:1573 term-utils/agetty.c:2277 term-utils/agetty.c:2841
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "échec d'allocation de tampon de mémoire : %m"
@@ -18845,32 +18841,32 @@ msgstr "impossible d'ouvrir le fichier os-release"
 msgid "failed to create reload file: %s: %m"
 msgstr "échec lors de la création du fichier de rechargement : %s : %m"
 
-#: term-utils/agetty.c:1981
+#: term-utils/agetty.c:1988
 #, fuzzy, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "%s : échec d'obtention des attributs du terminal : %m"
 
-#: term-utils/agetty.c:2002
+#: term-utils/agetty.c:2010
 msgid "[press ENTER to login]"
 msgstr "[appuyez sur Entrée pour vous connecter]"
 
-#: term-utils/agetty.c:2029
+#: term-utils/agetty.c:2037
 msgid "Num Lock off"
 msgstr "Verrouillage numérique désactivé"
 
-#: term-utils/agetty.c:2032
+#: term-utils/agetty.c:2040
 msgid "Num Lock on"
 msgstr "Verrouillage numérique activé"
 
-#: term-utils/agetty.c:2035
+#: term-utils/agetty.c:2043
 msgid "Caps Lock on"
 msgstr "Verrouillage majuscules activé"
 
-#: term-utils/agetty.c:2038
+#: term-utils/agetty.c:2046
 msgid "Scroll Lock on"
 msgstr "Arrêt de défilement activé"
 
-#: term-utils/agetty.c:2041
+#: term-utils/agetty.c:2049
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -18879,32 +18875,32 @@ msgstr ""
 "Conseil : %s\n"
 "\n"
 
-#: term-utils/agetty.c:2183
+#: term-utils/agetty.c:2191
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s : lu : %m"
 
-#: term-utils/agetty.c:2245
+#: term-utils/agetty.c:2253
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s : dépassement du tampon d'entrée"
 
-#: term-utils/agetty.c:2265 term-utils/agetty.c:2273
+#: term-utils/agetty.c:2273 term-utils/agetty.c:2281
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s : caractère de conversion non valable pour le nom de connexion"
 
-#: term-utils/agetty.c:2279
+#: term-utils/agetty.c:2287
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s : caractère 0x%x non valable dans le nom de connexion"
 
-#: term-utils/agetty.c:2364
+#: term-utils/agetty.c:2372
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s : échec de configuration des attributs du terminal : %m"
 
-#: term-utils/agetty.c:2402
+#: term-utils/agetty.c:2410
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18913,166 +18909,166 @@ msgstr ""
 " %1$s [options] <ligne> [<vitesse_de_connexion>,...] [<typeterm>]\n"
 " %1$s [options] <vitesse_de_connexion>,... <ligne> [<typeterm>]\n"
 
-#: term-utils/agetty.c:2406
+#: term-utils/agetty.c:2414
 msgid "Open a terminal and set its mode.\n"
 msgstr "Ouvrir un terminal et définir son mode.\n"
 
-#: term-utils/agetty.c:2409
+#: term-utils/agetty.c:2417
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                supposer que le terminal gère les caractères 8 bits\n"
 
-#: term-utils/agetty.c:2410
+#: term-utils/agetty.c:2418
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <ident>    connecter l'utilisateur indiqué automatiquement\n"
 
-#: term-utils/agetty.c:2411
+#: term-utils/agetty.c:2419
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              ne pas réinitialiser le mode de contrôle\n"
 
-#: term-utils/agetty.c:2412
+#: term-utils/agetty.c:2420
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               utiliser -r <nom_d_hôte> pour login(1)\n"
 
-#: term-utils/agetty.c:2413
+#: term-utils/agetty.c:2421
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <fichier> afficher le fichier issue\n"
 
-#: term-utils/agetty.c:2414
+#: term-utils/agetty.c:2422
 #, fuzzy
 msgid "     --show-issue           display issue file and exit\n"
 msgstr " -i, --noissue              ne pas afficher le fichier issue\n"
 
-#: term-utils/agetty.c:2415
+#: term-utils/agetty.c:2423
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         activer le contrôle de flux matériel\n"
 
 # getopt-1.1.2/getopt.c:335
-#: term-utils/agetty.c:2416
+#: term-utils/agetty.c:2424
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <nom_d_hôte>    indiquer l'hôte de connexion\n"
 
-#: term-utils/agetty.c:2417
+#: term-utils/agetty.c:2425
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              ne pas afficher le fichier issue\n"
 
-#: term-utils/agetty.c:2418
+#: term-utils/agetty.c:2426
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <chaîne> définir la chaîne initiale\n"
 
-#: term-utils/agetty.c:2419
+#: term-utils/agetty.c:2427
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              ne pas effacer l'écran avant l'invite\n"
 
-#: term-utils/agetty.c:2420
+#: term-utils/agetty.c:2428
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <fic.> indiquer le programme de connexion\n"
 
-#: term-utils/agetty.c:2421
+#: term-utils/agetty.c:2429
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<mode>]  contrôler l'attribut de ligne locale\n"
 
-#: term-utils/agetty.c:2422
+#: term-utils/agetty.c:2430
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         extraire la vitesse pendant la connexion\n"
 
-#: term-utils/agetty.c:2423
+#: term-utils/agetty.c:2431
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           ne pas demander d'identifiant de connexion\n"
 
-#: term-utils/agetty.c:2424
+#: term-utils/agetty.c:2432
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            ne pas afficher de changement de ligne avant issue\n"
 
-#: term-utils/agetty.c:2425
+#: term-utils/agetty.c:2433
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <opt.> options qui sont passées à la connexion\n"
 
-#: term-utils/agetty.c:2426
+#: term-utils/agetty.c:2434
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          attendre une touche avant la connexion\n"
 
-#: term-utils/agetty.c:2427
+#: term-utils/agetty.c:2435
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <répertoire>  modifier la racine au répertoire\n"
 
-#: term-utils/agetty.c:2428
+#: term-utils/agetty.c:2436
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               raccrocher virtuellement sur le terminal\n"
 
-#: term-utils/agetty.c:2429
+#: term-utils/agetty.c:2437
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            essayer de garder la vitesse en baud après une pause\n"
 
-#: term-utils/agetty.c:2430
+#: term-utils/agetty.c:2438
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <nombre>     temps d'expiration du processus de connexion\n"
 
-#: term-utils/agetty.c:2431
+#: term-utils/agetty.c:2439
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          détecter les terminaux en majuscule\n"
 
-#: term-utils/agetty.c:2432
+#: term-utils/agetty.c:2440
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              attendre un retour chariot\n"
 
-#: term-utils/agetty.c:2433
+#: term-utils/agetty.c:2441
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              ne pas afficher de conseils\n"
 
-#: term-utils/agetty.c:2434
+#: term-utils/agetty.c:2442
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           ne montrer aucun nom d'hôte\n"
 
-#: term-utils/agetty.c:2435
+#: term-utils/agetty.c:2443
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        montrer le nom d'hôte complètement qualifié\n"
 
-#: term-utils/agetty.c:2436
+#: term-utils/agetty.c:2444
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <chaîne> caractères supplémentaires d'espace arrière\n"
 
-#: term-utils/agetty.c:2437
+#: term-utils/agetty.c:2445
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <chaîne>  caractères supplémentaires pour tuer\n"
 
-#: term-utils/agetty.c:2438
+#: term-utils/agetty.c:2446
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <répertoire>   changer de répertoire avant la connexion\n"
 
-#: term-utils/agetty.c:2439
+#: term-utils/agetty.c:2447
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <nombre>       temps de sommeil, en seconde, avant l'invite\n"
 
-#: term-utils/agetty.c:2440
+#: term-utils/agetty.c:2448
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <nombre>        exécuter la connexion avec cette priorité\n"
 
-#: term-utils/agetty.c:2441
+#: term-utils/agetty.c:2449
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               recharger les invites des instances agetty en cours\n"
 
-#: term-utils/agetty.c:2442
+#: term-utils/agetty.c:2450
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          afficher les vitesse supportées\n"
 
-#: term-utils/agetty.c:2790
+#: term-utils/agetty.c:2798
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d utilisateur"
 msgstr[1] "%d utilisateurs"
 
-#: term-utils/agetty.c:2921
+#: term-utils/agetty.c:2929
 #, c-format
 msgid "checkname failed: %m"
 msgstr "échec de checkname : %m"
 
-#: term-utils/agetty.c:2933
+#: term-utils/agetty.c:2941
 #, c-format
 msgid "cannot touch file %s"
 msgstr "impossible de toucher le fichier %s"
 
-#: term-utils/agetty.c:2937
+#: term-utils/agetty.c:2945
 msgid "--reload is unsupported on your system"
 msgstr "--reload n’est pas pris en charge sur ce système"
 
@@ -20634,6 +20630,9 @@ msgstr "séquence de protection inconnue en entrée : %o, %o"
 #: text-utils/ul.c:629
 msgid "Input line too long."
 msgstr "Ligne d'entrée trop longue."
+
+#~ msgid "Rufus alignment"
+#~ msgstr "Alignement Rufus"
 
 #~ msgid "The old %s signature will be removed by a write command."
 #~ msgstr "L'ancienne signature %s sera enlevée par une commande d'écriture."
