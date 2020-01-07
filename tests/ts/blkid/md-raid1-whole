@@ -29,6 +29,8 @@ ts_skip_nonroot
 ts_check_losetup
 ts_check_prog "mdadm"
 
+TS_KNOWN_FAIL="yes"	# due to recent changes in mdadm
+
 ts_log "Initialize devices"
 IMGNAME="${TS_OUTDIR}/${TS_TESTNAME}"
 

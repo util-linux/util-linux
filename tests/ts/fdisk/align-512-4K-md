@@ -31,6 +31,8 @@ ts_check_test_command "$TS_CMD_FDISK"
 ts_skip_nonroot
 ts_check_prog "mdadm"
 
+TS_KNOWN_FAIL="yes"	# due to recent changes in mdadm
+
 # set global variable TS_DEVICE
 ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3
 DEVNAME=$(basename $TS_DEVICE)
