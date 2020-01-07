@@ -504,8 +504,12 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 		warn(_("error: %s"), devname);
 		return BLKID_EXIT_NOTFOUND;
 	}
-	if (blkid_probe_set_device(pr, fd, ctl->offset, ctl->size))
+	errno = 0;
+	if (blkid_probe_set_device(pr, fd, ctl->offset, ctl->size)) {
+		if (errno)
+			warn(_("error: %s"), devname);
 		goto done;
+	}
 
 	if (ctl->lowprobe_topology)
 		rc = lowprobe_topology(pr);

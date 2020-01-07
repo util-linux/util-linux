@@ -945,6 +945,14 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	    blkid_probe_is_wholedisk(pr) &&
 	    ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0) {
 
+# ifdef CDROM_DRIVE_STATUS
+		switch (ioctl(fd, CDROM_DRIVE_STATUS, 0)) {
+		case CDS_TRAY_OPEN:
+		case CDS_NO_DISC:
+			errno = ENOMEDIUM;
+			goto err;
+		}
+# endif
 		pr->flags |= BLKID_FL_CDROM_DEV;
 		cdrom_size_correction(pr);
 	}
