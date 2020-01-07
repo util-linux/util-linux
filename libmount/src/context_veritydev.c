@@ -153,15 +153,15 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 		}
 	}
 
-	if (root_hash && root_hash_file) {
+	if (!rc && root_hash && root_hash_file) {
 		DBG(VERITY, ul_debugobj(cxt, "verity.roothash and verity.roothashfile are mutually exclusive"));
 		rc = -EINVAL;
-	} else if (root_hash_file) {
+	} else if (!rc && root_hash_file) {
 		rc = ul_path_read_string(NULL, &root_hash, root_hash_file);
 		rc = rc < 1 ? rc : 0;
 	}
 
-	if (!hash_device || !root_hash) {
+	if (!rc && (!hash_device || !root_hash)) {
 		DBG(VERITY, ul_debugobj(cxt, "verity.hashdevice and one of verity.roothash or verity.roothashfile are mandatory"));
 		rc = -EINVAL;
 	}
