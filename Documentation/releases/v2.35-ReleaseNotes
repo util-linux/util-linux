@@ -62,6 +62,8 @@ agetty:
    - Remove superfluous fflush()  [Stanislav Brabec]
    - add --show-issue to review issue output  [Karel Zak]
    - add support for /run/issue and /usr/lib/issue  [Karel Zak]
+   - keep freed issue file pointer zeroized  [Karel Zak]
+   - return proper value if compiled without ISSUEDIR support  [Patrick Steinhardt]
    - simplify code in dolog() preprocessor blocks  [Sami Kerola]
 bash-completion:
    - (unshare) add --map-current-user  [Karel Zak]
@@ -70,6 +72,7 @@ bash-completion:
    - Standardize fsck/mkfs file/device  [Kevin Locke]
    - update for new script tools  [Karel Zak]
    - update options  [Sami Kerola]
+   - update script, scriptlive, and scriptreplay files  [Sami Kerola]
 blkid:
    - (man) add note about udev to --list-one  [Karel Zak]
    - retport block size of a filesystem  [Mikulas Patocka]
@@ -88,9 +91,13 @@ build-sys:
    - fix typo  [Karel Zak]
    - improve hwclock CMOS dependences  [Karel Zak]
    - introduce $sysconfstaticdir  [Karel Zak]
+   - make scriptlive optional  [Samuel Thibault]
+   - release++ (v2.35-rc1)  [Karel Zak]
    - remove duplicate includes  [Karel Zak]
    - support 'none' for parallel tests  [Karel Zak]
    - use parse-date() only for hwclock  [Karel Zak]
+cal:
+   - (man) make -w, -m and --iso relation more obvious  [Karel Zak]
 chfn:
    - don't append extra tailing commas  [Karel Zak]
 choom:
@@ -112,18 +119,24 @@ dmesg:
    - add --noescape  [Karel Zak]
    - do not stop on \0  [Karel Zak]
    - fix output hex encoding  [Karel Zak]
+doc:
+   - howto-man-page.txt  Use font macros instead of font escapes  [Bjarni Ingi Gislason]
 docs:
    - Fix adjtime documentation  [Pierre Labastie]
    - add GPLv3 text  [Karel Zak]
+   - add bjd-pfq to AUTHORS (rev.c co-author)  [Karel Zak]
+   - add irqtop to TODO  [Karel Zak]
+   - add non-signalfd PTY request to TODO  [Karel Zak]
    - add sfdisk --dump and --backup improvements to TODO  [Karel Zak]
+   - add v2.35-ReleaseNotes  [Karel Zak]
    - correct su.1 runuser reference from section 8 to 1  [Sami Kerola]
    - fix mixtyped constant.  [Andrius Štikonas]
    - remove implemented TODO items  [Karel Zak]
    - try to find broken man references and fix them  [Sami Kerola]
    - update AUTHORS file  [Karel Zak]
    - update howto-tests.txt  [Karel Zak]
+   - update year in libs docs  [Karel Zak]
    - we have 2019 already  [Karel Zak]
-   - fix typo  [Sanchit Saini]
 eject:
    - use O_EXCL on default  [Karel Zak]
 fallocate:
@@ -162,6 +175,8 @@ include/xalloc:
    - ensure xstrdup() and xstrndup() returns nonnull attribute  [Sami Kerola]
    - reindent function bodies to unify indentation  [Sami Kerola]
    - use multiline function declarations  [Sami Kerola]
+isosize:
+   - move ISO size functions into a shared header  [Daniel Drake]
 kill:
    - add another ifdef  [Karel Zak]
    - add missing ifdefs  [Karel Zak]
@@ -204,19 +219,25 @@ lib/ttyutils:
 libblkid:
    - (drbd) fix comment formatting  [Karel Zak]
    - (drbd) simplify padding  [Karel Zak]
+   - (xfs) external log  check for regular xfs on more sectors  [Mauricio Faria de Oliveira]
    - (xfs) fix sector size calculation  [Karel Zak]
+   - check for medium on CDMROMs probing  [Karel Zak]
    - check number of test_blkid_save arguments correctly  [Sami Kerola]
+   - check status for the current CDROM slot  [Karel Zak]
    - do not interpret NTFS as MBR  [Karel Zak]
    - fix address sanitizer issues  [Sami Kerola]
    - fix file descriptor leak in blkid_verify()  [Karel Zak]
    - improve MD I/O size calculation [lgtm scan]  [Karel Zak]
    - improve handling of ISO files with partition tables  [Daniel Drake]
+   - improve identification of ISO9660 partition  [Daniel Drake]
    - improve vfat entries calculation [lgtm scan]  [Karel Zak]
    - open device in nonblock mode.  [Michal Suchanek]
    - remove unnecessary condition [lgtm scan]  [Karel Zak]
+   - udf  Fix reporting UDF 2.60 revision for Mac OS X disks  [Pali Rohár]
 libdisk:
    - write sample output to stdout  [Karel Zak]
 libfdisk:
+   - (MBR) use 0xEA partition type by BootLoaderSpecification  [Karel Zak]
    - (bsd) cast before ask [lgtm scan]  [Karel Zak]
    - (docs) add notes about fdisk_enable_wipe()  [Karel Zak]
    - (gpt) add GUID for APFS containers  [Ernesto A. Fernández]
@@ -259,6 +280,7 @@ libmount:
    - fix potential null pointer dereference  [Sami Kerola]
    - fix typo  [Karel Zak]
    - fix typo in mnt_context_prepare_helper() [lgtm scan]  [Karel Zak]
+   - improve X-mount.mkdir for non-root users  [Karel Zak]
    - improve mountinfo reliability  [Karel Zak]
    - make sure optsmode is initialized  [Karel Zak]
    - move context fs merge to separate function  [Karel Zak]
@@ -293,6 +315,13 @@ lscpu:
    - make code more readable [lgtm scan]  [Karel Zak]
    - prefer memcpy() to manual pointer arithmetic  [Sami Kerola]
    - top-level DMI function refactoring  [Karel Zak]
+man:
+   - improve script and scriptreplay formatting style  [Sami Kerola]
+man pages:
+   - Add a comma after "e.g." and "i.e."  [Bjarni Ingi Gislason]
+   - Change a HYPHEN-MINUS (-) to a minus (\-) for options and numbers  [Bjarni Ingi Gislason]
+   - Fix misuse of two-fonts macros  [Bjarni Ingi Gislason]
+   - Make the number of .RS/.RE equal  [Bjarni Ingi Gislason]
 misc:
    - fix typos [codespell]  [Sami Kerola]
    - replaces atexit(close_stdout) with new close_stdout_atexit()  [Karel Zak]
@@ -345,6 +374,7 @@ script:
    - fix ECHO use, improve shell exec  [Karel Zak]
    - fix man page on --logging-format  [Karel Zak]
    - fix signalfd use  [Karel Zak]
+   - fix typos [codespell]  [Sami Kerola]
    - listen to SIGUSR1, flush logs on the signal  [Karel Zak]
    - log additional information  [Karel Zak]
    - log file usage refactoring  [Karel Zak]
@@ -415,11 +445,13 @@ term-utils:
    - add header file guards [lgtm scan]  [Karel Zak]
 tests:
    - (blkid) update regression tests (due to BLOCK_SIZE)  [Karel Zak]
+   - (chfn) force to bash  [Karel Zak]
    - (col) avoid hardcoding of errno string  [Patrick Steinhardt]
    - (colcrt) fix reliance on EILSEQ in POSIX locale  [Patrick Steinhardt]
    - (colcrt) use env to set locale  [Karel Zak]
    - (column) use actually invalid multibytes to test encoding  [Patrick Steinhardt]
    - (fdisk) avoid hardcoding of errno string  [Patrick Steinhardt]
+   - (fdisk) make sure we use the same sizes for MD devices  [Karel Zak]
    - (fdisk) update padding in output  [Karel Zak]
    - (getopt) remove unwanted paths from error output  [Karel Zak]
    - (libfdisk) remove reliance on buffer behaviour of standard streams  [Patrick Steinhardt]
@@ -432,6 +464,7 @@ tests:
    - add --parsable, remove TS_OPT_parsable  [Karel Zak]
    - add missing 'ts_check_prog xz'  [Karel Zak]
    - add mount --all tests  [Karel Zak]
+   - add new test for chfn gecos  [Radka Skvarilova]
    - add remaining stderr outputs  [Karel Zak]
    - add script and scriptlive replay  [Karel Zak]
    - another prompt fix  [Karel Zak]
@@ -442,6 +475,7 @@ tests:
    - improve unbuffer check  [Karel Zak]
    - lscpu s390 nested virtualization  [Radka Skvarilova]
    - make scriptlive output more portable  [Karel Zak]
+   - mark mdadm tests as TS_KNOWN_FAIL  [Karel Zak]
    - mark scriptlive as KNOWN_FAILED  [Karel Zak]
    - remove device name from blkdiscard output  [Karel Zak]
    - remove option --posix  [Karel Zak]
@@ -456,11 +490,17 @@ tests:
    - use subtests for mountpoint(1)  [Karel Zak]
 travis:
    - don't call tests in parallel for root  [Karel Zak]
+   - fix sudo command line  [Karel Zak]
    - force non-parallel for root  [Karel Zak]
 unshare:
    - add --keep-caps option  [James Peach]
    - add --map-current-user option  [James Peach]
    - cleanup capabilities code [lgtm scan]  [Karel Zak]
+   - fix --map-current-user short option (-c)  [Matthew Harm Bekkema]
+verity:
+   - add new verity.roothashfile option  [Luca Boccassi]
+   - add support for Forward Error Correction options  [Luca Boccassi]
+   - ensure that hash_device and root_hash[_file] are passed together or not at all  [Luca Boccassi]
 wdctl:
    - add control struct  [Karel Zak]
    - default to /dev/watchdog0  [Karel Zak]
@@ -469,3 +509,5 @@ wdctl:
    - rename watch dog info struct  [Karel Zak]
 wipefs:
    - Allow explicitly enable/disablement  [Sam Voss]
+
+- Allow explicitly enable/disablement  [Sam Voss]
