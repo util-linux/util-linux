@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2020-01-06 13:22+0100\n"
+"POT-Creation-Date: 2020-01-08 10:06+0100\n"
 "PO-Revision-Date: 2019-05-30 15:48+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -8792,64 +8792,64 @@ msgstr "(використано)"
 msgid "(not mounted)"
 msgstr "(не змонтовано)"
 
-#: misc-utils/blkid.c:504
+#: misc-utils/blkid.c:504 misc-utils/blkid.c:510
 #, c-format
 msgid "error: %s"
 msgstr "помилка: %s"
 
-#: misc-utils/blkid.c:549
+#: misc-utils/blkid.c:553
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
 msgstr "%s: неоднозначний результат (ймовірно, на пристрої більше файлових систем; скористайтеся wipefs(8), щоб дізнатися більше)"
 
-#: misc-utils/blkid.c:595
+#: misc-utils/blkid.c:599
 #, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "невідоме ключове слово у аргументі -u <list>: «%s»"
 
-#: misc-utils/blkid.c:612
+#: misc-utils/blkid.c:616
 msgid "error: -u <list> argument is empty"
 msgstr "помилка: порожній аргумент -u <список>"
 
-#: misc-utils/blkid.c:761
+#: misc-utils/blkid.c:765
 #, c-format
 msgid "unsupported output format %s"
 msgstr "непідтримуваний формат виведення %s"
 
-#: misc-utils/blkid.c:764 misc-utils/wipefs.c:733
+#: misc-utils/blkid.c:768 misc-utils/wipefs.c:733
 msgid "invalid offset argument"
 msgstr "некоректний аргумент зсуву"
 
-#: misc-utils/blkid.c:771
+#: misc-utils/blkid.c:775
 msgid "Too many tags specified"
 msgstr "Вказано забагато міток"
 
-#: misc-utils/blkid.c:777
+#: misc-utils/blkid.c:781
 msgid "invalid size argument"
 msgstr "некоректний аргумент розміру"
 
-#: misc-utils/blkid.c:781
+#: misc-utils/blkid.c:785
 msgid "Can only search for one NAME=value pair"
 msgstr "Можна шукати лише для однієї пари НАЗВА=значення"
 
-#: misc-utils/blkid.c:788
+#: misc-utils/blkid.c:792
 msgid "-t needs NAME=value pair"
 msgstr "-t потребує пари НАЗВА=значення"
 
-#: misc-utils/blkid.c:794
+#: misc-utils/blkid.c:798
 #, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s з %s  (libblkid %s, %s)\n"
 
-#: misc-utils/blkid.c:840
+#: misc-utils/blkid.c:844
 msgid "The low-level probing mode does not support 'list' output format"
 msgstr "У низькорівневому режимі зондування не передбачено підтримки формату виведення «list»"
 
-#: misc-utils/blkid.c:853
+#: misc-utils/blkid.c:857
 msgid "The low-level probing mode requires a device"
 msgstr "Для режиму низькорівневого зондування слід вказати пристрій"
 
-#: misc-utils/blkid.c:903
+#: misc-utils/blkid.c:907
 msgid "The lookup option requires a search type specified using -t"
 msgstr "Параметр пошуку потребує визначення типу пошуку за допомогою -t"
 

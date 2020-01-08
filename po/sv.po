@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2020-01-06 13:22+0100\n"
+"POT-Creation-Date: 2020-01-08 10:06+0100\n"
 "PO-Revision-Date: 2019-06-05 16:38+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -8768,64 +8768,64 @@ msgstr "(används)"
 msgid "(not mounted)"
 msgstr "(inte monterad)"
 
-#: misc-utils/blkid.c:504
+#: misc-utils/blkid.c:504 misc-utils/blkid.c:510
 #, c-format
 msgid "error: %s"
 msgstr "fel: %s"
 
-#: misc-utils/blkid.c:549
+#: misc-utils/blkid.c:553
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
 msgstr "%s: tvetydigt resultat (troligtvis flera filsystem på enheten, använd wipefs(8) för att se ytterligare detaljer)"
 
-#: misc-utils/blkid.c:595
+#: misc-utils/blkid.c:599
 #, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "okänt nyckelord i -u <lista>-argument: ”%s”"
 
-#: misc-utils/blkid.c:612
+#: misc-utils/blkid.c:616
 msgid "error: -u <list> argument is empty"
 msgstr "fel: -u <lista> argumentet är tomt"
 
-#: misc-utils/blkid.c:761
+#: misc-utils/blkid.c:765
 #, c-format
 msgid "unsupported output format %s"
 msgstr "utmatningsformat %s stöds inte"
 
-#: misc-utils/blkid.c:764 misc-utils/wipefs.c:733
+#: misc-utils/blkid.c:768 misc-utils/wipefs.c:733
 msgid "invalid offset argument"
 msgstr "ogiltigt positionsargument"
 
-#: misc-utils/blkid.c:771
+#: misc-utils/blkid.c:775
 msgid "Too many tags specified"
 msgstr "För många taggar angavs"
 
-#: misc-utils/blkid.c:777
+#: misc-utils/blkid.c:781
 msgid "invalid size argument"
 msgstr "ogiltigt storleksargument"
 
-#: misc-utils/blkid.c:781
+#: misc-utils/blkid.c:785
 msgid "Can only search for one NAME=value pair"
 msgstr "Kan endast söka efter ett NAMN=värde-par"
 
-#: misc-utils/blkid.c:788
+#: misc-utils/blkid.c:792
 msgid "-t needs NAME=value pair"
 msgstr "-t kräver NAMN=värde-par"
 
-#: misc-utils/blkid.c:794
+#: misc-utils/blkid.c:798
 #, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s från %s  (libblkid %s, %s)\n"
 
-#: misc-utils/blkid.c:840
+#: misc-utils/blkid.c:844
 msgid "The low-level probing mode does not support 'list' output format"
 msgstr "Lågnivåavsökningsläget har inte stöd för utmatningsformatet ”list”"
 
-#: misc-utils/blkid.c:853
+#: misc-utils/blkid.c:857
 msgid "The low-level probing mode requires a device"
 msgstr "Lågnivåavsökningsläget kräver en enhet"
 
-#: misc-utils/blkid.c:903
+#: misc-utils/blkid.c:907
 msgid "The lookup option requires a search type specified using -t"
 msgstr "Uppslagsflaggan kräver att en söktyp anges med -t"
 

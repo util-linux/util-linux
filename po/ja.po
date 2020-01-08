@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2020-01-06 13:22+0100\n"
+"POT-Creation-Date: 2020-01-08 10:06+0100\n"
 "PO-Revision-Date: 2019-08-24 14:35+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -8809,64 +8809,64 @@ msgstr "(使用中)"
 msgid "(not mounted)"
 msgstr "(マウントされていません)"
 
-#: misc-utils/blkid.c:504
+#: misc-utils/blkid.c:504 misc-utils/blkid.c:510
 #, c-format
 msgid "error: %s"
 msgstr "エラー: %s"
 
-#: misc-utils/blkid.c:549
+#: misc-utils/blkid.c:553
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
 msgstr ""
 
-#: misc-utils/blkid.c:595
+#: misc-utils/blkid.c:599
 #, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "-u <リスト> の引数に不明なキーワードがあります: '%s'"
 
-#: misc-utils/blkid.c:612
+#: misc-utils/blkid.c:616
 msgid "error: -u <list> argument is empty"
 msgstr "エラー: -u <リスト> の引数が空です"
 
-#: misc-utils/blkid.c:761
+#: misc-utils/blkid.c:765
 #, c-format
 msgid "unsupported output format %s"
 msgstr "未対応のオプション形式です %s"
 
-#: misc-utils/blkid.c:764 misc-utils/wipefs.c:733
+#: misc-utils/blkid.c:768 misc-utils/wipefs.c:733
 msgid "invalid offset argument"
 msgstr "オフセット値が間違っています"
 
-#: misc-utils/blkid.c:771
+#: misc-utils/blkid.c:775
 msgid "Too many tags specified"
 msgstr "指定されたタグが多すぎます"
 
-#: misc-utils/blkid.c:777
+#: misc-utils/blkid.c:781
 msgid "invalid size argument"
 msgstr "サイズ引数が間違っています"
 
-#: misc-utils/blkid.c:781
+#: misc-utils/blkid.c:785
 msgid "Can only search for one NAME=value pair"
 msgstr "NAME=value の1ペアのみ検索できます"
 
-#: misc-utils/blkid.c:788
+#: misc-utils/blkid.c:792
 msgid "-t needs NAME=value pair"
 msgstr "-t には NAME=value の組が必要です"
 
-#: misc-utils/blkid.c:794
+#: misc-utils/blkid.c:798
 #, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s (パッケージ %s)  (libblkid %s, %s)\n"
 
-#: misc-utils/blkid.c:840
+#: misc-utils/blkid.c:844
 msgid "The low-level probing mode does not support 'list' output format"
 msgstr ""
 
-#: misc-utils/blkid.c:853
+#: misc-utils/blkid.c:857
 msgid "The low-level probing mode requires a device"
 msgstr ""
 
-#: misc-utils/blkid.c:903
+#: misc-utils/blkid.c:907
 msgid "The lookup option requires a search type specified using -t"
 msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2020-01-06 13:22+0100\n"
+"POT-Creation-Date: 2020-01-08 10:06+0100\n"
 "PO-Revision-Date: 2019-05-30 20:15+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -8782,64 +8782,64 @@ msgstr "(w użyciu)"
 msgid "(not mounted)"
 msgstr "(nie zamontowany)"
 
-#: misc-utils/blkid.c:504
+#: misc-utils/blkid.c:504 misc-utils/blkid.c:510
 #, c-format
 msgid "error: %s"
 msgstr "błąd: %s"
 
-#: misc-utils/blkid.c:549
+#: misc-utils/blkid.c:553
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
 msgstr "%s: niejednoznaczny wynik (prawdopodobnie więcej systemów plików na urządzeniu; więcej informacji w wipefs(8))"
 
-#: misc-utils/blkid.c:595
+#: misc-utils/blkid.c:599
 #, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "nieznane słowo kluczowe w argumencie -u <lista>: '%s'"
 
-#: misc-utils/blkid.c:612
+#: misc-utils/blkid.c:616
 msgid "error: -u <list> argument is empty"
 msgstr "błąd: pusty argument -u <lista>"
 
-#: misc-utils/blkid.c:761
+#: misc-utils/blkid.c:765
 #, c-format
 msgid "unsupported output format %s"
 msgstr "nie obsługiwany format wyjścia %s"
 
-#: misc-utils/blkid.c:764 misc-utils/wipefs.c:733
+#: misc-utils/blkid.c:768 misc-utils/wipefs.c:733
 msgid "invalid offset argument"
 msgstr "błędna wartość offsetu"
 
-#: misc-utils/blkid.c:771
+#: misc-utils/blkid.c:775
 msgid "Too many tags specified"
 msgstr "Podano zbyt dużo znaczników"
 
-#: misc-utils/blkid.c:777
+#: misc-utils/blkid.c:781
 msgid "invalid size argument"
 msgstr "błędna wartość rozmiaru"
 
-#: misc-utils/blkid.c:781
+#: misc-utils/blkid.c:785
 msgid "Can only search for one NAME=value pair"
 msgstr "Można szukać tylko jednej pary NAZWA=wartość"
 
-#: misc-utils/blkid.c:788
+#: misc-utils/blkid.c:792
 msgid "-t needs NAME=value pair"
 msgstr "-t wymaga pary NAZWA=wartość"
 
-#: misc-utils/blkid.c:794
+#: misc-utils/blkid.c:798
 #, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s z pakietu %s (libblkid %s, %s)\n"
 
-#: misc-utils/blkid.c:840
+#: misc-utils/blkid.c:844
 msgid "The low-level probing mode does not support 'list' output format"
 msgstr "Niskopoziomowy tryb sprawdzania nie obsługuje formatu wyjścia 'list'"
 
-#: misc-utils/blkid.c:853
+#: misc-utils/blkid.c:857
 msgid "The low-level probing mode requires a device"
 msgstr "Niskopoziomowy tryb sprawdzania wymaga urządzenia"
 
-#: misc-utils/blkid.c:903
+#: misc-utils/blkid.c:907
 msgid "The lookup option requires a search type specified using -t"
 msgstr "Opcja wyszukiwania wymaga określenia typu wyszukiwania przy użyciu -t"
 
