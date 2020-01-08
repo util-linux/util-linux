@@ -54,7 +54,7 @@ usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -t, --timing <file>     script timing log file\n"), out);
-	fputs(_(" -T, --log-timing <file> aliast to -t\n"), out);
+	fputs(_(" -T, --log-timing <file> alias to -t\n"), out);
 	fputs(_(" -I, --log-in <file>     script stdin log file\n"), out);
 	fputs(_(" -O, --log-out <file>    script stdout log file (default)\n"), out);
 	fputs(_(" -B, --log-io <file>     script stdin and stdout log file\n"), out);
