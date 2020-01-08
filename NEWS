@@ -1,4 +1,8 @@
-util-linux 2.35: Dec 11 2019
+util-linux 2.35-rc2: Jan 8 2020
+* see Documentation/releases/v2.35-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.35/v2.35-rc2-ChangeLog
+
+util-linux 2.35-rc1: Dec 11 2019
 * see Documentation/releases/v2.35-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.35/v2.35-rc1-ChangeLog
 
