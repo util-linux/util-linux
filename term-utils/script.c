@@ -860,7 +860,7 @@ int main(int argc, char **argv)
 			else if (strcasecmp(optarg, "advanced") == 0)
 				format = SCRIPT_FMT_TIMING_MULTI;
 			else
-				errx(EXIT_FAILURE, _("unssuported logging format: '%s'"), optarg);
+				errx(EXIT_FAILURE, _("unsupported logging format: '%s'"), optarg);
 			break;
 		case 't':
 			if (optarg && *optarg == '=')
