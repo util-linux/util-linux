@@ -946,7 +946,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	    ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0) {
 
 # ifdef CDROM_DRIVE_STATUS
-		switch (ioctl(fd, CDROM_DRIVE_STATUS, 0)) {
+		switch (ioctl(fd, CDROM_DRIVE_STATUS, CDSL_CURRENT)) {
 		case CDS_TRAY_OPEN:
 		case CDS_NO_DISC:
 			errno = ENOMEDIUM;
