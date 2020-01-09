@@ -317,7 +317,7 @@ util-linux 2.13-pre4
 
 util-linux 2.13-pre3
 
-* misc buld system fixes
+* misc build system fixes
 * cfdisk: fix a segfault with ReiserFS partitions
 * umount: disallow -r option for non-root users
 * updated translations: da, fr, it, nl, ru, sl, tr

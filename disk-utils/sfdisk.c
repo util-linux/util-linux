@@ -113,7 +113,7 @@ struct sfdisk {
 		     append : 1,	/* don't create new PT, append partitions only */
 		     json : 1,		/* JSON dump */
 		     movedata: 1,	/* move data after resize */
-		     movefsync: 1, /* use fsync() afetr each write() */
+		     movefsync: 1,	/* use fsync() after each write() */
 		     notell : 1,	/* don't tell kernel aout new PT */
 		     noact  : 1;	/* do not write to device */
 };

@@ -3116,7 +3116,7 @@ struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmn
 		return old;
 
 #ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
-	/* remember the curremt cache */
+	/* remember the current cache */
 	if (old->cache != cxt->cache) {
 		mnt_unref_cache(old->cache);
 		old->cache = cxt->cache;
