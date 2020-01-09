@@ -204,6 +204,8 @@ static int lock_simplelock(struct libmnt_lock *ml)
 {
 	const char *lfile;
 	int rc;
+	struct stat sb;
+	const mode_t lock_mask = S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH;
 
 	assert(ml);
 	assert(ml->simplelock);
@@ -225,10 +227,19 @@ static int lock_simplelock(struct libmnt_lock *ml)
 		rc = -errno;
 		goto err;
 	}
-	rc = fchmod(ml->lockfile_fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+
+	rc = fstat(ml->lockfile_fd, &sb);
 	if (rc < 0) {
 		rc = -errno;
 		goto err;
+	}
+
+	if ((sb.st_mode & lock_mask) != lock_mask) {
+		rc = fchmod(ml->lockfile_fd, lock_mask);
+		if (rc < 0) {
+			rc = -errno;
+			goto err;
+		}
 	}
 
 	while (flock(ml->lockfile_fd, LOCK_EX) < 0) {
