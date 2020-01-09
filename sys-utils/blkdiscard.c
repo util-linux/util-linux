@@ -88,6 +88,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Discard the content of sectors on a device.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -f, --force         disable all checking\n"), out);
 	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"), out);
 	fputs(_(" -l, --length <num>  length of bytes to discard from the offset\n"), out);
 	fputs(_(" -p, --step <num>    size of the discard iterations within the offset\n"), out);
@@ -106,7 +107,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	char *path;
-	int c, fd, verbose = 0, secsize;
+	int c, fd, verbose = 0, secsize, force = 0;
 	uint64_t end, blksize, step, range[2], stats[2];
 	struct stat sb;
 	struct timeval now, last;
@@ -116,6 +117,7 @@ int main(int argc, char **argv)
 	    { "help",      no_argument,       NULL, 'h' },
 	    { "version",   no_argument,       NULL, 'V' },
 	    { "offset",    required_argument, NULL, 'o' },
+	    { "force",     no_argument,       NULL, 'f' },
 	    { "length",    required_argument, NULL, 'l' },
 	    { "step",      required_argument, NULL, 'p' },
 	    { "secure",    no_argument,       NULL, 's' },
@@ -133,8 +135,11 @@ int main(int argc, char **argv)
 	range[1] = ULLONG_MAX;
 	step = 0;
 
-	while ((c = getopt_long(argc, argv, "hVsvo:l:p:z", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hfVsvo:l:p:z", longopts, NULL)) != -1) {
 		switch(c) {
+		case 'f':
+			force = 1;
+			break;
 		case 'l':
 			range[1] = strtosize_or_err(optarg,
 					_("failed to parse length"));
@@ -176,7 +181,7 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	fd = open(path, O_WRONLY);
+	fd = open(path, O_WRONLY | (force ? 0 : O_EXCL));
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 
