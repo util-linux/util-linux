@@ -278,6 +278,12 @@ static int probe_zfs(blkid_probe pr,
 			break;
 		}
 
+		if ((S_ISREG(pr->mode) || blkid_probe_is_wholedisk(pr)) &&
+		    blkid_probe_is_covered_by_pt(pr,  offset, VDEV_LABEL_SIZE))
+			/* ignore this area, it's within any partition and
+			 * we are working with whole-disk now */
+			continue;
+
 		label = blkid_probe_get_buffer(pr, offset, VDEV_LABEL_SIZE);
 		if (label == NULL)
 			return errno ? -errno : 1;
