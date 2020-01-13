@@ -1,6 +1,9 @@
 /*
  * Please, don't add this file to libcommon because clock_gettime() requires
  * -lrt on systems with old libc.
+ *
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
  */
 #include <time.h>
 #include <signal.h>

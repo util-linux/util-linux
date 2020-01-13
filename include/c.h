@@ -1,7 +1,9 @@
 /*
  * Fundamental C definitions.
+ *
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
  */
-
 #ifndef UTIL_LINUX_C_H
 #define UTIL_LINUX_C_H
 
