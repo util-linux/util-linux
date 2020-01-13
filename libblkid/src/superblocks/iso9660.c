@@ -13,7 +13,6 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdint.h>
@@ -166,37 +165,6 @@ static int is_str_empty(const unsigned char *str, size_t len)
 	return 1;
 }
 
-/*
- * The ISO format specifically avoids the first 32kb to allow for a
- * partition table to be added, if desired.
- * When an ISO contains a partition table, the usual thing to do is to
- * have a partition that points at the iso filesystem. In such case,
- * we want to only probe the iso metadata for the corresponding partition
- * device, avoiding returning the metadata for the parent block device.
- */
-static bool isofs_belongs_to_device(blkid_probe pr)
-{
-	dev_t devno;
-	blkid_partlist ls;
-
-	/* Get device number, but if that fails, assume we aren't dealing
-	 * with partitions, and continue probing. */
-	devno = blkid_probe_get_devno(pr);
-	if (!devno)
-		return true;
-
-	/* Get partition table, but if that fails, assume we aren't dealing
-	 * with partitions, and continue probing. */
-	ls = blkid_probe_get_partitions(pr);
-	if (!ls)
-		return true;
-
-	/* Check that the device we're working with corresponds to an
-	 * entry in the partition table. If so, this is the correct
-	 * device to return the iso metadata on. */
-	return blkid_partlist_devno_to_partition(ls, devno) != NULL;
-}
-
 /* iso9660 [+ Microsoft Joliet Extension] */
 static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -211,11 +179,6 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	iso = blkid_probe_get_sb(pr, mag, struct iso_volume_descriptor);
 	if (!iso)
 		return errno ? -errno : 1;
-
-	/* Check if the iso metadata should be returned on a different device
-	 * instead of this one. */
-	if (!isofs_belongs_to_device(pr))
-		return 1;
 
 	memcpy(label, iso->volume_id, sizeof(label));
 
