@@ -1,7 +1,6 @@
 /*
- * Vaguely based on
- *	@(#)pathnames.h	5.3 (Berkeley) 5/9/89
- * This code is in the public domain.
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
  */
 #ifndef PATHNAMES_H
 #define PATHNAMES_H
@@ -63,6 +62,10 @@
 #define _PATH_GROUP		"/etc/group"
 #define _PATH_SHADOW_PASSWD	"/etc/shadow"
 #define _PATH_SHELLS		"/etc/shells"
+
+#ifndef _PATH_TMP
+# define _PATH_TMP		"/tmp/"
+#endif
 
 #ifndef _PATH_BTMP
 # define _PATH_BTMP		"/var/log/btmp"

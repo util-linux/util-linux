@@ -18,6 +18,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "bitops.h"
+#include "pathnames.h"
 
 static int STRTOXX_EXIT_CODE = EXIT_FAILURE;
 
@@ -1013,6 +1014,7 @@ int skip_fline(FILE *fp)
 }
 
 #ifdef TEST_PROGRAM_STRUTILS
+#include <stdio.h>
 
 static int test_strutils_sizes(int argc, char *argv[])
 {
