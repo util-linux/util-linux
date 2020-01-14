@@ -220,7 +220,7 @@ struct fdisk_label_operations {
 	/* get details from label */
 	int (*get_item)(struct fdisk_context *cxt, struct fdisk_labelitem *item);
 	/* set disk label ID */
-	int (*set_id)(struct fdisk_context *cxt);
+	int (*set_id)(struct fdisk_context *cxt, const char *str);
 
 
 	/* new partition */

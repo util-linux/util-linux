@@ -707,12 +707,12 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-static int dos_set_disklabel_id(struct fdisk_context *cxt)
+static int dos_set_disklabel_id(struct fdisk_context *cxt, const char *str)
 {
-	char *end = NULL, *str = NULL;
+	char *str0 = str;
 	unsigned int id, old;
 	struct fdisk_dos_label *l;
-	int rc;
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -722,18 +722,25 @@ static int dos_set_disklabel_id(struct fdisk_context *cxt)
 
 	l = self_label(cxt);
 	old = mbr_get_id(cxt->firstsector);
-	rc = fdisk_ask_string(cxt,
-			_("Enter the new disk identifier"), &str);
-	if (rc)
-		return rc;
 
-	errno = 0;
-	id = strtoul(str, &end, 0);
-	if (errno || str == end || (end && *end)) {
-		fdisk_warnx(cxt, _("Incorrect value."));
-		return -EINVAL;
+	if (!str)
+		rc = fdisk_ask_string(cxt,
+			_("Enter the new disk identifier"), &str);
+	if (!rc) {
+		char *end = NULL;
+
+		errno = 0;
+		id = strtoul(str, &end, 0);
+		if (errno || str == end || (end && *end)) {
+			fdisk_warnx(cxt, _("Incorrect value."));
+			rc = -EINVAL;
+		}
 	}
 
+	if (!str0)
+		free(str);
+	if (rc)
+		return -EINVAL;
 
 	mbr_set_id(cxt->firstsector, id);
 	l->non_pt_changed = 1;

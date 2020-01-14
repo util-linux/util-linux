@@ -81,6 +81,7 @@ fdisk_list_disklabel
 fdisk_locate_disklabel
 fdisk_reorder_partitions
 fdisk_set_disklabel_id
+fdisk_set_disklabel_id_from_string
 fdisk_set_partition_type
 fdisk_toggle_partition_flag
 fdisk_verify_disklabel

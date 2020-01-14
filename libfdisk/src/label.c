@@ -481,7 +481,24 @@ int fdisk_set_disklabel_id(struct fdisk_context *cxt)
 		return -ENOSYS;
 
 	DBG(CXT, ul_debugobj(cxt, "setting %s disk ID", cxt->label->name));
-	return cxt->label->op->set_id(cxt);
+	return cxt->label->op->set_id(cxt, NULL);
+}
+
+/**
+ * fdisk_set_disklabel_id_from_string
+ * @cxt: fdisk context
+ *
+ * Returns: 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_set_disklabel_id_from_string(struct fdisk_context *cxt, const char *str)
+{
+	if (!cxt || !cxt->label || !str)
+		return -EINVAL;
+	if (!cxt->label->op->set_id)
+		return -ENOSYS;
+
+	DBG(CXT, ul_debugobj(cxt, "setting %s disk ID from '%s'", cxt->label->name, str));
+	return cxt->label->op->set_id(cxt, str);
 }
 
 /**

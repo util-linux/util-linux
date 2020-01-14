@@ -2502,11 +2502,11 @@ done:
 	return rc;
 }
 
-static int gpt_set_disklabel_id(struct fdisk_context *cxt)
+static int gpt_set_disklabel_id(struct fdisk_context *cxt, const char *str)
 {
 	struct fdisk_gpt_label *gpt;
 	struct gpt_guid uuid;
-	char *str, *old, *new;
+	char *old, *new;
 	int rc;
 
 	assert(cxt);
@@ -2514,12 +2514,14 @@ static int gpt_set_disklabel_id(struct fdisk_context *cxt)
 	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
-	if (fdisk_ask_string(cxt,
-			_("Enter new disk UUID (in 8-4-4-4-12 format)"), &str))
-		return -EINVAL;
-
-	rc = string_to_guid(str, &uuid);
-	free(str);
+	if (!str) {
+		if (fdisk_ask_string(cxt,
+				_("Enter new disk UUID (in 8-4-4-4-12 format)"), &str))
+			return -EINVAL;
+		rc = string_to_guid(str, &uuid);
+		free(str);
+	} else
+		rc = string_to_guid(str, &uuid);
 
 	if (rc) {
 		fdisk_warnx(cxt, _("Failed to parse your UUID."));
