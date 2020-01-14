@@ -152,6 +152,11 @@ or a GUID for GPT.  For backward compatibility the options \fB\-c\fR and
 Change the GPT partition UUID.  If \fIuuid\fR is not specified,
 then print the current partition UUID.
 .TP
+.BR "\-\-disk\-id \fIdevice " [ \fIid ]
+Change the disk identifier.  If \fIid\fR is not specified,
+then print the current identifier.  The identifier is UUID for GPT
+or unsigned integer for MBR.
+.TP
 .BR \-r , " \-\-reorder " \fIdevice
 Renumber the partitions, ordering them by their start offset.
 .TP
