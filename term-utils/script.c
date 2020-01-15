@@ -865,11 +865,7 @@ int main(int argc, char **argv)
 		case 't':
 			if (optarg && *optarg == '=')
 				optarg++;
-			log_associate(&ctl, &ctl.out,
-				optarg ? optarg : "/dev/stderr",
-				SCRIPT_FMT_TIMING_SIMPLE);
-			/* used for message only */
-			timingfile = optarg ? optarg : "stderr";
+			timingfile = optarg ? optarg : "/dev/stderr";
 			break;
 		case 'T' :
 			timingfile = optarg;
