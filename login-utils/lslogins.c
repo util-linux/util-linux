@@ -740,12 +740,20 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			}
 			break;
 		case COL_LAST_TTY:
-			if (user_wtmp)
-				user->last_tty = xstrdup(user_wtmp->ut_line);
+			if (user_wtmp) {
+				user->last_tty = xmalloc(sizeof(user_wtmp->ut_line) + 1);
+				mem2strcpy(user->last_tty, user_wtmp->ut_line,
+						sizeof(user_wtmp->ut_line),
+						sizeof(user_wtmp->ut_line) + 1);;
+			}
 			break;
 		case COL_LAST_HOSTNAME:
-			if (user_wtmp)
-				user->last_hostname = xstrdup(user_wtmp->ut_host);
+			if (user_wtmp) {
+				user->last_hostname = xmalloc(sizeof(user_wtmp->ut_host) + 1);
+				mem2strcpy(user->last_hostname, user_wtmp->ut_host,
+						sizeof(user_wtmp->ut_host),
+						sizeof(user_wtmp->ut_host) + 1);;
+			}
 			break;
 		case COL_FAILED_LOGIN:
 			if (user_btmp) {
@@ -754,8 +762,12 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			}
 			break;
 		case COL_FAILED_TTY:
-			if (user_btmp)
-				user->failed_tty = xstrdup(user_btmp->ut_line);
+			if (user_btmp) {
+				user->failed_tty = xmalloc(sizeof(user_btmp->ut_line) + 1);
+				mem2strcpy(user->failed_tty, user_btmp->ut_line,
+						sizeof(user_btmp->ut_line),
+						sizeof(user_btmp->ut_line) + 1);;
+			}
 			break;
 		case COL_HUSH_STATUS:
 			user->hushed = get_hushlogin_status(pwd, 0);
