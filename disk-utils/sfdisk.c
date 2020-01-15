@@ -1732,8 +1732,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	else
 		label = "dos";	/* just for backward compatibility */
 
-	fdisk_script_set_header(dp, "label", label);
-
+	if (fdisk_script_set_header(dp, "label", label) != 0)
+		errx(EXIT_FAILURE, _("failed to set script header"));
 
 	if (!sf->quiet && sf->interactive) {
 		if (!fdisk_has_label(sf->cxt) && !sf->label)
