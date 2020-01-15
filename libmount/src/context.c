@@ -2684,8 +2684,8 @@ int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, char *fmt, .
 	/* we need to support "%m" */
 	errno = rc < 0 ? -rc : rc;
 
-	if (buf)
-		vsnprintf(buf, bufsz, fmt, va);
+	if (buf && bufsz && vsnprintf(buf, bufsz, fmt, va) < 0)
+		*buf = '\0';
 
 	switch (errno) {
 	case EINVAL:
