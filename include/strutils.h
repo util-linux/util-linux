@@ -93,7 +93,9 @@ static inline char *mem2strcpy(char *dest, const void *src, size_t n, size_t nma
 	return dest;
 }
 
-/* Reallocate @str according to @newstr and copy @newstr to @str; returns new @str */
+/* Reallocate @str according to @newstr and copy @newstr to @str; returns new @str.
+ * The @str is not modified if reallocation failed (like classic realloc()).
+ */
 static inline char * __attribute__((warn_unused_result))
 strrealloc(char *str, const char *newstr)
 {
@@ -101,27 +103,17 @@ strrealloc(char *str, const char *newstr)
 
 	if (!str)
 		return newstr ? strdup(newstr) : NULL;
-	if (!newstr) {
-		free(str);
-		goto nothing;
-	}
+	if (!newstr)
+		return NULL;
 
 	osz = strlen(str);
 	nsz = strlen(newstr);
 
-	if (nsz > osz) {
-		char *tmp = realloc(str, nsz + 1);
-		if (!tmp)
-			goto nothing;
-		str = tmp;
-	}
-
-	memcpy(str, newstr, nsz + 1);
+	if (nsz > osz)
+		str = realloc(str, nsz + 1);
+	if (str)
+		memcpy(str, newstr, nsz + 1);
 	return str;
-
-nothing:
-	free(str);
-	return NULL;
 }
 
 /* Copy string @str to struct @stru to member addressed by @offset */
