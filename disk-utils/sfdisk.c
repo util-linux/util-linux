@@ -1865,7 +1865,6 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	    && fdisk_script_get_header(dp, "label")) {
 
 		int xrc = fdisk_apply_script_headers(sf->cxt, dp);
-		created = !xrc;
 		if (xrc) {
 			fdisk_warnx(sf->cxt, _(
 				  "Failed to apply script headers, "
