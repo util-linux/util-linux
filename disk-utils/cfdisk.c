@@ -1266,7 +1266,10 @@ static char *get_mountpoint(struct cfdisk *cf, const char *tagname, const char *
 			cf->fstab = mnt_new_table();
 			if (cf->fstab) {
 				mnt_table_set_cache(cf->fstab, cf->mntcache);
-				mnt_table_parse_fstab(cf->fstab, NULL);
+				if (mnt_table_parse_fstab(cf->fstab, NULL) != 0) {
+					mnt_unref_table(cf->fstab);
+					cf->fstab = NULL;
+				}
 			}
 		}
 		if (cf->fstab)
