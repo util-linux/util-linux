@@ -362,9 +362,13 @@ static inline size_t gpt_get_nentries(struct fdisk_gpt_label *gpt)
 	return (size_t) le32_to_cpu(gpt->pheader->npartition_entries);
 }
 
-static inline int gpt_calculate_sizeof_ents(struct gpt_header *hdr, uint32_t nents, size_t *sz)
+/* calculate size of entries array in bytes for specified nuber of entries */
+static inline int gpt_calculate_sizeof_entries(
+				struct gpt_header *hdr,
+				uint32_t nents,	size_t *sz)
 {
-	uint32_t esz = le32_to_cpu(hdr->sizeof_partition_entry);
+	uint32_t esz = hdr ? le32_to_cpu(hdr->sizeof_partition_entry) :
+			     sizeof(struct gpt_entry);
 
 	if (nents == 0 || esz == 0 || SIZE_MAX/esz < nents) {
 		DBG(LABEL, ul_debug("GPT entreis array size check failed"));
@@ -375,11 +379,68 @@ static inline int gpt_calculate_sizeof_ents(struct gpt_header *hdr, uint32_t nen
 	return 0;
 }
 
-static inline int gpt_sizeof_ents(struct gpt_header *hdr, size_t *sz)
+/* calculate size of entries array in sectors for specified nuber of entries */
+static inline int gpt_calculate_sectorsof_entries(
+				struct gpt_header *hdr,
+				uint32_t nents, uint64_t *sz,
+				struct fdisk_context *cxt)
 {
-	return gpt_calculate_sizeof_ents(hdr, le32_to_cpu(hdr->npartition_entries), sz);
+	size_t esz;
+	int rc = gpt_calculate_sizeof_entries(hdr, nents, &esz);	/* in bytes */
+
+	if (rc == 0)
+		*sz = (esz + cxt->sector_size - 1) / cxt->sector_size;
+	return rc;
 }
 
+/* calculate alternative (backup) entries array offset from primary header */
+static inline int gpt_calculate_alternative_entries_lba(
+				struct gpt_header *hdr,
+				uint32_t nents,
+				uint64_t *sz,
+				struct fdisk_context *cxt)
+{
+	uint64_t esects;
+	int rc = gpt_calculate_sectorsof_entries(hdr, nents, &esects, cxt);
+
+	if (rc == 0)
+		*sz = cxt->total_sectors - 1ULL - esects;
+	return rc;
+}
+
+static inline int gpt_calculate_last_lba(
+				struct gpt_header *hdr,
+				uint32_t nents,
+				uint64_t *sz,
+				struct fdisk_context *cxt)
+{
+	uint64_t esects;
+	int rc = gpt_calculate_sectorsof_entries(hdr, nents, &esects, cxt);
+
+	if (rc == 0)
+		*sz = cxt->total_sectors - 2ULL - esects;
+	return rc;
+}
+
+static inline int gpt_calculate_first_lba(
+				struct gpt_header *hdr,
+				uint32_t nents,
+				uint64_t *sz,
+				struct fdisk_context *cxt)
+{
+	uint64_t esects;
+	int rc = gpt_calculate_sectorsof_entries(hdr, nents, &esects, cxt);
+
+	if (rc == 0)
+		*sz = esects + 2ULL;
+	return rc;
+}
+
+/* the current size of entries array in bytes */
+static inline int gpt_sizeof_entries(struct gpt_header *hdr, size_t *sz)
+{
+	return gpt_calculate_sizeof_entries(hdr, le32_to_cpu(hdr->npartition_entries), sz);
+}
 
 static char *gpt_get_header_id(struct gpt_header *header)
 {
@@ -426,11 +487,13 @@ static int gpt_mknew_pmbr(struct fdisk_context *cxt)
 	return 0;
 }
 
+
 /* Move backup header to the end of the device */
 static void gpt_fix_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_label *gpt)
 {
 	struct gpt_header *p, *b;
-	uint64_t esz, esects, last;
+	uint64_t x = 0;
+	size_t nents;
 
 	if (!cxt)
 		return;
@@ -438,9 +501,7 @@ static void gpt_fix_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_
 	p = gpt->pheader;	/* primary */
 	b = gpt->bheader;	/* backup */
 
-	/* count size of partitions array */
-	esz = (uint64_t) le32_to_cpu(p->npartition_entries) * sizeof(struct gpt_entry);
-	esects = (esz + cxt->sector_size - 1) / cxt->sector_size;
+	nents = le32_to_cpu(p->npartition_entries);
 
 	/* reference from primary to backup */
 	p->alternative_lba = cpu_to_le64(cxt->total_sectors - 1ULL);
@@ -450,12 +511,13 @@ static void gpt_fix_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_
 	b->my_lba = p->alternative_lba;
 
 	/* fix backup partitions array address */
-	b->partition_entry_lba = cpu_to_le64(cxt->total_sectors - 1ULL - esects);
+	gpt_calculate_alternative_entries_lba(p, nents, &x, cxt);
+	b->partition_entry_lba = cpu_to_le64(x);
 
 	/* update last usable LBA */
-	last = cxt->total_sectors - 2ULL - esects;
-	p->last_usable_lba  = cpu_to_le64(last);
-	b->last_usable_lba  = cpu_to_le64(last);
+	gpt_calculate_last_lba(p, nents, &x, cxt);
+	p->last_usable_lba  = cpu_to_le64(x);
+	b->last_usable_lba  = cpu_to_le64(x);
 
 	DBG(LABEL, ul_debug("Alternative-LBA updated to: %"PRIu64, le64_to_cpu(p->alternative_lba)));
 }
@@ -469,16 +531,19 @@ static void gpt_mknew_header_common(struct fdisk_context *cxt,
 
 	header->my_lba = cpu_to_le64(lba);
 
-	if (lba == GPT_PRIMARY_PARTITION_TABLE_LBA) { /* primary */
+	if (lba == GPT_PRIMARY_PARTITION_TABLE_LBA) {
+		/* primary */
 		header->alternative_lba = cpu_to_le64(cxt->total_sectors - 1ULL);
 		header->partition_entry_lba = cpu_to_le64(2ULL);
-	} else { /* backup */
-		uint64_t esz = (uint64_t) le32_to_cpu(header->npartition_entries)
-							* sizeof(struct gpt_entry);
-		uint64_t esects = (esz + cxt->sector_size - 1) / cxt->sector_size;
+
+	} else {
+		/* backup */
+		uint64_t x = 0;
+		gpt_calculate_alternative_entries_lba(header,
+				le32_to_cpu(header->npartition_entries), &x, cxt);
 
 		header->alternative_lba = cpu_to_le64(GPT_PRIMARY_PARTITION_TABLE_LBA);
-		header->partition_entry_lba = cpu_to_le64(cxt->total_sectors - 1ULL - esects);
+		header->partition_entry_lba = cpu_to_le64(x);
 	}
 }
 
@@ -586,8 +651,6 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 	int rc = 0;
 	uint64_t flba, llba;
 
-	uint64_t esz = 0;
-
 	assert(cxt);
 	assert(first);
 	assert(last);
@@ -595,9 +658,8 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 	*first = *last = 0;
 
 	/* UEFI default */
-	esz = sizeof(struct gpt_entry) * GPT_NPARTITIONS / cxt->sector_size;
-	llba = cxt->total_sectors - 2ULL - esz;
-	flba = esz + 2ULL;
+	gpt_calculate_last_lba(NULL, GPT_NPARTITIONS, &llba, cxt);
+	gpt_calculate_first_lba(NULL, GPT_NPARTITIONS, &flba, cxt);
 
 	/* script default */
 	if (cxt->script) {
@@ -828,7 +890,7 @@ static unsigned char *gpt_read_entries(struct fdisk_context *cxt,
 	assert(cxt);
 	assert(header);
 
-	if (gpt_sizeof_ents(header, &sz))
+	if (gpt_sizeof_entries(header, &sz))
 		return NULL;
 
 	if (sz > (size_t) SSIZE_MAX) {
@@ -875,7 +937,7 @@ static inline uint32_t gpt_entryarr_count_crc32(struct gpt_header *header, unsig
 {
 	size_t arysz = 0;
 
-	if (gpt_sizeof_ents(header, &arysz))
+	if (gpt_sizeof_entries(header, &arysz))
 		return 0;
 
 	return count_crc32(ents, arysz, 0, 0);
@@ -1071,7 +1133,7 @@ static int gpt_locate_disklabel(struct fdisk_context *cxt, int n,
 		gpt = self_label(cxt);
 		*offset = (uint64_t) le64_to_cpu(gpt->pheader->partition_entry_lba) *
 				     cxt->sector_size;
-		return gpt_sizeof_ents(gpt->pheader, size);
+		return gpt_sizeof_entries(gpt->pheader, size);
 	default:
 		return 1;			/* no more chunks */
 	}
@@ -1846,7 +1908,7 @@ static int gpt_write_partitions(struct fdisk_context *cxt,
 	ssize_t ssz;
 	int rc;
 
-	rc = gpt_sizeof_ents(header, &towrite);
+	rc = gpt_sizeof_entries(header, &towrite);
 	if (rc)
 		return rc;
 
@@ -2480,7 +2542,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	if (rc < 0)
 		goto done;
 
-	rc = gpt_sizeof_ents(gpt->pheader, &esz);
+	rc = gpt_sizeof_entries(gpt->pheader, &esz);
 	if (rc)
 		goto done;
 	gpt->ents = calloc(1, esz);
@@ -2587,7 +2649,7 @@ static int gpt_check_table_overlap(struct fdisk_context *cxt,
 /**
  * fdisk_gpt_set_npartitions:
  * @cxt: context
- * @entries: new size
+ * @nents: number of wanted entries
  *
  * Elarge GPT entries array if possible. The function check if an existing
  * partition does not overlap the entries array area. If yes, then it report
@@ -2596,11 +2658,11 @@ static int gpt_check_table_overlap(struct fdisk_context *cxt,
  * Returns: 0 on success, < 0 on error.
  * Since: 2.29
  */
-int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
+int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t nents)
 {
 	struct fdisk_gpt_label *gpt;
-	size_t old_size, new_size;
-	uint32_t old;
+	size_t new_size;
+	uint32_t old_nents;
 	uint64_t first_usable, last_usable;
 	int rc;
 
@@ -2612,12 +2674,12 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 
 	gpt = self_label(cxt);
 
-	old = le32_to_cpu(gpt->pheader->npartition_entries);
-	if (old == entries)
+	old_nents = le32_to_cpu(gpt->pheader->npartition_entries);
+	if (old_nents == nents)
 		return 0;	/* do nothing, say nothing */
 
 	/* calculate the size (bytes) of the entries array */
-	rc = gpt_calculate_sizeof_ents(gpt->pheader, entries, &new_size);
+	rc = gpt_calculate_sizeof_entries(gpt->pheader, nents, &new_size);
 	if (rc) {
 		uint32_t entry_size = le32_to_cpu(gpt->pheader->sizeof_partition_entry);
 
@@ -2629,20 +2691,18 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 		return rc;
 	}
 
-	rc = gpt_calculate_sizeof_ents(gpt->pheader, old, &old_size);
-	if (rc)
-		return rc;
-
-	/* calculate new range of usable LBAs */
-	first_usable = (uint64_t) (new_size / cxt->sector_size) + 2ULL;
-	last_usable = cxt->total_sectors - 2ULL - (uint64_t) (new_size / cxt->sector_size);
+	gpt_calculate_first_lba(gpt->pheader, nents, &first_usable, cxt);
+	gpt_calculate_last_lba(gpt->pheader, nents, &last_usable, cxt);
 
 	/* if expanding the table, first check that everything fits,
 	 * then allocate more memory and zero. */
-	if (entries > old) {
+	if (nents > old_nents) {
 		unsigned char *ents;
+		size_t old_size;
 
-		rc = gpt_check_table_overlap(cxt, first_usable, last_usable);
+		rc = gpt_calculate_sizeof_entries(gpt->pheader, old_nents, &old_size);
+		if (!rc)
+			rc = gpt_check_table_overlap(cxt, first_usable, last_usable);
 		if (rc)
 			return rc;
 		ents = realloc(gpt->ents, new_size);
@@ -2655,8 +2715,8 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 	}
 
 	/* everything's ok, apply the new size */
-	gpt->pheader->npartition_entries = cpu_to_le32(entries);
-	gpt->bheader->npartition_entries = cpu_to_le32(entries);
+	gpt->pheader->npartition_entries = cpu_to_le32(nents);
+	gpt->bheader->npartition_entries = cpu_to_le32(nents);
 
 	/* usable LBA addresses will have changed */
 	fdisk_set_first_lba(cxt, first_usable);
@@ -2665,7 +2725,6 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 	gpt->bheader->first_usable_lba = cpu_to_le64(first_usable);
 	gpt->pheader->last_usable_lba = cpu_to_le64(last_usable);
 	gpt->bheader->last_usable_lba = cpu_to_le64(last_usable);
-
 
 	/* The backup header must be recalculated */
 	gpt_mknew_header_common(cxt, gpt->bheader, le64_to_cpu(gpt->pheader->alternative_lba));
@@ -2677,7 +2736,8 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 	/* update library info */
 	cxt->label->nparts_max = gpt_get_nentries(gpt);
 
-	fdisk_info(cxt, _("Partition table length changed from %"PRIu32" to %"PRIu64"."), old, entries);
+	fdisk_info(cxt, _("Partition table length changed from %"PRIu32" to %"PRIu64"."),
+			old_nents, nents);
 
 	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
