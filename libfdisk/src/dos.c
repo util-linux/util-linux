@@ -709,7 +709,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 
 static int dos_set_disklabel_id(struct fdisk_context *cxt, const char *str)
 {
-	char *str0 = str;
+	char *buf = NULL;
 	unsigned int id, old;
 	struct fdisk_dos_label *l;
 	int rc = 0;
@@ -723,9 +723,11 @@ static int dos_set_disklabel_id(struct fdisk_context *cxt, const char *str)
 	l = self_label(cxt);
 	old = mbr_get_id(cxt->firstsector);
 
-	if (!str)
+	if (!str) {
 		rc = fdisk_ask_string(cxt,
-			_("Enter the new disk identifier"), &str);
+			_("Enter the new disk identifier"), &buf);
+		str = buf;
+	}
 	if (!rc) {
 		char *end = NULL;
 
@@ -737,8 +739,7 @@ static int dos_set_disklabel_id(struct fdisk_context *cxt, const char *str)
 		}
 	}
 
-	if (!str0)
-		free(str);
+	free(buf);
 	if (rc)
 		return -EINVAL;
 

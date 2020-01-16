@@ -2515,11 +2515,13 @@ static int gpt_set_disklabel_id(struct fdisk_context *cxt, const char *str)
 
 	gpt = self_label(cxt);
 	if (!str) {
+		char *buf = NULL;
+
 		if (fdisk_ask_string(cxt,
-				_("Enter new disk UUID (in 8-4-4-4-12 format)"), &str))
+				_("Enter new disk UUID (in 8-4-4-4-12 format)"), &buf))
 			return -EINVAL;
-		rc = string_to_guid(str, &uuid);
-		free(str);
+		rc = string_to_guid(buf, &uuid);
+		free(buf);
 	} else
 		rc = string_to_guid(str, &uuid);
 
