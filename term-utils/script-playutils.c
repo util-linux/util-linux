@@ -327,7 +327,7 @@ static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 		if (rc != 2)
 			break;
 
-		rc = fscanf(f, "%s", buf);		/* name */
+		rc = fscanf(f, "%128s", buf);		/* name */
 		if (rc != 1)
 			break;
 		step->name = strrealloc(step->name, buf);
