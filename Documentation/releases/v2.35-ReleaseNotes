@@ -93,11 +93,14 @@ build-sys:
    - introduce $sysconfstaticdir  [Karel Zak]
    - make scriptlive optional  [Samuel Thibault]
    - release++ (v2.35-rc1)  [Karel Zak]
+   - release++ (v2.35-rc2)  [Karel Zak]
    - remove duplicate includes  [Karel Zak]
    - support 'none' for parallel tests  [Karel Zak]
    - use parse-date() only for hwclock  [Karel Zak]
 cal:
    - (man) make -w, -m and --iso relation more obvious  [Karel Zak]
+cfdisk:
+   - check mnt_table_parse_fstab() return code [coverity scan]  [Karel Zak]
 chfn:
    - don't append extra tailing commas  [Karel Zak]
 choom:
@@ -131,10 +134,12 @@ docs:
    - add v2.35-ReleaseNotes  [Karel Zak]
    - correct su.1 runuser reference from section 8 to 1  [Sami Kerola]
    - fix mixtyped constant.  [Andrius Štikonas]
+   - fix typos [fossies codespell scan]  [Karel Zak]
    - remove implemented TODO items  [Karel Zak]
    - try to find broken man references and fix them  [Sami Kerola]
    - update AUTHORS file  [Karel Zak]
    - update howto-tests.txt  [Karel Zak]
+   - update v2.35-ReleaseNotes  [Karel Zak]
    - update year in libs docs  [Karel Zak]
    - we have 2019 already  [Karel Zak]
 eject:
@@ -161,6 +166,8 @@ hwclock:
    - add SPDX-License-Identifier(s)  [Karel Zak]
    - report rtc open() errors on --verbose  [Karel Zak]
    - use CMOS clock only if available  [Carlos Santos]
+include:
+   - add some missing licence stuff to header files  [Karel Zak]
 include/all-io:
    - remove unnecessary condition [lgtm scan]  [Karel Zak]
 include/closestream:
@@ -187,6 +194,7 @@ kill:
 last:
    - replace strncat() with more robust mem2strcpy()  [Sami Kerola]
 lib:
+   - add _PATH_TMP fallback  [Karel Zak]
    - add missing license headers  [Karel Zak]
 lib/fileutils:
    - add close_all_fds()  [Karel Zak]
@@ -221,6 +229,8 @@ libblkid:
    - (drbd) simplify padding  [Karel Zak]
    - (xfs) external log  check for regular xfs on more sectors  [Mauricio Faria de Oliveira]
    - (xfs) fix sector size calculation  [Karel Zak]
+   - (zfs) don't probe whole-disk areas covered by partitions  [Karel Zak]
+   - Fix documentation in libblkid header  [John Baublitz]
    - check for medium on CDMROMs probing  [Karel Zak]
    - check number of test_blkid_save arguments correctly  [Sami Kerola]
    - check status for the current CDROM slot  [Karel Zak]
@@ -264,6 +274,7 @@ libfdisk:
 libfidk:
    - (dos) fix tiny partitions calculation  [Karel Zak]
 libmount:
+   - (monitor) remove dead code [coverity scan]  [Karel Zak]
    - Add libselinux dependency to pkgconfig file  [Masami Hiramatsu]
    - Keep the mnt_tab info for the existent dest in mnt_copy_fs()  [Kevin Hao]
    - Recognize more FUSE pseudofs (avfsd, lxcfs, vmware-vmblock)  [Darsey Litzenberger]
@@ -272,6 +283,7 @@ libmount:
    - add verity to mount -V output  [Karel Zak]
    - allow use -o together with --all  [Karel Zak]
    - cleanup strdup() use in context, add reg.test  [Karel Zak]
+   - do not obscure return code when checking verity options  [Luca Boccassi]
    - don't access struct member, use API  [Karel Zak]
    - don't use /proc/mounts fallback if filename specified  [Karel Zak]
    - fix comment referring to passno field  [Patrick Steinhardt]
@@ -287,6 +299,7 @@ libmount:
    - save current FS setting as template  [Karel Zak]
    - use fmemopen() in more robust way [coverity scan]  [Karel Zak]
    - use strdup_between_structs()  [Karel Zak]
+   - use vsnprintf() in more robust way [coverity scan]  [Karel Zak]
 libsmartcols:
    - cleanup and extend padding functionality  [Karel Zak]
 libuuid:
@@ -315,6 +328,8 @@ lscpu:
    - make code more readable [lgtm scan]  [Karel Zak]
    - prefer memcpy() to manual pointer arithmetic  [Sami Kerola]
    - top-level DMI function refactoring  [Karel Zak]
+lslogins:
+   - assume unterminated strings in wtmp/btmp [coverity scan]  [Karel Zak]
 man:
    - improve script and scriptreplay formatting style  [Sami Kerola]
 man pages:
@@ -346,8 +361,15 @@ po:
    - add pt.po (from translationproject.org)  [Pedro Albuquerque]
    - merge changes  [Karel Zak]
    - remove possibility to translate static option arguments  [Sami Kerola]
+   - update cs.po (from translationproject.org)  [Petr Písař]
    - update de.po (from translationproject.org)  [Mario Blättermann]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
    - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update pt.po (from translationproject.org)  [Pedro Albuquerque]
+   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
    - update zh_CN.po (from translationproject.org)  [Boyuan Yang]
 po/update-potfiles:
    - fallback to `find` when git doesn't work  [Jan Chren (rindeal)]
@@ -375,6 +397,7 @@ script:
    - fix man page on --logging-format  [Karel Zak]
    - fix signalfd use  [Karel Zak]
    - fix typos [codespell]  [Sami Kerola]
+   - follow --logging-format on -t  [Karel Zak]
    - listen to SIGUSR1, flush logs on the signal  [Karel Zak]
    - log additional information  [Karel Zak]
    - log file usage refactoring  [Karel Zak]
@@ -413,6 +436,7 @@ scriptreplay:
    - make sure timing file specified  [Karel Zak]
    - move all utils to script-playutils.{c,h}  [Karel Zak]
    - print info and signals  [Karel Zak]
+   - restrict header name size  [Karel Zak]
    - rewrite to support new timing file format  [Karel Zak]
    - skip unwanted steps  [Karel Zak]
    - use struct timeval for delay  [Karel Zak]
@@ -430,9 +454,13 @@ sfdisk:
    - (move-data) improve MiB/s progress bar  [Karel Zak]
    - add --move-use-fsync, disable fsync() by default  [Karel Zak]
    - add -J between mutually exclusive options  [Karel Zak]
+   - check fdisk_script_set_header() return code [coverity scan]  [Karel Zak]
    - make --no-act usable for --move-data too  [Karel Zak]
    - mark --dump and --list-free as mutually exclusive  [Karel Zak]
+   - remove never read value [clang scan]  [Karel Zak]
    - write all message to stdout  [Karel Zak]
+strutils:
+   - fix double free in strrealloc() [coverity scan]  [Karel Zak]
 su:
    - (pty) remove unnecessary call  [Karel Zak]
    - More descriptive error message on malformed user entry  [Jakub Hrozek]
