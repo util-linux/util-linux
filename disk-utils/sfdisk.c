@@ -430,11 +430,6 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		step_bytes = io;
 
 	step = step_bytes / ss;
-
-	/* align the step (note that nsectors does not have to be power of 2) */
-	while (nsectors % step)
-		step--;
-
 	nbytes = nsectors * ss;
 
 	DBG(MISC, ul_debug(" step: %ju (%zu bytes)", (uintmax_t)step, step_bytes));
@@ -485,15 +480,15 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		fprintf(f, "# Disk: %s\n", devname);
 		fprintf(f, "# Partition: %zu\n", partno + 1);
 		fprintf(f, "# Operation: move data\n");
+		fprintf(f, "# Sector size: %zu\n", ss);
 		fprintf(f, "# Original start offset (sectors/bytes): %ju/%ju\n",
 			(uintmax_t)from, (uintmax_t)from * ss);
 		fprintf(f, "# New start offset (sectors/bytes): %ju/%ju\n",
 			(uintmax_t)to, (uintmax_t)to * ss);
 		fprintf(f, "# Area size (sectors/bytes): %ju/%ju\n",
 			(uintmax_t)nsectors, (uintmax_t)nsectors * ss);
-		fprintf(f, "# Sector size: %zu\n", ss);
-		fprintf(f, "# Step size (in bytes): %zu\n", step_bytes);
-		fprintf(f, "# Steps: %ju\n", (uintmax_t)(nsectors / step));
+				fprintf(f, "# Step size (sectors/bytes): %zu/%zu\n", step, step_bytes);
+		fprintf(f, "# Steps: %ju\n", ((uintmax_t) nsectors / step) + 1);
 		fprintf(f, "#\n");
 		fprintf(f, "# <step>: <from> <to> (step offsets in bytes)\n");
 	}
@@ -584,7 +579,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			fputc(' ', stdout);
 		fflush(stdout);
 		fputc('\r', stdout);
-		fprintf(stdout, _("Moved %ju from %ju sectors (%.3f%%)."),
+		fprintf(stdout, _("Moved %ju from %ju sectors (%.0f%%)."),
 				i, nsectors,
 				100.0 / ((double) nsectors/(i+1)));
 		fputc('\n', stdout);
