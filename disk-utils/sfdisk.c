@@ -374,7 +374,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	int ok = 0, fd, backward = 0;
 	fdisk_sector_t nsectors, from, to, step, i, prev;
 	size_t io, ss, step_bytes, cc;
-	uintmax_t src, dst;
+	uintmax_t src, dst, nbytes;
 	int errsv, progress = 0;
 	struct timeval prev_time;
 	uint64_t bytes_per_sec = 0;
@@ -409,6 +409,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	from = fdisk_partition_get_start(orig_pa);
 	to = fdisk_partition_get_start(pa);
 
+
 	if ((to >= from && from + nsectors >= to) ||
 	    (from >= to && to + nsectors >= from)) {
 		/* source and target overlay, check if we need to copy
@@ -433,6 +434,8 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	/* align the step (note that nsectors does not have to be power of 2) */
 	while (nsectors % step)
 		step--;
+
+	nbytes = nsectors * ss;
 
 	DBG(MISC, ul_debug(" step: %ju (%zu bytes)", (uintmax_t)step, step_bytes));
 
@@ -504,13 +507,20 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	gettimeofday(&prev_time, NULL);
 	prev = 0;
 
-	for (cc = 1, i = 0; i < nsectors; i += step, cc++) {
+	for (cc = 1, i = 0; i < nsectors && nbytes > 0; i += step, cc++) {
 		ssize_t rc;
 
 		if (backward)
 			src -= step_bytes, dst -= step_bytes;
 
 		DBG(MISC, ul_debug("#%05zu: src=%ju dst=%ju", cc, src, dst));
+
+		if (nbytes < step_bytes) {
+			DBG(MISC, ul_debug(" aligning step from %ju to %ju",
+						step_bytes, nbytes));
+			step_bytes = nbytes;
+		}
+		nbytes -= step_bytes;
 
 		if (!sf->noact) {
 			/* read source */
