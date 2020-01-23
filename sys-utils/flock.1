@@ -166,6 +166,14 @@ run.  If the env var $FLOCKER is not set to the shell script that is being run,
 then execute flock and grab an exclusive non-blocking lock (using the script
 itself as the lock file) before re-execing itself with the right arguments.  It
 also sets the FLOCKER env var to the right value so it doesn't run again.
+.TP
+.TQ
+exec 4<>/var/lock/mylockfile
+.TQ
+flock -n 4
+This form is convenient for locking a file without spawning a subprocess.
+The shell opens the lock file for reading and writing as file descriptor 4,
+then flock is used to lock the descriptor.
 .SH "EXIT STATUS"
 The command uses
 .B sysexits.h
