@@ -125,6 +125,7 @@ Display version information and exit.
 .BR \-h , " \-\-help"
 Display help text and exit.
 .SH EXAMPLES
+Note that "shell> " in examples is a command line prompt.
 .TP
 shell1> flock /tmp \-c cat
 .TQ
@@ -168,9 +169,9 @@ itself as the lock file) before re-execing itself with the right arguments.  It
 also sets the FLOCKER env var to the right value so it doesn't run again.
 .TP
 .TQ
-exec 4<>/var/lock/mylockfile
+shell> exec 4<>/var/lock/mylockfile
 .TQ
-flock -n 4
+shell> flock -n 4
 This form is convenient for locking a file without spawning a subprocess.
 The shell opens the lock file for reading and writing as file descriptor 4,
 then flock is used to lock the descriptor.
