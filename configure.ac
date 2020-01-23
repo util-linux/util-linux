@@ -2443,6 +2443,15 @@ AS_IF([test "x$with_cryptsetup" = xno], [
 	[AC_DEFINE([HAVE_CRYPTSETUP], [1], [Define if cryptsetup is available])
 	 UL_PKG_STATIC([CRYPTSETUP_LIBS_STATIC], [libcryptsetup])
 	 AM_CONDITIONAL([HAVE_CRYPTSETUP], [true])
+	 SAVE_CFLAGS="$CFLAGS"
+	 CFLAGS="$CRYPTSETUP_CFLAGS $CFLAGS"
+	 SAVE_LIBS="$LIBS"
+	 LIBS="$CRYPTSETUP_LIBS $LIBS"
+	 AC_CHECK_LIB([cryptsetup], [crypt_activate_by_signed_key], [
+	  AC_DEFINE_UNQUOTED([HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY], [1], [Define if crypt_activate_by_signed_key exist in -lcryptsetup])
+	 ])
+	 CFLAGS="$SAVE_CFLAGS"
+	 LIBS="$SAVE_LIBS"
 	 have_cryptsetup=yes],
 	[have_cryptsetup=no
    AM_CONDITIONAL([HAVE_CRYPTSETUP], [false])])

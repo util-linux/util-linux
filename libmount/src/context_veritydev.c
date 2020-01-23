@@ -50,13 +50,14 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	const char *backing_file, *optstr;
 	char *val = NULL, *key = NULL, *root_hash_binary = NULL, *mapper_device = NULL,
 		*mapper_device_full = NULL, *backing_file_basename = NULL, *root_hash = NULL,
-		*hash_device = NULL, *root_hash_file = NULL, *fec_device = NULL;
-	size_t len, hash_size, keysize = 0;
+		*hash_device = NULL, *root_hash_file = NULL, *fec_device = NULL, *hash_sig = NULL;
+	size_t len, hash_size, hash_sig_size = 0, keysize = 0;
 	struct crypt_params_verity crypt_params = {};
 	struct crypt_device *crypt_dev = NULL;
 	int rc = 0;
 	/* Use the same default for FEC parity bytes as cryptsetup uses */
 	uint64_t offset = 0, fec_offset = 0, fec_roots = 2;
+	struct stat hash_sig_st;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -153,6 +154,25 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 		}
 	}
 
+	/*
+	 * verity.roothashsig=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ROOT_HASH_SIG) &&
+	    mnt_optstr_get_option(optstr, "verity.roothashsig", &val, &len) == 0 && val) {
+		rc = ul_path_stat(NULL, &hash_sig_st, val);
+		if (rc == 0)
+			rc = !S_ISREG(hash_sig_st.st_mode) || !hash_sig_st.st_size ? -EINVAL : 0;
+		if (rc == 0) {
+			hash_sig_size = hash_sig_st.st_size;
+			hash_sig = malloc(hash_sig_size);
+			rc = hash_sig ? 0 : -ENOMEM;
+		}
+		if (rc == 0) {
+			rc = ul_path_read(NULL, hash_sig, hash_sig_size, val);
+			rc = rc < (int)hash_sig_size ? -1 : 0;
+		}
+	}
+
 	if (!rc && root_hash && root_hash_file) {
 		DBG(VERITY, ul_debugobj(cxt, "verity.roothash and verity.roothashfile are mutually exclusive"));
 		rc = -EINVAL;
@@ -189,7 +209,16 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 		rc = -EINVAL;
 		goto done;
 	}
-	rc = crypt_activate_by_volume_key(crypt_dev, mapper_device, root_hash_binary, hash_size,
+	if (hash_sig) {
+#ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
+		rc = crypt_activate_by_signed_key(crypt_dev, mapper_device, root_hash_binary, hash_size,
+				hash_sig, hash_sig_size, CRYPT_ACTIVATE_READONLY);
+#else
+		rc = -EINVAL;
+		DBG(VERITY, ul_debugobj(cxt, "verity.roothashsig=%s passed but libcryptsetup does not provide crypt_activate_by_signed_key()", hash_sig));
+#endif
+	} else
+		rc = crypt_activate_by_volume_key(crypt_dev, mapper_device, root_hash_binary, hash_size,
 				CRYPT_ACTIVATE_READONLY);
 	/*
 	 * If the mapper device already exists, and if libcryptsetup supports it, get the root
@@ -232,6 +261,18 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 		if (rc) {
 			rc = -EEXIST;
 		} else {
+			/*
+			 * Ensure that, if signatures are supported, we only reuse the device if the previous mount
+			 * used the same settings, so that a previous unsigned mount will not be reused if the user
+			 * asks to use signing for the new one, and viceversa.
+			 */
+#ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
+			if (!!hash_sig != !!(crypt_params.flags & CRYPT_VERITY_ROOT_HASH_SIGNATURE)) {
+				rc = -EINVAL;
+				DBG(VERITY, ul_debugobj(cxt, "existing device and new mount have to either be both opened with signature or both without"));
+				goto done;
+			}
+#endif
 			DBG(VERITY, ul_debugobj(cxt, "root hash of %s matches %s, reusing device", mapper_device, root_hash));
 		}
 	}
@@ -257,6 +298,7 @@ done:
 	free(root_hash);
 	free(root_hash_file);
 	free(fec_device);
+	free(hash_sig);
 	free(key);
 	return rc;
 }
