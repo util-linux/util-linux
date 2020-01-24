@@ -2224,7 +2224,7 @@ AM_CONDITIONAL([HAVE_BTRFS], [test "x$have_btrfs" = xyes])
 
 AC_ARG_WITH([systemd],
   AS_HELP_STRING([--without-systemd], [do not build with systemd support]),
-  [], [with_systemd=check]
+  [], [with_systemd=no]
 )
 
 have_systemd=no
