@@ -1558,6 +1558,15 @@ AS_IF([test "x$build_hwclock_cmos" = xyes ], [
     AC_DEFINE([USE_HWCLOCK_CMOS], [1], [Define to 1 if want to use CMOS clock.])
 ])
 
+AC_ARG_ENABLE([hwclock_gplv3],
+  AS_HELP_STRING([--disable-hwclock-gplv3], [do not use datetime parsing GPLv3 code]),
+  [], [enable_hwclock_gplv3=yes]
+)
+AM_CONDITIONAL([USE_HWCLOCK_GPLv3_DATETIME], [test "x$enable_hwclock_gplv3" = xyes])
+AS_IF([test "x$enable_hwclock_gplv3" = xyes ], [
+    AC_DEFINE([USE_HWCLOCK_GPLv3_DATETIME], [1], [use datetime parsing GPLv3 code to hwclock])
+])
+
 
 UL_BUILD_INIT([mkfs], [yes])
 AM_CONDITIONAL([BUILD_MKFS], [test "x$build_mkfs" = xyes])

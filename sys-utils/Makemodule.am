@@ -451,8 +451,11 @@ dist_man_MANS += \
 PATHFILES += sys-utils/hwclock.8
 hwclock_SOURCES = \
 	sys-utils/hwclock.c \
-	sys-utils/hwclock.h \
+	sys-utils/hwclock.h
+if USE_HWCLOCK_GPLv3_DATETIME
+hwclock_SOURCES += \
 	sys-utils/hwclock-parse-date.y
+endif
 hwclock_LDADD = $(LDADD) libcommon.la -lm
 hwclock_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/sys-utils
 if USE_HWCLOCK_CMOS

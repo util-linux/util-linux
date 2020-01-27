@@ -3,6 +3,7 @@
  *
  * Since 7a3000f7ba548cf7d74ac77cc63fe8de228a669e (v2.30) hwclock is linked
  * with parse_date.y from gnullib. This gnulib code is distributed with GPLv3.
+ * Use --disable-hwclock-gplv3 to exclude this code.
  *
  *
  * clock.c was written by Charles Hedrick, hedrick@cs.rutgers.edu, Apr 1992
@@ -1170,7 +1171,6 @@ int main(int argc, char **argv)
 	};
 	struct timeval startup_time;
 	struct adjtime adjtime = { 0 };
-	struct timespec when = { 0 };
 	/*
 	 * The time we started up, in seconds into the epoch, including
 	 * fractions.
@@ -1398,11 +1398,22 @@ int main(int argc, char **argv)
 
 	if (ctl.set || ctl.predict) {
 		if (!ctl.date_opt) {
-		warnx(_("--date is required for --set or --predict"));
-		exit(EXIT_FAILURE);
+			warnx(_("--date is required for --set or --predict"));
+			exit(EXIT_FAILURE);
 		}
+#ifdef USE_HWCLOCK_GPLv3_DATETIME
+		/* date(1) compatible GPLv3 parser */
+		struct timespec when = { 0 };
+
 		if (parse_date(&when, ctl.date_opt, NULL))
 			set_time = when.tv_sec;
+#else
+		/* minimalistic GPLv2 based parser */
+		usec_t usec;
+
+		if (parse_timestamp(ctl.date_opt, &usec) == 0)
+			set_time = (time_t) (usec / 1000000);
+#endif
 		else {
 			warnx(_("invalid date '%s'"), ctl.date_opt);
 			exit(EXIT_FAILURE);
