@@ -1042,6 +1042,7 @@ void fdisk_unref_context(struct fdisk_context *cxt)
 				cxt->labels[i]->op->free(cxt->labels[i]);
 			else
 				free(cxt->labels[i]);
+			cxt->labels[i] = NULL;
 		}
 
 		fdisk_unref_context(cxt->parent);
