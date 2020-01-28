@@ -60,9 +60,12 @@ static void crank_random(void)
 {
 	int i;
 	struct timeval tv;
+	unsigned int n_pid, n_uid;
 
 	gettimeofday(&tv, NULL);
-	srand((getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec);
+	n_pid = getpid();
+	n_uid = getuid();
+	srand((n_pid << 16) ^ n_uid ^ tv.tv_sec ^ tv.tv_usec);
 
 #ifdef DO_JRAND_MIX
 	ul_jrand_seed[0] = getpid() ^ (tv.tv_sec & 0xFFFF);
