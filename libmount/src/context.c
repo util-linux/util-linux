@@ -1855,49 +1855,48 @@ end:
 	return rc;
 }
 
-/* create a mountpoint if X-mount.mkdir[=<mode>] specified */
-static int mkdir_target(const char *tgt, struct libmnt_fs *fs)
+static int is_mkdir_required(const char *tgt, struct libmnt_fs *fs, mode_t *mode, int *rc)
 {
 	char *mstr = NULL;
 	size_t mstr_sz = 0;
-	mode_t mode = 0;
 	struct stat st;
-	int rc;
 
 	assert(tgt);
 	assert(fs);
+	assert(mode);
+	assert(rc);
+
+	*mode = 0;
+	*rc = 0;
 
 	if (mnt_optstr_get_option(fs->user_optstr, "X-mount.mkdir", &mstr, &mstr_sz) != 0 &&
 	    mnt_optstr_get_option(fs->user_optstr, "x-mount.mkdir", &mstr, &mstr_sz) != 0)   	/* obsolete */
 		return 0;
 
-	DBG(CXT, ul_debug("mkdir %s (%s) wanted", tgt, mstr));
-
 	if (mnt_stat_mountpoint(tgt, &st) == 0)
 		return 0;
+
+	DBG(CXT, ul_debug("mkdir %s (%s) wanted", tgt, mstr));
 
 	if (mstr && mstr_sz) {
 		char *end = NULL;
 
 		errno = 0;
-		mode = strtol(mstr, &end, 8);
+		*mode = strtol(mstr, &end, 8);
 
 		if (errno || !end || mstr + mstr_sz != end) {
 			DBG(CXT, ul_debug("failed to parse mkdir mode '%s'", mstr));
-			return -MNT_ERR_MOUNTOPT;
+			*rc = -MNT_ERR_MOUNTOPT;
+			return 0;
 		}
 	}
 
-	if (!mode)
-		mode = S_IRWXU |			/* 0755 */
+	if (!*mode)
+		*mode = S_IRWXU |			/* 0755 */
 		       S_IRGRP | S_IXGRP |
 		       S_IROTH | S_IXOTH;
 
-	rc = mkdir_p(tgt, mode);
-	if (rc)
-		DBG(CXT, ul_debug("mkdir %s failed: %m", tgt));
-
-	return rc;
+	return 1;
 }
 
 int mnt_context_prepare_target(struct libmnt_context *cxt)
@@ -1905,6 +1904,7 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	const char *tgt, *prefix;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
+	mode_t mode = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -1946,12 +1946,15 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	/* X-mount.mkdir target */
 	if (cxt->action == MNT_ACT_MOUNT
 	    && (cxt->user_mountflags & MNT_MS_XCOMMENT ||
-		cxt->user_mountflags & MNT_MS_XFSTABCOMM)) {
+		cxt->user_mountflags & MNT_MS_XFSTABCOMM)
+	    && is_mkdir_required(tgt, cxt->fs, &mode, &rc)) {
 
 		/* supported only for root or non-suid mount(8) */
-		if (!mnt_context_is_restricted(cxt))
-			rc = mkdir_target(tgt, cxt->fs);
-		else
+		if (!mnt_context_is_restricted(cxt)) {
+			rc = mkdir_p(tgt, mode);
+			if (rc)
+				DBG(CXT, ul_debug("mkdir %s failed: %m", tgt));
+		} else
 			rc = -EPERM;
 	}
 

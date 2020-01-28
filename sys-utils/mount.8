@@ -1306,14 +1306,14 @@ functionality have been extended to keep existing fstab configurations usable
 without a change.
 .TP
 .BR X-mount.mkdir [ = \fImode\fR ]
-Allow to make a target directory (mountpoint).  The optional argument
+Allow to make a target directory (mountpoint) if it does not exit yet.
+The optional argument
 .I mode
 specifies the filesystem access mode used for
 .BR mkdir (2)
 in octal notation.  The default mode is 0755.  This functionality is supported
 only for root users or when mount executed without suid permissions.  The option
-is also supported as x-mount.mkdir, this notation is deprecated for mount.mkdir
-since v2.30.
+is also supported as x-mount.mkdir, this notation is deprecated since v2.30.
 
 .SH "FILESYSTEM-SPECIFIC MOUNT OPTIONS"
 You should consult the respective man page for the filesystem first.
