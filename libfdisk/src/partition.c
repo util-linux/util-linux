@@ -96,19 +96,30 @@ static struct fdisk_partition *__copy_partition(struct fdisk_partition *o)
 	if (n->type)
 		fdisk_ref_parttype(n->type);
 
+	/* note that strdup_between_structs() deallocates destination pointer,
+	 * so make sure it's NULL as we call memcpy() before ... */
+	n->name = NULL;
 	rc = strdup_between_structs(n, o, name);
+
+	n->uuid = NULL;
 	if (!rc)
 		rc = strdup_between_structs(n, o, uuid);
+	n->attrs = NULL;
 	if (!rc)
 		rc = strdup_between_structs(n, o, attrs);
+	n->fstype = NULL;
 	if (!rc)
 		rc = strdup_between_structs(n, o, fstype);
+	n->fsuuid = NULL;
 	if (!rc)
 		rc = strdup_between_structs(n, o, fsuuid);
+	n->fslabel = NULL;
 	if (!rc)
 		rc = strdup_between_structs(n, o, fslabel);
+	n->start_chs = NULL;
 	if (!rc)
 		rc = strdup_between_structs(n, o, start_chs);
+	n->end_chs = NULL;
 	if (!rc)
 		rc = strdup_between_structs(n, o, end_chs);
 
