@@ -1015,6 +1015,38 @@ int skip_fline(FILE *fp)
 
 #ifdef TEST_PROGRAM_STRUTILS
 #include <stdio.h>
+#include "xalloc.h"
+
+struct testS {
+	char *name;
+	char *value;
+};
+
+static int test_strdup_to_member(int argc, char *argv[])
+{
+	struct testS *xx;
+
+	if (argc < 3)
+		return EXIT_FAILURE;
+
+	xx = calloc(1, sizeof(*xx));
+	if (!xx)
+		err_oom();
+
+	strdup_to_struct_member(xx, name, argv[1]);
+	strdup_to_struct_member(xx, value, argv[2]);
+
+	if (strcmp(xx->name, argv[1]) != 0 &&
+	    strcmp(xx->value, argv[2]) != 0)
+		errx(EXIT_FAILURE, "strdup_to_struct_member() failed");
+
+	printf("1: '%s', 2: '%s'\n", xx->name, xx->value);
+
+	free(xx->name);
+	free(xx->value);
+	free(xx);
+	return EXIT_SUCCESS;
+}
 
 static int test_strutils_sizes(int argc, char *argv[])
 {
@@ -1057,9 +1089,13 @@ int main(int argc, char *argv[])
 	else if (argc == 4 && strcmp(argv[1], "--cmp-paths") == 0)
 		return test_strutils_cmp_paths(argc - 1, argv + 1);
 
+	else if (argc == 4 && strcmp(argv[1], "--strdup-member") == 0)
+		return test_strdup_to_member(argc - 1, argv + 1);
+
 	else {
 		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
-				"       %1$s --cmp-paths <path> <path>\n",
+				"       %1$s --cmp-paths <path> <path>\n"
+				"       %1$s --strdup-member <str> <str>\n",
 				argv[0]);
 		exit(EXIT_FAILURE);
 	}
