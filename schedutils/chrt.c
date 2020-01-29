@@ -60,7 +60,7 @@
 # define SCHED_FLAG_RESET_ON_FORK 0x01
 #endif
 
-#if defined (__linux__) && !defined(HAVE_SCHED_SETATTR)
+#if defined (__linux__)
 # include <sys/syscall.h>
 #endif
 
@@ -347,7 +347,16 @@ static int set_sched_one_by_setscheduler(struct chrt_ctl *ctl, pid_t pid)
 	if (ctl->reset_on_fork)
 		policy |= SCHED_RESET_ON_FORK;
 # endif
+
+#if defined (__linux__) && defined(SYS_sched_setscheduler)
+	/* musl libc returns ENOSYS for its sched_setscheduler library
+	 * function, because the sched_setscheduler Linux kernel system call
+	 * does not conform to Posix; so we use the system call directly
+	 */
+	return syscall(SYS_sched_setscheduler, pid, policy, &sp);
+#else
 	return sched_setscheduler(pid, policy, &sp);
+#endif
 }
 
 
