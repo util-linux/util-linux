@@ -1894,7 +1894,20 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	return rc;
 }
 
+static int gpt_write(struct fdisk_context *cxt, off_t offset, void *buf, size_t count)
+{
+	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
+		return -errno;
 
+	if (write_all(cxt->dev_fd, buf, count))
+		return -errno;
+
+	fsync(cxt->dev_fd);
+
+	DBG(LABEL, ul_debug("GPT write OK [offset=%zu, size=%zu]",
+				(size_t) offset, count));
+	return 0;
+}
 
 /*
  * Write partitions.
@@ -1903,23 +1916,16 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 static int gpt_write_partitions(struct fdisk_context *cxt,
 				struct gpt_header *header, unsigned char *ents)
 {
-	off_t offset = (off_t) le64_to_cpu(header->partition_entry_lba) * cxt->sector_size;
-	size_t towrite = 0;
-	ssize_t ssz;
+	size_t esz = 0;
 	int rc;
 
-	rc = gpt_sizeof_entries(header, &towrite);
+	rc = gpt_sizeof_entries(header, &esz);
 	if (rc)
 		return rc;
 
-	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
-		return -errno;
-
-	ssz = write(cxt->dev_fd, ents, towrite);
-	if (ssz < 0 || (ssize_t) towrite != ssz)
-		return -errno;
-
-	return 0;
+	return gpt_write(cxt,
+			(off_t) le64_to_cpu(header->partition_entry_lba) * cxt->sector_size,
+			ents, esz);
 }
 
 /*
@@ -1933,15 +1939,7 @@ static int gpt_write_partitions(struct fdisk_context *cxt,
 static int gpt_write_header(struct fdisk_context *cxt,
 			    struct gpt_header *header, uint64_t lba)
 {
-	off_t offset = lba * cxt->sector_size;
-
-	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
-		goto fail;
-	if (cxt->sector_size ==
-	    (size_t) write(cxt->dev_fd, header, cxt->sector_size))
-		return 0;
-fail:
-	return -errno;
+	return gpt_write(cxt, lba * cxt->sector_size, header, cxt->sector_size);
 }
 
 /*
@@ -1950,7 +1948,6 @@ fail:
  */
 static int gpt_write_pmbr(struct fdisk_context *cxt)
 {
-	off_t offset;
 	struct gpt_legacy_mbr *pmbr;
 
 	assert(cxt);
@@ -1980,16 +1977,9 @@ static int gpt_write_pmbr(struct fdisk_context *cxt)
 		pmbr->partition_record[0].size_in_lba =
 			cpu_to_le32((uint32_t) (cxt->total_sectors - 1ULL));
 
-	offset = GPT_PMBR_LBA * cxt->sector_size;
-	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
-		goto fail;
-
 	/* pMBR covers the first sector (LBA) of the disk */
-	if (write_all(cxt->dev_fd, pmbr, cxt->sector_size))
-		goto fail;
-	return 0;
-fail:
-	return -errno;
+	return gpt_write(cxt, GPT_PMBR_LBA * cxt->sector_size,
+			 pmbr, cxt->sector_size);
 }
 
 /*
