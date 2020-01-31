@@ -221,7 +221,7 @@ static void swap_efi_guid(struct gpt_guid *uid)
 static int string_to_guid(const char *in, struct gpt_guid *guid)
 {
 	if (uuid_parse(in, (unsigned char *) guid)) {   /* BE */
-		DBG(LABEL, ul_debug("GPT: failed to parse GUID: %s", in));
+		DBG(GPT, ul_debug("failed to parse GUID: %s", in));
 		return -EINVAL;
 	}
 	swap_efi_guid(guid);				/* LE */
@@ -254,7 +254,7 @@ static struct fdisk_parttype *gpt_partition_parttype(
 static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *uuid)
 {
 	e->type = *uuid;
-	DBG(LABEL, gpt_debug_uuid("new type", uuid));
+	DBG(GPT, gpt_debug_uuid("new type", uuid));
 }
 
 static int gpt_entry_set_name(struct gpt_entry *e, char *str)
@@ -371,7 +371,7 @@ static inline int gpt_calculate_sizeof_entries(
 			     sizeof(struct gpt_entry);
 
 	if (nents == 0 || esz == 0 || SIZE_MAX/esz < nents) {
-		DBG(LABEL, ul_debug("GPT entreis array size check failed"));
+		DBG(GPT, ul_debug("entreis array size check failed"));
 		return -ERANGE;
 	}
 
@@ -519,7 +519,7 @@ static void gpt_fix_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_
 	p->last_usable_lba  = cpu_to_le64(x);
 	b->last_usable_lba  = cpu_to_le64(x);
 
-	DBG(LABEL, ul_debug("Alternative-LBA updated to: %"PRIu64, le64_to_cpu(p->alternative_lba)));
+	DBG(GPT, ul_debug("Alternative-LBA updated to: %"PRIu64, le64_to_cpu(p->alternative_lba)));
 }
 
 /* some universal differences between the headers */
@@ -667,7 +667,7 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 		if (rc < 0)
 			return rc;
 
-		DBG(LABEL, ul_debug("FirstLBA: script=%"PRIu64", uefi=%"PRIu64", topology=%ju.",
+		DBG(GPT, ul_debug("FirstLBA: script=%"PRIu64", uefi=%"PRIu64", topology=%ju.",
 		                    *first, flba,  (uintmax_t)cxt->first_lba));
 
 		if (rc == 0 && (*first < flba || *first > llba)) {
@@ -679,7 +679,7 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 		if (rc < 0)
 			return rc;
 
-		DBG(LABEL, ul_debug("LastLBA: script=%"PRIu64", uefi=%"PRIu64", topology=%ju.",
+		DBG(GPT, ul_debug("LastLBA: script=%"PRIu64", uefi=%"PRIu64", topology=%ju.",
 		                    *last, llba,  (uintmax_t)cxt->last_lba));
 
 		if (rc == 0 && (*last > llba || *last < flba)) {
@@ -837,7 +837,7 @@ static int valid_pmbr(struct fdisk_context *cxt)
 		}
 	}
 done:
-	DBG(LABEL, ul_debug("PMBR type: %s",
+	DBG(GPT, ul_debug("PMBR type: %s",
 			ret == GPT_MBR_PROTECTIVE ? "protective" :
 			ret == GPT_MBR_HYBRID     ? "hybrid"     : "???" ));
 	return ret;
@@ -862,7 +862,7 @@ static uint64_t last_lba(struct fdisk_context *cxt)
 	else
 		fdisk_warnx(cxt, _("gpt: cannot handle files with mode %o"), s.st_mode);
 
-	DBG(LABEL, ul_debug("GPT last LBA: %"PRIu64"", sectors));
+	DBG(GPT, ul_debug("last LBA: %"PRIu64"", sectors));
 	return sectors;
 }
 
@@ -894,7 +894,7 @@ static unsigned char *gpt_read_entries(struct fdisk_context *cxt,
 		return NULL;
 
 	if (sz > (size_t) SSIZE_MAX) {
-		DBG(LABEL, ul_debug("GPT entries array too large to read()"));
+		DBG(GPT, ul_debug("entries array too large to read()"));
 		return NULL;
 	}
 
@@ -1008,20 +1008,20 @@ static int gpt_check_lba_sanity(struct fdisk_context *cxt, struct gpt_header *he
 
 	/* check if first and last usable LBA make sense */
 	if (lu < fu) {
-		DBG(LABEL, ul_debug("error: header last LBA is before first LBA"));
+		DBG(GPT, ul_debug("error: header last LBA is before first LBA"));
 		goto done;
 	}
 
 	/* check if first and last usable LBAs with the disk's last LBA */
 	if (fu > lastlba || lu > lastlba) {
-		DBG(LABEL, ul_debug("error: header LBAs are after the disk's last LBA"));
+		DBG(GPT, ul_debug("error: header LBAs are after the disk's last LBA"));
 		goto done;
 	}
 
 	/* the header has to be outside usable range */
 	if (fu < GPT_PRIMARY_PARTITION_TABLE_LBA &&
 	    GPT_PRIMARY_PARTITION_TABLE_LBA < lu) {
-		DBG(LABEL, ul_debug("error: header outside of usable range"));
+		DBG(GPT, ul_debug("error: header outside of usable range"));
 		goto done;
 	}
 
@@ -1095,13 +1095,13 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 	else
 		free(ents);
 
-	DBG(LABEL, ul_debug("found valid GPT Header on LBA %"PRIu64"", lba));
+	DBG(GPT, ul_debug("found valid header on LBA %"PRIu64"", lba));
 	return header;
 invalid:
 	free(header);
 	free(ents);
 
-	DBG(LABEL, ul_debug("read GPT Header on LBA %"PRIu64" failed", lba));
+	DBG(GPT, ul_debug("read header on LBA %"PRIu64" failed", lba));
 	return NULL;
 }
 
@@ -1299,7 +1299,7 @@ static uint32_t check_overlap_partitions(struct fdisk_gpt_label *gpt)
 			if (!gpt_entry_is_used(ei) || !gpt_entry_is_used(ej))
 				continue;
 			if (partition_overlap(ei, ej)) {
-				DBG(LABEL, ul_debug("GPT partitions overlap detected [%zu vs. %zu]", i, j));
+				DBG(GPT, ul_debug("partitions overlap detected [%zu vs. %zu]", i, j));
 				return i + 1;
 			}
 		}
@@ -1561,7 +1561,7 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 	cxt->label->nparts_cur = partitions_in_use(gpt);
 	return 1;
 failed:
-	DBG(LABEL, ul_debug("GPT probe failed"));
+	DBG(GPT, ul_debug("probe failed"));
 	gpt_deinit(cxt->label);
 	return 0;
 }
@@ -1680,7 +1680,7 @@ static int gpt_entry_attrs_from_string(
 	assert(e);
 	assert(p);
 
-	DBG(LABEL, ul_debug("GPT: parsing string attributes '%s'", p));
+	DBG(GPT, ul_debug("parsing string attributes '%s'", p));
 
 	bits = (char *) &attrs;
 
@@ -1691,7 +1691,7 @@ static int gpt_entry_attrs_from_string(
 		if (!*p)
 			break;
 
-		DBG(LABEL, ul_debug(" parsing item '%s'", p));
+		DBG(GPT, ul_debug(" item '%s'", p));
 
 		if (strncmp(p, GPT_ATTRSTR_REQ,
 					sizeof(GPT_ATTRSTR_REQ) - 1) == 0) {
@@ -1904,7 +1904,7 @@ static int gpt_write(struct fdisk_context *cxt, off_t offset, void *buf, size_t 
 
 	fsync(cxt->dev_fd);
 
-	DBG(LABEL, ul_debug("GPT write OK [offset=%zu, size=%zu]",
+	DBG(GPT, ul_debug("  write OK [offset=%zu, size=%zu]",
 				(size_t) offset, count));
 	return 0;
 }
@@ -1953,7 +1953,7 @@ static int gpt_write_pmbr(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->firstsector);
 
-	DBG(LABEL, ul_debug("(over)writing PMBR"));
+	DBG(GPT, ul_debug("(over)writing PMBR"));
 	pmbr = (struct gpt_legacy_mbr *) cxt->firstsector;
 
 	/* zero out the legacy partitions */
@@ -1995,6 +1995,8 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_label(cxt, GPT));
+
+	DBG(GPT, ul_debug("writting..."));
 
 	gpt = self_label(cxt);
 	mbr_type = valid_pmbr(cxt);
@@ -2039,14 +2041,14 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 	else if (gpt_write_pmbr(cxt) != 0)
 		goto err1;
 
-	DBG(LABEL, ul_debug("GPT write success"));
+	DBG(GPT, ul_debug("...write success"));
 	return 0;
 err0:
-	DBG(LABEL, ul_debug("GPT write failed: incorrect input"));
+	DBG(GPT, ul_debug("...write failed: incorrect input"));
 	errno = EINVAL;
 	return -EINVAL;
 err1:
-	DBG(LABEL, ul_debug("GPT write failed: %m"));
+	DBG(GPT, ul_debug("...write failed: %m"));
 	return -errno;
 }
 
@@ -2234,7 +2236,7 @@ static int gpt_add_partition(
 
 	rc = fdisk_partition_next_partno(pa, cxt, &partnum);
 	if (rc) {
-		DBG(LABEL, ul_debug("GPT failed to get next partno"));
+		DBG(GPT, ul_debug("failed to get next partno"));
 		return rc;
 	}
 
@@ -2271,14 +2273,14 @@ static int gpt_add_partition(
 
 		do {
 			uint64_t x;
-			DBG(LABEL, ul_debug("testing first sector %"PRIu64"", disk_f));
+			DBG(GPT, ul_debug("testing first sector %"PRIu64"", disk_f));
 			disk_f = find_first_available(gpt, disk_f);
 			if (!disk_f)
 				break;
 			x = find_last_free(gpt, disk_f);
 			if (x - disk_f >= cxt->grain / cxt->sector_size)
 				break;
-			DBG(LABEL, ul_debug("first sector %"PRIu64" addresses to small space, continue...", disk_f));
+			DBG(GPT, ul_debug("first sector %"PRIu64" addresses to small space, continue...", disk_f));
 			disk_f = x + 1ULL;
 		} while(1);
 
@@ -2301,7 +2303,7 @@ static int gpt_add_partition(
 		user_f = dflt_f;
 
 	} else if (pa && fdisk_partition_has_start(pa)) {
-		DBG(LABEL, ul_debug("first sector defined: %ju",  (uintmax_t)pa->start));
+		DBG(GPT, ul_debug("first sector defined: %ju",  (uintmax_t)pa->start));
 		if (pa->start != find_first_available(gpt, pa->start)) {
 			fdisk_warnx(cxt, _("Sector %ju already used."),  (uintmax_t)pa->start);
 			return -ERANGE;
@@ -2346,7 +2348,7 @@ static int gpt_add_partition(
 
 	} else if (pa && fdisk_partition_has_size(pa)) {
 		user_l = user_f + pa->size - 1;
-		DBG(LABEL, ul_debug("size defined: %ju, end: %"PRIu64" (last possible: %"PRIu64")",
+		DBG(GPT, ul_debug("size defined: %ju, end: %"PRIu64" (last possible: %"PRIu64")",
 					 (uintmax_t)pa->size, user_l, dflt_l));
 
 		if (user_l != dflt_l
@@ -2450,7 +2452,7 @@ static int gpt_add_partition(
 	if (pa && pa->attrs)
 		gpt_entry_attrs_from_string(cxt, e, pa->attrs);
 
-	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%"PRIu64", end=%"PRIu64", size=%"PRIu64"",
+	DBG(GPT, ul_debug("new partition: partno=%zu, start=%"PRIu64", end=%"PRIu64", size=%"PRIu64"",
 				partnum,
 				gpt_partition_start(e),
 				gpt_partition_end(e),
@@ -2829,7 +2831,7 @@ int fdisk_gpt_set_partition_attrs(
 	if (!fdisk_is_label(cxt, GPT))
 		return -EINVAL;
 
-	DBG(LABEL, ul_debug("GPT entry attributes change requested partno=%zu", partnum));
+	DBG(GPT, ul_debug("entry attributes change requested partno=%zu", partnum));
 	gpt = self_label(cxt);
 
 	if (partnum >= gpt_get_nentries(gpt))
@@ -2862,7 +2864,7 @@ static int gpt_toggle_partition_flag(
 	assert(cxt->label);
 	assert(fdisk_is_label(cxt, GPT));
 
-	DBG(LABEL, ul_debug("GPT entry attribute change requested partno=%zu", i));
+	DBG(GPT, ul_debug("entry attribute change requested partno=%zu", i));
 	gpt = self_label(cxt);
 
 	if (i >= gpt_get_nentries(gpt))

@@ -22,7 +22,8 @@ UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
 	{ "script",	LIBFDISK_DEBUG_SCRIPT,	"sfdisk-like scripts" },
 	{ "tab",	LIBFDISK_DEBUG_TAB,	"table utils"},
 	{ "wipe",       LIBFDISK_DEBUG_WIPE,    "wipe area utils" },
-	{ "item",       LIBFDISK_DEBUG_WIPE,    "disklabel items" },
+	{ "item",       LIBFDISK_DEBUG_ITEM,    "disklabel items" },
+	{ "gpt",        LIBFDISK_DEBUG_GPT,     "GPT subsystems" },
 	{ NULL, 0 }
 };
 
