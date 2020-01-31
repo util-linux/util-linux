@@ -447,6 +447,10 @@ doskip(const char *fname, int statok, struct hexdump *hex)
 			return;
 		}
 	}
+	/* When buffering is set, glibc fseek() first calls lseek(), and then it calls
+	   read() to read the whole range it just skipped. Which can be quite a lot e.g.
+	   if a user tries to skip half a terabyte of data on block device. */
+	setbuf(stdin, 0);
 	/* sbuf may be undefined here - do not test it */
 	if (fseek(stdin, hex->skip, SEEK_SET))
 	        err(EXIT_FAILURE, "%s", fname);
