@@ -1,0 +1,19 @@
+util-linux 2.35.1 Release Notes
+===============================
+
+build-sys:
+   - add --disable-hwclock-gplv3  [Karel Zak]
+chrt:
+   - Use sched_setscheduler system call directly  [jonnyh64]
+lib/randutils:
+   - use explicit data types for bit ops  [Karel Zak]
+libfdisk:
+   - fix __copy_partition()  [Karel Zak]
+   - make sure we use NULL after free  [Karel Zak]
+libmount:
+   - fix x- options use for non-root users  [Karel Zak]
+po:
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+sfdisk:
+   - make sure we do not overlap on --move  [Karel Zak]
+   - remove broken step alignment for --move  [Karel Zak]
