@@ -833,6 +833,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out,
 	        "                                 %s\n", USAGE_COLORS_DEFAULT);
 	fputs(_(" -l, --list                    display partitions and exit\n"), out);
+	fputs(_(" -x, --list-details            like --list but with more details\n"), out);
+
 	fputs(_(" -o, --output <list>           output columns\n"), out);
 	fputs(_(" -t, --type <type>             recognize specified partition table type only\n"), out);
 	fputs(_(" -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"), out);
@@ -861,6 +863,7 @@ static void __attribute__((__noreturn__)) usage(void)
 enum {
 	ACT_FDISK = 0,	/* default */
 	ACT_LIST,
+	ACT_LIST_DETAILS,
 	ACT_SHOWSIZE
 };
 
@@ -883,6 +886,7 @@ int main(int argc, char **argv)
 		{ "getsz",          no_argument,       NULL, 's' },
 		{ "help",           no_argument,       NULL, 'h' },
 		{ "list",           no_argument,       NULL, 'l' },
+		{ "list-details",   no_argument,       NULL, 'x' },
 		{ "sector-size",    required_argument, NULL, 'b' },
 		{ "type",           required_argument, NULL, 't' },
 		{ "units",          optional_argument, NULL, 'u' },
@@ -909,7 +913,7 @@ int main(int argc, char **argv)
 
 	fdisk_set_ask(cxt, ask_callback, NULL);
 
-	while ((c = getopt_long(argc, argv, "b:Bc::C:hH:lL::o:sS:t:u::vVw:W:",
+	while ((c = getopt_long(argc, argv, "b:Bc::C:hH:lL::o:sS:t:u::vVw:W:x",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
@@ -962,6 +966,9 @@ int main(int argc, char **argv)
 			break;
 		case 'l':
 			act = ACT_LIST;
+			break;
+		case 'x':
+			act = ACT_LIST_DETAILS;
 			break;
 		case 'L':
 			colormode = UL_COLORMODE_AUTO;
@@ -1026,7 +1033,12 @@ int main(int argc, char **argv)
 
 	switch (act) {
 	case ACT_LIST:
+	case ACT_LIST_DETAILS:
 		fdisk_enable_listonly(cxt, 1);
+
+		if (act == ACT_LIST_DETAILS)
+			fdisk_enable_details(cxt, 1);
+
 		init_fields(cxt, outarg, NULL);
 
 		if (argc > optind) {
