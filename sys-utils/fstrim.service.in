@@ -6,8 +6,6 @@ ConditionVirtualization=!container
 [Service]
 Type=oneshot
 ExecStart=@sbindir@/fstrim --fstab --verbose --quiet
-ProtectSystem=strict
-ProtectHome=read-only
 PrivateDevices=no
 PrivateNetwork=yes
 PrivateUsers=no
