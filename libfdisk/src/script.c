@@ -192,6 +192,7 @@ void fdisk_unref_script(struct fdisk_script *dp)
 	if (dp->refcount <= 0) {
 		fdisk_reset_script(dp);
 		fdisk_unref_context(dp->cxt);
+		fdisk_unref_table(dp->table);
 		DBG(SCRIPT, ul_debugobj(dp, "free script"));
 		free(dp);
 	}
@@ -1458,6 +1459,9 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
  * Note that script also contains reference to the fdisk context (see
  * fdisk_new_script()). This context may be completely independent on
  * context used for fdisk_set_script().
+ *
+ * Don't forget to call fdisk_set_script(cxt, NULL); to remove this reference
+ * if no more necessary!
  *
  * Returns: <0 on error, 0 on success.
  */
