@@ -1951,6 +1951,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		break;
 	}
 
+	fdisk_set_script(sf->cxt, NULL);
 	fdisk_unref_script(dp);
 	return rc;
 }
