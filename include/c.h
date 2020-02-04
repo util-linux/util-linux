@@ -350,6 +350,7 @@ static inline int xusleep(useconds_t usec)
 #define USAGE_OPTIONS    _("\nOptions:\n")
 #define USAGE_FUNCTIONS  _("\nFunctions:\n")
 #define USAGE_COMMANDS   _("\nCommands:\n")
+#define USAGE_ARGUMENTS   _("\nArguments:\n")
 #define USAGE_COLUMNS    _("\nAvailable output columns:\n")
 #define USAGE_SEPARATOR    "\n"
 
