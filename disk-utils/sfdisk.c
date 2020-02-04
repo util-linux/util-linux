@@ -1823,7 +1823,11 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		}
 
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
-		if (rc < 0) {
+		if (rc == -ENOTSUP) {
+			buf[sizeof(buf) - 1] = '\0';
+			fdisk_warnx(sf->cxt, _("Unknown script header '%s' -- ignore."), buf);
+			continue;
+		} else if (rc < 0) {
 			DBG(PARSE, ul_debug("script parsing failed, trying sfdisk specific commands"));
 			buf[sizeof(buf) - 1] = '\0';
 			rc = loop_control_commands(sf, dp, buf);
