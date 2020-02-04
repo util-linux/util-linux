@@ -805,8 +805,12 @@ static inline int is_header_line(const char *s)
 /* parses "<name>: value", note modifies @s*/
 static int parse_line_header(struct fdisk_script *dp, char *s)
 {
-	int rc = -EINVAL;
+	size_t i;
 	char *name, *value;
+	static const char *supported[] = {
+		"label", "unit", "label-id", "device", "grain",
+		"first-lba", "last-lba", "table-length", "sector-size"
+	};
 
 	DBG(SCRIPT, ul_debugobj(dp, "   parse header '%s'", s));
 
@@ -816,7 +820,7 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 	name = s;
 	value = strchr(s, ':');
 	if (!value)
-		goto done;
+		return -EINVAL;
 	*value = '\0';
 	value++;
 
@@ -825,32 +829,30 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 	ltrim_whitespace((unsigned char *) value);
 	rtrim_whitespace((unsigned char *) value);
 
+	if (!*name || !*value)
+		return -EINVAL;
+
+	/* check header name */
+	for (i = 0; i < ARRAY_SIZE(supported); i++) {
+		if (strcmp(name, supported[i]) == 0)
+			break;
+	}
+	if (i == ARRAY_SIZE(supported))
+		return -ENOTSUP;
+
+	/* header specific actions */
 	if (strcmp(name, "label") == 0) {
 		if (dp->cxt && !fdisk_get_label(dp->cxt, value))
-			goto done;			/* unknown label name */
+			return -EINVAL;			/* unknown label name */
 		dp->force_label = 1;
+
 	} else if (strcmp(name, "unit") == 0) {
 		if (strcmp(value, "sectors") != 0)
-			goto done;			/* only "sectors" supported */
-	} else if (strcmp(name, "label-id") == 0
-		   || strcmp(name, "device") == 0
-		   || strcmp(name, "grain") == 0
-		   || strcmp(name, "first-lba") == 0
-		   || strcmp(name, "last-lba") == 0
-		   || strcmp(name, "table-length") == 0) {
-		;					/* whatever is possible */
-	} else
-		goto done;				/* unknown header */
+			return -EINVAL;			/* only "sectors" supported */
 
-	if (*name && *value)
-		rc = fdisk_script_set_header(dp, name, value);
-done:
-	if (rc)
-		DBG(SCRIPT, ul_debugobj(dp, "header parse error: "
-				"[rc=%d, name='%s', value='%s']",
-				rc, name, value));
-	return rc;
+	}
 
+	return fdisk_script_set_header(dp, name, value);
 }
 
 /* returns zero terminated string with next token and @str is updated */
@@ -1363,7 +1365,8 @@ int fdisk_script_set_fgets(struct fdisk_script *dp,
  *
  * Reads next line into dump.
  *
- * Returns: 0 on success, <0 on error, 1 when nothing to read.
+ * Returns: 0 on success, <0 on error, 1 when nothing to read. For unknown headers
+ *          returns -ENOTSUP, it's usually safe to ignore this error.
  */
 int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t bufsz)
 {
@@ -1428,7 +1431,7 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 
 	while (!feof(f)) {
 		rc = fdisk_script_read_line(dp, f, buf, sizeof(buf));
-		if (rc)
+		if (rc && rc != -ENOTSUP)
 			break;
 	}
 
