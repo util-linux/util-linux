@@ -878,7 +878,7 @@ int main(int argc, char **argv)
 		{ "color",          optional_argument, NULL, 'L' },
 		{ "compatibility",  optional_argument, NULL, 'c' },
 		{ "cylinders",      required_argument, NULL, 'C' },
-		{ "heads",	    required_argument, NULL, 'H' },
+		{ "heads",          required_argument, NULL, 'H' },
 		{ "sectors",        required_argument, NULL, 'S' },
 		{ "getsz",          no_argument,       NULL, 's' },
 		{ "help",           no_argument,       NULL, 'h' },

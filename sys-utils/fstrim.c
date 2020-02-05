@@ -396,6 +396,10 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(21));
+
+	fputs(USAGE_ARGUMENTS, out);
+	printf(USAGE_ARG_SIZE(_("<num>")));
+
 	printf(USAGE_MAN_TAIL("fstrim(8)"));
 	exit(EXIT_SUCCESS);
 }

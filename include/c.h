@@ -363,6 +363,11 @@ static inline int xusleep(useconds_t usec)
 		, " -h, --help",    USAGE_OPTSTR_HELP \
 		, " -V, --version", USAGE_OPTSTR_VERSION
 
+#define USAGE_ARG_SEPARATOR    "\n"
+#define USAGE_ARG_SIZE(_name) \
+		_(" %s arguments may be followed by the suffixes for\n" \
+		  "   GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"), _name
+
 #define USAGE_MAN_TAIL(_man)   _("\nFor more details see %s.\n"), _man
 
 #define UTIL_LINUX_VERSION _("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING

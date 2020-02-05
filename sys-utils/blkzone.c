@@ -322,6 +322,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(24));
 
+	fputs(USAGE_ARGUMENTS, out);
+	printf(USAGE_ARG_SIZE(_("<sector> and <sectors>")));
+
 	printf(USAGE_MAN_TAIL("blkzone(8)"));
 	exit(EXIT_SUCCESS);
 }

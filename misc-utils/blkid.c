@@ -86,7 +86,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(	" -l, --list-one             look up only first device with token specified by -t\n"), out);
 	fputs(_(	" -L, --label <label>        convert LABEL to device name\n"), out);
 	fputs(_(	" -U, --uuid <uuid>          convert UUID to device name\n"), out);
-	fputs(_(	" <dev>                      specify device(s) to probe (default: all devices)\n"), out);
 	fputs(          "\n", out);
 	fputs(_(	"Low-level probing options:\n"), out);
 	fputs(_(	" -p, --probe                low-level superblocks probing (bypass cache)\n"), out);
@@ -99,6 +98,12 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(28));
+
+	fputs(USAGE_ARGUMENTS, out);
+	printf(USAGE_ARG_SIZE(_("<size> and <offset>")));
+	fputs(USAGE_ARG_SEPARATOR, out);
+	fputs(_(" <dev> specify device(s) to probe (default: all devices)\n"), out);
+
 	printf(USAGE_MAN_TAIL("blkid(8)"));
 	exit(EXIT_SUCCESS);
 }

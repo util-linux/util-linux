@@ -103,6 +103,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(22));
 
+	fputs(USAGE_ARGUMENTS, out);
+	printf(USAGE_ARG_SIZE(_("<num>")));
+
 	printf(USAGE_MAN_TAIL("fallocate(1)"));
 
 	exit(EXIT_SUCCESS);

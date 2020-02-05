@@ -658,6 +658,9 @@ usage(void)
 
 	printf(USAGE_HELP_OPTIONS(21));
 
+	fputs(USAGE_ARGUMENTS, stdout);
+	printf(USAGE_ARG_SIZE(_("<num>")));
+
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(stdout, " %8s  %s\n", infos[i].name, _(infos[i].help));
