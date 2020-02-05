@@ -310,4 +310,6 @@ FDISK_2.35 {
 } FDISK_2.33;
 FDISK_2.36 {
 	fdisk_set_disklabel_id_from_string;
+	fdisk_gpt_disable_relocation;
+	fdisk_gpt_enable_minimize;
 } FDISK_2.35;

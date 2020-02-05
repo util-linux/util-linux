@@ -233,6 +233,8 @@ fdisk_gpt_is_hybrid
 fdisk_gpt_get_partition_attrs
 fdisk_gpt_set_partition_attrs
 fdisk_gpt_set_npartitions
+fdisk_gpt_disable_relocation
+fdisk_gpt_enable_minimize
 GPT_FLAG_REQUIRED
 GPT_FLAG_NOBLOCK
 GPT_FLAG_LEGACYBOOT

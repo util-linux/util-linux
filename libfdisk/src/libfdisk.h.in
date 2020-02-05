@@ -728,6 +728,9 @@ extern int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries
 extern int fdisk_gpt_get_partition_attrs(struct fdisk_context *cxt, size_t partnum, uint64_t *attrs);
 extern int fdisk_gpt_set_partition_attrs(struct fdisk_context *cxt, size_t partnum, uint64_t attrs);
 
+extern void fdisk_gpt_disable_relocation(struct fdisk_label *lb, int disable);
+extern void fdisk_gpt_enable_minimize(struct fdisk_label *lb, int enable);
+
 /**
  * fdisk_labelitem_gpt:
  * @GPT_LABELITEM_ID: GPT disklabel UUID (!= partition UUID)
