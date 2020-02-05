@@ -171,7 +171,20 @@ Print all supported types for the current disk label or the label specified by
 .TP
 .BR \-V , " \-\-verify " [ \fIdevice ...]
 Test whether the partition table and partitions seem correct.
-
+.TP
+.BR "\-\-relocate \fIoper " \fIdevice
+Relocate partition table header. This command is currently supported for GPT header only.
+The argument \fIoper\fP can be:
+.RS
+.TP
+.B gpt-bak-std
+Move GPT backup header to the standard location at the end of the device.
+.TP
+.B gpt-bak-mini
+Move GPT backup header behind the last partition. Note that UEFI
+standard requires the backup header at the end of the device and partitioning
+tools can automatically relocate the header to follow the standard.
+.RE
 .SH OPTIONS
 .TP
 .BR \-a , " \-\-append"

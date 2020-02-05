@@ -79,6 +79,7 @@ enum {
 	ACT_LIST_FREE,
 	ACT_LIST_TYPES,
 	ACT_REORDER,
+	ACT_RELOCATE,
 	ACT_SHOW_SIZE,
 	ACT_SHOW_GEOM,
 	ACT_VERIFY,
@@ -1368,6 +1369,40 @@ static int command_diskid(struct sfdisk *sf, int argc, char **argv)
 	return write_changes(sf);
 }
 
+/*
+ * sfdisk --relocate <mode> <device>
+ */
+static int command_relocate(struct sfdisk *sf, int argc, char **argv)
+{
+	const char *devname = NULL;
+	const char *oper = NULL;
+	struct fdisk_label *lb;
+
+	if (!argc)
+		errx(EXIT_FAILURE, _("no relocate operation specified"));
+	if (argc < 2)
+		errx(EXIT_FAILURE, _("no disk device specified"));
+	if (argc > 2)
+		errx(EXIT_FAILURE, _("unexpected arguments"));
+
+	oper = argv[0];
+	devname = argv[1];
+	lb = fdisk_get_label(sf->cxt, "gpt");
+
+	if (strcmp(oper, "gpt-bak-mini") == 0)
+		fdisk_gpt_enable_minimize(lb, 1);
+
+	else if (strcmp(oper, "gpt-bak-std") != 0)
+		errx(EXIT_FAILURE, _("unsupported relocation operation"));
+
+	if (fdisk_assign_device(sf->cxt, devname, 0) != 0)
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
+
+	fdisk_label_set_changed(lb, 1);
+
+	return write_changes(sf);
+}
+
 static void sfdisk_print_partition(struct sfdisk *sf, size_t n)
 {
 	struct fdisk_partition *pa = NULL;
@@ -1989,8 +2024,9 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" --disk-id <dev> [<str>]           print or change disk label ID (UUID)\n"), out);
+	fputs(_(" --relocate <oper> <dev>           move partition header\n"), out);
 
-	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_ARGUMENTS, out);
 	fputs(_(" <dev>                     device (usually disk) path\n"), out);
 	fputs(_(" <part>                    partition number\n"), out);
 	fputs(_(" <type>                    partition type, GUID for GPT, hex for MBR\n"), out);
@@ -2002,6 +2038,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"), out);
 	fputs(_("     --move-use-fsync      use fsync after each write when move data\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
+
 	fprintf(out,
 	      _("     --color[=<when>]      colorize output (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
@@ -2062,7 +2099,8 @@ int main(int argc, char *argv[])
 		OPT_MOVEDATA,
 		OPT_MOVEFSYNC,
 		OPT_DELETE,
-		OPT_NOTELL
+		OPT_NOTELL,
+		OPT_RELOCATE,
 	};
 
 	static const struct option longopts[] = {
@@ -2096,6 +2134,8 @@ int main(int argc, char *argv[])
 		{ "version", no_argument,       NULL, 'v' },
 		{ "wipe",    required_argument, NULL, 'w' },
 		{ "wipe-partitions",    required_argument, NULL, 'W' },
+
+		{ "relocate", no_argument,	NULL, OPT_RELOCATE },
 
 		{ "part-uuid",  no_argument,    NULL, OPT_PARTUUID },
 		{ "part-label", no_argument,    NULL, OPT_PARTLABEL },
@@ -2272,6 +2312,9 @@ int main(int argc, char *argv[])
 		case OPT_NOTELL:
 			sf->notell = 1;
 			break;
+		case OPT_RELOCATE:
+			sf->act = ACT_RELOCATE;
+			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -2357,6 +2400,10 @@ int main(int argc, char *argv[])
 
 	case ACT_REORDER:
 		rc = command_reorder(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_RELOCATE:
+		rc = command_relocate(sf, argc - optind, argv + optind);
 		break;
 	}
 
