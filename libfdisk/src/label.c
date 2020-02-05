@@ -487,6 +487,7 @@ int fdisk_set_disklabel_id(struct fdisk_context *cxt)
 /**
  * fdisk_set_disklabel_id_from_string
  * @cxt: fdisk context
+ * @str: new Id
  *
  * Returns: 0 on success, otherwise, a corresponding error.
  */

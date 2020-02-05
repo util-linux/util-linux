@@ -3172,7 +3172,7 @@ struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt __attribute__ 
 
 /**
  * fdisk_gpt_disable_relocation
- * @ld: label
+ * @lb: label
  * @disable: 0 or 1
  *
  * Disable automatic backup header relocation to the end of the device. The
@@ -3192,8 +3192,8 @@ void fdisk_gpt_disable_relocation(struct fdisk_label *lb, int disable)
 
 /**
  * fdisk_gpt_enable_minimize
- * @ld: label
- * @disable: 0 or 1
+ * @lb: label
+ * @enable: 0 or 1
  *
  * Force libfdisk to write backup header to behind last partition. The
  * header possition is recalculated on fdisk_write_disklabel().
