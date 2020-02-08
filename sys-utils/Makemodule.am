@@ -54,8 +54,8 @@ if BUILD_IRQTOP
 usrbin_exec_PROGRAMS += irqtop
 irqtop_SOURCES = sys-utils/irqtop.c \
 		 lib/monotonic.c
-irqtop_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(REALTIME_LIBS)
-irqtop_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
+irqtop_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(REALTIME_LIBS) libsmartcols.la
+irqtop_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
 
 if BUILD_LSIPC
