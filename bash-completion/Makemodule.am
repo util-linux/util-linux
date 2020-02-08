@@ -45,6 +45,9 @@ endif
 if BUILD_IPCS
 dist_bashcompletion_DATA += bash-completion/ipcs
 endif
+if BUILD_IRQTOP
+dist_bashcompletion_DATA += bash-completion/irqtop
+endif
 if BUILD_ISOSIZE
 dist_bashcompletion_DATA += bash-completion/isosize
 endif
