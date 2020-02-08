@@ -179,7 +179,7 @@ static void search_utmp(struct write_control *ctl)
 		if (ctl->src_uid && !tty_writeable)
 			/* skip ttys with msgs off */
 			continue;
-		if (strcmp(u->ut_line, ctl->src_tty_name) == 0) {
+		if (memcmp(u->ut_line, ctl->src_tty_name, strlen(ctl->src_tty_name) + 1) == 0) {
 			user_is_me = 1;
 			/* don't write to yourself */
 			continue;
