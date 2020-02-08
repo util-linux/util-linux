@@ -52,6 +52,7 @@ endif
 
 if BUILD_IRQTOP
 usrbin_exec_PROGRAMS += irqtop
+dist_man_MANS += sys-utils/irqtop.1
 irqtop_SOURCES = sys-utils/irqtop.c \
 		 lib/monotonic.c
 irqtop_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(REALTIME_LIBS) libsmartcols.la

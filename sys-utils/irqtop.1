@@ -1,0 +1,62 @@
+.TH IRQTOP "1" "February 2020" "util-linux" "User Commands"
+.SH NAME
+irqtop \- utility to display kernel interrupt information
+.SH SYNOPSIS
+.B irqtop
+[options]
+.SH DESCRIPTION
+Display kernel interrupt counter information in
+.BR top (1)
+style view.
+.SH OPTIONS
+.TP
+.BR \-d ,\  \-\-delay\ \c
+.I seconds
+Update interrupt output every
+.I seconds
+intervals.
+.TP
+.BR \-o ,\  \-\-once
+Collect interrupt information and output it.  This mode does not use
+ncurses, so the output can easily be redirected to a pipe, file, or such.
+.TP
+.BR \-s ,\  \-\-sort\ \c
+.I char
+Specify sort criteria by character.  Pressing these characters in
+interactive mode will make the ncurses output to be ordered accordingly.
+.PP
+.RS
+.PD 0
+.TP
+.B c
+sort by increase count of each interrupt (the default)
+.TP
+.B i
+sort by default interrupts from proc interrupt
+.TP
+.B n
+sort by name
+.TP
+.B q Q
+stop updates and exit program
+.PD
+.RE
+.TP
+.BR \-V ", " \-\-version
+Display version information and exit.
+.TP
+.BR \-h ,\  \-\-help
+Display help text and exit.
+.SH AUTHORS
+.MT pizhenwei@\:bytedance.com
+Zhenwei Pi
+.ME
+.br
+.MT kerolasa@\:iki.fi
+Sami Kerola
+.ME
+.SH AVAILABILITY
+The example command is part of the util-linux package and is available from
+.UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
