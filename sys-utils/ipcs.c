@@ -21,6 +21,7 @@
 #include "c.h"
 #include "nls.h"
 #include "closestream.h"
+#include "timeutils.h"
 
 #include "ipcutils.h"
 
@@ -43,8 +44,14 @@ static void print_sem (int id);
 static void do_msg (char format, int unit);
 static void print_msg (int id, int unit);
 
-/* we read time as int64_t from /proc, so cast... */
-#define xctime(_x)	ctime((time_t *) (_x))
+static inline char *ctime64(int64_t *t)
+{
+	static char buf[CTIME_BUFSIZ];
+
+	/* we read time as int64_t from /proc, so cast... */
+	ctime_r((time_t *)t, buf);
+	return buf;
+}
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -309,11 +316,11 @@ static void do_shm (char format, int unit)
 				printf ("%-10d %-10u", shmdsp->shm_perm.id, shmdsp->shm_perm.uid);
 			/* ctime uses static buffer: use separate calls */
 			printf(" %-20.16s", shmdsp->shm_atim
-			       ? xctime(&shmdsp->shm_atim) + 4 : _("Not set"));
+			       ? ctime64(&shmdsp->shm_atim) + 4 : _("Not set"));
 			printf(" %-20.16s", shmdsp->shm_dtim
-			       ? xctime(&shmdsp->shm_dtim) + 4 : _("Not set"));
+			       ? ctime64(&shmdsp->shm_dtim) + 4 : _("Not set"));
 			printf(" %-20.16s\n", shmdsp->shm_ctim
-			       ? xctime(&shmdsp->shm_ctim) + 4 : _("Not set"));
+			       ? ctime64(&shmdsp->shm_ctim) + 4 : _("Not set"));
 			break;
 		case PID:
 			if (pw)
@@ -427,9 +434,9 @@ static void do_sem (char format)
 			else
 				printf ("%-8d %-10u", semdsp->sem_perm.id, semdsp->sem_perm.uid);
 			printf ("  %-26.24s", semdsp->sem_otime
-				? xctime(&semdsp->sem_otime) : _("Not set"));
+				? ctime64(&semdsp->sem_otime) : _("Not set"));
 			printf (" %-26.24s\n", semdsp->sem_ctime
-				? xctime( &semdsp->sem_ctime) : _("Not set"));
+				? ctime64( &semdsp->sem_ctime) : _("Not set"));
 			break;
 		case PID:
 			break;
@@ -535,11 +542,11 @@ static void do_msg (char format, int unit)
 			else
 				printf ("%-8d %-10u", msgdsp->msg_perm.id, msgdsp->msg_perm.uid);
 			printf (" %-20.16s", msgdsp->q_stime
-				? xctime(&msgdsp->q_stime) + 4 : _("Not set"));
+				? ctime64(&msgdsp->q_stime) + 4 : _("Not set"));
 			printf (" %-20.16s", msgdsp->q_rtime
-				? xctime(&msgdsp->q_rtime) + 4 : _("Not set"));
+				? ctime64(&msgdsp->q_rtime) + 4 : _("Not set"));
 			printf (" %-20.16s\n", msgdsp->q_ctime
-				? xctime(&msgdsp->q_ctime) + 4 : _("Not set"));
+				? ctime64(&msgdsp->q_ctime) + 4 : _("Not set"));
 			break;
 		case PID:
 			if (pw)
@@ -593,10 +600,10 @@ static void print_shm(int shmid, int unit)
 	       shmdata->shm_lprid, shmdata->shm_cprid,
 	       shmdata->shm_nattch);
 	printf(_("att_time=%-26.24s\n"),
-	       shmdata->shm_atim ? xctime(&(shmdata->shm_atim)) : _("Not set"));
+	       shmdata->shm_atim ? ctime64(&(shmdata->shm_atim)) : _("Not set"));
 	printf(_("det_time=%-26.24s\n"),
-	       shmdata->shm_dtim ? xctime(&shmdata->shm_dtim) : _("Not set"));
-	printf(_("change_time=%-26.24s\n"), xctime(&shmdata->shm_ctim));
+	       shmdata->shm_dtim ? ctime64(&shmdata->shm_dtim) : _("Not set"));
+	printf(_("change_time=%-26.24s\n"), ctime64(&shmdata->shm_ctim));
 	printf("\n");
 
 	ipc_shm_free_info(shmdata);
@@ -624,11 +631,11 @@ static void print_msg(int msgid, int unit)
 	       msgdata->q_qnum,
 	       msgdata->q_lspid, msgdata->q_lrpid);
 	printf(_("send_time=%-26.24s\n"),
-	       msgdata->q_stime ? xctime(&msgdata->q_stime) : _("Not set"));
+	       msgdata->q_stime ? ctime64(&msgdata->q_stime) : _("Not set"));
 	printf(_("rcv_time=%-26.24s\n"),
-	       msgdata->q_rtime ? xctime(&msgdata->q_rtime) : _("Not set"));
+	       msgdata->q_rtime ? ctime64(&msgdata->q_rtime) : _("Not set"));
 	printf(_("change_time=%-26.24s\n"),
-	       msgdata->q_ctime ? xctime(&msgdata->q_ctime) : _("Not set"));
+	       msgdata->q_ctime ? ctime64(&msgdata->q_ctime) : _("Not set"));
 	printf("\n");
 
 	ipc_msg_free_info(msgdata);
@@ -652,8 +659,8 @@ static void print_sem(int semid)
 	       semdata->sem_perm.mode, semdata->sem_perm.mode & 0777);
 	printf(_("nsems = %ju\n"), semdata->sem_nsems);
 	printf(_("otime = %-26.24s\n"),
-	       semdata->sem_otime ? xctime(&semdata->sem_otime) : _("Not set"));
-	printf(_("ctime = %-26.24s\n"), xctime(&semdata->sem_ctime));
+	       semdata->sem_otime ? ctime64(&semdata->sem_otime) : _("Not set"));
+	printf(_("ctime = %-26.24s\n"), ctime64(&semdata->sem_ctime));
 
 	printf("%-10s %-10s %-10s %-10s %-10s\n",
 	       _("semnum"), _("value"), _("ncount"), _("zcount"), _("pid"));

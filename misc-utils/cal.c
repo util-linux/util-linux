@@ -281,7 +281,7 @@ static time_t cal_time(time_t *t)
 
 int main(int argc, char **argv)
 {
-	struct tm *local_time;
+	struct tm local_time;
 	char *term;
 	time_t now;
 	int ch = 0, yflag = 0, Yflag = 0;
@@ -467,7 +467,7 @@ int main(int argc, char **argv)
 	} else
 		cal_time(&now);
 
-	local_time = localtime(&now);
+	localtime_r(&now, &local_time);
 
 	switch(argc) {
 	case 3:
@@ -500,20 +500,20 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("illegal day value: use 1-%d"), dm);
 			ctl.req.day = day_in_year(&ctl, ctl.req.day,
 						  ctl.req.month, ctl.req.year);
-		} else if ((int32_t) (local_time->tm_year + 1900) == ctl.req.year) {
-			ctl.req.day = local_time->tm_yday + 1;
+		} else if ((int32_t) (local_time.tm_year + 1900) == ctl.req.year) {
+			ctl.req.day = local_time.tm_yday + 1;
 		}
 		if (!ctl.req.month && !ctl.req.week) {
-			ctl.req.month = local_time->tm_mon + 1;
+			ctl.req.month = local_time.tm_mon + 1;
 			if (!ctl.num_months)
 				yflag = 1;
 		}
 		break;
 	case 0:
-		ctl.req.day = local_time->tm_yday + 1;
-		ctl.req.year = local_time->tm_year + 1900;
+		ctl.req.day = local_time.tm_yday + 1;
+		ctl.req.year = local_time.tm_year + 1900;
 		if (!ctl.req.month)
-			ctl.req.month = local_time->tm_mon + 1;
+			ctl.req.month = local_time.tm_mon + 1;
 		break;
 	default:
 		warnx(_("bad usage"));

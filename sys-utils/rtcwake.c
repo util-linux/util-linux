@@ -195,21 +195,22 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 		/* Unless the system uses UTC, either delta or tzone
 		 * reflects a seconds offset from UTC.  The value can
 		 * help sort out problems like bugs in your C library. */
+		char s[64];
 		printf("\tdelta   = %ld\n", ctl->sys_time - ctl->rtc_time);
 		printf("\ttzone   = %ld\n", timezone);
 		printf("\ttzname  = %s\n", tzname[daylight]);
 		gmtime_r(&ctl->rtc_time, &tm);
 		printf("\tsystime = %ld, (UTC) %s",
-				(long) ctl->sys_time, asctime(gmtime(&ctl->sys_time)));
+				(long) ctl->sys_time, asctime_r(gmtime(&ctl->sys_time), s));
 		printf("\trtctime = %ld, (UTC) %s",
-				(long) ctl->rtc_time, asctime(&tm));
+				(long) ctl->rtc_time, asctime_r(&tm, s));
 	}
 	return 0;
 }
 
 static int setup_alarm(struct rtcwake_control *ctl, int fd, time_t *wakeup)
 {
-	struct tm		*tm;
+	struct tm		tm;
 	struct rtc_wkalrm	wake = { 0 };
 
 	/* The wakeup time is in POSIX time (more or less UTC).  Ideally
@@ -221,13 +222,13 @@ static int setup_alarm(struct rtcwake_control *ctl, int fd, time_t *wakeup)
 	 *
 	 * Else clock_mode == CM_LOCAL so the time given to the RTC will
 	 * instead use the local time zone. */
-	tm = localtime(wakeup);
-	wake.time.tm_sec = tm->tm_sec;
-	wake.time.tm_min = tm->tm_min;
-	wake.time.tm_hour = tm->tm_hour;
-	wake.time.tm_mday = tm->tm_mday;
-	wake.time.tm_mon = tm->tm_mon;
-	wake.time.tm_year = tm->tm_year;
+	localtime_r(wakeup, &tm);
+	wake.time.tm_sec = tm.tm_sec;
+	wake.time.tm_min = tm.tm_min;
+	wake.time.tm_hour = tm.tm_hour;
+	wake.time.tm_mday = tm.tm_mday;
+	wake.time.tm_mon = tm.tm_mon;
+	wake.time.tm_year = tm.tm_year;
 	/* wday, yday, and isdst fields are unused */
 	wake.time.tm_wday = -1;
 	wake.time.tm_yday = -1;
@@ -337,6 +338,7 @@ static int print_alarm(struct rtcwake_control *ctl, int fd)
 	struct rtc_wkalrm wake;
 	struct tm tm = { 0 };
 	time_t alarm;
+	char s[CTIME_BUFSIZ];
 
 	if (ioctl(fd, RTC_WKALM_RD, &wake) < 0) {
 		warn(_("read rtc alarm failed"));
@@ -362,7 +364,8 @@ static int print_alarm(struct rtcwake_control *ctl, int fd)
 	}
 	/* 0 if both UTC, or expresses diff if RTC in local time */
 	alarm += ctl->sys_time - ctl->rtc_time;
-	printf(_("alarm: on  %s"), ctime(&alarm));
+	ctime_r(&alarm, s);
+	printf(_("alarm: on  %s"), s);
 
 	return 0;
 }
@@ -554,9 +557,12 @@ int main(int argc, char **argv)
 	if (suspend != DISABLE_MODE && suspend != SHOW_MODE) {
 		/* perform alarm setup when the show or disable modes are not set */
 		if (alarm) {
-			if (alarm < ctl.sys_time)
-				errx(EXIT_FAILURE, _("time doesn't go backward to %s"),
-						ctime(&alarm));
+			if (alarm < ctl.sys_time) {
+				char s[CTIME_BUFSIZ];
+
+				ctime_r(&alarm, s);
+				errx(EXIT_FAILURE, _("time doesn't go backward to %s"), s);
+			}
 			alarm -= ctl.sys_time - ctl.rtc_time;
 		} else
 			alarm = ctl.rtc_time + seconds + 1;
@@ -564,14 +570,19 @@ int main(int argc, char **argv)
 		if (setup_alarm(&ctl, fd, &alarm) < 0)
 			exit(EXIT_FAILURE);
 
-		if (suspend == NO_MODE || suspend == ON_MODE)
+		if (suspend == NO_MODE || suspend == ON_MODE) {
+			char s[CTIME_BUFSIZ];
+
+			ctime_r(&alarm, s);
 			printf(_("%s: wakeup using %s at %s"),
-				program_invocation_short_name, devname,
-				ctime(&alarm));
-		else
+				program_invocation_short_name, devname, s);
+		} else {
+			char s[CTIME_BUFSIZ];
+
+			ctime_r(&alarm, s);
 			printf(_("%s: wakeup from \"%s\" using %s at %s"),
-				program_invocation_short_name, ctl.mode_str, devname,
-				ctime(&alarm));
+				program_invocation_short_name, ctl.mode_str, devname, s);
+		}
 		fflush(stdout);
 		xusleep(10 * 1000);
 	}

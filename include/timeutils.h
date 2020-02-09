@@ -74,6 +74,7 @@ enum {
 	ISO_TIMESTAMP_COMMA_GT  = ISO_TIMESTAMP_COMMA_G | ISO_T
 };
 
+#define CTIME_BUFSIZ	26
 #define ISO_BUFSIZ	42
 
 int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz);

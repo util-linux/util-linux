@@ -263,7 +263,9 @@ static int uread(FILE *fp, struct utmpx *u,  int *quit, const char *filename)
  */
 static char *showdate(void)
 {
-	char *s = ctime(&lastdate);
+	static char s[CTIME_BUFSIZ];
+
+	ctime_r(&lastdate, s);
 	s[16] = 0;
 	return s;
 }
@@ -339,15 +341,22 @@ static int time_formatter(int fmt, char *dst, size_t dlen, time_t *when)
 		break;
 	case LAST_TIMEFTM_HHMM:
 	{
-		struct tm *tm = localtime(when);
-		if (!snprintf(dst, dlen, "%02d:%02d", tm->tm_hour, tm->tm_min))
+		struct tm tm;
+
+		localtime_r(when, &tm);
+		if (!snprintf(dst, dlen, "%02d:%02d", tm.tm_hour, tm.tm_min))
 			ret = -1;
 		break;
 	}
 	case LAST_TIMEFTM_CTIME:
-		snprintf(dst, dlen, "%s", ctime(when));
+	{
+		char buf[CTIME_BUFSIZ];
+
+		ctime_r(when, buf);
+		snprintf(dst, dlen, "%s", buf);
 		ret = rtrim_whitespace((unsigned char *) dst);
 		break;
+	}
 	case LAST_TIMEFTM_ISO8601:
 		ret = strtime_iso(when, ISO_TIMESTAMP_T, dst, dlen);
 		break;
