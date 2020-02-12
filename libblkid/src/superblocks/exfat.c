@@ -33,7 +33,8 @@ struct exfat_super_block {
 struct exfat_entry_label {
 	uint8_t type;
 	uint8_t length;
-	uint8_t name[30];
+	uint8_t name[22];
+	uint8_t reserved[8];
 } __attribute__((__packed__));
 
 #define BLOCK_SIZE(sb) (1u << (sb)->block_bits)
@@ -125,7 +126,8 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 	label = find_label(pr, sb);
 	if (label)
 		blkid_probe_set_utf8label(pr, label->name,
-				min(label->length * 2, 30), BLKID_ENC_UTF16LE);
+				min(label->length * 2, sizeof(label->name)),
+				BLKID_ENC_UTF16LE);
 	else if (errno)
 		return -errno;
 
