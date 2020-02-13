@@ -98,7 +98,7 @@ static inline void timerinc(struct timeval *a, struct timeval *b)
 	timeradd(a, b, &res);
 	a->tv_sec = res.tv_sec;
 	a->tv_usec = res.tv_usec;
-};
+}
 
 struct replay_setup *replay_new_setup(void)
 {
