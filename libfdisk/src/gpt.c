@@ -1710,13 +1710,13 @@ static int gpt_entry_attrs_to_string(struct gpt_entry *e, char **res)
 		p += l - 1;
 	}
 	if (isset(bits, GPT_ATTRBIT_NOBLOCK)) {
-		if (p > *res)
+		if (p != *res)
 			*p++ = ' ';
 		memcpy(p, GPT_ATTRSTR_NOBLOCK, (l = sizeof(GPT_ATTRSTR_NOBLOCK)));
 		p += l - 1;
 	}
 	if (isset(bits, GPT_ATTRBIT_LEGACY)) {
-		if (p > *res)
+		if (p != *res)
 			*p++ = ' ';
 		memcpy(p, GPT_ATTRSTR_LEGACY, (l = sizeof(GPT_ATTRSTR_LEGACY)));
 		p += l - 1;
@@ -1728,7 +1728,7 @@ static int gpt_entry_attrs_to_string(struct gpt_entry *e, char **res)
 		if (!isset(bits, n))
 			continue;
 		if (!count) {
-			if (p > *res)
+			if (p != *res)
 				*p++ = ' ';
 			p += sprintf(p, "GUID:%u", n);
 		} else
