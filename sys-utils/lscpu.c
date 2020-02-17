@@ -1154,13 +1154,15 @@ read_topology(struct lscpu_desc *desc, int idx)
 		 */
 		desc->coremaps = xcalloc(desc->ncpuspos, sizeof(cpu_set_t *));
 		desc->socketmaps = xcalloc(desc->ncpuspos, sizeof(cpu_set_t *));
-		desc->coreids = xcalloc(desc->ncpuspos, sizeof(*desc->drawerids));
-		desc->socketids = xcalloc(desc->ncpuspos, sizeof(*desc->drawerids));
+		desc->coreids = xcalloc(desc->ncpuspos, sizeof(*desc->coreids));
+		desc->socketids = xcalloc(desc->ncpuspos, sizeof(*desc->socketids));
+
 		for (i = 0; i < desc->ncpuspos; i++)
 			desc->coreids[i] = desc->socketids[i] = -1;
+
 		if (book_siblings) {
 			desc->bookmaps = xcalloc(desc->ncpuspos, sizeof(cpu_set_t *));
-			desc->bookids = xcalloc(desc->ncpuspos, sizeof(*desc->drawerids));
+			desc->bookids = xcalloc(desc->ncpuspos, sizeof(*desc->bookids));
 			for (i = 0; i < desc->ncpuspos; i++)
 				desc->bookids[i] = -1;
 		}
@@ -1176,11 +1178,12 @@ read_topology(struct lscpu_desc *desc, int idx)
 	desc->coreids[idx] = coreid;
 	add_cpuset_to_array(desc->coremaps, &desc->ncores, thread_siblings);
 	desc->socketids[idx] = socketid;
-	if (book_siblings) {
+
+	if (book_siblings && desc->bookmaps && desc->bookids) {
 		add_cpuset_to_array(desc->bookmaps, &desc->nbooks, book_siblings);
 		desc->bookids[idx] = bookid;
 	}
-	if (drawer_siblings) {
+	if (drawer_siblings && desc->drawermaps && desc->drawerids) {
 		add_cpuset_to_array(desc->drawermaps, &desc->ndrawers, drawer_siblings);
 		desc->drawerids[idx] = drawerid;
 	}
@@ -1509,6 +1512,8 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 			snprintf(buf, bufsz, "%d", desc->idx2nodenum[i]);
 		break;
 	case COL_CPU_DRAWER:
+		if (!desc->drawerids || !desc->drawermaps)
+			break;
 		if (mod->physical) {
 			if (desc->drawerids[idx] == -1)
 				snprintf(buf, bufsz, "-");
@@ -1521,6 +1526,8 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 		}
 		break;
 	case COL_CPU_BOOK:
+		if (!desc->bookids || !desc->bookmaps)
+			break;
 		if (mod->physical) {
 			if (desc->bookids[idx] == -1)
 				snprintf(buf, bufsz, "-");
@@ -1843,6 +1850,7 @@ print_cpus_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 			data = get_cell_data(desc, i, cols[c], mod,
 					     buf, sizeof(buf));
 			fputs(data && *data ? data : "", stdout);
+			*buf = '\0';
 		}
 		putchar('\n');
 	}
