@@ -118,6 +118,7 @@ edit_cmd = sed \
 	 -e 's|@datadir[@]|$(datadir)|g' \
 	 -e 's|@sbindir[@]|$(sbindir)|g' \
 	 -e 's|@bindir[@]|$(bindir)|g' \
+	 -e 's|@docdir[@]|$(docdir)|g' \
 	 -e 's|@includedir[@]|$(includedir)|g' \
 	 -e 's|@runstatedir[@]|$(runstatedir)|g' \
 	 -e 's|@usrlib_execdir[@]|$(usrlib_execdir)|g' \

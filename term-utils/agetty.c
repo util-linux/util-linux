@@ -2721,24 +2721,21 @@ static void output_special_char(struct issue *ie,
 	case 't':
 	{
 		time_t now;
-		struct tm *tm;
+		struct tm tm;
 
 		time(&now);
-		tm = localtime(&now);
-
-		if (!tm)
-			break;
+		localtime_r(&now, &tm);
 
 		if (c == 'd') /* ISO 8601 */
 			fprintf(ie->output, "%s %s %d  %d",
-				      nl_langinfo(ABDAY_1 + tm->tm_wday),
-				      nl_langinfo(ABMON_1 + tm->tm_mon),
-				      tm->tm_mday,
-				      tm->tm_year < 70 ? tm->tm_year + 2000 :
-				      tm->tm_year + 1900);
+				      nl_langinfo(ABDAY_1 + tm.tm_wday),
+				      nl_langinfo(ABMON_1 + tm.tm_mon),
+				      tm.tm_mday,
+				      tm.tm_year < 70 ? tm.tm_year + 2000 :
+				      tm.tm_year + 1900);
 		else
 			fprintf(ie->output, "%02d:%02d:%02d",
-				      tm->tm_hour, tm->tm_min, tm->tm_sec);
+				      tm.tm_hour, tm.tm_min, tm.tm_sec);
 		break;
 	}
 	case 'l':

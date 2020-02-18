@@ -71,6 +71,7 @@
 #include "cctype.h"
 #include "fileutils.h"
 #include "closestream.h"
+#include "timeutils.h"
 
 #define	TERM_WIDTH	79
 #define	WRITE_TIME_OUT	300		/* in seconds */
@@ -349,7 +350,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 
 	if (print_banner == TRUE) {
 		char *hostname = xgethostname();
-		char *whom, *where, *date;
+		char *whom, *where, date[CTIME_BUFSIZ];
 		struct passwd *pw;
 		time_t now;
 
@@ -366,7 +367,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 			where += 5;
 
 		time(&now);
-		date = xstrdup(ctime(&now));
+		ctime_r(&now, date);
 		date[strlen(date) - 1] = '\0';
 
 		/*
@@ -385,7 +386,6 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 				whom, hostname, where, date);
 		buf_printf(bs, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
 		free(hostname);
-		free(date);
 	}
 	buf_printf(bs, "%*s\r\n", TERM_WIDTH, " ");
 

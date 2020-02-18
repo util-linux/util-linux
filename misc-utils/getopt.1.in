@@ -417,11 +417,9 @@ if it is called with
 .SH EXAMPLES
 Example scripts for (ba)sh and (t)csh are provided with the
 .BR getopt (1)
-distribution, and are optionally installed in
-.I /usr/share/getopt/
-or
-.I /usr/share/doc/
-in the util-linux subdirectory.
+distribution, and are installed in
+.I @docdir@/getopt/
+directory.
 .SH ENVIRONMENT
 .IP POSIXLY_CORRECT
 This environment variable is examined by the

@@ -76,6 +76,7 @@
 #include "xalloc.h"
 #include "all-io.h"
 #include "fileutils.h"
+#include "timeutils.h"
 #include "ttyutils.h"
 #include "pwdutils.h"
 
@@ -524,9 +525,12 @@ static void log_lastlog(struct login_context *cxt)
 	if (!cxt->quiet) {
 		if (read(fd, (char *)&ll, sizeof(ll)) == sizeof(ll) &&
 							ll.ll_time != 0) {
+			char time_string[CTIME_BUFSIZ];
+
 			time_t ll_time = (time_t) ll.ll_time;
 
-			printf(_("Last login: %.*s "), 24 - 5, ctime(&ll_time));
+			ctime_r(&ll_time, time_string);
+			printf(_("Last login: %.*s "), 24 - 5, time_string);
 			if (*ll.ll_host != '\0')
 				printf(_("from %.*s\n"),
 				       (int)sizeof(ll.ll_host), ll.ll_host);

@@ -202,6 +202,7 @@ endif
 if BUILD_GETOPT
 usrbin_exec_PROGRAMS += getopt
 dist_man_MANS += misc-utils/getopt.1
+PATHFILES += misc-utils/getopt.1
 getopt_SOURCES = misc-utils/getopt.c
 getoptexampledir = $(docdir)/getopt/
 dist_getoptexample_SCRIPTS = \
