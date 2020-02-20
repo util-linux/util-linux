@@ -404,8 +404,12 @@ partition; existing partitions will be resized as required.
 .sp
 The partition
 .I type
-is given in hex for MBR (DOS), without the 0x prefix, a GUID string for GPT, or
-a shortcut:
+is given in hex for MBR (DOS) where 0x prefix is optional; a GUID string for
+GPT; or a shortcut. It's recommended to use two letters for MBR hex codes to
+avoid collision between shortcut 'E' and '0E' MBR hex code. For backward
+compatibility sfdisk tries to interpret
+.I type
+as a shortcut as a first possibility. Supported shortcuts:
 .RS
 .TP
 .B L
@@ -415,7 +419,7 @@ Linux; means 83 for MBR and 0FC63DAF-8483-4772-8E79-3D69D8477DE4 for GPT.
 swap area; means 82 for MBR and 0657FD6D-A4AB-43C4-84E5-0933C84B4F4F for GPT
 .TP
 .B E
-extended partition; means 5 for MBR
+extended partition; means 05 for MBR
 .TP
 .B H
 home partition; means 933AC7E1-2EB4-4F13-B844-0E14E2AEF915 for GPT
