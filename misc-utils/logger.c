@@ -775,13 +775,13 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 
 	if (ctl->rfc5424_time) {
 		struct timeval tv;
-		struct tm *tm;
+		struct tm tm;
 
 		logger_gettimeofday(&tv, NULL);
-		if ((tm = localtime(&tv.tv_sec)) != NULL) {
+		if (localtime_r(&tv.tv_sec, &tm) != NULL) {
 			char fmt[64];
 			const size_t i = strftime(fmt, sizeof(fmt),
-						  "%Y-%m-%dT%H:%M:%S.%%06u%z ", tm);
+						  "%Y-%m-%dT%H:%M:%S.%%06u%z ", &tm);
 			/* patch TZ info to comply with RFC3339 (we left SP at end) */
 			fmt[i - 1] = fmt[i - 2];
 			fmt[i - 2] = fmt[i - 3];

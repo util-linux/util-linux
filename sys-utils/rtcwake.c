@@ -199,9 +199,10 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 		printf("\tdelta   = %ld\n", ctl->sys_time - ctl->rtc_time);
 		printf("\ttzone   = %ld\n", timezone);
 		printf("\ttzname  = %s\n", tzname[daylight]);
-		gmtime_r(&ctl->rtc_time, &tm);
+		gmtime_r(&ctl->sys_time, &tm);
 		printf("\tsystime = %ld, (UTC) %s",
-				(long) ctl->sys_time, asctime_r(gmtime(&ctl->sys_time), s));
+				(long) ctl->sys_time, asctime_r(&tm, s));
+		gmtime_r(&ctl->rtc_time, &tm);
 		printf("\trtctime = %ld, (UTC) %s",
 				(long) ctl->rtc_time, asctime_r(&tm, s));
 	}

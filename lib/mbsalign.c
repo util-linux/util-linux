@@ -349,9 +349,6 @@ wc_truncate (wchar_t *wc, size_t width)
   return cells;
 }
 
-/* FIXME: move this function to gnulib as it's missing on:
-   OpenBSD 3.8, IRIX 5.3, Solaris 2.5.1, mingw, BeOS  */
-
 static int
 rpl_wcswidth (const wchar_t *s, size_t n)
 {
@@ -413,8 +410,6 @@ done:
 static char*
 mbs_align_pad (char *dest, const char* dest_end, size_t n_spaces, int padchar)
 {
-  /* FIXME: Should we pad with "figure space" (\u2007)
-     if non ascii data present?  */
   for (/* nothing */; n_spaces && (dest < dest_end); n_spaces--)
     *dest++ = padchar;
   *dest = '\0';

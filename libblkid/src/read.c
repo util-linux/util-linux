@@ -277,26 +277,6 @@ static int parse_token(char **name, char **value, char **cp)
 }
 
 /*
- * Extract a tag of the form <NAME>value</NAME> from the line.
- */
-/*
-static int parse_xml(char **name, char **value, char **cp)
-{
-	char *end;
-
-	if (!name || !value || !cp)
-		return -BLKID_ERR_PARAM;
-
-	*name = strip_line(*cp);
-
-	if ((*name)[0] != '<' || (*name)[1] == '/')
-		return 0;
-
-	FIXME: finish this.
-}
-*/
-
-/*
  * Extract a tag from the line.
  *
  * Return 1 if a valid tag was found.
@@ -312,8 +292,7 @@ static int parse_tag(blkid_cache cache, blkid_dev dev, char **cp)
 	if (!cache || !dev)
 		return -BLKID_ERR_PARAM;
 
-	if ((ret = parse_token(&name, &value, cp)) <= 0 /* &&
-	    (ret = parse_xml(&name, &value, cp)) <= 0 */)
+	if ((ret = parse_token(&name, &value, cp)) <= 0)
 		return ret;
 
 	DBG(READ, ul_debug("tag: %s=\"%s\"", name, value));

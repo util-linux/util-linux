@@ -362,7 +362,7 @@ int __scols_calculate(struct libscols_table *tb, struct libscols_buffer *buf)
 				continue;
 
 			/* nothing to truncate */
-			if (cl->width == 0 || width == 0)
+			if (cl->width == 0)
 				continue;
 
 			trunc_flag = scols_column_is_trunc(cl)
