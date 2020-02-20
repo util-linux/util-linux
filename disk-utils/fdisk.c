@@ -542,7 +542,7 @@ void list_partition_types(struct fdisk_context *cxt)
 			size_t ret;
 
 			if (fdisk_parttype_get_name(t)) {
-				printf("%c%2x  ", i ? ' ' : '\n',
+				printf("%s%02x ", i ? "  " : "\n",
 						fdisk_parttype_get_code(t));
 				ret = mbsalign(_(fdisk_parttype_get_name(t)),
 						name, sizeof(name),
