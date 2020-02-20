@@ -208,10 +208,10 @@ Be careful before using the write command.
 Command (m for help): Entering nested BSD disklabel.
 
 Command (m for help): 
- 0  unused           5  4.1BSD           9  4.4LFS           d  boot           
- 1  swap             6  Eighth Edition   a  unknown          e  ADOS           
- 2  Version 6        7  4.2BSD           b  HPFS             f  HFS            
- 3  Version 7        8  ext2             c  ISO-9660        10  AdvFS          
- 4  System V       
+00 unused           05 4.1BSD           09 4.4LFS           0d boot           
+01 swap             06 Eighth Edition   0a unknown          0e ADOS           
+02 Version 6        07 4.2BSD           0b HPFS             0f HFS            
+03 Version 7        08 MS-DOS           0c ISO-9660         10 AdvFS          
+04 System V       
 
 Command (m for help): 
