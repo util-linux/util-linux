@@ -20,10 +20,9 @@ avoid using default outputs in your scripts.  Always explicitly define expected
 columns by using the \fB\-\-output\fR option together with a columns list in
 environments where a stable output is required.
 
-\fBNSFS\fP column, printed when \fBnet\fP is specified for
-\fB\-\-type\fR option, is special; it uses multi-line cells.
-Use the option \fB\-\-nowrap\fR is for switching to "," separated single-line
-representation.
+The \fBNSFS\fP column, printed when \fBnet\fP is specified for the
+\fB\-\-type\fP option, is special; it uses multi-line cells. Use the option
+\fB\-\-nowrap\fR to switch to ","-separated single-line representation.
 
 Note that \fBlsns\fR reads information directly from the /proc filesystem and
 for non-root users it may return incomplete information.  The current /proc
