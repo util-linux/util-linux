@@ -119,7 +119,7 @@ struct irqtop_ctl {
 	struct timeval uptime_tv;
 	int (*sort_func)(const struct irq_info *, const struct irq_info *);
 	long smp_num_cpus;
-	struct irq_stat *last_stat;
+	struct irq_stat *prev_stat;
 	char *hostname;
 	struct libscols_table *table;
 	struct libscols_line *outline;
@@ -129,6 +129,7 @@ struct irqtop_ctl {
 		json:1,
 		no_headings:1,
 		request_exit:1,
+		display_total:1,
 		run_once:1;
 };
 
@@ -396,6 +397,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("  c:   sort by increase count of each interrupt\n"), stdout);
 	fputs(_("  i:   sort by default interrupts from proc interrupt\n"), stdout);
 	fputs(_("  n:   sort by name\n"), stdout);
+	fputs(_("  q Q: stop updates and exit program\n"), stdout);
+	fputs(_("  t:   alterate displaying delta and totals count\n"), stdout);
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
@@ -430,6 +433,9 @@ static void parse_input(struct irqtop_ctl *ctl, char c)
 		break;
 	case 'n':
 		ctl->sort_func = sort_name;
+		break;
+	case 't':
+		ctl->display_total = !ctl->display_total;
 		break;
 	case 'q':
 	case 'Q':
@@ -496,8 +502,13 @@ static int update_screen(struct irqtop_ctl *ctl)
 	size = sizeof(*stat->irq_info) * stat->nr_irq;
 	result = xmalloc(size);
 	memcpy(result, stat->irq_info, size);
+	if (!ctl->display_total) {
+		for (index = 0; ctl->prev_stat && index < stat->nr_irq; index++)
+			result[index].count -= ctl->prev_stat->irq_info[index].count;
+	}
 	sort_result(ctl, result, stat->nr_irq);
-	for (index = 0; index < choose_smaller(ctl->rows - RESERVE_ROWS, stat->nr_irq); index++) {
+	size = choose_smaller(ctl->rows - RESERVE_ROWS, stat->nr_irq);
+	for (index = 0; index < size; index++) {
 		curr = result + index;
 		add_scols_line(ctl, curr);
 	}
@@ -514,6 +525,11 @@ static int update_screen(struct irqtop_ctl *ctl)
 	}
 	scols_unref_table(ctl->table);
 
+	if (!ctl->display_total) {
+		if (ctl->prev_stat)
+			free_irqinfo(ctl->prev_stat);
+		ctl->prev_stat = stat;
+	}
 	return 0;
 }
 
@@ -695,7 +711,7 @@ int main(int argc, char **argv)
 	else
 		event_loop(&ctl);
 
-	free_irqinfo(ctl.last_stat);
+	free_irqinfo(ctl.prev_stat);
 	free(ctl.hostname);
 
 	if (is_tty)
