@@ -194,6 +194,7 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 	scols_table_set_stream(tb, stream);
 	rc = do_print_table(tb, NULL);
 	fclose(stream);
+	free(*data);
 	scols_table_set_stream(tb, old_stream);
 
 	return rc;
