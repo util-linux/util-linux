@@ -701,6 +701,7 @@ int main(int argc, char **argv)
 		ctl.win = initscr();
 		get_terminal_dimension(&ctl.cols, &ctl.rows);
 		resizeterm(ctl.rows, ctl.cols);
+		curs_set(0);
 	}
 	ctl.smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
 	gettime_monotonic(&ctl.uptime_tv);
