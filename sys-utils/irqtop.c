@@ -68,11 +68,11 @@
 #include "ttyutils.h"
 #include "xalloc.h"
 
-#define DEF_SORT_FUNC		sort_count
-#define IRQ_NAME_LEN		4
-#define IRQ_DESC_LEN		64
-#define IRQ_INFO_LEN		64
-#define MAX_EVENTS		3
+#define DEF_SORT_FUNC	sort_count
+#define IRQ_FIELD_LEN	4
+#define IRQ_NAME_LEN	64
+#define IRQ_INFO_LEN	64
+#define MAX_EVENTS	3
 
 struct colinfo {
 	const char *name;
@@ -85,18 +85,18 @@ struct colinfo {
 enum {
 	COL_IRQ,
 	COL_COUNT,
-	COL_DESC
+	COL_NAME
 };
 
 static struct colinfo infos[] = {
 	[COL_IRQ] = {"IRQ", 0.20, SCOLS_FL_RIGHT, N_("interrupts"), SCOLS_JSON_STRING},
 	[COL_COUNT] = {"COUNT", 0.20, SCOLS_FL_RIGHT, N_("total count"), SCOLS_JSON_NUMBER},
-	[COL_DESC] = {"DESC", 0.60, SCOLS_FL_TRUNC, N_("description"), SCOLS_JSON_STRING},
+	[COL_NAME] = {"NAME", 0.60, SCOLS_FL_TRUNC, N_("name"), SCOLS_JSON_STRING},
 };
 
 struct irq_info {
-	char irq[IRQ_NAME_LEN + 1];	/* name of this irq */
-	char desc[IRQ_DESC_LEN + 1];	/* description of this irq */
+	char irq[IRQ_FIELD_LEN + 1];	/* name of this irq */
+	char name[IRQ_NAME_LEN + 1];	/* description of this irq */
 	unsigned long count;		/* count of this irq for all cpu(s) */
 };
 
@@ -181,8 +181,8 @@ static void add_scols_line(struct irqtop_ctl *ctl, struct irq_info *stat)
 		case COL_COUNT:
 			xasprintf(&str, "%ld", stat->count);
 			break;
-		case COL_DESC:
-			xasprintf(&str, "%s", stat->desc);
+		case COL_NAME:
+			xasprintf(&str, "%s", stat->name);
 			break;
 		default:
 			break;
@@ -261,8 +261,8 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 	struct irq_stat *stat;
 	struct irq_info *curr;
 
-	/* NAME + ':' + 11 bytes/cpu + IRQ_DESC_LEN */
-	bufferlen = IRQ_NAME_LEN + 1 + ctl->smp_num_cpus * 11 + IRQ_DESC_LEN;
+	/* NAME + ':' + 11 bytes/cpu + IRQ_NAME_LEN */
+	bufferlen = IRQ_FIELD_LEN + 1 + ctl->smp_num_cpus * 11 + IRQ_NAME_LEN;
 	buffer = xmalloc(bufferlen);
 	stat = xcalloc(1, sizeof(*stat));
 
@@ -297,7 +297,7 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 			continue;
 
 		length = strlen(buffer);
-		if (length < IRQ_NAME_LEN + 1 || tmp - buffer > IRQ_NAME_LEN)
+		if (length < IRQ_FIELD_LEN + 1 || tmp - buffer > IRQ_FIELD_LEN)
 			continue;
 
 		curr = stat->irq_info + stat->nr_irq++;
@@ -318,10 +318,10 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 			while (isspace(*tmp))
 				tmp++;
 			tmp = remove_repeated_spaces(tmp);
-			strcpy(curr->desc, tmp);
+			strcpy(curr->name, tmp);
 		} else {
-			/* no desc string at all, we have to set '\0' here */
-			curr->desc[0] = '\0';
+			/* no irq name string, we have to set '\0' here */
+			curr->name[0] = '\0';
 		}
 
 		if (stat->nr_irq == stat->nr_irq_info) {
@@ -678,7 +678,7 @@ int main(int argc, char **argv)
 
 	ctl.columns[ctl.ncolumns++] = COL_IRQ;
 	ctl.columns[ctl.ncolumns++] = COL_COUNT;
-	ctl.columns[ctl.ncolumns++] = COL_DESC;
+	ctl.columns[ctl.ncolumns++] = COL_NAME;
 
 	parse_args(&ctl, argc, argv);
 
