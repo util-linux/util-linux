@@ -329,8 +329,8 @@ AC_CHECK_HEADERS([security/openpam.h], [], [], [
 ])
 
 AC_CHECK_HEADERS([langinfo.h],
-		[AM_CONDITIONAL([HAVE_LANGINFO], [true])],
-		[AM_CONDITIONAL([HAVE_LANGINFO], [false])])
+		[AM_CONDITIONAL([HAVE_LANGINFO_H], [true])],
+		[AM_CONDITIONAL([HAVE_LANGINFO_H], [false])])
 
 AC_MSG_CHECKING([whether langinfo.h defines ALTMON_x constants])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[

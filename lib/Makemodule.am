@@ -40,7 +40,7 @@ if USE_PLYMOUTH_SUPPORT
 libcommon_la_SOURCES += lib/plymouth-ctrl.c
 endif
 
-if !HAVE_LANGINFO
+if !HAVE_LANGINFO_H
 libcommon_la_SOURCES += lib/langinfo.c
 endif
 
