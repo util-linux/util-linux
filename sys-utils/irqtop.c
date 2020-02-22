@@ -72,7 +72,6 @@
 #define IRQ_NAME_LEN		4
 #define IRQ_DESC_LEN		64
 #define IRQ_INFO_LEN		64
-#define RESERVE_ROWS		(1 + 2 + 1)	/* summary + header + last row */
 #define MAX_EVENTS		3
 
 struct colinfo {
@@ -105,7 +104,6 @@ struct irq_stat {
 	unsigned int nr_irq;		/* number of irq vector */
 	unsigned int nr_irq_info;	/* number of irq info */
 	struct irq_info *irq_info;	/* array of irq_info */
-	long nr_online_cpu;		/* number of online cpu */
 	long nr_active_cpu;		/* number of active cpu */
 	unsigned long total_irq;	/* total irqs */
 };
@@ -283,7 +281,6 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 		goto close_file;
 	}
 
-	stat->nr_online_cpu = ctl->smp_num_cpus;
 	tmp = buffer;
 	while ((tmp = strstr(tmp, "CPU")) != NULL) {
 		tmp += 3;	/* skip this "CPU", find next */
@@ -444,13 +441,6 @@ static void parse_input(struct irqtop_ctl *ctl, char c)
 	}
 }
 
-static inline size_t choose_smaller(size_t a, size_t b)
-{
-	if (a < b)
-		return a;
-	return b;
-}
-
 static inline void print_line(struct irqtop_ctl *ctl, const char *fmt, ...)
 {
 	va_list args;
@@ -473,25 +463,13 @@ static int update_screen(struct irqtop_ctl *ctl)
 	time_t now;
 	char timestr[64];
 
+	/* the stats */
 	stat = get_irqinfo(ctl);
 	if (!stat) {
 		ctl->request_exit = 1;
 		return 1;
 	}
 
-	/* summary header */
-	if (!ctl->run_once)
-		move(0, 0);
-	if (!ctl->json) {
-		now = time(NULL);
-		strtime_iso(&now, ISO_TIMESTAMP_T, timestr, sizeof(timestr));
-		print_line(ctl,
-			   "irqtop - IRQ: %d TOTAL: %ld CPU: %ld ACTIVE CPU: %ld\n"
-			   "HOST: %s TIME: %s\n",
-			   stat->nr_irq, stat->total_irq, stat->nr_online_cpu,
-			   stat->nr_active_cpu, ctl->hostname, timestr);
-	}
-	/* the stats */
 	if (!ctl->run_once && ctl->old_rows != ctl->rows) {
 		resizeterm(ctl->rows, ctl->cols);
 		ctl->old_rows = ctl->rows;
@@ -502,18 +480,31 @@ static int update_screen(struct irqtop_ctl *ctl)
 	size = sizeof(*stat->irq_info) * stat->nr_irq;
 	result = xmalloc(size);
 	memcpy(result, stat->irq_info, size);
-	if (!ctl->display_total) {
-		for (index = 0; ctl->prev_stat && index < stat->nr_irq; index++)
+	if (!ctl->display_total && ctl->prev_stat) {
+		stat->total_irq = 0;
+		for (index = 0; index < stat->nr_irq; index++) {
 			result[index].count -= ctl->prev_stat->irq_info[index].count;
+			stat->total_irq += result[index].count;
+		}
 	}
 	sort_result(ctl, result, stat->nr_irq);
-	size = choose_smaller(ctl->rows - RESERVE_ROWS, stat->nr_irq);
-	for (index = 0; index < size; index++) {
+	for (index = 0; index < stat->nr_irq; index++) {
 		curr = result + index;
 		add_scols_line(ctl, curr);
 	}
 	free(result);
 
+	/* header */
+	if (!ctl->run_once)
+		move(0, 0);
+	if (!ctl->json) {
+		now = time(NULL);
+		strtime_iso(&now, ISO_TIMESTAMP_T, timestr, sizeof(timestr));
+		print_line(ctl,
+			   "irqtop - total: %ld host: %s time: %s\n\n",
+			   stat->total_irq, ctl->hostname, timestr);
+	}
+	/* body */
 	if (ctl->run_once)
 		scols_print_table(ctl->table);
 	else {
@@ -523,8 +514,8 @@ static int update_screen(struct irqtop_ctl *ctl)
 		print_line(ctl, "%s", data);
 		free(data);
 	}
+	/* clean up */
 	scols_unref_table(ctl->table);
-
 	if (!ctl->display_total) {
 		if (ctl->prev_stat)
 			free_irqinfo(ctl->prev_stat);
