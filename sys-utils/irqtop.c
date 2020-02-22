@@ -68,7 +68,7 @@
 #include "ttyutils.h"
 #include "xalloc.h"
 
-#define DEF_SORT_FUNC	sort_count
+#define DEF_SORT_FUNC	sort_total
 #define IRQ_FIELD_LEN	4
 #define IRQ_NAME_LEN	64
 #define IRQ_INFO_LEN	64
@@ -84,20 +84,23 @@ struct colinfo {
 
 enum {
 	COL_IRQ,
-	COL_COUNT,
+	COL_TOTAL,
+	COL_DELTA,
 	COL_NAME
 };
 
 static struct colinfo infos[] = {
-	[COL_IRQ] = {"IRQ", 0.20, SCOLS_FL_RIGHT, N_("interrupts"), SCOLS_JSON_STRING},
-	[COL_COUNT] = {"COUNT", 0.20, SCOLS_FL_RIGHT, N_("total count"), SCOLS_JSON_NUMBER},
-	[COL_NAME] = {"NAME", 0.60, SCOLS_FL_TRUNC, N_("name"), SCOLS_JSON_STRING},
+	[COL_IRQ] = {"IRQ", 0.10, SCOLS_FL_RIGHT, N_("interrupts"), SCOLS_JSON_STRING},
+	[COL_TOTAL] = {"TOTAL", 0.10, SCOLS_FL_RIGHT, N_("total count"), SCOLS_JSON_NUMBER},
+	[COL_DELTA] = {"DELTA", 0.10, SCOLS_FL_RIGHT, N_("delta count"), SCOLS_JSON_NUMBER},
+	[COL_NAME] = {"NAME", 0.70, SCOLS_FL_TRUNC, N_("name"), SCOLS_JSON_STRING},
 };
 
 struct irq_info {
-	char irq[IRQ_FIELD_LEN + 1];	/* name of this irq */
-	char name[IRQ_NAME_LEN + 1];	/* description of this irq */
-	unsigned long count;		/* count of this irq for all cpu(s) */
+	char irq[IRQ_FIELD_LEN + 1];	/* short name of this irq */
+	char name[IRQ_NAME_LEN + 1];	/* descriptive name of this irq */
+	unsigned long total;		/* total count since system start up */
+	unsigned long delta;		/* delta count since previous update */
 };
 
 struct irq_stat {
@@ -106,6 +109,7 @@ struct irq_stat {
 	struct irq_info *irq_info;	/* array of irq_info */
 	long nr_active_cpu;		/* number of active cpu */
 	unsigned long total_irq;	/* total irqs */
+	unsigned long delta_irq;	/* delta irqs */
 };
 
 struct irqtop_ctl {
@@ -124,10 +128,10 @@ struct irqtop_ctl {
 	int columns[ARRAY_SIZE(infos)];
 	size_t ncolumns;
 	unsigned int
+		specific_columns:1,
 		json:1,
 		no_headings:1,
 		request_exit:1,
-		display_total:1,
 		run_once:1;
 };
 
@@ -178,8 +182,11 @@ static void add_scols_line(struct irqtop_ctl *ctl, struct irq_info *stat)
 		case COL_IRQ:
 			xasprintf(&str, "%s", stat->irq);
 			break;
-		case COL_COUNT:
-			xasprintf(&str, "%ld", stat->count);
+		case COL_TOTAL:
+			xasprintf(&str, "%ld", stat->total);
+			break;
+		case COL_DELTA:
+			xasprintf(&str, "%ld", stat->delta);
 			break;
 		case COL_NAME:
 			xasprintf(&str, "%s", stat->name);
@@ -308,7 +315,7 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 		tmp += 1;
 		for (index = 0; (index < stat->nr_active_cpu) && (tmp - buffer < length); index++) {
 			sscanf(tmp, " %10lu", &count);
-			curr->count += count;
+			curr->total += count;
 			stat->total_irq += count;
 			tmp += 11;
 		}
@@ -352,18 +359,22 @@ static void free_irqinfo(struct irq_stat *stat)
 
 static int sort_name(const struct irq_info *a, const struct irq_info *b)
 {
+	return (strcmp(a->name, b->name) > 0) ? 1 : 0;
+}
+
+static int sort_total(const struct irq_info *a, const struct irq_info *b)
+{
+	return a->total < b->total;
+}
+
+static int sort_delta(const struct irq_info *a, const struct irq_info *b)
+{
+	return a->delta < b->delta;
+}
+
+static int sort_interrupts(const struct irq_info *a, const struct irq_info *b)
+{
 	return (strcmp(a->irq, b->irq) > 0) ? 1 : 0;
-}
-
-static int sort_count(const struct irq_info *a, const struct irq_info *b)
-{
-	return a->count < b->count;
-}
-
-static int sort_interrupts(const struct irq_info *a __attribute__((__unused__)),
-			   const struct irq_info *b __attribute__((__unused__)))
-{
-	return 0;
 }
 
 static void sort_result(struct irqtop_ctl *ctl, struct irq_info *result, size_t nmemb)
@@ -391,11 +402,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(USAGE_HELP_OPTIONS(21));
 
 	fputs(_("\nThe following are valid sort criteria:\n"), stdout);
-	fputs(_("  c:   sort by increase count of each interrupt\n"), stdout);
-	fputs(_("  i:   sort by default interrupts from proc interrupt\n"), stdout);
-	fputs(_("  n:   sort by name\n"), stdout);
+	fputs(_("  i:   sort by IRQ field\n"), stdout);
+	fputs(_("  t:   sort by TOTAL field\n"), stdout);
+	fputs(_("  d:   sort by DELTA field\n"), stdout);
+	fputs(_("  n:   sort by NAME field\n"), stdout);
 	fputs(_("  q Q: stop updates and exit program\n"), stdout);
-	fputs(_("  t:   alterate displaying delta and totals count\n"), stdout);
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
@@ -408,10 +419,12 @@ static void __attribute__((__noreturn__)) usage(void)
 static void *set_sort_func(char key)
 {
 	switch (key) {
-	case 'c':
-		return (void *)sort_count;
 	case 'i':
 		return (void *)sort_interrupts;
+	case 't':
+		return (void *)sort_total;
+	case 'd':
+		return (void *)sort_delta;
 	case 'n':
 		return (void *)sort_name;
 	default:
@@ -422,17 +435,17 @@ static void *set_sort_func(char key)
 static void parse_input(struct irqtop_ctl *ctl, char c)
 {
 	switch (c) {
-	case 'c':
-		ctl->sort_func = sort_count;
-		break;
 	case 'i':
 		ctl->sort_func = sort_interrupts;
 		break;
+	case 't':
+		ctl->sort_func = sort_total;
+		break;
+	case 'd':
+		ctl->sort_func = sort_delta;
+		break;
 	case 'n':
 		ctl->sort_func = sort_name;
-		break;
-	case 't':
-		ctl->display_total = !ctl->display_total;
 		break;
 	case 'q':
 	case 'Q':
@@ -480,11 +493,11 @@ static int update_screen(struct irqtop_ctl *ctl)
 	size = sizeof(*stat->irq_info) * stat->nr_irq;
 	result = xmalloc(size);
 	memcpy(result, stat->irq_info, size);
-	if (!ctl->display_total && ctl->prev_stat) {
-		stat->total_irq = 0;
+	if (ctl->prev_stat) {
+		stat->delta_irq = 0;
 		for (index = 0; index < stat->nr_irq; index++) {
-			result[index].count -= ctl->prev_stat->irq_info[index].count;
-			stat->total_irq += result[index].count;
+			result[index].delta = result[index].total - ctl->prev_stat->irq_info[index].total;
+			stat->delta_irq += result[index].delta;
 		}
 	}
 	sort_result(ctl, result, stat->nr_irq);
@@ -501,8 +514,8 @@ static int update_screen(struct irqtop_ctl *ctl)
 		now = time(NULL);
 		strtime_iso(&now, ISO_TIMESTAMP_T, timestr, sizeof(timestr));
 		print_line(ctl,
-			   "irqtop - total: %ld host: %s time: %s\n\n",
-			   stat->total_irq, ctl->hostname, timestr);
+			   "irqtop - total: %ld delta: %ld host: %s time: %s\n\n",
+			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
 	}
 	/* body */
 	if (ctl->run_once)
@@ -516,11 +529,9 @@ static int update_screen(struct irqtop_ctl *ctl)
 	}
 	/* clean up */
 	scols_unref_table(ctl->table);
-	if (!ctl->display_total) {
-		if (ctl->prev_stat)
-			free_irqinfo(ctl->prev_stat);
-		ctl->prev_stat = stat;
-	}
+	if (ctl->prev_stat)
+		free_irqinfo(ctl->prev_stat);
+	ctl->prev_stat = stat;
 	return 0;
 }
 
@@ -609,7 +620,7 @@ static void parse_args(struct irqtop_ctl *ctl, int argc, char **argv)
 		{"sort", required_argument, NULL, 's'},
 		{"once", no_argument, NULL, 'o'},
 		{"json", no_argument, NULL, JSON_OPT},
-		{"columns", optional_argument, NULL, COLUMNS_OPT},
+		{"columns", required_argument, NULL, COLUMNS_OPT},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -642,13 +653,16 @@ static void parse_args(struct irqtop_ctl *ctl, int argc, char **argv)
 			ctl->request_exit = 1;
 			break;
 		case COLUMNS_OPT:
+			ctl->specific_columns = 1;
 			if (optarg) {
 				ssize_t nc = string_to_idarray(optarg, ctl->columns,
 							       ARRAY_SIZE(ctl->columns),
 							       column_name_to_id);
 
 				if (nc < 0)
-					exit(EXIT_FAILURE);
+					errx(EXIT_FAILURE,
+					     _("too many or unknown --columns argument: %s"),
+					     optarg);
 				ctl->ncolumns = nc;
 			}
 			break;
@@ -676,11 +690,15 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	ctl.sort_func = DEF_SORT_FUNC;
 
-	ctl.columns[ctl.ncolumns++] = COL_IRQ;
-	ctl.columns[ctl.ncolumns++] = COL_COUNT;
-	ctl.columns[ctl.ncolumns++] = COL_NAME;
-
 	parse_args(&ctl, argc, argv);
+
+	if (!ctl.specific_columns) {
+		ctl.columns[ctl.ncolumns++] = COL_IRQ;
+		ctl.columns[ctl.ncolumns++] = COL_TOTAL;
+		if (!ctl.run_once)
+			ctl.columns[ctl.ncolumns++] = COL_DELTA;
+		ctl.columns[ctl.ncolumns++] = COL_NAME;
+	}
 
 	is_tty = isatty(STDIN_FILENO);
 	if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)

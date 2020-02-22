@@ -10,7 +10,20 @@ _irqtop_module()
 			return 0
 			;;
 		'-s'|'--sort')
-			COMPREPLY=( $(compgen -W "c i n" -- $cur) )
+			COMPREPLY=( $(compgen -W "i t d n" -- $cur) )
+			return 0
+			;;
+		'--columns')
+			local prefix realcur OUTPUT
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			for WORD in "IRQ TOTAL DELTA NAME"; do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					OUTPUT="$WORD ${OUTPUT:-""}"
+				fi
+			done
+			compopt -o nospace
+			COMPREPLY=( $(compgen -P "$prefix" -W "$OUTPUT" -S ',' -- $realcur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -19,7 +32,9 @@ _irqtop_module()
 	esac
 	OPTS="	--delay
 		--once
+		--json
 		--sort
+		--columns
 		--help
 		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

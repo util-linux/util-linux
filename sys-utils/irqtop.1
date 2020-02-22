@@ -27,22 +27,22 @@ interactive mode will make the ncurses output to be ordered accordingly.
 .PP
 .RS
 .PD 0
-.\" Key commands are in alphabetical order
-.TP
-.B c
-sort by increase count of each interrupt (the default)
+.\" Sort key commands are in same order as default output fields
 .TP
 .B i
-sort by default interrupts from proc interrupt
+sort by short irq name or number field
+.TP
+.B t
+sort by total count of interrupts (the default)
+.TP
+.B d
+sort by delta count of interrupts
 .TP
 .B n
-sort by name
+sort by long descriptive name field
 .TP
 .B q Q
 stop updates and exit program
-.TP
-.B t
-alterate displaying delta and totals count
 .PD
 .RE
 .TP
