@@ -643,28 +643,28 @@ display_time(struct timeval hwctime)
  * tz.tz_minuteswest argument and sets PCIL (see below). At boot settimeofday(2)
  * has one-shot access to this function as shown in the table below.
  *
- * +-------------------------------------------------------------------+
- * |                       settimeofday(tv, tz)                        |
- * |-------------------------------------------------------------------|
- * |     Arguments     |  System Time  | PCIL |           | warp_clock |
- * |   tv    |   tz    | set  | warped | set  | firsttime |   locked   |
- * |---------|---------|---------------|------|-----------|------------|
- * | pointer | NULL    |  yes |   no   |  no  |     1     |    no      |
- * | pointer | pointer |  yes |   no   |  no  |     0     |    yes     |
- * | NULL    | ptr2utc |  no  |   no   |  no  |     0     |    yes     |
- * | NULL    | pointer |  no  |   yes  |  yes |     0     |    yes     |
- * +-------------------------------------------------------------------+
+ * +-------------------------------------------------------------------------+
+ * |                           settimeofday(tv, tz)                          |
+ * |-------------------------------------------------------------------------|
+ * |     Arguments     |  System Time  | TZ  | PCIL |           | warp_clock |
+ * |   tv    |   tz    | set  | warped | set | set  | firsttime |   locked   |
+ * |---------|---------|---------------|-----|------|-----------|------------|
+ * | pointer | NULL    |  yes |   no   | no  |  no  |     1     |    no      |
+ * | NULL    | ptr2utc |  no  |   no   | yes |  no  |     0     |    yes     |
+ * | NULL    | pointer |  no  |   yes  | yes |  yes |     0     |    yes     |
+ * +-------------------------------------------------------------------------+
  * ptr2utc: tz.tz_minuteswest is zero (UTC).
  * PCIL: persistent_clock_is_local, sets the "11 minute mode" timescale.
  * firsttime: locks the warp_clock function (initialized to 1 at boot).
+ * Since glibc v2.31 settimeofday() will fail if both args are non NULL
  *
  * +---------------------------------------------------------------------------+
  * |  op     | RTC scale | settimeofday calls                                  |
  * |---------|-----------|-----------------------------------------------------|
  * | systz   |   Local   | 1) warps system time*, sets PCIL* and kernel tz     |
  * | systz   |   UTC     | 1st) locks warp_clock* 2nd) sets kernel tz          |
- * | hctosys |   Local   | 1st) sets PCIL* 2nd) sets system time and kernel tz |
- * | hctosys |   UTC     | 1) sets system time and kernel tz                   |
+ * | hctosys |   Local   | 1st) sets PCIL* & kernel tz   2nd) sets system time |
+ * | hctosys |   UTC     | 1st) locks warp* 2nd) sets tz 3rd) sets system time |
  * +---------------------------------------------------------------------------+
  *                         * only on first call after boot
  */
@@ -675,41 +675,44 @@ set_system_clock(const struct hwclock_control *ctl,
 	struct tm broken;
 	int minuteswest;
 	int rc = 0;
-	const struct timezone tz_utc = { 0 };
 
 	localtime_r(&newtime.tv_sec, &broken);
 	minuteswest = -get_gmtoff(&broken) / 60;
 
 	if (ctl->verbose) {
-		if (ctl->hctosys && !ctl->universal)
-			printf(_("Calling settimeofday(NULL, %d) to set "
-				 "persistent_clock_is_local.\n"), minuteswest);
-		if (ctl->systz && ctl->universal)
+		if (ctl->universal) {
 			puts(_("Calling settimeofday(NULL, 0) "
-				"to lock the warp function."));
+			       "to lock the warp_clock function."));
+			if (!( ctl->universal && !minuteswest ))
+				printf(_("Calling settimeofday(NULL, %d) "
+					 "to set the kernel timezone.\n"),
+				       minuteswest);
+		} else
+			printf(_("Calling settimeofday(NULL, %d) to warp "
+				 "System time, set PCIL and the kernel tz.\n"),
+			       minuteswest);
+
 		if (ctl->hctosys)
-			printf(_("Calling settimeofday(%ld.%06ld, %d)\n"),
-			       newtime.tv_sec, newtime.tv_usec, minuteswest);
-		else {
-			printf(_("Calling settimeofday(NULL, %d) "), minuteswest);
-			if (ctl->universal)
-				 puts(_("to set the kernel timezone."));
-			else
-				 puts(_("to warp System time."));
-		}
+			printf(_("Calling settimeofday(%ld.%06ld, NULL) "
+				 "to set the System time.\n"),
+			       newtime.tv_sec, newtime.tv_usec);
 	}
 
 	if (!ctl->testing) {
+		const struct timezone tz_utc = { 0 };
 		const struct timezone tz = { minuteswest };
 
-		if (ctl->hctosys && !ctl->universal)	/* set PCIL */
-			rc = settimeofday(NULL, &tz);
-		if (ctl->systz && ctl->universal)	/* lock warp_clock */
+		/* If UTC RTC: lock warp_clock and PCIL */
+		if (ctl->universal)
 			rc = settimeofday(NULL, &tz_utc);
-		if (!rc && ctl->hctosys)
-			rc = settimeofday(&newtime, &tz);
-		else if (!rc)
+
+		/* Set kernel tz; if localtime RTC: warp_clock and set PCIL */
+		if (!rc && !( ctl->universal && !minuteswest ))
 			rc = settimeofday(NULL, &tz);
+
+		/* Set the System Clock */
+		if ((!rc || errno == ENOSYS) && ctl->hctosys)
+			rc = settimeofday(&newtime, NULL);
 
 		if (rc) {
 			warn(_("settimeofday() failed"));
