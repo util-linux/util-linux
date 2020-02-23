@@ -1,0 +1,67 @@
+dir_libfdisk = include_directories('.', 'src')
+
+defs = configuration_data()
+defs.set('LIBFDISK_VERSION', libfdisk_version)
+defs.set('LIBFDISK_MAJOR_VERSION', libfdisk_version.split('.')[0])
+defs.set('LIBFDISK_MINOR_VERSION', libfdisk_version.split('.')[1])
+defs.set('LIBFDISK_PATCH_VERSION', libfdisk_version.split('.')[2])
+
+libfdisk_h = configure_file(
+  input : 'src/libfdisk.h.in',
+  output : 'libfdisk.h',
+  configuration : defs)
+
+lib_fdisk_sources = '''
+  src/fdiskP.h
+  src/init.c
+  src/field.c
+  src/item.c
+  src/test.c
+  src/ask.c
+  src/alignment.c
+  src/label.c
+  src/utils.c
+  src/context.c
+  src/parttype.c
+  src/partition.c
+  src/table.c
+  src/iter.c
+  src/script.c
+  src/version.c
+  src/wipe.c
+
+  src/sun.c
+  src/sgi.c
+  src/dos.c
+  src/bsd.c
+  src/gpt.c
+'''.split() + [
+  list_h,
+]
+
+libfdisk_sym = 'src/libfdisk.sym'
+libfdisk_sym_path = '@0@/@1@'.format(meson.current_source_dir(), libfdisk_sym)
+
+lib_fdisk_includes = [dir_include,
+                      dir_libblkid,
+                      dir_libfdisk,
+                      dir_libuuid] # XXX: should this be declared along with the lib?
+
+lib_fdisk = both_libraries(
+  'fdisk',
+  list_h,
+  lib_fdisk_sources,
+  include_directories : lib_fdisk_includes,
+  link_depends : libfdisk_sym,
+  version : libfdisk_version,
+  link_args : ['-Wl,--version-script=@0@'.format(libfdisk_sym_path)],
+  link_with : [lib_common,
+               lib_blkid,
+               lib_uuid],
+  dependencies : build_libfdisk ? [] : disabler(),
+  install : build_libfdisk)
+
+pkgconfig.generate(lib_fdisk,
+                   description : 'fdisk library',
+                   subdirs : 'libfdisk',
+                   version : pc_version)

@@ -160,7 +160,11 @@ OPTS="$OPTS --srcdir=$top_srcdir --builddir=$top_builddir"
 
 # Auto-enable ASAN to avoid conflicts between tests and binaries
 if [ -z "$has_asan_opt" ]; then
-	asan=$(awk '/^ASAN_LDFLAGS/ { print $3 }' $top_builddir/Makefile)
+        if [ -e "$top_builddir/Makefile" ]; then
+	    asan=$(awk '/^ASAN_LDFLAGS/ { print $3 }' $top_builddir/Makefile)
+        else
+            . "$top_builddir/meson.conf"
+        fi
 	if [ -n "$asan" ]; then
 		OPTS="$OPTS --memcheck-asan"
 	fi

@@ -181,3 +181,4 @@ ylwrap
 /write
 /zramctl
 /uclampset
+/build*/
