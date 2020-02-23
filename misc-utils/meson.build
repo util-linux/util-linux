@@ -1,0 +1,136 @@
+cal_sources = files(
+  'cal.c',
+)
+
+logger_sources = files(
+  'logger.c',
+) + \
+  strutils_c + \
+  strv_c
+
+look_sources = files(
+  'look.c',
+)
+
+mcookie_sources = files(
+  'mcookie.c',
+) + \
+  md5_c
+
+namei_sources = files(
+  'namei.c',
+) + \
+  strutils_c + \
+  idcache_c
+
+whereis_sources = files(
+  'whereis.c',
+)
+
+lslocks_sources = files(
+  'lslocks.c',
+)
+
+lsblk_sources = files(
+  'lsblk.c',
+  'lsblk-mnt.c',
+  'lsblk-properties.c',
+  'lsblk-devtree.c',
+  'lsblk.h',
+)
+
+uuidgen_sources = files(
+  'uuidgen.c',
+)
+
+uuidparse_sources = files(
+  'uuidparse.c',
+)
+
+uuidd_sources = files(
+  'uuidd.c',
+) + \
+  monotonic_c + \
+  timer_c
+
+test_uuidd_sources = files(
+  'test_uuidd.c',
+)
+
+if build_uuidd
+  uuidd_service = configure_file(
+    input : 'uuidd.service.in',
+    output : 'uuidd.service',
+    configuration : conf)
+  install_data(
+    uuidd_service,
+    install_dir : systemdsystemunitdir)
+
+  uuidd_socket = configure_file(
+    input : 'uuidd.socket.in',
+    output : 'uuidd.socket',
+    configuration : conf)
+  install_data(
+    uuidd_socket,
+    install_dir : systemdsystemunitdir)
+
+  uuidd_8 = configure_file(
+    input : 'uuidd.8.in',
+    output : 'uuidd.8',
+    configuration : conf)
+  install_man(uuidd_8)
+endif
+
+blkid_sources = files(
+  'blkid.c',
+)
+
+findfs_sources = files(
+  'findfs.c',
+)
+
+wipefs_sources = files(
+  'wipefs.c',
+)
+
+findmnt_sources = files(
+  'findmnt.c',
+  'findmnt-verify.c',
+  'findmnt.h',
+)
+
+kill_sources = files(
+  'kill.c',
+)
+
+rename_sources = files(
+  'rename.c',
+)
+
+getopt_sources = files(
+  'getopt.c',
+)
+
+getopt_1 = configure_file(
+  input : 'getopt.1.in',
+  output : 'getopt.1',
+  configuration : conf)
+install_man(getopt_1)
+
+install_data(
+  'getopt-parse.bash',
+  'getopt-parse.tcsh',
+  install_dir : 'doc/getopt',
+  install_mode: 'rwxr-xr-x')
+
+fincore_sources = files(
+  'fincore.c',
+)
+
+hardlink_sources = files(
+  'hardlink.c',
+)
+
+cal_sources = files(
+  'cal.c',
+)

@@ -1,0 +1,92 @@
+lib_common_sources = '''
+  blkdev.c
+  canonicalize.c
+  color-names.c
+  crc32.c
+  crc32c.c
+  encode.c
+  env.c
+  exec_shell.c
+  fileutils.c
+  ismounted.c
+  mangle.c
+  match.c
+  mbsalign.c
+  mbsedit.c
+  pager.c
+  pwdutils.c
+  setproctitle.c
+  signames.c
+  timeutils.c
+  ttyutils.c
+'''.split()
+
+idcache_c = files('idcache.c')
+randutils_c = files('randutils.c')
+md5_c = files('md5.c')
+sha1_c = files('sha1.c')
+strutils_c = files('strutils.c')
+strv_c = files('strv.c')
+
+lib_common_sources += [idcache_c,
+                       randutils_c,
+                       md5_c,
+                       sha1_c,
+                       strutils_c,
+                       strv_c]
+
+monotonic_c = files('monotonic.c')
+timer_c = files('timer.c')
+swapprober_c = files('swapprober.c')
+pty_session_c = files('pty-session.c')
+
+if LINUX
+  lib_common_sources += '''
+    caputils.c
+    linux_version.c
+    loopdev.c
+'''.split()
+endif
+
+if build_plymouth_support
+  lib_common_sources += '''
+        plymouth-ctrl.c
+'''.split()
+endif
+
+if conf.get('HAVE_LANGINFO_H') in [1]
+  lib_common_sources += 'langinfo.c'
+endif
+
+if conf.get('HAVE_CPU_SET_T') in [1]
+  lib_common_sources += 'cpuset.c'
+endif
+
+if conf.get('HAVE_OPENAT') in [1] and conf.get('HAVE_DIRFD') in [1]
+  lib_common_sources += '''
+    path.c
+    procutils.c
+    sysfs.c
+'''.split()
+endif
+
+lib_common = static_library(
+  'common',
+  lib_common_sources,
+  include_directories : dir_include)
+
+
+lib_color_sources = files('''
+  colors.c
+  color-names.c
+'''.split())
+# colors.h include/color-names.h
+
+lib_tcolors = static_library(
+  'tcolors',
+  lib_color_sources,
+  include_directories : dir_include,
+  dependencies : curses_libs)
+
+install_man(
+  'terminal-colors.d.5')

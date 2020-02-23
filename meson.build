@@ -1,0 +1,2828 @@
+project('util-linux', 'c',
+        version : '2.35-rc2',
+        license : 'GPLv2+')
+
+pkgconfig = import('pkgconfig')
+
+libblkid_version = '1.1.0'
+libblkid_date = '11-Dec-2019'
+libuuid_version = '1.3.0'
+libmount_version = '1.1.0'
+libsmartcols_version = '1.1.0'
+libfdisk_version = '1.1.0'
+
+prefixdir = get_option('prefix')
+if not prefixdir.startswith('/')
+        error('Prefix is not absolute: "@0@"'.format(prefixdir))
+endif
+bindir = join_paths(prefixdir, get_option('bindir'))
+sbindir = join_paths(prefixdir, get_option('sbindir'))
+sysconfstaticdir = join_paths(prefixdir, 'lib')
+docdir = '/usr/share/doc/util-linux'
+runstatedir = '/run'
+execprefixdir = '/usr'
+usrbin_exec_dir = join_paths(execprefixdir, 'bin')
+usrsbin_exec_dir = join_paths(execprefixdir, 'sbin')
+
+add_project_arguments('-D_GNU_SOURCE', language : 'c')
+
+cc = meson.get_compiler('c')
+
+conf = configuration_data()
+package_string = '@0@ @1@'.format(meson.project_name(), meson.project_version())
+conf.set_quoted('PACKAGE_STRING', package_string)
+conf.set_quoted('PACKAGE_VERSION', meson.project_version())
+
+codes = [''' {print $1}  ''',
+         ''' {sub("-.*","",$2); print $2} ''',
+         ''' {sub("-.*","",$3); print $3 ~ /^@<:@0-9@:>@+$/ ? $3 : 0} ''']
+pc_version = []
+foreach code : codes
+  res = run_command('bash', '-c',
+                    '''echo '@0@' | awk -F. '@1@' '''.format(
+                      meson.project_version(), code))
+  pc_version += res.stdout().strip()
+endforeach
+pc_version = '.'.join(pc_version)
+
+conf.set_quoted('LIBBLKID_VERSION', libblkid_version)
+conf.set_quoted('LIBBLKID_DATE', libblkid_date)
+
+conf.set('bindir', bindir)
+conf.set('sbindir', sbindir)
+conf.set('runstatedir', runstatedir)
+conf.set('usrsbin_execdir', usrsbin_exec_dir)
+conf.set('docdir', docdir)
+conf.set_quoted('_PATH_SYSCONFSTATICDIR', sysconfstaticdir)
+conf.set_quoted('_PATH_RUNSTATEDIR', runstatedir)
+conf.set_quoted('CONFIG_ADJTIME_PATH', '/etc/adjtime')
+conf.set_quoted('ADJTIME_PATH', '/etc/adjtime') # yes, both are used :(
+
+build_libblkid = not get_option('build-libblkid').disabled()
+conf.set('HAVE_LIBBLKID', build_libblkid ? 1 : false)
+summary('libblkid', build_libblkid ? 'enabled' : 'disabled', section : 'components')
+
+build_libuuid = not get_option('build-libuuid').disabled()
+conf.set('HAVE_LIBUUID', build_libuuid ? 1 : false)
+summary('libuuid', build_libuuid ? 'enabled' : 'disabled', section : 'components')
+
+build_libmount = not get_option('build-libmount').disabled()
+conf.set('HAVE_LIBMOUNT', build_libmount ? 1 : false)
+summary('libmount', build_libmount ? 'enabled' : 'disabled', section : 'components')
+
+build_libsmartcols = not get_option('build-libsmartcols').disabled()
+conf.set('HAVE_LIBSMARTCOLS', build_libsmartcols ? 1 : false)
+summary('libsmartcols', build_libsmartcols ? 'enabled' : 'disabled', section : 'components')
+
+build_libfdisk = not get_option('build-libfdisk').disabled()
+conf.set('HAVE_LIBFDISK', build_libfdisk ? 1 : false)
+summary('libfdisk', build_libfdisk ? 'enabled' : 'disabled', section : 'components')
+
+build_uuidd = not get_option('build-uuidd').disabled()
+conf.set('HAVE_UUIDD', build_uuidd ? 1 : false)
+summary('uuidd', build_uuidd ? 'enabled' : 'disabled', section : 'components')
+
+LINUX = host_machine.system() in ['linux']
+BSD = host_machine.system() in ['dragonfly', 'freebsd', 'netbsd', 'openbsd']
+
+############################################################
+
+code = '''
+#include <wchar.h>
+#include <wctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+int main(void) {
+  wchar_t wc;
+  wint_t w;
+  w = fgetwc(stdin);
+  if (w == WEOF)
+    return 1;
+  wc = w;
+  fputwc(wc,stdout);
+  return 0;
+}
+'''
+have = cc.compiles(code, name : 'wchar_t support')
+if not have and get_option('widechar').enabled()
+  error('widechar support requested but unavailable')
+endif
+if get_option('ncurses').enabled() and get_option('widechar').enabled()
+  error('widechar support is incompatible with non-wide ncurses')
+endif
+conf.set('HAVE_WIDECHAR', have ? 1 : false)
+
+headers = '''
+        byteswap.h
+        crypt.h
+        endian.h
+        err.h
+        errno.h
+        fcntl.h
+        getopt.h
+        inttypes.h
+        langinfo.h
+        lastlog.h
+        libutil.h
+        locale.h
+        mntent.h
+        paths.h
+        pty.h
+        shadow.h
+        stdint.h
+        stdio_ext.h
+        stdlib.h
+        string.h
+        strings.h
+        unistd.h
+        utmp.h
+        utmpx.h
+        asm/io.h
+        linux/blkzoned.h
+        linux/capability.h
+        linux/cdrom.h
+        linux/compiler.h
+        linux/falloc.h
+        linux/fd.h
+        linux/fs.h
+        linux/net_namespace.h
+        linux/raw.h
+        linux/securebits.h
+        linux/tiocl.h
+        linux/version.h
+        linux/watchdog.h
+        net/if.h
+        net/if_dl.h
+        netinet/in.h
+        security/openpam.h
+        security/pam_appl.h
+        security/pam_misc.h
+        sys/disk.h
+        sys/disklabel.h
+        sys/endian.h
+        sys/file.h
+        sys/io.h
+        sys/ioccom.h
+        sys/ioctl.h
+        sys/mkdev.h
+        sys/mount.h
+        sys/param.h
+        sys/prctl.h
+        sys/resource.h
+        sys/signalfd.h
+        sys/socket.h
+        sys/sockio.h
+        sys/stat.h
+        sys/swap.h
+        sys/syscall.h
+        sys/sysmacros.h
+        sys/time.h
+        sys/timex.h
+        sys/ttydefaults.h
+        sys/types.h
+        sys/ucred.h
+        sys/un.h
+'''.split()
+
+lib_m = cc.find_library('m')
+
+lib_tinfo = dependency(
+  'tinfo',
+  required : get_option('tinfo'))
+
+lib_ncursesw = dependency(
+  'ncursesw',
+  required : get_option('ncursesw'))
+if lib_ncursesw.found()
+  headers += ['ncursesw/ncurses.h',
+              'ncursesw/term.h',
+              'ncurses.h',
+              'term.h']
+  lib_ncurses = disabler()
+else
+  lib_ncurses = dependency(
+    'ncurses',
+    required : get_option('ncurses'))
+  headers += ['ncurses.h',
+              'term.h']
+endif
+
+conf.set('HAVE_LIBNCURSESW', lib_ncursesw.found())
+conf.set('HAVE_LIBNCURSES', lib_ncurses.found())
+conf.set('HAVE_NCURSES', lib_ncursesw.found() or lib_ncurses.found())
+
+lib_slang = dependency(
+  'slang',
+  required : get_option('slang'))
+if lib_slang.found()
+  headers += ['slang.h',
+              'slang/slang.h',
+              'slcurses.h',
+              'slang/slcurses.h']
+endif
+conf.set('HAVE_SLANG', lib_slang.found())
+
+foreach curses_libs : [lib_slang, lib_ncursesw, lib_ncurses]
+  if curses_libs.found()
+    break
+  endif
+endforeach
+
+lib_z = dependency(
+  'zlib',
+  required : get_option('zlib'))
+
+lib_readline = dependency(
+  'readline',
+  required : get_option('readline'))
+conf.set('HAVE_LIBREADLINE', lib_readline.found() ? 1 : false)
+
+lib_pcre = dependency(
+  'libpcre2-8',
+  required : get_option('libpcre'))
+conf.set('HAVE_PCRE', lib_pcre.found() ? 1 : false)
+
+lib_user = dependency(
+  'libuser',
+  version : '>= 0.58',
+  required : get_option('libuser'))
+conf.set('HAVE_LIBUSER', lib_user.found() ? 1 : false)
+
+lib_util = cc.find_library(
+  'util',
+  required : get_option('libutil'))
+conf.set('HAVE_LIBUTIL', lib_util.found() ? 1 : false)
+
+lib_utempter = cc.find_library(
+  'utempter',
+  required : get_option('libutempter'))
+conf.set('HAVE_LIBUTEMPTER', lib_utempter.found() ? 1 : false)
+
+systemd = dependency(
+  'systemd',
+  required : get_option('systemd'))
+
+lib_systemd = dependency(
+  'libsystemd',
+  required : get_option('systemd'))
+conf.set('HAVE_LIBSYSTEMD', lib_systemd.found() ? 1 : false)
+
+lib_udev = dependency(
+  'libudev',
+  required : get_option('systemd'))
+conf.set('HAVE_LIBUDEV', lib_udev.found() ? 1 : false)
+
+lib_crypt = cc.find_library('crypt')
+
+lib_pam = cc.find_library('pam')
+if lib_pam.found()
+  lib_pam_misc = cc.find_library('pam_misc')
+  lib_pam = [lib_pam, lib_pam_misc]
+endif
+
+lib_cryptsetup = dependency(
+  'libcryptsetup',
+  required : get_option('cryptsetup'))
+conf.set('HAVE_CRYPTSETUP', lib_cryptsetup.found() ? 1 : false)
+
+have = cc.has_function(
+  'crypt_activate_by_signed_key',
+  dependencies : lib_cryptsetup)
+conf.set('HAVE_CRYPTSETUP', have ? 1 : false)
+
+lib_cap_ng = dependency(
+  'libcap-ng')
+
+lib_selinux = dependency(
+  'libselinux',
+  version : '>= 2.0',
+  required : get_option('selinux'))
+conf.set('HAVE_LIBSELINUX', lib_selinux.found() ? 1 : false)
+
+lib_audit = dependency(
+  'libaudit',
+  required : get_option('audit'))
+conf.set('HAVE_LIBAUDIT', lib_audit.found() ? 1 : false)
+
+conf.set('HAVE_SMACK', not get_option('smack').disabled())
+
+foreach header : headers
+  have = cc.has_header(header)
+  conf.set('HAVE_' + header.underscorify().to_upper(), have ? 1 : false)
+endforeach
+
+header = 'linux/btrfs.h'
+enable_btrfs = cc.has_header(header,
+                             required : get_option('btrfs'))
+conf.set('HAVE_' + header.underscorify().to_upper(), enable_btrfs ? 1 : false)
+conf.set('HAVE_BTRFS_SUPPORT', enable_btrfs ? 1 : false)
+
+prefix = conf.get('HAVE_LINUX_COMPILER_H') ? '#include <linux/compiler.h>' : ''
+foreach header : [
+  'linux/blkpg.h',
+  'linux/major.h',
+]
+  have = cc.has_header(header,
+                       prefix : prefix)
+  conf.set('HAVE_' + header.underscorify().to_upper(), have ? 1 : false)
+endforeach
+
+have = cc.has_header('sched.h')
+conf.set10('HAVE_DECL_CPU_ALLOC', have)
+# We get -1 if the size cannot be determined
+have_cpu_set_t = cc.sizeof('cpu_set_t', prefix : '#include <sched.h>') > 0
+conf.set('HAVE_CPU_SET_T', have_cpu_set_t ? 1 : false)
+
+have = cc.has_header_symbol('stdlib.h', 'environ')
+conf.set10('HAVE_ENVIRON_DECL', have)
+
+have = cc.has_header_symbol('signal.h', 'sighandler_t')
+conf.set('HAVE_SIGHANDLER_T', have ? 1 : false)
+
+have = cc.has_header_symbol('string.h', 'strsignal')
+conf.set10('HAVE_STRSIGNAL_DECL', have)
+
+have = cc.sizeof('union semun', prefix : '#include <sys/sem.h>') > 0
+conf.set('HAVE_UNION_SEMUN', have ? 1 : false)
+
+have = cc.compiles('''
+   #define _GNU_SOURCE 1
+   #include <langinfo.h>
+   int main(void) {
+        char *str;
+        str = nl_langinfo (ALTMON_1);
+        str = nl_langinfo (ALTMON_2);
+        str = nl_langinfo (ALTMON_3);
+        str = nl_langinfo (ALTMON_4);
+        str = nl_langinfo (ALTMON_5);
+        str = nl_langinfo (ALTMON_6);
+        str = nl_langinfo (ALTMON_7);
+        str = nl_langinfo (ALTMON_8);
+        str = nl_langinfo (ALTMON_9);
+        str = nl_langinfo (ALTMON_10);
+        str = nl_langinfo (ALTMON_11);
+        str = nl_langinfo (ALTMON_12);
+        return 0;
+   }
+   ''',
+  name : 'langinfo.h defines ALTMON_x constants')
+conf.set('HAVE_LANGINFO_ALTMON', have ? 1 : false)
+
+have = cc.compiles('''
+   #define _GNU_SOURCE 1
+   #include <langinfo.h>
+   int main(void) {
+        char *str;
+        str = nl_langinfo (_NL_ABALTMON_1);
+        str = nl_langinfo (_NL_ABALTMON_2);
+        str = nl_langinfo (_NL_ABALTMON_3);
+        str = nl_langinfo (_NL_ABALTMON_4);
+        str = nl_langinfo (_NL_ABALTMON_5);
+        str = nl_langinfo (_NL_ABALTMON_6);
+        str = nl_langinfo (_NL_ABALTMON_7);
+        str = nl_langinfo (_NL_ABALTMON_8);
+        str = nl_langinfo (_NL_ABALTMON_9);
+        str = nl_langinfo (_NL_ABALTMON_10);
+        str = nl_langinfo (_NL_ABALTMON_11);
+        str = nl_langinfo (_NL_ABALTMON_12);
+        return 0;
+   }
+   ''',
+  name : 'langinfo.h defines _NL_ABALTMON_x constants')
+conf.set('HAVE_LANGINFO_NL_ABALTMON', have ? 1 : false)
+
+funcs = '''
+        clearenv
+        __fpurge
+        fpurge
+        __fpending
+        secure_getenv
+        __secure_getenv
+        eaccess
+        err
+        errx
+        explicit_bzero
+        fmemopen
+        fseeko
+        fsync
+        utimensat
+        getdomainname
+        getdtablesize
+        getexecname
+        getmntinfo
+        getrandom
+        getrlimit
+        getsgnam
+        inotify_init
+        jrand48
+        lchown
+        llseek
+        lseek64
+        mempcpy
+        mkostemp
+        nanosleep
+        ntp_gettime
+        personality
+        pidfd_open
+        pidfd_send_signal
+        posix_fadvise
+        prctl
+        qsort_r
+        rpmatch
+        scandirat
+        setprogname
+        setns
+        setresgid
+        setresuid
+        sched_setattr
+        sched_setscheduler
+        sigqueue
+        srandom
+        strnchr
+        strndup
+        strnlen
+        sysconf
+        sysinfo
+        swapon
+        swapoff
+        timegm
+        unshare
+        usleep
+        vwarnx
+        warn
+        warnx
+        prlimit
+
+        openat
+        fstatat
+        unlinkat
+        ioperm
+        iopl
+        futimens
+        inotify_init1
+        open_memstream
+        reboot
+        getusershell
+'''.split()
+
+foreach func: funcs
+  have = cc.has_function(func)
+  # For autotools compatiblity, use either #define FOO 1 or #undef FOO.
+  # This makes little sense, but is necessary to avoid warnings about
+  # redefined macros from Python.h, which uses this convention.
+  conf.set('HAVE_' + func.to_upper(), have ? 1 : false)
+
+  if func == 'llseek' or func == 'lseek64'
+      conf.set('HAVE_' + func.to_upper() + '_PROTOTYPE', have ? 1 : false)
+  endif
+endforeach
+
+have = conf.get('HAVE_FUTIMENS') in [1] and conf.get('HAVE_INOTIFY_INIT1') in [1]
+conf.set('AGETTY_RELOAD', have ? 1 : false)
+if not have
+  warning('futimens or inotify_init1 not found; agetty(8) will not provide --reload functionality')
+endif
+
+have_dirfd = (cc.has_function('dirfd') or
+              cc.has_header_symbol('dirent.h', 'dirfd',
+                                   prefix : '#include <sys/types.h>'))
+conf.set('HAVE_DIRFD', have_dirfd ? 1 : false)
+
+have_ddfd = cc.has_member('DIR', 'dd_fd',
+                          prefix : '''
+                          #include <sys/types.h>
+                          #include <dirent.h>
+                          ''')
+conf.set('HAVE_DECL_DDFD', have_ddfd ? 1 : false)
+
+have = cc.has_member('struct tm', 'tm_gmtoff',
+                     prefix : '''
+                     #include <time.h>
+                     #include <unistd.h>
+                     ''')
+conf.set('HAVE_TM_GMTOFF', have ? 1 : false)
+
+have = cc.has_member('struct termios', 'c_line',
+                     prefix : '#include <termios.h>')
+conf.set('HAVE_STRUCT_TERMIOS_C_LINE', have ? 1 : false)
+
+have = cc.has_member('struct stat', 'st_mtim.tv_nsec',
+                     prefix : '#include <sys/stat.h>')
+conf.set('HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC', have ? 1 : false)
+
+# replacement for AC_STRUCT_TIMEZONE
+have = cc.has_member('struct tm', 'tm_zone',
+                     prefix : '#include <time.h>')
+conf.set('HAVE_STRUCT_TM_TM_ZONE', have ? 1 : false)
+
+have = cc.sizeof('tzname', prefix : '#include <time.h>') > 0
+conf.set('HAVE_DECL_TZNAME', have ? 1 : false)
+
+code = '''
+#include <time.h>
+#if !@0@
+extern char *tzname[];
+#endif
+int main(void) {
+  return tzname ? 0 : 1;
+}
+'''.format(have ? 1 : 0)
+result = cc.run(code, name : 'using tzname[]')
+have = result.compiled() and result.returncode() == 0
+conf.set('HAVE_TZNAME', have ? 1 : false)
+
+socket_libs = []
+if not cc.has_function('socket')
+  socket_libs += cc.find_library('socket', required : true)
+  have = cc.has_function('socket',
+                         dependencies : socket_libs)
+  if not have
+    error('socket() function not available')
+  endif
+endif
+
+realtime_libs = []
+have = cc.has_function('clock_gettime')
+if not have
+  realtime_libs += cc.find_library('rt', required : true)
+  have = cc.has_function('clock_gettime',
+                         dependencies : realtime_libs)
+endif
+conf.set('HAVE_CLOCK_GETTIME', have_dirfd ? 1 : false)
+
+thread_libs = dependency('threads')
+
+have = cc.has_function('timer_create')
+if not have
+  realtime_libs = cc.find_library('rt', required : true)
+  have = cc.has_function('timer_create',
+                         dependencies : realtime_libs)
+  if not have
+    realtime_libs += thread_libs
+    have = cc.has_function('timer_create',
+                           dependencies : realtime_libs)
+  endif
+endif
+conf.set('HAVE_TIMER_CREATE', have ? 1 : false)
+if not have
+  have = cc.has_function('setitimer')
+  conf.set('HAVE_SETITIMER', have ? 1 : false)
+endif
+
+rtas_libs = cc.find_library('rtas', required : false)
+conf.set('HAVE_LIBRTAS', rtas_libs.found() ? 1 : false)
+
+math_libs = []
+if not cc.has_function('isnan')
+  lib = cc.find_library('m', required : true)
+  if (cc.has_function('isnan', dependencies : lib) and
+      cc.has_function('__isnan', dependencies : lib))
+    math_libs += lib
+  endif
+endif
+
+have = cc.has_header_symbol('errno.h', 'program_invocation_short_name',
+                            args : '-D_GNU_SOURCE')
+conf.set('HAVE_PROGRAM_INVOCATION_SHORT_NAME', have ? 1 : false)
+
+code = '''
+extern char *__progname;
+int main(void) {
+    return (*__progname != 0);
+}
+'''
+result = cc.run(code, name : 'using __progname')
+have = result.compiled() and result.returncode() == 0
+conf.set('HAVE___PROGNAME', have ? 1 : false)
+
+code = '''
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+        int i;
+        int rc = 1;
+        char *s;
+        i = sscanf("x", "@0@", &s);
+        if (i == 1  && *s == 'x')
+                rc = 0;
+        free(s);
+        return rc;
+}
+'''
+have = false
+foreach mod : ['ms', 'as']
+  if not have
+    result = cc.run(code.format('%' + mod), name : 'sscanf with %' + mod)
+    have = result.compiled() and result.returncode() == 0
+    conf.set('HAVE_SCANF_@0@_MODIFIER'.format(mod.to_upper()), have ? 1 : false)
+  endif
+endforeach
+# XXX: handle cross cross-compilation w/o ability to run binaries:
+#      meson.is_cross_build() and not meson.has_exe_wrapper()
+
+build_plymouth_support = get_option('build-plymouth-support')
+have_tiocglcktrmios = cc.has_header_symbol(
+  'sys/ioctl.h', 'TIOCGLCKTRMIOS',
+  required : build_plymouth_support.enabled())
+have_sock_cloexec = cc.has_header_symbol(
+  'sys/socket.h', 'SOCK_CLOEXEC',
+  prefix : '#include <sys/types.h>',
+  required : build_plymouth_support.enabled())
+have_sock_nonblock = cc.has_header_symbol(
+  'sys/socket.h', 'SOCK_NONBLOCK',
+  prefix : '#include <sys/types.h>',
+  required : build_plymouth_support.enabled())
+have_so_passcred = cc.has_header_symbol(
+  'sys/socket.h', 'SO_PASSCRED',
+  prefix : '#include <sys/types.h>',
+  required : build_plymouth_support.enabled())
+
+build_plymouth_support = (not build_plymouth_support.disabled() and 
+                          have_tiocglcktrmios and
+                          have_sock_cloexec and
+                          have_sock_nonblock and
+                          have_so_passcred)
+conf.set('ENABLE_PLYMOUTH_SUPPORT', build_plymouth_support ? 1 : false)
+summary('plymouth support',
+        build_plymouth_support  ? 'enabled' : 'disabled',
+        section : 'components')
+
+# check for valid fallocate() function
+# with 32 bits glibc 2.10, fallocate() exists but not fallocate64()
+# when _FILE_OFFSET_BITS==64, fallocate() is redirect to fallocate64()
+# and program can't be linked.
+code = '''
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <fcntl.h>
+
+int main(void) {
+   long ret;
+   ret = fallocate(0, FALLOC_FL_KEEP_SIZE, 0xfffffffful, 0xfffffffful);
+   return ret == 0 ? 0 : 1;
+}
+'''
+have = cc.links(code, name : 'fallocate() function')
+conf.set('HAVE_FALLOCATE', have ? 1 : false)
+
+code = '''
+#include <unistd.h>
+#include <fcntl.h>
+
+int main(void) {
+   long ret;
+   ret = posix_fallocate(0, 0xfffffffful, 0xfffffffful);
+   return ret == 0 ? 0 : 1;
+}
+'''
+have = cc.links(code, name : 'posix_fallocate() function')
+conf.set('HAVE_POSIX_FALLOCATE', have ? 1 : false)
+
+use_hwclock_cmos = host_machine.cpu_family() in ['x86', 'x86_64']
+message('Use CMOS clock: @0@'.format(use_hwclock_cmos))
+conf.set('USE_HWCLOCK_CMOS', use_hwclock_cmos ? 1 : false)
+
+conf.set('HAVE_TLS', get_option('use-tls') ? 1 : false)
+conf.set('PG_BELL', get_option('pg-bell') ? 1 : false)
+
+############################################################
+
+fs_search_path = get_option('fs-search-path')
+fs_search_path_extra = get_option('fs-search-path-extra')
+if fs_search_path_extra != ''
+  fs_search_path = ':'.join(fs_search_path, fs_search_path_extra)
+endif
+conf.set_quoted('FS_SEARCH_PATH', fs_search_path)
+
+systemdsystemunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
+
+chfn_chsh_password = get_option('chfn-chsh-password') or lib_user.found()
+conf.set('CHFN_CHSH_PASSWORD', chfn_chsh_password ? 1 : false)
+
+have = get_option('chsh-only-listed')
+conf.set('ONLY_LISTED_SHELLS', have ? 1 : false)
+
+have = get_option('use-tty-group')
+conf.set('USE_TTY_GROUP', have ? 1 : false)
+
+build_hwclock = not get_option('build-hwclock').disabled()
+bison = find_program('bison', required: build_hwclock)
+bison_gen = generator(
+  bison,
+  output : ['@BASENAME@.tab.c', '@BASENAME@.tab.h'],
+  arguments : ['@INPUT@', '--defines=@OUTPUT1@', '--output=@OUTPUT0@'])
+
+meson_make_symlink = meson.current_source_dir() + '/tools/meson-make-symlink.sh'
+
+config_h = configure_file(
+  output : 'config.h',
+  configuration : conf)
+
+add_project_arguments('-include', 'config.h', language : 'c')
+
+subdir('include')
+subdir('lib')
+subdir('libblkid')
+subdir('libmount')
+subdir('libsmartcols')
+subdir('libuuid')
+subdir('libfdisk')
+subdir('login-utils')
+subdir('sys-utils')
+subdir('disk-utils')
+subdir('misc-utils')
+subdir('text-utils')
+subdir('term-utils')
+subdir('po')
+
+includes = [dir_include,
+            dir_libblkid,
+            dir_libsmartcols,
+            dir_libmount,
+            dir_libfdisk,
+            dir_libuuid,
+            dir_sys_utils]
+
+exes = []
+
+opt = not get_option('build-chfn-chsh').disabled()
+exe = executable(
+  'chfn',
+  chfn_sources,
+  chfn_chsh_sources,
+  include_directories : includes,
+  link_with : lib_common,
+  dependencies : chfn_chsh_deps,
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+exe2 = executable(
+  'chsh',
+  'login-utils/chsh.c',
+  chfn_chsh_sources,
+  include_directories : includes,
+  link_with : lib_common,
+  dependencies : chfn_chsh_deps,
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += [exe, exe2]
+endif
+
+exe = executable(
+  'test_islocal',
+  test_islocal_sources,
+  include_directories : includes,
+  c_args : '-DTEST_PROGRAM')
+exes += exe
+
+exe = executable(
+  'test_logindefs',
+  test_logindefs_sources,
+  include_directories : includes,
+  c_args : '-DTEST_PROGRAM')
+exes += exe
+
+exe = executable(
+  'test-consoles',
+  test_consoles_sources,
+  c_args : ['-DTEST_PROGRAM'],
+  include_directories : includes,
+  link_with : lib_common)
+exes += exe
+
+opt = not get_option('build-last').disabled()
+exe = executable(
+  'last',
+  last_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  meson.add_install_script(meson_make_symlink,
+                           'last',
+                           join_paths(usrbin_exec_dir, 'lastb'))
+endif
+
+opt = not get_option('build-nologin').disabled()
+exe = executable(
+  'nologin',
+  'login-utils/nologin.c',
+  include_directories : includes,
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+opt = not get_option('build-utmpdump').disabled()
+exe = executable(
+  'utmpdump',
+  'login-utils/utmpdump.c',
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+opt = not get_option('build-su').disabled()
+exe = executable(
+  'su',
+  'login-utils/su.c',
+  'login-utils/su-common.c',
+  'login-utils/su-common.h',
+  'login-utils/logindefs.c',
+  'login-utils/logindefs.h',
+  pty_session_c,
+  monotonic_c,
+  include_directories : includes,
+  link_with : lib_common,
+  dependencies : [lib_pam,
+                  lib_pam_misc,
+                  lib_util,
+                  realtime_libs],
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+opt = not get_option('build-newgrp').disabled()
+exe = executable(
+  'newgrp',
+  'login-utils/newgrp.c',
+  include_directories : includes,
+  dependencies : [lib_crypt],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+opt = not get_option('build-lslogins').disabled()
+exe = executable(
+  'lslogins',
+  'login-utils/lslogins.c',
+  'login-utils/logindefs.c',
+  'login-utils/logindefs.h',
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  dependencies : [lib_selinux,
+                  lib_systemd],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+opt = not get_option('build-vipw').disabled()
+exe = executable(
+  'vipw',
+  'login-utils/vipw.c',
+  'login-utils/setpwnam.h',
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_selinux],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  meson.add_install_script(meson_make_symlink,
+                           'vipw',
+                           join_paths(usrbin_exec_dir, 'vigr'))
+endif
+
+opt = not get_option('build-runuser').disabled()
+exe = executable(
+  'runuser',
+  'login-utils/runuser.c',
+  'login-utils/su-common.c',
+  'login-utils/su-common.h',
+  'login-utils/logindefs.c',
+  'login-utils/logindefs.h',
+  pty_session_c,
+  monotonic_c,
+  include_directories : includes,
+  link_with : lib_common,
+  dependencies : [lib_pam,
+                  lib_pam_misc,
+                  lib_util,
+                  realtime_libs],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+############################################################
+
+exe = executable(
+  'col',
+  col_sources,
+  include_directories : includes,
+  link_with : lib_common,
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+
+exe = executable(
+  'colcrt',
+  colcrt_sources,
+  include_directories : includes,
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+
+exe = executable(
+  'colrm',
+  colrm_sources,
+  include_directories : includes,
+  link_with : lib_common,
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+
+exe = executable(
+  'rev',
+  rev_sources,
+  include_directories : includes,
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+
+exe = executable(
+  'column',
+  column_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+opt = not get_option('build-line').disabled()
+exe = executable(
+  'line',
+  line_sources,
+  include_directories : includes,
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+opt = not get_option('build-pg').disabled()
+exe = executable(
+  'pg',
+  pg_sources,
+  link_with : lib_common,
+  include_directories : includes,
+  dependencies : [lib_tinfo,
+                  curses_libs],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+opt = not get_option('build-ul').disabled()
+exe = executable(
+  'ul',
+  ul_sources,
+  include_directories : includes,
+  dependencies : [lib_tinfo,
+                  curses_libs],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+opt = not get_option('build-more').disabled()
+exe = executable(
+  'more',
+  more_sources,
+  include_directories : includes,
+  dependencies : [lib_tinfo,
+                  curses_libs],
+  install : opt,
+  build_by_default : opt)
+exe2 = executable(
+  'test_more',
+  more_sources,
+  include_directories : includes,
+  c_args : '-DTEST_PROGRAM',
+  dependencies : [lib_tinfo,
+                  curses_libs],
+  build_by_default : opt)
+exes += exe
+if opt and not is_disabler(exe)
+  exes += [exe, exe2]
+endif
+
+exe = executable(
+  'hexdump',
+  hexdump_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_tcolors],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('text-utils/hexdump.1')
+endif
+
+opt = not get_option('build-lsmem').disabled()
+exe = executable(
+  'lsmem',
+  lsmem_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/lsmem.1')
+endif
+
+opt = not get_option('build-chmem').disabled()
+exe = executable(
+  'chmem',
+  chmem_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/chmem.8')
+endif
+
+exe = executable(
+  'choom',
+  choom_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('sys-utils/choom.1')
+
+exe = executable(
+  'ipcmk',
+  ipcmk_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('sys-utils/ipcmk.1')
+
+exe = executable(
+  'ipcrm',
+  ipcrm_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('sys-utils/ipcrm.1')
+
+opt = not get_option('build-ipcs').disabled()
+exe = executable(
+  'ipcs',
+  ipcs_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/ipcs.1')
+endif
+
+opt = not get_option('build-rfkill').disabled()
+exe = executable(
+  'rfkill',
+  rfkill_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/rfkill.8')
+endif
+
+exe = executable(
+  'renice',
+  renice_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/renice.1')
+endif
+
+exe = executable(
+  'setsid',
+  setsid_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/setsid.1')
+endif
+
+exe = executable(
+  'readprofile',
+  readprofile_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrsbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/readprofile.8')
+endif
+
+opt = not get_option('build-tunelp').disabled()
+exe = executable(
+  'tunelp',
+  tunelp_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/tunelp.8')
+endif
+
+exe = executable(
+  'fstrim',
+  fstrim_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_mount],
+  install_dir : sbindir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/fstrim.8')
+endif  
+
+exe = executable(
+  'dmesg',
+  dmesg_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_tcolors],
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/dmesg.1')
+endif
+
+exe = executable(
+  'test_dmesg',
+  dmesg_sources,
+  include_directories : dir_include,
+  c_args : '-DTEST_DMESG',
+  link_with : [lib_common,
+               lib_tcolors])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'ctrlaltdel',
+  ctrlaltdel_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : true)
+exes += exe
+install_man('sys-utils/ctrlaltdel.8')
+
+exe = executable(
+  'fsfreeze',
+  fsfreeze_sources,
+  include_directories : includes,
+  install_dir : sbindir,
+  install : true)
+exes += exe
+install_man('sys-utils/fsfreeze.8')
+
+exe = executable(
+  'blkdiscard',
+  blkdiscard_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : true)
+exes += exe
+install_man('sys-utils/blkdiscard.8')
+
+exe = executable(
+  'blkzone',
+  blkzone_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : true)
+exes += exe
+install_man('sys-utils/blkzone.8')
+
+exe = executable(
+  'ldattach',
+  ldattach_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : true)
+exes += exe
+install_man('sys-utils/ldattach.8')
+
+exe = executable(
+  'rtcwake',
+  rtcwake_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : true)
+exes += exe
+
+exe = executable(
+  'setarch',
+  setarch_sources,
+  include_directories : includes,
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('sys-utils/setarch.8')
+
+setarch_links = ['uname26', 'linux32', 'linux64']
+setarch_links_arch = {
+  's390x' :   ['s390', 's390x'],
+  'x86' :     ['i386'],
+  'x86_64' :  ['i386', 'x86_64'],
+  'ppc64' :   ['ppc', 'ppc64', 'ppc32'],
+  'space64' : ['sparc', 'sparc64', 'sparc32', 'sparc32bash'],
+  'mips64' :  ['mips', 'mips64', 'mips32'],
+  'ia64' :    ['i386', 'ia64'],
+  'hppa' :    ['parisc', 'parisc64', 'parisc32'],
+}
+setarch_links += setarch_links_arch.get(host_machine.cpu_family(), [])
+
+foreach link: setarch_links
+  meson.add_install_script(meson_make_symlink,
+                           'setarch',
+                           join_paths(usrbin_exec_dir, link))
+endforeach
+
+opt = not get_option('build-eject').disabled()
+exe = executable(
+  'eject',
+  eject_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_mount],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exe = exe
+  install_man('sys-utils/eject.1')
+endif
+
+opt = not get_option('build-losetup').disabled()
+exe = executable(
+  'losetup',
+  losetup_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  install_man('sys-utils/losetup.8')
+  exes += exe
+endif
+
+opt = not get_option('build-zramctl').disabled()
+exe = executable(
+  'zramctl',
+  zramctl_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/zramctl.8')
+endif
+
+exe = executable(
+  'prlimit',
+  prlimit_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/prlimit.1')
+endif
+
+exe = executable(
+  'lsns',
+  lsns_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols,
+               lib_mount],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/lsns.8')
+endif
+
+opt = not get_option('build-mount').disabled()
+exe = executable(
+  'mount',
+  mount_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols,
+               lib_mount],
+  dependencies : lib_selinux,
+  install : opt,
+  build_by_default : opt)
+exe2 = executable(
+  'umount',
+  umount_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_mount],
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += [exe, exe2]
+  install_man(mount_man)
+endif
+
+# setuid?
+
+exe = executable(
+  'swapon',
+  swapon_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid,
+               lib_mount,
+               lib_smartcols],
+  install_dir : sbindir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/swapon.8')
+endif
+
+exe = executable(
+  'swapoff',
+  swapoff_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid,
+               lib_mount],
+  install_dir : sbindir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/swapoff.8')
+endif
+
+exe = executable(
+  'lscpu',
+  lscpu_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  dependencies : [rtas_libs],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/lscpu.1')
+endif
+
+exe = executable(
+  'chcpu',
+  chcpu_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : true)
+exes += exe
+install_man('sys-utils/chcpu.8')
+
+exe = executable(
+  'wdctl',
+  wdctl_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/wdctl.8')
+endif
+
+opt = not get_option('build-mountpoint').disabled()
+exe = executable(
+  'mountpoint',
+  mountpoint_sources,
+  include_directories : includes,
+  link_with : [lib_mount],
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/mountpoint.1')
+endif
+
+opt = not get_option('build-fallocate').disabled()
+exe = executable(
+  'fallocate',
+  fallocate_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/fallocate.1')
+endif
+
+opt = not get_option('build-pivot_root').disabled()
+exe = executable(
+  'pivot_root',
+  pivot_root_sources,
+  include_directories : includes,
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/pivot_root.8')
+endif
+
+opt = not get_option('build-switch_root').disabled()
+if opt and  not have_dirfd and not have_ddfd
+  error('neither dirfd nor ddfd are available')
+endif
+exe = executable(
+  'switch_root',
+  switch_root_sources,
+  include_directories : includes,
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/switch_root.8')
+endif
+
+opt = not get_option('build-unshare').disabled()
+exe = executable(
+  'unshare',
+  unshare_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/unshare.1')
+endif
+
+opt = not get_option('build-nsenter').disabled()
+exe = executable(
+  'nsenter',
+  nsenter_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_selinux],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/nsenter.1')
+endif
+
+opt = not get_option('build-setpriv').disabled()
+exe = executable(
+  'setpriv',
+  setpriv_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_cap_ng],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/setpriv.1')
+endif
+
+exe = executable(
+  'flock',
+  flock_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : realtime_libs,
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('sys-utils/flock.1')
+
+opt = not get_option('build-ipcs').disabled()
+exe = executable(
+  'lsipc',
+  lsipc_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/lsipc.1')
+endif
+
+opt = build_hwclock
+exe = executable(
+  'hwclock',
+  hwclock_sources,
+  include_directories : includes,
+  link_with :    [lib_common],
+  dependencies : [lib_m,
+                  lib_audit],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'mkfs',
+  mkfs_sources,
+  include_directories : includes,
+  install_dir : sbindir,
+  install : true)
+exes += exe
+install_man('disk-utils/mkfs.8')
+
+opt = not get_option('build-bfs').disabled()
+exe = executable(
+  'mkfs.bfs',
+  mkfs_bfs_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('disk-utils/mkfs.bfs.8')
+endif
+
+exe = executable(
+  'isosize',
+  isosize_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('disk-utils/isosize.8')
+
+exe = executable(
+  'mkswap',
+  mkswap_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid,
+               lib_uuid],
+  dependencies: [lib_selinux],
+  install_dir : sbindir,
+  install : true)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('disk-utils/mkswap.8')
+endif
+
+exe = executable(
+  'swaplabel',
+  swaplabel_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid,
+               lib_uuid],
+  install_dir : sbindir,
+  install : true)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('disk-utils/swaplabel.8')
+endif
+
+opt = not get_option('build-fsck').disabled()
+exe = executable(
+  'fsck',
+  fsck_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid,
+               lib_mount],
+  dependencies : realtime_libs,
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('disk-utils/fsck.8')
+endif
+
+opt = not get_option('build-minix').disabled()
+exe = executable(
+  'mkfs.minix',
+  mkfs_minix_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+exe2 = executable(
+  'test_mkfs_minix',
+  mkfs_minix_sources,
+  include_directories : includes,
+  c_args : '-DTEST_SCRIPT',
+  link_with : [lib_common],
+  build_by_default : opt)
+exe3 = executable(
+  'fsck.minix',
+  fsck_minix_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += [exe, exe2, exe3]
+  install_man('disk-utils/mkfs.minix.8',
+              'disk-utils/fsck.minix.8')
+endif
+
+opt = not get_option('build-cramfs').disabled()
+exe = executable(
+  'mkfs.cramfs',
+  mkfs_cramfs_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_z],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+exe2 = executable(
+  'fsck.cramfs',
+  fsck_cramfs_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_z],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if not is_disabler(exe)
+  exes += [exe, exe2]
+  install_man('disk-utils/mkfs.cramfs.8',
+              'disk-utils/fsck.cramfs.8')
+endif
+
+opt = not get_option('build-raw').disabled()
+exe = executable(
+  'raw',
+  raw_sources,
+  include_directories : includes,
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('disk-utils/raw.8')
+endif
+
+opt = not get_option('build-fdformat').disabled()
+exe = executable(
+  'fdformat',
+  fdformat_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('disk-utils/fdformat.8')
+endif
+
+exe = executable(
+  'blockdev',
+  blockdev_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : true)
+install_man('disk-utils/blockdev.8')
+
+opt = not get_option('build-fdisks').disabled()
+if opt and not have_dirfd and not have_ddfd
+  error('neither dirfd nor ddfd are available')
+endif
+exe = executable(
+  'fdisk',
+  fdisk_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_fdisk,
+               lib_smartcols,
+               lib_tcolors],
+  dependencies : [lib_readline],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+# XXX: fdisk-static
+
+exe = executable(
+  'sfdisk',
+  sfdisk_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_fdisk,
+               lib_smartcols,
+               lib_tcolors],
+  dependencies : [lib_readline],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
+# XXX: sfdisk-static
+
+exe = executable(
+  'cfdisk',
+  cfdisk_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_fdisk,
+               lib_smartcols,
+               lib_tcolors,
+               lib_mount],
+  dependencies : [curses_libs],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('disk-utils/fdisk.8',
+              'disk-utils/sfdisk.8',
+              'disk-utils/cfdisk.8')
+endif
+
+opt = not get_option('build-partx').disabled()
+exe = executable(
+  'addpart',
+  addpart_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+exe2 = executable(
+  'delpart',
+  delpart_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+exe3 = executable(
+  'resizepart',
+  resizepart_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+exe4 = executable(
+  'partx',
+  partx_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid,
+               lib_smartcols],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt
+  exes += [exe, exe2, exe3, exe4]
+  install_man(addpart_delpart_man)
+endif
+
+############################################################
+
+exe = executable(
+  'script',
+  script_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_util,
+                  lib_utempter,
+                  realtime_libs,
+                  math_libs],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('term-utils/script.1')
+
+exe = executable(
+  'test_script',
+  script_sources,
+  include_directories : includes,
+  c_args : '-DTEST_SCRIPT',
+  link_with : [lib_common],
+  dependencies : [lib_util,
+                  lib_utempter,
+                  realtime_libs,
+                  math_libs])
+exes += exe
+
+exe = executable(
+  'scriptlive',
+  scriptlive_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_util,
+                  realtime_libs,
+                  math_libs],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('term-utils/scriptlive.1')
+
+exe = executable(
+  'scriptreplay',
+  scriptreplay_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [math_libs],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('term-utils/scriptreplay.1')
+
+opt = not get_option('build-agetty').disabled()
+exe = executable(
+  'agetty',
+  agetty_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : BSD ? lib_util : [],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt
+  exes += exe
+  install_man('term-utils/agetty.8')
+endif
+
+opt = not get_option('build-setterm').disabled()
+exe = executable(
+  'setterm',
+  setterm_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [curses_libs],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt
+  exes += exe
+  install_man('term-utils/setterm.1')
+endif
+
+opt = not get_option('build-mesg').disabled()
+exe = executable(
+  'mesg',
+  mesg_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt
+  exes += exe
+  install_man('term-utils/mesg.1')
+endif
+
+opt = not get_option('build-wall').disabled()
+exe = executable(
+  'wall',
+  wall_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt
+  exes += exe
+  install_man('term-utils/wall.1')
+endif
+
+# chgrp tty $(DESTDIR)$(usrbin_execdir)/wall
+# chmod g+s $(DESTDIR)$(usrbin_execdir)/wall
+
+opt = not get_option('build-write').disabled()
+exe = executable(
+  'write',
+  write_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt
+  exes += exe
+  install_man('term-utils/write.1')
+endif
+
+# chgrp tty $(DESTDIR)$(usrbin_execdir)/write
+# chmod g+s $(DESTDIR)$(usrbin_execdir)/write
+
+opt = not get_option('build-login').disabled()
+exe = executable(
+  'login',
+  login_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_pam,
+                  lib_audit,
+                  lib_selinux],
+  install : opt,
+  build_by_default : opt)
+if not is_disabler(exe)
+  exes += exe
+  install_man('login-utils/login.1')
+endif
+
+opt = not get_option('build-sulogin').disabled()
+exe = executable(
+  'sulogin',
+  sulogin_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_crypt,
+                  lib_selinux],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if not is_disabler(exe)
+  exes += exe
+  install_man('login-utils/sulogin.8')
+endif
+
+exe = executable(
+  'cal',
+  cal_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_tcolors],
+  dependencies : [curses_libs],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('misc-utils/cal.1')
+
+opt = not get_option('build-logger').disabled()
+exe = executable(
+  'logger',
+  logger_sources,
+  include_directories : includes,
+  dependencies : [lib_systemd],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/logger.1')
+endif
+
+exe = executable(
+  'test_logger',
+  logger_sources,
+  include_directories : includes,
+  c_args : '-DTEST_LOGGER',
+  dependencies : [lib_systemd])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'look',
+  look_sources,
+  include_directories : includes,
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('misc-utils/look.1')
+
+exe = executable(
+  'mcookie',
+  mcookie_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('misc-utils/mcookie.1')
+
+exe = executable(
+  'namei',
+  namei_sources,
+  include_directories : includes,
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('misc-utils/namei.1')
+
+exe = executable(
+  'whereis',
+  whereis_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+install_man('misc-utils/whereis.1')
+
+exe = executable(
+  'lslocks',
+  lslocks_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_mount,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/lslocks.8')
+endif
+
+exe = executable(
+  'lsblk',
+  lsblk_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid,
+               lib_mount,
+               lib_smartcols],
+  dependencies : lib_udev,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/lsblk.8')
+endif
+
+exe = executable(
+  'uuidgen',
+  uuidgen_sources,
+  include_directories : includes,
+  link_with : [lib_uuid],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/uuidgen.1')
+endif
+
+exe = executable(
+  'uuidparse',
+  uuidparse_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_uuid,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/uuidparse.1')
+endif
+
+opt = build_uuidd
+exe = executable(
+  'uuidd',
+  uuidd_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_uuid],
+  dependencies : [realtime_libs,
+                  lib_systemd],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+exe2 = executable(
+  'test_uuidd',
+  test_uuidd_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_uuid],
+  dependencies : thread_libs,
+  build_by_default : opt)
+if not is_disabler(exe)
+  exes += [exe, exe2]
+endif
+
+opt = build_libblkid
+exe = executable(
+  'blkid',
+  blkid_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/blkid.8')
+endif
+
+# XXX: blkid.static
+
+exe = executable(
+  'sample-mkfs',
+  'libblkid/samples/mkfs.c',
+  include_directories : includes,
+  link_with : lib_blkid)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-partitions',
+  'libblkid/samples/partitions.c',
+  include_directories : includes,
+  link_with : lib_blkid)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-superblocks',
+  'libblkid/samples/superblocks.c',
+  include_directories : includes,
+  link_with : lib_blkid)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-topology',
+  'libblkid/samples/topology.c',
+  include_directories : includes,
+  link_with : lib_blkid)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+############################################################
+
+exe = executable(
+  'findfs',
+  findfs_sources,
+  include_directories : includes,
+  link_with : [lib_blkid],
+  install_dir : sbindir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/findfs.8')
+endif
+
+exe = executable(
+  'wipefs',
+  wipefs_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid,
+               lib_smartcols],
+  install_dir : sbindir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/wipefs.8')
+endif
+
+exe = executable(
+  'findmnt',
+  findmnt_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid,
+               lib_mount,
+               lib_smartcols],
+  dependencies : [lib_udev],
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/findmnt.8')
+endif
+
+exe = executable(
+  'kill',
+  kill_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/kill.1')
+endif
+
+opt = not get_option('build-rename').disabled()
+exe = executable(
+  'rename',
+  rename_sources,
+  include_directories : includes,
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/rename.1')
+endif
+
+exe = executable(
+  'getopt',
+  getopt_sources,
+  include_directories : includes,
+  install_dir : usrbin_exec_dir,
+  install : true)
+exes += exe
+
+exe = executable(
+  'fincore',
+  fincore_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/fincore.1')
+endif
+
+exe = executable(
+  'hardlink',
+  hardlink_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_pcre],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  install_man('misc-utils/hardlink.1')
+endif
+
+exe = executable(
+  'test_cal',
+  cal_sources,
+  include_directories : includes,
+  c_args : '-DTEST_CAL',
+  link_with : [lib_common,
+               lib_tcolors],
+  dependencies : [curses_libs])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+############################################################
+
+opt = not get_option('build-schedutils').disabled()
+exe = executable(
+  'chrt',
+  'schedutils/chrt.c',
+  include_directories : includes,
+  link_with : lib_common,
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+
+exe2 = executable(
+  'ionice',
+  'schedutils/ionice.c',
+  include_directories : includes,
+  link_with : lib_common,
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+
+exe3 = executable(
+  'taskset',
+  'schedutils/taskset.c',
+  include_directories : includes,
+  link_with : lib_common,
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+
+if opt and not is_disabler(exe)
+  exes += [exe, exe2, exe3]
+  install_man('schedutils/chrt.1',
+              'schedutils/ionice.1',
+              'schedutils/taskset.1')
+endif
+
+############################################################
+
+# TODO: when autotools compat is not needed, s/_/-/g in file names?
+
+exe = executable(
+  'test_ttyutils',
+  'lib/ttyutils.c',
+  c_args : ['-DTEST_PROGRAM_TTYUTILS'],
+  include_directories : dir_include,
+  link_with : lib_common)
+exes += exe
+
+exe = executable(
+  'test_blkdev',
+  'lib/blkdev.c',
+  c_args : ['-DTEST_PROGRAM_BLKDEV'],
+  include_directories : dir_include,
+  link_with : lib_common)
+exes += exe
+
+exe = executable(
+  'test_ismounted',
+  'lib/ismounted.c',
+  c_args : ['-DTEST_PROGRAM_ISMOUNTED'],
+  include_directories : dir_include,
+  link_with : lib_common)
+exes += exe
+
+exe = executable(
+  'test_mangle',
+  'lib/mangle.c',
+  c_args : ['-DTEST_PROGRAM_MANGLE'],
+  include_directories : dir_include)
+exes += exe
+
+exe = executable(
+  'test_strutils',
+  'lib/strutils.c',
+  c_args : ['-DTEST_PROGRAM_STRUTILS'],
+  include_directories : dir_include)
+exes += exe
+
+exe = executable(
+  'test_colors',
+  'lib/colors.c',
+  'lib/color-names.c',
+  c_args : ['-DTEST_PROGRAM_COLORS'],
+  include_directories : dir_include,
+  link_with : [lib_common, lib_tcolors])
+exes += exe
+
+exe = executable(
+  'test_randutils',
+  'lib/randutils.c',
+  c_args : ['-DTEST_PROGRAM_RANDUTILS'],
+  include_directories : dir_include)
+exes += exe
+
+# XXX: HAVE_OPENAT && HAVE_DIRFD
+exe = executable(
+  'test_procutils',
+  'lib/procutils.c',
+  c_args : ['-DTEST_PROGRAM_PROCUTILS'],
+  include_directories : dir_include)
+exes += exe
+
+# XXX: HAVE_OPENAT && HAVE_DIRFD
+exe = executable(
+  'test_path',
+  'lib/path.c',
+  'lib/fileutils.c',
+  have_cpu_set_t ? 'lib/cpuset.c' : [],
+  c_args : ['-DTEST_PROGRAM_PATH'],
+  include_directories : dir_include,
+  link_with : lib_common)
+exes += exe
+
+# XXX: HAVE_PTY
+exe = executable(
+  'test_pty',
+  pty_session_c,
+  monotonic_c,
+  c_args : ['-DTEST_PROGRAM_PTY'],
+  include_directories : dir_include,
+  link_with : [lib_common],
+  dependencies : [lib_m,
+                  realtime_libs,
+                  lib_util])
+exes += exe
+
+# XXX: LINUX
+exe = executable(
+  'test_cpuset',
+  'lib/cpuset.c',
+  c_args : ['-DTEST_PROGRAM_CPUSET'],
+  include_directories : dir_include)
+exes += exe
+
+exe = executable(
+  'test_sysfs',
+  'lib/sysfs.c',
+  'lib/path.c',
+  'lib/fileutils.c',
+  have_cpu_set_t ? 'lib/cpuset.c' : [],
+  c_args : ['-DTEST_PROGRAM_SYSFS'],
+  include_directories : dir_include)
+exes += exe
+
+exe = executable(
+  'test_pager',
+  'lib/pager.c',
+  c_args : ['-DTEST_PROGRAM_PAGER'],
+  include_directories : dir_include)
+exes += exe
+
+exe = executable(
+  'test_linux_version',
+  'lib/linux_version.c',
+  c_args : ['-DTEST_PROGRAM_LINUXVERSION'],
+  include_directories : dir_include)
+exes += exe
+
+exe = executable(
+  'test_fileutils',
+  'lib/fileutils.c',
+  c_args : ['-DTEST_PROGRAM_FILEUTILS'],
+  include_directories : dir_include)
+exes += exe
+
+exe = executable(
+  'test_canonicalize',
+  'lib/canonicalize.c',
+  c_args : ['-DTEST_PROGRAM_CANONICALIZE'],
+  include_directories : dir_include)
+exes += exe
+
+exe = executable(
+  'test_timeutils',
+  'lib/timeutils.c',
+  'lib/strutils.c',
+  c_args : ['-DTEST_PROGRAM_TIMEUTILS'],
+  include_directories : dir_include)
+exes += exe
+
+exe = executable(
+  'test_pwdutils',
+  'lib/pwdutils.c',
+  c_args : ['-DTEST_PROGRAM'],
+  include_directories : dir_include,
+  link_with : lib_common)
+exes += exe
+
+############################################################
+
+exe = executable(
+  'test_uuid_parser',
+  'libuuid/src/test_uuid.c',
+  include_directories : [dir_include, dir_libuuid],
+  link_with : lib_uuid,
+  dependencies : socket_libs)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+############################################################
+
+libfdisk_tests_cflags = ['-DTEST_PROGRAM',
+                         '-Wno-unused']
+libfdisk_tests_ldadd = [lib_fdisk.get_static_lib(), lib_uuid, lib_blkid]
+
+exe = executable(
+  'test_fdisk_ask',
+  'libfdisk/src/ask.c',
+  c_args : libfdisk_tests_cflags,
+  include_directories : lib_fdisk_includes,
+  link_with : libfdisk_tests_ldadd)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'test_fdisk_gpt',
+  'libfdisk/src/gpt.c',
+  c_args : libfdisk_tests_cflags,
+  include_directories : lib_fdisk_includes,
+  link_with : libfdisk_tests_ldadd)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'test_fdisk_utils',
+  'libfdisk/src/utils.c',
+  c_args : libfdisk_tests_cflags,
+  include_directories : lib_fdisk_includes,
+  link_with : libfdisk_tests_ldadd)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'test_fdisk_script',
+  'libfdisk/src/script.c',
+  c_args : libfdisk_tests_cflags,
+  include_directories : lib_fdisk_includes,
+  link_with : libfdisk_tests_ldadd)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'test_fdisk_version',
+  'libfdisk/src/version.c',
+  c_args : libfdisk_tests_cflags,
+  include_directories : lib_fdisk_includes,
+  link_with : libfdisk_tests_ldadd)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'test_fdisk_item',
+  'libfdisk/src/item.c',
+  c_args : libfdisk_tests_cflags,
+  include_directories : lib_fdisk_includes,
+  link_with : libfdisk_tests_ldadd)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+sample_fdisk_cflags = ['-Wno-unused']
+sample_fdisk_ldadd = [lib_common, lib_fdisk]
+
+exe = executable(
+  'sample-fdisk-mkpart',
+  'libfdisk/samples/mkpart.c',
+  c_args : sample_fdisk_cflags,
+  include_directories : lib_fdisk_includes,
+  link_with : sample_fdisk_ldadd)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-fdisk-mkpart-fullspec',
+  'libfdisk/samples/mkpart-fullspec.c',
+  c_args : sample_fdisk_cflags,
+  include_directories : lib_fdisk_includes,
+  link_with : sample_fdisk_ldadd)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+############################################################
+
+exe = executable(
+  'test_mbsencode',
+  'tests/helpers/test_mbsencode.c',
+  include_directories : includes,
+  link_with : lib_common)
+exes += exe
+
+exe = executable(
+  'test_byteswap',
+  'tests/helpers/test_byteswap.c',
+  include_directories : includes)
+exes += exe
+
+exe = executable(
+  'test_md5',
+  'tests/helpers/test_md5.c',
+  md5_c,
+  include_directories : includes)
+exes += exe
+
+exe = executable(
+  'test_sha1',
+  'tests/helpers/test_sha1.c',
+  sha1_c,
+  include_directories : includes)
+exes += exe
+
+exe = executable(
+  'test_pathnames',
+  'tests/helpers/test_pathnames.c',
+  include_directories : includes)
+exes += exe
+
+exe = executable(
+  'test_strerror',
+  'tests/helpers/test_strerror.c',
+  include_directories : includes)
+exes += exe
+
+exe = executable(
+  'test_sysinfo',
+  'tests/helpers/test_sysinfo.c',
+  include_directories : includes)
+exes += exe
+
+exe = executable(
+  'test_sigreceive',
+  'tests/helpers/test_sigreceive.c',
+  include_directories : includes,
+  link_with : lib_common)
+exes += exe
+
+exe = executable(
+  'test_tiocsti',
+  'tests/helpers/test_tiocsti.c',
+  include_directories : includes)
+exes += exe
+
+exe = executable(
+  'test_uuid_namespace',
+  'tests/helpers/test_uuid_namespace.c',
+  predefined_c,
+  unpack_c,
+  unparse_c,
+  include_directories : includes)
+exes += exe
+
+############################################################
+
+# XXX: HAVE_OPENAT
+exe = executable(
+  'sample-scols-tree',
+  'libsmartcols/samples/tree.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-scols-title',
+  'libsmartcols/samples/title.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-scols-wrap',
+  'libsmartcols/samples/wrap.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-scols-continuous',
+  'libsmartcols/samples/continuous.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-scols-maxout',
+  'libsmartcols/samples/maxout.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-scols-fromfile',
+  'libsmartcols/samples/fromfile.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-scols-grouping-simple',
+  'libsmartcols/samples/grouping-simple.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
+  'sample-scols-grouping-overlay',
+  'libsmartcols/samples/grouping-overlay.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+############################################################
+
+# Let the test runner know whether we're running under asan and export
+# some paths. We use a file on disk so that it is possible to run the
+# test scripts from commandline without setting any variables.
+configure_file(output : 'meson.conf',
+               capture : true,
+               command : ['echo',
+                          '''asan=@0@
+PYTHON=@1@
+'''.format(get_option('b_sanitize')=='address' ? 'yes' : '',
+           python.path())])
+
+run_sh = find_program('tests/run.sh')
+run_target(
+  'check',
+  command : [run_sh,
+             '--srcdir=' + meson.current_source_dir(),
+             '--builddir=' + meson.current_build_dir(),
+             '--parallel',
+             '--nonroot'],
+  depends : exes)

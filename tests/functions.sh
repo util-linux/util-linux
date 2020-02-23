@@ -285,6 +285,10 @@ function ts_init_env {
 	top_srcdir=$(ts_abspath $top_srcdir)
 	top_builddir=$(ts_abspath $top_builddir)
 
+        if [ -e "$top_builddir/meson.conf" ]; then
+            . "$top_builddir/meson.conf"
+        fi
+
 	# We use helpser always from build tree
 	ts_helpersdir="${top_builddir}/"
 
@@ -424,15 +428,23 @@ function ts_init_suid {
 function ts_init_py {
 	LIBNAME="$1"
 
-	[ -f "$top_builddir/py${LIBNAME}.la" ] || ts_skip "py${LIBNAME} not compiled"
+	if [ -f "$top_builddir/py${LIBNAME}.la" ]; then
+            # autotoolz build
+	    export LD_LIBRARY_PATH="$top_builddir/.libs:$LD_LIBRARY_PATH"
+	    export PYTHONPATH="$top_builddir/$LIBNAME/python:$top_builddir/.libs:$PYTHONPATH"
 
-	export LD_LIBRARY_PATH="$top_builddir/.libs:$LD_LIBRARY_PATH"
-	export PYTHONPATH="$top_builddir/$LIBNAME/python:$top_builddir/.libs:$PYTHONPATH"
+	    PYTHON_VERSION=$(awk '/^PYTHON_VERSION/ { print $3 }' $top_builddir/Makefile)
+	    PYTHON_MAJOR_VERSION=$(echo $PYTHON_VERSION | sed 's/\..*//')
 
-	export PYTHON_VERSION=$(awk '/^PYTHON_VERSION/ { print $3 }' $top_builddir/Makefile)
-	export PYTHON_MAJOR_VERSION=$(echo $PYTHON_VERSION | sed 's/\..*//')
+	    export PYTHON="python${PYTHON_MAJOR_VERSION}"
 
-	export PYTHON="python${PYTHON_MAJOR_VERSION}"
+        elif compgen -G "$top_builddir/$LIBNAME/python/py$LIBNAME*.so" >/dev/null; then
+            # mezon!
+            export PYTHONPATH="$top_builddir/$LIBNAME/python:$PYTHONPATH"
+
+        else
+            ts_skip "py${LIBNAME} not compiled"
+        fi
 }
 
 function ts_run {
