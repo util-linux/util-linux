@@ -69,8 +69,6 @@
 #include "xalloc.h"
 
 #define DEF_SORT_FUNC	sort_total
-#define IRQ_FIELD_LEN	4
-#define IRQ_NAME_LEN	64
 #define IRQ_INFO_LEN	64
 #define MAX_EVENTS	3
 
@@ -97,8 +95,8 @@ static struct colinfo infos[] = {
 };
 
 struct irq_info {
-	char irq[IRQ_FIELD_LEN + 1];	/* short name of this irq */
-	char name[IRQ_NAME_LEN + 1];	/* descriptive name of this irq */
+	char *irq;			/* short name of this irq */
+	char *name;			/* descriptive name of this irq */
 	unsigned long total;		/* total count since system start up */
 	unsigned long delta;		/* delta count since previous update */
 };
@@ -199,6 +197,8 @@ static void add_scols_line(struct irqtop_ctl *ctl, struct irq_info *stat)
 			err_oom();
 	}
 	ctl->outline = line;
+	free(stat->irq);
+	free(stat->name);
 }
 
 static int init_scols_table(struct irqtop_ctl *ctl)
@@ -260,17 +260,15 @@ static char *remove_repeated_spaces(char *str)
 /*
  * irqinfo - parse the system's interrupts
  */
-static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
+static struct irq_stat *get_irqinfo(void)
 {
 	FILE *irqfile;
-	char *buffer, *tmp;
-	long bufferlen;
+	char *line = NULL, *tmp;
+	size_t len = 0;
 	struct irq_stat *stat;
 	struct irq_info *curr;
 
 	/* NAME + ':' + 11 bytes/cpu + IRQ_NAME_LEN */
-	bufferlen = IRQ_FIELD_LEN + 1 + ctl->smp_num_cpus * 11 + IRQ_NAME_LEN;
-	buffer = xmalloc(bufferlen);
 	stat = xcalloc(1, sizeof(*stat));
 
 	stat->irq_info = xmalloc(sizeof(*stat->irq_info) * IRQ_INFO_LEN);
@@ -283,52 +281,51 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 	}
 
 	/* read header firstly */
-	if (!fgets(buffer, bufferlen, irqfile)) {
+	if (getline(&line, &len, irqfile) < 0) {
 		warn(_("cannot read %s"), _PATH_PROC_INTERRUPTS);
 		goto close_file;
 	}
 
-	tmp = buffer;
+	tmp = line;
 	while ((tmp = strstr(tmp, "CPU")) != NULL) {
 		tmp += 3;	/* skip this "CPU", find next */
 		stat->nr_active_cpu++;
 	}
 
 	/* parse each line of _PATH_PROC_INTERRUPTS */
-	while (fgets(buffer, bufferlen, irqfile)) {
+	while (getline(&line, &len, irqfile) >= 0) {
 		unsigned long count;
 		int index, length;
 
-		tmp = strchr(buffer, ':');
+		tmp = strchr(line, ':');
 		if (!tmp)
 			continue;
 
-		length = strlen(buffer);
-		if (length < IRQ_FIELD_LEN + 1 || tmp - buffer > IRQ_FIELD_LEN)
-			continue;
+		length = strlen(line);
 
 		curr = stat->irq_info + stat->nr_irq++;
 		memset(curr, 0, sizeof(*curr));
-		memcpy(curr->irq, buffer, tmp - buffer);
+		*tmp = '\0';
+		curr->irq = xstrdup(line);
 		ltrim_whitespace((unsigned char *)curr->irq);
 
 		tmp += 1;
-		for (index = 0; (index < stat->nr_active_cpu) && (tmp - buffer < length); index++) {
+		for (index = 0; (index < stat->nr_active_cpu) && (tmp - line < length); index++) {
 			sscanf(tmp, " %10lu", &count);
 			curr->total += count;
 			stat->total_irq += count;
 			tmp += 11;
 		}
 
-		if (tmp - buffer < length) {
+		if (tmp - line < length) {
 			/* strip all space before desc */
 			while (isspace(*tmp))
 				tmp++;
 			tmp = remove_repeated_spaces(tmp);
-			strcpy(curr->name, tmp);
+			curr->name = xstrdup(tmp);
 		} else {
 			/* no irq name string, we have to set '\0' here */
-			curr->name[0] = '\0';
+			curr->name = xstrdup("");
 		}
 
 		if (stat->nr_irq == stat->nr_irq_info) {
@@ -338,7 +335,7 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
 		}
 	}
 	fclose(irqfile);
-	free(buffer);
+	free(line);
 	return stat;
 
  close_file:
@@ -346,7 +343,7 @@ static struct irq_stat *get_irqinfo(struct irqtop_ctl *ctl)
  free_stat:
 	free(stat->irq_info);
 	free(stat);
-	free(buffer);
+	free(line);
 	return NULL;
 }
 
@@ -477,7 +474,7 @@ static int update_screen(struct irqtop_ctl *ctl)
 	char timestr[64];
 
 	/* the stats */
-	stat = get_irqinfo(ctl);
+	stat = get_irqinfo();
 	if (!stat) {
 		ctl->request_exit = 1;
 		return 1;
