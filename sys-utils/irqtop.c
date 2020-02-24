@@ -87,11 +87,11 @@ enum {
 	COL_NAME
 };
 
-static struct colinfo infos[] = {
-	[COL_IRQ] = {"IRQ", 0.10, SCOLS_FL_RIGHT, N_("interrupts"), SCOLS_JSON_STRING},
+static const struct colinfo infos[] = {
+	[COL_IRQ]   = {"IRQ",   0.10, SCOLS_FL_RIGHT, N_("interrupts"),  SCOLS_JSON_STRING},
 	[COL_TOTAL] = {"TOTAL", 0.10, SCOLS_FL_RIGHT, N_("total count"), SCOLS_JSON_NUMBER},
 	[COL_DELTA] = {"DELTA", 0.10, SCOLS_FL_RIGHT, N_("delta count"), SCOLS_JSON_NUMBER},
-	[COL_NAME] = {"NAME", 0.70, SCOLS_FL_TRUNC, N_("name"), SCOLS_JSON_STRING},
+	[COL_NAME]  = {"NAME",  0.70, SCOLS_FL_TRUNC, N_("name"),        SCOLS_JSON_STRING},
 };
 
 struct irq_info {
@@ -110,6 +110,8 @@ struct irq_stat {
 	unsigned long delta_irq;	/* delta irqs */
 };
 
+typedef int (sort_fp)(const struct irq_info *, const struct irq_info *);
+
 struct irqtop_ctl {
 	WINDOW *win;
 	int cols;
@@ -117,7 +119,7 @@ struct irqtop_ctl {
 	int old_rows;
 	struct itimerspec timer;
 	struct timeval uptime_tv;
-	int (*sort_func)(const struct irq_info *, const struct irq_info *);
+	sort_fp *sort_func;
 	long smp_num_cpus;
 	struct irq_stat *prev_stat;
 	char *hostname;
@@ -133,12 +135,11 @@ struct irqtop_ctl {
 		run_once:1;
 };
 
-static int column_name_to_id(const char *name, size_t namesz)
+static int column_name_to_id(char const *const name, size_t const namesz)
 {
 	size_t i;
 
 	assert(name);
-
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
@@ -149,7 +150,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
-static inline int get_column_id(const struct irqtop_ctl *ctl, size_t num)
+static inline int get_column_id(struct irqtop_ctl const *const ctl, size_t const num)
 {
 	assert(num < ctl->ncolumns);
 	assert(ctl->columns[num] < (int)ARRAY_SIZE(infos));
@@ -157,12 +158,14 @@ static inline int get_column_id(const struct irqtop_ctl *ctl, size_t num)
 	return ctl->columns[num];
 }
 
-static inline struct colinfo *get_column_info(const struct irqtop_ctl *ctl, unsigned num)
+static inline struct colinfo const *get_column_info(struct irqtop_ctl const
+						    *const ctl,
+						    unsigned const num)
 {
 	return &infos[get_column_id(ctl, num)];
 }
 
-static void add_scols_line(struct irqtop_ctl *ctl, struct irq_info *stat)
+static void add_scols_line(struct irqtop_ctl *const ctl, struct irq_info const *const stat)
 {
 	size_t i;
 	struct libscols_line *line;
@@ -201,7 +204,7 @@ static void add_scols_line(struct irqtop_ctl *ctl, struct irq_info *stat)
 	free(stat->name);
 }
 
-static int init_scols_table(struct irqtop_ctl *ctl)
+static int init_scols_table(struct irqtop_ctl *const ctl)
 {
 	size_t i;
 
@@ -214,10 +217,10 @@ static int init_scols_table(struct irqtop_ctl *ctl)
 	scols_table_enable_noheadings(ctl->table, ctl->no_headings);
 
 	if (ctl->json)
-		scols_table_set_name(ctl->table, "interrupts");
+		scols_table_set_name(ctl->table, _("interrupts"));
 
 	for (i = 0; i < ctl->ncolumns; i++) {
-		const struct colinfo *col = get_column_info(ctl, i);
+		struct colinfo const *const col = get_column_info(ctl, i);
 		int flags = col->flags;
 		struct libscols_column *cl;
 
@@ -236,7 +239,7 @@ static int init_scols_table(struct irqtop_ctl *ctl)
 	return 1;
 }
 
-static char *remove_repeated_spaces(char *str)
+static char *remove_repeated_spaces(char *const str)
 {
 	char *inp = str, *outp = str;
 	uint8_t prev_space = 0;
@@ -323,10 +326,8 @@ static struct irq_stat *get_irqinfo(void)
 				tmp++;
 			tmp = remove_repeated_spaces(tmp);
 			curr->name = xstrdup(tmp);
-		} else {
-			/* no irq name string, we have to set '\0' here */
+		} else	/* no irq name string, we have to set '\0' here */
 			curr->name = xstrdup("");
-		}
 
 		if (stat->nr_irq == stat->nr_irq_info) {
 			stat->nr_irq_info *= 2;
@@ -347,34 +348,40 @@ static struct irq_stat *get_irqinfo(void)
 	return NULL;
 }
 
-static void free_irqinfo(struct irq_stat *stat)
+static void free_irqinfo(struct irq_stat *const stat)
 {
 	if (stat)
 		free(stat->irq_info);
 	free(stat);
 }
 
-static int sort_name(const struct irq_info *a, const struct irq_info *b)
+static int sort_name(struct irq_info const *const a,
+		     struct irq_info const *const b)
 {
 	return (strcmp(a->name, b->name) > 0) ? 1 : 0;
 }
 
-static int sort_total(const struct irq_info *a, const struct irq_info *b)
+static int sort_total(struct irq_info const *const a,
+		      struct irq_info const *const b)
 {
 	return a->total < b->total;
 }
 
-static int sort_delta(const struct irq_info *a, const struct irq_info *b)
+static int sort_delta(struct irq_info const *const a,
+		      struct irq_info const *const b)
 {
 	return a->delta < b->delta;
 }
 
-static int sort_interrupts(const struct irq_info *a, const struct irq_info *b)
+static int sort_interrupts(struct irq_info const *const a,
+			   struct irq_info const *const b)
 {
 	return (strcmp(a->irq, b->irq) > 0) ? 1 : 0;
 }
 
-static void sort_result(struct irqtop_ctl *ctl, struct irq_info *result, size_t nmemb)
+static void sort_result(struct irqtop_ctl *const ctl,
+			struct irq_info *const result,
+			size_t const nmemb)
 {
 	qsort(result, nmemb, sizeof(*result), (int (*)(const void *, const void *))ctl->sort_func);
 }
@@ -391,45 +398,46 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
-	fputs(_(" -o, --once           only display average irq once, then exit\n"), stdout);
+	fputs(_(" -o, --once           only display interrupts once, then exit\n"), stdout);
 	fputs(_("     --json           output json, implies displaying once\n"), stdout);
 	fputs(_("     --columns <list> define which output columns to use (see below)\n"), stdout);
 	fputs(_(" -s, --sort <char>    specify sort criteria by character (see below)\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
-	printf(USAGE_HELP_OPTIONS(21));
+	printf(USAGE_HELP_OPTIONS(22));
 
-	fputs(_("\nThe following are valid sort criteria:\n"), stdout);
-	fputs(_("  i:   sort by IRQ field\n"), stdout);
-	fputs(_("  t:   sort by TOTAL field\n"), stdout);
-	fputs(_("  d:   sort by DELTA field\n"), stdout);
-	fputs(_("  n:   sort by NAME field\n"), stdout);
-	fputs(_("  q Q: stop updates and exit program\n"), stdout);
+	fputs(_("\nThe following interactive key commands are valid:\n"), stdout);
+	fputs(_("  i      sort by IRQ\n"), stdout);
+	fputs(_("  t      sort by TOTAL\n"), stdout);
+	fputs(_("  d      sort by DELTA\n"), stdout);
+	fputs(_("  n      sort by NAME\n"), stdout);
+	fputs(_("  q Q    quit program\n"), stdout);
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(stdout, " %-10s  %s\n", infos[i].name, _(infos[i].help));
+		fprintf(stdout, "  %-5s  %s\n", infos[i].name, _(infos[i].help));
 
 	printf(USAGE_MAN_TAIL("irqtop(1)"));
 	exit(EXIT_SUCCESS);
 }
 
-static void *set_sort_func(char key)
+
+static sort_fp *set_sort_func(char const key)
 {
 	switch (key) {
 	case 'i':
-		return (void *)sort_interrupts;
+		return sort_interrupts;
 	case 't':
-		return (void *)sort_total;
+		return sort_total;
 	case 'd':
-		return (void *)sort_delta;
+		return sort_delta;
 	case 'n':
-		return (void *)sort_name;
+		return sort_name;
 	default:
-		return (void *)DEF_SORT_FUNC;
+		return DEF_SORT_FUNC;
 	}
 }
 
-static void parse_input(struct irqtop_ctl *ctl, char c)
+static void parse_input(struct irqtop_ctl *const ctl, char const c)
 {
 	switch (c) {
 	case 'i':
@@ -451,20 +459,20 @@ static void parse_input(struct irqtop_ctl *ctl, char c)
 	}
 }
 
-static inline void print_line(struct irqtop_ctl *ctl, const char *fmt, ...)
+static inline void print_line(struct irqtop_ctl const *const ctl,
+			      char const *const fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
 	if (ctl->run_once)
 		vprintf(fmt, args);
-	else {
+	else
 		vw_printw(ctl->win, fmt, args);
-	}
 	va_end(args);
 }
 
-static int update_screen(struct irqtop_ctl *ctl)
+static int update_screen(struct irqtop_ctl *const ctl)
 {
 	struct irq_info *result, *curr;
 	struct irq_stat *stat;
@@ -493,7 +501,8 @@ static int update_screen(struct irqtop_ctl *ctl)
 	if (ctl->prev_stat) {
 		stat->delta_irq = 0;
 		for (index = 0; index < stat->nr_irq; index++) {
-			result[index].delta = result[index].total - ctl->prev_stat->irq_info[index].total;
+			result[index].delta = result[index].total -
+					      ctl->prev_stat->irq_info[index].total;
 			stat->delta_irq += result[index].delta;
 		}
 	}
@@ -510,8 +519,7 @@ static int update_screen(struct irqtop_ctl *ctl)
 	if (!ctl->json) {
 		now = time(NULL);
 		strtime_iso(&now, ISO_TIMESTAMP_T, timestr, sizeof(timestr));
-		print_line(ctl,
-			   "irqtop - total: %ld delta: %ld host: %s time: %s\n\n",
+		print_line(ctl, _("irqtop - total: %ld delta: %ld host: %s time: %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
 	}
 	/* body */
@@ -532,7 +540,7 @@ static int update_screen(struct irqtop_ctl *ctl)
 	return 0;
 }
 
-static int event_loop(struct irqtop_ctl *ctl)
+static int event_loop(struct irqtop_ctl *const ctl)
 {
 	int efd, sfd, tfd;
 	sigset_t sigmask;
@@ -605,13 +613,13 @@ static int event_loop(struct irqtop_ctl *ctl)
 	return retval;
 }
 
-static void parse_args(struct irqtop_ctl *ctl, int argc, char **argv)
+static void parse_args(struct irqtop_ctl *const ctl, int const argc,
+		       char *const *const argv)
 {
 	enum {
-		COLUMNS_OPT,
+		COLUMNS_OPT = CHAR_MAX + 1,
 		JSON_OPT,
 	};
-
 	static const struct option longopts[] = {
 		{"delay", required_argument, NULL, 'd'},
 		{"sort", required_argument, NULL, 's'},
@@ -637,8 +645,7 @@ static void parse_args(struct irqtop_ctl *ctl, int argc, char **argv)
 			}
 			break;
 		case 's':
-			ctl->sort_func = (int (*)(const struct irq_info *, const struct irq_info *))
-					 set_sort_func(optarg[0]);
+			ctl->sort_func = set_sort_func(optarg[0]);
 			break;
 		case 'o':
 			ctl->run_once = 1;
@@ -678,7 +685,6 @@ int main(int argc, char **argv)
 	int is_tty;
 	int retval = EXIT_SUCCESS;
 	struct termios saved_tty;
-
 	struct irqtop_ctl ctl = {
 		.timer.it_interval = {3, 0},
 		.timer.it_value = {3, 0}
