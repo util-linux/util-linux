@@ -223,8 +223,10 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 
 	if (rc == -EPERM
 	    && mnt_context_is_restricted(cxt)
+	    && mnt_context_tab_applied(cxt)
 	    && !mnt_context_syscall_called(cxt)) {
-		/* Failed somewhere in libmount, drop perms and try it again */
+		/* Mountpoint exists, but failed something else in libmount,
+		 * drop perms and try it again */
 		suid_drop(cxt);
 		rc = mnt_context_umount(cxt);
 	}
