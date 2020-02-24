@@ -5,12 +5,6 @@ script (lib/pty-session.c)
 --------------------------
   - (!) add #ifdefs and optional code for non-signalfd() systems
 
-irqtop or lsirq
----------------
-  - add tool to list and monitor IRQs from /proc/interrupts
-  - libsmartcols is expected
-  - initial work is done by zhenwei pi, see https://github.com/pacepi/irqtop
-
 col
 ---
   - use unsigned sizes for columns and lines
