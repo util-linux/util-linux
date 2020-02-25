@@ -1058,8 +1058,8 @@ static void device_to_scols(
 	if (!parent && dev->wholedisk)
 		parent = dev->wholedisk;
 
-	/* Do not print device more than one in --list mode */
-	if (!(lsblk->flags & LSBLK_TREE) && dev->is_printed)
+	/* Do not print device more than once on --list if tree order is not requested */
+	if (!(lsblk->flags & LSBLK_TREE) && !lsblk->force_tree_order && dev->is_printed)
 		return;
 
 	if (lsblk->merge && list_count_entries(&dev->parents) > 1) {
@@ -2044,8 +2044,9 @@ int main(int argc, char *argv[])
 		 * /sys is no more sorted */
 		lsblk->sort_id = COL_MAJMIN;
 
-	/* For --inverse --list we still follow parent->child relation */
-	if (lsblk->inverse && !(lsblk->flags & LSBLK_TREE))
+	/* For --{inverse,raw,pairs} --list we still follow parent->child relation */
+	if (!(lsblk->flags & LSBLK_TREE)
+	    && (lsblk->inverse || lsblk->flags & LSBLK_EXPORT || lsblk->flags & LSBLK_RAW))
 		lsblk->force_tree_order = 1;
 
 	if (lsblk->sort_id >= 0 && column_id_to_number(lsblk->sort_id) < 0) {
