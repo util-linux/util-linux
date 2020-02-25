@@ -27,6 +27,7 @@
 #include "strutils.h"
 #include "all-io.h"
 #include "pt-mbr.h"
+#include "encode.h"
 
 /**
  * SECTION: gpt
@@ -1637,45 +1638,20 @@ failed:
 	return 0;
 }
 
-/*
- * Stolen from libblkid - can be removed once partition semantics
- * are added to the fdisk API.
- */
 static char *encode_to_utf8(unsigned char *src, size_t count)
 {
-	uint16_t c;
-	char *dest;
-	size_t i, j;
-	size_t len = count * 3 / 2;
+	unsigned char *dest;
+	size_t len = (count * 3 / 2) + 1;
 
-	dest = calloc(1, len + 1);
+	dest = calloc(1, len);
 	if (!dest)
 		return NULL;
 
-	for (j = i = 0; i + 2 <= count; i += 2) {
-		/* always little endian */
-		c = (src[i+1] << 8) | src[i];
-		if (c == 0) {
-			break;
-		} else if (c < 0x80) {
-			if (j+1 > len)
-				break;
-			dest[j++] = (uint8_t) c;
-		} else if (c < 0x800) {
-			if (j+2 > len)
-				break;
-			dest[j++] = (uint8_t) (0xc0 | (c >> 6));
-			dest[j++] = (uint8_t) (0x80 | (c & 0x3f));
-		} else {
-			if (j+3 > len)
-				break;
-			dest[j++] = (uint8_t) (0xe0 | (c >> 12));
-			dest[j++] = (uint8_t) (0x80 | ((c >> 6) & 0x3f));
-			dest[j++] = (uint8_t) (0x80 | (c & 0x3f));
-		}
+	if (ul_encode_to_utf8(UL_ENCODE_UTF16LE, dest, len, src, count) == 0) {
+		free(dest);
+		return NULL;
 	}
-
-	return dest;
+	return (char *) dest;
 }
 
 static int gpt_entry_attrs_to_string(struct gpt_entry *e, char **res)
