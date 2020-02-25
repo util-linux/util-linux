@@ -368,7 +368,7 @@ static int uncompress_block(void *src, size_t len)
 	return stream.total_out;
 }
 
-#if !HAVE_LCHOWN
+#ifndef HAVE_LCHOWN
 #define lchown chown
 #endif
 
