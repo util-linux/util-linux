@@ -96,7 +96,8 @@ also \fB\-\-tree\fR if necessary.
 .BR \-l , " \-\-list"
 Produce output in the form of a list. The output does not provide information
 about relationships between devices and since version 2.34 every device is
-printed only once.
+printed only once if \fB\-\-pairs\fR or \fB\-\-raw\fR not specified (the
+parsable outputs are maintained in backwardly compatible way).
 .TP
 .BR \-M , " \-\-merge"
 Group parents of sub-trees to provide more readable output for RAIDs and
@@ -122,14 +123,15 @@ specified in the format \fI+list\fP (e.g., \fBlsblk \-o +UUID\fP).
 Output all available columns.
 .TP
 .BR \-P , " \-\-pairs"
-Produce output in the form of key="value" pairs.
-All potentially unsafe characters are hex-escaped (\\x<code>).
+Produce output in the form of key="value" pairs.  The output lines are still ordered by
+dependencies.  All potentially unsafe characters are hex-escaped (\\x<code>).
 .TP
 .BR \-p , " \-\-paths"
 Print full device paths.
 .TP
 .BR \-r , " \-\-raw"
-Produce output in raw format.  All potentially unsafe characters are hex-escaped
+Produce output in raw format.  The output lines are still ordered by
+dependencies.  All potentially unsafe characters are hex-escaped
 (\\x<code>) in the NAME, KNAME, LABEL, PARTLABEL and MOUNTPOINT columns.
 .TP
 .BR \-S , " \-\-scsi"
