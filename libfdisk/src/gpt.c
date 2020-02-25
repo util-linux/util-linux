@@ -1647,10 +1647,7 @@ static char *encode_to_utf8(unsigned char *src, size_t count)
 	if (!dest)
 		return NULL;
 
-	if (ul_encode_to_utf8(UL_ENCODE_UTF16LE, dest, len, src, count) == 0) {
-		free(dest);
-		return NULL;
-	}
+	ul_encode_to_utf8(UL_ENCODE_UTF16LE, dest, len, src, count);
 	return (char *) dest;
 }
 
