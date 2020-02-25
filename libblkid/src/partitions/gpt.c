@@ -396,7 +396,7 @@ static int probe_gpt_pt(blkid_probe pr,
 
 		blkid_partition_set_utf8name(par,
 			(unsigned char *) e->partition_name,
-			sizeof(e->partition_name), BLKID_ENC_UTF16LE);
+			sizeof(e->partition_name), UL_ENCODE_UTF16LE);
 
 		guid = e->unique_partition_guid;
 		swap_efi_guid(&guid);

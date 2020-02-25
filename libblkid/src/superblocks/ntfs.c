@@ -201,7 +201,7 @@ static int __probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag, int save_
 
 			if (attr_off + val_off + val_len <= mft_record_size)
 				blkid_probe_set_utf8label(pr, val, val_len,
-							  BLKID_ENC_UTF16LE);
+							  UL_ENCODE_UTF16LE);
 			break;
 		}
 

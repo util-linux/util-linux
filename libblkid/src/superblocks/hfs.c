@@ -305,7 +305,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_utf8label(pr, key->unicode,
 			be16_to_cpu(key->unicode_len) * 2,
-			BLKID_ENC_UTF16BE);
+			UL_ENCODE_UTF16BE);
 	return 0;
 }
 

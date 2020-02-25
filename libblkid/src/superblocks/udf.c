@@ -19,7 +19,7 @@
 
 #include "superblocks.h"
 
-#define udf_cid_to_enc(cid) ((cid) == 8 ? BLKID_ENC_LATIN1 : (cid) == 16 ? BLKID_ENC_UTF16BE : -1)
+#define udf_cid_to_enc(cid) ((cid) == 8 ? UL_ENCODE_LATIN1 : (cid) == 16 ? UL_ENCODE_UTF16BE : -1)
 
 struct dstring128 {
 	uint8_t	cid;
@@ -144,7 +144,7 @@ static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring
 	if (enc == -1)
 		return -1;
 
-	len = blkid_encode_to_utf8(enc, buf, sizeof(buf), volset_id->c, clen);
+	len = ul_encode_to_utf8(enc, buf, sizeof(buf), volset_id->c, clen);
 	if (len < 8)
 		return -1;
 

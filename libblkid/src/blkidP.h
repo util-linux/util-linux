@@ -34,6 +34,7 @@
 #include "debug.h"
 #include "blkid.h"
 #include "list.h"
+#include "encode.h"
 
 /*
  * This describes the attributes of a specific device.
@@ -542,15 +543,5 @@ extern void blkid_probe_use_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 
 #define blkid_bmp_nbytes(max_items) \
 		(blkid_bmp_nwords(max_items) * sizeof(unsigned long))
-
-/* encode.c */
-extern unsigned char *blkid_encode_alloc(size_t count, size_t *reslen);
-extern size_t blkid_encode_to_utf8(int enc, unsigned char *dest, size_t len,
-				const unsigned char *src, size_t count)
-			__attribute__((nonnull));
-
-#define BLKID_ENC_UTF16BE	0
-#define BLKID_ENC_UTF16LE	1
-#define BLKID_ENC_LATIN1	2
 
 #endif /* _BLKID_BLKIDP_H */

@@ -246,7 +246,7 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 			blkid_probe_set_utf8label(pr,
 					iso->volume_id,
 					sizeof(iso->volume_id),
-					BLKID_ENC_UTF16BE);
+					UL_ENCODE_UTF16BE);
 			goto has_label;
 		}
 		off += ISO_SECTOR_SIZE;
