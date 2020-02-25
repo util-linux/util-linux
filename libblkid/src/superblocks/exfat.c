@@ -126,7 +126,7 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 	label = find_label(pr, sb);
 	if (label)
 		blkid_probe_set_utf8label(pr, label->name,
-				min(label->length * 2, sizeof(label->name)),
+				min((size_t) label->length * 2, sizeof(label->name)),
 				BLKID_ENC_UTF16LE);
 	else if (errno)
 		return -errno;
