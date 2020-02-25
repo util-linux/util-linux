@@ -500,6 +500,13 @@ struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa)
 	return pa ? pa->type : NULL;
 }
 
+/**
+ * fdisk_partition_set_name:
+ * @pa: partition
+ * @name: partition name
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_set_name(struct fdisk_partition *pa, const char *name)
 {
 	if (!pa)
@@ -507,11 +514,24 @@ int fdisk_partition_set_name(struct fdisk_partition *pa, const char *name)
 	return strdup_to_struct_member(pa, name, name);
 }
 
+/**
+ * fdisk_partition_get_name:
+ * @pa: partition
+ *
+ * Returns: partition name
+ */
 const char *fdisk_partition_get_name(struct fdisk_partition *pa)
 {
 	return pa ? pa->name : NULL;
 }
 
+/**
+ * fdisk_partition_set_uuid:
+ * @pa: partition
+ * @uuid: UUID of the partition
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid)
 {
 	if (!pa)
