@@ -75,7 +75,7 @@ static int set_cad(const char *arg)
 		return EXIT_FAILURE;
 	}
 	if (reboot(cmd) < 0) {
-		warnx("reboot");
+		warn("reboot");
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
