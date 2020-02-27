@@ -533,22 +533,28 @@ static char *get_data(struct libmnt_fs *fs, int num)
 		break;
 	}
 	case COL_TARGET:
-		str = xstrdup(mnt_fs_get_target(fs));
+		if (mnt_fs_get_target(fs))
+			str = xstrdup(mnt_fs_get_target(fs));
 		break;
 	case COL_FSTYPE:
-		str = xstrdup(mnt_fs_get_fstype(fs));
+		if (mnt_fs_get_fstype(fs))
+			str = xstrdup(mnt_fs_get_fstype(fs));
 		break;
 	case COL_OPTIONS:
-		str = xstrdup(mnt_fs_get_options(fs));
+		if (mnt_fs_get_options(fs))
+			str = xstrdup(mnt_fs_get_options(fs));
 		break;
 	case COL_VFS_OPTIONS:
-		str = xstrdup(mnt_fs_get_vfs_options(fs));
+		if (mnt_fs_get_vfs_options(fs))
+			str = xstrdup(mnt_fs_get_vfs_options(fs));
 		break;
 	case COL_FS_OPTIONS:
-		str = xstrdup(mnt_fs_get_fs_options(fs));
+		if (mnt_fs_get_fs_options(fs))
+			str = xstrdup(mnt_fs_get_fs_options(fs));
 		break;
 	case COL_OPT_FIELDS:
-		str = xstrdup(mnt_fs_get_optional_fields(fs));
+		if (mnt_fs_get_optional_fields(fs))
+			str = xstrdup(mnt_fs_get_optional_fields(fs));
 		break;
 	case COL_UUID:
 		str = get_tag(fs, "UUID", col_id);
@@ -582,7 +588,8 @@ static char *get_data(struct libmnt_fs *fs, int num)
 		str = get_vfs_attr(fs, col_id);
 		break;
 	case COL_FSROOT:
-		str = xstrdup(mnt_fs_get_root(fs));
+		if (mnt_fs_get_root(fs))
+			str = xstrdup(mnt_fs_get_root(fs));
 		break;
 	case COL_TID:
 		if (mnt_fs_get_tid(fs))
@@ -659,12 +666,14 @@ static char *get_tabdiff_data(struct libmnt_fs *old_fs,
 		break;
 	case COL_OLD_OPTIONS:
 		if (old_fs && (change == MNT_TABDIFF_REMOUNT ||
-			       change == MNT_TABDIFF_UMOUNT))
+			       change == MNT_TABDIFF_UMOUNT)
+		           && mnt_fs_get_options(old_fs))
 			str = xstrdup(mnt_fs_get_options(old_fs));
 		break;
 	case COL_OLD_TARGET:
 		if (old_fs && (change == MNT_TABDIFF_MOVE ||
-			       change == MNT_TABDIFF_UMOUNT))
+			       change == MNT_TABDIFF_UMOUNT)
+			   && mnt_fs_get_target(old_fs))
 			str = xstrdup(mnt_fs_get_target(old_fs));
 		break;
 	default:
