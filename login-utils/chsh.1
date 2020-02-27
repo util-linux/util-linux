@@ -46,11 +46,13 @@ Display version information and exit.
 .SH "VALID SHELLS"
 .B chsh
 will accept the full pathname of any executable file on the system.
-However, it will issue a warning if the shell is not listed in the
+.sp
+The default behavior for non-root users is to accept only shells
+listed in the
 .I /etc/shells
-file.
-On the other hand, it can also be configured such that it will
-only accept shells listed in this file, unless you are root.
+file, and issue a warning for root user.  It can also be configured
+at compile-time to only issue a warning for all users.
+
 .SH "EXIT STATUS"
 Returns 0 if operation was successful, 1 if operation failed or command syntax was not valid.
 .SH "SEE ALSO"
