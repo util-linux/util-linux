@@ -224,6 +224,7 @@ if [ "$paraller_jobs" -ne 1 ]; then
 fi
 
 count=0
+mkdir -p $top_builddir/tests/
 >| $top_builddir/tests/failures
 printf "%s\n" ${comps[*]} |
 	sort |
