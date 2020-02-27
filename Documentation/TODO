@@ -96,6 +96,7 @@ docs
 
  - (!) add API documentation to libuuid
 
+ - (!) rewrite man pages to AsciiDoc and generate final man pages by Asciidoctor & Docbook
 
 login-utils:
 -----------
