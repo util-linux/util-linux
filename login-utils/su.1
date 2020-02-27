@@ -56,6 +56,11 @@ that does not require authentication and provide separate PAM configuration. If
 the PAM session is not required at all then the recommend solution is to use
 command
 .BR setpriv (1).
+.PP
+Note that
+.B su
+in all cases use PAM (pam_getenvlist()) to do final environment modification.  The command line options
+like \fB\-\-login\fR or \fB\-\-preserve\-environment\fR affect environment before it's modified by PAM.
 
 .SH OPTIONS
 .TP
@@ -233,7 +238,8 @@ initializes
 .RE
 .sp
 The environment variable PATH may be different on systems where /bin and /sbin
-are merged into /usr.
+are merged into /usr, this variable is also affected by \fB\-\-login\fR command line option and
+PAM system setting (e.g. pam_env).
 .SH EXIT STATUS
 .B su
 normally returns the exit status of the command it executed.  If the
