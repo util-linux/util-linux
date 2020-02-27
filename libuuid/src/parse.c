@@ -41,14 +41,23 @@
 
 int uuid_parse(const char *in, uuid_t uu)
 {
+	size_t len = strlen(in);
+	if (len != 36)
+		return -1;
+
+	return uuid_parse_range(in, in + len, uu);
+}
+
+int uuid_parse_range(const char *in_start, const char *in_end, uuid_t uu)
+{
 	struct uuid	uuid;
 	int 		i;
 	const char	*cp;
 	char		buf[3];
 
-	if (strlen(in) != 36)
+	if ((in_end - in_start) != 36)
 		return -1;
-	for (i=0, cp = in; i <= 36; i++,cp++) {
+	for (i=0, cp = in_start; i <= 36; i++,cp++) {
 		if ((i == 8) || (i == 13) || (i == 18) ||
 		    (i == 23)) {
 			if (*cp == '-')
@@ -62,11 +71,11 @@ int uuid_parse(const char *in, uuid_t uu)
 		if (!isxdigit(*cp))
 			return -1;
 	}
-	uuid.time_low = strtoul(in, NULL, 16);
-	uuid.time_mid = strtoul(in+9, NULL, 16);
-	uuid.time_hi_and_version = strtoul(in+14, NULL, 16);
-	uuid.clock_seq = strtoul(in+19, NULL, 16);
-	cp = in+24;
+	uuid.time_low = strtoul(in_start, NULL, 16);
+	uuid.time_mid = strtoul(in_start+9, NULL, 16);
+	uuid.time_hi_and_version = strtoul(in_start+14, NULL, 16);
+	uuid.clock_seq = strtoul(in_start+19, NULL, 16);
+	cp = in_start+24;
 	buf[2] = 0;
 	for (i=0; i < 6; i++) {
 		buf[0] = *cp++;
