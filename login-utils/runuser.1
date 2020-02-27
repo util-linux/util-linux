@@ -52,6 +52,11 @@ is not root).
 This version of
 .B runuser
 uses PAM for session management.
+.PP
+Note that
+.B runuser
+in all cases use PAM (pam_getenvlist()) to do final environment modification.  The command line options
+like \fB\-\-login\fR or \fB\-\-preserve\-environment\fR affect environment before it's modified by PAM.
 .SH OPTIONS
 .TP
 .BR \-c , " \-\-command" = \fIcommand
@@ -212,7 +217,8 @@ initializes
 .RE
 .sp
 The environment variable PATH may be different on systems where /bin and /sbin
-are merged into /usr.
+are merged into /usr, this variable is also affected by \fB\-\-login\fR command line option and
+PAM system setting (e.g. pam_env).
 .SH EXIT STATUS
 .B runuser
 normally returns the exit status of the command it executed.  If the
