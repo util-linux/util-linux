@@ -45,6 +45,15 @@ global:
 } UUID_2.20;
 
 /*
+ * version(s) since util-linux.2.36
+ */
+UUID_2.36 {
+global:
+	uuid_parse_range;
+} UUID_2.31;
+
+
+/*
  * __uuid_* this is not part of the official API, this is
  * uuidd (uuid daemon) specific stuff. Hell.
  */

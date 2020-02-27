@@ -51,7 +51,7 @@ int uuid_parse(const char *in, uuid_t uu)
 int uuid_parse_range(const char *in_start, const char *in_end, uuid_t uu)
 {
 	struct uuid	uuid;
-	int 		i;
+	int		i;
 	const char	*cp;
 	char		buf[3];
 

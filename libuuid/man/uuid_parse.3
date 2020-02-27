@@ -36,7 +36,9 @@ uuid_parse \- convert an input UUID string into binary representation
 .nf
 .B #include <uuid.h>
 .sp
-.BI "int uuid_parse( char *" in ", uuid_t " uu );
+.BI "int uuid_parse(char *" in ", uuid_t " uu );
+.sp
+.BI "int uuid_parse_range(char *" in_start ", char *" in_end ", uuid_t " uu );
 .fi
 .SH DESCRIPTION
 The
@@ -47,6 +49,16 @@ into the binary representation.  The input UUID is a string of the form
 1b4e28ba\-2fa1\-11d2\-883f\-b9a761bde3fb (in
 .BR printf (3)
 format "%08x\-%04x\-%04x\-%04x\-%012x", 36 bytes plus the trailing '\e0').
+.PP
+The
+.B uuid_parse_range
+function works like
+.B uuid_parse
+but parses only range in string specified by
+.I in_start
+and
+.I in_end
+pointers.
 .SH RETURN VALUE
 Upon successfully parsing the input string, 0 is returned, and the UUID is
 stored in the location pointed to by
