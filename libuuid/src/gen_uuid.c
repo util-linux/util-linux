@@ -136,7 +136,7 @@ static int get_node_id(unsigned char *node_id)
 	struct ifconf	ifc;
 	char buf[1024];
 	int		n, i;
-	unsigned char	*a;
+	unsigned char	*a = NULL;
 #ifdef HAVE_NET_IF_DL_H
 	struct sockaddr_dl *sdlp;
 #endif
@@ -194,7 +194,7 @@ static int get_node_id(unsigned char *node_id)
 #endif /* HAVE_NET_IF_DL_H */
 #endif /* SIOCGENADDR */
 #endif /* SIOCGIFHWADDR */
-		if (!a[0] && !a[1] && !a[2] && !a[3] && !a[4] && !a[5])
+		if (a == NULL || (!a[0] && !a[1] && !a[2] && !a[3] && !a[4] && !a[5]))
 			continue;
 		if (node_id) {
 			memcpy(node_id, a, 6);
