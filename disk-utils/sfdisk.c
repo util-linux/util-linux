@@ -112,6 +112,7 @@ struct sfdisk {
 		     force  : 1,	/* do also stupid things */
 		     backup : 1,	/* backup sectors before write PT */
 		     container : 1,	/* PT contains container (MBR extended) partitions */
+		     unused : 1,	/* PT contains unused partition */
 		     append : 1,	/* don't create new PT, append partitions only */
 		     json : 1,		/* JSON dump */
 		     movedata: 1,	/* move data after resize */
@@ -1519,26 +1520,26 @@ static int loop_control_commands(struct sfdisk *sf,
 	return rc;
 }
 
-static int has_container(struct sfdisk *sf)
+static int has_container_or_unused(struct sfdisk *sf)
 {
 	size_t i, nparts;
 	struct fdisk_partition *pa = NULL;
 
-	if (sf->container)
-		return sf->container;
+	if (sf->container || sf->unused)
+		return 1;
 
 	nparts = fdisk_get_npartitions(sf->cxt);
 	for (i = 0; i < nparts; i++) {
 		if (fdisk_get_partition(sf->cxt, i, &pa) != 0)
 			continue;
-		if (fdisk_partition_is_container(pa)) {
+		if (!fdisk_partition_is_used(pa))
+			sf->unused = 1;
+		if (fdisk_partition_is_container(pa))
 			sf->container = 1;
-			break;
-		}
 	}
 
 	fdisk_unref_partition(pa);
-	return sf->container;
+	return sf->container || sf->unused;
 }
 
 static size_t last_pt_partno(struct sfdisk *sf)
@@ -1839,7 +1840,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		if (created
 		    && partno < 0
 		    && next_partno == fdisk_get_npartitions(sf->cxt)
-		    && !has_container(sf)) {
+		    && has_container_or_unused(sf)) {
 			fdisk_info(sf->cxt, _("All partitions used."));
 			rc = SFDISK_DONE_ASK;
 			break;
