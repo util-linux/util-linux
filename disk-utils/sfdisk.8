@@ -74,6 +74,10 @@ the event handling on the device.  For example:
 .sp
 .RE
 Note, this semantic is not currently supported by udevd for MD and DM devices.
+.PP
+The sfdisk prompt is only a hint for users and a displayed partition number does
+not mean that the same partition table entry will be created (if -N not
+specified), especially for tables with gaps.
 
 .SH COMMANDS
 The commands are mutually exclusive.
@@ -189,6 +193,10 @@ tools can automatically relocate the header to follow the standard.
 .TP
 .BR \-a , " \-\-append"
 Don't create a new partition table, but only append the specified partitions.
+.sp
+Note that unused partition maybe be re-used in this case although it is not the
+last partition in the partition table. See also \fB\-N\fR to specify entry in
+the partition table.
 .TP
 .BR \-b , " \-\-backup"
 Back up the current partition table sectors before starting the partitioning.

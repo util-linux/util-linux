@@ -1530,10 +1530,13 @@ static int has_container_or_unused(struct sfdisk *sf)
 
 	nparts = fdisk_get_npartitions(sf->cxt);
 	for (i = 0; i < nparts; i++) {
+
+		if (!fdisk_is_partition_used(sf->cxt, i)) {
+			sf->unused = 1;
+			continue;
+		}
 		if (fdisk_get_partition(sf->cxt, i, &pa) != 0)
 			continue;
-		if (!fdisk_partition_is_used(pa))
-			sf->unused = 1;
 		if (fdisk_partition_is_container(pa))
 			sf->container = 1;
 	}
@@ -1840,7 +1843,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		if (created
 		    && partno < 0
 		    && next_partno == fdisk_get_npartitions(sf->cxt)
-		    && has_container_or_unused(sf)) {
+		    && !has_container_or_unused(sf)) {
 			fdisk_info(sf->cxt, _("All partitions used."));
 			rc = SFDISK_DONE_ASK;
 			break;
