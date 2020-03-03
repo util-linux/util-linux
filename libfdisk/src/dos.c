@@ -70,6 +70,18 @@ static struct fdisk_parttype dos_parttypes[] = {
 	#include "pt-mbr-partnames.h"
 };
 
+static const struct fdisk_shortcut dos_parttype_cuts[] =
+{
+	{ .shortcut = "L", .alias = "linux",    .data = "83" },
+	{ .shortcut = "S", .alias = "swap",     .data = "82" },
+	{ .shortcut = "E", .alias = "extended", .data = "05", .deprecated = 1 }, /* collision with 0x0e type */
+	{ .shortcut = "Ex",.alias = "extended", .data = "05" }, /* MBR extended */
+	{ .shortcut = "U", .alias = "uefi",     .data = "EF" }, /* UEFI system */
+	{ .shortcut = "R", .alias = "raid",     .data = "FD" }, /* Linux RAID */
+	{ .shortcut = "V", .alias = "lvm",      .data = "8E" }, /* LVM */
+	{ .shortcut = "X", .alias = "linuxex",  .data = "85" }  /* Linux extended */
+};
+
 #define set_hsc(h,s,c,sector) { \
 		s = sector % cxt->geom.sectors + 1;			\
 		sector /= cxt->geom.sectors;				\
@@ -2556,8 +2568,12 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt __attribute__ 
 	lb->name = "dos";
 	lb->id = FDISK_DISKLABEL_DOS;
 	lb->op = &dos_operations;
+
 	lb->parttypes = dos_parttypes;
 	lb->nparttypes = ARRAY_SIZE(dos_parttypes) - 1;
+	lb->parttype_cuts = dos_parttype_cuts;
+	lb->nparttype_cuts = ARRAY_SIZE(dos_parttype_cuts);
+
 	lb->fields = dos_fields;
 	lb->nfields = ARRAY_SIZE(dos_fields);
 

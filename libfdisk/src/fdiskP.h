@@ -123,6 +123,17 @@ enum {
 #define fdisk_parttype_is_invisible(_x)	((_x) && ((_x)->flags & FDISK_PARTTYPE_INVISIBLE))
 #define fdisk_parttype_is_allocated(_x)	((_x) && ((_x)->flags & FDISK_PARTTYPE_ALLOCATED))
 
+/*
+ * Shortcut (used for partition types)
+ */
+struct fdisk_shortcut {
+	const char	*shortcut;	/* shortcut, usually one letter (e.h. "H") */
+	const char	*alias;		/* human readable alias (e.g. "home") */
+	const char	*data;		/* for example partition type */
+
+	unsigned int    deprecated : 1;
+};
+
 struct fdisk_partition {
 	int		refcount;		/* reference counter */
 
@@ -277,6 +288,9 @@ struct fdisk_label {
 	enum fdisk_labeltype	id;		/* FDISK_DISKLABEL_* */
 	struct fdisk_parttype	*parttypes;	/* supported partitions types */
 	size_t			nparttypes;	/* number of items in parttypes[] */
+
+	const struct fdisk_shortcut *parttype_cuts;	/* partition type shortcuts */
+	size_t			nparttype_cuts;	/* number of items in parttype_cuts */
 
 	size_t			nparts_max;	/* maximal number of partitions */
 	size_t			nparts_cur;	/* number of currently used partitions */
@@ -518,5 +532,8 @@ int fdisk_set_wipe_area(struct fdisk_context *cxt, uint64_t start, uint64_t size
 int fdisk_do_wipe(struct fdisk_context *cxt);
 int fdisk_has_wipe_area(struct fdisk_context *cxt, uint64_t start, uint64_t size);
 int fdisk_check_collisions(struct fdisk_context *cxt);
+
+/* parttype.c */
+const char *fdisk_label_translate_type_shortcut(const struct fdisk_label *lb, char *cut);
 
 #endif /* _LIBFDISK_PRIVATE_H */

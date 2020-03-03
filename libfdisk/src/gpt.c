@@ -156,6 +156,16 @@ static struct fdisk_parttype gpt_parttypes[] =
 	#include "pt-gpt-partnames.h"
 };
 
+static const struct fdisk_shortcut gpt_parttype_cuts[] =
+{
+	{ .shortcut = "L", .alias = "linux", .data = "0FC63DAF-8483-4772-8E79-3D69D8477DE4" }, /* Linux */
+	{ .shortcut = "S", .alias = "swap",  .data = "0657FD6D-A4AB-43C4-84E5-0933C84B4F4F" }, /* Swap */
+	{ .shortcut = "H", .alias = "home",  .data = "933AC7E1-2EB4-4F13-B844-0E14E2AEF915" }, /* Home */
+	{ .shortcut = "U", .alias = "uefi",  .data = "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" }, /* UEFI system */
+	{ .shortcut = "R", .alias = "raid",  .data = "A19D880F-05FC-4D3B-A006-743F0F84911E" }, /* Linux RAID */
+	{ .shortcut = "V", .alias = "lvm",   .data = "E6D6D379-F507-44C2-A23C-238F2A3DF928" }  /* LVM */
+};
+
 #define alignment_required(_x)  ((_x)->grain != (_x)->sector_size)
 
 /* gpt_entry macros */
@@ -3134,8 +3144,11 @@ struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt __attribute__ 
 	lb->name = "gpt";
 	lb->id = FDISK_DISKLABEL_GPT;
 	lb->op = &gpt_operations;
+
 	lb->parttypes = gpt_parttypes;
 	lb->nparttypes = ARRAY_SIZE(gpt_parttypes);
+	lb->parttype_cuts = gpt_parttype_cuts;
+	lb->nparttype_cuts = ARRAY_SIZE(gpt_parttype_cuts);
 
 	lb->fields = gpt_fields;
 	lb->nfields = ARRAY_SIZE(gpt_fields);

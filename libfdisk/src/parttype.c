@@ -146,6 +146,41 @@ struct fdisk_parttype *fdisk_label_get_parttype(const struct fdisk_label *lb, si
 }
 
 /**
+ * fdisk_label_get_parttype_shortcut:
+ * @lb: label
+ * @n: number
+ * @typestr: returns type as string
+ * @shortcut: returns type shortcut string
+ * @alias: returns type alias string
+ *
+ * Returns: return 0 on success, <0 on error, 2 for deprecated alias, 1 for @n out of range
+ *
+ * Since: v2.36
+ */
+int fdisk_label_get_parttype_shortcut(const struct fdisk_label *lb, size_t n,
+		const char **typestr, const char **shortcut, const char **alias)
+{
+	const struct fdisk_shortcut *sc;
+
+	if (!lb)
+		return -EINVAL;
+	if (n >= lb->nparttype_cuts)
+		return 1;
+
+	sc = &lb->parttype_cuts[n];
+	if (typestr)
+		*typestr = sc->data;
+	if (shortcut)
+		*shortcut = sc->shortcut;
+	if (alias)
+		*alias = sc->alias;
+
+	return sc->deprecated == 1 ? 2 : 0;
+
+}
+
+
+/**
  * fdisk_label_has_code_parttypes:
  * @lb: label
  *
@@ -159,6 +194,20 @@ int fdisk_label_has_code_parttypes(const struct fdisk_label *lb)
 	if (lb->parttypes && lb->parttypes[0].typestr)
 		return 0;
 	return 1;
+}
+
+/**
+ * fdisk_label_has_parttypes_shortcuts
+ * @lb: label
+ *
+ * Returns: 1 if the label support shortuts/aliases for partition types or 0.
+ *
+ * Since: 2.36
+ */
+int fdisk_label_has_parttypes_shortcuts(const struct fdisk_label *lb)
+{
+	assert(lb);
+	return lb->nparttype_cuts ? 1 : 0;
 }
 
 
@@ -266,15 +315,176 @@ struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type)
 	return t;
 }
 
+static struct fdisk_parttype *parttype_from_data(
+				const struct fdisk_label *lb,
+				const char *str,
+				unsigned int *xcode,
+				int use_seqnum)
+{
+	struct fdisk_parttype *types, *ret = NULL;
+	char *end = NULL;
+
+	assert(lb);
+	assert(str);
+
+	if (xcode)
+		*xcode = 0;
+	if (!lb->nparttypes)
+		return NULL;
+
+	DBG(LABEL, ul_debugobj(lb, " parsing '%s' data", str));
+	types = lb->parttypes;
+
+	if (types[0].typestr == NULL) {
+		unsigned int code;
+
+		DBG(LABEL, ul_debugobj(lb, " +hex"));
+
+		errno = 0;
+		code = strtol(str, &end, 16);
+
+		if (errno || *end != '\0') {
+			DBG(LABEL, ul_debugobj(lb, "  failed: %m"));
+			return NULL;
+		}
+		if (xcode)
+			*xcode = code;
+		ret = fdisk_label_get_parttype_from_code(lb, code);
+	} else {
+		DBG(LABEL, ul_debugobj(lb, " +string"));
+
+		/* maybe specified by type string (e.g. UUID) */
+		ret = fdisk_label_get_parttype_from_string(lb, str);
+
+		if (!ret) {
+			/* maybe specified by order number */
+			int i;
+
+			errno = 0;
+			i = strtol(str, &end, 0);
+
+			if (use_seqnum && errno == 0
+			    && *end == '\0' && i > 0
+			    && i - 1 < (int) lb->nparttypes)
+				ret = &types[i - 1];
+		}
+	}
+
+	if (ret)
+		DBG(PARTTYPE, ul_debugobj(ret, " result '%s'", ret->name));
+	return ret;
+}
+
+static struct fdisk_parttype *parttype_from_shortcut(
+				const struct fdisk_label *lb,
+				const char *str, int deprecated)
+{
+	size_t i;
+
+	DBG(LABEL, ul_debugobj(lb, " parsing '%s' shortcut", str));
+
+	for (i = 0; i < lb->nparttype_cuts; i++) {
+		const struct fdisk_shortcut *sc = &lb->parttype_cuts[i];
+
+		if (sc->deprecated && !deprecated)
+			continue;
+		if (sc->shortcut && strcmp(sc->shortcut, str) == 0)
+			return parttype_from_data(lb, sc->data, NULL, 0);
+	}
+	return NULL;
+}
+
+static struct fdisk_parttype *parttype_from_alias(
+				const struct fdisk_label *lb,
+				const char *str, int deprecated)
+{
+	size_t i;
+
+	DBG(LABEL, ul_debugobj(lb, " parsing '%s' alias", str));
+
+	for (i = 0; i < lb->nparttype_cuts; i++) {
+		const struct fdisk_shortcut *sc = &lb->parttype_cuts[i];
+
+		if (sc->deprecated && !deprecated)
+			continue;
+		if (sc->alias && strcmp(sc->alias, str) == 0)
+			return parttype_from_data(lb, sc->data, NULL, 0);
+	}
+	return NULL;
+}
+
+/**
+ * fdisk_label_advparse_parttype:
+ * @lb: label
+ * @str: string to parse from
+ * @flags: FDISK_PARTTYPE_PARSE_*
+ *
+ * This function is advanced partition types parser. It parses partition type
+ * from @str according to the label. The function returns a pointer to static
+ * table of the partition types, or newly allocated partition type for unknown
+ * types (see fdisk_parttype_is_unknown(). It's safe to call fdisk_unref_parttype()
+ * for all results.
+ *
+ * The @str may be type data (hex code or UUID), alias or shortcut. For GPT
+ * also sequence number of the type in the list of the supported types.
+ *
+ * Returns: pointer to type or NULL on error.
+ */
+struct fdisk_parttype *fdisk_label_advparse_parttype(
+				const struct fdisk_label *lb,
+				const char *str,
+				int flags)
+{
+	struct fdisk_parttype *res = NULL;
+	unsigned int code = 0;
+
+	if (!lb->nparttypes)
+		return NULL;
+
+	DBG(LABEL, ul_debugobj(lb, "parsing '%s' (%s) type", str, lb->name));
+
+	if ((flags & FDISK_PARTTYPE_PARSE_DATA)
+	    && !(flags & FDISK_PARTTYPE_PARSE_DATALAST))
+		res = parttype_from_data(lb, str, &code,
+				flags & FDISK_PARTTYPE_PARSE_SEQNUM);
+
+	if (!res && (flags & FDISK_PARTTYPE_PARSE_ALIAS))
+		res = parttype_from_alias(lb, str,
+				flags & FDISK_PARTTYPE_PARSE_DEPRECATED);
+
+	if (!res && (flags & FDISK_PARTTYPE_PARSE_SHORTCUT))
+		res = parttype_from_shortcut(lb, str,
+				flags & FDISK_PARTTYPE_PARSE_DEPRECATED);
+
+	if (!res && (flags & FDISK_PARTTYPE_PARSE_DATA)
+	    && (flags & FDISK_PARTTYPE_PARSE_DATALAST))
+		res = parttype_from_data(lb, str, &code,
+				flags & FDISK_PARTTYPE_PARSE_SEQNUM);
+
+	if (!res && !(flags & FDISK_PARTTYPE_PARSE_NOUNKNOWN)) {
+		if (lb->parttypes[0].typestr)
+			res = fdisk_new_unknown_parttype(0, str);
+		else
+			res = fdisk_new_unknown_parttype(code, NULL);
+	}
+
+	if (res)
+		DBG(PARTTYPE, ul_debugobj(res, "returns parsed '%s' [%s] partition type",
+				res->name, res->typestr ? : ""));
+	return res;
+}
+
 /**
  * fdisk_label_parse_parttype:
  * @lb: label
- * @str: string to parse from
+ * @str: string to parse from (type name, UUID, etc.)
  *
  * Parses partition type from @str according to the label. The function returns
  * a pointer to static table of the partition types, or newly allocated
  * partition type for unknown types (see fdisk_parttype_is_unknown(). It's
  * safe to call fdisk_unref_parttype() for all results.
+ *
+ * Note that for GPT it accepts sequence number of UUID.
  *
  * Returns: pointer to type or NULL on error.
  */
@@ -282,61 +492,7 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 				const struct fdisk_label *lb,
 				const char *str)
 {
-	struct fdisk_parttype *types, *ret = NULL;
-	char *end = NULL;
-
-	assert(lb);
-
-	if (!lb->nparttypes)
-		return NULL;
-
-	DBG(LABEL, ul_debugobj(lb, "parsing '%s' (%s) partition type",
-				str, lb->name));
-	types = lb->parttypes;
-
-	if (types[0].typestr == NULL) {
-		unsigned int code = 0;
-
-		DBG(LABEL, ul_debugobj(lb, " parsing hex"));
-
-		errno = 0;
-		code = strtol(str, &end, 16);
-
-		if (errno || *end != '\0') {
-			DBG(LABEL, ul_debugobj(lb, "parsing failed: %m"));
-			return NULL;
-		}
-		ret = fdisk_label_get_parttype_from_code(lb, code);
-		if (ret)
-			goto done;
-
-		ret = fdisk_new_unknown_parttype(code, NULL);
-	} else {
-		int i;
-
-		DBG(LABEL, ul_debugobj(lb, " parsing string"));
-
-		/* maybe specified by type string (e.g. UUID) */
-		ret = fdisk_label_get_parttype_from_string(lb, str);
-		if (ret)
-			goto done;
-
-		/* maybe specified by order number */
-		errno = 0;
-		i = strtol(str, &end, 0);
-		if (errno == 0 && *end == '\0' && i > 0
-		    && i - 1 < (int) lb->nparttypes) {
-			ret = &types[i - 1];
-			goto done;
-		}
-
-		ret = fdisk_new_unknown_parttype(0, str);
-	}
-
-done:
-	DBG(PARTTYPE, ul_debugobj(ret, "returns parsed '%s' [%s] partition type",
-				ret->name, ret->typestr ? : ""));
-	return ret;
+	return fdisk_label_advparse_parttype(lb, str, FDISK_PARTTYPE_PARSE_DATA);
 }
 
 /**

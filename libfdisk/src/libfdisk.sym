@@ -312,4 +312,7 @@ FDISK_2.36 {
 	fdisk_set_disklabel_id_from_string;
 	fdisk_gpt_disable_relocation;
 	fdisk_gpt_enable_minimize;
+	fdisk_label_has_parttypes_shortcuts;
+	fdisk_label_advparse_parttype;
+	fdisk_label_get_parttype_shortcut;
 } FDISK_2.35;

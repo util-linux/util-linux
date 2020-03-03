@@ -264,7 +264,13 @@ int fdisk_parttype_set_typestr(struct fdisk_parttype *t, const char *str);
 int fdisk_parttype_set_code(struct fdisk_parttype *t, int code);
 size_t fdisk_label_get_nparttypes(const struct fdisk_label *lb);
 struct fdisk_parttype *fdisk_label_get_parttype(const struct fdisk_label *lb, size_t n);
+int fdisk_label_get_parttype_shortcut(
+	                        const struct fdisk_label *lb, size_t n,
+		                const char **typestr,
+			        const char **shortcut,
+				const char **alias);
 int fdisk_label_has_code_parttypes(const struct fdisk_label *lb);
+int fdisk_label_has_parttypes_shortcuts(const struct fdisk_label *lb);
 struct fdisk_parttype *fdisk_label_get_parttype_from_code(
 				const struct fdisk_label *lb,
 				unsigned int code);
@@ -277,6 +283,36 @@ struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type);
 struct fdisk_parttype *fdisk_label_parse_parttype(
 				const struct fdisk_label *lb,
 				const char *str);
+struct fdisk_parttype *fdisk_label_advparse_parttype(
+				const struct fdisk_label *lb,
+				const char *str,
+				int flags);
+
+/**
+ * fdisk_parttype_parser_flags:
+ * @FDISK_PARTTYPE_PARSE_DATA: parse hex or UUID from string
+ * @FDISK_PARTTYPE_PARSE_DATALAST: try hex or UUID as the last possibility (don't use!)
+ * @FDISK_PARTTYPE_PARSE_SHORTCUT: try input interpret as type shortcut (e.g 'L' for linux partition)
+ * @FDISK_PARTTYPE_PARSE_ALIAS: try input interpret as type alias (e.g. 'linux' for linux partition)
+ * @FDISK_PARTTYPE_PARSE_DEPRECATED: accept also deprecated aliases and shortcuts
+ * @FDISK_PARTTYPE_PARSE_DEFAULT: recommended flags for new code
+ * @FDISK_PARTTYPE_PARSE_NOUNKNOWN: ignore unknown types
+ */
+enum fdisk_parttype_parser_flags {
+	FDISK_PARTTYPE_PARSE_DATA       = (1 << 1),
+	FDISK_PARTTYPE_PARSE_DATALAST   = (1 << 2),
+	FDISK_PARTTYPE_PARSE_SHORTCUT   = (1 << 3),
+	FDISK_PARTTYPE_PARSE_ALIAS      = (1 << 4),
+	FDISK_PARTTYPE_PARSE_DEPRECATED = (1 << 5),
+	FDISK_PARTTYPE_PARSE_NOUNKNOWN  = (1 << 6),
+	FDISK_PARTTYPE_PARSE_SEQNUM     = (1 << 7),
+
+	FDISK_PARTTYPE_PARSE_DEFAULT = (FDISK_PARTTYPE_PARSE_DATA | \
+				        FDISK_PARTTYPE_PARSE_SHORTCUT | \
+				        FDISK_PARTTYPE_PARSE_ALIAS | \
+					FDISK_PARTTYPE_PARSE_SEQNUM )
+};
+
 const char *fdisk_parttype_get_string(const struct fdisk_parttype *t);
 unsigned int fdisk_parttype_get_code(const struct fdisk_parttype *t);
 const char *fdisk_parttype_get_name(const struct fdisk_parttype *t);
