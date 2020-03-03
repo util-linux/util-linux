@@ -480,9 +480,15 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 		return NULL;
 
 	*canceled = 0;
-        q = fdisk_label_has_code_parttypes(lb) ?
-		_("Hex code (type L to list all codes): ") :
-		_("Partition type (type L to list all types): ");
+
+	if (fdisk_label_has_parttypes_shortcuts(lb))
+		 q = fdisk_label_has_code_parttypes(lb) ?
+			_("Hex code or alias (type L to list all): ") :
+			_("Partition type or alias (type L to list all): ");
+	else
+	        q = fdisk_label_has_code_parttypes(lb) ?
+			_("Hex code (type L to list all codes): ") :
+			_("Partition type (type L to list all types): ");
 	do {
 		char buf[256] = { '\0' };
 		int rc = get_user_reply(q, buf, sizeof(buf));
@@ -496,8 +502,10 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 		if (buf[1] == '\0' && toupper(*buf) == 'L')
 			list_partition_types(cxt);
 		else if (*buf) {
-			struct fdisk_parttype *t = fdisk_label_parse_parttype(lb, buf);
-
+			struct fdisk_parttype *t = fdisk_label_advparse_parttype(lb, buf,
+								FDISK_PARTTYPE_PARSE_DATA
+								| FDISK_PARTTYPE_PARSE_ALIAS
+								| FDISK_PARTTYPE_PARSE_SEQNUM);
 			if (!t)
 				fdisk_info(cxt, _("Failed to parse '%s' partition type."), buf);
 			return t;
@@ -510,8 +518,9 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 
 void list_partition_types(struct fdisk_context *cxt)
 {
-	size_t ntypes = 0;
+	size_t ntypes = 0, next = 0;
 	struct fdisk_label *lb;
+	int pager = 0;
 
 	assert(cxt);
 	lb = fdisk_get_label(cxt, NULL);
@@ -525,7 +534,7 @@ void list_partition_types(struct fdisk_context *cxt)
 		/*
 		 * Prints in 4 columns in format <hex> <name>
 		 */
-		size_t last[4], done = 0, next = 0, size;
+		size_t last[4], done = 0, size;
 		int i;
 
 		size = ntypes;
@@ -562,6 +571,7 @@ void list_partition_types(struct fdisk_context *cxt)
 			}
 		} while (done < last[0]);
 
+		putchar('\n');
 	} else {
 		/*
 		 * Prints 1 column in format <idx> <name> <typestr>
@@ -569,6 +579,7 @@ void list_partition_types(struct fdisk_context *cxt)
 		size_t i;
 
 		pager_open();
+		pager = 1;
 
 		for (i = 0; i < ntypes; i++) {
 			const struct fdisk_parttype *t = fdisk_label_get_parttype(lb, i);
@@ -577,9 +588,30 @@ void list_partition_types(struct fdisk_context *cxt)
 					fdisk_parttype_get_string(t));
 		}
 
-		pager_close();
 	}
-	putchar('\n');
+
+
+	/*
+	 * Aliases
+	 */
+	if (fdisk_label_has_parttypes_shortcuts(lb)) {
+		const char *alias = NULL, *typestr = NULL;
+		int rc = 0;
+
+		fputs(_("\nAliases:\n"), stdout);
+
+		for (next = 0; rc == 0 || rc == 2; next++) {
+			/* rc: <0 error, 0 success, 1 end, 2 deprecated */
+			rc = fdisk_label_get_parttype_shortcut(lb,
+					next, &typestr, NULL, &alias);
+			if (rc == 0)
+				printf("   %-14s - %s\n", alias, typestr);
+		}
+	}
+
+	if (pager)
+		pager_close();
+
 }
 
 void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
