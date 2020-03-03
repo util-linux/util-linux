@@ -136,7 +136,9 @@ List the free unpartitioned areas on all or the specified devices.
 .TP
 .BR "\-\-part\-attrs \fIdevice partition-number " [ \fIattributes ]
 Change the GPT partition attribute bits.  If \fIattributes\fR is not specified,
-then print the current partition settings.  The \fIattributes\fR argument is a
+then print the current partition settings.
+.sp
+The \fIattributes\fR argument is a
 comma- or space-delimited list of bits.  The currently supported attribute
 bits are: RequiredPartition, NoBlockIOProtocol, LegacyBIOSBootable
 and GUID-specific bits in the range from 48 to 63.  For example, the string
@@ -148,8 +150,11 @@ then print the current partition label.
 .TP
 .BR "\-\-part\-type \fIdevice partition-number " [ \fItype ]
 Change the partition type.  If \fItype\fR is not specified, then print the
-current partition type.  The \fItype\fR argument is hexadecimal for MBR,
-or a GUID for GPT.  For backward compatibility the options \fB\-c\fR and
+current partition type.
+.sp
+The \fItype\fR argument is hexadecimal for MBR,
+GUID for GPT, type alias (e.g. "linux") or type shortcut (e.g. 'L').
+For backward compatibility the options \fB\-c\fR and
 \fB\-\-id\fR have the same meaning as this one.
 .TP
 .BR "\-\-part\-uuid \fIdevice partition-number " [ \fIuuid ]
@@ -413,42 +418,48 @@ partition; existing partitions will be resized as required.
 The partition
 .I type
 is given in hex for MBR (DOS) where 0x prefix is optional; a GUID string for
-GPT; or a shortcut. It's recommended to use two letters for MBR hex codes to
-avoid collision between shortcut 'E' and '0E' MBR hex code. For backward
+GPT; a shortcut or an alias. It's recommended to use two letters for MBR hex codes to
+avoid collision between deprecated shortcut 'E' and '0E' MBR hex code. For backward
 compatibility sfdisk tries to interpret
 .I type
-as a shortcut as a first possibility. Supported shortcuts:
+as a shortcut as a first possibility in partitioning scripts although on another places (e.g.
+\fB\-\-part-type command)\fR it tries shortcuts as the last possibility.
+
+Since v2.36 libfdisk supports partition type aliases as extension to shortcuts. The alias is a
+simple human readable word (e.g. "linux").
+
+Supported shortcuts and aliases:
 .RS
 .TP
-.B L
+.B L - alias 'linux'
 Linux; means 83 for MBR and 0FC63DAF-8483-4772-8E79-3D69D8477DE4 for GPT.
 .TP
-.B S
+.B S - alias 'swap'
 swap area; means 82 for MBR and 0657FD6D-A4AB-43C4-84E5-0933C84B4F4F for GPT
 .TP
-.B E
-extended partition; means 05 for MBR
+.B Ex - alias 'extended'
+MBR extended partition; means 05 for MBR.  The original shortcut 'E' is deprecated due to collision with
+0x0E MBR partition type.
 .TP
-.B H
+.B H - alias 'home'
 home partition; means 933AC7E1-2EB4-4F13-B844-0E14E2AEF915 for GPT
 .TP
-.B X
-linux extended partition; means 85 for MBR.
-.TP
-.B U
+.B U - alias 'uefi'
 EFI System partition, means EF for MBR and C12A7328-F81F-11D2-BA4B-00A0C93EC93B for GPT
 .TP
-.B R
+.B R - alias 'raid'
 Linux RAID; means FD for MBR and A19D880F-05FC-4D3B-A006-743F0F84911E for GPT
 .TP
-.B V
+.B V - alias 'lvm'
 LVM; means 8E for MBR and E6D6D379-F507-44C2-A23C-238F2A3DF928 for GPT
 .RE
 .PP
 The default
 .I type
 value is
-.I L
+.I linux
+.sp
+The shortcut 'X' for Linux extended partition (85) is deprecated in favour of 'Ex'.
 
 .I bootable
 is specified as [\fB*\fR|\fB-\fR], with as default not-bootable.  The
