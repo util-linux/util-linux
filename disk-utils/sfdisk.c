@@ -1152,7 +1152,10 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 		backup_partition_table(sf, devname);
 
 	/* parse <type> and apply to PT */
-	type = fdisk_label_parse_parttype(lb, typestr);
+	type = fdisk_label_advparse_parttype(lb, typestr,
+			FDISK_PARTTYPE_PARSE_DATA
+			| FDISK_PARTTYPE_PARSE_ALIAS
+			| FDISK_PARTTYPE_PARSE_SHORTCUT);
 	if (!type)
 		errx(EXIT_FAILURE, _("failed to parse %s partition type '%s'"),
 				fdisk_label_get_name(lb), typestr);
@@ -1467,7 +1470,7 @@ static void command_fdisk_help(void)
 
 	fputc('\n', stdout);
 	fputs(_("   <type>   The partition type.  Default is a Linux data partition.\n"), stdout);
-	fputs(_("            MBR: hex or L,S,E,X,U,R,V shortcuts.\n"), stdout);
+	fputs(_("            MBR: hex or L,S,Ex,X,U,R,V shortcuts.\n"), stdout);
 	fputs(_("            GPT: UUID or L,S,H,U,R,V shortcuts.\n"), stdout);
 
 	fputc('\n', stdout);
