@@ -171,7 +171,7 @@ static const struct id_part intel_part[] = {
 };
 
 static const struct id_part hisi_part[] = {
-    { 0xd01, "tsv110" },
+    { 0xd01, "Kunpeng-920" },
     { -1, "unknown" },
 };
 
