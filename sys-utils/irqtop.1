@@ -8,6 +8,10 @@ irqtop \- utility to display kernel interrupt information
 Display kernel interrupt counter information in
 .BR top (1)
 style view.
+.PP
+The default output is subject to change.   So  whenever
+possible,  you should avoid using default outputs in your scripts.  Always explicitly define expected columns 
+by using \fB\-\-columns\fR.
 .SH OPTIONS
 .TP
 .BR \-d ,\  \-\-delay\ \c
@@ -15,6 +19,10 @@ style view.
 Update interrupt output every
 .I seconds
 intervals.
+.TP
+.BR \-J ,\ \-\-json
+Use JSON output format.  It's strongly recommended to use --columns to keep
+the output stable.
 .TP
 .BR \-o ,\  \-\-once
 Collect interrupt information and output it.  This mode does not use

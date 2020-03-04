@@ -628,7 +628,7 @@ static void parse_args(struct irqtop_ctl *const ctl, int const argc,
 		{"delay", required_argument, NULL, 'd'},
 		{"sort", required_argument, NULL, 's'},
 		{"once", no_argument, NULL, 'o'},
-		{"json", no_argument, NULL, JSON_OPT},
+		{"json", no_argument, NULL, 'J'},
 		{"columns", required_argument, NULL, COLUMNS_OPT},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
@@ -636,7 +636,7 @@ static void parse_args(struct irqtop_ctl *const ctl, int const argc,
 	};
 	int o;
 
-	while ((o = getopt_long(argc, argv, "d:os:hV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "d:os:hJV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'd':
 			{
@@ -655,7 +655,7 @@ static void parse_args(struct irqtop_ctl *const ctl, int const argc,
 			ctl->run_once = 1;
 			ctl->request_exit = 1;
 			break;
-		case JSON_OPT:
+		case 'J':
 			ctl->json = 1;
 			ctl->run_once = 1;
 			ctl->request_exit = 1;
