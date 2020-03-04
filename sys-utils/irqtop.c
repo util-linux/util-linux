@@ -324,6 +324,7 @@ static struct irq_stat *get_irqinfo(void)
 			while (isspace(*tmp))
 				tmp++;
 			tmp = remove_repeated_spaces(tmp);
+			rtrim_whitespace((unsigned char *)tmp);
 			curr->name = xstrdup(tmp);
 		} else	/* no irq name string, we have to set '\0' here */
 			curr->name = xstrdup("");
