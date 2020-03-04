@@ -518,8 +518,8 @@ static int update_screen(struct irqtop_ctl *const ctl)
 		move(0, 0);
 	if (!ctl->json) {
 		now = time(NULL);
-		strtime_iso(&now, ISO_TIMESTAMP_T, timestr, sizeof(timestr));
-		print_line(ctl, _("irqtop - total: %ld delta: %ld host: %s time: %s\n\n"),
+		strtime_iso(&now, ISO_TIMESTAMP, timestr, sizeof(timestr));
+		print_line(ctl, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
 	}
 	/* body */
