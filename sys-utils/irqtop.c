@@ -508,10 +508,9 @@ static int update_screen(struct irqtop_ctl *const ctl)
 	}
 	free(result);
 
-	/* header */
-	if (!ctl->run_once)
+	/* header in interactive mode */
+	if (!ctl->run_once) {
 		move(0, 0);
-	if (!ctl->json) {
 		now = time(NULL);
 		strtime_iso(&now, ISO_TIMESTAMP, timestr, sizeof(timestr));
 		print_line(ctl, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
