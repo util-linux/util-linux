@@ -116,7 +116,6 @@ struct irqtop_ctl {
 	WINDOW *win;
 	int cols;
 	int rows;
-	int old_rows;
 	struct itimerspec timer;
 	struct timeval uptime_tv;
 	sort_fp *sort_func;
@@ -488,10 +487,6 @@ static int update_screen(struct irqtop_ctl *const ctl)
 		return 1;
 	}
 
-	if (!ctl->run_once && ctl->old_rows != ctl->rows) {
-		resizeterm(ctl->rows, ctl->cols);
-		ctl->old_rows = ctl->rows;
-	}
 	if (init_scols_table(ctl))
 		return 1;
 
@@ -556,6 +551,7 @@ static int event_loop(struct irqtop_ctl *const ctl)
 		err(EXIT_FAILURE, _("cannot not create timerfd"));
 	if (timerfd_settime(tfd, 0, &ctl->timer, NULL) != 0)
 		err(EXIT_FAILURE, _("cannot set timerfd"));
+
 	ev.events = EPOLLIN;
 	ev.data.fd = tfd;
 	if (epoll_ctl(efd, EPOLL_CTL_ADD, tfd, &ev) != 0)
@@ -565,8 +561,15 @@ static int event_loop(struct irqtop_ctl *const ctl)
 		err(EXIT_FAILURE, _("sigfillset failed"));
 	if (sigprocmask(SIG_BLOCK, &sigmask, NULL) != 0)
 		err(EXIT_FAILURE, _("sigprocmask failed"));
-	if ((sfd = signalfd(-1, &sigmask, 0)) < 0)
+
+	sigaddset(&sigmask, SIGWINCH);
+	sigaddset(&sigmask, SIGTERM);
+	sigaddset(&sigmask, SIGINT);
+	sigaddset(&sigmask, SIGQUIT);
+
+	if ((sfd = signalfd(-1, &sigmask, SFD_CLOEXEC)) < 0)
 		err(EXIT_FAILURE, _("cannot not create signalfd"));
+
 	ev.events = EPOLLIN;
 	ev.data.fd = sfd;
 	if (epoll_ctl(efd, EPOLL_CTL_ADD, sfd, &ev) != 0)
@@ -592,8 +595,10 @@ static int event_loop(struct irqtop_ctl *const ctl)
 					warn(_("read failed"));
 					continue;
 				}
-				if (siginfo.ssi_signo == SIGWINCH)
+				if (siginfo.ssi_signo == SIGWINCH) {
 					get_terminal_dimension(&ctl->cols, &ctl->rows);
+					resizeterm(ctl->rows, ctl->cols);
+				}
 				else {
 					ctl->request_exit = 1;
 					break;
@@ -682,7 +687,7 @@ static void parse_args(struct irqtop_ctl *const ctl, int const argc,
 
 int main(int argc, char **argv)
 {
-	int is_tty;
+	int is_tty = 0;
 	int retval = EXIT_SUCCESS;
 	struct termios saved_tty;
 	struct irqtop_ctl ctl = {
@@ -703,18 +708,17 @@ int main(int argc, char **argv)
 		ctl.columns[ctl.ncolumns++] = COL_NAME;
 	}
 
-	is_tty = isatty(STDIN_FILENO);
-	if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
-		fputs(_("terminal setting retrieval"), stdout);
-
-	ctl.old_rows = ctl.rows;
-	get_terminal_dimension(&ctl.cols, &ctl.rows);
 	if (!ctl.run_once) {
+		is_tty = isatty(STDIN_FILENO);
+		if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
+			fputs(_("terminal setting retrieval"), stdout);
+
 		ctl.win = initscr();
 		get_terminal_dimension(&ctl.cols, &ctl.rows);
 		resizeterm(ctl.rows, ctl.cols);
 		curs_set(0);
 	}
+
 	ctl.smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
 	gettime_monotonic(&ctl.uptime_tv);
 	ctl.hostname = xgethostname();
@@ -727,10 +731,9 @@ int main(int argc, char **argv)
 	free_irqinfo(ctl.prev_stat);
 	free(ctl.hostname);
 
-	if (is_tty)
-		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
-
 	if (ctl.win) {
+		if (is_tty)
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
 		delwin(ctl.win);
 		endwin();
 	}
