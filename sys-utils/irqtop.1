@@ -9,14 +9,18 @@ Display kernel interrupt counter information in
 .BR top (1)
 style view.
 .PP
-The default output is subject to change. So  whenever possible,
-you should avoid using default outputs in your scripts.  Always
-explicitly define expected columns by using \fB\-\-output\fR.
+The default output is subject to change.  So whenever possible, you should
+avoid using default outputs in your scripts.  Always explicitly define
+expected columns by using
+.BR \-\-output .
 .SH OPTIONS
 .TP
 .BR \-o , " \-\-output " \fIlist\fP
-Specify which output columns to print.  Use \fB\-\-help\fR to get a list of all supported columns.
-The default list of columns may be extended if list is specified in the format +list.
+Specify which output columns to print.  Use
+.B \-\-help
+to get a list of all supported columns.  The default list of columns may be
+extended if list is specified in the format
+.IR +list .
 .TP
 .BR \-d , " \-\-delay " \fIseconds\fP
 Update interrupt output every
@@ -24,15 +28,18 @@ Update interrupt output every
 intervals.
 .TP
 .BR \-s , " \-\-sort " \fIcolumn\fP
-Specify sort criteria by column name.  See \fB\-\-help\fR output to get column
-names.  The sort criteria may be changes in interactive mode.
+Specify sort criteria by column name.  See
+.B \-\-help
+output to get column names.  The sort criteria may be changes in interactive
+mode.
 .TP
 .BR \-V ", " \-\-version
 Display version information and exit.
 .TP
 .BR \-h ,\  \-\-help
 Display help text and exit.
-.SH COMMAND IN INTERACTIE MODE
+.SH INTERACTIVE MODE KEY COMMANDS
+.PD 0
 .TP
 .B i
 sort by short irq name or number field
@@ -48,6 +55,7 @@ sort by long descriptive name field
 .TP
 .B q Q
 stop updates and exit program
+.PD 1
 .SH AUTHORS
 .MT pizhenwei@\:bytedance.com
 Zhenwei Pi
@@ -57,7 +65,7 @@ Zhenwei Pi
 Sami Kerola
 .ME
 .br
-.MT kzak@\:redhat.com 
+.MT kzak@\:redhat.com
 Karel Zak
 .ME
 .SH AVAILABILITY
