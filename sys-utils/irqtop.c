@@ -116,7 +116,6 @@ struct irqtop_ctl {
 	int cols;
 	int rows;
 	struct itimerspec timer;
-	struct timeval uptime_tv;
 	sort_fp *sort_func;
 	struct irq_stat *prev_stat;
 	char *hostname;
@@ -722,9 +721,7 @@ int main(int argc, char **argv)
 		resizeterm(ctl.rows, ctl.cols);
 		curs_set(0);
 
-		gettime_monotonic(&ctl.uptime_tv);
 		ctl.hostname = xgethostname();
-
 		event_loop(&ctl, win);
 
 		free_irqinfo(ctl.prev_stat);
