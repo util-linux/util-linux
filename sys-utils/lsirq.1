@@ -12,6 +12,9 @@ you should avoid using default outputs in your scripts.  Always
 explicitly define expected columns by using \fB\-\-output\fR.
 .SH OPTIONS
 .TP
+.BR \-n , " \-\-noheadings
+Don't print headings.
+.TP
 .BR \-o , " \-\-output " \fIlist\fP
 Specify which output columns to print.  Use \fB\-\-help\fR to get a list of all supported columns.
 The default list of columns may be extended if list is specified in the format +list.
@@ -21,7 +24,7 @@ Specify sort criteria by column name.  See \fB\-\-help\fR output to get column
 names.
 .TP
 .BR \-J , " \-\-json
-Update interrupt output every
+Use JSON output format.
 .TP
 .BR \-V ", " \-\-version
 Display version information and exit.
