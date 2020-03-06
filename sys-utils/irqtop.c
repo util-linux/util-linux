@@ -118,7 +118,6 @@ struct irqtop_ctl {
 	struct itimerspec timer;
 	struct timeval uptime_tv;
 	sort_fp *sort_func;
-	long smp_num_cpus;
 	struct irq_stat *prev_stat;
 	char *hostname;
 	struct libscols_table *table;
@@ -705,7 +704,9 @@ int main(int argc, char **argv)
 
 	parse_args(&ctl, argc, argv);
 
-	if (!ctl.run_once) {
+	if (ctl.run_once)
+		retval = update_screen(&ctl, NULL);
+	else {
 		is_tty = isatty(STDIN_FILENO);
 		if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
 			fputs(_("terminal setting retrieval"), stdout);
@@ -714,16 +715,12 @@ int main(int argc, char **argv)
 		get_terminal_dimension(&ctl.cols, &ctl.rows);
 		resizeterm(ctl.rows, ctl.cols);
 		curs_set(0);
-	}
 
-	ctl.smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-	gettime_monotonic(&ctl.uptime_tv);
-	ctl.hostname = xgethostname();
+		gettime_monotonic(&ctl.uptime_tv);
+		ctl.hostname = xgethostname();
 
-	if (ctl.run_once)
-		retval = update_screen(&ctl, NULL);
-	else
 		event_loop(&ctl, win);
+	}
 
 	free_irqinfo(ctl.prev_stat);
 	free(ctl.hostname);
