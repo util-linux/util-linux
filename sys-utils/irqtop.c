@@ -437,7 +437,11 @@ static int fill_scols_table(struct irqtop_ctl *const ctl, struct irq_stat **xsta
 	}
 
 	free(result);
-	*xstat = stat;
+
+	if (xstat)
+		*xstat = stat;
+	else
+		free_irqinfo(stat);
 	return 0;
 }
 
@@ -463,9 +467,21 @@ static void parse_input(struct irqtop_ctl *const ctl, char const c)
 	}
 }
 
+static int print_irq_data(struct irqtop_ctl *const ctl)
+{
+	if (fill_scols_table(ctl, NULL) != 0)
+		return 1;
+
+	scols_print_table(ctl->table);
+	scols_unref_table(ctl->table);
+	return 0;
+}
+
 static int update_screen(struct irqtop_ctl *const ctl, WINDOW *win)
 {
 	struct irq_stat *stat;
+	time_t now = time(NULL);
+	char timestr[64], *data;
 
 	if (fill_scols_table(ctl, &stat) != 0) {
 		ctl->request_exit = 1;
@@ -473,25 +489,15 @@ static int update_screen(struct irqtop_ctl *const ctl, WINDOW *win)
 	}
 
 	/* header in interactive mode */
-	if (!ctl->run_once) {
-		time_t now = time(NULL);
-		char timestr[64];
-
-		move(0, 0);
-		strtime_iso(&now, ISO_TIMESTAMP, timestr, sizeof(timestr));
-		wprintw(win, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
+	move(0, 0);
+	strtime_iso(&now, ISO_TIMESTAMP, timestr, sizeof(timestr));
+	wprintw(win, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
-	}
-	/* body */
-	if (ctl->run_once)
-		scols_print_table(ctl->table);
-	else {
-		char *data;
 
-		scols_print_table_to_string(ctl->table, &data);
-		wprintw(win, "%s", data);
-		free(data);
-	}
+	scols_print_table_to_string(ctl->table, &data);
+	wprintw(win, "%s", data);
+	free(data);
+
 	/* clean up */
 	scols_unref_table(ctl->table);
 	if (ctl->prev_stat)
@@ -705,7 +711,7 @@ int main(int argc, char **argv)
 	parse_args(&ctl, argc, argv);
 
 	if (ctl.run_once)
-		retval = update_screen(&ctl, NULL);
+		retval = print_irq_data(&ctl);
 	else {
 		is_tty = isatty(STDIN_FILENO);
 		if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
@@ -720,12 +726,10 @@ int main(int argc, char **argv)
 		ctl.hostname = xgethostname();
 
 		event_loop(&ctl, win);
-	}
 
-	free_irqinfo(ctl.prev_stat);
-	free(ctl.hostname);
+		free_irqinfo(ctl.prev_stat);
+		free(ctl.hostname);
 
-	if (win) {
 		if (is_tty)
 			tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
 		delwin(win);
