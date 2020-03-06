@@ -60,6 +60,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -J, --json           use JSON output format\n"), stdout);
+	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), stdout);
 	fputs(_(" -n, --noheadings     don't print headings\n"), stdout);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
@@ -83,6 +84,7 @@ int main(int argc, char **argv)
 		{"noheadings", no_argument, NULL, 'n'},
 		{"output", required_argument, NULL, 'o'},
 		{"json", no_argument, NULL, 'J'},
+		{"pairs", no_argument, NULL, 'P'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -92,10 +94,13 @@ int main(int argc, char **argv)
 
 	setlocale(LC_ALL, "");
 
-	while ((c = getopt_long(argc, argv, "no:s:hJV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:s:hJPV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'J':
 			out.json = 1;
+			break;
+		case 'P':
+			out.pairs = 1;
 			break;
 		case 'n':
 			out.no_headings = 1;

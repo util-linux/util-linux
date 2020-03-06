@@ -108,6 +108,7 @@ static struct libscols_table *new_scols_table(struct irq_output *out)
 	}
 	scols_table_enable_json(table, out->json);
 	scols_table_enable_noheadings(table, out->no_headings);
+	scols_table_enable_export(table, out->pairs);
 
 	if (out->json)
 		scols_table_set_name(table, _("interrupts"));
