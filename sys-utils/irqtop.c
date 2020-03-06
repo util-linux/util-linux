@@ -56,10 +56,8 @@
 
 #include <libsmartcols.h>
 
-#include "c.h"
 #include "closestream.h"
 #include "monotonic.h"
-#include "nls.h"
 #include "pathnames.h"
 #include "strutils.h"
 #include "timeutils.h"
@@ -70,6 +68,7 @@
 
 #define MAX_EVENTS	3
 
+/* top control struct */
 struct irqtop_ctl {
 	int cols;
 	int rows;
@@ -78,9 +77,9 @@ struct irqtop_ctl {
 	char *hostname;
 
 	unsigned int request_exit:1;
-
 };
 
+/* user's input parser */
 static void parse_input(struct irqtop_ctl *ctl, struct irq_output *out, char c)
 {
 	switch (c) {
@@ -227,8 +226,6 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
-	fputs(_("     --once           only display interrupts once, then exit\n"), stdout);
-	fputs(_(" -J  --json           output json, implies displaying once\n"), stdout);
 	fputs(_(" -o  --output <list>  define which output columns to use (see below)\n"), stdout);
 	fputs(_(" -s, --sort <char>    specify sort criteria by character (see below)\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);

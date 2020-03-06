@@ -1,6 +1,12 @@
+#ifndef UTIL_LINUX_H_IRQ_COMMON
+#define UTIL_LINUX_H_IRQ_COMMON
 
+#include "c.h"
+#include "nls.h"
+
+/* supported columns */
 enum {
-	COL_IRQ = 1,
+	COL_IRQ = 0,
 	COL_TOTAL,
 	COL_DELTA,
 	COL_NAME,
@@ -28,6 +34,7 @@ typedef int (sort_fp)(const struct irq_info *, const struct irq_info *);
 
 #define DEF_SORT_FUNC	((sort_fp *)sort_total)
 
+/* output definition */
 struct irq_output {
 	int columns[__COL_COUNT * 2];
 	size_t ncolumns;
@@ -73,3 +80,5 @@ sort_fp *set_sort_func(char key);
 struct libscols_table *get_scols_table(struct irq_output *out,
                                               struct irq_stat *prev,
                                               struct irq_stat **xstat);
+
+#endif /* UTIL_LINUX_H_IRQ_COMMON */
