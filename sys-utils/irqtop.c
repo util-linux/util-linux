@@ -124,10 +124,12 @@ struct irqtop_ctl {
 	char *hostname;
 	struct libscols_table *table;
 	struct libscols_line *outline;
-	int columns[ARRAY_SIZE(infos)];
+
+	/* make a space for repeating columns like we support in another tools (-o +FOO) */
+	int columns[ARRAY_SIZE(infos) * 2];
 	size_t ncolumns;
+
 	unsigned int
-		specific_columns:1,
 		json:1,
 		no_headings:1,
 		request_exit:1,
@@ -392,15 +394,15 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_HEADER, stdout);
 	printf(_(" %s [options]\n"), program_invocation_short_name);
-
 	fputs(USAGE_SEPARATOR, stdout);
-	puts(_("Utility to display kernel interrupt information."));
+
+	puts(_("Interactive utility to display kernel interrupt information."));
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
-	fputs(_(" -o, --once           only display interrupts once, then exit\n"), stdout);
-	fputs(_("     --json           output json, implies displaying once\n"), stdout);
-	fputs(_("     --columns <list> define which output columns to use (see below)\n"), stdout);
+	fputs(_("     --once           only display interrupts once, then exit\n"), stdout);
+	fputs(_(" -J  --json           output json, implies displaying once\n"), stdout);
+	fputs(_(" -o  --output <list>  define which output columns to use (see below)\n"), stdout);
 	fputs(_(" -s, --sort <char>    specify sort criteria by character (see below)\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(22));
@@ -621,23 +623,23 @@ static int event_loop(struct irqtop_ctl *const ctl)
 static void parse_args(struct irqtop_ctl *const ctl, int const argc,
 		       char *const *const argv)
 {
+	const char *outarg = NULL;
 	enum {
-		COLUMNS_OPT = CHAR_MAX + 1,
-		JSON_OPT,
+		ONCE_OPT = CHAR_MAX + 1,
 	};
 	static const struct option longopts[] = {
 		{"delay", required_argument, NULL, 'd'},
 		{"sort", required_argument, NULL, 's'},
-		{"once", no_argument, NULL, 'o'},
+		{"once", no_argument, NULL, ONCE_OPT },
 		{"json", no_argument, NULL, 'J'},
-		{"columns", required_argument, NULL, COLUMNS_OPT},
+		{"output", required_argument, NULL, 'o'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
 	};
 	int o;
 
-	while ((o = getopt_long(argc, argv, "d:os:hJV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "d:o:s:hJV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'd':
 			{
@@ -652,7 +654,7 @@ static void parse_args(struct irqtop_ctl *const ctl, int const argc,
 		case 's':
 			ctl->sort_func = set_sort_func(optarg[0]);
 			break;
-		case 'o':
+		case ONCE_OPT:
 			ctl->run_once = 1;
 			ctl->request_exit = 1;
 			break;
@@ -661,19 +663,8 @@ static void parse_args(struct irqtop_ctl *const ctl, int const argc,
 			ctl->run_once = 1;
 			ctl->request_exit = 1;
 			break;
-		case COLUMNS_OPT:
-			ctl->specific_columns = 1;
-			if (optarg) {
-				ssize_t nc = string_to_idarray(optarg, ctl->columns,
-							       ARRAY_SIZE(ctl->columns),
-							       column_name_to_id);
-
-				if (nc < 0)
-					errx(EXIT_FAILURE,
-					     _("too many or unknown --columns argument: %s"),
-					     optarg);
-				ctl->ncolumns = nc;
-			}
+		case 'o':
+			outarg = optarg;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -683,6 +674,21 @@ static void parse_args(struct irqtop_ctl *const ctl, int const argc,
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	/* default */
+	if (!ctl->ncolumns) {
+		ctl->columns[ctl->ncolumns++] = COL_IRQ;
+		ctl->columns[ctl->ncolumns++] = COL_TOTAL;
+		if (!ctl->run_once)
+			ctl->columns[ctl->ncolumns++] = COL_DELTA;
+		ctl->columns[ctl->ncolumns++] = COL_NAME;
+	}
+
+	/* add -o [+]<list> to putput */
+	if (outarg && string_add_to_idarray(outarg, ctl->columns,
+				ARRAY_SIZE(ctl->columns),
+				&ctl->ncolumns, column_name_to_id) < 0)
+		exit(EXIT_FAILURE);
 }
 
 int main(int argc, char **argv)
@@ -699,14 +705,6 @@ int main(int argc, char **argv)
 	ctl.sort_func = DEF_SORT_FUNC;
 
 	parse_args(&ctl, argc, argv);
-
-	if (!ctl.specific_columns) {
-		ctl.columns[ctl.ncolumns++] = COL_IRQ;
-		ctl.columns[ctl.ncolumns++] = COL_TOTAL;
-		if (!ctl.run_once)
-			ctl.columns[ctl.ncolumns++] = COL_DELTA;
-		ctl.columns[ctl.ncolumns++] = COL_NAME;
-	}
 
 	if (!ctl.run_once) {
 		is_tty = isatty(STDIN_FILENO);
