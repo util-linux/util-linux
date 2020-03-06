@@ -1,9 +1,8 @@
 /*
  * irqtop.c - utility to display kernel interrupt information.
  *
- * zhenwei pi <pizhenwei@bytedance.com>
- *
- * Copyright (C) 2019 zhenwei pi
+ * Copyright (C) 2019 zhenwei pi <pizhenwei@bytedance.com>
+ * Copyright (C) 2020 Karel Zak <kzak@redhat.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
-
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
@@ -68,61 +66,9 @@
 #include "ttyutils.h"
 #include "xalloc.h"
 
-#define IRQ_INFO_LEN	64
+#include "irq-common.h"
+
 #define MAX_EVENTS	3
-
-struct colinfo {
-	const char *name;
-	double whint;
-	int flags;
-	const char *help;
-	int json_type;
-};
-
-enum {
-	COL_IRQ,
-	COL_TOTAL,
-	COL_DELTA,
-	COL_NAME
-};
-
-static const struct colinfo infos[] = {
-	[COL_IRQ]   = {"IRQ",   0.10, SCOLS_FL_RIGHT, N_("interrupts"),  SCOLS_JSON_STRING},
-	[COL_TOTAL] = {"TOTAL", 0.10, SCOLS_FL_RIGHT, N_("total count"), SCOLS_JSON_NUMBER},
-	[COL_DELTA] = {"DELTA", 0.10, SCOLS_FL_RIGHT, N_("delta count"), SCOLS_JSON_NUMBER},
-	[COL_NAME]  = {"NAME",  0.70, SCOLS_FL_TRUNC, N_("name"),        SCOLS_JSON_STRING},
-};
-
-struct irq_info {
-	char *irq;			/* short name of this irq */
-	char *name;			/* descriptive name of this irq */
-	unsigned long total;		/* total count since system start up */
-	unsigned long delta;		/* delta count since previous update */
-};
-
-struct irq_stat {
-	unsigned int nr_irq;		/* number of irq vector */
-	unsigned int nr_irq_info;	/* number of irq info */
-	struct irq_info *irq_info;	/* array of irq_info */
-	long nr_active_cpu;		/* number of active cpu */
-	unsigned long total_irq;	/* total irqs */
-	unsigned long delta_irq;	/* delta irqs */
-};
-
-typedef int (sort_fp)(const struct irq_info *, const struct irq_info *);
-
-#define DEF_SORT_FUNC	((sort_fp *)sort_total)
-
-struct irq_output {
-	int columns[ARRAY_SIZE(infos) * 2];
-	size_t ncolumns;
-
-	sort_fp *sort_func;
-
-	unsigned int
-		json:1,
-		no_headings:1;
-};
 
 struct irqtop_ctl {
 	int cols;
@@ -131,332 +77,9 @@ struct irqtop_ctl {
 	struct irq_stat *prev_stat;
 	char *hostname;
 
-	unsigned int
-		request_exit:1,
-		run_once:1;
+	unsigned int request_exit:1;
 
 };
-
-static int column_name_to_id(char const *const name, size_t const namesz)
-{
-	size_t i;
-
-	assert(name);
-	for (i = 0; i < ARRAY_SIZE(infos); i++) {
-		const char *cn = infos[i].name;
-
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
-			return i;
-	}
-	warnx(_("unknown column: %s"), name);
-	return -1;
-}
-
-static inline int get_column_id(struct irq_output *out, size_t const num)
-{
-	assert(num < out->ncolumns);
-	assert(out->columns[num] < (int)ARRAY_SIZE(infos));
-
-	return out->columns[num];
-}
-
-static inline const struct colinfo *get_column_info(
-			struct irq_output *out, unsigned num)
-{
-	return &infos[get_column_id(out, num)];
-}
-
-static struct libscols_table *new_scols_table(struct irq_output *out)
-{
-	size_t i;
-	struct libscols_table *table;
-
-	table = scols_new_table();
-	if (!table) {
-		warn(_("failed to initialize output table"));
-		return NULL;
-	}
-	scols_table_enable_json(table, out->json);
-	scols_table_enable_noheadings(table, out->no_headings);
-
-	if (out->json)
-		scols_table_set_name(table, _("interrupts"));
-
-	for (i = 0; i < out->ncolumns; i++) {
-		const struct colinfo *col = get_column_info(out, i);
-		int flags = col->flags;
-		struct libscols_column *cl;
-
-		cl = scols_table_new_column(table, col->name, col->whint, flags);
-		if (cl == NULL) {
-			warnx(_("failed to initialize output column"));
-			goto err;
-		}
-		if (out->json)
-			scols_column_set_json_type(cl, col->json_type);
-	}
-
-	return table;
- err:
-	scols_unref_table(table);
-	return NULL;
-}
-
-static void add_scols_line(struct irq_output *out,
-			   struct irq_info *stat,
-			   struct libscols_table *table)
-{
-	size_t i;
-	struct libscols_line *line;
-
-	line = scols_table_new_line(table, NULL);
-	if (!line) {
-		warn(_("failed to add line to output"));
-		return;
-	}
-
-	for (i = 0; i < out->ncolumns; i++) {
-		char *str = NULL;
-
-		switch (get_column_id(out, i)) {
-		case COL_IRQ:
-			xasprintf(&str, "%s", stat->irq);
-			break;
-		case COL_TOTAL:
-			xasprintf(&str, "%ld", stat->total);
-			break;
-		case COL_DELTA:
-			xasprintf(&str, "%ld", stat->delta);
-			break;
-		case COL_NAME:
-			xasprintf(&str, "%s", stat->name);
-			break;
-		default:
-			break;
-		}
-
-		if (str && scols_line_refer_data(line, i, str) != 0)
-			err_oom();
-	}
-
-	/* FIXME */
-	free(stat->irq);
-	free(stat->name);
-}
-
-static char *remove_repeated_spaces(char *str)
-{
-	char *inp = str, *outp = str;
-	uint8_t prev_space = 0;
-
-	while (*inp) {
-		if (isspace(*inp)) {
-			if (!prev_space) {
-				*outp++ = ' ';
-				prev_space = 1;
-			}
-		} else {
-			*outp++ = *inp;
-			prev_space = 0;
-		}
-		++inp;
-	}
-	*outp = '\0';
-	return str;
-}
-
-/*
- * irqinfo - parse the system's interrupts
- */
-static struct irq_stat *get_irqinfo(void)
-{
-	FILE *irqfile;
-	char *line = NULL, *tmp;
-	size_t len = 0;
-	struct irq_stat *stat;
-	struct irq_info *curr;
-
-	/* NAME + ':' + 11 bytes/cpu + IRQ_NAME_LEN */
-	stat = xcalloc(1, sizeof(*stat));
-
-	stat->irq_info = xmalloc(sizeof(*stat->irq_info) * IRQ_INFO_LEN);
-	stat->nr_irq_info = IRQ_INFO_LEN;
-
-	irqfile = fopen(_PATH_PROC_INTERRUPTS, "r");
-	if (!irqfile) {
-		warn(_("cannot open %s"), _PATH_PROC_INTERRUPTS);
-		goto free_stat;
-	}
-
-	/* read header firstly */
-	if (getline(&line, &len, irqfile) < 0) {
-		warn(_("cannot read %s"), _PATH_PROC_INTERRUPTS);
-		goto close_file;
-	}
-
-	tmp = line;
-	while ((tmp = strstr(tmp, "CPU")) != NULL) {
-		tmp += 3;	/* skip this "CPU", find next */
-		stat->nr_active_cpu++;
-	}
-
-	/* parse each line of _PATH_PROC_INTERRUPTS */
-	while (getline(&line, &len, irqfile) >= 0) {
-		unsigned long count;
-		int index, length;
-
-		tmp = strchr(line, ':');
-		if (!tmp)
-			continue;
-
-		length = strlen(line);
-
-		curr = stat->irq_info + stat->nr_irq++;
-		memset(curr, 0, sizeof(*curr));
-		*tmp = '\0';
-		curr->irq = xstrdup(line);
-		ltrim_whitespace((unsigned char *)curr->irq);
-
-		tmp += 1;
-		for (index = 0; (index < stat->nr_active_cpu) && (tmp - line < length); index++) {
-			sscanf(tmp, " %10lu", &count);
-			curr->total += count;
-			stat->total_irq += count;
-			tmp += 11;
-		}
-
-		if (tmp - line < length) {
-			/* strip all space before desc */
-			while (isspace(*tmp))
-				tmp++;
-			tmp = remove_repeated_spaces(tmp);
-			rtrim_whitespace((unsigned char *)tmp);
-			curr->name = xstrdup(tmp);
-		} else	/* no irq name string, we have to set '\0' here */
-			curr->name = xstrdup("");
-
-		if (stat->nr_irq == stat->nr_irq_info) {
-			stat->nr_irq_info *= 2;
-			stat->irq_info = xrealloc(stat->irq_info,
-						  sizeof(*stat->irq_info) * stat->nr_irq_info);
-		}
-	}
-	fclose(irqfile);
-	free(line);
-	return stat;
-
- close_file:
-	fclose(irqfile);
- free_stat:
-	free(stat->irq_info);
-	free(stat);
-	free(line);
-	return NULL;
-}
-
-static void free_irqinfo(struct irq_stat *stat)
-{
-	if (stat)
-		free(stat->irq_info);
-	free(stat);
-}
-
-static int sort_name(const struct irq_info *a,
-		     const struct irq_info *b)
-{
-	return (strcmp(a->name, b->name) > 0) ? 1 : 0;
-}
-
-static int sort_total(const struct irq_info *a,
-		      const struct irq_info *b)
-{
-	return a->total < b->total;
-}
-
-static int sort_delta(const struct irq_info *a,
-		      const struct irq_info *b)
-{
-	return a->delta < b->delta;
-}
-
-static int sort_interrupts(const struct irq_info *a,
-			   const struct irq_info *b)
-{
-	return (strcmp(a->irq, b->irq) > 0) ? 1 : 0;
-}
-
-static void sort_result(struct irq_output *out,
-			struct irq_info *result,
-			size_t nmemb)
-{
-	qsort(result, nmemb, sizeof(*result),
-			(int (*)(const void *,
-				 const void *))out->sort_func);
-}
-
-static sort_fp *set_sort_func(char key)
-{
-	switch (key) {
-	case 'i':
-		return sort_interrupts;
-	case 't':
-		return sort_total;
-	case 'd':
-		return sort_delta;
-	case 'n':
-		return sort_name;
-	default:
-		return DEF_SORT_FUNC;
-	}
-}
-
-static struct libscols_table *get_scols_table(struct irq_output *out,
-					      struct irq_stat *prev,
-					      struct irq_stat **xstat)
-{
-	struct libscols_table *table;
-	struct irq_info *result, *curr;
-	struct irq_stat *stat;
-	size_t size;
-	size_t index;
-
-	/* the stats */
-	stat = get_irqinfo();
-	if (!stat)
-		return NULL;
-
-	size = sizeof(*stat->irq_info) * stat->nr_irq;
-	result = xmalloc(size);
-	memcpy(result, stat->irq_info, size);
-
-	if (prev) {
-		stat->delta_irq = 0;
-		for (index = 0; index < stat->nr_irq; index++) {
-			result[index].delta = result[index].total
-					- prev->irq_info[index].total;
-			stat->delta_irq += result[index].delta;
-		}
-	}
-	sort_result(out, result, stat->nr_irq);
-
-	table = new_scols_table(out);
-	if (!table)
-		return NULL;
-
-	for (index = 0; index < stat->nr_irq; index++) {
-		curr = result + index;
-		add_scols_line(out, curr, table);
-	}
-
-	free(result);
-
-	if (xstat)
-		*xstat = stat;
-	else
-		free_irqinfo(stat);
-
-	return table;
-}
 
 static void parse_input(struct irqtop_ctl *ctl, struct irq_output *out, char c)
 {
@@ -478,19 +101,6 @@ static void parse_input(struct irqtop_ctl *ctl, struct irq_output *out, char c)
 		ctl->request_exit = 1;
 		break;
 	}
-}
-
-static int print_irq_data(struct irq_output *out)
-{
-	struct libscols_table *table;
-
-	table = get_scols_table(out, NULL, NULL);
-	if (!table)
-		return 1;
-
-	scols_print_table(table);
-	scols_unref_table(table);
-	return 0;
 }
 
 static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out, WINDOW *win)
@@ -609,8 +219,6 @@ static int event_loop(struct irqtop_ctl *ctl, struct irq_output *out, WINDOW *wi
 
 static void __attribute__((__noreturn__)) usage(void)
 {
-	size_t i;
-
 	fputs(USAGE_HEADER, stdout);
 	printf(_(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_SEPARATOR, stdout);
@@ -634,8 +242,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("  q Q    quit program\n"), stdout);
 
 	fputs(USAGE_COLUMNS, stdout);
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(stdout, "  %-5s  %s\n", infos[i].name, _(infos[i].help));
+	irq_print_columns(stdout);
 
 	printf(USAGE_MAN_TAIL("irqtop(1)"));
 	exit(EXIT_SUCCESS);
@@ -647,14 +254,9 @@ static void parse_args(	struct irqtop_ctl *ctl,
 			char **argv)
 {
 	const char *outarg = NULL;
-	enum {
-		ONCE_OPT = CHAR_MAX + 1,
-	};
 	static const struct option longopts[] = {
 		{"delay", required_argument, NULL, 'd'},
 		{"sort", required_argument, NULL, 's'},
-		{"once", no_argument, NULL, ONCE_OPT },
-		{"json", no_argument, NULL, 'J'},
 		{"output", required_argument, NULL, 'o'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
@@ -677,15 +279,6 @@ static void parse_args(	struct irqtop_ctl *ctl,
 		case 's':
 			out->sort_func = set_sort_func(optarg[0]);
 			break;
-		case ONCE_OPT:
-			ctl->run_once = 1;
-			ctl->request_exit = 1;
-			break;
-		case 'J':
-			out->json = 1;
-			ctl->run_once = 1;
-			ctl->request_exit = 1;
-			break;
 		case 'o':
 			outarg = optarg;
 			break;
@@ -702,15 +295,15 @@ static void parse_args(	struct irqtop_ctl *ctl,
 	if (!out->ncolumns) {
 		out->columns[out->ncolumns++] = COL_IRQ;
 		out->columns[out->ncolumns++] = COL_TOTAL;
-		if (!ctl->run_once)
-			out->columns[out->ncolumns++] = COL_DELTA;
+		out->columns[out->ncolumns++] = COL_DELTA;
 		out->columns[out->ncolumns++] = COL_NAME;
 	}
 
 	/* add -o [+]<list> to putput */
 	if (outarg && string_add_to_idarray(outarg, out->columns,
 				ARRAY_SIZE(out->columns),
-				&out->ncolumns, column_name_to_id) < 0)
+				&out->ncolumns,
+				irq_column_name_to_id) < 0)
 		exit(EXIT_FAILURE);
 }
 
@@ -730,28 +323,25 @@ int main(int argc, char **argv)
 
 	parse_args(&ctl, &out, argc, argv);
 
-	if (ctl.run_once)
-		retval = print_irq_data(&out);
-	else {
-		is_tty = isatty(STDIN_FILENO);
-		if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
-			fputs(_("terminal setting retrieval"), stdout);
+	is_tty = isatty(STDIN_FILENO);
+	if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
+		fputs(_("terminal setting retrieval"), stdout);
 
-		win = initscr();
-		get_terminal_dimension(&ctl.cols, &ctl.rows);
-		resizeterm(ctl.rows, ctl.cols);
-		curs_set(0);
+	win = initscr();
+	get_terminal_dimension(&ctl.cols, &ctl.rows);
+	resizeterm(ctl.rows, ctl.cols);
+	curs_set(0);
 
-		ctl.hostname = xgethostname();
-		event_loop(&ctl, &out, win);
+	ctl.hostname = xgethostname();
+	event_loop(&ctl, &out, win);
 
-		free_irqinfo(ctl.prev_stat);
-		free(ctl.hostname);
+	free_irqinfo(ctl.prev_stat);
+	free(ctl.hostname);
 
-		if (is_tty)
-			tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
-		delwin(win);
-		endwin();
-	}
+	if (is_tty)
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
+	delwin(win);
+	endwin();
+
 	return retval;
 }
