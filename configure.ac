@@ -1768,13 +1768,27 @@ AC_ARG_ENABLE([ipcs],
 UL_BUILD_INIT([ipcs])
 AM_CONDITIONAL([BUILD_IPCS], [test "x$build_ipcs" = xyes])
 
+
 AC_ARG_ENABLE([irqtop],
   AS_HELP_STRING([--disable-irqtop], [do not build irqtop]),
   [], [UL_DEFAULT_ENABLE([irqtop], [yes])]
 )
 UL_BUILD_INIT([irqtop])
 UL_REQUIRES_LINUX([irqtop])
+UL_REQUIRES_BUILD([irqtop], [libsmartcols])
+UL_REQUIRES_HAVE([irqtop], [open_memstream], [open_memstream function])
+UL_REQUIRES_HAVE([irqtop], [ncursesw,slang,ncurses], [ncursesw, ncurses or slang library])
 AM_CONDITIONAL([BUILD_IRQTOP], [test "x$build_irqtop" = xyes])
+
+AC_ARG_ENABLE([lsirq],
+  AS_HELP_STRING([--disable-lsirq], [do not build lsirq]),
+  [], [UL_DEFAULT_ENABLE([lsirq], [yes])]
+)
+UL_BUILD_INIT([lsirq])
+UL_REQUIRES_LINUX([lsirq])
+UL_REQUIRES_BUILD([lsirq], [libsmartcols])
+AM_CONDITIONAL([BUILD_LSIRQ], [test "x$build_lsirq" = xyes])
+
 
 UL_BUILD_INIT([choom], [check])
 UL_REQUIRES_LINUX([choom])

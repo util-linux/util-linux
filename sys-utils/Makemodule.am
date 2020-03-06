@@ -61,6 +61,16 @@ irqtop_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(REALTIME_LIBS) libsmartco
 irqtop_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
 
+if BUILD_LSIRQ
+usrbin_exec_PROGRAMS += lsirq
+dist_man_MANS += sys-utils/lsirq.1
+lsirq_SOURCES =	sys-utils/lsirq.c \
+		sys-utils/irq-common.c \
+		sys-utils/irq-common.h
+lsirq_LDADD = $(LDADD) libcommon.la libsmartcols.la
+lsirq_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+endif
+
 if BUILD_LSIPC
 usrbin_exec_PROGRAMS += lsipc
 dist_man_MANS += sys-utils/lsipc.1

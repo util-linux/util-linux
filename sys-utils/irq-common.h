@@ -48,7 +48,7 @@ struct irq_output {
 int irq_column_name_to_id(char const *const name, size_t const namesz);
 void free_irqstat(struct irq_stat *stat);
 
-void irq_print_columns(FILE *f);
+void irq_print_columns(FILE *f, int nodelta);
 
 void set_sort_func_by_name(struct irq_output *out, const char *name);
 void set_sort_func_by_key(struct irq_output *out, const char c);

@@ -232,7 +232,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("  q Q    quit program\n"), stdout);
 
 	fputs(USAGE_COLUMNS, stdout);
-	irq_print_columns(stdout);
+	irq_print_columns(stdout, 0);
 
 	printf(USAGE_MAN_TAIL("irqtop(1)"));
 	exit(EXIT_SUCCESS);

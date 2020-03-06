@@ -115,6 +115,7 @@ ylwrap
 /losetup
 /lsblk
 /lsipc
+/lsirq
 /lscpu
 /lslocks
 /lslogins

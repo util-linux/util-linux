@@ -85,12 +85,15 @@ static inline const struct colinfo *get_column_info(
 	return &infos[get_column_id(out, num)];
 }
 
-void irq_print_columns(FILE *f)
+void irq_print_columns(FILE *f, int nodelta)
 {
 	size_t i;
 
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
+		if (nodelta && i == COL_DELTA)
+			continue;
 		fprintf(f, "  %-5s  %s\n", infos[i].name, _(infos[i].help));
+	}
 }
 
 static struct libscols_table *new_scols_table(struct irq_output *out)
