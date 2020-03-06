@@ -166,6 +166,41 @@ static inline struct colinfo const *get_column_info(struct irqtop_ctl const
 	return &infos[get_column_id(ctl, num)];
 }
 
+static int init_scols_table(struct irqtop_ctl *const ctl)
+{
+	size_t i;
+
+	ctl->table = scols_new_table();
+	if (!ctl->table) {
+		warn(_("failed to initialize output table"));
+		return 1;
+	}
+	scols_table_enable_json(ctl->table, ctl->json);
+	scols_table_enable_noheadings(ctl->table, ctl->no_headings);
+
+	if (ctl->json)
+		scols_table_set_name(ctl->table, _("interrupts"));
+
+	for (i = 0; i < ctl->ncolumns; i++) {
+		struct colinfo const *const col = get_column_info(ctl, i);
+		int flags = col->flags;
+		struct libscols_column *cl;
+
+		cl = scols_table_new_column(ctl->table, col->name, col->whint, flags);
+		if (cl == NULL) {
+			warnx(_("failed to initialize output column"));
+			goto err;
+		}
+		if (ctl->json)
+			scols_column_set_json_type(cl, col->json_type);
+	}
+
+	return 0;
+ err:
+	scols_unref_table(ctl->table);
+	return 1;
+}
+
 static void add_scols_line(struct irqtop_ctl *const ctl, struct irq_info const *const stat)
 {
 	size_t i;
@@ -203,41 +238,6 @@ static void add_scols_line(struct irqtop_ctl *const ctl, struct irq_info const *
 	ctl->outline = line;
 	free(stat->irq);
 	free(stat->name);
-}
-
-static int init_scols_table(struct irqtop_ctl *const ctl)
-{
-	size_t i;
-
-	ctl->table = scols_new_table();
-	if (!ctl->table) {
-		warn(_("failed to initialize output table"));
-		return 1;
-	}
-	scols_table_enable_json(ctl->table, ctl->json);
-	scols_table_enable_noheadings(ctl->table, ctl->no_headings);
-
-	if (ctl->json)
-		scols_table_set_name(ctl->table, _("interrupts"));
-
-	for (i = 0; i < ctl->ncolumns; i++) {
-		struct colinfo const *const col = get_column_info(ctl, i);
-		int flags = col->flags;
-		struct libscols_column *cl;
-
-		cl = scols_table_new_column(ctl->table, col->name, col->whint, flags);
-		if (cl == NULL) {
-			warnx(_("failed to initialize output column"));
-			goto err;
-		}
-		if (ctl->json)
-			scols_column_set_json_type(cl, col->json_type);
-	}
-
-	return 0;
- err:
-	scols_unref_table(ctl->table);
-	return 1;
 }
 
 static char *remove_repeated_spaces(char *const str)
@@ -388,41 +388,6 @@ static void sort_result(struct irqtop_ctl *const ctl,
 	qsort(result, nmemb, sizeof(*result), (int (*)(const void *, const void *))ctl->sort_func);
 }
 
-static void __attribute__((__noreturn__)) usage(void)
-{
-	size_t i;
-
-	fputs(USAGE_HEADER, stdout);
-	printf(_(" %s [options]\n"), program_invocation_short_name);
-	fputs(USAGE_SEPARATOR, stdout);
-
-	puts(_("Interactive utility to display kernel interrupt information."));
-
-	fputs(USAGE_OPTIONS, stdout);
-	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
-	fputs(_("     --once           only display interrupts once, then exit\n"), stdout);
-	fputs(_(" -J  --json           output json, implies displaying once\n"), stdout);
-	fputs(_(" -o  --output <list>  define which output columns to use (see below)\n"), stdout);
-	fputs(_(" -s, --sort <char>    specify sort criteria by character (see below)\n"), stdout);
-	fputs(USAGE_SEPARATOR, stdout);
-	printf(USAGE_HELP_OPTIONS(22));
-
-	fputs(_("\nThe following interactive key commands are valid:\n"), stdout);
-	fputs(_("  i      sort by IRQ\n"), stdout);
-	fputs(_("  t      sort by TOTAL\n"), stdout);
-	fputs(_("  d      sort by DELTA\n"), stdout);
-	fputs(_("  n      sort by NAME\n"), stdout);
-	fputs(_("  q Q    quit program\n"), stdout);
-
-	fputs(USAGE_COLUMNS, stdout);
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(stdout, "  %-5s  %s\n", infos[i].name, _(infos[i].help));
-
-	printf(USAGE_MAN_TAIL("irqtop(1)"));
-	exit(EXIT_SUCCESS);
-}
-
-
 static sort_fp *set_sort_func(char const key)
 {
 	switch (key) {
@@ -490,9 +455,6 @@ static int update_screen(struct irqtop_ctl *const ctl)
 		return 1;
 	}
 
-	if (init_scols_table(ctl))
-		return 1;
-
 	size = sizeof(*stat->irq_info) * stat->nr_irq;
 	result = xmalloc(size);
 	memcpy(result, stat->irq_info, size);
@@ -505,6 +467,10 @@ static int update_screen(struct irqtop_ctl *const ctl)
 		}
 	}
 	sort_result(ctl, result, stat->nr_irq);
+
+	if (init_scols_table(ctl))
+		return 1;
+
 	for (index = 0; index < stat->nr_irq; index++) {
 		curr = result + index;
 		add_scols_line(ctl, curr);
@@ -618,6 +584,40 @@ static int event_loop(struct irqtop_ctl *const ctl)
 		}
 	}
 	return retval;
+}
+
+static void __attribute__((__noreturn__)) usage(void)
+{
+	size_t i;
+
+	fputs(USAGE_HEADER, stdout);
+	printf(_(" %s [options]\n"), program_invocation_short_name);
+	fputs(USAGE_SEPARATOR, stdout);
+
+	puts(_("Interactive utility to display kernel interrupt information."));
+
+	fputs(USAGE_OPTIONS, stdout);
+	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
+	fputs(_("     --once           only display interrupts once, then exit\n"), stdout);
+	fputs(_(" -J  --json           output json, implies displaying once\n"), stdout);
+	fputs(_(" -o  --output <list>  define which output columns to use (see below)\n"), stdout);
+	fputs(_(" -s, --sort <char>    specify sort criteria by character (see below)\n"), stdout);
+	fputs(USAGE_SEPARATOR, stdout);
+	printf(USAGE_HELP_OPTIONS(22));
+
+	fputs(_("\nThe following interactive key commands are valid:\n"), stdout);
+	fputs(_("  i      sort by IRQ\n"), stdout);
+	fputs(_("  t      sort by TOTAL\n"), stdout);
+	fputs(_("  d      sort by DELTA\n"), stdout);
+	fputs(_("  n      sort by NAME\n"), stdout);
+	fputs(_("  q Q    quit program\n"), stdout);
+
+	fputs(USAGE_COLUMNS, stdout);
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
+		fprintf(stdout, "  %-5s  %s\n", infos[i].name, _(infos[i].help));
+
+	printf(USAGE_MAN_TAIL("irqtop(1)"));
+	exit(EXIT_SUCCESS);
 }
 
 static void parse_args(struct irqtop_ctl *const ctl, int const argc,
