@@ -280,10 +280,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
 	fputs(_(" --keep-caps               retain capabilities granted in user namespaces\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -R, --root=<dir>	    run the command with root directory set to <dir>\n"), out);
-	fputs(_(" -w, --wd=<dir>	    change working directory to <dir>\n"), out);
-	fputs(_(" -S, --setuid <uid>	    set uid in entered namespace\n"), out);
-	fputs(_(" -G, --setgid <gid>	    set gid in entered namespace\n"), out);
+	fputs(_(" -R, --root=<dir>          run the command with root directory set to <dir>\n"), out);
+	fputs(_(" -w, --wd=<dir>            change working directory to <dir>\n"), out);
+	fputs(_(" -S, --setuid <uid>        set uid in entered namespace\n"), out);
+	fputs(_(" -G, --setgid <gid>        set gid in entered namespace\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(27));
