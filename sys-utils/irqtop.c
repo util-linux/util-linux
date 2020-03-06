@@ -113,7 +113,6 @@ struct irq_stat {
 typedef int (sort_fp)(const struct irq_info *, const struct irq_info *);
 
 struct irqtop_ctl {
-	WINDOW *win;
 	int cols;
 	int rows;
 	struct itimerspec timer;
@@ -465,20 +464,7 @@ static void parse_input(struct irqtop_ctl *const ctl, char const c)
 	}
 }
 
-static inline void print_line(struct irqtop_ctl const *const ctl,
-			      char const *const fmt, ...)
-{
-	va_list args;
-
-	va_start(args, fmt);
-	if (ctl->run_once)
-		vprintf(fmt, args);
-	else
-		vw_printw(ctl->win, fmt, args);
-	va_end(args);
-}
-
-static int update_screen(struct irqtop_ctl *const ctl)
+static int update_screen(struct irqtop_ctl *const ctl, WINDOW *win)
 {
 	struct irq_stat *stat;
 
@@ -494,7 +480,7 @@ static int update_screen(struct irqtop_ctl *const ctl)
 
 		move(0, 0);
 		strtime_iso(&now, ISO_TIMESTAMP, timestr, sizeof(timestr));
-		print_line(ctl, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
+		wprintw(win, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
 	}
 	/* body */
@@ -504,7 +490,7 @@ static int update_screen(struct irqtop_ctl *const ctl)
 		char *data;
 
 		scols_print_table_to_string(ctl->table, &data);
-		print_line(ctl, "%s", data);
+		wprintw(win, "%s", data);
 		free(data);
 	}
 	/* clean up */
@@ -515,7 +501,7 @@ static int update_screen(struct irqtop_ctl *const ctl)
 	return 0;
 }
 
-static int event_loop(struct irqtop_ctl *const ctl)
+static int event_loop(struct irqtop_ctl *const ctl, WINDOW *win)
 {
 	int efd, sfd, tfd;
 	sigset_t sigmask;
@@ -560,7 +546,7 @@ static int event_loop(struct irqtop_ctl *const ctl)
 	if (epoll_ctl(efd, EPOLL_CTL_ADD, STDIN_FILENO, &ev) != 0)
 		err(EXIT_FAILURE, _("epoll_ctl failed"));
 
-	retval |= update_screen(ctl);
+	retval |= update_screen(ctl, win);
 	refresh();
 
 	while (!ctl->request_exit) {
@@ -591,7 +577,7 @@ static int event_loop(struct irqtop_ctl *const ctl)
 				parse_input(ctl, c);
 			} else
 				abort();
-			retval |= update_screen(ctl);
+			retval |= update_screen(ctl, win);
 			refresh();
 		}
 	}
@@ -705,6 +691,7 @@ static void parse_args(struct irqtop_ctl *const ctl, int const argc,
 
 int main(int argc, char **argv)
 {
+	WINDOW *win = NULL;
 	int is_tty = 0;
 	int retval = EXIT_SUCCESS;
 	struct termios saved_tty;
@@ -723,7 +710,7 @@ int main(int argc, char **argv)
 		if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
 			fputs(_("terminal setting retrieval"), stdout);
 
-		ctl.win = initscr();
+		win = initscr();
 		get_terminal_dimension(&ctl.cols, &ctl.rows);
 		resizeterm(ctl.rows, ctl.cols);
 		curs_set(0);
@@ -734,17 +721,17 @@ int main(int argc, char **argv)
 	ctl.hostname = xgethostname();
 
 	if (ctl.run_once)
-		retval = update_screen(&ctl);
+		retval = update_screen(&ctl, NULL);
 	else
-		event_loop(&ctl);
+		event_loop(&ctl, win);
 
 	free_irqinfo(ctl.prev_stat);
 	free(ctl.hostname);
 
-	if (ctl.win) {
+	if (win) {
 		if (is_tty)
 			tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
-		delwin(ctl.win);
+		delwin(win);
 		endwin();
 	}
 	return retval;
