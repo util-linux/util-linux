@@ -404,6 +404,45 @@ static sort_fp *set_sort_func(char const key)
 	}
 }
 
+static int fill_scols_table(struct irqtop_ctl *const ctl, struct irq_stat **xstat)
+{
+	struct irq_info *result, *curr;
+	struct irq_stat *stat;
+	size_t size;
+	size_t index;
+
+	/* the stats */
+	stat = get_irqinfo();
+	if (!stat)
+		return 1;
+
+	size = sizeof(*stat->irq_info) * stat->nr_irq;
+	result = xmalloc(size);
+	memcpy(result, stat->irq_info, size);
+
+	if (ctl->prev_stat) {
+		stat->delta_irq = 0;
+		for (index = 0; index < stat->nr_irq; index++) {
+			result[index].delta = result[index].total -
+					      ctl->prev_stat->irq_info[index].total;
+			stat->delta_irq += result[index].delta;
+		}
+	}
+	sort_result(ctl, result, stat->nr_irq);
+
+	if (init_scols_table(ctl))
+		return 1;
+
+	for (index = 0; index < stat->nr_irq; index++) {
+		curr = result + index;
+		add_scols_line(ctl, curr);
+	}
+
+	free(result);
+	*xstat = stat;
+	return 0;
+}
+
 static void parse_input(struct irqtop_ctl *const ctl, char const c)
 {
 	switch (c) {
@@ -441,46 +480,19 @@ static inline void print_line(struct irqtop_ctl const *const ctl,
 
 static int update_screen(struct irqtop_ctl *const ctl)
 {
-	struct irq_info *result, *curr;
 	struct irq_stat *stat;
-	size_t size;
-	size_t index;
-	time_t now;
-	char timestr[64];
 
-	/* the stats */
-	stat = get_irqinfo();
-	if (!stat) {
+	if (fill_scols_table(ctl, &stat) != 0) {
 		ctl->request_exit = 1;
 		return 1;
 	}
 
-	size = sizeof(*stat->irq_info) * stat->nr_irq;
-	result = xmalloc(size);
-	memcpy(result, stat->irq_info, size);
-	if (ctl->prev_stat) {
-		stat->delta_irq = 0;
-		for (index = 0; index < stat->nr_irq; index++) {
-			result[index].delta = result[index].total -
-					      ctl->prev_stat->irq_info[index].total;
-			stat->delta_irq += result[index].delta;
-		}
-	}
-	sort_result(ctl, result, stat->nr_irq);
-
-	if (init_scols_table(ctl))
-		return 1;
-
-	for (index = 0; index < stat->nr_irq; index++) {
-		curr = result + index;
-		add_scols_line(ctl, curr);
-	}
-	free(result);
-
 	/* header in interactive mode */
 	if (!ctl->run_once) {
+		time_t now = time(NULL);
+		char timestr[64];
+
 		move(0, 0);
-		now = time(NULL);
 		strtime_iso(&now, ISO_TIMESTAMP, timestr, sizeof(timestr));
 		print_line(ctl, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
