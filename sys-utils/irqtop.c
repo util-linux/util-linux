@@ -309,10 +309,8 @@ static void parse_args(	struct irqtop_ctl *ctl,
 int main(int argc, char **argv)
 {
 	int is_tty = 0;
-	int retval = EXIT_SUCCESS;
 	struct termios saved_tty;
 	struct irq_output out = {
-		.ncolumns = 0,
 		.sort_func = DEF_SORT_FUNC
 	};
 	struct irqtop_ctl ctl = {
@@ -344,5 +342,5 @@ int main(int argc, char **argv)
 	delwin(ctl.win);
 	endwin();
 
-	return retval;
+	return EXIT_SUCCESS;
 }
