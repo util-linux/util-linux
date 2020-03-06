@@ -56,7 +56,7 @@ static const struct colinfo infos[] = {
 	[COL_NAME]  = {"NAME",  0.70, SCOLS_FL_TRUNC, N_("name"),        SCOLS_JSON_STRING},
 };
 
-int irq_column_name_to_id(char const *const name, size_t const namesz)
+int irq_column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
