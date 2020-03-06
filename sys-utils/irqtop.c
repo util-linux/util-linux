@@ -119,8 +119,6 @@ struct irqtop_ctl {
 	sort_fp *sort_func;
 	struct irq_stat *prev_stat;
 	char *hostname;
-	struct libscols_table *table;
-	struct libscols_line *outline;
 
 	/* make a space for repeating columns like we support in another tools (-o +FOO) */
 	int columns[ARRAY_SIZE(infos) * 2];
@@ -163,27 +161,28 @@ static inline struct colinfo const *get_column_info(struct irqtop_ctl const
 	return &infos[get_column_id(ctl, num)];
 }
 
-static int init_scols_table(struct irqtop_ctl *const ctl)
+static struct libscols_table *new_scols_table(struct irqtop_ctl *const ctl)
 {
 	size_t i;
+	struct libscols_table *table;
 
-	ctl->table = scols_new_table();
-	if (!ctl->table) {
+	table = scols_new_table();
+	if (!table) {
 		warn(_("failed to initialize output table"));
-		return 1;
+		return NULL;
 	}
-	scols_table_enable_json(ctl->table, ctl->json);
-	scols_table_enable_noheadings(ctl->table, ctl->no_headings);
+	scols_table_enable_json(table, ctl->json);
+	scols_table_enable_noheadings(table, ctl->no_headings);
 
 	if (ctl->json)
-		scols_table_set_name(ctl->table, _("interrupts"));
+		scols_table_set_name(table, _("interrupts"));
 
 	for (i = 0; i < ctl->ncolumns; i++) {
 		struct colinfo const *const col = get_column_info(ctl, i);
 		int flags = col->flags;
 		struct libscols_column *cl;
 
-		cl = scols_table_new_column(ctl->table, col->name, col->whint, flags);
+		cl = scols_table_new_column(table, col->name, col->whint, flags);
 		if (cl == NULL) {
 			warnx(_("failed to initialize output column"));
 			goto err;
@@ -192,18 +191,20 @@ static int init_scols_table(struct irqtop_ctl *const ctl)
 			scols_column_set_json_type(cl, col->json_type);
 	}
 
-	return 0;
+	return table;
  err:
-	scols_unref_table(ctl->table);
-	return 1;
+	scols_unref_table(table);
+	return NULL;
 }
 
-static void add_scols_line(struct irqtop_ctl *const ctl, struct irq_info const *const stat)
+static void add_scols_line(struct irqtop_ctl *const ctl,
+			   struct irq_info const *const stat,
+			   struct libscols_table *table)
 {
 	size_t i;
 	struct libscols_line *line;
 
-	line = scols_table_new_line(ctl->table, NULL);
+	line = scols_table_new_line(table, NULL);
 	if (!line) {
 		warn(_("failed to add line to output"));
 		return;
@@ -232,7 +233,6 @@ static void add_scols_line(struct irqtop_ctl *const ctl, struct irq_info const *
 		if (str && scols_line_refer_data(line, i, str) != 0)
 			err_oom();
 	}
-	ctl->outline = line;
 	free(stat->irq);
 	free(stat->name);
 }
@@ -401,8 +401,9 @@ static sort_fp *set_sort_func(char const key)
 	}
 }
 
-static int fill_scols_table(struct irqtop_ctl *const ctl, struct irq_stat **xstat)
+static struct libscols_table *get_scols_table(struct irqtop_ctl *const ctl, struct irq_stat **xstat)
 {
+	struct libscols_table *table;
 	struct irq_info *result, *curr;
 	struct irq_stat *stat;
 	size_t size;
@@ -411,7 +412,7 @@ static int fill_scols_table(struct irqtop_ctl *const ctl, struct irq_stat **xsta
 	/* the stats */
 	stat = get_irqinfo();
 	if (!stat)
-		return 1;
+		return NULL;
 
 	size = sizeof(*stat->irq_info) * stat->nr_irq;
 	result = xmalloc(size);
@@ -427,12 +428,13 @@ static int fill_scols_table(struct irqtop_ctl *const ctl, struct irq_stat **xsta
 	}
 	sort_result(ctl, result, stat->nr_irq);
 
-	if (init_scols_table(ctl))
-		return 1;
+	table = new_scols_table(ctl);
+	if (!table)
+		return NULL;
 
 	for (index = 0; index < stat->nr_irq; index++) {
 		curr = result + index;
-		add_scols_line(ctl, curr);
+		add_scols_line(ctl, curr, table);
 	}
 
 	free(result);
@@ -441,7 +443,8 @@ static int fill_scols_table(struct irqtop_ctl *const ctl, struct irq_stat **xsta
 		*xstat = stat;
 	else
 		free_irqinfo(stat);
-	return 0;
+
+	return table;;
 }
 
 static void parse_input(struct irqtop_ctl *const ctl, char const c)
@@ -468,21 +471,26 @@ static void parse_input(struct irqtop_ctl *const ctl, char const c)
 
 static int print_irq_data(struct irqtop_ctl *const ctl)
 {
-	if (fill_scols_table(ctl, NULL) != 0)
+	struct libscols_table *table;
+
+	table = get_scols_table(ctl, NULL);
+	if (!table)
 		return 1;
 
-	scols_print_table(ctl->table);
-	scols_unref_table(ctl->table);
+	scols_print_table(table);
+	scols_unref_table(table);
 	return 0;
 }
 
 static int update_screen(struct irqtop_ctl *const ctl, WINDOW *win)
 {
+	struct libscols_table *table;
 	struct irq_stat *stat;
 	time_t now = time(NULL);
 	char timestr[64], *data;
 
-	if (fill_scols_table(ctl, &stat) != 0) {
+	table = get_scols_table(ctl, &stat);
+	if (!table) {
 		ctl->request_exit = 1;
 		return 1;
 	}
@@ -493,12 +501,12 @@ static int update_screen(struct irqtop_ctl *const ctl, WINDOW *win)
 	wprintw(win, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
 
-	scols_print_table_to_string(ctl->table, &data);
+	scols_print_table_to_string(table, &data);
 	wprintw(win, "%s", data);
 	free(data);
 
 	/* clean up */
-	scols_unref_table(ctl->table);
+	scols_unref_table(table);
 	if (ctl->prev_stat)
 		free_irqinfo(ctl->prev_stat);
 	ctl->prev_stat = stat;
