@@ -130,7 +130,7 @@ static struct libscols_table *new_scols_table(struct irq_output *out)
 }
 
 static void add_scols_line(struct irq_output *out,
-			   struct irq_info *stat,
+			   struct irq_info *info,
 			   struct libscols_table *table)
 {
 	size_t i;
@@ -147,16 +147,16 @@ static void add_scols_line(struct irq_output *out,
 
 		switch (get_column_id(out, i)) {
 		case COL_IRQ:
-			xasprintf(&str, "%s", stat->irq);
+			xasprintf(&str, "%s", info->irq);
 			break;
 		case COL_TOTAL:
-			xasprintf(&str, "%ld", stat->total);
+			xasprintf(&str, "%ld", info->total);
 			break;
 		case COL_DELTA:
-			xasprintf(&str, "%ld", stat->delta);
+			xasprintf(&str, "%ld", info->delta);
 			break;
 		case COL_NAME:
-			xasprintf(&str, "%s", stat->name);
+			xasprintf(&str, "%s", info->name);
 			break;
 		default:
 			break;
@@ -165,10 +165,6 @@ static void add_scols_line(struct irq_output *out,
 		if (str && scols_line_refer_data(line, i, str) != 0)
 			err_oom();
 	}
-
-	/* FIXME */
-	free(stat->irq);
-	free(stat->name);
 }
 
 static char *remove_repeated_spaces(char *str)
@@ -281,10 +277,19 @@ static struct irq_stat *get_irqinfo(void)
 	return NULL;
 }
 
-void free_irqinfo(struct irq_stat *stat)
+void free_irqstat(struct irq_stat *stat)
 {
-	if (stat)
-		free(stat->irq_info);
+	size_t i;
+
+	if (!stat)
+		return;
+
+	for (i = 0; i < stat->nr_irq; i++) {
+		free(stat->irq_info[i].name);
+		free(stat->irq_info[i].irq);
+	}
+
+	free(stat->irq_info);
 	free(stat);
 }
 
@@ -318,10 +323,10 @@ struct libscols_table *get_scols_table(struct irq_output *out,
 					      struct irq_stat **xstat)
 {
 	struct libscols_table *table;
-	struct irq_info *result, *curr;
+	struct irq_info *result;
 	struct irq_stat *stat;
 	size_t size;
-	size_t index;
+	size_t i;
 
 	/* the stats */
 	stat = get_irqinfo();
@@ -334,10 +339,12 @@ struct libscols_table *get_scols_table(struct irq_output *out,
 
 	if (prev) {
 		stat->delta_irq = 0;
-		for (index = 0; index < stat->nr_irq; index++) {
-			result[index].delta = result[index].total
-					- prev->irq_info[index].total;
-			stat->delta_irq += result[index].delta;
+		for (i = 0; i < stat->nr_irq; i++) {
+			struct irq_info *cur = &result[i];
+			struct irq_info *pre = &prev->irq_info[i];
+
+			cur->delta = cur->total - pre->total;
+			stat->delta_irq += cur->delta;
 		}
 	}
 	sort_result(out, result, stat->nr_irq);
@@ -346,17 +353,15 @@ struct libscols_table *get_scols_table(struct irq_output *out,
 	if (!table)
 		return NULL;
 
-	for (index = 0; index < stat->nr_irq; index++) {
-		curr = result + index;
-		add_scols_line(out, curr, table);
-	}
+	for (i = 0; i < stat->nr_irq; i++)
+		add_scols_line(out, &result[i], table);
 
 	free(result);
 
 	if (xstat)
 		*xstat = stat;
 	else
-		free_irqinfo(stat);
+		free_irqstat(stat);
 
 	return table;
 }

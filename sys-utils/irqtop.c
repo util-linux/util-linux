@@ -130,7 +130,7 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	/* clean up */
 	scols_unref_table(table);
 	if (ctl->prev_stat)
-		free_irqinfo(ctl->prev_stat);
+		free_irqstat(ctl->prev_stat);
 	ctl->prev_stat = stat;
 	return 0;
 }
@@ -336,7 +336,7 @@ int main(int argc, char **argv)
 	ctl.hostname = xgethostname();
 	event_loop(&ctl, &out);
 
-	free_irqinfo(ctl.prev_stat);
+	free_irqstat(ctl.prev_stat);
 	free(ctl.hostname);
 
 	if (is_tty)

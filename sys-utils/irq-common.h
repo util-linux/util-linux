@@ -21,6 +21,7 @@ struct irq_info {
 	unsigned long delta;		/* delta count since previous update */
 };
 
+
 struct irq_stat {
 	unsigned int nr_irq;		/* number of irq vector */
 	unsigned int nr_irq_info;	/* number of irq info */
@@ -47,7 +48,7 @@ struct irq_output {
 };
 
 int irq_column_name_to_id(char const *const name, size_t const namesz);
-void free_irqinfo(struct irq_stat *stat);
+void free_irqstat(struct irq_stat *stat);
 
 void irq_print_columns(FILE *f);
 
