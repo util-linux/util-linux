@@ -9,33 +9,30 @@ Display kernel interrupt counter information in
 .BR top (1)
 style view.
 .PP
-The default output is subject to change.   So  whenever
-possible,  you should avoid using default outputs in your scripts.  Always explicitly define expected columns 
-by using \fB\-\-columns\fR.
+The default output is subject to change. So  whenever possible,
+you should avoid using default outputs in your scripts.  Always
+explicitly define expected columns by using \fB\-\-output\fR.
 .SH OPTIONS
 .TP
-.BR \-d ,\  \-\-delay\ \c
-.I seconds
+.BR \-o , " \-\-output " \fIlist\fP
+Specify which output columns to print.  Use \fB\-\-help\fR to get a list of all supported columns.
+The default list of columns may be extended if list is specified in the format +list.
+.TP
+.BR \-d , " \-\-delay " \fIseconds\fP
 Update interrupt output every
 .I seconds
 intervals.
 .TP
-.BR \-J ,\ \-\-json
-Use JSON output format.  It's strongly recommended to use --columns to keep
-the output stable.
+.BR \-s , " \-\-sort " \fIcolumn\fP
+Specify sort criteria by column name.  See \fB\-\-help\fR output to get column
+names.  The sort criteria may be changes in interactive mode.
 .TP
-.BR \-o ,\  \-\-once
-Collect interrupt information and output it.  This mode does not use
-ncurses, so the output can easily be redirected to a pipe, file, or such.
+.BR \-V ", " \-\-version
+Display version information and exit.
 .TP
-.BR \-s ,\  \-\-sort\ \c
-.I char
-Specify sort criteria by character.  Pressing these characters in
-interactive mode will make the ncurses output to be ordered accordingly.
-.PP
-.RS
-.PD 0
-.\" Sort key commands are in same order as default output fields
+.BR \-h ,\  \-\-help
+Display help text and exit.
+.SH COMMAND IN INTERACTIE MODE
 .TP
 .B i
 sort by short irq name or number field
@@ -51,14 +48,6 @@ sort by long descriptive name field
 .TP
 .B q Q
 stop updates and exit program
-.PD
-.RE
-.TP
-.BR \-V ", " \-\-version
-Display version information and exit.
-.TP
-.BR \-h ,\  \-\-help
-Display help text and exit.
 .SH AUTHORS
 .MT pizhenwei@\:bytedance.com
 Zhenwei Pi
@@ -66,6 +55,10 @@ Zhenwei Pi
 .br
 .MT kerolasa@\:iki.fi
 Sami Kerola
+.ME
+.br
+.MT kzak@\:redhat.com 
+Karel Zak
 .ME
 .SH AVAILABILITY
 The example command is part of the util-linux package and is available from
