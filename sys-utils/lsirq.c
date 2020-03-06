@@ -32,6 +32,7 @@
 #include <libsmartcols.h>
 
 #include "closestream.h"
+#include "optutils.h"
 #include "strutils.h"
 #include "xalloc.h"
 
@@ -91,10 +92,17 @@ int main(int argc, char **argv)
 	};
 	int c;
 	const char *outarg = NULL;
+	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+		{'J', 'P'},
+		{0}
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	setlocale(LC_ALL, "");
 
 	while ((c = getopt_long(argc, argv, "no:s:hJPV", longopts, NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'J':
 			out.json = 1;
