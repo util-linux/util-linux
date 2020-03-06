@@ -31,16 +31,14 @@ struct irq_stat {
 	unsigned long delta_irq;	/* delta irqs */
 };
 
-typedef int (sort_fp)(const struct irq_info *, const struct irq_info *);
-
-#define DEF_SORT_FUNC	((sort_fp *)sort_total)
+typedef int (irq_cmp_t)(const struct irq_info *, const struct irq_info *);
 
 /* output definition */
 struct irq_output {
 	int columns[__COL_COUNT * 2];
 	size_t ncolumns;
 
-	sort_fp *sort_func;
+	irq_cmp_t *sort_cmp_func;
 
 	unsigned int
 		json:1,
@@ -52,31 +50,8 @@ void free_irqstat(struct irq_stat *stat);
 
 void irq_print_columns(FILE *f);
 
-static inline int sort_name(const struct irq_info *a,
-		     const struct irq_info *b)
-{
-	return (strcmp(a->name, b->name) > 0) ? 1 : 0;
-}
-
-static inline int sort_total(const struct irq_info *a,
-		      const struct irq_info *b)
-{
-	return a->total < b->total;
-}
-
-static inline int sort_delta(const struct irq_info *a,
-		      const struct irq_info *b)
-{
-	return a->delta < b->delta;
-}
-
-static inline int sort_interrupts(const struct irq_info *a,
-			   const struct irq_info *b)
-{
-	return (strcmp(a->irq, b->irq) > 0) ? 1 : 0;
-}
-
-sort_fp *set_sort_func(char key);
+void set_sort_func_by_name(struct irq_output *out, const char *name);
+void set_sort_func_by_key(struct irq_output *out, const char c);
 
 struct libscols_table *get_scols_table(struct irq_output *out,
                                               struct irq_stat *prev,

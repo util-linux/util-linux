@@ -293,28 +293,72 @@ void free_irqstat(struct irq_stat *stat)
 	free(stat);
 }
 
+static inline int cmp_name(const struct irq_info *a,
+		     const struct irq_info *b)
+{
+	return (strcmp(a->name, b->name) > 0) ? 1 : 0;
+}
+
+static inline int cmp_total(const struct irq_info *a,
+		      const struct irq_info *b)
+{
+	return a->total < b->total;
+}
+
+static inline int cmp_delta(const struct irq_info *a,
+		      const struct irq_info *b)
+{
+	return a->delta < b->delta;
+}
+
+static inline int cmp_interrupts(const struct irq_info *a,
+			   const struct irq_info *b)
+{
+	return (strcmp(a->irq, b->irq) > 0) ? 1 : 0;
+}
+
 static void sort_result(struct irq_output *out,
 			struct irq_info *result,
 			size_t nmemb)
 {
+	irq_cmp_t *func = cmp_total;	/* default */
+
+	if (out->sort_cmp_func)
+		func = out->sort_cmp_func;
+
 	qsort(result, nmemb, sizeof(*result),
-			(int (*)(const void *,
-				 const void *))out->sort_func);
+			(int (*)(const void *, const void *)) func);
 }
 
-sort_fp *set_sort_func(char key)
+void set_sort_func_by_name(struct irq_output *out, const char *name)
 {
-	switch (key) {
+	if (strcasecmp(name, "IRQ") == 0)
+		out->sort_cmp_func = cmp_interrupts;
+	else if (strcasecmp(name, "TOTAL") == 0)
+		out->sort_cmp_func = cmp_total;
+	else if (strcasecmp(name, "DELTA") == 0)
+		out->sort_cmp_func = cmp_delta;
+	else if (strcasecmp(name, "NAME") == 0)
+		out->sort_cmp_func = cmp_name;
+	else
+		errx(EXIT_FAILURE, _("unssupported column name to sort output"));
+}
+
+void set_sort_func_by_key(struct irq_output *out, char c)
+{
+	switch (c) {
 	case 'i':
-		return sort_interrupts;
+		out->sort_cmp_func = cmp_interrupts;
+		break;
 	case 't':
-		return sort_total;
+		out->sort_cmp_func = cmp_total;
+		break;
 	case 'd':
-		return sort_delta;
+		out->sort_cmp_func = cmp_delta;
+		break;
 	case 'n':
-		return sort_name;
-	default:
-		return DEF_SORT_FUNC;
+		out->sort_cmp_func = cmp_name;
+		break;
 	}
 }
 

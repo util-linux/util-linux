@@ -85,21 +85,12 @@ struct irqtop_ctl {
 static void parse_input(struct irqtop_ctl *ctl, struct irq_output *out, char c)
 {
 	switch (c) {
-	case 'i':
-		out->sort_func = sort_interrupts;
-		break;
-	case 't':
-		out->sort_func = sort_total;
-		break;
-	case 'd':
-		out->sort_func = sort_delta;
-		break;
-	case 'n':
-		out->sort_func = sort_name;
-		break;
 	case 'q':
 	case 'Q':
 		ctl->request_exit = 1;
+		break;
+	default:
+		set_sort_func_by_key(out, c);
 		break;
 	}
 }
@@ -228,8 +219,8 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
-	fputs(_(" -o  --output <list>  define which output columns to use (see below)\n"), stdout);
-	fputs(_(" -s, --sort <char>    specify sort criteria by character (see below)\n"), stdout);
+	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
+	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(22));
 
@@ -263,7 +254,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 	};
 	int o;
 
-	while ((o = getopt_long(argc, argv, "d:o:s:hJV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "d:o:s:hV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'd':
 			{
@@ -276,7 +267,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 			}
 			break;
 		case 's':
-			out->sort_func = set_sort_func(optarg[0]);
+			set_sort_func_by_name(out, optarg);
 			break;
 		case 'o':
 			outarg = optarg;
@@ -311,7 +302,7 @@ int main(int argc, char **argv)
 	int is_tty = 0;
 	struct termios saved_tty;
 	struct irq_output out = {
-		.sort_func = DEF_SORT_FUNC
+		.ncolumns = 0
 	};
 	struct irqtop_ctl ctl = {
 		.timer.it_interval = {3, 0},
