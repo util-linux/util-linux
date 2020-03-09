@@ -5,6 +5,12 @@ script (lib/pty-session.c)
 --------------------------
   - (!) add #ifdefs and optional code for non-signalfd() systems
 
+rev
+---
+  - support huge input lines (for example read input by small fixed buffer
+    rather than try allocate all buffer for a whole line)
+    see: https://github.com/karelzak/util-linux/issues/972
+
 col
 ---
   - use unsigned sizes for columns and lines
