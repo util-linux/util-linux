@@ -62,6 +62,7 @@ static struct namespace_file {
 	{ .nstype = CLONE_NEWNET,   .name = "ns/net",  .fd = -1 },
 	{ .nstype = CLONE_NEWPID,   .name = "ns/pid",  .fd = -1 },
 	{ .nstype = CLONE_NEWNS,    .name = "ns/mnt",  .fd = -1 },
+	{ .nstype = CLONE_NEWTIME,  .name = "ns/time", .fd = -1 },
 	{ .nstype = 0, .name = NULL, .fd = -1 }
 };
 
@@ -86,6 +87,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid[=<file>]     enter pid namespace\n"), out);
 	fputs(_(" -C, --cgroup[=<file>]  enter cgroup namespace\n"), out);
 	fputs(_(" -U, --user[=<file>]    enter user namespace\n"), out);
+	fputs(_(" -T, --time[=<file>]    enter time namespace\n"), out);
 	fputs(_(" -S, --setuid <uid>     set uid in entered namespace\n"), out);
 	fputs(_(" -G, --setgid <gid>     set gid in entered namespace\n"), out);
 	fputs(_("     --preserve-credentials do not touch uids or gids\n"), out);
@@ -219,6 +221,7 @@ int main(int argc, char *argv[])
 		{ "pid", optional_argument, NULL, 'p' },
 		{ "user", optional_argument, NULL, 'U' },
 		{ "cgroup", optional_argument, NULL, 'C' },
+		{ "time", optional_argument, NULL, 'T' },
 		{ "setuid", required_argument, NULL, 'S' },
 		{ "setgid", required_argument, NULL, 'G' },
 		{ "root", optional_argument, NULL, 'r' },
@@ -248,7 +251,7 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c =
-		getopt_long(argc, argv, "+ahVt:m::u::i::n::p::C::U::S:G:r::w::FZ",
+		getopt_long(argc, argv, "+ahVt:m::u::i::n::p::C::U::T::S:G:r::w::FZ",
 			    longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
@@ -299,6 +302,12 @@ int main(int argc, char *argv[])
 				open_namespace_fd(CLONE_NEWUSER, optarg);
 			else
 				namespaces |= CLONE_NEWUSER;
+			break;
+		case 'T':
+			if (optarg)
+				open_namespace_fd(CLONE_NEWTIME, optarg);
+			else
+				namespaces |= CLONE_NEWTIME;
 			break;
 		case 'S':
 			uid = strtoul_or_err(optarg, _("failed to parse uid"));

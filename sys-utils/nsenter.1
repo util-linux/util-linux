@@ -92,6 +92,13 @@ and the discussion of the
 flag in
 .BR clone (2).
 .TP
+.B time namespace
+The process can have a distinct view of
+.B CLOCK_MONOTONIC
+and/or
+.B CLOCK_BOOTTIME
+which can be changed using \fI/proc/self/timens_offsets\fP.
+.TP
 See \fBclone\fP(2) for the exact semantics of the flags.
 .SH OPTIONS
 Various of the options below that relate to namespaces take an optional
@@ -143,6 +150,9 @@ the user namespace
 .TP
 /proc/\fIpid\fR/ns/cgroup
 the cgroup namespace
+.TP
+/proc/\fIpid\fR/ns/time
+the time namespace
 .TP
 /proc/\fIpid\fR/root
 the root directory
@@ -208,6 +218,14 @@ the target process.
 If
 .I file
 is specified, enter the cgroup namespace specified by
+.IR file .
+.TP
+\fB\-T\fR, \fB\-\-time\fR[=\fIfile\fR]
+Enter the time namespace.  If no file is specified, enter the time namespace of
+the target process.
+If
+.I file
+is specified, enter the time namespace specified by
 .IR file .
 .TP
 \fB\-G\fR, \fB\-\-setgid\fR \fIgid\fR
