@@ -100,6 +100,13 @@ and the discussion of the
 .B CLONE_NEWUSER
 flag in
 .BR clone (2).
+.TP
+.B time namespace
+The process can have a distinct view of
+.B CLOCK_MONOTONIC
+and/or
+.B CLOCK_BOOTTIME
+which can be changed using \fI/proc/self/timens_offsets\fP.
 .SH OPTIONS
 .TP
 .BR \-i , " \-\-ipc" [ =\fIfile ]
@@ -133,6 +140,12 @@ namespace is created by a bind mount.
 .BR \-C , " \-\-cgroup"[=\fIfile\fP]
 Unshare the cgroup namespace. If \fIfile\fP is specified then persistent namespace is created
 by bind mount.
+.TP
+.BR \-t , " \-\-time"[=\fIfile\fP]
+Unshare the time namespace. If \fIfile\fP is specified then a persistent
+namespace is created by a bind mount. The \fB\-\-monotonic\fP and
+\fB\-\-boottime\fP options can be used to specify the corresponding
+offset in the time namespace.
 .TP
 .BR \-f , " \-\-fork"
 Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather than
@@ -208,6 +221,18 @@ Set the user ID which will be used in the entered namespace.
 Set the group ID which will be used in the entered namespace and drop
 supplementary groups.
 .TP
+.BR "\-\-monotonic \fIoffset"
+Set the offset of
+.B CLOCK_MONOTONIC
+which will be used in the entered time namespace. This option requires
+unsharing a time namespace with \fB\-\-time\fP.
+.TP
+.BR "\-\-boottime \fIoffset"
+Set the offset of
+.B CLOCK_BOOTTIME
+which will be used in the entered time namespace. This option requires
+unsharing a time namespace with \fB\-\-time\fP.
+.TP
 .BR \-V , " \-\-version"
 Display version information and exit.
 .TP
@@ -269,6 +294,10 @@ Reliable killing of subprocesses of the \fIprogram\fR.
 When \fBunshare\fR gets killed, everything below it gets killed as well.
 Without it, the children of \fIprogram\fR would have orphaned and
 been re-parented to PID 1.
+.TP
+.B # unshare \-\-fork \-\-time \-\-boottime 100000000 uptime
+.TQ
+ 10:58:48 up 1158 days,  6:05,  1 user,  load average: 0.00, 0.00, 0.00
 
 .SH SEE ALSO
 .BR clone (2),

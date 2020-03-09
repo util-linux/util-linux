@@ -31,6 +31,9 @@
 # ifndef CLONE_NEWPID
 #  define CLONE_NEWPID 0x20000000
 # endif
+# ifndef CLONE_NEWTIME
+#  define CLONE_NEWTIME 0x00000080
+# endif
 
 # if !defined(HAVE_UNSHARE) || !defined(HAVE_SETNS)
 #  include <sys/syscall.h>
