@@ -45,6 +45,9 @@ endif
 if BUILD_IPCS
 dist_bashcompletion_DATA += bash-completion/ipcs
 endif
+if BUILD_IRQTOP
+dist_bashcompletion_DATA += bash-completion/irqtop
+endif
 if BUILD_ISOSIZE
 dist_bashcompletion_DATA += bash-completion/isosize
 endif
@@ -56,6 +59,9 @@ dist_bashcompletion_DATA += bash-completion/look
 endif
 if BUILD_LSIPC
 dist_bashcompletion_DATA += bash-completion/lsipc
+endif
+if BUILD_LSIRQ
+dist_bashcompletion_DATA += bash-completion/lsirq
 endif
 if BUILD_LSNS
 dist_bashcompletion_DATA += bash-completion/lsns

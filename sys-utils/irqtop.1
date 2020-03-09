@@ -1,0 +1,75 @@
+.TH IRQTOP "1" "February 2020" "util-linux" "User Commands"
+.SH NAME
+irqtop \- utility to display kernel interrupt information
+.SH SYNOPSIS
+.B irqtop
+[options]
+.SH DESCRIPTION
+Display kernel interrupt counter information in
+.BR top (1)
+style view.
+.PP
+The default output is subject to change.  So whenever possible, you should
+avoid using default outputs in your scripts.  Always explicitly define
+expected columns by using
+.BR \-\-output .
+.SH OPTIONS
+.TP
+.BR \-o , " \-\-output " \fIlist\fP
+Specify which output columns to print.  Use
+.B \-\-help
+to get a list of all supported columns.  The default list of columns may be
+extended if list is specified in the format
+.IR +list .
+.TP
+.BR \-d , " \-\-delay " \fIseconds\fP
+Update interrupt output every
+.I seconds
+intervals.
+.TP
+.BR \-s , " \-\-sort " \fIcolumn\fP
+Specify sort criteria by column name.  See
+.B \-\-help
+output to get column names.  The sort criteria may be changes in interactive
+mode.
+.TP
+.BR \-V ", " \-\-version
+Display version information and exit.
+.TP
+.BR \-h ,\  \-\-help
+Display help text and exit.
+.SH INTERACTIVE MODE KEY COMMANDS
+.PD 0
+.TP
+.B i
+sort by short irq name or number field
+.TP
+.B t
+sort by total count of interrupts (the default)
+.TP
+.B d
+sort by delta count of interrupts
+.TP
+.B n
+sort by long descriptive name field
+.TP
+.B q Q
+stop updates and exit program
+.PD 1
+.SH AUTHORS
+.MT pizhenwei@\:bytedance.com
+Zhenwei Pi
+.ME
+.br
+.MT kerolasa@\:iki.fi
+Sami Kerola
+.ME
+.br
+.MT kzak@\:redhat.com
+Karel Zak
+.ME
+.SH AVAILABILITY
+The example command is part of the util-linux package and is available from
+.UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .

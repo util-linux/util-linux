@@ -103,6 +103,7 @@ ylwrap
 /ipcmk
 /ipcrm
 /ipcs
+/irqtop
 /isosize
 /kill
 /last
@@ -114,6 +115,7 @@ ylwrap
 /losetup
 /lsblk
 /lsipc
+/lsirq
 /lscpu
 /lslocks
 /lslogins
