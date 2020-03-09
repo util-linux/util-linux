@@ -119,7 +119,8 @@ enum {
 	LSNS_ID_UTS,
 	LSNS_ID_IPC,
 	LSNS_ID_USER,
-	LSNS_ID_CGROUP
+	LSNS_ID_CGROUP,
+	LSNS_ID_TIME
 };
 
 static char *ns_names[] = {
@@ -129,7 +130,8 @@ static char *ns_names[] = {
 	[LSNS_ID_UTS] = "uts",
 	[LSNS_ID_IPC] = "ipc",
 	[LSNS_ID_USER] = "user",
-	[LSNS_ID_CGROUP] = "cgroup"
+	[LSNS_ID_CGROUP] = "cgroup",
+	[LSNS_ID_TIME] = "time"
 };
 
 struct lsns_namespace {
@@ -910,7 +912,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 	fputs(_(" -W, --nowrap           don't use multi-line representation\n"), out);
-	fputs(_(" -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"), out);
+	fputs(_(" -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup, time)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(24));
