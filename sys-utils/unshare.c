@@ -285,7 +285,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid[=<file>]        unshare pid namespace\n"), out);
 	fputs(_(" -U, --user[=<file>]       unshare user namespace\n"), out);
 	fputs(_(" -C, --cgroup[=<file>]     unshare cgroup namespace\n"), out);
-	fputs(_(" -t, --time[=<file>]       unshare time namespace\n"), out);
+	fputs(_(" -T, --time[=<file>]       unshare time namespace\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
@@ -335,7 +335,7 @@ int main(int argc, char *argv[])
 		{ "pid",           optional_argument, NULL, 'p'             },
 		{ "user",          optional_argument, NULL, 'U'             },
 		{ "cgroup",        optional_argument, NULL, 'C'             },
-		{ "time",          optional_argument, NULL, 't'             },
+		{ "time",          optional_argument, NULL, 'T'             },
 
 		{ "fork",          no_argument,       NULL, 'f'             },
 		{ "kill-child",    optional_argument, NULL, OPT_KILLCHILD   },
@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "+fhVmuinpCtUrR:w:S:G:c", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+fhVmuinpCTUrR:w:S:G:c", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			forkit = 1;
@@ -419,7 +419,7 @@ int main(int argc, char *argv[])
 			if (optarg)
 				set_ns_target(CLONE_NEWCGROUP, optarg);
 			break;
-		case 't':
+		case 'T':
 			unshare_flags |= CLONE_NEWTIME;
 			if (optarg)
 				set_ns_target(CLONE_NEWTIME, optarg);
