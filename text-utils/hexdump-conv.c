@@ -90,7 +90,7 @@ conv_u(struct hexdump_pr *pr, u_char *p)
 	static const char *list[] = {
 		"nul", "soh", "stx", "etx", "eot", "enq", "ack", "bel",
 		 "bs",  "ht",  "lf",  "vt",  "ff",  "cr",  "so",  "si",
-		"dle", "dcl", "dc2", "dc3", "dc4", "nak", "syn", "etb",
+		"dle", "dc1", "dc2", "dc3", "dc4", "nak", "syn", "etb",
 		"can",  "em", "sub", "esc",  "fs",  "gs",  "rs",  "us",
 	};
 
