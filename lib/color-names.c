@@ -50,6 +50,7 @@ const char *color_sequence_from_colorname(const char *str)
 		{ "reset",      UL_COLOR_RESET,          },
 		{ "reverse",    UL_COLOR_REVERSE         },
 		{ "yellow",	UL_COLOR_BOLD_YELLOW     },
+		{ "white",      UL_COLOR_WHITE           }
 	};
 	struct ul_color_name key = { .name = str }, *res;
 
