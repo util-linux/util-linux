@@ -3,10 +3,10 @@
 
 #if defined(__linux__)
 # include <sys/syscall.h>
-# if defined(SYS_pidfd_send_signal)
+# if defined(SYS_pidfd_send_signal) && defined(SYS_pidfd_open)
 #  include <sys/types.h>
 
-#  ifndef HAVE_PIDFD_OPEN
+#  ifndef HAVE_PIDFD_SEND_SIGNAL
 static inline int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
 				    unsigned int flags)
 {
@@ -14,7 +14,7 @@ static inline int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
 }
 #  endif
 
-#  ifndef HAVE_PIDFD_SEND_SIGNAL
+#  ifndef HAVE_PIDFD_OPEN
 static inline int pidfd_open(pid_t pid, unsigned int flags)
 {
 	return syscall(SYS_pidfd_open, pid, flags);
