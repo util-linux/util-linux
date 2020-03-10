@@ -31,6 +31,7 @@ DEVNAME=$(basename $TS_DEVICE)
 
 ts_log "Create partitions"
 $TS_CMD_FDISK ${TS_DEVICE} &> /dev/null <<EOF
+o
 n
 p
 1
