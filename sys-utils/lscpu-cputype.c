@@ -6,6 +6,24 @@
 #include "pathnames.h"
 #include "path.h"
 #include "strutils.h"
+#include "debug.h"
+
+UL_DEBUG_DEFINE_MASK(lscpu);
+UL_DEBUG_DEFINE_MASKNAMES(lscpu) = UL_DEBUG_EMPTY_MASKNAMES;
+
+/*** TODO: move to lscpu.h ***/
+#define LSCPU_DEBUG_INIT	(1 << 1)
+#define LSCPU_DEBUG_MISC	(1 << 2)
+#define LSCPU_DEBUG_GATHER	(1 << 3)
+#define LSCPU_DEBUG_TYPE	(1 << 4)
+#define LSBLK_DEBUG_ALL		0xFFFF
+
+/*UL_DEBUG_DECLARE_MASK(lscpu);*/
+#define DBG(m, x)       __UL_DBG(lscpu, LSCPU_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(lscpu, LSCPU_DEBUG_, m, x)
+
+#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(lscpu)
+#include "debugobj.h"
 
 #define _PATH_SYS_SYSTEM	"/sys/devices/system"
 #define _PATH_SYS_HYP_FEATURES	"/sys/hypervisor/properties/features"
@@ -63,9 +81,16 @@ struct lscpu_cxt {
 	struct lscpu_cputype *cputypes;
 };
 
+/*** endof-TODO ***/
+
+static void lscpu_init_debug(void)
+{
+	__UL_INIT_DEBUG_FROM_ENV(lscpu, LSCPU_DEBUG_, 0, LSCPU_DEBUG);
+}
 
 static void context_init_paths(struct lscpu_cxt *cxt)
 {
+	DBG(MISC, ul_debugobj(cxt, "initialize paths"));
 	ul_path_init_debug();
 
 	/* /sys/devices/system/cpu */
@@ -88,6 +113,7 @@ static void free_context(struct lscpu_cxt *cxt)
 	if (!cxt)
 		return;
 
+	DBG(MISC, ul_debugobj(cxt, "de-initialize paths"));
 	ul_unref_path(cxt->syscpu);
 	ul_unref_path(cxt->procfs);
 }
@@ -99,11 +125,13 @@ static struct lscpu_cputype *lscpu_new_cputype(void)
 	ct = xcalloc(1, sizeof(struct lscpu_cputype));
 	ct->refcount = 1;
 
+	DBG(TYPE, ul_debugobj(ct, "alloc"));
 	return ct;
 }
 
 int lscpu_read_cputypes(struct lscpu_cxt *cxt)
 {
+	DBG(GATHER, ul_debugobj(cxt, "reading types"));
 	return 0;
 }
 
@@ -116,7 +144,10 @@ int main(int argc, char **argv)
 	if (argc == 3 && strcmp(argv[1], "--prefix") == 0)
 		cxt->prefix = argv[2];
 
+	lscpu_init_debug();
 	context_init_paths(cxt);
+
+	lscpu_read_cputypes(cxt);
 
 	free_context(cxt);
 
