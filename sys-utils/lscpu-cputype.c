@@ -77,9 +77,17 @@ struct lscpu_cxt {
 	struct path_cxt	*syscpu; /* _PATH_SYS_CPU path handler */
 	struct path_cxt *procfs; /* /proc path handler */
 
-	size_t	ncputypes;
-	struct lscpu_cputype *cputypes;
+	size_t ncputypes;
+	struct lscpu_cputype **cputypes;
 };
+
+struct lscpu_cputype *lscpu_new_cputype(void);
+void lscpu_ref_cputype(struct lscpu_cputype *ct);
+void lscpu_unref_cputype(struct lscpu_cputype *ct);
+int lscpu_read_cputypes(struct lscpu_cxt *cxt);
+
+struct lscpu_cxt *lscpu_new_context(void);
+static void lscpu_free_context(struct lscpu_cxt *cxt);
 
 /*** endof-TODO ***/
 
@@ -108,17 +116,8 @@ static void context_init_paths(struct lscpu_cxt *cxt)
 		ul_path_set_prefix(cxt->procfs, cxt->prefix);
 }
 
-static void free_context(struct lscpu_cxt *cxt)
-{
-	if (!cxt)
-		return;
 
-	DBG(MISC, ul_debugobj(cxt, "de-initialize paths"));
-	ul_unref_path(cxt->syscpu);
-	ul_unref_path(cxt->procfs);
-}
-
-static struct lscpu_cputype *lscpu_new_cputype(void)
+struct lscpu_cputype *lscpu_new_cputype(void)
 {
 	struct lscpu_cputype *ct;
 
@@ -127,6 +126,49 @@ static struct lscpu_cputype *lscpu_new_cputype(void)
 
 	DBG(TYPE, ul_debugobj(ct, "alloc"));
 	return ct;
+}
+
+void lscpu_ref_cputype(struct lscpu_cputype *ct)
+{
+	if (ct)
+		ct->refcount++;
+}
+
+void lscpu_unref_cputype(struct lscpu_cputype *ct)
+{
+	if (!ct)
+		return;
+
+	if (--ct->refcount <= 0) {
+		DBG(TYPE, ul_debugobj(ct, " freeing"));
+		free(ct);
+	}
+}
+
+struct lscpu_cxt *lscpu_new_context(void)
+{
+	return xcalloc(1, sizeof(struct lscpu_cxt));
+}
+
+static void lscpu_free_context(struct lscpu_cxt *cxt)
+{
+	size_t i;
+
+	if (!cxt)
+		return;
+
+	DBG(MISC, ul_debugobj(cxt, "freeing context"));
+
+	DBG(MISC, ul_debugobj(cxt, " de-initialize paths"));
+	ul_unref_path(cxt->syscpu);
+	ul_unref_path(cxt->procfs);
+
+	DBG(MISC, ul_debugobj(cxt, " freeing types"));
+	for (i = 0; i < cxt->ncputypes; i++)
+		lscpu_unref_cputype(cxt->cputypes[i]);
+
+	free(cxt->cputypes);
+	free(cxt);
 }
 
 int lscpu_read_cputypes(struct lscpu_cxt *cxt)
@@ -138,8 +180,9 @@ int lscpu_read_cputypes(struct lscpu_cxt *cxt)
 #ifdef TEST_PROGRAM_CPUTYPE
 int main(int argc, char **argv)
 {
-	struct lscpu_cxt _cxt = { .prefix = NULL },
-			 *cxt = &_cxt;
+	struct lscpu_cxt *cxt;
+
+	cxt = lscpu_new_context();
 
 	if (argc == 3 && strcmp(argv[1], "--prefix") == 0)
 		cxt->prefix = argv[2];
@@ -149,7 +192,7 @@ int main(int argc, char **argv)
 
 	lscpu_read_cputypes(cxt);
 
-	free_context(cxt);
+	lscpu_free_context(cxt);
 
 	return EXIT_SUCCESS;
 }
