@@ -49,6 +49,9 @@ struct lscpu_cputype {
 	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
 	char	*stepping;
 	char    *bogomips;
+	char	*mhz;
+	char	*dynamic_mhz;
+	char	*static_mhz;
 	char	*flags;
 	char	*mtid;		/* maximum thread id (s390) */
 	char	*addrsz;	/* address sizes */
@@ -145,6 +148,111 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 	}
 }
 
+struct cpuinfo_patern {
+	const char *pattern;
+	size_t	offset;
+};
+
+#define DEF_PATTERN(_str, _member) \
+	{ \
+		.pattern = (_str), \
+		.offset = offsetof(struct lscpu_cputype, _member) \
+	}
+
+static const struct cpuinfo_patern patterns[] =
+{
+	DEF_PATTERN("BogoMIPS", bogomips),		/* aarch64 */
+	DEF_PATTERN("CPU implementer", vendor),		/* ARM and aarch64 */
+	DEF_PATTERN("CPU part", model),			/* ARM and aarch64 */
+	DEF_PATTERN("CPU revision", revision),		/* aarch64 */
+	DEF_PATTERN("CPU variant", stepping),		/* aarch64 */
+	DEF_PATTERN("Features", flags),			/* aarch64 */
+	DEF_PATTERN("address sizes", addrsz),		/* x86 */
+	DEF_PATTERN("bogomips per cpu", bogomips),	/* s390 */
+	DEF_PATTERN("bogomips", bogomips),
+	DEF_PATTERN("cpu MHz dynamic", dynamic_mhz),	/* s390 */
+	DEF_PATTERN("cpu MHz static", static_mhz),	/* s390 */
+	DEF_PATTERN("cpu MHz", mhz),
+	DEF_PATTERN("cpu family", family),
+	DEF_PATTERN("cpu", cpu),
+	DEF_PATTERN("family", family),
+	DEF_PATTERN("features", flags),			/* s390 */
+	DEF_PATTERN("flags", flags),			/* x86 */
+	DEF_PATTERN("max thread id", mtid),		/* s390 */
+	DEF_PATTERN("model name", modelname),
+	DEF_PATTERN("model", model),
+	DEF_PATTERN("revision", revision),
+	DEF_PATTERN("stepping", stepping),
+	DEF_PATTERN("type", flags),			/* sparc64 */
+	DEF_PATTERN("vendor", vendor),
+	DEF_PATTERN("vendor_id", vendor),
+};
+
+#define CPUTYPE_PATTERN_BUFSZ	32
+
+static int cmp_pattern(const void *a0, const void *b0)
+{
+	const struct cpuinfo_patern
+		*a = (const struct cpuinfo_patern *) a0,
+		*b = (const struct cpuinfo_patern *) b0;
+	return strcmp(a->pattern, b->pattern);
+}
+
+static int cputype_parse(struct lscpu_cputype *ct, const char *str)
+{
+	struct cpuinfo_patern key, *pat;
+	const char *p, *v;
+	char buf[CPUTYPE_PATTERN_BUFSZ] = { 0 }, **data;
+
+	DBG(TYPE, ul_debugobj(ct, "parse \"%s\"", str));
+
+	if (!str || !*str)
+		return -EINVAL;
+	p = skip_blank(str);
+	if (!p || !*p)
+		return -EINVAL;
+
+	v = strchr(p, ':');
+	if (!v || !*v)
+		return -EINVAL;
+
+	/* prepare value name */
+	xstrncpy(buf, p, sizeof(buf));
+	buf[v - p] = '\0';
+	v++;
+
+	rtrim_whitespace((unsigned char *)buf);
+
+	/* search by name */
+	key.pattern = buf;
+	pat = bsearch(&key, patterns, ARRAY_SIZE(patterns),
+			sizeof(struct cpuinfo_patern),
+			cmp_pattern);
+	if (!pat) {
+		DBG(TYPE, ul_debugobj(ct, "'%s' not found", buf));
+		return 1;	/* not found */
+	}
+
+	/* copy value to struct lscpu_cputype */
+	v = skip_space(v);
+	if (!v || !*v)
+		return -EINVAL;
+	strdup_to_offset(ct, pat->offset, v);
+
+	/* cleanuup white chars */
+	data = (char **) ((char *) ct + pat->offset);
+	rtrim_whitespace((unsigned char *) *data);
+
+	return 0;
+}
+
+static void print_cputype(struct lscpu_cputype *ct, FILE *f)
+{
+	fprintf(f, "vendor=\"%s\"\n", ct->vendor);
+	fprintf(f, "model=\"%s\"\n", ct->model);
+	fprintf(f, "flags=\"%s\"\n", ct->flags);
+}
+
 struct lscpu_cxt *lscpu_new_context(void)
 {
 	return xcalloc(1, sizeof(struct lscpu_cxt));
@@ -173,7 +281,43 @@ static void lscpu_free_context(struct lscpu_cxt *cxt)
 
 int lscpu_read_cputypes(struct lscpu_cxt *cxt)
 {
+	struct lscpu_cputype *ct = NULL;
+	FILE *fp;
+	char buf[BUFSIZ];
+
 	DBG(GATHER, ul_debugobj(cxt, "reading types"));
+
+	fp = ul_path_fopen(cxt->procfs, "r", "cpuinfo");
+	if (!fp)
+		err(EXIT_FAILURE, _("cannot open %s"), "/proc/cpuinfo");
+
+	while (fgets(buf, sizeof(buf), fp) != NULL) {
+		const char *p = skip_space(buf);
+
+		if (*buf && !*p) {
+			if (ct) {
+				ON_DBG(GATHER, print_cputype(ct, stdout));
+				//lscpu_add_cputype(&cxt->cputypes, &cxt->ncputypes, ct);
+			}
+			lscpu_unref_cputype(ct);
+			ct = NULL;
+			continue;
+		}
+		if (!ct)
+			ct = lscpu_new_cputype();
+
+		cputype_parse(ct, p);
+
+		/* TODO: else lscpu_parse_cache(cxt, buf); */
+	}
+
+	if (ct) {
+		//lscpu_add_cputype(&cxt->cputypes, &cxt->ncputypes, ct);
+		lscpu_unref_cputype(ct);
+	}
+
+	fclose(fp);
+	return 0;
 	return 0;
 }
 
