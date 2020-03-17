@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include "c.h"
+
 /* initialize a custom exit code for all *_or_err functions */
 extern void strutils_set_exitcode(int exit_code);
 
@@ -61,8 +63,13 @@ extern char *strnchr(const char *s, size_t maxlen, int c);
 /* caller guarantees n > 0 */
 static inline void xstrncpy(char *dest, const char *src, size_t n)
 {
-	strncpy(dest, src, n-1);
-	dest[n-1] = 0;
+	size_t len = src ? strlen(src) : 0;
+
+	if (!len)
+		return;
+	len = min(len, n - 1);
+	memcpy(dest, src, len);
+	dest[len] = 0;
 }
 
 /* This is like strncpy(), but based on memcpy(), so compilers and static
