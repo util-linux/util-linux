@@ -151,8 +151,6 @@ struct more_control {
 	char *underline_ch;		/* underline character */
 	char *backspace_ch;		/* backspace character */
 	char *go_home;			/* go to home */
-	char *cursor_addr;		/* cursor movement */
-	char home_position[40];		/* contains cursor movement to home */
 	char *clear_rest;		/* clear rest of screen */
 	int num_columns;		/* number of columns */
 	char *previous_search;		/* previous search() buf[] item */
@@ -750,6 +748,7 @@ static void __attribute__((__noreturn__)) more_exit(struct more_control *ctl)
 	free(ctl->previous_search);
 	free(ctl->shell_line);
 	free(ctl->line_buf);
+	free(ctl->go_home);
 	_exit(EXIT_SUCCESS);
 }
 
@@ -1795,111 +1794,108 @@ static void copy_file(FILE *f)
 		fwrite(&buf, sizeof(char), sz, stdout);
 }
 
-
 static void initterm(struct more_control *ctl)
 {
 	int ret;
 	char *term;
 	struct winsize win;
+	char *cursor_addr;
 
 #ifndef NON_INTERACTIVE_MORE
 	ctl->no_tty_out = tcgetattr(STDOUT_FILENO, &ctl->output_tty);
 #endif
-	if (!ctl->no_tty_out) {
-		ctl->erase_previous_ok = (ctl->output_tty.c_cc[VERASE] != 255);
-		ctl->erase_input_ok = (ctl->output_tty.c_cc[VKILL] != 255);
-		if ((term = getenv("TERM")) == NULL) {
-			ctl->dumb_tty = 1;
-			ctl->enable_underlining = 0;
-		}
-		setupterm(term, 1, &ret);
-		if (ret <= 0) {
-			ctl->dumb_tty = 1;
-			ctl->enable_underlining = 0;
-		} else {
-			if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) < 0) {
-				ctl->lines_per_page = tigetnum(TERM_LINES);
-				ctl->num_columns = tigetnum(TERM_COLS);
-			} else {
-				if ((ctl->lines_per_page = win.ws_row) == 0)
-					ctl->lines_per_page = tigetnum(TERM_LINES);
-				if ((ctl->num_columns = win.ws_col) == 0)
-					ctl->num_columns = tigetnum(TERM_COLS);
-			}
-			if ((ctl->lines_per_page <= 0) || tigetflag(TERM_HARD_COPY)) {
-				ctl->hard_tty = 1;
-				ctl->lines_per_page = LINES_PER_PAGE;
-			}
-
-			if (tigetflag(TERM_EAT_NEW_LINE))
-				/* Eat newline at last column + 1; dec, concept */
-				ctl->eat_newline++;
-			if (ctl->num_columns <= 0)
-				ctl->num_columns = NUM_COLUMNS;
-
-			ctl->wrap_margin = tigetflag(TERM_AUTO_RIGHT_MARGIN);
-			ctl->bad_stdout = tigetflag(TERM_CEOL);
-			ctl->erase_line = tigetstr(TERM_CLEAR_TO_LINE_END);
-			ctl->clear = tigetstr(TERM_CLEAR);
-			ctl->enter_std = tigetstr(TERM_STANDARD_MODE);
-			ctl->exit_std = tigetstr(TERM_EXIT_STANDARD_MODE);
-			if (0 < tigetnum(TERM_STD_MODE_GLITCH))
-				ctl->stdout_glitch = 1;
-
-			/* Set up for underlining:  some terminals don't
-			 * need it; others have start/stop sequences,
-			 * still others have an underline char sequence
-			 * which is assumed to move the cursor forward
-			 * one character.  If underline sequence isn't
-			 * available, settle for standout sequence. */
-			if (tigetflag(TERM_UNDERLINE)
-			    || tigetflag(TERM_OVER_STRIKE))
-				ctl->enable_underlining = 0;
-			if ((ctl->underline_ch = tigetstr(TERM_UNDERLINE_CHAR)) == NULL)
-				ctl->underline_ch = "";
-			if (((ctl->enter_underline =
-			      tigetstr(TERM_ENTER_UNDERLINE)) == NULL
-			     || (ctl->exit_underline =
-				 tigetstr(TERM_EXIT_UNDERLINE)) == NULL)
-			    && !*ctl->underline_ch) {
-				if ((ctl->enter_underline = ctl->enter_std) == NULL
-				    || (ctl->exit_underline = ctl->exit_std) == NULL) {
-					ctl->enter_underline = "";
-					ctl->exit_underline = "";
-				} else
-					ctl->underline_glitch = ctl->stdout_glitch;
-			} else {
-				ctl->underline_glitch = 0;
-			}
-			ctl->go_home = tigetstr(TERM_HOME);
-			if (ctl->go_home == NULL || *ctl->go_home == '\0') {
-				if ((ctl->cursor_addr =
-				     tigetstr(TERM_CURSOR_ADDRESS)) != NULL) {
-					const char *t =
-					    (const char *)tparm(ctl->cursor_addr, 0,
-								   0);
-					xstrncpy(ctl->home_position, t,
-						 sizeof(ctl->home_position));
-					ctl->go_home = ctl->home_position;
-				}
-			}
-			ctl->clear_rest = tigetstr(TERM_CLEAR_TO_SCREEN_END);
-			if ((ctl->backspace_ch = tigetstr(TERM_LINE_DOWN)) == NULL)
-				ctl->backspace_ch = BS;
-
-		}
-		if ((ctl->shell = getenv("SHELL")) == NULL)
-			ctl->shell = _PATH_BSHELL;
-	}
 	ctl->no_tty_in = tcgetattr(STDIN_FILENO, &ctl->output_tty);
 	tcgetattr(STDERR_FILENO, &ctl->output_tty);
 	ctl->original_tty = ctl->output_tty;
 	ctl->hard_tabs = (ctl->output_tty.c_oflag & TABDLY) != TAB3;
-	if (!ctl->no_tty_out) {
-		ctl->output_tty.c_lflag &= ~(ICANON | ECHO);
-		ctl->output_tty.c_cc[VMIN] = 1;
-		ctl->output_tty.c_cc[VTIME] = 0;
+	if (ctl->no_tty_out)
+		return;
+
+	ctl->output_tty.c_lflag &= ~(ICANON | ECHO);
+	ctl->output_tty.c_cc[VMIN] = 1;
+	ctl->output_tty.c_cc[VTIME] = 0;
+	ctl->erase_previous_ok = (ctl->output_tty.c_cc[VERASE] != 255);
+	ctl->erase_input_ok = (ctl->output_tty.c_cc[VKILL] != 255);
+	if ((term = getenv("TERM")) == NULL) {
+		ctl->dumb_tty = 1;
+		ctl->enable_underlining = 0;
 	}
+	setupterm(term, 1, &ret);
+	if (ret <= 0) {
+		ctl->dumb_tty = 1;
+		ctl->enable_underlining = 0;
+		return;
+	}
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) < 0) {
+		ctl->lines_per_page = tigetnum(TERM_LINES);
+		ctl->num_columns = tigetnum(TERM_COLS);
+	} else {
+		if ((ctl->lines_per_page = win.ws_row) == 0)
+			ctl->lines_per_page = tigetnum(TERM_LINES);
+		if ((ctl->num_columns = win.ws_col) == 0)
+			ctl->num_columns = tigetnum(TERM_COLS);
+	}
+	if ((ctl->lines_per_page <= 0) || tigetflag(TERM_HARD_COPY)) {
+		ctl->hard_tty = 1;
+		ctl->lines_per_page = LINES_PER_PAGE;
+	}
+
+	if (tigetflag(TERM_EAT_NEW_LINE))
+		/* Eat newline at last column + 1; dec, concept */
+		ctl->eat_newline++;
+	if (ctl->num_columns <= 0)
+		ctl->num_columns = NUM_COLUMNS;
+
+	ctl->wrap_margin = tigetflag(TERM_AUTO_RIGHT_MARGIN);
+	ctl->bad_stdout = tigetflag(TERM_CEOL);
+	ctl->erase_line = tigetstr(TERM_CLEAR_TO_LINE_END);
+	ctl->clear = tigetstr(TERM_CLEAR);
+	ctl->enter_std = tigetstr(TERM_STANDARD_MODE);
+	ctl->exit_std = tigetstr(TERM_EXIT_STANDARD_MODE);
+	if (0 < tigetnum(TERM_STD_MODE_GLITCH))
+		ctl->stdout_glitch = 1;
+
+	/*
+	 * Set up for underlining.  Some terminals don't need it, others have
+	 * start/stop sequences, still others have an underline char sequence
+	 * which is assumed to move the cursor forward one character.  If
+	 * underline sequence isn't available, settle for standout sequence.
+	 */
+	if (tigetflag(TERM_UNDERLINE) || tigetflag(TERM_OVER_STRIKE))
+		ctl->enable_underlining = 0;
+	ctl->enter_underline = tigetstr(TERM_ENTER_UNDERLINE);
+	ctl->exit_underline = tigetstr(TERM_EXIT_UNDERLINE);
+	ctl->underline_ch = tigetstr(TERM_UNDERLINE_CHAR);
+	if (!ctl->underline_ch) {
+		ctl->underline_ch = "";
+		if (!ctl->enter_underline || !ctl->exit_underline) {
+			if (!ctl->enter_std || !ctl->exit_std) {
+				ctl->enter_underline = "";
+				ctl->exit_underline = "";
+			} else {
+				ctl->enter_underline = ctl->enter_std;
+				ctl->exit_underline = ctl->exit_std;
+				ctl->underline_glitch = ctl->stdout_glitch;
+			}
+		} else
+			ctl->underline_glitch = 0;
+	}
+
+	cursor_addr = tigetstr(TERM_HOME);
+	if (cursor_addr == NULL || *cursor_addr == '\0') {
+		cursor_addr = tigetstr(TERM_CURSOR_ADDRESS);
+		if (cursor_addr)
+			cursor_addr = tparm(cursor_addr, 0, 0);
+	}
+	if (cursor_addr)
+		ctl->go_home = xstrdup(cursor_addr);
+
+	ctl->clear_rest = tigetstr(TERM_CLEAR_TO_SCREEN_END);
+	if ((ctl->backspace_ch = tigetstr(TERM_LINE_DOWN)) == NULL)
+		ctl->backspace_ch = BS;
+
+	if ((ctl->shell = getenv("SHELL")) == NULL)
+		ctl->shell = _PATH_BSHELL;
 }
 
 int main(int argc, char **argv)
