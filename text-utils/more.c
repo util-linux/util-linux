@@ -62,6 +62,7 @@
 #include <assert.h>
 #include <poll.h>
 #include <sys/signalfd.h>
+#include <paths.h>
 
 #if defined(HAVE_NCURSESW_TERM_H)
 # include <ncursesw/term.h>
@@ -81,8 +82,6 @@
 #ifdef TEST_PROGRAM
 # define NON_INTERACTIVE_MORE 1
 #endif
-
-#define VI	"vi"	/* found on the user's path */
 
 #define BS		"\b"
 #define BSB		"\b \b"
@@ -1390,6 +1389,18 @@ notfound:
 	}
 }
 
+static char *find_editor(void)
+{
+	static char *editor;
+
+	editor = getenv("VISUAL");
+	if (editor == NULL || *editor == '\0')
+		editor = getenv("EDITOR");
+	if (editor == NULL || *editor == '\0')
+		editor = _PATH_VI;
+	return editor;
+}
+
 /* Read a command and do it.  A command consists of an optional integer
  * argument followed by the command character.  Return the number of
  * lines to display in the next screenful.  If there is nothing more to
@@ -1604,8 +1615,8 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 				  "Star (*) indicates argument becomes new default.\n"), stdout);
 			puts("---------------------------------------"
 			     "----------------------------------------");
-			fputs(_
-				("<space>                 Display next k lines of text [current screen size]\n"
+			fprintf(stdout,
+			       _("<space>                 Display next k lines of text [current screen size]\n"
 				 "z                       Display next k lines of text [current screen size]*\n"
 				 "<return>                Display next k lines of text [1]*\n"
 				 "d or ctrl-D             Scroll k lines [current scroll size, initially 11]*\n"
@@ -1618,12 +1629,12 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 				 "/<regular expression>   Search for kth occurrence of regular expression [1]\n"
 				 "n                       Search for kth occurrence of last r.e [1]\n"
 				 "!<cmd> or :!<cmd>       Execute <cmd> in a subshell\n"
-				 "v                       Start up /usr/bin/vi at current line\n"
+				 "v                       Start up '%s' at current line\n"
 				 "ctrl-L                  Redraw screen\n"
 				 ":n                      Go to kth next file [1]\n"
 				 ":p                      Go to kth previous file [1]\n"
 				 ":f                      Display current file name and line number\n"
-				 ".                       Repeat previous command\n"), stdout);
+				 ".                       Repeat previous command\n"), find_editor());
 			puts("---------------------------------------"
 			     "----------------------------------------");
 			output_prompt(ctl, filename);
@@ -1638,12 +1649,7 @@ static int more_key_command(struct more_control *ctl, char *filename, FILE *f)
 					 ctl->current_line - (ctl->lines_per_screen + 1) / 2);
 				int split = 0;
 
-				editor = getenv("VISUAL");
-				if (editor == NULL || *editor == '\0')
-					editor = getenv("EDITOR");
-				if (editor == NULL || *editor == '\0')
-					editor = VI;
-
+				editor = find_editor();
 				p = strrchr(editor, '/');
 				if (p)
 					p++;
@@ -1869,7 +1875,7 @@ static void initterm(struct more_control *ctl)
 
 		}
 		if ((ctl->shell = getenv("SHELL")) == NULL)
-			ctl->shell = "/bin/sh";
+			ctl->shell = _PATH_BSHELL;
 	}
 	ctl->no_tty_in = tcgetattr(STDIN_FILENO, &ctl->output_tty);
 	tcgetattr(STDERR_FILENO, &ctl->output_tty);
