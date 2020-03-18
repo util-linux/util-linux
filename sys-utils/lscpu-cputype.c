@@ -234,32 +234,6 @@ static void print_cputype(struct lscpu_cputype *ct, FILE *f)
 	fprintf(f, "flags=\"%s\"\n", ct->flags);
 }
 
-struct lscpu_cxt *lscpu_new_context(void)
-{
-	return xcalloc(1, sizeof(struct lscpu_cxt));
-}
-
-static void lscpu_free_context(struct lscpu_cxt *cxt)
-{
-	size_t i;
-
-	if (!cxt)
-		return;
-
-	DBG(MISC, ul_debugobj(cxt, "freeing context"));
-
-	DBG(MISC, ul_debugobj(cxt, " de-initialize paths"));
-	ul_unref_path(cxt->syscpu);
-	ul_unref_path(cxt->procfs);
-
-	DBG(MISC, ul_debugobj(cxt, " freeing types"));
-	for (i = 0; i < cxt->ncputypes; i++)
-		lscpu_unref_cputype(cxt->cputypes[i]);
-
-	free(cxt->cputypes);
-	free(cxt);
-}
-
 
 
 
@@ -316,6 +290,33 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 
 
 #ifdef TEST_PROGRAM_CPUTYPE
+/* TODO: move to lscpu.c */
+struct lscpu_cxt *lscpu_new_context(void)
+{
+	return xcalloc(1, sizeof(struct lscpu_cxt));
+}
+
+static void lscpu_free_context(struct lscpu_cxt *cxt)
+{
+	size_t i;
+
+	if (!cxt)
+		return;
+
+	DBG(MISC, ul_debugobj(cxt, "freeing context"));
+
+	DBG(MISC, ul_debugobj(cxt, " de-initialize paths"));
+	ul_unref_path(cxt->syscpu);
+	ul_unref_path(cxt->procfs);
+
+	DBG(MISC, ul_debugobj(cxt, " freeing types"));
+	for (i = 0; i < cxt->ncputypes; i++)
+		lscpu_unref_cputype(cxt->cputypes[i]);
+
+	free(cxt->cputypes);
+	free(cxt);
+}
+
 int main(int argc, char **argv)
 {
 	struct lscpu_cxt *cxt;
