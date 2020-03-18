@@ -1,98 +1,8 @@
 
-#include "c.h"
-#include "nls.h"
-#include "cpuset.h"
-#include "xalloc.h"
-#include "pathnames.h"
-#include "path.h"
-#include "strutils.h"
-#include "debug.h"
+#include "lscpu-api.h"
 
 UL_DEBUG_DEFINE_MASK(lscpu);
 UL_DEBUG_DEFINE_MASKNAMES(lscpu) = UL_DEBUG_EMPTY_MASKNAMES;
-
-/*** TODO: move to lscpu.h ***/
-#define LSCPU_DEBUG_INIT	(1 << 1)
-#define LSCPU_DEBUG_MISC	(1 << 2)
-#define LSCPU_DEBUG_GATHER	(1 << 3)
-#define LSCPU_DEBUG_TYPE	(1 << 4)
-#define LSBLK_DEBUG_ALL		0xFFFF
-
-/*UL_DEBUG_DECLARE_MASK(lscpu);*/
-#define DBG(m, x)       __UL_DBG(lscpu, LSCPU_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(lscpu, LSCPU_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(lscpu)
-#include "debugobj.h"
-
-#define _PATH_SYS_SYSTEM	"/sys/devices/system"
-#define _PATH_SYS_HYP_FEATURES	"/sys/hypervisor/properties/features"
-#define _PATH_SYS_CPU		_PATH_SYS_SYSTEM "/cpu"
-#define _PATH_SYS_NODE		_PATH_SYS_SYSTEM "/node"
-
-struct lscpu_cputype {
-	cpu_set_t       *map;	/* which cpus use this type */
-
-	int	refcount;
-
-	char	*arch;
-	char	*vendor;
-	char	*machinetype;	/* s390 */
-	char	*family;
-	char	*model;
-	char	*modelname;
-	char	*revision;	/* alternative for model (ppc) */
-	char	*cpu;		/* alternative for modelname (ppc, sparc) */
-	char	*virtflag;	/* virtualization flag (vmx, svm) */
-	char	*hypervisor;	/* hypervisor software */
-	int	hyper;		/* hypervisor vendor ID */
-	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
-	char	*stepping;
-	char    *bogomips;
-	char	*mhz;
-	char	*dynamic_mhz;
-	char	*static_mhz;
-	char	*flags;
-	char	*mtid;		/* maximum thread id (s390) */
-	char	*addrsz;	/* address sizes */
-	int	dispatching;	/* none, horizontal or vertical */
-	int	freqboost;	/* -1 if not evailable */
-
-	int	*polarization;	/* cpu polarization */
-	int	*addresses;	/* physical cpu addresses */
-	int	*configured;	/* cpu configured */
-	int	physsockets;	/* Physical sockets (modules) */
-	int	physchips;	/* Physical chips */
-	int	physcoresperchip;	/* Physical cores per chip */
-
-	int	ncores;
-	int	nbooks;
-	int	threads;
-	int	ndrawers;
-
-	unsigned int	bit32:1,
-			bit64:1;
-};
-
-struct lscpu_cxt {
-	const char *prefix;	 /* path to /sys and /proc snapshot or NULL */
-
-	struct path_cxt	*syscpu; /* _PATH_SYS_CPU path handler */
-	struct path_cxt *procfs; /* /proc path handler */
-
-	size_t ncputypes;
-	struct lscpu_cputype **cputypes;
-};
-
-struct lscpu_cputype *lscpu_new_cputype(void);
-void lscpu_ref_cputype(struct lscpu_cputype *ct);
-void lscpu_unref_cputype(struct lscpu_cputype *ct);
-int lscpu_read_cputypes(struct lscpu_cxt *cxt);
-
-struct lscpu_cxt *lscpu_new_context(void);
-static void lscpu_free_context(struct lscpu_cxt *cxt);
-
-/*** endof-TODO ***/
 
 static void lscpu_init_debug(void)
 {
@@ -148,61 +58,111 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 	}
 }
 
-struct cpuinfo_patern {
-	const char *pattern;
-	size_t	offset;
+/* Describes /proc/cpuinfo fields */
+struct cpuinfo_pattern {
+	int id;			/* field ID */
+	const char *pattern;	/* field name as used in /proc/cpuinfo */
+	size_t	offset;		/* offset in lscpu_cputype or lscpu_cpu struct */
 };
 
-#define DEF_PATTERN(_str, _member) \
+/* field identifiers (field name may be different on different archs) */
+enum {
+	PAT_ADDRESS_SIZES,
+	PAT_BOGOMIPS,
+	PAT_CPU,
+	PAT_FAMILY,
+	PAT_FEATURES,
+	PAT_FLAGS,
+	PAT_IMPLEMENTER,
+	PAT_MAX_THREAD_ID,
+	PAT_MHZ,
+	PAT_MHZ_DYNAMIC,
+	PAT_MHZ_STATIC,
+	PAT_MODEL,
+	PAT_MODEL_NAME,
+	PAT_PART,
+	PAT_PROCESSOR,
+	PAT_REVISION,
+	PAT_STEPPING,
+	PAT_TYPE,
+	PAT_VARIANT,
+	PAT_VENDOR,
+};
+
+/*
+ * /proc/cpuinfo to lscpu_cputype conversion
+ */
+#define DEF_PAT_CPUTYPE(_str, _id, _member) \
 	{ \
+		.id = (_id), \
 		.pattern = (_str), \
-		.offset = offsetof(struct lscpu_cputype, _member) \
+		.offset = offsetof(struct lscpu_cputype, _member), \
 	}
 
-static const struct cpuinfo_patern patterns[] =
+static const struct cpuinfo_pattern type_patterns[] =
 {
-	DEF_PATTERN("BogoMIPS", bogomips),		/* aarch64 */
-	DEF_PATTERN("CPU implementer", vendor),		/* ARM and aarch64 */
-	DEF_PATTERN("CPU part", model),			/* ARM and aarch64 */
-	DEF_PATTERN("CPU revision", revision),		/* aarch64 */
-	DEF_PATTERN("CPU variant", stepping),		/* aarch64 */
-	DEF_PATTERN("Features", flags),			/* aarch64 */
-	DEF_PATTERN("address sizes", addrsz),		/* x86 */
-	DEF_PATTERN("bogomips per cpu", bogomips),	/* s390 */
-	DEF_PATTERN("bogomips", bogomips),
-	DEF_PATTERN("cpu MHz dynamic", dynamic_mhz),	/* s390 */
-	DEF_PATTERN("cpu MHz static", static_mhz),	/* s390 */
-	DEF_PATTERN("cpu MHz", mhz),
-	DEF_PATTERN("cpu family", family),
-	DEF_PATTERN("cpu", cpu),
-	DEF_PATTERN("family", family),
-	DEF_PATTERN("features", flags),			/* s390 */
-	DEF_PATTERN("flags", flags),			/* x86 */
-	DEF_PATTERN("max thread id", mtid),		/* s390 */
-	DEF_PATTERN("model name", modelname),
-	DEF_PATTERN("model", model),
-	DEF_PATTERN("revision", revision),
-	DEF_PATTERN("stepping", stepping),
-	DEF_PATTERN("type", flags),			/* sparc64 */
-	DEF_PATTERN("vendor", vendor),
-	DEF_PATTERN("vendor_id", vendor),
+	/* Sort by fields name! */
+	DEF_PAT_CPUTYPE( "BogoMIPS",		PAT_BOGOMIPS,	bogomips),	/* aarch64 */
+	DEF_PAT_CPUTYPE( "CPU implementer",	PAT_IMPLEMENTER,vendor),	/* ARM and aarch64 */
+	DEF_PAT_CPUTYPE( "CPU part",		PAT_PART,	model),		/* ARM and aarch64 */
+	DEF_PAT_CPUTYPE( "CPU revision",	PAT_REVISION,	revision),	/* aarch64 */
+	DEF_PAT_CPUTYPE( "CPU variant",		PAT_VARIANT,	stepping),	/* aarch64 */
+	DEF_PAT_CPUTYPE( "Features",		PAT_FEATURES,	flags),		/* aarch64 */
+	DEF_PAT_CPUTYPE( "address sizes",	PAT_ADDRESS_SIZES,	addrsz),/* x86 */
+	DEF_PAT_CPUTYPE( "bogomips",		PAT_BOGOMIPS,	bogomips),
+	DEF_PAT_CPUTYPE( "bogomips per cpu",	PAT_BOGOMIPS,	bogomips),	/* s390 */
+	DEF_PAT_CPUTYPE( "cpu MHz dynamic",	PAT_MHZ_DYNAMIC,dynamic_mhz),	/* s390 */
+	DEF_PAT_CPUTYPE( "cpu MHz static",	PAT_MHZ_STATIC,	static_mhz),	/* s390 */
+	DEF_PAT_CPUTYPE( "cpu family",		PAT_FAMILY,	family),
+	DEF_PAT_CPUTYPE( "cpu",			PAT_CPU,	cpu),
+	DEF_PAT_CPUTYPE( "family",		PAT_FAMILY,	family),
+	DEF_PAT_CPUTYPE( "features",		PAT_FEATURES,	flags),		/* s390 */
+	DEF_PAT_CPUTYPE( "flags",		PAT_FLAGS,	flags),		/* x86 */
+	DEF_PAT_CPUTYPE( "max thread id",	PAT_MAX_THREAD_ID, mtid),	/* s390 */
+	DEF_PAT_CPUTYPE( "model name",		PAT_MODEL_NAME,	modelname),
+	DEF_PAT_CPUTYPE( "model",		PAT_MODEL,	model),
+	DEF_PAT_CPUTYPE( "revision",		PAT_REVISION,	revision),
+	DEF_PAT_CPUTYPE( "stepping",		PAT_STEPPING,	stepping),
+	DEF_PAT_CPUTYPE( "type",		PAT_TYPE,	flags),		/* sparc64 */
+	DEF_PAT_CPUTYPE( "vendor",		PAT_VENDOR,	vendor),
+	DEF_PAT_CPUTYPE( "vendor_id",		PAT_VENDOR,	vendor),
+};
+
+/*
+ * /proc/cpuinfo to lscpu_cpu conversion
+ */
+#define DEF_PAT_CPU(_str, _id, _member) \
+	{ \
+		.id = (_id), \
+		.pattern = (_str), \
+		.offset = offsetof(struct lscpu_cpu, _member), \
+	}
+
+static const struct cpuinfo_pattern cpu_patterns[] =
+{
+	/* Sort by fields name! */
+	DEF_PAT_CPU( "cpu MHz",		PAT_MHZ,	mhz),
+        DEF_PAT_CPU( "processor",	PAT_PROCESSOR,	logical_id),
 };
 
 #define CPUTYPE_PATTERN_BUFSZ	32
 
 static int cmp_pattern(const void *a0, const void *b0)
 {
-	const struct cpuinfo_patern
-		*a = (const struct cpuinfo_patern *) a0,
-		*b = (const struct cpuinfo_patern *) b0;
+	const struct cpuinfo_pattern
+		*a = (const struct cpuinfo_pattern *) a0,
+		*b = (const struct cpuinfo_pattern *) b0;
 	return strcmp(a->pattern, b->pattern);
 }
 
-static int cputype_parse(struct lscpu_cputype *ct, const char *str)
+static int cpuinfo_parse_line(	struct lscpu_cputype *ct,
+				struct lscpu_cpu *cpu,
+				const char *str)
 {
-	struct cpuinfo_patern key, *pat;
+	struct cpuinfo_pattern key, *pat;
 	const char *p, *v;
 	char buf[CPUTYPE_PATTERN_BUFSZ] = { 0 }, **data;
+	void *stru = NULL;
 
 	DBG(TYPE, ul_debugobj(ct, "parse \"%s\"", str));
 
@@ -216,32 +176,53 @@ static int cputype_parse(struct lscpu_cputype *ct, const char *str)
 	if (!v || !*v)
 		return -EINVAL;
 
-	/* prepare value name */
+	/* prepare name of the field */
 	xstrncpy(buf, p, sizeof(buf));
 	buf[v - p] = '\0';
 	v++;
 
 	rtrim_whitespace((unsigned char *)buf);
 
-	/* search by name */
+	/* search in cpu-types patterns */
 	key.pattern = buf;
-	pat = bsearch(&key, patterns, ARRAY_SIZE(patterns),
-			sizeof(struct cpuinfo_patern),
+	pat = bsearch(&key, type_patterns,
+			ARRAY_SIZE(type_patterns),
+			sizeof(struct cpuinfo_pattern),
 			cmp_pattern);
-	if (!pat) {
-		DBG(TYPE, ul_debugobj(ct, "'%s' not found", buf));
-		return 1;	/* not found */
+	if (pat)
+		stru = ct;
+	else {
+		/* search in cpu patterns */
+		pat = bsearch(&key, cpu_patterns,
+			ARRAY_SIZE(cpu_patterns),
+			sizeof(struct cpuinfo_pattern),
+			cmp_pattern);
+		if (pat)
+			stru = cpu;
 	}
 
-	/* copy value to struct lscpu_cputype */
+	if (!stru) {
+		DBG(TYPE, ul_debugobj(ct, "'%s' not found", buf));
+		return 1;
+	}
+
+	/* prepare value */
 	v = skip_space(v);
 	if (!v || !*v)
 		return -EINVAL;
-	strdup_to_offset(ct, pat->offset, v);
 
-	/* cleanuup white chars */
-	data = (char **) ((char *) ct + pat->offset);
-	rtrim_whitespace((unsigned char *) *data);
+	/* copy value to struct */
+	switch (pat->id) {
+	case PAT_PROCESSOR:
+		cpu->logical_id = atoi(v);
+		break;
+	default:
+		/* set value as a string and cleanup */
+		strdup_to_offset(stru, pat->offset, v);
+		data = (char **) ((char *) stru + pat->offset);
+		rtrim_whitespace((unsigned char *) *data);
+		break;
+	}
 
 	return 0;
 }
@@ -279,13 +260,17 @@ static void lscpu_free_context(struct lscpu_cxt *cxt)
 	free(cxt);
 }
 
-int lscpu_read_cputypes(struct lscpu_cxt *cxt)
+
+
+
+int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 {
 	struct lscpu_cputype *ct = NULL;
+	struct lscpu_cpu *cpu = NULL;
 	FILE *fp;
 	char buf[BUFSIZ];
 
-	DBG(GATHER, ul_debugobj(cxt, "reading types"));
+	DBG(GATHER, ul_debugobj(cxt, "reading cpuinfo"));
 
 	fp = ul_path_fopen(cxt->procfs, "r", "cpuinfo");
 	if (!fp)
@@ -300,26 +285,35 @@ int lscpu_read_cputypes(struct lscpu_cxt *cxt)
 				//lscpu_add_cputype(&cxt->cputypes, &cxt->ncputypes, ct);
 			}
 			lscpu_unref_cputype(ct);
-			ct = NULL;
+/*			lscpu_unref_cpu(cpu);*/
+			ct = NULL, cpu = NULL;
 			continue;
 		}
 		if (!ct)
 			ct = lscpu_new_cputype();
+/*		if (!cpu)
+			cpu = lscpu_new_cpu();*/
 
-		cputype_parse(ct, p);
+		cpuinfo_parse_line(ct, cpu, p);
 
 		/* TODO: else lscpu_parse_cache(cxt, buf); */
 	}
 
-	if (ct) {
-		//lscpu_add_cputype(&cxt->cputypes, &cxt->ncputypes, ct);
-		lscpu_unref_cputype(ct);
-	}
+	/*
+	if (ct)
+		lscpu_add_cputype(&cxt->cputypes, &cxt->ncputypes, ct);
+	if (cpu)
+		lscpu_add_cpu(&cxt->cputs, &cxt->ncpus, cpu);
+	*/
 
+	lscpu_unref_cputype(ct);
+	/*lscpu_unref_cpu(cpu);*/
 	fclose(fp);
+
 	return 0;
 	return 0;
 }
+
 
 #ifdef TEST_PROGRAM_CPUTYPE
 int main(int argc, char **argv)
@@ -334,7 +328,7 @@ int main(int argc, char **argv)
 	lscpu_init_debug();
 	context_init_paths(cxt);
 
-	lscpu_read_cputypes(cxt);
+	lscpu_read_cpuinfo(cxt);
 
 	lscpu_free_context(cxt);
 
