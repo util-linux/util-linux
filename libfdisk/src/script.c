@@ -1057,7 +1057,8 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 		} else if (!strncasecmp(p, "name=", 5)) {
 			p += 5;
 			rc = next_string(&p, &pa->name);
-			unhexmangle_string(pa->name);
+			if (!rc)
+				unhexmangle_string(pa->name);
 
 		} else if (!strncasecmp(p, "type=", 5) ||
 			   !strncasecmp(p, "Id=", 3)) {		/* backward compatibility */
