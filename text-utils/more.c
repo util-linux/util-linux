@@ -126,8 +126,8 @@ struct more_control {
 	struct termios output_tty;	/* output terminal */
 	struct termios original_tty;	/* original terminal settings */
 	FILE *current_file;		/* currently open input file */
-	long file_position;		/* file position */
-	long file_size;			/* file size */
+	off_t file_position;		/* file position */
+	off_t file_size;		/* file size */
 	int argv_position;		/* argv[] position */
 	int lines_per_screen;		/* screen size in lines */
 	int d_scroll_len;		/* number of lines scrolled by 'd' */
@@ -155,11 +155,11 @@ struct more_control {
 	int num_columns;		/* number of columns */
 	char *previous_search;		/* previous search() buf[] item */
 	struct {
-		long row_num;		/* row number */
+		off_t row_num;		/* row file position */
 		long line_num;		/* line number */
 	} context,
 	  screen_start;
-	int last_key_command;		/* previous more key command */
+	cc_t last_key_command;		/* previous more key command */
 	int last_key_arg;		/* previous key command argument */
 	int last_colon_command;		/* is a colon-prefixed key command */
 	char *shell_line;		/* line to execute in subshell */
@@ -286,22 +286,24 @@ static void arg_parser(struct more_control *ctl, char *s)
 	}
 }
 
-static void more_fseek(struct more_control *ctl, long pos)
+static void more_fseek(struct more_control *ctl, off_t pos)
 {
 	ctl->file_position = pos;
-	fseek(ctl->current_file, pos, 0);
+	fseeko(ctl->current_file, pos, SEEK_SET);
 }
 
 static int more_getc(struct more_control *ctl)
 {
-	ctl->file_position++;
-	return getc(ctl->current_file);
+	int ret = getc(ctl->current_file);
+	ctl->file_position = ftello(ctl->current_file);
+	return ret;
 }
 
 static int more_ungetc(struct more_control *ctl, int c)
 {
-	ctl->file_position--;
-	return ungetc(c, ctl->current_file);
+	int ret = ungetc(c, ctl->current_file);
+	ctl->file_position = ftello(ctl->current_file);
+	return ret;
 }
 
 static void print_separator(const int c, int n)
@@ -378,7 +380,7 @@ static void checkf(struct more_control *ctl, char *fs)
 	ctl->clear_first = (c == '\f');
 	more_ungetc(ctl, c);
 	if ((ctl->file_size = st.st_size) == 0)
-		ctl->file_size = LONG_MAX;
+		ctl->file_size = ~((off_t)0);
 }
 
 static void prepare_line_buffer(struct more_control *ctl)
@@ -414,7 +416,7 @@ static int get_line(struct more_control *ctl, int *length)
 	size_t mbc_pos = 0;		/* Position of the MBC. */
 	int use_mbc_buffer_flag = 0;	/* If 1, mbc has data. */
 	int break_flag = 0;		/* If 1, exit while(). */
-	long file_position_bak = ctl->file_position;
+	off_t file_position_bak = ctl->file_position;
 
 	memset(&state, '\0', sizeof(mbstate_t));
 #endif
@@ -763,9 +765,9 @@ static void __attribute__((__noreturn__)) more_exit(struct more_control *ctl)
 	_exit(EXIT_SUCCESS);
 }
 
-static int read_user_input(struct more_control *ctl)
+static cc_t read_user_input(struct more_control *ctl)
 {
-	unsigned char c;
+	cc_t c;
 
 	errno = 0;
 	if (read(STDERR_FILENO, &c, 1) <= 0) {
@@ -779,10 +781,10 @@ static int read_user_input(struct more_control *ctl)
 
 /* Read a decimal number from the terminal.  Set cmd to the non-digit
  * which terminates the number. */
-static int read_number(struct more_control *ctl, char *cmd)
+static int read_number(struct more_control *ctl, cc_t *cmd)
 {
 	int i;
-	char ch;
+	cc_t ch;
 
 	i = 0;
 	ch = ctl->output_tty.c_cc[VKILL];
@@ -790,7 +792,7 @@ static int read_number(struct more_control *ctl, char *cmd)
 		ch = read_user_input(ctl);
 		if (isdigit(ch))
 			i = i * 10 + ch - '0';
-		else if ((cc_t) ch == ctl->output_tty.c_cc[VKILL])
+		else if (ch == ctl->output_tty.c_cc[VKILL])
 			i = 0;
 		else {
 			*cmd = ch;
@@ -865,7 +867,7 @@ static void erase_one_column(struct more_control *ctl)
 static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 {
 	char *sp;
-	int c;
+	cc_t c;
 	int slash = 0;
 	int maxlen;
 
@@ -877,7 +879,7 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 		c = read_user_input(ctl);
 		if (c == '\\') {
 			slash++;
-		} else if (((cc_t) c == ctl->output_tty.c_cc[VERASE]) && !slash) {
+		} else if (c == ctl->output_tty.c_cc[VERASE] && !slash) {
 			if (sp > buf) {
 #ifdef HAVE_WIDECHAR
 				if (MB_CUR_MAX > 1) {
@@ -941,7 +943,7 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 				if (!ctl->erase_line)
 					ctl->prompt_len = maxlen;
 			}
-		} else if (((cc_t) c == ctl->output_tty.c_cc[VKILL]) && !slash) {
+		} else if (c == ctl->output_tty.c_cc[VKILL] && !slash) {
 			if (ctl->hard_tty) {
 				show(ctl, c);
 				putchar('\n');
@@ -960,8 +962,8 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 			fflush(stdout);
 			continue;
 		}
-		if (slash && ((cc_t) c == ctl->output_tty.c_cc[VKILL]
-			      || (cc_t) c == ctl->output_tty.c_cc[VERASE])) {
+		if (slash && (c == ctl->output_tty.c_cc[VKILL] ||
+			      c == ctl->output_tty.c_cc[VERASE])) {
 			erase_one_column(ctl);
 			--sp;
 		}
@@ -1263,7 +1265,7 @@ static void read_line(struct more_control *ctl)
 
 	p = ctl->line_buf;
 	while ((c = more_getc(ctl)) != '\n' && c != EOF
-	       && (size_t)(p - ctl->line_buf) < ctl->line_sz - 1)
+	       && (ptrdiff_t)p != (ptrdiff_t)(ctl->line_buf + ctl->line_sz - 1))
 		*p++ = c;
 	if (c == '\n')
 		ctl->current_line++;
@@ -1317,10 +1319,10 @@ static int more_poll(struct more_control *ctl, int timeout)
  * the file */
 static void search(struct more_control *ctl, char buf[], int n)
 {
-	long startline = ctl->file_position;
-	long line1 = startline;
-	long line2 = startline;
-	long line3;
+	off_t startline = ctl->file_position;
+	off_t line1 = startline;
+	off_t line2 = startline;
+	off_t line3;
 	int lncount;
 	int saveln, rc;
 	regex_t re;
@@ -1498,7 +1500,7 @@ static int skip_backwards(struct more_control *ctl, int nlines)
 		initline--;
 	if (initline < 0)
 		initline = 0;
-	more_fseek(ctl, 0L);
+	more_fseek(ctl, 0);
 	ctl->current_line = 0;	/* skip_lines() will make current_line correct */
 	skip_lines(ctl, initline);
 	if (!ctl->no_scroll)
@@ -1508,7 +1510,7 @@ static int skip_backwards(struct more_control *ctl, int nlines)
 	return retval;
 }
 
-static int skip_forwards(struct more_control *ctl, int nlines, char comchar)
+static int skip_forwards(struct more_control *ctl, int nlines, cc_t comchar)
 {
 	int c;
 
@@ -1546,9 +1548,10 @@ static int more_key_command(struct more_control *ctl, char *filename)
 {
 	int nlines;
 	int retval = 0;
-	char colonch;
+	cc_t colonch;
 	int done = 0;
-	char comchar, cmdbuf[INIT_BUF];
+	cc_t comchar;
+	char cmdbuf[INIT_BUF];
 	if (!ctl->report_errors)
 		output_prompt(ctl, filename);
 	else
@@ -1568,7 +1571,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 		}
 		ctl->last_key_command = comchar;
 		ctl->last_key_arg = nlines;
-		if ((cc_t) comchar == ctl->output_tty.c_cc[VERASE]) {
+		if (comchar == ctl->output_tty.c_cc[VERASE]) {
 			kill_line(ctl);
 			output_prompt(ctl, filename);
 			continue;
@@ -1818,7 +1821,7 @@ static void display_file(struct more_control *ctl, char *initbuf, int left)
 		    more_key_command(ctl, ctl->file_names[ctl->argv_position]);
 	if (left != 0) {
 		if ((ctl->no_scroll || ctl->clear_first)
-		    && (ctl->file_size != LONG_MAX)) {
+		    && ctl->file_size != ~((off_t)0)) {
 			if (ctl->clear_line_ends)
 				putp(ctl->go_home);
 			else
@@ -1849,7 +1852,7 @@ static void display_file(struct more_control *ctl, char *initbuf, int left)
 	fflush(stdout);
 	fclose(ctl->current_file);
 	ctl->current_file = NULL;
-	ctl->screen_start.line_num = ctl->screen_start.row_num = 0L;
+	ctl->screen_start.line_num = ctl->screen_start.row_num = 0;
 	ctl->context.line_num = ctl->context.row_num = 0L;
 }
 
