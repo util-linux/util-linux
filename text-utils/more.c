@@ -347,8 +347,11 @@ static void checkf(struct more_control *ctl, char *fs)
 	struct stat st;
 	int c;
 
-	if (stat(fs, &st) == -1) {
-		fflush(stdout);
+	ctl->current_line = 0;
+	ctl->file_position = 0;
+	fflush(NULL);
+	if (((ctl->current_file = fopen(fs, "r")) == NULL) ||
+	    (fstat(fileno(ctl->current_file), &st) != 0)) {
 		if (ctl->clear_line_ends)
 			putp(ctl->erase_line);
 		warn(_("stat of %s failed"), fs);
@@ -717,9 +720,9 @@ static void output_prompt(struct more_control *ctl, char *filename)
 			putp(ctl->exit_std);
 		if (ctl->clear_line_ends)
 			putp(ctl->clear_rest);
-		fflush(stdout);
 	} else
 		fprintf(stderr, "\a");
+	fflush(NULL);
 }
 
 static void reset_tty(struct more_control *ctl)
@@ -728,9 +731,9 @@ static void reset_tty(struct more_control *ctl)
 		return;
 	if (ctl->underline_state) {
 		putp(ctl->exit_underline);
-		fflush(stdout);
 		ctl->underline_state = 0;
 	}
+	fflush(NULL);
 	ctl->output_tty.c_lflag |= ICANON | ECHO;
 	ctl->output_tty.c_cc[VMIN] = ctl->original_tty.c_cc[VMIN];
 	ctl->output_tty.c_cc[VTIME] = ctl->original_tty.c_cc[VTIME];
@@ -744,11 +747,9 @@ static void __attribute__((__noreturn__)) more_exit(struct more_control *ctl)
 	if (ctl->clear_line_ends) {
 		putchar('\r');
 		putp(ctl->erase_line);
-		fflush(stdout);
-	} else if (!ctl->clear_line_ends && (ctl->prompt_len > 0)) {
+	} else if (!ctl->clear_line_ends && (ctl->prompt_len > 0))
 		erase_to_col(ctl, 0);
-		fflush(stdout);
-	}
+	fflush(NULL);
 	free(ctl->previous_search);
 	free(ctl->shell_line);
 	free(ctl->line_buf);
@@ -847,7 +848,7 @@ static void more_error(struct more_control *ctl, char *mess)
 	fputs(mess, stdout);
 	if (ctl->exit_std)
 		putp(ctl->exit_std);
-	fflush(stdout);
+	fflush(NULL);
 	ctl->report_errors++;
 }
 
@@ -953,7 +954,7 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 				ctl->prompt_len = 1;
 			}
 			sp = buf;
-			fflush(stdout);
+			fflush(NULL);
 			continue;
 		}
 		if (slash && (c == ctl->output_tty.c_cc[VKILL] ||
@@ -1056,7 +1057,7 @@ static void sigquit_handler(struct more_control *ctl)
 static void sigtstp_handler(struct more_control *ctl)
 {
 	reset_tty(ctl);
-	fflush(stdout);
+	fflush(NULL);
 	kill(0, SIGSTOP);
 	/* We're back */
 	set_tty(ctl);
@@ -1090,7 +1091,7 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 	char **args;
 	int argcount;
 
-	fflush(stdout);
+	fflush(NULL);
 	for (n = 10; (id = fork()) < 0 && n > 0; n--)
 		sleep(5);
 	if (id == 0) {
@@ -1151,8 +1152,7 @@ static void run_shell(struct more_control *ctl, char *filename)
 
 	erase_to_col(ctl, 0);
 	putchar('!');
-	fflush(stdout);
-	ctl->prompt_len = 1;
+	fflush(NULL);
 	if (ctl->run_previous_command && ctl->shell_line)
 		fputs(ctl->shell_line, stdout);
 	else {
@@ -1163,11 +1163,9 @@ static void run_shell(struct more_control *ctl, char *filename)
 			free(ctl->shell_line);
 			ctl->shell_line = xstrdup(cmdbuf);
 		}
-		erase_to_col(ctl, 0);
-		ctl->prompt_len = printf("!%s", ctl->shell_line);
 	}
-	fflush(stdout);
 	fputc('\n', stderr);
+	fflush(NULL);
 	ctl->prompt_len = 0;
 	execute(ctl, filename, ctl->shell, ctl->shell, "-c", ctl->shell_line, 0);
 }
@@ -1191,7 +1189,7 @@ static int colon_command(struct more_control *ctl, char *filename, int cmd, int 
 			    printf(_("\"%s\" line %d"), ctl->file_names[ctl->argv_position], ctl->current_line);
 		else
 			ctl->prompt_len = printf(_("[Not a file] line %d"), ctl->current_line);
-		fflush(stdout);
+		fflush(NULL);
 		return -1;
 	case 'n':
 		if (nlines == 0) {
@@ -1647,7 +1645,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 		case '=':
 			erase_to_col(ctl, 0);
 			ctl->prompt_len = printf("%d", ctl->current_line);
-			fflush(stdout);
+			fflush(NULL);
 			break;
 		case 'n':
 			if (!ctl->previous_search) {
@@ -1663,7 +1661,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			erase_to_col(ctl, 0);
 			putchar('/');
 			ctl->prompt_len = 1;
-			fflush(stdout);
+			fflush(NULL);
 			if (ctl->run_previous_command) {
 				fputc('\r', stderr);
 				search(ctl, ctl->previous_search, nlines);
@@ -1704,9 +1702,9 @@ static int more_key_command(struct more_control *ctl, char *filename)
 					    + 2 * ctl->stdout_glitch;
 				if (ctl->exit_std)
 					putp(ctl->exit_std);
-				fflush(stdout);
 			} else
 				fprintf(stderr, "\a");
+			fflush(NULL);
 			break;
 		}
 		if (done)
@@ -1755,7 +1753,7 @@ static void screen(struct more_control *ctl, int num_lines)
 			putp(ctl->exit_underline);
 			ctl->underline_state = 0;
 		}
-		fflush(stdout);
+		fflush(NULL);
 		if ((c = more_getc(ctl)) == EOF) {
 			if (ctl->clear_line_ends)
 				putp(ctl->clear_rest);
@@ -1842,7 +1840,7 @@ static void display_file(struct more_control *ctl, char *initbuf, int left)
 		else
 			screen(ctl, left);
 	}
-	fflush(stdout);
+	fflush(NULL);
 	fclose(ctl->current_file);
 	ctl->current_file = NULL;
 	ctl->screen_start.line_num = ctl->screen_start.row_num = 0;
