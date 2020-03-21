@@ -589,22 +589,27 @@ static int get_line(struct more_control *ctl, int *length)
 }
 
 /* Erase the rest of the prompt, assuming we are starting at column col. */
-static void erase_prompt(struct more_control *ctl, int col)
+static void erase_to_col(struct more_control *ctl, int col)
 {
 
 	if (ctl->prompt_len == 0)
 		return;
-	if (ctl->hard_tty) {
+	if (col == 0 && ctl->clear_line_ends)
+		puts(ctl->erase_line);
+	else if (ctl->hard_tty)
 		putchar('\n');
-	} else {
+	else {
 		if (col == 0)
 			putchar('\r');
 		if (!ctl->dumb_tty && ctl->erase_line)
 			putp(ctl->erase_line);
-		else
+		else {
 			printf("%*s", ctl->prompt_len - col, "");
+			if (col == 0)
+				putchar('\r');
+		}
 	}
-	ctl->prompt_len = 0;
+	ctl->prompt_len = col;
 }
 
 #ifdef HAVE_WIDECHAR
@@ -682,20 +687,12 @@ static void print_buf(struct more_control *ctl, char *s, int n)
 	}
 }
 
-/* Erase the current line entirely */
-static void kill_line(struct more_control *ctl)
-{
-	erase_prompt(ctl, 0);
-	if (!ctl->erase_line || ctl->dumb_tty)
-		putchar('\r');
-}
-
 static void output_prompt(struct more_control *ctl, char *filename)
 {
 	if (ctl->clear_line_ends)
 		putp(ctl->erase_line);
 	else if (ctl->prompt_len > 0)
-		kill_line(ctl);
+		erase_to_col(ctl, 0);
 	if (!ctl->hard_tty) {
 		ctl->prompt_len = 0;
 		if (ctl->enter_std) {
@@ -749,7 +746,7 @@ static void __attribute__((__noreturn__)) more_exit(struct more_control *ctl)
 		putp(ctl->erase_line);
 		fflush(stdout);
 	} else if (!ctl->clear_line_ends && (ctl->prompt_len > 0)) {
-		kill_line(ctl);
+		erase_to_col(ctl, 0);
 		fflush(stdout);
 	}
 	free(ctl->previous_search);
@@ -843,7 +840,7 @@ static void more_error(struct more_control *ctl, char *mess)
 	if (ctl->clear_line_ends)
 		putp(ctl->erase_line);
 	else
-		kill_line(ctl);
+		erase_to_col(ctl, 0);
 	ctl->prompt_len += strlen(mess);
 	if (ctl->enter_std)
 		putp(ctl->enter_std);
@@ -949,7 +946,7 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 				putchar('\r');
 				putchar(pchar);
 				if (ctl->erase_line)
-					erase_prompt(ctl, 1);
+					erase_to_col(ctl, 1);
 				else if (ctl->erase_input_ok)
 					while (ctl->prompt_len-- > 1)
 						fprintf(stderr, "%s %s", ctl->backspace_ch, ctl->backspace_ch);
@@ -1152,7 +1149,7 @@ static void run_shell(struct more_control *ctl, char *filename)
 {
 	char cmdbuf[COMMAND_BUF];
 
-	kill_line(ctl);
+	erase_to_col(ctl, 0);
 	putchar('!');
 	fflush(stdout);
 	ctl->prompt_len = 1;
@@ -1166,7 +1163,7 @@ static void run_shell(struct more_control *ctl, char *filename)
 			free(ctl->shell_line);
 			ctl->shell_line = xstrdup(cmdbuf);
 		}
-		kill_line(ctl);
+		erase_to_col(ctl, 0);
 		ctl->prompt_len = printf("!%s", ctl->shell_line);
 	}
 	fflush(stdout);
@@ -1188,7 +1185,7 @@ static int colon_command(struct more_control *ctl, char *filename, int cmd, int 
 	ctl->last_colon_command = ch;
 	switch (ch) {
 	case 'f':
-		kill_line(ctl);
+		erase_to_col(ctl, 0);
 		if (!ctl->no_tty_in)
 			ctl->prompt_len =
 			    printf(_("\"%s\" line %d"), ctl->file_names[ctl->argv_position], ctl->current_line);
@@ -1203,7 +1200,7 @@ static int colon_command(struct more_control *ctl, char *filename, int cmd, int 
 			nlines++;
 		}
 		putchar('\r');
-		erase_prompt(ctl, 0);
+		erase_to_col(ctl, 0);
 		change_file(ctl, nlines);
 		return 0;
 	case 'p':
@@ -1212,7 +1209,7 @@ static int colon_command(struct more_control *ctl, char *filename, int cmd, int 
 			return -1;
 		}
 		putchar('\r');
-		erase_prompt(ctl, 0);
+		erase_to_col(ctl, 0);
 		if (nlines == 0)
 			nlines++;
 		change_file(ctl, -nlines);
@@ -1359,7 +1356,7 @@ static void search(struct more_control *ctl, char buf[], int n)
 						more_clear_screen(ctl);
 				}
 			} else {
-				kill_line(ctl);
+				erase_to_col(ctl, 0);
 				if (ctl->no_scroll) {
 					if (ctl->clear_line_ends) {
 						putp(ctl->go_home);
@@ -1462,7 +1459,7 @@ static void execute_editor(struct more_control *ctl, char *cmdbuf, char *filenam
 	} else
 		sprintf(cmdbuf, "+%d", n);
 
-	kill_line(ctl);
+	erase_to_col(ctl, 0);
 	printf("%s %s %s", editor, cmdbuf, ctl->file_names[ctl->argv_position]);
 	if (split) {
 		cmdbuf[2] = 0;
@@ -1483,7 +1480,7 @@ static int skip_backwards(struct more_control *ctl, int nlines)
 		nlines++;
 
 	putchar('\r');
-	erase_prompt(ctl, 0);
+	erase_to_col(ctl, 0);
 	putchar('\n');
 	if (ctl->clear_line_ends)
 		putp(ctl->erase_line);
@@ -1516,7 +1513,7 @@ static int skip_forwards(struct more_control *ctl, int nlines, cc_t comchar)
 	if (comchar == 'f')
 		nlines *= ctl->lines_per_screen;
 	putchar('\r');
-	erase_prompt(ctl, 0);
+	erase_to_col(ctl, 0);
 	putchar('\n');
 	if (ctl->clear_line_ends)
 		putp(ctl->erase_line);
@@ -1569,7 +1566,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 		ctl->last_key_command = comchar;
 		ctl->last_key_arg = nlines;
 		if (comchar == ctl->output_tty.c_cc[VERASE]) {
-			kill_line(ctl);
+			erase_to_col(ctl, 0);
 			output_prompt(ctl, filename);
 			continue;
 		}
@@ -1636,7 +1633,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			}
 		case '\'':
 			if (!ctl->no_tty_in) {
-				kill_line(ctl);
+				erase_to_col(ctl, 0);
 				fputs(_("\n***Back***\n\n"), stdout);
 				more_fseek(ctl, ctl->context.row_num);
 				ctl->current_line = ctl->context.line_num;
@@ -1648,7 +1645,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 				break;
 			}
 		case '=':
-			kill_line(ctl);
+			erase_to_col(ctl, 0);
 			ctl->prompt_len = printf("%d", ctl->current_line);
 			fflush(stdout);
 			break;
@@ -1663,7 +1660,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			ctl->search_called = 1;
 			if (nlines == 0)
 				nlines++;
-			kill_line(ctl);
+			erase_to_col(ctl, 0);
 			putchar('/');
 			ctl->prompt_len = 1;
 			fflush(stdout);
@@ -1687,7 +1684,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 		case 'h':
 			if (ctl->no_scroll)
 				more_clear_screen(ctl);
-			kill_line(ctl);
+			erase_to_col(ctl, 0);
 			runtime_usage();
 			output_prompt(ctl, filename);
 			break;
@@ -1699,7 +1696,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			/* fallthrough */
 		default:
 			if (ctl->suppress_bell) {
-				kill_line(ctl);
+				erase_to_col(ctl, 0);
 				if (ctl->enter_std)
 					putp(ctl->enter_std);
 				ctl->prompt_len =
@@ -1740,7 +1737,7 @@ static void screen(struct more_control *ctl, int num_lines)
 			prev_len = length;
 			if (ctl->bad_stdout
 			    || ((ctl->enter_std && *ctl->enter_std == ' ') && (ctl->prompt_len > 0)))
-				erase_prompt(ctl, 0);
+				erase_to_col(ctl, 0);
 			/* must clear before drawing line since tabs on
 			 * some terminals do not erase what they tab
 			 * over. */
@@ -1748,9 +1745,8 @@ static void screen(struct more_control *ctl, int num_lines)
 				putp(ctl->erase_line);
 			print_buf(ctl, ctl->line_buf, length);
 			if (nchars < ctl->prompt_len)
-				erase_prompt(ctl, nchars);	/* erase_prompt () sets prompt_len to 0 */
-			else
-				ctl->prompt_len = 0;
+				erase_to_col(ctl, nchars);
+			ctl->prompt_len = 0;
 			if (nchars < ctl->num_columns || !ctl->fold_long_lines)
 				print_buf(ctl, "\n", 1);	/* will turn off UL if necessary */
 			num_lines--;
@@ -1775,7 +1771,7 @@ static void screen(struct more_control *ctl, int num_lines)
 				return;
 		} while (ctl->search_called && !ctl->previous_search);
 		if (ctl->hard_tty && ctl->prompt_len > 0)
-			erase_prompt(ctl, 0);
+			erase_to_col(ctl, 0);
 		if (ctl->no_scroll && num_lines >= ctl->lines_per_screen) {
 			if (ctl->clear_line_ends)
 				putp(ctl->go_home);
@@ -1826,11 +1822,11 @@ static void display_file(struct more_control *ctl, char *initbuf, int left)
 		}
 		if (ctl->print_banner) {
 			if (ctl->bad_stdout)
-				erase_prompt(ctl, 0);
+				erase_to_col(ctl, 0);
 			if (ctl->clear_line_ends)
 				putp(ctl->erase_line);
 			if (ctl->prompt_len > 14)
-				erase_prompt(ctl, 14);
+				erase_to_col(ctl, 14);
 			if (ctl->clear_line_ends)
 				putp(ctl->erase_line);
 			print_separator(':', 14);
