@@ -57,6 +57,7 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/file.h>
+#include <sys/ttydefaults.h>
 #include <sys/wait.h>
 #include <regex.h>
 #include <assert.h>
@@ -85,13 +86,9 @@
 
 #define BACKSPACE	"\b"
 #define CARAT		"^"
-#define RINGBELL	'\007'
 
 #define MIN_LINE_SZ	256	/* minimal line_buf buffer size */
-#define ctrl(letter)	(letter & 077)
-#define RUBOUT		'\177'
 #define ESC		'\033'
-#define QUIT		'\034'
 #define SCROLL_LEN	11
 #define LINES_PER_PAGE	24
 #define NUM_COLUMNS	80
@@ -725,7 +722,7 @@ static void output_prompt(struct more_control *ctl, char *filename)
 			putp(ctl->clear_rest);
 		fflush(stdout);
 	} else
-		fputc(RINGBELL, stderr);
+		fprintf(stderr, "\a");
 }
 
 static void reset_tty(struct more_control *ctl)
@@ -832,8 +829,8 @@ static void change_file(struct more_control *ctl, int nskip)
 
 static void show(struct more_control *ctl, char c)
 {
-	if ((c < ' ' && c != '\n' && c != ESC) || c == RUBOUT) {
-		c += (c == RUBOUT) ? -0100 : 0100;
+	if ((c < ' ' && c != '\n' && c != ESC) || c == CERASE) {
+		c += (c == CERASE) ? -0100 : 0100;
 		fputs(CARAT, stderr);
 		ctl->prompt_len++;
 	}
@@ -934,7 +931,7 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 					--sp;
 				}
 
-				if ((*sp < ' ' && *sp != '\n') || *sp == RUBOUT) {
+				if ((*sp < ' ' && *sp != '\n') || *sp == CERASE) {
 					--ctl->prompt_len;
 					erase_one_column(ctl);
 				}
@@ -970,8 +967,8 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 		if (c != '\\')
 			slash = 0;
 		*sp++ = c;
-		if ((c < ' ' && c != '\n' && c != ESC) || c == RUBOUT) {
-			c += (c == RUBOUT) ? -0100 : 0100;
+		if ((c < ' ' && c != '\n' && c != ESC) || c == CERASE) {
+			c += (c == CERASE) ? -0100 : 0100;
 			fputs(CARAT, stderr);
 			ctl->prompt_len++;
 		}
@@ -1211,7 +1208,7 @@ static int colon_command(struct more_control *ctl, char *filename, int cmd, int 
 		return 0;
 	case 'p':
 		if (ctl->no_tty_in) {
-			fputc(RINGBELL, stderr);
+			fprintf(stderr, "\a");
 			return -1;
 		}
 		putchar('\r');
@@ -1227,7 +1224,7 @@ static int colon_command(struct more_control *ctl, char *filename, int cmd, int 
 	case 'Q':
 		more_exit(ctl);
 	default:
-		fputc(RINGBELL, stderr);
+		fprintf(stderr, "\a");
 		return -1;
 	}
 }
@@ -1583,9 +1580,9 @@ static int more_key_command(struct more_control *ctl, char *filename)
 				done++;
 			break;
 		case 'b':
-		case ctrl('B'):
+		case CTRL('B'):
 			if (ctl->no_tty_in) {
-				fputc(RINGBELL, stderr);
+				fprintf(stderr, "\a");
 				return -1;
 			}
 			retval = skip_backwards(ctl, nlines);
@@ -1601,7 +1598,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			done = 1;
 			break;
 		case 'd':
-		case ctrl('D'):
+		case CTRL('D'):
 			if (nlines != 0)
 				ctl->d_scroll_len = nlines;
 			retval = ctl->d_scroll_len;
@@ -1612,7 +1609,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			more_exit(ctl);
 		case 's':
 		case 'f':
-		case ctrl('F'):
+		case CTRL('F'):
 			if (skip_forwards(ctl, nlines, comchar))
 				retval = ctl->lines_per_screen;
 			done = 1;
@@ -1634,7 +1631,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 				done = 1;
 				break;
 			} else {
-				fputc(RINGBELL, stderr);
+				fprintf(stderr, "\a");
 				break;
 			}
 		case '\'':
@@ -1647,7 +1644,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 				done = 1;
 				break;
 			} else {
-				fputc(RINGBELL, stderr);
+				fprintf(stderr, "\a");
 				break;
 			}
 		case '=':
@@ -1712,7 +1709,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 					putp(ctl->exit_std);
 				fflush(stdout);
 			} else
-				fputc(RINGBELL, stderr);
+				fprintf(stderr, "\a");
 			break;
 		}
 		if (done)
