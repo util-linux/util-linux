@@ -752,12 +752,14 @@ static void __attribute__((__noreturn__)) more_exit(struct more_control *ctl)
 	} else if (!ctl->clear_line_ends && (ctl->prompt_len > 0)) {
 		kill_line(ctl);
 		fflush(stdout);
-	} else
-		fputc('\n', stderr);
+	}
 	free(ctl->previous_search);
 	free(ctl->shell_line);
 	free(ctl->line_buf);
 	free(ctl->go_home);
+	if (ctl->current_file)
+		fclose(ctl->current_file);
+	del_curterm(cur_term);
 	_exit(EXIT_SUCCESS);
 }
 
@@ -2079,9 +2081,7 @@ int main(int argc, char **argv)
 		ctl.first_file = 0;
 		ctl.argv_position++;
 	}
-	free(ctl.previous_search);
-	free(initbuf);
-	free(ctl.line_buf);
-	reset_tty(&ctl);
-	exit(EXIT_SUCCESS);
+	ctl.clear_line_ends = 0;
+	ctl.prompt_len = 0;
+	more_exit(&ctl);
 }
