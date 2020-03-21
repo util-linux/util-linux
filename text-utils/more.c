@@ -1095,7 +1095,6 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 	int argcount;
 
 	fflush(stdout);
-	reset_tty(ctl);
 	for (n = 10; (id = fork()) < 0 && n > 0; n--)
 		sleep(5);
 	if (id == 0) {
@@ -1104,6 +1103,7 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 			close(STDIN_FILENO);
 			open("/dev/tty", 0);
 		}
+		reset_tty(ctl);
 
 		va_start(argp, cmd);
 		arg = va_arg(argp, char *);
