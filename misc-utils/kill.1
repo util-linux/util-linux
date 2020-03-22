@@ -164,10 +164,19 @@ and the description of
 .B CLONE_THREAD
 in
 .BR clone (2).
-
+.P
+Various shells have provide an internal kill implementation that is
+preferred in relation to the
+.BR kill (1)
+executable described by this manual.  Easiest way to ensure one is executing
+the executable is to use full path when calling the command, for example:
+.BR "/bin/kill --version"
 .SH RETURN CODES
 .B kill
 has the following return codes:
+.PP
+.RS
+.PD 0
 .TP
 .B 0
 success
@@ -177,7 +186,8 @@ failure
 .TP
 .B 64
 partial success (when more than one process specified)
-
+.PD
+.RE
 .SH SEE ALSO
 .BR bash (1),
 .BR tcsh (1),
