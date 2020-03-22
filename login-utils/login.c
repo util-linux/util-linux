@@ -498,6 +498,7 @@ static void log_lastlog(struct login_context *cxt)
 {
 	struct sigaction sa, oldsa_xfsz;
 	struct lastlog ll;
+	off_t offset;
 	time_t t;
 	int fd;
 
@@ -515,16 +516,14 @@ static void log_lastlog(struct login_context *cxt)
 	fd = open(_PATH_LASTLOG, O_RDWR, 0);
 	if (fd < 0)
 		goto done;
-
-	if (lseek(fd, (off_t) cxt->pwd->pw_uid * sizeof(ll), SEEK_SET) == -1)
-		goto done;
+	offset = cxt->pwd->pw_uid * sizeof(ll);
 
 	/*
 	 * Print last log message.
 	 */
 	if (!cxt->quiet) {
-		if (read(fd, (char *)&ll, sizeof(ll)) == sizeof(ll) &&
-							ll.ll_time != 0) {
+		if ((pread(fd, (void *)&ll, sizeof(ll), offset) == sizeof(ll)) &&
+		    ll.ll_time != 0) {
 			char time_string[CTIME_BUFSIZ];
 
 			time_t ll_time = (time_t) ll.ll_time;
@@ -538,8 +537,6 @@ static void log_lastlog(struct login_context *cxt)
 				printf(_("on %.*s\n"),
 				       (int)sizeof(ll.ll_line), ll.ll_line);
 		}
-		if (lseek(fd, (off_t) cxt->pwd->pw_uid * sizeof(ll), SEEK_SET) == -1)
-			goto done;
 	}
 
 	memset((char *)&ll, 0, sizeof(ll));
@@ -552,7 +549,7 @@ static void log_lastlog(struct login_context *cxt)
 	if (cxt->hostname)
 		str2memcpy(ll.ll_host, cxt->hostname, sizeof(ll.ll_host));
 
-	if (write_all(fd, (char *)&ll, sizeof(ll)))
+	if (pwrite(fd, (void *)&ll, sizeof(ll), offset) != sizeof(ll))
 		warn(_("write lastlog failed"));
 done:
 	if (fd >= 0)
