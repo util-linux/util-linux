@@ -28,6 +28,7 @@ ts_scsi_debug_init dev_size_mb=50
 
 ts_log "Create partitions"
 $TS_CMD_FDISK ${TS_DEVICE} &> /dev/null <<EOF
+o
 n
 p
 1
