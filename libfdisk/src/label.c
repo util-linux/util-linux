@@ -614,7 +614,6 @@ void fdisk_label_set_changed(struct fdisk_label *lb, int changed)
  */
 int fdisk_label_is_changed(const struct fdisk_label *lb)
 {
-	assert(lb);
 	return lb ? lb->changed : 0;
 }
 
