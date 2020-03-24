@@ -279,7 +279,7 @@ static const struct menu_entry *next_menu_entry(
 		/* no more entries */
 		if (e->title == NULL ||
 		/* menu wanted for specified labels only */
-		    (m->label && lb && !(m->label & type)) ||
+		    (m->label && (!lb || !(m->label & type))) ||
 		/* unwanted for nested PT */
 		    (m->nonested && parent) ||
 		/* menu excluded for specified labels */
@@ -296,7 +296,7 @@ static const struct menu_entry *next_menu_entry(
 		/* excluded for the current label */
 		if ((e->exclude && lb && e->exclude & type) ||
 		/* entry wanted for specified labels only */
-		    (e->label && lb && !(e->label & type)) ||
+		    (e->label && (!lb || !(e->label & type))) ||
 		/* exclude non-expert entries in expect mode */
 		    (e->expert == 0 && fdisk_is_details(cxt)) ||
 		/* nested only */
