@@ -55,10 +55,31 @@ x?:Reserved conditions (should not be reported)
 The command \fBblkzone reset\fP is used to reset one or more zones. Unlike
 .BR sg_reset_wp (8),
 this command operates from the block layer and can reset a range of zones.
+
+.SS open
+The command \fBblkzone open\fP is used to explicitly open one or more zones.
+Unlike
+.BR sg_zone (8),
+open action, this command operates from the block layer and can open a range
+of zones.
+
+.SS close
+The command \fBblkzone close\fP is used to close one or more zones. Unlike
+.BR sg_zone (8),
+close action, this command operates from the block layer and can close a range
+of zones.
+
+.SS finish
+The command \fBblkzone finish\fP is used to finish (transition to full condition)
+one or more zones. Unlike
+.BR sg_zone (8),
+finish action, this command operates from the block layer and can finish a range
+of zones.
+
 .PP
-By default, the command will operate from the zone at device
-sector 0 and reset all zones. Options may be used to modify this behavior
-as well as specify the operation to be performed on the zone, as explained below.
+By default, the reset, open, close and finish commands will operate from the zone
+at device sector 0 and operate on all zones. Options may be used to modify this
+behavior as explained below.
 
 .SH OPTIONS
 The

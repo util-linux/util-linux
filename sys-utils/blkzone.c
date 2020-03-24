@@ -44,10 +44,23 @@
 #include "sysfs.h"
 #include "optutils.h"
 
+/*
+ * These ioctls are defined in linux/blkzoned.h starting with kernel 5.5.
+ */
+#ifndef BLKOPENZONE
+#define BLKOPENZONE	_IOW(0x12, 134, struct blk_zone_range)
+#endif
+#ifndef BLKCLOSEZONE
+#define BLKCLOSEZONE	_IOW(0x12, 135, struct blk_zone_range)
+#endif
+#ifndef BLKFINISHZONE
+#define BLKFINISHZONE	_IOW(0x12, 136, struct blk_zone_range)
+#endif
+
 struct blkzone_control;
 
 static int blkzone_report(struct blkzone_control *ctl);
-static int blkzone_reset(struct blkzone_control *ctl);
+static int blkzone_action(struct blkzone_control *ctl);
 
 struct blkzone_command {
 	const char *name;
@@ -71,8 +84,27 @@ struct blkzone_control {
 
 static const struct blkzone_command commands[] = {
 	{ "report",	blkzone_report, N_("Report zone information about the given device") },
-	{ "reset",	blkzone_reset,  N_("Reset a range of zones.") }
+	{ "reset",	blkzone_action, N_("Reset a range of zones.") },
+	{ "open",	blkzone_action, N_("Open a range of zones.") },
+	{ "close",	blkzone_action, N_("Close a range of zones.") },
+	{ "finish",	blkzone_action, N_("Set a range of zones to Full.") }
 };
+
+/*
+ * The action values must match the command index in the command array.
+ */
+enum blkzone_action {
+	BLK_ZONE_NO_ACTION = 0,
+	BLK_ZONE_RESET,
+	BLK_ZONE_OPEN,
+	BLK_ZONE_CLOSE,
+	BLK_ZONE_FINISH,
+};
+
+static enum blkzone_action command_action(const struct blkzone_command *command)
+{
+	return command - &commands[0];
+}
 
 static const struct blkzone_command *name_to_command(const char *name)
 {
@@ -246,14 +278,40 @@ static int blkzone_report(struct blkzone_control *ctl)
 }
 
 /*
- * blkzone reset
+ * blkzone reset, open, close, and finish.
  */
-static int blkzone_reset(struct blkzone_control *ctl)
+
+static int blkzone_action(struct blkzone_control *ctl)
 {
 	struct blk_zone_range za = { .sector = 0 };
 	unsigned long zonesize;
+	unsigned long ioctl_cmd;
+	const char *ioctl_name;
 	uint64_t zlen;
 	int fd;
+
+	switch (command_action(ctl->command)) {
+	case BLK_ZONE_RESET:
+		ioctl_cmd = BLKRESETZONE;
+		ioctl_name = "BLKRESETZONE";
+		break;
+	case BLK_ZONE_OPEN:
+		ioctl_cmd = BLKOPENZONE;
+		ioctl_name = "BLKOPENZONE";
+		break;
+	case BLK_ZONE_CLOSE:
+		ioctl_cmd = BLKCLOSEZONE;
+		ioctl_name = "BLKCLOSEZONE";
+		break;
+	case BLK_ZONE_FINISH:
+		ioctl_cmd = BLKFINISHZONE;
+		ioctl_name = "BLKFINISHZONE";
+		break;
+	case BLK_ZONE_NO_ACTION:
+		/* fallthrough */
+	default:
+		errx(EXIT_FAILURE, _("Invalid zone action"));
+	}
 
 	zonesize = blkdev_chunk_sectors(ctl->devname);
 	if (!zonesize)
@@ -288,11 +346,13 @@ static int blkzone_reset(struct blkzone_control *ctl)
 	za.sector = ctl->offset;
 	za.nr_sectors = zlen;
 
-	if (ioctl(fd, BLKRESETZONE, &za) == -1)
-		err(EXIT_FAILURE, _("%s: BLKRESETZONE ioctl failed"), ctl->devname);
+	if (ioctl(fd, ioctl_cmd, &za) == -1)
+		err(EXIT_FAILURE, _("%s: %s ioctl failed"),
+		    ctl->devname, ioctl_name);
 	else if (ctl->verbose)
-		printf(_("%s: successfully reset in range from %" PRIu64 ", to %" PRIu64),
+		printf(_("%s: successfull %s of zones in range from %" PRIu64 ", to %" PRIu64),
 			ctl->devname,
+			ctl->command->name,
 			ctl->offset,
 			ctl->offset + zlen);
 	close(fd);
