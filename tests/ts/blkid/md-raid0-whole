@@ -51,7 +51,7 @@ mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=0 \
 	    --raid-devices=2 ${DEVICE1} ${DEVICE2} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 # create dos partition table
-$TS_CMD_FDISK ${MD_DEVICE} &>/dev/null <<EOF
+$TS_CMD_FDISK --noauto-pt ${MD_DEVICE} &>/dev/null <<EOF
 o
 w
 q

@@ -65,8 +65,8 @@ ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 # need to run init twice, to change system ID after new label, otherwise system
 # ID will be random and will screw up md5's
 ts_log "Create new DOS partition table"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_INIT}${FDISK_CMD_WRITE_CLOSE}" \
-	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+echo -e "${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_INIT}${FDISK_CMD_WRITE_CLOSE}" \
+	 | $TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 print_layout
 ts_finalize_subtest

@@ -51,7 +51,7 @@ TEST_IMAGE_NAME=$(ts_image_init 20)	# 20 MiB
 
 ts_log "Create new DOS partition table"
 echo -e "${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_WRITE_CLOSE}" \
-	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+	 | $TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
 

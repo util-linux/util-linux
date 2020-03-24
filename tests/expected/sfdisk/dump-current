@@ -13,11 +13,11 @@ I/O size (minimum/optimal): 4096 bytes / <removed> bytes
 >>> Script header accepted.
 >>> Script header accepted.
 >>> Script header accepted.
->>> Created a new <removed>.
-<removed>1: Created a new <removed>.
-<removed>2: Created a new <removed>.
-<removed>3: Created a new <removed>.
-<removed>4: Created a new <removed>.
+>>> Created a new disklabel.
+<removed>1: Created a new partition <removed>.
+<removed>2: Created a new partition <removed>.
+<removed>3: Created a new partition <removed>.
+<removed>4: Created a new partition <removed>.
 <removed>5: Done.
 
 New situation:

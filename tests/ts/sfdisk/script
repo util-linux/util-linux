@@ -22,7 +22,6 @@ TS_DESC="script"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SFDISK"
-ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_WIPEFS"
 
 ts_skip_nonroot

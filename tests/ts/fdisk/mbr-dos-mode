@@ -55,7 +55,7 @@ ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_log "Create new DOS partition table"
 echo -e "${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_INIT}${FDISK_CMD_WRITE_CLOSE}" \
-	 | $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
+	 | $TS_CMD_FDISK --noauto-pt ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout

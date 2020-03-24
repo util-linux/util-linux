@@ -770,7 +770,8 @@ function ts_fdisk_clean {
 
 	sed -i \
 		-e 's/Disk identifier:.*/Disk identifier: <removed>/' \
-		-e 's/Created a new.*/Created a new <removed>./' \
+		-e 's/Created a new partition.*/Created a new partition <removed>./' \
+		-e 's/Created a new .* disklabel .*/Created a new disklabel./' \
 		-e 's/^Device[[:blank:]]*Start/Device             Start/' \
 		-e 's/^Device[[:blank:]]*Boot/Device     Boot/' \
 		-e 's/Welcome to fdisk.*/Welcome to fdisk <removed>./' \

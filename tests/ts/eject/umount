@@ -34,7 +34,7 @@ function init_partitions {
 	local dev=$1
 
 	ts_log "Create partitions"
-	$TS_CMD_FDISK $dev >> /dev/null 2>&1 <<EOF
+	$TS_CMD_FDISK --noauto-pt $dev >> /dev/null 2>&1 <<EOF
 o
 n
 p

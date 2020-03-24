@@ -34,7 +34,8 @@ TS_KNOWN_FAIL="yes"	# due to recent changes in mdadm
 ts_scsi_debug_init dev_size_mb=51 sector_size=512
 
 ts_log "Create partitions"
-$TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
+$TS_CMD_FDISK --noauto-pt ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
+o
 n
 p
 1

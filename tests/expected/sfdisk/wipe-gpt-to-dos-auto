@@ -13,8 +13,8 @@ Old situation:
 Device     Boot Start    End Sectors Size Id Type
 <removed>1        2048 102399  100352  49M 83 Linux
 
->>> Created a new <removed>.
-<removed>1: Created a new <removed>.
+>>> Created a new disklabel.
+<removed>1: Created a new partition <removed>.
 <removed>2: Done.
 
 New situation:
@@ -40,8 +40,8 @@ Old situation:
 Device             Start    End Sectors Size Type
 <removed>1   2048 102366  100319  49M Linux filesystem
 
->>> Created a new <removed>.
-<removed>1: Created a new <removed>.
+>>> Created a new disklabel.
+<removed>1: Created a new partition <removed>.
 <removed>2: Done.
 
 New situation:

@@ -38,7 +38,8 @@ ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3
 DEVNAME=$(basename $TS_DEVICE)
 
 ts_log "Create partitions"
-$TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
+$TS_CMD_FDISK --noauto-pt ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
+o
 n
 p
 1

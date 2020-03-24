@@ -39,7 +39,7 @@ if [ "$has_mtab" == "yes" ]; then
 fi
 
 ts_log "Create partitions"
-$TS_CMD_FDISK ${TS_DEVICE} &> /dev/null <<EOF
+$TS_CMD_FDISK --noauto-pt ${TS_DEVICE} &> /dev/null <<EOF
 o
 n
 p

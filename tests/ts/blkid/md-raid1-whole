@@ -54,7 +54,7 @@ mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=1 \
 udevadm settle
 
 # create dos partition table
-$TS_CMD_FDISK ${MD_DEVICE} &>/dev/null <<EOF
+$TS_CMD_FDISK --noauto-pt ${MD_DEVICE} &>/dev/null <<EOF
 o
 w
 q
