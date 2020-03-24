@@ -867,6 +867,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --list                    display partitions and exit\n"), out);
 	fputs(_(" -x, --list-details            like --list but with more details\n"), out);
 
+	fputs(_(" -n, --noauto-pt               don't create default partition table on empty devices\n"), out);
 	fputs(_(" -o, --output <list>           output columns\n"), out);
 	fputs(_(" -t, --type <type>             recognize specified partition table type only\n"), out);
 	fputs(_(" -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"), out);
@@ -901,7 +902,7 @@ enum {
 
 int main(int argc, char **argv)
 {
-	int rc, i, c, act = ACT_FDISK;
+	int rc, i, c, act = ACT_FDISK, noauto_pt = 0;
 	int colormode = UL_COLORMODE_UNDEF;
 	struct fdisk_context *cxt;
 	char *outarg = NULL;
@@ -919,6 +920,7 @@ int main(int argc, char **argv)
 		{ "help",           no_argument,       NULL, 'h' },
 		{ "list",           no_argument,       NULL, 'l' },
 		{ "list-details",   no_argument,       NULL, 'x' },
+		{ "noauto-pt",      no_argument,       NULL, 'n' },
 		{ "sector-size",    required_argument, NULL, 'b' },
 		{ "type",           required_argument, NULL, 't' },
 		{ "units",          optional_argument, NULL, 'u' },
@@ -945,7 +947,7 @@ int main(int argc, char **argv)
 
 	fdisk_set_ask(cxt, ask_callback, NULL);
 
-	while ((c = getopt_long(argc, argv, "b:Bc::C:hH:lL::o:sS:t:u::vVw:W:x",
+	while ((c = getopt_long(argc, argv, "b:Bc::C:hH:lL::no:sS:t:u::vVw:W:x",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
@@ -1007,6 +1009,9 @@ int main(int argc, char **argv)
 			if (optarg)
 				colormode = colormode_or_err(optarg,
 						_("unsupported color mode"));
+			break;
+		case 'n':
+			noauto_pt = 1;
 			break;
 		case 'o':
 			outarg = optarg;
@@ -1135,7 +1140,8 @@ int main(int argc, char **argv)
 
 		if (!fdisk_has_label(cxt)) {
 			fdisk_info(cxt, _("Device does not contain a recognized partition table."));
-			fdisk_create_disklabel(cxt, NULL);
+			if (!noauto_pt)
+				fdisk_create_disklabel(cxt, NULL);
 
 		} else if (fdisk_is_label(cxt, GPT) && fdisk_gpt_is_hybrid(cxt))
 			fdisk_warnx(cxt, _(

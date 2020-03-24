@@ -83,8 +83,12 @@ If no devices are given, those mentioned in
 .I /proc/partitions
 (if that file exists) are used.
 .TP
-\fB\-x\fR, \fB\-\-list-details\fR
+\fB\-x\fR, \fB\-\-list\-details\fR
 Like \fB\-\-list\fR, but provides more details.
+.TP
+\fB\-n\fR, \fB\-\-noauto\-pt\fR
+Don't automatically create a default partition table on empty device.  The partition table
+has to be explicitly created by user (by command like 'o', 'g', etc.).
 .TP
 .BR \-o , " \-\-output " \fIlist\fP
 Specify which output columns to print.  Use
