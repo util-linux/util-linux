@@ -36,7 +36,6 @@ DEVNAME=$(basename $TS_DEVICE)
 
 ts_log "Create partitions"
 $TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
-o
 n
 p
 1
