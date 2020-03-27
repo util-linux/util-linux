@@ -43,17 +43,10 @@
 # define UMOUNT_UNUSED    0x80000000	/* Flag guaranteed to be unused */
 #endif
 
-/**
- * mnt_context_find_umount_fs:
- * @cxt: mount context
- * @tgt: mountpoint, device, ...
- * @pfs: returns point to filesystem
- *
- * Returns: 0 on success, <0 on error, 1 if target filesystem not found
- */
-int mnt_context_find_umount_fs(struct libmnt_context *cxt,
-			       const char *tgt,
-			       struct libmnt_fs **pfs)
+/* search in mountinfo/mtab */
+static int __mtab_find_umount_fs(struct libmnt_context *cxt,
+			    const char *tgt,
+			    struct libmnt_fs **pfs)
 {
 	int rc;
 	struct libmnt_ns *ns_old;
@@ -61,16 +54,12 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 	struct libmnt_fs *fs;
 	char *loopdev = NULL;
 
-	if (pfs)
-		*pfs = NULL;
+	assert(cxt);
+	assert(tgt);
+	assert(pfs);
 
-	if (!cxt || !tgt || !pfs)
-		return -EINVAL;
-
-	DBG(CXT, ul_debugobj(cxt, "umount: lookup FS for '%s'", tgt));
-
-	if (!*tgt)
-		return 1; /* empty string is not an error */
+	*pfs = NULL;
+	DBG(CXT, ul_debugobj(cxt, " search %s in mountinfo", tgt));
 
 	/*
 	 * The mount table may be huge, and on systems with utab we have to
@@ -166,8 +155,7 @@ try_loopdev:
 		}
 	}
 
-	if (pfs)
-		*pfs = fs;
+	*pfs = fs;
 	free(loopdev);
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
@@ -180,6 +168,36 @@ err:
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 	return rc;
+}
+
+/**
+ * mnt_context_find_umount_fs:
+ * @cxt: mount context
+ * @tgt: mountpoint, device, ...
+ * @pfs: returns point to filesystem
+ *
+ * Returns: 0 on success, <0 on error, 1 if target filesystem not found
+ */
+int mnt_context_find_umount_fs(struct libmnt_context *cxt,
+			       const char *tgt,
+			       struct libmnt_fs **pfs)
+{
+	if (pfs)
+		*pfs = NULL;
+
+	if (!cxt || !tgt || !pfs)
+		return -EINVAL;
+
+	DBG(CXT, ul_debugobj(cxt, "umount: lookup FS for '%s'", tgt));
+
+	if (!*tgt)
+		return 1; /* empty string is not an error */
+
+	/* In future this function should be extened to support for example
+	 * fsinfo() (or another cheap way kernel will support), for now the
+	 * default is expensive mountinfo/mtab.
+	 */
+	return __mtab_find_umount_fs(cxt, tgt, pfs);
 }
 
 /* Check if there is something important in the utab file. The parsed utab is
@@ -295,13 +313,13 @@ static int lookup_umount_fs_by_mountinfo(struct libmnt_context *cxt, const char 
 
 	DBG(CXT, ul_debugobj(cxt, " lookup by mountinfo"));
 
-	rc = mnt_context_find_umount_fs(cxt, tgt, &fs);
+	/* search */
+	rc = __mtab_find_umount_fs(cxt, tgt, &fs);
 	if (rc != 0)
 		return rc;
 
+	/* apply result */
 	if (fs != cxt->fs) {
-		/* copy from mtab to our FS description
-		 */
 		mnt_fs_set_source(cxt->fs, NULL);
 		mnt_fs_set_target(cxt->fs, NULL);
 
@@ -316,8 +334,13 @@ static int lookup_umount_fs_by_mountinfo(struct libmnt_context *cxt, const char 
 	return 0;
 }
 
-/* this is umount replacement to mnt_context_apply_fstab(), use
- * mnt_context_tab_applied() to check result.
+/* This finction search for FS according to cxt->fs->target,
+ * apply result to cxt->fs and it's umount replacement to
+ * mnt_context_apply_fstab(), use mnt_context_tab_applied()
+ * to check result.
+ *
+ * The goal is to mimimize situations wehn we need to parse
+ * /proc/self/mountinfo.
  */
 static int lookup_umount_fs(struct libmnt_context *cxt)
 {
