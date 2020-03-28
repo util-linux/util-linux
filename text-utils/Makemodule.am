@@ -80,7 +80,7 @@ bin_PROGRAMS += more
 dist_man_MANS += text-utils/more.1
 more_SOURCES = text-utils/more.c
 more_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS)
-more_LDADD = $(LDADD)
+more_LDADD = $(LDADD) libcommon.la
 if HAVE_TINFO
 more_LDADD += $(TINFO_LIBS)
 more_LDADD += $(TINFO_CFLAGS)
