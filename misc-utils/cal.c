@@ -108,7 +108,7 @@ static int setup_terminal(char *term
 	return 0;
 }
 
-static void my_putstring(char *s)
+static void my_putstring(const char *s)
 {
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 	if (has_term)
