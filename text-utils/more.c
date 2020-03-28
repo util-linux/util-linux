@@ -1058,8 +1058,12 @@ static void sigtstp_handler(struct more_control *ctl)
 {
 	reset_tty(ctl);
 	fflush(NULL);
-	kill(0, SIGSTOP);
-	/* We're back */
+	kill(getpid(), SIGSTOP);
+}
+
+/* Come here when we get a continue signal from the terminal */
+static void sigcont_handler(struct more_control *ctl)
+{
 	set_tty(ctl);
 }
 
@@ -1295,6 +1299,9 @@ static int more_poll(struct more_control *ctl, int timeout)
 			break;
 		case SIGTSTP:
 			sigtstp_handler(ctl);
+			break;
+		case SIGCONT:
+			sigcont_handler(ctl);
 			break;
 		case SIGWINCH:
 			sigwinch_handler(ctl);
@@ -2055,6 +2062,7 @@ int main(int argc, char **argv)
 	sigaddset(&ctl.sigset, SIGINT);
 	sigaddset(&ctl.sigset, SIGQUIT);
 	sigaddset(&ctl.sigset, SIGTSTP);
+	sigaddset(&ctl.sigset, SIGCONT);
 	sigaddset(&ctl.sigset, SIGWINCH);
 	sigprocmask(SIG_BLOCK, &ctl.sigset, NULL);
 	ctl.sigfd = signalfd(-1, &ctl.sigset, SFD_CLOEXEC);
