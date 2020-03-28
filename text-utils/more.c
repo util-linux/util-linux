@@ -1084,16 +1084,14 @@ static void sigwinch_handler(struct more_control *ctl)
 
 static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 {
-	int id;
-	int n;
+	pid_t id;
 	va_list argp;
 	char *arg;
 	char **args;
 	int argcount;
 
 	fflush(NULL);
-	for (n = 10; (id = fork()) < 0 && n > 0; n--)
-		sleep(5);
+	id = fork();
 	if (id == 0) {
 		int errsv;
 		if (!isatty(STDIN_FILENO)) {
@@ -1137,8 +1135,11 @@ static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
 		exit(errsv == ENOENT ? EX_EXEC_ENOENT : EX_EXEC_FAILED);
 	}
 	if (id > 0) {
-		while (wait(NULL) > 0)
-			/* nothing */ ;
+		errno = 0;
+		while (wait(NULL) > 0) {
+			if (errno == EINTR)
+				continue;
+		}
 	} else
 		fputs(_("can't fork\n"), stderr);
 	set_tty(ctl);
