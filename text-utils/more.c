@@ -106,9 +106,7 @@
 #define TERM_COLS                 "cols"
 #define TERM_CURSOR_ADDRESS       "cup"
 #define TERM_EAT_NEW_LINE         "xenl"
-#define TERM_ENTER_UNDERLINE      "smul"
 #define TERM_EXIT_STANDARD_MODE   "rmso"
-#define TERM_EXIT_UNDERLINE       "rmul"
 #define TERM_HARD_COPY            "hc"
 #define TERM_HOME                 "home"
 #define TERM_LINE_DOWN            "cud1"
@@ -116,8 +114,6 @@
 #define TERM_OVER_STRIKE          "os"
 #define TERM_STANDARD_MODE        "smso"
 #define TERM_STD_MODE_GLITCH      "xmc"
-#define TERM_UNDERLINE_CHAR       "uc"
-#define TERM_UNDERLINE            "ul"
 
 struct more_control {
 	struct termios output_tty;	/* output terminal */
@@ -142,9 +138,6 @@ struct more_control {
 	char *erase_line;		/* erase line */
 	char *enter_std;		/* enter standout mode */
 	char *exit_std;			/* exit standout mode */
-	char *enter_underline;		/* enter underline mode */
-	char *exit_underline;		/* exit underline mode */
-	char *underline_ch;		/* underline character */
 	char *backspace_ch;		/* backspace character */
 	char *go_home;			/* go to home */
 	char *move_line_down;		/* move line down */
@@ -167,7 +160,6 @@ struct more_control {
 		clear_first:1,		/* is first character in file \f */
 		dumb_tty:1,		/* is terminal type known */
 		eat_newline:1,		/* is newline ignored after 80 cols */
-		enable_underlining:1,	/* underline as best we can */
 		erase_input_ok:1,	/* is erase input supported */
 		erase_previous_ok:1,	/* is erase previous supported */
 		first_file:1,		/* is the input file the first in list */
@@ -189,8 +181,6 @@ struct more_control {
 		stdout_glitch:1,	/* terminal has standout mode glitch */
 		stop_after_formfeed:1,	/* stop after form feeds */
 		suppress_bell:1,	/* suppress bell */
-		underline_glitch:1,	/* terminal has underline mode glitch */
-		underline_state:1,	/* current UL state */
 		wrap_margin:1;		/* set if automargins */
 };
 
@@ -210,7 +200,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c          do not scroll, display text and clean line ends\n"), out);
 	fputs(_(" -p          do not scroll, clean screen and display text\n"), out);
 	fputs(_(" -s          squeeze multiple blank lines into one\n"), out);
-	fputs(_(" -u          suppress underlining\n"), out);
 	fputs(_(" -<number>   the number of lines per screenful\n"), out);
 	fputs(_(" +<number>   display file beginning from line number\n"), out);
 	fputs(_(" +/<string>  display file beginning from search string match\n"), out);
@@ -264,7 +253,6 @@ static void arg_parser(struct more_control *ctl, char *s)
 			ctl->squeeze_spaces = 1;
 			break;
 		case 'u':
-			ctl->enable_underlining = 0;
 			break;
 		case '-':
 		case ' ':
@@ -615,81 +603,6 @@ static void erase_to_col(struct more_control *ctl, int col)
 	ctl->prompt_len = col;
 }
 
-#ifdef HAVE_WIDECHAR
-static UL_ASAN_BLACKLIST size_t xmbrtowc(wchar_t *wc, const char *s, size_t n,
-				  mbstate_t *mbstate)
-{
-	const size_t mblength = mbrtowc(wc, s, n, mbstate);
-	if (mblength == (size_t)-2 || mblength == (size_t)-1)
-		return 1;
-	return mblength;
-}
-#endif
-
-static int would_underline(char *s, int n)
-{
-	if (n < 2)
-		return 0;
-	if ((s[0] == '_' && s[1] == '\b') || (s[1] == '\b' && s[2] == '_'))
-		return 1;
-	return 0;
-}
-
-/* Print a buffer of n characters */
-static void print_buf(struct more_control *ctl, char *s, int n)
-{
-	char c;		/* next output character */
-	int state;	/* next output char's UL state */
-
-	while (--n >= 0) {
-		if (!ctl->enable_underlining) {
-			putchar(*s++);
-			continue;
-		}
-		if (*s == ' ' && ctl->underline_state == 0 && ctl->underline_glitch
-		    && would_underline(s + 1, n - 1)) {
-			s++;
-			continue;
-		}
-		if ((state = would_underline(s, n)) != 0) {
-			c = (*s == '_') ? s[2] : *s;
-			n -= 2;
-			s += 3;
-		} else
-			c = *s++;
-		if (state != ctl->underline_state) {
-			if (c == ' ' && state == 0 && ctl->underline_glitch
-			    && would_underline(s, n - 1))
-				state = 1;
-			else
-				putp(state ? ctl->enter_underline : ctl->exit_underline);
-		}
-		if (c != ' ' || ctl->underline_state == 0 || state != 0
-		    || ctl->underline_glitch == 0) {
-#ifdef HAVE_WIDECHAR
-			wchar_t wc;
-			size_t mblength;
-			mbstate_t mbstate;
-
-			memset(&mbstate, '\0', sizeof(mbstate_t));
-			s--;
-			n++;
-			mblength = xmbrtowc(&wc, s, n, &mbstate);
-			while (mblength--)
-				putchar(*s++);
-			n += mblength;
-#else
-			putchar(c);
-#endif
-		}
-		if (state && *ctl->underline_ch) {
-			fputs(ctl->move_line_down, stdout);
-			putp(ctl->underline_ch);
-		}
-		ctl->underline_state = state;
-	}
-}
-
 static void output_prompt(struct more_control *ctl, char *filename)
 {
 	if (ctl->clear_line_ends)
@@ -729,10 +642,6 @@ static void reset_tty(struct more_control *ctl)
 {
 	if (ctl->no_tty_out)
 		return;
-	if (ctl->underline_state) {
-		putp(ctl->exit_underline);
-		ctl->underline_state = 0;
-	}
 	fflush(NULL);
 	ctl->output_tty.c_lflag |= ICANON | ECHO;
 	ctl->output_tty.c_cc[VMIN] = ctl->original_tty.c_cc[VMIN];
@@ -1749,17 +1658,13 @@ static void screen(struct more_control *ctl, int num_lines)
 			 * over. */
 			if (ctl->clear_line_ends)
 				putp(ctl->erase_line);
-			print_buf(ctl, ctl->line_buf, length);
+			fwrite(ctl->line_buf, length, 1, stdout);
 			if (nchars < ctl->prompt_len)
 				erase_to_col(ctl, nchars);
 			ctl->prompt_len = 0;
 			if (nchars < ctl->num_columns || !ctl->fold_long_lines)
-				print_buf(ctl, "\n", 1);	/* will turn off UL if necessary */
+				putchar('\n');
 			num_lines--;
-		}
-		if (ctl->underline_state) {
-			putp(ctl->exit_underline);
-			ctl->underline_state = 0;
 		}
 		fflush(NULL);
 		if ((c = more_getc(ctl)) == EOF) {
@@ -1879,12 +1784,10 @@ static void initterm(struct more_control *ctl)
 	ctl->erase_input_ok = (ctl->output_tty.c_cc[VKILL] != 255);
 	if ((term = getenv("TERM")) == NULL) {
 		ctl->dumb_tty = 1;
-		ctl->enable_underlining = 0;
 	}
 	setupterm(term, 1, &ret);
 	if (ret <= 0) {
 		ctl->dumb_tty = 1;
-		ctl->enable_underlining = 0;
 		return;
 	}
 	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) < 0) {
@@ -1915,32 +1818,6 @@ static void initterm(struct more_control *ctl)
 		ctl->exit_std = tigetstr(TERM_EXIT_STANDARD_MODE);
 		if (0 < tigetnum(TERM_STD_MODE_GLITCH))
 			ctl->stdout_glitch = 1;
-	}
-
-	/*
-	 * Set up for underlining.  Some terminals don't need it, others have
-	 * start/stop sequences, still others have an underline char sequence
-	 * which is assumed to move the cursor forward one character.  If
-	 * underline sequence isn't available, settle for standout sequence.
-	 */
-	if (tigetflag(TERM_UNDERLINE) || tigetflag(TERM_OVER_STRIKE))
-		ctl->enable_underlining = 0;
-	ctl->enter_underline = tigetstr(TERM_ENTER_UNDERLINE);
-	ctl->exit_underline = tigetstr(TERM_EXIT_UNDERLINE);
-	ctl->underline_ch = tigetstr(TERM_UNDERLINE_CHAR);
-	if (!ctl->underline_ch) {
-		ctl->underline_ch = "";
-		if (!ctl->enter_underline || !ctl->exit_underline) {
-			if (!ctl->enter_std || !ctl->exit_std) {
-				ctl->enter_underline = "";
-				ctl->exit_underline = "";
-			} else {
-				ctl->enter_underline = ctl->enter_std;
-				ctl->exit_underline = ctl->exit_std;
-				ctl->underline_glitch = ctl->stdout_glitch;
-			}
-		} else
-			ctl->underline_glitch = 0;
 	}
 
 	cursor_addr = tigetstr(TERM_HOME);
@@ -1974,7 +1851,6 @@ int main(int argc, char **argv)
 		.fold_long_lines = 1,
 		.no_quit_dialog = 1,
 		.stop_after_formfeed = 1,
-		.enable_underlining = 1,
 		.wrap_margin = 1,
 		.lines_per_page = LINES_PER_PAGE,
 		.num_columns = NUM_COLUMNS,
