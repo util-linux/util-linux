@@ -452,6 +452,11 @@ int main(int argc, char **argv)
 		ctl.week_width = (ctl.day_width * DAYS_IN_WEEK) + WNUM_LEN;
 	} else
 		ctl.week_width = ctl.day_width * DAYS_IN_WEEK;
+	/*
+	 * The day_width includes the space between days,
+	 * as there is no leading space, remove 1
+	 * */
+	ctl.week_width -= 1;
 
 	if (argc == 1 && !isdigit_string(*argv)) {
 		usec_t x;
@@ -688,7 +693,7 @@ static void headers_init(struct cal_control *ctl)
 
 	for (i = 0; i < MONTHS_IN_YEAR; i++) {
 		/* The +1 after year_len is space in between month and year. */
-		if (ctl->week_width < strlen(ctl->full_month[i]) + year_len + 1)
+		if (ctl->week_width < strlen(ctl->full_month[i]) + year_len)
 			ctl->header_hint = 1;
 	}
 }
@@ -757,19 +762,19 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 	if (ctl->header_hint || ctl->header_year) {
 		for (i = month; i; i = i->next) {
 			snprintf(out, sizeof(out), "%s", ctl->full_month[i->month - 1]);
-			center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
+			center(out, ctl->week_width, i->next == NULL ? 0 : ctl->gutter_width);
 		}
 		if (!ctl->header_year) {
 			my_putstring("\n");
 			for (i = month; i; i = i->next) {
 				snprintf(out, sizeof(out), "%04d", i->year);
-				center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
+				center(out, ctl->week_width, i->next == NULL ? 0 : ctl->gutter_width);
 			}
 		}
 	} else {
 		for (i = month; i; i = i->next) {
 			snprintf(out, sizeof(out), "%s %04d", ctl->full_month[i->month - 1], i->year);
-			center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
+			center(out, ctl->week_width, i->next == NULL ? 0 : ctl->gutter_width);
 		}
 	}
 	my_putstring("\n");
@@ -909,7 +914,7 @@ static void yearly(const struct cal_control *ctl)
 	char out[FMT_ST_CHARS];
 	int year_width;
 
-	year_width = ctl->months_in_row * (ctl->week_width - 1) +
+	year_width = ctl->months_in_row * (ctl->week_width) +
 		(ctl->months_in_row - 1) * ctl->gutter_width;
 
 	if (ctl->header_year) {
