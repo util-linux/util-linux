@@ -536,6 +536,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "cpu family", &desc->family)) ;
 		else if (lookup(buf, "model", &desc->model)) ;
 		else if (lookup(buf, "CPU part", &desc->model)) ; /* ARM and aarch64 */
+		else if (lookup(buf, "cpu model", &desc->model)) ; /* mips */
 		else if (lookup(buf, "model name", &desc->modelname)) ;
 		else if (lookup(buf, "stepping", &desc->stepping)) ;
 		else if (lookup(buf, "CPU variant", &desc->stepping)) ; /* aarch64 */
@@ -545,6 +546,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "flags", &desc->flags)) ;		/* x86 */
 		else if (lookup(buf, "features", &desc->flags)) ;	/* s390 */
 		else if (lookup(buf, "Features", &desc->flags)) ;	/* aarch64 */
+		else if (lookup(buf, "ASEs implemented", &desc->flags)) ;	/* mips */
 		else if (lookup(buf, "type", &desc->flags)) ;		/* sparc64 */
 		else if (lookup(buf, "bogomips", &desc->bogomips)) ;
 		else if (lookup(buf, "BogoMIPS", &desc->bogomips)) ;	/* aarch64 */
