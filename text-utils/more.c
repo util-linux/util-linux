@@ -1444,34 +1444,18 @@ static void execute_editor(struct more_control *ctl, char *cmdbuf, char *filenam
 
 static int skip_backwards(struct more_control *ctl, int nlines)
 {
-	int retval;
-
 	if (nlines == 0)
 		nlines++;
-
-	putchar('\r');
 	erase_to_col(ctl, 0);
-	putchar('\n');
-	if (ctl->clear_line_ends)
-		putp(ctl->erase_line);
 	printf(P_("...back %d page", "...back %d pages", nlines), nlines);
-	if (ctl->clear_line_ends)
-		putp(ctl->erase_line);
 	putchar('\n');
-
-	ctl->next_jump = ctl->current_line - ctl->lines_per_screen * (nlines + 1);
-	if (!ctl->no_scroll)
-		ctl->next_jump--;
+	ctl->next_jump = ctl->current_line - (ctl->lines_per_screen * (nlines + 1)) - 1;
 	if (ctl->next_jump < 0)
 		ctl->next_jump = 0;
 	more_fseek(ctl, 0);
-	ctl->current_line = 0;	/* skip_lines() will make current_line correct */
+	ctl->current_line = 0;
 	skip_lines(ctl);
-	if (!ctl->no_scroll)
-		retval = ctl->lines_per_screen + 1;
-	else
-		retval = ctl->lines_per_screen;
-	return retval;
+	return ctl->lines_per_screen;
 }
 
 static int skip_forwards(struct more_control *ctl, int nlines, cc_t comchar)
