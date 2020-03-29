@@ -36,6 +36,7 @@
 #include <err.h>
 #include <limits.h>
 #include <search.h>
+#include <lastlog.h>
 
 #include <libsmartcols.h>
 #ifdef HAVE_LIBSELINUX
@@ -93,6 +94,12 @@ enum {
 	OUT_RAW,
 	OUT_NUL,
 	OUT_PRETTY
+};
+
+enum {
+	LASTLOG_TIME,
+	LASTLOG_LINE,
+	LASTLOG_HOST
 };
 
 struct lslogins_user {
@@ -251,6 +258,8 @@ struct lslogins_control {
 
 	struct utmpx *btmp;
 	size_t btmp_size;
+
+	int lastlogin_fd;
 
 	void *usertree;
 
@@ -516,6 +525,31 @@ static int parse_btmp(struct lslogins_control *ctl, char *path)
 	return rc;
 }
 
+static void get_lastlog(struct lslogins_control *ctl, uid_t uid, void *dst, int what)
+{
+	struct lastlog ll;
+
+	if (ctl->lastlogin_fd < 0 ||
+	    pread(ctl->lastlogin_fd, (void *)&ll, sizeof(ll), uid * sizeof(ll)) != sizeof(ll))
+		return;
+
+	switch (what) {
+	case LASTLOG_TIME: {
+		time_t *t = (time_t *)dst;
+		*t = ll.ll_time;
+		break;
+		}
+	case LASTLOG_LINE:
+		mem2strcpy(dst, ll.ll_line, sizeof(ll.ll_line), sizeof(ll.ll_line) + 1);
+		break;
+	case LASTLOG_HOST:
+		mem2strcpy(dst, ll.ll_host, sizeof(ll.ll_host), sizeof(ll.ll_host) + 1);
+		break;
+	default:
+		abort();
+	}
+}
+
 static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 {
 	size_t n = 0;
@@ -737,23 +771,31 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (user_wtmp) {
 				time = user_wtmp->ut_tv.tv_sec;
 				user->last_login = make_time(ctl->time_mode, time);
+			} else {
+				time = 0;
+				get_lastlog(ctl, pwd->pw_uid, &time, LASTLOG_TIME);
+				if (time)
+					user->last_login = make_time(ctl->time_mode, time);
 			}
 			break;
 		case COL_LAST_TTY:
+			user->last_tty = xcalloc(1, sizeof(user_wtmp->ut_line) + 1);
 			if (user_wtmp) {
-				user->last_tty = xmalloc(sizeof(user_wtmp->ut_line) + 1);
 				mem2strcpy(user->last_tty, user_wtmp->ut_line,
 						sizeof(user_wtmp->ut_line),
 						sizeof(user_wtmp->ut_line) + 1);;
+			}  else {
+				get_lastlog(ctl, user->uid, user->last_tty, LASTLOG_LINE);
 			}
 			break;
 		case COL_LAST_HOSTNAME:
+			user->last_hostname = xcalloc(1, sizeof(user_wtmp->ut_host) + 1);
 			if (user_wtmp) {
-				user->last_hostname = xmalloc(sizeof(user_wtmp->ut_host) + 1);
 				mem2strcpy(user->last_hostname, user_wtmp->ut_host,
 						sizeof(user_wtmp->ut_host),
 						sizeof(user_wtmp->ut_host) + 1);;
-			}
+			}  else
+				get_lastlog(ctl, user->uid, user->last_hostname, LASTLOG_HOST);
 			break;
 		case COL_FAILED_LOGIN:
 			if (user_btmp) {
@@ -1363,6 +1405,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
 	fputs(_("     --wtmp-file <path>   set an alternate path for wtmp\n"), out);
 	fputs(_("     --btmp-file <path>   set an alternate path for btmp\n"), out);
+	fputs(_("     --lastlog <path>     set an alternate path for lastlog\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(26));
 
@@ -1379,7 +1422,7 @@ int main(int argc, char *argv[])
 {
 	int c;
 	char *logins = NULL, *groups = NULL, *outarg = NULL;
-	char *path_wtmp = _PATH_WTMP, *path_btmp = _PATH_BTMP;
+	char *path_lastlog = _PATH_LASTLOG, *path_wtmp = _PATH_WTMP, *path_btmp = _PATH_BTMP;
 	struct lslogins_control *ctl = xcalloc(1, sizeof(struct lslogins_control));
 	size_t i;
 
@@ -1387,6 +1430,7 @@ int main(int argc, char *argv[])
 	enum {
 		OPT_WTMP = CHAR_MAX + 1,
 		OPT_BTMP,
+		OPT_LASTLOG,
 		OPT_NOTRUNC,
 		OPT_NOHEAD,
 		OPT_TIME_FMT,
@@ -1417,6 +1461,7 @@ int main(int argc, char *argv[])
 		{ "print0",         no_argument,	0, 'z' },
 		{ "wtmp-file",      required_argument,	0, OPT_WTMP },
 		{ "btmp-file",      required_argument,	0, OPT_BTMP },
+		{ "lastlog-file",   required_argument,	0, OPT_LASTLOG },
 #ifdef HAVE_LIBSELINUX
 		{ "context",        no_argument,	0, 'Z' },
 #endif
@@ -1524,6 +1569,9 @@ int main(int argc, char *argv[])
 		case 'z':
 			outmode = OUT_NUL;
 			break;
+		case OPT_LASTLOG:
+			path_lastlog = optarg;
+			break;
 		case OPT_WTMP:
 			path_wtmp = optarg;
 			break;
@@ -1591,8 +1639,10 @@ int main(int argc, char *argv[])
 					 &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;
 
-	if (require_wtmp())
+	if (require_wtmp()) {
 		parse_wtmp(ctl, path_wtmp);
+		ctl->lastlogin_fd = open(path_lastlog, O_RDONLY, 0);
+	}
 	if (require_btmp())
 		parse_btmp(ctl, path_btmp);
 
@@ -1606,6 +1656,7 @@ int main(int argc, char *argv[])
 
 	scols_unref_table(tb);
 	tdestroy(ctl->usertree, free_user);
+	close(ctl->lastlogin_fd);
 	free_ctl(ctl);
 
 	return EXIT_SUCCESS;
