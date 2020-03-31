@@ -99,9 +99,10 @@ LVM setup, etc.  These reductions would not be reflected in fstrim_range.len
 .B \-\-length
 option).
 .TP
-.B \-\-quiet
-Suppress trim operation (ioctl) error messages.  This option is meant to be used in systemd service
-file or in cron scripts to hide warnings that are result of known problems,
+.B \-\-quiet\-unsupported
+Suppress error messages if trim operation (ioctl) is unsupported.  This option
+is meant to be used in systemd service file or in cron scripts to hide warnings
+that are result of known problems,
 such as NTFS driver
 reporting
 .I Bad file descriptor

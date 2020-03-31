@@ -60,7 +60,7 @@ struct fstrim_control {
 	struct fstrim_range range;
 
 	unsigned int verbose : 1,
-		     quiet   : 1,
+		     quiet_unsupp : 1,
 		     fstab   : 1,
 		     dryrun : 1;
 };
@@ -357,7 +357,7 @@ static int fstrim_all(struct fstrim_control *ctl)
 		rc = fstrim_filesystem(ctl, tgt, src);
 		if (rc < 0)
 		       cnt_err++;
-		else if (rc == 1 && !ctl->quiet)
+		else if (rc == 1 && !ctl->quiet_unsupp)
 			warnx(_("%s: the discard operation is not supported"), tgt);
 	}
 	mnt_free_iter(itr);
@@ -385,14 +385,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Discard unused blocks on a mounted filesystem.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all           trim all supported mounted filesystems\n"), out);
-	fputs(_(" -A, --fstab         trim all supported mounted filesystems from /etc/fstab\n"), out);
-	fputs(_(" -o, --offset <num>  the offset in bytes to start discarding from\n"), out);
-	fputs(_(" -l, --length <num>  the number of bytes to discard\n"), out);
-	fputs(_(" -m, --minimum <num> the minimum extent length to discard\n"), out);
-	fputs(_(" -v, --verbose       print number of discarded bytes\n"), out);
-	fputs(_("     --quiet         suppress trim error messages\n"), out);
-	fputs(_(" -n, --dry-run       does everything, but trim\n"), out);
+	fputs(_(" -a, --all                trim all supported mounted filesystems\n"), out);
+	fputs(_(" -A, --fstab              trim all supported mounted filesystems from /etc/fstab\n"), out);
+	fputs(_(" -o, --offset <num>       the offset in bytes to start discarding from\n"), out);
+	fputs(_(" -l, --length <num>       the number of bytes to discard\n"), out);
+	fputs(_(" -m, --minimum <num>      the minimum extent length to discard\n"), out);
+	fputs(_(" -v, --verbose            print number of discarded bytes\n"), out);
+	fputs(_("     --quiet-unsupported  suppress error messages if trim unsupported\n"), out);
+	fputs(_(" -n, --dry-run            does everything, but trim\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(21));
@@ -412,7 +412,7 @@ int main(int argc, char **argv)
 			.range = { .len = ULLONG_MAX }
 	};
 	enum {
-		OPT_QUIET = CHAR_MAX + 1
+		OPT_QUIET_UNSUPP = CHAR_MAX + 1
 	};
 
 	static const struct option longopts[] = {
@@ -424,7 +424,7 @@ int main(int argc, char **argv)
 	    { "length",    required_argument, NULL, 'l' },
 	    { "minimum",   required_argument, NULL, 'm' },
 	    { "verbose",   no_argument,       NULL, 'v' },
-	    { "quiet",     no_argument,       NULL, OPT_QUIET },
+	    { "quiet-unsupported", no_argument,       NULL, OPT_QUIET_UNSUPP },
 	    { "dry-run",   no_argument,       NULL, 'n' },
 	    { NULL, 0, NULL, 0 }
 	};
@@ -460,8 +460,8 @@ int main(int argc, char **argv)
 		case 'v':
 			ctl.verbose = 1;
 			break;
-		case OPT_QUIET:
-			ctl.quiet = 1;
+		case OPT_QUIET_UNSUPP:
+			ctl.quiet_unsupp = 1;
 			break;
 		case 'h':
 			usage();
@@ -490,7 +490,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 
 	rc = fstrim_filesystem(&ctl, path, NULL);
-	if (rc == 1 && !ctl.quiet)
+	if (rc == 1 && !ctl.quiet_unsupp)
 		warnx(_("%s: the discard operation is not supported"), path);
 
 	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
