@@ -23,7 +23,7 @@ _lslogins_module()
 			COMPREPLY=( $(compgen -W "short full iso" -- $cur) )
 			return 0
 			;;
-		'--wtmp-file'|'--btmp-file')
+		'--wtmp-file'|'--btmp-file'|'--lastlog')
 			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
@@ -69,6 +69,7 @@ _lslogins_module()
 			--print0
 			--wtmp-file
 			--btmp-file
+			--lastlog
 			--help
 			--version
 		" -- $cur) )
