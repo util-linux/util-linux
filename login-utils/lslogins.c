@@ -784,9 +784,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 				mem2strcpy(user->last_tty, user_wtmp->ut_line,
 						sizeof(user_wtmp->ut_line),
 						sizeof(user_wtmp->ut_line) + 1);;
-			}  else {
+			}  else
 				get_lastlog(ctl, user->uid, user->last_tty, LASTLOG_LINE);
-			}
 			break;
 		case COL_LAST_HOSTNAME:
 			user->last_hostname = xcalloc(1, sizeof(user_wtmp->ut_host) + 1);
