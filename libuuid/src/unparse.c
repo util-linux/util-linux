@@ -64,10 +64,11 @@ void uuid_unparse_upper(const uuid_t uu, char *out)
 	uuid_fmt(uu, out, hexdigits_upper);
 }
 
+void uuid_unparse(const uuid_t uu, char *out)
+{
 #ifdef UUID_UNPARSE_DEFAULT_UPPER
-void uuid_unparse(const uuid_t uu, char *out)
-	__attribute__((alias("uuid_unparse_upper")));
+	uuid_fmt(uu, out, hexdigits_upper);
 #else
-void uuid_unparse(const uuid_t uu, char *out)
-	__attribute__((alias("uuid_unparse_lower")));
+	uuid_fmt(uu, out, hexdigits_lower);
 #endif
+}
