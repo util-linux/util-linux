@@ -287,9 +287,13 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 	if (!type) {
 		struct statfs vfs;
 
-		DBG(CXT, ul_debugobj(cxt, "  trying statfs()"));
-		if (statfs(tgt, &vfs) == 0)
+		DBG(CXT, ul_debugobj(cxt, "  trying fstatfs()"));
+		/* O_PATH avoids triggering automount points. */
+		int pathfd = open(tgt, O_PATH);
+		if (pathfd >= 0 && fstatfs(pathfd, &vfs) == 0) {
 			type = mnt_statfs_get_fstype(&vfs);
+			close(pathfd);
+		}
 		if (type) {
 			int rc = mnt_fs_set_fstype(cxt->fs, type);
 			if (rc)
