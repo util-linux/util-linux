@@ -133,6 +133,16 @@ int mnt_stat_mountpoint(const char *target, struct stat *st)
 #endif
 }
 
+int mnt_lstat_mountpoint(const char *target, struct stat *st)
+{
+#ifdef AT_NO_AUTOMOUNT
+	return fstatat(AT_FDCWD, target, st, AT_NO_AUTOMOUNT | AT_SYMLINK_NOFOLLOW);
+#else
+	return lstat(target, st);
+#endif
+}
+
+
 /*
  * Note that the @target has to be an absolute path (so at least "/").  The
  * @filename returns an allocated buffer with the last path component, for example:

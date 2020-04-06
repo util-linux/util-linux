@@ -1757,7 +1757,7 @@ int mnt_context_get_mount_excode(
 		if (!buf)
 			break;
 		if (geteuid() == 0) {
-			if (stat(tgt, &st) || !S_ISDIR(st.st_mode))
+			if (mnt_stat_mountpoint(tgt, &st) || !S_ISDIR(st.st_mode))
 				snprintf(buf, bufsz, _("mount point is not a directory"));
 			else
 				snprintf(buf, bufsz, _("permission denied"));
@@ -1783,10 +1783,10 @@ int mnt_context_get_mount_excode(
 			snprintf(buf, bufsz, _("%s already mounted or mount point busy"), src);
 		break;
 	case ENOENT:
-		if (tgt && lstat(tgt, &st)) {
+		if (tgt && mnt_lstat_mountpoint(tgt, &st)) {
 			if (buf)
 				snprintf(buf, bufsz, _("mount point does not exist"));
-		} else if (tgt && stat(tgt, &st)) {
+		} else if (tgt && mnt_stat_mountpoint(tgt, &st)) {
 			if (buf)
 				snprintf(buf, bufsz, _("mount point is a symbolic link to nowhere"));
 		} else if (src && stat(src, &st)) {
@@ -1801,7 +1801,7 @@ int mnt_context_get_mount_excode(
 		break;
 
 	case ENOTDIR:
-		if (stat(tgt, &st) || ! S_ISDIR(st.st_mode)) {
+		if (mnt_stat_mountpoint(tgt, &st) || ! S_ISDIR(st.st_mode)) {
 			if (buf)
 				snprintf(buf, bufsz, _("mount point is not a directory"));
 		} else if (src && stat(src, &st) && errno == ENOTDIR) {
