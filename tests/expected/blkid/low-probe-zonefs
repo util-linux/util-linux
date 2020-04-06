@@ -1,0 +1,3 @@
+ID_FS_BLOCK_SIZE=4096
+ID_FS_TYPE=zonefs
+ID_FS_USAGE=filesystem
