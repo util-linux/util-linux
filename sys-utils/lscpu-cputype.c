@@ -53,9 +53,38 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		return;
 
 	if (--ct->refcount <= 0) {
-		DBG(TYPE, ul_debugobj(ct, " freeing"));
+		DBG(TYPE, ul_debugobj(ct, "  freeing"));
 		free(ct);
 	}
+}
+
+
+#define match(astr, bstr) \
+		((!astr && !bstr) || (astr && bstr && strcmp(astr, bstr) == 0))
+
+struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+{
+	size_t i;
+
+	/* ignore if already in the context */
+	for (i = 0; i < cxt->ncputypes; i++) {
+		struct lscpu_cputype *x = cxt->cputypes[i];
+
+		if (match(x->vendor, ct->vendor) &&
+		    match(x->model, ct->model) &&
+		    match(x->modelname, ct->modelname) &&
+		    match(x->cpu, ct->cpu) &&
+		    match(x->stepping, ct->stepping))
+			return x;
+	}
+
+	/* add */
+	cxt->cputypes = xrealloc(cxt->cputypes, (cxt->ncputypes + 1)
+				* sizeof(struct lscpu_cputype *));
+	cxt->cputypes[cxt->ncputypes] = ct;
+	cxt->ncputypes++;
+	lscpu_ref_cputype(ct);
+	return ct;
 }
 
 /* Describes /proc/cpuinfo fields */
@@ -111,8 +140,6 @@ static const struct cpuinfo_pattern type_patterns[] =
 	DEF_PAT_CPUTYPE( "address sizes",	PAT_ADDRESS_SIZES,	addrsz),/* x86 */
 	DEF_PAT_CPUTYPE( "bogomips",		PAT_BOGOMIPS,	bogomips),
 	DEF_PAT_CPUTYPE( "bogomips per cpu",	PAT_BOGOMIPS,	bogomips),	/* s390 */
-	DEF_PAT_CPUTYPE( "cpu MHz dynamic",	PAT_MHZ_DYNAMIC,dynamic_mhz),	/* s390 */
-	DEF_PAT_CPUTYPE( "cpu MHz static",	PAT_MHZ_STATIC,	static_mhz),	/* s390 */
 	DEF_PAT_CPUTYPE( "cpu family",		PAT_FAMILY,	family),
 	DEF_PAT_CPUTYPE( "cpu",			PAT_CPU,	cpu),
 	DEF_PAT_CPUTYPE( "family",		PAT_FAMILY,	family),
@@ -125,7 +152,7 @@ static const struct cpuinfo_pattern type_patterns[] =
 	DEF_PAT_CPUTYPE( "stepping",		PAT_STEPPING,	stepping),
 	DEF_PAT_CPUTYPE( "type",		PAT_TYPE,	flags),		/* sparc64 */
 	DEF_PAT_CPUTYPE( "vendor",		PAT_VENDOR,	vendor),
-	DEF_PAT_CPUTYPE( "vendor_id",		PAT_VENDOR,	vendor),
+	DEF_PAT_CPUTYPE( "vendor_id",		PAT_VENDOR,	vendor),	/* s390 */
 };
 
 /*
@@ -141,6 +168,8 @@ static const struct cpuinfo_pattern type_patterns[] =
 static const struct cpuinfo_pattern cpu_patterns[] =
 {
 	/* Sort by fields name! */
+	DEF_PAT_CPU( "cpu MHz dynamic",	PAT_MHZ_DYNAMIC,dynamic_mhz),	/* s390 */
+	DEF_PAT_CPU( "cpu MHz static",	PAT_MHZ_STATIC,	static_mhz),	/* s390 */
 	DEF_PAT_CPU( "cpu MHz",		PAT_MHZ,	mhz),
         DEF_PAT_CPU( "processor",	PAT_PROCESSOR,	logical_id),
 };
@@ -227,22 +256,13 @@ static int cpuinfo_parse_line(	struct lscpu_cputype *ct,
 	return 0;
 }
 
-static void print_cputype(struct lscpu_cputype *ct, FILE *f)
-{
-	fprintf(f, "vendor=\"%s\"\n", ct->vendor);
-	fprintf(f, "model=\"%s\"\n", ct->model);
-	fprintf(f, "flags=\"%s\"\n", ct->flags);
-}
-
-
-
-
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 {
 	struct lscpu_cputype *ct = NULL;
 	struct lscpu_cpu *cpu = NULL;
 	FILE *fp;
 	char buf[BUFSIZ];
+	int nblocks = 0, keeptype = 0;
 
 	DBG(GATHER, ul_debugobj(cxt, "reading cpuinfo"));
 
@@ -254,40 +274,58 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 		const char *p = skip_space(buf);
 
 		if (*buf && !*p) {
-			if (ct) {
-				ON_DBG(GATHER, print_cputype(ct, stdout));
-				//lscpu_add_cputype(&cxt->cputypes, &cxt->ncputypes, ct);
+			/* empty line between data in /proc/cpuinfo */
+			nblocks++;
+
+			if (nblocks == 1) {
+				/* For some architectures cpuinfo contains description
+				 * block before the list of CPUs (e.g. s390). The block
+				 * contains description for all CPUs, so we keep it as
+				 * one cputype.
+				 *
+				 * Note that for another architectures it's
+				 * fine to create cputype for each CPU, because
+				 * lscpu_add_cputype() and lscpu_add_cpu() are
+				 * able to deduplicate it if necessary.
+				 */
+				if (ct->vendor && strncasecmp(ct->vendor, "IBM/", 4) == 0) {
+					lscpu_add_cputype(cxt, ct);
+					keeptype = 1;
+					continue;
+				}
 			}
-			lscpu_unref_cputype(ct);
-/*			lscpu_unref_cpu(cpu);*/
-			ct = NULL, cpu = NULL;
+
+			if (ct && cpu)
+				lscpu_add_cpu(cxt, cpu, ct);
+
+			if (!keeptype) {
+				lscpu_unref_cputype(ct);
+				ct = NULL;
+			}
+
+			lscpu_unref_cpu(cpu);
+			cpu = NULL;
 			continue;
 		}
 		if (!ct)
 			ct = lscpu_new_cputype();
-/*		if (!cpu)
-			cpu = lscpu_new_cpu();*/
+		if (!cpu)
+			cpu = lscpu_new_cpu();
 
 		cpuinfo_parse_line(ct, cpu, p);
-
-		/* TODO: else lscpu_parse_cache(cxt, buf); */
 	}
 
-	/*
-	if (ct)
-		lscpu_add_cputype(&cxt->cputypes, &cxt->ncputypes, ct);
-	if (cpu)
-		lscpu_add_cpu(&cxt->cputs, &cxt->ncpus, cpu);
-	*/
+	if (cpu && ct)
+		lscpu_add_cpu(cxt, cpu, ct);
 
+	lscpu_unref_cpu(cpu);
 	lscpu_unref_cputype(ct);
-	/*lscpu_unref_cpu(cpu);*/
 	fclose(fp);
 
-	return 0;
+	DBG(GATHER, ul_debugobj(cxt, " parsed %d cpuinfo blocks", nblocks));
+
 	return 0;
 }
-
 
 #ifdef TEST_PROGRAM_CPUTYPE
 /* TODO: move to lscpu.c */
@@ -296,7 +334,7 @@ struct lscpu_cxt *lscpu_new_context(void)
 	return xcalloc(1, sizeof(struct lscpu_cxt));
 }
 
-static void lscpu_free_context(struct lscpu_cxt *cxt)
+void lscpu_free_context(struct lscpu_cxt *cxt)
 {
 	size_t i;
 
@@ -309,11 +347,16 @@ static void lscpu_free_context(struct lscpu_cxt *cxt)
 	ul_unref_path(cxt->syscpu);
 	ul_unref_path(cxt->procfs);
 
+	DBG(MISC, ul_debugobj(cxt, " freeing cpus"));
+	for (i = 0; i < cxt->ncpus; i++)
+		lscpu_unref_cpu(cxt->cpus[i]);
+
 	DBG(MISC, ul_debugobj(cxt, " freeing types"));
 	for (i = 0; i < cxt->ncputypes; i++)
 		lscpu_unref_cputype(cxt->cputypes[i]);
 
 	free(cxt->cputypes);
+	free(cxt->cpus);
 	free(cxt);
 }
 
@@ -332,7 +375,6 @@ int main(int argc, char **argv)
 	lscpu_read_cpuinfo(cxt);
 
 	lscpu_free_context(cxt);
-
 	return EXIT_SUCCESS;
 }
 #endif /* TEST_PROGRAM_CPUTYPES */

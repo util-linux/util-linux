@@ -16,6 +16,7 @@
 #define LSCPU_DEBUG_MISC	(1 << 2)
 #define LSCPU_DEBUG_GATHER	(1 << 3)
 #define LSCPU_DEBUG_TYPE	(1 << 4)
+#define LSCPU_DEBUG_CPU		(1 << 5)
 #define LSBLK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(lscpu);
@@ -31,8 +32,6 @@ UL_DEBUG_DECLARE_MASK(lscpu);
 #define _PATH_SYS_NODE		_PATH_SYS_SYSTEM "/node"
 
 struct lscpu_cputype {
-	cpu_set_t       *map;	/* which cpus use this type */
-
 	int	refcount;
 
 	char	*arch;
@@ -49,8 +48,6 @@ struct lscpu_cputype {
 	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
 	char	*stepping;
 	char    *bogomips;
-	char	*dynamic_mhz;
-	char	*static_mhz;
 	char	*flags;
 	char	*mtid;		/* maximum thread id (s390) */
 	char	*addrsz;	/* address sizes */
@@ -74,8 +71,14 @@ struct lscpu_cputype {
 };
 
 struct lscpu_cpu {
+	int refcount;
+	struct lscpu_cputype *type;
+
 	int logical_id;
 	char	*mhz;
+
+	char	*dynamic_mhz;
+	char	*static_mhz;
 };
 
 struct lscpu_cxt {
@@ -86,14 +89,26 @@ struct lscpu_cxt {
 
 	size_t ncputypes;
 	struct lscpu_cputype **cputypes;
+
+	size_t ncpus;
+	struct lscpu_cpu **cpus;
+
 };
 
 struct lscpu_cputype *lscpu_new_cputype(void);
 void lscpu_ref_cputype(struct lscpu_cputype *ct);
 void lscpu_unref_cputype(struct lscpu_cputype *ct);
+struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt);
 
+struct lscpu_cpu *lscpu_new_cpu(void);
+void lscpu_ref_cpu(struct lscpu_cpu *cpu);
+void lscpu_unref_cpu(struct lscpu_cpu *cpu);
+int lscpu_add_cpu(struct lscpu_cxt *cxt,
+                  struct lscpu_cpu *cpu,
+                  struct lscpu_cputype *ct);
+
 struct lscpu_cxt *lscpu_new_context(void);
-static void lscpu_free_context(struct lscpu_cxt *cxt);
+void lscpu_free_context(struct lscpu_cxt *cxt);
 
 #endif /* LSCPU_API_H */
