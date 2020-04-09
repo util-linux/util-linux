@@ -41,7 +41,6 @@ struct lscpu_cputype {
 	char	*model;
 	char	*modelname;
 	char	*revision;	/* alternative for model (ppc) */
-	char	*cpu;		/* alternative for modelname (ppc, sparc) */
 	char	*virtflag;	/* virtualization flag (vmx, svm) */
 	char	*hypervisor;	/* hypervisor software */
 	int	hyper;		/* hypervisor vendor ID */
@@ -99,6 +98,7 @@ struct lscpu_cputype *lscpu_new_cputype(void);
 void lscpu_ref_cputype(struct lscpu_cputype *ct);
 void lscpu_unref_cputype(struct lscpu_cputype *ct);
 struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
+struct lscpu_cputype *lscpu_cputype_get_default(struct lscpu_cxt *cxt);
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt);
 
 struct lscpu_cpu *lscpu_new_cpu(void);
@@ -107,6 +107,7 @@ void lscpu_unref_cpu(struct lscpu_cpu *cpu);
 int lscpu_add_cpu(struct lscpu_cxt *cxt,
                   struct lscpu_cpu *cpu,
                   struct lscpu_cputype *ct);
+int lscpu_cpus_apply_type(struct lscpu_cxt *cxt, struct lscpu_cputype *type);
 
 struct lscpu_cxt *lscpu_new_context(void);
 void lscpu_free_context(struct lscpu_cxt *cxt);
