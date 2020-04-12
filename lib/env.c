@@ -107,3 +107,34 @@ return secure_getenv(arg);
 	return getenv(arg);
 #endif
 }
+
+#ifdef TEST_PROGRAM
+int main(int argc, char **argv)
+{
+	char *const *bad;
+	char copy[32];
+	char *p;
+	int retval = EXIT_SUCCESS;
+
+	for (bad = forbid; *bad; bad++) {
+		strcpy(copy, *bad);
+		p = strchr(copy, '=');
+		if (p)
+			*p = '\0';
+		setenv(copy, copy, 1);
+	}
+	sanitize_env();
+	for (bad = forbid; *bad; bad++) {
+		strcpy(copy, *bad);
+		p = strchr(copy, '=');
+		if (p)
+			*p = '\0';
+		p = getenv(copy);
+		if (p) {
+			warnx("%s was not removed", copy);
+			retval = EXIT_FAILURE;
+		}
+	}
+	return retval;
+}
+#endif
