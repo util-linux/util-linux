@@ -56,13 +56,15 @@ sanitize_env(void)
         char **envp = environ;
         char * const *bad;
         char **cur;
-        char **move;
+        int last = 0;
+
+        for (cur = envp; *cur; cur++)
+                last++;
 
         for (cur = envp; *cur; cur++) {
                 for (bad = forbid; *bad; bad++) {
                         if (strncmp(*cur, *bad, strlen(*bad)) == 0) {
-                                for (move = cur; *move; move++)
-                                        *move = *(move + 1);
+                                last = remote_entry(envp, cur - envp, last);
                                 cur--;
                                 break;
                         }
@@ -75,8 +77,7 @@ sanitize_env(void)
                                 continue;
                         if (!strchr(*cur, '/'))
                                 continue;  /* OK */
-                        for (move = cur; *move; move++)
-                                *move = *(move + 1);
+                        last = remote_entry(envp, cur - envp, last);
                         cur--;
                         break;
                 }

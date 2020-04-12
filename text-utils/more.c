@@ -74,6 +74,7 @@
 # include <term.h>
 #endif
 
+#include "env.h"
 #include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
@@ -251,8 +252,7 @@ static void argscan(struct more_control *ctl, int as_argc, char **as_argv)
 			}
 		}
 		if (move) {
-			as_argc--;
-			memmove(as_argv + opt, as_argv + opt + 1, sizeof(char *) * (as_argc - opt));
+			as_argc = remote_entry(as_argv, opt, as_argc);
 			opt--;
 		}
 	}

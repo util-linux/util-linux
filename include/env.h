@@ -18,5 +18,11 @@ static inline void xsetenv(char const *name, char const *val, int overwrite)
 		err(XSETENV_EXIT_CODE, _("failed to set the %s environment variable"), name);
 }
 
+static inline int remote_entry(char **argv, int remove, int last)
+{
+	memmove(argv + remove, argv + remove + 1, sizeof(char *) * (last - remove));
+	return last - 1;
+}
+
 #endif /* UTIL_LINUX_ENV_H */
 
