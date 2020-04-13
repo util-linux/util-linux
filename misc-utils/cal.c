@@ -260,6 +260,8 @@ static int week_number(int day, int month, int32_t year, const struct cal_contro
 static int week_to_day(const struct cal_control *ctl);
 static int center_str(const char *src, char *dest, size_t dest_size, size_t width);
 static void center(const char *str, size_t len, int separate);
+static int left_str(const char *src, char *dest, size_t dest_size, size_t width);
+static void left(const char *str, size_t len, int separate)  __attribute__ ((unused));
 static int parse_reform_year(const char *reform_year);
 static void __attribute__((__noreturn__)) usage(void);
 
@@ -1098,7 +1100,25 @@ static void center(const char *str, size_t len, int separate)
 		my_putstring(lineout);
 	}
 }
+static int left_str(const char* src, char* dest,
+		    size_t dest_size, size_t width)
+{
+	return mbsalign(src, dest, dest_size, &width,
+			MBS_ALIGN_LEFT, MBA_UNIBYTE_FALLBACK);
+}
 
+static void left(const char *str, size_t len, int separate)
+{
+	char lineout[FMT_ST_CHARS];
+
+	left_str(str, lineout, sizeof(lineout), len);
+	my_putstring(lineout);
+
+	if (separate) {
+		snprintf(lineout, sizeof(lineout), "%*s", separate, "");
+		my_putstring(lineout);
+	}
+}
 static int parse_reform_year(const char *reform_year)
 {
 	size_t i;
