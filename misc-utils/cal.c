@@ -216,6 +216,7 @@ struct cal_request {
 struct cal_control {
 	const char *full_month[MONTHS_IN_YEAR];	/* month names */
 	const char *abbr_month[MONTHS_IN_YEAR];	/* abbreviated month names */
+	const char *weekdays[DAYS_IN_WEEK];     /* day names */
 
 	int reform_year;		/* Gregorian reform year */
 	int colormode;			/* day and week number highlight */
@@ -244,6 +245,7 @@ struct cal_month {
 /* function prototypes */
 static int leap_year(const struct cal_control *ctl, int32_t year);
 static int monthname_to_number(struct cal_control *ctl, const char *name);
+static void weekdays_init(struct cal_control *ctl);
 static void headers_init(struct cal_control *ctl);
 static void cal_fill_month(struct cal_month *month, const struct cal_control *ctl);
 static void cal_output_header(struct cal_month *month, const struct cal_control *ctl);
@@ -552,6 +554,7 @@ int main(int argc, char **argv)
 			ctl.req.month = MONTHS_IN_YEAR < m ? 1 : m;
 	}
 
+	weekdays_init(&ctl);
 	headers_init(&ctl);
 
 	if (colors_init(ctl.colormode, "cal") == 0) {
@@ -661,9 +664,17 @@ static int monthname_to_number(struct cal_control *ctl, const char *name)
 	return -EINVAL;
 }
 
+static void weekdays_init(struct cal_control *ctl)
+{
+	size_t wd;
+	for (int i = 0; i < DAYS_IN_WEEK; i++) {
+		wd = (i + ctl->weekstart) % DAYS_IN_WEEK;
+		ctl->weekdays[i] = nl_langinfo(ABDAY_1 + wd);
+	}
+}
 static void headers_init(struct cal_control *ctl)
 {
-	size_t i, wd;
+	size_t i;
 	char *cur_dh = day_headings;
 	char tmp[FMT_ST_CHARS];
 	int year_len;
@@ -677,7 +688,6 @@ static void headers_init(struct cal_control *ctl)
 
 	for (i = 0; i < DAYS_IN_WEEK; i++) {
 		size_t space_left;
-		wd = (i + ctl->weekstart) % DAYS_IN_WEEK;
 
 		if (i)
 			strcat(cur_dh++, " ");
@@ -685,7 +695,7 @@ static void headers_init(struct cal_control *ctl)
 
 		if (space_left <= (ctl->day_width - 1))
 			break;
-		cur_dh += center_str(nl_langinfo(ABDAY_1 + wd), cur_dh,
+		cur_dh += center_str(ctl->weekdays[i], cur_dh,
 				     space_left, ctl->day_width - 1);
 	}
 
