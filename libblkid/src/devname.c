@@ -258,7 +258,7 @@ set_pri:
 	if (dev) {
 		if (pri)
 			dev->bid_pri = pri;
-		else if (!strncmp(dev->bid_name, "/dev/mapper/", 11)) {
+		else if (!strncmp(dev->bid_name, "/dev/mapper/", 12)) {
 			dev->bid_pri = BLKID_PRI_DM;
 			if (is_dm_leaf(ptname))
 				dev->bid_pri += 5;
