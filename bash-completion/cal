@@ -18,6 +18,7 @@ _cal_module()
 				--color=auto
 				--color=always
 				--color=never
+				--vertical
 				--version
 				--help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
