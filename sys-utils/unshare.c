@@ -63,7 +63,7 @@ static struct namespace_file {
 	{ .type = CLONE_NEWIPC,   .name = "ns/ipc"  },
 	{ .type = CLONE_NEWUTS,   .name = "ns/uts"  },
 	{ .type = CLONE_NEWNET,   .name = "ns/net"  },
-	{ .type = CLONE_NEWPID,   .name = "ns/pid"  },
+	{ .type = CLONE_NEWPID,   .name = "ns/pid_for_children"  },
 	{ .type = CLONE_NEWNS,    .name = "ns/mnt"  },
 	{ .type = CLONE_NEWTIME,  .name = "ns/time"  },
 	{ .name = NULL }
@@ -361,6 +361,7 @@ int main(int argc, char *argv[])
 	const char *procmnt = NULL;
 	const char *newroot = NULL;
 	const char *newdir = NULL;
+	pid_t pid_bind = 0;
 	pid_t pid = 0;
 	int fds[2];
 	int status;
@@ -501,13 +502,37 @@ int main(int argc, char *argv[])
 			"unsharing of a time namespace (-t)"));
 
 	if (npersists && (unshare_flags & CLONE_NEWNS))
-		bind_ns_files_from_child(&pid, fds);
+		bind_ns_files_from_child(&pid_bind, fds);
 
 	if (-1 == unshare(unshare_flags))
 		err(EXIT_FAILURE, _("unshare failed"));
 
-	if (npersists) {
-		if (pid && (unshare_flags & CLONE_NEWNS)) {
+	if (force_boottime)
+		settime(boottime, CLOCK_BOOTTIME);
+
+	if (force_monotonic)
+		settime(monotonic, CLOCK_MONOTONIC);
+
+	if (forkit) {
+		// force child forking before mountspace binding
+		// so pid_for_children is populated
+		pid = fork();
+
+		switch(pid) {
+		case -1:
+			err(EXIT_FAILURE, _("fork failed"));
+		case 0:	/* child */
+			if (pid_bind && (unshare_flags & CLONE_NEWNS))
+				close(fds[1]);
+			break;
+		default: /* parent */
+			break;
+		}
+	}
+
+	if (npersists && (pid || !forkit)) {
+		// run in parent
+		if (pid_bind && (unshare_flags & CLONE_NEWNS)) {
 			int rc;
 			char ch = PIPE_SYNC_BYTE;
 
@@ -518,7 +543,7 @@ int main(int argc, char *argv[])
 
 			/* wait for bind_ns_files_from_child() */
 			do {
-				rc = waitpid(pid, &status, 0);
+				rc = waitpid(pid_bind, &status, 0);
 				if (rc < 0) {
 					if (errno == EINTR)
 						continue;
@@ -533,29 +558,14 @@ int main(int argc, char *argv[])
 			bind_ns_files(getpid());
 	}
 
-	if (force_boottime)
-		settime(boottime, CLOCK_BOOTTIME);
-
-	if (force_monotonic)
-		settime(monotonic, CLOCK_MONOTONIC);
-
-	if (forkit) {
-		pid = fork();
-
-		switch(pid) {
-		case -1:
-			err(EXIT_FAILURE, _("fork failed"));
-		case 0:	/* child */
-			break;
-		default: /* parent */
-			if (waitpid(pid, &status, 0) == -1)
-				err(EXIT_FAILURE, _("waitpid failed"));
-			if (WIFEXITED(status))
-				return WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				kill(getpid(), WTERMSIG(status));
-			err(EXIT_FAILURE, _("child exit failed"));
-		}
+	if (pid) {
+		if (waitpid(pid, &status, 0) == -1)
+			err(EXIT_FAILURE, _("waitpid failed"));
+		if (WIFEXITED(status))
+			return WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			kill(getpid(), WTERMSIG(status));
+		err(EXIT_FAILURE, _("child exit failed"));
 	}
 
 	if (kill_child_signo != 0 && prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
