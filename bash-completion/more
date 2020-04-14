@@ -5,18 +5,33 @@ _more_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-V')
+		'-n'|'--lines')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
 	esac
 	case $cur in
 		-*)
-			OPTS="-d -f -l -p -c -u -s -number -V"
+			OPTS="
+				--silent
+				--logical
+				--no-pause
+				--print-over
+				--clean-print
+				--squeeze
+				--plain
+				--lines
+				--help
+				--version
+			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
 		+*)
-			OPTS="+number +/string"
+			OPTS="+number +/pattern"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

@@ -34,7 +34,7 @@
 .\"
 .\" Copyright (c) 1992 Rik Faith (faith@cs.unc.edu)
 .\"
-.TH MORE "1" "February 2014" "util-linux" "User Commands"
+.TH MORE "1" "March 2020" "util-linux" "User Commands"
 .SH NAME
 more \- file perusal filter for crt viewing
 .SH SYNOPSIS
@@ -56,39 +56,50 @@ Options are also taken from the environment variable
 .RB ( \- ))
 but command-line options will override those.
 .TP
-.B \-d
+.BR \-d , " \-\-silent"
 Prompt with "[Press space to continue, 'q' to quit.]",
 and display "[Press 'h' for instructions.]" instead of ringing
 the bell when an illegal key is pressed.
 .TP
-.B \-l
+.BR \-l , " \-\-logical"
 Do not pause after any line containing a
 .B \&^L
 (form feed).
 .TP
-.B \-f
+.BR \-f , " \-\-no\-pause"
 Count logical lines, rather than screen lines (i.e., long lines are not folded).
 .TP
-.B \-p
+.BR \-p , " \-\-print\-over"
 Do not scroll.  Instead, clear the whole screen and then display the text.
 Notice that this option is switched on automatically if the executable is
 named
 .BR page .
 .TP
-.B \-c
+.BR \-c , " \-\-clean\-print"
 Do not scroll.  Instead, paint each screen from the top, clearing the
 remainder of each line as it is displayed.
 .TP
-.B \-s
+.BR \-s , " \-\-squeeze"
 Squeeze multiple blank lines into one.
 .TP
-.B \-u
-Suppress underlining.
+.BR \-u , " \-\-plain"
+Suppress underlining.  This option is silently ignored as backwards
+compatibility.
+.TP
+\fB\-n\fR, \fB\-\-lines \fInumber\fR
+Specify the
+.b number
+of lines per screenful.  The
+.b number
+argument is a positive decimal integer.  The
+.B \-\-lines
+option shall override any values obtained from any other source, such as
+number of lines reported by terminal.
 .TP
 .BI \- number
-The screen size to use, in
-.I number
-of lines.
+A numeric option means the same as
+.B \-\-lines
+option argument.
 .TP
 .BI + number
 Start displaying each file at line
