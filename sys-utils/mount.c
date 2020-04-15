@@ -709,7 +709,18 @@ int main(int argc, char **argv)
 			mnt_context_enable_rwonly_mount(cxt, TRUE);
 			break;
 		case 'o':
-			append_option(cxt, optarg);
+			/* "move" is not supported as option string in libmount
+			 * to avoid use in fstab */
+			if (mnt_optstr_get_option(optarg, "move", NULL, 0) == 0) {
+				char *o = xstrdup(optarg);
+
+				mnt_optstr_remove_option(&o, "move");
+				if (o && *o)
+					append_option(cxt, o);
+				oper = is_move = 1;
+				free(o);
+			} else
+				append_option(cxt, optarg);
 			break;
 		case 'O':
 			if (mnt_context_set_options_pattern(cxt, optarg))
