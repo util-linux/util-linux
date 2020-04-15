@@ -43,11 +43,11 @@ The force option disables the exclusive access mode.
 .TP
 .BR \-o , " \-\-offset \fIoffset"
 Byte offset into the device from which to start discarding.  The provided value
-will be aligned to the device sector size.  The default value is zero.
+must be aligned to the device sector size.  The default value is zero.
 .TP
 .BR \-l , " \-\-length \fIlength"
 The number of bytes to discard (counting from the starting point).  The provided value
-will be aligned to the device sector size.  If the specified value extends past
+must be aligned to the device sector size.  If the specified value extends past
 the end of the device,
 .B blkdiscard
 will stop at the device size boundary.  The default value extends to the end
