@@ -20,6 +20,10 @@ Once a persistent \%namespace is no longer needed, it can be unpersisted with
 .BR umount (8).
 See the \fBEXAMPLES\fR section for more details.
 .PP
+.B unshare
+since util-linux version 2.36 uses /\fIproc/[pid]/ns/pid_for_children\fP and \fI/proc/[pid]/ns/time_for_children\fP
+files for persistent PID and TIME namespaces. This change requires Linux kernel 4.17 or newer.
+.PP
 The namespaces to be unshared are indicated via options.  Unshareable namespaces are:
 .TP
 .B mount namespace
