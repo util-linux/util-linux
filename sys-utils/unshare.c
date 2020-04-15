@@ -45,6 +45,7 @@
 #include "all-io.h"
 #include "signames.h"
 #include "strutils.h"
+#include "pwdutils.h"
 
 /* synchronize parent and child by pipe */
 #define PIPE_SYNC_BYTE	0x06
@@ -260,6 +261,42 @@ static void bind_ns_files_from_child(pid_t *child, int fds[2])
 	}
 }
 
+static uid_t get_user(const char *s, const char *err)
+{
+	struct passwd *pw;
+	char *buf = NULL;
+	uid_t ret;
+
+	pw = xgetpwnam(s, &buf);
+	if (pw) {
+		ret = pw->pw_uid;
+		free(pw);
+		free(buf);
+	} else {
+		ret = strtoul_or_err(s, err);
+	}
+
+	return ret;
+}
+
+static gid_t get_group(const char *s, const char *err)
+{
+	struct group *gr;
+	char *buf = NULL;
+	gid_t ret;
+
+	gr = xgetgrnam(s, &buf);
+	if (gr) {
+		ret = gr->gr_gid;
+		free(gr);
+		free(buf);
+	} else {
+		ret = strtoul_or_err(s, err);
+	}
+
+	return ret;
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -282,8 +319,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --time[=<file>]       unshare time namespace\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
-	fputs(_(" --map-user=<uid>          map current user to uid (implies --user)\n"), out);
-	fputs(_(" --map-group=<gid>         map current group to gid (implies --user)\n"), out);
+	fputs(_(" --map-user=<uid>|<name>   map current user to uid (implies --user)\n"), out);
+	fputs(_(" --map-group=<gid>|<name>  map current group to gid (implies --user)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
 	fputs(_(" -c, --map-current-user    map current user to itself (implies --user)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -432,11 +469,11 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_MAPUSER:
 			unshare_flags |= CLONE_NEWUSER;
-			mapuser = strtoul_or_err(optarg, _("failed to parse uid"));
+			mapuser = get_user(optarg, _("failed to parse uid"));
 			break;
 		case OPT_MAPGROUP:
 			unshare_flags |= CLONE_NEWUSER;
-			mapgroup = strtoul_or_err(optarg, _("failed to parse gid"));
+			mapgroup = get_group(optarg, _("failed to parse gid"));
 			break;
 		case 'r':
 			unshare_flags |= CLONE_NEWUSER;

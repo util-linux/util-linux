@@ -169,12 +169,12 @@ implies creating a new mount namespace since the /proc mount would otherwise
 mess up existing programs on the system.  The new proc filesystem is explicitly
 mounted as private (with MS_PRIVATE|MS_REC).
 .TP
-.BR \-\-map\-user=\fIuid
+.BR \-\-map\-user=\fIuid|name
 Run the program only after the current effective user ID has been mapped to \fIuid\fP.
 If this option is specified multiple times, the last occurrence takes precedence.
 This option implies \fB\-\-user\fR.
 .TP
-.BR \-\-map\-group=\fIgid
+.BR \-\-map\-group=\fIgid|name
 Run the program only after the current effective group ID has been mapped to \fIgid\fP.
 If this option is specified multiple times, the last occurrence takes precedence.
 This option implies \fB\-\-setgroups=deny\fR and \fB\-\-user\fR.
