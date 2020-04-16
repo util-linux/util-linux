@@ -15473,7 +15473,7 @@ msgstr ""
 
 #: sys-utils/lscpu.c:2115
 msgid "Vendor ID:"
-msgstr "ID прроизводителя:"
+msgstr "ID производителя:"
 
 #: sys-utils/lscpu.c:2117
 #, fuzzy
@@ -15586,54 +15586,51 @@ msgstr "Флаги:"
 
 #: sys-utils/lscpu.c:2229
 msgid "Display information about the CPU architecture.\n"
-msgstr ""
+msgstr "Показать информацию об архитектуре процессора"
 
 #: sys-utils/lscpu.c:2232
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
-msgstr ""
+msgstr " -a, --all               вывести как онлайн, так и автономные процессоры (по-умолчанию для -e)\n"
 
 #: sys-utils/lscpu.c:2233
 msgid " -b, --online            print online CPUs only (default for -p)\n"
-msgstr ""
+msgstr " -b, --online            вывести только онлайн процессоры (по-умолчанию для -p)\n"
 
 #: sys-utils/lscpu.c:2234
-#, fuzzy
 msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
-msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
+msgstr " -B, --bytes             выводить размеры в байтах, а не в удобочитаемом формате\n"
 
 #: sys-utils/lscpu.c:2235
 msgid " -C, --caches[=<list>]   info about caches in extended readable format\n"
-msgstr ""
+msgstr " -C, --caches[=<list>]   информация о кешах в расширенном читаемом формате\n"
 
 #: sys-utils/lscpu.c:2236
 msgid " -c, --offline           print offline CPUs only\n"
-msgstr ""
+msgstr " -c, --offline           вывести только автономные процессоры\n"
 
 #: sys-utils/lscpu.c:2237
-#, fuzzy
 msgid " -J, --json              use JSON for default or extended format\n"
-msgstr "  -V, --version                Вывод информации о версии\n"
+msgstr " -J, --json              использовать по умолчанию JSON или расширенный формат\n"
 
 #: sys-utils/lscpu.c:2238
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
-msgstr ""
+msgstr " -e, --extended[=<list>] вывести в расширенном читаемом формате\n"
 
 #: sys-utils/lscpu.c:2239
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
-msgstr ""
+msgstr " -p, --parse[=<list>]    вывести в формате для анализа\n"
 
 #: sys-utils/lscpu.c:2240
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
-msgstr ""
+msgstr "" -s, --sysroot <dir>     использовать указанный каталог как системный корень\n"
 
 #: sys-utils/lscpu.c:2241
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
-msgstr ""
+msgstr " -x, --hex               вывести шестнадцатеричные маски, а не списки процессоров\n"
 
 #: sys-utils/lscpu.c:2242
-#, fuzzy
 msgid " -y, --physical          print physical instead of logical IDs\n"
-msgstr " -a, --all            показать все устройства\n"
+msgstr " -y, --physical          вывести физические идентификаторы вместо логических\n"
 
 #: sys-utils/lscpu.c:2243
 #, fuzzy
@@ -15648,11 +15645,12 @@ msgid ""
 msgstr "Доступные команды:\n"
 
 #: sys-utils/lscpu.c:2251
-#, fuzzy
 msgid ""
 "\n"
 "Available output columns for -C:\n"
-msgstr "Доступные команды:\n"
+msgstr ""
+"\n"
+"Доступные выходные столбцы для -C:\n"
 
 #: sys-utils/lscpu.c:2384
 #, c-format
