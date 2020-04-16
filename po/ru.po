@@ -15590,11 +15590,11 @@ msgstr "Показать информацию об архитектуре про
 
 #: sys-utils/lscpu.c:2232
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
-msgstr " -a, --all               вывести как онлайн, так и автономные процессоры (по-умолчанию для -e)\n"
+msgstr " -a, --all               вывести как online, так и offline процессоры (по-умолчанию для -e)\n"
 
 #: sys-utils/lscpu.c:2233
 msgid " -b, --online            print online CPUs only (default for -p)\n"
-msgstr " -b, --online            вывести только онлайн процессоры (по-умолчанию для -p)\n"
+msgstr " -b, --online            вывести только online процессоры (по-умолчанию для -p)\n"
 
 #: sys-utils/lscpu.c:2234
 msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
@@ -15606,7 +15606,7 @@ msgstr " -C, --caches[=<list>]   информация о кешах в расш�
 
 #: sys-utils/lscpu.c:2236
 msgid " -c, --offline           print offline CPUs only\n"
-msgstr " -c, --offline           вывести только автономные процессоры\n"
+msgstr " -c, --offline           вывести только offline процессоры\n"
 
 #: sys-utils/lscpu.c:2237
 msgid " -J, --json              use JSON for default or extended format\n"
