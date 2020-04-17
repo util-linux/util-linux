@@ -36,6 +36,38 @@ failed:
 	return NULL;
 }
 
+/* Returns allocated group and allocated grpbuf to store group strings
+ * fields. In case of error returns NULL and set errno, for unknown group set
+ * errno to EINVAL
+ */
+struct group *xgetgrnam(const char *groupname, char **grpbuf)
+{
+	struct group *grp = NULL, *res = NULL;
+	int rc;
+
+	if (!grpbuf || !groupname)
+		return NULL;
+
+	*grpbuf = xmalloc(UL_GETPW_BUFSIZ);
+	grp = xcalloc(1, sizeof(struct group));
+
+	errno = 0;
+	rc = getgrnam_r(groupname, grp, *grpbuf, UL_GETPW_BUFSIZ, &res);
+	if (rc != 0) {
+		errno = rc;
+		goto failed;
+	}
+	if (!res) {
+		errno = EINVAL;
+		goto failed;
+	}
+	return grp;
+failed:
+	free(grp);
+	free(*grpbuf);
+	return NULL;
+}
+
 struct passwd *xgetpwuid(uid_t uid, char **pwdbuf)
 {
 	struct passwd *pwd = NULL, *res = NULL;
