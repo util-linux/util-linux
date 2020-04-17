@@ -603,7 +603,10 @@ char *size_to_human_string(int options, uint64_t bytes)
 	/* round */
 	if (frac) {
 		/* get 3 digits after decimal point */
-		frac = (frac * 1000) / (1ULL << exp);
+		if (frac >= UINT64_MAX / 1000)
+			frac = ((frac / 1024) * 1000) / (1ULL << (exp - 10)) ;
+		else
+			frac = (frac * 1000) / (1ULL << (exp)) ;
 
 		if (options & SIZE_DECIMAL_2DIGITS) {
 			/* round 4/5 and keep 2 digits after decimal point */
