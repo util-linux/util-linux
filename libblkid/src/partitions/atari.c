@@ -164,7 +164,7 @@ static int parse_extended(blkid_probe pr, blkid_partlist ls,
 		if (!IS_ACTIVE(xrs->part[i+1]))
 			break;
 
-		if (memcmp(xrs->part[i+1].id, "XGM", 3))
+		if (memcmp(xrs->part[i+1].id, "XGM", 3) != 0)
 			return 0;
 
 		xstart = x0start + be32_to_cpu(xrs->part[i+1].start);

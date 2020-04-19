@@ -162,7 +162,7 @@ static int __probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag, int save_
 	if (!buf_mft)
 		return errno ? -errno : 1;
 
-	if (memcmp(buf_mft, "FILE", 4))
+	if (memcmp(buf_mft, "FILE", 4) != 0)
 		return 1;
 
 	off += MFT_RECORD_VOLUME * mft_record_size;
@@ -171,7 +171,7 @@ static int __probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag, int save_
 	if (!buf_mft)
 		return errno ? -errno : 1;
 
-	if (memcmp(buf_mft, "FILE", 4))
+	if (memcmp(buf_mft, "FILE", 4) != 0)
 		return 1;
 
 	/* return if caller does not care about UUID and LABEL */

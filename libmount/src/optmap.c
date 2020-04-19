@@ -249,7 +249,7 @@ const struct libmnt_optmap *mnt_optmap_get_entry(
 				}
 				continue;
 			}
-			if (strncmp(ent->name, name, namelen))
+			if (strncmp(ent->name, name, namelen) != 0)
 				continue;
 			p = ent->name + namelen;
 			if (*p == '\0' || *p == '=' || *p == '[') {

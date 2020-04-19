@@ -580,7 +580,7 @@ static char *replace_u(char *str, char *username)
 		size_t sz;
 		char *tp, *old = entry;
 
-		if (memcmp(p, "\\u", 2)) {
+		if (memcmp(p, "\\u", 2) != 0) {
 			p++;
 			continue;	/* no \u */
 		}
@@ -1732,7 +1732,7 @@ static int issuedir_filter(const struct dirent *d)
 
 	namesz = strlen(d->d_name);
 	if (!namesz || namesz < ISSUEDIR_EXTSIZ + 1 ||
-	    strcmp(d->d_name + (namesz - ISSUEDIR_EXTSIZ), ISSUEDIR_EXT))
+	    strcmp(d->d_name + (namesz - ISSUEDIR_EXTSIZ), ISSUEDIR_EXT) != 0)
 		return 0;
 
 	/* Accept this */

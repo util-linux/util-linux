@@ -1806,7 +1806,7 @@ int loopdev_count_by_backing_file(const char *filename, char **loopdev)
 	while(loopcxt_next(&lc) == 0) {
 		char *backing = loopcxt_get_backing_file(&lc);
 
-		if (!backing || strcmp(backing, filename)) {
+		if (!backing || strcmp(backing, filename) != 0) {
 			free(backing);
 			continue;
 		}

@@ -524,7 +524,7 @@ static char *get_data(struct libmnt_fs *fs, int num)
 			if (spec && (flags & FL_EVALUATE))
 				spec = cn = mnt_resolve_spec(spec, cache);
 		}
-		if (root && spec && !(flags & FL_NOFSROOT) && strcmp(root, "/"))
+		if (root && spec && !(flags & FL_NOFSROOT) && strcmp(root, "/") != 0)
 			xasprintf(&str, "%s[%s]", spec, root);
 		else if (spec)
 			str = xstrdup(spec);

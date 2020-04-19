@@ -344,7 +344,7 @@ static int memory_block_get_node(struct lsmem *lsmem, char *name)
 
 	node = -1;
 	while ((de = readdir(dir)) != NULL) {
-		if (strncmp("node", de->d_name, 4))
+		if (strncmp("node", de->d_name, 4) != 0)
 			continue;
 		if (!isdigit_string(de->d_name + 4))
 			continue;
@@ -459,7 +459,7 @@ static void read_info(struct lsmem *lsmem)
 
 static int memory_block_filter(const struct dirent *de)
 {
-	if (strncmp("memory", de->d_name, 6))
+	if (strncmp("memory", de->d_name, 6) != 0)
 		return 0;
 	return isdigit_string(de->d_name + 6);
 }

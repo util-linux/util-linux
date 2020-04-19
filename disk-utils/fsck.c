@@ -819,10 +819,10 @@ static struct fsck_instance *wait_one(int flags)
 		for (inst2 = instance_list; inst2; inst2 = inst2->next) {
 			if (inst2->flags & FLAG_DONE)
 				continue;
-			if (strcmp(inst2->type, "ext2") &&
+			if (strcmp(inst2->type, "ext2") != 0 &&
 			    strcmp(inst2->type, "ext3") &&
-			    strcmp(inst2->type, "ext4") &&
-			    strcmp(inst2->type, "ext4dev"))
+			    strcmp(inst2->type, "ext4") != 0 &&
+			    strcmp(inst2->type, "ext4dev") != 0)
 				continue;
 			/*
 			 * If we've just started the fsck, wait a tiny
@@ -903,8 +903,8 @@ static int fsck_device(struct libmnt_fs *fs, int interactive)
 
 	if (type && strcmp(type, "auto") != 0)
 		;
-	else if (fstype && strncmp(fstype, "no", 2) &&
-	    strncmp(fstype, "opts=", 5) && strncmp(fstype, "loop", 4) &&
+	else if (fstype && strncmp(fstype, "no", 2) != 0 &&
+	    strncmp(fstype, "opts=", 5) != 0 && strncmp(fstype, "loop", 4) != 0 &&
 	    !strchr(fstype, ','))
 		type = fstype;
 	else

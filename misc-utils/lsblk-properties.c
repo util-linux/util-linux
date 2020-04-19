@@ -136,7 +136,7 @@ static int lookup(char *buf, char *pattern, char **value)
 		return 0;
 
 	len = strlen(pattern);
-	if (strncmp(buf, pattern, len))
+	if (strncmp(buf, pattern, len) != 0)
 		return 0;
 
 	p = buf + len;

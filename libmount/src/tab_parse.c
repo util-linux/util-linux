@@ -885,7 +885,7 @@ static int mnt_table_parse_dir_filter(const struct dirent *d)
 	namesz = strlen(d->d_name);
 	if (!namesz || namesz < MNT_MNTTABDIR_EXTSIZ + 1 ||
 	    strcmp(d->d_name + (namesz - MNT_MNTTABDIR_EXTSIZ),
-		   MNT_MNTTABDIR_EXT))
+		   MNT_MNTTABDIR_EXT) != 0)
 		return 0;
 
 	/* Accept this */

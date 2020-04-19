@@ -388,7 +388,7 @@ static int is_associated_fs(const char *devname, struct libmnt_fs *fs)
 	int flags = 0;
 
 	/* check if it begins with /dev/loop */
-	if (strncmp(devname, _PATH_DEV_LOOP, sizeof(_PATH_DEV_LOOP) - 1))
+	if (strncmp(devname, _PATH_DEV_LOOP, sizeof(_PATH_DEV_LOOP) - 1) != 0)
 		return 0;
 
 	src = mnt_fs_get_srcpath(fs);

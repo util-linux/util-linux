@@ -976,7 +976,7 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 	inode = get_inode(ino);
 	name_depth--;
 	if (!offset) {
-		if (!inode || strcmp(".", name)) {
+		if (!inode || strcmp(".", name) != 0) {
 			get_current_name();
 			printf(_("%s: bad directory: '.' isn't first\n"),
 			       current_name);
@@ -985,7 +985,7 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 			return;
 	}
 	if (offset == dirsize) {
-		if (!inode || strcmp("..", name)) {
+		if (!inode || strcmp("..", name) != 0) {
 			get_current_name();
 			printf(_("%s: bad directory: '..' isn't second\n"),
 			       current_name);
@@ -1049,7 +1049,7 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 	inode = get_inode2(ino);
 	name_depth--;
 	if (!offset) {
-		if (!inode || strcmp(".", name)) {
+		if (!inode || strcmp(".", name) != 0) {
 			get_current_name();
 			printf(_("%s: bad directory: '.' isn't first\n"),
 			       current_name);
@@ -1058,7 +1058,7 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 			return;
 	}
 	if (offset == dirsize) {
-		if (!inode || strcmp("..", name)) {
+		if (!inode || strcmp("..", name) != 0) {
 			get_current_name();
 			printf(_("%s: bad directory: '..' isn't second\n"),
 			       current_name);

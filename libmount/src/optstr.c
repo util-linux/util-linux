@@ -1077,7 +1077,7 @@ int mnt_optstr_fix_user(char **optstr)
 	if (!username)
 		return -ENOMEM;
 
-	if (!ol.valsz || (ol.value && strncmp(ol.value, username, ol.valsz))) {
+	if (!ol.valsz || (ol.value && strncmp(ol.value, username, ol.valsz) != 0)) {
 		if (ol.valsz)
 			/* remove old value */
 			mnt_optstr_remove_option_at(optstr, ol.value, ol.end);

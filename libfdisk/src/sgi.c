@@ -413,7 +413,7 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 	}
 
 	if (strncmp(name, (char *) sgilabel->boot_file,
-				sizeof(sgilabel->boot_file))) {
+				sizeof(sgilabel->boot_file)) != 0) {
 		fdisk_warnx(cxt, _("Be aware that the bootfile is not checked "
 				   "for existence.  SGI's default is \"/unix\", "
 				   "and for backup \"/unix.save\"."));

@@ -277,7 +277,7 @@ lookup(char *line, char *pattern, char **value)
 		return 0;
 
 	/* pattern */
-	if (strncmp(line, pattern, len))
+	if (strncmp(line, pattern, len) != 0)
 		return 0;
 
 	/* white spaces */
@@ -322,7 +322,7 @@ lookup_cache(char *line, struct lscpu_desc *desc)
 	int level;
 
 	/* Make sure line starts with "cache<nr> :" */
-	if (strncmp(line, "cache", 5))
+	if (strncmp(line, "cache", 5) != 0)
 		return 0;
 	for (p = line + 5; isdigit(*p); p++);
 	for (; isspace(*p); p++);

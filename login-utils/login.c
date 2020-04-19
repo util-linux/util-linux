@@ -377,7 +377,7 @@ static void init_tty(struct login_context *cxt)
 	 */
 	if (!cxt->tty_path || !*cxt->tty_path ||
 	    lstat(cxt->tty_path, &st) != 0 || !S_ISCHR(st.st_mode) ||
-	    (st.st_nlink > 1 && strncmp(cxt->tty_path, "/dev/", 5)) ||
+	    (st.st_nlink > 1 && strncmp(cxt->tty_path, "/dev/", 5) != 0) ||
 	    access(cxt->tty_path, R_OK | W_OK) != 0) {
 
 		syslog(LOG_ERR, _("FATAL: bad tty"));

@@ -377,7 +377,7 @@ get(struct hexdump *hex)
 			hex->length -= n;
 		if (!(need -= n)) {
 			if (vflag == ALL || vflag == FIRST ||
-			    memcmp(curp, savp, hex->blocksize)) {
+			    memcmp(curp, savp, hex->blocksize) != 0) {
 				if (vflag == DUP || vflag == FIRST)
 					vflag = WAIT;
 				return(curp);
