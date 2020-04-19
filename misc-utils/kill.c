@@ -370,7 +370,6 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 		ctl->do_kill = 1;
 		if (ctl->do_pid)
 			errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
-		continue;
 	}
 	if (!*argv)
 		errx(EXIT_FAILURE, _("not enough arguments"));

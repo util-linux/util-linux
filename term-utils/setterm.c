@@ -779,7 +779,6 @@ static void set_blanking(struct setterm_control *ctl)
 	default:		/* should be impossible to reach */
 		abort();
 	}
-	return;
 }
 
 static void screendump(struct setterm_control *ctl)
@@ -833,7 +832,6 @@ static void screendump(struct setterm_control *ctl)
 	free(ctl->in_device);
 	if (close_stream(out) != 0)
 		errx(EXIT_FAILURE, _("write error"));
-	return;
 }
 
 /* Some options are applicable when terminal is virtual console. */

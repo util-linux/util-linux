@@ -398,7 +398,6 @@ done:
 		inst->lockpath = NULL;
 	}
 	free(diskpath);
-	return;
 }
 
 static void unlock_disk(struct fsck_instance *inst)
@@ -425,7 +424,6 @@ static void free_instance(struct fsck_instance *i)
 	free(i->lockpath);
 	mnt_unref_fs(i->fs);
 	free(i);
-	return;
 }
 
 static struct libmnt_fs *add_dummy_fs(const char *device)

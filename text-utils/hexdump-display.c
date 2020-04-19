@@ -100,7 +100,6 @@ static const char *color_cond(struct hexdump_pr *pr, unsigned char *bp, int bcnt
 		/* return the format string or check for another */
 		if (match ^ clr->invert)
 			return clr->fmt;
-		continue;
 	}
 
 	/* no match */

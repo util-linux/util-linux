@@ -228,7 +228,6 @@ static void add_scols_line(const struct swapon_ctl *ctl, struct libscols_table *
 	}
 	if (pr)
 		blkid_free_probe(pr);
-	return;
 }
 
 static int display_summary(void)

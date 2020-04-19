@@ -93,7 +93,6 @@ static void add_id(struct idcache *ic, char *name, unsigned long int id)
 	if (w <= 0)
 		w = ent->name ? strlen(ent->name) : 0;
 	ic->width = ic->width < w ? w : ic->width;
-	return;
 }
 
 void add_uid(struct idcache *cache, unsigned long int id)

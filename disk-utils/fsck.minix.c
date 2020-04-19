@@ -293,7 +293,6 @@ check_mount(void) {
 		printf(_("check aborted.\n"));
 		exit(FSCK_EX_OK);
 	}
-	return;
 }
 
 
@@ -511,7 +510,6 @@ write_super_block(void) {
 		die(_("seek failed in write_super_block"));
 	if (MINIX_BLOCK_SIZE != write(device_fd, super_block_buffer, MINIX_BLOCK_SIZE))
 		die(_("unable to write super-block"));
-	return;
 }
 
 static void
@@ -1017,7 +1015,6 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 	if (inode && S_ISDIR(inode->i_mode))
 		recursive_check(ino);
 	name_depth--;
-	return;
 }
 
 static void
@@ -1087,7 +1084,6 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 	if (inode && S_ISDIR(inode->i_mode))
 		recursive_check2(ino);
 	name_depth--;
-	return;
 }
 
 static void

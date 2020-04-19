@@ -147,7 +147,6 @@ static void dbg(char *fmt, ...)
 #endif
 	va_end(args);
 	fflush(NULL);
-	return;
 }
 
 static int lookup_table(const struct ld_table *tab, const char *str)

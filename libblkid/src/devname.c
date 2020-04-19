@@ -267,7 +267,6 @@ set_pri:
 		if (removable)
 			dev->bid_flags |= BLKID_BID_FL_REMOVABLE;
 	}
-	return;
 }
 
 #define PROC_PARTITIONS "/proc/partitions"

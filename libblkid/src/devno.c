@@ -161,7 +161,6 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 		add_to_dirlist(dirname, dp->d_name, list);
 	}
 	closedir(dir);
-	return;
 }
 
 /* Directories where we will try to search for device numbers */
