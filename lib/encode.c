@@ -48,7 +48,9 @@ size_t ul_encode_to_utf8(int enc, unsigned char *dest, size_t len,
 		if (c == 0) {
 			dest[j] = '\0';
 			break;
-		} else if (c < 0x80) {
+		}
+
+		if (c < 0x80) {
 			if (j+1 >= len)
 				break;
 			dest[j++] = (uint8_t) c;

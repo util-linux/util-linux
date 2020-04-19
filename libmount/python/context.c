@@ -34,12 +34,12 @@ static PyObject *Context_set_tables_errcb(ContextObjext *self, PyObject *func,
 
 	if (!PyCallable_Check(func))
 		return NULL;
-	else {
-		PyObject *tmp = self->table_errcb;
-		Py_INCREF(func);
-		self->table_errcb = func;
-		Py_XDECREF(tmp);
-	}
+
+	PyObject *tmp = self->table_errcb;
+	Py_INCREF(func);
+	self->table_errcb = func;
+	Py_XDECREF(tmp);
+
 	return UL_IncRef(self);
 }
 
@@ -570,7 +570,7 @@ static int Context_set_optsmode(ContextObjext *self, PyObject *value, void *clos
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
 	}
-	else if (!PyLong_Check(value)) {
+	if (!PyLong_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}
@@ -586,7 +586,7 @@ static int Context_set_syscall_status(ContextObjext *self, PyObject *value, void
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
 	}
-	else if (!PyLong_Check(value)) {
+	if (!PyLong_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}
@@ -602,7 +602,7 @@ static int Context_set_user_mflags(ContextObjext *self, PyObject *value, void *c
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
 	}
-	else if (!PyLong_Check(value)) {
+	if (!PyLong_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}
@@ -619,7 +619,7 @@ static int Context_set_mflags(ContextObjext *self, PyObject *value, void *closur
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
 	}
-	else if (!PyLong_Check(value)) {
+	if (!PyLong_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}

@@ -1701,7 +1701,9 @@ static int wait_for_term_input(int fd)
 		if (FD_ISSET(fd, &rfds)) {
 			return 1;
 
-		} else if (netlink_fd >= 0 && FD_ISSET(netlink_fd, &rfds)) {
+		}
+
+		if (netlink_fd >= 0 && FD_ISSET(netlink_fd, &rfds)) {
 			if (!process_netlink())
 				continue;
 

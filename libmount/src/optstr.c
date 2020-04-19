@@ -983,7 +983,7 @@ int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next)
 	    (*(value + 7) == ',' || !*(value + 7)))
 		return set_uint_value(optstr, getuid(), value, end, next);
 
-	else if (!isdigit(*value)) {
+	if (!isdigit(*value)) {
 		uid_t id;
 		int rc;
 		char *p = strndup(value, valsz);
@@ -1031,7 +1031,7 @@ int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next)
 	    (*(value + 7) == ',' || !*(value + 7)))
 		return set_uint_value(optstr, getgid(), value, end, next);
 
-	else if (!isdigit(*value)) {
+	if (!isdigit(*value)) {
 		int rc;
 		gid_t id;
 		char *p = strndup(value, valsz);

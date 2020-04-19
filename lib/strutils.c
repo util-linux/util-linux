@@ -255,7 +255,9 @@ int parse_switch(const char *arg, const char *errmesg, ...)
 		if (strcmp(arg, a) == 0) {
 			va_end(ap);
 			return 1;
-		} else if (strcmp(arg, b) == 0) {
+		}
+
+		if (strcmp(arg, b) == 0) {
 			va_end(ap);
 			return 0;
 		}
@@ -1110,19 +1112,16 @@ int main(int argc, char *argv[])
 	if (argc == 3 && strcmp(argv[1], "--size") == 0)
 		return test_strutils_sizes(argc - 1, argv + 1);
 
-	else if (argc == 4 && strcmp(argv[1], "--cmp-paths") == 0)
+	if (argc == 4 && strcmp(argv[1], "--cmp-paths") == 0)
 		return test_strutils_cmp_paths(argc - 1, argv + 1);
 
-	else if (argc == 4 && strcmp(argv[1], "--strdup-member") == 0)
+	if (argc == 4 && strcmp(argv[1], "--strdup-member") == 0)
 		return test_strdup_to_member(argc - 1, argv + 1);
 
-	else {
-		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
-				"       %1$s --cmp-paths <path> <path>\n"
-				"       %1$s --strdup-member <str> <str>\n",
-				argv[0]);
-		exit(EXIT_FAILURE);
-	}
+	fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
+			"       %1$s --cmp-paths <path> <path>\n"
+			"       %1$s --strdup-member <str> <str>\n",
+			argv[0]);
 
 	return EXIT_FAILURE;
 }

@@ -428,8 +428,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if (ns < 0) {
 			if ((errno == EAGAIN) || (errno == EINTR))
 				continue;
-			else
-				err(EXIT_FAILURE, "accept");
+			err(EXIT_FAILURE, "accept");
 		}
 		len = read(ns, &op, 1);
 		if (len != 1) {

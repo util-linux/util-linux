@@ -2864,7 +2864,9 @@ int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 		}
 		*mounted = 0;
 		return 0;	/* /proc not mounted */
-	} else if (rc)
+	}
+
+	if (rc)
 		return rc;
 
 	*mounted = __mnt_table_is_fs_mounted(mtab, fs,

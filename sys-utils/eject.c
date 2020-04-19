@@ -298,13 +298,12 @@ static char *find_device(const char *name)
 
 	if ((*name == '.' || *name == '/') && access(name, F_OK) == 0)
 		return xstrdup(name);
-	else {
-		char buf[PATH_MAX];
 
-		snprintf(buf, sizeof(buf), "/dev/%s", name);
-		if (access(buf, F_OK) == 0)
-			return xstrdup(buf);
-	}
+	char buf[PATH_MAX];
+
+	snprintf(buf, sizeof(buf), "/dev/%s", name);
+	if (access(buf, F_OK) == 0)
+		return xstrdup(buf);
 
 	return NULL;
 }

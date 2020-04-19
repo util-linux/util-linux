@@ -96,8 +96,8 @@ static int ask(char *name)
 	buf[1] = '\0';
 	if (rpmatch(buf) == RPMATCH_YES)
 		return 0;
-	else
-		return 1;
+
+	return 1;
 }
 
 static int do_symlink(char *from, char *to, char *s, int verbose, int noact,

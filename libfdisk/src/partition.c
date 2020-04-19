@@ -753,7 +753,9 @@ int fdisk_partition_next_partno(
 		}
 		return -ERANGE;
 
-	} else if (pa && fdisk_partition_has_partno(pa)) {
+	}
+
+	if (pa && fdisk_partition_has_partno(pa)) {
 
 		DBG(PART, ul_debugobj(pa, "next partno (specified=%zu)", pa->partno));
 
@@ -763,7 +765,9 @@ int fdisk_partition_next_partno(
 		*n = pa->partno;
 		return 0;
 
-	} else if (fdisk_has_dialogs(cxt))
+	}
+
+	if (fdisk_has_dialogs(cxt))
 		return fdisk_ask_partnum(cxt, n, 1);
 
 	return -EINVAL;

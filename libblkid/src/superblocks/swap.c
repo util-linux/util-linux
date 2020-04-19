@@ -91,7 +91,9 @@ static int probe_swap(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_set_version(pr, "0");
 		return 0;
 
-	} else if (!memcmp(mag->magic, "SWAPSPACE2", mag->len))
+	}
+
+	if (!memcmp(mag->magic, "SWAPSPACE2", mag->len))
 		return swap_set_info(pr, "1");
 
 	return 1;

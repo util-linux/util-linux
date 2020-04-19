@@ -321,7 +321,7 @@ static int probe_gpt_pt(blkid_probe pr,
 	ret = is_pmbr_valid(pr, NULL);
 	if (ret < 0)
 		return ret;
-	else if (ret == 0)
+	if (ret == 0)
 		goto nothing;
 
 	errno = 0;

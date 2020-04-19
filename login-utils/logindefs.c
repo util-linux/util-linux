@@ -391,8 +391,9 @@ int get_hushlogin_status(struct passwd *pwd, int force_check)
 			rc = effective_access(buf, O_RDONLY);
 			if (rc == 0)
 				return 1;
-			else if (rc == -1 && errno == EACCES)
-					return -1;
+
+			if (rc == -1 && errno == EACCES)
+				return -1;
 		}
 
 	}

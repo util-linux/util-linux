@@ -226,7 +226,7 @@ int scols_cell_get_alignment(const struct libscols_cell *ce)
 {
 	if (ce->flags & SCOLS_CELL_FL_RIGHT)
 		return SCOLS_CELL_FL_RIGHT;
-	else if (ce->flags & SCOLS_CELL_FL_CENTER)
+	if (ce->flags & SCOLS_CELL_FL_CENTER)
 		return SCOLS_CELL_FL_CENTER;
 
 	return SCOLS_CELL_FL_LEFT;	/* default */

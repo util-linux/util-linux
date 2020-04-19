@@ -209,7 +209,7 @@ const struct libmnt_optmap *mnt_get_builtin_optmap(int id)
 
 	if (id == MNT_LINUX_MAP)
 		return linux_flags_map;
-	else if (id == MNT_USERSPACE_MAP)
+	if (id == MNT_USERSPACE_MAP)
 		return userspace_opts_map;
 	return NULL;
 }

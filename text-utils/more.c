@@ -895,10 +895,9 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 					erase_one_column(ctl);
 				}
 				continue;
-			} else {
-				if (!ctl->erase_line)
-					ctl->prompt_len = maxlen;
 			}
+			if (!ctl->erase_line)
+				ctl->prompt_len = maxlen;
 		} else if (c == ctl->output_tty.c_cc[VKILL] && !slash) {
 			if (ctl->hard_tty) {
 				show(ctl, c);
@@ -1340,8 +1339,8 @@ static void search(struct more_control *ctl, char buf[], int n)
 				puts(ctl->line_buf);
 			}
 			break;
-		} else
-			more_poll(ctl, 1);
+		}
+		more_poll(ctl, 1);
 	}
 	/* Move ctrl+c signal handling back to more_key_command(). */
 	signal(SIGINT, SIG_DFL);

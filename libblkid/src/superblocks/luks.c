@@ -108,18 +108,18 @@ static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag __attribute_
 	if (!memcmp(header->magic, LUKS_MAGIC, LUKS_MAGIC_L)) {
 		/* LUKS primary header was found. */
 		return luks_attributes(pr, header, 0);
-	} else {
-		/* No primary header, scan for known offsets of LUKS2 secondary header. */
-		for (i = 0; i < ARRAY_SIZE(secondary_offsets); i++) {
-			header = (struct luks2_phdr *) blkid_probe_get_buffer(pr,
-				  secondary_offsets[i], sizeof(struct luks2_phdr));
+	}
 
-			if (!header)
-				return errno ? -errno : BLKID_PROBE_NONE;
+	/* No primary header, scan for known offsets of LUKS2 secondary header. */
+	for (i = 0; i < ARRAY_SIZE(secondary_offsets); i++) {
+		header = (struct luks2_phdr *) blkid_probe_get_buffer(pr,
+			  secondary_offsets[i], sizeof(struct luks2_phdr));
 
-			if (!memcmp(header->magic, LUKS_MAGIC_2, LUKS_MAGIC_L))
-				return luks_attributes(pr, header, secondary_offsets[i]);
-		}
+		if (!header)
+			return errno ? -errno : BLKID_PROBE_NONE;
+
+		if (!memcmp(header->magic, LUKS_MAGIC_2, LUKS_MAGIC_L))
+			return luks_attributes(pr, header, secondary_offsets[i]);
 	}
 
 	return BLKID_PROBE_NONE;

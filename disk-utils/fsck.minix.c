@@ -300,7 +300,7 @@ static int is_valid_zone_nr(unsigned short nr)
 {
 	if (nr < get_first_zone())
 		return 0;
-	else if (nr >= get_nzones())
+	if (nr >= get_nzones())
 		return 0;
 	return 1;
 }
@@ -1355,7 +1355,9 @@ main(int argc, char **argv) {
 		if (repair)
 			printf(_("%s is clean, no check.\n"), device_name);
 		return retcode;
-	} else if (force)
+	}
+
+	if (force)
 		printf(_("Forcing filesystem check on %s.\n"), device_name);
 	else if (repair)
 		printf(_("Filesystem on %s is dirty, needs checking.\n"),

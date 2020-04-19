@@ -492,7 +492,9 @@ static PyObject *Table_next_fs(TableObject *self)
 	if (rc == 1) {
 		mnt_reset_iter(self->iter, MNT_ITER_FORWARD);
 		Py_RETURN_NONE;
-	} else if (rc)
+	}
+
+	if (rc)
 		return UL_RaiseExc(-rc);
 
 	return PyObjectResultFs(fs);

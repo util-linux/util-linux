@@ -1074,8 +1074,8 @@ found:
 			uint64_t sz = 0;
 
 			return loopcxt_get_sizelimit(lc, &sz) == 0 && sz == sizelimit;
-		} else
-			return rc;
+		}
+		return rc;
 	}
 	return 1;
 }

@@ -986,7 +986,9 @@ static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 		if (!m->page_sz)				/* small menu */
 			return (ui_lines - (cf->menu->nitems + 1)) / 2 + idx;
 		return (idx % m->page_sz) + 1;
-	} else {
+	}
+
+	{
 		size_t len = MENU_H_ITEMWIDTH(m) + MENU_H_BETWEEN; /** item width */
 		size_t items = ui_cols / len;			/* items per line */
 
@@ -1003,7 +1005,9 @@ static int menuitem_get_column(struct cfdisk *cf, size_t idx)
 		if ((size_t) ui_cols <= nc)
 			return 0;
 		return (ui_cols - nc) / 2;
-	} else {
+	}
+
+	{
 		size_t len = MENU_H_ITEMWIDTH(cf->menu) + MENU_H_BETWEEN; /* item width */
 		size_t items = ui_cols / len;				/* items per line */
 		size_t extra = items < cf->menu->nitems ?		/* extra space on line */
@@ -1877,7 +1881,7 @@ static int ui_get_size(struct cfdisk *cf,	/* context */
 		if (rc == 0) {
 			ui_warnx(_("Please, specify size."));
 			continue;			/* nothing specified */
-		} else if (rc == -CFDISK_ERR_ESC)
+		} if (rc == -CFDISK_ERR_ESC)
 			break;				/* cancel dialog */
 
 		if (strcmp(buf, dflt) == 0)

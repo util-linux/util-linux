@@ -172,8 +172,8 @@ static int string_to_int(const char *s)
 	l = strtol(s, &p, 0);
 	if (*p || l == LONG_MIN || l == LONG_MAX || l < 0 || l > INT_MAX)
 		return -1;
-	else
-		return (int) l;
+
+	return (int) l;
 }
 
 /* Do we really really want to check this fs? */

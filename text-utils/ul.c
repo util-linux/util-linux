@@ -69,8 +69,8 @@ static int put1wc(int c)
 {
 	if (putwchar(c) == WEOF)
 		return EOF;
-	else
-		return c;
+
+	return c;
 }
 #define putwp(s) tputs(s, STDOUT_FILENO, put1wc)
 #else

@@ -701,28 +701,32 @@ static int try_write(const char *filename, const char *directory)
 	if (eaccess(filename, R_OK|W_OK) == 0) {
 		DBG(UTILS, ul_debug(" access OK"));
 		return 0;
-	} else if (errno != ENOENT) {
+	}
+
+	if (errno != ENOENT) {
 		DBG(UTILS, ul_debug(" access FAILED"));
 		return -errno;
-	} else if (directory) {
+	}
+
+	if (directory) {
 		/* file does not exist; try if directory is writable */
 		if (eaccess(directory, R_OK|W_OK) != 0)
 			rc = -errno;
 
 		DBG(UTILS, ul_debug(" access %s [%s]", rc ? "FAILED" : "OK", directory));
 		return rc;
-	} else
-#endif
-	{
-		DBG(UTILS, ul_debug(" doing open-write test"));
-
-		int fd = open(filename, O_RDWR|O_CREAT|O_CLOEXEC,
-			    S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
-		if (fd < 0)
-			rc = -errno;
-		else
-			close(fd);
 	}
+#endif
+
+	DBG(UTILS, ul_debug(" doing open-write test"));
+
+	int fd = open(filename, O_RDWR|O_CREAT|O_CLOEXEC,
+		    S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
+	if (fd < 0)
+		rc = -errno;
+	else
+		close(fd);
+
 	return rc;
 }
 
@@ -1210,7 +1214,7 @@ static int read_procfs_file(int fd, char **buf, size_t *bufsiz)
 			}
 			break;
 
-		} else if (ret > 0) {
+		} if (ret > 0) {
 			/* success -- verify no event during read */
 			struct pollfd fds[] = {
 				{ .fd = fd, .events = POLLPRI }

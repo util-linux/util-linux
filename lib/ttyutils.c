@@ -73,9 +73,9 @@ int get_terminal_stdfd(void)
 {
 	if (isatty(STDIN_FILENO))
 		return STDIN_FILENO;
-	else if (isatty(STDOUT_FILENO))
+	if (isatty(STDOUT_FILENO))
 		return STDOUT_FILENO;
-	else if (isatty(STDERR_FILENO))
+	if (isatty(STDERR_FILENO))
 		return STDERR_FILENO;
 
 	return -EINVAL;

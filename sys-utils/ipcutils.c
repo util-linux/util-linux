@@ -145,8 +145,8 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 			if (id == p->shm_perm.id) {
 				i = 1;
 				break;
-			} else
-				continue;
+			}
+			continue;
 		}
 
 		p->next = xcalloc(1, sizeof(struct shm_data));
@@ -284,8 +284,8 @@ int ipc_sem_get_info(int id, struct sem_data **semds)
 				get_sem_elements(p);
 				i = 1;
 				break;
-			} else
-				continue;
+			}
+			continue;
 		}
 
 		p->next = xcalloc(1, sizeof(struct sem_data));
@@ -397,8 +397,8 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 					p->q_qbytes = msgseg.msg_qbytes;
 				i = 1;
 				break;
-			} else
-				continue;
+			}
+			continue;
 		}
 
 		p->next = xcalloc(1, sizeof(struct msg_data));

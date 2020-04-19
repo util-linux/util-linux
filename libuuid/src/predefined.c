@@ -68,13 +68,16 @@ const uuid_t *uuid_get_template(const char *alias)
 
 	if (!strcmp(alias, "dns"))
 		return &NameSpace_DNS;
-	else if (!strcmp(alias, "url"))
+
+	if (!strcmp(alias, "url"))
 		return &NameSpace_URL;
-	else if (!strcmp(alias, "oid"))
+
+	if (!strcmp(alias, "oid"))
 		return &NameSpace_OID;
-	else if (!strcmp(alias, "x500") || !strcmp(alias, "x.500"))
+
+	if (!strcmp(alias, "x500") || !strcmp(alias, "x.500"))
 		return &NameSpace_X500;
-	else
-		return NULL;
+
+	return NULL;
 }
 
