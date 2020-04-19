@@ -355,7 +355,7 @@ int parse_timestamp(const char *t, usec_t *usec)
 int get_gmtoff(const struct tm *tp)
 {
 	if (tp->tm_isdst < 0)
-	return 0;
+		return 0;
 
 #if HAVE_TM_GMTOFF
 	return tp->tm_gmtoff;
