@@ -608,9 +608,8 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 	}
 
 	newhwtime = sethwtime
-		    + (int)(time_diff(nowsystime, refsystime)
-			    - delay /* don't count this */
-			    + 0.5 /* for rounding */);
+		    + ceil(time_diff(nowsystime, refsystime)
+			    - delay /* don't count this */);
 	if (ctl->verbose)
 		printf(_("%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
 			 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"),
