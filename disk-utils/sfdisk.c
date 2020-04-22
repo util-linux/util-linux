@@ -376,9 +376,9 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	FILE *f = NULL;
 	int ok = 0, fd, backward = 0;
 	fdisk_sector_t nsectors, from, to, step, i, prev;
-	size_t io, ss, step_bytes, cc;
+	size_t io, ss, step_bytes, cc, ioerr = 0;
 	uintmax_t src, dst, nbytes;
-	int errsv, progress = 0;
+	int progress = 0, rc = 0;
 	struct timeval prev_time;
 	uint64_t bytes_per_sec = 0;
 
@@ -474,8 +474,9 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	if (typescript) {
 		f = fopen(typescript, "w");
 		if (!f) {
+			rc = -errno;
 			fdisk_warn(sf->cxt, _("cannot open %s"), typescript);
-			goto fail;
+			goto done;
 		}
 
 		/* don't translate */
@@ -506,8 +507,6 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	prev = 0;
 
 	for (cc = 1, i = 0; i < nsectors && nbytes > 0; i += step, cc++) {
-		ssize_t rc;
-
 		if (backward)
 			src -= step_bytes, dst -= step_bytes;
 
@@ -522,18 +521,26 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 
 		if (!sf->noact) {
 			/* read source */
-			if (lseek(fd, src, SEEK_SET) == (off_t) -1)
-				goto fail;
-			rc = read(fd, buf, step_bytes);
-			if (rc < 0 || rc != (ssize_t) step_bytes)
-				goto fail;
+			if (lseek(fd, src, SEEK_SET) == (off_t) -1 ||
+			    read_all(fd, buf, step_bytes) != (ssize_t) step_bytes) {
+				if (f)
+					fprintf(f, "%05zu: read error %12ju %12ju\n", cc, src, dst);
+				fdisk_warn(sf->cxt,
+					_("cannot read at offset: %zu; continue"), src);
+				ioerr++;
+				goto next;
+			}
 
 			/* write target */
-			if (lseek(fd, dst, SEEK_SET) == (off_t) -1)
-				goto fail;
-			rc = write(fd, buf, step_bytes);
-			if (rc < 0 || rc != (ssize_t) step_bytes)
-				goto fail;
+			if (lseek(fd, dst, SEEK_SET) == (off_t) -1 ||
+			    write_all(fd, buf, step_bytes) != 0) {
+				if (f)
+					fprintf(f, "%05zu: write error %12ju %12ju\n", cc, src, dst);
+				fdisk_warn(sf->cxt,
+					_("cannot write at offset: %zu; continue"), dst);
+				ioerr++;
+				goto next;
+			}
 			if (sf->movefsync)
 				fsync(fd);
 		}
@@ -571,7 +578,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
                         fputc('\r', stdout);
 
 		}
-
+next:
 		if (!backward)
 			src += step_bytes, dst += step_bytes;
 	}
@@ -587,6 +594,8 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 				100.0 / ((double) nsectors/(i+1)));
 		fputc('\n', stdout);
 	}
+	rc = 0;
+done:
 	if (f)
 		fclose(f);
 	free(buf);
@@ -595,18 +604,13 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 
 	if (sf->noact)
 		fdisk_info(sf->cxt, _("Your data has not been moved (--no-act)."));
+	if (ioerr) {
+		fdisk_info(sf->cxt, _("%zu I/O errors detected!"), ioerr);
+		rc = -EIO;
+	} else if (rc)
+		warn(_("%s: failed to move data"), devname);
 
-	return 0;
-fail:
-	errsv = -errno;
-	warn(_("%s: failed to move data"), devname);
-	if (f)
-		fclose(f);
-	free(buf);
-	free(devname);
-	free(typescript);
-
-	return errsv;
+	return rc;
 }
 
 static int write_changes(struct sfdisk *sf)
