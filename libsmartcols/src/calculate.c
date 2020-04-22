@@ -50,6 +50,8 @@ static int count_cell_width(struct libscols_table *tb,
 		len = 0;
 	else if (scols_column_is_customwrap(cl))
 		len = cl->wrap_chunksize(cl, data, cl->wrapfunc_data);
+	else if (scols_table_is_noencoding(tb))
+		len = mbs_width(data);
 	else
 		len = mbs_safe_width(data);
 
@@ -101,13 +103,18 @@ static int count_column_width(struct libscols_table *tb,
 
 	cl->width = 0;
 	if (!cl->width_min) {
+		const char *data;
+
 		if (cl->width_hint < 1 && scols_table_is_maxout(tb) && tb->is_term) {
 			cl->width_min = (size_t) (cl->width_hint * tb->termwidth);
 			if (cl->width_min && !is_last_column(cl))
 				cl->width_min--;
 		}
-		if (scols_cell_get_data(&cl->header)) {
-			size_t len = mbs_safe_width(scols_cell_get_data(&cl->header));
+
+		data = scols_cell_get_data(&cl->header);
+		if (data) {
+			size_t len = scols_table_is_noencoding(tb) ?
+					mbs_width(data) : mbs_safe_width(data);
 			cl->width_min = max(cl->width_min, len);
 		} else
 			no_header = 1;
@@ -189,7 +196,9 @@ int __scols_calculate(struct libscols_table *tb, struct libscols_buffer *buf)
 	DBG(TAB, ul_debugobj(tb, "-----calculate-(termwidth=%zu)-----", tb->termwidth));
 	tb->is_dummy_print = 1;
 
-	colsepsz = mbs_safe_width(colsep(tb));
+	colsepsz = scols_table_is_noencoding(tb) ?
+			mbs_width(colsep(tb)) :
+			mbs_safe_width(colsep(tb));
 
 	if (has_groups(tb))
 		group_ncolumns = 1;

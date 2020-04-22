@@ -338,11 +338,15 @@ size_t scols_wrapnl_chunksize(const struct libscols_column *cl __attribute__((un
 
 		p = strchr(data, '\n');
 		if (p) {
-			sz = mbs_safe_nwidth(data, p - data, NULL);
+			sz = cl->table && scols_table_is_noencoding(cl->table) ?
+					mbs_nwidth(data, p - data) :
+					mbs_safe_nwidth(data, p - data, NULL);
 			p++;
-		} else
-			sz = mbs_safe_width(data);
-
+		} else {
+			sz = cl->table && scols_table_is_noencoding(cl->table) ?
+					mbs_width(data) :
+					mbs_safe_width(data);
+		}
 		sum = max(sum, sz);
 		data = p;
 	}

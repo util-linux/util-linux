@@ -122,8 +122,8 @@ char *buffer_get_safe_data(struct libscols_table *tb,
 			goto nothing;
 	}
 
-	if (tb->no_encode) {
-		*cells = mbs_safe_width(data);
+	if (scols_table_is_noencoding(tb)) {
+		*cells = mbs_width(data);
 		strcpy(buf->encdata, data);
 		res = buf->encdata;
 	} else {

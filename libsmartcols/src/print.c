@@ -233,7 +233,9 @@ static void print_empty_cell(struct libscols_table *tb,
 			/* only print symbols->vert if followed by child */
 			if (!list_empty(&ln->ln_branch)) {
 				fputs(vertical_symbol(tb), tb->out);
-				len_pad = mbs_safe_width(vertical_symbol(tb));
+				len_pad = scols_table_is_noencoding(tb) ?
+						mbs_width(vertical_symbol(tb)) :
+						mbs_safe_width(vertical_symbol(tb));
 			}
 		} else {
 			/* use the same draw function as though we were intending to draw an L-shape */
@@ -393,7 +395,9 @@ static int print_pending_data(
 	    && (nextchunk = cl->wrap_nextchunk(cl, data, cl->wrapfunc_data))) {
 		bytes = nextchunk - data;
 
-		len = mbs_safe_nwidth(data, bytes, NULL);
+		len = scols_table_is_noencoding(tb) ?
+				mbs_nwidth(data, bytes) :
+				mbs_safe_nwidth(data, bytes, NULL);
 	} else
 		bytes = mbs_truncate(data, &len);
 
@@ -511,7 +515,10 @@ static int print_data(struct libscols_table *tb,
 	    && (nextchunk = cl->wrap_nextchunk(cl, data, cl->wrapfunc_data))) {
 		set_pending_data(cl, nextchunk, bytes - (nextchunk - data));
 		bytes = nextchunk - data;
-		len = mbs_safe_nwidth(data, bytes, NULL);
+
+		len = scols_table_is_noencoding(tb) ?
+				mbs_nwidth(data, bytes) :
+				mbs_safe_nwidth(data, bytes, NULL);
 	}
 
 	if (is_last
