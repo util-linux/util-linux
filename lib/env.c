@@ -110,7 +110,7 @@ return secure_getenv(arg);
 }
 
 #ifdef TEST_PROGRAM
-int main(int argc, char **argv)
+int main(void)
 {
 	char *const *bad;
 	char copy[32];

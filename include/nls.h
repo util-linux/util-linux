@@ -1,8 +1,6 @@
 #ifndef UTIL_LINUX_NLS_H
 #define UTIL_LINUX_NLS_H
 
-int main(int argc, char *argv[]);
-
 #ifndef LOCALEDIR
 #define LOCALEDIR "/usr/share/locale"
 #endif
