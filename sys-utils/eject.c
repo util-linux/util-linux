@@ -888,7 +888,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!ctl.device)
-		errx(EXIT_FAILURE, _("%s: unable to find device"), ctl.device);
+		errx(EXIT_FAILURE, _("unable to find device"));
 
 	verbose(&ctl, _("device name is `%s'"), ctl.device);
 
