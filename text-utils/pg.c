@@ -987,42 +987,43 @@ static void pgfile(FILE *f, const char *name)
 					*b = '\0';
 					dline = pagelen;
 					break;
-				} else {
-					if (nobuf)
-						fseeko(f, fpos, SEEK_SET);
-					canjump = 1;
-					p = fgets(b, READBUF, f);
-					if (nobuf)
-						if ((fpos = ftello(f)) == -1)
-							warn("%s", name);
-					canjump = 0;
 				}
+
+				if (nobuf)
+					fseeko(f, fpos, SEEK_SET);
+				canjump = 1;
+				p = fgets(b, READBUF, f);
+				if (nobuf)
+					if ((fpos = ftello(f)) == -1)
+						warn("%s", name);
+				canjump = 0;
+
 				if (p == NULL || *b == '\0') {
 					if (ferror(f))
 						warn("%s", name);
 					eofline = fline;
 					eof = 1;
 					break;
-				} else {
-					if (!nobuf)
-						fputs(b, fbuf);
-					fwrite_all(&pos, sizeof pos, 1, find);
-					if (!fflag) {
-						oldpos = pos;
-						p = b;
-						while (*(p = endline(ttycols,
-								     p))
-						       != '\0') {
-							pos = oldpos + (p - b);
-							fwrite_all(&pos,
-								   sizeof pos,
-								   1, find);
-							fline++;
-							bline++;
-						}
-					}
-					fline++;
 				}
+
+				if (!nobuf)
+					fputs(b, fbuf);
+				fwrite_all(&pos, sizeof pos, 1, find);
+				if (!fflag) {
+					oldpos = pos;
+					p = b;
+					while (*(p = endline(ttycols,
+							     p))
+					       != '\0') {
+						pos = oldpos + (p - b);
+						fwrite_all(&pos,
+							   sizeof pos,
+							   1, find);
+						fline++;
+						bline++;
+					}
+				}
+				fline++;
 			} while (line > bline++);
 		} else {
 			/* eofline != 0 */
@@ -1057,7 +1058,9 @@ static void pgfile(FILE *f, const char *name)
 				skip(1);
 			}
 			continue;
-		} else if (eof) {
+		}
+
+		if (eof) {
 			/* We are not searching. */
 			line = bline;
 		} else if (*b != '\0') {

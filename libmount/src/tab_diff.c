@@ -277,7 +277,7 @@ int mnt_diff_tables(struct libmnt_tabdiff *df, struct libmnt_table *old_tab,
 				   *f1 = mnt_fs_get_fs_options(o_fs),
 				   *f2 = mnt_fs_get_fs_options(fs);
 
-			if ((v1 && v2 && strcmp(v1, v2)) || (f1 && f2 && strcmp(f1, f2)))
+			if ((v1 && v2 && strcmp(v1, v2) != 0) || (f1 && f2 && strcmp(f1, f2) != 0))
 				tabdiff_add_entry(df, o_fs, fs, MNT_TABDIFF_REMOUNT);
 		}
 	}

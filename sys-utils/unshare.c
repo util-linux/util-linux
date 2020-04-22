@@ -593,7 +593,7 @@ int main(int argc, char *argv[])
 				err(EXIT_FAILURE, _("waitpid failed"));
 			if (WIFEXITED(status))
 				return WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
+			if (WIFSIGNALED(status))
 				kill(getpid(), WTERMSIG(status));
 			err(EXIT_FAILURE, _("child exit failed"));
 		}

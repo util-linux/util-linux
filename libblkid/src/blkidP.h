@@ -350,7 +350,7 @@ struct dir_list {
 };
 extern void blkid__scan_dir(char *, dev_t, struct dir_list **, char **)
 			__attribute__((nonnull(1,4)));
-extern int blkid_driver_has_major(const char *drvname, int major)
+extern int blkid_driver_has_major(const char *drvname, int drvmaj)
 			__attribute__((warn_unused_result));
 
 /* lseek.c */

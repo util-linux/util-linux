@@ -1149,7 +1149,7 @@ int su_main(int argc, char **argv, int mode)
 			shell = getenv("SHELL");
 
 		if (shell
-		    && strcmp(shell, su->pwd->pw_shell)
+		    && strcmp(shell, su->pwd->pw_shell) != 0
 		    && getuid() != 0
 		    && is_restricted_shell(su->pwd->pw_shell)) {
 			/* The user being su'd to has a nonstandard shell, and

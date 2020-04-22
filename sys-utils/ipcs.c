@@ -353,7 +353,6 @@ static void do_shm (char format, int unit)
 	}
 
 	ipc_shm_free_info(shmds);
-	return;
 }
 
 static void do_sem (char format)
@@ -455,7 +454,6 @@ static void do_sem (char format)
 	}
 
 	ipc_sem_free_info(semds);
-	return;
 }
 
 static void do_msg (char format, int unit)
@@ -576,7 +574,6 @@ static void do_msg (char format, int unit)
 	}
 
 	ipc_msg_free_info(msgds);
-	return;
 }
 
 static void print_shm(int shmid, int unit)

@@ -126,11 +126,11 @@ static int process_next_step(struct scriptlive *ss)
 
 			ul_pty_set_mainloop_time(ss->pty, &target);
 			break;
-		} else {
-			/* no delay -- immediately write */
-			rc = replay_emit_step_data(ss->setup, ss->step, fd);
-			fdatasync(fd);
 		}
+
+		/* no delay -- immediately write */
+		rc = replay_emit_step_data(ss->setup, ss->step, fd);
+		fdatasync(fd);
 	} while (rc == 0);
 
 	return rc;

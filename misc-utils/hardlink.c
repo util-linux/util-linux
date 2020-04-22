@@ -296,7 +296,7 @@ static void process_path(struct hardlink_ctl *ctl, const char *name)
 						close(fd2);
 						return;
 					}
-					if (memcmp(ctl->iobuf1, ctl->iobuf2, rsize))
+					if (memcmp(ctl->iobuf1, ctl->iobuf2, rsize) != 0)
 						break;
 				}
 				close(fd2);

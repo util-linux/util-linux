@@ -618,8 +618,8 @@ static int leap_year(const struct cal_control *ctl, int32_t year)
 {
 	if (year <= ctl->reform_year)
 		return !(year % 4);
-	else
-		return ( !(year % 4) && (year % 100) ) || !(year % 400);
+
+	return ( !(year % 4) && (year % 100) ) || !(year % 400);
 }
 
 static void init_monthnames(struct cal_control *ctl)

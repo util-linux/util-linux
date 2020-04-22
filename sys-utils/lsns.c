@@ -596,11 +596,10 @@ static int netnsid_xasputs(char **str, int netnsid)
 	if (netnsid >= 0)
 		return xasprintf(str, "%d", netnsid);
 #ifdef NETNSA_NSID_NOT_ASSIGNED
-	else if (netnsid == NETNSA_NSID_NOT_ASSIGNED)
+	if (netnsid == NETNSA_NSID_NOT_ASSIGNED)
 		return xasprintf(str, "%s", "unassigned");
 #endif
-	else
-		return 0;
+	return 0;
 }
 
 static int read_namespaces(struct lsns *ls)

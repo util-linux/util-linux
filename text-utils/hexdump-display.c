@@ -100,7 +100,6 @@ static const char *color_cond(struct hexdump_pr *pr, unsigned char *bp, int bcnt
 		/* return the format string or check for another */
 		if (match ^ clr->invert)
 			return clr->fmt;
-		continue;
 	}
 
 	/* no match */
@@ -378,7 +377,7 @@ get(struct hexdump *hex)
 			hex->length -= n;
 		if (!(need -= n)) {
 			if (vflag == ALL || vflag == FIRST ||
-			    memcmp(curp, savp, hex->blocksize)) {
+			    memcmp(curp, savp, hex->blocksize) != 0) {
 				if (vflag == DUP || vflag == FIRST)
 					vflag = WAIT;
 				return(curp);

@@ -547,9 +547,9 @@ static int is_zero(unsigned char const *begin, unsigned len)
 			     (len-- == 0 ||
 			      (begin[3] == '\0' &&
 			       memcmp(begin, begin + 4, len) == 0))))))));
-	else
-		/* Never create holes. */
-		return 0;
+
+	/* Never create holes. */
+	return 0;
 }
 
 /*

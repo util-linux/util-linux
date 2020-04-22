@@ -425,7 +425,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		}
 	}
 
-	if (boot_label && memcmp(boot_label, no_name, 11))
+	if (boot_label && memcmp(boot_label, no_name, 11) != 0)
 		blkid_probe_set_id_label(pr, "LABEL_FATBOOT", boot_label, 11);
 
 	if (vol_label)

@@ -133,7 +133,7 @@ static int chmem_size(struct chmem_desc *desc, int enable, int zone_id)
 				zn = zone_names[zone_id];
 				if (enable && !strcasestr(line, zn))
 					continue;
-				if (!enable && strncasecmp(line, zn, strlen(zn)))
+				if (!enable && strncasecmp(line, zn, strlen(zn)) != 0)
 					continue;
 			} else if (enable) {
 				/* By default, use zone Movable for online, if valid */
@@ -218,7 +218,7 @@ static int chmem_range(struct chmem_desc *desc, int enable, int zone_id)
 					warnx(_("%s enable failed: Zone mismatch"), str);
 					continue;
 				}
-				if (!enable && strncasecmp(line, zn, strlen(zn))) {
+				if (!enable && strncasecmp(line, zn, strlen(zn)) != 0) {
 					warnx(_("%s disable failed: Zone mismatch"), str);
 					continue;
 				}
@@ -251,7 +251,7 @@ static int chmem_range(struct chmem_desc *desc, int enable, int zone_id)
 
 static int filter(const struct dirent *de)
 {
-	if (strncmp("memory", de->d_name, 6))
+	if (strncmp("memory", de->d_name, 6) != 0)
 		return 0;
 	return isdigit_string(de->d_name + 6);
 }

@@ -578,7 +578,8 @@ char *mnt_resolve_target(const char *path, struct libmnt_cache *cache)
 	p = (char *) cache_find_path(cache, path);
 	if (p)
 		return p;
-	else {
+
+	{
 		struct libmnt_iter itr;
 		struct libmnt_fs *fs = NULL;
 
@@ -586,8 +587,8 @@ char *mnt_resolve_target(const char *path, struct libmnt_cache *cache)
 		while (mnt_table_next_fs(cache->mtab, &itr, &fs) == 0) {
 
 			if (!mnt_fs_is_kernel(fs)
-                            || mnt_fs_is_swaparea(fs)
-                            || !mnt_fs_streq_target(fs, path))
+			     || mnt_fs_is_swaparea(fs)
+			     || !mnt_fs_streq_target(fs, path))
 				continue;
 
 			p = strdup(path);

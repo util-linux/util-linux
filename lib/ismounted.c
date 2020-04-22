@@ -272,7 +272,7 @@ static int is_swap_device(const char *file)
 	/* Skip the first line */
 	if (!fgets(buf, sizeof(buf), f))
 		goto leave;
-	if (*buf && strncmp(buf, "Filename\t", 9))
+	if (*buf && strncmp(buf, "Filename\t", 9) != 0)
 		/* Linux <=2.6.19 contained a bug in the /proc/swaps
 		 * code where the header would not be displayed
 		 */

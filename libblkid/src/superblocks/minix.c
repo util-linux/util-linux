@@ -143,7 +143,8 @@ static int probe_minix(blkid_probe pr,
 	ext = blkid_probe_get_buffer(pr, 0x400 + 0x38, 2);
 	if (!ext)
 		return errno ? -errno : 1;
-	else if (memcmp(ext, "\123\357", 2) == 0)
+
+	if (memcmp(ext, "\123\357", 2) == 0)
 		return 1;
 
 	blkid_probe_sprintf_version(pr, "%d", version);

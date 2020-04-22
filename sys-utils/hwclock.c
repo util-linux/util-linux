@@ -608,9 +608,8 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 	}
 
 	newhwtime = sethwtime
-		    + (int)(time_diff(nowsystime, refsystime)
-			    - delay /* don't count this */
-			    + 0.5 /* for rounding */);
+		    + ceil(time_diff(nowsystime, refsystime)
+			    - delay /* don't count this */);
 	if (ctl->verbose)
 		printf(_("%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
 			 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"),
@@ -876,7 +875,9 @@ static int save_adjtime(const struct hwclock_control *ctl,
 		if (fp == NULL) {
 			warn(_("cannot open %s"), ctl->adj_file_name);
 			return EXIT_FAILURE;
-		} else if (fputs(content, fp) < 0 || close_stream(fp) != 0) {
+		}
+
+		if (fputs(content, fp) < 0 || close_stream(fp) != 0) {
 			warn(_("cannot update %s"), ctl->adj_file_name);
 			return EXIT_FAILURE;
 		}
@@ -1053,7 +1054,9 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	}
 	if (ctl->show || ctl->get) {
 		return display_time(startup_hclocktime);
-	} else if (ctl->set) {
+	}
+
+	if (ctl->set) {
 		set_hardware_clock_exact(ctl, set_time, startup_time);
 		if (!ctl->noadjfile)
 			adjust_drift_factor(ctl, adjtime, t2tv(set_time),

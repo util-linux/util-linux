@@ -226,7 +226,8 @@ struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name)
 
 	if (!name)
 		return cxt->label;
-	else if (strcasecmp(name, "mbr") == 0)
+
+	if (strcasecmp(name, "mbr") == 0)
 		name = "dos";
 
 	for (i = 0; i < cxt->nlabels; i++)
@@ -818,17 +819,16 @@ int fdisk_reread_partition_table(struct fdisk_context *cxt)
 
 	if (!S_ISBLK(cxt->dev_st.st_mode))
 		return 0;
-	else {
-		DBG(CXT, ul_debugobj(cxt, "calling re-read ioctl"));
-		sync();
+
+	DBG(CXT, ul_debugobj(cxt, "calling re-read ioctl"));
+	sync();
 #ifdef BLKRRPART
-		fdisk_info(cxt, _("Calling ioctl() to re-read partition table."));
-		i = ioctl(cxt->dev_fd, BLKRRPART);
+	fdisk_info(cxt, _("Calling ioctl() to re-read partition table."));
+	i = ioctl(cxt->dev_fd, BLKRRPART);
 #else
-		errno = ENOSYS;
-		i = 1;
+	errno = ENOSYS;
+	i = 1;
 #endif
-	}
 
 	if (i) {
 		fdisk_warn(cxt, _("Re-reading the partition table failed."));

@@ -292,8 +292,7 @@ int main(int argc, char **argv)
 					printf(_(", error"));
 				printf("\n");
 			}
-		} else
-		if (ioctl(fd, cmds->op - offset, cmds->val) < 0)
+		} else if (ioctl(fd, cmds->op - offset, cmds->val) < 0)
 			warn(_("ioctl failed"));
 		cmdst = cmds;
 		cmds = cmds->next;

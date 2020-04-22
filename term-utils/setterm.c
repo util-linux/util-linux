@@ -247,11 +247,11 @@ static char *find_optional_arg(char **av, char *oa, int *oi)
 	char *arg;
 	if (oa)
 		return oa;
-	else {
-		arg = av[*oi];
-		if (!arg || arg[0] == '-')
-			return NULL;
-	}
+
+	arg = av[*oi];
+	if (!arg || arg[0] == '-')
+		return NULL;
+
 	(*oi)++;
 	return arg;
 }
@@ -265,29 +265,28 @@ static int parse_blank(char **av, char *oa, int *oi)
 		return BLANKEDSCREEN;
 	if (!strcmp(arg, "force"))
 		return BLANKSCREEN;
-	else if (!strcmp(arg, "poke"))
+	if (!strcmp(arg, "poke"))
 		return UNBLANKSCREEN;
-	else {
-		int ret;
 
-		ret = strtos32_or_err(arg, _("argument error"));
-		if (ret < 0 || BLANK_MAX < ret)
-			errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
-		return ret;
-	}
+	int ret;
+
+	ret = strtos32_or_err(arg, _("argument error"));
+	if (ret < 0 || BLANK_MAX < ret)
+		errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
+	return ret;
 }
 
 static int parse_powersave(const char *arg)
 {
 	if (strcmp(arg, "on") == 0)
 		return VESA_BLANK_MODE_SUSPENDV;
-	else if (strcmp(arg, "vsync") == 0)
+	if (strcmp(arg, "vsync") == 0)
 		return VESA_BLANK_MODE_SUSPENDV;
-	else if (strcmp(arg, "hsync") == 0)
+	if (strcmp(arg, "hsync") == 0)
 		return VESA_BLANK_MODE_SUSPENDH;
-	else if (strcmp(arg, "powerdown") == 0)
+	if (strcmp(arg, "powerdown") == 0)
 		return VESA_BLANK_MODE_POWERDOWN;
-	else if (strcmp(arg, "off") == 0)
+	if (strcmp(arg, "off") == 0)
 		return VESA_BLANK_MODE_OFF;
 	errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
 }
@@ -779,7 +778,6 @@ static void set_blanking(struct setterm_control *ctl)
 	default:		/* should be impossible to reach */
 		abort();
 	}
-	return;
 }
 
 static void screendump(struct setterm_control *ctl)
@@ -833,7 +831,6 @@ static void screendump(struct setterm_control *ctl)
 	free(ctl->in_device);
 	if (close_stream(out) != 0)
 		errx(EXIT_FAILURE, _("write error"));
-	return;
 }
 
 /* Some options are applicable when terminal is virtual console. */

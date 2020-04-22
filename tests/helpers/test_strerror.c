@@ -33,7 +33,7 @@ int main(int argc, const char *argv[])
 	}
 
 	for (i = 0; i < sizeof(errors)/sizeof(*errors); i++) {
-		if (strcmp(errors[i].str, argv[1]))
+		if (strcmp(errors[i].str, argv[1]) != 0)
 			continue;
 		puts(strerror(errors[i].error));
 		return 0;

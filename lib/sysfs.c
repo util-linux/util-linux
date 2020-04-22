@@ -869,7 +869,7 @@ dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char 
 		goto done;
 	sysfs_devname_dev_to_sys(_name);
 
-	if (parent && strncmp("dm-", name, 3)) {
+	if (parent && strncmp("dm-", name, 3) != 0) {
 		/*
 		 * Create path to /sys/block/<parent>/<name>/dev
 		 */

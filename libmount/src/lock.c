@@ -474,25 +474,25 @@ static int lock_mtab(struct libmnt_lock *ml)
 				/* proceed, since it was us who created the lockfile anyway */
 			}
 			break;
-		} else {
-			/* Someone else made the link. Wait. */
-			int err = mnt_wait_mtab_lock(ml, &flock, maxtime.tv_sec);
-
-			if (err == 1) {
-				DBG(LOCKS, ul_debugobj(ml,
-					"%s: can't create link: time out (perhaps "
-					"there is a stale lock file?)", lockfile));
-				rc = -ETIMEDOUT;
-				goto failed;
-
-			} else if (err < 0) {
-				rc = err;
-				goto failed;
-			}
-			nanosleep(&waittime, NULL);
-			close(ml->lockfile_fd);
-			ml->lockfile_fd = -1;
 		}
+
+		/* Someone else made the link. Wait. */
+		int err = mnt_wait_mtab_lock(ml, &flock, maxtime.tv_sec);
+
+		if (err == 1) {
+			DBG(LOCKS, ul_debugobj(ml,
+				"%s: can't create link: time out (perhaps "
+				"there is a stale lock file?)", lockfile));
+			rc = -ETIMEDOUT;
+			goto failed;
+
+		} else if (err < 0) {
+			rc = err;
+			goto failed;
+		}
+		nanosleep(&waittime, NULL);
+		close(ml->lockfile_fd);
+		ml->lockfile_fd = -1;
 	}
 	DBG(LOCKS, ul_debugobj(ml, "%s: (%d) successfully locked",
 					lockfile, getpid()));

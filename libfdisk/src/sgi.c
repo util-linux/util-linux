@@ -396,20 +396,24 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 				   "e.g. \"/unix\" or \"/unix.save\"."));
 		return -EINVAL;
 
-	} else if (sz > sizeof(sgilabel->boot_file)) {
+	}
+
+	if (sz > sizeof(sgilabel->boot_file)) {
 		fdisk_warnx(cxt, P_("Name of bootfile is too long: %zu byte maximum.",
 				    "Name of bootfile is too long: %zu bytes maximum.",
 				    sizeof(sgilabel->boot_file)),
 			    sizeof(sgilabel->boot_file));
 		return -EINVAL;
 
-	} else if (*name != '/') {
+	}
+
+	if (*name != '/') {
 		fdisk_warnx(cxt, _("Bootfile must have a fully qualified pathname."));
 		return -EINVAL;
 	}
 
 	if (strncmp(name, (char *) sgilabel->boot_file,
-				sizeof(sgilabel->boot_file))) {
+				sizeof(sgilabel->boot_file)) != 0) {
 		fdisk_warnx(cxt, _("Be aware that the bootfile is not checked "
 				   "for existence.  SGI's default is \"/unix\", "
 				   "and for backup \"/unix.save\"."));

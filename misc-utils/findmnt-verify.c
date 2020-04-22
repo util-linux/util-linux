@@ -407,7 +407,7 @@ static int verify_fstype(struct verify_context *vfy)
 		    && mnt_fs_get_option(vfy->fs, "move", NULL, NULL) == 1)
 			return verify_warn(vfy, _("\"none\" FS type is recommended for bind or move oprations only"));
 
-		else if (strcmp(type, "auto") == 0)
+		if (strcmp(type, "auto") == 0)
 			isauto = 1;
 		else if (strcmp(type, "swap") == 0)
 			isswap = 1;

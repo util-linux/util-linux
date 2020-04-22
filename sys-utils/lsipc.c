@@ -221,12 +221,12 @@ static int column_name_to_id(const char *name, size_t namesz)
 			if (i > COL_CTIME) {
 				if (i >= LOWER && i <= UPPER)
 					return i;
-				else {
-					warnx(_("column %s does not apply to the specified IPC"), name);
-					return -1;
-				}
-			} else
-				return i;
+
+				warnx(_("column %s does not apply to the specified IPC"), name);
+				return -1;
+			}
+
+			return i;
 		}
 	}
 	warnx(_("unknown column: %s"), name);

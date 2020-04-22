@@ -131,12 +131,15 @@ static int get_superblock_endianness(uint32_t magic)
 	if (magic == CRAMFS_MAGIC) {
 		cramfs_is_big_endian = HOST_IS_BIG_ENDIAN;
 		return 0;
-	} else if (magic ==
+	}
+
+	if (magic ==
 		   u32_toggle_endianness(!HOST_IS_BIG_ENDIAN, CRAMFS_MAGIC)) {
 		cramfs_is_big_endian = !HOST_IS_BIG_ENDIAN;
 		return 0;
-	} else
-		return -1;
+	}
+
+	return -1;
 }
 
 static void test_super(int *start, size_t * length)

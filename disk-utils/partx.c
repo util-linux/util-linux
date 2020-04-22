@@ -245,7 +245,7 @@ static int get_max_partno(const char *disk, dev_t devno)
 		if (d->d_type != DT_DIR && d->d_type != DT_UNKNOWN)
 			continue;
 #endif
-		if (strncmp(parent, d->d_name, strlen(parent)))
+		if (strncmp(parent, d->d_name, strlen(parent)) != 0)
 			continue;
 		snprintf(path, sizeof(path), "%s/partition", d->d_name);
 
@@ -332,7 +332,9 @@ static int del_parts(int fd, const char *device, dev_t devno,
 			if (verbose)
 				printf(_("%s: partition #%d removed\n"), device, i);
 			continue;
-		} else if (errno == ENXIO) {
+		}
+
+		if (errno == ENXIO) {
 			if (verbose)
 				printf(_("%s: partition #%d doesn't exist\n"), device, i);
 			continue;

@@ -217,7 +217,7 @@ static int probe_udf(blkid_probe pr,
 		if (vsd_len == 2048) {
 			if (vsd_2048_valid == 0)
 				continue;
-			else if (vsd_2048_valid == 1)
+			if (vsd_2048_valid == 1)
 				goto anchor;
 		}
 

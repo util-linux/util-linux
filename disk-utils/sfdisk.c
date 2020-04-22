@@ -1869,14 +1869,18 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			buf[sizeof(buf) - 1] = '\0';
 			fdisk_warnx(sf->cxt, _("Unknown script header '%s' -- ignore."), buf);
 			continue;
-		} else if (rc < 0) {
+		}
+
+		if (rc < 0) {
 			DBG(PARSE, ul_debug("script parsing failed, trying sfdisk specific commands"));
 			buf[sizeof(buf) - 1] = '\0';
 			rc = loop_control_commands(sf, dp, buf);
 			if (rc)
 				break;
 			continue;
-		} else if (rc == 1) {
+		}
+
+		if (rc == 1) {
 			rc = SFDISK_DONE_EOF;
 			if (!sf->quiet)
 				fputs(_("Done.\n"), stdout);
@@ -1910,7 +1914,9 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				rc = fdisk_set_partition(sf->cxt, partno, pa);
 				rc = rc == 0 ? SFDISK_DONE_ASK : SFDISK_DONE_ABORT;
 				break;
-			} else if (!rc) {		/* add partition */
+			}
+
+			if (!rc) {		/* add partition */
 				if (!sf->interactive && !sf->quiet &&
 				    (!sf->prompt || startswith(sf->prompt, SFDISK_PROMPT))) {
 					refresh_prompt_buffer(sf, devname, next_partno, created);

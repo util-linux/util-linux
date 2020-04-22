@@ -293,7 +293,6 @@ check_mount(void) {
 		printf(_("check aborted.\n"));
 		exit(FSCK_EX_OK);
 	}
-	return;
 }
 
 
@@ -301,7 +300,7 @@ static int is_valid_zone_nr(unsigned short nr)
 {
 	if (nr < get_first_zone())
 		return 0;
-	else if (nr >= get_nzones())
+	if (nr >= get_nzones())
 		return 0;
 	return 1;
 }
@@ -511,7 +510,6 @@ write_super_block(void) {
 		die(_("seek failed in write_super_block"));
 	if (MINIX_BLOCK_SIZE != write(device_fd, super_block_buffer, MINIX_BLOCK_SIZE))
 		die(_("unable to write super-block"));
-	return;
 }
 
 static void
@@ -978,7 +976,7 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 	inode = get_inode(ino);
 	name_depth--;
 	if (!offset) {
-		if (!inode || strcmp(".", name)) {
+		if (!inode || strcmp(".", name) != 0) {
 			get_current_name();
 			printf(_("%s: bad directory: '.' isn't first\n"),
 			       current_name);
@@ -987,7 +985,7 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 			return;
 	}
 	if (offset == dirsize) {
-		if (!inode || strcmp("..", name)) {
+		if (!inode || strcmp("..", name) != 0) {
 			get_current_name();
 			printf(_("%s: bad directory: '..' isn't second\n"),
 			       current_name);
@@ -1017,7 +1015,6 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 	if (inode && S_ISDIR(inode->i_mode))
 		recursive_check(ino);
 	name_depth--;
-	return;
 }
 
 static void
@@ -1052,7 +1049,7 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 	inode = get_inode2(ino);
 	name_depth--;
 	if (!offset) {
-		if (!inode || strcmp(".", name)) {
+		if (!inode || strcmp(".", name) != 0) {
 			get_current_name();
 			printf(_("%s: bad directory: '.' isn't first\n"),
 			       current_name);
@@ -1061,7 +1058,7 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 			return;
 	}
 	if (offset == dirsize) {
-		if (!inode || strcmp("..", name)) {
+		if (!inode || strcmp("..", name) != 0) {
 			get_current_name();
 			printf(_("%s: bad directory: '..' isn't second\n"),
 			       current_name);
@@ -1087,7 +1084,6 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 	if (inode && S_ISDIR(inode->i_mode))
 		recursive_check2(ino);
 	name_depth--;
-	return;
 }
 
 static void
@@ -1359,7 +1355,9 @@ main(int argc, char **argv) {
 		if (repair)
 			printf(_("%s is clean, no check.\n"), device_name);
 		return retcode;
-	} else if (force)
+	}
+
+	if (force)
 		printf(_("Forcing filesystem check on %s.\n"), device_name);
 	else if (repair)
 		printf(_("Filesystem on %s is dirty, needs checking.\n"),

@@ -177,7 +177,6 @@ void random_get_bytes(void *buf, size_t nbytes)
 		       sizeof(ul_jrand_seed)-sizeof(unsigned short));
 	}
 #endif
-	return;
 }
 
 

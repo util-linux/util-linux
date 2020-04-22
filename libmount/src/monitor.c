@@ -263,7 +263,9 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 			if (fd)
 				*fd = wd;
 			break;
-		} else if (errno != ENOENT) {
+		}
+
+		if (errno != ENOENT) {
 			rc = -errno;
 			break;
 		}

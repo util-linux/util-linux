@@ -281,8 +281,8 @@ int blkdev_is_cdrom(int fd)
 
 	if ((ret = ioctl(fd, CDROM_GET_CAPABILITY, NULL)) < 0)
 		return 0;
-	else
-		return ret;
+
+	return ret;
 }
 #else
 int blkdev_is_cdrom(int fd __attribute__((__unused__)))

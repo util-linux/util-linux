@@ -262,12 +262,12 @@ static void verify_arch_domain(struct arch_domain *dom, const char *wanted)
 		return;
 
 	uname(&un);
-	if (strcmp(un.machine, dom->result_arch)) {
-		if (strcmp(dom->result_arch, "i386")
-		    || (strcmp(un.machine, "i486")
+	if (strcmp(un.machine, dom->result_arch) != 0) {
+		if (strcmp(dom->result_arch, "i386") != 0
+		    || (strcmp(un.machine, "i486") != 0
 			&& strcmp(un.machine, "i586")
-			&& strcmp(un.machine, "i686")
-			&& strcmp(un.machine, "athlon")))
+			&& strcmp(un.machine, "i686") != 0
+			&& strcmp(un.machine, "athlon") != 0))
 			errx(EXIT_FAILURE, _("Kernel cannot set architecture to %s"), wanted);
 	}
 }

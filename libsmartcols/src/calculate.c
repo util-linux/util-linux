@@ -60,7 +60,7 @@ static int count_cell_width(struct libscols_table *tb,
 	if (cl->is_extreme && cl->width_avg && len > cl->width_avg * 2)
 		return 0;
 
-	else if (scols_column_is_noextremes(cl)) {
+	if (scols_column_is_noextremes(cl)) {
 		cl->extreme_sum += len;
 		cl->extreme_count++;
 	}

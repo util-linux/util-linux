@@ -1245,7 +1245,9 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 
 		return blkid_probe_step_back(pr);
 
-	} else if (dryrun) {
+	}
+
+	if (dryrun) {
 		/* wipe in memory only */
 		blkid_probe_hide_range(pr, magoff, len);
 		return blkid_probe_step_back(pr);
@@ -1998,7 +2000,6 @@ void blkid_probe_set_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 			chn->driver->name,
 			chn->driver->idinfos[chn->idx]->name,
 			pr->wipe_off, pr->wipe_size));
-	return;
 }
 
 /*

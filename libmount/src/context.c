@@ -1808,7 +1808,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 		 * Source is PATH (canonicalize)
 		 */
 		path = mnt_resolve_path(src, cache);
-		if (path && strcmp(path, src))
+		if (path && strcmp(path, src) != 0)
 			rc = mnt_fs_set_source(cxt->fs, path);
 	 }
 
@@ -2864,7 +2864,9 @@ int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 		}
 		*mounted = 0;
 		return 0;	/* /proc not mounted */
-	} else if (rc)
+	}
+
+	if (rc)
 		return rc;
 
 	*mounted = __mnt_table_is_fs_mounted(mtab, fs,

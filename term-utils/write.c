@@ -275,7 +275,7 @@ static void do_write(const struct write_control *ctl)
 	tm = localtime(&now);
 	/* print greeting */
 	printf("\r\n\a\a\a");
-	if (strcmp(login, pwuid))
+	if (strcmp(login, pwuid) != 0)
 		printf(_("Message from %s@%s (as %s) on %s at %02d:%02d ..."),
 		       login, host, pwuid, ctl->src_tty_name,
 		       tm->tm_hour, tm->tm_min);

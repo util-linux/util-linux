@@ -392,8 +392,8 @@ int main(int argc, char *argv[])
 			 */
 			printf(" --\n");
 			return EXIT_SUCCESS;
-		} else
-			parse_error(_("missing optstring argument"));
+		}
+		parse_error(_("missing optstring argument"));
 	}
 
 	add_longopt(&ctl, NULL, 0);	/* init */

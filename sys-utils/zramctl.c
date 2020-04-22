@@ -385,7 +385,9 @@ static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 		ul_path_read_string(sysfs, &str, name);
 		return str;
 
-	} else if (ul_path_read_u64(sysfs, &num, name) == 0)
+	}
+
+	if (ul_path_read_u64(sysfs, &num, name) == 0)
 		return size_to_human_string(SIZE_SUFFIX_1LETTER, num);
 
 	return NULL;

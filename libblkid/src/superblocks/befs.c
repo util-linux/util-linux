@@ -169,8 +169,7 @@ static unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_bloc
 				return get_custom_block_run(pr, bs,
 							&ds->direct[i],
 							start, length, fs_le);
-			else
-				start -= br_len;
+			start -= br_len;
 		}
 	} else if (start < (int64_t) FS64_TO_CPU(ds->max_indirect_range, fs_le)) {
 		struct block_run *br;
@@ -192,8 +191,7 @@ static unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_bloc
 			if (start < br_len)
 				return get_custom_block_run(pr, bs, &br[i],
 							start, length, fs_le);
-			else
-				start -= br_len;
+			start -= br_len;
 		}
 	} else if (start < (int64_t) FS64_TO_CPU(ds->max_double_indirect_range, fs_le)) {
 		struct block_run *br;
@@ -333,8 +331,8 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 			if ((int64_t) FS64_TO_CPU(bn->overflow_link, fs_le)
 							== BPLUSTREE_NULL)
 				return FS64_TO_CPU(values[last], fs_le);
-			else
-				node_pointer = FS64_TO_CPU(values[last], fs_le);
+
+			node_pointer = FS64_TO_CPU(values[last], fs_le);
 		} else if (cmp < 0)
 			node_pointer = FS64_TO_CPU(bn->overflow_link, fs_le);
 		else {
@@ -352,9 +350,10 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 						fs_le) == BPLUSTREE_NULL)
 						return FS64_TO_CPU(values[mid],
 									fs_le);
-					else
-						break;
-				} else if (cmp < 0)
+					break;
+				}
+
+				if (cmp < 0)
 					first = mid + 1;
 				else
 					last = mid - 1;
@@ -411,7 +410,9 @@ static int get_uuid(blkid_probe pr, const struct befs_super_block *bs,
 			       sizeof(uint64_t));
 
 			break;
-		} else if (FS32_TO_CPU(sd->type, fs_le) == 0
+		}
+
+		if (FS32_TO_CPU(sd->type, fs_le) == 0
 				&& FS16_TO_CPU(sd->name_size, fs_le) == 0
 				&& FS16_TO_CPU(sd->data_size, fs_le) == 0)
 			break;
@@ -437,7 +438,7 @@ static int get_uuid(blkid_probe pr, const struct befs_super_block *bs,
 		if (value < 0)
 			return value == -ENOENT ? BLKID_PROBE_NONE : value;
 
-		else if (value > 0) {
+		if (value > 0) {
 			bi = (struct befs_inode *) blkid_probe_get_buffer(pr,
 				value << FS32_TO_CPU(bs->block_shift, fs_le),
 				FS32_TO_CPU(bs->block_size, fs_le));

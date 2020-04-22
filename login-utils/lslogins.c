@@ -1225,7 +1225,6 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 			err(EXIT_FAILURE, _("failed to add output data"));
 		++n;
 	}
-	return;
 }
 #ifdef HAVE_LIBSYSTEMD
 static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, int time_mode)

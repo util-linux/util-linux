@@ -254,7 +254,6 @@ static void dirlist_add_dir(struct wh_dirlist **ls0, int type, const char *dir)
 	}
 
 	DBG(LIST, ul_debugobj(*ls0, "  add dir: %s", ls->path));
-	return;
 }
 
 /* special case for '*' in the paths */
@@ -324,7 +323,6 @@ static void construct_dirlist_from_env(const char *env,
 		dirlist_add_dir(ls, type, tok);
 
 	free(pathcp);
-	return;
 }
 
 static void construct_dirlist_from_argv(struct wh_dirlist **ls,
@@ -346,8 +344,6 @@ static void construct_dirlist_from_argv(struct wh_dirlist **ls,
 		dirlist_add_dir(ls, type, argv[i]);
 		*idx = i;
 	}
-
-	return;
 }
 
 static void construct_dirlist(struct wh_dirlist **ls,
@@ -365,7 +361,6 @@ static void construct_dirlist(struct wh_dirlist **ls,
 		else
 			dirlist_add_subdir(ls, type, paths[i]);
 	}
-	return;
 }
 
 static void free_dirlist(struct wh_dirlist **ls0, int type)
@@ -392,8 +387,6 @@ static void free_dirlist(struct wh_dirlist **ls0, int type)
 			ls = ls->next;
 		}
 	}
-
-	return;
 }
 
 
@@ -456,7 +449,6 @@ static void findin(const char *dir, const char *pattern, int *count, char **wait
 		++(*count);
 	}
 	closedir(dirp);
-	return;
 }
 
 static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
@@ -492,7 +484,6 @@ static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
 
 	if (!uflag || count > 1)
 		putchar('\n');
-	return;
 }
 
 static void list_dirlist(struct wh_dirlist *ls)

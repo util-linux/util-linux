@@ -73,7 +73,7 @@ int blkid_dev_has_tag(blkid_dev dev, const char *type,
 	tag = blkid_find_tag_dev(dev, type);
 	if (!value)
 		return (tag != NULL);
-	if (!tag || strcmp(tag->bit_val, value))
+	if (!tag || strcmp(tag->bit_val, value) != 0)
 		return 0;
 	return 1;
 }

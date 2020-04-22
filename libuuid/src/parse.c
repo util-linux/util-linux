@@ -62,8 +62,7 @@ int uuid_parse_range(const char *in_start, const char *in_end, uuid_t uu)
 		    (i == 23)) {
 			if (*cp == '-')
 				continue;
-			else
-				return -1;
+			return -1;
 		}
 		if (i== 36)
 			if (*cp == 0)
