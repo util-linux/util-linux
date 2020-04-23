@@ -61,17 +61,18 @@ flag in
 .B PID namespace
 Children will have a set of PID to process mappings separate from the
 .B nsenter
-process
+process.
+.B nsenter
+will fork by default if changing the PID namespace, so that the new program
+and its children share the same PID namespace and are visible to each other.
+If \fB\-\-no\-fork\fP is used, the new program will be exec'ed without forking.
 For further details, see
 .BR pid_namespaces (7)
 and
 the discussion of the
 .B CLONE_NEWPID
 flag in
-.B nsenter
-will fork by default if changing the PID namespace, so that the new program
-and its children share the same PID namespace and are visible to each other.
-If \fB\-\-no\-fork\fP is used, the new program will be exec'ed without forking.
+.BR clone (2).
 .TP
 .B user namespace
 The process will have a distinct set of UIDs, GIDs and capabilities.
