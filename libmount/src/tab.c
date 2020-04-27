@@ -1763,13 +1763,14 @@ int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_f
 		if (root) {
 			const char *fstype = mnt_fs_get_fstype(fs);
 
-			if (fstype && (strcmp(fstype, "cifs") == 0
-				       || strcmp(fstype, "smb3") == 0)) {
+			if (fstype && (strcmp(fstype, "cifs") == 0 ||
+				       strcmp(fstype, "smb3") == 0)) {
 
-				const char *unc_subdir = get_cifs_unc_subdir_path(src);
-				const char *path_on_fs = mnt_fs_get_root(fs);
+				const char *sub = get_cifs_unc_subdir_path(src);
+				const char *r = mnt_fs_get_root(fs);
 
-				if (!unc_subdir || !path_on_fs || !streq_paths(unc_subdir, path_on_fs))
+				if (!sub || !r || (!streq_paths(sub, r) &&
+						   !streq_paths("/", r)))
 					continue;
 			} else {
 				const char *r = mnt_fs_get_root(fs);
