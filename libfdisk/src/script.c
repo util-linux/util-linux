@@ -956,12 +956,17 @@ static int partno_from_devname(char *s)
 	size_t sz;
 	char *end, *p;
 
+	if (!s || !*s)
+		return -1;
+
 	sz = rtrim_whitespace((unsigned char *)s);
-	p = s + sz - 1;
+	end = p = s + sz;
 
 	while (p > s && isdigit(*(p - 1)))
 		p--;
-
+	if (p == end)
+		return -1;
+	end = NULL;
 	errno = 0;
 	pno = strtol(p, &end, 10);
 	if (errno || !end || p == end)
