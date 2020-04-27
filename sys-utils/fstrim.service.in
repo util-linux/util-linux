@@ -1,6 +1,7 @@
 [Unit]
 Description=Discard unused blocks on filesystems from /etc/fstab
 Documentation=man:fstrim(8)
+ConditionPathExists=/etc/fstab
 ConditionVirtualization=!container
 
 [Service]
