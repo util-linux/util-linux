@@ -1756,8 +1756,8 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	if (last + grain < cxt->total_sectors - 1)
 		free_sectors = 1;
 
-	if (!free_primary && cxt->label->nparts_max >= MAXIMUM_PARTS) {
-		fdisk_info(cxt, _("The maximum number of partitions has "
+	if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
+		fdisk_warnx(cxt, _("The maximum number of partitions has "
 				  "been created."));
 		return -EINVAL;
 	}
