@@ -51,7 +51,7 @@ _umount_module()
 
 	local oldifs=$IFS
 	IFS=$'\n'
-	COMPREPLY=( $( compgen -W "$(findmnt -lno TARGET | awk \
+	COMPREPLY=( $( compgen -W "$(findmnt -lno TARGET | gawk \
 		'{
 			if ($0 ~ ENVIRON["HOME"]) {
 				homeless = $0
