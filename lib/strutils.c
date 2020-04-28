@@ -195,7 +195,7 @@ check_suffix:
 			frac /= 10;	/* remove last digit from frac */
 			frac_poz *= 10;
 
-			if (seg)
+			if (seg && seg_div / seg)
 				x += frac_base / (seg_div / seg);
 		} while (frac);
 	}
