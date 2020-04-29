@@ -1236,7 +1236,11 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		struct pte *pe = self_pte(cxt, n);
 
 		assert(pe);
+		assert(start >= cxt->first_lba);
+
 		pe->offset = start - cxt->first_lba;
+		DBG(LABEL, ul_debug("DOS: setting EBR offset to %ju [start=%ju]", pe->offset, start));
+
 		if (pe->offset == l->ext_offset) { /* must be corrected */
 			pe->offset++;
 			if (cxt->first_lba == 1)
@@ -1337,7 +1341,6 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	set_partition(cxt, n, 0, start, stop, sys, fdisk_partition_is_bootable(pa));
 	if (n > 4) {
 		struct pte *pe = self_pte(cxt, n);
-
 		assert(pe);
 		set_partition(cxt, n - 1, 1, pe->offset, stop,
 					MBR_DOS_EXTENDED_PARTITION, 0);
