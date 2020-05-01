@@ -107,6 +107,8 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		data = udev_device_get_property_value(dev, "ID_SCSI_SERIAL");
 		if(!data)
 			data = udev_device_get_property_value(dev, "ID_SERIAL_SHORT");
+		if(!data)
+			data = udev_device_get_property_value(dev, "ID_SERIAL");
 		if (data)
 			prop->serial = xstrdup(data);
 
@@ -209,6 +211,7 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 		else if (lookup(buf, "ID_WWN", &prop->wwn)) ;
 		else if (lookup(buf, "ID_SCSI_SERIAL", &prop->serial)) ;
 		else if (lookup(buf, "ID_SERIAL_SHORT", &prop->serial)) ;
+		else if (lookup(buf, "ID_SERIAL", &prop->serial)) ;
 
 		/* lsblk specific */
 		else if (lookup(buf, "MODE", &prop->mode)) ;
