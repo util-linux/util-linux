@@ -238,8 +238,10 @@ Change root to the specified directory.
 Call vhangup() to do a virtual hangup of the specified terminal.
 .TP
 \-s, \-\-keep\-baud
-Try to keep the existing baud rate.  The baud rates from
-the command line are used when agetty receives a BREAK character.
+Try to keep the existing baud rate.  The baud rates from the command line are
+used when agetty receives a BREAK character.  If another baud rates specified
+then the original baud rate is also saved to the end of the wanted baud rates
+list.  It allows to return to the original baud rate after unexpected BREAKs.
 .TP
 \-t, \-\-timeout \fItimeout\fP
 Terminate if no user name could be read within \fItimeout\fP seconds.
