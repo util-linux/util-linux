@@ -68,8 +68,8 @@ LABEL=t-home2   /home      ext4    defaults,auto_da_alloc      0  2
 .B The first field
 .RI ( fs_spec ).
 .RS
-This field describes the block special device or
-remote filesystem to be mounted.
+This field describes the block special device, remote filesystem or filesystem
+image for loop device to be mounted or swap file or swap partition to be enabled.
 .LP
 For ordinary mounts, it will hold (a link to) a block special
 device node (as created by
