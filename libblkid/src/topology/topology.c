@@ -67,6 +67,7 @@ struct blkid_struct_topology {
 	unsigned long	optimal_io_size;
 	unsigned long	logical_sector_size;
 	unsigned long	physical_sector_size;
+	unsigned long   dax;
 };
 
 /*
@@ -75,8 +76,8 @@ struct blkid_struct_topology {
 static const struct blkid_idinfo *idinfos[] =
 {
 #ifdef __linux__
-	&ioctl_tp_idinfo,
 	&sysfs_tp_idinfo,
+	&ioctl_tp_idinfo,
 	&md_tp_idinfo,
 	&dm_tp_idinfo,
 	&lvm_tp_idinfo,
@@ -303,6 +304,14 @@ int blkid_topology_set_physical_sector_size(blkid_probe pr, unsigned long val)
 			val);
 }
 
+int blkid_topology_set_dax(blkid_probe pr, unsigned long val)
+{
+	return topology_set_value(pr,
+			"DAX",
+			offsetof(struct blkid_struct_topology, dax),
+			val);
+}
+
 /**
  * blkid_topology_get_alignment_offset:
  * @tp: topology
@@ -358,3 +367,13 @@ unsigned long blkid_topology_get_physical_sector_size(blkid_topology tp)
 	return tp->physical_sector_size;
 }
 
+/**
+ * blkid_topology_get_dax
+ * @tp: topology
+ *
+ * Returns: 1 if dax is supported, 0 otherwise.
+ */
+unsigned long blkid_topology_get_dax(blkid_topology tp)
+{
+	return tp->dax;
+}
