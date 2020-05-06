@@ -1080,15 +1080,10 @@ int main(int argc, char **argv)
 
 		if (argc > optind) {
 			int k;
-			int ct = 0;
 
-			for (rc = 0, k = optind; k < argc; k++) {
-				if (ct)
-				    fputs("\n\n", stdout);
+			for (rc = 0, k = optind; k < argc; k++)
+				rc += print_device_pt(cxt, argv[k], 1, 0, k != optind);
 
-				rc += print_device_pt(cxt, argv[k], 1, 0);
-				ct++;
-			}
 			if (rc)
 				return EXIT_FAILURE;
 		} else

@@ -653,15 +653,11 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 	fdisk_enable_listonly(sf->cxt, 1);
 
 	if (argc) {
-		int i, ct = 0;
+		int i;
 
-		for (i = 0; i < argc; i++) {
-			if (ct)
-				fputs("\n\n", stdout);
-			if (print_device_pt(sf->cxt, argv[i], 1, sf->verify) != 0)
+		for (i = 0; i < argc; i++)
+			if (print_device_pt(sf->cxt, argv[i], 1, sf->verify, i) != 0)
 				fail++;
-			ct++;
-		}
 	} else
 		print_all_devices_pt(sf->cxt, sf->verify);
 
