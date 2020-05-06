@@ -882,6 +882,7 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 	struct fdisk_partition **rem = NULL, **add = NULL, **upd = NULL;
 	int change, rc = 0, err = 0;
 	size_t nparts, i, nadds = 0, nupds = 0, nrems = 0;
+	unsigned int ssf;
 
 	DBG(CXT, ul_debugobj(cxt, "rereading changes"));
 
@@ -915,6 +916,9 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 			goto done;
 	}
 
+	/* sector size factor -- used to recount from real to 512-byte sectors */
+	ssf = cxt->sector_size / 512;
+
 	for (i = 0; i < nrems; i++) {
 		pa = rem[i];
 		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_DEL_PARTITION", pa->partno));
@@ -926,7 +930,8 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 	for (i = 0; i < nupds; i++) {
 		pa = upd[i];
 		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_RESIZE_PARTITION", pa->partno));
-		if (partx_resize_partition(cxt->dev_fd, pa->partno + 1, pa->start, pa->size) != 0) {
+		if (partx_resize_partition(cxt->dev_fd, pa->partno + 1,
+					   pa->start * ssf, pa->size * ssf) != 0) {
 			fdisk_warn(cxt, _("Failed to update system information about partition %zu"), pa->partno + 1);
 			err++;
 		}
@@ -934,7 +939,8 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 	for (i = 0; i < nadds; i++) {
 		pa = add[i];
 		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_ADD_PARTITION", pa->partno));
-		if (partx_add_partition(cxt->dev_fd, pa->partno + 1, pa->start, pa->size) != 0) {
+		if (partx_add_partition(cxt->dev_fd, pa->partno + 1,
+					pa->start * ssf, pa->size * ssf) != 0) {
 			fdisk_warn(cxt, _("Failed to add partition %zu to system"), pa->partno + 1);
 			err++;
 		}
