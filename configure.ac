@@ -1501,6 +1501,18 @@ AS_IF([test "x$with_libz" = xno], [have_z=no], [
   AC_CHECK_LIB([z], [crc32], [have_z=yes], [have_z=no])
 ])
 
+AC_ARG_WITH([libmagic],
+  AS_HELP_STRING([--without-libmagic], [compile without libmagic]),
+  [], [with_libmagic=auto]
+)
+AS_IF([test "x$with_libmagic" = xno], [have_magic=no], [
+  AC_CHECK_LIB([magic], [magic_open], [
+    AC_DEFINE([HAVE_MAGIC], [1], [Define to 1 if you have the libmagic present.])
+    MAGIC_LIBS="-lmagic"
+  ])
+])
+AC_SUBST([MAGIC_LIBS])
+
 
 AC_ARG_ENABLE([cramfs],
   AS_HELP_STRING([--disable-cramfs], [do not build fsck.cramfs, mkfs.cramfs]),

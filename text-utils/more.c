@@ -74,13 +74,17 @@
 # include <term.h>
 #endif
 
-#include "env.h"
+#ifdef HAVE_MAGIC
+# include <magic.h>
+#endif
+
 #include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
 #include "widechar.h"
 #include "closestream.h"
 #include "rpmatch.h"
+#include "env.h"
 
 #ifdef TEST_PROGRAM
 # define NON_INTERACTIVE_MORE 1
@@ -157,6 +161,9 @@ struct more_control {
 	int last_key_arg;		/* previous key command argument */
 	int last_colon_command;		/* is a colon-prefixed key command */
 	char *shell_line;		/* line to execute in subshell */
+#ifdef HAVE_MAGIC
+	magic_t magic;			/* libmagic database entries */
+#endif
 	unsigned int
 		bad_stdout:1,		/* true if overwriting does not turn off standout */
 		catch_suspend:1,	/* we should catch the SIGTSTP signal */
@@ -350,19 +357,24 @@ static void print_separator(const int c, int n)
 	putchar('\n');
 }
 
-/* magic --
- *	check for file magic numbers.  This code would best be shared
- *	with the file(1) program or, perhaps, more should not try to be
- *	so smart. */
-static int check_magic(FILE *f, char *fs)
+/* check_magic -- check for file magic numbers. */
+static int check_magic(struct more_control *ctl, char *fs)
 {
+#ifdef HAVE_MAGIC
+	const char *mime_encoding = magic_descriptor(ctl->magic, fileno(ctl->current_file));
+
+	if (!mime_encoding || !(strcmp("binary", mime_encoding))) {
+		printf(_("\n******** %s: Not a text file ********\n\n"), fs);
+		return 1;
+	}
+#else
 	signed char twobytes[2];
 
 	/* don't try to look ahead if the input is unseekable */
-	if (fseek(f, 0L, SEEK_SET))
+	if (fseek(ctl->current_file, 0L, SEEK_SET))
 		return 0;
 
-	if (fread(twobytes, 2, 1, f) == 1) {
+	if (fread(twobytes, 2, 1, ctl->current_file) == 1) {
 		switch (twobytes[0] + (twobytes[1] << 8)) {
 		case 0407:	/* a.out obj */
 		case 0410:	/* a.out exec */
@@ -376,7 +388,8 @@ static int check_magic(FILE *f, char *fs)
 			return 1;
 		}
 	}
-	fseek(f, 0L, SEEK_SET);	/* rewind() not necessary */
+	fseek(ctl->current_file, 0L, SEEK_SET);	/* rewind() not necessary */
+#endif
 	return 0;
 }
 
@@ -394,23 +407,17 @@ static void checkf(struct more_control *ctl, char *fs)
 	    (fstat(fileno(ctl->current_file), &st) != 0)) {
 		if (ctl->clear_line_ends)
 			putp(ctl->erase_line);
-		warn(_("stat of %s failed"), fs);
-		ctl->current_file = NULL;
+		warn(_("cannot open %s"), fs);
 		return;
 	}
+#ifndef HAVE_MAGIC
 	if ((st.st_mode & S_IFMT) == S_IFDIR) {
 		printf(_("\n*** %s: directory ***\n\n"), fs);
 		ctl->current_file = NULL;
 		return;
 	}
-	ctl->current_line = 0;
-	ctl->file_position = 0;
-	if ((ctl->current_file = fopen(fs, "r")) == NULL) {
-		fflush(stdout);
-		warn(_("cannot open %s"), fs);
-		return;
-	}
-	if (check_magic(ctl->current_file, fs)) {
+#endif
+	if (check_magic(ctl, fs)) {
 		fclose(ctl->current_file);
 		ctl->current_file = NULL;
 		return;
@@ -704,6 +711,9 @@ static void reset_tty(struct more_control *ctl)
 /* Clean up terminal state and exit. Also come here if interrupt signal received */
 static void __attribute__((__noreturn__)) more_exit(struct more_control *ctl)
 {
+#ifdef HAVE_MAGIC
+	magic_close(ctl->magic);
+#endif
 	reset_tty(ctl);
 	if (ctl->clear_line_ends) {
 		putchar('\r');
@@ -1906,6 +1916,10 @@ int main(int argc, char **argv)
 
 	initterm(&ctl);
 
+#ifdef HAVE_MAGIC
+	ctl.magic = magic_open(MAGIC_MIME_ENCODING | MAGIC_SYMLINK);
+	magic_load(ctl.magic, NULL);
+#endif
 	prepare_line_buffer(&ctl);
 
 	ctl.d_scroll_len = ctl.lines_per_page / 2 - 1;
