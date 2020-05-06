@@ -849,8 +849,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-	      _(" %1$s [options] <disk>      change partition table\n"
-	        " %1$s [options] -l [<disk>] list partition table(s)\n"),
+	      _(" %1$s [options] <disk>         change partition table\n"
+	        " %1$s [options] -l [<disk>...] list partition table(s)\n"),
 	       program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
