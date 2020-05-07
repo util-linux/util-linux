@@ -65,8 +65,6 @@ struct lscpu_cputype {
 	int	threads;
 	int	ndrawers;
 
-	unsigned int	bit32:1,
-			bit64:1;
 };
 
 struct lscpu_cpu {
@@ -78,6 +76,13 @@ struct lscpu_cpu {
 
 	char	*dynamic_mhz;
 	char	*static_mhz;
+};
+
+struct lscpu_arch {
+	char	*name;		/* uname() .machine */
+
+	unsigned int	bit32:1,
+			bit64:1;
 };
 
 struct lscpu_cxt {
@@ -92,6 +97,9 @@ struct lscpu_cxt {
 	size_t ncpus;
 	struct lscpu_cpu **cpus;
 
+	struct lscpu_arch *arch;
+
+	unsigned int noalive;
 };
 
 struct lscpu_cputype *lscpu_new_cputype(void);
@@ -99,7 +107,9 @@ void lscpu_ref_cputype(struct lscpu_cputype *ct);
 void lscpu_unref_cputype(struct lscpu_cputype *ct);
 struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
 struct lscpu_cputype *lscpu_cputype_get_default(struct lscpu_cxt *cxt);
+
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt);
+int lscpu_read_architecture(struct lscpu_cxt *cxt);
 
 struct lscpu_cpu *lscpu_new_cpu(void);
 void lscpu_ref_cpu(struct lscpu_cpu *cpu);

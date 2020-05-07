@@ -1,4 +1,7 @@
 
+#include <sys/utsname.h>
+#include <sys/personality.h>
+
 #include "lscpu-api.h"
 
 UL_DEBUG_DEFINE_MASK(lscpu);
@@ -364,6 +367,75 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 	return 0;
 }
 
+int lscpu_read_architecture(struct lscpu_cxt *cxt)
+{
+	struct utsname utsbuf;
+	struct lscpu_arch *ar;
+	struct lscpu_cputype *ct;
+
+	assert(cxt);
+	assert(!cxt->arch);
+
+	DBG(GATHER, ul_debugobj(cxt, "reading architecture"));
+
+	if (uname(&utsbuf) == -1)
+		err(EXIT_FAILURE, _("error: uname failed"));
+
+	ar = cxt->arch = xcalloc(1, sizeof(*cxt->arch));
+	ar->name = xstrdup(utsbuf.machine);
+
+	if (cxt->noalive)
+		/* reading info from any /{sys,proc} dump, don't mix it with
+		 * information about our real CPU */
+		;
+	else {
+#if defined(__alpha__) || defined(__ia64__)
+		ar->bit64 = 1;	/* 64bit platforms only */
+#endif
+		/* platforms with 64bit flag in /proc/cpuinfo, define
+		 * 32bit default here */
+#if defined(__i386__) || defined(__x86_64__) || \
+    defined(__s390x__) || defined(__s390__) || defined(__sparc_v9__)
+		ar->bit32 = 1;
+#endif
+
+#if defined(__aarch64__)
+		{
+			/* personality() is the most reliable way (since 4.7)
+			 * to determine aarch32 support */
+			int pers = personality(PER_LINUX32);
+			if (pers != -1) {
+				personality(pers);
+				ar->bit32 = 1;
+			}
+			ar->bit64 = 1;
+		}
+#endif
+	}
+
+	ct = lscpu_cputype_get_default(cxt);
+	if (ct && ct->flags) {
+		char buf[BUFSIZ];
+
+		snprintf(buf, sizeof(buf), " %s ", ct->flags);
+		if (strstr(buf, " lm "))
+			ar->bit32 = 1, ar->bit64 = 1;			/* x86_64 */
+		if (strstr(buf, " zarch "))
+			ar->bit32 = 1, ar->bit64 = 1;			/* s390x */
+		if (strstr(buf, " sun4v ") || strstr(buf, " sun4u "))
+			ar->bit32 = 1, ar->bit64 = 1;			/* sparc64 */
+	}
+
+	if (ar->name && !cxt->noalive) {
+		if (strcmp(ar->name, "ppc64") == 0)
+			ar->bit32 = 1, ar->bit64 = 1;
+		else if (strcmp(ar->name, "ppc") == 0)
+			ar->bit32 = 1;
+	}
+
+	return 0;
+}
+
 #ifdef TEST_PROGRAM_CPUTYPE
 /* TODO: move to lscpu.c */
 struct lscpu_cxt *lscpu_new_context(void)
@@ -403,13 +475,16 @@ int main(int argc, char **argv)
 
 	cxt = lscpu_new_context();
 
-	if (argc == 3 && strcmp(argv[1], "--prefix") == 0)
+	if (argc == 3 && strcmp(argv[1], "--prefix") == 0) {
 		cxt->prefix = argv[2];
+		cxt->noalive = 1;
+	}
 
 	lscpu_init_debug();
 	context_init_paths(cxt);
 
 	lscpu_read_cpuinfo(cxt);
+	lscpu_read_architecture(cxt);
 
 	lscpu_free_context(cxt);
 	return EXIT_SUCCESS;
