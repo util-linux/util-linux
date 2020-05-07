@@ -4,6 +4,8 @@
 
 #include "lscpu-api.h"
 
+#include "fileutils.h"
+
 UL_DEBUG_DEFINE_MASK(lscpu);
 UL_DEBUG_DEFINE_MASKNAMES(lscpu) = UL_DEBUG_EMPTY_MASKNAMES;
 
@@ -592,15 +594,78 @@ int lscpu_read_extra(struct lscpu_cxt *cxt)
 		if (!ntypes)
 			goto nortas;
 
-		desc->physsockets = strbe16toh(buf, 4);
-		desc->physchips = strbe16toh(buf, 6);
-		desc->physcoresperchip = strbe16toh(buf, 8);
+		ct->physsockets = strbe16toh(buf, 4);
+		ct->physchips = strbe16toh(buf, 6);
+		ct->physcoresperchip = strbe16toh(buf, 8);
 nortas:
 	}
 #endif
 	return 0;
 }
 
+static int cmp_vulnerability_name(const void *a0, const void *b0)
+{
+	const struct lscpu_vulnerability
+			*a = (const struct lscpu_vulnerability *) a0,
+			*b = (const struct lscpu_vulnerability *) b0;
+	return strcmp(a->name, b->name);
+}
+
+int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt)
+{
+	struct dirent *d;
+	DIR *dir;
+	size_t n = 0;
+
+	assert(cxt);
+
+	dir = ul_path_opendir(cxt->syscpu, "vulnerabilities");
+	if (!dir)
+		return 0;
+
+	cxt->nvuls = n = 0;
+	while (xreaddir(dir))
+		n++;
+	if (!n)
+		return 0;
+
+	rewinddir(dir);
+	cxt->vuls = xcalloc(n, sizeof(struct lscpu_vulnerability));
+
+	while (cxt->nvuls < n && (d = xreaddir(dir))) {
+		char *str, *p;
+		struct lscpu_vulnerability *vu;
+
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (d->d_type == DT_DIR || d->d_type == DT_UNKNOWN)
+			continue;
+#endif
+		if (ul_path_readf_string(cxt->syscpu, &str,
+					"vulnerabilities/%s", d->d_name) <= 0)
+			continue;
+
+		vu = &cxt->vuls[cxt->nvuls++];
+
+		/* Name */
+		vu->name = xstrdup(d->d_name);
+		*vu->name = toupper(*vu->name);
+		strrep(vu->name, '_', ' ');
+
+		/* Description */
+		vu->text = str;
+		p = (char *) startswith(vu->text, "Mitigation");
+		if (p) {
+			*p = ';';
+			strrem(vu->text, ':');
+		}
+	}
+	closedir(dir);
+
+	qsort(cxt->vuls, cxt->nvuls,
+	      sizeof(struct lscpu_vulnerability), cmp_vulnerability_name);
+
+	return 0;
+}
 
 #ifdef TEST_PROGRAM_CPUTYPE
 /* TODO: move to lscpu.c */
@@ -638,6 +703,12 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 	free(cxt->arch);
 	free(cxt->cputypes);
 	free(cxt->cpus);
+
+	for (i = 0; i < cxt->nvuls; i++) {
+		free(cxt->vuls[i].name);
+		free(cxt->vuls[i].text);
+	}
+	free(cxt->vuls);
 	free(cxt);
 }
 
@@ -659,6 +730,7 @@ int main(int argc, char **argv)
 	lscpu_read_architecture(cxt);
 	lscpu_read_cpulists(cxt);
 	lscpu_read_extra(cxt);
+	lscpu_read_vulnerabilities(cxt);
 
 	lscpu_free_context(cxt);
 	return EXIT_SUCCESS;

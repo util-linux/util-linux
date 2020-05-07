@@ -34,7 +34,6 @@ UL_DEBUG_DECLARE_MASK(lscpu);
 struct lscpu_cputype {
 	int	refcount;
 
-	char	*arch;
 	char	*vendor;
 	char	*machinetype;	/* s390 */
 	char	*family;
@@ -85,6 +84,11 @@ struct lscpu_arch {
 			bit64:1;
 };
 
+struct lscpu_vulnerability {
+	char	*name;
+	char	*text;
+};
+
 struct lscpu_cxt {
 	int maxcpus;		/* size in bits of kernel cpu mask */
 	const char *prefix;	/* path to /sys and /proc snapshot or NULL */
@@ -117,6 +121,9 @@ struct lscpu_cxt {
 
 	struct lscpu_arch *arch;
 
+	struct lscpu_vulnerability *vuls;	/* array of CPU vulnerabilities */
+	size_t  nvuls;				/* number of CPU vulnerabilities */
+
 	unsigned int noalive;
 };
 
@@ -130,6 +137,7 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt);
 int lscpu_read_architecture(struct lscpu_cxt *cxt);
 int lscpu_read_cpulists(struct lscpu_cxt *cxt);
 int lscpu_read_extra(struct lscpu_cxt *cxt);
+int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt);
 
 struct lscpu_cpu *lscpu_new_cpu(void);
 void lscpu_ref_cpu(struct lscpu_cpu *cpu);
