@@ -93,6 +93,19 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 
 	if (--ct->refcount <= 0) {
 		DBG(TYPE, ul_debugobj(ct, "  freeing"));
+		free(ct->vendor);
+		free(ct->machinetype);	/* s390 */
+		free(ct->family);
+		free(ct->model);
+		free(ct->modelname);
+		free(ct->revision);	/* alternative for model (ppc) */
+		free(ct->virtflag);	/* virtualization flag (vmx, svm) */
+		free(ct->hypervisor);	/* hypervisor software */
+		free(ct->stepping);
+		free(ct->bogomips);
+		free(ct->flags);
+		free(ct->mtid);		/* maximum thread id (s390) */
+		free(ct->addrsz);	/* address sizes */
 		free(ct);
 	}
 }
@@ -139,8 +152,6 @@ struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cput
 
 static void lscpu_merge_cputype(struct lscpu_cputype *a, struct lscpu_cputype *b)
 {
-	if (!a->arch && b->arch)
-		a->arch = xstrdup(b->arch);
 	if (!a->vendor && b->vendor)
 		a->vendor = xstrdup(b->vendor);
 	if (!a->machinetype && b->machinetype)
