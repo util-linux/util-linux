@@ -33,6 +33,42 @@ static void context_init_paths(struct lscpu_cxt *cxt)
 }
 
 
+/* Lookup a pattern and get the value for format  "<pattern> : <key>"
+ */
+static int lookup(char *line, char *pattern, char **value)
+{
+	char *p, *v;
+	int len = strlen(pattern);
+
+	/* don't re-fill already found tags, first one wins */
+	if (!*line || *value)
+		return 0;
+	/* pattern */
+	if (strncmp(line, pattern, len))
+		return 0;
+	/* white spaces */
+	for (p = line + len; isspace(*p); p++);
+
+	/* separator */
+	if (*p != ':')
+		return 0;
+	/* white spaces */
+	for (++p; isspace(*p); p++);
+
+	/* value */
+	if (!*p)
+		return 0;
+	v = p;
+
+	/* end of value */
+	len = strlen(line) - 1;
+	for (p = line + len; isspace(*(p-1)); p--);
+	*p = '\0';
+
+	*value = xstrdup(v);
+	return 1;
+}
+
 struct lscpu_cputype *lscpu_new_cputype(void)
 {
 	struct lscpu_cputype *ct;
@@ -489,6 +525,72 @@ int lscpu_read_cpulists(struct lscpu_cxt *cxt)
 	return 0;
 }
 
+#if defined(HAVE_LIBRTAS)
+# define PROCESSOR_MODULE_INFO	43
+static int strbe16toh(const char *buf, int offset)
+{
+	return (buf[offset] << 8) + buf[offset+1];
+}
+#endif
+
+/* some extra information for the default CPU type */
+int lscpu_read_extra(struct lscpu_cxt *cxt)
+{
+	FILE *f;
+	char buf[BUFSIZ];
+	struct lscpu_cputype *ct;
+
+	assert(cxt);
+	ct = lscpu_cputype_get_default(cxt);
+	if (!ct)
+		return -EINVAL;
+
+	/* get dispatching mode */
+	if (ul_path_read_s32(cxt->syscpu, &ct->dispatching, "dispatching") != 0)
+		ct->dispatching = -1;
+
+	/* get cpufreq boost mode */
+	if (ul_path_read_s32(cxt->syscpu, &ct->freqboost, "cpufreq/boost") != 0)
+		ct->freqboost = -1;
+
+	if ((f = ul_path_fopen(cxt->procfs, "r", "sysinfo"))) {
+		while (fgets(buf, sizeof(buf), f) != NULL) {
+			if (lookup(buf, "Type", &ct->machinetype))
+				break;
+		}
+		fclose(f);
+	}
+
+#if defined(HAVE_LIBRTAS)
+	/* Get PowerPC speficic info */
+	if (!cxt->noalive) {
+		int rc, len, ntypes;
+
+		ct->physsockets = ct->physchips = ct->physcoresperchip = 0;
+
+		rc = rtas_get_sysparm(PROCESSOR_MODULE_INFO, sizeof(buf), buf);
+		if (rc < 0)
+			goto nortas;
+
+		len = strbe16toh(buf, 0);
+		if (len < 8)
+			goto nortas;
+
+		ntypes = strbe16toh(buf, 2);
+		assert(ntypes <= 1);
+		if (!ntypes)
+			goto nortas;
+
+		desc->physsockets = strbe16toh(buf, 4);
+		desc->physchips = strbe16toh(buf, 6);
+		desc->physcoresperchip = strbe16toh(buf, 8);
+nortas:
+	}
+#endif
+	return 0;
+}
+
+
 #ifdef TEST_PROGRAM_CPUTYPE
 /* TODO: move to lscpu.c */
 struct lscpu_cxt *lscpu_new_context(void)
@@ -545,6 +647,7 @@ int main(int argc, char **argv)
 	lscpu_read_cpuinfo(cxt);
 	lscpu_read_architecture(cxt);
 	lscpu_read_cpulists(cxt);
+	lscpu_read_extra(cxt);
 
 	lscpu_free_context(cxt);
 	return EXIT_SUCCESS;

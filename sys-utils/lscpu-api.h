@@ -129,6 +129,7 @@ struct lscpu_cputype *lscpu_cputype_get_default(struct lscpu_cxt *cxt);
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt);
 int lscpu_read_architecture(struct lscpu_cxt *cxt);
 int lscpu_read_cpulists(struct lscpu_cxt *cxt);
+int lscpu_read_extra(struct lscpu_cxt *cxt);
 
 struct lscpu_cpu *lscpu_new_cpu(void);
 void lscpu_ref_cpu(struct lscpu_cpu *cpu);
