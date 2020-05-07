@@ -86,7 +86,8 @@ struct lscpu_arch {
 };
 
 struct lscpu_cxt {
-	const char *prefix;	 /* path to /sys and /proc snapshot or NULL */
+	int maxcpus;		/* size in bits of kernel cpu mask */
+	const char *prefix;	/* path to /sys and /proc snapshot or NULL */
 
 	struct path_cxt	*syscpu; /* _PATH_SYS_CPU path handler */
 	struct path_cxt *procfs; /* /proc path handler */
@@ -96,6 +97,23 @@ struct lscpu_cxt {
 
 	size_t ncpus;
 	struct lscpu_cpu **cpus;
+
+	/*
+	 * All maps are sequentially indexed (0..ncpuspos), the array index
+	 * does not have match with cpuX number as presented by kernel. You
+	 * have to use real_cpu_num() to get the real cpuX number.
+	 *
+	 * For example, the possible system CPUs are: 1,3,5, it means that
+	 * ncpuspos=3, so all arrays are in range 0..3.
+	 */
+	size_t ncpuspos;	/* maximal possible CPUs */
+	int *idx2cpunum;	/* mapping index to CPU num */
+
+	size_t npresents;
+	cpu_set_t *present;	/* mask with present CPUs */
+
+	size_t nonlines;	/* aka number of trhreads */
+	cpu_set_t *online;	/* mask with online CPUs */
 
 	struct lscpu_arch *arch;
 
@@ -110,6 +128,7 @@ struct lscpu_cputype *lscpu_cputype_get_default(struct lscpu_cxt *cxt);
 
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt);
 int lscpu_read_architecture(struct lscpu_cxt *cxt);
+int lscpu_read_cpulists(struct lscpu_cxt *cxt);
 
 struct lscpu_cpu *lscpu_new_cpu(void);
 void lscpu_ref_cpu(struct lscpu_cpu *cpu);

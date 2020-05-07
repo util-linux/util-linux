@@ -436,6 +436,59 @@ int lscpu_read_architecture(struct lscpu_cxt *cxt)
 	return 0;
 }
 
+int lscpu_read_cpulists(struct lscpu_cxt *cxt)
+{
+	size_t maxn;
+	size_t setsize;
+	cpu_set_t *cpuset = NULL;
+
+	assert(cxt);
+	DBG(GATHER, ul_debugobj(cxt, "reading cpulists"));
+
+	if (ul_path_read_s32(cxt->syscpu, &cxt->maxcpus, "kernel_max") == 0)
+		/* note that kernel_max is maximum index [NR_CPUS-1] */
+		cxt->maxcpus += 1;
+
+	else if (!cxt->noalive)
+		/* the root is '/' so we are working with data from the current kernel */
+		cxt->maxcpus = get_max_number_of_cpus();
+
+	if (cxt->maxcpus <= 0)
+		/* error or we are reading some /sys snapshot instead of the
+		 * real /sys, let's use any crazy number... */
+		cxt->maxcpus = 2048;
+
+	maxn = cxt->maxcpus;
+	setsize = CPU_ALLOC_SIZE(maxn);
+
+	if (ul_path_readf_cpulist(cxt->syscpu, &cpuset, maxn, "possible") == 0) {
+		size_t num, idx;
+
+		cxt->ncpuspos = CPU_COUNT_S(setsize, cpuset);
+		cxt->idx2cpunum = xcalloc(cxt->ncpuspos, sizeof(int));
+
+		for (num = 0, idx = 0; num < maxn; num++) {
+			if (CPU_ISSET_S(num, setsize, cpuset))
+				cxt->idx2cpunum[idx++] = num;
+		}
+		cpuset_free(cpuset);
+		cpuset = NULL;
+	} else
+		err(EXIT_FAILURE, _("failed to determine number of CPUs: %s"),
+				_PATH_SYS_CPU "/possible");
+
+
+	/* get mask for present CPUs */
+	if (ul_path_readf_cpulist(cxt->syscpu, &cxt->present, maxn, "present") == 0)
+		cxt->npresents = CPU_COUNT_S(setsize, cxt->present);
+
+	/* get mask for online CPUs */
+	if (ul_path_readf_cpulist(cxt->syscpu, &cxt->online, maxn, "online") == 0)
+		cxt->nonlines = CPU_COUNT_S(setsize, cxt->online);
+
+	return 0;
+}
+
 #ifdef TEST_PROGRAM_CPUTYPE
 /* TODO: move to lscpu.c */
 struct lscpu_cxt *lscpu_new_context(void)
@@ -464,6 +517,12 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 	for (i = 0; i < cxt->ncputypes; i++)
 		lscpu_unref_cputype(cxt->cputypes[i]);
 
+	free(cxt->idx2cpunum);
+	free(cxt->present);
+	free(cxt->online);
+	if (cxt->arch)
+		free(cxt->arch->name);
+	free(cxt->arch);
 	free(cxt->cputypes);
 	free(cxt->cpus);
 	free(cxt);
@@ -485,6 +544,7 @@ int main(int argc, char **argv)
 
 	lscpu_read_cpuinfo(cxt);
 	lscpu_read_architecture(cxt);
+	lscpu_read_cpulists(cxt);
 
 	lscpu_free_context(cxt);
 	return EXIT_SUCCESS;
