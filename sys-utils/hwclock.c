@@ -71,6 +71,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <sys/syscall.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -655,7 +656,6 @@ display_time(struct timeval hwctime)
  * ptr2utc: tz.tz_minuteswest is zero (UTC).
  * PCIL: persistent_clock_is_local, sets the "11 minute mode" timescale.
  * firsttime: locks the warp_clock function (initialized to 1 at boot).
- * Since glibc v2.31 settimeofday() will fail if both args are non NULL
  *
  * +---------------------------------------------------------------------------+
  * |  op     | RTC scale | settimeofday calls                                  |
@@ -666,7 +666,25 @@ display_time(struct timeval hwctime)
  * | hctosys |   UTC     | 1st) locks warp* 2nd) sets tz 3rd) sets system time |
  * +---------------------------------------------------------------------------+
  *                         * only on first call after boot
+ *
+ * POSIX 2008 marked TZ in settimeofday() as deprecated. Unfortunately,
+ * different C libraries react to this deprecation in a different way. Since
+ * glibc v2.31 settimeofday() will fail if both args are not NULL, Musl-C
+ * ignores TZ at all, etc. We use __set_time() and __set_timezone() to hide
+ * these portability issues and to keep code readable.
  */
+#define __set_time(_tv)		settimeofday(_tv, NULL)
+
+static inline int __set_timezone(const struct timezone *tz)
+{
+#ifdef SYS_settimeofday
+	errno = 0;
+	return syscall(SYS_settimeofday, NULL, tz);
+#else
+	return settimeofday(NULL, tz);
+#endif
+}
+
 static int
 set_system_clock(const struct hwclock_control *ctl,
 		 const struct timeval newtime)
@@ -703,15 +721,15 @@ set_system_clock(const struct hwclock_control *ctl,
 
 		/* If UTC RTC: lock warp_clock and PCIL */
 		if (ctl->universal)
-			rc = settimeofday(NULL, &tz_utc);
+			rc = __set_timezone(&tz_utc);
 
 		/* Set kernel tz; if localtime RTC: warp_clock and set PCIL */
 		if (!rc && !( ctl->universal && !minuteswest ))
-			rc = settimeofday(NULL, &tz);
+			rc = __set_timezone(&tz);
 
 		/* Set the System Clock */
 		if ((!rc || errno == ENOSYS) && ctl->hctosys)
-			rc = settimeofday(&newtime, NULL);
+			rc = __set_time(&newtime);
 
 		if (rc) {
 			warn(_("settimeofday() failed"));
