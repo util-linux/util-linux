@@ -8,7 +8,7 @@ extern void list_freespace(struct fdisk_context *cxt);
 
 extern char *next_proc_partition(FILE **f);
 extern int print_device_pt(struct fdisk_context *cxt, char *device, int warnme, int verify, int seperator);
-extern int print_device_freespace(struct fdisk_context *cxt, char *device, int warnme);
+extern int print_device_freespace(struct fdisk_context *cxt, char *device, int warnme, int seperator);
 
 extern void print_all_devices_pt(struct fdisk_context *cxt, int verify);
 extern void print_all_devices_freespace(struct fdisk_context *cxt);
