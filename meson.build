@@ -82,6 +82,10 @@ build_uuidd = not get_option('build-uuidd').disabled()
 conf.set('HAVE_UUIDD', build_uuidd ? 1 : false)
 summary('uuidd', build_uuidd ? 'enabled' : 'disabled', section : 'components')
 
+static_programs = get_option('static-programs')
+need_static_libs = static_programs.length() > 0 # a rough estimate...
+summary('static programs', static_programs)
+
 LINUX = host_machine.system() in ['linux']
 BSD = host_machine.system() in ['dragonfly', 'freebsd', 'netbsd', 'openbsd']
 
@@ -190,6 +194,11 @@ lib_tinfo = dependency(
   'tinfo',
   required : get_option('tinfo'))
 
+lib_tinfo_static = dependency(
+  'tinfo',
+  static : true,
+  required : need_static_libs ? get_option('tinfo') : disabler())
+
 lib_ncursesw = dependency(
   'ncursesw',
   required : get_option('ncursesw'))
@@ -236,6 +245,11 @@ lib_readline = dependency(
   'readline',
   required : get_option('readline'))
 conf.set('HAVE_LIBREADLINE', lib_readline.found() ? 1 : false)
+
+lib_readline_static = dependency(
+  'readline',
+  static : true,
+  required : need_static_libs ? get_option('readline') : disabler())
 
 lib_pcre = dependency(
   'libpcre2-8',
@@ -1345,6 +1359,21 @@ if opt and not is_disabler(exe)
   exes += exe
 endif
 
+opt = opt and 'losetup' in static_programs
+exe = executable(
+  'losetup.static',
+  losetup_sources,
+  include_directories : includes,
+  link_args : ['--static'],
+  link_with : [lib_common,
+               lib_smartcols.get_static_lib()],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
 opt = not get_option('build-zramctl').disabled()
 exe = executable(
   'zramctl',
@@ -1409,6 +1438,35 @@ exe2 = executable(
 if opt and not is_disabler(exe)
   exes += [exe, exe2]
   install_man(mount_man)
+endif
+
+opt2 = opt and 'mount' in static_programs
+exe = executable(
+  'mount.static',
+  mount_sources,
+  include_directories : includes,
+  link_args : ['--static'],
+  link_with : [lib_common,
+               lib_smartcols_static,
+               lib_mount_static],
+  install : opt2,
+  build_by_default : opt2)
+if opt2 and not is_disabler(exe)
+  exes += exe
+endif
+
+opt2 = opt and 'umount' in static_programs
+exe = executable(
+  'umount.static',
+  umount_sources,
+  include_directories : includes,
+  link_args : ['--static'],
+  link_with : [lib_common,
+               lib_mount_static],
+  install : opt2,
+  build_by_default : opt2)
+if opt2 and not is_disabler(exe)
+  exes += exe
 endif
 
 # setuid?
@@ -1548,6 +1606,19 @@ if opt and not is_disabler(exe)
   install_man('sys-utils/unshare.1')
 endif
 
+opt = opt and 'unshare' in static_programs
+exe = executable(
+  'unshare.static',
+  unshare_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
 opt = not get_option('build-nsenter').disabled()
 exe = executable(
   'nsenter',
@@ -1561,6 +1632,20 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   install_man('sys-utils/nsenter.1')
+endif
+
+opt = opt and 'nsenter' in static_programs
+exe = executable(
+  'nsenter.static',
+  nsenter_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [lib_selinux],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
 endif
 
 opt = not get_option('build-setpriv').disabled()
@@ -1809,7 +1894,23 @@ if opt and not is_disabler(exe)
   exes += exe
 endif
 
-# XXX: fdisk-static
+opt2 = opt and 'fdisk' in static_programs
+exe = executable(
+  'fdisk.static',
+  fdisk_sources,
+  link_args : ['--static'],
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_tcolors,
+               lib_fdisk_static,
+               lib_smartcols.get_static_lib()],
+  dependencies : [lib_readline_static],
+  install_dir : sbindir,
+  install : opt2,
+  build_by_default : opt2)
+if opt2 and not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'sfdisk',
@@ -1827,7 +1928,22 @@ if opt and not is_disabler(exe)
   exes += exe
 endif
 
-# XXX: sfdisk-static
+opt2 = opt and 'sfdisk' in static_programs
+exe = executable(
+  'sfdisk.static',
+  sfdisk_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_tcolors,
+               lib_fdisk_static,
+               lib_smartcols.get_static_lib()],
+  dependencies : [lib_readline_static],
+  install_dir : sbindir,
+  install : opt2,
+  build_by_default : opt2)
+if opt2 and not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'cfdisk',
@@ -2219,7 +2335,19 @@ if opt and not is_disabler(exe)
   install_man('misc-utils/blkid.8')
 endif
 
-# XXX: blkid.static
+opt = opt and 'blkid' in static_programs
+exe = executable(
+  'blkid.static',
+  blkid_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_blkid_static],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'sample-mkfs',
@@ -2575,7 +2703,7 @@ endif
 
 libfdisk_tests_cflags = ['-DTEST_PROGRAM',
                          '-Wno-unused']
-libfdisk_tests_ldadd = [lib_fdisk.get_static_lib(), lib_uuid, lib_blkid]
+libfdisk_tests_ldadd = [lib_fdisk_static, lib_uuid, lib_blkid]
 
 exe = executable(
   'test_fdisk_ask',

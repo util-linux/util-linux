@@ -156,6 +156,15 @@ option('build-bash-completion', type : 'feature',
 option('build-pylibmount', type : 'feature',
        description : 'build pylibmount')
 
+# static programs
+
+option('static-programs', type : 'array',
+       value : [],
+       choices : ['losetup', 'mount', 'umount', 'fdisk', 'sfdisk', 'blkid', 'nsenter', 'unshare'],
+       description : 'list of programs to also build with static linking')
+
+# feature selection and other configuration
+
 option('chfn-chsh-password',
        type : 'boolean', value : true,
        description : 'require the user to enter the password in chfn and chsh')

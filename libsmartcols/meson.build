@@ -42,6 +42,8 @@ lib_smartcols = both_libraries(
   dependencies : build_libsmartcols ? [] : disabler(),
   install : build_libsmartcols)
 
+lib_smartcols_static = lib_smartcols.get_static_lib()
+
 pkgconfig.generate(lib_smartcols,
                    description : 'table or tree library',
                    subdirs : 'libsmartcols',

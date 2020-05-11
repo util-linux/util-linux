@@ -47,18 +47,29 @@ lib_fdisk_includes = [dir_include,
                       dir_libfdisk,
                       dir_libuuid] # XXX: should this be declared along with the lib?
 
-lib_fdisk = both_libraries(
-  'fdisk',
-  list_h,
+lib__fdisk = static_library(
+  '_fdisk',
   lib_fdisk_sources,
   include_directories : lib_fdisk_includes,
+  dependencies : build_libfdisk ? [] : disabler())
+
+lib_fdisk_static = static_library(
+  'fdisk',
+  link_whole : lib__fdisk,
+  link_with : [lib_common,
+               lib_blkid.get_static_lib(),
+               lib_uuid.get_static_lib()],
+  install : false)
+
+lib_fdisk = library(
+  'fdisk',
+  link_whole : lib__fdisk,
   link_depends : libfdisk_sym,
   version : libfdisk_version,
   link_args : ['-Wl,--version-script=@0@'.format(libfdisk_sym_path)],
   link_with : [lib_common,
                lib_blkid,
                lib_uuid],
-  dependencies : build_libfdisk ? [] : disabler(),
   install : build_libfdisk)
 
 pkgconfig.generate(lib_fdisk,
