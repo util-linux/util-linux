@@ -54,11 +54,24 @@ if build_libmount and not have_dirfd and not have_ddfd
   error('neither dirfd nor ddfd are available')
 endif
 
-lib_mount = both_libraries(
-  'mount',
-  list_h,
+lib__mount = static_library(
+  '_mount',
   lib_mount_sources,
-  monotonic_c,
+  include_directories : [dir_include,
+                         dir_libmount,
+                         dir_libblkid])
+
+lib_mount_static = static_library(
+  'mount',
+  link_whole : lib__mount,
+  link_with : [lib_common,
+               lib_blkid.get_static_lib()],
+  dependencies : [realtime_libs],
+  install : false)
+
+lib_mount = library(
+  'mount',
+  link_whole : lib__mount,
   include_directories : [dir_include,
                          dir_libmount,
                          dir_libblkid],

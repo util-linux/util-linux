@@ -134,6 +134,8 @@ lib_blkid = both_libraries(
   dependencies : build_libblkid ? [] : disabler(),
   install : build_libblkid)
 
+lib_blkid_static = lib_blkid.get_static_lib()
+
 pkgconfig.generate(lib_blkid,
                    description : 'Block device id library',
                    subdirs : 'blkid',
