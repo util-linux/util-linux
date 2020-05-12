@@ -267,14 +267,14 @@ static int motddir_filter(const struct dirent *d)
 	return 1; /* accept */
 }
 
-static void motddir(const char *dirname)
+static int motddir(const char *dirname)
 {
-        int dd, nfiles, i;
+        int dd, nfiles, i, done = 0;
         struct dirent **namelist = NULL;
 
 	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
 	if (dd < 0)
-		return;
+		return 0;
 
 	nfiles = scandirat(dd, ".", &namelist, motddir_filter, versionsort);
 	if (nfiles <= 0)
@@ -290,6 +290,7 @@ static void motddir(const char *dirname)
 			if (fstat(fd, &st) == 0 && st.st_size > 0)
 				sendfile(fileno(stdout), fd, NULL, st.st_size);
 			close(fd);
+			done++;
 		}
 	}
 
@@ -298,6 +299,7 @@ static void motddir(const char *dirname)
 	free(namelist);
 done:
 	close(dd);
+	return done;
 }
 #endif /* MOTDDIR_SUPPORT */
 
@@ -313,6 +315,9 @@ static void motd(void)
 {
 	const char *mb;
 	char *file, *list;
+	int firstonly, done = 0;
+
+	firstonly = getlogindefs_bool("MOTD_FIRSTONLY", 0);
 
 	mb = getlogindefs_str("MOTD_FILE", _PATH_MOTDFILE);
 	if (!mb || !*mb)
@@ -327,15 +332,17 @@ static void motd(void)
 			continue;
 #ifdef MOTDDIR_SUPPORT
 		if (S_ISDIR(st.st_mode))
-			motddir(file);
-		else
+			done += motddir(file);
 #endif
 		if (S_ISREG(st.st_mode) && st.st_size > 0) {
 			int fd = open(file, O_RDONLY, 0);
 			if (fd >= 0)
 				sendfile(fileno(stdout), fd, NULL, st.st_size);
 			close(fd);
+			done++;
 		}
+		if (firstonly && done)
+			break;
 	}
 	free(list);
 }
