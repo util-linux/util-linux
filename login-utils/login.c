@@ -97,6 +97,14 @@
 #define	TTYGRPNAME	"tty"	/* name of group to own ttys */
 #define VCS_PATH_MAX	64
 
+#if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
+# include <dirent.h>
+# include "fileutils.h"
+# define MOTDDIR_SUPPORT
+# define MOTDDIR_EXT	".motd"
+# define MOTDDIR_EXTSIZ	(sizeof(MOTDDIR_EXT) - 1)
+#endif
+
 /*
  * Login control struct
  */
@@ -238,40 +246,98 @@ static const char *get_thishost(struct login_context *cxt, const char **domain)
 	return cxt->thishost;
 }
 
+#ifdef MOTDDIR_SUPPORT
+static int motddir_filter(const struct dirent *d)
+{
+	size_t namesz;
+
+#ifdef _DIRENT_HAVE_D_TYPE
+	if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
+	    d->d_type != DT_LNK)
+		return 0;
+#endif
+	if (*d->d_name == '.')
+		return 0;
+
+	namesz = strlen(d->d_name);
+	if (!namesz || namesz < MOTDDIR_EXTSIZ + 1 ||
+	    strcmp(d->d_name + (namesz - MOTDDIR_EXTSIZ), MOTDDIR_EXT) != 0)
+		return 0;
+
+	return 1; /* accept */
+}
+
+static void motddir(const char *dirname)
+{
+        int dd, nfiles, i;
+        struct dirent **namelist = NULL;
+
+	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
+	if (dd < 0)
+		return;
+
+	nfiles = scandirat(dd, ".", &namelist, motddir_filter, versionsort);
+	if (nfiles <= 0)
+		goto done;
+
+	for (i = 0; i < nfiles; i++) {
+		struct dirent *d = namelist[i];
+		int fd;
+
+		fd = openat(dd, d->d_name, O_RDONLY|O_CLOEXEC);
+		if (fd >= 0) {
+			struct stat st;
+			if (fstat(fd, &st) == 0 && st.st_size > 0)
+				sendfile(fileno(stdout), fd, NULL, st.st_size);
+			close(fd);
+		}
+	}
+
+	for (i = 0; i < nfiles; i++)
+		free(namelist[i]);
+	free(namelist);
+done:
+	close(dd);
+}
+#endif /* MOTDDIR_SUPPORT */
+
 /*
  * Output the /etc/motd file.
  *
- * It determines the name of a login announcement file and outputs it to the
+ * It determines the name of a login announcement file/dir and outputs it to the
  * user's terminal at login time.  The MOTD_FILE configuration option is a
- * colon-delimited list of filenames.  An empty MOTD_FILE option disables
+ * colon-delimited list of filenames or directories.  An empty option disables
  * message-of-the-day printing completely.
  */
 static void motd(void)
 {
-	char *motdlist, *motdfile;
 	const char *mb;
+	char *file, *list;
 
 	mb = getlogindefs_str("MOTD_FILE", _PATH_MOTDFILE);
 	if (!mb || !*mb)
 		return;
 
-	motdlist = xstrdup(mb);
+	list = xstrdup(mb);
 
-	for (motdfile = strtok(motdlist, ":"); motdfile;
-	     motdfile = strtok(NULL, ":")) {
-
+	for (file = strtok(list, ":"); file; file = strtok(NULL, ":")) {
 		struct stat st;
-		int fd;
 
-		fd = open(motdfile, O_RDONLY, 0);
-		if (fd < 0)
+		if (stat(file, &st) < 0)
 			continue;
-		if (!fstat(fd, &st) && st.st_size)
-			sendfile(fileno(stdout), fd, NULL, st.st_size);
-		close(fd);
+#ifdef MOTDDIR_SUPPORT
+		if (S_ISDIR(st.st_mode))
+			motddir(file);
+		else
+#endif
+		if (S_ISREG(st.st_mode) && st.st_size > 0) {
+			int fd = open(file, O_RDONLY, 0);
+			if (fd >= 0)
+				sendfile(fileno(stdout), fd, NULL, st.st_size);
+			close(fd);
+		}
 	}
-
-	free(motdlist);
+	free(list);
 }
 
 /*

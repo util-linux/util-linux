@@ -151,9 +151,12 @@ configuration items are relevant for
 .B MOTD_FILE
 (string)
 .RS 4
-If defined, a ":" delimited list of "message of the day" files to be
-displayed upon login.  The default value is
-.IR /etc\:/motd .
+Sepecifies a ":" delimited list of "message of the day" files and directories
+to be displayed upon login.  If the specified path is a directory then displays
+all files with .motd file extension in version-sort order from the directory.
+.PP
+The default value is
+.IR "/usr/share/misc/motd:/run/motd:/run/motd.d:/etc/motd:/etc/motd.d" .
 If the
 .B MOTD_FILE
 item is empty or a quiet login is enabled, then the message of the day
@@ -161,6 +164,10 @@ is not displayed.  Note that the same functionality is also provided
 by
 .BR pam_motd (8)
 PAM module.
+.PP
+The directories in the
+.B MOTD_FILE
+are supported since version 2.36.
 .RE
 .PP
 .B LOGIN_PLAIN_PROMPT
