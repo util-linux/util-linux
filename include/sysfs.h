@@ -93,8 +93,11 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
                              size_t len, dev_t *diskdevno);
 int sysfs_devno_is_dm_private(dev_t devno, char **uuid);
 int sysfs_devno_is_wholedisk(dev_t devno);
+
 dev_t sysfs_devname_to_devno(const char *name);
 dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent);
+int sysfs_devname_is_hidden(const char *prefix, const char *name);
+
 char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz);
 char *sysfs_devno_to_devname(dev_t devno, char *buf, size_t bufsiz);
 int sysfs_devno_count_partitions(dev_t devno);

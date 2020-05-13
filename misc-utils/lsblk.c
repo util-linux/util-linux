@@ -1163,6 +1163,11 @@ static int initialize_device(struct lsblk_device *dev,
 	DBG(DEV, ul_debugobj(dev, "initialize %s [wholedisk=%p %s]",
 			name, wholedisk, wholedisk ? wholedisk->name : ""));
 
+	if (sysfs_devname_is_hidden(lsblk->sysroot, name)) {
+		DBG(DEV, ul_debugobj(dev, "%s: hidden, ignore", name));
+		return -1;
+	}
+
 	dev->name = xstrdup(name);
 
 	if (wholedisk) {
