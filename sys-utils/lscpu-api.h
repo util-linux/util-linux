@@ -124,7 +124,11 @@ struct lscpu_cxt {
 	struct lscpu_vulnerability *vuls;	/* array of CPU vulnerabilities */
 	size_t  nvuls;				/* number of CPU vulnerabilities */
 
-	unsigned int noalive;
+	size_t nnodes;		/* number of NUMA modes */
+	int *idx2nodenum;	/* Support for discontinuous nodes */
+	cpu_set_t **nodemaps;	/* array with NUMA nodes */
+
+	unsigned int noalive : 1;
 };
 
 struct lscpu_cputype *lscpu_new_cputype(void);
@@ -138,6 +142,7 @@ int lscpu_read_architecture(struct lscpu_cxt *cxt);
 int lscpu_read_cpulists(struct lscpu_cxt *cxt);
 int lscpu_read_extra(struct lscpu_cxt *cxt);
 int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt);
+int lscpu_read_numas(struct lscpu_cxt *cxt);
 
 struct lscpu_cpu *lscpu_new_cpu(void);
 void lscpu_ref_cpu(struct lscpu_cpu *cpu);

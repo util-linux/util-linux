@@ -667,6 +667,73 @@ int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt)
 	return 0;
 }
 
+static inline int is_node_dirent(struct dirent *d)
+{
+	return
+		d &&
+#ifdef _DIRENT_HAVE_D_TYPE
+		(d->d_type == DT_DIR || d->d_type == DT_UNKNOWN) &&
+#endif
+		strncmp(d->d_name, "node", 4) == 0 &&
+		isdigit_string(d->d_name + 4);
+}
+
+static int nodecmp(const void *ap, const void *bp)
+{
+	int *a = (int *) ap, *b = (int *) bp;
+	return *a - *b;
+}
+
+int lscpu_read_numas(struct lscpu_cxt *cxt)
+{
+	size_t i = 0;
+	DIR *dir;
+	struct dirent *d;
+	struct path_cxt *sys;
+
+	assert(!cxt->nnodes);
+
+	sys = ul_new_path(_PATH_SYS_NODE);
+	if (!sys)
+		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_NODE);
+
+	ul_path_set_prefix(sys, cxt->prefix);
+
+	dir = ul_path_opendir(sys, NULL);
+	if (!dir)
+		goto done;
+
+	while ((d = readdir(dir))) {
+		if (is_node_dirent(d))
+			cxt->nnodes++;
+	}
+
+	if (!cxt->nnodes) {
+		closedir(dir);
+		goto done;
+	}
+
+	cxt->nodemaps = xcalloc(cxt->nnodes, sizeof(cpu_set_t *));
+	cxt->idx2nodenum = xmalloc(cxt->nnodes * sizeof(int));
+
+	rewinddir(dir);
+	for (i = 0; (d = readdir(dir)) && i < cxt->nnodes; i++) {
+		if (is_node_dirent(d))
+			cxt->idx2nodenum[i] = strtol_or_err(((d->d_name) + 4),
+						_("Failed to extract the node number"));
+	}
+	closedir(dir);
+	qsort(cxt->idx2nodenum, cxt->nnodes, sizeof(int), nodecmp);
+
+	/* information about how nodes share different CPUs */
+	for (i = 0; i < cxt->nnodes; i++)
+		ul_path_readf_cpuset(sys, &cxt->nodemaps[i], cxt->maxcpus,
+				"node%d/cpumap", cxt->idx2nodenum[i]);
+done:
+	ul_unref_path(sys);
+	return 0;
+}
+
 #ifdef TEST_PROGRAM_CPUTYPE
 /* TODO: move to lscpu.c */
 struct lscpu_cxt *lscpu_new_context(void)
@@ -709,6 +776,13 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 		free(cxt->vuls[i].text);
 	}
 	free(cxt->vuls);
+
+	for (i = 0; i < cxt->nnodes; i++)
+		free(cxt->nodemaps[i]);
+
+	free(cxt->nodemaps);
+	free(cxt->idx2nodenum);
+
 	free(cxt);
 }
 
@@ -731,6 +805,7 @@ int main(int argc, char **argv)
 	lscpu_read_cpulists(cxt);
 	lscpu_read_extra(cxt);
 	lscpu_read_vulnerabilities(cxt);
+	lscpu_read_numas(cxt);
 
 	lscpu_free_context(cxt);
 	return EXIT_SUCCESS;
