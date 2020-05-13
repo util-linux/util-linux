@@ -839,6 +839,35 @@ static dev_t read_devno(const char *path)
 	return dev;
 }
 
+int sysfs_devname_is_hidden(const char *prefix, const char *name)
+{
+	char buf[PATH_MAX];
+	int rc = 0, hidden = 0, len;
+	FILE *f;
+
+	if (strncmp("/dev/", name, 5) == 0)
+		return 0;
+	/*
+	 * Create path to /sys/block/<name>/hidden
+	 */
+	len = snprintf(buf, sizeof(buf),
+			"%s" _PATH_SYS_BLOCK "/%s/hidden",
+			prefix, name);
+
+	if (len < 0 || (size_t) len + 1 > sizeof(buf))
+		return 0;
+
+	f = fopen(buf, "r" UL_CLOEXECSTR);
+	if (!f)
+		return 0;
+
+	rc = fscanf(f, "%d", &hidden);
+	fclose(f);
+
+	return rc == 1 ? hidden : 0;
+}
+
+
 dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent)
 {
 	char buf[PATH_MAX];
