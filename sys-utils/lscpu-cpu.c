@@ -26,6 +26,9 @@ void lscpu_unref_cpu(struct lscpu_cpu *cpu)
 	if (--cpu->refcount <= 0) {
 		DBG(CPU, ul_debugobj(cpu, "  freeing"));
 		lscpu_unref_cputype(cpu->type);
+		free(cpu->dynamic_mhz);
+		free(cpu->static_mhz);
+		free(cpu->mhz);
 		free(cpu);
 	}
 }
