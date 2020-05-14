@@ -732,7 +732,7 @@ done:
 	return virt;
 }
 
-void lscpu_free_virt(struct lscpu_virt *virt)
+void lscpu_free_virtualization(struct lscpu_virt *virt)
 {
 	if (!virt)
 		return;

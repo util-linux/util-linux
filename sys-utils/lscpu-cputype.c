@@ -410,21 +410,20 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 	return 0;
 }
 
-int lscpu_read_architecture(struct lscpu_cxt *cxt)
+struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt)
 {
 	struct utsname utsbuf;
 	struct lscpu_arch *ar;
 	struct lscpu_cputype *ct;
 
 	assert(cxt);
-	assert(!cxt->arch);
 
-	DBG(GATHER, ul_debugobj(cxt, "reading architecture"));
+	DBG(GATHER, ul_debug("reading architecture"));
 
 	if (uname(&utsbuf) == -1)
 		err(EXIT_FAILURE, _("error: uname failed"));
 
-	ar = cxt->arch = xcalloc(1, sizeof(*cxt->arch));
+	ar = xcalloc(1, sizeof(*cxt->arch));
 	ar->name = xstrdup(utsbuf.machine);
 
 	if (cxt->noalive)
@@ -476,7 +475,19 @@ int lscpu_read_architecture(struct lscpu_cxt *cxt)
 			ar->bit32 = 1;
 	}
 
-	return 0;
+	DBG(GATHER, ul_debugobj(ar, "arch: name=%s %s %s",
+				ar->name,
+				ar->bit64 ? "64-bit" : "",
+				ar->bit64 ? "32-bit" : ""));
+	return ar;
+}
+
+void lscpu_free_architecture(struct lscpu_arch *ar)
+{
+	if (!ar)
+		return;
+	free(ar->name);
+	free(ar);
 }
 
 int lscpu_read_cpulists(struct lscpu_cxt *cxt)
@@ -759,9 +770,6 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 	free(cxt->idx2cpunum);
 	free(cxt->present);
 	free(cxt->online);
-	if (cxt->arch)
-		free(cxt->arch->name);
-	free(cxt->arch);
 	free(cxt->cputypes);
 	free(cxt->cpus);
 
@@ -777,7 +785,8 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 	free(cxt->nodemaps);
 	free(cxt->idx2nodenum);
 
-	lscpu_free_virt(cxt->virt);
+	lscpu_free_virtualization(cxt->virt);
+	lscpu_free_architecture(cxt->arch);
 
 	free(cxt);
 }
@@ -797,7 +806,8 @@ int main(int argc, char **argv)
 	context_init_paths(cxt);
 
 	lscpu_read_cpuinfo(cxt);
-	lscpu_read_architecture(cxt);
+	cxt->arch = lscpu_read_architecture(cxt);
+
 	lscpu_read_cpulists(cxt);
 	lscpu_read_extra(cxt);
 	lscpu_read_vulnerabilities(cxt);

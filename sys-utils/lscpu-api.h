@@ -172,14 +172,16 @@ struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cput
 struct lscpu_cputype *lscpu_cputype_get_default(struct lscpu_cxt *cxt);
 
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt);
-int lscpu_read_architecture(struct lscpu_cxt *cxt);
 int lscpu_read_cpulists(struct lscpu_cxt *cxt);
 int lscpu_read_extra(struct lscpu_cxt *cxt);
 int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt);
 int lscpu_read_numas(struct lscpu_cxt *cxt);
 
+struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt);
+void lscpu_free_architecture(struct lscpu_arch *ar);
+
 struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt);
-void lscpu_free_virt(struct lscpu_virt *virt);
+void lscpu_free_virtualization(struct lscpu_virt *virt);
 
 struct lscpu_cpu *lscpu_new_cpu(void);
 void lscpu_ref_cpu(struct lscpu_cpu *cpu);
