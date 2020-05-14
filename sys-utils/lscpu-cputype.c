@@ -343,6 +343,7 @@ static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
 		break;
 	default:
 		/* set value as a string and cleanup */
+		fprintf(stderr, "str=%s\n", str);
 		strdup_to_offset(stru, pat->offset, v);
 		data = (char **) ((char *) stru + pat->offset);
 		rtrim_whitespace((unsigned char *) *data);
@@ -812,6 +813,7 @@ int main(int argc, char **argv)
 	lscpu_read_extra(cxt);
 	lscpu_read_vulnerabilities(cxt);
 	lscpu_read_numas(cxt);
+	lscpu_decode_arm(cxt);
 
 	cxt->virt = lscpu_read_virtualization(cxt);
 

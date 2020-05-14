@@ -9,8 +9,6 @@
 
 #include "lscpu-api.h"
 
-#define _PATH_SYS_DMI	 "/sys/firmware/dmi/tables/DMI"
-
 /* Xen Domain feature flag used for /sys/hypervisor/properties/features */
 #define XENFEAT_supervisor_mode_kernel		3
 #define XENFEAT_mmu_pt_update_preserve_ad	5
@@ -40,14 +38,6 @@ static const int hv_graphics_pci[] = {
 #define WORD(x) (uint16_t)(*(const uint16_t *)(x))
 #define DWORD(x) (uint32_t)(*(const uint32_t *)(x))
 
-struct dmi_header
-{
-	uint8_t type;
-	uint8_t length;
-	uint16_t handle;
-	uint8_t *data;
-};
-
 static void *get_mem_chunk(size_t base, size_t len, const char *devmem)
 {
 	void *p = NULL;
@@ -72,35 +62,6 @@ nothing:
 	return NULL;
 }
 
-static void to_dmi_header(struct dmi_header *h, uint8_t *data)
-{
-	h->type = data[0];
-	h->length = data[1];
-	memcpy(&h->handle, data + 2, sizeof(h->handle));
-	h->data = data;
-}
-
-static char *dmi_string(const struct dmi_header *dm, uint8_t s)
-{
-	char *bp = (char *)dm->data;
-
-	if (s == 0)
-		return NULL;
-
-	bp += dm->length;
-	while (s > 1 && *bp)
-	{
-		bp += strlen(bp);
-		bp++;
-		s--;
-	}
-
-	if (!*bp)
-		return NULL;
-
-	return bp;
-}
-
 static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 				uint16_t num, const char *devmem)
 {
@@ -119,7 +80,7 @@ static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 	 /* 4 is the length of an SMBIOS structure header */
 	while (i < num && data + 4 <= buf + len) {
 		uint8_t *next;
-		struct dmi_header h;
+		struct lscpu_dmi_header h;
 
 		to_dmi_header(&h, data);
 

@@ -24,14 +24,7 @@
  *  - Ancient wisdom
  *  - SMBIOS tables (if applicable)
  */
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-#include "lscpu.h"
+#include "lscpu-api.h"
 
 struct id_part {
     const int id;
@@ -216,72 +209,102 @@ static const struct hw_impl hw_implementer[] = {
     { -1,   unknown_part, "unknown" },
 };
 
-static void __arm_cpu_decode(struct lscpu_desc *desc)
+static int parse_id(const char *str)
 {
-	int j, impl = 0;
+	int id;
+	char *end = NULL;
+
+	if (!str || strncmp(str, "0x",2) != 0)
+		return -EINVAL;
+
+	errno = 0;
+	id = (int) strtol(str, &end, 0);
+	if (errno || str == end)
+		return -EINVAL;
+
+	return id;
+}
+
+#define parse_implementer_id(_cxt)	(parse_id((_cxt)->vendor))
+#define parse_model_id(_cxt)		(parse_id((_cxt)->model))
+
+/*
+ * Use model and vendor IDs to decode to human readable names.
+ */
+static int arm_ids_decode(struct lscpu_cputype *ct)
+{
+	int impl, part, j;
 	const struct id_part *parts = NULL;
-	char *end;
 
-	if (desc->vendor && startswith(desc->vendor, "0x")) {
-		errno = 0;
-		impl = (int) strtol(desc->vendor, &end, 0);
-		if (errno || desc->vendor == end)
-			return;
-	}
+	impl = parse_implementer_id(ct);
+	if (impl <= 0)
+		return -EINVAL;	/* no ARM or missing ID */
 
-	/* model and modelname */
-	if (impl && desc->model && startswith(desc->model, "0x")) {
-		int part;
-
-		errno = 0;
-
-		part = (int) strtol(desc->model, &end, 0);
-		if (errno || desc->model == end)
-			return;
-
-		for (j = 0; hw_implementer[j].id != -1; j++) {
-			if (hw_implementer[j].id == impl) {
-				parts = hw_implementer[j].parts;
-				desc->vendor = (char *) hw_implementer[j].name;
-				break;
-			}
-		}
-
-		if (parts == NULL)
-			return;
-
-		for (j = 0; parts[j].id != -1; j++) {
-			if (parts[j].id == part) {
-				desc->modelname = (char *) parts[j].name;
-				break;
-			}
+	/* decode vendor */
+	for (j = 0; hw_implementer[j].id != -1; j++) {
+		if (hw_implementer[j].id == impl) {
+			parts = hw_implementer[j].parts;
+			free(ct->vendor);
+			ct->vendor = xstrdup(hw_implementer[j].name);
+			break;
 		}
 	}
 
-	/* Print out the rXpY string for ARM cores */
-	if (impl == 0x41 && desc->revision && desc->stepping) {
-		int revision, variant;
-		char buf[8];
+	/* decode model */
+	if (!parts)
+		goto done;
 
-		errno = 0;
-		revision = (int) strtol(desc->revision, &end, 10);
-		if (errno || desc->revision == end)
-			return;
+	part = parse_model_id(ct);
+	if (part <= 0)
+		goto done;
 
-		errno = 0;
-		variant = (int) strtol(desc->stepping, &end, 0);
-		if (errno || desc->stepping == end)
-			return;
-
-		snprintf(buf, sizeof(buf), "r%dp%d", variant, revision);
-		desc->stepping = xstrdup(buf);
+	for (j = 0; parts[j].id != -1; j++) {
+		if (parts[j].id == part) {
+			free(ct->modelname);
+			ct->modelname = xstrdup(parts[j].name);
+			break;
+		}
 	}
+done:
+	return 0;
+}
+
+/* use "rXpY" string as stepping */
+static int arm_decode_rXpY(struct lscpu_cputype *ct)
+{
+	int impl, revision, variant;
+	char *end = NULL;
+	char buf[8];
+
+	impl = parse_implementer_id(ct);
+
+	if (impl != 0x41 || !ct->revision || !ct->stepping)
+		return -EINVAL;
+
+	errno = 0;
+	revision = (int) strtol(ct->revision, &end, 10);
+	if (errno || ct->revision == end)
+		return -EINVAL;
+
+	errno = 0;
+	variant = (int) strtol(ct->stepping, &end, 0);
+	if (errno || ct->stepping == end)
+		return -EINVAL;
+
+	snprintf(buf, sizeof(buf), "r%dp%d", variant, revision);
+	free(ct->stepping);
+	ct->stepping = xstrdup(buf);
+
+	return 0;
 }
 
 #define PROC_MFR_OFFSET		0x07
 #define PROC_VERSION_OFFSET	0x10
 
-static int __arm_cpu_smbios(struct lscpu_desc *desc)
+/*
+ * Use firmware to get human readable names
+ */
+static int arm_smbios_decode(struct lscpu_cputype *ct)
 {
 	uint8_t data[8192];
 	char buf[128], *str;
@@ -304,28 +327,37 @@ static int __arm_cpu_smbios(struct lscpu_desc *desc)
 	str = dmi_string(&h, data[PROC_MFR_OFFSET]);
 	if (str) {
 		xstrncpy(buf, str, 127);
-		desc->vendor = xstrdup(buf);
+		ct->vendor = xstrdup(buf);
 	}
 
 	str = dmi_string(&h, data[PROC_VERSION_OFFSET]);
 	if (str) {
 		xstrncpy(buf, str, 127);
-		desc->modelname = xstrdup(buf);
+		ct->modelname = xstrdup(buf);
 	}
 
 	return 0;
 }
 
-void arm_cpu_decode(struct lscpu_desc *desc, struct lscpu_modifier *mod)
+static void arm_decode(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
 	int rc = -1;
 
-	/* use SMBIOS Type 4 data if available,
-	 * else fall back to manual decoding using the tables above */
-	if (mod->system == SYSTEM_LIVE &&
-	    access(_PATH_SYS_DMI_TYPE4, R_OK) == 0)
-		rc = __arm_cpu_smbios(desc);
-
+	/* use SMBIOS Type 4 data if available, else fall back to manual
+	 * decoding using the tables above
+	 */
+	if (!cxt->noalive && access(_PATH_SYS_DMI_TYPE4, R_OK) == 0)
+		rc = arm_smbios_decode(ct);
 	if (rc)
-		__arm_cpu_decode(desc);
+		arm_ids_decode(ct);
+
+	 arm_decode_rXpY(ct);
+}
+
+void lscpu_decode_arm(struct lscpu_cxt *cxt)
+{
+	size_t i;
+
+	for (i = 0; i < cxt->ncputypes; i++)
+		arm_decode(cxt, cxt->cputypes[i]);
 }
