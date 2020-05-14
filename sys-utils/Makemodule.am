@@ -402,6 +402,7 @@ dist_man_MANS += sys-utils/lscpu.1
 check_PROGRAMS += test_cputype
 test_cputype_SOURCES = sys-utils/lscpu-cputype.c \
 		       sys-utils/lscpu-cpu.c \
+		       sys-utils/lscpu-virt.c \
 		       sys-utils/lscpu-api.h
 test_cputype_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_CPUTYPE
 test_cputype_LDADD = $(LDADD) libcommon.la

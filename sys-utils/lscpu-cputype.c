@@ -37,7 +37,7 @@ static void context_init_paths(struct lscpu_cxt *cxt)
 
 /* Lookup a pattern and get the value for format  "<pattern> : <key>"
  */
-static int lookup(char *line, char *pattern, char **value)
+int lookup(char *line, char *pattern, char **value)
 {
 	char *p, *v;
 	int len = strlen(pattern);
@@ -101,8 +101,6 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		free(ct->model);
 		free(ct->modelname);
 		free(ct->revision);	/* alternative for model (ppc) */
-		free(ct->virtflag);	/* virtualization flag (vmx, svm) */
-		free(ct->hypervisor);	/* hypervisor software */
 		free(ct->stepping);
 		free(ct->bogomips);
 		free(ct->flags);
@@ -166,10 +164,6 @@ static void lscpu_merge_cputype(struct lscpu_cputype *a, struct lscpu_cputype *b
 		a->modelname = xstrdup(b->modelname);
 	if (!a->revision && b->revision)
 		a->revision = xstrdup(b->revision);
-	if (!a->virtflag && b->virtflag)
-		a->virtflag = xstrdup(b->virtflag);
-	if (!a->hypervisor && b->hypervisor)
-		a->hypervisor  = xstrdup(b->hypervisor);
 	if (!a->stepping && b->stepping)
 		a->stepping = xstrdup(b->stepping);
 	if (!a->bogomips && b->bogomips)
@@ -783,6 +777,8 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 	free(cxt->nodemaps);
 	free(cxt->idx2nodenum);
 
+	lscpu_free_virt(cxt->virt);
+
 	free(cxt);
 }
 
@@ -806,6 +802,8 @@ int main(int argc, char **argv)
 	lscpu_read_extra(cxt);
 	lscpu_read_vulnerabilities(cxt);
 	lscpu_read_numas(cxt);
+
+	cxt->virt = lscpu_read_virtualization(cxt);
 
 	lscpu_free_context(cxt);
 	return EXIT_SUCCESS;

@@ -17,6 +17,7 @@
 #define LSCPU_DEBUG_GATHER	(1 << 3)
 #define LSCPU_DEBUG_TYPE	(1 << 4)
 #define LSCPU_DEBUG_CPU		(1 << 5)
+#define LSCPU_DEBUG_VIRT	(1 << 6)
 #define LSBLK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(lscpu);
@@ -40,10 +41,6 @@ struct lscpu_cputype {
 	char	*model;
 	char	*modelname;
 	char	*revision;	/* alternative for model (ppc) */
-	char	*virtflag;	/* virtualization flag (vmx, svm) */
-	char	*hypervisor;	/* hypervisor software */
-	int	hyper;		/* hypervisor vendor ID */
-	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
 	char	*stepping;
 	char    *bogomips;
 	char	*flags;
@@ -89,6 +86,42 @@ struct lscpu_vulnerability {
 	char	*text;
 };
 
+/* virtualization types */
+enum {
+	VIRT_TYPE_NONE	= 0,
+	VIRT_TYPE_PARA,
+	VIRT_TYPE_FULL,
+	VIRT_TYPE_CONTAINER
+};
+
+/* hypervisor vendors */
+enum {
+	VIRT_VENDOR_NONE	= 0,
+	VIRT_VENDOR_XEN,
+	VIRT_VENDOR_KVM,
+	VIRT_VENDOR_MSHV,
+	VIRT_VENDOR_VMWARE,
+	VIRT_VENDOR_IBM,		/* sys-z powervm */
+	VIRT_VENDOR_VSERVER,
+	VIRT_VENDOR_UML,
+	VIRT_VENDOR_INNOTEK,		/* VBOX */
+	VIRT_VENDOR_HITACHI,
+	VIRT_VENDOR_PARALLELS,	/* OpenVZ/VIrtuozzo */
+	VIRT_VENDOR_VBOX,
+	VIRT_VENDOR_OS400,
+	VIRT_VENDOR_PHYP,
+	VIRT_VENDOR_SPAR,
+	VIRT_VENDOR_WSL,
+};
+
+struct lscpu_virt {
+	char	*cpuflag;	/* virtualization flag (vmx, svm) */
+	char	*hypervisor;	/* hypervisor software */
+	int	vendor;		/* VIRT_VENDOR_* */
+	int	type;		/* VIRT_TYPE_* ? */
+
+};
+
 struct lscpu_cxt {
 	int maxcpus;		/* size in bits of kernel cpu mask */
 	const char *prefix;	/* path to /sys and /proc snapshot or NULL */
@@ -120,6 +153,7 @@ struct lscpu_cxt {
 	cpu_set_t *online;	/* mask with online CPUs */
 
 	struct lscpu_arch *arch;
+	struct lscpu_virt *virt;
 
 	struct lscpu_vulnerability *vuls;	/* array of CPU vulnerabilities */
 	size_t  nvuls;				/* number of CPU vulnerabilities */
@@ -144,6 +178,9 @@ int lscpu_read_extra(struct lscpu_cxt *cxt);
 int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt);
 int lscpu_read_numas(struct lscpu_cxt *cxt);
 
+struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt);
+void lscpu_free_virt(struct lscpu_virt *virt);
+
 struct lscpu_cpu *lscpu_new_cpu(void);
 void lscpu_ref_cpu(struct lscpu_cpu *cpu);
 void lscpu_unref_cpu(struct lscpu_cpu *cpu);
@@ -154,5 +191,7 @@ int lscpu_cpus_apply_type(struct lscpu_cxt *cxt, struct lscpu_cputype *type);
 
 struct lscpu_cxt *lscpu_new_context(void);
 void lscpu_free_context(struct lscpu_cxt *cxt);
+
+int lookup(char *line, char *pattern, char **value);
 
 #endif /* LSCPU_API_H */
