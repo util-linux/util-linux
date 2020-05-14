@@ -173,12 +173,12 @@ implies creating a new mount namespace since the /proc mount would otherwise
 mess up existing programs on the system.  The new proc filesystem is explicitly
 mounted as private (with MS_PRIVATE|MS_REC).
 .TP
-.BR \-\-map\-user=\fIuid|name
+.BI \-\-map\-user= uid|name
 Run the program only after the current effective user ID has been mapped to \fIuid\fP.
 If this option is specified multiple times, the last occurrence takes precedence.
 This option implies \fB\-\-user\fR.
 .TP
-.BR \-\-map\-group=\fIgid|name
+.BI \-\-map\-group= gid|name
 Run the program only after the current effective group ID has been mapped to \fIgid\fP.
 If this option is specified multiple times, the last occurrence takes precedence.
 This option implies \fB\-\-setgroups=deny\fR and \fB\-\-user\fR.
@@ -237,13 +237,13 @@ Set the user ID which will be used in the entered namespace.
 Set the group ID which will be used in the entered namespace and drop
 supplementary groups.
 .TP
-.BR "\-\-monotonic \fIoffset"
+.BI \-\-monotonic " offset"
 Set the offset of
 .B CLOCK_MONOTONIC
 which will be used in the entered time namespace. This option requires
 unsharing a time namespace with \fB\-\-time\fP.
 .TP
-.BR "\-\-boottime \fIoffset"
+.BI \-\-boottime " offset"
 Set the offset of
 .B CLOCK_BOOTTIME
 which will be used in the entered time namespace. This option requires
