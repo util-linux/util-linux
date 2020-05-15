@@ -301,7 +301,7 @@ static int blkzone_action(struct blkzone_control *ctl)
 	if (!zonesize)
 		errx(EXIT_FAILURE, _("%s: unable to determine zone size"), ctl->devname);
 
-	fd = init_device(ctl, O_WRONLY);
+	fd = init_device(ctl, O_WRONLY | O_EXCL);
 
 	if (ctl->offset & (zonesize - 1))
 		errx(EXIT_FAILURE, _("%s: offset %" PRIu64 " is not aligned "
