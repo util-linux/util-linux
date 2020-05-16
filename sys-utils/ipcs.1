@@ -8,8 +8,7 @@ ipcs \- show information on IPC facilities
 [options]
 .SH DESCRIPTION
 .B ipcs
-shows information on the inter-process communication facilities
-for which the calling process has read access.
+shows information on inter-process communication facilities.
 By default it shows information about all three resources:
 shared memory segments, message queues, and semaphore arrays.
 .SH OPTIONS
@@ -76,6 +75,25 @@ Print sizes in bytes.
 .TP
 .B \-\-human
 Print sizes in human-readable format.
+.SH NOTES
+The current implementation of
+.B ipcs
+obtains information about available IPC resources by parsing the files in
+.IR /proc/sysvipc .
+Before util-linux version v2.23, an alternate mechanism was used: the
+.BR IPC_STAT
+command of
+.BR msgctl (2),
+.BR semctl (2),
+and
+.BR shmctl (2).
+This mechanism is also used in later util-linux versions in the case where
+.I /proc
+is unavailable.
+A limitation of the
+.B IPC_STAT
+mechanism is that it can only be used to retrieve information about
+IPC resources for which the user has read permission.
 .SH SEE ALSO
 .BR ipcmk (1),
 .BR ipcrm (1),
