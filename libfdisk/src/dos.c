@@ -1658,6 +1658,13 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	DBG(LABEL, ul_debug("DOS: new partition wanted"));
 
 	l = self_label(cxt);
+
+	if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
+		fdisk_warnx(cxt, _("The maximum number of partitions has "
+				  "been created."));
+		return -EINVAL;
+	}
+
 	ext_pe = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL;
 
 	/*
@@ -1759,11 +1766,6 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	if (last + grain < cxt->total_sectors - 1)
 		free_sectors = 1;
 
-	if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
-		fdisk_warnx(cxt, _("The maximum number of partitions has "
-				  "been created."));
-		return -EINVAL;
-	}
 
 	if (!free_primary || !free_sectors) {
 		DBG(LABEL, ul_debug("DOS: primary impossible, add logical"));
@@ -1793,12 +1795,6 @@ static int dos_add_partition(struct fdisk_context *cxt,
 					  "a primary with an extended partition."));
 			return -EINVAL;
 		}
-	} else if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
-		fdisk_info(cxt, _("All logical partitions are in use. "
-				  "Adding a primary partition."));
-		rc = get_partition_unused_primary(cxt, pa, &res);
-		if (rc == 0)
-			rc = add_partition(cxt, res, pa);
 	} else {
 		char hint[BUFSIZ];
 		struct fdisk_ask *ask;
