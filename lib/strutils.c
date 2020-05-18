@@ -173,13 +173,23 @@ check_suffix:
 
 		/* maximal divisor for last digit (e.g. for 0.05 is
 		 * frac_div=100, for 0.054 is frac_div=1000, etc.)
+		 *
+		 * Reduce frac if too large.
 		 */
-		while (frac_div < frac)
-			frac_div *= 10;
+		while (frac_div < frac) {
+			if (frac_div <= UINTMAX_MAX/10)
+				frac_div *= 10;
+			else
+				frac /= 10;
+		}
 
 		/* 'frac' is without zeros (5 means 0.5 as well as 0.05) */
-		for (i = 0; i < frac_zeros; i++)
-			frac_div *= 10;
+		for (i = 0; i < frac_zeros; i++) {
+			if (frac_div <= UINTMAX_MAX/10)
+				frac_div *= 10;
+			else
+				frac /= 10;
+		}
 
 		/*
 		 * Go backwardly from last digit and add to result what the
