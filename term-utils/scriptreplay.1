@@ -1,14 +1,14 @@
 .TH SCRIPTREPLAY 1 "October 2019" "util-linux" "User Commands"
-.SH "NAME"
+.SH NAME
 scriptreplay \- play back typescripts, using timing information
-.SH "SYNOPSIS"
+.SH SYNOPSIS
 .B scriptreplay
 [options]
 .RB [ \-t ]
 .I timingfile
 .RI [ typescript
 .RI [ divisor ]]
-.SH "DESCRIPTION"
+.SH DESCRIPTION
 This program replays a typescript, using timing information to ensure that
 output happens in the same rhythm as it originally appeared when the script
 was recorded.
@@ -110,7 +110,7 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
-.SH "EXAMPLE"
+.SH EXAMPLE
 .nf
 % script --log-timing file.tm --log-out script.out
 Script started, file is script.out
@@ -120,10 +120,10 @@ Script started, file is script.out
 Script done, file is script.out
 % scriptreplay --log-timing file.tm --log-out script.out
 .nf
-.SH "SEE ALSO"
+.SH SEE ALSO
 .BR script (1),
 .BR scriptlive (1)
-.SH "COPYRIGHT"
+.SH COPYRIGHT
 Copyright \(co 2008 James Youngman
 .br
 Copyright \(co 2008-2019 Karel Zak
@@ -133,7 +133,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.
 .PP
 Released under the GNU General Public License version 2 or later.
-.SH "AUTHOR"
+.SH AUTHOR
 The original
 .B scriptreplay
 program was written by

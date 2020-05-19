@@ -175,7 +175,7 @@ shell> flock -n 4
 This form is convenient for locking a file without spawning a subprocess.
 The shell opens the lock file for reading and writing as file descriptor 4,
 then flock is used to lock the descriptor.
-.SH "EXIT STATUS"
+.SH EXIT STATUS
 The command uses
 .B sysexits.h
 return values for everything, except when using either of the options
@@ -197,7 +197,7 @@ Copyright \(co 2003\-2006 H. Peter Anvin.
 .br
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-.SH "SEE ALSO"
+.SH SEE ALSO
 .BR flock (2)
 .SH AVAILABILITY
 The flock command is part of the util-linux package and is available from

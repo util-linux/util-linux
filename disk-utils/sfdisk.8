@@ -330,7 +330,7 @@ Display version information and exit.
 .BR \-h , " \-\-help"
 Display help text and exit.
 
-.SH "INPUT FORMATS"
+.SH INPUT FORMATS
 .B sfdisk
 supports two input formats and generic header lines.
 
@@ -522,7 +522,7 @@ For backward compatibility the \fBId=\fR field has the same meaning.
 .RE
 .RE
 
-.SH "EMPTY DISK LABEL"
+.SH EMPTY DISK LABEL
 .B sfdisk
 does not create partition table without partitions by default. The lines with
 partitions are expected in the script by default. The empty partition table has
@@ -535,7 +535,7 @@ partitions lines. For example:
 .RE
 creates empty GPT partition table. Note that the \fB\-\-append\fR disables this feature.
 
-.SH "BACKING UP THE PARTITION TABLE"
+.SH BACKING UP THE PARTITION TABLE
 It is recommended to save the layout of your devices.
 .B sfdisk
 supports two ways.
@@ -620,7 +620,7 @@ enables libblkid debug output.
 .IP LIBSMARTCOLS_DEBUG=all
 enables libsmartcols debug output.
 
-.SH "SEE ALSO"
+.SH SEE ALSO
 .BR fdisk (8),
 .BR cfdisk (8),
 .BR parted (8),

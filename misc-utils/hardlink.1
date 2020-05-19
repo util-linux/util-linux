@@ -1,11 +1,11 @@
 .TH "hardlink" "1"
-.SH "NAME"
+.SH NAME
 hardlink \- Consolidate duplicate files via hardlinks
-.SH "SYNOPSIS"
+.SH SYNOPSIS
 .B hardlink
 [options]
 .RI [ directory ...]
-.SH "DESCRIPTION"
+.SH DESCRIPTION
 .PP
 This manual page documents \fBhardlink\fR, a
 program which consolidates duplicate files in one or more directories
@@ -20,7 +20,7 @@ on a single filesystem contain many duplicate files.
 .PP
 Since hard links can only span a single filesystem, \fBhardlink\fR
 is only useful when all directories specified are on the same filesystem.
-.SH "OPTIONS"
+.SH OPTIONS
 .TP
 .BR \-c , " \-\-content"
 Compare only the contents of the files being considered for consolidation.
@@ -48,13 +48,13 @@ Display help text and exit.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
-.SH "AUTHOR"
+.SH AUTHOR
 .PP
 \fBhardlink\fR was written by Jakub Jelinek <jakub@redhat.com> and later modified by
 Ruediger Meier <ruediger.meier@ga-group.nl> and Karel Zak <kzak@redhat.com> for util-linux.
 .PP
 Man page written by Brian Long and later updated by Jindrich Novy <jnovy@redhat.com>
-.SH "BUGS"
+.SH BUGS
 .PP
 \fBhardlink\fR assumes that its target directory trees do not change from under
 it.  If a directory tree does change, this may result in \fBhardlink\fR

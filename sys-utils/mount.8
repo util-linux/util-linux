@@ -1320,7 +1320,7 @@ in octal notation.  The default mode is 0755.  This functionality is supported
 only for root users or when mount executed without suid permissions.  The option
 is also supported as x-mount.mkdir, this notation is deprecated since v2.30.
 
-.SH "FILESYSTEM-SPECIFIC MOUNT OPTIONS"
+.SH FILESYSTEM-SPECIFIC MOUNT OPTIONS
 You should consult the respective man page for the filesystem first.
 If you want to know what options the ext4 filesystem supports, then check the
 .BR ext4 (5)
@@ -2379,7 +2379,7 @@ Set the owner and group and mode of the file
 .I devices
 (default: uid=gid=0, mode=0444).  The mode is given in octal.
 
-.SH "DM-VERITY SUPPORT (experimental)"
+.SH DM-VERITY SUPPORT (experimental)
 The device-mapper verity target provides read-only transparent integrity
 checking of block devices using kernel crypto API.  The mount command can open
 the dm-verity device and do the integrity verification before on the device
@@ -2443,7 +2443,7 @@ create squashfs image from /etc directory, verity hash device
 and mount verified filesystem image to /mnt.
 The kernel will verify that the root hash is signed by a key from the kernel keyring if roothashsig is used.
 
-.SH "LOOP-DEVICE SUPPORT"
+.SH LOOP-DEVICE SUPPORT
 One further possible type is a mount via the loop device.  For example,
 the command
 .RS
@@ -2534,7 +2534,7 @@ some mount succeeded
 The command \fBmount \-a\fR returns 0 (all succeeded), 32 (all failed), or 64 (some
 failed, some succeeded).
 
-.SH "EXTERNAL HELPERS"
+.SH EXTERNAL HELPERS
 The syntax of external mount helpers is:
 .sp
 .in +4
@@ -2605,7 +2605,7 @@ enables libmount debug output
 enables libblkid debug output
 .IP LOOPDEV_DEBUG=all
 enables loop device setup debug output
-.SH "SEE ALSO"
+.SH SEE ALSO
 .na
 .BR mount (2),
 .BR umount (2),

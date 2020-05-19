@@ -190,7 +190,7 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
-.SH "NON-SUPERUSER UMOUNTS"
+.SH NON-SUPERUSER UMOUNTS
 Normally, only the superuser can umount filesystems.
 However, when
 .I fstab
@@ -209,7 +209,7 @@ inadequate by internal libmount security rules.  It drops suid permissions
 and continue as regular non-root user. It allows to support use-cases where
 root permissions are not necessary (e.g., fuse filesystems, user namespaces,
 etc).
-.SH "LOOP DEVICE"
+.SH LOOP DEVICE
 The
 .B umount
 command will automatically detach loop device previously initialized by
@@ -271,7 +271,7 @@ overrides the default location of the fstab file (ignored for suid)
 overrides the default location of the mtab file (ignored for suid)
 .IP LIBMOUNT_DEBUG=all
 enables libmount debug output
-.SH "SEE ALSO"
+.SH SEE ALSO
 .BR umount (2),
 .BR losetup (8),
 .BR mount (8)
