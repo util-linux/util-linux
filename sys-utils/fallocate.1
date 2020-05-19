@@ -33,7 +33,7 @@ preallocation is done quickly by allocating blocks and marking them as
 uninitialized, requiring no IO to the data blocks.
 This is much faster than creating a file by filling it with zeroes.
 .PP
-The exit code returned by
+The exit status returned by
 .B fallocate
 is 0 on success and 1 on failure.
 .SH OPTIONS

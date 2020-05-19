@@ -91,7 +91,7 @@ For security reasons
 .B blkid
 silently ignores all devices where the probing result is ambivalent (multiple
 colliding filesystems are detected).  The low-level probing mode (\fB\-p\fR)
-provides more information and extra return code in this case.
+provides more information and extra exit status in this case.
 It's recommended to use
 .BR wipefs (8)
 to get a detailed overview and to erase obsolete stuff (magic strings) from the device.
@@ -289,16 +289,16 @@ Display version number and exit.
 .SH EXIT STATUS
 If the specified device or device addressed by specified token (option
 \fB\-\-match\-token\fR) was found and it's possible to gather any information about the
-device, an exit code 0 is returned.  Note the option \fB\-\-match\-tag\fR filters output
-tags, but it does not affect return code.
+device, an exit status 0 is returned.  Note the option \fB\-\-match\-tag\fR filters output
+tags, but it does not affect exit status.
 
 If the specified token was not found, or no (specified) devices could be
 identified, or it is impossible to gather any information about the device
-identifiers or device content an exit code of 2 is returned.
+identifiers or device content an exit status of 2 is returned.
 
-For usage or other errors, an exit code of 4 is returned.
+For usage or other errors, an exit status of 4 is returned.
 
-If an ambivalent probing result was detected by low-level probing mode (\fB\-p\fR), an exit code of 8 is
+If an ambivalent probing result was detected by low-level probing mode (\fB\-p\fR), an exit status of 8 is
 returned.
 .SH CONFIGURATION FILE
 The standard location of the

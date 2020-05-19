@@ -41,7 +41,7 @@ serially.  This is equivalent to the
 .B \-As
 options.
 .PP
-The exit code returned by
+The exit status returned by
 .B fsck
 is the sum of the following conditions:
 .PP
@@ -74,8 +74,8 @@ Shared-library error
 .PD
 .RE
 .PP
-The exit code returned when multiple filesystems are checked
-is the bit-wise OR of the exit codes for each
+The exit status returned when multiple filesystems are checked
+is the bit-wise OR of the exit statuses for each
 filesystem that is checked.
 .PP
 In actuality,
@@ -280,7 +280,7 @@ a progress bar at a time.  GUI front-ends may specify a file descriptor
 in which case the progress bar information will be sent to that file descriptor.
 .TP
 .B \-M
-Do not check mounted filesystems and return an exit code of 0
+Do not check mounted filesystems and return an exit status of 0
 for mounted filesystems.
 .TP
 .B \-N

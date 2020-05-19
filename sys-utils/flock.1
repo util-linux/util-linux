@@ -66,7 +66,7 @@ Pass a single \fIcommand\fR, without arguments, to the shell with
 .BR \-c .
 .TP
 .BR \-E , " \-\-conflict\-exit\-code " \fInumber
-The exit code used when the \fB\-n\fP option is in use, and the
+The exit status used when the \fB\-n\fP option is in use, and the
 conflicting lock exists, or the \fB\-w\fP option is in use,
 and the timeout is reached.  The default value is \fB1\fR.
 .TP
@@ -87,7 +87,7 @@ Fail rather than wait if the lock cannot be
 immediately acquired.
 See the
 .B \-E
-option for the exit code used.
+option for the exit status used.
 .TP
 .BR \-o , " \-\-close"
 Close the file descriptor on which the lock is held before executing
@@ -111,7 +111,7 @@ Fail if the lock cannot be acquired within
 Decimal fractional values are allowed.
 See the
 .B \-E
-option for the exit code used. The zero number of
+option for the exit status used. The zero number of
 .I seconds
 is interpreted as \fB\-\-nonblock\fR.
 .TP
@@ -178,11 +178,11 @@ then flock is used to lock the descriptor.
 .SH EXIT STATUS
 The command uses
 .B sysexits.h
-return values for everything, except when using either of the options
+exit status values for everything, except when using either of the options
 .B \-n
 or
 .B \-w
-which report a failure to acquire the lock with a return value given by the
+which report a failure to acquire the lock with a exit status given by the
 .B \-E
 option, or 1 by default.
 .PP
