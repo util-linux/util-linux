@@ -18,7 +18,7 @@ even after the \fIprogram\fR terminates (except PID namespaces where
 permanently running init process is required).
 Once a persistent \%namespace is no longer needed, it can be unpersisted with
 .BR umount (8).
-See the \fBEXAMPLES\fR section for more details.
+See the \fBEXAMPLE\fR section for more details.
 .PP
 .B unshare
 since util-linux version 2.36 uses /\fIproc/[pid]/ns/pid_for_children\fP and \fI/proc/[pid]/ns/time_for_children\fP
@@ -259,7 +259,7 @@ The proc and sysfs filesystems mounting as root in a user namespace have to be
 restricted so that a less privileged user can not get more access to sensitive
 files that a more privileged user made unavailable. In short the rule for proc
 and sysfs is as close to a bind mount as possible.
-.SH EXAMPLES
+.SH EXAMPLE
 .TP
 .B # unshare \-\-fork \-\-pid \-\-mount-proc readlink /proc/self
 .TQ

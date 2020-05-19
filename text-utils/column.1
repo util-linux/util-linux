@@ -126,7 +126,7 @@ Display help text and exit.
 .SH ENVIRONMENT
 The environment variable \fBCOLUMNS\fR is used to determine the size of
 the screen if no other information is available.
-.SH EXAMPLES
+.SH EXAMPLE
 Print fstab with header line and align number to the right:
 .EX
 \fBsed 's/#.*//' /etc/fstab | column \-\-table \-\-table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ \-\-table-right PASS,FREQ\fR
