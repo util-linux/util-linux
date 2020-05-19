@@ -700,6 +700,7 @@ static void output_version(void)
 static void parse_args(int argc, char **argv, struct options *op)
 {
 	int c;
+	int opt_show_issue = 0;
 
 	enum {
 		VERSION_OPTION = CHAR_MAX + 1,
@@ -869,8 +870,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 			list_speeds();
 			exit(EXIT_SUCCESS);
 		case ISSUE_SHOW_OPTION:
-			show_issue(op);
-			exit(EXIT_SUCCESS);
+			opt_show_issue = 1;
 			break;
 		case VERSION_OPTION:
 			output_version();
@@ -880,6 +880,11 @@ static void parse_args(int argc, char **argv, struct options *op)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
+
+	if (opt_show_issue) {
+		show_issue(op);
+		exit(EXIT_SUCCESS);
 	}
 
 	debug("after getopt loop\n");
@@ -1929,23 +1934,31 @@ static void eval_issue_file(struct issue *ie,
 #endif
 	if (!(op->flags & F_ISSUE))
 		goto done;
-
 	/*
-	 * The custom issue file or directory specified by: agetty -f <path>.
+	 * The custom issue file or directory list specified by:
+	 *   agetty --isue-file <path[:path]...>
 	 * Note that nothing is printed if the file/dir does not exist.
 	 */
 	if (op->issue) {
-		struct stat st;
+		char *list = strdup(op->issue);
+		char *file;
 
-		if (stat(op->issue, &st) < 0)
-			goto done;
-		if (S_ISDIR(st.st_mode))
-			issuedir_read(ie, op->issue, op, tp);
-		else
-			issuefile_read(ie, op->issue, op, tp);
+		if (!list)
+			log_err(_("failed to allocate memory: %m"));
+
+		for (file = strtok(list, ":"); file; file = strtok(NULL, ":")) {
+			struct stat st;
+
+			if (stat(file, &st) < 0)
+				continue;
+			if (S_ISDIR(st.st_mode))
+				issuedir_read(ie, file, op, tp);
+			else
+				issuefile_read(ie, file, op, tp);
+		}
+		free(list);
 		goto done;
 	}
-
 
 	/* The default /etc/issue and optional /etc/issue.d directory as
 	 * extension to the file. The /etc/issue.d directory is ignored if
@@ -2428,7 +2441,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -a, --autologin <user>     login the specified user automatically\n"), out);
 	fputs(_(" -c, --noreset              do not reset control mode\n"), out);
 	fputs(_(" -E, --remote               use -r <hostname> for login(1)\n"), out);
-	fputs(_(" -f, --issue-file <file>    display issue file\n"), out);
+	fputs(_(" -f, --issue-file <list>    display issue files or directories\n"), out);
 	fputs(_("     --show-issue           display issue file and exit\n"), out);
 	fputs(_(" -h, --flow-control         enable hardware flow control\n"), out);
 	fputs(_(" -H, --host <hostname>      specify login host\n"), out);
