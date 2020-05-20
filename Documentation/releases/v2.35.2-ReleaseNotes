@@ -1,0 +1,83 @@
+util-linux 2.35.2 Release Notes
+===============================
+
+bash-completion:
+   - umount explicitly needs gawk  [Wolfram Sang]
+blkdiscard:
+   - (man) offset and length must be sector aligned  [Lukas Czerner]
+blkzone:
+   - deny destructive ioctls on busy blockdev  [Johannes Thumshirn]
+chsh:
+   - (man) fix default behavior description  [Karel Zak]
+ctrlaltdel:
+   - display error message indicated by errno  [Sami Kerola]
+docs:
+   - Correct ChangeLog URL to history log.  [Anatoly Pugachev]
+   - Fix dead references to kernel documentation  [Yannick Le Pennec]
+   - add swap to 1st fstab field  [Karel Zak]
+   - kill.1 add note about shell-internal kill implementations  [Sami Kerola]
+   - update AUTHORS file  [Karel Zak]
+eject:
+   - fix compiler warning [-Wformat-overflow]  [Karel Zak]
+exfat:
+   - Fix parsing exfat label  [Pali Rohár]
+fstrim:
+   - do not use Protect setting in systemd service  [Karel Zak]
+hwclock:
+   - fix audit exit status  [Karel Zak]
+   - make glibc 2.31 compatible  [J William Piggott, Karel Zak]
+ipcs:
+   - ipcs.1 ipcs no longer needs read permission on IPC resources  [Michael Kerrisk]
+kill:
+   - include sys/types.h before checking SYS_pidfd_send_signal  [Sami Kerola]
+lib/mangle:
+   - check for the NULL string argument  [Gaël PORTAY]
+lib/strutils:
+   - remove redundant include  [Karel Zak]
+libblkid:
+   - Fix UTF-16 support in function blkid_encode_to_utf8()  [Pali Rohár]
+   - fix compiler warning [-Wsign-compare]  [Karel Zak]
+   - fix fstatat() use in blkid__scan_dir()  [Karel Zak]
+libfdisk:
+   - (script) accept sector-size, ignore unknown headers  [Karel Zak]
+   - (script) fix memory leak  [Karel Zak]
+   - (script) fix partno_from_devname()  [Karel Zak]
+   - (script) fix segmentation fault  [Gaël PORTAY]
+   - fix partition calculation for BLKPG_* ioctls  [Karel Zak]
+   - remove unwanted assert()  [Karel Zak]
+libmount:
+   - do not unnecessarily chmod utab.lock  [Tycho Andersen]
+   - fix mount -a EBUSY for cifs  [Roberto Bergantinos Corpas]
+   - improve smb{2,3} support  [Karel Zak]
+   - smb2 is unsupported alias  [Karel Zak]
+lsblk:
+   - Fall back to ID_SERIAL  [Sven Wiltink]
+   - Ignore hidden devices  [Ritika Srivastava]
+   - fix -P regression from v2.34  [Karel Zak]
+lscpu:
+   - Adapt MIPS cpuinfo  [Jiaxun Yang]
+   - fix SIGSEGV on archs without drawers & books  [Karel Zak]
+   - use official name for HiSilicon tsv110  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update zh_CN.po (from translationproject.org)  [Boyuan Yang]
+pylibmount:
+   - cleanup and sync UL_RaiseExc  [Karel Zak]
+scriptlive:
+   - fix man page formatting  [Jakub Wilk]
+   - fix typo  [Jakub Wilk]
+sfdisk:
+   - (man) fix typo  [Gaël PORTAY]
+   - fix ref-counting for the script  [Karel Zak]
+   - only report I/O errors on --move-data  [Karel Zak]
+su, runuser:
+   - (man) add more info about PATH and PAM  [Karel Zak]
+tests:
+   - Fix for misc/fallocate test build failure.  [Mark Hindley]
+umount:
+   - don't try it as non-suid if not found mountinfo entry  [Karel Zak]
+wipefs:
+   - fix man page --no-headings short option  [Karel Zak]
+write:
+   - fix potential string overflow  [Sami Kerola]
