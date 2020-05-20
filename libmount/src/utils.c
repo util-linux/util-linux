@@ -281,8 +281,10 @@ int mnt_fstype_is_pseudofs(const char *type)
 	/* This array must remain sorted when adding new fstypes */
 	static const char *pseudofs[] = {
 		"anon_inodefs",
+		"apparmorfs",
 		"autofs",
 		"bdev",
+		"binder",
 		"binfmt_misc",
 		"bpf",
 		"cgroup",
@@ -294,6 +296,8 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"devpts",
 		"devtmpfs",
 		"dlmfs",
+		"dmabuf",
+		"drm",
 		"efivarfs",
 		"fuse", /* Fallback name of fuse used by many poorly written drivers. */
 		"fuse.archivemount", /* Not a true pseudofs (has source), but source is not reported. */
@@ -308,6 +312,7 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"fuse.xwmfs",
 		"fusectl",
 		"hugetlbfs",
+		"ipathfs",
 		"mqueue",
 		"nfsd",
 		"none",
@@ -317,14 +322,17 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"proc",
 		"pstore",
 		"ramfs",
+		"resctrl",
 		"rootfs",
 		"rpc_pipefs",
 		"securityfs",
 		"selinuxfs",
+		"smackfs",
 		"sockfs",
 		"spufs",
 		"sysfs",
-		"tmpfs"
+		"tmpfs",
+		"tracefs"
 	};
 
 	assert(type);
