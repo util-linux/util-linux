@@ -1014,8 +1014,6 @@ int skip_fline(FILE *fp)
 }
 
 #ifdef TEST_PROGRAM_STRUTILS
-#include <stdio.h>
-
 static int test_strutils_sizes(int argc, char *argv[])
 {
 	uintmax_t size = 0;
