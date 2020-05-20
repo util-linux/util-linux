@@ -237,6 +237,7 @@ CONTRIBUTORS:
       Diego Elio 'Flameeyes' Pettenò <flameeyes@gmail.com>
       Dima Kogan <dkogan@cds.caltech.edu>
       Dirk Mueller <dmueller@suse.com>
+      Disconnect3d <dominik.b.czarnota@gmail.com>
       Dmitry V. Levin <ldv@altlinux.org>
       Dong Hao <haodong@linux.vnet.ibm.com>
       Dongli Zhang <dongli.zhang@oracle.com>
@@ -291,6 +292,7 @@ CONTRIBUTORS:
       Gabriel de Perthuis <g2p.code@gmail.com>
       Gabriele Giacone <1o5g4r8o@gmail.com>
       Gabriel M. Schuyler <schuyler@easiest.com>
+      Gaël PORTAY <gael.portay@collabora.com>
       Georg Schiesser <georg.schiesser@opentech.at>
       Gerald Schaefer <gerald.schaefer@de.ibm.com>
       Gerhard Schneider <gs@ilfb.tuwien.ac.at>
@@ -372,6 +374,7 @@ CONTRIBUTORS:
       Jeroen Oortwijn <oortwijn@gmail.com>
       Jesper Dahl Nyerup <nyerup@one.com>
       Jesse Thilo <jesse.thilo@pobox.com>
+      Jiaxun Yang <jiaxun.yang@flygoat.com>
       Jim Meyering <jim@meyering.net>
       Jim Patterson <jimp@wegrok.net>
       Jindrich Makovicka <makovick@gmail.com>
@@ -380,6 +383,7 @@ CONTRIBUTORS:
       Joe Hansen <joedalton2@yahoo.dk>
       Johannes Berg <johannes@sipsolutions.net>
       Johannes Nixdorf <mixi@shadowice.org>
+      Johannes Thumshirn <johannes.thumshirn@wdc.com>
       John Baublitz <jbaublitz@redhat.com>
       John Garry <john.garry@huawei.com>
       John Groves <jgroves@micron.com>
@@ -459,6 +463,8 @@ CONTRIBUTORS:
       Marek Otahal <markotahal@gmail.com>
       Marek Polacek <mmpolacek@gmail.com>
       Mario Blättermann <mario.blaettermann@gmail.com>
+      Mark Barbone <mark.l.barbone@gmail.com>
+      Mark Hindley <mark@hindley.org.uk>
       Mark McLoughlin <markmc@redhat.com>
       Mark Sheppard <mark@ddf.net>
       Mark Tinguely <mark.tinguely@hpe.com>
@@ -613,8 +619,10 @@ CONTRIBUTORS:
       Rick Sladkey <jrs@world.std.com>
       Riku Voipio <riku.voipio@iki.fi>
       Rik van Riel <riel@redhat.com>
+      Ritika Srivastava <ritika.srivastava@oracle.com>
       Robert Förster <Dessa@gmake.de>
       Robert Millan <rmh@debian.org>
+      Roberto Bergantinos Corpas <rbergant@redhat.com>
       Robert Schiele <rschiele@gmail.com>
       Roddy Shuler <roddy@endlessm.com>
       Rodrigo Campos <rodrigo@sdfg.com.ar>
@@ -719,6 +727,7 @@ CONTRIBUTORS:
       Torsten Hilbrich <torsten.hilbrich@secunet.com>
       Toshi Kani <toshi.kani@hp.com>
       Trần Ngọc Quân <vnwildman@gmail.com>
+      Tycho Andersen <tycho@tycho.ws>
       utoddl <todd_lewis@unc.edu>
       Vaclav Dolezal <vdolezal@redhat.com>
       Valerie Aurora <vaurora@redhat.com>
@@ -748,11 +757,13 @@ CONTRIBUTORS:
       William Pitcock <nenolod@dereferenced.org>
       Will Johansson <will.johansson@gmail.com>
       Wolfgang Richter <wolf@cs.cmu.edu>
+      Wolfram Sang <wsa@the-dreams.de>
       W. Trevor King <wking@tremily.us>
       WUEBBELS, Josef <Josef.WUEBBELS@mtu.de>
       Wylmer Wang <wantinghard@gmail.com>
       W.Z. Venema
       Yann Droneaud <yann@droneaud.fr>
+      Yannick Le Pennec <yannick.lepennec@live.fr>
       YmrDtnJu <YmrDtnJu@users.noreply.github.com>
       Yoshihiro Takahashi <ytakahashi@miraclelinux.com>
       Yousong Zhou <yszhou4tech@gmail.com>
