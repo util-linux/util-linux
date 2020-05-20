@@ -1,3 +1,7 @@
+util-linux 2.35.2: May 20 2020
+* see Documentation/releases/v2.35.2-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.35/v2.35.2-ChangeLog
+
 util-linux 2.35.1: Jan 31 2020
 * see Documentation/releases/v2.35.1-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.35/v2.35.1-ChangeLog
