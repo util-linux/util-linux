@@ -126,28 +126,8 @@ Display help text and exit.
 .SH ENVIRONMENT
 The environment variable \fBCOLUMNS\fR is used to determine the size of
 the screen if no other information is available.
-.SH EXAMPLE
-Print fstab with header line and align number to the right:
-.EX
-\fBsed 's/#.*//' /etc/fstab | column \-\-table \-\-table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ \-\-table-right PASS,FREQ\fR
-.EE
-.PP
-Print fstab and hide unnamed columns:
-.EX
-\fBsed 's/#.*//' /etc/fstab | column \-\-table \-\-table-columns SOURCE,TARGET,TYPE \-\-table-hide \-\fR
-.EE
-.PP
-
-.PP
-Print a tree:
-.EX
-\fBecho \-e '1 0 A\\n2 1 AA\\n3 1 AB\\n4 2 AAA\\n5 2 AAB' | column \-\-tree-id 1 \-\-tree-parent 2 \-\-tree 3\fR
-1  0  A
-2  1  |-AA
-4  2  | |-AAA
-5  2  | `-AAB
-3  1  `-AB
-.EE
+.SH HISTORY
+The column command appeared in 4.3BSD-Reno.
 .SH BUGS
 Version 2.23 changed the
 .B \-s
@@ -177,8 +157,28 @@ has since been corrected (see above). Other implementations of
 .B column
 may continue to use the older documentation, but the behavior should be
 identical in any case.
-.SH HISTORY
-The column command appeared in 4.3BSD-Reno.
+.SH EXAMPLE
+Print fstab with header line and align number to the right:
+.EX
+\fBsed 's/#.*//' /etc/fstab | column \-\-table \-\-table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ \-\-table-right PASS,FREQ\fR
+.EE
+.PP
+Print fstab and hide unnamed columns:
+.EX
+\fBsed 's/#.*//' /etc/fstab | column \-\-table \-\-table-columns SOURCE,TARGET,TYPE \-\-table-hide \-\fR
+.EE
+.PP
+
+.PP
+Print a tree:
+.EX
+\fBecho \-e '1 0 A\\n2 1 AA\\n3 1 AB\\n4 2 AAA\\n5 2 AAB' | column \-\-tree-id 1 \-\-tree-parent 2 \-\-tree 3\fR
+1  0  A
+2  1  |-AA
+4  2  | |-AAA
+5  2  | `-AAB
+3  1  `-AB
+.EE
 .SH SEE ALSO
 .BR colrm (1),
 .BR ls (1),

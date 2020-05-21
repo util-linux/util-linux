@@ -50,30 +50,6 @@ or
 .I $HOME/.config/terminal-colors.d
 overrides the global setting.
 
-.SH EXAMPLE
-Disable colors for all compatible utilities:
-.RS
-.br
-.B "touch /etc/terminal-colors.d/disable"
-.br
-.RE
-
-Disable colors for all compatible utils on a vt100 terminal:
-.RS
-.br
-.B "touch /etc/terminal-colors.d/@vt100.disable"
-.br
-.RE
-
-Disable colors for all compatible utils except dmesg(1):
-.RS
-.br
-.B "touch /etc/terminal-colors.d/disable"
-.sp
-.B "touch /etc/terminal-colors.d/dmesg.enable"
-.br
-.RE
-
 .SH DEFAULT SCHEME FILES FORMAT
 The following statement is recognized:
 
@@ -179,6 +155,30 @@ a comment.
 .SH ENVIRONMENT
 .IP TERMINAL_COLORS_DEBUG=all
 enables debug output.
+
+.SH EXAMPLE
+Disable colors for all compatible utilities:
+.RS
+.br
+.B "touch /etc/terminal-colors.d/disable"
+.br
+.RE
+
+Disable colors for all compatible utils on a vt100 terminal:
+.RS
+.br
+.B "touch /etc/terminal-colors.d/@vt100.disable"
+.br
+.RE
+
+Disable colors for all compatible utils except dmesg(1):
+.RS
+.br
+.B "touch /etc/terminal-colors.d/disable"
+.sp
+.B "touch /etc/terminal-colors.d/dmesg.enable"
+.br
+.RE
 
 .SH COMPATIBILITY
 The terminal-colors.d functionality is currently supported by all util-linux

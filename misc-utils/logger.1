@@ -345,16 +345,16 @@ l l.
 .PP
 For the priority order and intended purposes of these facilities and levels, see
 .BR syslog (3).
+.SH CONFORMING TO
+The
+.B logger
+command is expected to be IEEE Std 1003.2 ("POSIX.2") compatible.
 .SH EXAMPLE
 .B logger System rebooted
 .br
 .B logger \-p local0.notice \-t HOSTIDM \-f /dev/idmc
 .br
 .B logger \-n loghost.example.com System rebooted
-.SH CONFORMING TO
-The
-.B logger
-command is expected to be IEEE Std 1003.2 ("POSIX.2") compatible.
 .SH AUTHORS
 The
 .B logger

@@ -343,6 +343,10 @@ used between format units than in the default output).
 .SH EXIT STATUS
 .B hexdump
 exits 0 on success and >0 if an error occurred.
+.SH CONFORMING TO
+The
+.B hexdump
+utility is expected to be IEEE Std 1003.2 ("POSIX.2") compatible.
 .SH EXAMPLE
 Display the input in perusal format:
 .nf
@@ -369,10 +373,6 @@ Implicit coloring can be disabled by an empty file \fI/etc/terminal-colors.d/hex
 See
 .BR terminal-colors.d (5)
 for more details about colorization configuration.
-.SH CONFORMING TO
-The
-.B hexdump
-utility is expected to be IEEE Std 1003.2 ("POSIX.2") compatible.
 .SH AVAILABILITY
 The hexdump command is part of the util-linux package and is available from
 .UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/

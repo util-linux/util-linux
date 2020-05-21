@@ -216,6 +216,10 @@ parallelism available in the hardware.
 Defaults to zero (don't fsck) if not present.
 .RE
 
+.SH FILES
+.IR /etc/fstab ,
+.I <fstab.h>
+
 .SH NOTES
 The proper way to read records from
 .B fstab
@@ -228,10 +232,6 @@ The keyword
 .B ignore
 as a filesystem type (3rd field) is no longer supported by the pure
 libmount based mount utility (since util-linux v2.22).
-
-.SH FILES
-.IR /etc/fstab ,
-.I <fstab.h>
 .SH HISTORY
 The ancestor of this
 .B fstab

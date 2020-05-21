@@ -260,6 +260,17 @@ It's possible to specify source (device) or target (mountpoint) to filter mount 
 .TP
 .B \-\-verbose
 Force findmnt to print more information (\fB\-\-verify\fP only for now).
+.SH ENVIRONMENT
+.IP LIBMOUNT_FSTAB=<path>
+overrides the default location of the fstab file
+.IP LIBMOUNT_MTAB=<path>
+overrides the default location of the mtab file
+.IP LIBMOUNT_DEBUG=all
+enables libmount debug output
+.IP LIBSMARTCOLS_DEBUG=all
+enables libsmartcols debug output
+.IP LIBSMARTCOLS_DEBUG_PADDING=on
+use visible padding characters. Requires enabled LIBSMARTCOLS_DEBUG.
 .SH EXAMPLE
 .IP "\fBfindmnt \-\-fstab \-t nfs\fP"
 Prints all NFS filesystems defined in
@@ -285,17 +296,6 @@ Monitors mount, unmount, remount and move on /mnt/foo.
 Waits for /mnt/foo unmount.
 .IP "\fBfindmnt \-\-poll=remount \-t ext3 \-O ro\fP"
 Monitors remounts to read-only mode on all ext3 filesystems.
-.SH ENVIRONMENT
-.IP LIBMOUNT_FSTAB=<path>
-overrides the default location of the fstab file
-.IP LIBMOUNT_MTAB=<path>
-overrides the default location of the mtab file
-.IP LIBMOUNT_DEBUG=all
-enables libmount debug output
-.IP LIBSMARTCOLS_DEBUG=all
-enables libsmartcols debug output
-.IP LIBSMARTCOLS_DEBUG_PADDING=on
-use visible padding characters. Requires enabled LIBSMARTCOLS_DEBUG.
 .SH AUTHORS
 .nf
 Karel Zak <kzak@redhat.com>

@@ -66,14 +66,10 @@ Display version information and exit.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
-.SH EXAMPLE
-A typical use of
+.SH HISTORY
+The
 .B colcrt
-would be:
-.PP
-.RS
-.B tbl exum2.n \&| nroff \-ms \&| colcrt \- \&| more
-.RE
+command appeared in 3.0BSD.
 .SH BUGS
 Should fold underlines onto blanks even with the
 .B '\-'
@@ -88,10 +84,14 @@ Lines are trimmed to 132 characters.
 .PP
 Some provision should be made for processing superscripts and subscripts in
 documents which are already double-spaced.
-.SH HISTORY
-The
+.SH EXAMPLE
+A typical use of
 .B colcrt
-command appeared in 3.0BSD.
+would be:
+.PP
+.RS
+.B tbl exum2.n \&| nroff \-ms \&| colcrt \- \&| more
+.RE
 .SH SEE ALSO
 .BR col (1),
 .BR more (1),

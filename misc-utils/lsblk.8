@@ -167,19 +167,6 @@ command is issued.  The specified directory is the system root of the Linux
 instance to be inspected.  The real device nodes in the target directory can
 be replaced by text files with udev attributes.
 
-.SH NOTES
-For partitions, some information (e.g., queue attributes) is inherited from the
-parent device.
-.PP
-The
-.B lsblk
-command needs to be able to look up each block device by major:minor numbers,
-which is done by using
-.IR /sys/dev/block .
-This sysfs block directory appeared in kernel 2.6.27 (October 2008).
-In case of problems with a new enough kernel, check that CONFIG_SYSFS
-was enabled at the time of the kernel build.
-
 .SH EXIT STATUS
 .IP 0
 success
@@ -201,6 +188,19 @@ enables libmount debug output.
 enables libsmartcols debug output.
 .IP LIBSMARTCOLS_DEBUG_PADDING=on
 use visible padding characters. Requires enabled LIBSMARTCOLS_DEBUG.
+.SH NOTES
+For partitions, some information (e.g., queue attributes) is inherited from the
+parent device.
+.PP
+The
+.B lsblk
+command needs to be able to look up each block device by major:minor numbers,
+which is done by using
+.IR /sys/dev/block .
+This sysfs block directory appeared in kernel 2.6.27 (October 2008).
+In case of problems with a new enough kernel, check that CONFIG_SYSFS
+was enabled at the time of the kernel build.
+
 .SH AUTHORS
 .nf
 Milan Broz <mbroz@redhat.com>

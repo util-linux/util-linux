@@ -2605,6 +2605,10 @@ enables libmount debug output
 enables libblkid debug output
 .IP LOOPDEV_DEBUG=all
 enables loop device setup debug output
+.SH HISTORY
+A
+.B mount
+command existed in Version 5 AT&T UNIX.
 .SH BUGS
 It is possible for a corrupted filesystem to cause a crash.
 .PP
@@ -2664,10 +2668,6 @@ the
 command manually before calling
 .B mount
 with the configured loop device.
-.SH HISTORY
-A
-.B mount
-command existed in Version 5 AT&T UNIX.
 .SH AUTHORS
 .nf
 Karel Zak <kzak@redhat.com>

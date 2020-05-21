@@ -113,6 +113,9 @@ scheduling parameters.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
+.SH NOTES
+Linux supports I/O scheduling priorities and classes since 2.6.13 with the CFQ
+I/O scheduler.
 .SH EXAMPLE
 .LP
 .TP 7
@@ -127,9 +130,6 @@ Runs 'bash' as a best-effort program with highest priority.
 # \fBionice\fP \-p 89 91
 .TP 7
 Prints the class and priority of the processes with PID 89 and 91.
-.SH NOTES
-Linux supports I/O scheduling priorities and classes since 2.6.13 with the CFQ
-I/O scheduler.
 .SH AUTHORS
 .nf
 Jens Axboe <jens@axboe.dk>

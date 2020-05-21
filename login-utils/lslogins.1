@@ -122,9 +122,6 @@ Display the users' security context.
 \fB\-z\fR, \fB\-\-print0\fR
 Delimit user entries with a nul character, instead of a newline.
 
-.SH NOTES
-The default UID thresholds are read from /etc/login.defs.
-
 .SH EXIT STATUS
 .TP
 0
@@ -135,6 +132,9 @@ if incorrect arguments specified,
 .TP
 2
 if a serious error occurs (e.g., a corrupt log).
+.SH NOTES
+The default UID thresholds are read from /etc/login.defs.
+
 .SH HISTORY
 The \fBlslogins\fP utility is inspired by the \fBlogins\fP utility, which first appeared in FreeBSD 4.10.
 .SH AUTHORS

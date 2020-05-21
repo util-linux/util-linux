@@ -186,6 +186,9 @@ loop block devices
 .I /dev/loop-control
 loop control device
 
+.SH ENVIRONMENT
+.IP LOOPDEV_DEBUG=all
+enables debug output.
 .SH EXAMPLE
 The following commands can be used as an example of using the loop device.
 .nf
@@ -199,9 +202,6 @@ The following commands can be used as an example of using the loop device.
 # umount /dev/loop0
 # losetup \-\-detach /dev/loop0
 .fi
-.SH ENVIRONMENT
-.IP LOOPDEV_DEBUG=all
-enables debug output.
 .SH AUTHORS
 Karel Zak <kzak@redhat.com>, based on the original version from
 Theodore Ts'o <tytso@athena.mit.edu>

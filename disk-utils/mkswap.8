@@ -99,6 +99,10 @@ Display help text and exit.
 .BR \-V , " \-\-version"
 Display version information and exit.
 
+.SH ENVIRONMENT
+.IP LIBBLKID_DEBUG=all
+enables libblkid debug output.
+
 .SH NOTES
 The maximum useful size of a swap area depends on the architecture and
 the kernel version.
@@ -135,10 +139,6 @@ Please read notes from
 about
 .B the swap file use restrictions
 (holes, preallocation and copy-on-write issues).
-
-.SH ENVIRONMENT
-.IP LIBBLKID_DEBUG=all
-enables libblkid debug output.
 
 .SH SEE ALSO
 .BR fdisk (8),

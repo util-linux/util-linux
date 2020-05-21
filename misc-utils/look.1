@@ -94,13 +94,6 @@ The
 .B look
 utility exits 0 if one or more lines were found and displayed, 1 if
 no lines were found, and >1 if an error occurred.
-.SH EXAMPLE
-.RS
-.nf
-sort \-d /etc/passwd \-o /tmp/look.dict
-look \-t: root:foobar /tmp/look.dict
-.nf
-.RE
 .SH ENVIRONMENT
 .TP
 .B WORDLIST
@@ -115,6 +108,13 @@ the alternative dictionary
 The
 .B look
 utility appeared in Version 7 AT&T Unix.
+.SH EXAMPLE
+.RS
+.nf
+sort \-d /etc/passwd \-o /tmp/look.dict
+look \-t: root:foobar /tmp/look.dict
+.nf
+.RE
 .SH SEE ALSO
 .BR grep (1),
 .BR sort (1)

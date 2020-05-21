@@ -601,15 +601,6 @@ The warning messages.
 .B welcome
 The welcome message.
 
-.SH NOTES
-Since version 2.26 \fBsfdisk\fR no longer provides the \fB\-R\fR or
-\fB\-\-re\-read\fR option to force the kernel to reread the partition table.
-Use \fBblockdev \-\-rereadpt\fR instead.
-.PP
-Since version 2.26 \fBsfdisk\fR does not provide the \fB\-\-DOS\fR, \fB\-\-IBM\fR, \fB\-\-DOS\-extended\fR,
-\fB\-\-unhide\fR, \fB\-\-show\-extended\fR, \fB\-\-cylinders\fR, \fB\-\-heads\fR, \fB\-\-sectors\fR,
-\fB\-\-inside\-outer\fR, \fB\-\-not\-inside\-outer\fR options.
-
 .SH ENVIRONMENT
 .IP SFDISK_DEBUG=all
 enables sfdisk debug output.
@@ -619,6 +610,15 @@ enables libfdisk debug output.
 enables libblkid debug output.
 .IP LIBSMARTCOLS_DEBUG=all
 enables libsmartcols debug output.
+
+.SH NOTES
+Since version 2.26 \fBsfdisk\fR no longer provides the \fB\-R\fR or
+\fB\-\-re\-read\fR option to force the kernel to reread the partition table.
+Use \fBblockdev \-\-rereadpt\fR instead.
+.PP
+Since version 2.26 \fBsfdisk\fR does not provide the \fB\-\-DOS\fR, \fB\-\-IBM\fR, \fB\-\-DOS\-extended\fR,
+\fB\-\-unhide\fR, \fB\-\-show\-extended\fR, \fB\-\-cylinders\fR, \fB\-\-heads\fR, \fB\-\-sectors\fR,
+\fB\-\-inside\-outer\fR, \fB\-\-not\-inside\-outer\fR options.
 
 .SH AUTHORS
 Karel Zak <kzak@redhat.com>

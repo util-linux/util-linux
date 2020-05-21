@@ -131,18 +131,6 @@ Display help text and exit.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
-.SH EXAMPLE
-To find all files in
-.I /usr/\:bin
-which are not documented
-in
-.I /usr/\:man/\:man1
-or have no source in
-.IR /usr/\:src :
-.IP
-.B cd /usr/bin
-.br
-.B whereis \-u \-ms \-M /usr/man/man1 \-S /usr/src \-f *
 .SH FILE SEARCH PATHS
 By default
 .B whereis
@@ -165,6 +153,18 @@ are displayed with
 .SH ENVIRONMENT
 .IP WHEREIS_DEBUG=all
 enables debug output.
+.SH EXAMPLE
+To find all files in
+.I /usr/\:bin
+which are not documented
+in
+.I /usr/\:man/\:man1
+or have no source in
+.IR /usr/\:src :
+.IP
+.B cd /usr/bin
+.br
+.B whereis \-u \-ms \-M /usr/man/man1 \-S /usr/src \-f *
 .SH AVAILABILITY
 The whereis command is part of the util-linux package and is available from
 .UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/

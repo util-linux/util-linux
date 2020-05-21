@@ -89,6 +89,10 @@ Maximum number of file locks held.
 .IP "\fB\-y, \-\-rttime\fP[=\fIlimits\fR]"
 Timeout for real-time tasks.
 
+.SH NOTES
+The prlimit system call is supported since Linux 2.6.36, older kernels will
+break this program.
+
 .SH EXAMPLE
 .IP "\fBprlimit \-\-pid 13134\fP"
 Display limit values for all current resources.
@@ -102,10 +106,6 @@ Set for the current process both the soft and ceiling values for the number of
 processes to unlimited.
 .IP "\fBprlimit \-\-cpu=10 sort \-u hugefile\fP"
 Set both the soft and hard CPU time limit to ten seconds and run 'sort'.
-
-.SH NOTES
-The prlimit system call is supported since Linux 2.6.36, older kernels will
-break this program.
 
 .SH AUTHORS
 .nf

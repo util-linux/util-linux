@@ -190,6 +190,25 @@ Display version information and exit.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
+.SH SIGNALS
+Upon receiving
+.BR SIGUSR1 ,
+.B script
+immediately flushes the output files.
+.PP
+.SH ENVIRONMENT
+The following environment variable is utilized by
+.BR script :
+.TP
+.B SHELL
+If the variable
+.B SHELL
+exists, the shell forked by
+.B script
+will be that shell.  If
+.B SHELL
+is not set, the Bourne shell is assumed.  (Most shells set this variable
+automatically).
 .SH NOTES
 The script ends when the forked shell exits (a
 .I control-D
@@ -240,25 +259,6 @@ You should also avoid use of script in command pipes, as
 .B script
 can read more input than you would expect.
 .PP
-.SH SIGNALS
-Upon receiving
-.BR SIGUSR1 ,
-.B script
-immediately flushes the output files.
-.PP
-.SH ENVIRONMENT
-The following environment variable is utilized by
-.BR script :
-.TP
-.B SHELL
-If the variable
-.B SHELL
-exists, the shell forked by
-.B script
-will be that shell.  If
-.B SHELL
-is not set, the Bourne shell is assumed.  (Most shells set this variable
-automatically).
 .SH HISTORY
 The
 .B script

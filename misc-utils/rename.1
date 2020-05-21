@@ -40,38 +40,6 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
-.SH EXAMPLE
-Given the files
-.IR foo1 ", ..., " foo9 ", " foo10 ", ..., " foo278 ,
-the commands
-.RS
-.PP
-.nf
-rename foo foo00 foo?
-rename foo foo0 foo??
-.fi
-.PP
-.RE
-will turn them into
-.IR foo001 ", ..., " foo009 ", " foo010 ", ..., " foo278 .
-And
-.RS
-.PP
-.nf
-rename .htm .html *.htm
-.fi
-.PP
-.RE
-will fix the extension of your html files.
-Provide an empty string for shortening:
-.RS
-.PP
-.nf
-rename '_with_long_name' '' file_with_long_name.*
-.fi
-.PP
-.RE
-will remove the substring in the filenames.
 .SH WARNING
 The renaming has no safeguards by default or without any one of the options
 .B \-\-no-overwrite\fR,
@@ -116,6 +84,38 @@ nothing was renamed
 unanticipated error occurred
 .PD
 .RE
+.SH EXAMPLE
+Given the files
+.IR foo1 ", ..., " foo9 ", " foo10 ", ..., " foo278 ,
+the commands
+.RS
+.PP
+.nf
+rename foo foo00 foo?
+rename foo foo0 foo??
+.fi
+.PP
+.RE
+will turn them into
+.IR foo001 ", ..., " foo009 ", " foo010 ", ..., " foo278 .
+And
+.RS
+.PP
+.nf
+rename .htm .html *.htm
+.fi
+.PP
+.RE
+will fix the extension of your html files.
+Provide an empty string for shortening:
+.RS
+.PP
+.nf
+rename '_with_long_name' '' file_with_long_name.*
+.fi
+.PP
+.RE
+will remove the substring in the filenames.
 .SH SEE ALSO
 .BR mv (1)
 .SH AVAILABILITY

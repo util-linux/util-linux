@@ -102,6 +102,10 @@ later.
 .TP
 \fB\-q\fR, \fB\-\-print\-irq\fR \fI<on|off>\fR
 This option sets printing the display of the current IRQ setting.
+.SH FILES
+.I /dev/lp?
+.br
+.I /proc/parport/*/*
 .SH NOTES
 .BR \-o ,
 .BR \-C ,
@@ -111,10 +115,6 @@ all require a Linux kernel version of 1.1.76 or later.
 .PP
 .B \-C
 requires a Linux version prior to 2.1.131.
-.SH FILES
-.I /dev/lp?
-.br
-.I /proc/parport/*/*
 .SH AVAILABILITY
 The tunelp  command is part of the util-linux package and is available from
 .UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/

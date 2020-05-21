@@ -187,6 +187,19 @@ Be verbose.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
+.SH ENVIRONMENT
+.IP LIBMOUNT_DEBUG=all
+enables libmount debug output.
+.IP LIBBLKID_DEBUG=all
+enables libblkid debug output.
+
+.SH FILES
+.br
+.I /dev/sd??
+standard paging devices
+.br
+.I /etc/fstab
+ascii filesystem description table
 .SH NOTES
 .SS Files with holes
 The swap file implementation in the kernel expects to be able to write to the
@@ -220,19 +233,6 @@ automatically detects and rewrites a swap space signature with old software
 suspend data (e.g., S1SUSPEND, S2SUSPEND, ...). The problem is that if we don't
 do it, then we get data corruption the next time an attempt at unsuspending is
 made.
-.SH ENVIRONMENT
-.IP LIBMOUNT_DEBUG=all
-enables libmount debug output.
-.IP LIBBLKID_DEBUG=all
-enables libblkid debug output.
-
-.SH FILES
-.br
-.I /dev/sd??
-standard paging devices
-.br
-.I /etc/fstab
-ascii filesystem description table
 .SH HISTORY
 The
 .B swapon

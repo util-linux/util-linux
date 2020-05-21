@@ -77,11 +77,10 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
-.SH EXAMPLE
-The following command would change the priority of the processes with
-PIDs 987 and 32, plus all processes owned by the users daemon and root:
+.SH FILES
 .TP
-.B "       renice" +1 987 \-u daemon root \-p 32
+.I /etc/passwd
+to map user names to user IDs
 .SH NOTES
 Users other than the superuser may only alter the priority of processes they
 own.  Furthermore, an unprivileged user can only
@@ -98,14 +97,15 @@ value in the range \-20 to 19.
 Useful priorities are: 19 (the affected processes will run only when nothing
 else in the system wants to), 0 (the ``base'' scheduling priority), anything
 negative (to make things go very fast).
-.SH FILES
-.TP
-.I /etc/passwd
-to map user names to user IDs
 .SH HISTORY
 The
 .B renice
 command appeared in 4.0BSD.
+.SH EXAMPLE
+The following command would change the priority of the processes with
+PIDs 987 and 32, plus all processes owned by the users daemon and root:
+.TP
+.B "       renice" +1 987 \-u daemon root \-p 32
 .SH SEE ALSO
 .BR nice (1),
 .BR chrt (1),
