@@ -39,6 +39,7 @@ uuid_unparse \- convert a UUID from binary representation to a string
 .BI "void uuid_unparse(uuid_t " uu ", char *" out );
 .BI "void uuid_unparse_upper(uuid_t " uu ", char *" out );
 .BI "void uuid_unparse_lower(uuid_t " uu ", char *" out );
+.BI "void uuid_unparse_formatted(uuid_t " uu ", char *" out ", int " flags );
 .fi
 .SH DESCRIPTION
 The
@@ -60,6 +61,26 @@ hex digits is important then the functions
 and
 .B uuid_unparse_lower
 may be used.
+.PP
+The
+.B uuid_unparse_formatted
+function allows for finer-grained unparsing that what is otherwise available.
+.B uuid_unparse, uuid_unparse_upper,
+and
+.B uuid_unparse_lower
+are each thin wrappers around
+.B uuid_unparse_formatted.
+The flags argument is specified as a bitwise-OR of zero or more of the
+constants listed below.
+.TP
+.BR UUID_UNPARSE_UPPER " (since 2.36)"
+Use upper-case hex digits.
+.TP
+.BR UUID_UNPARSE_COMPACT " (since 2.36)"
+Skip writing the separating dashes.
+.TP
+.BR UUID_UNPARSE_DEFAULT " (since 2.36)"
+The default unparsing flags. Is system-dependent.
 .SH CONFORMING TO
 This library unparses UUIDs compatible with OSF DCE 1.1.
 .SH AUTHORS

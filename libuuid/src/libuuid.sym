@@ -50,6 +50,7 @@ global:
 UUID_2.36 {
 global:
 	uuid_parse_range;
+	uuid_unparse_formatted;
 } UUID_2.31;
 
 
