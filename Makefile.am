@@ -167,7 +167,7 @@ $(PATHFILES): Makefile
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 # Set ChangeLog tag reference.
-	sed -i "s/log/log;h=$(VERSION)/" $(distdir)/ChangeLog
+	sed -i "s!log!log?h=v$(VERSION)!" $(distdir)/ChangeLog
 
 distclean-local:
 	-find . -name \*~ -o -name \*.orig -o -name \*.rej | xargs rm -f
