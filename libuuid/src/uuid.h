@@ -68,6 +68,8 @@ typedef unsigned char uuid_t[16];
 enum {
     /* Use uppercase hex digits */
     UUID_UNPARSE_UPPER   = (1 << 0),
+    /* Don't use dashes */
+    UUID_UNPARSE_COMPACT = (1 << 1),
 #ifdef UUID_UNPARSE_DEFAULT_UPPER
     UUID_UNPARSE_DEFAULT = UUID_UNPARSE_UPPER,
 #else

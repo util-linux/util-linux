@@ -45,7 +45,8 @@ void uuid_unparse_formatted(const uuid_t uu, char *out, int flags)
         hexdigits_upper : hexdigits_lower;
 
     for (int i = 0; i < 16; i++) {
-        if (i == 4 || i == 6 || i == 8 || i == 10)
+        if (!(flags & UUID_UNPARSE_COMPACT) &&
+            (i == 4 || i == 6 || i == 8 || i == 10))
             *out++ = '-';
 
         size_t tmp = uu[i];
