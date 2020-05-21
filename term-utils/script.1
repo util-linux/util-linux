@@ -259,13 +259,6 @@ will be that shell.  If
 .B SHELL
 is not set, the Bourne shell is assumed.  (Most shells set this variable
 automatically).
-.SH SEE ALSO
-.BR csh (1)
-(for the
-.I history
-mechanism),
-.BR scriptreplay (1),
-.BR scriptlive (1),
 .SH HISTORY
 The
 .B script
@@ -283,6 +276,13 @@ is not a terminal (for example: \fBecho foo | script\fR), then the session
 can hang, because the interactive shell within the script session misses EOF and
 .B script
 has no clue when to close the session.  See the \fBNOTES\fR section for more information.
+.SH SEE ALSO
+.BR csh (1)
+(for the
+.I history
+mechanism),
+.BR scriptreplay (1),
+.BR scriptlive (1),
 .SH AVAILABILITY
 The script command is part of the util-linux package and is available from
 .UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/

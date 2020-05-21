@@ -103,10 +103,6 @@ processes to unlimited.
 .IP "\fBprlimit \-\-cpu=10 sort \-u hugefile\fP"
 Set both the soft and hard CPU time limit to ten seconds and run 'sort'.
 
-.SH SEE ALSO
-.BR ulimit (1p),
-.BR prlimit (2)
-
 .SH NOTES
 The prlimit system call is supported since Linux 2.6.36, older kernels will
 break this program.
@@ -115,6 +111,10 @@ break this program.
 .nf
 Davidlohr Bueso <dave@gnu.org> - In memory of Dennis M. Ritchie.
 .fi
+.SH SEE ALSO
+.BR ulimit (1p),
+.BR prlimit (2)
+
 .SH AVAILABILITY
 The prlimit command is part of the util-linux package and is available from
 https://www.kernel.org/pub/linux/utils/util-linux/.

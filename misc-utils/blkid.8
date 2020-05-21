@@ -327,12 +327,12 @@ a comma-separated list.  Default is "udev,scan".  The "udev" method uses udev
 symlinks and the "scan" method scans all block devices from the
 .I /proc/partitions
 file.
+.SH ENVIRONMENT
+.IP "Setting LIBBLKID_DEBUG=all enables debug output."
 .SH AUTHORS
 .B blkid
 was written by Andreas Dilger for libblkid and improved by Theodore Ts'o
 and Karel Zak.
-.SH ENVIRONMENT
-.IP "Setting LIBBLKID_DEBUG=all enables debug output."
 .SH SEE ALSO
 .BR libblkid (3),
 .BR findfs (8),

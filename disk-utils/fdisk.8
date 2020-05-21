@@ -346,6 +346,18 @@ The warning messages.
 .B welcome
 The welcome message.
 
+.SH ENVIRONMENT
+.IP FDISK_DEBUG=all
+enables fdisk debug output.
+.IP LIBFDISK_DEBUG=all
+enables libfdisk debug output.
+.IP LIBBLKID_DEBUG=all
+enables libblkid debug output.
+.IP LIBSMARTCOLS_DEBUG=all
+enables libsmartcols debug output.
+.IP LIBSMARTCOLS_DEBUG_PADDING=on
+use visible padding characters. Requires enabled LIBSMARTCOLS_DEBUG.
+
 .SH AUTHORS
 .MT kzak@redhat.com
 Karel Zak
@@ -358,18 +370,6 @@ Davidlohr Bueso
 .PP
 The original version was written by
 Andries E. Brouwer, A. V. Le Blanc and others.
-
-.SH ENVIRONMENT
-.IP FDISK_DEBUG=all
-enables fdisk debug output.
-.IP LIBFDISK_DEBUG=all
-enables libfdisk debug output.
-.IP LIBBLKID_DEBUG=all
-enables libblkid debug output.
-.IP LIBSMARTCOLS_DEBUG=all
-enables libsmartcols debug output.
-.IP LIBSMARTCOLS_DEBUG_PADDING=on
-use visible padding characters. Requires enabled LIBSMARTCOLS_DEBUG.
 
 .SH SEE ALSO
 .BR cfdisk (8),

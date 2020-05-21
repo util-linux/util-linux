@@ -144,6 +144,9 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
+.SH ENVIRONMENT
+.IP LIBBLKID_DEBUG=all
+enables libblkid debug output.
 .SH EXAMPLE
 .TP
 partx \-\-show /dev/sdb3
@@ -169,12 +172,6 @@ Adds all available partitions from 3 to 5 (inclusive) on /dev/sdd.
 .TP
 partx \-d \-\-nr :\-1 /dev/sdd
 Removes the last partition on /dev/sdd.
-.SH SEE ALSO
-.BR addpart (8),
-.BR delpart (8),
-.BR fdisk (8),
-.BR parted (8),
-.BR partprobe (8)
 .SH AUTHORS
 .MT dave@gnu.org
 Davidlohr Bueso
@@ -188,9 +185,12 @@ The original version was written by
 .MT aeb@cwi.nl
 Andries E.\& Brouwer
 .ME .
-.SH ENVIRONMENT
-.IP LIBBLKID_DEBUG=all
-enables libblkid debug output.
+.SH SEE ALSO
+.BR addpart (8),
+.BR delpart (8),
+.BR fdisk (8),
+.BR parted (8),
+.BR partprobe (8)
 .SH AVAILABILITY
 The partx command is part of the util-linux package and is available from
 .UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/

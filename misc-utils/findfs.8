@@ -60,6 +60,9 @@ label or uuid cannot be found
 usage error, wrong number of arguments or unknown option
 .PD
 .RE
+.SH ENVIRONMENT
+.IP LIBBLKID_DEBUG=all
+enables libblkid debug output.
 .SH AUTHORS
 .B findfs
 was originally written by
@@ -70,9 +73,6 @@ and re-written for the util-linux package by
 .MT kzak@redhat.com
 Karel Zak
 .ME .
-.SH ENVIRONMENT
-.IP LIBBLKID_DEBUG=all
-enables libblkid debug output.
 .SH SEE ALSO
 .BR blkid (8),
 .BR lsblk (8),

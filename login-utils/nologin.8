@@ -56,6 +56,10 @@ access is always refused independently of the file.
 PAM module usually prevents all non-root users from logging into the system.
 .BR pam_nologin (8)
 functionality is controlled by /var/run/nologin or the /etc/nologin file.
+.SH HISTORY
+The
+.B nologin
+command appeared in 4.4BSD.
 .SH AUTHORS
 .UR kzak@redhat.com
 Karel Zak
@@ -64,10 +68,6 @@ Karel Zak
 .BR login (1),
 .BR passwd (5),
 .BR pam_nologin (8)
-.SH HISTORY
-The
-.B nologin
-command appeared in 4.4BSD.
 .SH AVAILABILITY
 The nologin command is part of the util-linux package and is available from
 .UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/

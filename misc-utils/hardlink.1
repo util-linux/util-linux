@@ -48,12 +48,6 @@ Display help text and exit.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
-.SH AUTHORS
-.PP
-\fBhardlink\fR was written by Jakub Jelinek <jakub@redhat.com> and later modified by
-Ruediger Meier <ruediger.meier@ga-group.nl> and Karel Zak <kzak@redhat.com> for util-linux.
-.PP
-Man page written by Brian Long and later updated by Jindrich Novy <jnovy@redhat.com>
 .SH BUGS
 .PP
 \fBhardlink\fR assumes that its target directory trees do not change from under
@@ -67,6 +61,12 @@ Historically \fBhardlink\fR silently excluded any names beginning with
 other characters. That prior behavior can be achieved by specifying
 .br
 \-x '^(\\.in\\.|\\.[^.]{6}$)'
+.SH AUTHORS
+.PP
+\fBhardlink\fR was written by Jakub Jelinek <jakub@redhat.com> and later modified by
+Ruediger Meier <ruediger.meier@ga-group.nl> and Karel Zak <kzak@redhat.com> for util-linux.
+.PP
+Man page written by Brian Long and later updated by Jindrich Novy <jnovy@redhat.com>
 .SH AVAILABILITY
 The hardlink command is part of the util-linux package and is available from
 https://www.kernel.org/pub/linux/utils/util-linux/.

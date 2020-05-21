@@ -112,6 +112,9 @@ taken.  For more details see mount(8).
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
+.SH ENVIRONMENT
+.IP LIBBLKID_DEBUG=all
+enables libblkid debug output.
 .SH EXAMPLE
 .TP
 .B wipefs /dev/sda*
@@ -125,9 +128,6 @@ file ~/wipefs-sdb-<offset>.bak for each signature.
 Restores an ext2 signature from the backup file  ~/wipefs-sdb-0x00000438.bak.
 .SH AUTHORS
 Karel Zak <kzak@redhat.com>
-.SH ENVIRONMENT
-.IP LIBBLKID_DEBUG=all
-enables libblkid debug output.
 .SH SEE ALSO
 .BR blkid (8),
 .BR findfs (8)
