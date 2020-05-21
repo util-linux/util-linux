@@ -64,6 +64,17 @@ typedef unsigned char uuid_t[16];
 
 #define UUID_STR_LEN	37
 
+/* Unparsing flags */
+enum {
+    /* Use uppercase hex digits */
+    UUID_UNPARSE_UPPER   = (1 << 0),
+#ifdef UUID_UNPARSE_DEFAULT_UPPER
+    UUID_UNPARSE_DEFAULT = UUID_UNPARSE_UPPER,
+#else
+    UUID_UNPARSE_DEFAULT = 0,
+#endif
+};
+
 /* Allow UUID constants to be defined */
 #ifdef __GNUC__
 #define UUID_DEFINE(name,u0,u1,u2,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14,u15) \
@@ -106,6 +117,7 @@ extern int uuid_parse_range(const char *in_start, const char *in_end, uuid_t uu)
 extern void uuid_unparse(const uuid_t uu, char *out);
 extern void uuid_unparse_lower(const uuid_t uu, char *out);
 extern void uuid_unparse_upper(const uuid_t uu, char *out);
+extern void uuid_unparse_formatted(const uuid_t uu, char *out, int flags);
 
 /* uuid_time.c */
 extern time_t uuid_time(const uuid_t uu, struct timeval *ret_tv);

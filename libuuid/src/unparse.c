@@ -39,36 +39,33 @@
 static char const hexdigits_lower[16] = "0123456789abcdef";
 static char const hexdigits_upper[16] = "0123456789ABCDEF";
 
-static void uuid_fmt(const uuid_t uuid, char *buf, char const fmt[restrict])
+void uuid_unparse_formatted(const uuid_t uu, char *out, int flags)
 {
-	char *p = buf;
+    char const *fmt = flags & UUID_UNPARSE_UPPER ?
+        hexdigits_upper : hexdigits_lower;
 
-	for (int i = 0; i < 16; i++) {
-		if (i == 4 || i == 6 || i == 8 || i == 10) {
-			*p++ = '-';
-		}
-		size_t tmp = uuid[i];
-		*p++ = fmt[tmp >> 4];
-		*p++ = fmt[tmp & 15];
-	}
-	*p = '\0';
+    for (int i = 0; i < 16; i++) {
+        if (i == 4 || i == 6 || i == 8 || i == 10)
+            *out++ = '-';
+
+        size_t tmp = uu[i];
+        *out++ = fmt[tmp >> 4];
+        *out++ = fmt[tmp & 15];
+    }
+    *out = '\0';
 }
 
 void uuid_unparse_lower(const uuid_t uu, char *out)
 {
-	uuid_fmt(uu, out, hexdigits_lower);
+    uuid_unparse_f(uu, out, 0);
 }
 
 void uuid_unparse_upper(const uuid_t uu, char *out)
 {
-	uuid_fmt(uu, out, hexdigits_upper);
+    uuid_unparse_formatted(uu, out, UUID_UNPARSE_UPPER);
 }
 
 void uuid_unparse(const uuid_t uu, char *out)
 {
-#ifdef UUID_UNPARSE_DEFAULT_UPPER
-	uuid_fmt(uu, out, hexdigits_upper);
-#else
-	uuid_fmt(uu, out, hexdigits_lower);
-#endif
+    uuid_unparse_formatted(uu, out, UUID_UNPARSE_DEFAULT);
 }
