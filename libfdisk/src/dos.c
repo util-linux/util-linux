@@ -988,6 +988,52 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 	return 0;
 }
 
+/* Returns last available sector in the free space pointed to by start. */
+static int find_last_free(
+			struct fdisk_context *cxt,
+			int logical,
+			fdisk_sector_t begin,
+			fdisk_sector_t stop,
+			fdisk_sector_t *result)
+{
+	fdisk_sector_t last = stop;
+
+	size_t i = logical ? 4 : 0;
+
+	for ( ; i < cxt->label->nparts_max; i++) {
+		struct pte *pe = self_pte(cxt, i);
+
+		assert(pe);
+		fdisk_sector_t p_start = get_abs_partition_start(pe);
+		fdisk_sector_t p_end = get_abs_partition_end(pe);
+
+		if (is_cleared_partition(pe->pt_entry))
+			continue;
+		/* count EBR and begin of the logical partition as used area */
+		if (pe->offset)
+			p_start -= cxt->first_lba;
+
+		if ((p_start >= begin && p_start <= last) ||
+		    (p_end >= begin && p_end <= last)) {
+			last = p_start - 1;
+		}
+		if (last < begin) {
+			DBG(LABEL, ul_debug("no free space <%ju,%ju>",
+					(uintmax_t) begin, (uintmax_t) stop));
+			return -ENOSPC;
+		}
+	}
+
+	if (last == begin)
+		last = stop;
+
+	DBG(LABEL, ul_debug("DOS: last free sector  <%ju,%ju>: %ju",
+			(uintmax_t) begin, (uintmax_t) stop, (uintmax_t) last));
+
+	*result = last;
+	return 0;
+}
+
 static int find_last_free_sector_in_range(
 			struct fdisk_context *cxt,
 			int logical,
@@ -1113,6 +1159,7 @@ static int get_disk_ranges(struct fdisk_context *cxt, int logical,
 	return 0;
 }
 
+/* first free sector on disk */
 static int find_first_free_sector(struct fdisk_context *cxt,
 				int logical,
 				fdisk_sector_t start,
@@ -1182,6 +1229,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 
 		temp = start;
 
+		DBG(LABEL, ul_debug("DOS: >>> search for first free from %ju", start));
 		rc = find_first_free_sector(cxt, is_logical, start, &dflt);
 		if (rc == -ENOSPC)
 			fdisk_warnx(cxt, _("No free sectors available."));
@@ -1208,12 +1256,11 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			break;
 		if (start >= temp + fdisk_get_units_per_sector(cxt)
 		    && read) {
-			fdisk_info(cxt, _("Sector %llu is already allocated."),
-					temp);
+			if (!pa || !pa->start_follow_default)
+				fdisk_info(cxt, _("Sector %llu is already allocated."), temp);
 			temp = start;
 			read = 0;
-			if (pa && (fdisk_partition_has_start(pa) ||
-				   pa->start_follow_default))
+			if (pa && fdisk_partition_has_start(pa))
 				break;
 		}
 
@@ -1223,6 +1270,30 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 				return rc;
 			read = 1;
 		}
+		if (pa && fdisk_partition_has_size(pa)) {
+			fdisk_sector_t last;
+
+			rc = find_last_free(cxt, is_logical, start, limit, &last);
+
+			if (rc == 0 && last - start + 1 < fdisk_partition_get_size(pa)) {
+				DBG(LABEL, ul_debug("DOS: area <%ju,%ju> too small [wanted=%ju aval=%ju]",
+							(uintmax_t) start, (uintmax_t) last,
+							fdisk_partition_get_size(pa),
+							last - start));
+
+				if (fdisk_partition_has_start(pa))
+					rc = -ENOSPC;
+				else {
+					start = last + 1;
+					continue;
+				}
+			}
+			if (rc == -ENOSPC) {
+				fdisk_warnx(cxt, _("No free sectors available."));
+				return rc;
+			}
+		}
+
 	} while (start != temp || !read);
 
 	if (n == 4) {
@@ -1248,7 +1319,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		}
 	}
 
-	rc = find_last_free_sector_in_range(cxt, is_logical, start, limit, &stop);
+	rc = find_last_free(cxt, is_logical, start, limit, &stop);
 	if (rc == -ENOSPC)
 		fdisk_warnx(cxt, _("No free sectors available."));
 	if (rc)
