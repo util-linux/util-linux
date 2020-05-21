@@ -2574,6 +2574,17 @@ and
 to the mount.<suffix> helpers.  All other options are used in a
 comma-separated list as argument to the \fB\-o\fR option.
 
+.SH ENVIRONMENT
+.IP LIBMOUNT_FSTAB=<path>
+overrides the default location of the fstab file (ignored for suid)
+.IP LIBMOUNT_MTAB=<path>
+overrides the default location of the mtab file (ignored for suid)
+.IP LIBMOUNT_DEBUG=all
+enables libmount debug output
+.IP LIBBLKID_DEBUG=all
+enables libblkid debug output
+.IP LOOPDEV_DEBUG=all
+enables loop device setup debug output
 .SH FILES
 See also "\fBThe files /etc/fstab, /etc/mtab and /proc/mounts\fR" section above.
 .TP 18n
@@ -2594,17 +2605,6 @@ temporary file (unused on systems with mtab symlink)
 .TP
 .I /etc/filesystems
 a list of filesystem types to try
-.SH ENVIRONMENT
-.IP LIBMOUNT_FSTAB=<path>
-overrides the default location of the fstab file (ignored for suid)
-.IP LIBMOUNT_MTAB=<path>
-overrides the default location of the mtab file (ignored for suid)
-.IP LIBMOUNT_DEBUG=all
-enables libmount debug output
-.IP LIBBLKID_DEBUG=all
-enables libblkid debug output
-.IP LOOPDEV_DEBUG=all
-enables loop device setup debug output
 .SH HISTORY
 A
 .B mount

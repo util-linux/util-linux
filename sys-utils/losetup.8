@@ -178,6 +178,10 @@ displays the status of a loop device, it returns 1 if the device
 is not configured and 2 if an error occurred which prevented
 determining the status of the device.
 
+.SH ENVIRONMENT
+.IP LOOPDEV_DEBUG=all
+enables debug output.
+
 .SH FILES
 .TP
 .I /dev/loop[0..N]
@@ -185,10 +189,6 @@ loop block devices
 .TP
 .I /dev/loop-control
 loop control device
-
-.SH ENVIRONMENT
-.IP LOOPDEV_DEBUG=all
-enables debug output.
 .SH EXAMPLE
 The following commands can be used as an example of using the loop device.
 .nf
