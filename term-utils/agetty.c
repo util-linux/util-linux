@@ -2271,6 +2271,9 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				break;
 			case CTL('D'):
 				exit(EXIT_SUCCESS);
+			case CTL('C'):
+				/* Ignore */
+				break;
 			default:
 				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
 					log_err(_("%s: input overrun"), op->tty);
