@@ -232,4 +232,32 @@ ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
 
+
+ts_init_subtest "default-vs-gap1"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
+3MiB 5MiB L
+- 6MiB L
+EOF
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
+ts_init_subtest "default-vs-gap2"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
+4MiB 3MiB L
+13MiB 5MiB L
+- 4MiB L
+- 2MiB L
+- - L
+EOF
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
 ts_finalize
