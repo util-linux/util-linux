@@ -72,6 +72,10 @@ to discard.  If the specified value extends past the end of the filesystem,
 .B fstrim
 will stop at the filesystem size boundary.  The default value extends to
 the end of the filesystem.
+.IP "\fB\-I, \-\-listed\-in\fP \fIlist\fP"
+Specifies a colon-separated list of files in fstab or kernel mountinfo
+format. All missing or empty files are silently ignored.  The evaluation of the
+\fIlist\fP stops after first non-empty file. For example: \fB--listed-in /etc/fstab:/proc/self/mountinfo\fR.
 .IP "\fB\-m, \-\-minimum\fP \fIminimum-size\fP"
 Minimum contiguous free range to discard, in bytes. (This value is internally
 rounded up to a multiple of the filesystem block size.)  Free ranges smaller

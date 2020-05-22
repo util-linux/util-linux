@@ -38,11 +38,13 @@
 #include <linux/fs.h>
 
 #include "nls.h"
+#include "xalloc.h"
 #include "strutils.h"
 #include "c.h"
 #include "closestream.h"
 #include "pathnames.h"
 #include "sysfs.h"
+#include "optutils.h"
 
 #include <libmount.h>
 
@@ -61,7 +63,6 @@ struct fstrim_control {
 
 	unsigned int verbose : 1,
 		     quiet_unsupp : 1,
-		     fstab   : 1,
 		     dryrun : 1;
 };
 
@@ -228,13 +229,12 @@ static int uniq_fs_source_cmp(
 }
 
 /*
- * fstrim --all follows "mount -a" return codes:
- *
- * 0  = all success
+ * -1 = tab empty
+ *  0 = all success
  * 32 = all failed
  * 64 = some failed, some success
  */
-static int fstrim_all(struct fstrim_control *ctl)
+static int fstrim_all_from_file(struct fstrim_control *ctl, const char *filename)
 {
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr;
@@ -242,29 +242,31 @@ static int fstrim_all(struct fstrim_control *ctl)
 	struct libmnt_cache *cache = NULL;
 	struct path_cxt *wholedisk = NULL;
 	int cnt = 0, cnt_err = 0;
-	const char *filename = _PATH_PROC_MOUNTINFO;
-
-	mnt_init_debug(0);
-	ul_path_init_debug();
-
-	if (ctl->fstab)
-		filename = mnt_get_fstab_path();
+	int fstab = 0;
 
 	tab = mnt_new_table_from_file(filename);
 	if (!tab)
 		err(MNT_EX_FAIL, _("failed to parse %s"), filename);
 
+	if (mnt_table_is_empty(tab)) {
+		mnt_unref_table(tab);
+		return -1;
+	}
+
+	if (streq_paths(filename, "/etc/fstab"))
+		fstab = 1;
+
 	/* de-duplicate by mountpoints */
 	mnt_table_uniq_fs(tab, 0, uniq_fs_target_cmp);
 
-	if (ctl->fstab) {
+	if (fstab) {
 		char *rootdev = NULL;
 
 		cache = mnt_new_cache();
 		if (!cache)
 			err(MNT_EX_FAIL, _("failed to initialize libmount cache"));
 
-		/* Make sure we trim also root FS on --fstab */
+		/* Make sure we trim also root FS on fstab */
 		if (mnt_table_find_target(tab, "/", MNT_ITER_FORWARD) == NULL &&
 		    mnt_guess_system_root(0, cache, &rootdev) == 0) {
 
@@ -374,6 +376,36 @@ static int fstrim_all(struct fstrim_control *ctl)
 	return MNT_EX_SUCCESS;
 }
 
+/*
+ * fstrim --all follows "mount -a" return codes:
+ *
+ * 0  = all success
+ * 32 = all failed
+ * 64 = some failed, some success
+ */
+static int fstrim_all(struct fstrim_control *ctl, const char *tabs)
+{
+	char *list = xstrdup(tabs);
+	char *file;
+	int rc = MNT_EX_FAIL;
+
+	mnt_init_debug(0);
+	ul_path_init_debug();
+
+	for (file = strtok(list, ":"); file; file = strtok(NULL, ":")) {
+		struct stat st;
+
+		if (stat(file, &st) < 0 || !S_ISREG(st.st_mode))
+			continue;
+
+		rc = fstrim_all_from_file(ctl, file);
+		if (rc >= 0)
+			break;	/* stop after first non-empty file */
+	}
+	free(list);
+	return rc;
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -385,8 +417,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Discard unused blocks on a mounted filesystem.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all                trim all supported mounted filesystems\n"), out);
-	fputs(_(" -A, --fstab              trim all supported mounted filesystems from /etc/fstab\n"), out);
+	fputs(_(" -a, --all                trim mounted filesystems\n"), out);
+	fputs(_(" -A, --fstab              trim filesystems from /etc/fstab\n"), out);
+	fputs(_(" -I, --listed-in <list>   trim filesystems listed in specified files\n"), out);
 	fputs(_(" -o, --offset <num>       the offset in bytes to start discarding from\n"), out);
 	fputs(_(" -l, --length <num>       the number of bytes to discard\n"), out);
 	fputs(_(" -m, --minimum <num>      the minimum extent length to discard\n"), out);
@@ -407,6 +440,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	char *path = NULL;
+	char *tabs = NULL;
 	int c, rc, all = 0;
 	struct fstrim_control ctl = {
 			.range = { .len = ULLONG_MAX }
@@ -419,6 +453,7 @@ int main(int argc, char **argv)
 	    { "all",       no_argument,       NULL, 'a' },
 	    { "fstab",     no_argument,       NULL, 'A' },
 	    { "help",      no_argument,       NULL, 'h' },
+	    { "listed-in", required_argument, NULL, 'I' },
 	    { "version",   no_argument,       NULL, 'V' },
 	    { "offset",    required_argument, NULL, 'o' },
 	    { "length",    required_argument, NULL, 'l' },
@@ -429,18 +464,33 @@ int main(int argc, char **argv)
 	    { NULL, 0, NULL, 0 }
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'A','I','a' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "Aahl:m:no:Vv", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "AahI:l:m:no:Vv", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch(c) {
 		case 'A':
-			ctl.fstab = 1;
-			/* fallthrough */
+			all = 1;
+			tabs = _PATH_MNTTAB;	/* fstab */
+			break;
 		case 'a':
 			all = 1;
+			tabs = _PATH_PROC_MOUNTINFO; /* mountinfo */
+			break;
+		case 'I':
+			all = 1;
+			tabs = optarg;
 			break;
 		case 'n':
 			ctl.dryrun = 1;
@@ -484,7 +534,7 @@ int main(int argc, char **argv)
 	}
 
 	if (all)
-		return fstrim_all(&ctl);	/* MNT_EX_* codes */
+		return fstrim_all(&ctl, tabs);	/* MNT_EX_* codes */
 
 	if (!is_directory(path, 0))
 		return EXIT_FAILURE;
