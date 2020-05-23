@@ -372,10 +372,17 @@ terminates, the processes in the PID namespace are not killed:
 .EE
 .in
 .PP
+The following example demonstrates the creation of a time namespace
+where the boottime clock is set to a point several years in the past:
+.PP
 .in +4n
 .EX
-.B # unshare \-\-fork \-\-time \-\-boottime 100000000 uptime
- 10:58:48 up 1158 days,  6:05,  1 user,  load average: 0.00, 0.00, 0.00
+.BR "# uptime \-p             " "# Show uptime in initial time namespace"
+up 21 hours, 30 minutes
+.B # unshare \-\-time \-\-fork \-\-boottime 300000000 uptime \-p
+up 9 years, 28 weeks, 1 day, 2 hours, 50 minutes
+.EE
+.in
 .SH AUTHORS
 .UR dottedmag@dottedmag.net
 Mikhail Gusarov
