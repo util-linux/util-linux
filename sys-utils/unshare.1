@@ -48,7 +48,7 @@ Note that \fBprivate\fP is the kernel default.
 .B UTS namespace
 Setting hostname or domainname will not affect the rest of the system.
 For further details, see
-.BR namespaces (7)
+.BR uts_namespaces (7)
 and the discussion of the
 .B CLONE_NEWUTS
 flag in
@@ -59,7 +59,7 @@ The process will have an independent namespace for POSIX message queues
 as well as System V \%message queues,
 semaphore sets and shared memory segments.
 For further details, see
-.BR namespaces (7)
+.BR ipc_namespaces (7)
 and the discussion of the
 .B CLONE_NEWIPC
 flag in
@@ -70,7 +70,7 @@ The process will have independent IPv4 and IPv6 stacks, IP routing tables,
 firewall rules, the \fI/proc/net\fP and \fI/sys/class/net\fP directory trees,
 sockets, etc.
 For further details, see
-.BR namespaces (7)
+.BR network_namespaces (7)
 and the discussion of the
 .B CLONE_NEWNET
 flag in
