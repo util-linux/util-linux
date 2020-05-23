@@ -32,12 +32,8 @@ except for filesystems which are explicitly marked as
 shared (with \fBmount \-\-make-shared\fP; see \fI/proc/self/mountinfo\fP or
 \fBfindmnt \-o+PROPAGATION\fP for the \fBshared\fP flags).
 For further details, see
-.BR mount_namespaces (7)
-and the discussion of the
-.B CLONE_NEWNS
-flag in
-.BR clone (2).
-.sp
+.BR mount_namespaces (7).
+.IP
 .B unshare
 since util-linux version 2.27 automatically sets propagation to \fBprivate\fP
 in a new mount namespace to make sure that the new namespace is really
@@ -48,62 +44,37 @@ Note that \fBprivate\fP is the kernel default.
 .B UTS namespace
 Setting hostname or domainname will not affect the rest of the system.
 For further details, see
-.BR uts_namespaces (7)
-and the discussion of the
-.B CLONE_NEWUTS
-flag in
-.BR clone (2).
+.BR uts_namespaces (7).
 .TP
 .B IPC namespace
 The process will have an independent namespace for POSIX message queues
 as well as System V \%message queues,
 semaphore sets and shared memory segments.
 For further details, see
-.BR ipc_namespaces (7)
-and the discussion of the
-.B CLONE_NEWIPC
-flag in
-.BR clone (2).
+.BR ipc_namespaces (7).
 .TP
 .B network namespace
 The process will have independent IPv4 and IPv6 stacks, IP routing tables,
 firewall rules, the \fI/proc/net\fP and \fI/sys/class/net\fP directory trees,
 sockets, etc.
 For further details, see
-.BR network_namespaces (7)
-and the discussion of the
-.B CLONE_NEWNET
-flag in
-.BR clone (2).
+.BR network_namespaces (7).
 .TP
 .B PID namespace
 Children will have a distinct set of PID-to-process mappings from their parent.
 For further details, see
-.BR pid_namespaces (7)
-and
-the discussion of the
-.B CLONE_NEWPID
-flag in
-.BR clone (2).
+.BR pid_namespaces (7).
 .TP
 .B cgroup namespace
 The process will have a virtualized view of \fI/proc\:/self\:/cgroup\fP, and new
 cgroup mounts will be rooted at the namespace cgroup root.
 For further details, see
-.BR cgroup_namespaces (7)
-and the discussion of the
-.B CLONE_NEWCGROUP
-flag in
-.BR clone (2).
+.BR cgroup_namespaces (7).
 .TP
 .B user namespace
 The process will have a distinct set of UIDs, GIDs and capabilities.
 For further details, see
-.BR user_namespaces (7)
-and the discussion of the
-.B CLONE_NEWUSER
-flag in
-.BR clone (2).
+.BR user_namespaces (7).
 .TP
 .B time namespace
 The process can have a distinct view of
