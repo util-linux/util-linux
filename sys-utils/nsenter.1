@@ -1,14 +1,19 @@
 .TH NSENTER 1 "June 2013" "util-linux" "User Commands"
 .SH NAME
-nsenter \- run program with namespaces of other processes
+nsenter \- run program in different namespaces
 .SH SYNOPSIS
 .B nsenter
 [options]
 .RI [ program
 .RI [ arguments ]]
 .SH DESCRIPTION
-Enters the namespaces of one or more other processes and then executes the specified
-\fIprogram\fP. If \fIprogram\fP is not given, then ``${SHELL}'' is run (default: /bin\:/sh).
+The
+.B nsenter
+command executes
+.I program
+in the namespace(s) that are specified in the command-line options
+(described below).
+If \fIprogram\fP is not given, then ``${SHELL}'' is run (default: /bin\:/sh).
 .PP
 Enterable namespaces are:
 .TP
