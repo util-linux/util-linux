@@ -1,30 +1,41 @@
 .TH UNSHARE 1 "February 2016" "util-linux" "User Commands"
 .SH NAME
-unshare \- run program with some namespaces unshared from parent
+unshare \- run program in new namespaces
 .SH SYNOPSIS
 .B unshare
 [options]
 .RI [ program
 .RI [ arguments ]]
 .SH DESCRIPTION
-Unshares the indicated namespaces from the parent process and then executes
-the specified \fIprogram\fR. If \fIprogram\fR is not given, then ``${SHELL}'' is
+The
+.B unshare
+command creates new namespaces
+(as specified by the command-line options described below)
+and then executes the specified \fIprogram\fR.
+If \fIprogram\fR is not given, then ``${SHELL}'' is
 run (default: /bin/sh).
 .PP
-The namespaces can optionally be made persistent by bind mounting
-/proc/\fIpid\fR/ns/\fItype\fR files to a filesystem path and entered with
+By default, a new namespace persists only as long as it has member processes.
+A new namespace can be made persistent even when it has no member processes
+by bind mounting
+/proc/\fIpid\fR/ns/\fItype\fR files to a filesystem path.
+A namespace that has been made persistent in this was can subsequently
+be entered with
 .BR \%nsenter (1)
 even after the \fIprogram\fR terminates (except PID namespaces where
-permanently running init process is required).
-Once a persistent \%namespace is no longer needed, it can be unpersisted with
-.BR umount (8).
+a permanently running init process is required).
+Once a persistent \%namespace is no longer needed,
+it can be unpersisted by using
+.BR umount (8)
+to remove the bind mount.
 See the \fBEXAMPLE\fR section for more details.
 .PP
 .B unshare
 since util-linux version 2.36 uses /\fIproc/[pid]/ns/pid_for_children\fP and \fI/proc/[pid]/ns/time_for_children\fP
 files for persistent PID and TIME namespaces. This change requires Linux kernel 4.17 or newer.
 .PP
-The namespaces to be unshared are indicated via options.  Unshareable namespaces are:
+The following types of namespaces can be created with
+.BR unshare :
 .TP
 .B mount namespace
 Mounting and unmounting filesystems will not affect the rest of the system,
