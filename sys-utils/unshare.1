@@ -244,61 +244,96 @@ restricted so that a less privileged user can not get more access to sensitive
 files that a more privileged user made unavailable. In short the rule for proc
 and sysfs is as close to a bind mount as possible.
 .SH EXAMPLE
-.TP
+.PP
+The following command creates a PID namespace, using
+.B \-\-fork
+to ensure that the executed command is performed in a child process
+that (being the first process in the namespace) has PID 1.
+The
+.B \-\-mount-proc
+option ensures that a new mount namespace is also simultaneously created
+and that a new
+.BR proc (5)
+filesystem is mounted that contains information corresponding to the new
+PID namespace.
+When the
+.BR readlink
+command terminates, the new namespaces are automatically torn down.
+.PP
+.in +4n
+.EX
 .B # unshare \-\-fork \-\-pid \-\-mount-proc readlink /proc/self
-.TQ
 1
-.br
-Establish a PID namespace, ensure we're PID 1 in it against a newly mounted
-procfs instance.
-.TP
-.B $ unshare \-\-map-root-user \-\-user sh \-c whoami
-.TQ
+.EE
+.in
+.PP
+As an unprivileged user, create a new user namespace where the user's
+credentials are mapped to the root IDs inside the namespace:
+.PP
+.in +4n
+.EX
+.B $ id \-u; id \-g
+1000
+1000
+.B $ unshare \-\-user \-\-map-root-user \e
+.B "        sh \-c \(aqwhoami; cat /proc/self/uid_map /proc/self/gid_map\(aq"
 root
-.br
-Establish a user namespace as an unprivileged user with a root user within it.
-.TP
+         0       1000          1
+         0       1000          1
+.EE
+.in
+.PP
+The first of the following commands creates a new persistent UTS namespace
+and modifies the hostname as seen in that namespace.
+The namespace is then entered with
+.BR nsenter (1)
+in order to display the modified hostname;
+this step demonstrates that the UTS namespace continues to exist
+even though the namespace had no member processes after the
+.B unshare
+command terminated.
+The namespace is then destroyed by removing the bind mount.
+.PP
+.in +4n
+.EX
 .B # touch /root/uts-ns
-.TQ
 .B # unshare \-\-uts=/root/uts-ns hostname FOO
-.TQ
 .B # nsenter \-\-uts=/root/uts-ns hostname
-.TQ
 FOO
-.TQ
 .B # umount /root/uts-ns
-.br
-Establish a persistent UTS namespace, and modify the hostname.  The namespace
-is then entered with \fBnsenter\fR.  The namespace is destroyed by unmounting
-the bind reference.
-.TP
-.B # mount \-\-bind /root/namespaces /root/namespaces
-.TQ
-.B # mount \-\-make-private /root/namespaces
-.TQ
-.B # touch /root/namespaces/mnt
-.TQ
-.B # unshare \-\-mount=/root/namespaces/mnt
-.br
+.EE
+.in
+.PP
 Establish a persistent mount namespace referenced by the bind mount
 /root/namespaces/mnt.  This example shows a portable solution, because it
 makes sure that the bind mount is created on a shared filesystem.
-.TP
-.B # unshare \-pf \-\-kill-child \-\- bash \-c "(sleep 999 &) && sleep 1000" &
-.TQ
-.B # pid=$!
-.TQ
-.B # kill $pid
-.br
+.PP
+.in +4n
+.EX
+.B # mount \-\-bind /root/namespaces /root/namespaces
+.B # mount \-\-make-private /root/namespaces
+.B # touch /root/namespaces/mnt
+.B # unshare \-\-mount=/root/namespaces/mnt
+.EE
+.in
+.PP
 Reliable killing of subprocesses of the \fIprogram\fR.
 When \fBunshare\fR gets killed, everything below it gets killed as well.
 Without it, the children of \fIprogram\fR would have orphaned and
 been re-parented to PID 1.
-.TP
+.PP
+.in +4n
+.EX
+.B # unshare \-pf \-\-kill-child \-\- bash \-c "(sleep 999 &) && sleep 1000" &
+.B # pid=$!
+.B # kill $pid
+.EE
+.in
+.PP
+.in +4n
+.EX
 .B # unshare \-\-fork \-\-time \-\-boottime 100000000 uptime
-.TQ
  10:58:48 up 1158 days,  6:05,  1 user,  load average: 0.00, 0.00, 0.00
-
 .SH AUTHORS
 .UR dottedmag@dottedmag.net
 Mikhail Gusarov
