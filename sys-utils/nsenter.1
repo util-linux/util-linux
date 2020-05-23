@@ -88,7 +88,8 @@ argument.
 This should be one of the
 .I /proc/[pid]/ns/*
 files described in
-.BR namespaces (7).
+.BR namespaces (7),
+or the pathname of a bind mount that was created on one of those files.
 .TP
 \fB\-a\fR, \fB\-\-all\fR
 Enter all namespaces of the target process by the default
