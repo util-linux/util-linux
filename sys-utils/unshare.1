@@ -317,16 +317,58 @@ makes sure that the bind mount is created on a shared filesystem.
 .EE
 .in
 .PP
-Reliable killing of subprocesses of the \fIprogram\fR.
-When \fBunshare\fR gets killed, everything below it gets killed as well.
-Without it, the children of \fIprogram\fR would have orphaned and
-been re-parented to PID 1.
+The following commands demonstrate the use of the
+.B \-\-kill-child
+option when creating a PID namespace, in order to ensure that when
+.B unshare
+is killed, all of the processes within the PID namespace are killed.
 .PP
 .in +4n
 .EX
-.B # unshare \-pf \-\-kill-child \-\- bash \-c "(sleep 999 &) && sleep 1000" &
-.B # pid=$!
-.B # kill $pid
+.BR "# set +m                " "# Don't print job status messages"
+.B # unshare \-\-pid \-\-fork \-\-mount\-proc \-\-kill\-child \-\- \e
+.B "       bash \-\-norc \-c \(aq(sleep 555 &) && (ps a &) && sleep 999\(aq &"
+[1] 53456
+#     PID TTY      STAT   TIME COMMAND
+      1 pts/3    S+     0:00 sleep 999
+      3 pts/3    S+     0:00 sleep 555
+      5 pts/3    R+     0:00 ps a
+
+.BR "# ps h \-o 'comm' $!     " "# Show that background job is unshare(1)"
+unshare
+.BR "# kill $!               " "# Kill unshare(1)
+.B # pidof sleep
+.EE
+.in
+.PP
+The
+.B pidof
+command prints no output, because the
+.B sleep
+processes have been killed.
+More precisely, when the
+.B sleep
+process that has PID 1 in the namespace (i.e., the namespace's init process)
+was killed, this caused all other processes in the namespace to be killed.
+By contrast, a similar series of commands where the
+.B \-\-kill\-child
+option is not used shows that when
+.B unshare
+terminates, the processes in the PID namespace are not killed:
+.PP
+.in +4n
+.EX
+.B # unshare \-\-pid \-\-fork \-\-mount\-proc \-\- \e
+.B "       bash \-\-norc \-c \(aq(sleep 555 &) && (ps a &) && sleep 999\(aq &"
+[1] 53479
+#     PID TTY      STAT   TIME COMMAND
+      1 pts/3    S+     0:00 sleep 999
+      3 pts/3    S+     0:00 sleep 555
+      5 pts/3    R+     0:00 ps a
+
+.B # kill $!
+.B # pidof sleep
+53482 53480
 .EE
 .in
 .PP
