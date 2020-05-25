@@ -44,9 +44,6 @@ login_SOURCES = \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
 login_LDADD = $(LDADD) libcommon.la -lpam
-if HAVE_VENDORDIR
-login_CFLAGS = $(AM_CFLAGS) -DHAVE_VENDORDIR -DVENDORDIR=\"@vendordir@\"
-endif
 if HAVE_LINUXPAM
 login_LDADD += -lpam_misc
 endif
@@ -127,9 +124,6 @@ chfn_SOURCES = \
 	login-utils/logindefs.h \
 	$(chfn_chsh_sources)
 chfn_CFLAGS = $(chfn_chsh_cflags)
-if HAVE_VENDORDIR
-chfn_CFLAGS += -DHAVE_VENDORDIR -DVENDORDIR=\"@vendordir@\"
-endif
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
 chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 if HAVE_ECONF
@@ -153,9 +147,6 @@ su_SOURCES = \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
-if HAVE_VENDORDIR
-su_CFLAGS += -DHAVE_VENDORDIR -DVENDORDIR=\"@vendordir@\"
-endif
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 su_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_LINUXPAM
@@ -195,9 +186,6 @@ endif
 if HAVE_ECONF
 runuser_LDADD += -leconf
 endif
-if HAVE_VENDORDIR
-runuser_CFLAGS = $(AM_CFLAGS) -DHAVE_VENDORDIR -DVENDORDIR=\"@vendordir@\"
-endif
 endif # BUILD_RUNUSER
 
 
@@ -222,9 +210,6 @@ lslogins_SOURCES = \
 	login-utils/logindefs.h
 lslogins_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
-if HAVE_VENDORDIR
-lslogins_CFLAGS += -DHAVE_VENDORDIR -DVENDORDIR=\"@vendordir@\"
-endif
 if HAVE_SELINUX
 lslogins_LDADD += -lselinux
 endif
@@ -267,9 +252,6 @@ test_logindefs_SOURCES = \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
 test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
-if HAVE_VENDORDIR
-test_logindefs_CPPFLAGS += -DHAVE_VENDORDIR -DVENDORDIR=\"@vendordir@\"
-endif
 if HAVE_ECONF
 test_logindefs_LDADD = -leconf
 endif

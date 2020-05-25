@@ -5,6 +5,11 @@ AM_CPPFLAGS = \
 	-D_PATH_RUNSTATEDIR=\"${runstatedir}\" \
 	-D_PATH_SYSCONFSTATICDIR=\"${sysconfstaticdir}\"
 
+if USE_VENDORDIR
+AM_CPPFLAGS += \
+	-D_PATH_VENDORDIR=\"${vendordir}\"
+endif
+
 AM_CFLAGS = -fsigned-char $(WARN_CFLAGS)
 AM_LDFLAGS = $(ASAN_LDFLAGS)
 
@@ -149,6 +154,12 @@ if HAVE_CRYPTSETUP
 edit_cmd += -e 's|@LIBCRYPTSETUP[@]|libcryptsetup|g'
 else
 edit_cmd += -e 's|@LIBCRYPTSETUP[@]||g'
+endif
+
+if USE_VENDORDIR
+edit_cmd += -e 's|@vendordir[@]|$(vendordir)|g'
+else
+edit_cmd += -e 's|@vendordir[@]||g'
 endif
 
 CLEANFILES += $(PATHFILES)

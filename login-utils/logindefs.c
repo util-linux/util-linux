@@ -235,7 +235,7 @@ const char *getlogindefs_str(const char *name, const char *dflt)
 	return ptr->value;
 }
 
-#else
+#else /* !HAVE_LIBECONF */
 
 #include <libeconf.h>
 
@@ -247,10 +247,6 @@ void free_getlogindefs_data(void)
 	file = NULL;
 }
 
-#ifndef VENDORDIR
-#define VENDORDIR NULL
-#endif
-
 static void load_defaults(void)
 {
 	econf_err error;
@@ -258,8 +254,15 @@ static void load_defaults(void)
 	if (file != NULL)
 	        free_getlogindefs_data();
 
-	if ((error = econf_readDirs(&file, VENDORDIR, "/etc",
-				    "login", "defs", "= \t", "#")))
+	error = econf_readDirs(&file,
+#if USE_VENDORDIR
+			_PATH_VENDORDIR,
+#else
+			NULL,
+#endif
+			"/etc", "login", "defs", "= \t", "#");
+
+	if (error)
 	  syslog(LOG_NOTICE, _("Error reading login.defs: %s"),
 		 econf_errString(error));
 
@@ -275,8 +278,8 @@ void logindefs_load_file(const char *filename)
 
 	logindefs_loader = NULL; /* No recursion */
 
-#if HAVE_VENDORDIR
-	if (asprintf (&path, VENDORDIR"/%s", filename) == -1)
+#if USE_VENDORDIR
+	if (asprintf (&path, _PATH_VENDORDIR"/%s", filename) == -1)
 	        return;
 	if (!econf_readFile(&file_l, path, "= \t", "#")) {
 	        if (file == NULL)
