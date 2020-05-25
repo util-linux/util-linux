@@ -395,7 +395,23 @@ static void print_separator(const int c, int n)
 static int check_magic(struct more_control *ctl, char *fs)
 {
 #ifdef HAVE_MAGIC
-	const char *mime_encoding = magic_descriptor(ctl->magic, fileno(ctl->current_file));
+	const int fd = fileno(ctl->current_file);
+	const char *mime_encoding = magic_descriptor(ctl->magic, fd);
+	const char *magic_error_msg = magic_error(ctl->magic);
+	struct stat st;
+
+	if (magic_error_msg) {
+		printf(_("magic failed: %s\n"), magic_error_msg);
+		return 0;
+	}
+	if (fstat(fd, &st)) {
+		warn(_("cannot stat %s"), fs);
+		return 1;
+	}
+	if (st.st_size == 0) {
+		/* libmagic tells an empty file has binary encoding */
+		return 0;
+	}
 
 	if (!mime_encoding || !(strcmp("binary", mime_encoding))) {
 		printf(_("\n******** %s: Not a text file ********\n\n"), fs);
