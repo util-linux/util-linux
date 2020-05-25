@@ -34,7 +34,9 @@ then the KILL signal may be used; be aware that the latter signal
 cannot be caught, and so does not give the target process the opportunity
 to perform any clean-up before terminating.
 .PP
-Most modern shells have a builtin kill command, with a usage rather similar to
+Most modern shells have a builtin
+.B kill
+command, with a usage rather similar to
 that of the command described here.  The
 .BR \-\-all ,
 .BR \-\-pid ", and"
@@ -49,7 +51,7 @@ The list of processes to be signaled can be a mixture of names and PIDs.
 .I pid
 Each
 .I pid
-can be one of four things:
+can be expressed in one of the following ways:
 .RS
 .TP
 .I n
@@ -87,7 +89,7 @@ The signal to send.  It may be given as a name or a number.
 \fB\-l\fR, \fB\-\-list\fR [\fInumber\fR]
 Print a list of signal names, or convert the given signal number to a name.
 The signals can be found in
-.I /usr/\:include/\:linux/\:signal.h
+.IR /usr/\:include/\:linux/\:signal.h .
 .TP
 \fB\-L\fR, \fB\-\-table\fR
 Similar to \fB\-l\fR, but it will print signal names and their corresponding
@@ -102,10 +104,12 @@ Only print the process ID (PID) of the named processes, do not send any
 signals.
 .TP
 \fB\-\-verbose\fR
-Print PID(s) that will be signaled with kill along with the signal.
+Print PID(s) that will be signaled with
+.B kill
+along with the signal.
 .TP
 \fB\-q\fR, \fB\-\-queue\fR \fIvalue\fR
-Use
+Send the signal using
 .BR sigqueue (3)
 rather than
 .BR kill (2).
@@ -132,7 +136,7 @@ to wait for a period defined in
 before sending follow-up
 .I signal
 to process.
-This feature is implemented by PID file-descriptor and guaranties that
+This feature is implemented by PID file-descriptor and guarantees that
 follow-up signals are sent to the same process or not sent if the process no
 more exist.  Note that the operating system may re-use PIDs and implement the
 same feature in a shell by kill and sleep commands sequence may introduce a
@@ -182,11 +186,14 @@ and the description of
 in
 .BR clone (2).
 .P
-Various shells have provide an internal kill implementation that is
+Various shells provide a builtin
+.B kill
+command that is
 preferred in relation to the
 .BR kill (1)
-executable described by this manual.  Easiest way to ensure one is executing
-the executable is to use full path when calling the command, for example:
+executable described by this manual.
+The easiest way to ensure one is executing the command described in this page
+is to use the full path when calling the command, for example:
 .B "/bin/kill \-\-version"
 .SH AUTHORS
 .MT svalente@mit.edu
