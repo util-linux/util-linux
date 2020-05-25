@@ -2309,6 +2309,31 @@ AS_IF([test "x$with_smack" = xyes], [
   AC_DEFINE([HAVE_SMACK], [1], [Add SMACK support])
 ])
 
+AC_ARG_WITH([econf],
+  AS_HELP_STRING([--without-econf], [do not use libeconf]),
+  [], [with_econf=check]
+)
+
+have_econf=no
+AS_IF([test "x$with_econf" != xno], [
+  # new version -- all libsystemd-* libs merged into libsystemd
+  PKG_CHECK_MODULES([ECONF], [libeconf], [have_econf=yes], [have_econf=no])
+    AS_CASE([$with_econf:$have_econf],
+    [yes:no],
+      [AC_MSG_ERROR([libeconf expected but libeconf not found])],
+    [*:yes],
+       AC_DEFINE([HAVE_LIBECONF], [1], [Define if libeconf is available])
+  )
+])
+AM_CONDITIONAL([HAVE_ECONF], [test "x$have_econf" = xyes])
+
+AC_ARG_ENABLE([vendordir],
+  AS_HELP_STRING([--enable-vendordir=DIR], [Direcotry for istribution provided configuration files]),,
+  []
+)
+AC_SUBST([vendordir], [$enable_vendordir])
+AM_CONDITIONAL([HAVE_VENDORDIR], [test "x$enable_vendordir" != x])
+
 
 AC_ARG_WITH([bashcompletiondir],
   AS_HELP_STRING([--with-bashcompletiondir=DIR], [Bash completions directory]),
@@ -2571,6 +2596,7 @@ AC_MSG_RESULT([
 	usrbin_execdir:    ${usrbin_execdir}
 	usrsbin_execdir:   ${usrsbin_execdir}
 	usrlib_execdir:    ${usrlib_execdir}
+        vendordir:         ${enable_vendordir}
 
 	compiler:          ${CC}
 	cflags:            ${CFLAGS}
@@ -2586,6 +2612,7 @@ AC_MSG_RESULT([
 	Bash completions:  ${with_bashcompletiondir}
 	Systemd support:   ${have_systemd}
 	Systemd unitdir:   ${with_systemdsystemunitdir}
+	libeconf support:  ${have_econf}
 	Btrfs support:     ${have_btrfs}
 	Wide-char support: ${build_widechar}
 
