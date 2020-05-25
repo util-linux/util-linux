@@ -127,30 +127,48 @@ field of the
 structure.
 .TP
 \fB\-\-timeout\fR \fImilliseconds signal\fR
-Send a signal defined the usual way to a process.
+Send a signal defined in the usual way to a process,
+followed by an additional signal after a specified delay.
+The
 .B \-\-timeout
-will make
+option causes
 .B kill
 to wait for a period defined in
 .I milliseconds
-before sending follow-up
+before sending a follow-up
 .I signal
-to process.
-This feature is implemented by PID file-descriptor and guarantees that
-follow-up signals are sent to the same process or not sent if the process no
-more exist.  Note that the operating system may re-use PIDs and implement the
-same feature in a shell by kill and sleep commands sequence may introduce a
-race.  This option can be specified more than once than signals are sent
-sequentially in defined timeouts.  The
+to the process.
+This feature is implemented using the Linux kernel
+PID file descriptor feature in order to guarantee that the follow-up signal
+is sent to the same process or not sent if the process no longer exists.
+.IP
+Note that the operating system may re-use PIDs and implementing an
+equivalent feature in a shell using
+.B kill
+and
+.B sleep
+would be subject to races whereby the follow-up signal might be sent
+to a different process that used a recycled PID.
+.IP
+The
 .B \-\-timeout
-option can be combined with
+option can be specified multiple times: the signals are sent
+sequentially with the specified timeouts.  The
+.B \-\-timeout
+option can be combined with the
 .B \-\-queue
 option.
 .IP
-Example.  Send signals QUIT, TERM and KILL in sequence and wait for 1000
-milliseconds between the signals
-.br
-kill \-\-verbose \-\-timeout 1000 TERM \-\-timeout 1000 KILL \-\-signal QUIT 12345
+As an example, the following command sends
+the signals QUIT, TERM and KILL in sequence and waits for 1000
+milliseconds between sending the signals:
+.IP
+.in +4n
+.EE
+kill \-\-verbose \-\-timeout 1000 TERM \-\-timeout 1000 KILL \e
+        \-\-signal QUIT 12345
+.EE
+.in
 .SH EXIT STATUS
 .B kill
 has the following exit status values:
