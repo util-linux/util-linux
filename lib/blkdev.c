@@ -6,6 +6,7 @@
  */
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/file.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <stdint.h>
@@ -360,6 +361,57 @@ const char *blkdev_scsi_type_to_name(int type)
 	}
 	return NULL;
 }
+
+/* return 0 on success */
+int blkdev_lock(int fd, const char *devname, const char *lockmode)
+{
+	int oper, rc, msg = 0;
+
+	if (!lockmode)
+		lockmode = getenv("LOCK_BLOCK_DEVICE");
+	if (!lockmode)
+		return 0;
+
+	if (strcasecmp(lockmode, "yes") == 0 ||
+	    strcmp(lockmode, "1") == 0)
+		oper = LOCK_EX;
+
+	else if (strcasecmp(lockmode, "nonblock") == 0)
+		oper = LOCK_EX | LOCK_NB;
+
+	else if (strcasecmp(lockmode, "no") == 0 ||
+		 strcmp(lockmode, "0") == 0)
+		return 0;
+	else {
+		warnx(_("unsupported lock mode: %s"), lockmode);
+		return -EINVAL;
+	}
+
+	if (!(oper & LOCK_NB)) {
+		/* Try non-block first to provide message */
+		rc = flock(fd, oper | LOCK_NB);
+		if (rc == 0)
+			return 0;
+		if (rc != 0 && errno == EWOULDBLOCK) {
+			fprintf(stderr, _("%s: %s: device already locked, waiting to get lock ... "),
+					program_invocation_short_name, devname);
+			msg = 1;
+		}
+	}
+	rc = flock(fd, oper);
+	if (rc != 0) {
+		switch (errno) {
+		case EWOULDBLOCK: /* LOCK_NB */
+			warnx(_("%s: device already locked"), devname);
+			break;
+		default:
+			warn(_("%s: failed to get lock"), devname);
+		}
+	} else if (msg)
+		fprintf(stderr, _("OK\n"));
+	return rc;
+}
+
 
 #ifdef TEST_PROGRAM_BLKDEV
 #include <stdio.h>

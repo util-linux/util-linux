@@ -146,5 +146,6 @@ int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s);
 /* convert scsi type code to name */
 const char *blkdev_scsi_type_to_name(int type);
 
+int blkdev_lock(int fd, const char *devname, const char *lockmode);
 
 #endif /* BLKDEV_H */
