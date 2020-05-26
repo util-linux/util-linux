@@ -252,8 +252,9 @@ test_logindefs_SOURCES = \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
 test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
+test_logindefs_LDADD = $(LDADD) libcommon.la
 if HAVE_ECONF
-test_logindefs_LDADD = -leconf
+test_logindefs_LDADD += -leconf
 endif
 
 
