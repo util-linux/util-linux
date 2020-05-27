@@ -77,6 +77,14 @@ Display help text and exit.
 .BR \-J , " \-\-json"
 Use JSON output format.
 .TP
+\fB\-\-lock\fR[=\fImode\fR]
+Use exclusive BSD lock for device or file it operates.  The optional argument
+\fImode\fP can be \fByes\fR, \fBno\fR (or 1 and 0) or \fBnonblock\fR.  If the \fImode\fR
+argument is omitted, it defaults to \fB"yes"\fR.  This option overwrites
+environment variable \fB$LOCK_BLOCK_DEVICE\fR.  The default is not to use any
+lock at all, but it's recommended to avoid collisions with udevd or other
+tools.
+.TP
 .BR \-i , " \-\-noheadings"
 Do not print a header line.
 .TP
@@ -115,6 +123,8 @@ Display version information and exit.
 .SH ENVIRONMENT
 .IP LIBBLKID_DEBUG=all
 enables libblkid debug output.
+.IP LOCK_BLOCK_DEVICE=<mode>
+use exclusive BSD lock.  The mode is "1" or "0".  See \fB\-\-lock\fR for more details.
 .SH EXAMPLE
 .TP
 .B wipefs /dev/sda*

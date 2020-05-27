@@ -64,6 +64,7 @@ struct wipe_desc {
 struct wipe_control {
 	char		*devname;
 	const char	*type_pattern;		/* -t <pattern> */
+	const char	*lockmode;
 
 	struct libscols_table *outtab;
 	struct wipe_desc *offsets;		/* -o <offset> -o <offset> ... */
@@ -546,6 +547,12 @@ static int do_wipe(struct wipe_control *ctl)
 	if (!pr)
 		return -errno;
 
+	if (blkdev_lock(blkid_probe_get_fd(pr),
+			ctl->devname, ctl->lockmode) != 0) {
+		blkid_free_probe(pr);
+		return -1;
+	}
+
 	if (ctl->backup) {
 		const char *home = getenv ("HOME");
 		char *tmp = xstrdup(ctl->devname);
@@ -655,6 +662,8 @@ usage(void)
 	puts(_(" -p, --parsable      print out in parsable instead of printable format"));
 	puts(_(" -q, --quiet         suppress output messages"));
 	puts(_(" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables"));
+	printf(
+	     _("     --lock[=<mode>] use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
 
 	printf(USAGE_HELP_OPTIONS(21));
 
@@ -676,12 +685,15 @@ main(int argc, char **argv)
 	struct wipe_control ctl = { .devname = NULL };
 	int c;
 	char *outarg = NULL;
-
+	enum {
+		OPT_LOCK = CHAR_MAX + 1,
+	};
 	static const struct option longopts[] = {
 	    { "all",       no_argument,       NULL, 'a' },
 	    { "backup",    no_argument,       NULL, 'b' },
 	    { "force",     no_argument,       NULL, 'f' },
 	    { "help",      no_argument,       NULL, 'h' },
+	    { "lock",      optional_argument, NULL, OPT_LOCK },
 	    { "no-act",    no_argument,       NULL, 'n' },
 	    { "offset",    required_argument, NULL, 'o' },
 	    { "parsable",  no_argument,       NULL, 'p' },
@@ -745,7 +757,14 @@ main(int argc, char **argv)
 		case 't':
 			ctl.type_pattern = optarg;
 			break;
-
+		case OPT_LOCK:
+			ctl.lockmode = "1";
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
+				ctl.lockmode = optarg;
+			}
+			break;
 		case 'h':
 			usage();
 		case 'V':
