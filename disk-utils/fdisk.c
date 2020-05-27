@@ -874,6 +874,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"), out);
 	fputs(_("     --bytes                   print SIZE in bytes rather than in human readable format\n"), out);
 	fprintf(out,
+	      _("     --lock[=<mode>]           use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
+	fprintf(out,
 	      _(" -w, --wipe <mode>             wipe signatures (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
 	      _(" -W, --wipe-partitions <mode>  wipe signatures from new partitions (%s, %s or %s)\n"), "auto", "always", "never");
@@ -906,8 +908,10 @@ int main(int argc, char **argv)
 	int colormode = UL_COLORMODE_UNDEF;
 	struct fdisk_context *cxt;
 	char *outarg = NULL;
+	const char *devname, *lockmode = NULL;
 	enum {
-		OPT_BYTES	= CHAR_MAX + 1
+		OPT_BYTES	= CHAR_MAX + 1,
+		OPT_LOCK
 	};
 	static const struct option longopts[] = {
 		{ "bytes",          no_argument,       NULL, OPT_BYTES },
@@ -920,6 +924,7 @@ int main(int argc, char **argv)
 		{ "help",           no_argument,       NULL, 'h' },
 		{ "list",           no_argument,       NULL, 'l' },
 		{ "list-details",   no_argument,       NULL, 'x' },
+		{ "lock",           optional_argument, NULL, OPT_LOCK },
 		{ "noauto-pt",      no_argument,       NULL, 'n' },
 		{ "sector-size",    required_argument, NULL, 'b' },
 		{ "type",           required_argument, NULL, 't' },
@@ -1056,6 +1061,14 @@ int main(int argc, char **argv)
 		case OPT_BYTES:
 			fdisk_set_size_unit(cxt, FDISK_SIZEUNIT_BYTES);
 			break;
+		case OPT_LOCK:
+			lockmode = "1";
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
+				lockmode = optarg;
+			}
+			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -1119,16 +1132,24 @@ int main(int argc, char **argv)
 		fdisk_info(cxt, _("Changes will remain in memory only, until you decide to write them.\n"
 				  "Be careful before using the write command.\n"));
 
-		rc = fdisk_assign_device(cxt, argv[optind], 0);
+		devname = argv[optind];
+		rc = fdisk_assign_device(cxt, devname, 0);
 		if (rc == -EACCES) {
-			rc = fdisk_assign_device(cxt, argv[optind], 1);
+			rc = fdisk_assign_device(cxt, devname, 1);
 			if (rc == 0)
 				fdisk_warnx(cxt, _("Device is open in read-only mode."));
 		}
 		if (rc)
-			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
+			err(EXIT_FAILURE, _("cannot open %s"), devname);
 
 		fflush(stdout);
+
+		if (!fdisk_is_readonly(cxt)
+		    && blkdev_lock(fdisk_get_devfd(cxt), devname, lockmode) != 0) {
+			fdisk_deassign_device(cxt, 1);
+			fdisk_unref_context(cxt);
+			return EXIT_FAILURE;
+		}
 
 		if (fdisk_get_collision(cxt))
 			follow_wipe_mode(cxt);
