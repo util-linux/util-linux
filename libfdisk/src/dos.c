@@ -1628,6 +1628,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 		       last[cxt->label->nparts_max];
 	struct dos_partition *p;
 	struct fdisk_dos_label *l = self_label(cxt);
+	int nerrors = 0;
 
 	assert(fdisk_is_label(cxt, DOS));
 
@@ -1639,10 +1640,12 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 		if (p && is_used_partition(p) && !IS_EXTENDED(p->sys_ind)) {
 			check_consistency(cxt, p, i);
 			assert(pe);
-			if (get_abs_partition_start(pe) < first[i])
+			if (get_abs_partition_start(pe) < first[i]) {
 				fdisk_warnx(cxt, _(
 					"Partition %zu: bad start-of-data."),
 					 i + 1);
+				nerrors++;
+			}
 
 			check(cxt, i + 1, p->eh, p->es, p->ec, last[i]);
 			total += last[i] + 1 - first[i];
@@ -1657,6 +1660,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 					fdisk_warnx(cxt, _("Partition %zu: "
 						"overlaps partition %zu."),
 						j + 1, i + 1);
+					nerrors++;
 
 					total += first[i] >= first[j] ?
 						first[i] : first[j];
@@ -1680,28 +1684,37 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 			assert(p);
 
 			if (!p->sys_ind) {
-				if (i != 4 || i + 1 < cxt->label->nparts_max)
+				if (i != 4 || i + 1 < cxt->label->nparts_max) {
 					fdisk_warnx(cxt,
 						_("Partition %zu: empty."),
 						i + 1);
+					nerrors++;
+				}
 			} else if (first[i] < l->ext_offset
 				   || last[i] > e_last) {
 
 				fdisk_warnx(cxt, _("Logical partition %zu: "
 					"not entirely in partition %zu."),
 					i + 1, l->ext_index + 1);
+				nerrors++;
 			}
 		}
 	}
 
-	if (total > n_sectors)
-		fdisk_warnx(cxt, _("Total allocated sectors %llu greater "
-			"than the maximum %llu."), total, n_sectors);
-	else if (total < n_sectors)
-		fdisk_warnx(cxt, _("Remaining %lld unallocated %ld-byte "
-			"sectors."), n_sectors - total, cxt->sector_size);
+	if (!nerrors) {
+		fdisk_info(cxt, _("No errors detected."));
+		if (total > n_sectors)
+			fdisk_info(cxt, _("Total allocated sectors %llu greater "
+				"than the maximum %llu."), total, n_sectors);
+		else if (total < n_sectors)
+			fdisk_info(cxt, _("Remaining %lld unallocated %ld-byte "
+				"sectors."), n_sectors - total, cxt->sector_size);
+	} else
+		fdisk_warnx(cxt,
+			P_("%d error detected.", "%d errors detected.", nerrors),
+			nerrors);
 
-	return 0;
+	return nerrors;
 }
 
 /*

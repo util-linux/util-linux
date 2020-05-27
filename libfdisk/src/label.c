@@ -269,7 +269,7 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
  *
  * Verifies the partition table.
  *
- * Returns: 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, <1 runtime or option errors, >0 number of detected issues
  */
 int fdisk_verify_disklabel(struct fdisk_context *cxt)
 {

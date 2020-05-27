@@ -2229,7 +2229,7 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 			P_("%d error detected.", "%d errors detected.", nerror),
 			nerror);
 
-	return 0;
+	return nerror;
 }
 
 /* Delete a single GPT partition, specified by partnum. */
