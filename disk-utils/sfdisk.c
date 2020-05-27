@@ -96,6 +96,7 @@ struct sfdisk {
 	int		partno;		/* -N <partno>, default -1 */
 	int		wipemode;	/* remove foreign signatures from disk */
 	int		pwipemode;	/* remove foreign signatures from partitions */
+	const char	*lockmode;	/* as specified by --lock */
 	const char	*label;		/* --label <label> */
 	const char	*label_nested;	/* --label-nested <label> */
 	const char	*backup_file;	/* -O <path> */
@@ -368,6 +369,25 @@ static void backup_partition_table(struct sfdisk *sf, const char *devname)
 		fputc('\n', stdout);
 	free(tpl);
 }
+
+static int assign_device(struct sfdisk *sf, const char *devname, int rdonly)
+{
+	struct fdisk_context *cxt = sf->cxt;
+
+	if (fdisk_assign_device(cxt, devname, rdonly) != 0)
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
+
+	if (!fdisk_is_readonly(cxt)) {
+		if (blkdev_lock(fdisk_get_devfd(cxt), devname, sf->lockmode) != 0) {
+			fdisk_deassign_device(cxt, 1);
+			exit(EXIT_FAILURE);
+		}
+		if (sf->backup)
+			backup_partition_table(sf, devname);
+	}
+	return 0;
+}
+
 
 static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_partition *orig_pa)
 {
@@ -724,10 +744,7 @@ static int verify_device(struct sfdisk *sf, const char *devname)
 
 	fdisk_enable_listonly(sf->cxt, 1);
 
-	if (fdisk_assign_device(sf->cxt, devname, 1)) {
-		warn(_("cannot open %s"), devname);
-		return 1;
-	}
+	assign_device(sf, devname, 1);
 
 	color_scheme_enable("header", UL_COLOR_BOLD);
 	fdisk_info(sf->cxt, "%s:", devname);
@@ -834,10 +851,7 @@ static int print_geom(struct sfdisk *sf, const char *devname)
 {
 	fdisk_enable_listonly(sf->cxt, 1);
 
-	if (fdisk_assign_device(sf->cxt, devname, 1)) {
-		warn(_("cannot open %s"), devname);
-		return 1;
-	}
+	assign_device(sf, devname, 1);
 
 	fdisk_info(sf->cxt, "%s: %ju cylinders, %ju heads, %ju sectors/track",
 			devname,
@@ -892,9 +906,7 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 	/*  --activate <device> */
 	listonly = argc == 1;
 
-	rc = fdisk_assign_device(sf->cxt, devname, listonly);
-	if (rc)
-		err(EXIT_FAILURE, _("cannot open %s"), devname);
+	assign_device(sf, devname, listonly);
 
 	if (fdisk_is_label(sf->cxt, GPT)) {
 		if (fdisk_gpt_is_hybrid(sf->cxt))
@@ -908,9 +920,6 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 
 	} else if (!fdisk_is_label(sf->cxt, DOS))
 		errx(EXIT_FAILURE, _("toggle boot flags is supported for MBR or PMBR only"));
-
-	if (!listonly && sf->backup)
-		backup_partition_table(sf, devname);
 
 	nparts = fdisk_get_npartitions(sf->cxt);
 	for (i = 0; i < nparts; i++) {
@@ -972,11 +981,7 @@ static int command_delete(struct sfdisk *sf, int argc, char **argv)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 	devname = argv[0];
 
-	if (fdisk_assign_device(sf->cxt, devname, 0) != 0)
-		err(EXIT_FAILURE, _("cannot open %s"), devname);
-
-	if (sf->backup)
-		backup_partition_table(sf, devname);
+	assign_device(sf, devname, 0);
 
 	/* delete all */
 	if (argc == 1) {
@@ -1012,12 +1017,7 @@ static int command_reorder(struct sfdisk *sf, int argc, char **argv)
 	if (!devname)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 
-	rc = fdisk_assign_device(sf->cxt, devname, 0);	/* read-write */
-	if (rc)
-		err(EXIT_FAILURE, _("cannot open %s"), devname);
-
-	if (sf->backup)
-		backup_partition_table(sf, devname);
+	assign_device(sf, devname, 0);	/* read-write */
 
 	if (fdisk_reorder_partitions(sf->cxt) == 1)	/* unchanged */
 		rc = fdisk_deassign_device(sf->cxt, 1);
@@ -1042,9 +1042,7 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	if (!devname)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 
-	rc = fdisk_assign_device(sf->cxt, devname, 1);	/* read-only */
-	if (rc)
-		err(EXIT_FAILURE, _("cannot open %s"), devname);
+	assign_device(sf, devname, 1);	/* read-only */
 
 	if (!fdisk_has_label(sf->cxt))
 		errx(EXIT_FAILURE, _("%s: does not contain a recognized partition table"), devname);
@@ -1083,6 +1081,11 @@ static void assign_device_partition(struct sfdisk *sf,
 	if (rc)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
+	if (!fdisk_is_readonly(sf->cxt)
+	    && blkdev_lock(fdisk_get_devfd(sf->cxt), devname, sf->lockmode) != 0) {
+		fdisk_deassign_device(sf->cxt, 1);
+		return;
+	}
 	lb = fdisk_get_label(sf->cxt, NULL);
 	if (!lb)
 		errx(EXIT_FAILURE, _("%s: no partition table found"), devname);
@@ -1346,8 +1349,7 @@ static int command_diskid(struct sfdisk *sf, int argc, char **argv)
 	else if (argc > 2)
 		errx(EXIT_FAILURE, _("unexpected arguments"));
 
-	if (fdisk_assign_device(sf->cxt, devname, !str) != 0)
-		err(EXIT_FAILURE, _("cannot open %s"), devname);
+	assign_device(sf, devname, !str);
 
 	/* print */
 	if (!str) {
@@ -1358,10 +1360,6 @@ static int command_diskid(struct sfdisk *sf, int argc, char **argv)
 		fdisk_deassign_device(sf->cxt, 1);
 		return 0;
 	}
-
-	/* change */
-	if (sf->backup)
-		backup_partition_table(sf, devname);
 
 	if (fdisk_set_disklabel_id_from_string(sf->cxt, str) != 0)
 		errx(EXIT_FAILURE, _("%s: failed to set disklabel ID"), devname);
@@ -1395,8 +1393,7 @@ static int command_relocate(struct sfdisk *sf, int argc, char **argv)
 	else if (strcmp(oper, "gpt-bak-std") != 0)
 		errx(EXIT_FAILURE, _("unsupported relocation operation"));
 
-	if (fdisk_assign_device(sf->cxt, devname, 0) != 0)
-		err(EXIT_FAILURE, _("cannot open %s"), devname);
+	assign_device(sf, devname, 0);
 
 	fdisk_label_set_changed(lb, 1);
 
@@ -1720,9 +1717,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (!devname)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 
-	rc = fdisk_assign_device(sf->cxt, devname, 0);
-	if (rc)
-		err(EXIT_FAILURE, _("cannot open %s"), devname);
+	assign_device(sf, devname, 0);
 
 	dp = fdisk_new_script(sf->cxt);
 	if (!dp)
@@ -1797,9 +1792,6 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 	if (fdisk_get_collision(sf->cxt))
 		follow_wipe_mode(sf);
-
-	if (sf->backup)
-		backup_partition_table(sf, devname);
 
 	if (!sf->quiet) {
 		list_disk_geometry(sf->cxt);
@@ -2052,6 +2044,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	      _("     --color[=<when>]      colorize output (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
 	        "                             %s\n", USAGE_COLORS_DEFAULT);
+	fprintf(out,
+	      _("     --lock[=<mode>]       use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
 	fputs(_(" -n, --no-act              do everything except write to device\n"), out);
 	fputs(_("     --no-reread           do not check whether the device is in use\n"), out);
@@ -2110,6 +2104,7 @@ int main(int argc, char *argv[])
 		OPT_DELETE,
 		OPT_NOTELL,
 		OPT_RELOCATE,
+		OPT_LOCK,
 	};
 
 	static const struct option longopts[] = {
@@ -2119,6 +2114,7 @@ int main(int argc, char *argv[])
 		{ "backup-file", required_argument, NULL, 'O' },
 		{ "bytes",   no_argument,	NULL, OPT_BYTES },
 		{ "color",   optional_argument, NULL, OPT_COLOR },
+		{ "lock",    optional_argument, NULL, OPT_LOCK },
 		{ "delete",  no_argument,	NULL, OPT_DELETE },
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
@@ -2323,6 +2319,14 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_RELOCATE:
 			sf->act = ACT_RELOCATE;
+			break;
+		case OPT_LOCK:
+			sf->lockmode = "1";
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
+				sf->lockmode = optarg;
+			}
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
