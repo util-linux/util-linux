@@ -187,6 +187,34 @@ Be verbose.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
+.SH EXIT STATUS
+.B swapoff
+has the following exit status values:
+.TP
+.B 0
+success
+.TP
+.B 1
+system has insufficient memory to stop swapping (OOM)
+.TP
+.B 2
+swapoff syscall failed for another reason
+.TP
+.B 4
+non-swapoff syscall system error (out of memory, ...)
+.TP
+.B 16
+usage or syntax error
+.TP
+.B 32
+all swapoff failed on \fB\-\-all\fR
+.TP
+.B 64
+some swapoff succeeded on \fB\-\-all\fR
+
+The command \fBswapoff \-\-all\fR returns 0 (all succeeded), 32 (all failed), or 64 (some
+failed, some succeeded).
+
 .SH ENVIRONMENT
 .IP LIBMOUNT_DEBUG=all
 enables libmount debug output.
