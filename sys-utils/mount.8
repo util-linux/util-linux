@@ -664,19 +664,21 @@ This is necessary for example when
 is on a read-only filesystem.
 .TP
 .BR \-N , " \-\-namespace " \fIns
-Perform mount in namespace specified by \fIns\fR.
+Perform mount in the mount namespace specified by \fIns\fR.
 \fIns\fR is either PID of process running in that namespace
 or special file representing that namespace.
 .sp
 .BR mount (8)
-switches to the namespace when it reads /etc/fstab, writes /etc/mtab (or writes to /run/mount) and calls
+switches to the mount namespace when it reads /etc/fstab,
+writes /etc/mtab (or writes to /run/mount) and calls
 .BR mount (2)
-system call, otherwise it runs in the original namespace. It means that the target namespace does not have
+system call, otherwise it runs in the original mount namespace.
+It means that the target namespace does not have
 to contain any libraries or another requirements necessary to execute
 .BR mount (2)
 command.
 .sp
-See \fBnamespaces\fR(7) for more information.
+See \fBmount_namespaces\fR(7) for more information.
 .TP
 .BR \-O , " \-\-test\-opts " \fIopts
 Limit the set of filesystems to which the
@@ -2680,6 +2682,7 @@ Karel Zak <kzak@redhat.com>
 .BR fstab (5),
 .BR nfs (5),
 .BR xfs (5),
+.BR mount_namespaces (7)
 .BR e2label (8),
 .BR findmnt (8),
 .BR losetup (8),

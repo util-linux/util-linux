@@ -68,7 +68,8 @@ filesystems. This list of the filesystems may be replaced by \fB\-\-types\fR
 umount option.
 .TP
 .BR \-A , " \-\-all\-targets"
-Unmount all mountpoints in the current namespace for the specified filesystem.
+Unmount all mountpoints in the current mount namespace
+for the specified filesystem.
 The filesystem can be specified by one of the mountpoints or the device name (or
 UUID, etc.).  When this option is used together with \fB\-\-recursive\fR, then
 all nested mounts within the filesystem are recursively unmounted.
@@ -129,19 +130,20 @@ server or a network partition. Remounts of the share will not be possible.
 
 .TP
 .BR \-N , " \-\-namespace " \fIns
-Perform umount in namespace specified by \fIns\fR.
+Perform umount in the mount namespace specified by \fIns\fR.
 \fIns\fR is either PID of process running in that namespace
 or special file representing that namespace.
 .sp
 .BR umount (8)
 switches to the namespace when it reads /etc/fstab, writes /etc/mtab (or writes to /run/mount) and calls
 .BR umount (2)
-system call, otherwise it runs in the original namespace. It means that the target namespace does not have
+system call, otherwise it runs in the original namespace.
+It means that the target mount namespace does not have
 to contain any libraries or another requirements necessary to execute
 .BR umount (2)
 command.
 .sp
-See \fBnamespaces\fR(7) for more information.
+See \fBmount_namespaces\fR(7) for more information.
 .TP
 .BR \-n , " \-\-no\-mtab"
 Unmount without writing in
@@ -278,6 +280,7 @@ command appeared in Version 6 AT&T UNIX.
 .SH SEE ALSO
 .BR umount (2),
 .BR losetup (8),
+.BR mount_namespaces (7)
 .BR mount (8)
 .SH AVAILABILITY
 The umount command is part of the util-linux package and is available from
