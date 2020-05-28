@@ -14,7 +14,7 @@ In comparison to
 .BR su (1)
 and
 .BR runuser (1),
-.BR setpriv (1)
+.BR setpriv
 neither uses PAM, nor does it prompt for a password.
 It is a simple, non-set-user-ID wrapper around
 .BR execve (2),
@@ -32,7 +32,8 @@ or similar tools shipped by other service managers.
 Clear supplementary groups.
 .TP
 .BR \-d , " \-\-dump"
-Dump current privilege state.  Can be specified more than once to show extra,
+Dump the current privilege state.
+Can be specified more than once to show extra,
 mostly useless, information.  Incompatible with all other options.
 .TP
 .B \-\-groups \fIgroup\fR...
@@ -49,7 +50,7 @@ entries, which add or remove an entry respectively. \fIcap\fR can either be a
 human-readable name as seen in
 .BR capabilities (7)
 without the \fIcap_\fR prefix or of the format
-.BI cap_N ,
+.BR cap_N ,
 where \fIN\fR is the internal capability index used by Linux.
 .B +all
 and
@@ -97,11 +98,13 @@ and
 .I Documentation/\:prctl/\:no_\:new_\:privs.txt
 in the Linux kernel source.
 .sp
-The no_new_privs bit is supported since Linux 3.5.
+The
+.I no_new_privs
+bit is supported since Linux 3.5.
 .TP
 .BI \-\-rgid " gid\fR, " \-\-egid " gid\fR, " \-\-regid " gid"
 Set the real, effective, or both GIDs.  The \fIgid\fR argument can be
-given as textual group name.
+given as a textual group name.
 .sp
 For safety, you must specify one of
 .BR \-\-clear\-groups ,
@@ -113,7 +116,7 @@ if you set any primary
 .TP
 .BI \-\-ruid " uid\fR, " \-\-euid " uid\fR, " \-\-reuid " uid"
 Set the real, effective, or both UIDs.  The \fIuid\fR argument can be
-given as textual login name.
+given as a textual login name.
 .sp
 Setting a
 .I uid
@@ -148,7 +151,7 @@ credentials to remedy that situation.
 .BI \-\-selinux\-label " label"
 Request a particular SELinux transition (using a transition on exec, not
 dyntrans).  This will fail and cause
-.BR setpriv (1)
+.BR setpriv
 to abort if SELinux is not in use, and the transition may be ignored or cause
 .BR execve (2)
 to fail at SELinux's whim.  (In particular, this is unlikely to work in
@@ -160,7 +163,7 @@ This is similar to
 .BI \-\-apparmor\-profile " profile"
 Request a particular AppArmor profile (using a transition on exec).  This will
 fail and cause
-.BR setpriv (1)
+.BR setpriv
 to abort if AppArmor is not in use, and the transition may be ignored or cause
 .BR execve (2)
 to fail at AppArmor's whim.
@@ -187,7 +190,9 @@ will not be run and
 will return with exit status 127.
 .PP
 Be careful with this tool \-\- it may have unexpected security consequences.
-For example, setting no_new_privs and then execing a program that is
+For example, setting
+.I no_new_privs
+and then execing a program that is
 SELinux\-confined (as this tool would do) may prevent the SELinux
 restrictions from taking effect.
 .SH EXAMPLES
