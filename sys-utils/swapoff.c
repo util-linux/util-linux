@@ -26,9 +26,9 @@ static int all;
 #define CANONIC	1
 
 #define SWAPOFF_EX_OK		0	/* no errors */
-#define SWAPOFF_EX_ENOMEM	1	/* swapoff(2) failed due to OOM */
-#define SWAPOFF_EX_FAILURE	2	/* swapoff(2) failed due to another reason */
-#define SWAPOFF_EX_SYSERR	4	/* non-swaoff() errors */
+#define SWAPOFF_EX_ENOMEM	2	/* swapoff(2) failed due to OOM */
+#define SWAPOFF_EX_FAILURE	4	/* swapoff(2) failed due to another reason */
+#define SWAPOFF_EX_SYSERR	8	/* non-swaoff() errors */
 #define SWAPOFF_EX_USAGE	16	/* usage, permissions or syntax error */
 #define SWAPOFF_EX_ALLERR	32	/* --all all failed */
 #define SWAPOFF_EX_SOMEOK	64	/* --all some failed some OK */
