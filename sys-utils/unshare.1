@@ -304,9 +304,16 @@ FOO
 .EE
 .in
 .PP
-Establish a persistent mount namespace referenced by the bind mount
-/root/namespaces/mnt.  This example shows a portable solution, because it
-makes sure that the bind mount is created on a shared filesystem.
+The following commands
+establish a persistent mount namespace referenced by the bind mount
+.IR /root/namespaces/mnt .
+In order to ensure that this bind mount does not get propagated
+to other mount namespaces,
+the parent directory
+.RI ( /root/namespaces )
+is first made a bind mount with
+.I private
+propagation.
 .PP
 .in +4n
 .EX
