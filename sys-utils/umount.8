@@ -24,7 +24,7 @@
 .\"
 .TH UMOUNT 8 "July 2014" "util-linux" "System Administration"
 .SH NAME
-umount \- unmount file systems
+umount \- unmount filesystems
 .SH SYNOPSIS
 .B umount \-a
 .RB [ \-dflnrv ]
@@ -43,13 +43,13 @@ umount \- unmount file systems
 .SH DESCRIPTION
 The
 .B umount
-command detaches the mentioned file system(s) from the file hierarchy.  A
-file system is specified by giving the directory where it has been
-mounted.  Giving the special device on which the file system lives may
+command detaches the mentioned filesystem(s) from the file hierarchy.  A
+filesystem is specified by giving the directory where it has been
+mounted.  Giving the special device on which the filesystem lives may
 also work, but is obsolete, mainly because it will fail in case this
 device was mounted on more than one directory.
 .PP
-Note that a file system cannot be unmounted when it is 'busy' - for
+Note that a filesystem cannot be unmounted when it is 'busy' - for
 example, when there are open files on it, or when some process has its
 working directory there, or when a swap file on it is in use.  The
 offending process could even be
