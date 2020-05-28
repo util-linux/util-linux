@@ -1396,23 +1396,37 @@ only for root users or when mount executed without suid permissions.  The option
 is also supported as x-mount.mkdir, this notation is deprecated since v2.30.
 
 .SH FILESYSTEM-SPECIFIC MOUNT OPTIONS
-You should consult the respective man page for the filesystem first.
-If you want to know what options the ext4 filesystem supports, then check the
-.BR ext4 (5)
-man page.
-If that doesn't exist, you can also check the corresponding mount page like
-.BR mount.cifs (8).
-Note that you might have to install the respective userland tools.
-.sp
+This section lists options that are specific to particular filesystems.
+Where possible, you should first consult filesystem-specific manual pages
+for details.
+Some of those pages are listed in the following table.
+.TS
+lb lb
+l l.
+Filesystem(s)	Manual page
+btrfs	\fBbtrfs\fP(5)
+cifs	\fBmount.cifs\fP(8)
+ext2, ext3, ext4	\fBext4\fP(5)
+fuse	\fBfuse\fP(8)
+nfs	\fBnfs\fP(5)
+tmpfs	\fBtmpfs\fP(5)
+xfs	\fBxfs\fP(5)
+.TE
+.PP
+Note that some of the pages listed above might be available only
+after you install the respective userland tools.
+.PP
 The following options apply only to certain filesystems.
-We sort them by filesystem.  They all follow the
+We sort them by filesystem.
+All options follow the
 .B \-o
 flag.
-.sp
+.PP
 What options are supported depends a bit on the running kernel.
-More info may be found in the kernel source subdirectory
+Further information may be available in fileystem-specific
+files in the kernel source subdirectory
 .IR Documentation/filesystems .
-
+.\"
 .SS "Mount options for adfs"
 .TP
 \fBuid=\fP\,\fIvalue\fP and \fBgid=\fP\,\fIvalue\fP
