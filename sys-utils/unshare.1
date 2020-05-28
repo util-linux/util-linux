@@ -19,7 +19,7 @@ By default, a new namespace persists only as long as it has member processes.
 A new namespace can be made persistent even when it has no member processes
 by bind mounting
 /proc/\fIpid\fR/ns/\fItype\fR files to a filesystem path.
-A namespace that has been made persistent in this was can subsequently
+A namespace that has been made persistent in this way can subsequently
 be entered with
 .BR \%nsenter (1)
 even after the \fIprogram\fR terminates (except PID namespaces where
