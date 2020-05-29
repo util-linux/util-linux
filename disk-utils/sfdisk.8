@@ -61,7 +61,7 @@ partitions.
 
 .B sfdisk
 uses BLKRRPART (reread partition table) ioctl to make sure that the device is
-not used by system or another tools (see also \-\-no-reread).  It's possible that
+not used by system or other tools (see also \-\-no-reread).  It's possible that
 this feature or another sfdisk activity races with \fBudevd\fR.  The recommended way
 how to avoid possible collisions is to use \fB\-\-lock\fR option.
 The exclusive lock will cause udevd to skip the event handling on the device. 
@@ -421,7 +421,7 @@ GPT; a shortcut or an alias. It's recommended to use two letters for MBR hex cod
 avoid collision between deprecated shortcut 'E' and '0E' MBR hex code. For backward
 compatibility sfdisk tries to interpret
 .I type
-as a shortcut as a first possibility in partitioning scripts although on another places (e.g.
+as a shortcut as a first possibility in partitioning scripts although on other places (e.g.
 \fB\-\-part-type command)\fR it tries shortcuts as the last possibility.
 
 Since v2.36 libfdisk supports partition type aliases as extension to shortcuts. The alias is a

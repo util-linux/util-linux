@@ -55,7 +55,7 @@ working directory there, or when a swap file on it is in use.  The
 offending process could even be
 .B umount
 itself - it opens libc, and libc in its turn may open for example locale
-files.  A lazy unmount avoids this problem, but it may introduce another
+files.  A lazy unmount avoids this problem, but it may introduce other
 issues. See \fB\-\-lazy\fR description below.
 .SH OPTIONS
 .TP
@@ -149,7 +149,7 @@ and calls
 .BR umount (2)
 system call, otherwise it runs in the original namespace.
 It means that the target mount namespace does not have
-to contain any libraries or another requirements necessary to execute
+to contain any libraries or other requirements necessary to execute
 .BR umount (2)
 command.
 .sp
@@ -267,7 +267,7 @@ A \fBhelper=\fItype\fR marker in the mtab file will redirect
 all unmount requests
 to the \fB/sbin/umount.\fItype\fR helper independently of UID.
 .PP
-Note that \fI/etc/mtab\fR is currently deprecated and helper= and another
+Note that \fI/etc/mtab\fR is currently deprecated and helper= and other
 userspace mount options are maintained by libmount.
 .SH ENVIRONMENT
 .IP LIBMOUNT_FSTAB=<path>

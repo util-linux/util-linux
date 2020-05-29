@@ -64,7 +64,7 @@ command serves to attach the filesystem found on some device
 to the big file tree.  Conversely, the
 .BR umount (8)
 command will detach it again.  The filesystem is used to control how data is
-stored on the device or provided in a virtual way by network or another services.
+stored on the device or provided in a virtual way by network or other services.
 
 The standard form of the
 .B mount
@@ -439,7 +439,8 @@ will be writable, but the
 will be read-only.
 
 It's also possible to change nosuid, nodev, noexec, noatime, nodiratime and
-relatime VFS entry flags by "remount,bind" operation.  The another (for example
+relatime VFS entry flags by "remount,bind" operation.
+The other (for example
 filesystem specific flags) are silently ignored.  It's impossible to change mount
 options recursively (for example with \fB\-o rbind,ro\fR).
 
@@ -696,7 +697,7 @@ and calls
 .BR mount (2)
 system call, otherwise it runs in the original mount namespace.
 It means that the target namespace does not have
-to contain any libraries or another requirements necessary to execute
+to contain any libraries or other requirements necessary to execute
 .BR mount (2)
 command.
 .sp
@@ -1372,7 +1373,7 @@ system call.  The suggested format is \fBX-\fIappname\fR.\fIoption\fR.
 .TP
 .B x-*
 The same as \fBX-*\fR options, but stored permanently in the user space. It
-means the options are also available for umount or another operations.  Note
+means the options are also available for umount or other operations.  Note
 that maintain mount options in user space is tricky, because it's necessary use
 libmount based tools and there is no guarantee that the options will be always
 available (for example after a move mount operation or in unshared namespace).
