@@ -152,7 +152,7 @@ check_PROGRAMS += \
 
 blkid_tests_cflags  = -DTEST_PROGRAM $(libblkid_la_CFLAGS)
 blkid_tests_ldflags =
-blkid_tests_ldadd   = libblkid.la
+blkid_tests_ldadd   = $(LDADD) libblkid.la
 blkid_tests_ldflags += -static
 
 test_blkid_cache_SOURCES = libblkid/src/cache.c
