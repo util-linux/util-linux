@@ -55,6 +55,7 @@ _dmesg_module()
 		--time-format
 		--userspace
 		--follow
+		--follow-new
 		--decode
 		--help
 		--version"

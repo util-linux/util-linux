@@ -190,6 +190,7 @@ struct dmesg_control {
 	unsigned int	time_fmt;	/* time format */
 
 	unsigned int	follow:1,	/* wait for new messages */
+			end:1,		/* seek to the of buffer */
 			raw:1,		/* raw mode */
 			noesc:1,	/* no escape */
 			fltr_lev:1,	/* filter out by levels[] */
@@ -292,6 +293,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"), out);
 	fputs(_(" -u, --userspace             display userspace messages\n"), out);
 	fputs(_(" -w, --follow                wait for new messages\n"), out);
+	fputs(_(" -W, --follow-new            wait and print only new messages\n"), out);
 	fputs(_(" -x, --decode                decode facility and level to readable string\n"), out);
 	fputs(_(" -d, --show-delta            show time delta between printed messages\n"), out);
 	fputs(_(" -e, --reltime               show local time and time delta in readable format\n"), out);
@@ -1127,7 +1129,7 @@ static int init_kmsg(struct dmesg_control *ctl)
 	 *
 	 * ... otherwise SYSLOG_ACTION_CLEAR will have no effect for kmsg.
 	 */
-	lseek(ctl->kmsg, 0, SEEK_DATA);
+	lseek(ctl->kmsg, 0, ctl->end ? SEEK_END : SEEK_DATA);
 
 	/*
 	 * Old kernels (<3.5) allow to successfully open /dev/kmsg for
@@ -1336,6 +1338,7 @@ int main(int argc, char *argv[])
 		{ "file",          required_argument, NULL, 'F' },
 		{ "facility",      required_argument, NULL, 'f' },
 		{ "follow",        no_argument,       NULL, 'w' },
+		{ "follow-new",    no_argument,       NULL, 'W' },
 		{ "human",         no_argument,       NULL, 'H' },
 		{ "help",          no_argument,	      NULL, 'h' },
 		{ "kernel",        no_argument,       NULL, 'k' },
@@ -1375,7 +1378,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkL::l:n:iPprSs:TtuVwx",
+	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkL::l:n:iPprSs:TtuVWwx",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1465,6 +1468,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'w':
 			ctl.follow = 1;
+			break;
+		case 'W':
+			ctl.follow = 1;
+			ctl.end = 1;
 			break;
 		case 'x':
 			ctl.decode = 1;
