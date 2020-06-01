@@ -147,17 +147,38 @@ but there are other possibilities.  For example, in the case of an NFS mount,
 .I device
 may look like
 .IR knuth.cwi.nl:/dir .
-It is also possible to indicate a block special device using its filesystem label
-or UUID (see the \fB\-L\fR and \fB\-U\fR options below), or its partition label
-or UUID.  Partition identifiers are supported for example for GUID Partition
-Tables (GPT).
-
+.PP
 The device names of disk partitions are unstable; hardware reconfiguration,
 and adding or removing a device can cause changes in names.
 This is the reason why it's
 strongly recommended to use filesystem or partition identifiers like UUID or
-LABEL.
-
+LABEL. Currently supported identifiers (tags):
+.TP
+LABEL=\fIlabel\fR
+Human readable filesystem identifier. See also \fB\-L\fR.
+.TP
+UUID=\fIuuid\fR
+Filesystem universally unique identifier. The format of the UUID is usually a
+series of hex digits separated by hyphens. See also \fB\-U\fR.
+.sp
+Note that
+.BR mount (8)
+uses UUIDs as strings.  The UUIDs from the command line or from
+.BR fstab (5)
+are not converted to internal binary representation.  The string representation
+of the UUID should be based on lower case characters.
+.TP
+PARTLABEL=\fIlabel\fR
+Human readable partition identifier.  This identifier is independent on
+filesystem and does not change by mkfs or mkswap operations It's supported
+for example for GUID Partition Tables (GPT).
+.TP
+PARTUUID=\fIuuid\fR
+Partition universally unique identifier.  This identifier is independent on
+filesystem and does not change by mkfs or mkswap operations  It's supported
+for example for GUID Partition Tables (GPT).
+.RE
+.sp
 The command \fBlsblk \-\-fs\fR provides an overview of filesystems, LABELs and UUIDs
 on available block devices.  The command \fBblkid \-p <device>\fR provides details about
 a filesystem on the specified device.
@@ -180,13 +201,6 @@ symlinks, so the use of symlinks in
 has no advantage over tags.
 For more details see
 .BR libblkid (3).
-
-Note that
-.BR mount (8)
-uses UUIDs as strings.  The UUIDs from the command line or from
-.BR fstab (5)
-are not converted to internal binary representation.  The string representation
-of the UUID should be based on lower case characters.
 
 The
 .I proc
