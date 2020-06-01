@@ -1178,7 +1178,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, stdout);
 	puts(_(" -p             do not destroy the environment"));
-	puts(_(" -f             skip a second login authentication"));
+	puts(_(" -f             skip a login authentication"));
 	puts(_(" -h <host>      hostname to be used for utmp logging"));
 	puts(_(" -H             suppress hostname in the login prompt"));
 	printf("     --help     %s\n", USAGE_OPTSTR_HELP);
@@ -1240,12 +1240,6 @@ int main(int argc, char **argv)
 	setpriority(PRIO_PROCESS, 0, 0);
 	initproctitle(argc, argv);
 
-	/*
-	 * -p is used by getty to tell login not to destroy the environment
-	 * -f is used to skip a second login authentication
-	 * -h is used by other servers to pass the name of the remote
-	 *    host to login so that it may be placed in utmp and wtmp
-	 */
 	while ((c = getopt_long(argc, argv, "fHh:pV", longopts, NULL)) != -1)
 		switch (c) {
 		case 'f':
