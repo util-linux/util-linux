@@ -169,6 +169,7 @@ struct dmesg_control {
 	struct timeval	lasttime;	/* last printed timestamp */
 	struct tm	lasttm;		/* last localtime */
 	struct timeval	boot_time;	/* system boot time */
+	time_t		suspended_time;	/* time spent in suspeneded state */
 
 	int		action;		/* SYSLOG_ACTION_* */
 	int		method;		/* DMESG_METHOD_* */
@@ -824,7 +825,7 @@ static struct tm *record_localtime(struct dmesg_control *ctl,
 				   struct dmesg_record *rec,
 				   struct tm *tm)
 {
-	time_t t = ctl->boot_time.tv_sec + rec->tv.tv_sec;
+	time_t t = ctl->boot_time.tv_sec + ctl->suspended_time + rec->tv.tv_sec;
 	return localtime_r(&t, tm);
 }
 
@@ -852,7 +853,7 @@ static char *iso_8601_time(struct dmesg_control *ctl, struct dmesg_record *rec,
 			   char *buf, size_t bufsz)
 {
 	struct timeval tv = {
-		.tv_sec = ctl->boot_time.tv_sec + rec->tv.tv_sec,
+		.tv_sec = ctl->boot_time.tv_sec + ctl->suspended_time + rec->tv.tv_sec,
 		.tv_usec = rec->tv.tv_usec
 	};
 
@@ -1301,8 +1302,16 @@ static inline int dmesg_get_boot_time(struct timeval *tv)
 
 	return get_boot_time(tv);
 }
+
+static inline time_t dmesg_get_suspended_time(void)
+{
+	if (getenv("DMESG_TEST_BOOTIME"))
+		return 0;
+	return get_suspended_time();
+}
 #else
 # define dmesg_get_boot_time	get_boot_time
+# define dmesg_get_suspended_time	get_suspended_time
 #endif
 
 int main(int argc, char *argv[])
@@ -1499,9 +1508,12 @@ int main(int argc, char *argv[])
 
 	if ((is_timefmt(&ctl, RELTIME) ||
 	     is_timefmt(&ctl, CTIME)   ||
-	     is_timefmt(&ctl, ISO8601))
-	    && dmesg_get_boot_time(&ctl.boot_time) != 0)
-		ctl.time_fmt = DMESG_TIMEFTM_NONE;
+	     is_timefmt(&ctl, ISO8601))) {
+		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
+			ctl.time_fmt = DMESG_TIMEFTM_NONE;
+		else
+			ctl.suspended_time = dmesg_get_suspended_time();
+	}
 
 	if (delta)
 		switch (ctl.time_fmt) {

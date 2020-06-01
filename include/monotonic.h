@@ -15,6 +15,8 @@
 
 extern int get_boot_time(struct timeval *boot_time);
 
+extern time_t get_suspended_time(void);
+
 extern int gettime_monotonic(struct timeval *tv);
 
 #endif /* UTIL_LINUX_MONOTONIC_H */

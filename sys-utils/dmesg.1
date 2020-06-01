@@ -161,6 +161,8 @@ source used for the logs is
 .B not updated after
 system
 .BR SUSPEND / RESUME .
+Timestamps are adjusted according to current delta between boottime and monotonic
+clocks, this works only for messages printed after last resume.
 .IP "\fB\-t\fR, \fB\-\-notime\fR"
 Do not print kernel's timestamps.
 .IP "\fB\-\-time\-format\fR \fIformat\fR"

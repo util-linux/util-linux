@@ -48,6 +48,18 @@ int get_boot_time(struct timeval *boot_time)
 #endif
 }
 
+time_t get_suspended_time(void)
+{
+#if defined(CLOCK_BOOTTIME) && defined(CLOCK_MONOTONIC)
+	struct timespec boot, mono;
+
+	if (clock_gettime(CLOCK_BOOTTIME, &boot) == 0 &&
+	    clock_gettime(CLOCK_MONOTONIC, &mono) == 0)
+		return boot.tv_sec - mono.tv_sec;
+#endif
+	return 0;
+}
+
 int gettime_monotonic(struct timeval *tv)
 {
 #ifdef CLOCK_MONOTONIC
