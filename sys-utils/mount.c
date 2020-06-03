@@ -493,7 +493,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	" LABEL=<label>           specifies device by filesystem label\n"
 	" UUID=<uuid>             specifies device by filesystem UUID\n"
 	" PARTLABEL=<label>       specifies device by partition label\n"
-	" PARTUUID=<uuid>         specifies device by partition UUID\n"));
+	" PARTUUID=<uuid>         specifies device by partition UUID\n"
+	" ID=<id>                 specifies device by udev hardware ID\n"));
 
 	fprintf(out, _(
 	" <device>                specifies device by path\n"

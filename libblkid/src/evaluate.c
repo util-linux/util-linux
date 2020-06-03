@@ -59,6 +59,9 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 	const char *data;
 	int errsv = 0;
 
+	if (strcmp(token, "ID") == 0)
+		return 0; /* non-content tag */
+
 	pr = blkid_new_probe();
 	if (!pr)
 		return -1;
@@ -149,6 +152,8 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 		strcpy(dev, _PATH_DEV_BYPARTLABEL "/");
 	else if (!strcmp(token, "PARTUUID"))
 		strcpy(dev, _PATH_DEV_BYPARTUUID "/");
+	else if (!strcmp(token, "ID"))
+		strcpy(dev, _PATH_DEV_BYID "/");
 	else {
 		DBG(EVALUATE, ul_debug("unsupported token %s", token));
 		return NULL;	/* unsupported tag */

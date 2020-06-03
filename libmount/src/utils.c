@@ -72,6 +72,7 @@ int is_file_empty(const char *name)
 int mnt_valid_tagname(const char *tagname)
 {
 	if (tagname && *tagname && (
+	    strcmp("ID", tagname) == 0 ||
 	    strcmp("UUID", tagname) == 0 ||
 	    strcmp("LABEL", tagname) == 0 ||
 	    strcmp("PARTUUID", tagname) == 0 ||
