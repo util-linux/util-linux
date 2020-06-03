@@ -104,8 +104,9 @@ namespace is created by a bind mount.
 .BR \-m , " \-\-mount" [ =\fIfile ]
 Unshare the mount namespace.  If \fIfile\fP is specified, then a persistent
 namespace is created by a bind mount.
-Note that \fIfile\fP has to be located on a filesystem with the propagation
-flag set to \fBprivate\fP.  Use the command \fBfindmnt \-o+PROPAGATION\fP
+Note that \fIfile\fP must be located on a mount whose propagation type
+is not \fBshared\fP (or an error results).
+Use the command \fBfindmnt \-o+PROPAGATION\fP
 when not sure about the current setting.  See also the examples below.
 .TP
 .BR \-n , " \-\-net" [ =\fIfile ]
@@ -307,13 +308,11 @@ FOO
 The following commands
 establish a persistent mount namespace referenced by the bind mount
 .IR /root/namespaces/mnt .
-In order to ensure that this bind mount does not get propagated
-to other mount namespaces,
+In order to ensure that the creation of that bind mount succeeds,
 the parent directory
 .RI ( /root/namespaces )
-is first made a bind mount with
-.I private
-propagation.
+is made a bind mount whose propagation type is not
+.BR shared .
 .PP
 .in +4n
 .EX
