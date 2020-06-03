@@ -114,8 +114,13 @@ Unshare the network namespace.  If \fIfile\fP is specified, then a persistent
 namespace is created by a bind mount.
 .TP
 .BR \-p , " \-\-pid" [ =\fIfile ]
-Unshare the PID namespace.  If \fIfile\fP is specified then persistent
-namespace is created by a bind mount.  See also the \fB\-\-fork\fP and
+Unshare the PID namespace.  If \fIfile\fP is specified, then a persistent
+namespace is created by a bind mount.
+(Creation of a persistent PID namespace will fail if the
+.B \-\-fork
+option is not also specified.)
+.IP
+See also the \fB\-\-fork\fP and
 \fB\-\-mount-proc\fP options.
 .TP
 .BR \-u , " \-\-uts" [ =\fIfile ]
