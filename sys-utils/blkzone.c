@@ -379,10 +379,7 @@ int main(int argc, char **argv)
 {
 	int c;
 	struct blkzone_control ctl = {
-		.devname = NULL,
-		.offset = 0,
-		.count = 0,
-		.length = 0
+		.devname = NULL
 	};
 
 	static const struct option longopts[] = {
