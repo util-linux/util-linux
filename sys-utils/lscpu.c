@@ -319,7 +319,7 @@ lookup_cache(char *line, struct lscpu_desc *desc)
 	struct cpu_cache *cache;
 	long long size;
 	char *p, type;
-	int level;
+	int level, line_size, associativity;
 
 	/* Make sure line starts with "cache<nr> :" */
 	if (strncmp(line, "cache", 5) != 0)
@@ -350,6 +350,14 @@ lookup_cache(char *line, struct lscpu_desc *desc)
 	if (!p || sscanf(p, "size=%lld", &size) != 1)
 	       return 0;
 
+	p = strstr(line, "line_size=");
+	if (!p || sscanf(p, "line_size=%u", &line_size) != 1)
+		return 0;
+
+	p = strstr(line, "associativity=");
+	if (!p || sscanf(p, "associativity=%u", &associativity) != 1)
+		return 0;
+
 	desc->necaches++;
 	desc->ecaches = xrealloc(desc->ecaches,
 				 desc->necaches * sizeof(struct cpu_cache));
@@ -363,6 +371,11 @@ lookup_cache(char *line, struct lscpu_desc *desc)
 
 	cache->level = level;
 	cache->size = size * 1024;
+	cache->ways_of_associativity = associativity;
+	cache->coherency_line_size = line_size;
+	/* Number of sets for s390. For safety, just check divide by zero */
+	cache->number_of_sets = line_size ? (cache->size / line_size): 0;
+	cache->number_of_sets = associativity ? (cache->number_of_sets / associativity) : 0;
 
 	cache->type = type == 'i' ? xstrdup("Instruction") :
 		      type == 'd' ? xstrdup("Data") :
@@ -1673,82 +1686,102 @@ print_caches_readable(struct lscpu_desc *desc, int cols[], int ncols,
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
-	for (i = desc->ncaches - 1; i >= 0; i--) {
-		struct cpu_cache *ca = &desc->caches[i];
-		struct libscols_line *line;
-		int c;
-
-		line = scols_table_new_line(table, NULL);
-		if (!line)
-			err(EXIT_FAILURE, _("failed to allocate output line"));
-
-		for (c = 0; c < ncols; c++) {
-			char *data = NULL;
-			int col = cols[c];
-
-			switch (col) {
-			case COL_CACHE_NAME:
-				if (ca->name)
-					data = xstrdup(ca->name);
-				break;
-			case COL_CACHE_ONESIZE:
-				if (!ca->size)
-					break;
-				if (mod->bytes)
-					xasprintf(&data, "%" PRIu64, ca->size);
-				else
-					data = size_to_human_string(SIZE_SUFFIX_1LETTER, ca->size);
-				break;
-			case COL_CACHE_ALLSIZE:
-			{
-				uint64_t sz = 0;
-
-				if (get_cache_full_size(desc, ca, &sz) != 0)
-					break;
-				if (mod->bytes)
-					xasprintf(&data, "%" PRIu64, sz);
-				else
-					data = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
-				break;
-			}
-			case COL_CACHE_WAYS:
-				if (ca->ways_of_associativity)
-					xasprintf(&data, "%u", ca->ways_of_associativity);
-				break;
-
-			case COL_CACHE_TYPE:
-				if (ca->type)
-					data = xstrdup(ca->type);
-				break;
-			case COL_CACHE_LEVEL:
-				if (ca->level)
-					xasprintf(&data, "%d", ca->level);
-				break;
-			case COL_CACHE_ALLOCPOL:
-				if (ca->allocation_policy)
-					data = xstrdup(ca->allocation_policy);
-				break;
-			case COL_CACHE_WRITEPOL:
-				if (ca->write_policy)
-					data = xstrdup(ca->write_policy);
-				break;
-			case COL_CACHE_PHYLINE:
-				if (ca->physical_line_partition)
-					xasprintf(&data, "%u", ca->physical_line_partition);
-				break;
-			case COL_CACHE_SETS:
-				if (ca->number_of_sets)
-					xasprintf(&data, "%u", ca->number_of_sets);
-				break;
-			case COL_CACHE_COHERENCYSIZE:
-				if (ca->coherency_line_size)
-					xasprintf(&data, "%u", ca->coherency_line_size);
-				break;
-			}
-
-			if (data && scols_line_refer_data(line, c, data))
-				err(EXIT_FAILURE, _("failed to add output data"));
+	struct cpu_cache *ca, *cachesrc;
+	int end, j, shared_allsize;
+	for (j = 0; j < 2; j++) {
+		/* First check the caches from /sys/devices */
+		if (j == 0) {
+			cachesrc = desc->caches;
+			end = desc->ncaches - 1;
+			shared_allsize = 0;
 		}
+		else {
+			/* Check shared caches from /proc/cpuinfo s390 */
+			cachesrc = desc->ecaches;
+			end = desc->necaches - 1;
+			/* Dont use get_cache_full_size */
+			shared_allsize = 1;
+		}
+
+		for (i = end; i >= 0; i--) {
+			ca = &cachesrc[i];
+			struct libscols_line *line;
+			int c;
+
+			line = scols_table_new_line(table, NULL);
+			if (!line)
+				err(EXIT_FAILURE, _("failed to allocate output line"));
+
+			for (c = 0; c < ncols; c++) {
+				char *data = NULL;
+				int col = cols[c];
+
+				switch (col) {
+				case COL_CACHE_NAME:
+					if (ca->name)
+						data = xstrdup(ca->name);
+					break;
+				case COL_CACHE_ONESIZE:
+					if (!ca->size)
+						break;
+					if (mod->bytes)
+						xasprintf(&data, "%" PRIu64, ca->size);
+					else
+						data = size_to_human_string(SIZE_SUFFIX_1LETTER, ca->size);
+					break;
+				case COL_CACHE_ALLSIZE:
+				{
+					uint64_t sz = 0;
+					if (shared_allsize)
+						break;
+					if (get_cache_full_size(desc, ca, &sz) != 0)
+						break;
+					if (mod->bytes)
+						xasprintf(&data, "%" PRIu64, sz);
+					else
+						data = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
+					break;
+				}
+				case COL_CACHE_WAYS:
+					if (ca->ways_of_associativity)
+						xasprintf(&data, "%u", ca->ways_of_associativity);
+					break;
+
+				case COL_CACHE_TYPE:
+					if (ca->type)
+						data = xstrdup(ca->type);
+					break;
+				case COL_CACHE_LEVEL:
+					if (ca->level)
+						xasprintf(&data, "%d", ca->level);
+					break;
+				case COL_CACHE_ALLOCPOL:
+					if (ca->allocation_policy)
+						data = xstrdup(ca->allocation_policy);
+					break;
+				case COL_CACHE_WRITEPOL:
+					if (ca->write_policy)
+						data = xstrdup(ca->write_policy);
+					break;
+				case COL_CACHE_PHYLINE:
+					if (ca->physical_line_partition)
+						xasprintf(&data, "%u", ca->physical_line_partition);
+					break;
+				case COL_CACHE_SETS:
+					if (ca->number_of_sets)
+						xasprintf(&data, "%u", ca->number_of_sets);
+					break;
+				case COL_CACHE_COHERENCYSIZE:
+					if (ca->coherency_line_size)
+						xasprintf(&data, "%u", ca->coherency_line_size);
+					break;
+				}
+
+				if (data && scols_line_refer_data(line, c, data))
+					err(EXIT_FAILURE, _("failed to add output data"));
+			}
+		}
+
 	}
 
 	scols_print_table(table);
