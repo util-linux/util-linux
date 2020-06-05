@@ -81,6 +81,7 @@ struct blkzone_control {
 	uint64_t length;
 	uint32_t count;
 
+	unsigned int force : 1;
 	unsigned int verbose : 1;
 };
 
@@ -301,7 +302,7 @@ static int blkzone_action(struct blkzone_control *ctl)
 	if (!zonesize)
 		errx(EXIT_FAILURE, _("%s: unable to determine zone size"), ctl->devname);
 
-	fd = init_device(ctl, O_WRONLY | O_EXCL);
+	fd = init_device(ctl, O_WRONLY | (ctl->force ? 0 : O_EXCL));
 
 	if (ctl->offset & (zonesize - 1))
 		errx(EXIT_FAILURE, _("%s: offset %" PRIu64 " is not aligned "
@@ -362,6 +363,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"), out);
 	fputs(_(" -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"), out);
 	fputs(_(" -c, --count <number>   maximum number of zones\n"), out);
+	fputs(_(" -f, --force            enforce on block devices used by the system\n"), out);
 	fputs(_(" -v, --verbose          display more details\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(24));
@@ -388,6 +390,7 @@ int main(int argc, char **argv)
 	    { "count",   required_argument, NULL, 'c' }, /* max #of zones to operate on */
 	    { "length",  required_argument, NULL, 'l' }, /* max of sectors to operate on */
 	    { "offset",  required_argument, NULL, 'o' }, /* starting LBA */
+	    { "force",   no_argument,       NULL, 'f' },
 	    { "verbose", no_argument,       NULL, 'v' },
 	    { "version", no_argument,       NULL, 'V' },
 	    { NULL, 0, NULL, 0 }
@@ -412,7 +415,7 @@ int main(int argc, char **argv)
 		argc--;
 	}
 
-	while ((c = getopt_long(argc, argv, "hc:l:o:vV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hc:l:o:fvV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -428,6 +431,9 @@ int main(int argc, char **argv)
 		case 'o':
 			ctl.offset = strtosize_or_err(optarg,
 					_("failed to parse zone offset"));
+			break;
+		case 'f':
+			ctl.force = 1;
 			break;
 		case 'v':
 			ctl.verbose = 1;
