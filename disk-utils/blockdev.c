@@ -455,6 +455,7 @@ static void report_device(char *device, int quiet)
 	long ra;
 	unsigned long long bytes;
 	uint64_t start = 0;
+	char start_str[11] = { "\0" };
 	struct stat st;
 
 	fd = open(device, O_RDONLY | O_NONBLOCK);
@@ -476,19 +477,21 @@ static void report_device(char *device, int quiet)
 		    disk != st.st_rdev) {
 
 			if (ul_path_read_u64(pc, &start, "start") != 0)
-				err(EXIT_FAILURE,
-					_("%s: failed to read partition start from sysfs"),
-					device);
+				/* TRANSLATORS: Start sector not available. Max. 10 letters. */
+				sprintf(start_str, "%10s", _("N/A"));
 		}
 		ul_unref_path(pc);
 	}
+	if (!*start_str)
+		sprintf(start_str, "%10ju", start);
+
 	if (ioctl(fd, BLKROGET, &ro) == 0 &&
 	    ioctl(fd, BLKRAGET, &ra) == 0 &&
 	    ioctl(fd, BLKSSZGET, &ssz) == 0 &&
 	    ioctl(fd, BLKBSZGET, &bsz) == 0 &&
 	    blkdev_get_size(fd, &bytes) == 0) {
-		printf("%s %5ld %5d %5d %10ju %15lld   %s\n",
-		       ro ? "ro" : "rw", ra, ssz, bsz, start, bytes, device);
+		printf("%s %5ld %5d %5d %s %15lld   %s\n",
+			ro ? "ro" : "rw", ra, ssz, bsz, start_str, bytes, device);
 	} else {
 		if (!quiet)
 			warnx(_("ioctl error on %s"), device);
