@@ -32,7 +32,12 @@
 mount \- mount a filesystem
 .SH SYNOPSIS
 .B mount
-.RB [ \-l | \-h | \-V ]
+.RB [ \-h | \-V ]
+.LP
+.B mount
+.RB [ \-l ]
+.RB [ \-t
+.IR fstype ]
 .LP
 .B mount \-a
 .RB [ \-fFnrsvw ]
@@ -45,7 +50,7 @@ mount \- mount a filesystem
 .RB [ \-fnrsvw ]
 .RB [ \-o
 .IR options ]
-.IR device | dir
+.IR device | mountpoint
 .LP
 .B mount
 .RB [ \-fnrsvw ]
@@ -53,7 +58,16 @@ mount \- mount a filesystem
 .IB fstype ]
 .RB [ \-o
 .IR options ]
-.I device dir
+.I device mountpoint
+.LP
+.B mount
+.RB [ \--bind | \--rbind | \--move ]
+.I olddir newdir
+.LP
+.B mount
+.B \--make-*
+.RI [ device ]
+.I mountpoint
 .SH DESCRIPTION
 All files accessible in a Unix system are arranged in one big
 tree, the file hierarchy, rooted at
