@@ -2,12 +2,14 @@ cfdisk:  libdl libfdisk libncursesw libsmartcols libtinfo libuuid
 column:  libsmartcols 
 fdisk:  libfdisk libreadline libsmartcols libtinfo libuuid 
 fincore:  libsmartcols 
+irqtop:  libdl libncursesw librt libsmartcols libtinfo 
 libfdisk.so.1.1.0:  libuuid 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
 losetup:  libsmartcols 
 lscpu:  libsmartcols 
 lsipc:  libsmartcols 
+lsirq:  libsmartcols 
 lslogins:  libsmartcols libsystemd 
 lsmem:  libsmartcols 
 mkswap:  libuuid 
@@ -73,15 +75,16 @@ rename:
 renice:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc libutil 
+runuser:  libpam libpam_misc librt libutil 
 script:  librt libutil 
+scriptlive:  librt libutil 
 scriptreplay:  
 setarch:  
-setpriv:  ap-ng 
+setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc libutil 
-sulogin:  rypt 
+su:  libpam libpam_misc librt libutil 
+sulogin:  libcrypt 
 switch_root:  
 taskset:  
 ul:  libtinfo 

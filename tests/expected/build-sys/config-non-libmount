@@ -4,6 +4,7 @@ column:  libsmartcols
 fdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 fincore:  libsmartcols 
 findfs:  libblkid 
+irqtop:  libdl libncursesw librt libsmartcols libtinfo 
 libblkid.so.1.1.0:  
 libfdisk.so.1.1.0:  libblkid libuuid 
 libsmartcols.so.1.1.0:  
@@ -11,6 +12,7 @@ libuuid.so.1.3.0:
 losetup:  libsmartcols 
 lscpu:  libsmartcols 
 lsipc:  libsmartcols 
+lsirq:  libsmartcols 
 lslogins:  libsmartcols libsystemd 
 lsmem:  libsmartcols 
 mkswap:  libblkid libuuid 
@@ -82,15 +84,16 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc libutil 
+runuser:  libpam libpam_misc librt libutil 
 script:  librt libutil 
+scriptlive:  librt libutil 
 scriptreplay:  
 setarch:  
-setpriv:  ap-ng 
+setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc libutil 
-sulogin:  rypt 
+su:  libpam libpam_misc librt libutil 
+sulogin:  libcrypt 
 switch_root:  
 taskset:  
 ul:  libtinfo 

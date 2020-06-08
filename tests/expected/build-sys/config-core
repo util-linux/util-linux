@@ -8,6 +8,7 @@ findfs:  libblkid
 findmnt:  libblkid libmount librt libsmartcols libudev 
 fsck:  libblkid libmount librt 
 fstrim:  libblkid libmount librt 
+irqtop:  libdl libncursesw librt libsmartcols libtinfo 
 libblkid.so.1.1.0:  
 libfdisk.so.1.1.0:  libblkid libuuid 
 libmount.so.1.1.0:  libblkid librt 
@@ -17,6 +18,7 @@ losetup:  libsmartcols
 lsblk:  libblkid libmount librt libsmartcols libudev 
 lscpu:  libsmartcols 
 lsipc:  libsmartcols 
+lsirq:  libsmartcols 
 lslocks:  libblkid libmount librt libsmartcols 
 lslogins:  libsmartcols libsystemd 
 lsmem:  libsmartcols 
@@ -26,7 +28,7 @@ mount:  libblkid libmount librt
 mountpoint:  libblkid libmount librt 
 partx:  libblkid libsmartcols 
 prlimit:  libsmartcols 
-pylibmount.so:  libblkid libmount libpython2 librt 
+pylibmount.so:  libblkid libmount libpython3 librt 
 rfkill:  libsmartcols 
 sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 swaplabel:  libblkid libuuid 
@@ -96,15 +98,16 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc libutil 
+runuser:  libpam libpam_misc librt libutil 
 script:  librt libutil 
+scriptlive:  librt libutil 
 scriptreplay:  
 setarch:  
-setpriv:  ap-ng 
+setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc libutil 
-sulogin:  rypt 
+su:  libpam libpam_misc librt libutil 
+sulogin:  libcrypt 
 switch_root:  
 taskset:  
 ul:  libtinfo 

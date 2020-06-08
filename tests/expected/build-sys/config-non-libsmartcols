@@ -10,7 +10,7 @@ libuuid.so.1.3.0:
 mkswap:  libblkid libuuid 
 mount:  libblkid libmount librt 
 mountpoint:  libblkid libmount librt 
-pylibmount.so:  libblkid libmount libpython2 librt 
+pylibmount.so:  libblkid libmount libpython3 librt 
 swaplabel:  libblkid libuuid 
 umount:  libblkid libmount librt 
 uuidd:  librt libsystemd libuuid 
@@ -69,15 +69,16 @@ rename:
 renice:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc libutil 
+runuser:  libpam libpam_misc librt libutil 
 script:  librt libutil 
+scriptlive:  librt libutil 
 scriptreplay:  
 setarch:  
-setpriv:  ap-ng 
+setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc libutil 
-sulogin:  rypt 
+su:  libpam libpam_misc librt libutil 
+sulogin:  libcrypt 
 switch_root:  
 taskset:  
 ul:  libtinfo 

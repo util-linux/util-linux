@@ -1,38 +1,40 @@
 blkid:  libblkid 
-cfdisk:  libblkid libdl libfdisk libmount libncursesw librt libselinux libsmartcols libtinfo libuuid 
+cfdisk:  libblkid libcryptsetup libdl libfdisk libmount libncursesw librt libselinux libsmartcols libtinfo libuuid 
 column:  libsmartcols 
-eject:  libblkid libmount librt libselinux 
+eject:  libblkid libcryptsetup libmount librt libselinux 
 fdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 fincore:  libsmartcols 
 findfs:  libblkid 
-findmnt:  libblkid libmount librt libselinux libsmartcols libudev 
-fsck:  libblkid libmount librt libselinux 
-fstrim:  libblkid libmount librt libselinux 
+findmnt:  libblkid libcryptsetup libmount librt libselinux libsmartcols libudev 
+fsck:  libblkid libcryptsetup libmount librt libselinux 
+fstrim:  libblkid libcryptsetup libmount librt libselinux 
+irqtop:  libdl libncursesw librt libsmartcols libtinfo 
 libblkid.so.1.1.0:  
 libfdisk.so.1.1.0:  libblkid libuuid 
-libmount.so.1.1.0:  libblkid librt libselinux 
+libmount.so.1.1.0:  libblkid libcryptsetup librt libselinux 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
 losetup:  libsmartcols 
-lsblk:  libblkid libmount librt libselinux libsmartcols libudev 
+lsblk:  libblkid libcryptsetup libmount librt libselinux libsmartcols libudev 
 lscpu:  libsmartcols 
 lsipc:  libsmartcols 
-lslocks:  libblkid libmount librt libselinux libsmartcols 
+lsirq:  libsmartcols 
+lslocks:  libblkid libcryptsetup libmount librt libselinux libsmartcols 
 lslogins:  libselinux libsmartcols libsystemd 
 lsmem:  libsmartcols 
-lsns:  libblkid libmount librt libselinux libsmartcols 
+lsns:  libblkid libcryptsetup libmount librt libselinux libsmartcols 
 mkswap:  libblkid libselinux libuuid 
-mount:  libblkid libmount librt libselinux 
-mountpoint:  libblkid libmount librt libselinux 
+mount:  libblkid libcryptsetup libmount librt libselinux 
+mountpoint:  libblkid libcryptsetup libmount librt libselinux 
 partx:  libblkid libsmartcols 
 prlimit:  libsmartcols 
-pylibmount.so:  libblkid libmount libpython2 librt libselinux 
+pylibmount.so:  libblkid libcryptsetup libmount libpython3 librt libselinux 
 rfkill:  libsmartcols 
 sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 swaplabel:  libblkid libuuid 
-swapoff:  libblkid libmount librt libselinux 
-swapon:  libblkid libmount librt libselinux libsmartcols 
-umount:  libblkid libmount librt libselinux 
+swapoff:  libblkid libcryptsetup libmount librt libselinux 
+swapon:  libblkid libcryptsetup libmount librt libselinux libsmartcols 
+umount:  libblkid libcryptsetup libmount librt libselinux 
 uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
 uuidparse:  libsmartcols libuuid 
@@ -87,7 +89,7 @@ mkfs.cramfs:  libz
 mkfs.minix:  
 more:  libtinfo 
 namei:  
-newgrp:  rypt 
+newgrp:  libcrypt 
 nologin:  
 nsenter:  libselinux 
 pg:  libdl libncursesw libtinfo 
@@ -99,15 +101,16 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc libutil 
+runuser:  libpam libpam_misc librt libutil 
 script:  librt libutempter libutil 
+scriptlive:  librt libutil 
 scriptreplay:  
 setarch:  
-setpriv:  ap-ng 
+setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc libutil 
-sulogin:  libselinux rypt 
+su:  libpam libpam_misc librt libutil 
+sulogin:  libcrypt libselinux 
 switch_root:  
 taskset:  
 tunelp:  
