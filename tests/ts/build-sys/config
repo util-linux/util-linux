@@ -24,7 +24,7 @@ ts_cd $top_builddir && make -j clean &> /dev/null
 for conf in $config_gen_dir/config-gen.d/*.conf; do
 	ts_init_subtest $(basename $conf | sed 's/\.conf//')
 
-	opts=$(ul_get_configuration $conf)
+	opts=$(ul_get_configuration $conf | sed 's/--enable-asan//')
 
 	olddir=$(pwd)
 	ts_cd $top_builddir
