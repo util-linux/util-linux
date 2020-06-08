@@ -1667,8 +1667,9 @@ static void
 print_caches_readable(struct lscpu_desc *desc, int cols[], int ncols,
 	       struct lscpu_modifier *mod)
 {
-	int i;
 	struct libscols_table *table;
+	struct cpu_cache *cachesrc;
+	int i, end, j, shared_allsize;
 
 	scols_init_debug(0);
 
@@ -1686,16 +1687,13 @@ print_caches_readable(struct lscpu_desc *desc, int cols[], int ncols,
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
-	struct cpu_cache *ca, *cachesrc;
-	int end, j, shared_allsize;
 	for (j = 0; j < 2; j++) {
 		/* First check the caches from /sys/devices */
 		if (j == 0) {
 			cachesrc = desc->caches;
 			end = desc->ncaches - 1;
 			shared_allsize = 0;
-		}
-		else {
+		} else {
 			/* Check shared caches from /proc/cpuinfo s390 */
 			cachesrc = desc->ecaches;
 			end = desc->necaches - 1;
@@ -1704,8 +1702,8 @@ print_caches_readable(struct lscpu_desc *desc, int cols[], int ncols,
 		}
 
 		for (i = end; i >= 0; i--) {
-			ca = &cachesrc[i];
 			struct libscols_line *line;
+			struct cpu_cache *ca = &cachesrc[i];
 			int c;
 
 			line = scols_table_new_line(table, NULL);
@@ -1714,9 +1712,8 @@ print_caches_readable(struct lscpu_desc *desc, int cols[], int ncols,
 
 			for (c = 0; c < ncols; c++) {
 				char *data = NULL;
-				int col = cols[c];
 
-				switch (col) {
+				switch (cols[c]) {
 				case COL_CACHE_NAME:
 					if (ca->name)
 						data = xstrdup(ca->name);
@@ -1746,7 +1743,6 @@ print_caches_readable(struct lscpu_desc *desc, int cols[], int ncols,
 					if (ca->ways_of_associativity)
 						xasprintf(&data, "%u", ca->ways_of_associativity);
 					break;
-
 				case COL_CACHE_TYPE:
 					if (ca->type)
 						data = xstrdup(ca->type);
