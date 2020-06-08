@@ -1783,7 +1783,7 @@ AM_CONDITIONAL([BUILD_IPCS], [test "x$build_ipcs" = xyes])
 
 AC_ARG_ENABLE([irqtop],
   AS_HELP_STRING([--disable-irqtop], [do not build irqtop]),
-  [], [UL_DEFAULT_ENABLE([irqtop], [yes])]
+  [], [UL_DEFAULT_ENABLE([irqtop], [check])]
 )
 UL_BUILD_INIT([irqtop])
 UL_REQUIRES_LINUX([irqtop])
@@ -1794,7 +1794,7 @@ AM_CONDITIONAL([BUILD_IRQTOP], [test "x$build_irqtop" = xyes])
 
 AC_ARG_ENABLE([lsirq],
   AS_HELP_STRING([--disable-lsirq], [do not build lsirq]),
-  [], [UL_DEFAULT_ENABLE([lsirq], [yes])]
+  [], [UL_DEFAULT_ENABLE([lsirq], [check])]
 )
 UL_BUILD_INIT([lsirq])
 UL_REQUIRES_LINUX([lsirq])
