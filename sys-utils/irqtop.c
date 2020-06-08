@@ -188,7 +188,9 @@ static int event_loop(struct irqtop_ctl *ctl, struct irq_output *out)
 				}
 				if (siginfo.ssi_signo == SIGWINCH) {
 					get_terminal_dimension(&ctl->cols, &ctl->rows);
+#if HAVE_RESIZETERM
 					resizeterm(ctl->rows, ctl->cols);
+#endif
 				}
 				else {
 					ctl->request_exit = 1;
@@ -319,7 +321,9 @@ int main(int argc, char **argv)
 
 	ctl.win = initscr();
 	get_terminal_dimension(&ctl.cols, &ctl.rows);
+#if HAVE_RESIZETERM
 	resizeterm(ctl.rows, ctl.cols);
+#endif
 	curs_set(0);
 
 	ctl.hostname = xgethostname();

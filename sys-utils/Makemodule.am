@@ -57,8 +57,14 @@ irqtop_SOURCES = sys-utils/irqtop.c \
 		 sys-utils/irq-common.c \
 		 sys-utils/irq-common.h \
 		 lib/monotonic.c
-irqtop_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(REALTIME_LIBS) libsmartcols.la
-irqtop_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS) -I$(ul_libsmartcols_incdir)
+irqtop_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS) libsmartcols.la
+irqtop_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+if HAVE_SLANG
+irqtop_LDADD += -lslang
+else
+irqtop_CFLAGS += $(NCURSES_CFLAGS)
+irqtop_LDADD += $(NCURSES_LIBS)
+endif
 endif
 
 if BUILD_LSIRQ
