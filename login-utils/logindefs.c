@@ -279,8 +279,8 @@ void logindefs_load_file(const char *filename)
 	logindefs_loader = NULL; /* No recursion */
 
 #if USE_VENDORDIR
-	if (asprintf (&path, _PATH_VENDORDIR"/%s", filename) == -1)
-	        return;
+	xasprintf(&path, _PATH_VENDORDIR"/%s", filename);
+
 	if (!econf_readFile(&file_l, path, "= \t", "#")) {
 	        if (file == NULL)
 		        file = file_l;
@@ -293,8 +293,8 @@ void logindefs_load_file(const char *filename)
 	free (path);
 #endif
 
-	if (asprintf (&path, "/etc/%s", filename) == -1)
-	        return;
+	xasprintf(&path, "/etc/%s", filename);
+
 	if (!econf_readFile(&file_l, path, "= \t", "#")) {
 	        if (file == NULL)
 		        file = file_l;
@@ -303,16 +303,15 @@ void logindefs_load_file(const char *filename)
 			file = file_m;
 			econf_free(file_l);
 		}
-	} else {
-	  /* Try original filename, could be relative */
-	  	if (!econf_readFile(&file_l, filename, "= \t", "#")) {
-		        if (file == NULL)
-			        file = file_l;
-  	                else if (!econf_mergeFiles(&file_m, file, file_l)) {
-	                        econf_free(file);
-				file = file_m;
-				econf_free(file_l);
-			}
+
+	/* Try original filename, could be relative */
+	} else if (!econf_readFile(&file_l, filename, "= \t", "#")) {
+		if (file == NULL)
+			file = file_l;
+		else if (!econf_mergeFiles(&file_m, file, file_l)) {
+			econf_free(file);
+			file = file_m;
+			econf_free(file_l);
 		}
 	}
 	free (path);
@@ -383,8 +382,8 @@ const char *getlogindefs_str(const char *name, const char *dflt)
 	}
 	if (value)
 		return value;
-	else
-		return strdup("");
+
+	return xstrdup("");
 }
 #endif /* !HAVE_LIBECONF */
 
