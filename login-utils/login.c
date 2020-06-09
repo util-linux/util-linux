@@ -99,7 +99,6 @@
 
 #if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
 # include <dirent.h>
-# include "fileutils.h"
 # define MOTDDIR_SUPPORT
 # define MOTDDIR_EXT	".motd"
 # define MOTDDIR_EXTSIZ	(sizeof(MOTDDIR_EXT) - 1)

@@ -1046,7 +1046,6 @@ int skip_fline(FILE *fp)
 }
 
 #ifdef TEST_PROGRAM_STRUTILS
-#include <stdio.h>
 #include "xalloc.h"
 
 struct testS {
