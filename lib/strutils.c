@@ -1060,7 +1060,7 @@ static int test_strdup_to_member(int argc, char *argv[])
 
 	xx = calloc(1, sizeof(*xx));
 	if (!xx)
-		err_oom();
+		err(EXIT_FAILURE, "calloc() failed");
 
 	strdup_to_struct_member(xx, name, argv[1]);
 	strdup_to_struct_member(xx, value, argv[2]);
