@@ -30,6 +30,7 @@ zramctl:  libsmartcols
 addpart:  
 agetty:  
 blkdiscard:  librt 
+blkid.static: STATIC
 blkzone:  
 blockdev:  
 cal:  libtinfo 
@@ -47,6 +48,7 @@ delpart:
 dmesg:  librt libtinfo 
 fallocate:  
 fdformat:  
+fdisk.static: STATIC
 flock:  librt 
 fsck.cramfs:  libz 
 fsck.minix:  
@@ -66,6 +68,7 @@ ldattach:
 logger:  libsystemd 
 login:  libpam libpam_misc 
 look:  
+losetup.static: STATIC
 mcookie:  
 mesg:  
 mkfs:  
@@ -73,9 +76,11 @@ mkfs.bfs:
 mkfs.cramfs:  libz 
 mkfs.minix:  
 more:  libtinfo 
+mount.static: STATIC
 namei:  
 nologin:  
 nsenter:  
+nsenter.static: STATIC
 pivot_root:  
 raw:  
 readprofile:  
@@ -92,12 +97,15 @@ setarch:
 setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
+sfdisk.static: STATIC
 su:  libpam libpam_misc librt libutil 
 sulogin:  libcrypt 
 switch_root:  
 taskset:  
 ul:  libtinfo 
+umount.static: STATIC
 unshare:  
+unshare.static: STATIC
 utmpdump:  
 wall:  
 whereis:  

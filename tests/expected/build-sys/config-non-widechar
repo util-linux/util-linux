@@ -1,0 +1,8 @@
+blkid.static: STATIC
+fdisk.static: STATIC
+losetup.static: STATIC
+mount.static: STATIC
+nsenter.static: STATIC
+sfdisk.static: STATIC
+umount.static: STATIC
+unshare.static: STATIC
