@@ -115,7 +115,7 @@ To include newlines in MESSAGE, specify MESSAGE several times.  This is
 handled as a special case, other fields will be stored as an array in
 the journal if they appear multiple times.
 .TP
-.BR \-\-msgid " \fImsgid
+.BI \-\-msgid " msgid"
 Sets the RFC5424 MSGID field.  Note that the space character is not permitted
 inside of \fImsgid\fR.  This option is only used if \fB\-\-rfc5424\fR is
 specified as well; otherwise, it is silently ignored.
@@ -225,12 +225,13 @@ than once for the same element.  Note that the quotation marks around
 .IP
 produces:
 .IP
-.nf
+.\".nf
+.\" this long line gets cut of in the output of "troff", and wraps
+.\" in "nroff"
 \fB  <13>1 2015-10-01T14:07:59.168662+02:00 ws kzak - - [timeQuality tzKnown="1" isSynced="1" syncAccuracy="218616"][zoo@123 tiger="hungry" zebra="running"][manager@123 onMeeting="yes"] this is message
-.fi
-.IP
+.\".fi
 .TP
-.BR \-S , " -\-size " \fIsize
+.BR \-S , " \-\-size " \fIsize
 Sets the maximum permitted message size to \fIsize\fR.  The default
 is 1KiB characters, which is the limit traditionally used and specified
 in RFC 3164.  With RFC 5424, this limit has become flexible.  A good assumption
