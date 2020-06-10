@@ -64,7 +64,7 @@ uses BLKRRPART (reread partition table) ioctl to make sure that the device is
 not used by system or other tools (see also \-\-no-reread).  It's possible that
 this feature or another sfdisk activity races with \fBudevd\fR.  The recommended way
 how to avoid possible collisions is to use \fB\-\-lock\fR option.
-The exclusive lock will cause udevd to skip the event handling on the device. 
+The exclusive lock will cause udevd to skip the event handling on the device.
 .PP
 The sfdisk prompt is only a hint for users and a displayed partition number does
 not mean that the same partition table entry will be created (if -N not
