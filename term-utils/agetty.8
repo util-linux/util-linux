@@ -9,7 +9,6 @@ agetty \- alternative Linux getty
 
 .SH DESCRIPTION
 .ad
-.fi
 \fBagetty\fP opens a tty port, prompts for a login name and invokes
 the /bin/login command.  It is normally invoked by \fBinit\fP(8).
 
@@ -217,11 +216,11 @@ program that \fBagetty\fR starts (usually /bin/login) is run as root.
 Do not print a newline before writing out /etc/issue.
 .TP
 \-o, \-\-login\-options "\fIlogin_options\fP"
-Options  and arguments that  are passed to \fBlogin\fP(1). Where \\u is
+Options and arguments that  are passed to \fBlogin\fP(1). Where \eu is
 replaced by the login name. For example:
 .RS
 .IP "" 4
-.B "\-\-login\-options '-h darkstar -- \\\u'"
+.B "\-\-login\-options '\-h darkstar \-\- \eu'"
 .PP
 See \fB\-\-autologin\fR, \fB\-\-login\-program\fR and \fB\-\-remote\fR.
 .PP
@@ -304,7 +303,6 @@ Display version information and exit.
 .TP
 \-\-help
 Display help text and exit.
-.PP
 .SH EXAMPLE
 This section shows examples for the process field of an entry in the
 \fI/etc/inittab\fP file.  You'll have to prepend appropriate values
@@ -486,7 +484,6 @@ problem reports (if syslog(3) is not used).
 \fIinit\fP(8) configuration file for SysV-style init daemon.
 .SH BUGS
 .ad
-.fi
 The baud-rate detection feature (the \fB\-\-extract\-baud\fP option) requires that
 \fBagetty\fP be scheduled soon enough after completion of a dial-in
 call (within 30 ms with modems that talk at 2400 baud).  For robustness,
@@ -500,7 +497,6 @@ The baud-rate detection feature (the \fB\-\-extract\-baud\fP option) requires th
 the modem emits its status message \fIafter\fP raising the DCD line.
 .SH DIAGNOSTICS
 .ad
-.fi
 Depending on how the program was configured, all diagnostics are
 written to the console device or reported via the \fBsyslog\fR(3) facility.
 Error messages are produced if the \fIport\fP argument does not
