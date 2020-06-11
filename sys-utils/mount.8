@@ -85,9 +85,7 @@ The standard form of the
 command is:
 .RS
 
-.br
 .BI "mount \-t" " type device dir"
-.br
 
 .RE
 This tells the kernel to attach the filesystem found on
@@ -899,7 +897,7 @@ but mount operations is done on another place, for example:
 .RS
 .RS
 .sp
-.B "mount \-\-all \-\-target\-prefix /chroot \-o X\-mount.mkdir
+.B "mount \-\-all \-\-target\-prefix /chroot \-o X\-mount.mkdir"
 .sp
 .RE
 mounts all from system
@@ -2237,7 +2235,7 @@ Enable POSIX Access Control Lists.  See the
 .BR acl (5)
 manual page.
 .TP
-.BR barrier=none " / " barrier=flush "
+.BR barrier=none " / " barrier=flush
 This disables / enables the use of write barriers in the journaling code.
 barrier=none disables, barrier=flush enables (default).  This also requires an
 IO stack which can support barriers, and if reiserfs gets an error on a barrier

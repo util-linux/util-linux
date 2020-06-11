@@ -30,7 +30,6 @@ The
 and
 .B \-\-console\-level
 options are mutually exclusive.
-.PP
 .IP "\fB\-C\fR, \fB\-\-clear\fR"
 Clear the ring buffer.
 .IP "\fB\-c\fR, \fB\-\-read\-clear\fR"
@@ -87,7 +86,7 @@ of levels.  For example:
 will print error and warning messages only.  For all supported levels see the
 .B \-\-help
 output.
-.IP "\fB\-n\fR, \fB\-\-console\-level \fIlevel\fR
+.IP "\fB\-n\fR, \fB\-\-console\-level \fIlevel\fR"
 Set the
 .I level
 at which printing of messages is done to the console.  The
@@ -144,7 +143,7 @@ kernel interface to read kernel messages.  The default is to use /dev/kmsg rathe
 than
 .BR syslog (2)
 since kernel 3.5.0.
-.IP "\fB\-s\fR, \fB\-\-buffer\-size \fIsize\fR
+.IP "\fB\-s\fR, \fB\-\-buffer\-size \fIsize\fR"
 Use a buffer of
 .I size
 to query the kernel ring buffer.  This is 16392 by default.  (The default
@@ -252,7 +251,6 @@ for more details.
 Karel Zak
 .ME
 
-.br
 .B dmesg
 was originally written by
 .MT tytso@athena.mit.edu

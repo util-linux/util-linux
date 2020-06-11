@@ -250,7 +250,6 @@ restricted so that a less privileged user can not get more access to sensitive
 files that a more privileged user made unavailable. In short the rule for proc
 and sysfs is as close to a bind mount as possible.
 .SH EXAMPLES
-.PP
 The following command creates a PID namespace, using
 .B \-\-fork
 to ensure that the executed command is performed in a child process
@@ -347,7 +346,7 @@ is killed, all of the processes within the PID namespace are killed.
 
 .BR "# ps h \-o 'comm' $!     " "# Show that background job is unshare(1)"
 unshare
-.BR "# kill $!               " "# Kill unshare(1)
+.BR "# kill $!               " "# Kill unshare(1)"
 .B # pidof sleep
 .EE
 .in

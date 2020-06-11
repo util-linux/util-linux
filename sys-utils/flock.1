@@ -40,7 +40,6 @@ flock \- manage locks from shell scripts
 .B flock
 .RI [options] " number"
 .SH DESCRIPTION
-.PP
 This utility manages
 .BR flock (2)
 locks from within shell scripts or from the command line.
@@ -181,7 +180,6 @@ then execute flock and grab an exclusive non-blocking lock (using the script
 itself as the lock file) before re-execing itself with the right arguments.  It
 also sets the FLOCKER env var to the right value so it doesn't run again.
 .TP
-.TQ
 shell> exec 4<>/var/lock/mylockfile
 .TQ
 shell> flock -n 4
