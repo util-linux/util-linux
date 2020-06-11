@@ -31,7 +31,8 @@ ts_check_test_command "$TS_CMD_FDISK"
 ts_skip_nonroot
 ts_check_prog "mdadm"
 
-TS_KNOWN_FAIL="yes"	# due to recent changes in mdadm
+# rhbz#182625: It can't create new raid0 with metadata 0.90 from mdadm-4.1
+TS_KNOWN_FAIL="yes"
 
 # set global variable TS_DEVICE
 ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3

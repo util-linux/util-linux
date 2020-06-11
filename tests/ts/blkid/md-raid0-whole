@@ -29,7 +29,8 @@ ts_skip_nonroot
 ts_check_losetup
 ts_check_prog "mdadm"
 
-TS_KNOWN_FAIL="yes"	# due to recent changes in mdadm
+# rhbz#182625: It can't create new raid0 with metadata 0.90 from mdadm-4.1
+TS_KNOWN_FAIL="yes"
 
 ts_log "Initialize devices"
 IMGNAME="${TS_OUTDIR}/${TS_TESTNAME}"
