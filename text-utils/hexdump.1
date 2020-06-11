@@ -203,7 +203,6 @@ NULL
 \ev
 .PD
 .RE
-.PP
 .SS Conversion strings
 The
 .B hexdump
@@ -353,20 +352,20 @@ Display the input in perusal format:
    "%06.6_ao "  12/1 "%3_u "
    "\et\et" "%_p "
    "\en"
-.nf
+.fi
 .PP
 Implement the \-x option:
 .nf
    "%07.7_Ax\en"
    "%07.7_ax  " 8/2 "%04x " "\en"
-.nf
+.fi
 .PP
 MBR Boot Signature example: Highlight the addresses cyan and the bytes at
 offsets 510 and 511 green if their value is 0xAA55, red otherwise.
 .nf
    "%07.7_Ax_L[cyan]\en"
    "%07.7_ax_L[cyan]  " 8/2 "   %04x_L[green:0xAA55@510-511,!red:0xAA55@510-511] " "\en"
-.nf
+.fi
 .SH COLORS
 Implicit coloring can be disabled by an empty file \fI/etc/terminal-colors.d/hexdump.disable\fR.
 

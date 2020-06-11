@@ -55,12 +55,10 @@ possible to modify by \fB\-\-table-*\fP options.  Use this mode if not sure.
 .PP
 Input is taken from \fIfile\fR, or otherwise from standard input.  Empty lines
 are ignored and all invalid multibyte sequences are encoded by \\x<hex> convention.
-.PP
 .SH OPTIONS
 The argument \fIcolumns\fP for \fB\-\-table-*\fP options is comma separated
 list of the column names as defined by \fB\-\-table-columns\fP or it's column
 number in order as specified by input. It's possible to mix names and numbers.
-.PP
 .IP "\fB\-J, \-\-json\fP"
 Use JSON output format to print the table, the option
 \fB\-\-table\-columns\fP is required and the option \fB\-\-table\-name\fP is recommended.
@@ -116,7 +114,6 @@ other anomalies in child and parent relation are silently ignored.
 Specify column with line ID to create child-parent relation.
 .IP "\fB\-p, \-\-tree\-parent\fP \fIcolumn\fP"
 Specify column with parent ID to create child-parent relation.
-.PP
 .IP "\fB\-x, \-\-fillrows\fP"
 Fill rows before filling columns.
 .IP "\fB\-V\fR, \fB\-\-version\fR"
@@ -167,8 +164,6 @@ Print fstab and hide unnamed columns:
 .EX
 \fBsed 's/#.*//' /etc/fstab | column \-\-table \-\-table-columns SOURCE,TARGET,TYPE \-\-table-hide \-\fR
 .EE
-.PP
-
 .PP
 Print a tree:
 .EX
