@@ -33,7 +33,7 @@ Clear supplementary groups.
 .TP
 .BR \-d , " \-\-dump"
 Dump the current privilege state.
-Can be specified more than once to show extra,
+This option can be specified more than once to show extra,
 mostly useless, information.  Incompatible with all other options.
 .TP
 .B \-\-groups \fIgroup\fR...
@@ -55,14 +55,17 @@ where \fIN\fR is the internal capability index used by Linux.
 .B +all
 and
 .B \-all
-can be used to add or remove all caps.  The set of capabilities starts out as
+can be used to add or remove all caps.
+.IP
+The set of capabilities starts out as
 the current inheritable set for
 .BR \-\-inh\-caps ,
 the current ambient set for
 .B \-\-ambient\-caps
 and the current bounding set for
 .BR \-\-bounding\-set .
-If you drop something from the bounding set without also dropping it from the
+.IP
+If you drop a capability from the bounding set without also dropping it from the
 inheritable set, you are likely to become confused.  Do not do that.
 .TP
 .B \-\-keep\-groups
@@ -170,11 +173,16 @@ to fail at AppArmor's whim.
 .TP
 .B \-\-reset\-env
 Clears all the environment variables except TERM; initializes the environment variables HOME, SHELL, USER, LOGNAME
-according to the user's passwd entry; sets PATH to \fI/usr/local/bin:/bin:/usr/bin\fR for a regual user and to
+according to the user's passwd entry; sets PATH to \fI/usr/local/bin:/bin:/usr/bin\fR for a regular user and to
 \fI/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\fR for root.
 .sp
-The environment variable PATH may be different on systems where /bin and /sbin
-are merged into /usr.  The environment variable SHELL defaults to \fI/bin/sh\fR if none is given in the user's
+The environment variable PATH may be different on systems where
+.I /bin
+and
+.I /sbin
+are merged into
+.IR /usr .
+The environment variable SHELL defaults to \fI/bin/sh\fR if none is given in the user's
 passwd entry.
 .TP
 .BR \-V , " \-\-version"
