@@ -28,6 +28,7 @@ _lsirq_module()
 	esac
 	OPTS="	--json
 		--pairs
+		--noheadings
 		--output
 		--sort
 		--help

@@ -16,6 +16,7 @@ _blkdiscard_module()
 	case $cur in
 		-*)
 			OPTS="
+				--force
 				--offset
 				--length
 				--step

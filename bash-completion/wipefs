@@ -41,6 +41,7 @@ _wipefs_module()
 				--force
 				--noheadings
 				--json
+				--lock
 				--no-act
 				--offset
 				--output

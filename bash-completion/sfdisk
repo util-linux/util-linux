@@ -58,10 +58,12 @@ _sfdisk_module()
 				--show-geometry
 				--list
 				--list-free
+				--disk-id
 				--reorder
 				--show-size
 				--list-types
 				--verify
+				--relocate
 				--delete
 				--part-label
 				--part-type
@@ -73,6 +75,7 @@ _sfdisk_module()
 				--move-data
 				--force
 				--color
+				--lock
 				--partno
 				--no-act
 				--no-reread

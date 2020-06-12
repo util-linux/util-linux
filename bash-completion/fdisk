@@ -75,6 +75,9 @@ _fdisk_module()
 				--compatibility
 				--color
 				--list
+				--list-details
+				--noauto-pt
+				--lock
 				--output
 				--type
 				--units
