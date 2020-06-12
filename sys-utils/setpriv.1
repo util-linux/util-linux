@@ -65,6 +65,22 @@ the current ambient set for
 and the current bounding set for
 .BR \-\-bounding\-set .
 .IP
+Note the following restrictions (detailed in
+.BR capabilities (7))
+regarding modifications to these capability sets:
+.RS
+.IP * 2
+A capability can be added to the inheritable set only if it is
+currently present in the bounding set.
+.IP *
+A capability can be added to the ambient set only if it is currently
+present in both the permitted and inheritable sets.
+.IP *
+Notwithstanding the syntax offered by
+.BR setpriv ,
+the kernel does not permit capabilities to be added to the bounding set.
+.RE
+.IP
 If you drop a capability from the bounding set without also dropping it from the
 inheritable set, you are likely to become confused.  Do not do that.
 .TP
