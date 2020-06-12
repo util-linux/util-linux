@@ -10,7 +10,7 @@ runuser \- run a command with substitute user and group ID
 .RI [ user " [" argument "...]]"
 .SH DESCRIPTION
 .B runuser
-allows to run commands with a substitute user and group ID.
+can be used to to run commands with a substitute user and group ID.
 If the option \fB\-u\fR is not given, it falls back to
 .BR su -compatible
 semantics and a shell is executed.
@@ -26,7 +26,8 @@ The command
 .B runuser
 does not have to be installed with set-user-ID permissions.
 .PP
-If the PAM session is not required then recommended solution is to use
+If the PAM session is not required,
+then the recommended solution is to use the
 .BR setpriv (1)
 command.
 .PP
@@ -37,7 +38,7 @@ defaults to running an interactive shell as
 .PP
 For backward compatibility,
 .B runuser
-defaults to not change the current directory and to only set the
+defaults to not changing the current directory and to setting only the
 environment variables
 .B HOME
 and
@@ -55,8 +56,10 @@ uses PAM for session management.
 .PP
 Note that
 .B runuser
-in all cases use PAM (pam_getenvlist()) to do final environment modification.  The command line options
-like \fB\-\-login\fR or \fB\-\-preserve\-environment\fR affect environment before it's modified by PAM.
+in all cases use PAM (pam_getenvlist()) to do final environment modification.
+Command-line options
+such as \fB\-\-login\fR or \fB\-\-preserve\-environment\fR affect
+the environment before it is modified by PAM.
 .SH OPTIONS
 .TP
 .BR \-c , " \-\-command" = \fIcommand
@@ -76,48 +79,48 @@ shell.
 The primary group to be used.  This option is allowed for the root user only.
 .TP
 .BR \-G , " \-\-supp\-group" = \fIgroup
-Specify a supplemental group.  This option is available to the root user only.  The first specified
-supplementary group is also used as a primary group if the option \fB\-\-group\fR is unspecified.
+Specify a supplementary group.
+This option is available to the root user only.  The first specified
+supplementary group is also used as a primary group
+if the option \fB\-\-group\fR is not specified.
 .TP
 .BR \- , " \-l" , " \-\-login"
 Start the shell as a login shell with an environment similar to a real
 login:
-.RS 10
-.TP
-o
+.RS
+.IP * 2
 clears all the environment variables except for
 .B TERM
 and variables specified by \fB\-\-whitelist\-environment\fR
-.TP
-o
+.IP *
 initializes the environment variables
 .BR HOME ,
 .BR SHELL ,
 .BR USER ,
 .BR LOGNAME ,
 .B PATH
-.TP
-o
+.IP *
 changes to the target user's home directory
-.TP
-o
+.IP *
 sets argv[0] of the shell to
 .RB ' \- '
 in order to make the shell a login shell
 .RE
 .TP
 .BR \-P , " \-\-pty"
-Create pseudo-terminal for the session. The independent terminal provides
-better security as user does not share terminal with the original
-session.  This allow to avoid TIOCSTI ioctl terminal injection and other
-security attacks against terminal file descriptors. The all session is also
-possible to move to background (e.g., "runuser \-\-pty \-u username \-\- command &").
+Create a pseudo-terminal for the session. The independent terminal provides
+better security as user does not share a terminal with the original
+session.
+This permits the avoidance of TIOCSTI ioctl terminal injection and other
+security attacks against terminal file descriptors. The entire session can also
+be moved to background (e.g., "runuser \-\-pty \-u username \-\- command &").
 If the pseudo-terminal is enabled then runuser command works
 as a proxy between the sessions (copy stdin and stdout).
 .sp
 This feature is mostly designed for interactive sessions. If the standard input
-is not a terminal, but for example pipe (e.g., echo "date" | runuser \-\-pty \-u user)
-than ECHO flag for the pseudo-terminal is disabled to avoid messy output.
+is not a terminal,
+but for example a pipe (e.g., echo "date" | runuser \-\-pty \-u user),
+then the ECHO flag for the pseudo-terminal is disabled to avoid messy output.
 .TP
 .BR \-m , " \-p" , " \-\-preserve\-environment"
 Preserve the entire environment, i.e., it does not set
@@ -131,28 +134,24 @@ The option is ignored if the option \fB\-\-login\fR is specified.
 .BR \-s , " \-\-shell" = \fIshell
 Run the specified \fIshell\fR instead of the default.  The shell to run is
 selected according to the following rules, in order:
-.RS 10
-.TP
-o
+.RS
+.IP * 2
 the shell specified with
 .B \-\-shell
-.TP
-o
+.IP *
 the shell specified in the environment variable
 .B SHELL
 if the
 .B \-\-preserve\-environment
 option is used
-.TP
-o
+.IP *
 the shell listed in the passwd entry of the target user
-.TP
-o
+.IP *
 /bin/sh
 .RE
 .IP
 If the target user has a restricted shell (i.e., not listed in
-/etc/shells) the
+/etc/shells), then the
 .B \-\-shell
 option and the
 .B SHELL
@@ -160,11 +159,12 @@ environment variables are ignored unless the calling user is root.
 .TP
 .BI \-\-session\-command= command
 Same as
-.B \-c ,
+.BR \-c ,
 but do not create a new session.  (Discouraged.)
 .TP
 .BR \-w , " \-\-whitelist\-environment" = \fIlist
-Don't reset environment variables specified in comma separated \fIlist\fR when clears
+Don't reset the environment variables specified in the
+comma-separated \fIlist\fR when clearing the
 environment for \fB\-\-login\fR. The whitelist is ignored for the environment variables
 .BR HOME ,
 .BR SHELL ,
