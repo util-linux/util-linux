@@ -134,9 +134,9 @@ struct login_context {
 	char		hostaddress[16];	/* remote address */
 
 	pid_t		pid;
-	int		quiet;		/* 1 if hush file exists */
 
-	unsigned int	remote:1,	/* login -h */
+	unsigned int	quiet:1,        /* hush file exists */
+			remote:1,	/* login -h */
 			nohost:1,	/* login -H */
 			noauth:1,	/* login -f */
 			keep_env:1;	/* login -p */
@@ -1339,7 +1339,7 @@ int main(int argc, char **argv)
 		sleepexit(EXIT_FAILURE);
 	}
 
-	cxt.quiet = get_hushlogin_status(pwd, 1);
+	cxt.quiet = get_hushlogin_status(pwd, 1) == 1 ? 1 : 0;
 
 	/*
 	 * Open PAM session (after successful authentication and account check).
