@@ -959,7 +959,7 @@ static void loginpam_session(struct login_context *cxt)
 	if (is_pam_failure(rc))
 		loginpam_err(pamh, rc);
 
-	rc = pam_open_session(pamh, 0);
+	rc = pam_open_session(pamh, cxt->quiet ? PAM_SILENT : 0);
 	if (is_pam_failure(rc)) {
 		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
 		loginpam_err(pamh, rc);
@@ -1339,6 +1339,8 @@ int main(int argc, char **argv)
 		sleepexit(EXIT_FAILURE);
 	}
 
+	cxt.quiet = get_hushlogin_status(pwd, 1);
+
 	/*
 	 * Open PAM session (after successful authentication and account check).
 	 */
@@ -1348,8 +1350,6 @@ int main(int argc, char **argv)
 	alarm((unsigned int)0);
 
 	endpwent();
-
-	cxt.quiet = get_hushlogin_status(pwd, 1);
 
 	log_utmp(&cxt);
 	log_audit(&cxt, 1);
