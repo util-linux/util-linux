@@ -37,6 +37,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <linux/fs.h>
+#include <blkid/blkid.h>
 
 #include "nls.h"
 #include "strutils.h"
@@ -106,6 +107,41 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+/*
+ * Check existing signature on the open fd
+ * Returns	0  signature found
+ * 		1  no signature
+ * 		<0 error
+ */
+static int probe_device(int fd, char *path)
+{
+	const char *type;
+	blkid_probe pr = NULL;
+	int ret = -1;
+
+	pr = blkid_new_probe();
+	if (!pr || blkid_probe_set_device(pr, fd, 0, 0))
+		return ret;
+
+	blkid_probe_enable_superblocks(pr, TRUE);
+	blkid_probe_enable_partitions(pr, TRUE);
+
+	ret = blkid_do_fullprobe(pr);
+	if (ret)
+		goto out;
+
+	if (!blkid_probe_lookup_value(pr, "TYPE", &type, NULL)) {
+		warnx("%s contains existing file system (%s).",path ,type);
+	} else if (!blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL)) {
+		warnx("%s contains existing partition (%s).",path ,type);
+	} else {
+		warnx("%s contains existing signature.", path);
+	}
+
+out:
+	blkid_free_probe(pr);
+	return ret;
+}
 
 int main(int argc, char **argv)
 {
@@ -184,7 +220,7 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	fd = open(path, O_WRONLY | (force ? 0 : O_EXCL));
+	fd = open(path, O_RDWR | (force ? 0 : O_EXCL));
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 
@@ -216,6 +252,27 @@ int main(int argc, char **argv)
 	if (range[1] % secsize)
 		errx(EXIT_FAILURE, _("%s: length %" PRIu64 " is not aligned "
 			 "to sector size %i"), path, range[1], secsize);
+
+	 /* Check for existing signatures on the device */
+	switch(probe_device(fd, path)) {
+	case 0: /* signature detected */
+		/*
+		 * Only require force in interactive mode to avoid
+		 * breaking existing scripts
+		 */
+		if (!force && isatty(STDIN_FILENO)) {
+			errx(EXIT_FAILURE,
+			     _("This is destructive operation, data will " \
+			       "be lost! Use the -f option to override."));
+		}
+		warnx(_("Operation forced, data will be lost!"));
+		break;
+	case 1: /* no signature */
+		break;
+	default: /* error */
+		err(EXIT_FAILURE, _("failed to probe the device"));
+		break;
+	}
 
 	stats[0] = range[0], stats[1] = 0;
 	gettime_monotonic(&last);
