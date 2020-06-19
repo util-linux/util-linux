@@ -847,6 +847,9 @@ int sysfs_devname_is_hidden(const char *prefix, const char *name)
 
 	if (strncmp("/dev/", name, 5) == 0)
 		return 0;
+
+	if (!prefix)
+		prefix = "";
 	/*
 	 * Create path to /sys/block/<name>/hidden
 	 */
