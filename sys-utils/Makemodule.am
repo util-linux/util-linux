@@ -166,6 +166,7 @@ sbin_PROGRAMS += blkdiscard
 dist_man_MANS += sys-utils/blkdiscard.8
 blkdiscard_SOURCES = sys-utils/blkdiscard.c lib/monotonic.c
 blkdiscard_LDADD = $(LDADD) libblkid.la libcommon.la $(REALTIME_LIBS)
+blkdiscard_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 endif
 
 if BUILD_BLKZONE

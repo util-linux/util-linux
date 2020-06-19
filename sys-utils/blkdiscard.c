@@ -37,7 +37,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <linux/fs.h>
-#include <blkid/blkid.h>
+#include <blkid.h>
 
 #include "nls.h"
 #include "strutils.h"
