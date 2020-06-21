@@ -2605,8 +2605,10 @@ For example commands:
 .B mksquashfs /etc /tmp/etc.squashfs
 .B dd if=/dev/zero of=/tmp/etc.hash bs=1M count=10
 .B veritysetup format /tmp/etc.squashfs /tmp/etc.hash
-.B openssl smime \-sign \-in <hash> \-nocerts \-inkey private.key \-signer private.crt \-noattr \-binary \-outform der \-out /tmp/etc.p7
-.B mount \-o verity.hashdevice=/tmp/etc.hash,verity.roothash=<hash>,verity.roothashsig=/tmp/etc.p7 /tmp/etc.squashfs /mnt
+.B openssl smime \-sign \-in <hash> \-nocerts \-inkey private.key \e
+.B \-signer private.crt \-noattr \-binary \-outform der \-out /tmp/etc.p7
+.B mount \-o verity.hashdevice=/tmp/etc.hash,verity.roothash=<hash>,\e
+.B verity.roothashsig=/tmp/etc.p7 /tmp/etc.squashfs /mnt
 .fi
 .RE
 .sp
