@@ -207,6 +207,19 @@ static struct arch_domain *init_arch_domains(void)
 		{PER_LINUX,	"e2k16c",	"e2k"},
 		{PER_LINUX,	"e2k2c3",	"e2k"},
 #endif
+#if defined(__arm__) || defined(__aarch64__)
+# ifdef __BIG_ENDIAN__
+		{PER_LINUX32,	"armv7b",	"arm"},
+		{PER_LINUX32,	"armv8b",	"arm"},
+# else
+		{PER_LINUX32,	"armv7l",	"arm"},
+		{PER_LINUX32,	"armv8l",	"arm"},
+# endif
+		{PER_LINUX32,	"armh",		"arm"},
+		{PER_LINUX32,	"arm",		"arm"},
+		{PER_LINUX,	"arm64",	"aarch64"},
+		{PER_LINUX,	"aarch64",	"aarch64"},
+#endif
 		/* place holder, will be filled up at runtime */
 		{-1,		NULL,		NULL},
 		{-1,		NULL,		NULL}
@@ -266,7 +279,8 @@ static void verify_arch_domain(struct arch_domain *doms, struct arch_domain *tar
 	if (!strcmp(un.machine, target->result_arch))
 		return;
 
-	if (!strcmp(target->result_arch, "i386")) {
+	if (!strcmp(target->result_arch, "i386") ||
+	    !strcmp(target->result_arch, "arm")) {
 		struct arch_domain *dom;
 		for (dom = doms; dom->target_arch != NULL; dom++) {
 			if (!dom->result_arch || strcmp(dom->result_arch, target->result_arch))
