@@ -82,6 +82,13 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 		{NULL, no_argument, NULL, 0}
 	};
 
+	if (!strcmp(program_invocation_short_name, "hd")) {
+		/* Canonical format */
+		add_fmt("\"%08.8_Ax\n\"", hex);
+		add_fmt("\"%08.8_ax  \" 8/1 \"%02x \" \"  \" 8/1 \"%02x \" ", hex);
+		add_fmt("\"  |\" 16/1 \"%_p\" \"|\\n\"", hex);
+	}
+
 	while ((ch = getopt_long(argc, argv, "bcCde:f:L::n:os:vxhV", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'b':
