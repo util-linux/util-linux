@@ -53,10 +53,13 @@ Repositories & Branches
 
 	* Branches:
 
-	  master	- development for the next release
-	  next		- optionally used when master branch is frozen due to -rcN releases
-	  topic/*	- long time development
-	  stable/*	- stable maintenance releases
+	  master   - development for the next release
+	  stable/* - stable maintenance releases
+
+	  Github only:
+
+	  next	   - optionally used when master branch is frozen due to -rcN releases
+	  topic/*  - long time development
 
 Patching Process
 
