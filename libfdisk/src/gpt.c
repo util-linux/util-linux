@@ -2712,7 +2712,7 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t nents)
 	struct fdisk_gpt_label *gpt;
 	size_t new_size;
 	uint32_t old_nents;
-	uint64_t first_usable, last_usable;
+	uint64_t first_usable, last_usable = 0ULL;
 	int rc;
 
 	assert(cxt);

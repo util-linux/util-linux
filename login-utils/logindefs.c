@@ -518,7 +518,7 @@ int get_hushlogin_status(struct passwd *pwd, int force_check)
 		}
 
 		/* per-account setting */
-		if (strlen(pwd->pw_dir) + sizeof(file) + 2 > sizeof(buf))
+		if (strlen(pwd->pw_dir) + strlen(file) + 2 > sizeof(buf))
 			continue;
 
 		sprintf(buf, "%s/%s", pwd->pw_dir, file);

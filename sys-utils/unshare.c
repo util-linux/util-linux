@@ -667,7 +667,7 @@ int main(int argc, char *argv[])
 			.pid = 0,
 		};
 
-		struct __user_cap_data_struct payload[_LINUX_CAPABILITY_U32S_3] = { 0 };
+		struct __user_cap_data_struct payload[_LINUX_CAPABILITY_U32S_3] = {{ 0 }};
 		int cap;
 		uint64_t effective;
 
