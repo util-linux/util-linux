@@ -335,6 +335,70 @@ static void flush_lines(struct col_ctl *ctl, int nflush)
 		ctl->lines->l_prev = NULL;
 }
 
+static int handle_not_graphic(struct col_ctl *ctl, char ch, CHAR *c,
+			      int *cur_col, int *cur_line, int *max_line,
+			      CSET *cur_set)
+{
+	switch (ch) {
+	case BS:		/* can't go back further */
+		if (*cur_col == 0)
+			return 1;
+		if (c)
+			*cur_col -= c->c_width;
+		else
+			*cur_col -= 1;
+		return 1;
+	case CR:
+		*cur_col = 0;
+		return 1;
+	case ESC:		/* just ignore EOF */
+		switch (getwchar()) {
+		case RLF:
+			*cur_line -= 2;
+			break;
+		case RHLF:
+			*cur_line -= 1;
+			break;
+		case FHLF:
+			*cur_line += 1;
+			if (*cur_line > *max_line)
+				*max_line = *cur_line;
+		}
+		return 1;
+	case NL:
+		*cur_line += 2;
+		if (*cur_line > *max_line)
+			*max_line = *cur_line;
+		*cur_col = 0;
+		return 1;
+	case SPACE:
+		*cur_col += 1;
+		return 1;
+	case SI:
+		*cur_set = CS_NORMAL;
+		return 1;
+	case SO:
+		*cur_set = CS_ALTERNATE;
+		return 1;
+	case TAB:		/* adjust column */
+		*cur_col |= 7;
+		*cur_col += 1;
+		return 1;
+	case VT:
+		*cur_line -= 2;
+		return 1;
+	}
+	if (iswspace(ch)) {
+		if (wcwidth(ch) > 0)
+			*cur_col += wcwidth(ch);
+		return 1;
+	}
+
+	if (!ctl->pass_unknown_seqs)
+		return 1;
+	return 0;
+}
+
 static void parse_options(struct col_ctl *ctl, int argc, char **argv)
 {
 	static const struct option longopts[] = {
@@ -435,64 +499,9 @@ int main(int argc, char **argv)
 			}
 			break;
 		}
-		if (!iswgraph(ch)) {
-			switch (ch) {
-			case BS:		/* can't go back further */
-				if (cur_col == 0)
-					continue;
-				if (c)
-					cur_col -= c->c_width;
-				else
-					cur_col--;
-				continue;
-			case CR:
-				cur_col = 0;
-				continue;
-			case ESC:		/* just ignore EOF */
-				switch(getwchar()) {
-				case RLF:
-					cur_line -= 2;
-					break;
-				case RHLF:
-					cur_line--;
-					break;
-				case FHLF:
-					cur_line++;
-					if (cur_line > max_line)
-						max_line = cur_line;
-				}
-				continue;
-			case NL:
-				cur_line += 2;
-				if (cur_line > max_line)
-					max_line = cur_line;
-				cur_col = 0;
-				continue;
-			case SPACE:
-				++cur_col;
-				continue;
-			case SI:
-				cur_set = CS_NORMAL;
-				continue;
-			case SO:
-				cur_set = CS_ALTERNATE;
-				continue;
-			case TAB:		/* adjust column */
-				cur_col |= 7;
-				++cur_col;
-				continue;
-			case VT:
-				cur_line -= 2;
-				continue;
-			}
-			if (iswspace(ch)) {
-				if (wcwidth(ch) > 0)
-					cur_col += wcwidth(ch);
-				continue;
-			}
-			if (!ctl.pass_unknown_seqs)
-				continue;
-		}
+		if (!iswgraph(ch) &&
+		    handle_not_graphic(&ctl, ch, c, &cur_col, &cur_line, &max_line, &cur_set))
+			continue;
 
 		/* Must stuff ch in a line - are we at the right one? */
 		if (cur_line != this_line - adjust) {
