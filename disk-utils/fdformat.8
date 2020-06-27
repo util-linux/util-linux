@@ -1,6 +1,6 @@
 .\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH FDFORMAT 8 "July 2014" "util-linux" "System Administration"
+.TH FDFORMAT 8 "June 2020" "util-linux" "System Administration"
 .SH NAME
 fdformat \- low-level format a floppy disk
 .SH SYNOPSIS
@@ -62,13 +62,18 @@ Display version information and exit.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
+.SH NOTES
+This utility does not handle USB floppy disk drives. Use
+.BR ufiformat (8)
+instead.
 .SH AUTHORS
 Werner Almesberger (almesber@nessie.cs.id.ethz.ch)
 .SH SEE ALSO
 .BR fd (4),
 .BR emkfs (8),
 .BR mkfs (8),
-.BR setfdprm (8)
+.BR setfdprm (8),
+.BR ufiformat (8)
 .SH AVAILABILITY
 The fdformat command is part of the util-linux package and is available from
 https://www.kernel.org/pub/linux/utils/util-linux/.
