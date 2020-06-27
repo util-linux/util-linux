@@ -235,12 +235,13 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 	if (!def_val)
 		def_val = "";
 	while (true) {
-		printf("%s [%s]: ", question, def_val);
+		printf("%s [%s]:", question, def_val);
 		__fpurge(stdin);
 #ifdef HAVE_LIBREADLINE
 		rl_bind_key('\t', rl_insert);
-		if ((buf = readline(NULL)) == NULL)
+		if ((buf = readline(" ")) == NULL)
 #else
+		putchar(' ');
 		if (getline(&buf, &dummy, stdin) < 0)
 #endif
 			errx(EXIT_FAILURE, _("Aborted."));

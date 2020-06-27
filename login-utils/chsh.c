@@ -205,10 +205,11 @@ static char *ask_new_shell(char *question, char *oldshell)
 #endif
 	if (!oldshell)
 		oldshell = "";
-	printf("%s [%s]\n", question, oldshell);
+	printf("%s [%s]:", question, oldshell);
 #ifdef HAVE_LIBREADLINE
-	if ((ans = readline("> ")) == NULL)
+	if ((ans = readline(" ")) == NULL)
 #else
+	putchar(' ');
 	if (getline(&ans, &dummy, stdin) < 0)
 #endif
 		return NULL;
