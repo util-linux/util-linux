@@ -167,10 +167,8 @@ static inline void col_putchar(wchar_t ch)
  */
 static void flush_blanks(struct col_ctl *ctl)
 {
-	int half, i, nb;
+	int half = 0, i, nb = ctl->nblank_lines;
 
-	half = 0;
-	nb = ctl->nblank_lines;
 	if (nb & 1) {
 		if (ctl->fine)
 			half = 1;
@@ -196,10 +194,7 @@ static void flush_blanks(struct col_ctl *ctl)
 static void flush_line(struct col_ctl *ctl, LINE *l)
 {
 	CHAR *c, *endc;
-	int nchars, last_col, this_col;
-
-	last_col = 0;
-	nchars = l->l_line_len;
+	int nchars = l->l_line_len, last_col = 0, this_col;
 
 	if (l->l_needs_sort) {
 		static CHAR *sorted = NULL;
@@ -409,17 +404,17 @@ int main(int argc, char **argv)
 		.last_set = CS_NORMAL,
 		.max_bufd_lines = 128 * 2,
 	};
-	register wint_t ch;
+	wint_t ch;
 	CHAR *c = NULL;
-	CSET cur_set;			/* current character set */
+	CSET cur_set = CS_NORMAL;	/* current character set */
 	LINE *l;			/* current line */
-	int extra_lines;		/* # of lines above first line */
-	int cur_col;			/* current column */
-	int cur_line;			/* line number of current position */
-	int max_line;			/* max value of cur_line */
-	int this_line;			/* line l points to */
-	int nflushd_lines;		/* number of lines that were flushed */
-	int adjust, warned;
+	int extra_lines = 0;		/* # of lines above first line */
+	int cur_col = 0;		/* current column */
+	int cur_line = 0;		/* line number of current position */
+	int max_line = 0;		/* max value of cur_line */
+	int this_line = 0;		/* line l points to */
+	int nflushd_lines = 0;		/* number of lines that were flushed */
+	int adjust = 0, warned = 0;
 	int ret = EXIT_SUCCESS;
 
 	setlocale(LC_ALL, "");
@@ -427,9 +422,6 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	adjust = cur_col = extra_lines = warned = 0;
-	cur_line = max_line = nflushd_lines = this_line = 0;
-	cur_set = CS_NORMAL;
 	ctl.lines = l = alloc_line(&ctl);
 
 	parse_options(&ctl, argc, argv);
