@@ -86,15 +86,16 @@
 /* number of lines to allocate */
 #define	NALLOC			64
 
-typedef char CSET;
+typedef enum {
+	CS_NORMAL,
+	CS_ALTERNATE
+} CSET;
 
 typedef struct char_str {
-#define	CS_NORMAL	1
-#define	CS_ALTERNATE	2
 	int		c_column;	/* column character is in */
-	CSET		c_set;		/* character set (currently only 2) */
 	wchar_t		c_char;		/* character in question */
 	int		c_width;	/* character width */
+	CSET		c_set;		/* character set (currently only 2) */
 } CHAR;
 
 typedef struct line_str LINE;
