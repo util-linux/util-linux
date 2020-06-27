@@ -119,10 +119,6 @@ static int no_backspaces;		/* if not to output any backspaces */
 static int pass_unknown_seqs;		/* whether to pass unknown control sequences */
 static LINE *line_freelist;
 
-#define	PUTC(ch) \
-	if (putwchar(ch) == WEOF) \
-		wrerr();
-
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -154,9 +150,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) wrerr(void)
+static inline void col_putchar(wchar_t ch)
 {
-	errx(EXIT_FAILURE, _("write error"));
+	if (putwchar(ch) == WEOF)
+		errx(EXIT_FAILURE, _("write error"));
 }
 
 /*
@@ -178,12 +175,12 @@ static void flush_blanks(void)
 	}
 	nb /= 2;
 	for (i = nb; --i >= 0;)
-		PUTC('\n');
+		col_putchar(NL);
 	if (half) {
-		PUTC('\033');
-		PUTC('9');
+		col_putchar(ESC);
+		col_putchar('9');
 		if (!nb)
-			PUTC('\r');
+			col_putchar(CR);
 	}
 	nblank_lines = 0;
 }
@@ -263,11 +260,11 @@ static void flush_line(LINE *l)
 				if (ntabs > 0) {
 					nspace = this_col & 7;
 					while (--ntabs >= 0)
-						PUTC('\t');
+						col_putchar(TAB);
 				}
 			}
 			while (--nspace >= 0)
-				PUTC(' ');
+				col_putchar(SPACE);
 			last_col = this_col;
 		}
 
@@ -275,18 +272,18 @@ static void flush_line(LINE *l)
 			if (c->c_set != last_set) {
 				switch (c->c_set) {
 				case CS_NORMAL:
-					PUTC('\017');
+					col_putchar(SI);
 					break;
 				case CS_ALTERNATE:
-					PUTC('\016');
+					col_putchar(SO);
 				}
 				last_set = c->c_set;
 			}
-			PUTC(c->c_char);
+			col_putchar(c->c_char);
 			if ((c + 1) < endc) {
 				int i;
 				for (i=0; i < c->c_width; i++)
-					PUTC('\b');
+					col_putchar(BS);
 			}
 			if (++c >= endc)
 				break;
@@ -581,7 +578,7 @@ int main(int argc, char **argv)
 
 	/* make sure we leave things in a sane state */
 	if (last_set != CS_NORMAL)
-		PUTC('\017');
+		col_putchar(SI);
 
 	/* flush out the last few blank lines */
 	nblank_lines = max_line - this_line;
