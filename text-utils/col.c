@@ -109,15 +109,18 @@ struct line_str {
 	int	l_max_col;		/* max column in the line */
 };
 
-static CSET last_set;			/* char_set of last char printed */
-static LINE *lines;
-static int compress_spaces;		/* if doing space -> tab conversion */
-static int fine;			/* if `fine' resolution (half lines) */
-static unsigned max_bufd_lines;		/* max # lines to keep in memory */
-static int nblank_lines;		/* # blanks after last flushed line */
-static int no_backspaces;		/* if not to output any backspaces */
-static int pass_unknown_seqs;		/* whether to pass unknown control sequences */
-static LINE *line_freelist;
+struct col_ctl {
+	CSET last_set;			/* char_set of last char printed */
+	LINE *lines;
+	unsigned max_bufd_lines;	/* max # lines to keep in memory */
+	LINE *line_freelist;
+	int nblank_lines;		/* # blanks after last flushed line */
+	unsigned int
+		compress_spaces:1,	/* if doing space -> tab conversion */
+		fine:1,			/* if `fine' resolution (half lines) */
+		no_backspaces:1,	/* if not to output any backspaces */
+		pass_unknown_seqs:1;	/* whether to pass unknown control sequences */
+};
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -161,14 +164,14 @@ static inline void col_putchar(wchar_t ch)
  * is the number of half line feeds, otherwise it is the number of whole line
  * feeds.
  */
-static void flush_blanks(void)
+static void flush_blanks(struct col_ctl *ctl)
 {
 	int half, i, nb;
 
 	half = 0;
-	nb = nblank_lines;
+	nb = ctl->nblank_lines;
 	if (nb & 1) {
-		if (fine)
+		if (ctl->fine)
 			half = 1;
 		else
 			nb++;
@@ -182,14 +185,14 @@ static void flush_blanks(void)
 		if (!nb)
 			col_putchar(CR);
 	}
-	nblank_lines = 0;
+	ctl->nblank_lines = 0;
 }
 
 /*
  * Write a line to stdout taking care of space to tab conversion (-h flag)
  * and character set shifts.
  */
-static void flush_line(LINE *l)
+static void flush_line(struct col_ctl *ctl, LINE *l)
 {
 	CHAR *c, *endc;
 	int nchars, last_col, this_col;
@@ -243,7 +246,7 @@ static void flush_line(LINE *l)
 		} while (--nchars > 0 && this_col == endc->c_column);
 
 		/* if -b only print last character */
-		if (no_backspaces) {
+		if (ctl->no_backspaces) {
 			c = endc - 1;
 			if (nchars > 0 &&
 			    this_col + c->c_width > endc->c_column)
@@ -253,7 +256,7 @@ static void flush_line(LINE *l)
 		if (this_col > last_col) {
 			int nspace = this_col - last_col;
 
-			if (compress_spaces && nspace > 1) {
+			if (ctl->compress_spaces && nspace > 1) {
 				int ntabs;
 
 				ntabs = this_col / 8 - last_col / 8;
@@ -269,7 +272,7 @@ static void flush_line(LINE *l)
 		}
 
 		for (;;) {
-			if (c->c_set != last_set) {
+			if (c->c_set != ctl->last_set) {
 				switch (c->c_set) {
 				case CS_NORMAL:
 					col_putchar(SI);
@@ -277,7 +280,7 @@ static void flush_line(LINE *l)
 				case CS_ALTERNATE:
 					col_putchar(SO);
 				}
-				last_set = c->c_set;
+				ctl->last_set = c->c_set;
 			}
 			col_putchar(c->c_char);
 			if ((c + 1) < endc) {
@@ -292,52 +295,57 @@ static void flush_line(LINE *l)
 	}
 }
 
-static LINE *alloc_line(void)
+static LINE *alloc_line(struct col_ctl *ctl)
 {
 	LINE *l;
 	int i;
 
-	if (!line_freelist) {
+	if (!ctl->line_freelist) {
 		l = xmalloc(sizeof(LINE) * NALLOC);
-		line_freelist = l;
+		ctl->line_freelist = l;
 		for (i = 1; i < NALLOC; i++, l++)
 			l->l_next = l + 1;
 		l->l_next = NULL;
 	}
-	l = line_freelist;
-	line_freelist = l->l_next;
+	l = ctl->line_freelist;
+	ctl->line_freelist = l->l_next;
 
 	memset(l, 0, sizeof(LINE));
 	return l;
 }
 
-static void free_line(LINE *l)
+static void free_line(struct col_ctl *ctl, LINE *l)
 {
-	l->l_next = line_freelist;
-	line_freelist = l;
+	l->l_next = ctl->line_freelist;
+	ctl->line_freelist = l;
 }
 
-static void flush_lines(int nflush)
+static void flush_lines(struct col_ctl *ctl, int nflush)
 {
 	LINE *l;
 
 	while (--nflush >= 0) {
-		l = lines;
-		lines = l->l_next;
+		l = ctl->lines;
+		ctl->lines = l->l_next;
 		if (l->l_line) {
-			flush_blanks();
-			flush_line(l);
+			flush_blanks(ctl);
+			flush_line(ctl, l);
 		}
-		nblank_lines++;
+		ctl->nblank_lines++;
 		free((void *)l->l_line);
-		free_line(l);
+		free_line(ctl, l);
 	}
-	if (lines)
-		lines->l_prev = NULL;
+	if (ctl->lines)
+		ctl->lines->l_prev = NULL;
 }
 
 int main(int argc, char **argv)
 {
+	struct col_ctl ctl = {
+		.compress_spaces = 1,
+		.last_set = CS_NORMAL,
+		.max_bufd_lines = 128 * 2,
+	};
 	register wint_t ch;
 	CHAR *c = NULL;
 	CSET cur_set;			/* current character set */
@@ -368,33 +376,29 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	max_bufd_lines = 128 * 2;
-	compress_spaces = 1;		/* compress spaces into tabs */
-	pass_unknown_seqs = 0;          /* remove unknown escape sequences */
-
 	while ((opt = getopt_long(argc, argv, "bfhl:pxVH", longopts, NULL)) != -1)
 		switch (opt) {
 		case 'b':		/* do not output backspaces */
-			no_backspaces = 1;
+			ctl.no_backspaces = 1;
 			break;
 		case 'f':		/* allow half forward line feeds */
-			fine = 1;
+			ctl.fine = 1;
 			break;
 		case 'h':		/* compress spaces into tabs */
-			compress_spaces = 1;
+			ctl.compress_spaces = 1;
 			break;
 		case 'l':
 			/*
 			 * Buffered line count, which is a value in half
 			 * lines e.g. twice the amount specified.
 			 */
-			max_bufd_lines = strtou32_or_err(optarg, _("bad -l argument")) * 2;
+			ctl.max_bufd_lines = strtou32_or_err(optarg, _("bad -l argument")) * 2;
 			break;
 		case 'p':
-			pass_unknown_seqs = 1;
+			ctl.pass_unknown_seqs = 1;
 			break;
 		case 'x':		/* do not compress spaces into tabs */
-			compress_spaces = 0;
+			ctl.compress_spaces = 0;
 			break;
 
 		case 'V':
@@ -412,8 +416,8 @@ int main(int argc, char **argv)
 
 	adjust = cur_col = extra_lines = warned = 0;
 	cur_line = max_line = nflushd_lines = this_line = 0;
-	cur_set = last_set = CS_NORMAL;
-	lines = l = alloc_line();
+	cur_set = CS_NORMAL;
+	ctl.lines = l = alloc_line(&ctl);
 
 	while (feof(stdin) == 0) {
 		errno = 0;
@@ -479,7 +483,7 @@ int main(int argc, char **argv)
 					cur_col += wcwidth(ch);
 				continue;
 			}
-			if (!pass_unknown_seqs)
+			if (!ctl.pass_unknown_seqs)
 				continue;
 		}
 
@@ -490,7 +494,7 @@ int main(int argc, char **argv)
 
 			adjust = 0;
 			nmove = cur_line - this_line;
-			if (!fine) {
+			if (!ctl.fine) {
 				/* round up to next line */
 				if (cur_line & 1) {
 					adjust = 1;
@@ -508,10 +512,10 @@ int main(int argc, char **argv)
 						 * flushed yet.
 						 */
 						for (; nmove < 0; nmove++) {
-							lnew = alloc_line();
+							lnew = alloc_line(&ctl);
 							l->l_prev = lnew;
 							lnew->l_next = l;
-							l = lines = lnew;
+							l = ctl.lines = lnew;
 							extra_lines++;
 						}
 					} else {
@@ -527,7 +531,7 @@ int main(int argc, char **argv)
 				for (; nmove > 0 && l->l_next; nmove--)
 					l = l->l_next;
 				for (; nmove > 0; nmove--) {
-					lnew = alloc_line();
+					lnew = alloc_line(&ctl);
 					lnew->l_prev = l;
 					l->l_next = lnew;
 					l = lnew;
@@ -536,9 +540,9 @@ int main(int argc, char **argv)
 			this_line = cur_line + adjust;
 			nmove = this_line - nflushd_lines;
 			if (nmove > 0
-			    && (unsigned) nmove >= max_bufd_lines + BUFFER_MARGIN) {
-				nflushd_lines += nmove - max_bufd_lines;
-				flush_lines(nmove - max_bufd_lines);
+			    && (unsigned) nmove >= ctl.max_bufd_lines + BUFFER_MARGIN) {
+				nflushd_lines += nmove - ctl.max_bufd_lines;
+				flush_lines(&ctl, nmove - ctl.max_bufd_lines);
 			}
 		}
 		/* grow line's buffer? */
@@ -574,19 +578,19 @@ int main(int argc, char **argv)
 		this_line++;
 	if (max_line == 0 && cur_col == 0)
 		return EXIT_SUCCESS;	/* no lines, so just exit */
-	flush_lines(this_line - nflushd_lines + extra_lines + 1);
+	flush_lines(&ctl, this_line - nflushd_lines + extra_lines + 1);
 
 	/* make sure we leave things in a sane state */
-	if (last_set != CS_NORMAL)
+	if (ctl.last_set != CS_NORMAL)
 		col_putchar(SI);
 
 	/* flush out the last few blank lines */
-	nblank_lines = max_line - this_line;
+	ctl.nblank_lines = max_line - this_line;
 	if (max_line & 1)
-		nblank_lines++;
-	else if (!nblank_lines)
+		ctl.nblank_lines++;
+	else if (!ctl.nblank_lines)
 		/* missing a \n on the last line? */
-		nblank_lines = 2;
-	flush_blanks();
+		ctl.nblank_lines = 2;
+	flush_blanks(&ctl);
 	return ret;
 }
