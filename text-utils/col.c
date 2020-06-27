@@ -66,6 +66,7 @@
 #include "widechar.h"
 #include "strutils.h"
 #include "closestream.h"
+#include "optutils.h"
 
 #define	BS	'\b'		/* backspace */
 #define	TAB	'\t'		/* tab */
@@ -339,6 +340,68 @@ static void flush_lines(struct col_ctl *ctl, int nflush)
 		ctl->lines->l_prev = NULL;
 }
 
+static void parse_options(struct col_ctl *ctl, int argc, char **argv)
+{
+	static const struct option longopts[] = {
+		{ "no-backspaces", no_argument,		NULL, 'b' },
+		{ "fine",	   no_argument,		NULL, 'f' },
+		{ "pass",	   no_argument,		NULL, 'p' },
+		{ "tabs",	   no_argument,		NULL, 'h' },
+		{ "spaces",	   no_argument,		NULL, 'x' },
+		{ "lines",	   required_argument,	NULL, 'l' },
+		{ "version",	   no_argument,		NULL, 'V' },
+		{ "help",	   no_argument,		NULL, 'H' },
+		{ NULL, 0, NULL, 0 }
+	};
+	static const ul_excl_t excl[] = {
+		{ 'h', 'x' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, "bfhl:pxVH", longopts, NULL)) != -1) {
+		err_exclusive_options(opt, longopts, excl, excl_st);
+
+		switch (opt) {
+		case 'b':		/* do not output backspaces */
+			ctl->no_backspaces = 1;
+			break;
+		case 'f':		/* allow half forward line feeds */
+			ctl->fine = 1;
+			break;
+		case 'h':		/* compress spaces into tabs */
+			ctl->compress_spaces = 1;
+			break;
+		case 'l':
+			/*
+			 * Buffered line count, which is a value in half
+			 * lines e.g. twice the amount specified.
+			 */
+			ctl->max_bufd_lines = strtou32_or_err(optarg, _("bad -l argument")) * 2;
+			break;
+		case 'p':
+			ctl->pass_unknown_seqs = 1;
+			break;
+		case 'x':		/* do not compress spaces into tabs */
+			ctl->compress_spaces = 0;
+			break;
+
+		case 'V':
+			print_version(EXIT_SUCCESS);
+		case 'H':
+			usage();
+		default:
+			errtryhelp(EXIT_FAILURE);
+		}
+	}
+
+	if (optind != argc) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
+}
+
 int main(int argc, char **argv)
 {
 	struct col_ctl ctl = {
@@ -356,68 +419,20 @@ int main(int argc, char **argv)
 	int max_line;			/* max value of cur_line */
 	int this_line;			/* line l points to */
 	int nflushd_lines;		/* number of lines that were flushed */
-	int adjust, opt, warned;
+	int adjust, warned;
 	int ret = EXIT_SUCCESS;
-
-	static const struct option longopts[] = {
-		{ "no-backspaces", no_argument,		NULL, 'b' },
-		{ "fine",	   no_argument,		NULL, 'f' },
-		{ "pass",	   no_argument,		NULL, 'p' },
-		{ "tabs",	   no_argument,		NULL, 'h' },
-		{ "spaces",	   no_argument,		NULL, 'x' },
-		{ "lines",	   required_argument,	NULL, 'l' },
-		{ "version",	   no_argument,		NULL, 'V' },
-		{ "help",	   no_argument,		NULL, 'H' },
-		{ NULL, 0, NULL, 0 }
-	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((opt = getopt_long(argc, argv, "bfhl:pxVH", longopts, NULL)) != -1)
-		switch (opt) {
-		case 'b':		/* do not output backspaces */
-			ctl.no_backspaces = 1;
-			break;
-		case 'f':		/* allow half forward line feeds */
-			ctl.fine = 1;
-			break;
-		case 'h':		/* compress spaces into tabs */
-			ctl.compress_spaces = 1;
-			break;
-		case 'l':
-			/*
-			 * Buffered line count, which is a value in half
-			 * lines e.g. twice the amount specified.
-			 */
-			ctl.max_bufd_lines = strtou32_or_err(optarg, _("bad -l argument")) * 2;
-			break;
-		case 'p':
-			ctl.pass_unknown_seqs = 1;
-			break;
-		case 'x':		/* do not compress spaces into tabs */
-			ctl.compress_spaces = 0;
-			break;
-
-		case 'V':
-			print_version(EXIT_SUCCESS);
-		case 'H':
-			usage();
-		default:
-			errtryhelp(EXIT_FAILURE);
-		}
-
-	if (optind != argc) {
-		warnx(_("bad usage"));
-		errtryhelp(EXIT_FAILURE);
-	}
-
 	adjust = cur_col = extra_lines = warned = 0;
 	cur_line = max_line = nflushd_lines = this_line = 0;
 	cur_set = CS_NORMAL;
 	ctl.lines = l = alloc_line(&ctl);
+
+	parse_options(&ctl, argc, argv);
 
 	while (feof(stdin) == 0) {
 		errno = 0;
