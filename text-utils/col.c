@@ -83,6 +83,9 @@
 /* build up at least this many lines before flushing them out */
 #define	BUFFER_MARGIN		32
 
+/* number of lines to allocate */
+#define	NALLOC			64
+
 typedef char CSET;
 
 typedef struct char_str {
@@ -105,12 +108,6 @@ struct line_str {
 	int	l_max_col;		/* max column in the line */
 };
 
-void free_line(LINE *l);
-void flush_line(LINE *l);
-void flush_lines(int);
-void flush_blanks(void);
-LINE *alloc_line(void);
-
 static CSET last_set;			/* char_set of last char printed */
 static LINE *lines;
 static int compress_spaces;		/* if doing space -> tab conversion */
@@ -119,6 +116,7 @@ static unsigned max_bufd_lines;		/* max # lines to keep in memory */
 static int nblank_lines;		/* # blanks after last flushed line */
 static int no_backspaces;		/* if not to output any backspaces */
 static int pass_unknown_seqs;		/* whether to pass unknown control sequences */
+static LINE *line_freelist;
 
 #define	PUTC(ch) \
 	if (putwchar(ch) == WEOF) \
@@ -158,6 +156,186 @@ static void __attribute__((__noreturn__)) usage(void)
 static void __attribute__((__noreturn__)) wrerr(void)
 {
 	errx(EXIT_FAILURE, _("write error"));
+}
+
+/*
+ * Print a number of newline/half newlines.  If fine flag is set, nblank_lines
+ * is the number of half line feeds, otherwise it is the number of whole line
+ * feeds.
+ */
+static void flush_blanks(void)
+{
+	int half, i, nb;
+
+	half = 0;
+	nb = nblank_lines;
+	if (nb & 1) {
+		if (fine)
+			half = 1;
+		else
+			nb++;
+	}
+	nb /= 2;
+	for (i = nb; --i >= 0;)
+		PUTC('\n');
+	if (half) {
+		PUTC('\033');
+		PUTC('9');
+		if (!nb)
+			PUTC('\r');
+	}
+	nblank_lines = 0;
+}
+
+/*
+ * Write a line to stdout taking care of space to tab conversion (-h flag)
+ * and character set shifts.
+ */
+static void flush_line(LINE *l)
+{
+	CHAR *c, *endc;
+	int nchars, last_col, this_col;
+
+	last_col = 0;
+	nchars = l->l_line_len;
+
+	if (l->l_needs_sort) {
+		static CHAR *sorted = NULL;
+		static int count_size = 0, *count = NULL, sorted_size = 0;
+		int i, tot;
+
+		/*
+		 * Do an O(n) sort on l->l_line by column being careful to
+		 * preserve the order of characters in the same column.
+		 */
+		if (l->l_lsize > sorted_size) {
+			sorted_size = l->l_lsize;
+			sorted = xrealloc((void *)sorted,
+						  (unsigned)sizeof(CHAR) * sorted_size);
+		}
+		if (l->l_max_col >= count_size) {
+			count_size = l->l_max_col + 1;
+			count = (int *)xrealloc((void *)count,
+			    (unsigned)sizeof(int) * count_size);
+		}
+		memset(count, 0, sizeof(int) * l->l_max_col + 1);
+		for (i = nchars, c = l->l_line; c && --i >= 0; c++)
+			count[c->c_column]++;
+
+		/*
+		 * calculate running total (shifted down by 1) to use as
+		 * indices into new line.
+		 */
+		for (tot = 0, i = 0; i <= l->l_max_col; i++) {
+			int save = count[i];
+			count[i] = tot;
+			tot += save;
+		}
+
+		for (i = nchars, c = l->l_line; --i >= 0; c++)
+			sorted[count[c->c_column]++] = *c;
+		c = sorted;
+	} else
+		c = l->l_line;
+	while (nchars > 0) {
+		this_col = c->c_column;
+		endc = c;
+		do {
+			++endc;
+		} while (--nchars > 0 && this_col == endc->c_column);
+
+		/* if -b only print last character */
+		if (no_backspaces) {
+			c = endc - 1;
+			if (nchars > 0 &&
+			    this_col + c->c_width > endc->c_column)
+				continue;
+		}
+
+		if (this_col > last_col) {
+			int nspace = this_col - last_col;
+
+			if (compress_spaces && nspace > 1) {
+				int ntabs;
+
+				ntabs = this_col / 8 - last_col / 8;
+				if (ntabs > 0) {
+					nspace = this_col & 7;
+					while (--ntabs >= 0)
+						PUTC('\t');
+				}
+			}
+			while (--nspace >= 0)
+				PUTC(' ');
+			last_col = this_col;
+		}
+
+		for (;;) {
+			if (c->c_set != last_set) {
+				switch (c->c_set) {
+				case CS_NORMAL:
+					PUTC('\017');
+					break;
+				case CS_ALTERNATE:
+					PUTC('\016');
+				}
+				last_set = c->c_set;
+			}
+			PUTC(c->c_char);
+			if ((c + 1) < endc) {
+				int i;
+				for (i=0; i < c->c_width; i++)
+					PUTC('\b');
+			}
+			if (++c >= endc)
+				break;
+		}
+		last_col += (c - 1)->c_width;
+	}
+}
+
+static LINE *alloc_line(void)
+{
+	LINE *l;
+	int i;
+
+	if (!line_freelist) {
+		l = xmalloc(sizeof(LINE) * NALLOC);
+		line_freelist = l;
+		for (i = 1; i < NALLOC; i++, l++)
+			l->l_next = l + 1;
+		l->l_next = NULL;
+	}
+	l = line_freelist;
+	line_freelist = l->l_next;
+
+	memset(l, 0, sizeof(LINE));
+	return l;
+}
+
+static void free_line(LINE *l)
+{
+	l->l_next = line_freelist;
+	line_freelist = l;
+}
+
+static void flush_lines(int nflush)
+{
+	LINE *l;
+
+	while (--nflush >= 0) {
+		l = lines;
+		lines = l->l_next;
+		if (l->l_line) {
+			flush_blanks();
+			flush_line(l);
+		}
+		nblank_lines++;
+		free((void *)l->l_line);
+		free_line(l);
+	}
+	if (lines)
+		lines->l_prev = NULL;
 }
 
 int main(int argc, char **argv)
@@ -413,189 +591,4 @@ int main(int argc, char **argv)
 		nblank_lines = 2;
 	flush_blanks();
 	return ret;
-}
-
-void flush_lines(int nflush)
-{
-	LINE *l;
-
-	while (--nflush >= 0) {
-		l = lines;
-		lines = l->l_next;
-		if (l->l_line) {
-			flush_blanks();
-			flush_line(l);
-		}
-		nblank_lines++;
-		free((void *)l->l_line);
-		free_line(l);
-	}
-	if (lines)
-		lines->l_prev = NULL;
-}
-
-/*
- * Print a number of newline/half newlines.  If fine flag is set, nblank_lines
- * is the number of half line feeds, otherwise it is the number of whole line
- * feeds.
- */
-void flush_blanks(void)
-{
-	int half, i, nb;
-
-	half = 0;
-	nb = nblank_lines;
-	if (nb & 1) {
-		if (fine)
-			half = 1;
-		else
-			nb++;
-	}
-	nb /= 2;
-	for (i = nb; --i >= 0;)
-		PUTC('\n');
-	if (half) {
-		PUTC('\033');
-		PUTC('9');
-		if (!nb)
-			PUTC('\r');
-	}
-	nblank_lines = 0;
-}
-
-/*
- * Write a line to stdout taking care of space to tab conversion (-h flag)
- * and character set shifts.
- */
-void flush_line(LINE *l)
-{
-	CHAR *c, *endc;
-	int nchars, last_col, this_col;
-
-	last_col = 0;
-	nchars = l->l_line_len;
-
-	if (l->l_needs_sort) {
-		static CHAR *sorted = NULL;
-		static int count_size = 0, *count = NULL, sorted_size = 0;
-		int i, tot;
-
-		/*
-		 * Do an O(n) sort on l->l_line by column being careful to
-		 * preserve the order of characters in the same column.
-		 */
-		if (l->l_lsize > sorted_size) {
-			sorted_size = l->l_lsize;
-			sorted = xrealloc((void *)sorted,
-						  (unsigned)sizeof(CHAR) * sorted_size);
-		}
-		if (l->l_max_col >= count_size) {
-			count_size = l->l_max_col + 1;
-			count = (int *)xrealloc((void *)count,
-			    (unsigned)sizeof(int) * count_size);
-		}
-		memset(count, 0, sizeof(int) * l->l_max_col + 1);
-		for (i = nchars, c = l->l_line; c && --i >= 0; c++)
-			count[c->c_column]++;
-
-		/*
-		 * calculate running total (shifted down by 1) to use as
-		 * indices into new line.
-		 */
-		for (tot = 0, i = 0; i <= l->l_max_col; i++) {
-			int save = count[i];
-			count[i] = tot;
-			tot += save;
-		}
-
-		for (i = nchars, c = l->l_line; --i >= 0; c++)
-			sorted[count[c->c_column]++] = *c;
-		c = sorted;
-	} else
-		c = l->l_line;
-	while (nchars > 0) {
-		this_col = c->c_column;
-		endc = c;
-		do {
-			++endc;
-		} while (--nchars > 0 && this_col == endc->c_column);
-
-		/* if -b only print last character */
-		if (no_backspaces) {
-			c = endc - 1;
-			if (nchars > 0 &&
-			    this_col + c->c_width > endc->c_column)
-				continue;
-		}
-
-		if (this_col > last_col) {
-			int nspace = this_col - last_col;
-
-			if (compress_spaces && nspace > 1) {
-				int ntabs;
-
-				ntabs = this_col / 8 - last_col / 8;
-				if (ntabs > 0) {
-					nspace = this_col & 7;
-					while (--ntabs >= 0)
-						PUTC('\t');
-				}
-			}
-			while (--nspace >= 0)
-				PUTC(' ');
-			last_col = this_col;
-		}
-
-		for (;;) {
-			if (c->c_set != last_set) {
-				switch (c->c_set) {
-				case CS_NORMAL:
-					PUTC('\017');
-					break;
-				case CS_ALTERNATE:
-					PUTC('\016');
-				}
-				last_set = c->c_set;
-			}
-			PUTC(c->c_char);
-			if ((c + 1) < endc) {
-				int i;
-				for (i=0; i < c->c_width; i++)
-					PUTC('\b');
-			}
-			if (++c >= endc)
-				break;
-		}
-		last_col += (c - 1)->c_width;
-	}
-}
-
-#define	NALLOC 64
-
-static LINE *line_freelist;
-
-LINE *
-alloc_line(void)
-{
-	LINE *l;
-	int i;
-
-	if (!line_freelist) {
-		l = xmalloc(sizeof(LINE) * NALLOC);
-		line_freelist = l;
-		for (i = 1; i < NALLOC; i++, l++)
-			l->l_next = l + 1;
-		l->l_next = NULL;
-	}
-	l = line_freelist;
-	line_freelist = l->l_next;
-
-	memset(l, 0, sizeof(LINE));
-	return l;
-}
-
-void free_line(LINE *l)
-{
-	l->l_next = line_freelist;
-	line_freelist = l;
 }
