@@ -93,7 +93,7 @@ typedef enum {
 } CSET;
 
 typedef struct char_str {
-	int		c_column;	/* column character is in */
+	size_t		c_column;	/* column character is in */
 	wchar_t		c_char;		/* character in question */
 	int		c_width;	/* character width */
 	CSET		c_set;		/* character set (currently only 2) */
@@ -104,19 +104,20 @@ struct line_str {
 	CHAR	*l_line;		/* characters on the line */
 	LINE	*l_prev;		/* previous line */
 	LINE	*l_next;		/* next line */
-	int	l_lsize;		/* allocated sizeof l_line */
-	int	l_line_len;		/* strlen(l_line) */
-	int	l_needs_sort;		/* set if chars went in out of order */
-	int	l_max_col;		/* max column in the line */
+	size_t	l_lsize;		/* allocated sizeof l_line */
+	size_t	l_line_len;		/* strlen(l_line) */
+	size_t	l_max_col;		/* max column in the line */
+	unsigned int
+		l_needs_sort:1;		/* set if chars went in out of order */
 };
 
 struct col_ctl {
 	CSET last_set;			/* char_set of last char printed */
 	LINE *lines;
 	LINE *l;			/* current line */
-	unsigned max_bufd_lines;	/* max # lines to keep in memory */
+	size_t max_bufd_lines;		/* max # lines to keep in memory */
 	LINE *line_freelist;
-	int nblank_lines;		/* # blanks after last flushed line */
+	size_t nblank_lines;		/* # blanks after last flushed line */
 	unsigned int
 		compress_spaces:1,	/* if doing space -> tab conversion */
 		fine:1,			/* if `fine' resolution (half lines) */
@@ -128,14 +129,14 @@ struct col_lines {
 	CHAR *c;
 	CSET cur_set;
 	wint_t ch;
-	int adjust;
-	int cur_col;
-	int cur_line;
-	int extra_lines;
-	int max_line;
-	int nflushd_lines;
-	int this_line;
-	int warned;
+	size_t adjust;
+	size_t cur_col;
+	ssize_t cur_line;
+	size_t extra_lines;
+	size_t max_line;
+	size_t nflushd_lines;
+	size_t this_line;
+	unsigned int warned:1;
 };
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -209,12 +210,12 @@ static void flush_blanks(struct col_ctl *ctl)
 static void flush_line(struct col_ctl *ctl, LINE *l)
 {
 	CHAR *c, *endc;
-	int nchars = l->l_line_len, last_col = 0, this_col;
+	size_t nchars = l->l_line_len, last_col = 0, this_col;
 
 	if (l->l_needs_sort) {
 		static CHAR *sorted = NULL;
-		static int count_size = 0, *count = NULL, sorted_size = 0;
-		int i, tot;
+		static size_t count_size = 0, *count = NULL, sorted_size = 0;
+		size_t i, tot;
 
 		/*
 		 * Do an O(n) sort on l->l_line by column being careful to
@@ -222,16 +223,14 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 		 */
 		if (l->l_lsize > sorted_size) {
 			sorted_size = l->l_lsize;
-			sorted = xrealloc((void *)sorted,
-						  (unsigned)sizeof(CHAR) * sorted_size);
+			sorted = xrealloc(sorted, sizeof(CHAR) * sorted_size);
 		}
 		if (l->l_max_col >= count_size) {
 			count_size = l->l_max_col + 1;
-			count = (int *)xrealloc((void *)count,
-			    (unsigned)sizeof(int) * count_size);
+			count = xrealloc((void *)count, sizeof(size_t) * count_size);
 		}
-		memset(count, 0, sizeof(int) * l->l_max_col + 1);
-		for (i = nchars, c = l->l_line; c && --i >= 0; c++)
+		memset(count, 0, sizeof(size_t) * l->l_max_col + 1);
+		for (i = nchars, c = l->l_line; c && 0 < i; i--, c++)
 			count[c->c_column]++;
 
 		/*
@@ -239,12 +238,12 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 		 * indices into new line.
 		 */
 		for (tot = 0, i = 0; i <= l->l_max_col; i++) {
-			int save = count[i];
+			size_t save = count[i];
 			count[i] = tot;
 			tot += save;
 		}
 
-		for (i = nchars, c = l->l_line; --i >= 0; c++)
+		for (i = nchars, c = l->l_line; 0 < i; i--, c++)
 			sorted[count[c->c_column]++] = *c;
 		c = sorted;
 	} else
@@ -265,10 +264,10 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 		}
 
 		if (this_col > last_col) {
-			int nspace = this_col - last_col;
+			ssize_t nspace = this_col - last_col;
 
 			if (ctl->compress_spaces && nspace > 1) {
-				int ntabs;
+				ssize_t ntabs;
 
 				ntabs = this_col / 8 - last_col / 8;
 				if (ntabs > 0) {
@@ -309,7 +308,7 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 static LINE *alloc_line(struct col_ctl *ctl)
 {
 	LINE *l;
-	int i;
+	size_t i;
 
 	if (!ctl->line_freelist) {
 		l = xmalloc(sizeof(LINE) * NALLOC);
@@ -331,7 +330,7 @@ static void free_line(struct col_ctl *ctl, LINE *l)
 	ctl->line_freelist = l;
 }
 
-static void flush_lines(struct col_ctl *ctl, int nflush)
+static void flush_lines(struct col_ctl *ctl, ssize_t nflush)
 {
 	LINE *l;
 
@@ -374,13 +373,13 @@ static int handle_not_graphic(struct col_ctl *ctl, struct col_lines *lns)
 			break;
 		case FHLF:
 			lns->cur_line += 1;
-			if (lns->cur_line > lns->max_line)
+			if (0 < lns->cur_line && lns->max_line < (size_t)lns->cur_line)
 				lns->max_line = lns->cur_line;
 		}
 		return 1;
 	case NL:
 		lns->cur_line += 2;
-		if (lns->cur_line > lns->max_line)
+		if (0 < lns->cur_line && lns->max_line < (size_t)lns->cur_line)
 			lns->max_line = lns->cur_line;
 		lns->cur_col = 0;
 		return 1;
@@ -415,7 +414,7 @@ static int handle_not_graphic(struct col_ctl *ctl, struct col_lines *lns)
 static void update_cur_line(struct col_ctl *ctl, struct col_lines *lns)
 {
 	LINE *lnew;
-	int nmove;
+	ssize_t nmove;
 
 	lns->adjust = 0;
 	nmove = lns->cur_line - lns->this_line;
@@ -443,11 +442,13 @@ static void update_cur_line(struct col_ctl *ctl, struct col_lines *lns)
 					lns->extra_lines += 1;
 				}
 			} else {
-				if (!lns->warned++)
+				if (!lns->warned) {
 					warnx(_("warning: can't back up %s."),
 						  lns->cur_line < 0 ?
 						    _("past first line") :
 					            _("-- line already flushed"));
+					lns->warned = 1;
+				}
 				lns->cur_line -= nmove;
 			}
 		}
@@ -464,7 +465,7 @@ static void update_cur_line(struct col_ctl *ctl, struct col_lines *lns)
 	}
 	lns->this_line = lns->cur_line + lns->adjust;
 	nmove = lns->this_line - lns->nflushd_lines;
-	if (nmove > 0 && (unsigned)nmove >= ctl->max_bufd_lines + BUFFER_MARGIN) {
+	if (nmove > 0 && (size_t)nmove >= ctl->max_bufd_lines + BUFFER_MARGIN) {
 		lns->nflushd_lines += nmove - ctl->max_bufd_lines;
 		flush_lines(ctl, nmove - ctl->max_bufd_lines);
 	}
@@ -537,7 +538,7 @@ int main(int argc, char **argv)
 	struct col_ctl ctl = {
 		.compress_spaces = 1,
 		.last_set = CS_NORMAL,
-		.max_bufd_lines = 128 * 2,
+		.max_bufd_lines = BUFFER_MARGIN * 2,
 	};
 	struct col_lines lns = {
 		.cur_set = CS_NORMAL,
@@ -557,7 +558,7 @@ int main(int argc, char **argv)
 		errno = 0;
 		if ((lns.ch = getwchar()) == WEOF) {
 			if (errno == EILSEQ) {
-				warn(_("failed on line %d"), lns.max_line + 1);
+				warn(_("failed on line %lu"), lns.max_line + 1);
 				ret = EXIT_FAILURE;
 			}
 			break;
@@ -567,16 +568,15 @@ int main(int argc, char **argv)
 			continue;
 
 		/* Must stuff ch in a line - are we at the right one? */
-		if (lns.cur_line != lns.this_line - lns.adjust)
+		if ((size_t)lns.cur_line != lns.this_line - lns.adjust)
 			update_cur_line(&ctl, &lns);
 
 		/* grow line's buffer? */
 		if (ctl.l->l_line_len + 1 >= ctl.l->l_lsize) {
-			int need;
+			size_t need;
 
-			need = ctl.l->l_lsize ? ctl.l->l_lsize * 2 : 90;
-			ctl.l->l_line = xrealloc((void *) ctl.l->l_line,
-						    (unsigned) need * sizeof(CHAR));
+			need = ctl.l->l_lsize ? ctl.l->l_lsize * 2 : NALLOC;
+			ctl.l->l_line = xrealloc(ctl.l->l_line, need * sizeof(CHAR));
 			ctl.l->l_lsize = need;
 		}
 		lns.c = &ctl.l->l_line[ctl.l->l_line_len++];
