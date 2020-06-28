@@ -113,6 +113,7 @@ struct line_str {
 struct col_ctl {
 	CSET last_set;			/* char_set of last char printed */
 	LINE *lines;
+	LINE *l;			/* current line */
 	unsigned max_bufd_lines;	/* max # lines to keep in memory */
 	LINE *line_freelist;
 	int nblank_lines;		/* # blanks after last flushed line */
@@ -399,6 +400,66 @@ static int handle_not_graphic(struct col_ctl *ctl, char ch, CHAR *c,
 	return 0;
 }
 
+static void update_cur_line(struct col_ctl *ctl, int *adjust, int *cur_line,
+			    int *this_line, int *nflushd_lines,
+			    int *extra_lines, int *warned)
+{
+	LINE *lnew;
+	int nmove;
+
+	*adjust = 0;
+	nmove = *cur_line - *this_line;
+	if (!ctl->fine) {
+		/* round up to next line */
+		if (*cur_line & 1) {
+			*adjust = 1;
+			nmove++;
+		}
+	}
+	if (nmove < 0) {
+		for (; nmove < 0 && ctl->l->l_prev; nmove++)
+			ctl->l = ctl->l->l_prev;
+		if (nmove) {
+			if (*nflushd_lines == 0) {
+				/*
+				 * Allow backup past first line if nothing
+				 * has been flushed yet.
+				 */
+				for (; nmove < 0; nmove++) {
+					lnew = alloc_line(ctl);
+					ctl->l->l_prev = lnew;
+					lnew->l_next = ctl->l;
+					ctl->l = ctl->lines = lnew;
+					*extra_lines += 1;
+				}
+			} else {
+				if (!*warned++)
+					warnx(_("warning: can't back up %s."),
+						  *cur_line < 0 ?
+						    _("past first line") :
+					            _("-- line already flushed"));
+				*cur_line -= nmove;
+			}
+		}
+	} else {
+		/* may need to allocate here */
+		for (; nmove > 0 && ctl->l->l_next; nmove--)
+			ctl->l = ctl->l->l_next;
+		for (; nmove > 0; nmove--) {
+			lnew = alloc_line(ctl);
+			lnew->l_prev = ctl->l;
+			ctl->l->l_next = lnew;
+			ctl->l = lnew;
+		}
+	}
+	*this_line = *cur_line + *adjust;
+	nmove = *this_line - *nflushd_lines;
+	if (nmove > 0 && (unsigned)nmove >= ctl->max_bufd_lines + BUFFER_MARGIN) {
+		*nflushd_lines += nmove - ctl->max_bufd_lines;
+		flush_lines(ctl, nmove - ctl->max_bufd_lines);
+	}
+}
+
 static void parse_options(struct col_ctl *ctl, int argc, char **argv)
 {
 	static const struct option longopts[] = {
@@ -471,7 +532,6 @@ int main(int argc, char **argv)
 	wint_t ch;
 	CHAR *c = NULL;
 	CSET cur_set = CS_NORMAL;	/* current character set */
-	LINE *l;			/* current line */
 	int extra_lines = 0;		/* # of lines above first line */
 	int cur_col = 0;		/* current column */
 	int cur_line = 0;		/* line number of current position */
@@ -486,7 +546,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	ctl.lines = l = alloc_line(&ctl);
+	ctl.lines = ctl.l = alloc_line(&ctl);
 
 	parse_options(&ctl, argc, argv);
 
@@ -504,73 +564,20 @@ int main(int argc, char **argv)
 			continue;
 
 		/* Must stuff ch in a line - are we at the right one? */
-		if (cur_line != this_line - adjust) {
-			LINE *lnew;
-			int nmove;
+		if (cur_line != this_line - adjust)
+			update_cur_line(&ctl, &adjust, &cur_line, &this_line, &nflushd_lines,
+					&extra_lines, &warned);
 
-			adjust = 0;
-			nmove = cur_line - this_line;
-			if (!ctl.fine) {
-				/* round up to next line */
-				if (cur_line & 1) {
-					adjust = 1;
-					nmove++;
-				}
-			}
-			if (nmove < 0) {
-				for (; nmove < 0 && l->l_prev; nmove++)
-					l = l->l_prev;
-				if (nmove) {
-					if (nflushd_lines == 0) {
-						/*
-						 * Allow backup past first
-						 * line if nothing has been
-						 * flushed yet.
-						 */
-						for (; nmove < 0; nmove++) {
-							lnew = alloc_line(&ctl);
-							l->l_prev = lnew;
-							lnew->l_next = l;
-							l = ctl.lines = lnew;
-							extra_lines++;
-						}
-					} else {
-						if (!warned++)
-							warnx(
-			_("warning: can't back up %s."), cur_line < 0 ?
-			_("past first line") : _("-- line already flushed"));
-						cur_line -= nmove;
-					}
-				}
-			} else {
-				/* may need to allocate here */
-				for (; nmove > 0 && l->l_next; nmove--)
-					l = l->l_next;
-				for (; nmove > 0; nmove--) {
-					lnew = alloc_line(&ctl);
-					lnew->l_prev = l;
-					l->l_next = lnew;
-					l = lnew;
-				}
-			}
-			this_line = cur_line + adjust;
-			nmove = this_line - nflushd_lines;
-			if (nmove > 0
-			    && (unsigned) nmove >= ctl.max_bufd_lines + BUFFER_MARGIN) {
-				nflushd_lines += nmove - ctl.max_bufd_lines;
-				flush_lines(&ctl, nmove - ctl.max_bufd_lines);
-			}
-		}
 		/* grow line's buffer? */
-		if (l->l_line_len + 1 >= l->l_lsize) {
+		if (ctl.l->l_line_len + 1 >= ctl.l->l_lsize) {
 			int need;
 
-			need = l->l_lsize ? l->l_lsize * 2 : 90;
-			l->l_line = xrealloc((void *) l->l_line,
+			need = ctl.l->l_lsize ? ctl.l->l_lsize * 2 : 90;
+			ctl.l->l_line = xrealloc((void *) ctl.l->l_line,
 						    (unsigned) need * sizeof(CHAR));
-			l->l_lsize = need;
+			ctl.l->l_lsize = need;
 		}
-		c = &l->l_line[l->l_line_len++];
+		c = &ctl.l->l_line[ctl.l->l_line_len++];
 		c->c_char = ch;
 		c->c_set = cur_set;
 		if (0 < cur_col)
@@ -582,15 +589,15 @@ int main(int argc, char **argv)
 		 * If things are put in out of order, they will need sorting
 		 * when it is flushed.
 		 */
-		if (cur_col < l->l_max_col)
-			l->l_needs_sort = 1;
+		if (cur_col < ctl.l->l_max_col)
+			ctl.l->l_needs_sort = 1;
 		else
-			l->l_max_col = cur_col;
+			ctl.l->l_max_col = cur_col;
 		if (c->c_width > 0)
 			cur_col += c->c_width;
 	}
 	/* goto the last line that had a character on it */
-	for (; l->l_next; l = l->l_next)
+	for (; ctl.l->l_next; ctl.l = ctl.l->l_next)
 		this_line++;
 	if (max_line == 0 && cur_col == 0)
 		return EXIT_SUCCESS;	/* no lines, so just exit */
