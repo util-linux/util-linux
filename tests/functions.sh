@@ -230,6 +230,7 @@ function ts_init_core_env {
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME"
 	TS_ERRLOG="$TS_OUTDIR/$TS_TESTNAME.err"
 	TS_VGDUMP="$TS_OUTDIR/$TS_TESTNAME.vgdump"
+	TS_EXIT_CODE="$TS_OUTDIR/$TS_TESTNAME.exit_code"
 	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME"
 	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
 	TS_EXPECTED_ERR="$TS_TOPDIR/expected/$TS_NS.err"
@@ -241,15 +242,16 @@ function ts_init_core_subtest_env {
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME"
 	TS_ERRLOG="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME.err"
 	TS_VGDUMP="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME.vgdump"
+	TS_EXIT_CODE="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME.exit_code"
 	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME-$TS_SUBNAME"
 	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
 	TS_EXPECTED_ERR="$TS_TOPDIR/expected/$TS_NS.err"
 	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-mnt"
 
-	rm -f $TS_OUTPUT $TS_ERRLOG $TS_VGDUMP
+	rm -f $TS_OUTPUT $TS_ERRLOG $TS_VGDUMP $TS_EXIT_CODE
 	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
 
-	touch $TS_OUTPUT $TS_ERRLOG
+	touch $TS_OUTPUT $TS_ERRLOG $TS_EXIT_CODE
 	[ -n "$TS_VALGRIND_CMD" ] && touch $TS_VGDUMP
 }
 
@@ -354,10 +356,10 @@ function ts_init_env {
 
 	export BLKID_FILE
 
-	rm -f $TS_OUTPUT $TS_ERRLOG $TS_VGDUMP
+	rm -f $TS_OUTPUT $TS_ERRLOG $TS_VGDUMP $TS_EXIT_CODE
 	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
 
-	touch $TS_OUTPUT $TS_ERRLOG
+	touch $TS_OUTPUT $TS_ERRLOG $TS_EXIT_CODE
 	[ -n "$TS_VALGRIND_CMD" ] && touch $TS_VGDUMP
 
 	if [ "$TS_VERBOSE" == "yes" ]; then
@@ -375,6 +377,7 @@ function ts_init_env {
 		echo "    verbose: $TS_VERBOSE"
 		echo "     output: $TS_OUTPUT"
 		echo "  error log: $TS_ERRLOG"
+		echo "  exit code: $TS_EXIT_CODE"
 		echo "   valgrind: $TS_VGDUMP"
 		echo "   expected: $TS_EXPECTED{.err}"
 		echo " mountpoint: $TS_MOUNTPOINT"
@@ -454,6 +457,7 @@ function ts_run {
 	fi
 
 	"${args[@]}" "$@"
+	echo $? >$TS_EXIT_CODE
 }
 
 function ts_gen_diff_from {
@@ -483,6 +487,7 @@ function ts_gen_diff_from {
 function ts_gen_diff {
 	local status_out=0
 	local status_err=0
+	local exit_code=0
 
 	[ -f "$TS_OUTPUT" ] || return 1
 	[ -f "$TS_EXPECTED" ] || TS_EXPECTED=/dev/null
@@ -503,7 +508,14 @@ function ts_gen_diff {
 	ts_gen_diff_from $TS_EXPECTED_ERR $TS_ERRLOG $TS_DIFF.err
 	status_err=$?
 
-	if [ $status_out -ne 0 -o $status_err -ne 0 ]; then
+	# TS_EXIT_CODE is empty when tests aren't run ts_run: https://github.com/karelzak/util-linux/issues/1072
+	# or when ts_finalize is called right after ts_finalize_subtest.
+	exit_code="$(cat $TS_EXIT_CODE)"
+	if [ -z "$exit_code" ]; then
+		exit_code=0
+	fi
+
+	if [ $status_out -ne 0 -o $status_err -ne 0 -o $exit_code -ne 0 ]; then
 		return 1
 	fi
 	return 0
