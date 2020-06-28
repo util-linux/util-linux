@@ -124,6 +124,20 @@ struct col_ctl {
 		pass_unknown_seqs:1;	/* whether to pass unknown control sequences */
 };
 
+struct col_lines {
+	CHAR *c;
+	CSET cur_set;
+	wint_t ch;
+	int adjust;
+	int cur_col;
+	int cur_line;
+	int extra_lines;
+	int max_line;
+	int nflushd_lines;
+	int this_line;
+	int warned;
+};
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -336,62 +350,60 @@ static void flush_lines(struct col_ctl *ctl, int nflush)
 		ctl->lines->l_prev = NULL;
 }
 
-static int handle_not_graphic(struct col_ctl *ctl, char ch, CHAR *c,
-			      int *cur_col, int *cur_line, int *max_line,
-			      CSET *cur_set)
+static int handle_not_graphic(struct col_ctl *ctl, struct col_lines *lns)
 {
-	switch (ch) {
+	switch (lns->ch) {
 	case BS:		/* can't go back further */
-		if (*cur_col == 0)
+		if (lns->cur_col == 0)
 			return 1;
-		if (c)
-			*cur_col -= c->c_width;
+		if (lns->c)
+			lns->cur_col -= lns->c->c_width;
 		else
-			*cur_col -= 1;
+			lns->cur_col -= 1;
 		return 1;
 	case CR:
-		*cur_col = 0;
+		lns->cur_col = 0;
 		return 1;
 	case ESC:		/* just ignore EOF */
 		switch (getwchar()) {
 		case RLF:
-			*cur_line -= 2;
+			lns->cur_line -= 2;
 			break;
 		case RHLF:
-			*cur_line -= 1;
+			lns->cur_line -= 1;
 			break;
 		case FHLF:
-			*cur_line += 1;
-			if (*cur_line > *max_line)
-				*max_line = *cur_line;
+			lns->cur_line += 1;
+			if (lns->cur_line > lns->max_line)
+				lns->max_line = lns->cur_line;
 		}
 		return 1;
 	case NL:
-		*cur_line += 2;
-		if (*cur_line > *max_line)
-			*max_line = *cur_line;
-		*cur_col = 0;
+		lns->cur_line += 2;
+		if (lns->cur_line > lns->max_line)
+			lns->max_line = lns->cur_line;
+		lns->cur_col = 0;
 		return 1;
 	case SPACE:
-		*cur_col += 1;
+		lns->cur_col += 1;
 		return 1;
 	case SI:
-		*cur_set = CS_NORMAL;
+		lns->cur_set = CS_NORMAL;
 		return 1;
 	case SO:
-		*cur_set = CS_ALTERNATE;
+		lns->cur_set = CS_ALTERNATE;
 		return 1;
 	case TAB:		/* adjust column */
-		*cur_col |= 7;
-		*cur_col += 1;
+		lns->cur_col |= 7;
+		lns->cur_col += 1;
 		return 1;
 	case VT:
-		*cur_line -= 2;
+		lns->cur_line -= 2;
 		return 1;
 	}
-	if (iswspace(ch)) {
-		if (wcwidth(ch) > 0)
-			*cur_col += wcwidth(ch);
+	if (iswspace(lns->ch)) {
+		if (wcwidth(lns->ch) > 0)
+			lns->cur_col += wcwidth(lns->ch);
 		return 1;
 	}
 
@@ -400,19 +412,17 @@ static int handle_not_graphic(struct col_ctl *ctl, char ch, CHAR *c,
 	return 0;
 }
 
-static void update_cur_line(struct col_ctl *ctl, int *adjust, int *cur_line,
-			    int *this_line, int *nflushd_lines,
-			    int *extra_lines, int *warned)
+static void update_cur_line(struct col_ctl *ctl, struct col_lines *lns)
 {
 	LINE *lnew;
 	int nmove;
 
-	*adjust = 0;
-	nmove = *cur_line - *this_line;
+	lns->adjust = 0;
+	nmove = lns->cur_line - lns->this_line;
 	if (!ctl->fine) {
 		/* round up to next line */
-		if (*cur_line & 1) {
-			*adjust = 1;
+		if (lns->cur_line & 1) {
+			lns->adjust = 1;
 			nmove++;
 		}
 	}
@@ -420,7 +430,7 @@ static void update_cur_line(struct col_ctl *ctl, int *adjust, int *cur_line,
 		for (; nmove < 0 && ctl->l->l_prev; nmove++)
 			ctl->l = ctl->l->l_prev;
 		if (nmove) {
-			if (*nflushd_lines == 0) {
+			if (lns->nflushd_lines == 0) {
 				/*
 				 * Allow backup past first line if nothing
 				 * has been flushed yet.
@@ -430,15 +440,15 @@ static void update_cur_line(struct col_ctl *ctl, int *adjust, int *cur_line,
 					ctl->l->l_prev = lnew;
 					lnew->l_next = ctl->l;
 					ctl->l = ctl->lines = lnew;
-					*extra_lines += 1;
+					lns->extra_lines += 1;
 				}
 			} else {
-				if (!*warned++)
+				if (!lns->warned++)
 					warnx(_("warning: can't back up %s."),
-						  *cur_line < 0 ?
+						  lns->cur_line < 0 ?
 						    _("past first line") :
 					            _("-- line already flushed"));
-				*cur_line -= nmove;
+				lns->cur_line -= nmove;
 			}
 		}
 	} else {
@@ -452,10 +462,10 @@ static void update_cur_line(struct col_ctl *ctl, int *adjust, int *cur_line,
 			ctl->l = lnew;
 		}
 	}
-	*this_line = *cur_line + *adjust;
-	nmove = *this_line - *nflushd_lines;
+	lns->this_line = lns->cur_line + lns->adjust;
+	nmove = lns->this_line - lns->nflushd_lines;
 	if (nmove > 0 && (unsigned)nmove >= ctl->max_bufd_lines + BUFFER_MARGIN) {
-		*nflushd_lines += nmove - ctl->max_bufd_lines;
+		lns->nflushd_lines += nmove - ctl->max_bufd_lines;
 		flush_lines(ctl, nmove - ctl->max_bufd_lines);
 	}
 }
@@ -529,16 +539,9 @@ int main(int argc, char **argv)
 		.last_set = CS_NORMAL,
 		.max_bufd_lines = 128 * 2,
 	};
-	wint_t ch;
-	CHAR *c = NULL;
-	CSET cur_set = CS_NORMAL;	/* current character set */
-	int extra_lines = 0;		/* # of lines above first line */
-	int cur_col = 0;		/* current column */
-	int cur_line = 0;		/* line number of current position */
-	int max_line = 0;		/* max value of cur_line */
-	int this_line = 0;		/* line l points to */
-	int nflushd_lines = 0;		/* number of lines that were flushed */
-	int adjust = 0, warned = 0;
+	struct col_lines lns = {
+		.cur_set = CS_NORMAL,
+	};
 	int ret = EXIT_SUCCESS;
 
 	setlocale(LC_ALL, "");
@@ -552,21 +555,20 @@ int main(int argc, char **argv)
 
 	while (feof(stdin) == 0) {
 		errno = 0;
-		if ((ch = getwchar()) == WEOF) {
+		if ((lns.ch = getwchar()) == WEOF) {
 			if (errno == EILSEQ) {
-				warn(_("failed on line %d"), max_line + 1);
+				warn(_("failed on line %d"), lns.max_line + 1);
 				ret = EXIT_FAILURE;
 			}
 			break;
 		}
-		if (!iswgraph(ch) &&
-		    handle_not_graphic(&ctl, ch, c, &cur_col, &cur_line, &max_line, &cur_set))
+		if (!iswgraph(lns.ch) &&
+		    handle_not_graphic(&ctl, &lns))
 			continue;
 
 		/* Must stuff ch in a line - are we at the right one? */
-		if (cur_line != this_line - adjust)
-			update_cur_line(&ctl, &adjust, &cur_line, &this_line, &nflushd_lines,
-					&extra_lines, &warned);
+		if (lns.cur_line != lns.this_line - lns.adjust)
+			update_cur_line(&ctl, &lns);
 
 		/* grow line's buffer? */
 		if (ctl.l->l_line_len + 1 >= ctl.l->l_lsize) {
@@ -577,39 +579,39 @@ int main(int argc, char **argv)
 						    (unsigned) need * sizeof(CHAR));
 			ctl.l->l_lsize = need;
 		}
-		c = &ctl.l->l_line[ctl.l->l_line_len++];
-		c->c_char = ch;
-		c->c_set = cur_set;
-		if (0 < cur_col)
-			c->c_column = cur_col;
+		lns.c = &ctl.l->l_line[ctl.l->l_line_len++];
+		lns.c->c_char = lns.ch;
+		lns.c->c_set = lns.cur_set;
+		if (0 < lns.cur_col)
+			lns.c->c_column = lns.cur_col;
 		else
-			c->c_column = 0;
-		c->c_width = wcwidth(ch);
+			lns.c->c_column = 0;
+		lns.c->c_width = wcwidth(lns.ch);
 		/*
 		 * If things are put in out of order, they will need sorting
 		 * when it is flushed.
 		 */
-		if (cur_col < ctl.l->l_max_col)
+		if (lns.cur_col < ctl.l->l_max_col)
 			ctl.l->l_needs_sort = 1;
 		else
-			ctl.l->l_max_col = cur_col;
-		if (c->c_width > 0)
-			cur_col += c->c_width;
+			ctl.l->l_max_col = lns.cur_col;
+		if (lns.c->c_width > 0)
+			lns.cur_col += lns.c->c_width;
 	}
 	/* goto the last line that had a character on it */
 	for (; ctl.l->l_next; ctl.l = ctl.l->l_next)
-		this_line++;
-	if (max_line == 0 && cur_col == 0)
+		lns.this_line++;
+	if (lns.max_line == 0 && lns.cur_col == 0)
 		return EXIT_SUCCESS;	/* no lines, so just exit */
-	flush_lines(&ctl, this_line - nflushd_lines + extra_lines + 1);
+	flush_lines(&ctl, lns.this_line - lns.nflushd_lines + lns.extra_lines + 1);
 
 	/* make sure we leave things in a sane state */
 	if (ctl.last_set != CS_NORMAL)
 		col_putchar(SI);
 
 	/* flush out the last few blank lines */
-	ctl.nblank_lines = max_line - this_line;
-	if (max_line & 1)
+	ctl.nblank_lines = lns.max_line - lns.this_line;
+	if (lns.max_line & 1)
 		ctl.nblank_lines++;
 	else if (!ctl.nblank_lines)
 		/* missing a \n on the last line? */
