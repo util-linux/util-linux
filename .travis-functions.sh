@@ -130,7 +130,9 @@ function travis_install_script
 	fi
 
 	# install required packages
+	sudo bash -c "echo 'deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted universe multiverse' >>/etc/apt/sources.list"
 	sudo apt-get -qq update --fix-missing
+	sudo apt-get build-dep -y util-linux
 	sudo apt-get install -qq >/dev/null \
 		bc \
 		btrfs-tools \
