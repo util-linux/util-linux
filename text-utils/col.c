@@ -53,33 +53,35 @@
  * See Documentation/deprecated.txt for more information.
  */
 
-#include <stdlib.h>
-#include <errno.h>
 #include <ctype.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
+#include <errno.h>
 #include <getopt.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-#include "nls.h"
-#include "xalloc.h"
-#include "widechar.h"
-#include "strutils.h"
 #include "closestream.h"
+#include "nls.h"
 #include "optutils.h"
+#include "strutils.h"
+#include "widechar.h"
+#include "xalloc.h"
 
-#define	BS	'\b'		/* backspace */
-#define	TAB	'\t'		/* tab */
 #define	SPACE	' '		/* space */
+#define	BS	'\b'		/* backspace */
 #define	NL	'\n'		/* newline */
 #define	CR	'\r'		/* carriage return */
+#define	TAB	'\t'		/* tab */
+#define	VT	'\v'		/* vertical tab (aka reverse line feed) */
+
 #define	ESC	'\033'		/* escape */
-#define	SI	'\017'		/* shift in to normal character set */
-#define	SO	'\016'		/* shift out to alternate character set */
-#define	VT	'\013'		/* vertical tab (aka reverse line feed) */
-#define	RLF	'\007'		/* ESC-07 reverse line feed */
-#define	RHLF	'\010'		/* ESC-010 reverse half-line feed */
-#define	FHLF	'\011'		/* ESC-011 forward half-line feed */
+#define	RLF	'\a'		/* ESC-007 reverse line feed */
+#define	RHLF	BS		/* ESC-010 reverse half-line feed */
+#define	FHLF	TAB		/* ESC-011 forward half-line feed */
+
+#define	SO	'\016'		/* activate the G1 character set */
+#define	SI	'\017'		/* activate the G0 character set */
 
 /* build up at least this many lines before flushing them out */
 #define	BUFFER_MARGIN		32
@@ -87,6 +89,7 @@
 /* number of lines to allocate */
 #define	NALLOC			64
 
+/* SI & SO charset mode */
 typedef enum {
 	CS_NORMAL,
 	CS_ALTERNATE
@@ -163,7 +166,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, _(
-		"%s reads from standard input and writes to standard output\n\n"),
+		"%s reads from standard input and writes to standard output\n"),
 		program_invocation_short_name);
 
 	printf(USAGE_MAN_TAIL("col(1)"));
@@ -173,7 +176,7 @@ static void __attribute__((__noreturn__)) usage(void)
 static inline void col_putchar(wchar_t ch)
 {
 	if (putwchar(ch) == WEOF)
-		errx(EXIT_FAILURE, _("write error"));
+		err(EXIT_FAILURE, _("write failed"));
 }
 
 /*
@@ -229,7 +232,7 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 		}
 		if (count_size <= l->l_max_col) {
 			count_size = l->l_max_col + 1;
-			count = xrealloc((void *)count, sizeof(size_t) * count_size);
+			count = xrealloc(count, sizeof(size_t) * count_size);
 		}
 		memset(count, 0, sizeof(size_t) * l->l_max_col + 1);
 		for (i = nchars, c = l->l_line; c && 0 < i; i--, c++)
@@ -254,18 +257,21 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 	while (0 < nchars) {
 		this_col = c->c_column;
 		endc = c;
+
+		/* find last character */
 		do {
 			++endc;
 		} while (0 < --nchars && this_col == endc->c_column);
 
-		/* if -b only print last character */
 		if (ctl->no_backspaces) {
+			/* print only the last character */
 			c = endc - 1;
 			if (0 < nchars && endc->c_column < this_col + c->c_width)
 				continue;
 		}
 
 		if (last_col < this_col) {
+			/* tabs and spaces handling */
 			ssize_t nspace = this_col - last_col;
 
 			if (ctl->compress_spaces && 1 < nspace) {
@@ -284,6 +290,7 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 		}
 
 		for (;;) {
+			/* SO / SI character set changing */
 			if (c->c_set != ctl->last_set) {
 				switch (c->c_set) {
 				case CS_NORMAL:
@@ -297,7 +304,11 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 				}
 				ctl->last_set = c->c_set;
 			}
+
+			/* output a character */
 			col_putchar(c->c_char);
+
+			/* rubout control chars from output */
 			if (c + 1 < endc) {
 				int i;
 
@@ -349,7 +360,7 @@ static void flush_lines(struct col_ctl *ctl, ssize_t nflush)
 			flush_line(ctl, l);
 		}
 		ctl->nblank_lines++;
-		free((void *)l->l_line);
+		free(l->l_line);
 		free_line(ctl, l);
 	}
 	if (ctl->lines)
@@ -359,9 +370,9 @@ static void flush_lines(struct col_ctl *ctl, ssize_t nflush)
 static int handle_not_graphic(struct col_ctl *ctl, struct col_lines *lns)
 {
 	switch (lns->ch) {
-	case BS:		/* can't go back further */
+	case BS:
 		if (lns->cur_col == 0)
-			return 1;
+			return 1;	/* can't go back further */
 		if (lns->c)
 			lns->cur_col -= lns->c->c_width;
 		else
@@ -370,8 +381,8 @@ static int handle_not_graphic(struct col_ctl *ctl, struct col_lines *lns)
 	case CR:
 		lns->cur_col = 0;
 		return 1;
-	case ESC:		/* just ignore EOF */
-		switch (getwchar()) {
+	case ESC:
+		switch (getwchar()) {	/* just ignore EOF */
 		case RLF:
 			lns->cur_line -= 2;
 			break;
@@ -479,6 +490,7 @@ static void update_cur_line(struct col_ctl *ctl, struct col_lines *lns)
 
 	lns->this_line = lns->cur_line + lns->adjust;
 	nmove = lns->this_line - lns->nflushd_lines;
+
 	if (0 < nmove && ctl->max_bufd_lines + BUFFER_MARGIN <= (size_t)nmove) {
 		lns->nflushd_lines += nmove - ctl->max_bufd_lines;
 		flush_lines(ctl, nmove - ctl->max_bufd_lines);
@@ -570,6 +582,7 @@ int main(int argc, char **argv)
 
 	while (feof(stdin) == 0) {
 		errno = 0;
+		/* Get character */
 		if ((lns.ch = getwchar()) == WEOF) {
 			if (errno == EILSEQ) {
 				warn(_("failed on line %lu"), lns.max_line + 1);
@@ -577,15 +590,16 @@ int main(int argc, char **argv)
 			}
 			break;
 		}
-		if (!iswgraph(lns.ch) &&
-		    handle_not_graphic(&ctl, &lns))
+
+		/* Deal printable characters */
+		if (!iswgraph(lns.ch) && handle_not_graphic(&ctl, &lns))
 			continue;
 
 		/* Must stuff ch in a line - are we at the right one? */
 		if ((size_t)lns.cur_line != lns.this_line - lns.adjust)
 			update_cur_line(&ctl, &lns);
 
-		/* grow line's buffer? */
+		/* Does line buffer need to grow? */
 		if (ctl.l->l_lsize <= ctl.l->l_line_len + 1) {
 			size_t need;
 
@@ -593,14 +607,18 @@ int main(int argc, char **argv)
 			ctl.l->l_line = xrealloc(ctl.l->l_line, need * sizeof(CHAR));
 			ctl.l->l_lsize = need;
 		}
+
+		/* Store character */
 		lns.c = &ctl.l->l_line[ctl.l->l_line_len++];
 		lns.c->c_char = lns.ch;
 		lns.c->c_set = lns.cur_set;
+
 		if (0 < lns.cur_col)
 			lns.c->c_column = lns.cur_col;
 		else
 			lns.c->c_column = 0;
 		lns.c->c_width = wcwidth(lns.ch);
+
 		/*
 		 * If things are put in out of order, they will need sorting
 		 * when it is flushed.
@@ -612,6 +630,7 @@ int main(int argc, char **argv)
 		if (0 < lns.c->c_width)
 			lns.cur_col += lns.c->c_width;
 	}
+
 	/* goto the last line that had a character on it */
 	for (; ctl.l->l_next; ctl.l = ctl.l->l_next)
 		lns.this_line++;
