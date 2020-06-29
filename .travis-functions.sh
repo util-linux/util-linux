@@ -53,7 +53,8 @@ function xconfigure
 function make_checkusage
 {
 	local tmp
-	if ! tmp=$($MAKE checkusage 2>&1) || test -n "$tmp"; then
+	# memory leaks are ignored here. See https://github.com/karelzak/util-linux/issues/1077
+	if ! tmp=$(ASAN_OPTIONS="$ASAN_OPTIONS:detect_leaks=0" $MAKE checkusage 2>&1) || test -n "$tmp"; then
 		echo "$tmp"
 		echo "make checkusage failed" >&2
 		return 1
