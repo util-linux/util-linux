@@ -132,6 +132,7 @@ function travis_install_script
 
 	# install required packages
 	sudo bash -c "echo 'deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted universe multiverse' >>/etc/apt/sources.list"
+	sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 	sudo apt-get -qq update --fix-missing
 	sudo apt-get build-dep -y util-linux
 	sudo apt-get install -qq >/dev/null \
@@ -147,6 +148,8 @@ function travis_install_script
 		ntp \
 		socat \
 		|| return
+
+	sudo apt-get install -y gcc-10
 
 	# install only if available (e.g. Ubuntu Trusty)
 	sudo apt-get install -qq >/dev/null \
