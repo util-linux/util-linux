@@ -2554,8 +2554,8 @@ checking of block devices using kernel crypto API.  The
 .B mount
 command can open
 the dm-verity device and do the integrity verification before on the device
-filesystem is mounted.  Requires libcryptsetup with in libmount.  If
-libcryptsetup supports extracting the root hash of an already mounted device,
+filesystem is mounted.  Requires libcryptsetup with in libmount (optionally via dlopen).
+If libcryptsetup supports extracting the root hash of an already mounted device,
 existing devices will be automatically reused in case of a match.
 Mount options for dm-verity:
 .TP

@@ -44,8 +44,15 @@ libmount_la_LIBADD = \
 	libcommon.la \
 	libblkid.la \
 	$(SELINUX_LIBS) \
-	$(CRYPTSETUP_LIBS) \
 	$(REALTIME_LIBS)
+
+if HAVE_CRYPTSETUP
+if CRYPTSETUP_VIA_DLOPEN
+libmount_la_LIBADD += -ldl
+else
+libmount_la_LIBADD += $(CRYPTSETUP_LIBS)
+endif
+endif
 
 libmount_la_CFLAGS = \
 	$(AM_CFLAGS) \
