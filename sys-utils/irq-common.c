@@ -195,7 +195,7 @@ static char *remove_repeated_spaces(char *str)
 /*
  * irqinfo - parse the system's interrupts
  */
-static struct irq_stat *get_irqinfo(void)
+static struct irq_stat *get_irqinfo(int softirq)
 {
 	FILE *irqfile;
 	char *line = NULL, *tmp;
@@ -209,7 +209,10 @@ static struct irq_stat *get_irqinfo(void)
 	stat->irq_info = xmalloc(sizeof(*stat->irq_info) * IRQ_INFO_LEN);
 	stat->nr_irq_info = IRQ_INFO_LEN;
 
-	irqfile = fopen(_PATH_PROC_INTERRUPTS, "r");
+	if (softirq)
+		irqfile = fopen(_PATH_PROC_SOFTIRQS, "r");
+	else
+		irqfile = fopen(_PATH_PROC_INTERRUPTS, "r");
 	if (!irqfile) {
 		warn(_("cannot open %s"), _PATH_PROC_INTERRUPTS);
 		goto free_stat;
@@ -368,7 +371,8 @@ void set_sort_func_by_key(struct irq_output *out, char c)
 
 struct libscols_table *get_scols_table(struct irq_output *out,
 					      struct irq_stat *prev,
-					      struct irq_stat **xstat)
+					      struct irq_stat **xstat,
+					      int softirq)
 {
 	struct libscols_table *table;
 	struct irq_info *result;
@@ -377,7 +381,7 @@ struct libscols_table *get_scols_table(struct irq_output *out,
 	size_t i;
 
 	/* the stats */
-	stat = get_irqinfo();
+	stat = get_irqinfo(softirq);
 	if (!stat)
 		return NULL;
 

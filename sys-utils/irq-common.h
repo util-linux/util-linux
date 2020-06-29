@@ -56,6 +56,7 @@ void set_sort_func_by_key(struct irq_output *out, const char c);
 
 struct libscols_table *get_scols_table(struct irq_output *out,
                                               struct irq_stat *prev,
-                                              struct irq_stat **xstat);
+                                              struct irq_stat **xstat,
+                                              int softirq);
 
 #endif /* UTIL_LINUX_H_IRQ_COMMON */
