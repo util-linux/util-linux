@@ -8,7 +8,7 @@ git:
 
 compiler:
   - gcc-10
-  - clang
+  - clang-10
 
 env:
   - MAKE_CHECK="nonroot"

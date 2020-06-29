@@ -132,6 +132,11 @@ function travis_install_script
 
 	# install required packages
 	sudo bash -c "echo 'deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted universe multiverse' >>/etc/apt/sources.list"
+
+	# the following snippet was borrowed from https://apt.llvm.org/llvm.sh
+	wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+	add-apt-repository -y "deb http://apt.llvm.org/$(lsb_release -cs)/   llvm-toolchain-$(lsb_release -cs)-10  main"
+
 	sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 	sudo apt-get -qq update --fix-missing
 	sudo apt-get build-dep -y util-linux
@@ -150,6 +155,7 @@ function travis_install_script
 		|| return
 
 	sudo apt-get install -y gcc-10
+	sudo apt-get install -y clang-10
 
 	# install only if available (e.g. Ubuntu Trusty)
 	sudo apt-get install -qq >/dev/null \
