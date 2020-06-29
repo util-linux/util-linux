@@ -78,22 +78,6 @@ static int put1wc(int c)
 # define putwp(s) putp(s)
 #endif
 
-static int handle_escape(FILE *f);
-static void filter(FILE *f);
-static void flushln(void);
-static void overstrike(void);
-static void iattr(void);
-static void initbuf(void);
-static void fwd(void);
-static void reverse(void);
-static void initinfo(void);
-static void outc(wint_t c, int width);
-static void xsetmode(int newmode);
-static void setcol(int newcol);
-static void needcol(int col);
-static void sig_handler(int signo);
-static void print_out(char *line);
-
 #define	IESC	'\033'
 #define	SO	'\016'
 #define	SI	'\017'
@@ -136,6 +120,8 @@ static int	halfpos;
 static int	upln;
 static int	iflag;
 
+static int curmode = 0;
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -157,85 +143,292 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-int main(int argc, char **argv)
+static void needcol(int acol)
 {
-	int c, ret, tflag = 0;
-	char *termtype;
-	FILE *f;
+	maxcol = acol;
 
-	static const struct option longopts[] = {
-		{ "terminal",	required_argument,	NULL, 't' },
-		{ "indicated",	no_argument,		NULL, 'i' },
-		{ "version",	no_argument,		NULL, 'V' },
-		{ "help",	no_argument,		NULL, 'h' },
-		{ NULL, 0, NULL, 0 }
-	};
+	/* If col >= obuflen, expand obuf until obuflen > col. */
+	while (acol >= obuflen) {
+		/* Paranoid check for obuflen == INT_MAX. */
+		if (obuflen == INT_MAX)
+			errx(EXIT_FAILURE, _("Input line too long."));
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	close_stdout_atexit();
+		/* Similar paranoia: double only up to INT_MAX. */
+		if (obuflen < (INT_MAX / 2))
+			obuflen *= 2;
+		else
+			obuflen = INT_MAX;
 
-	signal(SIGINT, sig_handler);
-	signal(SIGTERM, sig_handler);
-
-	termtype = getenv("TERM");
-
-	while ((c = getopt_long(argc, argv, "it:T:Vh", longopts, NULL)) != -1)
-		switch (c) {
-
-		case 't':
-		case 'T':
-			/* for nroff compatibility */
-			termtype = optarg;
-			tflag = 1;
-			break;
-		case 'i':
-			iflag = 1;
-			break;
-
-		case 'V':
-			print_version(EXIT_SUCCESS);
-		case 'h':
-			usage();
-		default:
-			errtryhelp(EXIT_FAILURE);
-		}
-	setupterm(termtype, STDOUT_FILENO, &ret);
-	switch (ret) {
-
-	case 1:
-		break;
-
-	default:
-		warnx(_("trouble reading terminfo"));
-		/* fallthrough */
-
-	case 0:
-		if (tflag)
-			warnx(_("terminal `%s' is not known, defaulting to `dumb'"),
-				termtype);
-		setupterm("dumb", STDOUT_FILENO, (int *)0);
-		break;
+		/* Now we can try to expand obuf. */
+		obuf = xrealloc(obuf, sizeof(struct CHAR) * obuflen);
 	}
+}
 
-	initinfo();
-	if ((tigetflag("os") && ENTER_BOLD == NULL) ||
-	    (tigetflag("ul") && ENTER_UNDERLINE == NULL && UNDER_CHAR == NULL))
-		must_overstrike = 1;
-	initbuf();
-	if (optind == argc)
-		filter(stdin);
-	else
-		for (; optind < argc; optind++) {
-			f = fopen(argv[optind], "r");
-			if (!f)
-				err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
-			filter(f);
-			fclose(f);
+static void setcol(int newcol)
+{
+	col = newcol;
+
+	if (col < 0)
+		col = 0;
+	else if (col > maxcol)
+		needcol(col);
+}
+
+static void initbuf(void)
+{
+	if (obuf == NULL) {
+		/* First time. */
+		obuflen = BUFSIZ;
+		obuf = xcalloc(obuflen, sizeof(struct CHAR));
+	} else
+		/* assumes NORMAL == 0 */
+		memset(obuf, 0, sizeof(struct CHAR) * maxcol);
+
+	setcol(0);
+	maxcol = 0;
+	mode &= ALTSET;
+}
+
+static void initinfo(void)
+{
+	CURS_UP		= tigetstr("cuu1");
+	CURS_RIGHT	= tigetstr("cuf1");
+	CURS_LEFT	= tigetstr("cub1");
+	if (CURS_LEFT == NULL)
+		CURS_LEFT = "\b";
+
+	ENTER_STANDOUT	= tigetstr("smso");
+	EXIT_STANDOUT	= tigetstr("rmso");
+	ENTER_UNDERLINE	= tigetstr("smul");
+	EXIT_UNDERLINE	= tigetstr("rmul");
+	ENTER_DIM	= tigetstr("dim");
+	ENTER_BOLD	= tigetstr("bold");
+	ENTER_REVERSE	= tigetstr("rev");
+	EXIT_ATTRIBUTES	= tigetstr("sgr0");
+
+	if (!ENTER_BOLD && ENTER_REVERSE)
+		ENTER_BOLD = ENTER_REVERSE;
+	if (!ENTER_BOLD && ENTER_STANDOUT)
+		ENTER_BOLD = ENTER_STANDOUT;
+	if (!ENTER_UNDERLINE && ENTER_STANDOUT) {
+		ENTER_UNDERLINE = ENTER_STANDOUT;
+		EXIT_UNDERLINE = EXIT_STANDOUT;
+	}
+	if (!ENTER_DIM && ENTER_STANDOUT)
+		ENTER_DIM = ENTER_STANDOUT;
+	if (!ENTER_REVERSE && ENTER_STANDOUT)
+		ENTER_REVERSE = ENTER_STANDOUT;
+	if (!EXIT_ATTRIBUTES && EXIT_STANDOUT)
+		EXIT_ATTRIBUTES = EXIT_STANDOUT;
+
+	/*
+	 * Note that we use REVERSE for the alternate character set,
+	 * not the as/ae capabilities.  This is because we are modeling
+	 * the model 37 teletype (since that's what nroff outputs) and
+	 * the typical as/ae is more of a graphics set, not the greek
+	 * letters the 37 has.
+	 */
+	UNDER_CHAR = tigetstr("uc");
+	must_use_uc = (UNDER_CHAR && !ENTER_UNDERLINE);
+}
+
+static void sig_handler(int signo __attribute__((__unused__)))
+{
+	_exit(EXIT_SUCCESS);
+}
+
+static void print_out(char *line)
+{
+	if (line == NULL)
+		return;
+
+	putwp(line);
+}
+
+static void xsetmode(int newmode)
+{
+	if (!iflag) {
+		if (curmode != NORMAL && newmode != NORMAL)
+			xsetmode(NORMAL);
+		switch (newmode) {
+		case NORMAL:
+			switch (curmode) {
+			case NORMAL:
+				break;
+			case UNDERL:
+				print_out(EXIT_UNDERLINE);
+				break;
+			default:
+				/* This includes standout */
+				print_out(EXIT_ATTRIBUTES);
+				break;
+			}
+			break;
+		case ALTSET:
+			print_out(ENTER_REVERSE);
+			break;
+		case SUPERSC:
+			/*
+			 * This only works on a few terminals.
+			 * It should be fixed.
+			 */
+			print_out(ENTER_UNDERLINE);
+			print_out(ENTER_DIM);
+			break;
+		case SUBSC:
+			print_out(ENTER_DIM);
+			break;
+		case UNDERL:
+			print_out(ENTER_UNDERLINE);
+			break;
+		case BOLD:
+			print_out(ENTER_BOLD);
+			break;
+		default:
+			/*
+			 * We should have some provision here for multiple modes
+			 * on at once.  This will have to come later.
+			 */
+			print_out(ENTER_STANDOUT);
+			break;
 		}
-	free(obuf);
-	return EXIT_SUCCESS;
+	}
+	curmode = newmode;
+}
+
+static void iattr(void)
+{
+	int i;
+	wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
+	wchar_t *cp = lbuf;
+
+	for (i = 0; i < maxcol; i++)
+		switch (obuf[i].c_mode) {
+		case NORMAL:	*cp++ = ' '; break;
+		case ALTSET:	*cp++ = 'g'; break;
+		case SUPERSC:	*cp++ = '^'; break;
+		case SUBSC:	*cp++ = 'v'; break;
+		case UNDERL:	*cp++ = '_'; break;
+		case BOLD:	*cp++ = '!'; break;
+		default:	*cp++ = 'X'; break;
+		}
+	for (*cp = ' '; *cp == ' '; cp--)
+		*cp = 0;
+	fputws(lbuf, stdout);
+	putwchar('\n');
+	free(lbuf);
+}
+
+static void outc(wint_t c, int width)
+{
+	int i;
+
+	putwchar(c);
+	if (must_use_uc && (curmode & UNDERL)) {
+		for (i = 0; i < width; i++)
+			print_out(CURS_LEFT);
+		for (i = 0; i < width; i++)
+			print_out(UNDER_CHAR);
+	}
+}
+
+/*
+ * For terminals that can overstrike, overstrike underlines and bolds.
+ * We don't do anything with halfline ups and downs, or Greek.
+ */
+static void overstrike(void)
+{
+	int i;
+	wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
+	wchar_t *cp = lbuf;
+	int hadbold = 0;
+
+	/* Set up overstrike buffer */
+	for (i = 0; i < maxcol; i++)
+		switch (obuf[i].c_mode) {
+		case NORMAL:
+		default:
+			*cp++ = ' ';
+			break;
+		case UNDERL:
+			*cp++ = '_';
+			break;
+		case BOLD:
+			*cp++ = obuf[i].c_char;
+			if (obuf[i].c_width > 1)
+				i += obuf[i].c_width - 1;
+			hadbold = 1;
+			break;
+		}
+	putwchar('\r');
+	for (*cp = ' '; *cp == ' '; cp--)
+		*cp = 0;
+	fputws(lbuf, stdout);
+	if (hadbold) {
+		putwchar('\r');
+		for (cp = lbuf; *cp; cp++)
+			putwchar(*cp == '_' ? ' ' : *cp);
+		putwchar('\r');
+		for (cp = lbuf; *cp; cp++)
+			putwchar(*cp == '_' ? ' ' : *cp);
+	}
+	free(lbuf);
+}
+
+static void flushln(void)
+{
+	int lastmode;
+	int i;
+	int hadmodes = 0;
+
+	lastmode = NORMAL;
+	for (i = 0; i < maxcol; i++) {
+		if (obuf[i].c_mode != lastmode) {
+			hadmodes++;
+			xsetmode(obuf[i].c_mode);
+			lastmode = obuf[i].c_mode;
+		}
+		if (obuf[i].c_char == '\0') {
+			if (upln)
+				print_out(CURS_RIGHT);
+			else
+				outc(' ', 1);
+		} else
+			outc(obuf[i].c_char, obuf[i].c_width);
+		if (obuf[i].c_width > 1)
+			i += obuf[i].c_width - 1;
+	}
+	if (lastmode != NORMAL)
+		xsetmode(NORMAL);
+	if (must_overstrike && hadmodes)
+		overstrike();
+	putwchar('\n');
+	if (iflag && hadmodes)
+		iattr();
+	fflush(stdout);
+	if (upln)
+		upln--;
+	initbuf();
+}
+
+static void fwd(void)
+{
+	int oldcol, oldmax;
+
+	oldcol = col;
+	oldmax = maxcol;
+	flushln();
+	setcol(oldcol);
+	maxcol = oldmax;
+}
+
+static void reverse(void)
+{
+	upln++;
+	fwd();
+	print_out(CURS_UP);
+	print_out(CURS_UP);
+	upln++;
 }
 
 static int handle_escape(FILE *f)
@@ -365,292 +558,83 @@ static void filter(FILE *f)
 		flushln();
 }
 
-static void flushln(void)
+int main(int argc, char **argv)
 {
-	int lastmode;
-	int i;
-	int hadmodes = 0;
+	int c, ret, tflag = 0;
+	char *termtype;
+	FILE *f;
 
-	lastmode = NORMAL;
-	for (i = 0; i < maxcol; i++) {
-		if (obuf[i].c_mode != lastmode) {
-			hadmodes++;
-			xsetmode(obuf[i].c_mode);
-			lastmode = obuf[i].c_mode;
+	static const struct option longopts[] = {
+		{ "terminal",	required_argument,	NULL, 't' },
+		{ "indicated",	no_argument,		NULL, 'i' },
+		{ "version",	no_argument,		NULL, 'V' },
+		{ "help",	no_argument,		NULL, 'h' },
+		{ NULL, 0, NULL, 0 }
+	};
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	close_stdout_atexit();
+
+	signal(SIGINT, sig_handler);
+	signal(SIGTERM, sig_handler);
+
+	termtype = getenv("TERM");
+
+	while ((c = getopt_long(argc, argv, "it:T:Vh", longopts, NULL)) != -1)
+		switch (c) {
+
+		case 't':
+		case 'T':
+			/* for nroff compatibility */
+			termtype = optarg;
+			tflag = 1;
+			break;
+		case 'i':
+			iflag = 1;
+			break;
+
+		case 'V':
+			print_version(EXIT_SUCCESS);
+		case 'h':
+			usage();
+		default:
+			errtryhelp(EXIT_FAILURE);
 		}
-		if (obuf[i].c_char == '\0') {
-			if (upln)
-				print_out(CURS_RIGHT);
-			else
-				outc(' ', 1);
-		} else
-			outc(obuf[i].c_char, obuf[i].c_width);
-		if (obuf[i].c_width > 1)
-			i += obuf[i].c_width - 1;
+	setupterm(termtype, STDOUT_FILENO, &ret);
+	switch (ret) {
+
+	case 1:
+		break;
+
+	default:
+		warnx(_("trouble reading terminfo"));
+		/* fallthrough */
+
+	case 0:
+		if (tflag)
+			warnx(_("terminal `%s' is not known, defaulting to `dumb'"),
+				termtype);
+		setupterm("dumb", STDOUT_FILENO, (int *)0);
+		break;
 	}
-	if (lastmode != NORMAL)
-		xsetmode(NORMAL);
-	if (must_overstrike && hadmodes)
-		overstrike();
-	putwchar('\n');
-	if (iflag && hadmodes)
-		iattr();
-	fflush(stdout);
-	if (upln)
-		upln--;
+
+	initinfo();
+	if ((tigetflag("os") && ENTER_BOLD == NULL) ||
+	    (tigetflag("ul") && ENTER_UNDERLINE == NULL && UNDER_CHAR == NULL))
+		must_overstrike = 1;
 	initbuf();
-}
-
-/*
- * For terminals that can overstrike, overstrike underlines and bolds.
- * We don't do anything with halfline ups and downs, or Greek.
- */
-static void overstrike(void)
-{
-	int i;
-	wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
-	wchar_t *cp = lbuf;
-	int hadbold = 0;
-
-	/* Set up overstrike buffer */
-	for (i = 0; i < maxcol; i++)
-		switch (obuf[i].c_mode) {
-		case NORMAL:
-		default:
-			*cp++ = ' ';
-			break;
-		case UNDERL:
-			*cp++ = '_';
-			break;
-		case BOLD:
-			*cp++ = obuf[i].c_char;
-			if (obuf[i].c_width > 1)
-				i += obuf[i].c_width - 1;
-			hadbold = 1;
-			break;
+	if (optind == argc)
+		filter(stdin);
+	else
+		for (; optind < argc; optind++) {
+			f = fopen(argv[optind], "r");
+			if (!f)
+				err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
+			filter(f);
+			fclose(f);
 		}
-	putwchar('\r');
-	for (*cp = ' '; *cp == ' '; cp--)
-		*cp = 0;
-	fputws(lbuf, stdout);
-	if (hadbold) {
-		putwchar('\r');
-		for (cp = lbuf; *cp; cp++)
-			putwchar(*cp == '_' ? ' ' : *cp);
-		putwchar('\r');
-		for (cp = lbuf; *cp; cp++)
-			putwchar(*cp == '_' ? ' ' : *cp);
-	}
-	free(lbuf);
-}
-
-static void iattr(void)
-{
-	int i;
-	wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
-	wchar_t *cp = lbuf;
-
-	for (i = 0; i < maxcol; i++)
-		switch (obuf[i].c_mode) {
-		case NORMAL:	*cp++ = ' '; break;
-		case ALTSET:	*cp++ = 'g'; break;
-		case SUPERSC:	*cp++ = '^'; break;
-		case SUBSC:	*cp++ = 'v'; break;
-		case UNDERL:	*cp++ = '_'; break;
-		case BOLD:	*cp++ = '!'; break;
-		default:	*cp++ = 'X'; break;
-		}
-	for (*cp = ' '; *cp == ' '; cp--)
-		*cp = 0;
-	fputws(lbuf, stdout);
-	putwchar('\n');
-	free(lbuf);
-}
-
-static void initbuf(void)
-{
-	if (obuf == NULL) {
-		/* First time. */
-		obuflen = BUFSIZ;
-		obuf = xcalloc(obuflen, sizeof(struct CHAR));
-	} else
-		/* assumes NORMAL == 0 */
-		memset(obuf, 0, sizeof(struct CHAR) * maxcol);
-
-	setcol(0);
-	maxcol = 0;
-	mode &= ALTSET;
-}
-
-static void fwd(void)
-{
-	int oldcol, oldmax;
-
-	oldcol = col;
-	oldmax = maxcol;
-	flushln();
-	setcol(oldcol);
-	maxcol = oldmax;
-}
-
-static void reverse(void)
-{
-	upln++;
-	fwd();
-	print_out(CURS_UP);
-	print_out(CURS_UP);
-	upln++;
-}
-
-static void initinfo(void)
-{
-	CURS_UP		= tigetstr("cuu1");
-	CURS_RIGHT	= tigetstr("cuf1");
-	CURS_LEFT	= tigetstr("cub1");
-	if (CURS_LEFT == NULL)
-		CURS_LEFT = "\b";
-
-	ENTER_STANDOUT	= tigetstr("smso");
-	EXIT_STANDOUT	= tigetstr("rmso");
-	ENTER_UNDERLINE	= tigetstr("smul");
-	EXIT_UNDERLINE	= tigetstr("rmul");
-	ENTER_DIM	= tigetstr("dim");
-	ENTER_BOLD	= tigetstr("bold");
-	ENTER_REVERSE	= tigetstr("rev");
-	EXIT_ATTRIBUTES	= tigetstr("sgr0");
-
-	if (!ENTER_BOLD && ENTER_REVERSE)
-		ENTER_BOLD = ENTER_REVERSE;
-	if (!ENTER_BOLD && ENTER_STANDOUT)
-		ENTER_BOLD = ENTER_STANDOUT;
-	if (!ENTER_UNDERLINE && ENTER_STANDOUT) {
-		ENTER_UNDERLINE = ENTER_STANDOUT;
-		EXIT_UNDERLINE = EXIT_STANDOUT;
-	}
-	if (!ENTER_DIM && ENTER_STANDOUT)
-		ENTER_DIM = ENTER_STANDOUT;
-	if (!ENTER_REVERSE && ENTER_STANDOUT)
-		ENTER_REVERSE = ENTER_STANDOUT;
-	if (!EXIT_ATTRIBUTES && EXIT_STANDOUT)
-		EXIT_ATTRIBUTES = EXIT_STANDOUT;
-
-	/*
-	 * Note that we use REVERSE for the alternate character set,
-	 * not the as/ae capabilities.  This is because we are modeling
-	 * the model 37 teletype (since that's what nroff outputs) and
-	 * the typical as/ae is more of a graphics set, not the greek
-	 * letters the 37 has.
-	 */
-	UNDER_CHAR = tigetstr("uc");
-	must_use_uc = (UNDER_CHAR && !ENTER_UNDERLINE);
-}
-
-static int curmode = 0;
-
-static void outc(wint_t c, int width)
-{
-	int i;
-
-	putwchar(c);
-	if (must_use_uc && (curmode & UNDERL)) {
-		for (i = 0; i < width; i++)
-			print_out(CURS_LEFT);
-		for (i = 0; i < width; i++)
-			print_out(UNDER_CHAR);
-	}
-}
-
-static void xsetmode(int newmode)
-{
-	if (!iflag) {
-		if (curmode != NORMAL && newmode != NORMAL)
-			xsetmode(NORMAL);
-		switch (newmode) {
-		case NORMAL:
-			switch (curmode) {
-			case NORMAL:
-				break;
-			case UNDERL:
-				print_out(EXIT_UNDERLINE);
-				break;
-			default:
-				/* This includes standout */
-				print_out(EXIT_ATTRIBUTES);
-				break;
-			}
-			break;
-		case ALTSET:
-			print_out(ENTER_REVERSE);
-			break;
-		case SUPERSC:
-			/*
-			 * This only works on a few terminals.
-			 * It should be fixed.
-			 */
-			print_out(ENTER_UNDERLINE);
-			print_out(ENTER_DIM);
-			break;
-		case SUBSC:
-			print_out(ENTER_DIM);
-			break;
-		case UNDERL:
-			print_out(ENTER_UNDERLINE);
-			break;
-		case BOLD:
-			print_out(ENTER_BOLD);
-			break;
-		default:
-			/*
-			 * We should have some provision here for multiple modes
-			 * on at once.  This will have to come later.
-			 */
-			print_out(ENTER_STANDOUT);
-			break;
-		}
-	}
-	curmode = newmode;
-}
-
-static void setcol(int newcol)
-{
-	col = newcol;
-
-	if (col < 0)
-		col = 0;
-	else if (col > maxcol)
-		needcol(col);
-}
-
-static void needcol(int acol)
-{
-	maxcol = acol;
-
-	/* If col >= obuflen, expand obuf until obuflen > col. */
-	while (acol >= obuflen) {
-		/* Paranoid check for obuflen == INT_MAX. */
-		if (obuflen == INT_MAX)
-			errx(EXIT_FAILURE, _("Input line too long."));
-
-		/* Similar paranoia: double only up to INT_MAX. */
-		if (obuflen < (INT_MAX / 2))
-			obuflen *= 2;
-		else
-			obuflen = INT_MAX;
-
-		/* Now we can try to expand obuf. */
-		obuf = xrealloc(obuf, sizeof(struct CHAR) * obuflen);
-	}
-}
-
-static void sig_handler(int signo __attribute__((__unused__)))
-{
-	_exit(EXIT_SUCCESS);
-}
-
-static void print_out(char *line)
-{
-	if (line == NULL)
-		return;
-
-	putwp(line);
+	free(obuf);
+	return EXIT_SUCCESS;
 }
