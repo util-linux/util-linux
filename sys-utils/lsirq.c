@@ -38,11 +38,11 @@
 
 #include "irq-common.h"
 
-static int print_irq_data(struct irq_output *out)
+static int print_irq_data(struct irq_output *out, int softirq)
 {
 	struct libscols_table *table;
 
-	table = get_scols_table(out, NULL, NULL);
+	table = get_scols_table(out, NULL, NULL, softirq);
 	if (!table)
 		return -1;
 
@@ -65,6 +65,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --noheadings     don't print headings\n"), stdout);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
+	fputs(_(" -S, --softirq        show softirqs instead of interrupts\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(22));
 
@@ -84,6 +85,7 @@ int main(int argc, char **argv)
 		{"sort", required_argument, NULL, 's'},
 		{"noheadings", no_argument, NULL, 'n'},
 		{"output", required_argument, NULL, 'o'},
+		{"softirq", no_argument, NULL, 'S'},
 		{"json", no_argument, NULL, 'J'},
 		{"pairs", no_argument, NULL, 'P'},
 		{"help", no_argument, NULL, 'h'},
@@ -97,10 +99,11 @@ int main(int argc, char **argv)
 		{0}
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+	int softirq = 0;
 
 	setlocale(LC_ALL, "");
 
-	while ((c = getopt_long(argc, argv, "no:s:hJPV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:s:ShJPV", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
@@ -119,6 +122,9 @@ int main(int argc, char **argv)
 		case 's':
 			set_sort_func_by_name(&out, optarg);
 			break;
+		case 'S':
+			softirq = 1;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -132,7 +138,8 @@ int main(int argc, char **argv)
 	if (!out.ncolumns) {
 		out.columns[out.ncolumns++] = COL_IRQ;
 		out.columns[out.ncolumns++] = COL_TOTAL;
-		out.columns[out.ncolumns++] = COL_NAME;
+		if (!softirq)
+			out.columns[out.ncolumns++] = COL_NAME;
 	}
 
 	/* add -o [+]<list> to putput */
@@ -142,5 +149,5 @@ int main(int argc, char **argv)
 				irq_column_name_to_id) < 0)
 		exit(EXIT_FAILURE);
 
-	return print_irq_data(&out) == 0 ?  EXIT_SUCCESS : EXIT_FAILURE;
+	return print_irq_data(&out, softirq) == 0 ?  EXIT_SUCCESS : EXIT_FAILURE;
 }

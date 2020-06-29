@@ -188,6 +188,7 @@
 
 /* irqtop paths */
 #define _PATH_PROC_INTERRUPTS	"/proc/interrupts"
+#define _PATH_PROC_SOFTIRQS	"/proc/softirqs"
 #define _PATH_PROC_UPTIME	"/proc/uptime"
 
 /* kernel command line */
