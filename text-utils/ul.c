@@ -72,12 +72,13 @@ static int put1wc(int c)
 
 	return c;
 }
-#define putwp(s) tputs(s, STDOUT_FILENO, put1wc)
+
+# define putwp(s) tputs(s, STDOUT_FILENO, put1wc)
 #else
-#define putwp(s) putp(s)
+# define putwp(s) putp(s)
 #endif
 
-static int handle_escape(FILE * f);
+static int handle_escape(FILE *f);
 static void filter(FILE *f);
 static void flushln(void);
 static void overstrike(void);
@@ -138,6 +139,7 @@ static int	iflag;
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
+
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<file> ...]\n"), program_invocation_short_name);
 
@@ -216,19 +218,19 @@ int main(int argc, char **argv)
 		setupterm("dumb", STDOUT_FILENO, (int *)0);
 		break;
 	}
+
 	initinfo();
-	if ((tigetflag("os") && ENTER_BOLD==NULL ) ||
-	    (tigetflag("ul") && ENTER_UNDERLINE==NULL && UNDER_CHAR==NULL))
+	if ((tigetflag("os") && ENTER_BOLD == NULL) ||
+	    (tigetflag("ul") && ENTER_UNDERLINE == NULL && UNDER_CHAR == NULL))
 		must_overstrike = 1;
 	initbuf();
 	if (optind == argc)
 		filter(stdin);
 	else
 		for (; optind < argc; optind++) {
-			f = fopen(argv[optind],"r");
+			f = fopen(argv[optind], "r");
 			if (!f)
-				err(EXIT_FAILURE, _("cannot open %s"),
-				    argv[optind]);
+				err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
 			filter(f);
 			fclose(f);
 		}
@@ -236,7 +238,7 @@ int main(int argc, char **argv)
 	return EXIT_SUCCESS;
 }
 
-static int handle_escape(FILE * f)
+static int handle_escape(FILE *f)
 {
 	wint_t c;
 
@@ -377,18 +379,17 @@ static void flushln(void)
 			lastmode = obuf[i].c_mode;
 		}
 		if (obuf[i].c_char == '\0') {
-			if (upln) {
+			if (upln)
 				print_out(CURS_RIGHT);
-			} else
+			else
 				outc(' ', 1);
 		} else
 			outc(obuf[i].c_char, obuf[i].c_width);
 		if (obuf[i].c_width > 1)
 			i += obuf[i].c_width - 1;
 	}
-	if (lastmode != NORMAL) {
-		xsetmode(0);
-	}
+	if (lastmode != NORMAL)
+		xsetmode(NORMAL);
 	if (must_overstrike && hadmodes)
 		overstrike();
 	putwchar('\n');
@@ -406,10 +407,10 @@ static void flushln(void)
  */
 static void overstrike(void)
 {
-	register int i;
-	register wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
-	register wchar_t *cp = lbuf;
-	int hadbold=0;
+	int i;
+	wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
+	wchar_t *cp = lbuf;
+	int hadbold = 0;
 
 	/* Set up overstrike buffer */
 	for (i = 0; i < maxcol; i++)
@@ -425,7 +426,7 @@ static void overstrike(void)
 			*cp++ = obuf[i].c_char;
 			if (obuf[i].c_width > 1)
 				i += obuf[i].c_width - 1;
-			hadbold=1;
+			hadbold = 1;
 			break;
 		}
 	putwchar('\r');
@@ -445,9 +446,9 @@ static void overstrike(void)
 
 static void iattr(void)
 {
-	register int i;
-	register wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
-	register wchar_t *cp = lbuf;
+	int i;
+	wchar_t *lbuf = xcalloc(maxcol + 1, sizeof(wchar_t));
+	wchar_t *cp = lbuf;
 
 	for (i = 0; i < maxcol; i++)
 		switch (obuf[i].c_mode) {
@@ -503,20 +504,20 @@ static void reverse(void)
 
 static void initinfo(void)
 {
-	CURS_UP =		tigetstr("cuu1");
-	CURS_RIGHT =		tigetstr("cuf1");
-	CURS_LEFT =		tigetstr("cub1");
+	CURS_UP		= tigetstr("cuu1");
+	CURS_RIGHT	= tigetstr("cuf1");
+	CURS_LEFT	= tigetstr("cub1");
 	if (CURS_LEFT == NULL)
-		CURS_LEFT =	"\b";
+		CURS_LEFT = "\b";
 
-	ENTER_STANDOUT =	tigetstr("smso");
-	EXIT_STANDOUT =		tigetstr("rmso");
-	ENTER_UNDERLINE =	tigetstr("smul");
-	EXIT_UNDERLINE =	tigetstr("rmul");
-	ENTER_DIM =		tigetstr("dim");
-	ENTER_BOLD =		tigetstr("bold");
-	ENTER_REVERSE =		tigetstr("rev");
-	EXIT_ATTRIBUTES =	tigetstr("sgr0");
+	ENTER_STANDOUT	= tigetstr("smso");
+	EXIT_STANDOUT	= tigetstr("rmso");
+	ENTER_UNDERLINE	= tigetstr("smul");
+	EXIT_UNDERLINE	= tigetstr("rmul");
+	ENTER_DIM	= tigetstr("dim");
+	ENTER_BOLD	= tigetstr("bold");
+	ENTER_REVERSE	= tigetstr("rev");
+	EXIT_ATTRIBUTES	= tigetstr("sgr0");
 
 	if (!ENTER_BOLD && ENTER_REVERSE)
 		ENTER_BOLD = ENTER_REVERSE;
@@ -540,18 +541,18 @@ static void initinfo(void)
 	 * the typical as/ae is more of a graphics set, not the greek
 	 * letters the 37 has.
 	 */
-
-	UNDER_CHAR =		tigetstr("uc");
+	UNDER_CHAR = tigetstr("uc");
 	must_use_uc = (UNDER_CHAR && !ENTER_UNDERLINE);
 }
 
 static int curmode = 0;
 
-static void outc(wint_t c, int width) {
+static void outc(wint_t c, int width)
+{
 	int i;
 
 	putwchar(c);
-	if (must_use_uc && (curmode&UNDERL)) {
+	if (must_use_uc && (curmode & UNDERL)) {
 		for (i = 0; i < width; i++)
 			print_out(CURS_LEFT);
 		for (i = 0; i < width; i++)
@@ -610,7 +611,8 @@ static void xsetmode(int newmode)
 	curmode = newmode;
 }
 
-static void setcol(int newcol) {
+static void setcol(int newcol)
+{
 	col = newcol;
 
 	if (col < 0)
@@ -619,7 +621,8 @@ static void setcol(int newcol) {
 		needcol(col);
 }
 
-static void needcol(int acol) {
+static void needcol(int acol)
+{
 	maxcol = acol;
 
 	/* If col >= obuflen, expand obuf until obuflen > col. */
@@ -639,7 +642,7 @@ static void needcol(int acol) {
 	}
 }
 
-static void sig_handler(int signo __attribute__ ((__unused__)))
+static void sig_handler(int signo __attribute__((__unused__)))
 {
 	_exit(EXIT_SUCCESS);
 }
