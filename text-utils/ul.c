@@ -92,19 +92,20 @@ static int put1wc(int c)
 #define	UNDERL	010	/* Ul */
 #define	BOLD	020	/* Bold */
 
-static int	must_use_uc, must_overstrike;
-static char	*CURS_UP,
-		*CURS_RIGHT,
-		*CURS_LEFT,
-		*ENTER_STANDOUT,
-		*EXIT_STANDOUT,
-		*ENTER_UNDERLINE,
-		*EXIT_UNDERLINE,
-		*ENTER_DIM,
-		*ENTER_BOLD,
-		*ENTER_REVERSE,
-		*UNDER_CHAR,
-		*EXIT_ATTRIBUTES;
+struct term_caps {
+	char *curs_up;
+	char *curs_right;
+	char *curs_left;
+	char *enter_standout;
+	char *exit_standout;
+	char *enter_underline;
+	char *exit_underline;
+	char *enter_dim;
+	char *enter_bold;
+	char *enter_reverse;
+	char *under_char;
+	char *exit_attributes;
+};
 
 struct CHAR {
 	char	c_mode;
@@ -119,6 +120,7 @@ static int	mode;
 static int	halfpos;
 static int	upln;
 static int	iflag;
+static int	must_use_uc, must_overstrike;
 
 static int curmode = 0;
 
@@ -189,37 +191,42 @@ static void initbuf(void)
 	mode &= ALTSET;
 }
 
-static void initinfo(void)
+static void initinfo(struct term_caps *const tcs)
 {
-	CURS_UP		= tigetstr("cuu1");
-	CURS_RIGHT	= tigetstr("cuf1");
-	CURS_LEFT	= tigetstr("cub1");
-	if (CURS_LEFT == NULL)
-		CURS_LEFT = "\b";
+	tcs->curs_up		= tigetstr("cuu1");
+	tcs->curs_right		= tigetstr("cuf1");
+	tcs->curs_left		= tigetstr("cub1");
+	if (tcs->curs_left == NULL)
+		tcs->curs_left = "\b";
 
-	ENTER_STANDOUT	= tigetstr("smso");
-	EXIT_STANDOUT	= tigetstr("rmso");
-	ENTER_UNDERLINE	= tigetstr("smul");
-	EXIT_UNDERLINE	= tigetstr("rmul");
-	ENTER_DIM	= tigetstr("dim");
-	ENTER_BOLD	= tigetstr("bold");
-	ENTER_REVERSE	= tigetstr("rev");
-	EXIT_ATTRIBUTES	= tigetstr("sgr0");
+	tcs->enter_standout	= tigetstr("smso");
+	tcs->exit_standout	= tigetstr("rmso");
+	tcs->enter_underline	= tigetstr("smul");
+	tcs->exit_underline	= tigetstr("rmul");
+	tcs->enter_dim		= tigetstr("dim");
+	tcs->enter_bold		= tigetstr("bold");
+	tcs->enter_reverse	= tigetstr("rev");
+	tcs->exit_attributes	= tigetstr("sgr0");
 
-	if (!ENTER_BOLD && ENTER_REVERSE)
-		ENTER_BOLD = ENTER_REVERSE;
-	if (!ENTER_BOLD && ENTER_STANDOUT)
-		ENTER_BOLD = ENTER_STANDOUT;
-	if (!ENTER_UNDERLINE && ENTER_STANDOUT) {
-		ENTER_UNDERLINE = ENTER_STANDOUT;
-		EXIT_UNDERLINE = EXIT_STANDOUT;
+	if (!tcs->enter_bold && tcs->enter_reverse)
+		tcs->enter_bold	= tcs->enter_reverse;
+
+	if (!tcs->enter_bold && tcs->enter_standout)
+		tcs->enter_bold	= tcs->enter_standout;
+
+	if (!tcs->enter_underline && tcs->enter_standout) {
+		tcs->enter_underline	= tcs->enter_standout;
+		tcs->exit_underline	= tcs->exit_standout;
 	}
-	if (!ENTER_DIM && ENTER_STANDOUT)
-		ENTER_DIM = ENTER_STANDOUT;
-	if (!ENTER_REVERSE && ENTER_STANDOUT)
-		ENTER_REVERSE = ENTER_STANDOUT;
-	if (!EXIT_ATTRIBUTES && EXIT_STANDOUT)
-		EXIT_ATTRIBUTES = EXIT_STANDOUT;
+
+	if (!tcs->enter_dim && tcs->enter_standout)
+		tcs->enter_dim 	= tcs->enter_standout;
+
+	if (!tcs->enter_reverse && tcs->enter_standout)
+		tcs->enter_reverse	= tcs->enter_standout;
+
+	if (!tcs->exit_attributes && tcs->exit_standout)
+		tcs->exit_attributes	= tcs->exit_standout;
 
 	/*
 	 * Note that we use REVERSE for the alternate character set,
@@ -228,8 +235,12 @@ static void initinfo(void)
 	 * the typical as/ae is more of a graphics set, not the greek
 	 * letters the 37 has.
 	 */
-	UNDER_CHAR = tigetstr("uc");
-	must_use_uc = (UNDER_CHAR && !ENTER_UNDERLINE);
+	tcs->under_char = tigetstr("uc");
+	must_use_uc = (tcs->under_char && !tcs->enter_underline);
+
+	if ((tigetflag("os") && tcs->enter_bold == NULL) ||
+	    (tigetflag("ul") && tcs->enter_underline == NULL && tcs->under_char == NULL))
+		must_overstrike = 1;
 }
 
 static void sig_handler(int signo __attribute__((__unused__)))
@@ -245,51 +256,51 @@ static void print_out(char *line)
 	putwp(line);
 }
 
-static void xsetmode(int newmode)
+static void xsetmode(struct term_caps const *const tcs, int newmode)
 {
 	if (!iflag) {
 		if (curmode != NORMAL && newmode != NORMAL)
-			xsetmode(NORMAL);
+			xsetmode(tcs, NORMAL);
 		switch (newmode) {
 		case NORMAL:
 			switch (curmode) {
 			case NORMAL:
 				break;
 			case UNDERL:
-				print_out(EXIT_UNDERLINE);
+				print_out(tcs->exit_underline);
 				break;
 			default:
 				/* This includes standout */
-				print_out(EXIT_ATTRIBUTES);
+				print_out(tcs->exit_attributes);
 				break;
 			}
 			break;
 		case ALTSET:
-			print_out(ENTER_REVERSE);
+			print_out(tcs->enter_reverse);
 			break;
 		case SUPERSC:
 			/*
 			 * This only works on a few terminals.
 			 * It should be fixed.
 			 */
-			print_out(ENTER_UNDERLINE);
-			print_out(ENTER_DIM);
+			print_out(tcs->enter_underline);
+			print_out(tcs->enter_dim);
 			break;
 		case SUBSC:
-			print_out(ENTER_DIM);
+			print_out(tcs->enter_dim);
 			break;
 		case UNDERL:
-			print_out(ENTER_UNDERLINE);
+			print_out(tcs->enter_underline);
 			break;
 		case BOLD:
-			print_out(ENTER_BOLD);
+			print_out(tcs->enter_bold);
 			break;
 		default:
 			/*
 			 * We should have some provision here for multiple modes
 			 * on at once.  This will have to come later.
 			 */
-			print_out(ENTER_STANDOUT);
+			print_out(tcs->enter_standout);
 			break;
 		}
 	}
@@ -319,16 +330,16 @@ static void iattr(void)
 	free(lbuf);
 }
 
-static void outc(wint_t c, int width)
+static void outc(struct term_caps const *const tcs, wint_t c, int width)
 {
 	int i;
 
 	putwchar(c);
 	if (must_use_uc && (curmode & UNDERL)) {
 		for (i = 0; i < width; i++)
-			print_out(CURS_LEFT);
+			print_out(tcs->curs_left);
 		for (i = 0; i < width; i++)
-			print_out(UNDER_CHAR);
+			print_out(tcs->under_char);
 	}
 }
 
@@ -375,7 +386,7 @@ static void overstrike(void)
 	free(lbuf);
 }
 
-static void flushln(void)
+static void flushln(struct term_caps const *const tcs)
 {
 	int lastmode;
 	int i;
@@ -385,21 +396,21 @@ static void flushln(void)
 	for (i = 0; i < maxcol; i++) {
 		if (obuf[i].c_mode != lastmode) {
 			hadmodes++;
-			xsetmode(obuf[i].c_mode);
+			xsetmode(tcs, obuf[i].c_mode);
 			lastmode = obuf[i].c_mode;
 		}
 		if (obuf[i].c_char == '\0') {
 			if (upln)
-				print_out(CURS_RIGHT);
+				print_out(tcs->curs_right);
 			else
-				outc(' ', 1);
+				outc(tcs, ' ', 1);
 		} else
-			outc(obuf[i].c_char, obuf[i].c_width);
+			outc(tcs, obuf[i].c_char, obuf[i].c_width);
 		if (obuf[i].c_width > 1)
 			i += obuf[i].c_width - 1;
 	}
 	if (lastmode != NORMAL)
-		xsetmode(NORMAL);
+		xsetmode(tcs, NORMAL);
 	if (must_overstrike && hadmodes)
 		overstrike();
 	putwchar('\n');
@@ -411,27 +422,27 @@ static void flushln(void)
 	initbuf();
 }
 
-static void fwd(void)
+static void fwd(struct term_caps const *const tcs)
 {
 	int oldcol, oldmax;
 
 	oldcol = col;
 	oldmax = maxcol;
-	flushln();
+	flushln(tcs);
 	setcol(oldcol);
 	maxcol = oldmax;
 }
 
-static void reverse(void)
+static void reverse(struct term_caps const *const tcs)
 {
 	upln++;
-	fwd();
-	print_out(CURS_UP);
-	print_out(CURS_UP);
+	fwd(tcs);
+	print_out(tcs->curs_up);
+	print_out(tcs->curs_up);
 	upln++;
 }
 
-static int handle_escape(FILE *f)
+static int handle_escape(struct term_caps const *const tcs, FILE *f)
 {
 	wint_t c;
 
@@ -445,7 +456,7 @@ static int handle_escape(FILE *f)
 			halfpos--;
 		} else {
 			halfpos = 0;
-			reverse();
+			reverse(tcs);
 		}
 		return 0;
 	case HFWD:
@@ -457,11 +468,11 @@ static int handle_escape(FILE *f)
 			halfpos++;
 		} else {
 			halfpos = 0;
-			fwd();
+			fwd(tcs);
 		}
 		return 0;
 	case FREV:
-		reverse();
+		reverse(tcs);
 		return 0;
 	default:
 		/* unknown escape */
@@ -470,7 +481,7 @@ static int handle_escape(FILE *f)
 	}
 }
 
-static void filter(FILE *f)
+static void filter(struct term_caps const *const tcs, FILE *f)
 {
 	wint_t c;
 	int i, w;
@@ -493,7 +504,7 @@ static void filter(FILE *f)
 			mode &= ~ALTSET;
 			continue;
 		case IESC:
-			if (handle_escape(f)) {
+			if (handle_escape(tcs, f)) {
 				c = getwc(f);
 				errx(EXIT_FAILURE,
 				     _("unknown escape sequence in input: %o, %o"), IESC, c);
@@ -516,10 +527,10 @@ static void filter(FILE *f)
 			setcol(col + 1);
 			continue;
 		case '\n':
-			flushln();
+			flushln(tcs);
 			continue;
 		case '\f':
-			flushln();
+			flushln(tcs);
 			putwchar('\f');
 			continue;
 		default:
@@ -555,13 +566,14 @@ static void filter(FILE *f)
 		}
 	}
 	if (maxcol)
-		flushln();
+		flushln(tcs);
 }
 
 int main(int argc, char **argv)
 {
 	int c, ret, tflag = 0;
 	char *termtype;
+	struct term_caps tcs = { 0 };
 	FILE *f;
 
 	static const struct option longopts[] = {
@@ -620,19 +632,16 @@ int main(int argc, char **argv)
 		break;
 	}
 
-	initinfo();
-	if ((tigetflag("os") && ENTER_BOLD == NULL) ||
-	    (tigetflag("ul") && ENTER_UNDERLINE == NULL && UNDER_CHAR == NULL))
-		must_overstrike = 1;
+	initinfo(&tcs);
 	initbuf();
 	if (optind == argc)
-		filter(stdin);
+		filter(&tcs, stdin);
 	else
 		for (; optind < argc; optind++) {
 			f = fopen(argv[optind], "r");
 			if (!f)
 				err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
-			filter(f);
+			filter(&tcs, f);
 			fclose(f);
 		}
 	free(obuf);
