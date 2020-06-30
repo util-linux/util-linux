@@ -125,19 +125,30 @@ function check_dist
 
 function travis_install_script
 {
+	local ubuntu_release=$(lsb_release -cs)
+	local additional_packages=()
+	local clang_version gcc_version
+
 	if [ "$TRAVIS_OS_NAME" = "osx" ]; then
 		osx_install_script
 		return
 	fi
 
 	# install required packages
-	sudo bash -c "echo 'deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted universe multiverse' >>/etc/apt/sources.list"
+	sudo bash -c "echo 'deb-src http://archive.ubuntu.com/ubuntu/ $ubuntu_release main restricted universe multiverse' >>/etc/apt/sources.list"
 
-	# the following snippet was borrowed from https://apt.llvm.org/llvm.sh
-	wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
-	add-apt-repository -y "deb http://apt.llvm.org/$(lsb_release -cs)/   llvm-toolchain-$(lsb_release -cs)-10  main"
+	if [[ "$CC" =~ ^clang-([0-9]+)$ ]]; then
+		clang_version=${BASH_REMATCH[1]}
+		# the following snippet was borrowed from https://apt.llvm.org/llvm.sh
+		wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+		sudo add-apt-repository -y "deb http://apt.llvm.org/$ubuntu_release/   llvm-toolchain-$ubuntu_release-$clang_version  main"
+		additional_packages+=(clang-$clang_version)
+	elif [[ "$CC" =~ ^gcc-([0-9]+)$ ]]; then
+		gcc_version=${BASH_REMATCH[1]}
+		sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+		additional_packages+=(gcc-$gcc_version)
+	fi
 
-	sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 	sudo apt-get -qq update --fix-missing
 	sudo apt-get build-dep -y util-linux
 	sudo apt-get install -qq >/dev/null \
@@ -152,10 +163,8 @@ function travis_install_script
 		mdadm \
 		ntp \
 		socat \
+		"${additional_packages[@]}" \
 		|| return
-
-	sudo apt-get install -y gcc-10
-	sudo apt-get install -y clang-10
 
 	# install only if available (e.g. Ubuntu Trusty)
 	sudo apt-get install -qq >/dev/null \
