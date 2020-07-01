@@ -70,8 +70,8 @@ function check_nonroot
 		--enable-all-programs"
 
 	if [ "$TRAVIS_OS_NAME" != "osx" ]; then
-		conf_opts="$conf_opts --enable-asan"
-		make_opts="$make_opts --memcheck-asan"
+		conf_opts="$conf_opts --enable-asan --enable-ubsan"
+		make_opts="$make_opts --memcheck-asan --memcheck-ubsan"
 	fi
 
 	xconfigure $conf_opts || return
@@ -93,8 +93,8 @@ function check_root
 	local conf_opts="--enable-all-programs"
 
 	if [ "$TRAVIS_OS_NAME" != "osx" ]; then
-		conf_opts="$conf_opts --enable-asan"
-		make_opts="$make_opts --memcheck-asan"
+		conf_opts="$conf_opts --enable-asan --enable-ubsan"
+		make_opts="$make_opts --memcheck-asan --memcheck-ubsan"
 	fi
 
 	xconfigure $conf_opts || return
