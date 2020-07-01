@@ -122,7 +122,6 @@ AC_C_BIGENDIAN
 dnl Compiler warnings
 UL_WARN_ADD([-fno-common])
 UL_WARN_ADD([-Wall])
-UL_WARN_ADD([-Werror=sequence-point])
 UL_WARN_ADD([-Wextra])
 UL_WARN_ADD([-Wextra-semi])
 UL_WARN_ADD([-Wembedded-directive])
@@ -146,7 +145,19 @@ UL_WARN_ADD([-Wformat-security])
 UL_WARN_ADD([-Wimplicit-function-declaration])
 UL_WARN_ADD([-Wdiscarded-qualifiers])
 UL_WARN_ADD([-Waddress-of-packed-member])
+
+AC_ARG_ENABLE([werror],
+  AS_HELP_STRING([--enable-werror], [make all compiler warnings into errors]),
+  [], [enable_werror=no]
+)
+AS_IF([test "x$enable_werror" = xyes], [
+  UL_WARN_ADD([-Werror])
+],[
+  UL_WARN_ADD([-Werror=sequence-point])
+])
+
 AC_SUBST([WARN_CFLAGS])
+
 
 UL_WARN_ADD([-Wno-clobbered], [BSD_WARN_CFLAGS])
 AC_SUBST([BSD_WARN_CFLAGS])
