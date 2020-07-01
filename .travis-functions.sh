@@ -53,7 +53,8 @@ function xconfigure
 function make_checkusage
 {
 	local tmp
-	if ! tmp=$($MAKE checkusage 2>&1) || test -n "$tmp"; then
+	# memory leaks are ignored here. See https://github.com/karelzak/util-linux/issues/1077
+	if ! tmp=$(ASAN_OPTIONS="$ASAN_OPTIONS:detect_leaks=0" $MAKE checkusage 2>&1) || test -n "$tmp"; then
 		echo "$tmp"
 		echo "make checkusage failed" >&2
 		return 1
@@ -124,13 +125,32 @@ function check_dist
 
 function travis_install_script
 {
+	local ubuntu_release=$(lsb_release -cs)
+	local additional_packages=()
+	local clang_version gcc_version
+
 	if [ "$TRAVIS_OS_NAME" = "osx" ]; then
 		osx_install_script
 		return
 	fi
 
 	# install required packages
+	sudo bash -c "echo 'deb-src http://archive.ubuntu.com/ubuntu/ $ubuntu_release main restricted universe multiverse' >>/etc/apt/sources.list"
+
+	if [[ "$CC" =~ ^clang-([0-9]+)$ ]]; then
+		clang_version=${BASH_REMATCH[1]}
+		# the following snippet was borrowed from https://apt.llvm.org/llvm.sh
+		wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+		sudo add-apt-repository -y "deb http://apt.llvm.org/$ubuntu_release/   llvm-toolchain-$ubuntu_release-$clang_version  main"
+		additional_packages+=(clang-$clang_version)
+	elif [[ "$CC" =~ ^gcc-([0-9]+)$ ]]; then
+		gcc_version=${BASH_REMATCH[1]}
+		sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+		additional_packages+=(gcc-$gcc_version)
+	fi
+
 	sudo apt-get -qq update --fix-missing
+	sudo apt-get build-dep -y util-linux
 	sudo apt-get install -qq >/dev/null \
 		bc \
 		btrfs-tools \
@@ -143,6 +163,7 @@ function travis_install_script
 		mdadm \
 		ntp \
 		socat \
+		"${additional_packages[@]}" \
 		|| return
 
 	# install only if available (e.g. Ubuntu Trusty)
