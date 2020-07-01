@@ -262,8 +262,9 @@ function ts_init_env {
 	LC_ALL="POSIX"
 	CHARSET="UTF-8"
 	ASAN_OPTIONS="detect_leaks=0"
+	UBSAN_OPTIONS="print_stacktrace=1:print_summary=1:halt_on_error=1"
 
-	export LANG LANGUAGE LC_ALL CHARSET ASAN_OPTIONS
+	export LANG LANGUAGE LC_ALL CHARSET ASAN_OPTIONS UBSAN_OPTIONS
 
 	mydir=$(ts_canonicalize "$mydir")
 
@@ -338,6 +339,10 @@ function ts_init_env {
 	tmp=$( ts_has_option "memcheck-asan" "$*")
 	if [ "$tmp" == "yes" ]; then
 		TS_ENABLE_ASAN="yes"
+	fi
+	tmp=$( ts_has_option "memcheck-ubsan" "$*")
+	if [ "$tmp" == "yes" ]; then
+		TS_ENABLE_UBSAN="yes"
 	fi
 
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
@@ -441,8 +446,14 @@ function ts_run {
 	#
 	# ASAN mode
 	#
-	if [ "$TS_ENABLE_ASAN" == "yes" ]; then
-		args+=(env ASAN_OPTIONS=detect_leaks=1)
+	if [ "$TS_ENABLE_ASAN" == "yes" -o "$TS_ENABLE_UBSAN" == "yes" ]; then
+		args+=(env)
+		if [ "$TS_ENABLE_ASAN" == "yes" ]; then
+			args+=(ASAN_OPTIONS=detect_leaks=1)
+		fi
+		if [ "$TS_ENABLE_UBSAN" == "yes" ]; then
+			args+=(UBSAN_OPTIONS=print_stacktrace=1:print_summary=1:halt_on_error=1)
+		fi
 	fi
 
 	#

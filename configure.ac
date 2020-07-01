@@ -179,6 +179,16 @@ AS_IF([test "x$enable_asan" = xyes], [
 ])
 AC_SUBST([ASAN_LDFLAGS])
 
+AC_ARG_ENABLE([ubsan],
+  AS_HELP_STRING([--enable-ubsan], [compile with UBsan]),
+  [], [enable_ubsan=no]
+)
+AS_IF([test "x$enable_ubsan" = xyes], [
+  UL_WARN_ADD([-fsanitize=undefined])
+  UBSAN_LDFLAGS="-fsanitize=undefined"
+])
+AC_SUBST([UBSAN_LDFLAGS])
+
 dnl libtool-2
 LT_INIT
 

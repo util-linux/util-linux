@@ -26,6 +26,7 @@ top_srcdir=
 top_builddir=
 paraller_jobs=1
 has_asan_opt=
+has_ubsan_opt=
 
 function num_cpus()
 {
@@ -73,6 +74,10 @@ while [ -n "$1" ]; do
 	--memcheck-asan)
 		OPTS="$OPTS $1"
 		has_asan_opt="yes"
+		;;
+	--memcheck-ubsan)
+		OPTS="$OPTS $1"
+		has_ubsan_opt="yes"
 		;;
 	--use-system-commands)
 		OPTS="$OPTS $1"
@@ -158,6 +163,13 @@ if [ -z "$has_asan_opt" ]; then
 	asan=$(awk '/^ASAN_LDFLAGS/ { print $3 }' $top_builddir/Makefile)
 	if [ -n "$asan" ]; then
 		OPTS="$OPTS --memcheck-asan"
+	fi
+fi
+
+if [ -z "$has_ubsan_opt" ]; then
+	ubsan=$(awk '/^UBSAN_LDFLAGS/ { print $3 }' $top_builddir/Makefile)
+	if [ -n "$ubsan" ]; then
+		OPTS="$OPTS --memcheck-ubsan"
 	fi
 fi
 
