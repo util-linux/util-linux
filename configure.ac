@@ -344,6 +344,10 @@ AC_CHECK_HEADERS([security/pam_misc.h],
 
 AC_CHECK_HEADERS([linux/blkzoned.h])
 
+AC_CHECK_DECLS([BLK_ZONE_REP_CAPACITY], [], [], [
+	#include <linux/blkzoned.h>
+])
+
 AC_CHECK_HEADERS([security/openpam.h], [], [], [
 #ifdef HAVE_SECURITY_PAM_APPL_H
 #include <security/pam_appl.h>
