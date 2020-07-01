@@ -142,7 +142,7 @@ function travis_install_script
 		# the following snippet was borrowed from https://apt.llvm.org/llvm.sh
 		wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 		sudo add-apt-repository -y "deb http://apt.llvm.org/$ubuntu_release/   llvm-toolchain-$ubuntu_release-$clang_version  main"
-		additional_packages+=(clang-$clang_version)
+		additional_packages+=(clang-$clang_version llvm-$clang_version)
 	elif [[ "$CC" =~ ^gcc-([0-9]+)$ ]]; then
 		gcc_version=${BASH_REMATCH[1]}
 		sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
