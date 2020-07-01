@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <fcntl.h>
 #include <limits.h>
 #include <getopt.h>
@@ -189,6 +190,14 @@ done:
 	return rc == 0 ? sz : 0;
 }
 
+#if HAVE_DECL_BLK_ZONE_REP_CAPACITY
+#define has_zone_capacity(zi)	((zi)->flags & BLK_ZONE_REP_CAPACITY)
+#define zone_capacity(z)	(z)->capacity
+#else
+#define has_zone_capacity(zi)	(false)
+#define zone_capacity(z)	(z)->len
+#endif
+
 /*
  * blkzone report
  */
@@ -269,15 +278,22 @@ static int blkzone_report(struct blkzone_control *ctl)
 			uint64_t wp = entry->wp;
 			uint8_t cond = entry->cond;
 			uint64_t len = entry->len;
+			uint64_t cap;
 
 			if (!len) {
 				nr_zones = 0;
 				break;
 			}
 
-			printf(_("  start: 0x%09"PRIx64", len 0x%06"PRIx64", wptr 0x%06"PRIx64
+			if (has_zone_capacity(zi))
+				cap = zone_capacity(entry);
+			else
+				cap = entry->len;
+
+			printf(_("  start: 0x%09"PRIx64", len 0x%06"PRIx64
+				", cap 0x%06"PRIx64", wptr 0x%06"PRIx64
 				" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
-				start, len, (type == 0x1) ? 0 : wp - start,
+				start, len, cap, (type == 0x1) ? 0 : wp - start,
 				entry->reset, entry->non_seq,
 				cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
 				type, type_text[type]);
