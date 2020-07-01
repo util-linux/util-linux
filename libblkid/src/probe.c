@@ -535,7 +535,7 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 	ssize_t ret;
 	struct blkid_bufinfo *bf = NULL;
 
-	if (blkid_llseek(pr->fd, real_off, SEEK_SET) < 0) {
+	if (lseek(pr->fd, real_off, SEEK_SET) == (off_t) -1) {
 		errno = 0;
 		return NULL;
 	}
@@ -796,7 +796,7 @@ static int is_sector_readable(int fd, uint64_t sector)
 	char buf[512];
 	ssize_t sz;
 
-	if (blkid_llseek(fd, sector * 512, SEEK_SET) < 0)
+	if (lseek(fd, sector * 512, SEEK_SET) == (off_t) -1)
 		goto failed;
 
 	sz = read(fd, buf, sizeof(buf));
@@ -1190,7 +1190,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 {
 	const char *off = NULL;
 	size_t len = 0;
-	uint64_t offset, magoff, l;
+	uint64_t offset, magoff;
 	char buf[BUFSIZ];
 	int fd, rc = 0;
 	struct blkid_chain *chn;
@@ -1230,8 +1230,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	    "do_wipe [offset=0x%"PRIx64" (%"PRIu64"), len=%zu, chain=%s, idx=%d, dryrun=%s]\n",
 	    offset, offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
 
-	l = blkid_llseek(fd, offset, SEEK_SET);
-	if ((blkid_loff_t)l == (off_t) -1)
+	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
 		return -1;
 
 	memset(buf, 0, len);

@@ -17,7 +17,6 @@ libblkid_la_SOURCES = \
 	libblkid/src/encode.c \
 	libblkid/src/evaluate.c \
 	libblkid/src/getsize.c \
-	libblkid/src/llseek.c \
 	libblkid/src/probe.c \
 	libblkid/src/read.c \
 	libblkid/src/resolve.c \
