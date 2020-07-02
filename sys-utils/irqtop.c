@@ -294,8 +294,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 		out->columns[out->ncolumns++] = COL_IRQ;
 		out->columns[out->ncolumns++] = COL_TOTAL;
 		out->columns[out->ncolumns++] = COL_DELTA;
-		if (!ctl->softirq)
-			out->columns[out->ncolumns++] = COL_NAME;
+		out->columns[out->ncolumns++] = COL_NAME;
 	}
 
 	/* add -o [+]<list> to putput */

@@ -138,8 +138,7 @@ int main(int argc, char **argv)
 	if (!out.ncolumns) {
 		out.columns[out.ncolumns++] = COL_IRQ;
 		out.columns[out.ncolumns++] = COL_TOTAL;
-		if (!softirq)
-			out.columns[out.ncolumns++] = COL_NAME;
+		out.columns[out.ncolumns++] = COL_NAME;
 	}
 
 	/* add -o [+]<list> to putput */
