@@ -74,6 +74,8 @@ function check_nonroot
 		make_opts="$make_opts --memcheck-asan"
 	fi
 
+	conf_opts="$conf_opts --enable-werror"
+
 	xconfigure $conf_opts || return
 	$MAKE || return
 
@@ -96,6 +98,8 @@ function check_root
 		conf_opts="$conf_opts --enable-asan"
 		make_opts="$make_opts --memcheck-asan"
 	fi
+
+	conf_opts="$conf_opts --enable-werror"
 
 	xconfigure $conf_opts || return
 	$MAKE || return
