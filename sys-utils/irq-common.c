@@ -56,6 +56,38 @@ static const struct colinfo infos[] = {
 	[COL_NAME]  = {"NAME",  0.70, SCOLS_FL_TRUNC, N_("name"),        SCOLS_JSON_STRING},
 };
 
+/* make softirq friendly to end-user */
+struct softirq_desc {
+	char *irq;
+	char *desc;
+} softirq_descs[] = {
+	{ .irq = "HI", .desc = "high priority tasklet softirq" },
+	{ .irq = "TIMER", .desc = "timer softirq" },
+	{ .irq = "NET_TX", .desc = "network transmit softirq", },
+	{ .irq = "NET_RX", .desc = "network receive softirq" },
+	{ .irq = "BLOCK", .desc = "block device softirq" },
+	{ .irq = "IRQ_POLL", .desc = "IO poll softirq" },
+	{ .irq = "TASKLET", .desc = "normal priority tasklet softirq" },
+	{ .irq = "SCHED", .desc = "schedule softirq" },
+	{ .irq = "HRTIMER", .desc = "high resolution timer softirq" },
+	{ .irq = "RCU", .desc = "RCU softirq" },
+};
+
+static void get_softirq_desc(struct irq_info *curr)
+{
+	int i, size = ARRAY_SIZE(softirq_descs);
+
+	for (i = 0; i < size; i++) {
+		if (!strcmp(curr->irq, softirq_descs[i].irq))
+			break;
+	}
+
+	if (i < size)
+		curr->name = xstrdup(softirq_descs[i].desc);
+	else
+		curr->name = xstrdup("");
+}
+
 int irq_column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
@@ -255,15 +287,20 @@ static struct irq_stat *get_irqinfo(int softirq)
 			tmp += 11;
 		}
 
-		if (tmp - line < length) {
-			/* strip all space before desc */
-			while (isspace(*tmp))
-				tmp++;
-			tmp = remove_repeated_spaces(tmp);
-			rtrim_whitespace((unsigned char *)tmp);
-			curr->name = xstrdup(tmp);
-		} else	/* no irq name string, we have to set '\0' here */
-			curr->name = xstrdup("");
+		/* softirq always has no desc, add additional desc for softirq */
+		if (softirq)
+			get_softirq_desc(curr);
+		else {
+			if (tmp - line < length) {
+				/* strip all space before desc */
+				while (isspace(*tmp))
+					tmp++;
+				tmp = remove_repeated_spaces(tmp);
+				rtrim_whitespace((unsigned char *)tmp);
+				curr->name = xstrdup(tmp);
+			} else /* no irq name string, we have to set '\0' here */
+				curr->name = xstrdup("");
+		}
 
 		if (stat->nr_irq == stat->nr_irq_info) {
 			stat->nr_irq_info *= 2;
