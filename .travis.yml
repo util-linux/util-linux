@@ -25,6 +25,15 @@ matrix:
       osx_image: xcode7.3
       compiler: clang
       env: MAKE_CHECK="root"
+    - arch: arm64
+      compiler: gcc-10
+      env: MAKE_CHECK="root"
+    - arch: ppc64le
+      compiler: gcc-10
+      env: MAKE_CHECK="root"
+    - arch: s390x
+      compiler: gcc-10
+      env: MAKE_CHECK="root"
 
 branches:
   only:
