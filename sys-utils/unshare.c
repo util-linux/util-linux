@@ -555,6 +555,9 @@ int main(int argc, char *argv[])
 		settime(monotonic, CLOCK_MONOTONIC);
 
 	if (forkit) {
+		signal(SIGINT, SIG_IGN);
+		signal(SIGTERM, SIG_IGN);
+
 		/* force child forking before mountspace binding
 		 * so pid_for_children is populated */
 		pid = fork();
@@ -602,6 +605,10 @@ int main(int argc, char *argv[])
 	if (pid) {
 		if (waitpid(pid, &status, 0) == -1)
 			err(EXIT_FAILURE, _("waitpid failed"));
+
+		signal(SIGINT, SIG_DFL);
+		signal(SIGTERM, SIG_DFL);
+
 		if (WIFEXITED(status))
 			return WEXITSTATUS(status);
 		if (WIFSIGNALED(status))
