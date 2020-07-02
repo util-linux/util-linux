@@ -36,11 +36,7 @@
 #include <sys/personality.h>
 
 #if (defined(__x86_64__) || defined(__i386__))
-# if !defined( __SANITIZE_ADDRESS__)
-#  define INCLUDE_VMWARE_BDOOR
-# else
-#  warning VMWARE detection disabled by __SANITIZE_ADDRESS__
-# endif
+# define INCLUDE_VMWARE_BDOOR
 #endif
 
 #ifdef INCLUDE_VMWARE_BDOOR
