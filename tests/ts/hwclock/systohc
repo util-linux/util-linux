@@ -26,6 +26,9 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_HWCLOCK"
 
 ts_skip_nonroot
+if [ "$TRAVIS_DIST" == "precise" ]; then
+	ts_skip "https://github.com/karelzak/util-linux/issues/1082"
+fi
 ts_check_prog "bc"
 ts_check_prog "sntp"
 
