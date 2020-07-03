@@ -74,6 +74,10 @@ function check_nonroot
 		make_opts="$make_opts --memcheck-asan --memcheck-ubsan"
 	fi
 
+	if [ "$TRAVIS_OS_NAME" != "osx" -a "$TRAVIS_DIST" != "precise" ]; then
+		conf_opts="$conf_opts --enable-werror"
+	fi
+
 	xconfigure $conf_opts || return
 	$MAKE || return
 
@@ -95,6 +99,10 @@ function check_root
 	if [ "$TRAVIS_OS_NAME" != "osx" ]; then
 		conf_opts="$conf_opts --enable-asan --enable-ubsan"
 		make_opts="$make_opts --memcheck-asan --memcheck-ubsan"
+	fi
+
+	if [ "$TRAVIS_OS_NAME" != "osx" -a "$TRAVIS_DIST" != "precise" ]; then
+		conf_opts="$conf_opts --enable-werror"
 	fi
 
 	xconfigure $conf_opts || return
