@@ -399,7 +399,7 @@ static inline int gpt_calculate_sectorsof_entries(
 				uint32_t nents, uint64_t *sz,
 				struct fdisk_context *cxt)
 {
-	size_t esz;
+	size_t esz = 0;
 	int rc = gpt_calculate_sizeof_entries(hdr, nents, &esz);	/* in bytes */
 
 	if (rc == 0)
@@ -414,7 +414,7 @@ static inline int gpt_calculate_alternative_entries_lba(
 				uint64_t *sz,
 				struct fdisk_context *cxt)
 {
-	uint64_t esects;
+	uint64_t esects = 0;
 	int rc = gpt_calculate_sectorsof_entries(hdr, nents, &esects, cxt);
 
 	if (rc == 0)
@@ -428,7 +428,7 @@ static inline int gpt_calculate_last_lba(
 				uint64_t *sz,
 				struct fdisk_context *cxt)
 {
-	uint64_t esects;
+	uint64_t esects = 0;
 	int rc = gpt_calculate_sectorsof_entries(hdr, nents, &esects, cxt);
 
 	if (rc == 0)
@@ -442,7 +442,7 @@ static inline int gpt_calculate_first_lba(
 				uint64_t *sz,
 				struct fdisk_context *cxt)
 {
-	uint64_t esects;
+	uint64_t esects = 0;
 	int rc = gpt_calculate_sectorsof_entries(hdr, nents, &esects, cxt);
 
 	if (rc == 0)
@@ -503,14 +503,15 @@ static int gpt_mknew_pmbr(struct fdisk_context *cxt)
 
 
 /* Move backup header to the end of the device */
-static void gpt_fix_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_label *gpt)
+static int gpt_fix_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_label *gpt)
 {
 	struct gpt_header *p, *b;
 	uint64_t x = 0, orig;
 	size_t nents;
+	int rc;
 
 	if (!cxt)
-		return;
+		return -EINVAL;
 
 	p = gpt->pheader;	/* primary */
 	b = gpt->bheader;	/* backup */
@@ -526,16 +527,26 @@ static void gpt_fix_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_
 	b->my_lba = p->alternative_lba;
 
 	/* fix backup partitions array address */
-	gpt_calculate_alternative_entries_lba(p, nents, &x, cxt);
+	rc = gpt_calculate_alternative_entries_lba(p, nents, &x, cxt);
+	if (rc)
+		goto failed;
+
 	b->partition_entry_lba = cpu_to_le64(x);
 
 	/* update last usable LBA */
-	gpt_calculate_last_lba(p, nents, &x, cxt);
+	rc = gpt_calculate_last_lba(p, nents, &x, cxt);
+	if (rc)
+		goto failed;
+
 	p->last_usable_lba  = cpu_to_le64(x);
 	b->last_usable_lba  = cpu_to_le64(x);
 
 	DBG(GPT, ul_debug("Alternative-LBA updated from %"PRIu64" to %"PRIu64,
 				orig, le64_to_cpu(p->alternative_lba)));
+	return 0;
+failed:
+	DBG(GPT, ul_debug("failed to fix alternative-LBA [rc=%d]", rc));
+	return rc;
 }
 
 static uint64_t gpt_calculate_minimal_size(struct fdisk_context *cxt, struct fdisk_gpt_label *gpt)
@@ -582,16 +593,21 @@ static int gpt_possible_minimize(struct fdisk_context *cxt, struct fdisk_gpt_lab
 }
 
 /* move backup header behind the last partition */
-static void gpt_minimize_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_label *gpt)
+static int gpt_minimize_alternative_lba(struct fdisk_context *cxt, struct fdisk_gpt_label *gpt)
 {
 	uint64_t total = gpt_calculate_minimal_size(cxt, gpt);
 	uint64_t orig = cxt->total_sectors;
+	int rc;
 
 	/* Let's temporary change size of the device to recalculate backup header */
 	cxt->total_sectors = total;
-	gpt_fix_alternative_lba(cxt, gpt);
+	rc = gpt_fix_alternative_lba(cxt, gpt);
+	if (rc)
+		return rc;
+
 	cxt->total_sectors = orig;
 	fdisk_label_set_changed(cxt->label, 1);
+	return 0;
 }
 
 /* some universal differences between the headers */
@@ -721,7 +737,7 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 				 uint64_t *first, uint64_t *last)
 {
 	int rc = 0;
-	uint64_t flba, llba;
+	uint64_t flba = 0, llba = 0;
 
 	assert(cxt);
 	assert(first);
@@ -730,8 +746,11 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 	*first = *last = 0;
 
 	/* UEFI default */
-	gpt_calculate_last_lba(NULL, GPT_NPARTITIONS, &llba, cxt);
-	gpt_calculate_first_lba(NULL, GPT_NPARTITIONS, &flba, cxt);
+	rc = gpt_calculate_last_lba(NULL, GPT_NPARTITIONS, &llba, cxt);
+	if (rc == 0)
+		gpt_calculate_first_lba(NULL, GPT_NPARTITIONS, &flba, cxt);
+	if (rc)
+		return rc;
 
 	/* script default */
 	if (cxt->script) {
@@ -1629,7 +1648,8 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 			fdisk_warnx(cxt, _("The backup GPT table is not on the end of the device. "
 					   "This problem will be corrected by write."));
 
-			gpt_fix_alternative_lba(cxt, gpt);
+			if (gpt_fix_alternative_lba(cxt, gpt) != 0)
+				fdisk_warnx(cxt, _("Failed to recalculate backup GPT table location"));
 			gpt_recompute_crc(gpt->bheader, gpt->ents);
 			gpt_recompute_crc(gpt->pheader, gpt->ents);
 			fdisk_label_set_changed(cxt->label, 1);
@@ -2710,9 +2730,9 @@ static int gpt_check_table_overlap(struct fdisk_context *cxt,
 int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t nents)
 {
 	struct fdisk_gpt_label *gpt;
-	size_t new_size;
+	size_t new_size = 0;
 	uint32_t old_nents;
-	uint64_t first_usable, last_usable = 0ULL;
+	uint64_t first_usable = 0ULL, last_usable = 0ULL;
 	int rc;
 
 	assert(cxt);
@@ -2740,17 +2760,20 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t nents)
 		return rc;
 	}
 
-	gpt_calculate_first_lba(gpt->pheader, nents, &first_usable, cxt);
-	gpt_calculate_last_lba(gpt->pheader, nents, &last_usable, cxt);
+	rc = gpt_calculate_first_lba(gpt->pheader, nents, &first_usable, cxt);
+	if (rc == 0)
+		rc = gpt_calculate_last_lba(gpt->pheader, nents, &last_usable, cxt);
+	if (rc)
+		return rc;
 
 	/* if expanding the table, first check that everything fits,
 	 * then allocate more memory and zero. */
 	if (nents > old_nents) {
 		unsigned char *ents;
-		size_t old_size;
+		size_t old_size = 0;
 
 		rc = gpt_calculate_sizeof_entries(gpt->pheader, old_nents, &old_size);
-		if (!rc)
+		if (rc == 0)
 			rc = gpt_check_table_overlap(cxt, first_usable, last_usable);
 		if (rc)
 			return rc;
