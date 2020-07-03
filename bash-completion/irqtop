@@ -33,6 +33,7 @@ _irqtop_module()
 	OPTS="	--delay
 		--sort
 		--output
+		--softirq
 		--help
 		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

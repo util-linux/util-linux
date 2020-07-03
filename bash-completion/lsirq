@@ -30,6 +30,7 @@ _lsirq_module()
 		--pairs
 		--noheadings
 		--output
+		--softirq
 		--sort
 		--help
 		--version"
