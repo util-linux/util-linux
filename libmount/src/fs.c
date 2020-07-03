@@ -39,7 +39,7 @@ struct libmnt_fs *mnt_new_fs(void)
 
 	fs->refcount = 1;
 	INIT_LIST_HEAD(&fs->ents);
-	DBG(FS, ul_debugobj(fs, "alloc"));
+	/*DBG(FS, ul_debugobj(fs, "alloc"));*/
 	return fs;
 }
 

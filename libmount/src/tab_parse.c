@@ -703,6 +703,7 @@ static int __table_parse_stream(struct libmnt_table *tb, FILE *f, const char *fi
 	int rc = -1;
 	int flags = 0;
 	pid_t tid = -1;
+	struct libmnt_fs *fs = NULL;
 	struct libmnt_parser pa = { .line = 0 };
 
 	assert(tb);
@@ -722,25 +723,19 @@ static int __table_parse_stream(struct libmnt_table *tb, FILE *f, const char *fi
 	if (filename && strcmp(filename, _PATH_PROC_MOUNTS) == 0)
 		flags = MNT_FS_KERNEL;
 
-	do {
-		struct libmnt_fs *fs;
-
-		if (feof(f)) {
-			DBG(TAB, ul_debugobj(tb, "end-of-file"));
-			break;
+	while (!feof(f)) {
+		if (!fs) {
+			fs = mnt_new_fs();
+			if (!fs)
+				goto err;
 		}
-		fs = mnt_new_fs();
-		if (!fs)
-			goto err;
 
-		/* parse */
 		rc = mnt_table_parse_next(&pa, tb, fs);
 
-		if (rc != 0 && tb->fltrcb && tb->fltrcb(fs, tb->fltrcb_data))
-			rc = 1;	/* error filtered out by callback... */
+		if (!rc && tb->fltrcb && tb->fltrcb(fs, tb->fltrcb_data))
+			rc = 1;	/* filtered out by callback... */
 
-		/* add to the table */
-		if (rc == 0) {
+		if (!rc) {
 			rc = mnt_table_add_fs(tb, fs);
 			fs->flags |= flags;
 
@@ -751,21 +746,21 @@ static int __table_parse_stream(struct libmnt_table *tb, FILE *f, const char *fi
 			}
 		}
 
-		/* remove refernece (or deallocate on error) */
+		if (rc) {
+			if (rc > 0) {
+				mnt_reset_fs(fs);
+				assert(fs->refcount == 1);
+				continue;	/* recoverable error, reuse fs*/
+			}
+
+			mnt_unref_fs(fs);
+			if (feof(f))
+				break;
+			goto err;		/* fatal error */
+		}
 		mnt_unref_fs(fs);
-
-		/* recoverable error */
-		if (rc > 0) {
-			DBG(TAB, ul_debugobj(tb, "recoverable error (continue)"));
-			continue;
-		}
-
-		/* fatal errors */
-		if (rc < 0 && !feof(f)) {
-			DBG(TAB, ul_debugobj(tb, "fatal error"));
-			goto err;
-		}
-	} while (1);
+		fs = NULL;
+	}
 
 	DBG(TAB, ul_debugobj(tb, "%s: stop parsing (%d entries)",
 				filename, mnt_table_get_nents(tb)));
