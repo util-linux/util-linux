@@ -1057,10 +1057,10 @@ static void monthly(const struct cal_control *ctl)
 static void yearly(const struct cal_control *ctl)
 {
 	char out[FMT_ST_CHARS];
-	int year_width;
+	size_t year_width;
 
-	year_width = ctl->months_in_row * (ctl->week_width) +
-		(ctl->months_in_row - 1) * ctl->gutter_width;
+	year_width = (size_t) ctl->months_in_row * ctl->week_width
+		     + ((size_t) ctl->months_in_row - 1) * ctl->gutter_width;
 
 	if (ctl->header_year) {
 		snprintf(out, sizeof(out), "%04d", ctl->req.year);
