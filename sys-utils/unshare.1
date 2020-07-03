@@ -142,8 +142,11 @@ namespace is created by a bind mount. The \fB\-\-monotonic\fP and
 offset in the time namespace.
 .TP
 .BR \-f , " \-\-fork"
-Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather than
-running it directly.  This is useful when creating a new PID namespace.
+Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather
+than running it directly.  This is useful when creating a new PID namespace.
+Note that when \fBunshare\fR is waiting for the child process,
+then it ignores SIGINT and SIGTERM and does not forward any signals to the
+child.  It is necessary to send signals to the child process.
 .TP
 .B \-\-keep\-caps
 When the \fB\-\-user\fP option is given, ensure that capabilities granted
