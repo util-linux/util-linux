@@ -442,6 +442,7 @@ function ts_init_py {
 
 function ts_run {
 	declare -a args
+	local asan_options="strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1"
 
 	#
 	# ASAN mode
@@ -449,7 +450,11 @@ function ts_run {
 	if [ "$TS_ENABLE_ASAN" == "yes" -o "$TS_ENABLE_UBSAN" == "yes" ]; then
 		args+=(env)
 		if [ "$TS_ENABLE_ASAN" == "yes" ]; then
-			args+=(ASAN_OPTIONS=detect_leaks=1)
+			# detect_leaks isn't supported on s390x: https://github.com/llvm/llvm-project/blob/master/compiler-rt/lib/lsan/lsan_common.h
+			if [ "$(uname -m)" != "s390x" ]; then
+				asan_options="$asan_options:detect_leaks=1"
+			fi
+			args+=(ASAN_OPTIONS=$asan_options)
 		fi
 		if [ "$TS_ENABLE_UBSAN" == "yes" ]; then
 			args+=(UBSAN_OPTIONS=print_stacktrace=1:print_summary=1:halt_on_error=1)
