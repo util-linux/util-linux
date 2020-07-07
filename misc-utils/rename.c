@@ -167,12 +167,21 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact,
 {
 	char *newname = NULL, *file=NULL;
 	int ret = 1;
+	struct stat sb;
 
-	if (access(s, F_OK) != 0) {
+	if ( faccessat(AT_FDCWD, s, F_OK, AT_SYMLINK_NOFOLLOW) != 0 &&
+	     errno != EINVAL )
+	   /* Skip if AT_SYMLINK_NOFOLLOW is not supported; lstat() below will
+	      detect the access error */
+	{
 		warn(_("%s: not accessible"), s);
 		return 2;
 	}
 
+	if (lstat(s, &sb) == -1) {
+		warn(_("stat of %s failed"), s);
+		return 2;
+	}
 	if (strchr(from, '/') == NULL && strchr(to, '/') == NULL)
 		file = strrchr(s, '/');
 	if (file == NULL)
