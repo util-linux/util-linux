@@ -33,6 +33,13 @@ DEVICE="/dev/mapper/${DEVNAME}"
 ts_log "Initialize device"
 echo "0 262144 error" | dmsetup create $DEVNAME
 
+# Some tests are run in LXD containers on Travis CI where `mknod` doesn't always work
+# https://docs.travis-ci.com/user/multi-cpu-architectures/#security-and-lxd-container
+# https://linuxcontainers.org/lxd/docs/master/syscall-interception
+if [ "$TRAVIS" == "true" ] && [ ! -b "$DEVICE" ]; then
+	ts_skip "$DEVICE wasn't created"
+fi
+
 ts_log "Probe device"
 $TS_CMD_BLKID -p -o udev $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "Return code: $?" >> $TS_OUTPUT
