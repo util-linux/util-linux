@@ -256,34 +256,25 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 
 	if (rc == 0)
 		*(void **)(&sym_crypt_init_data_device) = get_symbol(cxt, dl, "crypt_init_data_device", &rc);
-
 	if (rc == 0)
 		*(void **)(&sym_crypt_load) = get_symbol(cxt, dl, "crypt_load", &rc);
-
 	if (rc == 0)
 		*(void **)(&sym_crypt_get_volume_key_size) = get_symbol(cxt, dl, "crypt_get_volume_key_size", &rc);
-
 #ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
 	if (rc == 0)
 		*(void **)(&sym_crypt_activate_by_signed_key) = get_symbol(cxt, dl, "crypt_activate_by_signed_key", &rc);
 #endif
-
 	if (rc == 0)
 		*(void **)(&sym_crypt_activate_by_volume_key) = get_symbol(cxt, dl, "crypt_activate_by_volume_key", &rc);
-
 	if (rc == 0)
 		*(void **)(&sym_crypt_free) = get_symbol(cxt, dl, "crypt_free", &rc);
-
 	if (rc == 0)
 		*(void **)(&sym_crypt_init_by_name) = get_symbol(cxt, dl, "crypt_init_by_name", &rc);
-
 	if (rc == 0)
 		*(void **)(&sym_crypt_get_verity_info) = get_symbol(cxt, dl, "crypt_get_verity_info", &rc);
-
 	if (rc == 0)
 		*(void **)(&sym_crypt_volume_key_get) = get_symbol(cxt, dl, "crypt_volume_key_get", &rc);
 #endif
-
 	if (rc)
 		goto done;
 
@@ -456,7 +447,6 @@ int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt)
 	if (!rc)
 		*(void **)(&sym_crypt_free) = get_symbol(cxt, dl, "crypt_free", &rc);
 #endif
-
 	if (!rc) {
 		rc = (*sym_crypt_init_by_name)(&crypt_dev, src);
 		if (!rc) {
@@ -471,9 +461,7 @@ int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt)
 #ifdef CRYPTSETUP_VIA_DLOPEN
 	dlclose(dl);
 #endif
-
 	DBG(VERITY, ul_debugobj(cxt, "deleted [rc=%d]", rc));
-
 	return rc;
 }
 
