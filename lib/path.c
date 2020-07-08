@@ -195,6 +195,20 @@ static const char *get_absdir(struct path_cxt *pc)
 	return pc->path_buffer;
 }
 
+int ul_path_is_accessible(struct path_cxt *pc)
+{
+	const char *path;
+	assert(pc);
+
+	if (pc->dir_fd >= 0)
+		return 1;
+
+	path = get_absdir(pc);
+	if (!path)
+		return 0;
+	return access(path, F_OK) == 0;
+}
+
 int ul_path_get_dirfd(struct path_cxt *pc)
 {
 	assert(pc);

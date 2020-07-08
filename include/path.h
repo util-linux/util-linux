@@ -42,6 +42,7 @@ int ul_path_set_enoent_redirect(struct path_cxt *pc, int (*func)(struct path_cxt
 int ul_path_get_dirfd(struct path_cxt *pc);
 void ul_path_close_dirfd(struct path_cxt *pc);
 int ul_path_isopen_dirfd(struct path_cxt *pc);
+int ul_path_is_accessible(struct path_cxt *pc);
 
 char *ul_path_get_abspath(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 4, 5)));
