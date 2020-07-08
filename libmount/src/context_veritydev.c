@@ -419,7 +419,6 @@ done:
 int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt)
 {
 	const char *src;
-	struct crypt_device *crypt_dev = NULL;
 	/* If mounting failed delete immediately, otherwise setup auto cleanup for user umount */
 	uint32_t flags = mnt_context_get_status(cxt) ? CRYPT_DEACTIVATE_DEFERRED : 0;
 #ifdef CRYPTSETUP_VIA_DLOPEN
@@ -431,15 +430,11 @@ int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt)
 #endif
 	void (*sym_crypt_set_debug_level)(int) = NULL;
 	void (*sym_crypt_set_log_callback)(struct crypt_device *, void (*log)(int, const char *, void *), void *) = NULL;
-	int (*sym_crypt_init_by_name)(struct crypt_device **, const char *) = NULL;
 	int (*sym_crypt_deactivate_by_name)(struct crypt_device *, const char *, uint32_t) = NULL;
-	void (*sym_crypt_free)(struct crypt_device *) = NULL;
 #else
 	void (*sym_crypt_set_debug_level)(int) = &crypt_set_debug_level;
 	void (*sym_crypt_set_log_callback)(struct crypt_device *, void (*log)(int, const char *, void *), void *) = &crypt_set_log_callback;
-	int (*sym_crypt_init_by_name)(struct crypt_device **, const char *) = &crypt_init_by_name;
 	int (*sym_crypt_deactivate_by_name)(struct crypt_device *, const char *, uint32_t) = &crypt_deactivate_by_name;
-	void (*sym_crypt_free)(struct crypt_device *) = &crypt_free;
 #endif
 	int rc = 0;
 
@@ -468,24 +463,16 @@ int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt)
 	if (!rc)
 		*(void **)(&sym_crypt_set_log_callback) = get_symbol(cxt, dl, "crypt_set_log_callback", &rc);
 	if (!rc)
-		*(void **)(&sym_crypt_init_by_name) = get_symbol(cxt, dl, "crypt_init_by_name", &rc);
-	if (!rc)
 		*(void **)(&sym_crypt_deactivate_by_name) = get_symbol(cxt, dl, "crypt_deactivate_by_name", &rc);
-	if (!rc)
-		*(void **)(&sym_crypt_free) = get_symbol(cxt, dl, "crypt_free", &rc);
 #endif
 	if (!rc) {
 		if (mnt_context_is_verbose(cxt))
 			(*sym_crypt_set_debug_level)(CRYPT_DEBUG_ALL);
 		(*sym_crypt_set_log_callback)(NULL, libcryptsetup_log, cxt);
-		rc = (*sym_crypt_init_by_name)(&crypt_dev, src);
-		if (!rc) {
-			rc = (*sym_crypt_deactivate_by_name)(crypt_dev, src, flags);
-			if (!rc)
-				cxt->flags &= ~MNT_FL_VERITYDEV_READY;
-		}
 
-		(*sym_crypt_free)(crypt_dev);
+		rc = (*sym_crypt_deactivate_by_name)(NULL, src, flags);
+		if (!rc)
+			cxt->flags &= ~MNT_FL_VERITYDEV_READY;
 	}
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
