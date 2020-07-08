@@ -431,6 +431,18 @@ static int is_mergeable(struct lsmem *lsmem, struct memory_block *blk)
 	return 1;
 }
 
+static void free_info(struct lsmem *lsmem)
+{
+	int i;
+
+	if (!lsmem)
+		return;
+	free(lsmem->blocks);
+	for (i = 0; i < lsmem->ndirs; i++)
+		free(lsmem->dirs[i]);
+	free(lsmem->dirs);
+}
+
 static void read_info(struct lsmem *lsmem)
 {
 	struct memory_block blk;
@@ -742,5 +754,6 @@ int main(int argc, char **argv)
 
 	scols_unref_table(lsmem->table);
 	ul_unref_path(lsmem->sysmem);
+	free_info(lsmem);
 	return 0;
 }
