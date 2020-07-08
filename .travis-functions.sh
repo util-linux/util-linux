@@ -133,7 +133,7 @@ function check_dist
 
 function travis_install_script
 {
-	local ubuntu_release=$(lsb_release -cs)
+	local ubuntu_release
 	local additional_packages=()
 	local clang_version gcc_version
 
@@ -141,6 +141,8 @@ function travis_install_script
 		osx_install_script
 		return
 	fi
+
+	ubuntu_release=$(lsb_release -cs)
 
 	# install required packages
 	sudo bash -c "echo 'deb-src http://archive.ubuntu.com/ubuntu/ $ubuntu_release main restricted universe multiverse' >>/etc/apt/sources.list"
