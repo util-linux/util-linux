@@ -18,7 +18,7 @@ export OUT=${OUT:-$(pwd)/out}
 mkdir -p $OUT
 
 ./autogen.sh
-./configure --disable-all-programs --enable-fuzzing-engine --enable-libmount --enable-libblkid
+./configure --disable-all-programs --enable-last --enable-fuzzing-engine --enable-libmount --enable-libblkid
 make -j$(nproc) V=1 check-programs
 
 find . -maxdepth 1 -type f -executable -name "test_*_fuzz" -exec mv {} $OUT \;

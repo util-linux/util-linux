@@ -11,6 +11,18 @@ install-exec-hook-last:
 	cd $(DESTDIR)$(usrbin_execdir) && ln -sf last lastb
 
 INSTALL_EXEC_HOOKS += install-exec-hook-last
+
+if FUZZING_ENGINE
+check_PROGRAMS += test_last_fuzz
+
+# https://google.github.io/oss-fuzz/getting-started/new-project-guide/#Requirements
+nodist_EXTRA_test_last_fuzz_SOURCES = dummy.cxx
+
+test_last_fuzz_SOURCES = login-utils/last.c
+test_last_fuzz_CFLAGS = $(AM_CFLAGS) -DFUZZ_TARGET
+test_last_fuzz_LDADD = $(LDADD) libcommon.la $(LIB_FUZZING_ENGINE)
+endif
+
 endif
 
 if BUILD_SULOGIN

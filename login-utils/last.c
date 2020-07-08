@@ -53,6 +53,10 @@
 #include "timeutils.h"
 #include "monotonic.h"
 
+#ifdef FUZZ_TARGET
+#include "fuzz.h"
+#endif
+
 #ifndef SHUTDOWN_TIME
 # define SHUTDOWN_TIME 254
 #endif
@@ -157,6 +161,7 @@ static unsigned int recsdone;	/* Number of records listed */
 static time_t lastdate;		/* Last date we've seen */
 static time_t currentdate;	/* date when we started processing the file */
 
+#ifndef FUZZ_TARGET
 /* --time-format=option parser */
 static int which_time_format(const char *s)
 {
@@ -168,6 +173,7 @@ static int which_time_format(const char *s)
 	}
 	errx(EXIT_FAILURE, _("unknown time format: %s"), s);
 }
+#endif
 
 /*
  *	Read one utmp entry, return in new format.
@@ -258,6 +264,7 @@ static int uread(FILE *fp, struct utmpx *u,  int *quit, const char *filename)
 	return 1;
 }
 
+#ifndef FUZZ_TARGET
 /*
  *	Print a short date.
  */
@@ -286,6 +293,7 @@ static void quit_handler(int sig __attribute__((unused)))
 	warnx(_("Interrupted %s"), showdate());
 	signal(SIGQUIT, quit_handler);
 }
+#endif
 
 /*
  *	Lookup a host with DNS.
@@ -564,7 +572,7 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	return 0;
 }
 
-
+#ifndef FUZZ_TARGET
 static void __attribute__((__noreturn__)) usage(const struct last_control *ctl)
 {
 	FILE *out = stdout;
@@ -599,6 +607,7 @@ static void __attribute__((__noreturn__)) usage(const struct last_control *ctl)
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
+#endif
 
 static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 {
@@ -660,17 +669,23 @@ static void process_wtmp_file(const struct last_control *ctl,
 	int quit = 0;		/* Flag */
 	int down = 0;		/* Down flag */
 
+#ifndef FUZZ_TARGET
 	time(&lastdown);
+#else
+	lastdown = 1596001948;
+#endif
 	/*
 	 * Fill in 'lastdate'
 	 */
 	lastdate = currentdate = lastrch = lastdown;
 
+#ifndef FUZZ_TARGET
 	/*
 	 * Install signal handlers
 	 */
 	signal(SIGINT, int_handler);
 	signal(SIGQUIT, quit_handler);
+#endif
 
 	/*
 	 * Open the utmp file
@@ -907,6 +922,36 @@ static void process_wtmp_file(const struct last_control *ctl,
 	}
 }
 
+#ifdef FUZZ_TARGET
+int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+	struct last_control ctl = {
+		.showhost = TRUE,
+		.name_len = LAST_LOGIN_LEN,
+		.time_fmt = LAST_TIMEFTM_SHORT,
+		.domain_len = LAST_DOMAIN_LEN,
+		.boot_time = {
+			.tv_sec = 1595978419,
+			.tv_usec = 816074
+		}
+	};
+	char name[] = "/tmp/test-last-fuzz.XXXXXX";
+	int fd;
+	ssize_t n;
+
+	fd = mkostemp(name, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
+	assert(fd >= 0);
+
+	n = write(fd, data, size);
+	assert(n == (ssize_t) size);
+
+	process_wtmp_file(&ctl, name);
+
+	close(fd);
+	unlink(name);
+
+	return 0;
+}
+#else
 int main(int argc, char **argv)
 {
 	struct last_control ctl = {
@@ -1041,3 +1086,4 @@ int main(int argc, char **argv)
 	free(files);
 	return EXIT_SUCCESS;
 }
+#endif
