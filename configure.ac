@@ -2516,6 +2516,7 @@ AC_ARG_WITH([cryptsetup],
 
 AS_IF([test "x$with_cryptsetup" = xno], [
   AM_CONDITIONAL([HAVE_CRYPTSETUP], [false])
+  AM_CONDITIONAL([CRYPTSETUP_VIA_DLOPEN], [false])
 ], [
   PKG_CHECK_MODULES([CRYPTSETUP], [libcryptsetup],
 	[AC_DEFINE([HAVE_CRYPTSETUP], [1], [Define if cryptsetup is available])
@@ -2528,11 +2529,22 @@ AS_IF([test "x$with_cryptsetup" = xno], [
 	 AC_CHECK_LIB([cryptsetup], [crypt_activate_by_signed_key], [
 	  AC_DEFINE_UNQUOTED([HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY], [1], [Define if crypt_activate_by_signed_key exist in -lcryptsetup])
 	 ])
+	 AS_IF([test "x$with_cryptsetup" = xdlopen], [
+	  LIBS="-ldl $LIBS"
+	  AC_CHECK_LIB([dl], [dlsym], [
+	    AC_DEFINE([CRYPTSETUP_VIA_DLOPEN], [1], [Define if cryptsetup is to be loaded via dlopen])
+	    AM_CONDITIONAL([CRYPTSETUP_VIA_DLOPEN], [true])
+	   ], [AC_MSG_ERROR([libdl required to build with cryptsetup support])])
+	 ], [
+	  AM_CONDITIONAL([CRYPTSETUP_VIA_DLOPEN], [false])
+	 ])
 	 CFLAGS="$SAVE_CFLAGS"
 	 LIBS="$SAVE_LIBS"
 	 have_cryptsetup=yes],
 	[have_cryptsetup=no
-   AM_CONDITIONAL([HAVE_CRYPTSETUP], [false])])
+   AM_CONDITIONAL([HAVE_CRYPTSETUP], [false])
+   AM_CONDITIONAL([CRYPTSETUP_VIA_DLOPEN], [false])
+  ])
 
   AS_CASE([$with_cryptsetup:$have_cryptsetup],
     [yes:no], [AC_MSG_WARN([cryptsetup selected but libcryptsetup not found])]

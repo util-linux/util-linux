@@ -20,3 +20,4 @@ Version: @LIBMOUNT_VERSION@
 Requires.private: blkid @LIBSELINUX@ @LIBCRYPTSETUP@
 Cflags: -I${includedir}/libmount
 Libs: -L${libdir} -lmount
+Libs.private: @LIBDL@
