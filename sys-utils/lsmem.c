@@ -654,6 +654,8 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMORY);
 	if (prefix && ul_path_set_prefix(lsmem->sysmem, prefix) != 0)
 		err(EXIT_FAILURE, _("invalid argument to --sysroot"));
+	if (!ul_path_is_accessible(lsmem->sysmem))
+		err(EXIT_FAILURE, _("cannot open %s"), _PATH_SYS_MEMORY);
 
 	/* Shortcut to avoid scols machinery on --summary=only */
 	if (lsmem->want_table == 0 && lsmem->want_summary) {
