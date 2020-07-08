@@ -627,7 +627,7 @@ static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 	} else {
 		struct stat st;
 
-		sprintf(path, "/dev/%s", ut->ut_line);
+		snprintf(path, sizeof(ut->ut_line)+6, "/dev/%s", ut->ut_line);
 		if (stat(path, &st))
 			return 1;
 		if (pw->pw_uid != st.st_uid)
