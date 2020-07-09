@@ -17,13 +17,13 @@ in a secure and guaranteed-unique fashion, even in the face of large
 numbers of threads running on different CPUs trying to grab UUIDs.
 .SH OPTIONS
 .TP
-.BR \-d , " \-\-debug "
+.BR \-d , " \-\-debug"
 Run uuidd in debugging mode.  This prevents uuidd from running as a daemon.
 .TP
-.BR \-F , " \-\-no-fork "
+.BR \-F , " \-\-no-fork"
 Do not daemonize using a double-fork.
 .TP
-.BR \-k , " \-\-kill "
+.BR \-k , " \-\-kill"
 If currently a uuidd daemon is running, kill it.
 .TP
 .BR \-n , " \-\-uuids " \fInumber\fR
@@ -32,21 +32,21 @@ of
 .I number
 UUIDs.
 .TP
-.BR \-P , " \-\-no-pid "
+.BR \-P , " \-\-no-pid"
 Do not create a pid file.
 .TP
 .BR \-p , " \-\-pid " \fIpath\fR
 Specify the pathname where the pid file should be written.  By default,
 the pid file is written to @runstatedir@/uuidd/uuidd.pid.
 .TP
-.BR \-q , " \-\-quiet "
+.BR \-q , " \-\-quiet"
 Suppress some failure messages.
 .TP
-.BR \-r , " \-\-random "
+.BR \-r , " \-\-random"
 Test uuidd by trying to connect to a running uuidd daemon and
 request it to return a random-based UUID.
 .TP
-.BR \-S , " \-\-socket-activation "
+.BR \-S , " \-\-socket-activation"
 Do not create a socket but instead expect it to be provided by the calling
 process.  This implies \fB\-\-no-fork\fR and \fB\-\-no-pid\fR.  This option is
 intended to be used only with \fBsystemd\fR(1).  It needs to be enabled with
@@ -61,14 +61,14 @@ library.
 .BR \-T , " \-\-timeout " \fInumber\fR
 Make uuidd exit after \fInumber\fR seconds of inactivity.
 .TP
-.BR \-t , " \-\-time "
+.BR \-t , " \-\-time"
 Test uuidd by trying to connect to a running uuidd daemon and
 request it to return a time-based UUID.
 .TP
-.BR \-V , " \-\-version "
+.BR \-V , " \-\-version"
 Output version information and exit.
 .TP
-.BR \-h , " \-\-help "
+.BR \-h , " \-\-help"
 Display help screen and exit.
 .SH EXAMPLE
 Start up a daemon, print 42 random keys, and then stop the daemon:
