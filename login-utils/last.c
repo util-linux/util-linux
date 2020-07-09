@@ -612,7 +612,7 @@ static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 	pw = getpwnam(ut->ut_user);
 	if (!pw)
 		return 1;
-	sprintf(path, "/proc/%u/loginuid", ut->ut_pid);
+	snprintf(path, sizeof(path), "/proc/%u/loginuid", ut->ut_pid);
 	if (access(path, R_OK) == 0) {
 		unsigned int loginuid;
 		FILE *f = NULL;
@@ -626,8 +626,11 @@ static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 			return 1;
 	} else {
 		struct stat st;
+		char utline[sizeof(ut->ut_line) + 1];
 
-		sprintf(path, "/dev/%s", ut->ut_line);
+		mem2strcpy(utline, ut->ut_line, sizeof(ut->ut_line), sizeof(utline));
+
+		snprintf(path, sizeof(path), "/dev/%s", utline);
 		if (stat(path, &st))
 			return 1;
 		if (pw->pw_uid != st.st_uid)
