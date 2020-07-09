@@ -55,10 +55,17 @@ All tools which read /etc/login.defs is possible to compile with libeconf now.
 The build system provides a new option --disable-hwclock-gplv3 to avoid optional 
 GPLv3 code in the command hwclock(8).
 
+The build system supports a new option --with-cryptsetup=dlopen to use dlopen
+for libcryptsetup in libmount dm-verity support. This is a temporary workaround
+to avoid collisions between JSON libraries and to reduce dependencies overhead in
+libmount.  Note that dm-verity support is still EXPERIMENTAL and disabled by
+default.
+
 more(1) has been refactored to meet 21st century codding standards. Thanks to
 Sami Kerola.
 
-Thanks to Michael Kerrisk for massive man pages cleanup.
+Thanks to Michael Kerrisk for massive man pages cleanup, and thanks to Evgeny 
+Vereshchagin for work on better integration with CIFuzz and Travis.
 
 
 Changes between v2.35 and v2.36
