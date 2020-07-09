@@ -385,7 +385,7 @@ static inline int gpt_calculate_sizeof_entries(
 			     sizeof(struct gpt_entry);
 
 	if (nents == 0 || esz == 0 || SIZE_MAX/esz < nents) {
-		DBG(GPT, ul_debug("entreis array size check failed"));
+		DBG(GPT, ul_debug("entries array size check failed"));
 		return -ERANGE;
 	}
 

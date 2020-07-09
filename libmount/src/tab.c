@@ -488,7 +488,7 @@ static int __table_insert_fs(
  * @pos is NULL than add the begin of the @tab if @before is 1; or to the tail
  * of the @tb if @before is 0.
  *
- * This function inncrements reference to @fs. Don't forget to use
+ * This function increments reference to @fs. Don't forget to use
  * mnt_unref_fs() after mnt_table_insert_fs() if you want to keep the @fs
  * referenced by the table only.
  *

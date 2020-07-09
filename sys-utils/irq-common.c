@@ -345,7 +345,7 @@ void set_sort_func_by_name(struct irq_output *out, const char *name)
 	else if (strcasecmp(name, "NAME") == 0)
 		out->sort_cmp_func = cmp_name;
 	else
-		errx(EXIT_FAILURE, _("unssupported column name to sort output"));
+		errx(EXIT_FAILURE, _("unsupported column name to sort output"));
 }
 
 void set_sort_func_by_key(struct irq_output *out, char c)

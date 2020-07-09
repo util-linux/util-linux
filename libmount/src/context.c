@@ -1094,7 +1094,7 @@ const char *mnt_context_get_fstype(struct libmnt_context *cxt)
  * @cxt: mount context
  * @optstr: comma delimited mount options
  *
- * Note that that MS_MOVE cannot be specified as "string". It's operation that
+ * Note that MS_MOVE cannot be specified as "string". It's operation that
  * is no supported in fstab (etc.)
  *
  * Returns: 0 on success, negative number in case of error.

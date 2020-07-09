@@ -123,7 +123,7 @@ void random_get_bytes(void *buf, size_t nbytes)
 			break;
 
 		} else if (errno == EAGAIN && lose_counter < UL_RAND_READ_ATTEMPTS) {
-			xusleep(UL_RAND_READ_DELAY);	/* no etropy, wait and try again */
+			xusleep(UL_RAND_READ_DELAY);	/* no entropy, wait and try again */
 			lose_counter++;
 		} else
 			break;

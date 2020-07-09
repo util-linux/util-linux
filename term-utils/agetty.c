@@ -1285,7 +1285,7 @@ static void termio_init(struct options *op, struct termios *tp)
 		ospeed = cfgetospeed(tp);
 
 		/* Save also the original speed to array of the speeds to make
-		 * it possible to return the the original after unexpected BREAKs.
+		 * it possible to return the original after unexpected BREAKs.
 		 */
 		if (op->numspeed)
 			op->speeds[op->numspeed++] = ispeed ? ispeed :

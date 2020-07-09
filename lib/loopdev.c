@@ -681,7 +681,7 @@ struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc)
 /*
  * @lc: context
  *
- * Returns (allocated) string with path to the file assicieted
+ * Returns (allocated) string with path to the file associated
  * with the current loop device.
  */
 char *loopcxt_get_backing_file(struct loopdev_cxt *lc)

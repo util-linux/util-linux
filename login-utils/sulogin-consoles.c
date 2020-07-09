@@ -318,7 +318,7 @@ int append_console(struct list_head *consoles, const char * const name)
 	struct console *restrict tail;
 	const struct console *last = NULL;
 
-	DBG(dbgprint("appenging %s", name));
+	DBG(dbgprint("appending %s", name));
 
 	if (!list_empty(consoles))
 		last = list_last_entry(consoles, struct console, entry);

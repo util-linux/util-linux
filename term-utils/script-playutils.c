@@ -47,7 +47,7 @@ struct replay_step {
 	char	type;		/* 'I'nput, 'O'utput, ... */
 	size_t	size;
 
-	char	*name;		/* signals / heders */
+	char	*name;		/* signals / headers */
 	char	*value;
 
 	struct timeval delay;
@@ -216,7 +216,7 @@ int replay_set_timing_file(struct replay_setup *stp, const char *filename)
 			rc = -ENOMEM;
 		else {
 			log->noseek = 1;
-			DBG(LOG, ul_debug("accociate file '%s' for streams 'SH'", filename));
+			DBG(LOG, ul_debug("associate file '%s' for streams 'SH'", filename));
 		}
 	}
 
@@ -253,7 +253,7 @@ int replay_associate_log(struct replay_setup *stp,
 	if (rc == 0)
 		replay_new_log(stp, streams, filename, f);
 
-	DBG(LOG, ul_debug("accociate log file '%s', streams '%s' [rc=%d]", filename, streams, rc));
+	DBG(LOG, ul_debug("associate log file '%s', streams '%s' [rc=%d]", filename, streams, rc));
 	return rc;
 }
 

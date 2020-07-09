@@ -868,7 +868,7 @@ static inline int add_to_partitions_array(
  * partition table. The BLKPG_* ioctls are used for individual partitions. The
  * advantage is that unmodified partitions maybe mounted.
  *
- * The function behavies like fdisk_reread_partition_table() on systems where
+ * The function behaves like fdisk_reread_partition_table() on systems where
  * are no available BLKPG_* ioctls.
  *
  * Returns: <0 on error, or 0.

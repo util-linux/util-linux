@@ -693,9 +693,9 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len
  * blkid_probe_reset_buffers:
  * @pr: prober
  *
- * libblkid reuse all already read buffers from the device. The bufferes may be
+ * libblkid reuse all already read buffers from the device. The buffers may be
  * modified by blkid_probe_hide_range(). This function reset and free all
- * cached bufferes. The next blkid_do_probe() will read all data from the
+ * cached buffers. The next blkid_do_probe() will read all data from the
  * device.
  *
  * Returns: <0 in case of failure, or 0 on success.
@@ -1267,7 +1267,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
  * according to the current libblkid probing result.
  *
  * Note that blkid_probe_hide_range() changes semantic of this function and
- * cached bufferes are not reset, but library uses in-memory modified
+ * cached buffers are not reset, but library uses in-memory modified
  * buffers to call the next probing function.
  *
  * <example>

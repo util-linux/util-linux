@@ -243,7 +243,7 @@ static int probe_udf(blkid_probe pr,
 				 * terminated by the first sector which is not a valid
 				 * descriptor.
 				 * UDF-2.60 2.1.7: UDF 2.00 and lower revisions do not
-				 * have requirement that NSR descritor is in Extended Area
+				 * have requirement that NSR descriptor is in Extended Area
 				 * (between BEA01 and TEA01) and that there is only one
 				 * Extended Area. So do not stop scanning after TEA01. */
 				break;

@@ -222,7 +222,7 @@ static int group_state_for_line(struct libscols_group *gr, struct libscols_line 
 }
 
 /*
- * apply new @state to the chunk (addresesd by @xx) of grpset used for the group (@gr)
+ * apply new @state to the chunk (addressed by @xx) of grpset used for the group (@gr)
  */
 static void grpset_apply_group_state(struct libscols_group **xx, int state, struct libscols_group *gr)
 {
