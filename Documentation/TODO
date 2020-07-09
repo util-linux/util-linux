@@ -5,6 +5,13 @@ script (lib/pty-session.c)
 --------------------------
   - (!) add #ifdefs and optional code for non-signalfd() systems
 
+
+docs
+----
+  - use terminal hyperlinks (for example for --help)
+    try on terminal: printf 'For more details see \e]8;;man:fdisk(8)\e\\fdisk(8)\e]8;;\e\\.\n'
+    https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+
 rev
 ---
   - support huge input lines (for example read input by small fixed buffer
