@@ -78,7 +78,7 @@ Start up a daemon, print 42 random keys, and then stop the daemon:
 uuidd \-p /tmp/uuidd.pid \-s /tmp/uuidd.socket
 uuidd \-d \-r \-n 42 \-s /tmp/uuidd.socket
 uuidd \-d \-k \-s /tmp/uuidd.socket
-.nf
+.fi
 .RE
 .SH AUTHOR
 The
