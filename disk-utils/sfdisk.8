@@ -295,7 +295,7 @@ disk label (see the \fBEMPTY DISK LABEL\fR section below).
 .TP
 .BR \-Y , " \-\-label\-nested " \fItype
 Force editing of a nested disk label.  The primary disk label has to exist already.
-This option allows to edit for example a hybrid/protective MBR on devices with GPT.
+This option allows editing for example a hybrid/protective MBR on devices with GPT.
 
 .TP
 .BR \-w , " \-\-wipe "\fIwhen
@@ -469,7 +469,7 @@ loaders and for other operating systems.
 
 .B Named-fields format
 .RS
-This format is more readable, robust, extensible and allows to specify additional
+This format is more readable, robust, extensible and allows specifying additional
 information (e.g., a UUID).  It is recommended to use this format to keep your scripts
 more readable.
 .RS
@@ -480,7 +480,7 @@ more readable.
 The
 .I device
 field is optional.  \fBsfdisk\fR extracts the partition number from the
-device name.  It allows to specify the partitions in random order.
+device name.  It allows specifying the partitions in random order.
 This functionality is mostly used by \fB\-\-dump\fR.
 Don't use it if you are not sure.
 
