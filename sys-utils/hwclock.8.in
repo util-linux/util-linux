@@ -297,7 +297,6 @@ another delay is required.
 .RE
 .
 .TP
-.TP
 .BR \-D ", " \-\-debug
 .RB Use\  \-\-verbose .
 .RB The\  \%\-\-debug\  option
@@ -456,7 +455,6 @@ is doing internally.
 .SH NOTES
 .
 .SS Clocks in a Linux System
-.PP
 There are two types of date-time clocks:
 .PP
 .B The Hardware Clock:
@@ -540,7 +538,6 @@ See also
 .BR \%settimeofday (2).
 .
 .SS Hardware Clock Access Methods
-.PP
 .B \%hwclock
 uses many different ways to get and set Hardware Clock values.  The most
 normal way is to do I/O to the rtc device special file, which is
@@ -571,7 +568,6 @@ provides it for testing, troubleshooting, and  because it may be the
 only method available on ISA systems which do not have a working rtc
 device driver.
 .SS The Adjust Function
-.PP
 The Hardware Clock is usually not very accurate.  However, much of its
 inaccuracy is completely predictable - it gains or loses the same amount
 of time every day.  This is called systematic drift.
@@ -670,7 +666,6 @@ You can use an adjtime file that was previously used with the
 .BR \%clock "(8) program with " \%hwclock .
 .
 .SS Automatic Hardware Clock Synchronization by the Kernel
-.PP
 You should be aware of another way that the Hardware Clock is kept
 synchronized in some systems.  The Linux kernel has a mode wherein it
 copies the System Time to the Hardware Clock every 11 minutes. This mode
@@ -718,7 +713,6 @@ notify the kernel.
 should not be used with NTP \%'11\ minute\ mode'.
 .
 .SS ISA Hardware Clock Century value
-.PP
 There is some sort of standard that defines CMOS memory Byte 50 on an ISA
 machine as an indicator of what century it is.
 .B \%hwclock
