@@ -1994,6 +1994,7 @@ int main(int argc, char *argv[])
 			add_uniq_column(COL_VENDOR);
 			add_uniq_column(COL_MODEL);
 			add_uniq_column(COL_REV);
+			add_uniq_column(COL_SERIAL);
 			add_uniq_column(COL_TRANSPORT);
 			break;
 		case 'T':
