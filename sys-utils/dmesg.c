@@ -169,7 +169,7 @@ struct dmesg_control {
 	struct timeval	lasttime;	/* last printed timestamp */
 	struct tm	lasttm;		/* last localtime */
 	struct timeval	boot_time;	/* system boot time */
-	time_t		suspended_time;	/* time spent in suspeneded state */
+	time_t		suspended_time;	/* time spent in suspended state */
 
 	int		action;		/* SYSLOG_ACTION_* */
 	int		method;		/* DMESG_METHOD_* */

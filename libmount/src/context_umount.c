@@ -193,7 +193,7 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 	if (!*tgt)
 		return 1; /* empty string is not an error */
 
-	/* In future this function should be extened to support for example
+	/* In future this function should be extended to support for example
 	 * fsinfo() (or another cheap way kernel will support), for now the
 	 * default is expensive mountinfo/mtab.
 	 */
@@ -346,7 +346,7 @@ static int lookup_umount_fs_by_mountinfo(struct libmnt_context *cxt, const char 
  * mnt_context_apply_fstab(), use mnt_context_tab_applied()
  * to check result.
  *
- * The goal is to mimimize situations wehn we need to parse
+ * The goal is to minimize situations when we need to parse
  * /proc/self/mountinfo.
  */
 static int lookup_umount_fs(struct libmnt_context *cxt)

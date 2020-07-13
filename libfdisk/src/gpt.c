@@ -376,7 +376,7 @@ static inline size_t gpt_get_nentries(struct fdisk_gpt_label *gpt)
 	return (size_t) le32_to_cpu(gpt->pheader->npartition_entries);
 }
 
-/* calculate size of entries array in bytes for specified nuber of entries */
+/* calculate size of entries array in bytes for specified number of entries */
 static inline int gpt_calculate_sizeof_entries(
 				struct gpt_header *hdr,
 				uint32_t nents,	size_t *sz)
@@ -393,7 +393,7 @@ static inline int gpt_calculate_sizeof_entries(
 	return 0;
 }
 
-/* calculate size of entries array in sectors for specified nuber of entries */
+/* calculate size of entries array in sectors for specified number of entries */
 static inline int gpt_calculate_sectorsof_entries(
 				struct gpt_header *hdr,
 				uint32_t nents, uint64_t *sz,
@@ -2070,7 +2070,7 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_label(cxt, GPT));
 
-	DBG(GPT, ul_debug("writting..."));
+	DBG(GPT, ul_debug("writing..."));
 
 	gpt = self_label(cxt);
 	mbr_type = valid_pmbr(cxt);
@@ -3185,7 +3185,7 @@ struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt __attribute__ 
  * @disable: 0 or 1
  *
  * Disable automatic backup header relocation to the end of the device. The
- * header possition is recalculated during libfdisk probing stage by
+ * header position is recalculated during libfdisk probing stage by
  * fdisk_assign_device() and later written by fdisk_write_disklabel(), so you
  * need to call it before fdisk_assign_device().
  *
@@ -3205,7 +3205,7 @@ void fdisk_gpt_disable_relocation(struct fdisk_label *lb, int disable)
  * @enable: 0 or 1
  *
  * Force libfdisk to write backup header to behind last partition. The
- * header possition is recalculated on fdisk_write_disklabel().
+ * header position is recalculated on fdisk_write_disklabel().
  *
  * Since: 2.36
  */

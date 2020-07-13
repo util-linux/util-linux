@@ -484,7 +484,7 @@ int mnt_context_force_unrestricted(struct libmnt_context *cxt)
  * - MNT_OMODE_AUTO is used if nothing else is defined
  * - the flags are evaluated in this order: MNT_OMODE_NOTAB, MNT_OMODE_FORCE,
  *   MNT_OMODE_FSTAB, MNT_OMODE_MTAB and then the mount options from fstab/mtab
- *   are set according to MNT_OMODE_{IGNORE,APPEND,PREPAND,REPLACE}
+ *   are set according to MNT_OMODE_{IGNORE,APPEND,PREPEND,REPLACE}
  *
  * Returns: 0 on success, negative number in case of error.
  */

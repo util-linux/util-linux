@@ -751,7 +751,7 @@ static int __table_parse_stream(struct libmnt_table *tb, FILE *f, const char *fi
 			}
 		}
 
-		/* remove refernece (or deallocate on error) */
+		/* remove reference (or deallocate on error) */
 		mnt_unref_fs(fs);
 
 		/* recoverable error */
