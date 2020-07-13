@@ -15,7 +15,13 @@ env:
   - MAKE_CHECK="root"
   - MAKE_CHECK="dist"
 
-matrix:
+stages:
+  - name: Coverity
+    if: type = cron
+  - name: Test
+    if: type != cron
+
+jobs:
   include:
     # test old Ubuntu 12.04 and OSX for compatibility
     - dist: precise
@@ -34,6 +40,11 @@ matrix:
     - arch: s390x
       compiler: gcc-10
       env: MAKE_CHECK="root"
+    - stage: Coverity
+      compiler: gcc
+      env:
+        # Generated with `travis encrypt -r karelzak/util-linux COVERITY_SCAN_TOKEN=***`
+        - secure: cqwhidkCY+BckuBwmBevstLCHJm9aS2pQnYB3xGiz9JeqwW/x5h9pMElQdTFWw3AD2p5DzKzuW9nUtqNVzMSUWdPBrQGeuBT5tJW5eFeP/9mb5CG1/+w5xzOaZ/+3CK0gtcMSyRhGl2NeuLlimj6hzy37cUTSmBVHzGMZLD51As=
 
 branches:
   only:
