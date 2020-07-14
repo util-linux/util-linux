@@ -76,8 +76,7 @@ static int check_uuids_in_file(const char *file)
 		return 1;
 	}
 	while ((sz = read(fd, str, sizeof(str))) != 0) {
-		if (isspace(str[sizeof(str) - 1]))
-			str[sizeof(str) - 1] = '\0';
+		str[sizeof(str) - 1] = '\0';
 		if (uuid_parse(str, uuidBits)) {
 			warnx("%s: %s", file, str);
 			ret++;
