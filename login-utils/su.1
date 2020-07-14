@@ -59,8 +59,12 @@ command
 .PP
 Note that
 .B su
-in all cases use PAM (pam_getenvlist()) to do final environment modification.  The command line options
-like \fB\-\-login\fR or \fB\-\-preserve\-environment\fR affect environment before it's modified by PAM.
+in all cases use PAM
+.RB (pam_getenvlist (3))
+to do the final environment modification.
+Command-line options
+such as \fB\-\-login\fR and \fB\-\-preserve\-environment\fR affect
+the environment before it is modified by PAM.
 
 .SH OPTIONS
 .TP
@@ -80,8 +84,10 @@ to the shell, which may or may not be useful, depending on the shell.
 Specify the primary group.  This option is available to the root user only.
 .TP
 .BR \-G , " \-\-supp\-group" = \fIgroup
-Specify a supplemental group.  This option is available to the root user only.  The first specified
-supplementary group is also used as a primary group if the option \fB\-\-group\fR is unspecified.
+Specify a supplementary group.
+This option is available to the root user only.  The first specified
+supplementary group is also used as a primary group
+if the option \fB\-\-group\fR is not specified.
 .TP
 .BR \- , " \-l" , " \-\-login"
 Start the shell as a login shell with an environment similar to a real
@@ -111,26 +117,30 @@ in order to make the shell a login shell
 .RE
 .TP
 .BR \-m , " \-p" , " \-\-preserve\-environment"
-Preserve the entire environment, i.e., it does not set
+Preserve the entire environment, i.e., do not set
 .BR HOME ,
 .BR SHELL ,
 .B USER
-nor
+or
 .BR LOGNAME .
 This option is ignored if the option \fB\-\-login\fR is specified.
 .TP
 .BR \-P , " \-\-pty"
-Create pseudo-terminal for the session. The independent terminal provides
-better security as user does not share terminal with the original
-session.  This can be used to avoid TIOCSTI ioctl terminal injection and other
-security attacks against terminal file descriptors. The all session is also
-possible to move to background (e.g., "su \-\-pty \- username \-c
-application &"). If the pseudo-terminal is enabled then su command works
-as a proxy between the sessions (copy stdin and stdout).
-.sp
-This feature is mostly designed for interactive sessions. If the standard input
-is not a terminal, but for example pipe (e.g., echo "date" | su --pty) than ECHO
-flag for the pseudo-terminal is disabled to avoid messy output.
+Create a pseudo-terminal for the session. The independent terminal provides
+better security as the user does not share a terminal with the original
+session.
+This can be used to avoid TIOCSTI ioctl terminal injection and other
+security attacks against terminal file descriptors.
+The entire session can also be moved to the background
+(e.g., "su \-\-pty \- username \-c application &").
+If the pseudo-terminal is enabled, then
+.B su
+works as a proxy between the sessions (copy stdin and stdout).
+.IP
+This feature is mostly designed for interactive sessions.
+If the standard input is not a terminal,
+but for example a pipe (e.g., echo "date" | su \-\-pty),
+then the ECHO flag for the pseudo-terminal is disabled to avoid messy output.
 .TP
 .BR \-s , " \-\-shell" = \fIshell
 Run the specified \fIshell\fR instead of the default.  The shell to run is
@@ -164,11 +174,12 @@ environment variables are ignored unless the calling user is root.
 .TP
 .BI \-\-session\-command= command
 Same as
-.B \-c
+.BR \-c ,
 but do not create a new session.  (Discouraged.)
 .TP
 .BR \-w , " \-\-whitelist\-environment" = \fIlist
-Don't reset environment variables specified in comma separated \fIlist\fR when clears
+Don't reset the environment variables specified in the
+comma-separated \fIlist\fR when clearing the
 environment for \fB\-\-login\fR. The whitelist is ignored for the environment variables
 .BR HOME ,
 .BR SHELL ,
@@ -199,7 +210,7 @@ and
 .I /etc/login.defs
 configuration files.  The following configuration items are relevant
 for
-.BR su (1):
+.BR su:
 .PP
 .B FAIL_DELAY
 (number)
@@ -211,7 +222,9 @@ a non-negative integer.
 .B ENV_PATH
 (string)
 .RS 4
-Defines the PATH environment variable for a regular user.  The
+Defines the
+.B PATH
+environment variable for a regular user.  The
 default value is
 .IR /usr/local/bin:\:/bin:\:/usr/bin .
 .RE
@@ -222,7 +235,9 @@ default value is
 .B ENV_SUPATH
 (string)
 .RS 4
-Defines the PATH environment variable for root.  ENV_SUPATH takes precedence.  The default value is
+Defines the PATH environment variable for root.
+.B ENV_SUPATH
+takes precedence.  The default value is
 .IR /usr/local/sbin:\:/usr/local/bin:\:/sbin:\:/bin:\:/usr/sbin:\:/usr/bin .
 .RE
 .PP
@@ -237,9 +252,17 @@ initializes
 .BR PATH .
 .RE
 .sp
-The environment variable PATH may be different on systems where /bin and /sbin
-are merged into /usr, this variable is also affected by \fB\-\-login\fR command line option and
-PAM system setting (e.g. pam_env).
+The environment variable
+.B PATH
+may be different on systems where
+.I /bin
+and
+.I /sbin
+are merged into
+.IR  /usr ;
+this variable is also affected by the \fB\-\-login\fR command-line option and
+the PAM system setting (e.g.,
+.BR pam_env (8)).
 .SH EXIT STATUS
 .B su
 normally returns the exit status of the command it executed.  If the
@@ -277,14 +300,22 @@ command specific logindef config file
 global logindef config file
 .PD 1
 .SH NOTES
-For security reasons
+For security reasons,
 .B su
 always logs failed log-in attempts to the btmp file, but it does not write to
-the lastlog file at all.  This solution can be used to control
+the
+.I lastlog
+file at all.  This solution can be used to control
 .B su
-behavior by PAM configuration.  If you want to use the pam_lastlog module to
-print warning message about failed log-in attempts then the pam_lastlog has to
-be configured to update the lastlog file as well. For example by:
+behavior by PAM configuration.  If you want to use the
+.BR pam_lastlog (8)
+module to
+print warning message about failed log-in attempts then
+.BR pam_lastlog (8)
+has to
+be configured to update the
+.I lastlog
+file as well. For example by:
 
 .RS
 .br
@@ -293,7 +324,7 @@ session  required  pam_lastlog.so nowtmp
 .SH HISTORY
 This \fBsu\fR command was
 derived from coreutils' \fBsu\fR, which was based on an implementation by
-David MacKenzie. The util-linux has been refactored by Karel Zak.
+David MacKenzie. The util-linux version has been refactored by Karel Zak.
 .SH SEE ALSO
 .BR setpriv (1),
 .BR login.defs (5),

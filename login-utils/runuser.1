@@ -11,7 +11,9 @@ runuser \- run a command with substitute user and group ID
 .SH DESCRIPTION
 .B runuser
 can be used to run commands with a substitute user and group ID.
-If the option \fB\-u\fR is not given, it falls back to
+If the option \fB\-u\fR is not given,
+.B runuser
+falls back to
 .BR su -compatible
 semantics and a shell is executed.
 The difference between the commands
@@ -56,9 +58,10 @@ uses PAM for session management.
 .PP
 Note that
 .B runuser
-in all cases use PAM (pam_getenvlist()) to do final environment modification.
+in all cases use PAM (pam_getenvlist()) to do
+the final environment modification.
 Command-line options
-such as \fB\-\-login\fR or \fB\-\-preserve\-environment\fR affect
+such as \fB\-\-login\fR and \fB\-\-preserve\-environment\fR affect
 the environment before it is modified by PAM.
 .SH OPTIONS
 .TP
@@ -72,7 +75,7 @@ option.
 .BR \-f , " \-\-fast"
 Pass
 .B \-f
-to the shell, which may or may not be useful depending on the
+to the shell, which may or may not be useful, depending on the
 shell.
 .TP
 .BR \-g , " \-\-group" = \fIgroup
@@ -98,6 +101,7 @@ initializes the environment variables
 .BR SHELL ,
 .BR USER ,
 .BR LOGNAME ,
+and
 .B PATH
 .IP *
 changes to the target user's home directory
@@ -109,25 +113,27 @@ in order to make the shell a login shell
 .TP
 .BR \-P , " \-\-pty"
 Create a pseudo-terminal for the session. The independent terminal provides
-better security as user does not share a terminal with the original
+better security as the user does not share a terminal with the original
 session.
-This permits the avoidance of TIOCSTI ioctl terminal injection and other
-security attacks against terminal file descriptors. The entire session can also
-be moved to background (e.g., "runuser \-\-pty \-u username \-\- command &").
-If the pseudo-terminal is enabled then runuser command works
-as a proxy between the sessions (copy stdin and stdout).
-.sp
-This feature is mostly designed for interactive sessions. If the standard input
-is not a terminal,
+This can be used to avoid TIOCSTI ioctl terminal injection and other
+security attacks against terminal file descriptors.
+The entire session can also be moved to the background
+(e.g., "runuser \-\-pty \-u username \-\- command &").
+If the pseudo-terminal is enabled, then
+.B runuser
+works as a proxy between the sessions (copy stdin and stdout).
+.IP
+This feature is mostly designed for interactive sessions.
+If the standard input is not a terminal,
 but for example a pipe (e.g., echo "date" | runuser \-\-pty \-u user),
 then the ECHO flag for the pseudo-terminal is disabled to avoid messy output.
 .TP
 .BR \-m , " \-p" , " \-\-preserve\-environment"
-Preserve the entire environment, i.e., it does not set
+Preserve the entire environment, i.e., do not set
 .BR HOME ,
 .BR SHELL ,
 .B USER
-nor
+or
 .BR LOGNAME .
 The option is ignored if the option \fB\-\-login\fR is specified.
 .TP
@@ -201,7 +207,11 @@ default value is
 .B ENV_SUPATH
 (string)
 .RS 4
-Defines the PATH environment variable for root.  ENV_SUPATH takes precedence.  The default value is
+Defines the
+.B PATH
+environment variable for root.
+.B ENV_SUPATH
+takes precedence.  The default value is
 .IR /usr/local/sbin:\:/usr/local/bin:\:/sbin:\:/bin:\:/usr/sbin:\:/usr/bin .
 .RE
 .PP
@@ -216,9 +226,17 @@ initializes
 .BR PATH .
 .RE
 .sp
-The environment variable PATH may be different on systems where /bin and /sbin
-are merged into /usr, this variable is also affected by \fB\-\-login\fR command line option and
-PAM system setting (e.g. pam_env).
+The environment variable
+.B PATH
+may be different on systems where
+.I /bin
+and
+.I /sbin
+are merged into
+.IR  /usr ;
+this variable is also affected by the \fB\-\-login\fR command-line option and
+the PAM system setting (e.g.,
+.BR pam_env (8)).
 .SH EXIT STATUS
 .B runuser
 normally returns the exit status of the command it executed.  If the
