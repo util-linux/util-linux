@@ -241,7 +241,8 @@ Call vhangup() to do a virtual hangup of the specified terminal.
 Try to keep the existing baud rate.  The baud rates from the command line are
 used when agetty receives a BREAK character.  If another baud rates specified
 then the original baud rate is also saved to the end of the wanted baud rates
-list.  It allows to return to the original baud rate after unexpected BREAKs.
+list.
+This can be used to return to the original baud rate after unexpected BREAKs.
 .TP
 \-t, \-\-timeout \fItimeout\fP
 Terminate if no user name could be read within \fItimeout\fP seconds.
@@ -357,7 +358,7 @@ checks for \fI/etc/issue.d\fP directory. The directory is optional extension to
 the default issue file and content of the directory is printed after
 \fI/etc/issue\fP content. If the \fI/etc/issue\fP does not exist than the
 directory is ignored. All files \fBwith .issue extension\fP from the directory are
-printed in version-sort order. The directory allow to maintain 3rd-party
+printed in version-sort order. The directory can be used to maintain 3rd-party
 messages independently on the primary system \fI/etc/issue\fP file.
 
 Since version 2.35 additional locations for issue file and directory are
@@ -413,7 +414,7 @@ S or S{VARIABLE}
 Insert the VARIABLE data from \fI/etc/os-release\fP.  If this file does not exist
 then fall back to \fI/usr/lib/os-release\fP.  If the VARIABLE argument is not
 specified, then use PRETTY_NAME from the file or the system name (see \\s).
-This escape code allows to keep \fI/etc/issue\fP distribution and release
+This escape code can be used to keep \fI/etc/issue\fP distribution and release
 independent.  Note that \\S{ANSI_COLOR} is converted to the real terminal
 escape sequence.
 .TP

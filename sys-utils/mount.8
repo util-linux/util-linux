@@ -584,7 +584,7 @@ with a single
 .BR mount (2)
 system call, and the flags cannot be mixed with other mount options and operations.
 
-Since util-linux 2.23 the \fBmount\fR command allows to do more propagation
+Since util-linux 2.23 the \fBmount\fR command can be used to do more propagation
 (topology) changes by one mount(8) call and do it also together with other
 mount operations.  This feature is EXPERIMENTAL.  The propagation flags are applied
 by additional \fBmount\fR(2) system calls when the preceding mount operations
@@ -891,9 +891,9 @@ explicitly define that the argument is the mount target.
 .TP
 .BI \-\-target\-prefix " directory"
 Prepend the specified directory to all mount targets.
-This option allows to follow
+This option can be used to follow
 .IR fstab ,
-but mount operations is done on another place, for example:
+but mount operations are done in another place, for example:
 .RS
 .RS
 .sp

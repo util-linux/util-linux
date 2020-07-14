@@ -6,7 +6,7 @@ su \- run a command with substitute user and group ID
 .RI [ user " [" argument ...]]
 .SH DESCRIPTION
 .B su
-allows to run commands with a substitute user and group ID.
+allows commands to be with a substitute user and group ID.
 .PP
 When called with no
 .I user
@@ -122,7 +122,7 @@ This option is ignored if the option \fB\-\-login\fR is specified.
 .BR \-P , " \-\-pty"
 Create pseudo-terminal for the session. The independent terminal provides
 better security as user does not share terminal with the original
-session.  This allow to avoid TIOCSTI ioctl terminal injection and other
+session.  This can be used to avoid TIOCSTI ioctl terminal injection and other
 security attacks against terminal file descriptors. The all session is also
 possible to move to background (e.g., "su \-\-pty \- username \-c
 application &"). If the pseudo-terminal is enabled then su command works
@@ -280,7 +280,7 @@ global logindef config file
 For security reasons
 .B su
 always logs failed log-in attempts to the btmp file, but it does not write to
-the lastlog file at all.  This solution allows to control
+the lastlog file at all.  This solution can be used to control
 .B su
 behavior by PAM configuration.  If you want to use the pam_lastlog module to
 print warning message about failed log-in attempts then the pam_lastlog has to

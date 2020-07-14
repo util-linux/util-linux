@@ -281,7 +281,8 @@ parameters should be observed.
 .
 .TP
 .BI \%\-\-delay= seconds
-This option allows to overwrite internally used delay when set clock time. The
+This option can be used to overwrite the internally used delay
+when setting the clock time. The
 default is 0.5 (500ms) for rtc_cmos, for another RTC types the delay is 0. If
 RTC type is impossible to determine (from sysfs) then it defaults also to 0.5
 to be backwardly compatible.

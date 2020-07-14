@@ -67,7 +67,9 @@ Output is formatted to a width specified as number of characters. The original
 name of this option is \-\-columns; this name is deprecated since v2.30. Note that input
 longer than \fIwidth\fP is not truncated by default.
 .IP "\fB\-d, \-\-table\-noheadings\fP"
-Do not print header. This option allows to use logical column names on command line, but keep the header hidden when print the table.
+Do not print header.
+This option allows the use of logical column names on the command line,
+but keeps the header hidden when printing the table.
 .IP "\fB\-o, \-\-output\-separator\fP \fIstring\fP"
 Specify the columns delimiter for table output (default is two spaces).
 .IP "\fB\-s, \-\-separator\fP \fIseparators\fP"
@@ -83,7 +85,7 @@ for the table header or to address column in option arguments.
 .IP "\fB\-R, \-\-table-right\fP \fIcolumns\fP"
 Right align text in the specified columns.
 .IP "\fB\-T, \-\-table-truncate\fP \fIcolumns\fP"
-Specify columns where is allowed to truncate text when necessary, otherwise
+Specify columns where text can be truncated when necessary, otherwise
 very long table entries may be printed on multiple lines.
 .IP "\fB\-E, \-\-table-noextreme\fP \fIcolumns\fP"
 Specify columns where is possible to ignore unusually long (longer than
