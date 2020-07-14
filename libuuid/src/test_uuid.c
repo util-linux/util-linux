@@ -83,6 +83,8 @@ static int check_uuids_in_file(const char *file)
 			ret++;
 		}
 	}
+
+	close(fd);
 	return ret;
 }
 
