@@ -131,7 +131,9 @@ Used by other servers (i.e.,
 to tell
 .B login
 that printing the hostname should be suppressed in the login: prompt.
-See also LOGIN_PLAIN_PROMPT below if your server does not allow to configure
+See also
+.B LOGIN_PLAIN_PROMPT
+below if your server does not allow to configure
 .B login
 command line.
 .TP
@@ -147,7 +149,7 @@ reads the
 configuration file.  Note that the configuration file could be
 distributed with another package (e.g., shadow-utils).  The following
 configuration items are relevant for
-.BR login (1):
+.BR login :
 .PP
 .B MOTD_FILE
 (string)
@@ -173,12 +175,17 @@ are supported since version 2.36.
 Note that
 .B login
 does not implement any filenames overriding behavior like pam_motd
-(see also MOTD_FIRSTONLY), but all content from all files is displayed.  It is
-recommended to keep extra logic in content generators and use /run/motd.d rather
+(see also
+.BR MOTD_FIRSTONLY ),
+but all content from all files is displayed.  It is
+recommended to keep extra logic in content generators and use
+.I /run/motd.d
+rather
 than rely on overriding behavior hardcoded in system tools.
 .RE
 .PP
-.B MOTD_FIRSTONLY (boolean)
+.B MOTD_FIRSTONLY
+(boolean)
 .RS 4
 Forces
 .B login
@@ -193,7 +200,9 @@ semantic to be more compatible with pam_motd.
 .B LOGIN_PLAIN_PROMPT
 (boolean)
 .RS 4
-Tell login that printing the hostname should be suppressed in the login:
+Tell
+.B login
+that printing the hostname should be suppressed in the login:
 prompt.  This is alternative to the \fB\-H\fR command line option.  The default
 value is
 .IR no .
@@ -286,12 +295,18 @@ to change directory to her home.  The default value is
 .B LASTLOG_UID_MAX
 (unsigned number)
 .RS 4
-Highest user ID number for which the lastlog entries should be
+Highest user ID number for which the
+.I lastlog
+entries should be
 updated.  As higher user IDs are usually tracked by remote user
 identity and authentication services there is no need to create
-a huge sparse lastlog file for them.  No LASTLOG_UID_MAX option
+a huge sparse
+.I lastlog
+file for them.  No LASTLOG_UID_MAX option
 present in the configuration means that there is no user ID limit
-for writing lastlog entries.
+for writing
+.I lastlog
+entries.
 .RE
 .PP
 .B LOG_UNKFAIL_ENAB
@@ -308,7 +323,9 @@ user enters her password instead of her login name.
 .B ENV_PATH
 (string)
 .RS 4
-If set, it will be used to define the PATH environment variable when
+If set, it will be used to define the
+.B PATH
+environment variable when
 a regular user logs in.  The default value is
 .I /usr\:/local\:/bin:\:/bin:\:/usr\:/bin
 .RE
@@ -347,12 +364,17 @@ programs.
 A recursive login, as used to be possible in the good old days, no
 longer works; for most purposes
 .BR su (1)
-is a satisfactory substitute.  Indeed, for security reasons, login
-does a vhangup() system call to remove any possible listening
+is a satisfactory substitute.  Indeed, for security reasons,
+.B login
+does a
+.BR vhangup (2)
+system call to remove any possible listening
 processes on the tty.  This is to avoid password sniffing.  If one
 uses the command
 .BR login ,
-then the surrounding shell gets killed by vhangup() because it's no
+then the surrounding shell gets killed by
+.BR vhangup (2)
+because it's no
 longer the true owner of the tty.  This can be avoided by using
 .B exec login
 in a top-level shell or xterm.
