@@ -1175,7 +1175,7 @@ static int recount_resize(
 	rc = fdisk_get_partitions(cxt, &tb);
 	if (!rc) {
 		/* For resize we do not follow grain to detect free-space, but
-		 * we allow to resize with very small granulation. */
+		 * we support to resize with very small granulation. */
 		unsigned long org = cxt->grain;
 
 		cxt->grain = cxt->sector_size;

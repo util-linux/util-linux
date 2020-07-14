@@ -11,7 +11,7 @@
 /**
  * SECTION: symbols
  * @title: Symbols
- * @short_description: allows to overwrite default output chars (for ascii art)
+ * @short_description: can be used to overwrite default output chars (for ascii art)
  *
  * An API to access and modify data and information per symbol/symbol group.
  */

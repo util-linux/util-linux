@@ -1956,8 +1956,8 @@ size_t blkid_ltrim_whitespace(unsigned char *str)
  * wiped area then the signature has been added later and LVM superblock
  * should be ignore.
  *
- * Note that this heuristic is not 100% reliable, for example "pvcreate --zero
- * n" allows to keep the begin of the device unmodified. It's probably better
+ * Note that this heuristic is not 100% reliable, for example "pvcreate --zero n"
+ * can be used to keep the begin of the device unmodified. It's probably better
  * to use this heuristic for conflicts between superblocks and partition tables
  * than for conflicts between filesystem superblocks -- existence of unwanted
  * partition table is very unusual, because PT is pretty visible (parsed and

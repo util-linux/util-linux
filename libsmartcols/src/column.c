@@ -383,7 +383,7 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
  * @wrap_nextchunk: function to return next zero terminated data
  * @userdata: optional stuff for callbacks
  *
- * Extends SCOLS_FL_WRAP and allows to set custom wrap function. The default
+ * Extends SCOLS_FL_WRAP and can be used to set custom wrap function. The default
  * is to wrap by column size, but you can create functions to wrap for example
  * after \n or after words, etc.
  *

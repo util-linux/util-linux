@@ -153,7 +153,7 @@ void mnt_unref_cache(struct libmnt_cache *cache)
  * @cache: cache pointer
  * @mtab: table with already canonicalized mountpoints
  *
- * Add to @cache reference to @mtab. This allows to avoid unnecessary paths
+ * Add to @cache reference to @mtab. This can be used to avoid unnecessary paths
  * canonicalization in mnt_resolve_target().
  *
  * Returns: negative number in case of error, or 0 o success.

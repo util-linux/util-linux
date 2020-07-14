@@ -199,7 +199,7 @@ static void timedout(int sig __attribute__ ((__unused__)))
 }
 
 /*
- * This handler allows to inform a shell about signals to login. If you have
+ * This handler can be used to inform a shell about signals to login. If you have
  * (root) permissions, you can kill all login children by one signal to the
  * login process.
  *

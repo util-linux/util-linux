@@ -64,7 +64,7 @@ static int __mtab_find_umount_fs(struct libmnt_context *cxt,
 	/*
 	 * The mount table may be huge, and on systems with utab we have to
 	 * merge userspace mount options into /proc/self/mountinfo. This all is
-	 * expensive. The tab filter allows to filter out entries, then a mount
+	 * expensive. The tab filter can be used to filter out entries, then a mount
 	 * table and utab are very tiny files.
 	 *
 	 * The filter uses mnt_fs_streq_{target,srcpath} function where all

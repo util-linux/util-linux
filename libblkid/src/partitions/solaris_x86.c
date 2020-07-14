@@ -15,7 +15,7 @@
 
 /*
  * Solaris-x86 is always within primary dos partition (nested PT table).  The
- * solaris-x86 vtoc allows to split the entire partition to "slices". The
+ * solaris-x86 vtoc can be used to split the entire partition to "slices". The
  * offset (start) of the slice is always relatively to the primary dos
  * partition.
  *

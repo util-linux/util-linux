@@ -293,8 +293,8 @@ static int fix_optstr(struct libmnt_context *cxt)
 		se_rem = 1;
 	else if (cxt->mountflags & MS_REMOUNT)
 		/*
-		 * Linux kernel < 2.6.39 does not allow to remount with any
-		 * selinux specific mount options.
+		 * Linux kernel < 2.6.39 does not support remount operation
+		 * with any selinux specific mount options.
 		 *
 		 * Kernel 2.6.39 commits:  ff36fe2c845cab2102e4826c1ffa0a6ebf487c65
 		 *                         026eb167ae77244458fa4b4b9fc171209c079ba7
@@ -1080,7 +1080,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 		/*
 		 * Mounted by mount(2), do some post-mount checks
 		 *
-		 * Kernel allows to use MS_RDONLY for bind mounts, but the
+		 * Kernel can be used to use MS_RDONLY for bind mounts, but the
 		 * read-only request could be silently ignored. Check it to
 		 * avoid 'ro' in mtab and 'rw' in /proc/mounts.
 		 */

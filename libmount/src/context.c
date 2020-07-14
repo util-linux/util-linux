@@ -900,7 +900,7 @@ int mnt_context_is_loopdel(struct libmnt_context *cxt)
  * @cxt: mount context
  * @fs: filesystem description
  *
- * The mount context uses private @fs by default. This function allows to
+ * The mount context uses private @fs by default. This function can be used to
  * overwrite the private @fs with an external instance. This function
  * increments @fs reference counter (and decrement reference counter of the
  * old fs).
@@ -1190,7 +1190,7 @@ int mnt_context_set_options_pattern(struct libmnt_context *cxt, const char *patt
  * @tb: fstab
  *
  * The mount context reads /etc/fstab to the private struct libmnt_table by default.
- * This function allows to overwrite the private fstab with an external
+ * This function can be used to overwrite the private fstab with an external
  * instance.
  *
  * This function modify the @tb reference counter. This function does not set
@@ -1493,7 +1493,7 @@ int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
  * @cache: cache instance or NULL
  *
  * The mount context maintains a private struct libmnt_cache by default. This
- * function allows to overwrite the private cache with an external instance.
+ * function can be used to overwrite the private cache with an external instance.
  * This function increments cache reference counter.
  *
  * If the @cache argument is NULL, then the current cache instance is reset.
@@ -1611,7 +1611,7 @@ struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
  *
  * Sets mount flags (see mount(2) man page).
  *
- * Note that mount context allows to define mount options by mount flags. It
+ * Note that mount context can be used to define mount options by mount flags. It
  * means you can for example use
  *
  *	mnt_context_set_mflags(cxt, MS_NOEXEC | MS_NOSUID);
@@ -1740,7 +1740,7 @@ int mnt_context_get_user_mflags(struct libmnt_context *cxt, unsigned long *flags
  * @data: mount(2) data
  *
  * The mount context generates mountdata from mount options by default. This
- * function allows to overwrite this behavior, and @data will be used instead
+ * function can be used to overwrite this behavior, and @data will be used instead
  * of mount options.
  *
  * The libmount does not deallocate the data by mnt_free_context(). Note that

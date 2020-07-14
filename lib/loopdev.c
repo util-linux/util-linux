@@ -299,7 +299,7 @@ int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, int mode)
  * @lc: context
  * @flags: LOOPITER_FL_* flags
  *
- * Iterator allows to scan list of the free or used loop devices.
+ * Iterator can be used to scan list of the free or used loop devices.
  *
  * Returns: <0 on error, 0 on success
  */

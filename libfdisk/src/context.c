@@ -335,7 +335,7 @@ int fdisk_has_protected_bootbits(struct fdisk_context *cxt)
  * @enable: 1 or 0
  *
  * The library zeroizes all the first sector when create a new disk label by
- * default.  This function allows to control this behavior. For now it's
+ * default.  This function can be used to control this behavior. For now it's
  * supported for MBR and GPT.
  *
  * Returns: 0 on success, < 0 on error.

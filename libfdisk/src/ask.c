@@ -323,7 +323,7 @@ int fdisk_ask_number_is_relative(struct fdisk_ask *ask)
  * fdisk_ask_number_is_wrap_negative:
  * @ask: ask instance
  *
- * The wrap-negative flag allows to accept negative number from user. In this
+ * The wrap-negative flag can be used to accept negative number from user. In this
  * case the dialog result is calculated as "high - num" (-N from high limit).
  *
  * Returns: 1 or 0.
@@ -342,8 +342,8 @@ int fdisk_ask_number_is_wrap_negative(struct fdisk_ask *ask)
  * @ask: ask instance
  * @relative: 0 or 1
  *
- * Inform libfdisk that user specified number in relative notation rather than
- * by explicit number. This info allows to fdisk do some optimization (e.g.
+ * Inform libfdisk that user can specify the number in relative notation rather than
+ * by explicit number. This is useful for some optimization (e.g.
  * align end of partition, etc.)
  *
  * Returns: 0 on success, <0 on error

@@ -9,7 +9,7 @@
  * @title: Script
  * @short_description: complex way to create and dump partition table
  *
- * This interface allows to compose in-memory partition table with all details,
+ * This interface can be used to compose in-memory partition table with all details,
  * write all partition table description to human readable text file, read it
  * from the file, and apply the script to on-disk label.
  *
@@ -268,7 +268,7 @@ const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name)
  * If no @data is specified then the header is removed. If header does not exist
  * and @data is specified then a new header is added.
  *
- * Note that libfdisk allows to specify arbitrary custom header, the default
+ * Note that libfdisk can be used to specify arbitrary custom header, the default
  * built-in headers are "unit" and "label", and some label specific headers
  * (for example "uuid" and "name" for GPT).
  *
@@ -362,7 +362,7 @@ struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp)
  * @tb: table
  *
  * Replaces table used by script and creates a new reference to @tb. This
- * function allows to generate a new script table independently on the current
+ * function can be used to generate a new script table independently on the current
  * context and without any file reading.
  *
  * This is useful for example to create partition table with the same basic

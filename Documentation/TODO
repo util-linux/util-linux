@@ -77,7 +77,7 @@ libmount (mount/umount)
    loop devices, write to /run/mount/utab or /etc/mtab, etc.
 
    It would be nice to improve libmount to check for CAP_SYS_ADMIN if suid not
-   set and allow to use it for simple tasks where no another operation is
+   set and allow using it for simple tasks where no another operation is
    necessary.
 
 partx

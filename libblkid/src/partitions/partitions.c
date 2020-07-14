@@ -466,7 +466,7 @@ blkid_partition blkid_partlist_add_partition(blkid_partlist ls,
 	return par;
 }
 
-/* allows to modify used partitions numbers (for example for logical partitions) */
+/* can be used to modify used partitions numbers (for example for logical partitions) */
 int blkid_partlist_set_partno(blkid_partlist ls, int partno)
 {
 	if (!ls)
@@ -480,7 +480,7 @@ int blkid_partlist_increment_partno(blkid_partlist ls)
 	return ls ? ls->next_partno++ : -1;
 }
 
-/* allows to set "parent" for the next nested partition */
+/* can be used to set "parent" for the next nested partition */
 static int blkid_partlist_set_parent(blkid_partlist ls, blkid_partition par)
 {
 	if (!ls)
