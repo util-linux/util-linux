@@ -91,7 +91,8 @@ int main(int argc, char *argv[])
 		/* Make a reference from cell data to the buffer, then we can
 		 * update cell data without any interaction with libsmartcols
 		 */
-		scols_line_refer_data(line, COL_TIME, timecell);
+		if (scols_line_refer_data(line, COL_TIME, timecell) != 0)
+			err(EXIT_FAILURE, "failed to add data to table");
 
 		do {
 			double diff;
