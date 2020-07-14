@@ -97,7 +97,7 @@ not to destroy the environment.
 .TP
 .B \-f
 Used to skip a login authentication.  This option is usually
-used by
+used by the
 .BR getty (8)
 autologin feature.
 .TP
@@ -111,14 +111,14 @@ use this option.
 .IP
 Note that the
 .B \-h
-option has impact on the
+option has an impact on the
 .B PAM service
 .BR name .
 The standard service name is
 .IR login ,
-with the
+but with the
 .B \-h
-option the name is
+option, the name is
 .IR remote .
 It is necessary to create proper PAM config files (e.g.,
 .I /etc\:/pam.d\:/login
@@ -164,7 +164,7 @@ If the
 .B MOTD_FILE
 item is empty or a quiet login is enabled, then the message of the day
 is not displayed.  Note that the same functionality is also provided
-by
+by the
 .BR pam_motd (8)
 PAM module.
 .PP
@@ -191,7 +191,8 @@ Forces
 .B login
 to stop display content specified by
 .B MOTD_FILE
-after first accessible item in the list.  Note that a directory is one item in this case.
+after the first accessible item in the list.
+Note that a directory is one item in this case.
 This option allows to configure
 .B login
 semantic to be more compatible with pam_motd.
@@ -203,7 +204,8 @@ semantic to be more compatible with pam_motd.
 Tell
 .B login
 that printing the hostname should be suppressed in the login:
-prompt.  This is alternative to the \fB\-H\fR command line option.  The default
+prompt.
+This is an alternative to the \fB\-H\fR command line option.  The default
 value is
 .IR no .
 .RE
@@ -211,7 +213,7 @@ value is
 .B LOGIN_TIMEOUT
 (number)
 .RS 4
-Max time in seconds for login.  The default value is
+Maximum time in seconds for login.  The default value is
 .IR 60 .
 .RE
 .PP
