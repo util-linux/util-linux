@@ -152,7 +152,7 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 		if (!ln)
 			break;
 
-		if (str && *str && scols_line_set_data(ln, col, str) != 0)
+		if (*str && scols_line_set_data(ln, col, str) != 0)
 			err(EXIT_FAILURE, "failed to add output data");
 	}
 
