@@ -42,10 +42,15 @@ int main(int argc, char *argv[])
 
 	while (nlines--) {
 		struct libscols_line *ln = scols_table_new_line(tb, NULL);
+		int rc;
 
-		scols_line_set_data(ln, COL_LEFT, "A");
-		scols_line_set_data(ln, COL_FOO, "B");
-		scols_line_set_data(ln, COL_RIGHT, "C");
+		rc = scols_line_set_data(ln, COL_LEFT, "A");
+		if (!rc)
+			rc = scols_line_set_data(ln, COL_FOO, "B");
+		if (!rc)
+			rc = scols_line_set_data(ln, COL_RIGHT, "C");
+		if (rc)
+			err(EXIT_FAILURE, "failed to set line data");
 	}
 
 	scols_print_table(tb);
