@@ -17,11 +17,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <stdlib.h>
 #include <sys/ioctl.h>
 
 int main(void)
 {
-  char *cmd = "id -u -n\n";
-  while(*cmd)
-   ioctl(0, TIOCSTI, cmd++);
+	int rc = 0;
+	char *cmd = "id -u -n\n";
+
+	while(*cmd)
+		rc += ioctl(0, TIOCSTI, cmd++);
+
+	exit(rc ? EXIT_FAILURE : EXIT_SUCCESS);
 }
