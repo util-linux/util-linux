@@ -30,6 +30,10 @@ fi
 MAKE="make -j2"
 DUMP_CONFIG_LOG="short"
 
+# Coverity-related settings
+COVERITY_SCAN_TOOL_BASE="/tmp/coverity-scan-analysis"
+COVERITY_SCAN_PROJECT_NAME="karelzak/util-linux"
+
 # workaround ugly warning on travis OSX,
 # see https://github.com/direnv/direnv/issues/210
 shell_session_update() { :; }
@@ -124,6 +128,43 @@ function check_root
 	sudo env "PATH=$PATH" $MAKE install || return
 }
 
+function run_coverity
+{
+	local results_dir="cov-int"
+	local tool_dir=$(find $COVERITY_SCAN_TOOL_BASE -type d -name 'cov-analysis*')
+	local results_archive="analysis-results.tgz"
+	local sha=$(git rev-parse --short HEAD)
+	local author_email=$(git log -1 --pretty="%aE")
+	local response status_code
+
+	xconfigure --enable-all-programs || return
+	echo -e "\033[33;1mRunning Coverity Scan Analysis Tool...\033[0m"
+	COVERITY_UNSUPPORTED=1 $tool_dir/bin/cov-build --dir $results_dir sh -c "$MAKE check-programs all" || return
+	$tool_dir/bin/cov-import-scm --dir $results_dir --scm git --log $results_dir/scm_log.txt || return
+
+	echo -e "\033[33;1mTarring Coverity Scan Analysis results...\033[0m"
+	tar czf $results_archive $results_dir || return
+
+	echo -e "\033[33;1mUploading Coverity Scan Analysis results...\033[0m"
+	response=$(curl \
+		   --silent --write-out "\n%{http_code}\n" \
+		   --form project=$COVERITY_SCAN_PROJECT_NAME \
+	           --form token=$COVERITY_SCAN_TOKEN \
+	           --form email=$author_email \
+		   --form file=@$results_archive \
+		   --form version=$sha \
+		   --form description="Travis CI build" \
+		   https://scan.coverity.com/builds)
+	printf "\033[33;1mThe response is\033[0m\n%s\n" "$response"
+	status_code=$(echo "$response" | sed -n '$p')
+	if [ "$status_code" != "200" ]; then
+		echo -e "\033[33;1mCoverity Scan upload failed: $(echo "$response" | sed '$d').\033[0m"
+		return 1
+	fi
+
+	echo -e "\n\033[33;1mCoverity Scan Analysis completed successfully.\033[0m"
+}
+
 function check_dist
 {
 	xconfigure \
@@ -181,6 +222,27 @@ function travis_install_script
 		libsystemd-daemon-dev \
 		libsystemd-journal-dev \
 		|| true
+
+	if [ "$TRAVIS_BUILD_STAGE_NAME" = "Coverity" ]; then
+		coverity_install_script
+		return
+	fi
+}
+
+function coverity_install_script
+{
+	local platform=$(uname)
+	local tool_url="https://scan.coverity.com/download/${platform}"
+	local tool_archive="/tmp/cov-analysis-${platform}.tgz"
+
+	echo -e "\033[33;1mDownloading Coverity Scan Analysis Tool...\033[0m"
+	wget -nv -O $tool_archive $tool_url --post-data "project=$COVERITY_SCAN_PROJECT_NAME&token=$COVERITY_SCAN_TOKEN" || return
+
+	echo -e "\033[33;1mExtracting Coverity Scan Analysis Tool...\033[0m"
+	mkdir -p $COVERITY_SCAN_TOOL_BASE
+	pushd $COVERITY_SCAN_TOOL_BASE
+	tar xzf $tool_archive || return
+	popd
 }
 
 function osx_install_script
@@ -233,6 +295,13 @@ function travis_before_script
 function travis_script
 {
 	local ret
+
+	# run_coverity should be run before set -o xtrace so as not to expose COVERITY_SCAN_TOKEN
+	if [ "$TRAVIS_BUILD_STAGE_NAME" = "Coverity" ]; then
+		run_coverity
+		return
+	fi
+
 	set -o xtrace
 
 	case "$MAKE_CHECK" in
