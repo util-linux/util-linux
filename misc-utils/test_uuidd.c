@@ -206,6 +206,8 @@ static void create_nthreads(process_t *proc, size_t index)
 		LOG(2, (stderr, "%d: thread exited [tid=%jd,return=%d]\n",
 		     proc->pid, (intmax_t) th->tid, th->retval));
 	}
+
+	free(threads);
 }
 
 static void create_nprocesses(void)
@@ -243,6 +245,8 @@ static void create_nprocesses(void)
 		    (stderr, "process exited [pid=%d,status=%d]\n",
 		     proc->pid, proc->status));
 	}
+
+	free(process);
 }
 
 static void object_dump(size_t idx, object_t *obj)
