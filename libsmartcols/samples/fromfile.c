@@ -134,7 +134,6 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 	size_t len = 0, nlines = 0;
 	int i;
 	char *str = NULL;
-	int rc;
 
 	while ((i = getline(&str, &len, f)) != -1) {
 
