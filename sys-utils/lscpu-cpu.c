@@ -83,9 +83,12 @@ int lscpu_read_topolgy_ids(struct lscpu_cxt *cxt)
 	struct path_cxt *sys = cxt->syscpu;
 	size_t i;
 
+
 	for (i = 0; i < cxt->ncpus; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
 		int num = cpu->logical_id;
+
+		DBG(TYPE, ul_debugobj(cpu, "#%d reading IDs", num));
 
 		if (ul_path_readf_s32(sys, &cpu->coreid, "cpu%d/topology/core_id", num) != 0)
 			cpu->coreid = -1;

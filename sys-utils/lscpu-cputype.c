@@ -77,7 +77,7 @@ static int add_cpuset_to_array(cpu_set_t **ary, int *items, cpu_set_t *set, size
 	int i;
 
 	if (!ary)
-		return -1;
+		return -EINVAL;
 
 	for (i = 0; i < *items; i++) {
 		if (CPU_EQUAL_S(setsize, set, ary[i]))
@@ -90,6 +90,17 @@ static int add_cpuset_to_array(cpu_set_t **ary, int *items, cpu_set_t *set, size
 	}
 	CPU_FREE(set);
 	return 1;
+}
+
+static void free_cpuset_array(cpu_set_t **ary, int items)
+{
+	int i;
+
+	if (!ary)
+		return;
+	for (i = 0; i < items; i++)
+		free(ary[i]);
+	free(ary);
 }
 
 struct lscpu_cputype *lscpu_new_cputype(void)
@@ -127,10 +138,10 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		free(ct->flags);
 		free(ct->mtid);		/* maximum thread id (s390) */
 		free(ct->addrsz);	/* address sizes */
-		free(ct->coremaps);
-		free(ct->socketmaps);
-		free(ct->bookmaps);
-		free(ct->drawermaps);
+		free_cpuset_array(ct->coremaps, ct->ncores);
+		free_cpuset_array(ct->socketmaps, ct->nsockets);
+		free_cpuset_array(ct->bookmaps, ct->nbooks);
+		free_cpuset_array(ct->drawermaps, ct->ndrawers);
 		free(ct);
 	}
 }
@@ -212,7 +223,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	npos = cxt->ncpuspos;				/* possible CPUs */
 
 	for (i = 0; i < cxt->ncpus; i++) {
-		struct lscpu_cpu *cpu = cxt->cpus[i++];
+		struct lscpu_cpu *cpu = cxt->cpus[i];
 		cpu_set_t *thread_siblings = NULL, *core_siblings = NULL;
 		cpu_set_t *book_siblings = NULL, *drawer_siblings = NULL;
 		int num;
@@ -224,6 +235,8 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		if (ul_path_accessf(sys, F_OK,
 					"cpu%d/topology/thread_siblings", num) != 0)
 			continue;
+
+		DBG(TYPE, ul_debugobj(ct, "#%d reading topology", num));
 
 		/* read topology maps */
 		ul_path_readf_cpuset(sys, &thread_siblings, cxt->maxcpus,
@@ -279,7 +292,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			 * non-present cpu maps and to keep calculation easy we make
 			 * sure that nsockets and nbooks is at least 1.
 			 */
-			nsockets = ct->ncpus / nthreads / ncores;
+			nsockets = cxt->npresents / nthreads / ncores;
 			if (!nsockets)
 				nsockets = 1;
 
@@ -296,6 +309,13 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			ct->nthreads = ndrawers * nbooks * nsockets * ncores * nthreads;
 		}
 	}
+
+
+	DBG(TYPE, ul_debugobj(ct, " nthreads: %d", ct->nthreads));
+	DBG(TYPE, ul_debugobj(ct, "   ncores: %d", ct->ncores));
+	DBG(TYPE, ul_debugobj(ct, " nsockets: %d", ct->nsockets));
+	DBG(TYPE, ul_debugobj(ct, "   nbooks: %d", ct->nbooks));
+	DBG(TYPE, ul_debugobj(ct, " ndrawers: %d", ct->ndrawers));
 
 	return 0;
 }
