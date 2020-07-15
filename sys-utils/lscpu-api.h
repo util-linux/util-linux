@@ -56,11 +56,17 @@ struct lscpu_cputype {
 	int	physchips;	/* Physical chips */
 	int	physcoresperchip;	/* Physical cores per chip */
 
-	int	ncores;
-	int	nbooks;
-	int	threads;
-	int	ndrawers;
+	int	ncpus;		/* how many CPUs references this type */
+	int	nthreads;	/* calculated (probably same as ncpus) */
 
+	int		ncores;
+	cpu_set_t	**coremaps;
+	int		nsockets;
+	cpu_set_t       **socketmaps;
+	int		nbooks;
+	cpu_set_t	**bookmaps;
+	int		ndrawers;
+	cpu_set_t	**drawermaps;
 };
 
 struct lscpu_cpu {
@@ -72,6 +78,11 @@ struct lscpu_cpu {
 
 	char	*dynamic_mhz;
 	char	*static_mhz;
+
+	int	coreid;
+	int	socketid;
+	int	bookid;
+	int	drawerid;
 };
 
 struct lscpu_arch {
@@ -132,6 +143,7 @@ struct lscpu_cxt {
 	size_t ncputypes;
 	struct lscpu_cputype **cputypes;
 
+	/* CPUs as read from /proc/cpuinfo, it means online CPUs only */
 	size_t ncpus;
 	struct lscpu_cpu **cpus;
 
@@ -142,6 +154,8 @@ struct lscpu_cxt {
 	 *
 	 * For example, the possible system CPUs are: 1,3,5, it means that
 	 * ncpuspos=3, so all arrays are in range 0..3.
+	 *
+	 * TODO: Do we really need it if we have lscpu_cpu->logical_id?
 	 */
 	size_t ncpuspos;	/* maximal possible CPUs */
 	int *idx2cpunum;	/* mapping index to CPU num */
@@ -176,6 +190,7 @@ int lscpu_read_cpulists(struct lscpu_cxt *cxt);
 int lscpu_read_archext(struct lscpu_cxt *cxt);
 int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt);
 int lscpu_read_numas(struct lscpu_cxt *cxt);
+int lscpu_read_topology(struct lscpu_cxt *cxt);
 
 struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt);
 void lscpu_free_architecture(struct lscpu_arch *ar);

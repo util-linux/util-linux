@@ -71,6 +71,27 @@ int lookup(char *line, char *pattern, char **value)
 	return 1;
 }
 
+/* add @set to the @ary, unnecessary set is deallocated. */
+static int add_cpuset_to_array(cpu_set_t **ary, int *items, cpu_set_t *set, size_t setsize)
+{
+	int i;
+
+	if (!ary)
+		return -1;
+
+	for (i = 0; i < *items; i++) {
+		if (CPU_EQUAL_S(setsize, set, ary[i]))
+			break;
+	}
+	if (i == *items) {
+		ary[*items] = set;
+		++*items;
+		return 0;
+	}
+	CPU_FREE(set);
+	return 1;
+}
+
 struct lscpu_cputype *lscpu_new_cputype(void)
 {
 	struct lscpu_cputype *ct;
@@ -106,6 +127,10 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		free(ct->flags);
 		free(ct->mtid);		/* maximum thread id (s390) */
 		free(ct->addrsz);	/* address sizes */
+		free(ct->coremaps);
+		free(ct->socketmaps);
+		free(ct->bookmaps);
+		free(ct->drawermaps);
 		free(ct);
 	}
 }
@@ -175,6 +200,117 @@ static void lscpu_merge_cputype(struct lscpu_cputype *a, struct lscpu_cputype *b
 	if (!a->addrsz && b->addrsz)
 		a->addrsz = xstrdup(b->addrsz);
 }
+
+/* Read topology for specified type */
+static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+{
+	size_t i, setsize, npos;
+	struct path_cxt *sys;
+
+	sys = cxt->syscpu;				/* /sys/devices/system/cpu/ */
+	setsize = CPU_ALLOC_SIZE(cxt->maxcpus);		/* CPU set size */
+	npos = cxt->ncpuspos;				/* possible CPUs */
+
+	for (i = 0; i < cxt->ncpus; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i++];
+		cpu_set_t *thread_siblings, *core_siblings;
+		cpu_set_t *book_siblings, *drawer_siblings;
+		int num;
+
+		if (cpu->type != ct)
+			continue;
+
+		num = cpu->logical_id;
+		if (ul_path_accessf(sys, F_OK, "cpu%d/topology/thread_siblings", num) != 0)
+			continue;
+
+		/* read topology maps */
+		ul_path_readf_cpuset(sys, &thread_siblings, cxt->maxcpus,
+					"cpu%d/topology/thread_siblings", num);
+		ul_path_readf_cpuset(sys, &core_siblings, cxt->maxcpus,
+					"cpu%d/topology/core_siblings", num);
+		ul_path_readf_cpuset(sys, &book_siblings, cxt->maxcpus,
+					"cpu%d/topology/book_siblings", num);
+		ul_path_readf_cpuset(sys, &drawer_siblings, cxt->maxcpus,
+					"cpu%d/topology/drawer_siblings", num);
+
+
+		/* Allocate arrays for topology maps.
+		 *
+		 * For each map we make sure that it can have up to ncpuspos
+		 * entries. This is because we cannot reliably calculate the
+		 * number of cores, sockets and books on all architectures.
+		 * E.g. completely virtualized architectures like s390 may
+		 * have multiple sockets of different sizes.
+		 */
+		if (!ct->coremaps)
+			ct->coremaps = xcalloc(npos, sizeof(cpu_set_t *));
+		if (!ct->socketmaps)
+			ct->socketmaps = xcalloc(npos, sizeof(cpu_set_t *));
+		if (!ct->bookmaps && book_siblings)
+			ct->bookmaps = xcalloc(npos, sizeof(cpu_set_t *));
+		if (!ct->drawermaps && drawer_siblings)
+			ct->drawermaps = xcalloc(npos, sizeof(cpu_set_t *));
+
+		/* add to topology maps */
+		add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, setsize);
+		add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, setsize);
+
+		if (book_siblings)
+			add_cpuset_to_array(ct->bookmaps, &ct->nbooks, book_siblings, setsize);
+		if (drawer_siblings)
+			add_cpuset_to_array(ct->drawermaps, &ct->ndrawers, drawer_siblings, setsize);
+
+		/* calculate threads */
+		if (!ct->nthreads) {
+			int ndrawers, nbooks, nsockets, ncores, nthreads;
+
+			/* threads within one core */
+			nthreads = CPU_COUNT_S(setsize, thread_siblings);
+			if (!nthreads)
+				nthreads = 1;
+
+			/* cores within one socket */
+			ncores = CPU_COUNT_S(setsize, core_siblings) / nthreads;
+			if (!ncores)
+				ncores = 1;
+
+			/* number of sockets within one book.  Because of odd /
+			 * non-present cpu maps and to keep calculation easy we make
+			 * sure that nsockets and nbooks is at least 1.
+			 */
+			nsockets = ct->ncpus / nthreads / ncores;
+			if (!nsockets)
+				nsockets = 1;
+
+			/* number of books */
+			nbooks = cxt->npresents / nthreads / ncores / nsockets;
+			if (!nbooks)
+				ct->nbooks = 1;
+
+			/* number of drawers */
+			ndrawers = cxt->npresents / nbooks / nthreads / ncores / nsockets;
+			if (!ndrawers)
+				ndrawers = 1;
+
+			ct->nthreads = ndrawers * nbooks * nsockets * ncores * nthreads;
+		}
+	}
+
+	return 0;
+}
+
+int lscpu_read_topology(struct lscpu_cxt *cxt)
+{
+	size_t i;
+	int rc = 0;
+
+	for (i = 0; i < cxt->ncputypes; i++)
+		rc += cputype_read_topology(cxt, cxt->cputypes[i]);
+
+	return rc;
+}
+
 
 /* Describes /proc/cpuinfo fields */
 struct cpuinfo_pattern {
@@ -812,6 +948,7 @@ int main(int argc, char **argv)
 	lscpu_read_archext(cxt);
 	lscpu_read_vulnerabilities(cxt);
 	lscpu_read_numas(cxt);
+	lscpu_read_topology(cxt);
 
 	lscpu_decode_arm(cxt);
 
