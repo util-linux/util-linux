@@ -9,17 +9,23 @@ scriptlive \- re-run session typescripts, using timing information
 .RB [ \-I|\-B ]
 .I typescript
 .SH DESCRIPTION
-This program re-run a typescript, using stdin typescript and timing information to ensure that
+This program re-runs a typescript,
+using stdin typescript and timing information to ensure that
 input happens in the same rhythm as it originally appeared when the script
 was recorded.
 .PP
-The \fBsession is executed\fR in newly created pseudo terminal with user's $SHELL
+The \fBsession is executed\fR in a newly created pseudoterminal with
+the user's $SHELL
 (or defaults to /bin/bash).
 .PP
 .B Be careful!
 Do not forget that the typescript may contains arbitrary commands.
 It is recommended to use \fB"scriptreplay \-\-stream in \-\-log\-in typescript"\fR
-(or with --log-io instead of --log-in) to verify the typescript before it is executed by
+(or with
+.B \-\-log\-io
+instead of
+.BR \-\-log\-in\)
+to verify the typescript before it is executed by
 .BR scriptlive (1).
 .PP
 The timing information is what
@@ -47,17 +53,18 @@ File containing \fBscript\fR's timing output.  This option overrides old-style a
 .BR \-T , " \-\-log\-timing " \fIfile\fR
 Aliased to \fB\-t\fR, maintained for compatibility with
 .BR script (1)
-command line options.
+command-line options.
+.TP
 .BR \-d , " \-\-divisor " \fInumber\fR
 Speed up the replay displaying this
 .I number
-of times.  The argument is a floating point number.  It's called divisor
+of times.  The argument is a floating-point number.  It's called divisor
 because it divides the timings by this factor.  This option overrides old-style arguments.
 .TP
 .BR \-m , " \-\-maxdelay " \fInumber\fR
 Set the maximum delay between updates to
 .I number
-of seconds.  The argument is a floating point number.  This can be used to
+of seconds.  The argument is a floating-point number.  This can be used to
 avoid long pauses in the typescript replay.
 .TP
 .BR \-V , " \-\-version"
