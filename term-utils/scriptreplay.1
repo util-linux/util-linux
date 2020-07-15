@@ -30,7 +30,7 @@ outputs to file specified by
 .BR \-\-log-timing .
 .PP
 By default, the typescript to display is assumed to be named
-.BR typescript ,
+.IR typescript ,
 but other filenames may be specified, as the second parameter or with option
 .BR \-\-log\-out .
 .PP
@@ -56,20 +56,21 @@ File containing \fBscript\fR's terminal output and input.
 File containing \fBscript\fR's timing output.  This option overrides old-style arguments.
 .TP
 .BR \-T , " \-\-log\-timing " \fIfile\fR
-aliast to \fB\-t\fR, maintained for compatibility with
-.B script (1)
-command line options.
+This is an alias for \fB\-t\fR, maintained for compatibility with
+.BR script (1)
+command-line options.
 .TP
 .BR \-s , " \-\-typescript " \fIfile\fR
 File containing \fBscript\fR's terminal output.  Deprecated alias to \fB\-\-log-out\fR.
 This option overrides old-style arguments.
 .TP
 .BR \-c , " \-\-cr\-mode " \fImode\fR
-Specifies how to use CR (0x0D, carriage return) character from log files.
+Specifies how to use the CR (0x0D, carriage return) character from log files.
 The default mode is
 .IR auto ,
 in this case CR is replaced with line break for stdin log, because otherwise
-scriptreplay will overwrite the same line.  The other modes are
+.B scriptreplay
+would overwrite the same line.  The other modes are
 .I never
 and
 .IR always .
@@ -77,33 +78,36 @@ and
 .BR \-d , " \-\-divisor " \fInumber\fR
 Speed up the replay displaying this
 .I number
-of times.  The argument is a floating point number.  It's called divisor
+of times.  The argument is a floating-point number.  It's called divisor
 because it divides the timings by this factor.  This option overrides old-style arguments.
 .TP
 .BR \-m , " \-\-maxdelay " \fInumber\fR
 Set the maximum delay between updates to
 .I number
-of seconds.  The argument is a floating point number.  This can be used to
+of seconds.  The argument is a floating-point number.  This can be used to
 avoid long pauses in the typescript replay.
 .TP
 .B \-\-summary
-Display details about session recorded in the specified timing file and exit.  The session has
-to be recorded by
+Display details about the session recorded in the specified timing file
+and exit.  The session has to be recorded using
 .I advanced
 format (see
 .BR script (1))
 option \fB\-\-logging\-format\fR for more details).
 .TP
 .BR \-x , " \-\-stream " \fItype\fR
-Forces scriptreplay to print only specified stream.  The supported stream types
+Forces
+.B scriptreplay
+to print only the specified stream.  The supported stream types
 are
 .IR in ,
 .IR out ,
 .IR signal ,
 or
 .IR info .
-This option is recommended for multi-stream logs (e.g., \-\-log-io)
-to print only specified data.
+This option is recommended for multi-stream logs (e.g.,
+.BR \-\-log-io )
+in order to print only specified data.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
