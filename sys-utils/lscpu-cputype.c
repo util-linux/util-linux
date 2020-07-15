@@ -213,15 +213,16 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 
 	for (i = 0; i < cxt->ncpus; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i++];
-		cpu_set_t *thread_siblings, *core_siblings;
-		cpu_set_t *book_siblings, *drawer_siblings;
+		cpu_set_t *thread_siblings = NULL, *core_siblings = NULL;
+		cpu_set_t *book_siblings = NULL, *drawer_siblings = NULL;
 		int num;
 
 		if (cpu->type != ct)
 			continue;
 
 		num = cpu->logical_id;
-		if (ul_path_accessf(sys, F_OK, "cpu%d/topology/thread_siblings", num) != 0)
+		if (ul_path_accessf(sys, F_OK,
+					"cpu%d/topology/thread_siblings", num) != 0)
 			continue;
 
 		/* read topology maps */
@@ -233,7 +234,6 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 					"cpu%d/topology/book_siblings", num);
 		ul_path_readf_cpuset(sys, &drawer_siblings, cxt->maxcpus,
 					"cpu%d/topology/drawer_siblings", num);
-
 
 		/* Allocate arrays for topology maps.
 		 *
@@ -253,8 +253,8 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			ct->drawermaps = xcalloc(npos, sizeof(cpu_set_t *));
 
 		/* add to topology maps */
-		add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, setsize);
 		add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, setsize);
+		add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, setsize);
 
 		if (book_siblings)
 			add_cpuset_to_array(ct->bookmaps, &ct->nbooks, book_siblings, setsize);
@@ -949,6 +949,7 @@ int main(int argc, char **argv)
 	lscpu_read_vulnerabilities(cxt);
 	lscpu_read_numas(cxt);
 	lscpu_read_topology(cxt);
+	lscpu_read_topolgy_ids(cxt);
 
 	lscpu_decode_arm(cxt);
 

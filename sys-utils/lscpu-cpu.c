@@ -55,6 +55,7 @@ int lscpu_add_cpu(struct lscpu_cxt *cxt,
 	if (type) {
 		cpu->type = type;
 		lscpu_ref_cputype(type);
+		type->ncpus++;
 	}
 
 	return 0;
@@ -70,21 +71,33 @@ int lscpu_cpus_apply_type(struct lscpu_cxt *cxt, struct lscpu_cputype *type)
 		if (!cpu->type) {
 			cpu->type = type;
 			lscpu_ref_cputype(type);
+			type->ncpus++;
 		}
 	}
 	return 0;
 }
 
-/* returns first CPU which represents the type */
-struct lscpu_cpu *lscpu_cpus_loopup_by_type(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+
+int lscpu_read_topolgy_ids(struct lscpu_cxt *cxt)
 {
+	struct path_cxt *sys = cxt->syscpu;
 	size_t i;
 
 	for (i = 0; i < cxt->ncpus; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
+		int num = cpu->logical_id;
 
-		if (cpu->type == ct)
-			return cpu;
+		if (ul_path_readf_s32(sys, &cpu->coreid, "cpu%d/topology/core_id", num) != 0)
+			cpu->coreid = -1;
+		if (ul_path_readf_s32(sys, &cpu->socketid, "cpu%d/topology/physical_package_id", num) != 0)
+			cpu->socketid = -1;
+		if (ul_path_readf_s32(sys, &cpu->bookid, "cpu%d/topology/book_id", num) != 0)
+			cpu->bookid = -1;
+		if (ul_path_readf_s32(sys, &cpu->drawerid, "cpu%d/topology/drawer_id", num) != 0)
+			cpu->drawerid = -1;
 	}
-	return NULL;
+
+	return 0;
 }
+
+

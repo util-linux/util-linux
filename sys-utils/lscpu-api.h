@@ -191,6 +191,7 @@ int lscpu_read_archext(struct lscpu_cxt *cxt);
 int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt);
 int lscpu_read_numas(struct lscpu_cxt *cxt);
 int lscpu_read_topology(struct lscpu_cxt *cxt);
+int lscpu_read_topolgy_ids(struct lscpu_cxt *cxt);
 
 struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt);
 void lscpu_free_architecture(struct lscpu_arch *ar);
