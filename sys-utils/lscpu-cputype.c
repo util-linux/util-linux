@@ -343,7 +343,6 @@ static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
 		break;
 	default:
 		/* set value as a string and cleanup */
-		fprintf(stderr, "str=%s\n", str);
 		strdup_to_offset(stru, pat->offset, v);
 		data = (char **) ((char *) stru + pat->offset);
 		rtrim_whitespace((unsigned char *) *data);
@@ -553,7 +552,7 @@ static int strbe16toh(const char *buf, int offset)
 #endif
 
 /* some extra information for the default CPU type */
-int lscpu_read_extra(struct lscpu_cxt *cxt)
+int lscpu_read_archext(struct lscpu_cxt *cxt)
 {
 	FILE *f;
 	char buf[BUFSIZ];
@@ -810,9 +809,10 @@ int main(int argc, char **argv)
 	cxt->arch = lscpu_read_architecture(cxt);
 
 	lscpu_read_cpulists(cxt);
-	lscpu_read_extra(cxt);
+	lscpu_read_archext(cxt);
 	lscpu_read_vulnerabilities(cxt);
 	lscpu_read_numas(cxt);
+
 	lscpu_decode_arm(cxt);
 
 	cxt->virt = lscpu_read_virtualization(cxt);

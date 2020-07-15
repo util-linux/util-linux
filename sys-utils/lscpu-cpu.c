@@ -75,3 +75,16 @@ int lscpu_cpus_apply_type(struct lscpu_cxt *cxt, struct lscpu_cputype *type)
 	return 0;
 }
 
+/* returns first CPU which represents the type */
+struct lscpu_cpu *lscpu_cpus_loopup_by_type(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+{
+	size_t i;
+
+	for (i = 0; i < cxt->ncpus; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+
+		if (cpu->type == ct)
+			return cpu;
+	}
+	return NULL;
+}
