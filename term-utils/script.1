@@ -44,10 +44,10 @@ makes a typescript of everything on your terminal session.  The terminal
 data are stored in raw form to the log file and information about timing
 to another (optional) structured log file.  The timing log file is necessary to replay
 the session later by
-.B scriptreplay (1)
+.BR scriptreplay (1)
 and to store additional information about the session.
 .PP
-Since version 2.35
+Since version 2.35,
 .B script
 supports multiple streams and allows the logging of input and output to separate
 files or all the one file.  This version also supports new timing file
@@ -63,11 +63,13 @@ or option \fB\-\-log\-out\fR \fIfile\fR is given,
 saves the dialogue in this
 .IR file .
 If no filename is given, the dialogue is saved in the file
-.BR typescript .
+.IR typescript .
 .PP
-Note that log input by \fB\-\-log\-in\fR or \fB\-\-log\-io\fR may be security
-sensitive operation as the log file contains all terminal session input (it
-means also passwords) independently on the terminal echo flag setting.
+Note that logging input using \fB\-\-log\-in\fR or \fB\-\-log\-io\fR
+may record security-sensitive information
+as the log file contains all terminal session input
+(e.g., passwords)
+independently of the terminal echo flag setting.
 .SH OPTIONS
 Below, the \fIsize\fR argument may be followed by the multiplicative
 suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
@@ -78,7 +80,7 @@ KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 Append the output to
 .I file
 or to
-.BR typescript ,
+.IR typescript ,
 retaining the prior contents.
 .TP
 \fB\-c\fR, \fB\-\-command\fR \fIcommand\fR
@@ -89,8 +91,8 @@ the output of a program that behaves differently when its stdout is not a
 tty.
 .TP
 \fB\-E\fR, \fB\-\-echo\fR \fIwhen\fR
-This option controls the ECHO flag for pseudoterminal within the session.  The
-supported modes are
+This option controls the ECHO flag for the pseudoterminal within the session.
+The supported modes are
 .IR always ,
 .IR never ,
 or
@@ -98,25 +100,28 @@ or
 The default is
 .I auto
 -- in this case, ECHO is disabled if the current standard input is a
-terminal to avoid double-echo, and enabled if standard input is not terminal
+terminal iin order to avoid double-echo,
+and enabled if standard input is not a terminal
 (for example pipe:
 .BR "echo date | script" )
 to avoid missing input in the session log.
 .TP
 \fB\-e\fR, \fB\-\-return\fR
 Return the exit status of the child process.  Uses the same format as bash
-termination on signal termination exit status is 128+n.  The exit status of
-the child process is always stored in type script file too.
+termination on signal termination
+(i.e., exit status is 128 + the signal number).  The exit status of
+the child process is always stored in the type script file too.
 .TP
 \fB\-f\fR, \fB\-\-flush\fR
 Flush output after each write.  This is nice for telecooperation: one person
-does `mkfifo foo; script \-f foo', and another can supervise real-time what is
-being done using `cat foo'.  Note that flush has an impact on performance, it's
+does `mkfifo foo; script \-f foo',
+and another can supervise in real-time what is
+being done using `cat foo'.  Note that flush has an impact on performance; it's
 possible to use SIGUSR1 to flush logs on demand.
 .TP
 \fB\-\-force\fR
 Allow the default output file
-.B typescript
+.I typescript
 to be a hard or symbolic link.  The command will follow a symbolic link.
 .TP
 \fB\-B\fR, \fB\-\-log\-io\fR \fIfile\fR
@@ -130,12 +135,12 @@ Log input to the \fIfile\fR.  The log output is disabled if only \fB\-\-log\-in\
 specified.
 .sp
 Use this logging functionality carefully as it logs all input, including input
-when terminal has disabled echo flag (for example password inputs).
+when terminal has disabled echo flag (for example, password inputs).
 .TP
 \fB\-O\fR, \fB\-\-log\-out\fR \fIfile\fR
 Log output to the \fIfile\fR.  The default is to log output to the file with
 name
-.B typescript
+.I typescript
 if the option \fB\-\-log\-out\fR or \fB\-\-log\-in\fR is not given.  The log
 output is disabled if only \fB\-\-log\-in\fR specified.
 .TP
@@ -147,7 +152,7 @@ is enabled.  The multi-stream format is used on \fB\-\-log\-io\fR or when
 See also \fB\-\-logging\-format\fR.
 .TP
 \fB\-m\fR, \fB\-\-logging\-format\fR \fIformat\fR
-Force use
+Force use of
 .I advanced
 or
 .I classic
@@ -163,8 +168,10 @@ field indicates how many characters were output this time.
 .sp
 .B Advanced (multi-stream) format
 .PP
-The first field is entry type itentifier ('I'nput, 'O'utput, 'H'eader, 'S'ignal).
-The socond field is how much time elapsed since the previous entry, and rest of the entry is type specific data.
+The first field is an entry type identifier
+('I'nput, 'O'utput, 'H'eader, 'S'ignal).
+The socond field is how much time elapsed since the previous entry,
+and the rest of the entry is type-specific data.
 .RE
 .TP
 \fB\-o\fR, \fB\-\-output-limit\fR \fIsize\fR
@@ -252,7 +259,9 @@ fi
 .RE
 .ad
 .PP
-You should also avoid use of script in command pipes, as
+You should also avoid use of
+.B script
+in command pipes, as
 .B script
 can read more input than you would expect.
 .SH HISTORY
