@@ -356,7 +356,7 @@ msgstr "erreur interne : type de fenêtre de dialogue %d non permis"
 #: disk-utils/cfdisk.c:1287
 #, c-format
 msgid "%s (mounted)"
-msgstr "%s (démonté)"
+msgstr "%s (monté)"
 
 #: disk-utils/cfdisk.c:1307
 msgid "Partition name:"
