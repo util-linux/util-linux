@@ -57,7 +57,8 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 {
 	size_t i, setsize, npos;
 	struct path_cxt *sys;
-	int nthreads = 0;
+	int nthreads = 0, sw_topo = 0;
+	FILE *fd;
 
 	sys = cxt->syscpu;				/* /sys/devices/system/cpu/ */
 	setsize = CPU_ALLOC_SIZE(cxt->maxcpus);		/* CPU set size */
@@ -126,16 +127,59 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 
 	}
 
-	ct->nthreads =	(ct->ndrawers ?: 1) *
-			(ct->nbooks   ?: 1) *
-			(ct->nsockets ?: 1) *
-			(ct->ncores   ?: 1) * nthreads;
+	/* s390 detects its cpu topology via /proc/sysinfo, if present.
+	 * Using simply the cpu topology masks in sysfs will not give
+	 * usable results since everything is virtualized. E.g.
+	 * virtual core 0 may have only 1 cpu, but virtual core 2 may
+	 * five cpus.
+	 * If the cpu topology is not exported (e.g. 2nd level guest)
+	 * fall back to old calculation scheme.
+	 */
+	if ((fd = ul_path_fopen(cxt->procfs, "r", "sysinfo"))) {
+		int t0, t1;
+		char buf[BUFSIZ];
 
-	DBG(TYPE, ul_debugobj(ct, " nthreads: %d (per core: %d)", ct->nthreads, nthreads));
-	DBG(TYPE, ul_debugobj(ct, "   ncores: %d", ct->ncores));
-	DBG(TYPE, ul_debugobj(ct, " nsockets: %d", ct->nsockets));
-	DBG(TYPE, ul_debugobj(ct, "   nbooks: %d", ct->nbooks));
-	DBG(TYPE, ul_debugobj(ct, " ndrawers: %d", ct->ndrawers));
+		DBG(TYPE, ul_debugobj(ct, " reading sysinfo"));
+
+		while (fgets(buf, sizeof(buf), fd) != NULL) {
+			if (sscanf(buf, "CPU Topology SW: %d %d %d %d %d %d",
+					&t0, &t1,
+					&ct->ndrawers_per_system,
+					&ct->nbooks_per_drawer,
+					&ct->nsockets_per_book,
+					&ct->ncores_per_socket) == 6) {
+				sw_topo = 1;
+				DBG(TYPE, ul_debugobj(ct, " using SW topology"));
+				break;
+			}
+		}
+		if (fd)
+			fclose(fd);
+	}
+
+	if (ct->mtid)
+		ct->nthreads_per_core = atoi(ct->mtid) + 1;
+	else
+		ct->nthreads_per_core = nthreads;
+
+	if (!sw_topo) {
+		ct->ndrawers_per_system = ct->nbooks_per_drawer =
+			ct->nsockets_per_book = ct->ncores_per_socket = 0;
+		if (!ct->ncores_per_socket)
+			ct->ncores_per_socket = ct->ncores / ct->nsockets;
+		if (!ct->nsockets_per_book && ct->nbooks)
+			ct->nsockets_per_book = ct->nsockets / ct->nbooks;
+		if (!ct->nbooks_per_drawer && ct->ndrawers)
+			ct->nbooks_per_drawer = ct->nbooks / ct->ndrawers;
+		if (ct->ndrawers_per_system)
+			ct->ndrawers_per_system = ct->ndrawers;
+	}
+
+	DBG(TYPE, ul_debugobj(ct, " nthreads: %d (per core)", ct->nthreads_per_core));
+	DBG(TYPE, ul_debugobj(ct, "   ncores: %d (%d per socket)", ct->ncores, ct->ncores_per_socket));
+	DBG(TYPE, ul_debugobj(ct, " nsockets: %d (%d per books)", ct->nsockets, ct->nsockets_per_book));
+	DBG(TYPE, ul_debugobj(ct, "   nbooks: %d (%d per drawer)", ct->nbooks, ct->nbooks_per_drawer));
+	DBG(TYPE, ul_debugobj(ct, " ndrawers: %d (%d per system)", ct->ndrawers, ct->ndrawers_per_system));
 
 	return 0;
 }

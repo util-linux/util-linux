@@ -56,8 +56,14 @@ struct lscpu_cputype {
 	int	physcoresperchip;	/* Physical cores per chip */
 
 	int	ncpus;		/* how many CPUs references this type */
-	int	nthreads;	/* calculated (probably same as ncpus) */
 
+	int	nthreads_per_core;
+	int	ncores_per_socket;
+	int	nsockets_per_book;
+	int	nbooks_per_drawer;
+	int	ndrawers_per_system;
+
+	/* siblings maps */
 	int		ncores;
 	cpu_set_t	**coremaps;
 	int		nsockets;
