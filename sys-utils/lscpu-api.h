@@ -46,10 +46,9 @@ struct lscpu_cputype {
 	char	*flags;
 	char	*mtid;		/* maximum thread id (s390) */
 	char	*addrsz;	/* address sizes */
-	int	dispatching;	/* none, horizontal or vertical */
+	int	dispatching;	/* -1 if not evailable, DIST_* */
 	int	freqboost;	/* -1 if not evailable */
 
-	int	*polarization;	/* cpu polarization */
 	int	*addresses;	/* physical cpu addresses */
 	int	*configured;	/* cpu configured */
 	int	physsockets;	/* Physical sockets (modules) */
@@ -69,6 +68,21 @@ struct lscpu_cputype {
 	cpu_set_t	**drawermaps;
 };
 
+/* dispatching modes */
+enum {
+	DISP_HORIZONTAL = 0,
+	DISP_VERTICAL	= 1
+};
+
+/* cpu polarization */
+enum {
+	POLAR_UNKNOWN	= 0,
+	POLAR_VLOW,
+	POLAR_VMEDIUM,
+	POLAR_VHIGH,
+	POLAR_HORIZONTAL
+};
+
 struct lscpu_cpu {
 	int refcount;
 	struct lscpu_cputype *type;
@@ -83,6 +97,9 @@ struct lscpu_cpu {
 	int	socketid;
 	int	bookid;
 	int	drawerid;
+
+	int	polarization;	/* POLAR_* */
+
 };
 
 struct lscpu_arch {
@@ -193,6 +210,7 @@ int lscpu_read_numas(struct lscpu_cxt *cxt);
 
 int lscpu_read_topology(struct lscpu_cxt *cxt);
 int lscpu_read_topology_ids(struct lscpu_cxt *cxt);
+int lscpu_read_topology_polarization(struct lscpu_cxt *cxt);
 void lscpu_cputype_free_topology(struct lscpu_cputype *ct);
 
 struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt);

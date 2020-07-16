@@ -301,6 +301,8 @@ static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
 	buf[v - p] = '\0';
 	v++;
 
+	fprintf(stderr, "key='%s', value='%s'\n", buf, v);
+
 	rtrim_whitespace((unsigned char *)buf);
 
 	/* search in cpu-types patterns */
@@ -358,6 +360,7 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 	struct lscpu_cputype *type = NULL;
 	struct lscpu_cpu *cpu = NULL;
 	FILE *fp;
+	size_t ncpus = 0;
 	char buf[BUFSIZ];
 
 	DBG(GATHER, ul_debugobj(cxt, "reading cpuinfo"));
@@ -372,10 +375,11 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 		if (fgets(buf, sizeof(buf), fp) != NULL)
 			p = skip_space(buf);
 
-		if (p == NULL || (*buf && !*p)) {
-			if (cpu)
+		if (p == NULL || (*buf && !*p)) {	/* empty line */
+			if (cpu) {
 				lscpu_add_cpu(cxt, cpu, type);
-			else if (type) {
+				ncpus++;
+			} else if (type) {
 				/* Generic non-cpu data. For some architectures
 				 * cpuinfo contains description block (at the
 				 * beginning of the file (IBM s390) or at the
@@ -408,6 +412,9 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 	lscpu_unref_cpu(cpu);
 	lscpu_unref_cputype(type);
 	fclose(fp);
+
+	DBG(GATHER, ul_debug("cpuinfo done: CPUs: %zu, types: %zu",
+				ncpus, cxt->ncputypes));
 	return 0;
 }
 
@@ -815,6 +822,7 @@ int main(int argc, char **argv)
 	lscpu_read_numas(cxt);
 	lscpu_read_topology(cxt);
 	lscpu_read_topology_ids(cxt);
+	lscpu_read_topology_polarization(cxt);
 
 	lscpu_decode_arm(cxt);
 
