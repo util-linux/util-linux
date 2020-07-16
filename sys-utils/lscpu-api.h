@@ -190,8 +190,10 @@ int lscpu_read_cpulists(struct lscpu_cxt *cxt);
 int lscpu_read_archext(struct lscpu_cxt *cxt);
 int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt);
 int lscpu_read_numas(struct lscpu_cxt *cxt);
+
 int lscpu_read_topology(struct lscpu_cxt *cxt);
-int lscpu_read_topolgy_ids(struct lscpu_cxt *cxt);
+int lscpu_read_topology_ids(struct lscpu_cxt *cxt);
+void lscpu_cputype_free_topology(struct lscpu_cputype *ct);
 
 struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt);
 void lscpu_free_architecture(struct lscpu_arch *ar);
