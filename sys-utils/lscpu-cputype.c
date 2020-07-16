@@ -223,6 +223,9 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	setsize = CPU_ALLOC_SIZE(cxt->maxcpus);		/* CPU set size */
 	npos = cxt->ncpuspos;				/* possible CPUs */
 
+	DBG(TYPE, ul_debugobj(ct, "reading %s/%s/%s topology",
+				ct->vendor ?: "", ct->model ?: "", ct->modelname ?:""));
+
 	for (i = 0; i < cxt->ncpus; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
 		cpu_set_t *thread_siblings = NULL, *core_siblings = NULL;
@@ -237,7 +240,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 					"cpu%d/topology/thread_siblings", num) != 0)
 			continue;
 
-		DBG(TYPE, ul_debugobj(ct, "#%d reading topology", num));
+		/*DBG(TYPE, ul_debugobj(ct, " #%d", num));*/
 
 		/* read topology maps */
 		ul_path_readf_cpuset(sys, &thread_siblings, cxt->maxcpus,
