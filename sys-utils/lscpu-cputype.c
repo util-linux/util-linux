@@ -217,6 +217,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 {
 	size_t i, setsize, npos;
 	struct path_cxt *sys;
+	int nthreads = 0;
 
 	sys = cxt->syscpu;				/* /sys/devices/system/cpu/ */
 	setsize = CPU_ALLOC_SIZE(cxt->maxcpus);		/* CPU set size */
@@ -226,7 +227,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		struct lscpu_cpu *cpu = cxt->cpus[i];
 		cpu_set_t *thread_siblings = NULL, *core_siblings = NULL;
 		cpu_set_t *book_siblings = NULL, *drawer_siblings = NULL;
-		int num;
+		int num, n;
 
 		if (cpu->type != ct)
 			continue;
@@ -247,6 +248,12 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 					"cpu%d/topology/book_siblings", num);
 		ul_path_readf_cpuset(sys, &drawer_siblings, cxt->maxcpus,
 					"cpu%d/topology/drawer_siblings", num);
+
+		n = CPU_COUNT_S(setsize, thread_siblings);
+		if (!n)
+			n = 1;
+		if (n > nthreads)
+			nthreads = n;
 
 		/* Allocate arrays for topology maps.
 		 *
@@ -274,42 +281,12 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		if (drawer_siblings)
 			add_cpuset_to_array(ct->drawermaps, &ct->ndrawers, drawer_siblings, setsize);
 
-		/* calculate threads */
-		if (!ct->nthreads) {
-			int ndrawers, nbooks, nsockets, ncores, nthreads;
-
-			/* threads within one core */
-			nthreads = CPU_COUNT_S(setsize, thread_siblings);
-			if (!nthreads)
-				nthreads = 1;
-
-			/* cores within one socket */
-			ncores = CPU_COUNT_S(setsize, core_siblings) / nthreads;
-			if (!ncores)
-				ncores = 1;
-
-			/* number of sockets within one book.  Because of odd /
-			 * non-present cpu maps and to keep calculation easy we make
-			 * sure that nsockets and nbooks is at least 1.
-			 */
-			nsockets = cxt->npresents / nthreads / ncores;
-			if (!nsockets)
-				nsockets = 1;
-
-			/* number of books */
-			nbooks = cxt->npresents / nthreads / ncores / nsockets;
-			if (!nbooks)
-				ct->nbooks = 1;
-
-			/* number of drawers */
-			ndrawers = cxt->npresents / nbooks / nthreads / ncores / nsockets;
-			if (!ndrawers)
-				ndrawers = 1;
-
-			ct->nthreads = ndrawers * nbooks * nsockets * ncores * nthreads;
-		}
 	}
 
+	ct->nthreads =	(ct->ndrawers ?: 1) *
+			(ct->nbooks   ?: 1) *
+			(ct->nsockets ?: 1) *
+			(ct->ncores   ?: 1) * nthreads;
 
 	DBG(TYPE, ul_debugobj(ct, " nthreads: %d", ct->nthreads));
 	DBG(TYPE, ul_debugobj(ct, "   ncores: %d", ct->ncores));
