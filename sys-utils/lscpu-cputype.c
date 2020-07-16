@@ -275,6 +275,12 @@ static int cmp_pattern(const void *a0, const void *b0)
 	return strcmp(a->pattern, b->pattern);
 }
 
+/*
+ * This function parses "key : value" from /proc/cpuinfo. The "key" describes CPU-type
+ * (type_patterns[]) or CPU specific (cpu_patterns[]) values.
+ *
+ * Note that s390-like "processor <n>:" lines are not suported here.
+ */
 static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
 				struct lscpu_cpu **cpu,
 				const char *str)
@@ -300,8 +306,6 @@ static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
 	xstrncpy(buf, p, sizeof(buf));
 	buf[v - p] = '\0';
 	v++;
-
-	fprintf(stderr, "key='%s', value='%s'\n", buf, v);
 
 	rtrim_whitespace((unsigned char *)buf);
 
@@ -355,12 +359,50 @@ static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
 	return 0;
 }
 
+static int is_processor_line(const char *str)
+{
+	const char *p;
+
+	if (!startswith(str, "processor "))
+		return 0;
+	p = str + 10;
+	while (*p && isdigit(*p))
+		p++;
+	if (*p == ':')
+		return 1;
+	return 0;
+}
+
+/*
+ * s390-like "processor <n>: value = xxx, value = yyy" lines parser.
+ */
+static int cpuinfo_parse_processor_line(struct lscpu_cpu **cpu, const char *str)
+{
+	const char *v;
+	char *end = NULL;
+	int n;
+
+	v = strchr(str, ' ');
+	if (!v)
+		return -EINVAL;
+	v++;
+	errno = 0;
+	n = strtol(v, &end, 10);
+	if (errno || !end || v == end || *end != ':')
+		return -EINVAL;
+
+	if (!*cpu)
+		*cpu = lscpu_new_cpu();
+
+	(*cpu)->logical_id = n;
+	return 0;
+}
+
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 {
 	struct lscpu_cputype *type = NULL;
 	struct lscpu_cpu *cpu = NULL;
 	FILE *fp;
-	size_t ncpus = 0;
 	char buf[BUFSIZ];
 
 	DBG(GATHER, ul_debugobj(cxt, "reading cpuinfo"));
@@ -375,11 +417,13 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 		if (fgets(buf, sizeof(buf), fp) != NULL)
 			p = skip_space(buf);
 
-		if (p == NULL || (*buf && !*p)) {	/* empty line */
-			if (cpu) {
+		if (p == NULL || (*buf && !*p)) {
+			/*
+			 * Blank line separates CPUs
+			 */
+			if (cpu)
 				lscpu_add_cpu(cxt, cpu, type);
-				ncpus++;
-			} else if (type) {
+			else if (type) {
 				/* Generic non-cpu data. For some architectures
 				 * cpuinfo contains description block (at the
 				 * beginning of the file (IBM s390) or at the
@@ -405,7 +449,17 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 				break;	/* fgets() returns nothing; EOF */
 		} else {
 			rtrim_whitespace((unsigned char *) buf);
-			cpuinfo_parse_line(&type, &cpu, p);
+
+			if (is_processor_line(buf)) {
+				/* s390-like "processor <n>:" per line */
+				cpuinfo_parse_processor_line(&cpu, p);
+				if (cpu) {
+					lscpu_add_cpu(cxt, cpu, type);
+					lscpu_unref_cpu(cpu);
+					cpu = NULL;
+				}
+			} else
+				cpuinfo_parse_line(&type, &cpu, p);
 		}
 	} while (1);
 
@@ -414,7 +468,7 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 	fclose(fp);
 
 	DBG(GATHER, ul_debug("cpuinfo done: CPUs: %zu, types: %zu",
-				ncpus, cxt->ncputypes));
+				cxt->ncpus, cxt->ncputypes));
 	return 0;
 }
 

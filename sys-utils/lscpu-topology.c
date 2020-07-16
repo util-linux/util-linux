@@ -131,7 +131,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			(ct->nsockets ?: 1) *
 			(ct->ncores   ?: 1) * nthreads;
 
-	DBG(TYPE, ul_debugobj(ct, " nthreads: %d", ct->nthreads));
+	DBG(TYPE, ul_debugobj(ct, " nthreads: %d (per core: %d)", ct->nthreads, nthreads));
 	DBG(TYPE, ul_debugobj(ct, "   ncores: %d", ct->ncores));
 	DBG(TYPE, ul_debugobj(ct, " nsockets: %d", ct->nsockets));
 	DBG(TYPE, ul_debugobj(ct, "   nbooks: %d", ct->nbooks));
