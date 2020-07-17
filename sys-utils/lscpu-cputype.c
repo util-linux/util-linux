@@ -84,14 +84,18 @@ struct lscpu_cputype *lscpu_new_cputype(void)
 
 void lscpu_ref_cputype(struct lscpu_cputype *ct)
 {
-	if (ct)
+	if (ct) {
 		ct->refcount++;
+		/*DBG(TYPE, ul_debugobj(ct, ">>> ref %d", ct->refcount));*/
+	}
 }
 
 void lscpu_unref_cputype(struct lscpu_cputype *ct)
 {
 	if (!ct)
 		return;
+
+	/*DBG(TYPE, ul_debugobj(ct, ">>> unref %d", ct->refcount - 1));*/
 
 	if (--ct->refcount <= 0) {
 		DBG(TYPE, ul_debugobj(ct, "  freeing"));
@@ -119,7 +123,10 @@ struct lscpu_cputype *lscpu_cputype_get_default(struct lscpu_cxt *cxt)
 #define match(astr, bstr) \
 		((!astr && !bstr) || (astr && bstr && strcmp(astr, bstr) == 0))
 
-struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+/*
+ * Return: 1|0 if @ct matches any exising type; @cur returns the type
+ */
+static int has_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct, struct lscpu_cputype **cur)
 {
 	size_t i;
 
@@ -131,23 +138,22 @@ struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cput
 		    match(x->model, ct->model) &&
 		    match(x->modelname, ct->modelname) &&
 		    match(x->stepping, ct->stepping)) {
-
-			DBG(TYPE, ul_debugobj(x, "reuse"));
-			return x;
+			if (cur)
+				*cur = x;
+			return 1;
 		}
 	}
+	return 0;
+}
 
+struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+{
 	DBG(TYPE, ul_debugobj(ct, "add new"));
 	cxt->cputypes = xrealloc(cxt->cputypes, (cxt->ncputypes + 1)
 				* sizeof(struct lscpu_cputype *));
 	cxt->cputypes[cxt->ncputypes] = ct;
 	cxt->ncputypes++;
 	lscpu_ref_cputype(ct);
-
-	/* first type -- use it for all CPUs */
-	if (cxt->ncputypes == 1)
-		lscpu_cpus_apply_type(cxt, ct);
-
 	return ct;
 }
 
@@ -177,9 +183,18 @@ static void lscpu_merge_cputype(struct lscpu_cputype *a, struct lscpu_cputype *b
 		a->addrsz = xstrdup(b->addrsz);
 }
 
+
+enum {
+	CPUINFO_LINE_UNKNOWN,	/* unknown line */
+	CPUINFO_LINE_CPUTYPE,	/* line found in type_patterns[] */
+	CPUINFO_LINE_CPU,	/* line found in cpu_patterns[] */
+	CPUINFO_LINE_CACHE	/* line found in cache_pattern[] */
+};
+
 /* Describes /proc/cpuinfo fields */
 struct cpuinfo_pattern {
 	int id;			/* field ID */
+	int domain;		/* CPUINFO_LINE_* */
 	const char *pattern;	/* field name as used in /proc/cpuinfo */
 	size_t	offset;		/* offset in lscpu_cputype or lscpu_cpu struct */
 };
@@ -214,6 +229,7 @@ enum {
 #define DEF_PAT_CPUTYPE(_str, _id, _member) \
 	{ \
 		.id = (_id), \
+		.domain = CPUINFO_LINE_CPUTYPE, \
 		.pattern = (_str), \
 		.offset = offsetof(struct lscpu_cputype, _member), \
 	}
@@ -251,6 +267,7 @@ static const struct cpuinfo_pattern type_patterns[] =
 #define DEF_PAT_CPU(_str, _id, _member) \
 	{ \
 		.id = (_id), \
+		.domain = CPUINFO_LINE_CPU, \
 		.pattern = (_str), \
 		.offset = offsetof(struct lscpu_cpu, _member), \
 	}
@@ -263,6 +280,7 @@ static const struct cpuinfo_pattern cpu_patterns[] =
 	DEF_PAT_CPU( "cpu MHz",		PAT_MHZ,	mhz),
 	DEF_PAT_CPU( "cpu number",	PAT_PROCESSOR,  logical_id),	/* s390 */
         DEF_PAT_CPU( "processor",	PAT_PROCESSOR,	logical_id),
+
 };
 
 #define CPUTYPE_PATTERN_BUFSZ	32
@@ -275,132 +293,127 @@ static int cmp_pattern(const void *a0, const void *b0)
 	return strcmp(a->pattern, b->pattern);
 }
 
-/*
- * This function parses "key : value" from /proc/cpuinfo. The "key" describes CPU-type
- * (type_patterns[]) or CPU specific (cpu_patterns[]) values.
- *
- * Note that s390-like "processor <n>:" lines are not suported here.
- */
-static int cpuinfo_parse_line(	struct lscpu_cxt *cxt,
-				struct lscpu_cputype **ct,
-				struct lscpu_cpu **cpu,
-				const char *str)
+
+struct cpuinfo_parser {
+	struct lscpu_cxt	*cxt;
+	struct lscpu_cpu	*curr_cpu;
+	struct lscpu_cputype	*curr_type;
+};
+
+/* cannonicalize @str -- replaces number at the end with %d and return the
+ * number by @keynum. This is usable for example for "processor 5" or "cache1"
+ * cpuinfo lines */
+static char *key_cleanup(char *str, int *keynum)
+{
+	size_t sz = rtrim_whitespace((unsigned char *)str);
+	size_t i;
+
+	if (!sz)
+		return str;
+	i = --sz;
+	while (i > 0 && isdigit(str[i--]));
+
+	if (i + 1 < sz) {
+		i++;
+		*keynum = atoi(str + i);
+		str[i] = '\0';
+	}
+	return str;
+}
+
+static const struct cpuinfo_pattern *cpuinfo_parse_line(char *str, char **value, int *keynum)
 {
 	struct cpuinfo_pattern key, *pat;
-	const char *p, *v;
-	char buf[CPUTYPE_PATTERN_BUFSZ] = { 0 }, **data;
-	void *stru = NULL;
+	char *p, *v;
+	char buf[CPUTYPE_PATTERN_BUFSZ] = { 0 };
 
 	DBG(GATHER, ul_debug("parse \"%s\"", str));
 
 	if (!str || !*str)
-		return -EINVAL;
-	p = skip_blank(str);
+		return NULL;
+	p = (char *) skip_blank(str);
 	if (!p || !*p)
-		return -EINVAL;
+		return NULL;
 
 	v = strchr(p, ':');
 	if (!v || !*v)
-		return -EINVAL;
+		return NULL;
 
 	/* prepare name of the field */
 	xstrncpy(buf, p, sizeof(buf));
 	buf[v - p] = '\0';
 	v++;
 
-	rtrim_whitespace((unsigned char *)buf);
-
 	/* prepare value */
-	v = skip_space(v);
+	v = (char *) skip_space(v);
 	if (!v || !*v)
-		return -EINVAL;
+		return NULL;
 
-	/* search in cpu-types patterns */
-	key.pattern = buf;
-	pat = bsearch(&key, type_patterns,
+	key.pattern = key_cleanup(buf, keynum);
+
+	/* CPU-type */
+	if ((pat = bsearch(&key, type_patterns,
 			ARRAY_SIZE(type_patterns),
 			sizeof(struct cpuinfo_pattern),
-			cmp_pattern);
-	if (pat) {
-		if (!*ct)
-			*ct = lscpu_new_cputype();
-		stru = *ct;
+			cmp_pattern)))
+		goto found;
 
-	/* search in cpu patterns */
-	} else {
-		pat = bsearch(&key, cpu_patterns,
+	/* CPU */
+	if ((pat = bsearch(&key, cpu_patterns,
 			ARRAY_SIZE(cpu_patterns),
 			sizeof(struct cpuinfo_pattern),
-			cmp_pattern);
+			cmp_pattern)))
+		goto found;
 
-		if (pat) {
-			if (pat->id == PAT_PROCESSOR) {
-				/* switch to another CPU only */
-				*cpu = lscpu_get_cpu(cxt, atoi(v));
-				return 0;
-			}
-			stru = *cpu;
-		}
-	}
-
-	if (!stru) {
-		DBG(GATHER, ul_debug("'%s' not found", buf));
-		return 1;
-	}
-
-	/* set value as a string and cleanup */
-	strdup_to_offset(stru, pat->offset, v);
-	data = (char **) ((char *) stru + pat->offset);
-	rtrim_whitespace((unsigned char *) *data);
-
-	return 0;
+	return NULL;
+found:
+	rtrim_whitespace((unsigned char *) v);
+	*value = v;
+	return pat;
 }
 
-static int is_processor_line(const char *str)
+/* saves the current state to the @cxt and cleanup */
+static void cpuinfo_commit(struct cpuinfo_parser *pr)
 {
-	const char *p;
+	/* save new type */
+	if (pr->curr_type) {
+		struct lscpu_cputype *type;
 
-	if (!startswith(str, "processor "))
-		return 0;
-	p = str + 10;
-	while (*p && isdigit(*p))
-		p++;
-	if (*p == ':')
-		return 1;
-	return 0;
-}
+		if (has_cputype(pr->cxt, pr->curr_type, &type)) {
+			/* type already exist, merge new to the old; free new;
+			 * continue with original */
+			lscpu_ref_cputype(type);
+			lscpu_merge_cputype(type, pr->curr_type);
+			lscpu_unref_cputype(pr->curr_type);
+			pr->curr_type = type;
+		} else
+			lscpu_add_cputype(pr->cxt, pr->curr_type);
 
-/*
- * s390-like "processor <n>: value = xxx, value = yyy" lines parser.
- */
-static int cpuinfo_parse_processor_line(struct lscpu_cxt *cxt, struct lscpu_cpu **cpu, const char *str)
-{
-	const char *v;
-	char *end = NULL;
-	int n;
+	/* we have CPU, but not type, let's use the default type or create a new one */
+	} else if (pr->curr_cpu && !pr->curr_cpu->type) {
+		pr->curr_type = lscpu_cputype_get_default(pr->cxt);
+		if (!pr->curr_type)
+			pr->curr_type = lscpu_new_cputype();
+	}
 
-	v = strchr(str, ' ');
-	if (!v)
-		return -EINVAL;
-	v++;
-	errno = 0;
-	n = strtol(v, &end, 10);
-	if (errno || !end || v == end || *end != ':')
-		return -EINVAL;
+	/* Make connection between CPU and cputype. Note that CPUs are already
+	 * stored in cxt->cpus */
+	if (pr->curr_cpu)
+		lscpu_cpu_set_type(pr->curr_cpu, pr->curr_type);
 
-	/* switch to another CPU */
-	*cpu = lscpu_get_cpu(cxt, n);
 
-	/* we don't parse anythign more from the line */
-	return 0;
+	/* cleanup */
+	lscpu_unref_cputype(pr->curr_type);
+	lscpu_unref_cpu(pr->curr_cpu);
+	pr->curr_type = NULL;
+	pr->curr_cpu = NULL;
 }
 
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 {
-	struct lscpu_cputype *type = NULL;
-	struct lscpu_cpu *cpu = NULL;
 	FILE *fp;
 	char buf[BUFSIZ];
+	struct cpuinfo_parser _pr = { .cxt = cxt }, *pr = &_pr;
 
 	assert(cxt->npossibles);	/* lscpu_create_cpus() required */
 	assert(cxt->cpus);
@@ -412,58 +425,62 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 		err(EXIT_FAILURE, _("cannot open %s"), "/proc/cpuinfo");
 
 	do {
-		const char *p = NULL;
+		int keynum = -1;
+		char *p = NULL, *value = NULL;
+		const struct cpuinfo_pattern *pattern;
 
 		if (fgets(buf, sizeof(buf), fp) != NULL)
-			p = skip_space(buf);
+			p = (char *) skip_space(buf);
 
 		if (p == NULL || (*buf && !*p)) {
-			/*
-			 * Blank line separates CPUs
-			 */
-			if (cpu)
-				lscpu_cpu_set_type(cpu, type);
-			else if (type) {
-				/* Generic non-cpu data. For some architectures
-				 * cpuinfo contains description block (at the
-				 * beginning of the file (IBM s390) or at the
-				 * end of the file (IBM POWER). The block is
-				 * global for all CPUs.
-				 */
-				if (cxt->ncputypes == 1) {
-					/* The type already exist, merge it. For example on POWER
-					 * CPU list contains "cpu:" line with architecture and
-					 * global information at the end of the file */
-					struct lscpu_cputype *dflt = lscpu_cputype_get_default(cxt);
-					if (dflt)
-						lscpu_merge_cputype(dflt, type);
-				} else
-					lscpu_add_cputype(cxt, type);
-			}
-
-			lscpu_unref_cputype(type);
-			cpu = NULL, type = NULL;
+			/* Blank line separates information */
+			cpuinfo_commit(pr);
 
 			if (p == NULL)
 				break;	/* fgets() returns nothing; EOF */
-		} else {
-			rtrim_whitespace((unsigned char *) buf);
+			continue;
+		}
 
-			if (is_processor_line(buf)) {
-				/* s390-like "processor <n>:" per line */
-				cpuinfo_parse_processor_line(cxt, &cpu, p);
-				if (cpu) {
-					lscpu_cpu_set_type(cpu, type);
-					cpu = NULL;
-				}
-			} else
-				cpuinfo_parse_line(cxt, &type, &cpu, p);
+		rtrim_whitespace((unsigned char *) buf);
+
+		/* parse */
+		pattern = cpuinfo_parse_line(p, &value, &keynum);
+		if (!pattern) {
+			DBG(GATHER, ul_debug("'%s' not found", buf));
+			continue;
+		}
+
+		/* set data */
+		switch (pattern->domain) {
+		case CPUINFO_LINE_CPU:
+			if (pattern->id == PAT_PROCESSOR) {
+				int id = keynum >= 0 ? keynum : atoi(value);
+				lscpu_unref_cpu(pr->curr_cpu);
+				pr->curr_cpu = lscpu_get_cpu(cxt, id);
+				if (!pr->curr_cpu)
+					DBG(GATHER, ul_debug("*** cpu ID '%d' undefined", id));
+				else
+					DBG(GATHER, ul_debug(" switch to CPU %d", id));
+				lscpu_ref_cpu(pr->curr_cpu);
+				break;
+			}
+			if (!pr->curr_cpu)
+				DBG(GATHER, ul_debug("*** cpu data before cpu ID"));
+			else
+				strdup_to_offset(pr->curr_cpu, pattern->offset, value);
+			break;
+		case CPUINFO_LINE_CPUTYPE:
+			if (!pr->curr_type)
+				pr->curr_type = lscpu_new_cputype();
+			strdup_to_offset(pr->curr_type, pattern->offset, value);
+			break;
+		case CPUINFO_LINE_CACHE:
+			/* not implemented yet */
+			break;
 		}
 	} while (1);
 
-	lscpu_unref_cputype(type);
 	fclose(fp);
-
 	return 0;
 }
 

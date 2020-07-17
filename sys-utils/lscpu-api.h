@@ -55,8 +55,6 @@ struct lscpu_cputype {
 	int	physchips;	/* Physical chips */
 	int	physcoresperchip;	/* Physical cores per chip */
 
-	int	ncpus;		/* how many CPUs references this type */
-
 	int	nthreads_per_core;
 	int	ncores_per_socket;
 	int	nsockets_per_book;
@@ -217,7 +215,6 @@ void lscpu_unref_cpu(struct lscpu_cpu *cpu);
 struct lscpu_cpu *lscpu_get_cpu(struct lscpu_cxt *cxt, int logical_id);
 int lscpu_cpu_set_type(struct lscpu_cpu *cpu, struct lscpu_cputype *type);
 int lscpu_create_cpus(struct lscpu_cxt *cxt, cpu_set_t *cpuset, size_t setsize);
-int lscpu_cpus_apply_type(struct lscpu_cxt *cxt, struct lscpu_cputype *type);
 struct lscpu_cpu *lscpu_cpus_loopup_by_type(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
 
 void lscpu_decode_arm(struct lscpu_cxt *cxt);
