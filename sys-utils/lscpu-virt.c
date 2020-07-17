@@ -640,6 +640,8 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 				memmove(str, str + 1, strlen(str));
 			break;
 		}
+		if (virt->hypervisor)
+			virt->hypervisor = xstrdup(virt->hypervisor);
 		fclose(fd);
 	}
 
