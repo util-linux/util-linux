@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <sys/time.h>
+#include <termios.h>
 
 #include "c.h"
 #include "xalloc.h"
@@ -120,11 +121,30 @@ static void appendchr(char *buf, size_t bufsz, int c)
 		buf[sz] = c;
 }
 
+static int termraw(struct termios *backup)
+{
+	struct termios tattr;
+
+	if (tcgetattr(STDOUT_FILENO, backup) != 0)
+		return -1;
+
+	tattr = *backup;
+	cfmakeraw(&tattr);
+	tattr.c_lflag |= ISIG;
+	if (tcsetattr(STDOUT_FILENO, TCSANOW, &tattr) != 0)
+		return -1;
+
+	return 0;
+}
+
 int
 main(int argc, char *argv[])
 {
 	static const struct timeval mindelay = { .tv_sec = 0, .tv_usec = 100 };
 	struct timeval maxdelay;
+
+	char isterm;
+	struct termios saved;
 
 	struct replay_setup *setup = NULL;
 	struct replay_step *step = NULL;
@@ -286,6 +306,10 @@ main(int argc, char *argv[])
 		replay_set_delay_max(setup, &maxdelay);
 	replay_set_delay_min(setup, &mindelay);
 
+	isterm = isatty(STDOUT_FILENO);
+	if (isterm && termraw(&saved) != 0)
+		err(EXIT_FAILURE, _("failed to set terminal to raw mode"));
+
 	do {
 		rc = replay_get_next_step(setup, streams, &step);
 		if (rc)
@@ -299,6 +323,9 @@ main(int argc, char *argv[])
 		}
 		rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 	} while (rc == 0);
+
+	if (isterm)
+		tcsetattr(STDOUT_FILENO, TCSADRAIN, &saved);
 
 	if (step && rc < 0)
 		err(EXIT_FAILURE, _("%s: log file error"), replay_step_get_filename(step));
