@@ -130,6 +130,7 @@ static int termraw(struct termios *backup)
 
 	tattr = *backup;
 	cfmakeraw(&tattr);
+	tattr.c_lflag |= ISIG;
 	if (tcsetattr(STDOUT_FILENO, TCSANOW, &tattr) != 0)
 		return -1;
 
