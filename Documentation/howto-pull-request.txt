@@ -43,7 +43,7 @@ is needed to stay up to date with upstream.
 git checkout master
 git branch textual
 # spent here most of the effort
-git push yourbranch textual:textual
+git push yourgit textual:textual
 
 5. Do not worry if you used stupid-and-wrong branch name, it can be fixed
 before submission.
