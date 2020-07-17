@@ -281,7 +281,8 @@ static int cmp_pattern(const void *a0, const void *b0)
  *
  * Note that s390-like "processor <n>:" lines are not suported here.
  */
-static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
+static int cpuinfo_parse_line(	struct lscpu_cxt *cxt,
+				struct lscpu_cputype **ct,
 				struct lscpu_cpu **cpu,
 				const char *str)
 {
@@ -309,6 +310,11 @@ static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
 
 	rtrim_whitespace((unsigned char *)buf);
 
+	/* prepare value */
+	v = skip_space(v);
+	if (!v || !*v)
+		return -EINVAL;
+
 	/* search in cpu-types patterns */
 	key.pattern = buf;
 	pat = bsearch(&key, type_patterns,
@@ -316,19 +322,23 @@ static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
 			sizeof(struct cpuinfo_pattern),
 			cmp_pattern);
 	if (pat) {
-		/* CPU type */
 		if (!*ct)
 			*ct = lscpu_new_cputype();
 		stru = *ct;
+
+	/* search in cpu patterns */
 	} else {
-		/* search in cpu patterns */
 		pat = bsearch(&key, cpu_patterns,
 			ARRAY_SIZE(cpu_patterns),
 			sizeof(struct cpuinfo_pattern),
 			cmp_pattern);
+
 		if (pat) {
-			if (!*cpu)
-				*cpu = lscpu_new_cpu();
+			if (pat->id == PAT_PROCESSOR) {
+				/* switch to another CPU only */
+				*cpu = lscpu_get_cpu(cxt, atoi(v));
+				return 0;
+			}
 			stru = *cpu;
 		}
 	}
@@ -338,23 +348,10 @@ static int cpuinfo_parse_line(	struct lscpu_cputype **ct,
 		return 1;
 	}
 
-	/* prepare value */
-	v = skip_space(v);
-	if (!v || !*v)
-		return -EINVAL;
-
-	/* copy value to struct */
-	switch (pat->id) {
-	case PAT_PROCESSOR:
-		(*cpu)->logical_id = atoi(v);
-		break;
-	default:
-		/* set value as a string and cleanup */
-		strdup_to_offset(stru, pat->offset, v);
-		data = (char **) ((char *) stru + pat->offset);
-		rtrim_whitespace((unsigned char *) *data);
-		break;
-	}
+	/* set value as a string and cleanup */
+	strdup_to_offset(stru, pat->offset, v);
+	data = (char **) ((char *) stru + pat->offset);
+	rtrim_whitespace((unsigned char *) *data);
 
 	return 0;
 }
@@ -376,7 +373,7 @@ static int is_processor_line(const char *str)
 /*
  * s390-like "processor <n>: value = xxx, value = yyy" lines parser.
  */
-static int cpuinfo_parse_processor_line(struct lscpu_cpu **cpu, const char *str)
+static int cpuinfo_parse_processor_line(struct lscpu_cxt *cxt, struct lscpu_cpu **cpu, const char *str)
 {
 	const char *v;
 	char *end = NULL;
@@ -391,10 +388,10 @@ static int cpuinfo_parse_processor_line(struct lscpu_cpu **cpu, const char *str)
 	if (errno || !end || v == end || *end != ':')
 		return -EINVAL;
 
-	if (!*cpu)
-		*cpu = lscpu_new_cpu();
+	/* switch to another CPU */
+	*cpu = lscpu_get_cpu(cxt, n);
 
-	(*cpu)->logical_id = n;
+	/* we don't parse anythign more from the line */
 	return 0;
 }
 
@@ -404,6 +401,9 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 	struct lscpu_cpu *cpu = NULL;
 	FILE *fp;
 	char buf[BUFSIZ];
+
+	assert(cxt->npossibles);	/* lscpu_create_cpus() required */
+	assert(cxt->cpus);
 
 	DBG(GATHER, ul_debugobj(cxt, "reading cpuinfo"));
 
@@ -422,7 +422,7 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 			 * Blank line separates CPUs
 			 */
 			if (cpu)
-				lscpu_add_cpu(cxt, cpu, type);
+				lscpu_cpu_set_type(cpu, type);
 			else if (type) {
 				/* Generic non-cpu data. For some architectures
 				 * cpuinfo contains description block (at the
@@ -441,7 +441,6 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 					lscpu_add_cputype(cxt, type);
 			}
 
-			lscpu_unref_cpu(cpu);
 			lscpu_unref_cputype(type);
 			cpu = NULL, type = NULL;
 
@@ -452,23 +451,19 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 
 			if (is_processor_line(buf)) {
 				/* s390-like "processor <n>:" per line */
-				cpuinfo_parse_processor_line(&cpu, p);
+				cpuinfo_parse_processor_line(cxt, &cpu, p);
 				if (cpu) {
-					lscpu_add_cpu(cxt, cpu, type);
-					lscpu_unref_cpu(cpu);
+					lscpu_cpu_set_type(cpu, type);
 					cpu = NULL;
 				}
 			} else
-				cpuinfo_parse_line(&type, &cpu, p);
+				cpuinfo_parse_line(cxt, &type, &cpu, p);
 		}
 	} while (1);
 
-	lscpu_unref_cpu(cpu);
 	lscpu_unref_cputype(type);
 	fclose(fp);
 
-	DBG(GATHER, ul_debug("cpuinfo done: CPUs: %zu, types: %zu",
-				cxt->ncpus, cxt->ncputypes));
 	return 0;
 }
 
@@ -577,16 +572,9 @@ int lscpu_read_cpulists(struct lscpu_cxt *cxt)
 	maxn = cxt->maxcpus;
 	setsize = CPU_ALLOC_SIZE(maxn);
 
+	/* create CPUs from possible mask */
 	if (ul_path_readf_cpulist(cxt->syscpu, &cpuset, maxn, "possible") == 0) {
-		size_t num, idx;
-
-		cxt->ncpuspos = CPU_COUNT_S(setsize, cpuset);
-		cxt->idx2cpunum = xcalloc(cxt->ncpuspos, sizeof(int));
-
-		for (num = 0, idx = 0; num < maxn; num++) {
-			if (CPU_ISSET_S(num, setsize, cpuset))
-				cxt->idx2cpunum[idx++] = num;
-		}
+		lscpu_create_cpus(cxt, cpuset, setsize);
 		cpuset_free(cpuset);
 		cpuset = NULL;
 	} else
@@ -822,14 +810,13 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 	ul_unref_path(cxt->procfs);
 
 	DBG(MISC, ul_debugobj(cxt, " freeing cpus"));
-	for (i = 0; i < cxt->ncpus; i++)
+	for (i = 0; i < cxt->npossibles; i++)
 		lscpu_unref_cpu(cxt->cpus[i]);
 
 	DBG(MISC, ul_debugobj(cxt, " freeing types"));
 	for (i = 0; i < cxt->ncputypes; i++)
 		lscpu_unref_cputype(cxt->cputypes[i]);
 
-	free(cxt->idx2cpunum);
 	free(cxt->present);
 	free(cxt->online);
 	free(cxt->cputypes);
@@ -865,12 +852,13 @@ int main(int argc, char **argv)
 	}
 
 	lscpu_init_debug();
+
 	context_init_paths(cxt);
 
+	lscpu_read_cpulists(cxt);
 	lscpu_read_cpuinfo(cxt);
 	cxt->arch = lscpu_read_architecture(cxt);
 
-	lscpu_read_cpulists(cxt);
 	lscpu_read_archext(cxt);
 	lscpu_read_vulnerabilities(cxt);
 	lscpu_read_numas(cxt);

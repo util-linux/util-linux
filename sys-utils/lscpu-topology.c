@@ -62,18 +62,18 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 
 	sys = cxt->syscpu;				/* /sys/devices/system/cpu/ */
 	setsize = CPU_ALLOC_SIZE(cxt->maxcpus);		/* CPU set size */
-	npos = cxt->ncpuspos;				/* possible CPUs */
+	npos = cxt->npossibles;				/* possible CPUs */
 
 	DBG(TYPE, ul_debugobj(ct, "reading %s/%s/%s topology",
 				ct->vendor ?: "", ct->model ?: "", ct->modelname ?:""));
 
-	for (i = 0; i < cxt->ncpus; i++) {
+	for (i = 0; i < npos; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
 		cpu_set_t *thread_siblings = NULL, *core_siblings = NULL;
 		cpu_set_t *book_siblings = NULL, *drawer_siblings = NULL;
 		int num, n;
 
-		if (cpu->type != ct)
+		if (!cpu || cpu->type != ct)
 			continue;
 
 		num = cpu->logical_id;
@@ -165,7 +165,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	if (!sw_topo) {
 		ct->ndrawers_per_system = ct->nbooks_per_drawer =
 			ct->nsockets_per_book = ct->ncores_per_socket = 0;
-		if (!ct->ncores_per_socket)
+		if (!ct->ncores_per_socket && ct->nsockets)
 			ct->ncores_per_socket = ct->ncores / ct->nsockets;
 		if (!ct->nsockets_per_book && ct->nbooks)
 			ct->nsockets_per_book = ct->nsockets / ct->nbooks;
@@ -200,11 +200,15 @@ int lscpu_read_topology_ids(struct lscpu_cxt *cxt)
 	struct path_cxt *sys = cxt->syscpu;
 	size_t i;
 
-	for (i = 0; i < cxt->ncpus; i++) {
+	for (i = 0; i < cxt->npossibles; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
-		int num = cpu->logical_id;
+		int num;
 
-		DBG(TYPE, ul_debugobj(cpu, "#%d reading IDs", num));
+		if (!cpu)
+			continue;
+
+		num= cpu->logical_id;
+		DBG(CPU, ul_debugobj(cpu, "#%d reading IDs", num));
 
 		if (ul_path_readf_s32(sys, &cpu->coreid, "cpu%d/topology/core_id", num) != 0)
 			cpu->coreid = -1;
@@ -224,13 +228,15 @@ int lscpu_read_topology_polarization(struct lscpu_cxt *cxt)
 	struct path_cxt *sys = cxt->syscpu;
 	size_t i;
 
-	for (i = 0; i < cxt->ncpus; i++) {
+	for (i = 0; i < cxt->npossibles; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
-		int num = cpu->logical_id;
+		int num;
 		char mode[64];
 
-		if (!cpu->type || cpu->type->dispatching < 0)
+		if (!cpu || !cpu->type || cpu->type->dispatching < 0)
 			continue;
+
+		num = cpu->logical_id;
 		if (ul_path_accessf(sys, F_OK, "cpu%d/polarization", num) != 0)
 			continue;
 

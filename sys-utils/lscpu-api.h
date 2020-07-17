@@ -166,22 +166,8 @@ struct lscpu_cxt {
 	size_t ncputypes;
 	struct lscpu_cputype **cputypes;
 
-	/* CPUs as read from /proc/cpuinfo, it means online CPUs only */
-	size_t ncpus;
-	struct lscpu_cpu **cpus;
-
-	/*
-	 * All maps are sequentially indexed (0..ncpuspos), the array index
-	 * does not have match with cpuX number as presented by kernel. You
-	 * have to use real_cpu_num() to get the real cpuX number.
-	 *
-	 * For example, the possible system CPUs are: 1,3,5, it means that
-	 * ncpuspos=3, so all arrays are in range 0..3.
-	 *
-	 * TODO: Do we really need it if we have lscpu_cpu->logical_id?
-	 */
-	size_t ncpuspos;	/* maximal possible CPUs */
-	int *idx2cpunum;	/* mapping index to CPU num */
+	size_t npossibles;	/* number of possible CPUs */
+	struct lscpu_cpu **cpus; /* possible CPUs, contains gaps (cups[n]=NULL) */
 
 	size_t npresents;
 	cpu_set_t *present;	/* mask with present CPUs */
@@ -225,12 +211,12 @@ void lscpu_free_architecture(struct lscpu_arch *ar);
 struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt);
 void lscpu_free_virtualization(struct lscpu_virt *virt);
 
-struct lscpu_cpu *lscpu_new_cpu(void);
+struct lscpu_cpu *lscpu_new_cpu(int id);
 void lscpu_ref_cpu(struct lscpu_cpu *cpu);
 void lscpu_unref_cpu(struct lscpu_cpu *cpu);
-int lscpu_add_cpu(struct lscpu_cxt *cxt,
-                  struct lscpu_cpu *cpu,
-                  struct lscpu_cputype *ct);
+struct lscpu_cpu *lscpu_get_cpu(struct lscpu_cxt *cxt, int logical_id);
+int lscpu_cpu_set_type(struct lscpu_cpu *cpu, struct lscpu_cputype *type);
+int lscpu_create_cpus(struct lscpu_cxt *cxt, cpu_set_t *cpuset, size_t setsize);
 int lscpu_cpus_apply_type(struct lscpu_cxt *cxt, struct lscpu_cputype *type);
 struct lscpu_cpu *lscpu_cpus_loopup_by_type(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
 
