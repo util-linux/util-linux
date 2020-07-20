@@ -146,6 +146,11 @@ static int has_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct, struct l
 	return 0;
 }
 
+static int is_relevant_cputype(struct lscpu_cputype *ct)
+{
+	return ct->vendor || ct->model || ct->modelname || ct->stepping;
+}
+
 struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
 	DBG(TYPE, ul_debugobj(ct, "add new"));
@@ -183,6 +188,24 @@ static void lscpu_merge_cputype(struct lscpu_cputype *a, struct lscpu_cputype *b
 		a->addrsz = xstrdup(b->addrsz);
 }
 
+static void fprintf_cputypes(FILE *f, struct lscpu_cxt *cxt)
+{
+	size_t i;
+
+	for (i = 0; i <	cxt->ncputypes; i++) {
+		struct lscpu_cputype *ct = cxt->cputypes[i];
+
+		fprintf(f, "\n vendor: %s\n", ct->vendor);
+		fprintf(f, " machinetype: %s\n", ct->machinetype);
+		fprintf(f, " family: %s\n", ct->family);
+		fprintf(f, " model: %s\n", ct->model);
+		fprintf(f, " modelname: %s\n", ct->modelname);
+		fprintf(f, " revision: %s\n", ct->revision);
+		fprintf(f, " stepping: %s\n", ct->stepping);
+		fprintf(f, " mtid: %s\n", ct->mtid);
+		fprintf(f, " addrsz: %s\n", ct->addrsz);
+	}
+}
 
 enum {
 	CPUINFO_LINE_UNKNOWN,	/* unknown line */
@@ -298,6 +321,7 @@ struct cpuinfo_parser {
 	struct lscpu_cxt	*cxt;
 	struct lscpu_cpu	*curr_cpu;
 	struct lscpu_cputype	*curr_type;
+	unsigned int		curr_type_added : 1;
 };
 
 /* cannonicalize @str -- replaces number at the end with %d and return the
@@ -375,9 +399,12 @@ found:
 /* saves the current state to the @cxt and cleanup */
 static void cpuinfo_commit(struct cpuinfo_parser *pr)
 {
+
 	/* save new type */
-	if (pr->curr_type) {
+	if (pr->curr_type && !pr->curr_type_added) {
 		struct lscpu_cputype *type;
+
+		DBG(GATHER, ul_debug("commiting cputype"));
 
 		if (has_cputype(pr->cxt, pr->curr_type, &type)) {
 			/* type already exist, merge new to the old; free new;
@@ -386,11 +413,14 @@ static void cpuinfo_commit(struct cpuinfo_parser *pr)
 			lscpu_merge_cputype(type, pr->curr_type);
 			lscpu_unref_cputype(pr->curr_type);
 			pr->curr_type = type;
-		} else
+		} else {
 			lscpu_add_cputype(pr->cxt, pr->curr_type);
+			pr->curr_type_added = 1;
+		}
+	}
 
 	/* we have CPU, but not type, let's use the default type or create a new one */
-	} else if (pr->curr_cpu && !pr->curr_cpu->type) {
+	if (pr->curr_cpu && !pr->curr_cpu->type) {
 		pr->curr_type = lscpu_cputype_get_default(pr->cxt);
 		if (!pr->curr_type)
 			pr->curr_type = lscpu_new_cputype();
@@ -398,14 +428,23 @@ static void cpuinfo_commit(struct cpuinfo_parser *pr)
 
 	/* Make connection between CPU and cputype. Note that CPUs are already
 	 * stored in cxt->cpus */
-	if (pr->curr_cpu)
+	if (pr->curr_cpu) {
+		DBG(GATHER, ul_debug("commiting cpu"));
 		lscpu_cpu_set_type(pr->curr_cpu, pr->curr_type);
-
+	}
 
 	/* cleanup */
-	lscpu_unref_cputype(pr->curr_type);
+	if (pr->curr_type) {
+		if (!is_relevant_cputype(pr->curr_type))
+			/* continue to use empty cputype */
+			;
+		else {
+			lscpu_unref_cputype(pr->curr_type);
+			pr->curr_type = NULL;
+			pr->curr_type_added = 0;
+		}
+	}
 	lscpu_unref_cpu(pr->curr_cpu);
-	pr->curr_type = NULL;
 	pr->curr_cpu = NULL;
 }
 
@@ -479,6 +518,10 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 			break;
 		}
 	} while (1);
+
+	cpuinfo_commit(pr);
+
+	DBG(GATHER, fprintf_cputypes(stderr, cxt));
 
 	fclose(fp);
 	return 0;
