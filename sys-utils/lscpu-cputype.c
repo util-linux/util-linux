@@ -86,7 +86,7 @@ void lscpu_ref_cputype(struct lscpu_cputype *ct)
 {
 	if (ct) {
 		ct->refcount++;
-		/*DBG(TYPE, ul_debugobj(ct, ">>> ref %d", ct->refcount));*/
+		DBG(TYPE, ul_debugobj(ct, ">>> ref %d", ct->refcount));
 	}
 }
 
@@ -95,7 +95,7 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 	if (!ct)
 		return;
 
-	/*DBG(TYPE, ul_debugobj(ct, ">>> unref %d", ct->refcount - 1));*/
+	DBG(TYPE, ul_debugobj(ct, ">>> unref %d", ct->refcount - 1));
 
 	if (--ct->refcount <= 0) {
 		DBG(TYPE, ul_debugobj(ct, "  freeing"));
@@ -122,34 +122,6 @@ struct lscpu_cputype *lscpu_cputype_get_default(struct lscpu_cxt *cxt)
 
 #define match(astr, bstr) \
 		((!astr && !bstr) || (astr && bstr && strcmp(astr, bstr) == 0))
-
-/*
- * Return: 1|0 if @ct matches any exising type; @cur returns the type
- */
-static int has_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct, struct lscpu_cputype **cur)
-{
-	size_t i;
-
-	/* ignore if already in the context */
-	for (i = 0; i < cxt->ncputypes; i++) {
-		struct lscpu_cputype *x = cxt->cputypes[i];
-
-		if (match(x->vendor, ct->vendor) &&
-		    match(x->model, ct->model) &&
-		    match(x->modelname, ct->modelname) &&
-		    match(x->stepping, ct->stepping)) {
-			if (cur)
-				*cur = x;
-			return 1;
-		}
-	}
-	return 0;
-}
-
-static int is_relevant_cputype(struct lscpu_cputype *ct)
-{
-	return ct->vendor || ct->model || ct->modelname || ct->stepping;
-}
 
 struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
@@ -269,14 +241,14 @@ static const struct cpuinfo_pattern type_patterns[] =
 	DEF_PAT_CPUTYPE( "address sizes",	PAT_ADDRESS_SIZES,	addrsz),/* x86 */
 	DEF_PAT_CPUTYPE( "bogomips",		PAT_BOGOMIPS,	bogomips),
 	DEF_PAT_CPUTYPE( "bogomips per cpu",	PAT_BOGOMIPS,	bogomips),	/* s390 */
-	DEF_PAT_CPUTYPE( "cpu family",		PAT_FAMILY,	family),
 	DEF_PAT_CPUTYPE( "cpu",			PAT_CPU,	modelname),	/* ppc, sparc */
+	DEF_PAT_CPUTYPE( "cpu family",		PAT_FAMILY,	family),
 	DEF_PAT_CPUTYPE( "family",		PAT_FAMILY,	family),
 	DEF_PAT_CPUTYPE( "features",		PAT_FEATURES,	flags),		/* s390 */
 	DEF_PAT_CPUTYPE( "flags",		PAT_FLAGS,	flags),		/* x86 */
 	DEF_PAT_CPUTYPE( "max thread id",	PAT_MAX_THREAD_ID, mtid),	/* s390 */
-	DEF_PAT_CPUTYPE( "model name",		PAT_MODEL_NAME,	modelname),
 	DEF_PAT_CPUTYPE( "model",		PAT_MODEL,	model),
+	DEF_PAT_CPUTYPE( "model name",		PAT_MODEL_NAME,	modelname),
 	DEF_PAT_CPUTYPE( "revision",		PAT_REVISION,	revision),
 	DEF_PAT_CPUTYPE( "stepping",		PAT_STEPPING,	stepping),
 	DEF_PAT_CPUTYPE( "type",		PAT_TYPE,	flags),		/* sparc64 */
@@ -298,9 +270,9 @@ static const struct cpuinfo_pattern type_patterns[] =
 static const struct cpuinfo_pattern cpu_patterns[] =
 {
 	/* Sort by fields name! */
+	DEF_PAT_CPU( "cpu MHz",		PAT_MHZ,	mhz),
 	DEF_PAT_CPU( "cpu MHz dynamic",	PAT_MHZ_DYNAMIC,dynamic_mhz),	/* s390 */
 	DEF_PAT_CPU( "cpu MHz static",	PAT_MHZ_STATIC,	static_mhz),	/* s390 */
-	DEF_PAT_CPU( "cpu MHz",		PAT_MHZ,	mhz),
 	DEF_PAT_CPU( "cpu number",	PAT_PROCESSOR,  logical_id),	/* s390 */
         DEF_PAT_CPU( "processor",	PAT_PROCESSOR,	logical_id),
 
@@ -316,13 +288,27 @@ static int cmp_pattern(const void *a0, const void *b0)
 	return strcmp(a->pattern, b->pattern);
 }
 
-
 struct cpuinfo_parser {
 	struct lscpu_cxt	*cxt;
 	struct lscpu_cpu	*curr_cpu;
 	struct lscpu_cputype	*curr_type;
 	unsigned int		curr_type_added : 1;
 };
+
+static int is_different_cputype(struct lscpu_cputype *ct, size_t offset, const char *value)
+{
+	switch (offset) {
+	case offsetof(struct lscpu_cputype, vendor):
+		return ct->vendor && value && strcmp(ct->vendor, value) != 0;
+	case offsetof(struct lscpu_cputype, model):
+		return ct->model && value && strcmp(ct->model, value) != 0;
+	case offsetof(struct lscpu_cputype, modelname):
+		return ct->modelname && value && strcmp(ct->modelname, value) != 0;
+	case offsetof(struct lscpu_cputype, stepping):
+		return ct->stepping && value && strcmp(ct->stepping, value) != 0;
+	}
+	return 0;
+}
 
 /* cannonicalize @str -- replaces number at the end with %d and return the
  * number by @keynum. This is usable for example for "processor 5" or "cache1"
@@ -396,58 +382,6 @@ found:
 	return pat;
 }
 
-/* saves the current state to the @cxt and cleanup */
-static void cpuinfo_commit(struct cpuinfo_parser *pr)
-{
-
-	/* save new type */
-	if (pr->curr_type && !pr->curr_type_added) {
-		struct lscpu_cputype *type;
-
-		DBG(GATHER, ul_debug("commiting cputype"));
-
-		if (has_cputype(pr->cxt, pr->curr_type, &type)) {
-			/* type already exist, merge new to the old; free new;
-			 * continue with original */
-			lscpu_ref_cputype(type);
-			lscpu_merge_cputype(type, pr->curr_type);
-			lscpu_unref_cputype(pr->curr_type);
-			pr->curr_type = type;
-		} else {
-			lscpu_add_cputype(pr->cxt, pr->curr_type);
-			pr->curr_type_added = 1;
-		}
-	}
-
-	/* we have CPU, but not type, let's use the default type or create a new one */
-	if (pr->curr_cpu && !pr->curr_cpu->type) {
-		pr->curr_type = lscpu_cputype_get_default(pr->cxt);
-		if (!pr->curr_type)
-			pr->curr_type = lscpu_new_cputype();
-	}
-
-	/* Make connection between CPU and cputype. Note that CPUs are already
-	 * stored in cxt->cpus */
-	if (pr->curr_cpu) {
-		DBG(GATHER, ul_debug("commiting cpu"));
-		lscpu_cpu_set_type(pr->curr_cpu, pr->curr_type);
-	}
-
-	/* cleanup */
-	if (pr->curr_type) {
-		if (!is_relevant_cputype(pr->curr_type))
-			/* continue to use empty cputype */
-			;
-		else {
-			lscpu_unref_cputype(pr->curr_type);
-			pr->curr_type = NULL;
-			pr->curr_type_added = 0;
-		}
-	}
-	lscpu_unref_cpu(pr->curr_cpu);
-	pr->curr_cpu = NULL;
-}
-
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 {
 	FILE *fp;
@@ -473,8 +407,6 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 
 		if (p == NULL || (*buf && !*p)) {
 			/* Blank line separates information */
-			cpuinfo_commit(pr);
-
 			if (p == NULL)
 				break;	/* fgets() returns nothing; EOF */
 			continue;
@@ -493,9 +425,15 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 		switch (pattern->domain) {
 		case CPUINFO_LINE_CPU:
 			if (pattern->id == PAT_PROCESSOR) {
+				/* switch CPU */
 				int id = keynum >= 0 ? keynum : atoi(value);
+
+				if (pr->curr_cpu && pr->curr_type)
+					lscpu_cpu_set_type(pr->curr_cpu, pr->curr_type);
+
 				lscpu_unref_cpu(pr->curr_cpu);
 				pr->curr_cpu = lscpu_get_cpu(cxt, id);
+
 				if (!pr->curr_cpu)
 					DBG(GATHER, ul_debug("*** cpu ID '%d' undefined", id));
 				else
@@ -509,8 +447,15 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 				strdup_to_offset(pr->curr_cpu, pattern->offset, value);
 			break;
 		case CPUINFO_LINE_CPUTYPE:
-			if (!pr->curr_type)
+			if (pr->curr_type && is_different_cputype(pr->curr_type, pattern->offset, value)) {
+				lscpu_unref_cputype(pr->curr_type);
+				pr->curr_type = NULL;
+			}
+			if (!pr->curr_type) {
 				pr->curr_type = lscpu_new_cputype();
+				lscpu_add_cputype(cxt, pr->curr_type);
+			}
+
 			strdup_to_offset(pr->curr_type, pattern->offset, value);
 			break;
 		case CPUINFO_LINE_CACHE:
@@ -519,9 +464,10 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 		}
 	} while (1);
 
-	cpuinfo_commit(pr);
-
 	DBG(GATHER, fprintf_cputypes(stderr, cxt));
+
+	lscpu_unref_cputype(pr->curr_type);
+	lscpu_unref_cpu(pr->curr_cpu);
 
 	fclose(fp);
 	return 0;
@@ -870,12 +816,15 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 	ul_unref_path(cxt->procfs);
 
 	DBG(MISC, ul_debugobj(cxt, " freeing cpus"));
-	for (i = 0; i < cxt->npossibles; i++)
+	for (i = 0; i < cxt->npossibles; i++) {
 		lscpu_unref_cpu(cxt->cpus[i]);
-
+		cxt->cpus[i] = NULL;
+	}
 	DBG(MISC, ul_debugobj(cxt, " freeing types"));
-	for (i = 0; i < cxt->ncputypes; i++)
+	for (i = 0; i < cxt->ncputypes; i++) {
 		lscpu_unref_cputype(cxt->cputypes[i]);
+		cxt->cputypes[i] = NULL;
+	}
 
 	free(cxt->present);
 	free(cxt->online);

@@ -26,6 +26,7 @@ void lscpu_unref_cpu(struct lscpu_cpu *cpu)
 	if (--cpu->refcount <= 0) {
 		DBG(CPU, ul_debugobj(cpu, "  freeing #%d", cpu->logical_id));
 		lscpu_unref_cputype(cpu->type);
+		cpu->type = NULL;
 		free(cpu->dynamic_mhz);
 		free(cpu->static_mhz);
 		free(cpu->mhz);
@@ -55,9 +56,14 @@ int lscpu_create_cpus(struct lscpu_cxt *cxt, cpu_set_t *cpuset, size_t setsize)
 
 int lscpu_cpu_set_type(struct lscpu_cpu *cpu, struct lscpu_cputype *type)
 {
+	if (cpu->type == type)
+		return 0;
+
 	lscpu_unref_cputype(cpu->type);
 	cpu->type = type;
 	lscpu_ref_cputype(type);
+
+	DBG(CPU, ul_debugobj(cpu, "cputype set to %s", type ? type->vendor : NULL));
 	return 0;
 }
 

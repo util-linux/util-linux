@@ -207,7 +207,10 @@ int lscpu_read_topology_ids(struct lscpu_cxt *cxt)
 		if (!cpu)
 			continue;
 
-		num= cpu->logical_id;
+		num = cpu->logical_id;
+		if (ul_path_accessf(sys, F_OK, "cpu%d/topology", num) != 0)
+			continue;
+
 		DBG(CPU, ul_debugobj(cpu, "#%d reading IDs", num));
 
 		if (ul_path_readf_s32(sys, &cpu->coreid, "cpu%d/topology/core_id", num) != 0)
