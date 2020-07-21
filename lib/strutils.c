@@ -1114,6 +1114,23 @@ static int test_strutils_cmp_paths(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+static int test_strutils_normalize(int argc, char *argv[])
+{
+	unsigned char *str;
+	size_t sz;
+
+	if (argc < 2)
+		return EXIT_FAILURE;
+
+	str = (unsigned char *) strdup(argv[1]);
+	sz = normalize_whitespace(str);
+
+	printf("'%s' --> '%s' [sz=%zu]\n", argv[1], str, sz);
+	free(str);
+
+	return EXIT_SUCCESS;
+}
+
 int main(int argc, char *argv[])
 {
 	if (argc == 3 && strcmp(argv[1], "--size") == 0)
@@ -1125,10 +1142,17 @@ int main(int argc, char *argv[])
 	if (argc == 4 && strcmp(argv[1], "--strdup-member") == 0)
 		return test_strdup_to_member(argc - 1, argv + 1);
 
-	fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
-			"       %1$s --cmp-paths <path> <path>\n"
-			"       %1$s --strdup-member <str> <str>\n",
-			argv[0]);
+	else if (argc == 3 && strcmp(argv[1], "--normalize") == 0)
+		return test_strutils_normalize(argc - 1, argv + 1);
+
+	else {
+		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
+				"       %1$s --cmp-paths <path> <path>\n"
+				"       %1$s --strdup-member <str> <str>\n"
+				"       %1$s --normalize <str>\n",
+				argv[0]);
+		exit(EXIT_FAILURE);
+	}
 
 	return EXIT_FAILURE;
 }
