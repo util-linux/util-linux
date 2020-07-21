@@ -619,26 +619,16 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 		virt->type = VIRT_TYPE_FULL;
 
 		while (fgets(buf, sizeof(buf), fd) != NULL) {
-			char *str, *p;
-
 			if (!strstr(buf, "Control Program:"))
 				continue;
 			virt->vendor = strstr(buf, "KVM") ? VIRT_VENDOR_KVM : VIRT_VENDOR_IBM;
-			p = strchr(buf, ':');
-			if (!p)
-				continue;
-			xasprintf(&str, "%s", p + 1);
+			virt->hypervisor = strchr(buf, ':');
 
-			/* remove leading, trailing and repeating whitespace */
-			while (*str == ' ')
-				str++;
-			virt->hypervisor = str;
-			str += strlen(str) - 1;
-			while ((*str == '\n') || (*str == ' '))
-				*(str--) = '\0';
-			while ((str = strstr(virt->hypervisor, "  ")))
-				memmove(str, str + 1, strlen(str));
-			break;
+			if (virt->hypervisor) {
+				virt->hypervisor++;
+				normalize_whitespace((unsigned char *) virt->hypervisor);
+				break;
+			}
 		}
 		if (virt->hypervisor)
 			virt->hypervisor = xstrdup(virt->hypervisor);
@@ -687,7 +677,7 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 		}
 	}
 done:
-	DBG(VIRT, ul_debugobj(virt, "virt: cpu=%s hypervisor=%s vendor=%d type=%d",
+	DBG(VIRT, ul_debugobj(virt, "virt: cpu='%s' hypervisor='%s' vendor=%d type=%d",
 				virt->cpuflag,
 				virt->hypervisor,
 				virt->vendor,
