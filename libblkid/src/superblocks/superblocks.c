@@ -856,7 +856,7 @@ int blkid_probe_invert_filter(blkid_probe pr)
  *
  * Returns: 0 on success, or -1 in case of error.
  *
- * Deprecated: Use blkid_probe_filter_superblocks_types().
+ * Deprecated: Use blkid_probe_filter_superblocks_type().
  */
 int blkid_probe_filter_types(blkid_probe pr, int flag, char *names[])
 {

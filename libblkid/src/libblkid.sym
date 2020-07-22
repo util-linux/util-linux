@@ -175,6 +175,6 @@ BLKID_2_31 {
 	blkid_probe_hide_range;
 } BLKID_2.30;
 
-BLKID_2_35 {
+BLKID_2_36 {
 	blkid_topology_get_dax;
 } BLKID_2_31;

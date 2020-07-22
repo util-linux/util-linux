@@ -372,6 +372,8 @@ unsigned long blkid_topology_get_physical_sector_size(blkid_topology tp)
  * @tp: topology
  *
  * Returns: 1 if dax is supported, 0 otherwise.
+ *
+ * Since: 2.36
  */
 unsigned long blkid_topology_get_dax(blkid_topology tp)
 {
