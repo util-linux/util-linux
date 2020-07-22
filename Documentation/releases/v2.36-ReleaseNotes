@@ -76,6 +76,8 @@ Changes between v2.35 and v2.36
 -------------------------------
 
 Manual pages:
+   - ipcmk.1, ipcs.1, lsipc.1  explicitly mention "System V"  [Michael Kerrisk (man-pages)]
+   - fdisk.8  fix typo  [Shigeki Morishima]
    - Standardize on AUTHORS as section title  [Michael Kerrisk (man-pages)]
    - Standardize on CONFORMING TO as section title  [Michael Kerrisk (man-pages)]
    - Standardize on ENVIRONMENT as section title  [Michael Kerrisk (man-pages)]
@@ -85,6 +87,9 @@ Manual pages:
    - ipcmk.1, ipcrm.1, ipcs.1, lsipc.1  SEE ALSO  add sysvipc(7)  [Michael Kerrisk (man-pages)]
    - kill.1  improve the description of the --timout option  [Michael Kerrisk (man-pages)]
    - kill.1  various language, spelling, and formatting fixes  [Michael Kerrisk (man-pages)]
+   - login.1  SEE ALSO  add utmp(5), lastlog(8)  [Michael Kerrisk (man-pages)]
+   - login.1  formatting fixes  [Michael Kerrisk (man-pages)]
+   - login.1  various minor wording fixes  [Michael Kerrisk (man-pages)]
    - losetup.8  Fix "--direct-io" defaults  [Rupesh Girase]
    - mount.8  Miscellaneous wording, grammar, and formatting fixes  [Michael Kerrisk (man-pages)]
    - mount.8  Rewrite FILESYSTEM-SPECIFIC MOUNT OPTIONS intro  [Michael Kerrisk (man-pages)]
@@ -102,7 +107,12 @@ Manual pages:
    - order NOTES / HISTORY / BUGS / EXAMPLE consistently  [Michael Kerrisk (man-pages)]
    - rename EXAMPLE section to EXAMPLES  [Michael Kerrisk (man-pages)]
    - rename RETURN VALUES to RETURN VALUE  [Michael Kerrisk (man-pages)]
+   - reword su.1 description  [Karel Zak]
    - runuser.1  Various wording and formatting fixes  [Michael Kerrisk (man-pages)]
+   - runuser.1, su.1  miscellaneous wording and formatting fixes  [Michael Kerrisk (man-pages)]
+   - script.1  Miscellaneous wording, grammar, and formatting fixes  [Michael Kerrisk (man-pages)]
+   - scriptlive.1  Miscellaneous wording, grammar, and formatting fixes  [Michael Kerrisk (man-pages)]
+   - scriptreplay.1  Miscellaneous wording, grammar, and formatting fixes  [Michael Kerrisk (man-pages)]
    - setpriv.1  Minor formatting and typo fixes  [Michael Kerrisk (man-pages)]
    - setpriv.1  Various minor wording and formatting fixes  [Michael Kerrisk (man-pages)]
    - setpriv.1  warn users of restrictions on capability changes  [Michael Kerrisk (man-pages)]
@@ -116,11 +126,12 @@ Manual pages:
    - unshare.1  improve intro paragraphs  [Michael Kerrisk]
    - unshare.1  typo fix  [Michael Kerrisk (man-pages)]
    - use the term "exit status"  [Michael Kerrisk (man-pages)]
+   - various  reword "allow(s) to"  [Michael Kerrisk (man-pages)]
    - wording fix  "another" ==> "other"  [Michael Kerrisk (man-pages)]
-   - ipcmk.1, ipcs.1, lsipc.1  explicitly mention "System V"  [Michael Kerrisk (man-pages)]
-   - fdisk.8  fix typo  [Shigeki Morishima]
-   - aliast -> alias  [Yuri Chornoivan]
-   - ussuported -> unsupported  [Yuri Chornoivan]
+Subject:
+   - docs  change from nofill to fill mode  [Bjarni Ingi Gislason]
+   - docs  disk-utils  change "allows to <verb>" to "allows <verb>ing"  [Bjarni Ingi Gislason]
+   - docs  remove unnecessary paragraph macros  [Bjarni Ingi Gislason]
 agetty:
    - (man) add "white" color name  [Karel Zak]
    - (man) fix typo  [Karel Zak]
@@ -152,6 +163,7 @@ build-sys:
    - add --disable-hwclock-gplv3  [Karel Zak]
    - add --enable-ubsan to make it possible to build util-linux with UBSan  [Evgeny Vereshchagin]
    - add --enable-werror  [Karel Zak]
+   - add --enable-werror to devel build scenarios  [Karel Zak]
    - add -Waddress-of-packed-member  [Karel Zak]
    - add missing LDADD to blkid test  [Karel Zak]
    - cleanup $vendordir use  [Karel Zak]
@@ -160,6 +172,7 @@ build-sys:
    - fix irqtop compilation with -lslang  [Karel Zak]
    - make lsirq and irqtop optional  [Karel Zak]
    - release++ (v2.36-rc1)  [Karel Zak]
+   - release++ (v2.36-rc2)  [Karel Zak]
    - remove redundard includes  [Karel Zak]
    - remove unneeded include of generated file  [Zbigniew Jędrzejewski-Szmek]
    - rename automake variable to match define name  [Zbigniew Jędrzejewski-Szmek]
@@ -209,6 +222,7 @@ docs:
    - Fix dead references to kernel documentation  [Yannick Le Pennec]
    - Improve grammar  [Ben Frankel]
    - Some minor fixes in some manuals  [Bjarni Ingi Gislason]
+   - add blkdiscard to ReleaseNotes  [Karel Zak]
    - add note about AsciiDocs  [Karel Zak]
    - add rev(1) to TODO  [Karel Zak]
    - add swap to 1st fstab field  [Karel Zak]
@@ -219,12 +233,17 @@ docs:
    - improve size arguments description in --help output  [Karel Zak, ed]
    - kill.1 add note about shell-internal kill implementations  [Sami Kerola]
    - mark some branches as github-only  [Karel Zak]
+   - mention Coverity Scan and the Fossies codespell report  [Evgeny Vereshchagin]
+   - misc-utils  change "allows to <verb>" to "allows <verb>ing"  [Bjarni Ingi Gislason]
    - nsenter(1)  fix further details in PID namespace section  [Stephen Kitt]
    - remove drone.io, add lgtm.com  [Karel Zak]
    - remove irqtop TODO item  [Sami Kerola]
+   - remove trailing space in strings  [Bjarni Ingi Gislason]
    - renice(1)  Add chrt(1) to SEE ALSO  [Jann Horn]
+   - reword others "allow to"  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
    - update ReleaseNotes  [Karel Zak]
+   - update v2.36-ReleaseNotes  [Karel Zak]
 eject:
    - fix compiler warning [-Wformat-overflow]  [Karel Zak]
 exfat:
@@ -241,6 +260,8 @@ fdisk:
    - update expected test outputs with command outputs  [Sami Kerola]
 findmnt:
    - make xalloc use mroe robust  [Karel Zak]
+fix typo:
+   - yourbranch -> yourgit  [Soumendra Ganguly]
 flock:
    - Add new example using shell IO redirection  [Jookia]
    - make examples in man page more readable  [Karel Zak]
@@ -349,6 +370,7 @@ lib/strutils:
 lib/sysfs:
    - fix prefix use in sysfs_devname_is_hidden()  [Karel Zak]
 libblkid:
+   - (docs) add missing references  [Karel Zak]
    - (docs) document new function  [Karel Zak]
    - Add support for zonefs  [Damien Le Moal]
    - Fix UTF-16 support in function blkid_encode_to_utf8()  [Pali Rohár]
@@ -359,6 +381,8 @@ libblkid:
    - remove blkid_llseek()  [Karel Zak]
    - remove unnecessary uuid.h  [Karel Zak]
 libfdisk:
+   - (docs) add missing comment  [Karel Zak]
+   - (docs) add missing references  [Karel Zak]
    - (docs) document new functions  [Karel Zak]
    - (docs) fix typos  [Karel Zak]
    - (dos) be more explicit in fdisk_verify_disklabel() output  [Karel Zak]
@@ -390,6 +414,8 @@ libfdisk:
 libfdisk, unshare:
    - fix gcc-4.9.4 warnings  [Toni Uhlig]
 libmount:
+   - (docs) add missing references  [Karel Zak]
+   - (docs) fix typo, remove unused reference  [Karel Zak]
    - (parser) fix memory leak on error before end-of-file  [Karel Zak]
    - (umount) FS lookup refactoring  [Karel Zak]
    - (umount) fix FD leak  [Karel Zak]
@@ -398,6 +424,7 @@ libmount:
    - add support for ID=  [Karel Zak]
    - add support for signed verity devices  [Luca Boccassi]
    - do not unnecessarily chmod utab.lock  [Tycho Andersen]
+   - fix condition for mountinfo filter  [Karel Zak]
    - fix mount -a EBUSY for cifs  [Roberto Bergantinos Corpas]
    - fix x- options use for non-root users  [Karel Zak]
    - improve smb{2,3} support  [Karel Zak]
@@ -407,8 +434,18 @@ libmount:
    - try read-only mount on write-protected superblock too  [Karel Zak]
    - use mnt_stat_mountpoint() on more places  [Karel Zak]
 libsmartcols:
+   - (docs) add missing references  [Karel Zak]
+   - (docs) fix reference  [Karel Zak]
+   - (sample) check scols_line_refer_data() return code [coverity scan]  [Karel Zak]
+   - (sample) check scols_line_set_data() return code [coverity scan]  [Karel Zak]
+   - (sample) remove unnecessary check [coverity scan]  [Karel Zak]
+   - (sample) remove unused variable  [Karel Zak]
+   - (smaple) check scols_line_set_data() return code [coverity scan]  [Karel Zak]
    - don't calculate with encoding on scols_table_enable_noencoding()  [Karel Zak]
 libuuid:
+   - (test) cleanup unused memory [coverity scan]  [Karel Zak]
+   - (test) close fd [coverity scan]  [Karel Zak]
+   - (test) make sure UUID is terminated [coverity scan]  [Karel Zak]
    - add uuid_parse_range()  [Zane van Iperen]
    - add uuid_parse_range() to man page and symbol-table  [Karel Zak]
    - ensure variable is initialized [cppcheck]  [Sami Kerola]
@@ -427,6 +464,7 @@ login:
 logindefs:
    - use xalloc.h, code cleanup  [Karel Zak]
 lsblk:
+   - Add SERIAL column to the SCSI output mode.  [Milan Broz]
    - Fall back to ID_SERIAL  [Sven Wiltink]
    - Ignore hidden devices  [Ritika Srivastava]
    - add dax (direct access) capability column  [Anthony Iliopoulos]
@@ -450,6 +488,8 @@ lsmem:
    - report inaccessible /sys/devices/system/memory  [Karel Zak]
 lsns:
    - add time namespace support  [Adrian Reber]
+manual pages:
+   - adjtime_config.5  format pathname with .I  [Michael Kerrisk (man-pages)]
 mkswap:
    - add --lock and LOCK_BLOCK_DEVICE  [Karel Zak]
 more:
@@ -486,12 +526,22 @@ nsenter:
    - add support for the time namespace  [Adrian Reber]
 po:
    - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Písař]
+   - update de.po (from translationproject.org)  [Mario Blättermann]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
    - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update pt.po (from translationproject.org)  [Pedro Albuquerque]
+   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
    - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+   - update zh_CN.po (from translationproject.org)  [Boyuan Yang]
 pylibmount:
    - cleanup and sync UL_RaiseExc  [Karel Zak]
 rename:
    - fix regression for symlink with non-existing target  [Mauricio Faria de Oliveira]
+   - tests  add more symlink checks  [Mauricio Faria de Oliveira]
 rev:
    - (man) add note about limitations  [Karel Zak]
    - report line on error  [Karel Zak]
@@ -527,6 +577,8 @@ swapoff:
    - do not use 1 exist status at all  [Karel Zak]
 sys-utils:
    - mount.8  split a long line into two  [Bjarni Ingi Gislason]
+test_tiocsti:
+   - check ioctl() return code [coverity scan]  [Karel Zak]
 tests:
    - Add UDF hdd image with emoji label created by mkudffs 2.2  [Pali Rohár]
    - Fix for misc/fallocate test build failure.  [Mark Hindley]
@@ -556,8 +608,10 @@ travis:
    - ignore memory leaks in checkusage  [Evgeny Vereshchagin]
    - install all the "official" build dependencies  [Evgeny Vereshchagin]
    - install llvm-* to get llvm-symbolizer  [Evgeny Vereshchagin]
+   - integrate util-linux with Coverity Scan  [Evgeny Vereshchagin]
    - make it easier to switch to the next clang/gcc  [Evgeny Vereshchagin]
    - switch to Bionic  [Evgeny Vereshchagin]
+   - switch to a newer version of macOS  [Evgeny Vereshchagin]
    - switch to clang-10  [Evgeny Vereshchagin]
    - switch to gcc-10  [Evgeny Vereshchagin]
    - turn off -Werror on precise and osx  [Evgeny Vereshchagin]
