@@ -292,11 +292,12 @@ struct fdisk_parttype *fdisk_label_advparse_parttype(
  * fdisk_parttype_parser_flags:
  * @FDISK_PARTTYPE_PARSE_DATA: parse hex or UUID from string
  * @FDISK_PARTTYPE_PARSE_DATALAST: try hex or UUID as the last possibility (don't use!)
- * @FDISK_PARTTYPE_PARSE_SHORTCUT: try input interpret as type shortcut (e.g 'L' for linux partition)
- * @FDISK_PARTTYPE_PARSE_ALIAS: try input interpret as type alias (e.g. 'linux' for linux partition)
+ * @FDISK_PARTTYPE_PARSE_SHORTCUT: try input as type shortcut (e.g 'L' for linux partition)
+ * @FDISK_PARTTYPE_PARSE_ALIAS: try input as type alias (e.g. 'linux' for linux partition)
  * @FDISK_PARTTYPE_PARSE_DEPRECATED: accept also deprecated aliases and shortcuts
  * @FDISK_PARTTYPE_PARSE_DEFAULT: recommended flags for new code
  * @FDISK_PARTTYPE_PARSE_NOUNKNOWN: ignore unknown types
+ * @FDISK_PARTTYPE_PARSE_SEQNUM: use input as sequntial number of type (e.g. list-types fdisk dialog)
  */
 enum fdisk_parttype_parser_flags {
 	FDISK_PARTTYPE_PARSE_DATA       = (1 << 1),
