@@ -4,6 +4,10 @@ Util-linux 2.36 Release Notes
 Release highlights
 ------------------
 
+blkdiscard(8) refuses to proceed if filesystem or RAID signatures are found in
+interactive mode (executed on a terminal). The option --force is required to
+the discard data.
+
 irqtop(1) and lsirq(1) are NEW COMMANDS to monitor kernel interrupts.
 
 cal(1) provides a new --vertical command line option to output calendar
