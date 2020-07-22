@@ -31,6 +31,8 @@ AUTHORS (merged projects & commands):
       hardlink:        Jakub Jelinek <jakub@redhat.com>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
       ipcmk:           Hayden James <hayden.james@gmail.com>
+      irqtop/lsirq:    Zhenwei Pi <pizhenwei@bytedance.com>
+                       Sami Kerola <kerolasa@iki.fi>
       last/lastb:      [merged from sysvinit]
                        Miquel van Smoorenburg <miquels@cistron.nl>
       ldattach:        Tilman Schmidt <tilman@imap.cc>
@@ -694,6 +696,7 @@ CONTRIBUTORS:
       Simon Mihevc <simonmihevc@email.si>
       sluidfoe <sluidfoe@gmail.com>
       Søren Holm <sgh@sgh.dk>
+      Soumendra Ganguly <soumendraganguly@gmail.com>
       s.p@orbitalfox.com <s.p@orbitalfox.com>
       Stanislav Brabec <sbrabec@suse.cz>
       Stefan Krah <stefan@bytereef.org>
