@@ -490,6 +490,8 @@ int fdisk_set_disklabel_id(struct fdisk_context *cxt)
  * @str: new Id
  *
  * Returns: 0 on success, otherwise, a corresponding error.
+ *
+ * Since: 2.36
  */
 int fdisk_set_disklabel_id_from_string(struct fdisk_context *cxt, const char *str)
 {

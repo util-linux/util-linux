@@ -701,6 +701,8 @@ int fdisk_assign_device(struct fdisk_context *cxt,
  * The device has to be open O_RDWR on @readonly=0.
  *
  * Returns: 0 on success, < 0 on error.
+ *
+ * Since: 2.35
  */
 int fdisk_assign_device_by_fd(struct fdisk_context *cxt, int fd,
 			const char *fname, int readonly)

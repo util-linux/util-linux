@@ -376,6 +376,8 @@ struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp)
  * always a new script table.
  *
  * Returns: 0 on success, <0 on error
+ *
+ * Since: 2.35
  */
 int fdisk_script_set_table(struct fdisk_script *dp, struct fdisk_table *tb)
 {

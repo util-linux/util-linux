@@ -263,6 +263,7 @@ fdisk_parttype_get_code
 fdisk_parttype_get_name
 fdisk_parttype_get_string
 fdisk_parttype_is_unknown
+fdisk_parttype_parser_flags
 fdisk_parttype_set_code
 fdisk_parttype_set_name
 fdisk_parttype_set_typestr
