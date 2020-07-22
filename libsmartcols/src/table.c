@@ -483,6 +483,8 @@ int scols_table_next_column(struct libscols_table *tb,
  * Sets @iter to the position of @cl in the file @tb.
  *
  * Returns: 0 on success, negative number in case of error.
+ *
+ * Since: 2.35
  */
 int scols_table_set_columns_iter(
 			struct libscols_table *tb,
@@ -1162,7 +1164,7 @@ int scols_table_enable_header_repeat(struct libscols_table *tb, int enable)
  * The extra space after last column is ignored by default. The output
  * maximization add padding for all columns.
  *
- * This setting is mutually exclusive to cols_table_enable_minout().
+ * This setting is mutually exclusive to scols_table_enable_minout().
  *
  * Returns: 0 on success, negative number in case of an error.
  */
@@ -1188,6 +1190,8 @@ int scols_table_enable_maxout(struct libscols_table *tb, int enable)
  * This setting is mutually exclusive to cols_table_enable_maxout().
  *
  * Returns: 0 on success, negative number in case of an error.
+ *
+ * Since: 2.35
  */
 int scols_table_enable_minout(struct libscols_table *tb, int enable)
 {
@@ -1373,6 +1377,8 @@ int scols_table_is_maxout(const struct libscols_table *tb)
  * @tb: table
  *
  * Returns: 1 if output minimization is enabled or 0
+ *
+ * Since: 2.35
  */
 int scols_table_is_minout(const struct libscols_table *tb)
 {
