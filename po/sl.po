@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2020-07-09 12:08+0200\n"
+"POT-Creation-Date: 2020-07-22 12:05+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -1308,7 +1308,7 @@ msgstr "Za medpomnilnik ni mogoèe dodeliti pomnilnika.\n"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
 #: disk-utils/partx.c:669 login-utils/lslogins.c:1066 misc-utils/fincore.c:356
-#: misc-utils/findmnt.c:1634 misc-utils/lsblk.c:2082 misc-utils/lslocks.c:456
+#: misc-utils/findmnt.c:1634 misc-utils/lsblk.c:2083 misc-utils/lslocks.c:456
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157 sys-utils/losetup.c:325
 #: sys-utils/lscpu.c:1674 sys-utils/lscpu.c:1902 sys-utils/lscpu.c:2034
 #: sys-utils/lsipc.c:351 sys-utils/prlimit.c:297 sys-utils/rfkill.c:459
@@ -3932,7 +3932,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1662
-#: misc-utils/lsblk.c:2121 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
+#: misc-utils/lsblk.c:2122 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
 #: sys-utils/lscpu.c:1683 sys-utils/lscpu.c:1911 sys-utils/prlimit.c:306
 #: sys-utils/rfkill.c:471 sys-utils/swapon.c:292 sys-utils/wdctl.c:310
 #, fuzzy
@@ -6166,7 +6166,7 @@ msgstr ""
 msgid "Disklabel written to %s."
 msgstr "Diskovna enota: %s\n"
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:751
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:753
 #, fuzzy
 msgid "Syncing disks."
 msgstr "Sinhroniziram diske.\n"
@@ -6198,27 +6198,27 @@ msgstr "Najveèja velikost=%ld\n"
 msgid "Cpg"
 msgstr ""
 
-#: libfdisk/src/context.c:741
+#: libfdisk/src/context.c:743
 #, fuzzy, c-format
 msgid "%s: fsync device failed"
 msgstr "iskanje je bilo neuspe¹no"
 
-#: libfdisk/src/context.c:746
+#: libfdisk/src/context.c:748
 #, fuzzy, c-format
 msgid "%s: close device failed"
 msgstr "iskanje je bilo neuspe¹no"
 
-#: libfdisk/src/context.c:826
+#: libfdisk/src/context.c:828
 #, fuzzy
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Klièem ioctl() za ponovno branje tabele razdelkov.\n"
 
-#: libfdisk/src/context.c:834
+#: libfdisk/src/context.c:836
 #, fuzzy
 msgid "Re-reading the partition table failed."
 msgstr "Ponovno berem tabelo razdelkov ...\n"
 
-#: libfdisk/src/context.c:836
+#: libfdisk/src/context.c:838
 #, fuzzy
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr ""
@@ -6227,22 +6227,22 @@ msgstr ""
 "Jedro ¹e vedno uporablja staro tabelo.\n"
 "Nova tabelo bo v uporabi ¹ele po naslednjem zagonu.\n"
 
-#: libfdisk/src/context.c:926
+#: libfdisk/src/context.c:928
 #, fuzzy, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "ponovno preberi tabelo razdelkov"
 
-#: libfdisk/src/context.c:935
+#: libfdisk/src/context.c:937
 #, fuzzy, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "%s: ni bloèna naprava\n"
 
-#: libfdisk/src/context.c:944
+#: libfdisk/src/context.c:946
 #, fuzzy, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "ponovno preberi tabelo razdelkov"
 
-#: libfdisk/src/context.c:950
+#: libfdisk/src/context.c:952
 #, fuzzy
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr ""
@@ -6251,21 +6251,21 @@ msgstr ""
 "Jedro ¹e vedno uporablja staro tabelo.\n"
 "Nova tabelo bo v uporabi ¹ele po naslednjem zagonu.\n"
 
-#: libfdisk/src/context.c:1161
+#: libfdisk/src/context.c:1163
 #, fuzzy
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "steza"
 msgstr[1] "steza"
 
-#: libfdisk/src/context.c:1162
+#: libfdisk/src/context.c:1164
 #, fuzzy
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektor"
 msgstr[1] "sektor"
 
-#: libfdisk/src/context.c:1518
+#: libfdisk/src/context.c:1520
 msgid "Incomplete geometry setting."
 msgstr ""
 
@@ -11426,7 +11426,7 @@ msgstr ""
 msgid "failed to access sysfs directory: %s"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: misc-utils/lsblk.c:2153
+#: misc-utils/lsblk.c:2154
 #, fuzzy
 msgid "failed to allocate device tree"
 msgstr "Za medpomnilnik ni mogoèe dodeliti pomnilnika.\n"
@@ -12900,7 +12900,7 @@ msgstr "openpty ni uspel\n"
 
 #: sys-utils/blkzone.c:345
 #, fuzzy, c-format
-msgid "%s: successfull %s of zones in range from %<PRIu64>, to %<PRIu64>"
+msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "Neuspe¹no zapisovanje razdelka na %s\n"
 
 #: sys-utils/blkzone.c:360
@@ -15723,7 +15723,7 @@ msgstr "Za medpomnilnik ni mogoèe dodeliti pomnilnika.\n"
 
 #: sys-utils/irq-common.c:348
 #, fuzzy
-msgid "unssupported column name to sort output"
+msgid "unsupported column name to sort output"
 msgstr "ni ukaza?\n"
 
 #: sys-utils/irqtop.c:114

@@ -52,7 +52,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2020-07-09 12:54+0200\n"
+"POT-Creation-Date: 2020-07-22 12:05+0200\n"
 "PO-Revision-Date: 2020-07-12 11:32+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -525,8 +525,7 @@ msgstr "Schreiben des Skripts %s ist fehlgeschlagen"
 msgid "Select label type"
 msgstr "Bezeichnungstyp ändern"
 
-#: disk-utils/cfdisk.c:2131 disk-utils/fdisk.c:1158
-#: disk-utils/fdisk-menu.c:489
+#: disk-utils/cfdisk.c:2131 disk-utils/fdisk.c:1158 disk-utils/fdisk-menu.c:489
 msgid "Device does not contain a recognized partition table."
 msgstr "Gerät enthält keine erkennbare Partitionstabelle."
 
@@ -804,8 +803,8 @@ msgstr ""
 "Operation wird fortgesetzt … "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:648
-#: sys-utils/blkdiscard.c:86 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:648 sys-utils/blkdiscard.c:86
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [Optionen] <Gerät>\n"
@@ -1182,21 +1181,21 @@ msgstr "nicht unterstützter Löschmodus"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Die Geräteeigenschaften (Sektorgröße und Geometrie) sollten nur mit einem bestimmten Gerät verwendet werden."
 
-#: disk-utils/fdisk.c:1109 disk-utils/fdisk.c:1124
-#: disk-utils/fsck.cramfs.c:696 disk-utils/mkfs.bfs.c:192
-#: disk-utils/mkfs.cramfs.c:786 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:534 misc-utils/findfs.c:58 misc-utils/look.c:149
-#: misc-utils/whereis.c:577 misc-utils/whereis.c:588 misc-utils/whereis.c:599
-#: misc-utils/whereis.c:641 schedutils/chrt.c:513 schedutils/ionice.c:262
-#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:422
-#: sys-utils/dmesg.c:1505 sys-utils/ipcmk.c:138 sys-utils/ldattach.c:320
-#: sys-utils/losetup.c:913 sys-utils/lscpu.c:2426 sys-utils/lsmem.c:643
-#: sys-utils/mount.c:824 sys-utils/mount.c:832 sys-utils/mount.c:879
-#: sys-utils/mount.c:892 sys-utils/mount.c:964 sys-utils/mountpoint.c:189
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:992
-#: sys-utils/switch_root.c:249 sys-utils/umount.c:598
-#: term-utils/setterm.c:1197 text-utils/col.c:233 text-utils/more.c:2058
+#: disk-utils/fdisk.c:1109 disk-utils/fdisk.c:1124 disk-utils/fsck.cramfs.c:696
+#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:786
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:534
+#: misc-utils/findfs.c:58 misc-utils/look.c:149 misc-utils/whereis.c:577
+#: misc-utils/whereis.c:588 misc-utils/whereis.c:599 misc-utils/whereis.c:641
+#: schedutils/chrt.c:513 schedutils/ionice.c:262 schedutils/taskset.c:188
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1505
+#: sys-utils/ipcmk.c:138 sys-utils/ldattach.c:320 sys-utils/losetup.c:913
+#: sys-utils/lscpu.c:2426 sys-utils/lsmem.c:643 sys-utils/mount.c:824
+#: sys-utils/mount.c:832 sys-utils/mount.c:879 sys-utils/mount.c:892
+#: sys-utils/mount.c:964 sys-utils/mountpoint.c:189 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:992 sys-utils/switch_root.c:249
+#: sys-utils/umount.c:598 term-utils/setterm.c:1197 text-utils/col.c:233
+#: text-utils/more.c:2058
 msgid "bad usage"
 msgstr "fehlerhafter Aufruf"
 
@@ -1270,7 +1269,7 @@ msgstr "Zuweisen des Iterators fehlgeschlagen"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
 #: disk-utils/partx.c:669 login-utils/lslogins.c:1066 misc-utils/fincore.c:356
-#: misc-utils/findmnt.c:1634 misc-utils/lsblk.c:2082 misc-utils/lslocks.c:456
+#: misc-utils/findmnt.c:1634 misc-utils/lsblk.c:2083 misc-utils/lslocks.c:456
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157 sys-utils/losetup.c:325
 #: sys-utils/lscpu.c:1674 sys-utils/lscpu.c:1902 sys-utils/lscpu.c:2034
 #: sys-utils/lsipc.c:351 sys-utils/prlimit.c:297 sys-utils/rfkill.c:459
@@ -3676,11 +3675,11 @@ msgstr "%s: Loop-Gerät konnte nicht eingerichtet werden"
 
 #: disk-utils/partx.c:161 login-utils/lslogins.c:320 misc-utils/fincore.c:92
 #: misc-utils/findmnt.c:376 misc-utils/lsblk.c:317 misc-utils/lslocks.c:344
-#: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:132
-#: sys-utils/irq-common.c:70 sys-utils/losetup.c:112 sys-utils/lscpu.c:241
-#: sys-utils/lscpu.c:256 sys-utils/lsipc.c:232 sys-utils/lsmem.c:178
-#: sys-utils/lsns.c:225 sys-utils/prlimit.c:277 sys-utils/rfkill.c:159
-#: sys-utils/swapon.c:150 sys-utils/wdctl.c:161 sys-utils/zramctl.c:147
+#: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:132 sys-utils/irq-common.c:70
+#: sys-utils/losetup.c:112 sys-utils/lscpu.c:241 sys-utils/lscpu.c:256
+#: sys-utils/lsipc.c:232 sys-utils/lsmem.c:178 sys-utils/lsns.c:225
+#: sys-utils/prlimit.c:277 sys-utils/rfkill.c:159 sys-utils/swapon.c:150
+#: sys-utils/wdctl.c:161 sys-utils/zramctl.c:147
 #, c-format
 msgid "unknown column: %s"
 msgstr "unbekannte Spalte: %s"
@@ -3780,7 +3779,7 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju Sektor, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju Sektoren, %6ju MB)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1662
-#: misc-utils/lsblk.c:2121 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
+#: misc-utils/lsblk.c:2122 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
 #: sys-utils/lscpu.c:1683 sys-utils/lscpu.c:1911 sys-utils/prlimit.c:306
 #: sys-utils/rfkill.c:471 sys-utils/swapon.c:292 sys-utils/wdctl.c:310
 msgid "failed to allocate output column"
@@ -5958,7 +5957,7 @@ msgstr "Die Plattenkennung wurde auf %s geschrieben (vergessen Sie nicht, die %s
 msgid "Disklabel written to %s."
 msgstr "Festplattenbezeichnung geschrieben nach %s."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:751
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:753
 msgid "Syncing disks."
 msgstr "Festplatten werden synchronisiert."
 
@@ -5987,60 +5986,60 @@ msgstr "Bl.größe"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:741
+#: libfdisk/src/context.c:743
 #, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: fsync auf dem Gerät ist fehlgeschlagen"
 
-#: libfdisk/src/context.c:746
+#: libfdisk/src/context.c:748
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: Gerät schließen ist fehlgeschlagen"
 
-#: libfdisk/src/context.c:826
+#: libfdisk/src/context.c:828
 msgid "Calling ioctl() to re-read partition table."
 msgstr "ioctl() wird aufgerufen, um die Partitionstabelle neu einzulesen."
 
-#: libfdisk/src/context.c:834
+#: libfdisk/src/context.c:836
 msgid "Re-reading the partition table failed."
 msgstr "Das erneute Einlesen der Partitionstabelle ist fehlgeschlagen."
 
-#: libfdisk/src/context.c:836
+#: libfdisk/src/context.c:838
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "Der Kernel benutzt noch die alte Tabelle. Die neue Tabelle wird beim nächsten Neustart verwendet werden oder nachdem Sie partprobe(8) oder partx(8) ausgeführt haben."
 
-#: libfdisk/src/context.c:926
+#: libfdisk/src/context.c:928
 #, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "Entfernen der Partition %zu aus dem System ist fehlgeschlagen"
 
-#: libfdisk/src/context.c:935
+#: libfdisk/src/context.c:937
 #, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "Systeminformationen über die Partition %zu konnten nicht aktualisiert werden"
 
-#: libfdisk/src/context.c:944
+#: libfdisk/src/context.c:946
 #, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "Hinzufügen der Partition %zu zum System fehlgeschlagen"
 
-#: libfdisk/src/context.c:950
+#: libfdisk/src/context.c:952
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "Der Kernel benutzt noch die alte Tabelle. Die neue Tabelle wird beim nächsten Neustart verwendet."
 
-#: libfdisk/src/context.c:1161
+#: libfdisk/src/context.c:1163
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "Zylinder"
 msgstr[1] "Zylinder"
 
-#: libfdisk/src/context.c:1162
+#: libfdisk/src/context.c:1164
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "Sektor"
 msgstr[1] "Sektoren"
 
-#: libfdisk/src/context.c:1518
+#: libfdisk/src/context.c:1520
 msgid "Incomplete geometry setting."
 msgstr "Unvollständige Geometrieeinstellung."
 
@@ -7817,9 +7816,9 @@ msgstr ""
 "\n"
 "%s beginnt %s\n"
 
-#: login-utils/last.c:976 term-utils/scriptlive.c:85
-#: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:79
-#: term-utils/scriptreplay.c:83 text-utils/more.c:280 text-utils/more.c:286
+#: login-utils/last.c:976 term-utils/scriptlive.c:85 term-utils/scriptlive.c:89
+#: term-utils/scriptreplay.c:79 term-utils/scriptreplay.c:83
+#: text-utils/more.c:280 text-utils/more.c:286
 msgid "failed to parse number"
 msgstr "Einlesen der Nummer fehlgeschlagen"
 
@@ -10882,7 +10881,7 @@ msgstr "     --sysroot <Verz> angegebenes Verzeichnis als Systemwurzel verwenden
 msgid "failed to access sysfs directory: %s"
 msgstr "Auf sysfs-Verzeichnis konnte nicht zugegriffen werden: %s"
 
-#: misc-utils/lsblk.c:2153
+#: misc-utils/lsblk.c:2154
 msgid "failed to allocate device tree"
 msgstr "Zuweisen des Gerätebaums fehlgeschlagen"
 
@@ -12144,9 +12143,8 @@ msgstr "Position konnte nicht eingelesen werden"
 msgid "failed to parse step"
 msgstr "Durchläufe konnten nicht eingelesen werden"
 
-#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:463
-#: sys-utils/fallocate.c:379 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:532
-#: sys-utils/umount.c:588
+#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:463 sys-utils/fallocate.c:379
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:532 sys-utils/umount.c:588
 msgid "unexpected number of arguments"
 msgstr "unerwartete Anzahl an Argumenten"
 
@@ -12268,8 +12266,8 @@ msgid "%s: %s ioctl failed"
 msgstr "%s: %s ioctl fehlgeschlagen"
 
 #: sys-utils/blkzone.c:345
-#, c-format
-msgid "%s: successfull %s of zones in range from %<PRIu64>, to %<PRIu64>"
+#, fuzzy, c-format
+msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "%s: %s im Bereich %<PRIu64> bis %<PRIu64> war erfolgreich"
 
 #: sys-utils/blkzone.c:360
@@ -15031,7 +15029,8 @@ msgid "failed to add line to output"
 msgstr "das Hinzufügen einer Zeile zur Ausgabe ist fehlgeschlagen"
 
 #: sys-utils/irq-common.c:348
-msgid "unssupported column name to sort output"
+#, fuzzy
+msgid "unsupported column name to sort output"
 msgstr "nicht unterstützter Spaltenname zum Sortieren der Ausgabe"
 
 #: sys-utils/irqtop.c:114

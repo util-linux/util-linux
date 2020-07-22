@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2020-07-09 12:08+0200\n"
+"POT-Creation-Date: 2020-07-22 12:05+0200\n"
 "PO-Revision-Date: 2019-06-05 16:38+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -1205,7 +1205,7 @@ msgstr "misslyckades med att allokera iterator"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
 #: disk-utils/partx.c:669 login-utils/lslogins.c:1066 misc-utils/fincore.c:356
-#: misc-utils/findmnt.c:1634 misc-utils/lsblk.c:2082 misc-utils/lslocks.c:456
+#: misc-utils/findmnt.c:1634 misc-utils/lsblk.c:2083 misc-utils/lslocks.c:456
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157 sys-utils/losetup.c:325
 #: sys-utils/lscpu.c:1674 sys-utils/lscpu.c:1902 sys-utils/lscpu.c:2034
 #: sys-utils/lsipc.c:351 sys-utils/prlimit.c:297 sys-utils/rfkill.c:459
@@ -3707,7 +3707,7 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju sektor, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju sektorer, %6ju MB)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1662
-#: misc-utils/lsblk.c:2121 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
+#: misc-utils/lsblk.c:2122 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
 #: sys-utils/lscpu.c:1683 sys-utils/lscpu.c:1911 sys-utils/prlimit.c:306
 #: sys-utils/rfkill.c:471 sys-utils/swapon.c:292 sys-utils/wdctl.c:310
 msgid "failed to allocate output column"
@@ -5830,7 +5830,7 @@ msgstr "Disketikett skriven till %s. (Glöm inte att skriva disketiketten %s ock
 msgid "Disklabel written to %s."
 msgstr "Disketikett skriven till %s."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:751
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:753
 msgid "Syncing disks."
 msgstr "Synkroniserar diskar."
 
@@ -5859,61 +5859,61 @@ msgstr "B-storlek"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:741
+#: libfdisk/src/context.c:743
 #, fuzzy, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: stängning av enhet misslyckades"
 
-#: libfdisk/src/context.c:746
+#: libfdisk/src/context.c:748
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: stängning av enhet misslyckades"
 
-#: libfdisk/src/context.c:826
+#: libfdisk/src/context.c:828
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Anropar ioctl() för att läsa om partitionstabellen."
 
-#: libfdisk/src/context.c:834
+#: libfdisk/src/context.c:836
 msgid "Re-reading the partition table failed."
 msgstr "Omläsning av partitionstabellen misslyckades."
 
-#: libfdisk/src/context.c:836
+#: libfdisk/src/context.c:838
 #, fuzzy
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "Kärnan använder fortfarande den gamla tabellen. Den nya tabellen kommer att användas vid nästa omstart eller efter att du kört partprobe(8) eller kpartx(8)."
 
-#: libfdisk/src/context.c:926
+#: libfdisk/src/context.c:928
 #, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "Misslyckades med att ta bort partition %zu från systemet"
 
-#: libfdisk/src/context.c:935
+#: libfdisk/src/context.c:937
 #, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "Misslyckades med att uppdatera systeminformation om partition %zu"
 
-#: libfdisk/src/context.c:944
+#: libfdisk/src/context.c:946
 #, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "Misslyckades med att lägga till partition %zu till systemet"
 
-#: libfdisk/src/context.c:950
+#: libfdisk/src/context.c:952
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "Kärnan använder fortfarande de gamla partitionerna. Den nya tabellen kommer att användas vid nästa omstart. "
 
-#: libfdisk/src/context.c:1161
+#: libfdisk/src/context.c:1163
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "cylinder"
 msgstr[1] "cylindrar"
 
-#: libfdisk/src/context.c:1162
+#: libfdisk/src/context.c:1164
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektor"
 msgstr[1] "sektorer"
 
-#: libfdisk/src/context.c:1518
+#: libfdisk/src/context.c:1520
 msgid "Incomplete geometry setting."
 msgstr "Ofullständig geometriinställning."
 
@@ -10680,7 +10680,7 @@ msgstr "     --sysroot <kat>  använd angiven katalog som systemrot\n"
 msgid "failed to access sysfs directory: %s"
 msgstr "misslyckades med att komma åt sysfs-katalog: %s"
 
-#: misc-utils/lsblk.c:2153
+#: misc-utils/lsblk.c:2154
 msgid "failed to allocate device tree"
 msgstr "misslyckades med att allokera enhetsträd"
 
@@ -12059,7 +12059,7 @@ msgstr "%s: FITRIM ioctl misslyckades"
 
 #: sys-utils/blkzone.c:345
 #, fuzzy, c-format
-msgid "%s: successfull %s of zones in range from %<PRIu64>, to %<PRIu64>"
+msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "%s: framgångsrikt återställd i intervall från %<PRIu64> till %<PRIu64>"
 
 #: sys-utils/blkzone.c:360
@@ -14786,7 +14786,7 @@ msgstr "misslyckades med att lägga till rad till utmatning"
 
 #: sys-utils/irq-common.c:348
 #, fuzzy
-msgid "unssupported column name to sort output"
+msgid "unsupported column name to sort output"
 msgstr "färgläge stöds ej"
 
 #: sys-utils/irqtop.c:114

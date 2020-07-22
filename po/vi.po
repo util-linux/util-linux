@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2020-07-09 12:08+0200\n"
+"POT-Creation-Date: 2020-07-22 12:05+0200\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -1238,7 +1238,7 @@ msgstr "gặp lỗi khi cấp phát iterator"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
 #: disk-utils/partx.c:669 login-utils/lslogins.c:1066 misc-utils/fincore.c:356
-#: misc-utils/findmnt.c:1634 misc-utils/lsblk.c:2082 misc-utils/lslocks.c:456
+#: misc-utils/findmnt.c:1634 misc-utils/lsblk.c:2083 misc-utils/lslocks.c:456
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157 sys-utils/losetup.c:325
 #: sys-utils/lscpu.c:1674 sys-utils/lscpu.c:1902 sys-utils/lscpu.c:2034
 #: sys-utils/lsipc.c:351 sys-utils/prlimit.c:297 sys-utils/rfkill.c:459
@@ -3764,7 +3764,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju cung từ, %6ju MB)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1662
-#: misc-utils/lsblk.c:2121 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
+#: misc-utils/lsblk.c:2122 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
 #: sys-utils/lscpu.c:1683 sys-utils/lscpu.c:1911 sys-utils/prlimit.c:306
 #: sys-utils/rfkill.c:471 sys-utils/swapon.c:292 sys-utils/wdctl.c:310
 #, fuzzy
@@ -5960,7 +5960,7 @@ msgstr ""
 msgid "Disklabel written to %s."
 msgstr "Nhãn đĩa được ghi vào %s."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:751
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:753
 msgid "Syncing disks."
 msgstr "Đang đồng bộ hóa các đĩa."
 
@@ -5989,60 +5989,60 @@ msgstr "Bsize"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:741
+#: libfdisk/src/context.c:743
 #, fuzzy, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: gặp lỗi khi đóng thiết-bị"
 
-#: libfdisk/src/context.c:746
+#: libfdisk/src/context.c:748
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: gặp lỗi khi đóng thiết-bị"
 
-#: libfdisk/src/context.c:826
+#: libfdisk/src/context.c:828
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Đang gọi hàm ioctl() để đọc lại bảng phân vùng."
 
-#: libfdisk/src/context.c:834
+#: libfdisk/src/context.c:836
 msgid "Re-reading the partition table failed."
 msgstr "Gl khi đọc lại bảng phân vùng."
 
-#: libfdisk/src/context.c:836
+#: libfdisk/src/context.c:838
 #, fuzzy
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "Nhân hệ điều hành vẫn còn dùng bảng cũ. Bảng mới sẽ được dùng ở lần khởi động kế tiếp, hoặc sau khi bạn chạy lệnh partprobe(8) hay kpartx(8)."
 
-#: libfdisk/src/context.c:926
+#: libfdisk/src/context.c:928
 #, fuzzy, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "gặp lỗi khi gỡ bỏ phân vùng"
 
-#: libfdisk/src/context.c:935
+#: libfdisk/src/context.c:937
 #, fuzzy, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "Hiển thị thông tin về thiết bị khối.\n"
 
-#: libfdisk/src/context.c:944
+#: libfdisk/src/context.c:946
 #, fuzzy, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "gặp lỗi khi thêm phân vùng"
 
-#: libfdisk/src/context.c:950
+#: libfdisk/src/context.c:952
 #, fuzzy
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "Nhân hệ điều hành vẫn còn dùng bảng cũ. Bảng mới sẽ được dùng ở lần khởi động kế tiếp, hoặc sau khi bạn chạy lệnh partprobe(8) hay kpartx(8)."
 
-#: libfdisk/src/context.c:1161
+#: libfdisk/src/context.c:1163
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "trụ"
 
-#: libfdisk/src/context.c:1162
+#: libfdisk/src/context.c:1164
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "cung từ"
 
-#: libfdisk/src/context.c:1518
+#: libfdisk/src/context.c:1520
 msgid "Incomplete geometry setting."
 msgstr "Cài đặt hình học không hoàn thiện."
 
@@ -10924,7 +10924,7 @@ msgstr " -s, --sysroot <dir>     dùng thư mục đã cho như là thư mục g
 msgid "failed to access sysfs directory: %s"
 msgstr "Truy cập thư mục sysfs gặp lỗi: %s"
 
-#: misc-utils/lsblk.c:2153
+#: misc-utils/lsblk.c:2154
 #, fuzzy
 msgid "failed to allocate device tree"
 msgstr "gặp lỗi khi cấp phát iterator"
@@ -12394,7 +12394,7 @@ msgstr "%s: FITRIM ioctl không thành công"
 
 #: sys-utils/blkzone.c:345
 #, fuzzy, c-format
-msgid "%s: successfull %s of zones in range from %<PRIu64>, to %<PRIu64>"
+msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "Tên phân vùng được thay đổi từ “%s” thành “%.*s”."
 
 #: sys-utils/blkzone.c:360
@@ -15175,7 +15175,7 @@ msgstr "không thêm được dòng vào kết xuất"
 
 #: sys-utils/irq-common.c:348
 #, fuzzy
-msgid "unssupported column name to sort output"
+msgid "unsupported column name to sort output"
 msgstr "không được hỗ trợ tô màu"
 
 #: sys-utils/irqtop.c:114
