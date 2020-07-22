@@ -83,4 +83,8 @@ available from https://www.kernel.org/pub/linux/utils/util-linux/.
     <title>Index of new symbols in 2.34</title>
     <xi:include href="xml/api-index-2.34.xml"><xi:fallback /></xi:include>
   </index>
+  <index role="2.35">
+    <title>Index of new symbols in 2.35</title>
+    <xi:include href="xml/api-index-2.35.xml"><xi:fallback /></xi:include>
+  </index>
 </book>
