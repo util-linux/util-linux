@@ -1187,7 +1187,7 @@ int scols_table_enable_maxout(struct libscols_table *tb, int enable)
  * padding is not added to the empty cells at the end of the line. The default is fill
  * tailing empty cells except the last line cell.
  *
- * This setting is mutually exclusive to cols_table_enable_maxout().
+ * This setting is mutually exclusive to scols_table_enable_maxout().
  *
  * Returns: 0 on success, negative number in case of an error.
  *
