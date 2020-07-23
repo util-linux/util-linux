@@ -1,8 +1,12 @@
-util-linux 2.36: Jul 09 2020
+util-linux 2.36: Jul 23 2020
+* see Documentation/releases/v2.36-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.36/v2.36-ChangeLog
+
+util-linux 2.36-rc2: Jul 09 2020
 * see Documentation/releases/v2.36-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.36/v2.36-rc2-ChangeLog
 
-util-linux 2.36: Jun 09 2020
+util-linux 2.36-rc1: Jun 09 2020
 * see Documentation/releases/v2.36-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.36/v2.36-rc1-ChangeLog
 
