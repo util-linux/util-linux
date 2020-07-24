@@ -26,7 +26,7 @@ sfdisk \- display or manipulate a disk partition table
 .SH DESCRIPTION
 .B sfdisk
 is a script-oriented tool for partitioning any block device.  It
-runs in interactive mode if executed on terminal (stdin refers to a terminal).
+runs in interactive mode if executed on a terminal (stdin refers to a terminal).
 
 Since version 2.26
 .B sfdisk
@@ -45,11 +45,15 @@ to alignment if the start offset is specified exactly in sectors and partition
 size relative or by multiplicative suffixes.
 
 The recommended way is not to specify start offsets at all and specify
-partition size in MiB, GiB (or so).  In this case sfdisk align all partitions
+partition size in MiB, GiB (or so).  In this case
+.B sfdisk
+aligns all partitions
 to block-device I/O limits (or when I/O limits are too small then to megabyte
 boundary to keep disk layout portable).  If this default behaviour is unwanted
 (usually for very small partitions) then specify offsets and sizes in
-sectors.  In this case sfdisk entirely follows specified numbers without any
+sectors.  In this case
+.B sfdisk
+entirely follows specified numbers without any
 optimization.
 .sp
 .B sfdisk
@@ -62,11 +66,15 @@ partitions.
 .B sfdisk
 uses BLKRRPART (reread partition table) ioctl to make sure that the device is
 not used by system or other tools (see also \-\-no-reread).  It's possible that
-this feature or another sfdisk activity races with \fBudevd\fR.  The recommended way
+this feature or another
+.B sfdisk
+activity races with \fBudevd\fR.  The recommended way
 how to avoid possible collisions is to use \fB\-\-lock\fR option.
 The exclusive lock will cause udevd to skip the event handling on the device.
 .PP
-The sfdisk prompt is only a hint for users and a displayed partition number does
+The
+.B sfdisk
+prompt is only a hint for users and a displayed partition number does
 not mean that the same partition table entry will be created (if -N not
 specified), especially for tables with gaps.
 
@@ -96,8 +104,10 @@ bootable flag on all unspecified partitions. The special placeholder '\-'
 may be used instead of the partition numbers to switch off the bootable flag
 on all partitions.
 
-The activation command is supported for MBR and PMBR only.  If GPT label is detected
-than sfdisk prints warning and automatically enter PMBR.
+The activation command is supported for MBR and PMBR only.
+If a GPT label is detected, then
+.B sfdisk
+prints warning and automatically enters PMBR.
 
 If no \fIpartition-number\fR is specified, then list the partitions with an
 enabled flag.
@@ -267,7 +277,9 @@ and the last command reorders partitions to match disk order
 
 .TP
 .B \-\-move\-use\-fsync
-Use fsync system call after each write when move data to a new location by
+Use the
+.BR fsync (2)
+system call after each write when moving data to a new location by
 \fB\-\-move\-data\fR.
 .TP
 .BR \-o , " \-\-output " \fIlist
@@ -305,7 +317,7 @@ to avoid possible collisions.  The argument \fIwhen\fR can be \fBauto\fR,
 except the old partition-table signatures which are always wiped before create
 a new partition-table if the argument \fIwhen\fR is not \fBnever\fR. In all
 cases detected signatures are reported by warning messages before a new
-partition table is created.  See also
+partition table is created.  See also the
 .BR wipefs (8)
 command.
 
@@ -418,7 +430,9 @@ The partition
 is given in hex for MBR (DOS) where 0x prefix is optional; a GUID string for
 GPT; a shortcut or an alias. It's recommended to use two letters for MBR hex codes to
 avoid collision between deprecated shortcut 'E' and '0E' MBR hex code. For backward
-compatibility sfdisk tries to interpret
+compatibility
+.B sfdisk
+tries to interpret
 .I type
 as a shortcut as a first possibility in partitioning scripts although on other places (e.g.
 \fB\-\-part-type command)\fR it tries shortcuts as the last possibility.
@@ -601,7 +615,9 @@ The welcome message.
 
 .SH ENVIRONMENT
 .IP SFDISK_DEBUG=all
-enables sfdisk debug output.
+enablescw
+.B sfdisk
+debug output.
 .IP LIBFDISK_DEBUG=all
 enables libfdisk debug output.
 .IP LIBBLKID_DEBUG=all
