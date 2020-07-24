@@ -74,7 +74,9 @@ The default for \fBserial terminals\fP is keep the current baud rate
 .TP
 .I term
 The value to be used for the TERM environment variable.  This overrides
-whatever init(8) may have set, and is inherited by login and the shell.
+whatever
+.BR init (1)
+may have set, and is inherited by login and the shell.
 .sp
 The default is 'vt100', or 'linux' for Linux on a virtual terminal,
 or 'hurd' for GNU Hurd on a virtual terminal.
@@ -93,8 +95,12 @@ Using this option causes an \fB\-f \fIusername\fR option and argument to be
 added to the \fB/bin/login\fP command line.  See \fB\-\-login\-options\fR, which
 can be used to modify this option's behavior.
 
-Note that \fB\-\-autologin\fP may affect the way how agetty initializes the
-serial line, because on auto-login agetty does not read from the line and it
+Note that \fB\-\-autologin\fP may affect the way in which 
+.B getty
+initializes the
+serial line, because on auto-login
+.B agetty
+does not read from the line and it
 has no opportunity optimize the line setting.
 .TP
 \-c, \-\-noreset
@@ -353,16 +359,20 @@ not be interpreted as options.  Use this feature if available by passing "\-\-"
 before the username gets passed by \\u.
 
 .SH ISSUE FILES
-The default issue file is \fI/etc/issue\fP. If the file exists then agetty also
+The default issue file is \fI/etc/issue\fP. If the file exists, then
+.B agetty
+also
 checks for \fI/etc/issue.d\fP directory. The directory is optional extension to
 the default issue file and content of the directory is printed after
-\fI/etc/issue\fP content. If the \fI/etc/issue\fP does not exist than the
+\fI/etc/issue\fP content. If the \fI/etc/issue\fP does not exist, then the
 directory is ignored. All files \fBwith .issue extension\fP from the directory are
 printed in version-sort order. The directory can be used to maintain 3rd-party
 messages independently on the primary system \fI/etc/issue\fP file.
 
 Since version 2.35 additional locations for issue file and directory are
-supported. If the default \fI/etc/issue\fP does not exist than agetty checks
+supported. If the default \fI/etc/issue\fP does not exist, then
+.B agetty
+checks
 for \fI/run/issue\fP and \fI/run/issue.d\fP, thereafter for
 \fI/usr/lib/issue\fP and \fI/usr/lib/issue.d\fP.  The directory /etc is
 expected for host specific configuration, /run is expected for generated stuff
@@ -372,7 +382,7 @@ The default path maybe overridden by \fB\-\-issue\-file\fP option. In this case
 specified path has to be file or directory and all the default issue file and
 directory locations are ignored.
 
-The issue file feature is possible to completely disable by \fB\-\-noissue\fP option.
+The issue file feature can be completely disabled by \fB\-\-noissue\fP option.
 
 It is possible to review the current issue file by \fBagetty \-\-show\-issue\fP
 on the current terminal.
