@@ -28,7 +28,9 @@ to make the signatures invisible for libblkid.
 .B wipefs
 does not erase the filesystem itself nor any other data from the device.
 
-When used without any options, wipefs lists all visible filesystems and the
+When used without any options,
+.B wipefs
+lists all visible filesystems and the
 offsets of their basic signatures.  The default output is subject to change.
 So whenever possible, you should avoid using default outputs in your scripts.
 Always explicitly define expected columns by using
@@ -89,8 +91,9 @@ tools.
 Do not print a header line.
 .TP
 .BR \-O , " \-\-output " \fIlist\fP
-Specify which output columns to print.  Use \-\-help to
-get a list of all supported columns.
+Specify which output columns to print.  Use
+.B \-\-help
+to get a list of all supported columns.
 .TP
 .BR \-n , " \-\-no\-act"
 Causes everything to be done except for the write() call.
@@ -116,7 +119,8 @@ Suppress any messages after a successful signature wipe.
 Limit the set of printed or erased signatures.  More than one type may
 be specified in a comma-separated list.  The list or individual types
 can be prefixed with 'no' to specify the types on which no action should be
-taken.  For more details see mount(8).
+taken.  For more details see
+.BR mount (8).
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
