@@ -49,8 +49,10 @@ given either, then standard input is logged.
 .TP
 .BR \-d , " \-\-udp"
 Use datagrams (UDP) only.  By default the connection is tried to the
-syslog port defined in /etc/services, which is often 514 .
-.sp
+syslog port defined in
+.IR /etc/services ,
+which is often 514.
+.IP
 See also \fB\-\-server\fR and \fB\-\-socket\fR to specify where to connect.
 .TP
 .BR \-e , " \-\-skip-empty"
@@ -75,7 +77,9 @@ command's PID.  The use of \fB\-\-id=$$\fR
 (PPID) is recommended in scripts that send several messages.
 
 Note that the system logging infrastructure (for example \fBsystemd\fR when
-listening on /dev/log) may follow local socket credentials to overwrite the
+listening on
+.IR /dev/log )
+may follow local socket credentials to overwrite the
 PID specified in the message.
 .BR logger (1)
 is able to set those socket credentials to the given \fIid\fR, but only if you
