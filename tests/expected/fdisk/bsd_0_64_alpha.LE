@@ -211,7 +211,7 @@ Command (m for help):
 00 unused           05 4.1BSD           09 4.4LFS           0d boot           
 01 swap             06 Eighth Edition   0a unknown          0e ADOS           
 02 Version 6        07 4.2BSD           0b HPFS             0f HFS            
-03 Version 7        08 MS-DOS           0c ISO-9660         10 AdvFS          
+03 Version 7        08 ext2             0c ISO-9660         10 AdvFS          
 04 System V       
 
 Command (m for help): 
