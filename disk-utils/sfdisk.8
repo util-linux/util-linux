@@ -344,17 +344,14 @@ Display help text and exit.
 .B sfdisk
 supports two input formats and generic header lines.
 
-.B Header lines
-.RS
+.SS Header lines
 The optional header lines specify generic information that apply to the partition
 table.  The header-line format is:
-.RS
 .sp
 .B "<name>: <value>"
 .sp
 .RE
 The currently recognized headers are:
-.RS
 .TP
 .B unit
 Specify the partitioning unit.  The only supported unit is \fBsectors\fR.
@@ -384,14 +381,11 @@ modify this variable if you're not sure.
 Specify sector size. This header is informative only and it is not used when
 sfdisk creates a new partition table, in this case the real device specific
 value is always used and sector size from the dump is ignored.
-.RE
-.sp
+.PP
 Note that it is only possible to use header lines before the first partition
 is specified in the input.
-.RE
-
-.B Unnamed-fields format
-.RS
+.SS Unnamed-fields format
+\&
 .RS
 .sp
 .I start size type bootable
@@ -441,7 +435,6 @@ Since v2.36 libfdisk supports partition type aliases as extension to shortcuts. 
 simple human readable word (e.g. "linux").
 
 Supported shortcuts and aliases:
-.RS
 .TP
 .B L - alias 'linux'
 Linux; means 83 for MBR and 0FC63DAF-8483-4772-8E79-3D69D8477DE4 for GPT.
@@ -464,7 +457,6 @@ Linux RAID; means FD for MBR and A19D880F-05FC-4D3B-A006-743F0F84911E for GPT
 .TP
 .B V - alias 'lvm'
 LVM; means 8E for MBR and E6D6D379-F507-44C2-A23C-238F2A3DF928 for GPT
-.RE
 .PP
 The default
 .I type
@@ -478,10 +470,7 @@ is specified as [\fB*\fR|\fB-\fR], with as default not-bootable.  The
 value of this field is irrelevant for Linux - when Linux runs it has
 been booted already - but it might play a role for certain boot
 loaders and for other operating systems.
-.RE
-
-.B Named-fields format
-.RS
+.SS Named-fields format
 This format is more readable, robust, extensible and allows specifying additional
 information (e.g., a UUID).  It is recommended to use this format to keep your scripts
 more readable.
@@ -501,7 +490,6 @@ The
 .I value
 can be between quotation marks (e.g., name="This is partition name").
 The currently supported fields are:
-.RS
 .TP
 .BI start= number
 The first non-assigned sector aligned according to device I/O limits.  The default
@@ -531,9 +519,6 @@ GPT partition name.
 A hexadecimal number (without 0x) for an MBR partition, a GUID for a GPT partition,
 or a shortcut as for unnamed-fields format.
 For backward compatibility the \fBId=\fR field has the same meaning.
-.RE
-.RE
-
 .SH EMPTY DISK LABEL
 .B sfdisk
 does not create partition table without partitions by default. The lines with
