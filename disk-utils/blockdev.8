@@ -31,7 +31,9 @@ Be quiet.
 Be verbose.
 .IP "\fB\-\-report\fP"
 Print a report for the specified device. It is possible to give multiple
-devices. If none is given, all devices which appear in /proc/partitions are
+devices. If none is given, all devices which appear in
+.I /proc/partitions
+are
 shown. Note that the partition StartSec is in 512-byte sectors.
 .IP "\fB\-h\fR, \fB\-\-help\fR"
 Display help text and exit.
@@ -44,8 +46,9 @@ Flush buffers.
 .IP "\fB\-\-getalignoff\fP"
 Get alignment offset.
 .IP "\fB\-\-getbsz\fP"
-Print blocksize in bytes.  This size does not describe device topology.  It's
-size used internally by kernel and it maybe modified (for example) by
+Print the blocksize in bytes.
+This size does not describe device topology.  It's
+the size used internally by ithe kernel and it may be modified (for example) by
 filesystem driver on mount.
 .IP "\fB\-\-getdiscardzeroes\fP"
 Get discard zeroes support status.
@@ -66,7 +69,9 @@ Get read-only. Print 1 if the device is read-only, 0 otherwise.
 .IP "\fB\-\-getsize64\fP"
 Print device size in bytes.
 .IP "\fB\-\-getsize\fP"
-Print device size (32-bit!) in sectors. Deprecated in favor of the \-\-getsz option.
+Print device size (32-bit!) in sectors. Deprecated in favor of the
+.B \-\-getsz
+option.
 .IP "\fB\-\-getss\fP"
 Print logical sector size in bytes \(en usually 512.
 .IP "\fB\-\-getsz\fP"
@@ -76,14 +81,21 @@ Reread partition table
 .IP "\fB\-\-setbsz\fP \fIbytes\fP"
 Set blocksize. Note that the block size is specific to the current file
 descriptor opening the block device, so the change of block size only persists
-for as long as blockdev has the device open, and is lost once blockdev exits.
+for as long as
+.B blockdev
+has the device open, and is lost once
+.B blockdev
+exits.
 .IP "\fB\-\-setfra\fP \fIsectors\fP"
-Set filesystem readahead (same like \-\-setra on 2.6 kernels).
+Set filesystem readahead (same as
+.B \-\-setra
+on 2.6 kernels).
 .IP "\fB\-\-setra\fP \fIsectors\fP"
 Set readahead (in 512-byte sectors).
 .IP "\fB\-\-setro\fP"
-Set read-only. The currently active access to the device may not be affected by the change. For example
-filesystem already mounted in read-write mode will not be affected. The change applies after remount.
+Set read-only. The currently active access to the device may not be affected by the change. For example,
+a filesystem already mounted in read-write mode will not be affected.
+The change applies after remount.
 .IP "\fB\-\-setrw\fP"
 Set read-write.
 .SH AUTHORS
