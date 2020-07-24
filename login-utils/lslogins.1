@@ -11,7 +11,10 @@ lslogins \- display information about known users in the system
 .RB [ \-l " \fIlogins\fR]"
 .RI [ username ]
 .SH DESCRIPTION
-Examine the wtmp and btmp logs, /etc/shadow (if necessary) and /etc/passwd
+Examine the wtmp and btmp logs,
+.I /etc/shadow
+(if necessary) and
+.I /passwd
 and output the desired data.
 
 The optional argument \fIusername\fR forces
@@ -46,12 +49,14 @@ Show information about supplementary groups.
 .TP
 \fB\-g\fR, \fB\-\-groups\fR=\fIgroups\fR
 Only show data of users belonging to \fIgroups\fR.  More than one group
-may be specified; the list has to be comma-separated.  The unknown group
+may be specified; the list has to be comma-separated.  Unknown group
 names are ignored.
 
 Note that relation between user and group may be invisible for primary group if
 the user is not explicitly specify as group member (e.g., in /etc/group). If the
-command lslogins scans for groups than it uses groups database only, and user
+command
+.B lslogins
+scans for groups than it uses groups database only, and user
 database with primary GID is not used at all.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
@@ -63,7 +68,7 @@ Display data containing information about the users' last login sessions.
 \fB\-l\fR, \fB\-\-logins\fR=\fIlogins\fR
 Only show data of users with a login specified in \fIlogins\fR (user names or user
 IDS).  More than one login may be specified; the list has to be comma-separated.
-The unknown login names are ignored.
+Unknown login names are ignored.
 .TP
 \fB\-n\fR, \fB\-\-newline\fR
 Display each piece of information on a separate line.
@@ -94,7 +99,8 @@ Raw output (no columnation).
 Show system accounts.  These are by default all accounts with a UID between 101 and 999
 (inclusive), with the exception of either nobody or nfsnobody (UID 65534).
 This hardcoded default may be overwritten by parameters SYS_UID_MIN and SYS_UID_MAX in
-the file /etc/login.defs.
+the file
+.IR /etc/login.defs .
 .TP
 \fB\-\-time\-format\fR \fItype\fP
 Display dates in short, full or iso format.  The default is short, this time
@@ -104,7 +110,8 @@ format is designed to be space efficient and human readable.
 Show user accounts.  These are by default all accounts with UID above 1000
 (inclusive), with the exception of either nobody or nfsnobody (UID 65534).
 This hardcoded default maybe overwritten by parameters UID_MIN and UID_MAX in
-the file /etc/login.defs.
+the file
+.IR /etc/login.defs .
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
@@ -132,7 +139,8 @@ if incorrect arguments specified,
 2
 if a serious error occurs (e.g., a corrupt log).
 .SH NOTES
-The default UID thresholds are read from /etc/login.defs.
+The default UID thresholds are read from
+.IR /etc/login.defs .
 
 .SH HISTORY
 The \fBlslogins\fP utility is inspired by the \fBlogins\fP utility, which first appeared in FreeBSD 4.10.
