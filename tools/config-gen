@@ -23,6 +23,10 @@ fi
 
 while [ -n "$1" ]; do
 	opts="$opts $(ul_get_configuration tools/config-gen.d/$1.conf)"
+	if [ "$1" == "fuzz" ]; then
+		export CC=${CC:-clang}
+		export CXX=${CXX:-clang++}
+	fi
 	shift
 done
 
