@@ -67,6 +67,14 @@
  Please, be careful and use these tests only for development and never on
  production system.
 
+fuzz targets
+------------
+
+The fuzz targets can be built and run along with the other tests (after installing
+clang):
+
+	$ ./tools/config-gen fuzz
+	$ make check
 
 environment variables
 ---------------------
@@ -136,3 +144,14 @@ Coverity Scan
 Fossies codespell report
 
     URL: https://fossies.org/linux/test/util-linux-master.tar.gz/codespell.html
+
+OSS-Fuzz
+
+    URL: https://google.github.io/oss-fuzz/
+    URL: https://oss-fuzz-build-logs.storage.googleapis.com/index.html#util-linux
+    URL: https://oss-fuzz.com/coverage-report/job/libfuzzer_asan_util-linux/latest
+
+CIFuzz
+
+    URL: https://google.github.io/oss-fuzz/getting-started/continuous-integration/
+    URL: https://github.com/karelzak/util-linux/actions?query=workflow%3ACIFuzz
