@@ -1,3 +1,4 @@
+#include "fuzz.h"
 #include "mountP.h"
 
 #include <stddef.h>
