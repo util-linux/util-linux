@@ -40,10 +40,27 @@ shell_session_update() { :; }
 
 function xconfigure
 {
+	local gcc_version clang_version cxx
+
 	which "$CC"
 	"$CC" --version
 
-	./configure "$@" $OSX_CONFOPTS
+	if [[ "$CC" =~ ^clang-([0-9]+)$ ]]; then
+		clang_version=${BASH_REMATCH[1]}
+		cxx=clang++-${clang_version}
+	elif [[ "$CC" =~ ^gcc-([0-9]+)$ ]]; then
+		gcc_version=${BASH_REMATCH[1]}
+		cxx=g++-${gcc_version}
+	elif [[ "$CC" == "clang" ]]; then
+		cxx=clang++
+	elif [[ "$CC" == "gcc" ]]; then
+		cxx=g++
+	fi
+
+	which "$cxx"
+	"$cxx" --version
+
+	CC=$CC CXX=$cxx ./configure "$@" $OSX_CONFOPTS
 	err=$?
 	if [ "$DUMP_CONFIG_LOG" = "short" ]; then
 		grep -B1 -A10000 "^## Output variables" config.log | grep -v "_FALSE="
