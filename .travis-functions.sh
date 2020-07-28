@@ -82,6 +82,10 @@ function check_nonroot
 		conf_opts="$conf_opts --enable-werror"
 	fi
 
+	if [[ "$CC" =~ "clang" ]]; then
+		conf_opts="$conf_opts --enable-fuzzing-engine"
+	fi
+
 	xconfigure $conf_opts || return
 	$MAKE || return
 
@@ -107,6 +111,10 @@ function check_root
 
 	if [ "$TRAVIS_OS_NAME" != "osx" -a "$TRAVIS_DIST" != "precise" ]; then
 		conf_opts="$conf_opts --enable-werror"
+	fi
+
+	if [[ "$CC" =~ "clang" ]]; then
+		conf_opts="$conf_opts --enable-fuzzing-engine"
 	fi
 
 	xconfigure $conf_opts || return
