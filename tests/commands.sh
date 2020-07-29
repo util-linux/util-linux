@@ -42,6 +42,7 @@ TS_HELPER_UUID_PARSER="${ts_helpersdir}test_uuid_parser"
 TS_HELPER_UUID_NAMESPACE="${ts_helpersdir}test_uuid_namespace"
 TS_HELPER_MBSENCODE="${ts_helpersdir}test_mbsencode"
 TS_HELPER_CAL="${ts_helpersdir}test_cal"
+TS_HELPER_LAST_FUZZ="${ts_helpersdir}test_last_fuzz"
 
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"${ts_commandsdir}addpart"}
