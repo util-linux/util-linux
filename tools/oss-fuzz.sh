@@ -21,5 +21,11 @@ mkdir -p $OUT
 ./configure --disable-all-programs --enable-last --enable-fuzzing-engine --enable-libmount --enable-libblkid
 make -j$(nproc) V=1 check-programs
 
+for d in "$(dirname $0)"/../tests/ts/fuzzers/test_*_fuzz_files; do
+    bd=$(basename "$d")
+    fuzzer=${bd%_files}
+    zip -jqr $OUT/${fuzzer}_seed_corpus.zip "$d"
+done
+
 find . -maxdepth 1 -type f -executable -name "test_*_fuzz" -exec mv {} $OUT \;
 find . -type f -name "fuzz-*.dict" -exec cp {} $OUT \;
