@@ -652,5 +652,6 @@ int main(int argc, char **argv)
 			fclose(f);
 		}
 	free(ctl.obuf);
+	del_curterm(cur_term);
 	return EXIT_SUCCESS;
 }
