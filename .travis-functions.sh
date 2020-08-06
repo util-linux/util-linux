@@ -256,6 +256,7 @@ function osx_install_script
 	OSX_CONFOPTS="
 		--disable-ipcrm \
 		--disable-ipcs \
+		--disable-libmount \
 	"
 
 	# workaround: glibtoolize could not find sed
