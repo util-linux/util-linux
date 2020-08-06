@@ -690,69 +690,6 @@ AS_CASE([$enable_all_programs],
 
 AX_CHECK_TLS
 
-AC_DEFUN([UL_SCANF_TYPE_MODIFIER], [dnl
-# include <stdio.h>
-# include <stdlib.h>
-int main()
-{
-	int i;
-	int rc = 1;
-	char *s;
-	i = sscanf("x", $1, &s);
-	if (i == 1  && *s == 'x')
-		rc = 0;
-	free(s);
-	return rc;
-}])
-
-AC_CACHE_VAL([scanf_cv_alloc_modifier],
-  AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%ms"])])],
-    [scanf_cv_alloc_modifier=ms],
-    AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%as"])])],
-      [scanf_cv_alloc_modifier=as],
-      [scanf_cv_alloc_modifier=no]
-    )
-    ,
-
-    [AC_COMPILE_IFELSE([AC_LANG_SOURCE([
-     #include <stdio.h>
-     #include <unistd.h>
-
-     #if defined(__GLIBC__) && !defined(__UCLIBC__)
-
-     #if !(__GLIBC_PREREQ(2, 7))
-     #error %m is not available
-     #endif
-
-     #elif defined(_POSIX_VERSION)
-
-     #if _POSIX_VERSION < 200809L
-     #error %m is not available
-     #endif
-
-     #else
-     #error Your C-library is not supported.
-     #endif
-     ])],
-    [scanf_cv_alloc_modifier=ms],
-    [scanf_cv_alloc_modifier=no])]
-  )
-)
-
-AC_MSG_CHECKING([scanf string alloc modifiers])
-AS_CASE([$scanf_cv_alloc_modifier],
-  [ms],
-    [AC_MSG_RESULT([(%ms) yes])
-     AC_DEFINE([HAVE_SCANF_MS_MODIFIER], [1], [scanf %ms modifier])
-     have_scanf_alloc_modifier=yes],
-  [as],
-    [AC_MSG_RESULT([(%as) yes])
-     have_scanf_alloc_modifier=yes
-     AC_DEFINE([HAVE_SCANF_AS_MODIFIER], [1], [scanf %as modifier])],
-  [AC_MSG_RESULT([no])
-   have_scanf_alloc_modifier=no]
-)
-
 have_pty=no
 AC_ARG_WITH([util], AS_HELP_STRING([--without-util], [compile without libutil]),
   [], [with_util=auto]
@@ -1127,7 +1064,6 @@ AC_ARG_ENABLE([libmount],
 )
 UL_BUILD_INIT([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
-UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifier])
 UL_REQUIRES_HAVE([libmount], [dirfd,ddfd], [dirfd or ddfd function])
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
 AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes -a "x$enable_static" = xyes])

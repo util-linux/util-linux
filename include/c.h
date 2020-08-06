@@ -378,15 +378,6 @@ static inline int xusleep(useconds_t usec)
 })
 
 /*
- * scanf modifiers for "strings allocation"
- */
-#ifdef HAVE_SCANF_MS_MODIFIER
-#define UL_SCNsA	"%ms"
-#elif defined(HAVE_SCANF_AS_MODIFIER)
-#define UL_SCNsA	"%as"
-#endif
-
-/*
  * seek stuff
  */
 #ifndef SEEK_DATA
