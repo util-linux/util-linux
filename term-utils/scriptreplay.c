@@ -109,7 +109,8 @@ delay_for(struct timeval *delay)
 #endif
 }
 
-static void appendchr(char *buf, size_t bufsz, int c)
+static void
+appendchr(char *buf, size_t bufsz, int c)
 {
 	size_t sz;
 
@@ -121,20 +122,22 @@ static void appendchr(char *buf, size_t bufsz, int c)
 		buf[sz] = c;
 }
 
-static int termraw(struct termios *backup)
+static int
+setterm(struct termios *backup)
 {
 	struct termios tattr;
 
-	if (tcgetattr(STDOUT_FILENO, backup) != 0)
-		return -1;
-
+	if (tcgetattr(STDOUT_FILENO, backup) != 0) {
+		if (errno == EBADF)
+			err(EXIT_FAILURE, _("%d not valid fd"), STDOUT_FILENO);
+		/* errno == ENOTTY */
+		return 0;
+	}
 	tattr = *backup;
 	cfmakeraw(&tattr);
 	tattr.c_lflag |= ISIG;
-	if (tcsetattr(STDOUT_FILENO, TCSANOW, &tattr) != 0)
-		return -1;
-
-	return 0;
+	tcsetattr(STDOUT_FILENO, TCSANOW, &tattr);
+	return 1;
 }
 
 int
@@ -143,7 +146,7 @@ main(int argc, char *argv[])
 	static const struct timeval mindelay = { .tv_sec = 0, .tv_usec = 100 };
 	struct timeval maxdelay;
 
-	char isterm;
+	int isterm;
 	struct termios saved;
 
 	struct replay_setup *setup = NULL;
@@ -306,9 +309,7 @@ main(int argc, char *argv[])
 		replay_set_delay_max(setup, &maxdelay);
 	replay_set_delay_min(setup, &mindelay);
 
-	isterm = isatty(STDOUT_FILENO);
-	if (isterm && termraw(&saved) != 0)
-		err(EXIT_FAILURE, _("failed to set terminal to raw mode"));
+	isterm = setterm(&saved);
 
 	do {
 		rc = replay_get_next_step(setup, streams, &step);
