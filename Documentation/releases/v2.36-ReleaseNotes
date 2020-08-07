@@ -21,7 +21,7 @@ agetty(8) now supports multiple paths in the option --issue-file.
 
 The commands fdisk(8), sfdisk(8), cfdisk(8), mkswap(8) and wipefs(8) now
 support block devices locking by flock(2) to better behave with udevd or other
-tools. Ffor more details see https://systemd.io/BLOCK_DEVICE_LOCKING/.  This
+tools. For more details see https://systemd.io/BLOCK_DEVICE_LOCKING/.  This
 feature is controlled by a new command line option --lock and
 $LOCK_BLOCK_DEVICE environmental variable.
 
