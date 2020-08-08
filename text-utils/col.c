@@ -114,6 +114,16 @@ struct line_str {
 		l_needs_sort:1;		/* set if chars went in out of order */
 };
 
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+/*
+ * Free memory before exit when compiling LeakSanitizer.
+ */
+struct col_alloc {
+	LINE *l;
+	struct col_alloc *next;
+};
+#endif
+
 struct col_ctl {
 	CSET last_set;			/* char_set of last char printed */
 	LINE *lines;
@@ -121,6 +131,10 @@ struct col_ctl {
 	size_t max_bufd_lines;		/* max # lines to keep in memory */
 	LINE *line_freelist;
 	size_t nblank_lines;		/* # blanks after last flushed line */
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+	struct col_alloc *alloc_root;	/* first of line allocations */
+	struct col_alloc *alloc_head;	/* latest line allocation */
+#endif
 	unsigned int
 		compress_spaces:1,	/* if doing space -> tab conversion */
 		fine:1,			/* if `fine' resolution (half lines) */
@@ -330,6 +344,17 @@ static LINE *alloc_line(struct col_ctl *ctl)
 
 	if (!ctl->line_freelist) {
 		l = xmalloc(sizeof(LINE) * NALLOC);
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+		if (ctl->alloc_root == NULL) {
+			ctl->alloc_root = xcalloc(1, sizeof(struct col_alloc));
+			ctl->alloc_root->l = l;
+			ctl->alloc_head = ctl->alloc_root;
+		} else {
+			ctl->alloc_head->next = xcalloc(1, sizeof(struct col_alloc));
+			ctl->alloc_head = ctl->alloc_head->next;
+			ctl->alloc_head->l = l;
+		}
+#endif
 		ctl->line_freelist = l;
 		for (i = 1; i < NALLOC; i++, l++)
 			l->l_next = l + 1;
@@ -559,6 +584,20 @@ static void parse_options(struct col_ctl *ctl, int argc, char **argv)
 	}
 }
 
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+static void free_line_allocations(struct col_alloc *root)
+{
+	struct col_alloc *next;
+
+	while (root) {
+		next = root->next;
+		free(root->l);
+		free(root);
+		root = next;
+	}
+}
+#endif
+
 int main(int argc, char **argv)
 {
 	struct col_ctl ctl = {
@@ -634,8 +673,12 @@ int main(int argc, char **argv)
 	/* goto the last line that had a character on it */
 	for (; ctl.l->l_next; ctl.l = ctl.l->l_next)
 		lns.this_line++;
-	if (lns.max_line == 0 && lns.cur_col == 0)
+	if (lns.max_line == 0 && lns.cur_col == 0) {
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+		free_line_allocations(ctl.alloc_root);
+#endif
 		return EXIT_SUCCESS;	/* no lines, so just exit */
+	}
 	flush_lines(&ctl, lns.this_line - lns.nflushd_lines + lns.extra_lines + 1);
 
 	/* make sure we leave things in a sane state */
@@ -650,5 +693,8 @@ int main(int argc, char **argv)
 		/* missing a \n on the last line? */
 		ctl.nblank_lines = 2;
 	flush_blanks(&ctl);
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+	free_line_allocations(ctl.alloc_root);
+#endif
 	return ret;
 }
