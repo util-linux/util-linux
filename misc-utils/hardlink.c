@@ -523,6 +523,9 @@ int main(int argc, char **argv)
 		}
 		closedir(dh);
 	}
-
+#ifdef HAVE_PCRE
+	pcre2_code_free(re);
+	pcre2_match_data_free(match_data);
+#endif
 	return 0;
 }
