@@ -698,9 +698,9 @@ done:
  */
 static void log_utmp(struct login_context *cxt)
 {
-	struct utmpx ut;
-	struct utmpx *utp;
-	struct timeval tv;
+	struct utmpx ut = {0};
+	struct utmpx *utp = NULL;
+	struct timeval tv = {0};
 
 	utmpxname(_PATH_UTMP);
 	setutxent();
