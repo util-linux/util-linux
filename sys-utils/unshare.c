@@ -675,8 +675,7 @@ int main(int argc, char *argv[])
 		};
 
 		struct __user_cap_data_struct payload[_LINUX_CAPABILITY_U32S_3] = {{ 0 }};
-		int cap;
-		uint64_t effective;
+		uint64_t effective, cap;
 
 		if (capget(&header, payload) < 0)
 			err(EXIT_FAILURE, _("capget failed"));
@@ -691,10 +690,10 @@ int main(int argc, char *argv[])
 
 		effective = ((uint64_t)payload[1].effective << 32) |  (uint64_t)payload[0].effective;
 
-		for (cap = 0; cap < 64; cap++) {
+		for (cap = 0; cap < (sizeof(effective) * 8); cap++) {
 			/* This is the same check as cap_valid(), but using
 			 * the runtime value for the last valid cap. */
-			if (cap > cap_last_cap())
+			if ((int)cap > cap_last_cap())
 				continue;
 
 			if ((effective & (1 << cap))
