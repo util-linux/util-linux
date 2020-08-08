@@ -1071,7 +1071,7 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 		/* don't break -- keep scanning for more options */
 	}
 
-	return res;
+	return strdup(res);
 }
 
 /**
