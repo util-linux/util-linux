@@ -180,6 +180,12 @@ static int switchroot(const char *newroot)
 		return -1;
 	}
 
+	if (chdir("/")) {
+		close(cfd);
+		warn(_("cannot change directory to %s"), "/");
+		return -1;
+	}
+
 	pid = fork();
 	if (pid <= 0) {
 		struct statfs stfs;

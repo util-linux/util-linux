@@ -457,6 +457,8 @@ int main(int argc, char *argv[])
 
 		if (chroot(".") < 0)
 			err(EXIT_FAILURE, _("chroot failed"));
+		if (chdir("/"))
+			err(EXIT_FAILURE, _("cannot change directory to %s"), "/");
 
 		close(root_fd);
 		root_fd = -1;
