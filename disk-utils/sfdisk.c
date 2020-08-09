@@ -619,7 +619,6 @@ done:
 	if (f)
 		fclose(f);
 	free(buf);
-	free(devname);
 	free(typescript);
 
 	if (sf->noact)
@@ -629,6 +628,8 @@ done:
 		rc = -EIO;
 	} else if (rc)
 		warn(_("%s: failed to move data"), devname);
+
+	free(devname);
 
 	return rc;
 }
