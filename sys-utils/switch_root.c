@@ -58,6 +58,7 @@ static int recursiveRemove(int fd)
 
 	if (!(dir = fdopendir(fd))) {
 		warn(_("failed to open directory"));
+		close(fd);
 		goto done;
 	}
 
@@ -104,10 +105,8 @@ static int recursiveRemove(int fd)
 				int cfd;
 
 				cfd = openat(dfd, d->d_name, O_RDONLY);
-				if (cfd >= 0) {
+				if (cfd >= 0)
 					recursiveRemove(cfd);
-					close(cfd);
-				}
 				isdir = 1;
 			}
 		}
@@ -200,7 +199,6 @@ static int switchroot(const char *newroot)
 			exit(EXIT_SUCCESS);
 	}
 
-	close(cfd);
 	return 0;
 }
 
