@@ -606,9 +606,11 @@ static void log_lastlog(struct login_context *cxt)
 			if (*ll.ll_host != '\0')
 				printf(_("from %.*s\n"),
 				       (int)sizeof(ll.ll_host), ll.ll_host);
-			else
+			else {
+				ll.ll_line[sizeof(ll.ll_line) - 1] = '\0';
 				printf(_("on %.*s\n"),
 				       (int)sizeof(ll.ll_line), ll.ll_line);
+			}
 		}
 	}
 
