@@ -931,8 +931,8 @@ static int fsck_device(struct libmnt_fs *fs, int interactive)
 	}
 	return 0;
 err:
-	warnx(_("error %d (%m) while executing fsck.%s for %s"),
-			retval, type, fs_get_device(fs));
+	warnx(_("error %d (%s) while executing fsck.%s for %s"),
+			retval, strerror(errno), type, fs_get_device(fs));
 	return FSCK_EX_ERROR;
 }
 
