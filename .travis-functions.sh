@@ -93,14 +93,14 @@ function check_nonroot
 	if [ "$TRAVIS_OS_NAME" != "osx" ]; then
 		conf_opts="$conf_opts --enable-asan --enable-ubsan"
 		make_opts="$make_opts --memcheck-asan --memcheck-ubsan"
-	fi
 
-	if [ "$TRAVIS_OS_NAME" != "osx" -a "$TRAVIS_DIST" != "precise" ]; then
-		conf_opts="$conf_opts --enable-werror"
-	fi
+		if [ "$TRAVIS_DIST" != "precise" ]; then
+			conf_opts="$conf_opts --enable-werror"
+		fi
 
-	if [[ "$CC" =~ "clang" ]]; then
-		conf_opts="$conf_opts --enable-fuzzing-engine"
+		if [[ "$CC" =~ "clang" ]]; then
+			conf_opts="$conf_opts --enable-fuzzing-engine"
+		fi
 	fi
 
 	xconfigure $conf_opts || return
@@ -124,14 +124,14 @@ function check_root
 	if [ "$TRAVIS_OS_NAME" != "osx" ]; then
 		conf_opts="$conf_opts --enable-asan --enable-ubsan"
 		make_opts="$make_opts --memcheck-asan --memcheck-ubsan"
-	fi
 
-	if [ "$TRAVIS_OS_NAME" != "osx" -a "$TRAVIS_DIST" != "precise" ]; then
-		conf_opts="$conf_opts --enable-werror"
-	fi
+		if [ "$TRAVIS_DIST" != "precise" ]; then
+			conf_opts="$conf_opts --enable-werror"
+		fi
 
-	if [[ "$CC" =~ "clang" ]]; then
-		conf_opts="$conf_opts --enable-fuzzing-engine"
+		if [[ "$CC" =~ "clang" ]]; then
+			conf_opts="$conf_opts --enable-fuzzing-engine"
+		fi
 	fi
 
 	xconfigure $conf_opts || return
