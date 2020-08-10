@@ -4,6 +4,10 @@
 #include "carefulputc.h"
 #include "mangle.h"
 
+#ifdef FUZZ_TARGET
+#include "fuzz.h"
+#endif
+
 /**
  * SECTION: script
  * @title: Script
@@ -1522,6 +1526,42 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 	DBG(CXT, ul_debugobj(cxt, "script done [rc=%d]", rc));
 	return rc;
 }
+
+#ifdef FUZZ_TARGET
+int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+{
+	char name[] = "/tmp/test-script-fuzz.XXXXXX";
+	int fd;
+	ssize_t n;
+	struct fdisk_script *dp;
+	struct fdisk_context *cxt;
+	FILE *f;
+
+	fd = mkostemp(name, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
+	assert(fd >= 0);
+
+	n = write(fd, data, size);
+	assert(n == (ssize_t) size);
+
+	f = fopen(name, "r");
+	assert(f);
+
+	cxt = fdisk_new_context();
+	dp = fdisk_new_script(cxt);
+
+	fdisk_script_read_file(dp, f);
+	fclose(f);
+
+	fdisk_script_write_file(dp, stdout);
+	fdisk_unref_script(dp);
+	fdisk_unref_context(cxt);
+
+	close(fd);
+	unlink(name);
+
+	return 0;
+}
+#endif
 
 #ifdef TEST_PROGRAM
 static int test_dump(struct fdisk_test *ts, int argc, char *argv[])
