@@ -189,6 +189,21 @@ AS_IF([test "x$enable_ubsan" = xyes], [
 ])
 AC_SUBST([UBSAN_LDFLAGS])
 
+AC_ARG_ENABLE([fuzzing-engine],
+  AS_HELP_STRING([--enable-fuzzing-engine], [compile with fuzzing engine]),
+  [], [enable_fuzzing_engine=no]
+)
+AS_IF([test "x$enable_fuzzing_engine" = xyes -a "x$LIB_FUZZING_ENGINE" = x], [
+  UL_WARN_ADD([-fno-omit-frame-pointer])
+  UL_WARN_ADD([-gline-tables-only])
+  UL_WARN_ADD([-fsanitize=fuzzer-no-link])
+  FUZZING_ENGINE_LDFLAGS="-fsanitize=fuzzer-no-link"
+])
+AC_SUBST([FUZZING_ENGINE_LDFLAGS])
+AC_PROG_CXX
+AM_CONDITIONAL([FUZZING_ENGINE], [test "x$enable_fuzzing_engine" = xyes])
+AM_CONDITIONAL([OSS_FUZZ], [test "x$LIB_FUZZING_ENGINE" != x])
+
 dnl libtool-2
 LT_INIT
 

@@ -154,6 +154,19 @@ test_mount_debug_CFLAGS = $(libmount_tests_cflags)
 test_mount_debug_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_debug_LDADD = $(libmount_tests_ldadd)
 
+if FUZZING_ENGINE
+check_PROGRAMS += test_mount_fuzz
+
+test_mount_fuzz_SOURCES = libmount/src/fuzz.c
+
+# https://google.github.io/oss-fuzz/getting-started/new-project-guide/#Requirements
+nodist_EXTRA_test_mount_fuzz_SOURCES = dummy.cxx
+
+test_mount_fuzz_CFLAGS = $(libmount_tests_cflags)
+test_mount_fuzz_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_fuzz_LDADD = $(libmount_tests_ldadd) $(LIB_FUZZING_ENGINE)
+endif
+
 endif # BUILD_LIBMOUNT_TESTS
 
 

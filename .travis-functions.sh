@@ -40,10 +40,27 @@ shell_session_update() { :; }
 
 function xconfigure
 {
+	local gcc_version clang_version cxx
+
 	which "$CC"
 	"$CC" --version
 
-	./configure "$@" $OSX_CONFOPTS
+	if [[ "$CC" =~ ^clang-([0-9]+)$ ]]; then
+		clang_version=${BASH_REMATCH[1]}
+		cxx=clang++-${clang_version}
+	elif [[ "$CC" =~ ^gcc-([0-9]+)$ ]]; then
+		gcc_version=${BASH_REMATCH[1]}
+		cxx=g++-${gcc_version}
+	elif [[ "$CC" == "clang" ]]; then
+		cxx=clang++
+	elif [[ "$CC" == "gcc" ]]; then
+		cxx=g++
+	fi
+
+	which "$cxx"
+	"$cxx" --version
+
+	CC=$CC CXX=$cxx ./configure "$@" $OSX_CONFOPTS
 	err=$?
 	if [ "$DUMP_CONFIG_LOG" = "short" ]; then
 		grep -B1 -A10000 "^## Output variables" config.log | grep -v "_FALSE="
@@ -82,6 +99,10 @@ function check_nonroot
 		conf_opts="$conf_opts --enable-werror"
 	fi
 
+	if [[ "$CC" =~ "clang" ]]; then
+		conf_opts="$conf_opts --enable-fuzzing-engine"
+	fi
+
 	xconfigure $conf_opts || return
 	$MAKE || return
 
@@ -107,6 +128,10 @@ function check_root
 
 	if [ "$TRAVIS_OS_NAME" != "osx" -a "$TRAVIS_DIST" != "precise" ]; then
 		conf_opts="$conf_opts --enable-werror"
+	fi
+
+	if [[ "$CC" =~ "clang" ]]; then
+		conf_opts="$conf_opts --enable-fuzzing-engine"
 	fi
 
 	xconfigure $conf_opts || return

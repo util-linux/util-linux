@@ -18,6 +18,7 @@ TS_HELPER_LIBMOUNT_TAB="${ts_helpersdir}test_mount_tab"
 TS_HELPER_LIBMOUNT_UPDATE="${ts_helpersdir}test_mount_tab_update"
 TS_HELPER_LIBMOUNT_UTILS="${ts_helpersdir}test_mount_utils"
 TS_HELPER_LIBMOUNT_DEBUG="${ts_helpersdir}test_mount_debug"
+TS_HELPER_LIBMOUNT_FUZZ="${ts_helpersdir}test_mount_fuzz"
 TS_HELPER_LIBSMARTCOLS_FROMFILE="${ts_helpersdir}sample-scols-fromfile"
 TS_HELPER_LIBSMARTCOLS_TITLE="${ts_helpersdir}sample-scols-title"
 TS_HELPER_PYLIBMOUNT_CONTEXT="$top_srcdir/libmount/python/test_mount_context.py"
@@ -41,6 +42,7 @@ TS_HELPER_UUID_PARSER="${ts_helpersdir}test_uuid_parser"
 TS_HELPER_UUID_NAMESPACE="${ts_helpersdir}test_uuid_namespace"
 TS_HELPER_MBSENCODE="${ts_helpersdir}test_mbsencode"
 TS_HELPER_CAL="${ts_helpersdir}test_cal"
+TS_HELPER_LAST_FUZZ="${ts_helpersdir}test_last_fuzz"
 
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"${ts_commandsdir}addpart"}
