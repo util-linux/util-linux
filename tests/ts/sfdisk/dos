@@ -260,4 +260,17 @@ udevadm settle
 ts_finalize_subtest
 
 
+ts_init_subtest "sizes-vs-gaps"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG <<EOF
+2048 1023 L -
+4096 4095 L -
+8192 8191 L -
+EOF
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
 ts_finalize
