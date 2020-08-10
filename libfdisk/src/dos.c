@@ -1274,14 +1274,14 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			fdisk_sector_t last;
 
 			rc = find_last_free(cxt, is_logical, start, limit, &last);
-
 			if (rc == 0 && last - start + 1 < fdisk_partition_get_size(pa)) {
 				DBG(LABEL, ul_debug("DOS: area <%ju,%ju> too small [wanted=%ju aval=%ju]",
 							(uintmax_t) start, (uintmax_t) last,
 							fdisk_partition_get_size(pa),
 							last - start));
 
-				if (fdisk_partition_has_start(pa))
+				if (fdisk_partition_has_start(pa)
+				    && fdisk_partition_get_start(pa) <= last)
 					rc = -ENOSPC;
 				else {
 					start = last + 1;
