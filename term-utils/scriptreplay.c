@@ -128,9 +128,8 @@ setterm(struct termios *backup)
 	struct termios tattr;
 
 	if (tcgetattr(STDOUT_FILENO, backup) != 0) {
-		if (errno == EBADF)
-			err(EXIT_FAILURE, _("%d not valid fd"), STDOUT_FILENO);
-		/* errno == ENOTTY */
+		if (errno != ENOTTY) /* For debugger. */
+			err(EXIT_FAILURE, _("unexpected tcgetattr failure"));
 		return 0;
 	}
 	tattr = *backup;
