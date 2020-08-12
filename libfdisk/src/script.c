@@ -1329,11 +1329,13 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
 
 	assert(dp);
 	assert(f);
+	assert(bufsz);
 
 	DBG(SCRIPT, ul_debugobj(dp, " parsing line %zu", dp->nlines));
 
 	/* read the next non-blank non-comment line */
 	do {
+		buf[0] = '\0';
 		if (dp->fn_fgets) {
 			if (dp->fn_fgets(dp, buf, bufsz, f) == NULL)
 				return 1;
@@ -1376,7 +1378,7 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
  */
 int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 {
-	char buf[BUFSIZ];
+	char buf[BUFSIZ] = { '\0' };
 	int rc = 1;
 
 	assert(dp);
@@ -1624,7 +1626,7 @@ static int test_read(struct fdisk_test *ts, int argc, char *argv[])
 
 static int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 {
-	char buf[BUFSIZ];
+	char buf[BUFSIZ] = { '\0' };
 	struct fdisk_script *dp;
 	struct fdisk_context *cxt;
 	int rc = 0;
