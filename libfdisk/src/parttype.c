@@ -438,7 +438,7 @@ struct fdisk_parttype *fdisk_label_advparse_parttype(
 	struct fdisk_parttype *res = NULL;
 	unsigned int code = 0;
 
-	if (!lb || lb->nparttypes)
+	if (!lb || !lb->nparttypes)
 		return NULL;
 
 	DBG(LABEL, ul_debugobj(lb, "parsing '%s' (%s) type", str, lb->name));
