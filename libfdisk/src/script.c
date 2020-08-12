@@ -1071,7 +1071,7 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 
 		} else if (!strncasecmp(p, "type=", 5) ||
 			   !strncasecmp(p, "Id=", 3)) {		/* backward compatibility */
-			char *type;
+			char *type = NULL;
 
 			p += ((*p == 'I' || *p == 'i') ? 3 : 5); /* "Id=", "type=" */
 
@@ -1079,14 +1079,12 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			if (rc)
 				break;
 
+			fdisk_unref_parttype(pa->type);
 			pa->type = fdisk_label_advparse_parttype(script_get_label(dp),
 					type, FDISK_SCRIPT_PARTTYPE_PARSE_FLAGS);
 			free(type);
-
-			if (!pa->type) {
+			if (!pa->type)
 				rc = -EINVAL;
-				break;
-			}
 		} else {
 			DBG(SCRIPT, ul_debugobj(dp, "script parse error: unknown field '%s'", p));
 			rc = -EINVAL;
@@ -1197,10 +1195,10 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 			if (rc)
 				break;
 
+			fdisk_unref_parttype(pa->type);
 			pa->type = fdisk_label_advparse_parttype(script_get_label(dp),
 						str, FDISK_SCRIPT_PARTTYPE_PARSE_FLAGS);
 			free(str);
-
 			if (!pa->type)
 				rc = -EINVAL;
 			break;
