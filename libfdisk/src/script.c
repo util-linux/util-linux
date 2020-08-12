@@ -1032,8 +1032,13 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			p += 6;
 			rc = next_number(&p, &num, &pow);
 			if (!rc) {
-				if (pow)	/* specified as <num><suffix> */
+				if (pow) {	/* specified as <num><suffix> */
+					if (!dp->cxt->sector_size) {
+						rc = -EINVAL;
+						break;
+					}
 					num /= dp->cxt->sector_size;
+				}
 				fdisk_partition_set_start(pa, num);
 				fdisk_partition_start_follow_default(pa, 0);
 			}
@@ -1043,9 +1048,13 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			p += 5;
 			rc = next_number(&p, &num, &pow);
 			if (!rc) {
-				if (pow)	/* specified as <num><suffix> */
+				if (pow) {	/* specified as <num><suffix> */
+					if (!dp->cxt->sector_size) {
+						rc = -EINVAL;
+						break;
+					}
 					num /= dp->cxt->sector_size;
-				else		/* specified as number of sectors */
+				} else		/* specified as number of sectors */
 					fdisk_partition_size_explicit(pa, 1);
 				fdisk_partition_set_size(pa, num);
 				fdisk_partition_end_follow_default(pa, 0);
@@ -1159,8 +1168,13 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 
 				rc = next_number(&p, &num, &pow);
 				if (!rc) {
-					if (pow)	/* specified as <num><suffix> */
+					if (pow) {	/* specified as <num><suffix> */
+						if (!dp->cxt->sector_size) {
+							rc = -EINVAL;
+							break;
+						}
 						num /= dp->cxt->sector_size;
+					}
 					fdisk_partition_set_start(pa, num);
 					pa->movestart = sign == TK_MINUS ? FDISK_MOVE_DOWN :
 							sign == TK_PLUS  ? FDISK_MOVE_UP :
@@ -1179,9 +1193,13 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 				int pow = 0;
 				rc = next_number(&p, &num, &pow);
 				if (!rc) {
-					if (pow) /* specified as <size><suffix> */
+					if (pow) { /* specified as <size><suffix> */
+						if (!dp->cxt->sector_size) {
+							rc = -EINVAL;
+							break;
+						}
 						num /= dp->cxt->sector_size;
-					else	 /* specified as number of sectors */
+					} else	 /* specified as number of sectors */
 						fdisk_partition_size_explicit(pa, 1);
 					fdisk_partition_set_size(pa, num);
 					pa->resize = sign == TK_MINUS ? FDISK_RESIZE_REDUCE :
