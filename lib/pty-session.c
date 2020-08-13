@@ -600,7 +600,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 				/* data */
 				if (pfd[i].revents & POLLIN)
 					rc = handle_io(pty, pfd[i].fd, &eof);
-				/* EOF maybe detected in two ways; they are:
+				/* EOF maybe detected in two ways; they are as follows:
 				 *	A) poll() return POLLHUP event after close()
 				 *	B) read() returns 0 (no data)
 				 *
