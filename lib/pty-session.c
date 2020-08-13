@@ -3,7 +3,7 @@
  * proxy between the current std{in,out,etrr} and the child's pty. Advantages:
  *
  * - child has no access to parent's terminal (e.g. su --pty)
- * - parent can log all traffic between user and child's terminall (e.g. script(1))
+ * - parent can log all traffic between user and child's terminal (e.g. script(1))
  * - it's possible to start commands on terminal although parent has no terminal
  *
  * This code is in the public domain; do with it what you wish.
