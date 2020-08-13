@@ -939,7 +939,7 @@ static int next_number(char **s, uint64_t *num, int *power)
 
 static int next_string(char **s, char **str)
 {
-	char *tk;
+	char *tk, *p = NULL;
 	int rc = -EINVAL;
 
 	assert(s);
@@ -947,9 +947,11 @@ static int next_string(char **s, char **str)
 
 	tk = next_token(s);
 	if (tk) {
-		*str = strdup(tk);
-		rc = !*str ? -ENOMEM : 0;
+		p = strdup(tk);
+		rc = p ? 0 : -ENOMEM;
 	}
+
+	*str = p;
 	return rc;
 }
 
@@ -1086,18 +1088,19 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			   !strncasecmp(p, "Id=", 3)) {		/* backward compatibility */
 			char *type = NULL;
 
+			fdisk_unref_parttype(pa->type);
+			pa->type = NULL;
+
 			p += ((*p == 'I' || *p == 'i') ? 3 : 5); /* "Id=", "type=" */
 
 			rc = next_string(&p, &type);
-			if (rc)
-				break;
-
-			fdisk_unref_parttype(pa->type);
-			pa->type = fdisk_label_advparse_parttype(script_get_label(dp),
+			if (rc == 0) {
+				pa->type = fdisk_label_advparse_parttype(script_get_label(dp),
 					type, FDISK_SCRIPT_PARTTYPE_PARSE_FLAGS);
+				if (!pa->type)
+					rc = -EINVAL;
+			}
 			free(type);
-			if (!pa->type)
-				rc = -EINVAL;
 		} else {
 			DBG(SCRIPT, ul_debugobj(dp, "script parse error: unknown field '%s'", p));
 			rc = -EINVAL;
