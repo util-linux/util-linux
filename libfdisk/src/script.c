@@ -640,6 +640,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 			fputs("\"node\":", f);
 			fputs_quoted_json(p, f);
 			nvars++;
+			free(p);
 		}
 
 		if (fdisk_partition_has_start(pa)) {
@@ -741,6 +742,7 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 		if (p) {
 			DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
 			fprintf(f, "%s :", p);
+			free(p);
 		} else
 			fprintf(f, "%zu :", pa->partno + 1);
 
@@ -1072,14 +1074,17 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 
 		} else if (!strncasecmp(p, "attrs=", 6)) {
 			p += 6;
+			free(pa->attrs);
 			rc = next_string(&p, &pa->attrs);
 
 		} else if (!strncasecmp(p, "uuid=", 5)) {
 			p += 5;
+			free(pa->uuid);
 			rc = next_string(&p, &pa->uuid);
 
 		} else if (!strncasecmp(p, "name=", 5)) {
 			p += 5;
+			free(pa->name);
 			rc = next_string(&p, &pa->name);
 			if (!rc)
 				unhexmangle_string(pa->name);
@@ -1128,7 +1133,7 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 {
 	int rc = 0;
-	char *p = s, *str;
+	char *p = s;
 	struct fdisk_partition *pa;
 	enum { ITEM_START, ITEM_SIZE, ITEM_TYPE, ITEM_BOOTABLE };
 	int item = -1;
@@ -1213,6 +1218,9 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 			}
 			break;
 		case ITEM_TYPE:
+		{
+			char *str = NULL;
+
 			if (*p == ',' || *p == ';' || alone_sign(sign, p))
 				break;	/* use default type */
 
@@ -1227,6 +1235,7 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 			if (!pa->type)
 				rc = -EINVAL;
 			break;
+		}
 		case ITEM_BOOTABLE:
 			if (*p == ',' || *p == ';')
 				break;
