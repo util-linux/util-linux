@@ -17,6 +17,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
         f = fmemopen((char*) data, size, "re");
         assert(f);
 
+        mnt_table_enable_comments(tb, TRUE);
         (void) mnt_table_parse_stream(tb, f, "mountinfo");
 
         mnt_unref_table(tb);
