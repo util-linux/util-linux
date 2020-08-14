@@ -3,7 +3,7 @@
  * proxy between the current std{in,out,etrr} and the child's pty. Advantages:
  *
  * - child has no access to parent's terminal (e.g. su --pty)
- * - parent can log all traffic between user and child's terminall (e.g. script(1))
+ * - parent can log all traffic between user and child's terminal (e.g. script(1))
  * - it's possible to start commands on terminal although parent has no terminal
  *
  * This code is in the public domain; do with it what you wish.
@@ -113,7 +113,7 @@ pid_t ul_pty_get_child(struct ul_pty *pty)
 	return pty->child;
 }
 
-/* it's active when signals are redurected to sigfd */
+/* it's active when signals are redirected to sigfd */
 int ul_pty_is_running(struct ul_pty *pty)
 {
 	assert(pty);
@@ -479,7 +479,7 @@ static int handle_signal(struct ul_pty *pty, int fd)
 	case SIGQUIT:
 		DBG(SIG, ul_debugobj(pty, " get signal SIG{TERM,INT,QUIT}"));
 		pty->delivered_signal = info.ssi_signo;
-                /* Child termination is going to generate SIGCHILD (see above) */
+                /* Child termination is going to generate SIGCHLD (see above) */
 		if (pty->child > 0)
 	                kill(pty->child, SIGTERM);
 
@@ -515,9 +515,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 		[POLLFD_STDIN]	= { .fd = STDIN_FILENO, .events = POLLIN | POLLERR | POLLHUP }
 	};
 
-	/* We use signalfd and standard signals by handlers are blocked
-	 * at all
-	 */
+	/* We use signalfd, and standard signals by handlers are completely blocked */
 	assert(pty->sigfd >= 0);
 
 	pfd[POLLFD_SIGNAL].fd = pty->sigfd;
@@ -602,7 +600,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 				/* data */
 				if (pfd[i].revents & POLLIN)
 					rc = handle_io(pty, pfd[i].fd, &eof);
-				/* EOF maybe detected by two ways:
+				/* EOF maybe detected in two ways; they are as follows:
 				 *	A) poll() return POLLHUP event after close()
 				 *	B) read() returns 0 (no data)
 				 *
