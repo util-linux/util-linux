@@ -955,7 +955,7 @@ static int next_string(char **s, char **str)
 
 static int partno_from_devname(char *s)
 {
-	int pno;
+	intmax_t num;
 	size_t sz;
 	char *end, *p;
 
@@ -971,10 +971,15 @@ static int partno_from_devname(char *s)
 		return -1;
 	end = NULL;
 	errno = 0;
-	pno = strtol(p, &end, 10);
+	num = strtol(p, &end, 10);
 	if (errno || !end || p == end)
 		return -1;
-	return pno - 1;
+
+	if (num < INT32_MIN || num > INT32_MAX) {
+		errno = ERANGE;
+		return -1;
+	}
+	return num - 1;
 }
 
 #define FDISK_SCRIPT_PARTTYPE_PARSE_FLAGS \
