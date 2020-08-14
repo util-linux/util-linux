@@ -872,8 +872,6 @@ int main(int argc, char **argv)
 	lscpu_read_vulnerabilities(cxt);
 	lscpu_read_numas(cxt);
 	lscpu_read_topology(cxt);
-	lscpu_read_topology_ids(cxt);
-	lscpu_read_topology_polarization(cxt);
 
 	lscpu_decode_arm(cxt);
 

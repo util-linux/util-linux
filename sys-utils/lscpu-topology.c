@@ -184,6 +184,55 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	return 0;
 }
 
+static int read_ids(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
+{
+	struct path_cxt *sys = cxt->syscpu;
+	int num = cpu->logical_id;
+
+	if (ul_path_accessf(sys, F_OK, "cpu%d/topology", num) != 0)
+		return 0;
+
+	DBG(CPU, ul_debugobj(cpu, "#%d reading IDs", num));
+
+	if (ul_path_readf_s32(sys, &cpu->coreid, "cpu%d/topology/core_id", num) != 0)
+		cpu->coreid = -1;
+	if (ul_path_readf_s32(sys, &cpu->socketid, "cpu%d/topology/physical_package_id", num) != 0)
+		cpu->socketid = -1;
+	if (ul_path_readf_s32(sys, &cpu->bookid, "cpu%d/topology/book_id", num) != 0)
+		cpu->bookid = -1;
+	if (ul_path_readf_s32(sys, &cpu->drawerid, "cpu%d/topology/drawer_id", num) != 0)
+		cpu->drawerid = -1;
+
+	return 0;
+}
+
+static int read_polarization(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
+{
+	struct path_cxt *sys = cxt->syscpu;
+	int num = cpu->logical_id;
+	char mode[64];
+
+	if (ul_path_accessf(sys, F_OK, "cpu%d/polarization", num) != 0)
+		return 0;
+
+	ul_path_readf_buffer(sys, mode, sizeof(mode), "cpu%d/polarization", num);
+
+	DBG(CPU, ul_debugobj(cpu, "#%d polar=%s", num, mode));
+
+	if (strncmp(mode, "vertical:low", sizeof(mode)) == 0)
+		cpu->polarization = POLAR_VLOW;
+	else if (strncmp(mode, "vertical:medium", sizeof(mode)) == 0)
+		cpu->polarization = POLAR_VMEDIUM;
+	else if (strncmp(mode, "vertical:high", sizeof(mode)) == 0)
+		cpu->polarization = POLAR_VHIGH;
+	else if (strncmp(mode, "horizontal", sizeof(mode)) == 0)
+		cpu->polarization = POLAR_HORIZONTAL;
+	else
+		cpu->polarization = POLAR_UNKNOWN;
+
+	return 0;
+}
+
 int lscpu_read_topology(struct lscpu_cxt *cxt)
 {
 	size_t i;
@@ -192,71 +241,18 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 	for (i = 0; i < cxt->ncputypes; i++)
 		rc += cputype_read_topology(cxt, cxt->cputypes[i]);
 
+	for (i = 0; rc == 0 && i < cxt->npossibles; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+
+		if (!cpu || !cpu->type)
+			continue;
+
+		rc = read_ids(cxt, cpu);
+		if (rc == 0)
+			read_polarization(cxt, cpu);
+	}
+
 	return rc;
 }
 
-int lscpu_read_topology_ids(struct lscpu_cxt *cxt)
-{
-	struct path_cxt *sys = cxt->syscpu;
-	size_t i;
 
-	for (i = 0; i < cxt->npossibles; i++) {
-		struct lscpu_cpu *cpu = cxt->cpus[i];
-		int num;
-
-		if (!cpu)
-			continue;
-
-		num = cpu->logical_id;
-		if (ul_path_accessf(sys, F_OK, "cpu%d/topology", num) != 0)
-			continue;
-
-		DBG(CPU, ul_debugobj(cpu, "#%d reading IDs", num));
-
-		if (ul_path_readf_s32(sys, &cpu->coreid, "cpu%d/topology/core_id", num) != 0)
-			cpu->coreid = -1;
-		if (ul_path_readf_s32(sys, &cpu->socketid, "cpu%d/topology/physical_package_id", num) != 0)
-			cpu->socketid = -1;
-		if (ul_path_readf_s32(sys, &cpu->bookid, "cpu%d/topology/book_id", num) != 0)
-			cpu->bookid = -1;
-		if (ul_path_readf_s32(sys, &cpu->drawerid, "cpu%d/topology/drawer_id", num) != 0)
-			cpu->drawerid = -1;
-	}
-
-	return 0;
-}
-
-int lscpu_read_topology_polarization(struct lscpu_cxt *cxt)
-{
-	struct path_cxt *sys = cxt->syscpu;
-	size_t i;
-
-	for (i = 0; i < cxt->npossibles; i++) {
-		struct lscpu_cpu *cpu = cxt->cpus[i];
-		int num;
-		char mode[64];
-
-		if (!cpu || !cpu->type || cpu->type->dispatching < 0)
-			continue;
-
-		num = cpu->logical_id;
-		if (ul_path_accessf(sys, F_OK, "cpu%d/polarization", num) != 0)
-			continue;
-
-		ul_path_readf_buffer(sys, mode, sizeof(mode), "cpu%d/polarization", num);
-
-		DBG(CPU, ul_debugobj(cpu, "#%d polar=%s", num, mode));
-
-		if (strncmp(mode, "vertical:low", sizeof(mode)) == 0)
-			cpu->polarization = POLAR_VLOW;
-		else if (strncmp(mode, "vertical:medium", sizeof(mode)) == 0)
-			cpu->polarization = POLAR_VMEDIUM;
-		else if (strncmp(mode, "vertical:high", sizeof(mode)) == 0)
-			cpu->polarization = POLAR_VHIGH;
-		else if (strncmp(mode, "horizontal", sizeof(mode)) == 0)
-			cpu->polarization = POLAR_HORIZONTAL;
-		else
-			cpu->polarization = POLAR_UNKNOWN;
-	}
-	return 0;
-}
