@@ -257,6 +257,19 @@ static int read_configure(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	return 0;
 }
 
+static int read_mhz(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
+{
+	struct path_cxt *sys = cxt->syscpu;
+	int num = cpu->logical_id;
+	int mhz;
+
+	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/cpuinfo_max_freq", num) == 0)
+		cpu->mhz_max_freq = (float) mhz / 1000;
+	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/cpuinfo_min_freq", num) == 0)
+		cpu->mhz_min_freq = (float) mhz / 1000;
+	return 0;
+}
+
 int lscpu_read_topology(struct lscpu_cxt *cxt)
 {
 	size_t i;
@@ -278,6 +291,8 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 			rc = read_address(cxt, cpu);
 		if (!rc)
 			rc = read_configure(cxt, cpu);
+		if (!rc)
+			rc = read_mhz(cxt, cpu);
 	}
 
 	return rc;

@@ -90,10 +90,12 @@ struct lscpu_cpu {
 	struct lscpu_cputype *type;
 
 	int logical_id;
-	char	*mhz;
 
-	char	*dynamic_mhz;
-	char	*static_mhz;
+	char	*mhz;		/* max freq from cpuinfo */
+	char	*dynamic_mhz;   /* from cpuinf for s390 */
+	char	*static_mhz;	/* from cpuinf for s390 */
+	float	mhz_max_freq;	/* realtime freq from /sys/.../cpuinfo_max_freq */
+	float	mhz_min_freq;	/* realtime freq from /sys/.../cpuinfo_min_freq */
 
 	int	coreid;
 	int	socketid;
