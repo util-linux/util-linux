@@ -49,7 +49,6 @@ struct lscpu_cputype {
 	int	dispatching;	/* -1 if not evailable, DIST_* */
 	int	freqboost;	/* -1 if not evailable */
 
-	int	*addresses;	/* physical cpu addresses */
 	int	*configured;	/* cpu configured */
 	int	physsockets;	/* Physical sockets (modules) */
 	int	physchips;	/* Physical chips */
@@ -103,7 +102,7 @@ struct lscpu_cpu {
 	int	drawerid;
 
 	int	polarization;	/* POLAR_* */
-
+	int	address;	/* physical cpu address */
 };
 
 struct lscpu_arch {

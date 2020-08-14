@@ -233,6 +233,18 @@ static int read_polarization(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	return 0;
 }
 
+static int read_address(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
+{
+	struct path_cxt *sys = cxt->syscpu;
+	int num = cpu->logical_id;
+
+	if (ul_path_accessf(sys, F_OK, "cpu%d/address", num) != 0)
+		return 0;
+
+	ul_path_readf_s32(sys, &cpu->address, "cpu%d/address", num);
+	return 0;
+}
+
 int lscpu_read_topology(struct lscpu_cxt *cxt)
 {
 	size_t i;
@@ -248,8 +260,10 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 			continue;
 
 		rc = read_ids(cxt, cpu);
-		if (rc == 0)
-			read_polarization(cxt, cpu);
+		if (!rc)
+			rc = read_polarization(cxt, cpu);
+		if (!rc)
+			rc = read_address(cxt, cpu);
 	}
 
 	return rc;
