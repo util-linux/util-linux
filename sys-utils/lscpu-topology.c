@@ -245,6 +245,18 @@ static int read_address(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	return 0;
 }
 
+static int read_configure(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
+{
+	struct path_cxt *sys = cxt->syscpu;
+	int num = cpu->logical_id;
+
+	if (ul_path_accessf(sys, F_OK, "cpu%d/configure", num) != 0)
+		return 0;
+
+	ul_path_readf_s32(sys, &cpu->configured, "cpu%d/configure", num);
+	return 0;
+}
+
 int lscpu_read_topology(struct lscpu_cxt *cxt)
 {
 	size_t i;
@@ -264,6 +276,8 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 			rc = read_polarization(cxt, cpu);
 		if (!rc)
 			rc = read_address(cxt, cpu);
+		if (!rc)
+			rc = read_configure(cxt, cpu);
 	}
 
 	return rc;
