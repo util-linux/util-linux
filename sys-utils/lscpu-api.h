@@ -155,6 +155,25 @@ struct lscpu_virt {
 
 };
 
+struct lscpu_cache {
+	int		nth;		/* cache<number> from cpuinfo */
+	char		*name;
+	char		*type;
+	char		*allocation_policy;
+	char		*write_policy;
+
+	int		level;
+	uint64_t	size;
+
+	unsigned int	ways_of_associativity;
+	unsigned int	physical_line_partition;
+	unsigned int	number_of_sets;
+	unsigned int	coherency_line_size;
+
+	int		nsharedmaps;
+	cpu_set_t	**sharedmaps;
+};
+
 struct lscpu_cxt {
 	int maxcpus;		/* size in bits of kernel cpu mask */
 	const char *prefix;	/* path to /sys and /proc snapshot or NULL */
@@ -179,6 +198,12 @@ struct lscpu_cxt {
 
 	struct lscpu_vulnerability *vuls;	/* array of CPU vulnerabilities */
 	size_t  nvuls;				/* number of CPU vulnerabilities */
+
+	struct lscpu_cache *caches;
+	size_t ncaches;
+
+	struct lscpu_cache *ecaches;
+	size_t necaches;		/* extra caches (s390) from /proc/cpuinfo */
 
 	size_t nnodes;		/* number of NUMA modes */
 	int *idx2nodenum;	/* Support for discontinuous nodes */

@@ -216,6 +216,7 @@ enum {
 	PAT_TYPE,
 	PAT_VARIANT,
 	PAT_VENDOR,
+	PAT_CACHE
 };
 
 /*
@@ -278,6 +279,22 @@ static const struct cpuinfo_pattern cpu_patterns[] =
 
 };
 
+/*
+ * /proc/cpuinfo to lscpu_cache conversion
+ */
+#define DEF_PAT_CACHE(_str, _id) \
+	{ \
+		.id = (_id), \
+		.domain = CPUINFO_LINE_CACHE, \
+		.pattern = (_str) \
+	}
+
+static const struct cpuinfo_pattern cache_patterns[] =
+{
+	/* Sort by fields name! */
+        DEF_PAT_CACHE("cache",	PAT_CACHE),
+};
+
 #define CPUTYPE_PATTERN_BUFSZ	32
 
 static int cmp_pattern(const void *a0, const void *b0)
@@ -310,7 +327,7 @@ static int is_different_cputype(struct lscpu_cputype *ct, size_t offset, const c
 	return 0;
 }
 
-/* cannonicalize @str -- replaces number at the end with %d and return the
+/* cannonicalize @str -- remove number at the end return the
  * number by @keynum. This is usable for example for "processor 5" or "cache1"
  * cpuinfo lines */
 static char *key_cleanup(char *str, int *keynum)
@@ -320,13 +337,16 @@ static char *key_cleanup(char *str, int *keynum)
 
 	if (!sz)
 		return str;
-	i = --sz;
-	while (i > 0 && isdigit(str[i--]));
 
-	if (i + 1 < sz) {
-		i++;
+	for (i = sz; i > 0; i--) {
+		if (!isdigit(str[i - 1]))
+			break;
+	}
+
+	if (i < sz) {
 		*keynum = atoi(str + i);
 		str[i] = '\0';
+		rtrim_whitespace((unsigned char *)str);
 	}
 	return str;
 }
@@ -375,11 +395,80 @@ static const struct cpuinfo_pattern *cpuinfo_parse_line(char *str, char **value,
 			cmp_pattern)))
 		goto found;
 
+	/* CACHE */
+	if ((pat = bsearch(&key, cache_patterns,
+			ARRAY_SIZE(cache_patterns),
+			sizeof(struct cpuinfo_pattern),
+			cmp_pattern)))
+		goto found;
+
 	return NULL;
 found:
 	rtrim_whitespace((unsigned char *) v);
 	*value = v;
 	return pat;
+}
+
+/* Parse extra cache lines contained within /proc/cpuinfo but which are not
+ * part of the cache topology information within the sysfs filesystem.  This is
+ * true for all shared caches on e.g. s390. When there are layers of
+ * hypervisors in between it is not knows which CPUs share which caches.
+ * Therefore information about shared caches is only available in
+ * /proc/cpuinfo. Format is:
+ *
+ *  cache<nr> : level=<lvl> type=<type> scope=<scope> size=<size> line_size=<lsz> associativity=<as>
+ *
+ * the cache<nr> part is parsed in cpuinfo_parse_line, in this function parses part after ":".
+ */
+static int cpuinfo_parse_cache(struct lscpu_cxt *cxt, int keynum, char *data)
+{
+	struct lscpu_cache *cache;
+	long long size;
+	char *p, type;
+	int level;
+
+	DBG(GATHER, ul_debugobj(cxt, " parse cpuinfo cache '%s'", data));
+
+	p = strstr(data, "scope=") + 6;
+	/* Skip private caches, also present in sysfs */
+	if (!p || strncmp(p, "Private", 7) == 0)
+		return 0;
+	p = strstr(data, "level=");
+	if (!p || sscanf(p, "level=%d", &level) != 1)
+		return 0;
+	p = strstr(data, "type=") + 5;
+	if (!p || !*p)
+		return 0;
+	type = 0;
+	if (strncmp(p, "Data", 4) == 0)
+		type = 'd';
+	else if (strncmp(p, "Instruction", 11) == 0)
+		type = 'i';
+	else if (strncmp(p, "Unified", 7) == 0)
+		type = 'u';
+	p = strstr(data, "size=");
+	if (!p || sscanf(p, "size=%lld", &size) != 1)
+	       return 0;
+
+	cxt->necaches++;
+	cxt->ecaches = xrealloc(cxt->ecaches,
+				cxt->necaches * sizeof(struct lscpu_cache));
+	cache = &cxt->ecaches[cxt->necaches - 1];
+	memset(cache, 0 , sizeof(*cache));
+
+	if (type == 'i' || type == 'd')
+		xasprintf(&cache->name, "L%d%c", level, type);
+	else
+		xasprintf(&cache->name, "L%d", level);
+
+	cache->nth = keynum;
+	cache->level = level;
+	cache->size = size * 1024;
+
+	cache->type = type == 'i' ? xstrdup("Instruction") :
+		      type == 'd' ? xstrdup("Data") :
+		      type == 'u' ? xstrdup("Unified") : NULL;
+	return 1;
 }
 
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
@@ -459,7 +548,9 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 			strdup_to_offset(pr->curr_type, pattern->offset, value);
 			break;
 		case CPUINFO_LINE_CACHE:
-			/* not implemented yet */
+			if (pattern->id != PAT_CACHE)
+				break;
+			cpuinfo_parse_cache(cxt, keynum, value);
 			break;
 		}
 	} while (1);
@@ -802,6 +893,27 @@ struct lscpu_cxt *lscpu_new_context(void)
 	return xcalloc(1, sizeof(struct lscpu_cxt));
 }
 
+static void lscpu_free_caches(struct lscpu_cache *caches, size_t n)
+{
+	size_t i;
+
+	if (!caches)
+		return;
+
+	for (i = 0; i < n; i++) {
+		struct lscpu_cache *c = &caches[i];
+
+		DBG(MISC, ul_debug(" freeing #%zu cache", i));
+
+		free(c->name);
+		free(c->type);
+		free(c->allocation_policy);
+		free(c->write_policy);
+		free(c->sharedmaps);
+	}
+	free(caches);
+}
+
 void lscpu_free_context(struct lscpu_cxt *cxt)
 {
 	size_t i;
@@ -845,6 +957,8 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 
 	lscpu_free_virtualization(cxt->virt);
 	lscpu_free_architecture(cxt->arch);
+	lscpu_free_caches(cxt->ecaches, cxt->necaches);
+	lscpu_free_caches(cxt->caches, cxt->ncaches);
 
 	free(cxt);
 }
