@@ -481,7 +481,7 @@ static int is_terminated_by_blank(const char *str)
 	if (p == str)
 		return 1;		/* only '\n' */
 	p--;
-	while (p >= str && (*p == ' ' || *p == '\t'))
+	while (p > str && (*p == ' ' || *p == '\t'))
 		p--;
 	return *p == '\n' ? 1 : 0;
 }
@@ -553,22 +553,16 @@ next_line:
 		pa->line++;
 		s = strchr(pa->buf, '\n');
 		if (!s) {
+			DBG(TAB, ul_debugobj(tb, "%s:%zu: no final newline",
+						pa->filename, pa->line));
+
 			/* Missing final newline?  Otherwise an extremely */
 			/* long line - assume file was corrupted */
-			if (feof(pa->f)) {
-				DBG(TAB, ul_debugobj(tb,
-					"%s: no final newline",	pa->filename));
-				s = strchr(pa->buf, '\0');
-			} else {
-				DBG(TAB, ul_debugobj(tb,
-					"%s:%zu: missing newline at line",
-					pa->filename, pa->line));
-				goto err;
-			}
-		}
+			if (feof(pa->f))
+				s = memchr(pa->buf, '\0', pa->bufsiz);
 
 		/* comments parser */
-		if (tb->comms
+		} else if (tb->comms
 		    && (tb->fmt == MNT_FMT_GUESS || tb->fmt == MNT_FMT_FSTAB)
 		    && is_comment_line(pa->buf)) {
 			do {
@@ -584,9 +578,11 @@ next_line:
 
 		}
 
+		if (!s)
+			goto err;
 		*s = '\0';
-		if (--s >= pa->buf && *s == '\r')
-			*s = '\0';
+		if (s > pa->buf && *(s - 1)  == '\r')
+			*(--s) = '\0';
 		s = (char *) skip_blank(pa->buf);
 	} while (*s == '\0' || *s == '#');
 
