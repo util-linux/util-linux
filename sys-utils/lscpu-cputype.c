@@ -95,10 +95,10 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 	if (!ct)
 		return;
 
-	DBG(TYPE, ul_debugobj(ct, ">>> unref %d", ct->refcount - 1));
+	/*DBG(TYPE, ul_debugobj(ct, ">>> unref %d", ct->refcount - 1));*/
 
 	if (--ct->refcount <= 0) {
-		DBG(TYPE, ul_debugobj(ct, "  freeing"));
+		DBG(TYPE, ul_debugobj(ct, "  freeing %s/%s", ct->vendor, ct->model));
 		lscpu_cputype_free_topology(ct);
 		free(ct->vendor);
 		free(ct->machinetype);	/* s390 */
