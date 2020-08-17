@@ -134,32 +134,6 @@ struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cput
 	return ct;
 }
 
-static void lscpu_merge_cputype(struct lscpu_cputype *a, struct lscpu_cputype *b)
-{
-	if (!a->vendor && b->vendor)
-		a->vendor = xstrdup(b->vendor);
-	if (!a->machinetype && b->machinetype)
-		a->machinetype = xstrdup(b->machinetype);
-	if (!a->family && b->family)
-		a->family = xstrdup(b->family);
-	if (!a->model && b->model)
-		a->model = xstrdup(b->model);
-	if (!a->modelname && b->modelname)
-		a->modelname = xstrdup(b->modelname);
-	if (!a->revision && b->revision)
-		a->revision = xstrdup(b->revision);
-	if (!a->stepping && b->stepping)
-		a->stepping = xstrdup(b->stepping);
-	if (!a->bogomips && b->bogomips)
-		a->bogomips = xstrdup(b->bogomips);
-	if (!a->flags && b->flags)
-		a->flags = xstrdup(b->flags);
-	if (!a->mtid && b->mtid)
-		a->mtid = xstrdup(b->mtid);
-	if (!a->addrsz && b->addrsz)
-		a->addrsz = xstrdup(b->addrsz);
-}
-
 static void fprintf_cputypes(FILE *f, struct lscpu_cxt *cxt)
 {
 	size_t i;
