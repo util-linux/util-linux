@@ -279,14 +279,6 @@ static int cmp_pattern(const void *a0, const void *b0)
 	return strcmp(a->pattern, b->pattern);
 }
 
-static int cmp_cache(const void *a0, const void *b0)
-{
-	const struct lscpu_cache
-		*a = (const struct lscpu_cache *) a0,
-		*b = (const struct lscpu_cache *) b0;
-	return strcmp(a->name, b->name);
-}
-
 struct cpuinfo_parser {
 	struct lscpu_cxt	*cxt;
 	struct lscpu_cpu	*curr_cpu;
@@ -543,10 +535,7 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 	lscpu_unref_cpu(pr->curr_cpu);
 
 	fclose(fp);
-
-	if (cxt->ecaches)
-		qsort(cxt->ecaches, cxt->necaches,
-				sizeof(struct lscpu_cache), cmp_cache);
+	lscpu_sort_caches(cxt->ecaches, cxt->necaches);
 
 	return 0;
 }
@@ -880,27 +869,6 @@ struct lscpu_cxt *lscpu_new_context(void)
 	return xcalloc(1, sizeof(struct lscpu_cxt));
 }
 
-static void lscpu_free_caches(struct lscpu_cache *caches, size_t n)
-{
-	size_t i;
-
-	if (!caches)
-		return;
-
-	for (i = 0; i < n; i++) {
-		struct lscpu_cache *c = &caches[i];
-
-		DBG(MISC, ul_debug(" freeing #%zu cache", i));
-
-		free(c->name);
-		free(c->type);
-		free(c->allocation_policy);
-		free(c->write_policy);
-		free(c->sharedmaps);
-	}
-	free(caches);
-}
-
 void lscpu_free_context(struct lscpu_cxt *cxt)
 {
 	size_t i;
@@ -945,7 +913,6 @@ void lscpu_free_context(struct lscpu_cxt *cxt)
 	lscpu_free_virtualization(cxt->virt);
 	lscpu_free_architecture(cxt->arch);
 	lscpu_free_caches(cxt->ecaches, cxt->necaches);
-	lscpu_free_caches(cxt->caches, cxt->ncaches);
 
 	free(cxt);
 }

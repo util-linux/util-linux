@@ -49,6 +49,44 @@ void lscpu_cputype_free_topology(struct lscpu_cputype *ct)
 	free_cpuset_array(ct->socketmaps, ct->nsockets);
 	free_cpuset_array(ct->bookmaps, ct->nbooks);
 	free_cpuset_array(ct->drawermaps, ct->ndrawers);
+
+	lscpu_free_caches(ct->caches, ct->ncaches);
+}
+
+void lscpu_free_caches(struct lscpu_cache *caches, size_t n)
+{
+	size_t i;
+
+	if (!caches)
+		return;
+
+	for (i = 0; i < n; i++) {
+		struct lscpu_cache *c = &caches[i];
+
+		DBG(MISC, ul_debug(" freeing #%zu cache [%s]", i, c->name));
+
+		free(c->name);
+		free(c->type);
+		free(c->allocation_policy);
+		free(c->write_policy);
+
+		free_cpuset_array(c->sharedmaps, c->nsharedmaps);
+	}
+	free(caches);
+}
+
+static int cmp_cache(const void *a0, const void *b0)
+{
+	const struct lscpu_cache
+		*a = (const struct lscpu_cache *) a0,
+		*b = (const struct lscpu_cache *) b0;
+	return strcmp(a->name, b->name);
+}
+
+void lscpu_sort_caches(struct lscpu_cache *caches, size_t n)
+{
+	if (caches && n)
+		qsort(caches, n, sizeof(struct lscpu_cache), cmp_cache);
 }
 
 
@@ -184,6 +222,113 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	return 0;
 }
 
+static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cputype *ct, struct lscpu_cpu *cpu)
+{
+	char buf[256];
+	struct path_cxt *sys = cxt->syscpu;
+	int num = cpu->logical_id;
+	size_t i, setsize;
+
+	if (!ct->ncaches) {
+		while (ul_path_accessf(sys, F_OK,
+					"cpu%d/cache/index%zu",
+					num, ct->ncaches) == 0)
+			ct->ncaches++;
+
+		if (!ct->ncaches)
+			return 0;
+		ct->caches = xcalloc(ct->ncaches, sizeof(*ct->caches));
+	}
+
+	setsize = CPU_ALLOC_SIZE(cxt->maxcpus);
+
+	for (i = 0; i < ct->ncaches; i++) {
+		struct lscpu_cache *ca = &ct->caches[i];
+		cpu_set_t *map;
+
+		if (ul_path_accessf(sys, F_OK, "cpu%d/cache/index%zu", num, i) != 0)
+			continue;
+
+		if (!ca->name) {
+			int type = 0;
+
+			/* cache type */
+			if (ul_path_readf_string(sys, &ca->type,
+					"cpu%d/cache/index%zu/type", num, i) > 0) {
+				if (!strcmp(ca->type, "Data"))
+					type = 'd';
+				else if (!strcmp(ca->type, "Instruction"))
+					type = 'i';
+			}
+
+			/* cache level */
+			ul_path_readf_s32(sys, &ca->level,
+					"cpu%d/cache/index%zu/level", num, i);
+			if (type)
+				snprintf(buf, sizeof(buf), "L%d%c", ca->level, type);
+			else
+				snprintf(buf, sizeof(buf), "L%d", ca->level);
+
+			ca->name = xstrdup(buf);
+
+			ul_path_readf_u32(sys, &ca->ways_of_associativity,
+					"cpu%d/cache/index%zu/ways_of_associativity", num, i);
+			ul_path_readf_u32(sys, &ca->physical_line_partition,
+					"cpu%d/cache/index%zu/physical_line_partition", num, i);
+			ul_path_readf_u32(sys, &ca->number_of_sets,
+					"cpu%d/cache/index%zu/number_of_sets", num, i);
+			ul_path_readf_u32(sys, &ca->coherency_line_size,
+					"cpu%d/cache/index%zu/coherency_line_size", num, i);
+
+			ul_path_readf_string(sys, &ca->allocation_policy,
+					"cpu%d/cache/index%zu/allocation_policy", num, i);
+			ul_path_readf_string(sys, &ca->write_policy,
+					"cpu%d/cache/index%zu/write_policy", num, i);
+
+			/* cache size */
+			if (ul_path_readf_buffer(sys, buf, sizeof(buf),
+					"cpu%d/cache/index%zu/size", num, i) > 0)
+				parse_size(buf, &ca->size, NULL);
+			else
+				ca->size = 0;
+		}
+
+		/* information about how CPUs share different caches */
+		ul_path_readf_cpuset(sys, &map, cxt->maxcpus,
+				  "cpu%d/cache/index%zu/shared_cpu_map", num, i);
+
+		if (!ca->sharedmaps)
+			ca->sharedmaps = xcalloc(cxt->npossibles, sizeof(cpu_set_t *));
+
+		add_cpuset_to_array(ca->sharedmaps, &ca->nsharedmaps, map, setsize);
+	}
+
+	return 0;
+}
+
+/* Read cache for specified type */
+static int cputype_read_caches(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+{
+	size_t i;
+	int rc = 0;
+
+	DBG(TYPE, ul_debugobj(ct, "reading %s/%s/%s topology",
+				ct->vendor ?: "", ct->model ?: "", ct->modelname ?:""));
+
+	for (i = 0; i < cxt->npossibles; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+
+		if (!cpu || cpu->type != ct)
+			continue;
+		rc = read_caches(cxt, ct, cpu);
+		if (rc)
+			break;
+	}
+
+	lscpu_sort_caches(ct->caches, ct->ncaches);
+	return rc;
+}
+
 static int read_ids(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 {
 	struct path_cxt *sys = cxt->syscpu;
@@ -275,8 +420,10 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 	size_t i;
 	int rc = 0;
 
-	for (i = 0; i < cxt->ncputypes; i++)
+	for (i = 0; i < cxt->ncputypes; i++) {
 		rc += cputype_read_topology(cxt, cxt->cputypes[i]);
+		rc += cputype_read_caches(cxt, cxt->cputypes[i]);
+	}
 
 	for (i = 0; rc == 0 && i < cxt->npossibles; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];

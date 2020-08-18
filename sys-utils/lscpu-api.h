@@ -32,6 +32,25 @@ UL_DEBUG_DECLARE_MASK(lscpu);
 #define _PATH_SYS_CPU		_PATH_SYS_SYSTEM "/cpu"
 #define _PATH_SYS_NODE		_PATH_SYS_SYSTEM "/node"
 
+struct lscpu_cache {
+	int		nth;		/* cache<number> from cpuinfo */
+	char		*name;
+	char		*type;
+	char		*allocation_policy;
+	char		*write_policy;
+
+	int		level;
+	uint64_t	size;
+
+	unsigned int	ways_of_associativity;
+	unsigned int	physical_line_partition;
+	unsigned int	number_of_sets;
+	unsigned int	coherency_line_size;
+
+	int		nsharedmaps;
+	cpu_set_t	**sharedmaps;
+};
+
 struct lscpu_cputype {
 	int	refcount;
 
@@ -58,6 +77,9 @@ struct lscpu_cputype {
 	int	nsockets_per_book;
 	int	nbooks_per_drawer;
 	int	ndrawers_per_system;
+
+	struct lscpu_cache *caches;
+	size_t ncaches;
 
 	/* siblings maps */
 	int		ncores;
@@ -155,25 +177,6 @@ struct lscpu_virt {
 
 };
 
-struct lscpu_cache {
-	int		nth;		/* cache<number> from cpuinfo */
-	char		*name;
-	char		*type;
-	char		*allocation_policy;
-	char		*write_policy;
-
-	int		level;
-	uint64_t	size;
-
-	unsigned int	ways_of_associativity;
-	unsigned int	physical_line_partition;
-	unsigned int	number_of_sets;
-	unsigned int	coherency_line_size;
-
-	int		nsharedmaps;
-	cpu_set_t	**sharedmaps;
-};
-
 struct lscpu_cxt {
 	int maxcpus;		/* size in bits of kernel cpu mask */
 	const char *prefix;	/* path to /sys and /proc snapshot or NULL */
@@ -199,8 +202,6 @@ struct lscpu_cxt {
 	struct lscpu_vulnerability *vuls;	/* array of CPU vulnerabilities */
 	size_t  nvuls;				/* number of CPU vulnerabilities */
 
-	struct lscpu_cache *caches;
-	size_t ncaches;
 
 	struct lscpu_cache *ecaches;
 	size_t necaches;		/* extra caches (s390) from /proc/cpuinfo */
@@ -223,6 +224,9 @@ int lscpu_read_cpulists(struct lscpu_cxt *cxt);
 int lscpu_read_archext(struct lscpu_cxt *cxt);
 int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt);
 int lscpu_read_numas(struct lscpu_cxt *cxt);
+
+void lscpu_free_caches(struct lscpu_cache *caches, size_t n);
+void lscpu_sort_caches(struct lscpu_cache *caches, size_t n);
 
 int lscpu_read_topology(struct lscpu_cxt *cxt);
 void lscpu_cputype_free_topology(struct lscpu_cputype *ct);
