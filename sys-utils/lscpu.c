@@ -44,49 +44,30 @@
 #include "lscpu-api.h"
 
 static const char *virt_types[] = {
-	[VIRT_NONE]	= N_("none"),
-	[VIRT_PARA]	= N_("para"),
-	[VIRT_FULL]	= N_("full"),
-	[VIRT_CONT]	= N_("container"),
+	[VIRT_TYPE_NONE]	= N_("none"),
+	[VIRT_TYPE_PARA]	= N_("para"),
+	[VIRT_TYPE_FULL]	= N_("full"),
+	[VIRT_TYPE_CONTAINER]	= N_("container"),
 };
 
 static const char *hv_vendors[] = {
-	[HYPER_NONE]	= NULL,
-	[HYPER_XEN]	= "Xen",
-	[HYPER_KVM]	= "KVM",
-	[HYPER_MSHV]	= "Microsoft",
-	[HYPER_VMWARE]  = "VMware",
-	[HYPER_IBM]	= "IBM",
-	[HYPER_VSERVER]	= "Linux-VServer",
-	[HYPER_UML]	= "User-mode Linux",
-	[HYPER_INNOTEK]	= "Innotek GmbH",
-	[HYPER_HITACHI]	= "Hitachi",
-	[HYPER_PARALLELS] = "Parallels",
-	[HYPER_VBOX]	= "Oracle",
-	[HYPER_OS400]	= "OS/400",
-	[HYPER_PHYP]	= "pHyp",
-	[HYPER_SPAR]	= "Unisys s-Par",
-	[HYPER_WSL]	= "Windows Subsystem for Linux"
+	[VIRT_VENDOR_NONE]	= NULL,
+	[VIRT_VENDOR_XEN]	= "Xen",
+	[VIRT_VENDOR_KVM]	= "KVM",
+	[VIRT_VENDOR_MSHV]	= "Microsoft",
+	[VIRT_VENDOR_VMWARE]  = "VMware",
+	[VIRT_VENDOR_IBM]	= "IBM",
+	[VIRT_VENDOR_VSERVER]	= "Linux-VServer",
+	[VIRT_VENDOR_UML]	= "User-mode Linux",
+	[VIRT_VENDOR_INNOTEK]	= "Innotek GmbH",
+	[VIRT_VENDOR_HITACHI]	= "Hitachi",
+	[VIRT_VENDOR_PARALLELS] = "Parallels",
+	[VIRT_VENDOR_VBOX]	= "Oracle",
+	[VIRT_VENDOR_OS400]	= "OS/400",
+	[VIRT_VENDOR_PHYP]	= "pHyp",
+	[VIRT_VENDOR_SPAR]	= "Unisys s-Par",
+	[VIRT_VENDOR_WSL]	= "Windows Subsystem for Linux"
 };
-
-static const int hv_vendor_pci[] = {
-	[HYPER_NONE]	= 0x0000,
-	[HYPER_XEN]	= 0x5853,
-	[HYPER_KVM]	= 0x0000,
-	[HYPER_MSHV]	= 0x1414,
-	[HYPER_VMWARE]	= 0x15ad,
-	[HYPER_VBOX]	= 0x80ee,
-};
-
-static const int hv_graphics_pci[] = {
-	[HYPER_NONE]	= 0x0000,
-	[HYPER_XEN]	= 0x0001,
-	[HYPER_KVM]	= 0x0000,
-	[HYPER_MSHV]	= 0x5353,
-	[HYPER_VMWARE]	= 0x0710,
-	[HYPER_VBOX]	= 0xbeef,
-};
-
 
 /* dispatching modes */
 static const char *disp_modes[] = {
