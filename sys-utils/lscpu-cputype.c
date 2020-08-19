@@ -832,38 +832,3 @@ done:
 	ul_unref_path(sys);
 	return 0;
 }
-
-#ifdef TEST_PROGRAM_CPUTYPE
-/* TODO: move to lscpu.c */
-int main(int argc, char **argv)
-{
-	struct lscpu_cxt *cxt;
-
-	cxt = lscpu_new_context();
-
-	if (argc == 3 && strcmp(argv[1], "--prefix") == 0) {
-		cxt->prefix = argv[2];
-		cxt->noalive = 1;
-	}
-
-	lscpu_init_debug();
-
-	context_init_paths(cxt);
-
-	lscpu_read_cpulists(cxt);
-	lscpu_read_cpuinfo(cxt);
-	cxt->arch = lscpu_read_architecture(cxt);
-
-	lscpu_read_archext(cxt);
-	lscpu_read_vulnerabilities(cxt);
-	lscpu_read_numas(cxt);
-	lscpu_read_topology(cxt);
-
-	lscpu_decode_arm(cxt);
-
-	cxt->virt = lscpu_read_virtualization(cxt);
-
-	lscpu_free_context(cxt);
-	return EXIT_SUCCESS;
-}
-#endif /* TEST_PROGRAM_CPUTYPES */

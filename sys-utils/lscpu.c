@@ -1132,8 +1132,6 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	lscpu_init_debug();
-
 	cxt = lscpu_new_context();
 
 	while ((c = getopt_long(argc, argv, "aBbC::ce::hJp::s:xyV", longopts, NULL)) != -1) {
@@ -1234,53 +1232,25 @@ int main(int argc, char *argv[])
 		cxt->show_online = 1;
 		cxt->show_offline = cxt->mode == LSCPU_OUTPUT_READABLE ? 1 : 0;
 	}
+
+	lscpu_init_debug();
+
+	lscpu_context_init_paths(cxt);
+
+	lscpu_read_cpulists(cxt);
+	lscpu_read_cpuinfo(cxt);
+	cxt->arch = lscpu_read_architecture(cxt);
+
+	lscpu_read_archext(cxt);
+	lscpu_read_vulnerabilities(cxt);
+	lscpu_read_numas(cxt);
+	lscpu_read_topology(cxt);
+
+	lscpu_decode_arm(cxt);
+
+	cxt->virt = lscpu_read_virtualization(cxt);
+
 #ifdef LSCPU_OLD_OUTPUT_CODE
-	ul_path_init_debug();
-
-	/* /sys/devices/system/cpu */
-	desc->syscpu = ul_new_path(_PATH_SYS_CPU);
-	if (!desc->syscpu)
-		err(EXIT_FAILURE, _("failed to initialize CPUs sysfs handler"));
-	if (desc->prefix)
-		ul_path_set_prefix(desc->syscpu, desc->prefix);
-
-	/* /proc */
-	desc->procfs = ul_new_path("/proc");
-	if (!desc->procfs)
-		err(EXIT_FAILURE, _("failed to initialize procfs handler"));
-	if (desc->prefix)
-		ul_path_set_prefix(desc->procfs, desc->prefix);
-
-	read_basicinfo(desc, mod);
-
-	setsize = CPU_ALLOC_SIZE(maxcpus);
-
-	for (i = 0; i < desc->ncpuspos; i++) {
-		/* only consider present CPUs */
-		if (desc->present &&
-		    !CPU_ISSET_S(real_cpu_num(desc, i), setsize, desc->present))
-			continue;
-		read_topology(desc, i);
-		read_cache(desc, i);
-		read_polarization(desc, i);
-		read_address(desc, i);
-		read_configured(desc, i);
-		read_max_mhz(desc, i);
-		read_min_mhz(desc, i);
-	}
-
-	if (desc->caches)
-		qsort(desc->caches, desc->ncaches,
-				sizeof(struct cpu_cache), cachecmp);
-
-	if (desc->ecaches)
-		qsort(desc->ecaches, desc->necaches,
-				sizeof(struct cpu_cache), cachecmp);
-
-	read_nodes(desc);
-	read_hypervisor(desc, mod);
-	arm_cpu_decode(desc, mod);
-
 	switch(mod->mode) {
 	case LSCPU_OUTPUT_SUMMARY:
 		print_summary(desc, mod);
@@ -1343,8 +1313,6 @@ int main(int argc, char *argv[])
 		break;
 	}
 
-	ul_unref_path(desc->syscpu);
-	ul_unref_path(desc->procfs);
 #endif /* LSCPU_OLD_OUTPUT_CODE */
 
 	lscpu_free_context(cxt);
