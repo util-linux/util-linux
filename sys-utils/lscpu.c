@@ -380,7 +380,7 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 			int x = desc->polarization[idx];
 
 			snprintf(buf, bufsz, "%s",
-				 mod->mode == OUTPUT_PARSABLE ?
+				 mod->mode == LSCPU_OUTPUT_PARSABLE ?
 						polar_modes[x].parsable :
 						polar_modes[x].readable);
 		}
@@ -392,7 +392,7 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 	case COL_CPU_CONFIGURED:
 		if (!desc->configured)
 			break;
-		if (mod->mode == OUTPUT_PARSABLE)
+		if (mod->mode == LSCPU_OUTPUT_PARSABLE)
 			snprintf(buf, bufsz, "%s",
 				 desc->configured[idx] ? _("Y") : _("N"));
 		else
@@ -402,7 +402,7 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 	case COL_CPU_ONLINE:
 		if (!desc->online)
 			break;
-		if (mod->mode == OUTPUT_PARSABLE)
+		if (mod->mode == LSCPU_OUTPUT_PARSABLE)
 			snprintf(buf, bufsz, "%s",
 				 is_cpu_online(desc, cpu) ? _("Y") : _("N"));
 		else
@@ -1101,7 +1101,7 @@ int main(int argc, char *argv[])
 	cxt = lscpu_new_context();
 
 #ifdef LSCPU_OLD_OUTPUT_CODE
-	struct lscpu_modifier _mod = { .mode = OUTPUT_SUMMARY }, *mod = &_mod;
+	struct lscpu_modifier _mod = { .mode = LSCPU_OUTPUT_SUMMARY }, *mod = &_mod;
 	struct lscpu_desc _desc = { .flags = NULL }, *desc = &_desc;
 	int c, i, all = 0;
 	int columns[ARRAY_SIZE(coldescs_cpu)], ncolumns = 0;
@@ -1171,7 +1171,7 @@ int main(int argc, char *argv[])
 				if (ncolumns < 0)
 					return EXIT_FAILURE;
 			}
-			mod->mode = OUTPUT_CACHES;
+			mod->mode = LSCPU_OUTPUT_CACHES;
 			break;
 		case 'J':
 			mod->json = 1;
@@ -1187,7 +1187,7 @@ int main(int argc, char *argv[])
 				if (ncolumns < 0)
 					return EXIT_FAILURE;
 			}
-			mod->mode = c == 'p' ? OUTPUT_PARSABLE : OUTPUT_READABLE;
+			mod->mode = c == 'p' ? LSCPU_OUTPUT_PARSABLE : LSCPU_OUTPUT_READABLE;
 			break;
 		case 's':
 			desc->prefix = optarg;
@@ -1213,7 +1213,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (all && ncolumns == 0) {
-		size_t sz, maxsz = mod->mode == OUTPUT_CACHES ?
+		size_t sz, maxsz = mod->mode == LSCPU_OUTPUT_CACHES ?
 				ARRAY_SIZE(coldescs_cache) :
 				ARRAY_SIZE(coldescs_cpu);
 
@@ -1221,7 +1221,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = sz;
 	}
 
-	if (cpu_modifier_specified && mod->mode == OUTPUT_SUMMARY) {
+	if (cpu_modifier_specified && mod->mode == LSCPU_OUTPUT_SUMMARY) {
 		fprintf(stderr,
 			_("%s: options --all, --online and --offline may only "
 			  "be used with options --extended or --parse.\n"),
@@ -1237,7 +1237,7 @@ int main(int argc, char *argv[])
 	/* set default cpu display mode if none was specified */
 	if (!mod->online && !mod->offline) {
 		mod->online = 1;
-		mod->offline = mod->mode == OUTPUT_READABLE ? 1 : 0;
+		mod->offline = mod->mode == LSCPU_OUTPUT_READABLE ? 1 : 0;
 	}
 
 	ul_path_init_debug();
@@ -1287,10 +1287,10 @@ int main(int argc, char *argv[])
 	arm_cpu_decode(desc, mod);
 
 	switch(mod->mode) {
-	case OUTPUT_SUMMARY:
+	case LSCPU_OUTPUT_SUMMARY:
 		print_summary(desc, mod);
 		break;
-	case OUTPUT_CACHES:
+	case LSCPU_OUTPUT_CACHES:
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_CACHE_NAME;
 			columns[ncolumns++] = COL_CACHE_ONESIZE;
@@ -1304,7 +1304,7 @@ int main(int argc, char *argv[])
 		}
 		print_caches_readable(desc, columns, ncolumns, mod);
 		break;
-	case OUTPUT_PARSABLE:
+	case LSCPU_OUTPUT_PARSABLE:
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_CPU_CPU;
 			columns[ncolumns++] = COL_CPU_CORE;
@@ -1315,7 +1315,7 @@ int main(int argc, char *argv[])
 		}
 		print_cpus_parsable(desc, columns, ncolumns, mod);
 		break;
-	case OUTPUT_READABLE:
+	case LSCPU_OUTPUT_READABLE:
 		if (!ncolumns) {
 			/* No list was given. Just print whatever is there. */
 			columns[ncolumns++] = COL_CPU_CPU;

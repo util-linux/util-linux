@@ -179,6 +179,13 @@ struct lscpu_virt {
 
 };
 
+enum {
+	LSCPU_OUTPUT_SUMMARY = 0,	/* default */
+	LSCPU_OUTPUT_CACHES,
+	LSCPU_OUTPUT_PARSABLE,
+	LSCPU_OUTPUT_READABLE
+};
+
 struct lscpu_cxt {
 	int maxcpus;		/* size in bits of kernel cpu mask */
 	const char *prefix;	/* path to /sys and /proc snapshot or NULL */
@@ -212,7 +219,16 @@ struct lscpu_cxt {
 	int *idx2nodenum;	/* Support for discontinuous nodes */
 	cpu_set_t **nodemaps;	/* array with NUMA nodes */
 
-	unsigned int noalive : 1;
+	int mode;	/* LSCPU_OUTPUT_* */
+
+	unsigned int noalive : 1,
+		     show_online : 1,
+		     show_offline : 1,
+		     show_physical : 1,
+		     hex : 1,
+		     json : 1,
+		     bytes : 1;
+
 };
 
 struct lscpu_cputype *lscpu_new_cputype(void);
