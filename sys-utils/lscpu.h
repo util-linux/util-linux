@@ -249,9 +249,6 @@ struct lscpu_cpu *lscpu_cpus_loopup_by_type(struct lscpu_cxt *cxt, struct lscpu_
 
 void lscpu_decode_arm(struct lscpu_cxt *cxt);
 
-struct lscpu_cxt *lscpu_new_context(void);
-void lscpu_free_context(struct lscpu_cxt *cxt);
-
 int lookup(char *line, char *pattern, char **value);
 
 struct lscpu_dmi_header

@@ -171,7 +171,6 @@ static void lscpu_init_debug(void)
 	__UL_INIT_DEBUG_FROM_ENV(lscpu, LSCPU_DEBUG_, 0, LSCPU_DEBUG);
 }
 
-
 static int
 cpu_column_name_to_id(const char *name, size_t namesz)
 {
@@ -200,6 +199,79 @@ cache_column_name_to_id(const char *name, size_t namesz)
 	}
 	warnx(_("unknown column: %s"), name);
 	return -1;
+}
+
+static void lscpu_context_init_paths(struct lscpu_cxt *cxt)
+{
+	DBG(MISC, ul_debugobj(cxt, "initialize paths"));
+	ul_path_init_debug();
+
+	/* /sys/devices/system/cpu */
+	cxt->syscpu = ul_new_path(_PATH_SYS_CPU);
+	if (!cxt->syscpu)
+		err(EXIT_FAILURE, _("failed to initialize CPUs sysfs handler"));
+	if (cxt->prefix)
+		ul_path_set_prefix(cxt->syscpu, cxt->prefix);
+
+	/* /proc */
+	cxt->procfs = ul_new_path("/proc");
+	if (!cxt->procfs)
+		err(EXIT_FAILURE, _("failed to initialize procfs handler"));
+	if (cxt->prefix)
+		ul_path_set_prefix(cxt->procfs, cxt->prefix);
+}
+
+static struct lscpu_cxt *lscpu_new_context(void)
+{
+	return xcalloc(1, sizeof(struct lscpu_cxt));
+}
+
+static void lscpu_free_context(struct lscpu_cxt *cxt)
+{
+	size_t i;
+
+	if (!cxt)
+		return;
+
+	DBG(MISC, ul_debugobj(cxt, "freeing context"));
+
+	DBG(MISC, ul_debugobj(cxt, " de-initialize paths"));
+	ul_unref_path(cxt->syscpu);
+	ul_unref_path(cxt->procfs);
+
+	DBG(MISC, ul_debugobj(cxt, " freeing cpus"));
+	for (i = 0; i < cxt->npossibles; i++) {
+		lscpu_unref_cpu(cxt->cpus[i]);
+		cxt->cpus[i] = NULL;
+	}
+	DBG(MISC, ul_debugobj(cxt, " freeing types"));
+	for (i = 0; i < cxt->ncputypes; i++) {
+		lscpu_unref_cputype(cxt->cputypes[i]);
+		cxt->cputypes[i] = NULL;
+	}
+
+	free(cxt->present);
+	free(cxt->online);
+	free(cxt->cputypes);
+	free(cxt->cpus);
+
+	for (i = 0; i < cxt->nvuls; i++) {
+		free(cxt->vuls[i].name);
+		free(cxt->vuls[i].text);
+	}
+	free(cxt->vuls);
+
+	for (i = 0; i < cxt->nnodes; i++)
+		free(cxt->nodemaps[i]);
+
+	free(cxt->nodemaps);
+	free(cxt->idx2nodenum);
+
+	lscpu_free_virtualization(cxt->virt);
+	lscpu_free_architecture(cxt->arch);
+	lscpu_free_caches(cxt->ecaches, cxt->necaches);
+
+	free(cxt);
 }
 
 #ifdef LSCPU_OLD_OUTPUT_CODE	/* temporary disabled for revrite */
@@ -1022,8 +1094,11 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char *argv[])
 {
+	struct lscpu_cxt *cxt;
 
 	lscpu_init_debug();
+
+	cxt = lscpu_new_context();
 
 #ifdef LSCPU_OLD_OUTPUT_CODE
 	struct lscpu_modifier _mod = { .mode = OUTPUT_SUMMARY }, *mod = &_mod;
@@ -1276,5 +1351,8 @@ int main(int argc, char *argv[])
 	ul_unref_path(desc->syscpu);
 	ul_unref_path(desc->procfs);
 #endif /* LSCPU_OLD_OUTPUT_CODE */
+
+	lscpu_free_context(cxt);
+
 	return EXIT_SUCCESS;
 }

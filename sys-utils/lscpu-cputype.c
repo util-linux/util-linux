@@ -6,27 +6,6 @@
 
 #include "fileutils.h"
 
-static void context_init_paths(struct lscpu_cxt *cxt)
-{
-	DBG(MISC, ul_debugobj(cxt, "initialize paths"));
-	ul_path_init_debug();
-
-	/* /sys/devices/system/cpu */
-	cxt->syscpu = ul_new_path(_PATH_SYS_CPU);
-	if (!cxt->syscpu)
-		err(EXIT_FAILURE, _("failed to initialize CPUs sysfs handler"));
-	if (cxt->prefix)
-		ul_path_set_prefix(cxt->syscpu, cxt->prefix);
-
-	/* /proc */
-	cxt->procfs = ul_new_path("/proc");
-	if (!cxt->procfs)
-		err(EXIT_FAILURE, _("failed to initialize procfs handler"));
-	if (cxt->prefix)
-		ul_path_set_prefix(cxt->procfs, cxt->prefix);
-}
-
-
 /* Lookup a pattern and get the value for format  "<pattern> : <key>"
  */
 int lookup(char *line, char *pattern, char **value)
@@ -856,59 +835,6 @@ done:
 
 #ifdef TEST_PROGRAM_CPUTYPE
 /* TODO: move to lscpu.c */
-struct lscpu_cxt *lscpu_new_context(void)
-{
-	return xcalloc(1, sizeof(struct lscpu_cxt));
-}
-
-void lscpu_free_context(struct lscpu_cxt *cxt)
-{
-	size_t i;
-
-	if (!cxt)
-		return;
-
-	DBG(MISC, ul_debugobj(cxt, "freeing context"));
-
-	DBG(MISC, ul_debugobj(cxt, " de-initialize paths"));
-	ul_unref_path(cxt->syscpu);
-	ul_unref_path(cxt->procfs);
-
-	DBG(MISC, ul_debugobj(cxt, " freeing cpus"));
-	for (i = 0; i < cxt->npossibles; i++) {
-		lscpu_unref_cpu(cxt->cpus[i]);
-		cxt->cpus[i] = NULL;
-	}
-	DBG(MISC, ul_debugobj(cxt, " freeing types"));
-	for (i = 0; i < cxt->ncputypes; i++) {
-		lscpu_unref_cputype(cxt->cputypes[i]);
-		cxt->cputypes[i] = NULL;
-	}
-
-	free(cxt->present);
-	free(cxt->online);
-	free(cxt->cputypes);
-	free(cxt->cpus);
-
-	for (i = 0; i < cxt->nvuls; i++) {
-		free(cxt->vuls[i].name);
-		free(cxt->vuls[i].text);
-	}
-	free(cxt->vuls);
-
-	for (i = 0; i < cxt->nnodes; i++)
-		free(cxt->nodemaps[i]);
-
-	free(cxt->nodemaps);
-	free(cxt->idx2nodenum);
-
-	lscpu_free_virtualization(cxt->virt);
-	lscpu_free_architecture(cxt->arch);
-	lscpu_free_caches(cxt->ecaches, cxt->necaches);
-
-	free(cxt);
-}
-
 int main(int argc, char **argv)
 {
 	struct lscpu_cxt *cxt;
