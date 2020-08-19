@@ -41,7 +41,6 @@
 #include "optutils.h"
 
 #include "lscpu.h"
-#include "lscpu-api.h"
 
 static const char *virt_types[] = {
 	[VIRT_TYPE_NONE]	= N_("none"),

@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "lscpu-api.h"
+#include "lscpu.h"
 
 /* add @set to the @ary, unnecessary set is deallocated. */
 static int add_cpuset_to_array(cpu_set_t **ary, int *items, cpu_set_t *set, size_t setsize)

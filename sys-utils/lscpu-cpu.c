@@ -1,4 +1,4 @@
-#include "lscpu-api.h"
+#include "lscpu.h"
 
 struct lscpu_cpu *lscpu_new_cpu(int id)
 {

@@ -2,7 +2,7 @@
 #include <sys/utsname.h>
 #include <sys/personality.h>
 
-#include "lscpu-api.h"
+#include "lscpu.h"
 
 #include "fileutils.h"
 

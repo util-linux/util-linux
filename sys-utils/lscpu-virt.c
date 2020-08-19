@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "lscpu-api.h"
+#include "lscpu.h"
 
 #if (defined(__x86_64__) || defined(__i386__))
 # define INCLUDE_VMWARE_BDOOR

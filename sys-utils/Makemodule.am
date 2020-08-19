@@ -396,7 +396,7 @@ lscpu_SOURCES = sys-utils/lscpu.c \
 		sys-utils/lscpu-topology.c \
 		sys-utils/lscpu-virt.c \
 		sys-utils/lscpu-arm.c \
-		sys-utils/lscpu-api.h
+		sys-utils/lscpu.h
 lscpu_LDADD = $(LDADD) libcommon.la libsmartcols.la $(RTAS_LIBS)
 lscpu_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 dist_man_MANS += sys-utils/lscpu.1

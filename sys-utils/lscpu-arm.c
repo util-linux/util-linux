@@ -24,7 +24,7 @@
  *  - Ancient wisdom
  *  - SMBIOS tables (if applicable)
  */
-#include "lscpu-api.h"
+#include "lscpu.h"
 
 struct id_part {
     const int id;
