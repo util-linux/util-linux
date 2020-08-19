@@ -163,6 +163,15 @@ static struct lscpu_coldesc coldescs_cache[] =
 	[COL_CACHE_COHERENCYSIZE] = { "COHERENCY-SIZE", N_("minimum amount of data in bytes transferred from memory to cache"), SCOLS_FL_RIGHT }
 };
 
+UL_DEBUG_DEFINE_MASK(lscpu);
+UL_DEBUG_DEFINE_MASKNAMES(lscpu) = UL_DEBUG_EMPTY_MASKNAMES;
+
+static void lscpu_init_debug(void)
+{
+	__UL_INIT_DEBUG_FROM_ENV(lscpu, LSCPU_DEBUG_, 0, LSCPU_DEBUG);
+}
+
+
 static int
 cpu_column_name_to_id(const char *name, size_t namesz)
 {
@@ -1013,6 +1022,9 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char *argv[])
 {
+
+	lscpu_init_debug();
+
 #ifdef LSCPU_OLD_OUTPUT_CODE
 	struct lscpu_modifier _mod = { .mode = OUTPUT_SUMMARY }, *mod = &_mod;
 	struct lscpu_desc _desc = { .flags = NULL }, *desc = &_desc;

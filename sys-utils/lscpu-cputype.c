@@ -6,14 +6,6 @@
 
 #include "fileutils.h"
 
-UL_DEBUG_DEFINE_MASK(lscpu);
-UL_DEBUG_DEFINE_MASKNAMES(lscpu) = UL_DEBUG_EMPTY_MASKNAMES;
-
-static void lscpu_init_debug(void)
-{
-	__UL_INIT_DEBUG_FROM_ENV(lscpu, LSCPU_DEBUG_, 0, LSCPU_DEBUG);
-}
-
 static void context_init_paths(struct lscpu_cxt *cxt)
 {
 	DBG(MISC, ul_debugobj(cxt, "initialize paths"));
