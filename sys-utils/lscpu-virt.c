@@ -9,6 +9,20 @@
 
 #include "lscpu-api.h"
 
+#if (defined(__x86_64__) || defined(__i386__))
+# define INCLUDE_VMWARE_BDOOR
+#endif
+
+#ifdef INCLUDE_VMWARE_BDOOR
+# include <stdint.h>
+# include <signal.h>
+# include <strings.h>
+# include <setjmp.h>
+# ifdef HAVE_SYS_IO_H
+#  include <sys/io.h>
+# endif
+#endif
+
 /* Xen Domain feature flag used for /sys/hypervisor/properties/features */
 #define XENFEAT_supervisor_mode_kernel		3
 #define XENFEAT_mmu_pt_update_preserve_ad	5
