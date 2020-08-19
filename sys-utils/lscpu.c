@@ -1095,19 +1095,10 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	struct lscpu_cxt *cxt;
-
-	lscpu_init_debug();
-
-	cxt = lscpu_new_context();
-
-#ifdef LSCPU_OLD_OUTPUT_CODE
-	struct lscpu_modifier _mod = { .mode = LSCPU_OUTPUT_SUMMARY }, *mod = &_mod;
-	struct lscpu_desc _desc = { .flags = NULL }, *desc = &_desc;
-	int c, i, all = 0;
+	int c, all = 0;
 	int columns[ARRAY_SIZE(coldescs_cpu)], ncolumns = 0;
 	int cpu_modifier_specified = 0;
-	size_t setsize;
-
+	size_t i;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1,
 	};
@@ -1141,24 +1132,28 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
+	lscpu_init_debug();
+
+	cxt = lscpu_new_context();
+
 	while ((c = getopt_long(argc, argv, "aBbC::ce::hJp::s:xyV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
 		case 'a':
-			mod->online = mod->offline = 1;
+			cxt->show_online = cxt->show_offline = 1;
 			cpu_modifier_specified = 1;
 			break;
 		case 'B':
-			mod->bytes = 1;
+			cxt->bytes = 1;
 			break;
 		case 'b':
-			mod->online = 1;
+			cxt->show_online = 1;
 			cpu_modifier_specified = 1;
 			break;
 		case 'c':
-			mod->offline = 1;
+			cxt->show_offline = 1;
 			cpu_modifier_specified = 1;
 			break;
 		case 'C':
@@ -1171,10 +1166,10 @@ int main(int argc, char *argv[])
 				if (ncolumns < 0)
 					return EXIT_FAILURE;
 			}
-			mod->mode = LSCPU_OUTPUT_CACHES;
+			cxt->mode = LSCPU_OUTPUT_CACHES;
 			break;
 		case 'J':
-			mod->json = 1;
+			cxt->json = 1;
 			break;
 		case 'p':
 		case 'e':
@@ -1187,17 +1182,17 @@ int main(int argc, char *argv[])
 				if (ncolumns < 0)
 					return EXIT_FAILURE;
 			}
-			mod->mode = c == 'p' ? LSCPU_OUTPUT_PARSABLE : LSCPU_OUTPUT_READABLE;
+			cxt->mode = c == 'p' ? LSCPU_OUTPUT_PARSABLE : LSCPU_OUTPUT_READABLE;
 			break;
 		case 's':
-			desc->prefix = optarg;
-			mod->system = SYSTEM_SNAPSHOT;
+			cxt->prefix = optarg;
+			cxt->noalive = 1;
 			break;
 		case 'x':
-			mod->hex = 1;
+			cxt->hex = 1;
 			break;
 		case 'y':
-			mod->physical = 1;
+			cxt->show_physical = 1;
 			break;
 		case OPT_OUTPUT_ALL:
 			all = 1;
@@ -1213,15 +1208,15 @@ int main(int argc, char *argv[])
 	}
 
 	if (all && ncolumns == 0) {
-		size_t sz, maxsz = mod->mode == LSCPU_OUTPUT_CACHES ?
+		size_t maxsz = cxt->mode == LSCPU_OUTPUT_CACHES ?
 				ARRAY_SIZE(coldescs_cache) :
 				ARRAY_SIZE(coldescs_cpu);
 
-		for (sz = 0; sz < maxsz; sz++)
-			columns[ncolumns++] = sz;
+		for (i = 0; i < maxsz; i++)
+			columns[ncolumns++] = i;
 	}
 
-	if (cpu_modifier_specified && mod->mode == LSCPU_OUTPUT_SUMMARY) {
+	if (cpu_modifier_specified && cxt->mode == LSCPU_OUTPUT_SUMMARY) {
 		fprintf(stderr,
 			_("%s: options --all, --online and --offline may only "
 			  "be used with options --extended or --parse.\n"),
@@ -1235,11 +1230,11 @@ int main(int argc, char *argv[])
 	}
 
 	/* set default cpu display mode if none was specified */
-	if (!mod->online && !mod->offline) {
-		mod->online = 1;
-		mod->offline = mod->mode == LSCPU_OUTPUT_READABLE ? 1 : 0;
+	if (!cxt->show_online && !cxt->show_offline) {
+		cxt->show_online = 1;
+		cxt->show_offline = cxt->mode == LSCPU_OUTPUT_READABLE ? 1 : 0;
 	}
-
+#ifdef LSCPU_OLD_OUTPUT_CODE
 	ul_path_init_debug();
 
 	/* /sys/devices/system/cpu */
