@@ -35,6 +35,7 @@ UL_DEBUG_DECLARE_MASK(lscpu);
 #define _PATH_SYS_DMI_TYPE4	"/sys/firmware/dmi/entries/4-0/raw"
 
 struct lscpu_cache {
+	int		id;		/* unique identifier */
 	int		nth;		/* cache<number> from cpuinfo */
 	char		*name;
 	char		*type;
@@ -79,9 +80,6 @@ struct lscpu_cputype {
 	int	nsockets_per_book;
 	int	nbooks_per_drawer;
 	int	ndrawers_per_system;
-
-	struct lscpu_cache *caches;
-	size_t ncaches;
 
 	/* siblings maps */
 	int		ncores;
@@ -211,6 +209,8 @@ struct lscpu_cxt {
 	struct lscpu_vulnerability *vuls;	/* array of CPU vulnerabilities */
 	size_t  nvuls;				/* number of CPU vulnerabilities */
 
+	struct lscpu_cache *caches;
+	size_t ncaches;
 
 	struct lscpu_cache *ecaches;
 	size_t necaches;		/* extra caches (s390) from /proc/cpuinfo */

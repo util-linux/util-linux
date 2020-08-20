@@ -269,7 +269,9 @@ static void lscpu_free_context(struct lscpu_cxt *cxt)
 
 	lscpu_free_virtualization(cxt->virt);
 	lscpu_free_architecture(cxt->arch);
+
 	lscpu_free_caches(cxt->ecaches, cxt->necaches);
+	lscpu_free_caches(cxt->caches, cxt->ncaches);
 
 	free(cxt);
 }

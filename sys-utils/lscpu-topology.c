@@ -49,8 +49,6 @@ void lscpu_cputype_free_topology(struct lscpu_cputype *ct)
 	free_cpuset_array(ct->socketmaps, ct->nsockets);
 	free_cpuset_array(ct->bookmaps, ct->nbooks);
 	free_cpuset_array(ct->drawermaps, ct->ndrawers);
-
-	lscpu_free_caches(ct->caches, ct->ncaches);
 }
 
 void lscpu_free_caches(struct lscpu_cache *caches, size_t n)
@@ -63,7 +61,8 @@ void lscpu_free_caches(struct lscpu_cache *caches, size_t n)
 	for (i = 0; i < n; i++) {
 		struct lscpu_cache *c = &caches[i];
 
-		DBG(MISC, ul_debug(" freeing #%zu cache [%s]", i, c->name));
+		DBG(MISC, ul_debug(" freeing cache #%zu %s::%d",
+					i, c->name, c->id));
 
 		free(c->name);
 		free(c->type);
@@ -222,48 +221,87 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	return 0;
 }
 
-static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cputype *ct, struct lscpu_cpu *cpu)
+/*
+ * The cache is identifued by type+level+id.
+ */
+static struct lscpu_cache *get_cache(struct lscpu_cxt *cxt,
+				const char *type, int level, int id)
+{
+	size_t i;
+
+	for (i = 0; i < cxt->ncaches; i++) {
+		struct lscpu_cache *ca = &cxt->caches[i];
+		if (ca->id == id &&
+		    ca->level == level &&
+		    strcmp(ca->type, type) == 0)
+			return ca;
+	}
+	return NULL;
+}
+
+static struct lscpu_cache *add_cache(struct lscpu_cxt *cxt,
+				const char *type, int level, int id)
+{
+	struct lscpu_cache *ca;
+
+	cxt->ncaches++;
+	cxt->caches = xrealloc(cxt->caches,
+			       cxt->ncaches * sizeof(*cxt->caches));
+
+	ca = &cxt->caches[cxt->ncaches - 1];
+	memset(ca, 0 , sizeof(*ca));
+
+	ca->id = id;
+	ca->level = level;
+	ca->type = xstrdup(type);
+
+	DBG(GATHER, ul_debugobj(cxt, "add cache %s%d::%d", type, level, id));
+
+	return ca;
+}
+
+static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 {
 	char buf[256];
 	struct path_cxt *sys = cxt->syscpu;
 	int num = cpu->logical_id;
-	size_t i, setsize;
+	size_t i, ncaches, setsize;
 
-	if (!ct->ncaches) {
-		while (ul_path_accessf(sys, F_OK,
-					"cpu%d/cache/index%zu",
-					num, ct->ncaches) == 0)
-			ct->ncaches++;
-
-		if (!ct->ncaches)
-			return 0;
-		ct->caches = xcalloc(ct->ncaches, sizeof(*ct->caches));
-	}
+	ncaches = cxt->ncaches;
+	while (ul_path_accessf(sys, F_OK,
+				"cpu%d/cache/index%zu",
+				num, ncaches) == 0)
+		ncaches++;
 
 	setsize = CPU_ALLOC_SIZE(cxt->maxcpus);
 
-	for (i = 0; i < ct->ncaches; i++) {
-		struct lscpu_cache *ca = &ct->caches[i];
+	for (i = 0; i < ncaches; i++) {
+		struct lscpu_cache *ca;
 		cpu_set_t *map;
+		int id, level;
 
-		if (ul_path_accessf(sys, F_OK, "cpu%d/cache/index%zu", num, i) != 0)
+		if (ul_path_readf_s32(sys, &id, "cpu%d/cache/index%zu/id", num, i) != 0)
 			continue;
+		if (ul_path_readf_s32(sys, &level, "cpu%d/cache/index%zu/level", num, i) != 0)
+			continue;
+		if (ul_path_readf_buffer(sys, buf, sizeof(buf),
+                                        "cpu%d/cache/index%zu/type", num, i) <= 0)
+			continue;
+
+		ca = get_cache(cxt, buf, level, id);
+		if (!ca)
+			ca = add_cache(cxt, buf, level, id);
 
 		if (!ca->name) {
 			int type = 0;
 
-			/* cache type */
-			if (ul_path_readf_string(sys, &ca->type,
-					"cpu%d/cache/index%zu/type", num, i) > 0) {
-				if (!strcmp(ca->type, "Data"))
-					type = 'd';
-				else if (!strcmp(ca->type, "Instruction"))
-					type = 'i';
-			}
+			assert(ca->type);
 
-			/* cache level */
-			ul_path_readf_s32(sys, &ca->level,
-					"cpu%d/cache/index%zu/level", num, i);
+			if (!strcmp(ca->type, "Data"))
+				type = 'd';
+			else if (!strcmp(ca->type, "Instruction"))
+				type = 'i';
+
 			if (type)
 				snprintf(buf, sizeof(buf), "L%d%c", ca->level, type);
 			else
@@ -304,29 +342,6 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cputype *ct, struct l
 	}
 
 	return 0;
-}
-
-/* Read cache for specified type */
-static int cputype_read_caches(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
-{
-	size_t i;
-	int rc = 0;
-
-	DBG(TYPE, ul_debugobj(ct, "reading %s/%s/%s topology",
-				ct->vendor ?: "", ct->model ?: "", ct->modelname ?:""));
-
-	for (i = 0; i < cxt->npossibles; i++) {
-		struct lscpu_cpu *cpu = cxt->cpus[i];
-
-		if (!cpu || cpu->type != ct)
-			continue;
-		rc = read_caches(cxt, ct, cpu);
-		if (rc)
-			break;
-	}
-
-	lscpu_sort_caches(ct->caches, ct->ncaches);
-	return rc;
 }
 
 static int read_ids(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
@@ -420,10 +435,8 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 	size_t i;
 	int rc = 0;
 
-	for (i = 0; i < cxt->ncputypes; i++) {
+	for (i = 0; i < cxt->ncputypes; i++)
 		rc += cputype_read_topology(cxt, cxt->cputypes[i]);
-		rc += cputype_read_caches(cxt, cxt->cputypes[i]);
-	}
 
 	for (i = 0; rc == 0 && i < cxt->npossibles; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
@@ -440,7 +453,11 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 			rc = read_configure(cxt, cpu);
 		if (!rc)
 			rc = read_mhz(cxt, cpu);
+		if (!rc)
+			rc = read_caches(cxt, cpu);
 	}
+
+	lscpu_sort_caches(cxt->caches, cxt->ncaches);
 
 	return rc;
 }
