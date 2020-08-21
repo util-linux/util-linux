@@ -593,8 +593,6 @@ void lscpu_free_architecture(struct lscpu_arch *ar)
 
 int lscpu_read_cpulists(struct lscpu_cxt *cxt)
 {
-	size_t maxn;
-	size_t setsize;
 	cpu_set_t *cpuset = NULL;
 
 	assert(cxt);
@@ -613,12 +611,11 @@ int lscpu_read_cpulists(struct lscpu_cxt *cxt)
 		 * real /sys, let's use any crazy number... */
 		cxt->maxcpus = 2048;
 
-	maxn = cxt->maxcpus;
-	setsize = CPU_ALLOC_SIZE(maxn);
+	cxt->setsize = CPU_ALLOC_SIZE(cxt->maxcpus);
 
 	/* create CPUs from possible mask */
-	if (ul_path_readf_cpulist(cxt->syscpu, &cpuset, maxn, "possible") == 0) {
-		lscpu_create_cpus(cxt, cpuset, setsize);
+	if (ul_path_readf_cpulist(cxt->syscpu, &cpuset, cxt->maxcpus, "possible") == 0) {
+		lscpu_create_cpus(cxt, cpuset, cxt->setsize);
 		cpuset_free(cpuset);
 		cpuset = NULL;
 	} else
@@ -627,12 +624,12 @@ int lscpu_read_cpulists(struct lscpu_cxt *cxt)
 
 
 	/* get mask for present CPUs */
-	if (ul_path_readf_cpulist(cxt->syscpu, &cxt->present, maxn, "present") == 0)
-		cxt->npresents = CPU_COUNT_S(setsize, cxt->present);
+	if (ul_path_readf_cpulist(cxt->syscpu, &cxt->present, cxt->maxcpus, "present") == 0)
+		cxt->npresents = CPU_COUNT_S(cxt->setsize, cxt->present);
 
 	/* get mask for online CPUs */
-	if (ul_path_readf_cpulist(cxt->syscpu, &cxt->online, maxn, "online") == 0)
-		cxt->nonlines = CPU_COUNT_S(setsize, cxt->online);
+	if (ul_path_readf_cpulist(cxt->syscpu, &cxt->online, cxt->maxcpus, "online") == 0)
+		cxt->nonlines = CPU_COUNT_S(cxt->setsize, cxt->online);
 
 	return 0;
 }

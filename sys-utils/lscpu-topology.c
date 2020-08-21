@@ -92,13 +92,12 @@ void lscpu_sort_caches(struct lscpu_cache *caches, size_t n)
 /* Read topology for specified type */
 static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
-	size_t i, setsize, npos;
+	size_t i, npos;
 	struct path_cxt *sys;
 	int nthreads = 0, sw_topo = 0;
 	FILE *fd;
 
 	sys = cxt->syscpu;				/* /sys/devices/system/cpu/ */
-	setsize = CPU_ALLOC_SIZE(cxt->maxcpus);		/* CPU set size */
 	npos = cxt->npossibles;				/* possible CPUs */
 
 	DBG(TYPE, ul_debugobj(ct, "reading %s/%s/%s topology",
@@ -130,7 +129,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		ul_path_readf_cpuset(sys, &drawer_siblings, cxt->maxcpus,
 					"cpu%d/topology/drawer_siblings", num);
 
-		n = CPU_COUNT_S(setsize, thread_siblings);
+		n = CPU_COUNT_S(cxt->setsize, thread_siblings);
 		if (!n)
 			n = 1;
 		if (n > nthreads)
@@ -154,13 +153,13 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			ct->drawermaps = xcalloc(npos, sizeof(cpu_set_t *));
 
 		/* add to topology maps */
-		add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, setsize);
-		add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, setsize);
+		add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, cxt->setsize);
+		add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, cxt->setsize);
 
 		if (book_siblings)
-			add_cpuset_to_array(ct->bookmaps, &ct->nbooks, book_siblings, setsize);
+			add_cpuset_to_array(ct->bookmaps, &ct->nbooks, book_siblings, cxt->setsize);
 		if (drawer_siblings)
-			add_cpuset_to_array(ct->drawermaps, &ct->ndrawers, drawer_siblings, setsize);
+			add_cpuset_to_array(ct->drawermaps, &ct->ndrawers, drawer_siblings, cxt->setsize);
 
 	}
 
@@ -277,15 +276,13 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	char buf[256];
 	struct path_cxt *sys = cxt->syscpu;
 	int num = cpu->logical_id;
-	size_t i, ncaches, setsize;
+	size_t i, ncaches;
 
 	ncaches = cxt->ncaches;
 	while (ul_path_accessf(sys, F_OK,
 				"cpu%d/cache/index%zu",
 				num, ncaches) == 0)
 		ncaches++;
-
-	setsize = CPU_ALLOC_SIZE(cxt->maxcpus);
 
 	for (i = 0; i < ncaches; i++) {
 		struct lscpu_cache *ca;
@@ -350,7 +347,7 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 		if (!ca->sharedmaps)
 			ca->sharedmaps = xcalloc(cxt->npossibles, sizeof(cpu_set_t *));
 
-		add_cpuset_to_array(ca->sharedmaps, &ca->nsharedmaps, map, setsize);
+		add_cpuset_to_array(ca->sharedmaps, &ca->nsharedmaps, map, cxt->setsize);
 	}
 
 	return 0;

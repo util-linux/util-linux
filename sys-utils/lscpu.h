@@ -186,6 +186,7 @@ enum {
 
 struct lscpu_cxt {
 	int maxcpus;		/* size in bits of kernel cpu mask */
+	size_t setsize;
 	const char *prefix;	/* path to /sys and /proc snapshot or NULL */
 
 	struct path_cxt	*syscpu; /* _PATH_SYS_CPU path handler */
@@ -230,6 +231,14 @@ struct lscpu_cxt {
 		     bytes : 1;
 
 };
+
+#define is_cpu_online(_cxt, _cpu) \
+		((_cxt) && (_cpu) && (_cxt)->online && \
+		 CPU_ISSET_S((_cpu)->logical_id, (_cxt)->setsize, (_cxt)->online))
+
+#define is_cpu_present(_cxt, _cpu) \
+		((_cxt) && (_cpu) && (_cxt)->present && \
+		 CPU_ISSET_S((_cpu)->logical_id, (_cxt)->setsize, (_cxt)->present))
 
 struct lscpu_cputype *lscpu_new_cputype(void);
 void lscpu_ref_cputype(struct lscpu_cputype *ct);
