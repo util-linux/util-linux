@@ -790,32 +790,6 @@ print_cpuset(struct libscols_table *tb,
 	}
 }
 
-static int get_cache_full_size(struct lscpu_desc *desc,
-		struct cpu_cache *ca, uint64_t *res)
-{
-	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
-	int i, nshares = 0;
-
-	/* Count number of CPUs which shares the cache */
-	for (i = 0; i < desc->ncpuspos; i++) {
-		int cpu = real_cpu_num(desc, i);
-
-		if (desc->present && !is_cpu_present(desc, cpu))
-			continue;
-		if (CPU_ISSET_S(cpu, setsize, ca->sharedmaps[0]))
-			nshares++;
-	}
-
-	/* Correction for CPU threads */
-	if (desc->nthreads > desc->ncores)
-		nshares /= (desc->nthreads / desc->ncores);
-	if (nshares < 1)
-		nshares = 1;
-
-	*res = (desc->ncores / nshares) * ca->size;
-	return 0;
-}
-
 /*
  * default output
  */

@@ -221,6 +221,19 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	return 0;
 }
 
+/* count size of all instancess of the "name" */
+size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name)
+{
+	size_t i, sz = 0;
+
+	for (i = 0; i < cxt->ncaches; i++) {
+		if (strcmp(cxt->caches[i].name, name) == 0)
+			sz += cxt->caches[i].size;
+	}
+
+	return sz;
+}
+
 /*
  * The cache is identifued by type+level+id.
  */
@@ -256,7 +269,6 @@ static struct lscpu_cache *add_cache(struct lscpu_cxt *cxt,
 	ca->type = xstrdup(type);
 
 	DBG(GATHER, ul_debugobj(cxt, "add cache %s%d::%d", type, level, id));
-
 	return ca;
 }
 
@@ -458,6 +470,10 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 	}
 
 	lscpu_sort_caches(cxt->caches, cxt->ncaches);
+	DBG(GATHER, ul_debugobj(cxt, " L1d: %zu", lscpu_get_cache_full_size(cxt, "L1d")));
+	DBG(GATHER, ul_debugobj(cxt, " L1i: %zu", lscpu_get_cache_full_size(cxt, "L1i")));
+	DBG(GATHER, ul_debugobj(cxt, " L2: %zu", lscpu_get_cache_full_size(cxt, "L2")));
+	DBG(GATHER, ul_debugobj(cxt, " L3: %zu", lscpu_get_cache_full_size(cxt, "L3")));
 
 	return rc;
 }

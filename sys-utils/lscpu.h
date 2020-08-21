@@ -209,7 +209,7 @@ struct lscpu_cxt {
 	struct lscpu_vulnerability *vuls;	/* array of CPU vulnerabilities */
 	size_t  nvuls;				/* number of CPU vulnerabilities */
 
-	struct lscpu_cache *caches;
+	struct lscpu_cache *caches;		/* all instances of the all caches from /sys */
 	size_t ncaches;
 
 	struct lscpu_cache *ecaches;
@@ -248,6 +248,8 @@ void lscpu_sort_caches(struct lscpu_cache *caches, size_t n);
 
 int lscpu_read_topology(struct lscpu_cxt *cxt);
 void lscpu_cputype_free_topology(struct lscpu_cputype *ct);
+
+size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name);
 
 struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt);
 void lscpu_free_architecture(struct lscpu_arch *ar);
