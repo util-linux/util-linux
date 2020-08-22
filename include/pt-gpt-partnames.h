@@ -69,8 +69,11 @@ DEF_GUID("86ED10D5-B607-45BB-8957-D350F23D0571", N_("Linux root verity (IA-64)")
 DEF_GUID("7FFEC5C9-2D00-49B7-8941-3EA10A5586B7", N_("Linux plain dm-crypt")),
 DEF_GUID("CA7D7CCB-63ED-4C53-861C-1742536059CC", N_("Linux LUKS")),
 */
-/* Linux https://www.freedesktop.org/wiki/Specifications/BootLoaderSpec/ */
+/* Linux https://systemd.io/BOOT_LOADER_SPECIFICATION/ */
 DEF_GUID("BC13C2FF-59E6-4262-A352-B275FD6F7172", N_("Linux extended boot")),
+
+/* Linux https://systemd.io/HOME_DIRECTORY/ */
+DEF_GUID("773f91ef-66d4-49b5-bd83-d683bf40ad16", N_("Linux user's home")),
 
 /* FreeBSD */
 DEF_GUID("516E7CB4-6ECF-11D6-8FF8-00022D09712B", N_("FreeBSD data")),
