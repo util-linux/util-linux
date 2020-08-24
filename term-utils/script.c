@@ -208,7 +208,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -e, --return                  return exit code of the child process\n"), out);
 	fputs(_(" -f, --flush                   run flush after each write\n"), out);
 	fputs(_("     --force                   use output file even when it is a link\n"), out);
-	fputs(_(" -E, --echo <when>             echo input (auto, always or never)\n"), out);
+	fputs(_(" -E, --echo <when>             echo input (on/off)\n"), out);
 	fputs(_(" -o, --output-limit <size>     terminate if output files exceed size\n"), out);
 	fputs(_(" -q, --quiet                   be quiet\n"), out);
 
@@ -752,7 +752,7 @@ int main(int argc, char **argv)
 		.in  = { .ident = 'I' },
 	};
 	struct ul_pty_callbacks *cb;
-	int ch, format = 0, caught_signal = 0, rc = 0, echo = 0;
+	int ch, format = 0, caught_signal = 0, rc = 0, echo = 1;
 	const char *outfile = NULL, *infile = NULL;
 	const char *timingfile = NULL, *shell = NULL, *command = NULL;
 
@@ -789,6 +789,7 @@ int main(int argc, char **argv)
 	 * is a perl script, and does not handle numbers in locale format (not
 	 * even when "use locale;" is added).  So, since these numbers are not
 	 * for human consumption, it seems easiest to set LC_NUMERIC here.
+	 * Note: scriptreplay has been re-written in C now.
 	 */
 	setlocale(LC_NUMERIC, "C");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -798,12 +799,7 @@ int main(int argc, char **argv)
 	script_init_debug();
 	ON_DBG(PTY, ul_pty_init_debug(0xFFFF));
 
-	/* The default is to keep ECHO flag when stdin is not terminal. We need
-	 * it to make stdin (in case of "echo foo | script") log-able and
-	 * visible on terminal, and for backward compatibility.
-	 */
 	ctl.isterm = isatty(STDIN_FILENO);
-	echo = ctl.isterm ? 0 : 1;
 
 	while ((ch = getopt_long(argc, argv, "aB:c:eE:fI:O:o:qm:T:t::Vh", longopts, NULL)) != -1) {
 
@@ -817,12 +813,10 @@ int main(int argc, char **argv)
 			command = optarg;
 			break;
 		case 'E':
-			if (strcmp(optarg, "auto") == 0)
+			if (strcmp(optarg, "on") == 0)
 				; /* keep default */
-			else if (strcmp(optarg, "never") == 0)
+			else if (strcmp(optarg, "off") == 0)
 				echo = 0;
-			else if (strcmp(optarg, "always") == 0)
-				echo = 1;
 			else
 				errx(EXIT_FAILURE, _("unssuported echo mode: '%s'"), optarg);
 			break;

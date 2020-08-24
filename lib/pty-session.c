@@ -146,7 +146,7 @@ static void pty_signals_cleanup(struct ul_pty *pty)
 /* call me before fork() */
 int ul_pty_setup(struct ul_pty *pty)
 {
-	struct termios slave_attrs;
+	struct termios tattrs;
 	sigset_t ourset;
 	int rc = 0;
 
@@ -163,22 +163,22 @@ int ul_pty_setup(struct ul_pty *pty)
 			rc = -errno;
 			goto done;
 		}
+		tattrs = pty->stdin_attrs;
+		if (pty->slave_echo)
+			tattrs.c_lflag |= ECHO;
+		else
+			tattrs.c_lflag &= ~ECHO;
+
 		ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&pty->win);
 		/* create master+slave */
-		rc = openpty(&pty->master, &pty->slave, NULL, &pty->stdin_attrs, &pty->win);
+		rc = openpty(&pty->master, &pty->slave, NULL, &tattrs, &pty->win);
 		if (rc)
 			goto done;
 
 		/* set the current terminal to raw mode; pty_cleanup() reverses this change on exit */
-		slave_attrs = pty->stdin_attrs;
-		cfmakeraw(&slave_attrs);
+		cfmakeraw(&tattrs);
 
-		if (pty->slave_echo)
-			slave_attrs.c_lflag |= ECHO;
-		else
-			slave_attrs.c_lflag &= ~ECHO;
-
-		tcsetattr(STDIN_FILENO, TCSANOW, &slave_attrs);
+		tcsetattr(STDIN_FILENO, TCSANOW, &tattrs);
 	} else {
 	        DBG(SETUP, ul_debugobj(pty, "create for non-terminal"));
 
@@ -186,14 +186,14 @@ int ul_pty_setup(struct ul_pty *pty)
 		if (rc)
 			goto done;
 
-		tcgetattr(pty->slave, &slave_attrs);
+		tcgetattr(pty->slave, &tattrs);
 
 		if (pty->slave_echo)
-			slave_attrs.c_lflag |= ECHO;
+			tattrs.c_lflag |= ECHO;
 		else
-			slave_attrs.c_lflag &= ~ECHO;
+			tattrs.c_lflag &= ~ECHO;
 
-		tcsetattr(pty->slave, TCSANOW, &slave_attrs);
+		tcsetattr(pty->slave, TCSANOW, &tattrs);
 	}
 
 	sigfillset(&ourset);
@@ -571,16 +571,15 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 				rc = mainloop_callback(pty);
 				if (rc == 0)
 					continue;
-			} else
+			} else {
 				rc = 0;
+			}
 
 			DBG(IO, ul_debugobj(pty, "leaving poll() loop [timeout=%d, rc=%d]", timeout, rc));
 			break;
 		}
 		/* event */
 		for (i = 0; i < ARRAY_SIZE(pfd); i++) {
-			rc = 0;
-
 			if (pfd[i].revents == 0)
 				continue;
 
@@ -599,7 +598,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 			case POLLFD_MASTER:
 				/* data */
 				if (pfd[i].revents & POLLIN)
-					rc = handle_io(pty, pfd[i].fd, &eof);
+					handle_io(pty, pfd[i].fd, &eof);
 				/* EOF maybe detected in two ways; they are as follows:
 				 *	A) poll() return POLLHUP event after close()
 				 *	B) read() returns 0 (no data)
