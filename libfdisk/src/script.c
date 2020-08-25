@@ -604,7 +604,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 		else
 			fputs(fi->data, f);
 
-		if (!dp->table && fi == list_last_entry(&dp->headers, struct fdisk_scriptheader, headers))
+		if ((fi == list_last_entry(&dp->headers, struct fdisk_scriptheader, headers)) && (!dp->table || fdisk_table_is_empty(dp->table)))
 			fputc('\n', f);
 		else
 			fputs(",\n", f);
