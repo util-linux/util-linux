@@ -82,6 +82,10 @@ Table output is useful for pretty-printing.
 .IP "\fB\-N, \-\-table-columns\fP \fInames\fP"
 Specify the columns names by comma separated list of names. The names are used
 for the table header or to address column in option arguments.
+.IP "\fB\-l, \-\-table-columns-limit\fP \fInumber\fP"
+Specify maximal number of the input columns.
+The last column will contain all remaining line data if the limit is smaller
+than the number of the columns in the input data.
 .IP "\fB\-R, \-\-table-right\fP \fIcolumns\fP"
 Right align text in the specified columns.
 .IP "\fB\-T, \-\-table-truncate\fP \fIcolumns\fP"

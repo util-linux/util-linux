@@ -91,6 +91,7 @@ struct column_control {
 	wchar_t	**ents;		/* input entries */
 	size_t	nents;		/* number of entries */
 	size_t	maxlength;	/* longest input record (line) */
+	size_t  maxncols;	/* maximal numer of input columns */
 
 	unsigned int greedy :1,
 		     json :1,
@@ -427,18 +428,24 @@ static void modify_table(struct column_control *ctl)
 }
 
 
-static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
+static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 {
-	wchar_t *wcdata, *sv = NULL;
-	size_t n = 0;
+	wchar_t *wcdata, *sv = NULL, *wcs = wcs0;
+	size_t n = 0, nchars = 0;
 	struct libscols_line *ln = NULL;
 
 	if (!ctl->tab)
 		init_table(ctl);
-
-	while ((wcdata = local_wcstok(ctl, wcs, &sv))) {
+	do {
 		char *data;
 
+		if (ctl->maxncols && n + 1 == ctl->maxncols)
+			wcdata = wcs0 + nchars;
+		else
+			wcdata = local_wcstok(ctl, wcs, &sv);
+
+		if (!wcdata)
+			break;
 		if (scols_table_get_ncols(ctl->tab) < n + 1) {
 			if (scols_table_is_json(ctl->tab))
 				errx(EXIT_FAILURE, _("line %zu: for JSON the name of the "
@@ -453,6 +460,8 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
 				err(EXIT_FAILURE, _("failed to allocate output line"));
 		}
 
+		nchars += wcslen(wcdata) + 1;
+
 		data = wcs_to_mbs(wcdata);
 		if (!data)
 			err(EXIT_FAILURE, _("failed to allocate output data"));
@@ -460,7 +469,9 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
 			err(EXIT_FAILURE, _("failed to add output data"));
 		n++;
 		wcs = NULL;
-	}
+		if (ctl->maxncols && n == ctl->maxncols)
+			break;
+	} while (1);
 
 	return 0;
 }
@@ -633,6 +644,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -O, --table-order <columns>      specify order of output columns\n"), out);
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
+	fputs(_(" -l, --table-columns-limit <num>  maximal number of input columns\n"), out);
 	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
 	fputs(_(" -d, --table-noheadings           don't print header\n"), out);
 	fputs(_(" -e, --table-header-repeat        repeat header for each page\n"), out);
@@ -684,6 +696,7 @@ int main(int argc, char **argv)
 		{ "separator",           required_argument, NULL, 's' },
 		{ "table",               no_argument,       NULL, 't' },
 		{ "table-columns",       required_argument, NULL, 'N' },
+		{ "table-columns-limit", required_argument, NULL, 'l' },
 		{ "table-hide",          required_argument, NULL, 'H' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "table-noextreme",     required_argument, NULL, 'E' },
@@ -715,7 +728,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "c:dE:eH:hi:JLN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c:dE:eH:hi:Jl:LN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -744,6 +757,11 @@ int main(int argc, char **argv)
 			break;
 		case 'L':
 			ctl.tab_empty_lines = 1;
+			break;
+		case 'l':
+			ctl.maxncols = strtou32_or_err(optarg, _("invalid columns limit argument"));
+			if (ctl.maxncols == 0)
+				errx(EXIT_FAILURE, _("columns limit must be greater than zero"));
 			break;
 		case 'N':
 			ctl.tab_colnames = split_or_error(optarg, _("failed to parse column names"));
