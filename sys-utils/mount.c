@@ -45,6 +45,8 @@
 #define OPTUTILS_EXIT_CODE MNT_EX_USAGE
 #include "optutils.h"
 
+static struct ul_env_list *envs_removed;
+
 static int mk_exit_code(struct libmnt_context *cxt, int rc);
 
 static void suid_drop(struct libmnt_context *cxt)
@@ -65,6 +67,13 @@ static void suid_drop(struct libmnt_context *cxt)
 		errx(MNT_EX_FAIL, _("drop permissions failed."));
 
 	mnt_context_force_unrestricted(cxt);
+
+	/* restore "bad" environment variables */
+	if (envs_removed) {
+		env_list_setenv(envs_removed);
+		env_list_free(envs_removed);
+		envs_removed = NULL;
+	}
 }
 
 static void __attribute__((__noreturn__)) mount_print_version(void)
@@ -652,7 +661,7 @@ int main(int argc, char **argv)
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	sanitize_env();
+	__sanitize_env(&envs_removed);
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -991,6 +1000,7 @@ int main(int argc, char **argv)
 		success_message(cxt);
 done:
 	mnt_free_context(cxt);
+	env_list_free(envs_removed);
 	return rc;
 }
 

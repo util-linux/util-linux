@@ -43,6 +43,7 @@
 #include "optutils.h"
 
 static int quiet;
+static struct ul_env_list *envs_removed;
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
 			const char *filename, int line)
@@ -130,6 +131,13 @@ static void suid_drop(struct libmnt_context *cxt)
 		errx(MNT_EX_FAIL, _("drop permissions failed."));
 
 	mnt_context_force_unrestricted(cxt);
+
+	/* restore "bad" environment variables */
+	if (envs_removed) {
+		env_list_setenv(envs_removed);
+		env_list_free(envs_removed);
+		envs_removed = NULL;
+	}
 }
 
 static void success_message(struct libmnt_context *cxt)
@@ -486,7 +494,7 @@ int main(int argc, char **argv)
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	sanitize_env();
+	__sanitize_env(&envs_removed);
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -621,6 +629,8 @@ int main(int argc, char **argv)
 	}
 
 	mnt_free_context(cxt);
+	env_list_free(envs_removed);
+
 	return (rc < 256) ? rc : 255;
 }
 
