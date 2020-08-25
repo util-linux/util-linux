@@ -4,7 +4,14 @@
 #include "c.h"
 #include "nls.h"
 
+struct ul_env_list;
+
 extern void sanitize_env(void);
+extern void __sanitize_env(struct ul_env_list **org);
+
+extern int env_list_setenv(struct ul_env_list *ls);
+extern void env_list_free(struct ul_env_list *ls);
+
 extern char *safe_getenv(const char *arg);
 
 
