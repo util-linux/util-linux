@@ -5,7 +5,7 @@ _column_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-c'|'--output-width')
+		'-c'|'--output-width'|'-l'|'--table-columns-limit')
 			COMPREPLY=( $(compgen -W "number" -- $cur) )
 			return 0
 			;;
@@ -32,6 +32,7 @@ _column_module()
 				--table-name
 				--table-order
 				--table-columns
+				--table-columns-limit
 				--table-noextreme
 				--table-noheadings
 				--table-header-repeat
