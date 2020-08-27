@@ -146,7 +146,7 @@ static void pty_signals_cleanup(struct ul_pty *pty)
 /* call me before fork() */
 int ul_pty_setup(struct ul_pty *pty)
 {
-	struct termios slave_attrs;
+	struct termios attrs;
 	sigset_t ourset;
 	int rc = 0;
 
@@ -163,22 +163,22 @@ int ul_pty_setup(struct ul_pty *pty)
 			rc = -errno;
 			goto done;
 		}
+
+		attrs = pty->stdin_attrs;
+		if (pty->slave_echo)
+			attrs.c_lflag |= ECHO;
+		else
+			attrs.c_lflag &= ~ECHO;
+
 		ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&pty->win);
 		/* create master+slave */
-		rc = openpty(&pty->master, &pty->slave, NULL, &pty->stdin_attrs, &pty->win);
+		rc = openpty(&pty->master, &pty->slave, NULL, &attrs, &pty->win);
 		if (rc)
 			goto done;
 
 		/* set the current terminal to raw mode; pty_cleanup() reverses this change on exit */
-		slave_attrs = pty->stdin_attrs;
-		cfmakeraw(&slave_attrs);
-
-		if (pty->slave_echo)
-			slave_attrs.c_lflag |= ECHO;
-		else
-			slave_attrs.c_lflag &= ~ECHO;
-
-		tcsetattr(STDIN_FILENO, TCSANOW, &slave_attrs);
+		cfmakeraw(&attrs);
+		tcsetattr(STDIN_FILENO, TCSANOW, &attrs);
 	} else {
 	        DBG(SETUP, ul_debugobj(pty, "create for non-terminal"));
 
@@ -186,14 +186,14 @@ int ul_pty_setup(struct ul_pty *pty)
 		if (rc)
 			goto done;
 
-		tcgetattr(pty->slave, &slave_attrs);
+		tcgetattr(pty->slave, &attrs);
 
 		if (pty->slave_echo)
-			slave_attrs.c_lflag |= ECHO;
+			attrs.c_lflag |= ECHO;
 		else
-			slave_attrs.c_lflag &= ~ECHO;
+			attrs.c_lflag &= ~ECHO;
 
-		tcsetattr(pty->slave, TCSANOW, &slave_attrs);
+		tcsetattr(pty->slave, TCSANOW, &attrs);
 	}
 
 	sigfillset(&ourset);

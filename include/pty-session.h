@@ -81,7 +81,7 @@ struct ul_pty {
 	struct timeval	next_callback_time;
 
 	unsigned int isterm:1,		/* is stdin terminal? */
-		     slave_echo:1;	/* keep ECHO on stdin */
+		     slave_echo:1;	/* keep ECHO on pty slave */
 };
 
 void ul_pty_init_debug(int mask);
