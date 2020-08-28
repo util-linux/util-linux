@@ -735,7 +735,7 @@ PyTypeObject TableType = {
 	sizeof(TableObject), /*tp_basicsize*/
 	0, /*tp_itemsize*/
 	(destructor)Table_destructor, /*tp_dealloc*/
-	NULL, /*tp_print*/
+	0, /*tp_print*/
 	NULL, /*tp_getattr*/
 	NULL, /*tp_setattr*/
 	NULL, /*tp_compare*/
