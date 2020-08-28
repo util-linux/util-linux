@@ -856,7 +856,7 @@ static void loginpam_auth(struct login_context *cxt)
 		if (rc == PAM_USER_UNKNOWN && !show_unknown)
 			/*
 			 * Logging unknown usernames may be a security issue if
-			 * a user enters her password instead of her login name.
+			 * a user enters their password instead of their login name.
 			 */
 			cxt->username = NULL;
 		else
