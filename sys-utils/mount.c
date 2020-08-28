@@ -391,7 +391,7 @@ static struct libmnt_table *append_fstab(struct libmnt_context *cxt,
 
 /*
  * Check source and target paths -- non-root user should not be able to
- * resolve paths which are unreadable for him.
+ * resolve paths which are unreadable for them.
  */
 static int sanitize_paths(struct libmnt_context *cxt)
 {
