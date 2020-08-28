@@ -743,6 +743,7 @@ print_cpus_readable(struct lscpu_desc *desc, int cols[], int ncols,
 	scols_unref_table(table);
 }
 
+#endif
 
 static void __attribute__ ((__format__(printf, 3, 4)))
 	add_summary_sprint(struct libscols_table *tb,
@@ -770,22 +771,22 @@ static void __attribute__ ((__format__(printf, 3, 4)))
 		 err(EXIT_FAILURE, _("failed to add output data"));
 }
 
-#define add_summary_n(tb, txt, num)	add_summary_sprint(tb, txt, "%d", num)
+#define add_summary_n(tb, txt, num)	add_summary_sprint(tb, txt, "%zu", num)
 #define add_summary_s(tb, txt, str)	add_summary_sprint(tb, txt, "%s", str)
 
 static void
-print_cpuset(struct libscols_table *tb,
-	     const char *key, cpu_set_t *set, int hex)
+print_cpuset(struct lscpu_cxt *cxt,
+	     struct libscols_table *tb,
+	     const char *key, cpu_set_t *set)
 {
-	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
-	size_t setbuflen = 7 * maxcpus;
+	size_t setbuflen = 7 * cxt->maxcpus;
 	char setbuf[setbuflen], *p;
 
-	if (hex) {
-		p = cpumask_create(setbuf, setbuflen, set, setsize);
+	if (cxt->hex) {
+		p = cpumask_create(setbuf, setbuflen, set, cxt->setsize);
 		add_summary_s(tb, key, p);
 	} else {
-		p = cpulist_create(setbuf, setbuflen, set, setsize);
+		p = cpulist_create(setbuf, setbuflen, set, cxt->setsize);
 		add_summary_s(tb, key, p);
 	}
 }
@@ -793,12 +794,11 @@ print_cpuset(struct libscols_table *tb,
 /*
  * default output
  */
-static void
-print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
+static void print_summary(struct lscpu_cxt *cxt)
 {
+	struct lscpu_cputype *ct;
 	char buf[BUFSIZ];
-	int i = 0;
-	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
+	size_t i = 0;
 	struct libscols_table *tb;
 
 	scols_init_debug(0);
@@ -808,7 +808,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
 
 	scols_table_enable_noheadings(tb, 1);
-	if (mod->json) {
+	if (cxt->json) {
 		scols_table_enable_json(tb, 1);
 		scols_table_set_name(tb, "lscpu");
 	}
@@ -817,15 +817,18 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	    scols_table_new_column(tb, "data", 0, SCOLS_FL_NOEXTREMES | SCOLS_FL_WRAP) == NULL)
 		err(EXIT_FAILURE, _("failed to initialize output column"));
 
-	add_summary_s(tb, _("Architecture:"), desc->arch);
-	if (desc->mode) {
+	ct = lscpu_cputype_get_default(cxt);
+
+	if (cxt->arch)
+		add_summary_s(tb, _("Architecture:"), cxt->arch->name);
+	if (cxt->arch && (cxt->arch->bit32 || cxt->arch->bit64)) {
 		char *p = buf;
 
-		if (desc->mode & MODE_32BIT) {
+		if (cxt->arch->bit32) {
 			strcpy(p, "32-bit, ");
 			p += 8;
 		}
-		if (desc->mode & MODE_64BIT) {
+		if (cxt->arch->bit64) {
 			strcpy(p, "64-bit, ");
 			p += 8;
 		}
@@ -838,37 +841,41 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	add_summary_s(tb, _("Byte Order:"), "Big Endian");
 #endif
 
-	if (desc->addrsz)
-		add_summary_s(tb, _("Address sizes:"), desc->addrsz);
+	add_summary_n(tb, _("CPU(s):"), cxt->npresents);
 
-	add_summary_n(tb, _("CPU(s):"), desc->ncpus);
+	if (cxt->online)
+		print_cpuset(cxt, tb,
+				cxt->hex ? _("On-line CPU(s) mask:") :
+					   _("On-line CPU(s) list:"),
+				cxt->online);
 
-	if (desc->online)
-		print_cpuset(tb, mod->hex ? _("On-line CPU(s) mask:") :
-					    _("On-line CPU(s) list:"),
-				desc->online, mod->hex);
-
-	if (desc->online && CPU_COUNT_S(setsize, desc->online) != desc->ncpus) {
+	if (cxt->online && cxt->nonlines != cxt->npresents) {
 		cpu_set_t *set;
 
 		/* Linux kernel provides cpuset of off-line CPUs that contains
 		 * all configured CPUs (see /sys/devices/system/cpu/offline),
 		 * but want to print real (present in system) off-line CPUs only.
 		 */
-		set = cpuset_alloc(maxcpus, NULL, NULL);
+		set = cpuset_alloc(cxt->maxcpus, NULL, NULL);
 		if (!set)
 			err(EXIT_FAILURE, _("failed to callocate cpu set"));
-		CPU_ZERO_S(setsize, set);
-		for (i = 0; i < desc->ncpuspos; i++) {
-			int cpu = real_cpu_num(desc, i);
-			if (!is_cpu_online(desc, cpu) && is_cpu_present(desc, cpu))
-				CPU_SET_S(cpu, setsize, set);
+		CPU_ZERO_S(cxt->setsize, set);
+		for (i = 0; i < cxt->npossibles; i++) {
+			struct lscpu_cpu *cpu = cxt->cpus[i];
+
+			if (cpu && is_cpu_present(cxt, cpu) && !is_cpu_online(cxt, cpu))
+				CPU_SET_S(cpu->logical_id, cxt->setsize, set);
 		}
-		print_cpuset(tb, mod->hex ? _("Off-line CPU(s) mask:") :
-					    _("Off-line CPU(s) list:"),
-			     set, mod->hex);
+		print_cpuset(cxt, tb,
+				cxt->hex ? _("Off-line CPU(s) mask:") :
+					   _("Off-line CPU(s) list:"), set);
 		cpuset_free(set);
 	}
+
+	if (ct->addrsz)
+		add_summary_s(tb, _("Address sizes:"), ct->addrsz);
+
+#ifdef FOOOOOO
 
 	if (desc->nsockets) {
 		int threads_per_core, cores_per_socket, sockets_per_book;
@@ -1003,7 +1010,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	for (i = 0; i < desc->nnodes; i++) {
 		snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), desc->idx2nodenum[i]);
-		print_cpuset(tb, buf, desc->nodemaps[i], mod->hex);
+		print_cpuset(cxt, tb, buf, desc->nodemaps[i]);
 	}
 
 	if (desc->physsockets) {
@@ -1021,12 +1028,10 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	if (desc->flags)
 		add_summary_s(tb, _("Flags:"), desc->flags);
-
+#endif
 	scols_print_table(tb);
 	scols_unref_table(tb);
 }
-
-#endif /* LSCPU_OLD_OUTPUT_CODE */
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -1226,11 +1231,13 @@ int main(int argc, char *argv[])
 
 	cxt->virt = lscpu_read_virtualization(cxt);
 
-#ifdef LSCPU_OLD_OUTPUT_CODE
-	switch(mod->mode) {
+	switch(cxt->mode) {
 	case LSCPU_OUTPUT_SUMMARY:
-		print_summary(desc, mod);
+		print_summary(cxt);
 		break;
+	}
+
+#ifdef LSCPU_OLD_OUTPUT_CODE
 	case LSCPU_OUTPUT_CACHES:
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_CACHE_NAME;
