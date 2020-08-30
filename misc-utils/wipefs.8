@@ -138,10 +138,10 @@ Prints information about sda and all partitions on sda.
 .TP
 .B wipefs \-\-all \-\-backup /dev/sdb
 Erases all signatures from the device /dev/sdb and creates a signature backup
-file ~/wipefs-sdb-<offset>.bak for each signature.
+file \(ti/wipefs-sdb-<offset>.bak for each signature.
 .TP
-.B dd if=~/wipefs-sdb-0x00000438.bak of=/dev/sdb seek=$((0x00000438)) bs=1 conv=notrunc
-Restores an ext2 signature from the backup file  ~/wipefs-sdb-0x00000438.bak.
+.B dd if=\(ti/wipefs-sdb-0x00000438.bak of=/dev/sdb seek=$((0x00000438)) bs=1 conv=notrunc
+Restores an ext2 signature from the backup file \(ti/wipefs-sdb-0x00000438.bak.
 .SH AUTHORS
 Karel Zak <kzak@redhat.com>
 .SH SEE ALSO

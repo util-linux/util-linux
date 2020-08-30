@@ -205,8 +205,8 @@ loop control device
 The following commands can be used as an example of using the loop device.
 .nf
 .IP
-# dd if=/dev/zero of=~/file.img bs=1024k count=10
-# losetup \-\-find \-\-show ~/file.img
+# dd if=/dev/zero of=\(ti/file.img bs=1024k count=10
+# losetup \-\-find \-\-show \(ti/file.img
 /dev/loop0
 # mkfs \-t ext2 /dev/loop0
 # mount /dev/loop0 /mnt
