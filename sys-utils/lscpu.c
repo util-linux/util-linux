@@ -791,152 +791,37 @@ print_cpuset(struct lscpu_cxt *cxt,
 	}
 }
 
-/*
- * default output
- */
-static void print_summary(struct lscpu_cxt *cxt)
+static void
+print_summary_cputype(struct lscpu_cxt *cxt,
+		     struct lscpu_cputype *ct,
+		     struct libscols_table *tb)
 {
-	struct lscpu_cputype *ct;
-	char buf[BUFSIZ];
-	size_t i = 0;
-	struct libscols_table *tb;
+	if (ct->vendor)
+		add_summary_s(tb, _("Vendor ID:"), ct->vendor);
+	if (ct->machinetype)
+		add_summary_s(tb, _("Machine type:"), ct->machinetype);
+	if (ct->family)
+		add_summary_s(tb, _("CPU family:"), ct->family);
+	if (ct->modelname)
+		add_summary_s(tb, _("Model name:"), ct->modelname);
+	if (ct->model || ct->revision)
+		add_summary_s(tb, _("Model:"), ct->revision ? ct->revision : ct->model);
 
-	scols_init_debug(0);
+	add_summary_n(tb, _("Thread(s) per core:"), ct->nthreads_per_core);
+	add_summary_n(tb, _("Core(s) per socket:"), ct->ncores_per_socket);
+	if (ct->nbooks) {
+		add_summary_n(tb, _("Socket(s) per book:"), ct->nsockets_per_book);
+		if (ct->ndrawers_per_system) {
+			add_summary_n(tb, _("Book(s) per drawer:"), ct->nbooks_per_drawer);
+			add_summary_n(tb, _("Drawer(s):"), ct->ndrawers_per_system);
+		} else
+			add_summary_n(tb, _("Book(s):"), ct->nbooks);
+	} else
+		add_summary_n(tb, _("Socket(s):"), ct->nsockets);
 
-	tb = scols_new_table();
-	if (!tb)
-		err(EXIT_FAILURE, _("failed to allocate output table"));
-
-	scols_table_enable_noheadings(tb, 1);
-	if (cxt->json) {
-		scols_table_enable_json(tb, 1);
-		scols_table_set_name(tb, "lscpu");
-	}
-
-	if (scols_table_new_column(tb, "field", 0, 0) == NULL ||
-	    scols_table_new_column(tb, "data", 0, SCOLS_FL_NOEXTREMES | SCOLS_FL_WRAP) == NULL)
-		err(EXIT_FAILURE, _("failed to initialize output column"));
-
-	ct = lscpu_cputype_get_default(cxt);
-
-	if (cxt->arch)
-		add_summary_s(tb, _("Architecture:"), cxt->arch->name);
-	if (cxt->arch && (cxt->arch->bit32 || cxt->arch->bit64)) {
-		char *p = buf;
-
-		if (cxt->arch->bit32) {
-			strcpy(p, "32-bit, ");
-			p += 8;
-		}
-		if (cxt->arch->bit64) {
-			strcpy(p, "64-bit, ");
-			p += 8;
-		}
-		*(p - 2) = '\0';
-		add_summary_s(tb, _("CPU op-mode(s):"), buf);
-	}
-#if !defined(WORDS_BIGENDIAN)
-	add_summary_s(tb, _("Byte Order:"), "Little Endian");
-#else
-	add_summary_s(tb, _("Byte Order:"), "Big Endian");
-#endif
-
-	add_summary_n(tb, _("CPU(s):"), cxt->npresents);
-
-	if (cxt->online)
-		print_cpuset(cxt, tb,
-				cxt->hex ? _("On-line CPU(s) mask:") :
-					   _("On-line CPU(s) list:"),
-				cxt->online);
-
-	if (cxt->online && cxt->nonlines != cxt->npresents) {
-		cpu_set_t *set;
-
-		/* Linux kernel provides cpuset of off-line CPUs that contains
-		 * all configured CPUs (see /sys/devices/system/cpu/offline),
-		 * but want to print real (present in system) off-line CPUs only.
-		 */
-		set = cpuset_alloc(cxt->maxcpus, NULL, NULL);
-		if (!set)
-			err(EXIT_FAILURE, _("failed to callocate cpu set"));
-		CPU_ZERO_S(cxt->setsize, set);
-		for (i = 0; i < cxt->npossibles; i++) {
-			struct lscpu_cpu *cpu = cxt->cpus[i];
-
-			if (cpu && is_cpu_present(cxt, cpu) && !is_cpu_online(cxt, cpu))
-				CPU_SET_S(cpu->logical_id, cxt->setsize, set);
-		}
-		print_cpuset(cxt, tb,
-				cxt->hex ? _("Off-line CPU(s) mask:") :
-					   _("Off-line CPU(s) list:"), set);
-		cpuset_free(set);
-	}
-
-	if (ct->addrsz)
-		add_summary_s(tb, _("Address sizes:"), ct->addrsz);
-
-#ifdef FOOOOOO
-
-	if (desc->nsockets) {
-		int threads_per_core, cores_per_socket, sockets_per_book;
-		int books_per_drawer, drawers;
-		FILE *fd;
-
-		threads_per_core = cores_per_socket = sockets_per_book = 0;
-		books_per_drawer = drawers = 0;
-		/* s390 detects its cpu topology via /proc/sysinfo, if present.
-		 * Using simply the cpu topology masks in sysfs will not give
-		 * usable results since everything is virtualized. E.g.
-		 * virtual core 0 may have only 1 cpu, but virtual core 2 may
-		 * five cpus.
-		 * If the cpu topology is not exported (e.g. 2nd level guest)
-		 * fall back to old calculation scheme.
-		 */
-		if ((fd = ul_path_fopen(desc->procfs, "r", "sysinfo"))) {
-			int t0, t1;
-
-			while (fd && fgets(buf, sizeof(buf), fd) != NULL) {
-				if (sscanf(buf, "CPU Topology SW:%d%d%d%d%d%d",
-					   &t0, &t1, &drawers, &books_per_drawer,
-					   &sockets_per_book,
-					   &cores_per_socket) == 6)
-					break;
-			}
-			if (fd)
-				fclose(fd);
-		}
-		if (desc->mtid)
-			threads_per_core = atoi(desc->mtid) + 1;
-		add_summary_n(tb, _("Thread(s) per core:"),
-			threads_per_core ?: desc->nthreads / desc->ncores);
-		add_summary_n(tb, _("Core(s) per socket:"),
-			cores_per_socket ?: desc->ncores / desc->nsockets);
-		if (desc->nbooks) {
-			add_summary_n(tb, _("Socket(s) per book:"),
-				sockets_per_book ?: desc->nsockets / desc->nbooks);
-			if (desc->ndrawers) {
-				add_summary_n(tb, _("Book(s) per drawer:"),
-					books_per_drawer ?: desc->nbooks / desc->ndrawers);
-				add_summary_n(tb, _("Drawer(s):"), drawers ?: desc->ndrawers);
-			} else {
-				add_summary_n(tb, _("Book(s):"), books_per_drawer ?: desc->nbooks);
-			}
-		} else {
-			add_summary_n(tb, _("Socket(s):"), sockets_per_book ?: desc->nsockets);
-		}
-	}
+#ifdef FOOOO
 	if (desc->nnodes)
 		add_summary_n(tb, _("NUMA node(s):"), desc->nnodes);
-	if (desc->vendor)
-		add_summary_s(tb, _("Vendor ID:"), desc->vendor);
-	if (desc->machinetype)
-		add_summary_s(tb, _("Machine type:"), desc->machinetype);
-	if (desc->family)
-		add_summary_s(tb, _("CPU family:"), desc->family);
-	if (desc->model || desc->revision)
-		add_summary_s(tb, _("Model:"), desc->revision ? desc->revision : desc->model);
-	if (desc->modelname || desc->cpu)
-		add_summary_s(tb, _("Model name:"), desc->cpu ? desc->cpu : desc->modelname);
 	if (desc->stepping)
 		add_summary_s(tb, _("Stepping:"), desc->stepping);
 	if (desc->freqboost >= 0)
@@ -1029,6 +914,92 @@ static void print_summary(struct lscpu_cxt *cxt)
 	if (desc->flags)
 		add_summary_s(tb, _("Flags:"), desc->flags);
 #endif
+}
+
+/*
+ * default output
+ */
+static void print_summary(struct lscpu_cxt *cxt)
+{
+	struct lscpu_cputype *ct;
+	size_t i = 0;
+	struct libscols_table *tb;
+
+	scols_init_debug(0);
+
+	tb = scols_new_table();
+	if (!tb)
+		err(EXIT_FAILURE, _("failed to allocate output table"));
+
+	scols_table_enable_noheadings(tb, 1);
+	if (cxt->json) {
+		scols_table_enable_json(tb, 1);
+		scols_table_set_name(tb, "lscpu");
+	}
+
+	if (scols_table_new_column(tb, "field", 0, 0) == NULL ||
+	    scols_table_new_column(tb, "data", 0, SCOLS_FL_NOEXTREMES | SCOLS_FL_WRAP) == NULL)
+		err(EXIT_FAILURE, _("failed to initialize output column"));
+
+	ct = lscpu_cputype_get_default(cxt);
+
+	if (cxt->arch)
+		add_summary_s(tb, _("Architecture:"), cxt->arch->name);
+	if (cxt->arch && (cxt->arch->bit32 || cxt->arch->bit64)) {
+		char buf[32], *p = buf;
+
+		if (cxt->arch->bit32) {
+			strcpy(p, "32-bit, ");
+			p += 8;
+		}
+		if (cxt->arch->bit64) {
+			strcpy(p, "64-bit, ");
+			p += 8;
+		}
+		*(p - 2) = '\0';
+		add_summary_s(tb, _("CPU op-mode(s):"), buf);
+	}
+	if (ct->addrsz)
+		add_summary_s(tb, _("Address sizes:"), ct->addrsz);
+#if !defined(WORDS_BIGENDIAN)
+	add_summary_s(tb, _("Byte Order:"), "Little Endian");
+#else
+	add_summary_s(tb, _("Byte Order:"), "Big Endian");
+#endif
+	add_summary_n(tb, _("CPU(s):"), cxt->npresents);
+
+	if (cxt->online)
+		print_cpuset(cxt, tb,
+				cxt->hex ? _("On-line CPU(s) mask:") :
+					   _("On-line CPU(s) list:"),
+				cxt->online);
+
+	if (cxt->online && cxt->nonlines != cxt->npresents) {
+		cpu_set_t *set;
+
+		/* Linux kernel provides cpuset of off-line CPUs that contains
+		 * all configured CPUs (see /sys/devices/system/cpu/offline),
+		 * but want to print real (present in system) off-line CPUs only.
+		 */
+		set = cpuset_alloc(cxt->maxcpus, NULL, NULL);
+		if (!set)
+			err(EXIT_FAILURE, _("failed to callocate cpu set"));
+		CPU_ZERO_S(cxt->setsize, set);
+		for (i = 0; i < cxt->npossibles; i++) {
+			struct lscpu_cpu *cpu = cxt->cpus[i];
+
+			if (cpu && is_cpu_present(cxt, cpu) && !is_cpu_online(cxt, cpu))
+				CPU_SET_S(cpu->logical_id, cxt->setsize, set);
+		}
+		print_cpuset(cxt, tb,
+				cxt->hex ? _("Off-line CPU(s) mask:") :
+					   _("Off-line CPU(s) list:"), set);
+		cpuset_free(set);
+	}
+
+	for (i = 0; i < cxt->ncputypes; i++)
+		print_summary_cputype(cxt, cxt->cputypes[i], tb);
+
 	scols_print_table(tb);
 	scols_unref_table(tb);
 }
