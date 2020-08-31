@@ -50,7 +50,7 @@ struct lscpu_cache {
 	unsigned int	number_of_sets;
 	unsigned int	coherency_line_size;
 
-	int		nsharedmaps;
+	size_t		nsharedmaps;
 	cpu_set_t	**sharedmaps;
 };
 
@@ -71,24 +71,24 @@ struct lscpu_cputype {
 	int	dispatching;	/* -1 if not evailable, DIST_* */
 	int	freqboost;	/* -1 if not evailable */
 
-	int	physsockets;	/* Physical sockets (modules) */
-	int	physchips;	/* Physical chips */
-	int	physcoresperchip;	/* Physical cores per chip */
+	size_t	physsockets;	/* Physical sockets (modules) */
+	size_t	physchips;	/* Physical chips */
+	size_t	physcoresperchip;	/* Physical cores per chip */
 
-	int	nthreads_per_core;
-	int	ncores_per_socket;
-	int	nsockets_per_book;
-	int	nbooks_per_drawer;
-	int	ndrawers_per_system;
+	size_t	nthreads_per_core;
+	size_t	ncores_per_socket;
+	size_t	nsockets_per_book;
+	size_t	nbooks_per_drawer;
+	size_t	ndrawers_per_system;
 
 	/* siblings maps */
-	int		ncores;
+	size_t		ncores;
 	cpu_set_t	**coremaps;
-	int		nsockets;
+	size_t		nsockets;
 	cpu_set_t       **socketmaps;
-	int		nbooks;
+	size_t		nbooks;
 	cpu_set_t	**bookmaps;
-	int		ndrawers;
+	size_t		ndrawers;
 	cpu_set_t	**drawermaps;
 };
 

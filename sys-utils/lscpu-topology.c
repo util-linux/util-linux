@@ -10,9 +10,9 @@
 #include "lscpu.h"
 
 /* add @set to the @ary, unnecessary set is deallocated. */
-static int add_cpuset_to_array(cpu_set_t **ary, int *items, cpu_set_t *set, size_t setsize)
+static int add_cpuset_to_array(cpu_set_t **ary, size_t *items, cpu_set_t *set, size_t setsize)
 {
-	int i;
+	size_t i;
 
 	if (!ary)
 		return -EINVAL;
@@ -178,7 +178,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		DBG(TYPE, ul_debugobj(ct, " reading sysinfo"));
 
 		while (fgets(buf, sizeof(buf), fd) != NULL) {
-			if (sscanf(buf, "CPU Topology SW: %d %d %d %d %d %d",
+			if (sscanf(buf, "CPU Topology SW: %d %d %zu %zu %zu %zu",
 					&t0, &t1,
 					&ct->ndrawers_per_system,
 					&ct->nbooks_per_drawer,
@@ -211,11 +211,11 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			ct->ndrawers_per_system = ct->ndrawers;
 	}
 
-	DBG(TYPE, ul_debugobj(ct, " nthreads: %d (per core)", ct->nthreads_per_core));
-	DBG(TYPE, ul_debugobj(ct, "   ncores: %d (%d per socket)", ct->ncores, ct->ncores_per_socket));
-	DBG(TYPE, ul_debugobj(ct, " nsockets: %d (%d per books)", ct->nsockets, ct->nsockets_per_book));
-	DBG(TYPE, ul_debugobj(ct, "   nbooks: %d (%d per drawer)", ct->nbooks, ct->nbooks_per_drawer));
-	DBG(TYPE, ul_debugobj(ct, " ndrawers: %d (%d per system)", ct->ndrawers, ct->ndrawers_per_system));
+	DBG(TYPE, ul_debugobj(ct, " nthreads: %zu (per core)", ct->nthreads_per_core));
+	DBG(TYPE, ul_debugobj(ct, "   ncores: %zu (%zu per socket)", ct->ncores, ct->ncores_per_socket));
+	DBG(TYPE, ul_debugobj(ct, " nsockets: %zu (%zu per books)", ct->nsockets, ct->nsockets_per_book));
+	DBG(TYPE, ul_debugobj(ct, "   nbooks: %zu (%zu per drawer)", ct->nbooks, ct->nbooks_per_drawer));
+	DBG(TYPE, ul_debugobj(ct, " ndrawers: %zu (%zu per system)", ct->ndrawers, ct->ndrawers_per_system));
 
 	return 0;
 }
