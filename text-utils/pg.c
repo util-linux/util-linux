@@ -453,7 +453,7 @@ static char *endline_for_mb(unsigned col, char *s)
  ended:
 	*end = L'\0';
 	p = wbuf;
-	if ((pos = wcstombs(NULL, p, READBUF)) == (size_t)-1)
+	if ((pos = wcstombs(NULL, p, 0)) == (size_t)-1)
 		return s + 1;
 	return s + pos;
 }
