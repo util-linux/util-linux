@@ -98,7 +98,6 @@ extern int mnt_valid_tagname(const char *tagname);
 extern int append_string(char **a, const char *b);
 
 extern const char *mnt_statfs_get_fstype(struct statfs *vfs);
-extern int is_procfs_fd(int fd);
 extern int is_file_empty(const char *name);
 
 extern int mnt_is_readonly(const char *path)
@@ -124,7 +123,6 @@ extern void mnt_free_filesystems(char **filesystems);
 extern char *mnt_get_kernel_cmdline_option(const char *name);
 extern int mnt_stat_mountpoint(const char *target, struct stat *st);
 extern int mnt_lstat_mountpoint(const char *target, struct stat *st);
-extern FILE *mnt_get_procfs_memstream(int fd, char **membuf);
 
 /* tab.c */
 extern int is_mountinfo(struct libmnt_table *tb);
