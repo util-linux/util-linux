@@ -424,7 +424,7 @@ done:
 
 /*
  * Check path -- non-root user should not be able to resolve path which is
- * unreadable for him.
+ * unreadable for them.
  */
 static char *sanitize_path(const char *path)
 {
