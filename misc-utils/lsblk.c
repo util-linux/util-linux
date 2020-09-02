@@ -1888,7 +1888,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-			       "abdDzE:e:fhJlnMmo:OpPiI:rstVST:x:", longopts, NULL)) != -1) {
+			       "abdDzE:e:fhJlnMmo:OpPiI:rstVST::x:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1999,8 +1999,11 @@ int main(int argc, char *argv[])
 			break;
 		case 'T':
 			force_tree = 1;
-			if (optarg)
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
 				lsblk->tree_id = column_name_to_id(optarg, strlen(optarg));
+			}
 			break;
 		case OPT_SYSROOT:
 			lsblk->sysroot = optarg;
