@@ -649,6 +649,8 @@ int lscpu_read_archext(struct lscpu_cxt *cxt)
 	char buf[BUFSIZ];
 	struct lscpu_cputype *ct;
 
+	DBG(GATHER, ul_debugobj(cxt, "reading extra arch info"));
+
 	assert(cxt);
 	ct = lscpu_cputype_get_default(cxt);
 	if (!ct)
@@ -714,6 +716,8 @@ int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt)
 	size_t n = 0;
 
 	assert(cxt);
+
+	DBG(GATHER, ul_debugobj(cxt, "reading vulnerabilities"));
 
 	dir = ul_path_opendir(cxt->syscpu, "vulnerabilities");
 	if (!dir)
@@ -789,6 +793,7 @@ int lscpu_read_numas(struct lscpu_cxt *cxt)
 
 	assert(!cxt->nnodes);
 
+
 	sys = ul_new_path(_PATH_SYS_NODE);
 	if (!sys)
 		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_NODE);
@@ -813,9 +818,9 @@ int lscpu_read_numas(struct lscpu_cxt *cxt)
 	cxt->idx2nodenum = xmalloc(cxt->nnodes * sizeof(int));
 
 	rewinddir(dir);
-	for (i = 0; (d = readdir(dir)) && i < cxt->nnodes; i++) {
+	for (i = 0; (d = readdir(dir)) && i < cxt->nnodes;) {
 		if (is_node_dirent(d))
-			cxt->idx2nodenum[i] = strtol_or_err(((d->d_name) + 4),
+			cxt->idx2nodenum[i++] = strtol_or_err(((d->d_name) + 4),
 						_("Failed to extract the node number"));
 	}
 	closedir(dir);
@@ -826,6 +831,8 @@ int lscpu_read_numas(struct lscpu_cxt *cxt)
 		ul_path_readf_cpuset(sys, &cxt->nodemaps[i], cxt->maxcpus,
 				"node%d/cpumap", cxt->idx2nodenum[i]);
 done:
+	DBG(GATHER, ul_debugobj(cxt, "read %zu numas", cxt->nnodes));
+
 	ul_unref_path(sys);
 	return 0;
 }
