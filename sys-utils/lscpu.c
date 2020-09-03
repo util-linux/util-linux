@@ -773,6 +773,7 @@ static void __attribute__ ((__format__(printf, 3, 4)))
 
 #define add_summary_n(tb, txt, num)	add_summary_sprint(tb, txt, "%zu", num)
 #define add_summary_s(tb, txt, str)	add_summary_sprint(tb, txt, "%s", str)
+#define add_summary_x(tb, txt, fmt, x)	add_summary_sprint(tb, txt, fmt, x)
 
 static void
 print_cpuset(struct lscpu_cxt *cxt,
@@ -781,6 +782,11 @@ print_cpuset(struct lscpu_cxt *cxt,
 {
 	size_t setbuflen = 7 * cxt->maxcpus;
 	char setbuf[setbuflen], *p;
+
+	assert(set);
+	assert(key);
+	assert(tb);
+	assert(cxt);
 
 	if (cxt->hex) {
 		p = cpumask_create(setbuf, setbuflen, set, cxt->setsize);
@@ -819,101 +825,34 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 	} else
 		add_summary_n(tb, _("Socket(s):"), ct->nsockets);
 
-#ifdef FOOOO
-	if (desc->nnodes)
-		add_summary_n(tb, _("NUMA node(s):"), desc->nnodes);
-	if (desc->stepping)
-		add_summary_s(tb, _("Stepping:"), desc->stepping);
-	if (desc->freqboost >= 0)
-		add_summary_s(tb, _("Frequency boost:"), desc->freqboost ?
+	if (ct->stepping)
+		add_summary_s(tb, _("Stepping:"), ct->stepping);
+	if (ct->freqboost >= 0)
+		add_summary_s(tb, _("Frequency boost:"), ct->freqboost ?
 				_("enabled") : _("disabled"));
-	if (desc->mhz)
-		add_summary_s(tb, _("CPU MHz:"), desc->mhz);
-	if (desc->dynamic_mhz)
-		add_summary_s(tb, _("CPU dynamic MHz:"), desc->dynamic_mhz);
-	if (desc->static_mhz)
-		add_summary_s(tb, _("CPU static MHz:"), desc->static_mhz);
-	if (desc->maxmhz)
-		add_summary_s(tb, _("CPU max MHz:"), cpu_max_mhz(desc, buf, sizeof(buf)));
-	if (desc->minmhz)
-		add_summary_s(tb, _("CPU min MHz:"), cpu_min_mhz(desc, buf, sizeof(buf)));
-	if (desc->bogomips)
-		add_summary_s(tb, _("BogoMIPS:"), desc->bogomips);
-	if (desc->virtflag) {
-		if (!strcmp(desc->virtflag, "svm"))
-			add_summary_s(tb, _("Virtualization:"), "AMD-V");
-		else if (!strcmp(desc->virtflag, "vmx"))
-			add_summary_s(tb, _("Virtualization:"), "VT-x");
+/*
+	if (ct->dynamic_mhz)
+		add_summary_s(tb, _("CPU dynamic MHz:"), ct->dynamic_mhz);
+	if (ct->static_mhz)
+		add_summary_s(tb, _("CPU static MHz:"), ct->static_mhz);
+*/
+	if (ct->has_freq) {
+		add_summary_x(tb, _("CPU max MHz:"), "%.4f", lsblk_cputype_get_maxmhz(cxt, ct));
+		add_summary_x(tb, _("CPU min MHz:"), "%.4f", lsblk_cputype_get_minmhz(cxt, ct));
 	}
-	if (desc->hypervisor)
-		add_summary_s(tb, _("Hypervisor:"), desc->hypervisor);
-	if (desc->hyper) {
-		add_summary_s(tb, _("Hypervisor vendor:"), hv_vendors[desc->hyper]);
-		add_summary_s(tb, _("Virtualization type:"), _(virt_types[desc->virtype]));
-	}
-	if (desc->dispatching >= 0)
-		add_summary_s(tb, _("Dispatching mode:"), _(disp_modes[desc->dispatching]));
-	if (desc->ncaches) {
-		for (i = desc->ncaches - 1; i >= 0; i--) {
-			uint64_t sz = 0;
-			char *tmp;
-			struct cpu_cache *ca = &desc->caches[i];
+	if (ct->bogomips)
+		add_summary_s(tb, _("BogoMIPS:"), ct->bogomips);
+	if (ct->dispatching >= 0)
+		add_summary_s(tb, _("Dispatching mode:"), _(disp_modes[ct->dispatching]));
 
-			if (ca->size == 0)
-				continue;
-			if (get_cache_full_size(desc, ca, &sz) != 0 || sz == 0)
-				continue;
-			if (mod->bytes)
-				xasprintf(&tmp, "%" PRIu64, sz);
-			else
-				tmp = size_to_human_string(
-					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-					sz);
-			snprintf(buf, sizeof(buf), _("%s cache:"), ca->name);
-			add_summary_s(tb, buf, tmp);
-			free(tmp);
-		}
-	}
-	if (desc->necaches) {
-		for (i = desc->necaches - 1; i >= 0; i--) {
-			char *tmp;
-			struct cpu_cache *ca = &desc->ecaches[i];
-
-			if (ca->size == 0)
-				continue;
-			if (mod->bytes)
-				xasprintf(&tmp, "%" PRIu64, ca->size);
-			else
-				tmp = size_to_human_string(
-					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-					ca->size);
-			snprintf(buf, sizeof(buf), _("%s cache:"), ca->name);
-			add_summary_s(tb, buf, tmp);
-			free(tmp);
-		}
+	if (ct->physsockets) {
+		add_summary_n(tb, _("Physical sockets:"), ct->physsockets);
+		add_summary_n(tb, _("Physical chips:"), ct->physchips);
+		add_summary_n(tb, _("Physical cores/chip:"), ct->physcoresperchip);
 	}
 
-	for (i = 0; i < desc->nnodes; i++) {
-		snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), desc->idx2nodenum[i]);
-		print_cpuset(cxt, tb, buf, desc->nodemaps[i]);
-	}
-
-	if (desc->physsockets) {
-		add_summary_n(tb, _("Physical sockets:"), desc->physsockets);
-		add_summary_n(tb, _("Physical chips:"), desc->physchips);
-		add_summary_n(tb, _("Physical cores/chip:"), desc->physcoresperchip);
-	}
-
-	if (desc->vuls) {
-		for (i = 0; i < desc->nvuls; i++) {
-			snprintf(buf, sizeof(buf), ("Vulnerability %s:"), desc->vuls[i].name);
-			add_summary_s(tb, buf, desc->vuls[i].text);
-		}
-	}
-
-	if (desc->flags)
-		add_summary_s(tb, _("Flags:"), desc->flags);
-#endif
+	if (ct->flags)
+		add_summary_s(tb, _("Flags:"), ct->flags);
 }
 
 /*
@@ -1000,6 +939,76 @@ static void print_summary(struct lscpu_cxt *cxt)
 	for (i = 0; i < cxt->ncputypes; i++)
 		print_summary_cputype(cxt, cxt->cputypes[i], tb);
 
+	if (cxt->virt) {
+		if (!strcmp(cxt->virt->cpuflag, "svm"))
+			add_summary_s(tb, _("Virtualization:"), "AMD-V");
+		else if (!strcmp(cxt->virt->cpuflag, "vmx"))
+			add_summary_s(tb, _("Virtualization:"), "VT-x");
+
+		if (cxt->virt->hypervisor)
+			add_summary_s(tb, _("Hypervisor:"), cxt->virt->hypervisor);
+		if (cxt->virt->vendor) {
+			add_summary_s(tb, _("Hypervisor vendor:"), hv_vendors[cxt->virt->vendor]);
+			add_summary_s(tb, _("Virtualization type:"), _(virt_types[cxt->virt->type]));
+		}
+	}
+
+	if (cxt->nnodes) {
+		char buf[256];
+		add_summary_n(tb, _("NUMA node(s):"), cxt->nnodes);
+		for (i = 0; i < cxt->nnodes; i++) {
+			snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), cxt->idx2nodenum[i]);
+			print_cpuset(cxt, tb, buf, cxt->nodemaps[i]);
+		}
+	}
+/***
+	if (ct->ncaches) {
+		for (i = ct->ncaches - 1; i >= 0; i--) {
+			uint64_t sz = 0;
+			char *tmp;
+			struct cpu_cache *ca = &ct->caches[i];
+
+			if (ca->size == 0)
+				continue;
+			if (get_cache_full_size(ct, ca, &sz) != 0 || sz == 0)
+				continue;
+			if (mod->bytes)
+				xasprintf(&tmp, "%" PRIu64, sz);
+			else
+				tmp = size_to_human_string(
+					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
+					sz);
+			snprintf(buf, sizeof(buf), _("%s cache:"), ca->name);
+			add_summary_s(tb, buf, tmp);
+			free(tmp);
+		}
+	}
+	if (ct->necaches) {
+		for (i = ct->necaches - 1; i >= 0; i--) {
+			char *tmp;
+			struct cpu_cache *ca = &ct->ecaches[i];
+
+			if (ca->size == 0)
+				continue;
+			if (mod->bytes)
+				xasprintf(&tmp, "%" PRIu64, ca->size);
+			else
+				tmp = size_to_human_string(
+					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
+					ca->size);
+			snprintf(buf, sizeof(buf), _("%s cache:"), ca->name);
+			add_summary_s(tb, buf, tmp);
+			free(tmp);
+		}
+	}
+
+	if (ct->vuls) {
+		for (i = 0; i < ct->nvuls; i++) {
+			snprintf(buf, sizeof(buf), ("Vulnerability %s:"), ct->vuls[i].name);
+			add_summary_s(tb, buf, ct->vuls[i].text);
+		}
+	}
+***/
 	scols_print_table(tb);
 	scols_unref_table(tb);
 }
