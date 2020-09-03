@@ -436,7 +436,42 @@ static int read_mhz(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 		cpu->mhz_max_freq = (float) mhz / 1000;
 	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/cpuinfo_min_freq", num) == 0)
 		cpu->mhz_min_freq = (float) mhz / 1000;
+
+	if (cpu->type && (cpu->mhz_min_freq || cpu->mhz_max_freq))
+		cpu->type->has_freq = 1;
+
 	return 0;
+}
+
+float lsblk_cputype_get_maxmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+{
+	size_t i;
+	float res = 0.0;
+
+	for (i = 0; i < cxt->npossibles; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+
+		if (!cpu || cpu->type != ct || !is_cpu_present(cxt, cpu))
+			continue;
+		res = max(res, cpu->mhz_max_freq);
+	}
+	return res;
+}
+
+float lsblk_cputype_get_minmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+{
+	size_t i;
+	float res = -1.0;
+
+	for (i = 0; i < cxt->npossibles; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+
+		if (!cpu || cpu->type != ct || !is_cpu_present(cxt, cpu))
+			continue;
+		if (res < 0.0 || cpu->mhz_min_freq < res)
+			res = cpu->mhz_min_freq;
+	}
+	return res;
 }
 
 int lscpu_read_topology(struct lscpu_cxt *cxt)

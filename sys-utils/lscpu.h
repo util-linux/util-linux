@@ -90,6 +90,8 @@ struct lscpu_cputype {
 	cpu_set_t	**bookmaps;
 	size_t		ndrawers;
 	cpu_set_t	**drawermaps;
+
+	unsigned int	has_freq;
 };
 
 /* dispatching modes */
@@ -257,6 +259,9 @@ void lscpu_sort_caches(struct lscpu_cache *caches, size_t n);
 
 int lscpu_read_topology(struct lscpu_cxt *cxt);
 void lscpu_cputype_free_topology(struct lscpu_cputype *ct);
+
+float lsblk_cputype_get_maxmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
+float lsblk_cputype_get_minmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
 
 size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name);
 
