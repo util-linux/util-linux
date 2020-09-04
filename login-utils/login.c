@@ -837,6 +837,7 @@ static void loginpam_auth(struct login_context *cxt)
 
 	show_unknown = getlogindefs_bool("LOG_UNKFAIL_ENAB", 0);
 	retries = getlogindefs_num("LOGIN_RETRIES", LOGIN_MAX_TRIES);
+	int keep_username = getlogindefs_bool("LOGIN_KEEP_USERNAME", 0);
 
 	/*
 	 * There may be better ways to deal with some of these conditions, but
@@ -873,7 +874,9 @@ static void loginpam_auth(struct login_context *cxt)
 
 		fprintf(stderr, _("Login incorrect\n\n"));
 
-		pam_set_item(pamh, PAM_USER, NULL);
+		if (!keep_username || rc == PAM_USER_UNKNOWN) {
+			pam_set_item(pamh, PAM_USER, NULL);
+		}
 		rc = pam_authenticate(pamh, 0);
 	}
 
