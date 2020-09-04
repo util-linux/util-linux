@@ -830,12 +830,13 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 	if (ct->freqboost >= 0)
 		add_summary_s(tb, _("Frequency boost:"), ct->freqboost ?
 				_("enabled") : _("disabled"));
-/*
+
+	/* s390 -- from the first CPU where is dynamic/static MHz */
 	if (ct->dynamic_mhz)
 		add_summary_s(tb, _("CPU dynamic MHz:"), ct->dynamic_mhz);
 	if (ct->static_mhz)
 		add_summary_s(tb, _("CPU static MHz:"), ct->static_mhz);
-*/
+
 	if (ct->has_freq) {
 		add_summary_x(tb, _("CPU max MHz:"), "%.4f", lsblk_cputype_get_maxmhz(cxt, ct));
 		add_summary_x(tb, _("CPU min MHz:"), "%.4f", lsblk_cputype_get_minmhz(cxt, ct));
@@ -940,9 +941,9 @@ static void print_summary(struct lscpu_cxt *cxt)
 		print_summary_cputype(cxt, cxt->cputypes[i], tb);
 
 	if (cxt->virt) {
-		if (!strcmp(cxt->virt->cpuflag, "svm"))
+		if (cxt->virt->cpuflag && !strcmp(cxt->virt->cpuflag, "svm"))
 			add_summary_s(tb, _("Virtualization:"), "AMD-V");
-		else if (!strcmp(cxt->virt->cpuflag, "vmx"))
+		else if (cxt->virt->cpuflag && !strcmp(cxt->virt->cpuflag, "vmx"))
 			add_summary_s(tb, _("Virtualization:"), "VT-x");
 
 		if (cxt->virt->hypervisor)
@@ -950,6 +951,60 @@ static void print_summary(struct lscpu_cxt *cxt)
 		if (cxt->virt->vendor) {
 			add_summary_s(tb, _("Hypervisor vendor:"), hv_vendors[cxt->virt->vendor]);
 			add_summary_s(tb, _("Virtualization type:"), _(virt_types[cxt->virt->type]));
+		}
+	}
+	if (cxt->ncaches) {
+		const char *last = NULL;
+		char hdr[256];
+
+		/* The caches are sorted by name, cxt->caches[] may contains
+		 * multiple instances for the same name.
+		 */
+		for (i = 0; i < cxt->ncaches; i++) {
+			const char *name = cxt->caches[i].name;
+			uint64_t sz;
+
+			if (last && strcmp(last, name) == 0)
+				continue;
+			sz = lscpu_get_cache_full_size(cxt, name);
+			if (!sz)
+				continue;
+			snprintf(hdr, sizeof(hdr), _("%s cache:"), name);
+
+			if (cxt->bytes)
+				add_summary_x(tb, hdr, "%" PRIu64, sz);
+			else {
+				char *tmp = size_to_human_string(
+						SIZE_SUFFIX_3LETTER |
+						SIZE_SUFFIX_SPACE,
+						sz);
+				add_summary_s(tb, hdr, tmp);
+				free(tmp);
+			}
+			last = name;
+		}
+	}
+
+	/* Extra caches (s390, ...) */
+	if (cxt->necaches) {
+		char hdr[256];
+
+		for (i = 0; i < cxt->necaches; i++) {
+			struct lscpu_cache *ca = &cxt->ecaches[i];
+
+			if (ca->size == 0)
+				continue;
+			snprintf(hdr, sizeof(hdr), _("%s cache:"), ca->name);
+			if (cxt->bytes)
+				add_summary_x(tb, hdr, "%" PRIu64, ca->size);
+			else {
+				char *tmp = size_to_human_string(
+						SIZE_SUFFIX_3LETTER |
+						SIZE_SUFFIX_SPACE,
+						ca->size);
+				add_summary_s(tb, hdr, tmp);
+				free(tmp);
+			}
 		}
 	}
 
@@ -961,54 +1016,14 @@ static void print_summary(struct lscpu_cxt *cxt)
 			print_cpuset(cxt, tb, buf, cxt->nodemaps[i]);
 		}
 	}
-/***
-	if (ct->ncaches) {
-		for (i = ct->ncaches - 1; i >= 0; i--) {
-			uint64_t sz = 0;
-			char *tmp;
-			struct cpu_cache *ca = &ct->caches[i];
 
-			if (ca->size == 0)
-				continue;
-			if (get_cache_full_size(ct, ca, &sz) != 0 || sz == 0)
-				continue;
-			if (mod->bytes)
-				xasprintf(&tmp, "%" PRIu64, sz);
-			else
-				tmp = size_to_human_string(
-					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-					sz);
-			snprintf(buf, sizeof(buf), _("%s cache:"), ca->name);
-			add_summary_s(tb, buf, tmp);
-			free(tmp);
+	if (cxt->vuls) {
+		char buf[256];
+		for (i = 0; i < cxt->nvuls; i++) {
+			snprintf(buf, sizeof(buf), ("Vulnerability %s:"), cxt->vuls[i].name);
+			add_summary_s(tb, buf, cxt->vuls[i].text);
 		}
 	}
-	if (ct->necaches) {
-		for (i = ct->necaches - 1; i >= 0; i--) {
-			char *tmp;
-			struct cpu_cache *ca = &ct->ecaches[i];
-
-			if (ca->size == 0)
-				continue;
-			if (mod->bytes)
-				xasprintf(&tmp, "%" PRIu64, ca->size);
-			else
-				tmp = size_to_human_string(
-					SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-					ca->size);
-			snprintf(buf, sizeof(buf), _("%s cache:"), ca->name);
-			add_summary_s(tb, buf, tmp);
-			free(tmp);
-		}
-	}
-
-	if (ct->vuls) {
-		for (i = 0; i < ct->nvuls; i++) {
-			snprintf(buf, sizeof(buf), ("Vulnerability %s:"), ct->vuls[i].name);
-			add_summary_s(tb, buf, ct->vuls[i].text);
-		}
-	}
-***/
 	scols_print_table(tb);
 	scols_unref_table(tb);
 }
