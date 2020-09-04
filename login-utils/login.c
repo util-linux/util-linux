@@ -826,7 +826,7 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 
 static void loginpam_auth(struct login_context *cxt)
 {
-	int rc, show_unknown;
+	int rc, show_unknown, keep_username;
 	unsigned int retries, failcount = 0;
 	const char *hostname = cxt->hostname ? cxt->hostname :
 			       cxt->tty_name ? cxt->tty_name : "<unknown>";
@@ -837,6 +837,7 @@ static void loginpam_auth(struct login_context *cxt)
 
 	show_unknown = getlogindefs_bool("LOG_UNKFAIL_ENAB", 0);
 	retries = getlogindefs_num("LOGIN_RETRIES", LOGIN_MAX_TRIES);
+	keep_username = getlogindefs_bool("LOGIN_KEEP_USERNAME", 0);
 
 	/*
 	 * There may be better ways to deal with some of these conditions, but
@@ -871,9 +872,13 @@ static void loginpam_auth(struct login_context *cxt)
 		log_btmp(cxt);
 		log_audit(cxt, 0);
 
-		fprintf(stderr, _("Login incorrect\n\n"));
 
-		pam_set_item(pamh, PAM_USER, NULL);
+		if (!keep_username || rc == PAM_USER_UNKNOWN) {
+			pam_set_item(pamh, PAM_USER, NULL);
+			fprintf(stderr, _("Login incorrect\n\n"));
+		} else
+			fprintf(stderr, _("Password incorrect\n\n"));
+
 		rc = pam_authenticate(pamh, 0);
 	}
 
