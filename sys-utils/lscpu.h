@@ -81,6 +81,9 @@ struct lscpu_cputype {
 	size_t	nbooks_per_drawer;
 	size_t	ndrawers_per_system;
 
+	char	*dynamic_mhz;	/* s390; copy from the first CPU */
+	char	*static_mhz;	/* s390; copy from the first CPU */
+
 	/* siblings maps */
 	size_t		ncores;
 	cpu_set_t	**coremaps;
@@ -91,7 +94,7 @@ struct lscpu_cputype {
 	size_t		ndrawers;
 	cpu_set_t	**drawermaps;
 
-	unsigned int	has_freq;
+	unsigned int	has_freq : 1;		/* has max/nim frequence info */
 };
 
 /* dispatching modes */

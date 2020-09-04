@@ -82,6 +82,8 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		free(ct->flags);
 		free(ct->mtid);		/* maximum thread id (s390) */
 		free(ct->addrsz);	/* address sizes */
+		free(ct->static_mhz);
+		free(ct->dynamic_mhz);
 		free(ct);
 	}
 }
@@ -479,6 +481,11 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 				DBG(GATHER, ul_debug("*** cpu data before cpu ID"));
 			else
 				strdup_to_offset(pr->curr_cpu, pattern->offset, value);
+
+			if (pattern->id == PAT_MHZ_DYNAMIC && pr->curr_type && !pr->curr_type->dynamic_mhz)
+				pr->curr_type->dynamic_mhz = xstrdup(value);
+			if (pattern->id == PAT_MHZ_STATIC && pr->curr_type && !pr->curr_type->static_mhz)
+				pr->curr_type->static_mhz = xstrdup(value);
 			break;
 		case CPUINFO_LINE_CPUTYPE:
 			if (pr->curr_type && is_different_cputype(pr->curr_type, pattern->offset, value)) {
