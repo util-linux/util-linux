@@ -636,6 +636,7 @@ static int fdisk_assign_fd(struct fdisk_context *cxt, int fd,
 fail:
 	{
 		int rc = -errno;
+		cxt->dev_fd = -1；
 		DBG(CXT, ul_debugobj(cxt, "failed to assign device [rc=%d]", rc));
 		return rc;
 	}
