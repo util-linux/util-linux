@@ -116,7 +116,10 @@ static int do_print_table(struct libscols_table *tb, int *is_empty)
 	}
 	if (list_empty(&tb->tb_lines)) {
 		DBG(TAB, ul_debugobj(tb, "ignore -- no lines"));
-		if (is_empty)
+		if (scols_table_is_json(tb)) {
+			fput_table_open(tb);
+			fput_table_close(tb);
+		} else if (is_empty)
 			*is_empty = 1;
 		return 0;
 	}
