@@ -16,12 +16,17 @@
 #include <limits.h>
 #include <sys/utsname.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <errno.h>
 #include <getopt.h>
 #include <assert.h>
 #ifdef HAVE_LIBSELINUX
-#include <selinux/selinux.h>
-#include <selinux/context.h>
+# include <selinux/selinux.h>
+# include <selinux/context.h>
+#endif
+#ifdef HAVE_LINUX_FIEMAP_H
+# include <linux/fs.h>
+# include <linux/fiemap.h>
 #endif
 
 #include "linux_version.h"
@@ -208,6 +213,89 @@ static void check_blocks(struct mkswap_control *ctl)
 	printf(P_("%lu bad page\n", "%lu bad pages\n", ctl->nbadpages), ctl->nbadpages);
 	free(buffer);
 }
+
+
+#ifdef HAVE_LINUX_FIEMAP_H
+static void check_extents_print_hdr(int *n)
+{
+	if (*n == 0) {
+		fputc('\n', stderr);
+		warnx(_("extents check failed:"));
+	}
+	++*n;
+}
+
+static void check_extents(struct mkswap_control *ctl)
+{
+	char buf[BUFSIZ] = { 0 };
+	struct fiemap *fiemap = (struct fiemap *) buf;
+	int last = 0, nerrs = 0;
+	uint64_t last_logical = 0;
+
+	memset(fiemap, 0, sizeof(struct fiemap));
+
+	do {
+		int rc;
+		size_t n, i;
+
+		fiemap->fm_length = ~0ULL;
+		fiemap->fm_flags = 0;
+		fiemap->fm_extent_count =
+			(sizeof(buf) - sizeof(*fiemap)) / sizeof(struct fiemap_extent);
+
+		rc = ioctl(ctl->fd, FS_IOC_FIEMAP, (unsigned long) fiemap);
+		if (rc < 0) {
+			warn(_("FIEMAP failed -- ignore extents check"));
+			return;
+		}
+
+		n = fiemap->fm_mapped_extents;
+
+		for (i = 0; i < n; i++) {
+			struct fiemap_extent *e = &fiemap->fm_extents[i];
+
+			if (e->fe_logical > last_logical) {
+				check_extents_print_hdr(&nerrs);
+				fprintf(stderr, ("  - hole detected at offset %ju (size %ju bytes)\n"),
+						(uintmax_t) last_logical,
+						(uintmax_t) e->fe_logical - last_logical);
+			}
+
+			last_logical = (e->fe_logical + e->fe_length);
+
+			if (e->fe_flags & FIEMAP_EXTENT_LAST)
+				last = 1;
+			if (e->fe_flags & FIEMAP_EXTENT_UNKNOWN) {
+				check_extents_print_hdr(&nerrs);
+				fprintf(stderr, _("  - unknown file extent type at offset %ju\n"),
+						(uintmax_t) last_logical);
+			}
+			if (e->fe_flags & FIEMAP_EXTENT_DATA_INLINE){
+				check_extents_print_hdr(&nerrs);
+				fprintf(stderr, _("  - data inline extent at offset %ju\n"),
+						(uintmax_t) last_logical);
+			}
+			if (e->fe_flags & FIEMAP_EXTENT_SHARED){
+				check_extents_print_hdr(&nerrs);
+				fprintf(stderr, _("  - shared extent at offset %ju\n"),
+						(uintmax_t) last_logical);
+			}
+			if (e->fe_flags & FIEMAP_EXTENT_DELALLOC){
+				check_extents_print_hdr(&nerrs);
+				fprintf(stderr, _("  - deallocated extent at offset %ju\n"),
+						(uintmax_t) last_logical);
+			}
+
+		}
+		fiemap->fm_start = fiemap->fm_extents[n - 1].fe_logical
+				 + fiemap->fm_extents[n - 1].fe_length;
+	} while (last == 0);
+
+	if (nerrs)
+		fprintf(stderr, _("file %s can be rejected by kernel on swap activation.\n\n"),
+			ctl->devname);
+}
+#endif /* HAVE_LINUX_FIEMAP_H */
 
 /* return size in pages */
 static unsigned long long get_size(const struct mkswap_control *ctl)
@@ -497,6 +585,10 @@ int main(int argc, char **argv)
 
 	if (ctl.check)
 		check_blocks(&ctl);
+#ifdef HAVE_LINUX_FIEMAP_H
+	if (S_ISREG(ctl.devstat.st_mode))
+		check_extents(&ctl);
+#endif
 
 	wipe_device(&ctl);
 

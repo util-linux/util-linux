@@ -281,6 +281,7 @@ AC_CHECK_HEADERS([ \
 	linux/btrfs.h \
 	linux/cdrom.h \
 	linux/falloc.h \
+	linux/fiemap.h \
 	linux/watchdog.h \
 	linux/fd.h \
 	linux/raw.h \
