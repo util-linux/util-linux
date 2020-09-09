@@ -906,8 +906,6 @@ static char *device_get_data(
 			ul_path_read_string(dev->sysfs, &str, "device/vendor");
 		break;
 	case COL_SIZE:
-		if (!dev->size)
-			break;
 		if (lsblk->bytes)
 			xasprintf(&str, "%ju", dev->size);
 		else
