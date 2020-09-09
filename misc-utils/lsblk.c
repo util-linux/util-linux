@@ -1152,11 +1152,16 @@ static void devtree_to_scols(struct lsblk_devtree *tr, struct libscols_table *ta
 
 static int ignore_empty(struct lsblk_device *dev)
 {
-	if (dev->size != 0)
+	/* show all non-empty devices */
+	if (dev->size)
 		return 0;
-	if (dev->maj == LOOPDEV_MAJOR && loopdev_has_backing_file(dev->filename))
-		return 0;
-	return 1;
+
+	/* ignore empty loop devices without backing file */
+	if (dev->maj == LOOPDEV_MAJOR &&
+	    !loopdev_has_backing_file(dev->filename))
+		return 1;
+
+	return 0;
 }
 
 /*
