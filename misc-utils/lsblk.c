@@ -50,6 +50,7 @@
 #include "closestream.h"
 #include "optutils.h"
 #include "fileutils.h"
+#include "loopdev.h"
 
 #include "lsblk.h"
 
@@ -1149,6 +1150,15 @@ static void devtree_to_scols(struct lsblk_devtree *tr, struct libscols_table *ta
 		device_to_scols(dev, NULL, tab, NULL);
 }
 
+static int ignore_empty(struct lsblk_device *dev)
+{
+	if (dev->size != 0)
+		return 0;
+	if (dev->maj == LOOPDEV_MAJOR && loopdev_has_backing_file(dev->filename))
+		return 0;
+	return 1;
+}
+
 /*
  * Reads very basic information about the device from sysfs into the device struct
  */
@@ -1200,7 +1210,7 @@ static int initialize_device(struct lsblk_device *dev,
 		dev->size <<= 9;					/* in bytes */
 
 	/* Ignore devices of zero size */
-	if (!lsblk->all_devices && dev->size == 0) {
+	if (!lsblk->all_devices && ignore_empty(dev)) {
 		DBG(DEV, ul_debugobj(dev, "zero size device -- ignore"));
 		return -1;
 	}

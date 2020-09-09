@@ -1619,6 +1619,17 @@ char *loopdev_get_backing_file(const char *device)
 	return res;
 }
 
+int loopdev_has_backing_file(const char *device)
+{
+	char *tmp = loopdev_get_backing_file(device);
+
+	if (tmp) {
+		free(tmp);
+		return 1;
+	}
+	return 0;
+}
+
 /*
  * Returns: TRUE/FALSE
  */

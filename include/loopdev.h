@@ -134,6 +134,7 @@ extern int is_loopdev(const char *device);
 extern int loopdev_is_autoclear(const char *device);
 
 extern char *loopdev_get_backing_file(const char *device);
+extern int loopdev_has_backing_file(const char *device);
 extern int loopdev_is_used(const char *device, const char *filename,
 			   uint64_t offset, uint64_t sizelimit, int flags);
 extern char *loopdev_find_by_backing_file(const char *filename,
