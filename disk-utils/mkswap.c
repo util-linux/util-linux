@@ -239,7 +239,7 @@ static void check_extents(struct mkswap_control *ctl)
 		size_t n, i;
 
 		fiemap->fm_length = ~0ULL;
-		fiemap->fm_flags = 0;
+		fiemap->fm_flags = FIEMAP_FLAG_SYNC;
 		fiemap->fm_extent_count =
 			(sizeof(buf) - sizeof(*fiemap)) / sizeof(struct fiemap_extent);
 
@@ -265,31 +265,33 @@ static void check_extents(struct mkswap_control *ctl)
 
 			if (e->fe_flags & FIEMAP_EXTENT_LAST)
 				last = 1;
-			if (e->fe_flags & FIEMAP_EXTENT_UNKNOWN) {
-				check_extents_print_hdr(&nerrs);
-				fprintf(stderr, _("  - unknown file extent type at offset %ju\n"),
-						(uintmax_t) last_logical);
-			}
 			if (e->fe_flags & FIEMAP_EXTENT_DATA_INLINE){
 				check_extents_print_hdr(&nerrs);
 				fprintf(stderr, _("  - data inline extent at offset %ju\n"),
-						(uintmax_t) last_logical);
+						(uintmax_t) e->fe_logical);
 			}
 			if (e->fe_flags & FIEMAP_EXTENT_SHARED){
 				check_extents_print_hdr(&nerrs);
 				fprintf(stderr, _("  - shared extent at offset %ju\n"),
-						(uintmax_t) last_logical);
+						(uintmax_t) e->fe_logical);
 			}
 			if (e->fe_flags & FIEMAP_EXTENT_DELALLOC){
 				check_extents_print_hdr(&nerrs);
-				fprintf(stderr, _("  - deallocated extent at offset %ju\n"),
-						(uintmax_t) last_logical);
+				fprintf(stderr, _("  - unallocated extent at offset %ju\n"),
+						(uintmax_t) e->fe_logical);
 			}
 
 		}
 		fiemap->fm_start = fiemap->fm_extents[n - 1].fe_logical
 				 + fiemap->fm_extents[n - 1].fe_length;
 	} while (last == 0);
+
+	if (last_logical < (uint64_t) ctl->devstat.st_size) {
+		check_extents_print_hdr(&nerrs);
+		fprintf(stderr, ("  - hole detected at offset %ju (size %ju bytes)\n"),
+				(uintmax_t) last_logical,
+				(uintmax_t) ctl->devstat.st_size - last_logical);
+	}
 
 	if (nerrs)
 		fprintf(stderr, _("file %s can be rejected by kernel on swap activation.\n\n"),
