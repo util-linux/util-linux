@@ -244,10 +244,8 @@ static void check_extents(struct mkswap_control *ctl)
 			(sizeof(buf) - sizeof(*fiemap)) / sizeof(struct fiemap_extent);
 
 		rc = ioctl(ctl->fd, FS_IOC_FIEMAP, (unsigned long) fiemap);
-		if (rc < 0) {
-			warn(_("FIEMAP failed -- ignore extents check"));
+		if (rc < 0)
 			return;
-		}
 
 		n = fiemap->fm_mapped_extents;
 
