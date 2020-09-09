@@ -1472,6 +1472,16 @@ specifies the filesystem access mode used for
 in octal notation.  The default mode is 0755.  This functionality is supported
 only for root users or when mount executed without suid permissions.  The option
 is also supported as x-mount.mkdir, this notation is deprecated since v2.30.
+.TP
+.B nosymfollow
+Do not follow symlinks when resolving paths.  Symlinks can still be created,
+and
+.BR readlink (1),
+.BR readlink (2),
+.BR realpath (1)
+and
+.BR realpath (3)
+all still work properly.
 
 .SH FILESYSTEM-SPECIFIC MOUNT OPTIONS
 This section lists options that are specific to particular filesystems.

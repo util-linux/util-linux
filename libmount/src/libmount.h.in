@@ -941,6 +941,9 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 #ifndef MS_DIRSYNC
 #define MS_DIRSYNC	128	/* Directory modifications are synchronous */
 #endif
+#ifndef MS_NOSYMFOLLOW
+#define MS_NOSYMFOLLOW	256	/* Don't follow symlinks */
+#endif
 #ifndef MS_NOATIME
 #define MS_NOATIME	0x400	/* 1024: Do not update access times. */
 #endif
