@@ -150,23 +150,21 @@ static void set_uuid_and_label(const struct mkswap_control *ctl)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	fprintf(out,
-		_("\nUsage:\n"
-		  " %s [options] device [size]\n"),
-		program_invocation_short_name);
+
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] device [size]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Set up a Linux swap area.\n"), out);
 
-	fprintf(out, _(
-		"\nOptions:\n"
-		" -c, --check               check bad blocks before creating the swap area\n"
-		" -f, --force               allow swap size area be larger than device\n"
-		" -p, --pagesize SIZE       specify page size in bytes\n"
-		" -L, --label LABEL         specify label\n"
-		" -v, --swapversion NUM     specify swap-space version number\n"
-		" -U, --uuid UUID           specify the uuid to use\n"
-		));
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -c, --check               check bad blocks before creating the swap area\n"), out);
+	fputs(_(" -f, --force               allow swap size area be larger than device\n"), out);
+	fputs(_(" -p, --pagesize SIZE       specify page size in bytes\n"), out);
+	fputs(_(" -L, --label LABEL         specify label\n"), out);
+	fputs(_(" -v, --swapversion NUM     specify swap-space version number\n"), out);
+	fputs(_(" -U, --uuid UUID           specify the uuid to use\n"), out);
+
 	fprintf(out,
 	      _("     --lock[=<mode>]       use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
 	printf(USAGE_HELP_OPTIONS(27));
