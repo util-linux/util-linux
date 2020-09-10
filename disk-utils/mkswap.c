@@ -71,7 +71,10 @@ struct mkswap_control {
 	char			*opt_label;	/* LABEL as specified on command line */
 	unsigned char		*uuid;		/* UUID parsed by libbuuid */
 
+	size_t			nbad_extents;
+
 	unsigned int		check:1,	/* --check */
+				verbose:1,      /* --verbose */
 				force:1;	/* --force */
 };
 
@@ -164,6 +167,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -L, --label LABEL         specify label\n"), out);
 	fputs(_(" -v, --swapversion NUM     specify swap-space version number\n"), out);
 	fputs(_(" -U, --uuid UUID           specify the uuid to use\n"), out);
+	fputs(_("     --verbose             verbose output\n"), out);
 
 	fprintf(out,
 	      _("     --lock[=<mode>]       use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
@@ -214,20 +218,36 @@ static void check_blocks(struct mkswap_control *ctl)
 
 
 #ifdef HAVE_LINUX_FIEMAP_H
-static void check_extents_print_hdr(int *n)
+static void warn_extent(struct mkswap_control *ctl, const char *msg, uint64_t off)
 {
-	if (*n == 0) {
+	if (ctl->nbad_extents == 0) {
 		fputc('\n', stderr);
-		warnx(_("extents check failed:"));
+		fprintf(stderr, _(
+
+	"mkswap: %s contains holes or other unsupported extents.\n"
+	"        This swap file can be rejected by kernel on swap activation!\n"),
+				ctl->devname);
+
+		if (ctl->verbose)
+			fputc('\n', stderr);
+		else
+			fprintf(stderr, _(
+	"        Use --verbose for more details.\n"));
+
 	}
-	++*n;
+	if (ctl->verbose) {
+		fputs(" - ", stderr);
+		fprintf(stderr, msg, off);
+		fputc('\n', stderr);
+	}
+	ctl->nbad_extents++;
 }
 
 static void check_extents(struct mkswap_control *ctl)
 {
 	char buf[BUFSIZ] = { 0 };
 	struct fiemap *fiemap = (struct fiemap *) buf;
-	int last = 0, nerrs = 0;
+	int last = 0;
 	uint64_t last_logical = 0;
 
 	memset(fiemap, 0, sizeof(struct fiemap));
@@ -250,48 +270,37 @@ static void check_extents(struct mkswap_control *ctl)
 		for (i = 0; i < n; i++) {
 			struct fiemap_extent *e = &fiemap->fm_extents[i];
 
-			if (e->fe_logical > last_logical) {
-				check_extents_print_hdr(&nerrs);
-				fprintf(stderr, ("  - hole detected at offset %ju (size %ju bytes)\n"),
-						(uintmax_t) last_logical,
-						(uintmax_t) e->fe_logical - last_logical);
-			}
+			if (e->fe_logical > last_logical)
+				warn_extent(ctl, _("hole detected at offset %ju"),
+						(uintmax_t) last_logical);
 
 			last_logical = (e->fe_logical + e->fe_length);
 
 			if (e->fe_flags & FIEMAP_EXTENT_LAST)
 				last = 1;
-			if (e->fe_flags & FIEMAP_EXTENT_DATA_INLINE){
-				check_extents_print_hdr(&nerrs);
-				fprintf(stderr, _("  - data inline extent at offset %ju\n"),
+			if (e->fe_flags & FIEMAP_EXTENT_DATA_INLINE)
+				warn_extent(ctl, _("data inline extent at offset %ju"),
 						(uintmax_t) e->fe_logical);
-			}
-			if (e->fe_flags & FIEMAP_EXTENT_SHARED){
-				check_extents_print_hdr(&nerrs);
-				fprintf(stderr, _("  - shared extent at offset %ju\n"),
+			if (e->fe_flags & FIEMAP_EXTENT_SHARED)
+				 warn_extent(ctl, _("shared extent at offset %ju"),
 						(uintmax_t) e->fe_logical);
-			}
-			if (e->fe_flags & FIEMAP_EXTENT_DELALLOC){
-				check_extents_print_hdr(&nerrs);
-				fprintf(stderr, _("  - unallocated extent at offset %ju\n"),
+			if (e->fe_flags & FIEMAP_EXTENT_DELALLOC)
+				warn_extent(ctl, _("unallocated extent at offset %ju"),
 						(uintmax_t) e->fe_logical);
-			}
 
+			if (!ctl->verbose && ctl->nbad_extents)
+				goto done;
 		}
 		fiemap->fm_start = fiemap->fm_extents[n - 1].fe_logical
 				 + fiemap->fm_extents[n - 1].fe_length;
 	} while (last == 0);
 
-	if (last_logical < (uint64_t) ctl->devstat.st_size) {
-		check_extents_print_hdr(&nerrs);
-		fprintf(stderr, ("  - hole detected at offset %ju (size %ju bytes)\n"),
-				(uintmax_t) last_logical,
-				(uintmax_t) ctl->devstat.st_size - last_logical);
-	}
-
-	if (nerrs)
-		fprintf(stderr, _("file %s can be rejected by kernel on swap activation.\n\n"),
-			ctl->devname);
+	if (last_logical < (uint64_t) ctl->devstat.st_size)
+		warn_extent(ctl, _("hole detected at offset %ju"),
+				(uintmax_t) last_logical);
+done:
+	if (ctl->nbad_extents)
+		fputc('\n', stderr);
 }
 #endif /* HAVE_LINUX_FIEMAP_H */
 
@@ -449,6 +458,7 @@ int main(int argc, char **argv)
 #endif
 	enum {
 		OPT_LOCK = CHAR_MAX + 1,
+		OPT_VERBOSE
 	};
 	static const struct option longopts[] = {
 		{ "check",       no_argument,       NULL, 'c' },
@@ -460,6 +470,7 @@ int main(int argc, char **argv)
 		{ "version",     no_argument,       NULL, 'V' },
 		{ "help",        no_argument,       NULL, 'h' },
 		{ "lock",        optional_argument, NULL, OPT_LOCK },
+		{ "verbose",    no_argument,        NULL, OPT_VERBOSE },
 		{ NULL,          0, NULL, 0 }
 	};
 
@@ -506,6 +517,9 @@ int main(int argc, char **argv)
 					optarg++;
 				ctl.lockmode = optarg;
 			}
+			break;
+		case OPT_VERBOSE:
+			ctl.verbose = 1;
 			break;
 		case 'h':
 			usage();

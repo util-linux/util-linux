@@ -27,7 +27,7 @@ _mkswap_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--check --force --pagesize --lock --label --swapversion --uuid --version --help"
+			OPTS="--check --force --pagesize --lock --label --swapversion --uuid --verbose --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
