@@ -264,8 +264,11 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 			off += rsz;
 		}
 		if (hole_sz) {
+			off_t alloc_sz = hole_sz;
+			if (off >= end)
+				alloc_sz += st.st_blksize;		/* meet block boundary */
 			xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
-					hole_start, hole_sz);
+					hole_start, alloc_sz);
 			ct += hole_sz;
 		}
 		file_off = off;
