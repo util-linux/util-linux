@@ -92,6 +92,10 @@ static const struct blkzone_command commands[] = {
 		.handler = blkzone_report,
 		.help = N_("Report zone information about the given device")
 	},{
+		.name = "capacity",
+		.handler = blkzone_report,
+		.help = N_("Report sum of zone capacities for the given device")
+	},{
 		.name = "reset",
 		.handler = blkzone_action,
 		.ioctl_cmd = BLKRESETZONE,
@@ -224,6 +228,8 @@ static const char *condition_str[] = {
 
 static int blkzone_report(struct blkzone_control *ctl)
 {
+	bool only_capacity_sum = !strcmp(ctl->command->name, "capacity");
+	uint64_t capacity_sum = 0;
 	struct blk_zone_report *zi;
 	unsigned long zonesize;
 	uint32_t i, nr_zones;
@@ -290,20 +296,26 @@ static int blkzone_report(struct blkzone_control *ctl)
 			else
 				cap = entry->len;
 
-			printf(_("  start: 0x%09"PRIx64", len 0x%06"PRIx64
-				", cap 0x%06"PRIx64", wptr 0x%06"PRIx64
-				" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
-				start, len, cap, (type == 0x1) ? 0 : wp - start,
-				entry->reset, entry->non_seq,
-				cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
-				type, type_text[type]);
+			if (only_capacity_sum) {
+				capacity_sum += cap;
+			} else {
+				printf(_("  start: 0x%09"PRIx64", len 0x%06"PRIx64
+					", cap 0x%06"PRIx64", wptr 0x%06"PRIx64
+					" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
+					start, len, cap, (type == 0x1) ? 0 : wp - start,
+					entry->reset, entry->non_seq,
+					cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
+					type, type_text[type]);
+			}
 
 			nr_zones--;
 			ctl->offset = start + len;
-
 		}
 
 	}
+
+	if (only_capacity_sum)
+		printf(_("0x%09"PRIx64"\n"), capacity_sum);
 
 	free(zi);
 	close(fd);

@@ -52,6 +52,13 @@ ro:Read only
 x?:Reserved conditions (should not be reported)
 .TE
 
+.SS capacity
+The command \fBblkzone capacity\fP is used to report device capacity information.
+.PP
+By default, the command will report the sum, in number of sectors, of all
+zone capacities on the device. Options may be used to modify this behavior,
+changing the starting zone or the size of the report, as explained below.
+
 .SS reset
 The command \fBblkzone reset\fP is used to reset one or more zones. Unlike
 .BR sg_reset_wp (8),
