@@ -90,27 +90,27 @@
 #define	NALLOC			64
 
 /* SI & SO charset mode */
-typedef enum {
+enum {
 	CS_NORMAL,
 	CS_ALTERNATE
-} CSET;
+};
 
-typedef struct char_str {
+struct col_char {
 	size_t		c_column;	/* column character is in */
 	wchar_t		c_char;		/* character in question */
 	int		c_width;	/* character width */
-	CSET		c_set;		/* character set (currently only 2) */
-} CHAR;
+	uint8_t
+			c_set:1;	/* character set (currently only 2) */
+};
 
-typedef struct line_str LINE;
-struct line_str {
-	CHAR	*l_line;		/* characters on the line */
-	LINE	*l_prev;		/* previous line */
-	LINE	*l_next;		/* next line */
-	size_t	l_lsize;		/* allocated sizeof l_line */
-	size_t	l_line_len;		/* strlen(l_line) */
-	size_t	l_max_col;		/* max column in the line */
-	unsigned int
+struct col_line {
+	struct col_char	*l_line;	/* characters on the line */
+	struct col_line	*l_prev;	/* previous line */
+	struct col_line	*l_next;	/* next line */
+	size_t		l_lsize;	/* allocated sizeof l_line */
+	size_t		l_line_len;	/* strlen(l_line) */
+	size_t		l_max_col;	/* max column in the line */
+	uint8_t
 		l_needs_sort:1;		/* set if chars went in out of order */
 };
 
@@ -119,23 +119,23 @@ struct line_str {
  * Free memory before exit when compiling LeakSanitizer.
  */
 struct col_alloc {
-	LINE *l;
+	struct col_line	 *l;
 	struct col_alloc *next;
 };
 #endif
 
 struct col_ctl {
-	CSET last_set;			/* char_set of last char printed */
-	LINE *lines;
-	LINE *l;			/* current line */
+	struct col_line *lines;
+	struct col_line *l;		/* current line */
 	size_t max_bufd_lines;		/* max # lines to keep in memory */
-	LINE *line_freelist;
+	struct col_line *line_freelist;
 	size_t nblank_lines;		/* # blanks after last flushed line */
 #ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 	struct col_alloc *alloc_root;	/* first of line allocations */
 	struct col_alloc *alloc_head;	/* latest line allocation */
 #endif
-	unsigned int
+	uint8_t
+		last_set:1,		/* char_set of last char printed */
 		compress_spaces:1,	/* if doing space -> tab conversion */
 		fine:1,			/* if `fine' resolution (half lines) */
 		no_backspaces:1,	/* if not to output any backspaces */
@@ -143,8 +143,7 @@ struct col_ctl {
 };
 
 struct col_lines {
-	CHAR *c;
-	CSET cur_set;
+	struct col_char *c;
 	wint_t ch;
 	size_t adjust;
 	size_t cur_col;
@@ -153,7 +152,9 @@ struct col_lines {
 	size_t max_line;
 	size_t nflushd_lines;
 	size_t this_line;
-	unsigned int warned:1;
+	unsigned int
+		cur_set:1,
+		warned:1;
 };
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -226,13 +227,13 @@ static void flush_blanks(struct col_ctl *ctl)
  * Write a line to stdout taking care of space to tab conversion (-h flag)
  * and character set shifts.
  */
-static void flush_line(struct col_ctl *ctl, LINE *l)
+static void flush_line(struct col_ctl *ctl, struct col_line *l)
 {
-	CHAR *c, *endc;
+	struct col_char *c, *endc;
 	size_t nchars = l->l_line_len, last_col = 0, this_col;
 
 	if (l->l_needs_sort) {
-		static CHAR *sorted = NULL;
+		static struct col_char *sorted = NULL;
 		static size_t count_size = 0, *count = NULL, sorted_size = 0;
 		size_t i, tot;
 
@@ -242,7 +243,7 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 		 */
 		if (sorted_size < l->l_lsize) {
 			sorted_size = l->l_lsize;
-			sorted = xrealloc(sorted, sizeof(CHAR) * sorted_size);
+			sorted = xrealloc(sorted, sizeof(struct col_char) * sorted_size);
 		}
 		if (count_size <= l->l_max_col) {
 			count_size = l->l_max_col + 1;
@@ -337,13 +338,13 @@ static void flush_line(struct col_ctl *ctl, LINE *l)
 	}
 }
 
-static LINE *alloc_line(struct col_ctl *ctl)
+static struct col_line *alloc_line(struct col_ctl *ctl)
 {
-	LINE *l;
+	struct col_line *l;
 	size_t i;
 
 	if (!ctl->line_freelist) {
-		l = xmalloc(sizeof(LINE) * NALLOC);
+		l = xmalloc(sizeof(struct col_line) * NALLOC);
 #ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 		if (ctl->alloc_root == NULL) {
 			ctl->alloc_root = xcalloc(1, sizeof(struct col_alloc));
@@ -363,11 +364,11 @@ static LINE *alloc_line(struct col_ctl *ctl)
 	l = ctl->line_freelist;
 	ctl->line_freelist = l->l_next;
 
-	memset(l, 0, sizeof(LINE));
+	memset(l, 0, sizeof(struct col_line));
 	return l;
 }
 
-static void free_line(struct col_ctl *ctl, LINE *l)
+static void free_line(struct col_ctl *ctl, struct col_line *l)
 {
 	l->l_next = ctl->line_freelist;
 	ctl->line_freelist = l;
@@ -375,7 +376,7 @@ static void free_line(struct col_ctl *ctl, LINE *l)
 
 static void flush_lines(struct col_ctl *ctl, ssize_t nflush)
 {
-	LINE *l;
+	struct col_line *l;
 
 	while (0 <= --nflush) {
 		l = ctl->lines;
@@ -483,7 +484,7 @@ static void update_cur_line(struct col_ctl *ctl, struct col_lines *lns)
 				 * has been flushed yet.
 				 */
 				for (; nmove < 0; nmove++) {
-					LINE *lnew = alloc_line(ctl);
+					struct col_line *lnew = alloc_line(ctl);
 					ctl->l->l_prev = lnew;
 					lnew->l_next = ctl->l;
 					ctl->l = ctl->lines = lnew;
@@ -506,7 +507,7 @@ static void update_cur_line(struct col_ctl *ctl, struct col_lines *lns)
 			ctl->l = ctl->l->l_next;
 
 		for (; 0 < nmove; nmove--) {
-			LINE *lnew = alloc_line(ctl);
+			struct col_line *lnew = alloc_line(ctl);
 			lnew->l_prev = ctl->l;
 			ctl->l->l_next = lnew;
 			ctl->l = lnew;
@@ -643,7 +644,7 @@ int main(int argc, char **argv)
 			size_t need;
 
 			need = ctl.l->l_lsize ? ctl.l->l_lsize * 2 : NALLOC;
-			ctl.l->l_line = xrealloc(ctl.l->l_line, need * sizeof(CHAR));
+			ctl.l->l_line = xrealloc(ctl.l->l_line, need * sizeof(struct col_char));
 			ctl.l->l_lsize = need;
 		}
 
