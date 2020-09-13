@@ -813,7 +813,6 @@ static void raw_print(struct dmesg_control *ctl, const char *buf, size_t size)
 			lastc = x[sz - 1];
 			size -= sz;
 			ctl->mmap_buff += sz;
-			munmap(x, sz);
 		}
 	}
 
