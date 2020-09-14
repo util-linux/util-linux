@@ -129,6 +129,7 @@ static const struct id_part samsung_part[] = {
 static const struct id_part nvidia_part[] = {
     { 0x000, "Denver" },
     { 0x003, "Denver 2" },
+    { 0x004, "Carmel" },
     { -1, "unknown" },
 };
 
