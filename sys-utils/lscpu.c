@@ -745,13 +745,15 @@ print_cpus_readable(struct lscpu_desc *desc, int cols[], int ncols,
 
 #endif
 
-static void __attribute__ ((__format__(printf, 3, 4)))
+static struct libscols_line *
+	__attribute__ ((__format__(printf, 3, 4)))
 	add_summary_sprint(struct libscols_table *tb,
+			struct libscols_line *sec,
 			const char *txt,
 			const char *fmt,
 			...)
 {
-	struct libscols_line *ln = scols_table_new_line(tb, NULL);
+	struct libscols_line *ln = scols_table_new_line(tb, sec);
 	char *data;
 	va_list args;
 
@@ -769,11 +771,13 @@ static void __attribute__ ((__format__(printf, 3, 4)))
 
 	if (data && scols_line_refer_data(ln, 1, data))
 		 err(EXIT_FAILURE, _("failed to add output data"));
+
+	return ln;
 }
 
-#define add_summary_n(tb, txt, num)	add_summary_sprint(tb, txt, "%zu", num)
-#define add_summary_s(tb, txt, str)	add_summary_sprint(tb, txt, "%s", str)
-#define add_summary_x(tb, txt, fmt, x)	add_summary_sprint(tb, txt, fmt, x)
+#define add_summary_n(tb, sec, txt, num)	add_summary_sprint(tb, sec, txt, "%zu", num)
+#define add_summary_s(tb, sec, txt, str)	add_summary_sprint(tb, sec, txt, "%s", str)
+#define add_summary_x(tb, sec, txt, fmt, x)	add_summary_sprint(tb, sec, txt, fmt, x)
 
 static void
 print_cpuset(struct lscpu_cxt *cxt,
@@ -864,6 +868,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 	struct lscpu_cputype *ct;
 	size_t i = 0;
 	struct libscols_table *tb;
+	struct libscols_line *sec = NULL;
 
 	scols_init_debug(0);
 
@@ -884,7 +889,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 	ct = lscpu_cputype_get_default(cxt);
 
 	if (cxt->arch)
-		add_summary_s(tb, _("Architecture:"), cxt->arch->name);
+		sec = add_summary_s(tb, NULL, _("Architecture:"), cxt->arch->name);
 	if (cxt->arch && (cxt->arch->bit32 || cxt->arch->bit64)) {
 		char buf[32], *p = buf;
 
@@ -897,19 +902,17 @@ static void print_summary(struct lscpu_cxt *cxt)
 			p += 8;
 		}
 		*(p - 2) = '\0';
-		add_summary_s(tb, _("CPU op-mode(s):"), buf);
+		add_summary_s(tb, sec, _("CPU op-mode(s):"), buf);
 	}
 	if (ct->addrsz)
-		add_summary_s(tb, _("Address sizes:"), ct->addrsz);
+		add_summary_s(tb, sec, _("Address sizes:"), ct->addrsz);
 #if !defined(WORDS_BIGENDIAN)
-	add_summary_s(tb, _("Byte Order:"), "Little Endian");
+	add_summary_s(tb, sec, _("Byte Order:"), "Little Endian");
 #else
-	add_summary_s(tb, _("Byte Order:"), "Big Endian");
+	add_summary_s(tb, sec, _("Byte Order:"), "Big Endian");
 #endif
-	add_summary_n(tb, _("CPU(s):"), cxt->npresents);
-
 	if (cxt->online)
-		print_cpuset(cxt, tb,
+		print_cpuset(cxt, tb, NULL,
 				cxt->hex ? _("On-line CPU(s) mask:") :
 					   _("On-line CPU(s) list:"),
 				cxt->online);
@@ -931,27 +934,31 @@ static void print_summary(struct lscpu_cxt *cxt)
 			if (cpu && is_cpu_present(cxt, cpu) && !is_cpu_online(cxt, cpu))
 				CPU_SET_S(cpu->logical_id, cxt->setsize, set);
 		}
-		print_cpuset(cxt, tb,
+		print_cpuset(cxt, tb, NULL,
 				cxt->hex ? _("Off-line CPU(s) mask:") :
 					   _("Off-line CPU(s) list:"), set);
 		cpuset_free(set);
 	}
 
+	sec = add_summary_n(tb, NULL, _("CPU(s):"), cxt->npresents);
+
 	for (i = 0; i < cxt->ncputypes; i++)
 		print_summary_cputype(cxt, cxt->cputypes[i], tb);
 
 	if (cxt->virt) {
+		sec = add_summary_s(tb, NULL, _("Virtualization features:"), NULL);
 		if (cxt->virt->cpuflag && !strcmp(cxt->virt->cpuflag, "svm"))
-			add_summary_s(tb, _("Virtualization:"), "AMD-V");
+			add_summary_s(tb, sec, _("Virtualization:"), "AMD-V");
 		else if (cxt->virt->cpuflag && !strcmp(cxt->virt->cpuflag, "vmx"))
-			add_summary_s(tb, _("Virtualization:"), "VT-x");
+			add_summary_s(tb, sec, _("Virtualization:"), "VT-x");
 
 		if (cxt->virt->hypervisor)
-			add_summary_s(tb, _("Hypervisor:"), cxt->virt->hypervisor);
+			add_summary_s(tb, sec, _("Hypervisor:"), cxt->virt->hypervisor);
 		if (cxt->virt->vendor) {
-			add_summary_s(tb, _("Hypervisor vendor:"), hv_vendors[cxt->virt->vendor]);
-			add_summary_s(tb, _("Virtualization type:"), _(virt_types[cxt->virt->type]));
+			add_summary_s(tb, sec, _("Hypervisor vendor:"), hv_vendors[cxt->virt->vendor]);
+			add_summary_s(tb, sec, _("Virtualization type:"), _(virt_types[cxt->virt->type]));
 		}
+		sec = NULL;
 	}
 	if (cxt->ncaches) {
 		const char *last = NULL;
@@ -960,6 +967,8 @@ static void print_summary(struct lscpu_cxt *cxt)
 		/* The caches are sorted by name, cxt->caches[] may contains
 		 * multiple instances for the same name.
 		 */
+		sec = add_summary_s(tb, NULL, _("Caches:"), NULL);
+
 		for (i = 0; i < cxt->ncaches; i++) {
 			const char *name = cxt->caches[i].name;
 			uint64_t sz;
@@ -972,22 +981,25 @@ static void print_summary(struct lscpu_cxt *cxt)
 			snprintf(hdr, sizeof(hdr), _("%s cache:"), name);
 
 			if (cxt->bytes)
-				add_summary_x(tb, hdr, "%" PRIu64, sz);
+				add_summary_x(tb, sec, hdr, "%" PRIu64, sz);
 			else {
 				char *tmp = size_to_human_string(
 						SIZE_SUFFIX_3LETTER |
 						SIZE_SUFFIX_SPACE,
 						sz);
-				add_summary_s(tb, hdr, tmp);
+				add_summary_s(tb, sec, hdr, tmp);
 				free(tmp);
 			}
 			last = name;
 		}
+		sec = NULL;
 	}
 
 	/* Extra caches (s390, ...) */
 	if (cxt->necaches) {
 		char hdr[256];
+
+		sec = add_summary_s(tb, NULL, _("Extra caches:"), NULL);
 
 		for (i = 0; i < cxt->necaches; i++) {
 			struct lscpu_cache *ca = &cxt->ecaches[i];
@@ -996,13 +1008,13 @@ static void print_summary(struct lscpu_cxt *cxt)
 				continue;
 			snprintf(hdr, sizeof(hdr), _("%s cache:"), ca->name);
 			if (cxt->bytes)
-				add_summary_x(tb, hdr, "%" PRIu64, ca->size);
+				add_summary_x(tb, sec, hdr, "%" PRIu64, ca->size);
 			else {
 				char *tmp = size_to_human_string(
 						SIZE_SUFFIX_3LETTER |
 						SIZE_SUFFIX_SPACE,
 						ca->size);
-				add_summary_s(tb, hdr, tmp);
+				add_summary_s(tb, sec, hdr, tmp);
 				free(tmp);
 			}
 		}
@@ -1010,19 +1022,27 @@ static void print_summary(struct lscpu_cxt *cxt)
 
 	if (cxt->nnodes) {
 		char buf[256];
-		add_summary_n(tb, _("NUMA node(s):"), cxt->nnodes);
+
+		sec = add_summary_s(tb, NULL, _("NUMA:"), NULL);
+
+		add_summary_n(tb, sec,_("NUMA node(s):"), cxt->nnodes);
 		for (i = 0; i < cxt->nnodes; i++) {
 			snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), cxt->idx2nodenum[i]);
-			print_cpuset(cxt, tb, buf, cxt->nodemaps[i]);
+			print_cpuset(cxt, tb, sec, buf, cxt->nodemaps[i]);
 		}
+		sec = NULL;
 	}
 
 	if (cxt->vuls) {
 		char buf[256];
+
+		sec = add_summary_s(tb, NULL, _("Vulnerabilities:"), NULL);
+
 		for (i = 0; i < cxt->nvuls; i++) {
-			snprintf(buf, sizeof(buf), ("Vulnerability %s:"), cxt->vuls[i].name);
-			add_summary_s(tb, buf, cxt->vuls[i].text);
+			snprintf(buf, sizeof(buf), (" %s:"), cxt->vuls[i].name);
+			add_summary_s(tb, sec, buf, cxt->vuls[i].text);
 		}
+		sec = NULL;
 	}
 	scols_print_table(tb);
 	scols_unref_table(tb);
