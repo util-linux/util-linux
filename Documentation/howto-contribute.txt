@@ -9,8 +9,8 @@ CONTENTS
 
 Sending Patches
 
-	* send your patches to the mailing list.
-	  See ../README.
+	* send your patches to the mailing list (see ../README) or by
+	  github.com pull request.
 
 	* email is accepted as an inline patch with, or without, a git pull
 	  request. Pull request emails need to include the patch set for review
