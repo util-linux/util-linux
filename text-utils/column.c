@@ -96,7 +96,7 @@ struct column_control {
 	unsigned int greedy :1,
 		     json :1,
 		     header_repeat :1,
-		     tab_empty_lines :1,	/* --table-empty-lines */
+		     keep_empty_lines :1,	/* --keep-empty-lines */
 		     tab_noheadings :1;
 };
 
@@ -523,7 +523,7 @@ static int read_input(struct column_control *ctl, FILE *fp)
 				*p = '\0';
 		}
 		if (!str || !*str) {
-			if (ctl->tab_empty_lines) {
+			if (ctl->keep_empty_lines) {
 				if (ctl->mode == COLUMN_MODE_TABLE) {
 					add_emptyline_to_table(ctl);
 				} else {
@@ -664,7 +664,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
-	fputs(_(" -L, --table-empty-lines          don't ignore empty lines\n"), out);
+	fputs(_(" -L, --keep-empty-lines           don't ignore empty lines\n"), out);
 	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -703,6 +703,7 @@ int main(int argc, char **argv)
 		{ "fillrows",            no_argument,       NULL, 'x' },
 		{ "help",                no_argument,       NULL, 'h' },
 		{ "json",                no_argument,       NULL, 'J' },
+		{ "keep-empty-lines",    no_argument,       NULL, 'L' },
 		{ "output-separator",    required_argument, NULL, 'o' },
 		{ "output-width",        required_argument, NULL, 'c' },
 		{ "separator",           required_argument, NULL, 's' },
@@ -717,7 +718,7 @@ int main(int argc, char **argv)
 		{ "table-right",         required_argument, NULL, 'R' },
 		{ "table-truncate",      required_argument, NULL, 'T' },
 		{ "table-wrap",          required_argument, NULL, 'W' },
-		{ "table-empty-lines",   no_argument,       NULL, 'L' },
+		{ "table-empty-lines",   no_argument,       NULL, 'L' }, /* deprecated */
 		{ "table-header-repeat", no_argument,       NULL, 'e' },
 		{ "tree",                required_argument, NULL, 'r' },
 		{ "tree-id",             required_argument, NULL, 'i' },
@@ -768,7 +769,7 @@ int main(int argc, char **argv)
 			ctl.mode = COLUMN_MODE_TABLE;
 			break;
 		case 'L':
-			ctl.tab_empty_lines = 1;
+			ctl.keep_empty_lines = 1;
 			break;
 		case 'l':
 			ctl.maxncols = strtou32_or_err(optarg, _("invalid columns limit argument"));

@@ -40,7 +40,7 @@ _column_module()
 				--table-right
 				--table-truncate
 				--table-wrap
-				--table-empty-lines
+				--keep-empty-lines
 				--json
 				--tree
 				--tree-id

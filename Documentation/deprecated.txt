@@ -2,6 +2,13 @@ The following is a list of commands or features that are deprecated.  All
 deprecated utils are in maintenance mode and we keep them in source tree for
 backward compatibility only.
 
+
+what:  column --table-empty-lines
+why:   renamed to --keep-empty-lines
+since: v2.37
+
+--------------------------
+
 what:  hwclock --debug
 why:   renamed to --verbose, and may be repurposed later.
 since: v2.32
