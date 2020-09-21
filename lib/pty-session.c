@@ -631,6 +631,12 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 			break;
 	}
 
+	if (rc && pty->child && pty->child != (pid_t) -1 && !pty->delivered_signal) {
+		kill(pty->child, SIGTERM);
+		sleep(2);
+		kill(pty->child, SIGKILL);
+	}
+
 	pty_signals_cleanup(pty);
 
 	DBG(IO, ul_debug("poll() done [signal=%d, rc=%d]", pty->delivered_signal, rc));

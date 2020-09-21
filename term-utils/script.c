@@ -673,7 +673,6 @@ static int callback_log_stream_activity(void *data, int fd, char *buf, size_t bu
 
 	ctl->outsz += ssz;
 
-
 	/* check output limit */
 	if (ctl->maxsz != 0 && ctl->outsz >= ctl->maxsz) {
 		if (!ctl->quiet)
