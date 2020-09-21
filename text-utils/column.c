@@ -487,8 +487,19 @@ static int add_emptyline_to_table(struct column_control *ctl)
 	return 0;
 }
 
+static void add_entry(struct column_control *ctl, size_t *maxents, wchar_t *wcs)
+{
+	if (ctl->nents <= *maxents) {
+		*maxents += 1000;
+		ctl->ents = xrealloc(ctl->ents, *maxents * sizeof(wchar_t *));
+	}
+	ctl->ents[ctl->nents] = wcs;
+	ctl->nents++;
+}
+
 static int read_input(struct column_control *ctl, FILE *fp)
 {
+	wchar_t *empty = NULL;
 	char *buf = NULL;
 	size_t bufsz = 0;
 	size_t maxents = 0;
@@ -512,8 +523,15 @@ static int read_input(struct column_control *ctl, FILE *fp)
 				*p = '\0';
 		}
 		if (!str || !*str) {
-			if (ctl->mode == COLUMN_MODE_TABLE && ctl->tab_empty_lines)
-				add_emptyline_to_table(ctl);
+			if (ctl->tab_empty_lines) {
+				if (ctl->mode == COLUMN_MODE_TABLE) {
+					add_emptyline_to_table(ctl);
+				} else {
+					if (!empty)
+						empty = mbs_to_wcs("");
+					add_entry(ctl, &maxents, empty);
+				}
+			}
 			continue;
 		}
 
@@ -539,16 +557,10 @@ static int read_input(struct column_control *ctl, FILE *fp)
 
 		case COLUMN_MODE_FILLCOLS:
 		case COLUMN_MODE_FILLROWS:
-			if (ctl->nents <= maxents) {
-				maxents += 1000;
-				ctl->ents = xrealloc(ctl->ents,
-						maxents * sizeof(wchar_t *));
-			}
-			ctl->ents[ctl->nents] = wcs;
-			len = width(ctl->ents[ctl->nents]);
+			add_entry(ctl, &maxents, wcs);
+			len = width(wcs);
 			if (ctl->maxlength < len)
 				ctl->maxlength = len;
-			ctl->nents++;
 			break;
 		default:
 			free(wcs);
