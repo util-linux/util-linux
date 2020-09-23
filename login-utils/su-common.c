@@ -550,8 +550,7 @@ static void create_watching_parent(struct su_context *su)
 	if (su->force_pty) {
 		ul_pty_set_child(su->pty, su->child);
 
-		if (ul_pty_proxy_master(su->pty) != 0)
-			caught_signal = true;
+		ul_pty_proxy_master(su->pty);
 
 		/* ul_pty_proxy_master() keeps classic signal handler are out of game */
 		caught_signal = ul_pty_get_delivered_signal(su->pty);
