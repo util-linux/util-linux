@@ -209,7 +209,7 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 		else if (lookup(buf, "ID_MODEL", &prop->model)) ;
 		else if (lookup(buf, "ID_WWN_WITH_EXTENSION", &prop->wwn)) ;
 		else if (lookup(buf, "ID_WWN", &prop->wwn)) ;
-		else if (lookup(buf, "ID_SCSI_IDENT_SERIAL", &prop->serial)) ;	/* serial from sg3_utils */
+		else if (lookup(buf, "SCSI_IDENT_SERIAL", &prop->serial)) ;	/* serial from sg3_utils */
 		else if (lookup(buf, "ID_SCSI_SERIAL", &prop->serial)) ;
 		else if (lookup(buf, "ID_SERIAL_SHORT", &prop->serial)) ;
 		else if (lookup(buf, "ID_SERIAL", &prop->serial)) ;
