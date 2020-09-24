@@ -714,7 +714,6 @@ int lscpu_read_archext(struct lscpu_cxt *cxt)
 			goto nortas;
 
 		ntypes = strbe16toh(buf, 2);
-		assert(ntypes <= 1);
 		if (!ntypes)
 			goto nortas;
 
