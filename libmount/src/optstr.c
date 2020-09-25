@@ -39,7 +39,7 @@ struct libmnt_optloc {
 	size_t  namesz;
 };
 
-#define mnt_init_optloc(_ol)	(memset((_ol), 0, sizeof(struct libmnt_optloc)))
+#define MNT_INIT_OPTLOC	{ .begin = NULL }
 
 #define mnt_optmap_entry_novalue(e) \
 		(e && (e)->name && !strchr((e)->name, '=') && !((e)->mask & MNT_PREFIX))
@@ -292,13 +292,11 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 int mnt_optstr_get_option(const char *optstr, const char *name,
 			  char **value, size_t *valsz)
 {
-	struct libmnt_optloc ol;
+	struct libmnt_optloc ol = MNT_INIT_OPTLOC;
 	int rc;
 
 	if (!optstr || !name)
 		return -EINVAL;
-
-	mnt_init_optloc(&ol);
 
 	rc = mnt_optstr_locate_option((char *) optstr, name, &ol);
 	if (!rc) {
@@ -330,9 +328,7 @@ int mnt_optstr_deduplicate_option(char **optstr, const char *name)
 
 	opt = *optstr;
 	do {
-		struct libmnt_optloc ol;
-
-		mnt_init_optloc(&ol);
+		struct libmnt_optloc ol = MNT_INIT_OPTLOC;
 
 		rc = mnt_optstr_locate_option(opt, name, &ol);
 		if (!rc) {
@@ -439,14 +435,12 @@ insert_value(char **str, char *pos, const char *substr, char **next)
  */
 int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 {
-	struct libmnt_optloc ol;
+	struct libmnt_optloc ol = MNT_INIT_OPTLOC;
 	char *nameend;
 	int rc = 1;
 
 	if (!optstr || !name)
 		return -EINVAL;
-
-	mnt_init_optloc(&ol);
 
 	if (*optstr)
 		rc = mnt_optstr_locate_option(*optstr, name, &ol);
@@ -486,13 +480,11 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
  */
 int mnt_optstr_remove_option(char **optstr, const char *name)
 {
-	struct libmnt_optloc ol;
+	struct libmnt_optloc ol = MNT_INIT_OPTLOC;
 	int rc;
 
 	if (!optstr || !name)
 		return -EINVAL;
-
-	mnt_init_optloc(&ol);
 
 	rc = mnt_optstr_locate_option(*optstr, name, &ol);
 	if (rc != 0)
@@ -1062,12 +1054,10 @@ int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next)
 int mnt_optstr_fix_user(char **optstr)
 {
 	char *username;
-	struct libmnt_optloc ol;
+	struct libmnt_optloc ol = MNT_INIT_OPTLOC;
 	int rc = 0;
 
 	DBG(CXT, ul_debug("fixing user"));
-
-	mnt_init_optloc(&ol);
 
 	rc = mnt_optstr_locate_option(*optstr, "user", &ol);
 	if (rc)
