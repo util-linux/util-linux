@@ -3,6 +3,7 @@ noinst_LTLIBRARIES += libcommon.la
 libcommon_la_CFLAGS = $(AM_CFLAGS)
 libcommon_la_SOURCES = \
 	lib/blkdev.c \
+	lib/buffer.c \
 	lib/canonicalize.c \
 	lib/crc32.c \
 	lib/crc32c.c \
@@ -76,6 +77,7 @@ dist_man_MANS += lib/terminal-colors.d.5
 
 check_PROGRAMS += \
 	test_blkdev \
+	test_buffer \
 	test_canonicalize \
 	test_colors \
 	test_fileutils \
@@ -186,3 +188,6 @@ test_pwdutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 test_remove_env_SOURCES = lib/env.c
 test_remove_env_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
+
+test_buffer_SOURCES = lib/buffer.c
+test_buffer_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_BUFFER
