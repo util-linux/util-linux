@@ -171,6 +171,11 @@ static const struct id_part intel_part[] = {
     { -1, "unknown" },
 };
 
+static const struct id_part fujitsu_part[] = {
+    { 0x001, "A64FX" },
+    { -1, "unknown" },
+};
+
 static const struct id_part hisi_part[] = {
     { 0xd01, "Kunpeng-920" },	/* aka tsv110 */
     { -1, "unknown" },
@@ -191,6 +196,7 @@ static const struct hw_impl hw_implementer[] = {
     { 0x42, brcm_part,    "Broadcom" },
     { 0x43, cavium_part,  "Cavium" },
     { 0x44, dec_part,     "DEC" },
+    { 0x46, fujitsu_part, "FUJITSU" },
     { 0x48, hisi_part,    "HiSilicon" },
     { 0x4e, nvidia_part,  "Nvidia" },
     { 0x50, apm_part,     "APM" },
