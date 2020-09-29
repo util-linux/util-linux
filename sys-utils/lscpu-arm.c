@@ -22,7 +22,15 @@
  *  - Linux kernel: arch/armX/include/asm/cputype.h
  *  - GCC sources: config/arch/arch-cores.def
  *  - Ancient wisdom
+ *  - SMBIOS tables (if applicable)
  */
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include "lscpu.h"
 
 struct id_part {
@@ -208,42 +216,45 @@ static const struct hw_impl hw_implementer[] = {
     { -1,   unknown_part, "unknown" },
 };
 
-void arm_cpu_decode(struct lscpu_desc *desc)
+static void __arm_cpu_decode(struct lscpu_desc *desc)
 {
-	int j, impl, part;
+	int j, impl = 0;
 	const struct id_part *parts = NULL;
 	char *end;
 
-	if (desc->vendor == NULL || desc->model == NULL)
-		return;
-	if ((strncmp(desc->vendor,"0x",2) != 0 || strncmp(desc->model,"0x",2) ))
-		return;
-
-	errno = 0;
-	impl = (int) strtol(desc->vendor, &end, 0);
-	if (errno || desc->vendor == end)
-		return;
-
-	errno = 0;
-	part = (int) strtol(desc->model, &end, 0);
-	if (errno || desc->model == end)
-		return;
-
-	for (j = 0; hw_implementer[j].id != -1; j++) {
-		if (hw_implementer[j].id == impl) {
-			parts = hw_implementer[j].parts;
-			desc->vendor = (char *) hw_implementer[j].name;
-			break;
-		}
+	if (desc->vendor && startswith(desc->vendor, "0x")) {
+		errno = 0;
+		impl = (int) strtol(desc->vendor, &end, 0);
+		if (errno || desc->vendor == end)
+			return;
 	}
 
-	if (parts == NULL)
-		return;
+	/* model and modelname */
+	if (impl && desc->model && startswith(desc->model, "0x")) {
+		int part;
 
-	for (j = 0; parts[j].id != -1; j++) {
-		if (parts[j].id == part) {
-			desc->modelname = (char *) parts[j].name;
-			break;
+		errno = 0;
+
+		part = (int) strtol(desc->model, &end, 0);
+		if (errno || desc->model == end)
+			return;
+
+		for (j = 0; hw_implementer[j].id != -1; j++) {
+			if (hw_implementer[j].id == impl) {
+				parts = hw_implementer[j].parts;
+				desc->vendor = (char *) hw_implementer[j].name;
+				break;
+			}
+		}
+
+		if (parts == NULL)
+			return;
+
+		for (j = 0; parts[j].id != -1; j++) {
+			if (parts[j].id == part) {
+				desc->modelname = (char *) parts[j].name;
+				break;
+			}
 		}
 	}
 
@@ -265,4 +276,55 @@ void arm_cpu_decode(struct lscpu_desc *desc)
 		snprintf(buf, sizeof(buf), "r%dp%d", variant, revision);
 		desc->stepping = xstrdup(buf);
 	}
+}
+
+#define PROC_MFR_OFFSET		0x07
+#define PROC_VERSION_OFFSET	0x10
+
+static int __arm_cpu_smbios(struct lscpu_desc *desc)
+{
+	uint8_t data[8192];
+	char buf[128], *str;
+	struct lscpu_dmi_header h;
+	int fd;
+	ssize_t rs;
+
+	fd = open(_PATH_SYS_DMI_TYPE4, O_RDONLY);
+	if (fd < 0)
+		return fd;
+
+	rs = read_all(fd, (char *) data, 8192);
+	close(fd);
+
+	if (rs == -1)
+		return -1;
+
+	to_dmi_header(&h, data);
+
+	str = dmi_string(&h, data[PROC_MFR_OFFSET]);
+	if (str) {
+		xstrncpy(buf, str, 127);
+		desc->vendor = xstrdup(buf);
+	}
+
+	str = dmi_string(&h, data[PROC_VERSION_OFFSET]);
+	if (str) {
+		xstrncpy(buf, str, 127);
+		desc->modelname = xstrdup(buf);
+	}
+
+	return 0;
+}
+
+void arm_cpu_decode(struct lscpu_desc *desc)
+{
+	int rc = -1;
+
+	/* use SMBIOS Type 4 data if available,
+	 * else fall back to manual decoding using the tables above */
+	if (access(_PATH_SYS_DMI_TYPE4, R_OK) == 0)
+		rc = __arm_cpu_smbios(desc);
+
+	if (rc)
+		__arm_cpu_decode(desc);
 }

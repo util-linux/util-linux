@@ -211,4 +211,40 @@ struct lscpu_modifier {
 extern int read_hypervisor_dmi(void);
 extern void arm_cpu_decode(struct lscpu_desc *desc);
 
+#define _PATH_SYS_DMI		"/sys/firmware/dmi/tables/DMI"
+#define _PATH_SYS_DMI_TYPE4	"/sys/firmware/dmi/entries/4-0/raw"
+
+struct lscpu_dmi_header
+{
+	uint8_t type;
+	uint8_t length;
+	uint16_t handle;
+	uint8_t *data;
+};
+
+static inline void to_dmi_header(struct lscpu_dmi_header *h, uint8_t *data)
+{
+	h->type = data[0];
+	h->length = data[1];
+	memcpy(&h->handle, data + 2, sizeof(h->handle));
+	h->data = data;
+}
+
+static inline char *dmi_string(const struct lscpu_dmi_header *dm, uint8_t s)
+{
+	char *bp = (char *)dm->data;
+
+	if (!s || !bp)
+		return NULL;
+
+	bp += dm->length;
+	while (s > 1 && *bp) {
+		bp += strlen(bp);
+		bp++;
+		s--;
+	}
+
+	return !*bp ? NULL : bp;
+}
+
 #endif /* LSCPU_H */
