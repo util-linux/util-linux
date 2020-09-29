@@ -24,7 +24,8 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_COL"
 ts_check_test_command "$TS_HELPER_STRERROR"
 
-cat $TS_SELF/multibyte.data | LC_ALL=C.UTF-8 $TS_CMD_COL 2>&1 > /dev/null |
+cat $TS_SELF/multibyte.data |
+    LC_ALL=C.UTF-8 ts_run $TS_CMD_COL 2>&1 > /dev/null |
     sed -e "s@$($TS_HELPER_STRERROR EILSEQ)@EILSEQ@" > $TS_OUTPUT
 
 ts_finalize

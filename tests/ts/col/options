@@ -16,26 +16,24 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="newline handling"
+TS_DESC="options"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_COL"
 
-ts_log "zero length file"
-printf "" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_log "no-backspaces"
+printf "FIXME" | ts_run $TS_CMD_COL --no-backspaces >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-ts_log "one line no nl"
-printf "1" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_log "pass"
+printf "a\x11b" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+printf "a\x11b" | ts_run $TS_CMD_COL --pass >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-ts_log "one line with nl"
-printf "1\n" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_log "tabs"
+printf "        1\n" | ts_run $TS_CMD_COL --tabs >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-ts_log "second line no nl"
-printf "1\n2" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
-
-ts_log "second line with nl"
-printf "1\n2\n" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_log "spaces"
+printf "\t1\n" | ts_run $TS_CMD_COL --spaces >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize
