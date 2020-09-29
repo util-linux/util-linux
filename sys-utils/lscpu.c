@@ -440,8 +440,6 @@ static void read_physical_info_powerpc(struct lscpu_desc *desc)
 		return;
 
 	ntypes = strbe16toh(buf, 2);
-
-	assert(ntypes <= 1);
 	if (!ntypes)
 		return;
 
