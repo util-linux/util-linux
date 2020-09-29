@@ -804,8 +804,13 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 
 	/* add missing options (but ignore fl if contains MS_REC only) */
 	if (fl && fl != MS_REC) {
+
 		const struct libmnt_optmap *ent;
+		struct ul_buffer buf = UL_INIT_BUFFER;
+		size_t sz;
 		char *p;
+
+		ul_buffer_refer_string(&buf, *optstr);
 
 		for (ent = map; ent && ent->name; ent++) {
 			if ((ent->mask & MNT_INVERT)
@@ -820,17 +825,16 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 					p--;			/* name[=] */
 				else
 					continue;		/* name= */
-
-				p = strndup(ent->name, p - ent->name);
-				if (!p) {
-					rc = -ENOMEM;
-					goto err;
-				}
-				mnt_optstr_append_option(optstr, p, NULL);
-				free(p);
+				sz = p - ent->name;
 			} else
-				mnt_optstr_append_option(optstr, ent->name, NULL);
+				sz = strlen(ent->name);
+
+			rc = __buffer_append_option(&buf, ent->name, sz, NULL, 0);
+			if (rc)
+				goto err;
 		}
+
+		*optstr = ul_buffer_get_data(&buf);
 	}
 
 	DBG(CXT, ul_debug("new optstr '%s'", *optstr));
