@@ -99,8 +99,8 @@ struct col_char {
 	size_t		c_column;	/* column character is in */
 	wchar_t		c_char;		/* character in question */
 	int		c_width;	/* character width */
-	uint8_t
-			c_set:1;	/* character set (currently only 2) */
+
+	uint8_t		c_set:1;	/* character set (currently only 2) */
 };
 
 struct col_line {
@@ -110,8 +110,8 @@ struct col_line {
 	size_t		l_lsize;	/* allocated sizeof l_line */
 	size_t		l_line_len;	/* strlen(l_line) */
 	size_t		l_max_col;	/* max column in the line */
-	uint8_t
-		l_needs_sort:1;		/* set if chars went in out of order */
+
+	uint8_t		l_needs_sort:1;	/* set if chars went in out of order */
 };
 
 #ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
@@ -134,7 +134,7 @@ struct col_ctl {
 	struct col_alloc *alloc_root;	/* first of line allocations */
 	struct col_alloc *alloc_head;	/* latest line allocation */
 #endif
-	uint8_t
+	unsigned int
 		last_set:1,		/* char_set of last char printed */
 		compress_spaces:1,	/* if doing space -> tab conversion */
 		fine:1,			/* if `fine' resolution (half lines) */
@@ -152,6 +152,7 @@ struct col_lines {
 	size_t max_line;
 	size_t nflushd_lines;
 	size_t this_line;
+
 	unsigned int
 		cur_set:1,
 		warned:1;
@@ -165,7 +166,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Filter out reverse line feeds.\n"), out);
+	fputs(_("Filter out reverse line feeds from standard input.\n"), out);
 
 	fprintf(out, _(
 		"\nOptions:\n"
@@ -176,13 +177,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -x, --spaces           convert tabs to spaces\n"
 		" -l, --lines NUM        buffer at least NUM lines\n"
 		));
-	printf( " -H, --help             %s\n", USAGE_OPTSTR_HELP);
-	printf( " -V, --version          %s\n", USAGE_OPTSTR_VERSION);
-
-	fputs(USAGE_SEPARATOR, out);
-	fprintf(out, _(
-		"%s reads from standard input and writes to standard output\n"),
-		program_invocation_short_name);
+	printf(USAGE_HELP_OPTIONS(24));
 
 	printf(USAGE_MAN_TAIL("col(1)"));
 	exit(EXIT_SUCCESS);
