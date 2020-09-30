@@ -417,9 +417,13 @@ static inline int gpt_calculate_alternative_entries_lba(
 	uint64_t esects = 0;
 	int rc = gpt_calculate_sectorsof_entries(hdr, nents, &esects, cxt);
 
-	if (rc == 0)
-		*sz = cxt->total_sectors - 1ULL - esects;
-	return rc;
+	if (rc)
+		return rc;
+	if (cxt->total_sectors < 1ULL + esects)
+		return -ENOSPC;
+
+	*sz = cxt->total_sectors - 1ULL - esects;
+	return 0;
 }
 
 static inline int gpt_calculate_last_lba(
@@ -431,9 +435,13 @@ static inline int gpt_calculate_last_lba(
 	uint64_t esects = 0;
 	int rc = gpt_calculate_sectorsof_entries(hdr, nents, &esects, cxt);
 
-	if (rc == 0)
-		*sz = cxt->total_sectors - 2ULL - esects;
-	return rc;
+	if (rc)
+		return rc;
+	if (cxt->total_sectors < 2ULL + esects)
+		return -ENOSPC;
+
+	*sz = cxt->total_sectors - 2ULL - esects;
+	return 0;
 }
 
 static inline int gpt_calculate_first_lba(
@@ -3082,7 +3090,6 @@ static int gpt_reset_alignment(struct fdisk_context *cxt)
 		uint64_t first, last;
 
 		count_first_last_lba(cxt, &first, &last);
-
 		if (cxt->first_lba < first)
 			cxt->first_lba = first;
 		if (cxt->last_lba > last)
