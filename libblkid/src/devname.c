@@ -351,7 +351,7 @@ static void lvm_probe_all(blkid_cache cache, int only_if_new)
 				lv_name);
 			dev = lvm_get_devno(lvm_device);
 			sprintf(lvm_device, "%s/%s", vg_name, lv_name);
-			DBG(DEVNAME, ul_debug("LVM dev %s: devno 0x%04X",
+			DBG(DEVNAME, ul_debug("Probe LVM dev %s: devno 0x%04X",
 						  lvm_device,
 						  (unsigned int) dev));
 			probe_one(cache, lvm_device, dev, BLKID_PRI_LVM,
@@ -383,7 +383,7 @@ evms_probe_all(blkid_cache cache, int only_if_new)
 			    &ma, &mi, &sz, device) != 4)
 			continue;
 
-		DBG(DEVNAME, ul_debug("Checking partition %s (%d, %d)",
+		DBG(DEVNAME, ul_debug("Probe EVMS partition %s (%d, %d)",
 					  device, ma, mi));
 
 		probe_one(cache, device, makedev(ma, mi), BLKID_PRI_EVMS,
@@ -433,7 +433,7 @@ ubi_probe_all(blkid_cache cache, int only_if_new)
 
 			if (!S_ISCHR(st.st_mode) || !minor(dev))
 				continue;
-			DBG(DEVNAME, ul_debug("UBI vol %s/%s: devno 0x%04X",
+			DBG(DEVNAME, ul_debug("Probe UBI vol %s/%s: devno 0x%04X",
 				  *dirname, name, (int) dev));
 			probe_one(cache, name, dev, BLKID_PRI_UBI, only_if_new, 0);
 		}
@@ -506,7 +506,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 
 		/* probably partition, so check */
 		if (!iswhole[which]) {
-			DBG(DEVNAME, ul_debug(" partition dev %s, devno 0x%04X",
+			DBG(DEVNAME, ul_debug(" Probe partition dev %s, devno 0x%04X",
 				   ptname, (unsigned int) devs[which]));
 
 			if (sz > 1)
@@ -545,7 +545,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 		 * check last as well.
 		 */
 		if (lens[last] && strncmp(ptnames[last], ptname, lens[last]) != 0) {
-			DBG(DEVNAME, ul_debug(" whole dev %s, devno 0x%04X",
+			DBG(DEVNAME, ul_debug(" Probe whole dev %s, devno 0x%04X",
 				   ptnames[last], (unsigned int) devs[last]));
 			probe_one(cache, ptnames[last], devs[last], 0,
 				  only_if_new, 0);
@@ -555,8 +555,11 @@ static int probe_all(blkid_cache cache, int only_if_new)
 	}
 
 	/* Handle the last device if it wasn't partitioned */
-	if (lens[which])
+	if (lens[which]) {
+		DBG(DEVNAME, ul_debug(" Probe whole dev %s, devno 0x%04X",
+					ptname, (unsigned int) devs[which]));
 		probe_one(cache, ptname, devs[which], 0, only_if_new, 0);
+	}
 
 	fclose(proc);
 	blkid_flush_cache(cache);
