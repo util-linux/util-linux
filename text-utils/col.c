@@ -89,6 +89,10 @@
 /* number of lines to allocate */
 #define	NALLOC			64
 
+#if defined(__SANITIZE_ADDRESS__) || defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
+# define COL_DEALLOCATE_ON_EXIT
+#endif
+
 /* SI & SO charset mode */
 enum {
 	CS_NORMAL,
@@ -114,7 +118,7 @@ struct col_line {
 	uint8_t		l_needs_sort:1;	/* set if chars went in out of order */
 };
 
-#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+#ifdef COL_DEALLOCATE_ON_EXIT
 /*
  * Free memory before exit when compiling LeakSanitizer.
  */
@@ -130,7 +134,7 @@ struct col_ctl {
 	size_t max_bufd_lines;		/* max # lines to keep in memory */
 	struct col_line *line_freelist;
 	size_t nblank_lines;		/* # blanks after last flushed line */
-#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+#ifdef COL_DEALLOCATE_ON_EXIT
 	struct col_alloc *alloc_root;	/* first of line allocations */
 	struct col_alloc *alloc_head;	/* latest line allocation */
 #endif
@@ -340,7 +344,7 @@ static struct col_line *alloc_line(struct col_ctl *ctl)
 
 	if (!ctl->line_freelist) {
 		l = xmalloc(sizeof(struct col_line) * NALLOC);
-#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+#ifdef COL_DEALLOCATE_ON_EXIT
 		if (ctl->alloc_root == NULL) {
 			ctl->alloc_root = xcalloc(1, sizeof(struct col_alloc));
 			ctl->alloc_root->l = l;
@@ -580,7 +584,7 @@ static void parse_options(struct col_ctl *ctl, int argc, char **argv)
 	}
 }
 
-#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+#ifdef COL_DEALLOCATE_ON_EXIT
 static void free_line_allocations(struct col_alloc *root)
 {
 	struct col_alloc *next;
@@ -670,7 +674,7 @@ int main(int argc, char **argv)
 	for (; ctl.l->l_next; ctl.l = ctl.l->l_next)
 		lns.this_line++;
 	if (lns.max_line == 0 && lns.cur_col == 0) {
-#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+#ifdef COL_DEALLOCATE_ON_EXIT
 		free_line_allocations(ctl.alloc_root);
 #endif
 		return EXIT_SUCCESS;	/* no lines, so just exit */
@@ -689,7 +693,7 @@ int main(int argc, char **argv)
 		/* missing a \n on the last line? */
 		ctl.nblank_lines = 2;
 	flush_blanks(&ctl);
-#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+#ifdef COL_DEALLOCATE_ON_EXIT
 	free_line_allocations(ctl.alloc_root);
 #endif
 	return ret;
