@@ -487,7 +487,7 @@ static int script_read(struct fdisk_context *cxt)
 		rc = fdisk_reassign_device(cxt);
                 if (rc == 0 && !fdisk_has_label(cxt)) {
                         fdisk_info(cxt, _("Device does not contain a recognized partition table."));
-                        fdisk_create_disklabel(cxt, NULL);
+                        rc = fdisk_create_disklabel(cxt, NULL);
 		}
 	} else
 		fdisk_info(cxt, _("Script successfully applied."));
@@ -1065,6 +1065,7 @@ static int createlabel_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu_entry *ent)
 {
 	struct fdisk_context *cxt = *cxt0;
+	const char *wanted = NULL;
 	int rc = -EINVAL;
 
 	DBG(MENU, ul_debug("enter Create label menu"));
@@ -1077,26 +1078,33 @@ static int createlabel_menu_cb(struct fdisk_context **cxt0,
 		case 'g':
 			/* Deprecated, use 'G' in main menu, just for backward
 			 * compatibility only. */
-			rc = fdisk_create_disklabel(cxt, "sgi");
+			wanted = "sgi";
 			break;
 		}
 	} else {
 		switch (ent->key) {
 			case 'g':
-				rc = fdisk_create_disklabel(cxt, "gpt");
+				wanted = "gpt";
 				break;
 			case 'G':
-				rc = fdisk_create_disklabel(cxt, "sgi");
+				wanted = "sgi";
 				break;
 			case 'o':
-				rc = fdisk_create_disklabel(cxt, "dos");
+				wanted = "dos";
 				break;
 			case 's':
-				rc = fdisk_create_disklabel(cxt, "sun");
+				wanted = "sun";
 				break;
 		}
 	}
 
+	if (wanted) {
+		rc = fdisk_create_disklabel(cxt, wanted);
+		if (rc) {
+			errno = -rc;
+			fdisk_warn(cxt, _("Failed to create '%s' disk label"), wanted);
+		}
+	}
 	if (rc == 0 && fdisk_get_collision(cxt))
 		follow_wipe_mode(cxt);
 

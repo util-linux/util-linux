@@ -1890,10 +1890,11 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			if (!created) {		/* create a new disklabel */
 				rc = fdisk_apply_script_headers(sf->cxt, dp);
 				created = !rc;
-				if (rc)
-					fdisk_warnx(sf->cxt, _(
-					  "Failed to apply script headers, "
-					  "disk label not created."));
+				if (rc) {
+					errno = -rc;
+					fdisk_warn(sf->cxt, _(
+					  "Failed to apply script headers, disk label not created"));
+				}
 
 				if (rc == 0 && fdisk_get_collision(sf->cxt))
 					follow_wipe_mode(sf);
