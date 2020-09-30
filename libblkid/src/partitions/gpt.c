@@ -423,7 +423,6 @@ const struct blkid_idinfo gpt_pt_idinfo =
 {
 	.name		= "gpt",
 	.probefunc	= probe_gpt_pt,
-	.minsz		= 1024 * 1440 + 1,	/* ignore floppies */
 
 	/*
 	 * It would be possible to check for DOS signature (0xAA55), but
