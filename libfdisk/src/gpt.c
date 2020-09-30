@@ -742,10 +742,12 @@ static int get_script_u64(struct fdisk_context *cxt, uint64_t *num, const char *
 }
 
 static int count_first_last_lba(struct fdisk_context *cxt,
-				 uint64_t *first, uint64_t *last)
+				 uint64_t *first, uint64_t *last,
+				 uint32_t *maxents)
 {
 	int rc = 0;
 	uint64_t flba = 0, llba = 0;
+	uint32_t nents;
 
 	assert(cxt);
 	assert(first);
@@ -753,12 +755,24 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 
 	*first = *last = 0;
 
-	/* UEFI default */
-	rc = gpt_calculate_last_lba(NULL, GPT_NPARTITIONS, &llba, cxt);
-	if (rc == 0)
-		gpt_calculate_first_lba(NULL, GPT_NPARTITIONS, &flba, cxt);
+	/* The default is GPT_NPARTITIONS, if the device is not large enough
+	 * than reduce this number of partitions and try to recalculate it
+	 * again, until we get something useful or return error.
+	 */
+	for (nents = GPT_NPARTITIONS; nents > 0; nents--) {
+		rc = gpt_calculate_last_lba(NULL, nents, &llba, cxt);
+		if (rc == 0)
+			rc = gpt_calculate_first_lba(NULL, nents, &flba, cxt);
+		if (llba < flba)
+			rc = -ENOSPC;
+		else if (rc == 0)
+			break;
+	}
+
 	if (rc)
 		return rc;
+	if (maxents)
+		*maxents = nents;
 
 	/* script default */
 	if (cxt->script) {
@@ -809,6 +823,7 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 			    struct gpt_header *header, uint64_t lba)
 {
 	uint64_t first, last;
+	uint32_t nents = 0;
 	int has_id = 0, rc;
 
 	if (!cxt || !header)
@@ -825,16 +840,14 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 	header->size = cpu_to_le32(sizeof(struct gpt_header)
 				- sizeof(header->reserved2));
 
-	/*
-	 * 128 partitions are the default. It can go beyond that, but
-	 * we're creating a de facto header here, so no funny business.
-	 */
-	header->npartition_entries     = cpu_to_le32(GPT_NPARTITIONS);
-	header->sizeof_partition_entry = cpu_to_le32(sizeof(struct gpt_entry));
-
-	rc = count_first_last_lba(cxt, &first, &last);
+	/* Set {First,Last}LBA and number of the partitions
+	 * (default is GPT_NPARTITIONS) */
+	rc = count_first_last_lba(cxt, &first, &last, &nents);
 	if (rc)
 		return rc;
+
+	header->npartition_entries     = cpu_to_le32(nents);
+	header->sizeof_partition_entry = cpu_to_le32(sizeof(struct gpt_entry));
 
 	header->first_usable_lba = cpu_to_le64(first);
 	header->last_usable_lba  = cpu_to_le64(last);
@@ -2637,6 +2650,10 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	guid_to_string(&guid, str);
 	fdisk_label_set_changed(cxt->label, 1);
 	fdisk_info(cxt, _("Created a new GPT disklabel (GUID: %s)."), str);
+
+	if (gpt_get_nentries(gpt) < GPT_NPARTITIONS)
+		fdisk_info(cxt, _("The maximal number of partitions is %d (default is %d)."),
+				gpt_get_nentries(gpt), GPT_NPARTITIONS);
 done:
 	return rc;
 }
@@ -3089,7 +3106,7 @@ static int gpt_reset_alignment(struct fdisk_context *cxt)
 		/* estimate ranges for GPT */
 		uint64_t first, last;
 
-		count_first_last_lba(cxt, &first, &last);
+		count_first_last_lba(cxt, &first, &last, NULL);
 		if (cxt->first_lba < first)
 			cxt->first_lba = first;
 		if (cxt->last_lba > last)
