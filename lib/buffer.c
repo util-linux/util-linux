@@ -34,7 +34,7 @@ void ul_buffer_refer_string(struct ul_buffer *buf, char *str)
 		ul_buffer_free_data(buf);
 	buf->begin = str;
 	buf->sz = str ? strlen(str) : 0;
-	buf->end = buf->begin + buf->sz;
+	buf->end = buf->begin ? buf->begin + buf->sz : buf->begin;
 }
 
 int ul_buffer_alloc_data(struct ul_buffer *buf, size_t sz)
