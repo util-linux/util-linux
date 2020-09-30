@@ -209,7 +209,7 @@ struct lscpu_modifier {
 };
 
 extern int read_hypervisor_dmi(void);
-extern void arm_cpu_decode(struct lscpu_desc *desc);
+extern void arm_cpu_decode(struct lscpu_desc *desc, struct lscpu_modifier *mod);
 
 #define _PATH_SYS_DMI		"/sys/firmware/dmi/tables/DMI"
 #define _PATH_SYS_DMI_TYPE4	"/sys/firmware/dmi/entries/4-0/raw"

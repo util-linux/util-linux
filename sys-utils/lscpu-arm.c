@@ -316,13 +316,14 @@ static int __arm_cpu_smbios(struct lscpu_desc *desc)
 	return 0;
 }
 
-void arm_cpu_decode(struct lscpu_desc *desc)
+void arm_cpu_decode(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
 	int rc = -1;
 
 	/* use SMBIOS Type 4 data if available,
 	 * else fall back to manual decoding using the tables above */
-	if (access(_PATH_SYS_DMI_TYPE4, R_OK) == 0)
+	if (mod->system == SYSTEM_LIVE &&
+	    access(_PATH_SYS_DMI_TYPE4, R_OK) == 0)
 		rc = __arm_cpu_smbios(desc);
 
 	if (rc)

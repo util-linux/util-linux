@@ -2475,7 +2475,7 @@ int main(int argc, char *argv[])
 
 	read_nodes(desc);
 	read_hypervisor(desc, mod);
-	arm_cpu_decode(desc);
+	arm_cpu_decode(desc, mod);
 
 	switch(mod->mode) {
 	case OUTPUT_SUMMARY:
