@@ -747,6 +747,20 @@ static void ui_clean_warn(void)
 	clrtoeol();
 }
 
+static int __attribute__((__noreturn__)) ui_err(int rc, const char *fmt, ...)
+		{
+	va_list ap;
+	ui_end();
+
+	va_start(ap, fmt);
+	fprintf(stderr, "%s: ", program_invocation_short_name);
+	vfprintf(stderr, fmt, ap);
+	fprintf(stderr, ": %s\n", strerror(errno));
+	va_end(ap);
+
+	exit(rc);
+}
+
 static int __attribute__((__noreturn__)) ui_errx(int rc, const char *fmt, ...)
 		{
 	va_list ap;
@@ -2529,9 +2543,11 @@ static int ui_run(struct cfdisk *cf)
 
 	if (!fdisk_has_label(cf->cxt) || cf->zero_start) {
 		rc = ui_create_label(cf);
-		if (rc < 0)
-			ui_errx(EXIT_FAILURE,
+		if (rc < 0) {
+			errno = -rc;
+			ui_err(EXIT_FAILURE,
 					_("failed to create a new disklabel"));
+		}
 		if (rc)
 			return rc;
 	}
