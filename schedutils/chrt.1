@@ -86,13 +86,37 @@ Specifies period parameter for SCHED_DEADLINE policy (Linux-specific).
 Specifies deadline parameter for SCHED_DEADLINE policy (Linux-specific).
 .TP
 \fB\-R\fR, \fB\-\-reset-on-fork\fR
-Add
+Use
 .B SCHED_RESET_ON_FORK
-flag to the
+or
+.B SCHED_FLAG_RESET_ON_FORK
+flag.  Linux-specific, supported since 2.6.31.
+
+Each thread has a reset-on-fork scheduling flag.  When this flag is set, children created by
+.BR fork (2)
+do not inherit privileged scheduling policies.  After the reset-on-fork flag has been enabled,
+it can be reset only if the thread has the
+.BR CAP_SYS_NICE
+capability.  This flag is disabled in child processes created by
+.BR fork (2).
+
+More precisely, if the reset-on-fork flag is set,
+the following rules apply for subsequently created children:
+.RS
+.IP * 3
+If the calling thread has a scheduling policy of
 .B SCHED_FIFO
 or
-.B SCHED_RR
-scheduling policy (Linux-specific, supported since 2.6.31).
+.BR SCHED_RR ,
+the policy is reset to
+.BR SCHED_OTHER
+in child processes.
+.IP *
+If the calling process has a negative nice value,
+the nice value is reset to zero in child processes.
+.RE
+
+
 
 .SH OPTIONS
 .TP

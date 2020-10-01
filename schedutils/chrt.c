@@ -152,7 +152,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Scheduling options:\n"), out);
-	fputs(_(" -R, --reset-on-fork       set SCHED_RESET_ON_FORK for FIFO or RR\n"), out);
+	fputs(_(" -R, --reset-on-fork       set reset-on-fork flag\n"), out);
 	fputs(_(" -T, --sched-runtime <ns>  runtime parameter for DEADLINE\n"), out);
 	fputs(_(" -P, --sched-period <ns>   period parameter for DEADLINE\n"), out);
 	fputs(_(" -D, --sched-deadline <ns> deadline parameter for DEADLINE\n"), out);
@@ -173,22 +173,19 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static const char *get_policy_name(int policy)
 {
+#ifdef SCHED_RESET_ON_FORK
+	policy &= ~SCHED_RESET_ON_FORK;
+#endif
 	switch (policy) {
 	case SCHED_OTHER:
 		return "SCHED_OTHER";
 	case SCHED_FIFO:
-#ifdef SCHED_RESET_ON_FORK
-	case SCHED_FIFO | SCHED_RESET_ON_FORK:
-#endif
 		return "SCHED_FIFO";
 #ifdef SCHED_IDLE
 	case SCHED_IDLE:
 		return "SCHED_IDLE";
 #endif
 	case SCHED_RR:
-#ifdef SCHED_RESET_ON_FORK
-	case SCHED_RR | SCHED_RESET_ON_FORK:
-#endif
 		return "SCHED_RR";
 #ifdef SCHED_BATCH
 	case SCHED_BATCH:
@@ -257,7 +254,7 @@ fallback:
 		else
 			prio = sp.sched_priority;
 # ifdef SCHED_RESET_ON_FORK
-		if (policy == (SCHED_FIFO|SCHED_RESET_ON_FORK) || policy == (SCHED_BATCH|SCHED_RESET_ON_FORK))
+		if (policy & SCHED_RESET_ON_FORK)
 			reset_on_fork = 1;
 # endif
 	}
@@ -524,11 +521,6 @@ int main(int argc, char **argv)
 	errno = 0;
 	ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
 
-#ifdef SCHED_RESET_ON_FORK
-	if (ctl->reset_on_fork && ctl->policy != SCHED_FIFO && ctl->policy != SCHED_RR)
-		errx(EXIT_FAILURE, _("--reset-on-fork option is supported for "
-				     "SCHED_FIFO and SCHED_RR policies only"));
-#endif
 #ifdef SCHED_DEADLINE
 	if ((ctl->runtime || ctl->deadline || ctl->period) && ctl->policy != SCHED_DEADLINE)
 		errx(EXIT_FAILURE, _("--sched-{runtime,deadline,period} options "
