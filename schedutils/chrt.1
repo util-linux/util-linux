@@ -41,34 +41,29 @@ or runs \fIcommand\fR with the given attributes.
 .SH POLICIES
 .TP
 \fB\-o\fR, \fB\-\-other\fR
-Set scheduling policy to
-.BR SCHED_OTHER .
+Set scheduling policy to \fBSCHED_OTHER\fR (time-sharing scheduling).
 This is the default Linux scheduling policy.
 .TP
 \fB\-f\fR, \fB\-\-fifo\fR
-Set scheduling policy to \fBSCHED_FIFO\fR.
+Set scheduling policy to \fBSCHED_FIFO\fR (first in-first out).
 .TP
 \fB\-r\fR, \fB\-\-rr\fR
-Set scheduling policy to
-.BR SCHED_RR .
+Set scheduling policy to \fBSCHED_RR\fR (round-robin scheduling).
 When no policy is defined, the
 .B SCHED_RR
 is used as the default.
 .TP
 \fB\-b\fR, \fB\-\-batch\fR
-Set scheduling policy to
-.B SCHED_BATCH
-(Linux-specific, supported since 2.6.16).  The priority argument has to be set to zero.
+Set scheduling policy to \fBSCHED_BATCH\fR (scheduling batch processes).
+Linux-specific, supported since 2.6.16.  The priority argument has to be set to zero.
 .TP
 \fB\-i\fR, \fB\-\-idle\fR
-Set scheduling policy to
-.B SCHED_IDLE
-(Linux-specific, supported since 2.6.23).  The priority argument has to be set to zero.
+Set scheduling policy to \fBSCHED_IDLE\fR (scheduling very low priority jobs).
+Linux-specific, supported since 2.6.23.  The priority argument has to be set to zero.
 .TP
 .BR \-d ,\  \-\-deadline
-Set scheduling policy to
-.B SCHED_DEADLINE
-(Linux-specific, supported since 3.14).  The priority argument has to be set to zero.
+Set scheduling policy to \fBSCHED_DEADLINE\fR (sporadic task model deadline scheduling).
+Linux-specific, supported since 3.14.  The priority argument has to be set to zero.
 See also \fB\-\-sched\-runtime\fR, \fB\-\-sched\-deadline\fR and
 \fB\-\-sched\-period\fR.  The relation between the options required by the kernel is
 runtime <= deadline <= period.
