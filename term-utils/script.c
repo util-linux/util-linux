@@ -1006,14 +1006,14 @@ int main(int argc, char **argv)
 			log_info(&ctl, "COLUMNS", "%d", ctl.ttycols);
 			log_info(&ctl, "LINES", "%d", ctl.ttylines);
 		}
-		log_info(&ctl, "SHELL", shell);
+		log_info(&ctl, "SHELL", "%s", shell);
 		if (command)
-			log_info(&ctl, "COMMAND", command);
-		log_info(&ctl, "TIMING_LOG", timingfile);
+			log_info(&ctl, "COMMAND", "%s", command);
+		log_info(&ctl, "TIMING_LOG", "%s", timingfile);
 		if (outfile)
-			log_info(&ctl, "OUTPUT_LOG", outfile);
+			log_info(&ctl, "OUTPUT_LOG", "%s", outfile);
 		if (infile)
-			log_info(&ctl, "INPUT_LOG", infile);
+			log_info(&ctl, "INPUT_LOG", "%s", infile);
 	}
 
         /* this is the main loop */
