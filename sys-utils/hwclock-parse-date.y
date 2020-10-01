@@ -1298,8 +1298,8 @@ int parse_date(struct timespec *result, char const *p,
 					break;
 			} else if (*s == '"') {
 				char *z;
-				char *tz1;
-				char tz1buf[TZBUFSIZE];
+				char *tz1 = NULL;
+				char tz1buf[TZBUFSIZE] = { '\0' };
 				int large_tz = TZBUFSIZE < tzsize;
 				int setenv_ok;
 
