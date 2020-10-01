@@ -123,7 +123,7 @@ struct chrt_ctl {
 	uint64_t period;
 
 	unsigned int all_tasks : 1,		/* all threads of the PID */
-		     reset_on_fork : 1,		/* SCHED_RESET_ON_FORK */
+		     reset_on_fork : 1,		/* SCHED_RESET_ON_FORK or SCHED_FLAG_RESET_ON_FORK */
 		     altered : 1,		/* sched_set**() used */
 		     verbose : 1;		/* verbose output */
 };
@@ -385,9 +385,10 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 	sa.sched_period   = ctl->period;
 	sa.sched_deadline = ctl->deadline;
 
-# ifdef SCHED_RESET_ON_FORK
+# ifdef SCHED_FLAG_RESET_ON_FORK
+	/* Don't use SCHED_RESET_ON_FORK for sched_setattr()! */
 	if (ctl->reset_on_fork)
-		sa.sched_flags |= SCHED_RESET_ON_FORK;
+		sa.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
 # endif
 	errno = 0;
 	return sched_setattr(pid, &sa, 0);
