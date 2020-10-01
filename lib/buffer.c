@@ -81,6 +81,9 @@ int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz)
 		if (rc)
 			return rc;
 	}
+	if (!buf->end)
+		return -EINVAL;	/* make static analyzers happy */
+
 	memcpy(buf->end, data, sz);
 	buf->end += sz;
 	*buf->end = '\0';	/* make sure it's terminated */
