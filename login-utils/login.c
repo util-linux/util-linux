@@ -597,17 +597,20 @@ static void log_lastlog(struct login_context *cxt)
 		if ((pread(fd, (void *)&ll, sizeof(ll), offset) == sizeof(ll)) &&
 		    ll.ll_time != 0) {
 			char time_string[CTIME_BUFSIZ];
+			char buf[sizeof(ll.ll_host) + 1];
 
 			time_t ll_time = (time_t) ll.ll_time;
 
 			ctime_r(&ll_time, time_string);
 			printf(_("Last login: %.*s "), 24 - 5, time_string);
-			if (*ll.ll_host != '\0')
-				printf(_("from %.*s\n"),
-				       (int)sizeof(ll.ll_host), ll.ll_host);
-			else
-				printf(_("on %.*s\n"),
-				       (int)sizeof(ll.ll_line), ll.ll_line);
+
+			if (*ll.ll_host != '\0') {
+				mem2strcpy(buf, ll.ll_host, sizeof(ll.ll_host), sizeof(buf));
+				printf(_("from %s\n"), buf);
+			} else {
+				mem2strcpy(buf, ll.ll_line, sizeof(ll.ll_line), sizeof(buf));
+				printf(_("on %s\n"), buf);
+			}
 		}
 	}
 
