@@ -100,7 +100,7 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 	lc->has_info = 0;
 	lc->info_failed = 0;
 	*lc->device = '\0';
-	memset(&lc->info, 0, sizeof(lc->info));
+	memset(&lc->config, 0, sizeof(lc->config));
 
 	/* set new */
 	if (device) {
@@ -659,17 +659,17 @@ struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc)
 	}
 	errno = 0;
 	if (lc->has_info)
-		return &lc->info;
+		return &lc->config.info;
 
 	fd = loopcxt_get_fd(lc);
 	if (fd < 0)
 		return NULL;
 
-	if (ioctl(fd, LOOP_GET_STATUS64, &lc->info) == 0) {
+	if (ioctl(fd, LOOP_GET_STATUS64, &lc->config.info) == 0) {
 		lc->has_info = 1;
 		lc->info_failed = 0;
 		DBG(CXT, ul_debugobj(lc, "reading loop_info64 OK"));
-		return &lc->info;
+		return &lc->config.info;
 	}
 
 	lc->info_failed = 1;
@@ -1087,7 +1087,7 @@ int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset)
 {
 	if (!lc)
 		return -EINVAL;
-	lc->info.lo_offset = offset;
+	lc->config.info.lo_offset = offset;
 
 	DBG(CXT, ul_debugobj(lc, "set offset=%jd", offset));
 	return 0;
@@ -1100,7 +1100,7 @@ int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit)
 {
 	if (!lc)
 		return -EINVAL;
-	lc->info.lo_sizelimit = sizelimit;
+	lc->config.info.lo_sizelimit = sizelimit;
 
 	DBG(CXT, ul_debugobj(lc, "set sizelimit=%jd", sizelimit));
 	return 0;
@@ -1134,7 +1134,7 @@ int loopcxt_set_flags(struct loopdev_cxt *lc, uint32_t flags)
 {
 	if (!lc)
 		return -EINVAL;
-	lc->info.lo_flags = flags;
+	lc->config.info.lo_flags = flags;
 
 	DBG(CXT, ul_debugobj(lc, "set flags=%u", (unsigned) flags));
 	return 0;
@@ -1157,9 +1157,9 @@ int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename)
 	if (!lc->filename)
 		return -errno;
 
-	xstrncpy((char *)lc->info.lo_file_name, lc->filename, LO_NAME_SIZE);
+	xstrncpy((char *)lc->config.info.lo_file_name, lc->filename, LO_NAME_SIZE);
 
-	DBG(CXT, ul_debugobj(lc, "set backing file=%s", lc->info.lo_file_name));
+	DBG(CXT, ul_debugobj(lc, "set backing file=%s", lc->config.info.lo_file_name));
 	return 0;
 }
 
@@ -1182,7 +1182,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 	int dev_fd;
 	struct stat st;
 
-	if (!lc->info.lo_offset && !lc->info.lo_sizelimit)
+	if (!lc->config.info.lo_offset && !lc->config.info.lo_sizelimit)
 		return 0;
 
 	if (fstat(file_fd, &st)) {
@@ -1198,16 +1198,16 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 	} else
 		expected_size = st.st_size;
 
-	if (expected_size == 0 || expected_size <= lc->info.lo_offset) {
+	if (expected_size == 0 || expected_size <= lc->config.info.lo_offset) {
 		DBG(CXT, ul_debugobj(lc, "failed to determine expected size"));
 		return 0;	/* ignore this error */
 	}
 
-	if (lc->info.lo_offset > 0)
-		expected_size -= lc->info.lo_offset;
+	if (lc->config.info.lo_offset > 0)
+		expected_size -= lc->config.info.lo_offset;
 
-	if (lc->info.lo_sizelimit > 0 && lc->info.lo_sizelimit < expected_size)
-		expected_size = lc->info.lo_sizelimit;
+	if (lc->config.info.lo_sizelimit > 0 && lc->config.info.lo_sizelimit < expected_size)
+		expected_size = lc->config.info.lo_sizelimit;
 
 	dev_fd = loopcxt_get_fd(lc);
 	if (dev_fd < 0) {
@@ -1275,6 +1275,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 {
 	int file_fd, dev_fd, mode = O_RDWR, rc = -1, cnt = 0, err, again;
 	int errsv = 0;
+	int fallback = 0;
 
 	if (!lc || !*lc->device || !lc->filename)
 		return -EINVAL;
@@ -1284,7 +1285,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	/*
 	 * Open backing file and device
 	 */
-	if (lc->info.lo_flags & LO_FLAGS_READ_ONLY)
+	if (lc->config.info.lo_flags & LO_FLAGS_READ_ONLY)
 		mode = O_RDONLY;
 
 	if ((file_fd = open(lc->filename, mode | O_CLOEXEC)) < 0) {
@@ -1307,10 +1308,10 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 
 	if (mode == O_RDONLY) {
 		lc->flags |= LOOPDEV_FL_RDONLY;			/* open() mode */
-		lc->info.lo_flags |= LO_FLAGS_READ_ONLY;	/* kernel loopdev mode */
+		lc->config.info.lo_flags |= LO_FLAGS_READ_ONLY;	/* kernel loopdev mode */
 	} else {
 		lc->flags |= LOOPDEV_FL_RDWR;			/* open() mode */
-		lc->info.lo_flags &= ~LO_FLAGS_READ_ONLY;
+		lc->config.info.lo_flags &= ~LO_FLAGS_READ_ONLY;
 		lc->flags &= ~LOOPDEV_FL_RDONLY;
 	}
 
@@ -1334,45 +1335,69 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 
 	DBG(SETUP, ul_debugobj(lc, "device open: OK"));
 
-	/*
-	 * Set FD
-	 */
-	if (ioctl(dev_fd, LOOP_SET_FD, file_fd) < 0) {
+	lc->config.fd = file_fd;
+	if (ioctl(dev_fd, LOOP_CONFIGURE, &lc->config) < 0) {
 		rc = -errno;
 		errsv = errno;
-		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_FD failed: %m"));
-		goto err;
+		if (errno != EINVAL)
+		{
+			DBG(SETUP, ul_debugobj(lc, "LOOP_CONFIGURE failed: %m"));
+			goto err;
+		}
+		fallback = 1;
+	}
+	else
+	{
+		if (lc->blocksize > 0
+			&& (rc = loopcxt_ioctl_blocksize(lc, lc->blocksize)) < 0) {
+			errsv = -rc;
+			goto err;
+		}
+
+		DBG(SETUP, ul_debugobj(lc, "LOOP_CONFIGURE: OK"));
 	}
 
-	DBG(SETUP, ul_debugobj(lc, "LOOP_SET_FD: OK"));
+	if (fallback) {
+		/*
+		 * Set FD
+		 */
+		if (ioctl(dev_fd, LOOP_SET_FD, file_fd) < 0) {
+			rc = -errno;
+			errsv = errno;
+			DBG(SETUP, ul_debugobj(lc, "LOOP_SET_FD failed: %m"));
+			goto err;
+		}
 
-	if (lc->blocksize > 0
-	    && (rc = loopcxt_ioctl_blocksize(lc, lc->blocksize)) < 0) {
-		errsv = -rc;
-		goto err;
+		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_FD: OK"));
+
+		if (lc->blocksize > 0
+			&& (rc = loopcxt_ioctl_blocksize(lc, lc->blocksize)) < 0) {
+			errsv = -rc;
+			goto err;
+		}
+
+		do {
+			err = ioctl(dev_fd, LOOP_SET_STATUS64, &lc->config.info);
+			again = err && errno == EAGAIN;
+			if (again)
+				xusleep(250000);
+		} while (again);
+		if (err) {
+			rc = -errno;
+			errsv = errno;
+			DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64 failed: %m"));
+			goto err;
+		}
+
+		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64: OK"));
 	}
-
-	do {
-		err = ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info);
-		again = err && errno == EAGAIN;
-		if (again)
-			xusleep(250000);
-	} while (again);
-	if (err) {
-		rc = -errno;
-		errsv = errno;
-		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64 failed: %m"));
-		goto err;
-	}
-
-	DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64: OK"));
 
 	if ((rc = loopcxt_check_size(lc, file_fd)))
 		goto err;
 
 	close(file_fd);
 
-	memset(&lc->info, 0, sizeof(lc->info));
+	memset(&lc->config, 0, sizeof(lc->config));
 	lc->has_info = 0;
 	lc->info_failed = 0;
 
@@ -1415,7 +1440,7 @@ int loopcxt_ioctl_status(struct loopdev_cxt *lc)
 	DBG(SETUP, ul_debugobj(lc, "device open: OK"));
 
 	do {
-		err = ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info);
+		err = ioctl(dev_fd, LOOP_SET_STATUS64, &lc->config.info);
 		again = err && errno == EAGAIN;
 		if (again)
 			xusleep(250000);
