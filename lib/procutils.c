@@ -1,17 +1,11 @@
 /*
  * Copyright (C) 2011 Davidlohr Bueso <dave@gnu.org>
+ * Copyright (C) 2011-2020 Karel Zak <kzak@redhat.com>
  *
  * procutils.c: General purpose procfs parsing utilities
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library Public License for more details.
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
  */
 
 #include <stdio.h>
