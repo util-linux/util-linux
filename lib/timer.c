@@ -1,4 +1,7 @@
 /*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
  * Please, don't add this file to libcommon because timers requires
  * -lrt on systems with old libc (and probably also -lpthread for static
  *  build).

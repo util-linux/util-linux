@@ -1,7 +1,9 @@
 /*
+ * This code is in the public domain; do with it what you wish.
+ *
  * Copyright (C) 2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright (C) 2012-2020 Karel Zak <kzak@redhat.com>
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>

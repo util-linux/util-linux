@@ -1,10 +1,9 @@
 /*
- * Security checks of environment
- * Added from shadow-utils package
- * by Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
+ * environ[] array cleanup code and getenv() wappers
  *
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
