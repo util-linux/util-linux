@@ -136,7 +136,8 @@ PATHFILES += \
 if BUILD_BLKID
 sbin_PROGRAMS += blkid
 dist_man_MANS += misc-utils/blkid.8
-blkid_SOURCES = misc-utils/blkid.c
+blkid_SOURCES = misc-utils/blkid.c \
+		lib/ismounted.c
 blkid_LDADD = $(LDADD) libblkid.la libcommon.la
 blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 

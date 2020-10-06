@@ -19,7 +19,8 @@ dist_man_MANS += login-utils/sulogin.8
 sulogin_SOURCES = \
 	login-utils/sulogin.c \
 	login-utils/sulogin-consoles.c \
-	login-utils/sulogin-consoles.h
+	login-utils/sulogin-consoles.h \
+	lib/plymouth-ctrl.c
 sulogin_LDADD = $(LDADD) libcommon.la
 
 if HAVE_LIBCRYPT
