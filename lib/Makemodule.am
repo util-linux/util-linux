@@ -1,4 +1,14 @@
-
+#
+# Use only LGPL or Public domain (preferred) code in libcommon, otherwise add
+# your lib/file.c directly to the _SOURCES= of the target binary.
+#
+# THIS LIBRARY IS NOT DISTRIBUTED!
+#
+# It's just ar(1) archive used by build-system to keep things simple.
+#
+# Note that you need "make install-strip" (or proper rpm / Debian build)
+# to generate binaries with only relevant stuff.
+#
 noinst_LTLIBRARIES += libcommon.la
 libcommon_la_CFLAGS = $(AM_CFLAGS)
 libcommon_la_SOURCES = \
@@ -11,7 +21,6 @@ libcommon_la_SOURCES = \
 	lib/idcache.c \
 	lib/encode.c \
 	lib/fileutils.c \
-	lib/ismounted.c \
 	lib/color-names.c \
 	lib/mangle.c \
 	lib/match.c \
@@ -19,26 +28,21 @@ libcommon_la_SOURCES = \
 	lib/mbsedit.c\
 	lib/md5.c \
 	lib/pager.c \
+	lib/procutils.c \
 	lib/pwdutils.c \
 	lib/randutils.c \
 	lib/setproctitle.c \
 	lib/strutils.c \
 	lib/timeutils.c \
 	lib/ttyutils.c \
-	lib/exec_shell.c \
 	lib/strv.c \
 	lib/sha1.c \
 	lib/signames.c
 
 if LINUX
 libcommon_la_SOURCES += \
-	lib/caputils.c \
 	lib/linux_version.c \
 	lib/loopdev.c
-endif
-
-if USE_PLYMOUTH_SUPPORT
-libcommon_la_SOURCES += lib/plymouth-ctrl.c
 endif
 
 if !HAVE_LANGINFO_H
@@ -52,7 +56,6 @@ endif
 if HAVE_OPENAT
 if HAVE_DIRFD
 libcommon_la_SOURCES += lib/path.c
-libcommon_la_SOURCES += lib/procutils.c
 libcommon_la_SOURCES += lib/sysfs.c
 endif
 endif

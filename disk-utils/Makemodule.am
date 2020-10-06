@@ -4,14 +4,16 @@ sbin_PROGRAMS += fsck.minix
 dist_man_MANS += disk-utils/fsck.minix.8
 fsck_minix_SOURCES = \
 	disk-utils/fsck.minix.c \
-	disk-utils/minix_programs.h
+	disk-utils/minix_programs.h \
+	lib/ismounted.c
 fsck_minix_LDADD = $(LDADD) libcommon.la
 
 sbin_PROGRAMS += mkfs.minix
 dist_man_MANS += disk-utils/mkfs.minix.8
 mkfs_minix_SOURCES = \
 	disk-utils/minix_programs.h \
-	disk-utils/mkfs.minix.c
+	disk-utils/mkfs.minix.c \
+	lib/ismounted.c
 mkfs_minix_LDADD = $(LDADD) libcommon.la
 
 check_PROGRAMS += test_mkfs_minix
@@ -49,7 +51,8 @@ if BUILD_MKSWAP
 sbin_PROGRAMS += mkswap
 dist_man_MANS += disk-utils/mkswap.8
 mkswap_SOURCES = \
-	disk-utils/mkswap.c
+	disk-utils/mkswap.c \
+	lib/ismounted.c
 mkswap_LDADD = $(LDADD) libcommon.la
 
 mkswap_CFLAGS = $(AM_CFLAGS)

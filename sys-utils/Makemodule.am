@@ -276,7 +276,8 @@ endif # BUILD_LOSETUP
 if BUILD_ZRAMCTL
 sbin_PROGRAMS += zramctl
 dist_man_MANS += sys-utils/zramctl.8
-zramctl_SOURCES = sys-utils/zramctl.c
+zramctl_SOURCES = sys-utils/zramctl.c \
+		  lib/ismounted.c
 zramctl_LDADD = $(LDADD) libcommon.la libsmartcols.la
 zramctl_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
@@ -444,7 +445,9 @@ endif
 if BUILD_UNSHARE
 usrbin_exec_PROGRAMS += unshare
 dist_man_MANS += sys-utils/unshare.1
-unshare_SOURCES = sys-utils/unshare.c
+unshare_SOURCES = sys-utils/unshare.c \
+		  lib/caputils.c \
+		  lib/exec_shell.c
 unshare_LDADD = $(LDADD) libcommon.la
 unshare_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 
@@ -460,7 +463,7 @@ endif
 if BUILD_NSENTER
 usrbin_exec_PROGRAMS += nsenter
 dist_man_MANS += sys-utils/nsenter.1
-nsenter_SOURCES = sys-utils/nsenter.c
+nsenter_SOURCES = sys-utils/nsenter.c lib/exec_shell.c
 nsenter_LDADD = $(LDADD) libcommon.la $(SELINUX_LIBS)
 
 if HAVE_STATIC_NSENTER
@@ -504,6 +507,7 @@ endif # BUILD_HWCLOCK
 if BUILD_SETPRIV
 usrbin_exec_PROGRAMS += setpriv
 dist_man_MANS += sys-utils/setpriv.1
-setpriv_SOURCES = sys-utils/setpriv.c
+setpriv_SOURCES = sys-utils/setpriv.c \
+		  lib/caputils.c
 setpriv_LDADD = $(LDADD) -lcap-ng libcommon.la
 endif
