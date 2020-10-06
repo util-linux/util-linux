@@ -31,7 +31,6 @@ libcommon_la_SOURCES = \
 	lib/procutils.c \
 	lib/pwdutils.c \
 	lib/randutils.c \
-	lib/setproctitle.c \
 	lib/strutils.c \
 	lib/timeutils.c \
 	lib/ttyutils.c \

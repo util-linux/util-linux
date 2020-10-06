@@ -57,7 +57,6 @@ dist_noinst_HEADERS += \
 	include/rpmatch.h \
 	include/sha1.h \
 	include/signames.h \
-	include/setproctitle.h \
 	include/statfs_magic.h \
 	include/strutils.h \
 	include/strv.h \
