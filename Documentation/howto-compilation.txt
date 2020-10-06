@@ -2,8 +2,15 @@ The common case
 
 	./autogen.sh && ./configure && make
 
-	If something fails read the last lines. Typical reason to
-	fail is a missing dependency, such as libtool or gettext.
+	  If something fails read the last lines. Typical reason to
+	  fail is a missing dependency, such as libtool or gettext.
+
+        make install-strip
+
+	  Note that on the production systems it is strongly recommended to use
+	  "make install-strip" to install binaries and libraries. The result
+	  from the standard "make install" may produce large binaries with
+	  unnecessary symbols.
 
 Autotools
 

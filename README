@@ -5,6 +5,10 @@
 
      Note: for the years 2006-2010 this project was named "util-linux-ng".
 
+COMPILE & INSTALL:
+
+      See Documentation/howto-compilation.txt.
+
 MAILING LIST:
 
       E-MAIL:  util-linux@vger.kernel.org
@@ -56,6 +60,11 @@ SOURCE CODE:
 
  Download archive:
 	  https://www.kernel.org/pub/linux/utils/util-linux/
+
+ See also:
+     Documentation/howto-contribute.txt
+     Documentation/howto-build-sys.txt
+     Documentation/howto-pull-request.txt
 
  SCM (Source Code Management) Repository:
 
