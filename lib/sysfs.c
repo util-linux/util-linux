@@ -874,7 +874,7 @@ int sysfs_devname_is_hidden(const char *prefix, const char *name)
 dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char *parent)
 {
 	char buf[PATH_MAX];
-	char *_name = NULL;	/* name as encoded in sysfs */
+	char *_name = NULL, *_parent = NULL;	/* name as encoded in sysfs */
 	dev_t dev = 0;
 	int len;
 
@@ -901,21 +901,22 @@ dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char 
 		goto done;
 	sysfs_devname_dev_to_sys(_name);
 
-	if (parent && strncmp("dm-", name, 3) != 0) {
-		/*
-		 * Create path to /sys/block/<parent>/<name>/dev
-		 */
-		char *_parent = strdup(parent);
-
+	if (parent) {
+		_parent = strdup(parent);
 		if (!_parent) {
 			free(_parent);
 			goto done;
 		}
+	}
+
+	if (parent && strncmp("dm-", name, 3) != 0) {
+		/*
+		 * Create path to /sys/block/<parent>/<name>/dev
+		 */
 		sysfs_devname_dev_to_sys(_parent);
 		len = snprintf(buf, sizeof(buf),
 				"%s" _PATH_SYS_BLOCK "/%s/%s/dev",
 				prefix,	_parent, _name);
-		free(_parent);
 		if (len < 0 || (size_t) len >= sizeof(buf))
 			goto done;
 
@@ -934,10 +935,22 @@ dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char 
 		goto done;
 	dev = read_devno(buf);
 
+	/*
+	 * Read from /sys/block/<parent>/<partition>/dev
+	 */
+	if (!dev && parent && startswith(name, parent)) {
+		len = snprintf(buf, sizeof(buf),
+				"%s" _PATH_SYS_BLOCK "/%s/%s/dev",
+				prefix, _parent, _name);
+		if (len < 0 || (size_t) len >= sizeof(buf))
+			goto done;
+		dev = read_devno(buf);
+	}
+
+	/*
+	 * Read from /sys/block/<sysname>/device/dev
+	 */
 	if (!dev) {
-		/*
-		 * Read from /sys/block/<sysname>/device/dev
-		 */
 		len = snprintf(buf, sizeof(buf),
 				"%s" _PATH_SYS_BLOCK "/%s/device/dev",
 				prefix, _name);
@@ -947,6 +960,7 @@ dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char 
 	}
 done:
 	free(_name);
+	free(_parent);
 	return dev;
 }
 

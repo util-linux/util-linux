@@ -39,6 +39,7 @@
 #include "canonicalize.h"		/* $(top_srcdir)/include */
 #include "pathnames.h"
 #include "sysfs.h"
+#include "fileutils.h"
 
 /*
  * Find a dev struct in the cache by device name, if available.
@@ -442,25 +443,125 @@ ubi_probe_all(blkid_cache cache, int only_if_new)
 }
 
 /*
+ * This function uses /sys to read all block devices in way compatible with
+ * /proc/partitions (like the original libblkid implementation)
+ */
+static int
+sysfs_probe_all(blkid_cache cache, int only_if_new, int only_removable)
+{
+	DIR *sysfs;
+	struct dirent *dev;
+
+	sysfs = opendir(_PATH_SYS_BLOCK);
+	if (!sysfs)
+		return -BLKID_ERR_SYSFS;
+
+	/* scan /sys/block */
+	while ((dev = xreaddir(sysfs))) {
+		DIR *dir = NULL;
+		dev_t devno;
+		size_t nparts = 0;
+		unsigned int maxparts = 0, removable = 0;
+		struct dirent *part;
+		struct path_cxt *pc = NULL;
+		uint64_t size = 0;
+
+		DBG(DEVNAME, ul_debug("checking %s", dev->d_name));
+
+		devno = sysfs_devname_to_devno(dev->d_name);
+		if (!devno)
+			goto next;
+		pc = ul_new_sysfs_path(devno, NULL, NULL);
+		if (!pc)
+			goto next;
+
+		if (ul_path_read_u64(pc, &size, "size") != 0)
+			size = 0;
+		if (ul_path_read_u32(pc, &removable, "removable") != 0)
+			removable = 0;
+
+		/* ingnore empty devices */
+		if (!size)
+			goto next;
+
+		/* accept removeable if only removable requested */
+		if (only_removable) {
+			if (!removable)
+				goto next;
+
+		/* emulate /proc/partitions
+		 * -- ignore empty devices and non-partitionable removable devices */
+		} else {
+			if (ul_path_read_u32(pc, &maxparts, "ext_range") != 0)
+				maxparts = 0;
+			if (!maxparts && removable)
+				goto next;
+		}
+
+		DBG(DEVNAME, ul_debug("read device name %s", dev->d_name));
+
+		dir = ul_path_opendir(pc, NULL);
+		if (!dir)
+			goto next;
+
+		/* read /sys/block/<name>/ do get partitions */
+		while ((part = xreaddir(dir))) {
+			dev_t partno;
+
+			if (!sysfs_blkdev_is_partition_dirent(dir, part, dev->d_name))
+				continue;
+
+			/* ignore extended partitions
+			 * -- recount size to blocks like /proc/partitions */
+			if (ul_path_readf_u64(pc, &size, "%s/size", part->d_name) == 0
+			    && (size >> 1) == 1)
+				continue;
+			partno = __sysfs_devname_to_devno(NULL, part->d_name, dev->d_name);
+			if (!partno)
+				continue;
+
+			DBG(DEVNAME, ul_debug(" Probe partition dev %s, devno 0x%04X",
+                                   part->d_name, (unsigned int) partno));
+			nparts++;
+			probe_one(cache, part->d_name, partno, 0, only_if_new, 0);
+		}
+
+		if (!nparts) {
+			/* add non-partitioned whole disk to cache */
+			DBG(DEVNAME, ul_debug(" Probe whole dev %s, devno 0x%04X",
+				   dev->d_name, (unsigned int) devno));
+			probe_one(cache, dev->d_name, devno, 0, only_if_new, 0);
+		} else {
+			/* remove partitioned whole-disk from cache */
+			struct list_head *p, *pnext;
+
+			list_for_each_safe(p, pnext, &cache->bic_devs) {
+				blkid_dev tmp = list_entry(p, struct blkid_struct_dev,
+							bid_devs);
+				if (tmp->bid_devno == devno) {
+					DBG(DEVNAME, ul_debug(" freeing %s", tmp->bid_name));
+					blkid_free_dev(tmp);
+					cache->bic_flags |= BLKID_BIC_FL_CHANGED;
+					break;
+				}
+			}
+		}
+	next:
+		if (dir)
+			closedir(dir);
+		if (pc)
+			ul_unref_path(pc);
+	}
+
+	closedir(sysfs);
+	return 0;
+}
+
+/*
  * Read the device data for all available block devices in the system.
  */
 static int probe_all(blkid_cache cache, int only_if_new)
 {
-	FILE *proc;
-	char line[1024];
-	char ptname0[128 + 1], ptname1[128 + 1], *ptname = NULL;
-	char *ptnames[2];
-	dev_t devs[2] = { 0, 0 };
-	int iswhole[2] = { 0, 0 };
-	int ma, mi;
-	unsigned long long sz;
-	int lens[2] = { 0, 0 };
-	int which = 0, last = 0;
-	struct list_head *p, *pnext;
-
-	ptnames[0] = ptname0;
-	ptnames[1] = ptname1;
-
 	if (!cache)
 		return -BLKID_ERR_PARAM;
 
@@ -469,150 +570,18 @@ static int probe_all(blkid_cache cache, int only_if_new)
 		return 0;
 
 	blkid_read_cache(cache);
+
 	evms_probe_all(cache, only_if_new);
 #ifdef VG_DIR
 	lvm_probe_all(cache, only_if_new);
 #endif
 	ubi_probe_all(cache, only_if_new);
 
-	proc = fopen(PROC_PARTITIONS, "r" UL_CLOEXECSTR);
-	if (!proc)
-		return -BLKID_ERR_PROC;
+	sysfs_probe_all(cache, only_if_new, 0);
 
-	while (fgets(line, sizeof(line), proc)) {
-		last = which;
-		which ^= 1;
-		ptname = ptnames[which];
-
-		if (sscanf(line, " %d %d %llu %128[^\n ]",
-			   &ma, &mi, &sz, ptname) != 4)
-			continue;
-		devs[which] = makedev(ma, mi);
-
-		DBG(DEVNAME, ul_debug("read device name %s", ptname));
-
-		/* Skip whole disk devs unless they have no partitions.
-		 * If base name of device has changed, also
-		 * check previous dev to see if it didn't have a partn.
-		 * heuristic: partition name ends in a digit, & partition
-		 * names contain whole device name as substring.
-		 *
-		 * Skip extended partitions.
-		 * heuristic: size is 1
-		 */
-
-		lens[which] = strlen(ptname);
-		iswhole[which] = sysfs_devno_is_wholedisk(devs[which]);
-
-		/* probably partition, so check */
-		if (!iswhole[which]) {
-			DBG(DEVNAME, ul_debug(" Probe partition dev %s, devno 0x%04X",
-				   ptname, (unsigned int) devs[which]));
-
-			if (sz > 1)
-				probe_one(cache, ptname, devs[which], 0,
-					  only_if_new, 0);
-			lens[which] = 0;	/* mark as checked */
-		}
-
-		/*
-		 * If last was a whole disk and we just found a partition
-		 * on it, remove the whole-disk dev from the cache if
-		 * it exists.
-		 */
-		if (lens[last] && iswhole[last]
-		    && !strncmp(ptnames[last], ptname, lens[last])) {
-
-			list_for_each_safe(p, pnext, &cache->bic_devs) {
-				blkid_dev tmp;
-
-				/* find blkid dev for the whole-disk devno */
-				tmp = list_entry(p, struct blkid_struct_dev,
-						 bid_devs);
-				if (tmp->bid_devno == devs[last]) {
-					DBG(DEVNAME, ul_debug(" freeing %s",
-						       tmp->bid_name));
-					blkid_free_dev(tmp);
-					cache->bic_flags |= BLKID_BIC_FL_CHANGED;
-					break;
-				}
-			}
-			lens[last] = 0;		/* mark as checked */
-		}
-		/*
-		 * If last was not checked because it looked like a whole-disk
-		 * dev, and the device's base name has changed,
-		 * check last as well.
-		 */
-		if (lens[last] && strncmp(ptnames[last], ptname, lens[last]) != 0) {
-			DBG(DEVNAME, ul_debug(" Probe whole dev %s, devno 0x%04X",
-				   ptnames[last], (unsigned int) devs[last]));
-			probe_one(cache, ptnames[last], devs[last], 0,
-				  only_if_new, 0);
-
-			lens[last] = 0;		/* mark as checked */
-		}
-	}
-
-	/* Handle the last device if it wasn't partitioned */
-	if (lens[which]) {
-		DBG(DEVNAME, ul_debug(" Probe whole dev %s, devno 0x%04X",
-					ptname, (unsigned int) devs[which]));
-		probe_one(cache, ptname, devs[which], 0, only_if_new, 0);
-	}
-
-	fclose(proc);
 	blkid_flush_cache(cache);
 	return 0;
 }
-
-/* Don't use it by default -- it's pretty slow (because cdroms, floppy, ...)
- */
-static int probe_all_removable(blkid_cache cache)
-{
-	struct path_cxt *pc;
-	DIR *dir;
-	struct dirent *d;
-
-	if (!cache)
-		return -BLKID_ERR_PARAM;
-
-	dir = opendir(_PATH_SYS_BLOCK);
-	if (!dir)
-		return -BLKID_ERR_PROC;
-
-	pc = ul_new_path(NULL);
-
-	while((d = readdir(dir))) {
-		int removable = 0;
-		dev_t devno;
-
-#ifdef _DIRENT_HAVE_D_TYPE
-		if (d->d_type != DT_UNKNOWN && d->d_type != DT_LNK)
-			continue;
-#endif
-		if (d->d_name[0] == '.' &&
-		    ((d->d_name[1] == 0) ||
-		     ((d->d_name[1] == '.') && (d->d_name[2] == 0))))
-			continue;
-
-		devno = sysfs_devname_to_devno(d->d_name);
-		if (!devno)
-			continue;
-
-		if (sysfs_blkdev_init_path(pc, devno, NULL) == 0
-		    && ul_path_read_s32(pc, &removable, "removable") != 0)
-				removable = 0;
-
-		if (removable)
-			probe_one(cache, d->d_name, devno, 0, 0, 1);
-	}
-
-	ul_unref_path(pc);
-	closedir(dir);
-	return 0;
-}
-
 
 /**
  * blkid_probe_all:
@@ -677,7 +646,7 @@ int blkid_probe_all_removable(blkid_cache cache)
 	int ret;
 
 	DBG(PROBE, ul_debug("Begin blkid_probe_all_removable()"));
-	ret = probe_all_removable(cache);
+	ret = sysfs_probe_all(cache, 0, 1);
 	DBG(PROBE, ul_debug("End blkid_probe_all_removable() [rc=%d]", ret));
 	return ret;
 }

@@ -301,7 +301,7 @@ struct blkid_struct_cache
 #define BLKID_PROBE_NONE 1
 
 #define BLKID_ERR_IO	 5
-#define BLKID_ERR_PROC	 9
+#define BLKID_ERR_SYSFS	 9
 #define BLKID_ERR_MEM	12
 #define BLKID_ERR_CACHE	14
 #define BLKID_ERR_DEV	19
