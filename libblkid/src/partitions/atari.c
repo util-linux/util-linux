@@ -199,11 +199,10 @@ static int probe_atari_pt(blkid_probe pr,
 
 	hdsize = blkid_probe_get_size(pr) / 512;
 
-	/* Look for validly looking primary partition */
-	for (i = 0; ; i++) {
-		if (i >= ARRAY_SIZE(rs->part))
-			goto nothing;
-
+	/*
+	 * At least one valid partition required
+	 */
+	for (i = 0; i < 4; i++) {
 		if (IS_PARTDEF_VALID(rs->part[i], hdsize)) {
 			if (blkid_probe_set_magic(pr,
 					offsetof(struct atari_rootsector, part[i]),
@@ -213,6 +212,9 @@ static int probe_atari_pt(blkid_probe pr,
 			break;
 		}
 	}
+
+	if (i == 4)
+		goto nothing;
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
