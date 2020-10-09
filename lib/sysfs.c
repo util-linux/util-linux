@@ -907,10 +907,8 @@ dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char 
 		 */
 		char *_parent = strdup(parent);
 
-		if (!_parent) {
-			free(_parent);
+		if (!_parent)
 			goto done;
-		}
 		sysfs_devname_dev_to_sys(_parent);
 		len = snprintf(buf, sizeof(buf),
 				"%s" _PATH_SYS_BLOCK "/%s/%s/dev",
