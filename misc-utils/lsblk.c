@@ -1814,7 +1814,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, USAGE_COLUMNS);
 
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
+		fprintf(out, " %12s  %s\n", infos[i].name, _(infos[i].help));
 
 	printf(USAGE_MAN_TAIL("lsblk(8)"));
 
