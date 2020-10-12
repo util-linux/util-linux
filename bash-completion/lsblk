@@ -79,6 +79,7 @@ _lsblk_module()
 				--topology
 				--scsi
 				--sort
+				--width
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

@@ -1804,8 +1804,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -s, --inverse        inverse dependencies\n"), out);
 	fputs(_(" -t, --topology       output info about topology\n"), out);
-	fputs(_(" -z, --zoned          print zone model\n"), out);
+	fputs(_(" -w, --width <num>    specifies output width as number of characters\n"), out);
 	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
+	fputs(_(" -z, --zoned          print zone model\n"), out);
 	fputs(_("     --sysroot <dir>  use specified directory as system root\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(22));
@@ -1839,6 +1840,7 @@ int main(int argc, char *argv[])
 	int c, status = EXIT_FAILURE;
 	char *outarg = NULL;
 	size_t i;
+	unsigned int width = 0;
 	int force_tree = 0, has_tree_col = 0;
 
 	enum {
@@ -1874,6 +1876,7 @@ int main(int argc, char *argv[])
 		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
 		{ "tree",       optional_argument, NULL, 'T' },
 		{ "version",    no_argument,       NULL, 'V' },
+		{ "width",	required_argument, NULL, 'w' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -1901,7 +1904,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-			       "abdDzE:e:fhJlnMmo:OpPiI:rstVST::x:", longopts, NULL)) != -1) {
+			       "abdDzE:e:fhJlnMmo:OpPiI:rstVST::w:x:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -2027,6 +2030,9 @@ int main(int argc, char *argv[])
 				break;
 			errtryhelp(EXIT_FAILURE);
 			break;
+		case 'w':
+			width = strtou32_or_err(optarg, _("invalid output width number argument"));
+			break;
 		case 'x':
 			lsblk->flags &= ~LSBLK_TREE; /* disable the default */
 			lsblk->sort_id = column_name_to_id(optarg, strlen(optarg));
@@ -2105,6 +2111,10 @@ int main(int argc, char *argv[])
 
 	if (lsblk->flags & LSBLK_JSON)
 		scols_table_set_name(lsblk->table, "blockdevices");
+	if (width) {
+		scols_table_set_termwidth(lsblk->table, width);
+		scols_table_set_termforce(lsblk->table, SCOLS_TERMFORCE_ALWAYS);
+	}
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);

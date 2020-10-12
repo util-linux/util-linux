@@ -157,6 +157,15 @@ This option is equivalent to
 .BR \-V , " \-\-version"
 Display version information and exit.
 .TP
+.BR \-w , " \-\-width " \fInumber\fP
+Specifies output width as a number of characters.  The default is the number of
+the terminal columns, and if not executed on a terminal, then output width is not
+restricted at all by default.  This option also forces lsblk to assume that terminal
+control characters and unsafe characters are not allowed.  The expected use-case is
+for example when lsblk used by
+.BR watch (1)
+command.
+.TP
 .BR \-x , " \-\-sort " \fIcolumn\fP
 Sort output lines by \fIcolumn\fP. This option enables \fB\-\-list\fR output format by default.
 It is possible to use the option \fI\-\-tree\fP to force tree-like output and
