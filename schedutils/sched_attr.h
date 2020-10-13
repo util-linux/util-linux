@@ -13,6 +13,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Copyright (C) 2004 Robert Love
+ * Copyright (C) 2020-2021 Qais Yousef
+ * Copyright (C) 2020-2021 Arm Ltd
  */
 #ifndef UTIL_LINUX_SCHED_ATTR_H
 #define UTIL_LINUX_SCHED_ATTR_H
@@ -40,6 +42,30 @@
 /* flag by sched_getattr() */
 #if defined(__linux__) && !defined(SCHED_FLAG_RESET_ON_FORK)
 # define SCHED_FLAG_RESET_ON_FORK 0x01
+#endif
+
+#if defined(__linux__) && !defined(SCHED_FLAG_RECLAIM)
+# define SCHED_FLAG_RECLAIM 0x02
+#endif
+
+#if defined(__linux__) && !defined(SCHED_FLAG_DL_OVERRUN)
+# define SCHED_FLAG_DL_OVERRUN 0x04
+#endif
+
+#if defined(__linux__) && !defined(SCHED_FLAG_KEEP_POLICY)
+# define SCHED_FLAG_KEEP_POLICY 0x08
+#endif
+
+#if defined(__linux__) && !defined(SCHED_FLAG_KEEP_PARAMS)
+# define SCHED_FLAG_KEEP_PARAMS 0x10
+#endif
+
+#if defined(__linux__) && !defined(SCHED_FLAG_UTIL_CLAMP_MIN)
+# define SCHED_FLAG_UTIL_CLAMP_MIN 0x20
+#endif
+
+#if defined(__linux__) && !defined(SCHED_FLAG_UTIL_CLAMP_MAX)
+# define SCHED_FLAG_UTIL_CLAMP_MAX 0x40
 #endif
 
 #if defined (__linux__)
@@ -73,6 +99,10 @@ struct sched_attr {
 	uint64_t sched_runtime;
 	uint64_t sched_deadline;
 	uint64_t sched_period;
+
+	/* UTILIZATION CLAMPING */
+	uint32_t sched_util_min;
+	uint32_t sched_util_max;
 };
 
 static int sched_setattr(pid_t pid, const struct sched_attr *attr, unsigned int flags)

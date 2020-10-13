@@ -207,4 +207,8 @@
 #define _PATH_DEV_RFKILL	"/dev/rfkill"
 #define _PATH_SYS_RFKILL	"/sys/class/rfkill"
 
+#define _PATH_PROC_KERNEL(file)	"/proc/sys/kernel" #file
+#define _PATH_PROC_UCLAMP_MIN	_PATH_PROC_KERNEL(/sched_util_clamp_min)
+#define _PATH_PROC_UCLAMP_MAX	_PATH_PROC_KERNEL(/sched_util_clamp_max)
+
 #endif /* PATHNAMES_H */
