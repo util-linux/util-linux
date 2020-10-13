@@ -68,6 +68,13 @@ It's possible to create more independent loop devices for the same backing
 file.
 .B This setup may be dangerous, can cause data loss, corruption and overwrites.
 Use \fB\-\-nooverlap\fR with \fB\-\-find\fR during setup to avoid this problem.
+.sp
+The loop device setup is not an atomic operation when used with \fB\-\-find\fP, and
+.B losetup
+does not protect this operation by any lock.  The number of attempts is
+internally restricted to a maximum of 16.  It is recommended to use for example
+.BR flock (1)
+to avoid a collision in heavily parallel use cases.
 
 .SH OPTIONS
 The \fIsize\fR and \fIoffset\fR
