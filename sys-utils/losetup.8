@@ -68,6 +68,13 @@ It's possible to create more independent loop devices for the same backing
 file.
 .B This setup may be dangerous, can cause data loss, corruption and overwrites.
 Use \fB\-\-nooverlap\fR with \fB\-\-find\fR during setup to avoid this problem.
+.sp
+The loop device setup is not an atomic operation when used with \fB\-\-find\fP, and
+.B losetup
+does not protect this operation by any lock.  The number of attempts is
+internally restricted to a maximum of 16.  It is recommended to use for example
+.BR flock (1)
+to avoid a collision in heavily parallel use cases.
 
 .SH OPTIONS
 The \fIsize\fR and \fIoffset\fR
@@ -177,6 +184,11 @@ returns 0 on success, nonzero on failure.  When
 displays the status of a loop device, it returns 1 if the device
 is not configured and 2 if an error occurred which prevented
 determining the status of the device.
+.SH NOTES
+Since version 2.37
+.B losetup
+uses LOOP_CONFIGURE ioctl to setup a new loop device by one ioctl call.  The
+old versions use LOOP_SET_FD and LOOP_SET_STATUS64 ioctls to do the same.
 
 .SH ENVIRONMENT
 .IP LOOPDEV_DEBUG=all
