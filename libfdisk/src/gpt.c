@@ -1126,7 +1126,8 @@ static int gpt_check_lba_sanity(struct fdisk_context *cxt, struct gpt_header *he
 
 	/* check if first and last usable LBAs with the disk's last LBA */
 	if (fu > lastlba || lu > lastlba) {
-		DBG(GPT, ul_debug("error: header LBAs are after the disk's last LBA"));
+		DBG(GPT, ul_debug("error: header LBAs are after the disk's last LBA (%ju..%ju)",
+					(uintmax_t) fu, (uintmax_t) lu));
 		goto done;
 	}
 
