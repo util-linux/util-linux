@@ -71,12 +71,12 @@
 #define	FREV	'7'
 
 enum {
-	NORMAL 	= 0,		/* Must be zero, see initbuf() */
-	ALTSET 	= 1 << 0,	/* Reverse */
-	SUPERSC = 1 << 1,	/* Dim */
-	SUBSC	= 1 << 2,	/* Dim | Ul */
-	UNDERL	= 1 << 3,	/* Ul */
-	BOLD	= 1 << 4,	/* Bold */
+	NORMAL_CHARSET	     = 0,	/* Must be zero, see initbuf() */
+	ALTERNATIVE_CHARSET = 1 << 0,	/* Reverse */
+	SUPERSCRIPT	     = 1 << 1,	/* Dim */
+	SUBSCRIPT	     = 1 << 2,	/* Dim | Ul */
+	UNDERLINE	     = 1 << 3,	/* Ul */
+	BOLD		     = 1 << 4,	/* Bold */
 };
 
 struct term_caps {
@@ -174,12 +174,12 @@ static void initbuf(struct ul_ctl *ctl)
 		ctl->obuflen = BUFSIZ;
 		ctl->obuf = xcalloc(ctl->obuflen, sizeof(struct ul_char));
 	} else
-		/* assumes NORMAL == 0 */
+		/* assumes NORMAL_CHARSET == 0 */
 		memset(ctl->obuf, 0, sizeof(struct ul_char) * ctl->maxcol);
 
 	setcol(ctl, 0);
 	ctl->maxcol = 0;
-	ctl->mode &= ALTSET;
+	ctl->mode &= ALTERNATIVE_CHARSET;
 }
 
 static void initinfo(struct ul_ctl *ctl, struct term_caps *const tcs)
@@ -256,14 +256,14 @@ static void print_out(char *line)
 static void xsetmode(struct ul_ctl *ctl, struct term_caps const *const tcs, int newmode)
 {
 	if (!ctl->iflag) {
-		if (ctl->curmode != NORMAL && newmode != NORMAL)
-			xsetmode(ctl, tcs, NORMAL);
+		if (ctl->curmode != NORMAL_CHARSET && newmode != NORMAL_CHARSET)
+			xsetmode(ctl, tcs, NORMAL_CHARSET);
 		switch (newmode) {
-		case NORMAL:
+		case NORMAL_CHARSET:
 			switch (ctl->curmode) {
-			case NORMAL:
+			case NORMAL_CHARSET:
 				break;
-			case UNDERL:
+			case UNDERLINE:
 				print_out(tcs->exit_underline);
 				break;
 			default:
@@ -272,10 +272,10 @@ static void xsetmode(struct ul_ctl *ctl, struct term_caps const *const tcs, int 
 				break;
 			}
 			break;
-		case ALTSET:
+		case ALTERNATIVE_CHARSET:
 			print_out(tcs->enter_reverse);
 			break;
-		case SUPERSC:
+		case SUPERSCRIPT:
 			/*
 			 * This only works on a few terminals.
 			 * It should be fixed.
@@ -283,10 +283,10 @@ static void xsetmode(struct ul_ctl *ctl, struct term_caps const *const tcs, int 
 			print_out(tcs->enter_underline);
 			print_out(tcs->enter_dim);
 			break;
-		case SUBSC:
+		case SUBSCRIPT:
 			print_out(tcs->enter_dim);
 			break;
-		case UNDERL:
+		case UNDERLINE:
 			print_out(tcs->enter_underline);
 			break;
 		case BOLD:
@@ -312,13 +312,13 @@ static void iattr(struct ul_ctl *ctl)
 
 	for (i = 0; i < ctl->maxcol; i++)
 		switch (ctl->obuf[i].c_mode) {
-		case NORMAL:	*cp++ = ' '; break;
-		case ALTSET:	*cp++ = 'g'; break;
-		case SUPERSC:	*cp++ = '^'; break;
-		case SUBSC:	*cp++ = 'v'; break;
-		case UNDERL:	*cp++ = '_'; break;
-		case BOLD:	*cp++ = '!'; break;
-		default:	*cp++ = 'X'; break;
+		case NORMAL_CHARSET:	  *cp++ = ' '; break;
+		case ALTERNATIVE_CHARSET: *cp++ = 'g'; break;
+		case SUPERSCRIPT:	  *cp++ = '^'; break;
+		case SUBSCRIPT:		  *cp++ = 'v'; break;
+		case UNDERLINE:		  *cp++ = '_'; break;
+		case BOLD:		  *cp++ = '!'; break;
+		default:		  *cp++ = 'X'; break;
 		}
 	for (*cp = ' '; *cp == ' '; cp--)
 		*cp = 0;
@@ -332,7 +332,7 @@ static void outc(struct ul_ctl *ctl, struct term_caps const *const tcs, wint_t c
 	int i;
 
 	putwchar(c);
-	if (ctl->must_use_uc && (ctl->curmode & UNDERL)) {
+	if (ctl->must_use_uc && (ctl->curmode & UNDERLINE)) {
 		for (i = 0; i < width; i++)
 			print_out(tcs->curs_left);
 		for (i = 0; i < width; i++)
@@ -354,11 +354,11 @@ static void overstrike(struct ul_ctl *ctl)
 	/* Set up overstrike buffer */
 	for (i = 0; i < ctl->maxcol; i++)
 		switch (ctl->obuf[i].c_mode) {
-		case NORMAL:
+		case NORMAL_CHARSET:
 		default:
 			*cp++ = ' ';
 			break;
-		case UNDERL:
+		case UNDERLINE:
 			*cp++ = '_';
 			break;
 		case BOLD:
@@ -389,7 +389,7 @@ static void flushln(struct ul_ctl *ctl, struct term_caps const *const tcs)
 	int i;
 	int hadmodes = 0;
 
-	lastmode = NORMAL;
+	lastmode = NORMAL_CHARSET;
 	for (i = 0; i < ctl->maxcol; i++) {
 		if (ctl->obuf[i].c_mode != lastmode) {
 			hadmodes++;
@@ -406,8 +406,8 @@ static void flushln(struct ul_ctl *ctl, struct term_caps const *const tcs)
 		if (ctl->obuf[i].c_width > 1)
 			i += ctl->obuf[i].c_width - 1;
 	}
-	if (lastmode != NORMAL)
-		xsetmode(ctl, tcs, NORMAL);
+	if (lastmode != NORMAL_CHARSET)
+		xsetmode(ctl, tcs, NORMAL_CHARSET);
 	if (ctl->must_overstrike && hadmodes)
 		overstrike(ctl);
 	putwchar('\n');
@@ -446,10 +446,10 @@ static int handle_escape(struct ul_ctl *ctl, struct term_caps const *const tcs, 
 	switch (c = getwc(f)) {
 	case HREV:
 		if (ctl->halfpos == 0) {
-			ctl->mode |= SUPERSC;
+			ctl->mode |= SUPERSCRIPT;
 			ctl->halfpos--;
 		} else if (ctl->halfpos > 0) {
-			ctl->mode &= ~SUBSC;
+			ctl->mode &= ~SUBSCRIPT;
 			ctl->halfpos--;
 		} else {
 			ctl->halfpos = 0;
@@ -458,10 +458,10 @@ static int handle_escape(struct ul_ctl *ctl, struct term_caps const *const tcs, 
 		return 0;
 	case HFWD:
 		if (ctl->halfpos == 0) {
-			ctl->mode |= SUBSC;
+			ctl->mode |= SUBSCRIPT;
 			ctl->halfpos++;
 		} else if (ctl->halfpos < 0) {
-			ctl->mode &= ~SUPERSC;
+			ctl->mode &= ~SUPERSCRIPT;
 			ctl->halfpos++;
 		} else {
 			ctl->halfpos = 0;
@@ -495,10 +495,10 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 			setcol(ctl, 0);
 			continue;
 		case SO:
-			ctl->mode |= ALTSET;
+			ctl->mode |= ALTERNATIVE_CHARSET;
 			continue;
 		case SI:
-			ctl->mode &= ~ALTSET;
+			ctl->mode &= ~ALTERNATIVE_CHARSET;
 			continue;
 		case IESC:
 			if (handle_escape(ctl, tcs, f)) {
@@ -513,7 +513,7 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 					ctl->col--;
 				w = ctl->obuf[ctl->col].c_width;
 				for (i = 0; i < w; i++)
-					ctl->obuf[ctl->col++].c_mode |= UNDERL | ctl->mode;
+					ctl->obuf[ctl->col++].c_mode |= UNDERLINE | ctl->mode;
 				setcol(ctl, ctl->col);
 				continue;
 			}
@@ -546,7 +546,7 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 			} else if (ctl->obuf[ctl->col].c_char == '_') {
 				ctl->obuf[ctl->col].c_char = c;
 				for (i = 0; i < w; i++)
-					ctl->obuf[ctl->col + i].c_mode |= UNDERL | ctl->mode;
+					ctl->obuf[ctl->col + i].c_mode |= UNDERLINE | ctl->mode;
 				ctl->obuf[ctl->col].c_width = w;
 				for (i = 1; i < w; i++)
 					ctl->obuf[ctl->col + i].c_width = -1;
@@ -571,7 +571,7 @@ int main(int argc, char **argv)
 	int c, ret, tflag = 0;
 	char *termtype;
 	struct term_caps tcs = { 0 };
-	struct ul_ctl ctl = { .curmode = NORMAL };
+	struct ul_ctl ctl = { .curmode = NORMAL_CHARSET };
 	FILE *f;
 
 	static const struct option longopts[] = {
