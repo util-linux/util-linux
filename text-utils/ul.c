@@ -63,21 +63,6 @@
 #include "c.h"
 #include "closestream.h"
 
-#ifdef HAVE_WIDECHAR
-/* Output an ASCII character as a wide character */
-static int put1wc(int c)
-{
-	if (putwchar(c) == WEOF)
-		return EOF;
-
-	return c;
-}
-
-# define putwp(s) tputs(s, STDOUT_FILENO, put1wc)
-#else
-# define putwp(s) putp(s)
-#endif
-
 #define	IESC	'\033'
 #define	SO	'\016'
 #define	SI	'\017'
@@ -254,12 +239,18 @@ static void sig_handler(int signo __attribute__((__unused__)))
 	_exit(EXIT_SUCCESS);
 }
 
+static int ul_putwchar(int c)
+{
+	if (putwchar(c) == WEOF)
+		return EOF;
+	return c;
+}
+
 static void print_out(char *line)
 {
 	if (line == NULL)
 		return;
-
-	putwp(line);
+	tputs(line, STDOUT_FILENO, ul_putwchar);
 }
 
 static void xsetmode(struct ul_ctl *ctl, struct term_caps const *const tcs, int newmode)
