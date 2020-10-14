@@ -105,6 +105,7 @@ static char *inode_buffer = NULL;
 struct fs_control {
 	char *device_name;		/* device on a Minix file system is created */
 	int device_fd;			/* open file descriptor of the device */
+	char *lockmode;			/* as specified by --lock */
 	unsigned long long fs_blocks;	/* device block count for the file system */
 	int fs_used_blocks;		/* used blocks on a device */
 	int fs_bad_blocks;		/* number of bad blocks found from device */
@@ -144,6 +145,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -i, --inodes <num>      number of inodes for the filesystem\n"), out);
 	fputs(_(" -c, --check             check the device for bad blocks\n"), out);
 	fputs(_(" -l, --badblocks <file>  list of bad blocks from file\n"), out);
+	fprintf(out, _(
+		"     --lock[=<mode>]     use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(25));
 	printf(USAGE_MAN_TAIL("mkfs.minix(8)"));
@@ -745,6 +748,9 @@ int main(int argc, char ** argv)
 	int i;
 	struct stat statbuf;
 	char * listfile = NULL;
+	enum {
+		OPT_LOCK = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 		{"namelength", required_argument, NULL, 'n'},
 		{"inodes", required_argument, NULL, 'i'},
@@ -752,6 +758,7 @@ int main(int argc, char ** argv)
 		{"badblocks", required_argument, NULL, 'l'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
+		{"lock",optional_argument, NULL, OPT_LOCK},
 		{NULL, 0, NULL, 0}
 	};
 
@@ -791,6 +798,14 @@ int main(int argc, char ** argv)
 		case 'l':
 			listfile = optarg;
 			break;
+		case OPT_LOCK:
+			ctl.lockmode = "1";
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
+				ctl.lockmode = optarg;
+			}
+			break;
 		case 'V':
 			print_version(MKFS_EX_OK);
 		case 'h':
@@ -821,6 +836,8 @@ int main(int argc, char ** argv)
 	ctl.device_fd = open_blkdev_or_file(&statbuf, ctl.device_name, O_RDWR);
 	if (ctl.device_fd < 0)
 		err(MKFS_EX_ERROR, _("cannot open %s"), ctl.device_name);
+	if (blkdev_lock(ctl.device_fd, ctl.device_name, ctl.lockmode) != 0)
+		exit(MKFS_EX_ERROR);
 	determine_device_blocks(&ctl, &statbuf);
 	setup_tables(&ctl);
 	if (ctl.check_blocks)

@@ -46,6 +46,14 @@ Specify the maximum length of filenames.  Currently, the only allowable
 values are 14 and 30 for file system versions 1 and 2.  Version 3 allows
 only value 60.  The default is 30.
 .TP
+\fB\-\-lock\fR[=\fImode\fR]
+Use exclusive BSD lock for device or file it operates.  The optional argument
+\fImode\fP can be \fByes\fR, \fBno\fR (or 1 and 0) or \fBnonblock\fR.  If the \fImode\fR
+argument is omitted, it defaults to \fB"yes"\fR.  This option overwrites
+environment variable \fB$LOCK_BLOCK_DEVICE\fR.  The default is not to use any
+lock at all, but it's recommended to avoid collisions with udevd or other
+tools.
+.TP
 \fB\-i\fR, \fB\-\-inodes\fR \fInumber\fR
 Specify the number of inodes for the filesystem.
 .TP
@@ -70,6 +78,9 @@ with other options.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
+.SH ENVIRONMENT
+.IP LOCK_BLOCK_DEVICE=<mode>
+use exclusive BSD lock.  The mode is "1" or "0".  See \fB\-\-lock\fR for more details.
 .SH EXIT STATUS
 The exit status returned by
 .B mkfs.minix
