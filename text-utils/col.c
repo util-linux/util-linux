@@ -181,7 +181,8 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -x, --spaces           convert tabs to spaces\n"
 		" -l, --lines NUM        buffer at least NUM lines\n"
 		));
-	printf(USAGE_HELP_OPTIONS(24));
+	printf( " -H, --help             %s\n", USAGE_OPTSTR_HELP);
+	printf( " -v, --version          %s\n", USAGE_OPTSTR_VERSION);
 
 	printf(USAGE_MAN_TAIL("col(1)"));
 	exit(EXIT_SUCCESS);
