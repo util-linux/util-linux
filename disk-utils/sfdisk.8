@@ -36,6 +36,14 @@ never been important for Linux, and this addressing concept does not make any
 sense for new devices.
 .sp
 .B sfdisk
+protects the first disk sector when create a new disk label.
+The option \fB\-\-wipe always\fR disables this protection.  Note that
+.BR fdisk (8)
+and
+.BR cfdisk (8)
+completely erase this area by default.
+.sp
+.B sfdisk
 (since version 2.26)
 .B aligns the start and end of partitions
 to block-device I/O limits when relative sizes are specified, when the default
@@ -315,8 +323,10 @@ to avoid possible collisions.  The argument \fIwhen\fR can be \fBauto\fR,
 \fBnever\fR or \fBalways\fR.  When this option is not given, the default is
 \fBauto\fR, in which case signatures are wiped only when in interactive mode;
 except the old partition-table signatures which are always wiped before create
-a new partition-table if the argument \fIwhen\fR is not \fBnever\fR. In all
-cases detected signatures are reported by warning messages before a new
+a new partition-table if the argument \fIwhen\fR is not \fBnever\fR.
+The \fBauto\fR mode also does not wipe the first sector (boot sector), it is
+necessary to use the \fBalways\fR mode to wipe this area.
+In all cases detected signatures are reported by warning messages before a new
 partition table is created.  See also the
 .BR wipefs (8)
 command.

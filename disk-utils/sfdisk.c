@@ -230,7 +230,9 @@ static void sfdisk_init(struct sfdisk *sf)
 	if (!sf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
 	fdisk_set_ask(sf->cxt, ask_callback, (void *) sf);
-	fdisk_enable_bootbits_protection(sf->cxt, 1);
+
+	if (sf->wipemode != WIPEMODE_ALWAYS)
+		fdisk_enable_bootbits_protection(sf->cxt, 1);
 
 	if (sf->label_nested) {
 		struct fdisk_context *x = fdisk_new_nested_context(sf->cxt,
@@ -1627,7 +1629,7 @@ static void follow_wipe_mode(struct sfdisk *sf)
 	if (dowipe) {
 		if (!fdisk_is_ptcollision(sf->cxt)) {
 			fdisk_warnx(sf->cxt, _(
-				"The device contains '%s' signature and it will be removed by a write command. "
+				"The device contains '%s' signature and it may be removed by a write command. "
 				"See sfdisk(8) man page and --wipe option for more details."),
 				fdisk_get_collision(sf->cxt));
 			fputc('\n', stdout);
