@@ -63,7 +63,6 @@ static int recursiveRemove(int fd)
 
 	/* fdopendir() precludes us from continuing to use the input fd */
 	dfd = dirfd(dir);
-
 	if (fstat(dfd, &rb)) {
 		warn(_("stat failed"));
 		goto done;
@@ -104,10 +103,8 @@ static int recursiveRemove(int fd)
 				int cfd;
 
 				cfd = openat(dfd, d->d_name, O_RDONLY);
-				if (cfd >= 0) {
-					recursiveRemove(cfd);
-					close(cfd);
-				}
+				if (cfd >= 0)
+					recursiveRemove(cfd);	/* it closes cfd too */
 				isdir = 1;
 			}
 		}
@@ -117,10 +114,11 @@ static int recursiveRemove(int fd)
 	}
 
 	rc = 0;	/* success */
-
 done:
 	if (dir)
 		closedir(dir);
+	else
+		close(fd);
 	return rc;
 }
 
@@ -129,8 +127,7 @@ static int switchroot(const char *newroot)
 	/*  Don't try to unmount the old "/", there's no way to do it. */
 	const char *umounts[] = { "/dev", "/proc", "/sys", "/run", NULL };
 	int i;
-	int cfd;
-	pid_t pid;
+	int cfd = -1;
 	struct stat newroot_stat, sb;
 
 	if (stat(newroot, &newroot_stat) != 0) {
@@ -165,43 +162,51 @@ static int switchroot(const char *newroot)
 	cfd = open("/", O_RDONLY);
 	if (cfd < 0) {
 		warn(_("cannot open %s"), "/");
-		return -1;
+		goto fail;
 	}
 
 	if (mount(newroot, "/", NULL, MS_MOVE, NULL) < 0) {
-		close(cfd);
 		warn(_("failed to mount moving %s to /"), newroot);
-		return -1;
+		goto fail;
 	}
 
 	if (chroot(".")) {
-		close(cfd);
 		warn(_("failed to change root"));
-		return -1;
+		goto fail;
 	}
 
 	if (chdir("/")) {
-		close(cfd);
 		warn(_("cannot change directory to %s"), "/");
-		return -1;
+		goto fail;
 	}
 
-	pid = fork();
-	if (pid <= 0) {
+	switch (fork()) {
+	case 0: /* child */
+	{
 		struct statfs stfs;
 
 		if (fstatfs(cfd, &stfs) == 0 &&
 		    (F_TYPE_EQUAL(stfs.f_type, STATFS_RAMFS_MAGIC) ||
 		     F_TYPE_EQUAL(stfs.f_type, STATFS_TMPFS_MAGIC)))
 			recursiveRemove(cfd);
-		else
+		else {
 			warn(_("old root filesystem is not an initramfs"));
-		if (pid == 0)
-			exit(EXIT_SUCCESS);
+			close(cfd);
+		}
+		exit(EXIT_SUCCESS);
+	}
+	case -1: /* error */
+		break;
+
+	default: /* parent */
+		close(cfd);
+		return 0;
 	}
 
-	close(cfd);
-	return 0;
+fail:
+	if (cfd >= 0)
+		close(cfd);
+	return -1;
 }
 
 static void __attribute__((__noreturn__)) usage(void)
