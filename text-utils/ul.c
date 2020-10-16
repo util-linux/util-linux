@@ -352,7 +352,7 @@ static void overstrike(struct ul_ctl *ctl)
 			break;
 		case BOLD:
 			*p++ = ctl->buf[i].c_char;
-			if (ctl->buf[i].c_width > 1)
+			if (1 < ctl->buf[i].c_width)
 				i += ctl->buf[i].c_width - 1;
 			had_bold = 1;
 			break;
@@ -392,7 +392,7 @@ static void flush_line(struct ul_ctl *ctl, struct term_caps const *const tcs)
 				output_char(ctl, tcs, ' ', 1);
 		} else
 			output_char(ctl, tcs, ctl->buf[i].c_char, ctl->buf[i].c_width);
-		if (ctl->buf[i].c_width > 1)
+		if (1 < ctl->buf[i].c_width)
 			i += ctl->buf[i].c_width - 1;
 	}
 	if (last_mode != NORMAL_CHARSET)
@@ -434,11 +434,11 @@ static int handle_escape(struct ul_ctl *ctl, struct term_caps const *const tcs, 
 
 	switch (c = getwc(f)) {
 	case HREV:
-		if (ctl->half_position == 0) {
-			ctl->mode |= SUPERSCRIPT;
-			ctl->half_position--;
-		} else if (ctl->half_position > 0) {
+		if (0 < ctl->half_position) {
 			ctl->mode &= ~SUBSCRIPT;
+			ctl->half_position--;
+		} else if (ctl->half_position == 0) {
+			ctl->mode |= SUPERSCRIPT;
 			ctl->half_position--;
 		} else {
 			ctl->half_position = 0;
@@ -446,11 +446,11 @@ static int handle_escape(struct ul_ctl *ctl, struct term_caps const *const tcs, 
 		}
 		return 0;
 	case HFWD:
-		if (ctl->half_position == 0) {
-			ctl->mode |= SUBSCRIPT;
-			ctl->half_position++;
-		} else if (ctl->half_position < 0) {
+		if (ctl->half_position < 0) {
 			ctl->mode &= ~SUPERSCRIPT;
+			ctl->half_position++;
+		} else if (ctl->half_position == 0) {
+			ctl->mode |= SUBSCRIPT;
 			ctl->half_position++;
 		} else {
 			ctl->half_position = 0;
@@ -498,7 +498,7 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 			continue;
 		case '_':
 			if (ctl->buf[ctl->column].c_char || ctl->buf[ctl->column].c_width < 0) {
-				while (ctl->column > 0 && ctl->buf[ctl->column].c_width < 0)
+				while (ctl->buf[ctl->column].c_width < 0 && 0 < ctl->column)
 					ctl->column--;
 				width = ctl->buf[ctl->column].c_width;
 				for (i = 0; i < width; i++)
