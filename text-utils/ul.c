@@ -101,13 +101,13 @@ struct ul_char {
 };
 
 struct ul_ctl {
-	int column;
-	int max_column;
+	size_t column;
+	size_t max_column;
 	int half_position;
 	int up_line;
 	int mode;
 	int current_mode;
-	int buflen;
+	size_t buflen;
 	struct ul_char *buf;
 	unsigned int
 		indicated_opt:1,
@@ -136,34 +136,21 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void need_column(struct ul_ctl *ctl, int new_max)
+static void need_column(struct ul_ctl *ctl, size_t new_max)
 {
 	ctl->max_column = new_max;
 
-	/* If col >= buflen, expand buf until buflen > col. */
 	while (new_max >= ctl->buflen) {
-		/* Paranoid check for buflen == INT_MAX. */
-		if (ctl->buflen == INT_MAX)
-			errx(EXIT_FAILURE, _("Input line too long."));
-
-		/* Similar paranoia: double only up to INT_MAX. */
-		if (ctl->buflen < (INT_MAX / 2))
-			ctl->buflen *= 2;
-		else
-			ctl->buflen = INT_MAX;
-
-		/* Now we can try to expand buf. */
+		ctl->buflen *= 2;
 		ctl->buf = xrealloc(ctl->buf, sizeof(struct ul_char) * ctl->buflen);
 	}
 }
 
-static void set_column(struct ul_ctl *ctl, int column)
+static void set_column(struct ul_ctl *ctl, size_t column)
 {
 	ctl->column = column;
 
-	if (ctl->column < 0)
-		ctl->column = 0;
-	else if (ctl->column > ctl->max_column)
+	if (ctl->max_column < ctl->column)
 		need_column(ctl, ctl->column);
 }
 
@@ -307,7 +294,7 @@ static void ul_setmode(struct ul_ctl *ctl, struct term_caps const *const tcs,
 
 static void indicate_attribute(struct ul_ctl *ctl)
 {
-	int i;
+	size_t i;
 	wchar_t *buf = xcalloc(ctl->max_column + 1, sizeof(wchar_t));
 	wchar_t *p = buf;
 
@@ -348,7 +335,7 @@ static void output_char(struct ul_ctl *ctl, struct term_caps const *const tcs,
  */
 static void overstrike(struct ul_ctl *ctl)
 {
-	int i;
+	size_t i;
 	wchar_t *buf = xcalloc(ctl->max_column + 1, sizeof(wchar_t));
 	wchar_t *p = buf;
 	int had_bold = 0;
@@ -388,7 +375,7 @@ static void overstrike(struct ul_ctl *ctl)
 static void flush_line(struct ul_ctl *ctl, struct term_caps const *const tcs)
 {
 	int last_mode;
-	int i;
+	size_t i;
 	int had_mode = 0;
 
 	last_mode = NORMAL_CHARSET;
@@ -488,7 +475,7 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 	while ((c = getwc(f)) != WEOF) {
 		switch (c) {
 		case '\b':
-			set_column(ctl, ctl->column - 1);
+			set_column(ctl, 0 < (ctl->column - 1) ? ctl->column - 1 : 0);
 			continue;
 		case '\t':
 			set_column(ctl, (ctl->column + 8) & ~07);
@@ -516,7 +503,7 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 				width = ctl->buf[ctl->column].c_width;
 				for (i = 0; i < width; i++)
 					ctl->buf[ctl->column++].c_mode |= UNDERLINE | ctl->mode;
-				set_column(ctl, ctl->column);
+				set_column(ctl, 0 < ctl->column ? ctl->column : 0);
 				continue;
 			}
 			ctl->buf[ctl->column].c_char = '_';
