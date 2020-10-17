@@ -6820,7 +6820,7 @@ msgstr "間違った vtoc.sanity 値 [0x%08x] の sun ディスクラベルを�
 #: libfdisk/src/sun.c:163
 #, c-format
 msgid "Detected sun disklabel with wrong vtoc.nparts [%u]."
-msgstr "間違った vtoc.nparts 値 [0x%u] の sun ディスクラベルを検出しました。"
+msgstr "間違った vtoc.nparts 値 [%u] の sun ディスクラベルを検出しました。"
 
 #: libfdisk/src/sun.c:168
 msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)"
