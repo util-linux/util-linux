@@ -110,12 +110,7 @@ static int setup_terminal(char *term
 
 static void my_putstring(const char *s)
 {
-#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
-	if (has_term)
-		putp(s);
-	else
-#endif
-		fputs(s, stdout);
+	fputs(s, stdout);
 }
 
 static const char *my_tgetstr(char *ss
