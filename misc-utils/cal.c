@@ -108,16 +108,6 @@ static int setup_terminal(char *term
 	return 0;
 }
 
-static void my_putstring(const char *s)
-{
-#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
-	if (has_term)
-		putp(s);
-	else
-#endif
-		fputs(s, stdout);
-}
-
 static const char *my_tgetstr(char *ss
 #if !defined(HAVE_LIBNCURSES) && !defined(HAVE_LIBNCURSESW)
 			__attribute__((__unused__))
@@ -786,7 +776,7 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 			center(out, ctl->week_width, i->next == NULL ? 0 : ctl->gutter_width);
 		}
 		if (!ctl->header_year) {
-			my_putstring("\n");
+			fputc('\n', stdout);
 			for (i = month; i; i = i->next) {
 				snprintf(out, sizeof(out), "%04d", i->year);
 				center(out, ctl->week_width, i->next == NULL ? 0 : ctl->gutter_width);
@@ -798,22 +788,19 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 			center(out, ctl->week_width, i->next == NULL ? 0 : ctl->gutter_width);
 		}
 	}
-	my_putstring("\n");
+	fputc('\n', stdout);
 	for (i = month; i; i = i->next) {
 		if (ctl->weektype) {
 			if (ctl->julian)
-				snprintf(out, sizeof(out), "%*s%s", (int)ctl->day_width - 1, "", day_headings);
+				printf("%*s%s", (int)ctl->day_width - 1, "", day_headings);
 			else
-				snprintf(out, sizeof(out), "%*s%s", (int)ctl->day_width, "", day_headings);
-			my_putstring(out);
+				printf("%*s%s", (int)ctl->day_width, "", day_headings);
 		} else
-			my_putstring(day_headings);
-		if (i->next != NULL) {
-			snprintf(out, sizeof(out), "%*s", ctl->gutter_width, "");
-			my_putstring(out);
-		}
+			fputs(day_headings, stdout);
+		if (i->next != NULL)
+			printf("%*s", ctl->gutter_width, "");
 	}
-	my_putstring("\n");
+	fputc('\n', stdout);
 }
 
 static void cal_vert_output_header(struct cal_month *month,
@@ -824,19 +811,20 @@ static void cal_vert_output_header(struct cal_month *month,
 	int month_width;
 
 	month_width = ctl->day_width * (MAXDAYS / DAYS_IN_WEEK);
+
 	/* Padding for the weekdays */
-	snprintf(out, sizeof(out), "%*s", (int)ctl->day_width + 1, "");
-	my_putstring(out);
+	printf("%*s", (int)ctl->day_width + 1, "");
+
 	if (ctl->header_hint || ctl->header_year) {
 		for (m = month; m; m = m->next) {
 			snprintf(out, sizeof(out), "%s", ctl->full_month[m->month - 1]);
 			left(out, month_width, ctl->gutter_width);
 		}
 		if (!ctl->header_year) {
-			my_putstring("\n");
+			fputc('\n', stdout);
 			/* Padding for the weekdays */
-			snprintf(out, sizeof(out), "%*s", (int)ctl->day_width + 1, "");
-			my_putstring(out);
+			printf("%*s", (int)ctl->day_width + 1, "");
+
 			for (m = month; m; m = m->next) {
 				snprintf(out, sizeof(out), "%04d", m->year);
 				left(out, month_width, ctl->gutter_width);
@@ -848,12 +836,11 @@ static void cal_vert_output_header(struct cal_month *month,
 			left(out, month_width, ctl->gutter_width);
 		}
 	}
-	my_putstring("\n");
+	fputc('\n', stdout);
 }
 
 static void cal_output_months(struct cal_month *month, const struct cal_control *ctl)
 {
-	char out[FMT_ST_CHARS];
 	int reqday, week_line, d;
 	int skip;
 	struct cal_month *i;
@@ -873,16 +860,12 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 
 			if (ctl->weektype) {
 				if (0 < i->weeks[week_line]) {
-					if ((ctl->weektype & WEEK_NUM_MASK) ==
-					    i->weeks[week_line])
-						snprintf(out, sizeof(out), "%s%2d%s",
-								Senter, i->weeks[week_line],
-								Sexit);
+					if ((ctl->weektype & WEEK_NUM_MASK) == i->weeks[week_line])
+						printf("%s%2d%s", Senter, i->weeks[week_line], Sexit);
 					else
-						snprintf(out, sizeof(out), "%2d", i->weeks[week_line]);
+						printf("%2d", i->weeks[week_line]);
 				} else
-					snprintf(out, sizeof(out), "%2s", "");
-				my_putstring(out);
+					printf("%2s", "");
 				skip = ctl->day_width;
 			} else
 				/* First day of the week is one char narrower than the other days,
@@ -893,32 +876,29 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 			     d < DAYS_IN_WEEK * week_line + DAYS_IN_WEEK; d++) {
 				if (0 < i->days[d]) {
 					if (reqday == i->days[d])
-						snprintf(out, sizeof(out), "%*s%s%*d%s",
-						       skip - (ctl->julian ? 3 : 2),
-						       "", Senter, (ctl->julian ? 3 : 2),
-						       i->days[d], Sexit);
+						printf("%*s%s%*d%s",
+							skip - (ctl->julian ? 3 : 2),
+							"", Senter, (ctl->julian ? 3 : 2),
+							i->days[d], Sexit);
 					else
-						snprintf(out, sizeof(out), "%*d", skip, i->days[d]);
+						printf("%*d", skip, i->days[d]);
 				} else
-					snprintf(out, sizeof(out), "%*s", skip, "");
-				my_putstring(out);
+					printf("%*s", skip, "");
+
 				if (skip < (int)ctl->day_width)
 					skip++;
 			}
-			if (i->next != NULL) {
-				snprintf(out, sizeof(out), "%*s", ctl->gutter_width, "");
-				my_putstring(out);
-			}
+			if (i->next != NULL)
+				printf("%*s", ctl->gutter_width, "");
 		}
 		if (i == NULL)
-			my_putstring("\n");
+			fputc('\n', stdout);
 	}
 }
 
 static void
 cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 {
-	char out[FMT_ST_CHARS];
 	int i, reqday, week, d;
 	int skip;
 	struct cal_month *m;
@@ -940,58 +920,44 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 				d = i + DAYS_IN_WEEK * week;
 				if (0 < m->days[d]) {
 					if (reqday == m->days[d]) {
-						snprintf(out, sizeof(out), "%*s%s%*d%s",
+						printf("%*s%s%*d%s",
 						       skip - (ctl->julian ? 3 : 2),
 						       "", Senter, (ctl->julian ? 3 : 2),
 						       m->days[d], Sexit);
 					} else {
-						snprintf(out, sizeof(out), "%*d",
-							 skip, m->days[d]);
+						printf("%*d",  skip, m->days[d]);
 					}
 				} else {
-					snprintf(out, sizeof(out), "%*s",
-						 skip, "");
+					printf("%*s", skip, "");
 				}
-				my_putstring(out);
 				skip = ctl->day_width;
 			}
-			if (m->next != NULL) {
-				snprintf(out, sizeof(out), "%*s", ctl->gutter_width, "");
-				my_putstring(out);
-			}
+			if (m->next != NULL)
+				printf("%*s", ctl->gutter_width, "");
 		}
-		my_putstring("\n");
+		fputc('\n', stdout);
 	}
 	if (!ctl->weektype)
 		return;
 
-	snprintf(out, sizeof(out), "%*s", (int)ctl->day_width - 1, "");
-	my_putstring(out);
+	printf("%*s", (int)ctl->day_width - 1, "");
 	for (m = month; m; m = m->next) {
 		for (week = 0; week < MAXDAYS / DAYS_IN_WEEK; week++) {
 			if (0 < m->weeks[week]) {
-				if ((ctl->weektype & WEEK_NUM_MASK) ==
-				    m->weeks[week])
-				{
-					snprintf(out, sizeof(out), "%s%*d%s",
+				if ((ctl->weektype & WEEK_NUM_MASK) == m->weeks[week])
+					printf("%s%*d%s",
 						 Senter,
 						 skip - (ctl->julian ? 3 : 2),
 						 m->weeks[week], Sexit);
-				} else {
-					snprintf(out, sizeof(out), "%*d",
-						 skip, m->weeks[week]);
-				}
-			} else {
-				snprintf(out, sizeof(out), "%*s", skip, "");
-			}
-			my_putstring(out);
+				else
+					printf("%*d", skip, m->weeks[week]);
+			} else
+				printf("%*s", skip, "");
 		}
-		if (m->next != NULL) {
-			snprintf(out, sizeof(out), "%*s", ctl->gutter_width, "");
-			my_putstring(out);
-		}
+		if (m->next != NULL)
+			printf("%*s", ctl->gutter_width, "");
 	}
-	my_putstring("\n");
+	fputc('\n', stdout);
 }
 
 
@@ -1041,10 +1007,9 @@ static void monthly(const struct cal_control *ctl)
 			cal_fill_month(m, ctl);
 		}
 		if (ctl->vertical) {
-			if (i > 0) {
-				/* Add a line between row */
-				my_putstring("\n");
-			}
+			if (i > 0)
+				fputc('\n', stdout);		/* Add a line between row */
+
 			cal_vert_output_header(&m1, ctl);
 			cal_vert_output_months(&m1, ctl);
 		} else {
@@ -1056,16 +1021,17 @@ static void monthly(const struct cal_control *ctl)
 
 static void yearly(const struct cal_control *ctl)
 {
-	char out[FMT_ST_CHARS];
 	size_t year_width;
 
 	year_width = (size_t) ctl->months_in_row * ctl->week_width
 		     + ((size_t) ctl->months_in_row - 1) * ctl->gutter_width;
 
 	if (ctl->header_year) {
+		char out[FMT_ST_CHARS];
+
 		snprintf(out, sizeof(out), "%04d", ctl->req.year);
 		center(out, year_width, 0);
-		my_putstring("\n\n");
+		fputs("\n\n", stdout);
 	}
 	monthly(ctl);
 }
@@ -1226,12 +1192,10 @@ static void center(const char *str, size_t len, int separate)
 	char lineout[FMT_ST_CHARS];
 
 	center_str(str, lineout, ARRAY_SIZE(lineout), len);
-	my_putstring(lineout);
+	fputs(lineout, stdout);
 
-	if (separate) {
-		snprintf(lineout, sizeof(lineout), "%*s", separate, "");
-		my_putstring(lineout);
-	}
+	if (separate)
+		printf("%*s", separate, "");
 }
 static int left_str(const char* src, char* dest,
 		    size_t dest_size, size_t width)
@@ -1245,13 +1209,12 @@ static void left(const char *str, size_t len, int separate)
 	char lineout[FMT_ST_CHARS];
 
 	left_str(str, lineout, sizeof(lineout), len);
-	my_putstring(lineout);
+	fputs(lineout, stdout);
 
-	if (separate) {
-		snprintf(lineout, sizeof(lineout), "%*s", separate, "");
-		my_putstring(lineout);
-	}
+	if (separate)
+		printf("%*s", separate, "");
 }
+
 static int parse_reform_year(const char *reform_year)
 {
 	size_t i;
@@ -1269,9 +1232,8 @@ static int parse_reform_year(const char *reform_year)
 	};
 
 	for (i = 0; i < ARRAY_SIZE(years); i++) {
-		if (strcasecmp(reform_year, years[i].name) == 0) {
+		if (strcasecmp(reform_year, years[i].name) == 0)
 			return years[i].val;
-		}
 	}
 	errx(EXIT_FAILURE, "invalid --reform value: '%s'", reform_year);
 }
@@ -1279,6 +1241,7 @@ static int parse_reform_year(const char *reform_year)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
+
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [[[day] month] year]\n"), program_invocation_short_name);
 	fprintf(out, _(" %s [options] <timestamp|monthname>\n"), program_invocation_short_name);
