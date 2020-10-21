@@ -180,6 +180,9 @@ struct dmesg_control {
 	ssize_t		kmsg_first_read;/* initial read() return code */
 	char		kmsg_buf[BUFSIZ];/* buffer to read kmsg data */
 
+	time_t		since;		/* filter records by time */
+	time_t		until;		/* filter records by time */
+
 	/*
 	 * For the --file option we mmap whole file. The unnecessary (already
 	 * printed) pages are always unmapped. The result is that we have in
@@ -303,6 +306,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --time-format <format>  show timestamp using the given format:\n"
 		"                               [delta|reltime|ctime|notime|iso]\n"
 		"Suspending/resume will make ctime and iso timestamps inaccurate.\n"), out);
+	fputs(_("     --since <time>          display the lines since the specified time\n"), out);
+	fputs(_("     --until <time>          display the lines until the specified time\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(29));
 	fputs(_("\nSupported log facilities:\n"), out);
@@ -778,6 +784,11 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 	return 1;
 }
 
+static time_t record_time(struct dmesg_control *ctl, struct dmesg_record *rec)
+{
+	return ctl->boot_time.tv_sec + ctl->suspended_time + rec->tv.tv_sec;
+}
+
 static int accept_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 {
 	if (ctl->fltr_lev && (rec->facility < 0 ||
@@ -786,6 +797,12 @@ static int accept_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 
 	if (ctl->fltr_fac && (rec->facility < 0 ||
 			      !isset(ctl->facilities, rec->facility)))
+		return 0;
+
+	if (ctl->since && ctl->since >= record_time(ctl, rec))
+		return 0;
+
+	if (ctl->until && ctl->until <= record_time(ctl, rec))
 		return 0;
 
 	return 1;
@@ -825,7 +842,7 @@ static struct tm *record_localtime(struct dmesg_control *ctl,
 				   struct dmesg_record *rec,
 				   struct tm *tm)
 {
-	time_t t = ctl->boot_time.tv_sec + ctl->suspended_time + rec->tv.tv_sec;
+	time_t t = record_time(ctl, rec);
 	return localtime_r(&t, tm);
 }
 
@@ -1333,7 +1350,9 @@ int main(int argc, char *argv[])
 	int colormode = UL_COLORMODE_UNDEF;
 	enum {
 		OPT_TIME_FORMAT = CHAR_MAX + 1,
-		OPT_NOESC
+		OPT_NOESC,
+		OPT_SINCE,
+		OPT_UNTIL
 	};
 
 	static const struct option longopts[] = {
@@ -1352,6 +1371,7 @@ int main(int argc, char *argv[])
 		{ "help",          no_argument,	      NULL, 'h' },
 		{ "kernel",        no_argument,       NULL, 'k' },
 		{ "level",         required_argument, NULL, 'l' },
+		{ "since",	   required_argument, NULL, OPT_SINCE },
 		{ "syslog",        no_argument,       NULL, 'S' },
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "read-clear",    no_argument,	      NULL, 'c' },
@@ -1361,6 +1381,7 @@ int main(int argc, char *argv[])
 		{ "noescape",      no_argument,       NULL, OPT_NOESC },
 		{ "notime",        no_argument,       NULL, 't' },
 		{ "nopager",       no_argument,       NULL, 'P' },
+		{ "until",         required_argument, NULL, OPT_UNTIL },
 		{ "userspace",     no_argument,       NULL, 'u' },
 		{ "version",       no_argument,	      NULL, 'V' },
 		{ "time-format",   required_argument, NULL, OPT_TIME_FORMAT },
@@ -1491,7 +1512,22 @@ int main(int argc, char *argv[])
 		case OPT_NOESC:
 			ctl.noesc = 1;
 			break;
-
+		case OPT_SINCE:
+		{
+			usec_t p;
+			if (parse_timestamp(optarg, &p) < 0)
+				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
+			ctl.since = (time_t) (p / 1000000);
+			break;
+		}
+		case OPT_UNTIL:
+		{
+			usec_t p;
+			if (parse_timestamp(optarg, &p) < 0)
+				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
+			ctl.until = (time_t) (p / 1000000);
+			break;
+		}
 		case 'h':
 			usage();
 		case 'V':

@@ -57,6 +57,8 @@ _dmesg_module()
 		--follow
 		--follow-new
 		--decode
+		--since
+		--until
 		--help
 		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
