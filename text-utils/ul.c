@@ -35,9 +35,9 @@
  * modified by Kars de Jong <jongk@cs.utwente.nl>
  *	to use terminfo instead of termcap.
  * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
- * 	added Native Language Support
+ *	added Native Language Support
  * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
- * 	modified to work correctly in multi-byte locales
+ *	modified to work correctly in multi-byte locales
  */
 
 #include <stdio.h>
@@ -128,7 +128,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -t, -T, --terminal TERMINAL  override the TERM environment variable\n"), out);
 	fputs(_(" -i, --indicated              underlining is indicated via a separate line\n"), out);
-	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(30));
 
 	printf(USAGE_MAN_TAIL("ul(1)"));
@@ -193,18 +192,18 @@ static void init_term_caps(struct ul_ctl *ctl, struct term_caps *const tcs)
 		tcs->enter_bold	= tcs->enter_standout;
 
 	if (!tcs->enter_underline && tcs->enter_standout) {
-		tcs->enter_underline	= tcs->enter_standout;
-		tcs->exit_underline	= tcs->exit_standout;
+		tcs->enter_underline = tcs->enter_standout;
+		tcs->exit_underline = tcs->exit_standout;
 	}
 
 	if (!tcs->enter_dim && tcs->enter_standout)
-		tcs->enter_dim 	= tcs->enter_standout;
+		tcs->enter_dim = tcs->enter_standout;
 
 	if (!tcs->enter_reverse && tcs->enter_standout)
-		tcs->enter_reverse	= tcs->enter_standout;
+		tcs->enter_reverse = tcs->enter_standout;
 
 	if (!tcs->exit_attributes && tcs->exit_standout)
-		tcs->exit_attributes	= tcs->exit_standout;
+		tcs->exit_attributes = tcs->exit_standout;
 
 	/*
 	 * Note that we use REVERSE for the alternate character set,
@@ -217,7 +216,8 @@ static void init_term_caps(struct ul_ctl *ctl, struct term_caps *const tcs)
 	ctl->must_use_uc = (tcs->under_char && !tcs->enter_underline);
 
 	if ((tigetflag("os") && tcs->enter_bold == NULL) ||
-	    (tigetflag("ul") && tcs->enter_underline == NULL && tcs->under_char == NULL))
+	    (tigetflag("ul") && tcs->enter_underline == NULL
+			     && tcs->under_char == NULL))
 		ctl->must_overstrike = 1;
 }
 
@@ -246,6 +246,7 @@ static void ul_setmode(struct ul_ctl *ctl, struct term_caps const *const tcs,
 	if (!ctl->indicated_opt) {
 		if (ctl->current_mode != NORMAL_CHARSET && new_mode != NORMAL_CHARSET)
 			ul_setmode(ctl, tcs, NORMAL_CHARSET);
+
 		switch (new_mode) {
 		case NORMAL_CHARSET:
 			switch (ctl->current_mode) {
@@ -298,7 +299,7 @@ static void indicate_attribute(struct ul_ctl *ctl)
 	wchar_t *buf = xcalloc(ctl->max_column + 1, sizeof(wchar_t));
 	wchar_t *p = buf;
 
-	for (i = 0; i < ctl->max_column; i++)
+	for (i = 0; i < ctl->max_column; i++) {
 		switch (ctl->buf[i].c_mode) {
 		case NORMAL_CHARSET:	*p++ = ' '; break;
 		case ALTERNATIVE_CHARSET:	*p++ = 'g'; break;
@@ -308,8 +309,11 @@ static void indicate_attribute(struct ul_ctl *ctl)
 		case BOLD:	*p++ = '!'; break;
 		default:	*p++ = 'X'; break;
 		}
+	}
+
 	for (*p = ' '; *p == ' '; p--)
 		*p = 0;
+
 	fputws(buf, stdout);
 	putwchar('\n');
 	free(buf);
@@ -341,7 +345,7 @@ static void overstrike(struct ul_ctl *ctl)
 	int had_bold = 0;
 
 	/* Set up overstrike buffer */
-	for (i = 0; i < ctl->max_column; i++)
+	for (i = 0; i < ctl->max_column; i++) {
 		switch (ctl->buf[i].c_mode) {
 		case NORMAL_CHARSET:
 		default:
@@ -357,10 +361,13 @@ static void overstrike(struct ul_ctl *ctl)
 			had_bold = 1;
 			break;
 		}
+	}
+
 	putwchar('\r');
 	for (*p = ' '; *p == ' '; p--)
 		*p = 0;
 	fputws(buf, stdout);
+
 	if (had_bold) {
 		putwchar('\r');
 		for (p = buf; *p; p++)
@@ -581,7 +588,7 @@ int main(int argc, char **argv)
 
 	termtype = getenv("TERM");
 
-	while ((c = getopt_long(argc, argv, "it:T:Vh", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "it:T:Vh", longopts, NULL)) != -1) {
 		switch (c) {
 
 		case 't':
@@ -601,16 +608,15 @@ int main(int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
+
 	setupterm(termtype, STDOUT_FILENO, &ret);
 	switch (ret) {
-
 	case 1:
 		break;
-
 	default:
 		warnx(_("trouble reading terminfo"));
 		/* fallthrough */
-
 	case 0:
 		if (opt_terminal)
 			warnx(_("terminal `%s' is not known, defaulting to `dumb'"),
@@ -621,9 +627,10 @@ int main(int argc, char **argv)
 
 	init_term_caps(&ctl, &tcs);
 	init_buffer(&ctl);
+
 	if (optind == argc)
 		filter(&ctl, &tcs, stdin);
-	else
+	else {
 		for (; optind < argc; optind++) {
 			f = fopen(argv[optind], "r");
 			if (!f)
@@ -631,6 +638,8 @@ int main(int argc, char **argv)
 			filter(&ctl, &tcs, f);
 			fclose(f);
 		}
+	}
+
 	free(ctl.buf);
 	del_curterm(cur_term);
 	return EXIT_SUCCESS;
