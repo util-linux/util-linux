@@ -420,6 +420,8 @@ static int rfkill_list_old(const char *param)
 	}
 
 	fd = rfkill_ro_open(1);
+	if (fd < 0)
+		return -errno;
 
 	while (1) {
 		rc = rfkill_read_event(fd, &event);
@@ -492,6 +494,8 @@ static int rfkill_list_fill(struct control const *ctrl, const char *param)
 	}
 
 	fd = rfkill_ro_open(1);
+	if (fd < 0)
+		return -errno;
 
 	while (1) {
 		rc = rfkill_read_event(fd, &event);
