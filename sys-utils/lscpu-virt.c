@@ -696,6 +696,11 @@ done:
 				virt->hypervisor,
 				virt->vendor,
 				virt->type));
+
+	if (!virt->cpuflag && !virt->hypervisor && !virt->vendor && !virt->type) {
+		lscpu_free_virtualization(virt);
+		virt = NULL;
+	}
 	return virt;
 }
 

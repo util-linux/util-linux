@@ -163,6 +163,8 @@ static struct lscpu_coldesc coldescs_cache[] =
 	[COL_CACHE_COHERENCYSIZE] = { "COHERENCY-SIZE", N_("minimum amount of data in bytes transferred from memory to cache"), SCOLS_FL_RIGHT }
 };
 
+static int is_term = 0;
+
 UL_DEBUG_DEFINE_MASK(lscpu);
 UL_DEBUG_DEFINE_MASKNAMES(lscpu) = UL_DEBUG_EMPTY_MASKNAMES;
 
@@ -746,17 +748,21 @@ print_cpus_readable(struct lscpu_desc *desc, int cols[], int ncols,
 #endif
 
 static struct libscols_line *
-	__attribute__ ((__format__(printf, 3, 4)))
+	__attribute__ ((__format__(printf, 4, 5)))
 	add_summary_sprint(struct libscols_table *tb,
 			struct libscols_line *sec,
 			const char *txt,
 			const char *fmt,
 			...)
 {
-	struct libscols_line *ln = scols_table_new_line(tb, sec);
-	char *data;
+	struct libscols_line *ln;
 	va_list args;
 
+	/* Don't print section lines without data on non-terminal output */
+	if (!is_term && fmt == NULL)
+		return NULL;
+
+	ln = scols_table_new_line(tb, sec);
 	if (!ln)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
@@ -765,16 +771,20 @@ static struct libscols_line *
 		err(EXIT_FAILURE, _("failed to add output data"));
 
 	/* data column */
-	va_start(args, fmt);
-	xvasprintf(&data, fmt, args);
-	va_end(args);
+	if (fmt) {
+		char *data;
+		va_start(args, fmt);
+		xvasprintf(&data, fmt, args);
+		va_end(args);
 
-	if (data && scols_line_refer_data(ln, 1, data))
-		 err(EXIT_FAILURE, _("failed to add output data"));
+		if (data && scols_line_refer_data(ln, 1, data))
+			err(EXIT_FAILURE, _("failed to add output data"));
+	}
 
 	return ln;
 }
 
+#define add_summary_e(tb, sec, txt)		add_summary_sprint(tb, sec, txt, NULL)
 #define add_summary_n(tb, sec, txt, num)	add_summary_sprint(tb, sec, txt, "%zu", num)
 #define add_summary_s(tb, sec, txt, str)	add_summary_sprint(tb, sec, txt, "%s", str)
 #define add_summary_x(tb, sec, txt, fmt, x)	add_summary_sprint(tb, sec, txt, fmt, x)
@@ -782,6 +792,7 @@ static struct libscols_line *
 static void
 print_cpuset(struct lscpu_cxt *cxt,
 	     struct libscols_table *tb,
+	     struct libscols_line *sec,
 	     const char *key, cpu_set_t *set)
 {
 	size_t setbuflen = 7 * cxt->maxcpus;
@@ -794,70 +805,74 @@ print_cpuset(struct lscpu_cxt *cxt,
 
 	if (cxt->hex) {
 		p = cpumask_create(setbuf, setbuflen, set, cxt->setsize);
-		add_summary_s(tb, key, p);
+		add_summary_s(tb, sec, key, p);
 	} else {
 		p = cpulist_create(setbuf, setbuflen, set, cxt->setsize);
-		add_summary_s(tb, key, p);
+		add_summary_s(tb, sec, key, p);
 	}
 }
 
 static void
 print_summary_cputype(struct lscpu_cxt *cxt,
 		     struct lscpu_cputype *ct,
-		     struct libscols_table *tb)
+		     struct libscols_table *tb,
+		     struct libscols_line *sec)
 {
-	if (ct->vendor)
-		add_summary_s(tb, _("Vendor ID:"), ct->vendor);
-	if (ct->machinetype)
-		add_summary_s(tb, _("Machine type:"), ct->machinetype);
-	if (ct->family)
-		add_summary_s(tb, _("CPU family:"), ct->family);
-	if (ct->modelname)
-		add_summary_s(tb, _("Model name:"), ct->modelname);
-	if (ct->model || ct->revision)
-		add_summary_s(tb, _("Model:"), ct->revision ? ct->revision : ct->model);
+	if (ct->modelname) {
+		struct libscols_line *tmp = add_summary_s(tb, sec, _("Model name:"), ct->modelname);
+		if (!sec)
+			sec= tmp;
+	}
 
-	add_summary_n(tb, _("Thread(s) per core:"), ct->nthreads_per_core);
-	add_summary_n(tb, _("Core(s) per socket:"), ct->ncores_per_socket);
+	if (ct->machinetype)
+		add_summary_s(tb, sec, _("Machine type:"), ct->machinetype);
+	if (ct->family)
+		add_summary_s(tb, sec, _("CPU family:"), ct->family);
+	if (ct->model || ct->revision)
+		add_summary_s(tb, sec, _("Model:"), ct->revision ? ct->revision : ct->model);
+
+	add_summary_n(tb, sec, _("Thread(s) per core:"), ct->nthreads_per_core);
+	add_summary_n(tb, sec, _("Core(s) per socket:"), ct->ncores_per_socket);
 	if (ct->nbooks) {
-		add_summary_n(tb, _("Socket(s) per book:"), ct->nsockets_per_book);
+		add_summary_n(tb, sec, _("Socket(s) per book:"), ct->nsockets_per_book);
 		if (ct->ndrawers_per_system) {
-			add_summary_n(tb, _("Book(s) per drawer:"), ct->nbooks_per_drawer);
-			add_summary_n(tb, _("Drawer(s):"), ct->ndrawers_per_system);
+			add_summary_n(tb, sec, _("Book(s) per drawer:"), ct->nbooks_per_drawer);
+			add_summary_n(tb, sec, _("Drawer(s):"), ct->ndrawers_per_system);
 		} else
-			add_summary_n(tb, _("Book(s):"), ct->nbooks);
+			add_summary_n(tb, sec, _("Book(s):"), ct->nbooks);
 	} else
-		add_summary_n(tb, _("Socket(s):"), ct->nsockets);
+		add_summary_n(tb, sec, _("Socket(s):"), ct->nsockets);
 
 	if (ct->stepping)
-		add_summary_s(tb, _("Stepping:"), ct->stepping);
+		add_summary_s(tb, sec, _("Stepping:"), ct->stepping);
 	if (ct->freqboost >= 0)
-		add_summary_s(tb, _("Frequency boost:"), ct->freqboost ?
+		add_summary_s(tb, sec, _("Frequency boost:"), ct->freqboost ?
 				_("enabled") : _("disabled"));
 
 	/* s390 -- from the first CPU where is dynamic/static MHz */
 	if (ct->dynamic_mhz)
-		add_summary_s(tb, _("CPU dynamic MHz:"), ct->dynamic_mhz);
+		add_summary_s(tb, sec, _("CPU dynamic MHz:"), ct->dynamic_mhz);
 	if (ct->static_mhz)
-		add_summary_s(tb, _("CPU static MHz:"), ct->static_mhz);
+		add_summary_s(tb, sec, _("CPU static MHz:"), ct->static_mhz);
 
 	if (ct->has_freq) {
-		add_summary_x(tb, _("CPU max MHz:"), "%.4f", lsblk_cputype_get_maxmhz(cxt, ct));
-		add_summary_x(tb, _("CPU min MHz:"), "%.4f", lsblk_cputype_get_minmhz(cxt, ct));
+		add_summary_x(tb, sec, _("CPU max MHz:"), "%.4f", lsblk_cputype_get_maxmhz(cxt, ct));
+		add_summary_x(tb, sec, _("CPU min MHz:"), "%.4f", lsblk_cputype_get_minmhz(cxt, ct));
 	}
 	if (ct->bogomips)
-		add_summary_s(tb, _("BogoMIPS:"), ct->bogomips);
+		add_summary_s(tb, sec, _("BogoMIPS:"), ct->bogomips);
+
 	if (ct->dispatching >= 0)
-		add_summary_s(tb, _("Dispatching mode:"), _(disp_modes[ct->dispatching]));
+		add_summary_s(tb, sec, _("Dispatching mode:"), _(disp_modes[ct->dispatching]));
 
 	if (ct->physsockets) {
-		add_summary_n(tb, _("Physical sockets:"), ct->physsockets);
-		add_summary_n(tb, _("Physical chips:"), ct->physchips);
-		add_summary_n(tb, _("Physical cores/chip:"), ct->physcoresperchip);
+		add_summary_n(tb, sec, _("Physical sockets:"), ct->physsockets);
+		add_summary_n(tb, sec, _("Physical chips:"), ct->physchips);
+		add_summary_n(tb, sec, _("Physical cores/chip:"), ct->physcoresperchip);
 	}
 
 	if (ct->flags)
-		add_summary_s(tb, _("Flags:"), ct->flags);
+		add_summary_s(tb, sec, _("Flags:"), ct->flags);
 }
 
 /*
@@ -866,6 +881,7 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 static void print_summary(struct lscpu_cxt *cxt)
 {
 	struct lscpu_cputype *ct;
+	char field[256];
 	size_t i = 0;
 	struct libscols_table *tb;
 	struct libscols_line *sec = NULL;
@@ -880,14 +896,24 @@ static void print_summary(struct lscpu_cxt *cxt)
 	if (cxt->json) {
 		scols_table_enable_json(tb, 1);
 		scols_table_set_name(tb, "lscpu");
+	} else if (is_term) {
+		struct libscols_symbols *sy = scols_new_symbols();
+
+		if (!sy)
+			err_oom();
+		scols_symbols_set_branch(sy, "  ");
+		scols_symbols_set_vertical(sy, "  ");
+		scols_symbols_set_right(sy, "  ");
+		scols_table_set_symbols(tb, sy);
 	}
 
-	if (scols_table_new_column(tb, "field", 0, 0) == NULL ||
+	if (scols_table_new_column(tb, "field", 0, is_term ? SCOLS_FL_TREE : 0) == NULL ||
 	    scols_table_new_column(tb, "data", 0, SCOLS_FL_NOEXTREMES | SCOLS_FL_WRAP) == NULL)
 		err(EXIT_FAILURE, _("failed to initialize output column"));
 
 	ct = lscpu_cputype_get_default(cxt);
 
+	/* Section: architecture */
 	if (cxt->arch)
 		sec = add_summary_s(tb, NULL, _("Architecture:"), cxt->arch->name);
 	if (cxt->arch && (cxt->arch->bit32 || cxt->arch->bit64)) {
@@ -911,8 +937,12 @@ static void print_summary(struct lscpu_cxt *cxt)
 #else
 	add_summary_s(tb, sec, _("Byte Order:"), "Big Endian");
 #endif
+
+	/* Section: CPU lists */
+	sec = add_summary_n(tb, NULL, _("CPU(s):"), cxt->npresents);
+
 	if (cxt->online)
-		print_cpuset(cxt, tb, NULL,
+		print_cpuset(cxt, tb, sec,
 				cxt->hex ? _("On-line CPU(s) mask:") :
 					   _("On-line CPU(s) list:"),
 				cxt->online);
@@ -934,19 +964,26 @@ static void print_summary(struct lscpu_cxt *cxt)
 			if (cpu && is_cpu_present(cxt, cpu) && !is_cpu_online(cxt, cpu))
 				CPU_SET_S(cpu->logical_id, cxt->setsize, set);
 		}
-		print_cpuset(cxt, tb, NULL,
+		print_cpuset(cxt, tb, sec,
 				cxt->hex ? _("Off-line CPU(s) mask:") :
 					   _("Off-line CPU(s) list:"), set);
 		cpuset_free(set);
 	}
 
-	sec = add_summary_n(tb, NULL, _("CPU(s):"), cxt->npresents);
+	/* Section: cpu type description */
+	if (ct->vendor)
+		sec = add_summary_s(tb, NULL, _("Vendor ID:"), ct->vendor);
 
-	for (i = 0; i < cxt->ncputypes; i++)
-		print_summary_cputype(cxt, cxt->cputypes[i], tb);
+	for (i = 0; i < cxt->ncputypes; i++) {
+		print_summary_cputype(cxt, cxt->cputypes[i],
+					tb, cxt->ncputypes == 1 ? sec : NULL);
 
+	}
+	sec = NULL;
+
+	/* Section: vitualiazation */
 	if (cxt->virt) {
-		sec = add_summary_s(tb, NULL, _("Virtualization features:"), NULL);
+		sec = add_summary_e(tb, NULL, _("Virtualization features:"));
 		if (cxt->virt->cpuflag && !strcmp(cxt->virt->cpuflag, "svm"))
 			add_summary_s(tb, sec, _("Virtualization:"), "AMD-V");
 		else if (cxt->virt->cpuflag && !strcmp(cxt->virt->cpuflag, "vmx"))
@@ -960,14 +997,15 @@ static void print_summary(struct lscpu_cxt *cxt)
 		}
 		sec = NULL;
 	}
+
+	/* Section: caches */
 	if (cxt->ncaches) {
 		const char *last = NULL;
-		char hdr[256];
 
 		/* The caches are sorted by name, cxt->caches[] may contains
 		 * multiple instances for the same name.
 		 */
-		sec = add_summary_s(tb, NULL, _("Caches:"), NULL);
+		sec = add_summary_e(tb, NULL, _("Caches:"));
 
 		for (i = 0; i < cxt->ncaches; i++) {
 			const char *name = cxt->caches[i].name;
@@ -978,16 +1016,15 @@ static void print_summary(struct lscpu_cxt *cxt)
 			sz = lscpu_get_cache_full_size(cxt, name);
 			if (!sz)
 				continue;
-			snprintf(hdr, sizeof(hdr), _("%s cache:"), name);
-
+			snprintf(field, sizeof(field), is_term ? _("%s:") : _("%s cache:"), name);
 			if (cxt->bytes)
-				add_summary_x(tb, sec, hdr, "%" PRIu64, sz);
+				add_summary_x(tb, sec, field, "%" PRIu64, sz);
 			else {
 				char *tmp = size_to_human_string(
 						SIZE_SUFFIX_3LETTER |
 						SIZE_SUFFIX_SPACE,
 						sz);
-				add_summary_s(tb, sec, hdr, tmp);
+				add_summary_s(tb, sec, field, tmp);
 				free(tmp);
 			}
 			last = name;
@@ -995,52 +1032,49 @@ static void print_summary(struct lscpu_cxt *cxt)
 		sec = NULL;
 	}
 
-	/* Extra caches (s390, ...) */
+	/* Section: extra caches (s390, ...) */
 	if (cxt->necaches) {
-		char hdr[256];
-
-		sec = add_summary_s(tb, NULL, _("Extra caches:"), NULL);
+		sec = add_summary_e(tb, NULL, _("Extra caches:"));
 
 		for (i = 0; i < cxt->necaches; i++) {
 			struct lscpu_cache *ca = &cxt->ecaches[i];
 
 			if (ca->size == 0)
 				continue;
-			snprintf(hdr, sizeof(hdr), _("%s cache:"), ca->name);
+			snprintf(field, sizeof(field), is_term ? _("%s:") : _("%s cache:"), ca->name);
 			if (cxt->bytes)
-				add_summary_x(tb, sec, hdr, "%" PRIu64, ca->size);
+				add_summary_x(tb, sec, field, "%" PRIu64, ca->size);
 			else {
 				char *tmp = size_to_human_string(
 						SIZE_SUFFIX_3LETTER |
 						SIZE_SUFFIX_SPACE,
 						ca->size);
-				add_summary_s(tb, sec, hdr, tmp);
+				add_summary_s(tb, sec, field, tmp);
 				free(tmp);
 			}
 		}
 	}
 
+	/* Section: NUMA modes */
 	if (cxt->nnodes) {
-		char buf[256];
-
-		sec = add_summary_s(tb, NULL, _("NUMA:"), NULL);
+		sec = add_summary_e(tb, NULL, _("NUMA:"));
 
 		add_summary_n(tb, sec,_("NUMA node(s):"), cxt->nnodes);
 		for (i = 0; i < cxt->nnodes; i++) {
-			snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), cxt->idx2nodenum[i]);
-			print_cpuset(cxt, tb, sec, buf, cxt->nodemaps[i]);
+			snprintf(field, sizeof(field), _("NUMA node%d CPU(s):"), cxt->idx2nodenum[i]);
+			print_cpuset(cxt, tb, sec, field, cxt->nodemaps[i]);
 		}
 		sec = NULL;
 	}
 
+	/* Section: Vulnerabilities */
 	if (cxt->vuls) {
-		char buf[256];
-
-		sec = add_summary_s(tb, NULL, _("Vulnerabilities:"), NULL);
+		sec = add_summary_e(tb, NULL, _("Vulnerabilities:"));
 
 		for (i = 0; i < cxt->nvuls; i++) {
-			snprintf(buf, sizeof(buf), (" %s:"), cxt->vuls[i].name);
-			add_summary_s(tb, sec, buf, cxt->vuls[i].text);
+			snprintf(field, sizeof(field), is_term ?
+					_("%s:") : _("Vulnerability %s:"), cxt->vuls[i].name);
+			add_summary_s(tb, sec, field, cxt->vuls[i].text);
 		}
 		sec = NULL;
 	}
@@ -1228,6 +1262,8 @@ int main(int argc, char *argv[])
 		cxt->show_online = 1;
 		cxt->show_offline = cxt->mode == LSCPU_OUTPUT_READABLE ? 1 : 0;
 	}
+
+	is_term = isatty(STDOUT_FILENO);	/* global variable */
 
 	lscpu_init_debug();
 

@@ -14,6 +14,12 @@ sockets, and Non-Uniform Memory Access (NUMA) nodes.  There is also information
 about the CPU caches and cache sharing, family, model, bogoMIPS, byte order,
 and stepping.
 .sp
+The default output formatting on terminal is subject to change and maybe
+optimized for better readability.  The output for non-terminals (e.g., pipes)
+is never affected by this optimization and it is always in "Field: data\\n"
+format.  Use for example \fBlscpu | less\fP to see the default output without
+optimizations.
+.sp
 In virtualized environments, the CPU architecture information displayed
 reflects the configuration of the guest operating system which is
 typically different from the physical (host) system.  On architectures that
@@ -29,10 +35,6 @@ column labels are not case sensitive.
 .sp
 Not all columns are supported on all architectures.  If an unsupported column is
 specified, \fBlscpu\fP prints the column but does not provide any data for it.
-.sp
-The default output formatting on terminal maybe optimized for better
-readability.  The output for non-terminals (e.g., pipes) is never affected by
-this optimization and it is always in "Field: data\\n" format.
 .sp
 The cache sizes are reported as summary from all CPUs.  The versions before
 v2.34 reported per-core sizes, but this output was confusing due to complicated

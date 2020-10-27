@@ -48,6 +48,8 @@ struct lscpu_cputype *lscpu_new_cputype(void)
 
 	ct = xcalloc(1, sizeof(struct lscpu_cputype));
 	ct->refcount = 1;
+	ct->dispatching = -1;
+	ct->freqboost = -1;
 
 	DBG(TYPE, ul_debugobj(ct, "alloc"));
 	return ct;
