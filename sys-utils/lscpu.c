@@ -458,129 +458,116 @@ get_cell_header(struct lscpu_desc *desc, int col,
 	return buf;
 }
 
+#endif
+
 /*
  * [-C] backend
  */
-static void
-print_caches_readable(struct lscpu_desc *desc, int cols[], int ncols,
-	       struct lscpu_modifier *mod)
+static void print_caches_readable(struct lscpu_cxt *cxt, int cols[], size_t ncols)
 {
-	struct libscols_table *table;
-	struct cpu_cache *cachesrc;
-	int i, end, j, shared_allsize;
+	size_t i;
+	struct libscols_table *tb;
+	const char *last = NULL;
 
 	scols_init_debug(0);
 
-	table = scols_new_table();
-	if (!table)
+	tb = scols_new_table();
+	if (!tb)
 		 err(EXIT_FAILURE, _("failed to allocate output table"));
-	if (mod->json) {
-		scols_table_enable_json(table, 1);
-		scols_table_set_name(table, "caches");
+	if (cxt->json) {
+		scols_table_enable_json(tb, 1);
+		scols_table_set_name(tb, "caches");
 	}
 
 	for (i = 0; i < ncols; i++) {
 		struct lscpu_coldesc *cd = &coldescs_cache[cols[i]];
-		if (!scols_table_new_column(table, cd->name, 0, cd->flags))
+		if (!scols_table_new_column(tb, cd->name, 0, cd->flags))
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
-	for (j = 0; j < 2; j++) {
-		/* First check the caches from /sys/devices */
-		if (j == 0) {
-			cachesrc = desc->caches;
-			end = desc->ncaches - 1;
-			shared_allsize = 0;
-		} else {
-			/* Check shared caches from /proc/cpuinfo s390 */
-			cachesrc = desc->ecaches;
-			end = desc->necaches - 1;
-			/* Dont use get_cache_full_size */
-			shared_allsize = 1;
-		}
+	for (i = 0; i < cxt->ncaches; i++) {
+		struct lscpu_cache *ca = &cxt->caches[i];
+		struct libscols_line *ln;
+		size_t c;
 
-		for (i = end; i >= 0; i--) {
-			struct libscols_line *line;
-			struct cpu_cache *ca = &cachesrc[i];
-			int c;
+		if (last && strcmp(last, ca->name) == 0)
+			continue;
 
-			line = scols_table_new_line(table, NULL);
-			if (!line)
-				err(EXIT_FAILURE, _("failed to allocate output line"));
+		last = ca->name;
+		ln = scols_table_new_line(tb, NULL);
+		if (!ln)
+			err(EXIT_FAILURE, _("failed to allocate output line"));
 
-			for (c = 0; c < ncols; c++) {
-				char *data = NULL;
+		for (c = 0; c < ncols; c++) {
+			char *data = NULL;
 
-				switch (cols[c]) {
+			switch (cols[c]) {
 				case COL_CACHE_NAME:
 					if (ca->name)
 						data = xstrdup(ca->name);
 					break;
-				case COL_CACHE_ONESIZE:
-					if (!ca->size)
-						break;
-					if (mod->bytes)
-						xasprintf(&data, "%" PRIu64, ca->size);
-					else
-						data = size_to_human_string(SIZE_SUFFIX_1LETTER, ca->size);
+				if (cxt->bytes)
+					xasprintf(&data, "%" PRIu64, ca->size);
+				else
+					data = size_to_human_string(SIZE_SUFFIX_1LETTER, ca->size);
+				break;
+			case COL_CACHE_ALLSIZE:
+			{
+				uint64_t sz = lscpu_get_cache_full_size(cxt, ca->name);
+				if (!sz)
 					break;
-				case COL_CACHE_ALLSIZE:
-				{
-					uint64_t sz = 0;
-					if (shared_allsize)
-						break;
-					if (get_cache_full_size(desc, ca, &sz) != 0)
-						break;
-					if (mod->bytes)
-						xasprintf(&data, "%" PRIu64, sz);
-					else
-						data = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
-					break;
-				}
-				case COL_CACHE_WAYS:
-					if (ca->ways_of_associativity)
-						xasprintf(&data, "%u", ca->ways_of_associativity);
-					break;
-				case COL_CACHE_TYPE:
-					if (ca->type)
-						data = xstrdup(ca->type);
-					break;
-				case COL_CACHE_LEVEL:
-					if (ca->level)
-						xasprintf(&data, "%d", ca->level);
-					break;
-				case COL_CACHE_ALLOCPOL:
-					if (ca->allocation_policy)
-						data = xstrdup(ca->allocation_policy);
-					break;
-				case COL_CACHE_WRITEPOL:
-					if (ca->write_policy)
-						data = xstrdup(ca->write_policy);
-					break;
-				case COL_CACHE_PHYLINE:
-					if (ca->physical_line_partition)
-						xasprintf(&data, "%u", ca->physical_line_partition);
-					break;
-				case COL_CACHE_SETS:
-					if (ca->number_of_sets)
-						xasprintf(&data, "%u", ca->number_of_sets);
-					break;
-				case COL_CACHE_COHERENCYSIZE:
-					if (ca->coherency_line_size)
-						xasprintf(&data, "%u", ca->coherency_line_size);
-					break;
-				}
-
-				if (data && scols_line_refer_data(line, c, data))
-					err(EXIT_FAILURE, _("failed to add output data"));
+				if (cxt->bytes)
+					xasprintf(&data, "%" PRIu64, sz);
+				else
+					data = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
+				break;
 			}
+			case COL_CACHE_WAYS:
+				if (ca->ways_of_associativity)
+					xasprintf(&data, "%u", ca->ways_of_associativity);
+				break;
+
+			case COL_CACHE_TYPE:
+				if (ca->type)
+					data = xstrdup(ca->type);
+				break;
+			case COL_CACHE_LEVEL:
+				if (ca->level)
+					xasprintf(&data, "%d", ca->level);
+				break;
+			case COL_CACHE_ALLOCPOL:
+				if (ca->allocation_policy)
+					data = xstrdup(ca->allocation_policy);
+				break;
+			case COL_CACHE_WRITEPOL:
+				if (ca->write_policy)
+					data = xstrdup(ca->write_policy);
+				break;
+			case COL_CACHE_PHYLINE:
+				if (ca->physical_line_partition)
+					xasprintf(&data, "%u", ca->physical_line_partition);
+				break;
+			case COL_CACHE_SETS:
+				if (ca->number_of_sets)
+					xasprintf(&data, "%u", ca->number_of_sets);
+				break;
+			case COL_CACHE_COHERENCYSIZE:
+				if (ca->coherency_line_size)
+					xasprintf(&data, "%u", ca->coherency_line_size);
+				break;
+			}
+
+			if (data && scols_line_refer_data(ln, c, data))
+				err(EXIT_FAILURE, _("failed to add output data"));
 		}
 
 	}
 
-	scols_print_table(table);
-	scols_unref_table(table);
+	scols_print_table(tb);
+	scols_unref_table(tb);
 }
+
+#ifdef LSCPU_OLD_OUTPUT_CODE    /* temporary disabled for revrite */
 
 /*
  * [-p] backend, we support two parsable formats:
@@ -1286,9 +1273,6 @@ int main(int argc, char *argv[])
 	case LSCPU_OUTPUT_SUMMARY:
 		print_summary(cxt);
 		break;
-	}
-
-#ifdef LSCPU_OLD_OUTPUT_CODE
 	case LSCPU_OUTPUT_CACHES:
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_CACHE_NAME;
@@ -1301,8 +1285,11 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_CACHE_PHYLINE;
 			columns[ncolumns++] = COL_CACHE_COHERENCYSIZE;
 		}
-		print_caches_readable(desc, columns, ncolumns, mod);
+		print_caches_readable(cxt, columns, ncolumns);
 		break;
+	}
+
+#ifdef LSCPU_OLD_OUTPUT_CODE
 	case LSCPU_OUTPUT_PARSABLE:
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_CPU_CPU;
