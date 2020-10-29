@@ -94,7 +94,7 @@ static void copyfile(int from, int to)
 	char buf[8 * 1024];
 
 	while ((nr = read(from, buf, sizeof(buf))) > 0)
-		for (off = 0; off < nr; nr -= nw, off += nw)
+		for (off = 0; nr > 0; nr -= nw, off += nw)
 			if ((nw = write(to, buf + off, nr)) < 0)
 				pw_error(tmp_file, 1, 1);
 
