@@ -789,11 +789,11 @@ static void sushell(struct passwd *pwd)
 		free(level);
 	}
 #endif
-	execl(su_shell, shell, NULL);
+	execl(su_shell, shell, (char *)NULL);
 	warn(_("failed to execute %s"), su_shell);
 
 	xsetenv("SHELL", "/bin/sh", 1);
-	execl("/bin/sh", profile ? "-sh" : "sh", NULL);
+	execl("/bin/sh", profile ? "-sh" : "sh", (char *)NULL);
 	warn(_("failed to execute %s"), "/bin/sh");
 }
 

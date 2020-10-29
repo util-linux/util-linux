@@ -688,9 +688,9 @@ int main(int argc, char *argv[])
 		shname = shname ? shname + 1 : shell;
 
 		if (command)
-			execl(shell, shname, "-c", command, NULL);
+			execl(shell, shname, "-c", command, (char *)NULL);
 		else
-			execl(shell, shname, "-i", NULL);
+			execl(shell, shname, "-i", (char *)NULL);
 		err(EXIT_FAILURE, "failed to execute %s", shell);
 		break;
 
