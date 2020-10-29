@@ -663,9 +663,9 @@ static void umount_one(const struct eject_control *ctl, const char *name)
 			err(EXIT_FAILURE, _("cannot set user id"));
 
 		if (ctl->p_option)
-			execl("/bin/umount", "/bin/umount", name, "-n", NULL);
+			execl("/bin/umount", "/bin/umount", name, "-n", (char *)NULL);
 		else
-			execl("/bin/umount", "/bin/umount", name, NULL);
+			execl("/bin/umount", "/bin/umount", name, (char *)NULL);
 
 		errexec("/bin/umount");
 

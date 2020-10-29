@@ -469,7 +469,7 @@ set_arch:
 
 	/* Execute shell */
 	if (shell) {
-		execl(shell, shell_arg, NULL);
+		execl(shell, shell_arg, (char *)NULL);
 		errexec(shell);
 	}
 

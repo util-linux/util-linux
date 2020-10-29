@@ -46,6 +46,6 @@ void __attribute__((__noreturn__)) exec_shell(void)
 	arg0[0] = '-';
 	strcpy(arg0 + 1, shell_basename);
 
-	execl(shell, arg0, NULL);
+	execl(shell, arg0, (char *)NULL);
 	errexec(shell);
 }

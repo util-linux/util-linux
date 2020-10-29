@@ -208,7 +208,7 @@ static void pw_edit(void)
 		err(EXIT_FAILURE, _("fork failed"));
 
 	if (!pid) {
-		execlp(editor, p, tmp_file, NULL);
+		execlp(editor, p, tmp_file, (char *)NULL);
 		errexec(editor);
 	}
 	for (;;) {
