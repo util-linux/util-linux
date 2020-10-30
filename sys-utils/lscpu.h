@@ -51,7 +51,7 @@ struct lscpu_cache {
 	unsigned int	coherency_line_size;
 
 	size_t		nsharedmaps;
-	cpu_set_t	**sharedmaps;
+	cpu_set_t	*sharedmap;
 };
 
 struct lscpu_cputype {
@@ -94,7 +94,10 @@ struct lscpu_cputype {
 	size_t		ndrawers;
 	cpu_set_t	**drawermaps;
 
-	unsigned int	has_freq : 1;		/* has max/nim frequence info */
+	unsigned int	has_freq : 1,
+			has_configured : 1,
+			has_polarization : 1,
+			has_addresses : 1;
 };
 
 /* dispatching modes */
@@ -231,6 +234,7 @@ struct lscpu_cxt {
 		     show_online : 1,
 		     show_offline : 1,
 		     show_physical : 1,
+		     show_compatible : 1,
 		     hex : 1,
 		     json : 1,
 		     bytes : 1;
@@ -260,13 +264,15 @@ int lscpu_read_numas(struct lscpu_cxt *cxt);
 void lscpu_free_caches(struct lscpu_cache *caches, size_t n);
 void lscpu_sort_caches(struct lscpu_cache *caches, size_t n);
 
+size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name);
+struct lscpu_cache *lscpu_cpu_get_cache(struct lscpu_cxt *cxt,
+                                struct lscpu_cpu *cpu, const char *name);
+
 int lscpu_read_topology(struct lscpu_cxt *cxt);
 void lscpu_cputype_free_topology(struct lscpu_cputype *ct);
 
 float lsblk_cputype_get_maxmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
 float lsblk_cputype_get_minmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
-
-size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name);
 
 struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt);
 void lscpu_free_architecture(struct lscpu_arch *ar);

@@ -68,8 +68,7 @@ void lscpu_free_caches(struct lscpu_cache *caches, size_t n)
 		free(c->type);
 		free(c->allocation_policy);
 		free(c->write_policy);
-
-		free_cpuset_array(c->sharedmaps, c->nsharedmaps);
+		free(c->sharedmap);
 	}
 	free(caches);
 }
@@ -233,6 +232,22 @@ size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name)
 	return sz;
 }
 
+struct lscpu_cache *lscpu_cpu_get_cache(struct lscpu_cxt *cxt,
+				struct lscpu_cpu *cpu, const char *name)
+{
+	size_t i;
+
+	for (i = 0; i < cxt->ncaches; i++) {
+		struct lscpu_cache *ca = &cxt->caches[i];
+
+		if (strcmp(ca->name, name) == 0 &&
+		    CPU_ISSET_S(cpu->logical_id, cxt->setsize, ca->sharedmap))
+			return ca;
+	}
+
+	return NULL;
+}
+
 /*
  * The cache is identifued by type+level+id.
  */
@@ -286,7 +301,6 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 
 	for (i = 0; i < ncaches; i++) {
 		struct lscpu_cache *ca;
-		cpu_set_t *map;
 		int id, level;
 
 		if (ul_path_readf_s32(sys, &id, "cpu%d/cache/index%zu/id", num, i) != 0)
@@ -340,14 +354,10 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 				ca->size = 0;
 		}
 
-		/* information about how CPUs share different caches */
-		ul_path_readf_cpuset(sys, &map, cxt->maxcpus,
-				  "cpu%d/cache/index%zu/shared_cpu_map", num, i);
-
-		if (!ca->sharedmaps)
-			ca->sharedmaps = xcalloc(cxt->npossibles, sizeof(cpu_set_t *));
-
-		add_cpuset_to_array(ca->sharedmaps, &ca->nsharedmaps, map, cxt->setsize);
+		if (!ca->sharedmap)
+			/* information about how CPUs share different caches */
+			ul_path_readf_cpuset(sys, &ca->sharedmap, cxt->maxcpus,
+					  "cpu%d/cache/index%zu/shared_cpu_map", num, i);
 	}
 
 	return 0;
@@ -399,6 +409,8 @@ static int read_polarization(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	else
 		cpu->polarization = POLAR_UNKNOWN;
 
+	if (cpu->type)
+		cpu->type->has_polarization = 1;
 	return 0;
 }
 
@@ -411,6 +423,8 @@ static int read_address(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 		return 0;
 
 	ul_path_readf_s32(sys, &cpu->address, "cpu%d/address", num);
+	if (cpu->type)
+		cpu->type->has_addresses = 1;
 	return 0;
 }
 
@@ -423,6 +437,8 @@ static int read_configure(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 		return 0;
 
 	ul_path_readf_s32(sys, &cpu->configured, "cpu%d/configure", num);
+	if (cpu->type)
+		cpu->type->has_configured = 1;
 	return 0;
 }
 

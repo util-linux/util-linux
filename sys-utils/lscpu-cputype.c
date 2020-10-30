@@ -511,6 +511,9 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 
 	DBG(GATHER, fprintf_cputypes(stderr, cxt));
 
+	if (pr->curr_cpu && !pr->curr_cpu->type)
+		lscpu_cpu_set_type(pr->curr_cpu, pr->curr_type);
+
 	lscpu_unref_cputype(pr->curr_type);
 	lscpu_unref_cpu(pr->curr_cpu);
 

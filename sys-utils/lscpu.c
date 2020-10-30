@@ -278,101 +278,94 @@ static void lscpu_free_context(struct lscpu_cxt *cxt)
 	free(cxt);
 }
 
-#ifdef LSCPU_OLD_OUTPUT_CODE	/* temporary disabled for revrite */
-
-static char *
-get_cell_data(struct lscpu_desc *desc, int idx, int col,
-	      struct lscpu_modifier *mod,
-	      char *buf, size_t bufsz)
+static void __fill_id(	struct lscpu_cxt *cxt,
+			struct lscpu_cpu *cpu,
+			int id, cpu_set_t **map,
+			size_t nitems,
+			char *buf, size_t bufsz)
 {
-	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
+	*buf = '\0';
+
+	if (cxt->show_physical) {
+		if (id < 0)
+			snprintf(buf, bufsz, "-");
+		else
+			snprintf(buf, bufsz, "%d", id);
+	} else if (map) {
+		size_t i;
+
+		if (cpuset_ary_isset(cpu->logical_id, map, nitems,
+					cxt->setsize, &i) == 0)
+			snprintf(buf, bufsz, "%zu", i);
+	}
+}
+
+#define fill_id(_cxt, _cpu, NAME, _buf, _bufsz) \
+		__fill_id(_cxt, (_cpu), \
+			(_cpu)-> NAME ## id, \
+			(_cpu)->type-> NAME ## maps, \
+			(_cpu)->type->n ## NAME ## s, \
+			_buf, _bufsz)
+
+static char *get_cell_data(
+			struct lscpu_cxt *cxt,
+			struct lscpu_cpu *cpu, int col,
+			char *buf, size_t bufsz)
+{
 	size_t i;
-	int cpu = real_cpu_num(desc, idx);
 
 	*buf = '\0';
 
+	if (!cpu->type)
+		return NULL;
+
 	switch (col) {
 	case COL_CPU_CPU:
-		snprintf(buf, bufsz, "%d", cpu);
+		snprintf(buf, bufsz, "%d", cpu->logical_id);
 		break;
 	case COL_CPU_CORE:
-		if (mod->physical) {
-			if (desc->coreids[idx] == -1)
-				snprintf(buf, bufsz, "-");
-			else
-				snprintf(buf, bufsz, "%d", desc->coreids[idx]);
-		} else {
-			if (cpuset_ary_isset(cpu, desc->coremaps,
-					     desc->ncores, setsize, &i) == 0)
-				snprintf(buf, bufsz, "%zu", i);
-		}
+		fill_id(cxt, cpu, core, buf, bufsz);
 		break;
 	case COL_CPU_SOCKET:
-		if (mod->physical) {
-			if (desc->socketids[idx] ==  -1)
-				snprintf(buf, bufsz, "-");
-			else
-				snprintf(buf, bufsz, "%d", desc->socketids[idx]);
-		} else {
-			if (cpuset_ary_isset(cpu, desc->socketmaps,
-					     desc->nsockets, setsize, &i) == 0)
-				snprintf(buf, bufsz, "%zu", i);
-		}
-		break;
-	case COL_CPU_NODE:
-		if (cpuset_ary_isset(cpu, desc->nodemaps,
-				     desc->nnodes, setsize, &i) == 0)
-			snprintf(buf, bufsz, "%d", desc->idx2nodenum[i]);
+		fill_id(cxt, cpu, socket, buf, bufsz);
 		break;
 	case COL_CPU_DRAWER:
-		if (!desc->drawerids || !desc->drawermaps)
-			break;
-		if (mod->physical) {
-			if (desc->drawerids[idx] == -1)
-				snprintf(buf, bufsz, "-");
-			else
-				snprintf(buf, bufsz, "%d", desc->drawerids[idx]);
-		} else {
-			if (cpuset_ary_isset(cpu, desc->drawermaps,
-					     desc->ndrawers, setsize, &i) == 0)
-				snprintf(buf, bufsz, "%zu", i);
-		}
+		fill_id(cxt, cpu, drawer, buf, bufsz);
 		break;
 	case COL_CPU_BOOK:
-		if (!desc->bookids || !desc->bookmaps)
-			break;
-		if (mod->physical) {
-			if (desc->bookids[idx] == -1)
-				snprintf(buf, bufsz, "-");
-			else
-				snprintf(buf, bufsz, "%d", desc->bookids[idx]);
-		} else {
-			if (cpuset_ary_isset(cpu, desc->bookmaps,
-					     desc->nbooks, setsize, &i) == 0)
-				snprintf(buf, bufsz, "%zu", i);
-		}
+		fill_id(cxt, cpu, book, buf, bufsz);
+		break;
+	case COL_CPU_NODE:
+		if (cpuset_ary_isset(cpu->logical_id, cxt->nodemaps,
+				     cxt->nnodes, cxt->setsize, &i) == 0)
+			snprintf(buf, bufsz, "%d", cxt->idx2nodenum[i]);
 		break;
 	case COL_CPU_CACHE:
 	{
+		const char *last = NULL;
 		char *p = buf;
 		size_t sz = bufsz;
-		int j;
 
-		for (j = desc->ncaches - 1; j >= 0; j--) {
-			struct cpu_cache *ca = &desc->caches[j];
+		for (i = 0; i < cxt->ncaches; i++) {
+			int x;
+			struct lscpu_cache *ca;
+			const char *name = cxt->caches[i].name;
 
-			if (cpuset_ary_isset(cpu, ca->sharedmaps,
-					     ca->nsharedmaps, setsize, &i) == 0) {
-				int x = snprintf(p, sz, "%zu", i);
-				if (x < 0 || (size_t) x >= sz)
-					return NULL;
-				p += x;
-				sz -= x;
-			}
-			if (j != 0) {
+			if (last && strcmp(last, name) == 0)
+				continue;
+			last = name;
+			ca = lscpu_cpu_get_cache(cxt, cpu, name);
+			if (!ca)
+				continue;
+			x = snprintf(p, sz, "%d", ca->id);
+			if (x < 0 || (size_t) x >= sz)
+				return NULL;
+			p += x;
+			sz -= x;
+			if (i + 1 < cxt->ncaches) {
 				if (sz < 2)
 					return NULL;
-				*p++ = mod->compat ? ',' : ':';
+				*p++ = cxt->show_compatible ? ',' : ':';
 				*p = '\0';
 				sz--;
 			}
@@ -380,85 +373,90 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 		break;
 	}
 	case COL_CPU_POLARIZATION:
-		if (desc->polarization) {
-			int x = desc->polarization[idx];
-
-			snprintf(buf, bufsz, "%s",
-				 mod->mode == LSCPU_OUTPUT_PARSABLE ?
-						polar_modes[x].parsable :
-						polar_modes[x].readable);
-		}
+		if (cpu->polarization < 0)
+			break;
+		snprintf(buf, bufsz, "%s",
+				cxt->mode == LSCPU_OUTPUT_PARSABLE ?
+				polar_modes[cpu->polarization].parsable :
+				polar_modes[cpu->polarization].readable);
 		break;
 	case COL_CPU_ADDRESS:
-		if (desc->addresses)
-			snprintf(buf, bufsz, "%d", desc->addresses[idx]);
+		if (cpu->address < 0)
+			break;
+		snprintf(buf, bufsz, "%d", cpu->address);
 		break;
 	case COL_CPU_CONFIGURED:
-		if (!desc->configured)
+		if (cpu->configured < 0)
 			break;
-		if (mod->mode == LSCPU_OUTPUT_PARSABLE)
+		if (cxt->mode == LSCPU_OUTPUT_PARSABLE)
 			snprintf(buf, bufsz, "%s",
-				 desc->configured[idx] ? _("Y") : _("N"));
+				 cpu->configured ? _("Y") : _("N"));
 		else
 			snprintf(buf, bufsz, "%s",
-				 desc->configured[idx] ? _("yes") : _("no"));
+				 cpu->configured ? _("yes") : _("no"));
 		break;
 	case COL_CPU_ONLINE:
-		if (!desc->online)
+		if (!cxt->online)
 			break;
-		if (mod->mode == LSCPU_OUTPUT_PARSABLE)
+		if (cxt->mode == LSCPU_OUTPUT_PARSABLE)
 			snprintf(buf, bufsz, "%s",
-				 is_cpu_online(desc, cpu) ? _("Y") : _("N"));
+				 is_cpu_online(cxt, cpu) ? _("Y") : _("N"));
 		else
 			snprintf(buf, bufsz, "%s",
-				 is_cpu_online(desc, cpu) ? _("yes") : _("no"));
+				 is_cpu_online(cxt, cpu) ? _("yes") : _("no"));
 		break;
 	case COL_CPU_MAXMHZ:
-		if (desc->maxmhz && desc->maxmhz[idx])
-			xstrncpy(buf, desc->maxmhz[idx], bufsz);
+		if (cpu->mhz_max_freq)
+			snprintf(buf, bufsz, "%.4f", cpu->mhz_max_freq);
 		break;
 	case COL_CPU_MINMHZ:
-		if (desc->minmhz && desc->minmhz[idx])
-			xstrncpy(buf, desc->minmhz[idx], bufsz);
+		if (cpu->mhz_min_freq)
+			snprintf(buf, bufsz, "%.4f", cpu->mhz_min_freq);
 		break;
 	}
 	return buf;
 }
 
-static char *
-get_cell_header(struct lscpu_desc *desc, int col,
-		struct lscpu_modifier *mod,
-	        char *buf, size_t bufsz)
+static char *get_cell_header(
+			struct lscpu_cxt *cxt, int col,
+			char *buf, size_t bufsz)
 {
 	*buf = '\0';
 
 	if (col == COL_CPU_CACHE) {
+		const char *last = NULL;
 		char *p = buf;
 		size_t sz = bufsz;
-		int i;
+		size_t i;
 
-		for (i = desc->ncaches - 1; i >= 0; i--) {
-			int x = snprintf(p, sz, "%s", desc->caches[i].name);
+		for (i = 0; i < cxt->ncaches; i++) {
+			struct lscpu_cache *ca = &cxt->caches[i];
+			int x;
+
+			if (last && strcmp(last, ca->name) == 0)
+				continue;
+			last = ca->name;
+
+			x = snprintf(p, sz, "%s", ca->name);
 			if (x < 0 || (size_t) x >= sz)
 				return NULL;
 			sz -= x;
 			p += x;
-			if (i > 0) {
+			if (i + 1 < cxt->ncaches) {
 				if (sz < 2)
 					return NULL;
-				*p++ = mod->compat ? ',' : ':';
+				*p++ = cxt->show_compatible ? ',' : ':';
 				*p = '\0';
 				sz--;
 			}
 		}
-		if (desc->ncaches)
+		if (cxt->ncaches)
 			return buf;
 	}
 	snprintf(buf, bufsz, "%s", coldescs_cpu[col].name);
 	return buf;
 }
 
-#endif
 
 static void caches_add_line(struct lscpu_cxt *cxt,
 			    struct libscols_table *tb,
@@ -694,68 +692,65 @@ print_cpus_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 		putchar('\n');
 	}
 }
+#endif
 
 /*
  * [-e] backend
  */
-static void
-print_cpus_readable(struct lscpu_desc *desc, int cols[], int ncols,
-	       struct lscpu_modifier *mod)
+static void print_cpus_readable(struct lscpu_cxt *cxt, int cols[], size_t ncols)
 {
-	int i;
+	size_t i;
 	char buf[BUFSIZ];
 	const char *data;
-	struct libscols_table *table;
+	struct libscols_table *tb;
 
 	scols_init_debug(0);
 
-	table = scols_new_table();
-	if (!table)
+	tb = scols_new_table();
+	if (!tb)
 		 err(EXIT_FAILURE, _("failed to allocate output table"));
-	if (mod->json) {
-		scols_table_enable_json(table, 1);
-		scols_table_set_name(table, "cpus");
+	if (cxt->json) {
+		scols_table_enable_json(tb, 1);
+		scols_table_set_name(tb, "cpus");
 	}
 
 	for (i = 0; i < ncols; i++) {
-		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
-		if (!scols_table_new_column(table, data, 0, coldescs_cpu[cols[i]].flags))
+		data = get_cell_header(cxt, cols[i], buf, sizeof(buf));
+		if (!scols_table_new_column(tb, data, 0, coldescs_cpu[cols[i]].flags))
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
-	for (i = 0; i < desc->ncpuspos; i++) {
-		int c;
-		struct libscols_line *line;
-		int cpu = real_cpu_num(desc, i);
+	for (i = 0; i < cxt->npossibles; i++) {
+		size_t c;
+		struct libscols_line *ln;
+		struct lscpu_cpu *cpu = cxt->cpus[i];
 
-		if (desc->online) {
-			if (!mod->offline && !is_cpu_online(desc, cpu))
+		if (cxt->online) {
+			if (!cxt->show_offline && !is_cpu_online(cxt, cpu))
 				continue;
-			if (!mod->online && is_cpu_online(desc, cpu))
+			if (!cxt->show_online && is_cpu_online(cxt, cpu))
 				continue;
 		}
-		if (desc->present && !is_cpu_present(desc, cpu))
+
+		if (cxt->present && !is_cpu_present(cxt, cpu))
 			continue;
 
-		line = scols_table_new_line(table, NULL);
-		if (!line)
+		ln = scols_table_new_line(tb, NULL);
+		if (!ln)
 			err(EXIT_FAILURE, _("failed to allocate output line"));
 
 		for (c = 0; c < ncols; c++) {
-			data = get_cell_data(desc, i, cols[c], mod,
-					     buf, sizeof(buf));
+			data = get_cell_data(cxt, cpu, cols[c], buf, sizeof(buf));
 			if (!data || !*data)
 				data = "-";
-			if (scols_line_set_data(line, c, data))
+			if (scols_line_set_data(ln, c, data))
 				err(EXIT_FAILURE, _("failed to add output data"));
 		}
 	}
 
-	scols_print_table(table);
-	scols_unref_table(table);
+	scols_print_table(tb);
+	scols_unref_table(tb);
 }
-
-#endif
 
 static struct libscols_line *
 	__attribute__ ((__format__(printf, 4, 5)))
@@ -1310,6 +1305,39 @@ int main(int argc, char *argv[])
 		}
 		print_caches_readable(cxt, columns, ncolumns);
 		break;
+	case LSCPU_OUTPUT_READABLE:
+		if (!ncolumns) {
+			/* No list was given. Just print whatever is there. */
+			struct lscpu_cputype *ct = lscpu_cputype_get_default(cxt);
+
+			columns[ncolumns++] = COL_CPU_CPU;
+			if (cxt->nnodes)
+				columns[ncolumns++] = COL_CPU_NODE;
+			if (ct && ct->ndrawers)
+				columns[ncolumns++] = COL_CPU_DRAWER;
+			if (ct && ct->nbooks)
+				columns[ncolumns++] = COL_CPU_BOOK;
+			if (ct && ct->nsockets)
+				columns[ncolumns++] = COL_CPU_SOCKET;
+			if (ct && ct->ncores)
+				columns[ncolumns++] = COL_CPU_CORE;
+			if (cxt->ncaches)
+				columns[ncolumns++] = COL_CPU_CACHE;
+			if (cxt->online)
+				columns[ncolumns++] = COL_CPU_ONLINE;
+			if (ct && ct->has_configured)
+				columns[ncolumns++] = COL_CPU_CONFIGURED;
+			if (ct && ct->has_polarization)
+				columns[ncolumns++] = COL_CPU_POLARIZATION;
+			if (ct && ct->has_addresses)
+				columns[ncolumns++] = COL_CPU_ADDRESS;
+			if (ct && ct->has_freq) {
+				columns[ncolumns++] = COL_CPU_MAXMHZ;
+				columns[ncolumns++] = COL_CPU_MINMHZ;
+			}
+		}
+		print_cpus_readable(cxt, columns, ncolumns);
+		break;
 	}
 
 #ifdef LSCPU_OLD_OUTPUT_CODE
@@ -1323,37 +1351,6 @@ int main(int argc, char *argv[])
 			mod->compat = 1;
 		}
 		print_cpus_parsable(desc, columns, ncolumns, mod);
-		break;
-	case LSCPU_OUTPUT_READABLE:
-		if (!ncolumns) {
-			/* No list was given. Just print whatever is there. */
-			columns[ncolumns++] = COL_CPU_CPU;
-			if (desc->nodemaps)
-				columns[ncolumns++] = COL_CPU_NODE;
-			if (desc->drawermaps)
-				columns[ncolumns++] = COL_CPU_DRAWER;
-			if (desc->bookmaps)
-				columns[ncolumns++] = COL_CPU_BOOK;
-			if (desc->socketmaps)
-				columns[ncolumns++] = COL_CPU_SOCKET;
-			if (desc->coremaps)
-				columns[ncolumns++] = COL_CPU_CORE;
-			if (desc->caches)
-				columns[ncolumns++] = COL_CPU_CACHE;
-			if (desc->online)
-				columns[ncolumns++] = COL_CPU_ONLINE;
-			if (desc->configured)
-				columns[ncolumns++] = COL_CPU_CONFIGURED;
-			if (desc->polarization)
-				columns[ncolumns++] = COL_CPU_POLARIZATION;
-			if (desc->addresses)
-				columns[ncolumns++] = COL_CPU_ADDRESS;
-			if (desc->maxmhz)
-				columns[ncolumns++] = COL_CPU_MAXMHZ;
-			if (desc->minmhz)
-				columns[ncolumns++] = COL_CPU_MINMHZ;
-		}
-		print_cpus_readable(desc, columns, ncolumns, mod);
 		break;
 	}
 

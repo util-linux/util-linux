@@ -7,6 +7,12 @@ struct lscpu_cpu *lscpu_new_cpu(int id)
 	cpu = xcalloc(1, sizeof(struct lscpu_cpu));
 	cpu->refcount = 1;
 	cpu->logical_id = id;
+	cpu->coreid = -1;
+	cpu->socketid = -1;
+	cpu->bookid = -1;
+	cpu->bookid = -1;
+	cpu->address = -1;
+	cpu->configured = -1;
 
 	DBG(CPU, ul_debugobj(cpu, "alloc"));
 	return cpu;
