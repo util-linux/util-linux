@@ -588,8 +588,6 @@ static void print_caches_readable(struct lscpu_cxt *cxt, int cols[], size_t ncol
 	scols_unref_table(tb);
 }
 
-#ifdef LSCPU_OLD_OUTPUT_CODE    /* temporary disabled for revrite */
-
 /*
  * [-p] backend, we support two parsable formats:
  *
@@ -613,12 +611,10 @@ static void print_caches_readable(struct lscpu_cxt *cxt, int cols[], size_t ncol
  *	0,0,0,0,0:0:0
  *	1,1,0,0,1:1:0
  */
-static void
-print_cpus_parsable(struct lscpu_desc *desc, int cols[], int ncols,
-	       struct lscpu_modifier *mod)
+static void print_cpus_parsable(struct lscpu_cxt *cxt, int cols[], size_t ncols)
 {
 	char buf[BUFSIZ], *data;
-	int i;
+	size_t i;
 
 	/*
 	 * Header
@@ -633,16 +629,15 @@ print_cpus_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 		int col = cols[i];
 
 		if (col == COL_CPU_CACHE) {
-			if (mod->compat && !desc->ncaches)
+			if (cxt->show_compatible && !cxt->ncaches)
 				continue;
-			if (mod->compat && i != 0)
+			if (cxt->show_compatible && i != 0)
 				putchar(',');
 		}
 		if (i > 0)
 			putchar(',');
 
-		data = get_cell_header(desc, col, mod, buf, sizeof(buf));
-
+		data = get_cell_header(cxt, col, buf, sizeof(buf));
 		if (data && * data && col != COL_CPU_CACHE &&
 		    !coldescs_cpu[col].is_abbr) {
 			/*
@@ -662,21 +657,22 @@ print_cpus_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 	/*
 	 * Data
 	 */
-	for (i = 0; i < desc->ncpuspos; i++) {
-		int c;
-		int cpu = real_cpu_num(desc, i);
+	for (i = 0; i < cxt->npossibles; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+		size_t c;
 
-		if (desc->online) {
-			if (!mod->offline && !is_cpu_online(desc, cpu))
+		if (cxt->online) {
+			if (!cxt->show_offline && !is_cpu_online(cxt, cpu))
 				continue;
-			if (!mod->online && is_cpu_online(desc, cpu))
+			if (!cxt->show_online && is_cpu_online(cxt, cpu))
 				continue;
 		}
-		if (desc->present && !is_cpu_present(desc, cpu))
+		if (cxt->present && !is_cpu_present(cxt, cpu))
 			continue;
+
 		for (c = 0; c < ncols; c++) {
-			if (mod->compat && cols[c] == COL_CPU_CACHE) {
-				if (!desc->ncaches)
+			if (cxt->show_compatible && cols[c] == COL_CPU_CACHE) {
+				if (!cxt->ncaches)
 					continue;
 				if (c > 0)
 					putchar(',');
@@ -684,15 +680,13 @@ print_cpus_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 			if (c > 0)
 				putchar(',');
 
-			data = get_cell_data(desc, i, cols[c], mod,
-					     buf, sizeof(buf));
+			data = get_cell_data(cxt, cpu, cols[c], buf, sizeof(buf));
 			fputs(data && *data ? data : "", stdout);
 			*buf = '\0';
 		}
 		putchar('\n');
 	}
 }
-#endif
 
 /*
  * [-e] backend
@@ -1338,9 +1332,6 @@ int main(int argc, char *argv[])
 		}
 		print_cpus_readable(cxt, columns, ncolumns);
 		break;
-	}
-
-#ifdef LSCPU_OLD_OUTPUT_CODE
 	case LSCPU_OUTPUT_PARSABLE:
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_CPU_CPU;
@@ -1348,13 +1339,11 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_CPU_SOCKET;
 			columns[ncolumns++] = COL_CPU_NODE;
 			columns[ncolumns++] = COL_CPU_CACHE;
-			mod->compat = 1;
+			cxt->show_compatible = 1;
 		}
-		print_cpus_parsable(desc, columns, ncolumns, mod);
+		print_cpus_parsable(cxt, columns, ncolumns);
 		break;
 	}
-
-#endif /* LSCPU_OLD_OUTPUT_CODE */
 
 	lscpu_free_context(cxt);
 
