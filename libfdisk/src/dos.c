@@ -693,7 +693,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	/* random disk signature */
 	if (!has_id) {
 		DBG(LABEL, ul_debug("DOS: generate new ID"));
-		random_get_bytes(&id, sizeof(id));
+		ul_random_get_bytes(&id, sizeof(id));
 	}
 
 	if (fdisk_has_protected_bootbits(cxt))

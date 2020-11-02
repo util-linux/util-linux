@@ -102,7 +102,7 @@ int random_get_fd(void)
 #define UL_RAND_READ_ATTEMPTS	8
 #define UL_RAND_READ_DELAY	125000	/* microseconds */
 
-void random_get_bytes(void *buf, size_t nbytes)
+void ul_random_get_bytes(void *buf, size_t nbytes)
 {
 	unsigned char *cp = (unsigned char *)buf;
 	size_t i, n = nbytes;
@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
 
 	printf("Multiple random calls:\n");
 	for (i = 0; i < n; i++) {
-		random_get_bytes(&v, sizeof(v));
+		ul_random_get_bytes(&v, sizeof(v));
 		printf("#%02zu: %25"PRIu64"\n", i, v);
 	}
 
@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
 	if (!buf)
 		err(EXIT_FAILURE, "failed to allocate buffer");
 
-	random_get_bytes(buf, bufsz);
+	ul_random_get_bytes(buf, bufsz);
 	for (i = 0; i < n; i++) {
 		vp = (int64_t *) (buf + (i * sizeof(*vp)));
 		printf("#%02zu: %25"PRIu64"\n", i, *vp);
