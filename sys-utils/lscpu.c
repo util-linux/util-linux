@@ -362,14 +362,14 @@ static char *get_cell_data(
 				return NULL;
 			p += x;
 			sz -= x;
-			if (i + 1 < cxt->ncaches) {
-				if (sz < 2)
-					return NULL;
-				*p++ = cxt->show_compatible ? ',' : ':';
-				*p = '\0';
-				sz--;
-			}
+			if (sz < 2)
+				return NULL;
+			*p++ = cxt->show_compatible ? ',' : ':';
+			*p = '\0';
+			sz--;
 		}
+		if (p > buf && (*(p - 1) == ',' || *(p - 1) == ':'))
+			*(p - 1) = '\0';
 		break;
 	}
 	case COL_CPU_POLARIZATION:
@@ -442,14 +442,14 @@ static char *get_cell_header(
 				return NULL;
 			sz -= x;
 			p += x;
-			if (i + 1 < cxt->ncaches) {
-				if (sz < 2)
-					return NULL;
-				*p++ = cxt->show_compatible ? ',' : ':';
-				*p = '\0';
-				sz--;
-			}
+			if (sz < 2)
+				return NULL;
+			*p++ = cxt->show_compatible ? ',' : ':';
+			*p = '\0';
+			sz--;
 		}
+		if (p > buf && (*(p - 1) == ',' || *(p - 1) == ':'))
+			*(p - 1) = '\0';
 		if (cxt->ncaches)
 			return buf;
 	}

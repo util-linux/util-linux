@@ -50,7 +50,6 @@ struct lscpu_cache {
 	unsigned int	number_of_sets;
 	unsigned int	coherency_line_size;
 
-	size_t		nsharedmaps;
 	cpu_set_t	*sharedmap;
 };
 
