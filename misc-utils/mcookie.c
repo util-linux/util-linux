@@ -184,7 +184,7 @@ int main(int argc, char **argv)
 	randomness_from_files(&ctl);
 	free(ctl.files);
 
-	random_get_bytes(&buf, RAND_BYTES);
+	ul_random_get_bytes(&buf, RAND_BYTES);
 	ul_MD5Update(&ctl.ctx, buf, RAND_BYTES);
 	if (ctl.verbose)
 		fprintf(stderr, P_("Got %d byte from %s\n",
