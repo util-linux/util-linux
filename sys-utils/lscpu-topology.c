@@ -286,30 +286,53 @@ static struct lscpu_cache *add_cache(struct lscpu_cxt *cxt,
 	return ca;
 }
 
+static int mk_cache_id(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu, char *type, int level)
+{
+	size_t i;
+	int idx = 0;
+
+	for (i = 0; i < cxt->ncaches; i++) {
+		struct lscpu_cache *ca = &cxt->caches[i];
+
+		if (ca->level != level || strcmp(ca->type, type) != 0)
+			continue;
+
+		if (CPU_ISSET_S(cpu->logical_id, cxt->setsize, ca->sharedmap))
+			return idx;
+		idx++;
+	}
+
+	return idx;
+}
+
 static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 {
 	char buf[256];
 	struct path_cxt *sys = cxt->syscpu;
 	int num = cpu->logical_id;
-	size_t i, ncaches;
+	size_t i, ncaches = 0;
 
-	ncaches = cxt->ncaches;
 	while (ul_path_accessf(sys, F_OK,
 				"cpu%d/cache/index%zu",
 				num, ncaches) == 0)
 		ncaches++;
+
+	DBG(CPU, ul_debugobj(cpu, "#%d reading %zd caches", num, ncaches));
 
 	for (i = 0; i < ncaches; i++) {
 		struct lscpu_cache *ca;
 		int id, level;
 
 		if (ul_path_readf_s32(sys, &id, "cpu%d/cache/index%zu/id", num, i) != 0)
-			continue;
+			id = -1;
 		if (ul_path_readf_s32(sys, &level, "cpu%d/cache/index%zu/level", num, i) != 0)
 			continue;
 		if (ul_path_readf_buffer(sys, buf, sizeof(buf),
                                         "cpu%d/cache/index%zu/type", num, i) <= 0)
 			continue;
+
+		if (id == -1)
+			id = mk_cache_id(cxt, cpu, buf, level);
 
 		ca = get_cache(cxt, buf, level, id);
 		if (!ca)
@@ -396,7 +419,7 @@ static int read_polarization(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 
 	ul_path_readf_buffer(sys, mode, sizeof(mode), "cpu%d/polarization", num);
 
-	DBG(CPU, ul_debugobj(cpu, "#%d polar=%s", num, mode));
+	DBG(CPU, ul_debugobj(cpu, "#%d reading polar=%s", num, mode));
 
 	if (strncmp(mode, "vertical:low", sizeof(mode)) == 0)
 		cpu->polarization = POLAR_VLOW;
@@ -422,6 +445,8 @@ static int read_address(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	if (ul_path_accessf(sys, F_OK, "cpu%d/address", num) != 0)
 		return 0;
 
+	DBG(CPU, ul_debugobj(cpu, "#%d reading address", num));
+
 	ul_path_readf_s32(sys, &cpu->address, "cpu%d/address", num);
 	if (cpu->type)
 		cpu->type->has_addresses = 1;
@@ -436,6 +461,8 @@ static int read_configure(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	if (ul_path_accessf(sys, F_OK, "cpu%d/configure", num) != 0)
 		return 0;
 
+	DBG(CPU, ul_debugobj(cpu, "#%d reading configure", num));
+
 	ul_path_readf_s32(sys, &cpu->configured, "cpu%d/configure", num);
 	if (cpu->type)
 		cpu->type->has_configured = 1;
@@ -447,6 +474,8 @@ static int read_mhz(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	struct path_cxt *sys = cxt->syscpu;
 	int num = cpu->logical_id;
 	int mhz;
+
+	DBG(CPU, ul_debugobj(cpu, "#%d reading mhz", num));
 
 	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/cpuinfo_max_freq", num) == 0)
 		cpu->mhz_max_freq = (float) mhz / 1000;
@@ -495,6 +524,7 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 	size_t i;
 	int rc = 0;
 
+
 	for (i = 0; i < cxt->ncputypes; i++)
 		rc += cputype_read_topology(cxt, cxt->cputypes[i]);
 
@@ -503,6 +533,8 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 
 		if (!cpu || !cpu->type)
 			continue;
+
+		DBG(CPU, ul_debugobj(cpu, "#%d reading topology", cpu->logical_id));
 
 		rc = read_ids(cxt, cpu);
 		if (!rc)
