@@ -102,6 +102,7 @@ enum {
 	COL_CPU_ADDRESS,
 	COL_CPU_CONFIGURED,
 	COL_CPU_ONLINE,
+	COL_CPU_MHZ,
 	COL_CPU_MAXMHZ,
 	COL_CPU_MINMHZ,
 };
@@ -144,6 +145,7 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU") },
 	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT },
+	[COL_CPU_MHZ]	       = { "MHZ", N_("shows the currently MHz of the CPU"), SCOLS_FL_RIGHT },
 	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT },
 	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT }
 };
@@ -404,6 +406,10 @@ static char *get_cell_data(
 		else
 			snprintf(buf, bufsz, "%s",
 				 is_cpu_online(cxt, cpu) ? _("yes") : _("no"));
+		break;
+	case COL_CPU_MHZ:
+		if (cpu->mhz)
+			xstrncpy(buf, cpu->mhz, bufsz);
 		break;
 	case COL_CPU_MAXMHZ:
 		if (cpu->mhz_max_freq)
