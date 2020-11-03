@@ -183,6 +183,7 @@ enum {
 static const struct cpuinfo_pattern type_patterns[] =
 {
 	/* Sort by fields name! */
+	DEF_PAT_CPUTYPE( "ASEs implemented",    PAT_FLAGS,	flags),		/* mips */
 	DEF_PAT_CPUTYPE( "BogoMIPS",		PAT_BOGOMIPS,	bogomips),	/* aarch64 */
 	DEF_PAT_CPUTYPE( "CPU implementer",	PAT_IMPLEMENTER,vendor),	/* ARM and aarch64 */
 	DEF_PAT_CPUTYPE( "CPU part",		PAT_PART,	model),		/* ARM and aarch64 */
@@ -193,6 +194,7 @@ static const struct cpuinfo_pattern type_patterns[] =
 	DEF_PAT_CPUTYPE( "bogomips per cpu",	PAT_BOGOMIPS,	bogomips),	/* s390 */
 	DEF_PAT_CPUTYPE( "cpu",			PAT_CPU,	modelname),	/* ppc, sparc */
 	DEF_PAT_CPUTYPE( "cpu family",		PAT_FAMILY,	family),
+	DEF_PAT_CPUTYPE( "cpu model",           PAT_MODEL,      model),		/* mips */
 	DEF_PAT_CPUTYPE( "family",		PAT_FAMILY,	family),
 	DEF_PAT_CPUTYPE( "features",		PAT_FEATURES,	flags),		/* s390 */
 	DEF_PAT_CPUTYPE( "flags",		PAT_FLAGS,	flags),		/* x86 */
