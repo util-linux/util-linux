@@ -1029,12 +1029,11 @@ static void print_summary(struct lscpu_cxt *cxt)
 			}
 			last = name;
 		}
-		sec = NULL;
 	}
 
-	/* Section: extra caches (s390, ...) */
 	if (cxt->necaches) {
-		sec = add_summary_e(tb, NULL, _("Extra caches:"));
+		if (!cxt->ncaches)
+			sec = add_summary_e(tb, NULL, _("Caches:"));
 
 		for (i = 0; i < cxt->necaches; i++) {
 			struct lscpu_cache *ca = &cxt->ecaches[i];
@@ -1054,6 +1053,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 			}
 		}
 	}
+	sec = NULL;
 
 	/* Section: NUMA modes */
 	if (cxt->nnodes) {
