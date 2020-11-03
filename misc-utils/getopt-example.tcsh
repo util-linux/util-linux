@@ -3,10 +3,10 @@
 # A small example script for using the getopt(1) program.
 # This script will only work with tcsh(1).
 # A similar script using the bash(1) language can be found
-# as getopt-parse.bash.
+# as getopt-example.bash.
 
 # Example input and output (from the tcsh prompt):
-# ./parse.tcsh -a par1 'another arg' --c-long 'wow\!*\?' -cmore -b " very long "
+# ./getopt-example.tcsh -a par1 'another arg' --c-long 'wow\!*\?' -cmore -b " very long "
 # Option a
 # Option c, no argument
 # Option c, argument `more'
