@@ -184,6 +184,15 @@ struct blkid_bufinfo {
 };
 
 /*
+ * Probing hint
+ */
+struct blkid_hint {
+	char			*name;
+	uint64_t		value;
+	struct list_head	hints;
+};
+
+/*
  * Low-level probing control struct
  */
 struct blkid_struct_probe
@@ -205,6 +214,7 @@ struct blkid_struct_probe
 	struct blkid_chain	*wipe_chain;	/* superblock, partition, ... */
 
 	struct list_head	buffers;	/* list of buffers */
+	struct list_head	hints;
 
 	struct blkid_chain	chains[BLKID_NCHAINS];	/* array of chains */
 	struct blkid_chain	*cur_chain;		/* current chain */
@@ -520,6 +530,10 @@ extern int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn,
 			__attribute__((warn_unused_result));
 extern void blkid_probe_use_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 			__attribute__((nonnull));
+
+extern int blkid_probe_get_hint(blkid_probe pr, const char *name, uint64_t *value)
+			__attribute__((nonnull(1,2)))
+			__attribute__((warn_unused_result));
 
 /* filter bitmap macros */
 #define blkid_bmp_wordsize		(8 * sizeof(unsigned long))

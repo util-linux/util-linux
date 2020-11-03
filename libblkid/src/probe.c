@@ -121,6 +121,7 @@ static const struct blkid_chaindrv *chains_drvs[] = {
 };
 
 static void blkid_probe_reset_values(blkid_probe pr);
+static void blkid_probe_reset_hints(blkid_probe pr);
 
 /**
  * blkid_new_probe:
@@ -147,6 +148,7 @@ blkid_probe blkid_new_probe(void)
 	}
 	INIT_LIST_HEAD(&pr->buffers);
 	INIT_LIST_HEAD(&pr->values);
+	INIT_LIST_HEAD(&pr->hints);
 	return pr;
 }
 
@@ -248,6 +250,7 @@ void blkid_free_probe(blkid_probe pr)
 		close(pr->fd);
 	blkid_probe_reset_buffers(pr);
 	blkid_probe_reset_values(pr);
+	blkid_probe_reset_hints(pr);
 	blkid_free_probe(pr->disk_probe);
 
 	DBG(LOWPROBE, ul_debug("free probe"));
@@ -403,6 +406,7 @@ void blkid_reset_probe(blkid_probe pr)
 	int i;
 
 	blkid_probe_reset_values(pr);
+	blkid_probe_reset_hints(pr);
 	blkid_probe_set_wiper(pr, 0, 0);
 
 	pr->cur_chain = NULL;
@@ -756,6 +760,7 @@ int blkid_probe_hide_range(blkid_probe pr, uint64_t off, uint64_t len)
 		pr->flags |= BLKID_FL_MODIF_BUFF;
 	return rc;
 }
+
 
 static void blkid_probe_reset_values(blkid_probe pr)
 {
@@ -2030,4 +2035,99 @@ void blkid_probe_use_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 		blkid_probe_set_wiper(pr, 0, 0);
 		blkid_probe_chain_reset_values(pr, chn);
 	}
+}
+
+/**
+ * blkid_probe_set_hint
+ * @pr: probe
+ * @name: hint name or NAME=value
+ * @value: offset or another number
+ *
+ * Sets extra hint for low-level prober. If the hint is set by NAME=value
+ * notation than @value is ignored. The functions blkid_probe_set_device()
+ * and blkid_reset_probe() resets all hints.
+ *
+ * The hints are optional way how to force libblkid probing functions to check
+ * for example another location.
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_set_hint(blkid_probe pr, const char *name, uint64_t value)
+{
+	struct blkid_hint *hint = NULL;
+	char *n = NULL, *v = NULL;
+
+	if (strchr(name, '=')) {
+		char *end = NULL;
+
+		if (blkid_parse_tag_string(name, &n, &v) != 0)
+			goto done;
+
+		errno = 0;
+		value = strtoumax(v, &end, 10);
+
+		if (errno || v == end || (end && *end))
+			goto done;
+	} else {
+		n = strdup(name);
+		if (!n)
+			goto done;
+	}
+
+	/* allocate info and space for data by one malloc call */
+	hint = malloc(sizeof(*hint));
+	if (!hint)
+		goto done;
+
+	INIT_LIST_HEAD(&hint->hints);
+	hint->name = n;
+	hint->value = value;
+	n = NULL;
+	list_add_tail(&hint->hints, &pr->hints);
+
+	DBG(LOWPROBE,
+		ul_debug("new hint '%s' is %"PRIu64"", hint->name, hint->value));
+done:
+	free(n);
+	free(v);
+	if (!hint)
+		return errno ? -errno : -EINVAL;
+	return 0;
+}
+
+int blkid_probe_get_hint(blkid_probe pr, const char *name, uint64_t *value)
+{
+	struct list_head *p;
+
+	if (list_empty(&pr->hints))
+		return -EINVAL;
+
+	list_for_each(p, &pr->hints) {
+		struct blkid_hint *h = list_entry(p, struct blkid_hint, hints);
+
+		if (h->name && strcmp(name, h->name) == 0) {
+			if (value)
+				*value = h->value;
+			return 0;
+		}
+	}
+	return -EINVAL;
+}
+
+static void blkid_probe_reset_hints(blkid_probe pr)
+{
+	if (list_empty(&pr->hints))
+		return;
+
+	DBG(LOWPROBE, ul_debug("resetting hints"));
+
+	while (!list_empty(&pr->hints)) {
+		struct blkid_hint *h = list_entry(pr->hints.next,
+						struct blkid_hint, hints);
+		list_del(&h->hints);
+		free(h->name);
+		free(h);
+	}
+
+	INIT_LIST_HEAD(&pr->hints);
 }
