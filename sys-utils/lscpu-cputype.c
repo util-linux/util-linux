@@ -375,6 +375,7 @@ static int cpuinfo_parse_cache(struct lscpu_cxt *cxt, int keynum, char *data)
 	long long size;
 	char *p, type;
 	int level;
+	unsigned int line_size, associativity;
 
 	DBG(GATHER, ul_debugobj(cxt, " parse cpuinfo cache '%s'", data));
 
@@ -397,7 +398,15 @@ static int cpuinfo_parse_cache(struct lscpu_cxt *cxt, int keynum, char *data)
 		type = 'u';
 	p = strstr(data, "size=");
 	if (!p || sscanf(p, "size=%lld", &size) != 1)
-	       return 0;
+		return 0;
+
+	p = strstr(data, "line_size=");
+	if (!p || sscanf(p, "line_size=%u", &line_size) != 1)
+		return 0;
+
+	p = strstr(data, "associativity=");
+	if (!p || sscanf(p, "associativity=%u", &associativity) != 1)
+		return 0;
 
 	cxt->necaches++;
 	cxt->ecaches = xrealloc(cxt->ecaches,
@@ -413,6 +422,11 @@ static int cpuinfo_parse_cache(struct lscpu_cxt *cxt, int keynum, char *data)
 	cache->nth = keynum;
 	cache->level = level;
 	cache->size = size * 1024;
+	cache->ways_of_associativity = associativity;
+	cache->coherency_line_size = line_size;
+	/* Number of sets for s390. For safety, just check divide by zero */
+	cache->number_of_sets = line_size ? (cache->size / line_size): 0;
+	cache->number_of_sets = associativity ? (cache->number_of_sets / associativity) : 0;
 
 	cache->type = type == 'i' ? xstrdup("Instruction") :
 		      type == 'd' ? xstrdup("Data") :
