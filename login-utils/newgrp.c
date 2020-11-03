@@ -234,6 +234,6 @@ int main(int argc, char *argv[])
 	fflush(NULL);
 	shell = (pw_entry->pw_shell && *pw_entry->pw_shell ?
 				pw_entry->pw_shell : _PATH_BSHELL);
-	execl(shell, shell, (char *)0);
+	execl(shell, shell, (char *)NULL);
 	errexec(shell);
 }

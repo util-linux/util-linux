@@ -967,14 +967,14 @@ int main(int argc, char **argv)
 
 		if (access(shell, X_OK) == 0) {
 			if (command)
-				execl(shell, shname, "-c", command, NULL);
+				execl(shell, shname, "-c", command, (char *)NULL);
 			else
-				execl(shell, shname, "-i", NULL);
+				execl(shell, shname, "-i", (char *)NULL);
 		} else {
 			if (command)
-				execlp(shname, "-c", command, NULL);
+				execlp(shname, "-c", command, (char *)NULL);
 			else
-				execlp(shname, "-i", NULL);
+				execlp(shname, "-i", (char *)NULL);
 		}
 
 		err(EXIT_FAILURE, "failed to execute %s", shell);

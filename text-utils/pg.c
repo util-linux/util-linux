@@ -1382,7 +1382,7 @@ static void pgfile(FILE *f, const char *name)
 						my_sigset(SIGQUIT, oldquit);
 						my_sigset(SIGTERM, oldterm);
 						execl(sh, sh, "-c",
-						      cmd.cmdline + 1, NULL);
+						      cmd.cmdline + 1, (char *)NULL);
 						errexec(sh);
 						break;
 					}
