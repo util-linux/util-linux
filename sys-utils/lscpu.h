@@ -120,6 +120,7 @@ struct lscpu_cpu {
 
 	int logical_id;
 
+	char	*bogomips;	/* per-CPU bogomips */
 	char	*mhz;		/* max freq from cpuinfo */
 	char	*dynamic_mhz;   /* from cpuinf for s390 */
 	char	*static_mhz;	/* from cpuinf for s390 */

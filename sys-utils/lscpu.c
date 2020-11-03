@@ -91,6 +91,7 @@ static struct polarization_modes polar_modes[] = {
  * IDs
  */
 enum {
+	COL_CPU_BOGOMIPS,
 	COL_CPU_CPU,
 	COL_CPU_CORE,
 	COL_CPU_SOCKET,
@@ -134,6 +135,7 @@ struct lscpu_coldesc {
 
 static struct lscpu_coldesc coldescs_cpu[] =
 {
+	[COL_CPU_BOGOMIPS]     = { "BOGOMIPS", N_("crude measurement of CPU speed"), SCOLS_FL_RIGHT, 1 },
 	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), SCOLS_FL_RIGHT, 1 },
 	[COL_CPU_CORE]         = { "CORE", N_("logical core number"), SCOLS_FL_RIGHT },
 	[COL_CPU_SOCKET]       = { "SOCKET", N_("logical socket number"), SCOLS_FL_RIGHT },
@@ -324,6 +326,12 @@ static char *get_cell_data(
 	switch (col) {
 	case COL_CPU_CPU:
 		snprintf(buf, bufsz, "%d", cpu->logical_id);
+		break;
+	case COL_CPU_BOGOMIPS:
+		if (cpu->bogomips)
+			xstrncpy(buf, cpu->bogomips, bufsz);
+		else if (cpu->type->bogomips)
+			xstrncpy(buf, cpu->type->bogomips, bufsz);
 		break;
 	case COL_CPU_CORE:
 		fill_id(cxt, cpu, core, buf, bufsz);

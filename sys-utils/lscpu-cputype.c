@@ -146,7 +146,8 @@ struct cpuinfo_pattern {
 /* field identifiers (field name may be different on different archs) */
 enum {
 	PAT_ADDRESS_SIZES,
-	PAT_BOGOMIPS,
+	PAT_BOGOMIPS,		/* global */
+	PAT_BOGOMIPS_CPU,	/* per-cpu */
 	PAT_CPU,
 	PAT_FAMILY,
 	PAT_FEATURES,
@@ -189,7 +190,6 @@ static const struct cpuinfo_pattern type_patterns[] =
 	DEF_PAT_CPUTYPE( "CPU variant",		PAT_VARIANT,	stepping),	/* aarch64 */
 	DEF_PAT_CPUTYPE( "Features",		PAT_FEATURES,	flags),		/* aarch64 */
 	DEF_PAT_CPUTYPE( "address sizes",	PAT_ADDRESS_SIZES,	addrsz),/* x86 */
-	DEF_PAT_CPUTYPE( "bogomips",		PAT_BOGOMIPS,	bogomips),
 	DEF_PAT_CPUTYPE( "bogomips per cpu",	PAT_BOGOMIPS,	bogomips),	/* s390 */
 	DEF_PAT_CPUTYPE( "cpu",			PAT_CPU,	modelname),	/* ppc, sparc */
 	DEF_PAT_CPUTYPE( "cpu family",		PAT_FAMILY,	family),
@@ -220,11 +220,12 @@ static const struct cpuinfo_pattern type_patterns[] =
 static const struct cpuinfo_pattern cpu_patterns[] =
 {
 	/* Sort by fields name! */
-	DEF_PAT_CPU( "cpu MHz",		PAT_MHZ,	mhz),
-	DEF_PAT_CPU( "cpu MHz dynamic",	PAT_MHZ_DYNAMIC,dynamic_mhz),	/* s390 */
-	DEF_PAT_CPU( "cpu MHz static",	PAT_MHZ_STATIC,	static_mhz),	/* s390 */
-	DEF_PAT_CPU( "cpu number",	PAT_PROCESSOR,  logical_id),	/* s390 */
-        DEF_PAT_CPU( "processor",	PAT_PROCESSOR,	logical_id),
+	DEF_PAT_CPU( "bogomips",	PAT_BOGOMIPS_CPU, bogomips),
+	DEF_PAT_CPU( "cpu MHz dynamic",	PAT_MHZ_DYNAMIC,  dynamic_mhz),	/* s390 */
+	DEF_PAT_CPU( "cpu MHz static",	PAT_MHZ_STATIC,	  static_mhz),	/* s390 */
+	DEF_PAT_CPU( "cpu MHz",		PAT_MHZ,	  mhz),
+	DEF_PAT_CPU( "cpu number",	PAT_PROCESSOR,    logical_id),	/* s390 */
+        DEF_PAT_CPU( "processor",	PAT_PROCESSOR,	  logical_id),
 
 };
 
@@ -490,6 +491,8 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 				pr->curr_type->dynamic_mhz = xstrdup(value);
 			if (pattern->id == PAT_MHZ_STATIC && pr->curr_type && !pr->curr_type->static_mhz)
 				pr->curr_type->static_mhz = xstrdup(value);
+			if (pattern->id == PAT_BOGOMIPS_CPU && pr->curr_type && !pr->curr_type->bogomips)
+				pr->curr_type->bogomips = xstrdup(value);
 			break;
 		case CPUINFO_LINE_CPUTYPE:
 			if (pr->curr_type && is_different_cputype(pr->curr_type, pattern->offset, value)) {
