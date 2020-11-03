@@ -424,6 +424,8 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 {
 	FILE *fp;
 	char buf[BUFSIZ];
+	size_t i;
+	struct lscpu_cputype *ct;
 	struct cpuinfo_parser _pr = { .cxt = cxt }, *pr = &_pr;
 
 	assert(cxt->npossibles);	/* lscpu_create_cpus() required */
@@ -519,6 +521,16 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 
 	fclose(fp);
 	lscpu_sort_caches(cxt->ecaches, cxt->necaches);
+
+	/* Set the default type to CPUs which are missing (or not parsed)
+	 * in cpuinfo */
+	ct = lscpu_cputype_get_default(cxt);
+	for (i = 0; i < cxt->npossibles; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+
+		if (cpu && !cpu->type)
+			lscpu_cpu_set_type(cpu, ct);
+	}
 
 	return 0;
 }
