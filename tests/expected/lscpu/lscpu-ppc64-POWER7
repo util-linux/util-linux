@@ -1,18 +1,18 @@
 CPU(s):              16
 On-line CPU(s) list: 0-15
+Model name:          POWER7 (architected), altivec supported
+Model:               2.1 (pvr 003f 0201)
 Thread(s) per core:  4
 Core(s) per socket:  1
 Socket(s):           4
-NUMA node(s):        1
-Model:               2.1 (pvr 003f 0201)
-Model name:          POWER7 (architected), altivec supported
 L1d cache:           128 KiB
 L1i cache:           128 KiB
+NUMA node(s):        1
 NUMA node0 CPU(s):   0-15
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID
-# starting from zero.
+# starting usually from zero.
 # CPU,Core,Socket,Node,,L1d,L1i
 0,0,0,0,,0,0
 1,0,0,0,,0,0
@@ -33,7 +33,7 @@ NUMA node0 CPU(s):   0-15
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID
-# starting from zero.
+# starting usually from zero.
 # CPU,Core,Socket,Node,,L1d,L1i
 0,0,-,0,,0,0
 1,0,-,0,,0,0

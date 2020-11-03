@@ -1,15 +1,15 @@
 CPU op-mode(s):      32-bit, 64-bit
 CPU(s):              6
 On-line CPU(s) list: 6,7,10,11,14,15
+Model name:          TI UltraSparc II  (BlackBird)
 Thread(s) per core:  1
 Core(s) per socket:  1
 Socket(s):           6
-Model name:          TI UltraSparc II  (BlackBird)
 Flags:               sun4u
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID
-# starting from zero.
+# starting usually from zero.
 # CPU,Core,Socket,Node
 6,0,0,
 7,1,1,
@@ -20,7 +20,7 @@ Flags:               sun4u
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID
-# starting from zero.
+# starting usually from zero.
 # CPU,Core,Socket,Node
 6,0,-,
 7,0,-,
