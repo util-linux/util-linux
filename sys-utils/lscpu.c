@@ -628,7 +628,7 @@ static void print_cpus_parsable(struct lscpu_cxt *cxt, int cols[], size_t ncols)
 	printf(_(
 	"# The following is the parsable format, which can be fed to other\n"
 	"# programs. Each different item in every column has an unique ID\n"
-	"# starting from zero.\n"));
+	"# starting usually from zero.\n"));
 
 	fputs("# ", stdout);
 	for (i = 0; i < ncols; i++) {
