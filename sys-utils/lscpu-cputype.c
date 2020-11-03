@@ -221,9 +221,9 @@ static const struct cpuinfo_pattern cpu_patterns[] =
 {
 	/* Sort by fields name! */
 	DEF_PAT_CPU( "bogomips",	PAT_BOGOMIPS_CPU, bogomips),
+	DEF_PAT_CPU( "cpu MHz",		PAT_MHZ,	  mhz),
 	DEF_PAT_CPU( "cpu MHz dynamic",	PAT_MHZ_DYNAMIC,  dynamic_mhz),	/* s390 */
 	DEF_PAT_CPU( "cpu MHz static",	PAT_MHZ_STATIC,	  static_mhz),	/* s390 */
-	DEF_PAT_CPU( "cpu MHz",		PAT_MHZ,	  mhz),
 	DEF_PAT_CPU( "cpu number",	PAT_PROCESSOR,    logical_id),	/* s390 */
         DEF_PAT_CPU( "processor",	PAT_PROCESSOR,	  logical_id),
 
@@ -330,7 +330,6 @@ static const struct cpuinfo_pattern *cpuinfo_parse_line(char *str, char **value,
 		return NULL;
 
 	key.pattern = key_cleanup(buf, keynum);
-
 	/* CPU-type */
 	if ((pat = bsearch(&key, type_patterns,
 			ARRAY_SIZE(type_patterns),
