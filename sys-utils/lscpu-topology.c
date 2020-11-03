@@ -102,7 +102,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	DBG(TYPE, ul_debugobj(ct, "reading %s/%s/%s topology",
 				ct->vendor ?: "", ct->model ?: "", ct->modelname ?:""));
 
-	for (i = 0; i < npos; i++) {
+	for (i = 0; i < cxt->npossibles; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
 		cpu_set_t *thread_siblings = NULL, *core_siblings = NULL;
 		cpu_set_t *book_siblings = NULL, *drawer_siblings = NULL;
@@ -115,8 +115,6 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		if (ul_path_accessf(sys, F_OK,
 					"cpu%d/topology/thread_siblings", num) != 0)
 			continue;
-
-		/*DBG(TYPE, ul_debugobj(ct, " #%d", num));*/
 
 		/* read topology maps */
 		ul_path_readf_cpuset(sys, &thread_siblings, cxt->maxcpus,
@@ -192,22 +190,13 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			fclose(fd);
 	}
 
-	if (ct->mtid)
-		ct->nthreads_per_core = atoi(ct->mtid) + 1;
-	else
-		ct->nthreads_per_core = nthreads;
+	ct->nthreads_per_core = ct->mtid ? atoi(ct->mtid) + 1 : nthreads;
 
 	if (!sw_topo) {
-		ct->ndrawers_per_system = ct->nbooks_per_drawer =
-			ct->nsockets_per_book = ct->ncores_per_socket = 0;
-		if (!ct->ncores_per_socket && ct->nsockets)
-			ct->ncores_per_socket = ct->ncores / ct->nsockets;
-		if (!ct->nsockets_per_book && ct->nbooks)
-			ct->nsockets_per_book = ct->nsockets / ct->nbooks;
-		if (!ct->nbooks_per_drawer && ct->ndrawers)
-			ct->nbooks_per_drawer = ct->nbooks / ct->ndrawers;
-		if (ct->ndrawers_per_system)
-			ct->ndrawers_per_system = ct->ndrawers;
+		ct->ncores_per_socket = ct->nsockets ? ct->ncores / ct->nsockets : 0;
+		ct->nsockets_per_book = ct->nbooks   ? ct->nsockets / ct->nbooks : 0;
+		ct->nbooks_per_drawer = ct->ndrawers ? ct->nbooks / ct->ndrawers : 0;
+		ct->ndrawers_per_system = ct->ndrawers;
 	}
 
 	DBG(TYPE, ul_debugobj(ct, " nthreads: %zu (per core)", ct->nthreads_per_core));

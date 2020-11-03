@@ -832,15 +832,16 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 
 	add_summary_n(tb, sec, _("Thread(s) per core:"), ct->nthreads_per_core);
 	add_summary_n(tb, sec, _("Core(s) per socket:"), ct->ncores_per_socket);
+
 	if (ct->nbooks) {
 		add_summary_n(tb, sec, _("Socket(s) per book:"), ct->nsockets_per_book);
-		if (ct->ndrawers_per_system) {
+		if (ct->ndrawers_per_system || ct->ndrawers) {
 			add_summary_n(tb, sec, _("Book(s) per drawer:"), ct->nbooks_per_drawer);
-			add_summary_n(tb, sec, _("Drawer(s):"), ct->ndrawers_per_system);
+			add_summary_n(tb, sec, _("Drawer(s):"), ct->ndrawers_per_system ?: ct->ndrawers);
 		} else
-			add_summary_n(tb, sec, _("Book(s):"), ct->nbooks);
+			add_summary_n(tb, sec, _("Book(s):"), ct->nbooks_per_drawer ?: ct->nbooks);
 	} else
-		add_summary_n(tb, sec, _("Socket(s):"), ct->nsockets);
+		add_summary_n(tb, sec, _("Socket(s):"), ct->nsockets_per_book ?: ct->nsockets);
 
 	if (ct->stepping)
 		add_summary_s(tb, sec, _("Stepping:"), ct->stepping);
