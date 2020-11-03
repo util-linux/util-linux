@@ -45,16 +45,16 @@ void lscpu_unref_cpu(struct lscpu_cpu *cpu)
  */
 int lscpu_create_cpus(struct lscpu_cxt *cxt, cpu_set_t *cpuset, size_t setsize)
 {
-	size_t n;
+	size_t n, i;
 
 	assert(!cxt->cpus);
 
 	cxt->npossibles = CPU_COUNT_S(setsize, cpuset);
 	cxt->cpus = xcalloc(1, cxt->npossibles * sizeof(struct lscpu_cpu *));
 
-	for (n = 0; n < cxt->npossibles; n++) {
+	for (n = 0, i = 0; n < (size_t) cxt->maxcpus && i < cxt->npossibles; n++) {
 		if (CPU_ISSET_S(n, setsize, cpuset))
-			cxt->cpus[n] = lscpu_new_cpu(n);
+			cxt->cpus[i++] = lscpu_new_cpu(n);
 	}
 
 	return 0;
