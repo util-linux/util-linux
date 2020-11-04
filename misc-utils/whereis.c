@@ -469,9 +469,6 @@ static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
 				want & BIN_DIR ? "bin" : "",
 				want & MAN_DIR ? "man" : "",
 				want & SRC_DIR ? "src" : ""));
-	p = strrchr(patbuf, '.');
-	if (p)
-		*p = '\0';
 
 	if (!uflag)
 		/* if -u not specified then we always print the pattern */
