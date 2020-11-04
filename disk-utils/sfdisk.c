@@ -2165,7 +2165,8 @@ int main(int argc, char *argv[])
 		{ NULL, 0, NULL, 0 },
 	};
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'F','J','d'},                 /* --list-free --json --dump */
+		{ 'F','d'},                     /* --list-free --dump */
+		{ 'F','J'},                     /* --list-free --json */
 		{ 's','u'},			/* --show-size --unit */
 		{ 0 }
 	};
