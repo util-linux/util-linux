@@ -91,7 +91,7 @@ struct column_control {
 	wchar_t	**ents;		/* input entries */
 	size_t	nents;		/* number of entries */
 	size_t	maxlength;	/* longest input record (line) */
-	size_t  maxncols;	/* maximal numer of input columns */
+	size_t  maxncols;	/* maximal number of input columns */
 
 	unsigned int greedy :1,
 		     json :1,

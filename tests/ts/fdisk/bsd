@@ -105,7 +105,7 @@ $TS_CMD_HEXDUMP -C ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
-ts_log "Create 2st primary partition"
+ts_log "Create 2nd primary partition"
 echo -e "${FDISK_CMD_CREATE_PRIMARY2}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 $TS_CMD_HEXDUMP -C ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG

@@ -2289,7 +2289,7 @@ AS_IF([test "x$with_econf" != xno], [
 AM_CONDITIONAL([HAVE_ECONF], [test "x$have_econf" = xyes])
 
 AC_ARG_WITH([vendordir],
-  AS_HELP_STRING([--with-vendordir=DIR], [Direcotry for distribution provided configuration files]),
+  AS_HELP_STRING([--with-vendordir=DIR], [Directory for distribution provided configuration files]),
   [], []
 )
 AC_SUBST([vendordir], [$with_vendordir])

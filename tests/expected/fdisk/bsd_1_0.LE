@@ -51,7 +51,7 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>1       2048  4095    2048   1M 83 Linux
 -------------------
 
-Create 2st primary partition
+Create 2nd primary partition
 00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
 *
 000001b0  00 00 00 00 00 00 00 00  01 00 00 00 00 00 00 20  |............... |

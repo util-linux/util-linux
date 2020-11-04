@@ -361,7 +361,7 @@ char *next_proc_partition(FILE **f)
 }
 
 int print_device_pt(struct fdisk_context *cxt, char *device, int warnme,
-		    int verify, int seperator)
+		    int verify, int separator)
 {
 	if (fdisk_assign_device(cxt, device, 1) != 0) {	/* read-only */
 		if (warnme || errno == EACCES)
@@ -369,7 +369,7 @@ int print_device_pt(struct fdisk_context *cxt, char *device, int warnme,
 		return -1;
 	}
 
-	if (seperator)
+	if (separator)
 		fputs("\n\n", stdout);
 
 	list_disk_geometry(cxt);
@@ -384,7 +384,7 @@ int print_device_pt(struct fdisk_context *cxt, char *device, int warnme,
 }
 
 int print_device_freespace(struct fdisk_context *cxt, char *device, int warnme,
-			   int seperator)
+			   int separator)
 {
 	if (fdisk_assign_device(cxt, device, 1) != 0) {	/* read-only */
 		if (warnme || errno == EACCES)
@@ -392,7 +392,7 @@ int print_device_freespace(struct fdisk_context *cxt, char *device, int warnme,
 		return -1;
 	}
 
-	if (seperator)
+	if (separator)
 		fputs("\n\n", stdout);
 
 	list_freespace(cxt);

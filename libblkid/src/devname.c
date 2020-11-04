@@ -480,11 +480,11 @@ sysfs_probe_all(blkid_cache cache, int only_if_new, int only_removable)
 		if (ul_path_read_u32(pc, &removable, "removable") != 0)
 			removable = 0;
 
-		/* ingnore empty devices */
+		/* ignore empty devices */
 		if (!size)
 			goto next;
 
-		/* accept removeable if only removable requested */
+		/* accept removable if only removable requested */
 		if (only_removable) {
 			if (!removable)
 				goto next;
