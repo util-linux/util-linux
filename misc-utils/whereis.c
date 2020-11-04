@@ -414,8 +414,6 @@ static int filename_equal(const char *cp, const char *dp)
 		cp++, dp++, i--;
 	if (*cp == 0 && *dp == 0)
 		return 1;
-	while (isdigit(*dp))
-		dp++;
 	if (*cp == 0 && *dp++ == '.') {
 		--i;
 		while (i > 0 && *dp)
