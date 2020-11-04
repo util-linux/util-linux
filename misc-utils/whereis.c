@@ -107,10 +107,12 @@ static const char *bindirs[] = {
 	"/usr/local/lib/" MULTIARCHTRIPLET,
 #endif
 	"/usr/lib",
+	"/usr/lib32",
 	"/usr/lib64",
 	"/etc",
 	"/usr/etc",
 	"/lib",
+	"/lib32",
 	"/lib64",
 	"/usr/games",
 	"/usr/games/bin",
