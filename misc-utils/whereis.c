@@ -406,6 +406,8 @@ static int filename_equal(const char *cp, const char *dp)
 		i -= 3;
 	else if (i > 3 && !strcmp(dp + i - 4, ".bz2"))
 		i -= 4;
+	else if (i > 3 && !strcmp(dp + i - 4, ".zst"))
+		i -= 4;
 	while (*cp && *dp && *cp == *dp)
 		cp++, dp++, i--;
 	if (*cp == 0 && *dp == 0)
