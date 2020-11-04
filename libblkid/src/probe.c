@@ -577,7 +577,7 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 }
 
 /*
- * Search in buffers we already in memory
+ * Search in buffers we already have in memory
  */
 static struct blkid_bufinfo *get_cached_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 {

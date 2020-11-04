@@ -86,7 +86,7 @@ char *blkid_get_cache_filename(struct blkid_config *conf)
  * @cache: pointer to return cache handler
  * @filename: path to the cache file or NULL for the default path
  *
- * Allocates and initialize library cache handler.
+ * Allocates and initializes library cache handler.
  *
  * Returns: 0 on success or number less than zero in case of error.
  */
@@ -183,7 +183,7 @@ void blkid_gc_cache(blkid_cache cache)
 	list_for_each_safe(p, pnext, &cache->bic_devs) {
 		blkid_dev dev = list_entry(p, struct blkid_struct_dev, bid_devs);
 		if (stat(dev->bid_name, &st) < 0) {
-			DBG(CACHE, ul_debugobj(cache, "freeing non-exiting %s", dev->bid_name));
+			DBG(CACHE, ul_debugobj(cache, "freeing non-existing %s", dev->bid_name));
 			blkid_free_dev(dev);
 			cache->bic_flags |= BLKID_BIC_FL_CHANGED;
 		} else {

@@ -36,7 +36,7 @@
 #endif
 
 #if !defined(HAVE_GETRANDOM) && defined(SYS_getrandom)
-/* libc without function, but we have syscal */
+/* libc without function, but we have syscall */
 #define GRND_NONBLOCK 0x01
 #define GRND_RANDOM 0x02
 static int getrandom(void *buf, size_t buflen, unsigned int flags)

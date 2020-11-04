@@ -153,8 +153,8 @@ static inline int update_str(char **dest, const char *src)
 	return 0;
 }
 
-/* This function do NOT overwrite (replace) the string in @new, the string in
- * the @new has to be NULL otherwise this is no-op */
+/* This function does NOT overwrite (replace) the string in @new, the string in
+ * @new has to be NULL otherwise this is no-op. */
 static inline int cpy_str_at_offset(void *new, const void *old, size_t offset)
 {
 	char **o = (char **) ((char *) old + offset);
