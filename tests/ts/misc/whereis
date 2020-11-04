@@ -20,11 +20,31 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_WHEREIS"
 
-LS_COUNT=$($TS_CMD_WHEREIS ls | wc -w)
-if [ $LS_COUNT -lt 2 ]; then
-	echo "ls binary nor manual not found?" > $TS_OUTPUT
-else
-	echo "success" > $TS_OUTPUT
-fi
+BIN_DIR="$(mktemp -d "${TS_OUTDIR}/binXXXXXXXXXXXXX")"
+MAN_DIR="$(mktemp -d "${TS_OUTDIR}/manXXXXXXXXXXXXX")"
+touch "$BIN_DIR/fsck"
+touch "$MAN_DIR/fsck.8.zst"
+touch "$BIN_DIR/fsck.ext4"
+touch "$MAN_DIR/fsck.ext4.8.zst"
+touch "$BIN_DIR/fsck.minix"
+touch "$BIN_DIR/python"
+touch "$MAN_DIR/python.1.gz"
+touch "$BIN_DIR/python3"
+touch "$MAN_DIR/python3.1"
+touch "$BIN_DIR/python3.8"
+touch "$BIN_DIR/python3.8-config"
+touch "$MAN_DIR/python3.8.1"
+
+for COMMAND in fsck fsck.ext4 python python3 python3.8
+do
+	COUNT=$($TS_CMD_WHEREIS -B $BIN_DIR -M $MAN_DIR -f $COMMAND | wc -w)
+	if [ $COUNT -eq 3 ]; then
+		echo "$COMMAND success" >> $TS_OUTPUT
+	else
+		echo "$COMMAND failure" >> $TS_OUTPUT
+	fi
+done
+
+rm -rf "$BIN_DIR" "$MAN_DIR"
 
 ts_finalize
