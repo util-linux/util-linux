@@ -398,13 +398,13 @@ static int filename_equal(const char *cp, const char *dp)
 
 	if (dp[0] == 's' && dp[1] == '.' && filename_equal(cp, dp + 2))
 		return 1;
-	if (!strcmp(dp + i - 2, ".Z"))
+	if (i > 1 && !strcmp(dp + i - 2, ".Z"))
 		i -= 2;
-	else if (!strcmp(dp + i - 3, ".gz"))
+	else if (i > 2 && !strcmp(dp + i - 3, ".gz"))
 		i -= 3;
-	else if (!strcmp(dp + i - 3, ".xz"))
+	else if (i > 2 && !strcmp(dp + i - 3, ".xz"))
 		i -= 3;
-	else if (!strcmp(dp + i - 4, ".bz2"))
+	else if (i > 3 && !strcmp(dp + i - 4, ".bz2"))
 		i -= 4;
 	while (*cp && *dp && *cp == *dp)
 		cp++, dp++, i--;
