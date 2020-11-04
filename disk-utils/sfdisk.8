@@ -145,13 +145,36 @@ List the free unpartitioned areas on all or the specified devices.
 .TP
 .BR "\-\-part\-attrs \fIdevice partition-number " [ \fIattributes ]
 Change the GPT partition attribute bits.  If \fIattributes\fR is not specified,
-then print the current partition settings.
+then print the current partition settings.  The \fIattributes\fR argument is a
+comma- or space-delimited list of bits numbers or bit names.  For example, the
+string "RequiredPartition,50,51" sets three bits.  The currently supported
+attribute bits are:
+.RS
+.TP
+.BR "Bit 0 (RequiredPartition)"
+If this bit is set, the partition is required for the platform to function. The
+creator of the partition indicates that deletion or modification of the contents
+can result in loss of platform features or failure for the platform to boot or
+operate. The system cannot function normally if this partition is removed, and it
+should be considered part of the hardware of the system.
+.TP
+.BR "Bit 1 (NoBlockIOProtocol)"
+EFI firmware should ignore the content of the partition and not try to read from it.
+.TP
+.BR "Bit 2 (LegacyBIOSBootable)"
+The partition may be bootable by legacy BIOS firmware.
+.TP
+.BR "Bits 3-47"
+Undefined and must be zero. Reserved for expansion by future versions of the
+UEFI specification.
+.TP
+.BR "Bits 48-63"
+Reserved for GUID specific use. The use of these bits will vary depending on
+the partition type.  For example Microsoft uses bit 60 to indicate read-only,
+61 for shadow copy of another partition, 62 for hidden partitions and 63 to
+disable automount.
+.RE
 .sp
-The \fIattributes\fR argument is a
-comma- or space-delimited list of bits.  The currently supported attribute
-bits are: RequiredPartition, NoBlockIOProtocol, LegacyBIOSBootable
-and GUID-specific bits in the range from 48 to 63.  For example, the string
-"RequiredPartition,50,51" sets three bits.
 .TP
 .BR "\-\-part\-label \fIdevice partition-number " [ \fIlabel ]
 Change the GPT partition name (label).  If \fIlabel\fR is not specified,
