@@ -147,6 +147,7 @@ struct blkid_idmag
 	const char	*magic;		/* magic string */
 	unsigned int	len;		/* length of magic */
 
+	const char	*hoff;		/* hint which contains byte offset to kboff */
 	long		kboff;		/* kilobyte offset of superblock */
 	unsigned int	sboff;		/* byte offset within superblock */
 };
