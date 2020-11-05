@@ -983,6 +983,14 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 		if (pr->flags & BLKID_FL_CDROM_DEV) {
 			cdrom_size_correction(pr, last_written);
+
+# ifdef CDROMMULTISESSION
+			if (!pr->off && blkid_probe_get_hint(pr, "session_offset", NULL) < 0) {
+				struct cdrom_multisession multisession = { .addr_format = CDROM_LBA };
+				if (ioctl(fd, CDROMMULTISESSION, &multisession) == 0 && multisession.xa_flag)
+					blkid_probe_set_hint(pr, "session_offset", (multisession.addr.lba << 11));
+			}
+# endif
 		}
 	}
 #endif
