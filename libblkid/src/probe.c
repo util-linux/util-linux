@@ -864,6 +864,9 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	struct stat sb;
 	uint64_t devsiz = 0;
 	char *dm_uuid = NULL;
+#ifdef CDROM_GET_CAPABILITY
+	long last_written = 0;
+#endif
 
 	blkid_reset_probe(pr);
 	blkid_probe_reset_buffers(pr);
@@ -945,19 +948,38 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	else if (S_ISBLK(sb.st_mode) &&
 	    !blkid_probe_is_tiny(pr) &&
 	    !dm_uuid &&
-	    blkid_probe_is_wholedisk(pr) &&
-	    ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0) {
+	    blkid_probe_is_wholedisk(pr)) {
 
+		/**
+		 * pktcdvd.ko accepts only these ioctls:
+		 *   CDROMEJECT CDROMMULTISESSION CDROMREADTOCENTRY
+		 *   CDROM_LAST_WRITTEN CDROM_SEND_PACKET SCSI_IOCTL_SEND_COMMAND
+		 * So CDROM_GET_CAPABILITY cannot be used for detecting pktcdvd
+		 * devices. But CDROM_GET_CAPABILITY and CDROM_DRIVE_STATUS are
+		 * fast so use them for detecting if medium is present. In any
+		 * case use last written block form CDROM_LAST_WRITTEN.
+		 */
+
+		if (ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0) {
 # ifdef CDROM_DRIVE_STATUS
-		switch (ioctl(fd, CDROM_DRIVE_STATUS, CDSL_CURRENT)) {
-		case CDS_TRAY_OPEN:
-		case CDS_NO_DISC:
-			errno = ENOMEDIUM;
-			goto err;
-		}
+			switch (ioctl(fd, CDROM_DRIVE_STATUS, CDSL_CURRENT)) {
+			case CDS_TRAY_OPEN:
+			case CDS_NO_DISC:
+				errno = ENOMEDIUM;
+				goto err;
+			}
 # endif
-		pr->flags |= BLKID_FL_CDROM_DEV;
-		cdrom_size_correction(pr);
+			pr->flags |= BLKID_FL_CDROM_DEV;
+		}
+
+# ifdef CDROM_LAST_WRITTEN
+		if (ioctl(fd, CDROM_LAST_WRITTEN, &last_written) == 0)
+			pr->flags |= BLKID_FL_CDROM_DEV;
+# endif
+
+		if (pr->flags & BLKID_FL_CDROM_DEV) {
+			cdrom_size_correction(pr);
+		}
 	}
 #endif
 	free(dm_uuid);
