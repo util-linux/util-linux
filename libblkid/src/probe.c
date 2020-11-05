@@ -818,11 +818,15 @@ failed:
  * readable by read(2). We have to reduce the probing area to avoid unwanted
  * I/O errors in probing functions. It seems that unreadable are always last 2
  * or 3 CD blocks (CD block size is 2048 bytes, it means 12 in 512-byte
- * sectors).
+ * sectors). Linux kernel reports (CDROM_LAST_WRITTEN) also location of last
+ * written block, so we will reduce size based on it too.
  */
-static void cdrom_size_correction(blkid_probe pr)
+static void cdrom_size_correction(blkid_probe pr, uint64_t last_written)
 {
 	uint64_t n, nsectors = pr->size >> 9;
+
+	if (last_written && nsectors > ((last_written+1) << 2))
+		nsectors = (last_written+1) << 2;
 
 	for (n = nsectors - 12; n < nsectors; n++) {
 		if (!is_sector_readable(pr->fd, n))
@@ -978,7 +982,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 # endif
 
 		if (pr->flags & BLKID_FL_CDROM_DEV) {
-			cdrom_size_correction(pr);
+			cdrom_size_correction(pr, last_written);
 		}
 	}
 #endif
