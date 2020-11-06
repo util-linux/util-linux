@@ -1651,7 +1651,11 @@ if test "x$matriplet" != "x"; then
   AC_DEFINE_UNQUOTED([MULTIARCHTRIPLET], ["$matriplet"],
   ["Multi-arch triplet for whereis library search path"])
 fi
-UL_BUILD_INIT([whereis], [yes])
+AC_ARG_ENABLE([whereis],
+  AS_HELP_STRING([--disable-whereis], [do not build whereis]),
+  [], [UL_DEFAULT_ENABLE([whereis], [check])]
+)
+UL_BUILD_INIT([whereis])
 AM_CONDITIONAL([BUILD_WHEREIS], [test "x$build_whereis" = xyes])
 
 UL_BUILD_INIT([getopt], [yes])
