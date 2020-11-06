@@ -14,6 +14,7 @@
 #include "c.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "fileutils.h"
 
 /*
  * Always return EXIT_FAILURE (1), don't try to be smart!
@@ -97,12 +98,7 @@ int main(int argc, char *argv[])
 	if (c < 0 || !S_ISREG(st.st_mode))
 		goto dflt;
 	else {
-		char buf[BUFSIZ];
-		ssize_t rd;
-
-		while ((rd = read(fd, buf, sizeof(buf))) > 0)
-			ignore_result( write(STDOUT_FILENO, buf, rd) );
-
+		ul_copy_file(fd, STDOUT_FILENO);
 		close(fd);
 		return EXIT_FAILURE;
 	}
