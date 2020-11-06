@@ -6,10 +6,12 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <sys/sendfile.h>
 #include <string.h>
 
 #include "c.h"
@@ -248,8 +250,7 @@ char *stripoff_last_component(char *path)
 	return p + 1;
 }
 
-/* Copies the contents of a file. Returns -1 on read error, -2 on write error. */
-int ul_copy_file(int from, int to)
+static int copy_file_simple(int from, int to)
 {
 	ssize_t nr, nw, off;
 	char buf[8 * 1024];
@@ -263,5 +264,30 @@ int ul_copy_file(int from, int to)
 #ifdef HAVE_EXPLICIT_BZERO
 	explicit_bzero(buf, sizeof(buf));
 #endif
+	return 0;
+}
+
+/* Copies the contents of a file. Returns -1 on read error, -2 on write error. */
+int ul_copy_file(int from, int to)
+{
+	struct stat st;
+	ssize_t nw;
+	off_t left;
+
+	if (fstat(from, &st) == -1)
+		return -1;
+	if (!S_ISREG(st.st_mode))
+		return copy_file_simple(from, to);
+	for (left = st.st_size; left != 0; left -= nw) {
+		if ((nw = sendfile(to, from, NULL, left)) < 0)
+			return copy_file_simple(from, to);
+		if (!nw)
+			return 0;
+	}
+	/* For extra robustness, treat st_size as advisory and ensure that we
+	 * actually get EOF. */
+	while ((nw = sendfile(to, from, NULL, 1024*1024)) != 0)
+		if (nw < 0)
+			return copy_file_simple(from, to);
 	return 0;
 }
