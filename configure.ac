@@ -530,6 +530,7 @@ AC_CHECK_FUNCS([ \
 	qsort_r \
 	rpmatch \
 	scandirat \
+	sendfile \
 	setprogname \
 	setresgid \
 	setresuid \

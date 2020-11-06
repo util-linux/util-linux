@@ -11,7 +11,9 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#ifdef HAVE_SENDFILE
 #include <sys/sendfile.h>
+#endif
 #include <string.h>
 
 #include "c.h"
@@ -270,6 +272,7 @@ static int copy_file_simple(int from, int to)
 /* Copies the contents of a file. Returns -1 on read error, -2 on write error. */
 int ul_copy_file(int from, int to)
 {
+#ifdef HAVE_SENDFILE
 	struct stat st;
 	ssize_t nw;
 	off_t left;
@@ -290,4 +293,7 @@ int ul_copy_file(int from, int to)
 		if (nw < 0)
 			return copy_file_simple(from, to);
 	return 0;
+#else
+	return copy_file_simple(from, to);
+#endif
 }
