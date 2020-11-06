@@ -529,17 +529,18 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	prev = 0;
 
 	for (cc = 1, i = 0; i < nsectors && nbytes > 0; i += step, cc++) {
+
+		if (nbytes < step_bytes) {
+			DBG(MISC, ul_debug("aligning step #%05zu from %ju to %ju",
+						cc, step_bytes, nbytes));
+			step_bytes = nbytes;
+		}
+		nbytes -= step_bytes;
+
 		if (backward)
 			src -= step_bytes, dst -= step_bytes;
 
 		DBG(MISC, ul_debug("#%05zu: src=%ju dst=%ju", cc, src, dst));
-
-		if (nbytes < step_bytes) {
-			DBG(MISC, ul_debug(" aligning step from %ju to %ju",
-						step_bytes, nbytes));
-			step_bytes = nbytes;
-		}
-		nbytes -= step_bytes;
 
 		if (!sf->noact) {
 			/* read source */
@@ -611,6 +612,12 @@ next:
 			fputc(' ', stdout);
 		fflush(stdout);
 		fputc('\r', stdout);
+
+		if (i > nsectors)
+			/* see for() above; @i has to be greater than @nsectors
+			 * on success due to i += step */
+			i = nsectors;
+
 		fprintf(stdout, _("Moved %ju from %ju sectors (%.0f%%)."),
 				i, nsectors,
 				100.0 / ((double) nsectors/(i+1)));
