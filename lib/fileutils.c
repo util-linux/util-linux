@@ -177,7 +177,7 @@ void close_all_fds(const int exclude[], size_t exsz)
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
-		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds}", argv[0]);
+		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds,copy-file}", argv[0]);
 
 	if (strcmp(argv[1], "--mkstemp") == 0) {
 		FILE *f;
@@ -197,6 +197,12 @@ int main(int argc, char *argv[])
 		ignore_result( dup(STDIN_FILENO) );
 
 		close_all_fds(wanted_fds, ARRAY_SIZE(wanted_fds));
+	} else if (strcmp(argv[1], "--copy-file") == 0) {
+		int ret = ul_copy_file(STDIN_FILENO, STDOUT_FILENO);
+		if (ret == -1)
+			err(EXIT_FAILURE, "read");
+		else if (ret == -2)
+			err(EXIT_FAILURE, "write");
 	}
 	return EXIT_SUCCESS;
 }
