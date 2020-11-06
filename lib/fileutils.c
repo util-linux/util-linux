@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "c.h"
+#include "all-io.h"
 #include "fileutils.h"
 #include "pathnames.h"
 
@@ -254,13 +255,12 @@ char *stripoff_last_component(char *path)
 
 static int copy_file_simple(int from, int to)
 {
-	ssize_t nr, nw, off;
+	ssize_t nr;
 	char buf[BUFSIZ];
 
-	while ((nr = read(from, buf, sizeof(buf))) > 0)
-		for (off = 0; nr > 0; nr -= nw, off += nw)
-			if ((nw = write(to, buf + off, nr)) < 0)
-				return -2;
+	while ((nr = read_all(from, buf, sizeof(buf))) > 0)
+		if (write_all(to, buf, nr) == -1)
+			return -2;
 	if (nr < 0)
 		return -1;
 #ifdef HAVE_EXPLICIT_BZERO
