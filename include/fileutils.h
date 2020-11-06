@@ -74,4 +74,6 @@ static inline struct dirent *xreaddir(DIR *dp)
 
 extern void close_all_fds(const int exclude[], size_t exsz);
 
+int ul_copy_file(int from, int to);
+
 #endif /* UTIL_LINUX_FILEUTILS */

@@ -88,23 +88,6 @@ static char *tmp_file;			/* tmp file */
 
 void pw_error (char *, int, int);
 
-static void copyfile(int from, int to)
-{
-	int nr, nw, off;
-	char buf[8 * 1024];
-
-	while ((nr = read(from, buf, sizeof(buf))) > 0)
-		for (off = 0; nr > 0; nr -= nw, off += nw)
-			if ((nw = write(to, buf + off, nr)) < 0)
-				pw_error(tmp_file, 1, 1);
-
-	if (nr < 0)
-		pw_error(orig_file, 1, 1);
-#ifdef HAVE_EXPLICIT_BZERO
-	explicit_bzero(buf, sizeof(buf));
-#endif
-}
-
 static void pw_init(void)
 {
 	struct rlimit rlim;
@@ -139,14 +122,19 @@ static FILE * pw_tmpfile(int lockfd)
 {
 	FILE *fd;
 	char *tmpname = NULL;
+	int res;
 
 	if ((fd = xfmkstemp(&tmpname, "/etc", ".vipw")) == NULL) {
 		ulckpwdf();
 		err(EXIT_FAILURE, _("can't open temporary file"));
 	}
 
-	copyfile(lockfd, fileno(fd));
 	tmp_file = tmpname;
+	res = ul_copy_file(lockfd, fileno(fd));
+	if (res == -1)
+		pw_error(orig_file, 1, 1);
+	else if (res == -2)
+		pw_error(tmp_file, 1, 1);
 	return fd;
 }
 

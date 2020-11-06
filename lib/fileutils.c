@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <string.h>
 
 #include "c.h"
 #include "fileutils.h"
@@ -245,4 +246,22 @@ char *stripoff_last_component(char *path)
 		return NULL;
 	*p = '\0';
 	return p + 1;
+}
+
+/* Copies the contents of a file. Returns -1 on read error, -2 on write error. */
+int ul_copy_file(int from, int to)
+{
+	ssize_t nr, nw, off;
+	char buf[8 * 1024];
+
+	while ((nr = read(from, buf, sizeof(buf))) > 0)
+		for (off = 0; nr > 0; nr -= nw, off += nw)
+			if ((nw = write(to, buf + off, nr)) < 0)
+				return -2;
+	if (nr < 0)
+		return -1;
+#ifdef HAVE_EXPLICIT_BZERO
+	explicit_bzero(buf, sizeof(buf));
+#endif
+	return 0;
 }
