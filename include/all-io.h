@@ -67,13 +67,15 @@ static inline ssize_t read_all(int fd, char *buf, size_t count)
 	memset(buf, 0, count);
 	while (count > 0) {
 		ret = read(fd, buf, count);
-		if (ret <= 0) {
-			if (ret < 0 && (errno == EAGAIN || errno == EINTR) && (tries++ < 5)) {
+		if (ret < 0) {
+			if ((errno == EAGAIN || errno == EINTR) && (tries++ < 5)) {
 				xusleep(250000);
 				continue;
 			}
 			return c ? c : -1;
 		}
+		if (ret == 0)
+			return c;
 		tries = 0;
 		count -= ret;
 		buf += ret;
