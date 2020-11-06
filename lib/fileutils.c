@@ -255,7 +255,7 @@ char *stripoff_last_component(char *path)
 static int copy_file_simple(int from, int to)
 {
 	ssize_t nr, nw, off;
-	char buf[8 * 1024];
+	char buf[BUFSIZ];
 
 	while ((nr = read(from, buf, sizeof(buf))) > 0)
 		for (off = 0; nr > 0; nr -= nw, off += nw)
