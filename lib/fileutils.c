@@ -199,9 +199,9 @@ int main(int argc, char *argv[])
 		close_all_fds(wanted_fds, ARRAY_SIZE(wanted_fds));
 	} else if (strcmp(argv[1], "--copy-file") == 0) {
 		int ret = ul_copy_file(STDIN_FILENO, STDOUT_FILENO);
-		if (ret == -1)
+		if (ret == UL_COPY_READ_ERROR)
 			err(EXIT_FAILURE, "read");
-		else if (ret == -2)
+		else if (ret == UL_COPY_WRITE_ERROR)
 			err(EXIT_FAILURE, "write");
 	}
 	return EXIT_SUCCESS;
@@ -263,9 +263,9 @@ static int copy_file_simple(int from, int to)
 
 	while ((nr = read_all(from, buf, sizeof(buf))) > 0)
 		if (write_all(to, buf, nr) == -1)
-			return -2;
+			return UL_COPY_WRITE_ERROR;
 	if (nr < 0)
-		return -1;
+		return UL_COPY_READ_ERROR;
 #ifdef HAVE_EXPLICIT_BZERO
 	explicit_bzero(buf, sizeof(buf));
 #endif
@@ -280,7 +280,7 @@ int ul_copy_file(int from, int to)
 	ssize_t nw;
 
 	if (fstat(from, &st) == -1)
-		return -1;
+		return UL_COPY_READ_ERROR;
 	if (!S_ISREG(st.st_mode))
 		return copy_file_simple(from, to);
 	if (sendfile_all(to, from, NULL, st.st_size) < 0)

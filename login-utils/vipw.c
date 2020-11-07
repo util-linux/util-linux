@@ -131,9 +131,9 @@ static FILE * pw_tmpfile(int lockfd)
 
 	tmp_file = tmpname;
 	res = ul_copy_file(lockfd, fileno(fd));
-	if (res == -1)
+	if (res == UL_COPY_READ_ERROR)
 		pw_error(orig_file, 1, 1);
-	else if (res == -2)
+	else if (res == UL_COPY_WRITE_ERROR)
 		pw_error(tmp_file, 1, 1);
 	return fd;
 }
