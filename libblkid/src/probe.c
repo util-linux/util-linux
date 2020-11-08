@@ -1035,6 +1035,16 @@ int blkid_probe_set_dimension(blkid_probe pr, uint64_t off, uint64_t size)
 	return 0;
 }
 
+unsigned char *_blkid_probe_get_sb(blkid_probe pr, const struct blkid_idmag *mag, size_t size)
+{
+	uint64_t hint_offset;
+
+	if (!mag->hoff || blkid_probe_get_hint(pr, mag->hoff, &hint_offset) < 0)
+		hint_offset = 0;
+
+	return blkid_probe_get_buffer(pr, hint_offset + (mag->kboff << 10), size);
+}
+
 /*
  * Check for matching magic value.
  * Returns BLKID_PROBE_OK if found, BLKID_PROBE_NONE if not found

@@ -428,9 +428,9 @@ extern int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 			__attribute__((nonnull(1)));
 
 /* returns superblock according to 'struct blkid_idmag' */
+extern unsigned char *_blkid_probe_get_sb(blkid_probe pr, const struct blkid_idmag *mag, size_t size);
 #define blkid_probe_get_sb(_pr, _mag, type) \
-			((type *) blkid_probe_get_buffer((_pr),\
-					(_mag)->kboff << 10, sizeof(type)))
+			((type *) _blkid_probe_get_sb((_pr), _mag, sizeof(type)))
 
 extern blkid_partlist blkid_probe_get_partlist(blkid_probe pr)
 			__attribute__((nonnull))
