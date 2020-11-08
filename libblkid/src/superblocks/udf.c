@@ -276,12 +276,24 @@ anchor:
 			return errno ? -errno : 1;
 
 		/* Check that we read correct sector and detected correct block size */
-		if (le32_to_cpu(vd->tag.location) != s_off / pbs[i] + 256)
-			continue;
+		if (le32_to_cpu(vd->tag.location) == s_off / pbs[i] + 256) {
+			type = le16_to_cpu(vd->tag.id);
+			if (type == TAG_ID_AVDP)
+				goto real_blksz;
+		}
 
-		type = le16_to_cpu(vd->tag.id);
-		if (type == TAG_ID_AVDP)
-			goto real_blksz;
+		/* UDF-2.60: 2.2.3: Unclosed sequential Write-Once media may
+		 * have a single AVDP present at either sector 256 or 512. */
+		vd = (struct volume_descriptor *)
+			blkid_probe_get_buffer(pr, s_off + 512 * pbs[i], sizeof(*vd));
+		if (!vd)
+			return errno ? -errno : 1;
+
+		if (le32_to_cpu(vd->tag.location) == s_off / pbs[i] + 512) {
+			type = le16_to_cpu(vd->tag.id);
+			if (type == TAG_ID_AVDP)
+				goto real_blksz;
+		}
 
 	}
 	return 1;
