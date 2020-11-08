@@ -49,7 +49,10 @@ The
 .B uuid_generate
 function creates a new universally unique identifier (UUID).  The uuid will
 be generated based on high-quality randomness from
+.IR getrandom(2) ,
 .IR /dev/urandom ,
+or
+.IR /dev/random
 if available.  If it is not available, then
 .B uuid_generate
 will use an alternative algorithm which uses the current time, the
@@ -59,8 +62,7 @@ using a pseudo-random generator.
 The
 .B uuid_generate_random
 function forces the use of the all-random UUID format, even if
-a high-quality random number generator (i.e.,
-.IR /dev/urandom )
+a high-quality random number generator
 is not available, in which case a pseudo-random
 generator will be substituted.  Note that the use of a pseudo-random
 generator may compromise the uniqueness of UUIDs

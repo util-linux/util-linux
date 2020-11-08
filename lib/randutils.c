@@ -102,7 +102,12 @@ int random_get_fd(void)
 #define UL_RAND_READ_ATTEMPTS	8
 #define UL_RAND_READ_DELAY	125000	/* microseconds */
 
-void ul_random_get_bytes(void *buf, size_t nbytes)
+/*
+ * Write @nbytes random bytes into @buf.
+ *
+ * Returns 0 for good quality of random bytes or 1 for weak quality.
+ */
+int ul_random_get_bytes(void *buf, size_t nbytes)
 {
 	unsigned char *cp = (unsigned char *)buf;
 	size_t i, n = nbytes;
@@ -118,7 +123,7 @@ void ul_random_get_bytes(void *buf, size_t nbytes)
 		       n -= x;
 		       cp += x;
 		       lose_counter = 0;
-
+		       errno = 0;
 		} else if (errno == ENOSYS) {	/* kernel without getrandom() */
 			break;
 
@@ -177,6 +182,8 @@ void ul_random_get_bytes(void *buf, size_t nbytes)
 		       sizeof(ul_jrand_seed)-sizeof(unsigned short));
 	}
 #endif
+
+	return n != 0;
 }
 
 
