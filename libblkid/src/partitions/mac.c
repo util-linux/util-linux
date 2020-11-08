@@ -123,12 +123,12 @@ static int probe_mac_pt(blkid_probe pr,
 	ssf = block_size / 512;
 	nblks = be32_to_cpu(p->map_count);
 
-	for (i = 1; i <= nblks; ++i) {
+	for (i = 0; i < nblks; ++i) {
 		blkid_partition par;
 		uint32_t start;
 		uint32_t size;
 
-		p = (struct mac_partition *) get_mac_block(pr, block_size, i);
+		p = (struct mac_partition *) get_mac_block(pr, block_size, i + 1);
 		if (!p) {
 			if (errno)
 				return -errno;
@@ -141,7 +141,7 @@ static int probe_mac_pt(blkid_probe pr,
 			DBG(LOWPROBE, ul_debug(
 				"mac: inconsistent map_count in partition map, "
 				"entry[0]: %d, entry[%d]: %d",
-				nblks, i - 1,
+				nblks, i,
 				be32_to_cpu(p->map_count)));
 		}
 
