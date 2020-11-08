@@ -52,10 +52,10 @@ static int save_dev(blkid_dev dev, FILE *file)
 	DBG(SAVE, ul_debug("device %s, type %s", dev->bid_name, dev->bid_type ?
 		   dev->bid_type : "(null)"));
 
-	fprintf(file, "<device DEVNO=\"0x%04lx\" TIME=\"%ld.%ld\"",
+	fprintf(file, "<device DEVNO=\"0x%04lx\" TIME=\"%lld.%lld\"",
 			(unsigned long) dev->bid_devno,
-			(long) dev->bid_time,
-			(long) dev->bid_utime);
+			(long long) dev->bid_time,
+			(long long) dev->bid_utime);
 
 	if (dev->bid_pri)
 		fprintf(file, " PRI=\"%d\"", dev->bid_pri);
