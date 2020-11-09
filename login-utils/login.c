@@ -61,7 +61,6 @@
 #elif defined(HAVE_SECURITY_OPENPAM_H)
 # include <security/openpam.h>
 #endif
-#include <sys/sendfile.h>
 
 #ifdef HAVE_LIBAUDIT
 # include <libaudit.h>
@@ -345,9 +344,7 @@ static int motddir(const char *dirname)
 
 		fd = openat(dd, d->d_name, O_RDONLY|O_CLOEXEC);
 		if (fd >= 0) {
-			struct stat st;
-			if (fstat(fd, &st) == 0 && st.st_size > 0)
-				sendfile(fileno(stdout), fd, NULL, st.st_size);
+			ul_copy_file(fd, fileno(stdout));
 			close(fd);
 			done++;
 		}
@@ -396,7 +393,7 @@ static void motd(void)
 		if (S_ISREG(st.st_mode) && st.st_size > 0) {
 			int fd = open(file, O_RDONLY, 0);
 			if (fd >= 0) {
-				sendfile(fileno(stdout), fd, NULL, st.st_size);
+				ul_copy_file(fd, fileno(stdout));
 				close(fd);
 			}
 			done++;

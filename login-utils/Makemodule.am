@@ -76,6 +76,7 @@ if BUILD_NOLOGIN
 sbin_PROGRAMS += nologin
 dist_man_MANS += login-utils/nologin.8
 nologin_SOURCES = login-utils/nologin.c
+nologin_LDADD = $(LDADD) libcommon.la
 endif
 
 

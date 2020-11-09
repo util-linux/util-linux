@@ -6,12 +6,15 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <string.h>
 
 #include "c.h"
+#include "all-io.h"
 #include "fileutils.h"
 #include "pathnames.h"
 
@@ -174,7 +177,7 @@ void close_all_fds(const int exclude[], size_t exsz)
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
-		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds}", argv[0]);
+		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds,copy-file}", argv[0]);
 
 	if (strcmp(argv[1], "--mkstemp") == 0) {
 		FILE *f;
@@ -194,6 +197,12 @@ int main(int argc, char *argv[])
 		ignore_result( dup(STDIN_FILENO) );
 
 		close_all_fds(wanted_fds, ARRAY_SIZE(wanted_fds));
+	} else if (strcmp(argv[1], "--copy-file") == 0) {
+		int ret = ul_copy_file(STDIN_FILENO, STDOUT_FILENO);
+		if (ret == UL_COPY_READ_ERROR)
+			err(EXIT_FAILURE, "read");
+		else if (ret == UL_COPY_WRITE_ERROR)
+			err(EXIT_FAILURE, "write");
 	}
 	return EXIT_SUCCESS;
 }
@@ -245,4 +254,43 @@ char *stripoff_last_component(char *path)
 		return NULL;
 	*p = '\0';
 	return p + 1;
+}
+
+static int copy_file_simple(int from, int to)
+{
+	ssize_t nr;
+	char buf[BUFSIZ];
+
+	while ((nr = read_all(from, buf, sizeof(buf))) > 0)
+		if (write_all(to, buf, nr) == -1)
+			return UL_COPY_WRITE_ERROR;
+	if (nr < 0)
+		return UL_COPY_READ_ERROR;
+#ifdef HAVE_EXPLICIT_BZERO
+	explicit_bzero(buf, sizeof(buf));
+#endif
+	return 0;
+}
+
+/* Copies the contents of a file. Returns -1 on read error, -2 on write error. */
+int ul_copy_file(int from, int to)
+{
+#ifdef HAVE_SENDFILE
+	struct stat st;
+	ssize_t nw;
+
+	if (fstat(from, &st) == -1)
+		return UL_COPY_READ_ERROR;
+	if (!S_ISREG(st.st_mode))
+		return copy_file_simple(from, to);
+	if (sendfile_all(to, from, NULL, st.st_size) < 0)
+		return copy_file_simple(from, to);
+	/* ensure we either get an EOF or an error */
+	while ((nw = sendfile_all(to, from, NULL, 16*1024*1024)) != 0)
+		if (nw < 0)
+			return copy_file_simple(from, to);
+	return 0;
+#else
+	return copy_file_simple(from, to);
+#endif
 }
