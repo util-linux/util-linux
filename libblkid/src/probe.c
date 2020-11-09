@@ -2035,6 +2035,22 @@ void blkid_probe_use_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 	}
 }
 
+static struct blkid_hint *get_hint(blkid_probe pr, const char *name)
+{
+	struct list_head *p;
+
+	if (list_empty(&pr->hints))
+		return NULL;
+
+	list_for_each(p, &pr->hints) {
+		struct blkid_hint *h = list_entry(p, struct blkid_hint, hints);
+
+		if (h->name && strcmp(name, h->name) == 0)
+			return h;
+	}
+	return NULL;
+}
+
 /**
  * blkid_probe_set_hint:
  * @pr: probe
@@ -2066,28 +2082,39 @@ int blkid_probe_set_hint(blkid_probe pr, const char *name, uint64_t value)
 
 		if (errno || v == end || (end && *end))
 			goto done;
-	} else {
-		n = strdup(name);
-		if (!n)
-			goto done;
 	}
 
-	/* allocate info and space for data by one malloc call */
-	hint = malloc(sizeof(*hint));
-	if (!hint)
-		goto done;
+	hint = get_hint(pr, n ? n : name);
+	if (hint) {
+		/* alter old hint */
+		hint->value = value;
+		DBG(LOWPROBE,
+			ul_debug("updated hint '%s' to %"PRIu64"", hint->name, hint->value));
+	} else {
+		/* add a new hint */
+		if (!n) {
+			n = strdup(name);
+			if (!n)
+				goto done;
+		}
+		hint = malloc(sizeof(*hint));
+		if (!hint)
+			goto done;
 
-	INIT_LIST_HEAD(&hint->hints);
-	hint->name = n;
-	hint->value = value;
-	n = NULL;
-	list_add_tail(&hint->hints, &pr->hints);
+		hint->name = n;
+		hint->value = value;
 
-	DBG(LOWPROBE,
-		ul_debug("new hint '%s' is %"PRIu64"", hint->name, hint->value));
+		INIT_LIST_HEAD(&hint->hints);
+		list_add_tail(&hint->hints, &pr->hints);
+
+		DBG(LOWPROBE,
+			ul_debug("new hint '%s' is %"PRIu64"", hint->name, hint->value));
+		n = NULL;
+	}
 done:
 	free(n);
 	free(v);
+
 	if (!hint)
 		return errno ? -errno : -EINVAL;
 	return 0;
@@ -2095,21 +2122,13 @@ done:
 
 int blkid_probe_get_hint(blkid_probe pr, const char *name, uint64_t *value)
 {
-	struct list_head *p;
+	struct blkid_hint *h = get_hint(pr, name);
 
-	if (list_empty(&pr->hints))
+	if (!h)
 		return -EINVAL;
-
-	list_for_each(p, &pr->hints) {
-		struct blkid_hint *h = list_entry(p, struct blkid_hint, hints);
-
-		if (h->name && strcmp(name, h->name) == 0) {
-			if (value)
-				*value = h->value;
-			return 0;
-		}
-	}
-	return -EINVAL;
+	if (value)
+		*value = h->value;
+	return 0;
 }
 
 /**
