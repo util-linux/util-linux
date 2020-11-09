@@ -40,6 +40,8 @@ in environments where a stable output is required.
 calls the BLKRRPART ioctl when it has erased a partition-table signature
 to inform the kernel about the change. The ioctl is called as the last step
 and when all specified signatures from all specified devices are already erased.
+This feature can be used to wipe content on partitions devices as well as partition
+table on a disk device, for example by \fBwipefs \-a /dev/sdc1 /dev/sdc2 /dev/sdc\fR.
 
 Note that some filesystems and some partition tables store more magic strings on
 the device (e.g., FAT, ZFS, GPT).  The
