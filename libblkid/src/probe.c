@@ -121,7 +121,6 @@ static const struct blkid_chaindrv *chains_drvs[] = {
 };
 
 static void blkid_probe_reset_values(blkid_probe pr);
-static void blkid_probe_reset_hints(blkid_probe pr);
 
 /**
  * blkid_new_probe:
@@ -406,7 +405,6 @@ void blkid_reset_probe(blkid_probe pr)
 	int i;
 
 	blkid_probe_reset_values(pr);
-	blkid_probe_reset_hints(pr);
 	blkid_probe_set_wiper(pr, 0, 0);
 
 	pr->cur_chain = NULL;
@@ -2038,7 +2036,7 @@ void blkid_probe_use_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 }
 
 /**
- * blkid_probe_set_hint
+ * blkid_probe_set_hint:
  * @pr: probe
  * @name: hint name or NAME=value
  * @value: offset or another number
@@ -2114,7 +2112,13 @@ int blkid_probe_get_hint(blkid_probe pr, const char *name, uint64_t *value)
 	return -EINVAL;
 }
 
-static void blkid_probe_reset_hints(blkid_probe pr)
+/**
+ * blkid_probe_reset_hints:
+ * @pr probe
+ *
+ * Removes all previously defined probinig hints. See also blkid_probe_set_hint().
+ */
+void blkid_probe_reset_hints(blkid_probe pr)
 {
 	if (list_empty(&pr->hints))
 		return;
