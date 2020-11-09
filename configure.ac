@@ -319,6 +319,7 @@ AC_CHECK_HEADERS([ \
 	sys/socket.h \
 	sys/sockio.h \
 	sys/stat.h \
+	sys/sendfile.h \
 	sys/sysmacros.h \
 	sys/swap.h \
 	sys/syscall.h \

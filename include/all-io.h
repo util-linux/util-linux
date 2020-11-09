@@ -13,8 +13,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/types.h>
-#ifdef HAVE_SENDFILE
-#include <sys/sendfile.h>
+#ifdef HAVE_SYS_SENDFILE_H
+# include <sys/sendfile.h>
 #endif
 
 #include "c.h"
@@ -86,7 +86,7 @@ static inline ssize_t read_all(int fd, char *buf, size_t count)
 
 static inline ssize_t sendfile_all(int out, int in, off_t *off, size_t count)
 {
-#ifdef HAVE_SENDFILE
+#if defined(HAVE_SENDFILE) && defined(__linux__)
 	ssize_t ret;
 	ssize_t c = 0;
 	int tries = 0;
