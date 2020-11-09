@@ -212,6 +212,8 @@ int main(int argc, char *argv[])
 		case 'E':
 			conflict_exit_code = strtos32_or_err(optarg,
 				_("invalid exit code"));
+			if (conflict_exit_code < 0 || conflict_exit_code > 255)
+				errx(EX_USAGE, _("exit code out of range (expected 0 to 255)"));
 			break;
 		case OPT_VERBOSE:
 			verbose = 1;
