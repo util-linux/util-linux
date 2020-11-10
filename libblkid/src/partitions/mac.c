@@ -79,7 +79,7 @@ static int probe_mac_pt(blkid_probe pr,
 	blkid_partlist ls;
 	uint16_t block_size;
 	uint16_t ssf;	/* sector size fragment */
-	uint32_t nblks, i;
+	uint32_t nblks, nprts, i;
 
 
 	/* The driver descriptor record is always located at physical block 0,
@@ -122,8 +122,15 @@ static int probe_mac_pt(blkid_probe pr,
 
 	ssf = block_size / 512;
 	nblks = be32_to_cpu(p->map_count);
+	if (nblks > 256) {
+		nprts = 256;
+		DBG(LOWPROBE, ul_debug(
+			"mac: map_count too large, entry[0]: %u, "
+			"enforcing limit of %u", nblks, nprts));
+	} else
+		nprts = nblks;
 
-	for (i = 0; i < nblks; ++i) {
+	for (i = 0; i < nprts; ++i) {
 		blkid_partition par;
 		uint32_t start;
 		uint32_t size;
@@ -140,7 +147,7 @@ static int probe_mac_pt(blkid_probe pr,
 		if (be32_to_cpu(p->map_count) != nblks) {
 			DBG(LOWPROBE, ul_debug(
 				"mac: inconsistent map_count in partition map, "
-				"entry[0]: %d, entry[%d]: %d",
+				"entry[0]: %u, entry[%u]: %u",
 				nblks, i,
 				be32_to_cpu(p->map_count)));
 		}
