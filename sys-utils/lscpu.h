@@ -57,6 +57,7 @@ struct lscpu_cputype {
 	int	refcount;
 
 	char	*vendor;
+	int	vendor_id;	/* created by lscpu_decode_arm() */
 	char	*machinetype;	/* s390 */
 	char	*family;
 	char	*model;

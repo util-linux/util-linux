@@ -225,8 +225,15 @@ static int parse_id(const char *str)
 	return id;
 }
 
-#define parse_implementer_id(_cxt)	(parse_id((_cxt)->vendor))
 #define parse_model_id(_cxt)		(parse_id((_cxt)->model))
+
+static inline int parse_implementer_id(struct lscpu_cputype *ct)
+{
+	if (ct->vendor_id)
+		return ct->vendor_id;
+	ct->vendor_id = parse_id(ct->vendor);
+	return ct->vendor_id;
+}
 
 /*
  * Use model and vendor IDs to decode to human readable names.
