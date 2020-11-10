@@ -70,7 +70,7 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		return NULL;
 
 	now = time(NULL);
-	diff = now - dev->bid_time;
+	diff = (uintmax_t)now - dev->bid_time;
 
 	if (stat(dev->bid_name, &st) < 0) {
 		DBG(PROBE, ul_debug("blkid_verify: error %s (%d) while "
@@ -95,23 +95,23 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 #else
 	    st.st_mtime <= dev->bid_time &&
 #endif
-	    diff < BLKID_PROBE_MIN) {
+	    diff >= 0 && diff < BLKID_PROBE_MIN) {
 		dev->bid_flags |= BLKID_BID_FL_VERIFIED;
 		return dev;
 	}
 
 #ifndef HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC
-	DBG(PROBE, ul_debug("need to revalidate %s (cache time %lu, stat time %lu,\t"
-		   "time since last check %lu)",
-		   dev->bid_name, (unsigned long)dev->bid_time,
-		   (unsigned long)st.st_mtime, (unsigned long)diff));
+	DBG(PROBE, ul_debug("need to revalidate %s (cache time %lld, stat time %lld,\t"
+		   "time since last check %lld)",
+		   dev->bid_name, (long long)dev->bid_time,
+		   (long long)st.st_mtime, (long long)diff));
 #else
-	DBG(PROBE, ul_debug("need to revalidate %s (cache time %lu.%lu, stat time %lu.%lu,\t"
-		   "time since last check %lu)",
+	DBG(PROBE, ul_debug("need to revalidate %s (cache time %lld.%lld, stat time %lld.%lld,\t"
+		   "time since last check %lld)",
 		   dev->bid_name,
-		   (unsigned long)dev->bid_time, (unsigned long)dev->bid_utime,
-		   (unsigned long)st.st_mtime, (unsigned long)st.st_mtim.tv_nsec / 1000,
-		   (unsigned long)diff));
+		   (long long)dev->bid_time, (long long)dev->bid_utime,
+		   (long long)st.st_mtime, (long long)st.st_mtim.tv_nsec / 1000,
+		   (long long)diff));
 #endif
 
 	if (sysfs_devno_is_dm_private(st.st_rdev, NULL)) {

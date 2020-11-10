@@ -87,8 +87,8 @@ void blkid_debug_dump_dev(blkid_dev dev)
 	}
 
 	fprintf(stderr, "  dev: name = %s\n", dev->bid_name);
-	fprintf(stderr, "  dev: DEVNO=\"0x%0llx\"\n", (long long)dev->bid_devno);
-	fprintf(stderr, "  dev: TIME=\"%ld.%ld\"\n", (long)dev->bid_time, (long)dev->bid_utime);
+	fprintf(stderr, "  dev: DEVNO=\"0x%0lx\"\n", (unsigned long)dev->bid_devno);
+	fprintf(stderr, "  dev: TIME=\"%lld.%lld\"\n", (long long)dev->bid_time, (long long)dev->bid_utime);
 	fprintf(stderr, "  dev: PRI=\"%d\"\n", dev->bid_pri);
 	fprintf(stderr, "  dev: flags = 0x%08X\n", dev->bid_flags);
 

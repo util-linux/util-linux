@@ -92,7 +92,7 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 		dev = blkid_new_dev();
 		if (!dev)
 			goto done;
-		dev->bid_time = INT_MIN;
+		dev->bid_time = (uintmax_t)1 << (sizeof(time_t) * 8 - 1);
 		if (cn) {
 			dev->bid_name = cn;
 			dev->bid_xname = strdup(devname);

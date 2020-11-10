@@ -141,12 +141,16 @@ static int parse_extended(blkid_probe pr, blkid_partlist ls,
 	blkid_parttable tab, struct atari_part_def *part)
 {
 	uint32_t x0start, xstart;
-	unsigned i = 0;
+	unsigned ct = 0, i = 0;
 	int rc;
 
 	x0start = xstart = be32_to_cpu(part->start);
 	while (1) {
 		struct atari_rootsector *xrs;
+
+		if (++ct > 100)
+			break;
+
 		xrs = (struct atari_rootsector *) blkid_probe_get_sector(pr, xstart);
 		if (!xrs) {
 			if (errno)
