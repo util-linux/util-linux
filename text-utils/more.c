@@ -398,21 +398,12 @@ static int check_magic(struct more_control *ctl, char *fs)
 	const int fd = fileno(ctl->current_file);
 	const char *mime_encoding = magic_descriptor(ctl->magic, fd);
 	const char *magic_error_msg = magic_error(ctl->magic);
-	struct stat st;
 
 	if (magic_error_msg) {
-		printf(_("magic failed: %s\n"), magic_error_msg);
+		printf("%s: %s: %s\n", program_invocation_short_name,
+			_("magic failed"), magic_error_msg);
 		return 0;
 	}
-	if (fstat(fd, &st)) {
-		warn(_("cannot stat %s"), fs);
-		return 1;
-	}
-	if (st.st_size == 0) {
-		/* libmagic tells an empty file has binary encoding */
-		return 0;
-	}
-
 	if (!mime_encoding || !(strcmp("binary", mime_encoding))) {
 		printf(_("\n******** %s: Not a text file ********\n\n"), fs);
 		return 1;
@@ -453,20 +444,26 @@ static void checkf(struct more_control *ctl, char *fs)
 	ctl->current_line = 0;
 	ctl->file_position = 0;
 	fflush(NULL);
-	if (((ctl->current_file = fopen(fs, "r")) == NULL) ||
-	    (fstat(fileno(ctl->current_file), &st) != 0)) {
+
+	ctl->current_file = fopen(fs, "r");
+	if (ctl->current_file == NULL) {
 		if (ctl->clear_line_ends)
 			putp(ctl->erase_line);
 		warn(_("cannot open %s"), fs);
 		return;
 	}
-#ifndef HAVE_MAGIC
+	if (fstat(fileno(ctl->current_file), &st) != 0) {
+		warn(_("cannot stat %s"), fs);
+		return;
+	}
 	if ((st.st_mode & S_IFMT) == S_IFDIR) {
 		printf(_("\n*** %s: directory ***\n\n"), fs);
 		ctl->current_file = NULL;
 		return;
 	}
-#endif
+	if (st.st_size == 0) {
+		return;
+	}
 	if (check_magic(ctl, fs)) {
 		fclose(ctl->current_file);
 		ctl->current_file = NULL;
