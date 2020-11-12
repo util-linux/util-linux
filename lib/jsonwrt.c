@@ -35,7 +35,7 @@ void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
 	else {
 		ul_jsonwrt_indent(fmt);
 		if (name)
-			fputs_quoted(name, fmt->out);
+			fputs_quoted_json_lower(name, fmt->out);
 	}
 
 	switch (type) {
@@ -104,7 +104,7 @@ void ul_jsonwrt_value_s(struct ul_jsonwrt *fmt,
 {
 	ul_jsonwrt_value_open(fmt, name);
 	if (data && *data)
-		fputs_quoted(data, fmt->out);
+		fputs_quoted_json(data, fmt->out);
 	else
 		fputs("null", fmt->out);
 	ul_jsonwrt_value_close(fmt, islast);
