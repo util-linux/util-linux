@@ -153,7 +153,7 @@ struct login_context {
  */
 static unsigned int timeout = LOGIN_TIMEOUT;
 static int child_pid = 0;
-static volatile int got_sig = 0;
+static volatile sig_atomic_t got_sig = 0;
 static char timeout_msg[128];
 
 #ifdef LOGIN_CHOWN_VCS
