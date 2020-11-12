@@ -237,36 +237,217 @@ RANGE SIZE STATE REMOVABLE BLOCK NODE
 $ lsmem --json --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE --split RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
 {
    "memory": [
-      {"range":"0x0000000000000000-0x0000000007ffffff", "size":"128M", "state":"online", "removable":false, "block":"0", "node":0},
-      {"range":"0x0000000008000000-0x0000000037ffffff", "size":"768M", "state":"online", "removable":true, "block":"1-6", "node":0},
-      {"range":"0x0000000038000000-0x000000003fffffff", "size":"128M", "state":"online", "removable":false, "block":"7", "node":0},
-      {"range":"0x0000000040000000-0x0000000077ffffff", "size":"896M", "state":"online", "removable":true, "block":"8-14", "node":0},
-      {"range":"0x0000000078000000-0x000000007fffffff", "size":"128M", "state":"online", "removable":false, "block":"15", "node":0},
-      {"range":"0x0000000080000000-0x00000000afffffff", "size":"768M", "state":"online", "removable":true, "block":"16-21", "node":0},
-      {"range":"0x00000000b0000000-0x00000000bfffffff", "size":"256M", "state":"online", "removable":false, "block":"22-23", "node":0},
-      {"range":"0x0000000100000000-0x00000001a7ffffff", "size":"2.6G", "state":"online", "removable":false, "block":"32-52", "node":0},
-      {"range":"0x00000001a8000000-0x00000001afffffff", "size":"128M", "state":"online", "removable":true, "block":"53", "node":0},
-      {"range":"0x00000001b0000000-0x00000001bfffffff", "size":"256M", "state":"online", "removable":false, "block":"54-55", "node":0},
-      {"range":"0x00000001c0000000-0x00000001ffffffff", "size":"1G", "state":"online", "removable":true, "block":"56-63", "node":0},
-      {"range":"0x0000000200000000-0x0000000207ffffff", "size":"128M", "state":"online", "removable":false, "block":"64", "node":0},
-      {"range":"0x0000000208000000-0x000000021fffffff", "size":"384M", "state":"online", "removable":true, "block":"65-67", "node":0},
-      {"range":"0x0000000220000000-0x0000000237ffffff", "size":"384M", "state":"online", "removable":false, "block":"68-70", "node":0},
-      {"range":"0x0000000238000000-0x0000000277ffffff", "size":"1G", "state":"online", "removable":true, "block":"71-78", "node":0},
-      {"range":"0x0000000278000000-0x000000028fffffff", "size":"384M", "state":"online", "removable":false, "block":"79-81", "node":0},
-      {"range":"0x0000000290000000-0x0000000297ffffff", "size":"128M", "state":"online", "removable":true, "block":"82", "node":0},
-      {"range":"0x0000000298000000-0x00000002a7ffffff", "size":"256M", "state":"online", "removable":false, "block":"83-84", "node":0},
-      {"range":"0x00000002a8000000-0x00000002c7ffffff", "size":"512M", "state":"online", "removable":true, "block":"85-88", "node":0},
-      {"range":"0x00000002c8000000-0x00000002dfffffff", "size":"384M", "state":"online", "removable":false, "block":"89-91", "node":0},
-      {"range":"0x00000002e0000000-0x00000002efffffff", "size":"256M", "state":"online", "removable":true, "block":"92-93", "node":0},
-      {"range":"0x00000002f0000000-0x000000034fffffff", "size":"1.5G", "state":"online", "removable":false, "block":"94-105", "node":0},
-      {"range":"0x0000000350000000-0x0000000357ffffff", "size":"128M", "state":"online", "removable":true, "block":"106", "node":0},
-      {"range":"0x0000000358000000-0x000000036fffffff", "size":"384M", "state":"online", "removable":false, "block":"107-109", "node":0},
-      {"range":"0x0000000370000000-0x0000000377ffffff", "size":"128M", "state":"online", "removable":true, "block":"110", "node":0},
-      {"range":"0x0000000378000000-0x00000003c7ffffff", "size":"1.3G", "state":"online", "removable":false, "block":"111-120", "node":0},
-      {"range":"0x00000003c8000000-0x00000003e7ffffff", "size":"512M", "state":"online", "removable":true, "block":"121-124", "node":0},
-      {"range":"0x00000003e8000000-0x000000042fffffff", "size":"1.1G", "state":"online", "removable":false, "block":"125-133", "node":0},
-      {"range":"0x0000000430000000-0x0000000437ffffff", "size":"128M", "state":"online", "removable":true, "block":"134", "node":0},
-      {"range":"0x0000000438000000-0x000000043fffffff", "size":"128M", "state":"online", "removable":false, "block":"135", "node":0}
+      {
+         "range": "0x0000000000000000-0x0000000007ffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": false,
+         "block": "0",
+         "node": 0
+      },{
+         "range": "0x0000000008000000-0x0000000037ffffff",
+         "size": "768M",
+         "state": "online",
+         "removable": true,
+         "block": "1-6",
+         "node": 0
+      },{
+         "range": "0x0000000038000000-0x000000003fffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": false,
+         "block": "7",
+         "node": 0
+      },{
+         "range": "0x0000000040000000-0x0000000077ffffff",
+         "size": "896M",
+         "state": "online",
+         "removable": true,
+         "block": "8-14",
+         "node": 0
+      },{
+         "range": "0x0000000078000000-0x000000007fffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": false,
+         "block": "15",
+         "node": 0
+      },{
+         "range": "0x0000000080000000-0x00000000afffffff",
+         "size": "768M",
+         "state": "online",
+         "removable": true,
+         "block": "16-21",
+         "node": 0
+      },{
+         "range": "0x00000000b0000000-0x00000000bfffffff",
+         "size": "256M",
+         "state": "online",
+         "removable": false,
+         "block": "22-23",
+         "node": 0
+      },{
+         "range": "0x0000000100000000-0x00000001a7ffffff",
+         "size": "2.6G",
+         "state": "online",
+         "removable": false,
+         "block": "32-52",
+         "node": 0
+      },{
+         "range": "0x00000001a8000000-0x00000001afffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": true,
+         "block": "53",
+         "node": 0
+      },{
+         "range": "0x00000001b0000000-0x00000001bfffffff",
+         "size": "256M",
+         "state": "online",
+         "removable": false,
+         "block": "54-55",
+         "node": 0
+      },{
+         "range": "0x00000001c0000000-0x00000001ffffffff",
+         "size": "1G",
+         "state": "online",
+         "removable": true,
+         "block": "56-63",
+         "node": 0
+      },{
+         "range": "0x0000000200000000-0x0000000207ffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": false,
+         "block": "64",
+         "node": 0
+      },{
+         "range": "0x0000000208000000-0x000000021fffffff",
+         "size": "384M",
+         "state": "online",
+         "removable": true,
+         "block": "65-67",
+         "node": 0
+      },{
+         "range": "0x0000000220000000-0x0000000237ffffff",
+         "size": "384M",
+         "state": "online",
+         "removable": false,
+         "block": "68-70",
+         "node": 0
+      },{
+         "range": "0x0000000238000000-0x0000000277ffffff",
+         "size": "1G",
+         "state": "online",
+         "removable": true,
+         "block": "71-78",
+         "node": 0
+      },{
+         "range": "0x0000000278000000-0x000000028fffffff",
+         "size": "384M",
+         "state": "online",
+         "removable": false,
+         "block": "79-81",
+         "node": 0
+      },{
+         "range": "0x0000000290000000-0x0000000297ffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": true,
+         "block": "82",
+         "node": 0
+      },{
+         "range": "0x0000000298000000-0x00000002a7ffffff",
+         "size": "256M",
+         "state": "online",
+         "removable": false,
+         "block": "83-84",
+         "node": 0
+      },{
+         "range": "0x00000002a8000000-0x00000002c7ffffff",
+         "size": "512M",
+         "state": "online",
+         "removable": true,
+         "block": "85-88",
+         "node": 0
+      },{
+         "range": "0x00000002c8000000-0x00000002dfffffff",
+         "size": "384M",
+         "state": "online",
+         "removable": false,
+         "block": "89-91",
+         "node": 0
+      },{
+         "range": "0x00000002e0000000-0x00000002efffffff",
+         "size": "256M",
+         "state": "online",
+         "removable": true,
+         "block": "92-93",
+         "node": 0
+      },{
+         "range": "0x00000002f0000000-0x000000034fffffff",
+         "size": "1.5G",
+         "state": "online",
+         "removable": false,
+         "block": "94-105",
+         "node": 0
+      },{
+         "range": "0x0000000350000000-0x0000000357ffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": true,
+         "block": "106",
+         "node": 0
+      },{
+         "range": "0x0000000358000000-0x000000036fffffff",
+         "size": "384M",
+         "state": "online",
+         "removable": false,
+         "block": "107-109",
+         "node": 0
+      },{
+         "range": "0x0000000370000000-0x0000000377ffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": true,
+         "block": "110",
+         "node": 0
+      },{
+         "range": "0x0000000378000000-0x00000003c7ffffff",
+         "size": "1.3G",
+         "state": "online",
+         "removable": false,
+         "block": "111-120",
+         "node": 0
+      },{
+         "range": "0x00000003c8000000-0x00000003e7ffffff",
+         "size": "512M",
+         "state": "online",
+         "removable": true,
+         "block": "121-124",
+         "node": 0
+      },{
+         "range": "0x00000003e8000000-0x000000042fffffff",
+         "size": "1.1G",
+         "state": "online",
+         "removable": false,
+         "block": "125-133",
+         "node": 0
+      },{
+         "range": "0x0000000430000000-0x0000000437ffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": true,
+         "block": "134",
+         "node": 0
+      },{
+         "range": "0x0000000438000000-0x000000043fffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": false,
+         "block": "135",
+         "node": 0
+      }
    ]
 }
 
