@@ -154,7 +154,7 @@ struct login_context {
 static unsigned int timeout = LOGIN_TIMEOUT;
 static int child_pid = 0;
 static volatile sig_atomic_t got_sig = 0;
-static char timeout_msg[128];
+static char *timeout_msg;
 
 #ifdef LOGIN_CHOWN_VCS
 /* true if the filedescriptor fd is a console tty, very Linux specific */
@@ -196,7 +196,8 @@ static void timedout(int sig __attribute__ ((__unused__)))
 {
 	signal(SIGALRM, timedout2);
 	alarm(10);
-	ignore_result( write(STDERR_FILENO, timeout_msg, strlen(timeout_msg)) );
+	if (timeout_msg)
+		ignore_result( write(STDERR_FILENO, timeout_msg, strlen(timeout_msg)) );
 	signal(SIGALRM, SIG_IGN);
 	alarm(0);
 	timedout2(0);
@@ -1290,9 +1291,8 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 
 	/* TRANSLATORS: The standard value for %u is 60. */
-	snprintf(timeout_msg, sizeof(timeout_msg),
-	    _("%s: timed out after %u seconds"),
-	    program_invocation_short_name, timeout);
+	xasprintf(&timeout_msg, _("%s: timed out after %u seconds"),
+				  program_invocation_short_name, timeout);
 
 	signal(SIGALRM, timedout);
 	(void) sigaction(SIGALRM, NULL, &act);
@@ -1414,6 +1414,8 @@ int main(int argc, char **argv)
 
 	/* committed to login -- turn off timeout */
 	alarm((unsigned int)0);
+	free(timeout_msg);
+	timeout_msg = NULL;
 
 	endpwent();
 
