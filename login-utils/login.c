@@ -80,7 +80,6 @@
 
 #include "logindefs.h"
 
-#define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
 #define LOGIN_MAX_TRIES        3
 #define LOGIN_EXIT_TIMEOUT     5
@@ -444,12 +443,15 @@ static void open_tty(const char *tty)
 		close(fd);
 }
 
-#define chown_err(_what, _uid, _gid) \
-		syslog(LOG_ERR, _("chown (%s, %lu, %lu) failed: %m"), \
-			(_what), (unsigned long) (_uid), (unsigned long) (_gid))
+static inline void chown_err(const char *what, uid_t uid, gid_t gid)
+{
+	syslog(LOG_ERR, _("chown (%s, %u, %u) failed: %m"), what, uid, gid);
+}
 
-#define chmod_err(_what, _mode) \
-		syslog(LOG_ERR, _("chmod (%s, %u) failed: %m"), (_what), (_mode))
+static inline void chmod_err(const char *what, mode_t mode)
+{
+	syslog(LOG_ERR, _("chmod (%s, %u) failed: %m"), what, mode);
+}
 
 static void chown_tty(struct login_context *cxt)
 {
@@ -839,6 +841,11 @@ static const char *loginpam_get_prompt(struct login_context *cxt)
 	snprintf(prompt, sz, "%s %s", host, dflt_prompt);
 
 	return prompt;
+}
+
+static inline int is_pam_failure(int rc)
+{
+	return rc != PAM_SUCCESS;
 }
 
 static pam_handle_t *init_loginpam(struct login_context *cxt)
