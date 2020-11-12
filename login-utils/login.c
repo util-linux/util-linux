@@ -151,7 +151,6 @@ struct login_context {
  * This bounds the time given to login.  Not a define, so it can
  * be patched on machines where it's too small.
  */
-static unsigned int timeout = LOGIN_TIMEOUT;
 static int child_pid = 0;
 static volatile sig_atomic_t got_sig = 0;
 static char *timeout_msg;
@@ -1260,6 +1259,7 @@ int main(int argc, char **argv)
 	char *buff;
 	int childArgc = 0;
 	int retcode;
+	unsigned int timeout;
 	struct sigaction act;
 	struct passwd *pwd;
 	static const int wanted_fds[] = {
