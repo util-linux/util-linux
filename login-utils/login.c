@@ -1284,11 +1284,11 @@ int main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
-	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
-
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+
+	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
 
 	/* TRANSLATORS: The standard value for %u is 60. */
 	xasprintf(&timeout_msg, _("%s: timed out after %u seconds"),
