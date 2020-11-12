@@ -55,6 +55,16 @@ struct uuidd_cxt_t {
 			no_sock: 1;
 };
 
+struct uuidd_options_t {
+	const char 	*pidfile_path;
+	const char 	*socket_path;
+	uint32_t	num;
+	int		do_type;
+	unsigned int	do_kill:1,
+			no_pid:1,
+			s_flag:1;
+};
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -94,7 +104,7 @@ static void create_daemon(void)
 }
 
 static int call_daemon(const char *socket_path, int op, char *buf,
-		       size_t buflen, int *num, const char **err_context)
+		       size_t buflen, uint32_t *num, const char **err_context)
 {
 	char op_buf[8];
 	int op_len;
@@ -532,22 +542,10 @@ static void __attribute__ ((__noreturn__)) unexpected_size(int size)
 	errx(EXIT_FAILURE, _("Unexpected reply length from server %d"), size);
 }
 
-int main(int argc, char **argv)
+static void parse_options(int argc, char **argv, struct uuidd_cxt_t *uuidd_cxt,
+			  struct uuidd_options_t *uuidd_opts)
 {
-	const char	*socket_path = UUIDD_SOCKET_PATH;
-	const char	*pidfile_path = NULL;
-	const char	*err_context = NULL;
-	char		buf[1024], *cp;
-	char		str[UUID_STR_LEN];
-	uuid_t		uu;
-	int		i, c, ret;
-	int		do_type = 0, do_kill = 0, num = 0;
-	int		no_pid = 0;
-	int		s_flag = 0;
-
-	struct uuidd_cxt_t uuidd_cxt = { .timeout = 0 };
-
-	static const struct option longopts[] = {
+	const struct option longopts[] = {
 		{"pid", required_argument, NULL, 'p'},
 		{"socket", required_argument, NULL, 's'},
 		{"timeout", required_argument, NULL, 'T'},
@@ -564,18 +562,14 @@ int main(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
-	static const ul_excl_t excl[] = {
+	const ul_excl_t excl[] = {
 		{ 'P', 'p' },
 		{ 'd', 'q' },
 		{ 'r', 't' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	close_stdout_atexit();
+	int c;
 
 	while ((c =
 		getopt_long(argc, argv, "p:s:T:krtn:PFSdqVh", longopts,
@@ -583,49 +577,49 @@ int main(int argc, char **argv)
 		err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
 		case 'd':
-			uuidd_cxt.debug = 1;
+			uuidd_cxt->debug = 1;
 			break;
 		case 'k':
-			do_kill++;
+			uuidd_opts->do_kill = 1;
 			break;
 		case 'n':
-			num = strtou32_or_err(optarg,
+			uuidd_opts->num = strtou32_or_err(optarg,
 						_("failed to parse --uuids"));
 			break;
 		case 'p':
-			pidfile_path = optarg;
+			uuidd_opts->pidfile_path = optarg;
 			break;
 		case 'P':
-			no_pid = 1;
+			uuidd_opts->no_pid = 1;
 			break;
 		case 'F':
-			uuidd_cxt.no_fork = 1;
+			uuidd_cxt->no_fork = 1;
 			break;
 		case 'S':
 #ifdef HAVE_LIBSYSTEMD
-			uuidd_cxt.no_sock = 1;
-			uuidd_cxt.no_fork = 1;
-			no_pid = 1;
+			uuidd_cxt->no_sock = 1;
+			uuidd_cxt->no_fork = 1;
+			uuidd_opts->no_pid = 1;
 #else
 			errx(EXIT_FAILURE, _("uuidd has been built without "
 					     "support for socket activation"));
 #endif
 			break;
 		case 'q':
-			uuidd_cxt.quiet = 1;
+			uuidd_cxt->quiet = 1;
 			break;
 		case 'r':
-			do_type = UUIDD_OP_RANDOM_UUID;
+			uuidd_opts->do_type = UUIDD_OP_RANDOM_UUID;
 			break;
 		case 's':
-			socket_path = optarg;
-			s_flag = 1;
+			uuidd_opts->socket_path = optarg;
+			uuidd_opts->s_flag = 1;
 			break;
 		case 't':
-			do_type = UUIDD_OP_TIME_UUID;
+			uuidd_opts->do_type = UUIDD_OP_TIME_UUID;
 			break;
 		case 'T':
-			uuidd_cxt.timeout = strtou32_or_err(optarg,
+			uuidd_cxt->timeout = strtou32_or_err(optarg,
 						_("failed to parse --timeout"));
 			break;
 
@@ -638,52 +632,78 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (strlen(socket_path) >= sizeof(((struct sockaddr_un *)0)->sun_path))
-		errx(EXIT_FAILURE, _("socket name too long: %s"), socket_path);
+}
 
-	if (!no_pid && !pidfile_path)
-		pidfile_path = UUIDD_PIDFILE_PATH;
+int main(int argc, char **argv)
+{
+	const char	*err_context = NULL;
+	char		*cp;
+	int		ret;
+
+	struct uuidd_cxt_t uuidd_cxt = { .timeout = 0 };
+	struct uuidd_options_t uuidd_opts = { .socket_path = UUIDD_SOCKET_PATH };
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	close_stdout_atexit();
+
+	parse_options(argc, argv, &uuidd_cxt, &uuidd_opts);
+
+	if (strlen(uuidd_opts.socket_path) >= sizeof(((struct sockaddr_un *)0)->sun_path))
+		errx(EXIT_FAILURE, _("socket name too long: %s"), uuidd_opts.socket_path);
+
+	if (!uuidd_opts.no_pid && !uuidd_opts.pidfile_path)
+		uuidd_opts.pidfile_path = UUIDD_PIDFILE_PATH;
 
 	/* custom socket path and socket-activation make no sense */
-	if (s_flag && uuidd_cxt.no_sock && !uuidd_cxt.quiet)
+	if (uuidd_opts.s_flag && uuidd_cxt.no_sock && !uuidd_cxt.quiet)
 		warnx(_("Both --socket-activation and --socket specified. "
 			"Ignoring --socket."));
 
-	if (num && do_type) {
-		ret = call_daemon(socket_path, do_type + 2, buf,
-				  sizeof(buf), &num, &err_context);
+	if (uuidd_opts.num && uuidd_opts.do_type) {
+		char buf[1024];
+		char str[UUID_STR_LEN];
+
+		ret = call_daemon(uuidd_opts.socket_path, uuidd_opts.do_type + 2, buf,
+				  sizeof(buf), &uuidd_opts.num, &err_context);
 		if (ret < 0)
 			err(EXIT_FAILURE, _("error calling uuidd daemon (%s)"),
 					err_context ? : _("unexpected error"));
 
-		if (do_type == UUIDD_OP_TIME_UUID) {
-			if (ret != sizeof(uu) + sizeof(num))
+		if (uuidd_opts.do_type == UUIDD_OP_TIME_UUID) {
+			if (ret != sizeof(uuid_t) + sizeof(uuidd_opts.num))
 				unexpected_size(ret);
 
 			uuid_unparse((unsigned char *) buf, str);
 
 			printf(P_("%s and %d subsequent UUID\n",
-				  "%s and %d subsequent UUIDs\n", num - 1),
-			       str, num - 1);
+				  "%s and %d subsequent UUIDs\n", uuidd_opts.num - 1),
+			       str, uuidd_opts.num - 1);
 		} else {
+			uint32_t i;
+
 			printf(_("List of UUIDs:\n"));
 			cp = buf + 4;
-			if (ret != (int) (sizeof(num) + num * sizeof(uu)))
+			if (ret != (int) (sizeof(uuidd_opts.num) + uuidd_opts.num * sizeof(uuid_t)))
 				unexpected_size(ret);
-			for (i = 0; i < num; i++, cp += UUID_LEN) {
+			for (i = 0; i < uuidd_opts.num; i++, cp += UUID_LEN) {
 				uuid_unparse((unsigned char *) cp, str);
 				printf("\t%s\n", str);
 			}
 		}
 		return EXIT_SUCCESS;
 	}
-	if (do_type) {
-		ret = call_daemon(socket_path, do_type, (char *) &uu,
-				  sizeof(uu), 0, &err_context);
+	if (uuidd_opts.do_type) {
+		uuid_t uu;
+		char str[UUID_STR_LEN];
+
+		ret = call_daemon(uuidd_opts.socket_path, uuidd_opts.do_type, (char *) &uu,
+				  sizeof(uuid_t), 0, &err_context);
 		if (ret < 0)
 			err(EXIT_FAILURE, _("error calling uuidd daemon (%s)"),
 					err_context ? : _("unexpected error"));
-		if (ret != sizeof(uu))
+		if (ret != sizeof(uuid_t))
 		        unexpected_size(ret);
 
 		uuid_unparse(uu, str);
@@ -692,23 +712,27 @@ int main(int argc, char **argv)
 		return EXIT_SUCCESS;
 	}
 
-	if (do_kill) {
-		ret = call_daemon(socket_path, UUIDD_OP_GETPID, buf, sizeof(buf), 0, NULL);
-		if ((ret > 0) && ((do_kill = atoi((char *) buf)) > 0)) {
-			ret = kill(do_kill, SIGTERM);
+	if (uuidd_opts.do_kill) {
+		char buf[16];
+
+		ret = call_daemon(uuidd_opts.socket_path, UUIDD_OP_GETPID, buf, sizeof(buf), 0, NULL);
+		if (0 < ret) {
+			pid_t pid;
+
+			pid = (pid_t)strtou32_or_err(buf, _("failed to parse pid"));
+			ret = kill(pid, SIGTERM);
 			if (ret < 0) {
 				if (!uuidd_cxt.quiet)
 					warn(_("couldn't kill uuidd running "
-						  "at pid %d"), do_kill);
+						  "at pid %d"), pid);
 				return EXIT_FAILURE;
 			}
 			if (!uuidd_cxt.quiet)
-				printf(_("Killed uuidd running at pid %d.\n"),
-				       do_kill);
+				printf(_("Killed uuidd running at pid %d.\n"), pid);
 		}
 		return EXIT_SUCCESS;
 	}
 
-	server_loop(socket_path, pidfile_path, &uuidd_cxt);
+	server_loop(uuidd_opts.socket_path, uuidd_opts.pidfile_path, &uuidd_cxt);
 	return EXIT_SUCCESS;
 }
