@@ -22,6 +22,7 @@ libcommon_la_SOURCES = \
 	lib/encode.c \
 	lib/fileutils.c \
 	lib/color-names.c \
+	lib/jsonwrt.c \
 	lib/mangle.c \
 	lib/match.c \
 	lib/mbsalign.c \
