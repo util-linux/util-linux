@@ -16,7 +16,6 @@ libsmartcols_la_SOURCES= \
 	libsmartcols/src/line.c \
 	libsmartcols/src/table.c \
 	libsmartcols/src/print.c \
-	libsmartcols/src/fput.c \
 	libsmartcols/src/print-api.c \
 	libsmartcols/src/version.c \
 	libsmartcols/src/buffer.c \

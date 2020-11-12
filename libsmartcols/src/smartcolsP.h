@@ -15,6 +15,7 @@
 #include "list.h"
 #include "strutils.h"
 #include "color-names.h"
+#include "jsonwrt.h"
 #include "debug.h"
 
 #include "libsmartcols.h"
@@ -224,8 +225,8 @@ struct libscols_table {
 	struct libscols_symbols	*symbols;
 	struct libscols_cell	title;		/* optional table title (for humans) */
 
-	int	indent;		/* indentation counter */
-	int	indent_last_sep;/* last printed has been line separator */
+	struct ul_jsonwrt	json;		/* JSON formatting */
+
 	int	format;		/* SCOLS_FMT_* */
 
 	size_t	termlines_used;	/* printed line counter */
@@ -356,17 +357,6 @@ int __scols_print_range(struct libscols_table *tb,
                         struct libscols_buffer *buf,
                         struct libscols_iter *itr,
                         struct libscols_line *end);
-
-/*
- * fput.c
- */
-extern void fput_indent(struct libscols_table *tb);
-extern void fput_table_open(struct libscols_table *tb);
-extern void fput_table_close(struct libscols_table *tb);
-extern void fput_children_open(struct libscols_table *tb);
-extern void fput_children_close(struct libscols_table *tb);
-extern void fput_line_open(struct libscols_table *tb);
-extern void fput_line_close(struct libscols_table *tb, int last, int last_in_table);
 
 static inline int is_tree_root(struct libscols_line *ln)
 {

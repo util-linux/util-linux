@@ -117,8 +117,11 @@ static int do_print_table(struct libscols_table *tb, int *is_empty)
 	if (list_empty(&tb->tb_lines)) {
 		DBG(TAB, ul_debugobj(tb, "ignore -- no lines"));
 		if (scols_table_is_json(tb)) {
-			fput_table_open(tb);
-			fput_table_close(tb);
+			ul_jsonwrt_init(&tb->json, tb->out, 0);
+			ul_jsonwrt_root_open(&tb->json);
+			ul_jsonwrt_array_open(&tb->json, tb->name);
+			ul_jsonwrt_array_close(&tb->json, 1);
+			ul_jsonwrt_root_close(&tb->json);
 		} else if (is_empty)
 			*is_empty = 1;
 		return 0;
@@ -129,7 +132,10 @@ static int do_print_table(struct libscols_table *tb, int *is_empty)
 	if (rc)
 		return rc;
 
-	fput_table_open(tb);
+	if (scols_table_is_json(tb)) {
+		ul_jsonwrt_root_open(&tb->json);
+		ul_jsonwrt_array_open(&tb->json, tb->name);
+	}
 
 	if (tb->format == SCOLS_FMT_HUMAN)
 		__scols_print_title(tb);
@@ -143,7 +149,10 @@ static int do_print_table(struct libscols_table *tb, int *is_empty)
 	else
 		rc = __scols_print_table(tb, buf);
 
-	fput_table_close(tb);
+	if (scols_table_is_json(tb)) {
+		ul_jsonwrt_array_close(&tb->json, 1);
+		ul_jsonwrt_root_close(&tb->json);
+	}
 done:
 	__scols_cleanup_printing(tb, buf);
 	return rc;
@@ -162,7 +171,7 @@ int scols_print_table(struct libscols_table *tb)
 	int empty = 0;
 	int rc = do_print_table(tb, &empty);
 
-	if (rc == 0 && !empty)
+	if (rc == 0 && !empty && !scols_table_is_json(tb))
 		fputc('\n', tb->out);
 	return rc;
 }

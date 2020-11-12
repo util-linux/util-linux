@@ -444,6 +444,7 @@ static int print_data(struct libscols_table *tb,
 	size_t len = 0, i, width, bytes;
 	const char *color = NULL;
 	char *data, *nextchunk;
+	const char *name = NULL;
 	int is_last;
 
 	assert(tb);
@@ -453,7 +454,15 @@ static int print_data(struct libscols_table *tb,
 	if (!data)
 		data = "";
 
+	if (tb->format != SCOLS_FMT_HUMAN)
+		name = scols_cell_get_data(&cl->header);
+
 	is_last = is_last_column(cl);
+
+	if (is_last && scols_table_is_json(tb) &&
+	    scols_table_is_tree(tb) && has_children(ln))
+		/* "children": [] is the real last value */
+		is_last = 0;
 
 	switch (tb->format) {
 	case SCOLS_FMT_RAW:
@@ -463,37 +472,28 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	case SCOLS_FMT_EXPORT:
-		fprintf(tb->out, "%s=", scols_cell_get_data(&cl->header));
+		fprintf(tb->out, "%s=", name);
 		fputs_quoted(data, tb->out);
 		if (!is_last)
 			fputs(colsep(tb), tb->out);
 		return 0;
 
 	case SCOLS_FMT_JSON:
-		fputs_quoted_json_lower(scols_cell_get_data(&cl->header), tb->out);
-		fputs(":", tb->out);
 		switch (cl->json_type) {
-			case SCOLS_JSON_STRING:
-				if (!*data)
-					fputs("null", tb->out);
-				else
-					fputs_quoted_json(data, tb->out);
-				break;
-			case SCOLS_JSON_NUMBER:
-				if (!*data)
-					fputs("null", tb->out);
-				else
-					fputs(data, tb->out);
-				break;
-			case SCOLS_JSON_BOOLEAN:
-				fputs(!*data ? "false" :
-				      *data == '0' ? "false" :
-				      *data == 'N' || *data == 'n' ? "false" : "true",
-				      tb->out);
-				break;
+		case SCOLS_JSON_STRING:
+			ul_jsonwrt_value_s(&tb->json, name, data, is_last);
+			break;
+		case SCOLS_JSON_NUMBER:
+			ul_jsonwrt_value_raw(&tb->json, name, data, is_last);
+			break;
+		case SCOLS_JSON_BOOLEAN:
+			ul_jsonwrt_value_boolean(&tb->json, name,
+				!*data ? 0 :
+				*data == '0' ? 0 :
+				*data == 'N' || *data == 'n' ? 0 : 1,
+				is_last);
+			break;
 		}
-		if (!is_last)
-			fputs(", ", tb->out);
 		return 0;
 
 	case SCOLS_FMT_HUMAN:
@@ -871,9 +871,17 @@ int __scols_print_range(struct libscols_table *tb,
 
 		int last = scols_iter_is_last(itr);
 
-		fput_line_open(tb);
+		if (scols_table_is_json(tb))
+			ul_jsonwrt_object_open(&tb->json, NULL);
+
 		rc = print_line(tb, ln, buf);
-		fput_line_close(tb, last, last);
+
+		if (scols_table_is_json(tb))
+			ul_jsonwrt_object_close(&tb->json, last);
+		else if (last == 0 && tb->no_linesep == 0) {
+			fputs(linesep(tb), tb->out);
+			tb->termlines_used++;
+		}
 
 		if (end && ln == end)
 			break;
@@ -905,16 +913,22 @@ static int print_tree_line(struct libscols_table *tb,
 
 	DBG(LINE, ul_debugobj(ln, "   printing tree line"));
 
-	fput_line_open(tb);
+	if (scols_table_is_json(tb))
+		ul_jsonwrt_object_open(&tb->json, NULL);
+
 	rc = print_line(tb, ln, buf);
 	if (rc)
 		return rc;
 
-	if (has_children(ln))
-		fput_children_open(tb);
-
-	else {
-		int last_in_tree = scols_walk_is_last(tb, ln);
+	if (has_children(ln)) {
+		if (scols_table_is_json(tb))
+			ul_jsonwrt_array_open(&tb->json, "children");
+		else {
+			/* between parent and child is separator */
+			fputs(linesep(tb), tb->out);
+			tb->termlines_used++;
+		}
+	} else {
 		int last;
 
 		/* terminate all open last children for JSON */
@@ -923,20 +937,20 @@ static int print_tree_line(struct libscols_table *tb,
 				last = (is_child(ln) && is_last_child(ln)) ||
 				       (is_tree_root(ln) && is_last_tree_root(tb, ln));
 
-				fput_line_close(tb, last, last_in_tree);
+				ul_jsonwrt_object_close(&tb->json, last);
 				if (last && is_child(ln))
-					fput_children_close(tb);
-
-				last_in_tree = 0;
+					ul_jsonwrt_array_close(&tb->json, last);
 				ln = ln->parent;
 			} while(ln && last);
 
-		} else {
-			/* standard output */
-			last = (is_child(ln) && is_last_child(ln)) ||
-			       (is_group_child(ln) && is_last_group_child(ln));
+		} else if (tb->no_linesep == 0) {
+			int last_in_tree = scols_walk_is_last(tb, ln);
 
-			fput_line_close(tb, last, last_in_tree);
+			if (last_in_tree == 0) {
+				/* standard output */
+				fputs(linesep(tb), tb->out);
+				tb->termlines_used++;
+			}
 		}
 	}
 
@@ -1029,8 +1043,8 @@ int __scols_initialize_printing(struct libscols_table *tb, struct libscols_buffe
 		extra_bufsz += tb->ncols;			/* separator between columns */
 		break;
 	case SCOLS_FMT_JSON:
-		if (tb->format == SCOLS_FMT_JSON)
-			extra_bufsz += tb->nlines * 3;		/* indentation */
+		ul_jsonwrt_init(&tb->json, tb->out, 0);
+		extra_bufsz += tb->nlines * 3;		/* indentation */
 		/* fallthrough */
 	case SCOLS_FMT_EXPORT:
 	{
