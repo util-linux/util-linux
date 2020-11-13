@@ -91,10 +91,6 @@
 # define TTY_MODE 0600
 #endif
 
-#ifndef SPT_BUFSIZE
-# define SPT_BUFSIZE     2048
-#endif
-
 static char **argv0;
 static size_t argv_lth;
 
@@ -260,18 +256,19 @@ static void process_title_init (int argc, char **argv)
 		argv0 = argv;
 }
 
-static void process_title_update (const char *prog, const char *txt)
+static void process_title_update(const char *username)
 {
         size_t i;
-        char buf[SPT_BUFSIZE];
+        const char prefix[] = "login -- ";
+        char buf[sizeof(prefix) + LOGIN_NAME_MAX];
 
         if (!argv0)
                 return;
 
-	if (strlen(prog) + strlen(txt) + 5 > SPT_BUFSIZE)
+	if (sizeof(buf) < (sizeof(prefix) + strlen(username) + 1))
 		return;
 
-	sprintf(buf, "%s -- %s", prog, txt);
+	snprintf(buf, sizeof(buf), "%s%s", prefix, username);
 
         i = strlen(buf);
         if (i > argv_lth - 2) {
@@ -1452,7 +1449,7 @@ int main(int argc, char **argv)
 
 	init_environ(&cxt);		/* init $HOME, $TERM ... */
 
-	process_title_update("login", cxt.username);
+	process_title_update(cxt.username);
 
 	log_syslog(&cxt);
 
