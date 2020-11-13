@@ -283,7 +283,7 @@ done:
 }
 
 /* use "rXpY" string as stepping */
-static int arm_decode_rXpY(struct lscpu_cputype *ct)
+static int arm_rXpY_decode(struct lscpu_cputype *ct)
 {
 	int impl, revision, variant;
 	char *end = NULL;
@@ -340,13 +340,13 @@ static int arm_smbios_decode(struct lscpu_cputype *ct)
 	str = dmi_string(&h, data[PROC_MFR_OFFSET]);
 	if (str) {
 		xstrncpy(buf, str, 127);
-		ct->vendor = xstrdup(buf);
+		ct->bios_vendor = xstrdup(buf);
 	}
 
 	str = dmi_string(&h, data[PROC_VERSION_OFFSET]);
 	if (str) {
 		xstrncpy(buf, str, 127);
-		ct->modelname = xstrdup(buf);
+		ct->bios_modelname = xstrdup(buf);
 	}
 
 	return 0;
@@ -354,17 +354,12 @@ static int arm_smbios_decode(struct lscpu_cputype *ct)
 
 static void arm_decode(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
-	int rc = -1;
-
-	/* use SMBIOS Type 4 data if available, else fall back to manual
-	 * decoding using the tables above
-	 */
+	/* use SMBIOS Type 4 data if available */
 	if (!cxt->noalive && access(_PATH_SYS_DMI_TYPE4, R_OK) == 0)
-		rc = arm_smbios_decode(ct);
-	if (rc)
-		arm_ids_decode(ct);
+		arm_smbios_decode(ct);
 
-	 arm_decode_rXpY(ct);
+	arm_ids_decode(ct);
+	arm_rXpY_decode(ct);
 }
 
 void lscpu_decode_arm(struct lscpu_cxt *cxt)

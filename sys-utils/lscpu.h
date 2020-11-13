@@ -58,10 +58,12 @@ struct lscpu_cputype {
 
 	char	*vendor;
 	int	vendor_id;	/* created by lscpu_decode_arm() */
+	char	*bios_vendor;	/* aarch64 */
 	char	*machinetype;	/* s390 */
 	char	*family;
 	char	*model;
 	char	*modelname;
+	char	*bios_modelname; /* aarch64 */
 	char	*revision;	/* alternative for model (ppc) */
 	char	*stepping;
 	char    *bogomips;

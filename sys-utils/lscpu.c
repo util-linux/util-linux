@@ -831,12 +831,10 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 		     struct libscols_table *tb,
 		     struct libscols_line *sec)
 {
-	if (ct->modelname) {
-		struct libscols_line *tmp = add_summary_s(tb, sec, _("Model name:"), ct->modelname);
-		if (!sec)
-			sec= tmp;
-	}
-
+	if (ct->modelname)
+		sec = add_summary_s(tb, sec, _("Model name:"), ct->modelname);
+	if (ct->bios_modelname)
+		add_summary_s(tb, sec, _("BIOS Model name:"), ct->bios_modelname);
 	if (ct->machinetype)
 		add_summary_s(tb, sec, _("Machine type:"), ct->machinetype);
 	if (ct->family)
@@ -983,16 +981,16 @@ static void print_summary(struct lscpu_cxt *cxt)
 					   _("Off-line CPU(s) list:"), set);
 		cpuset_free(set);
 	}
+	sec = NULL;
 
 	/* Section: cpu type description */
 	if (ct->vendor)
 		sec = add_summary_s(tb, NULL, _("Vendor ID:"), ct->vendor);
+	if (ct->bios_vendor)
+		add_summary_s(tb, sec, _("BIOS Vendor ID:"), ct->bios_vendor);
 
-	for (i = 0; i < cxt->ncputypes; i++) {
-		print_summary_cputype(cxt, cxt->cputypes[i],
-					tb, cxt->ncputypes == 1 ? sec : NULL);
-
-	}
+	for (i = 0; i < cxt->ncputypes; i++)
+		print_summary_cputype(cxt, cxt->cputypes[i], tb, sec);
 	sec = NULL;
 
 	/* Section: vitualiazation */
