@@ -1259,41 +1259,22 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-int main(int argc, char **argv)
+static void initialize(int argc, char **argv, struct login_context *cxt)
 {
 	int c;
-	char *childArgv[10];
-	char *buff;
-	int childArgc = 0;
-	int retcode;
 	unsigned int timeout;
 	struct sigaction act;
-	struct passwd *pwd;
-	static const int wanted_fds[] = {
-		STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
-	};
-	struct login_context cxt = {
-		.tty_mode = TTY_MODE,		  /* tty chmod() */
-		.pid = getpid(),		  /* PID */
-#ifdef HAVE_SECURITY_PAM_MISC_H
-		.conv = { misc_conv, NULL }	  /* Linux-PAM conversation function */
-#elif defined(HAVE_SECURITY_OPENPAM_H)
-		.conv = { openpam_ttyconv, NULL } /* OpenPAM conversation function */
-#endif
-
-	};
 
 	/* the only two longopts to satisfy UL standards */
 	enum { HELP_OPTION = CHAR_MAX + 1 };
-	static const struct option longopts[] = {
+	const struct option longopts[] = {
 		{"help", no_argument, NULL, HELP_OPTION},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
 	};
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
+	const int wanted_fds[] = {
+		STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
+	};
 
 	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
 
@@ -1302,7 +1283,7 @@ int main(int argc, char **argv)
 				  program_invocation_short_name, timeout);
 
 	signal(SIGALRM, timedout);
-	(void) sigaction(SIGALRM, NULL, &act);
+	sigaction(SIGALRM, NULL, &act);
 	act.sa_flags &= ~SA_RESTART;
 	sigaction(SIGALRM, &act, NULL);
 	alarm(timeout);
@@ -1315,11 +1296,11 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "fHh:pV", longopts, NULL)) != -1)
 		switch (c) {
 		case 'f':
-			cxt.noauth = 1;
+			cxt->noauth = 1;
 			break;
 
 		case 'H':
-			cxt.nohost = 1;
+			cxt->nohost = 1;
 			break;
 
 		case 'h':
@@ -1328,11 +1309,11 @@ int main(int argc, char **argv)
 					_("login: -h is for superuser only\n"));
 				exit(EXIT_FAILURE);
 			}
-			init_remote_info(&cxt, optarg);
+			init_remote_info(cxt, optarg);
 			break;
 
 		case 'p':
-			cxt.keep_env = 1;
+			cxt->keep_env = 1;
 			break;
 
 		case 'V':
@@ -1349,9 +1330,9 @@ int main(int argc, char **argv)
 		char *p = *argv;
 
 		/* username from command line */
-		cxt.cmd_username = xstrdup(p);
+		cxt->cmd_username = xstrdup(p);
 		/* used temporary, it'll be replaced by username from PAM or/and cxt->pwd */
-		cxt.username = cxt.cmd_username;
+		cxt->username = cxt->cmd_username;
 
 		/* Wipe the name - some people mistype their password here. */
 		/* (Of course we are too late, but perhaps this helps a little...) */
@@ -1360,6 +1341,29 @@ int main(int argc, char **argv)
 	}
 
 	close_all_fds(wanted_fds, ARRAY_SIZE(wanted_fds));
+}
+
+int main(int argc, char **argv)
+{
+	char *childArgv[10];
+	int childArgc = 0;
+	struct passwd *pwd;
+	struct login_context cxt = {
+		.tty_mode = TTY_MODE,		  /* tty chmod() */
+		.pid = getpid(),		  /* PID */
+#ifdef HAVE_SECURITY_PAM_MISC_H
+		.conv = { misc_conv, NULL }	  /* Linux-PAM conversation function */
+#elif defined(HAVE_SECURITY_OPENPAM_H)
+		.conv = { openpam_ttyconv, NULL } /* OpenPAM conversation function */
+#endif
+
+	};
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	initialize(argc, argv, &cxt);
 
 	setpgrp();	 /* set pgid to pid this means that setsid() will fail */
 	init_tty(&cxt);
@@ -1403,13 +1407,17 @@ int main(int argc, char **argv)
 	 * which can cause problems if NIS, NIS+, LDAP or something similar
 	 * is used and the machine has network problems.
 	 */
-	retcode = pwd->pw_uid ? initgroups(cxt.username, pwd->pw_gid) :	/* user */
-			        setgroups(0, NULL);			/* root */
-	if (retcode < 0) {
-		syslog(LOG_ERR, _("groups initialization failed: %m"));
-		warnx(_("\nSession setup problem, abort."));
-		pam_end(cxt.pamh, PAM_SYSTEM_ERR);
-		sleepexit(EXIT_FAILURE);
+	{
+		int retcode;
+
+		retcode = pwd->pw_uid ? initgroups(cxt.username, pwd->pw_gid) :	/* user */
+				        setgroups(0, NULL);			/* root */
+		if (retcode < 0) {
+			syslog(LOG_ERR, _("groups initialization failed: %m"));
+			warnx(_("\nSession setup problem, abort."));
+			pam_end(cxt.pamh, PAM_SYSTEM_ERR);
+			sleepexit(EXIT_FAILURE);
+		}
 	}
 
 	cxt.quiet = get_hushlogin_status(pwd, 1) == 1 ? 1 : 0;
@@ -1497,6 +1505,8 @@ int main(int argc, char **argv)
 
 	/* if the shell field has a space: treat it like a shell script */
 	if (strchr(pwd->pw_shell, ' ')) {
+		char *buff;
+
 		xasprintf(&buff, "exec %s", pwd->pw_shell);
 		childArgv[childArgc++] = "/bin/sh";
 		childArgv[childArgc++] = "-sh";
