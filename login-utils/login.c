@@ -1336,8 +1336,12 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 
 		/* Wipe the name - some people mistype their password here. */
 		/* (Of course we are too late, but perhaps this helps a little...) */
+#ifdef HAVE_EXPLICIT_BZERO
+		explicit_bzero(p, strlen(p));
+#else
 		while (*p)
 			*p++ = ' ';
+#endif
 	}
 
 	close_all_fds(wanted_fds, ARRAY_SIZE(wanted_fds));
