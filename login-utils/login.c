@@ -1159,10 +1159,8 @@ static void init_environ(struct login_context *cxt)
 		termenv = xstrdup(termenv);
 
 	/* destroy environment unless user has requested preservation (-p) */
-	if (!cxt->keep_env) {
-		environ = xmalloc(sizeof(char *));
-		memset(environ, 0, sizeof(char *));
-	}
+	if (!cxt->keep_env)
+		environ = xcalloc(1, sizeof(char *));
 
 	xsetenv("HOME", pwd->pw_dir, 0);	/* legal to override */
 	xsetenv("USER", pwd->pw_name, 1);
