@@ -917,6 +917,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		scols_symbols_set_vertical(sy, "  ");
 		scols_symbols_set_right(sy, "  ");
 		scols_table_set_symbols(tb, sy);
+		scols_unref_symbols(sy);
 	}
 
 	if (scols_table_new_column(tb, "field", 0, is_term ? SCOLS_FL_TREE : 0) == NULL ||

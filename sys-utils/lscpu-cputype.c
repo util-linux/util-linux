@@ -74,10 +74,12 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		DBG(TYPE, ul_debugobj(ct, "  freeing %s/%s", ct->vendor, ct->model));
 		lscpu_cputype_free_topology(ct);
 		free(ct->vendor);
+		free(ct->bios_vendor);
 		free(ct->machinetype);	/* s390 */
 		free(ct->family);
 		free(ct->model);
 		free(ct->modelname);
+		free(ct->bios_modelname);
 		free(ct->revision);	/* alternative for model (ppc) */
 		free(ct->stepping);
 		free(ct->bogomips);
