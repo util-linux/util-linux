@@ -242,13 +242,10 @@ static void process_title_init(int argc, char **argv)
 	for (i = 0; envp[i] != NULL; i++)
 		continue;
 
-	environ = malloc(sizeof(char *) * (i + 1));
-	if (environ == NULL)
-		return;
+	environ = xmalloc(sizeof(char *) * (i + 1));
 
 	for (i = 0; envp[i] != NULL; i++)
-		if ((environ[i] = strdup(envp[i])) == NULL)
-			return;
+		environ[i] = xstrdup(envp[i]);
 	environ[i] = NULL;
 
 	if (i > 0)
