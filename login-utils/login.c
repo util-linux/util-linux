@@ -401,6 +401,35 @@ static void motd(void)
 }
 
 /*
+ * Display message of the day and you have mail notifications
+ */
+static void display_login_messages()
+{
+	motd();
+
+#ifdef LOGIN_STAT_MAIL
+	/*
+	 * This turns out to be a bad idea: when the mail spool
+	 * is NFS mounted, and the NFS connection hangs, the
+	 * login hangs, even root cannot login.
+	 * Checking for mail should be done from the shell.
+	 */
+	{
+		struct stat st;
+		char *mail;
+
+		mail = getenv("MAIL");
+		if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
+			if (st.st_mtime > st.st_atime)
+				printf(_("You have new mail.\n"));
+			else
+				printf(_("You have mail.\n"));
+		}
+	}
+#endif
+}
+
+/*
  * Nice and simple code provided by Linus Torvalds 16-Feb-93.
  * Non-blocking stuff by Maciej W. Rozycki, macro@ds2.pg.gda.pl, 1999.
  *
@@ -1450,30 +1479,8 @@ int main(int argc, char **argv)
 
 	log_syslog(&cxt);
 
-	if (!cxt.quiet) {
-		motd();
-
-#ifdef LOGIN_STAT_MAIL
-		/*
-		 * This turns out to be a bad idea: when the mail spool
-		 * is NFS mounted, and the NFS connection hangs, the
-		 * login hangs, even root cannot login.
-		 * Checking for mail should be done from the shell.
-		 */
-		{
-			struct stat st;
-			char *mail;
-
-			mail = getenv("MAIL");
-			if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
-				if (st.st_mtime > st.st_atime)
-					printf(_("You have new mail.\n"));
-				else
-					printf(_("You have mail.\n"));
-			}
-		}
-#endif
-	}
+	if (!cxt.quiet)
+		display_login_messages();
 
 	/*
 	 * Detach the controlling terminal, fork, and create a new session
