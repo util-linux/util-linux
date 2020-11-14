@@ -497,6 +497,7 @@ AC_CHECK_DECL([SO_PASSCRED],
 
 AC_CHECK_FUNCS([ \
 	clearenv \
+	close_range \
 	__fpurge \
 	fpurge \
 	__fpending \
@@ -571,6 +572,7 @@ AS_IF([test "x$ul_cv_syscall_setns" = xno], [
 
 UL_CHECK_SYSCALL([pidfd_open])
 UL_CHECK_SYSCALL([pidfd_send_signal])
+UL_CHECK_SYSCALL([close_range])
 
 AC_CHECK_FUNCS([isnan], [],
 	[AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]

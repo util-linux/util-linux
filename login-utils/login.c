@@ -1294,9 +1294,11 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
 	};
+#ifndef HAVE_CLOSE_RANGE
 	const int wanted_fds[] = {
 		STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
 	};
+#endif
 
 	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
 
@@ -1365,8 +1367,11 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 			*p++ = ' ';
 #endif
 	}
-
+#ifdef HAVE_CLOSE_RANGE
+	close_range(STDERR_FILENO + 1, ~0U);
+#else
 	close_all_fds(wanted_fds, ARRAY_SIZE(wanted_fds));
+#endif
 }
 
 int main(int argc, char **argv)
