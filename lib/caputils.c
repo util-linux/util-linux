@@ -14,32 +14,59 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <sys/prctl.h>
 #include <stdio.h>
+#include <limits.h>
 
 #include "caputils.h"
+#include "procutils.h"
 #include "pathnames.h"
+
+static int test_cap(unsigned int cap)
+{
+	/* prctl returns 0 or 1 for valid caps, -1 otherwise */
+	return prctl(PR_CAPBSET_READ, cap, 0, 0, 0) >= 0;
+}
 
 int cap_last_cap(void)
 {
-	/* CAP_LAST_CAP is untrustworthy. */
-	static int ret = -1;
-	int matched;
+	static int cap = -1;
 	FILE *f;
 
-	if (ret != -1)
-		return ret;
+	if (cap != -1)
+		return cap;
 
+	/* try to read value from kernel, check that the path is
+	 * indeed in a procfs mount */
 	f = fopen(_PATH_PROC_CAPLASTCAP, "r");
-	if (!f) {
-		ret = CAP_LAST_CAP;	/* guess */
-		return ret;
+	if (f) {
+		int matched = 0;
+
+		if (proc_is_procfs(fileno(f))) {
+			matched = fscanf(f, "%d", &cap);
+		}
+		fclose(f);
+
+		/* we check if the cap after this one really isn't valid */
+		if (matched == 1 && cap < INT_MAX && !test_cap(cap + 1))
+			return cap;
 	}
 
-	matched = fscanf(f, "%d", &ret);
-	fclose(f);
+	/* if it wasn't possible to read the file in /proc,
+	 * fall back to binary search over capabilities */
 
-	if (matched != 1)
-		ret = CAP_LAST_CAP;	/* guess */
+	/* starting with cap=INT_MAX means we always know
+	 * that cap1 is invalid after the first iteration */
+	unsigned int cap0 = 0, cap1 = INT_MAX;
+	cap = INT_MAX;
+	while ((int)cap0 < cap) {
+		if (test_cap(cap)) {
+			cap0 = cap;
+		} else {
+			cap1 = cap;
+		}
+		cap = (cap0 + cap1) / 2U;
+	}
 
-	return ret;
+	return cap;
 }
