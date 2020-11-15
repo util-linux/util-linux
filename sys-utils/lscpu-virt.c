@@ -377,8 +377,9 @@ none:
 }
 
 #else /* ! (__x86_64__ || __i386__) */
-static void read_hypervisor_cpuid(void)
+static int read_hypervisor_cpuid(void)
 {
+	return 0;
 }
 #endif
 
