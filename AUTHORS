@@ -88,6 +88,7 @@ CONTRIBUTORS:
       A. Bram Neijt <bneijt@gmail.com>
       A. Costa <agcosta@gis.net>
       Adam Jackson <ajax@redhat.com>
+      Adriaan de Groot <groot@kde.org>
       Adrian Knoth <adi@drcomp.erfurt.thur.de>
       Adrian Reber <areber@redhat.com>
       Ævar Arnfjörð Bjarmason <avarab@gmail.com>
@@ -246,6 +247,7 @@ CONTRIBUTORS:
       Dennis Jensen <dennis.h.jensen@siemens.com>
       Diego Elio 'Flameeyes' Pettenò <flameeyes@gmail.com>
       Dima Kogan <dkogan@cds.caltech.edu>
+      Dimitri John Ledkov <xnox@ubuntu.com>
       Dirk Mueller <dmueller@suse.com>
       Disconnect3d <dominik.b.czarnota@gmail.com>
       Dmitry V. Levin <ldv@altlinux.org>
@@ -255,14 +257,18 @@ CONTRIBUTORS:
       Douglas E. Quale
       Doug Quale <quale@saavik.cs.wisc.edu>
       Dov Grobgeld <dov.grobgeld@gmail.com>
+      Dr. David Alan Gilbert <dave@treblig.org>
+      Dusty Mabe <dusty@dustymabe.com>
       Ed Carp
       edupont <emeric.dupont@agol.org>
+      Egor Chelak <egor.chelak@gmail.com>
       Elan Ruusamäe <glen@delfi.ee>
       Elliott Mitchell <ehem+util-linux@drgnwing.com>
       Eric Desrochers <eric.desrochers@canonical.com>
       Eric Rannaud <e@nanocritical.com>
       Eric Rasmussen <ear@usfirst.org>
       Eric Sandeen <sandeen@redhat.com>
+      Eric Simpson <esimpson@ca.ibm.com>
       Eric S. Raymond <esr@thyrsus.com>
       Eric W. Biederman <ebiederm@xmission.com>
       Erik Troan
@@ -309,6 +315,7 @@ CONTRIBUTORS:
       Georg Schiesser <georg.schiesser@opentech.at>
       Gerald Schaefer <gerald.schaefer@de.ibm.com>
       Gerhard Schneider <gs@ilfb.tuwien.ac.at>
+      Gero Treuner <gero@70t.de>
       Gerrit Renker <gerrit@erg.abdn.ac.uk>
       Giacomo <giacomo.perale@gmail.com>
       Gilles Espinasse <g.esp@free.fr>
@@ -384,6 +391,7 @@ CONTRIBUTORS:
       Jeremy Fitzhardinge <jeremy@suite.sw.oz.au>
       Jeremy Huntwork <jhuntwork@lightcubesolutions.com>
       Jeremy Katz <katzj@fedoraproject.org>
+      Jeremy Linton <jeremy.linton@arm.com>
       Jeremy Linton <lintonrjeremy@gmail.com>
       Jeroen Oortwijn <oortwijn@gmail.com>
       Jesper Dahl Nyerup <nyerup@one.com>
@@ -501,6 +509,7 @@ CONTRIBUTORS:
       Matthew Krupcale <mkrupcale@matthewkrupcale.com>
       Matthias Gerstner <matthias.gerstner@suse.de>
       Matthias König <mk@phasorlab.de>
+      Mattias Nissler <mnissler@chromium.org>
       Matti Niemenmaa <matti.niemenmaa+git@iki.fi>
       Mauricio Faria de Oliveira <mfo@canonical.com>
       Maurizio Lombardi <m.lombardi85@gmail.com>
@@ -663,6 +672,7 @@ CONTRIBUTORS:
       Ruediger Meier <ruediger.meier@ga-group.nl>
       Rui Zhao (renyuneyun) <renyuneyun@gmail.com>
       Rupesh Girase <rgirase@redhat.com>
+      Samanta Navarro <ferivoz@riseup.net>
       Sami Kerola <kerolasa@iki.fi>
       Sami Liedes <sami.liedes@iki.fi>
       Sam Morris <sam@robots.org.uk>
@@ -693,6 +703,7 @@ CONTRIBUTORS:
       Shaun Tancheff <shaun@tancheff.com>
       Shigeki Morishima <s.morishima@jp.fujitsu.com>
       Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+      Shunsuke Nakamura <nakamura.shun@jp.fujitsu.com>
       Simon Mihevc <simonmihevc@email.si>
       sluidfoe <sluidfoe@gmail.com>
       Søren Holm <sgh@sgh.dk>
@@ -729,6 +740,7 @@ CONTRIBUTORS:
       Theodore Ts'o <tytso@mit.edu>
       Thierry Reding <thierry.reding@avionic-design.de>
       Thierry Vignaud <thierry.vignaud@gmail.com>
+      Thomas Abraham <tabraham@suse.com>
       Thomas Bächler <thomas@archlinux.org>
       Thomas Deutschmann <whissi@gentoo.org>
       Thomas Fehr <fehr@suse.de>
@@ -751,6 +763,7 @@ CONTRIBUTORS:
       Tomislav Krznar <tomislav.krznar@gmail.com>
       Tommi Kyntola <kynde@iki.fi>
       Tommy Thorn
+      Tomoaki Teshima <tomoaki.teshima@gmail.com>
       Tom Prince <tom.prince@ualberta.net>
       Toni Uhlig <matzeton@googlemail.com>
       Tony Asleson <tasleson@redhat.com>
