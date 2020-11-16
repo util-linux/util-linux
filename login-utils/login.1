@@ -1,6 +1,6 @@
 .\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH LOGIN "1" "June 2012" "util-linux" "User Commands"
+.TH LOGIN "1" "November 2020" "util-linux" "User Commands"
 .SH NAME
 login \- begin session on the system
 .SH SYNOPSIS
@@ -25,24 +25,25 @@ is used when signing onto a system.  If no argument is given,
 prompts for the username.
 .PP
 The user is then prompted for a password, where appropriate.  Echoing
-is disabled to prevent revealing the password.  Only a small number
+is disabled to prevent revealing the password.  Only a number
 of password failures are permitted before
 .B login
-exits and the communications link is severed.
+exits and the communications link is severed.  See
+.B LOGIN_RETRIES
+in CONFIG FILE ITEMS section.
 .PP
-If password aging has been enabled for the account, the user may be
-prompted for a new password before proceeding.  They will be forced to
-provide their old password and the new password before continuing.
-Please refer to
+If password aging has been enabled for the account, the user may be prompted
+for a new password before proceeding.  In such case old password must be
+provided and the new password entered before continuing.  Please refer to
 .BR passwd (1)
 for more information.
 .PP
 The user and group ID will be set according to their values in the
 .I /etc/passwd
-file.  There is one exception if the user ID is zero: in this case,
+file.  There is one exception if the user ID is zero.  In this case,
 only the primary group ID of the account is set.  This should allow
 the system administrator to login even in case of network problems.
-The value for
+The environment variable values for
 .BR $HOME ,
 .BR $USER ,
 .BR $SHELL ,
@@ -60,32 +61,29 @@ for root, if not otherwise configured.
 .P
 The environment variable
 .B $TERM
-will be preserved, if it exists (other environment variables are
-preserved if the
+will be preserved, if it exists, else it will be initialized to the terminal
+type on your tty.  Other environment variables are preserved if the
 .B \-p
-option is given), else it will be initialized to the terminal type on your tty.
+option is given.
 .PP
-Then the user's shell is started.  If no shell is specified for the
-user in
+Then the user's shell is started.  If no shell is specified for the user in
 .IR /etc\:/passwd ,
 then
 .I /bin\:/sh
-is used.  If there is no directory specified in
+is used.  If there is no home directory specified in
 .IR /etc\:/passwd ,
 then
 .I /
-is used (the home directory is checked for the
+is used, followed by
 .I .hushlogin
-file described below).
+check as described below.
 .PP
 If the file
 .I .hushlogin
-exists, then a "quiet" login is performed (this disables the checking
-of mail and the printing of the last login time and message of the
-day).  Otherwise, if
+exists, then a "quiet" login is performed.  This disables the checking of mail
+and the printing of the last login time and message of the day.  Otherwise, if
 .I /var\:/log\:/lastlog
-exists, the last login time is printed (and the current login is
-recorded).
+exists, the last login time is printed, and the current login is recorded.
 .SH OPTIONS
 .TP
 .B \-p
@@ -93,21 +91,20 @@ Used by
 .BR getty (8)
 to tell
 .B login
-not to destroy the environment.
+to preserve the environment.
 .TP
 .B \-f
-Used to skip a login authentication.  This option is usually
-used by the
+Used to skip a login authentication.  This option is usually used by the
 .BR getty (8)
 autologin feature.
 .TP
 .B \-h
-Used by other servers (i.e.,
+Used by other servers (such as
 .BR telnetd (8))
 to pass the name of the remote host to
 .B login
-so that it may be placed in utmp and wtmp.  Only the superuser may
-use this option.
+so that it can be placed in utmp and wtmp.  Only the superuser is
+allowed use this option.
 .IP
 Note that the
 .B \-h
@@ -120,35 +117,32 @@ but with the
 .B \-h
 option, the name is
 .IR remote .
-It is necessary to create proper PAM config files (e.g.,
+It is necessary to create proper PAM config files (for example,
 .I /etc\:/pam.d\:/login
 and
 .IR /etc\:/pam.d\:/remote ).
 .TP
 .B \-H
-Used by other servers (i.e.,
+Used by other servers (for example,
 .BR telnetd (8))
 to tell
 .B login
-that printing the hostname should be suppressed in the login: prompt.
-See also
+that printing the hostname should be suppressed in the login: prompt.  See also
 .B LOGIN_PLAIN_PROMPT
-below if your server does not allow the
-.B login
-command line to be configured.
+below.
 .TP
-\fB\-\-help\fR
+.B \-\-help
 Display help text and exit.
 .TP
-\fB\-V\fR, \fB\-\-version\fR
+.BR \-V ", " \-\-version
 Display version information and exit.
 .SH CONFIG FILE ITEMS
 .B login
 reads the
 .IR /etc\:/login.defs (5)
-configuration file.  Note that the configuration file could be
-distributed with another package (e.g., shadow-utils).  The following
-configuration items are relevant for
+configuration file.  Note that the configuration file could be distributed with
+another package (usually shadow-utils).  The following configuration items are
+relevant for
 .BR login :
 .PP
 .B MOTD_FILE
@@ -159,12 +153,11 @@ to be displayed upon login.  If the specified path is a directory then displays
 all files with .motd file extension in version-sort order from the directory.
 .PP
 The default value is
-.IR "/usr/share/misc/motd:/run/motd:/etc/motd" .
+.IR "/usr\:/share\:/misc\:/motd:\:/run\:/motd:\:/etc\:/motd" .
 If the
 .B MOTD_FILE
-item is empty or a quiet login is enabled, then the message of the day
-is not displayed.  Note that the same functionality is also provided
-by the
+item is empty or a quiet login is enabled, then the message of the day is not
+displayed.  Note that the same functionality is also provided by the
 .BR pam_motd (8)
 PAM module.
 .PP
@@ -174,14 +167,12 @@ are supported since version 2.36.
 .PP
 Note that
 .B login
-does not implement any filenames overriding behavior like pam_motd
-(see also
+does not implement any filenames overriding behavior like pam_motd (see also
 .BR MOTD_FIRSTONLY ),
-but all content from all files is displayed.  It is
-recommended to keep extra logic in content generators and use
+but all content from all files is displayed.  It is recommended to
+keep extra logic in content generators and use
 .I /run/motd.d
-rather
-than rely on overriding behavior hardcoded in system tools.
+rather than rely on overriding behavior hardcoded in system tools.
 .RE
 .PP
 .B MOTD_FIRSTONLY
@@ -191,11 +182,12 @@ Forces
 .B login
 to stop display content specified by
 .B MOTD_FILE
-after the first accessible item in the list.
-Note that a directory is one item in this case.
-This option allows
+after the first accessible item in the list.  Note that a directory
+is one item in this case.  This option allows
 .B login
-semantics to be configured to be more compatible with pam_motd.
+semantics to be configured to be more compatible with pam_motd.  The
+default value is
+.IR no .
 .RE
 .PP
 .B LOGIN_PLAIN_PROMPT
@@ -203,10 +195,10 @@ semantics to be configured to be more compatible with pam_motd.
 .RS 4
 Tell
 .B login
-that printing the hostname should be suppressed in the login:
-prompt.
-This is an alternative to the \fB\-H\fR command line option.  The default
-value is
+that printing the hostname should be suppressed in the login: prompt.
+This is an alternative to the
+.B \-H
+command line option.  The default value is
 .IR no .
 .RE
 .PP
@@ -230,7 +222,8 @@ value is
 .RS 4
 Tell
 .B login
-to only re-prompt for the password if authentication failed, but the username is valid. The default value is
+to only re-prompt for the password if authentication failed, but the
+username is valid.  The default value is
 .IR no .
 .RE
 .PP
@@ -273,7 +266,7 @@ can be either the name of a group or a numeric group identifier.
 (string)
 .RS 4
 If defined, this file can inhibit all the usual chatter during the
-login sequence.  If a full pathname (e.g.,
+login sequence.  If a full pathname (for example,
 .IR /etc\:/hushlogins )
 is specified, then hushed mode will be enabled if the user\'s name or
 shell are found in the file.  If this global hush login file is empty
@@ -308,16 +301,15 @@ to change directory to their home.  The default value is
 .RS 4
 Highest user ID number for which the
 .I lastlog
-entries should be
-updated.  As higher user IDs are usually tracked by remote user
-identity and authentication services there is no need to create
-a huge sparse
+entries should be updated.  As higher user IDs are usually tracked by
+remote user identity and authentication services there is no need to
+create a huge sparse
 .I lastlog
-file for them.  No LASTLOG_UID_MAX option
-present in the configuration means that there is no user ID limit
-for writing
+file for them.  No LASTLOG_UID_MAX option present in the
+configuration means that there is no user ID limit for writing
 .I lastlog
-entries.
+entries.  The default value is
+.IR ULONG_MAX .
 .RE
 .PP
 .B LOG_UNKFAIL_ENAB
@@ -336,8 +328,7 @@ user enters their password instead of their login name.
 .RS 4
 If set, it will be used to define the
 .B PATH
-environment variable when
-a regular user logs in.  The default value is
+environment variable when a regular user logs in.  The default value is
 .I /usr\:/local\:/bin:\:/bin:\:/usr\:/bin
 .RE
 .PP
@@ -347,8 +338,8 @@ a regular user logs in.  The default value is
 .B ENV_SUPATH
 (string)
 .RS 4
-If set, it will be used to define the PATH environment variable when
-the superuser logs in.  ENV_ROOTPATH takes precedence.  The default value is
+If set, it will be used to define the PATH environment variable when the
+superuser logs in.  ENV_ROOTPATH takes precedence.  The default value is
 .I /usr\:/local\:/sbin:\:/usr\:/local\:/bin:\:/sbin:\:/bin:\:/usr\:/sbin:\:/usr\:/bin
 .RE
 .SH FILES
@@ -363,7 +354,7 @@ the superuser logs in.  ENV_ROOTPATH takes precedence.  The default value is
 .I /etc/pam.d/login
 .I /etc/pam.d/remote
 .I /etc/hushlogins
-.I .hushlogin
+.I $HOME/.hushlogin
 .fi
 .SH BUGS
 The undocumented BSD
@@ -379,14 +370,12 @@ is a satisfactory substitute.  Indeed, for security reasons,
 .B login
 does a
 .BR vhangup (2)
-system call to remove any possible listening
-processes on the tty.  This is to avoid password sniffing.  If one
-uses the command
+system call to remove any possible listening processes on the tty.  This is to
+avoid password sniffing.  If one uses the command
 .BR login ,
 then the surrounding shell gets killed by
 .BR vhangup (2)
-because it's no
-longer the true owner of the tty.  This can be avoided by using
+because it's no longer the true owner of the tty.  This can be avoided by using
 .B exec login
 in a top-level shell or xterm.
 .SH AUTHORS
@@ -416,8 +405,7 @@ Karel Zak
 .BR lastlog (8)
 .BR shutdown (8)
 .SH AVAILABILITY
-The login command is part of the util-linux package and is
-available from
+The login command is part of the util-linux package and is available from
 .UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
 Linux Kernel Archive
 .UE .
