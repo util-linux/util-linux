@@ -42,8 +42,10 @@ endif # BUILD_SCRIPTLIVE
 if BUILD_AGETTY
 sbin_PROGRAMS += agetty
 dist_man_MANS += term-utils/agetty.8
-agetty_SOURCES = term-utils/agetty.c \
-		 lib/plymouth-ctrl.c
+agetty_SOURCES = term-utils/agetty.c
+if USE_PLYMOUTH_SUPPORT
+agetty_SOURCES += lib/plymouth-ctrl.c
+endif
 agetty_LDADD = $(LDADD) libcommon.la
 if BSD
 agetty_LDADD += -lutil
