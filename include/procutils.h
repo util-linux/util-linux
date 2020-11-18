@@ -2,6 +2,7 @@
 #define UTIL_LINUX_PROCUTILS
 
 #include <dirent.h>
+#include <sys/types.h>
 
 struct proc_tasks {
 	DIR *dir;
@@ -30,5 +31,7 @@ extern int proc_next_pid(struct proc_processes *ps, pid_t *pid);
 
 extern char *proc_get_command(pid_t pid);
 extern char *proc_get_command_name(pid_t pid);
+
+extern int proc_is_procfs(int fd);
 
 #endif /* UTIL_LINUX_PROCUTILS */
