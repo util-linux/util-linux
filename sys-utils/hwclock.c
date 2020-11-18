@@ -678,7 +678,7 @@ display_time(struct timeval hwctime)
 #ifndef SYS_settimeofday
 # ifdef __NR_settimeofday
 #  define SYS_settimeofday	__NR_settimeofday
-# else
+# elif defined(__NR_settimeofday_time32)
 #  define SYS_settimeofday	__NR_settimeofday_time32
 # endif
 #endif
