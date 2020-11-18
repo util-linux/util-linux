@@ -13,11 +13,13 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/vfs.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <ctype.h>
 
 #include "procutils.h"
+#include "statfs_magic.h"
 #include "fileutils.h"
 #include "all-io.h"
 #include "c.h"
@@ -233,6 +235,23 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 	} while (1);
 
 	return 0;
+}
+
+/* checks if fd is file in a procfs;
+ * returns 1 if true, 0 if false or couldn't determine */
+int proc_is_procfs(int fd)
+{
+	struct statfs st;
+	int ret;
+
+	do {
+		ret = fstatfs(fd, &st);
+	} while (ret == -1 && errno == EINTR);
+
+	if (ret == 0)
+		return st.f_type == STATFS_PROC_MAGIC;
+	else
+		return 0;
 }
 
 #ifdef TEST_PROGRAM_PROCUTILS
