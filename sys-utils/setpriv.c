@@ -532,12 +532,9 @@ static void do_caps(enum cap_type type, const char *caps)
 
 		if (!strcmp(c + 1, "all")) {
 			int i;
-			/* It would be really bad if -all didn't drop all
-			 * caps.  It's better to just fail. */
-			if (cap_last_cap() > CAP_LAST_CAP)
-				errx(SETPRIV_EXIT_PRIVERR,
-				     _("libcap-ng is too old for \"all\" caps"));
-			for (i = 0; i <= CAP_LAST_CAP; i++)
+			/* We can trust the return value from cap_last_cap(),
+			 * so use that directly. */
+			for (i = 0; i <= cap_last_cap(); i++)
 				cap_update(action, type, i);
 		} else {
 			int cap = capng_name_to_capability(c + 1);
