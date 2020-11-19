@@ -769,8 +769,10 @@ int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt)
 	cxt->nvuls = n = 0;
 	while (xreaddir(dir))
 		n++;
-	if (!n)
+	if (!n) {
+		closedir(dir);
 		return 0;
+	}
 
 	rewinddir(dir);
 	cxt->vuls = xcalloc(n, sizeof(struct lscpu_vulnerability));
