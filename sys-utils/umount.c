@@ -512,8 +512,17 @@ int main(int argc, char **argv)
 
 
 		/* only few options are allowed for non-root users */
-		if (mnt_context_is_restricted(cxt) && !strchr("hdilqVv", c))
+		if (mnt_context_is_restricted(cxt) && !strchr("hdilqVv", c)) {
+
+			/* Silently ignore options without direct impact to the
+			 * umount operation, but with security sensitive
+			 * side-effects */
+			if (strchr("c", c))
+				continue;	/* ignore */
+
+			/* drop permissions, continue as regular user */
 			suid_drop(cxt);
+		}
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 

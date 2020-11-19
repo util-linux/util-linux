@@ -89,6 +89,10 @@ system calls. These system calls may hang in some cases (for example on NFS if
 server is not available). The option has to be used with canonical path to the
 mount point.
 
+This option is silently ignored by
+.B umount
+for non-root users.
+
 For more details about this option see the
 .BR mount (8)
 man page. Note that \fBumount\fR does not pass this option to the
