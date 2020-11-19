@@ -415,6 +415,9 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 		 * string, because there is nothing like MS_EXEC (we only have
 		 * MS_NOEXEC in mount flags and we don't care about the original
 		 * mount string in libmount for VFS options).
+		 *
+		 * This use-case makes sense for MS_SECURE flags only (see
+		 * mnt_optstr_get_flags() and mnt_context_merge_mflags()).
 		 */
 		if (!(cxt->mountflags & MS_NOEXEC))
 			mnt_optstr_append_option(optstr, "exec", NULL);
@@ -422,10 +425,7 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 			mnt_optstr_append_option(optstr, "suid", NULL);
 		if (!(cxt->mountflags & MS_NODEV))
 			mnt_optstr_append_option(optstr, "dev", NULL);
-		if (!(cxt->mountflags & MS_NOSYMFOLLOW))
-			mnt_optstr_append_option(optstr, "symfollow", NULL);
 	}
-
 
 	if (cxt->flags & MNT_FL_SAVED_USER)
 		rc = mnt_optstr_set_option(optstr, "user", cxt->orig_user);
