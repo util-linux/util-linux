@@ -503,7 +503,9 @@ static void caches_add_line(struct lscpu_cxt *cxt,
 			break;
 		case COL_CACHE_ALLSIZE:
 		{
-			uint64_t sz = lscpu_get_cache_full_size(cxt, ca->name);
+			uint64_t sz = 0;
+			if (ca->name)
+				sz = lscpu_get_cache_full_size(cxt, ca->name);
 			if (!sz)
 				break;
 			if (cxt->bytes)
