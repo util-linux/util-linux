@@ -76,20 +76,13 @@ nothing:
 	return NULL;
 }
 
-static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
-				uint16_t num, const char *devmem)
+static int parse_dmi_table(uint16_t len, uint16_t num,
+				uint8_t *data,
+				struct dmi_info *di)
 {
-	uint8_t *buf;
-	uint8_t *data;
+	uint8_t *buf = data;
+	int rc = -1;
 	int i = 0;
-	char *vendor = NULL;
-	char *product = NULL;
-	char *manufacturer = NULL;
-	int rc = VIRT_VENDOR_NONE;
-
-	data = buf = get_mem_chunk(base, len, devmem);
-	if (!buf)
-		goto done;
 
 	 /* 4 is the length of an SMBIOS structure header */
 	while (i < num && data + 4 <= buf + len) {
@@ -113,11 +106,11 @@ static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 		next += 2;
 		switch (h.type) {
 			case 0:
-				vendor = dmi_string(&h, data[0x04]);
+				di->vendor = dmi_string(&h, data[0x04]);
 				break;
 			case 1:
-				manufacturer = dmi_string(&h, data[0x04]);
-				product = dmi_string(&h, data[0x05]);
+				di->manufacturer = dmi_string(&h, data[0x04]);
+				di->product = dmi_string(&h, data[0x05]);
 				break;
 			default:
 				break;
@@ -126,15 +119,36 @@ static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 		data = next;
 		i++;
 	}
-	if (manufacturer && !strcmp(manufacturer, "innotek GmbH"))
+	rc = 0;
+done:
+	return rc;
+}
+
+static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
+				uint16_t num, const char *devmem)
+{
+	uint8_t *data;
+	int rc = VIRT_VENDOR_NONE;
+	struct dmi_info di;
+
+	data = get_mem_chunk(base, len, devmem);
+	if (!data)
+		return rc;
+
+	memset(&di, 0, sizeof(struct dmi_info));
+	rc = parse_dmi_table(len, num, data, &di);
+	if (rc < 0)
+		goto done;
+
+	if (di.manufacturer && !strcmp(di.manufacturer, "innotek GmbH"))
 		rc = VIRT_VENDOR_INNOTEK;
-	else if (manufacturer && strstr(manufacturer, "HITACHI") &&
-					product && strstr(product, "LPAR"))
+	else if (di.manufacturer && strstr(di.manufacturer, "HITACHI") &&
+					di.product && strstr(di.product, "LPAR"))
 		rc = VIRT_VENDOR_HITACHI;
-	else if (vendor && !strcmp(vendor, "Parallels"))
+	else if (di.vendor && !strcmp(di.vendor, "Parallels"))
 		rc = VIRT_VENDOR_PARALLELS;
 done:
-	free(buf);
+	free(data);
 	return rc;
 }
 

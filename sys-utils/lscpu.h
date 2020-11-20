@@ -305,6 +305,12 @@ struct lscpu_dmi_header
 	uint8_t *data;
 };
 
+struct dmi_info {
+	char *vendor;
+	char *product;
+	char *manufacturer;
+};
+
 static inline void to_dmi_header(struct lscpu_dmi_header *h, uint8_t *data)
 {
 	h->type = data[0];
