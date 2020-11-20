@@ -16,8 +16,11 @@
 
 #include <sys/prctl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
+#include <errno.h>
 
+#include "c.h"
 #include "caputils.h"
 #include "procutils.h"
 #include "pathnames.h"
@@ -28,45 +31,88 @@ static int test_cap(unsigned int cap)
 	return prctl(PR_CAPBSET_READ, cap, 0, 0, 0) >= 0;
 }
 
-int cap_last_cap(void)
+static int cap_last_by_bsearch(int *ret)
 {
-	static int cap = -1;
-	FILE *f;
-
-	if (cap != -1)
-		return cap;
-
-	/* try to read value from kernel, check that the path is
-	 * indeed in a procfs mount */
-	f = fopen(_PATH_PROC_CAPLASTCAP, "r");
-	if (f) {
-		int matched = 0;
-
-		if (proc_is_procfs(fileno(f))) {
-			matched = fscanf(f, "%d", &cap);
-		}
-		fclose(f);
-
-		/* we check if the cap after this one really isn't valid */
-		if (matched == 1 && cap < INT_MAX && !test_cap(cap + 1))
-			return cap;
-	}
-
-	/* if it wasn't possible to read the file in /proc,
-	 * fall back to binary search over capabilities */
-
 	/* starting with cap=INT_MAX means we always know
 	 * that cap1 is invalid after the first iteration */
+	int cap = INT_MAX;
 	unsigned int cap0 = 0, cap1 = INT_MAX;
-	cap = INT_MAX;
+
 	while ((int)cap0 < cap) {
-		if (test_cap(cap)) {
+		if (test_cap(cap))
 			cap0 = cap;
-		} else {
+		else
 			cap1 = cap;
-		}
+
 		cap = (cap0 + cap1) / 2U;
 	}
 
+	*ret = cap;
+	return 0;
+}
+
+static int cap_last_by_procfs(int *ret)
+{
+	FILE *f = fopen(_PATH_PROC_CAPLASTCAP, "r");
+	int rc = -EINVAL;
+
+	*ret = 0;
+
+	if (f && proc_is_procfs(fileno(f))) {
+		int cap;
+
+		/* we check if the cap after this one really isn't valid */
+		if (fscanf(f, "%d", &cap) == 1 &&
+		    cap < INT_MAX && !test_cap(cap + 1)) {
+
+			*ret = cap;
+			rc = 0;
+		}
+	}
+
+	if (f)
+		fclose(f);
+	return rc;
+}
+
+int cap_last_cap(void)
+{
+	static int cap = -1;
+
+	if (cap != -1)
+		return cap;
+	if (cap_last_by_procfs(&cap) < 0)
+		cap_last_by_bsearch(&cap);
+
 	return cap;
 }
+
+#ifdef TEST_PROGRAM_CAPUTILS
+int main(int argc, char *argv[])
+{
+	int rc = 0, cap;
+
+	if (argc < 2) {
+		fprintf(stderr, "usage: %1$s --last-by-procfs\n"
+				"       %1$s --last-by-bsearch\n"
+				"       %1$s --last\n",
+				program_invocation_short_name);
+		return EXIT_FAILURE;
+	}
+
+	if (strcmp(argv[1], "--last-by-procfs") == 0) {
+		rc = cap_last_by_procfs(&cap);
+		if (rc == 0)
+			printf("last cap: %d\n", cap);
+
+	} else if (strcmp(argv[1], "--last-by-bsearch") == 0) {
+		rc = cap_last_by_bsearch(&cap);
+		if (rc == 0)
+			printf("last cap: %d\n", cap);
+
+	} else if (strcmp(argv[1], "--last") == 0)
+		printf("last cap: %d\n", cap_last_cap());
+
+	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+#endif

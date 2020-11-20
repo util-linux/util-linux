@@ -100,7 +100,8 @@ check_PROGRAMS += test_cpuset
 endif
 check_PROGRAMS += \
 	test_sysfs \
-	test_pager
+	test_pager \
+	test_caputils
 endif
 
 if HAVE_OPENAT
@@ -109,6 +110,10 @@ check_PROGRAMS += test_procutils
 check_PROGRAMS += test_path
 endif
 endif
+
+test_caputils_SOURCES = lib/caputils.c
+test_caputils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_CAPUTILS
+test_caputils_LDADD = $(LDADD) libcommon.la
 
 test_ttyutils_SOURCES = lib/ttyutils.c
 test_ttyutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_TTYUTILS
