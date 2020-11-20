@@ -52,7 +52,7 @@ static const int hv_graphics_pci[] = {
 #define WORD(x) (uint16_t)(*(const uint16_t *)(x))
 #define DWORD(x) (uint32_t)(*(const uint32_t *)(x))
 
-static void *get_mem_chunk(size_t base, size_t len, const char *devmem)
+void *get_mem_chunk(size_t base, size_t len, const char *devmem)
 {
 	void *p = NULL;
 	int fd;
@@ -74,54 +74,6 @@ nothing:
 	free(p);
 	close(fd);
 	return NULL;
-}
-
-static int parse_dmi_table(uint16_t len, uint16_t num,
-				uint8_t *data,
-				struct dmi_info *di)
-{
-	uint8_t *buf = data;
-	int rc = -1;
-	int i = 0;
-
-	 /* 4 is the length of an SMBIOS structure header */
-	while (i < num && data + 4 <= buf + len) {
-		uint8_t *next;
-		struct lscpu_dmi_header h;
-
-		to_dmi_header(&h, data);
-
-		/*
-		 * If a short entry is found (less than 4 bytes), not only it
-		 * is invalid, but we cannot reliably locate the next entry.
-		 * Better stop at this point.
-		 */
-		if (h.length < 4)
-			goto done;
-
-		/* look for the next handle */
-		next = data + h.length;
-		while (next - buf + 1 < len && (next[0] != 0 || next[1] != 0))
-			next++;
-		next += 2;
-		switch (h.type) {
-			case 0:
-				di->vendor = dmi_string(&h, data[0x04]);
-				break;
-			case 1:
-				di->manufacturer = dmi_string(&h, data[0x04]);
-				di->product = dmi_string(&h, data[0x05]);
-				break;
-			default:
-				break;
-		}
-
-		data = next;
-		i++;
-	}
-	rc = 0;
-done:
-	return rc;
 }
 
 static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,

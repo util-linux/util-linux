@@ -297,6 +297,8 @@ void lscpu_decode_arm(struct lscpu_cxt *cxt);
 
 int lookup(char *line, char *pattern, char **value);
 
+void *get_mem_chunk(size_t base, size_t len, const char *devmem);
+
 struct lscpu_dmi_header
 {
 	uint8_t type;
@@ -311,28 +313,8 @@ struct dmi_info {
 	char *manufacturer;
 };
 
-static inline void to_dmi_header(struct lscpu_dmi_header *h, uint8_t *data)
-{
-	h->type = data[0];
-	h->length = data[1];
-	memcpy(&h->handle, data + 2, sizeof(h->handle));
-	h->data = data;
-}
 
-static inline char *dmi_string(const struct lscpu_dmi_header *dm, uint8_t s)
-{
-	char *bp = (char *)dm->data;
-
-	if (!s || !bp)
-		return NULL;
-
-	bp += dm->length;
-	while (s > 1 && *bp) {
-		bp += strlen(bp);
-		bp++;
-		s--;
-	}
-
-	return !*bp ? NULL : bp;
-}
+void to_dmi_header(struct lscpu_dmi_header *h, uint8_t *data);
+char *dmi_string(const struct lscpu_dmi_header *dm, uint8_t s);
+int parse_dmi_table(uint16_t len, uint16_t num, uint8_t *data, struct dmi_info *di);
 #endif /* LSCPU_H */
