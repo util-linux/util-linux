@@ -245,13 +245,17 @@ int proc_is_procfs(int fd)
 	int ret;
 
 	do {
+		errno = 0;
 		ret = fstatfs(fd, &st);
-	} while (ret == -1 && errno == EINTR);
 
-	if (ret == 0)
-		return st.f_type == STATFS_PROC_MAGIC;
-	else
-		return 0;
+		if (ret < 0) {
+			if (errno != EINTR && errno != EAGAIN)
+				return 0;
+			xusleep(250000);
+		}
+	} while (ret != 0);
+
+	return st.f_type == STATFS_PROC_MAGIC;
 }
 
 #ifdef TEST_PROGRAM_PROCUTILS
@@ -302,10 +306,28 @@ static int test_processes(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+static int test_isprocfs(int argc, char *argv[])
+{
+	const char *name = argc > 1 ? argv[1] : "/proc";
+	int fd = open(name, O_RDONLY);
+	int is = 0;
+
+	if (fd >= 0) {
+		is = proc_is_procfs(fd);
+		close(fd);
+	} else
+		err(EXIT_FAILURE, "cannot open %s", name);
+
+	printf("%s: %s procfs\n", name, is ? "is" : "is NOT");
+	return is ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+
 int main(int argc, char *argv[])
 {
 	if (argc < 2) {
 		fprintf(stderr, "usage: %1$s --tasks <pid>\n"
+				"       %1$s --is-procfs [<dir>]\n"
 				"       %1$s --processes [---name <name>] [--uid <uid>]\n",
 				program_invocation_short_name);
 		return EXIT_FAILURE;
@@ -315,6 +337,8 @@ int main(int argc, char *argv[])
 		return test_tasks(argc - 1, argv + 1);
 	if (strcmp(argv[1], "--processes") == 0)
 		return test_processes(argc - 1, argv + 1);
+	if (strcmp(argv[1], "--is-procfs") == 0)
+		return test_isprocfs(argc - 1, argv + 1);
 
 	return EXIT_FAILURE;
 }
