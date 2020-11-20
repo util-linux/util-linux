@@ -1716,7 +1716,7 @@ Other users can change timestamp.
 .PP
 The default is set from `dmask' option. (If the directory is writable,
 .BR utime (2)
-is also allowed.  I.e.\& \s+3~\s0dmask & 022)
+is also allowed.  I.e.\& \s+3\(ti\s0dmask & 022)
 
 Normally
 .BR utime (2)
@@ -2512,7 +2512,7 @@ This option is obsolete.
 .B nonumtail
 First try to make a short name without sequence number,
 before trying
-.IR name\s+3~\s0num.ext .
+.IR name\s+3\(ti\s0num.ext .
 .TP
 .B utf8
 UTF8 is the filesystem safe 8-bit encoding of Unicode that is used by the
@@ -2789,7 +2789,7 @@ libmount private runtime directory
 table of mounted filesystems or symlink to
 .I /proc/mounts
 .TP
-.I /etc/mtab\s+3~\s0
+.I /etc/mtab\s+3\(ti\s0
 lock file (unused on systems with
 .I mtab
 symlink)

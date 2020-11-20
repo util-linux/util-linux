@@ -58,7 +58,7 @@ Historically \fBhardlink\fR silently excluded any names beginning with
 ".in.", as well as any names beginning with "." followed by exactly 6
 other characters. That prior behavior can be achieved by specifying
 .br
-\-x '^(\\.in\\.|\\.[^.]{6}$)'
+\-x '\(ha(\\.in\\.|\\.[\(ha.]{6}$)'
 .SH AUTHORS
 \fBhardlink\fR was written by Jakub Jelinek <jakub@redhat.com> and later modified by
 Ruediger Meier <ruediger.meier@ga-group.nl> and Karel Zak <kzak@redhat.com> for util-linux.

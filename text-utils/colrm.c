@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 	close_stdout_atexit();
 
 	while ((opt =
-		getopt_long(argc, argv, "bfhl:pxVH", longopts,
+		getopt_long(argc, argv, "Vh", longopts,
 			    NULL)) != -1)
 		switch (opt) {
 		case 'V':

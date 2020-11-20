@@ -63,7 +63,7 @@ the bell when an illegal key is pressed.
 .TP
 .BR \-l , " \-\-logical"
 Do not pause after any line containing a
-.B \&^L
+.B \&\(haL
 (form feed).
 .TP
 .BR \-f , " \-\-no\-pause"
@@ -122,7 +122,7 @@ are based on
 .BR vi (1).
 Some commands may be preceded by a decimal number, called k in the
 descriptions below.  In the following descriptions,
-.B ^X
+.B \(haX
 means
 .BR control-X .
 .PP
@@ -143,7 +143,7 @@ becomes new default.
 .B RETURN
 Display next k lines of text.  Defaults to 1.  Argument becomes new default.
 .TP
-.BR d \ or \ \&^D
+.BR d \ or \ \&\(haD
 Scroll k lines.  Default is current scroll size, initially 11.  Argument
 becomes new default.
 .TP
@@ -156,7 +156,7 @@ Skip forward k lines of text.  Defaults to 1.
 .B f
 Skip forward k screenfuls of text.  Defaults to 1.
 .TP
-.BR b \ or \ \&^B
+.BR b \ or \ \&\(haB
 Skip backwards k screenfuls of text.  Defaults to 1.  Only works with files,
 not pipes.
 .TP
@@ -194,7 +194,7 @@ nor
 .B EDITOR
 is defined.
 .TP
-.B \&^L
+.B \&(haL
 Redraw screen.
 .TP
 .B :n

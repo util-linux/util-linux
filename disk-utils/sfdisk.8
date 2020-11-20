@@ -237,7 +237,7 @@ the partition table.
 .TP
 .BR \-b , " \-\-backup"
 Back up the current partition table sectors before starting the partitioning.
-The default backup file name is ~/sfdisk-<device>-<offset>.bak; to use another
+The default backup file name is \(ti/sfdisk-<device>-<offset>.bak; to use another
 name see option \fB\-O\fR, \fB\-\-backup\-file\fR.
 .TP
 .BR \-\-color [ =\fIwhen ]
@@ -284,7 +284,7 @@ option \fB\-N\fR in order to be processed on one specific partition only.
 
 The optional \fIpath\fR specifies log file name. The log file contains information
 about all read/write operations on the partition data. The word "@default" as
-a \fIpath\fR forces sfdisk to use ~/sfdisk-<devname>.move for the log.  The log is
+a \fIpath\fR forces sfdisk to use \(ti/sfdisk-<devname>.move for the log.  The log is
 optional since v2.35.
 
 Note that this operation is risky and not atomic. \fBDon't forget to backup your data!\fR
@@ -587,7 +587,7 @@ This can later be restored by:
 If you want to do a full (binary) backup of all sectors where the
 partition table is stored,
 then use the \fB\-\-backup\fR option.  It writes the sectors to
-~/sfdisk-<device>-<offset>.bak files.  The default name of the backup file can
+\(ti/sfdisk-<device>-<offset>.bak files.  The default name of the backup file can
 be changed with the \fB\-\-backup\-file\fR option.  The backup files
 contain only raw data from the \fIdevice\fR.
 Note that the same concept of backup files is used by
@@ -602,7 +602,7 @@ The GPT header can later be restored by:
 .RS
 .sp
 .nf
-.B "dd  if=~/sfdisk-sda-0x00000200.bak  of=/dev/sda  \e"
+.B "dd  if=\(ti/sfdisk-sda-0x00000200.bak  of=/dev/sda  \e"
 .B "  seek=$((0x00000200))  bs=1  conv=notrunc"
 .fi
 .sp

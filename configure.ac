@@ -1504,8 +1504,8 @@ AM_CONDITIONAL([BUILD_MINIX], [test "x$build_minix" = xyes])
 
 
 AC_ARG_ENABLE([fdformat],
-  AS_HELP_STRING([--disable-fdformat], [do not build fdformat]),
-  [], [UL_DEFAULT_ENABLE([fdformat], [check])]
+  AS_HELP_STRING([--enable-fdformat], [build fdformat]),
+  [], [UL_DEFAULT_ENABLE([fdformat], [no])]
 )
 UL_BUILD_INIT([fdformat])
 UL_REQUIRES_LINUX([fdformat])

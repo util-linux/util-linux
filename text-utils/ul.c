@@ -482,7 +482,7 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 	while ((c = getwc(f)) != WEOF) {
 		switch (c) {
 		case '\b':
-			set_column(ctl, ctl->column && 0 < (ctl->column - 1) ? ctl->column - 1 : 0);
+			set_column(ctl, ctl->column && 0 < ctl->column ? ctl->column - 1 : 0);
 			continue;
 		case '\t':
 			set_column(ctl, (ctl->column + 8) & ~07);
