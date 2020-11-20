@@ -586,7 +586,7 @@ int main(int argc, char **argv)
 			uuidd_cxt.debug = 1;
 			break;
 		case 'k':
-			do_kill++;
+			do_kill = 1;
 			break;
 		case 'n':
 			num = strtou32_or_err(optarg,
@@ -694,17 +694,19 @@ int main(int argc, char **argv)
 
 	if (do_kill) {
 		ret = call_daemon(socket_path, UUIDD_OP_GETPID, buf, sizeof(buf), 0, NULL);
-		if ((ret > 0) && ((do_kill = atoi((char *) buf)) > 0)) {
-			ret = kill(do_kill, SIGTERM);
+		if (0 < ret) {
+			pid_t pid;
+
+			pid = (pid_t)strtou32_or_err(buf, _("failed to parse pid"));
+			ret = kill(pid, SIGTERM);
 			if (ret < 0) {
 				if (!uuidd_cxt.quiet)
 					warn(_("couldn't kill uuidd running "
-						  "at pid %d"), do_kill);
+						  "at pid %d"), pid);
 				return EXIT_FAILURE;
 			}
 			if (!uuidd_cxt.quiet)
-				printf(_("Killed uuidd running at pid %d.\n"),
-				       do_kill);
+				printf(_("Killed uuidd running at pid %d.\n"), pid);
 		}
 		return EXIT_SUCCESS;
 	}
