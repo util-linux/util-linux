@@ -542,16 +542,10 @@ static void __attribute__ ((__noreturn__)) unexpected_size(int size)
 	errx(EXIT_FAILURE, _("Unexpected reply length from server %d"), size);
 }
 
-int main(int argc, char **argv)
+static void parse_options(int argc, char **argv, struct uuidd_cxt_t *uuidd_cxt,
+			  struct uuidd_options_t *uuidd_opts)
 {
-	const char	*err_context = NULL;
-	char		*cp;
-	int		c, ret;
-
-	struct uuidd_cxt_t uuidd_cxt = { .timeout = 0 };
-	struct uuidd_options_t uuidd_opts = { .socket_path = UUIDD_SOCKET_PATH };
-
-	static const struct option longopts[] = {
+	const struct option longopts[] = {
 		{"pid", required_argument, NULL, 'p'},
 		{"socket", required_argument, NULL, 's'},
 		{"timeout", required_argument, NULL, 'T'},
@@ -568,68 +562,62 @@ int main(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
-	static const ul_excl_t excl[] = {
+	const ul_excl_t excl[] = {
 		{ 'P', 'p' },
 		{ 'd', 'q' },
 		{ 'r', 't' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+	int c;
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	close_stdout_atexit();
-
-	while ((c =
-		getopt_long(argc, argv, "p:s:T:krtn:PFSdqVh", longopts,
-			    NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "p:s:T:krtn:PFSdqVh", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
 		case 'd':
-			uuidd_cxt.debug = 1;
+			uuidd_cxt->debug = 1;
 			break;
 		case 'k':
-			uuidd_opts.do_kill = 1;
+			uuidd_opts->do_kill = 1;
 			break;
 		case 'n':
-			uuidd_opts.num = strtou32_or_err(optarg,
+			uuidd_opts->num = strtou32_or_err(optarg,
 						_("failed to parse --uuids"));
 			break;
 		case 'p':
-			uuidd_opts.pidfile_path = optarg;
+			uuidd_opts->pidfile_path = optarg;
 			break;
 		case 'P':
-			uuidd_opts.no_pid = 1;
+			uuidd_opts->no_pid = 1;
 			break;
 		case 'F':
-			uuidd_cxt.no_fork = 1;
+			uuidd_cxt->no_fork = 1;
 			break;
 		case 'S':
 #ifdef HAVE_LIBSYSTEMD
-			uuidd_cxt.no_sock = 1;
-			uuidd_cxt.no_fork = 1;
-			uuidd_opts.no_pid = 1;
+			uuidd_cxt->no_sock = 1;
+			uuidd_cxt->no_fork = 1;
+			uuidd_opts->no_pid = 1;
 #else
 			errx(EXIT_FAILURE, _("uuidd has been built without "
 					     "support for socket activation"));
 #endif
 			break;
 		case 'q':
-			uuidd_cxt.quiet = 1;
+			uuidd_cxt->quiet = 1;
 			break;
 		case 'r':
-			uuidd_opts.do_type = UUIDD_OP_RANDOM_UUID;
+			uuidd_opts->do_type = UUIDD_OP_RANDOM_UUID;
 			break;
 		case 's':
-			uuidd_opts.socket_path = optarg;
-			uuidd_opts.s_flag = 1;
+			uuidd_opts->socket_path = optarg;
+			uuidd_opts->s_flag = 1;
 			break;
 		case 't':
-			uuidd_opts.do_type = UUIDD_OP_TIME_UUID;
+			uuidd_opts->do_type = UUIDD_OP_TIME_UUID;
 			break;
 		case 'T':
-			uuidd_cxt.timeout = strtou32_or_err(optarg,
+			uuidd_cxt->timeout = strtou32_or_err(optarg,
 						_("failed to parse --timeout"));
 			break;
 
@@ -641,6 +629,23 @@ int main(int argc, char **argv)
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+}
+
+int main(int argc, char **argv)
+{
+	const char	*err_context = NULL;
+	char		*cp;
+	int		ret;
+
+	struct uuidd_cxt_t uuidd_cxt = { .timeout = 0 };
+	struct uuidd_options_t uuidd_opts = { .socket_path = UUIDD_SOCKET_PATH };
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	close_stdout_atexit();
+
+	parse_options(argc, argv, &uuidd_cxt, &uuidd_opts);
 
 	if (strlen(uuidd_opts.socket_path) >= sizeof(((struct sockaddr_un *)0)->sun_path))
 		errx(EXIT_FAILURE, _("socket name too long: %s"), uuidd_opts.socket_path);
