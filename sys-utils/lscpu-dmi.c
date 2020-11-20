@@ -66,6 +66,9 @@ int parse_dmi_table(uint16_t len, uint16_t num,
 			di->manufacturer = dmi_string(&h, data[0x04]);
 			di->product = dmi_string(&h, data[0x05]);
 			break;
+		case 4:
+			di->sockets++;
+			break;
 		default:
 			break;
 		}
@@ -76,4 +79,30 @@ int parse_dmi_table(uint16_t len, uint16_t num,
 	rc = 0;
 done:
 	return rc;
+}
+
+size_t get_number_of_physical_sockets_from_dmi(void)
+{
+	static char const sys_fw_dmi_tables[] = _PATH_SYS_DMI;
+	struct dmi_info di;
+	struct stat st;
+	uint8_t *data;
+	int rc = 0;
+
+	if (stat(sys_fw_dmi_tables, &st))
+		return rc;
+
+	data = get_mem_chunk(0, st.st_size, sys_fw_dmi_tables);
+	if (!data)
+		return rc;
+
+	memset(&di, 0, sizeof(struct dmi_info));
+	rc = parse_dmi_table(st.st_size, st.st_size/4, data, &di);
+
+	free(data);
+
+	if ((rc < 0) || !di.sockets)
+		return 0;
+	else
+		return di.sockets;
 }

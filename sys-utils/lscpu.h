@@ -311,10 +311,12 @@ struct dmi_info {
 	char *vendor;
 	char *product;
 	char *manufacturer;
+	int sockets;
 };
 
 
 void to_dmi_header(struct lscpu_dmi_header *h, uint8_t *data);
 char *dmi_string(const struct lscpu_dmi_header *dm, uint8_t s);
 int parse_dmi_table(uint16_t len, uint16_t num, uint8_t *data, struct dmi_info *di);
+size_t get_number_of_physical_sockets_from_dmi(void);
 #endif /* LSCPU_H */
