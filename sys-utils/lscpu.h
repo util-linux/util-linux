@@ -33,6 +33,7 @@ UL_DEBUG_DECLARE_MASK(lscpu);
 #define _PATH_SYS_NODE		_PATH_SYS_SYSTEM "/node"
 #define _PATH_SYS_DMI		"/sys/firmware/dmi/tables/DMI"
 #define _PATH_SYS_DMI_TYPE4	"/sys/firmware/dmi/entries/4-0/raw"
+#define _PATH_ACPI_PPTT		"/sys/firmware/acpi/tables/PPTT"
 
 struct lscpu_cache {
 	int		id;		/* unique identifier */
@@ -242,6 +243,7 @@ struct lscpu_cxt {
 		     json : 1,
 		     bytes : 1;
 
+	int is_cluster; /* For aarch64 if the machine doesn't have ACPI PPTT */
 };
 
 #define is_cpu_online(_cxt, _cpu) \

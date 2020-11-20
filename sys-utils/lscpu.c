@@ -95,6 +95,7 @@ enum {
 	COL_CPU_CPU,
 	COL_CPU_CORE,
 	COL_CPU_SOCKET,
+	COL_CPU_CLUSTER,
 	COL_CPU_NODE,
 	COL_CPU_BOOK,
 	COL_CPU_DRAWER,
@@ -138,6 +139,7 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_BOGOMIPS]     = { "BOGOMIPS", N_("crude measurement of CPU speed"), SCOLS_FL_RIGHT, 1 },
 	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), SCOLS_FL_RIGHT, 1 },
 	[COL_CPU_CORE]         = { "CORE", N_("logical core number"), SCOLS_FL_RIGHT },
+	[COL_CPU_CLUSTER]      = { "CLUSTER", N_("logical cluster number"), SCOLS_FL_RIGHT },
 	[COL_CPU_SOCKET]       = { "SOCKET", N_("logical socket number"), SCOLS_FL_RIGHT },
 	[COL_CPU_NODE]         = { "NODE", N_("logical NUMA node number"), SCOLS_FL_RIGHT },
 	[COL_CPU_BOOK]         = { "BOOK", N_("logical book number"), SCOLS_FL_RIGHT },
@@ -338,6 +340,10 @@ static char *get_cell_data(
 		break;
 	case COL_CPU_SOCKET:
 		fill_id(cxt, cpu, socket, buf, bufsz);
+		break;
+	case COL_CPU_CLUSTER:
+		if (cxt->is_cluster)
+			fill_id(cxt, cpu, socket, buf, bufsz);
 		break;
 	case COL_CPU_DRAWER:
 		fill_id(cxt, cpu, drawer, buf, bufsz);
@@ -845,7 +851,10 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 		add_summary_s(tb, sec, _("Model:"), ct->revision ? ct->revision : ct->model);
 
 	add_summary_n(tb, sec, _("Thread(s) per core:"), ct->nthreads_per_core);
-	add_summary_n(tb, sec, _("Core(s) per socket:"), ct->ncores_per_socket);
+	if (cxt->is_cluster)
+		add_summary_n(tb, sec, _("Core(s) per cluster:"), ct->ncores_per_socket);
+	else
+		add_summary_n(tb, sec, _("Core(s) per socket:"), ct->ncores_per_socket);
 
 	if (ct->nbooks) {
 		add_summary_n(tb, sec, _("Socket(s) per book:"), ct->nsockets_per_book);
@@ -854,8 +863,14 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 			add_summary_n(tb, sec, _("Drawer(s):"), ct->ndrawers_per_system ?: ct->ndrawers);
 		} else
 			add_summary_n(tb, sec, _("Book(s):"), ct->nbooks_per_drawer ?: ct->nbooks);
-	} else
-		add_summary_n(tb, sec, _("Socket(s):"), ct->nsockets_per_book ?: ct->nsockets);
+	} else {
+		if (cxt->is_cluster)
+			add_summary_n(tb, sec, _("Cluster(s):"),
+					ct->nsockets_per_book ?: ct->nsockets);
+		else
+			add_summary_n(tb, sec, _("Socket(s):"),
+					ct->nsockets_per_book ?: ct->nsockets);
+	}
 
 	if (ct->stepping)
 		add_summary_s(tb, sec, _("Stepping:"), ct->stepping);
@@ -1327,8 +1342,12 @@ int main(int argc, char *argv[])
 				columns[ncolumns++] = COL_CPU_DRAWER;
 			if (ct && ct->nbooks)
 				columns[ncolumns++] = COL_CPU_BOOK;
-			if (ct && ct->nsockets)
-				columns[ncolumns++] = COL_CPU_SOCKET;
+			if (ct && ct->nsockets) {
+				if (cxt->is_cluster)
+					columns[ncolumns++] = COL_CPU_CLUSTER;
+				else
+					columns[ncolumns++] = COL_CPU_SOCKET;
+			}
 			if (ct && ct->ncores)
 				columns[ncolumns++] = COL_CPU_CORE;
 			if (cxt->ncaches)
@@ -1352,7 +1371,10 @@ int main(int argc, char *argv[])
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_CPU_CPU;
 			columns[ncolumns++] = COL_CPU_CORE;
-			columns[ncolumns++] = COL_CPU_SOCKET;
+			if (cxt->is_cluster)
+				columns[ncolumns++] = COL_CPU_CLUSTER;
+			else
+				columns[ncolumns++] = COL_CPU_SOCKET;
 			columns[ncolumns++] = COL_CPU_NODE;
 			columns[ncolumns++] = COL_CPU_CACHE;
 			cxt->show_compatible = 1;

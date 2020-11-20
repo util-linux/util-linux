@@ -362,9 +362,22 @@ static void arm_decode(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 	arm_rXpY_decode(ct);
 }
 
+static int lscpu_is_cluster_arm(struct lscpu_cxt *cxt)
+{
+	struct stat st;
+
+	if (!(strcmp(cxt->arch->name, "aarch64")) &&
+	     (stat(_PATH_ACPI_PPTT, &st) < 0) && (cxt->ncputypes == 1))
+		return 1;
+	else
+		return 0;
+}
+
 void lscpu_decode_arm(struct lscpu_cxt *cxt)
 {
 	size_t i;
+
+	cxt->is_cluster = lscpu_is_cluster_arm(cxt);
 
 	for (i = 0; i < cxt->ncputypes; i++)
 		arm_decode(cxt, cxt->cputypes[i]);
