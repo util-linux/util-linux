@@ -190,10 +190,7 @@ static int print_caps(FILE *f, enum cap_type which)
 			if (name)
 				fputs(name, f);
 			else
-				/* cap-ng has very poor handling of
-				 * CAP_LAST_CAP changes.  This is the
-				 * best we can do. */
-				printf("cap_%d", i);
+				warnx(_("cap %d: libcap-ng is broken"), i);
 			n++;
 		}
 	}
@@ -321,13 +318,13 @@ static void dump_pdeathsig(void)
 		return;
 	}
 
-	printf("Parent death signal: ");
+	printf(_("Parent death signal: "));
 	if (pdeathsig && signum_to_signame(pdeathsig) != NULL)
 		printf("%s\n", signum_to_signame(pdeathsig));
 	else if (pdeathsig)
 		printf("%d\n", pdeathsig);
 	else
-		printf("[none]\n");
+		printf(_("[none]\n"));
 }
 
 static void dump(int dumplevel)
