@@ -101,6 +101,8 @@ struct lscpu_cputype {
 			has_configured : 1,
 			has_polarization : 1,
 			has_addresses : 1;
+
+	size_t nr_socket_on_cluster; /* the number of sockets if the is_cluster is 1 */
 };
 
 /* dispatching modes */

@@ -864,10 +864,15 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 		} else
 			add_summary_n(tb, sec, _("Book(s):"), ct->nbooks_per_drawer ?: ct->nbooks);
 	} else {
-		if (cxt->is_cluster)
+		if (cxt->is_cluster) {
+			if (ct->nr_socket_on_cluster > 0)
+				add_summary_n(tb, sec, _("Socket(s):"), ct->nr_socket_on_cluster);
+			else
+				add_summary_s(tb, sec, _("Socket(s):"), "-");
+
 			add_summary_n(tb, sec, _("Cluster(s):"),
 					ct->nsockets_per_book ?: ct->nsockets);
-		else
+		} else
 			add_summary_n(tb, sec, _("Socket(s):"),
 					ct->nsockets_per_book ?: ct->nsockets);
 	}

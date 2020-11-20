@@ -360,6 +360,8 @@ static void arm_decode(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 
 	arm_ids_decode(ct);
 	arm_rXpY_decode(ct);
+	if (cxt->is_cluster)
+		ct->nr_socket_on_cluster = get_number_of_physical_sockets_from_dmi();
 }
 
 static int lscpu_is_cluster_arm(struct lscpu_cxt *cxt)
