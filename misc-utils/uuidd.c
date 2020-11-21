@@ -629,6 +629,17 @@ static void parse_options(int argc, char **argv, struct uuidd_cxt_t *uuidd_cxt,
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (0 < uuidd_opts->num) {
+		switch (uuidd_opts->do_type) {
+		case UUIDD_OP_RANDOM_UUID:
+			uuidd_opts->do_type = UUIDD_OP_BULK_RANDOM_UUID;
+			break;
+		case UUIDD_OP_TIME_UUID:
+			uuidd_opts->do_type = UUIDD_OP_BULK_TIME_UUID;
+			break;
+		}
+	}
 }
 
 int main(int argc, char **argv)
@@ -662,14 +673,14 @@ int main(int argc, char **argv)
 		char buf[1024];
 		char str[UUID_STR_LEN];
 
-		ret = call_daemon(uuidd_opts.socket_path, uuidd_opts.do_type + 2, buf,
+		ret = call_daemon(uuidd_opts.socket_path, uuidd_opts.do_type, buf,
 				  sizeof(buf), &uuidd_opts.num, &err_context);
 
 		if (ret < 0)
 			err(EXIT_FAILURE, _("error calling uuidd daemon (%s)"),
 					err_context ? : _("unexpected error"));
 
-		if (uuidd_opts.do_type == UUIDD_OP_TIME_UUID) {
+		if (uuidd_opts.do_type == UUIDD_OP_BULK_TIME_UUID) {
 			if (ret != sizeof(uuid_t) + sizeof(uuidd_opts.num))
 				unexpected_size(ret);
 
