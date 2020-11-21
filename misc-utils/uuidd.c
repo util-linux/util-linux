@@ -446,7 +446,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			if (errno == EAGAIN)
 				continue;
 			warn(_("poll failed"));
-				all_done(uuidd_cxt, EXIT_FAILURE);
+			all_done(uuidd_cxt, EXIT_FAILURE);
 		}
 		if (ret == 0) {		/* true when poll() times out */
 			if (uuidd_cxt->debug)
