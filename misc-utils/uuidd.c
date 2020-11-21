@@ -8,6 +8,23 @@
  * License.
  * %End-Header%
  */
+
+/*
+ * The uuidd protocol.
+ *
+ * Client:
+ * | operation type (1 byte) | number of uuids (if bulk request, 4 bytes) |
+ *
+ * Server:
+ * | reply length (4 bytes) | uuid reply (16 bytes) |
+ *   or
+ * | reply length (4 bytes) | uuid reply (16 bytes) multiply by number when random bulk request |
+ *   or
+ * | reply length (4 bytes) | uuid reply (16 bytes) | number (4 bytes) time bulk |
+ *   or
+ * | reply length (4 bytes) | pid or maxop number string length in ascii (up to 7 bytes) |
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
