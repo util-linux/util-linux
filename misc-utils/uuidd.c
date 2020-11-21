@@ -529,18 +529,19 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				num = (sizeof(reply_buf) - sizeof(num)) / UUID_LEN;
 			__uuid_generate_random((unsigned char *) reply_buf +
 					      sizeof(num), &num);
+			reply_len = sizeof(num) + (UUID_LEN * num);
+			memcpy(reply_buf, &num, sizeof(num));
 			if (uuidd_cxt->debug) {
 				fprintf(stderr, P_("Generated %d UUID:\n",
 						   "Generated %d UUIDs:\n", num), num);
-				for (i = 0, cp = reply_buf + sizeof(num);
-				     i < num;
-				     i++, cp += UUID_LEN) {
+
+				cp = reply_buf + sizeof(num)
+				for (i = 0; i < num; i++) {
 					uuid_unparse((unsigned char *)cp, str);
 					fprintf(stderr, "\t%s\n", str);
+					cp += UUID_LEN;
 				}
 			}
-			reply_len = (num * UUID_LEN) + sizeof(num);
-			memcpy(reply_buf, &num, sizeof(num));
 			break;
 		default:
 			if (uuidd_cxt->debug)
