@@ -530,8 +530,6 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		case UUIDD_OP_BULK_RANDOM_UUID:
 			if (num < 0)
 				num = 1;
-			if (num > 1000)
-				num = 1000;
 			if ((sizeof(reply_buf) - sizeof(num)) < (size_t) (sizeof(uu) * num))
 				num = (sizeof(reply_buf) - sizeof(num)) / sizeof(uu);
 			__uuid_generate_random((unsigned char *) reply_buf +
