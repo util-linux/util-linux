@@ -58,8 +58,14 @@
 
 #include "nls.h"
 
-/* length of binary representation of UUID */
-#define UUID_LEN	(sizeof(uuid_t))
+/* Protocol segment lenghts */
+typedef uint8_t	uuidd_prot_op_t;	/* client operation field */
+typedef int32_t	uuidd_prot_num_t;	/* number of requested uuids */
+
+enum {
+	/* client - server buffer size */
+	UUIDD_PROT_BUFSZ = ((sizeof(uuidd_prot_num_t)) + (sizeof(uuid_t) * 63))
+};
 
 /* server loop control structure */
 struct uuidd_cxt_t {
@@ -73,13 +79,13 @@ struct uuidd_cxt_t {
 };
 
 struct uuidd_options_t {
-	const char	*pidfile_path;
-	const char	*socket_path;
-	int		num;
-	int		do_type;
-	unsigned int	do_kill:1,
-			no_pid:1,
-			s_flag:1;
+	const char	 *pidfile_path;
+	const char	 *socket_path;
+	uuidd_prot_num_t num;
+	uuidd_prot_op_t	 do_type;
+	unsigned int	 do_kill:1,
+			 no_pid:1,
+			 s_flag:1;
 };
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -120,11 +126,11 @@ static void create_daemon(void)
 		err(EXIT_FAILURE, "setreuid");
 }
 
-static int call_daemon(const char *socket_path, int op, char *buf,
-		       size_t buflen, int *num, const char **err_context)
+static int call_daemon(const char *socket_path, uuidd_prot_op_t op, char *buf,
+		       size_t buflen, uuidd_prot_num_t *num, const char **err_context)
 {
-	char op_buf[8];
-	int op_len;
+	char op_buf[sizeof(op) + sizeof(*num)];
+	size_t op_len;
 	int s;
 	ssize_t ret;
 	int32_t reply_len = 0;
@@ -157,15 +163,15 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	}
 
 	if (op == UUIDD_OP_BULK_RANDOM_UUID) {
-		if ((*num) * UUID_LEN > buflen - 4)
-			*num = (buflen - 4) / UUID_LEN;
+		if ((buflen - sizeof(*num)) < (size_t)((*num) * sizeof(uuid_t)))
+			*num = (buflen - sizeof(*num)) / sizeof(uuid_t);
 	}
 	op_buf[0] = op;
-	op_len = 1;
+	op_len = sizeof(op);
 	if ((op == UUIDD_OP_BULK_TIME_UUID) ||
 	    (op == UUIDD_OP_BULK_RANDOM_UUID)) {
-		memcpy(op_buf + 1, num, sizeof(int));
-		op_len += sizeof(int);
+		memcpy(op_buf + sizeof(op), num, sizeof(*num));
+		op_len += sizeof(*num);
 	}
 
 	ret = write_all(s, op_buf, op_len);
@@ -192,14 +198,14 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	ret = read_all(s, (char *) buf, reply_len);
 
 	if ((ret > 0) && (op == UUIDD_OP_BULK_TIME_UUID)) {
-		if (reply_len >= (int) (UUID_LEN + sizeof(int)))
-			memcpy(buf + UUID_LEN, num, sizeof(int));
+		if ((sizeof(uuid_t) + sizeof(*num)) <= (size_t) reply_len)
+			memcpy(buf + sizeof(uuid_t), num, sizeof(*num));
 		else
 			*num = -1;
 	}
 	if ((ret > 0) && (op == UUIDD_OP_BULK_RANDOM_UUID)) {
-		if (reply_len >= (int) sizeof(int))
-			memcpy(buf, num, sizeof(int));
+		if (sizeof(*num) <= (size_t) reply_len)
+			memcpy(buf, num, sizeof(*num));
 		else
 			*num = -1;
 	}
@@ -338,10 +344,11 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	socklen_t		fromlen;
 	int32_t			reply_len = 0;
 	uuid_t			uu;
-	char			reply_buf[1024], *cp;
-	char			op, str[UUID_STR_LEN];
+	char			reply_buf[UUIDD_PROT_BUFSZ], *cp;
+	uuidd_prot_op_t 	op;
+	char			str[UUID_STR_LEN];
 	int			i, ns, len;
-	int			num;		/* intentionally uninitialized */
+	uuidd_prot_num_t	num;		/* intentionally uninitialized */
 	int			s = 0;
 	int			fd_pidfile = -1;
 	int			ret;
@@ -457,8 +464,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				continue;
 			err(EXIT_FAILURE, "accept");
 		}
-		len = read(ns, &op, 1);
-		if (len != 1) {
+		len = read(ns, &op, sizeof(op));
+		if (len != sizeof(op)) {
 			if (len < 0)
 				warn(_("read failed"));
 			else
@@ -468,7 +475,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		}
 		if ((op == UUIDD_OP_BULK_TIME_UUID) ||
 		    (op == UUIDD_OP_BULK_RANDOM_UUID)) {
-			if (read_all(ns, (char *) &num, sizeof(num)) != 4)
+			if (read_all(ns, (char *) &num, sizeof(num)) != sizeof(num))
 				goto shutdown_socket;
 			if (uuidd_cxt->debug)
 				fprintf(stderr, _("operation %d, incoming num = %d\n"),
@@ -525,21 +532,20 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				num = 1;
 			if (num > 1000)
 				num = 1000;
-			if (num * UUID_LEN > (int) (sizeof(reply_buf) - sizeof(num)))
-				num = (sizeof(reply_buf) - sizeof(num)) / UUID_LEN;
+			if ((sizeof(reply_buf) - sizeof(num)) < (size_t) (sizeof(uu) * num))
+				num = (sizeof(reply_buf) - sizeof(num)) / sizeof(uu);
 			__uuid_generate_random((unsigned char *) reply_buf +
 					      sizeof(num), &num);
-			reply_len = sizeof(num) + (UUID_LEN * num);
+			reply_len = sizeof(num) + (sizeof(uu) * num);
 			memcpy(reply_buf, &num, sizeof(num));
 			if (uuidd_cxt->debug) {
 				fprintf(stderr, P_("Generated %d UUID:\n",
 						   "Generated %d UUIDs:\n", num), num);
-
-				cp = reply_buf + sizeof(num)
+				cp = reply_buf + sizeof(num);
 				for (i = 0; i < num; i++) {
 					uuid_unparse((unsigned char *)cp, str);
 					fprintf(stderr, "\t%s\n", str);
-					cp += UUID_LEN;
+					cp += sizeof(uu);
 				}
 			}
 			break;
@@ -548,7 +554,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				fprintf(stderr, _("Invalid operation %d\n"), op);
 			goto shutdown_socket;
 		}
-		write_all(ns, (char *) &reply_len, sizeof(reply_len));
+		write_all(ns, (char *) &reply_len, sizeof(num));
 		write_all(ns, reply_buf, reply_len);
 	shutdown_socket:
 		close(ns);
@@ -599,7 +605,7 @@ static void parse_options(int argc, char **argv, struct uuidd_cxt_t *uuidd_cxt,
 			uuidd_opts->do_kill = 1;
 			break;
 		case 'n':
-			uuidd_opts->num = strtou32_or_err(optarg,
+			uuidd_opts->num = (uuidd_prot_num_t) strtou16_or_err(optarg,
 						_("failed to parse --uuids"));
 			break;
 		case 'p':
@@ -688,7 +694,7 @@ int main(int argc, char **argv)
 			"Ignoring --socket."));
 
 	if (uuidd_opts.num && uuidd_opts.do_type) {
-		char buf[1024];
+		char buf[UUIDD_PROT_BUFSZ];
 		char str[UUID_STR_LEN];
 
 		ret = call_daemon(uuidd_opts.socket_path, uuidd_opts.do_type, buf,
@@ -711,10 +717,10 @@ int main(int argc, char **argv)
 			int i;
 
 			printf(_("List of UUIDs:\n"));
-			cp = buf + 4;
+			cp = buf + sizeof(uuidd_opts.num);
 			if (ret != (int) (sizeof(uuidd_opts.num) + uuidd_opts.num * sizeof(uuid_t)))
 				unexpected_size(ret);
-			for (i = 0; i < uuidd_opts.num; i++, cp += UUID_LEN) {
+			for (i = 0; i < uuidd_opts.num; i++, cp += sizeof(uuid_t)) {
 				uuid_unparse((unsigned char *) cp, str);
 				printf("\t%s\n", str);
 			}
