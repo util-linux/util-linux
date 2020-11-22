@@ -56,7 +56,7 @@ static int probe_drbdmanage(blkid_probe pr,
 	if (hdr->lf != '\n')
 		return 1;
 
-	if (blkid_probe_set_id_label(pr, "UUID",
+	if (blkid_probe_strncpy_uuid(pr,
 				hdr->uuid, sizeof(hdr->uuid)))
 		return errno ? -errno : 1;
 
