@@ -193,7 +193,7 @@ static void fill_table_row(struct libscols_table *tb, char const *const uuid)
 			}
 			switch (type) {
 			case 0:
-				if (strspn(uuid, "0-") == 36)
+				if (uuid_is_null(buf))
 					str = xstrdup(_("nil"));
 				else
 					str = xstrdup(_("unknown"));
