@@ -53,6 +53,7 @@ typedef unsigned char uuid_t[16];
 #define UUID_VARIANT_MASK     0x7
 
 /* UUID Type definitions */
+#define UUID_TYPE_DCE_NIL    0
 #define UUID_TYPE_DCE_TIME   1
 #define UUID_TYPE_DCE_SECURITY 2
 #define UUID_TYPE_DCE_MD5    3
