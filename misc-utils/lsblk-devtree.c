@@ -18,6 +18,7 @@
  */
 #include "lsblk.h"
 #include "sysfs.h"
+#include "pathnames.h"
 
 
 void lsblk_reset_iter(struct lsblk_iter *itr, int direction)
@@ -244,6 +245,7 @@ struct lsblk_devtree *lsblk_new_devtree()
 
 	INIT_LIST_HEAD(&tr->roots);
 	INIT_LIST_HEAD(&tr->devices);
+	INIT_LIST_HEAD(&tr->pktcdvd_map);
 
 	DBG(TREE, ul_debugobj(tr, "alloc"));
 	return tr;
@@ -268,6 +270,14 @@ void lsblk_unref_devtree(struct lsblk_devtree *tr)
 						struct lsblk_device, ls_devices);
 			lsblk_devtree_remove_device(tr, dev);
 		}
+
+		while (!list_empty(&tr->pktcdvd_map)) {
+			struct lsblk_devnomap *map = list_entry(tr->pktcdvd_map.next,
+						struct lsblk_devnomap, ls_devnomap);
+			list_del(&map->ls_devnomap);
+			free(map);
+		}
+
 		free(tr);
 	}
 }
@@ -282,6 +292,15 @@ int lsblk_devtree_add_root(struct lsblk_devtree *tr, struct lsblk_device *dev)
 
         DBG(TREE, ul_debugobj(tr, "add root device 0x%p [%s]", dev, dev->name));
         list_add_tail(&dev->ls_roots, &tr->roots);
+	return 0;
+}
+
+int lsblk_devtree_remove_root(struct lsblk_devtree *tr __attribute__((unused)),
+			      struct lsblk_device *dev)
+{
+        DBG(TREE, ul_debugobj(tr, "remove root device 0x%p [%s]", dev, dev->name));
+        list_del_init(&dev->ls_roots);
+
 	return 0;
 }
 
@@ -371,6 +390,62 @@ int lsblk_devtree_remove_device(struct lsblk_devtree *tr, struct lsblk_device *d
 	list_del_init(&dev->ls_devices);
 	lsblk_unref_device(dev);
 
+	return 0;
+}
+
+static void read_pktcdvd_map(struct lsblk_devtree *tr)
+{
+	char buf[PATH_MAX];
+	FILE *f;
+
+	assert(tr->pktcdvd_read == 0);
+
+	f = ul_path_fopen(NULL, "r", _PATH_SYS_CLASS "/pktcdvd/device_map");
+	if (!f)
+		goto done;
+
+	while (fgets(buf, sizeof(buf), f)) {
+		struct lsblk_devnomap *map;
+		int pkt_maj, pkt_min, blk_maj, blk_min;
+
+		if (sscanf(buf, "%*s %d:%d %d:%d\n",
+					&pkt_maj, &pkt_min,
+					&blk_maj, &blk_min) != 4)
+			continue;
+
+		map = malloc(sizeof(*map));
+		if (!map)
+			break;
+		map->holder = makedev(pkt_maj, pkt_min);
+		map->slave = makedev(blk_maj, blk_min);
+		INIT_LIST_HEAD(&map->ls_devnomap);
+		list_add_tail(&map->ls_devnomap, &tr->pktcdvd_map);
+	}
+
+	fclose(f);
+done:
+	tr->pktcdvd_read = 1;
+}
+
+/* returns opposite device of @devno for blk->pkt relation -- e.g. if devno
+ * is_slave (blk) then returns holder (pkt) and vice-versa */
+dev_t lsblk_devtree_pktcdvd_get_mate(struct lsblk_devtree *tr, dev_t devno, int is_slave)
+{
+	struct list_head *p;
+
+	if (!tr->pktcdvd_read)
+		read_pktcdvd_map(tr);
+	if (list_empty(&tr->pktcdvd_map))
+		return 0;
+
+	list_for_each(p, &tr->pktcdvd_map) {
+		struct lsblk_devnomap *x = list_entry(p, struct lsblk_devnomap, ls_devnomap);
+
+		if (is_slave && devno == x->slave)
+			return x->holder;
+		if (!is_slave && devno == x->holder)
+			return x->slave;
+	}
 	return 0;
 }
 

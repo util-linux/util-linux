@@ -1267,6 +1267,26 @@ static struct lsblk_device *devtree_get_device_or_new(struct lsblk_devtree *tr,
 	return dev;
 }
 
+static struct lsblk_device *devtree_pktcdvd_get_dep(
+			struct lsblk_devtree *tr,
+			struct lsblk_device *dev,
+			int want_slave)
+{
+	char buf[PATH_MAX], *name;
+	dev_t devno;
+
+	devno = lsblk_devtree_pktcdvd_get_mate(tr,
+			makedev(dev->maj, dev->min), !want_slave);
+	if (!devno)
+		return NULL;
+
+	name = sysfs_devno_to_devname(devno, buf, sizeof(buf));
+	if (!name)
+		return NULL;
+
+	return devtree_get_device_or_new(tr, NULL, name);
+}
+
 static int process_dependencies(
 			struct lsblk_devtree *tr,
 			struct lsblk_device *dev,
@@ -1357,6 +1377,7 @@ static int process_dependencies(
 	DIR *dir;
 	struct dirent *d;
 	const char *depname;
+	struct lsblk_device *dep = NULL;
 
 	assert(dev);
 
@@ -1371,21 +1392,20 @@ static int process_dependencies(
 
 	if (!(lsblk->inverse ? dev->nslaves : dev->nholders)) {
 		DBG(DEV, ul_debugobj(dev, " ignore (no slaves/holders)"));
-		return 0;
+		goto done;
 	}
 
 	depname = lsblk->inverse ? "slaves" : "holders";
 	dir = ul_path_opendir(dev->sysfs, depname);
 	if (!dir) {
 		DBG(DEV, ul_debugobj(dev, " ignore (no slaves/holders directory)"));
-		return 0;
+		goto done;
 	}
 	ul_path_close_dirfd(dev->sysfs);
 
 	DBG(DEV, ul_debugobj(dev, " %s: checking for '%s' dependence", dev->name, depname));
 
 	while ((d = xreaddir(dir))) {
-		struct lsblk_device *dep = NULL;
 		struct lsblk_device *disk = NULL;
 
 		/* Is the dependency a partition? */
@@ -1436,8 +1456,14 @@ next:
 			ul_path_close_dirfd(disk->sysfs);
 	}
 	closedir(dir);
+done:
+	dep = devtree_pktcdvd_get_dep(tr, dev, lsblk->inverse);
 
-	DBG(DEV, ul_debugobj(dev, "%s: checking for '%s' -- done", dev->name, depname));
+	if (dep && lsblk_device_new_dependence(dev, dep) == 0) {
+		lsblk_devtree_remove_root(tr, dep);
+		process_dependencies(tr, dep, lsblk->inverse ? 0 : 1);
+	}
+
 	return 0;
 }
 
