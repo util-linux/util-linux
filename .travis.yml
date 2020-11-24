@@ -28,7 +28,7 @@ jobs:
       compiler: gcc
       env: PRECISE="yes" MAKE_CHECK="root"
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.1
       compiler: clang
       env: MAKE_CHECK="root"
     - arch: arm64
