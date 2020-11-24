@@ -205,7 +205,7 @@ usrbin_exec_PROGRAMS += getopt
 dist_man_MANS += misc-utils/getopt.1
 PATHFILES += misc-utils/getopt.1
 getopt_SOURCES = misc-utils/getopt.c
-getoptexampledir = $(docdir)/getopt/
+getoptexampledir = $(docdir)
 dist_getoptexample_DATA = \
 	misc-utils/getopt-example.bash \
 	misc-utils/getopt-example.tcsh

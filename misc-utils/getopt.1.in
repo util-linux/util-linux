@@ -418,7 +418,7 @@ if it is called with
 Example scripts for (ba)sh and (t)csh are provided with the
 .BR getopt (1)
 distribution, and are installed in
-.I @docdir@/getopt/
+.I @docdir@
 directory.
 .SH ENVIRONMENT
 .IP POSIXLY_CORRECT
