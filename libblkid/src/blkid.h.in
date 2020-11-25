@@ -255,6 +255,11 @@ extern blkid_loff_t blkid_probe_get_sectors(blkid_probe pr)
 extern int blkid_probe_get_fd(blkid_probe pr)
 			__ul_attribute__((nonnull));
 
+extern int blkid_probe_set_hint(blkid_probe pr, const char *name, uint64_t value)
+			__ul_attribute__((nonnull));
+extern void blkid_probe_reset_hints(blkid_probe pr)
+			__ul_attribute__((nonnull));
+
 /*
  * superblocks probing
  */

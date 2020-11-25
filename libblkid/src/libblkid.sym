@@ -178,3 +178,8 @@ BLKID_2_31 {
 BLKID_2_36 {
 	blkid_topology_get_dax;
 } BLKID_2_31;
+
+BLKID_2_37 {
+	blkid_probe_set_hint;
+	blkid_probe_reset_hints;
+} BLKID_2_36;

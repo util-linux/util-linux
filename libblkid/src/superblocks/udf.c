@@ -182,6 +182,7 @@ static int probe_udf(blkid_probe pr,
 	struct logical_vol_integ_descriptor_imp_use *lvidiu;
 	uint32_t lvid_len = 0;
 	uint32_t lvid_loc = 0;
+	uint64_t s_off;
 	uint32_t bs;
 	uint32_t b;
 	uint16_t type;
@@ -197,6 +198,10 @@ static int probe_udf(blkid_probe pr,
 	int have_volid = 0;
 	int have_volsetid = 0;
 
+	/* Session offset */
+	if (blkid_probe_get_hint(pr, "session_offset", &s_off) < 0)
+		s_off = 0;
+
 	/* The block size of a UDF filesystem is that of the underlying
 	 * storage; we check later on for the special case of image files,
 	 * which may have any block size valid for UDF filesystem */
@@ -208,13 +213,18 @@ static int probe_udf(blkid_probe pr,
 		if (i != 0 && pbs[0] == pbs[i])
 			continue;
 
+		/* Do not try with block size which is not divisor of session offset */
+		if (s_off % pbs[i])
+			continue;
+
 		/* ECMA-167 2/8.4, 2/9.1: Each VSD is either 2048 bytes long or
 		 * its size is same as blocksize (for blocksize > 2048 bytes)
 		 * plus padded with zeros */
 		vsd_len = pbs[i] > 2048 ? pbs[i] : 2048;
 
-		/* Process 2048 bytes long VSD only once */
-		if (vsd_len == 2048) {
+		/* Process 2048 bytes long VSD on first session only once
+		 * as its location is same for any blocksize */
+		if (s_off == 0 && vsd_len == 2048) {
 			if (vsd_2048_valid == 0)
 				continue;
 			if (vsd_2048_valid == 1)
@@ -225,7 +235,7 @@ static int probe_udf(blkid_probe pr,
 		for (b = 0; b < 64; b++) {
 			vsd = (struct volume_structure_descriptor *)
 				blkid_probe_get_buffer(pr,
-						UDF_VSD_OFFSET + b * vsd_len,
+						s_off + UDF_VSD_OFFSET + b * vsd_len,
 						sizeof(*vsd));
 			if (!vsd)
 				return errno ? -errno : 1;
@@ -249,29 +259,41 @@ static int probe_udf(blkid_probe pr,
 				break;
 		}
 
-		if (vsd_len == 2048)
+		if (s_off == 0 && vsd_len == 2048)
 			vsd_2048_valid = 0;
 
 		/* NSR was not found, try with next block size */
 		continue;
 
 anchor:
-		if (vsd_len == 2048)
+		if (s_off == 0 && vsd_len == 2048)
 			vsd_2048_valid = 1;
 
 		/* Read Anchor Volume Descriptor (AVDP), detect block size */
 		vd = (struct volume_descriptor *)
-			blkid_probe_get_buffer(pr, 256 * pbs[i], sizeof(*vd));
+			blkid_probe_get_buffer(pr, s_off + 256 * pbs[i], sizeof(*vd));
 		if (!vd)
 			return errno ? -errno : 1;
 
 		/* Check that we read correct sector and detected correct block size */
-		if (le32_to_cpu(vd->tag.location) != 256)
-			continue;
+		if (le32_to_cpu(vd->tag.location) == s_off / pbs[i] + 256) {
+			type = le16_to_cpu(vd->tag.id);
+			if (type == TAG_ID_AVDP)
+				goto real_blksz;
+		}
 
-		type = le16_to_cpu(vd->tag.id);
-		if (type == TAG_ID_AVDP)
-			goto real_blksz;
+		/* UDF-2.60: 2.2.3: Unclosed sequential Write-Once media may
+		 * have a single AVDP present at either sector 256 or 512. */
+		vd = (struct volume_descriptor *)
+			blkid_probe_get_buffer(pr, s_off + 512 * pbs[i], sizeof(*vd));
+		if (!vd)
+			return errno ? -errno : 1;
+
+		if (le32_to_cpu(vd->tag.location) == s_off / pbs[i] + 512) {
+			type = le16_to_cpu(vd->tag.id);
+			if (type == TAG_ID_AVDP)
+				goto real_blksz;
+		}
 
 	}
 	return 1;
@@ -477,13 +499,13 @@ const struct blkid_idinfo udf_idinfo =
 	.flags		= BLKID_IDINFO_TOLERANT,
 	.magics		=
 	{
-		{ .magic = "BEA01", .len = 5, .kboff = 32, .sboff = 1 },
-		{ .magic = "BOOT2", .len = 5, .kboff = 32, .sboff = 1 },
-		{ .magic = "CD001", .len = 5, .kboff = 32, .sboff = 1 },
-		{ .magic = "CDW02", .len = 5, .kboff = 32, .sboff = 1 },
-		{ .magic = "NSR02", .len = 5, .kboff = 32, .sboff = 1 },
-		{ .magic = "NSR03", .len = 5, .kboff = 32, .sboff = 1 },
-		{ .magic = "TEA01", .len = 5, .kboff = 32, .sboff = 1 },
+		{ .magic = "BEA01", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
+		{ .magic = "BOOT2", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
+		{ .magic = "CD001", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
+		{ .magic = "CDW02", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
+		{ .magic = "NSR02", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
+		{ .magic = "NSR03", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
+		{ .magic = "TEA01", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
 		{ NULL }
 	}
 };

@@ -171,7 +171,13 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	struct iso_volume_descriptor *iso;
 	unsigned char label[32];
 	int i;
-	int off;
+	uint64_t off;
+
+	if (blkid_probe_get_hint(pr, mag->hoff, &off) < 0)
+		off = 0;
+
+	if (off % 2048)
+		return 1;
 
 	if (strcmp(mag->magic, "CDROM") == 0)
 		return probe_iso9660_hsfs(pr, mag);
@@ -201,7 +207,7 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 		probe_iso9660_set_uuid(pr, &iso->created);
 
 	/* Joliet Extension and Boot Record */
-	off = ISO_VD_OFFSET;
+	off += ISO_VD_OFFSET;
 	for (i = 0; i < ISO_VD_MAX; i++) {
 		struct boot_record *boot= (struct boot_record *)
 			blkid_probe_get_buffer(pr,
@@ -267,8 +273,8 @@ const struct blkid_idinfo iso9660_idinfo =
 	.flags		= BLKID_IDINFO_TOLERANT,
 	.magics		=
 	{
-		{ .magic = "CD001", .len = 5, .kboff = 32, .sboff = 1 },
-		{ .magic = "CDROM", .len = 5, .kboff = 32, .sboff = 9 },
+		{ .magic = "CD001", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
+		{ .magic = "CDROM", .len = 5, .kboff = 32, .sboff = 9, .hoff = "session_offset" },
 		{ NULL }
 	}
 };
