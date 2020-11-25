@@ -53,8 +53,8 @@ const struct blkid_idinfo cramfs_idinfo =
 	.probefunc	= probe_cramfs,
 	.magics		=
 	{
-		{ "\x45\x3d\xcd\x28", 4, 0, 0 },
-		{ "\x28\xcd\x3d\x45", 4, 0, 0 },
+		{ .magic = "\x45\x3d\xcd\x28", .len = 4 },
+		{ .magic = "\x28\xcd\x3d\x45", .len = 4 },
 		{ NULL }
 	}
 };
