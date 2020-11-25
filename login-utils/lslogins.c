@@ -1654,7 +1654,9 @@ int main(int argc, char *argv[])
 
 	scols_unref_table(tb);
 	tdestroy(ctl->usertree, free_user);
-	close(ctl->lastlogin_fd);
+
+	if (ctl->lastlogin_fd >= 0)
+		close(ctl->lastlogin_fd);
 	free_ctl(ctl);
 
 	return EXIT_SUCCESS;
