@@ -599,6 +599,49 @@ static void free_line_allocations(struct col_alloc *root)
 }
 #endif
 
+static void process_char(struct col_ctl *ctl, struct col_lines *lns)
+{
+                /* Deal printable characters */
+                if (!iswgraph(lns->ch) && handle_not_graphic(ctl, lns))
+                        return;
+
+                /* Must stuff ch in a line - are we at the right one? */
+                if ((size_t)lns->cur_line != lns->this_line - lns->adjust)
+                        update_cur_line(ctl, lns);
+
+                /* Does line buffer need to grow? */
+                if (ctl->l->l_lsize <= ctl->l->l_line_len + 1) {
+                        size_t need;
+
+                        need = ctl->l->l_lsize ? ctl->l->l_lsize * 2 : NALLOC;
+                        ctl->l->l_line = xrealloc(ctl->l->l_line, need * sizeof(struct col_char));
+                        ctl->l->l_lsize = need;
+                }
+
+                /* Store character */
+                lns->c = &ctl->l->l_line[ctl->l->l_line_len++];
+                lns->c->c_char = lns->ch;
+                lns->c->c_set = lns->cur_set;
+
+                if (0 < lns->cur_col)
+                        lns->c->c_column = lns->cur_col;
+                else
+                        lns->c->c_column = 0;
+                lns->c->c_width = wcwidth(lns->ch);
+
+                /*
+                 * If things are put in out of order, they will need sorting
+                 * when it is flushed.
+                 */
+                if (lns->cur_col < ctl->l->l_max_col)
+                        ctl->l->l_needs_sort = 1;
+                else
+                        ctl->l->l_max_col = lns->cur_col;
+                if (0 < lns->c->c_width)
+                        lns->cur_col += lns->c->c_width;
+
+}
+
 int main(int argc, char **argv)
 {
 	struct col_ctl ctl = {
@@ -623,52 +666,30 @@ int main(int argc, char **argv)
 	while (feof(stdin) == 0) {
 		errno = 0;
 		/* Get character */
-		if ((lns.ch = getwchar()) == WEOF) {
+		lns.ch = getwchar();
+
+		if (lns.ch == WEOF) {
 			if (errno == EILSEQ) {
-				warn(_("failed on line %lu"), lns.max_line + 1);
-				ret = EXIT_FAILURE;
-			}
-			break;
-		}
+				/* Illegal multibyte sequence */
+				int c;
+				char buf[5];
+				size_t len, i;
 
-		/* Deal printable characters */
-		if (!iswgraph(lns.ch) && handle_not_graphic(&ctl, &lns))
-			continue;
-
-		/* Must stuff ch in a line - are we at the right one? */
-		if ((size_t)lns.cur_line != lns.this_line - lns.adjust)
-			update_cur_line(&ctl, &lns);
-
-		/* Does line buffer need to grow? */
-		if (ctl.l->l_lsize <= ctl.l->l_line_len + 1) {
-			size_t need;
-
-			need = ctl.l->l_lsize ? ctl.l->l_lsize * 2 : NALLOC;
-			ctl.l->l_line = xrealloc(ctl.l->l_line, need * sizeof(struct col_char));
-			ctl.l->l_lsize = need;
-		}
-
-		/* Store character */
-		lns.c = &ctl.l->l_line[ctl.l->l_line_len++];
-		lns.c->c_char = lns.ch;
-		lns.c->c_set = lns.cur_set;
-
-		if (0 < lns.cur_col)
-			lns.c->c_column = lns.cur_col;
-		else
-			lns.c->c_column = 0;
-		lns.c->c_width = wcwidth(lns.ch);
-
-		/*
-		 * If things are put in out of order, they will need sorting
-		 * when it is flushed.
-		 */
-		if (lns.cur_col < ctl.l->l_max_col)
-			ctl.l->l_needs_sort = 1;
-		else
-			ctl.l->l_max_col = lns.cur_col;
-		if (0 < lns.c->c_width)
-			lns.cur_col += lns.c->c_width;
+				c = getchar();
+				if (c == EOF)
+					break;
+				sprintf(buf, "\\x%02x", (unsigned char) c);
+				len = strlen(buf);
+				for (i = 0; i < len; i++) {
+					lns.ch = buf[i];
+					process_char(&ctl, &lns);
+				}
+			} else
+				/* end of file */
+				break;
+		} else
+			/* the common case */
+			process_char(&ctl, &lns);
 	}
 
 	/* goto the last line that had a character on it */
