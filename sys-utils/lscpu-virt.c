@@ -571,10 +571,10 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 
 		fd = ul_path_fopen(cxt->procfs, "r", "xen/capabilities");
 		if (fd) {
-			char buf[256];
+			char xenbuf[256];
 
-			if (fscanf(fd, "%255s", buf) == 1 &&
-			    !strcmp(buf, "control_d"))
+			if (fscanf(fd, "%255s", xenbuf) == 1 &&
+			    !strcmp(xenbuf, "control_d"))
 				dom0 = 1;
 			fclose(fd);
 		}
