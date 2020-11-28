@@ -469,8 +469,9 @@ static char *make_time(int mode, time_t time)
 	return xstrdup(buf);
 }
 
-static void global_set_data(struct libscols_table *tb, const char *resource,
-			    const char *desc, uintmax_t used, uintmax_t limit, int usage)
+static void global_set_data(struct lsipc_control *ctl, struct libscols_table *tb,
+			    const char *resource, const char *desc, uintmax_t used,
+			    uintmax_t limit, int usage, int byte_unit)
 {
 	struct libscols_line *ln;
 	size_t n;
@@ -492,7 +493,10 @@ static void global_set_data(struct libscols_table *tb, const char *resource,
 			break;
 		case COL_USED:
 			if (usage) {
-				xasprintf(&arg, "%ju", used);
+				if (!byte_unit || ctl->bytes)
+					xasprintf(&arg, "%ju", used);
+				else
+					arg = size_to_human_string(SIZE_SUFFIX_1LETTER, used);
 				rc = scols_line_refer_data(ln, n, arg);
 			} else
 				rc = scols_line_set_data(ln, n, "-");
@@ -505,7 +509,10 @@ static void global_set_data(struct libscols_table *tb, const char *resource,
 				rc = scols_line_set_data(ln, n, "-");
 			break;
 		case COL_LIMIT:
-			xasprintf(&arg, "%ju", limit);
+			if (!byte_unit || ctl->bytes)
+				xasprintf(&arg, "%ju", limit);
+			else
+				arg = size_to_human_string(SIZE_SUFFIX_1LETTER, limit);
 			rc = scols_line_refer_data(ln, n, arg);
 			break;
 		}
@@ -703,7 +710,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	ipc_sem_free_info(semds);
 }
 
-static void do_sem_global(struct libscols_table *tb)
+static void do_sem_global(struct lsipc_control *ctl, struct libscols_table *tb)
 {
 	struct sem_data *semds, *semdsp;
 	struct ipc_limits lim;
@@ -719,11 +726,11 @@ static void do_sem_global(struct libscols_table *tb)
 		ipc_sem_free_info(semds);
 	}
 
-	global_set_data(tb, "SEMMNI", _("Number of semaphore identifiers"), nsets, lim.semmni, 1);
-	global_set_data(tb, "SEMMNS", _("Total number of semaphores"), nsems, lim.semmns, 1);
-	global_set_data(tb, "SEMMSL", _("Max semaphores per semaphore set."), 0, lim.semmsl, 0);
-	global_set_data(tb, "SEMOPM", _("Max number of operations per semop(2)"), 0, lim.semopm, 0);
-	global_set_data(tb, "SEMVMX", _("Semaphore max value"), 0, lim.semvmx, 0);
+	global_set_data(ctl, tb, "SEMMNI", _("Number of semaphore identifiers"), nsets, lim.semmni, 1, 0);
+	global_set_data(ctl, tb, "SEMMNS", _("Total number of semaphores"), nsems, lim.semmns, 1, 0);
+	global_set_data(ctl, tb, "SEMMSL", _("Max semaphores per semaphore set."), 0, lim.semmsl, 0, 0);
+	global_set_data(ctl, tb, "SEMOPM", _("Max number of operations per semop(2)"), 0, lim.semopm, 0, 0);
+	global_set_data(ctl, tb, "SEMVMX", _("Semaphore max value"), 0, lim.semvmx, 0, 0);
 }
 
 static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
@@ -826,7 +833,10 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 							  (time_t)msgdsp->q_ctime));
 				break;
 			case COL_USEDBYTES:
-				xasprintf(&arg, "%ju", msgdsp->q_cbytes);
+				if (ctl->bytes)
+					xasprintf(&arg, "%ju", msgdsp->q_cbytes);
+				else
+					arg = size_to_human_string(SIZE_SUFFIX_1LETTER, msgdsp->q_cbytes);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_MSGS:
@@ -865,7 +875,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 }
 
 
-static void do_msg_global(struct libscols_table *tb)
+static void do_msg_global(struct lsipc_control *ctl, struct libscols_table *tb)
 {
 	struct msg_data *msgds, *msgdsp;
 	struct ipc_limits lim;
@@ -880,9 +890,9 @@ static void do_msg_global(struct libscols_table *tb)
 		ipc_msg_free_info(msgds);
 	}
 
-	global_set_data(tb, "MSGMNI", _("Number of message queues"), msgqs, lim.msgmni, 1);
-	global_set_data(tb, "MSGMAX", _("Max size of message (bytes)"),	0, lim.msgmax, 0);
-	global_set_data(tb, "MSGMNB", _("Default max size of queue (bytes)"), 0, lim.msgmnb, 0);
+	global_set_data(ctl, tb, "MSGMNI", _("Number of message queues"), msgqs, lim.msgmni, 1, 0);
+	global_set_data(ctl, tb, "MSGMAX", _("Max size of message (bytes)"),	0, lim.msgmax, 0, 1);
+	global_set_data(ctl, tb, "MSGMNB", _("Default max size of queue (bytes)"), 0, lim.msgmnb, 0, 1);
 }
 
 
@@ -1063,7 +1073,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	ipc_shm_free_info(shmds);
 }
 
-static void do_shm_global(struct libscols_table *tb)
+static void do_shm_global(struct lsipc_control *ctl, struct libscols_table *tb)
 {
 	struct shm_data *shmds, *shmdsp;
 	uint64_t nsegs = 0, sum_segsz = 0;
@@ -1079,10 +1089,10 @@ static void do_shm_global(struct libscols_table *tb)
 		ipc_shm_free_info(shmds);
 	}
 
-	global_set_data(tb, "SHMMNI", _("Shared memory segments"), nsegs, lim.shmmni, 1);
-	global_set_data(tb, "SHMALL", _("Shared memory pages"), sum_segsz / getpagesize(), lim.shmall, 1);
-	global_set_data(tb, "SHMMAX", _("Max size of shared memory segment (bytes)"), 0, lim.shmmax, 0);
-	global_set_data(tb, "SHMMIN", _("Min size of shared memory segment (bytes)"), 0, lim.shmmin, 0);
+	global_set_data(ctl, tb, "SHMMNI", _("Shared memory segments"), nsegs, lim.shmmni, 1, 0);
+	global_set_data(ctl, tb, "SHMALL", _("Shared memory pages"), sum_segsz / getpagesize(), lim.shmall, 1, 0);
+	global_set_data(ctl, tb, "SHMMAX", _("Max size of shared memory segment (bytes)"), 0, lim.shmmax, 0, 1);
+	global_set_data(ctl, tb, "SHMMIN", _("Min size of shared memory segment (bytes)"), 0, lim.shmmin, 0, 1);
 }
 
 int main(int argc, char *argv[])
@@ -1311,19 +1321,19 @@ int main(int argc, char *argv[])
 
 	if (msg) {
 		if (global)
-			do_msg_global(tb);
+			do_msg_global(ctl, tb);
 		else
 			do_msg(id, ctl, tb);
 	}
 	if (shm) {
 		if (global)
-			do_shm_global(tb);
+			do_shm_global(ctl ,tb);
 		else
 			do_shm(id, ctl, tb);
 	}
 	if (sem) {
 		if (global)
-			do_sem_global(tb);
+			do_sem_global(ctl, tb);
 		else
 			do_sem(id, ctl, tb);
 	}
