@@ -587,12 +587,12 @@ int main(int argc, char **argv)
 	open_device(&ctl);
 	permMask = S_ISBLK(ctl.devstat.st_mode) ? 07007 : 07077;
 	if ((ctl.devstat.st_mode & permMask) != 0)
-		warnx(_("%s: insecure permissions %04o, %04o suggested."),
+		warnx(_("%s: insecure permissions %04o, fix with: chmod %04o %s"),
 			ctl.devname, ctl.devstat.st_mode & 07777,
-			~permMask & 0666);
+			~permMask & 0666, ctl.devname);
 	if (getuid() == 0 && S_ISREG(ctl.devstat.st_mode) && ctl.devstat.st_uid != 0)
-		warnx(_("%s: insecure file owner %d, 0 (root) suggested."),
-			ctl.devname, ctl.devstat.st_uid);
+		warnx(_("%s: insecure file owner %d, fix with: chown 0:0 %s"),
+			ctl.devname, ctl.devstat.st_uid, ctl.devname);
 
 
 	if (ctl.check)
