@@ -28,6 +28,9 @@ struct exfat_super_block {
 	uint8_t fat_count;
 	uint8_t drive_no;
 	uint8_t allocated_percent;
+	uint8_t	__unused2[7];
+	uint8_t boot_code[390];
+	uint8_t boot_signature[2];
 } __attribute__((__packed__));
 
 struct exfat_entry_label {
@@ -152,6 +155,7 @@ const struct blkid_idinfo exfat_idinfo =
 	.magics		=
 	{
 		{ .magic = "EXFAT   ", .len = 8, .sboff = 3 },
+		{ .magic = "\125\252", .len = 2, .sboff = 0x1fe },
 		{ NULL }
 	}
 };
