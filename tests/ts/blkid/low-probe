@@ -32,12 +32,34 @@ for img in $(ls $TS_SELF/images-fs/*.img.xz | sort); do
 	name=$(basename $img .img.xz)
 	outimg=$TS_OUTDIR/images-fs/${name}.img
 
-	ts_init_subtest $name
-
 	xz -dc $img > $outimg
 
-	$TS_CMD_BLKID -p -o udev $outimg 2> $TS_ERRLOG | sort > $TS_OUTPUT
-	ts_finalize_subtest
+	#
+	# multi session images, the image name contains "-multi-" and all
+	# -<numbers>- are interpreted as offset to the sessions. The offset is
+	# calculated in 2048 sectors.  For example: iso-multi-0-174-348-genisoimage.img
+	#
+	if [[ $name =~ (.*multi.*) ]]; then
+		sessions=$(echo "$name" \
+			| awk 'BEGIN { RS="-" } /^[[:digit:]]+$/ { print $0 }')
+		name=$(echo "$name" \
+			| awk 'BEGIN { RS="-"; ORS="-" } !/^[[:digit:]]+$/ { print $1 }' \
+			| sed 's/-$//g')
+		for off in $sessions; do
+			ts_init_subtest $name-$off
+			$TS_CMD_BLKID -p -o udev $outimg \
+				--hint session_offset=$(( $off * 2048 )) \
+				2> $TS_ERRLOG | sort > $TS_OUTPUT
+			ts_finalize_subtest
+		done
+	#
+	# Standard filesystem images
+	#
+	else
+		ts_init_subtest $name
+		$TS_CMD_BLKID -p -o udev $outimg 2> $TS_ERRLOG | sort > $TS_OUTPUT
+		ts_finalize_subtest
+	fi
 done
 
 ts_finalize
