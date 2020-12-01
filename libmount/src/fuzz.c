@@ -1,6 +1,8 @@
 #include "fuzz.h"
+#include "xalloc.h"
 #include "mountP.h"
 
+#include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -12,10 +14,12 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
                 return 0;
 
         tb = mnt_new_table();
-        assert(tb);
+        if (!tb)
+		err_oom();
 
         f = fmemopen((char*) data, size, "re");
-        assert(f);
+        if (!f)
+		err(EXIT_FAILURE, "fmemopen() failed");
 
         mnt_table_enable_comments(tb, TRUE);
         (void) mnt_table_parse_stream(tb, f, "mountinfo");

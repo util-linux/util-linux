@@ -1563,23 +1563,24 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 }
 
 #ifdef FUZZ_TARGET
+# include "all-io.h"
+
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	char name[] = "/tmp/test-script-fuzz.XXXXXX";
 	int fd;
-	ssize_t n;
 	struct fdisk_script *dp;
 	struct fdisk_context *cxt;
 	FILE *f;
 
 	fd = mkostemp(name, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
-	assert(fd >= 0);
-
-	n = write(fd, data, size);
-	assert(n == (ssize_t) size);
-
+	if (fd < 0)
+		err(EXIT_FAILURE, "mkostemp() failed");
+	if (write_all(fd, data, size) != 0)
+		err(EXIT_FAILURE, "write() failed");
 	f = fopen(name, "r");
-	assert(f);
+	if (!f)
+		err(EXIT_FAILURE, "cannot open %s", name);
 
 	cxt = fdisk_new_context();
 	dp = fdisk_new_script(cxt);

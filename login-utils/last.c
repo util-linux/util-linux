@@ -923,6 +923,8 @@ static void process_wtmp_file(const struct last_control *ctl,
 }
 
 #ifdef FUZZ_TARGET
+# include "all-io.h"
+
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 	struct last_control ctl = {
 		.showhost = TRUE,
@@ -936,13 +938,12 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 	};
 	char name[] = "/tmp/test-last-fuzz.XXXXXX";
 	int fd;
-	ssize_t n;
 
 	fd = mkostemp(name, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
-	assert(fd >= 0);
-
-	n = write(fd, data, size);
-	assert(n == (ssize_t) size);
+	if (fd < 0)
+		err(EXIT_FAILURE, "mkostemp() failed");
+	if (write_all(fd, data, size) != 0)
+		err(EXIT_FAILURE, "write() failed");
 
 	process_wtmp_file(&ctl, name);
 
