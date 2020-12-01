@@ -27,10 +27,10 @@ jobs:
     - dist: precise
       compiler: gcc
       env: PRECISE="yes" MAKE_CHECK="root"
-    - os: osx
-      osx_image: xcode10.1
-      compiler: clang
-      env: MAKE_CHECK="root"
+    #- os: osx
+    #  osx_image: xcode10.1
+    #  compiler: clang
+    #  env: MAKE_CHECK="root"
     - arch: arm64
       compiler: gcc-10
       env: MAKE_CHECK="root"
