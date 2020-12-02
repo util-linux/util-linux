@@ -110,7 +110,7 @@ unwind:
 /*
  * portable getdtablesize()
  */
-int get_fd_tabsize(void)
+unsigned int get_fd_tabsize(void)
 {
 	int m;
 
@@ -129,18 +129,8 @@ int get_fd_tabsize(void)
 	return m;
 }
 
-static inline int in_set(int x, const int set[], size_t setsz)
-{
-	size_t i;
-
-	for (i = 0; i < setsz; i++) {
-		if (set[i] == x)
-			return 1;
-	}
-	return 0;
-}
-
-void close_all_fds(const int exclude[], size_t exsz)
+#ifndef HAVE_CLOSE_RANGE
+void close_all_fds(unsigned int first, unsigned int last)
 {
 	struct dirent *d;
 	DIR *dir;
@@ -149,29 +139,34 @@ void close_all_fds(const int exclude[], size_t exsz)
 	if (dir) {
 		while ((d = xreaddir(dir))) {
 			char *end;
-			int fd;
+			unsigned int fd;
+			int dfd;
 
 			errno = 0;
-			fd = strtol(d->d_name, &end, 10);
+			fd = strtoul(d->d_name, &end, 10);
 
 			if (errno || end == d->d_name || !end || *end)
 				continue;
-			if (dirfd(dir) == fd)
+			dfd = dirfd(dir);
+			if (dfd < 0)
 				continue;
-			if (in_set(fd, exclude, exsz))
+			if ((unsigned int)dfd == fd)
+				continue;
+			if (fd < first || last < fd)
 				continue;
 			close(fd);
 		}
 		closedir(dir);
 	} else {
-		int fd, tbsz = get_fd_tabsize();
+		unsigned fd, tbsz = get_fd_tabsize();
 
 		for (fd = 0; fd < tbsz; fd++) {
-			if (!in_set(fd, exclude, exsz))
+			if (first <= fd && fd <= last)
 				close(fd);
 		}
 	}
 }
+#endif
 
 #ifdef TEST_PROGRAM_FILEUTILS
 int main(int argc, char *argv[])
@@ -196,7 +191,11 @@ int main(int argc, char *argv[])
 		ignore_result( dup(STDIN_FILENO) );
 		ignore_result( dup(STDIN_FILENO) );
 
-		close_all_fds(wanted_fds, ARRAY_SIZE(wanted_fds));
+# ifdef HAVE_CLOSE_RANGE
+		close_range(STDERR_FILENO + 1, ~0U);
+# else
+		close_all_fds(STDERR_FILENO + 1, ~0U);
+# endif
 	} else if (strcmp(argv[1], "--copy-file") == 0) {
 		int ret = ul_copy_file(STDIN_FILENO, STDOUT_FILENO);
 		if (ret == UL_COPY_READ_ERROR)
