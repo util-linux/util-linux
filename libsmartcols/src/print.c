@@ -472,7 +472,10 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	case SCOLS_FMT_EXPORT:
-		fprintf(tb->out, "%s=", name);
+		fputs_shell_ident(name, tb->out);
+		if (endswith(name, "%"))
+			fputs("PCT", tb->out);
+		fputc('=', tb->out);
 		fputs_quoted(data, tb->out);
 		if (!is_last)
 			fputs(colsep(tb), tb->out);

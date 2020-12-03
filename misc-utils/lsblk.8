@@ -128,7 +128,9 @@ Output all available columns.
 .TP
 .BR \-P , " \-\-pairs"
 Produce output in the form of key="value" pairs.  The output lines are still ordered by
-dependencies.  All potentially unsafe characters are hex-escaped (\\x<code>).
+dependencies.  All potentially unsafe value characters are hex-escaped (\\x<code>).
+The key (variable name) will be modified to contain only characters allowed for a shell variable
+identifiers, for example, MIN_IO and FSUSE_PCT instead of MIN-IO and FSUSE%.
 .TP
 .BR \-p , " \-\-paths"
 Print full device paths.

@@ -51,7 +51,10 @@ Write information about active semaphore sets.
 Show creator and owner.
 .TP
 \fB\-e\fR, \fB\-\-export\fR
-Output data in the format of NAME=VALUE.
+Produce output in the form of key="value" pairs.  All potentially unsafe value
+characters are hex-escaped (\\x<code>).  The key (variable name) will be
+modified to contain only characters allowed for a shell variable identifiers,
+for example, USE_PCT instead of USE%.
 .TP
 \fB\-J\fR, \fB\-\-json\fR
 Use the JSON output format.

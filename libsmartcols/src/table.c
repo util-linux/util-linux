@@ -1076,6 +1076,10 @@ int scols_table_enable_json(struct libscols_table *tb, int enable)
  * Enable/disable export output format (COLUMNAME="value" ...).
  * The parsable output formats (export and raw) are mutually exclusive.
  *
+ * Note that COLUMNAME maybe be modified on output to contains only chars
+ * allowed as shell variable identifiers, for example MIN-IO and FSUSE% will be
+ * MIN_IO and FSUSE_PCT.
+ *
  * Returns: 0 on success, negative number in case of an error.
  */
 int scols_table_enable_export(struct libscols_table *tb, int enable)

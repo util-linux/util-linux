@@ -156,7 +156,9 @@ Output almost all available columns.  The columns that require
 are not included.
 .TP
 .BR \-P , " \-\-pairs"
-Use key="value" output format.  All potentially unsafe characters are hex-escaped (\\x<code>).
+Produce output in the form of key="value" pairs.  All potentially unsafe value characters are hex-escaped (\\x<code>).
+The key (variable name) will be modified to contain only characters allowed for a shell variable
+identifiers, for example, FS_OPTIONS and USE_PCT instead of FS-OPTIONS and USE%.
 .TP
 .BR \-p , " \-\-poll\fR[\fI=list\fR]"
 Monitor changes in the /proc/self/mountinfo file.  Supported actions are: mount,
