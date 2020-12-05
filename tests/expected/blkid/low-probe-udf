@@ -1,3 +1,4 @@
+ID_FS_APPLICATION_ID=genisoimage
 ID_FS_BLOCK_SIZE=2048
 ID_FS_LABEL=test-udf
 ID_FS_LABEL_ENC=test-udf

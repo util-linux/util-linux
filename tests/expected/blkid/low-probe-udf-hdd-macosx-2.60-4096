@@ -1,7 +1,9 @@
+ID_FS_APPLICATION_ID=Mac OS X udf newfs_udf
 ID_FS_BLOCK_SIZE=4096
 ID_FS_LABEL=Untitled_UDF_Volume
 ID_FS_LABEL_ENC=Untitled\x20UDF\x20Volume
 ID_FS_LOGICAL_VOLUME_ID=Untitled UDF Volume
+ID_FS_PUBLISHER_ID=Default Owner Name
 ID_FS_TYPE=udf
 ID_FS_USAGE=filesystem
 ID_FS_UUID=691eed1320284d61
