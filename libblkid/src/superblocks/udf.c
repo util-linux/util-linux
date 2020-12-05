@@ -40,6 +40,12 @@ struct dstring32 {
 	uint8_t	clen;
 } __attribute__((packed));
 
+struct dstring36 {
+	uint8_t	cid;
+	uint8_t	c[34];
+	uint8_t	clen;
+} __attribute__((packed));
+
 struct volume_descriptor {
 	struct descriptor_tag {
 		uint16_t	id;
@@ -112,12 +118,28 @@ struct volume_descriptor {
 			uint32_t	num_partitions;
 			uint32_t	imp_use_length;
 		} __attribute__((packed)) logical_vol_integ;
+
+		struct imp_use_volume_descriptor {
+			uint32_t	seq_num;
+			uint8_t 	lvi_id_flags;
+			char		lvi_id[23];
+			uint16_t	lvi_id_udf_rev;
+			uint8_t		lvi_id_os_class;
+			uint8_t		lvi_id_os_id;
+			uint8_t		lvi_id_reserved[4];
+			struct charspec	lvi_charset;
+			struct dstring128 logvol_id;
+			struct dstring36 lvinfo1;
+			struct dstring36 lvinfo2;
+			struct dstring36 lvinfo3;
+		} __attribute__((packed)) imp_use_volume;
 	} __attribute__((packed)) type;
 
 } __attribute__((packed));
 
 #define TAG_ID_PVD  1
 #define TAG_ID_AVDP 2
+#define TAG_ID_IUVD 4
 #define TAG_ID_LVD  6
 #define TAG_ID_TD   8
 #define TAG_ID_LVID 9
@@ -218,6 +240,7 @@ static int probe_udf(blkid_probe pr,
 	int have_volid = 0;
 	int have_volsetid = 0;
 	int have_applicationid = 0;
+	int have_publisherid = 0;
 
 	/* Session offset */
 	if (blkid_probe_get_hint(pr, "session_offset", &s_off) < 0)
@@ -479,8 +502,25 @@ real_blksz:
 								vd->type.logical.logvol_id.c, clen, enc);
 				}
 			}
+		} else if (type == TAG_ID_IUVD) {
+			if (!have_publisherid && strncmp(vd->type.imp_use_volume.lvi_id, "*UDF LV Info", sizeof(vd->type.imp_use_volume.lvi_id)) == 0 && is_charset_udf(vd->type.imp_use_volume.lvi_charset)) {
+				/* UDF-2.60: 2.2.7.2.3: Field LVInfo1 could contain information such as Owner Name
+				 * More UDF generating tools set this field to person who creating the filesystem
+				 * therefore its meaning is similar to ISO9660 Publisher Identifier. So for
+				 * compatibility with iso9660 superblock code export this field via PUBLISHER_ID.
+				 */
+				int enc = udf_cid_to_enc(vd->type.imp_use_volume.lvinfo1.cid);
+				uint8_t clen = vd->type.imp_use_volume.lvinfo1.clen;
+				if (clen > 0)
+					--clen;
+				if (clen > sizeof(vd->type.imp_use_volume.lvinfo1.c))
+					clen = sizeof(vd->type.imp_use_volume.lvinfo1.c);
+				if (enc != -1)
+					have_publisherid = !blkid_probe_set_utf8_id_label(pr, "PUBLISHER_ID",
+								vd->type.imp_use_volume.lvinfo1.c, clen, enc);
+			}
 		}
-		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && lvid_len && lvid_loc && have_applicationid)
+		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && lvid_len && lvid_loc && have_applicationid && have_publisherid)
 			break;
 	}
 
