@@ -19,7 +19,14 @@
 
 #include "superblocks.h"
 
+#define is_charset_udf(charspec) ((charspec).type == 0 && strncmp((charspec).info, "OSTA Compressed Unicode", sizeof((charspec).info)) == 0)
+
 #define udf_cid_to_enc(cid) ((cid) == 8 ? UL_ENCODE_LATIN1 : (cid) == 16 ? UL_ENCODE_UTF16BE : -1)
+
+struct charspec {
+	uint8_t	type;
+	char	info[63];
+} __attribute__((packed));
 
 struct dstring128 {
 	uint8_t	cid;
@@ -62,11 +69,12 @@ struct volume_descriptor {
 			uint32_t	charset_list;
 			uint32_t	max_charset_list;
 			struct dstring128 volset_id;
+			struct charspec	desc_charset;
 		} __attribute__((packed)) primary;
 
 		struct logical_descriptor {
 			uint32_t	seq_num;
-			uint8_t		desc_charset[64];
+			struct charspec	desc_charset;
 			struct dstring128 logvol_id;
 			uint32_t	logical_blocksize;
 			uint8_t		domain_id_flags;
@@ -322,7 +330,7 @@ real_blksz:
 		if (type == TAG_ID_TD)
 			break;
 		if (type == TAG_ID_PVD) {
-			if (!have_volid) {
+			if (!have_volid && is_charset_udf(vd->type.primary.desc_charset)) {
 				int enc = udf_cid_to_enc(vd->type.primary.ident.cid);
 				uint8_t clen = vd->type.primary.ident.clen;
 				if (clen > 0)
@@ -333,7 +341,7 @@ real_blksz:
 					have_volid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_ID",
 							vd->type.primary.ident.c, clen, enc);
 			}
-			if (!have_uuid) {
+			if (!have_uuid && is_charset_udf(vd->type.primary.desc_charset)) {
 				/* VolumeSetIdentifier in UDF 2.01 specification:
 				 * =================================================================================
 				 * 2.2.2.5 dstring VolumeSetIdentifier
@@ -367,7 +375,7 @@ real_blksz:
 				if (gen_uuid_from_volset_id(uuid, &vd->type.primary.volset_id) == 0)
 					have_uuid = !blkid_probe_strncpy_uuid(pr, uuid, sizeof(uuid));
 			}
-			if (!have_volsetid) {
+			if (!have_volsetid && is_charset_udf(vd->type.primary.desc_charset)) {
 				int enc = udf_cid_to_enc(vd->type.primary.volset_id.cid);
 				uint8_t clen = vd->type.primary.volset_id.clen;
 				if (clen > 0)
@@ -393,7 +401,7 @@ real_blksz:
 				if (strncmp(vd->type.logical.domain_id, "*OSTA UDF Compliant", sizeof(vd->type.logical.domain_id)) == 0)
 					udf_rev = le16_to_cpu(vd->type.logical.udf_rev);
 			}
-			if (!have_logvolid || !have_label) {
+			if ((!have_logvolid || !have_label) && is_charset_udf(vd->type.logical.desc_charset)) {
 				/* LogicalVolumeIdentifier in UDF 2.01 specification:
 				 * ===============================================================
 				 * 2. Basic Restrictions & Requirements
