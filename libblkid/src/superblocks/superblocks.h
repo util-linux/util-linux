@@ -85,6 +85,7 @@ extern const struct blkid_idinfo stratis_idinfo;
 extern const struct blkid_idinfo bitlocker_idinfo;
 extern const struct blkid_idinfo apfs_idinfo;
 extern const struct blkid_idinfo zonefs_idinfo;
+extern const struct blkid_idinfo erofs_idinfo;
 
 /*
  * superblock functions

@@ -101,6 +101,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/xfs.c \
 	libblkid/src/superblocks/zfs.c \
 	libblkid/src/superblocks/zonefs.c \
+	libblkid/src/superblocks/erofs.c \
 	\
 	libblkid/src/topology/topology.c \
 	libblkid/src/topology/topology.h

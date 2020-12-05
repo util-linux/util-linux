@@ -168,7 +168,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&f2fs_idinfo,
 	&mpool_idinfo,
 	&apfs_idinfo,
-	&zonefs_idinfo
+	&zonefs_idinfo,
+	&erofs_idinfo
 };
 
 /*
