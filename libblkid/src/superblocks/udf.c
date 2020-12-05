@@ -70,6 +70,18 @@ struct volume_descriptor {
 			uint32_t	max_charset_list;
 			struct dstring128 volset_id;
 			struct charspec	desc_charset;
+			struct charspec	exp_charset;
+			uint32_t	vol_abstract[2];
+			uint32_t	vol_copyright[2];
+			uint8_t		app_id_flags;
+			char		app_id[23];
+			uint8_t		app_id_reserved[8];
+			uint8_t		recording_date[12];
+			uint8_t		imp_id_flags;
+			char		imp_id[23];
+			uint8_t		imp_id_os_class;
+			uint8_t		imp_id_os_id;
+			uint8_t		imp_id_reserved[6];
 		} __attribute__((packed)) primary;
 
 		struct logical_descriptor {
@@ -205,6 +217,7 @@ static int probe_udf(blkid_probe pr,
 	int have_logvolid = 0;
 	int have_volid = 0;
 	int have_volsetid = 0;
+	int have_applicationid = 0;
 
 	/* Session offset */
 	if (blkid_probe_get_hint(pr, "session_offset", &s_off) < 0)
@@ -386,6 +399,29 @@ real_blksz:
 					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
 							vd->type.primary.volset_id.c, clen, enc);
 			}
+			if (!have_applicationid) {
+				/* UDF-2.60: 2.2.2.9: This field specifies a valid Entity Identifier identifying the application that last wrote this field */
+				const unsigned char *app_id = (const unsigned char *)vd->type.primary.app_id;
+				size_t app_id_len = strnlen(vd->type.primary.app_id, sizeof(vd->type.primary.app_id));
+				if (app_id_len > 0 && app_id[0] == '*') {
+					app_id++;
+					app_id_len--;
+				}
+				/* When Application Identifier is not set then use Developer ID from Implementation Identifier */
+				if (app_id_len == 0) {
+					/* UDF-2.60: 2.1.5.2: "*Developer ID" refers to an Entity Identifier that uniquely identifies the current implementation */
+					app_id = (const unsigned char *)vd->type.primary.imp_id;
+					app_id_len = strnlen(vd->type.primary.imp_id, sizeof(vd->type.primary.imp_id));
+					if (app_id_len > 0 && app_id[0] == '*') {
+						app_id++;
+						app_id_len--;
+					}
+				}
+				if (app_id_len > 0) {
+					/* UDF-2.60: 2.1.5.2: Values used by UDF for this field are specified in terms of ASCII character strings */
+					have_applicationid = !blkid_probe_set_id_label(pr, "APPLICATION_ID", app_id, app_id_len);
+				}
+			}
 		} else if (type == TAG_ID_LVD) {
 			if (!lvid_len || !lvid_loc) {
 				uint32_t num_partition_maps = le32_to_cpu(vd->type.logical.num_partition_maps);
@@ -444,7 +480,7 @@ real_blksz:
 				}
 			}
 		}
-		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && lvid_len && lvid_loc)
+		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && lvid_len && lvid_loc && have_applicationid)
 			break;
 	}
 
