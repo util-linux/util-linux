@@ -22,6 +22,8 @@
 #include <libsmartcols.h>
 #include <sys/ioctl.h>
 #include <libfdisk.h>
+#include <fdiskP.h>
+#include <sys/stat.h>
 
 #ifdef HAVE_LIBMOUNT
 # include <libmount.h>	/* keep it optional for non-linux systems */
@@ -2679,6 +2681,7 @@ int main(int argc, char *argv[])
 {
 	const char *diskpath = NULL, *lockmode = NULL;
 	int rc, c, colormode = UL_COLORMODE_UNDEF;
+        int uid, read_only = 0;
 	struct cfdisk _cf = { .lines_idx = 0 },
 		      *cf = &_cf;
 	enum {
@@ -2690,6 +2693,7 @@ int main(int argc, char *argv[])
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "version", no_argument,       NULL, 'V' },
 		{ "zero",    no_argument,	NULL, 'z' },
+                { "read-only", no_argument,      NULL, 'r' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2698,7 +2702,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while((c = getopt_long(argc, argv, "L::hVz", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "L::hVzr", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage();
@@ -2722,6 +2726,9 @@ int main(int argc, char *argv[])
 				lockmode = optarg;
 			}
 			break;
+                case 'r':
+                        read_only = 1;
+                        break;
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -2735,6 +2742,8 @@ int main(int argc, char *argv[])
 	cf->cxt = fdisk_new_context();
 	if (!cf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
+        if (read_only)
+                cf->cxt->readonly = 1;
 
 	fdisk_set_ask(cf->cxt, ask_callback, (void *) cf);
 
@@ -2752,19 +2761,34 @@ int main(int argc, char *argv[])
 	} else
 		diskpath = argv[optind];
 
-	rc = fdisk_assign_device(cf->cxt, diskpath, 0);
-	if (rc == -EACCES)
-		rc = fdisk_assign_device(cf->cxt, diskpath, 1);
+        uid = getuid();
+        if (!read_only){
+	        rc = fdisk_assign_device(cf->cxt, diskpath, 0);
+
+                /*Forced try to open in read-only mode */
+	        if (rc == -EACCES){
+                        struct stat disk_perms;
+                        if (uid){
+                                if (!stat(diskpath, &disk_perms)){
+                                        if(!(disk_perms.st_mode & S_IROTH))
+                                                err(EXIT_FAILURE, _("reading of %s"), diskpath);
+                                }
+                                rc = fdisk_assign_device(cf->cxt, diskpath, 1);
+                        }
+                        else
+                                err(EXIT_FAILURE, _("writing to %s denied to root"), diskpath);
+                }
+                
+        } else {
+                rc = fdisk_assign_device(cf->cxt, diskpath, 1);
+        }
 	if (rc != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), diskpath);
+	if (blkdev_lock(fdisk_get_devfd(cf->cxt), diskpath, lockmode) != 0)
+	        return EXIT_FAILURE;
 
-	if (!fdisk_is_readonly(cf->cxt)) {
-		if (blkdev_lock(fdisk_get_devfd(cf->cxt), diskpath, lockmode) != 0)
-			return EXIT_FAILURE;
-
-		cf->device_is_used = fdisk_device_is_used(cf->cxt);
-		fdisk_get_partitions(cf->cxt, &cf->original_layout);
-	}
+	cf->device_is_used = fdisk_device_is_used(cf->cxt);
+	fdisk_get_partitions(cf->cxt, &cf->original_layout);
 
 	/* Don't use err(), warn() from this point */
 	ui_init(cf);
