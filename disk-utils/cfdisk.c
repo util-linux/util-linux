@@ -22,7 +22,7 @@
 #include <libsmartcols.h>
 #include <sys/ioctl.h>
 #include <libfdisk.h>
-#include <fdiskP.h>
+#include <libfdisk/src/fdiskP.h>
 #include <sys/stat.h>
 
 #ifdef HAVE_LIBMOUNT
