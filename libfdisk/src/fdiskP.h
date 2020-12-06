@@ -16,7 +16,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <uuid.h>
+#include <uuid/uuid.h>
 
 #include "c.h"
 #include "libfdisk.h"
