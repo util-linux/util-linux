@@ -403,7 +403,7 @@ static void motd(void)
 /*
  * Display message of the day and you have mail notifications
  */
-static void display_login_messages()
+static void display_login_messages(void)
 {
 	motd();
 
