@@ -183,10 +183,6 @@ int main(int argc, char *argv[])
 		fclose(f);
 
 	} else if (strcmp(argv[1], "--close-fds") == 0) {
-		static const int wanted_fds[] = {
-			STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO
-		};
-
 		ignore_result( dup(STDIN_FILENO) );
 		ignore_result( dup(STDIN_FILENO) );
 		ignore_result( dup(STDIN_FILENO) );
