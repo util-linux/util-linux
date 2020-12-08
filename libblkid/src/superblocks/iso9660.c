@@ -193,11 +193,11 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_id_label(pr, "SYSTEM_ID",
 				iso->system_id, sizeof(iso->system_id));
 
-	if (!is_str_empty(iso->publisher_id, sizeof(iso->publisher_id)))
+	if (!is_str_empty(iso->publisher_id, sizeof(iso->publisher_id)) && iso->publisher_id[0] != '_')
 		blkid_probe_set_id_label(pr, "PUBLISHER_ID",
 				iso->publisher_id, sizeof(iso->publisher_id));
 
-	if (!is_str_empty(iso->application_id, sizeof(iso->application_id)))
+	if (!is_str_empty(iso->application_id, sizeof(iso->application_id)) && iso->application_id[0] != '_')
 		blkid_probe_set_id_label(pr, "APPLICATION_ID",
 				iso->application_id, sizeof(iso->application_id));
 
