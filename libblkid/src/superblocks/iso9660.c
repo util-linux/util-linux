@@ -102,6 +102,7 @@ static int probe_iso9660_hsfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!iso)
 		return errno ? -errno : 1;
 
+	blkid_probe_set_block_size(pr, ISO_SECTOR_SIZE);
 	blkid_probe_set_version(pr, "High Sierra");
 	blkid_probe_set_label(pr, iso->volume_id, sizeof(iso->volume_id));
 	return 0;
