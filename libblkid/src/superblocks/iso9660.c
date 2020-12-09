@@ -63,8 +63,8 @@ struct boot_record {
 
 #define ISO_SUPERBLOCK_OFFSET		0x8000
 #define ISO_SECTOR_SIZE			0x800
-#define ISO_VD_OFFSET			(ISO_SUPERBLOCK_OFFSET + ISO_SECTOR_SIZE)
 #define ISO_VD_BOOT_RECORD		0x0
+#define ISO_VD_PRIMARY			0x1
 #define ISO_VD_SUPPLEMENTARY		0x2
 #define ISO_VD_END			0xff
 #define ISO_VD_MAX			16
@@ -169,97 +169,81 @@ static int is_str_empty(const unsigned char *str, size_t len)
 /* iso9660 [+ Microsoft Joliet Extension] */
 static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct iso_volume_descriptor *iso;
-	unsigned char label[32];
+	struct boot_record *boot = NULL;
+	struct iso_volume_descriptor *pvd = NULL;
+	struct iso_volume_descriptor *joliet = NULL;
 	int i;
 	uint64_t off;
 
 	if (blkid_probe_get_hint(pr, mag->hoff, &off) < 0)
 		off = 0;
 
-	if (off % 2048)
+	if (off % ISO_SECTOR_SIZE)
 		return 1;
 
 	if (strcmp(mag->magic, "CDROM") == 0)
 		return probe_iso9660_hsfs(pr, mag);
 
-	iso = blkid_probe_get_sb(pr, mag, struct iso_volume_descriptor);
-	if (!iso)
-		return errno ? -errno : 1;
-
-	memcpy(label, iso->volume_id, sizeof(label));
-
-	blkid_probe_set_block_size(pr, 2048);
-
-	blkid_probe_set_id_label(pr, "SYSTEM_ID",
-				iso->system_id, sizeof(iso->system_id));
-
-	if (!is_str_empty(iso->publisher_id, sizeof(iso->publisher_id)) && iso->publisher_id[0] != '_')
-		blkid_probe_set_id_label(pr, "PUBLISHER_ID",
-				iso->publisher_id, sizeof(iso->publisher_id));
-
-	if (!is_str_empty(iso->application_id, sizeof(iso->application_id)) && iso->application_id[0] != '_')
-		blkid_probe_set_id_label(pr, "APPLICATION_ID",
-				iso->application_id, sizeof(iso->application_id));
-
-	/* create an UUID using the modified/created date */
-	if (! probe_iso9660_set_uuid(pr, &iso->modified))
-		probe_iso9660_set_uuid(pr, &iso->created);
-
-	/* Joliet Extension and Boot Record */
-	off += ISO_VD_OFFSET;
-	for (i = 0; i < ISO_VD_MAX; i++) {
-		struct boot_record *boot= (struct boot_record *)
+	for (i = 0, off += ISO_SUPERBLOCK_OFFSET; i < ISO_VD_MAX && (!boot || !pvd || !joliet); i++, off += ISO_SECTOR_SIZE) {
+		unsigned char *desc =
 			blkid_probe_get_buffer(pr,
 					off,
 					max(sizeof(struct boot_record),
 					    sizeof(struct iso_volume_descriptor)));
 
-		if (boot == NULL || boot->vd_type == ISO_VD_END)
+		if (desc == NULL || desc[0] == ISO_VD_END)
 			break;
-
-		if (boot->vd_type == ISO_VD_BOOT_RECORD) {
-			blkid_probe_set_id_label(pr, "BOOT_SYSTEM_ID",
-							boot->boot_system_id,
-							sizeof(boot->boot_system_id));
-			off += ISO_SECTOR_SIZE;
-			continue;
+		else if (!boot && desc[0] == ISO_VD_BOOT_RECORD)
+			boot = (struct boot_record *)desc;
+		else if (!pvd && desc[0] == ISO_VD_PRIMARY)
+			pvd = (struct iso_volume_descriptor *)desc;
+		else if (!joliet && desc[0] == ISO_VD_SUPPLEMENTARY) {
+			joliet = (struct iso_volume_descriptor *)desc;
+			if (memcmp(joliet->escape_sequences, "%/@", 3) != 0 &&
+			    memcmp(joliet->escape_sequences, "%/C", 3) != 0 &&
+			    memcmp(joliet->escape_sequences, "%/E", 3) != 0)
+				joliet = NULL;
 		}
-
-		/* Not a Boot record, lets see if its supplementary volume descriptor */
-		iso = (struct iso_volume_descriptor *) boot;
-
-		if (iso->vd_type != ISO_VD_SUPPLEMENTARY) {
-			off += ISO_SECTOR_SIZE;
-			continue;
-		}
-
-		if (memcmp(iso->escape_sequences, "%/@", 3) == 0 ||
-		    memcmp(iso->escape_sequences, "%/C", 3) == 0 ||
-		    memcmp(iso->escape_sequences, "%/E", 3) == 0) {
-
-			blkid_probe_set_version(pr, "Joliet Extension");
-
-			/* Is the Joliet (UTF16BE) label equal to the label in
-			 * the PVD? If yes, use PVD label.  The Joliet version
-			 * of the label could be trimmed (because UTF16..).
-			 */
-			if (ascii_eq_utf16be(label, iso->volume_id, 32))
-				break;
-
-			blkid_probe_set_utf8label(pr,
-					iso->volume_id,
-					sizeof(iso->volume_id),
-					UL_ENCODE_UTF16BE);
-			goto has_label;
-		}
-		off += ISO_SECTOR_SIZE;
 	}
 
-	/* Joliet not found, let use standard iso label */
-	blkid_probe_set_label(pr, label, sizeof(label));
+	if (!pvd)
+		return errno ? -errno : 1;
 
-has_label:
+	blkid_probe_set_block_size(pr, ISO_SECTOR_SIZE);
+
+	blkid_probe_set_id_label(pr, "SYSTEM_ID",
+				pvd->system_id, sizeof(pvd->system_id));
+
+	if (!is_str_empty(pvd->publisher_id, sizeof(pvd->publisher_id)) && pvd->publisher_id[0] != '_')
+		blkid_probe_set_id_label(pr, "PUBLISHER_ID",
+				pvd->publisher_id, sizeof(pvd->publisher_id));
+
+	if (!is_str_empty(pvd->application_id, sizeof(pvd->application_id)) && pvd->application_id[0] != '_')
+		blkid_probe_set_id_label(pr, "APPLICATION_ID",
+				pvd->application_id, sizeof(pvd->application_id));
+
+	/* create an UUID using the modified/created date */
+	if (! probe_iso9660_set_uuid(pr, &pvd->modified))
+		probe_iso9660_set_uuid(pr, &pvd->created);
+
+	if (boot)
+		blkid_probe_set_id_label(pr, "BOOT_SYSTEM_ID",
+					boot->boot_system_id,
+					sizeof(boot->boot_system_id));
+
+	if (joliet)
+		blkid_probe_set_version(pr, "Joliet Extension");
+
+	/* Is the Joliet (UTF16BE) label equal to the label in
+	 * the PVD? If yes, use PVD label.  The Joliet version
+	 * of the label could be trimmed (because UTF16..).
+	 */
+	if (joliet && !ascii_eq_utf16be(pvd->volume_id, joliet->volume_id, sizeof(pvd->volume_id)))
+		blkid_probe_set_utf8label(pr, joliet->volume_id, sizeof(joliet->volume_id), UL_ENCODE_UTF16BE);
+	else
+		/* Joliet not found, let use standard primary label */
+		blkid_probe_set_label(pr, pvd->volume_id, sizeof(pvd->volume_id));
+
 	return 0;
 }
 
