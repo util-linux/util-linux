@@ -19,6 +19,7 @@
 #include <ctype.h>
 
 #include "superblocks.h"
+#include "cctype.h"
 
 struct iso9660_date {
 	unsigned char year[4];
@@ -78,20 +79,6 @@ struct high_sierra_volume_descriptor {
 	unsigned char	system_id[32];
 	unsigned char   volume_id[32];
 } __attribute__((packed));
-
-/* returns 1 if the begin of @ascii is equal to @utf16 string.
- */
-static int ascii_eq_utf16be(unsigned char *ascii,
-			unsigned char *utf16, size_t len)
-{
-	size_t a, u;
-
-	for (a = 0, u = 0; u < len; a++, u += 2) {
-		if (utf16[u] != 0x0 || ascii[a] != utf16[u + 1])
-			return 0;
-	}
-	return 1;
-}
 
 /* old High Sierra format */
 static int probe_iso9660_hsfs(blkid_probe pr, const struct blkid_idmag *mag)
@@ -166,12 +153,51 @@ static int is_str_empty(const unsigned char *str, size_t len)
 	return 1;
 }
 
+/* if @utf16 is prefix of @ascii (ignoring non-representable characters and upper-case conversion)
+ * then reconstruct prefix from @utf16 and @ascii, append suffix from @ascii, fill it into @out
+ * and returns length of bytes written into @out; otherwise returns zero */
+static size_t merge_utf16be_ascii(unsigned char *out, const unsigned char *utf16, const unsigned char *ascii, size_t len)
+{
+	size_t o, a, u;
+
+	for (o = 0, a = 0, u = 0; u + 1 < len && a < len; o += 2, a++, u += 2) {
+		/* Surrogate pair with code point above U+FFFF */
+		if (utf16[u] >= 0xD8 && utf16[u] <= 0xDB && u + 3 < len &&
+		    utf16[u + 2] >= 0xDC && utf16[u + 2] <= 0xDF) {
+			out[o++] = utf16[u++];
+			out[o++] = utf16[u++];
+		}
+		/* Value '_' is replacement for non-representable character */
+		if (ascii[a] == '_') {
+			out[o] = utf16[u];
+			out[o + 1] = utf16[u + 1];
+		} else if (utf16[u] == 0x00 && utf16[u + 1] == '_') {
+			out[o] = 0x00;
+			out[o + 1] = ascii[a];
+		} else if (utf16[u] == 0x00 && c_toupper(ascii[a]) == c_toupper(utf16[u + 1])) {
+			out[o] = 0x00;
+			out[o + 1] = c_isupper(ascii[a]) ? utf16[u + 1] : ascii[a];
+		} else {
+			return 0;
+		}
+	}
+
+	for (; a < len; o += 2, a++) {
+		out[o] = 0x00;
+		out[o + 1] = ascii[a];
+	}
+
+	return o;
+}
+
 /* iso9660 [+ Microsoft Joliet Extension] */
 static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct boot_record *boot = NULL;
 	struct iso_volume_descriptor *pvd = NULL;
 	struct iso_volume_descriptor *joliet = NULL;
+	unsigned char buf[256];
+	size_t len;
 	int i;
 	uint64_t off;
 
@@ -234,14 +260,17 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	if (joliet)
 		blkid_probe_set_version(pr, "Joliet Extension");
 
-	/* Is the Joliet (UTF16BE) label equal to the label in
-	 * the PVD? If yes, use PVD label.  The Joliet version
-	 * of the label could be trimmed (because UTF16..).
+	/* Label in Joliet is UNICODE (UTF16BE) but can contain only 16 characters. Label in PVD is
+	 * subset of ASCII but can contain up to the 32 characters. Non-representable characters are
+	 * stored as replacement character '_'. Label in Joliet is in most cases trimmed but UNICODE
+	 * version of label in PVD. Based on these facts try to reconstruct original label if label
+	 * in Joliet is prefix of the label in PVD (ignoring non-representable characters).
 	 */
-	if (joliet && !ascii_eq_utf16be(pvd->volume_id, joliet->volume_id, sizeof(pvd->volume_id)))
+	if (joliet && (len = merge_utf16be_ascii(buf, joliet->volume_id, pvd->volume_id, sizeof(pvd->volume_id))) != 0)
+		blkid_probe_set_utf8label(pr, buf, len, UL_ENCODE_UTF16BE);
+	else if (joliet)
 		blkid_probe_set_utf8label(pr, joliet->volume_id, sizeof(joliet->volume_id), UL_ENCODE_UTF16BE);
 	else
-		/* Joliet not found, let use standard primary label */
 		blkid_probe_set_label(pr, pvd->volume_id, sizeof(pvd->volume_id));
 
 	return 0;
