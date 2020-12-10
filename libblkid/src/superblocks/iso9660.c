@@ -43,9 +43,10 @@ struct iso_volume_descriptor {
 	unsigned char	unused[8];
 	unsigned char	space_size[8];
 	unsigned char	escape_sequences[8];
-	unsigned char  unused1[222];
+	unsigned char  unused2[94];
+	unsigned char  volume_set_id[128];
 	unsigned char  publisher_id[128];
-	unsigned char  unused2[128];
+	unsigned char  data_preparer_id[128];
 	unsigned char  application_id[128];
 	unsigned char  unused3[111];
 	struct iso9660_date created;
@@ -257,6 +258,13 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	else
 		blkid_probe_set_id_label(pr, "SYSTEM_ID", pvd->system_id, sizeof(pvd->system_id));
 
+	if (joliet && (len = merge_utf16be_ascii(buf, joliet->volume_set_id, pvd->volume_set_id, sizeof(pvd->volume_set_id))) != 0)
+		blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID", buf, len, UL_ENCODE_UTF16BE);
+	else if (joliet)
+		blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID", joliet->volume_set_id, sizeof(joliet->volume_set_id), UL_ENCODE_UTF16BE);
+	else
+		blkid_probe_set_id_label(pr, "VOLUME_SET_ID", pvd->volume_set_id, sizeof(pvd->volume_set_id));
+
 	is_ascii_empty = (is_str_empty(pvd->publisher_id, sizeof(pvd->publisher_id)) || pvd->publisher_id[0] == '_');
 	is_unicode_empty = (!joliet || is_utf16be_str_empty(joliet->publisher_id, sizeof(joliet->publisher_id)) || (joliet->publisher_id[0] == 0x00 && joliet->publisher_id[1] == '_'));
 	if (!is_unicode_empty && !is_ascii_empty && (len = merge_utf16be_ascii(buf, joliet->publisher_id, pvd->publisher_id, sizeof(pvd->publisher_id))) != 0)
@@ -265,6 +273,15 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_set_utf8_id_label(pr, "PUBLISHER_ID", joliet->publisher_id, sizeof(joliet->publisher_id), UL_ENCODE_UTF16BE);
 	else if (!is_ascii_empty)
 		blkid_probe_set_id_label(pr, "PUBLISHER_ID", pvd->publisher_id, sizeof(pvd->publisher_id));
+
+	is_ascii_empty = (is_str_empty(pvd->data_preparer_id, sizeof(pvd->data_preparer_id)) || pvd->data_preparer_id[0] == '_');
+	is_unicode_empty = (!joliet || is_utf16be_str_empty(joliet->data_preparer_id, sizeof(joliet->data_preparer_id)) || (joliet->data_preparer_id[0] == 0x00 && joliet->data_preparer_id[1] == '_'));
+	if (!is_unicode_empty && !is_ascii_empty && (len = merge_utf16be_ascii(buf, joliet->data_preparer_id, pvd->data_preparer_id, sizeof(pvd->data_preparer_id))) != 0)
+		blkid_probe_set_utf8_id_label(pr, "DATA_PREPARER_ID", buf, len, UL_ENCODE_UTF16BE);
+	else if (!is_unicode_empty)
+		blkid_probe_set_utf8_id_label(pr, "DATA_PREPARER_ID", joliet->data_preparer_id, sizeof(joliet->data_preparer_id), UL_ENCODE_UTF16BE);
+	else if (!is_ascii_empty)
+		blkid_probe_set_id_label(pr, "DATA_PREPARER_ID", pvd->data_preparer_id, sizeof(pvd->data_preparer_id));
 
 	is_ascii_empty = (is_str_empty(pvd->application_id, sizeof(pvd->application_id)) || pvd->application_id[0] == '_');
 	is_unicode_empty = (!joliet || is_utf16be_str_empty(joliet->application_id, sizeof(joliet->application_id)) || (joliet->application_id[0] == 0x00 && joliet->application_id[1] == '_'));
