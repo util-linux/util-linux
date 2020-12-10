@@ -153,6 +153,17 @@ static int is_str_empty(const unsigned char *str, size_t len)
 	return 1;
 }
 
+static int is_utf16be_str_empty(unsigned char *utf16, size_t len)
+{
+	size_t i;
+
+	for (i = 0; i < len; i += 2) {
+		if (utf16[i] != 0x0 || !isspace(utf16[i + 1]))
+			return 0;
+	}
+	return 1;
+}
+
 /* if @utf16 is prefix of @ascii (ignoring non-representable characters and upper-case conversion)
  * then reconstruct prefix from @utf16 and @ascii, append suffix from @ascii, fill it into @out
  * and returns length of bytes written into @out; otherwise returns zero */
@@ -198,6 +209,8 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	struct iso_volume_descriptor *joliet = NULL;
 	unsigned char buf[256];
 	size_t len;
+	int is_unicode_empty;
+	int is_ascii_empty;
 	int i;
 	uint64_t off;
 
@@ -237,16 +250,30 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_block_size(pr, ISO_SECTOR_SIZE);
 
-	blkid_probe_set_id_label(pr, "SYSTEM_ID",
-				pvd->system_id, sizeof(pvd->system_id));
+	if (joliet && (len = merge_utf16be_ascii(buf, joliet->system_id, pvd->system_id, sizeof(pvd->system_id))) != 0)
+		blkid_probe_set_utf8_id_label(pr, "SYSTEM_ID", buf, len, UL_ENCODE_UTF16BE);
+	else if (joliet)
+		blkid_probe_set_utf8_id_label(pr, "SYSTEM_ID", joliet->system_id, sizeof(joliet->system_id), UL_ENCODE_UTF16BE);
+	else
+		blkid_probe_set_id_label(pr, "SYSTEM_ID", pvd->system_id, sizeof(pvd->system_id));
 
-	if (!is_str_empty(pvd->publisher_id, sizeof(pvd->publisher_id)) && pvd->publisher_id[0] != '_')
-		blkid_probe_set_id_label(pr, "PUBLISHER_ID",
-				pvd->publisher_id, sizeof(pvd->publisher_id));
+	is_ascii_empty = (is_str_empty(pvd->publisher_id, sizeof(pvd->publisher_id)) || pvd->publisher_id[0] == '_');
+	is_unicode_empty = (!joliet || is_utf16be_str_empty(joliet->publisher_id, sizeof(joliet->publisher_id)) || (joliet->publisher_id[0] == 0x00 && joliet->publisher_id[1] == '_'));
+	if (!is_unicode_empty && !is_ascii_empty && (len = merge_utf16be_ascii(buf, joliet->publisher_id, pvd->publisher_id, sizeof(pvd->publisher_id))) != 0)
+		blkid_probe_set_utf8_id_label(pr, "PUBLISHER_ID", buf, len, UL_ENCODE_UTF16BE);
+	else if (!is_unicode_empty)
+		blkid_probe_set_utf8_id_label(pr, "PUBLISHER_ID", joliet->publisher_id, sizeof(joliet->publisher_id), UL_ENCODE_UTF16BE);
+	else if (!is_ascii_empty)
+		blkid_probe_set_id_label(pr, "PUBLISHER_ID", pvd->publisher_id, sizeof(pvd->publisher_id));
 
-	if (!is_str_empty(pvd->application_id, sizeof(pvd->application_id)) && pvd->application_id[0] != '_')
-		blkid_probe_set_id_label(pr, "APPLICATION_ID",
-				pvd->application_id, sizeof(pvd->application_id));
+	is_ascii_empty = (is_str_empty(pvd->application_id, sizeof(pvd->application_id)) || pvd->application_id[0] == '_');
+	is_unicode_empty = (!joliet || is_utf16be_str_empty(joliet->application_id, sizeof(joliet->application_id)) || (joliet->application_id[0] == 0x00 && joliet->application_id[1] == '_'));
+	if (!is_unicode_empty && !is_ascii_empty && (len = merge_utf16be_ascii(buf, joliet->application_id, pvd->application_id, sizeof(pvd->application_id))) != 0)
+		blkid_probe_set_utf8_id_label(pr, "APPLICATION_ID", buf, len, UL_ENCODE_UTF16BE);
+	else if (!is_unicode_empty)
+		blkid_probe_set_utf8_id_label(pr, "APPLICATION_ID", joliet->application_id, sizeof(joliet->application_id), UL_ENCODE_UTF16BE);
+	else if (!is_ascii_empty)
+		blkid_probe_set_id_label(pr, "APPLICATION_ID", pvd->application_id, sizeof(pvd->application_id));
 
 	/* create an UUID using the modified/created date */
 	if (! probe_iso9660_set_uuid(pr, &pvd->modified))
