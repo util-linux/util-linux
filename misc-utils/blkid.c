@@ -254,7 +254,14 @@ static void print_udev_format(const char *name, const char *value)
 
 	*safe = *enc = '\0';
 
-	if (!strcmp(name, "TYPE") || !strcmp(name, "VERSION")) {
+	if (!strcmp(name, "TYPE")
+	    || !strcmp(name, "VERSION")
+	    || !strcmp(name, "SYSTEM_ID")
+	    || !strcmp(name, "PUBLISHER_ID")
+	    || !strcmp(name, "APPLICATION_ID")
+	    || !strcmp(name, "BOOT_SYSTEM_ID")
+	    || !strcmp(name, "VOLUME_SET_ID")
+	    || !strcmp(name, "DATA_PREPARER_ID")) {
 		blkid_encode_string(value, enc, sizeof(enc));
 		printf("ID_FS_%s=%s\n", name, enc);
 

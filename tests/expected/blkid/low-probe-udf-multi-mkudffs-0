@@ -1,9 +1,9 @@
-ID_FS_APPLICATION_ID=Linux mkudffs
+ID_FS_APPLICATION_ID=Linux\x20mkudffs
 ID_FS_BLOCK_SIZE=2048
 ID_FS_LABEL=first_session
 ID_FS_LABEL_ENC=first\x20session
 ID_FS_LOGICAL_VOLUME_ID=first session
-ID_FS_PUBLISHER_ID=Linux mkudffs 2.2
+ID_FS_PUBLISHER_ID=Linux\x20mkudffs\x202.2
 ID_FS_TYPE=udf
 ID_FS_USAGE=filesystem
 ID_FS_UUID=5fa6f31ee7b7f813
