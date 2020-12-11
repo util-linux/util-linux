@@ -260,6 +260,8 @@ static void print_udev_format(const char *name, const char *value)
 	    || !strcmp(name, "PUBLISHER_ID")
 	    || !strcmp(name, "APPLICATION_ID")
 	    || !strcmp(name, "BOOT_SYSTEM_ID")
+	    || !strcmp(name, "VOLUME_ID")
+	    || !strcmp(name, "LOGICAL_VOLUME_ID")
 	    || !strcmp(name, "VOLUME_SET_ID")
 	    || !strcmp(name, "DATA_PREPARER_ID")) {
 		blkid_encode_string(value, enc, sizeof(enc));
