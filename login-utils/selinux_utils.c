@@ -16,7 +16,11 @@ access_vector_t get_access_vector(const char *tclass, const char *op)
 int setupDefaultContext(char *orig_file)
 {
 	if (is_selinux_enabled() > 0) {
-		security_context_t scontext;
+#ifdef HAVE_SELINUX_CONTEXT_T
+		security_context_t scontext = NULL;	/* deprecated */
+#else
+		char *scontext = NULL;			/* since libselinux >= 3.1 */
+#endif
 		if (getfilecon(orig_file, &scontext) < 0)
 			return 1;
 		if (setfscreatecon(scontext) < 0) {

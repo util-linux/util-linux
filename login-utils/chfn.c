@@ -442,9 +442,14 @@ int main(int argc, char **argv)
 			access_vector_t av = get_access_vector("passwd", "chfn");
 
 			if (selinux_check_passwd_access(av) != 0) {
-				security_context_t user_context;
+# ifdef HAVE_SELINUX_CONTEXT_T
+				security_context_t user_context;	/* deprecated */
+# else
+				char *user_context;			/* since libselinux >= 3.1 */
+# endif
 				if (getprevcon(&user_context) < 0)
 					user_context = NULL;
+
 				errx(EXIT_FAILURE,
 				     _("%s is not authorized to change "
 				       "the finger info of %s"),

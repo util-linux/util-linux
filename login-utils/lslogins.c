@@ -132,7 +132,11 @@ struct lslogins_user {
 	char *failed_tty;
 
 #ifdef HAVE_LIBSELINUX
+# ifdef HAVE_SELINUX_CONTEXT_T
 	security_context_t context;
+# else
+	char *context;
+# endif
 #endif
 	char *homedir;
 	char *shell;
@@ -884,12 +888,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		case COL_SELINUX:
 #ifdef HAVE_LIBSELINUX
-			if (ctl->selinux_enabled) {
-				/* typedefs and pointers are pure evil */
-				security_context_t con = NULL;
-				if (getcon(&con) == 0)
-					user->context = con;
-			}
+			if (!ctl->selinux_enabled || getcon(&user->context) != 0)
+				user->context = NULL;
 #endif
 			break;
 		case COL_NPROCS:

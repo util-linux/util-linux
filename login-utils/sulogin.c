@@ -775,9 +775,14 @@ static void sushell(struct passwd *pwd)
 
 #ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled() > 0) {
-		security_context_t scon=NULL;
+# ifdef HAVE_SELINUX_CONTEXT_T
+		security_context_t scon = NULL;		/* deprecated */
+# else
+		char *scon = NULL;			/* since libselinux >= 3.1 */
+# endif
 		char *seuser=NULL;
 		char *level=NULL;
+
 		if (getseuserbyname("root", &seuser, &level) == 0) {
 			if (get_default_context_with_level(seuser, level, 0, &scon) == 0) {
 				if (setexeccon(scon) != 0)
