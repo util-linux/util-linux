@@ -22,7 +22,6 @@
 #include <libsmartcols.h>
 #include <sys/ioctl.h>
 #include <libfdisk.h>
-#include <libfdisk/src/fdiskP.h>
 #include <sys/stat.h>
 
 #ifdef HAVE_LIBMOUNT
@@ -2672,6 +2671,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -z, --zero               start with zeroed partition table\n"), out);
 	fprintf(out,
 	      _("     --lock[=<mode>]      use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
+	fputs(_(" -r, --read-only          forced open cfdisk in read-only mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(26));
@@ -2684,7 +2684,7 @@ int main(int argc, char *argv[])
 {
 	const char *diskpath = NULL, *lockmode = NULL;
 	int rc, c, colormode = UL_COLORMODE_UNDEF;
-        int uid, read_only = 0;
+        int read_only = 0;
 	struct cfdisk _cf = { .lines_idx = 0 },
 		      *cf = &_cf;
 	enum {
@@ -2745,8 +2745,6 @@ int main(int argc, char *argv[])
 	cf->cxt = fdisk_new_context();
 	if (!cf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
-        if (read_only)
-                cf->cxt->readonly = 1;
 
 	fdisk_set_ask(cf->cxt, ask_callback, (void *) cf);
 
@@ -2763,28 +2761,9 @@ int main(int argc, char *argv[])
 			diskpath = default_disks[0];	/* default, used for "cannot open" */
 	} else
 		diskpath = argv[optind];
-
-        uid = getuid();
-        if (!read_only){
-	        rc = fdisk_assign_device(cf->cxt, diskpath, 0);
-
-                /*Forced try to open in read-only mode */
-	        if (rc == -EACCES){
-                        struct stat disk_perms;
-                        if (uid){
-                                if (!stat(diskpath, &disk_perms)){
-                                        if(!(disk_perms.st_mode & S_IROTH))
-                                                err(EXIT_FAILURE, _("reading of %s"), diskpath);
-                                }
-                                rc = fdisk_assign_device(cf->cxt, diskpath, 1);
-                        }
-                        else
-                                err(EXIT_FAILURE, _("writing to %s denied to root"), diskpath);
-                }
-                
-        } else {
-                rc = fdisk_assign_device(cf->cxt, diskpath, 1);
-        }
+	rc = fdisk_assign_device(cf->cxt, diskpath, read_only);
+	if (rc == -EACCES && read_only == 0)
+		rc = fdisk_assign_device(cf->cxt, diskpath, 1);
 	if (rc != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), diskpath);
 	if (blkdev_lock(fdisk_get_devfd(cf->cxt), diskpath, lockmode) != 0)
