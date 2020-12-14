@@ -300,7 +300,7 @@ static int log_close(struct script_control *ctl,
 	}
 	case SCRIPT_FMT_TIMING_MULTI:
 	{
-		struct timeval now, delta;
+		struct timeval now = { 0 }, delta = { 0 };
 
 		gettime_monotonic(&now);
 		timersub(&now, &log->starttime, &delta);
