@@ -212,7 +212,7 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 	/* The time when we were called (and started waiting) */
 	struct tm nowtime;
 	int rc;
-	struct timeval begin, now;
+	struct timeval begin = { 0 }, now = { 0 };
 
 	if (ctl->verbose) {
 		printf("ioctl(%d, RTC_UIE_ON, 0): %s\n",
