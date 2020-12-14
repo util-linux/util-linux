@@ -312,14 +312,18 @@ static void success_message(struct libmnt_context *cxt)
 }
 
 #if defined(HAVE_LIBSELINUX) && defined(HAVE_SECURITY_GET_INITIAL_CONTEXT)
-#include <selinux/selinux.h>
-#include <selinux/context.h>
+# include <selinux/selinux.h>
+# include <selinux/context.h>
 
 static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 {
 
 	if (tgt && mnt_context_is_verbose(cxt) && is_selinux_enabled() > 0) {
-		security_context_t raw = NULL, def = NULL;
+# ifdef HAVE_SELINUX_CONTEXT_T
+		security_context_t raw = NULL, def = NULL;	/* deprecated */
+# else
+		char *raw = NULL, *def = NULL;			/* since libselinux >= 3.1 */
+# endif
 
 		if (getfilecon(tgt, &raw) > 0
 		    && security_get_initial_context("file", &def) == 0) {
