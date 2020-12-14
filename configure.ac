@@ -824,18 +824,23 @@ AC_ARG_WITH([selinux],
 AS_IF([test "x$with_selinux" = xno], [
   AM_CONDITIONAL([HAVE_SELINUX], [false])
 ], [
-  PKG_CHECK_MODULES([SELINUX], [libselinux >= 2.0],
-	[AC_DEFINE([HAVE_LIBSELINUX], [1], [Define if SELinux is available])
-	 UL_PKG_STATIC([SELINUX_LIBS_STATIC], [libselinux])
-	 AM_CONDITIONAL([HAVE_SELINUX], [true])
-	 have_selinux=yes],
-	[have_selinux=no])
+  PKG_CHECK_MODULES([SELINUX], [libselinux >= 3.1], [have_selinux=yes], [have_selinux=no])
+  AS_IF([test "x$have_selinux" = xno], [
+	PKG_CHECK_MODULES([SELINUX], [libselinux >= 2.0],
+		[have_selinux=yes
+		 AC_DEFINE([HAVE_SELINUX_CONTEXT_T], [1], [Do we need deprecated selinux_context_t?])
+		],
+		[have_selinux=no])
+  ])
 
   AS_CASE([$with_selinux:$have_selinux],
     [yes:no], [AC_MSG_ERROR([SELinux selected but libselinux not found or too old])]
   )
-
   AS_IF([test "x$have_selinux" = xyes], [
+    AC_DEFINE([HAVE_LIBSELINUX], [1], [Define if SELinux is available])
+    UL_PKG_STATIC([SELINUX_LIBS_STATIC], [libselinux])
+    AM_CONDITIONAL([HAVE_SELINUX], [true])
+
     UL_SET_FLAGS([], [], [$SELINUX_LIBS])
     # This function is missing in old libselinux 1.xx versions
     AC_CHECK_FUNCS([security_get_initial_context])
