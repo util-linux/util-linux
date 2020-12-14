@@ -628,8 +628,11 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBSELINUX
 	if (S_ISREG(ctl.devstat.st_mode) && is_selinux_enabled() > 0) {
-		security_context_t context_string;
-		security_context_t oldcontext;
+# ifdef HAVE_SELINUX_CONTEXT_T
+		security_context_t context_string, oldcontext;	/* deprecated */
+# else
+		char *context_string, *oldcontext;		/* since libselinux >= 3.1 */
+# endif
 		context_t newcontext;
 
 		if (fgetfilecon(ctl.fd, &oldcontext) < 0) {
