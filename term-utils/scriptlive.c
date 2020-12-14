@@ -119,7 +119,7 @@ static int process_next_step(struct scriptlive *ss)
 		delay = replay_step_get_delay(ss->step);
 		if (timerisset(delay)) {
 			/* wait until now+delay in mainloop */
-			struct timeval now, target;
+			struct timeval now = { 0 }, target = { 0 };
 
 			gettime_monotonic(&now);
 			timeradd(&now, delay, &target);
