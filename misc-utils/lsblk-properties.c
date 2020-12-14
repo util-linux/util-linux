@@ -104,7 +104,9 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		if (data)
 			prop->wwn = xstrdup(data);
 
-		data = udev_device_get_property_value(dev, "ID_SCSI_SERIAL");
+		data = udev_device_get_property_value(dev, "SCSI_IDENT_SERIAL");	/* sg3_utils do not use I_D prefix */
+		if (!data)
+			data = udev_device_get_property_value(dev, "ID_SCSI_SERIAL");
 		if(!data)
 			data = udev_device_get_property_value(dev, "ID_SERIAL_SHORT");
 		if(!data)
