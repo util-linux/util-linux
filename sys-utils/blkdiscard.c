@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 	int c, fd, verbose = 0, secsize, force = 0;
 	uint64_t end, blksize, step, range[2], stats[2];
 	struct stat sb;
-	struct timeval now, last;
+	struct timeval now = { 0 }, last = { 0 };
 	int act = ACT_DISCARD;
 
 	static const struct option longopts[] = {
