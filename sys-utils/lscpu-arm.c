@@ -364,7 +364,7 @@ static void arm_decode(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 		ct->nr_socket_on_cluster = get_number_of_physical_sockets_from_dmi();
 }
 
-static int lscpu_is_cluster_arm(struct lscpu_cxt *cxt)
+static int is_cluster_arm(struct lscpu_cxt *cxt)
 {
 	struct stat st;
 
@@ -379,7 +379,7 @@ void lscpu_decode_arm(struct lscpu_cxt *cxt)
 {
 	size_t i;
 
-	cxt->is_cluster = lscpu_is_cluster_arm(cxt);
+	cxt->is_cluster = is_cluster_arm(cxt);
 
 	for (i = 0; i < cxt->ncputypes; i++)
 		arm_decode(cxt, cxt->cputypes[i]);
