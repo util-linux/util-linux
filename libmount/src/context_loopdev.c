@@ -250,7 +250,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 
 		case 2: /* overlap -- full size and offset match (reuse) */
 		{
-			uint32_t lc_encrypt_type;
+			uint32_t lc_encrypt_type = 0;
 
 			DBG(LOOP, ul_debugobj(cxt, "re-using existing loop device %s",
 				loopcxt_get_device(&lc)));
