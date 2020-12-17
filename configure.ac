@@ -625,7 +625,7 @@ AS_IF([test x"$have_dirfd" = xno], [
 		 #include <dirent.h>])
 ])
 
-AM_CONDITIONAL([HAVE_DIRFD], [test "x$have_dirfd" = xyes -o "x$have_ddfd" = xyes])
+AM_CONDITIONAL([HAVE_DIRFD], [test "x$have_dirfd" = xyes || test "x$have_ddfd" = xyes])
 
 
 AC_MSG_CHECKING([whether program_invocation_short_name is defined])
@@ -701,7 +701,7 @@ AS_IF([test "x$with_util" = xno], [
   UL_CHECK_LIB([util], [openpty])
 ])
 
-AS_IF([test "x$have_pty_h" = xyes -a "x$have_sys_signalfd_h" = xyes -a "x$have_util" = xyes], [
+AS_IF([test "x$have_pty_h" = xyes && test "x$have_sys_signalfd_h" = xyes && test "x$have_util" = xyes], [
    AM_CONDITIONAL([HAVE_PTY], [true])
    AC_DEFINE([HAVE_PTY], [1], [have PTY support])
    have_pty=yes
@@ -893,7 +893,7 @@ have_ncurses_header=no
 AS_CASE([$with_ncurses:$build_widechar],
   [yes:yes], [AC_MSG_ERROR([wide-char support enabled, but non-wide ncurses selects])])
 
-AS_IF([test "x$have_ncursesw" = xno -a "x$with_ncurses" != xno ], [
+AS_IF([test "x$have_ncursesw" = xno && test "x$with_ncurses" != xno ], [
   UL_NCURSES_CHECK([ncurses])
   AS_IF([test "x$have_ncurses" = xyes], [
     AC_CHECK_HEADERS([ncurses/ncurses.h], [have_ncurses_header=yes])
@@ -917,7 +917,7 @@ AS_CASE([$with_ncurses:$have_ncurses],
 
 AC_SUBST([NCURSES_CFLAGS])
 AC_SUBST([NCURSES_LIBS])
-AM_CONDITIONAL([HAVE_NCURSES], [test "x$have_ncursesw" = xyes -o  "x$have_ncurses" = xyes])
+AM_CONDITIONAL([HAVE_NCURSES], [test "x$have_ncursesw" = xyes || test "x$have_ncurses" = xyes])
 
 
 AC_ARG_WITH([slang],
@@ -943,7 +943,7 @@ AS_IF([test "x$with_slang" = xyes], [
 AM_CONDITIONAL([HAVE_SLANG], [test "x$have_slang" = xyes])
 
 
-AS_IF([test "x$have_slang" = xyes -o "x$have_ncursesw" = xyes -o "x$have_ncurses" = xyes], [
+AS_IF([test "x$have_slang" = xyes || test "x$have_ncursesw" = xyes || test "x$have_ncurses" = xyes], [
 	AC_CHECK_LIB([$CURSES_LIB_NAME], use_default_colors, [
 		     AC_DEFINE(HAVE_USE_DEFAULT_COLORS, 1,
 			       [Define if curses library has the use_default_colors().])
@@ -971,8 +971,8 @@ AS_IF([test "x$with_tinfo" != xno], [
 AC_SUBST([TINFO_LIBS])
 AC_SUBST([TINFO_LIBS_STATIC])
 AC_SUBST([TINFO_CFLAGS])
-AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xyes -o "x$have_tinfow" = xyes])
-AS_IF([test "x$have_tinfo" = xyes -o "x$have_tinfow" = xyes], [
+AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xyes || test "x$have_tinfow" = xyes])
+AS_IF([test "x$have_tinfo" = xyes || test "x$have_tinfow" = xyes], [
   AC_DEFINE(HAVE_LIBTINFO, 1, [Define if libtinfo or libtinfow available.])
 ])
 
@@ -1053,7 +1053,7 @@ AS_IF([test "x$build_libblkid" = xyes], [
   AC_DEFINE([HAVE_LIBBLKID], [1], [Define to 1 if you have the -lblkid.])
 ])
 AM_CONDITIONAL([BUILD_LIBBLKID], [test "x$build_libblkid" = xyes])
-AM_CONDITIONAL([BUILD_LIBBLKID_TESTS], [test "x$build_libblkid" = xyes -a "x$enable_static" = xyes])
+AM_CONDITIONAL([BUILD_LIBBLKID_TESTS], [test "x$build_libblkid" = xyes && test "x$enable_static" = xyes])
 
 dnl
 dnl libmount
@@ -1066,7 +1066,7 @@ UL_BUILD_INIT([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
 UL_REQUIRES_HAVE([libmount], [dirfd,ddfd], [dirfd or ddfd function])
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
-AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes -a "x$enable_static" = xyes])
+AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes && test "x$enable_static" = xyes])
 AS_IF([test "x$build_libmount" = xyes], [
   AC_DEFINE(HAVE_LIBMOUNT, 1, [Define if libmount available.])
   AS_IF([test "x$have_setns_syscall" = "xyes"], [
@@ -1117,7 +1117,7 @@ AC_ARG_ENABLE([libfdisk],
 UL_BUILD_INIT([libfdisk])
 UL_REQUIRES_BUILD([libfdisk], [libuuid])
 AM_CONDITIONAL([BUILD_LIBFDISK], [test "x$build_libfdisk" = xyes])
-AM_CONDITIONAL([BUILD_LIBFDISK_TESTS], [test "x$build_libfdisk" = xyes -a "x$enable_static" = xyes])
+AM_CONDITIONAL([BUILD_LIBFDISK_TESTS], [test "x$build_libfdisk" = xyes && test "x$enable_static" = xyes])
 
 AS_IF([test "x$build_libblkid" = xyes],
   [LIBFDISK_PC_REQUIRES="uuid blkid"],[LIBFDISK_PC_REQUIRES="uuid"])
@@ -1414,7 +1414,7 @@ UL_BUILD_INIT([agetty])
 UL_REQUIRES_HAVE([agetty], [utmpx_h], [utmpx.h header])
 UL_REQUIRES_HAVE([agetty], [gnu_utmpx], [GNU utmpx functions])
 AM_CONDITIONAL([BUILD_AGETTY], [test "x$build_agetty" = xyes])
-AS_IF([test "x$have_futimens" = xyes -a "x$have_inotify_init1" = xyes ], [
+AS_IF([test "x$have_futimens" = xyes && test "x$have_inotify_init1" = xyes ], [
   AC_DEFINE([AGETTY_RELOAD], [1], [Enable agetty --reload feature])
 ],[
   AC_MSG_WARN([futimens or inotify_init1 not found; agetty(8) will not provide ---reload functionality])
@@ -1599,7 +1599,7 @@ AM_CONDITIONAL([BUILD_SWAPLABEL], [test "x$build_swaplabel" = xyes])
 
 UL_BUILD_INIT([mkswap], [yes])
 AM_CONDITIONAL([BUILD_MKSWAP], [test "x$build_mkswap" = xyes])
-AS_IF([test "x$build_mkswap" = xyes -a "x$build_libuuid" != xyes], [
+AS_IF([test "x$build_mkswap" = xyes && test "x$build_libuuid" != xyes], [
   AC_MSG_WARN([uuid library is not found; mkswap(8) will not generate UUIDs])
 ])
 
@@ -1978,7 +1978,7 @@ UL_BUILD_INIT([chfn_chsh])
 UL_REQUIRES_HAVE([chfn_chsh], [shadow_h], [shadow.h header])
 UL_REQUIRES_HAVE([chfn_chsh], [getusershell], [getusershell function])
 
-AS_IF([test "x$enable_chfn_chsh_password" = xyes -o "x$have_user" = xyes], [
+AS_IF([test "x$enable_chfn_chsh_password" = xyes || test "x$have_user" = xyes], [
   UL_REQUIRES_HAVE([chfn_chsh], [security_pam_appl_h], [PAM header file])
   AC_DEFINE([CHFN_CHSH_PASSWORD], [1], [Should chfn and chsh require the user to enter the password?])
 ])
@@ -2215,7 +2215,7 @@ AS_IF([test "x$with_systemd" != xno], [
 		      [have_systemd_daemon=yes], [have_systemd_daemon=no])
     PKG_CHECK_MODULES([SYSTEMD_JOURNAL], [libsystemd-journal],
 		      [have_systemd_journal=yes], [have_systemd_journal=no])
-    AS_IF([test "x$have_systemd_daemon" = "xyes" -a "x$have_systemd_journal" = "xyes" ],[
+    AS_IF([test "x$have_systemd_daemon" = "xyes" && test "x$have_systemd_journal" = "xyes" ],[
 	   have_systemd=yes])
   ])
   AS_CASE([$with_systemd:$have_systemd],
@@ -2311,7 +2311,7 @@ AS_IF([test "x$with_python" != xno], [
   # (minimal version is 2) but if major version is explicitly specified by
   # --with-python=2 or --with-python=3 then we look for PKG module "python2" or
   # "python3".
-  AS_IF([test "x$withval" != xno -a "x$withval" != xyes -a "x$withval" != xcheck],
+  AS_IF([test "x$withval" != xno && test "x$withval" != xyes && test "x$withval" != xcheck],
 	[pymajor="$withval"; PYTHON=python${pymajor}], [pymajor="2"])
 
   # check for python interpreter
