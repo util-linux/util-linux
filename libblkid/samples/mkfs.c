@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 					"%s superblock", devname, type);
 
 		if (!blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL))
-			errx(EXIT_FAILURE, "%s: appears to contain an partition "
+			errx(EXIT_FAILURE, "%s: appears to contain a partition "
 					"table (%s)", devname, type);
 	}
 

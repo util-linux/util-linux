@@ -222,7 +222,7 @@ int main(int argc, char **argv)
 	if (stat(argv[0], &st) < 0)
 		err(EXIT_FAILURE, _("stat of %s failed"), argv[0]);
 	if (!S_ISBLK(st.st_mode))
-		/* do not test major - perhaps this was an USB floppy */
+		/* do not test major - perhaps this was a USB floppy */
 		errx(EXIT_FAILURE, _("%s: not a block device"), argv[0]);
 	ctrl = open_blkdev_or_file(&st, argv[0], O_RDWR);
 	if (ctrl < 0)

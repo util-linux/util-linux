@@ -2440,7 +2440,7 @@ AC_ARG_ENABLE([sulogin-emergency-mount],
 
 AS_IF([test "x$enable_sulogin_emergency_mount" = xyes], [
   AC_DEFINE([USE_SULOGIN_EMERGENCY_MOUNT], [1],
-	    [Should sulogin use a emergency mount of /dev and /proc?])
+	    [Should sulogin use an emergency mount of /dev and /proc?])
 ])
 
 

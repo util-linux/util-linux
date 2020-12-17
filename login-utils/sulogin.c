@@ -851,7 +851,7 @@ int main(int argc, char **argv)
 	INIT_LIST_HEAD(&consoles);
 
 	/*
-	 * If we are init we need to set up a own session.
+	 * If we are init we need to set up an own session.
 	 */
 	if ((pid = getpid()) == 1) {
 		setsid();
