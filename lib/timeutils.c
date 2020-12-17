@@ -581,7 +581,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (strcmp(argv[1], "--timestamp") == 0) {
-		usec_t usec;
+		usec_t usec = 0;
 
 		parse_timestamp(argv[2], &usec);
 		tv.tv_sec = (time_t) (usec / 1000000);

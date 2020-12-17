@@ -176,7 +176,8 @@ int main(int argc, char *argv[])
 
 	if (strcmp(argv[1], "--mkstemp") == 0) {
 		FILE *f;
-		char *tmpname;
+		char *tmpname = NULL;
+
 		f = xfmkstemp(&tmpname, NULL, "test");
 		unlink(tmpname);
 		free(tmpname);
