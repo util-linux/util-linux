@@ -1,15 +1,15 @@
 AC_INIT([util-linux],
 	m4_esyscmd([tools/git-version-gen .tarball-version]),
-	[kzak@redhat.com],,
+	[kzak@redhat.com], [],
 	[http://www.kernel.org/pub/linux/utils/util-linux/])
 
 
-AC_PREREQ([2.60])
+AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 dnl AC_USE_SYSTEM_EXTENSIONS must be called before any macros that run
-dnl the compiler (like AC_PROG_LIBTOOL) to avoid autoconf errors.
+dnl the compiler (like LT_INIT) to avoid autoconf errors.
 AC_USE_SYSTEM_EXTENSIONS
 AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax no-dist-gzip dist-xz subdir-objects])
 
@@ -109,10 +109,9 @@ AS_IF([test "x$SYSCONFSTATICDIR" = x],
       [sysconfstaticdir=$SYSCONFSTATICDIR])
 AC_SUBST([sysconfstaticdir])
 
-
+AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_MKDIR_P
-AC_PROG_CC_STDC
 AC_PROG_YACC
 AC_CANONICAL_HOST
 AC_C_CONST
