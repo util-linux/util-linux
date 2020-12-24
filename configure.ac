@@ -11,7 +11,7 @@ AC_CONFIG_MACRO_DIR([m4])
 dnl AC_USE_SYSTEM_EXTENSIONS must be called before any macros that run
 dnl the compiler (like LT_INIT) to avoid autoconf errors.
 AC_USE_SYSTEM_EXTENSIONS
-AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax no-dist-gzip dist-xz subdir-objects])
+AM_INIT_AUTOMAKE([-Wall -Wno-portability foreign 1.10 tar-pax no-dist-gzip dist-xz subdir-objects])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
 			    [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
