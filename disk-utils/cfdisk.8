@@ -115,6 +115,15 @@ MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
 Quit the program.  This will exit the program without writing any data to
 the disk.
 .TP
+.B r
+Reduce or enlarge the current partition.
+.B cfdisk
+then prompts you for the new size of the partition.
+The default size is the current size.
+A partition marked as free space or marked as unusable cannot be resized.
+
+Note that reducing the size of a partition might destroy data on that partition.
+.TP
 .B s
 Sort the partitions in ascending start-sector order.  When deleting and
 adding partitions, it is likely that the numbering of the partitions will
