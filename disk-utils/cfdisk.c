@@ -2209,6 +2209,7 @@ static int ui_help(void)
 		N_("  h          Print this screen"),
 		N_("  n          Create new partition from free space"),
 		N_("  q          Quit program without writing partition table"),
+		N_("  r          Reduce or enlarge the current partition"),
 		N_("  s          Fix partitions order (only when in disarray)"),
 		N_("  t          Change the partition type"),
 		N_("  u          Dump disk layout to sfdisk compatible script file"),
