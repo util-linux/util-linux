@@ -12,7 +12,7 @@ Setup
 1. Find a git server that can be reached from anywhere in internet
 anonymously.  Github is for example a popular choice.
 
-2. Create your own util-linux contributor repository, and push a upstream
+2. Create your own util-linux contributor repository, and push an upstream
 clone to there.
 
 3. In these instructions the upstream remote repository is called

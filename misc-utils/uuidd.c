@@ -58,7 +58,7 @@
 
 #include "nls.h"
 
-/* Protocol segment lenghts */
+/* Protocol segment lengths */
 typedef uint8_t	uuidd_prot_op_t;	/* client operation field */
 typedef int32_t	uuidd_prot_num_t;	/* number of requested uuids */
 

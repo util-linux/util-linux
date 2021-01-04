@@ -1,7 +1,7 @@
 Release schedule
 ----------------
 
-The util-linux package uses the <major>.<minor>.<maintenaince> version
+The util-linux package uses the <major>.<minor>.<maintenance> version
 numbering scheme.  Since the major version is pretty much fixed, any
 release means an increment of the minor number.  The minor version is
 incremented roughly twice per year.  The easiest way to estimate when
