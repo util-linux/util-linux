@@ -541,12 +541,16 @@ int fdisk_discover_topology(struct fdisk_context *cxt)
 				/* optimal I/O is optional, default to minimum IO */
 				cxt->io_size = cxt->min_io_size;
 
-			/* ignore optimal I/O if not aligned to phy.sector size */
-			if (cxt->io_size
-			    && cxt->phy_sector_size
-			    && (cxt->io_size % cxt->phy_sector_size) != 0) {
-				DBG(CXT, ul_debugobj(cxt, "ignore misaligned I/O size"));
-				cxt->io_size = cxt->phy_sector_size;
+			if (cxt->io_size && cxt->phy_sector_size) {
+				if (cxt->io_size == 33553920) {
+					/* 33553920 (32 MiB - 512) is always a controller error */
+					DBG(CXT, ul_debugobj(cxt, "ignore bad I/O size 33553920"));
+					cxt->io_size = cxt->phy_sector_size;
+				} else if ((cxt->io_size % cxt->phy_sector_size) != 0) {
+					/* ignore optimal I/O if not aligned to phy.sector size */
+					DBG(CXT, ul_debugobj(cxt, "ignore misaligned I/O size"));
+					cxt->io_size = cxt->phy_sector_size;
+				}
 			}
 
 		}
