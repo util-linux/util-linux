@@ -69,6 +69,7 @@
 
 #include "closestream.h"
 #include "nls.h"
+#include "strutils.h"
 #include "xalloc.h"
 
 /* NON_OPT is the code that is returned getopt(3) when a non-option is
@@ -275,6 +276,18 @@ static void add_longopt(struct getopt_control *ctl, const char *name, int has_ar
 }
 
 
+static void add_short_options(struct getopt_control *ctl, char *options)
+{
+	free(ctl->optstr);
+	if (*options != '+' && getenv("POSIXLY_CORRECT"))
+		ctl->optstr = strappend("+", options);
+	else
+		ctl->optstr = xstrdup(options);
+	if (!ctl->optstr)
+		err_oom();
+}
+
+
 /*
  * Register several long options. options is a string of long options,
  * separated by commas or whitespace. This nukes options!
@@ -414,8 +427,7 @@ int main(int argc, char *argv[])
 			getopt_long_fp = getopt_long_only;
 			break;
 		case 'o':
-			free(ctl.optstr);
-			ctl.optstr = xstrdup(optarg);
+			add_short_options(&ctl, optarg);
 			break;
 		case 'l':
 			add_long_options(&ctl, optarg);
@@ -455,7 +467,7 @@ int main(int argc, char *argv[])
 		if (optind >= argc)
 			parse_error(_("missing optstring argument"));
 		else {
-			ctl.optstr = xstrdup(argv[optind]);
+			add_short_options(&ctl, argv[optind]);
 			optind++;
 		}
 	}
