@@ -192,25 +192,25 @@ static void fill_table_row(struct libscols_table *tb, char const *const uuid)
 				break;
 			}
 			switch (type) {
-			case 0:
-				if (strspn(uuid, "0-") == 36)
+			case UUID_TYPE_DCE_NIL:
+				if (uuid_is_null(buf))
 					str = xstrdup(_("nil"));
 				else
 					str = xstrdup(_("unknown"));
 				break;
-			case 1:
+			case UUID_TYPE_DCE_TIME:
 				str = xstrdup(_("time-based"));
 				break;
-			case 2:
+			case UUID_TYPE_DCE_SECURITY:
 				str = xstrdup("DCE");
 				break;
-			case 3:
+			case UUID_TYPE_DCE_MD5:
 				str = xstrdup(_("name-based"));
 				break;
-			case 4:
+			case UUID_TYPE_DCE_RANDOM:
 				str = xstrdup(_("random"));
 				break;
-			case 5:
+			case UUID_TYPE_DCE_SHA1:
 				str = xstrdup(_("sha1-based"));
 				break;
 			default:
@@ -222,7 +222,7 @@ static void fill_table_row(struct libscols_table *tb, char const *const uuid)
 				str = xstrdup(_("invalid"));
 				break;
 			}
-			if (variant == UUID_VARIANT_DCE && type == 1) {
+			if (variant == UUID_VARIANT_DCE && type == UUID_TYPE_DCE_TIME) {
 				struct timeval tv;
 				char date_buf[ISO_BUFSIZ];
 

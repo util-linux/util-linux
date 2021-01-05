@@ -32,12 +32,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --random        generate random-based uuid\n"), out);
 	fputs(_(" -t, --time          generate time-based uuid\n"), out);
 	fputs(_(" -n, --namespace ns  generate hash-based uuid in this namespace\n"), out);
+	printf(_("                       available namespaces: %s\n"), "@dns @url @oid @x500");
 	fputs(_(" -N, --name name     generate hash-based uuid from this name\n"), out);
 	fputs(_(" -m, --md5           generate md5 hash\n"), out);
 	fputs(_(" -s, --sha1          generate sha1 hash\n"), out);
 	fputs(_(" -x, --hex           interpret name as hex string\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(18));
+	printf(USAGE_HELP_OPTIONS(21));
 	printf(USAGE_MAN_TAIL("uuidgen(1)"));
 	exit(EXIT_SUCCESS);
 }
@@ -49,7 +50,7 @@ static char *unhex(const char *value, size_t *valuelen)
 
 	if (*valuelen % 2 != 0) {
 badstring:
-		fprintf(stderr, "%s: not a valid hex string\n", program_invocation_short_name);
+		warnx(_("not a valid hex string"));
 		errtryhelp(EXIT_FAILURE);
 	}
 
@@ -140,20 +141,20 @@ main (int argc, char *argv[])
 
 	if (namespace) {
 		if (!name) {
-			fprintf(stderr, "%s: --namespace requires --name argument\n", program_invocation_short_name);
+			warnx(_("--namespace requires --name argument"));
 			errtryhelp(EXIT_FAILURE);
 		}
 		if (do_type != UUID_TYPE_DCE_MD5 && do_type != UUID_TYPE_DCE_SHA1) {
-			fprintf(stderr, "%s: --namespace requires --md5 or --sha1\n", program_invocation_short_name);
+			warnx(_("--namespace requires --md5 or --sha1"));
 			errtryhelp(EXIT_FAILURE);
 		}
 	} else {
 		if (name) {
-			fprintf(stderr, "%s: --name requires --namespace argument\n", program_invocation_short_name);
+			warnx(_("--name requires --namespace argument"));
 			errtryhelp(EXIT_FAILURE);
 		}
 		if (do_type == UUID_TYPE_DCE_MD5 || do_type == UUID_TYPE_DCE_SHA1) {
-			fprintf(stderr, "%s: --md5 or --sha1 require --namespace\n", program_invocation_short_name);
+			warnx(_("--md5 or --sha1 requires --namespace argument"));
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
@@ -178,13 +179,13 @@ main (int argc, char *argv[])
 
 			uuidptr = uuid_get_template(&namespace[1]);
 			if (uuidptr == NULL) {
-				fprintf(stderr, "%s: unknown namespace alias '%s'\n", program_invocation_short_name, namespace);
+				warnx(_("unknown namespace alias: '%s'"), namespace);
 				errtryhelp(EXIT_FAILURE);
 			}
 			memcpy(ns, *uuidptr, sizeof(ns));
 		} else {
 			if (uuid_parse(namespace, ns) != 0) {
-				fprintf(stderr, "%s: invalid uuid for namespace '%s'\n", program_invocation_short_name, namespace);
+				warnx(_("invalid uuid for namespace: '%s'"), namespace);
 				errtryhelp(EXIT_FAILURE);
 			}
 		}

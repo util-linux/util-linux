@@ -23,9 +23,9 @@ AC_PREFIX_DEFAULT([/usr])
 dnl version details from <major>.<minor>[-<suffix>]
 PACKAGE_VERSION_MAJOR=$(echo $PACKAGE_VERSION | awk -F. '{print $1}')
 PACKAGE_VERSION_MINOR=$(echo $PACKAGE_VERSION | awk -F. '{
-                                                   sub("-.*","",$2); print $2}')
+						   sub("-.*","",$2); print $2}')
 PACKAGE_VERSION_RELEASE=$(echo $PACKAGE_VERSION | awk -F. '{
-                     sub("-.*","",$3); print $3 ~ /^@<:@0-9@:>@+$/ ? $3 : 0}')
+		     sub("-.*","",$3); print $3 ~ /^@<:@0-9@:>@+$/ ? $3 : 0}')
 
 dnl libblkid version
 LIBBLKID_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
@@ -123,14 +123,22 @@ dnl Compiler warnings
 UL_WARN_ADD([-fno-common])
 UL_WARN_ADD([-Wall])
 UL_WARN_ADD([-Wextra])
-UL_WARN_ADD([-Wextra-semi])
+
+UL_WARN_ADD([-Waddress-of-packed-member])
+UL_WARN_ADD([-Wdiscarded-qualifiers])
 UL_WARN_ADD([-Wembedded-directive])
+UL_WARN_ADD([-Wextra-semi])
+UL_WARN_ADD([-Wformat-security])
+UL_WARN_ADD([-Wimplicit-function-declaration])
 UL_WARN_ADD([-Wmissing-declarations])
 UL_WARN_ADD([-Wmissing-parameter-type])
 UL_WARN_ADD([-Wmissing-prototypes])
+UL_WARN_ADD([-Wnested-externs])
 UL_WARN_ADD([-Wno-missing-field-initializers])
+UL_WARN_ADD([-Wpointer-arith])
 UL_WARN_ADD([-Wredundant-decls])
 UL_WARN_ADD([-Wsign-compare])
+UL_WARN_ADD([-Wstrict-prototypes])
 UL_WARN_ADD([-Wtype-limits])
 UL_WARN_ADD([-Wuninitialized])
 UL_WARN_ADD([-Wunused-but-set-parameter])
@@ -138,13 +146,6 @@ UL_WARN_ADD([-Wunused-but-set-variable])
 UL_WARN_ADD([-Wunused-parameter])
 UL_WARN_ADD([-Wunused-result])
 UL_WARN_ADD([-Wunused-variable])
-UL_WARN_ADD([-Wnested-externs])
-UL_WARN_ADD([-Wpointer-arith])
-UL_WARN_ADD([-Wstrict-prototypes])
-UL_WARN_ADD([-Wformat-security])
-UL_WARN_ADD([-Wimplicit-function-declaration])
-UL_WARN_ADD([-Wdiscarded-qualifiers])
-UL_WARN_ADD([-Waddress-of-packed-member])
 
 AC_ARG_ENABLE([werror],
   AS_HELP_STRING([--enable-werror], [make all compiler warnings into errors]),
@@ -260,9 +261,18 @@ AM_GNU_GETTEXT([external])
 
 AS_IF([test -d "$srcdir/po"], [
   ALL_LINGUAS=`cd $srcdir/po > /dev/null && echo *.po | sed 's/\.po//g'`
-], [
-  ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
-])
+], [dnl echo $ALL_LINGUAS | sed 's/ /\n/g' | sort -u | column -xc 72 -o ' ' | sed 's/^/\t/'
+  ALL_LINGUAS="
+	af      am      ar      as      be      bg      bn      bn_IN   ca
+	cs      cy      da      de      el      en_GB   es      et      eu_ES
+	fa      fi      fr      gl      gu      he      hi      hr      hu
+	hy      id      is      it      ja      ka      kn      ko      ku
+	lo      lt      lv      mk      ml      mr      ms      my      nb
+	nl      nn      no      nso     or      pa      pl      pt      pt_BR
+	ro      ru      si      sk      sl      sq      sr      sr@Latn sv
+	ta      te      th      tr      uk      ur      vi      zh_CN   zh_TW
+	zu
+"])
 
 AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h linux/major.h], [], [], [
 #ifdef HAVE_LINUX_COMPILER_H
@@ -271,6 +281,8 @@ AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h linux/major.h], [], [], [
 ])
 AC_CHECK_HEADERS([ \
 	asm/io.h \
+	byteswap.h \
+	endian.h \
 	err.h \
 	errno.h \
 	fcntl.h \
@@ -279,50 +291,49 @@ AC_CHECK_HEADERS([ \
 	lastlog.h \
 	libutil.h \
 	linux/btrfs.h \
+	linux/capability.h \
 	linux/cdrom.h \
 	linux/falloc.h \
-	linux/fiemap.h \
-	linux/watchdog.h \
 	linux/fd.h \
+	linux/fiemap.h \
+	linux/net_namespace.h \
 	linux/raw.h \
+	linux/securebits.h \
 	linux/tiocl.h \
 	linux/version.h \
-	linux/securebits.h \
-	linux/net_namespace.h \
-	linux/capability.h \
+	linux/watchdog.h \
 	locale.h \
 	mntent.h \
-	net/if.h \
 	net/if_dl.h \
+	net/if.h \
 	netinet/in.h \
 	paths.h \
 	pty.h \
 	security/pam_appl.h \
+	shadow.h \
 	stdint.h \
 	stdio_ext.h \
 	stdlib.h \
-	endian.h \
-	byteswap.h \
-	sys/endian.h \
 	sys/disk.h \
 	sys/disklabel.h \
+	sys/endian.h \
 	sys/file.h \
-	sys/io.h \
 	sys/ioccom.h \
 	sys/ioctl.h \
+	sys/io.h \
 	sys/mkdev.h \
 	sys/mount.h \
 	sys/param.h \
 	sys/prctl.h \
 	sys/resource.h \
+	sys/sendfile.h \
 	sys/signalfd.h \
 	sys/socket.h \
 	sys/sockio.h \
 	sys/stat.h \
-	sys/sendfile.h \
-	sys/sysmacros.h \
 	sys/swap.h \
 	sys/syscall.h \
+	sys/sysmacros.h \
 	sys/time.h \
 	sys/timex.h \
 	sys/ttydefaults.h \
@@ -330,7 +341,6 @@ AC_CHECK_HEADERS([ \
 	sys/ucred.h \
 	sys/un.h \
 	unistd.h \
-	shadow.h \
 	utmp.h \
 	utmpx.h \
 ])
@@ -429,20 +439,20 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
-have_linux_version_h=$ac_cv_header_linux_version_h
 have_linux_blkzoned_h=$ac_cv_header_linux_blkzoned_h
 have_linux_btrfs_h=$ac_cv_header_linux_btrfs_h
+have_linux_capability_h=$ac_cv_header_linux_capability_h
 have_linux_raw_h=$ac_cv_header_linux_raw_h
 have_linux_securebits_h=$ac_cv_header_linux_securebits_h
-have_linux_capability_h=$ac_cv_header_linux_capability_h
+have_linux_version_h=$ac_cv_header_linux_version_h
 have_linux_watchdog_h=$ac_cv_header_linux_watchdog_h
+have_pty_h=$ac_cv_header_pty_h
+have_security_openpam_h=$ac_cv_header_security_openpam_h
 have_security_pam_appl_h=$ac_cv_header_security_pam_appl_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
-have_security_openpam_h=$ac_cv_header_security_openpam_h
 have_shadow_h=$ac_cv_header_shadow_h
 have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmpx_h=$ac_cv_header_utmpx_h
-have_pty_h=$ac_cv_header_pty_h
 
 AS_CASE([$linux_os:$have_linux_version_h],
   [yes:no],
@@ -481,34 +491,31 @@ AC_CHECK_DECL([strsignal],
 
 AC_CHECK_DECL([TIOCGLCKTRMIOS],
 	      [have_tiocglcktrmios=yes], [have_tiocglcktrmios=no],
-              [#include <sys/ioctl.h>])
+	      [#include <sys/ioctl.h>])
 AC_CHECK_DECL([SOCK_CLOEXEC],
 	      [have_sock_cloexec=yes], [have_sock_cloexec=no],
 	      [#include <sys/types.h>
-               #include <sys/socket.h>])
+	       #include <sys/socket.h>])
 AC_CHECK_DECL([SOCK_NONBLOCK],
 	      [have_sock_nonblock=yes], [have_sock_nonblock=no],
 	      [#include <sys/types.h>
-               #include <sys/socket.h>])
+	       #include <sys/socket.h>])
 AC_CHECK_DECL([SO_PASSCRED],
 	      [have_so_passcred=yes], [have_so_passcred=no],
 	      [#include <sys/types.h>
-               #include <sys/socket.h>])
+	       #include <sys/socket.h>])
 
 AC_CHECK_FUNCS([ \
 	clearenv \
 	close_range \
-	__fpurge \
-	fpurge \
-	__fpending \
-	secure_getenv \
-	__secure_getenv \
 	eaccess \
 	err \
 	errx \
 	explicit_bzero \
+	__fpending \
+	__fpurge \
+	fpurge \
 	fsync \
-	utimensat \
 	getdomainname \
 	getdtablesize \
 	getexecname \
@@ -532,12 +539,14 @@ AC_CHECK_FUNCS([ \
 	qsort_r \
 	rpmatch \
 	scandirat \
+	sched_setattr \
+	sched_setscheduler \
+	__secure_getenv \
+	secure_getenv \
 	sendfile \
 	setprogname \
 	setresgid \
 	setresuid \
-	sched_setattr \
-	sched_setscheduler \
 	sigqueue \
 	srandom \
 	strnchr \
@@ -547,20 +556,21 @@ AC_CHECK_FUNCS([ \
 	sysinfo \
 	timegm \
 	usleep \
+	utimensat \
 	vwarnx \
 	warn \
 	warnx \
 ])
 AC_FUNC_FSEEKO
 
-AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
-AC_CHECK_FUNCS([ioperm iopl], [have_io=yes])
 AC_CHECK_FUNCS([futimens], [have_futimens=yes])
+AC_CHECK_FUNCS([getusershell], [have_getusershell=yes],[have_getusershell=no])
 AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
+AC_CHECK_FUNCS([ioperm iopl], [have_io=yes])
+AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
 AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=no])
 AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 AC_CHECK_FUNCS([updwtmpx updwtmpx], [have_gnu_utmpx=yes], [have_gnu_utmpx=no])
-AC_CHECK_FUNCS([getusershell], [have_getusershell=yes],[have_getusershell=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 
@@ -673,7 +683,7 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([extern char *__progname;],
 	   AC_MSG_RESULT([no]))
 
 dnl Static compilation
-m4_define([UL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk, blkid, nsenter, unshare])
+m4_define([UL_STATIC_PROGRAMS], [blkid, fdisk, losetup, mount, nsenter, sfdisk, umount, unshare])
 
 AC_ARG_ENABLE([static-programs],
   [AS_HELP_STRING([--enable-static-programs=LIST],
@@ -705,9 +715,9 @@ AC_ARG_ENABLE([all-programs],
 
 AS_CASE([$enable_all_programs],
   [yes], [AC_MSG_WARN([force to build all programs by default])
-          ul_default_estate=check],
+	  ul_default_estate=check],
   [no],  [AC_MSG_WARN([disable all programs by default])
-          ul_default_estate=no]
+	  ul_default_estate=no]
 )
 
 
@@ -2585,7 +2595,7 @@ AC_MSG_RESULT([
 	usrbin_execdir:    ${usrbin_execdir}
 	usrsbin_execdir:   ${usrsbin_execdir}
 	usrlib_execdir:    ${usrlib_execdir}
-        vendordir:         ${with_vendordir}
+	vendordir:         ${with_vendordir}
 
 	compiler:          ${CC}
 	cflags:            ${CFLAGS}
