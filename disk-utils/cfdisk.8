@@ -31,6 +31,10 @@ If you need advanced features, use
 .BR fdisk (8)
 instead.
 
+All disk label changes will remain in memory only, and the disk will be
+unmodified until you decide to write your changes.  Be careful before using the
+write command.
+
 Since version 2.25
 .B cfdisk
 supports MBR (DOS), GPT, SUN and SGI disk labels, but no longer provides any
@@ -125,7 +129,7 @@ then prompts you for the new size of the partition.
 The default size is the current size.
 A partition marked as free space or marked as unusable cannot be resized.
 
-Note that reducing the size of a partition might destroy data on that partition.
+.B Note that reducing the size of a partition might destroy data on that partition.
 .TP
 .B s
 Sort the partitions in ascending start-sector order.  When deleting and
