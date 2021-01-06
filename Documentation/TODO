@@ -64,21 +64,19 @@ bash completion
 libmount (mount/umount)
 -----------------------
 
+ - mnt_context_get_excode() does not return error messages from /sbin/[u]mount.<type>
+   external helpers. It is disadvantages in same cases (non-terminal progarms).
+   The solution is to use pipe(), keep output from helper in memory and return it later
+   by mnt_context_get_excode() (or mnt_context_get_helper_output(), etc.). This feature
+   should be optional and disabled by default.
+   see: https://github.com/karelzak/util-linux/issues/1208
+
  - add --onlyonce to force mount(8) to check if mountpoint is already used. Now
    "already mounted" detection is used for --all only. The problem is if you
    call "mount <mountpoint>" more than once for in fstab defined tmpfs (or network
    filesystem etc.). In this case kernel does not return EBUSY, but a new instance
    of the FS is created. https://github.com/karelzak/util-linux/issues/448
    (... just idea, maybe wrong idea)
-
- - support CAP_SYS_ADMIN; for mount(2) syscall the CAP_SYS_ADMIN is good
-   enough. Unfortunately, mount(8) does more things like check for filesystem
-   type (but it's usually done by udev, so root perms are unnecessary), create
-   loop devices, write to /run/mount/utab or /etc/mtab, etc.
-
-   It would be nice to improve libmount to check for CAP_SYS_ADMIN if suid not
-   set and allow using it for simple tasks where no another operation is
-   necessary.
 
 partx
 -----

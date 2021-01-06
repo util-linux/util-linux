@@ -2723,6 +2723,9 @@ int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, char *fmt, .
  * and mnt_context_get_helper_status(). Note that mount(8) and umount(8) utils
  * always return code from helper without extra care about it.
  *
+ * The current implementation does not read error message from external
+ * helper into @buf.
+ *
  * If the argument @buf is not NULL then error message is generated (if
  * anything failed).
  *
