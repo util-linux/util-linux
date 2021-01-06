@@ -33,17 +33,6 @@ preallocation is done quickly by allocating blocks and marking them as
 uninitialized, requiring no IO to the data blocks.
 This is much faster than creating a file by filling it with zeroes.
 .PP
-.PP
-Note that a filesystem may place limitations on the granularity of some
-fallocate operations.  Typically,
-.I offset
-and
-.I lenght
-must be a multiple of the
-filesystem logical block size, which varies according to the filesystem type
-and configuration.  If a filesystem has such a requirement, the operation will
-fail with the error EINVAL (Invalid argument) if this requirement is violated.
-.PP
 The exit status returned by
 .B fallocate
 is 0 on success and 1 on failure.
