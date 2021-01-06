@@ -120,6 +120,10 @@ login-utils:
 libblkid
 --------
 
+ - extend ZFS proper to scan for more uberblocks if BLKID_SUBLKS_MAGIC flag is set.
+   This solution will make wipefs(8) more usable as ZFS is extremely variable with
+   additional root blocks locations. See  https://github.com/karelzak/util-linux/issues/1228
+
  - (!) add support for BitLocker Drive Encryption
    https://github.com/karelzak/util-linux/issues/617
    https://github.com/libyal/libbde/blob/master/documentation/BitLocker%20Drive%20Encryption%20(BDE)%20format.asciidoc
