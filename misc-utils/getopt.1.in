@@ -382,7 +382,11 @@ will be parsed.  It will still do parameter shuffling (i.e., all
 non\-option parameters are output at the end), unless the
 environment variable
 .B POSIXLY_CORRECT
-is set.
+is set, in which case,
+.B getopt
+will prepend a
+.RB ' + '
+before short options automatically.
 .PP
 The environment variable
 .B GETOPT_COMPATIBLE
