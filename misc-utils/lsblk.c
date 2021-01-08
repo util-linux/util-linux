@@ -2044,7 +2044,7 @@ int main(int argc, char *argv[])
 			add_uniq_column(COL_UUID);
 			add_uniq_column(COL_FSAVAIL);
 			add_uniq_column(COL_FSUSEPERC);
-			add_uniq_column(COL_TARGET);
+			add_uniq_column(COL_TARGETS);
 			break;
 		case 'm':
 			add_uniq_column(COL_NAME);
