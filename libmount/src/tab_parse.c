@@ -723,7 +723,9 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	/* necessary for /proc/mounts only, the /proc/self/mountinfo
 	 * parser sets the flag properly
 	 */
-	if (filename && strcmp(filename, _PATH_PROC_MOUNTS) == 0)
+	if (tb->fmt == MNT_FMT_SWAPS)
+		flags = MNT_FS_SWAP;
+	else if (filename && strcmp(filename, _PATH_PROC_MOUNTS) == 0)
 		flags = MNT_FS_KERNEL;
 
 	do {
