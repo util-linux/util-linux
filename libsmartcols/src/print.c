@@ -435,6 +435,51 @@ err:
 	return -errno;
 }
 
+static void print_json_data(struct libscols_table *tb,
+			    struct libscols_column *cl,
+			    const char *name,
+			    char *data,
+			    int is_last)
+{
+	switch (cl->json_type) {
+	case SCOLS_JSON_STRING:
+		/* name: "aaa" */
+		ul_jsonwrt_value_s(&tb->json, name, data, is_last);
+		break;
+	case SCOLS_JSON_NUMBER:
+		/* name: 123 */
+		ul_jsonwrt_value_raw(&tb->json, name, data, is_last);
+		break;
+	case SCOLS_JSON_BOOLEAN:
+		/* name: true|false */
+		ul_jsonwrt_value_boolean(&tb->json, name,
+			!*data ? 0 :
+			*data == '0' ? 0 :
+			*data == 'N' || *data == 'n' ? 0 : 1,
+			is_last);
+		break;
+	case SCOLS_JSON_ARRAY_STRING:
+	case SCOLS_JSON_ARRAY_NUMBER:
+		/* name: [ "aaa", "bbb", "ccc" ] */
+		ul_jsonwrt_array_open(&tb->json, name);
+
+		if (!scols_column_is_customwrap(cl))
+			ul_jsonwrt_value_s(&tb->json, NULL, data, 1);
+		else do {
+				char *next = cl->wrap_nextchunk(cl, data, cl->wrapfunc_data);
+
+				if (cl->json_type == SCOLS_JSON_ARRAY_STRING)
+					ul_jsonwrt_value_s(&tb->json, NULL, data, next ? 0 : 1);
+				else
+					ul_jsonwrt_value_raw(&tb->json, NULL, data, next ? 0 : 1);
+				data = next;
+		} while (data);
+
+		ul_jsonwrt_array_close(&tb->json, is_last);
+		break;
+	}
+}
+
 static int print_data(struct libscols_table *tb,
 		      struct libscols_column *cl,
 		      struct libscols_line *ln,	/* optional */
@@ -482,21 +527,7 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	case SCOLS_FMT_JSON:
-		switch (cl->json_type) {
-		case SCOLS_JSON_STRING:
-			ul_jsonwrt_value_s(&tb->json, name, data, is_last);
-			break;
-		case SCOLS_JSON_NUMBER:
-			ul_jsonwrt_value_raw(&tb->json, name, data, is_last);
-			break;
-		case SCOLS_JSON_BOOLEAN:
-			ul_jsonwrt_value_boolean(&tb->json, name,
-				!*data ? 0 :
-				*data == '0' ? 0 :
-				*data == 'N' || *data == 'n' ? 0 : 1,
-				is_last);
-			break;
-		}
+		print_json_data(tb, cl, name, data, is_last);
 		return 0;
 
 	case SCOLS_FMT_HUMAN:

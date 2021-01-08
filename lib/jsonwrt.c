@@ -44,7 +44,7 @@ void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
 		fmt->indent++;
 		break;
 	case UL_JSON_ARRAY:
-		fputs(name ? ": [\n" : "{\n", fmt->out);
+		fputs(name ? ": [\n" : "[\n", fmt->out);
 		fmt->indent++;
 		break;
 	case UL_JSON_VALUE:

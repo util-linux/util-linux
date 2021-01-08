@@ -93,7 +93,9 @@ enum {
 enum {
 	SCOLS_JSON_STRING    = 0,	/* default */
 	SCOLS_JSON_NUMBER    = 1,
-	SCOLS_JSON_BOOLEAN   = 2
+	SCOLS_JSON_BOOLEAN   = 2,
+	SCOLS_JSON_ARRAY_STRING = 3,        /* e.g. for multi-line (SCOLS_FL_WRAP) cells */
+	SCOLS_JSON_ARRAY_NUMBER	= 4
 };
 
 /*
