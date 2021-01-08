@@ -74,6 +74,7 @@ enum {
 	COL_FSTYPE,
 	COL_FSUSED,
 	COL_FSUSEPERC,
+	COL_FSROOTS,
 	COL_FSVERSION,
 	COL_TARGET,
 	COL_TARGETS,
@@ -164,6 +165,7 @@ static struct colinfo infos[] = {
 	[COL_FSTYPE]    = { "FSTYPE", 0.1, SCOLS_FL_TRUNC, N_("filesystem type") },
 	[COL_FSUSED]    = { "FSUSED", 5, SCOLS_FL_RIGHT, N_("filesystem size used") },
 	[COL_FSUSEPERC] = { "FSUSE%", 3, SCOLS_FL_RIGHT, N_("filesystem use percentage") },
+	[COL_FSROOTS]   = { "FSROOTS", 0.1, SCOLS_FL_WRAP, N_("mounted filesystem roots") },
 	[COL_FSVERSION] = { "FSVER", 0.1, SCOLS_FL_TRUNC, N_("filesystem version") },
 
 	[COL_TARGET]    = { "MOUNTPOINT",  0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
@@ -819,6 +821,24 @@ static char *device_get_data(
 				ul_buffer_append_string(&buf, "[SWAP]");
 			else
 				ul_buffer_append_string(&buf, mnt_fs_get_target(fs));
+			if (i + 1 < n)
+				ul_buffer_append_data(&buf, "\n", 1);
+		}
+		str = ul_buffer_get_data(&buf);
+		break;
+	}
+	case COL_FSROOTS:
+	{
+		size_t i, n = 0;
+		struct ul_buffer buf = UL_INIT_BUFFER;
+		struct libmnt_fs **fss = lsblk_device_get_filesystems(dev, &n);
+
+		for (i = 0; i < n; i++) {
+			struct libmnt_fs *fs = fss[i];
+			const char *root = mnt_fs_get_root(fs);
+			if (mnt_fs_is_swaparea(fs))
+				continue;
+			ul_buffer_append_string(&buf, root ? root : "/");
 			if (i + 1 < n)
 				ul_buffer_append_data(&buf, "\n", 1);
 		}
