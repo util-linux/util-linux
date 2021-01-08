@@ -51,6 +51,7 @@
 #include "optutils.h"
 #include "fileutils.h"
 #include "loopdev.h"
+#include "buffer.h"
 
 #include "lsblk.h"
 
@@ -75,6 +76,7 @@ enum {
 	COL_FSUSEPERC,
 	COL_FSVERSION,
 	COL_TARGET,
+	COL_TARGETS,
 	COL_LABEL,
 	COL_UUID,
 	COL_PTUUID,
@@ -164,7 +166,9 @@ static struct colinfo infos[] = {
 	[COL_FSUSEPERC] = { "FSUSE%", 3, SCOLS_FL_RIGHT, N_("filesystem use percentage") },
 	[COL_FSVERSION] = { "FSVER", 0.1, SCOLS_FL_TRUNC, N_("filesystem version") },
 
-	[COL_TARGET] = { "MOUNTPOINT", 0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
+	[COL_TARGET]    = { "MOUNTPOINT",  0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
+	[COL_TARGETS]   = { "MOUNTPOINTS", 0.10, SCOLS_FL_WRAP,  N_("all locations where device is mounted") },
+
 	[COL_LABEL]  = { "LABEL",   0.1, 0, N_("filesystem LABEL") },
 	[COL_UUID]   = { "UUID",    36,  0, N_("filesystem UUID") },
 
@@ -620,10 +624,9 @@ static char *get_vfs_attribute(struct lsblk_device *dev, int id)
 {
 	char *sizestr;
 	uint64_t vfs_attr = 0;
-	char *mnt;
 
 	if (!dev->fsstat.f_blocks) {
-		mnt = lsblk_device_get_mountpoint(dev);
+		const char *mnt = lsblk_device_get_mountpoint(dev);
 		if (!mnt || dev->is_swap)
 			return NULL;
 		if (statvfs(mnt, &dev->fsstat) != 0)
@@ -799,11 +802,27 @@ static char *device_get_data(
 		break;
 	case COL_TARGET:
 	{
-		char *s = lsblk_device_get_mountpoint(dev);
-		if (s)
-			str = xstrdup(s);
-		else
-			str = NULL;
+		const char *p = lsblk_device_get_mountpoint(dev);
+		if (p)
+			str = xstrdup(p);
+		break;
+	}
+	case COL_TARGETS:
+	{
+		size_t i, n = 0;
+		struct ul_buffer buf = UL_INIT_BUFFER;
+		struct libmnt_fs **fss = lsblk_device_get_filesystems(dev, &n);
+
+		for (i = 0; i < n; i++) {
+			struct libmnt_fs *fs = fss[i];
+			if (mnt_fs_is_swaparea(fs))
+				ul_buffer_append_string(&buf, "[SWAP]");
+			else
+				ul_buffer_append_string(&buf, mnt_fs_get_target(fs));
+			if (i + 1 < n)
+				ul_buffer_append_data(&buf, "\n", 1);
+		}
+		str = ul_buffer_get_data(&buf);
 		break;
 	}
 	case COL_LABEL:
@@ -2182,6 +2201,15 @@ int main(int argc, char *argv[])
 			        ci->type == COLTYPE_SORTNUM ? cmp_u64_cells : scols_cmpstr_cells,
 				NULL);
 		}
+		/* multi-line cells (now used for MOUNTPOINTS) */
+		if (fl & SCOLS_FL_WRAP) {
+			scols_column_set_wrapfunc(cl,
+						scols_wrapnl_chunksize,
+						scols_wrapnl_nextchunk,
+						NULL);
+			scols_column_set_safechars(cl, "\n");
+		}
+
 		if (lsblk->flags & LSBLK_JSON) {
 			switch (ci->type) {
 			case COLTYPE_SIZE:
@@ -2189,13 +2217,16 @@ int main(int argc, char *argv[])
 					break;
 				/* fallthrough */
 			case COLTYPE_NUM:
-				 scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
 				break;
 			case COLTYPE_BOOL:
 				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
 				break;
 			default:
-				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+				if (fl & SCOLS_FL_WRAP)
+					scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
+				else
+					scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 				break;
 			}
 		}

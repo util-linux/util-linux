@@ -46,6 +46,15 @@ case it is recommended to use
 before
 .B lsblk
 to synchronize with udev.
+.PP
+The relationship between block devices and filesystems is not always one-to-one.
+The filesystem may use more block devices, or the same filesystem may be accessible
+by more paths.  This is the reason why
+.B lsblk
+provides MOUNTPOINT and MOUNTPOINTS (pl.) columns.  The column MOUNTPOINT displays
+only one mount point (usually the last mounted instance of the filesystem), and
+the column MOUNTPOINTS displays by multi-line cell all mount points associated
+with the device.
 .SH OPTIONS
 .TP
 .BR \-a , " \-\-all"

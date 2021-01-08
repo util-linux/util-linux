@@ -12,6 +12,7 @@
 #include <sys/statvfs.h>
 
 #include <libsmartcols.h>
+#include <libmount.h>
 
 #include "c.h"
 #include "list.h"
@@ -33,7 +34,6 @@ UL_DEBUG_DECLARE_MASK(lsblk);
 
 struct lsblk {
 	struct libscols_table *table;	/* output table */
-
 	struct libscols_column *sort_col;/* sort output by this column */
 
 	int sort_id;			/* id of the sort column */
@@ -117,7 +117,9 @@ struct lsblk_device {
 
 	struct path_cxt	*sysfs;
 
-	char *mountpoint;	/* device mountpoint */
+	struct libmnt_fs **fss;	/* filesystems attached to the device */
+	size_t nfss;		/* number of items in fss[] */
+
 	struct statvfs fsstat;	/* statvfs() result */
 
 	int npartitions;	/* # of partitions this device has */
@@ -207,7 +209,9 @@ struct lsblk_iter {
 extern void lsblk_mnt_init(void);
 extern void lsblk_mnt_deinit(void);
 
-extern char *lsblk_device_get_mountpoint(struct lsblk_device *dev);
+extern void lsblk_device_free_filesystems(struct lsblk_device *dev);
+extern const char *lsblk_device_get_mountpoint(struct lsblk_device *dev);
+extern struct libmnt_fs **lsblk_device_get_filesystems(struct lsblk_device *dev, size_t *n);
 
 /* lsblk-properties.c */
 extern void lsblk_device_free_properties(struct lsblk_devprop *p);

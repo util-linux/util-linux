@@ -3,8 +3,6 @@
 #include "xalloc.h"
 #include "nls.h"
 
-#include <libmount.h>
-
 #include "lsblk.h"
 
 static struct libmnt_table *mtab, *swaps;
@@ -18,8 +16,10 @@ static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)
 	return 1;
 }
 
-static int is_active_swap(const char *filename)
+static struct libmnt_fs *get_active_swap(const char *filename)
 {
+	assert(filename);
+
 	if (!swaps) {
 		swaps = mnt_new_table();
 		if (!swaps)
@@ -39,19 +39,46 @@ static int is_active_swap(const char *filename)
 		}
 	}
 
-	return mnt_table_find_srcpath(swaps, filename, MNT_ITER_BACKWARD) != NULL;
+	return mnt_table_find_srcpath(swaps, filename, MNT_ITER_BACKWARD);
 }
 
-char *lsblk_device_get_mountpoint(struct lsblk_device *dev)
+void lsblk_device_free_filesystems(struct lsblk_device *dev)
+{
+	if (!dev)
+		return;
+
+	free(dev->fss);
+
+	dev->fss = NULL;
+	dev->nfss = 0;
+	dev->is_mounted = 0;
+	dev->is_swap = 0;
+}
+
+static void add_filesystem(struct lsblk_device *dev, struct libmnt_fs *fs)
+{
+	assert(dev);
+	assert(fs);
+
+	dev->fss = xrealloc(dev->fss, dev->nfss + 1 * sizeof(struct libmnt_fs *));
+	dev->fss[dev->nfss] = fs;
+	dev->nfss++;
+	dev->is_mounted = 1;
+}
+
+struct libmnt_fs **lsblk_device_get_filesystems(struct lsblk_device *dev, size_t *n)
 {
 	struct libmnt_fs *fs;
-	const char *fsroot;
+	struct libmnt_iter *itr = NULL;
+	dev_t devno;
 
 	assert(dev);
 	assert(dev->filename);
 
-	if (dev->is_mounted || dev->is_swap)
-		return dev->mountpoint;
+	if (dev->is_mounted)
+		goto done;
+
+	lsblk_device_free_filesystems(dev);	/* reset */
 
 	if (!mtab) {
 		mtab = mnt_new_table();
@@ -72,46 +99,72 @@ char *lsblk_device_get_mountpoint(struct lsblk_device *dev)
 		}
 	}
 
-	/* Note that maj:min in /proc/self/mountinfo does not have to match with
-	 * devno as returned by stat(), so we have to try devname too
-	 */
-	fs = mnt_table_find_devno(mtab, makedev(dev->maj, dev->min), MNT_ITER_BACKWARD);
-	if (!fs)
-		fs = mnt_table_find_srcpath(mtab, dev->filename, MNT_ITER_BACKWARD);
-	if (!fs) {
-		if (is_active_swap(dev->filename)) {
-			dev->mountpoint = xstrdup("[SWAP]");
-			dev->is_swap = 1;
-		} else
-			dev->mountpoint = NULL;
+	devno = makedev(dev->maj, dev->min);
 
-		return dev->mountpoint;
+	/* All mounpoint where is used devno or device name
+	 */
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	while (mnt_table_next_fs(mtab, itr, &fs) == 0) {
+		if (mnt_fs_get_devno(fs) != devno &&
+		    !mnt_fs_streq_srcpath(fs, dev->filename))
+			continue;
+		add_filesystem(dev, fs);
 	}
 
-	/* found */
-	fsroot = mnt_fs_get_root(fs);
-	if (fsroot && strcmp(fsroot, "/") != 0) {
-		/* hmm.. we found bind mount or btrfs subvolume, let's try to
-		 * get real FS root mountpoint */
-		struct libmnt_fs *rfs;
-		struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	/* Try mnt_table_find_srcpath() which also cannonicalize patchs, etc.
+	 */
+	if (!dev->nfss) {
+		fs = get_active_swap(dev->filename);
+		if (!fs) {
+			fs = mnt_table_find_srcpath(mtab, dev->filename, MNT_ITER_BACKWARD);
+			if (fs)
+				dev->is_swap = 1;
+		}
+		if (fs)
+			add_filesystem(dev, fs);
+	}
 
-		mnt_table_set_iter(mtab, itr, fs);
-		while (mnt_table_next_fs(mtab, itr, &rfs) == 0) {
-			fsroot = mnt_fs_get_root(rfs);
-			if ((!fsroot || strcmp(fsroot, "/") == 0)
-			    && mnt_fs_match_source(rfs, dev->filename, mntcache)) {
-				fs = rfs;
+done:
+	mnt_free_iter(itr);
+	if (n)
+		*n = dev->nfss;
+	return dev->fss;
+}
+
+/* Returns mounpoint where the device is mounted. If the device is used for
+ * more filesystems (subvolumes, ...) than returns the "best" one.
+ */
+const char *lsblk_device_get_mountpoint(struct lsblk_device *dev)
+{
+	struct libmnt_fs *fs = NULL;
+	const char *root;
+
+	lsblk_device_get_filesystems(dev, NULL);
+	if (!dev->nfss)
+		return NULL;
+
+	/* lsblk_device_get_filesystems() scans mountinfo/swaps in backward
+	 * order. It means the first in fss[] is the last mounted FS. Let's
+	 * keep it as default */
+	fs = dev->fss[0];
+	root = mnt_fs_get_root(fs);
+
+	if (root && strcmp(root, "/") != 0) {
+		/* FS is subvolume (or subdirectory bind-mount). Try to get
+		 * FS with "/" root */
+		size_t i;
+
+		for (i = 1; i < dev->nfss; i++) {
+			root = mnt_fs_get_root(dev->fss[i]);
+			if (!root || strcmp(root, "/") == 0) {
+				fs = dev->fss[i];
 				break;
 			}
 		}
-		mnt_free_iter(itr);
 	}
-
-	DBG(DEV, ul_debugobj(dev, "mountpoint: %s", mnt_fs_get_target(fs)));
-	dev->mountpoint = xstrdup(mnt_fs_get_target(fs));
-	dev->is_mounted = 1;
-	return dev->mountpoint;
+	if (mnt_fs_is_swaparea(fs))
+		return "[SWAP]";
+	return mnt_fs_get_target(fs);
 }
 
 void lsblk_mnt_init(void)

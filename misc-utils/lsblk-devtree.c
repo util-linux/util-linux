@@ -106,12 +106,12 @@ void lsblk_unref_device(struct lsblk_device *dev)
 
 		device_remove_dependences(dev);
 		lsblk_device_free_properties(dev->properties);
+		lsblk_device_free_filesystems(dev);
 
 		lsblk_unref_device(dev->wholedisk);
 
 		free(dev->dm_name);
 		free(dev->filename);
-		free(dev->mountpoint);
 		free(dev->dedupkey);
 
 		ul_unref_path(dev->sysfs);
