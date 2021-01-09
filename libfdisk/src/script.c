@@ -1038,7 +1038,11 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 
 		if (!strncasecmp(p, "start=", 6)) {
 			int pow = 0;
+
 			p += 6;
+			if (!*p)
+				continue;
+
 			rc = next_number(&p, &num, &pow);
 			if (!rc) {
 				if (pow) {	/* specified as <num><suffix> */
@@ -1055,6 +1059,9 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			int pow = 0;
 
 			p += 5;
+			if (!*p)
+				continue;
+
 			rc = next_number(&p, &num, &pow);
 			if (!rc) {
 				if (pow) {	/* specified as <num><suffix> */
