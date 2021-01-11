@@ -2127,7 +2127,7 @@ int main(int argc, char *argv[])
 		add_column(COL_SIZE);
 		add_column(COL_RO);
 		add_column(COL_TYPE);
-		add_column(COL_TARGET);
+		add_column(COL_TARGETS);
 	}
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
