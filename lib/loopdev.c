@@ -41,6 +41,7 @@
 #include "canonicalize.h"
 #include "blkdev.h"
 #include "debug.h"
+#include "fileutils.h"
 
 /*
  * Debug stuff (based on include/debug.h)
@@ -634,14 +635,30 @@ done:
 int is_loopdev(const char *device)
 {
 	struct stat st;
+	int rc = 0;
 
-	if (device && stat(device, &st) == 0 &&
-		S_ISBLK(st.st_mode) &&
-		major(st.st_rdev) == LOOPDEV_MAJOR)
-		return 1;
+	if (!device || stat(device, &st) != 0 || !S_ISBLK(st.st_mode))
+		rc = 0;
+	else if (major(st.st_rdev) == LOOPDEV_MAJOR)
+		rc = 1;
+	else {
+		/* It's possible that kernel creates a device with a different
+		 * major number ... check by /sys it's really loop device.
+		 */
+		char name[PATH_MAX], *cn, *p = NULL;
 
-	errno = ENODEV;
-	return 0;
+		snprintf(name, sizeof(name), _PATH_SYS_DEVBLOCK "/%d:%d",
+				major(st.st_rdev), minor(st.st_rdev));
+		cn = canonicalize_path(name);
+		if (cn)
+			p = stripoff_last_component(cn);
+		rc = p && startswith(p, "loop");
+		free(cn);
+	}
+
+	if (rc == 0)
+		errno = ENODEV;
+	return rc;
 }
 
 /*
