@@ -471,6 +471,7 @@ extern int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
 extern const char *mnt_fs_get_fs_options(struct libmnt_fs *fs);
 extern const char *mnt_fs_get_vfs_options(struct libmnt_fs *fs);
 extern const char *mnt_fs_get_user_options(struct libmnt_fs *fs);
+extern char *mnt_fs_get_vfs_options_all(struct libmnt_fs *fs);
 
 extern const char *mnt_fs_get_attributes(struct libmnt_fs *fs);
 extern int mnt_fs_set_attributes(struct libmnt_fs *fs, const char *optstr);

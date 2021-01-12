@@ -20,6 +20,7 @@ enum {
 	FL_VERBOSE	= (1 << 16),
 	FL_PSEUDO	= (1 << 17),
 	FL_REAL		= (1 << 18),
+	FL_VFS_ALL	= (1 << 19),
 
 	/* basic table settings */
 	FL_ASCII	= (1 << 20),

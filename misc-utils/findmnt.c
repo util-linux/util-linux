@@ -545,7 +545,9 @@ static char *get_data(struct libmnt_fs *fs, int num)
 			str = xstrdup(mnt_fs_get_options(fs));
 		break;
 	case COL_VFS_OPTIONS:
-		if (mnt_fs_get_vfs_options(fs))
+		if (flags & FL_VFS_ALL)
+			str = mnt_fs_get_vfs_options_all(fs);
+		else if (mnt_fs_get_vfs_options(fs))
 			str = xstrdup(mnt_fs_get_vfs_options(fs));
 		break;
 	case COL_FS_OPTIONS:
@@ -1262,6 +1264,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputc('\n', out);
 	fputs(_(" -x, --verify           verify mount table content (default is fstab)\n"), out);
 	fputs(_("     --verbose          print more details\n"), out);
+	fputs(_("     --vfs-all          print all VFS options\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(24));
@@ -1294,7 +1297,8 @@ int main(int argc, char *argv[])
 		FINDMNT_OPT_TREE,
 		FINDMNT_OPT_OUTPUT_ALL,
 		FINDMNT_OPT_PSEUDO,
-		FINDMNT_OPT_REAL
+		FINDMNT_OPT_REAL,
+		FINDMNT_OPT_VFS_ALL
 	};
 
 	static const struct option longopts[] = {
@@ -1338,6 +1342,7 @@ int main(int argc, char *argv[])
 		{ "tree",	    no_argument,       NULL, FINDMNT_OPT_TREE	 },
 		{ "real",	    no_argument,       NULL, FINDMNT_OPT_REAL	 },
 		{ "pseudo",	    no_argument,       NULL, FINDMNT_OPT_PSEUDO	 },
+		{ "vfs-all",	    no_argument,       NULL, FINDMNT_OPT_VFS_ALL },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -1511,6 +1516,9 @@ int main(int argc, char *argv[])
 			break;
 		case FINDMNT_OPT_REAL:
 			flags |= FL_REAL;
+			break;
+		case FINDMNT_OPT_VFS_ALL:
+			flags |= FL_VFS_ALL;
 			break;
 
 		case 'h':

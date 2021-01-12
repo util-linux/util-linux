@@ -262,6 +262,12 @@ It's possible to specify source (device) or target (mountpoint) to filter mount 
 .TP
 .B \-\-verbose
 Force findmnt to print more information (\fB\-\-verify\fP only for now).
+.TP
+.B \-\-vfs-all
+When used with
+.BR VFS-OPTIONS
+column, print all VFS (fs-independent) flags.  This option is designed for auditing purposes to
+list also default VFS kernel mount options which are normally not listed.
 .SH ENVIRONMENT
 .IP LIBMOUNT_FSTAB=<path>
 overrides the default location of the fstab file
