@@ -438,22 +438,15 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled() > 0) {
-		if (uid == 0) {
-			access_vector_t av = get_access_vector("passwd", "chfn");
+		char *user_cxt = NULL;
 
-			if (selinux_check_passwd_access(av) != 0) {
-				char *user_context;
+		if (uid == 0 && !ul_selinux_has_access("passwd", "chfn", &user_cxt))
+			errx(EXIT_FAILURE,
+			     _("%s is not authorized to change "
+			       "the finger info of %s"),
+			     user_cxt ? : _("Unknown user context"),
+			     ctl.username);
 
-				if (getprevcon(&user_context) < 0)
-					user_context = NULL;
-
-				errx(EXIT_FAILURE,
-				     _("%s is not authorized to change "
-				       "the finger info of %s"),
-				     user_context ? : _("Unknown user context"),
-				     ctl.username);
-			}
-		}
 		if (ul_setfscreatecon_from_file(_PATH_PASSWD))
 			errx(EXIT_FAILURE,
 			     _("can't set default context for %s"), _PATH_PASSWD);
