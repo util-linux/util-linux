@@ -14,16 +14,21 @@
 
 #include "selinux-utils.h"
 
+/* set the SELinux security context used for _creating_ a new file system object
+ *
+ * returns 0 on success,
+ *     or <0 on error
+ */
 int ul_setfscreatecon_from_file(char *orig_file)
 {
 	if (is_selinux_enabled() > 0) {
 		char *scontext = NULL;
 
 		if (getfilecon(orig_file, &scontext) < 0)
-			return 1;
+			return -1;
 		if (setfscreatecon(scontext) < 0) {
 			freecon(scontext);
-			return 1;
+			return -1;
 		}
 		freecon(scontext);
 	}
@@ -54,8 +59,10 @@ int ul_selinux_has_access(const char *classstr, const char *perm, char **user_cx
 	return rc == 0 ? 1 : 0;
 }
 
-/* return 0 on success, 0 on error; @cxt returns the default context for @path
- * and @st_mode (stat())
+/* Gets the default context for @path and @st_mode.
+ *
+ * returns 0 on success,
+ *     or <0 on error
  */
 int ul_selinux_get_default_context(const char *path, int st_mode, char **cxt)
 {
