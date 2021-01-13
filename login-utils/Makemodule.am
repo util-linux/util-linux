@@ -129,8 +129,8 @@ endif
 
 if HAVE_SELINUX
 chfn_chsh_sources += \
-	login-utils/selinux_utils.c \
-	login-utils/selinux_utils.h
+	lib/selinux-utils.c \
+	include/selinux-utils.h
 chfn_chsh_ldadd += -lselinux
 endif
 

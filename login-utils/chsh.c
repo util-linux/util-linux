@@ -47,7 +47,7 @@
 
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
-# include "selinux_utils.h"
+# include "selinux-utils.h"
 #endif
 
 

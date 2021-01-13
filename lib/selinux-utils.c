@@ -4,7 +4,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "selinux_utils.h"
+#include "selinux-utils.h"
 
 access_vector_t get_access_vector(const char *tclass, const char *op)
 {
