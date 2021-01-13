@@ -302,7 +302,7 @@ int main(int argc, char **argv)
 				     pw->pw_name);
 			}
 		}
-		if (setupDefaultContext(_PATH_PASSWD) != 0)
+		if (ul_setfscreatecon_from_file(_PATH_PASSWD) != 0)
 			errx(EXIT_FAILURE,
 			     _("can't set default context for %s"), _PATH_PASSWD);
 	}

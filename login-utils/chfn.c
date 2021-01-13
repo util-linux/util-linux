@@ -454,7 +454,7 @@ int main(int argc, char **argv)
 				     ctl.username);
 			}
 		}
-		if (setupDefaultContext(_PATH_PASSWD))
+		if (ul_setfscreatecon_from_file(_PATH_PASSWD))
 			errx(EXIT_FAILURE,
 			     _("can't set default context for %s"), _PATH_PASSWD);
 	}

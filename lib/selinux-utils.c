@@ -13,7 +13,7 @@ access_vector_t get_access_vector(const char *tclass, const char *op)
 	return tc ? string_to_av_perm(tc, op) : 0;
 }
 
-int setupDefaultContext(char *orig_file)
+int ul_setfscreatecon_from_file(char *orig_file)
 {
 	if (is_selinux_enabled() > 0) {
 		char *scontext = NULL;
