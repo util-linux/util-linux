@@ -150,12 +150,9 @@ static void pw_write(void)
 
 #ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled() > 0) {
-# ifdef HAVE_SELINUX_CONTEXT_T
-		security_context_t passwd_context = NULL;	/* deprecated */
-# else
-		char *passwd_context = NULL;			/* since libselinux >= 3.1 */
-# endif
+		char *passwd_context = NULL;
 		int ret = 0;
+
 		if (getfilecon(orig_file, &passwd_context) < 0) {
 			warnx(_("Can't get context for %s"), orig_file);
 			pw_error(orig_file, 1, 1);

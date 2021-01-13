@@ -291,11 +291,8 @@ int main(int argc, char **argv)
 			access_vector_t av = get_access_vector("passwd", "chsh");
 
 			if (selinux_check_passwd_access(av) != 0) {
-# ifdef HAVE_SELINUX_CONTEXT_T
-				security_context_t user_context;	/* deprecated */
-# else
-				char *user_context;			/* since libselinux >= 3.1 */
-# endif
+				char *user_context;
+
 				if (getprevcon(&user_context) < 0)
 					user_context = NULL;
 

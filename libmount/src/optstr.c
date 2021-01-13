@@ -871,13 +871,7 @@ int mnt_optstr_fix_secontext(char **optstr,
 			     char **next)
 {
 	int rc = 0;
-# ifdef HAVE_SELINUX_CONTEXT_T
-	security_context_t raw = NULL;		/* deprecated */
-# else
-	char *raw = NULL;			/* since libselinux >= 3.1 */
-# endif
-
-	char *p, *val, *begin, *end;
+	char *p, *val, *begin, *end, *raw = NULL;
 	size_t sz;
 
 	if (!optstr || !*optstr || !value || !valsz)
@@ -902,11 +896,7 @@ int mnt_optstr_fix_secontext(char **optstr,
 
 
 	/* translate the context */
-	rc = selinux_trans_to_raw_context(
-# ifdef HAVE_SELINUX_CONTEXT_T
-			(security_context_t)
-# endif
-			p, &raw);
+	rc = selinux_trans_to_raw_context(p, &raw);
 
 	DBG(CXT, ul_debug("SELinux context '%s' translated to '%s'",
 			p, rc == -1 ? "FAILED" : (char *) raw));

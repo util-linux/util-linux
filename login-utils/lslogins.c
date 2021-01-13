@@ -132,11 +132,7 @@ struct lslogins_user {
 	char *failed_tty;
 
 #ifdef HAVE_LIBSELINUX
-# ifdef HAVE_SELINUX_CONTEXT_T
-	security_context_t context;
-# else
 	char *context;
-# endif
 #endif
 	char *homedir;
 	char *shell;
