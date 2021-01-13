@@ -23,6 +23,7 @@
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
 # include <selinux/context.h>
+# include "selinux-utils.h"
 #endif
 #ifdef HAVE_LINUX_FIEMAP_H
 # include <linux/fs.h>
@@ -636,8 +637,11 @@ int main(int argc, char **argv)
 				err(EXIT_FAILURE,
 					_("%s: unable to obtain selinux file label"),
 					ctl.devname);
-			if (matchpathcon(ctl.devname, ctl.devstat.st_mode, &oldcontext))
-				errx(EXIT_FAILURE, _("unable to matchpathcon()"));
+			if (ul_selinux_get_default_context(ctl.devname,
+						ctl.devstat.st_mode, &oldcontext))
+				errx(EXIT_FAILURE,
+					_("%s: unable to obtain default selinux file label"),
+					ctl.devname);
 		}
 		if (!(newcontext = context_new(oldcontext)))
 			errx(EXIT_FAILURE, _("unable to create new selinux context"));

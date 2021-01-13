@@ -66,6 +66,9 @@ mkswap_LDADD += libblkid.la
 endif
 if HAVE_SELINUX
 mkswap_LDADD += -lselinux
+mkswap_SOURCES += \
+	lib/selinux-utils.c \
+	include/selinux-utils.h
 endif
 endif # BUILD_MKSWAP
 

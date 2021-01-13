@@ -1,8 +1,16 @@
+/*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
+ * Written by Karel Zak <kzak@redhat.com> [January 2021]
+ */
 #include <selinux/context.h>
 #include <selinux/selinux.h>
+#include <selinux/label.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
+#include <errno.h>
 
 #include "selinux-utils.h"
 
@@ -46,3 +54,25 @@ int ul_selinux_has_access(const char *classstr, const char *perm, char **user_cx
 	return rc == 0 ? 1 : 0;
 }
 
+/* return 0 on success, 0 on error; @cxt returns the default context for @path
+ * and @st_mode (stat())
+ */
+int ul_selinux_get_default_context(const char *path, int st_mode, char **cxt)
+{
+	struct selabel_handle *hnd;
+	struct selinux_opt options[SELABEL_NOPT] = {};
+	int rc = 0;
+
+	*cxt = NULL;
+
+	hnd = selabel_open(SELABEL_CTX_FILE, options, SELABEL_NOPT);
+	if (!hnd)
+		return -errno;
+
+	if (selabel_lookup(hnd, cxt, path, st_mode) != 0)
+		rc = -errno
+			;
+	selabel_close(hnd);
+
+	return rc;
+}
