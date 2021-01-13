@@ -954,7 +954,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	    !dm_uuid &&
 	    blkid_probe_is_wholedisk(pr)) {
 
-		/**
+		/*
 		 * pktcdvd.ko accepts only these ioctls:
 		 *   CDROMEJECT CDROMMULTISESSION CDROMREADTOCENTRY
 		 *   CDROM_LAST_WRITTEN CDROM_SEND_PACKET SCSI_IOCTL_SEND_COMMAND
