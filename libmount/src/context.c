@@ -1764,7 +1764,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 {
 	const char *path = NULL;
 	struct libmnt_cache *cache;
-	const char *t, *v, *src;
+	const char *t, *v, *src, *type;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
 
@@ -1784,6 +1784,11 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	 * where the source is a quasi-path (//foo/bar)
 	 */
 	if (!src || mnt_fs_is_netfs(cxt->fs))
+		return 0;
+
+	/* ZFS source is always "dataset", not a real path */
+	type = mnt_fs_get_fstype(cxt->fs);
+	if (type && strcmp(type, "zfs") == 0)
 		return 0;
 
 	DBG(CXT, ul_debugobj(cxt, "srcpath '%s'", src));
