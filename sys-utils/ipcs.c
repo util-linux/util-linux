@@ -216,13 +216,19 @@ static void do_shm (char format, int unit)
 		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_KB : unit,
 			       _("max seg size"), lim.shmmax, "\n", 0);
 
-		tmp = (uint64_t) lim.shmall * pgsz;
-		/* overflow handling, at least we don't print ridiculous small values */
-		if (lim.shmall != 0 && tmp / lim.shmall != pgsz) {
-			tmp = UINT64_MAX - (UINT64_MAX % pgsz);
+		if (unit == IPC_UNIT_KB || unit == IPC_UNIT_DEFAULT) {
+			ipc_print_size(IPC_UNIT_DEFAULT,
+			       _("max total shared memory (kbytes)"), (pgsz / 1024) *
+			       (uint64_t) lim.shmall, "\n", 0);
 		}
-		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_KB : unit,
-			       _("max total shared memory"), tmp, "\n", 0);
+		else {
+			tmp = (uint64_t) lim.shmall * pgsz;
+			/* overflow handling, at least we don't print ridiculous small values */
+			if (lim.shmall != 0 && tmp / lim.shmall != pgsz)
+			        tmp = UINT64_MAX - (UINT64_MAX % pgsz);
+
+			ipc_print_size(unit, _("max total shared memory"), tmp, "\n", 0);
+		}
 		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_BYTES : unit,
 			       _("min seg size"), lim.shmmin, "\n", 0);
 		return;
