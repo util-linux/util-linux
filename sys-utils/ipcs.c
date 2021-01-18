@@ -217,9 +217,11 @@ static void do_shm (char format, int unit)
 			       _("max seg size"), lim.shmmax, "\n", 0);
 
 		if (unit == IPC_UNIT_KB || unit == IPC_UNIT_DEFAULT) {
-			ipc_print_size(IPC_UNIT_DEFAULT,
-			       _("max total shared memory (kbytes)"), (pgsz / 1024) *
-			       (uint64_t) lim.shmall, "\n", 0);
+			tmp = (uint64_t) lim.shmall * (pgsz / 1024);
+			if (lim.shmall != 0 && tmp / lim.shmall != pgsz / 1024)
+				tmp = UINT64_MAX - (UINT64_MAX % (pgsz / 1024));
+
+			ipc_print_size(IPC_UNIT_DEFAULT, _("max total shared memory (kbytes)"), tmp, "\n", 0);
 		}
 		else {
 			tmp = (uint64_t) lim.shmall * pgsz;
