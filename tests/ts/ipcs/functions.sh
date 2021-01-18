@@ -55,7 +55,7 @@ IPCS_CMD=(
 #  ... it's a problem for admins who want to use 75557863725TB of RAM for shm)
 #
 IPCS_LIMITS=(
-	$($TS_HELPER_SYSINFO INT_MAX)
+	32768
 	$($TS_HELPER_SYSINFO ULONG_MAX32)
 	$($TS_HELPER_SYSINFO ULONG_MAX32)
 )
