@@ -63,6 +63,8 @@ IPCS_LIMITS=(
 # list of indexes = 0..(sizeof Array - 1)
 IPCS_IDX=$(seq 0 $(( ${#IPCS_PROCFILES[*]} - 1 )))
 
+UINT64_MAX=$($TS_HELPER_SYSINFO UINT64_MAX)
+
 # checker
 function ipcs_limits_check {
 	for i in $IPCS_IDX; do
@@ -72,16 +74,17 @@ function ipcs_limits_check {
 		a=$(eval ${IPCS_KERNEL_CMD[$i]})
 		b=$(eval ${IPCS_CMD[$i]})
 
+		# follow the way how ipcs handles u64 overflow
+		max_kbytes=$(bc <<< "$UINT64_MAX - ($UINT64_MAX % ($PAGE_SIZE / 1024))")
+
 		#echo
-		#echo "KERNEL-CMD: ${IPCS_KERNEL_CMD[$i]}"
-		#echo "KERNEL-RAW: $(cat ${IPCS_PROCFILES[$i]})"
-		#echo "IPCS-CMD:   ${IPCS_CMD[$i]}"
+		#echo "kernel kbytes: $a"
+		#echo "lsipc kbytes:  $b"
+		#echo "max kbytes:    $max_kbytes"
 		#echo
 
-		# overflow is handled differently because we don't have large
-		# int math, see https://github.com/karelzak/util-linux/issues/51
-		if [ $(bc <<<"$a >= 2^64/1024") -eq 1 ]; then
-			a=$(bc <<<"(2^64 - $PAGE_SIZE)/1024")
+		if [ $(bc <<<"$a > $max_kbytes") -eq 1 ]; then
+			a=$max_kbytes
 		fi
 
 		if [ x"$a" == x"$b" ]; then

@@ -19,6 +19,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
+#include <stdint.h>
+#include <inttypes.h>
 
 typedef struct {
 	const char	*name;
@@ -72,6 +74,12 @@ static int hlp_ulong_max(void)
 	return 0;
 }
 
+static int hlp_u64_max(void)
+{
+	printf("%" PRIu64 "\n", UINT64_MAX);
+	return 0;
+}
+
 static int hlp_ulong_max32(void)
 {
 #if __WORDSIZE == 64
@@ -91,6 +99,7 @@ static mntHlpfnc hlps[] =
 	{ "LONG_MAX",   hlp_long_max	},
 	{ "ULONG_MAX",  hlp_ulong_max	},
 	{ "ULONG_MAX32",hlp_ulong_max32	},
+	{ "UINT64_MAX", hlp_u64_max     },
 	{ "byte-order", hlp_endianness  },
 	{ NULL, NULL }
 };
