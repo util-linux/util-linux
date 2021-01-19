@@ -17,7 +17,7 @@ includedir=@includedir@
 Name: mount
 Description: mount library
 Version: @LIBMOUNT_VERSION@
-Requires.private: blkid @LIBSELINUX@ @LIBCRYPTSETUP@
+Requires.private: blkid @SELINUX_LIBS@ @CRYPTSETUP_LIBS@
 Cflags: -I${includedir}/libmount
 Libs: -L${libdir} -lmount
 Libs.private: @LIBDL@
