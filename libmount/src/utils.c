@@ -333,7 +333,9 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"spufs",
 		"sysfs",
 		"tmpfs",
-		"tracefs"
+		"tracefs",
+		"vboxsf",
+		"virtiofs"
 	};
 
 	assert(type);
