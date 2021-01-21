@@ -390,13 +390,17 @@ int main(int argc, char **argv)
 	sigaction(SIGINT, &sa, &sa_int);
 
 #ifdef DEBUGGING
-	dbf = fopen(DEBUG_OUTPUT, "w");
-	for (int i = 1; i < argc; i++) {
-		if (i > 1)
-			debug(" ");
-		debug(argv[i]);
+	{
+		int i;
+
+		dbf = fopen(DEBUG_OUTPUT, "w");
+		for (i = 1; i < argc; i++) {
+			if (i > 1)
+				debug(" ");
+			debug(argv[i]);
+		}
+		debug("\n");
 	}
-	debug("\n");
 #endif				/* DEBUGGING */
 
 	/* Parse command-line arguments. */

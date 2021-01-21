@@ -100,7 +100,7 @@ int ipc_shm_get_limits(struct ipc_limits *lim)
 int ipc_shm_get_info(int id, struct shm_data **shmds)
 {
 	FILE *f;
-	int i = 0, maxid;
+	int i = 0, maxid, j;
 	char buf[BUFSIZ];
 	struct shm_data *p;
 	struct shmid_ds dummy;
@@ -164,7 +164,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 shm_fallback:
 	maxid = shmctl(0, SHM_INFO, &dummy);
 
-	for (int j = 0; j <= maxid; j++) {
+	for (j = 0; j <= maxid; j++) {
 		int shmid;
 		struct shmid_ds shmseg;
 		struct ipc_perm *ipcp = &shmseg.shm_perm;
@@ -248,7 +248,7 @@ static void get_sem_elements(struct sem_data *p)
 int ipc_sem_get_info(int id, struct sem_data **semds)
 {
 	FILE *f;
-	int i = 0, maxid;
+	int i = 0, maxid, j;
 	struct sem_data *p;
 	struct seminfo dummy;
 	union semun arg;
@@ -304,7 +304,7 @@ sem_fallback:
 	arg.array = (ushort *) (void *)&dummy;
 	maxid = semctl(0, 0, SEM_INFO, arg);
 
-	for (int j = 0; j <= maxid; j++) {
+	for (j = 0; j <= maxid; j++) {
 		int semid;
 		struct semid_ds semseg;
 		struct ipc_perm *ipcp = &semseg.sem_perm;
@@ -356,7 +356,7 @@ void ipc_sem_free_info(struct sem_data *semds)
 int ipc_msg_get_info(int id, struct msg_data **msgds)
 {
 	FILE *f;
-	int i = 0, maxid;
+	int i = 0, maxid, j;
 	struct msg_data *p;
 	struct msqid_ds dummy;
 	struct msqid_ds msgseg;
@@ -416,7 +416,7 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 msg_fallback:
 	maxid = msgctl(0, MSG_INFO, &dummy);
 
-	for (int j = 0; j <= maxid; j++) {
+	for (j = 0; j <= maxid; j++) {
 		int msgid;
 		struct ipc_perm *ipcp = &msgseg.msg_perm;
 

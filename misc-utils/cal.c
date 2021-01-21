@@ -668,7 +668,9 @@ static int monthname_to_number(struct cal_control *ctl, const char *name)
 static void weekdays_init(struct cal_control *ctl)
 {
 	size_t wd;
-	for (int i = 0; i < DAYS_IN_WEEK; i++) {
+	int i;
+
+	for (i = 0; i < DAYS_IN_WEEK; i++) {
 		wd = (i + ctl->weekstart) % DAYS_IN_WEEK;
 		ctl->weekdays[i] = nl_langinfo(ABDAY_1 + wd);
 	}

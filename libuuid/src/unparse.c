@@ -42,8 +42,9 @@ static char const hexdigits_upper[16] = "0123456789ABCDEF";
 static void uuid_fmt(const uuid_t uuid, char *buf, char const fmt[restrict])
 {
 	char *p = buf;
+	int i;
 
-	for (int i = 0; i < 16; i++) {
+	for (i = 0; i < 16; i++) {
 		if (i == 4 || i == 6 || i == 8 || i == 10) {
 			*p++ = '-';
 		}
