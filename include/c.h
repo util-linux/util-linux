@@ -64,6 +64,21 @@
 # define ignore_result(x) ((void) (x))
 #endif /* !__GNUC__ */
 
+
+/* "restrict" keyword fallback */
+#if __STDC__ != 1
+# define restrict __restrict /* use implementation __ format */
+#else
+# ifndef __STDC_VERSION__
+#  define restrict __restrict /* use implementation __ format */
+# else
+#  if __STDC_VERSION__ < 199901L
+#   define restrict __restrict /* use implementation __ format */
+#  endif
+# endif
+#endif
+
+
 /*
  * It evaluates to 1 if the attribute/feature is supported by the current
  * compilation target. Fallback for old compilers.
