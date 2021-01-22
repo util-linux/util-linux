@@ -39,7 +39,7 @@
 static char const hexdigits_lower[16] = "0123456789abcdef";
 static char const hexdigits_upper[16] = "0123456789ABCDEF";
 
-static void uuid_fmt(const uuid_t uuid, char *buf, char const fmt[restrict])
+static void uuid_fmt(const uuid_t uuid, char *buf, char const *restrict fmt)
 {
 	char *p = buf;
 	int i;
