@@ -28,5 +28,5 @@ jobs:
         run: .github/workflows/cibuild.sh INSTALL
       - name: Make distcheck
         run: .github/workflows/cibuild.sh DISTCHECK
-      - make: Check
+      - name: Check
         run: sudo -E .github/workflows/cibuild.sh CHECK
