@@ -1,10 +1,12 @@
 #!/bin/bash
      
 set -ex
-     
+
+# Xenial uses btrfs-tools, but since Focal it's btrfs-progs
+#
 PACKAGES=(
 	bc
-	btrfs-tools
+	btrfs-progs
 	dnsutils
 	libcap-ng-dev
 	libncursesw5-dev
