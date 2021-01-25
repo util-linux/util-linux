@@ -1,0 +1,32 @@
+name: Build test
+on:
+  push:
+    branches:
+      - 'cibuild'
+    paths-ignore:
+      - 'Documentation/**'
+      - 'lib*/docs/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        env:
+          - { COMPILER: "gcc",   COMPILER_VERSION: "10" }
+          - { COMPILER: "clang", COMPILER_VERSION: "10" }
+    env: ${{ matrix.env }}
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v1
+      - name: Ubuntu setup      (${{ env.COMPILER }}-${{ env.COMPILER_VERSION }})
+        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+      - name: Congure & Make    (${{ env.COMPILER }}-${{ env.COMPILER_VERSION }})
+        run: .github/workflows/cibuild.sh CONFIGURE MAKE
+      - name: Make install 
+        run: .github/workflows/cibuild.sh INSTALL
+      - name: Make distcheck
+        run: .github/workflows/cibuild.sh DISTCHECK
+      - make: Check
+        run: sudo -E .github/workflows/cibuild.sh CHECK
