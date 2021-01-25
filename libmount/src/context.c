@@ -2319,9 +2319,12 @@ end:
 	return rc;
 }
 
-/* apply @fs to @cxt -- use mnt_context_apply_fstab() if not sure
+/* apply @fs to @cxt;
+ *
+ * @mflags are mount flags as specified on command-line -- used only to save
+ * MS_RDONLY which is allowed for non-root users.
  */
-int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
+static int apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs, unsigned long mflags)
 {
 	int rc;
 
@@ -2333,6 +2336,7 @@ int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
 			DBG(CXT, ul_debugobj(cxt, "use default optsmode"));
 			cxt->optsmode = MNT_OMODE_AUTO;
 		}
+
 	}
 
 	DBG(CXT, ul_debugobj(cxt, "apply entry:"));
@@ -2360,9 +2364,15 @@ int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
 
 	if (cxt->optsmode & MNT_OMODE_IGNORE)
 		;
-	else if (cxt->optsmode & MNT_OMODE_REPLACE)
+	else if (cxt->optsmode & MNT_OMODE_REPLACE) {
 		rc = mnt_fs_set_options(cxt->fs, mnt_fs_get_options(fs));
 
+		/* mount --read-only for non-root users is allowed */
+		if (rc == 0 && (mflags & MS_RDONLY)
+		    && mnt_context_is_restricted(cxt)
+		    && cxt->optsmode == MNT_OMODE_USER)
+			rc = mnt_fs_append_options(cxt->fs, "ro");
+	}
 	else if (cxt->optsmode & MNT_OMODE_APPEND)
 		rc = mnt_fs_append_options(cxt->fs, mnt_fs_get_options(fs));
 
@@ -2380,7 +2390,7 @@ done:
 }
 
 static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
-		     int direction)
+		     int direction, unsigned long mflags)
 {
 	struct libmnt_fs *fs = NULL;
 	const char *src, *tgt;
@@ -2418,7 +2428,14 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
 	if (!fs)
 		return -MNT_ERR_NOFSTAB;	/* not found */
 
-	return mnt_context_apply_fs(cxt, fs);
+	return apply_fs(cxt, fs, mflags);
+}
+
+/* apply @fs to @cxt -- use mnt_context_apply_fstab() if not sure
+ */
+int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
+{
+	return apply_fs(cxt, fs, 0);
 }
 
 /**
@@ -2498,7 +2515,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		DBG(CXT, ul_debugobj(cxt, "trying to apply fstab (src=%s, target=%s)", src, tgt));
 		rc = mnt_context_get_fstab(cxt, &tab);
 		if (!rc)
-			rc = apply_table(cxt, tab, MNT_ITER_FORWARD);
+			rc = apply_table(cxt, tab, MNT_ITER_FORWARD, mflags);
 	}
 
 	/* try mtab */
@@ -2510,7 +2527,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		else
 			rc = mnt_context_get_mtab(cxt, &tab);
 		if (!rc)
-			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD);
+			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD, mflags);
 	}
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
