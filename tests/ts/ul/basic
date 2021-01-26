@@ -18,10 +18,14 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="basic tests"
 
+
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_UL"
+
+# This test provides different result on some terminals and virtual machines
+TS_KNOWN_FAIL="yes"
 
 ts_log "printable characters"
 $TS_CMD_UL < $TS_SELF/basic.input >> $TS_OUTPUT 2>> $TS_ERRLOG
