@@ -36,14 +36,25 @@ if [[ "$COMPILER" == clang ]]; then
     wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
     add-apt-repository -y "deb http://apt.llvm.org/$RELEASE/   llvm-toolchain-$RELEASE-$COMPILER_VERSION  main"
     PACKAGES+=(clang-$COMPILER_VERSION lldb-$COMPILER_VERSION lld-$COMPILER_VERSION clangd-$COMPILER_VERSION)
+    CC="clang-$COMPILER_VERSION"
+    CXX="clang++-$COMPILER_VERSION"
+    AR="llvm-ar-$COMPILER_VERSION"
 elif [[ "$COMPILER" == gcc ]]; then
     # Latest gcc stack deb packages provided by
     # https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
     PACKAGES+=(gcc-$COMPILER_VERSION)
+    CC="gcc-$COMPILER_VERSION"
+    CXX="g++-$COMPILER_VERSION"
+    AR="gcc-ar-$COMPILER_VERSION"
 else
     fatal "Unknown compiler: $COMPILER"
 fi
+
+export CC
+export CXX
+export AR
+
 
 apt-get -y update --fix-missing
 apt-get -y build-dep util-linux

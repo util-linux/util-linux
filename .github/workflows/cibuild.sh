@@ -23,7 +23,7 @@ for phase in "${PHASES[@]}"; do
 		sudo -E git clean -xdf
 
 		./autogen.sh
-		./configure $opts
+		CC=$CC CXX=$CXX ./configure $opts
 		;;
         MAKE)
 		make -j
