@@ -20,13 +20,11 @@ jobs:
     steps:
       - name: Repository checkout
         uses: actions/checkout@v1
-      - name: Ubuntu setup      (${{ env.COMPILER }}-${{ env.COMPILER_VERSION }})
+      - name: Ubuntu setup
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
-      - name: Congure & Make    (${{ env.COMPILER }}-${{ env.COMPILER_VERSION }})
+      - name: Congure & Make
         run: .github/workflows/cibuild.sh CONFIGURE MAKE
-      - name: Make install 
-        run: .github/workflows/cibuild.sh INSTALL
-      - name: Make distcheck
-        run: .github/workflows/cibuild.sh DISTCHECK
       - name: Check
         run: sudo -E .github/workflows/cibuild.sh CHECK
+      - name: Make install
+        run: .github/workflows/cibuild.sh INSTALL

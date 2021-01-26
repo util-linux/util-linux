@@ -26,8 +26,8 @@ for phase in "${PHASES[@]}"; do
 		./configure $opts
 		;;
         MAKE)
-		make -j V=1
-		make -j check-programs V=1
+		make -j
+		make -j check-programs
 		;;
 	INSTALL)
 		make install DESTDIR=/tmp/dest
