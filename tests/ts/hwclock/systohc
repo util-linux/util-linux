@@ -29,6 +29,10 @@ ts_skip_nonroot
 if [ "$TRAVIS_DIST" == "precise" ]; then
 	ts_skip "https://github.com/karelzak/util-linux/issues/1082"
 fi
+if [ "$GITHUB_ACTIONS" == "true" ]; then
+	ts_skip "virtual machine"
+fi
+
 ts_check_prog "bc"
 ts_check_prog "sntp"
 
