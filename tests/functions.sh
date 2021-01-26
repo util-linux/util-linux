@@ -691,15 +691,41 @@ function ts_fstype_by_devname {
 	return $?
 }
 
+function ts_vfs_dump {
+	if [ "$TS_SHOWDIFF" == "yes" -a "$TS_KNOWN_FAIL" != "yes" ]; then
+		echo
+		echo "{{{{ VFS dump:"
+		findmnt
+		echo "}}}}"
+	fi
+}
+
+function ts_blk_dump {
+	if [ "$TS_SHOWDIFF" == "yes" -a "$TS_KNOWN_FAIL" != "yes" ]; then
+		echo
+		echo "{{{{ blkdevs dump:"
+		lsblk -o+FSTYPE
+		echo "}}}}"
+	fi
+}
+
 function ts_device_has {
 	local TAG="$1"
 	local VAL="$2"
 	local DEV="$3"
 	local vl=""
+	local res=""
 
 	vl=$(ts_blkidtag_by_devname "$TAG" "$DEV")
 	test $? = 0 -a "$vl" = "$VAL"
-	return $?
+	res=$?
+
+	if [ "$res" != 0 ]; then
+		ts_vfs_dump
+		ts_blk_dump
+	fi
+
+	return $res
 }
 
 function ts_is_uuid()
