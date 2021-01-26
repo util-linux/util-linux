@@ -1,6 +1,14 @@
 
  Note that items with (!) have high priority.
 
+tests
+-----
+  - add MacOS to GitHub Actions (.github/workflows/cibuild.yml). Note, we have used
+    Mac in Travis-CI (see .travis.yml).
+
+  - add Coverity to GitHub Actions (see for example .github/workflows/coverity.yml
+    in systemd repo).
+
 script (lib/pty-session.c)
 --------------------------
   - (!) add #ifdefs and optional code for non-signalfd() systems
