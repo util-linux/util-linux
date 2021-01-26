@@ -27,14 +27,14 @@ ts_check_test_command "$TS_CMD_UMOUNT"
 
 ts_skip_nonroot
 ts_check_losetup
-ts_check_prog "mkfs.ext3"
+ts_check_prog "mkfs.ext2"
 
 ts_device_init
 DEVICE=$TS_LODEV
 
-mkfs.ext3 $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE"
+mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
 
-ts_device_has "TYPE" "ext3" $DEVICE || ts_die "Cannot find ext3 on $DEVICE"
+ts_device_has "TYPE" "ext2" $DEVICE || ts_die "Cannot find ext2 on $DEVICE"
 
 # Don't forget that $TS_MOUNTPOINT is subtest specific, don't create it
 # globally!
@@ -42,7 +42,7 @@ ts_device_has "TYPE" "ext3" $DEVICE || ts_die "Cannot find ext3 on $DEVICE"
 
 ts_init_subtest "one-type"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -t ext3 $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -t ext2 $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $TS_MOUNTPOINT
 ts_log "Success"
@@ -51,7 +51,7 @@ ts_finalize_subtest
 
 ts_init_subtest "more-types"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -t foo,bar,ext3 $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -t foo,bar,ext2 $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $TS_MOUNTPOINT
 ts_log "Success"
@@ -60,7 +60,7 @@ ts_finalize_subtest
 
 ts_init_subtest "more-types-fstab"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-ts_fstab_add $DEVICE $TS_MOUNTPOINT "foo,bar,ext3"
+ts_fstab_add $DEVICE $TS_MOUNTPOINT "foo,bar,ext2"
 $TS_CMD_MOUNT $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_fstab_clean
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
@@ -80,7 +80,7 @@ ts_finalize_subtest
 
 ts_init_subtest "type-pattern-neg"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -i -t nofoo,bar,ext3,ext2,ext4 $DEVICE $TS_MOUNTPOINT &> /dev/null
+$TS_CMD_MOUNT -i -t nofoo,bar,ext2,ext2,ext4 $DEVICE $TS_MOUNTPOINT &> /dev/null
 ts_is_mounted $DEVICE && ts_die "$DEVICE unexpectedly mounted"
 ts_log "Success"
 ts_finalize_subtest

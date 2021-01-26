@@ -27,7 +27,7 @@ ts_check_test_command "$TS_CMD_UMOUNT"
 
 ts_skip_nonroot
 ts_check_losetup
-ts_check_prog "mkfs.ext3"
+ts_check_prog "mkfs.ext2"
 ts_check_prog "dd"
 ts_check_prog "stat"
 

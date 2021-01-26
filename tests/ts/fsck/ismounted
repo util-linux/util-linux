@@ -26,16 +26,16 @@ ts_check_test_command "$TS_HELPER_ISMOUNTED"
 
 ts_skip_nonroot
 ts_check_losetup
-ts_check_prog "mkfs.ext3"
+ts_check_prog "mkfs.ext2"
 
 > $TS_OUTPUT
 
 ts_device_init
 DEVICE=$TS_LODEV
 
-mkfs.ext3 $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE"
+mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
 
-ts_device_has "TYPE" "ext3" $DEVICE || ts_die "Cannot find ext3 on $DEVICE"
+ts_device_has "TYPE" "ext2" $DEVICE || ts_die "Cannot find ext2 on $DEVICE"
 
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 

@@ -35,7 +35,7 @@ ts_check_test_command "$TS_HELPER_MD5"
 
 ts_skip_nonroot
 ts_check_losetup
-ts_check_prog "mkfs.ext3"
+ts_check_prog "mkfs.ext2"
 
 has_mtab=$( ts_has_mtab_support )
 [ "$has_mtab" == "yes" ] || ts_skip "mtab unsupported"
@@ -51,7 +51,7 @@ function mtab_checksum()
 ts_device_init
 DEVICE=$TS_LODEV
 
-mkfs.ext3 $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE"
+mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
 
 
 ts_init_subtest "mount"

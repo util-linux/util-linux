@@ -29,7 +29,7 @@ ts_check_test_command "$TS_CMD_LOSETUP"
 
 ts_skip_nonroot
 ts_check_losetup
-ts_check_prog "mkfs.ext3"
+ts_check_prog "mkfs.ext2"
 
 function verify_mount_dev {
 	local dev=$1
@@ -47,7 +47,7 @@ function verify_mount_dev {
 #
 BACKFILE=$(ts_image_init 10)
 
-mkfs.ext3 -F $BACKFILE &> /dev/null || ts_die "Cannot make ext3 on $BACKFILE"
+mkfs.ext2 -F $BACKFILE &> /dev/null || ts_die "Cannot make ext2 on $BACKFILE"
 
 # All tests are separated by "udevadm settle" because loop device exists some time after
 # "losetup -d". This device confuses some tests. And find-race-condition, tests,

@@ -15,7 +15,7 @@ ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_UUIDGEN"
 
 ts_skip_nonroot
-ts_check_prog "mkfs.ext3"
+ts_check_prog "mkfs.ext2"
 ts_check_prog "mkfs.ext4"
 
 ts_init_py libmount
@@ -88,7 +88,7 @@ function is_mounted {
 
 
 udevadm settle
-ts_device_has "TYPE" "ext4" $DEVICE || ts_die "Cannot find ext3 on $DEVICE"
+ts_device_has "TYPE" "ext4" $DEVICE || ts_die "Cannot find ext2 on $DEVICE"
 
 
 ts_init_subtest "mount-by-devname"
@@ -143,7 +143,7 @@ ts_finalize_subtest
 ts_init_subtest "mount-loopdev"
 mkdir -p $MOUNTPOINT &> /dev/null
 img=$(ts_image_init)
-mkfs.ext3 -F $img &> /dev/null
+mkfs.ext2 -F $img &> /dev/null
 udevadm settle
 
 $PYTHON $TESTPROG --mount -o loop $img $MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
