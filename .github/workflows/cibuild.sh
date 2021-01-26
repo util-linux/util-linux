@@ -2,8 +2,20 @@
  
 PHASES=(${@:-CONFIGURE MAKE INSTALL CHECK DISTCHECK})
 COMPILER="${COMPILER:?}"
+COMPILER_VERSION="${COMPILER_VERSION:?}"
+
+if [[ "$COMPILER" == clang ]]; then
+    CC="clang"
+    CXX="clang++"
+elif [[ "$COMPILER" == gcc ]]; then
+    CC="gcc"
+    CXX="g++"
+fi
 
 set -ex
+
+export CC="$CC"
+export CXX="$CXX"
 
 for phase in "${PHASES[@]}"; do
     case $phase in
