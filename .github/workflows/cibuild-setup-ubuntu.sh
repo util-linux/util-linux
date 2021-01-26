@@ -51,9 +51,9 @@ else
     fatal "Unknown compiler: $COMPILER"
 fi
 
-export CC
-export CXX
-export AR
+export CC="$CC"
+export CXX="$CXX"
+export AR="$AR"
 
 
 apt-get -y update --fix-missing
