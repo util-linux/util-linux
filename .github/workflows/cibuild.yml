@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - 'cibuild'
+      - 'master'
+      - 'next'
+      - 'stable/**'
     paths-ignore:
       - 'Documentation/**'
       - 'lib*/docs/**'
