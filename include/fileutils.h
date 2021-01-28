@@ -55,7 +55,7 @@ static inline int is_same_inode(const int fd, const struct stat *st)
 extern int dup_fd_cloexec(int oldfd, int lowfd);
 extern unsigned int get_fd_tabsize(void);
 
-extern int mkdir_p(const char *path, mode_t mode);
+extern int ul_mkdir_p(const char *path, mode_t mode);
 extern char *stripoff_last_component(char *path);
 
 /* This is readdir()-like function, but skips "." and ".." directory entries */
@@ -87,7 +87,7 @@ static inline int close_range(unsigned int first, unsigned int last)
 #endif	/* __linux__ */
 
 #ifndef HAVE_CLOSE_RANGE
-extern void close_all_fds(unsigned int first, unsigned int last);
+extern void ul_close_all_fds(unsigned int first, unsigned int last);
 #endif
 
 #define UL_COPY_READ_ERROR (-1)

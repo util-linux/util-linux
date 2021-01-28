@@ -1956,7 +1956,7 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 
 		/* supported only for root or non-suid mount(8) */
 		if (!mnt_context_is_restricted(cxt)) {
-			rc = mkdir_p(tgt, mode);
+			rc = ul_mkdir_p(tgt, mode);
 			if (rc)
 				DBG(CXT, ul_debug("mkdir %s failed: %m", tgt));
 		} else

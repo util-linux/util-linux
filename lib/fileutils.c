@@ -130,7 +130,7 @@ unsigned int get_fd_tabsize(void)
 }
 
 #ifndef HAVE_CLOSE_RANGE
-void close_all_fds(unsigned int first, unsigned int last)
+void ul_close_all_fds(unsigned int first, unsigned int last)
 {
 	struct dirent *d;
 	DIR *dir;
@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
 # ifdef HAVE_CLOSE_RANGE
 		close_range(STDERR_FILENO + 1, ~0U);
 # else
-		close_all_fds(STDERR_FILENO + 1, ~0U);
+		ul_close_all_fds(STDERR_FILENO + 1, ~0U);
 # endif
 	} else if (strcmp(argv[1], "--copy-file") == 0) {
 		int ret = ul_copy_file(STDIN_FILENO, STDOUT_FILENO);
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 #endif
 
 
-int mkdir_p(const char *path, mode_t mode)
+int ul_mkdir_p(const char *path, mode_t mode)
 {
 	char *p, *dir;
 	int rc = 0;

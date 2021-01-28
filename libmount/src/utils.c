@@ -1311,7 +1311,7 @@ static int test_mkdir(struct libmnt_test *ts, int argc, char *argv[])
 {
 	int rc;
 
-	rc = mkdir_p(argv[1], S_IRWXU |
+	rc = ul_mkdir_p(argv[1], S_IRWXU |
 			 S_IRGRP | S_IXGRP |
 			 S_IROTH | S_IXOTH);
 	if (rc)

@@ -1365,7 +1365,7 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 #ifdef HAVE_CLOSE_RANGE
 	close_range(STDERR_FILENO + 1, ~0U);
 #else
-	close_all_fds(STDERR_FILENO + 1, ~0U);
+	ul_close_all_fds(STDERR_FILENO + 1, ~0U);
 #endif
 }
 
