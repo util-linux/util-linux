@@ -86,11 +86,17 @@ static unsigned long start_data = ~0UL;	/* start of the data (256 MB = max) */
 static unsigned long end_data = 0;	/* end of the data */
 
 
-/* Guarantee access to at least 8kB at a time */
-#define ROMBUFFER_BITS	13
-#define ROMBUFFERSIZE	(1 << ROMBUFFER_BITS)
-#define ROMBUFFERMASK	(ROMBUFFERSIZE - 1)
-static char read_buffer[ROMBUFFERSIZE * 2];
+/* Guarantee access to at least 2 * blksize at a time */
+#define CRAMFS_ROMBUFFER_BITS	13
+#define CRAMFS_ROMBUFFERSIZE	(1 << CRAMFS_ROMBUFFER_BITS)
+#define CRAMFS_ROMBUFFERMASK	(CRAMFS_ROMBUFFERSIZE - 1)
+
+/* Defaults, updated in main() according to block size */
+static size_t rombufbits = CRAMFS_ROMBUFFER_BITS;
+static size_t rombufsize = CRAMFS_ROMBUFFERSIZE;
+static size_t rombufmask = CRAMFS_ROMBUFFERMASK;
+
+static char *read_buffer;
 static unsigned long read_buffer_block = ~0UL;
 
 static z_stream stream;
@@ -298,19 +304,19 @@ static void print_node(char type, struct cramfs_inode *i, char *name)
  */
 static void *romfs_read(unsigned long offset)
 {
-	unsigned int block = offset >> ROMBUFFER_BITS;
+	unsigned int block = offset >> rombufbits;
 	if (block != read_buffer_block) {
 		ssize_t x;
 
 		read_buffer_block = block;
-		if (lseek(fd, block << ROMBUFFER_BITS, SEEK_SET) == (off_t) -1)
+		if (lseek(fd, block << rombufbits, SEEK_SET) == (off_t) -1)
 			warn(_("seek failed"));
 
-		x = read(fd, read_buffer, ROMBUFFERSIZE * 2);
+		x = read(fd, read_buffer, rombufsize * 2);
 		if (x < 0)
 			warn(_("read romfs failed"));
 	}
-	return read_buffer + (offset & ROMBUFFERMASK);
+	return read_buffer + (offset & rombufmask);
 }
 
 static struct cramfs_inode *cramfs_iget(struct cramfs_inode *i)
@@ -701,10 +707,21 @@ int main(int argc, char **argv)
 	test_super(&start, &length);
 	test_crc(start);
 
-	if(opt_extract) {
+	if (opt_extract) {
+		size_t bufsize = 0;
+
 		if (blksize == 0)
 			blksize = getpagesize();
+
+		/* re-calculate according to blksize */
+		bufsize = rombufsize = blksize * 2;
+		rombufbits = 0;
+		while (bufsize >>= 1)
+			rombufbits++;
+		rombufmask = rombufsize - 1;
+
 		outbuffer = xmalloc(blksize * 2);
+		read_buffer = xmalloc(rombufsize * 2);
 		test_fs(start);
 	}
 
