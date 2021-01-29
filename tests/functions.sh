@@ -1078,3 +1078,17 @@ function ts_has_ncurses_support {
 		echo "no"
 	fi
 }
+
+# Get path to the ASan runtime DSO the given binary was compiled with
+function ts_get_asan_rt_path {
+	local binary="${1?}"
+	local rt_path
+
+	ts_check_prog "ldd"
+	ts_check_prog "awk"
+
+	rt_path="$(ldd "$binary" | awk '/lib.+asan.*.so/ {print $3; exit}')"
+	if [ -n "$rt_path" -a -f "$rt_path" ]; then
+		echo "$rt_path"
+	fi
+}
