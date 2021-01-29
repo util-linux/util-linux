@@ -2,14 +2,14 @@
  
 PHASES=(${@:-CONFIGURE MAKE INSTALL CHECK DISTCHECK})
 COMPILER="${COMPILER:?}"
-COMPILER_VERSION="${COMPILER_VERSION:?}"
+COMPILER_VERSION="${COMPILER_VERSION}"
 
 if [[ "$COMPILER" == clang ]]; then
-    CC="clang"
-    CXX="clang++"
+    CC="clang${COMPILER_VERSION:+-$COMPILER_VERSION}"
+    CXX="clang++${COMPILER_VERSION:+-$COMPILER_VERSION}"
 elif [[ "$COMPILER" == gcc ]]; then
-    CC="gcc"
-    CXX="g++"
+    CC="gcc${COMPILER_VERSION:+-$COMPILER_VERSION}"
+    CXX="g++${COMPILER_VERSION:+-$COMPILER_VERSION}"
 fi
 
 set -ex
@@ -28,7 +28,7 @@ for phase in "${PHASES[@]}"; do
 			--without-python \
 			--enable-werror"
 
-		if [[ "$COMPILER" == clang ]]; then
+		if [[ "$COMPILER" == clang* ]]; then
 			opts="$opts --enable-fuzzing-engine"
 		fi
 
