@@ -411,6 +411,23 @@ static inline int xusleep(useconds_t usec)
 #define stringify_value(s) stringify(s)
 #define stringify(s) #s
 
+/* Detect if we're compiled with Address Sanitizer
+ *  - gcc (__SANITIZE_ADDRESS__)
+ *  - clang (__has_feature(address_sanitizer))
+ */
+#if !defined(HAS_FEATURE_ADDRESS_SANITIZER)
+#  ifdef __SANITIZE_ADDRESS__
+#      define HAS_FEATURE_ADDRESS_SANITIZER 1
+#  elif defined(__has_feature)
+#    if __has_feature(address_sanitizer)
+#      define HAS_FEATURE_ADDRESS_SANITIZER 1
+#    endif
+#  endif
+#  if !defined(HAS_FEATURE_ADDRESS_SANITIZER)
+#    define HAS_FEATURE_ADDRESS_SANITIZER 0
+#  endif
+#endif
+
 /*
  * UL_ASAN_BLACKLIST is a macro to tell AddressSanitizer (a compile-time
  * instrumentation shipped with Clang and GCC) to not instrument the
