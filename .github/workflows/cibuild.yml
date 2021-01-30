@@ -1,5 +1,9 @@
 name: Build test
 on:
+  pull_request:
+    paths-ignore:
+      - 'Documentation/**'
+      - 'lib*/docs/**'
   push:
     branches:
       - 'cibuild'
