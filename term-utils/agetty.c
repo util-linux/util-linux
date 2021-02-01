@@ -439,7 +439,7 @@ int main(int argc, char **argv)
 	termio_init(&options, &termios);
 
 	/* Write the modem init string and DO NOT flush the buffers. */
-	if (serial_tty_option(&options, F_INITSTRING) &&
+	if (options.flags & F_INITSTRING &&
 	    options.initstring && *options.initstring != '\0') {
 		debug("writing init string\n");
 		write_all(STDOUT_FILENO, options.initstring,
