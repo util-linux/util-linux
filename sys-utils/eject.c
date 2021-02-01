@@ -850,7 +850,7 @@ int main(int argc, char **argv)
 	char *disk = NULL;
 	char *mountpoint = NULL;
 	int worked = 0;    /* set to 1 when successfully ejected */
-	struct eject_control ctl = { NULL };
+	struct eject_control ctl = { .fd = -1 };
 
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -920,14 +920,14 @@ int main(int argc, char **argv)
 	if (ctl.n_option) {
 		info(_("device is `%s'"), ctl.device);
 		verbose(&ctl, _("exiting due to -n/--noop option"));
-		return EXIT_SUCCESS;
+		goto done;
 	}
 
 	/* handle -i option */
 	if (ctl.i_option) {
 		open_device(&ctl);
 		manual_eject(&ctl);
-		return EXIT_SUCCESS;
+		goto done;
 	}
 
 	/* handle -a option */
@@ -938,7 +938,7 @@ int main(int argc, char **argv)
 			verbose(&ctl, _("%s: disabling auto-eject mode"), ctl.device);
 		open_device(&ctl);
 		auto_eject(&ctl);
-		return EXIT_SUCCESS;
+		goto done;
 	}
 
 	/* handle -t option */
@@ -947,7 +947,7 @@ int main(int argc, char **argv)
 		open_device(&ctl);
 		close_tray(ctl.fd);
 		set_device_speed(&ctl);
-		return EXIT_SUCCESS;
+		goto done;
 	}
 
 	/* handle -T option */
@@ -956,7 +956,7 @@ int main(int argc, char **argv)
 		open_device(&ctl);
 		toggle_tray(ctl.fd);
 		set_device_speed(&ctl);
-		return EXIT_SUCCESS;
+		goto done;
 	}
 
 	/* handle -X option */
@@ -964,7 +964,7 @@ int main(int argc, char **argv)
 		verbose(&ctl, _("%s: listing CD-ROM speed"), ctl.device);
 		open_device(&ctl);
 		list_speeds(&ctl);
-		return EXIT_SUCCESS;
+		goto done;
 	}
 
 	/* handle -x option only */
@@ -1002,7 +1002,7 @@ int main(int argc, char **argv)
 		open_device(&ctl);
 		changer_select(&ctl);
 		set_device_speed(&ctl);
-		return EXIT_SUCCESS;
+		goto done;
 	}
 
 	/* if user did not specify type of eject, try all four methods */
@@ -1044,8 +1044,11 @@ int main(int argc, char **argv)
 	if (!worked)
 		errx(EXIT_FAILURE, _("unable to eject"));
 
+done:
 	/* cleanup */
-	close(ctl.fd);
+	if (ctl.fd >= 0)
+		close(ctl.fd);
+
 	free(ctl.device);
 	free(mountpoint);
 
