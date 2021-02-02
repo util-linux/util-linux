@@ -210,6 +210,9 @@ endif
 if BUILD_CHRT
 dist_bashcompletion_DATA += bash-completion/chrt
 endif
+if BUILD_UCLAMPSET
+dist_bashcompletion_DATA += bash-completion/uclampset
+endif
 if BUILD_IONICE
 dist_bashcompletion_DATA += bash-completion/ionice
 endif

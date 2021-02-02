@@ -18,3 +18,10 @@ dist_man_MANS += schedutils/taskset.1
 taskset_SOURCES = schedutils/taskset.c
 taskset_LDADD = $(LDADD) libcommon.la
 endif
+
+if BUILD_UCLAMPSET
+usrbin_exec_PROGRAMS += uclampset
+dist_man_MANS += schedutils/uclampset.1
+uclampset_SOURCES = schedutils/uclampset.c
+uclampset_LDADD = $(LDADD) libcommon.la
+endif
