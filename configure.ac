@@ -2196,12 +2196,9 @@ AS_IF([test "x$build_chrt" = xyes], [
 
 UL_ENABLE_ALIAS([uclampset], [schedutils])
 UL_BUILD_INIT([uclampset])
-UL_REQUIRES_HAVE([uclampset], [schedsetter], [sched_set functions])
+UL_REQUIRES_SYSCALL_CHECK([uclampset],
+	[UL_CHECK_SYSCALL([sched_setattr])], [sched_setattr])
 AM_CONDITIONAL([BUILD_UCLAMPSET], [test "x$build_uclampset" = xyes])
-
-AS_IF([test "x$build_uclampset" = xyes], [
-	UL_CHECK_SYSCALL([sched_setattr])
-])
 
 
 AC_ARG_ENABLE([wall],
