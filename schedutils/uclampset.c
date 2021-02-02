@@ -51,27 +51,29 @@ static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
 
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 		_(" %1$s [options]\n"
 		  " %1$s [options] --pid <pid> | --system | <command> <arg>...\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Show or change the utilization clamping attributes of a process or the system.\n"), out);
-	fputs(_("Utilization range: [0:1024]\n"), out);
-	fputs(_("Use special -1 value to reset to system's default\n"), out);
+	fputs(_("Show or change the utilization clamping attributes.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -m                   util_min value to set\n"), out);
-	fputs(_(" -M                   util_max value to set\n"), out);
+	fputs(_(" -m <value>           util_min value to set\n"), out);
+	fputs(_(" -M <value>           util_max value to set\n"), out);
 	fputs(_(" -a, --all-tasks      operate on all the tasks (threads) for a given pid\n"), out);
-	fputs(_(" -p, --pid            operate on existing given pid\n"), out);
+	fputs(_(" -p, --pid <pid>      operate on existing given pid\n"), out);
 	fputs(_(" -s, --system         operate on system\n"), out);
 	fputs(_(" -R, --reset-on-fork  set reset-on-fork flag\n"), out);
 	fputs(_(" -v, --verbose        display status information\n"), out);
 
-	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(22));
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Utilization value range is [0:1024]. Use special -1 value to "
+		"reset to system's default.\n"), out);
 
 	printf(USAGE_MAN_TAIL("uclampset(1)"));
 	exit(EXIT_SUCCESS);
