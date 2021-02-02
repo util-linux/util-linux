@@ -174,17 +174,23 @@
 /* deprecated */
 #define _PATH_RAWDEVCTL_OLD	"/dev/rawctl"
 
+#define _PATH_PROC_KERNEL	"/proc/sys/kernel"
+
 /* ipc paths */
 #define _PATH_PROC_SYSV_MSG	"/proc/sysvipc/msg"
 #define _PATH_PROC_SYSV_SEM	"/proc/sysvipc/sem"
 #define _PATH_PROC_SYSV_SHM	"/proc/sysvipc/shm"
-#define _PATH_PROC_IPC_MSGMAX	"/proc/sys/kernel/msgmax"
-#define _PATH_PROC_IPC_MSGMNB	"/proc/sys/kernel/msgmnb"
-#define _PATH_PROC_IPC_MSGMNI	"/proc/sys/kernel/msgmni"
-#define _PATH_PROC_IPC_SEM	"/proc/sys/kernel/sem"
-#define _PATH_PROC_IPC_SHMALL	"/proc/sys/kernel/shmall"
-#define _PATH_PROC_IPC_SHMMAX	"/proc/sys/kernel/shmmax"
-#define _PATH_PROC_IPC_SHMMNI	"/proc/sys/kernel/shmmni"
+#define _PATH_PROC_IPC_MSGMAX	_PATH_PROC_KERNEL "/msgmax"
+#define _PATH_PROC_IPC_MSGMNB	_PATH_PROC_KERNEL "/msgmnb"
+#define _PATH_PROC_IPC_MSGMNI	_PATH_PROC_KERNEL "/msgmni"
+#define _PATH_PROC_IPC_SEM	_PATH_PROC_KERNEL "/sem"
+#define _PATH_PROC_IPC_SHMALL	_PATH_PROC_KERNEL "/shmall"
+#define _PATH_PROC_IPC_SHMMAX	_PATH_PROC_KERNEL "/shmmax"
+#define _PATH_PROC_IPC_SHMMNI	_PATH_PROC_KERNEL "/shmmni"
+
+/* util clamp */
+#define _PATH_PROC_UCLAMP_MIN	_PATH_PROC_KERNEL "/sched_util_clamp_min"
+#define _PATH_PROC_UCLAMP_MAX	_PATH_PROC_KERNEL "/sched_util_clamp_max"
 
 /* irqtop paths */
 #define _PATH_PROC_INTERRUPTS	"/proc/interrupts"
@@ -193,6 +199,7 @@
 
 /* kernel command line */
 #define _PATH_PROC_CMDLINE	"/proc/cmdline"
+
 
 /* logger paths */
 #define _PATH_DEVLOG		"/dev/log"
@@ -207,8 +214,5 @@
 #define _PATH_DEV_RFKILL	"/dev/rfkill"
 #define _PATH_SYS_RFKILL	"/sys/class/rfkill"
 
-#define _PATH_PROC_KERNEL(file)	"/proc/sys/kernel" #file
-#define _PATH_PROC_UCLAMP_MIN	_PATH_PROC_KERNEL(/sched_util_clamp_min)
-#define _PATH_PROC_UCLAMP_MAX	_PATH_PROC_KERNEL(/sched_util_clamp_max)
 
 #endif /* PATHNAMES_H */
