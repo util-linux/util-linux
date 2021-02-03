@@ -128,6 +128,7 @@ struct su_context {
 	struct passwd	*pwd;			/* new user info */
 	char		*pwdbuf;		/* pwd strings */
 
+	const char	*tty_path;		/* tty device path */
 	const char	*tty_name;		/* tty_path without /dev prefix */
 	const char	*tty_number;		/* end of the tty_path */
 
@@ -178,7 +179,7 @@ static void init_tty(struct su_context *su)
 	su->isterm = isatty(STDIN_FILENO) ? 1 : 0;
 	DBG(TTY, ul_debug("initialize [is-term=%s]", su->isterm ? "true" : "false"));
 	if (su->isterm)
-		get_terminal_name(NULL, &su->tty_name, &su->tty_number);
+		get_terminal_name(&su->tty_path, &su->tty_name, &su->tty_number);
 }
 
 /*
@@ -366,8 +367,8 @@ static void supam_authenticate(struct su_context *su)
 	if (is_pam_failure(rc))
 		goto done;
 
-	if (su->tty_name) {
-		rc = pam_set_item(su->pamh, PAM_TTY, su->tty_name);
+	if (su->tty_path) {
+		rc = pam_set_item(su->pamh, PAM_TTY, su->tty_path);
 		if (is_pam_failure(rc))
 			goto done;
 	}
