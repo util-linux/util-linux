@@ -805,9 +805,11 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 	if (is_pam_failure(rc))
 		loginpam_err(pamh, rc);
 
-	rc = pam_set_item(pamh, PAM_TTY, cxt->tty_name);
-	if (is_pam_failure(rc))
-		loginpam_err(pamh, rc);
+	if (cxt->tty_path) {
+		rc = pam_set_item(pamh, PAM_TTY, cxt->tty_path);
+		if (is_pam_failure(rc))
+			loginpam_err(pamh, rc);
+	}
 
 	/*
 	 * Andrew.Taylor@cal.montage.ca: Provide a user prompt to PAM so that
