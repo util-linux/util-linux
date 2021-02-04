@@ -222,8 +222,8 @@ endif
 
 if BUILD_HARDLINK
 usrbin_exec_PROGRAMS += hardlink
-hardlink_SOURCES = misc-utils/hardlink.c
-hardlink_LDADD = $(LDADD) libcommon.la
+hardlink_SOURCES = misc-utils/hardlink.c lib/monotonic.c
+hardlink_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
 hardlink_CFLAGS = $(AM_CFLAGS)
 if HAVE_PCRE2_POSIX
 hardlink_LDADD += $(PCRE2_POSIX_LIBS)

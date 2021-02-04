@@ -41,6 +41,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "monotonic.h"
 
 /* Use libpcre2posix if it's available */
 #ifdef HAVE_PCRE2_POSIX
@@ -110,7 +111,7 @@ enum log_level {
  * @xattr_comparisons: The number of extended attribute comparisons
  * @comparisons: The number of comparisons
  * @saved: The (exaggerated) amount of space saved
- * @start_time: The time we started at, in seconds since some unspecified point
+ * @start_time: The time we started at
  */
 static struct statistics {
     int started;
@@ -119,7 +120,7 @@ static struct statistics {
     size_t xattr_comparisons;
     size_t comparisons;
     double saved;
-    double start_time;
+    struct timeval start_time;
 } stats;
 
 /**
@@ -241,19 +242,6 @@ static const char *format(double bytes)
 }
 
 /**
- * gettime() - Get the current time from the system
- */
-static double gettime(void)
-{
-    struct timeval tv = { 0, 0 };
-
-    if (gettimeofday(&tv, NULL) != 0)
-        jlog(JLOG_SYSERR, "Cannot read current time");
-
-    return (double) tv.tv_sec + (double) tv.tv_usec / 1000000;
-}
-
-/**
  * regexec_any - Match against multiple regular expressions
  * @pregs: A linked list of regular expressions
  * @what:  The string to match against
@@ -323,6 +311,11 @@ static int compare_nodes_ino(const void *_a, const void *_b)
  */
 static void print_stats(void)
 {
+    struct timeval end = { 0, 0 }, delta = { 0, 0 };
+
+    gettime_monotonic(&end);
+    timersub(&end, &stats.start_time, &delta);
+
     jlog(JLOG_SUMMARY, "Mode:     %s", opts.dry_run ? "dry-run" : "real");
     jlog(JLOG_SUMMARY, "Files:    %zu", stats.files);
     jlog(JLOG_SUMMARY, "Linked:   %zu files", stats.linked);
@@ -331,7 +324,8 @@ static void print_stats(void)
 #endif
     jlog(JLOG_SUMMARY, "Compared: %zu files", stats.comparisons);
     jlog(JLOG_SUMMARY, "Saved:    %s", format(stats.saved));
-    jlog(JLOG_SUMMARY, "Duration: %.2f seconds", gettime() - stats.start_time);
+    jlog(JLOG_SUMMARY, "Duration: %ld.%06ld seconds",
+		    (long)delta.tv_sec, (long)delta.tv_usec);
 }
 
 /**
@@ -1062,7 +1056,6 @@ int main(int argc, char *argv[])
 
     /* Pretty print numeric output */
     setlocale(LC_NUMERIC, "");
-    stats.start_time = gettime();
 
     if (atexit(to_be_called_atexit) != 0)
         err(EXIT_FAILURE, _("cannot register exit handler"));
@@ -1072,6 +1065,7 @@ int main(int argc, char *argv[])
     if (optind == argc)
 	errx(EXIT_FAILURE, _("no directory of dile specified"));
 
+    gettime_monotonic(&stats.start_time);
     stats.started = TRUE;
 
     for (; optind < argc; optind++)
