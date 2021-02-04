@@ -23,7 +23,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 #define _POSIX_C_SOURCE 200112L /* POSIX functions */
 #define _XOPEN_SOURCE      600  /* nftw() */
 
@@ -36,7 +35,6 @@
 #include <search.h>             /* tsearch() and friends */
 #include <signal.h>		/* SIG*, sigaction */
 #include <getopt.h>		/* getopt_long() */
-
 #include <ctype.h>              /* tolower() */
 
 #include "nls.h"
@@ -51,8 +49,8 @@
 # include <regex.h>              /* regcomp(), regsearch() */
 #endif
 
-#ifdef HAVE_XATTR
-#include <sys/xattr.h>          /* listxattr, getxattr */
+#ifdef HAVE_SYS_XATTR_H
+# include <sys/xattr.h>          /* listxattr, getxattr */
 #endif
 
 /**
@@ -318,7 +316,7 @@ static void print_stats(void)
     jlog(JLOG_SUMMARY, "Mode:     %s", opts.dry_run ? "dry-run" : "real");
     jlog(JLOG_SUMMARY, "Files:    %zu", stats.files);
     jlog(JLOG_SUMMARY, "Linked:   %zu files", stats.linked);
-#ifdef HAVE_XATTR
+#ifdef HAVE_SYS_XATTR_H
     jlog(JLOG_SUMMARY, "Compared: %zu xattrs", stats.xattr_comparisons);
 #endif
     jlog(JLOG_SUMMARY, "Compared: %zu files", stats.comparisons);
@@ -347,7 +345,7 @@ static int handle_interrupt(void)
     return FALSE;
 }
 
-#ifdef HAVE_XATTR
+#ifdef HAVE_SYS_XATTR_H
 
 /**
  * malloc_or_die -- Wrapper for malloc()
@@ -922,7 +920,7 @@ static int help(const char *name)
     puts("  -p, --ignore-mode     Ignore changes of file mode");
     puts("  -o, --ignore-owner    Ignore owner changes");
     puts("  -t, --ignore-time     Ignore timestamps (when testing for equality)");
-#ifdef HAVE_XATTR
+#ifdef HAVE_SYS_XATTR_H
     puts("  -X, --respect-xattrs  Respect extended attributes");
 #endif
     puts("  -m, --maximize        Maximize the hardlink count, remove the file with");

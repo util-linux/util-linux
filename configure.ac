@@ -339,6 +339,7 @@ AC_CHECK_HEADERS([ \
 	sys/types.h \
 	sys/ucred.h \
 	sys/un.h \
+	sys/xattr.h \
 	unistd.h \
 	utmp.h \
 	utmpx.h \
