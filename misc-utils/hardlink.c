@@ -83,20 +83,12 @@ struct file {
 
 /**
  * enum log_level - Logging levels
- * @JLOG_SYSFAT:  Fatal error message with errno, will be printed to stderr
- * @JLOG_FATAL:   Fatal error message with errno, will be printed to stderr
- * @JLOG_SYSERR:  Error message with errno, will be printed to stderr
- * @JLOG_ERROR:   Error message, will be printed to stderr
  * @JLOG_SUMMARY: Default log level
  * @JLOG_INFO:    Verbose logging (verbose == 1)
  * @JLOG_DEBUG1:  Verbosity 2
  * @JLOG_DEBUG2:  Verbosity 3
  */
 enum log_level {
-    JLOG_SYSFAT = -4,
-    JLOG_FATAL = -3,
-    JLOG_SYSERR = -2,
-    JLOG_ERROR = -1,
     JLOG_SUMMARY,
     JLOG_INFO,
     JLOG_DEBUG1,
@@ -191,21 +183,13 @@ __attribute__ ((format(printf, 2, 3)))
 static void jlog(enum log_level level, const char *format, ...)
 {
     FILE *stream = (level >= 0) ? stdout : stderr;
-    int errno_ = errno;
     va_list args;
 
-    if (level <= opts.verbosity) {
-        if (level <= JLOG_FATAL)
-            fprintf(stream, "ERROR: ");
-        else if (level < 0)
-            fprintf(stream, "WARNING: ");
+    if (level <= (unsigned int) opts.verbosity) {
         va_start(args, format);
         vfprintf(stream, format, args);
         va_end(args);
-        if (level == JLOG_SYSERR || level == JLOG_SYSFAT)
-            fprintf(stream, ": %s\n", strerror(errno_));
-        else
-            fputc('\n', stream);
+        fputc('\n', stream);
     }
 }
 
@@ -599,11 +583,9 @@ static int file_contents_equal(const struct file *a, const struct file *b)
     return !handle_interrupt() && cmp == 0;
   err:
     if (fa == NULL || fb == NULL)
-        jlog(JLOG_SYSERR, "Cannot open %s",
-             fa ? b->links->path : a->links->path);
+        warn(_("cannot open %s"), fa ? b->links->path : a->links->path);
     else
-        jlog(JLOG_SYSERR, "Cannot read %s",
-             ferror(fa) ? a->links->path : b->links->path);
+        warn(_("cannot read %s"), ferror(fa) ? a->links->path : b->links->path);
     cmp = 1;
     goto out;
 }
@@ -689,12 +671,11 @@ static int file_link(struct file *a, struct file *b)
         snprintf(new_path, len, "%s.hardlink-temporary", b->links->path);
 
         if (link(a->links->path, new_path) != 0) {
-            jlog(JLOG_SYSERR, "Cannot link %s to %s", a->links->path, new_path);
+            warn(_("cannot link %s to %s"), a->links->path, new_path);
             free(new_path);
             return FALSE;
         } else if (rename(new_path, b->links->path) != 0) {
-            jlog(JLOG_SYSERR, "Cannot rename %s to %s", a->links->path,
-                 new_path);
+            warn(_("cannot rename %s to %s"), a->links->path, new_path);
             unlink(new_path);   /* cleanup failed rename */
             free(new_path);
             return FALSE;
@@ -750,7 +731,7 @@ static int inserter(const char *fpath, const struct stat *sb, int typeflag,
     if (handle_interrupt())
         return 1;
     if (typeflag == FTW_DNR || typeflag == FTW_NS)
-        jlog(JLOG_SYSERR, "Cannot read %s", fpath);
+        warn(_("cannot read %s"), fpath);
     if (typeflag != FTW_F || !S_ISREG(sb->st_mode))
         return 0;
 
@@ -784,7 +765,7 @@ static int inserter(const char *fpath, const struct stat *sb, int typeflag,
     node = tsearch(fil, &files_by_ino, compare_nodes_ino);
 
     if (node == NULL)
-        return jlog(JLOG_SYSFAT, "Cannot continue"), 1;
+        goto fail;
 
     if (*node != fil) {
         /* Already known inode, add link to inode information */
@@ -800,7 +781,7 @@ static int inserter(const char *fpath, const struct stat *sb, int typeflag,
         node = tsearch(fil, &files, compare_nodes);
 
         if (node == NULL)
-            return jlog(JLOG_SYSFAT, "Cannot continue"), 1;
+            goto fail;
 
         if (*node != fil) {
             struct file *l;
@@ -822,6 +803,10 @@ static int inserter(const char *fpath, const struct stat *sb, int typeflag,
         }
     }
 
+    return 0;
+
+fail:
+    warn(_("cannot continue"));	/* probably ENOMEM */
     return 0;
 }
 
@@ -1070,7 +1055,7 @@ int main(int argc, char *argv[])
 
     for (; optind < argc; optind++)
         if (nftw(argv[optind], inserter, 20, FTW_PHYS) == -1)
-            jlog(JLOG_SYSERR, "Cannot process %s", argv[optind]);
+            warn(_("cannot process %s"), argv[optind]);
 
     twalk(files, visitor);
 
