@@ -1,6 +1,7 @@
 /* hardlink.c - Link multiple identical files together
  *
  * Copyright (C) 2008 - 2014 Julian Andres Klode <jak@jak-linux.org>
+ * Copyright (C) 2021 Karel Zak <kzak@redhat.com>
  *
  * SPDX-License-Identifier: MIT
  *
@@ -23,60 +24,24 @@
  * THE SOFTWARE.
  */
 
-#define _GNU_SOURCE             /* GNU extensions (optional) */
 #define _POSIX_C_SOURCE 200112L /* POSIX functions */
 #define _XOPEN_SOURCE      600  /* nftw() */
-
-#define _FILE_OFFSET_BITS   64  /* Large file support */
-#define _LARGEFILE_SOURCE       /* Large file support */
-#define _LARGE_FILES            /* AIX apparently */
 
 #include <sys/types.h>          /* stat */
 #include <sys/stat.h>           /* stat */
 #include <sys/time.h>           /* getrlimit, getrusage */
 #include <sys/resource.h>       /* getrlimit, getrusage */
-#include <unistd.h>             /* stat */
 #include <fcntl.h>              /* posix_fadvise */
 #include <ftw.h>                /* ftw */
 #include <search.h>             /* tsearch() and friends */
+#include <signal.h>		/* SIG*, sigaction */
+#include <getopt.h>		/* getopt_long() */
 
-#include <errno.h>              /* strerror, errno */
-#include <locale.h>             /* setlocale */
-#include <signal.h>             /* SIG*, sigaction */
-#include <stdio.h>              /* stderr, fprint */
-#include <stdarg.h>             /* va_arg */
-#include <stdlib.h>             /* free(), realloc() */
-#include <string.h>             /* strcmp() and friends */
-#include <assert.h>             /* assert() */
 #include <ctype.h>              /* tolower() */
 
-/* Some boolean names for clarity */
-typedef enum hl_bool {
-    FALSE,
-    TRUE
-} hl_bool;
+#include "nls.h"
+#include "c.h"
 
-/* The makefile sets this for us and creates config.h */
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-/* We don't have getopt_long(). Define no-op alternatives */
-#ifdef HAVE_GETOPT_LONG
-#include <getopt.h>
-#else
-#define getopt_long(argc, argv, shrt, lng, index) getopt((argc), (argv), (shrt))
-#endif
-
-/* For systems without posix_fadvise */
-#ifndef HAVE_POSIX_FADVISE
-#define posix_fadvise(fd, offset, len, advise) (void) 0
-#endif
-
-/* __attribute__ is fairly GNU-specific, define a no-op alternative elsewhere */
-#ifndef __GNUC__
-#define __attribute__(attributes)
-#endif
 
 /* Use libpcreposix if it's available, it's cooler */
 #if defined(HAVE_libpcre2_posix)
@@ -154,7 +119,7 @@ enum log_level {
  * @start_time: The time we started at, in seconds since some unspecified point
  */
 static struct statistics {
-    hl_bool started;
+    int started;
     size_t files;
     size_t linked;
     size_t xattr_comparisons;
@@ -294,7 +259,7 @@ static double gettime(void)
  * Checks whether any of the regular expressions in the list matches the
  * string.
  */
-static hl_bool regexec_any(struct regex_link *pregs, const char *what)
+static int regexec_any(struct regex_link *pregs, const char *what)
 {
     for (; pregs != NULL; pregs = pregs->next)
         if (regexec(&pregs->preg, what, 0, NULL, 0) == 0)
@@ -372,7 +337,7 @@ static void print_stats(void)
  *
  * Returns: %TRUE on SIGINT, SIGTERM; %FALSE on all other signals.
  */
-static hl_bool handle_interrupt(void)
+static int handle_interrupt(void)
 {
     switch (last_signal) {
     case SIGINT:
@@ -497,7 +462,7 @@ static const char **get_sorted_xattr_name_table(const char *names, int n)
  *
  * @Returns: %TRUE if and only if extended attributes are equal
  */
-static hl_bool file_xattrs_equal(const struct file *a, const struct file *b)
+static int file_xattrs_equal(const struct file *a, const struct file *b)
 {
     ssize_t len_a;
     ssize_t len_b;
@@ -509,7 +474,7 @@ static hl_bool file_xattrs_equal(const struct file *a, const struct file *b)
     const char **name_ptrs_b = NULL;
     void *value_a = NULL;
     void *value_b = NULL;
-    hl_bool ret = FALSE;
+    int ret = FALSE;
     int i;
 
     assert(a->links != NULL);
@@ -590,7 +555,7 @@ static hl_bool file_xattrs_equal(const struct file *a, const struct file *b)
     return ret;
 }
 #else
-static hl_bool file_xattrs_equal(const struct file *a, const struct file *b)
+static int file_xattrs_equal(const struct file *a, const struct file *b)
 {
     return TRUE;
 }
@@ -603,7 +568,7 @@ static hl_bool file_xattrs_equal(const struct file *a, const struct file *b)
  *
  * Compare the contents of the files for equality
  */
-static hl_bool file_contents_equal(const struct file *a, const struct file *b)
+static int file_contents_equal(const struct file *a, const struct file *b)
 {
     FILE *fa = NULL;
     FILE *fb = NULL;
@@ -624,8 +589,10 @@ static hl_bool file_contents_equal(const struct file *a, const struct file *b)
     if ((fb = fopen(b->links->path, "rb")) == NULL)
         goto err;
 
+#if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
     posix_fadvise(fileno(fa), 0, 0, POSIX_FADV_SEQUENTIAL);
     posix_fadvise(fileno(fb), 0, 0, POSIX_FADV_SEQUENTIAL);
+#endif
 
     while (!handle_interrupt() && cmp == 0) {
         size_t ca;
@@ -673,7 +640,7 @@ static hl_bool file_contents_equal(const struct file *a, const struct file *b)
  * together. If the two files are identical, the result will be FALSE,
  * as replacing a link with an identical one is stupid.
  */
-static hl_bool file_may_link_to(const struct file *a, const struct file *b)
+static int file_may_link_to(const struct file *a, const struct file *b)
 {
     return (a->st.st_size != 0 &&
             a->st.st_size == b->st.st_size &&
@@ -728,7 +695,7 @@ static int file_compare(const struct file *a, const struct file *b)
  * linked to a temporary name, and then renamed to the name of @b, making
  * the replace atomic (@b will always exist).
  */
-static hl_bool file_link(struct file *a, struct file *b)
+static int file_link(struct file *a, struct file *b)
 {
   file_link:
     assert(a->links != NULL);
@@ -805,8 +772,8 @@ static int inserter(const char *fpath, const struct stat *sb, int typeflag,
     struct file *fil;
     struct file **node;
     size_t pathlen;
-    hl_bool included;
-    hl_bool excluded;
+    int included;
+    int excluded;
 
     if (handle_interrupt())
         return 1;
@@ -1035,7 +1002,6 @@ static int register_regex(struct regex_link **pregs, const char *regex)
 static int parse_options(int argc, char *argv[])
 {
     static const char optstr[] = "VhvnfpotXcmMOx:i:s:";
-#ifdef HAVE_GETOPT_LONG
     static const struct option long_options[] = {
         {"version", no_argument, NULL, 'V'},
         {"help", no_argument, NULL, 'h'},
@@ -1054,7 +1020,6 @@ static int parse_options(int argc, char *argv[])
         {"minimum-size", required_argument, NULL, 's'},
         {NULL, 0, NULL, 0}
     };
-#endif
 
     int opt;
     char unit = '\0';
