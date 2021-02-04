@@ -40,6 +40,7 @@
 #include "nls.h"
 #include "c.h"
 #include "xalloc.h"
+#include "strutils.h"
 
 /* Use libpcre2posix if it's available */
 #ifdef HAVE_PCRE2_POSIX
@@ -152,7 +153,7 @@ static struct options {
     unsigned int minimise:1;
     unsigned int keep_oldest:1;
     unsigned int dry_run:1;
-    unsigned long long min_size;
+    uintmax_t min_size;
 } opts = {
     /* default setting */
     .respect_mode = TRUE,
@@ -770,7 +771,7 @@ static int inserter(const char *fpath, const struct stat *sb, int typeflag,
 
     stats.files++;
 
-    if (sb->st_size < opts.min_size) {
+    if ((uintmax_t) sb->st_size < opts.min_size) {
         jlog(JLOG_DEBUG1, "Skipped %s (smaller than configured size)", fpath);
         return 0;
     }
@@ -972,13 +973,10 @@ static int parse_options(int argc, char *argv[])
 	{"content", no_argument, NULL, 'c'},
         {NULL, 0, NULL, 0}
     };
+    int c;
 
-    int opt;
-    char unit = '\0';
-
-
-    while ((opt = getopt_long(argc, argv, optstr, long_options, NULL)) != -1) {
-        switch (opt) {
+    while ((c = getopt_long(argc, argv, optstr, long_options, NULL)) != -1) {
+        switch (c) {
         case 'p':
             opts.respect_mode = FALSE;
             break;
@@ -1025,28 +1023,7 @@ static int parse_options(int argc, char *argv[])
                 return 1;
             break;
         case 's':
-            if (sscanf(optarg, "%llu%c", &opts.min_size, &unit) < 1) {
-                jlog(JLOG_ERROR, "Invalid option given to -s: %s", optarg);
-                return 1;
-            }
-            switch (tolower(unit)) {
-            case '\0':
-                break;
-            case 't':
-                opts.min_size *= 1024;
-            case 'g':
-                opts.min_size *= 1024;
-            case 'm':
-                opts.min_size *= 1024;
-            case 'k':
-                opts.min_size *= 1024;
-                break;
-            default:
-                jlog(JLOG_ERROR, "Unknown unit indicator %c.", unit);
-                return 1;
-            }
-            jlog(JLOG_DEBUG1, "Using minimum size of %lld bytes.",
-                 opts.min_size);
+	    opts.min_size = strtosize_or_err(optarg, _("failed to parse size"));
             break;
 
 	case 'h':

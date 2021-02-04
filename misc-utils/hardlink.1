@@ -59,11 +59,11 @@ A regular expression to include files. If the option \-\-exclude has been given,
 this option re-includes files which would otherwise be excluded. If the option
 is used without \-\-exclude, only files matched by the pattern are included.
 .TP
-.B \-s or \-\-minimum\-size
+.B \-s or \-\-minimum\-size \fIsize\fP
 The minimum size to consider. By default this is 1, so empty files will not
-be linked. An optional suffix of K,M,G,T may be provided, indicating that the
-file size is KiB,MiB,GiB,TiB.
-
+be linked. The \fIsize\fR argument may be followed by the multiplicative
+suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB
+and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
 .SH ARGUMENTS
 .B hardlink
 takes one or more directories which will be searched for files to be linked.
