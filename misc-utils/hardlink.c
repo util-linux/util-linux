@@ -919,12 +919,10 @@ static void __attribute__((__noreturn__)) usage(void)
  * @pregs: Pointer to a linked list of regular expressions
  * @regex: String containing the regular expression to be compiled
  */
-static int register_regex(struct regex_link **pregs, const char *regex)
+static void register_regex(struct regex_link **pregs, const char *regex)
 {
-    struct regex_link *link;
+    struct regex_link *link = xmalloc(sizeof(*link));
     int err;
-
-    link = xmalloc(sizeof(*link));
 
     if ((err = regcomp(&link->preg, regex, REG_NOSUB | REG_EXTENDED)) != 0) {
         size_t size = regerror(err, &link->preg, NULL, 0);
@@ -932,16 +930,12 @@ static int register_regex(struct regex_link **pregs, const char *regex)
 
         regerror(err, &link->preg, buf, size);
 
-        jlog(JLOG_FATAL, "Could not compile regular expression %s: %s",
+        errx(EXIT_FAILURE, _("could not compile regular expression %s: %s"),
              regex, buf);
-        free(buf);
-        free(link);
-        return 1;
     }
 
     link->next = *pregs;
     *pregs = link;
-    return 0;
 }
 
 /**
@@ -1013,12 +1007,10 @@ static int parse_options(int argc, char *argv[])
             opts.dry_run = 1;
             break;
         case 'x':
-            if (register_regex(&opts.exclude, optarg) != 0)
-                return 1;
+            register_regex(&opts.exclude, optarg);
             break;
         case 'i':
-            if (register_regex(&opts.include, optarg) != 0)
-                return 1;
+            register_regex(&opts.include, optarg);
             break;
         case 's':
 	    opts.min_size = strtosize_or_err(optarg, _("failed to parse size"));
@@ -1075,8 +1067,7 @@ int main(int argc, char *argv[])
     if (atexit(to_be_called_atexit) != 0)
         err(EXIT_FAILURE, _("cannot register exit handler"));
 
-    if (parse_options(argc, argv) != 0)
-        return 1;
+    parse_options(argc, argv);
 
     if (optind == argc)
 	errx(EXIT_FAILURE, _("no directory of dile specified"));
