@@ -42,19 +42,13 @@
 #include "nls.h"
 #include "c.h"
 
-
-/* Use libpcreposix if it's available, it's cooler */
-#if defined(HAVE_libpcre2_posix)
-#warning hie
-#include <pcre2posix.h>
-#undef REG_NOSUB
-#define REG_NOSUB 0             /* we do want backreferences in PCRE mode */
-#elif defined(HAVE_libpcreposix)
-#include <pcreposix.h>
-#undef REG_NOSUB
-#define REG_NOSUB 0             /* we do want backreferences in PCRE mode */
+/* Use libpcre2posix if it's available */
+#ifdef HAVE_PCRE2_POSIX
+# include <pcre2posix.h>
+# undef REG_NOSUB
+# define REG_NOSUB 0             /* we do want backreferences in PCRE mode */
 #else
-#include <regex.h>              /* regcomp(), regsearch() */
+# include <regex.h>              /* regcomp(), regsearch() */
 #endif
 
 #ifdef HAVE_XATTR
