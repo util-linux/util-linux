@@ -39,6 +39,7 @@
 
 #include "nls.h"
 #include "c.h"
+#include "xalloc.h"
 
 /* Use libpcre2posix if it's available */
 #ifdef HAVE_PCRE2_POSIX
@@ -348,23 +349,6 @@ static int handle_interrupt(void)
 #ifdef HAVE_SYS_XATTR_H
 
 /**
- * malloc_or_die -- Wrapper for malloc()
- *
- * This does the same thing as malloc() except that it aborts if memory
- * can't be allocated.
- */
-static void *malloc_or_die(size_t size)
-{
-    void *mem = malloc(size);
-
-    if (!mem) {
-        jlog(JLOG_SYSFAT, "Cannot allocate memory");
-        exit(1);
-    }
-    return mem;
-}
-
-/**
  * llistxattr_or_die - Wrapper for llistxattr()
  *
  * This does the same thing as llistxattr() except that it aborts if any error
@@ -434,7 +418,7 @@ static int cmp_xattr_name_ptrs(const void *ptr1, const void *ptr2)
  */
 static const char **get_sorted_xattr_name_table(const char *names, int n)
 {
-    const char **table = malloc_or_die(n * sizeof(char *));
+    const char **table = xmalloc(n * sizeof(char *));
     int i;
 
     for (i = 0; i < n; i++) {
@@ -486,8 +470,8 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
     if (len_a != len_b)
         return FALSE;           // total lengths of xattr names differ
 
-    names_a = malloc_or_die(len_a);
-    names_b = malloc_or_die(len_b);
+    names_a = xmalloc(len_a);
+    names_b = xmalloc(len_b);
 
     len_a = llistxattr_or_die(a->links->path, names_a, len_a);
     len_b = llistxattr_or_die(b->links->path, names_b, len_b);
@@ -517,8 +501,8 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
         if (len_a != len_b)
             goto exit;          // xattrs with same name, different value lengths
 
-        value_a = malloc_or_die(len_a);
-        value_b = malloc_or_die(len_b);
+        value_a = xmalloc(len_a);
+        value_b = xmalloc(len_b);
 
         len_a = lgetxattr_or_die(a->links->path, name_ptrs_a[i],
                                  value_a, len_a);
@@ -699,12 +683,7 @@ static int file_link(struct file *a, struct file *b)
 
     if (!opts.dry_run) {
         size_t len = strlen(b->links->path) + strlen(".hardlink-temporary") + 1;
-        char *new_path = malloc(len);
-
-        if (new_path == NULL) {
-            jlog(JLOG_SYSFAT, "Cannot allocate memory");
-            exit(1);
-        }
+        char *new_path = xmalloc(len);
 
         snprintf(new_path, len, "%s.hardlink-temporary", b->links->path);
 
@@ -792,15 +771,8 @@ static int inserter(const char *fpath, const struct stat *sb, int typeflag,
 
     pathlen = strlen(fpath) + 1;
 
-    fil = calloc(1, sizeof(*fil));
-
-    if (fil == NULL)
-        return jlog(JLOG_SYSFAT, "Cannot continue"), 1;
-
-    fil->links = calloc(1, sizeof(struct link) + pathlen);
-
-    if (fil->links == NULL)
-        return jlog(JLOG_SYSFAT, "Cannot continue"), 1;
+    fil = xcalloc(1, sizeof(*fil));
+    fil->links = xcalloc(1, sizeof(struct link) + pathlen);
 
     fil->st = *sb;
     fil->links->basename = ftwbuf->base;
@@ -956,21 +928,11 @@ static int register_regex(struct regex_link **pregs, const char *regex)
     struct regex_link *link;
     int err;
 
-    link = malloc(sizeof(*link));
-
-    if (link == NULL) {
-        jlog(JLOG_SYSFAT, "Cannot allocate memory");
-        exit(1);
-    }
+    link = xmalloc(sizeof(*link));
 
     if ((err = regcomp(&link->preg, regex, REG_NOSUB | REG_EXTENDED)) != 0) {
         size_t size = regerror(err, &link->preg, NULL, 0);
-        char *buf = malloc(size + 1);
-
-        if (buf == NULL) {
-            jlog(JLOG_SYSFAT, "Cannot allocate memory");
-            exit(1);
-        }
+        char *buf = xmalloc(size + 1);
 
         regerror(err, &link->preg, buf, size);
 
