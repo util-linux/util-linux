@@ -153,7 +153,15 @@ static struct options {
     unsigned int keep_oldest:1;
     unsigned int dry_run:1;
     unsigned long long min_size;
-} opts;
+} opts = {
+    /* default setting */
+    .respect_mode = TRUE,
+    .respect_owner = TRUE,
+    .respect_time = TRUE,
+    .respect_xattrs = FALSE,
+    .keep_oldest = FALSE,
+    .min_size = 1
+};
 
 /*
  * files
@@ -968,12 +976,6 @@ static int parse_options(int argc, char *argv[])
     int opt;
     char unit = '\0';
 
-    opts.respect_mode = TRUE;
-    opts.respect_owner = TRUE;
-    opts.respect_time = TRUE;
-    opts.respect_xattrs = FALSE;
-    opts.keep_oldest = FALSE;
-    opts.min_size = 1;
 
     while ((opt = getopt_long(argc, argv, optstr, long_options, NULL)) != -1) {
         switch (opt) {
