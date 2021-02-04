@@ -367,10 +367,9 @@ static ssize_t llistxattr_or_die(const char *path, char *list, size_t size)
 {
     ssize_t len = llistxattr(path, list, size);
 
-    if (len < 0 && errno != ENOTSUP) {
-        jlog(JLOG_SYSFAT, "Cannot get xattr names for %s", path);
-        exit(1);
-    }
+    if (len < 0 && errno != ENOTSUP)
+	err(EXIT_FAILURE, _("cannot get xattr names for %s"), path);
+
     return len;
 }
 
@@ -384,10 +383,9 @@ static ssize_t lgetxattr_or_die(const char *path, const char *name, void *value,
 {
     ssize_t len = lgetxattr(path, name, value, size);
 
-    if (len < 0) {
-        jlog(JLOG_SYSFAT, "Cannot get xattr value of %s for %s", name, path);
-        exit(1);
-    }
+    if (len < 0)
+        err(EXIT_FAILURE, _("cannot get xattr value of %s for %s"), name, path);
+
     return len;
 }
 
@@ -855,13 +853,13 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 
     for (; master != NULL; master = master->next) {
         if (handle_interrupt())
-            exit(1);
+            exit(EXIT_FAILURE);
         if (master->links == NULL)
             continue;
 
         for (other = master->next; other != NULL; other = other->next) {
             if (handle_interrupt())
-                exit(1);
+                exit(EXIT_FAILURE);
 
             assert(other != other->next);
             assert(other->st.st_size == master->st.st_size);
@@ -1074,18 +1072,14 @@ int main(int argc, char *argv[])
     setlocale(LC_NUMERIC, "");
     stats.start_time = gettime();
 
-    if (atexit(to_be_called_atexit) != 0) {
-        jlog(JLOG_SYSFAT, "Cannot register exit handler");
-        return 1;
-    }
+    if (atexit(to_be_called_atexit) != 0)
+        err(EXIT_FAILURE, _("cannot register exit handler"));
 
     if (parse_options(argc, argv) != 0)
         return 1;
 
-    if (optind == argc) {
-        jlog(JLOG_FATAL, "Expected file or directory names");
-        return 1;
-    }
+    if (optind == argc)
+	errx(EXIT_FAILURE, _("no directory of dile specified"));
 
     stats.started = TRUE;
 
