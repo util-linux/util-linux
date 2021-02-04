@@ -1,69 +1,88 @@
-.TH "hardlink" "1"
+.\" Copyright (C) 2008 - 2012 Julian Andres Klode. See hardlink.c for license.
+.\" SPDX-License-Identifier: MIT
+.TH hardlink 1 "2012-09-17" "0.3"
 .SH NAME
-hardlink \- Consolidate duplicate files via hardlinks
+hardlink \- Link multiple copies of a file
 .SH SYNOPSIS
 .B hardlink
-[options]
-.RI [ directory ...]
+.RI [ option ]...
+.RI [ directory | file ]...
 .SH DESCRIPTION
-This manual page documents \fBhardlink\fR, a
-program which consolidates duplicate files in one or more directories
-using hardlinks.
-.PP
-\fBhardlink\fR traverses one
-or more directories searching for duplicate files.  When it finds duplicate
-files, it uses one of them as the master.  It then removes all other
-duplicates and places a hardlink for each one pointing to the master file.
-This allows for conservation of disk space where multiple directories
-on a single filesystem contain many duplicate files.
-.PP
-Since hard links can only span a single filesystem, \fBhardlink\fR
-is only useful when all directories specified are on the same filesystem.
+.B hardlink
+is a tool which replaces copies of a file with hardlinks, therefore saving
+space.
 .SH OPTIONS
 .TP
-.BR \-c , " \-\-content"
-Compare only the contents of the files being considered for consolidation.
-Disregards permission, ownership and other differences.
+.B \-h or \-\-help
+print quick usage details to the screen.
 .TP
-.BR \-f , " \-\-force"
-Force hardlinking across file systems.
+.B \-v or \-\-verbose
+More verbose output. If specified once, every hardlinked file is displayed,
+if specified twice, it also shows every comparison.
 .TP
-.BR \-n , " \-\-dry\-run"
-Do not perform the consolidation; only print what would be changed.
+.B \-n or \-\-dry\-run
+Do not act, just print what would happen
 .TP
-.BR \-v , " \-\-verbose"
-Print summary after hardlinking. The option may be specified more than once. In
-this case (e.g., \fB\-vv\fR) it prints every hardlinked file and bytes saved.
+.B \-f or \-\-respect\-name
+Only try to link files with the same (basename).
 .TP
-.BR \-x , " \-\-exclude " \fIregex\fR
-Exclude files and directories matching pattern from hardlinking.
-.sp
-The optional pattern for excluding files and directories must be a PCRE2
-compatible regular expression. Only the basename of the file or directory
-is checked, not its path. Excluded directories' contents will not be examined.
+.B \-p or \-\-ignore\-mode
+Link/compare files even if their mode is different. This may be a bit unpredictable.
 .TP
-.BR \-h , " \-\-help"
-Display help text and exit.
+.B \-o or \-\-ignore\-owner
+Link/compare files even if their owner (user and group) is different. It is not
+predictable
 .TP
-.BR \-V , " \-\-version"
-Display version information and exit.
+.B \-t or \-\-ignore\-time
+Link/compare files even if their time of modification is different. You almost
+always want this.
+.TP
+.B \-X or \-\-respect\-xattrs
+Only try to link files with the same extended attributes.
+.TP
+.B \-m or \-\-maximize
+Among equal files, keep the file with the highest link count.
+.TP
+.B \-M or \-\-minimize
+Among equal files, keep the file with the lowest link count.
+.TP
+.B \-O or \-\-keep\-oldest
+Among equal files, keep the oldest file (least recent modification time). By
+default, the newest file is kept. If \-\-maximize or \-\-minimize is specified,
+the link count has a higher precedence than the time of modification.
+.TP
+.B \-x or \-\-exclude
+A regular expression which excludes files from being compared and linked.
+.TP
+.B \-i or \-\-include
+A regular expression to include files. If the option \-\-exclude has been given,
+this option re-includes files which would otherwise be excluded. If the option
+is used without \-\-exclude, only files matched by the pattern are included.
+.TP
+.B \-s or \-\-minimum\-size
+The minimum size to consider. By default this is 1, so empty files will not
+be linked. An optional suffix of K,M,G,T may be provided, indicating that the
+file size is KiB,MiB,GiB,TiB.
+
+.SH ARGUMENTS
+.B hardlink
+takes one or more directories which will be searched for files to be linked.
+
 .SH BUGS
-\fBhardlink\fR assumes that its target directory trees do not change from under
-it.  If a directory tree does change, this may result in \fBhardlink\fR
-accessing files and/or directories outside of the intended directory tree.
-Thus, you must avoid running \fBhardlink\fR on potentially changing directory
-trees, and especially on directory trees under control of another user.
-.PP
-Historically \fBhardlink\fR silently excluded any names beginning with
-".in.", as well as any names beginning with "." followed by exactly 6
-other characters. That prior behavior can be achieved by specifying
-.br
-\-x '\(ha(\\.in\\.|\\.[\(ha.]{6}$)'
-.SH AUTHORS
-\fBhardlink\fR was written by Jakub Jelinek <jakub@redhat.com> and later modified by
-Ruediger Meier <ruediger.meier@ga-group.nl> and Karel Zak <kzak@redhat.com> for util-linux.
-.PP
-Man page written by Brian Long and later updated by Jindrich Novy <jnovy@redhat.com>
-.SH AVAILABILITY
-The hardlink command is part of the util-linux package and is available from
-https://www.kernel.org/pub/linux/utils/util-linux/.
+.B hardlink
+assumes that the trees it operates on do not change during
+operation. If a tree does change, the result is undefined and potentially
+dangerous. For example, if a regular file is replaced by a device, hardlink
+may start reading from the device. If a component of a path is replaced by
+a symbolic link or file permissions change, security may be compromised. Do
+not run hardlink on a changing tree or on a tree controlled by another user.
+
+.B hardlink
+, as of version 0.3 RC1, improperly calculates the amount of space saved if the
+option \-\-respect\-name is specified. In previous versions, the amount was
+wrong in almost all other cases as well.
+
+.SH AUTHOR
+The program hardlink and this manpage have been written by Julian Andres Klode,
+and are licensed under the MIT license. See the code of hardlink for further
+information.
