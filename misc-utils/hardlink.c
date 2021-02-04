@@ -867,55 +867,44 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 }
 
 /**
- * version - Print the program version and exit
+ * usage - Print the program help and exit
  */
-static int version(void)
+static void __attribute__((__noreturn__)) usage(void)
 {
-    printf("hardlink 0.3 RC2\n");
-    printf("Compiled %s at %s\n", __DATE__, __TIME__);
-    exit(0);
-}
+    FILE *out = stdout;
 
-/**
- * help - Print the program help and exit
- * @name: The name of the program executable (argv[0])
- */
-static int help(const char *name)
-{
-    printf("Usage: %s [options] directory|file ...\n", name);
-    puts("Options:");
-    puts("  -V, --version         show program's version number and exit");
-    puts("  -h, --help            show this help message and exit");
-    puts("  -v, --verbose         Increase verbosity (repeat for more verbosity)");
-    puts("  -n, --dry-run         Modify nothing, just print what would happen");
-    puts("  -f, --respect-name    Filenames have to be identical");
-    puts("  -p, --ignore-mode     Ignore changes of file mode");
-    puts("  -o, --ignore-owner    Ignore owner changes");
-    puts("  -t, --ignore-time     Ignore timestamps (when testing for equality)");
+    fputs(USAGE_HEADER, out);
+    fprintf(out, _(" %s [options] <directory>|<file> ...\n"), program_invocation_short_name);
+
+    fputs(USAGE_SEPARATOR, out);
+    fputs(_("Consolidate duplicate files using hardlinks.\n"), out);
+
+    fputs(USAGE_OPTIONS, out);
+    fputs(_(" -v, --verbose              verbose output (repeat for more verbosity)\n"), out);
+    fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
+    fputs(_(" -f, --respect-name         filenames have to be identical\n"), out);
+    fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
+    fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
+    fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
 #ifdef HAVE_SYS_XATTR_H
-    puts("  -X, --respect-xattrs  Respect extended attributes");
+    fputs(_(" -X, --respect-xattrs       respect extended attributes\n"), out);
 #endif
-    puts("  -m, --maximize        Maximize the hardlink count, remove the file with");
-    puts("                        lowest hardlink cout");
-    puts("  -M, --minimize        Reverse the meaning of -m");
-    puts("  -O, --keep-oldest     Keep the oldest file of multiple equal files");
-    puts("                        (lower precedence than minimize/maximize)");
-    puts("  -x REGEXP, --exclude=REGEXP");
-    puts("                        Regular expression to exclude files");
-    puts("  -i REGEXP, --include=REGEXP");
-    puts("                        Regular expression to include files/dirs");
-    puts("  -s <num>[K,M,G], --minimum-size=<num>[K,M,G]");
-    puts("                        Minimum size for files. Optional suffix");
-    puts("                        allows for using KiB, MiB, or GiB");
-    puts("");
-    puts("Compatibility options to Jakub Jelinek's hardlink:");
-    puts("  -c                    Compare only file contents, same as -pot");
+    fputs(_(" -m, --maximize             maximize the hardlink count, remove the file with\n"
+            "                              lowest hardlink count\n"), out);
+    fputs(_(" -M, --minimize             reverse the meaning of -m\n"), out);
+    fputs(_(" -O, --keep-oldest          keep the oldest file of multiple equal files\n"
+            "                              (lower precedence than minimize/maximize)\n"), out);
+    fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
+    fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
+    fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
+    fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
 
-#ifndef HAVE_GETOPT_LONG
-    puts("");
-    puts("Your system only supports the short option names given above.");
-#endif
-    exit(0);
+    fputs(USAGE_SEPARATOR, out);
+    printf(USAGE_HELP_OPTIONS(28));
+
+    printf(USAGE_MAN_TAIL("hardlink(1)"));
+
+    exit(EXIT_SUCCESS);
 }
 
 /**
@@ -972,6 +961,7 @@ static int parse_options(int argc, char *argv[])
         {"exclude", required_argument, NULL, 'x'},
         {"include", required_argument, NULL, 'i'},
         {"minimum-size", required_argument, NULL, 's'},
+	{"content", no_argument, NULL, 'c'},
         {NULL, 0, NULL, 0}
     };
 
@@ -1024,10 +1014,6 @@ static int parse_options(int argc, char *argv[])
         case 'n':
             opts.dry_run = 1;
             break;
-        case 'h':
-            return help(argv[0]);
-        case 'V':
-            return version();
         case 'x':
             if (register_regex(&opts.exclude, optarg) != 0)
                 return 1;
@@ -1060,11 +1046,13 @@ static int parse_options(int argc, char *argv[])
             jlog(JLOG_DEBUG1, "Using minimum size of %lld bytes.",
                  opts.min_size);
             break;
-        case '?':
-            return 1;
+
+	case 'h':
+	    usage();
+        case 'V':
+	    print_version(EXIT_SUCCESS);
         default:
-            jlog(JLOG_ERROR, "Unexpected invalid option: -%c\n", opt);
-            return 1;
+	    errtryhelp(EXIT_FAILURE);
         }
     }
     return 0;
