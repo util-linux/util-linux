@@ -61,6 +61,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "c.h"
 #include "closestream.h"
 #include "nls.h"
 #include "optutils.h"
@@ -89,7 +90,7 @@
 /* number of lines to allocate */
 #define	NALLOC			64
 
-#if defined(__SANITIZE_ADDRESS__) || defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
+#if HAS_FEATURE_ADDRESS_SANITIZER || defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 # define COL_DEALLOCATE_ON_EXIT
 #endif
 
