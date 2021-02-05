@@ -427,7 +427,7 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
     assert(a->links != NULL);
     assert(b->links != NULL);
 
-    jlog(JLOG_DEBUG1, "Comparing xattrs of %s to %s", a->links->path,
+    jlog(JLOG_DEBUG1, _("Comparing xattrs of %s to %s"), a->links->path,
          b->links->path);
 
     stats.xattr_comparisons++;
@@ -527,7 +527,7 @@ static int file_contents_equal(const struct file *a, const struct file *b)
     assert(a->links != NULL);
     assert(b->links != NULL);
 
-    jlog(JLOG_DEBUG1, "Comparing %s to %s", a->links->path, b->links->path);
+    jlog(JLOG_DEBUG1, _("Comparing %s to %s"), a->links->path, b->links->path);
 
     stats.comparisons++;
 
@@ -651,8 +651,8 @@ static int file_link(struct file *a, struct file *b)
     ssz = size_to_human_string(SIZE_SUFFIX_3LETTER|
 		         SIZE_SUFFIX_SPACE|
 			 SIZE_DECIMAL_2DIGITS, a->st.st_size);
-    jlog(JLOG_INFO, "%sLinking %s to %s (-%s)",
-         opts.dry_run ? "[DryRun] " : "", a->links->path, b->links->path, ssz);
+    jlog(JLOG_INFO, _("%sLinking %s to %s (-%s)"),
+         opts.dry_run ? _("[DryRun] ") : "", a->links->path, b->links->path, ssz);
     free(ssz);
 
     if (!opts.dry_run) {
@@ -736,11 +736,11 @@ static int inserter(const char *fpath, const struct stat *sb, int typeflag,
     stats.files++;
 
     if ((uintmax_t) sb->st_size < opts.min_size) {
-        jlog(JLOG_DEBUG1, "Skipped %s (smaller than configured size)", fpath);
+        jlog(JLOG_DEBUG1, _("Skipped %s (smaller than configured size)"), fpath);
         return 0;
     }
 
-    jlog(JLOG_DEBUG2, "Visiting %s (file %zu)", fpath, stats.files);
+    jlog(JLOG_DEBUG2, _("Visiting %s (file %zu)"), fpath, stats.files);
 
     pathlen = strlen(fpath) + 1;
 
