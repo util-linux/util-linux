@@ -1,11 +1,14 @@
-.\" Copyright (C) 2008 - 2012 Julian Andres Klode. See hardlink.c for license.
 .\" SPDX-License-Identifier: MIT
-.TH hardlink 1 "2012-09-17" "0.3"
+.\"
+.\" Copyright (C) 2008 - 2012 Julian Andres Klode. See hardlink.c for license.
+.\" Copyright (C) 2021 Karel Zak <kzak@redhat.com>
+.\"
+.TH HARDLINK 1 "February 2021" "util-linux" "User Commands"
 .SH NAME
-hardlink \- Link multiple copies of a file
+hardlink \- link multiple copies of a file
 .SH SYNOPSIS
 .B hardlink
-.RI [ option ]...
+[ options ]
 .RI [ directory | file ]...
 .SH DESCRIPTION
 .B hardlink
@@ -13,53 +16,55 @@ is a tool which replaces copies of a file with hardlinks, therefore saving
 space.
 .SH OPTIONS
 .TP
-.B \-h or \-\-help
+.BR \-h ,\ \-\-help
 print quick usage details to the screen.
 .TP
-.B \-v or \-\-verbose
+.BR \-v ,\ \-\-verbose
 More verbose output. If specified once, every hardlinked file is displayed,
 if specified twice, it also shows every comparison.
 .TP
-.B \-n or \-\-dry\-run
+.B \-n ,\ \-\-dry\-run
 Do not act, just print what would happen
 .TP
-.B \-f or \-\-respect\-name
-Only try to link files with the same (basename).
+.BR \-f ,\ \-\-respect\-name
+Only try to link files with the same (basename).  It's strongly recommended to
+use long options rather than \fI\-f\fR which is interpreted in a different way
+by others hardlink implementations.
 .TP
-.B \-p or \-\-ignore\-mode
+.BR \-p ,\ \-\-ignore\-mode
 Link/compare files even if their mode is different. This may be a bit unpredictable.
 .TP
-.B \-o or \-\-ignore\-owner
+.BR \-o ,\ \-\-ignore\-owner
 Link/compare files even if their owner (user and group) is different. It is not
 predictable
 .TP
-.B \-t or \-\-ignore\-time
+.BR \-t ,\ \-\-ignore\-time
 Link/compare files even if their time of modification is different. You almost
 always want this.
 .TP
-.B \-X or \-\-respect\-xattrs
+.BR \-X , \-\-respect\-xattrs
 Only try to link files with the same extended attributes.
 .TP
-.B \-m or \-\-maximize
+.BR \-m ,\ \-\-maximize
 Among equal files, keep the file with the highest link count.
 .TP
-.B \-M or \-\-minimize
+.BR \-M ,\ \-\-minimize
 Among equal files, keep the file with the lowest link count.
 .TP
-.B \-O or \-\-keep\-oldest
+.BR \-O ,\ \-\-keep\-oldest
 Among equal files, keep the oldest file (least recent modification time). By
 default, the newest file is kept. If \-\-maximize or \-\-minimize is specified,
 the link count has a higher precedence than the time of modification.
 .TP
-.B \-x or \-\-exclude
+.BR \-x ,\ \-\-exclude\ \fIregex\fP
 A regular expression which excludes files from being compared and linked.
 .TP
-.B \-i or \-\-include
+.BR \-i ,\ \-\-include\ \fIregex\fP
 A regular expression to include files. If the option \-\-exclude has been given,
 this option re-includes files which would otherwise be excluded. If the option
 is used without \-\-exclude, only files matched by the pattern are included.
 .TP
-.B \-s or \-\-minimum\-size \fIsize\fP
+.BR \-s ,\ \-\-minimum\-size\ \fIsize\fP
 The minimum size to consider. By default this is 1, so empty files will not
 be linked. The \fIsize\fR argument may be followed by the multiplicative
 suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB
@@ -69,6 +74,10 @@ and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
 takes one or more directories which will be searched for files to be linked.
 
 .SH BUGS
+The original hardlink implementation uses the option \fI\-f\fR to force
+hardlinks creation between filesystem.  This very rarely usable feature
+is no more supported by the current hardlink.
+.PP
 .B hardlink
 assumes that the trees it operates on do not change during
 operation. If a tree does change, the result is undefined and potentially
@@ -77,12 +86,15 @@ may start reading from the device. If a component of a path is replaced by
 a symbolic link or file permissions change, security may be compromised. Do
 not run hardlink on a changing tree or on a tree controlled by another user.
 
-.B hardlink
-, as of version 0.3 RC1, improperly calculates the amount of space saved if the
-option \-\-respect\-name is specified. In previous versions, the amount was
-wrong in almost all other cases as well.
-
 .SH AUTHOR
-The program hardlink and this manpage have been written by Julian Andres Klode,
-and are licensed under the MIT license. See the code of hardlink for further
-information.
+There are multiple hardlink implementations.  The very first implementation is
+from Jakub Jelinek for Fedora distribution, this implementation has been used
+in util-linux between versions v2.34 to v2.36.  The current implementations is
+based on Debian version from Julian Andres Klod.
+
+.SH AVAILABILITY
+The example command is part of the util-linux package and is available from
+.UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
+
