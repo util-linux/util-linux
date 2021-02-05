@@ -278,22 +278,23 @@ static void print_stats(void)
     gettime_monotonic(&end);
     timersub(&end, &stats.start_time, &delta);
 
-    jlog(JLOG_SUMMARY, "Mode:     %s", opts.dry_run ? "dry-run" : "real");
-    jlog(JLOG_SUMMARY, "Files:    %zu", stats.files);
-    jlog(JLOG_SUMMARY, "Linked:   %zu files", stats.linked);
+    jlog(JLOG_SUMMARY, "%-15s %s", _("Mode:"),
+		    opts.dry_run ? _("dry-run") : _("real"));
+    jlog(JLOG_SUMMARY, "%-15s %zu", _("Files:"), stats.files);
+    jlog(JLOG_SUMMARY, _("%-15s %zu files"), _("Linked:"), stats.linked);
 #ifdef HAVE_SYS_XATTR_H
-    jlog(JLOG_SUMMARY, "Compared: %zu xattrs", stats.xattr_comparisons);
+    jlog(JLOG_SUMMARY, _("%-15s %zu xattrs"), _("Compared:"), stats.xattr_comparisons);
 #endif
-    jlog(JLOG_SUMMARY, "Compared: %zu files", stats.comparisons);
+    jlog(JLOG_SUMMARY, _("%-15s %zu files"), _("Compared:"), stats.comparisons);
 
     ssz = size_to_human_string(SIZE_SUFFIX_3LETTER|
 		         SIZE_SUFFIX_SPACE|
 			 SIZE_DECIMAL_2DIGITS, stats.saved);
 
-    jlog(JLOG_SUMMARY, "Saved:    %s", ssz);
+    jlog(JLOG_SUMMARY, "%-15s %s", _("Saved:"), ssz);
     free(ssz);
 
-    jlog(JLOG_SUMMARY, "Duration: %ld.%06ld seconds",
+    jlog(JLOG_SUMMARY, _("%-15s %ld.%06ld seconds"), _("Duration:"),
 		    (long)delta.tv_sec, (long)delta.tv_usec);
 }
 
