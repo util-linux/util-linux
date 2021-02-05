@@ -174,23 +174,23 @@ static void *files_by_ino;
  */
 static int last_signal;
 
-__attribute__ ((format(printf, 2, 3)))
 /**
  * jlog - Logging for hardlink
  * @level: The log level
  * @format: A format string for printf()
  */
+__attribute__ ((format(printf, 2, 3)))
 static void jlog(enum log_level level, const char *format, ...)
 {
-    FILE *stream = (level >= 0) ? stdout : stderr;
     va_list args;
 
-    if (level <= (unsigned int) opts.verbosity) {
-        va_start(args, format);
-        vfprintf(stream, format, args);
-        va_end(args);
-        fputc('\n', stream);
-    }
+    if (level > (unsigned int) opts.verbosity)
+        return;
+
+    va_start(args, format);
+    vfprintf(stdout, format, args);
+    va_end(args);
+    fputc('\n', stdout);
 }
 
 /**
@@ -201,29 +201,6 @@ static void jlog(enum log_level level, const char *format, ...)
  * Used to compare two integers of any size while avoiding overflow.
  */
 #define CMP(a, b) ((a) > (b) ? 1 : ((a) < (b) ? -1 : 0))
-
-/**
- * format - Print a human-readable name for the given size
- * @bytes: A number specifying an amount of bytes
- *
- * Uses a double. The result with infinity and NaN is most likely
- * not pleasant.
- */
-static const char *format(double bytes)
-{
-    static char buf[256];
-
-    if (bytes >= 1024 * 1024 * 1024)
-        snprintf(buf, sizeof(buf), "%.2f GiB", (bytes / 1024 / 1024 / 1024));
-    else if (bytes >= 1024 * 1024)
-        snprintf(buf, sizeof(buf), "%.2f MiB", (bytes / 1024 / 1024));
-    else if (bytes >= 1024)
-        snprintf(buf, sizeof(buf), "%.2f KiB", (bytes / 1024));
-    else
-        snprintf(buf, sizeof(buf), "%.0f bytes", bytes);
-
-    return buf;
-}
 
 /**
  * regexec_any - Match against multiple regular expressions
@@ -296,6 +273,7 @@ static int compare_nodes_ino(const void *_a, const void *_b)
 static void print_stats(void)
 {
     struct timeval end = { 0, 0 }, delta = { 0, 0 };
+    char *ssz;
 
     gettime_monotonic(&end);
     timersub(&end, &stats.start_time, &delta);
@@ -307,7 +285,14 @@ static void print_stats(void)
     jlog(JLOG_SUMMARY, "Compared: %zu xattrs", stats.xattr_comparisons);
 #endif
     jlog(JLOG_SUMMARY, "Compared: %zu files", stats.comparisons);
-    jlog(JLOG_SUMMARY, "Saved:    %s", format(stats.saved));
+
+    ssz = size_to_human_string(SIZE_SUFFIX_3LETTER|
+		         SIZE_SUFFIX_SPACE|
+			 SIZE_DECIMAL_2DIGITS, stats.saved);
+
+    jlog(JLOG_SUMMARY, "Saved:    %s", ssz);
+    free(ssz);
+
     jlog(JLOG_SUMMARY, "Duration: %ld.%06ld seconds",
 		    (long)delta.tv_sec, (long)delta.tv_usec);
 }
@@ -656,13 +641,18 @@ static int file_compare(const struct file *a, const struct file *b)
  */
 static int file_link(struct file *a, struct file *b)
 {
+    char *ssz;
+
   file_link:
     assert(a->links != NULL);
     assert(b->links != NULL);
 
+    ssz = size_to_human_string(SIZE_SUFFIX_3LETTER|
+		         SIZE_SUFFIX_SPACE|
+			 SIZE_DECIMAL_2DIGITS, a->st.st_size);
     jlog(JLOG_INFO, "%sLinking %s to %s (-%s)",
-         opts.dry_run ? "[DryRun] " : "", a->links->path, b->links->path,
-         format(a->st.st_size));
+         opts.dry_run ? "[DryRun] " : "", a->links->path, b->links->path, ssz);
+    free(ssz);
 
     if (!opts.dry_run) {
         size_t len = strlen(b->links->path) + strlen(".hardlink-temporary") + 1;
