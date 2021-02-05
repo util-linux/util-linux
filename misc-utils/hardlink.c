@@ -85,14 +85,14 @@ struct file {
  * enum log_level - Logging levels
  * @JLOG_SUMMARY: Default log level
  * @JLOG_INFO:    Verbose logging (verbose == 1)
- * @JLOG_DEBUG1:  Verbosity 2
- * @JLOG_DEBUG2:  Verbosity 3
+ * @JLOG_VERBOSE1:  Verbosity 2
+ * @JLOG_VERBOSE2:  Verbosity 3
  */
 enum log_level {
     JLOG_SUMMARY,
     JLOG_INFO,
-    JLOG_DEBUG1,
-    JLOG_DEBUG2
+    JLOG_VERBOSE1,
+    JLOG_VERBOSE2
 };
 
 /**
@@ -427,7 +427,7 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
     assert(a->links != NULL);
     assert(b->links != NULL);
 
-    jlog(JLOG_DEBUG1, _("Comparing xattrs of %s to %s"), a->links->path,
+    jlog(JLOG_VERBOSE1, _("Comparing xattrs of %s to %s"), a->links->path,
          b->links->path);
 
     stats.xattr_comparisons++;
@@ -527,7 +527,7 @@ static int file_contents_equal(const struct file *a, const struct file *b)
     assert(a->links != NULL);
     assert(b->links != NULL);
 
-    jlog(JLOG_DEBUG1, _("Comparing %s to %s"), a->links->path, b->links->path);
+    jlog(JLOG_VERBOSE1, _("Comparing %s to %s"), a->links->path, b->links->path);
 
     stats.comparisons++;
 
@@ -736,11 +736,11 @@ static int inserter(const char *fpath, const struct stat *sb, int typeflag,
     stats.files++;
 
     if ((uintmax_t) sb->st_size < opts.min_size) {
-        jlog(JLOG_DEBUG1, _("Skipped %s (smaller than configured size)"), fpath);
+        jlog(JLOG_VERBOSE1, _("Skipped %s (smaller than configured size)"), fpath);
         return 0;
     }
 
-    jlog(JLOG_DEBUG2, _("Visiting %s (file %zu)"), fpath, stats.files);
+    jlog(JLOG_VERBOSE2, _("Visiting %s (file %zu)"), fpath, stats.files);
 
     pathlen = strlen(fpath) + 1;
 
