@@ -1,7 +1,7 @@
 if BUILD_CHRT
 usrbin_exec_PROGRAMS += chrt
 dist_man_MANS += schedutils/chrt.1
-chrt_SOURCES = schedutils/chrt.c
+chrt_SOURCES = schedutils/chrt.c schedutils/sched_attr.h
 chrt_LDADD = $(LDADD) libcommon.la
 endif
 
@@ -22,6 +22,6 @@ endif
 if BUILD_UCLAMPSET
 usrbin_exec_PROGRAMS += uclampset
 dist_man_MANS += schedutils/uclampset.1
-uclampset_SOURCES = schedutils/uclampset.c
+uclampset_SOURCES = schedutils/uclampset.c schedutils/sched_attr.h
 uclampset_LDADD = $(LDADD) libcommon.la
 endif
