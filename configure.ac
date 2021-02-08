@@ -1857,16 +1857,28 @@ UL_BUILD_INIT([setarch], [check])
 UL_REQUIRES_LINUX([setarch])
 AM_CONDITIONAL([BUILD_SETARCH], [test "x$build_setarch" = xyes])
 
-UL_BUILD_INIT([script], [check])
+
+# build_scriptutils= is just configure-only variable to control
+# script, scriptreplay and scriptlive
+AC_ARG_ENABLE([scriptutils],
+  AS_HELP_STRING([--disable-scriptutils], [do not build script, scriptreplay and scriptlive]),
+  [], [UL_DEFAULT_ENABLE([scriptutils], [check])]
+)
+
+UL_ENABLE_ALIAS([script], [scriptutils])
+UL_BUILD_INIT([script])
 UL_REQUIRES_HAVE([script], [pty])
 AM_CONDITIONAL([BUILD_SCRIPT], [test "x$build_script" = xyes])
 
-UL_BUILD_INIT([scriptreplay], [yes])
+UL_ENABLE_ALIAS([scriptreplay], [scriptutils])
+UL_BUILD_INIT([scriptreplay])
 AM_CONDITIONAL([BUILD_SCRIPTREPLAY], [test "x$build_scriptreplay" = xyes])
 
-UL_BUILD_INIT([scriptlive], [check])
+UL_ENABLE_ALIAS([scriptlive], [scriptutils])
+UL_BUILD_INIT([scriptlive])
 UL_REQUIRES_HAVE([scriptlive], [pty])
 AM_CONDITIONAL([BUILD_SCRIPTLIVE], [test "x$build_scriptlive" = xyes])
+
 
 UL_BUILD_INIT([col], [yes])
 AM_CONDITIONAL([BUILD_COL], [test "x$build_col" = xyes])
