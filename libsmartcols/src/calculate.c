@@ -325,7 +325,7 @@ int __scols_calculate(struct libscols_table *tb, struct libscols_buffer *buf)
 
 			DBG(TAB, ul_debugobj(tb, " enlarge width (last column)"));
 
-			if (!scols_column_is_right(col) && tb->termwidth - width > 0) {
+			if (!scols_column_is_right(col)) {
 				col->width += tb->termwidth - width;
 				width = tb->termwidth;
 			}
