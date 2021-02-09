@@ -2101,6 +2101,11 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
+	if (cxt->helper) {
+		free(cxt->helper);
+		cxt->helper = NULL;
+	}
+
 	if (!type)
 		type = mnt_fs_get_fstype(cxt->fs);
 
