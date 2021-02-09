@@ -73,7 +73,7 @@ struct chardata {
 #define INIT_CHARDATA(ptr) do {              \
 		(ptr)->erase    = DEF_ERASE; \
 		(ptr)->kill     = DEF_KILL;  \
-		(ptr)->eol      = CTRL('r'); \
+		(ptr)->eol      = CR;        \
 	        (ptr)->parity   = 0;         \
 	        (ptr)->capslock = 0;         \
 	} while (0)
