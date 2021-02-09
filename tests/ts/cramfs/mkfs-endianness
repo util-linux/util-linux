@@ -29,6 +29,8 @@ ts_skip_nonroot
 IMAGE_DATA="$TS_OUTDIR/${TS_TESTNAME}-data"
 IMAGE_CREATED="$TS_OUTDIR/${TS_TESTNAME}-cramfs.img"	#Image created during the test and compared against the known images.
 
+umask 133
+
 test_image() {
 	local TO_ENDIANNESS="$1"; shift
 	ts_log "create $TO_ENDIANNESS endian"
@@ -43,7 +45,9 @@ test_image() {
 
 #generate test data, must be owner root
 rm -rf "$IMAGE_DATA"
-mkdir -p $IMAGE_DATA/dirA/dirB
+mkdir -m 755 $IMAGE_DATA
+mkdir -m 755 $IMAGE_DATA/dirA
+mkdir -m 755 $IMAGE_DATA/dirA/dirB
 
 cp $TS_SELF/mkfs-endianness_testdata_a $IMAGE_DATA/dirA/dirB/a
 cp $TS_SELF/mkfs-endianness_testdata_b $IMAGE_DATA/dirA/dirB/b
