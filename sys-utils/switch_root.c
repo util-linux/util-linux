@@ -128,7 +128,12 @@ static int switchroot(const char *newroot)
 	const char *umounts[] = { "/dev", "/proc", "/sys", "/run", NULL };
 	int i;
 	int cfd = -1;
-	struct stat newroot_stat, sb;
+	struct stat newroot_stat, oldroot_stat, sb;
+
+	if (stat("/", &oldroot_stat) != 0) {
+		warn(_("stat of %s failed"), "/");
+		return -1;
+	}
 
 	if (stat(newroot, &newroot_stat) != 0) {
 		warn(_("stat of %s failed"), newroot);
@@ -139,6 +144,11 @@ static int switchroot(const char *newroot)
 		char newmount[PATH_MAX];
 
 		snprintf(newmount, sizeof(newmount), "%s%s", newroot, umounts[i]);
+
+		if ((stat(umounts[i], &sb) == 0) && sb.st_dev == oldroot_stat.st_dev) {
+			/* mount point to move seems to be a normal directory or stat failed */
+			continue;
+		}
 
 		if ((stat(newmount, &sb) != 0) || (sb.st_dev != newroot_stat.st_dev)) {
 			/* mount point seems to be mounted already or stat failed */
