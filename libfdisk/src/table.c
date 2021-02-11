@@ -235,8 +235,8 @@ int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa
 	DBG(TAB, ul_debugobj(tb, "add entry %p [start=%ju, end=%ju, size=%ju, %s %s %s]",
 			pa,
 			(uintmax_t) fdisk_partition_get_start(pa),
-			(uintmax_t) fdisk_partition_get_end(pa),
-			(uintmax_t) fdisk_partition_get_size(pa),
+			fdisk_partition_has_end(pa) ? (uintmax_t) fdisk_partition_get_end(pa) : 0,
+			fdisk_partition_has_size(pa) ? (uintmax_t) fdisk_partition_get_size(pa) : 0,
 			fdisk_partition_is_freespace(pa) ? "freespace" : "",
 			fdisk_partition_is_nested(pa)    ? "nested"    : "",
 			fdisk_partition_is_container(pa) ? "container" : "primary"));
