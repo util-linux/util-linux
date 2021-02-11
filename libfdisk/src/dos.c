@@ -1729,7 +1729,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 {
 	size_t i;
 	uint8_t free_primary = 0, free_sectors = 0;
-	fdisk_sector_t last = 0, grain;
+	fdisk_sector_t first = 0, grain;
 	int rc = 0;
 	struct fdisk_dos_label *l;
 	struct pte *ext_pe;
@@ -1827,32 +1827,41 @@ static int dos_add_partition(struct fdisk_context *cxt,
 
 	/* check if there is space for primary partition */
 	grain = cxt->grain > cxt->sector_size ? cxt->grain / cxt->sector_size : 1;
-	last = cxt->first_lba;
+	first = cxt->first_lba;
 
 	if (cxt->parent && fdisk_is_label(cxt->parent, GPT)) {
 		/* modifying a hybrid MBR, which throws out the rules */
 		grain = 1;
-		last = 1;
+		first = 1;
 	}
 
+	/* set @first after the last used partition, set @free_sectors if there
+	 * is gap in front if the first partition or between used parrtitions. */
 	for (i = 0; i < 4; i++) {
 		struct dos_partition *p = self_partition(cxt, i);
 
 		assert(p);
 		if (is_used_partition(p)) {
 			fdisk_sector_t start = dos_partition_get_start(p);
-			if (last + grain <= start)
+			if (first + grain <= start)
 				free_sectors = 1;
-			last = start + dos_partition_get_size(p);
+			first = start + dos_partition_get_size(p);
 		} else
 			free_primary++;
 	}
-	if (last + grain < cxt->total_sectors - 1)
+
+	/* set @free_sectors if there is a space after the first usable sector */
+	if (first + grain - 1 <= cxt->total_sectors - 1)
 		free_sectors = 1;
 
+	DBG(LABEL, ul_debug("DOS: primary: first free: %ju, last on disk: %ju, "
+			    "free_sectors=%d, free_primary=%d",
+				(uintmax_t) first,
+				(uintmax_t) cxt->total_sectors - 1,
+				free_sectors, free_primary));
 
 	if (!free_primary || !free_sectors) {
-		DBG(LABEL, ul_debug("DOS: primary impossible, add logical"));
+		DBG(LABEL, ul_debug("DOS: primary impossible"));
 		if (l->ext_offset) {
 			if (!pa || fdisk_partition_has_start(pa)) {
 				/* See above case A); here we have start, but
@@ -1869,6 +1878,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 				}
 				fdisk_info(cxt, msg);
 			}
+			DBG(LABEL, ul_debug("DOS: tring logical"));
 			rc = add_logical(cxt, pa, &res);
 		} else {
 			if (free_primary)
