@@ -26,6 +26,7 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_PARTX"
 ts_check_test_command "$TS_CMD_ADDPART"
 ts_check_test_command "$TS_CMD_DELPART"
+ts_check_test_command "$TS_CMD_SFDISK"
 
 ts_skip_nonroot
 
@@ -70,10 +71,17 @@ ts_init_subtest "delpart"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
-ts_scsi_debug_rmmod
 
-# set global variable TS_DEVICE
-ts_scsi_debug_init dev_size_mb=50 num_parts=$PARTS
+udevadm settle
+$TS_CMD_SFDISK $TS_DEVICE &> /dev/null <<EOF
+label: dos
+label-id: 0x1ddc8a79
+32,33760,,
+33792,33792,,
+67584,34816,,
+EOF
+udevadm settle
+
 
 ts_init_subtest "detect-parts"
 {
