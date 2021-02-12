@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2020-11-16 11:21+0100\n"
+"POT-Creation-Date: 2021-02-12 14:48+0100\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -30,7 +30,7 @@ msgstr ""
 #: disk-utils/mkfs.bfs.c:127 disk-utils/resizepart.c:96 misc-utils/kill.c:314
 #: misc-utils/kill.c:375 misc-utils/rename.c:289 misc-utils/whereis.c:526
 #: sys-utils/flock.c:177 sys-utils/ipcrm.c:160 sys-utils/ldattach.c:367
-#: sys-utils/renice.c:144 sys-utils/switch_root.c:240 sys-utils/tunelp.c:152
+#: sys-utils/renice.c:144 sys-utils/switch_root.c:250 sys-utils/tunelp.c:152
 #: term-utils/agetty.c:893 term-utils/agetty.c:894 term-utils/agetty.c:902
 #: term-utils/agetty.c:903
 #, fuzzy
@@ -38,11 +38,11 @@ msgid "not enough arguments"
 msgstr "不足引數"
 
 #: disk-utils/addpart.c:57 disk-utils/blockdev.c:293 disk-utils/blockdev.c:437
-#: disk-utils/blockdev.c:464 disk-utils/cfdisk.c:2759 disk-utils/delpart.c:58
+#: disk-utils/blockdev.c:464 disk-utils/cfdisk.c:2760 disk-utils/delpart.c:58
 #: disk-utils/fdformat.c:229 disk-utils/fdisk.c:812 disk-utils/fdisk.c:1143
 #: disk-utils/fdisk-list.c:327 disk-utils/fdisk-list.c:368
 #: disk-utils/fdisk-list.c:391 disk-utils/fsck.c:1466
-#: disk-utils/fsck.cramfs.c:155 disk-utils/fsck.cramfs.c:514
+#: disk-utils/fsck.cramfs.c:161 disk-utils/fsck.cramfs.c:520
 #: disk-utils/isosize.c:53 disk-utils/mkfs.bfs.c:186
 #: disk-utils/mkfs.cramfs.c:171 disk-utils/mkfs.cramfs.c:660
 #: disk-utils/mkfs.cramfs.c:799 disk-utils/mkfs.minix.c:823
@@ -61,9 +61,9 @@ msgstr "不足引數"
 #: sys-utils/hwclock-rtc.c:403 sys-utils/hwclock-rtc.c:438
 #: sys-utils/irq-common.c:214 sys-utils/ldattach.c:391 sys-utils/lscpu.c:534
 #: sys-utils/lsmem.c:658 sys-utils/nsenter.c:131 sys-utils/rfkill.c:192
-#: sys-utils/rfkill.c:553 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
-#: sys-utils/setpriv.c:259 sys-utils/setpriv.c:628 sys-utils/setpriv.c:651
-#: sys-utils/swapon.c:374 sys-utils/swapon.c:517 sys-utils/switch_root.c:167
+#: sys-utils/rfkill.c:557 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
+#: sys-utils/setpriv.c:256 sys-utils/setpriv.c:622 sys-utils/setpriv.c:645
+#: sys-utils/swapon.c:374 sys-utils/swapon.c:517 sys-utils/switch_root.c:177
 #: sys-utils/unshare.c:112 sys-utils/unshare.c:127 sys-utils/wdctl.c:361
 #: sys-utils/zramctl.c:517 term-utils/agetty.c:2961 term-utils/mesg.c:143
 #: term-utils/script.c:382 term-utils/scriptlive.c:256
@@ -308,7 +308,7 @@ msgid "Quit program without writing changes"
 msgstr "離開本程式且不寫入分割表"
 
 #: disk-utils/cfdisk.c:196 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2606 libfdisk/src/gpt.c:3153 libfdisk/src/sgi.c:1164
+#: libfdisk/src/dos.c:2616 libfdisk/src/gpt.c:3153 libfdisk/src/sgi.c:1164
 #: libfdisk/src/sun.c:1136
 msgid "Type"
 msgstr "類型"
@@ -554,203 +554,208 @@ msgid "  q          Quit program without writing partition table"
 msgstr "  q          離開本程式並且不寫入分割表"
 
 #: disk-utils/cfdisk.c:2212
+#, fuzzy
+msgid "  r          Reduce or enlarge the current partition"
+msgstr "刪除目前的分割區"
+
+#: disk-utils/cfdisk.c:2213
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr ""
 
-#: disk-utils/cfdisk.c:2213
+#: disk-utils/cfdisk.c:2214
 #, fuzzy
 msgid "  t          Change the partition type"
 msgstr "  t          變更檔案系統的類型"
 
-#: disk-utils/cfdisk.c:2214
+#: disk-utils/cfdisk.c:2215
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr ""
 
-#: disk-utils/cfdisk.c:2215
+#: disk-utils/cfdisk.c:2216
 #, fuzzy
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W          寫入分割表 (寫入一定要用大寫 W)"
 
-#: disk-utils/cfdisk.c:2216
+#: disk-utils/cfdisk.c:2217
 #, fuzzy
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "             因為這將會使您的硬碟中的資料消失，您必須"
 
-#: disk-utils/cfdisk.c:2217
+#: disk-utils/cfdisk.c:2218
 #, fuzzy
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "             明確地回答 'yes' 代表寫入，若不要寫入請回答"
 
-#: disk-utils/cfdisk.c:2218
+#: disk-utils/cfdisk.c:2219
 #, fuzzy
 msgid "  x          Display/hide extra information about a partition"
 msgstr " -V           輸出版本資訊然後離開\n"
 
-#: disk-utils/cfdisk.c:2219
+#: disk-utils/cfdisk.c:2220
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "向上鍵       移動往上鍵可移至上一個分割區"
 
-#: disk-utils/cfdisk.c:2220
+#: disk-utils/cfdisk.c:2221
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "向下鍵       移動往下鍵可移至下一個分割區"
 
-#: disk-utils/cfdisk.c:2221
+#: disk-utils/cfdisk.c:2222
 #, fuzzy
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "向上鍵       移動往上鍵可移至上一個分割區"
 
-#: disk-utils/cfdisk.c:2222
+#: disk-utils/cfdisk.c:2223
 #, fuzzy
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "向下鍵       移動往下鍵可移至下一個分割區"
 
-#: disk-utils/cfdisk.c:2224
+#: disk-utils/cfdisk.c:2225
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "注意: 以上所有的按鍵命令均不區分大小寫"
 
-#: disk-utils/cfdisk.c:2225
+#: disk-utils/cfdisk.c:2226
 #, fuzzy
 msgid "case letters (except for Write)."
 msgstr "(除了 '寫入' 之外)。"
 
-#: disk-utils/cfdisk.c:2227
+#: disk-utils/cfdisk.c:2228
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2237 disk-utils/cfdisk.c:2540
+#: disk-utils/cfdisk.c:2238 disk-utils/cfdisk.c:2541
 #, fuzzy
 msgid "Press a key to continue."
 msgstr "按任何鍵繼續"
 
-#: disk-utils/cfdisk.c:2323
+#: disk-utils/cfdisk.c:2324
 msgid "Could not toggle the flag."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2333
+#: disk-utils/cfdisk.c:2334
 #, fuzzy, c-format
 msgid "Could not delete partition %zu."
 msgstr "已選分割區 %d\n"
 
-#: disk-utils/cfdisk.c:2335 disk-utils/fdisk-menu.c:662
+#: disk-utils/cfdisk.c:2336 disk-utils/fdisk-menu.c:662
 #, fuzzy, c-format
 msgid "Partition %zu has been deleted."
 msgstr "分割 %d 被刪除\n"
 
-#: disk-utils/cfdisk.c:2356
+#: disk-utils/cfdisk.c:2357
 #, fuzzy
 msgid "Partition size: "
 msgstr "分割區 (a-%c)："
 
-#: disk-utils/cfdisk.c:2397
+#: disk-utils/cfdisk.c:2398
 #, fuzzy, c-format
 msgid "Changed type of partition %zu."
 msgstr "分割區 %d 的系統類型已變更為 %x (%s)\n"
 
-#: disk-utils/cfdisk.c:2399
+#: disk-utils/cfdisk.c:2400
 #, fuzzy, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "分割區 %d 的系統類型未被變更：%x (%s)\n"
 
-#: disk-utils/cfdisk.c:2420
+#: disk-utils/cfdisk.c:2421
 #, fuzzy
 msgid "New size: "
 msgstr "新命令殼"
 
-#: disk-utils/cfdisk.c:2435
+#: disk-utils/cfdisk.c:2436
 #, fuzzy, c-format
 msgid "Partition %zu resized."
 msgstr "%s：分割 #%d 移除\n"
 
-#: disk-utils/cfdisk.c:2453 disk-utils/cfdisk.c:2571 disk-utils/fdisk.c:1140
+#: disk-utils/cfdisk.c:2454 disk-utils/cfdisk.c:2572 disk-utils/fdisk.c:1140
 #: disk-utils/fdisk-menu.c:592
 msgid "Device is open in read-only mode."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2458
+#: disk-utils/cfdisk.c:2459
 #, fuzzy
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "您確定要將分割表寫入硬碟中嗎? (yes 或 no):"
 
-#: disk-utils/cfdisk.c:2460
+#: disk-utils/cfdisk.c:2461
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2465 login-utils/lslogins.c:218 sys-utils/lscpu.c:1600
+#: disk-utils/cfdisk.c:2466 login-utils/lslogins.c:218 sys-utils/lscpu.c:1600
 #: sys-utils/lscpu.c:1610 sys-utils/lsmem.c:266
 msgid "yes"
 msgstr "是"
 
-#: disk-utils/cfdisk.c:2466
+#: disk-utils/cfdisk.c:2467
 #, fuzzy
 msgid "Did not write partition table to disk."
 msgstr "不要將分割表寫入硬碟"
 
-#: disk-utils/cfdisk.c:2471
+#: disk-utils/cfdisk.c:2472
 #, fuzzy
 msgid "Failed to write disklabel."
 msgstr "%s：無法寫入標籤"
 
-#: disk-utils/cfdisk.c:2477 disk-utils/fdisk-menu.c:599
+#: disk-utils/cfdisk.c:2478 disk-utils/fdisk-menu.c:599
 #, fuzzy
 msgid "The partition table has been altered."
 msgstr ""
 "分割表已變更！\n"
 "\n"
 
-#: disk-utils/cfdisk.c:2500 disk-utils/cfdisk.c:2573
+#: disk-utils/cfdisk.c:2501 disk-utils/cfdisk.c:2574
 #, fuzzy
 msgid "Note that partition table entries are not in disk order now."
 msgstr ""
 "\n"
 "分割表項目未按磁碟排序\n"
 
-#: disk-utils/cfdisk.c:2537
+#: disk-utils/cfdisk.c:2538
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2549
+#: disk-utils/cfdisk.c:2550
 #, fuzzy
 msgid "failed to create a new disklabel"
 msgstr "建立新的清空 Sun disklabel"
 
-#: disk-utils/cfdisk.c:2558
+#: disk-utils/cfdisk.c:2559
 #, fuzzy
 msgid "failed to read partitions"
 msgstr "加入分割時失敗"
 
-#: disk-utils/cfdisk.c:2657
+#: disk-utils/cfdisk.c:2658
 #, fuzzy, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %s [選項] <device>\n"
 
-#: disk-utils/cfdisk.c:2660 disk-utils/fdisk.c:857 disk-utils/sfdisk.c:2014
+#: disk-utils/cfdisk.c:2661 disk-utils/fdisk.c:857 disk-utils/sfdisk.c:2014
 #, fuzzy
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "%s：無法讀取分割表"
 
-#: disk-utils/cfdisk.c:2664
+#: disk-utils/cfdisk.c:2665
 #, fuzzy, c-format
 msgid " -L, --color[=<when>]     colorize output (%s, %s or %s)\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: disk-utils/cfdisk.c:2667
+#: disk-utils/cfdisk.c:2668
 #, fuzzy
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: disk-utils/cfdisk.c:2669
+#: disk-utils/cfdisk.c:2670
 #, fuzzy, c-format
 msgid "     --lock[=<mode>]      use exclusive device lock (%s, %s or %s)\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: disk-utils/cfdisk.c:2710 disk-utils/fdisk.c:1016 disk-utils/sfdisk.c:2315
+#: disk-utils/cfdisk.c:2711 disk-utils/fdisk.c:1016 disk-utils/sfdisk.c:2315
 #: misc-utils/cal.c:436 sys-utils/dmesg.c:1437 text-utils/hexdump.c:121
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "不受支援的命令"
 
-#: disk-utils/cfdisk.c:2737 disk-utils/fdisk.c:951 disk-utils/sfdisk.c:231
+#: disk-utils/cfdisk.c:2738 disk-utils/fdisk.c:951 disk-utils/sfdisk.c:231
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "配置迭代器時失敗"
@@ -848,7 +853,7 @@ msgstr "無效的引數：%s"
 msgid "invalid argument - repair"
 msgstr "無效的引數：%s"
 
-#: disk-utils/fdformat.c:223 disk-utils/fsck.cramfs.c:151
+#: disk-utils/fdformat.c:223 disk-utils/fsck.cramfs.c:157
 #: disk-utils/mkfs.bfs.c:182 disk-utils/mkfs.cramfs.c:337
 #: disk-utils/mkfs.cramfs.c:758 disk-utils/mkfs.cramfs.c:796
 #: disk-utils/mkfs.minix.c:820 disk-utils/mkswap.c:246 disk-utils/partx.c:959
@@ -857,7 +862,8 @@ msgstr "無效的引數：%s"
 #: sys-utils/blkzone.c:142 sys-utils/dmesg.c:532 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:75 sys-utils/nsenter.c:166
 #: sys-utils/nsenter.c:170 sys-utils/swapon.c:522 sys-utils/switch_root.c:94
-#: sys-utils/switch_root.c:137 term-utils/mesg.c:145
+#: sys-utils/switch_root.c:137 sys-utils/switch_root.c:142
+#: term-utils/mesg.c:145
 #, fuzzy, c-format
 msgid "stat of %s failed"
 msgstr "stat 失敗"
@@ -1197,7 +1203,7 @@ msgstr "不受支援的命令"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "警告：-b (設定磁區大小) 選項應該與一個指定裝置共同使用\n"
 
-#: disk-utils/fdisk.c:1109 disk-utils/fdisk.c:1124 disk-utils/fsck.cramfs.c:696
+#: disk-utils/fdisk.c:1109 disk-utils/fdisk.c:1124 disk-utils/fsck.cramfs.c:702
 #: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:786
 #: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
 #: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:534
@@ -1209,8 +1215,8 @@ msgstr "警告：-b (設定磁區大小) 選項應該與一個指定裝置共同
 #: sys-utils/lscpu.c:2424 sys-utils/lsmem.c:643 sys-utils/mount.c:824
 #: sys-utils/mount.c:832 sys-utils/mount.c:879 sys-utils/mount.c:892
 #: sys-utils/mount.c:964 sys-utils/mountpoint.c:189 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:992 sys-utils/switch_root.c:249
-#: sys-utils/umount.c:598 term-utils/setterm.c:1197 text-utils/col.c:233
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:992 sys-utils/switch_root.c:259
+#: sys-utils/umount.c:607 term-utils/setterm.c:1197 text-utils/col.c:233
 #: text-utils/more.c:2058
 #, fuzzy
 msgid "bad usage"
@@ -1295,7 +1301,7 @@ msgstr "配置迭代器時失敗"
 #: misc-utils/findmnt.c:1634 misc-utils/lsblk.c:2084 misc-utils/lslocks.c:456
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157 sys-utils/losetup.c:325
 #: sys-utils/lscpu.c:1672 sys-utils/lscpu.c:1900 sys-utils/lscpu.c:2032
-#: sys-utils/lsipc.c:351 sys-utils/prlimit.c:297 sys-utils/rfkill.c:459
+#: sys-utils/lsipc.c:351 sys-utils/prlimit.c:297 sys-utils/rfkill.c:461
 #: sys-utils/swapon.c:283 sys-utils/wdctl.c:299 sys-utils/zramctl.c:496
 #: text-utils/column.c:209
 #, fuzzy
@@ -1346,23 +1352,23 @@ msgstr ""
 "\n"
 "分割表項目未按磁碟排序\n"
 
-#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2600
+#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2610
 #: libfdisk/src/gpt.c:3149 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1130
 #, fuzzy
 msgid "Start"
 msgstr "啟始"
 
-#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2601
+#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2611
 #: libfdisk/src/gpt.c:3150 libfdisk/src/sgi.c:1159 libfdisk/src/sun.c:1131
 msgid "End"
 msgstr "結束"
 
-#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2602
+#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2612
 #: libfdisk/src/gpt.c:3151 libfdisk/src/sgi.c:1160 libfdisk/src/sun.c:1132
 msgid "Sectors"
 msgstr "磁區"
 
-#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2604
+#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2614
 #: libfdisk/src/gpt.c:3152 libfdisk/src/sgi.c:1162 libfdisk/src/sun.c:1134
 msgid "Size"
 msgstr ""
@@ -1873,13 +1879,13 @@ msgstr "%s 被掛載\n"
 msgid "%s is not mounted\n"
 msgstr "%s 未被掛載\n"
 
-#: disk-utils/fsck.c:329 disk-utils/fsck.cramfs.c:174
-#: disk-utils/fsck.cramfs.c:181 disk-utils/fsck.cramfs.c:237
-#: disk-utils/fsck.cramfs.c:258 disk-utils/sfdisk.c:305 libfdisk/src/bsd.c:647
+#: disk-utils/fsck.c:329 disk-utils/fsck.cramfs.c:180
+#: disk-utils/fsck.cramfs.c:187 disk-utils/fsck.cramfs.c:243
+#: disk-utils/fsck.cramfs.c:264 disk-utils/sfdisk.c:305 libfdisk/src/bsd.c:647
 #: login-utils/last.c:208 login-utils/last.c:245 login-utils/sulogin.c:657
 #: misc-utils/hardlink.c:290 misc-utils/hardlink.c:292
 #: sys-utils/ctrlaltdel.c:44 sys-utils/irq-common.c:220 sys-utils/rfkill.c:213
-#: sys-utils/setpriv.c:268 term-utils/setterm.c:746 term-utils/setterm.c:802
+#: sys-utils/setpriv.c:265 term-utils/setterm.c:746 term-utils/setterm.c:802
 #: term-utils/setterm.c:806 term-utils/setterm.c:813
 #, fuzzy, c-format
 msgid "cannot read %s"
@@ -1937,7 +1943,7 @@ msgstr "%s：剖析錯誤於列 %d -- 忽略"
 msgid "%s: failed to parse fstab"
 msgstr "%s：無法剖析 fstab"
 
-#: disk-utils/fsck.c:685 login-utils/login.c:1017 login-utils/sulogin.c:1024
+#: disk-utils/fsck.c:685 login-utils/login.c:1019 login-utils/sulogin.c:1024
 #: login-utils/vipw.c:208 sys-utils/flock.c:350 sys-utils/nsenter.c:182
 #: sys-utils/swapon.c:319 sys-utils/unshare.c:242 sys-utils/unshare.c:567
 msgid "fork failed"
@@ -2147,275 +2153,275 @@ msgstr "無效的引數：%s"
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "-l 選項可以被使用與一個裝置只有 -- 忽略"
 
-#: disk-utils/fsck.cramfs.c:111
+#: disk-utils/fsck.cramfs.c:117
 #, fuzzy, c-format
 msgid " %s [options] <file>\n"
 msgstr " %s [選項] [<file>]\n"
 
-#: disk-utils/fsck.cramfs.c:114
+#: disk-utils/fsck.cramfs.c:120
 msgid "Check and repair a compressed ROM filesystem.\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:117
+#: disk-utils/fsck.cramfs.c:123
 msgid " -a                       for compatibility only, ignored\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:118
+#: disk-utils/fsck.cramfs.c:124
 #, fuzzy
 msgid " -v, --verbose            be more verbose\n"
 msgstr " -v, --verbose            是更多詳細的\n"
 
-#: disk-utils/fsck.cramfs.c:119
+#: disk-utils/fsck.cramfs.c:125
 msgid " -y                       for compatibility only, ignored\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:120
+#: disk-utils/fsck.cramfs.c:126
 msgid " -b, --blocksize <size>   use this blocksize, defaults to page size\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:121
+#: disk-utils/fsck.cramfs.c:127
 msgid "     --extract[=<dir>]    test uncompression, optionally extract into <dir>\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:161
+#: disk-utils/fsck.cramfs.c:167
 #, c-format
 msgid "ioctl failed: unable to determine device size: %s"
 msgstr "ioctl 失敗：無法決定裝置大小：%s"
 
-#: disk-utils/fsck.cramfs.c:167
+#: disk-utils/fsck.cramfs.c:173
 #, c-format
 msgid "not a block device or file: %s"
 msgstr "不是區塊裝置或檔案：%s"
 
-#: disk-utils/fsck.cramfs.c:170 disk-utils/fsck.cramfs.c:206
+#: disk-utils/fsck.cramfs.c:176 disk-utils/fsck.cramfs.c:212
 msgid "file length too short"
 msgstr "檔案長度太短"
 
-#: disk-utils/fsck.cramfs.c:179 disk-utils/fsck.cramfs.c:234
-#: disk-utils/fsck.cramfs.c:254 libfdisk/src/bsd.c:719 libfdisk/src/bsd.c:901
+#: disk-utils/fsck.cramfs.c:185 disk-utils/fsck.cramfs.c:240
+#: disk-utils/fsck.cramfs.c:260 libfdisk/src/bsd.c:719 libfdisk/src/bsd.c:901
 #: login-utils/last.c:203 login-utils/last.c:237 sys-utils/fallocate.c:206
 #, fuzzy, c-format
 msgid "seek on %s failed"
 msgstr "搜尋失敗"
 
-#: disk-utils/fsck.cramfs.c:185 disk-utils/fsck.cramfs.c:187
+#: disk-utils/fsck.cramfs.c:191 disk-utils/fsck.cramfs.c:193
 msgid "superblock magic not found"
 msgstr "找不到超區塊的魔術標記"
 
-#: disk-utils/fsck.cramfs.c:190
+#: disk-utils/fsck.cramfs.c:196
 #, fuzzy, c-format
 msgid "cramfs endianness is %s\n"
 msgstr "cramfs 尾序是 %s\n"
 
-#: disk-utils/fsck.cramfs.c:191
+#: disk-utils/fsck.cramfs.c:197
 #, fuzzy
 msgid "big"
 msgstr "大"
 
-#: disk-utils/fsck.cramfs.c:191
+#: disk-utils/fsck.cramfs.c:197
 #, fuzzy
 msgid "little"
 msgstr "小型"
 
-#: disk-utils/fsck.cramfs.c:195
+#: disk-utils/fsck.cramfs.c:201
 msgid "unsupported filesystem features"
 msgstr "不受支援的檔案系統特徵"
 
-#: disk-utils/fsck.cramfs.c:199
+#: disk-utils/fsck.cramfs.c:205
 #, c-format
 msgid "superblock size (%d) too small"
 msgstr "超區塊大小 (%d) 太小"
 
-#: disk-utils/fsck.cramfs.c:204
+#: disk-utils/fsck.cramfs.c:210
 msgid "zero file count"
 msgstr "零個檔案計數"
 
-#: disk-utils/fsck.cramfs.c:208
+#: disk-utils/fsck.cramfs.c:214
 #, fuzzy
 msgid "file extends past end of filesystem"
 msgstr "警告：檔案延伸超過檔案系統末端\n"
 
-#: disk-utils/fsck.cramfs.c:210
+#: disk-utils/fsck.cramfs.c:216
 #, fuzzy
 msgid "old cramfs format"
 msgstr "警告：舊的 cramfs 格式\n"
 
-#: disk-utils/fsck.cramfs.c:219
+#: disk-utils/fsck.cramfs.c:225
 msgid "unable to test CRC: old cramfs format"
 msgstr "無法測試循環冗餘檢查：舊的 cramfs 格式"
 
-#: disk-utils/fsck.cramfs.c:239
+#: disk-utils/fsck.cramfs.c:245
 #, fuzzy, c-format
 msgid "failed to read %<PRIu32> bytes from file %s"
 msgstr "讀取 typescript 檔案 %s 時失敗"
 
-#: disk-utils/fsck.cramfs.c:277
+#: disk-utils/fsck.cramfs.c:283
 msgid "crc error"
 msgstr "循環冗餘檢查錯誤"
 
-#: disk-utils/fsck.cramfs.c:307 disk-utils/fsck.minix.c:558
+#: disk-utils/fsck.cramfs.c:313 disk-utils/fsck.minix.c:558
 msgid "seek failed"
 msgstr "搜尋失敗"
 
-#: disk-utils/fsck.cramfs.c:311
+#: disk-utils/fsck.cramfs.c:317
 #, fuzzy
 msgid "read romfs failed"
 msgstr "fread 失敗"
 
-#: disk-utils/fsck.cramfs.c:343
+#: disk-utils/fsck.cramfs.c:349
 msgid "root inode is not directory"
 msgstr "根 inode 並非目錄"
 
-#: disk-utils/fsck.cramfs.c:347
+#: disk-utils/fsck.cramfs.c:353
 #, c-format
 msgid "bad root offset (%lu)"
 msgstr "不當的根偏移 (%lu)"
 
-#: disk-utils/fsck.cramfs.c:365
+#: disk-utils/fsck.cramfs.c:371
 msgid "data block too large"
 msgstr "資料區塊太大"
 
-#: disk-utils/fsck.cramfs.c:369
+#: disk-utils/fsck.cramfs.c:375
 #, fuzzy, c-format
 msgid "decompression error: %s"
 msgstr "解壓縮錯誤 %p(%d)：%s"
 
-#: disk-utils/fsck.cramfs.c:395
+#: disk-utils/fsck.cramfs.c:401
 #, fuzzy, c-format
 msgid "  hole at %lu (%zu)\n"
 msgstr "  漏洞位於 %ld (%zd)\n"
 
-#: disk-utils/fsck.cramfs.c:402 disk-utils/fsck.cramfs.c:554
+#: disk-utils/fsck.cramfs.c:408 disk-utils/fsck.cramfs.c:560
 #, fuzzy, c-format
 msgid "  uncompressing block at %lu to %lu (%lu)\n"
 msgstr "  解壓縮區塊位於 %ld 到 %ld (%ld)\n"
 
-#: disk-utils/fsck.cramfs.c:409
+#: disk-utils/fsck.cramfs.c:415
 #, c-format
 msgid "non-block (%ld) bytes"
 msgstr "非區塊 (%ld) 位元組"
 
-#: disk-utils/fsck.cramfs.c:413
+#: disk-utils/fsck.cramfs.c:419
 #, c-format
 msgid "non-size (%ld vs %ld) bytes"
 msgstr "非大小 (%ld vs %ld) 位元組"
 
-#: disk-utils/fsck.cramfs.c:418 disk-utils/fsck.cramfs.c:520
+#: disk-utils/fsck.cramfs.c:424 disk-utils/fsck.cramfs.c:526
 #: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:369 sys-utils/fallocate.c:417
-#: sys-utils/rfkill.c:560 sys-utils/setpriv.c:634 sys-utils/setpriv.c:657
+#: sys-utils/rfkill.c:564 sys-utils/setpriv.c:628 sys-utils/setpriv.c:651
 #: sys-utils/swapon.c:392 term-utils/script.c:318 term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
 msgstr "寫入失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:428
+#: disk-utils/fsck.cramfs.c:434
 #, c-format
 msgid "lchown failed: %s"
 msgstr "lchown 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:432
+#: disk-utils/fsck.cramfs.c:438
 #, c-format
 msgid "chown failed: %s"
 msgstr "chown 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:437
+#: disk-utils/fsck.cramfs.c:443
 #, fuzzy, c-format
 msgid "utimes failed: %s"
 msgstr "utime 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:449
+#: disk-utils/fsck.cramfs.c:455
 #, c-format
 msgid "directory inode has zero offset and non-zero size: %s"
 msgstr "目錄 inode 有零偏移值和非零大小：%s"
 
-#: disk-utils/fsck.cramfs.c:464
+#: disk-utils/fsck.cramfs.c:470
 #, c-format
 msgid "mkdir failed: %s"
 msgstr "mkdir 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:480
+#: disk-utils/fsck.cramfs.c:486
 msgid "filename length is zero"
 msgstr "檔名長度為零"
 
-#: disk-utils/fsck.cramfs.c:482
+#: disk-utils/fsck.cramfs.c:488
 msgid "bad filename length"
 msgstr "不當的檔名長度"
 
-#: disk-utils/fsck.cramfs.c:488
+#: disk-utils/fsck.cramfs.c:494
 msgid "bad inode offset"
 msgstr "不當的 inode 偏移值"
 
-#: disk-utils/fsck.cramfs.c:503
+#: disk-utils/fsck.cramfs.c:509
 msgid "file inode has zero offset and non-zero size"
 msgstr "檔案 inode 有零偏移值和非零大小"
 
-#: disk-utils/fsck.cramfs.c:506
+#: disk-utils/fsck.cramfs.c:512
 msgid "file inode has zero size and non-zero offset"
 msgstr "檔案 inode 有零大小和非零偏移值"
 
-#: disk-utils/fsck.cramfs.c:535
+#: disk-utils/fsck.cramfs.c:541
 msgid "symbolic link has zero offset"
 msgstr "符號連結有零偏移值"
 
-#: disk-utils/fsck.cramfs.c:537
+#: disk-utils/fsck.cramfs.c:543
 msgid "symbolic link has zero size"
 msgstr "符號連結有零大小"
 
-#: disk-utils/fsck.cramfs.c:546
+#: disk-utils/fsck.cramfs.c:552
 #, c-format
 msgid "size error in symlink: %s"
 msgstr "大小錯誤發生於符號連結：%s"
 
-#: disk-utils/fsck.cramfs.c:560
+#: disk-utils/fsck.cramfs.c:566
 #, c-format
 msgid "symlink failed: %s"
 msgstr "符號連結失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:573
+#: disk-utils/fsck.cramfs.c:579
 #, c-format
 msgid "special file has non-zero offset: %s"
 msgstr "特殊檔案有非零偏移值：%s"
 
-#: disk-utils/fsck.cramfs.c:583
+#: disk-utils/fsck.cramfs.c:589
 #, c-format
 msgid "fifo has non-zero size: %s"
 msgstr "fifo 有非零大小：%s"
 
-#: disk-utils/fsck.cramfs.c:589
+#: disk-utils/fsck.cramfs.c:595
 #, c-format
 msgid "socket has non-zero size: %s"
 msgstr "通訊端有非零大小：%s"
 
-#: disk-utils/fsck.cramfs.c:592
+#: disk-utils/fsck.cramfs.c:598
 #, c-format
 msgid "bogus mode: %s (%o)"
 msgstr "假造模式：%s (%o)"
 
-#: disk-utils/fsck.cramfs.c:601
+#: disk-utils/fsck.cramfs.c:607
 #, c-format
 msgid "mknod failed: %s"
 msgstr "mknod 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:633
+#: disk-utils/fsck.cramfs.c:639
 #, fuzzy, c-format
 msgid "directory data start (%lu) < sizeof(struct cramfs_super) + start (%zu)"
 msgstr "目錄資料起始 (%ld) < sizeof(struct cramfs_super) + 起始 (%ld)"
 
-#: disk-utils/fsck.cramfs.c:637
+#: disk-utils/fsck.cramfs.c:643
 #, fuzzy, c-format
 msgid "directory data end (%lu) != file data start (%lu)"
 msgstr "目錄資料結束 (%ld) != 檔案資料起始 (%ld)"
 
-#: disk-utils/fsck.cramfs.c:641
+#: disk-utils/fsck.cramfs.c:647
 msgid "invalid file data offset"
 msgstr "無效的檔案資料偏移值"
 
-#: disk-utils/fsck.cramfs.c:689 disk-utils/mkfs.cramfs.c:736
+#: disk-utils/fsck.cramfs.c:695 disk-utils/mkfs.cramfs.c:736
 #, fuzzy
 msgid "invalid blocksize argument"
 msgstr "無效的區塊大小引數"
 
-#: disk-utils/fsck.cramfs.c:712
+#: disk-utils/fsck.cramfs.c:729
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s：確定\n"
@@ -3106,7 +3112,7 @@ msgid ""
 "                      specifying -V more than once will cause a dry-run\n"
 msgstr ""
 
-#: disk-utils/mkfs.c:133 include/c.h:254 login-utils/su-common.c:1214
+#: disk-utils/mkfs.c:133 include/c.h:254 login-utils/su-common.c:1215
 #: login-utils/sulogin.c:793 login-utils/sulogin.c:797 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:621
 #, c-format
@@ -3936,7 +3942,7 @@ msgstr[0] "#%2d：%9 ju-%9 ju (%9 ju 磁區，%6 ju MB)\n"
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1662
 #: misc-utils/lsblk.c:2123 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
 #: sys-utils/lscpu.c:1681 sys-utils/lscpu.c:1909 sys-utils/prlimit.c:306
-#: sys-utils/rfkill.c:471 sys-utils/swapon.c:292 sys-utils/wdctl.c:310
+#: sys-utils/rfkill.c:473 sys-utils/swapon.c:292 sys-utils/wdctl.c:310
 #, fuzzy
 msgid "failed to allocate output column"
 msgstr "callocate cpu 集合時失敗"
@@ -5136,8 +5142,8 @@ msgstr "預設會拒絕從 %2$s 登入到 %1$s。\n"
 msgid "colors are disabled by default"
 msgstr "預設會拒絕從 %2$s 登入到 %1$s。\n"
 
-#: include/env.h:18 lib/pager.c:153 login-utils/login.c:1103
-#: login-utils/login.c:1107 term-utils/agetty.c:1203
+#: include/env.h:18 lib/pager.c:153 login-utils/login.c:1105
+#: login-utils/login.c:1109 term-utils/agetty.c:1203
 #, fuzzy, c-format
 msgid "failed to set the %s environment variable"
 msgstr "設定 %s 資源限制時失敗"
@@ -6127,7 +6133,7 @@ msgstr "磁軌/磁柱"
 msgid "Sectors/Cylinder"
 msgstr "磁區/磁柱"
 
-#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2603
+#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2613
 #: libfdisk/src/sgi.c:1161 libfdisk/src/sun.c:203 libfdisk/src/sun.c:1133
 msgid "Cylinders"
 msgstr "磁柱"
@@ -6554,7 +6560,7 @@ msgstr[0] ""
 msgid "The maximum number of partitions has been created."
 msgstr "已建立分割區的最大數量\n"
 
-#: libfdisk/src/dos.c:1780 libfdisk/src/dos.c:1795 libfdisk/src/dos.c:2238
+#: libfdisk/src/dos.c:1780 libfdisk/src/dos.c:1795 libfdisk/src/dos.c:2248
 #, fuzzy
 msgid "Extended partition already exists."
 msgstr "這個分割區已經存在。\n"
@@ -6563,75 +6569,75 @@ msgstr "這個分割區已經存在。\n"
 msgid "Extended partition does not exists. Failed to add logical partition."
 msgstr ""
 
-#: libfdisk/src/dos.c:1862
+#: libfdisk/src/dos.c:1871
 #, fuzzy
 msgid "All primary partitions are in use."
 msgstr "所有主要分割區是在中使用\n"
 
-#: libfdisk/src/dos.c:1864 libfdisk/src/dos.c:1875
+#: libfdisk/src/dos.c:1873 libfdisk/src/dos.c:1885
 #, fuzzy
 msgid "All space for primary partitions is in use."
 msgstr "所有主要分割區是在中使用\n"
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:1878
+#: libfdisk/src/dos.c:1888
 #, fuzzy
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr ""
 "如果您要建立超過四分割區，您必須置換\n"
 "主要分割與進階分割先。\n"
 
-#: libfdisk/src/dos.c:1899
+#: libfdisk/src/dos.c:1909
 #, fuzzy
 msgid "Partition type"
 msgstr "分割區編號"
 
-#: libfdisk/src/dos.c:1903
+#: libfdisk/src/dos.c:1913
 #, c-format
 msgid "%u primary, %d extended, %u free"
 msgstr ""
 
-#: libfdisk/src/dos.c:1908
+#: libfdisk/src/dos.c:1918
 #, fuzzy
 msgid "primary"
 msgstr "主要的"
 
-#: libfdisk/src/dos.c:1910
+#: libfdisk/src/dos.c:1920
 #, fuzzy
 msgid "extended"
 msgstr "延伸"
 
-#: libfdisk/src/dos.c:1910
+#: libfdisk/src/dos.c:1920
 #, fuzzy
 msgid "container for logical partitions"
 msgstr "壞的邏輯分割區"
 
-#: libfdisk/src/dos.c:1912
+#: libfdisk/src/dos.c:1922
 #, fuzzy
 msgid "logical"
 msgstr "邏輯的"
 
-#: libfdisk/src/dos.c:1912
+#: libfdisk/src/dos.c:1922
 #, fuzzy
 msgid "numbered from 5"
 msgstr "   l   邏輯的 (已編號從 5)"
 
-#: libfdisk/src/dos.c:1951
+#: libfdisk/src/dos.c:1961
 #, fuzzy, c-format
 msgid "Invalid partition type `%c'."
 msgstr "無效的分割區類型『%c』\n"
 
-#: libfdisk/src/dos.c:1969
+#: libfdisk/src/dos.c:1979
 #, fuzzy, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "無法寫入指令稿檔案"
 
-#: libfdisk/src/dos.c:2129 libfdisk/src/gpt.c:1257
+#: libfdisk/src/dos.c:2139 libfdisk/src/gpt.c:1257
 #, fuzzy
 msgid "Disk identifier"
 msgstr "磁碟識別碼：0x%08x\n"
 
-#: libfdisk/src/dos.c:2243
+#: libfdisk/src/dos.c:2253
 #, fuzzy
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr ""
@@ -6640,63 +6646,63 @@ msgstr ""
 "類型為 0 的分割區可能不太明智。您可以\n"
 "使用「d」命令來刪除分割區。\n"
 
-#: libfdisk/src/dos.c:2248
+#: libfdisk/src/dos.c:2258
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr ""
 
-#: libfdisk/src/dos.c:2434 libfdisk/src/gpt.c:3059
+#: libfdisk/src/dos.c:2444 libfdisk/src/gpt.c:3059
 #, fuzzy
 msgid "Nothing to do. Ordering is correct already."
 msgstr ""
 "無事可做。順序已經是正確的。\n"
 "\n"
 
-#: libfdisk/src/dos.c:2489
+#: libfdisk/src/dos.c:2499
 #, fuzzy, c-format
 msgid "Partition %zu: no data area."
 msgstr "分割區 %d 沒有資料區域\n"
 
-#: libfdisk/src/dos.c:2522
+#: libfdisk/src/dos.c:2532
 msgid "New beginning of data"
 msgstr "新的資料開始部分"
 
-#: libfdisk/src/dos.c:2578
+#: libfdisk/src/dos.c:2588
 #, fuzzy, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "警告：分割區 %d 是擴充分割區\n"
 
-#: libfdisk/src/dos.c:2584
+#: libfdisk/src/dos.c:2594
 #, fuzzy, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "分割區 %d 的系統類型未被變更：%x (%s)\n"
 
-#: libfdisk/src/dos.c:2585
+#: libfdisk/src/dos.c:2595
 #, fuzzy, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "切換目前分割區的屬性旗標"
 
-#: libfdisk/src/dos.c:2598 libfdisk/src/gpt.c:3148 libfdisk/src/sgi.c:1157
+#: libfdisk/src/dos.c:2608 libfdisk/src/gpt.c:3148 libfdisk/src/sgi.c:1157
 #: libfdisk/src/sun.c:1129
 msgid "Device"
 msgstr "所用裝置"
 
-#: libfdisk/src/dos.c:2599 libfdisk/src/sun.c:40
+#: libfdisk/src/dos.c:2609 libfdisk/src/sun.c:40
 msgid "Boot"
 msgstr "可開機"
 
-#: libfdisk/src/dos.c:2605 libfdisk/src/sgi.c:1163 libfdisk/src/sun.c:1135
+#: libfdisk/src/dos.c:2615 libfdisk/src/sgi.c:1163 libfdisk/src/sun.c:1135
 msgid "Id"
 msgstr ""
 
-#: libfdisk/src/dos.c:2609
+#: libfdisk/src/dos.c:2619
 msgid "Start-C/H/S"
 msgstr ""
 
-#: libfdisk/src/dos.c:2610
+#: libfdisk/src/dos.c:2620
 msgid "End-C/H/S"
 msgstr ""
 
-#: libfdisk/src/dos.c:2611 libfdisk/src/gpt.c:3158 libfdisk/src/sgi.c:1165
+#: libfdisk/src/dos.c:2621 libfdisk/src/gpt.c:3158 libfdisk/src/sgi.c:1165
 msgid "Attrs"
 msgstr ""
 
@@ -7540,280 +7546,280 @@ msgstr ""
 "如果您很確定想要該分割區被\n"
 "標示為 82 (Linux 交換區) 就輸入 YES："
 
-#: libmount/src/context.c:2761
+#: libmount/src/context.c:2771
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "開啟失敗：%s"
 
-#: libmount/src/context_mount.c:1640
+#: libmount/src/context_mount.c:1652
 #, fuzzy, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "附加選項時失敗"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1662
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "%s 被防止寫入的，掛載唯讀"
 
-#: libmount/src/context_mount.c:1664
+#: libmount/src/context_mount.c:1676
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1668
+#: libmount/src/context_mount.c:1680
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "%s 已經掛載"
 
-#: libmount/src/context_mount.c:1674
+#: libmount/src/context_mount.c:1686
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "找不到 %s 在中 %s"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1689
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "找不到 mountpoint %s 在中 %s"
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1692
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "找不到掛載來源 %s 在中 %s"
 
-#: libmount/src/context_mount.c:1685
+#: libmount/src/context_mount.c:1697
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1690
+#: libmount/src/context_mount.c:1702
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s：無法讀取速度"
 
-#: libmount/src/context_mount.c:1691
+#: libmount/src/context_mount.c:1703
 #, fuzzy, c-format
 msgid "no filesystem type specified"
 msgstr "未指定任何檔名"
 
-#: libmount/src/context_mount.c:1698
+#: libmount/src/context_mount.c:1710
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "找不到 %s"
 
-#: libmount/src/context_mount.c:1700
+#: libmount/src/context_mount.c:1712
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "沒有 mountpoint 指定的。"
 
-#: libmount/src/context_mount.c:1706
+#: libmount/src/context_mount.c:1718
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1707
+#: libmount/src/context_mount.c:1719
 #, fuzzy, c-format
 msgid "failed to parse mount options"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1711
+#: libmount/src/context_mount.c:1723
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s：無法設定迴圈裝置"
 
-#: libmount/src/context_mount.c:1715
+#: libmount/src/context_mount.c:1727
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s 不是 lp 裝置"
 
-#: libmount/src/context_mount.c:1719 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1731 libmount/src/context_umount.c:1263
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "關閉 %s 失敗"
 
-#: libmount/src/context_mount.c:1723 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1735 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:249 sys-utils/umount.c:265
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "狀態的裝置"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1738
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "掛載失敗"
 
-#: libmount/src/context_mount.c:1736
+#: libmount/src/context_mount.c:1748
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1742
+#: libmount/src/context_mount.c:1754
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1749
+#: libmount/src/context_mount.c:1761
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1767 libmount/src/context_mount.c:1812
+#: libmount/src/context_mount.c:1779 libmount/src/context_mount.c:1824
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "掛載點 %s 並非目錄"
 
-#: libmount/src/context_mount.c:1769 login-utils/newgrp.c:226
+#: libmount/src/context_mount.c:1781 login-utils/newgrp.c:226
 #, fuzzy, c-format
 msgid "permission denied"
 msgstr "權限被拒"
 
-#: libmount/src/context_mount.c:1771
+#: libmount/src/context_mount.c:1783
 #, fuzzy, c-format
 msgid "must be superuser to use mount"
 msgstr "必須是系統管理者以使用掛載"
 
-#: libmount/src/context_mount.c:1778
+#: libmount/src/context_mount.c:1790
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount：%s 忙碌中"
 
-#: libmount/src/context_mount.c:1785
+#: libmount/src/context_mount.c:1797
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount：%s 已經掛載到 %s\n"
 
-#: libmount/src/context_mount.c:1789
+#: libmount/src/context_mount.c:1801
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s 已經掛載的或 %s 忙碌"
 
-#: libmount/src/context_mount.c:1794
+#: libmount/src/context_mount.c:1806
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "掛載點 %s 不存在"
 
-#: libmount/src/context_mount.c:1797
+#: libmount/src/context_mount.c:1809
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "掛載點 %s 是符號連結到 nowhere"
 
-#: libmount/src/context_mount.c:1802
+#: libmount/src/context_mount.c:1814
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr "特殊裝置 %s 不存在"
 
-#: libmount/src/context_mount.c:1805 libmount/src/context_mount.c:1821
-#: libmount/src/context_mount.c:1905 libmount/src/context_mount.c:1928
+#: libmount/src/context_mount.c:1817 libmount/src/context_mount.c:1833
+#: libmount/src/context_mount.c:1917 libmount/src/context_mount.c:1940
 #, fuzzy, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "掛載 (2) 失敗"
 
-#: libmount/src/context_mount.c:1817
+#: libmount/src/context_mount.c:1829
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "特殊裝置 %s 不存在 (a 路徑前綴並非目錄)"
 
-#: libmount/src/context_mount.c:1829
+#: libmount/src/context_mount.c:1841
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "掛載：%s 無法掛載的或不當的選項"
 
-#: libmount/src/context_mount.c:1831
+#: libmount/src/context_mount.c:1843
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "%s 不是 mountpoint 或不當的選項"
 
-#: libmount/src/context_mount.c:1834
+#: libmount/src/context_mount.c:1846
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 
-#: libmount/src/context_mount.c:1838
+#: libmount/src/context_mount.c:1850
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (對於許多檔案系統 (例如 nfs，cifs) 您也許\n"
 "       需要 /sbin/mount.<type> 輔助程式)"
 
-#: libmount/src/context_mount.c:1842
+#: libmount/src/context_mount.c:1854
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "錯誤的 fs 型態，不當的選項，不當的超區塊於 %s，\n"
 "       缺少的編碼頁或輔助程式程式，或其他錯誤"
 
-#: libmount/src/context_mount.c:1849
+#: libmount/src/context_mount.c:1861
 #, c-format
 msgid "mount table full"
 msgstr "掛載表已滿"
 
-#: libmount/src/context_mount.c:1854
+#: libmount/src/context_mount.c:1866
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "%s：無法讀取超區塊"
 
-#: libmount/src/context_mount.c:1861
+#: libmount/src/context_mount.c:1873
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "不明檔案系統型態『%s』"
 
-#: libmount/src/context_mount.c:1864
+#: libmount/src/context_mount.c:1876
 #, fuzzy, c-format
 msgid "unknown filesystem type"
 msgstr "不明檔案系統型態『%s』"
 
-#: libmount/src/context_mount.c:1873
+#: libmount/src/context_mount.c:1885
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s 並非區塊裝置，而stat (2) 失敗？"
 
-#: libmount/src/context_mount.c:1876
+#: libmount/src/context_mount.c:1888
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 "內核不識別 %s 做為區塊裝置\n"
 "       (也許『modprobe 驅動程式』?)"
 
-#: libmount/src/context_mount.c:1879
+#: libmount/src/context_mount.c:1891
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s 並非區塊裝置 (也許嘗試『-o 迴圈』?)"
 
-#: libmount/src/context_mount.c:1881
+#: libmount/src/context_mount.c:1893
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr " %s 並非區塊裝置"
 
-#: libmount/src/context_mount.c:1888
+#: libmount/src/context_mount.c:1900
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "%s 並非有效區塊裝置"
 
-#: libmount/src/context_mount.c:1896
+#: libmount/src/context_mount.c:1908
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "無法掛載 %s 唯讀"
 
-#: libmount/src/context_mount.c:1898
+#: libmount/src/context_mount.c:1910
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s 被防止寫入的但是明確的『-w』旗標給定的"
 
-#: libmount/src/context_mount.c:1900
+#: libmount/src/context_mount.c:1912
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "無法 remount %s 可讀可寫，被防止寫入的"
 
-#: libmount/src/context_mount.c:1902
+#: libmount/src/context_mount.c:1914
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "%s 失敗。\n"
 
-#: libmount/src/context_mount.c:1913
+#: libmount/src/context_mount.c:1925
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "找不到任何中於 %s"
 
-#: libmount/src/context_mount.c:1920
+#: libmount/src/context_mount.c:1932
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "將不會試著於「%s」製作檔案系統"
@@ -8389,12 +8395,12 @@ msgstr "PAM 失敗，放棄：%s"
 msgid "Couldn't initialize PAM: %s"
 msgstr "無法初始化 PAM：%s"
 
-#: login-utils/login.c:867
+#: login-utils/login.c:869
 #, fuzzy, c-format
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "失敗的登入 %u 從 %s 用於 %s，%s"
 
-#: login-utils/login.c:875 login-utils/sulogin.c:1013
+#: login-utils/login.c:877 login-utils/sulogin.c:1013
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -8403,17 +8409,17 @@ msgstr ""
 "登入不正確\n"
 "\n"
 
-#: login-utils/login.c:890
+#: login-utils/login.c:892
 #, fuzzy, c-format
 msgid "TOO MANY LOGIN TRIES (%u) FROM %s FOR %s, %s"
 msgstr "太多登入嘗試 (%u) 從 %s 用於 %s，%s"
 
-#: login-utils/login.c:896
+#: login-utils/login.c:898
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "失敗的登入執行階段自 %s 用於 %s, %s"
 
-#: login-utils/login.c:904
+#: login-utils/login.c:906
 #, c-format
 msgid ""
 "\n"
@@ -8422,7 +8428,7 @@ msgstr ""
 "\n"
 "登入錯誤\n"
 
-#: login-utils/login.c:932 login-utils/login.c:1315 login-utils/login.c:1338
+#: login-utils/login.c:934 login-utils/login.c:1317 login-utils/login.c:1340
 #, fuzzy
 msgid ""
 "\n"
@@ -8431,100 +8437,100 @@ msgstr ""
 "\n"
 "作業階段設定問題，放棄。"
 
-#: login-utils/login.c:933
+#: login-utils/login.c:935
 #, fuzzy
 msgid "NULL user name. Abort."
 msgstr "在 %s:%d 中包含空使用者名稱，放棄。"
 
-#: login-utils/login.c:1071
+#: login-utils/login.c:1073
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY 失敗：%m"
 
-#: login-utils/login.c:1175
+#: login-utils/login.c:1177
 #, fuzzy, c-format
 msgid " %s [-p] [-h <host>] [-H] [[-f] <username>]\n"
 msgstr "用法：登入 [-p] [-h 主機] [-H] [-f 使用者名稱|使用者名稱]\n"
 
-#: login-utils/login.c:1177
+#: login-utils/login.c:1179
 #, fuzzy
 msgid "Begin a session on the system.\n"
 msgstr "您正在這個系統中使用陰影密碼。\n"
 
-#: login-utils/login.c:1180
+#: login-utils/login.c:1182
 #, fuzzy
 msgid " -p             do not destroy the environment"
 msgstr " -f           不分割長列\n"
 
-#: login-utils/login.c:1181
+#: login-utils/login.c:1183
 #, fuzzy
 msgid " -f             skip a login authentication"
 msgstr " -f           不分割長列\n"
 
-#: login-utils/login.c:1182
+#: login-utils/login.c:1184
 msgid " -h <host>      hostname to be used for utmp logging"
 msgstr ""
 
-#: login-utils/login.c:1183
+#: login-utils/login.c:1185
 #, fuzzy
 msgid " -H             suppress hostname in the login prompt"
 msgstr " -e           不暫停於結束的檔案\n"
 
-#: login-utils/login.c:1229
+#: login-utils/login.c:1231
 #, fuzzy, c-format
 msgid "%s: timed out after %u seconds"
 msgstr "已逾時之後 %u 秒"
 
-#: login-utils/login.c:1256
+#: login-utils/login.c:1258
 #, fuzzy, c-format
 msgid "login: -h is for superuser only\n"
 msgstr "login：-h 只提供系統管理者使用。\n"
 
-#: login-utils/login.c:1316
+#: login-utils/login.c:1318
 #, fuzzy, c-format
 msgid "Invalid user name \"%s\". Abort."
 msgstr "無效的使用者名稱「%s」於 %s:%d，放棄。"
 
-#: login-utils/login.c:1337
+#: login-utils/login.c:1339
 #, fuzzy, c-format
 msgid "groups initialization failed: %m"
 msgstr "群組初始化失敗：%m"
 
-#: login-utils/login.c:1362 sys-utils/mount.c:57 sys-utils/umount.c:122
+#: login-utils/login.c:1364 sys-utils/mount.c:57 sys-utils/umount.c:122
 #, fuzzy
 msgid "setgid() failed"
 msgstr "setgid() 失敗"
 
-#: login-utils/login.c:1392
+#: login-utils/login.c:1394
 #, c-format
 msgid "You have new mail.\n"
 msgstr "您有新郵件。\n"
 
-#: login-utils/login.c:1394
+#: login-utils/login.c:1396
 #, c-format
 msgid "You have mail.\n"
 msgstr "您有郵件。\n"
 
-#: login-utils/login.c:1408 sys-utils/mount.c:60 sys-utils/umount.c:125
+#: login-utils/login.c:1410 sys-utils/mount.c:60 sys-utils/umount.c:125
 msgid "setuid() failed"
 msgstr "setuid() 失敗"
 
-#: login-utils/login.c:1414 login-utils/sulogin.c:731
+#: login-utils/login.c:1416 login-utils/sulogin.c:731
 #, fuzzy, c-format
 msgid "%s: change directory failed"
 msgstr "%s：變更目錄失敗"
 
-#: login-utils/login.c:1421 login-utils/sulogin.c:732
+#: login-utils/login.c:1423 login-utils/sulogin.c:732
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "登入時個人資料夾=「/」。\n"
 
-#: login-utils/login.c:1447
+#: login-utils/login.c:1449
 #, fuzzy
 msgid "couldn't exec shell script"
 msgstr "無法 exec 命令稿"
 
-#: login-utils/login.c:1449
+#: login-utils/login.c:1451
 #, fuzzy
 msgid "no shell"
 msgstr "沒有命令殼"
@@ -9026,76 +9032,76 @@ msgstr " -c  --command <command>  運行單一命令字串透過命令殼\n"
 msgid "This account is currently not available.\n"
 msgstr "這個磁碟為目前在使用中。\n"
 
-#: login-utils/su-common.c:227
+#: login-utils/su-common.c:228
 msgid " (core dumped)"
 msgstr ""
 
-#: login-utils/su-common.c:349
+#: login-utils/su-common.c:350
 #, fuzzy
 msgid "failed to modify environment"
 msgstr "開啟目錄時失敗"
 
-#: login-utils/su-common.c:385
+#: login-utils/su-common.c:386
 msgid "may not be used by non-root users"
 msgstr ""
 
-#: login-utils/su-common.c:409
+#: login-utils/su-common.c:410
 #, fuzzy
 msgid "authentication failed"
 msgstr "tcgetattr 失敗"
 
-#: login-utils/su-common.c:422
+#: login-utils/su-common.c:423
 #, fuzzy, c-format
 msgid "cannot open session: %s"
 msgstr "無法無法開啟作業階段：%s"
 
-#: login-utils/su-common.c:441
+#: login-utils/su-common.c:442
 #, fuzzy
 msgid "cannot block signals"
 msgstr "無法區塊信號"
 
-#: login-utils/su-common.c:458
+#: login-utils/su-common.c:459
 msgid "cannot initialize signal mask for session"
 msgstr ""
 
-#: login-utils/su-common.c:466
+#: login-utils/su-common.c:467
 #, fuzzy
 msgid "cannot initialize signal mask"
 msgstr "無法區塊信號"
 
-#: login-utils/su-common.c:476
+#: login-utils/su-common.c:477
 #, fuzzy
 msgid "cannot set signal handler for session"
 msgstr "無法設定信號處理程式"
 
-#: login-utils/su-common.c:484 misc-utils/uuidd.c:401 sys-utils/lscpu.c:887
+#: login-utils/su-common.c:485 misc-utils/uuidd.c:401 sys-utils/lscpu.c:887
 #, fuzzy
 msgid "cannot set signal handler"
 msgstr "無法設定信號處理程式"
 
-#: login-utils/su-common.c:492
+#: login-utils/su-common.c:493
 #, fuzzy
 msgid "cannot set signal mask"
 msgstr "無法設定信號處理程式"
 
-#: login-utils/su-common.c:517 term-utils/script.c:949
+#: login-utils/su-common.c:518 term-utils/script.c:949
 #: term-utils/scriptlive.c:296
 #, fuzzy
 msgid "failed to create pseudo-terminal"
 msgstr "初始化輸出表格時失敗"
 
-#: login-utils/su-common.c:529 term-utils/script.c:959
+#: login-utils/su-common.c:530 term-utils/script.c:959
 #: term-utils/scriptlive.c:303
 #, fuzzy
 msgid "cannot create child process"
 msgstr "無法建立子行程"
 
-#: login-utils/su-common.c:548
+#: login-utils/su-common.c:549
 #, fuzzy, c-format
 msgid "cannot change directory to %s"
 msgstr "無法變更目錄到 %s"
 
-#: login-utils/su-common.c:575 term-utils/scriptlive.c:352
+#: login-utils/su-common.c:576 term-utils/scriptlive.c:352
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -9104,85 +9110,85 @@ msgstr ""
 "\n"
 "作業階段終止，killing 命令殼…"
 
-#: login-utils/su-common.c:586
+#: login-utils/su-common.c:587
 #, fuzzy, c-format
 msgid " ...killed.\n"
 msgstr "...killed。\n"
 
-#: login-utils/su-common.c:683
+#: login-utils/su-common.c:684
 #, fuzzy
 msgid "failed to set the PATH environment variable"
 msgstr "設定 %s 資源限制時失敗"
 
-#: login-utils/su-common.c:760
+#: login-utils/su-common.c:761
 #, fuzzy
 msgid "cannot set groups"
 msgstr "無法設定群組"
 
-#: login-utils/su-common.c:766
+#: login-utils/su-common.c:767
 #, fuzzy, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "剖析等級『%s 時失敗』"
 
-#: login-utils/su-common.c:776 sys-utils/eject.c:660
+#: login-utils/su-common.c:777 sys-utils/eject.c:660
 msgid "cannot set group id"
 msgstr "無法設定群組識別號"
 
-#: login-utils/su-common.c:778 sys-utils/eject.c:663
+#: login-utils/su-common.c:779 sys-utils/eject.c:663
 msgid "cannot set user id"
 msgstr "無法設定使用者識別號"
 
-#: login-utils/su-common.c:846
+#: login-utils/su-common.c:847
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:847
+#: login-utils/su-common.c:848
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:850
+#: login-utils/su-common.c:851
 #, fuzzy
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
-#: login-utils/su-common.c:851
+#: login-utils/su-common.c:852
 #, fuzzy
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
-#: login-utils/su-common.c:854
+#: login-utils/su-common.c:855
 #, fuzzy
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -h, --help                   這個小用法指導\n"
 
-#: login-utils/su-common.c:855
+#: login-utils/su-common.c:856
 #, fuzzy
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c  --command <command>  運行單一命令字串透過命令殼\n"
 
-#: login-utils/su-common.c:856
+#: login-utils/su-common.c:857
 #, fuzzy
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
 msgstr " -c  --command <command>  運行單一命令字串透過命令殼\n"
 
-#: login-utils/su-common.c:858
+#: login-utils/su-common.c:859
 #, fuzzy
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -r, --reset                  重置通訊埠\n"
 
-#: login-utils/su-common.c:859
+#: login-utils/su-common.c:860
 #, fuzzy
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>          設定命令殼引言慣例\n"
 
-#: login-utils/su-common.c:860
+#: login-utils/su-common.c:861
 #, fuzzy
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: login-utils/su-common.c:870
+#: login-utils/su-common.c:871
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9191,24 +9197,24 @@ msgstr ""
 " %1$s [選項] [<loopdev>]\n"
 " %1$s [選項] -f|<loopdev><檔案>\n"
 
-#: login-utils/su-common.c:875
+#: login-utils/su-common.c:876
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
 "The options -c, -f, -l, and -s are mutually exclusive with -u.\n"
 msgstr ""
 
-#: login-utils/su-common.c:880
+#: login-utils/su-common.c:881
 #, fuzzy
 msgid " -u, --user <user>               username\n"
 msgstr " -v, --verbose            是更多詳細的\n"
 
-#: login-utils/su-common.c:891
+#: login-utils/su-common.c:892
 #, fuzzy, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [選項] <program> [引數...]\n"
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:896
 #, fuzzy
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
@@ -9218,54 +9224,54 @@ msgstr ""
 " 變更有效使用者識別號和群組識別號到該的使用者。\n"
 " mere - 意味著 -l.   如果使用者無法給定的，假設根。\n"
 
-#: login-utils/su-common.c:943
+#: login-utils/su-common.c:944
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] ""
 
-#: login-utils/su-common.c:949
+#: login-utils/su-common.c:950
 #, fuzzy, c-format
 msgid "group %s does not exist"
 msgstr "使用者 %s 不存在"
 
-#: login-utils/su-common.c:1058
+#: login-utils/su-common.c:1059
 msgid "--pty is not supported for your system"
 msgstr ""
 
-#: login-utils/su-common.c:1092
+#: login-utils/su-common.c:1093
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr ""
 
-#: login-utils/su-common.c:1106
+#: login-utils/su-common.c:1107
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr ""
 
-#: login-utils/su-common.c:1109
+#: login-utils/su-common.c:1110
 #, fuzzy
 msgid "no command was specified"
 msgstr "未指定任何動作"
 
-#: login-utils/su-common.c:1121
+#: login-utils/su-common.c:1122
 msgid "only root can specify alternative groups"
 msgstr ""
 
-#: login-utils/su-common.c:1132
+#: login-utils/su-common.c:1133
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr ""
 
-#: login-utils/su-common.c:1167
+#: login-utils/su-common.c:1168
 #, fuzzy, c-format
 msgid "using restricted shell %s"
 msgstr "使用限制的命令殼 %s"
 
-#: login-utils/su-common.c:1186
+#: login-utils/su-common.c:1187
 #, fuzzy
 msgid "failed to allocate pty handler"
 msgstr "配置迭代器時失敗"
 
-#: login-utils/su-common.c:1208
+#: login-utils/su-common.c:1209
 #, fuzzy, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "警告：無法變更目錄到 %s"
@@ -10256,7 +10262,7 @@ msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -v, --verbose             列印詳細的資料\n"
 
 #: misc-utils/findmnt.c:1240 misc-utils/lslocks.c:535 sys-utils/lsns.c:905
-#: sys-utils/rfkill.c:581
+#: sys-utils/rfkill.c:585
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
@@ -10863,7 +10869,7 @@ msgstr "%s 來自 %s\n"
 msgid " (with: "
 msgstr ""
 
-#: misc-utils/kill.c:285 misc-utils/kill.c:294 sys-utils/setpriv.c:451
+#: misc-utils/kill.c:285 misc-utils/kill.c:294 sys-utils/setpriv.c:448
 #: sys-utils/unshare.c:499
 #, fuzzy, c-format
 msgid "unknown signal: %s"
@@ -11671,17 +11677,17 @@ msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:537 sys-utils/lsns.c:907 sys-utils/rfkill.c:582
+#: misc-utils/lslocks.c:537 sys-utils/lsns.c:907 sys-utils/rfkill.c:586
 #, fuzzy
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -f           不分割長列\n"
 
-#: misc-utils/lslocks.c:538 sys-utils/lsns.c:908 sys-utils/rfkill.c:583
+#: misc-utils/lslocks.c:538 sys-utils/lsns.c:908 sys-utils/rfkill.c:587
 #, fuzzy
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --options <optstring>    短選項為辨識的\n"
 
-#: misc-utils/lslocks.c:539 sys-utils/lsns.c:909 sys-utils/rfkill.c:584
+#: misc-utils/lslocks.c:539 sys-utils/lsns.c:909 sys-utils/rfkill.c:588
 #, fuzzy
 msgid "     --output-all       output all columns\n"
 msgstr " -o, --options <optstring>    短選項為辨識的\n"
@@ -11690,7 +11696,7 @@ msgstr " -o, --options <optstring>    短選項為辨識的\n"
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:541 sys-utils/lsns.c:911 sys-utils/rfkill.c:585
+#: misc-utils/lslocks.c:541 sys-utils/lsns.c:911 sys-utils/rfkill.c:589
 #, fuzzy
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
@@ -12954,7 +12960,7 @@ msgid "failed to parse step"
 msgstr "剖析大小時失敗"
 
 #: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:463 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:532 sys-utils/umount.c:588
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:532 sys-utils/umount.c:597
 msgid "unexpected number of arguments"
 msgstr "未預期的引數數量"
 
@@ -17878,12 +17884,12 @@ msgstr ""
 msgid "libmount context allocation failed"
 msgstr "libmount 語境配額失敗"
 
-#: sys-utils/mount.c:728 sys-utils/umount.c:551
+#: sys-utils/mount.c:728 sys-utils/umount.c:560
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "設定選項胚騰時失敗"
 
-#: sys-utils/mount.c:775 sys-utils/umount.c:568
+#: sys-utils/mount.c:775 sys-utils/umount.c:577
 #, fuzzy, c-format
 msgid "failed to set target namespace to %s"
 msgstr "設定身分為 %s 時失敗"
@@ -18077,7 +18083,7 @@ msgstr "掛載失敗"
 msgid "change directory by working directory file descriptor failed"
 msgstr "變更目錄到系統根失敗"
 
-#: sys-utils/nsenter.c:480 sys-utils/setpriv.c:1031 sys-utils/setpriv.c:1038
+#: sys-utils/nsenter.c:480 sys-utils/setpriv.c:1025 sys-utils/setpriv.c:1032
 #: sys-utils/unshare.c:661
 #, fuzzy
 msgid "setgroups failed"
@@ -18600,17 +18606,17 @@ msgstr "已鎖定"
 msgid "unblocked"
 msgstr "已鎖定"
 
-#: sys-utils/rfkill.c:417 sys-utils/rfkill.c:489 sys-utils/rfkill.c:533
+#: sys-utils/rfkill.c:417 sys-utils/rfkill.c:491 sys-utils/rfkill.c:537
 #, fuzzy, c-format
 msgid "invalid identifier: %s"
 msgstr "磁碟識別碼：0x%08x\n"
 
-#: sys-utils/rfkill.c:575
+#: sys-utils/rfkill.c:579
 #, fuzzy, c-format
 msgid " %s [options] command [identifier ...]\n"
 msgstr " %s [選項] [檔案]\n"
 
-#: sys-utils/rfkill.c:578
+#: sys-utils/rfkill.c:582
 msgid "Tool for enabling and disabling wireless devices.\n"
 msgstr ""
 
@@ -18619,25 +18625,25 @@ msgstr ""
 #. *
 #. list   [identifier]   (lista [tarkenne])
 #.
-#: sys-utils/rfkill.c:602
+#: sys-utils/rfkill.c:606
 msgid " help\n"
 msgstr ""
 
-#: sys-utils/rfkill.c:603
+#: sys-utils/rfkill.c:607
 msgid " event\n"
 msgstr ""
 
-#: sys-utils/rfkill.c:604
+#: sys-utils/rfkill.c:608
 #, fuzzy
 msgid " list   [identifier]\n"
 msgstr "磁碟識別碼：0x%08x\n"
 
-#: sys-utils/rfkill.c:605
+#: sys-utils/rfkill.c:609
 #, fuzzy
 msgid " block   identifier\n"
 msgstr "磁碟識別碼：0x%08x\n"
 
-#: sys-utils/rfkill.c:606
+#: sys-utils/rfkill.c:610
 #, fuzzy
 msgid " unblock identifier\n"
 msgstr "磁碟識別碼：0x%08x\n"
@@ -19089,348 +19095,349 @@ msgstr ""
 msgid "invalid capability type"
 msgstr "無效的分割區類型『%c』\n"
 
-#: sys-utils/setpriv.c:222 sys-utils/setpriv.c:566
-msgid "getting process secure bits failed"
-msgstr ""
-
-#: sys-utils/setpriv.c:226
-#, c-format
-msgid "Securebits: "
-msgstr ""
-
-#: sys-utils/setpriv.c:246
-#, fuzzy, c-format
-msgid "[none]\n"
-msgstr "無"
-
-#: sys-utils/setpriv.c:272
-#, fuzzy, c-format
-msgid "%s: too long"
-msgstr "列太長"
-
-#: sys-utils/setpriv.c:300
-#, c-format
-msgid "Supplementary groups: "
-msgstr ""
-
-#: sys-utils/setpriv.c:302 sys-utils/setpriv.c:368 sys-utils/setpriv.c:373
-#: sys-utils/setpriv.c:379 sys-utils/setpriv.c:385 sys-utils/setpriv.c:392
-#, fuzzy, c-format
-msgid "[none]"
-msgstr "無"
-
-#: sys-utils/setpriv.c:320
-#, fuzzy
-msgid "get pdeathsig failed"
-msgstr "setuid 失敗"
-
-#: sys-utils/setpriv.c:340
-#, c-format
-msgid "uid: %u\n"
-msgstr ""
-
-#: sys-utils/setpriv.c:341
-#, c-format
-msgid "euid: %u\n"
-msgstr ""
-
-#: sys-utils/setpriv.c:344
-#, c-format
-msgid "suid: %u\n"
-msgstr ""
-
-#: sys-utils/setpriv.c:346 sys-utils/setpriv.c:459
-#, fuzzy
-msgid "getresuid failed"
-msgstr "setuid 失敗"
-
-#: sys-utils/setpriv.c:355 sys-utils/setpriv.c:474
-#, fuzzy
-msgid "getresgid failed"
-msgstr "setgid 失敗"
-
-#: sys-utils/setpriv.c:366
-#, c-format
-msgid "Effective capabilities: "
-msgstr ""
-
-#: sys-utils/setpriv.c:371
-#, c-format
-msgid "Permitted capabilities: "
-msgstr ""
-
-#: sys-utils/setpriv.c:377
-#, c-format
-msgid "Inheritable capabilities: "
-msgstr ""
-
-#: sys-utils/setpriv.c:382
-#, c-format
-msgid "Ambient capabilities: "
-msgstr ""
-
-#: sys-utils/setpriv.c:387
-#, fuzzy, c-format
-msgid "[unsupported]"
-msgstr "不受支援的命令"
-
-#: sys-utils/setpriv.c:390
-#, c-format
-msgid "Capability bounding set: "
-msgstr ""
-
-#: sys-utils/setpriv.c:399
-#, fuzzy
-msgid "SELinux label"
-msgstr "Linux 純文字"
-
-#: sys-utils/setpriv.c:402
-msgid "AppArmor profile"
-msgstr ""
-
-#: sys-utils/setpriv.c:415
+#: sys-utils/setpriv.c:193 sys-utils/setpriv.c:412
 #, c-format
 msgid "cap %d: libcap-ng is broken"
 msgstr ""
 
-#: sys-utils/setpriv.c:437
+#: sys-utils/setpriv.c:219 sys-utils/setpriv.c:560
+msgid "getting process secure bits failed"
+msgstr ""
+
+#: sys-utils/setpriv.c:223
+#, c-format
+msgid "Securebits: "
+msgstr ""
+
+#: sys-utils/setpriv.c:243 sys-utils/setpriv.c:327
+#, fuzzy, c-format
+msgid "[none]\n"
+msgstr "無"
+
+#: sys-utils/setpriv.c:269
+#, fuzzy, c-format
+msgid "%s: too long"
+msgstr "列太長"
+
+#: sys-utils/setpriv.c:297
+#, c-format
+msgid "Supplementary groups: "
+msgstr ""
+
+#: sys-utils/setpriv.c:299 sys-utils/setpriv.c:365 sys-utils/setpriv.c:370
+#: sys-utils/setpriv.c:376 sys-utils/setpriv.c:382 sys-utils/setpriv.c:389
+#, fuzzy, c-format
+msgid "[none]"
+msgstr "無"
+
+#: sys-utils/setpriv.c:317
+#, fuzzy
+msgid "get pdeathsig failed"
+msgstr "setuid 失敗"
+
+#: sys-utils/setpriv.c:321
+#, fuzzy, c-format
+msgid "Parent death signal: "
+msgstr "設定 rtc 喚醒警示失敗"
+
+#: sys-utils/setpriv.c:337
+#, c-format
+msgid "uid: %u\n"
+msgstr ""
+
+#: sys-utils/setpriv.c:338
+#, c-format
+msgid "euid: %u\n"
+msgstr ""
+
+#: sys-utils/setpriv.c:341
+#, c-format
+msgid "suid: %u\n"
+msgstr ""
+
+#: sys-utils/setpriv.c:343 sys-utils/setpriv.c:456
+#, fuzzy
+msgid "getresuid failed"
+msgstr "setuid 失敗"
+
+#: sys-utils/setpriv.c:352 sys-utils/setpriv.c:471
+#, fuzzy
+msgid "getresgid failed"
+msgstr "setgid 失敗"
+
+#: sys-utils/setpriv.c:363
+#, c-format
+msgid "Effective capabilities: "
+msgstr ""
+
+#: sys-utils/setpriv.c:368
+#, c-format
+msgid "Permitted capabilities: "
+msgstr ""
+
+#: sys-utils/setpriv.c:374
+#, c-format
+msgid "Inheritable capabilities: "
+msgstr ""
+
+#: sys-utils/setpriv.c:379
+#, c-format
+msgid "Ambient capabilities: "
+msgstr ""
+
+#: sys-utils/setpriv.c:384
+#, fuzzy, c-format
+msgid "[unsupported]"
+msgstr "不受支援的命令"
+
+#: sys-utils/setpriv.c:387
+#, c-format
+msgid "Capability bounding set: "
+msgstr ""
+
+#: sys-utils/setpriv.c:396
+#, fuzzy
+msgid "SELinux label"
+msgstr "Linux 純文字"
+
+#: sys-utils/setpriv.c:399
+msgid "AppArmor profile"
+msgstr ""
+
+#: sys-utils/setpriv.c:434
 msgid "Invalid supplementary group id"
 msgstr ""
 
-#: sys-utils/setpriv.c:447
+#: sys-utils/setpriv.c:444
 #, fuzzy
 msgid "failed to get parent death signal"
 msgstr "剖析掛載表時失敗"
 
-#: sys-utils/setpriv.c:467
+#: sys-utils/setpriv.c:464
 #, fuzzy
 msgid "setresuid failed"
 msgstr "setuid 失敗"
 
-#: sys-utils/setpriv.c:482
+#: sys-utils/setpriv.c:479
 #, fuzzy
 msgid "setresgid failed"
 msgstr "setgid 失敗"
 
-#: sys-utils/setpriv.c:514
+#: sys-utils/setpriv.c:511
 #, fuzzy
 msgid "unsupported capability type"
 msgstr "不受支援的引數：%s"
 
-#: sys-utils/setpriv.c:531
+#: sys-utils/setpriv.c:528
 msgid "bad capability string"
 msgstr ""
 
-#: sys-utils/setpriv.c:539
-msgid "libcap-ng is too old for \"all\" caps"
-msgstr ""
-
-#: sys-utils/setpriv.c:551
+#: sys-utils/setpriv.c:545
 #, fuzzy, c-format
 msgid "unknown capability \"%s\""
 msgstr "不明機能『%s』"
 
-#: sys-utils/setpriv.c:575
+#: sys-utils/setpriv.c:569
 #, fuzzy
 msgid "unrecognized securebit set -- refusing to adjust"
 msgstr "無法辨識的格式 - 使用磁區數\n"
 
-#: sys-utils/setpriv.c:579
+#: sys-utils/setpriv.c:573
 msgid "bad securebits string"
 msgstr ""
 
-#: sys-utils/setpriv.c:586
+#: sys-utils/setpriv.c:580
 #, fuzzy
 msgid "+all securebits is not allowed"
 msgstr "『%c』未被允許"
 
-#: sys-utils/setpriv.c:599
+#: sys-utils/setpriv.c:593
 #, fuzzy
 msgid "adjusting keep_caps does not make sense"
 msgstr "指定的範圍<%d:%d>不具任何意義"
 
-#: sys-utils/setpriv.c:603
+#: sys-utils/setpriv.c:597
 #, fuzzy
 msgid "unrecognized securebit"
 msgstr "無法辨識的輸入：%s"
 
-#: sys-utils/setpriv.c:623
+#: sys-utils/setpriv.c:617
 msgid "SELinux is not running"
 msgstr ""
 
-#: sys-utils/setpriv.c:638
+#: sys-utils/setpriv.c:632
 #, fuzzy, c-format
 msgid "close failed: %s"
 msgstr "搜尋失敗"
 
-#: sys-utils/setpriv.c:646
+#: sys-utils/setpriv.c:640
 msgid "AppArmor is not running"
 msgstr ""
 
-#: sys-utils/setpriv.c:825
+#: sys-utils/setpriv.c:819
 msgid "duplicate --no-new-privs option"
 msgstr ""
 
-#: sys-utils/setpriv.c:830
+#: sys-utils/setpriv.c:824
 msgid "duplicate ruid"
 msgstr ""
 
-#: sys-utils/setpriv.c:832
+#: sys-utils/setpriv.c:826
 #, fuzzy
 msgid "failed to parse ruid"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/setpriv.c:840
+#: sys-utils/setpriv.c:834
 msgid "duplicate euid"
 msgstr ""
 
-#: sys-utils/setpriv.c:842
+#: sys-utils/setpriv.c:836
 #, fuzzy
 msgid "failed to parse euid"
 msgstr "剖析結束時失敗"
 
-#: sys-utils/setpriv.c:846
+#: sys-utils/setpriv.c:840
 msgid "duplicate ruid or euid"
 msgstr ""
 
-#: sys-utils/setpriv.c:848
+#: sys-utils/setpriv.c:842
 #, fuzzy
 msgid "failed to parse reuid"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/setpriv.c:857
+#: sys-utils/setpriv.c:851
 msgid "duplicate rgid"
 msgstr ""
 
-#: sys-utils/setpriv.c:859
+#: sys-utils/setpriv.c:853
 #, fuzzy
 msgid "failed to parse rgid"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/setpriv.c:863
+#: sys-utils/setpriv.c:857
 msgid "duplicate egid"
 msgstr ""
 
-#: sys-utils/setpriv.c:865
+#: sys-utils/setpriv.c:859
 #, fuzzy
 msgid "failed to parse egid"
 msgstr "剖析結束時失敗"
 
-#: sys-utils/setpriv.c:869
+#: sys-utils/setpriv.c:863
 msgid "duplicate rgid or egid"
 msgstr ""
 
-#: sys-utils/setpriv.c:871
+#: sys-utils/setpriv.c:865
 #, fuzzy
 msgid "failed to parse regid"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/setpriv.c:876
+#: sys-utils/setpriv.c:870
 msgid "duplicate --clear-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:882
+#: sys-utils/setpriv.c:876
 msgid "duplicate --keep-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:888
+#: sys-utils/setpriv.c:882
 msgid "duplicate --init-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:894
+#: sys-utils/setpriv.c:888
 msgid "duplicate --groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:900
+#: sys-utils/setpriv.c:894
 msgid "duplicate --keep-pdeathsig option"
 msgstr ""
 
-#: sys-utils/setpriv.c:909
+#: sys-utils/setpriv.c:903
 msgid "duplicate --inh-caps option"
 msgstr ""
 
-#: sys-utils/setpriv.c:915
+#: sys-utils/setpriv.c:909
 msgid "duplicate --ambient-caps option"
 msgstr ""
 
-#: sys-utils/setpriv.c:921
+#: sys-utils/setpriv.c:915
 msgid "duplicate --bounding-set option"
 msgstr ""
 
-#: sys-utils/setpriv.c:927
+#: sys-utils/setpriv.c:921
 msgid "duplicate --securebits option"
 msgstr ""
 
-#: sys-utils/setpriv.c:933
+#: sys-utils/setpriv.c:927
 msgid "duplicate --selinux-label option"
 msgstr ""
 
-#: sys-utils/setpriv.c:939
+#: sys-utils/setpriv.c:933
 msgid "duplicate --apparmor-profile option"
 msgstr ""
 
-#: sys-utils/setpriv.c:958
+#: sys-utils/setpriv.c:952
 msgid "--dump is incompatible with all other options"
 msgstr ""
 
-#: sys-utils/setpriv.c:966
+#: sys-utils/setpriv.c:960
 #, fuzzy
 msgid "--list-caps must be specified alone"
 msgstr "選項 --pid 也許會被指定的只一次"
 
-#: sys-utils/setpriv.c:972
+#: sys-utils/setpriv.c:966
 #, fuzzy
 msgid "No program specified"
 msgstr "未指定任何檔名"
 
-#: sys-utils/setpriv.c:978
+#: sys-utils/setpriv.c:972
 msgid "--[re]gid requires --keep-groups, --clear-groups, --init-groups, or --groups"
 msgstr ""
 
-#: sys-utils/setpriv.c:982
+#: sys-utils/setpriv.c:976
 msgid "--init-groups requires --ruid or --reuid"
 msgstr ""
 
-#: sys-utils/setpriv.c:986
+#: sys-utils/setpriv.c:980
 #, c-format
 msgid "uid %ld not found, --init-groups requires an user that can be found on the system"
 msgstr ""
 
-#: sys-utils/setpriv.c:1001
+#: sys-utils/setpriv.c:995
 msgid "disallow granting new privileges failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:1009
+#: sys-utils/setpriv.c:1003
 msgid "keep process capabilities failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:1017
+#: sys-utils/setpriv.c:1011
 msgid "activate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1023
+#: sys-utils/setpriv.c:1017
 msgid "reactivate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1034
+#: sys-utils/setpriv.c:1028
 #, fuzzy
 msgid "initgroups failed"
 msgstr "strdup 失敗"
 
-#: sys-utils/setpriv.c:1042
+#: sys-utils/setpriv.c:1036
 #, fuzzy
 msgid "set process securebits failed"
 msgstr "setuid 失敗"
 
-#: sys-utils/setpriv.c:1048
+#: sys-utils/setpriv.c:1042
 msgid "apply bounding set"
 msgstr ""
 
-#: sys-utils/setpriv.c:1054
+#: sys-utils/setpriv.c:1048
 msgid "apply capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:1063
+#: sys-utils/setpriv.c:1057
 #, fuzzy
 msgid "set parent death signal failed"
 msgstr "設定 rtc 喚醒警示失敗"
@@ -19787,50 +19794,50 @@ msgstr "讀取目錄時失敗"
 msgid "failed to unlink %s"
 msgstr "取消連結 %s 時失敗"
 
-#: sys-utils/switch_root.c:153
+#: sys-utils/switch_root.c:163
 #, fuzzy, c-format
 msgid "failed to mount moving %s to %s"
 msgstr "掛載移動 %s 到 %s 時失敗"
 
-#: sys-utils/switch_root.c:155
+#: sys-utils/switch_root.c:165
 #, fuzzy, c-format
 msgid "forcing unmount of %s"
 msgstr "強制卸載的 %s"
 
-#: sys-utils/switch_root.c:161
+#: sys-utils/switch_root.c:171
 #, fuzzy, c-format
 msgid "failed to change directory to %s"
 msgstr "變更目錄到 %s 時失敗"
 
-#: sys-utils/switch_root.c:173
+#: sys-utils/switch_root.c:183
 #, fuzzy, c-format
 msgid "failed to mount moving %s to /"
 msgstr "掛載移動 %s 到時失敗/"
 
-#: sys-utils/switch_root.c:179
+#: sys-utils/switch_root.c:189
 #, fuzzy
 msgid "failed to change root"
 msgstr "變更根時失敗"
 
-#: sys-utils/switch_root.c:192
+#: sys-utils/switch_root.c:202
 msgid "old root filesystem is not an initramfs"
 msgstr ""
 
-#: sys-utils/switch_root.c:205
+#: sys-utils/switch_root.c:215
 #, fuzzy, c-format
 msgid " %s [options] <newrootdir> <init> <args to init>\n"
 msgstr " %s [選項] <newrootdir><init><引數到 init>\n"
 
-#: sys-utils/switch_root.c:209
+#: sys-utils/switch_root.c:219
 msgid "Switch to another filesystem as the root of the mount tree.\n"
 msgstr ""
 
-#: sys-utils/switch_root.c:254
+#: sys-utils/switch_root.c:264
 #, fuzzy
 msgid "failed. Sorry."
 msgstr "失敗。抱歉。"
 
-#: sys-utils/switch_root.c:257
+#: sys-utils/switch_root.c:267
 #, fuzzy, c-format
 msgid "cannot access %s"
 msgstr "無法存取 %s"
