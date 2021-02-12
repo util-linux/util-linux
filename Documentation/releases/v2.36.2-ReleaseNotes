@@ -1,0 +1,80 @@
+util-linux 2.36.2 Release Notes
+===============================
+
+agetty:
+   - tty eol defaults to REPRINT  [Sami Loone]
+blkdiscard:
+   - fix compiler warnings [-Wmaybe-uninitialized]  [Karel Zak]
+build-sys:
+   - do not build plymouth-ctrl.c w/ disabled plymouth  [Pino Toscano]
+configure:
+   - test -a|o is not POSIX  [Issam E. Maghni]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fsck.cramfs:
+   - fix fsck.cramfs crashes on blocksizes > 4K  [ToddRK]
+fstab:
+   - fstab.5 NTFS and FAT volume IDs use upper case  [Heinrich Schuchardt]
+github:
+   - remove cifuzz from stable branch  [Karel Zak]
+hwclock:
+   - do not assume __NR_settimeofday_time32  [Pino Toscano]
+   - fix compiler warnings [-Wmaybe-uninitialized]  [Karel Zak]
+lib/caputils:
+   - add fall back for last cap using prctl.  [Érico Rolim]
+lib/loopdev:
+   - make is_loopdev() more robust  [Karel Zak]
+lib/procutils:
+   - add proc_is_procfs helper.  [Érico Rolim]
+   - improve proc_is_procfs(), add test  [Karel Zak]
+lib/signames:
+   - change license to public domain  [Karel Zak]
+libblkid:
+   - drbdmanage  use blkid_probe_strncpy_uuid instead of blkid_probe_set_id_label  [Pali Rohár]
+   - make gfs2 prober more extendible  [Karel Zak]
+libfdisk:
+   - (dos) fix last possible sector calculation  [Karel Zak]
+   - (script) ignore empty values for start and size  [Gaël PORTAY]
+   - ignore 33553920 byte optimal I/O size  [Ryan Finnie]
+libmount:
+   - (py) do not use pointer as an integer value  [Karel Zak]
+   - add vboxsf, virtiofs to pseudo filesystems  [Shahid Laher]
+   - do not canonicalize ZFS source dataset  [Karel Zak]
+   - don't use "symfollow" for helpers on user mounts  [Karel Zak]
+   - fix /{etc,proc}/filesystems use  [Karel Zak]
+login:
+   - use full tty path for PAM_TTY  [Karel Zak]
+losetup:
+   - fix wrong printf() format specifier for ino_t data type  [Manuel Bentele]
+lsblk:
+   - read SCSI_IDENT_SERIAL also from udev  [Karel Zak]
+lslogins:
+   - call close() for usable FD [coverity scan]  [Karel Zak]
+po:
+   - add sr.po (from translationproject.org)  [Мирослав Николић]
+   - merge changes  [Karel Zak]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
+rfkill:
+   - stop execution when rfkill device cannot be opened  [Sami Kerola]
+script:
+   - fix compiler warnings [-Wmaybe-uninitialized]  [Karel Zak]
+scriptlive:
+   - fix compiler warnings [-Wmaybe-uninitialized]  [Karel Zak]
+setpriv:
+   - allow using [-+]all for capabilities.  [Érico Rolim]
+   - small clean-up.  [Érico Rolim]
+su:
+   - use full tty path for PAM_TTY  [Karel Zak]
+switch_root:
+   - check if mount point to move even exists  [Thomas Deutschmann]
+sys-utils:
+   - mount.8  fix a typo  [Eric Biggers]
+tests:
+   - add checksum for cramfs/mkfs for LE 16384 (ia64)  [Anatoly Pugachev]
+   - be explicit with file permissions for cramfs  [Karel Zak]
+   - don't rely on scsi_debug partitions  [Karel Zak]
+umount:
+   - ignore --no-canonicalize,-c for non-root users  [Karel Zak]
+
+- Show the 'r' option in the help menu  [Vincent McIntyre]
