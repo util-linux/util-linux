@@ -17,7 +17,6 @@ lib_smartcols_sources = '''
   src/line.c
   src/table.c
   src/print.c
-  src/fput.c
   src/print-api.c
   src/version.c
   src/buffer.c

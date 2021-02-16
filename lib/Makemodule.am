@@ -15,13 +15,13 @@ libcommon_la_SOURCES = \
 	lib/blkdev.c \
 	lib/buffer.c \
 	lib/canonicalize.c \
+	lib/color-names.c \
 	lib/crc32.c \
 	lib/crc32c.c \
-	lib/env.c \
-	lib/idcache.c \
 	lib/encode.c \
+	lib/env.c \
 	lib/fileutils.c \
-	lib/color-names.c \
+	lib/idcache.c \
 	lib/jsonwrt.c \
 	lib/mangle.c \
 	lib/match.c \
@@ -31,12 +31,12 @@ libcommon_la_SOURCES = \
 	lib/pager.c \
 	lib/pwdutils.c \
 	lib/randutils.c \
-	lib/strutils.c \
-	lib/timeutils.c \
-	lib/ttyutils.c \
-	lib/strv.c \
 	lib/sha1.c \
-	lib/signames.c
+	lib/signames.c \
+	lib/strutils.c \
+	lib/strv.c \
+	lib/timeutils.c \
+	lib/ttyutils.c
 
 if LINUX
 libcommon_la_SOURCES += \

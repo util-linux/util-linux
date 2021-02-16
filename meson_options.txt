@@ -16,6 +16,8 @@ option('libuser',     type : 'feature')
 option('selinux',     type : 'feature', value : 'disabled')
 option('audit',       type : 'feature', value : 'disabled')
 option('smack',       type : 'feature', value : 'disabled')
+option('magic',       type : 'feature')
+option('econf',       type : 'feature')
 option('systemd',     type : 'feature')
 option('btrfs',       type : 'feature')
 option('widechar',    type : 'feature',
@@ -192,3 +194,6 @@ option('fs-search-path',
 option('fs-search-path-extra',
        type : 'string',
        description : 'additional search path for fs helpers')
+option('vendordir',
+       type: 'string',
+       description : 'directory for distribution provided econf files')

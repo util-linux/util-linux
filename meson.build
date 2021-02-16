@@ -24,6 +24,8 @@ execprefixdir = '/usr'
 usrbin_exec_dir = join_paths(execprefixdir, 'bin')
 usrsbin_exec_dir = join_paths(execprefixdir, 'sbin')
 
+vendordir = get_option('vendordir')
+
 add_project_arguments('-D_GNU_SOURCE', language : 'c')
 
 cc = meson.get_compiler('c')
@@ -55,9 +57,11 @@ conf.set('usrsbin_execdir', usrsbin_exec_dir)
 conf.set('docdir', docdir)
 conf.set_quoted('_PATH_SYSCONFSTATICDIR', sysconfstaticdir)
 conf.set_quoted('_PATH_RUNSTATEDIR', runstatedir)
-conf.set_quoted('_PATH_VENDORDIR', vendordir)
 conf.set_quoted('CONFIG_ADJTIME_PATH', '/etc/adjtime')
 conf.set_quoted('ADJTIME_PATH', '/etc/adjtime') # yes, both are used :(
+
+conf.set_quoted('_PATH_VENDORDIR', vendordir)
+conf.set('USE_VENDORDIR', vendordir == '' ? false : 1)
 
 build_libblkid = not get_option('build-libblkid').disabled()
 conf.set('HAVE_LIBBLKID', build_libblkid ? 1 : false)
@@ -701,8 +705,6 @@ conf.set_quoted('FS_SEARCH_PATH', fs_search_path)
 
 systemdsystemunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
 
-vendordir = get_option('vendordir')
-conf.set('USE_VENDORDIR', vendordir ? 1 : false)
 
 chfn_chsh_password = get_option('chfn-chsh-password') or lib_user.found()
 conf.set('CHFN_CHSH_PASSWORD', chfn_chsh_password ? 1 : false)
@@ -822,6 +824,7 @@ exe = executable(
   'login-utils/nologin.c',
   include_directories : includes,
   install_dir : sbindir,
+  link_with : [lib_common],
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
@@ -1028,6 +1031,7 @@ opt = not get_option('build-more').disabled()
 exe = executable(
   'more',
   more_sources,
+  link_with : [lib_common],
   include_directories : includes,
   dependencies : [lib_tinfo,
                   curses_libs,
@@ -1037,6 +1041,7 @@ exe = executable(
 exe2 = executable(
   'test_more',
   more_sources,
+  link_with : [lib_common],
   include_directories : includes,
   c_args : '-DTEST_PROGRAM',
   dependencies : [lib_tinfo,
@@ -1261,7 +1266,8 @@ exe = executable(
   'blkdiscard',
   blkdiscard_sources,
   include_directories : includes,
-  link_with : [lib_common],
+  link_with : [lib_common,
+               lib_blkid],
   install_dir : sbindir,
   install : true)
 exes += exe
@@ -2451,6 +2457,7 @@ exe = executable(
   'getopt',
   getopt_sources,
   include_directories : includes,
+  link_with : [lib_common],
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe

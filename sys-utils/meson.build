@@ -97,7 +97,8 @@ losetup_sources = files(
 
 zramctl_sources = files(
   'zramctl.c',
-)
+) + \
+  ismounted_c
 
 prlimit_sources = files(
   'prlimit.c',
@@ -138,6 +139,10 @@ swapoff_sources = files(
 lscpu_sources = files(
   'lscpu.c',
   'lscpu.h',
+  'lscpu-cputype.c',
+  'lscpu-cpu.c',
+  'lscpu-topology.c',
+  'lscpu-virt.c',
   'lscpu-arm.c',
   'lscpu-dmi.c',
 )
@@ -168,11 +173,13 @@ switch_root_sources = files(
 
 unshare_sources = files(
   'unshare.c',
-)
+) + \
+    exec_shell_c
 
 nsenter_sources = files(
   'nsenter.c',
-)
+) + \
+    exec_shell_c
 
 setpriv_sources = files(
   'setpriv.c',

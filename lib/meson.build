@@ -1,24 +1,30 @@
 lib_common_sources = '''
-  blkdev.c
-  canonicalize.c
-  color-names.c
-  crc32.c
-  crc32c.c
-  encode.c
-  env.c
-  exec_shell.c
-  fileutils.c
-  ismounted.c
-  mangle.c
-  match.c
-  mbsalign.c
-  mbsedit.c
-  pager.c
-  pwdutils.c
-  setproctitle.c
-  signames.c
-  timeutils.c
-  ttyutils.c
+	blkdev.c
+	buffer.c
+	canonicalize.c
+	color-names.c
+	crc32.c
+	crc32c.c
+	encode.c
+	env.c
+	fileutils.c
+	idcache.c
+	jsonwrt.c
+	mangle.c
+	match.c
+	mbsalign.c
+	mbsedit.c
+	md5.c
+	pager.c
+	procutils.c
+	pwdutils.c
+	randutils.c
+	sha1.c
+	signames.c
+	strutils.c
+	strv.c
+	timeutils.c
+	ttyutils.c
 '''.split()
 
 idcache_c = files('idcache.c')
@@ -39,6 +45,8 @@ monotonic_c = files('monotonic.c')
 timer_c = files('timer.c')
 swapprober_c = files('swapprober.c')
 pty_session_c = files('pty-session.c')
+ismounted_c = files('ismounted.c')
+exec_shell_c = files('exec_shell.c')
 
 if LINUX
   lib_common_sources += '''

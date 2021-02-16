@@ -12,7 +12,8 @@ isosize_sources = files(
 
 mkswap_sources = files(
   'mkswap.c',
-)
+) + \
+  ismounted_c
 
 swaplabel_sources = files(
   'swaplabel.c',
@@ -27,12 +28,14 @@ fsck_sources = files(
 mkfs_minix_sources = files(
   'mkfs.minix.c',
   'minix_programs.h',
-)
+) + \
+  ismounted_c
 
 fsck_minix_sources = files(
   'fsck.minix.c',
   'minix_programs.h',
-)
+) + \
+  ismounted_c
 
 mkfs_cramfs_sources = files(
   'mkfs.cramfs.c',

@@ -16,7 +16,6 @@ lib_blkid_sources = '''
   src/encode.c
   src/evaluate.c
   src/getsize.c
-  src/llseek.c
   src/probe.c
   src/read.c
   src/resolve.c
@@ -40,7 +39,7 @@ lib_blkid_sources = '''
   src/partitions/sun.c
   src/partitions/ultrix.c
   src/partitions/unixware.c
-
+  
   src/superblocks/adaptec_raid.c
   src/superblocks/apfs.c
   src/superblocks/bcache.c
@@ -99,6 +98,8 @@ lib_blkid_sources = '''
   src/superblocks/vxfs.c
   src/superblocks/xfs.c
   src/superblocks/zfs.c
+  src/superblocks/zonefs.c
+  src/superblocks/erofs.c
 
   src/topology/topology.c
   src/topology/topology.h

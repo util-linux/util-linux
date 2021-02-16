@@ -83,7 +83,8 @@ endif
 
 blkid_sources = files(
   'blkid.c',
-)
+) + \
+  ismounted_c
 
 findfs_sources = files(
   'findfs.c',
@@ -118,9 +119,9 @@ getopt_1 = configure_file(
 install_man(getopt_1)
 
 install_data(
-  'getopt-parse.bash',
-  'getopt-parse.tcsh',
-  install_dir : 'doc/getopt',
+  'getopt-example.bash',
+  'getopt-example.tcsh',
+  install_dir : 'doc',
   install_mode: 'rwxr-xr-x')
 
 fincore_sources = files(
