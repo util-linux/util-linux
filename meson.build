@@ -55,6 +55,7 @@ conf.set('usrsbin_execdir', usrsbin_exec_dir)
 conf.set('docdir', docdir)
 conf.set_quoted('_PATH_SYSCONFSTATICDIR', sysconfstaticdir)
 conf.set_quoted('_PATH_RUNSTATEDIR', runstatedir)
+conf.set_quoted('_PATH_VENDORDIR', vendordir)
 conf.set_quoted('CONFIG_ADJTIME_PATH', '/etc/adjtime')
 conf.set_quoted('ADJTIME_PATH', '/etc/adjtime') # yes, both are used :(
 
@@ -173,6 +174,7 @@ headers = '''
         sys/param.h
         sys/prctl.h
         sys/resource.h
+	sys/sendfile.h
         sys/signalfd.h
         sys/socket.h
         sys/sockio.h
@@ -299,6 +301,11 @@ lib_cryptsetup = dependency(
   required : get_option('cryptsetup'))
 conf.set('HAVE_CRYPTSETUP', lib_cryptsetup.found() ? 1 : false)
 
+lib_cryptsetup_dl = dependency(
+  'dl',
+  required : get_option('cryptsetup-dlopen'))
+conf.set('CRYPTSETUP_VIA_DLOPEN', lib_cryptsetup_dl.found() ? 1 : false)
+
 have = cc.has_function(
   'crypt_activate_by_signed_key',
   dependencies : lib_cryptsetup)
@@ -309,9 +316,19 @@ lib_cap_ng = dependency(
 
 lib_selinux = dependency(
   'libselinux',
-  version : '>= 2.0',
+  version : '>= 2.5',
   required : get_option('selinux'))
 conf.set('HAVE_LIBSELINUX', lib_selinux.found() ? 1 : false)
+
+lib_magic = dependency(
+  'libmagic',
+  required : get_option('magic'))
+conf.set('HAVE_MAGIC', lib_magic.found() ? 1 : false)
+
+lib_econf = dependency(
+  'libeconf',
+  required : get_option('econf'))
+conf.set('HAVE_LIBECONF', lib_econf.found() ? 1 : false)
 
 lib_audit = dependency(
   'libaudit',
@@ -407,6 +424,7 @@ conf.set('HAVE_LANGINFO_NL_ABALTMON', have ? 1 : false)
 
 funcs = '''
         clearenv
+	close_range
         __fpurge
         fpurge
         __fpending
@@ -431,7 +449,6 @@ funcs = '''
         jrand48
         lchown
         llseek
-        lseek64
         mempcpy
         mkostemp
         nanosleep
@@ -445,6 +462,7 @@ funcs = '''
         rpmatch
         scandirat
         setprogname
+	sendfile
         setns
         setresgid
         setresuid
@@ -462,6 +480,7 @@ funcs = '''
         timegm
         unshare
         usleep
+	utimensat
         vwarnx
         warn
         warnx
@@ -485,10 +504,6 @@ foreach func: funcs
   # This makes little sense, but is necessary to avoid warnings about
   # redefined macros from Python.h, which uses this convention.
   conf.set('HAVE_' + func.to_upper(), have ? 1 : false)
-
-  if func == 'llseek' or func == 'lseek64'
-      conf.set('HAVE_' + func.to_upper() + '_PROTOTYPE', have ? 1 : false)
-  endif
 endforeach
 
 have = conf.get('HAVE_FUTIMENS') in [1] and conf.get('HAVE_INOTIFY_INIT1') in [1]
@@ -609,32 +624,6 @@ result = cc.run(code, name : 'using __progname')
 have = result.compiled() and result.returncode() == 0
 conf.set('HAVE___PROGNAME', have ? 1 : false)
 
-code = '''
-#include <stdio.h>
-#include <stdlib.h>
-int main()
-{
-        int i;
-        int rc = 1;
-        char *s;
-        i = sscanf("x", "@0@", &s);
-        if (i == 1  && *s == 'x')
-                rc = 0;
-        free(s);
-        return rc;
-}
-'''
-have = false
-foreach mod : ['ms', 'as']
-  if not have
-    result = cc.run(code.format('%' + mod), name : 'sscanf with %' + mod)
-    have = result.compiled() and result.returncode() == 0
-    conf.set('HAVE_SCANF_@0@_MODIFIER'.format(mod.to_upper()), have ? 1 : false)
-  endif
-endforeach
-# XXX: handle cross cross-compilation w/o ability to run binaries:
-#      meson.is_cross_build() and not meson.has_exe_wrapper()
-
 build_plymouth_support = get_option('build-plymouth-support')
 have_tiocglcktrmios = cc.has_header_symbol(
   'sys/ioctl.h', 'TIOCGLCKTRMIOS',
@@ -702,6 +691,7 @@ conf.set('PG_BELL', get_option('pg-bell') ? 1 : false)
 
 ############################################################
 
+
 fs_search_path = get_option('fs-search-path')
 fs_search_path_extra = get_option('fs-search-path-extra')
 if fs_search_path_extra != ''
@@ -710,6 +700,9 @@ endif
 conf.set_quoted('FS_SEARCH_PATH', fs_search_path)
 
 systemdsystemunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
+
+vendordir = get_option('vendordir')
+conf.set('USE_VENDORDIR', vendordir ? 1 : false)
 
 chfn_chsh_password = get_option('chfn-chsh-password') or lib_user.found()
 conf.set('CHFN_CHSH_PASSWORD', chfn_chsh_password ? 1 : false)
@@ -1037,7 +1030,8 @@ exe = executable(
   more_sources,
   include_directories : includes,
   dependencies : [lib_tinfo,
-                  curses_libs],
+                  curses_libs,
+		  lib_magic],
   install : opt,
   build_by_default : opt)
 exe2 = executable(
@@ -1046,7 +1040,8 @@ exe2 = executable(
   include_directories : includes,
   c_args : '-DTEST_PROGRAM',
   dependencies : [lib_tinfo,
-                  curses_libs],
+                  curses_libs,
+		  lib_magic],
   build_by_default : opt)
 exes += exe
 if opt and not is_disabler(exe)
@@ -2528,11 +2523,21 @@ exe3 = executable(
   install : opt,
   build_by_default : opt)
 
+exe4 = executable(
+  'uclampset',
+  'schedutils/uclampset.c',
+  include_directories : includes,
+  link_with : lib_common,
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+
 if opt and not is_disabler(exe)
-  exes += [exe, exe2, exe3]
+  exes += [exe, exe2, exe3, exe4]
   install_man('schedutils/chrt.1',
               'schedutils/ionice.1',
-              'schedutils/taskset.1')
+              'schedutils/taskset.1',
+	      'schedutils/uclampset.1')
 endif
 
 ############################################################

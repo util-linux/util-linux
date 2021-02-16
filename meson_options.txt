@@ -6,6 +6,7 @@ option('ncurses',     type : 'feature')
 option('slang',       type : 'feature', value : 'disabled',
        description : 'compile cfdisk with slang rather than ncurses')
 option('cryptsetup',  type : 'feature')
+option('cryptsetup-dlopen',  type : 'feature')
 option('zlib',        type : 'feature')
 option('readline',    type : 'feature')
 option('libutil',     type : 'feature')
@@ -79,7 +80,7 @@ option('build-bfs', type : 'feature',
        description : 'build mkfs.bfs')
 option('build-minix', type : 'feature',
        description : 'build fsck.minix, mkfs.minix')
-option('build-fdformat', type : 'feature',
+option('build-fdformat', type : 'feature', value : 'disabled',
        description : 'build fdformat')
 option('build-hwclock', type : 'feature',
        description : 'build hwclock')
