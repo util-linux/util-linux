@@ -29,7 +29,6 @@ libcommon_la_SOURCES = \
 	lib/mbsedit.c\
 	lib/md5.c \
 	lib/pager.c \
-	lib/procutils.c \
 	lib/pwdutils.c \
 	lib/randutils.c \
 	lib/strutils.c \
@@ -42,6 +41,7 @@ libcommon_la_SOURCES = \
 if LINUX
 libcommon_la_SOURCES += \
 	lib/linux_version.c \
+	lib/procutils.c \
 	lib/loopdev.c
 endif
 
