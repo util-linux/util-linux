@@ -46,30 +46,30 @@ show_srcdir >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "dryrun"
-$TS_CMD_HARDLINK -n -v "$SRCDIR" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HARDLINK --quiet --dry-run "$SRCDIR" >> $TS_OUTPUT 2>> $TS_ERRLOG
 show_srcdir >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "nargs"
-$TS_CMD_HARDLINK -v "$SRCDIR"/dir-1/sdir-1 "$SRCDIR"/file-?-{1,2} >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HARDLINK --quiet "$SRCDIR"/dir-1/sdir-1 "$SRCDIR"/file-?-{1,2} >> $TS_OUTPUT 2>> $TS_ERRLOG
 show_srcdir >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 # cases without and with -x support
-tmp=$($TS_CMD_HARDLINK -x pattern "$SRCDIR"/dir-1/sdir-2 2>&1)
+tmp=$($TS_CMD_HARDLINK --quiet --exclude pattern "$SRCDIR"/dir-1/sdir-2 2>&1)
 if test $? -ne 0; then
 	ts_init_subtest "noregex"
 	printf "%s\n" "$tmp" >> $TS_OUTPUT 2>> $TS_ERRLOG
 	ts_finalize_subtest
 else
 	ts_init_subtest "regex-escapes"
-	$TS_CMD_HARDLINK -x '.*z-"§\$%&\(\)=\?\*\+$' "$SRCDIR" >> $TS_OUTPUT 2>> $TS_ERRLOG
+	$TS_CMD_HARDLINK --quiet --exclude '.*z-"§\$%&\(\)=\?\*\+$' "$SRCDIR" >> $TS_OUTPUT 2>> $TS_ERRLOG
 	show_srcdir >> $TS_OUTPUT 2>> $TS_ERRLOG
 	ts_finalize_subtest
 fi
 
 ts_init_subtest "content"
-$TS_CMD_HARDLINK -c "$SRCDIR" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HARDLINK --quiet --content "$SRCDIR" >> $TS_OUTPUT 2>> $TS_ERRLOG
 # When using -c we need to cheat with sed because it's not deterministic which
 # file (i.e. which timestamp and perms) wins. TODO at least the choice of the
 # permissions should be sensitive by default and/or controllable by the user.

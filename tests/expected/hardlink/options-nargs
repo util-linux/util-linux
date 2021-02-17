@@ -1,9 +1,3 @@
-Directories:           1
-Objects:              16
-Regular files:        15
-Comparisons:           9
-Linked:                9
-Saved:             73728
 dir-1/sdir-1/file-a-1	4	8192	1540236330	644
 dir-1/sdir-1/file-a-2	4	8192	1540236330	644
 dir-1/sdir-1/file-a-3	1	8192	1540236423	644
