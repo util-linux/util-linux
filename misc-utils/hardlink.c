@@ -42,6 +42,7 @@
 #include "xalloc.h"
 #include "strutils.h"
 #include "monotonic.h"
+#include "optutils.h"
 
 /* Use libpcre2posix if it's available */
 #ifdef HAVE_PCRE2_POSIX
@@ -55,6 +56,8 @@
 #ifdef HAVE_SYS_XATTR_H
 # include <sys/xattr.h>          /* listxattr, getxattr */
 #endif
+
+static int quiet;		/* don't print anything */
 
 /**
  * struct file - Information about a file
@@ -184,7 +187,7 @@ static void jlog(enum log_level level, const char *format, ...)
 {
     va_list args;
 
-    if (level > (unsigned int) opts.verbosity)
+    if (quiet || level > (unsigned int) opts.verbosity)
         return;
 
     va_start(args, format);
@@ -858,6 +861,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
     fputs(USAGE_OPTIONS, out);
     fputs(_(" -v, --verbose              verbose output (repeat for more verbosity)\n"), out);
+    fputs(_(" -q, --quiet                quiet mode - don't print anything\n"
     fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
     fputs(_(" -f, --respect-name         filenames have to be identical\n"), out);
     fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
@@ -915,7 +919,7 @@ static void register_regex(struct regex_link **pregs, const char *regex)
  */
 static int parse_options(int argc, char *argv[])
 {
-    static const char optstr[] = "VhvnfpotXcmMOx:i:s:";
+    static const char optstr[] = "VhvnfpotXcmMOx:i:s:q";
     static const struct option long_options[] = {
         {"version", no_argument, NULL, 'V'},
         {"help", no_argument, NULL, 'h'},
@@ -933,11 +937,20 @@ static int parse_options(int argc, char *argv[])
         {"include", required_argument, NULL, 'i'},
         {"minimum-size", required_argument, NULL, 's'},
 	{"content", no_argument, NULL, 'c'},
+	{"quiet", no_argument, NULL, 'q'},
         {NULL, 0, NULL, 0}
     };
+    static const ul_excl_t excl[] = {
+	    { 'q','v' },
+	    { 0 }
+    };
+    int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
     int c;
 
     while ((c = getopt_long(argc, argv, optstr, long_options, NULL)) != -1) {
+
+	err_exclusive_options(c, long_options, excl, excl_st);
+
         switch (c) {
         case 'p':
             opts.respect_mode = FALSE;
@@ -966,6 +979,9 @@ static int parse_options(int argc, char *argv[])
         case 'v':
             opts.verbosity++;
             break;
+	case 'q':
+	    quiet = TRUE;
+	    break;
         case 'c':
             opts.respect_mode = FALSE;
             opts.respect_name = FALSE;
