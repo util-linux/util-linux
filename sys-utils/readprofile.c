@@ -147,6 +147,7 @@ int main(int argc, char **argv)
 	int maplineno = 1;
 	int popenMap;		/* flag to tell if popen() has been used */
 	int header_printed;
+	double rep = 0;
 
 	static const struct option longopts[] = {
 		{"mapfile", required_argument, NULL, 'm'},
@@ -346,7 +347,7 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE,
 			     _("profile address out of range. Wrong map file?"));
 
-		while (indx < (next_add - add0) / step) {
+		while (step > 0 && indx < (next_add - add0) / step) {
 			if (optBins && (buf[indx] || optAll)) {
 				if (!header_printed) {
 					printf("%s:\n", fn_name);
@@ -370,7 +371,7 @@ int main(int argc, char **argv)
 			else
 				printf("%6u %-40s %8.4f\n",
 				       this, fn_name, this / (double)fn_len);
-			if (optSub) {
+			if (optSub && step > 0) {
 				unsigned long long scan;
 
 				for (scan = (fn_add - add0) / step + 1;
@@ -396,13 +397,16 @@ int main(int argc, char **argv)
 	/* clock ticks, out of kernel text - probably modules */
 	printf("%6u %s\n", buf[len / sizeof(*buf) - 1], "*unknown*");
 
+	if (fn_add > add0)
+		rep = total / (double)(fn_add - add0);
+
 	/* trailer */
 	if (optVerbose)
 		printf("%016x %-40s %6u %8.4f\n",
-		       0, "total", total, total / (double)(fn_add - add0));
+		       0, "total", total, rep);
 	else
 		printf("%6u %-40s %8.4f\n",
-		       total, _("total"), total / (double)(fn_add - add0));
+		       total, _("total"), rep);
 
 	popenMap ? pclose(map) : fclose(map);
 	exit(EXIT_SUCCESS);
