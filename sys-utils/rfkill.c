@@ -295,7 +295,7 @@ done:
 static struct rfkill_id rfkill_id_to_type(const char *s)
 {
 	const struct rfkill_type_str *p;
-	struct rfkill_id ret;
+	struct rfkill_id ret = { .result = 0 };
 
 	if (islower(*s)) {
 		for (p = rfkill_type_strings; p->name != NULL; p++) {
