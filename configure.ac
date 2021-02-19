@@ -74,6 +74,17 @@ AS_CASE([$exec_prefix:$prefix],
   ]
 )
 
+# Check whether prefix=/usr
+AS_CASE([$prefix],
+[NONE | /usr],
+  [AC_MSG_NOTICE([Default --prefix detected.])
+   AS_CASE([$localstatedir], [NONE | '${prefix}/var' | "${prefix}"/var ],
+	   [localstatedir=/var; AC_MSG_NOTICE([  --localstatedir defaults to /var])])
+   AS_CASE([$sysconfdir], [NONE | '${prefix}/etc' | "${prefix}"/etc ],
+	   [sysconfdir=/etc; AC_MSG_NOTICE([  --sysconfdir defaults to /etc])])
+
+  ]
+)
 
 # default for old versions without $runstatedir
 AS_IF([test x"$runstatedir" = x], [runstatedir='${localstatedir}/run'])
@@ -2600,14 +2611,19 @@ AC_MSG_RESULT([
 	prefix:            ${prefix}
 	exec prefix:       ${exec_prefix}
 
-	runstatedir:       ${runstatedir}
 	bindir:            ${bindir}
 	sbindir:           ${sbindir}
 	libdir:            ${libdir}
-	includedir:        ${includedir}
 	usrbin_execdir:    ${usrbin_execdir}
 	usrsbin_execdir:   ${usrsbin_execdir}
 	usrlib_execdir:    ${usrlib_execdir}
+
+	localstatedir:     ${localstatedir}
+	runstatedir:       ${runstatedir}
+	includedir:        ${includedir}
+	sysconfdir:        ${sysconfdir}
+	sysconfstaticdir:  ${sysconfstaticdir}
+
 	vendordir:         ${with_vendordir}
 
 	compiler:          ${CC}
