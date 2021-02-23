@@ -89,16 +89,9 @@
 #define LOGIN_EXIT_TIMEOUT     5
 #define LOGIN_TIMEOUT          60
 
-#ifdef USE_TTY_GROUP
-# define TTY_MODE 0620
-#else
-# define TTY_MODE 0600
-#endif
-
 static char **argv0;
 static size_t argv_lth;
 
-#define	TTYGRPNAME	"tty"	/* name of group to own ttys */
 #define VCS_PATH_MAX	64
 
 #if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)

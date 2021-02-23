@@ -17,6 +17,13 @@
 #include <sys/ttydefaults.h>
 #endif
 
+#ifdef USE_TTY_GROUP
+# define TTY_MODE 0620
+#else
+# define TTY_MODE 0600
+#endif
+#define TTYGRPNAME      "tty"   /* name of group to own ttys */
+
 /* Some shorthands for control characters. */
 #define CTL(x)		((x) ^ 0100)	/* Assumes ASCII dialect */
 #define CR		CTL('M')	/* carriage return */
