@@ -82,7 +82,6 @@ UL_DEBUG_DEFINE_MASKNAMES(su) = UL_DEBUG_EMPTY_MASKNAMES;
 #define DBG(m, x)       __UL_DBG(su, SU_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(su, SU_DEBUG_, m, x)
 
-
 /* name of the pam configuration files. separate configs for su and su -  */
 #define PAM_SRVNAME_SU "su"
 #define PAM_SRVNAME_SU_L "su-l"
@@ -254,6 +253,26 @@ static void wait_for_child_cb(
 			pid_t child __attribute__((__unused__)))
 {
 	wait_for_child((struct su_context *) data);
+}
+
+static void chownmod_pty(struct su_context *su)
+{
+	gid_t gid = su->pwd->pw_gid;
+	mode_t mode = (mode_t) getlogindefs_num("TTYPERM", TTY_MODE);
+	const char *grname = getlogindefs_str("TTYGROUP", TTYGRPNAME);
+
+	if (grname && *grname) {
+		struct group *gr = getgrnam(grname);
+		if (gr)	/* group by name */
+			gid = gr->gr_gid;
+		else	/* group by ID */
+			gid = (gid_t) getlogindefs_num("TTYGROUP", gid);
+	}
+
+	if (ul_pty_chownmod_slave(su->pty,
+				  su->pwd->pw_uid,
+				  gid, mode))
+		warn(_("change owner or mode for pseudo-terminal failed"));
 }
 #endif
 
@@ -495,7 +514,6 @@ static void parent_setup_signals(struct su_context *su)
 		}
 	}
 }
-
 
 static void create_watching_parent(struct su_context *su)
 {
@@ -1191,6 +1209,10 @@ int su_main(int argc, char **argv, int mode)
 	create_watching_parent(su);
 	/* Now we're in the child.  */
 
+#ifdef USE_PTY
+	if (su->force_pty)
+		chownmod_pty(su);
+#endif
 	change_identity(su->pwd);
 	if (!su->same_session) {
 		/* note that on --pty we call setsid() in ul_pty_init_slave() */

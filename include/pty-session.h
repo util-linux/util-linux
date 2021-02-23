@@ -10,6 +10,7 @@
 #include <termios.h>
 #include <signal.h>
 #include <sys/time.h>
+#include <sys/stat.h>
 
 #include <sys/signalfd.h>
 
@@ -98,6 +99,7 @@ struct ul_pty_callbacks *ul_pty_get_callbacks(struct ul_pty *pty);
 int ul_pty_is_running(struct ul_pty *pty);
 int ul_pty_setup(struct ul_pty *pty);
 void ul_pty_cleanup(struct ul_pty *pty);
+int ul_pty_chownmod_slave(struct ul_pty *pty, uid_t uid, gid_t gid, mode_t mode);
 void ul_pty_init_slave(struct ul_pty *pty);
 int ul_pty_proxy_master(struct ul_pty *pty);
 

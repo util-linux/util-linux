@@ -239,6 +239,15 @@ void ul_pty_cleanup(struct ul_pty *pty)
 	tcsetattr(STDIN_FILENO, TCSADRAIN, &rtt);
 }
 
+int ul_pty_chownmod_slave(struct ul_pty *pty, uid_t uid, gid_t gid, mode_t mode)
+{
+	if (fchown(pty->slave, uid, gid))
+		return -errno;
+	if (fchmod(pty->slave, mode))
+		return -errno;
+	return 0;
+}
+
 /* call me in child process */
 void ul_pty_init_slave(struct ul_pty *pty)
 {
