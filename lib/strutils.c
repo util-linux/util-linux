@@ -1045,6 +1045,36 @@ int skip_fline(FILE *fp)
 	} while (1);
 }
 
+
+/* compare two strings, but ignoring non-alnum and case of the characters, for example
+ * "Hello (123)!" is the same as "hello123".
+ */
+int ul_stralnumcmp(const char *p1, const char *p2)
+{
+	const unsigned char *s1 = (const unsigned char *) p1;
+	const unsigned char *s2 = (const unsigned char *) p2;
+	unsigned char c1, c2;
+
+	do {
+		do {
+			c1 = (unsigned char) *s1++;
+		} while (c1 != '\0' && !isalnum((unsigned int) c1));
+
+		do {
+			c2 = (unsigned char) *s2++;
+		} while (c2 != '\0' && !isalnum((unsigned int) c2));
+
+		if (c1 != '\0')
+			c1 = tolower(c1);
+		if (c2 != '\0')
+			c2 = tolower(c2);
+		if (c1 == '\0')
+			return c1 - c2;
+	} while (c1 == c2);
+
+	return c1 - c2;
+}
+
 #ifdef TEST_PROGRAM_STRUTILS
 struct testS {
 	char *name;
@@ -1142,13 +1172,19 @@ int main(int argc, char *argv[])
 	if (argc == 4 && strcmp(argv[1], "--strdup-member") == 0)
 		return test_strdup_to_member(argc - 1, argv + 1);
 
-	else if (argc == 3 && strcmp(argv[1], "--normalize") == 0)
+	if  (argc == 4 && strcmp(argv[1], "--stralnumcmp") == 0) {
+		printf("%s\n", ul_stralnumcmp(argv[2], argv[3]) == 0 ?
+				"match" : "dismatch");
+		return EXIT_SUCCESS;
+
+	} else if (argc == 3 && strcmp(argv[1], "--normalize") == 0)
 		return test_strutils_normalize(argc - 1, argv + 1);
 
 	else {
 		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
 				"       %1$s --cmp-paths <path> <path>\n"
 				"       %1$s --strdup-member <str> <str>\n"
+				"       %1$s --stralnumcmp <str> <str>\n"
 				"       %1$s --normalize <str>\n",
 				argv[0]);
 		exit(EXIT_FAILURE);

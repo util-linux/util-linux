@@ -363,5 +363,6 @@ extern char *strfappend(const char *s, const char *format, ...)
 extern const char *split(const char **state, size_t *l, const char *separator, int quoted);
 
 extern int skip_fline(FILE *fp);
+extern int ul_stralnumcmp(const char *p1, const char *p2);
 
 #endif
