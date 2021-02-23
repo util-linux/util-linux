@@ -505,6 +505,7 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 			struct fdisk_parttype *t = fdisk_label_advparse_parttype(lb, buf,
 								FDISK_PARTTYPE_PARSE_DATA
 								| FDISK_PARTTYPE_PARSE_ALIAS
+								| FDISK_PARTTYPE_PARSE_NAME
 								| FDISK_PARTTYPE_PARSE_SEQNUM);
 			if (!t)
 				fdisk_info(cxt, _("Failed to parse '%s' partition type."), buf);
