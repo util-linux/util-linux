@@ -298,6 +298,7 @@ struct fdisk_parttype *fdisk_label_advparse_parttype(
  * @FDISK_PARTTYPE_PARSE_DEFAULT: recommended flags for new code
  * @FDISK_PARTTYPE_PARSE_NOUNKNOWN: ignore unknown types
  * @FDISK_PARTTYPE_PARSE_SEQNUM: use input as sequntial number of type (e.g. list-types fdisk dialog)
+ * @FDISK_PARTTYPE_PARSE_NAME: parse type human readable name
  */
 enum fdisk_parttype_parser_flags {
 	FDISK_PARTTYPE_PARSE_DATA       = (1 << 1),
@@ -307,10 +308,12 @@ enum fdisk_parttype_parser_flags {
 	FDISK_PARTTYPE_PARSE_DEPRECATED = (1 << 5),
 	FDISK_PARTTYPE_PARSE_NOUNKNOWN  = (1 << 6),
 	FDISK_PARTTYPE_PARSE_SEQNUM     = (1 << 7),
+	FDISK_PARTTYPE_PARSE_NAME	= (1 << 8),
 
 	FDISK_PARTTYPE_PARSE_DEFAULT = (FDISK_PARTTYPE_PARSE_DATA | \
 				        FDISK_PARTTYPE_PARSE_SHORTCUT | \
 				        FDISK_PARTTYPE_PARSE_ALIAS | \
+					FDISK_PARTTYPE_PARSE_NAME | \
 					FDISK_PARTTYPE_PARSE_SEQNUM )
 };
 

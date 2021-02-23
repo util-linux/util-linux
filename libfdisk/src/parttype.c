@@ -413,6 +413,24 @@ static struct fdisk_parttype *parttype_from_alias(
 	return NULL;
 }
 
+static struct fdisk_parttype *parttype_from_name(
+				const struct fdisk_label *lb,
+				const char *str)
+{
+	size_t i;
+
+	DBG(LABEL, ul_debugobj(lb, " parsing '%s' name", str));
+
+	for (i = 0; i < lb->nparttypes; i++) {
+		const char *name = lb->parttypes[i].name;
+
+		if (name && *name && ul_stralnumcmp(name, str) == 0)
+			return &lb->parttypes[i];
+	}
+
+	return NULL;
+}
+
 /**
  * fdisk_label_advparse_parttype:
  * @lb: label
@@ -455,6 +473,9 @@ struct fdisk_parttype *fdisk_label_advparse_parttype(
 	if (!res && (flags & FDISK_PARTTYPE_PARSE_SHORTCUT))
 		res = parttype_from_shortcut(lb, str,
 				flags & FDISK_PARTTYPE_PARSE_DEPRECATED);
+
+	if (!res && (flags & FDISK_PARTTYPE_PARSE_NAME))
+		res = parttype_from_name(lb, str);
 
 	if (!res && (flags & FDISK_PARTTYPE_PARSE_DATA)
 	    && (flags & FDISK_PARTTYPE_PARSE_DATALAST))
