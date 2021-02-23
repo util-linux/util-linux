@@ -467,6 +467,10 @@ as a shortcut as a first possibility in partitioning scripts although on other p
 Since v2.36 libfdisk supports partition type aliases as extension to shortcuts. The alias is a
 simple human readable word (e.g. "linux").
 
+Since v2.37 libfdisk supports partition type names on input, ignoring the case
+of the characters and all non-alphanumeric and non-digit characters in the name
+(e.g. "Linux /usr x86" is the same as "linux usr-x86").
+
 Supported shortcuts and aliases:
 .TP
 .B L - alias 'linux'
@@ -550,7 +554,8 @@ GPT partition name.
 .TP
 .BI type= code
 A hexadecimal number (without 0x) for an MBR partition, a GUID for a GPT partition,
-or a shortcut as for unnamed-fields format.
+a shortcut as for unnamed-fields format or a type name (e.g. type="Linux /usr (x86)").
+See above the section about the unnamed-fields format for more details.
 For backward compatibility the \fBId=\fR field has the same meaning.
 .SH EMPTY DISK LABEL
 .B sfdisk

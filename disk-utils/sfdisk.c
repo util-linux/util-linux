@@ -1165,6 +1165,7 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 	type = fdisk_label_advparse_parttype(lb, typestr,
 			FDISK_PARTTYPE_PARSE_DATA
 			| FDISK_PARTTYPE_PARSE_ALIAS
+			| FDISK_PARTTYPE_PARSE_NAME
 			| FDISK_PARTTYPE_PARSE_SHORTCUT);
 	if (!type)
 		errx(EXIT_FAILURE, _("failed to parse %s partition type '%s'"),
