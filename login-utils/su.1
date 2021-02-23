@@ -52,15 +52,15 @@ is mostly designed for unprivileged users, the recommended solution for
 privileged users (e.g., scripts executed by root) is to use
 non-set-user-ID command
 .BR runuser (1)
-that does not require authentication and provide separate PAM configuration. If
-the PAM session is not required at all then the recommend solution is to use
+that does not require authentication and provides separate PAM configuration. If
+the PAM session is not required at all then the recommended solution is to use
 command
 .BR setpriv (1).
 .PP
 Note that
 .B su
-in all cases use PAM
-.RB (pam_getenvlist (3))
+in all cases uses PAM
+.RB ( pam_getenvlist (3))
 to do the final environment modification.
 Command-line options
 such as \fB\-\-login\fR and \fB\-\-preserve\-environment\fR affect
