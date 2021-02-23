@@ -513,6 +513,8 @@ static void create_watching_parent(struct su_context *su)
 		cb->child_wait    = wait_for_child_cb;
 		cb->child_sigstop = wait_for_child_cb;
 
+		ul_pty_slave_echo(su->pty, 1);
+
 		/* create pty */
 		if (ul_pty_setup(su->pty))
 			err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
