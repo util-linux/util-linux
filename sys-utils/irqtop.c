@@ -101,7 +101,7 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	struct libscols_table *table;
 	struct irq_stat *stat;
 	time_t now = time(NULL);
-	char timestr[64], *data;
+	char timestr[64], *data, *data0, *p;
 
 	table = get_scols_table(out, ctl->prev_stat, &stat, ctl->softirq);
 	if (!table) {
@@ -109,15 +109,31 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 		return 1;
 	}
 
+	scols_table_enable_maxout(table, 1);
+	scols_table_enable_nowrap(table, 1);
+	scols_table_reduce_termwidth(table, 1);
+
 	/* header in interactive mode */
 	move(0, 0);
 	strtime_iso(&now, ISO_TIMESTAMP, timestr, sizeof(timestr));
 	wprintw(ctl->win, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
 
-	scols_print_table_to_string(table, &data);
+	scols_print_table_to_string(table, &data0);
+	data = data0;
+
+	/* print header in reverse mode */
+	p = strchr(data, '\n');
+	if (p) {
+		*p = '\0';
+		attron(A_REVERSE);
+		wprintw(ctl->win, "%s\n", data);
+		attroff(A_REVERSE);
+		data = p + 1;
+	}
+
 	wprintw(ctl->win, "%s", data);
-	free(data);
+	free(data0);
 
 	/* clean up */
 	scols_unref_table(table);
