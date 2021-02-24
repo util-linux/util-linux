@@ -21,15 +21,21 @@ struct irq_info {
 	unsigned long delta;		/* delta count since previous update */
 };
 
+struct irq_cpu {
+	unsigned long total;
+	unsigned long delta;
+};
 
 struct irq_stat {
 	unsigned int nr_irq;		/* number of irq vector */
 	unsigned int nr_irq_info;	/* number of irq info */
 	struct irq_info *irq_info;	/* array of irq_info */
-	long nr_active_cpu;		/* number of active cpu */
+	struct irq_cpu *cpus;		 /* array of irq_cpu */
+	size_t nr_active_cpu;		/* number of active cpu */
 	unsigned long total_irq;	/* total irqs */
 	unsigned long delta_irq;	/* delta irqs */
 };
+
 
 typedef int (irq_cmp_t)(const struct irq_info *, const struct irq_info *);
 
@@ -58,5 +64,9 @@ struct libscols_table *get_scols_table(struct irq_output *out,
                                               struct irq_stat *prev,
                                               struct irq_stat **xstat,
                                               int softirq);
+
+struct libscols_table *get_scols_cpus_table(struct irq_output *out,
+                                        struct irq_stat *prev,
+                                        struct irq_stat *curr);
 
 #endif /* UTIL_LINUX_H_IRQ_COMMON */

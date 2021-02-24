@@ -98,33 +98,43 @@ static void parse_input(struct irqtop_ctl *ctl, struct irq_output *out, char c)
 
 static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 {
-	struct libscols_table *table;
+	struct libscols_table *table, *cpus;
 	struct irq_stat *stat;
 	time_t now = time(NULL);
 	char timestr[64], *data, *data0, *p;
 
+	/* make irqs table */
 	table = get_scols_table(out, ctl->prev_stat, &stat, ctl->softirq);
 	if (!table) {
 		ctl->request_exit = 1;
 		return 1;
 	}
-
 	scols_table_enable_maxout(table, 1);
 	scols_table_enable_nowrap(table, 1);
 	scols_table_reduce_termwidth(table, 1);
 
-	/* header in interactive mode */
+	/* make cpus table */
+	cpus = get_scols_cpus_table(out, ctl->prev_stat, stat);
+	scols_table_reduce_termwidth(cpus, 1);
+
+	/* print header */
 	move(0, 0);
 	strtime_iso(&now, ISO_TIMESTAMP, timestr, sizeof(timestr));
 	wprintw(ctl->win, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
 
+	/* print cpus table */
+	scols_print_table_to_string(cpus, &data);
+	wprintw(ctl->win, "%s\n\n", data);
+	free(data);
+
+	/* print irqs table */
 	scols_print_table_to_string(table, &data0);
 	data = data0;
 
-	/* print header in reverse mode */
 	p = strchr(data, '\n');
 	if (p) {
+		/* print header in reverse mode */
 		*p = '\0';
 		attron(A_REVERSE);
 		wprintw(ctl->win, "%s\n", data);

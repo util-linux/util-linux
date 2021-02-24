@@ -143,7 +143,7 @@ static struct libscols_table *new_scols_table(struct irq_output *out)
 	scols_table_enable_export(table, out->pairs);
 
 	if (out->json)
-		scols_table_set_name(table, _("interrupts"));
+		scols_table_set_name(table, "interrupts");
 
 	for (i = 0; i < out->ncolumns; i++) {
 		const struct colinfo *col = get_column_info(out, i);
@@ -262,10 +262,13 @@ static struct irq_stat *get_irqinfo(int softirq)
 		stat->nr_active_cpu++;
 	}
 
+	stat->cpus =  xcalloc(stat->nr_active_cpu, sizeof(struct irq_cpu));
+
 	/* parse each line of _PATH_PROC_INTERRUPTS */
 	while (getline(&line, &len, irqfile) >= 0) {
 		unsigned long count;
-		int index, length;
+		size_t index;
+		int length;
 
 		tmp = strchr(line, ':');
 		if (!tmp)
@@ -281,9 +284,13 @@ static struct irq_stat *get_irqinfo(int softirq)
 
 		tmp += 1;
 		for (index = 0; (index < stat->nr_active_cpu) && (tmp - line < length); index++) {
+			struct irq_cpu *cpu = &stat->cpus[index];
+
 			sscanf(tmp, " %10lu", &count);
 			curr->total += count;
+			cpu->total += count;
 			stat->total_irq += count;
+
 			tmp += 11;
 		}
 
@@ -316,6 +323,7 @@ static struct irq_stat *get_irqinfo(int softirq)
 	fclose(irqfile);
  free_stat:
 	free(stat->irq_info);
+	free(stat->cpus);
 	free(stat);
 	free(line);
 	return NULL;
@@ -334,6 +342,7 @@ void free_irqstat(struct irq_stat *stat)
 	}
 
 	free(stat->irq_info);
+	free(stat->cpus);
 	free(stat);
 }
 
@@ -404,6 +413,94 @@ void set_sort_func_by_key(struct irq_output *out, char c)
 		out->sort_cmp_func = cmp_name;
 		break;
 	}
+}
+
+struct libscols_table *get_scols_cpus_table(struct irq_output *out,
+					struct irq_stat *prev,
+					struct irq_stat *curr)
+{
+	struct libscols_table *table;
+	struct libscols_column *cl;
+	struct libscols_line *ln;
+	char colname[sizeof(stringify_value(LONG_MAX))];
+	size_t i;
+
+	if (prev) {
+		for (i = 0; i < curr->nr_active_cpu; i++) {
+			struct irq_cpu *pre = &prev->cpus[i];
+			struct irq_cpu *cur = &curr->cpus[i];
+
+			cur->delta = cur->total - pre->total;
+		}
+	}
+
+	table = scols_new_table();
+	if (!table) {
+		warn(_("failed to initialize output table"));
+		return NULL;
+	}
+	scols_table_enable_json(table, out->json);
+	scols_table_enable_noheadings(table, out->no_headings);
+	scols_table_enable_export(table, out->pairs);
+
+	if (out->json)
+		scols_table_set_name(table, _("cpu-interrupts"));
+	else
+		scols_table_new_column(table, "", 0, SCOLS_FL_RIGHT);
+
+	for (i = 0; i < curr->nr_active_cpu; i++) {
+		snprintf(colname, sizeof(colname), "cpu%zu", i);
+		cl = scols_table_new_column(table, colname, 0, SCOLS_FL_RIGHT);
+		if (cl == NULL) {
+			warnx(_("failed to initialize output column"));
+			goto err;
+		}
+		if (out->json)
+			scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+	}
+
+	/* per cpu % of total */
+	ln = scols_table_new_line(table, NULL);
+	if (!ln) {
+		warn(_("failed to add line to output"));
+		goto err;
+	}
+	if (!out->json)
+		scols_line_set_data(ln, 0, "%irq:");
+
+	for (i = 0; i < curr->nr_active_cpu; i++) {
+		struct irq_cpu *cpu = &curr->cpus[i];
+		char *str;
+
+		xasprintf(&str, "%0.1f", (double)((long double) cpu->total / (long double) curr->total_irq * 100.0));
+		if (str && scols_line_refer_data(ln, i + 1, str) != 0)
+			goto err;
+	}
+
+	/* per cpu % of delta */
+	ln = scols_table_new_line(table, NULL);
+	if (!ln) {
+		warn(_("failed to add line to output"));
+		goto err;
+	}
+	if (!out->json)
+		scols_line_set_data(ln, 0, "%delta:");
+
+	for (i = 0; i < curr->nr_active_cpu; i++) {
+		struct irq_cpu *cpu = &curr->cpus[i];
+		char *str;
+
+		if (!curr->delta_irq)
+			continue;
+		xasprintf(&str, "%0.1f", (double)((long double) cpu->delta / (long double) curr->delta_irq * 100.0));
+		if (str && scols_line_refer_data(ln, i + 1, str) != 0)
+			goto err;
+	}
+
+	return table;
+ err:
+	scols_unref_table(table);
+	return NULL;
 }
 
 struct libscols_table *get_scols_table(struct irq_output *out,
