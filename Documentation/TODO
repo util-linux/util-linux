@@ -123,6 +123,12 @@ login-utils:
     * note that shadow-utils newgpr(1) provides support for syslog and audit log.
 
 
+libsmartcols / column -t
+------------------------
+  - add support for border of table
+    * extend 'struct libscols_symbols', use box-drawing chars UTF8/ASCII
+    * add scols_table_enable_border()
+    
 libblkid
 --------
 
