@@ -465,10 +465,8 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 
 	/* per cpu % of total */
 	ln = new_scols_line(table);
-	if (!ln)
+	if (!ln || (!out->json && scols_line_set_data(ln, 0, "%irq:") != 0))
 		goto err;
-	if (!out->json)
-		scols_line_set_data(ln, 0, "%irq:");
 
 	for (i = 0; i < curr->nr_active_cpu; i++) {
 		struct irq_cpu *cpu = &curr->cpus[i];
@@ -481,10 +479,8 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 
 	/* per cpu % of delta */
 	ln = new_scols_line(table);
-	if (!ln)
+	if (!ln || (!out->json && scols_line_set_data(ln, 0, _("%delta:")) != 0))
 		goto err;
-	if (!out->json)
-		scols_line_set_data(ln, 0, _("%delta:"));
 
 	for (i = 0; i < curr->nr_active_cpu; i++) {
 		struct irq_cpu *cpu = &curr->cpus[i];
