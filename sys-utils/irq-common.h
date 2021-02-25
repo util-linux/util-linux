@@ -27,8 +27,8 @@ struct irq_cpu {
 };
 
 struct irq_stat {
-	unsigned int nr_irq;		/* number of irq vector */
-	unsigned int nr_irq_info;	/* number of irq info */
+	unsigned long nr_irq;		/* number of irq vector */
+	unsigned long nr_irq_info;	/* number of irq info */
 	struct irq_info *irq_info;	/* array of irq_info */
 	struct irq_cpu *cpus;		 /* array of irq_cpu */
 	size_t nr_active_cpu;		/* number of active cpu */

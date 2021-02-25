@@ -165,18 +165,22 @@ static struct libscols_table *new_scols_table(struct irq_output *out)
 	return NULL;
 }
 
+static struct libscols_line *new_scols_line(struct libscols_table *table)
+{
+	struct libscols_line *line = scols_table_new_line(table, NULL);
+	if (!line) {
+		warn(_("failed to add line to output"));
+		return NULL;
+	}
+	return line;
+}
+
 static void add_scols_line(struct irq_output *out,
 			   struct irq_info *info,
 			   struct libscols_table *table)
 {
 	size_t i;
-	struct libscols_line *line;
-
-	line = scols_table_new_line(table, NULL);
-	if (!line) {
-		warn(_("failed to add line to output"));
-		return;
-	}
+	struct libscols_line *line = new_scols_line(table);
 
 	for (i = 0; i < out->ncolumns; i++) {
 		char *str = NULL;
@@ -460,11 +464,9 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 	}
 
 	/* per cpu % of total */
-	ln = scols_table_new_line(table, NULL);
-	if (!ln) {
-		warn(_("failed to add line to output"));
+	ln = new_scols_line(table);
+	if (!ln)
 		goto err;
-	}
 	if (!out->json)
 		scols_line_set_data(ln, 0, "%irq:");
 
@@ -478,13 +480,11 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 	}
 
 	/* per cpu % of delta */
-	ln = scols_table_new_line(table, NULL);
-	if (!ln) {
-		warn(_("failed to add line to output"));
+	ln = new_scols_line(table);
+	if (!ln)
 		goto err;
-	}
 	if (!out->json)
-		scols_line_set_data(ln, 0, "%delta:");
+		scols_line_set_data(ln, 0, _("%delta:"));
 
 	for (i = 0; i < curr->nr_active_cpu; i++) {
 		struct irq_cpu *cpu = &curr->cpus[i];
