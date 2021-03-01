@@ -558,7 +558,7 @@ static ssize_t read_syslog_buffer(struct dmesg_control *ctl, char **buf)
 	if (ctl->bufsize) {
 		sz = ctl->bufsize + 8;
 		*buf = xmalloc(sz * sizeof(char));
-		rc = klogctl(ctl->action, *buf, sz);
+		rc = klogctl(SYSLOG_ACTION_READ_ALL, *buf, sz);
 	} else {
 		sz = 16392;
 		while (1) {
@@ -572,9 +572,6 @@ static ssize_t read_syslog_buffer(struct dmesg_control *ctl, char **buf)
 			*buf = NULL;
 			sz *= 4;
 		}
-
-		if (rc > 0 && ctl->action == SYSLOG_ACTION_READ_CLEAR)
-			rc = klogctl(SYSLOG_ACTION_READ_CLEAR, *buf, sz);
 	}
 
 	return rc;
@@ -602,8 +599,6 @@ static ssize_t read_buffer(struct dmesg_control *ctl, char **buf)
 		 * Since kernel 3.5.0
 		 */
 		n = read_kmsg(ctl);
-		if (n == 0 && ctl->action == SYSLOG_ACTION_READ_CLEAR)
-			n = klogctl(SYSLOG_ACTION_CLEAR, NULL, 0);
 		break;
 	default:
 		abort();	/* impossible method -> drop core */
@@ -1597,12 +1592,19 @@ int main(int argc, char *argv[])
 			print_buffer(&ctl, buf, n);
 		if (!ctl.mmap_buff)
 			free(buf);
-		if (n < 0)
-			err(EXIT_FAILURE, _("read kernel buffer failed"));
 		if (ctl.kmsg >= 0)
 			close(ctl.kmsg);
-		break;
+		if (n < 0)
+			err(EXIT_FAILURE, _("read kernel buffer failed"));
+		if (n >= 0
+		    && ctl.action == SYSLOG_ACTION_READ_CLEAR)
+			; /* fallthrough */
+		else
+			break;
 	case SYSLOG_ACTION_CLEAR:
+		if (klogctl(SYSLOG_ACTION_CLEAR, NULL, 0) < 0)
+			err(EXIT_FAILURE, _("clear kernel buffer failed"));
+		break;
 	case SYSLOG_ACTION_CONSOLE_OFF:
 	case SYSLOG_ACTION_CONSOLE_ON:
 		klog_rc = klogctl(ctl.action, NULL, 0);
