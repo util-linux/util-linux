@@ -367,6 +367,10 @@ int main(int argc, char **argv)
 	if (!out)
 		out = stdout;
 
+	if (follow && (out != stdout || !isatty(STDOUT_FILENO))) {
+		setvbuf(out, NULL, _IOLBF, 0);
+	}
+
 	if (optind < argc) {
 		filename = argv[optind];
 		in = fopen(filename, "r");
