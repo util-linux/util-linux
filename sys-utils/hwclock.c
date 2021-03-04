@@ -196,7 +196,7 @@ static struct timeval time_inc(struct timeval addend, double increment)
 
 static int
 hw_clock_is_utc(const struct hwclock_control *ctl,
-		const struct adjtime adjtime)
+		const struct adjtime *adjtime)
 {
 	int ret;
 
@@ -206,7 +206,8 @@ hw_clock_is_utc(const struct hwclock_control *ctl,
 		ret = 0;	/* --localtime explicitly given */
 	else
 		/* get info from adjtime file - default is UTC */
-		ret = (adjtime.local_utc != LOCAL);
+		ret = (adjtime->local_utc != LOCAL);
+
 	if (ctl->verbose)
 		printf(_("Assuming hardware clock is kept in %s time.\n"),
 		       ret ? _("UTC") : _("local"));
@@ -1474,7 +1475,8 @@ int main(int argc, char **argv)
 	} else
 		/* Avoid writing adjtime file if we don't have to. */
 		adjtime.dirty = 0;
-	ctl.universal = hw_clock_is_utc(&ctl, adjtime);
+
+	ctl.universal = hw_clock_is_utc(&ctl, &adjtime);
 	rc = manipulate_clock(&ctl, set_time, startup_time, &adjtime);
 	if (ctl.testing)
 		puts(_("Test mode: nothing was changed."));
