@@ -79,9 +79,12 @@ see the \fB\-\-help\fR output.  See also the \fBCOLORS\fR section.
 .TP
 \fB\-l\fR, \fB\-\-list\fR
 List the partition tables for the specified devices and then exit.
-If no devices are given, those mentioned in
+
+If no devices are given, the devices mentioned in
 .I /proc/partitions
-(if that file exists) are used.
+(if this file exists) are used. Devices are always listed in the order in 
+which they are specified on the command-line, or by the kernel listed
+in /proc/partitions. 
 .TP
 \fB\-x\fR, \fB\-\-list\-details\fR
 Like \fB\-\-list\fR, but provides more details.
