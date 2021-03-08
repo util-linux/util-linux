@@ -1040,7 +1040,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		/* The caches are sorted by name, cxt->caches[] may contains
 		 * multiple instances for the same name.
 		 */
-		sec = add_summary_e(tb, NULL, _("Caches:"));
+		sec = add_summary_e(tb, NULL, _("Caches (sum of all):"));
 
 		for (i = 0; i < cxt->ncaches; i++) {
 			const char *name = cxt->caches[i].name;
