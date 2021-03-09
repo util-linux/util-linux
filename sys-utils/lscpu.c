@@ -1163,6 +1163,7 @@ int main(int argc, char *argv[])
 	int c, all = 0;
 	int columns[ARRAY_SIZE(coldescs_cpu)], ncolumns = 0;
 	int cpu_modifier_specified = 0;
+	char *outarg = NULL;
 	size_t i;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1,
@@ -1223,11 +1224,7 @@ int main(int argc, char *argv[])
 			if (optarg) {
 				if (*optarg == '=')
 					optarg++;
-				ncolumns = string_to_idarray(optarg,
-						columns, ARRAY_SIZE(columns),
-						cache_column_name_to_id);
-				if (ncolumns < 0)
-					return EXIT_FAILURE;
+				outarg = optarg;
 			}
 			cxt->mode = LSCPU_OUTPUT_CACHES;
 			break;
@@ -1239,11 +1236,7 @@ int main(int argc, char *argv[])
 			if (optarg) {
 				if (*optarg == '=')
 					optarg++;
-				ncolumns = string_to_idarray(optarg,
-						columns, ARRAY_SIZE(columns),
-						cpu_column_name_to_id);
-				if (ncolumns < 0)
-					return EXIT_FAILURE;
+				outarg = optarg;
 			}
 			cxt->mode = c == 'p' ? LSCPU_OUTPUT_PARSABLE : LSCPU_OUTPUT_READABLE;
 			break;
@@ -1333,6 +1326,11 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_CACHE_PHYLINE;
 			columns[ncolumns++] = COL_CACHE_COHERENCYSIZE;
 		}
+		if (outarg && string_add_to_idarray(outarg, columns,
+					ARRAY_SIZE(columns),
+					&ncolumns, cache_column_name_to_id) < 0)
+			return EXIT_FAILURE;
+
 		print_caches_readable(cxt, columns, ncolumns);
 		break;
 	case LSCPU_OUTPUT_READABLE:
@@ -1370,6 +1368,10 @@ int main(int argc, char *argv[])
 				columns[ncolumns++] = COL_CPU_MINMHZ;
 			}
 		}
+		if (outarg && string_add_to_idarray(outarg, columns,
+					ARRAY_SIZE(columns),
+					&ncolumns, cpu_column_name_to_id) < 0)
+			return EXIT_FAILURE;
 		print_cpus_readable(cxt, columns, ncolumns);
 		break;
 	case LSCPU_OUTPUT_PARSABLE:
@@ -1384,6 +1386,11 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_CPU_CACHE;
 			cxt->show_compatible = 1;
 		}
+		if (outarg && string_add_to_idarray(outarg, columns,
+					ARRAY_SIZE(columns),
+					&ncolumns, cpu_column_name_to_id) < 0)
+			return EXIT_FAILURE;
+
 		print_cpus_parsable(cxt, columns, ncolumns);
 		break;
 	}

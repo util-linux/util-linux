@@ -130,6 +130,9 @@ are included in the command output.
 When specifying the \fIlist\fP argument, the string of option, equal sign (=), and
 \fIlist\fP must not contain any blanks or other whitespace.
 Examples: '\fB\-C=NAME,ONE-SIZE\fP' or '\fB\-\-caches=NAME,ONE-SIZE\fP'.
+
+The default list of columns may be extended if list is specified in the format +list
+(e.g., lscpu -C=+ALLOC-POLICY).
 .TP
 .BR \-c , " \-\-offline"
 Limit the output to offline CPUs.
@@ -144,6 +147,9 @@ are included in the command output.
 When specifying the \fIlist\fP argument, the string of option, equal sign (=), and
 \fIlist\fP must not contain any blanks or other whitespace.
 Examples: '\fB\-e=cpu,node\fP' or '\fB\-\-extended=cpu,node\fP'.
+
+The default list of columns may be extended if list is specified in the format +list
+(e.g., lscpu -e=+MHZ).
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
@@ -163,6 +169,9 @@ If the \fIlist\fP argument is used, cache columns are separated with a colon (:)
 When specifying the \fIlist\fP argument, the string of option, equal sign (=), and
 \fIlist\fP must not contain any blanks or other whitespace.
 Examples: '\fB\-p=cpu,node\fP' or '\fB\-\-parse=cpu,node\fP'.
+
+The default list of columns may be extended if list is specified in the format +list
+(e.g., lscpu -p=+MHZ).
 .TP
 .BR \-s , " \-\-sysroot " \fIdirectory\fP
 Gather CPU data for a Linux instance other than the instance from which the
