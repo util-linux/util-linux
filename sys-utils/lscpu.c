@@ -1161,10 +1161,10 @@ int main(int argc, char *argv[])
 {
 	struct lscpu_cxt *cxt;
 	int c, all = 0;
-	int columns[ARRAY_SIZE(coldescs_cpu)], ncolumns = 0;
+	int columns[ARRAY_SIZE(coldescs_cpu)];
 	int cpu_modifier_specified = 0;
 	char *outarg = NULL;
-	size_t i;
+	size_t i, ncolumns = 0;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1,
 	};
