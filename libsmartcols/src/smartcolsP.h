@@ -124,7 +124,7 @@ struct libscols_column {
 
 
 	struct libscols_cell	header;
-	struct list_head	cl_columns;
+	struct list_head	cl_columns;	/* member of table->tb_columns */
 
 	struct libscols_table	*table;
 
@@ -212,8 +212,8 @@ struct libscols_table {
 	char	*colsep;	/* column separator */
 	char	*linesep;	/* line separator */
 
-	struct list_head	tb_columns;
-	struct list_head	tb_lines;
+	struct list_head	tb_columns;	/* list of columns, items: column->cl_columns */
+	struct list_head	tb_lines;	/* list of lines; items: line->ln_lines  */
 
 	struct list_head	tb_groups;	/* all defined groups */
 	struct libscols_group	**grpset;
