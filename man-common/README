@@ -1,0 +1,16 @@
+To get the groff version from an asciidoc man page (example for schedutils/ionice.1.adoc): 
+
+asciidoctor -b manpage \
+            -a release-version=2.37 \
+            -D output_directory \
+            ionice.1.adoc
+
+The headers of the asciidoc files already contain relative paths to the files in man-common.
+
+The groff man page libblikid.3 contains the version number of util-linux from which this library available:
+
+.SH AVAILABILITY
+libblkid is part of the util-linux package since version 2.15 and is available from
+https://www.kernel.org/pub/linux/utils/util-linux/.
+
+I've replaced this section with a generic footer for library man pages; if you consider this version number as important, I will replace the footer with the original static AVAILABILITY section.

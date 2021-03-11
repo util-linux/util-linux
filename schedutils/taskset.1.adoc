@@ -1,0 +1,125 @@
+////
+taskset(1) manpage
+Copyright (C) 2004 Robert Love
+
+This is free documentation; you can redistribute it and/or
+modify it under the terms of the GNU General Public License,
+version 2, as published by the Free Software Foundation.
+
+The GNU General Public License's references to "object code"
+and "executables" are to be interpreted as the output of any
+document formatting or typesetting system, including
+intermediate and printed output.
+
+This manual is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+////
+= taskset(1)
+:doctype: manpage
+:man manual: User commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: taskset
+
+== NAME
+
+taskset - set or retrieve a process's CPU affinity
+
+== SYNOPSIS
+
+*taskset* _options mask command argument_
+
+*taskset* _options_ *-p* _mask pid_
+
+== DESCRIPTION
+
+The *taskset* command is used to set or retrieve the CPU affinity of a running process given its _pid_, or to launch a new _command_ with a given CPU affinity. CPU affinity is a scheduler property that "bonds" a process to a given set of CPUs on the system. The Linux scheduler will honor the given CPU affinity and the process will not run on any other CPUs. Note that the Linux scheduler also supports natural CPU affinity: the scheduler attempts to keep processes on the same CPU as long as practical for performance reasons. Therefore, forcing a specific CPU affinity is useful only in certain applications.
+
+The CPU affinity is represented as a bitmask, with the lowest order bit corresponding to the first logical CPU and the highest order bit corresponding to the last logical CPU. Not all CPUs may exist on a given system but a mask may specify more CPUs than are present. A retrieved mask will reflect only the bits that correspond to CPUs physically on the system. If an invalid mask is given (i.e., one that corresponds to no valid CPUs on the current system) an error is returned. The masks may be specified in hexadecimal (with or without a leading "0x"), or as a CPU list with the *--cpu-list* option. For example,
+
+____
+*0x00000001*::
+  is processor #0,
+
+*0x00000003*::
+  is processors #0 and #1,
+
+*0xFFFFFFFF*::
+  is processors #0 through #31,
+
+*32*::
+  is processors #1, #4, and #5,
+
+*--cpu-list 0-2,6*::
+  is processors #0, #1, #2, and #6.
+
+*--cpu-list 0-10:2*::
+  is processors #0, #2, #4, #6, #8 and #10. The suffix ":N" specifies stride in the range, for example 0-10:3 is interpreted as 0,3,6,9 list.
+____
+
+When *taskset* returns, it is guaranteed that the given program has been scheduled to a legal CPU.
+
+== OPTIONS
+
+*-a*, *--all-tasks*::
+  Set or retrieve the CPU affinity of all the tasks (threads) for a given PID.
+
+*-c*, *--cpu-list*::
+  Interpret _mask_ as numerical list of processors instead of a bitmask. Numbers are separated by commas and may include ranges. For example: *0,5,8-11*.
+
+*-p*, *--pid*::
+  Operate on an existing PID and do not launch a new task.
+
+*-V*, *--version*::
+  Display version information and exit.
+
+*-h*, *--help*::
+  Display help text and exit.
+
+== USAGE
+
+The default behavior is to run a new command with a given affinity mask:::
+  *taskset* _mask_ _command_ [_arguments_]
+
+You can also retrieve the CPU affinity of an existing task:::
+  *taskset -p* _pid_
+
+Or set it:::
+  *taskset -p* _mask pid_
+
+== PERMISSIONS
+
+A user can change the CPU affinity of a process belonging to the same user. A user must possess *CAP_SYS_NICE* to change the CPU affinity of a process belonging to another user. A user can retrieve the affinity mask of any process.
+
+== AUTHORS
+
+Written by Robert M. Love.
+
+== COPYRIGHT
+
+Copyright © 2004 Robert M. Love. This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+[[see_also]]
+== SEE ALSO
+
+*chrt*(1),
+*nice*(1),
+*renice*(1),
+*sched_getaffinity*(2),
+*sched_setaffinity*(2)
+
+See *sched*(7) for a description of the Linux scheduling scheme.
+
+include::../man-common/bugreports.adoc[]
+
+include::../man-common/footer.adoc[]
+
+ifdef::translation[]
+include::../man-common/translation.adoc[]
+endif::[]
