@@ -40,6 +40,8 @@
 #include "closestream.h"
 #include "pathnames.h"
 
+#define MOUNTPOINT_EXIT_NOMNT	32
+
 struct mountpoint_control {
 	char *path;
 	dev_t dev;
@@ -201,15 +203,17 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 	if (ctl.dev_devno)
-		return print_devno(&ctl) ? EXIT_FAILURE : EXIT_SUCCESS;
+		return print_devno(&ctl) ? MOUNTPOINT_EXIT_NOMNT : EXIT_SUCCESS;
+
 	if ((ctl.nofollow && S_ISLNK(ctl.st.st_mode)) || dir_to_device(&ctl)) {
 		if (!ctl.quiet)
 			printf(_("%s is not a mountpoint\n"), ctl.path);
-		return EXIT_FAILURE;
+		return MOUNTPOINT_EXIT_NOMNT;
 	}
 	if (ctl.fs_devno)
 		printf("%u:%u\n", major(ctl.dev), minor(ctl.dev));
 	else if (!ctl.quiet)
 		printf(_("%s is a mountpoint\n"), ctl.path);
+
 	return EXIT_SUCCESS;
 }
