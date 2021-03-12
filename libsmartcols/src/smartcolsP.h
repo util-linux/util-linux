@@ -232,6 +232,8 @@ struct libscols_table {
 	size_t	termlines_used;	/* printed line counter */
 	size_t	header_next;	/* where repeat header */
 
+	const char *cur_color;	/* current active color when printing */
+
 	/* flags */
 	unsigned int	ascii		:1,	/* don't use unicode */
 			colors_wanted	:1,	/* enable colors */

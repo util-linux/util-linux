@@ -1,5 +1,6 @@
 
 check_PROGRAMS += \
+	sample-scols-colors \
 	sample-scols-title \
 	sample-scols-wrap \
 	sample-scols-continuous \
@@ -18,6 +19,10 @@ sample_scols_tree_SOURCES = libsmartcols/samples/tree.c
 sample_scols_tree_LDADD = $(sample_scols_ldadd) libcommon.la
 sample_scols_tree_CFLAGS = $(sample_scols_cflags)
 endif
+
+sample_scols_colors_SOURCES = libsmartcols/samples/colors.c
+sample_scols_colors_LDADD = $(sample_scols_ldadd) libcommon.la
+sample_scols_colors_CFLAGS = $(sample_scols_cflags)
 
 sample_scols_title_SOURCES = libsmartcols/samples/title.c
 sample_scols_title_LDADD = $(sample_scols_ldadd) libcommon.la

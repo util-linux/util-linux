@@ -122,8 +122,6 @@ login-utils:
 
 libsmartcols / column -t
 ------------------------
-  - fix color use, color has to be used for all cell, line and column. Now it's
-    used only for text, but no for padding chars and cell separators (line color).
   - add column --table-header-color
   - add support for border of table
     * extend 'struct libscols_symbols', use box-drawing chars UTF8/ASCII

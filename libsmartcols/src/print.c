@@ -1,5 +1,4 @@
-/*
- * table.c - functions handling the data at the table level
+ /* print.c - functions to print table
  *
  * Copyright (C) 2010-2014 Karel Zak <kzak@redhat.com>
  * Copyright (C) 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com>
@@ -217,15 +216,93 @@ static int has_pending_data(struct libscols_table *tb)
 	return 0;
 }
 
+static void fputs_color_reset(struct libscols_table *tb)
+{
+	if (tb->cur_color) {
+		fputs(UL_COLOR_RESET, tb->out);
+		tb->cur_color = NULL;
+	}
+}
+
+static void fputs_color(struct libscols_table *tb, const char *color)
+{
+	if (tb->cur_color)
+		fputs_color_reset(tb);
+
+	tb->cur_color = color;
+	if (color)
+		fputs(color, tb->out);
+}
+
+static const char *get_cell_color(struct libscols_table *tb,
+				struct libscols_column *cl,
+				struct libscols_line *ln,
+				struct libscols_cell *ce)
+{
+	const char *color = NULL;
+
+	if (!tb || !tb->colors_wanted || tb->format != SCOLS_FMT_HUMAN)
+		return NULL;
+	if (ce)
+		color = ce->color;
+	if (!color && (!ln || !ln->color) && cl)
+		color = cl->color;
+	return color;
+}
+
+/* switch from line color to cell/column color */
+static void fputs_color_cell_open(struct libscols_table *tb,
+				struct libscols_column *cl,
+				struct libscols_line *ln,
+				struct libscols_cell *ce)
+{
+	const char *color = get_cell_color(tb, cl, ln, ce);
+
+	if (color)
+		fputs_color(tb, color);
+}
+
+/* switch from cell/column color to line color or reset */
+static void fputs_color_cell_close(struct libscols_table *tb,
+				struct libscols_column *cl,
+				struct libscols_line *ln,
+				struct libscols_cell *ce)
+{
+	const char *color = get_cell_color(tb, cl, ln, ce);
+
+	if (color)
+		fputs_color(tb, ln ? ln->color : NULL);
+}
+
+/* switch to line color */
+static void fputs_color_line_open(struct libscols_table *tb,
+				struct libscols_line *ln)
+{
+	if (!tb || !tb->colors_wanted || tb->format != SCOLS_FMT_HUMAN)
+		return;
+	fputs_color(tb, ln ? ln->color : NULL);
+}
+
+/* switch off all colors */
+static void fputs_color_line_close(struct libscols_table *tb)
+{
+	if (!tb || !tb->colors_wanted || tb->format != SCOLS_FMT_HUMAN)
+		return;
+	fputs_color_reset(tb);
+}
+
 /* print padding or ASCII-art instead of data of @cl */
 static void print_empty_cell(struct libscols_table *tb,
 			  struct libscols_column *cl,
 			  struct libscols_line *ln,	/* optional */
+			  struct libscols_cell *ce,
 			  size_t bufsz)
 {
 	size_t len_pad = 0;		/* in screen cells as opposed to bytes */
 
 	DBG(COL, ul_debugobj(cl, " printing empty cell"));
+
+	fputs_color_cell_open(tb, cl, ln, ce);
 
 	/* generate tree ASCII-art rather than padding */
 	if (ln && scols_column_is_tree(cl)) {
@@ -256,39 +333,28 @@ static void print_empty_cell(struct libscols_table *tb,
 	}
 
 	/* minout -- don't fill */
-	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln))
+	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln)) {
+		fputs_color_cell_close(tb, cl, ln, ce);
 		return;
+	}
 
 	/* default -- fill except last column */
-	if (!scols_table_is_maxout(tb) && is_last_column(cl))
+	if (!scols_table_is_maxout(tb) && is_last_column(cl)) {
+		fputs_color_cell_close(tb, cl, ln, ce);
 		return;
+	}
 
 	/* fill rest of cell with space */
 	for(; len_pad < cl->width; ++len_pad)
 		fputs(cellpadding_symbol(tb), tb->out);
+
+	fputs_color_cell_close(tb, cl, ln, ce);
 
 	if (!is_last_column(cl))
 		fputs(colsep(tb), tb->out);
 }
 
 
-static const char *get_cell_color(struct libscols_table *tb,
-				  struct libscols_column *cl,
-				  struct libscols_line *ln,	/* optional */
-				  struct libscols_cell *ce)	/* optional */
-{
-	const char *color = NULL;
-
-	if (tb && tb->colors_wanted) {
-		if (ce)
-			color = ce->color;
-		if (ln && !color)
-			color = ln->color;
-		if (!color)
-			color = cl->color;
-	}
-	return color;
-}
 
 /* Fill the start of a line with padding (or with tree ascii-art).
  *
@@ -304,6 +370,7 @@ static const char *get_cell_color(struct libscols_table *tb,
 static void print_newline_padding(struct libscols_table *tb,
 				  struct libscols_column *cl,
 				  struct libscols_line *ln,	/* optional */
+				  struct libscols_cell *ce,
 				  size_t bufsz)
 {
 	size_t i;
@@ -316,9 +383,13 @@ static void print_newline_padding(struct libscols_table *tb,
 	fputs(linesep(tb), tb->out);		/* line break */
 	tb->termlines_used++;
 
+	fputs_color_line_open(tb, ln);
+
 	/* fill cells after line break */
 	for (i = 0; i <= (size_t) cl->seqnum; i++)
-		print_empty_cell(tb, scols_table_get_column(tb, i), ln, bufsz);
+		print_empty_cell(tb, scols_table_get_column(tb, i), ln, ce, bufsz);
+
+	fputs_color_line_close(tb);
 }
 
 /*
@@ -374,7 +445,6 @@ static int print_pending_data(
 		struct libscols_line *ln,	/* optional */
 		struct libscols_cell *ce)
 {
-	const char *color = get_cell_color(tb, cl, ln, ce);
 	size_t width = cl->width, bytes;
 	size_t len = width, i;
 	char *data;
@@ -407,24 +477,28 @@ static int print_pending_data(
 	if (bytes)
 		step_pending_data(cl, bytes);
 
-	if (color)
-		fputs(color, tb->out);
+	fputs_color_cell_open(tb, cl, ln, ce);
+
 	fputs(data, tb->out);
-	if (color)
-		fputs(UL_COLOR_RESET, tb->out);
 	free(data);
 
 	/* minout -- don't fill */
-	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln))
+	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln)) {
+		fputs_color_cell_close(tb, cl, ln, ce);
 		return 0;
+	}
 
 	/* default -- fill except last column */
-	if (!scols_table_is_maxout(tb) && is_last_column(cl))
+	if (!scols_table_is_maxout(tb) && is_last_column(cl)) {
+		fputs_color_cell_close(tb, cl, ln, ce);
 		return 0;
+	}
 
 	/* fill rest of cell with space */
 	for(i = len; i < width; i++)
 		fputs(cellpadding_symbol(tb), tb->out);
+
+	fputs_color_cell_close(tb, cl, ln, ce);
 
 	if (!is_last_column(cl))
 		fputs(colsep(tb), tb->out);
@@ -487,7 +561,6 @@ static int print_data(struct libscols_table *tb,
 		      struct libscols_buffer *buf)
 {
 	size_t len = 0, i, width, bytes;
-	const char *color = NULL;
 	char *data, *nextchunk;
 	const char *name = NULL;
 	int is_last;
@@ -533,8 +606,6 @@ static int print_data(struct libscols_table *tb,
 	case SCOLS_FMT_HUMAN:
 		break;		/* continue below */
 	}
-
-	color = get_cell_color(tb, cl, ln, ce);
 
 	/* Encode. Note that 'len' and 'width' are number of cells, not bytes.
 	 */
@@ -583,49 +654,39 @@ static int print_data(struct libscols_table *tb,
 		data = NULL;
 	}
 
+	fputs_color_cell_open(tb, cl, ln, ce);
+
 	if (data && *data) {
 		if (scols_column_is_right(cl)) {
-			if (color)
-				fputs(color, tb->out);
 			for (i = len; i < width; i++)
 				fputs(cellpadding_symbol(tb), tb->out);
-			fputs(data, tb->out);
-			if (color)
-				fputs(UL_COLOR_RESET, tb->out);
 			len = width;
+		}
+		fputs(data, tb->out);
 
-		} else if (color) {
-			char *p = data;
-			size_t art = buffer_get_safe_art_size(buf);
-
-			/* we don't want to colorize tree ascii art */
-			if (scols_column_is_tree(cl) && art && art < bytes) {
-				fwrite(p, 1, art, tb->out);
-				p += art;
-			}
-
-			fputs(color, tb->out);
-			fputs(p, tb->out);
-			fputs(UL_COLOR_RESET, tb->out);
-		} else
-			fputs(data, tb->out);
 	}
 
 	/* minout -- don't fill */
-	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln))
+	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln)) {
+		fputs_color_cell_close(tb, cl, ln, ce);
 		return 0;
+	}
 
 	/* default -- fill except last column */
-	if (!scols_table_is_maxout(tb) && is_last)
+	if (!scols_table_is_maxout(tb) && is_last) {
+		fputs_color_cell_close(tb, cl, ln, ce);
 		return 0;
+	}
 
 	/* fill rest of cell with space */
 	for(i = len; i < width; i++)
 		fputs(cellpadding_symbol(tb), tb->out);
 
+	fputs_color_cell_close(tb, cl, ln, ce);
+
 	if (len > width && !scols_column_is_trunc(cl)) {
 		DBG(COL, ul_debugobj(cl, "*** data len=%zu > column width=%zu", len, width));
-		print_newline_padding(tb, cl, ln, buffer_get_size(buf));	/* next column starts on next line */
+		print_newline_padding(tb, cl, ln, ce, buffer_get_size(buf));	/* next column starts on next line */
 
 	} else if (!is_last)
 		fputs(colsep(tb), tb->out);		/* columns separator */
@@ -698,6 +759,8 @@ static int print_line(struct libscols_table *tb,
 
 	DBG(LINE, ul_debugobj(ln, "printing line"));
 
+	fputs_color_line_open(tb, ln);
+
 	/* regular line */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
@@ -711,12 +774,14 @@ static int print_line(struct libscols_table *tb,
 		if (rc == 0 && cl->pending_data)
 			pending = 1;
 	}
+	fputs_color_line_close(tb);
 
 	/* extra lines of the multi-line cells */
 	while (rc == 0 && pending) {
 		DBG(LINE, ul_debugobj(ln, "printing pending data"));
 		pending = 0;
 		fputs(linesep(tb), tb->out);
+		fputs_color_line_open(tb, ln);
 		tb->termlines_used++;
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 		while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
@@ -727,8 +792,9 @@ static int print_line(struct libscols_table *tb,
 				if (rc == 0 && cl->pending_data)
 					pending = 1;
 			} else
-				print_empty_cell(tb, cl, ln, buffer_get_size(buf));
+				print_empty_cell(tb, cl, ln, NULL, buffer_get_size(buf));
 		}
+		fputs_color_line_close(tb);
 	}
 
 	return 0;
@@ -736,7 +802,7 @@ static int print_line(struct libscols_table *tb,
 
 int __scols_print_title(struct libscols_table *tb)
 {
-	int rc, color = 0;
+	int rc;
 	mbs_align_t align;
 	size_t width, len = 0, bufsz, titlesz;
 	char *title = NULL, *buf = NULL;
@@ -817,15 +883,11 @@ int __scols_print_title(struct libscols_table *tb)
 		goto done;
 	}
 
-	if (tb->colors_wanted && tb->title.color)
-		color = 1;
-	if (color)
-		fputs(tb->title.color, tb->out);
+	fputs_color(tb, tb->title.color);
 
 	fputs(title, tb->out);
 
-	if (color)
-		fputs(UL_COLOR_RESET, tb->out);
+	fputs_color_reset(tb);
 
 	fputc('\n', tb->out);
 	rc = 0;
