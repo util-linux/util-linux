@@ -16,6 +16,8 @@ Created  Wed Sep 14 12:02:12 2001, Andreas Dilger
 
 libblkid - block device identification library
 
+== SYNOPSIS
+
 *#include <blkid.h>*
 
 *cc* _file.c_ *-lblkid*
