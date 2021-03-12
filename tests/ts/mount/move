@@ -68,6 +68,11 @@ mount_and_check --move $DIR_A $DIR_B
 for f in `find $DIR_PRIVATE2 $DIR_PRIVATE`; do
 	xo="$($TS_CMD_MOUNTPOINT -q "$f" 2>&1)"
 	x=$?
+	# mountpoint(1) returns 32 if mountpoint does not exist, map it to 1 to
+	# be compatible with findmnt(8)
+	if [ "$x" = "32" ]; then
+		x=1
+	fi
 	yo="$($TS_CMD_FINDMNT --kernel --mountpoint "$f" 2>&1)"
 	y=$?
 
