@@ -11,10 +11,12 @@ findmnt \- find a filesystem
 .sp
 .B findmnt
 [options]
-.RB [ \-\-source ]
-.I device
-.RB [ \-\-target | \-\-mountpoint ]
-.I mountpoint
+.RB [ \-\-source
+.IR device ]
+.RB [ \-\-target
+.IR path " |"
+.BR  \-\-mountpoint
+.IR mountpoint ]
 .SH DESCRIPTION
 .B findmnt
 will list all mounted filesystems or search for a filesystem.  The
@@ -38,6 +40,9 @@ follows
 behavior where a device name may be interpreted
 as a mountpoint (and vice versa) if the \fB\-\-target\fR, \fB\-\-mountpoint\fR or
 \fB\-\-source\fR options are not specified.
+.PP
+The command-line option \fB\-\-target\fR accepts any file or directory and then
+findmnt displays the filesystem for the given path.
 .PP
 The command prints all mounted filesystems in the tree-like format by default.
 .SH OPTIONS
