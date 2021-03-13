@@ -1,8 +1,11 @@
-To get the groff version from an asciidoc man page (example for schedutils/ionice.1.adoc): 
+To get the groff version from an asciidoc man page (example for a dummy man page filename.1.adoc): 
 
 asciidoctor -b manpage \
             -a release-version=2.37 \
+            -a adjtime_path=/etc/adjtime \
             -D output_directory \
-            ionice.1.adoc
+            filename.1.adoc
+            
+"-a release-version" is applicable to all man pages; "-a adjtime_path" is for sys-utils/rtcwake.8.
 
 The headers of the asciidoc files already contain relative paths to the files in man-common.
