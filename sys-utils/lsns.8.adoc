@@ -5,7 +5,7 @@ May be distributed under the GNU General Public License
 ////
 = lsns(8)
 :doctype: manpage
-:man manual: User commands
+:man manual: System Administration
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lsns
