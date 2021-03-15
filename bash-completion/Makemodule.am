@@ -189,7 +189,7 @@ endif
 if BUILD_UTMPDUMP
 dist_bashcompletion_DATA += bash-completion/utmpdump
 endif
-if BUILD_LIBUUID
+if BUILD_UUIDGEN
 dist_bashcompletion_DATA += bash-completion/uuidgen
 endif
 if BUILD_UUIDPARSE
