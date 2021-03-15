@@ -659,7 +659,7 @@ int pymnt_table_parser_errcb(struct libmnt_table *tb, const char *filename, int 
 			return -ENOMEM;
 
 		/* A python callback was set, so tb is definitely encapsulated in an object */
-		result = PyEval_CallObject(((TableObject *)obj)->errcb, arglist);
+		result = PyObject_Call(((TableObject *)obj)->errcb, arglist, NULL);
 		Py_DECREF(arglist);
 
 		if (!result)
