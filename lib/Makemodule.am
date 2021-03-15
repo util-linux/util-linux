@@ -9,7 +9,7 @@
 # Note that you need "make install-strip" (or proper rpm / Debian build)
 # to generate binaries with only relevant stuff.
 #
-noinst_LTLIBRARIES += libcommon.la
+EXTRA_LTLIBRARIES += libcommon.la
 libcommon_la_CFLAGS = $(AM_CFLAGS)
 libcommon_la_SOURCES = \
 	lib/blkdev.c \
@@ -60,7 +60,7 @@ libcommon_la_SOURCES += lib/sysfs.c
 endif
 endif
 
-noinst_LTLIBRARIES += libtcolors.la
+EXTRA_LTLIBRARIES += libtcolors.la
 libtcolors_la_CFLAGS = $(AM_CFLAGS)
 libtcolors_la_SOURCES = lib/colors.c lib/color-names.c include/colors.h include/color-names.h
 libtcolors_la_LIBADD =

@@ -49,7 +49,7 @@ bashcompletiondir = @bashcompletiondir@
 
 dist_noinst_HEADERS =
 noinst_PROGRAMS =
-noinst_LTLIBRARIES =
+EXTRA_LTLIBRARIES =
 usrbin_exec_PROGRAMS =
 usrsbin_exec_PROGRAMS =
 dist_man_MANS =
