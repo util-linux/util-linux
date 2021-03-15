@@ -883,11 +883,14 @@ int __scols_print_title(struct libscols_table *tb)
 		goto done;
 	}
 
-	fputs_color(tb, tb->title.color);
+
+	if (tb->colors_wanted)
+		fputs_color(tb, tb->title.color);
 
 	fputs(title, tb->out);
 
-	fputs_color_reset(tb);
+	if (tb->colors_wanted)
+		fputs_color_reset(tb);
 
 	fputc('\n', tb->out);
 	rc = 0;
