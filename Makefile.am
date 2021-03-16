@@ -190,6 +190,24 @@ $(PATHFILES): Makefile
 		$(edit_cmd) $${srcdir}$@.in >$@.tmp
 	@ mv $@.tmp $@
 
+asciidoc_man_cmd = $(ASCIIDOCTOR) 
+	-b manpage \
+	-a 'VERSION=$(VERSION)' \
+	-a 'ADJTIME_PATH=$(ADJTIME_PATH)'
+
+CLEANFILES += $(dist_man_MANS)
+EXTRA_DIST += $(dist_man_MANS:=.adoc)
+
+$(dist_man_MANS): Makefile
+	@ rm -f $@
+	$(AM_V_at) $(MKDIR_P) $$(dirname $@)
+	$(AM_V_GEN) srcdir=''; \
+		test -f ./$@.adoc || srcdir=$(srcdir)/; \
+		$(asciidoc_man_cmd) $${srcdir}$@.adoc
+
+gen-man: $(dist_man_MANS)
+
+
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
 dist-hook:

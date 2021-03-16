@@ -186,7 +186,6 @@ endif
 if BUILD_RTCWAKE
 usrsbin_exec_PROGRAMS += rtcwake
 dist_man_MANS += sys-utils/rtcwake.8
-PATHFILES += sys-utils/rtcwake.8
 rtcwake_SOURCES = sys-utils/rtcwake.c
 rtcwake_LDADD = $(LDADD) libcommon.la
 endif
@@ -482,7 +481,6 @@ sbin_PROGRAMS += hwclock
 dist_man_MANS += \
 	sys-utils/hwclock.8 \
 	sys-utils/adjtime_config.5
-PATHFILES += sys-utils/hwclock.8
 hwclock_SOURCES = \
 	sys-utils/hwclock.c \
 	sys-utils/hwclock.h
