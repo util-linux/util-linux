@@ -106,7 +106,7 @@ Some PC systems can't currently exit sleep states such as *mem* using only the k
 
 == FILES
 
-_{adjtime_path}_
+_{ADJTIME_PATH}_
 
 == HISTORY
 
