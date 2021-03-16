@@ -294,12 +294,12 @@ static int synchronize_to_clock_tick_rtc(const struct hwclock_control *ctl)
 		if (rc == -1)
 			warn(_("ioctl() to %s to turn off update interrupts failed"),
 			     rtc_dev_name);
-		} else if (errno == ENOTTY || errno == EINVAL) {
-			/* rtc ioctl interrupts are unimplemented */
-			ret = busywait_for_rtc_clock_tick(ctl, rtc_fd);
-		} else
-			warn(_("ioctl(%d, RTC_UIE_ON, 0) to %s failed"),
-			     rtc_fd, rtc_dev_name);
+	} else if (errno == ENOTTY || errno == EINVAL) {
+		/* rtc ioctl interrupts are unimplemented */
+		ret = busywait_for_rtc_clock_tick(ctl, rtc_fd);
+	} else
+		warn(_("ioctl(%d, RTC_UIE_ON, 0) to %s failed"),
+		     rtc_fd, rtc_dev_name);
 	return ret;
 }
 
