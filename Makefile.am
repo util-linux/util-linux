@@ -110,6 +110,7 @@ include bash-completion/Makemodule.am
 
 include tests/Makemodule.am
 
+
 # pylibmountexec module must be installed after usrlib_exec libraries,
 # otherwise the libtool relink step will fail to find libmount.la and
 # will try -lmount which is possibly not available.
@@ -179,7 +180,7 @@ else
 edit_cmd += -e 's|@vendordir[@]||g'
 endif
 
-CLEANFILES += $(PATHFILES)
+CLEANFILES += $(PATHFILES) $(EXTRA_LTLIBRARIES)
 EXTRA_DIST += $(PATHFILES:=.in)
 
 $(PATHFILES): Makefile
