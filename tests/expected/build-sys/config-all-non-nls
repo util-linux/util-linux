@@ -1,5 +1,6 @@
+blkdiscard:  libblkid librt 
 blkid:  libblkid 
-cfdisk:  libblkid libcryptsetup libdl libfdisk libmount libncursesw librt libsmartcols libtinfo libuuid 
+cfdisk:  libblkid libcryptsetup libfdisk libmount libncursesw librt libsmartcols libtinfo libuuid 
 column:  libsmartcols 
 eject:  libblkid libcryptsetup libmount librt 
 fdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
@@ -8,7 +9,7 @@ findfs:  libblkid
 findmnt:  libblkid libcryptsetup libmount librt libsmartcols libudev 
 fsck:  libblkid libcryptsetup libmount librt 
 fstrim:  libblkid libcryptsetup libmount librt 
-irqtop:  libdl libncursesw librt libsmartcols libtinfo 
+irqtop:  libncursesw librt libsmartcols libtinfo 
 libblkid.so.1.1.0:  
 libfdisk.so.1.1.0:  libblkid libuuid 
 libmount.so.1.1.0:  libblkid libcryptsetup librt 
@@ -28,7 +29,7 @@ mount:  libblkid libcryptsetup libmount librt
 mountpoint:  libblkid libcryptsetup libmount librt 
 partx:  libblkid libsmartcols 
 prlimit:  libsmartcols 
-pylibmount.so:  libblkid libcryptsetup libmount libpython3 librt 
+pylibmount.so:  libblkid libcryptsetup libmount librt 
 rfkill:  libsmartcols 
 sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 swaplabel:  libblkid libuuid 
@@ -43,8 +44,6 @@ wipefs:  libblkid libsmartcols
 zramctl:  libsmartcols 
 addpart:  
 agetty:  
-blkdiscard:  librt 
-blkid.static: STATIC
 blkzone:  
 blockdev:  
 cal:  libtinfo 
@@ -62,13 +61,12 @@ delpart:
 dmesg:  librt libtinfo 
 fallocate:  
 fdformat:  
-fdisk.static: STATIC
 flock:  librt 
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
 getopt:  
-hardlink:  libpcre2-8 
+hardlink:  libpcre2-posix librt 
 hexdump:  libtinfo 
 hwclock:  libm librt 
 ionice:  
@@ -83,7 +81,6 @@ line:
 logger:  libsystemd 
 login:  libpam libpam_misc 
 look:  
-losetup.static: STATIC
 mcookie:  
 mesg:  
 mkfs:  
@@ -91,13 +88,11 @@ mkfs.bfs:
 mkfs.cramfs:  libz 
 mkfs.minix:  
 more:  libtinfo 
-mount.static: STATIC
 namei:  
 newgrp:  libcrypt 
 nologin:  
 nsenter:  
-nsenter.static: STATIC
-pg:  libdl libncursesw libtinfo 
+pg:  libncursesw libtinfo 
 pivot_root:  
 raw:  
 readprofile:  
@@ -114,16 +109,14 @@ setarch:
 setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
-sfdisk.static: STATIC
 su:  libpam libpam_misc librt libutil 
 sulogin:  libcrypt 
 switch_root:  
 taskset:  
 tunelp:  
+uclampset:  
 ul:  libtinfo 
-umount.static: STATIC
 unshare:  
-unshare.static: STATIC
 utmpdump:  
 vipw:  
 wall:  

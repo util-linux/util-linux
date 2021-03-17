@@ -1,3 +1,4 @@
+blkdiscard:  libblkid librt 
 blkid:  libblkid 
 eject:  libblkid libmount librt 
 findfs:  libblkid 
@@ -10,14 +11,12 @@ libuuid.so.1.3.0:
 mkswap:  libblkid libuuid 
 mount:  libblkid libmount librt 
 mountpoint:  libblkid libmount librt 
-pylibmount.so:  libblkid libmount libpython3 librt 
+pylibmount.so:  libblkid libmount librt 
 swaplabel:  libblkid libuuid 
 umount:  libblkid libmount librt 
 uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
 agetty:  
-blkdiscard:  librt 
-blkid.static: STATIC
 blkzone:  
 blockdev:  
 cal:  libtinfo 
@@ -33,14 +32,12 @@ colrm:
 ctrlaltdel:  
 dmesg:  librt libtinfo 
 fallocate:  
-fdformat:  
-fdisk.static: STATIC
 flock:  librt 
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
 getopt:  
-hardlink:  libpcre2-8 
+hardlink:  libpcre2-posix librt 
 hexdump:  libtinfo 
 hwclock:  libm librt 
 ionice:  
@@ -54,7 +51,6 @@ ldattach:
 logger:  libsystemd 
 login:  libpam libpam_misc 
 look:  
-losetup.static: STATIC
 mcookie:  
 mesg:  
 mkfs:  
@@ -62,11 +58,9 @@ mkfs.bfs:
 mkfs.cramfs:  libz 
 mkfs.minix:  
 more:  libtinfo 
-mount.static: STATIC
 namei:  
 nologin:  
 nsenter:  
-nsenter.static: STATIC
 pivot_root:  
 raw:  
 readprofile:  
@@ -82,15 +76,13 @@ setarch:
 setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
-sfdisk.static: STATIC
 su:  libpam libpam_misc librt libutil 
 sulogin:  libcrypt 
 switch_root:  
 taskset:  
+uclampset:  
 ul:  libtinfo 
-umount.static: STATIC
 unshare:  
-unshare.static: STATIC
 utmpdump:  
 wall:  
 whereis:  

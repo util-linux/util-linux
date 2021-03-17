@@ -1,11 +1,4 @@
-blkid.static: STATIC
 chrt:  
-fdisk.static: STATIC
 ionice:  
-losetup.static: STATIC
-mount.static: STATIC
-nsenter.static: STATIC
-sfdisk.static: STATIC
 taskset:  
-umount.static: STATIC
-unshare.static: STATIC
+uclampset:  
