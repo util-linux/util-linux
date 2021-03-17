@@ -815,13 +815,13 @@ static struct number_command read_command(struct more_control *ctl)
 			cmd.key = more_kc_backwards;
 			return cmd;
 		} else if (!memcmp(input, ARROW_DOWN, sizeof(ARROW_DOWN))) {
-			cmd.key = more_kc_skip_forward_line;
+			cmd.key = more_kc_jump_lines_per_screen;
 			return cmd;
 		} else if (!memcmp(input, PAGE_UP, sizeof(PAGE_UP))) {
 			cmd.key = more_kc_backwards;
 			return cmd;
 		} else if (!memcmp(input, PAGE_DOWN, sizeof(PAGE_DOWN))) {
-			cmd.key = more_kc_skip_forward_line;
+			cmd.key = more_kc_jump_lines_per_screen;
 			return cmd;
 		}
 	}
