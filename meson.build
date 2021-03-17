@@ -241,6 +241,10 @@ conf.set('HAVE_SLANG', lib_slang.found())
 
 foreach curses_libs : [lib_slang, lib_ncursesw, lib_ncurses]
   if curses_libs.found()
+    have = cc.has_function('use_default_colors', dependencies : curses_libs)
+    conf.set('HAVE_USE_DEFAULT_COLORS', have ? 1 : false)
+    have = cc.has_function('resizeterm', dependencies : curses_libs)
+    conf.set('HAVE_RESIZETERM', have ? 1 : false)
     break
   endif
 endforeach
