@@ -23,6 +23,8 @@ runstatedir = '/run'
 execprefixdir = '/usr'
 usrbin_exec_dir = join_paths(execprefixdir, 'bin')
 usrsbin_exec_dir = join_paths(execprefixdir, 'sbin')
+sysconfdir = '/etc'
+localstatedir = '/var'
 
 vendordir = get_option('vendordir')
 
