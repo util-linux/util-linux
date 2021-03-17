@@ -260,9 +260,9 @@ lib_readline_static = dependency(
   required : need_static_libs ? get_option('readline') : disabler())
 
 lib_pcre = dependency(
-  'libpcre2-8',
-  required : get_option('libpcre'))
-conf.set('HAVE_PCRE', lib_pcre.found() ? 1 : false)
+  'libpcre2-posix',
+  required : get_option('libpcre2-posix'))
+conf.set('HAVE_PCRE2_POSIX', lib_pcre.found() ? 1 : false)
 
 lib_user = dependency(
   'libuser',
