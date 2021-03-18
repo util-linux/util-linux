@@ -453,6 +453,9 @@ static int parse_prlim(struct rlimit *lim, char *ops, size_t id)
 	rlim_t soft, hard;
 	int found = 0;
 
+	if (ops && *ops == '=')
+		ops++;
+
 	if (get_range(ops, &soft, &hard, &found))
 		errx(EXIT_FAILURE, _("failed to parse %s limit"),
 		     prlimit_desc[id].name);
