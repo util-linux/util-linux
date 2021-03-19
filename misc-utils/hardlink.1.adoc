@@ -1,0 +1,93 @@
+////
+SPDX-License-Identifier: MIT
+
+Copyright (C) 2008 - 2012 Julian Andres Klode. See hardlink.c for license.
+Copyright (C) 2021 Karel Zak <kzak@redhat.com>
+////
+= hardlink(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: hardlink
+
+== NAME
+
+hardlink - link multiple copies of a file
+
+== SYNOPSIS
+
+*hardlink* [options] [_directory_|_file_]...
+
+== DESCRIPTION
+
+*hardlink* is a tool which replaces copies of a file with hardlinks, therefore saving space.
+
+== OPTIONS
+
+*-h*, *--help*::
+  print quick usage details to the screen.
+
+*-v*, *--verbose*::
+  More verbose output. If specified once, every hardlinked file is displayed, if specified twice, it also shows every comparison.
+
+*-q*, *--quiet*::
+  Quiet mode, don't print anything.
+
+*-n*, *--dry-run*::
+  Do not act, just print what would happen
+
+*-f*, *--respect-name*::
+  Only try to link files with the same (basename). It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by others hardlink implementations.
+
+*-p*, *--ignore-mode*::
+  Link/compare files even if their mode is different. This may be a bit unpredictable.
+
+*-o*, *--ignore-owner*::
+  Link/compare files even if their owner (user and group) is different. It is not predictable.
+
+*-t*, *--ignore-time*::
+  Link/compare files even if their time of modification is different. You almost always want this.
+
+*-X*, *--respect-xattrs*::
+  Only try to link files with the same extended attributes.
+
+*-m*, *--maximize*::
+  Among equal files, keep the file with the highest link count.
+
+*-M*, *--minimize*::
+  Among equal files, keep the file with the lowest link count.
+
+*-O*, *--keep-oldest*::
+  Among equal files, keep the oldest file (least recent modification time). By default, the newest file is kept. If *--maximize* or *--minimize* is specified, the link count has a higher precedence than the time of modification.
+
+*-x*, *--exclude* _regex_::
+  A regular expression which excludes files from being compared and linked.
+
+*-i*, *--include* _regex_::
+  A regular expression to include files. If the option *--exclude* has been given, this option re-includes files which would otherwise be excluded. If the option is used without *--exclude*, only files matched by the pattern are included.
+
+*-s*, *--minimum-size* _size_::
+  The minimum size to consider. By default this is 1, so empty files will not be linked. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
+
+== ARGUMENTS
+
+*hardlink* takes one or more directories which will be searched for files to be linked.
+
+== BUGS
+
+The original *hardlink* implementation uses the option *-f* to force hardlinks creation between filesystem. This very rarely usable feature is no more supported by the current hardlink.
+
+*hardlink* assumes that the trees it operates on do not change during operation. If a tree does change, the result is undefined and potentially dangerous. For example, if a regular file is replaced by a device, hardlink may start reading from the device. If a component of a path is replaced by a symbolic link or file permissions change, security may be compromised. Do not run hardlink on a changing tree or on a tree controlled by another user.
+
+== AUTHOR
+
+There are multiple *hardlink* implementations. The very first implementation is from Jakub Jelinek for Fedora distribution, this implementation has been used in util-linux between versions v2.34 to v2.36. The current implementations is based on Debian version from Julian Andres Klode.
+
+include::../man-common/bugreports.adoc[]
+
+include::../man-common/footer.adoc[]
+
+ifdef::translation[]
+include::../man-common/translation.adoc[]
+endif::[]
