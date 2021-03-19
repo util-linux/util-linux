@@ -72,6 +72,7 @@ enum {
 	COL_FSROOT,
 	COL_TID,
 	COL_ID,
+	COL_PARENT,
 	COL_OPT_FIELDS,
 	COL_PROPAGATION,
 	COL_FREQ,
@@ -117,6 +118,7 @@ static struct colinfo infos[] = {
 	[COL_FSROOT]       = { "FSROOT",       0.25, SCOLS_FL_NOEXTREMES, N_("filesystem root") },
 	[COL_TID]          = { "TID",             4, SCOLS_FL_RIGHT, N_("task ID") },
 	[COL_ID]           = { "ID",              2, SCOLS_FL_RIGHT, N_("mount ID") },
+	[COL_PARENT]       = { "PARENT",          2, SCOLS_FL_RIGHT, N_("mount parent ID") },
 	[COL_OPT_FIELDS]   = { "OPT-FIELDS",   0.10, SCOLS_FL_TRUNC, N_("optional mount fields") },
 	[COL_PROPAGATION]  = { "PROPAGATION",  0.10, 0, N_("VFS propagation flags") },
 	[COL_FREQ]         = { "FREQ",            1, SCOLS_FL_RIGHT, N_("dump(8) period in days [fstab only]") },
@@ -600,6 +602,10 @@ static char *get_data(struct libmnt_fs *fs, int num)
 	case COL_ID:
 		if (mnt_fs_get_id(fs))
 			xasprintf(&str, "%d", mnt_fs_get_id(fs));
+		break;
+	case COL_PARENT:
+		if (mnt_fs_get_parent_id(fs))
+			xasprintf(&str, "%d", mnt_fs_get_parent_id(fs));
 		break;
 	case COL_PROPAGATION:
 		if (mnt_fs_is_kernel(fs)) {
@@ -1680,6 +1686,7 @@ int main(int argc, char *argv[])
 					break;
 				/* fallthrough */
 			case COL_ID:
+			case COL_PARENT:
 			case COL_FREQ:
 			case COL_PASSNO:
 			case COL_TID:
