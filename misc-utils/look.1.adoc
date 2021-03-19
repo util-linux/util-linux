@@ -60,6 +60,7 @@ If _file_ is not specified, the file _/usr/share/dict/words_ is used, only alpha
 
 *-d*, *--alphanum*::
   Use normal dictionary character set and order, i.e., only blanks and alphanumeric characters are compared. This is on by default if no file is specified. +
+  {nbsp} +
   Note that blanks have been added to dictionary character set for compatibility with *sort -d* command since version 2.28.
 
 *-f*, *--ignore-case*::

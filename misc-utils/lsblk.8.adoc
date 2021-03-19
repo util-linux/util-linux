@@ -41,6 +41,7 @@ The relationship between block devices and filesystems is not always one-to-one.
 
 *-E*, *--dedup* _column_::
   Use _column_ as a de-duplication key to de-duplicate output tree. If the key is not available for the device, or the device is a partition and parental whole-disk device provides the same key than the device is always printed. +
+  {nbsp} +
   The usual use case is to de-duplicate output on system multi-path devices, for example by *-E WWN*.
 
 -e*, *--exclude* _list_::
@@ -75,6 +76,7 @@ The relationship between block devices and filesystems is not always one-to-one.
 
 *-o*, *--output* _list_::
   Specify which output columns to print. Use *--help* to get a list of all supported columns. The columns may affect tree-like output. The default is to use tree for the column 'NAME' (see also *--tree*). +
+  {nbsp} +
   The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *lsblk -o +UUID*).
 
 *-O*, *--output-all*::
@@ -100,6 +102,7 @@ The relationship between block devices and filesystems is not always one-to-one.
 
 *-t*, *--topology*::
   Output info about block-device topology. This option is equivalent to +
+  {nbsp} +
   *-o NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,RA,WSAME*.
 
 *-V*, *--version*::

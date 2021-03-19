@@ -55,6 +55,7 @@ This will see sda3 as a whole-disk rather than as a partition.
 
 *-n*, *--nr* __M__**:**_N_::
   Specify the range of partitions. For backward compatibility also the format __M__**-**_N_ is supported. The range may contain negative numbers, for example *--nr -1:-1* means the last partition, and *--nr -2:-1* means the last two partitions. Supported range specifications are: +
+  {nbsp} +
   _M_;;
     Specifies just one partition (e.g. *--nr 3*).
   __M__**:**;;

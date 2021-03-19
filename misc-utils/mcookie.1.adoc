@@ -32,6 +32,7 @@ The "random" number generated is actually the MD5 message digest of random infor
 
 *-m*, *--max-size* _number_::
   Read from _file_ only this _number_ of bytes. This option is meant to be used when reading additional randomness from a file or device. +
+  {nbsp} +
   The _number_ argument may be followed by the multiplicative suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB.
 
 *-v*, *--verbose*::

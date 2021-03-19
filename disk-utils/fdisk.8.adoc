@@ -53,6 +53,7 @@ Note that *partx*(8) provides a rich interface for scripts to print disk layouts
 
 *-l*, *--list*::
   List the partition tables for the specified devices and then exit. +
+  {nbsp} +
   If no devices are given, the devices mentioned in _/proc/partitions_ (if this file exists) are used. Devices are always listed in the order in which they are specified on the command-line, or by the kernel listed in _/proc/partitions_.
 
 *-x*, *--list-details*::
@@ -66,6 +67,7 @@ Note that *partx*(8) provides a rich interface for scripts to print disk layouts
 
 *-o*, *--output* _list_::
   Specify which output columns to print. Use *--help* to get a list of all supported columns. +
+  {nbsp} +
   The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *-o +UUID*).
 
 *-s*, *--getsz*::

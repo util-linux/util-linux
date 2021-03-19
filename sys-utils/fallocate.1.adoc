@@ -31,12 +31,16 @@ The options *--collapse-range*, *--dig-holes*, *--punch-hole*, and *--zero-range
 
 *-c*, *--collapse-range*::
   Removes a byte range from a file, without leaving a hole. The byte range to be collapsed starts at _offset_ and continues for _length_ bytes. At the completion of the operation, the contents of the file starting at the location __offset__+_length_ will be appended at the location _offset_, and the file will be _length_ bytes smaller. The option *--keep-size* may not be specified for the collapse-range operation. +
+  {nbsp} +
   Available since Linux 3.15 for ext4 (only for extent-based files) and XFS. +
+  {nbsp} +
   A filesystem may place limitations on the granularity of the operation, in order to ensure efficient implementation. Typically, offset and len must be a multiple of the filesystem logical block size, which varies according to the filesystem type and configuration. If a filesystem has such a requirement, the operation will fail with the error EINVAL if this requirement is violated.
 
 *-d*, *--dig-holes*::
   Detect and dig holes. This makes the file sparse in-place, without using extra disk space. The minimum size of the hole depends on filesystem I/O block size (usually 4096 bytes). Also, when using this option, *--keep-size* is implied. If no range is specified by *--offset* and *--length*, then the entire file is analyzed for holes. +
+  {nbsp} +
   You can think of this option as doing a "*cp --sparse*" and then renaming the destination file to the original, without the need for extra disk space. +
+  {nbsp} +
   See *--punch-hole* for a list of supported filesystems.
 
 *-i*, *--insert-range*::
@@ -53,6 +57,7 @@ The options *--collapse-range*, *--dig-holes*, *--punch-hole*, and *--zero-range
 
 *-p*, *--punch-hole*::
   Deallocates space (i.e., creates a hole) in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, partial filesystem blocks are zeroed, and whole filesystem blocks are removed from the file. After a successful call, subsequent reads from this range will return zeroes. This option may not be specified at the same time as the *--zero-range* option. Also, when using this option, *--keep-size* is implied. +
+  {nbsp} +
   Supported for XFS (since Linux 2.6.38), ext4 (since Linux 3.0), Btrfs (since Linux 3.7), tmpfs (since Linux 3.5) and gfs2 (since Linux 4.16).
 
 *-v*, *--verbose*::
@@ -63,8 +68,11 @@ The options *--collapse-range*, *--dig-holes*, *--punch-hole*, and *--zero-range
 
 *-z*, *--zero-range*::
   Zeroes space in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, blocks are preallocated for the regions that span the holes in the file. After a successful call, subsequent reads from this range will return zeroes. +
+  {nbsp} +
   Zeroing is done within the filesystem preferably by converting the range into unwritten extents. This approach means that the specified range will not be physically zeroed out on the device (except for partial blocks at the either end of the range), and I/O is (otherwise) required only to update metadata. +
+  {nbsp} +
   Option *--keep-size* can be specified to prevent file length modification. +
+  {nbsp} +
   Available since Linux 3.14 for ext4 (only for extent-based files) and XFS.
 
 *-V*, *--version*::

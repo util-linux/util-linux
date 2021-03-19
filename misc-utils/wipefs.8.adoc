@@ -65,6 +65,7 @@ Note that by default *wipefs* does not erase nested partition tables on non-whol
 
 *-o*, *--offset* _offset_::
   Specify the location (in bytes) of the signature which should be erased from the device. The _offset_ number may include a "0x" prefix; then the number will be interpreted as a hex value. It is possible to specify multiple *-o* options. +
+  {nbsp} +
   The _offset_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB"), or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-p*, *--parsable*::

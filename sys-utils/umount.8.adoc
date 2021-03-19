@@ -58,7 +58,9 @@ Note that a filesystem cannot be unmounted when it is 'busy' - for example, when
 
 *-c*, *--no-canonicalize*::
   Do not canonicalize paths. The paths canonicalization is based on *stat*(2) and *readlink*(2) system calls. These system calls may hang in some cases (for example on NFS if server is not available). The option has to be used with canonical path to the mount point. +
+  {nbsp} +
   This option is silently ignored by *umount* for non-root users. +
+  {nbsp} +
   For more details about this option see the *mount*(8) man page. Note that *umount* does not pass this option to the **/sbin/umount.**__type__ helpers.
 
 *-d*, *--detach-loop*::
@@ -69,6 +71,7 @@ Note that a filesystem cannot be unmounted when it is 'busy' - for example, when
 
 *-f*, *--force*::
   Force an unmount (in case of an unreachable NFS system). +
+  {nbsp} +
   Note that this option does not guarantee that umount command does not hang. It's strongly recommended to use absolute paths without symlinks to avoid unwanted readlink and stat system calls on unreachable NFS in *umount*.
 
 *-i*, *--internal-only*::
@@ -76,11 +79,14 @@ Note that a filesystem cannot be unmounted when it is 'busy' - for example, when
 
 *-l*, *--lazy*::
   Lazy unmount. Detach the filesystem from the file hierarchy now, and clean up all references to this filesystem as soon as it is not busy anymore. +
+  {nbsp} +
   A system reboot would be expected in near future if you're going to use this option for network filesystem or local filesystem with submounts. The recommended use-case for *umount -l* is to prevent hangs on shutdown due to an unreachable network share where a normal umount will hang due to a downed server or a network partition. Remounts of the share will not be possible.
 
 *-N*, *--namespace* _ns_::
   Perform umount in the mount namespace specified by _ns_. _ns_ is either PID of process running in that namespace or special file representing that namespace. +
+  {nbsp} +
   *umount* switches to the namespace when it reads _/etc/fstab_, writes _/etc/mtab_ (or writes to _/run/mount_) and calls *umount*(2) system call, otherwise it runs in the original namespace. It means that the target mount namespace does not have to contain any libraries or other requirements necessary to execute *umount*(2) command. +
+  {nbsp} +
   See *mount_namespaces*(7) for more information.
 
 *-n*, *--no-mtab*::

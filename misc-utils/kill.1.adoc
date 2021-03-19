@@ -37,6 +37,7 @@ The list of processes to be signaled can be a mixture of names and PIDs.
 
 _pid_::
   Each _pid_ can be expressed in one of the following ways: +
+  {nbsp} +
   _n_;;
     where _n_ is larger than 0. The process with PID _n_ is signaled.
   *0*;;
@@ -67,8 +68,11 @@ _name_::
   Send the signal using *sigqueue*(3) rather than *kill*(2). The _value_ argument is an integer that is sent along with the signal. If the receiving process has installed a handler for this signal using the *SA_SIGINFO* flag to *sigaction*(2), then it can obtain this data via the _si_sigval_ field of the `siginfo_t` structure.
 *--timeout* _milliseconds signal_::
   Send a signal defined in the usual way to a process, followed by an additional signal after a specified delay. The *--timeout* option causes *kill* to wait for a period defined in _milliseconds_ before sending a follow-up _signal_ to the process. This feature is implemented using the Linux kernel PID file descriptor feature in order to guarantee that the follow-up signal is sent to the same process or not sent if the process no longer exists. +
+  {nbsp} +
   Note that the operating system may re-use PIDs and implementing an equivalent feature in a shell using *kill* and *sleep* would be subject to races whereby the follow-up signal might be sent to a different process that used a recycled PID. +
+  {nbsp} +
   The *--timeout* option can be specified multiple times: the signals are sent sequentially with the specified timeouts. The *--timeout* option can be combined with the *--queue* option. +
+  {nbsp} +
   As an example, the following command sends the signals QUIT, TERM and KILL in sequence and waits for 1000 milliseconds between sending the signals: +
 ....
 kill --verbose --timeout 1000 TERM --timeout 1000 KILL \

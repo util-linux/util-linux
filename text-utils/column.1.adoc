@@ -98,6 +98,7 @@ The argument _columns_ for *--table-** options is a comma separated list of the 
 
 *-E, --table-noextreme* _columns_::
   Specify columns where is possible to ignore unusually long (longer than average) cells when calculate column width. The option has impact to the width calculation and table formatting, but the printed text is not affected. +
+  {nbsp} +
   The option is used for the last visible column by default.
 
 *-e, --table-header-repeat*::

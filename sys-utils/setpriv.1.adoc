@@ -34,11 +34,15 @@ In comparison to *su*(1) and *runuser*(1), *setpriv* neither uses PAM, nor does 
 *--ambient-caps* (*+*|*-*)_cap_...::
 *--bounding-set* (*+*|*-*)_cap_...::
   Set the inheritable capabilities, ambient capabilities or the capability bounding set. See *capabilities*(7). The argument is a comma-separated list of **+**__cap__ and **-**__cap__ entries, which add or remove an entry respectively. _cap_ can either be a human-readable name as seen in *capabilities*(7) without the _cap__ prefix or of the format *cap_N*, where _N_ is the internal capability index used by Linux. *+all* and *-all* can be used to add or remove all caps. +
+  {nbsp} +
   The set of capabilities starts out as the current inheritable set for *--inh-caps*, the current ambient set for *--ambient-caps* and the current bounding set for *--bounding-set*. +
+  {nbsp} +
   Note the following restrictions (detailed in *capabilities*(7)) regarding modifications to these capability sets: +
+  {nbsp} +
   * A capability can be added to the inheritable set only if it is currently present in the bounding set.
   * A capability can be added to the ambient set only if it is currently present in both the permitted and inheritable sets.
   * Notwithstanding the syntax offered by *setpriv*, the kernel does not permit capabilities to be added to the bounding set. +
+  {nbsp} +
   If you drop a capability from the bounding set without also dropping it from the inheritable set, you are likely to become confused. Do not do that.
 
 *--keep-groups*::
@@ -52,15 +56,19 @@ In comparison to *su*(1) and *runuser*(1), *setpriv* neither uses PAM, nor does 
 
 *--no-new-privs*::
   Set the _no_new_privs_ bit. With this bit set, *execve*(2) will not grant new privileges. For example, the set-user-ID and set-group-ID bits as well as file capabilities will be disabled. (Executing binaries with these bits set will still work, but they will not gain privileges. Certain LSMs, especially AppArmor, may result in failures to execute certain programs.) This bit is inherited by child processes and cannot be unset. See *prctl*(2) and _Documentation/prctl/no_new_privs.txt_ in the Linux kernel source. +
+  {nbsp} +
   The _no_new_privs_ bit is supported since Linux 3.5.
 
 *--rgid* _gid_, *--egid* _gid_, *--regid* _gid_::
   Set the real, effective, or both GIDs. The _gid_ argument can be given as a textual group name. +
+  {nbsp} +
   For safety, you must specify one of *--clear-groups*, *--groups*, *--keep-groups*, or *--init-groups* if you set any primary _gid_.
 
 *--ruid* _uid_, *--euid* _uid_, *--reuid* _uid_::
   Set the real, effective, or both UIDs. The _uid_ argument can be given as a textual login name. +
+  {nbsp} +
   Setting a _uid_ or _gid_ does not change capabilities, although the exec call at the end might change capabilities. This means that, if you are root, you probably want to do something like: +
+  {nbsp} +
   *setpriv --reuid=1000 --regid=1000 --inh-caps=-all*
 
 *--securebits* (**+**|*-*)__securebit__...::
@@ -77,6 +85,7 @@ In comparison to *su*(1) and *runuser*(1), *setpriv* neither uses PAM, nor does 
 
 *--reset-env*::
   Clears all the environment variables except *TERM*; initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME* according to the user's passwd entry; sets *PATH* to _/usr/local/bin:/bin:/usr/bin_ for a regular user and to _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_ for root. +
+  {nbsp} +
   The environment variable *PATH* may be different on systems where _/bin_ and _/sbin_ are merged into _/usr_. The environment variable *SHELL* defaults to */bin/sh* if none is given in the user's passwd entry.
 
 *-V*, *--version*::

@@ -43,6 +43,7 @@ Note that *su* in all cases uses PAM (*pam_getenvlist*(3)) to do the final envir
 
 *-*, *-l*, *--login*::
   Start the shell as a login shell with an environment similar to a real login: +
+  {nbsp} +
   * clears all the environment variables except *TERM* and variables specified by *--whitelist-environment*
   * initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*
   * changes to the target user's home directory
@@ -53,14 +54,17 @@ Note that *su* in all cases uses PAM (*pam_getenvlist*(3)) to do the final envir
 
 *-P*, *--pty*::
   Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid TIOCSTI ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., "su --pty - username -c application &"). If the pseudo-terminal is enabled, then *su* works as a proxy between the sessions (copy stdin and stdout). +
+  {nbsp} +
   This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., echo "date" | su --pty), then the ECHO flag for the pseudo-terminal is disabled to avoid messy output.
 
 *-s*, **--shell**=__shell__::
   Run the specified _shell_ instead of the default. The shell to run is selected according to the following rules, in order: +
+  {nbsp} +
   * the shell specified with *--shell*
   * the shell specified in the environment variable *SHELL*, if the *--preserve-environment* option is used
   * the shell listed in the passwd entry of the target user
   * /bin/sh +
+  {nbsp} +
   If the target user has a restricted shell (i.e., not listed in /etc/shells), the *--shell* option and the *SHELL* environment variables are ignored unless the calling user is root.
 
 **--session-command=**__command__::

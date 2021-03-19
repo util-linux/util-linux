@@ -36,18 +36,19 @@ The suspend setup may be interrupted by active hardware; for example wireless US
   Read the clock mode (whether the hardware clock is set to UTC or local time) from the _adjtime_ file, where *hwclock*(8) stores that information. This is the default.
 
 *--date* _timestamp_::
-  Set the wakeup time to the value of the timestamp. Format of the timestamp can be any of the following: +
-  [cols=",",]
-  |===
-  |YYYYMMDDhhmmss |
-  |YYYY-MM-DD hh:mm:ss |
-  |YYYY-MM-DD hh:mm |(seconds will be set to 00)
-  |YYYY-MM-DD |(time will be set to 00:00:00)
-  |hh:mm:ss |(date will be set to today)
-  |hh:mm |(date will be set to today, seconds to 00)
-  |tomorrow |(time is set to 00:00:00)
-  |+5min |
-  |===
+  Set the wakeup time to the value of the timestamp. Format of the timestamp can be any of the following:
+
+[cols=",",]
+|===
+|YYYYMMDDhhmmss |
+|YYYY-MM-DD hh:mm:ss |
+|YYYY-MM-DD hh:mm |(seconds will be set to 00)
+|YYYY-MM-DD |(time will be set to 00:00:00)
+|hh:mm:ss |(date will be set to today)
+|hh:mm |(date will be set to today, seconds to 00)
+|tomorrow |(time is set to 00:00:00)
+|+5min |
+|===
 
 *-d*, *--device* _device_::
   Use the specified _device_ instead of *rtc0* as realtime clock. This option is only relevant if your system has more than one RTC. You may specify *rtc1*, *rtc2*, ... here.

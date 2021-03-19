@@ -60,7 +60,9 @@ The *--clear*, *--read-clear*, *--console-on*, *--console-off*, and *--console-l
 
 *-f*, *--facility* _list_::
   Restrict output to the given (comma-separated) _list_ of facilities. For example: +
+  {nbsp} +
   *dmesg --facility=daemon* +
+  {nbsp} +
   will print messages from system daemons only. For all supported facilities see the *--help* output.
 
 *-H*, *--human*::
@@ -74,11 +76,14 @@ The *--clear*, *--read-clear*, *--console-on*, *--console-off*, and *--console-l
 
 *-l*, *--level* _list_::
   Restrict output to the given (comma-separated) _list_ of levels. For example: +
+  {nbsp} +
   *dmesg --level=err,warn* +
+  {nbsp} +
   will print error and warning messages only. For all supported levels see the *--help* output.
 
 *-n*, *--console-level* _level_::
   Set the _level_ at which printing of messages is done to the console. The _level_ is a level number or abbreviation of the level name. For all supported levels see the *--help* output. +
+  {nbsp} +
   For example, *-n 1* or *-n emerg* prevents all messages, except emergency (panic) messages, from appearing on the console. All levels of messages are still written to _/proc/kmsg_, so *syslogd*(8) can still be used to control exactly where kernel messages appear. When the *-n* option is used, *dmesg* will _not_ print or clear the kernel ring buffer.
 
 *--noescape*::
@@ -91,8 +96,8 @@ The *--clear*, *--read-clear*, *--console-on*, *--console-off*, and *--console-l
   Add facility, level or timestamp information to each line of a multi-line message.
 
 *-r*, *--raw*::
-  Print the raw message buffer, i.e., do not strip the log-level prefixes, but all unprintable characters are still escaped (see also *--noescape*).
-  +
+  Print the raw message buffer, i.e., do not strip the log-level prefixes, but all unprintable characters are still escaped (see also *--noescape*). +
+  {nbsp} +
   Note that the real raw format depends on the method how *dmesg* reads kernel messages. The _/dev/kmsg_ device uses a different format than *syslog*(2). For backward compatibility, *dmesg* returns data always in the *syslog*(2) format. It is possible to read the real raw data from _/dev/kmsg_ by, for example, the command 'dd if=/dev/kmsg iflag=nonblock'.
 
 *-S*, *--syslog*::
@@ -102,8 +107,8 @@ The *--clear*, *--read-clear*, *--console-on*, *--console-off*, and *--console-l
   Use a buffer of _size_ to query the kernel ring buffer. This is 16392 by default. (The default kernel syslog buffer size was 4096 at first, 8192 since 1.3.54, 16384 since 2.1.113.) If you have set the kernel buffer to be larger than the default, then this option can be used to view the entire buffer.
 
 *-T*, *--ctime*::
-  Print human-readable timestamps.
-  +
+  Print human-readable timestamps. +
+  {nbsp} +
   *Be aware that the timestamp could be inaccurate!* The *time* source used for the logs is *not updated after* system *SUSPEND*/*RESUME*. Timestamps are adjusted according to current delta between boottime and monotonic clocks, this works only for messages printed after last resume.
 
 *--since* _time_::
@@ -117,6 +122,7 @@ The *--clear*, *--read-clear*, *--console-on*, *--console-off*, and *--console-l
 
 *--time-format* _format_::
   Print timestamps using the given _format_, which can be *ctime*, *reltime*, *delta* or *iso*. The first three formats are aliases of the time-format-specific options. The *iso* format is a *dmesg* implementation of the ISO-8601 timestamp format. The purpose of this format is to make the comparing of timestamps between two systems, and any other parsing, easy. The definition of the *iso* timestamp is: YYYY-MM-DD<T>HH:MM:SS,<microseconds><-+><timezone offset from UTC>. +
+  {nbsp} +
   The *iso* format has the same issue as *ctime*: the time may be inaccurate when a system is suspended and resumed.
 
 *-u*, *--userspace*;;

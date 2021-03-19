@@ -32,7 +32,9 @@ As of this writing, a process can be in one of three scheduling classes:
 
 *Best-effort*::
   This is the effective scheduling class for any process that has not asked for a specific I/O priority. This class takes a priority argument from _0-7_, with a lower number being higher priority. Programs running at the same best-effort priority are served in a round-robin fashion. +
+  {nbsp} +
   Note that before kernel 2.6.26 a process that has not asked for an I/O priority formally uses "*none*" as scheduling class, but the I/O scheduler will treat such processes as if it were in the best-effort class. The priority within the best-effort class will be dynamically derived from the CPU nice level of the process: io_priority = (cpu_nice + 20) / 5. +
+  {nbsp} +
   For kernels after 2.6.26 with the CFQ I/O scheduler, a process that has not asked for an I/O priority inherits its CPU scheduling class. The I/O priority is derived from the CPU nice level of the process (same as before kernel 2.6.26).
 
 *Realtime*::

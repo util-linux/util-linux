@@ -106,6 +106,7 @@ LABEL=__label__::
   Human readable filesystem identifier. See also *-L*.
 UUID=__uuid__::
   Filesystem universally unique identifier. The format of the UUID is usually a series of hex digits separated by hyphens. See also *-U*. +
+  {nbsp} +
   Note that *mount* uses UUIDs as strings. The UUIDs from the command line or from *fstab*(5) are not converted to internal binary representation. The string representation of the UUID should be based on lower case characters.
 PARTLABEL=__label__::
   Human readable partition identifier. This identifier is independent on filesystem and does not change by mkfs or mkswap operations It's supported for example for GUID Partition Tables (GPT).
@@ -295,8 +296,11 @@ Command-line options available for the *mount* command are:
 
 *-a*, *--all*::
   Mount all filesystems (of the given types) mentioned in _fstab_ (except for those whose line contains the *noauto* keyword). The filesystems are mounted following their order in _fstab_. The *mount* command compares filesystem source, target (and fs root for bind mount or btrfs) to detect already mounted filesystems. The kernel table with already mounted filesystems is cached during *mount --all*. This means that all duplicated _fstab_ entries will be mounted. +
+  {nbsp} +
   The option *--all* is possible to use for remount operation too. In this case all filters (*-t* and *-O*) are applied to the table of already mounted filesystems. +
+  {nbsp} +
   Since version 2.35 is possible to use the command line option *-o* to alter mount options from _fstab_ (see also *--options-mode*). +
+  {nbsp} +
   Note that it is a bad practice to use *mount -a* for _fstab_ checking. The recommended solution is *findmnt --verify*.
 
 *-B*, *--bind*::
@@ -304,6 +308,7 @@ Command-line options available for the *mount* command are:
 
 *-c*, *--no-canonicalize*::
   Don't canonicalize paths. The *mount* command canonicalizes all paths (from the command line or _fstab_) by default. This option can be used together with the *-f* flag for already canonicalized absolute paths. The option is designed for mount helpers which call *mount -i*. It is strongly recommended to not use this command-line option for normal mount operations. +
+  {nbsp} +
   Note that *mount* does not pass this option to the **/sbin/mount.**__type__ helpers.
 
 *-F*, *--fork*::
@@ -329,21 +334,31 @@ Command-line options available for the *mount* command are:
 
 *-N*, *--namespace* _ns_::
   Perform the mount operation in the mount namespace specified by _ns_. _ns_ is either PID of process running in that namespace or special file representing that namespace. +
+  {nbsp} +
   *mount* switches to the mount namespace when it reads _/etc/fstab_, writes _/etc/mtab: (or writes to _/run/mount_) and calls the *mount*(2) system call, otherwise it runs in the original mount namespace. This means that the target namespace does not have to contain any libraries or other requirements necessary to execute the *mount*(2) call. +
+  {nbsp} +
   See *mount_namespaces*(7) for more information.
 
 *-O*, *--test-opts* _opts_::
   Limit the set of filesystems to which the *-a* option applies. In this regard it is like the *-t* option except that *-O* is useless without *-a*. For example, the command +
+  {nbsp} +
   *mount -a -O no_netdev* +
+  {nbsp} +
   mounts all filesystems except those which have the option _netdev_ specified in the options field in the _/etc/fstab_ file. +
+  {nbsp} +
   It is different from *-t* in that each option is matched exactly; a leading *no* at the beginning of one option does not negate the rest. +
+  {nbsp} +
   The *-t* and *-O* options are cumulative in effect; that is, the command +
+  {nbsp} +
   *mount -a -t ext2 -O  _netdev* +
+  {nbsp} +
   mounts all ext2 filesystems with the _netdev option, not all filesystems that are either ext2 or have the _netdev option specified.
 
 *-o*, *--options* _opts_::
   Use the specified mount options. The _opts_ argument is a comma-separated list. For example: +
+  {nbsp} +
   *mount LABEL=mydisk -o noatime,nodev,nosuid* +
+  {nbsp} +
   For more details, see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* and *FILESYSTEM-SPECIFIC MOUNT OPTIONS* sections.
 
 *--options-mode* _mode_::
@@ -360,6 +375,7 @@ Command-line options available for the *mount* command are:
 
 *-r*, *--read-only*::
   Mount the filesystem read-only. A synonym is *-o ro*. +
+  {nbsp} +
   Note that, depending on the filesystem type, state and kernel behavior, the system may still write to the device. For example, ext3 and ext4 will replay the journal if the filesystem is dirty. To prevent this kind of write access, you may want to mount an ext3 or ext4 filesystem with the *ro,noload* mount options or set the block device itself to read-only mode, see the *blockdev*(8) command.
 
 *-s*::
@@ -373,22 +389,33 @@ Command-line options available for the *mount* command are:
 
 *--target-prefix* _directory_::
   Prepend the specified directory to all mount targets. This option can be used to follow _fstab_, but mount operations are done in another place, for example: +
+  {nbsp} +
   *mount --all --target-prefix /chroot -o X-mount.mkdir* +
+  {nbsp} +
   mounts all from system _fstab_ to `/chroot`, all missing mountpoint are created (due to X-mount.mkdir). See also *--fstab* to use an alternative _fstab_.
 
 *-T*, *--fstab* _path_::
   Specifies an alternative _fstab_ file. If _path_ is a directory, then the files in the directory are sorted by *strverscmp*(3); files that start with "." or without an _.fstab_ extension are ignored. The option can be specified more than once. This option is mostly designed for initramfs or chroot scripts where additional configuration is specified beyond standard system configuration. +
+  {nbsp} +
   Note that *mount* does not pass the option *--fstab* to the **/sbin/mount.**__type__ helpers, meaning that the alternative _fstab_ files will be invisible for the helpers. This is no problem for normal mounts, but user (non-root) mounts always require _fstab_ to verify the user's rights.
 
 *-t*, *--types* _fstype_::
   The argument following the *-t* is used to indicate the filesystem type. The filesystem types which are currently supported depend on the running kernel. See _/proc/filesystems_ and _/lib/modules/$(uname -r)/kernel/fs_ for a complete list of the filesystems. The most common are ext2, ext3, ext4, xfs, btrfs, vfat, sysfs, proc, nfs and cifs. +
+  {nbsp} +
   The programs *mount* and *umount*(8) support filesystem subtypes. The subtype is defined by a '.subtype' suffix. For example 'fuse.sshfs'. It's recommended to use subtype notation rather than add any prefix to the mount source (for example 'sshfs#example.com' is deprecated). +
+  {nbsp} +
   If no *-t* option is given, or if the *auto* type is specified, *mount* will try to guess the desired type. *mount* uses the *libblkid*(3) library for guessing the filesystem type; if that does not turn up anything that looks familiar, *mount* will try to read the file _/etc/filesystems_, or, if that does not exist, _/proc/filesystems_. All of the filesystem types listed there will be tried, except for those that are labeled "nodev" (e.g. _devpts_, _proc_ and _nfs_). If _/etc/filesystems_ ends in a line with a single +++*+++, mount will read _/proc/filesystems_ afterwards. While trying, all filesystem types will be mounted with the mount option *silent*. +
+  {nbsp} +
   The *auto* type may be useful for user-mounted floppies. Creating a file _/etc/filesystems_ can be useful to change the probe order (e.g., to try vfat before msdos or ext3 before ext2) or if you use a kernel module autoloader. +
+  {nbsp} +
   More than one type may be specified in a comma-separated list, for the *-t* option as well as in an _/etc/fstab_ entry. The list of filesystem types for the *-t* option can be prefixed with *no* to specify the filesystem types on which no action should be taken. The prefix *no* has no effect when specified in an _/etc/fstab_ entry. +
+  {nbsp} +
   The prefix *no* can be meaningful with the *-a* option. For example, the command +
+  {nbsp} +
   *mount -a -t nomsdos,smbfs* +
+  {nbsp} +
   mounts all filesystems except those of type _msdos_ and _smbfs_. +
+  {nbsp} +
   For most types all the *mount* program has to do is issue a simple *mount*(2) system call, and no detailed knowledge of the filesystem type is required. For a few types however (like nfs, nfs4, cifs, smbfs, ncpfs) an ad hoc code is necessary. The nfs, nfs4, cifs, smbfs, and ncpfs filesystems have a separate mount program. In order to make it possible to treat all types in a uniform way, *mount* will execute the program **/sbin/mount.**__type__ (if that exists) when called with type _type_. Since different versions of the *smbmount* program have different calling conventions, */sbin/mount.smbfs* may have to be a shell script that sets up the desired call.
 
 *-U*, *--uuid* _uuid_::
@@ -399,7 +426,9 @@ Command-line options available for the *mount* command are:
 
 *-w*, *--rw*, *--read-write*::
   Mount the filesystem read/write. Read-write is the kernel default and the *mount* default is to try read-only if the previous mount syscall with read-write flags on write-protected devices of filesystems failed. +
+  {nbsp} +
   A synonym is *-o rw*. +
+  {nbsp} +
   Note that specifying *-w* on the command line forces *mount* to never try read-only mount on write-protected devices or already mounted read-only filesystems.
 
 *-V*, *--version*::
@@ -433,19 +462,30 @@ The following options apply to any filesystem that is being mounted (but not eve
 
 **context=**__context__, **fscontext=**__context__, **defcontext=**__context__, and **­rootcontext=**__context__::
   The *context=* option is useful when mounting filesystems that do not support extended attributes, such as a floppy or hard disk formatted with VFAT, or systems that are not normally running under SELinux, such as an ext3 or ext4 formatted disk from a non-SELinux workstation. You can also use *context=* on filesystems you do not trust, such as a floppy. It also helps in compatibility with xattr-supporting filesystems on earlier 2.4.<x> kernel versions. Even where xattrs are supported, you can save time not having to label every file by assigning the entire disk one security context. +
+  {nbsp} +
   A commonly used option for removable media is *­context="system_u:object_r:removable_t*. +
+  {nbsp} +
   Two other options are *fscontext=* and *defcontext=*, both of which are mutually exclusive of the *context=* option. This means you can use fscontext and defcontext with each other, but neither can be used with context. +
+  {nbsp} +
   The *fscontext=* option works for all filesystems, regardless of their xattr support. The fscontext option sets the overarching filesystem label to a specific security context. This filesystem label is separate from the individual labels on the files. It represents the entire filesystem for certain kinds of permission checks, such as during mount or file creation. Individual file labels are still obtained from the xattrs on the files themselves. The context option actually sets the aggregate context that fscontext provides, in addition to supplying the same label for individual files. +
+  {nbsp} +
   You can set the default security context for unlabeled files using *defcontext=* option. This overrides the value set for unlabeled files in the policy and requires a filesystem that supports xattr labeling. +
+  {nbsp} +
   The *rootcontext=* option allows you to explicitly label the root inode of a FS being mounted before that FS or inode becomes visible to userspace. This was found to be useful for things like stateless Linux. +
+  {nbsp} +
   Note that the kernel rejects any remount request that includes the context option, *even* when unchanged from the current context. +
+  {nbsp} +
   *Warning: the* _context_ *value might contain commas*, in which case the value has to be properly quoted, otherwise mount8 will interpret the comma as a separator between mount options. Don't forget that the shell strips off quotes and thus *double quoting is required*. For example: +
+  {nbsp} +
   mount -t tmpfs none /mnt -o \ +
+  {nbsp} +
   'context="system_u:object_r:tmp_t:s0:c127,c456",noexec' +
+  {nbsp} +
   For more details, see *selinux*(8).
 
 *defaults*::
   Use the default options: *rw*, *suid*, *dev*, *exec*, *auto*, *nouser*, and *async*. +
+  {nbsp} +
   Note that the real set of all default mount options depends on the kernel and filesystem type. See the beginning of this section for more details.
 
 *dev*::
@@ -492,6 +532,7 @@ The following options apply to any filesystem that is being mounted (but not eve
 
 *relatime*::
   Update inode access times relative to modify or change time. Access time is only updated if the previous access time was earlier than the current modify or change time. (Similar to *­noatime*, but it doesn't break *mutt*(1) or other applications that need to know if a file has been read since the last time it was modified.) +
+  {nbsp} +
   Since Linux 2.6.30, the kernel defaults to the behavior provided by this option (unless *­noatime* was specified), and the *­strictatime* option is required to obtain traditional semantics. In addition, since Linux 2.6.30, the file's last access time is always updated if it is more than 1 day old.
 
 *norelatime*::
@@ -505,8 +546,11 @@ The following options apply to any filesystem that is being mounted (but not eve
 
 *lazytime*::
   Only update times (atime, mtime, ctime) on the in-memory version of the file inode. +
+  {nbsp} +
   This mount option significantly reduces writes to the inode table for workloads that perform frequent random writes to preallocated files. +
+  {nbsp} +
   The on-disk timestamps are updated only when: +
+  {nbsp} +
     * the inode needs to be updated for some change unrelated to file timestamps
     * the application employs *fsync*(2), *syncfs*(2), or *sync*(2)
     * an undeleted inode is evicted from memory
@@ -532,14 +576,23 @@ The following options apply to any filesystem that is being mounted (but not eve
 
 *remount*::
   Attempt to remount an already-mounted filesystem. This is commonly used to change the mount flags for a filesystem, especially to make a readonly filesystem writable. It does not change device or mount point. +
+  {nbsp} +
   The remount operation together with the *bind* flag has special semantics. See above, the subsection *Bind mounts*. +
+  {nbsp} +
   The remount functionality follows the standard way the *mount* command works with options from _fstab_. This means that *mount* does not read _fstab_ (or _mtab_) only when both _device_ and _dir_ are specified. +
-   *mount -o remount,rw /dev/foo /dir* +
+  {nbsp} +
+  *mount -o remount,rw /dev/foo /dir* +
+  {nbsp} +
   After this call all old mount options are replaced and arbitrary stuff from _fstab_ (or _mtab_) is ignored, except the loop= option which is internally generated and maintained by the mount command. +
-   *mount -o remount,rw /dir* +
+  {nbsp} +
+  *mount -o remount,rw /dir* +
+  {nbsp} +
   After this call, mount reads _fstab_ and merges these options with the options from the command line (*-o*). If no mountpoint is found in _fstab_, then a remount with unspecified source is allowed. +
+  {nbsp} +
   *mount* allows the use of *--all* to remount all already mounted filesystems which match a specified filter (*-O* and *-t*). For example: +
-   *mount --all -o remount,ro -t vfat* +
+  {nbsp} +
+  *mount --all -o remount,ro -t vfat* +
+  {nbsp} +
   remounts all already mounted vfat filesystems in read-only mode. Each of the filesystems is remounted by *mount -o remount,ro /dir* semantic. This means the *mount* command reads _fstab_ or _mtab_ and merges these options with the options from the command line.
 
 *ro*::
@@ -565,6 +618,7 @@ The following options apply to any filesystem that is being mounted (but not eve
 
 *x-**::
   The same as *X-** options, but stored permanently in user space. This means the options are also available for *umount*(8) or other operations. Note that maintaining mount options in user space is tricky, because it's necessary use libmount-based tools and there is no guarantee that the options will be always available (for example after a move mount operation or in unshared namespace). +
+  {nbsp} +
   Note that before util-linux v2.30 the x-* options have not been maintained by libmount and stored in user space (functionality was the same as for X-* now), but due to the growing number of use-cases (in initrd, systemd etc.) the functionality has been extended to keep existing _fstab_ configurations usable without a change.
 
 *X-mount.mkdir*[=_mode_]::
@@ -663,14 +717,20 @@ The devpts filesystem is a pseudo filesystem, traditionally mounted on _/dev/pts
 
 *newinstance*::
   Create a private instance of the devpts filesystem, such that indices of pseudo terminals allocated in this new instance are independent of indices created in other instances of devpts. +
+  {nbsp} +
   All mounts of devpts without this *newinstance* option share the same set of pseudo terminal indices (i.e., legacy mode). Each mount of devpts with the *newinstance* option has a private set of pseudo terminal indices. +
+  {nbsp} +
   This option is mainly used to support containers in the Linux kernel. It is implemented in Linux kernel versions starting with 2.6.29. Further, this mount option is valid only if *CONFIG_DEVPTS_MULTIPLE_INSTANCES* is enabled in the kernel configuration. +
+  {nbsp} +
   To use this option effectively, _/dev/ptmx_ must be a symbolic link to _pts/ptmx_. See _Documentation/filesystems/devpts.txt_ in the Linux kernel source tree for details.
 
 **ptmxmode=**__value__::
   Set the mode for the new _ptmx_ device node in the devpts filesystem. +
+  {nbsp} +
   With the support for multiple instances of devpts (see *newinstance* option above), each instance has a private _ptmx_ node in the root of the devpts filesystem (typically _/dev/pts/ptmx_). +
+  {nbsp} +
   For compatibility with older versions of the kernel, the default mode of the new _ptmx_ node is 0000. **ptmxmode=**__value__ specifies a more useful mode for the _ptmx_ node and is highly recommended when the *newinstance* option is specified. +
+  {nbsp} +
   This option is only implemented in Linux kernel versions starting with 2.6.29. Further, this option is valid only if *CONFIG_DEVPTS_MULTIPLE_INSTANCES* is enabled in the kernel configuration.
 
 === Mount options for fat
@@ -694,6 +754,7 @@ The devpts filesystem is a pseudo filesystem, traditionally mounted on _/dev/pts
 
 **allow_utime=**__value__::
   This option controls the permission check of mtime/atime. +
+  {nbsp} +
   * *20*
     If current process is in group of file's group ID, you can change timestamp.
   * *2*
@@ -705,6 +766,7 @@ Normally *utime*(2) checks that the current process is owner of the file, or tha
 
 **check=**__value__::
   Three different levels of pickiness can be chosen: +
+  {nbsp} +
   * *r*[*elaxed*]
     Upper and lower case are accepted and equivalent, long name parts are truncated (e.g. _verylongname.foobar_ becomes _verylong.foo_), leading and embedded spaces are accepted in each name part (name and extension).
   * *n*[*ormal*]
@@ -744,8 +806,11 @@ Normally *utime*(2) checks that the current process is owner of the file, or tha
 
 *nfs=*{**stale_rw**|*nostale_ro*}::
   Enable this only if you want to export the FAT filesystem over NFS. +
+  {nbsp} +
   *stale_rw*: This option maintains an index (cache) of directory inodes which is used by the nfs-related code to improve look-ups. Full file operations (read/write) over NFS are supported but with cache eviction at NFS server, this could result in spurious *ESTALE* errors. +
+  {nbsp} +
   *nostale_ro*: This option bases the inode number and file handle on the on-disk location of a file in the FAT directory entry. This ensures that *ESTALE* will not be returned after a file is evicted from the inode cache. However, it means that operations such as rename, create and unlink could cause file handles that previously pointed at one file to point at a different file, potentially causing data corruption. For this reason, this option also mounts the filesystem readonly +
+  {nbsp} +
   To maintain backward compatibility, *-o nfs* is also accepted, defaulting to *stale_rw*.
 
 *tz=UTC*::
@@ -759,6 +824,7 @@ Normally *utime*(2) checks that the current process is owner of the file, or tha
 
 *rodir*::
   FAT has the *ATTR_RO* (read-only) attribute. On Windows, the *ATTR_RO* of the directory will just be ignored, and is used only by applications as a flag (e.g. it's set for the customized folder). +
+  {nbsp} +
   If you want to use *ATTR_RO* as read-only flag even for the directory, set this option.
 
 *showexec*::
@@ -948,6 +1014,7 @@ Reiserfs is a journaling filesystem.
 
 *hash=*{**rupasov**|**tea**|**r5**|*detect*}::
   Choose which hash function reiserfs will use to find files within directories. +
+  {nbsp} +
   * *rupasov*
     A hash invented by Yury Yu. Rupasov. It is fast and preserves locality, mapping lexicographically close file names to close hash values. This option should not be used, as it causes a high probability of hash collisions.
   * *tea*
@@ -1044,6 +1111,7 @@ UDF is the "Universal Disk Format" filesystem defined by OSTA, the Optical Stora
 
 *bs=*::
   Set the block size. Default value prior to kernel version 2.6.30 was 2048. Since 2.6.30 and prior to 4.11 it was logical device block size with fallback to 2048. Since 4.11 it is logical block size with fallback to any valid block size between logical device block size and 4096. +
+  {nbsp} +
   For other details see the mkudffs8 2.0+ manpage, sections *COMPATIBILITY* and *BLOCK SIZE*.
 
 *unhide*::
@@ -1111,6 +1179,7 @@ UDF is the "Universal Disk Format" filesystem defined by OSTA, the Optical Stora
 
 **ufstype=**__value__::
   UFS is a filesystem widely used in different operating systems. The problem are differences among implementations. Features of some implementations are undocumented, so its hard to recognize the type of ufs automatically. That's why the user must specify the type of ufs by mount option. Possible values are: +
+  {nbsp} +
   * *old*
     Old format of ufs, this is the default, read only. (Don't forget to give the *-r* option.)
   * *44bsd*
@@ -1134,6 +1203,7 @@ UDF is the "Universal Disk Format" filesystem defined by OSTA, the Optical Stora
 
 **onerror=**__value__::
   Set behavior on error: +
+  {nbsp} +
   * *panic*
     If an error is encountered, cause a kernel panic.
   * [**lock**|**umount**|*repair*]
@@ -1161,6 +1231,7 @@ First of all, the mount options for _fat_ are recognized. The *dotsOK* option is
 
 **shortname=**__mode__::
   Defines the behavior for creation and display of filenames which fit into 8.3 characters. If a long name for a file exists, it will always be the preferred one for display. There are four __mode__s: +
+  {nbsp} +
   * *lower*
     Force the short name to lower case upon display; store a long name when the short name is not all upper case.
   * *win95*
@@ -1284,6 +1355,7 @@ Since util-linux v2.29, *mount* re-uses the loop device rather than initializing
 
 *64*::
   some mount succeeded +
+  {nbsp} +
   The command *mount -a* returns 0 (all succeeded), 32 (all failed), or 64 (some failed, some succeeded).
 
 == EXTERNAL HELPERS

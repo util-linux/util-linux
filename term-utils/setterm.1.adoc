@@ -47,7 +47,9 @@ The optional arguments require '=' (equals sign) and not space between the optio
 
 *--blank*[=0-60|force|poke]::
   Sets the interval of inactivity, in minutes, after which the screen will be automatically blanked (using APM if available). Without an argument, it gets the blank status (returns which vt was blanked, or zero for an unblanked vt). Virtual consoles only. +
+  {nbsp} +
   The *force* argument keeps the screen blank even if a key is pressed. +
+  {nbsp} +
   The *poke* argument unblanks the screen.
 
 *--bfreq*[=_number_]::
@@ -103,6 +105,7 @@ The optional arguments require '=' (equals sign) and not space between the optio
 
 *--msglevel* 0-8::
   Sets the console logging level for kernel *printk()* messages. All messages strictly more important than this will be printed, so a logging level of *0* has the same effect as *--msg on* and a logging level of *8* will print all kernel messages. *klogd*(8) may be a more convenient interface to the logging of kernel messages. +
+  {nbsp} +
   Virtual consoles only.
 
 *--powerdown*[=0-60]::
@@ -110,6 +113,7 @@ The optional arguments require '=' (equals sign) and not space between the optio
 
 *--powersave* _mode_::
   Valid values for _mode_ are: +
+  {nbsp} +
   *vsync|on*;;
     Puts the monitor into VESA vsync suspend mode.
   *hsync*;;

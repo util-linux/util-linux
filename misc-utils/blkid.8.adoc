@@ -64,36 +64,47 @@ The _size_ and _offset_ arguments may be followed by the multiplicative suffixes
 
 *-l*, *--list-one*::
   Look up only one device that matches the search parameter specified with the *--match-token* option. If there are multiple devices that match the specified search parameter, then the device with the highest priority is returned, and/or the first device found at a given priority (but see below note about udev). Device types in order of decreasing priority are: Device Mapper, EVMS, LVM, MD, and finally regular block devices. If this option is not specified, *blkid* will print all of the devices that match the search parameter. +
+  {nbsp} +
   This option forces *blkid* to use udev when used for LABEL or UUID tokens in *--match-token*. The goal is to provide output consistent with other utils (like *mount*(8), etc.) on systems where the same tag is used for multiple devices.
 
 *-L*, *--label* _label_::
   Look up the device that uses this filesystem _label_; this is equal to **--list-one --output device --match-token LABEL=**__label__. This lookup method is able to reliably use /dev/disk/by-label udev symlinks (dependent on a setting in _/etc/blkid.conf_). Avoid using the symlinks directly; it is not reliable to use the symlinks without verification. The *--label* option works on systems with and without udev. +
+  {nbsp} +
   Unfortunately, the original *blkid*(8) from e2fsprogs uses the *-L* option as a synonym for *-o list*. For better portability, use **-l -o device -t LABEL=**__label__ and *-o list* in your scripts rather than the *-L* option.
 
 *-n*, *--match-types* _list_::
   Restrict the probing functions to the specified (comma-separated) _list_ of superblock types (names). The list items may be prefixed with "no" to specify the types which should be ignored. For example: +
+  {nbsp} +
   *blkid --probe --match-types vfat,ext3,ext4 /dev/sda1* +
+  {nbsp} +
   probes for vfat, ext3 and ext4 filesystems, and +
+  {nbsp} +
   *blkid --probe --match-types nominix /dev/sda1* +
+  {nbsp} +
   probes for all supported formats except minix filesystems. This option is only useful together with *--probe*.
 
 *-o*, *--output* _format_::
   Use the specified output format. Note that the order of variables and devices is not fixed. See also option *-s*. The _format_ parameter may be: +
+  {nbsp} +
   *full*;;
     print all tags (the default)
   *value*;;
     print the value of the tags
   *list*;;
     print the devices in a user-friendly format; this output format is unsupported for low-level probing (*--probe* or *--info*). +
+    {nbsp} +
     This output format is *DEPRECATED* in favour of the *lsblk*(8) command.
   *device*;;
     print the device name only; this output format is always enabled for the *--label* and *--uuid* options
   *udev*;;
     print key="value" pairs for easy import into the udev environment; the keys are prefixed by ID_FS_ or ID_PART_ prefixes. The value may be modified to be safe for udev environment; allowed is plain ASCII, hex-escaping and valid UTF-8, everything else (including whitespaces) is replaced with '+++_+++'. The keys with __ENC_ postfix use hex-escaping for unsafe chars. +
+    {nbsp} +
     The udev output returns the ID_FS_AMBIVALENT tag if more superblocks are detected, and ID_PART_ENTRY_* tags are always returned for all partitions including empty partitions. +
+    {nbsp} +
     This output format is *DEPRECATED*.
   *export*;;
     print key=value pairs for easy import into the environment; this output format is automatically enabled when I/O Limits (*--info* option) are requested. +
+    {nbsp} +
     The non-printing characters are encoded by ^ and M- notation and all potentially unsafe characters are escaped.
 
 *-O*, *--offset* _offset_::
@@ -101,6 +112,7 @@ The _size_ and _offset_ arguments may be followed by the multiplicative suffixes
 
 *-p*, *--probe*::
   Switch to low-level superblock probing mode (bypassing the cache). +
+  {nbsp} +
   Note that low-level probing also returns information about partition table type (PTTYPE tag) and partitions (PART_ENTRY_* tags). The tag names produced by low-level probing are based on names used internally by libblkid and it may be different than when executed without *--probe* (for example PART_ENTRY_UUID= vs PARTUUID=). See also *--no-part-details*.
 
 *-s*, *--match-tag* _tag_::
@@ -114,9 +126,13 @@ The _size_ and _offset_ arguments may be followed by the multiplicative suffixes
 
 *-u*, *--usages* _list_::
   Restrict the probing functions to the specified (comma-separated) _list_ of "usage" types. Supported usage types are: filesystem, raid, crypto and other. The list items may be prefixed with "no" to specify the usage types which should be ignored. For example: +
+  {nbsp} +
   *blkid --probe --usages filesystem,other /dev/sda1* +
+  {nbsp} +
   probes for all filesystem and other (e.g., swap) formats, and +
+  {nbsp} +
   *blkid --probe --usages noraid /dev/sda1* +
+  {nbsp} +
   probes for all supported formats except RAIDs. This option is only useful together with *--probe*.
 
 *-U*, *--uuid* _uuid_::

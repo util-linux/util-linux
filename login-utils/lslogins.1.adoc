@@ -47,6 +47,7 @@ Mandatory arguments to long options are mandatory for short options too.
 
 *-g*, **--groups**=_groups_::
   Only show data of users belonging to _groups_. More than one group may be specified; the list has to be comma-separated. Unknown group names are ignored. +
+  {nbsp} +
   Note that relation between user and group may be invisible for primary group if the user is not explicitly specify as group member (e.g., in _/etc/group_). If the command *lslogins* scans for groups than it uses groups database only, and user database with primary GID is not used at all.
 
 *-h*, *--help*::

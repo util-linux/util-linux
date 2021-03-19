@@ -35,6 +35,7 @@ The details of the removes are described in *shmctl*(2), *msgctl*(2), and *semct
 
 *-a*, *--all* [*shm*] [*msg*] [*sem*]::
   Remove all resources. When an option argument is provided, the removal is performed only for the specified resource types. +
+  {nbsp} +
   _Warning!_ Do not use *-a* if you are unsure how the software using the resources might react to missing objects. Some programs create these resources at startup and may not have any code to deal with an unexpected disappearance.
 
 *-M*, *--shmem-key* _shmkey_::

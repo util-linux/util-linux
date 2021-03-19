@@ -89,6 +89,7 @@ The command prints all mounted filesystems in the tree-like format by default.
 
 *-o*, *--output* _list_::
   Define output columns. See the *--help* output to get a list of the currently supported columns. The *TARGET* column contains tree formatting if the *--list* or *--raw* options are not specified. +
+  {nbsp} +
   The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *findmnt -o +PROPAGATION*).
 
 *--output-all*::
@@ -99,8 +100,11 @@ The command prints all mounted filesystems in the tree-like format by default.
 
 *-p*, *--poll*[_=list_]::
   Monitor changes in the _/proc/self/mountinfo_ file. Supported actions are: mount, umount, remount and move. More than one action may be specified in a comma-separated list. All actions are monitored by default. +
+  {nbsp} +
   The time for which *--poll* will block can be restricted with the *--timeout* or *--first-only* options. +
+  {nbsp} +
   The standard columns always use the new version of the information from the mountinfo file, except the umount action which is based on the original information cached by findmnt8. The poll mode allows using extra columns: +
+  {nbsp} +
   *ACTION*;;
     mount, umount, move or remount action name; this column is enabled by default
   *OLD-TARGET*;;

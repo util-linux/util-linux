@@ -60,6 +60,7 @@ Note that _zramdev_ node specified on command line has to already exist. The com
 
 *-s*, *--size* _size_::
   Create a zram device of the specified _size_. Zram devices are aligned to memory pages; when the requested _size_ is not a multiple of the page size, it will be rounded up to the next multiple. When not otherwise specified, the unit of the _size_ parameter is bytes. +
+  {nbsp} +
   The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-t*, *--streams* _number_::

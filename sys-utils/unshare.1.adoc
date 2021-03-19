@@ -25,6 +25,7 @@ The following types of namespaces can be created with *unshare*:
 
 *mount namespace*::
   Mounting and unmounting filesystems will not affect the rest of the system, except for filesystems which are explicitly marked as shared (with *mount --make-shared*; see _/proc/self/mountinfo_ or *findmnt -o+PROPAGATION* for the *shared* flags). For further details, see *mount_namespaces*(7). +
+  {nbsp} +
   *unshare* since util-linux version 2.27 automatically sets propagation to *private* in a new mount namespace to make sure that the new namespace is really unshared. It's possible to disable this feature with option *--propagation unchanged*. Note that *private* is the kernel default.
 
 *UTS namespace*::
@@ -61,6 +62,7 @@ The following types of namespaces can be created with *unshare*:
 
 *-p*, *--pid*[**=**__file__]::
   Unshare the PID namespace. If _file_ is specified, then a persistent namespace is created by a bind mount. (Creation of a persistent PID namespace will fail if the *--fork* option is not also specified.) +
+  {nbsp} +
   See also the *--fork* and *--mount-proc* options.
 
 *-u*, *--uts*[**=**__file__]::
@@ -104,6 +106,7 @@ The following types of namespaces can be created with *unshare*:
 
 **--setgroups allow**|*deny*::
   Allow or deny the *setgroups*(2) system call in a user namespace. +
+  {nbsp} +
   To be able to call *setgroups*(2), the calling process must at least have *CAP_SETGID*. But since Linux 3.19 a further restriction applies: the kernel gives permission to call ­*setgroups*(2) only after the GID map (**/proc/**__pid__*/gid_map*) has been set. The GID map is writable by root when ­*setgroups*(2) is enabled (i.e., *allow*, the default), and the GID map becomes writable by unprivileged processes when ­*setgroups*(2) is permanently disabled (with *deny*).
 
 *-R*, **--root=**__dir__::

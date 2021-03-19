@@ -42,6 +42,7 @@ However, *mkswap* refuses to erase the first block on a device with a disk label
 
 *-f*, *--force*::
   Go ahead even if the command is stupid. This allows the creation of a swap area larger than the file or partition it resides on. +
+  {nbsp} +
   Also, without this option, *mkswap* will refuse to erase the first block on a device with a partition table.
 
 *-L*, *--label* _label_::

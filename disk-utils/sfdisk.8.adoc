@@ -52,12 +52,16 @@ The commands are mutually exclusive.
 
 [*-N* _partition-number_] __device__::
   The default *sfdisk* command is to read the specification for the desired partitioning of _device_ from standard input, and then create a partition table according to the specification. See below for the description of the input format. If standard input is a terminal, then *sfdisk* starts an interactive session. +
+  {nbsp} +
   If the option *-N* is specified, then the changes are applied to the partition addressed by _partition-number_. The unspecified fields of the partition are not modified. +
+  {nbsp} +
   Note that it's possible to address an unused partition with *-N*. For example, an MBR always contains 4 partitions, but the number of used partitions may be smaller. In this case *sfdisk* follows the default values from the partition table and does not use built-in defaults for the unused partition given with *-N*. See also *--append*.
 
 *-A*, *--activate* __device__ [__partition-number__...]::
   Switch on the bootable flag for the specified partitions and switch off the bootable flag on all unspecified partitions. The special placeholder '-' may be used instead of the partition numbers to switch off the bootable flag on all partitions. +
+  {nbsp} +
   The activation command is supported for MBR and PMBR only. If a GPT label is detected, then *sfdisk* prints warning and automatically enters PMBR. +
+  {nbsp} +
   If no _partition-number_ is specified, then list the partitions with an enabled flag.
 
 *--delete* _device_ [__partition-number__...]::
@@ -80,6 +84,7 @@ The commands are mutually exclusive.
 
 *--part-attrs* _device partition-number_ [__attributes__]::
   Change the GPT partition attribute bits. If _attributes_ is not specified, then print the current partition settings. The _attributes_ argument is a comma- or space-delimited list of bits numbers or bit names. For example, the string "RequiredPartition,50,51" sets three bits. The currently supported attribute bits are: +
+  {nbsp} +
   *Bit 0 (RequiredPartition)*;;
     If this bit is set, the partition is required for the platform to function. The creator of the partition indicates that deletion or modification of the contents can result in loss of platform features or failure for the platform to boot or operate. The system cannot function normally if this partition is removed, and it should be considered part of the hardware of the system.
   *Bit 1 (NoBlockIOProtocol)*;;
@@ -96,6 +101,7 @@ The commands are mutually exclusive.
 
 *--part-type* _device partition-number_ [__type__]::
   Change the partition type. If _type_ is not specified, then print the current partition type. +
+  {nbsp} +
   The _type_ argument is hexadecimal for MBR, GUID for GPT, type alias (e.g. "linux") or type shortcut (e.g. 'L'). For backward compatibility the options *-c* and *--id* have the same meaning as this one.
 
 *--part-uuid* _device partition-number_ [__uuid__]::
@@ -118,6 +124,7 @@ The commands are mutually exclusive.
 
 *--relocate* _oper_ _device_::
   Relocate partition table header. This command is currently supported for GPT header only. The argument _oper_ can be: +
+  {nbsp} +
   *gpt-bak-std*;;
     Move GPT backup header to the standard location at the end of the device.
   *gpt-bak-mini*;;
@@ -127,6 +134,7 @@ The commands are mutually exclusive.
 
 *-a*, *--append*::
   Don't create a new partition table, but only append the specified partitions. +
+  {nbsp} +
   Note that unused partition maybe be re-used in this case although it is not the last partition in the partition table. See also *-N* to specify entry in the partition table.
 
 *-b*, *--backup*::
@@ -158,10 +166,15 @@ The commands are mutually exclusive.
 
 *--move-data*[**=**__path__]::
   Move data after partition relocation, for example when moving the beginning of a partition to another place on the disk. The size of the partition has to remain the same, the new and old location may overlap. This option requires option *-N* in order to be processed on one specific partition only. +
+  {nbsp} +
   The optional _path_ specifies log file name. The log file contains information about all read/write operations on the partition data. The word "@default" as a _path_ forces sfdisk to use _~/sfdisk-<devname>.move_ for the log. The log is optional since v2.35. +
+  {nbsp} +
   Note that this operation is risky and not atomic. *Don't forget to backup your data!* +
+  {nbsp} +
   See also *--move-use-fsync*. +
+  {nbsp} +
   In the example below, the first command creates a 100MiB free area before the first partition and moves the data it contains (e.g., a filesystem), the next command creates a new partition from the free space (at offset 2048), and the last command reorders partitions to match disk order (the original sdc1 will become sdc2). +
+  {nbsp} +
   *echo '+100M,' | sfdisk --move-data /dev/sdc -N 1* *echo '2048,' | sfdisk /dev/sdc --append* *sfdisk /dev/sdc --reorder*
 
 *--move-use-fsync*::
@@ -169,6 +182,7 @@ The commands are mutually exclusive.
 
 *-o*, *--output* _list_::
   Specify which output columns to print. Use *--help* to get a list of all supported columns. +
+  {nbsp} +
   The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *-o +UUID*).
 
 *-q*, *--quiet*::

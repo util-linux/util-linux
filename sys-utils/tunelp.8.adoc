@@ -21,6 +21,7 @@ tunelp - set various parameters for the lp device
 
 *-i*, *--irq* _argument_::
   specifies the IRQ to use for the parallel port in question. If this is set to something non-zero, *-t* and *-c* have no effect. If your port does not use interrupts, this option will make printing stop. The command *tunelp -i 0* restores non-interrupt driven (polling) action, and your printer should work again. If your parallel port does support interrupts, interrupt-driven printing should be somewhat faster and efficient, and will probably be desirable. +
+  {nbsp} +
   NOTE: This option will have no effect with kernel 2.1.131 or later since the irq is handled by the parport driver. You can change the parport irq for example via _/proc/parport/*/irq_. Read _/usr/src/linux/Documentation/admin-guide/parport.rst_ for more details on parport.
 
 *-t*, *--time* _milliseconds_::
@@ -28,6 +29,7 @@ tunelp - set various parameters for the lp device
 
 *-c*, *--chars* _characters_::
   is the number of times to try to output a character to the printer before sleeping for *-t* _TIME_. It is the number of times around a loop that tries to send a character to the printer. 120 appears to be a good value for most printers in polling mode. 1000 is the default, because there are some printers that become jerky otherwise, but you _must_ set this to `1' to handle the maximal CPU efficiency if you are using interrupts. If you have a very fast printer, a value of 10 might make more sense even if in polling mode. If you have a _really_ old printer, you can increase this further. +
+  {nbsp} +
   Setting *-t* _TIME_ to 0 is equivalent to setting *-c* _CHARS_ to infinity.
 
 *-w*, *--wait* _milliseconds_::
@@ -41,6 +43,7 @@ tunelp - set various parameters for the lp device
 
 *-C*, *--careful* _<on|off>_::
   This option adds extra ("careful") error checking. When this option is on, the printer driver will ensure that the printer is on-line and not reporting any out of paper or other errors before sending data. This is particularly useful for printers that normally appear to accept data when turned off. +
+  {nbsp} +
   *NOTE*: This option is obsolete because it's the default in 2.1.131 kernel or later.
 
 *-s*, *--status*::

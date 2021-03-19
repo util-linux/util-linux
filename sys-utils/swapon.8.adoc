@@ -52,7 +52,9 @@ If no policy is selected, the default behavior is to enable both discard types. 
 
 *-o*, *--options* _opts_::
   Specify swap options by an fstab-compatible comma-separated string. For example: +
+  {nbsp} +
   *swapon -o pri=1,discard=pages,nofail /dev/sda2* +
+  {nbsp} +
   The _opts_ string is evaluated last and overrides all other command line options.
 
 *-p*, *--priority* _priority_::
@@ -109,7 +111,9 @@ If no policy is selected, the default behavior is to enable both discard types. 
 
 *64*::
   some swapoff succeeded on *--all* +
+  {nbsp} +
   The command *swapoff --all* returns 0 (all succeeded), 32 (all failed), or 64 (some failed, some succeeded). +
+  {nbsp} +
   The old versions before v2.36 has no documented exit status, 0 means success in all versions.
 
 == ENVIRONMENT

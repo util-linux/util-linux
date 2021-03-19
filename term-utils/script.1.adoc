@@ -69,7 +69,9 @@ Below, the _size_ argument may be followed by the multiplicative suffixes KiB (=
 
 *-E*, *--echo* _when_::
   This option controls the *ECHO* flag for the slave end of the session's pseudoterminal. The supported modes are _always_, _never_, or _auto_. +
+  {nbsp} +
   The default is _auto_ -- in this case, *ECHO* enabled for the pseudoterminal slave; if the current standard input is a terminal, *ECHO* is disabled for it to prevent double echo; if the current standard input is not a terminal (for example pipe: *echo date | script*) then keeping *ECHO* enabled for the pseudoterminal slave enables the standard input data to be viewed on screen while being recorded to session log simultaneously. +
+  {nbsp} +
   Note that 'never' mode affects content of the session output log, because users input is not repeated on output.
 
 *-e*, *--return*::
@@ -86,6 +88,7 @@ Below, the _size_ argument may be followed by the multiplicative suffixes KiB (=
 
 *-I*, *--log-in* _file_::
   Log input to the _file_. The log output is disabled if only *--log-in* specified. +
+  {nbsp} +
   Use this logging functionality carefully as it logs all input, including input when terminal has disabled echo flag (for example, password inputs).
 
 *-O*, *--log-out* _file_::
@@ -95,7 +98,7 @@ Below, the _size_ argument may be followed by the multiplicative suffixes KiB (=
   Log timing information to the _file_. Two timing file formats are supported now. The classic format is used when only one stream (input or output) logging is enabled. The multi-stream format is used on *--log-io* or when *--log-in* and *--log-out* are used together. See also *--logging-format*.
 
 *-m*, *--logging-format* _format_::
-  Force use of _advanced_ or _classic_ format. The default is the classic format to log only output and the advanced format when input as well as output logging is requested. +
+  Force use of _advanced_ or _classic_ format. The default is the classic format to log only output and the advanced format when input as well as output logging is requested.
   
 
 *Classic format*:::

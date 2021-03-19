@@ -41,6 +41,7 @@ Note that *lsns* reads information directly from the _/proc_ filesystem and for 
 
 *-o*, *--output* _list_::
   Specify which output columns to print. Use *--help* to get a list of all supported columns. +
+  {nbsp} +
   The default list of columns may be extended if _list_ is specified in the format **+**__list__ (e.g., *lsns -o +PATH*).
 
 *--output-all*::

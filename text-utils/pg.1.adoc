@@ -46,6 +46,7 @@ If input comes from a pipe, *pg* stores the data in a buffer file while reading,
 
 *-n*::
   Without this option, commands must be terminated by a newline character. +
+  {nbsp} +
   With this option, *pg* advances once a command letter is entered.
 
 *-p* _string_::

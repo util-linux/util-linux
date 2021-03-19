@@ -43,13 +43,15 @@ The _offset_, _length_, and _minimum-size_ arguments may be followed by the mult
   The number of bytes (after the starting point) to search for free blocks to discard. If the specified value extends past the end of the filesystem, *fstrim* will stop at the filesystem size boundary. The default value extends to the end of the filesystem.
 
 *-I, --listed-in* _list_::
-  Specifies a colon-separated list of files in fstab or kernel mountinfo format. All missing or empty files are silently ignored. The evaluation of the _list_ stops after first non-empty file. For example: *--listed-in /etc/fstab:/proc/self/mountinfo*.
+  Specifies a colon-separated list of files in fstab or kernel mountinfo format. All missing or empty files are silently ignored. The evaluation of the _list_ stops after first non-empty file. For example: 
+  *--listed-in /etc/fstab:/proc/self/mountinfo*.
 
 *-m, --minimum* _minimum-size_::
   Minimum contiguous free range to discard, in bytes. (This value is internally rounded up to a multiple of the filesystem block size.) Free ranges smaller than this will be ignored and fstrim will adjust the minimum if it's smaller than the device's minimum, and report that (fstrim_range.minlen) back to userspace. By increasing this value, the fstrim operation will complete more quickly for filesystems with badly fragmented freespace, although not all blocks will be discarded. The default value is zero, discarding every free block.
 
 *-v, --verbose*::
   Verbose execution. With this option *fstrim* will output the number of bytes passed from the filesystem down the block stack to the device for potential discard. This number is a maximum discard amount from the storage device's perspective, because _FITRIM_ ioctl called repeated will keep sending the same sectors for discard repeatedly. +
+  {nbsp} +
   *fstrim* will report the same potential discard bytes each time, but only sectors which had been written to between the discards would actually be discarded by the storage device. Further, the kernel block layer reserves the right to adjust the discard ranges to fit raid stripe geometry, non-trim capable devices in a LVM setup, etc. These reductions would not be reflected in fstrim_range.len (the *--length* option).
   
 *--quiet-unsupported*::

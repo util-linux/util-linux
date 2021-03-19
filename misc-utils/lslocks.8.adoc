@@ -45,6 +45,7 @@ Note that lslocks also lists OFD (Open File Description) locks, these locks are 
 
 *-o*, *--output* _list_::
   Specify which output columns to print. Use *--help* to get a list of all supported columns. +
+  {nbsp} +
   The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *lslocks -o +BLOCKER*).
 
 *--output-all*::

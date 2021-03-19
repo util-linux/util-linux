@@ -57,8 +57,11 @@ Please see the filesystem-specific checker manual pages for further details.
 
 *-r* [****__fd__]::
   Report certain statistics for each fsck when it completes. These statistics include the exit status, the maximum run set size (in kilobytes), the elapsed all-clock time and the user and system CPU time used by the fsck run. For example: +
+  {nbsp} +
   */dev/sda1: status 0, rss 92828, real 4.002804, user 2.677592, sys 0.86186* +
+  {nbsp} +
   GUI front-ends may specify a file descriptor _fd_, in which case the progress bar information will be sent to that file descriptor in a machine parsable format. For example: +
+  {nbsp} +
   */dev/sda1 0 92828 4.002804 2.677592 0.86186*
 
 *-s*::
@@ -66,16 +69,24 @@ Please see the filesystem-specific checker manual pages for further details.
 
 *-t* _fslist_::
   Specifies the type(s) of filesystem to be checked. When the *-A* flag is specified, only filesystems that match _fslist_ are checked. The _fslist_ parameter is a comma-separated list of filesystems and options specifiers. All of the filesystems in this comma-separated list may be prefixed by a negation operator '*no*' or '*!*', which requests that only those filesystems not listed in _fslist_ will be checked. If none of the filesystems in _fslist_ is prefixed by a negation operator, then only those listed filesystems will be checked. +
+  {nbsp} +
   Options specifiers may be included in the comma-separated _fslist_. They must have the format **opts=**__fs-option__. If an options specifier is present, then only filesystems which contain _fs-option_ in their mount options field of _/etc/fstab_ will be checked. If the options specifier is prefixed by a negation operator, then only those filesystems that do not have _fs-option_ in their mount options field of _/etc/fstab_ will be checked. +
+  {nbsp} +
   For example, if *opts=ro* appears in _fslist_, then only filesystems listed in _/etc/fstab_ with the *ro* option will be checked. +
+  {nbsp} +
   For compatibility with Mandrake distributions whose boot scripts depend upon an unauthorized UI change to the *fsck* program, if a filesystem type of *loop* is found in _fslist_, it is treated as if *opts=loop* were specified as an argument to the *-t* option. +
+  {nbsp} +
   Normally, the filesystem type is deduced by searching for _filesys_ in the _/etc/fstab_ file and using the corresponding entry. If the type cannot be deduced, and there is only a single filesystem given as an argument to the *-t* option, *fsck* will use the specified filesystem type. If this type is not available, then the default filesystem type (currently ext2) is used.
 
 *-A*::
   Walk through the _/etc/fstab_ file and try to check all filesystems in one run. This option is typically used from the _/etc/rc_ system initialization file, instead of multiple commands for checking a single filesystem. +
+  {nbsp} +
   The root filesystem will be checked first unless the *-P* option is specified (see below). After that, filesystems will be checked in the order specified by the _fs_passno_ (the sixth) field in the _/etc/fstab_ file. Filesystems with a _fs_passno_ value of 0 are skipped and are not checked at all. Filesystems with a _fs_passno_ value of greater than zero will be checked in order, with filesystems with the lowest _fs_passno_ number being checked first. If there are multiple filesystems with the same pass number, *fsck* will attempt to check them in parallel, although it will avoid running multiple filesystem checks on the same physical disk. +
+  {nbsp} +
   *fsck* does not check stacked devices (RAIDs, dm-crypt, ...) in parallel with any other device. See below for *FSCK_FORCE_ALL_PARALLEL* setting. The _/sys_ filesystem is used to determine dependencies between devices. +
+  {nbsp} +
   Hence, a very common configuration in _/etc/fstab_ files is to set the root filesystem to have a _fs_passno_ value of 1 and to set all other filesystems to have a _fs_passno_ value of 2. This will allow *fsck* to automatically run filesystem checkers in parallel if it is advantageous to do so. System administrators might choose not to use this configuration if they need to avoid multiple filesystem checks running in parallel for some reason - for example, if the machine in question is short on memory so that excessive paging is a concern. +
+  {nbsp} +
   *fsck* normally does not check whether the device actually exists before calling a filesystem specific checker. Therefore non-existing devices may cause the system to enter filesystem repair mode during boot if the filesystem specific checker returns a fatal error. The _/etc/fstab_ mount option *nofail* may be used to have *fsck* skip non-existing devices. *fsck* also skips non-existing devices that have the special filesystem type *auto*.
 
 *-C* [****__fd__]::

@@ -43,6 +43,7 @@ If the file _.hushlogin_ exists, then a "quiet" login is performed. This disable
 
 *-h*::
   Used by other servers (such as *telnetd*(8) to pass the name of the remote host to *login* so that it can be placed in utmp and wtmp. Only the superuser is allowed use this option. +
+  {nbsp} +
   Note that the *-h* option has an impact on the *PAM service* *name*. The standard service name is _login_, but with the *-h* option, the name is _remote_. It is necessary to create proper PAM config files (for example, _/etc/pam.d/login_ and _/etc/pam.d/remote_).
 
 *-H*::
