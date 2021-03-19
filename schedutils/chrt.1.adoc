@@ -35,9 +35,9 @@ chrt - manipulate the real-time attributes of a process
 
 == SYNOPSIS
 
-*chrt* _options priority command argument_ …
+*chrt* [options] _priority command argument_ ...
 
-*chrt* _options_ *-p* _priority PID_
+*chrt* [options] *-p* [_priority_] _PID_
 
 == DESCRIPTION
 
@@ -46,7 +46,7 @@ chrt - manipulate the real-time attributes of a process
 == POLICIES
 
 *-o*, *--other*::
-  Set scheduling policy to *SCHED_OTHER* (time-sharing scheduling). This is the   default Linux scheduling policy.
+  Set scheduling policy to *SCHED_OTHER* (time-sharing scheduling). This is the default Linux scheduling policy.
 
 *-f*, *--fifo*::
   Set scheduling policy to *SCHED_FIFO* (first in-first out).
@@ -64,7 +64,6 @@ chrt - manipulate the real-time attributes of a process
   Set scheduling policy to *SCHED_DEADLINE* (sporadic task model deadline scheduling). Linux-specific, supported since 3.14. The priority argument has to be set to zero. See also *--sched-runtime*, *--sched-deadline* and *--sched-period*. The relation between the options required by the kernel is
   runtime <= deadline <= period. *chrt* copies _period_ to _deadline_ if *--sched-deadline* is not specified and _deadline_ to _runtime_ if *--sched-runtime* is not specified. It means that at least *--sched-period* has to be specified. See *sched*(7) for more details.
 
-[[scheduling_options]]
 == SCHEDULING OPTIONS
 
 *-T*, *--sched-runtime* _nanoseconds_::
@@ -136,12 +135,9 @@ Linux' default scheduling policy is *SCHED_OTHER*.
 
 == AUTHORS
 
-....
-Robert Love <rml@tech9.net>
-Karel Zak <kzak@redhat.com>
-....
+mailto:rml@tech9.net[Robert Love] +
+mailto:kzak@redhat.com[Karel Zak]
 
-[[see_also]]
 == SEE ALSO
 
 *nice*(1),

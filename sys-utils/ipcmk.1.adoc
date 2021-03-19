@@ -15,7 +15,7 @@ ipcmk - make various IPC resources
 
 == SYNOPSIS
 
-*ipcmk* [_options_]
+*ipcmk* [options]
 
 == DESCRIPTION
 

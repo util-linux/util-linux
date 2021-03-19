@@ -36,9 +36,9 @@ manipulate the utilization clamping attributes of the system or a process
 
 == SYNOPSIS
 
-*uclampset* _options_ *-m* _uclamp_min_ *-M* _uclamp_max command argument_
+*uclampset* [options] [*-m* _uclamp_min_] [*-M* _uclamp_max] _command argument_
 
-*uclampset* _options_ *-m* _uclamp_min_ *-M* _uclamp_max_ *-p* _PID_
+*uclampset* [options] [*-m* _uclamp_min_] [*-M* _uclamp_max_] *-p* _PID_
 
 == DESCRIPTION
 
@@ -118,11 +118,8 @@ Consult your kernel docs for the exact expected behavior on that kernel.
 
 == AUTHORS
 
-....
-Qais Yousef <qais.yousef@arm.com>
-....
+mailto:qais.yousef@arm.com[Qais Yousef]
 
-[[see_also]]
 == SEE ALSO
 
 *nice*(1),

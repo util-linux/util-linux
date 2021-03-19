@@ -11,7 +11,7 @@ irqtop - utility to display kernel interrupt information
 
 == SYNOPSIS
 
-*irqtop* [_options_]
+*irqtop* [options]
 
 == DESCRIPTION
 

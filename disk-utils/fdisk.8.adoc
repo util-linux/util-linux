@@ -18,7 +18,7 @@ fdisk - manipulate disk partition table
 
 == SYNOPSIS
 
-*fdisk* [_options_] _device_
+*fdisk* [options] _device_
 
 *fdisk* *-l* [_device_...]
 

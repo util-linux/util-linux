@@ -25,7 +25,7 @@ cfdisk - display or manipulate a disk partition table
 
 == SYNOPSIS
 
-*cfdisk* [_options_] [_device_]
+*cfdisk* [options] [_device_]
 
 == DESCRIPTION
 

@@ -13,7 +13,7 @@ zramctl - set up and control zram devices
 
 Get info: ::
 
-*zramctl* [_options_]
+*zramctl* [options]
 
 Reset zram: ::
 

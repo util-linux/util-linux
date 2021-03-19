@@ -11,7 +11,7 @@ isosize - output the length of an iso9660 filesystem
 
 == SYNOPSIS
 
-*isosize* [_options_] _iso9660_image_file_
+*isosize* [options] _iso9660_image_file_
 
 == DESCRIPTION
 

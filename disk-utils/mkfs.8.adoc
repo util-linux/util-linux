@@ -11,7 +11,7 @@ mkfs - build a Linux filesystem
 
 == SYNOPSIS
 
-*mkfs* [_options_] [*-t* _type_] [_fs-options_] _device_ [_size_]
+*mkfs* [options] [*-t* _type_] [_fs-options_] _device_ [_size_]
 
 == DESCRIPTION
 

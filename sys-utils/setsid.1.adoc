@@ -13,7 +13,7 @@ setsid - run a program in a new session
 
 == SYNOPSIS
 
-*setsid* [_options_] _program_ [_arguments_]
+*setsid* [options] _program_ [_arguments_]
 
 == DESCRIPTION
 

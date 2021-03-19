@@ -11,7 +11,7 @@ wdctl - show hardware watchdog status
 
 == SYNOPSIS
 
-*wdctl* [_options_] [_device_...]
+*wdctl* [options] [_device_...]
 
 == DESCRIPTION
 

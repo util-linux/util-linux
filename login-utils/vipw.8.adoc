@@ -45,9 +45,9 @@ vipw, vigr - edit the password or group file
 
 == SYNOPSIS
 
-*vipw* [_options_]
+*vipw* [options]
 
-*vigr* [_options_]
+*vigr* [options]
 
 == DESCRIPTION
 

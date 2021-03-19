@@ -15,7 +15,7 @@ fdformat - low-level format a floppy disk
 
 == SYNOPSIS
 
-*fdformat* [_options_] _device_
+*fdformat* [options] _device_
 
 == DESCRIPTION
 

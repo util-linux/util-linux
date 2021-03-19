@@ -11,7 +11,7 @@ rtcwake - enter a system sleep state until specified wakeup time
 
 == SYNOPSIS
 
-*rtcwake* [_options_] [*-d* _device_] [*-m* _standby_mode_] {*-s* _seconds_|*-t* _time_t_}
+*rtcwake* [options] [*-d* _device_] [*-m* _standby_mode_] {*-s* _seconds_|*-t* _time_t_}
 
 == DESCRIPTION
 
@@ -114,11 +114,11 @@ The program was posted several times on LKML and other lists before appearing in
 
 == AUTHORS
 
-The program was written by David Brownell <dbrownell@users.sourceforge.net> and improved by Bernhard Walle <bwalle@suse.de>.
+The program was written by mailto:dbrownell@users.sourceforge.net[David Brownell] and improved by mailto:bwalle@suse.de[Bernhard Walle].
 
 == COPYRIGHT
 
-This is free software. You may redistribute copies of it under the terms of the GNU General Public License <http://www.gnu.org/licenses/gpl.html>. There is NO WARRANTY, to the extent permitted by law.
+This is free software. You may redistribute copies of it under the terms of the link:http://www.gnu.org/licenses/gpl.html[GNU General Public License]. There is NO WARRANTY, to the extent permitted by law.
 
 == SEE ALSO
 

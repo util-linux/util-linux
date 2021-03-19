@@ -158,7 +158,7 @@ The following commands can be used as an example of using the loop device.
 
 == AUTHORS
 
-Karel Zak <kzak@redhat.com>, based on the original version from Theodore Ts'o <tytso@athena.mit.edu>
+mailto:kzak@redhat.com[Karel Zak], based on the original version from mailto:tytso@athena.mit.edu[Theodore Ts'o.]
 
 include::../man-common/bugreports.adoc[]
 

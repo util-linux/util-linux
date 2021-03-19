@@ -11,7 +11,7 @@ lsipc - show information on IPC facilities currently employed in the system
 
 == SYNOPSIS
 
-*lsipc* [_options_]
+*lsipc* [options]
 
 == DESCRIPTION
 
@@ -96,7 +96,7 @@ lsipc - show information on IPC facilities currently employed in the system
 
 == HISTORY
 
-The *lsipc* utility is inspired by the *ipcs* utility.
+The *lsipc* utility is inspired by the *ipcs*(1) utility.
 
 == AUTHORS
 

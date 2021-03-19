@@ -55,7 +55,7 @@ mount -o ro 10.0.0.1:/my_root /mnt
 killall portmap   # portmap keeps old root busy
 cd /mnt
 pivot_root . old_root
-exec chroot . sh -c 'umount /old_root; exec /sbin/init' BSOL
+exec chroot . sh -c 'umount /old_root; exec /sbin/init' \
   <dev/console >dev/console 2>&1
 ....
 

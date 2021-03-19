@@ -18,7 +18,7 @@ mkfs.minix - make a Minix filesystem
 
 == SYNOPSIS
 
-*mkfs.minix* [_options_] _device_ [_size-in-blocks_]
+*mkfs.minix* [options] _device_ [_size-in-blocks_]
 
 == DESCRIPTION
 

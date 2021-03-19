@@ -11,7 +11,7 @@ fsck.cramfs - fsck compressed ROM file system
 
 == SYNOPSIS
 
-*fsck.cramfs* [_options_] _file_
+*fsck.cramfs* [options] _file_
 
 == DESCRIPTION
 

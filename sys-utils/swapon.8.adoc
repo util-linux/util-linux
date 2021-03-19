@@ -11,7 +11,7 @@ swapon, swapoff - enable/disable devices and files for paging and swapping
 
 == SYNOPSIS
 
-*swapon* [_options_] [_specialfile_...]
+*swapon* [options] [_specialfile_...]
 
 *swapoff* [*-va*] [_specialfile_...]
 
@@ -115,15 +115,18 @@ If no policy is selected, the default behavior is to enable both discard types. 
 == ENVIRONMENT
 
 LIBMOUNT_DEBUG=all::
-  enables libmount debug output.
+  enables *libmount* debug output.
 
 LIBBLKID_DEBUG=all::
-  enables libblkid debug output.
+  enables *libblkid* debug output.
 
 == FILES
 
-_/dev/sd??_ standard paging devices +
-_/etc/fstab_ ascii filesystem description table
+_/dev/sd??_::
+  standard paging devices
+
+_/etc/fstab_::
+  ascii filesystem description table
 
 == NOTES
 

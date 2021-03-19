@@ -16,7 +16,7 @@ lsns - list namespaces
 
 == SYNOPSIS
 
-*lsns* [_options_] _namespace_
+*lsns* [options] _namespace_
 
 == DESCRIPTION
 

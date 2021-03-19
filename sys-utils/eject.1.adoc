@@ -17,7 +17,7 @@ for conditions under which this file may be redistributed.
 
 eject - eject removable media
 
-*eject* [_options_] _device_|_mountpoint_
+*eject* [options] _device_|_mountpoint_
 
 == DESCRIPTION
 

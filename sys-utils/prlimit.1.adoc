@@ -16,9 +16,9 @@ prlimit - get and set process resource limits
 
 == SYNOPSIS
 
-*prlimit* [_options_] [*--resource*=_limits_]] [*--pid* _PID_]
+*prlimit* [options] [*--resource*=_limits_]] [*--pid* _PID_]
 
-*prlimit* [_options_] [*--resource*=_limits_]] _command_ [_argument_...]
+*prlimit* [options] [*--resource*=_limits_]] _command_ [_argument_...]
 
 == DESCRIPTION
 

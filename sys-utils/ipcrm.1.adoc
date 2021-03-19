@@ -15,7 +15,7 @@ ipcrm - remove certain IPC resources
 
 == SYNOPSIS
 
-*ipcrm* [_options_]
+*ipcrm* [options]
 
 *ipcrm* [*shm*|*msg*|*sem*] _ID_ ...
 

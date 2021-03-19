@@ -15,7 +15,7 @@ fsck.minix - check consistency of Minix filesystem
 
 == SYNOPSIS
 
-*fsck.minix* [_options_] _device_
+*fsck.minix* [options] _device_
 
 == DESCRIPTION
 

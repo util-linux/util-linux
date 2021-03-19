@@ -15,11 +15,11 @@ dmesg - print or control the kernel ring buffer
 
 == SYNOPSIS
 
-*dmesg* [_options_]
+*dmesg* [options]
 
 *dmesg* *--clear*
 
-*dmesg* *--read-clear* [_options_]
+*dmesg* *--read-clear* [options]
 
 *dmesg* *--console-level* _level_
 

@@ -1,5 +1,3 @@
-////
-////
 = agetty(8)
 :doctype: manpage
 :man manual: System Administration
@@ -13,7 +11,7 @@ agetty - alternative Linux getty
 
 == SYNOPSIS
 
-*agetty* [_options_] _port_ [_baud_rate_...] [_term_]
+*agetty* [options] _port_ [_baud_rate_...] [_term_]
 
 == DESCRIPTION
 

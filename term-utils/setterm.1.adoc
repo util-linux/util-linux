@@ -18,7 +18,7 @@ setterm - set terminal attributes
 
 == SYNOPSIS
 
-*setterm* [_options_]
+*setterm* [options]
 
 == DESCRIPTION
 

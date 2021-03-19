@@ -11,7 +11,7 @@ scriptreplay - play back typescripts, using timing information
 
 == SYNOPSIS
 
-*scriptreplay* [_options_] [*-t*] _timingfile_ [_typescript_ [_divisor_]
+*scriptreplay* [options] [*-t*] _timingfile_ [_typescript_ [_divisor_]
 
 == DESCRIPTION
 

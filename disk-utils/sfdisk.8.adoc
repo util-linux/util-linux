@@ -24,9 +24,9 @@ sfdisk - display or manipulate a disk partition table
 
 == SYNOPSIS
 
-*sfdisk* [_options_] _device_ [*-N* _partition-number_]
+*sfdisk* [options] _device_ [*-N* _partition-number_]
 
-*sfdisk* [_options_] _command_]
+*sfdisk* [options] _command_]
 
 == DESCRIPTION
 
@@ -349,7 +349,6 @@ ____
 
 Note that *sfdisk* since version 2.26 no longer provides the *-I* option to restore sectors. *dd*(1) provides all necessary functionality.
 
-[[doclifter-colors]]
 == COLORS
 
 Implicit coloring can be disabled by an empty file _/etc/terminal-colors.d/sfdisk.disable_.

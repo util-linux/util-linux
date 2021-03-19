@@ -45,7 +45,7 @@ script - make typescript of terminal session
 
 == SYNOPSIS
 
-*script* [_options_] [_file_]
+*script* [options] [_file_]
 
 == DESCRIPTION
 

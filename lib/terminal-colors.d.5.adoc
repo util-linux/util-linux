@@ -44,7 +44,6 @@ If there are more files that match for a utility, then the file with the more sp
 
 The user-specific _$XDG_CONFIG_HOME/terminal-colors.d_ or _$HOME/.config/terminal-colors.d_ overrides the global setting.
 
-[[default_scheme_files_format]]
 == DEFAULT SCHEME FILES FORMAT
 
 The following statement is recognized:
@@ -57,12 +56,10 @@ The *name* is a logical name of color sequence (for example "error"). The names 
 
 The *color-sequence* is a color name, ASCII color sequences or escape sequences.
 
-[[color_names]]
 === Color names
 
 black, blink, blue, bold, brown, cyan, darkgray, gray, green, halfbright, lightblue, lightcyan, lightgray, lightgreen, lightmagenta, lightred, magenta, red, reset, reverse, and yellow.
 
-[[ansi_color_sequences]]
 === ANSI color sequences
 
 The color sequences are composed of sequences of numbers separated by semicolons. The most common codes are:
@@ -93,27 +90,26 @@ ____
 |===
 ____
 
-[[escape_sequences]]
 === Escape sequences
 
-To specify control or blank characters in the color sequences, C-style BSOL-escaped notation can be used:
+To specify control or blank characters in the color sequences, C-style \-escaped notation can be used:
 
 ____
 [cols=",",]
 |===
-|*BSOLa* |Bell (ASCII 7)
-|*BSOLb* |Backspace (ASCII 8)
-|*BSOLe* |Escape (ASCII 27)
-|*BSOLf* |Form feed (ASCII 12)
-|*BSOLn* |Newline (ASCII 10)
-|*BSOLr* |Carriage Return (ASCII 13)
-|*BSOLt* |Tab (ASCII 9)
-|*BSOLv* |Vertical Tab (ASCII 11)
-|*BSOL?* |Delete (ASCII 127)
-|*BSOL_* |Space
-|*BSOLBSOL* |Backslash (BSOL)
-|*BSOL^* |Caret (^)
-|*BSOL#* |Hash mark (#)
+|*\a* |Bell (ASCII 7)
+|*\b* |Backspace (ASCII 8)
+|*\e* |Escape (ASCII 27)
+|*\f* |Form feed (ASCII 12)
+|*\n* |Newline (ASCII 10)
+|*\r* |Carriage Return (ASCII 13)
+|*\t* |Tab (ASCII 9)
+|*\v* |Vertical Tab (ASCII 11)
+|*\?* |Delete (ASCII 127)
+|*\_* |Space
+|*\\* |Backslash (\)
+|*\^* |Caret (^)
+|*\#* |Hash mark (#)
 |===
 ____
 

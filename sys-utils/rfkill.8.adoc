@@ -11,7 +11,7 @@ rfkill - tool for enabling and disabling wireless devices
 
 == SYNOPSIS
 
-*rfkill* [_options_] [_command_] [_ID_|_type_ ...]
+*rfkill* [options] [_command_] [_ID_|_type_ ...]
 
 == DESCRIPTION
 
@@ -71,7 +71,7 @@ The default output is subject to change. So whenever possible, you should avoid 
 
 == AUTHORS
 
-*rfkill* was originally written by mailto:johannes@sipsolutions.net[Johannes Berg] and mailto:marcel@holtmann.org[Marcel Holtmann] The code has been later modified by mailto:kerolasa@iki.fi[Sami Kerola] and mailto:kzak@redhat.com[Karel Zak] for the util-linux project.
+*rfkill* was originally written by mailto:johannes@sipsolutions.net[Johannes Berg] and mailto:marcel@holtmann.org[Marcel Holtmann]. The code has been later modified by mailto:kerolasa@iki.fi[Sami Kerola] and mailto:kzak@redhat.com[Karel Zak] for the util-linux project.
 
 This manual page was written by mailto:linux@youmustbejoking.demon.co.uk[Darren Salt] for the Debian project (and may be used by others).
 

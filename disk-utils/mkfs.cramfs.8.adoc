@@ -11,7 +11,7 @@ mkfs.cramfs - make compressed ROM file system
 
 == SYNOPSIS
 
-*mkfs.cramfs* [_options_] _directory file_
+*mkfs.cramfs* [options] _directory file_
 
 == DESCRIPTION
 

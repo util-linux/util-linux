@@ -11,7 +11,7 @@ lscpu - display information about the CPU architecture
 
 == SYNOPSIS
 
-*lscpu* [_options_]
+*lscpu* [options]
 
 == DESCRIPTION
 

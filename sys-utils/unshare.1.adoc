@@ -11,7 +11,7 @@ unshare - run program in new namespaces
 
 == SYNOPSIS
 
-*unshare* [_options_] [_program_ [_arguments_]
+*unshare* [options] [_program_ [_arguments_]
 
 == DESCRIPTION
 

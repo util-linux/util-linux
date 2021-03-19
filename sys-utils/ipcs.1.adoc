@@ -15,7 +15,7 @@ ipcs - show information on IPC facilities
 
 == SYNOPSIS
 
-*ipcs* [_options_]
+*ipcs* [options]
 
 == DESCRIPTION
 

@@ -11,7 +11,7 @@ nsenter - run program in different namespaces
 
 == SYNOPSIS
 
-*nsenter* [_options_] [_program_ [_arguments_]]
+*nsenter* [options] [_program_ [_arguments_]]
 
 == DESCRIPTION
 
@@ -20,7 +20,7 @@ The *nsenter* command executes _program_ in the namespace(s) that are specified 
 Enterable namespaces are:
 
 *mount namespace*::
-  Mounting and unmounting filesystems will not affect the rest of the system, except for filesystems which are explicitly marked as shared (with *mount --make-shared*; see _/proc/self/mountinfo_ for the *shared* flag). For further details, see mount_namespaces7 and the discussion of the *CLONE_NEWNS* flag in *clone*(2).
+  Mounting and unmounting filesystems will not affect the rest of the system, except for filesystems which are explicitly marked as shared (with *mount --make-shared*; see _/proc/self/mountinfo_ for the *shared* flag). For further details, see *mount_namespaces*(7) and the discussion of the *CLONE_NEWNS* flag in *clone*(2).
 
 *UTS namespace*::
   Setting hostname or domainname will not affect the rest of the system. For further details, see *uts_namespaces*(7).

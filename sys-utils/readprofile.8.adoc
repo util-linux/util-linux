@@ -11,7 +11,7 @@ readprofile - read kernel profiling information
 
 == SYNOPSIS
 
-*readprofile* [_options_]
+*readprofile* [options]
 
 == VERSION
 
@@ -58,9 +58,14 @@ The *readprofile* command uses the _/proc/profile_ information to print ascii da
 
 == FILES
 
-_/proc/profile_               A binary snapshot of the profiling buffer.
-_/usr/src/linux/System.map_   The symbol table for the kernel.
-_/usr/src/linux/*_            The program being profiled :-)
+_/proc/profile_::
+  A binary snapshot of the profiling buffer.
+
+_/usr/src/linux/System.map_::
+  The symbol table for the kernel.
+
+_/usr/src/linux/*_::
+  The program being profiled :-)
 
 == BUGS
 

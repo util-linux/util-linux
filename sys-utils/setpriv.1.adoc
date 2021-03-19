@@ -11,7 +11,7 @@ setpriv - run a program with different Linux privilege settings
 
 == SYNOPSIS
 
-*setpriv* [_options_] _program_ [_arguments_]
+*setpriv* [options] _program_ [_arguments_]
 
 == DESCRIPTION
 

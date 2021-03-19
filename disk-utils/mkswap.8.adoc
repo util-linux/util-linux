@@ -15,7 +15,7 @@ mkswap - set up a Linux swap area
 
 == SYNOPSIS
 
-*mkswap* [_options_] _device_ [_size_]
+*mkswap* [options] _device_ [_size_]
 
 == DESCRIPTION
 

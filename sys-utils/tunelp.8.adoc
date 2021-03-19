@@ -11,7 +11,7 @@ tunelp - set various parameters for the lp device
 
 == SYNOPSIS
 
-*tunelp* [_options_] _device_
+*tunelp* [options] _device_
 
 == DESCRIPTION
 

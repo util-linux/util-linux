@@ -15,7 +15,7 @@ mkfs.bfs - make an SCO bfs filesystem
 
 == SYNOPSIS
 
-*mkfs.bfs* [_options_] _device_ [_block-count_]
+*mkfs.bfs* [options] _device_ [_block-count_]
 
 == DESCRIPTION
 

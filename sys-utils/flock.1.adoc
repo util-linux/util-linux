@@ -35,11 +35,11 @@ flock - manage locks from shell scripts
 
 == SYNOPSIS
 
-*flock* [_options_] _file_|_directory_ _command_ [_arguments_]
+*flock* [options] _file_|_directory_ _command_ [_arguments_]
 
-*flock* [_options_] _file_|_directory_ *-c* _command_
+*flock* [options] _file_|_directory_ *-c* _command_
 
-*flock* [_options_] _number_
+*flock* [options] _number_
 
 == DESCRIPTION
 

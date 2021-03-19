@@ -11,7 +11,7 @@ blkzone - run zone command on a device
 
 == SYNOPSIS
 
-*blkzone* _command_ [_options_] _device_
+*blkzone* _command_ [options] _device_
 
 == DESCRIPTION
 

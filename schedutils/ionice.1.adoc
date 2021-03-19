@@ -11,13 +11,13 @@ ionice - set or get process I/O scheduling class and priority
 
 == SYNOPSIS
 
-*ionice* *-c* _class_ *-n* _level_ *-t* *-p* _PID_
+*ionice* [*-c* _class_] [*-n* _level_] [*-t*] *-p* _PID_
 
-*ionice* *-c* _class_ *-n* _level_ *-t* *-P* _PGID_
+*ionice* [*-c* _class_] [*-n* _level_] [*-t*] *-P* _PGID_
 
-*ionice* *-c* _class_ *-n* _level_ *-t* *-u* _UID_
+*ionice* [*-c* _class_] [*-n* _level_] [*-t*] *-u* _UID_
 
-*ionice* *-c* _class_ *-n* _level_ *-t* _command_ [argument] ...
+*ionice* [*-c* _class_] [*-n* _level_] [*-t*] _command_ [argument] ...
 
 == DESCRIPTION
 
@@ -70,21 +70,20 @@ Linux supports I/O scheduling priorities and classes since 2.6.13 with the CFQ I
 
 == EXAMPLES
 
-* # *ionice* -c 3 -p 89
-* Sets process with PID 89 as an idle I/O process.
-* # *ionice* -c 2 -n 0 bash
-* Runs 'bash' as a best-effort program with highest priority.
-* # *ionice* -p 89 91
-* Prints the class and priority of the processes with PID 89 and 91.
+* # *ionice* -c 3 -p 89 +
+Sets process with PID 89 as an idle I/O process.
+
+* # *ionice* -c 2 -n 0 bash +
+Runs 'bash' as a best-effort program with highest priority.
+
+* # *ionice* -p 89 91 +
+Prints the class and priority of the processes with PID 89 and 91.
 
 == AUTHORS
 
-....
-Jens Axboe <jens@axboe.dk>
-Karel Zak <kzak@redhat.com>
-....
+mailto:jens@axboe.dk[Jens Axboe] +
+mailto:kzak@redhat.com[Karel Zak]
 
-[[see_also]]
 == SEE ALSO
 
 *ioprio_set*(2)
