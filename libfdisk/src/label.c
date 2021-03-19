@@ -393,9 +393,19 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
  * @offset: return offset where is item
  * @size: of the item
  *
- * Locate disklabel and returns info about @n item of the label. For example
- * GPT is composed from two items, PMBR and GPT, n=0 return offset to PMBR and n=1
- * return offset to GPT. For more details see 'D' expert fdisk command.
+ * Locate disklabel and returns info about @n item of the label.
+ *
+ * For example GPT is composed from three items, PMBR and GPT, n=0 return
+ * offset to PMBR and n=1 return offset to GPT Header and n=2 returns offset to
+ * GPT array of partitions, n=3 and n=4 returns location of the backup GPT
+ * label at the end of the disk.
+ *
+ * The function returns the current in-memory situation. It's possible that a
+ * header location is modified by write operation, for example when enabled
+ * minimization (see fdisk_gpt_enable_minimize()). In this case it's better to
+ * call this function after fdisk_write_disklabel().
+ *
+ * For more details see 'D' expert fdisk command.
  *
  * Returns: 0 on success, <0 on error, 1 no more items.
  */

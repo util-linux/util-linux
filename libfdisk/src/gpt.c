@@ -1247,6 +1247,18 @@ static int gpt_locate_disklabel(struct fdisk_context *cxt, int n,
 		*offset = (uint64_t) le64_to_cpu(gpt->pheader->partition_entry_lba) *
 				     cxt->sector_size;
 		return gpt_sizeof_entries(gpt->pheader, size);
+	case 3:
+		*name = _("GPT Backup Entries");
+		gpt = self_label(cxt);
+		*offset = (uint64_t) le64_to_cpu(gpt->bheader->partition_entry_lba) *
+				     cxt->sector_size;
+		return gpt_sizeof_entries(gpt->bheader, size);
+	case 4:
+		*name = _("GPT Backup Header");
+		gpt = self_label(cxt);
+		*offset = (uint64_t) le64_to_cpu(gpt->pheader->alternative_lba) * cxt->sector_size;
+		*size = sizeof(struct gpt_header);
+		break;
 	default:
 		return 1;			/* no more chunks */
 	}
