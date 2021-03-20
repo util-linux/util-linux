@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 chfn.1 -- change your finger information
 (c) 1994 by salvatore valente <svalente@athena.mit.edu>

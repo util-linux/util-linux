@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright 2003-2006 H. Peter Anvin - All Rights Reserved
 

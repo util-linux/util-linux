@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 addpart.8 -- man page for addpart
 Copyright 2007 Karel Zak <kzak@redhat.com>

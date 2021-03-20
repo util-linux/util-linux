@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 resizepart.8 -- man page for resizepart
 Copyright 2012 Vivek Goyal <vgoyal@redhat.com>

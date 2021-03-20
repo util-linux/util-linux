@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
 May be distributed under the GNU General Public License

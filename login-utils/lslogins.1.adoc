@@ -1,3 +1,4 @@
+//po4a: entry man manual
 // Copyright 2014 Ondrej Oprala (ondrej.oprala@gmail.com)
 // May be distributed under the GNU General Public License
 = lslogins(1)

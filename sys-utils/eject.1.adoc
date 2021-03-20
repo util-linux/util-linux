@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright (C) 1994-2005 Jeff Tranter (tranter@pobox.com)
 Copyright (C) 2012 Karel Zak <kzak@redhat.com>.

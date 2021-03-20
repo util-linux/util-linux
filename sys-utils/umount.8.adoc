@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright (c) 1996 Andries Brouwer
 This page is somewhat derived from a page that was

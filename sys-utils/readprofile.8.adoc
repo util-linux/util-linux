@@ -1,3 +1,4 @@
+//po4a: entry man manual
 = readprofile(8)
 :doctype: manpage
 :man manual: System Administration

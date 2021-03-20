@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright (C) 2010 Michael Krapp
 

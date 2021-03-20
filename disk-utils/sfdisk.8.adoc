@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 sfdisk.8 -- man page for sfdisk
 Copyright (C) 2014 Karel Zak <kzak@redhat.com>

@@ -1,3 +1,4 @@
+//po4a: entry man manual
 // Rick Sladkey <jrs@world.std.com>
 // In the public domain.
 = setsid(1)

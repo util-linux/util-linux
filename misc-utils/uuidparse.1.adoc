@@ -1,3 +1,4 @@
+//po4a: entry man manual
 // Copyright (c) 2017 Sami Kerola
 // The 3-Clause BSD License
 = uuidparse(1)

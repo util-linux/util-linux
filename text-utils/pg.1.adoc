@@ -1,3 +1,4 @@
+//po4a: entry man manual
 // Copyright 2001 Gunnar Ritter
 = pg(1)
 :doctype: manpage

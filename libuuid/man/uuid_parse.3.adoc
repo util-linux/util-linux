@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
 

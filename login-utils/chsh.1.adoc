@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 chsh.1 -- change your login shell
 (c) 1994 by salvatore valente <svalente@athena.mit.edu>

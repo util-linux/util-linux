@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright 2002 Andre C. Mazzone (linuxdev@karagee.com)
 May be distributed under the GNU General Public License

@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 delpart.8 -- man page for delpart
 Copyright 2007 Karel Zak <kzak@redhat.com>

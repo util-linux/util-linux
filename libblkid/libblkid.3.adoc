@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright 2001 Andreas Dilger (adilger@turbolinux.com)
 This man page was created for libblkid.so.1.0 from e2fsprogs-1.24.

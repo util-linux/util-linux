@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright 2008 Tilman Schmidt (tilman@imap.cc)
 May be distributed under the GNU General Public License version 2 or later

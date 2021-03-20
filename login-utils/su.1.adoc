@@ -1,3 +1,4 @@
+//po4a: entry man manual
 = su(1)
 :doctype: manpage
 :man manual: User commands

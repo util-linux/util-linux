@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 cfdisk.8 -- man page for cfdisk
 Copyright 1994 Kevin E. Martin (martin@cs.unc.edu)

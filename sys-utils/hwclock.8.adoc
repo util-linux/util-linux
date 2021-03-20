@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 hwclock.8 -- man page for util-linux' hwclock
 

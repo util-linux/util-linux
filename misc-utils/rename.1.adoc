@@ -1,3 +1,4 @@
+//po4a: entry man manual
 // Written by Andries E. Brouwer (aeb@cwi.nl)
 // Placed in the public domain
 = rename(1)

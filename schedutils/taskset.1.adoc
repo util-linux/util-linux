@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 taskset(1) manpage
 Copyright (C) 2004 Robert Love

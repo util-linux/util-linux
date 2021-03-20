@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Man page for the lsns command.
 Copyright 2015 Karel Zak <kzak@redhat.com>

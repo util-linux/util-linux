@@ -1,3 +1,4 @@
+//po4a: entry man manual
 // mcookie.1 --
 // Public Domain 1995 Rickard E. Faith (faith@cs.unc.edu)
 = mcookie(1)

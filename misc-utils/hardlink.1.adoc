@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 SPDX-License-Identifier: MIT
 

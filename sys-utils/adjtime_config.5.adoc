@@ -1,3 +1,4 @@
+//po4a: entry man manual
 = adjtime_config(5)
 :doctype: manpage
 :man manual: File formats

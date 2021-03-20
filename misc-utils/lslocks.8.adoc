@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Man page for the lslocks command.
 Copyright 2012 Davidlohr Bueso <dave@gnu.org>

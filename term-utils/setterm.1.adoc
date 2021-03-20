@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright 1990 Gordon Irlam (gordoni@cs.ua.oz.au)
 Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)

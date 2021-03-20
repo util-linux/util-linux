@@ -1,3 +1,4 @@
+//po4a: entry man manual
 ////
 Copyright 1999 Andries E. Brouwer (aeb@cwi.nl)
 May be freely distributed.
