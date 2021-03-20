@@ -65,7 +65,7 @@ lsipc - show information on IPC facilities currently employed in the system
 *--notruncate*::
   Don't truncate output.
 
-*-o*, *--output* __list__****::
+*-o*, *--output* _list_::
   Specify which output columns to print. Use *--help* to get a list of all supported columns.
 
 *-b*, *--bytes*::
@@ -75,7 +75,7 @@ lsipc - show information on IPC facilities currently employed in the system
   Raw output (no columnation).
 
 *-t*, *--time*::
-  Write time information. The time of the last control operation that changed the access permissions for all facilities, the time of the last msgsnd2 and msgrcv2 operations on message queues, the time of the last *shmat*(2) and *shmdt*(2) operations on shared memory, and the time of the last *semop*(2) operation on semaphores.
+  Write time information. The time of the last control operation that changed the access permissions for all facilities, the time of the last *msgsnd*(2) and *msgrcv*(2) operations on message queues, the time of the last *shmat*(2) and *shmdt*(2) operations on shared memory, and the time of the last *semop*(2) operation on semaphores.
 
 *--time-format* _type_::
   Display dates in short, full or iso format. The default is short, this time format is designed to be space efficient and human readable.

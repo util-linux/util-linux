@@ -120,7 +120,7 @@ The command *lsblk --fs* provides an overview of filesystems, LABELs and UUIDs o
 
 Don't forget that there is no guarantee that UUIDs and labels are really unique, especially if you move, share or copy the device. Use *lsblk -o +UUID,PARTUUID* to verify that the UUIDs are really unique in your system.
 
-The recommended setup is to use tags (e.g. *UUID*=_uuid_) rather than _/dev/disk/by-{label,uuid,id,partuuid,partlabel}_ udev symlinks in the _/etc/fstab_ file. Tags are more readable, robust and portable. The mount8 command internally uses udev symlinks, so the use of symlinks in _/etc/fstab_ has no advantage over tags. For more details see *libblkid*(3).
+The recommended setup is to use tags (e.g. *UUID*=_uuid_) rather than _/dev/disk/by-{label,uuid,id,partuuid,partlabel}_ udev symlinks in the _/etc/fstab_ file. Tags are more readable, robust and portable. The *mount*(8) command internally uses udev symlinks, so the use of symlinks in _/etc/fstab_ has no advantage over tags. For more details see *libblkid*(3).
 
 The _proc_ filesystem is not associated with a special device, and when mounting it, an arbitrary keyword - for example, __proc__ - can be used instead of a device specification. (The customary choice _none_ is less fortunate: the error message `none already mounted' from *mount* can be confusing.)
 
@@ -266,7 +266,7 @@ mount --make-rprivate mountpoint
 mount --make-runbindable mountpoint
 ....
 
-mount8 *does not read* fstab5 when a *--make-** operation is requested. All necessary information has to be specified on the command line.
+*mount*(8) *does not read* *fstab*(5) when a *--make-** operation is requested. All necessary information has to be specified on the command line.
 
 Note that the Linux kernel does not allow changing multiple propagation flags with a single *mount*(2) system call, and the flags cannot be mixed with other mount options and operations.
 
@@ -330,7 +330,7 @@ Command-line options available for the *mount* command are:
   Move a subtree to some other place. See above, the subsection *The move operation*.
 
 *-n*, *--no-mtab*::
-  Mount without writing in `/etc/mtab`. This is necessary for example when `/etc` is on a read-only filesystem.
+  Mount without writing in _/etc/mtab_. This is necessary for example when _/etc_ is on a read-only filesystem.
 
 *-N*, *--namespace* _ns_::
   Perform the mount operation in the mount namespace specified by _ns_. _ns_ is either PID of process running in that namespace or special file representing that namespace. +
@@ -475,7 +475,7 @@ The following options apply to any filesystem that is being mounted (but not eve
   {nbsp} +
   Note that the kernel rejects any remount request that includes the context option, *even* when unchanged from the current context. +
   {nbsp} +
-  *Warning: the* _context_ *value might contain commas*, in which case the value has to be properly quoted, otherwise mount8 will interpret the comma as a separator between mount options. Don't forget that the shell strips off quotes and thus *double quoting is required*. For example: +
+  *Warning: the* _context_ *value might contain commas*, in which case the value has to be properly quoted, otherwise *mount* will interpret the comma as a separator between mount options. Don't forget that the shell strips off quotes and thus *double quoting is required*. For example: +
   {nbsp} +
   mount -t tmpfs none /mnt -o \ +
   {nbsp} +
@@ -605,7 +605,7 @@ The following options apply to any filesystem that is being mounted (but not eve
   All I/O to the filesystem should be done synchronously. In the case of media with a limited number of write cycles (e.g. some flash drives), *sync* may cause life-cycle shortening.
 
 *user*::
-  Allow an ordinary user to mount the filesystem. The name of the mounting user is written to the _mtab_ file (or to the private libmount file in `/run/mount` on systems without a regular _mtab_) so that this same user can unmount the filesystem again. This option implies the options *noexec*, *nosuid*, and *nodev* (unless overridden by subsequent options, as in the option line *user,exec,dev,suid*).
+  Allow an ordinary user to mount the filesystem. The name of the mounting user is written to the _mtab_ file (or to the private libmount file in _/run/mount_ on systems without a regular _mtab_) so that this same user can unmount the filesystem again. This option implies the options *noexec*, *nosuid*, and *nodev* (unless overridden by subsequent options, as in the option line *user,exec,dev,suid*).
 
 *nouser*::
   Forbid an ordinary user to mount the filesystem. This is the default; it does not imply any other options.
@@ -934,7 +934,7 @@ The following options are the same as for vfat and specifying them only makes se
 === Mount options for jfs
 
 **iocharset=**__name__::
-  Character set to use for converting from Unicode to ASCII. The default is to do no conversion. Use *iocharset=utf8* for UTF8 translations. This requires CONFIG_NLS_UTF8 to be set in the kernel _.config_ file.
+  Character set to use for converting from Unicode to ASCII. The default is to do no conversion. Use *iocharset=utf8* for UTF8 translations. This requires *CONFIG_NLS_UTF8* to be set in the kernel _.config_ file.
 
 **resize=**__value__::
   Resize the volume to _value_ blocks. JFS only supports growing a volume, not shrinking it. This option is only valid during a remount, when the volume is mounted read-write. The *resize* keyword with no value will grow the volume to the full size of the partition.
@@ -1431,7 +1431,6 @@ mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 
-*lsblk*(1),
 *mount*(2),
 *umount*(2),
 *filesystems*(5),
@@ -1443,6 +1442,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *e2label*(8),
 *findmnt*(8),
 *losetup*(8),
+*lsblk*(8),
 *mke2fs*(8),
 *mountd*(8),
 *nfsd*(8),
