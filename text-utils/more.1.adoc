@@ -38,7 +38,7 @@ Copyright (c) 1992 Rik Faith (faith@cs.unc.edu)
 ////
 = more(1)
 :doctype: manpage
-:man manual: User commands
+:man manual: User Commands
 :man source: util-linux {release-version}
 :page-layout: base
 :command: more

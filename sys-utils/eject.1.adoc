@@ -9,7 +9,7 @@ for conditions under which this file may be redistributed.
 ////
 = eject(1)
 :doctype: manpage
-:man manual: User commands
+:man manual: User Commands
 :man source: util-linux {release-version}
 :page-layout: base
 :command: eject

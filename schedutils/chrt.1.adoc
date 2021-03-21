@@ -25,7 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ////
 = chrt(1)
 :doctype: manpage
-:man manual: User commands
+:man manual: User Commands
 :man source: util-linux {release-version}
 :page-layout: base
 :command: chrt

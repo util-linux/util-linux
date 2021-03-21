@@ -3,7 +3,7 @@
 // May be distributed under the GNU General Public License
 = lslogins(1)
 :doctype: manpage
-:man manual: User commands
+:man manual: User Commands
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lslogins

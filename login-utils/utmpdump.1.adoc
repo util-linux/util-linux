@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 ////
 = utmpdump(1)
 :doctype: manpage
-:man manual: User commands
+:man manual: User Commands
 :man source: util-linux {release-version}
 :page-layout: base
 :command: utmpdump
