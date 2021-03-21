@@ -54,7 +54,7 @@ Rather than using raw devices applications should prefer open2 devices, such as 
 
 == BUGS
 
-The Linux dd1 command should be used without the *bs=* option, or the blocksize needs to be a multiple of the sector size of the device (512 bytes usually), otherwise it will fail with "Invalid Argument" messages (*EINVAL*).
+The Linux *dd*(1) command should be used without the *bs=* option, or the blocksize needs to be a multiple of the sector size of the device (512 bytes usually), otherwise it will fail with "Invalid Argument" messages (*EINVAL*).
 
 Raw I/O devices do not maintain cache coherency with the Linux block device buffer cache. If you use raw I/O to overwrite data already in the buffer cache, the buffer cache will no longer correspond to the contents of the actual storage device underneath. This is deliberate, but is regarded as either a bug or a feature, depending on who you ask!
 
