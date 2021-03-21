@@ -100,7 +100,7 @@ Options are also taken from the environment variable *MORE* (make sure to preced
 
 == COMMANDS
 
-Interactive commands for *more* are based on vi1. Some commands may be preceded by a decimal number, called k in the descriptions below. In the following descriptions, *^X* means *control-X*.
+Interactive commands for *more* are based on *vi*(1). Some commands may be preceded by a decimal number, called k in the descriptions below. In the following descriptions, *^X* means *control-X*.
 
 ____
 *h* or *?*::
@@ -195,7 +195,6 @@ Modified by Geoff Peck, UCB to add underlining, single spacing.
 
 Modified by John Foderaro, UCB to add -c and MORE environment variable.
 
-[[see_also]]
 == SEE ALSO
 
 *less*(1),

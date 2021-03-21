@@ -54,7 +54,7 @@ Please see the filesystem-specific checker manual pages for further details.
 == OPTIONS
 
 *-l*::
-  Create an exclusive *flock*(2) lock file (_/run/fsck/<diskname>.lock_) for whole-disk device. This option can be used with one device only (this means that *-A* and *-l* are mutually exclusive). This option is recommended when more *fsck* instances are executed in the same time. The option is ignored when used for multiple devices or for non-rotating disks. *fsck* does not lock underlying devices when executed to check stacked devices (e.g. MD or DM) NDASH this feature is not implemented yet.
+  Create an exclusive *flock*(2) lock file (_/run/fsck/<diskname>.lock_) for whole-disk device. This option can be used with one device only (this means that *-A* and *-l* are mutually exclusive). This option is recommended when more *fsck* instances are executed in the same time. The option is ignored when used for multiple devices or for non-rotating disks. *fsck* does not lock underlying devices when executed to check stacked devices (e.g. MD or DM) - this feature is not implemented yet.
 
 *-r* [****__fd__]::
   Report certain statistics for each fsck when it completes. These statistics include the exit status, the maximum run set size (in kilobytes), the elapsed all-clock time and the user and system CPU time used by the fsck run. For example: +

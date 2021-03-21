@@ -88,7 +88,7 @@ Presently, Linux allows 32 swap areas. The areas in use can be seen in the file 
 
 *mkswap* refuses areas smaller than 10 pages.
 
-If you don't know the page size that your machine uses, you may be able to look it up with "cat /proc/cpuinfo" (or you may not NDASH the contents of this file depend on architecture and kernel version).
+If you don't know the page size that your machine uses, you may be able to look it up with "cat /proc/cpuinfo" (or you may not - the contents of this file depend on architecture and kernel version).
 
 To set up a swap file, it is necessary to create that file before initializing it with *mkswap*, e.g. using a command like
 
