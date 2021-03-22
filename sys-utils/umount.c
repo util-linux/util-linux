@@ -299,12 +299,19 @@ static int umount_one_if_mounted(struct libmnt_context *cxt, const char *spec)
 static int umount_do_recurse(struct libmnt_context *cxt,
 		struct libmnt_table *tb, struct libmnt_fs *fs)
 {
-	struct libmnt_fs *child;
+	struct libmnt_fs *child, *over = NULL;
 	struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
 	int rc;
 
 	if (!itr)
 		err(MNT_EX_SYSERR, _("libmount iterator allocation failed"));
+
+	/* first try overmount */
+	if (mnt_table_over_fs(tb, fs, &over) == 0 && over) {
+		rc = umount_do_recurse(cxt, tb, over);
+		if (rc != MNT_EX_SUCCESS)
+			goto done;
+	}
 
 	/* umount all children */
 	for (;;) {
@@ -316,6 +323,9 @@ static int umount_do_recurse(struct libmnt_context *cxt,
 			goto done;
 		} else if (rc == 1)
 			break;		/* no more children */
+
+		if (over && child == over)
+			continue;
 
 		rc = umount_do_recurse(cxt, tb, child);
 		if (rc != MNT_EX_SUCCESS)
