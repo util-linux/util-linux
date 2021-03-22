@@ -154,6 +154,9 @@ if [ -z "$top_srcdir" ]; then
 fi
 if [ -z "$top_builddir" ]; then
 	top_builddir="$TS_TOPDIR/.."
+	if [ -e "$top_builddir/build/meson.conf" ]; then
+		top_builddir="$TS_TOPDIR/../build"
+	fi
 fi
 
 OPTS="$OPTS --srcdir=$top_srcdir --builddir=$top_builddir"
@@ -171,7 +174,9 @@ if [ -z "$has_asan_opt" ]; then
 fi
 
 if [ -z "$has_ubsan_opt" ]; then
-	ubsan=$(awk '/^UBSAN_LDFLAGS/ { print $3 }' $top_builddir/Makefile)
+	if [ -e "$top_builddir/Makefile" ]; then
+		ubsan=$(awk '/^UBSAN_LDFLAGS/ { print $3 }' $top_builddir/Makefile)
+	fi
 	if [ -n "$ubsan" ]; then
 		OPTS="$OPTS --memcheck-ubsan"
 	fi
