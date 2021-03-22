@@ -970,6 +970,14 @@ static int match_func(struct libmnt_fs *fs,
 	if ((flags & FL_PSEUDO) && !mnt_fs_is_pseudofs(fs))
 	    return rc;
 
+	if ((flags & FL_SHADOWED)) {
+		struct libmnt_table *tb = NULL;
+
+		mnt_fs_get_table(fs, &tb);
+		if (tb && mnt_table_over_fs(tb, fs, NULL) != 0)
+			return rc;
+	}
+
 	return !rc;
 }
 
@@ -1254,6 +1262,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --output-all       output all available columns\n"), out);
 	fputs(_(" -P, --pairs            use key=\"value\" output format\n"), out);
 	fputs(_("     --pseudo           print only pseudo-filesystems\n"), out);
+	fputs(_("     --shadowed         print only filesystems over-mounted by another filesystem\n"), out);
 	fputs(_(" -R, --submounts        print all submounts for the matching filesystems\n"), out);
 	fputs(_(" -r, --raw              use raw output format\n"), out);
 	fputs(_("     --real             print only real filesystems\n"), out);
@@ -1304,7 +1313,8 @@ int main(int argc, char *argv[])
 		FINDMNT_OPT_OUTPUT_ALL,
 		FINDMNT_OPT_PSEUDO,
 		FINDMNT_OPT_REAL,
-		FINDMNT_OPT_VFS_ALL
+		FINDMNT_OPT_VFS_ALL,
+		FINDMNT_OPT_SHADOWED
 	};
 
 	static const struct option longopts[] = {
@@ -1349,6 +1359,7 @@ int main(int argc, char *argv[])
 		{ "real",	    no_argument,       NULL, FINDMNT_OPT_REAL	 },
 		{ "pseudo",	    no_argument,       NULL, FINDMNT_OPT_PSEUDO	 },
 		{ "vfs-all",	    no_argument,       NULL, FINDMNT_OPT_VFS_ALL },
+		{ "shadowed",       no_argument,       NULL, FINDMNT_OPT_SHADOWED },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -1525,6 +1536,9 @@ int main(int argc, char *argv[])
 			break;
 		case FINDMNT_OPT_VFS_ALL:
 			flags |= FL_VFS_ALL;
+			break;
+		case FINDMNT_OPT_SHADOWED:
+			flags |= FL_SHADOWED;
 			break;
 
 		case 'h':
