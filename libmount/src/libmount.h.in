@@ -570,6 +570,8 @@ extern int mnt_table_move_fs(struct libmnt_table *src, struct libmnt_table *dst,
 extern int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_first_fs(struct libmnt_table *tb, struct libmnt_fs **fs);
 extern int mnt_table_last_fs(struct libmnt_table *tb, struct libmnt_fs **fs);
+extern int mnt_table_over_fs(struct libmnt_table *tb, struct libmnt_fs *parent,
+                             struct libmnt_fs **child);
 extern int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 			     struct libmnt_fs **fs);
 extern int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,

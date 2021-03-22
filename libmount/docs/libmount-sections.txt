@@ -365,6 +365,7 @@ mnt_table_last_fs
 mnt_table_move_fs
 mnt_table_next_child_fs
 mnt_table_next_fs
+mnt_table_over_fs
 mnt_table_parse_dir
 mnt_table_parse_file
 mnt_table_parse_fstab
