@@ -39,28 +39,28 @@ For each line of output, *namei* uses the following characters to identify the f
 == OPTIONS
 
 *-l*, *--long*::
-  Use the long listing format (same as *-m -o -v*).
+Use the long listing format (same as *-m -o -v*).
 
 *-m*, *--modes*::
-  Show the mode bits of each file type in the style of *ls*(1), for example 'rwxr-xr-x'.
+Show the mode bits of each file type in the style of *ls*(1), for example 'rwxr-xr-x'.
 
 *-n*, *--nosymlinks*::
-  Don't follow symlinks.
+Don't follow symlinks.
 
 *-o*, *--owners*::
-  Show owner and group name of each file.
+Show owner and group name of each file.
 
 *-v*, *--vertical*::
-  Vertically align the modes and owners.
+Vertically align the modes and owners.
 
 *-x*, *--mountpoints*::
-  Show mountpoint directories with a 'D' rather than a 'd'.
+Show mountpoint directories with a 'D' rather than a 'd'.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == BUGS
 
@@ -68,7 +68,7 @@ To be discovered.
 
 == AUTHORS
 
-The original *namei* program was written by Roger mailto:rogers@amadeus.wr.tek.com[Roger Southwick].
+The original *namei* program was written by mailto:rogers@amadeus.wr.tek.com[Roger Southwick].
 
 The program was rewritten by Karel Zak mailto:kzak@redhat.com[Karel Zak].
 

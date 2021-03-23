@@ -38,67 +38,67 @@ Note that by default *wipefs* does not erase nested partition tables on non-whol
 == OPTIONS
 
 *-a*, *--all*::
-  Erase all available signatures. The set of erased signatures can be restricted with the *-t* option.
+Erase all available signatures. The set of erased signatures can be restricted with the *-t* option.
 
 *-b*, *--backup*::
-  Create a signature backup to the file _$HOME/wipefs-<devname>-<offset>.bak_. For more details see the *EXAMPLE* section.
+Create a signature backup to the file _$HOME/wipefs-<devname>-<offset>.bak_. For more details see the *EXAMPLE* section.
 
 *-f*, *--force*::
-  Force erasure, even if the filesystem is mounted. This is required in order to erase a partition-table signature on a block device.
+Force erasure, even if the filesystem is mounted. This is required in order to erase a partition-table signature on a block device.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-J*, *--json*::
-  Use JSON output format.
+Use JSON output format.
 
 *--lock*[=_mode_]::
-  Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.
+Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.
 
 *-i*, *--noheadings*::
-  Do not print a header line.
+Do not print a header line.
 
 *-O*, *--output* _list_::
-  Specify which output columns to print. Use *--help* to get a list of all supported columns.
+Specify which output columns to print. Use *--help* to get a list of all supported columns.
 
 *-n*, *--no-act*::
-  Causes everything to be done except for the write() call.
+Causes everything to be done except for the *write*(2) call.
 
 *-o*, *--offset* _offset_::
-  Specify the location (in bytes) of the signature which should be erased from the device. The _offset_ number may include a "0x" prefix; then the number will be interpreted as a hex value. It is possible to specify multiple *-o* options. +
-  {nbsp} +
-  The _offset_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB"), or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
+Specify the location (in bytes) of the signature which should be erased from the device. The _offset_ number may include a "0x" prefix; then the number will be interpreted as a hex value. It is possible to specify multiple *-o* options.
++
+The _offset_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB"), or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-p*, *--parsable*::
-  Print out in parsable instead of printable format. Encode all potentially unsafe characters of a string to the corresponding hex value prefixed by '\x'.
+Print out in parsable instead of printable format. Encode all potentially unsafe characters of a string to the corresponding hex value prefixed by '\x'.
 
 *-q*, *--quiet*::
-  Suppress any messages after a successful signature wipe.
+Suppress any messages after a successful signature wipe.
 
 *-t*, *--types* _list_::
-  Limit the set of printed or erased signatures. More than one type may be specified in a comma-separated list. The list or individual types can be prefixed with 'no' to specify the types on which no action should be taken. For more details see *mount*(8).
+Limit the set of printed or erased signatures. More than one type may be specified in a comma-separated list. The list or individual types can be prefixed with 'no' to specify the types on which no action should be taken. For more details see *mount*(8).
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 == ENVIRONMENT
 
 LIBBLKID_DEBUG=all::
-  enables *libblkid*(3) debug output.
+enables *libblkid*(3) debug output.
 
 LOCK_BLOCK_DEVICE=<mode>::
-  use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
+use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
 
 == EXAMPLES
 
 *wipefs /dev/sda**::
-  Prints information about sda and all partitions on sda.
+Prints information about sda and all partitions on sda.
 
 *wipefs --all --backup /dev/sdb*::
-  Erases all signatures from the device _/dev/sdb_ and creates a signature backup file _~/wipefs-sdb-<offset>.bak_ for each signature.
+Erases all signatures from the device _/dev/sdb_ and creates a signature backup file _~/wipefs-sdb-<offset>.bak_ for each signature.
 
 *dd if=~/wipefs-sdb-0x00000438.bak of=/dev/sdb seek=$((0x00000438)) bs=1 conv=notrunc*::
-  Restores an ext2 signature from the backup file _~/wipefs-sdb-0x00000438.bak_.
+Restores an ext2 signature from the backup file _~/wipefs-sdb-0x00000438.bak_.
 
 == AUTHORS
 

@@ -29,31 +29,31 @@ The third type of UUID is generated with the *--md5* or *--sha1* options, follow
 == OPTIONS
 
 *-r*, *--random*::
-  Generate a random-based UUID. This method creates a UUID consisting mostly of random bits. It requires that the operating system has a high quality random number generator, such as _/dev/random_.
+Generate a random-based UUID. This method creates a UUID consisting mostly of random bits. It requires that the operating system has a high quality random number generator, such as _/dev/random_.
 
 *-t*, *--time*::
-  Generate a time-based UUID. This method creates a UUID based on the system clock plus the system's ethernet hardware address, if present.
+Generate a time-based UUID. This method creates a UUID based on the system clock plus the system's ethernet hardware address, if present.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-m*, *--md5*::
-  Use MD5 as the hash algorithm.
+Use MD5 as the hash algorithm.
 
 *-s*, *--sha1*::
-  Use SHA1 as the hash algorithm.
+Use SHA1 as the hash algorithm.
 
 *-n*, *--namespace* _namespace_::
-  Generate the hash with the _namespace_ prefix. The _namespace_ is UUID, or '@ns' where "ns" is well-known predefined UUID addressed by namespace name (see above).
+Generate the hash with the _namespace_ prefix. The _namespace_ is UUID, or '@ns' where "ns" is well-known predefined UUID addressed by namespace name (see above).
 
 *-N*, *--name* _name_::
-  Generate the hash of the _name_.
+Generate the hash of the _name_.
 
 *-x*, *--hex*::
-  Interpret name _name_ as a hexadecimal string.
+Interpret name _name_ as a hexadecimal string.
 
 == CONFORMING TO
 
@@ -69,7 +69,7 @@ uuidgen --sha1 --namespace @dns --name "www.example.com"
 
 == SEE ALSO
 
-*libuuid*(3), +
+*libuuid*(3),
 link:https://tools.ietf.org/html/rfc4122[RFC 4122]
 
 include::../man-common/bugreports.adoc[]

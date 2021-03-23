@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: getopt
+:plus: +
 
 == NAME
 
@@ -29,37 +30,38 @@ Traditional implementations of *getopt*(1) are unable to cope with whitespace an
 == OPTIONS
 
 *-a*, *--alternative*::
-  Allow long options to start with a single '*-*'.
+Allow long options to start with a single '*-*'.
 
 *-h*, *--help*::
-  Display help text and exit. No other output is generated.
+Display help text and exit. No other output is generated.
 
 *-l*, *--longoptions* _longopts_::
-  The long (multi-character) options to be recognized. More than one option name may be specified at once, by separating the names with commas. This option may be given more than once, the _longopts_ are cumulative. Each long option name in _longopts_ may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument.
+The long (multi-character) options to be recognized. More than one option name may be specified at once, by separating the names with commas. This option may be given more than once, the _longopts_ are cumulative. Each long option name in _longopts_ may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument.
 
 *-n*, *--name* _progname_::
-  The name that will be used by the *getopt*(3) routines when it reports errors. Note that errors of *getopt*(1) are still reported as coming from getopt.
+The name that will be used by the *getopt*(3) routines when it reports errors. Note that errors of *getopt*(1) are still reported as coming from getopt.
 
 *-o*, *--options* _shortopts_::
-  The short (one-character) options to be recognized. If this option is not found, the first parameter of *getopt* that does not start with a '*-*' (and is not an option argument) is used as the short options string. Each short option character in _shortopts_ may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument. The first character of shortopts may be '*+*' or '*-*' to influence the way options are parsed and output is generated (see section *SCANNING MODES* for details).
+The short (one-character) options to be recognized. If this option is not found, the first parameter of *getopt* that does not start with a '*-*' (and is not an option argument) is used as the short options string. Each short option character in _shortopts_ may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument. The first character of shortopts may be '*{plus}*' or '*-*' to influence the way options are parsed and output is generated (see section *SCANNING MODES* for details).
+//TRANSLATORS: Keep {plus} untranslated.
 
 *-q*, *--quiet*::
-  Disable error reporting by *getopt*(3).
+Disable error reporting by *getopt*(3).
 
 *-Q*, *--quiet-output*::
-  Do not generate normal output. Errors are still reported by *getopt*(3), unless you also use *-q*.
+Do not generate normal output. Errors are still reported by *getopt*(3), unless you also use *-q*.
 
 *-s*, *--shell* _shell_::
-  Set quoting conventions to those of _shell_. If the *-s* option is not given, the BASH conventions are used. Valid arguments are currently '*sh*' '*bash*', '*csh*', and '*tcsh*'.
+Set quoting conventions to those of _shell_. If the *-s* option is not given, the BASH conventions are used. Valid arguments are currently '*sh*' '*bash*', '*csh*', and '*tcsh*'.
 
 *-T*, *--test*::
-  Test if your *getopt*(1) is this enhanced version or an old version. This generates no output, and sets the error status to 4. Other implementations of getopt1, and this version if the environment variable *GETOPT_COMPATIBLE* is set, will return '*--*' and error status 0.
+Test if your *getopt*(1) is this enhanced version or an old version. This generates no output, and sets the error status to 4. Other implementations of *getopt*(1), and this version if the environment variable *GETOPT_COMPATIBLE* is set, will return '*--*' and error status 0.
 
 *-u*, *--unquoted*::
-  Do not quote the output. Note that whitespace and special (shell-dependent) characters can cause havoc in this mode (like they do with other getopt1 implementations).
+Do not quote the output. Note that whitespace and special (shell-dependent) characters can cause havoc in this mode (like they do with other *getopt*(1) implementations).
 
 *-V*, *--version*::
-  Display version information and exit. No other output is generated.
+Display version information and exit. No other output is generated.
 
 == PARSING
 
@@ -73,7 +75,8 @@ It is possible to specify several short options after one '*-*', as long as all 
 
 A long option normally begins with '*--*' followed by the long option name. If the option has a required argument, it may be written directly after the long option name, separated by '*=*', or as the next argument (i.e., separated by whitespace on the command line). If the option has an optional argument, it must be written directly after the long option name, separated by '*=*', if present (if you add the '*=*' but nothing behind it, it is interpreted as if no argument was present; this is a slight bug, see the *BUGS*). Long options may be abbreviated, as long as the abbreviation is not ambiguous.
 
-Each parameter not starting with a '*-*', and not a required argument of a previous option, is a non-option parameter. Each parameter after a '*--*' parameter is always interpreted as a non-option parameter. If the environment variable *POSIXLY_CORRECT* is set, or if the short option string started with a '*+*', all remaining parameters are interpreted as non-option parameters as soon as the first non-option parameter is found.
+Each parameter not starting with a '*-*', and not a required argument of a previous option, is a non-option parameter. Each parameter after a '*--*' parameter is always interpreted as a non-option parameter. If the environment variable *POSIXLY_CORRECT* is set, or if the short option string started with a '*{plus}*', all remaining parameters are interpreted as non-option parameters as soon as the first non-option parameter is found.
+//TRANSLATORS: Keep {plus} untranslated.
 
 == OUTPUT
 
@@ -87,7 +90,8 @@ If several short options were specified after a single '*-*', each will be prese
 
 For a long option, '*--*' and the full option name are generated as one parameter. This is done regardless whether the option was abbreviated or specified with a single '*-*' in the input. Arguments are handled as with short options.
 
-Normally, no non-option parameters output is generated until all options and their arguments have been generated. Then '*--*' is generated as a single parameter, and after it the non-option parameters in the order they were found, each as a separate parameter. Only if the first character of the short options string was a '*-*', non-option parameter output is generated at the place they are found in the input (this is not supported if the first format of the *SYNOPSIS* is used; in that case all preceding occurrences of '*-*' and '*+*' are ignored).
+Normally, no non-option parameters output is generated until all options and their arguments have been generated. Then '*--*' is generated as a single parameter, and after it the non-option parameters in the order they were found, each as a separate parameter. Only if the first character of the short options string was a '*-*', non-option parameter output is generated at the place they are found in the input (this is not supported if the first format of the *SYNOPSIS* is used; in that case all preceding occurrences of '*-*' and '*{plus}*' are ignored).
+//TRANSLATORS: Keep {plus} untranslated.
 
 == QUOTING
 
@@ -99,9 +103,11 @@ Different shells use different quoting conventions. You can use the '*-s*' optio
 
 == SCANNING MODES
 
-The first character of the short options string may be a '*-*' or a '*+*' to indicate a special scanning mode. If the first calling form in the *SYNOPSIS* is used they are ignored; the environment variable *POSIXLY_CORRECT* is still examined, though.
+The first character of the short options string may be a '*-*' or a '*{plus}*' to indicate a special scanning mode. If the first calling form in the *SYNOPSIS* is used they are ignored; the environment variable *POSIXLY_CORRECT* is still examined, though.
+//TRANSLATORS: Keep {plus} untranslated.
 
-If the first character is '*+*', or if the environment variable *POSIXLY_CORRECT* is set, parsing stops as soon as the first non-option parameter (i.e., a parameter that does not start with a '*-*') is found that is not an option argument. The remaining parameters are all interpreted as non-option parameters.
+If the first character is '*{plus}*', or if the environment variable *POSIXLY_CORRECT* is set, parsing stops as soon as the first non-option parameter (i.e., a parameter that does not start with a '*-*') is found that is not an option argument. The remaining parameters are all interpreted as non-option parameters.
+//TRANSLATORS: Keep {plus} untranslated.
 
 If the first character is a '*-*', non-option parameters are outputted at the place where they are found; in normal operation, they are all collected at the end of output after a '*--*' parameter has been generated. Note that this '*--*' parameter is still generated, but it will always be the last parameter in this mode.
 
@@ -109,11 +115,13 @@ If the first character is a '*-*', non-option parameters are outputted at the pl
 
 This version of *getopt*(1) is written to be as compatible as possible to other versions. Usually you can just replace them with this version without any modifications, and with some advantages.
 
-If the first character of the first parameter of getopt is not a '*-*', *getopt* goes into compatibility mode. It will interpret its first parameter as the string of short options, and all other arguments will be parsed. It will still do parameter shuffling (i.e., all non-option parameters are output at the end), unless the environment variable *POSIXLY_CORRECT* is set, in which case, *getopt* will prepend a '*+*' before short options automatically.
+If the first character of the first parameter of getopt is not a '*-*', *getopt* goes into compatibility mode. It will interpret its first parameter as the string of short options, and all other arguments will be parsed. It will still do parameter shuffling (i.e., all non-option parameters are output at the end), unless the environment variable *POSIXLY_CORRECT* is set, in which case, *getopt* will prepend a '*{plus}*' before short options automatically.
+//TRANSLATORS: Keep {plus} untranslated.
 
 The environment variable *GETOPT_COMPATIBLE* forces *getopt* into compatibility mode. Setting both this environment variable and *POSIXLY_CORRECT* offers 100% compatibility for 'difficult' programs. Usually, though, neither is needed.
 
-In compatibility mode, leading '*-*' and '*+*' characters in the short options string are ignored.
+In compatibility mode, leading '*-*' and '*{plus}*' characters in the short options string are ignored.
+//TRANSLATORS: Keep {plus} untranslated.
 
 == RETURN CODES
 
@@ -127,10 +135,10 @@ Example scripts for (ba)sh and (t)csh are provided with the *getopt*(1) distribu
 == ENVIRONMENT
 
 *POSIXLY_CORRECT*::
-  This environment variable is examined by the *getopt*(3) routines. If it is set, parsing stops as soon as a parameter is found that is not an option or an option argument. All remaining parameters are also interpreted as non-option parameters, regardless whether they start with a '*-*'.
+This environment variable is examined by the *getopt*(3) routines. If it is set, parsing stops as soon as a parameter is found that is not an option or an option argument. All remaining parameters are also interpreted as non-option parameters, regardless whether they start with a '*-*'.
 
 *GETOPT_COMPATIBLE*::
-  Forces *getopt* to use the first calling format as specified in the *SYNOPSIS*.
+Forces *getopt* to use the first calling format as specified in the *SYNOPSIS*.
 
 == BUGS
 

@@ -10,6 +10,7 @@ This file may be copied under the terms of the GNU Public License.
 :man source: util-linux {release-version}
 :page-layout: base
 :command: fincore
+:plus: +
 
 == NAME
 
@@ -28,25 +29,26 @@ The default output is subject to change. So whenever possible, you should avoid 
 == OPTIONS
 
 *-n*, *--noheadings*::
-  Do not print a header line in status output.
+Do not print a header line in status output.
 
 *-b*, *--bytes*::
-  Print the SIZE column in bytes rather than in a human-readable format.
+Print the SIZE column in bytes rather than in a human-readable format.
 
 *-o*, *--output* _list_::
-  Define output columns. See the *--help* output to get a list of the currently supported columns. The default list of columns may be extended if _list_ is specified in the format _+list_.
+Define output columns. See the *--help* output to get a list of the currently supported columns. The default list of columns may be extended if _list_ is specified in the format _{plus}list_.
+//TRANSLATORS: Keep {plus} untranslated.
 
 *-r*, *--raw*::
-  Produce output in raw format. All potentially unsafe characters are hex-escaped (BSOLx<code>).
+Produce output in raw format. All potentially unsafe characters are hex-escaped (\x<code>).
 
 *-J*, *--json*::
-  Use JSON output format.
+Use JSON output format.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == AUTHORS
 

@@ -57,39 +57,39 @@ If _file_ is not specified, the file _/usr/share/dict/words_ is used, only alpha
 == OPTIONS
 
 *-a*, *--alternative*::
-  Use the alternative dictionary file.
+Use the alternative dictionary file.
 
 *-d*, *--alphanum*::
-  Use normal dictionary character set and order, i.e., only blanks and alphanumeric characters are compared. This is on by default if no file is specified. +
-  {nbsp} +
-  Note that blanks have been added to dictionary character set for compatibility with *sort -d* command since version 2.28.
+Use normal dictionary character set and order, i.e., only blanks and alphanumeric characters are compared. This is on by default if no file is specified.
++
+Note that blanks have been added to dictionary character set for compatibility with *sort -d* command since version 2.28.
 
 *-f*, *--ignore-case*::
-  Ignore the case of alphabetic characters. This is on by default if no file is specified.
+Ignore the case of alphabetic characters. This is on by default if no file is specified.
 
 *-t*, *--terminate* _character_::
-  Specify a string termination character, i.e., only the characters in _string_ up to and including the first occurrence of _character_ are compared.
+Specify a string termination character, i.e., only the characters in _string_ up to and including the first occurrence of _character_ are compared.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 The *look* utility exits 0 if one or more lines were found and displayed, 1 if no lines were found, and >1 if an error occurred.
 
 == ENVIRONMENT
 
 *WORDLIST*::
-  Path to a dictionary file. The environment variable has greater priority than the dictionary path defined in FILES segment.
+Path to a dictionary file. The environment variable has greater priority than the dictionary path defined in FILES segment.
 
 == FILES
 
 _/usr/share/dict/words_::
-  the dictionary
+the dictionary
 
 _/usr/share/dict/web2_::
-  the alternative dictionary
+the alternative dictionary
 
 == HISTORY
 

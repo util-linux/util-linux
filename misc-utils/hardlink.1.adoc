@@ -27,49 +27,49 @@ hardlink - link multiple copies of a file
 == OPTIONS
 
 *-h*, *--help*::
-  print quick usage details to the screen.
+print quick usage details to the screen.
 
 *-v*, *--verbose*::
-  More verbose output. If specified once, every hardlinked file is displayed, if specified twice, it also shows every comparison.
+More verbose output. If specified once, every hardlinked file is displayed, if specified twice, it also shows every comparison.
 
 *-q*, *--quiet*::
-  Quiet mode, don't print anything.
+Quiet mode, don't print anything.
 
 *-n*, *--dry-run*::
-  Do not act, just print what would happen
+Do not act, just print what would happen.
 
 *-f*, *--respect-name*::
-  Only try to link files with the same (basename). It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by others hardlink implementations.
+Only try to link files with the same (basename). It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by others *hardlink* implementations.
 
 *-p*, *--ignore-mode*::
-  Link/compare files even if their mode is different. This may be a bit unpredictable.
+Link/compare files even if their mode is different. This may be a bit unpredictable.
 
 *-o*, *--ignore-owner*::
-  Link/compare files even if their owner (user and group) is different. It is not predictable.
+Link/compare files even if their owner (user and group) is different. It is not predictable.
 
 *-t*, *--ignore-time*::
-  Link/compare files even if their time of modification is different. You almost always want this.
+Link/compare files even if their time of modification is different. You almost always want this.
 
 *-X*, *--respect-xattrs*::
-  Only try to link files with the same extended attributes.
+Only try to link files with the same extended attributes.
 
 *-m*, *--maximize*::
-  Among equal files, keep the file with the highest link count.
+Among equal files, keep the file with the highest link count.
 
 *-M*, *--minimize*::
-  Among equal files, keep the file with the lowest link count.
+Among equal files, keep the file with the lowest link count.
 
 *-O*, *--keep-oldest*::
-  Among equal files, keep the oldest file (least recent modification time). By default, the newest file is kept. If *--maximize* or *--minimize* is specified, the link count has a higher precedence than the time of modification.
+Among equal files, keep the oldest file (least recent modification time). By default, the newest file is kept. If *--maximize* or *--minimize* is specified, the link count has a higher precedence than the time of modification.
 
 *-x*, *--exclude* _regex_::
-  A regular expression which excludes files from being compared and linked.
+A regular expression which excludes files from being compared and linked.
 
 *-i*, *--include* _regex_::
-  A regular expression to include files. If the option *--exclude* has been given, this option re-includes files which would otherwise be excluded. If the option is used without *--exclude*, only files matched by the pattern are included.
+A regular expression to include files. If the option *--exclude* has been given, this option re-includes files which would otherwise be excluded. If the option is used without *--exclude*, only files matched by the pattern are included.
 
 *-s*, *--minimum-size* _size_::
-  The minimum size to consider. By default this is 1, so empty files will not be linked. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
+The minimum size to consider. By default this is 1, so empty files will not be linked. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
 
 == ARGUMENTS
 

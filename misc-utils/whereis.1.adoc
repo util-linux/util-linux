@@ -66,42 +66,42 @@ ____
 *whereis -m ls -M /usr/share/man/man1 -f cal*
 ____
 
-searches for "ls" man pages in all default paths, but for "cal" in the _/usr/share/man/man1_ directory only.
+searches for "*ls*" man pages in all default paths, but for "cal" in the _/usr/share/man/man1_ directory only.
 
 == OPTIONS
 
 *-b*::
-  Search for binaries.
+Search for binaries.
 
 *-m*::
-  Search for manuals.
+Search for manuals.
 
 *-s*::
-  Search for sources.
+Search for sources.
 
 *-u*::
-  Only show the command names that have unusual entries. A command is said to be unusual if it does not have just one entry of each explicitly requested type. Thus '*whereis -m -u **' asks for those files in the current directory which have no documentation file, or more than one.
+Only show the command names that have unusual entries. A command is said to be unusual if it does not have just one entry of each explicitly requested type. Thus '*whereis -m -u **' asks for those files in the current directory which have no documentation file, or more than one.
 
 *-B* _list_::
-  Limit the places where *whereis* searches for binaries, by a whitespace-separated list of directories.
+Limit the places where *whereis* searches for binaries, by a whitespace-separated list of directories.
 
 *-M* _list_::
-  Limit the places where *whereis* searches for manuals and documentation in Info format, by a whitespace-separated list of directories.
+Limit the places where *whereis* searches for manuals and documentation in Info format, by a whitespace-separated list of directories.
 
 *-S* _list_::
-  Limit the places where *whereis* searches for sources, by a whitespace-separated list of directories.
+Limit the places where *whereis* searches for sources, by a whitespace-separated list of directories.
 
 *-f*::
-  Terminates the directory list and signals the start of filenames. It _must_ be used when any of the *-B*, *-M*, or *-S* options is used.
+Terminates the directory list and signals the start of filenames. It _must_ be used when any of the *-B*, *-M*, or *-S* options is used.
 
 *-l*::
-  Output the list of effective lookup paths that *whereis* is using. When none of *-B*, *-M*, or *-S* is specified, the option will output the hard-coded paths that the command was able to find on the system.
+Output the list of effective lookup paths that *whereis* is using. When none of *-B*, *-M*, or *-S* is specified, the option will output the hard-coded paths that the command was able to find on the system.
 
 *-h*, *--help*::
-    Display help text and exit.
+Display help text and exit.
     
 *-V*, *--version*::
-    Display version information and exit.
+Display version information and exit.
 
 == FILE SEARCH PATHS
 
@@ -110,7 +110,7 @@ By default *whereis* tries to find files from hard-coded paths, which are define
 == ENVIRONMENT
 
 WHEREIS_DEBUG=all::
-  enables debug output.
+enables debug output.
 
 == EXAMPLES
 

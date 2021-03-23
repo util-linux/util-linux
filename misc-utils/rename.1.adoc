@@ -23,25 +23,25 @@ rename - rename files
 == OPTIONS
 
 *-s*, *--symlink*::
-  Do not rename a symlink but its target.
+Do not rename a symlink but its target.
 
 *-v*, *--verbose*::
-  Show which files were renamed, if any.
+Show which files were renamed, if any.
 
 *-n*, *--no-act*::
-  Do not make any changes; add *--verbose* to see what would be made.
+Do not make any changes; add *--verbose* to see what would be made.
 
 *-o*, *--no-overwrite*::
-  Do not overwrite existing files. When *--symlink* is active, do not overwrite symlinks pointing to existing targets.
+Do not overwrite existing files. When *--symlink* is active, do not overwrite symlinks pointing to existing targets.
 
 *-i*, *--interactive*::
-  Ask before overwriting existing files.
+Ask before overwriting existing files.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == WARNING
 
@@ -58,19 +58,19 @@ sh -c 'stty -icanon min 1; "$0" "$@"; stty icanon' rename -i from to files
 == EXIT STATUS
 
 *0*::
-  all requested rename operations were successful
+all requested rename operations were successful
 
 *1*::
-  all rename operations failed
+all rename operations failed
 
 *2*::
-  some rename operations failed
+some rename operations failed
 
 *4*::
-  nothing was renamed
+nothing was renamed
 
 *64*::
-  unanticipated error occurred
+unanticipated error occurred
 
 == EXAMPLES
 

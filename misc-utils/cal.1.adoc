@@ -42,6 +42,7 @@ SUCH DAMAGE.
 :man source: util-linux {release-version}
 :page-layout: base
 :command: cal
+:plus: +
 
 == NAME
 
@@ -66,79 +67,80 @@ Optionally, either the proleptic Gregorian calendar or the Julian calendar may b
 == OPTIONS
 
 *-1*, *--one*::
-  Display single month output. (This is the default.)
+Display single month output. (This is the default.)
 
 *-3*, *--three*::
-  Display three months spanning the date.
+Display three months spanning the date.
 
 *-n , --months* _number_::
-  Display _number_ of months, starting from the month containing the date.
+Display _number_ of months, starting from the month containing the date.
 
 *-S, --span*::
-  Display months spanning the date.
+Display months spanning the date.
 
 *-s*, *--sunday*::
-  Display Sunday as the first day of the week.
+Display Sunday as the first day of the week.
 
 *-m*, *--monday*::
-  Display Monday as the first day of the week.
+Display Monday as the first day of the week.
 
 *-v*, *--vertical*::
-  Display using a vertical layout (aka *ncal*(1) mode).
+Display using a vertical layout (aka *ncal*(1) mode).
 
 *--iso*::
-  Display the proleptic Gregorian calendar exclusively. This option does not affect week numbers and the first day of the week. See *--reform* below.
+Display the proleptic Gregorian calendar exclusively. This option does not affect week numbers and the first day of the week. See *--reform* below.
 
 *-j*, *--julian*::
-  Use day-of-year numbering for all calendars. These are also called ordinal days. Ordinal days range from 1 to 366. This option does not switch from the Gregorian to the Julian calendar system, that is controlled by the *--reform* option. +
-  {nbsp} +
-  Sometimes Gregorian calendars using ordinal dates are referred to as Julian calendars. This can be confusing due to the many date related conventions that use Julian in their name: (ordinal) julian date, julian (calendar) date, (astronomical) julian date, (modified) julian date, and more. This option is named julian, because ordinal days are identified as julian by the POSIX standard. However, be aware that *cal* also uses the Julian calendar system. See *DESCRIPTION* above.
+Use day-of-year numbering for all calendars. These are also called ordinal days. Ordinal days range from 1 to 366. This option does not switch from the Gregorian to the Julian calendar system, that is controlled by the *--reform* option.
++
+Sometimes Gregorian calendars using ordinal dates are referred to as Julian calendars. This can be confusing due to the many date related conventions that use Julian in their name: (ordinal) julian date, julian (calendar) date, (astronomical) julian date, (modified) julian date, and more. This option is named julian, because ordinal days are identified as julian by the POSIX standard. However, be aware that *cal* also uses the Julian calendar system. See *DESCRIPTION* above.
 
 *--reform* _val_::
-  This option sets the adoption date of the Gregorian calendar reform. Calendar dates previous to reform use the Julian calendar system. Calendar dates after reform use the Gregorian calendar system. The argument _val_ can be: +
-  {nbsp} +
-  * _1752_ - sets 3 September 1752 as the reform date (default). This is when the Gregorian calendar reform was adopted by the British Empire.
-  * _gregorian_ - display Gregorian calendars exclusively. This special placeholder sets the reform date below the smallest year that *cal* can use; meaning all calendar output uses the Gregorian calendar system. This is called the proleptic Gregorian calendar, because dates prior to the calendar system's creation use extrapolated values.
-  * _iso_ - alias of _gregorian_. The ISO 8601 standard for the representation of dates and times in information interchange requires using the proleptic Gregorian calendar.
-  * _julian_ - display Julian calendars exclusively. This special placeholder sets the reform date above the largest year that *cal* can use; meaning all calendar output uses the Julian calendar system.
+This option sets the adoption date of the Gregorian calendar reform. Calendar dates previous to reform use the Julian calendar system. Calendar dates after reform use the Gregorian calendar system. The argument _val_ can be:
++
+* _1752_ - sets 3 September 1752 as the reform date (default). This is when the Gregorian calendar reform was adopted by the British Empire.
+* _gregorian_ - display Gregorian calendars exclusively. This special placeholder sets the reform date below the smallest year that *cal* can use; meaning all calendar output uses the Gregorian calendar system. This is called the proleptic Gregorian calendar, because dates prior to the calendar system's creation use extrapolated values.
+* _iso_ - alias of _gregorian_. The ISO 8601 standard for the representation of dates and times in information interchange requires using the proleptic Gregorian calendar.
+* _julian_ - display Julian calendars exclusively. This special placeholder sets the reform date above the largest year that *cal* can use; meaning all calendar output uses the Julian calendar system.
 
-See *­DESCRIPTION* above.
+See *DESCRIPTION* above.
 
 *-y*, *--year*::
-  Display a calendar for the whole year.
+Display a calendar for the whole year.
 
 *-Y, --twelve*::
-  Display a calendar for the next twelve months.
+Display a calendar for the next twelve months.
 
 *-w*, *--week*[=_number_]::
-  Display week numbers in the calendar (US or ISO-8601). See NOTES section for more details.
+Display week numbers in the calendar (US or ISO-8601). See NOTES section for more details.
 
 *--color*[=_when_]::
-  Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section.
+Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == PARAMETERS
 
 *Single digits-only parameter (e.g., 'cal 2020')*::
-  Specifies the _year_ to be displayed; note the year must be fully specified: *cal 89* will not display a calendar for 1989.
+Specifies the _year_ to be displayed; note the year must be fully specified: *cal 89* will not display a calendar for 1989.
 
 *Single string parameter (e.g., 'cal tomorrow' or 'cal August')*::
-  Specifies _timestamp_ or a _month name_ (or abbreviated name) according to the current locales. +
-  {nbsp} +
-  The special placeholders are accepted when parsing timestamp, "now" may be used to refer to the current time, "today", "yesterday", "tomorrow" refer to of the current day, the day before or the next day, respectively. +
-  {nbsp} +
-  The relative date specifications are also accepted, in this case "+" is evaluated to the current time plus the specified time span. Correspondingly, a time span that is prefixed with "-" is evaluated to the current time minus the specified time span, for example '+2days'. Instead of prefixing the time span with "+" or "-", it may also be suffixed with a space and the word "left" or "ago" (for example '1 week ago').
+Specifies _timestamp_ or a _month name_ (or abbreviated name) according to the current locales.
++
+The special placeholders are accepted when parsing timestamp, "now" may be used to refer to the current time, "today", "yesterday", "tomorrow" refer to of the current day, the day before or the next day, respectively.
++
+The relative date specifications are also accepted, in this case "{plus}" is evaluated to the current time plus the specified time span. Correspondingly, a time span that is prefixed with "-" is evaluated to the current time minus the specified time span, for example '{plus}2days'. Instead of prefixing the time span with "{plus}" or "-", it may also be suffixed with a space and the word "left" or "ago" (for example '1 week ago').
+//TRANSLATORS: Please keep {plus} untranslated.
 
 *Two parameters (e.g., 'cal 11 2020')*::
-  Denote the _month_ (1 - 12) and _year_.
+Denote the _month_ (1 - 12) and _year_.
 
 *Three parameters (e.g., 'cal 25 11 2020')*::
-  Denote the _day_ (1-31), _month and year_, and the day will be highlighted if the calendar is displayed on a terminal. If no parameters are specified, the current month's calendar is displayed.
+Denote the _day_ (1-31), _month and year_, and the day will be highlighted if the calendar is displayed on a terminal. If no parameters are specified, the current month's calendar is displayed.
 
 == NOTES
 

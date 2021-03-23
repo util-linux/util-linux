@@ -29,128 +29,128 @@ The relationship between block devices and filesystems is not always one-to-one.
 == OPTIONS
 
 *-a*, *--all*::
-  Also list empty devices and RAM disk devices.
+Also list empty devices and RAM disk devices.
 
 *-b*, *--bytes*::
-  Print the SIZE column in bytes rather than in a human-readable format.
+Print the SIZE column in bytes rather than in a human-readable format.
 
 *-D*, *--discard*::
-  Print information about the discarding capabilities (TRIM, UNMAP) for each device.
+Print information about the discarding capabilities (TRIM, UNMAP) for each device.
 
 *-d*, *--nodeps*::
-  Do not print holder devices or slaves. For example, *lsblk --nodeps /dev/sda* prints information about the sda device only.
+Do not print holder devices or slaves. For example, *lsblk --nodeps /dev/sda* prints information about the sda device only.
 
 *-E*, *--dedup* _column_::
-  Use _column_ as a de-duplication key to de-duplicate output tree. If the key is not available for the device, or the device is a partition and parental whole-disk device provides the same key than the device is always printed. +
-  {nbsp} +
-  The usual use case is to de-duplicate output on system multi-path devices, for example by *-E WWN*.
+Use _column_ as a de-duplication key to de-duplicate output tree. If the key is not available for the device, or the device is a partition and parental whole-disk device provides the same key than the device is always printed.
++
+The usual use case is to de-duplicate output on system multi-path devices, for example by *-E WWN*.
 
 -e*, *--exclude* _list_::
-  Exclude the devices specified by the comma-separated _list_ of major device numbers. Note that RAM disks (major=1) are excluded by default if *--all* is not specified. The filter is applied to the top-level devices only. This may be confusing for *--list* output format where hierarchy of the devices is not obvious.
+Exclude the devices specified by the comma-separated _list_ of major device numbers. Note that RAM disks (major=1) are excluded by default if *--all* is not specified. The filter is applied to the top-level devices only. This may be confusing for *--list* output format where hierarchy of the devices is not obvious.
 
 *-f*, *--fs*::
-  Output info about filesystems. This option is equivalent to *-o NAME,FSTYPE,FSVER,LABEL,UUID,FSAVAIL,FSUSE%,MOUNTPOINTS*. The authoritative information about filesystems and raids is provided by the *blkid*(8) command.
+Output info about filesystems. This option is equivalent to *-o NAME,FSTYPE,FSVER,LABEL,UUID,FSAVAIL,FSUSE%,MOUNTPOINTS*. The authoritative information about filesystems and raids is provided by the *blkid*(8) command.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-I*, *--include* _list_::
-  Include devices specified by the comma-separated _list_ of major device numbers. The filter is applied to the top-level devices only. This may be confusing for *--list* output format where hierarchy of the devices is not obvious.
+Include devices specified by the comma-separated _list_ of major device numbers. The filter is applied to the top-level devices only. This may be confusing for *--list* output format where hierarchy of the devices is not obvious.
 
 *-i*, *--ascii*::
-  Use ASCII characters for tree formatting.
+Use ASCII characters for tree formatting.
 
 *-J*, *--json*::
-  Use JSON output format. It's strongly recommended to use *--output* and also *--tree* if necessary.
+Use JSON output format. It's strongly recommended to use *--output* and also *--tree* if necessary.
 
 *-l*, *--list*::
-  Produce output in the form of a list. The output does not provide information about relationships between devices and since version 2.34 every device is printed only once if *--pairs* or *--raw* not specified (the parsable outputs are maintained in backwardly compatible way).
+Produce output in the form of a list. The output does not provide information about relationships between devices and since version 2.34 every device is printed only once if *--pairs* or *--raw* not specified (the parsable outputs are maintained in backwardly compatible way).
 
 *-M*, *--merge*::
-  Group parents of sub-trees to provide more readable output for RAIDs and Multi-path devices. The tree-like output is required.
+Group parents of sub-trees to provide more readable output for RAIDs and Multi-path devices. The tree-like output is required.
 
 *-m*, *--perms*::
-  Output info about device owner, group and mode. This option is equivalent to *-o NAME,SIZE,OWNER,GROUP,MODE*.
+Output info about device owner, group and mode. This option is equivalent to *-o NAME,SIZE,OWNER,GROUP,MODE*.
 
 *-n*, *--noheadings*::
-  Do not print a header line.
+Do not print a header line.
 
 *-o*, *--output* _list_::
-  Specify which output columns to print. Use *--help* to get a list of all supported columns. The columns may affect tree-like output. The default is to use tree for the column 'NAME' (see also *--tree*). +
-  {nbsp} +
-  The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *lsblk -o +UUID*).
+Specify which output columns to print. Use *--help* to get a list of all supported columns. The columns may affect tree-like output. The default is to use tree for the column 'NAME' (see also *--tree*).
++
+The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *lsblk -o +UUID*).
 
 *-O*, *--output-all*::
-  Output all available columns.
+Output all available columns.
 
 *-P*, *--pairs*::
-  Produce output in the form of key="value" pairs. The output lines are still ordered by dependencies. All potentially unsafe value characters are hex-escaped (\x<code>). The key (variable name) will be modified to contain only characters allowed for a shell variable identifiers, for example, MIN_IO and FSUSE_PCT instead of MIN-IO and FSUSE%.
+Produce output in the form of key="value" pairs. The output lines are still ordered by dependencies. All potentially unsafe value characters are hex-escaped (\x<code>). The key (variable name) will be modified to contain only characters allowed for a shell variable identifiers, for example, MIN_IO and FSUSE_PCT instead of MIN-IO and FSUSE%.
 
 *-p*, *--paths*::
-  Print full device paths.
+Print full device paths.
 
 *-r*, *--raw*::
-  Produce output in raw format. The output lines are still ordered by dependencies. All potentially unsafe characters are hex-escaped (\x<code>) in the NAME, KNAME, LABEL, PARTLABEL and MOUNTPOINT columns.
+Produce output in raw format. The output lines are still ordered by dependencies. All potentially unsafe characters are hex-escaped (\x<code>) in the NAME, KNAME, LABEL, PARTLABEL and MOUNTPOINT columns.
 
 *-S*, *--scsi*::
-  Output info about SCSI devices only. All partitions, slaves and holder devices are ignored.
+Output info about SCSI devices only. All partitions, slaves and holder devices are ignored.
 
 *-s*, *--inverse*::
-  Print dependencies in inverse order. If the *--list* output is requested then the lines are still ordered by dependencies.
+Print dependencies in inverse order. If the *--list* output is requested then the lines are still ordered by dependencies.
 
 *-T*, *--tree*[**=**__column__]::
-  Force tree-like output format. If _column_ is specified, then a tree is printed in the column. The default is NAME column.
+Force tree-like output format. If _column_ is specified, then a tree is printed in the column. The default is NAME column.
 
 *-t*, *--topology*::
-  Output info about block-device topology. This option is equivalent to +
-  {nbsp} +
-  *-o NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,RA,WSAME*.
+Output info about block-device topology. This option is equivalent to
++
+*-o NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,RA,WSAME*.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-w*, *--width* _number_::
-  Specifies output width as a number of characters. The default is the number of the terminal columns, and if not executed on a terminal, then output width is not restricted at all by default. This option also forces *lsblk* to assume that terminal control characters and unsafe characters are not allowed. The expected use-case is for example when lsblk used by *watch*(1) command.
+Specifies output width as a number of characters. The default is the number of the terminal columns, and if not executed on a terminal, then output width is not restricted at all by default. This option also forces *lsblk* to assume that terminal control characters and unsafe characters are not allowed. The expected use-case is for example when *lsblk* is used by the *watch*(1) command.
 
 *-x*, *--sort* _column_::
-  Sort output lines by _column_. This option enables *--list* output format by default. It is possible to use the option *--tree* to force tree-like output and than the tree branches are sorted by the _column_.
+Sort output lines by _column_. This option enables *--list* output format by default. It is possible to use the option *--tree* to force tree-like output and than the tree branches are sorted by the _column_.
 
 *-z*, *--zoned*::
-  Print the zone model for each device.
+Print the zone model for each device.
 
 *--sysroot* _directory_::
-  Gather data for a Linux instance other than the instance from which the *lsblk* command is issued. The specified directory is the system root of the Linux instance to be inspected. The real device nodes in the target directory can be replaced by text files with udev attributes.
+Gather data for a Linux instance other than the instance from which the *lsblk* command is issued. The specified directory is the system root of the Linux instance to be inspected. The real device nodes in the target directory can be replaced by text files with udev attributes.
 
 == EXIT STATUS
 
 0::
-  success
+success
 
 1::
-  failure
+failure
 
 32::
-  none of specified devices found
+none of specified devices found
 
 64::
-  some specified devices found, some not found
+some specified devices found, some not found
 
 == ENVIRONMENT
 
 LSBLK_DEBUG=all::
-  enables *lsblk* debug output.
+enables *lsblk* debug output.
 
 LIBBLKID_DEBUG=all::
-  enables *libblkid* debug output.
+enables *libblkid* debug output.
 
 LIBMOUNT_DEBUG=all::
-  enables *libmount* debug output.
+enables *libmount* debug output.
 
 LIBSMARTCOLS_DEBUG=all::
-  enables *libsmartcols* debug output.
+enables *libsmartcols* debug output.
 
 LIBSMARTCOLS_DEBUG_PADDING=on::
-  use visible padding characters. Requires enabled LIBSMARTCOLS_DEBUG.
+use visible padding characters. Requires enabled LIBSMARTCOLS_DEBUG.
 
 == NOTES
 
@@ -160,7 +160,7 @@ The *lsblk* command needs to be able to look up each block device by major:minor
 
 == AUTHORS
 
-mailto:mbroz@redhat.com[Milan Broz] +
+mailto:mbroz@redhat.com[Milan Broz],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO

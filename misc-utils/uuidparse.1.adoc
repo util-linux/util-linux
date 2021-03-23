@@ -48,22 +48,22 @@ This command will parse unique identifier inputs from either command line argume
 == OPTIONS
 
 *-J*, *--json*::
-  Use JSON output format.
+Use JSON output format.
 
 *-n*, *--noheadings*::
-  Do not print a header line.
+Do not print a header line.
 
 *-o*, *--output*::
-  Specify which output columns to print. Use *--help* to get a list of all supported columns.
+Specify which output columns to print. Use *--help* to get a list of all supported columns.
 
 *-r*, *--raw*::
-  Use the raw output format.
+Use the raw output format.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == AUTHORS
 
@@ -72,7 +72,7 @@ mailto:kerolasa@iki.fi[Sami Kerola]
 == SEE ALSO
 
 *uuidgen*(1),
-*libuuid*(3), +
+*libuuid*(3),
 https://tools.ietf.org/html/rfc4122[RFC 4122]
 
 include::../man-common/bugreports.adoc[]

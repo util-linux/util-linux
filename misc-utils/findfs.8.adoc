@@ -20,17 +20,17 @@ findfs - find a filesystem by label or UUID
 
 *findfs* will search the block devices in the system looking for a filesystem or partition with specified tag. The currently supported tags are:
 
-*LABEL=<label>*::
-  Specifies filesystem label.
+*LABEL*=_<label>_::
+Specifies filesystem label.
 
-*UUID=<uuid>*::
-  Specifies filesystem UUID.
+*UUID*=_<uuid>_::
+Specifies filesystem UUID.
 
-*PARTUUID=<uuid>*::
-  Specifies partition UUID. This partition identifier is supported for example for GUID Partition Table (GPT) partition tables.
+*PARTUUID*=_<uuid>_::
+Specifies partition UUID. This partition identifier is supported for example for GUID Partition Table (GPT) partition tables.
 
-*PARTLABEL=<label>*::
-  Specifies partition label (name). The partition labels are supported for example for GUID Partition Table (GPT) or MAC partition tables.
+*PARTLABEL*=_<label>_::
+Specifies partition label (name). The partition labels are supported for example for GUID Partition Table (GPT) or MAC partition tables.
 
 If the filesystem or partition is found, the device name will be printed on stdout.
 
@@ -46,23 +46,21 @@ ____
 
 == EXIT STATUS
 
-____
 *0*::
-  success
+success
 *1*::
-  label or uuid cannot be found
+label or uuid cannot be found
 *2*::
-  usage error, wrong number of arguments or unknown option
-____
+usage error, wrong number of arguments or unknown option
 
 == ENVIRONMENT
 
 LIBBLKID_DEBUG=all::
-  enables libblkid debug output.
+enables libblkid debug output.
 
 == AUTHORS
 
-*findfs* was originally written by mailto:tytso@mit.edu[Theodore Ts'o] and re-written for the util-linux package by mailto:kzak@redhat.com[Karel Zak]
+*findfs* was originally written by mailto:tytso@mit.edu[Theodore Ts'o] and re-written for the util-linux package by mailto:kzak@redhat.com[Karel Zak].
 
 == SEE ALSO
 
