@@ -232,6 +232,7 @@ PKG_INSTALLDIR(['${usrlib_execdir}/pkgconfig'])
 
 GTK_DOC_CHECK([1.10])
 AC_PATH_PROG([XSLTPROC], [xsltproc])
+AC_PATH_PROG([ASCIIDOCTOR], [asciidoctor])
 
 linux_os=no
 bsd_os=no
