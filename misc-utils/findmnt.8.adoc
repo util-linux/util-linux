@@ -119,6 +119,9 @@ available for umount and remount actions
 *--pseudo*::
 Print only pseudo filesystems.
 
+*--shadow*::
+Print only filesystems over-mounted by another filesystem.
+
 *-R*, *--submounts*::
 Print recursively all submounts for the selected filesystems. The restrictions defined by options *-t*, *-O*, *-S*, *-T* and *­--direction* are not applied to submounts. All submounts are always printed in tree-like order. The option enables the tree-like output format by default. This option has no effect for *--mtab* or *--fstab*.
 
