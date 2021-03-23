@@ -29,6 +29,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 :man source: util-linux {release-version}
 :page-layout: base
 :command: chrt
+:colon: :
 
 == NAME
 
@@ -47,80 +48,79 @@ chrt - manipulate the real-time attributes of a process
 == POLICIES
 
 *-o*, *--other*::
-  Set scheduling policy to *SCHED_OTHER* (time-sharing scheduling). This is the default Linux scheduling policy.
+Set scheduling policy to *SCHED_OTHER* (time-sharing scheduling). This is the default Linux scheduling policy.
 
 *-f*, *--fifo*::
-  Set scheduling policy to *SCHED_FIFO* (first in-first out).
+Set scheduling policy to *SCHED_FIFO* (first in-first out).
 
 *-r*, *--rr*::
-  Set scheduling policy to *SCHED_RR* (round-robin scheduling). When no policy is defined, the *SCHED_RR* is used as the default.
+Set scheduling policy to *SCHED_RR* (round-robin scheduling). When no policy is defined, the *SCHED_RR* is used as the default.
 
 *-b*, *--batch*::
-  Set scheduling policy to *SCHED_BATCH* (scheduling batch processes). Linux-specific, supported since 2.6.16. The priority argument has to be set to zero.
+Set scheduling policy to *SCHED_BATCH* (scheduling batch processes). Linux-specific, supported since 2.6.16. The priority argument has to be set to zero.
 
 *-i*, *--idle*::
-  Set scheduling policy to *SCHED_IDLE* (scheduling very low priority jobs). Linux-specific, supported since 2.6.23. The priority argument has to be set to zero.
+Set scheduling policy to *SCHED_IDLE* (scheduling very low priority jobs). Linux-specific, supported since 2.6.23. The priority argument has to be set to zero.
 
 *-d*, *--deadline*::
-  Set scheduling policy to *SCHED_DEADLINE* (sporadic task model deadline scheduling). Linux-specific, supported since 3.14. The priority argument has to be set to zero. See also *--sched-runtime*, *--sched-deadline* and *--sched-period*. The relation between the options required by the kernel is
-  runtime <= deadline <= period. *chrt* copies _period_ to _deadline_ if *--sched-deadline* is not specified and _deadline_ to _runtime_ if *--sched-runtime* is not specified. It means that at least *--sched-period* has to be specified. See *sched*(7) for more details.
+Set scheduling policy to *SCHED_DEADLINE* (sporadic task model deadline scheduling). Linux-specific, supported since 3.14. The priority argument has to be set to zero. See also *--sched-runtime*, *--sched-deadline* and *--sched-period*. The relation between the options required by the kernel is runtime <= deadline <= period. *chrt* copies _period_ to _deadline_ if *--sched-deadline* is not specified and _deadline_ to _runtime_ if *--sched-runtime* is not specified. It means that at least *--sched-period* has to be specified. See *sched*(7) for more details.
 
 == SCHEDULING OPTIONS
 
 *-T*, *--sched-runtime* _nanoseconds_::
-  Specifies runtime parameter for *SCHED_DEADLINE* policy (Linux-specific).
+Specifies runtime parameter for *SCHED_DEADLINE* policy (Linux-specific).
 
 *-P*, *--sched-period* _nanoseconds_::
-  Specifies period parameter for *SCHED_DEADLINE* policy (Linux-specific).
+Specifies period parameter for *SCHED_DEADLINE* policy (Linux-specific).
 
 *-D*, *--sched-deadline* _nanoseconds_::
-  Specifies deadline parameter for *SCHED_DEADLINE* policy (Linux-specific).
+Specifies deadline parameter for *SCHED_DEADLINE* policy (Linux-specific).
 
 *-R*, *--reset-on-fork*::
-  Use *SCHED_RESET_ON_FORK* or *SCHED_FLAG_RESET_ON_FORK* flag. Linux-specific,
-  supported since 2.6.31.
+Use *SCHED_RESET_ON_FORK* or *SCHED_FLAG_RESET_ON_FORK* flag. Linux-specific, supported since 2.6.31.
 
 Each thread has a _reset-on-fork_ scheduling flag. When this flag is set, children created by *fork*(2) do not inherit privileged scheduling policies. After the _reset-on-fork_ flag has been enabled, it can be reset only if the thread has the *CAP_SYS_NICE* capability. This flag is disabled in child processes created by *fork*(2).
 
 More precisely, if the _reset-on-fork_ flag is set, the following rules apply for subsequently created children:
 
-* If the calling thread has a scheduling policy of *SCHED_FIFO* or *SCHED_RR*,
-  the policy is reset to *SCHED_OTHER* in child processes.
+* If the calling thread has a scheduling policy of *SCHED_FIFO* or *SCHED_RR*, the policy is reset to *SCHED_OTHER* in child processes.
 
-* If the calling process has a negative nice value, the nice value is reset to
-  zero in child processes.
+* If the calling process has a negative nice value, the nice value is reset to zero in child processes.
 
 == OPTIONS
 
 *-a*, *--all-tasks*::
-  Set or retrieve the scheduling attributes of all the tasks (threads) for a given PID.
+Set or retrieve the scheduling attributes of all the tasks (threads) for a given PID.
 
 *-m*, *--max*::
-  Show minimum and maximum valid priorities, then exit.
+Show minimum and maximum valid priorities, then exit.
 
 *-p*, *--pid*::
-  Operate on an existing PID and do not launch a new task.
+Operate on an existing PID and do not launch a new task.
 
 *-v*, *--verbose*::
-  Show status information.
+Show status information.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == USAGE
 
-The default behavior is to run a new command:::
+//TRANSLATORS: Keep {colon} untranslated
+The default behavior is to run a new command{colon}::
 
 *chrt* _priority_ _command_ [_arguments_]
 
-You can also retrieve the real-time attributes of an existing task:::
+//TRANSLATORS: Keep {colon} untranslated
+You can also retrieve the real-time attributes of an existing task{colon}::
 
 *chrt -p* _PID_
 
-Or set them:::
+//TRANSLATORS: Keep {colon} untranslated
+Or set them{colon}::
 
 *chrt -r -p* _priority PID_
 
@@ -136,7 +136,7 @@ Linux' default scheduling policy is *SCHED_OTHER*.
 
 == AUTHORS
 
-mailto:rml@tech9.net[Robert Love] +
+mailto:rml@tech9.net[Robert Love],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO

@@ -27,6 +27,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 :man source: util-linux {release-version}
 :page-layout: base
 :command: taskset
+:colon: :
+:copyright: ©
 
 == NAME
 
@@ -44,55 +46,56 @@ The *taskset* command is used to set or retrieve the CPU affinity of a running p
 
 The CPU affinity is represented as a bitmask, with the lowest order bit corresponding to the first logical CPU and the highest order bit corresponding to the last logical CPU. Not all CPUs may exist on a given system but a mask may specify more CPUs than are present. A retrieved mask will reflect only the bits that correspond to CPUs physically on the system. If an invalid mask is given (i.e., one that corresponds to no valid CPUs on the current system) an error is returned. The masks may be specified in hexadecimal (with or without a leading "0x"), or as a CPU list with the *--cpu-list* option. For example,
 
-____
 *0x00000001*::
-  is processor #0,
+is processor #0,
 
 *0x00000003*::
-  is processors #0 and #1,
+is processors #0 and #1,
 
 *0xFFFFFFFF*::
-  is processors #0 through #31,
+is processors #0 through #31,
 
 *32*::
-  is processors #1, #4, and #5,
+is processors #1, #4, and #5,
 
 *--cpu-list 0-2,6*::
-  is processors #0, #1, #2, and #6.
+is processors #0, #1, #2, and #6.
 
 *--cpu-list 0-10:2*::
-  is processors #0, #2, #4, #6, #8 and #10. The suffix ":N" specifies stride in the range, for example 0-10:3 is interpreted as 0,3,6,9 list.
-____
+is processors #0, #2, #4, #6, #8 and #10. The suffix ":N" specifies stride in the range, for example 0-10:3 is interpreted as 0,3,6,9 list.
 
 When *taskset* returns, it is guaranteed that the given program has been scheduled to a legal CPU.
 
 == OPTIONS
 
 *-a*, *--all-tasks*::
-  Set or retrieve the CPU affinity of all the tasks (threads) for a given PID.
+Set or retrieve the CPU affinity of all the tasks (threads) for a given PID.
 
 *-c*, *--cpu-list*::
-  Interpret _mask_ as numerical list of processors instead of a bitmask. Numbers are separated by commas and may include ranges. For example: *0,5,8-11*.
+Interpret _mask_ as numerical list of processors instead of a bitmask. Numbers are separated by commas and may include ranges. For example: *0,5,8-11*.
 
 *-p*, *--pid*::
-  Operate on an existing PID and do not launch a new task.
+Operate on an existing PID and do not launch a new task.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == USAGE
 
-The default behavior is to run a new command with a given affinity mask:::
-  *taskset* _mask_ _command_ [_arguments_]
+//TRANSLATORS: Keep {colon} untranslated.
+The default behavior is to run a new command with a given affinity mask{colon}::
+*taskset* _mask_ _command_ [_arguments_]
 
-You can also retrieve the CPU affinity of an existing task:::
-  *taskset -p* _pid_
+//TRANSLATORS: Keep {colon} untranslated.
+You can also retrieve the CPU affinity of an existing task{colon}::
+*taskset -p* _pid_
 
-Or set it:::
-  *taskset -p* _mask pid_
+//TRANSLATORS: Keep {colon} untranslated.
+Or set it{colon}::
+*taskset -p* _mask pid_
 
 == PERMISSIONS
 
@@ -104,7 +107,8 @@ Written by Robert M. Love.
 
 == COPYRIGHT
 
-Copyright © 2004 Robert M. Love. This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//TRANSLATORS: Keep {copyright} untranslated.
+Copyright {copyright} 2004 Robert M. Love. This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 == SEE ALSO
 
