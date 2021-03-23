@@ -37,6 +37,7 @@
 #include "timeutils.h"
 #include "widechar.h"
 #include "xalloc.h"
+#include "all-io.h"
 
 
 /*
@@ -93,6 +94,7 @@ enum {
 	ACT_EVENT,
 	ACT_BLOCK,
 	ACT_UNBLOCK,
+	ACT_TOGGLE,
 
 	ACT_LIST_OLD
 };
@@ -102,7 +104,8 @@ static char *rfkill_actions[] = {
 	[ACT_HELP]	= "help",
 	[ACT_EVENT]	= "event",
 	[ACT_BLOCK]	= "block",
-	[ACT_UNBLOCK]	= "unblock"
+	[ACT_UNBLOCK]	= "unblock",
+	[ACT_TOGGLE]	= "toggle"
 };
 
 /* column IDs */
@@ -183,11 +186,11 @@ static int string_to_action(const char *str)
 	return -EINVAL;
 }
 
-static int rfkill_ro_open(int nonblock)
+static int rfkill_open(int rdonly, int nonblock)
 {
 	int fd;
 
-	fd = open(_PATH_DEV_RFKILL, O_RDONLY);
+	fd = open(_PATH_DEV_RFKILL, rdonly ? O_RDONLY : O_RDWR);
 	if (fd < 0) {
 		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
 		return -errno;
@@ -231,9 +234,9 @@ static int rfkill_event(void)
 	struct pollfd p;
 	int fd, n;
 
-	fd = rfkill_ro_open(0);
+	fd = rfkill_open(1, 0);
 	if (fd < 0)
-		return -errno;
+		return fd;
 
 	memset(&p, 0, sizeof(p));
 	p.fd = fd;
@@ -419,9 +422,9 @@ static int rfkill_list_old(const char *param)
 		}
 	}
 
-	fd = rfkill_ro_open(1);
+	fd = rfkill_open(1, 1);
 	if (fd < 0)
-		return -errno;
+		return fd;
 
 	while (1) {
 		rc = rfkill_read_event(fd, &event);
@@ -493,9 +496,9 @@ static int rfkill_list_fill(struct control const *ctrl, const char *param)
 		}
 	}
 
-	fd = rfkill_ro_open(1);
+	fd = rfkill_open(1, 1);
 	if (fd < 0)
-		return -errno;
+		return fd;
 
 	while (1) {
 		rc = rfkill_read_event(fd, &event);
@@ -518,32 +521,27 @@ static void rfkill_list_output(struct control const *ctrl)
 	scols_unref_table(ctrl->tb);
 }
 
-static int rfkill_block(uint8_t block, const char *param)
+static int __rfkill_block(int fd, struct rfkill_id *id, uint8_t block, const char *param)
 {
-	struct rfkill_id id;
 	struct rfkill_event event = {
 		.op = RFKILL_OP_CHANGE_ALL,
 		.soft = block,
 		0
 	};
-	ssize_t len;
-	int fd;
 	char *message = NULL;
 
-	id = rfkill_id_to_type(param);
-
-	switch (id.result) {
+	switch (id->result) {
 	case RFKILL_IS_INVALID:
 		warnx(_("invalid identifier: %s"), param);
 		return -1;
 	case RFKILL_IS_TYPE:
-		event.type = id.type;
+		event.type = id->type;
 		xasprintf(&message, "type %s", param);
 		break;
 	case RFKILL_IS_INDEX:
 		event.op = RFKILL_OP_CHANGE;
-		event.idx = id.index;
-		xasprintf(&message, "id %d", id.index);
+		event.idx = id->index;
+		xasprintf(&message, "id %d", id->index);
 		break;
 	case RFKILL_IS_ALL:
 		message = xstrdup("all");
@@ -552,15 +550,7 @@ static int rfkill_block(uint8_t block, const char *param)
 		abort();
 	}
 
-	fd = open(_PATH_DEV_RFKILL, O_RDWR);
-	if (fd < 0) {
-		warn(_("cannot open %s"), _PATH_DEV_RFKILL);
-		free(message);
-		return -errno;
-	}
-
-	len = write(fd, &event, sizeof(event));
-	if (len < 0)
+	if (write_all(fd, &event, sizeof(event)) != 0)
 		warn(_("write failed: %s"), _PATH_DEV_RFKILL);
 	else {
 		openlog("rfkill", 0, LOG_USER);
@@ -568,8 +558,61 @@ static int rfkill_block(uint8_t block, const char *param)
 		closelog();
 	}
 	free(message);
+	return 0;
+}
+
+static int rfkill_block(uint8_t block, const char *param)
+{
+	struct rfkill_id id;
+	int fd;
+
+	id = rfkill_id_to_type(param);
+	if (id.result == RFKILL_IS_INVALID) {
+		warnx(_("invalid identifier: %s"), param);
+		return -EINVAL;
+	}
+
+	fd = rfkill_open(0, 0);
+	if (fd < 0)
+		return fd;
+
+	__rfkill_block(fd, &id, block, param);
+
 	return close(fd);
 }
+
+static int rfkill_toggle(const char *param)
+{
+	struct rfkill_id id = { .result = RFKILL_IS_ALL };
+	struct rfkill_event event;
+	int fd, rc = 0;
+
+	id = rfkill_id_to_type(param);
+	if (id.result == RFKILL_IS_INVALID) {
+		warnx(_("invalid identifier: %s"), param);
+		return -EINVAL;
+	}
+
+	fd = rfkill_open(0, 1);
+	if (fd < 0)
+		return fd;
+
+	while (1) {
+		rc = rfkill_read_event(fd, &event);
+		if (rc < 0)
+			break;
+		if (rc == 1 && errno == EAGAIN) {
+			rc = 0;		/* done */
+			break;
+		}
+		if (rc == 0 && event_match(&event, &id))
+			__rfkill_block(fd, &id, event.soft ? 0 : 1, param);
+	}
+
+	close(fd);
+	return rc;
+}
+
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -608,6 +651,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" list   [identifier]\n"), stdout);
 	fputs(_(" block   identifier\n"), stdout);
 	fputs(_(" unblock identifier\n"), stdout);
+	fputs(_(" toggle  identifier\n"), stdout);
 
 	fprintf(stdout, USAGE_MAN_TAIL("rfkill(8)"));
 	exit(EXIT_SUCCESS);
@@ -682,7 +726,7 @@ int main(int argc, char **argv)
 
 		/*
 		 * For backward compatibility we use old output format if
-		 * "list" explicitly specified and--output not defined.
+		 * "list" explicitly specified and --output not defined.
 		 */
 		if (!outarg && act == ACT_LIST)
 			act = ACT_LIST_OLD;
@@ -745,6 +789,14 @@ int main(int argc, char **argv)
 	case ACT_UNBLOCK:
 		while (argc) {
 			ret |= rfkill_block(0, *argv);
+			argv++;
+			argc--;
+		}
+		break;
+
+	case ACT_TOGGLE:
+		while (argc) {
+			ret |= rfkill_toggle(*argv);
 			argv++;
 			argc--;
 		}
