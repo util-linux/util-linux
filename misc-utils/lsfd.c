@@ -24,13 +24,11 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <dirent.h>
 #include <inttypes.h>
 #include <pthread.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <stdbool.h>
 
 #include "c.h"
 #include "nls.h"
@@ -43,18 +41,7 @@
 
 #include "libsmartcols.h"
 
-#define list_free(LIST,TYPE,MEMBER,FREEFN)				\
-	do {								\
-		struct list_head *__p, *__pnext;			\
-									\
-		list_for_each_safe (__p, __pnext, (LIST)) {		\
-			TYPE *__elt = list_entry(__p, TYPE, MEMBER);	\
-			list_del(__p);					\
-			FREEFN(__elt);					\
-		}							\
-	} while (0)
-
-DIR *opendirf(const char *format, ...) __attribute__((format (printf, 1, 2)));
+#include "lsfd.h"
 
 /*
  * Multi-threading related stuffs
@@ -72,14 +59,6 @@ static void *fill_procs(void *arg);
  * Column related stuffs
  */
 
-/* column IDs */
-enum {
-	COL_PID,
-	COL_FD,
-	COL_NAME,
-	COL_COMMAND,
-};
-
 /* column names */
 struct colinfo {
 	const char *name;
@@ -94,6 +73,7 @@ static struct colinfo infos[] = {
 	[COL_FD]      = { "FD",       5, SCOLS_FL_RIGHT, N_("file descriptor for the file") },
 	[COL_NAME]    = { "NAME",    30, 0,              N_("name of the file") },
 	[COL_COMMAND] = { "COMMAND", 10, 0,              N_("command of the process opening the file") },
+	[COL_TYPE]    = { "TYPE",     7, 0,              N_("file type") },
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
@@ -134,87 +114,6 @@ static int get_column_id(int num)
 static const struct colinfo *get_column_info(int num)
 {
 	return &infos[ get_column_id(num) ];
-}
-
-struct proc {
-	pid_t pid;
-	char *command;
-	struct list_head procs;
-	struct list_head files;
-};
-
-/*
- * File classes
- */
-struct file {
-	struct list_head files;
-	const struct file_class *class;
-	char *name;
-};
-
-struct fd_file {
-	struct file file;
-	int fd;
-};
-
-struct file_class {
-	const struct file_class *super;
-	size_t size;
-	bool (*fill_column)(struct proc *proc,
-			    struct file *file,
-			    struct libscols_line *ln,
-			    int column_id,
-			    size_t column_index);
-	void (*free_content)(struct file *file);
-};
-
-static bool file_fill_column(struct proc *proc,
-			     struct file *file,
-			     struct libscols_line *ln,
-			     int column_id,
-			     size_t column_index);
-static void file_free_content(struct file *file);
-static const struct file_class file_class = {
-	.super = NULL,
-	.size = 0,
-	.fill_column = file_fill_column,
-	.free_content = file_free_content,
-};
-
-static bool fd_file_fill_column(struct proc *proc,
-				struct file *file,
-				struct libscols_line *ln,
-				int column_id,
-				size_t column_index);
-static const struct file_class fd_file_class = {
-	.super = &file_class,
-	.size = sizeof(struct fd_file),
-	.fill_column = fd_file_fill_column,
-	.free_content = NULL,
-};
-
-static struct file *make_file(const struct file_class *class, const char *name)
-{
-	struct file *file = xcalloc(1, class->size);
-
-	file->class = class;
-	file->name = xstrdup(name);
-	return file;
-}
-
-static void file_free_content(struct file *file)
-{
-	free(file->name);
-}
-
-static struct file *make_fd_file(int fd, const char *name)
-{
-	struct file *file = make_file(&fd_file_class, name);
-
-	((struct fd_file *)(file))->fd = fd;
-
-	return file;
-
 }
 
 static struct proc *make_proc(pid_t pid)
@@ -333,7 +232,12 @@ static struct file *collect_file(int dd, struct dirent *dp)
 	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	return make_fd_file((int)num, sym);
+	switch (sb.st_mode & S_IFMT) {
+	case S_IFREG:
+		return make_regular_fd_file(NULL, &sb, sym, (int)num);
+	}
+
+	return make_fd_file(NULL, &sb, sym, (int)num);
 }
 
 static void enqueue_file(struct proc *proc, struct file * file)
@@ -377,6 +281,7 @@ static void fill_proc(struct proc *proc)
 	collect_files(proc);
 }
 
+
 static void *fill_procs(void *arg)
 {
 	struct list_head *procs = arg;
@@ -419,57 +324,6 @@ static void *fill_procs(void *arg)
 	}
 
 	return NULL;
-}
-
-static bool file_fill_column(struct proc *proc,
-			     struct file *file,
-			     struct libscols_line *ln,
-			     int column_id,
-			     size_t column_index)
-{
-	char *str = NULL;
-
-	switch(column_id) {
-	case COL_COMMAND:
-		if (proc->command && scols_line_set_data(ln, column_index, proc->command))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
-	case COL_NAME:
-		if (file->name && scols_line_set_data(ln, column_index, file->name))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
-	case COL_PID:
-		xasprintf(&str, "%d", (int)proc->pid);
-		if (!str)
-			err(EXIT_FAILURE, _("failed to add output data"));
-		if (scols_line_refer_data(ln, column_index, str))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
-	};
-
-	return false;
-}
-
-static bool fd_file_fill_column(struct proc *proc __attribute__((__unused__)),
-				struct file *file,
-				struct libscols_line *ln,
-				int column_id,
-				size_t column_index)
-{
-	char *str = NULL;
-	struct fd_file * fd_file =  (struct fd_file *)file;
-
-	switch(column_id) {
-	case COL_FD:
-		xasprintf(&str, "%d", fd_file->fd);
-		if (!str)
-			err(EXIT_FAILURE, _("failed to add output data"));
-		if (scols_line_refer_data(ln, column_index, str))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
-	};
-
-	return false;
 }
 
 static void fill_column(struct proc *proc,
@@ -606,6 +460,7 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_COMMAND;
 		columns[ncolumns++] = COL_PID;
 		columns[ncolumns++] = COL_FD;
+		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_NAME;
 	}
 
