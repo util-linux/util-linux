@@ -31,54 +31,54 @@ Note that *su* in all cases uses PAM (*pam_getenvlist*(3)) to do the final envir
 == OPTIONS
 
 *-c*, **--command**=__command__::
-  Pass _command_ to the shell with the *-c* option.
+Pass _command_ to the shell with the *-c* option.
 
 *-f*, *--fast*::
-  Pass *-f* to the shell, which may or may not be useful, depending on the shell.
+Pass *-f* to the shell, which may or may not be useful, depending on the shell.
 
 *-g*, **--group**=__group__::
-  Specify the primary group. This option is available to the root user only.
+Specify the primary group. This option is available to the root user only.
 
 *-G*, **--supp-group**=__group__::
-  Specify a supplementary group. This option is available to the root user only. The first specified supplementary group is also used as a primary group if the option *--group* is not specified.
+Specify a supplementary group. This option is available to the root user only. The first specified supplementary group is also used as a primary group if the option *--group* is not specified.
 
 *-*, *-l*, *--login*::
-  Start the shell as a login shell with an environment similar to a real login: +
-  {nbsp} +
-  * clears all the environment variables except *TERM* and variables specified by *--whitelist-environment*
-  * initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*
-  * changes to the target user's home directory
-  * sets argv[0] of the shell to '*-*' in order to make the shell a login shell
+Start the shell as a login shell with an environment similar to a real login:
+
+* clears all the environment variables except *TERM* and variables specified by *--whitelist-environment*
+* initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*
+* changes to the target user's home directory
+* sets argv[0] of the shell to '*-*' in order to make the shell a login shell
 
 *-m*, *-p*, *--preserve-environment*::
-  Preserve the entire environment, i.e., do not set *HOME*, *SHELL*, *USER* or *LOGNAME*. This option is ignored if the option *--login* is specified.
+Preserve the entire environment, i.e., do not set *HOME*, *SHELL*, *USER* or *LOGNAME*. This option is ignored if the option *--login* is specified.
 
 *-P*, *--pty*::
-  Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid TIOCSTI ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., "su --pty - username -c application &"). If the pseudo-terminal is enabled, then *su* works as a proxy between the sessions (copy stdin and stdout). +
-  {nbsp} +
-  This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., echo "date" | su --pty), then the ECHO flag for the pseudo-terminal is disabled to avoid messy output.
+Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid TIOCSTI ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., "su --pty - username -c application &"). If the pseudo-terminal is enabled, then *su* works as a proxy between the sessions (copy stdin and stdout).
++
+This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., echo "date" | su --pty), then the ECHO flag for the pseudo-terminal is disabled to avoid messy output.
 
 *-s*, **--shell**=__shell__::
-  Run the specified _shell_ instead of the default. The shell to run is selected according to the following rules, in order: +
-  {nbsp} +
-  * the shell specified with *--shell*
-  * the shell specified in the environment variable *SHELL*, if the *--preserve-environment* option is used
-  * the shell listed in the passwd entry of the target user
-  * /bin/sh +
-  {nbsp} +
-  If the target user has a restricted shell (i.e., not listed in /etc/shells), the *--shell* option and the *SHELL* environment variables are ignored unless the calling user is root.
+Run the specified _shell_ instead of the default. The shell to run is selected according to the following rules, in order:
+
+* the shell specified with *--shell*
+* the shell specified in the environment variable *SHELL*, if the *--preserve-environment* option is used
+* the shell listed in the passwd entry of the target user
+* /bin/sh
+
+If the target user has a restricted shell (i.e., not listed in /etc/shells), the *--shell* option and the *SHELL* environment variables are ignored unless the calling user is root.
 
 **--session-command=**__command__::
-  Same as *-c*, but do not create a new session. (Discouraged.)
+Same as *-c*, but do not create a new session. (Discouraged.)
 
 *-w*, **--whitelist-environment**=__list__::
-  Don't reset the environment variables specified in the comma-separated _list_ when clearing the environment for *--login*. The whitelist is ignored for the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*.
+Don't reset the environment variables specified in the comma-separated _list_ when clearing the environment for *--login*. The whitelist is ignored for the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == SIGNALS
 
@@ -88,30 +88,19 @@ Upon receiving either *SIGINT*, *SIGQUIT* or *SIGTERM*, *su* terminates its chil
 
 *su* reads the _/etc/default/su_ and _/etc/login.defs_ configuration files. The following configuration items are relevant for *su:*
 
-*FAIL_DELAY* (number)
-
-____
+*FAIL_DELAY* (number)::
 Delay in seconds in case of an authentication failure. The number must be a non-negative integer.
-____
 
-*ENV_PATH* (string)
-
-____
+*ENV_PATH* (string)::
 Defines the *PATH* environment variable for a regular user. The default value is _/usr/local/bin:/bin:/usr/bin_.
-____
 
-*ENV_ROOTPATH* (string) *ENV_SUPATH* (string)
-
-____
+*ENV_ROOTPATH* (string)::
+*ENV_SUPATH* (string)::
 Defines the *PATH* environment variable for root. *ENV_SUPATH* takes precedence. The default value is _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_.
-____
 
-*ALWAYS_SET_PATH* (boolean)
-
-____
+*ALWAYS_SET_PATH* (boolean)::
 If set to _yes_ and *--login* and *--preserve-environment* were not specified *su* initializes *PATH*.
-____
-
++
 The environment variable *PATH* may be different on systems where _/bin_ and _/sbin_ are merged into _/usr_; this variable is also affected by the *--login* command-line option and the PAM system setting (e.g., *pam_env*(8)).
 
 == EXIT STATUS
@@ -120,28 +109,26 @@ The environment variable *PATH* may be different on systems where _/bin_ and _/s
 
 Exit status generated by *su* itself:
 
-____
 1::
-  Generic error before executing the requested command
+Generic error before executing the requested command
 126::
-  The requested command could not be executed
+The requested command could not be executed
 127::
-  The requested command was not found
-____
+The requested command was not found
 
 == FILES
 
 _/etc/pam.d/su_::
-  default PAM configuration file
+default PAM configuration file
 
 _/etc/pam.d/su-l_::
-  PAM configuration file if *--login* is specified
+PAM configuration file if *--login* is specified
 
 _/etc/default/su_::
-  command specific logindef config file
+command specific logindef config file
 
 _/etc/login.defs_::
-  global logindef config file
+global logindef config file
 
 == NOTES
 

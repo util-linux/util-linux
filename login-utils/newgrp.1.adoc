@@ -24,7 +24,7 @@ If no group is specified, the GID is changed to the login GID.
 
 == FILES
 
-_/etc/group_ +
+_/etc/group_,
 _/etc/passwd_
 
 == AUTHORS

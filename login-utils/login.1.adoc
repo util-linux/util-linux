@@ -37,147 +37,117 @@ If the file _.hushlogin_ exists, then a "quiet" login is performed. This disable
 == OPTIONS
 
 *-p*::
-  Used by *getty*(8) to tell *login* to preserve the environment.
+Used by *getty*(8) to tell *login* to preserve the environment.
 
 *-f*::
-  Used to skip a login authentication. This option is usually used by the *getty*(8) autologin feature.
+Used to skip a login authentication. This option is usually used by the *getty*(8) autologin feature.
 
 *-h*::
-  Used by other servers (such as *telnetd*(8) to pass the name of the remote host to *login* so that it can be placed in utmp and wtmp. Only the superuser is allowed use this option. +
-  {nbsp} +
-  Note that the *-h* option has an impact on the *PAM service* *name*. The standard service name is _login_, but with the *-h* option, the name is _remote_. It is necessary to create proper PAM config files (for example, _/etc/pam.d/login_ and _/etc/pam.d/remote_).
+Used by other servers (such as *telnetd*(8) to pass the name of the remote host to *login* so that it can be placed in utmp and wtmp. Only the superuser is allowed use this option.
++
+Note that the *-h* option has an impact on the *PAM service* *name*. The standard service name is _login_, but with the *-h* option, the name is _remote_. It is necessary to create proper PAM config files (for example, _/etc/pam.d/login_ and _/etc/pam.d/remote_).
 
 *-H*::
-  Used by other servers (for example, *telnetd*(8)) to tell *login* that printing the hostname should be suppressed in the login: prompt. See also *LOGIN_PLAIN_PROMPT* below.
+Used by other servers (for example, *telnetd*(8)) to tell *login* that printing the hostname should be suppressed in the login: prompt. See also *LOGIN_PLAIN_PROMPT* below.
 
 *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 == CONFIG FILE ITEMS
 
 *login* reads the _/etc/login.defs_ configuration file (see login.defs(5)). Note that the configuration file could be distributed with another package (usually shadow-utils). The following configuration items are relevant for *login*:
 
-*MOTD_FILE* (string)
-
-____
+*MOTD_FILE* (string)::
 Specifies a ":" delimited list of "message of the day" files and directories to be displayed upon login. If the specified path is a directory then displays all files with .motd file extension in version-sort order from the directory.
-
++
 The default value is _/usr/share/misc/motd:/run/motd:/etc/motd_. If the *MOTD_FILE* item is empty or a quiet login is enabled, then the message of the day is not displayed. Note that the same functionality is also provided by the *pam_motd*(8) PAM module.
-
++
 The directories in the *MOTD_FILE* are supported since version 2.36.
-
++
 Note that *login* does not implement any filenames overriding behavior like pam_motd (see also *MOTD_FIRSTONLY*), but all content from all files is displayed. It is recommended to keep extra logic in content generators and use _/run/motd.d_ rather than rely on overriding behavior hardcoded in system tools.
-____
 
-*MOTD_FIRSTONLY* (boolean)
+*MOTD_FIRSTONLY* (boolean)::
 
-____
 Forces *login* to stop display content specified by *MOTD_FILE* after the first accessible item in the list. Note that a directory is one item in this case. This option allows *login* semantics to be configured to be more compatible with pam_motd. The default value is _no_.
-____
 
-*LOGIN_PLAIN_PROMPT* (boolean)
+*LOGIN_PLAIN_PROMPT* (boolean)::
 
-____
 Tell *login* that printing the hostname should be suppressed in the login: prompt. This is an alternative to the *-H* command line option. The default value is _no_.
-____
 
-*LOGIN_TIMEOUT* (number)
+*LOGIN_TIMEOUT* (number)::
 
-____
 Maximum time in seconds for login. The default value is _60_.
-____
 
-*LOGIN_RETRIES* (number)
+*LOGIN_RETRIES* (number)::
 
-____
 Maximum number of login retries in case of a bad password. The default value is _3_.
-____
 
-*LOGIN_KEEP_USERNAME* (boolean)
+*LOGIN_KEEP_USERNAME* (boolean)::
 
-____
 Tell *login* to only re-prompt for the password if authentication failed, but the username is valid. The default value is _no_.
-____
 
-*FAIL_DELAY* (number)
+*FAIL_DELAY* (number)::
 
-____
 Delay in seconds before being allowed another three tries after a login failure. The default value is _5_.
-____
 
-*TTYPERM* (string)
+*TTYPERM* (string)::
 
-____
 The terminal permissions. The default value is _0600_ or _0620_ if tty group is used.
-____
 
-*TTYGROUP* (string)
+*TTYGROUP* (string)::
 
-____
 The login tty will be owned by the *TTYGROUP*. The default value is _tty_. If the *TTYGROUP* does not exist, then the ownership of the terminal is set to the user´s primary group.
-
++
 The *TTYGROUP* can be either the name of a group or a numeric group identifier.
-____
 
-*HUSHLOGIN_FILE* (string)
+*HUSHLOGIN_FILE* (string)::
 
-____
 If defined, this file can inhibit all the usual chatter during the login sequence. If a full pathname (for example, _/etc/hushlogins_) is specified, then hushed mode will be enabled if the user´s name or shell are found in the file. If this global hush login file is empty then the hushed mode will be enabled for all users.
-
++
 If a full pathname is not specified, then hushed mode will be enabled if the file exists in the user´s home directory.
-
++
 The default is to check _/etc/hushlogins_ and if it does not exist then _~/.hushlogin_.
-
++
 If the *HUSHLOGIN_FILE* item is empty, then all the checks are disabled.
-____
 
-*DEFAULT_HOME* (boolean)
+*DEFAULT_HOME* (boolean)::
 
-____
 Indicate if login is allowed if we cannot change directory to the home directory. If set to _yes_, the user will login in the root (/) directory if it is not possible to change directory to their home. The default value is _yes_.
-____
 
-*LASTLOG_UID_MAX* (unsigned number)
+*LASTLOG_UID_MAX* (unsigned number)::
 
-____
 Highest user ID number for which the _lastlog_ entries should be updated. As higher user IDs are usually tracked by remote user identity and authentication services there is no need to create a huge sparse _lastlog_ file for them. No LASTLOG_UID_MAX option present in the configuration means that there is no user ID limit for writing _lastlog_ entries. The default value is _ULONG_MAX_.
-____
 
-*LOG_UNKFAIL_ENAB* (boolean)
+*LOG_UNKFAIL_ENAB* (boolean)::
 
-____
 Enable display of unknown usernames when login failures are recorded. The default value is _no_.
-
++
 Note that logging unknown usernames may be a security issue if a user enters their password instead of their login name.
-____
 
-*ENV_PATH* (string)
+*ENV_PATH* (string)::
 
-____
 If set, it will be used to define the *PATH* environment variable when a regular user logs in. The default value is _/usr/local/bin:/bin:/usr/bin_.
-____
 
-*ENV_ROOTPATH* (string) *ENV_SUPATH* (string)
+*ENV_ROOTPATH* (string)::
+*ENV_SUPATH* (string)::
 
-____
 If set, it will be used to define the PATH environment variable when the superuser logs in. *ENV_ROOTPATH* takes precedence. The default value is _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_.
-____
 
 == FILES
 
-_/var/run/utmp_ +
-_/var/log/wtmp_ +
-_/var/log/lastlog_ +
-_/var/spool/mail/*_ +
-_/etc/motd_ +
-_/etc/passwd_ +
-_/etc/nologin_ +
-_/etc/pam.d/login_ +
-_/etc/pam.d/remote_ +
-_/etc/hushlogins_ +
+_/var/run/utmp_,
+_/var/log/wtmp_,
+_/var/log/lastlog_,
+_/var/spool/mail/*_,
+_/etc/motd_,
+_/etc/passwd_,
+_/etc/nologin_,
+_/etc/pam.d/login_,
+_/etc/pam.d/remote_,
+_/etc/hushlogins_,
 _$HOME/.hushlogin_
 
 == BUGS

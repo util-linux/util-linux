@@ -59,7 +59,7 @@ vipw, vigr - edit the password or group file
 If the following environment variable exists, it will be utilized by *vipw* and *vigr*:
 
 *EDITOR*::
-  The editor specified by the string *EDITOR* will be invoked instead of the default editor *vi*(1).
+The editor specified by the string *EDITOR* will be invoked instead of the default editor *vi*(1).
 
 == HISTORY
 

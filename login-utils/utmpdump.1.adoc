@@ -38,19 +38,19 @@ utmpdump - dump UTMP and WTMP files in raw format
 == OPTIONS
 
 *-f*, *--follow*::
-  Output appended data as the file grows.
+Output appended data as the file grows.
 
 *-o*, *--output* _file_::
-  Write command output to _file_ instead of standard output.
+Write command output to _file_ instead of standard output.
 
 *-r*, *--reverse*::
-  Undump, write back edited login information into the utmp or wtmp files.
+Undump, write back edited login information into the utmp or wtmp files.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == NOTES
 

@@ -35,38 +35,36 @@ In interactive mode, *chfn* will prompt for each field. At a prompt, you can ent
 == OPTIONS
 
 *-f*, *--full-name* _full-name_::
-  Specify your real name.
+Specify your real name.
 
 *-o*, *--office* _office_::
-  Specify your office room number.
+Specify your office room number.
 
 *-p*, *--office-phone* _office-phone_::
-  Specify your office phone number.
+Specify your office phone number.
 
 *-h*, *--home-phone* _home-phone_::
-  Specify your home phone number.
+Specify your home phone number.
 
 *-u*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-v*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 == CONFIG FILE ITEMS
 
 *chfn* reads the _/etc/login.defs_ configuration file (see *login.defs*(5)). Note that the configuration file could be distributed with another package (e.g., shadow-utils). The following configuration items are relevant for *chfn*:
 
-*CHFN_RESTRICT* _string_
+*CHFN_RESTRICT* _string_::
 
-____
 Indicate which fields are changeable by *chfn*.
-
++
 The boolean setting *"yes"* means that only the Office, Office Phone and Home Phone fields are changeable, and boolean setting *"no"* means that also the Full Name is changeable.
-
++
 Another way to specify changeable fields is by abbreviations: f = Full Name, r = Office (room), w = Office (work) Phone, h = Home Phone. For example, *CHFN_RESTRICT "wh"* allows changing work and home phone numbers.
-
++
 If *CHFN_RESTRICT* is undefined, then all finger information is read-only. This is the default.
-____
 
 == EXIT STATUS
 
