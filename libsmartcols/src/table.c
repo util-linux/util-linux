@@ -270,6 +270,8 @@ int scols_table_remove_column(struct libscols_table *tb,
 
 	if (cl->flags & SCOLS_FL_TREE)
 		tb->ntreecols--;
+	if (tb->dflt_sort_column == cl)
+		tb->dflt_sort_column = NULL;
 
 	DBG(TAB, ul_debugobj(tb, "remove column"));
 	list_del_init(&cl->cl_columns);
@@ -1515,41 +1517,63 @@ static int sort_line_children(struct libscols_line *ln, struct libscols_column *
 	return 0;
 }
 
+static int  __scols_sort_tree(struct libscols_table *tb, struct libscols_column *cl)
+{
+	struct libscols_line *ln;
+	struct libscols_iter itr;
+
+	if (!tb || !cl || !cl->cmpfunc)
+		return -EINVAL;
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_line(tb, &itr, &ln) == 0)
+		sort_line_children(ln, cl);
+	return 0;
+}
+
 /**
  * scols_sort_table:
  * @tb: table
- * @cl: order by this column
+ * @cl: order by this column or NULL
  *
  * Orders the table by the column. See also scols_column_set_cmpfunc(). If the
  * tree output is enabled then children in the tree are recursively sorted too.
+ *
+ * The column @cl is saved as the default sort column to the @tb and the next time
+ * is possible to call scols_sort_table(tb, NULL). The saved column is also used by
+ * scols_sort_table_by_tree().
  *
  * Returns: 0, a negative value in case of an error.
  */
 int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
 {
-	if (!tb || !cl || !cl->cmpfunc)
+	if (!tb)
+		return -EINVAL;
+	if (!cl)
+		cl = tb->dflt_sort_column;
+	if (!cl || !cl->cmpfunc)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "sorting table"));
+	DBG(TAB, ul_debugobj(tb, "sorting table by %zu column", cl->seqnum));
 	list_sort(&tb->tb_lines, cells_cmp_wrapper_lines, cl);
 
-	if (scols_table_is_tree(tb)) {
-		struct libscols_line *ln;
-		struct libscols_iter itr;
+	if (scols_table_is_tree(tb))
+		__scols_sort_tree(tb, cl);
 
-		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-		while (scols_table_next_line(tb, &itr, &ln) == 0)
-			sort_line_children(ln, cl);
-	}
+	if (cl && cl != tb->dflt_sort_column)
+		tb->dflt_sort_column = cl;
 
 	return 0;
 }
 
+/*
+ * Move all @ln's children after @ln in the table.
+ */
 static struct libscols_line *move_line_and_children(struct libscols_line *ln, struct libscols_line *pre)
 {
 	if (pre) {
 		list_del_init(&ln->ln_lines);			/* remove from old position */
-	        list_add(&ln->ln_lines, &pre->ln_lines);        /* add to the new place (behind @pre) */
+	        list_add(&ln->ln_lines, &pre->ln_lines);        /* add to the new place (after @pre) */
 	}
 	pre = ln;
 
@@ -1571,7 +1595,10 @@ static struct libscols_line *move_line_and_children(struct libscols_line *ln, st
  * @tb: table
  *
  * Reorders lines in the table by parent->child relation. Note that order of
- * the lines in the table is independent on the tree hierarchy.
+ * the lines in the table is independent on the tree hierarchy by default.
+ *
+ * The children of the lines are sorted according to the default sort column
+ * if scols_sort_table() has been previously called.
  *
  * Since: 2.30
  *
@@ -1587,13 +1614,12 @@ int scols_sort_table_by_tree(struct libscols_table *tb)
 
 	DBG(TAB, ul_debugobj(tb, "sorting table by tree"));
 
-	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_line(tb, &itr, &ln) == 0) {
-		if (ln->parent)
-			continue;
+	if (tb->dflt_sort_column)
+		__scols_sort_tree(tb, tb->dflt_sort_column);
 
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_line(tb, &itr, &ln) == 0)
 		move_line_and_children(ln, NULL);
-	}
 
 	return 0;
 }

@@ -222,6 +222,8 @@ struct libscols_table {
 	size_t			ngrpchlds_pending;	/* groups with not yet printed children */
 	struct libscols_line	*walk_last_tree_root;	/* last root, used by scols_walk_() */
 
+	struct libscols_column	*dflt_sort_column;	/* default sort column, set by scols_sort_table() */
+
 	struct libscols_symbols	*symbols;
 	struct libscols_cell	title;		/* optional table title (for humans) */
 
