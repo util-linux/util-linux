@@ -25,6 +25,8 @@ static int add_children(struct libscols_table *tb,
 
 enum { COL_MODE, COL_SIZE, COL_NAME };
 
+struct libscols_column *sort_column;
+
 /* add columns to the @tb */
 static void setup_columns(struct libscols_table *tb, int notree)
 {
@@ -32,9 +34,12 @@ static void setup_columns(struct libscols_table *tb, int notree)
 		goto fail;
 	if (!scols_table_new_column(tb, "SIZE", 5, SCOLS_FL_RIGHT))
 		goto fail;
-	if (!scols_table_new_column(tb, "NAME", 0.5,
-			(notree ? 0 : SCOLS_FL_TREE) | SCOLS_FL_NOEXTREMES))
+
+	sort_column = scols_table_new_column(tb, "NAME", 0.5,
+			(notree ? 0 : SCOLS_FL_TREE) | SCOLS_FL_NOEXTREMES);
+	if (!sort_column)
 		goto fail;
+	scols_column_set_cmpfunc(sort_column, scols_cmpstr_cells, NULL);
 
 	return;
 fail:
@@ -149,6 +154,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(" -p, --pairs             use key=\"value\" output format\n", out);
 	fputs(" -J, --json              use JSON output format\n", out);
 	fputs(" -r, --raw               use raw output format\n", out);
+	fputs(" -s, --sort              sort by NAME\n", out);
+	fputs(" -x, --tree-sort         keep tree-like order (also for --list)\n", out);
 	fputs(" -S, --range-start <n>   first line to print\n", out);
 	fputs(" -E, --range-end <n>     last line to print\n", out);
 
@@ -158,7 +165,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
-	int c, notree = 0, nstart = -1, nend = -1;
+	int c, notree = 0, nstart = -1, nend = -1, sort = 0, force_tree_sort = 0;
 
 
 	static const struct option longopts[] = {
@@ -171,6 +178,8 @@ int main(int argc, char *argv[])
 		{ "raw",        0, NULL, 'r' },
 		{ "range-start",1, NULL, 'S' },
 		{ "range-end",  1, NULL, 'E' },
+		{ "sort",       0, NULL, 's' },
+		{ "tree-sort",  0, NULL, 'x' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -182,7 +191,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "ciJlnprS:E:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "ciJlnprS:sE:x", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'c':
 			scols_table_set_column_separator(tb, ",");
@@ -213,8 +222,14 @@ int main(int argc, char *argv[])
 		case 'S':
 			nstart = strtos32_or_err(optarg, "failed to parse range start") - 1;
 			break;
+		case 's':
+			sort = 1;
+			break;
 		case 'E':
 			nend = strtos32_or_err(optarg, "failed to parse range end") - 1;
+			break;
+		case 'x':
+			force_tree_sort = 1;
 			break;
 		default:
 			usage(stderr);
@@ -228,6 +243,11 @@ int main(int argc, char *argv[])
 		add_lines(tb, ".");
 	else while (optind < argc)
 		add_lines(tb, argv[optind++]);
+
+	if (sort)
+		scols_sort_table(tb, sort_column);
+	if (force_tree_sort)
+		scols_sort_table_by_tree(tb);
 
 	if (nstart >= 0 || nend >= 0) {
 		/* print subset */
