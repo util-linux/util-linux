@@ -41,50 +41,50 @@ The _size-in-blocks_ parameter is the desired size of the file system, in blocks
 == OPTIONS
 
 *-c*, *--check*::
-  Check the device for bad blocks before creating the filesystem. If any are found, the count is printed.
+Check the device for bad blocks before creating the filesystem. If any are found, the count is printed.
 
 *-n*, *--namelength* _length_::
-  Specify the maximum length of filenames. Currently, the only allowable values are 14 and 30 for file system versions 1 and 2. Version 3 allows only value 60. The default is 30.
+Specify the maximum length of filenames. Currently, the only allowable values are 14 and 30 for file system versions 1 and 2. Version 3 allows only value 60. The default is 30.
 
 *--lock*[=_mode_]::
-  Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.
+Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.
 
 *-i*, *--inodes* _number_::
-  Specify the number of inodes for the filesystem.
+Specify the number of inodes for the filesystem.
 
 *-l*, *--badblocks* _filename_::
-  Read the list of bad blocks from _filename_. The file has one bad-block number per line. The count of bad blocks read is printed.
+Read the list of bad blocks from _filename_. The file has one bad-block number per line. The count of bad blocks read is printed.
 
 *-1*::
-  Make a Minix version 1 filesystem. This is the default.
+Make a Minix version 1 filesystem. This is the default.
 
 *-2*, *-v*::
-  Make a Minix version 2 filesystem.
+Make a Minix version 2 filesystem.
 
 *-3*::
-  Make a Minix version 3 filesystem.
+Make a Minix version 3 filesystem.
 
 *-V*, *--version*::
-  Display version information and exit. The long option cannot be combined with other options.
+Display version information and exit. The long option cannot be combined with other options.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == ENVIRONMENT
 
 LOCK_BLOCK_DEVICE=<mode>::
-  use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
+use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
 
 == EXIT STATUS
 
 The exit status returned by *mkfs.minix* is one of the following:
 
 0::
-  No errors
+No errors
 8::
-  Operational error
+Operational error
 16::
-  Usage or syntax error
+Usage or syntax error
 
 == SEE ALSO
 

@@ -21,38 +21,36 @@ fsck.cramfs - fsck compressed ROM file system
 == OPTIONS
 
 *-v*, *--verbose*::
-  Enable verbose messaging.
+Enable verbose messaging.
 
 *-b*, *--blocksize* _blocksize_::
-  Use this blocksize, defaults to page size. Must be equal to what was set at creation time. Only used for *--extract*.
+Use this blocksize, defaults to page size. Must be equal to what was set at creation time. Only used for *--extract*.
 
 *--extract*[=_directory_]::
-  Test to uncompress the whole file system. Optionally extract contents of the _file_ to _directory_.
+Test to uncompress the whole file system. Optionally extract contents of the _file_ to _directory_.
 
 *-a*::
-  This option is silently ignored.
+This option is silently ignored.
 
 *-y*::
-  This option is silently ignored.
+This option is silently ignored.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == EXIT STATUS
 
-____
 *0*::
-  success
+success
 *4*::
-  file system was left uncorrected
+file system was left uncorrected
 *8*::
-  operation error, such as unable to allocate memory
+operation error, such as unable to allocate memory
 *16*::
-  usage information was printed
-____
+usage information was printed
 
 == SEE ALSO
 

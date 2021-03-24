@@ -27,28 +27,28 @@ The _block-count_ parameter is the desired size of the filesystem, in blocks. If
 == OPTIONS
 
 *-N*, *--inodes* _number_::
-  Specify the desired _number_ of inodes (at most 512). If nothing is specified, some default number in the range 48-512 is picked depending on the size of the partition.
+Specify the desired _number_ of inodes (at most 512). If nothing is specified, some default number in the range 48-512 is picked depending on the size of the partition.
 
 *-V*, *--vname* _label_::
-  Specify the volume _label_. I have no idea if/where this is used.
+Specify the volume _label_. I have no idea if/where this is used.
 
 *-F*, *--fname* _name_::
-  Specify the filesystem _name_. I have no idea if/where this is used.
+Specify the filesystem _name_. I have no idea if/where this is used.
 
 *-v*, *--verbose*::
-  Explain what is being done.
+Explain what is being done.
 
 *-c*::
-  This option is silently ignored.
+This option is silently ignored.
 
 *-l*::
-  This option is silently ignored.
+This option is silently ignored.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V*, *--version*::
-  Display version information and exit. Option *-V* only works as *--version* when it is the only option.
+Display version information and exit. Option *-V* only works as *--version* when it is the only option.
 
 == EXIT STATUS
 

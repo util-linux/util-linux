@@ -29,13 +29,13 @@ This command doesn't manipulate partitions on a block device.
 == PARAMETERS
 
 _device_::
-  The disk device.
+The disk device.
 
 _partition_::
-  The partition number.
+The partition number.
 
 _length_::
-  The new length of the partition (in 512-byte sectors).
+The new length of the partition (in 512-byte sectors).
 
 == SEE ALSO
 

@@ -37,16 +37,16 @@ Because raw I/O involves direct hardware access to a process's memory, a few ext
 == OPTIONS
 
 *-q*, *--query*::
-  Set query mode. *raw* will query an existing binding instead of setting a new one.
+Set query mode. *raw* will query an existing binding instead of setting a new one.
 
 *-a*, *--all*::
-  With *-q*, specify that all bound raw devices should be queried.
+With *-q*, specify that all bound raw devices should be queried.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 == NOTES
 

@@ -27,19 +27,19 @@ In actuality, *mkfs* is simply a front-end for the various filesystem builders (
 == OPTIONS
 
 *-t*, *--type* _type_::
-  Specify the _type_ of filesystem to be built. If not specified, the default filesystem type (currently ext2) is used.
+Specify the _type_ of filesystem to be built. If not specified, the default filesystem type (currently ext2) is used.
 
 _fs-options_::
-  Filesystem-specific options to be passed to the real filesystem builder.
+Filesystem-specific options to be passed to the real filesystem builder.
 
 *-V*, *--verbose*::
-  Produce verbose output, including all filesystem-specific commands that are executed. Specifying this option more than once inhibits execution of any filesystem-specific commands. This is really only useful for testing.
+Produce verbose output, including all filesystem-specific commands that are executed. Specifying this option more than once inhibits execution of any filesystem-specific commands. This is really only useful for testing.
 
 *-V*, *--version*::
-  Display version information and exit. (Option *-V* will display version information only when it is the only parameter, otherwise it will work as *--verbose*.)
+Display version information and exit. (Option *-V* will display version information only when it is the only parameter, otherwise it will work as *--verbose*.)
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == BUGS
 
@@ -47,9 +47,10 @@ All generic options must precede and not be combined with filesystem-specific op
 
 == AUTHORS
 
-mailto:david@ods.com[David Engel] +
-mailto:waltje@uwalt.nl.mugnet.org[Fred N. van Kempen] +
-mailto:sommel@sci.kun.nl[Ron Sommeling] +
+mailto:david@ods.com[David Engel],
+mailto:waltje@uwalt.nl.mugnet.org[Fred N. van Kempen],
+mailto:sommel@sci.kun.nl[Ron Sommeling].
+
 The manual page was shamelessly adapted from Remy Card's version for the ext2 filesystem.
 
 == SEE ALSO

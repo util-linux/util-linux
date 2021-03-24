@@ -50,22 +50,22 @@ The generic floppy devices, _/dev/fd0_ and _/dev/fd1_, will fail to work with *f
 == OPTIONS
 
 *-f*, *--from* _N_::
-  Start at the track _N_ (default is 0).
+Start at the track _N_ (default is 0).
 
 *-t*, *--to* _N_::
-  Stop at the track _N_.
+Stop at the track _N_.
 
 *-r*, *--repair* _N_::
-  Try to repair tracks failed during the verification (max _N_ retries).
+Try to repair tracks failed during the verification (max _N_ retries).
 
 *-n*, *--no-verify*::
-  Skip the verification that is normally performed after the formatting.
+Skip the verification that is normally performed after the formatting.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == NOTES
 

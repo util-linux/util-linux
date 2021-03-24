@@ -33,49 +33,47 @@ The _file_ will contain the cram file system, which later can be mounted.
 == OPTIONS
 
 *-v*::
-  Enable verbose messaging.
+Enable verbose messaging.
 
 *-E*::
-  Treat all warnings as errors, which are reflected as command exit status.
+Treat all warnings as errors, which are reflected as command exit status.
 
 *-b* _blocksize_::
-  Use defined block size, which has to be divisible by page size.
+Use defined block size, which has to be divisible by page size.
 
 *-e* _edition_::
-  Use defined file system edition number in superblock.
+Use defined file system edition number in superblock.
 
 *-N* _big, little, host_::
-  Use defined endianness. Value defaults to _host_.
+Use defined endianness. Value defaults to _host_.
 
 *-i* _file_::
-  Insert a _file_ to cramfs file system.
+Insert a _file_ to cramfs file system.
 
 *-n* _name_::
-  Set name of the cramfs file system.
+Set name of the cramfs file system.
 
 *-p*::
-  Pad by 512 bytes for boot code.
+Pad by 512 bytes for boot code.
 
 *-s*::
-  This option is ignored. Originally the *-s* turned on directory entry sorting.
+This option is ignored. Originally the *-s* turned on directory entry sorting.
 
 *-z*::
-  Make explicit holes.
+Make explicit holes.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 == EXIT STATUS
 
-____
 *0*::
-  success
+success
 *8*::
-  operation error, such as unable to allocate memory
-____
+operation error, such as unable to allocate memory
 
 == SEE ALSO
 

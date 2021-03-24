@@ -45,31 +45,31 @@ If the filesystem was changed, i.e., repaired, then *fsck.minix* will print "FIL
 == OPTIONS
 
 *-l*, *--list*::
-  List all filenames.
+List all filenames.
 
 *-r*, *--repair*::
-  Perform interactive repairs.
+Perform interactive repairs.
 
 *-a*, *--auto*::
-  Perform automatic repairs. This option implies *--repair* and serves to answer all of the questions asked with the default. Note that this can be extremely dangerous in the case of extensive filesystem damage.
+Perform automatic repairs. This option implies *--repair* and serves to answer all of the questions asked with the default. Note that this can be extremely dangerous in the case of extensive filesystem damage.
 
 *-v*, *--verbose*::
-  Be verbose.
+Be verbose.
 
 *-s*, *--super*::
-  Output super-block information.
+Output super-block information.
 
 *-m*, *--uncleared*::
-  Activate MINIX-like "mode not cleared" warnings.
+Activate MINIX-like "mode not cleared" warnings.
 
 *-f*, *--force*::
-  Force a filesystem check even if the filesystem was marked as valid. Marking is done by the kernel when the filesystem is unmounted.
+Force a filesystem check even if the filesystem was marked as valid. Marking is done by the kernel when the filesystem is unmounted.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == DIAGNOSTICS
 
@@ -81,20 +81,19 @@ If the device does not exist, *fsck.minix* will print "unable to read super bloc
 
 The exit status returned by *fsck.minix* is the sum of the following:
 
-____
 *0*::
-  No errors
+No errors
 *3*::
-  Filesystem errors corrected, system should be rebooted if filesystem was mounted
+Filesystem errors corrected, system should be rebooted if filesystem was mounted
 *4*::
-  Filesystem errors left uncorrected
+Filesystem errors left uncorrected
 *7*::
-  Combination of exit statuses 3 and 4
+Combination of exit statuses 3 and 4
 *8*::
-  Operational error
+Operational error
 *16*::
-  Usage or syntax error
-____
+Usage or syntax error
+
 
 == AUTHORS
 

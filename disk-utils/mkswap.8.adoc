@@ -39,44 +39,44 @@ However, *mkswap* refuses to erase the first block on a device with a disk label
 == OPTIONS
 
 *-c*, *--check*::
-  Check the device (if it is a block device) for bad blocks before creating the swap area. If any bad blocks are found, the count is printed.
+Check the device (if it is a block device) for bad blocks before creating the swap area. If any bad blocks are found, the count is printed.
 
 *-f*, *--force*::
-  Go ahead even if the command is stupid. This allows the creation of a swap area larger than the file or partition it resides on. +
-  {nbsp} +
-  Also, without this option, *mkswap* will refuse to erase the first block on a device with a partition table.
+Go ahead even if the command is stupid. This allows the creation of a swap area larger than the file or partition it resides on.
++
+Also, without this option, *mkswap* will refuse to erase the first block on a device with a partition table.
 
 *-L*, *--label* _label_::
-  Specify a _label_ for the device, to allow *swapon* by label.
+Specify a _label_ for the device, to allow *swapon* by label.
 
 *--lock*[=_mode_]::
-  Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.
+Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.
 
 *-p*, *--pagesize* _size_::
-  Specify the page _size_ (in bytes) to use. This option is usually unnecessary; *mkswap* reads the size from the kernel.
+Specify the page _size_ (in bytes) to use. This option is usually unnecessary; *mkswap* reads the size from the kernel.
 
 *-U*, *--uuid* _UUID_::
-  Specify the _UUID_ to use. The default is to generate a UUID.
+Specify the _UUID_ to use. The default is to generate a UUID.
 
 *-v*, *--swapversion 1*::
-  Specify the swap-space version. (This option is currently pointless, as the old *-v 0* option has become obsolete and now only *-v 1* is supported. The kernel has not supported v0 swap-space format since 2.5.22 (June 2002). The new version v1 is supported since 2.1.117 (August 1998).)
+Specify the swap-space version. (This option is currently pointless, as the old *-v 0* option has become obsolete and now only *-v 1* is supported. The kernel has not supported v0 swap-space format since 2.5.22 (June 2002). The new version v1 is supported since 2.1.117 (August 1998).)
 
 *--verbose*::
-  Verbose execution. With this option *mkswap* will output more details about detected problems during swap area set up.
+Verbose execution. With this option *mkswap* will output more details about detected problems during swap area set up.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 == ENVIRONMENT
 
 LIBBLKID_DEBUG=all::
-  enables libblkid debug output.
+enables libblkid debug output.
 
 LOCK_BLOCK_DEVICE=<mode>::
-  use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
+use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
 
 == NOTES
 
@@ -88,7 +88,7 @@ Presently, Linux allows 32 swap areas. The areas in use can be seen in the file 
 
 *mkswap* refuses areas smaller than 10 pages.
 
-If you don't know the page size that your machine uses, you may be able to look it up with "cat /proc/cpuinfo" (or you may not - the contents of this file depend on architecture and kernel version).
+If you don't know the page size that your machine uses, you may be able to look it up with *cat /proc/cpuinfo* (or you may not - the contents of this file depend on architecture and kernel version).
 
 To set up a swap file, it is necessary to create that file before initializing it with *mkswap*, e.g. using a command like
 
