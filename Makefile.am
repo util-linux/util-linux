@@ -190,7 +190,7 @@ $(PATHFILES): Makefile
 		$(edit_cmd) $${srcdir}$@.in >$@.tmp
 	@ mv $@.tmp $@
 
-asciidoc_man_cmd = $(ASCIIDOCTOR) 
+asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-b manpage \
 	-a 'VERSION=$(VERSION)' \
 	-a 'ADJTIME_PATH=$(ADJTIME_PATH)'
