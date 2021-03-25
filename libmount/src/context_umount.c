@@ -253,6 +253,9 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 	struct stat st;
 	const char *type;
 
+	assert(cxt);
+	assert(cxt->fs);
+
 	DBG(CXT, ul_debugobj(cxt, " lookup by statfs"));
 
 	/*
@@ -317,6 +320,9 @@ static int lookup_umount_fs_by_mountinfo(struct libmnt_context *cxt, const char 
 {
 	struct libmnt_fs *fs = NULL;
 	int rc;
+
+	assert(cxt);
+	assert(cxt->fs);
 
 	DBG(CXT, ul_debugobj(cxt, " lookup by mountinfo"));
 
