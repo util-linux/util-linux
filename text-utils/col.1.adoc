@@ -51,74 +51,68 @@ col - filter reverse line feeds from input
 
 *col* _options_
 
-[[description]]
 == DESCRIPTION
 
 *col* filters out reverse (and half-reverse) line feeds so the output is in the correct order, with only forward and half-forward line feeds. It also replaces any whitespace characters with tabs where possible. This can be useful in processing the output of *nroff*(1) and *tbl*(1).
 
 *col* reads from standard input and writes to standard output.
 
-[[options]]
 == OPTIONS
 
 *-b*, *--no-backspaces*::
-  Do not output any backspaces, printing only the last character written to each column position.
+Do not output any backspaces, printing only the last character written to each column position.
 
 *-f*, *--fine*::
-  Permit half-forward line feeds. Normally characters destined for a half-line boundary are printed on the following line.
+Permit half-forward line feeds. Normally characters destined for a half-line boundary are printed on the following line.
 
 *-h*, *--tabs*::
-  Output tabs instead of multiple spaces.
+Output tabs instead of multiple spaces.
 
 *-l*, *--lines* _number_::
-  Buffer at least _number_ lines in memory. By default, 128 lines are buffered.
+Buffer at least _number_ lines in memory. By default, 128 lines are buffered.
 
 *-p*, *--pass*::
-  Force unknown control sequences to be passed through unchanged. Normally *col* will filter out any control sequences other than those recognized and interpreted by itself, which are listed below.
+Force unknown control sequences to be passed through unchanged. Normally *col* will filter out any control sequences other than those recognized and interpreted by itself, which are listed below.
 
 *-x*, *--spaces*::
-  Output multiple spaces instead of tabs.
+Output multiple spaces instead of tabs.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-H*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
-[[conforming_to]]
 == CONFORMING TO
 
 The *col* utility conforms to the Single UNIX Specification, Version 2. The *-l* option is an extension to the standard.
 
-[[notes]]
 == NOTES
 
 The control sequences for carriage motion that *col* understands and their decimal values are listed in the following table:
 
-____
 *ESC-7*::
-  reverse line feed (escape then 7)
+reverse line feed (escape then 7)
 *ESC-8*::
-  half reverse line feed (escape then 8)
+half reverse line feed (escape then 8)
 *ESC-9*::
-  half forward line feed (escape then 9)
+half forward line feed (escape then 9)
 *backspace*::
-  moves back one column (8); ignored in the first column
+moves back one column (8); ignored in the first column
 *newline*::
-  forward line feed (10); also does carriage return
+forward line feed (10); also does carriage return
 *carriage return*::
-  (13)
+(13)
 *shift in*::
-  shift to normal character set (15)
+shift to normal character set (15)
 *shift out*::
-  shift to alternate character set (14)
+shift to alternate character set (14)
 *space*::
-  moves forward one column (32)
+moves forward one column (32)
 *tab*::
-  moves forward to next tab stop (9)
+moves forward to next tab stop (9)
 *vertical tab*::
-  reverse line feed (11)
-____
+reverse line feed (11)
 
 All unrecognized control characters and escape sequences are discarded.
 
@@ -126,12 +120,10 @@ All unrecognized control characters and escape sequences are discarded.
 
 If the input attempts to back up to the last flushed line, *col* will display a warning message.
 
-[[history]]
 == HISTORY
 
 A *col* command appeared in Version 6 AT&T UNIX.
 
-[[see_also]]
 == SEE ALSO
 
 *expand*(1),

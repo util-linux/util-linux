@@ -46,7 +46,7 @@ ul - do underlining
 
 == SYNOPSIS
 
-*ul* _options file_ ...
+*ul* [options] [_file_...]
 
 == DESCRIPTION
 
@@ -55,23 +55,23 @@ ul - do underlining
 == OPTIONS
 
 *-i*, *--indicated*::
-  Underlining is indicated by a separate line containing appropriate dashes `-'; this is useful when you want to look at the underlining which is present in an *nroff* output stream on a crt-terminal.
+Underlining is indicated by a separate line containing appropriate dashes `-'; this is useful when you want to look at the underlining which is present in an *nroff* output stream on a crt-terminal.
 
 *-t*, *-T*, *--terminal* _terminal_::
-  Override the environment variable *TERM* with the specified _terminal_ type.
+Override the environment variable *TERM* with the specified _terminal_ type.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == ENVIRONMENT
 
 The following environment variable is used:
 
 *TERM*::
-  The *TERM* variable is used to relate a tty device with its device capability description (see terminfo5). *TERM* is set at login time, either by the default terminal type specified in _/etc/ttys_ or as set during the login process by the user in their *login* file (see *setenv*(3)).
+The *TERM* variable is used to relate a tty device with its device capability description (see *terminfo*(5)). *TERM* is set at login time, either by the default terminal type specified in _/etc/ttys_ or as set during the login process by the user in their _login_ file (see *setenv*(3)).
 
 == HISTORY
 
@@ -81,7 +81,6 @@ The *ul* command appeared in 3.0BSD.
 
 *nroff* usually outputs a series of backspaces and underlines intermixed with the text to indicate underlining. No attempt is made to optimize the backward motion.
 
-[[see_also]]
 == SEE ALSO
 
 *colcrt*(1), 

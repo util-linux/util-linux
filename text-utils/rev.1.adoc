@@ -46,7 +46,7 @@ rev - reverse lines characterwise
 
 == SYNOPSIS
 
-*rev* _option file_ ...
+*rev* [option] [_file_...]
 
 == DESCRIPTION
 
@@ -57,12 +57,11 @@ This utility is a line-oriented tool and it uses in-memory allocated buffer for 
 == OPTIONS
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
-[[see_also]]
 == SEE ALSO
 
 *tac*(1)

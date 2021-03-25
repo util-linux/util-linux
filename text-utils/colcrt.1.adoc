@@ -39,6 +39,7 @@ SUCH DAMAGE.
 :man source: util-linux {release-version}
 :page-layout: base
 :command: colcrt
+:plus: +
 
 == NAME
 
@@ -46,7 +47,7 @@ colcrt - filter nroff output for CRT previewing
 
 == SYNOPSIS
 
-*colcrt* _options file_ ...
+*colcrt* [options] [_file_ ...]
 
 == DESCRIPTION
 
@@ -55,16 +56,16 @@ colcrt - filter nroff output for CRT previewing
 == OPTIONS
 
 *-*, *--no-underlining*::
-  Suppress all underlining. This option is especially useful for previewing _allboxed_ tables from *tbl*(1).
+Suppress all underlining. This option is especially useful for previewing _allboxed_ tables from *tbl*(1).
 
 *-2*, *--half-lines*::
-  Causes all half-lines to be printed, effectively double spacing the output. Normally, a minimal space output format is used which will suppress empty lines. The program never suppresses two consecutive empty lines, however. The *-2* option is useful for sending output to the line printer when the output contains superscripts and subscripts which would otherwise be invisible.
+Causes all half-lines to be printed, effectively double spacing the output. Normally, a minimal space output format is used which will suppress empty lines. The program never suppresses two consecutive empty lines, however. The *-2* option is useful for sending output to the line printer when the output contains superscripts and subscripts which would otherwise be invisible.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == HISTORY
 
@@ -76,7 +77,8 @@ Should fold underlines onto blanks even with the *'-'* option so that a true und
 
 Can't back up more than 102 lines.
 
-General overstriking is lost; as a special case '|' overstruck with '-' or underline becomes '+'.
+//TRANSLATORS: Keep {plus} untranslated.
+General overstriking is lost; as a special case '|' overstruck with '-' or underline becomes '{plus}'.
 
 Lines are trimmed to 132 characters.
 
@@ -90,7 +92,7 @@ ____
 *tbl exum2.n | nroff -ms | colcrt - | more*
 ____
 
-[[see_also]]
+
 == SEE ALSO
 
 *col*(1),

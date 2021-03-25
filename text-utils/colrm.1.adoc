@@ -59,16 +59,15 @@ Column numbering starts with column 1.
 == OPTIONS
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == HISTORY
 
 The *colrm* command appeared in 3.0BSD.
 
-[[see_also]]
 == SEE ALSO
 
 *awk*(1p),

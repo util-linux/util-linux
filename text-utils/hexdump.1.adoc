@@ -39,6 +39,8 @@ SUCH DAMAGE.
 :man source: util-linux {release-version}
 :page-layout: base
 :command: hexdump
+:plus: +
+:underscore: _
 
 == NAME
 
@@ -55,46 +57,47 @@ The *hexdump* utility is a filter which displays the specified files, or standar
 Below, the _length_ and _offset_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB"), or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-b*, *--one-byte-octal*::
-  _One-byte octal display_. Display the input offset in hexadecimal, followed by sixteen space-separated, three-column, zero-filled bytes of input data, in octal, per line.
+_One-byte octal display_. Display the input offset in hexadecimal, followed by sixteen space-separated, three-column, zero-filled bytes of input data, in octal, per line.
 
 *-c*, *--one-byte-char*::
-  _One-byte character display_. Display the input offset in hexadecimal, followed by sixteen space-separated, three-column, space-filled characters of input data per line.
+_One-byte character display_. Display the input offset in hexadecimal, followed by sixteen space-separated, three-column, space-filled characters of input data per line.
 
 *-C*, *--canonical*::
-  _Canonical hex+ASCII display_. Display the input offset in hexadecimal, followed by sixteen space-separated, two-column, hexadecimal bytes, followed by the same sixteen bytes in *%_p* format enclosed in '*|*' characters. Invoking the program as *hd* implies this option.
+_Canonical hex{plus}ASCII display_. Display the input offset in hexadecimal, followed by sixteen space-separated, two-column, hexadecimal bytes, followed by the same sixteen bytes in *%{underscore}p* format enclosed in '*|*' characters. Invoking the program as *hd* implies this option.
+//TRANSLATORS: Keep {plus} and {underscore} untranslated.
 
 *-d*, *--two-bytes-decimal*::
-  _Two-byte decimal display_. Display the input offset in hexadecimal, followed by eight space-separated, five-column, zero-filled, two-byte units of input data, in unsigned decimal, per line.
+_Two-byte decimal display_. Display the input offset in hexadecimal, followed by eight space-separated, five-column, zero-filled, two-byte units of input data, in unsigned decimal, per line.
 
 *-e*, *--format* _format_string_::
-  Specify a format string to be used for displaying data.
+Specify a format string to be used for displaying data.
 
 *-f*, *--format-file* _file_::
-  Specify a file that contains one or more newline-separated format strings. Empty lines and lines whose first non-blank character is a hash mark (#) are ignored.
+Specify a file that contains one or more newline-separated format strings. Empty lines and lines whose first non-blank character is a hash mark (#) are ignored.
 
 *-L*, *--color*[=_when_]::
-  Accept color units for the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *Colors* subsection and the *COLORS* section below.
+Accept color units for the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *Colors* subsection and the *COLORS* section below.
 
 *-n*, *--length* _length_::
-  Interpret only _length_ bytes of input.
+Interpret only _length_ bytes of input.
 
 *-o*, *--two-bytes-octal*::
-  _Two-byte octal display_. Display the input offset in hexadecimal, followed by eight space-separated, six-column, zero-filled, two-byte quantities of input data, in octal, per line.
+_Two-byte octal display_. Display the input offset in hexadecimal, followed by eight space-separated, six-column, zero-filled, two-byte quantities of input data, in octal, per line.
 
 *-s*, *--skip* _offset_::
-  Skip _offset_ bytes from the beginning of the input.
+Skip _offset_ bytes from the beginning of the input.
 
 *-v*, *--no-squeezing*::
-  The *-v* option causes *hexdump* to display all input data. Without the *-v* option, any number of groups of output lines which would be identical to the immediately preceding group of output lines (except for the input offsets), are replaced with a line comprised of a single asterisk.
+The *-v* option causes *hexdump* to display all input data. Without the *-v* option, any number of groups of output lines which would be identical to the immediately preceding group of output lines (except for the input offsets), are replaced with a line comprised of a single asterisk.
 
 *-x*, *--two-bytes-hex*::
-  _Two-byte hexadecimal display_. Display the input offset in hexadecimal, followed by eight space-separated, four-column, zero-filled, two-byte quantities of input data, in hexadecimal, per line.
+_Two-byte hexadecimal display_. Display the input offset in hexadecimal, followed by eight space-separated, four-column, zero-filled, two-byte quantities of input data, in hexadecimal, per line.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 For each input file, *hexdump* sequentially copies the input to standard output, transforming the data according to the format strings specified by the *-e* and *-f* options, in the order that they were specified.
 
@@ -111,16 +114,16 @@ If an iteration count and/or a byte count is specified, a single slash must be p
 The format is required and must be surrounded by double quote (" ") marks. It is interpreted as a fprintf-style format string (see *fprintf*(3), with the following exceptions:
 
 1.::
-  An asterisk (*) may not be used as a field width or precision.
+An asterisk (*) may not be used as a field width or precision.
 
 2.::
-  A byte count or field precision _is_ required for each *s* conversion character (unlike the fprintf3 default which prints the entire string if the precision is unspecified).
+A byte count or field precision _is_ required for each *s* conversion character (unlike the fprintf3 default which prints the entire string if the precision is unspecified).
 
 3.::
-  The conversion characters *h*, *l*, *n*, *p*, and *q* are not supported.
+The conversion characters *h*, *l*, *n*, *p*, and *q* are not supported.
 
 4.::
-  The single character escape sequences described in the C standard are supported:
+The single character escape sequences described in the C standard are supported:
 
 ____
 |===
@@ -140,19 +143,19 @@ ____
 The *hexdump* utility also supports the following additional conversion strings.
 
 *_a[dox]*::
-  Display the input offset, cumulative across input files, of the next byte to be displayed. The appended characters *d*, *o*, and *x* specify the display base as decimal, octal or hexadecimal respectively.
+Display the input offset, cumulative across input files, of the next byte to be displayed. The appended characters *d*, *o*, and *x* specify the display base as decimal, octal or hexadecimal respectively.
 
 *_A[dox]*::
-  Identical to the *_a* conversion string except that it is only performed once, when all of the input data has been processed.
+Identical to the *_a* conversion string except that it is only performed once, when all of the input data has been processed.
 
 *_c*::
-  Output characters in the default character set. Non-printing characters are displayed in three-character, zero-padded octal, except for those representable by standard escape notation (see above), which are displayed as two-character strings.
+Output characters in the default character set. Non-printing characters are displayed in three-character, zero-padded octal, except for those representable by standard escape notation (see above), which are displayed as two-character strings.
 
 *_p*::
-  Output characters in the default character set. Non-printing characters are displayed as a single '*.*'.
+Output characters in the default character set. Non-printing characters are displayed as a single '*.*'.
 
 *_u*::
-  Output US ASCII characters, with the exception that control characters are displayed using the following, lower-case, names. Characters greater than 0xff, hexadecimal, are displayed as hexadecimal strings.
+Output US ASCII characters, with the exception that control characters are displayed using the following, lower-case, names. Characters greater than 0xff, hexadecimal, are displayed as hexadecimal strings.
 
 ____
 |===
@@ -176,29 +179,29 @@ The full syntax of a color unit is as follows:
 *[!]COLOR[:VALUE][@OFFSET_START[-END]]*
 
 *!*::
-  Negate the condition. Please note that it only makes sense to negate a unit if both a value/string and an offset are specified. In that case the respective output string will be highlighted if and only if the value/string does not match the one at the offset.
+Negate the condition. Please note that it only makes sense to negate a unit if both a value/string and an offset are specified. In that case the respective output string will be highlighted if and only if the value/string does not match the one at the offset.
 
 *COLOR*::
-  One of the 8 basic shell colors.
+One of the 8 basic shell colors.
 
 *VALUE*::
-  A value to be matched specified in hexadecimal, or octal base, or as a string. Please note that the usual C escape sequences are not interpreted by hexdump inside the color_units.
+A value to be matched specified in hexadecimal, or octal base, or as a string. Please note that the usual C escape sequences are not interpreted by hexdump inside the color_units.
 
 *OFFSET*::
-  An offset or an offset range at which to check for a match. Please note that lone OFFSET_START uses the same value as END offset.
+An offset or an offset range at which to check for a match. Please note that lone OFFSET_START uses the same value as END offset.
 
 === Counters
 
 The default and supported byte counts for the conversion characters are as follows:
 
 *%_c*, *%_p*, *%_u*, *%c*::
-  One byte counts only.
+One byte counts only.
 
 *%d*, *%i*, *%o*, *%u*, *%X*, *%x*::
-  Four byte default, one, two and four byte counts supported.
+Four byte default, one, two and four byte counts supported.
 
 *%E*, *%e*, *%f*, *%G*, *%g*::
-  Eight byte default, four byte counts supported.
+Eight byte default, four byte counts supported.
 
 The amount of data interpreted by each format string is the sum of the data required by each format unit, which is the iteration count times the byte count, or the iteration count times the number of bytes required by the format if the byte count is not specified.
 
@@ -210,7 +213,8 @@ It is an error to specify a byte count as well as multiple conversion characters
 
 If, as a result of the specification of the *-n* option or end-of-file being reached, input data only partially satisfies a format string, the input block is zero-padded sufficiently to display all available data (i.e., any format units overlapping the end of data will display some number of the zero bytes).
 
-Further output by such format strings is replaced by an equivalent number of spaces. An equivalent number of spaces is defined as the number of spaces output by an *s* conversion character with the same field width and precision as the original conversion character or conversion string but with any '*+*', ´ ´, '*#*' conversion flag characters removed, and referencing a NULL string.
+//TRANSLATORS: Keep {plus} untranslated.
+Further output by such format strings is replaced by an equivalent number of spaces. An equivalent number of spaces is defined as the number of spaces output by an *s* conversion character with the same field width and precision as the original conversion character or conversion string but with any '*{plus}*', ' ', '*#*' conversion flag characters removed, and referencing a NULL string.
 
 If no format strings are specified, the default display is very similar to the *-x* output format (the *-x* option causes more space to be used between format units than in the default output).
 
