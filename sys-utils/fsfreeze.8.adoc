@@ -29,18 +29,18 @@ Note that access-time updates are also suspended if the filesystem is mounted wi
 == OPTIONS
 
 *-f*, *--freeze*::
-  This option requests the specified a filesystem to be frozen from new modifications. When this is selected, all ongoing transactions in the filesystem are allowed to complete, new write system calls are halted, other calls which modify the filesystem are halted, and all dirty data, metadata, and log information are written to disk. Any process attempting to write to the frozen filesystem will block waiting for the filesystem to be unfrozen. +
-  {nbsp} +
-  Note that even after freezing, the on-disk filesystem can contain information on files that are still in the process of unlinking. These files will not be unlinked until the filesystem is unfrozen or a clean mount of the snapshot is complete.
+This option requests the specified a filesystem to be frozen from new modifications. When this is selected, all ongoing transactions in the filesystem are allowed to complete, new write system calls are halted, other calls which modify the filesystem are halted, and all dirty data, metadata, and log information are written to disk. Any process attempting to write to the frozen filesystem will block waiting for the filesystem to be unfrozen.
++
+Note that even after freezing, the on-disk filesystem can contain information on files that are still in the process of unlinking. These files will not be unlinked until the filesystem is unfrozen or a clean mount of the snapshot is complete.
 
 *-u*, *--unfreeze*::
-  This option is used to un-freeze the filesystem and allow operations to continue. Any filesystem modifications that were blocked by the freeze are unblocked and allowed to complete.
+This option is used to un-freeze the filesystem and allow operations to continue. Any filesystem modifications that were blocked by the freeze are unblocked and allowed to complete.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == FILESYSTEM SUPPORT
 

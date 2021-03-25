@@ -53,40 +53,40 @@ The third form uses an open file by its file descriptor _number_. See the exampl
 == OPTIONS
 
 *-c*, *--command* _command_::
-  Pass a single _command_, without arguments, to the shell with *-c*.
+Pass a single _command_, without arguments, to the shell with *-c*.
 
 *-E*, *--conflict-exit-code* _number_::
-  The exit status used when the *-n* option is in use, and the conflicting lock exists, or the *-w* option is in use, and the timeout is reached. The default value is *1*. The _number_ has to be in the range of 0 to 255.
+The exit status used when the *-n* option is in use, and the conflicting lock exists, or the *-w* option is in use, and the timeout is reached. The default value is *1*. The _number_ has to be in the range of 0 to 255.
 
 *-F*, *--no-fork*::
-  Do not fork before executing _command_. Upon execution the flock process is replaced by _command_ which continues to hold the lock. This option is incompatible with *--close* as there would otherwise be nothing left to hold the lock.
+Do not fork before executing _command_. Upon execution the flock process is replaced by _command_ which continues to hold the lock. This option is incompatible with *--close* as there would otherwise be nothing left to hold the lock.
 
 *-e*, *-x*, *--exclusive*::
-  Obtain an exclusive lock, sometimes called a write lock. This is the default.
+Obtain an exclusive lock, sometimes called a write lock. This is the default.
 
 *-n*, *--nb*, *--nonblock*::
-  Fail rather than wait if the lock cannot be immediately acquired. See the *-E* option for the exit status used.
+Fail rather than wait if the lock cannot be immediately acquired. See the *-E* option for the exit status used.
 
 *-o*, *--close*::
-  Close the file descriptor on which the lock is held before executing _command_. This is useful if _command_ spawns a child process which should not be holding the lock.
+Close the file descriptor on which the lock is held before executing _command_. This is useful if _command_ spawns a child process which should not be holding the lock.
 
 *-s*, *--shared*::
-  Obtain a shared lock, sometimes called a read lock.
+Obtain a shared lock, sometimes called a read lock.
 
 *-u*, *--unlock*::
-  Drop a lock. This is usually not required, since a lock is automatically dropped when the file is closed. However, it may be required in special cases, for example if the enclosed command group may have forked a background process which should not be holding the lock.
+Drop a lock. This is usually not required, since a lock is automatically dropped when the file is closed. However, it may be required in special cases, for example if the enclosed command group may have forked a background process which should not be holding the lock.
 
 *-w*, *--wait*, *--timeout* _seconds_::
-  Fail if the lock cannot be acquired within _seconds_. Decimal fractional values are allowed. See the *-E* option for the exit status used. The zero number of _seconds_ is interpreted as *--nonblock*.
+Fail if the lock cannot be acquired within _seconds_. Decimal fractional values are allowed. See the *-E* option for the exit status used. The zero number of _seconds_ is interpreted as *--nonblock*.
 
 *--verbose*::
-  Report how long it took to acquire the lock, or why the lock could not be obtained.
+Report how long it took to acquire the lock, or why the lock could not be obtained.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == EXIT STATUS
 
@@ -99,22 +99,22 @@ When using the _command_ variant, and executing the child worked, then the exit 
 Note that "shell> " in examples is a command line prompt.
 
 shell1> flock /tmp -c cat; shell2> flock -w .007 /tmp -c echo; /bin/echo $?::
-  Set exclusive lock to directory /tmp and the second command will fail.
+Set exclusive lock to directory /tmp and the second command will fail.
 
 shell1> flock -s /tmp -c cat; shell2> flock -s -w .007 /tmp -c echo; /bin/echo $?::
-  Set shared lock to directory /tmp and the second command will not fail. Notice that attempting to get exclusive lock with second command would fail.
+Set shared lock to directory /tmp and the second command will not fail. Notice that attempting to get exclusive lock with second command would fail.
 
 shell> flock -x local-lock-file echo 'a b c'::
-  Grab the exclusive lock "local-lock-file" before running echo with 'a b c'.
+Grab the exclusive lock "local-lock-file" before running echo with 'a b c'.
 
 (; flock -n 9 || exit 1; # ... commands executed under lock ...; ) 9>/var/lock/mylockfile::
-  The form is convenient inside shell scripts. The mode used to open the file doesn't matter to *flock*; using _>_ or _>>_ allows the lockfile to be created if it does not already exist, however, write permission is required. Using _<_ requires that the file already exists but only read permission is required.
+The form is convenient inside shell scripts. The mode used to open the file doesn't matter to *flock*; using _>_ or _>>_ allows the lockfile to be created if it does not already exist, however, write permission is required. Using _<_ requires that the file already exists but only read permission is required.
 
 [ $\{FLOCKER} != $0 ] && exec env FLOCKER="$0 flock -en $0 $0 $@ || :::
-  This is useful boilerplate code for shell scripts. Put it at the top of the shell script you want to lock and it'll automatically lock itself on the first run. If the env var *$FLOCKER* is not set to the shell script that is being run, then execute *flock* and grab an exclusive non-blocking lock (using the script itself as the lock file) before re-execing itself with the right arguments. It also sets the FLOCKER env var to the right value so it doesn't run again.
+This is useful boilerplate code for shell scripts. Put it at the top of the shell script you want to lock and it'll automatically lock itself on the first run. If the env var *$FLOCKER* is not set to the shell script that is being run, then execute *flock* and grab an exclusive non-blocking lock (using the script itself as the lock file) before re-execing itself with the right arguments. It also sets the FLOCKER env var to the right value so it doesn't run again.
 
 shell> exec 4<>/var/lock/mylockfile; shell> flock -n 4::
-  This form is convenient for locking a file without spawning a subprocess. The shell opens the lock file for reading and writing as file descriptor 4, then flock is used to lock the descriptor.
+This form is convenient for locking a file without spawning a subprocess. The shell opens the lock file for reading and writing as file descriptor 4, then flock is used to lock the descriptor.
 
 == AUTHORS
 

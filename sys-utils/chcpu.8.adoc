@@ -27,47 +27,47 @@ Some options have a _cpu-list_ argument. Use this argument to specify a comma-se
 == OPTIONS
 
 *-c*, *--configure* _cpu-list_::
-  Configure the specified CPUs. Configuring a CPU means that the hypervisor takes a CPU from the CPU pool and assigns it to the virtual hardware on which your kernel runs.
+Configure the specified CPUs. Configuring a CPU means that the hypervisor takes a CPU from the CPU pool and assigns it to the virtual hardware on which your kernel runs.
 
 *-d*, *--disable* _cpu-list_::
-  Disable the specified CPUs. Disabling a CPU means that the kernel sets it offline.
+Disable the specified CPUs. Disabling a CPU means that the kernel sets it offline.
 
 *-e*, *--enable* _cpu-list_::
-  Enable the specified CPUs. Enabling a CPU means that the kernel sets it online. A CPU must be configured, see *-c*, before it can be enabled.
+Enable the specified CPUs. Enabling a CPU means that the kernel sets it online. A CPU must be configured, see *-c*, before it can be enabled.
 
 *-g*, *--deconfigure* _cpu-list_::
-  Deconfigure the specified CPUs. Deconfiguring a CPU means that the hypervisor removes the CPU from the virtual hardware on which the Linux instance runs and returns it to the CPU pool. A CPU must be offline, see *-d*, before it can be deconfigured.
+Deconfigure the specified CPUs. Deconfiguring a CPU means that the hypervisor removes the CPU from the virtual hardware on which the Linux instance runs and returns it to the CPU pool. A CPU must be offline, see *-d*, before it can be deconfigured.
 
 *-p*, *--dispatch* _mode_::
-  Set the CPU dispatching _mode_ (polarization). This option has an effect only if your hardware architecture and hypervisor support CPU polarization. Available _modes_ are:
+Set the CPU dispatching _mode_ (polarization). This option has an effect only if your hardware architecture and hypervisor support CPU polarization. Available _modes_ are:
   
-  *horizontal*;;
-    The workload is spread across all available CPUs.
+*horizontal*;;
+The workload is spread across all available CPUs.
   
-  *vertical*;;
-    The workload is concentrated on few CPUs.
+*vertical*;;
+The workload is concentrated on few CPUs.
 
 *-r*, *--rescan*::
-  Trigger a rescan of CPUs. After a rescan, the Linux kernel recognizes the new CPUs. Use this option on systems that do not automatically detect newly attached CPUs.
+Trigger a rescan of CPUs. After a rescan, the Linux kernel recognizes the new CPUs. Use this option on systems that do not automatically detect newly attached CPUs.
 
- *-V*, *--version*::
-  Display version information and exit.
+*-V*, *--version*::
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == EXIT STATUS
 
 *chcpu* has the following exit status values:
 
 *0*::
-  success
+success
 
 *1*::
-  failure
+failure
 
 *64*::
-  partial success
+partial success
 
 == AUTHORS
 

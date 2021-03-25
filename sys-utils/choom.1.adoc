@@ -23,16 +23,16 @@ The *choom* command displays and adjusts Out-Of-Memory killer score setting.
 == OPTIONS
 
 *-p*, *--pid* _pid_::
-  Specifies process ID.
+Specifies process ID.
 
 *-n*, *--adjust* _value_::
-  Specify the adjust score value.
+Specify the adjust score value.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 == NOTES
 
