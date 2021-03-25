@@ -763,6 +763,7 @@ static int exec_helper(struct libmnt_context *cxt)
 		break;
 	}
 
+	free(namespace);
 	return rc;
 }
 

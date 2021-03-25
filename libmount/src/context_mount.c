@@ -715,6 +715,7 @@ static int exec_helper(struct libmnt_context *cxt)
 	}
 
 	free(o);
+	free(namespace);
 	return rc;
 }
 
