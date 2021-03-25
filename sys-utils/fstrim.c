@@ -280,6 +280,7 @@ static int fstrim_all_from_file(struct fstrim_control *ctl, const char *filename
 			mnt_unref_fs(fs);
 			fs = NULL;
 		}
+		free(rootdev);
 	}
 
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
