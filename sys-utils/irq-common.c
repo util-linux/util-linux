@@ -534,6 +534,7 @@ struct libscols_table *get_scols_table(struct irq_output *out,
 	table = new_scols_table(out);
 	if (!table) {
 		free(result);
+		free_irqstat(stat);
 		return NULL;
 	}
 
