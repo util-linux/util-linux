@@ -184,6 +184,8 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 		return errbuf;
 	}
 
+	close(fd);
+
 	if (forked)
 		_exit(EXIT_SUCCESS);
 	return NULL;
