@@ -55,6 +55,7 @@ enum {
 	COL_NAME,
 	COL_COMMAND,
 	COL_TYPE,
+	COL_UID,
 };
 
 /*

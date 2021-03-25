@@ -81,6 +81,13 @@ static bool file_fill_column(struct proc *proc,
 		if (scols_line_refer_data(ln, column_index, str))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_UID:
+		xasprintf(&str, "%d", (int)file->stat.st_uid);
+		if (!str)
+			err(EXIT_FAILURE, _("failed to add output data"));
+		if (scols_line_refer_data(ln, column_index, str))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
 	};
 
 	return false;
