@@ -532,8 +532,10 @@ struct libscols_table *get_scols_table(struct irq_output *out,
 	sort_result(out, result, stat->nr_irq);
 
 	table = new_scols_table(out);
-	if (!table)
+	if (!table) {
+		free(result);
 		return NULL;
+	}
 
 	for (i = 0; i < stat->nr_irq; i++)
 		add_scols_line(out, &result[i], table);
