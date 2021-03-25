@@ -27,28 +27,28 @@ The timing information is what script1 outputs to file specified by *--log-timin
 == OPTIONS
 
 *-I*, *--log-in* _file_::
-  File containing *script*'s terminal input.
+File containing *script*'s terminal input.
 
 *-B*, *--log-io* _file_::
-  File containing *script*'s terminal output and input.
+File containing *script*'s terminal output and input.
 
 *-t*, *--timing* _file_::
-  File containing *script*'s timing output. This option overrides old-style arguments.
+File containing *script*'s timing output. This option overrides old-style arguments.
 
 *-T*, *--log-timing* _file_::
-  Aliased to *-t*, maintained for compatibility with *script*(1) command-line options.
+Aliased to *-t*, maintained for compatibility with *script*(1) command-line options.
 
 *-d*, *--divisor* _number_::
-  Speed up the replay displaying this _number_ of times. The argument is a floating-point number. It's called divisor because it divides the timings by this factor. This option overrides old-style arguments.
+Speed up the replay displaying this _number_ of times. The argument is a floating-point number. It's called divisor because it divides the timings by this factor. This option overrides old-style arguments.
 
 *-m*, *--maxdelay* _number_::
-  Set the maximum delay between updates to _number_ of seconds. The argument is a floating-point number. This can be used to avoid long pauses in the typescript replay.
+Set the maximum delay between updates to _number_ of seconds. The argument is a floating-point number. This can be used to avoid long pauses in the typescript replay.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == EXAMPLES
 

@@ -39,6 +39,7 @@ SUCH DAMAGE.
 :man source: util-linux {release-version}
 :page-layout: base
 :command: script
+:plus: +
 
 == NAME
 
@@ -63,65 +64,66 @@ Note that logging input using *--log-in* or *--log-io* may record security-sensi
 Below, the _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB"), or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-a*, *--append*::
-  Append the output to _file_ or to _typescript_, retaining the prior contents.
+Append the output to _file_ or to _typescript_, retaining the prior contents.
 
 *-c*, *--command* _command_::
-  Run the _command_ rather than an interactive shell. This makes it easy for a script to capture the output of a program that behaves differently when its stdout is not a tty.
+Run the _command_ rather than an interactive shell. This makes it easy for a script to capture the output of a program that behaves differently when its stdout is not a tty.
 
 *-E*, *--echo* _when_::
-  This option controls the *ECHO* flag for the slave end of the session's pseudoterminal. The supported modes are _always_, _never_, or _auto_. +
-  {nbsp} +
-  The default is _auto_ -- in this case, *ECHO* enabled for the pseudoterminal slave; if the current standard input is a terminal, *ECHO* is disabled for it to prevent double echo; if the current standard input is not a terminal (for example pipe: *echo date | script*) then keeping *ECHO* enabled for the pseudoterminal slave enables the standard input data to be viewed on screen while being recorded to session log simultaneously. +
-  {nbsp} +
-  Note that 'never' mode affects content of the session output log, because users input is not repeated on output.
+This option controls the *ECHO* flag for the slave end of the session's pseudoterminal. The supported modes are _always_, _never_, or _auto_.
++
+The default is _auto_ -- in this case, *ECHO* enabled for the pseudoterminal slave; if the current standard input is a terminal, *ECHO* is disabled for it to prevent double echo; if the current standard input is not a terminal (for example pipe: *echo date | script*) then keeping *ECHO* enabled for the pseudoterminal slave enables the standard input data to be viewed on screen while being recorded to session log simultaneously.
++
+Note that 'never' mode affects content of the session output log, because users input is not repeated on output.
 
 *-e*, *--return*::
-  Return the exit status of the child process. Uses the same format as bash termination on signal termination (i.e., exit status is 128 + the signal number). The exit status of the child process is always stored in the type script file too.
+Return the exit status of the child process. Uses the same format as bash termination on signal termination (i.e., exit status is 128 {plus} the signal number). The exit status of the child process is always stored in the type script file too.
+//TRANSLATORS: Keep {plus} untranslated.
 
 *-f*, *--flush*::
-  Flush output after each write. This is nice for telecooperation: one person does *mkfifo foo; script -f foo*, and another can supervise in real-time what is being done using *cat foo*. Note that flush has an impact on performance; it's possible to use *SIGUSR1* to flush logs on demand.
+Flush output after each write. This is nice for telecooperation: one person does *mkfifo foo; script -f foo*, and another can supervise in real-time what is being done using *cat foo*. Note that flush has an impact on performance; it's possible to use *SIGUSR1* to flush logs on demand.
 
 *--force*::
-  Allow the default output file _typescript_ to be a hard or symbolic link. The command will follow a symbolic link.
+Allow the default output file _typescript_ to be a hard or symbolic link. The command will follow a symbolic link.
 
 *-B*, *--log-io* _file_::
-  Log input and output to the same _file_. Note, this option makes sense only if *--log-timing* is also specified, otherwise it's impossible to separate output and input streams from the log _file_.
+Log input and output to the same _file_. Note, this option makes sense only if *--log-timing* is also specified, otherwise it's impossible to separate output and input streams from the log _file_.
 
 *-I*, *--log-in* _file_::
-  Log input to the _file_. The log output is disabled if only *--log-in* specified. +
-  {nbsp} +
-  Use this logging functionality carefully as it logs all input, including input when terminal has disabled echo flag (for example, password inputs).
+Log input to the _file_. The log output is disabled if only *--log-in* specified.
++
+Use this logging functionality carefully as it logs all input, including input when terminal has disabled echo flag (for example, password inputs).
 
 *-O*, *--log-out* _file_::
-  Log output to the _file_. The default is to log output to the file with name _typescript_ if the option *--log-out* or *--log-in* is not given. The log output is disabled if only *--log-in* specified.
+Log output to the _file_. The default is to log output to the file with name _typescript_ if the option *--log-out* or *--log-in* is not given. The log output is disabled if only *--log-in* specified.
 
 *-T*, *--log-timing* _file_::
-  Log timing information to the _file_. Two timing file formats are supported now. The classic format is used when only one stream (input or output) logging is enabled. The multi-stream format is used on *--log-io* or when *--log-in* and *--log-out* are used together. See also *--logging-format*.
+Log timing information to the _file_. Two timing file formats are supported now. The classic format is used when only one stream (input or output) logging is enabled. The multi-stream format is used on *--log-io* or when *--log-in* and *--log-out* are used together. See also *--logging-format*.
 
 *-m*, *--logging-format* _format_::
-  Force use of _advanced_ or _classic_ format. The default is the classic format to log only output and the advanced format when input as well as output logging is requested.
+Force use of _advanced_ or _classic_ format. The default is the classic format to log only output and the advanced format when input as well as output logging is requested.
   
 
 *Classic format*:::
-  The log contains two fields, separated by a space. The first field indicates how much time elapsed since the previous output. The second field indicates how many characters were output this time.
+The log contains two fields, separated by a space. The first field indicates how much time elapsed since the previous output. The second field indicates how many characters were output this time.
 
 *Advanced (multi-stream) format*:::
-  The first field is an entry type identifier ('I'nput, 'O'utput, 'H'eader, 'S'ignal). The socond field is how much time elapsed since the previous entry, and the rest of the entry is type-specific data.
+The first field is an entry type identifier ('I'nput, 'O'utput, 'H'eader, 'S'ignal). The socond field is how much time elapsed since the previous entry, and the rest of the entry is type-specific data.
 
 *-o*, *--output-limit* _size_::
-  Limit the size of the typescript and timing files to _size_ and stop the child process after this size is exceeded. The calculated file size does not include the start and done messages that the *script* command prepends and appends to the child process output. Due to buffering, the resulting output file might be larger than the specified value.
+Limit the size of the typescript and timing files to _size_ and stop the child process after this size is exceeded. The calculated file size does not include the start and done messages that the *script* command prepends and appends to the child process output. Due to buffering, the resulting output file might be larger than the specified value.
 
 *-q*, *--quiet*::
-  Be quiet (do not write start and done messages to standard output).
+Be quiet (do not write start and done messages to standard output).
 
 *-t*[_file_], *--timing*[=_file_]::
-  Output timing data to standard error, or to _file_ when given. This option is deprecated in favour of *--log-timing* where the _file_ argument is not optional.
+Output timing data to standard error, or to _file_ when given. This option is deprecated in favour of *--log-timing* where the _file_ argument is not optional.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == SIGNALS
 
@@ -132,7 +134,7 @@ Upon receiving *SIGUSR1*, *script* immediately flushes the output files.
 The following environment variable is utilized by *script*:
 
 *SHELL*::
-  If the variable *SHELL* exists, the shell forked by *script* will be that shell. If *SHELL* is not set, the Bourne shell is assumed. (Most shells set this variable automatically).
+If the variable *SHELL* exists, the shell forked by *script* will be that shell. If *SHELL* is not set, the Bourne shell is assumed. (Most shells set this variable automatically).
 
 == NOTES
 

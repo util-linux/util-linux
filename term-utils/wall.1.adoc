@@ -60,23 +60,23 @@ Reading from a _file_ is refused when the invoker is not superuser and the progr
 == OPTIONS
 
 *-n*, *--nobanner*::
-  Suppress the banner.
+Suppress the banner.
 
 *-t*, *--timeout* _timeout_::
-  Abandon the write attempt to the terminals after _timeout_ seconds. This _timeout_ must be a positive integer. The default value is 300 seconds, which is a legacy from the time when people ran terminals over modem lines.
+Abandon the write attempt to the terminals after _timeout_ seconds. This _timeout_ must be a positive integer. The default value is 300 seconds, which is a legacy from the time when people ran terminals over modem lines.
 
 *-g*, *--group* _group_::
-  Limit printing message to members of group defined as a _group_ argument. The argument can be group name or GID.
+Limit printing message to members of group defined as a _group_ argument. The argument can be group name or GID.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == NOTES
 
-Some sessions, such as wdm, that have in the beginning of *utmp*(5) ut_type data a ':' character will not get the message from *wall*. This is done to avoid write errors.
+Some sessions, such as *wdm*(1x), that have in the beginning of *utmp*(5) ut_type data a ':' character will not get the message from *wall*. This is done to avoid write errors.
 
 == HISTORY
 

@@ -59,36 +59,34 @@ The *mesg* utility silently exits with error status 2 if not executed on termina
 == ARGUMENTS
 
 *n*::
-  Disallow messages.
+Disallow messages.
 
 *y*::
-  Allow messages to be displayed.
+Allow messages to be displayed.
 
 If no arguments are given, *mesg* shows the current message status on standard error output.
 
 == OPTIONS
 
 *-v*, *--verbose*::
-  Explain what is being done.
+Explain what is being done.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == EXIT STATUS
 
 The *mesg* utility exits with one of the following values:
 
-____
 *0*::
-  Messages are allowed.
+Messages are allowed.
 *1*::
-  Messages are not allowed.
+Messages are not allowed.
 *>1*::
-  An error has occurred.
-____
+An error has occurred.
 
 == FILES
 
