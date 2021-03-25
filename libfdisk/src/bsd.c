@@ -1060,5 +1060,6 @@ struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt __attribute__ 
 	lb->flags |= FDISK_LABEL_FL_INCHARS_PARTNO;
 	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
 
-	return lb;
+	/* return calloc() result to keep static anaylizers happy */
+	return (struct fdisk_label *) bsd;
 }

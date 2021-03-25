@@ -3213,7 +3213,8 @@ struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt __attribute__ 
 	lb->fields = gpt_fields;
 	lb->nfields = ARRAY_SIZE(gpt_fields);
 
-	return lb;
+	/* return calloc() result to keep static anaylizers happy */
+	return (struct fdisk_label *) gpt;
 }
 
 /**
