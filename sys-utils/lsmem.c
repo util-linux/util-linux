@@ -370,7 +370,7 @@ static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
 	if (ul_path_readf_s32(lsmem->sysmem, &x, "%s/removable", name) == 0)
 		blk->removable = x == 1;
 
-	if (ul_path_readf_string(lsmem->sysmem, &line, "%s/state", name) > 0) {
+	if (ul_path_readf_string(lsmem->sysmem, &line, "%s/state", name) > 0 && line) {
 		if (strcmp(line, "offline") == 0)
 			blk->state = MEMORY_STATE_OFFLINE;
 		else if (strcmp(line, "online") == 0)
@@ -384,8 +384,9 @@ static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
 		blk->node = memory_block_get_node(lsmem, name);
 
 	blk->nr_zones = 0;
-	if (lsmem->have_zones &&
-	    ul_path_readf_string(lsmem->sysmem, &line, "%s/valid_zones", name) > 0) {
+	if (lsmem->have_zones
+	    && ul_path_readf_string(lsmem->sysmem, &line, "%s/valid_zones", name) > 0
+	    && line) {
 
 		char *token = strtok(line, " ");
 
@@ -394,7 +395,6 @@ static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
 			blk->nr_zones++;
 			token = strtok(NULL, " ");
 		}
-
 		free(line);
 	}
 }
