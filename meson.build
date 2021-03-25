@@ -1681,6 +1681,38 @@ exe = executable(
 exes += exe
 install_man('sys-utils/flock.1')
 
+opt = not get_option('build-lsirq').disabled()
+exe = executable(
+  'lsirq',
+  lsirq_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/lsirq.1')
+endif
+
+opt = not get_option('build-irqtop').disabled()
+exe = executable(
+  'irqtop',
+  irqtop_sources,
+  include_directories : includes,
+  dependencies : [realtime_libs, curses_libs],
+  link_with : [lib_common,
+               lib_smartcols,
+	       lib_tcolors],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  install_man('sys-utils/irqtop.1')
+endif
+
 opt = not get_option('build-ipcs').disabled()
 exe = executable(
   'lsipc',

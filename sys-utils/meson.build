@@ -197,6 +197,19 @@ lsipc_sources = files(
   'ipcutils.h',
 )
 
+lsirq_sources = files(
+  'lsirq.c',
+  'irq-common.c',
+  'irq-common.h',
+)
+
+irqtop_sources = files(
+  'irqtop.c',
+  'irq-common.c',
+  'irq-common.h',
+) + \
+    monotonic_c
+
 hwclock_sources = [
   'sys-utils/hwclock.c',
   'sys-utils/hwclock.h',
