@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
+#include "idcache.h"
 #include "list.h"
 
 /*
@@ -56,6 +57,7 @@ enum {
 	COL_COMMAND,
 	COL_TYPE,
 	COL_UID,
+	COL_USER,
 };
 
 /*
@@ -104,5 +106,7 @@ struct file *make_fd_file(const struct file_class *class,
 			  struct stat *sb, const char *name, int fd);
 struct file *make_regular_fd_file(const struct file_class *class,
 				  struct stat *sb, const char *name, int fd);
+
+extern struct idcache *username_cache;
 
 #endif /* UTIL_LINUX_LSFD_H */
