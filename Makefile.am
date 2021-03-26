@@ -71,6 +71,9 @@ UNINSTALL_HOOKS =
 INSTALL_DATA_HOOKS =
 CLEAN_LOCALS =
 CHECK_LOCALS =
+MANPAGES =
+MANLINKS =
+MANPAGES_EXTRA =
 
 EXTRA_DIST =
 CLEANFILES =
@@ -107,6 +110,7 @@ include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am
 
 include bash-completion/Makemodule.am
+include man-common/Makemodule.am
 
 include tests/Makemodule.am
 
@@ -190,20 +194,23 @@ $(PATHFILES): Makefile
 		$(edit_cmd) $${srcdir}$@.in >$@.tmp
 	@ mv $@.tmp $@
 
+
 asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-b manpage \
 	-a 'VERSION=$(VERSION)' \
 	-a 'ADJTIME_PATH=$(ADJTIME_PATH)'
 
-CLEANFILES += $(dist_man_MANS)
-EXTRA_DIST += $(dist_man_MANS:=.adoc)
+dist_man_MANS += $(MANPAGES) $(MANLINKS)
 
-$(dist_man_MANS): Makefile
+CLEANFILES += $(dist_man_MANS)
+EXTRA_DIST += $(MANPAGES:=.adoc) $(MANPAGES_EXTRA)
+
+$(MANPAGES): $(MANPAGES:=.adoc) $(MANPAGES_EXTRA) Makefile
 	@ rm -f $@
 	$(AM_V_at) $(MKDIR_P) $$(dirname $@)
 	$(AM_V_GEN) srcdir=''; \
 		test -f ./$@.adoc || srcdir=$(srcdir)/; \
-		$(asciidoc_man_cmd) $${srcdir}$@.adoc
+		$(asciidoc_man_cmd) $${srcdir}$@.adoc --destination-dir $$(dirname $@)
 
 gen-man: $(dist_man_MANS)
 
