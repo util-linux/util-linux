@@ -62,11 +62,13 @@ static bool file_fill_column(struct proc *proc,
 
 	switch(column_id) {
 	case COL_COMMAND:
-		if (proc->command && scols_line_set_data(ln, column_index, proc->command))
+		if (proc->command
+		    && scols_line_set_data(ln, column_index, proc->command))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
 	case COL_NAME:
-		if (file->name && scols_line_set_data(ln, column_index, file->name))
+		if (file->name
+		    && scols_line_set_data(ln, column_index, file->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
 	case COL_TYPE:
@@ -76,21 +78,19 @@ static bool file_fill_column(struct proc *proc,
 		return true;
 	case COL_PID:
 		xasprintf(&str, "%d", (int)proc->pid);
-		if (!str)
-			err(EXIT_FAILURE, _("failed to add output data"));
-		if (scols_line_refer_data(ln, column_index, str))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
+		break;
 	case COL_UID:
 		xasprintf(&str, "%d", (int)file->stat.st_uid);
-		if (!str)
-			err(EXIT_FAILURE, _("failed to add output data"));
-		if (scols_line_refer_data(ln, column_index, str))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
+		break;
+	default:
+		return false;
 	};
 
-	return false;
+	if (!str)
+		err(EXIT_FAILURE, _("failed to add output data"));
+	if (scols_line_refer_data(ln, column_index, str))
+		err(EXIT_FAILURE, _("failed to add output data"));
+	return true;
 }
 
 static void file_free_content(struct file *file)
