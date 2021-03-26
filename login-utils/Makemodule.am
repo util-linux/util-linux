@@ -240,7 +240,7 @@ endif # BUILD_LSLOGINS
 
 if BUILD_VIPW
 usrsbin_exec_PROGRAMS += vipw
-MANPAGES += ogin-utils/vipw.8
+MANPAGES += login-utils/vipw.8
 MANLINKS += login-utils/vigr.8
 vipw_SOURCES = \
 	login-utils/vipw.c \
