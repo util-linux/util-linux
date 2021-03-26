@@ -16,7 +16,7 @@ isosize - output the length of an iso9660 filesystem
 
 == DESCRIPTION
 
-This command outputs the length of an iso9660 filesystem that is contained in the specified file. This file may be a normal file or a block device (e.g. _/dev/hdd_ or _/dev/sr0_). In the absence of any options (and errors), it will output the size of the iso9660 filesystem in bytes. This can now be a large number (>> 4 GB).
+This command outputs the length of an iso9660 filesystem that is contained in the specified file. This file may be a normal file or a block device (e.g. _/dev/hdd_ or _/dev/sr0_). In the absence of any options (and errors), it will output the size of the iso9660 filesystem in bytes. This can now be a large number (>> 4 GB).
 
 == OPTIONS
 
