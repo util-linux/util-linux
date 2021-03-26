@@ -212,7 +212,7 @@ Monitors remounts to read-only mode on all ext3 filesystems.
 
 == AUTHORS
 
-mailto:kzak@redhat.com>[Karel Zak]
+mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 
