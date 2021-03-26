@@ -210,7 +210,7 @@ $(MANPAGES): $(MANPAGES:=.adoc) $(MANPAGES_EXTRA) Makefile
 	$(AM_V_at) $(MKDIR_P) $$(dirname $@)
 	$(AM_V_GEN) srcdir=''; \
 		test -f ./$@.adoc || srcdir=$(srcdir)/; \
-		$(asciidoc_man_cmd) $${srcdir}$@.adoc
+		$(asciidoc_man_cmd) $${srcdir}$@.adoc --destination-dir $$(dirname $@)
 
 gen-man: $(dist_man_MANS)
 
