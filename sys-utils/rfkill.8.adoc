@@ -62,6 +62,9 @@ The default output is subject to change. So whenever possible, you should avoid 
 **unblock id**|*type* [...]::
   Enable the corresponding device. If the device is hard-blocked, for example via a hardware switch, it will remain unavailable though it is now soft-unblocked.
 
+**toggle id**|*type* [...]::
+  Enable or disable the the corresponding device.
+
 == EXAMPLE
 ....
   rfkill --output ID,TYPE
