@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-03-26 21:41+0100\n"
+"POT-Creation-Date: 2021-03-27 00:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1644,10 +1644,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:151 ../disk-utils/sfdisk.8.adoc:407
-#: ../login-utils/nologin.8.adoc:70 ../misc-utils/wipefs.8.adoc:106
-#: ../sys-utils/choom.1.adoc:54 ../sys-utils/dmesg.1.adoc:184
-#: ../sys-utils/lsns.8.adoc:75 ../sys-utils/mount.8.adoc:1455
-#: ../sys-utils/mountpoint.1.adoc:68 ../term-utils/scriptlive.1.adoc:68
+#: ../login-utils/nologin.8.adoc:70 ../misc-utils/findmnt.8.adoc:216
+#: ../misc-utils/wipefs.8.adoc:106 ../sys-utils/choom.1.adoc:54
+#: ../sys-utils/dmesg.1.adoc:184 ../sys-utils/lsns.8.adoc:75
+#: ../sys-utils/mount.8.adoc:1455 ../sys-utils/mountpoint.1.adoc:68
+#: ../term-utils/scriptlive.1.adoc:68
 msgid "mailto:kzak@redhat.com[Karel Zak]"
 msgstr ""
 
@@ -3658,7 +3659,7 @@ msgid ""
 "in the specified file. This file may be a normal file or a block device "
 "(e.g. _/dev/hdd_ or _/dev/sr0_). In the absence of any options (and errors), "
 "it will output the size of the iso9660 filesystem in bytes. This can now be "
-"a large number (>> 4Â GB)."
+"a large number (>> 4 GB)."
 msgstr ""
 
 #. type: Labeled list
@@ -12765,11 +12766,6 @@ msgstr ""
 #. type: Plain text
 #: ../misc-utils/findmnt.8.adoc:212
 msgid "Monitors remounts to read-only mode on all ext3 filesystems."
-msgstr ""
-
-#. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:216
-msgid "mailto:kzak@redhat.com>[Karel Zak]"
 msgstr ""
 
 #. type: Plain text
