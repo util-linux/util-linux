@@ -83,6 +83,9 @@ static bool file_fill_column(struct proc *proc,
 					       (int)file->stat.st_uid)->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_INODE:
+		xasprintf(&str, "%llu", (unsigned long long)file->stat.st_ino);
+		break;
 	case COL_PID:
 		xasprintf(&str, "%d", (int)proc->pid);
 		break;

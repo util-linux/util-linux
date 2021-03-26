@@ -51,10 +51,11 @@ DIR *opendirf(const char *format, ...) __attribute__((format (printf, 1, 2)));
  * column IDs
  */
 enum {
-	COL_PID,
-	COL_FD,
-	COL_NAME,
 	COL_COMMAND,
+	COL_FD,
+	COL_INODE,
+	COL_NAME,
+	COL_PID,
 	COL_TYPE,
 	COL_UID,
 	COL_USER,
