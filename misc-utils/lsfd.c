@@ -75,16 +75,16 @@ struct colinfo {
 
 /* columns descriptions */
 static struct colinfo infos[] = {
-	[COL_PID]     = { "PID",      0, SCOLS_FL_RIGHT, N_("PID of the process opening the file") },
-	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, N_("file descriptor for the file") },
-	[COL_NAME]    = { "NAME",     0, 0,              N_("name of the file") },
 	[COL_COMMAND] = { "COMMAND",  0, 0,              N_("command of the process opening the file") },
+	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, N_("file descriptor for the file") },
+	[COL_INODE]   = { "INODE",    0, SCOLS_FL_RIGHT, N_("inode number") },
+	[COL_NAME]    = { "NAME",     0, 0,              N_("name of the file") },
+	[COL_PID]     = { "PID",      0, SCOLS_FL_RIGHT, N_("PID of the process opening the file") },
 	[COL_TYPE]    = { "TYPE",     0, SCOLS_FL_RIGHT, N_("file type") },
-	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, N_("user of the process") },
 	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, N_("user ID number") },
+	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, N_("user of the process") },
 	/* DEVICE */
 	/* SIZE/OFF */
-	/* NODE */
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
@@ -473,6 +473,7 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_USER;
 		columns[ncolumns++] = COL_FD;
 		columns[ncolumns++] = COL_TYPE;
+		columns[ncolumns++] = COL_INODE;
 		columns[ncolumns++] = COL_NAME;
 	}
 
