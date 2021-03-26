@@ -40,7 +40,7 @@ These functions are for Alpha machines only, and are only available through the 
 +
 They are used to read and set the kernel's Hardware Clock epoch value. Epoch is the number of years into AD to which a zero year value in the Hardware Clock refers. For example, if the machine's BIOS sets the year counter in the Hardware Clock to contain the number of full years since 1952, then the kernel's Hardware Clock epoch value must be 1952.
 +
-The *­--setepoch* function requires using the *­--epoch* option to specify the year. For example:
+The *--setepoch* function requires using the *--epoch* option to specify the year. For example:
 +
 **hwclock --setepoch --epoch=1952**
 +
@@ -63,11 +63,11 @@ The *--get* function also applies drift correction to the time read, based upon 
 *-s*, *--hctosys*::
 Set the System Clock from the Hardware Clock. The time read from the Hardware Clock is compensated to account for systematic drift before using it to set the System Clock. See the discussion below, under *The Adjust Function*.
 +
-The System Clock must be kept in the UTC timescale for date-time applications to work correctly in conjunction with the timezone configured for the system. If the Hardware Clock is kept in local time then the time read from it must be shifted to the UTC timescale before using it to set the System Clock. The *­--hctosys* function does this based upon the information in the _{ADJTIME_PATH}_ file or the command line arguments *­--localtime* and *--utc*. Note: no daylight saving adjustment is made. See the discussion below, under *LOCAL vs UTC*.
+The System Clock must be kept in the UTC timescale for date-time applications to work correctly in conjunction with the timezone configured for the system. If the Hardware Clock is kept in local time then the time read from it must be shifted to the UTC timescale before using it to set the System Clock. The *--hctosys* function does this based upon the information in the _{ADJTIME_PATH}_ file or the command line arguments *--localtime* and *--utc*. Note: no daylight saving adjustment is made. See the discussion below, under *LOCAL vs UTC*.
 +
-The kernel also keeps a timezone value, the *­--hctosys* function sets it to the timezone configured for the system. The system timezone is configured by the TZ environment variable or the _­/etc/localtime_ file, as *­tzset*(3) would interpret them. The obsolete _tz_dsttime_ field of the kernel's timezone value is set to zero. (For details on what this field used to mean, see *­settimeofday*(2).)
+The kernel also keeps a timezone value, the *--hctosys* function sets it to the timezone configured for the system. The system timezone is configured by the TZ environment variable or the _­/etc/localtime_ file, as *tzset*(3) would interpret them. The obsolete _tz_dsttime_ field of the kernel's timezone value is set to zero. (For details on what this field used to mean, see *settimeofday*(2).)
 +
-When used in a startup script, making the *­--hctosys* function the first caller of *settimeofday*(2) from boot, it will set the NTP '11 minute mode' timescale via the _persistent_clock_is_local_ kernel variable. If the Hardware Clock's timescale configuration is changed then a reboot is required to inform the kernel. See the discussion below, under *Automatic Hardware Clock Synchronization by the Kernel*.
+When used in a startup script, making the *--hctosys* function the first caller of *settimeofday*(2) from boot, it will set the NTP '11 minute mode' timescale via the _persistent_clock_is_local_ kernel variable. If the Hardware Clock's timescale configuration is changed then a reboot is required to inform the kernel. See the discussion below, under *Automatic Hardware Clock Synchronization by the Kernel*.
 +
 This is a good function to use in one of the system startup scripts before the file systems are mounted read/write.
 +
@@ -199,7 +199,7 @@ The kernel's timezone value actually consists of two parts: 1) a field tz_minute
 
 However, this method is not always available as older systems do not have an rtc driver. On these systems, the method of accessing the Hardware Clock depends on the system hardware.
 
-On an ISA compatible system, ­*hwclock* can directly access the "CMOS memory" registers that constitute the clock, by doing I/O to Ports 0x70 and 0x71. It does this with actual I/O instructions and consequently can only do it if running with superuser effective userid. This method may be used by specifying the *--directisa* option.
+On an ISA compatible system, *hwclock* can directly access the "CMOS memory" registers that constitute the clock, by doing I/O to Ports 0x70 and 0x71. It does this with actual I/O instructions and consequently can only do it if running with superuser effective userid. This method may be used by specifying the *--directisa* option.
 
 This is a really poor method of accessing the clock, for all the reasons that userspace programs are generally not supposed to do direct I/O and disable interrupts. *hwclock* provides it for testing, troubleshooting, and because it may be the only method available on ISA systems which do not have a working rtc device driver.
 
@@ -328,7 +328,7 @@ Linux does, however, attempt to accommodate the Hardware Clock being in the loca
 A discussion on date-time configuration would be incomplete without addressing timezones, this is mostly well covered by *tzset*(3). One area that seems to have no documentation is the 'right' directory of the Time Zone Database, sometimes called tz or zoneinfo.
 
 //TRANSLATORS: Keep {plus} untranslated.
-There are two separate databases in the zoneinfo system, posix and 'right'. 'Right' (now named zoneinfo-leaps) includes leap seconds and posix does not. To use the 'right' database the System Clock must be set to ­(UTC {plus} leap seconds), which is equivalent to ­(TAI - 10). This allows calculating the exact number of seconds between two dates that cross a leap second epoch. The System Clock is then converted to the correct civil time, including UTC, by using the 'right' timezone files which subtract the leap seconds. Note: this configuration is considered experimental and is known to have issues.
+There are two separate databases in the zoneinfo system, posix and 'right'. 'Right' (now named zoneinfo-leaps) includes leap seconds and posix does not. To use the 'right' database the System Clock must be set to ­(UTC {plus} leap seconds), which is equivalent to (TAI - 10). This allows calculating the exact number of seconds between two dates that cross a leap second epoch. The System Clock is then converted to the correct civil time, including UTC, by using the 'right' timezone files which subtract the leap seconds. Note: this configuration is considered experimental and is known to have issues.
 
 To configure a system to use a particular database all of the files located in its directory must be copied to the root of _/usr/share/zoneinfo_. Files are never used directly from the posix or 'right' subdirectories, e.g., ­TZ='_right/Europe/Dublin_'. This habit was becoming so common that the upstream zoneinfo project restructured the system's file tree by moving the posix and 'right' subdirectories out of the zoneinfo directory and into sibling directories:
 
