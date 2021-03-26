@@ -71,6 +71,8 @@ UNINSTALL_HOOKS =
 INSTALL_DATA_HOOKS =
 CLEAN_LOCALS =
 CHECK_LOCALS =
+MANPAGES =
+MANLINKS =
 
 EXTRA_DIST =
 CLEANFILES =
@@ -195,10 +197,13 @@ asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-a 'VERSION=$(VERSION)' \
 	-a 'ADJTIME_PATH=$(ADJTIME_PATH)'
 
-CLEANFILES += $(dist_man_MANS)
-EXTRA_DIST += $(dist_man_MANS:=.adoc)
+dist_man_MANS += $(MANPAGES) $(MANLINKS)
 
-$(dist_man_MANS): Makefile
+CLEANFILES += $(dist_man_MANS)
+EXTRA_DIST += $(MANPAGES:=.adoc)
+
+
+$(MANPAGES): Makefile
 	@ rm -f $@
 	$(AM_V_at) $(MKDIR_P) $$(dirname $@)
 	$(AM_V_GEN) srcdir=''; \

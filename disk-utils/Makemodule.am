@@ -1,7 +1,7 @@
 
 if BUILD_MINIX
 sbin_PROGRAMS += fsck.minix
-dist_man_MANS += disk-utils/fsck.minix.8
+MANPAGES += disk-utils/fsck.minix.8
 fsck_minix_SOURCES = \
 	disk-utils/fsck.minix.c \
 	disk-utils/minix_programs.h \
@@ -9,7 +9,7 @@ fsck_minix_SOURCES = \
 fsck_minix_LDADD = $(LDADD) libcommon.la
 
 sbin_PROGRAMS += mkfs.minix
-dist_man_MANS += disk-utils/mkfs.minix.8
+MANPAGES += disk-utils/mkfs.minix.8
 mkfs_minix_SOURCES = \
 	disk-utils/minix_programs.h \
 	disk-utils/mkfs.minix.c \
@@ -25,14 +25,14 @@ endif
 
 if BUILD_MKFS
 sbin_PROGRAMS += mkfs
-dist_man_MANS += disk-utils/mkfs.8
+MANPAGES += disk-utils/mkfs.8
 mkfs_SOURCES = disk-utils/mkfs.c
 endif
 
 
 if BUILD_ISOSIZE
 usrbin_exec_PROGRAMS += isosize
-dist_man_MANS += disk-utils/isosize.8
+MANPAGES += disk-utils/isosize.8
 isosize_SOURCES = disk-utils/isosize.c
 isosize_LDADD = $(LDADD) libcommon.la
 endif
@@ -40,7 +40,7 @@ endif
 
 if BUILD_BFS
 sbin_PROGRAMS += mkfs.bfs
-dist_man_MANS += disk-utils/mkfs.bfs.8
+MANPAGES += disk-utils/mkfs.bfs.8
 mkfs_bfs_SOURCES = \
 	disk-utils/mkfs.bfs.c
 mkfs_bfs_LDADD = $(LDADD) libcommon.la
@@ -49,7 +49,7 @@ endif
 
 if BUILD_MKSWAP
 sbin_PROGRAMS += mkswap
-dist_man_MANS += disk-utils/mkswap.8
+MANPAGES += disk-utils/mkswap.8
 mkswap_SOURCES = \
 	disk-utils/mkswap.c \
 	lib/ismounted.c
@@ -75,7 +75,7 @@ endif # BUILD_MKSWAP
 
 if BUILD_SWAPLABEL
 sbin_PROGRAMS += swaplabel
-dist_man_MANS += disk-utils/swaplabel.8
+MANPAGES += disk-utils/swaplabel.8
 swaplabel_SOURCES = \
 	disk-utils/swaplabel.c \
 	lib/swapprober.c \
@@ -93,7 +93,7 @@ endif #BUILD_SWAPLABEL
 
 if BUILD_FSCK
 sbin_PROGRAMS += fsck
-dist_man_MANS += disk-utils/fsck.8
+MANPAGES += disk-utils/fsck.8
 fsck_SOURCES = disk-utils/fsck.c lib/monotonic.c
 fsck_LDADD = $(LDADD) libmount.la libblkid.la libcommon.la $(REALTIME_LIBS)
 fsck_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libblkid_incdir)
@@ -102,7 +102,7 @@ endif
 
 if BUILD_RAW
 sbin_PROGRAMS += raw
-dist_man_MANS += disk-utils/raw.8
+MANPAGES += disk-utils/raw.8
 raw_SOURCES = disk-utils/raw.c
 endif
 
@@ -112,24 +112,24 @@ cramfs_common_sources = disk-utils/cramfs.h disk-utils/cramfs_common.c
 sbin_PROGRAMS += fsck.cramfs
 fsck_cramfs_SOURCES = disk-utils/fsck.cramfs.c $(cramfs_common_sources)
 fsck_cramfs_LDADD = $(LDADD) -lz libcommon.la
-dist_man_MANS += disk-utils/fsck.cramfs.8
+MANPAGES += disk-utils/fsck.cramfs.8
 
 sbin_PROGRAMS += mkfs.cramfs
 mkfs_cramfs_SOURCES = disk-utils/mkfs.cramfs.c $(cramfs_common_sources)
 mkfs_cramfs_LDADD = $(LDADD) -lz libcommon.la
-dist_man_MANS += disk-utils/mkfs.cramfs.8
+MANPAGES += disk-utils/mkfs.cramfs.8
 endif
 
 if BUILD_FDFORMAT
 usrsbin_exec_PROGRAMS += fdformat
-dist_man_MANS += disk-utils/fdformat.8
+MANPAGES += disk-utils/fdformat.8
 fdformat_SOURCES = disk-utils/fdformat.c
 fdformat_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_BLOCKDEV
 sbin_PROGRAMS += blockdev
-dist_man_MANS += disk-utils/blockdev.8
+MANPAGES += disk-utils/blockdev.8
 blockdev_SOURCES = disk-utils/blockdev.c
 blockdev_LDADD = $(LDADD) libcommon.la
 endif
@@ -137,7 +137,7 @@ endif
 
 if BUILD_FDISK
 sbin_PROGRAMS += fdisk
-dist_man_MANS += disk-utils/fdisk.8
+MANPAGES += disk-utils/fdisk.8
 fdisk_SOURCES = \
 	disk-utils/fdisk.c \
 	disk-utils/fdisk.h \
@@ -161,7 +161,7 @@ endif # BUILD_FDISK
 
 if BUILD_SFDISK
 sbin_PROGRAMS += sfdisk
-dist_man_MANS += disk-utils/sfdisk.8
+MANPAGES += disk-utils/sfdisk.8
 sfdisk_SOURCES = \
 	disk-utils/sfdisk.c \
 	disk-utils/fdisk-list.c \
@@ -183,7 +183,7 @@ endif # BUILD_SFDISK
 
 if BUILD_CFDISK
 sbin_PROGRAMS += cfdisk
-dist_man_MANS += disk-utils/cfdisk.8
+MANPAGES += disk-utils/cfdisk.8
 cfdisk_SOURCES = disk-utils/cfdisk.c
 cfdisk_LDADD = \
 	$(LDADD) \
@@ -212,7 +212,7 @@ endif # BUILD_CFDISK
 
 if BUILD_PARTX
 usrsbin_exec_PROGRAMS += partx addpart delpart resizepart
-dist_man_MANS += \
+MANPAGES += \
 	disk-utils/addpart.8 \
 	disk-utils/delpart.8 \
 	disk-utils/resizepart.8 \

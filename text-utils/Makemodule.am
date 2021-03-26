@@ -1,26 +1,26 @@
 if BUILD_COL
 usrbin_exec_PROGRAMS += col
-dist_man_MANS += text-utils/col.1
+MANPAGES += text-utils/col.1
 col_SOURCES = text-utils/col.c
 col_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_COLCRT
 usrbin_exec_PROGRAMS += colcrt
-dist_man_MANS += text-utils/colcrt.1
+MANPAGES += text-utils/colcrt.1
 colcrt_SOURCES = text-utils/colcrt.c
 endif
 
 if BUILD_COLRM
 usrbin_exec_PROGRAMS += colrm
-dist_man_MANS += text-utils/colrm.1
+MANPAGES += text-utils/colrm.1
 colrm_SOURCES = text-utils/colrm.c
 colrm_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_COLUMN
 usrbin_exec_PROGRAMS += column
-dist_man_MANS += text-utils/column.1
+MANPAGES += text-utils/column.1
 column_SOURCES = text-utils/column.c
 column_LDADD = $(LDADD) libcommon.la libsmartcols.la
 column_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
@@ -28,7 +28,7 @@ endif
 
 if BUILD_HEXDUMP
 usrbin_exec_PROGRAMS += hexdump
-dist_man_MANS += text-utils/hexdump.1
+MANPAGES += text-utils/hexdump.1
 hexdump_SOURCES = \
 	text-utils/hexdump-conv.c \
 	text-utils/hexdump-display.c \
@@ -40,19 +40,19 @@ endif
 
 if BUILD_REV
 usrbin_exec_PROGRAMS += rev
-dist_man_MANS += text-utils/rev.1
+MANPAGES += text-utils/rev.1
 rev_SOURCES = text-utils/rev.c
 endif
 
 if BUILD_LINE
 usrbin_exec_PROGRAMS += line
 line_SOURCES = text-utils/line.c
-dist_man_MANS += text-utils/line.1
+MANPAGES += text-utils/line.1
 endif
 
 if BUILD_PG
 usrbin_exec_PROGRAMS += pg
-dist_man_MANS += text-utils/pg.1
+MANPAGES += text-utils/pg.1
 pg_SOURCES = text-utils/pg.c
 pg_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS) $(NCURSES_CFLAGS) $(TINFO_CFLAGS)
 pg_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(TINFO_LIBS)
@@ -61,7 +61,7 @@ endif # BUILD_PG
 
 if BUILD_UL
 usrbin_exec_PROGRAMS += ul
-dist_man_MANS += text-utils/ul.1
+MANPAGES += text-utils/ul.1
 ul_SOURCES = text-utils/ul.c
 ul_CFLAGS = $(AM_CFLAGS)
 ul_LDADD = $(LDADD)
@@ -77,7 +77,7 @@ endif # BUILD_UL
 
 if BUILD_MORE
 bin_PROGRAMS += more
-dist_man_MANS += text-utils/more.1
+MANPAGES += text-utils/more.1
 more_SOURCES = text-utils/more.c
 more_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS)
 more_LDADD = $(LDADD) $(MAGIC_LIBS) libcommon.la

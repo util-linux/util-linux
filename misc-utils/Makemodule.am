@@ -1,6 +1,6 @@
 if BUILD_CAL
 usrbin_exec_PROGRAMS += cal
-dist_man_MANS += misc-utils/cal.1
+MANPAGES += misc-utils/cal.1
 cal_SOURCES = misc-utils/cal.c
 cal_CFLAGS = $(AM_CFLAGS)
 cal_LDADD = $(LDADD) libcommon.la libtcolors.la
@@ -24,7 +24,7 @@ endif # BUILD_CAL
 
 if BUILD_LOGGER
 usrbin_exec_PROGRAMS += logger
-dist_man_MANS += misc-utils/logger.1
+MANPAGES += misc-utils/logger.1
 logger_SOURCES = misc-utils/logger.c lib/strutils.c lib/strv.c
 logger_LDADD = $(LDADD)
 logger_CFLAGS = $(AM_CFLAGS)
@@ -42,33 +42,33 @@ endif # BUILD_LOGGER
 
 if BUILD_LOOK
 usrbin_exec_PROGRAMS += look
-dist_man_MANS += misc-utils/look.1
+MANPAGES += misc-utils/look.1
 look_SOURCES = misc-utils/look.c
 endif
 
 if BUILD_MCOOKIE
 usrbin_exec_PROGRAMS += mcookie
-dist_man_MANS += misc-utils/mcookie.1
+MANPAGES += misc-utils/mcookie.1
 mcookie_SOURCES = misc-utils/mcookie.c lib/md5.c
 mcookie_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_NAMEI
 usrbin_exec_PROGRAMS += namei
-dist_man_MANS += misc-utils/namei.1
+MANPAGES += misc-utils/namei.1
 namei_SOURCES = misc-utils/namei.c lib/strutils.c lib/idcache.c
 endif
 
 if BUILD_WHEREIS
 usrbin_exec_PROGRAMS += whereis
-dist_man_MANS += misc-utils/whereis.1
+MANPAGES += misc-utils/whereis.1
 whereis_SOURCES = misc-utils/whereis.c
 whereis_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_LSLOCKS
 usrbin_exec_PROGRAMS += lslocks
-dist_man_MANS += misc-utils/lslocks.8
+MANPAGES += misc-utils/lslocks.8
 lslocks_LDADD = $(LDADD) libcommon.la libmount.la libsmartcols.la
 lslocks_SOURCES = misc-utils/lslocks.c
 lslocks_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libsmartcols_incdir)
@@ -76,7 +76,7 @@ endif
 
 if BUILD_LSBLK
 bin_PROGRAMS += lsblk
-dist_man_MANS += misc-utils/lsblk.8
+MANPAGES += misc-utils/lsblk.8
 lsblk_SOURCES = \
 	misc-utils/lsblk.c \
 	misc-utils/lsblk-mnt.c \
@@ -92,7 +92,7 @@ endif # BUILD_LSBLK
 
 if BUILD_UUIDGEN
 usrbin_exec_PROGRAMS += uuidgen
-dist_man_MANS += misc-utils/uuidgen.1
+MANPAGES += misc-utils/uuidgen.1
 uuidgen_SOURCES = misc-utils/uuidgen.c
 uuidgen_LDADD = $(LDADD) libuuid.la
 uuidgen_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
@@ -100,7 +100,7 @@ endif
 
 if BUILD_UUIDPARSE
 usrbin_exec_PROGRAMS += uuidparse
-dist_man_MANS += misc-utils/uuidparse.1
+MANPAGES += misc-utils/uuidparse.1
 uuidparse_SOURCES = misc-utils/uuidparse.c
 uuidparse_LDADD = $(LDADD) libcommon.la libuuid.la libsmartcols.la
 uuidparse_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir) -I$(ul_libsmartcols_incdir)
@@ -108,7 +108,7 @@ endif
 
 if BUILD_UUIDD
 usrsbin_exec_PROGRAMS += uuidd
-dist_man_MANS += misc-utils/uuidd.8
+MANPAGES += misc-utils/uuidd.8
 uuidd_LDADD = $(LDADD) libuuid.la libcommon.la $(REALTIME_LIBS)
 uuidd_CFLAGS = $(DAEMON_CFLAGS) $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 uuidd_LDFLAGS = $(DAEMON_LDFLAGS) $(AM_LDFLAGS)
@@ -134,7 +134,7 @@ PATHFILES += \
 
 if BUILD_BLKID
 sbin_PROGRAMS += blkid
-dist_man_MANS += misc-utils/blkid.8
+MANPAGES += misc-utils/blkid.8
 blkid_SOURCES = misc-utils/blkid.c \
 		lib/ismounted.c
 blkid_LDADD = $(LDADD) libblkid.la libcommon.la
@@ -152,7 +152,7 @@ endif # BUILD_BLKID
 
 if BUILD_FINDFS
 sbin_PROGRAMS += findfs
-dist_man_MANS += misc-utils/findfs.8
+MANPAGES += misc-utils/findfs.8
 findfs_LDADD = $(LDADD) libblkid.la
 findfs_SOURCES = misc-utils/findfs.c
 findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
@@ -160,7 +160,7 @@ endif
 
 if BUILD_WIPEFS
 sbin_PROGRAMS += wipefs
-dist_man_MANS += misc-utils/wipefs.8
+MANPAGES += misc-utils/wipefs.8
 wipefs_SOURCES = misc-utils/wipefs.c
 wipefs_LDADD = $(LDADD) libblkid.la libcommon.la libsmartcols.la
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libsmartcols_incdir)
@@ -168,7 +168,7 @@ endif
 
 if BUILD_FINDMNT
 bin_PROGRAMS += findmnt
-dist_man_MANS += misc-utils/findmnt.8
+MANPAGES += misc-utils/findmnt.8
 findmnt_LDADD = $(LDADD) libmount.la \
 		libcommon.la \
 		libsmartcols.la \
@@ -190,18 +190,18 @@ if BUILD_KILL
 bin_PROGRAMS += kill
 kill_SOURCES = misc-utils/kill.c
 kill_LDADD = $(LDADD) libcommon.la
-dist_man_MANS += misc-utils/kill.1
+MANPAGES += misc-utils/kill.1
 endif
 
 if BUILD_RENAME
 usrbin_exec_PROGRAMS += rename
-dist_man_MANS += misc-utils/rename.1
+MANPAGES += misc-utils/rename.1
 rename_SOURCES = misc-utils/rename.c
 endif
 
 if BUILD_GETOPT
 usrbin_exec_PROGRAMS += getopt
-dist_man_MANS += misc-utils/getopt.1
+MANPAGES += misc-utils/getopt.1
 getopt_SOURCES = misc-utils/getopt.c
 getopt_LDADD = $(LDADD) libcommon.la
 getoptexampledir = $(docdir)
@@ -212,7 +212,7 @@ endif
 
 if BUILD_FINCORE
 usrbin_exec_PROGRAMS += fincore
-dist_man_MANS += misc-utils/fincore.1
+MANPAGES += misc-utils/fincore.1
 fincore_SOURCES = misc-utils/fincore.c
 fincore_LDADD = $(LDADD) libsmartcols.la libcommon.la
 fincore_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
@@ -227,5 +227,5 @@ if HAVE_PCRE2_POSIX
 hardlink_LDADD += $(PCRE2_POSIX_LIBS)
 hardlink_CFLAGS += $(PCRE2_POSIX_CFLAGS)
 endif
-dist_man_MANS += misc-utils/hardlink.1
+MANPAGES += misc-utils/hardlink.1
 endif

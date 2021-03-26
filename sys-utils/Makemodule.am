@@ -1,6 +1,6 @@
 if BUILD_LSMEM
 usrbin_exec_PROGRAMS += lsmem
-dist_man_MANS += sys-utils/lsmem.1
+MANPAGES += sys-utils/lsmem.1
 lsmem_SOURCES = sys-utils/lsmem.c
 lsmem_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lsmem_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
@@ -8,42 +8,42 @@ endif
 
 if BUILD_CHMEM
 usrbin_exec_PROGRAMS += chmem
-dist_man_MANS += sys-utils/chmem.8
+MANPAGES += sys-utils/chmem.8
 chmem_SOURCES = sys-utils/chmem.c
 chmem_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_FLOCK
 usrbin_exec_PROGRAMS += flock
-dist_man_MANS += sys-utils/flock.1
+MANPAGES += sys-utils/flock.1
 flock_SOURCES = sys-utils/flock.c lib/monotonic.c lib/timer.c
 flock_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
 endif
 
 if BUILD_CHOOM
 usrbin_exec_PROGRAMS += choom
-dist_man_MANS += sys-utils/choom.1
+MANPAGES += sys-utils/choom.1
 choom_SOURCES = sys-utils/choom.c
 choom_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_IPCMK
 usrbin_exec_PROGRAMS += ipcmk
-dist_man_MANS += sys-utils/ipcmk.1
+MANPAGES += sys-utils/ipcmk.1
 ipcmk_SOURCES = sys-utils/ipcmk.c
 ipcmk_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_IPCRM
 usrbin_exec_PROGRAMS += ipcrm
-dist_man_MANS += sys-utils/ipcrm.1
+MANPAGES += sys-utils/ipcrm.1
 ipcrm_SOURCES = sys-utils/ipcrm.c
 ipcrm_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_IPCS
 usrbin_exec_PROGRAMS += ipcs
-dist_man_MANS += sys-utils/ipcs.1
+MANPAGES += sys-utils/ipcs.1
 ipcs_SOURCES =	sys-utils/ipcs.c \
 		sys-utils/ipcutils.c \
 		sys-utils/ipcutils.h
@@ -52,7 +52,7 @@ endif
 
 if BUILD_IRQTOP
 usrbin_exec_PROGRAMS += irqtop
-dist_man_MANS += sys-utils/irqtop.1
+MANPAGES += sys-utils/irqtop.1
 irqtop_SOURCES = sys-utils/irqtop.c \
 		 sys-utils/irq-common.c \
 		 sys-utils/irq-common.h \
@@ -69,7 +69,7 @@ endif
 
 if BUILD_LSIRQ
 usrbin_exec_PROGRAMS += lsirq
-dist_man_MANS += sys-utils/lsirq.1
+MANPAGES += sys-utils/lsirq.1
 lsirq_SOURCES =	sys-utils/lsirq.c \
 		sys-utils/irq-common.c \
 		sys-utils/irq-common.h
@@ -79,7 +79,7 @@ endif
 
 if BUILD_LSIPC
 usrbin_exec_PROGRAMS += lsipc
-dist_man_MANS += sys-utils/lsipc.1
+MANPAGES += sys-utils/lsipc.1
 lsipc_SOURCES =	sys-utils/lsipc.c \
 		sys-utils/ipcutils.c \
 		sys-utils/ipcutils.h
@@ -89,13 +89,13 @@ endif
 
 if BUILD_RENICE
 usrbin_exec_PROGRAMS += renice
-dist_man_MANS += sys-utils/renice.1
+MANPAGES += sys-utils/renice.1
 renice_SOURCES = sys-utils/renice.c
 endif
 
 if BUILD_RFKILL
 usrsbin_exec_PROGRAMS += rfkill
-dist_man_MANS += sys-utils/rfkill.8
+MANPAGES += sys-utils/rfkill.8
 rfkill_SOURCES = sys-utils/rfkill.c
 rfkill_LDADD = $(LDADD) libcommon.la libsmartcols.la
 rfkill_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
@@ -103,26 +103,26 @@ endif
 
 if BUILD_SETSID
 usrbin_exec_PROGRAMS += setsid
-dist_man_MANS += sys-utils/setsid.1
+MANPAGES += sys-utils/setsid.1
 setsid_SOURCES = sys-utils/setsid.c
 endif
 
 if BUILD_READPROFILE
 usrsbin_exec_PROGRAMS += readprofile
-dist_man_MANS += sys-utils/readprofile.8
+MANPAGES += sys-utils/readprofile.8
 readprofile_SOURCES = sys-utils/readprofile.c
 endif
 
 if BUILD_TUNELP
 usrsbin_exec_PROGRAMS += tunelp
-dist_man_MANS += sys-utils/tunelp.8
+MANPAGES += sys-utils/tunelp.8
 tunelp_SOURCES = sys-utils/tunelp.c
 tunelp_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_FSTRIM
 sbin_PROGRAMS += fstrim
-dist_man_MANS += sys-utils/fstrim.8
+MANPAGES += sys-utils/fstrim.8
 fstrim_SOURCES = sys-utils/fstrim.c
 fstrim_LDADD = $(LDADD) libcommon.la libmount.la
 fstrim_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
@@ -138,7 +138,7 @@ EXTRA_DIST += sys-utils/fstrim.timer
 
 if BUILD_DMESG
 bin_PROGRAMS += dmesg
-dist_man_MANS += sys-utils/dmesg.1
+MANPAGES += sys-utils/dmesg.1
 dmesg_SOURCES = sys-utils/dmesg.c lib/monotonic.c
 dmesg_LDADD = $(LDADD) libcommon.la libtcolors.la $(REALTIME_LIBS)
 dmesg_CFLAGS = $(AM_CFLAGS)
@@ -150,20 +150,20 @@ endif
 
 if BUILD_CTRLALTDEL
 sbin_PROGRAMS += ctrlaltdel
-dist_man_MANS += sys-utils/ctrlaltdel.8
+MANPAGES += sys-utils/ctrlaltdel.8
 ctrlaltdel_SOURCES = sys-utils/ctrlaltdel.c
 ctrlaltdel_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_FSFREEZE
 sbin_PROGRAMS += fsfreeze
-dist_man_MANS += sys-utils/fsfreeze.8
+MANPAGES += sys-utils/fsfreeze.8
 fsfreeze_SOURCES = sys-utils/fsfreeze.c
 endif
 
 if BUILD_BLKDISCARD
 sbin_PROGRAMS += blkdiscard
-dist_man_MANS += sys-utils/blkdiscard.8
+MANPAGES += sys-utils/blkdiscard.8
 blkdiscard_SOURCES = sys-utils/blkdiscard.c lib/monotonic.c
 blkdiscard_LDADD = $(LDADD) libblkid.la libcommon.la $(REALTIME_LIBS)
 blkdiscard_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
@@ -171,28 +171,28 @@ endif
 
 if BUILD_BLKZONE
 sbin_PROGRAMS += blkzone
-dist_man_MANS += sys-utils/blkzone.8
+MANPAGES += sys-utils/blkzone.8
 blkzone_SOURCES = sys-utils/blkzone.c
 blkzone_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_LDATTACH
 usrsbin_exec_PROGRAMS += ldattach
-dist_man_MANS += sys-utils/ldattach.8
+MANPAGES += sys-utils/ldattach.8
 ldattach_SOURCES = sys-utils/ldattach.c
 ldattach_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_RTCWAKE
 usrsbin_exec_PROGRAMS += rtcwake
-dist_man_MANS += sys-utils/rtcwake.8
+MANPAGES += sys-utils/rtcwake.8
 rtcwake_SOURCES = sys-utils/rtcwake.c
 rtcwake_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_SETARCH
 usrbin_exec_PROGRAMS += setarch
-dist_man_MANS += sys-utils/setarch.8
+MANPAGES += sys-utils/setarch.8
 setarch_SOURCES = sys-utils/setarch.c
 
 SETARCH_LINKS = uname26 linux32 linux64
@@ -251,13 +251,13 @@ usrbin_exec_PROGRAMS += eject
 eject_SOURCES =  sys-utils/eject.c lib/monotonic.c
 eject_LDADD = $(LDADD) libmount.la libcommon.la $(REALTIME_LIBS)
 eject_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-dist_man_MANS += sys-utils/eject.1
+MANPAGES += sys-utils/eject.1
 endif
 
 
 if BUILD_LOSETUP
 sbin_PROGRAMS += losetup
-dist_man_MANS += sys-utils/losetup.8
+MANPAGES += sys-utils/losetup.8
 losetup_SOURCES = sys-utils/losetup.c
 losetup_LDADD = $(LDADD) libcommon.la libsmartcols.la
 losetup_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
@@ -274,7 +274,7 @@ endif # BUILD_LOSETUP
 
 if BUILD_ZRAMCTL
 sbin_PROGRAMS += zramctl
-dist_man_MANS += sys-utils/zramctl.8
+MANPAGES += sys-utils/zramctl.8
 zramctl_SOURCES = sys-utils/zramctl.c \
 		  lib/ismounted.c
 zramctl_LDADD = $(LDADD) libcommon.la libsmartcols.la
@@ -284,7 +284,7 @@ endif
 
 if BUILD_PRLIMIT
 usrbin_exec_PROGRAMS += prlimit
-dist_man_MANS += sys-utils/prlimit.1
+MANPAGES += sys-utils/prlimit.1
 prlimit_SOURCES = sys-utils/prlimit.c
 prlimit_LDADD = $(LDADD) libcommon.la libsmartcols.la
 prlimit_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
@@ -293,7 +293,7 @@ endif
 
 if BUILD_LSNS
 usrbin_exec_PROGRAMS += lsns
-dist_man_MANS += sys-utils/lsns.8
+MANPAGES += sys-utils/lsns.8
 lsns_SOURCES =	sys-utils/lsns.c
 lsns_LDADD = $(LDADD) libcommon.la libsmartcols.la libmount.la
 lsns_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir) -I$(ul_libmount_incdir)
@@ -302,7 +302,7 @@ endif
 
 if BUILD_MOUNT
 bin_PROGRAMS += mount umount
-dist_man_MANS += \
+MANPAGES += \
 	sys-utils/mount.8 \
 	sys-utils/fstab.5 \
 	sys-utils/umount.8
@@ -352,9 +352,8 @@ endif # BUILD_MOUNT
 
 if BUILD_SWAPON
 sbin_PROGRAMS += swapon swapoff
-dist_man_MANS += \
-	sys-utils/swapon.8 \
-	sys-utils/swapoff.8
+MANPAGES += sys-utils/swapon.8
+MANLINKS += sys-utils/swapoff.8
 
 swapon_SOURCES = \
 	sys-utils/swapon.c \
@@ -399,19 +398,19 @@ lscpu_SOURCES = sys-utils/lscpu.c \
 		sys-utils/lscpu.h
 lscpu_LDADD = $(LDADD) libcommon.la libsmartcols.la $(RTAS_LIBS)
 lscpu_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
-dist_man_MANS += sys-utils/lscpu.1
+MANPAGES += sys-utils/lscpu.1
 endif
 
 if BUILD_CHCPU
 sbin_PROGRAMS += chcpu
 chcpu_SOURCES = sys-utils/chcpu.c
 chcpu_LDADD = $(LDADD) libcommon.la
-dist_man_MANS += sys-utils/chcpu.8
+MANPAGES += sys-utils/chcpu.8
 endif
 
 if BUILD_WDCTL
 bin_PROGRAMS += wdctl
-dist_man_MANS += sys-utils/wdctl.8
+MANPAGES += sys-utils/wdctl.8
 wdctl_SOURCES = sys-utils/wdctl.c
 wdctl_LDADD = $(LDADD) libcommon.la libsmartcols.la
 wdctl_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
@@ -421,7 +420,7 @@ if BUILD_MOUNTPOINT
 bin_PROGRAMS += mountpoint
 mountpoint_LDADD = $(LDADD) libmount.la
 mountpoint_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-dist_man_MANS += sys-utils/mountpoint.1
+MANPAGES += sys-utils/mountpoint.1
 mountpoint_SOURCES = sys-utils/mountpoint.c
 endif
 
@@ -429,24 +428,24 @@ if BUILD_FALLOCATE
 usrbin_exec_PROGRAMS += fallocate
 fallocate_SOURCES = sys-utils/fallocate.c
 fallocate_LDADD = $(LDADD) libcommon.la
-dist_man_MANS += sys-utils/fallocate.1
+MANPAGES += sys-utils/fallocate.1
 endif
 
 if BUILD_PIVOT_ROOT
 sbin_PROGRAMS += pivot_root
-dist_man_MANS += sys-utils/pivot_root.8
+MANPAGES += sys-utils/pivot_root.8
 pivot_root_SOURCES = sys-utils/pivot_root.c
 endif
 
 if BUILD_SWITCH_ROOT
 sbin_PROGRAMS += switch_root
-dist_man_MANS += sys-utils/switch_root.8
+MANPAGES += sys-utils/switch_root.8
 switch_root_SOURCES = sys-utils/switch_root.c
 endif
 
 if BUILD_UNSHARE
 usrbin_exec_PROGRAMS += unshare
-dist_man_MANS += sys-utils/unshare.1
+MANPAGES += sys-utils/unshare.1
 unshare_SOURCES = sys-utils/unshare.c \
 		  lib/caputils.c \
 		  lib/exec_shell.c
@@ -464,7 +463,7 @@ endif
 
 if BUILD_NSENTER
 usrbin_exec_PROGRAMS += nsenter
-dist_man_MANS += sys-utils/nsenter.1
+MANPAGES += sys-utils/nsenter.1
 nsenter_SOURCES = sys-utils/nsenter.c lib/exec_shell.c
 nsenter_LDADD = $(LDADD) libcommon.la $(SELINUX_LIBS)
 
@@ -478,7 +477,7 @@ endif
 
 if BUILD_HWCLOCK
 sbin_PROGRAMS += hwclock
-dist_man_MANS += \
+MANPAGES += \
 	sys-utils/hwclock.8 \
 	sys-utils/adjtime_config.5
 hwclock_SOURCES = \
@@ -507,7 +506,7 @@ endif # BUILD_HWCLOCK
 
 if BUILD_SETPRIV
 usrbin_exec_PROGRAMS += setpriv
-dist_man_MANS += sys-utils/setpriv.1
+MANPAGES += sys-utils/setpriv.1
 setpriv_SOURCES = sys-utils/setpriv.c \
 		  lib/caputils.c
 setpriv_LDADD = $(LDADD) -lcap-ng libcommon.la
