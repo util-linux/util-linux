@@ -51,14 +51,14 @@ This epoch value is used whenever *­hwclock* reads or sets the Hardware Clock o
 *--predict*::
 Predict what the Hardware Clock will read in the future based upon the time given by the *--date* option and the information in _{ADJTIME_PATH}_. This is useful, for example, to account for drift when setting a Hardware Clock wakeup (aka alarm). See *­rtcwake*(8).
 +
-Do not use this function if the Hardware Clock is being modified by anything other than the current operating system's *hwclock* command, such as ­'11 minute mode' or from dual-booting another OS.
+Do not use this function if the Hardware Clock is being modified by anything other than the current operating system's *hwclock* command, such as '11 minute mode' or from dual-booting another OS.
 
 *-r*, *--show*; *--get*::
 Read the Hardware Clock and print its time to standard output in the *ISO 8601* format. The time shown is always in local time, even if you keep your Hardware Clock in UTC. See the *­--localtime* option.
 +
 Showing the Hardware Clock time is the default when no function is specified.
 +
-The *--get* function also applies drift correction to the time read, based upon the information in _{ADJTIME_PATH}_. Do not use this function if the Hardware Clock is being modified by anything other than the current operating system's *hwclock* command, such as ­'11 minute mode' or from dual-booting another OS.
+The *--get* function also applies drift correction to the time read, based upon the information in _{ADJTIME_PATH}_. Do not use this function if the Hardware Clock is being modified by anything other than the current operating system's *hwclock* command, such as '11 minute mode' or from dual-booting another OS.
 
 *-s*, *--hctosys*::
 Set the System Clock from the Hardware Clock. The time read from the Hardware Clock is compensated to account for systematic drift before using it to set the System Clock. See the discussion below, under *The Adjust Function*.
@@ -67,11 +67,11 @@ The System Clock must be kept in the UTC timescale for date-time applications to
 +
 The kernel also keeps a timezone value, the *­--hctosys* function sets it to the timezone configured for the system. The system timezone is configured by the TZ environment variable or the _­/etc/localtime_ file, as *­tzset*(3) would interpret them. The obsolete _tz_dsttime_ field of the kernel's timezone value is set to zero. (For details on what this field used to mean, see *­settimeofday*(2).)
 +
-When used in a startup script, making the *­--hctosys* function the first caller of *settimeofday*(2) from boot, it will set the NTP ­'11 minute mode' timescale via the _persistent_clock_is_local_ kernel variable. If the Hardware Clock's timescale configuration is changed then a reboot is required to inform the kernel. See the discussion below, under *Automatic Hardware Clock Synchronization by the Kernel*.
+When used in a startup script, making the *­--hctosys* function the first caller of *settimeofday*(2) from boot, it will set the NTP '11 minute mode' timescale via the _persistent_clock_is_local_ kernel variable. If the Hardware Clock's timescale configuration is changed then a reboot is required to inform the kernel. See the discussion below, under *Automatic Hardware Clock Synchronization by the Kernel*.
 +
 This is a good function to use in one of the system startup scripts before the file systems are mounted read/write.
 +
-This function should never be used on a running system. Jumping system time will cause problems, such as corrupted filesystem timestamps. Also, if something has changed the Hardware Clock, like NTP's  '11 minute mode', then *--hctosys* will set the time incorrectly by including drift compensation.
+This function should never be used on a running system. Jumping system time will cause problems, such as corrupted filesystem timestamps. Also, if something has changed the Hardware Clock, like NTP's '11 minute mode', then *--hctosys* will set the time incorrectly by including drift compensation.
 +
 Drift compensation can be inhibited by setting the drift factor in _{ADJTIME_PATH}_ to zero. This setting will be persistent as long as the *­--update-drift* option is not used with *­--systohc* at shutdown (or anywhere else). Another way to inhibit this is by using the *­--noadjfile* option when calling the *--hctosys* function. A third method is to delete the _{ADJTIME_PATH}_ file. *Hwclock* will then default to using the UTC timescale for the Hardware Clock. If the Hardware Clock is ticking local time it will need to be defined in the file. This can be done by calling *hwclock --localtime --adjust*; when the file is not present this command will not actually adjust the Clock, but it will create the file with local time configured, and a drift factor of zero.
 +
