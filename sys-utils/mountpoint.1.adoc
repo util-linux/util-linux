@@ -23,40 +23,40 @@ mountpoint - see if a directory or file is a mountpoint
 == OPTIONS
 
 *-d*, *--fs-devno*::
-  Show the major/minor numbers of the device that is mounted on the given directory.
+Show the major/minor numbers of the device that is mounted on the given directory.
 
 *-q*, *--quiet*::
-  Be quiet - don't print anything.
+Be quiet - don't print anything.
 
 *--nofollow*::
-  Do not follow symbolic link if it the last element of the _directory_ path.
+Do not follow symbolic link if it the last element of the _directory_ path.
 
 *-x*, *--devno*::
-  Show the major/minor numbers of the given blockdevice on standard output.
+Show the major/minor numbers of the given blockdevice on standard output.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == EXIT STATUS
 
 *mountpoint* has the following exit status values:
 
 *0*::
-  success; the directory is a mountpoint, or device is block device on *--devno*
+success; the directory is a mountpoint, or device is block device on *--devno*
 
 *1*::
-  failure; incorrect invocation, permissions or system error
+failure; incorrect invocation, permissions or system error
 
 *32*::
-  failure; the directory is not a mountpoint, or device is not a block device on *--devno*
+failure; the directory is not a mountpoint, or device is not a block device on *--devno*
 
 == ENVIRONMENT
 
 LIBMOUNT_DEBUG=all::
-  enables libmount debug output.
+enables libmount debug output.
 
 == NOTES
 

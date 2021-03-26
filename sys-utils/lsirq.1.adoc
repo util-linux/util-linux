@@ -23,33 +23,33 @@ The default output is subject to change. So whenever possible, you should avoid 
 == OPTIONS
 
 *-n*, *--noheadings*::
-  Don't print headings.
+Don't print headings.
 
 *-o*, *--output* _list_::
-  Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
+Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
 
 *-s*, *--sort* _column_::
-  Specify sort criteria by column name. See *--help* output to get column names.
+Specify sort criteria by column name. See *--help* output to get column names.
 
 *-J*, *--json*::
-  Use JSON output format.
+Use JSON output format.
 
 *-P*, *--pairs*::
-  Produce output in the form of key="value" pairs. All potentially unsafe characters are hex-escaped (\x<code>).
+Produce output in the form of key="value" pairs. All potentially unsafe characters are hex-escaped (\x<code>).
 
 *-S*, *--softirq*::
-  Show softirqs information.
+Show softirqs information.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == AUTHORS
 
-mailto:pizhenwei@bytedance.com[Zhenwei Pi] +
-mailto:kerolasa@iki.fi[Sami Kerola] +
+mailto:pizhenwei@bytedance.com[Zhenwei Pi],
+mailto:kerolasa@iki.fi[Sami Kerola],
 mailto:kzak@redhat.com[Karel Zak]
 
 include::../man-common/bugreports.adoc[]

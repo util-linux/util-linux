@@ -27,24 +27,24 @@ ipcmk - make various IPC resources
 Resources can be specified with these options:
 
 *-M*, *--shmem* _size_::
-  Create a shared memory segment of _size_ bytes. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, etc. (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, etc.
+Create a shared memory segment of _size_ bytes. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, etc. (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, etc.
 
 *-Q*, *--queue*::
-  Create a message queue.
+Create a message queue.
 
 *-S*, *--semaphore* _number_::
-  Create a semaphore array with _number_ of elements.
+Create a semaphore array with _number_ of elements.
 
 Other options are:
 
 *-p*, *--mode* _mode_::
-  Access permissions for the resource. Default is 0644.
+Access permissions for the resource. Default is 0644.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == AUTHORS
 

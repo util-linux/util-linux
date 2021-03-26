@@ -55,27 +55,27 @@ renice - alter priority of running processes
 == OPTIONS
 
 *-n*, *--priority* _priority_::
-  Specify the scheduling _priority_ to be used for the process, process group, or user. Use of the option *-n* or *--priority* is optional, but when used it must be the first argument.
+Specify the scheduling _priority_ to be used for the process, process group, or user. Use of the option *-n* or *--priority* is optional, but when used it must be the first argument.
 
 *-g*, *--pgrp*::
-  Interpret the succeeding arguments as process group IDs.
+Interpret the succeeding arguments as process group IDs.
 
 *-p*, *--pid*::
-  Interpret the succeeding arguments as process IDs (the default).
+Interpret the succeeding arguments as process IDs (the default).
 
 *-u*, *--user*::
-  Interpret the succeeding arguments as usernames or UIDs.
+Interpret the succeeding arguments as usernames or UIDs.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == FILES
 
 _/etc/passwd_::
-  to map user names to user IDs
+to map user names to user IDs
 
 == NOTES
 

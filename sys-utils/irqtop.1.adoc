@@ -23,44 +23,44 @@ The default output is subject to change. So whenever possible, you should avoid 
 == OPTIONS
 
 *-o*, *--output* _list_::
-  Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
+Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
 
 *-d*, *--delay* _seconds_::
-  Update interrupt output every _seconds_ intervals.
+Update interrupt output every _seconds_ intervals.
 
 *-s*, *--sort* _column_::
-  Specify sort criteria by column name. See *--help* output to get column names. The sort criteria may be changes in interactive mode.
+Specify sort criteria by column name. See *--help* output to get column names. The sort criteria may be changes in interactive mode.
 
 *-S*, *--softirq*::
-  Show softirqs information.
+Show softirqs information.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == INTERACTIVE MODE KEY COMMANDS
 
 *i*::
-  sort by short irq name or number field
+sort by short irq name or number field
 
 *t*::
-  sort by total count of interrupts (the default)
+sort by total count of interrupts (the default)
 
 *d*::
-  sort by delta count of interrupts
+sort by delta count of interrupts
 
 *n*::
-  sort by long descriptive name field
+sort by long descriptive name field
 
 *q Q*::
-  stop updates and exit program
+stop updates and exit program
 
 == AUTHORS
 
-mailto:pizhenwei@bytedance.com[Zhenwei Pi] +
-mailto:kerolasa@iki.fi[Sami Kerola] +
+mailto:pizhenwei@bytedance.com[Zhenwei Pi],
+mailto:kerolasa@iki.fi[Sami Kerola],
 mailto:kzak@redhat.com[Karel Zak]
 
 include::../man-common/bugreports.adoc[]

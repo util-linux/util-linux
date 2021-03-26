@@ -23,19 +23,19 @@ setsid - run a program in a new session
 == OPTIONS
 
 *-c*, *--ctty*::
-  Set the controlling terminal to the current one.
+Set the controlling terminal to the current one.
 
 *-f*, *--fork*::
-  Always create a new process.
+Always create a new process.
 
 *-w*, *--wait*::
-  Wait for the execution of the program to end, and return the exit status of this program as the exit status of *setsid*.
+Wait for the execution of the program to end, and return the exit status of this program as the exit status of *setsid*.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == AUTHORS
 

@@ -25,44 +25,44 @@ Note that the number of supported watchdog features is hardware specific.
 == OPTIONS
 
 *-f*, *--flags* _list_::
-  Print only the specified flags.
+Print only the specified flags.
 
 *-F*, *--noflags*::
-  Do not print information about flags.
+Do not print information about flags.
 
 *-I*, *--noident*::
-  Do not print watchdog identity information.
+Do not print watchdog identity information.
 
 *-n*, *--noheadings*::
-  Do not print a header line for flags table.
+Do not print a header line for flags table.
 
 *-o*, *--output* _list_::
-  Define the output columns to use in table of watchdog flags. If no output arrangement is specified, then a default set is used. Use *--help* to get list of all supported columns.
+Define the output columns to use in table of watchdog flags. If no output arrangement is specified, then a default set is used. Use *--help* to get list of all supported columns.
 
 *-O*, *--oneline*::
-  Print all wanted information on one line in key="value" output format.
+Print all wanted information on one line in key="value" output format.
 
 *-r*, *--raw*::
-  Use the raw output format.
+Use the raw output format.
 
 *-s*, *-settimeout* _seconds_::
-  Set the watchdog timeout in seconds.
+Set the watchdog timeout in seconds.
 
 *-T*, *--notimeouts*::
-  Do not print watchdog timeouts.
+Do not print watchdog timeouts.
 
 *-x*, *--flags-only*::
-  Same as *-I -T*.
+Same as *-I -T*.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == AUTHORS
 
-mailto:kzak@redhat.com[Karel Zak] +
+mailto:kzak@redhat.com[Karel Zak],
 mailto:lennart@poettering.net[Lennart Poettering]
 
 include::../man-common/bugreports.adoc[]

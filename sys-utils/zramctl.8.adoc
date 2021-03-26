@@ -39,39 +39,39 @@ Note that _zramdev_ node specified on command line has to already exist. The com
 == OPTIONS
 
 *-a*, **--algorithm lzo**|**lz4**|**lz4hc**|**deflate**|*842*::
-  Set the compression algorithm to be used for compressing data in the zram device.
+Set the compression algorithm to be used for compressing data in the zram device.
 
 *-f*, *--find*::
-  Find the first unused zram device. If a *--size* argument is present, then initialize the device.
+Find the first unused zram device. If a *--size* argument is present, then initialize the device.
 
 *-n*, *--noheadings*::
-  Do not print a header line in status output.
+Do not print a header line in status output.
 
 *-o*, *--output* _list_::
-  Define the status output columns to be used. If no output arrangement is specified, then a default set is used. Use *--help* to get a list of all supported columns.
+Define the status output columns to be used. If no output arrangement is specified, then a default set is used. Use *--help* to get a list of all supported columns.
 
 *--output-all*::
-  Output all available columns.
+Output all available columns.
 
 *--raw*::
-  Use the raw format for status output.
+Use the raw format for status output.
 
 *-r*, *--reset*::
-  Reset the options of the specified zram device(s). Zram device settings can be changed only after a reset.
+Reset the options of the specified zram device(s). Zram device settings can be changed only after a reset.
 
 *-s*, *--size* _size_::
-  Create a zram device of the specified _size_. Zram devices are aligned to memory pages; when the requested _size_ is not a multiple of the page size, it will be rounded up to the next multiple. When not otherwise specified, the unit of the _size_ parameter is bytes. +
-  {nbsp} +
-  The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
+Create a zram device of the specified _size_. Zram devices are aligned to memory pages; when the requested _size_ is not a multiple of the page size, it will be rounded up to the next multiple. When not otherwise specified, the unit of the _size_ parameter is bytes.
++
+The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-t*, *--streams* _number_::
-  Set the maximum number of compression streams that can be used for the device. The default is one stream.
+Set the maximum number of compression streams that can be used for the device. The default is one stream.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == EXIT STATUS
 
@@ -80,7 +80,7 @@ Note that _zramdev_ node specified on command line has to already exist. The com
 == FILES
 
 _/dev/zram[0..N]_::
-  zram block devices
+zram block devices
 
 == EXAMPLE
 
@@ -98,7 +98,7 @@ The following commands set up a zram device with a size of one gigabyte and use 
 
 == AUTHORS
 
-mailto:nefelim4ag@gmail.com[Timofey Titovets] +
+mailto:nefelim4ag@gmail.com[Timofey Titovets],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO

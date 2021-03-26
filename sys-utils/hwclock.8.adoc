@@ -35,135 +35,136 @@ The following functions are mutually exclusive, only one can be given at a time.
 Add or subtract time from the Hardware Clock to account for systematic drift since the last time the clock was set or adjusted. See the discussion below, under *The Adjust Function*.
 
 *--getepoch*; *--setepoch*::
-  These functions are for Alpha machines only, and are only available through the Linux kernel RTC driver. +
-  {nbsp} +
-  They are used to read and set the kernel's Hardware Clock epoch value. Epoch is the number of years into AD to which a zero year value in the Hardware Clock refers. For example, if the machine's BIOS sets the year counter in the Hardware Clock to contain the number of full years since 1952, then the kernel's Hardware Clock epoch value must be 1952. +
-  {nbsp} +
-  The *­--setepoch* function requires using the *­--epoch* option to specify the year. For example: +
-  {nbsp} +
-  **hwclock --setepoch --epoch=1952** +
-  {nbsp} +
-  The RTC driver attempts to guess the correct epoch value, so setting it may not be required. +
-  {nbsp} +
-  This epoch value is used whenever *­hwclock* reads or sets the Hardware Clock on an Alpha machine. For ISA machines the kernel uses the fixed Hardware Clock epoch of 1900.
+These functions are for Alpha machines only, and are only available through the Linux kernel RTC driver.
++
+They are used to read and set the kernel's Hardware Clock epoch value. Epoch is the number of years into AD to which a zero year value in the Hardware Clock refers. For example, if the machine's BIOS sets the year counter in the Hardware Clock to contain the number of full years since 1952, then the kernel's Hardware Clock epoch value must be 1952.
++
+The *­--setepoch* function requires using the *­--epoch* option to specify the year. For example:
++
+**hwclock --setepoch --epoch=1952**
++
+The RTC driver attempts to guess the correct epoch value, so setting it may not be required.
++
+This epoch value is used whenever *­hwclock* reads or sets the Hardware Clock on an Alpha machine. For ISA machines the kernel uses the fixed Hardware Clock epoch of 1900.
 
 *--predict*::
-  Predict what the Hardware Clock will read in the future based upon the time given by the *--date* option and the information in _{ADJTIME_PATH}_. This is useful, for example, to account for drift when setting a Hardware Clock wakeup (aka alarm). See *­rtcwake*(8). +
-  {nbsp} +
-  Do not use this function if the Hardware Clock is being modified by anything other than the current operating system's *­hwclock* command, such as ­'11 minute mode' or from dual-booting another OS.
+Predict what the Hardware Clock will read in the future based upon the time given by the *--date* option and the information in _{ADJTIME_PATH}_. This is useful, for example, to account for drift when setting a Hardware Clock wakeup (aka alarm). See *­rtcwake*(8).
++
+Do not use this function if the Hardware Clock is being modified by anything other than the current operating system's *­hwclock* command, such as ­'11 minute mode' or from dual-booting another OS.
 
 *-r*, *--show*; *--get*::
-  Read the Hardware Clock and print its time to standard output in the *ISO 8601* format. The time shown is always in local time, even if you keep your Hardware Clock in UTC. See the *­--localtime* option. +
-  {nbsp} +
-  Showing the Hardware Clock time is the default when no function is specified. +
-  {nbsp} +
-  The *--get* function also applies drift correction to the time read, based upon the information in _{ADJTIME_PATH}_. Do not use this function if the Hardware Clock is being modified by anything other than the current operating system's *­hwclock* command, such as ­'11 minute mode' or from dual-booting another OS.
+Read the Hardware Clock and print its time to standard output in the *ISO 8601* format. The time shown is always in local time, even if you keep your Hardware Clock in UTC. See the *­--localtime* option.
++
+Showing the Hardware Clock time is the default when no function is specified.
++
+The *--get* function also applies drift correction to the time read, based upon the information in _{ADJTIME_PATH}_. Do not use this function if the Hardware Clock is being modified by anything other than the current operating system's *­hwclock* command, such as ­'11 minute mode' or from dual-booting another OS.
 
 *-s*, *--hctosys*::
-  Set the System Clock from the Hardware Clock. The time read from the Hardware Clock is compensated to account for systematic drift before using it to set the System Clock. See the discussion below, under *The Adjust Function*. +
-  {nbsp} +
-  The System Clock must be kept in the UTC timescale for date-time applications to work correctly in conjunction with the timezone configured for the system. If the Hardware Clock is kept in local time then the time read from it must be shifted to the UTC timescale before using it to set the System Clock. The *­--hctosys* function does this based upon the information in the _{ADJTIME_PATH}_ file or the command line arguments *­--localtime* and *--utc*. Note: no daylight saving adjustment is made. See the discussion below, under *LOCAL vs UTC*. +
-  {nbsp} +
-  The kernel also keeps a timezone value, the *­--hctosys* function sets it to the timezone configured for the system. The system timezone is configured by the TZ environment variable or the _­/etc/localtime_ file, as *­tzset*(3) would interpret them. The obsolete _tz_dsttime_ field of the kernel's timezone value is set to zero. (For details on what this field used to mean, see *­settimeofday*(2).) +
-  {nbsp} +
-  When used in a startup script, making the *­--hctosys* function the first caller of *­settimeofday*(2) from boot, it will set the NTP ­'11 minute mode' timescale via the _­persistent_clock_is_local_ kernel variable. If the Hardware Clock's timescale configuration is changed then a reboot is required to inform the kernel. See the discussion below, under *Automatic Hardware Clock Synchronization by the Kernel*. +
-  {nbsp} +
-  This is a good function to use in one of the system startup scripts before the file systems are mounted read/write. +
-  {nbsp} +
-  This function should never be used on a running system. Jumping system time will cause problems, such as corrupted filesystem timestamps. Also, if something has changed the Hardware Clock, like NTP's ­'11 minute mode', then *­--hctosys* will set the time incorrectly by including drift compensation. +
-  {nbsp} +
-  Drift compensation can be inhibited by setting the drift factor in _{ADJTIME_PATH}_ to zero. This setting will be persistent as long as the *­--update-drift* option is not used with *­--systohc* at shutdown (or anywhere else). Another way to inhibit this is by using the *­--noadjfile* option when calling the *­--hctosys* function. A third method is to delete the _{ADJTIME_PATH}_ file. *Hwclock* will then default to using the UTC timescale for the Hardware Clock. If the Hardware Clock is ticking local time it will need to be defined in the file. This can be done by calling *hwclock --localtime --adjust*; when the file is not present this command will not actually adjust the Clock, but it will create the file with local time configured, and a drift factor of zero. +
-  {nbsp} +
-  A condition under which inhibiting *hwclock*'s drift correction may be desired is when dual-booting multiple operating systems. If while this instance of Linux is stopped, another OS changes the Hardware Clock's value, then when this instance is started again the drift correction applied will be incorrect. +
-  {nbsp} +
-  For *hwclock*'s drift correction to work properly it is imperative that nothing changes the Hardware Clock while its Linux instance is not running.
+Set the System Clock from the Hardware Clock. The time read from the Hardware Clock is compensated to account for systematic drift before using it to set the System Clock. See the discussion below, under *The Adjust Function*.
++
+The System Clock must be kept in the UTC timescale for date-time applications to work correctly in conjunction with the timezone configured for the system. If the Hardware Clock is kept in local time then the time read from it must be shifted to the UTC timescale before using it to set the System Clock. The *­--hctosys* function does this based upon the information in the _{ADJTIME_PATH}_ file or the command line arguments *­--localtime* and *--utc*. Note: no daylight saving adjustment is made. See the discussion below, under *LOCAL vs UTC*.
++
+The kernel also keeps a timezone value, the *­--hctosys* function sets it to the timezone configured for the system. The system timezone is configured by the TZ environment variable or the _­/etc/localtime_ file, as *­tzset*(3) would interpret them. The obsolete _tz_dsttime_ field of the kernel's timezone value is set to zero. (For details on what this field used to mean, see *­settimeofday*(2).)
++
+When used in a startup script, making the *­--hctosys* function the first caller of *­settimeofday*(2) from boot, it will set the NTP ­'11 minute mode' timescale via the _­persistent_clock_is_local_ kernel variable. If the Hardware Clock's timescale configuration is changed then a reboot is required to inform the kernel. See the discussion below, under *Automatic Hardware Clock Synchronization by the Kernel*.
++
+This is a good function to use in one of the system startup scripts before the file systems are mounted read/write.
++
+This function should never be used on a running system. Jumping system time will cause problems, such as corrupted filesystem timestamps. Also, if something has changed the Hardware Clock, like NTP's ­'11 minute mode', then *­--hctosys* will set the time incorrectly by including drift compensation.
++
+Drift compensation can be inhibited by setting the drift factor in _{ADJTIME_PATH}_ to zero. This setting will be persistent as long as the *­--update-drift* option is not used with *­--systohc* at shutdown (or anywhere else). Another way to inhibit this is by using the *­--noadjfile* option when calling the *­--hctosys* function. A third method is to delete the _{ADJTIME_PATH}_ file. *Hwclock* will then default to using the UTC timescale for the Hardware Clock. If the Hardware Clock is ticking local time it will need to be defined in the file. This can be done by calling *hwclock --localtime --adjust*; when the file is not present this command will not actually adjust the Clock, but it will create the file with local time configured, and a drift factor of zero.
++
+A condition under which inhibiting *hwclock*'s drift correction may be desired is when dual-booting multiple operating systems. If while this instance of Linux is stopped, another OS changes the Hardware Clock's value, then when this instance is started again the drift correction applied will be incorrect.
++
+For *hwclock*'s drift correction to work properly it is imperative that nothing changes the Hardware Clock while its Linux instance is not running.
 
 *--set*::
-  Set the Hardware Clock to the time given by the *--date* option, and update the timestamps in _{ADJTIME_PATH}_. With the *­--update-drift* option also (re)calculate the drift factor. Try it without the option if *­--set* fails. See *­--update-drift* below.
+Set the Hardware Clock to the time given by the *--date* option, and update the timestamps in _{ADJTIME_PATH}_. With the *­--update-drift* option also (re)calculate the drift factor. Try it without the option if *­--set* fails. See *­--update-drift* below.
 
 *--systz*::
-  This is an alternate to the *­--hctosys* function that does not read the Hardware Clock nor set the System Clock; consequently there is not any drift correction. It is intended to be used in a startup script on systems with kernels above version 2.6 where you know the System Clock has been set from the Hardware Clock by the kernel during boot. +
-  {nbsp} +
-  It does the following things that are detailed above in the *­--hctosys* function: +
-  {nbsp} +
-  * Corrects the System Clock timescale to UTC as needed. Only instead of accomplishing this by setting the System Clock, *hwclock* simply informs the kernel and it handles the change.
-  * Sets the kernel's NTP ­'11 minute mode' timescale.
-  * Sets the kernel's timezone. +
-  {nbsp} +
-  The first two are only available on the first call of ­*settimeofday*(2) after boot. Consequently this option only makes sense when used in a startup script. If the Hardware Clocks timescale configuration is changed then a reboot would be required to inform the kernel.
+This is an alternate to the *­--hctosys* function that does not read the Hardware Clock nor set the System Clock; consequently there is not any drift correction. It is intended to be used in a startup script on systems with kernels above version 2.6 where you know the System Clock has been set from the Hardware Clock by the kernel during boot.
++
+It does the following things that are detailed above in the *­--hctosys* function:
+
+* Corrects the System Clock timescale to UTC as needed. Only instead of accomplishing this by setting the System Clock, *hwclock* simply informs the kernel and it handles the change.
+* Sets the kernel's NTP ­'11 minute mode' timescale.
+* Sets the kernel's timezone.
+
+The first two are only available on the first call of ­*settimeofday*(2) after boot. Consequently this option only makes sense when used in a startup script. If the Hardware Clocks timescale configuration is changed then a reboot would be required to inform the kernel.
 
 *-w*, *--systohc*::
-  Set the Hardware Clock from the System Clock, and update the timestamps in _{ADJTIME_PATH}_. With the *­--update-drift* option also (re)calculate the drift factor. Try it without the option if *­--systohc* fails. See *­--update-drift* below.
+Set the Hardware Clock from the System Clock, and update the timestamps in _{ADJTIME_PATH}_. With the *­--update-drift* option also (re)calculate the drift factor. Try it without the option if *­--systohc* fails. See *­--update-drift* below.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == OPTIONS
 
 **--adjfile=**__filename__::
-  Override the default _{ADJTIME_PATH}_ file path.
+Override the default _{ADJTIME_PATH}_ file path.
 
 **­--date=**__date_string__::
-  This option must be used with the *--set* or *­--predict* functions, otherwise it is ignored. +
-  {nbsp} +
-  *hwclock --set --date='16:45'* +
-  *hwclock --predict --date='2525-08-14 07:11:05'* +
-  {nbsp} +
-  The argument must be in local time, even if you keep your Hardware Clock in UTC. See the *­--localtime* option. Therefore, the argument should not include any timezone information. It also should not be a relative time like "+5 minutes", because *­hwclock*'s precision depends upon correlation between the argument's value and when the enter key is pressed. Fractional seconds are silently dropped. This option is capable of understanding many time and date formats, but the previous parameters should be observed.
+This option must be used with the *--set* or *­--predict* functions, otherwise it is ignored.
++
+*hwclock --set --date='16:45'*
++
+*hwclock --predict --date='2525-08-14 07:11:05'*
++
+The argument must be in local time, even if you keep your Hardware Clock in UTC. See the *­--localtime* option. Therefore, the argument should not include any timezone information. It also should not be a relative time like "+5 minutes", because *­hwclock*'s precision depends upon correlation between the argument's value and when the enter key is pressed. Fractional seconds are silently dropped. This option is capable of understanding many time and date formats, but the previous parameters should be observed.
 
 **­--delay=**__seconds__::
-  This option can be used to overwrite the internally used delay when setting the clock time. The default is 0.5 (500ms) for rtc_cmos, for another RTC types the delay is 0. If RTC type is impossible to determine (from sysfs) then it defaults also to 0.5 to be backwardly compatible. +
-  {nbsp} +
-  The 500ms default is based on commonly used MC146818A-compatible (x86) hardware clock. This Hardware Clock can only be set to any integer time plus one half second. The integer time is required because there is no interface to set or get a fractional second. The additional half second delay is because the Hardware Clock updates to the following second precisely 500 ms after setting the new time. Unfortunately, this behavior is hardware specific and in same cases another delay is required.
+This option can be used to overwrite the internally used delay when setting the clock time. The default is 0.5 (500ms) for rtc_cmos, for another RTC types the delay is 0. If RTC type is impossible to determine (from sysfs) then it defaults also to 0.5 to be backwardly compatible.
++
+The 500ms default is based on commonly used MC146818A-compatible (x86) hardware clock. This Hardware Clock can only be set to any integer time plus one half second. The integer time is required because there is no interface to set or get a fractional second. The additional half second delay is because the Hardware Clock updates to the following second precisely 500 ms after setting the new time. Unfortunately, this behavior is hardware specific and in same cases another delay is required.
 
 *-D*, *--debug*::
-  Use *--verbose*. The *­--debug* option has been deprecated and may be repurposed or removed in a future release.
+Use *--verbose*. The *­--debug* option has been deprecated and may be repurposed or removed in a future release.
 
 *--directisa*::
-  This option is meaningful for ISA compatible machines in the x86 and x86_64 family. For other machines, it has no effect. This option tells *­hwclock* to use explicit I/O instructions to access the Hardware Clock. Without this option, *­hwclock* will use the rtc device file, which it assumes to be driven by the Linux RTC device driver. As of v2.26 it will no longer automatically use directisa when the rtc driver is unavailable; this was causing an unsafe condition that could allow two processes to access the Hardware Clock at the same time. Direct hardware access from userspace should only be used for testing, troubleshooting, and as a last resort when all other methods fail. See the *--rtc* option.
+This option is meaningful for ISA compatible machines in the x86 and x86_64 family. For other machines, it has no effect. This option tells *­hwclock* to use explicit I/O instructions to access the Hardware Clock. Without this option, *­hwclock* will use the rtc device file, which it assumes to be driven by the Linux RTC device driver. As of v2.26 it will no longer automatically use directisa when the rtc driver is unavailable; this was causing an unsafe condition that could allow two processes to access the Hardware Clock at the same time. Direct hardware access from userspace should only be used for testing, troubleshooting, and as a last resort when all other methods fail. See the *--rtc* option.
 
 **--epoch=**__year__::
-  This option is required when using the *­--setepoch* function. The minimum _year_ value is 1900. The maximum is system dependent (*ULONG_MAX - 1*).
+This option is required when using the *­--setepoch* function. The minimum _year_ value is 1900. The maximum is system dependent (*ULONG_MAX - 1*).
 
 *-f*, **--rtc=**__filename__::
-  Override *­hwclock*'s default rtc device file name. Otherwise it will use the first one found in this order: _/dev/rtc0_ _/dev/rtc_ _/dev/misc/rtc_ For *IA-64:* _/dev/efirtc_ _/dev/misc/efirtc_
+Override *­hwclock*'s default rtc device file name. Otherwise it will use the first one found in this order: _/dev/rtc0_, _/dev/rtc_, _/dev/misc/rtc_. For *IA-64:* _/dev/efirtc_ _/dev/misc/efirtc_
 
 *-l*, *--localtime*; *-u*, *--utc*::
-  Indicate which timescale the Hardware Clock is set to. +
-  {nbsp} +
-  The Hardware Clock may be configured to use either the UTC or the local timescale, but nothing in the clock itself says which alternative is being used. The *­--localtime* or *--utc* options give this information to the *­hwclock* command. If you specify the wrong one (or specify neither and take a wrong default), both setting and reading the Hardware Clock will be incorrect. +
-  {nbsp} +
-  If you specify neither *--utc* nor *­--localtime* then the one last given with a set function (*--set*, *­--systohc*, or *­--adjust*), as recorded in _{ADJTIME_PATH}_, will be used. If the adjtime file doesn't exist, the default is UTC. +
-  {nbsp} +
-  Note: daylight saving time changes may be inconsistent when the Hardware Clock is kept in local time. See the discussion below, under *LOCAL vs UTC*.
+Indicate which timescale the Hardware Clock is set to.
++
+The Hardware Clock may be configured to use either the UTC or the local timescale, but nothing in the clock itself says which alternative is being used. The *­--localtime* or *--utc* options give this information to the *­hwclock* command. If you specify the wrong one (or specify neither and take a wrong default), both setting and reading the Hardware Clock will be incorrect.
++
+If you specify neither *--utc* nor *­--localtime* then the one last given with a set function (*--set*, *­--systohc*, or *­--adjust*), as recorded in _{ADJTIME_PATH}_, will be used. If the adjtime file doesn't exist, the default is UTC.
++
+Note: daylight saving time changes may be inconsistent when the Hardware Clock is kept in local time. See the discussion below, under *LOCAL vs UTC*.
 
 *--noadjfile*::
-  Disable the facilities provided by _{ADJTIME_PATH}_. *­hwclock* will not read nor write to that file with this option. Either *--utc* or *­--localtime* must be specified when using this option.
+Disable the facilities provided by _{ADJTIME_PATH}_. *­hwclock* will not read nor write to that file with this option. Either *--utc* or *­--localtime* must be specified when using this option.
 
 *--test*::
-  Do not actually change anything on the system, that is, the Clocks or _{ADJTIME_PATH}_ (*­--verbose* is implicit with this option).
+Do not actually change anything on the system, that is, the Clocks or _{ADJTIME_PATH}_ (*­--verbose* is implicit with this option).
 
 *--update-drift*::
-  Update the Hardware Clock's drift factor in _{ADJTIME_PATH}_. It can only be used with *--set* or *­--systohc*. +
-  {nbsp} +
-  A minimum four hour period between settings is required. This is to avoid invalid calculations. The longer the period, the more precise the resulting drift factor will be. +
-  {nbsp} +
-  This option was added in v2.26, because it is typical for systems to call *­hwclock --systohc* at shutdown; with the old behaviour this would automatically (re)calculate the drift factor which caused several problems: +
-  {nbsp} +
-  * When using NTP with an ­'11 minute mode' kernel the drift factor would be clobbered to near zero.
-  * It would not allow the use of 'cold' drift correction. With most configurations using 'cold' drift will yield favorable results. Cold, means when the machine is turned off which can have a significant impact on the drift factor.
-  * (Re)calculating drift factor on every shutdown delivers suboptimal results. For example, if ephemeral conditions cause the machine to be abnormally hot the drift factor calculation would be out of range.
-  * Significantly increased system shutdown times (as of v2.31 when not using *­--update-drift* the RTC is not read).
+Update the Hardware Clock's drift factor in _{ADJTIME_PATH}_. It can only be used with *--set* or *­--systohc*.
++
+A minimum four hour period between settings is required. This is to avoid invalid calculations. The longer the period, the more precise the resulting drift factor will be.
++
+This option was added in v2.26, because it is typical for systems to call *­hwclock --systohc* at shutdown; with the old behaviour this would automatically (re)calculate the drift factor which caused several problems:
++
+* When using NTP with an ­'11 minute mode' kernel the drift factor would be clobbered to near zero.
+* It would not allow the use of 'cold' drift correction. With most configurations using 'cold' drift will yield favorable results. Cold, means when the machine is turned off which can have a significant impact on the drift factor.
+* (Re)calculating drift factor on every shutdown delivers suboptimal results. For example, if ephemeral conditions cause the machine to be abnormally hot the drift factor calculation would be out of range.
+* Significantly increased system shutdown times (as of v2.31 when not using *­--update-drift* the RTC is not read).
 
 Having *­hwclock* calculate the drift factor is a good starting point, but for optimal results it will likely need to be adjusted by directly editing the _{ADJTIME_PATH}_ file. For most configurations once a machine's optimal drift factor is crafted it should not need to be changed. Therefore, the old behavior to automatically (re)calculate drift was changed and now requires this option to be used. See the discussion below, under *The Adjust Function*.
 
 This option requires reading the Hardware Clock before setting it. If it cannot be read, then this option will cause the set functions to fail. This can happen, for example, if the Hardware Clock is corrupted by a power failure. In that case, the clock must first be set without this option. Despite it not working, the resulting drift correction factor would be invalid anyway.
 
 *-v*, *--verbose*::
-  Display more details about what *­hwclock* is doing internally.
+Display more details about what *­hwclock* is doing internally.
 
 == NOTES
 
@@ -285,22 +286,22 @@ As a rule, cold drift will work best for most use cases. This should be true eve
 *Steps to calculate cold drift:*
 
 1::
-  *Ensure that NTP daemon will not be launched at startup.*
+*Ensure that NTP daemon will not be launched at startup.*
 
 2::
-  The _System Clock_ time must be correct at shutdown!
+The _System Clock_ time must be correct at shutdown!
 
 3::
-  Shut down the system.
+Shut down the system.
 
 4::
-  Let an extended period pass without changing the Hardware Clock.
+Let an extended period pass without changing the Hardware Clock.
 
 5::
-  Start the system.
+Start the system.
 
 6::
-  Immediately use *hwclock* to set the correct time, adding the *­--update-drift* option.
+Immediately use *hwclock* to set the correct time, adding the *­--update-drift* option.
 
 Note: if step 6 uses *­--systohc*, then the System Clock must be set correctly (step 6a) just before doing so.
 
@@ -329,7 +330,7 @@ There are two separate databases in the zoneinfo system, posix and 'right'. 'Rig
 
 To configure a system to use a particular database all of the files located in its directory must be copied to the root of _­/usr/share/zoneinfo_. Files are never used directly from the posix or 'right' subdirectories, e.g., ­TZ='_right/Europe/Dublin_'. This habit was becoming so common that the upstream zoneinfo project restructured the system's file tree by moving the posix and 'right' subdirectories out of the zoneinfo directory and into sibling directories:
 
-_/usr/share/zoneinfo_ _/usr/share/zoneinfo-posix_ _/usr/share/zoneinfo-leaps_
+_/usr/share/zoneinfo_, _/usr/share/zoneinfo-posix_, _/usr/share/zoneinfo-leaps_
 
 Unfortunately, some Linux distributions are changing it back to the old tree structure in their packages. So the problem of system administrators reaching into the 'right' subdirectory persists. This causes the system timezone to be configured to include leap seconds while the zoneinfo database is still configured to exclude them. Then when an application such as a World Clock needs the South_Pole timezone file; or an email MTA, or *hwclock* needs the UTC timezone file; they fetch it from the root of _­/usr/share/zoneinfo_ , because that is what they are supposed to do. Those files exclude leap seconds, but the System Clock now includes them, causing an incorrect time conversion.
 
@@ -340,29 +341,29 @@ Attempting to mix and match files from these separate databases will not work, b
 One of the following exit values will be returned:
 
 *EXIT_SUCCESS* ('0' on POSIX systems)::
-  Successful program execution.
+Successful program execution.
 
 *EXIT_FAILURE* ('1' on POSIX systems)::
-  The operation failed or the command syntax was not valid.
+The operation failed or the command syntax was not valid.
 
 == ENVIRONMENT
 
 *TZ*::
-  If this variable is set its value takes precedence over the system configured timezone.
+If this variable is set its value takes precedence over the system configured timezone.
 
 *TZDIR*::
-  If this variable is set its value takes precedence over the system configured timezone database directory path.
+If this variable is set its value takes precedence over the system configured timezone database directory path.
 
 == FILES
 
 _{ADJTIME_PATH}_::
-  The configuration and state file for hwclock.
+The configuration and state file for hwclock.
 
 _/etc/localtime_::
-  The system timezone file.
+The system timezone file.
 
 _/usr/share/zoneinfo/_::
-  The system timezone database directory.
+The system timezone database directory.
 
 Device files *hwclock* may try for Hardware Clock access: _/dev/rtc0_ _/dev/rtc_ _/dev/misc/rtc_ _/dev/efirtc_ _/dev/misc/efirtc_
 

@@ -31,43 +31,43 @@ Use the *--help* option to see the columns description.
 == OPTIONS
 
 *-a*, *--all*::
-  List each individual memory block, instead of combining memory blocks with similar attributes.
+List each individual memory block, instead of combining memory blocks with similar attributes.
 
 *-b*, *--bytes*::
-  Print the SIZE column in bytes rather than in a human-readable format.
+Print the SIZE column in bytes rather than in a human-readable format.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-J*, *--json*::
-  Use JSON output format.
+Use JSON output format.
 
 *-n*, *--noheadings*::
-  Do not print a header line.
+Do not print a header line.
 
 *-o*, *--output* _list_::
-  Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if _list_ is specified in the format **+**__list__ (e.g., *lsmem -o +NODE*).
+Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if _list_ is specified in the format **+**__list__ (e.g., *lsmem -o +NODE*).
 
 *--output-all*::
-  Output all available columns.
+Output all available columns.
 
 *-P*, *--pairs*::
-  Produce output in the form of key="value" pairs. All potentially unsafe value characters are hex-escaped (\x<code>).
+Produce output in the form of key="value" pairs. All potentially unsafe value characters are hex-escaped (\x<code>).
 
 *-r*, *--raw*::
-  Produce output in raw format. All potentially unsafe characters are hex-escaped (\x<code>).
+Produce output in raw format. All potentially unsafe characters are hex-escaped (\x<code>).
 
 *-S*, *--split* _list_::
-  Specify which columns (attributes) use to split memory blocks to ranges. The supported columns are STATE, REMOVABLE, NODE and ZONES, or "none". The other columns are silently ignored. For more details see DESCRIPTION above.
+Specify which columns (attributes) use to split memory blocks to ranges. The supported columns are STATE, REMOVABLE, NODE and ZONES, or "none". The other columns are silently ignored. For more details see DESCRIPTION above.
 
 *-s*, *--sysroot* _directory_::
-  Gather memory data for a Linux instance other than the instance from which the *lsmem* command is issued. The specified _directory_ is the system root of the Linux instance to be inspected.
+Gather memory data for a Linux instance other than the instance from which the *lsmem* command is issued. The specified _directory_ is the system root of the Linux instance to be inspected.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *--summary*[=_when_]::
-  This option controls summary lines output. The optional argument _when_ can be *never*, *always* or *only*. If the _when_ argument is omitted, it defaults to *"only"*. The summary output is suppressed for *--raw*, *--pairs* and *--json*.
+This option controls summary lines output. The optional argument _when_ can be *never*, *always* or *only*. If the _when_ argument is omitted, it defaults to *"only"*. The summary output is suppressed for *--raw*, *--pairs* and *--json*.
 
 == AUTHORS
 

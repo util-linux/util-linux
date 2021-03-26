@@ -25,60 +25,60 @@ ipcs - show information on IPC facilities
 == OPTIONS
 
 *-i*, *--id* _id_::
-  Show full details on just the one resource element identified by _id_. This option needs to be combined with one of the three resource options: *-m*, *-q* or *-s*.
+Show full details on just the one resource element identified by _id_. This option needs to be combined with one of the three resource options: *-m*, *-q* or *-s*.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 === Resource options
 
 *-m*, *--shmems*::
-  Write information about active shared memory segments.
+Write information about active shared memory segments.
 
 *-q*, *--queues*::
-  Write information about active message queues.
+Write information about active message queues.
 
 *-s*, *--semaphores*::
-  Write information about active semaphore sets.
+Write information about active semaphore sets.
 
 *-a*, *--all*::
-  Write information about all three resources (default).
+Write information about all three resources (default).
 
 === Output formats
 
 Of these options only one takes effect: the last one specified.
 
 *-c*, *--creator*::
-  Show creator and owner.
+Show creator and owner.
 
 *-l*, *--limits*::
-  Show resource limits.
+Show resource limits.
 
 *-p*, *--pid*::
-  Show PIDs of creator and last operator.
+Show PIDs of creator and last operator.
 
 *-t*, *--time*::
-  Write time information. The time of the last control operation that changed the access permissions for all facilities, the time of the last *msgsnd*(2) and *msgrcv*(2) operations on message queues, the time of the last *shmat*(2) and *shmdt*(2) operations on shared memory, and the time of the last *semop*(2) operation on semaphores.
+Write time information. The time of the last control operation that changed the access permissions for all facilities, the time of the last *msgsnd*(2) and *msgrcv*(2) operations on message queues, the time of the last *shmat*(2) and *shmdt*(2) operations on shared memory, and the time of the last *semop*(2) operation on semaphores.
 
 *-u*, *--summary*::
-  Show status summary.
+Show status summary.
 
 === Representation
 
 These affect only the *-l* (*--limits*) option.
 
 *-b*, *--bytes*::
-  Print sizes in bytes.
+Print sizes in bytes.
 
 *--human*::
-  Print sizes in human-readable format.
+Print sizes in human-readable format.
 
 == CONFORMING TO
 
-The Linux ipcs utility is not fully compatible to the POSIX ipcs utility. The Linux version does not support the POSIX *-a*, *-b* and *-o* options, but does support the *-l* and *-u* options not defined by POSIX. A portable application shall not use the *-a*, *-b*, *-o*, *-l*, and *-u* options.
+The Linux *ipcs* utility is not fully compatible to the POSIX *ipcs* utility. The Linux version does not support the POSIX *-a*, *-b* and *-o* options, but does support the *-l* and *-u* options not defined by POSIX. A portable application shall not use the *-a*, *-b*, *-o*, *-l*, and *-u* options.
 
 == NOTES
 

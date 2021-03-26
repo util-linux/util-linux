@@ -32,42 +32,42 @@ Note that *lsns* reads information directly from the _/proc_ filesystem and for 
 == OPTIONS
 
 *-J*, *--json*::
-  Use JSON output format.
+Use JSON output format.
 
 *-l*, *--list*::
-  Use list output format.
+Use list output format.
 
 *-n*, *--noheadings*::
-  Do not print a header line.
+Do not print a header line.
 
 *-o*, *--output* _list_::
-  Specify which output columns to print. Use *--help* to get a list of all supported columns. +
-  {nbsp} +
-  The default list of columns may be extended if _list_ is specified in the format **+**__list__ (e.g., *lsns -o +PATH*).
+Specify which output columns to print. Use *--help* to get a list of all supported columns.
++
+The default list of columns may be extended if _list_ is specified in the format **+**__list__ (e.g., *lsns -o +PATH*).
 
 *--output-all*::
-  Output all available columns.
+Output all available columns.
 
 *-p*, *--task* _PID_::
-  Display only the namespaces held by the process with this _PID_.
+Display only the namespaces held by the process with this _PID_.
 
 *-r*, *--raw*::
-  Use the raw output format.
+Use the raw output format.
 
 *-t*, *--type* _type_::
-  Display the specified _type_ of namespaces only. The supported types are *mnt*, *net*, *ipc*, *user*, *pid*, *uts*, *cgroup* and *time*. This option may be given more than once.
+Display the specified _type_ of namespaces only. The supported types are *mnt*, *net*, *ipc*, *user*, *pid*, *uts*, *cgroup* and *time*. This option may be given more than once.
 
 *-u*, *--notruncate*::
-  Do not truncate text in columns.
+Do not truncate text in columns.
 
 *-W*, *--nowrap*::
-  Do not use multi-line text in columns.
+Do not use multi-line text in columns.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == AUTHORS
 

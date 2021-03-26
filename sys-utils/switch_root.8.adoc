@@ -25,10 +25,10 @@ switch_root - switch to another filesystem as the root of the mount tree
 == OPTIONS
 
 *-h, --help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V, --version*::
-  Display version information and exit.
+Display version information and exit.
 
 == EXIT STATUS
 
@@ -44,8 +44,8 @@ mount --bind $DIR $DIR
 
 == AUTHORS
 
-mailto:pjones@redhat.com[Peter Jones] +
-mailto:katzj@redhat.com[Jeremy Katz] +
+mailto:pjones@redhat.com[Peter Jones],
+mailto:katzj@redhat.com[Jeremy Katz],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO

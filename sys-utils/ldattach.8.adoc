@@ -33,87 +33,87 @@ With no arguments, *ldattach* prints usage information.
 Depending on the kernel release, the following line disciplines are supported:
 
 *TTY*(*0*)::
-  The default line discipline, providing transparent operation (raw mode) as well as the habitual terminal line editing capabilities (cooked mode).
+The default line discipline, providing transparent operation (raw mode) as well as the habitual terminal line editing capabilities (cooked mode).
 
 *SLIP*(*1*)::
-  Serial Line IP (SLIP) protocol processor for transmitting TCP/IP packets over serial lines.
+Serial Line IP (SLIP) protocol processor for transmitting TCP/IP packets over serial lines.
 
 *MOUSE*(*2*)::
-  Device driver for RS232 connected pointing devices (serial mice).
+Device driver for RS232 connected pointing devices (serial mice).
 
 *PPP*(*3*)::
-  Point to Point Protocol (PPP) processor for transmitting network packets over serial lines.
+Point to Point Protocol (PPP) processor for transmitting network packets over serial lines.
 
 *STRIP*(*4*); *AX25*(*5*); *X25*(*6*)::
-  Line driver for transmitting X.25 packets over asynchronous serial lines.
+Line driver for transmitting X.25 packets over asynchronous serial lines.
 
 *6PACK*(*7*); *R3964*(*9*)::
-  Driver for Simatic R3964 module.
+Driver for Simatic R3964 module.
 
 *IRDA*(*11*)::
-  Linux IrDa (infrared data transmission) driver - see http://irda.sourceforge.net/
+Linux IrDa (infrared data transmission) driver - see http://irda.sourceforge.net/
 
 *HDLC*(*13*)::
-  Synchronous HDLC driver.
+Synchronous HDLC driver.
 
 *SYNC_PPP*(*14*)::
-  Synchronous PPP driver.
+Synchronous PPP driver.
 
 *HCI*(*15*)::
-  Bluetooth HCI UART driver.
+Bluetooth HCI UART driver.
 
 *GIGASET_M101*(*16*)::
-  Driver for Siemens Gigaset M101 serial DECT adapter.
+Driver for Siemens Gigaset M101 serial DECT adapter.
 
 *PPS*(*18*)::
-  Driver for serial line Pulse Per Second (PPS) source.
+Driver for serial line Pulse Per Second (PPS) source.
 
 *GSM0710*(*21*)::
-  Driver for GSM 07.10 multiplexing protocol modem (CMUX).
+Driver for GSM 07.10 multiplexing protocol modem (CMUX).
 
 == OPTIONS
 
 *-1*, *--onestopbit*::
-  Set the number of stop bits of the serial line to one.
+Set the number of stop bits of the serial line to one.
 
 *-2*, *--twostopbits*::
-  Set the number of stop bits of the serial line to two.
+Set the number of stop bits of the serial line to two.
 
 *-7*, *--sevenbits*::
-  Set the character size of the serial line to 7 bits.
+Set the character size of the serial line to 7 bits.
 
 *-8*, *--eightbits*::
-  Set the character size of the serial line to 8 bits.
+Set the character size of the serial line to 8 bits.
 
 *-d*, *--debug*::
-  Keep *ldattach* in the foreground so that it can be interrupted or debugged, and to print verbose messages about its progress to standard error output.
+Keep *ldattach* in the foreground so that it can be interrupted or debugged, and to print verbose messages about its progress to standard error output.
 
 *-e*, *--evenparity*::
-  Set the parity of the serial line to even.
+Set the parity of the serial line to even.
 
-*-i*, *--iflag* [*-*]****__value__...::
-  Set the specified bits in the c_iflag word of the serial line. The given _value_ may be a number or a symbolic name. If _value_ is prefixed by a minus sign, the specified bits are cleared instead. Several comma-separated values may be given in order to set and clear multiple bits.
+*-i*, *--iflag* [*-*]_value_...::
+Set the specified bits in the c_iflag word of the serial line. The given _value_ may be a number or a symbolic name. If _value_ is prefixed by a minus sign, the specified bits are cleared instead. Several comma-separated values may be given in order to set and clear multiple bits.
 
 *-n*, *--noparity*::
-  Set the parity of the serial line to none.
+Set the parity of the serial line to none.
 
 *-o*, *--oddparity*::
-  Set the parity of the serial line to odd.
+Set the parity of the serial line to odd.
 
 *-s*, *--speed* _value_::
-  Set the speed (the baud rate) of the serial line to the specified _value_.
+Set the speed (the baud rate) of the serial line to the specified _value_.
 
 *-c*, *--intro-command* _string_::
-  Define an intro command that is sent through the serial line before the invocation of ldattach. E.g. in conjunction with line discipline GSM0710, the command ´AT+CMUX=0BSOLr´ is commonly suitable to switch the modem into the CMUX mode.
+Define an intro command that is sent through the serial line before the invocation of ldattach. E.g. in conjunction with line discipline GSM0710, the command 'AT+CMUX=0\r' is commonly suitable to switch the modem into the CMUX mode.
 
 *-p*, *--pause* _value_::
-  Sleep for _value_ seconds before the invocation of ldattach. Default is one second.
+Sleep for _value_ seconds before the invocation of ldattach. Default is one second.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == AUTHORS
 

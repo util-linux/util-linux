@@ -31,13 +31,13 @@ The suspend setup may be interrupted by active hardware; for example wireless US
 == OPTIONS
 
 *-A*, *--adjfile* _file_::
-  Specify an alternative path to the adjust file.
+Specify an alternative path to the adjust file.
 
 *-a*, *--auto*::
-  Read the clock mode (whether the hardware clock is set to UTC or local time) from the _adjtime_ file, where *hwclock*(8) stores that information. This is the default.
+Read the clock mode (whether the hardware clock is set to UTC or local time) from the _adjtime_ file, where *hwclock*(8) stores that information. This is the default.
 
 *--date* _timestamp_::
-  Set the wakeup time to the value of the timestamp. Format of the timestamp can be any of the following:
+Set the wakeup time to the value of the timestamp. Format of the timestamp can be any of the following:
 
 [cols=",",]
 |===
@@ -52,55 +52,64 @@ The suspend setup may be interrupted by active hardware; for example wireless US
 |===
 
 *-d*, *--device* _device_::
-  Use the specified _device_ instead of *rtc0* as realtime clock. This option is only relevant if your system has more than one RTC. You may specify *rtc1*, *rtc2*, ... here.
+Use the specified _device_ instead of *rtc0* as realtime clock. This option is only relevant if your system has more than one RTC. You may specify *rtc1*, *rtc2*, ... here.
 
 *-l*, *--local*::
-  Assume that the hardware clock is set to local time, regardless of the contents of the _adjtime_ file.
+Assume that the hardware clock is set to local time, regardless of the contents of the _adjtime_ file.
 
 *--list-modes*::
-  List available *--mode* option arguments.
+List available *--mode* option arguments.
 
 *-m*, *--mode* _mode_::
-  Go into the given standby state. Valid values for _mode_ are: +
-  *standby*;;
-    ACPI state S1. This state offers minimal, though real, power savings, while providing a very low-latency transition back to a working system. This is the default mode.
-  *freeze*;;
-    The processes are frozen, all the devices are suspended and all the processors idled. This state is a general state that does not need any platform-specific support, but it saves less power than Suspend-to-RAM, because the system is still in a running state. (Available since Linux 3.9.)
-  *mem*;;
-    ACPI state S3 (Suspend-to-RAM). This state offers significant power savings as everything in the system is put into a low-power state, except for memory, which is placed in self-refresh mode to retain its contents.
-  *disk*;;
-    ACPI state S4 (Suspend-to-disk). This state offers the greatest power savings, and can be used even in the absence of low-level platform support for power management. This state operates similarly to Suspend-to-RAM, but includes a final step of writing memory contents to disk.
-  *off*;;
-    ACPI state S5 (Poweroff). This is done by calling '/sbin/shutdown'. Not officially supported by ACPI, but it usually works.
-  *no*;;
-    Don't suspend, only set the RTC wakeup time.
-  *on*;;
-    Don't suspend, but read the RTC device until an alarm time appears. This mode is useful for debugging.
-  *disable*;;
-    Disable a previously set alarm.
-  *show*;;
-    Print alarm information in format: "alarm: off|on <time>". The time is in ctime() output format, e.g., "alarm: on Tue Nov 16 04:48:45 2010".
+Go into the given standby state. Valid values for _mode_ are:
+
+*standby*;;
+ACPI state S1. This state offers minimal, though real, power savings, while providing a very low-latency transition back to a working system. This is the default mode.
+
+*freeze*;;
+The processes are frozen, all the devices are suspended and all the processors idled. This state is a general state that does not need any platform-specific support, but it saves less power than Suspend-to-RAM, because the system is still in a running state. (Available since Linux 3.9.)
+
+*mem*;;
+ACPI state S3 (Suspend-to-RAM). This state offers significant power savings as everything in the system is put into a low-power state, except for memory, which is placed in self-refresh mode to retain its contents.
+
+*disk*;;
+ACPI state S4 (Suspend-to-disk). This state offers the greatest power savings, and can be used even in the absence of low-level platform support for power management. This state operates similarly to Suspend-to-RAM, but includes a final step of writing memory contents to disk.
+
+*off*;;
+ACPI state S5 (Poweroff). This is done by calling '/sbin/shutdown'. Not officially supported by ACPI, but it usually works.
+
+*no*;;
+Don't suspend, only set the RTC wakeup time.
+
+*on*;;
+Don't suspend, but read the RTC device until an alarm time appears. This mode is useful for debugging.
+
+*disable*;;
+Disable a previously set alarm.
+
+*show*;;
+Print alarm information in format: "alarm: off|on <time>". The time is in ctime() output format, e.g., "alarm: on Tue Nov 16 04:48:45 2010".
 
 *-n*, *--dry-run*::
-  This option does everything apart from actually setting up the alarm, suspending the system, or waiting for the alarm.
+This option does everything apart from actually setting up the alarm, suspending the system, or waiting for the alarm.
 
 *-s*, *--seconds* _seconds_::
-  Set the wakeup time to _seconds_ in the future from now.
+Set the wakeup time to _seconds_ in the future from now.
 
 *-t*, *--time* _time_t_::
-  Set the wakeup time to the absolute time _time_t_. _time_t_ is the time in seconds since 1970-01-01, 00:00 UTC. Use the *date*(1) tool to convert between human-readable time and _time_t_.
+Set the wakeup time to the absolute time _time_t_. _time_t_ is the time in seconds since 1970-01-01, 00:00 UTC. Use the *date*(1) tool to convert between human-readable time and _time_t_.
 
 *-u*, *--utc*::
-  Assume that the hardware clock is set to UTC (Universal Time Coordinated), regardless of the contents of the _adjtime_ file.
+Assume that the hardware clock is set to UTC (Universal Time Coordinated), regardless of the contents of the _adjtime_ file.
 
 *-v*, *--verbose*::
-  Be verbose.
+Be verbose.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 == NOTES
 

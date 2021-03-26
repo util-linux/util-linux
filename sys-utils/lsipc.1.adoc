@@ -21,79 +21,79 @@ lsipc - show information on IPC facilities currently employed in the system
 == OPTIONS
 
 *-i*, *--id* _id_::
-  Show full details on just the one resource element identified by _id_. This option needs to be combined with one of the three resource options: *-m*, *-q* or *-s*. It is possible to override the default output format for this option with the *--list*, *--raw*, *--json* or *--export* option.
+Show full details on just the one resource element identified by _id_. This option needs to be combined with one of the three resource options: *-m*, *-q* or *-s*. It is possible to override the default output format for this option with the *--list*, *--raw*, *--json* or *--export* option.
 
 *-g*, *--global*::
-  Show system-wide usage and limits of IPC resources. This option may be combined with one of the three resource options: *-m*, *-q* or *-s*. The default is to show information about all resources.
+Show system-wide usage and limits of IPC resources. This option may be combined with one of the three resource options: *-m*, *-q* or *-s*. The default is to show information about all resources.
 
 *-h*, *--help*::
-  Display help text and exit.
+Display help text and exit.
 
 *-V*, *--version*::
-  Display version information and exit.
+Display version information and exit.
 
 === Resource options
 
 *-m*, *--shmems*::
-  Write information about active shared memory segments.
+Write information about active shared memory segments.
 
 *-q*, *--queues*::
-  Write information about active message queues.
+Write information about active message queues.
 
 *-s*, *--semaphores*::
-  Write information about active semaphore sets.
+Write information about active semaphore sets.
 
 === Output formatting
 
 *-c*, *--creator*::
-  Show creator and owner.
+Show creator and owner.
 
 *-e*, *--export*::
-  Produce output in the form of key="value" pairs. All potentially unsafe value characters are hex-escaped (\x<code>). The key (variable name) will be modified to contain only characters allowed for a shell variable identifiers, for example, USE_PCT instead of USE%.
+Produce output in the form of key="value" pairs. All potentially unsafe value characters are hex-escaped (\x<code>). The key (variable name) will be modified to contain only characters allowed for a shell variable identifiers, for example, USE_PCT instead of USE%.
 
 *-J*, *--json*::
-  Use the JSON output format.
+Use the JSON output format.
 
 *-l*, *--list*::
-  Use the list output format. This is the default, except when *--id* is used.
+Use the list output format. This is the default, except when *--id* is used.
 
 *-n*, *--newline*::
-  Display each piece of information on a separate line.
+Display each piece of information on a separate line.
 
 *--noheadings*::
-  Do not print a header line.
+Do not print a header line.
 
 *--notruncate*::
-  Don't truncate output.
+Don't truncate output.
 
 *-o*, *--output* _list_::
-  Specify which output columns to print. Use *--help* to get a list of all supported columns.
+Specify which output columns to print. Use *--help* to get a list of all supported columns.
 
 *-b*, *--bytes*::
-  Print size in bytes rather than in human readable format.
+Print size in bytes rather than in human readable format.
 
 *-r*, *--raw*::
-  Raw output (no columnation).
+Raw output (no columnation).
 
 *-t*, *--time*::
-  Write time information. The time of the last control operation that changed the access permissions for all facilities, the time of the last *msgsnd*(2) and *msgrcv*(2) operations on message queues, the time of the last *shmat*(2) and *shmdt*(2) operations on shared memory, and the time of the last *semop*(2) operation on semaphores.
+Write time information. The time of the last control operation that changed the access permissions for all facilities, the time of the last *msgsnd*(2) and *msgrcv*(2) operations on message queues, the time of the last *shmat*(2) and *shmdt*(2) operations on shared memory, and the time of the last *semop*(2) operation on semaphores.
 
 *--time-format* _type_::
-  Display dates in short, full or iso format. The default is short, this time format is designed to be space efficient and human readable.
+Display dates in short, full or iso format. The default is short, this time format is designed to be space efficient and human readable.
 
 *-P*, *--numeric-perms*::
-  Print numeric permissions in PERMS column.
+Print numeric permissions in PERMS column.
 
 == EXIT STATUS
 
 0::
-  if OK,
+if OK,
 
 1::
-  if incorrect arguments specified,
+if incorrect arguments specified,
 
 2::
-  if a serious error occurs.
+if a serious error occurs.
 
 == HISTORY
 
@@ -101,7 +101,7 @@ The *lsipc* utility is inspired by the *ipcs*(1) utility.
 
 == AUTHORS
 
-mailto:ooprala@redhat.com[Ondrej Oprala] +
+mailto:ooprala@redhat.com[Ondrej Oprala],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
