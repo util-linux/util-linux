@@ -353,8 +353,8 @@ endif # BUILD_MOUNT
 if BUILD_SWAPON
 sbin_PROGRAMS += swapon swapoff
 dist_man_MANS += \
-	sys-utils/swapoff.8 \
-	sys-utils/swapon.8
+	sys-utils/swapon.8 \
+	sys-utils/swapoff.8
 
 swapon_SOURCES = \
 	sys-utils/swapon.c \

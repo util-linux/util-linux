@@ -242,8 +242,8 @@ endif # BUILD_LSLOGINS
 if BUILD_VIPW
 usrsbin_exec_PROGRAMS += vipw
 dist_man_MANS += \
-	login-utils/vigr.8 \
-	login-utils/vipw.8
+	login-utils/vipw.8 \
+	login-utils/vigr.8
 vipw_SOURCES = \
 	login-utils/vipw.c \
 	login-utils/setpwnam.h
