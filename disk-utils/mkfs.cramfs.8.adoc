@@ -20,9 +20,9 @@ Files on cramfs file systems are zlib-compressed one page at a time to allow ran
 
 The file system is intentionally read-only to simplify its design; random write access for compressed files is difficult to implement. cramfs ships with a utility (*mkcramfs*(8)) to pack files into new cramfs images.
 
-File sizes are limited to less than 16 MB.
+File sizes are limited to less than 16 MB.
 
-Maximum file system size is a little under 272 MB. (The last file on the file system must begin before the 256 MB block, but can extend past it.)
+Maximum file system size is a little under 272 MB. (The last file on the file system must begin before the 256 MB block, but can extend past it.)
 
 == ARGUMENTS
 

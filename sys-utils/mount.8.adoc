@@ -923,7 +923,7 @@ Set the block size to the indicated value. (Default: *block=1024*.)
 This option is obsolete and may fail or being ignored.
 
 *cruft*::
-If the high byte of the file length contains other garbage, set this mount option to ignore the high order bits of the file length. This implies that a file cannot be larger than 16 MB.
+If the high byte of the file length contains other garbage, set this mount option to ignore the high order bits of the file length. This implies that a file cannot be larger than 16 MB.
 
 **session=**__x__::
 Select number of session on a multisession CD.
