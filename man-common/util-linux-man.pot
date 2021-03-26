@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-03-26 20:54+0100\n"
+"POT-Creation-Date: 2021-03-26 21:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -166,7 +166,7 @@ msgstr ""
 #: ../sys-utils/chcpu.8.adoc:9 ../sys-utils/chmem.8.adoc:9
 #: ../sys-utils/choom.1.adoc:9 ../sys-utils/ctrlaltdel.8.adoc:13
 #: ../sys-utils/dmesg.1.adoc:13 ../sys-utils/eject.1.adoc:17
-#: ../sys-utils/fallocate.1.adoc:9 ../sys-utils/flock.1.adoc:33
+#: ../sys-utils/fallocate.1.adoc:9 ../sys-utils/flock.1.adoc:34
 #: ../sys-utils/fsfreeze.8.adoc:9 ../sys-utils/fstab.5.adoc:43
 #: ../sys-utils/fstrim.8.adoc:9 ../sys-utils/hwclock.8.adoc:17
 #: ../sys-utils/ipcmk.1.adoc:13 ../sys-utils/ipcrm.1.adoc:14
@@ -240,7 +240,7 @@ msgstr ""
 #: ../sys-utils/blkdiscard.8.adoc:13 ../sys-utils/blkzone.8.adoc:13
 #: ../sys-utils/chcpu.8.adoc:13 ../sys-utils/chmem.8.adoc:13
 #: ../sys-utils/ctrlaltdel.8.adoc:17 ../sys-utils/dmesg.1.adoc:17
-#: ../sys-utils/fallocate.1.adoc:13 ../sys-utils/flock.1.adoc:37
+#: ../sys-utils/fallocate.1.adoc:13 ../sys-utils/flock.1.adoc:38
 #: ../sys-utils/fsfreeze.8.adoc:13 ../sys-utils/fstab.5.adoc:47
 #: ../sys-utils/fstrim.8.adoc:13 ../sys-utils/hwclock.8.adoc:21
 #: ../sys-utils/ipcmk.1.adoc:17 ../sys-utils/ipcrm.1.adoc:18
@@ -315,7 +315,7 @@ msgstr ""
 #: ../sys-utils/chcpu.8.adoc:21 ../sys-utils/chmem.8.adoc:17
 #: ../sys-utils/choom.1.adoc:19 ../sys-utils/ctrlaltdel.8.adoc:21
 #: ../sys-utils/dmesg.1.adoc:31 ../sys-utils/eject.1.adoc:23
-#: ../sys-utils/fallocate.1.adoc:21 ../sys-utils/flock.1.adoc:45
+#: ../sys-utils/fallocate.1.adoc:21 ../sys-utils/flock.1.adoc:46
 #: ../sys-utils/fsfreeze.8.adoc:17 ../sys-utils/fstab.5.adoc:51
 #: ../sys-utils/fstrim.8.adoc:17 ../sys-utils/hwclock.8.adoc:25
 #: ../sys-utils/ipcmk.1.adoc:21 ../sys-utils/ipcrm.1.adoc:24
@@ -447,7 +447,7 @@ msgstr ""
 #: ../sys-utils/chcpu.8.adoc:80 ../sys-utils/chmem.8.adoc:85
 #: ../sys-utils/choom.1.adoc:55 ../sys-utils/ctrlaltdel.8.adoc:51
 #: ../sys-utils/dmesg.1.adoc:187 ../sys-utils/eject.1.adoc:121
-#: ../sys-utils/fallocate.1.adoc:90 ../sys-utils/flock.1.adoc:127
+#: ../sys-utils/fallocate.1.adoc:90 ../sys-utils/flock.1.adoc:129
 #: ../sys-utils/fsfreeze.8.adoc:57 ../sys-utils/fstab.5.adoc:135
 #: ../sys-utils/fstrim.8.adoc:85 ../sys-utils/hwclock.8.adoc:372
 #: ../sys-utils/ipcmk.1.adoc:53 ../sys-utils/ipcrm.1.adoc:72
@@ -555,7 +555,7 @@ msgstr ""
 #: ../sys-utils/chcpu.8.adoc:27 ../sys-utils/chmem.8.adoc:35
 #: ../sys-utils/choom.1.adoc:23 ../sys-utils/ctrlaltdel.8.adoc:35
 #: ../sys-utils/dmesg.1.adoc:37 ../sys-utils/eject.1.adoc:35
-#: ../sys-utils/fallocate.1.adoc:27 ../sys-utils/flock.1.adoc:53
+#: ../sys-utils/fallocate.1.adoc:27 ../sys-utils/flock.1.adoc:54
 #: ../sys-utils/fsfreeze.8.adoc:29 ../sys-utils/fstrim.8.adoc:27
 #: ../sys-utils/hwclock.8.adoc:105 ../sys-utils/ipcmk.1.adoc:25
 #: ../sys-utils/ipcrm.1.adoc:36 ../sys-utils/ipcs.1.adoc:25
@@ -649,7 +649,7 @@ msgstr ""
 #: ../sys-utils/chcpu.8.adoc:56 ../sys-utils/chmem.8.adoc:49
 #: ../sys-utils/choom.1.adoc:31 ../sys-utils/ctrlaltdel.8.adoc:40
 #: ../sys-utils/dmesg.1.adoc:144 ../sys-utils/eject.1.adoc:52
-#: ../sys-utils/fallocate.1.adoc:82 ../sys-utils/flock.1.adoc:88
+#: ../sys-utils/fallocate.1.adoc:82 ../sys-utils/flock.1.adoc:89
 #: ../sys-utils/fsfreeze.8.adoc:42 ../sys-utils/fstrim.8.adoc:65
 #: ../sys-utils/hwclock.8.adoc:102 ../sys-utils/ipcmk.1.adoc:46
 #: ../sys-utils/ipcrm.1.adoc:64 ../sys-utils/ipcs.1.adoc:30
@@ -700,7 +700,7 @@ msgstr ""
 #: ../sys-utils/blkzone.8.adoc:106 ../sys-utils/chcpu.8.adoc:58
 #: ../sys-utils/choom.1.adoc:33 ../sys-utils/ctrlaltdel.8.adoc:42
 #: ../sys-utils/dmesg.1.adoc:146 ../sys-utils/eject.1.adoc:54
-#: ../sys-utils/fallocate.1.adoc:84 ../sys-utils/flock.1.adoc:90
+#: ../sys-utils/fallocate.1.adoc:84 ../sys-utils/flock.1.adoc:91
 #: ../sys-utils/fsfreeze.8.adoc:44 ../sys-utils/fstrim.8.adoc:67
 #: ../sys-utils/hwclock.8.adoc:104 ../sys-utils/ipcmk.1.adoc:48
 #: ../sys-utils/ipcrm.1.adoc:66 ../sys-utils/ipcs.1.adoc:32
@@ -754,7 +754,7 @@ msgstr ""
 #: ../sys-utils/chcpu.8.adoc:53 ../sys-utils/chmem.8.adoc:55
 #: ../sys-utils/choom.1.adoc:34 ../sys-utils/ctrlaltdel.8.adoc:37
 #: ../sys-utils/dmesg.1.adoc:141 ../sys-utils/eject.1.adoc:85
-#: ../sys-utils/fallocate.1.adoc:79 ../sys-utils/flock.1.adoc:85
+#: ../sys-utils/fallocate.1.adoc:79 ../sys-utils/flock.1.adoc:86
 #: ../sys-utils/fsfreeze.8.adoc:39 ../sys-utils/fstrim.8.adoc:62
 #: ../sys-utils/hwclock.8.adoc:99 ../sys-utils/ipcmk.1.adoc:43
 #: ../sys-utils/ipcrm.1.adoc:61 ../sys-utils/ipcs.1.adoc:33
@@ -1071,7 +1071,7 @@ msgstr ""
 #: ../sys-utils/chcpu.8.adoc:72 ../sys-utils/choom.1.adoc:51
 #: ../sys-utils/ctrlaltdel.8.adoc:47 ../sys-utils/dmesg.1.adoc:181
 #: ../sys-utils/eject.1.adoc:117 ../sys-utils/fallocate.1.adoc:85
-#: ../sys-utils/flock.1.adoc:119 ../sys-utils/fsfreeze.8.adoc:53
+#: ../sys-utils/flock.1.adoc:120 ../sys-utils/fsfreeze.8.adoc:53
 #: ../sys-utils/fstrim.8.adoc:81 ../sys-utils/hwclock.8.adoc:381
 #: ../sys-utils/ipcmk.1.adoc:49 ../sys-utils/ipcs.1.adoc:87
 #: ../sys-utils/irqtop.1.adoc:60 ../sys-utils/ldattach.8.adoc:118
@@ -1242,7 +1242,7 @@ msgstr ""
 #: ../sys-utils/blkzone.8.adoc:103 ../sys-utils/chcpu.8.adoc:55
 #: ../sys-utils/choom.1.adoc:36 ../sys-utils/ctrlaltdel.8.adoc:39
 #: ../sys-utils/dmesg.1.adoc:143 ../sys-utils/eject.1.adoc:87
-#: ../sys-utils/fallocate.1.adoc:81 ../sys-utils/flock.1.adoc:87
+#: ../sys-utils/fallocate.1.adoc:81 ../sys-utils/flock.1.adoc:88
 #: ../sys-utils/fsfreeze.8.adoc:41 ../sys-utils/fstrim.8.adoc:64
 #: ../sys-utils/hwclock.8.adoc:101 ../sys-utils/ipcmk.1.adoc:45
 #: ../sys-utils/ipcrm.1.adoc:63 ../sys-utils/ipcs.1.adoc:35
@@ -3371,7 +3371,7 @@ msgstr ""
 #: ../misc-utils/logger.1.adoc:187 ../misc-utils/lsblk.8.adoc:124
 #: ../misc-utils/rename.1.adoc:58 ../sys-utils/chcpu.8.adoc:59
 #: ../sys-utils/chmem.8.adoc:58 ../sys-utils/dmesg.1.adoc:177
-#: ../sys-utils/eject.1.adoc:97 ../sys-utils/flock.1.adoc:91
+#: ../sys-utils/eject.1.adoc:97 ../sys-utils/flock.1.adoc:92
 #: ../sys-utils/fstrim.8.adoc:68 ../sys-utils/hwclock.8.adoc:341
 #: ../sys-utils/losetup.8.adoc:126 ../sys-utils/lsipc.1.adoc:87
 #: ../sys-utils/mount.8.adoc:1355 ../sys-utils/mountpoint.1.adoc:43
@@ -4481,7 +4481,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/mkswap.8.adoc:64 ../misc-utils/findmnt.8.adoc:164
-#: ../misc-utils/kill.1.adoc:65 ../sys-utils/flock.1.adoc:82
+#: ../misc-utils/kill.1.adoc:65 ../sys-utils/flock.1.adoc:83
 #: ../sys-utils/prlimit.1.adoc:58
 #, no-wrap
 msgid "*--verbose*"
@@ -12661,7 +12661,7 @@ msgstr ""
 #: ../misc-utils/logger.1.adoc:234 ../misc-utils/look.1.adoc:98
 #: ../misc-utils/rename.1.adoc:75 ../misc-utils/uuidgen.1.adoc:62
 #: ../misc-utils/whereis.1.adoc:115 ../misc-utils/wipefs.8.adoc:92
-#: ../schedutils/ionice.1.adoc:76 ../sys-utils/flock.1.adoc:97
+#: ../schedutils/ionice.1.adoc:76 ../sys-utils/flock.1.adoc:98
 #: ../sys-utils/prlimit.1.adoc:118 ../sys-utils/renice.1.adoc:90
 #: ../sys-utils/setpriv.1.adoc:104 ../sys-utils/unshare.1.adoc:141
 #: ../term-utils/scriptlive.1.adoc:53 ../term-utils/scriptreplay.1.adoc:71
@@ -15878,7 +15878,7 @@ msgid "Run uuidd in debugging mode. This prevents uuidd from running as a daemon
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidd.8.adoc:30 ../sys-utils/flock.1.adoc:61
+#: ../misc-utils/uuidd.8.adoc:30 ../sys-utils/flock.1.adoc:62
 #: ../sys-utils/nsenter.1.adoc:121
 #, no-wrap
 msgid "*-F*, *--no-fork*"
@@ -17572,7 +17572,7 @@ msgstr ""
 
 #. type: Title ==
 #: ../schedutils/taskset.1.adoc:108 ../sys-utils/chcpu.8.adoc:76
-#: ../sys-utils/flock.1.adoc:123 ../sys-utils/rtcwake.8.adoc:130
+#: ../sys-utils/flock.1.adoc:124 ../sys-utils/rtcwake.8.adoc:130
 #: ../term-utils/scriptlive.1.adoc:69 ../term-utils/scriptreplay.1.adoc:87
 #, no-wrap
 msgid "COPYRIGHT"
@@ -20222,37 +20222,37 @@ msgid "flock(1)"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:36
+#: ../sys-utils/flock.1.adoc:37
 msgid "flock - manage locks from shell scripts"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:40
+#: ../sys-utils/flock.1.adoc:41
 #, no-wrap
 msgid "*flock* [options] _file_|_directory_ _command_ [_arguments_]\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:42
+#: ../sys-utils/flock.1.adoc:43
 #, no-wrap
 msgid "*flock* [options] _file_|_directory_ *-c* _command_\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:44
+#: ../sys-utils/flock.1.adoc:45
 #, no-wrap
 msgid "*flock* [options] _number_\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:48
+#: ../sys-utils/flock.1.adoc:49
 msgid ""
 "This utility manages *flock*(2) locks from within shell scripts or from the "
 "command line."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:50
+#: ../sys-utils/flock.1.adoc:51
 msgid ""
 "The first and second of the above forms wrap the lock around the execution "
 "of a _command_, in a manner similar to *su*(1) or *newgrp*(1). They lock a "
@@ -20262,31 +20262,31 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:52
+#: ../sys-utils/flock.1.adoc:53
 msgid ""
 "The third form uses an open file by its file descriptor _number_. See the "
 "examples below for how that can be used."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:55 ../term-utils/script.1.adoc:69
+#: ../sys-utils/flock.1.adoc:56 ../term-utils/script.1.adoc:69
 #, no-wrap
 msgid "*-c*, *--command* _command_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:57
+#: ../sys-utils/flock.1.adoc:58
 msgid "Pass a single _command_, without arguments, to the shell with *-c*."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:58
+#: ../sys-utils/flock.1.adoc:59
 #, no-wrap
 msgid "*-E*, *--conflict-exit-code* _number_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:60
+#: ../sys-utils/flock.1.adoc:61
 msgid ""
 "The exit status used when the *-n* option is in use, and the conflicting "
 "lock exists, or the *-w* option is in use, and the timeout is reached. The "
@@ -20294,7 +20294,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:63
+#: ../sys-utils/flock.1.adoc:64
 msgid ""
 "Do not fork before executing _command_. Upon execution the flock process is "
 "replaced by _command_ which continues to hold the lock. This option is "
@@ -20303,39 +20303,39 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:64
+#: ../sys-utils/flock.1.adoc:65
 #, no-wrap
 msgid "*-e*, *-x*, *--exclusive*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:66
+#: ../sys-utils/flock.1.adoc:67
 msgid ""
 "Obtain an exclusive lock, sometimes called a write lock. This is the "
 "default."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:67
+#: ../sys-utils/flock.1.adoc:68
 #, no-wrap
 msgid "*-n*, *--nb*, *--nonblock*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:69
+#: ../sys-utils/flock.1.adoc:70
 msgid ""
 "Fail rather than wait if the lock cannot be immediately acquired. See the "
 "*-E* option for the exit status used."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:70
+#: ../sys-utils/flock.1.adoc:71
 #, no-wrap
 msgid "*-o*, *--close*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:72
+#: ../sys-utils/flock.1.adoc:73
 msgid ""
 "Close the file descriptor on which the lock is held before executing "
 "_command_. This is useful if _command_ spawns a child process which should "
@@ -20343,24 +20343,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:73
+#: ../sys-utils/flock.1.adoc:74
 #, no-wrap
 msgid "*-s*, *--shared*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:75
+#: ../sys-utils/flock.1.adoc:76
 msgid "Obtain a shared lock, sometimes called a read lock."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:76
+#: ../sys-utils/flock.1.adoc:77
 #, no-wrap
 msgid "*-u*, *--unlock*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:78
+#: ../sys-utils/flock.1.adoc:79
 msgid ""
 "Drop a lock. This is usually not required, since a lock is automatically "
 "dropped when the file is closed. However, it may be required in special "
@@ -20369,13 +20369,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:79
+#: ../sys-utils/flock.1.adoc:80
 #, no-wrap
 msgid "*-w*, *--wait*, *--timeout* _seconds_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:81
+#: ../sys-utils/flock.1.adoc:82
 msgid ""
 "Fail if the lock cannot be acquired within _seconds_. Decimal fractional "
 "values are allowed. See the *-E* option for the exit status used. The zero "
@@ -20383,14 +20383,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:84
+#: ../sys-utils/flock.1.adoc:85
 msgid ""
 "Report how long it took to acquire the lock, or why the lock could not be "
 "obtained."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:94
+#: ../sys-utils/flock.1.adoc:95
 msgid ""
 "The command uses <sysexits.h> exit status values for everything, except when "
 "using either of the options *-n* or *-w* which report a failure to acquire "
@@ -20399,30 +20399,30 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:96
+#: ../sys-utils/flock.1.adoc:97
 msgid ""
 "When using the _command_ variant, and executing the child worked, then the "
 "exit status is that of the child command."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:100
+#: ../sys-utils/flock.1.adoc:101
 msgid "Note that \"shell> \" in examples is a command line prompt."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:101
+#: ../sys-utils/flock.1.adoc:102
 #, no-wrap
 msgid "shell1> flock /tmp -c cat; shell2> flock -w .007 /tmp -c echo; /bin/echo $?"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:103
+#: ../sys-utils/flock.1.adoc:104
 msgid "Set exclusive lock to directory /tmp and the second command will fail."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:104
+#: ../sys-utils/flock.1.adoc:105
 #, no-wrap
 msgid ""
 "shell1> flock -s /tmp -c cat; shell2> flock -s -w .007 /tmp -c echo; "
@@ -20430,7 +20430,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:106
+#: ../sys-utils/flock.1.adoc:107
 msgid ""
 "Set shared lock to directory /tmp and the second command will not "
 "fail. Notice that attempting to get exclusive lock with second command would "
@@ -20438,20 +20438,20 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:107
+#: ../sys-utils/flock.1.adoc:108
 #, no-wrap
 msgid "shell> flock -x local-lock-file echo 'a b c'"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:109
+#: ../sys-utils/flock.1.adoc:110
 msgid ""
 "Grab the exclusive lock \"local-lock-file\" before running echo with 'a b "
 "c'."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:110
+#: ../sys-utils/flock.1.adoc:111
 #, no-wrap
 msgid ""
 "(; flock -n 9 || exit 1; # ... commands executed under lock ...; ) "
@@ -20459,7 +20459,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:112
+#: ../sys-utils/flock.1.adoc:113
 msgid ""
 "The form is convenient inside shell scripts. The mode used to open the file "
 "doesn't matter to *flock*; using _>_ or _>>_ allows the lockfile to be "
@@ -20469,13 +20469,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:113
+#: ../sys-utils/flock.1.adoc:114
 #, no-wrap
 msgid "[ $\\{FLOCKER} != $0 ] && exec env FLOCKER=\"$0 flock -en $0 $0 $@ || :"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:115
+#: ../sys-utils/flock.1.adoc:116
 msgid ""
 "This is useful boilerplate code for shell scripts. Put it at the top of the "
 "shell script you want to lock and it'll automatically lock itself on the "
@@ -20487,13 +20487,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:116
+#: ../sys-utils/flock.1.adoc:117
 #, no-wrap
 msgid "shell> exec 4<>/var/lock/mylockfile; shell> flock -n 4"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:118
+#: ../sys-utils/flock.1.adoc:119
 msgid ""
 "This form is convenient for locking a file without spawning a "
 "subprocess. The shell opens the lock file for reading and writing as file "
@@ -20501,20 +20501,21 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:122
+#: ../sys-utils/flock.1.adoc:123
 msgid "mailto:hpa@zytor.com[H. Peter Anvin]"
 msgstr ""
 
+#. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:126
+#: ../sys-utils/flock.1.adoc:128
 msgid ""
-"Copyright Â© 2003-2006 H. Peter Anvin. This is free software; see the source "
-"for copying conditions. There is NO warranty; not even for MERCHANTABILITY "
-"or FITNESS FOR A PARTICULAR PURPOSE."
+"Copyright {copyright} 2003-2006 H. Peter Anvin. This is free software; see "
+"the source for copying conditions. There is NO warranty; not even for "
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:130
+#: ../sys-utils/flock.1.adoc:132
 #, no-wrap
 msgid "*flock*(2)\n"
 msgstr ""
@@ -21331,8 +21332,8 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:44
 msgid ""
-"The *Â­--setepoch* function requires using the *Â­--epoch* option to specify "
-"the year. For example:"
+"The *--setepoch* function requires using the *--epoch* option to specify the "
+"year. For example:"
 msgstr ""
 
 #. type: Plain text
@@ -21368,7 +21369,7 @@ msgid ""
 "Predict what the Hardware Clock will read in the future based upon the time "
 "given by the *--date* option and the information in _{ADJTIME_PATH}_. This "
 "is useful, for example, to account for drift when setting a Hardware Clock "
-"wakeup (aka alarm). See *Â­rtcwake*(8)."
+"wakeup (aka alarm). See *rtcwake*(8)."
 msgstr ""
 
 #. type: Plain text
@@ -21390,7 +21391,7 @@ msgstr ""
 msgid ""
 "Read the Hardware Clock and print its time to standard output in the *ISO "
 "8601* format. The time shown is always in local time, even if you keep your "
-"Hardware Clock in UTC. See the *Â­--localtime* option."
+"Hardware Clock in UTC. See the *--localtime* option."
 msgstr ""
 
 #. type: Plain text
@@ -21432,27 +21433,27 @@ msgid ""
 "applications to work correctly in conjunction with the timezone configured "
 "for the system. If the Hardware Clock is kept in local time then the time "
 "read from it must be shifted to the UTC timescale before using it to set the "
-"System Clock. The *Â­--hctosys* function does this based upon the "
-"information in the _{ADJTIME_PATH}_ file or the command line arguments "
-"*Â­--localtime* and *--utc*. Note: no daylight saving adjustment is "
-"made. See the discussion below, under *LOCAL vs UTC*."
+"System Clock. The *--hctosys* function does this based upon the information "
+"in the _{ADJTIME_PATH}_ file or the command line arguments *--localtime* and "
+"*--utc*. Note: no daylight saving adjustment is made. See the discussion "
+"below, under *LOCAL vs UTC*."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:69
 msgid ""
-"The kernel also keeps a timezone value, the *Â­--hctosys* function sets it "
-"to the timezone configured for the system. The system timezone is configured "
-"by the TZ environment variable or the _Â­/etc/localtime_ file, as "
-"*Â­tzset*(3) would interpret them. The obsolete _tz_dsttime_ field of the "
-"kernel's timezone value is set to zero. (For details on what this field used "
-"to mean, see *Â­settimeofday*(2).)"
+"The kernel also keeps a timezone value, the *--hctosys* function sets it to "
+"the timezone configured for the system. The system timezone is configured by "
+"the TZ environment variable or the _/etc/localtime_ file, as *tzset*(3) "
+"would interpret them. The obsolete _tz_dsttime_ field of the kernel's "
+"timezone value is set to zero. (For details on what this field used to mean, "
+"see *settimeofday*(2).)"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:71
 msgid ""
-"When used in a startup script, making the *Â­--hctosys* function the first "
+"When used in a startup script, making the *--hctosys* function the first "
 "caller of *settimeofday*(2) from boot, it will set the NTP '11 minute mode' "
 "timescale via the _persistent_clock_is_local_ kernel variable. If the "
 "Hardware Clock's timescale configuration is changed then a reboot is "
@@ -21585,7 +21586,7 @@ msgstr ""
 msgid ""
 "Set the Hardware Clock from the System Clock, and update the timestamps in "
 "_{ADJTIME_PATH}_. With the *--update-drift* option also (re)calculate the "
-"drift factor. Try it without the option if Â­*--systohc* fails. See "
+"drift factor. Try it without the option if *--systohc* fails. See "
 "*--update-drift* below."
 msgstr ""
 
@@ -22026,7 +22027,7 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:203
 msgid ""
-"On an ISA compatible system, Â­*hwclock* can directly access the \"CMOS "
+"On an ISA compatible system, *hwclock* can directly access the \"CMOS "
 "memory\" registers that constitute the clock, by doing I/O to Ports 0x70 and "
 "0x71. It does this with actual I/O instructions and consequently can only do "
 "it if running with superuser effective userid. This method may be used by "
@@ -22570,7 +22571,7 @@ msgid ""
 "There are two separate databases in the zoneinfo system, posix and "
 "'right'. 'Right' (now named zoneinfo-leaps) includes leap seconds and posix "
 "does not. To use the 'right' database the System Clock must be set to Â­(UTC "
-"{plus} leap seconds), which is equivalent to Â­(TAI - 10). This allows "
+"{plus} leap seconds), which is equivalent to (TAI - 10). This allows "
 "calculating the exact number of seconds between two dates that cross a leap "
 "second epoch. The System Clock is then converted to the correct civil time, "
 "including UTC, by using the 'right' timezone files which subtract the leap "
@@ -26506,7 +26507,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "**context=**__context__, **fscontext=**__context__, "
-"**defcontext=**__context__, and **Â­rootcontext=**__context__"
+"**defcontext=**__context__, and **rootcontext=**__context__"
 msgstr ""
 
 #. type: Plain text
@@ -26526,7 +26527,7 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:472
 msgid ""
 "A commonly used option for removable media is "
-"*Â­context=\"system_u:object_r:removable_t*."
+"*context=\"system_u:object_r:removable_t*."
 msgstr ""
 
 #. type: Plain text
@@ -26794,7 +26795,7 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:542
 msgid ""
 "Since Linux 2.6.30, the kernel defaults to the behavior provided by this "
-"option (unless *Â­noatime* was specified), and the *Â­strictatime* option is "
+"option (unless *noatime* was specified), and the *strictatime* option is "
 "required to obtain traditional semantics. In addition, since Linux 2.6.30, "
 "the file's last access time is always updated if it is more than 1 day old."
 msgstr ""
@@ -26820,9 +26821,9 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:548
 msgid ""
 "Allows to explicitly request full atime updates. This makes it possible for "
-"the kernel to default to *Â­relatime* or *Â­noatime* but still allow "
-"userspace to override it. For more details about the default system mount "
-"options see _/proc/mounts_."
+"the kernel to default to *relatime* or *noatime* but still allow userspace "
+"to override it. For more details about the default system mount options see "
+"_/proc/mounts_."
 msgstr ""
 
 #. type: Labeled list
