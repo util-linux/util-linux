@@ -465,10 +465,10 @@ Can be mounted with the *-a* option.
 *noauto*::
 Can only be mounted explicitly (i.e., the *-a* option will not cause the filesystem to be mounted).
 
-**context=**__context__, **fscontext=**__context__, **defcontext=**__context__, and **­rootcontext=**__context__::
+**context=**__context__, **fscontext=**__context__, **defcontext=**__context__, and **rootcontext=**__context__::
 The *context=* option is useful when mounting filesystems that do not support extended attributes, such as a floppy or hard disk formatted with VFAT, or systems that are not normally running under SELinux, such as an ext3 or ext4 formatted disk from a non-SELinux workstation. You can also use *context=* on filesystems you do not trust, such as a floppy. It also helps in compatibility with xattr-supporting filesystems on earlier 2.4.<x> kernel versions. Even where xattrs are supported, you can save time not having to label every file by assigning the entire disk one security context.
 +
-A commonly used option for removable media is *­context="system_u:object_r:removable_t*.
+A commonly used option for removable media is *context="system_u:object_r:removable_t*.
 +
 Two other options are *fscontext=* and *defcontext=*, both of which are mutually exclusive of the *context=* option. This means you can use fscontext and defcontext with each other, but neither can be used with context.
 +
@@ -538,13 +538,13 @@ Do not report errors for this device if it does not exist.
 *relatime*::
 Update inode access times relative to modify or change time. Access time is only updated if the previous access time was earlier than the current modify or change time. (Similar to *­noatime*, but it doesn't break *mutt*(1) or other applications that need to know if a file has been read since the last time it was modified.)
 +
-Since Linux 2.6.30, the kernel defaults to the behavior provided by this option (unless *­noatime* was specified), and the *­strictatime* option is required to obtain traditional semantics. In addition, since Linux 2.6.30, the file's last access time is always updated if it is more than 1 day old.
+Since Linux 2.6.30, the kernel defaults to the behavior provided by this option (unless *noatime* was specified), and the *strictatime* option is required to obtain traditional semantics. In addition, since Linux 2.6.30, the file's last access time is always updated if it is more than 1 day old.
 
 *norelatime*::
 Do not use the *relatime* feature. See also the *strictatime* mount option.
 
 *strictatime*::
-Allows to explicitly request full atime updates. This makes it possible for the kernel to default to *­relatime* or *­noatime* but still allow userspace to override it. For more details about the default system mount options see _/proc/mounts_.
+Allows to explicitly request full atime updates. This makes it possible for the kernel to default to *relatime* or *noatime* but still allow userspace to override it. For more details about the default system mount options see _/proc/mounts_.
 
 *nostrictatime*::
 Use the kernel's default behavior for inode access time updates.

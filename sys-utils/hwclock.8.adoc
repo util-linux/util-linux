@@ -49,12 +49,12 @@ The RTC driver attempts to guess the correct epoch value, so setting it may not 
 This epoch value is used whenever *hwclock* reads or sets the Hardware Clock on an Alpha machine. For ISA machines the kernel uses the fixed Hardware Clock epoch of 1900.
 
 *--predict*::
-Predict what the Hardware Clock will read in the future based upon the time given by the *--date* option and the information in _{ADJTIME_PATH}_. This is useful, for example, to account for drift when setting a Hardware Clock wakeup (aka alarm). See *­rtcwake*(8).
+Predict what the Hardware Clock will read in the future based upon the time given by the *--date* option and the information in _{ADJTIME_PATH}_. This is useful, for example, to account for drift when setting a Hardware Clock wakeup (aka alarm). See *rtcwake*(8).
 +
 Do not use this function if the Hardware Clock is being modified by anything other than the current operating system's *hwclock* command, such as '11 minute mode' or from dual-booting another OS.
 
 *-r*, *--show*; *--get*::
-Read the Hardware Clock and print its time to standard output in the *ISO 8601* format. The time shown is always in local time, even if you keep your Hardware Clock in UTC. See the *­--localtime* option.
+Read the Hardware Clock and print its time to standard output in the *ISO 8601* format. The time shown is always in local time, even if you keep your Hardware Clock in UTC. See the *--localtime* option.
 +
 Showing the Hardware Clock time is the default when no function is specified.
 +
@@ -65,7 +65,7 @@ Set the System Clock from the Hardware Clock. The time read from the Hardware Cl
 +
 The System Clock must be kept in the UTC timescale for date-time applications to work correctly in conjunction with the timezone configured for the system. If the Hardware Clock is kept in local time then the time read from it must be shifted to the UTC timescale before using it to set the System Clock. The *--hctosys* function does this based upon the information in the _{ADJTIME_PATH}_ file or the command line arguments *--localtime* and *--utc*. Note: no daylight saving adjustment is made. See the discussion below, under *LOCAL vs UTC*.
 +
-The kernel also keeps a timezone value, the *--hctosys* function sets it to the timezone configured for the system. The system timezone is configured by the TZ environment variable or the _­/etc/localtime_ file, as *tzset*(3) would interpret them. The obsolete _tz_dsttime_ field of the kernel's timezone value is set to zero. (For details on what this field used to mean, see *settimeofday*(2).)
+The kernel also keeps a timezone value, the *--hctosys* function sets it to the timezone configured for the system. The system timezone is configured by the TZ environment variable or the _/etc/localtime_ file, as *tzset*(3) would interpret them. The obsolete _tz_dsttime_ field of the kernel's timezone value is set to zero. (For details on what this field used to mean, see *settimeofday*(2).)
 +
 When used in a startup script, making the *--hctosys* function the first caller of *settimeofday*(2) from boot, it will set the NTP '11 minute mode' timescale via the _persistent_clock_is_local_ kernel variable. If the Hardware Clock's timescale configuration is changed then a reboot is required to inform the kernel. See the discussion below, under *Automatic Hardware Clock Synchronization by the Kernel*.
 +
@@ -94,7 +94,7 @@ It does the following things that are detailed above in the *--hctosys* function
 The first two are only available on the first call of *settimeofday*(2) after boot. Consequently this option only makes sense when used in a startup script. If the Hardware Clocks timescale configuration is changed then a reboot would be required to inform the kernel.
 
 *-w*, *--systohc*::
-Set the Hardware Clock from the System Clock, and update the timestamps in _{ADJTIME_PATH}_. With the *--update-drift* option also (re)calculate the drift factor. Try it without the option if ­*--systohc* fails. See *--update-drift* below.
+Set the Hardware Clock from the System Clock, and update the timestamps in _{ADJTIME_PATH}_. With the *--update-drift* option also (re)calculate the drift factor. Try it without the option if *--systohc* fails. See *--update-drift* below.
 
 *-V*, *--version*::
 Display version information and exit.
