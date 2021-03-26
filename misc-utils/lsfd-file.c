@@ -76,6 +76,13 @@ static bool file_fill_column(struct proc *proc,
 		if (scols_line_set_data(ln, column_index, strftype(ftype)))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_USER:
+		add_uid(username_cache, (int)file->stat.st_uid);
+		if (scols_line_set_data(ln, column_index,
+					get_id(username_cache,
+					       (int)file->stat.st_uid)->name))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
 	case COL_PID:
 		xasprintf(&str, "%d", (int)proc->pid);
 		break;

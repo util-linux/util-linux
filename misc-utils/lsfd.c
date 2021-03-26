@@ -38,6 +38,7 @@
 #include "strutils.h"
 #include "procutils.h"
 #include "fileutils.h"
+#include "idcache.h"
 
 #include "libsmartcols.h"
 
@@ -54,6 +55,11 @@ static pthread_mutex_t procs_consumer_lock = PTHREAD_MUTEX_INITIALIZER;
 static struct list_head *current_proc;
 
 static void *fill_procs(void *arg);
+
+/*
+ * idcaches
+ */
+struct idcache *username_cache;
 
 /*
  * Column related stuffs
@@ -74,6 +80,7 @@ static struct colinfo infos[] = {
 	[COL_NAME]    = { "NAME",     0, 0,              N_("name of the file") },
 	[COL_COMMAND] = { "COMMAND",  0, 0,              N_("command of the process opening the file") },
 	[COL_TYPE]    = { "TYPE",     0, SCOLS_FL_RIGHT, N_("file type") },
+	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, N_("user of the process") },
 	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, N_("user ID number") },
 	/* DEVICE */
 	/* SIZE/OFF */
@@ -463,7 +470,7 @@ int main(int argc, char *argv[])
 	if (!ncolumns) {
 		columns[ncolumns++] = COL_COMMAND;
 		columns[ncolumns++] = COL_PID;
-		columns[ncolumns++] = COL_UID; /* This should be COL_USER. */
+		columns[ncolumns++] = COL_USER;
 		columns[ncolumns++] = COL_FD;
 		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_NAME;
@@ -472,6 +479,10 @@ int main(int argc, char *argv[])
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					    &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;
+
+	username_cache = new_idcache();
+	if (!username_cache)
+		err(EXIT_FAILURE, _("failed to allocate UID cache"));
 
 	scols_init_debug(0);
 	ctl.tb = scols_new_table();
@@ -500,6 +511,7 @@ int main(int argc, char *argv[])
 			case COL_NAME:
 			case COL_COMMAND:
 			case COL_TYPE:
+			case COL_USER:
 				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 				break;
 			case COL_PID:
@@ -519,6 +531,8 @@ int main(int argc, char *argv[])
 	convert(&procs, &ctl);
 	emit(&ctl);
 	delete(&procs, &ctl);
+
+	free_idcache(username_cache);
 
 	return 0;
 }
