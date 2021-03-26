@@ -73,6 +73,7 @@ CLEAN_LOCALS =
 CHECK_LOCALS =
 MANPAGES =
 MANLINKS =
+MANPAGES_EXTRA =
 
 EXTRA_DIST =
 CLEANFILES =
@@ -109,6 +110,7 @@ include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am
 
 include bash-completion/Makemodule.am
+include man-common/Makemodule.am
 
 include tests/Makemodule.am
 
@@ -192,6 +194,7 @@ $(PATHFILES): Makefile
 		$(edit_cmd) $${srcdir}$@.in >$@.tmp
 	@ mv $@.tmp $@
 
+
 asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-b manpage \
 	-a 'VERSION=$(VERSION)' \
@@ -200,10 +203,9 @@ asciidoc_man_cmd = $(ASCIIDOCTOR) \
 dist_man_MANS += $(MANPAGES) $(MANLINKS)
 
 CLEANFILES += $(dist_man_MANS)
-EXTRA_DIST += $(MANPAGES:=.adoc)
+EXTRA_DIST += $(MANPAGES:=.adoc) $(MANPAGES_EXTRA)
 
-
-$(MANPAGES): Makefile
+$(MANPAGES): $(MANPAGES:=.adoc) $(MANPAGES_EXTRA) Makefile
 	@ rm -f $@
 	$(AM_V_at) $(MKDIR_P) $$(dirname $@)
 	$(AM_V_GEN) srcdir=''; \
