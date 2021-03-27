@@ -36,15 +36,19 @@ static bool fd_file_fill_column(struct proc *proc __attribute__((__unused__)),
 
 	switch(column_id) {
 	case COL_FD:
+	case COL_ASSOC:
 		xasprintf(&str, "%d", fd_file->fd);
-		if (!str)
-			err(EXIT_FAILURE, _("failed to add output data"));
-		if (scols_line_refer_data(ln, column_index, str))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
+		break;
+	default:
+		return false;
 	};
 
-	return false;
+	if (!str)
+		err(EXIT_FAILURE, _("failed to add output data"));
+	if (scols_line_refer_data(ln, column_index, str))
+		err(EXIT_FAILURE, _("failed to add output data"));
+
+	return true;
 }
 
 const struct file_class fd_file_class = {
