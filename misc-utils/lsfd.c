@@ -76,6 +76,7 @@ struct colinfo {
 /* columns descriptions */
 static struct colinfo infos[] = {
 	[COL_COMMAND] = { "COMMAND",  0, 0,              N_("command of the process opening the file") },
+	[COL_DEVICE]  = { "DEVICE",   0, SCOLS_FL_RIGHT, N_("device major and minor number") },
 	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, N_("file descriptor for the file") },
 	[COL_INODE]   = { "INODE",    0, SCOLS_FL_RIGHT, N_("inode number") },
 	[COL_NAME]    = { "NAME",     0, 0,              N_("name of the file") },
@@ -246,6 +247,10 @@ static struct file *collect_file(int dd, struct dirent *dp)
 	switch (sb.st_mode & S_IFMT) {
 	case S_IFREG:
 		return make_regular_fd_file(NULL, &sb, sym, (int)num);
+	case S_IFCHR:
+		return make_cdev_fd_file(NULL, &sb, sym, (int)num);
+	case S_IFBLK:
+		return make_bdev_fd_file(NULL, &sb, sym, (int)num);
 	}
 
 	return make_fd_file(NULL, &sb, sym, (int)num);
@@ -473,6 +478,7 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_USER;
 		columns[ncolumns++] = COL_FD;
 		columns[ncolumns++] = COL_TYPE;
+		columns[ncolumns++] = COL_DEVICE;
 		columns[ncolumns++] = COL_INODE;
 		columns[ncolumns++] = COL_NAME;
 	}
@@ -509,14 +515,15 @@ int main(int argc, char *argv[])
 			int id = get_column_id(i);
 
 			switch (id) {
-			case COL_NAME:
 			case COL_COMMAND:
+			case COL_DEVICE:
+			case COL_NAME:
 			case COL_TYPE:
 			case COL_USER:
 				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 				break;
-			case COL_PID:
 			case COL_FD:
+			case COL_PID:
 			case COL_UID:
 				/* fallthrough */
 			default:

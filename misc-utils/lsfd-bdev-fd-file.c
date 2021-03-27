@@ -1,5 +1,5 @@
 /*
- * lsfd-file.c - handle associations opening file objects
+ * lsfd-bdev.c - handle associations opening block devices
  *
  * Copyright (C) 2021 Red Hat, Inc. All rights reserved.
  * Written by Masatake YAMATO <yamato@redhat.com>
@@ -25,42 +25,44 @@
 
 #include "lsfd.h"
 
-static bool fd_file_fill_column(struct proc *proc __attribute__((__unused__)),
-				struct file *file,
-				struct libscols_line *ln,
-				int column_id,
-				size_t column_index)
+static bool bdev_fd_file_fill_column(struct proc *proc __attribute__((__unused__)),
+				     struct file *file __attribute__((__unused__)),
+				     struct libscols_line *ln,
+				     int column_id,
+				     size_t column_index)
 {
 	char *str = NULL;
-	struct fd_file * fd_file =  (struct fd_file *)file;
-
 	switch(column_id) {
-	case COL_FD:
-		xasprintf(&str, "%d", fd_file->fd);
-		if (!str)
-			err(EXIT_FAILURE, _("failed to add output data"));
-		if (scols_line_refer_data(ln, column_index, str))
+	case COL_TYPE:
+		if (scols_line_set_data(ln, column_index, "BLK"))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
-	};
+	case COL_DEVICE:
+		xasprintf(&str, "%u:%u",
+			  major(file->stat.st_rdev),
+			  minor(file->stat.st_rdev));
+		break;
+	default:
+		return false;
+	}
 
-	return false;
+	if (!str)
+		err(EXIT_FAILURE, _("failed to add output data"));
+	if (scols_line_refer_data(ln, column_index, str))
+		err(EXIT_FAILURE, _("failed to add output data"));
+	return true;
 }
 
-const struct file_class fd_file_class = {
-	.super = &file_class,
+const struct file_class bdev_fd_file_class = {
+	.super = &fd_file_class,
 	.size = sizeof(struct fd_file),
-	.fill_column = fd_file_fill_column,
+	.fill_column = bdev_fd_file_fill_column,
 	.free_content = NULL,
 };
 
-struct file *make_fd_file(const struct file_class *class,
-			  struct stat *sb, const char *name, int fd)
+struct file *make_bdev_fd_file(const struct file_class *class,
+			       struct stat *sb, const char *name, int fd)
 {
-	struct file *file = make_file(class? class: &fd_file_class,
-				      sb, name);
-
-	((struct fd_file *)(file))->fd = fd;
-
-	return file;
+	return make_fd_file(class? class: &bdev_fd_file_class,
+			    sb, name, fd);
 }

@@ -86,6 +86,11 @@ static bool file_fill_column(struct proc *proc,
 	case COL_INODE:
 		xasprintf(&str, "%llu", (unsigned long long)file->stat.st_ino);
 		break;
+	case COL_DEVICE:
+		xasprintf(&str, "%u:%u",
+			  major(file->stat.st_dev),
+			  minor(file->stat.st_dev));
+		break;
 	case COL_PID:
 		xasprintf(&str, "%d", (int)proc->pid);
 		break;
