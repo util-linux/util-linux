@@ -75,6 +75,7 @@ struct colinfo {
 
 /* columns descriptions */
 static struct colinfo infos[] = {
+	[COL_ASSOC]   = { "ASSOC",    0, SCOLS_FL_RIGHT, N_("association between file and process") },
 	[COL_COMMAND] = { "COMMAND",  0, 0,              N_("command of the process opening the file") },
 	[COL_DEVICE]  = { "DEVICE",   0, SCOLS_FL_RIGHT, N_("device major and minor number") },
 	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, N_("file descriptor for the file") },
@@ -476,7 +477,7 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_COMMAND;
 		columns[ncolumns++] = COL_PID;
 		columns[ncolumns++] = COL_USER;
-		columns[ncolumns++] = COL_FD;
+		columns[ncolumns++] = COL_ASSOC;
 		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_DEVICE;
 		columns[ncolumns++] = COL_INODE;
@@ -520,6 +521,7 @@ int main(int argc, char *argv[])
 			case COL_NAME:
 			case COL_TYPE:
 			case COL_USER:
+			case COL_ASSOC:
 				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 				break;
 			case COL_FD:
