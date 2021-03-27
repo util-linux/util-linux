@@ -52,6 +52,7 @@ DIR *opendirf(const char *format, ...) __attribute__((format (printf, 1, 2)));
  */
 enum {
 	COL_COMMAND,
+	COL_DEVICE,
 	COL_FD,
 	COL_INODE,
 	COL_NAME,
@@ -98,7 +99,8 @@ struct file_class {
 };
 
 extern const struct file_class
-file_class, fd_file_class, regular_fd_file_class
+file_class, fd_file_class, regular_fd_file_class,
+	cdev_fd_file_class, bdev_fd_file_class
 	;
 
 struct file *make_file(const struct file_class *class,
@@ -107,6 +109,10 @@ struct file *make_fd_file(const struct file_class *class,
 			  struct stat *sb, const char *name, int fd);
 struct file *make_regular_fd_file(const struct file_class *class,
 				  struct stat *sb, const char *name, int fd);
+struct file *make_cdev_fd_file(const struct file_class *class,
+			       struct stat *sb, const char *name, int fd);
+struct file *make_bdev_fd_file(const struct file_class *class,
+			       struct stat *sb, const char *name, int fd);
 
 extern struct idcache *username_cache;
 
