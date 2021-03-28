@@ -21,9 +21,9 @@ findmnt - find a filesystem
 
 == DESCRIPTION
 
-*findmnt* will list all mounted filesystems or search for a filesystem. The *­findmnt* command is able to search in _/etc/fstab_, _/etc/mtab_ or _/proc/self/mountinfo_. If _device_ or _mountpoint_ is not given, all filesystems are shown.
+*findmnt* will list all mounted filesystems or search for a filesystem. The *findmnt* command is able to search in _/etc/fstab_, _/etc/mtab_ or _/proc/self/mountinfo_. If _device_ or _mountpoint_ is not given, all filesystems are shown.
 
-The device may be specified by device name, major:minor numbers, filesystem label or UUID, or partition label or UUID. Note that *­findmnt* follows *mount*(8) behavior where a device name may be interpreted as a mountpoint (and vice versa) if the *--target*, *--mountpoint* or *--source* options are not specified.
+The device may be specified by device name, major:minor numbers, filesystem label or UUID, or partition label or UUID. Note that *findmnt* follows *mount*(8) behavior where a device name may be interpreted as a mountpoint (and vice versa) if the *--target*, *--mountpoint* or *--source* options are not specified.
 
 The command prints all mounted filesystems in the tree-like format by default.
 
@@ -123,7 +123,7 @@ Print only pseudo filesystems.
 Print only filesystems over-mounted by another filesystem.
 
 *-R*, *--submounts*::
-Print recursively all submounts for the selected filesystems. The restrictions defined by options *-t*, *-O*, *-S*, *-T* and *­--direction* are not applied to submounts. All submounts are always printed in tree-like order. The option enables the tree-like output format by default. This option has no effect for *--mtab* or *--fstab*.
+Print recursively all submounts for the selected filesystems. The restrictions defined by options *-t*, *-O*, *-S*, *-T* and *--direction* are not applied to submounts. All submounts are always printed in tree-like order. The option enables the tree-like output format by default. This option has no effect for *--mtab* or *--fstab*.
 
 *-r*, *--raw*::
 Use raw output format. All potentially unsafe characters are hex-escaped (\x<code>).

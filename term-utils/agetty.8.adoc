@@ -163,10 +163,10 @@ By default the hostname will be printed. With this option enabled, no hostname a
 By default the hostname is only printed until the first dot. With this option enabled, the fully qualified hostname by *gethostname*(3P) or (if not found) by *getaddrinfo*(3) is shown.
 
 *--erase-chars* _string_::
-This option specifies additional characters that should be interpreted as a backspace ("ignore the previous character") when the user types the login name. The default additional ´erase´ has been ´#´, but since util-linux 2.23 no additional erase characters are enabled by default.
+This option specifies additional characters that should be interpreted as a backspace ("ignore the previous character") when the user types the login name. The default additional 'erase' has been '#', but since util-linux 2.23 no additional erase characters are enabled by default.
 
 *--kill-chars* _string_::
-This option specifies additional characters that should be interpreted as a kill ("ignore all previous characters") when the user types the login name. The default additional ´kill´ has been ´@´, but since util-linux 2.23 no additional kill characters are enabled by default.
+This option specifies additional characters that should be interpreted as a kill ("ignore all previous characters") when the user types the login name. The default additional 'kill' has been '@', but since util-linux 2.23 no additional kill characters are enabled by default.
 
 *--chdir* _directory_::
 Change directory before the login.

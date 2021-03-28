@@ -63,7 +63,7 @@ Disable the corresponding device.
 Enable the corresponding device. If the device is hard-blocked, for example via a hardware switch, it will remain unavailable though it is now soft-unblocked.
 
 **toggle id**|*type* [...]::
-Enable or disable the the corresponding device.
+Enable or disable the corresponding device.
 
 == EXAMPLE
 ....

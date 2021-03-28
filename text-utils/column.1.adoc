@@ -118,7 +118,7 @@ Specify columns order on output.
 Specify the table name used for JSON output. The default is "table".
 
 *-L, --keep-empty-lines*::
-Preserve whitespace-only lines in the input. The default is ignore empty lines at all. This option’s original name was *--table-empty-lines* but is now deprecated because it gives the false impression that the option only applies to table mode.
+Preserve whitespace-only lines in the input. The default is ignore empty lines at all. This option's original name was *--table-empty-lines* but is now deprecated because it gives the false impression that the option only applies to table mode.
 
 *-r, --tree* _column_::
 Specify column to use tree-like output. Note that the circular dependencies and other anomalies in child and parent relation are silently ignored.

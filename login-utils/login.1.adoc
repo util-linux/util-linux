@@ -99,15 +99,15 @@ The terminal permissions. The default value is _0600_ or _0620_ if tty group is 
 
 *TTYGROUP* (string)::
 
-The login tty will be owned by the *TTYGROUP*. The default value is _tty_. If the *TTYGROUP* does not exist, then the ownership of the terminal is set to the user´s primary group.
+The login tty will be owned by the *TTYGROUP*. The default value is _tty_. If the *TTYGROUP* does not exist, then the ownership of the terminal is set to the user's primary group.
 +
 The *TTYGROUP* can be either the name of a group or a numeric group identifier.
 
 *HUSHLOGIN_FILE* (string)::
 
-If defined, this file can inhibit all the usual chatter during the login sequence. If a full pathname (for example, _/etc/hushlogins_) is specified, then hushed mode will be enabled if the user´s name or shell are found in the file. If this global hush login file is empty then the hushed mode will be enabled for all users.
+If defined, this file can inhibit all the usual chatter during the login sequence. If a full pathname (for example, _/etc/hushlogins_) is specified, then hushed mode will be enabled if the user's name or shell are found in the file. If this global hush login file is empty then the hushed mode will be enabled for all users.
 +
-If a full pathname is not specified, then hushed mode will be enabled if the file exists in the user´s home directory.
+If a full pathname is not specified, then hushed mode will be enabled if the file exists in the user's home directory.
 +
 The default is to check _/etc/hushlogins_ and if it does not exist then _~/.hushlogin_.
 +

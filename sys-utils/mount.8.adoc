@@ -454,10 +454,10 @@ The following options apply to any filesystem that is being mounted (but not eve
 All I/O to the filesystem should be done asynchronously. (See also the *sync* option.)
 
 *atime*::
-Do not use the *noatime* feature, so the inode access time is controlled by kernel defaults. See also the descriptions of the *­relatime* and *strictatime* mount options.
+Do not use the *noatime* feature, so the inode access time is controlled by kernel defaults. See also the descriptions of the *relatime* and *strictatime* mount options.
 
 *noatime*::
-Do not update inode access times on this filesystem (e.g. for faster access on the news spool to speed up news servers). This works for all inode types (directories too), so it implies *­nodiratime*.
+Do not update inode access times on this filesystem (e.g. for faster access on the news spool to speed up news servers). This works for all inode types (directories too), so it implies *nodiratime*.
 
 *auto*::
 Can be mounted with the *-a* option.
@@ -536,7 +536,7 @@ The filesystem resides on a device that requires network access (used to prevent
 Do not report errors for this device if it does not exist.
 
 *relatime*::
-Update inode access times relative to modify or change time. Access time is only updated if the previous access time was earlier than the current modify or change time. (Similar to *­noatime*, but it doesn't break *mutt*(1) or other applications that need to know if a file has been read since the last time it was modified.)
+Update inode access times relative to modify or change time. Access time is only updated if the previous access time was earlier than the current modify or change time. (Similar to *noatime*, but it doesn't break *mutt*(1) or other applications that need to know if a file has been read since the last time it was modified.)
 +
 Since Linux 2.6.30, the kernel defaults to the behavior provided by this option (unless *noatime* was specified), and the *strictatime* option is required to obtain traditional semantics. In addition, since Linux 2.6.30, the file's last access time is always updated if it is more than 1 day old.
 
@@ -1344,7 +1344,7 @@ ____
 *mount -t ext4 /tmp/disk.img /mnt*
 ____
 
-This type of mount knows about three options, namely *loop*, *offset* and *sizelimit*, that are really options to *­losetup*(8). (These options can be used in addition to those specific to the filesystem type.)
+This type of mount knows about three options, namely *loop*, *offset* and *sizelimit*, that are really options to *losetup*(8). (These options can be used in addition to those specific to the filesystem type.)
 
 Since Linux 2.6.25 auto-destruction of loop devices is supported, meaning that any loop device allocated by *mount* will be freed by *umount* independently of _/etc/mtab_.
 

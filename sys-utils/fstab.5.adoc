@@ -66,7 +66,7 @@ This field describes the block special device, remote filesystem or filesystem i
 
 For ordinary mounts, it will hold (a link to) a block special device node (as created by *mknod*(2)) for the device to be mounted, like _/dev/cdrom_ or _/dev/sdb7_. For NFS mounts, this field is _<host>:<dir>_, e.g., _knuth.aeb.nl:/_. For filesystems with no storage, any string can be used, and will show up in *df*(1) output, for example. Typical usage is _proc_ for *procfs*; _mem_, _none_, or _tmpfs_ for *tmpfs*. Other special filesystems, like *udev* and *sysfs*, are typically not listed in *fstab*.
 
-LABEL=<label> or UUID=<uuid> may be given instead of a device name. This is the recommended method, as device names are often a coincidence of hardware detection order, and can change when other disks are added or removed. For example, `LABEL=Boot' or `UUID=3e6be9de­-8139­-11d1­-9106­-a43f08d823a6'. (Use a filesystem-specific tool like *e2label*(8), *xfs_admin*(8), or *fatlabel*(8) to set LABELs on filesystems).
+LABEL=<label> or UUID=<uuid> may be given instead of a device name. This is the recommended method, as device names are often a coincidence of hardware detection order, and can change when other disks are added or removed. For example, 'LABEL=Boot' or 'UUID=3e6be9de-8139-11d1-9106-a43f08d823a6'. (Use a filesystem-specific tool like *e2label*(8), *xfs_admin*(8), or *fatlabel*(8) to set LABELs on filesystems).
 
 It's also possible to use *PARTUUID=* and *PARTLABEL=*. These partitions identifiers are supported for example for GUID Partition Table (GPT).
 

@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: scriptlive
+:copyright: ©
 
 == NAME
 
@@ -68,7 +69,8 @@ mailto:kzak@redhat.com[Karel Zak]
 
 == COPYRIGHT
 
-Copyright © 2019 Karel Zak
+//TRANSLATORS: Keep {copyright} untranslated.
+Copyright {copyright} 2019 Karel Zak
 
 This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 

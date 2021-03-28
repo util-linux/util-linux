@@ -18,7 +18,7 @@ unshare - run program in new namespaces
 
 The *unshare* command creates new namespaces (as specified by the command-line options described below) and then executes the specified _program_. If _program_ is not given, then "${SHELL}" is run (default: _/bin/sh_).
 
-By default, a new namespace persists only as long as it has member processes. A new namespace can be made persistent even when it has no member processes by bind mounting /proc/_pid_/ns/_type_ files to a filesystem path. A namespace that has been made persistent in this way can subsequently be entered with *­nsenter*(1) even after the _program_ terminates (except PID namespaces where a permanently running init process is required). Once a persistent ­namespace is no longer needed, it can be unpersisted by using *umount*(8) to remove the bind mount. See the EXAMPLES section for more details.
+By default, a new namespace persists only as long as it has member processes. A new namespace can be made persistent even when it has no member processes by bind mounting /proc/_pid_/ns/_type_ files to a filesystem path. A namespace that has been made persistent in this way can subsequently be entered with *nsenter*(1) even after the _program_ terminates (except PID namespaces where a permanently running init process is required). Once a persistent namespace is no longer needed, it can be unpersisted by using *umount*(8) to remove the bind mount. See the EXAMPLES section for more details.
 
 *unshare* since util-linux version 2.36 uses _/proc/[pid]/ns/pid_for_children_ and _/proc/[pid]/ns/time_for_children_ files for persistent PID and TIME namespaces. This change requires Linux kernel 4.17 or newer.
 
@@ -33,7 +33,7 @@ Mounting and unmounting filesystems will not affect the rest of the system, exce
 Setting hostname or domainname will not affect the rest of the system. For further details, see *uts_namespaces*(7).
 
 *IPC namespace*::
-The process will have an independent namespace for POSIX message queues as well as System V ­message queues, semaphore sets and shared memory segments. For further details, see *ipc_namespaces*(7).
+The process will have an independent namespace for POSIX message queues as well as System V message queues, semaphore sets and shared memory segments. For further details, see *ipc_namespaces*(7).
 
 *network namespace*::
 The process will have independent IPv4 and IPv6 stacks, IP routing tables, firewall rules, the _/proc/net_ and _/sys/class/net_ directory trees, sockets, etc. For further details, see *network_namespaces*(7).
@@ -108,7 +108,7 @@ Recursively set the mount propagation flag in the new mount namespace. The defau
 **--setgroups allow**|*deny*::
 Allow or deny the *setgroups*(2) system call in a user namespace.
 +
-To be able to call *setgroups*(2), the calling process must at least have *CAP_SETGID*. But since Linux 3.19 a further restriction applies: the kernel gives permission to call ­*setgroups*(2) only after the GID map (**/proc/**__pid__*/gid_map*) has been set. The GID map is writable by root when ­*setgroups*(2) is enabled (i.e., *allow*, the default), and the GID map becomes writable by unprivileged processes when ­*setgroups*(2) is permanently disabled (with *deny*).
+To be able to call *setgroups*(2), the calling process must at least have *CAP_SETGID*. But since Linux 3.19 a further restriction applies: the kernel gives permission to call *setgroups*(2) only after the GID map (**/proc/**__pid__*/gid_map*) has been set. The GID map is writable by root when *setgroups*(2) is enabled (i.e., *allow*, the default), and the GID map becomes writable by unprivileged processes when *setgroups*(2) is permanently disabled (with *deny*).
 
 *-R*, **--root=**__dir__::
 run the command with root directory set to _dir_.
