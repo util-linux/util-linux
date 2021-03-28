@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-03-27 00:44+0100\n"
+"POT-Creation-Date: 2021-03-28 10:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -185,7 +185,7 @@ msgstr ""
 #: ../sys-utils/umount.8.adoc:34 ../sys-utils/unshare.1.adoc:9
 #: ../sys-utils/wdctl.8.adoc:9 ../sys-utils/zramctl.8.adoc:9
 #: ../term-utils/agetty.8.adoc:9 ../term-utils/mesg.1.adoc:43
-#: ../term-utils/script.1.adoc:44 ../term-utils/scriptlive.1.adoc:9
+#: ../term-utils/script.1.adoc:44 ../term-utils/scriptlive.1.adoc:10
 #: ../term-utils/scriptreplay.1.adoc:10 ../term-utils/setterm.1.adoc:16
 #: ../term-utils/wall.1.adoc:44 ../term-utils/write.1.adoc:46
 #: ../text-utils/col.1.adoc:46 ../text-utils/colcrt.1.adoc:44
@@ -259,7 +259,7 @@ msgstr ""
 #: ../sys-utils/umount.8.adoc:38 ../sys-utils/unshare.1.adoc:13
 #: ../sys-utils/wdctl.8.adoc:13 ../sys-utils/zramctl.8.adoc:13
 #: ../term-utils/agetty.8.adoc:13 ../term-utils/mesg.1.adoc:47
-#: ../term-utils/script.1.adoc:48 ../term-utils/scriptlive.1.adoc:13
+#: ../term-utils/script.1.adoc:48 ../term-utils/scriptlive.1.adoc:14
 #: ../term-utils/scriptreplay.1.adoc:14 ../term-utils/setterm.1.adoc:20
 #: ../term-utils/wall.1.adoc:48 ../text-utils/col.1.adoc:50
 #: ../text-utils/colcrt.1.adoc:48 ../text-utils/colrm.1.adoc:47
@@ -334,7 +334,7 @@ msgstr ""
 #: ../sys-utils/umount.8.adoc:46 ../sys-utils/unshare.1.adoc:17
 #: ../sys-utils/wdctl.8.adoc:17 ../sys-utils/zramctl.8.adoc:31
 #: ../term-utils/agetty.8.adoc:17 ../term-utils/mesg.1.adoc:51
-#: ../term-utils/script.1.adoc:52 ../term-utils/scriptlive.1.adoc:17
+#: ../term-utils/script.1.adoc:52 ../term-utils/scriptlive.1.adoc:18
 #: ../term-utils/scriptreplay.1.adoc:18 ../term-utils/setterm.1.adoc:24
 #: ../term-utils/wall.1.adoc:52 ../term-utils/write.1.adoc:52
 #: ../text-utils/col.1.adoc:54 ../text-utils/colcrt.1.adoc:52
@@ -463,7 +463,7 @@ msgstr ""
 #: ../sys-utils/switch_root.8.adoc:51 ../sys-utils/umount.8.adoc:180
 #: ../sys-utils/unshare.1.adoc:236 ../sys-utils/zramctl.8.adoc:104
 #: ../term-utils/mesg.1.adoc:99 ../term-utils/script.1.adoc:166
-#: ../term-utils/scriptlive.1.adoc:77 ../term-utils/scriptreplay.1.adoc:99
+#: ../term-utils/scriptlive.1.adoc:79 ../term-utils/scriptreplay.1.adoc:99
 #: ../term-utils/setterm.1.adoc:171 ../term-utils/wall.1.adoc:85
 #: ../term-utils/write.1.adoc:84 ../text-utils/col.1.adoc:127
 #: ../text-utils/colcrt.1.adoc:96 ../text-utils/colrm.1.adoc:71
@@ -573,7 +573,7 @@ msgstr ""
 #: ../sys-utils/unshare.1.adoc:53 ../sys-utils/wdctl.8.adoc:25
 #: ../sys-utils/zramctl.8.adoc:39 ../term-utils/agetty.8.adoc:56
 #: ../term-utils/mesg.1.adoc:69 ../term-utils/script.1.adoc:62
-#: ../term-utils/scriptlive.1.adoc:27 ../term-utils/scriptreplay.1.adoc:30
+#: ../term-utils/scriptlive.1.adoc:28 ../term-utils/scriptreplay.1.adoc:30
 #: ../term-utils/setterm.1.adoc:28 ../term-utils/wall.1.adoc:60
 #: ../term-utils/write.1.adoc:72 ../text-utils/col.1.adoc:60
 #: ../text-utils/colcrt.1.adoc:56 ../text-utils/colrm.1.adoc:59
@@ -665,7 +665,7 @@ msgstr ""
 #: ../sys-utils/swapon.8.adoc:52 ../sys-utils/umount.8.adoc:117
 #: ../sys-utils/unshare.1.adoc:134 ../sys-utils/wdctl.8.adoc:60
 #: ../sys-utils/zramctl.8.adoc:73 ../term-utils/mesg.1.adoc:77
-#: ../term-utils/script.1.adoc:125 ../term-utils/scriptlive.1.adoc:50
+#: ../term-utils/script.1.adoc:125 ../term-utils/scriptlive.1.adoc:51
 #: ../term-utils/scriptreplay.1.adoc:68 ../term-utils/wall.1.adoc:74
 #: ../term-utils/write.1.adoc:77 ../text-utils/colcrt.1.adoc:67
 #: ../text-utils/colrm.1.adoc:64 ../text-utils/hexdump.1.adoc:99
@@ -719,7 +719,7 @@ msgstr ""
 #: ../sys-utils/unshare.1.adoc:136 ../sys-utils/wdctl.8.adoc:62
 #: ../sys-utils/zramctl.8.adoc:75 ../term-utils/agetty.8.adoc:188
 #: ../term-utils/mesg.1.adoc:79 ../term-utils/script.1.adoc:127
-#: ../term-utils/scriptlive.1.adoc:52 ../term-utils/scriptreplay.1.adoc:70
+#: ../term-utils/scriptlive.1.adoc:53 ../term-utils/scriptreplay.1.adoc:70
 #: ../term-utils/wall.1.adoc:76 ../term-utils/write.1.adoc:79
 #: ../text-utils/col.1.adoc:85 ../text-utils/colcrt.1.adoc:69
 #: ../text-utils/colrm.1.adoc:66 ../text-utils/column.1.adoc:140
@@ -770,7 +770,7 @@ msgstr ""
 #: ../sys-utils/swapon.8.adoc:92 ../sys-utils/umount.8.adoc:114
 #: ../sys-utils/unshare.1.adoc:131 ../sys-utils/wdctl.8.adoc:57
 #: ../sys-utils/zramctl.8.adoc:70 ../term-utils/mesg.1.adoc:74
-#: ../term-utils/script.1.adoc:122 ../term-utils/scriptlive.1.adoc:47
+#: ../term-utils/script.1.adoc:122 ../term-utils/scriptlive.1.adoc:48
 #: ../term-utils/scriptreplay.1.adoc:65 ../term-utils/wall.1.adoc:71
 #: ../term-utils/write.1.adoc:74 ../text-utils/col.1.adoc:80
 #: ../text-utils/colcrt.1.adoc:64 ../text-utils/colrm.1.adoc:61
@@ -1085,7 +1085,7 @@ msgstr ""
 #: ../sys-utils/setsid.1.adoc:40 ../sys-utils/switch_root.8.adoc:45
 #: ../sys-utils/unshare.1.adoc:231 ../sys-utils/wdctl.8.adoc:63
 #: ../sys-utils/zramctl.8.adoc:99 ../term-utils/agetty.8.adoc:329
-#: ../term-utils/scriptlive.1.adoc:65 ../term-utils/scriptreplay.1.adoc:83
+#: ../term-utils/scriptlive.1.adoc:66 ../term-utils/scriptreplay.1.adoc:83
 #: ../text-utils/more.1.adoc:188
 #, no-wrap
 msgid "AUTHORS"
@@ -1260,7 +1260,7 @@ msgstr ""
 #: ../sys-utils/umount.8.adoc:116 ../sys-utils/unshare.1.adoc:133
 #: ../sys-utils/wdctl.8.adoc:59 ../sys-utils/zramctl.8.adoc:72
 #: ../term-utils/agetty.8.adoc:185 ../term-utils/mesg.1.adoc:76
-#: ../term-utils/script.1.adoc:124 ../term-utils/scriptlive.1.adoc:49
+#: ../term-utils/script.1.adoc:124 ../term-utils/scriptlive.1.adoc:50
 #: ../term-utils/scriptreplay.1.adoc:67 ../term-utils/wall.1.adoc:73
 #: ../term-utils/write.1.adoc:76 ../text-utils/col.1.adoc:82
 #: ../text-utils/colcrt.1.adoc:66 ../text-utils/colrm.1.adoc:63
@@ -1648,7 +1648,7 @@ msgstr ""
 #: ../misc-utils/wipefs.8.adoc:106 ../sys-utils/choom.1.adoc:54
 #: ../sys-utils/dmesg.1.adoc:184 ../sys-utils/lsns.8.adoc:75
 #: ../sys-utils/mount.8.adoc:1455 ../sys-utils/mountpoint.1.adoc:68
-#: ../term-utils/scriptlive.1.adoc:68
+#: ../term-utils/scriptlive.1.adoc:69
 msgid "mailto:kzak@redhat.com[Karel Zak]"
 msgstr ""
 
@@ -3676,7 +3676,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/isosize.8.adoc:26 ../term-utils/scriptlive.1.adoc:41
+#: ../disk-utils/isosize.8.adoc:26 ../term-utils/scriptlive.1.adoc:42
 #: ../term-utils/scriptreplay.1.adoc:53
 #, no-wrap
 msgid "*-d*, *--divisor* _number_"
@@ -8860,7 +8860,7 @@ msgstr ""
 msgid ""
 "The login tty will be owned by the *TTYGROUP*. The default value is "
 "_tty_. If the *TTYGROUP* does not exist, then the ownership of the terminal "
-"is set to the userÂ´s primary group."
+"is set to the user's primary group."
 msgstr ""
 
 #. type: Plain text
@@ -8881,7 +8881,7 @@ msgstr ""
 msgid ""
 "If defined, this file can inhibit all the usual chatter during the login "
 "sequence. If a full pathname (for example, _/etc/hushlogins_) is specified, "
-"then hushed mode will be enabled if the userÂ´s name or shell are found in "
+"then hushed mode will be enabled if the user's name or shell are found in "
 "the file. If this global hush login file is empty then the hushed mode will "
 "be enabled for all users."
 msgstr ""
@@ -8890,7 +8890,7 @@ msgstr ""
 #: ../login-utils/login.1.adoc:111
 msgid ""
 "If a full pathname is not specified, then hushed mode will be enabled if the "
-"file exists in the userÂ´s home directory."
+"file exists in the user's home directory."
 msgstr ""
 
 #. type: Plain text
@@ -12064,7 +12064,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "*findmnt* will list all mounted filesystems or search for a filesystem. The "
-"*Â­findmnt* command is able to search in _/etc/fstab_, _/etc/mtab_ or "
+"*findmnt* command is able to search in _/etc/fstab_, _/etc/mtab_ or "
 "_/proc/self/mountinfo_. If _device_ or _mountpoint_ is not given, all "
 "filesystems are shown.\n"
 msgstr ""
@@ -12073,7 +12073,7 @@ msgstr ""
 #: ../misc-utils/findmnt.8.adoc:27
 msgid ""
 "The device may be specified by device name, major:minor numbers, filesystem "
-"label or UUID, or partition label or UUID. Note that *Â­findmnt* follows "
+"label or UUID, or partition label or UUID. Note that *findmnt* follows "
 "*mount*(8) behavior where a device name may be interpreted as a mountpoint "
 "(and vice versa) if the *--target*, *--mountpoint* or *--source* options are "
 "not specified."
@@ -12422,8 +12422,8 @@ msgstr ""
 #: ../misc-utils/findmnt.8.adoc:127
 msgid ""
 "Print recursively all submounts for the selected filesystems. The "
-"restrictions defined by options *-t*, *-O*, *-S*, *-T* and *Â­--direction* "
-"are not applied to submounts. All submounts are always printed in tree-like "
+"restrictions defined by options *-t*, *-O*, *-S*, *-T* and *--direction* are "
+"not applied to submounts. All submounts are always printed in tree-like "
 "order. The option enables the tree-like output format by default. This "
 "option has no effect for *--mtab* or *--fstab*."
 msgstr ""
@@ -12665,7 +12665,7 @@ msgstr ""
 #: ../schedutils/ionice.1.adoc:76 ../sys-utils/flock.1.adoc:98
 #: ../sys-utils/prlimit.1.adoc:118 ../sys-utils/renice.1.adoc:90
 #: ../sys-utils/setpriv.1.adoc:104 ../sys-utils/unshare.1.adoc:141
-#: ../term-utils/scriptlive.1.adoc:53 ../term-utils/scriptreplay.1.adoc:71
+#: ../term-utils/scriptlive.1.adoc:54 ../term-utils/scriptreplay.1.adoc:71
 #: ../text-utils/colcrt.1.adoc:87 ../text-utils/column.1.adoc:173
 #: ../text-utils/hexdump.1.adoc:229
 #, no-wrap
@@ -17569,7 +17569,7 @@ msgstr ""
 #. type: Title ==
 #: ../schedutils/taskset.1.adoc:108 ../sys-utils/chcpu.8.adoc:76
 #: ../sys-utils/flock.1.adoc:124 ../sys-utils/rtcwake.8.adoc:130
-#: ../term-utils/scriptlive.1.adoc:69 ../term-utils/scriptreplay.1.adoc:87
+#: ../term-utils/scriptlive.1.adoc:70 ../term-utils/scriptreplay.1.adoc:87
 #, no-wrap
 msgid "COPYRIGHT"
 msgstr ""
@@ -20750,8 +20750,7 @@ msgid ""
 "LABEL=<label> or UUID=<uuid> may be given instead of a device name. This is "
 "the recommended method, as device names are often a coincidence of hardware "
 "detection order, and can change when other disks are added or removed. For "
-"example, `LABEL=Boot' or "
-"`UUID=3e6be9deÂ­-8139Â­-11d1Â­-9106Â­-a43f08d823a6'. (Use a "
+"example, 'LABEL=Boot' or 'UUID=3e6be9de-8139-11d1-9106-a43f08d823a6'. (Use a "
 "filesystem-specific tool like *e2label*(8), *xfs_admin*(8), or *fatlabel*(8) "
 "to set LABELs on filesystems)."
 msgstr ""
@@ -21963,7 +21962,7 @@ msgid ""
 "almost nobody cares what timezone the kernel thinks it is in. Instead, "
 "programs that care about the timezone (perhaps because they want to display "
 "a local time for you) almost always use a more traditional method of "
-"determining the timezone: They use the *TZ* environment variable or theÂ­ "
+"determining the timezone: They use the *TZ* environment variable or the "
 "_/etc/localtime_ file, as explained in the man page for *tzset*(3). However, "
 "some programs and fringe parts of the Linux kernel such as filesystems use "
 "the kernel's timezone value. An example is the vfat filesystem. If the "
@@ -22194,7 +22193,7 @@ msgstr ""
 msgid ""
 "If the kernel is compiled with the '11 minute mode' option it will be active "
 "when the kernel's clock discipline is in a synchronized state. When in this "
-"state, bit 6 (the bit that is set in the mask 0x0040) of the kernel'sÂ­ "
+"state, bit 6 (the bit that is set in the mask 0x0040) of the kernel's "
 "_time_status_ variable is unset. This value is output as the 'status' line "
 "of the *adjtimex --print* or *ntptime* commands."
 msgstr ""
@@ -22225,8 +22224,8 @@ msgstr ""
 msgid ""
 "The first userspace command to set the System Clock informs the kernel what "
 "timescale the Hardware Clock is using. This happens via the "
-"_Â­persistent_clock_is_local_ kernel variable. If *--hctosys* or *--systz* "
-"is the first, it will set this variable according to the adjtime file or the "
+"_persistent_clock_is_local_ kernel variable. If *--hctosys* or *--systz* is "
+"the first, it will set this variable according to the adjtime file or the "
 "appropriate command-line argument. Note that when using this capability and "
 "the Hardware Clock timescale configuration is changed, then a reboot is "
 "required to notify the kernel."
@@ -22382,7 +22381,7 @@ msgstr ""
 #: ../sys-utils/hwclock.8.adoc:282
 msgid ""
 "After setting the tick and frequency values, continue to test and refine the "
-"adjustments until the System Clock keeps good time. See Â­*adjtimex*(2) for "
+"adjustments until the System Clock keeps good time. See *adjtimex*(2) for "
 "more information and the example demonstrating manual drift calculations."
 msgstr ""
 
@@ -22566,7 +22565,7 @@ msgstr ""
 msgid ""
 "There are two separate databases in the zoneinfo system, posix and "
 "'right'. 'Right' (now named zoneinfo-leaps) includes leap seconds and posix "
-"does not. To use the 'right' database the System Clock must be set to Â­(UTC "
+"does not. To use the 'right' database the System Clock must be set to (UTC "
 "{plus} leap seconds), which is equivalent to (TAI - 10). This allows "
 "calculating the exact number of seconds between two dates that cross a leap "
 "second epoch. The System Clock is then converted to the correct civil time, "
@@ -22581,7 +22580,7 @@ msgid ""
 "To configure a system to use a particular database all of the files located "
 "in its directory must be copied to the root of _/usr/share/zoneinfo_. Files "
 "are never used directly from the posix or 'right' subdirectories, e.g., "
-"Â­TZ='_right/Europe/Dublin_'. This habit was becoming so common that the "
+"TZ='_right/Europe/Dublin_'. This habit was becoming so common that the "
 "upstream zoneinfo project restructured the system's file tree by moving the "
 "posix and 'right' subdirectories out of the zoneinfo directory and into "
 "sibling directories:"
@@ -26462,7 +26461,7 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:458
 msgid ""
 "Do not use the *noatime* feature, so the inode access time is controlled by "
-"kernel defaults. See also the descriptions of the *Â­relatime* and "
+"kernel defaults. See also the descriptions of the *relatime* and "
 "*strictatime* mount options."
 msgstr ""
 
@@ -26477,7 +26476,7 @@ msgstr ""
 msgid ""
 "Do not update inode access times on this filesystem (e.g. for faster access "
 "on the news spool to speed up news servers). This works for all inode types "
-"(directories too), so it implies *Â­nodiratime*."
+"(directories too), so it implies *nodiratime*."
 msgstr ""
 
 #. type: Labeled list
@@ -26782,7 +26781,7 @@ msgstr ""
 msgid ""
 "Update inode access times relative to modify or change time. Access time is "
 "only updated if the previous access time was earlier than the current modify "
-"or change time. (Similar to *Â­noatime*, but it doesn't break *mutt*(1) or "
+"or change time. (Similar to *noatime*, but it doesn't break *mutt*(1) or "
 "other applications that need to know if a file has been read since the last "
 "time it was modified.)"
 msgstr ""
@@ -29835,8 +29834,8 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:1348
 msgid ""
 "This type of mount knows about three options, namely *loop*, *offset* and "
-"*sizelimit*, that are really options to *Â­losetup*(8). (These options can "
-"be used in addition to those specific to the filesystem type.)"
+"*sizelimit*, that are really options to *losetup*(8). (These options can be "
+"used in addition to those specific to the filesystem type.)"
 msgstr ""
 
 #. type: Plain text
@@ -30287,7 +30286,7 @@ msgid "*IPC namespace*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/nsenter.1.adoc:31
+#: ../sys-utils/nsenter.1.adoc:31 ../sys-utils/unshare.1.adoc:37
 msgid ""
 "The process will have an independent namespace for POSIX message queues as "
 "well as System V message queues, semaphore sets and shared memory "
@@ -31681,7 +31680,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/rfkill.8.adoc:67
-msgid "Enable or disable the the corresponding device."
+msgid "Enable or disable the corresponding device."
 msgstr ""
 
 #. type: delimited block .
@@ -33980,9 +33979,9 @@ msgid ""
 "processes. A new namespace can be made persistent even when it has no member "
 "processes by bind mounting /proc/_pid_/ns/_type_ files to a filesystem "
 "path. A namespace that has been made persistent in this way can subsequently "
-"be entered with *Â­nsenter*(1) even after the _program_ terminates (except "
-"PID namespaces where a permanently running init process is required). Once a "
-"persistent Â­namespace is no longer needed, it can be unpersisted by using "
+"be entered with *nsenter*(1) even after the _program_ terminates (except PID "
+"namespaces where a permanently running init process is required). Once a "
+"persistent namespace is no longer needed, it can be unpersisted by using "
 "*umount*(8) to remove the bind mount. See the EXAMPLES section for more "
 "details."
 msgstr ""
@@ -34019,14 +34018,6 @@ msgid ""
 "*private* in a new mount namespace to make sure that the new namespace is "
 "really unshared. It's possible to disable this feature with option "
 "*--propagation unchanged*. Note that *private* is the kernel default.\n"
-msgstr ""
-
-#. type: Plain text
-#: ../sys-utils/unshare.1.adoc:37
-msgid ""
-"The process will have an independent namespace for POSIX message queues as "
-"well as System V Â­message queues, semaphore sets and shared memory "
-"segments. For further details, see *ipc_namespaces*(7)."
 msgstr ""
 
 #. type: Plain text
@@ -34299,10 +34290,10 @@ msgstr ""
 msgid ""
 "To be able to call *setgroups*(2), the calling process must at least have "
 "*CAP_SETGID*. But since Linux 3.19 a further restriction applies: the kernel "
-"gives permission to call Â­*setgroups*(2) only after the GID map "
+"gives permission to call *setgroups*(2) only after the GID map "
 "(**/proc/**__pid__*/gid_map*) has been set. The GID map is writable by root "
-"when Â­*setgroups*(2) is enabled (i.e., *allow*, the default), and the GID "
-"map becomes writable by unprivileged processes when Â­*setgroups*(2) is "
+"when *setgroups*(2) is enabled (i.e., *allow*, the default), and the GID map "
+"becomes writable by unprivileged processes when *setgroups*(2) is "
 "permanently disabled (with *deny*)."
 msgstr ""
 
@@ -35584,8 +35575,8 @@ msgstr ""
 msgid ""
 "This option specifies additional characters that should be interpreted as a "
 "backspace (\"ignore the previous character\") when the user types the login "
-"name. The default additional Â´eraseÂ´ has been Â´#Â´, but since util-linux "
-"2.23 no additional erase characters are enabled by default."
+"name. The default additional 'erase' has been '#', but since util-linux 2.23 "
+"no additional erase characters are enabled by default."
 msgstr ""
 
 #. type: Labeled list
@@ -35599,8 +35590,8 @@ msgstr ""
 msgid ""
 "This option specifies additional characters that should be interpreted as a "
 "kill (\"ignore all previous characters\") when the user types the login "
-"name. The default additional Â´killÂ´ has been Â´@Â´, but since util-linux "
-"2.23 no additional kill characters are enabled by default."
+"name. The default additional 'kill' has been '@', but since util-linux 2.23 "
+"no additional kill characters are enabled by default."
 msgstr ""
 
 #. type: Labeled list
@@ -36463,7 +36454,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:89 ../term-utils/scriptlive.1.adoc:32
+#: ../term-utils/script.1.adoc:89 ../term-utils/scriptlive.1.adoc:33
 #: ../term-utils/scriptreplay.1.adoc:38
 #, no-wrap
 msgid "*-B*, *--log-io* _file_"
@@ -36478,7 +36469,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:92 ../term-utils/scriptlive.1.adoc:29
+#: ../term-utils/script.1.adoc:92 ../term-utils/scriptlive.1.adoc:30
 #: ../term-utils/scriptreplay.1.adoc:32
 #, no-wrap
 msgid "*-I*, *--log-in* _file_"
@@ -36513,7 +36504,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:100 ../term-utils/scriptlive.1.adoc:38
+#: ../term-utils/script.1.adoc:100 ../term-utils/scriptlive.1.adoc:39
 #: ../term-utils/scriptreplay.1.adoc:44
 #, no-wrap
 msgid "*-T*, *--log-timing* _file_"
@@ -36652,7 +36643,7 @@ msgid ""
 "It is not recommended to run *script* in non-interactive shells. The inner "
 "shell of *script* is always interactive, and this could lead to unexpected "
 "results. If you use *script* in the shell initialization file, you have to "
-"avoid entering an infinite loop. You can use for example the *Â­.profile* "
+"avoid entering an infinite loop. You can use for example the *.profile* "
 "file, which is read by login shells only:"
 msgstr ""
 
@@ -36713,18 +36704,18 @@ msgid "scriptlive(1)"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:12
+#: ../term-utils/scriptlive.1.adoc:13
 msgid "scriptlive - re-run session typescripts, using timing information"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:16
+#: ../term-utils/scriptlive.1.adoc:17
 #, no-wrap
 msgid "*scriptlive* [options] [*-t*] _timingfile_ [*-I*|*-B*] _typescript_\n"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:20
+#: ../term-utils/scriptlive.1.adoc:21
 msgid ""
 "This program re-runs a typescript, using stdin typescript and timing "
 "information to ensure that input happens in the same rhythm as it originally "
@@ -36732,14 +36723,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:22
+#: ../term-utils/scriptlive.1.adoc:23
 msgid ""
 "The *session is executed* in a newly created pseudoterminal with the user's "
 "$SHELL (or defaults to _/bin/bash_)."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:24
+#: ../term-utils/scriptlive.1.adoc:25
 #, no-wrap
 msgid ""
 "*Be careful!* Do not forget that the typescript may contains arbitrary "
@@ -36749,7 +36740,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:26
+#: ../term-utils/scriptlive.1.adoc:27
 msgid ""
 "The timing information is what script1 outputs to file specified by "
 "*--log-timing*. The typescript has to contain stdin information and it is "
@@ -36757,37 +36748,37 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:31 ../term-utils/scriptreplay.1.adoc:34
+#: ../term-utils/scriptlive.1.adoc:32 ../term-utils/scriptreplay.1.adoc:34
 msgid "File containing *script*'s terminal input."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:34 ../term-utils/scriptreplay.1.adoc:40
+#: ../term-utils/scriptlive.1.adoc:35 ../term-utils/scriptreplay.1.adoc:40
 msgid "File containing *script*'s terminal output and input."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptlive.1.adoc:35 ../term-utils/scriptreplay.1.adoc:41
+#: ../term-utils/scriptlive.1.adoc:36 ../term-utils/scriptreplay.1.adoc:41
 #, no-wrap
 msgid "*-t*, *--timing* _file_"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:37 ../term-utils/scriptreplay.1.adoc:43
+#: ../term-utils/scriptlive.1.adoc:38 ../term-utils/scriptreplay.1.adoc:43
 msgid ""
 "File containing *script*'s timing output. This option overrides old-style "
 "arguments."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:40
+#: ../term-utils/scriptlive.1.adoc:41
 msgid ""
 "Aliased to *-t*, maintained for compatibility with *script*(1) command-line "
 "options."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:43 ../term-utils/scriptreplay.1.adoc:55
+#: ../term-utils/scriptlive.1.adoc:44 ../term-utils/scriptreplay.1.adoc:55
 msgid ""
 "Speed up the replay displaying this _number_ of times. The argument is a "
 "floating-point number. It's called divisor because it divides the timings by "
@@ -36795,13 +36786,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptlive.1.adoc:44 ../term-utils/scriptreplay.1.adoc:56
+#: ../term-utils/scriptlive.1.adoc:45 ../term-utils/scriptreplay.1.adoc:56
 #, no-wrap
 msgid "*-m*, *--maxdelay* _number_"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:46 ../term-utils/scriptreplay.1.adoc:58
+#: ../term-utils/scriptlive.1.adoc:47 ../term-utils/scriptreplay.1.adoc:58
 msgid ""
 "Set the maximum delay between updates to _number_ of seconds. The argument "
 "is a floating-point number. This can be used to avoid long pauses in the "
@@ -36809,7 +36800,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block .
-#: ../term-utils/scriptlive.1.adoc:63
+#: ../term-utils/scriptlive.1.adoc:64
 #, no-wrap
 msgid ""
 "% script --log-timing file.tm --log-in script.in\n"
@@ -36821,25 +36812,26 @@ msgid ""
 "% scriptlive --log-timing file.tm --log-in script.in\n"
 msgstr ""
 
+#. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:72
-msgid "Copyright Â© 2019 Karel Zak"
+#: ../term-utils/scriptlive.1.adoc:74
+msgid "Copyright {copyright} 2019 Karel Zak"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:74 ../term-utils/scriptreplay.1.adoc:96
+#: ../term-utils/scriptlive.1.adoc:76 ../term-utils/scriptreplay.1.adoc:96
 msgid ""
 "This is free software; see the source for copying conditions. There is NO "
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:76 ../term-utils/scriptreplay.1.adoc:98
+#: ../term-utils/scriptlive.1.adoc:78 ../term-utils/scriptreplay.1.adoc:98
 msgid "Released under the GNU General Public License version 2 or later."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:81
+#: ../term-utils/scriptlive.1.adoc:83
 #, no-wrap
 msgid ""
 "*script*(1),\n"
@@ -38750,7 +38742,7 @@ msgstr ""
 #: ../text-utils/column.1.adoc:122
 msgid ""
 "Preserve whitespace-only lines in the input. The default is ignore empty "
-"lines at all. This optionâs original name was *--table-empty-lines* but is "
+"lines at all. This option's original name was *--table-empty-lines* but is "
 "now deprecated because it gives the false impression that the option only "
 "applies to table mode."
 msgstr ""
