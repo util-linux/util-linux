@@ -20,7 +20,11 @@ pivot_root - change the root filesystem
 
 Note that, depending on the implementation of *pivot_root*, root and current working directory of the caller may or may not change. The following is a sequence for invoking *pivot_root* that works in either case, assuming that *pivot_root* and *chroot* are in the current *PATH*:
 
-cd _new_root_ pivot_root . _put_old_ exec chroot . _command_
+....
+cd new_root
+pivot_root . put_old
+exec chroot . command
+....
 
 Note that *chroot* must be available under the old root and under the new root, because *pivot_root* may or may not have implicitly changed the root directory of the shell.
 
