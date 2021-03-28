@@ -58,25 +58,25 @@ The user namespace will be ignored if the same as the caller's current user name
 *-t*, *--target* _PID_::
 Specify a target process to get contexts from. The paths to the contexts specified by _pid_ are:
 
-/proc/_pid_/ns/mnt;;
+_/proc/pid/ns/mnt_;;
 the mount namespace
-/proc/_pid_/ns/uts;;
+_/proc/pid/ns/uts_;;
 the UTS namespace
-/proc/_pid_/ns/ipc;;
+_/proc/pid/ns/ipc_;;
 the IPC namespace
-/proc/_pid_/ns/net;;
+_/proc/pid/ns/net_;;
 the network namespace
-/proc/_pid_/ns/pid;;
+_/proc/pid/ns/pid_;;
 the PID namespace
-/proc/_pid_/ns/user;;
+_/proc/pid/ns/user_;;
 the user namespace
-/proc/_pid_/ns/cgroup;;
+_/proc/pid/ns/cgroup_;;
 the cgroup namespace
-/proc/_pid_/ns/time;;
+_/proc/pid/ns/time_;;
 the time namespace
-/proc/_pid_/root;;
+_/proc/pid/root_;;
 the root directory
-/proc/_pid_/cwd;;
+_/proc/pid/cwd_;;
 the working directory respectively
 
 *-m*, *--mount*[=_file_]::
