@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-03-28 11:58+0200\n"
+"POT-Creation-Date: 2021-03-28 14:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -455,7 +455,7 @@ msgstr ""
 #: ../sys-utils/lscpu.1.adoc:162 ../sys-utils/lsipc.1.adoc:107
 #: ../sys-utils/lsmem.1.adoc:76 ../sys-utils/lsns.8.adoc:76
 #: ../sys-utils/mount.8.adoc:1456 ../sys-utils/mountpoint.1.adoc:69
-#: ../sys-utils/nsenter.1.adoc:138 ../sys-utils/pivot_root.8.adoc:63
+#: ../sys-utils/nsenter.1.adoc:138 ../sys-utils/pivot_root.8.adoc:67
 #: ../sys-utils/prlimit.1.adoc:139 ../sys-utils/renice.1.adoc:96
 #: ../sys-utils/rfkill.8.adoc:82 ../sys-utils/rtcwake.8.adoc:134
 #: ../sys-utils/setarch.8.adoc:94 ../sys-utils/setpriv.1.adoc:118
@@ -564,7 +564,7 @@ msgstr ""
 #: ../sys-utils/lsipc.1.adoc:21 ../sys-utils/lsirq.1.adoc:23
 #: ../sys-utils/lsmem.1.adoc:31 ../sys-utils/lsns.8.adoc:32
 #: ../sys-utils/mountpoint.1.adoc:23 ../sys-utils/nsenter.1.adoc:47
-#: ../sys-utils/pivot_root.8.adoc:29 ../sys-utils/readprofile.8.adoc:25
+#: ../sys-utils/pivot_root.8.adoc:33 ../sys-utils/readprofile.8.adoc:25
 #: ../sys-utils/renice.1.adoc:55 ../sys-utils/rfkill.8.adoc:25
 #: ../sys-utils/rtcwake.8.adoc:31 ../sys-utils/setarch.8.adoc:29
 #: ../sys-utils/setpriv.1.adoc:23 ../sys-utils/setsid.1.adoc:23
@@ -658,7 +658,7 @@ msgstr ""
 #: ../sys-utils/lsipc.1.adoc:29 ../sys-utils/lsirq.1.adoc:46
 #: ../sys-utils/lsmem.1.adoc:39 ../sys-utils/lsns.8.adoc:69
 #: ../sys-utils/mount.8.adoc:442 ../sys-utils/mountpoint.1.adoc:40
-#: ../sys-utils/nsenter.1.adoc:130 ../sys-utils/pivot_root.8.adoc:34
+#: ../sys-utils/nsenter.1.adoc:130 ../sys-utils/pivot_root.8.adoc:38
 #: ../sys-utils/readprofile.8.adoc:57 ../sys-utils/renice.1.adoc:72
 #: ../sys-utils/rtcwake.8.adoc:111 ../sys-utils/setarch.8.adoc:76
 #: ../sys-utils/setpriv.1.adoc:95 ../sys-utils/setsid.1.adoc:37
@@ -709,7 +709,7 @@ msgstr ""
 #: ../sys-utils/lsipc.1.adoc:31 ../sys-utils/lsirq.1.adoc:48
 #: ../sys-utils/lsmem.1.adoc:41 ../sys-utils/lsns.8.adoc:71
 #: ../sys-utils/mount.8.adoc:444 ../sys-utils/mountpoint.1.adoc:42
-#: ../sys-utils/nsenter.1.adoc:132 ../sys-utils/pivot_root.8.adoc:36
+#: ../sys-utils/nsenter.1.adoc:132 ../sys-utils/pivot_root.8.adoc:40
 #: ../sys-utils/prlimit.1.adoc:45 ../sys-utils/readprofile.8.adoc:59
 #: ../sys-utils/renice.1.adoc:74 ../sys-utils/rfkill.8.adoc:44
 #: ../sys-utils/rfkill.8.adoc:52 ../sys-utils/rtcwake.8.adoc:113
@@ -763,7 +763,7 @@ msgstr ""
 #: ../sys-utils/lsipc.1.adoc:32 ../sys-utils/lsirq.1.adoc:43
 #: ../sys-utils/lsmem.1.adoc:66 ../sys-utils/lsns.8.adoc:66
 #: ../sys-utils/mount.8.adoc:439 ../sys-utils/mountpoint.1.adoc:37
-#: ../sys-utils/nsenter.1.adoc:127 ../sys-utils/pivot_root.8.adoc:31
+#: ../sys-utils/nsenter.1.adoc:127 ../sys-utils/pivot_root.8.adoc:35
 #: ../sys-utils/readprofile.8.adoc:54 ../sys-utils/renice.1.adoc:69
 #: ../sys-utils/rtcwake.8.adoc:108 ../sys-utils/setarch.8.adoc:73
 #: ../sys-utils/setpriv.1.adoc:92 ../sys-utils/setsid.1.adoc:34
@@ -1251,7 +1251,7 @@ msgstr ""
 #: ../sys-utils/lsipc.1.adoc:34 ../sys-utils/lsirq.1.adoc:45
 #: ../sys-utils/lsmem.1.adoc:68 ../sys-utils/lsns.8.adoc:68
 #: ../sys-utils/mount.8.adoc:441 ../sys-utils/mountpoint.1.adoc:39
-#: ../sys-utils/nsenter.1.adoc:129 ../sys-utils/pivot_root.8.adoc:33
+#: ../sys-utils/nsenter.1.adoc:129 ../sys-utils/pivot_root.8.adoc:37
 #: ../sys-utils/prlimit.1.adoc:63 ../sys-utils/readprofile.8.adoc:56
 #: ../sys-utils/renice.1.adoc:71 ../sys-utils/rfkill.8.adoc:47
 #: ../sys-utils/rtcwake.8.adoc:110 ../sys-utils/setarch.8.adoc:75
@@ -4880,7 +4880,7 @@ msgstr ""
 #. type: Title ==
 #: ../disk-utils/partx.8.adoc:110 ../lib/terminal-colors.d.5.adoc:142
 #: ../misc-utils/uuidd.8.adoc:71 ../sys-utils/chmem.8.adoc:71
-#: ../sys-utils/losetup.8.adoc:147 ../sys-utils/pivot_root.8.adoc:37
+#: ../sys-utils/losetup.8.adoc:147 ../sys-utils/pivot_root.8.adoc:41
 #: ../sys-utils/readprofile.8.adoc:81 ../sys-utils/rfkill.8.adoc:68
 #: ../sys-utils/setarch.8.adoc:79 ../sys-utils/zramctl.8.adoc:85
 #: ../term-utils/agetty.8.adoc:189
@@ -30769,13 +30769,17 @@ msgid ""
 "*pivot_root* and *chroot* are in the current *PATH*:"
 msgstr ""
 
-#. type: Plain text
-#: ../sys-utils/pivot_root.8.adoc:24
-msgid "cd _new_root_ pivot_root . _put_old_ exec chroot . _command_"
+#. type: delimited block .
+#: ../sys-utils/pivot_root.8.adoc:27
+#, no-wrap
+msgid ""
+"cd new_root\n"
+"pivot_root . put_old\n"
+"exec chroot . command\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/pivot_root.8.adoc:26
+#: ../sys-utils/pivot_root.8.adoc:30
 msgid ""
 "Note that *chroot* must be available under the old root and under the new "
 "root, because *pivot_root* may or may not have implicitly changed the root "
@@ -30783,7 +30787,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/pivot_root.8.adoc:28
+#: ../sys-utils/pivot_root.8.adoc:32
 msgid ""
 "Note that *exec chroot* changes the running executable, which is necessary "
 "if the old root directory should be unmounted afterwards. Also note that "
@@ -30794,12 +30798,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/pivot_root.8.adoc:40
+#: ../sys-utils/pivot_root.8.adoc:44
 msgid "Change the root file system to _/dev/hda1_ from an interactive shell:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/pivot_root.8.adoc:47
+#: ../sys-utils/pivot_root.8.adoc:51
 #, no-wrap
 msgid ""
 "mount /dev/hda1 /new-root\n"
@@ -30810,14 +30814,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/pivot_root.8.adoc:50
+#: ../sys-utils/pivot_root.8.adoc:54
 msgid ""
 "Mount the new root file system over NFS from 10.0.0.1:/my_root and run "
 "*init*:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/pivot_root.8.adoc:61
+#: ../sys-utils/pivot_root.8.adoc:65
 #, no-wrap
 msgid ""
 "ifconfig lo 127.0.0.1 up   # for portmap\n"
@@ -30832,7 +30836,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/pivot_root.8.adoc:70
+#: ../sys-utils/pivot_root.8.adoc:74
 #, no-wrap
 msgid ""
 "*chroot*(1),\n"
