@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-03-28 10:37+0200\n"
+"POT-Creation-Date: 2021-03-28 11:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30405,15 +30405,114 @@ msgid ""
 "specified by _pid_ are:"
 msgstr ""
 
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:61
+#, no-wrap
+msgid "_/proc/pid/ns/mnt_"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/nsenter.1.adoc:63
+msgid "the mount namespace"
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:63
+#, no-wrap
+msgid "_/proc/pid/ns/uts_"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/nsenter.1.adoc:65
+msgid "the UTS namespace"
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:65
+#, no-wrap
+msgid "_/proc/pid/ns/ipc_"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/nsenter.1.adoc:67
+msgid "the IPC namespace"
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:67
+#, no-wrap
+msgid "_/proc/pid/ns/net_"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/nsenter.1.adoc:69
+msgid "the network namespace"
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:69
+#, no-wrap
+msgid "_/proc/pid/ns/pid_"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/nsenter.1.adoc:71
+msgid "the PID namespace"
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:71
+#, no-wrap
+msgid "_/proc/pid/ns/user_"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/nsenter.1.adoc:73
+msgid "the user namespace"
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:73
+#, no-wrap
+msgid "_/proc/pid/ns/cgroup_"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/nsenter.1.adoc:75
+msgid "the cgroup namespace"
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:75
+#, no-wrap
+msgid "_/proc/pid/ns/time_"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/nsenter.1.adoc:77
+msgid "the time namespace"
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:77
+#, no-wrap
+msgid "_/proc/pid/root_"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/nsenter.1.adoc:79
+msgid "the root directory"
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/nsenter.1.adoc:79
+#, no-wrap
+msgid "_/proc/pid/cwd_"
+msgstr ""
+
 #. type: Plain text
 #: ../sys-utils/nsenter.1.adoc:81
-msgid ""
-"/proc/_pid_/ns/mnt;; the mount namespace /proc/_pid_/ns/uts;; the UTS "
-"namespace /proc/_pid_/ns/ipc;; the IPC namespace /proc/_pid_/ns/net;; the "
-"network namespace /proc/_pid_/ns/pid;; the PID namespace "
-"/proc/_pid_/ns/user;; the user namespace /proc/_pid_/ns/cgroup;; the cgroup "
-"namespace /proc/_pid_/ns/time;; the time namespace /proc/_pid_/root;; the "
-"root directory /proc/_pid_/cwd;; the working directory respectively"
+msgid "the working directory respectively"
 msgstr ""
 
 #. type: Labeled list
