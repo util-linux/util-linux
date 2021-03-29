@@ -1,6 +1,6 @@
 //po4a: entry man manual
 ////
-Please treat this file as a real man page! We provide it only to show how
+Please don't treat this file as a real man page! We provide it only to show how
 things should be formatted. Besides this example file, see the existing .adoc
 files for many more formatting options.
 The first line above is a hint for po4a that the :man manual: entry needs
