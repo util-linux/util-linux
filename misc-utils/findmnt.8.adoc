@@ -17,13 +17,15 @@ findmnt - find a filesystem
 
 *findmnt* [options] _device_|_mountpoint_
 
-*findmnt* [options] [*--source*] _device_ [*--target*|*--mountpoint*] _mountpoint_
+*findmnt* [options] [*--source*] _device_ [*--target* _path_|*--mountpoint* _mountpoint_]
 
 == DESCRIPTION
 
 *findmnt* will list all mounted filesystems or search for a filesystem. The *findmnt* command is able to search in _/etc/fstab_, _/etc/mtab_ or _/proc/self/mountinfo_. If _device_ or _mountpoint_ is not given, all filesystems are shown.
 
 The device may be specified by device name, major:minor numbers, filesystem label or UUID, or partition label or UUID. Note that *findmnt* follows *mount*(8) behavior where a device name may be interpreted as a mountpoint (and vice versa) if the *--target*, *--mountpoint* or *--source* options are not specified.
+
+The command-line option *--target* accepts any file or directory and then *findmnt* displays the filesystem for the given path.
 
 The command prints all mounted filesystems in the tree-like format by default.
 
