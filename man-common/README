@@ -3,9 +3,16 @@ To get the groff version from an asciidoc man page (example for a dummy man page
 asciidoctor -b manpage \
             -a release-version=2.37 \
             -a adjtime_path=/etc/adjtime \
+            -a docdir=/usr/share/doc \
+            -a runstatedir=/run \
             -D output_directory \
             filename.1.adoc
             
-"-a release-version" is applicable to all man pages; "-a adjtime_path" is for sys-utils/rtcwake.8.
+To get the translated versions, add an extra option which includes translation.adoc:
 
-The headers of the asciidoc files already contain relative paths to the files in man-common.
+            -a translation
+            
+The "-a" options are applicable to certain man pages. However, if the mentioned
+variable is unused, they don't produce an error message. 
+
+The footers of the asciidoc files already contain relative paths to the files in man-common.
