@@ -1,27 +1,27 @@
 if BUILD_CHRT
 usrbin_exec_PROGRAMS += chrt
-dist_man_MANS += schedutils/chrt.1
+MANPAGES += schedutils/chrt.1
 chrt_SOURCES = schedutils/chrt.c schedutils/sched_attr.h
 chrt_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_IONICE
 usrbin_exec_PROGRAMS += ionice
-dist_man_MANS += schedutils/ionice.1
+MANPAGES += schedutils/ionice.1
 ionice_SOURCES = schedutils/ionice.c
 ionice_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_TASKSET
 usrbin_exec_PROGRAMS += taskset
-dist_man_MANS += schedutils/taskset.1
+MANPAGES += schedutils/taskset.1
 taskset_SOURCES = schedutils/taskset.c
 taskset_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_UCLAMPSET
 usrbin_exec_PROGRAMS += uclampset
-dist_man_MANS += schedutils/uclampset.1
+MANPAGES += schedutils/uclampset.1
 uclampset_SOURCES = schedutils/uclampset.c schedutils/sched_attr.h
 uclampset_LDADD = $(LDADD) libcommon.la
 endif

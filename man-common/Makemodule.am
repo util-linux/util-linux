@@ -1,0 +1,7 @@
+MANPAGES_EXTRA += \
+	      man-common/bugreports.adoc \
+	      man-common/footer.adoc \
+	      man-common/footer-config.adoc \
+	      man-common/footer-lib.adoc \
+	      man-common/manpage-stub.adoc \
+	      man-common/translation.adoc

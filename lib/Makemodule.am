@@ -75,7 +75,7 @@ libtcolors_la_CFLAGS += $(NCURSES_CFLAGS)
 endif
 endif # !HAVE_TINFO
 
-dist_man_MANS += lib/terminal-colors.d.5
+MANPAGES += lib/terminal-colors.d.5
 
 
 check_PROGRAMS += \
