@@ -16,6 +16,7 @@ PACKAGES=(
 	mdadm
 	ntp
 	socat
+	ruby-asciidoctor
 )
 
 PACKAGES_OPTIONAL=(
