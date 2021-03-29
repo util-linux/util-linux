@@ -2,7 +2,7 @@
 
 ## Add a new .po file
 
-To enable a new .po file, add their basename (in fact, the language code), to
+To enable a new .po file, add its basename (in fact, the language code), to
 the first line of po4a.cfg:
 
     [po4a_langs] de es fr pl uk
@@ -16,7 +16,7 @@ This is done in one step using the following simple command:
 
     po4a po4a.cfg
     
-If there's something wrong with a .po file, the comman will fail. In any case,
+If there's something wrong with a .po file, the command will fail. In any case,
 have a look at the first line of po4a.cfg if all of the mentioned files are
 present.
 
