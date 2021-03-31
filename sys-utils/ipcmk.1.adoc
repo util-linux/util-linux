@@ -56,10 +56,10 @@ mailto:hayden.james@gmail.com[Hayden A. James]
 *ipcs*(1),
 *sysvipc*(7)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

@@ -56,10 +56,10 @@ _/etc/adjtime_
 *hwclock*(8),
 *rtcwake*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer-config.adoc[]
+include::man-common/footer-config.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

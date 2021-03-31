@@ -116,10 +116,10 @@ Set read-write.
 
 *blockdev* was written by Andries E. Brouwer and rewritten by Karel Zak.
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

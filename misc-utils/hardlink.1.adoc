@@ -85,10 +85,10 @@ The original *hardlink* implementation uses the option *-f* to force hardlinks c
 
 There are multiple *hardlink* implementations. The very first implementation is from Jakub Jelinek for Fedora distribution, this implementation has been used in util-linux between versions v2.34 to v2.36. The current implementations is based on Debian version from Julian Andres Klode.
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

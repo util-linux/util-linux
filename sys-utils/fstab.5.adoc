@@ -140,10 +140,10 @@ The ancestor of this *fstab* file format appeared in 4.0BSD.
 *mount*(8),
 *swapon*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer-config.adoc[]
+include::man-common/footer-config.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

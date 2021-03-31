@@ -124,10 +124,10 @@ mailto:tilman@imap.cc[Tilman Schmidt]
 *inputattach*(1),
 *ttys*(4)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

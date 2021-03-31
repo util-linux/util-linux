@@ -46,10 +46,10 @@ The new length of the partition (in 512-byte sectors).
 *partprobe*(8),
 *partx*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

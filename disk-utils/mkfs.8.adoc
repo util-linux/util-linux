@@ -69,10 +69,10 @@ The manual page was shamelessly adapted from Remy Card's version for the ext2 fi
 *mkfs.vfat*(8),
 *mkfs.xfs*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

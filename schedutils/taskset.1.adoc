@@ -120,10 +120,10 @@ Copyright {copyright} 2004 Robert M. Love. This is free software; see the source
 
 See *sched*(7) for a description of the Linux scheduling scheme.
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

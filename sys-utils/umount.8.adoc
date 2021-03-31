@@ -184,10 +184,10 @@ A *umount* command appeared in Version 6 AT&T UNIX.
 *mount_namespaces*(7),
 *mount*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

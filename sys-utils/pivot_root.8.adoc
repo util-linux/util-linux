@@ -72,10 +72,10 @@ exec chroot . sh -c 'umount /old_root; exec /sbin/init' \
 *switch_root*(8),
 *umount*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

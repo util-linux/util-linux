@@ -72,10 +72,10 @@ uuidgen --sha1 --namespace @dns --name "www.example.com"
 *libuuid*(3),
 link:https://tools.ietf.org/html/rfc4122[RFC 4122]
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

@@ -102,10 +102,10 @@ The following command would change the priority of the processes with PIDs 987 a
 *credentials*(7),
 *sched*(7)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

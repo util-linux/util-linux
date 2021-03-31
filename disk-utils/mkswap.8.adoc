@@ -105,10 +105,10 @@ Please read notes from *swapon*(8) about *the swap file use restrictions* (holes
 *fdisk*(8),
 *swapon*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

@@ -161,10 +161,10 @@ The following commands can be used as an example of using the loop device.
 
 mailto:kzak@redhat.com[Karel Zak], based on the original version from mailto:tytso@athena.mit.edu[Theodore Ts'o].
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

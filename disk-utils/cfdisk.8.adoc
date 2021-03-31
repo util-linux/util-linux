@@ -159,10 +159,10 @@ The current *cfdisk* implementation is based on the original *cfdisk* from mailt
 *partx*(8),
 *sfdisk*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

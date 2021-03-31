@@ -108,10 +108,10 @@ mailto:torvalds@cs.helsinki.fi[Linus Torvalds]. Exit status values by mailto:fai
 *mkfs.minix*(8),
 *reboot*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]
