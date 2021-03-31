@@ -58,10 +58,10 @@ The exit status returned by *mkfs.bfs* is 0 when all went well, and 1 when somet
 
 *mkfs*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

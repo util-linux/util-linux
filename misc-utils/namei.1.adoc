@@ -78,10 +78,10 @@ The program was rewritten by Karel Zak mailto:kzak@redhat.com[Karel Zak].
 *stat*(1),
 *symlink*(7)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

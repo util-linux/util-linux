@@ -130,10 +130,10 @@ Copyright {copyright} 2003-2006 H. Peter Anvin. This is free software; see the s
 
 *flock*(2)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

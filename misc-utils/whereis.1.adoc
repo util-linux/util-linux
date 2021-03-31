@@ -118,10 +118,10 @@ To find all files in _/usr/bin_ which are not documented in _/usr/man/man1_ or h
 
 *cd /usr/bin* *whereis -u -ms -M /usr/man/man1 -S /usr/src -f **
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

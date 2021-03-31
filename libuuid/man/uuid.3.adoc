@@ -71,10 +71,10 @@ Theodore Y. Ts'o
 *uuid_time*(3),
 *uuid_unparse*(3)
 
-include::../../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../../man-common/footer-lib.adoc[]
+include::man-common/footer-lib.adoc[]
 
 ifdef::translation[]
-include::../../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

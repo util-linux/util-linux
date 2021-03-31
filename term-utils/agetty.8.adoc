@@ -333,10 +333,10 @@ mailto:kzak@redhat.com[Karel Zak]
 
 The original *agetty* for serial terminals was written by mailto:wietse@wzv.win.tue.nl[W.Z. Venema] and ported to Linux by mailto:poe@daimi.aau.dk[Peter Orbaek].
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

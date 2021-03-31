@@ -135,10 +135,10 @@ mailto:qais.yousef@arm.com[Qais Yousef]
 
 See *sched_setscheduler*(2) and *sched_setattr*(2) for a description of the Linux scheduling scheme.
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

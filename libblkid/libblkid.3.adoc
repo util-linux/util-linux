@@ -58,10 +58,10 @@ The low-level probing code was rewritten by Karel Zak.
 *blkid*(8), 
 *findfs*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer-lib.adoc[]
+include::man-common/footer-lib.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

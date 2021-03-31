@@ -172,10 +172,10 @@ Derived from BSD login 5.40 (5/9/89) by mailto:glad@daimi.dk[Michael Glad] for H
 *lastlog*(8),
 *shutdown*(8)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

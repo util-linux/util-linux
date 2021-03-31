@@ -94,10 +94,10 @@ Theodore Y. Ts'o
 *uuid_unparse*(3),
 *uuidd*(8)
 
-include::../../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../../man-common/footer-lib.adoc[]
+include::man-common/footer-lib.adoc[]
 
 ifdef::translation[]
-include::../../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

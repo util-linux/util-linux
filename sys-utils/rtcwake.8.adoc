@@ -136,10 +136,10 @@ This is free software. You may redistribute copies of it under the terms of the 
 *hwclock*(8),
 *date*(1)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

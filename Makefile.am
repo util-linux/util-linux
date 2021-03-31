@@ -211,7 +211,7 @@ $(MANPAGES): $(MANPAGES:=.adoc) $(MANPAGES_EXTRA) Makefile
 	$(AM_V_at) $(MKDIR_P) $$(dirname $@)
 	$(AM_V_GEN) srcdir=''; \
 		test -f ./$@.adoc || srcdir=$(srcdir)/; \
-		$(asciidoc_man_cmd) $${srcdir}$@.adoc --destination-dir $$(dirname $@)
+		$(asciidoc_man_cmd) --base-dir=$${srcdir} $${srcdir}$@.adoc --destination-dir $$(dirname $@)
 
 gen-man: $(dist_man_MANS)
 
@@ -269,11 +269,11 @@ checklibdoc:
 		$(top_srcdir)/libblkid/docs/libblkid-sections.txt
 
 DISTCHECK_CONFIGURE_FLAGS = \
+	--disable-makeinstall-chown \
 	--disable-use-tty-group \
 	--disable-silent-rules \
+	--disable-rpath \
 	--enable-all-programs \
-	--disable-makeinstall-chown \
-	--enable-static-programs \
 	--enable-gtk-doc \
 	--with-python \
 	--with-bashcompletiondir=$$dc_install_base/$(bashcompletiondir) \

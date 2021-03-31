@@ -150,10 +150,10 @@ This *su* command was derived from coreutils' *su*, which was based on an implem
 *pam*(8),
 *runuser*(1)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

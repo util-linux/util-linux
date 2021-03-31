@@ -87,10 +87,10 @@ A *write* command appeared in Version 6 AT&T UNIX.
 *talk*(1),
 *who*(1)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

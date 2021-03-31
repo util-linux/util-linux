@@ -36,10 +36,10 @@ Originally by Michael Haardt. Currently maintained by mailto:poe@daimi.aau.dk[Pe
 *login*(1),
 *group*(5)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

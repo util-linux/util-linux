@@ -93,10 +93,10 @@ mailto:kzak@redhat.com[Karel Zak]
 *fallocate*(2),
 *posix_fallocate*(3)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

@@ -256,10 +256,10 @@ Implicit coloring can be disabled by an empty file _/etc/terminal-colors.d/hexdu
 
 See *terminal-colors.d*(5) for more details about colorization configuration.
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

@@ -168,10 +168,10 @@ The default *cal* output uses 3 September 1752 as the Gregorian calendar reform 
 
 Alternative calendars, such as the Umm al-Qura, the Solar Hijri, the Ge'ez, or the lunisolar Hindu, are not supported.
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

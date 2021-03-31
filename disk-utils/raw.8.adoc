@@ -62,10 +62,10 @@ Raw I/O devices do not maintain cache coherency with the Linux block device buff
 
 mailto:sct@redhat.com[Stephen Tweedie]
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

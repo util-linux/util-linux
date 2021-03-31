@@ -382,10 +382,10 @@ Device files *hwclock* may try for Hardware Clock access: _/dev/rtc0_ _/dev/rtc_
 
 Written by mailto:bryanh@giraffe-data.com[Bryan Henderson], September 1996, based on work done on the *clock*(8) program by Charles Hedrick, Rob Hooft, and Harald Koenig. See the source code for complete history and credits.
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]

@@ -245,10 +245,10 @@ The *logger* command was originally written by University of California in 1983-
 *syslog*(3),
 *systemd.journal-fields*(7)
 
-include::../man-common/bugreports.adoc[]
+include::man-common/bugreports.adoc[]
 
-include::../man-common/footer.adoc[]
+include::man-common/footer.adoc[]
 
 ifdef::translation[]
-include::../man-common/translation.adoc[]
+include::man-common/translation.adoc[]
 endif::[]
