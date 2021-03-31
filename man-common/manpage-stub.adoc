@@ -60,7 +60,6 @@ mailto:john.doe@example.com[John Doe]
 
 *foo*(1),
 *bar*(1)
-<<<<<<< HEAD
  
 include::man-common/bugreports.adoc[]
 
