@@ -206,12 +206,16 @@ dist_man_MANS += $(MANPAGES) $(MANLINKS)
 CLEANFILES += $(dist_man_MANS)
 EXTRA_DIST += $(MANPAGES:=.adoc) $(MANPAGES_EXTRA)
 
-$(MANPAGES): $(MANPAGES:=.adoc) $(MANPAGES_EXTRA) Makefile
-	@ rm -f $@
-	$(AM_V_at) $(MKDIR_P) $$(dirname $@)
-	$(AM_V_GEN) srcdir=''; \
-		test -f ./$@.adoc || srcdir=$(srcdir)/; \
-		$(asciidoc_man_cmd) --base-dir=$${srcdir} $${srcdir}$@.adoc --destination-dir $$(dirname $@)
+$(MANPAGES): $(MANPAGES_EXTRA) Makefile
+
+SUFFIXES = .1.adoc .3.adoc .5.adoc .8.adoc .1 .3 .5 .8
+.1.adoc.1 .3.adoc.3 .5.adoc.5 .8.adoc.8:
+	$(AM_V_GEN) test -f ./$@ || \
+		$(MKDIR_P) $$(dirname $@) && \
+		$(asciidoc_man_cmd) --base-dir=$(abs_srcdir) \
+				    --destination-dir $(abs_builddir)/$$(dirname $@) $<
+
+$(MANLINKS): $(MANPAGES)
 
 gen-man: $(dist_man_MANS)
 
