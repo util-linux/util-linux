@@ -271,7 +271,7 @@ int lscpu_read_numas(struct lscpu_cxt *cxt);
 void lscpu_free_caches(struct lscpu_cache *caches, size_t n);
 void lscpu_sort_caches(struct lscpu_cache *caches, size_t n);
 
-size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name);
+size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name, int *instances);
 struct lscpu_cache *lscpu_cpu_get_cache(struct lscpu_cxt *cxt,
                                 struct lscpu_cpu *cpu, const char *name);
 

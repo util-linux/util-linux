@@ -511,7 +511,7 @@ static void caches_add_line(struct lscpu_cxt *cxt,
 		{
 			uint64_t sz = 0;
 			if (ca->name)
-				sz = lscpu_get_cache_full_size(cxt, ca->name);
+				sz = lscpu_get_cache_full_size(cxt, ca->name, NULL);
 			if (!sz)
 				break;
 			if (cxt->bytes)
@@ -1045,21 +1045,28 @@ static void print_summary(struct lscpu_cxt *cxt)
 		for (i = 0; i < cxt->ncaches; i++) {
 			const char *name = cxt->caches[i].name;
 			uint64_t sz;
+			int n = 0;
 
 			if (last && strcmp(last, name) == 0)
 				continue;
-			sz = lscpu_get_cache_full_size(cxt, name);
+			sz = lscpu_get_cache_full_size(cxt, name, &n);
 			if (!sz)
 				continue;
 			snprintf(field, sizeof(field), is_term ? _("%s:") : _("%s cache:"), name);
 			if (cxt->bytes)
-				add_summary_x(tb, sec, field, "%" PRIu64, sz);
+				add_summary_sprint(tb, sec, field,
+						P_("%" PRIu64 " (%d instance)",
+						   "%" PRIu64 " (%d instances)", n),
+						sz, n);
 			else {
 				char *tmp = size_to_human_string(
 						SIZE_SUFFIX_3LETTER |
 						SIZE_SUFFIX_SPACE,
 						sz);
-				add_summary_s(tb, sec, field, tmp);
+				add_summary_sprint(tb, sec, field,
+						P_("%s (%d instance)",
+						   "%s (%d instances)", n),
+						tmp, n);
 				free(tmp);
 			}
 			last = name;

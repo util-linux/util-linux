@@ -209,13 +209,19 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 }
 
 /* count size of all instancess of the "name" */
-size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name)
+size_t lscpu_get_cache_full_size(struct lscpu_cxt *cxt, const char *name, int *instances)
 {
 	size_t i, sz = 0;
 
+	if (instances)
+		*instances = 0;
+
 	for (i = 0; i < cxt->ncaches; i++) {
-		if (strcmp(cxt->caches[i].name, name) == 0)
+		if (strcmp(cxt->caches[i].name, name) == 0) {
 			sz += cxt->caches[i].size;
+			if (instances)
+				(*instances)++;
+		}
 	}
 
 	return sz;
@@ -539,10 +545,10 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 	}
 
 	lscpu_sort_caches(cxt->caches, cxt->ncaches);
-	DBG(GATHER, ul_debugobj(cxt, " L1d: %zu", lscpu_get_cache_full_size(cxt, "L1d")));
-	DBG(GATHER, ul_debugobj(cxt, " L1i: %zu", lscpu_get_cache_full_size(cxt, "L1i")));
-	DBG(GATHER, ul_debugobj(cxt, " L2: %zu", lscpu_get_cache_full_size(cxt, "L2")));
-	DBG(GATHER, ul_debugobj(cxt, " L3: %zu", lscpu_get_cache_full_size(cxt, "L3")));
+	DBG(GATHER, ul_debugobj(cxt, " L1d: %zu", lscpu_get_cache_full_size(cxt, "L1d", NULL)));
+	DBG(GATHER, ul_debugobj(cxt, " L1i: %zu", lscpu_get_cache_full_size(cxt, "L1i", NULL)));
+	DBG(GATHER, ul_debugobj(cxt, " L2: %zu", lscpu_get_cache_full_size(cxt, "L2", NULL)));
+	DBG(GATHER, ul_debugobj(cxt, " L3: %zu", lscpu_get_cache_full_size(cxt, "L3", NULL)));
 
 	return rc;
 }
