@@ -16,10 +16,10 @@ Flags:               esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs t
 Hypervisor:          PR/SM
 Hypervisor vendor:   IBM
 Virtualization type: full
-L1d cache:           1 MiB
-L1i cache:           768 KiB
-L2d cache:           16 MiB
-L2i cache:           16 MiB
+L1d cache:           1 MiB (8 instances)
+L1i cache:           768 KiB (8 instances)
+L2d cache:           16 MiB (8 instances)
+L2i cache:           16 MiB (8 instances)
 L3 cache:            64 MiB
 L4 cache:            480 MiB
 NUMA node(s):        1

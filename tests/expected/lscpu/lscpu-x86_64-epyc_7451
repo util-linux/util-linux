@@ -16,10 +16,10 @@ CPU min MHz:                     1200.0000
 BogoMIPS:                        4590.83
 Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid amd_dcm aperfmperf pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb hw_pstate ssbd ibpb vmmcall fsgsbase bmi1 avx2 smep bmi2 rdseed adx smap clflushopt sha_ni xsaveopt xsavec xgetbv1 xsaves clzero irperf xsaveerptr arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif overflow_recov succor smca
 Virtualization:                  AMD-V
-L1d cache:                       1.5 MiB
-L1i cache:                       3 MiB
-L2 cache:                        24 MiB
-L3 cache:                        128 MiB
+L1d cache:                       1.5 MiB (48 instances)
+L1i cache:                       3 MiB (48 instances)
+L2 cache:                        24 MiB (48 instances)
+L3 cache:                        128 MiB (16 instances)
 NUMA node(s):                    8
 NUMA node0 CPU(s):               0-5,48-53
 NUMA node1 CPU(s):               6-11,54-59

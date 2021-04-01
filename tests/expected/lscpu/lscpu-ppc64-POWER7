@@ -5,8 +5,8 @@ Model:               2.1 (pvr 003f 0201)
 Thread(s) per core:  4
 Core(s) per socket:  1
 Socket(s):           4
-L1d cache:           128 KiB
-L1i cache:           128 KiB
+L1d cache:           128 KiB (4 instances)
+L1i cache:           128 KiB (4 instances)
 NUMA node(s):        1
 NUMA node0 CPU(s):   0-15
 

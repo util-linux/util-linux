@@ -16,8 +16,8 @@ BogoMIPS:            3355.62
 Flags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl pni ssse3 lahf_lm
 Hypervisor vendor:   Oracle
 Virtualization type: full
-L1d cache:           64 KiB
-L2d cache:           6 MiB
+L1d cache:           64 KiB (2 instances)
+L2d cache:           6 MiB (1 instance)
 NUMA node(s):        1
 NUMA node0 CPU(s):   0,1
 

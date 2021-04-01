@@ -7,8 +7,8 @@ Core(s) per socket:  1
 Socket(s):           16
 Hypervisor vendor:   pHyp
 Virtualization type: para
-L1d cache:           512 KiB
-L1i cache:           512 KiB
+L1d cache:           512 KiB (16 instances)
+L1i cache:           512 KiB (16 instances)
 NUMA node(s):        2
 NUMA node0 CPU(s):   0-63
 NUMA node1 CPU(s):   

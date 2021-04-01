@@ -16,10 +16,10 @@ Flags:                           esan3 zarch stfle msa ldisp eimm dfp edat etf3e
 Hypervisor:                      KVM/Linux
 Hypervisor vendor:               KVM
 Virtualization type:             full
-L1d cache:                       256 KiB
-L1i cache:                       192 KiB
-L2d cache:                       4 MiB
-L2i cache:                       4 MiB
+L1d cache:                       256 KiB (2 instances)
+L1i cache:                       192 KiB (2 instances)
+L2d cache:                       4 MiB (2 instances)
+L2i cache:                       4 MiB (2 instances)
 L3 cache:                        64 MiB
 L4 cache:                        480 MiB
 NUMA node(s):                    1
