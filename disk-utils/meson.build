@@ -89,10 +89,3 @@ resizepart_sources = files(
 partx_sources = files(
   'partx.c',
 )
-
-addpart_delpart_man = files(
-  'addpart.8',
-  'delpart.8',
-  'resizepart.8',
-  'partx.8',
-)

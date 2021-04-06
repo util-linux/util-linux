@@ -19,6 +19,7 @@ bindir = join_paths(prefixdir, get_option('bindir'))
 sbindir = join_paths(prefixdir, get_option('sbindir'))
 sysconfstaticdir = join_paths(prefixdir, 'lib')
 docdir = '/usr/share/doc/util-linux'
+mandir = join_paths(prefixdir, get_option('mandir'))
 runstatedir = '/run'
 execprefixdir = '/usr'
 usrbin_exec_dir = join_paths(execprefixdir, 'bin')
@@ -728,6 +729,8 @@ bison_gen = generator(
   output : ['@BASENAME@.tab.c', '@BASENAME@.tab.h'],
   arguments : ['@INPUT@', '--defines=@OUTPUT1@', '--output=@OUTPUT0@'])
 
+
+
 meson_make_symlink = meson.current_source_dir() + '/tools/meson-make-symlink.sh'
 
 config_h = configure_file(
@@ -735,6 +738,9 @@ config_h = configure_file(
   configuration : conf)
 
 add_project_arguments('-include', 'config.h', language : 'c')
+
+manadocs = []
+manlinks = []
 
 subdir('include')
 subdir('lib')
@@ -1069,7 +1075,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('text-utils/hexdump.1')
+  manadocs += ['text-utils/hexdump.1.adoc']
 endif
 
 opt = not get_option('build-lsmem').disabled()
@@ -1084,7 +1090,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/lsmem.1')
+  manadocs += ['sys-utils/lsmem.1.adoc']
 endif
 
 opt = not get_option('build-chmem').disabled()
@@ -1098,7 +1104,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/chmem.8')
+  manadocs += ['sys-utils/chmem.8.adoc']
 endif
 
 exe = executable(
@@ -1109,7 +1115,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('sys-utils/choom.1')
+manadocs += ['sys-utils/choom.1.adoc']
 
 exe = executable(
   'ipcmk',
@@ -1119,7 +1125,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('sys-utils/ipcmk.1')
+manadocs += ['sys-utils/ipcmk.1.adoc']
 
 exe = executable(
   'ipcrm',
@@ -1129,7 +1135,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('sys-utils/ipcrm.1')
+manadocs += ['sys-utils/ipcrm.1.adoc']
 
 opt = not get_option('build-ipcs').disabled()
 exe = executable(
@@ -1142,7 +1148,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/ipcs.1')
+  manadocs += ['sys-utils/ipcs.1.adoc']
 endif
 
 opt = not get_option('build-rfkill').disabled()
@@ -1157,7 +1163,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/rfkill.8')
+  manadocs += ['sys-utils/rfkill.8.adoc']
 endif
 
 exe = executable(
@@ -1170,7 +1176,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/renice.1')
+  manadocs += ['sys-utils/renice.1.adoc']
 endif
 
 exe = executable(
@@ -1183,7 +1189,7 @@ exe = executable(
   install : true)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/setsid.1')
+  manadocs += ['sys-utils/setsid.1.adoc']
 endif
 
 exe = executable(
@@ -1196,7 +1202,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/readprofile.8')
+  manadocs += ['sys-utils/readprofile.8.adoc']
 endif
 
 opt = not get_option('build-tunelp').disabled()
@@ -1210,7 +1216,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/tunelp.8')
+  manadocs += ['sys-utils/tunelp.8.adoc']
 endif
 
 exe = executable(
@@ -1223,7 +1229,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/fstrim.8')
+  manadocs += ['sys-utils/fstrim.8.adoc']
 endif  
 
 exe = executable(
@@ -1235,7 +1241,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/dmesg.1')
+  manadocs += ['sys-utils/dmesg.1.adoc']
 endif
 
 exe = executable(
@@ -1257,7 +1263,7 @@ exe = executable(
   install_dir : sbindir,
   install : true)
 exes += exe
-install_man('sys-utils/ctrlaltdel.8')
+manadocs += ['sys-utils/ctrlaltdel.8.adoc']
 
 exe = executable(
   'fsfreeze',
@@ -1266,7 +1272,7 @@ exe = executable(
   install_dir : sbindir,
   install : true)
 exes += exe
-install_man('sys-utils/fsfreeze.8')
+manadocs += ['sys-utils/fsfreeze.8.adoc']
 
 exe = executable(
   'blkdiscard',
@@ -1277,7 +1283,7 @@ exe = executable(
   install_dir : sbindir,
   install : true)
 exes += exe
-install_man('sys-utils/blkdiscard.8')
+manadocs += ['sys-utils/blkdiscard.8.adoc']
 
 exe = executable(
   'blkzone',
@@ -1287,7 +1293,7 @@ exe = executable(
   install_dir : sbindir,
   install : true)
 exes += exe
-install_man('sys-utils/blkzone.8')
+manadocs += ['sys-utils/blkzone.8.adoc']
 
 exe = executable(
   'ldattach',
@@ -1297,7 +1303,7 @@ exe = executable(
   install_dir : usrsbin_exec_dir,
   install : true)
 exes += exe
-install_man('sys-utils/ldattach.8')
+manadocs += ['sys-utils/ldattach.8.adoc']
 
 exe = executable(
   'rtcwake',
@@ -1307,6 +1313,7 @@ exe = executable(
   install_dir : usrsbin_exec_dir,
   install : true)
 exes += exe
+manadocs += ['sys-utils/rtcwake.8.adoc']
 
 exe = executable(
   'setarch',
@@ -1315,7 +1322,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('sys-utils/setarch.8')
+manadocs += ['sys-utils/setarch.8.adoc']
 
 setarch_links = ['uname26', 'linux32', 'linux64']
 setarch_links_arch = {
@@ -1348,7 +1355,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exe = exe
-  install_man('sys-utils/eject.1')
+  manadocs += ['sys-utils/eject.1.adoc']
 endif
 
 opt = not get_option('build-losetup').disabled()
@@ -1362,7 +1369,7 @@ exe = executable(
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
-  install_man('sys-utils/losetup.8')
+  manadocs += ['sys-utils/losetup.8.adoc']
   exes += exe
 endif
 
@@ -1393,7 +1400,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/zramctl.8')
+  manadocs += ['sys-utils/zramctl.8.adoc']
 endif
 
 exe = executable(
@@ -1406,7 +1413,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/prlimit.1')
+  manadocs += ['sys-utils/prlimit.1.adoc']
 endif
 
 exe = executable(
@@ -1420,7 +1427,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/lsns.8')
+  manadocs += ['sys-utils/lsns.8.adoc']
 endif
 
 opt = not get_option('build-mount').disabled()
@@ -1444,7 +1451,9 @@ exe2 = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += [exe, exe2]
-  install_man(mount_man)
+  manadocs += ['sys-utils/fstab.5.adoc',
+		    'sys-utils/mount.8.adoc',
+	            'sys-utils/umount.8.adoc']
 endif
 
 opt2 = opt and 'mount' in static_programs
@@ -1490,7 +1499,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/swapon.8')
+  manadocs += ['sys-utils/swapon.8.adoc']
 endif
 
 exe = executable(
@@ -1504,7 +1513,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/swapoff.8')
+  manlinks += 'sys-utils/swapoff.8.adoc'
 endif
 
 exe = executable(
@@ -1518,7 +1527,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/lscpu.1')
+  manadocs += ['sys-utils/lscpu.1.adoc']
 endif
 
 exe = executable(
@@ -1529,7 +1538,7 @@ exe = executable(
   install_dir : sbindir,
   install : true)
 exes += exe
-install_man('sys-utils/chcpu.8')
+manadocs += ['sys-utils/chcpu.8.adoc']
 
 exe = executable(
   'wdctl',
@@ -1540,7 +1549,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/wdctl.8')
+  manadocs += ['sys-utils/wdctl.8.adoc']
 endif
 
 opt = not get_option('build-mountpoint').disabled()
@@ -1553,7 +1562,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/mountpoint.1')
+  manadocs += ['sys-utils/mountpoint.1.adoc']
 endif
 
 opt = not get_option('build-fallocate').disabled()
@@ -1567,7 +1576,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/fallocate.1')
+  manadocs += ['sys-utils/fallocate.1.adoc']
 endif
 
 opt = not get_option('build-pivot_root').disabled()
@@ -1580,7 +1589,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/pivot_root.8')
+  manadocs += ['sys-utils/pivot_root.8.adoc']
 endif
 
 opt = not get_option('build-switch_root').disabled()
@@ -1596,7 +1605,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/switch_root.8')
+  manadocs += ['sys-utils/switch_root.8.adoc']
 endif
 
 opt = not get_option('build-unshare').disabled()
@@ -1610,7 +1619,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/unshare.1')
+  manadocs += ['sys-utils/unshare.1.adoc']
 endif
 
 opt = opt and 'unshare' in static_programs
@@ -1638,7 +1647,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/nsenter.1')
+  manadocs += ['sys-utils/nsenter.1.adoc']
 endif
 
 opt = opt and 'nsenter' in static_programs
@@ -1667,7 +1676,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/setpriv.1')
+  manadocs += ['sys-utils/setpriv.1.adoc']
 endif
 
 exe = executable(
@@ -1679,7 +1688,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('sys-utils/flock.1')
+manadocs += ['sys-utils/flock.1.adoc']
 
 opt = not get_option('build-lsirq').disabled()
 exe = executable(
@@ -1693,7 +1702,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/lsirq.1')
+  manadocs += ['sys-utils/lsirq.1.adoc']
 endif
 
 opt = not get_option('build-irqtop').disabled()
@@ -1710,7 +1719,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/irqtop.1')
+  manadocs += ['sys-utils/irqtop.1.adoc']
 endif
 
 opt = not get_option('build-ipcs').disabled()
@@ -1725,7 +1734,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('sys-utils/lsipc.1')
+  manadocs += ['sys-utils/lsipc.1.adoc']
 endif
 
 opt = build_hwclock
@@ -1741,6 +1750,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
+  manadocs += ['sys-utils/hwclock.8.adoc']
 endif
 
 exe = executable(
@@ -1750,7 +1760,7 @@ exe = executable(
   install_dir : sbindir,
   install : true)
 exes += exe
-install_man('disk-utils/mkfs.8')
+manadocs += ['disk-utils/mkfs.8.adoc']
 
 opt = not get_option('build-bfs').disabled()
 exe = executable(
@@ -1763,7 +1773,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('disk-utils/mkfs.bfs.8')
+  manadocs += ['disk-utils/mkfs.bfs.8.adoc']
 endif
 
 exe = executable(
@@ -1774,7 +1784,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('disk-utils/isosize.8')
+manadocs += ['disk-utils/isosize.8.adoc']
 
 exe = executable(
   'mkswap',
@@ -1788,7 +1798,7 @@ exe = executable(
   install : true)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('disk-utils/mkswap.8')
+  manadocs += ['disk-utils/mkswap.8.adoc']
 endif
 
 exe = executable(
@@ -1802,7 +1812,7 @@ exe = executable(
   install : true)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('disk-utils/swaplabel.8')
+  manadocs += ['disk-utils/swaplabel.8.adoc']
 endif
 
 opt = not get_option('build-fsck').disabled()
@@ -1819,7 +1829,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('disk-utils/fsck.8')
+  manadocs += ['disk-utils/fsck.8.adoc']
 endif
 
 opt = not get_option('build-minix').disabled()
@@ -1848,8 +1858,7 @@ exe3 = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += [exe, exe2, exe3]
-  install_man('disk-utils/mkfs.minix.8',
-              'disk-utils/fsck.minix.8')
+  manadocs += ['disk-utils/mkfs.minix.8.adoc','disk-utils/fsck.minix.8.adoc']
 endif
 
 opt = not get_option('build-cramfs').disabled()
@@ -1873,8 +1882,7 @@ exe2 = executable(
   build_by_default : opt)
 if not is_disabler(exe)
   exes += [exe, exe2]
-  install_man('disk-utils/mkfs.cramfs.8',
-              'disk-utils/fsck.cramfs.8')
+  manadocs += ['disk-utils/mkfs.cramfs.8.adoc','disk-utils/fsck.cramfs.8.adoc']
 endif
 
 opt = not get_option('build-raw').disabled()
@@ -1887,7 +1895,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('disk-utils/raw.8')
+  manadocs += ['disk-utils/raw.8.adoc']
 endif
 
 opt = not get_option('build-fdformat').disabled()
@@ -1901,7 +1909,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('disk-utils/fdformat.8')
+  manadocs += ['disk-utils/fdformat.8.adoc']
 endif
 
 exe = executable(
@@ -1911,7 +1919,7 @@ exe = executable(
   link_with : [lib_common],
   install_dir : sbindir,
   install : true)
-install_man('disk-utils/blockdev.8')
+manadocs += ['disk-utils/blockdev.8.adoc']
 
 opt = not get_option('build-fdisks').disabled()
 if opt and not have_dirfd and not have_ddfd
@@ -1999,9 +2007,9 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('disk-utils/fdisk.8',
-              'disk-utils/sfdisk.8',
-              'disk-utils/cfdisk.8')
+  manadocs += ['disk-utils/fdisk.8.adoc',
+		    'disk-utils/sfdisk.8.adoc',
+		    'disk-utils/cfdisk.8.adoc']
 endif
 
 opt = not get_option('build-partx').disabled()
@@ -2041,7 +2049,10 @@ exe4 = executable(
   build_by_default : opt)
 if opt
   exes += [exe, exe2, exe3, exe4]
-  install_man(addpart_delpart_man)
+  manadocs += ['disk-utils/addpart.8.adoc',
+		    'disk-utils/delpart.8.adoc',
+		    'disk-utils/resizepart.8.adoc',
+		    'disk-utils/partx.8.adoc']
 endif
 
 ############################################################
@@ -2058,7 +2069,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('term-utils/script.1')
+manadocs += ['term-utils/script.1.adoc']
 
 exe = executable(
   'test_script',
@@ -2083,7 +2094,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('term-utils/scriptlive.1')
+manadocs += ['term-utils/scriptlive.1.adoc']
 
 exe = executable(
   'scriptreplay',
@@ -2094,7 +2105,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('term-utils/scriptreplay.1')
+manadocs += ['term-utils/scriptreplay.1.adoc']
 
 opt = not get_option('build-agetty').disabled()
 exe = executable(
@@ -2108,7 +2119,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  install_man('term-utils/agetty.8')
+  manadocs += ['term-utils/agetty.8.adoc']
 endif
 
 opt = not get_option('build-setterm').disabled()
@@ -2123,7 +2134,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  install_man('term-utils/setterm.1')
+  manadocs += ['term-utils/setterm.1.adoc']
 endif
 
 opt = not get_option('build-mesg').disabled()
@@ -2137,7 +2148,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  install_man('term-utils/mesg.1')
+  manadocs += ['term-utils/mesg.1.adoc']
 endif
 
 opt = not get_option('build-wall').disabled()
@@ -2151,7 +2162,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  install_man('term-utils/wall.1')
+  manadocs += ['term-utils/wall.1.adoc']
 endif
 
 # chgrp tty $(DESTDIR)$(usrbin_execdir)/wall
@@ -2168,7 +2179,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  install_man('term-utils/write.1')
+  manadocs += ['term-utils/write.1.adoc']
 endif
 
 # chgrp tty $(DESTDIR)$(usrbin_execdir)/write
@@ -2187,7 +2198,7 @@ exe = executable(
   build_by_default : opt)
 if not is_disabler(exe)
   exes += exe
-  install_man('login-utils/login.1')
+  manadocs += ['login-utils/login.1.adoc']
 endif
 
 opt = not get_option('build-sulogin').disabled()
@@ -2203,7 +2214,7 @@ exe = executable(
   build_by_default : opt)
 if not is_disabler(exe)
   exes += exe
-  install_man('login-utils/sulogin.8')
+  manadocs += ['login-utils/sulogin.8.adoc']
 endif
 
 exe = executable(
@@ -2216,7 +2227,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('misc-utils/cal.1')
+manadocs += ['misc-utils/cal.1.adoc']
 
 opt = not get_option('build-logger').disabled()
 exe = executable(
@@ -2229,7 +2240,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/logger.1')
+  manadocs += ['misc-utils/logger.1.adoc']
 endif
 
 exe = executable(
@@ -2249,7 +2260,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('misc-utils/look.1')
+manadocs += ['misc-utils/look.1.adoc']
 
 exe = executable(
   'mcookie',
@@ -2259,7 +2270,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('misc-utils/mcookie.1')
+manadocs += ['misc-utils/mcookie.1.adoc']
 
 exe = executable(
   'namei',
@@ -2268,7 +2279,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('misc-utils/namei.1')
+manadocs += ['misc-utils/namei.1.adoc']
 
 exe = executable(
   'whereis',
@@ -2278,7 +2289,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
-install_man('misc-utils/whereis.1')
+manadocs += ['misc-utils/whereis.1.adoc']
 
 exe = executable(
   'lslocks',
@@ -2291,7 +2302,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/lslocks.8')
+  manadocs += ['misc-utils/lslocks.8.adoc']
 endif
 
 exe = executable(
@@ -2306,7 +2317,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/lsblk.8')
+  manadocs += ['misc-utils/lsblk.8.adoc']
 endif
 
 exe = executable(
@@ -2318,7 +2329,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/uuidgen.1')
+  manadocs += ['misc-utils/uuidgen.1.adoc']
 endif
 
 exe = executable(
@@ -2332,7 +2343,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/uuidparse.1')
+  manadocs += ['misc-utils/uuidparse.1.adoc']
 endif
 
 opt = build_uuidd
@@ -2357,6 +2368,7 @@ exe2 = executable(
   build_by_default : opt)
 if not is_disabler(exe)
   exes += [exe, exe2]
+  manadocs += ['misc-utils/uuidd.8.adoc']
 endif
 
 opt = build_libblkid
@@ -2371,7 +2383,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/blkid.8')
+  manadocs += ['misc-utils/blkid.8.adoc']
 endif
 
 opt = opt and 'blkid' in static_programs
@@ -2435,7 +2447,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/findfs.8')
+  manadocs += ['misc-utils/findfs.8.adoc']
 endif
 
 exe = executable(
@@ -2449,7 +2461,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/wipefs.8')
+  manadocs += ['misc-utils/wipefs.8.adoc']
 endif
 
 exe = executable(
@@ -2464,7 +2476,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/findmnt.8')
+  manadocs += ['misc-utils/findmnt.8.adoc']
 endif
 
 exe = executable(
@@ -2475,7 +2487,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/kill.1')
+  manadocs += ['misc-utils/kill.1.adoc']
 endif
 
 opt = not get_option('build-rename').disabled()
@@ -2488,7 +2500,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/rename.1')
+  manadocs += ['misc-utils/rename.1.adoc']
 endif
 
 exe = executable(
@@ -2499,6 +2511,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
+manadocs += ['misc-utils/getopt.1.adoc']
 
 exe = executable(
   'fincore',
@@ -2510,7 +2523,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/fincore.1')
+  manadocs += ['misc-utils/fincore.1.adoc']
 endif
 
 exe = executable(
@@ -2523,7 +2536,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  install_man('misc-utils/hardlink.1')
+  manadocs += ['misc-utils/hardlink.1.adoc']
 endif
 
 exe = executable(
@@ -2579,10 +2592,10 @@ exe4 = executable(
 
 if opt and not is_disabler(exe)
   exes += [exe, exe2, exe3, exe4]
-  install_man('schedutils/chrt.1',
-              'schedutils/ionice.1',
-              'schedutils/taskset.1',
-	      'schedutils/uclampset.1')
+  manadocs += ['schedutils/chrt.1.adoc',
+               'schedutils/ionice.1.adoc',
+               'schedutils/taskset.1.adoc',
+	       'schedutils/uclampset.1.adoc']
 endif
 
 ############################################################
@@ -3004,3 +3017,49 @@ run_target(
              '--parallel',
              '--nonroot'],
   depends : exes)
+
+
+manadocs += ['lib/terminal-colors.d.5.adoc']
+manadocs += ['libblkid/libblkid.3.adoc']
+
+if build_libuuid
+  manadocs += [
+    'libuuid/man/uuid.3.adoc',
+    'libuuid/man/uuid_clear.3.adoc',
+    'libuuid/man/uuid_compare.3.adoc',
+    'libuuid/man/uuid_copy.3.adoc',
+    'libuuid/man/uuid_generate.3.adoc',
+    'libuuid/man/uuid_is_null.3.adoc',
+    'libuuid/man/uuid_parse.3.adoc',
+    'libuuid/man/uuid_time.3.adoc',
+    'libuuid/man/uuid_unparse.3.adoc']
+  manlinks += [
+    'libuuid/man/uuid_generate_random.3',
+    'libuuid/man/uuid_generate_time.3',
+    'libuuid/man/uuid_generate_time_safe.3']
+endif
+
+asciidoctor = find_program('asciidoctor')
+if asciidoctor.found()
+  foreach adoc : manadocs
+    name = adoc.split('/')[-1]
+    page = name.split('.adoc')[0]
+    section = page.split('.')[-1]
+    mandirn = join_paths(mandir, 'man' + section)
+    input = adoc
+
+    custom_target(
+      page,
+      command : [ asciidoctor,
+	  '-b', 'manpage',
+	  '-a', 'VERSION=' + meson.project_version(),
+	  '-a', 'ADJTIME_PATH=/etc/adjtime',
+	  '--base-dir=' + meson.current_source_dir(),
+          '--destination-dir=' + meson.current_build_dir(),
+	  '@INPUT@'],
+      input : input,
+      output : [page],
+      install: true,
+      install_dir : mandirn)
+  endforeach
+endif

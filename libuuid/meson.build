@@ -42,19 +42,3 @@ pkgconfig.generate(lib_uuid,
                    description : 'Universally unique id library',
                    subdirs : 'uuid',
                    version : pc_version)
-
-if build_libuuid
-  install_man(
-    'man/uuid.3',
-    'man/uuid_clear.3',
-    'man/uuid_compare.3',
-    'man/uuid_copy.3',
-    'man/uuid_generate.3',
-    'man/uuid_is_null.3',
-    'man/uuid_parse.3',
-    'man/uuid_time.3',
-    'man/uuid_unparse.3',
-    'man/uuid_generate_random.3',
-    'man/uuid_generate_time.3',
-    'man/uuid_generate_time_safe.3')
-endif

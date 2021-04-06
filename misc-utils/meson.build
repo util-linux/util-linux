@@ -73,12 +73,6 @@ if build_uuidd
   install_data(
     uuidd_socket,
     install_dir : systemdsystemunitdir)
-
-  uuidd_8 = configure_file(
-    input : 'uuidd.8.in',
-    output : 'uuidd.8',
-    configuration : conf)
-  install_man(uuidd_8)
 endif
 
 blkid_sources = files(
@@ -111,12 +105,6 @@ rename_sources = files(
 getopt_sources = files(
   'getopt.c',
 )
-
-getopt_1 = configure_file(
-  input : 'getopt.1.in',
-  output : 'getopt.1',
-  configuration : conf)
-install_man(getopt_1)
 
 install_data(
   'getopt-example.bash',

@@ -115,13 +115,6 @@ mount_sources = files(
 umount_sources = files(
   'umount.c',
 )
-
-mount_man = files(
-  'fstab.5',
-  'mount.8',
-  'umount.8',
-)
-
 swapon_sources = files(
   'swapon.c',
   'swapon-common.c',
@@ -236,17 +229,3 @@ install_data(fstrim_service,
              install_dir : systemdsystemunitdir)
 install_data('fstrim.timer',
              install_dir : systemdsystemunitdir)
-
-man = configure_file(
-  input : 'rtcwake.8.in',
-  output : 'rtcwake.8',
-  configuration : conf)
-install_man(man)
-
-if build_hwclock
-  man = configure_file(
-    input : 'hwclock.8.in',
-    output : 'hwclock.8',
-    configuration : conf)
-  install_man(man)
-endif

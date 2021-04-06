@@ -95,6 +95,3 @@ lib_tcolors = static_library(
   lib_color_sources,
   include_directories : dir_include,
   dependencies : curses_libs)
-
-install_man(
-  'terminal-colors.d.5')

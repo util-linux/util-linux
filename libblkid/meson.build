@@ -141,7 +141,3 @@ pkgconfig.generate(lib_blkid,
                    description : 'Block device id library',
                    subdirs : 'blkid',
                    version : pc_version)
-
-if build_libblkid
-  install_man('libblkid.3')
-endif
