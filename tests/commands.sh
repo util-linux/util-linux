@@ -103,6 +103,7 @@ TS_CMD_SWAPOFF=${TS_CMD_SWAPOFF:-"${ts_commandsdir}swapoff"}
 TS_CMD_SWAPON=${TS_CMD_SWAPON:-"${ts_commandsdir}swapon"}
 TS_CMD_UL=${TS_CMD_UL-"${ts_commandsdir}ul"}
 TS_CMD_UMOUNT=${TS_CMD_UMOUNT:-"${ts_commandsdir}umount"}
+TS_CMD_UNSHARE=${TS_CMD_UNSHARE:-"${ts_commandsdir}unshare"}
 TS_CMD_UTMPDUMP=${TS_CMD_UTMPDUMP-"${ts_commandsdir}utmpdump"}
 TS_CMD_UUIDD=${TS_CMD_UUIDD-"${ts_commandsdir}uuidd"}
 TS_CMD_UUIDGEN=${TS_CMD_UUIDGEN-"${ts_commandsdir}uuidgen"}

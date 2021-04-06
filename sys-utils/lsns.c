@@ -38,6 +38,10 @@
 #include <linux/net_namespace.h>
 #endif
 
+#ifdef HAVE_LINUX_NSFS_H
+#include <linux/nsfs.h>
+#endif
+
 #include "pathnames.h"
 #include "nls.h"
 #include "xalloc.h"
@@ -83,6 +87,8 @@ enum {
 	COL_USER,
 	COL_NETNSID,
 	COL_NSFS,
+	COL_PNS,		/* parent namespace */
+	COL_ONS,		/* owner namespace */
 };
 
 /* column names */
@@ -106,7 +112,9 @@ static const struct colinfo infos[] = {
 	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("UID of the PID"), SCOLS_JSON_NUMBER},
 	[COL_USER]    = { "USER",    0, 0, N_("username of the PID")},
 	[COL_NETNSID] = { "NETNSID", 0, SCOLS_FL_RIGHT, N_("namespace ID as used by network subsystem")},
-	[COL_NSFS]    = { "NSFS",    0, SCOLS_FL_WRAP, N_("nsfs mountpoint (usually used network subsystem)")}
+	[COL_NSFS]    = { "NSFS",    0, SCOLS_FL_WRAP, N_("nsfs mountpoint (usually used network subsystem)")},
+	[COL_PNS]     = { "PNS",   10, SCOLS_FL_RIGHT, N_("parent namespace identifier (inode number)"), SCOLS_JSON_NUMBER },
+	[COL_ONS]     = { "ONS",   10, SCOLS_FL_RIGHT, N_("owner namespace identifier (inode number)"), SCOLS_JSON_NUMBER },
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
@@ -139,6 +147,8 @@ struct lsns_namespace {
 	int type;			/* LSNS_* */
 	int nprocs;
 	int netnsid;
+	ino_t parentid;
+	ino_t ownerid;
 
 	struct lsns_process *proc;
 
@@ -154,6 +164,9 @@ struct lsns_process {
 	uid_t uid;
 
 	ino_t            ns_ids[ARRAY_SIZE(ns_names)];
+	ino_t            ns_pids[ARRAY_SIZE(ns_names)];
+	ino_t            ns_oids[ARRAY_SIZE(ns_names)];
+
 	struct list_head ns_siblings[ARRAY_SIZE(ns_names)];
 
 	struct list_head processes;	/* list of processes */
@@ -251,7 +264,7 @@ static inline const struct colinfo *get_column_info(unsigned num)
 	return &infos[ get_column_id(num) ];
 }
 
-static int get_ns_ino(int dir, const char *nsname, ino_t *ino)
+static int get_ns_ino(int dir, const char *nsname, ino_t *ino, ino_t *pino, ino_t *oino)
 {
 	struct stat st;
 	char path[16];
@@ -261,6 +274,47 @@ static int get_ns_ino(int dir, const char *nsname, ino_t *ino)
 	if (fstatat(dir, path, &st, 0) != 0)
 		return -errno;
 	*ino = st.st_ino;
+
+	*pino = 0;
+	*oino = 0;
+
+#ifdef HAVE_LINUX_NSFS_H
+	int fd, pfd, ofd;
+	fd = openat(dir, path, 0);
+	if (fd < 0)
+		return -errno;
+	if (strcmp(nsname, "pid") == 0 || strcmp(nsname, "user") == 0) {
+		if ((pfd = ioctl(fd, NS_GET_PARENT)) < 0) {
+			if (errno == EPERM)
+				goto user;
+			close(fd);
+			return -errno;
+		}
+		if (fstat(pfd, &st) < 0) {
+			close(pfd);
+			close(fd);
+			return -errno;
+		}
+		*pino = st.st_ino;
+		close(pfd);
+	}
+ user:
+	if ((ofd = ioctl(fd, NS_GET_USERNS)) < 0) {
+		if (errno == EPERM)
+			goto out;
+		close(fd);
+		return -errno;
+	}
+	if (fstat(ofd, &st) < 0) {
+		close(ofd);
+		close(fd);
+		return -errno;
+	}
+	*oino = st.st_ino;
+	close(ofd);
+ out:
+	close(fd);
+#endif
 	return 0;
 }
 
@@ -466,7 +520,8 @@ static int read_process(struct lsns *ls, pid_t pid)
 		if (!ls->fltr_types[i])
 			continue;
 
-		rc = get_ns_ino(dirfd(dir), ns_names[i], &p->ns_ids[i]);
+		rc = get_ns_ino(dirfd(dir), ns_names[i], &p->ns_ids[i],
+				&p->ns_pids[i], &p->ns_oids[i]);
 		if (rc && rc != -EACCES && rc != -ENOENT)
 			goto done;
 		if (i == LSNS_ID_NET)
@@ -538,7 +593,8 @@ static int namespace_has_process(struct lsns_namespace *ns, pid_t pid)
 	return 0;
 }
 
-static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino)
+static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino,
+					    ino_t parent_ino, ino_t owner_ino)
 {
 	struct lsns_namespace *ns = xcalloc(1, sizeof(*ns));
 
@@ -552,6 +608,8 @@ static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino
 
 	ns->type = type;
 	ns->id = ino;
+	ns->parentid = parent_ino;
+	ns->ownerid = owner_ino;
 
 	list_add_tail(&ns->namespaces, &ls->namespaces);
 	return ns;
@@ -617,7 +675,8 @@ static int read_namespaces(struct lsns *ls)
 			if (proc->ns_ids[i] == 0)
 				continue;
 			if (!(ns = get_namespace(ls, proc->ns_ids[i]))) {
-				ns = add_namespace(ls, i, proc->ns_ids[i]);
+				ns = add_namespace(ls, i, proc->ns_ids[i],
+						   proc->ns_pids[i], proc->ns_oids[i]);
 				if (!ns)
 					return -ENOMEM;
 			}
@@ -760,6 +819,12 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 			break;
 		case COL_NSFS:
 			nsfs_xasputs(&str, ns, ls->tab, ls->no_wrap ? ',' : '\n');
+			break;
+		case COL_PNS:
+			xasprintf(&str, "%ju", (uintmax_t)ns->parentid);
+			break;
+		case COL_ONS:
+			xasprintf(&str, "%ju", (uintmax_t)ns->ownerid);
 			break;
 		default:
 			break;
