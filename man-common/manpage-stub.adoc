@@ -60,7 +60,7 @@ mailto:john.doe@example.com[John Doe]
 
 *foo*(1),
 *bar*(1)
- 
+
 include::man-common/bugreports.adoc[]
 
 include::man-common/footer.adoc[]
