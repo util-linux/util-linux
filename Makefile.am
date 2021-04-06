@@ -28,12 +28,6 @@ LDADD = $(LTLIBINTL)
 
 LIB_FUZZING_ENGINE ?= -fsanitize=fuzzer
 
-# Automake (at least up to 1.10) mishandles dist_man_MANS inside conditionals.
-# Unlike with other dist primaries, the files are not distributed if the
-# conditional is false.
-# Work the bug around until it is fixed:
-dist_noinst_DATA = $(dist_man_MANS)
-
 # Paths to in-tree libraries (use ul_ prefix to avoid possible collisions) Note
 # that blkid.h, libmount.h, libfdisk.h and libsmartcols.h are generated and
 # stored in build dirs.
@@ -52,7 +46,6 @@ noinst_PROGRAMS =
 EXTRA_LTLIBRARIES =
 usrbin_exec_PROGRAMS =
 usrsbin_exec_PROGRAMS =
-dist_man_MANS =
 man_MANS =
 pkgconfig_DATA =
 usrlib_exec_LTLIBRARIES =
@@ -196,17 +189,18 @@ $(PATHFILES): Makefile
 	@ mv $@.tmp $@
 
 
+CLEANFILES += $(MANPAGES) $(MANLINKS)
+EXTRA_DIST += $(MANPAGES:=.adoc) $(MANPAGES_EXTRA)
+
+if ENABLE_ASCIIDOC
+man_MANS += $(MANPAGES) $(MANLINKS)
+
+$(MANPAGES): $(MANPAGES_EXTRA) Makefile
+
 asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-b manpage \
 	-a 'VERSION=$(VERSION)' \
 	-a 'ADJTIME_PATH=$(ADJTIME_PATH)'
-
-dist_man_MANS += $(MANPAGES) $(MANLINKS)
-
-CLEANFILES += $(dist_man_MANS)
-EXTRA_DIST += $(MANPAGES:=.adoc) $(MANPAGES_EXTRA)
-
-$(MANPAGES): $(MANPAGES_EXTRA) Makefile
 
 SUFFIXES = .1.adoc .3.adoc .5.adoc .8.adoc .1 .3 .5 .8
 .1.adoc.1 .3.adoc.3 .5.adoc.5 .8.adoc.8:
@@ -216,8 +210,11 @@ SUFFIXES = .1.adoc .3.adoc .5.adoc .8.adoc .1 .3 .5 .8
 				    --destination-dir $(abs_builddir)/$$(dirname $@) $<
 
 $(MANLINKS): $(MANPAGES)
+gen-man: $(man_MANS)
 
-gen-man: $(dist_man_MANS)
+else
+gen-man:
+endif
 
 
 # Arrange so that .tarball-version appears only in the distribution
@@ -282,6 +279,7 @@ DISTCHECK_CONFIGURE_FLAGS = \
 	--with-python \
 	--with-bashcompletiondir=$$dc_install_base/$(bashcompletiondir) \
 	--with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir)
+
 
 BUILT_SOURCES = .version
 .version:

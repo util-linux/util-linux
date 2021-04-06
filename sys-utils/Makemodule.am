@@ -222,7 +222,10 @@ if ARCH_HPPA
 SETARCH_LINKS += parisc parisc64 parisc32
 endif
 
+if ENABLE_ASCIIDOC
 SETARCH_MAN_LINKS = $(addprefix sys-utils/,$(SETARCH_LINKS:=.8))
+endif
+
 man_MANS += $(SETARCH_MAN_LINKS)
 CLEANFILES += $(SETARCH_MAN_LINKS)
 

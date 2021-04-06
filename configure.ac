@@ -232,7 +232,23 @@ PKG_INSTALLDIR(['${usrlib_execdir}/pkgconfig'])
 
 GTK_DOC_CHECK([1.10])
 AC_PATH_PROG([XSLTPROC], [xsltproc])
-AC_PATH_PROG([ASCIIDOCTOR], [asciidoctor])
+
+
+AC_ARG_ENABLE([asciidoc],
+  AS_HELP_STRING([--disable-asciidoc], [do not generate man pages from asciidoc]),
+  [], [enable_asciidoc=check]
+)
+
+AS_IF([test "x$enable_asciidoc" = xno], [
+  AM_CONDITIONAL([ENABLE_ASCIIDOC], [false])
+], [
+  AC_PATH_PROG([ASCIIDOCTOR], [asciidoctor])
+  AS_IF([test "x$enable_asciidoc" = xyes && "x$ASCIIDOCTOR" = x], [
+    AC_MSG_ERROR([AsciiDoc requested but asciidoctor not found])
+  ])
+  AM_CONDITIONAL([ENABLE_ASCIIDOC], [test  "x$ASCIIDOCTOR" != x])
+])
+
 
 linux_os=no
 bsd_os=no
