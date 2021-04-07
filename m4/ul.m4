@@ -325,6 +325,38 @@ AC_DEFUN([UL_REQUIRES_COMPILE], [
   fi
 ])
 
+
+dnl UL_REQUIRES_PROGRAM(NAME, PROGVAR, PROGRAM, DESC, [VARSUFFIX=$1])
+dnl
+dnl Modifies $build_<name> variable according to $enable_<name> and
+dnl ability compile AC_PATH_PROG().
+dnl
+dnl The <desc> is description used for warning/error dnl message (e.g. "foo support").
+dnl
+dnl The default <name> for $build_ and $enable_ could be overwrited by option $5.
+AC_DEFUN([UL_REQUIRES_PROGRAM], [
+  m4_define([suffix], m4_default([$5],$1))
+
+  if test "x$[build_]suffix" != xno; then
+
+    AC_PATH_PROG([$2], [$3])
+
+    case $[enable_]suffix:x$$2 in #(
+    no:*)
+      [build_]suffix=no ;;
+    yes:x)
+      AC_MSG_ERROR([$1 selected, but required $3 not available]);;
+    yes:x*)
+      [build_]suffix=yes ;;
+    check:x)
+      AC_MSG_WARN([$3 not found; not building $4])
+      [build_]suffix=no ;;
+    check:x*)
+      [build_]suffix=yes ;;
+    esac
+  fi
+])
+
 dnl
 dnl UL_CONFLICTS_BUILD(NAME, ANOTHER, ANOTHERDESC, [VARSUFFIX=$1])
 dnl

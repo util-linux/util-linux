@@ -234,22 +234,6 @@ GTK_DOC_CHECK([1.10])
 AC_PATH_PROG([XSLTPROC], [xsltproc])
 
 
-AC_ARG_ENABLE([asciidoc],
-  AS_HELP_STRING([--disable-asciidoc], [do not generate man pages from asciidoc]),
-  [], [enable_asciidoc=check]
-)
-
-AS_IF([test "x$enable_asciidoc" = xno], [
-  AM_CONDITIONAL([ENABLE_ASCIIDOC], [false])
-], [
-  AC_PATH_PROG([ASCIIDOCTOR], [asciidoctor])
-  AS_IF([test "x$enable_asciidoc" = xyes && "x$ASCIIDOCTOR" = x], [
-    AC_MSG_ERROR([AsciiDoc requested but asciidoctor not found])
-  ])
-  AM_CONDITIONAL([ENABLE_ASCIIDOC], [test  "x$ASCIIDOCTOR" != x])
-])
-
-
 linux_os=no
 bsd_os=no
 AS_CASE([${host_os}],
@@ -744,9 +728,18 @@ AC_ARG_ENABLE([all-programs],
 AS_CASE([$enable_all_programs],
   [yes], [AC_MSG_WARN([force to build all programs by default])
 	  ul_default_estate=check],
-  [no],  [AC_MSG_WARN([disable all programs by default])
+  [no],  [AC_MSG_WARN([disable all programs and man pages by default])
 	  ul_default_estate=no]
 )
+
+
+AC_ARG_ENABLE([asciidoc],
+  AS_HELP_STRING([--disable-asciidoc], [do not generate man pages from asciidoc]),
+  [], [UL_DEFAULT_ENABLE([asciidoc], [check])]
+)
+UL_BUILD_INIT([asciidoc])
+UL_REQUIRES_PROGRAM([asciidoc], [ASCIIDOCTOR], [asciidoctor], [man pages])
+AM_CONDITIONAL([ENABLE_ASCIIDOC], [test "x$build_asciidoc" = xyes])
 
 
 AX_CHECK_TLS
@@ -2660,6 +2653,8 @@ AC_MSG_RESULT([
 	libeconf support:  ${have_econf}
 	Btrfs support:     ${have_btrfs}
 	Wide-char support: ${build_widechar}
+
+	Manual pages:      ${build_asciidoc}
 
 	warnings:
 
