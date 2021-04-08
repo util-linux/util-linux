@@ -240,7 +240,8 @@ checkconfig:
 		| xargs $(top_srcdir)/tools/checkconfig.sh $(top_srcdir)
 
 checkmans:
-	@$(top_srcdir)/tools/checkmans.sh
+	@$(top_srcdir)/tools/adoc-missing.sh
+	@$(top_srcdir)/tools/adoc-repeat.sh
 
 checkxalloc:
 	@ $(top_srcdir)/tools/checkxalloc.sh
