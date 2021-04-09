@@ -1269,7 +1269,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -S, --source <string>  the device to mount (by name, maj:min, \n"
 	        "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"), out);
 	fputs(_(" -T, --target <path>    the path to the filesystem to use\n"), out);
-	fputs(_("     --tree             enable tree format output is possible\n"), out);
+	fputs(_("     --tree             enable tree format output if possible\n"), out);
 	fputs(_(" -M, --mountpoint <dir> the mountpoint directory\n"), out);
 	fputs(_(" -t, --types <list>     limit the set of filesystems by FS types\n"), out);
 	fputs(_(" -U, --uniq             ignore filesystems with duplicate target\n"), out);
