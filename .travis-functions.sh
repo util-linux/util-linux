@@ -311,6 +311,7 @@ function travis_before_script
 {
 	set -o xtrace
 
+	git clean -xdf
 	./autogen.sh
 	ret=$?
 
