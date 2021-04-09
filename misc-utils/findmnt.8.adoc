@@ -148,6 +148,9 @@ Limit the set of printed filesystems. More than one type may be specified in a c
 *--tree*::
 Enable tree-like output if possible. The options is silently ignored for tables where is missing child-parent relation (e.g., fstab).
 
+*--shadowed*::
+Print only filesystems over-mounted by another filesystem.
+
 *-U*, *--uniq*::
 Ignore filesystems with duplicate mount targets, thus effectively skipping over-mounted mount points.
 
