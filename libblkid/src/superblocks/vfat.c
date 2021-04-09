@@ -250,24 +250,6 @@ static int fat_valid_superblock(blkid_probe pr,
 	if (cluster_count)
 		*cluster_count = __cluster_count;
 
-	if (blkid_probe_is_wholedisk(pr)) {
-		/* OK, seems like FAT, but it's possible that we found boot
-		 * sector with crazy FAT-like stuff (magic strings, media,
-		 * etc..) before MBR. Let's make sure that there is no MBR with
-		 * usable partition. */
-		unsigned char *buf = (unsigned char *) ms;
-
-		if (mbr_is_valid_magic(buf)) {
-			struct dos_partition *p0 = mbr_get_partition(buf, 0);
-
-			if (dos_partition_get_size(p0) != 0 &&
-			    (p0->boot_ind == 0 || p0->boot_ind == 0x80)) {
-				DBG(LOWPROBE, ul_debug("\tMBR detected"));
-				return 0;
-			}
-		}
-	}
-
 	if (blkid_probe_is_bitlocker(pr))
 		return 0;
 
