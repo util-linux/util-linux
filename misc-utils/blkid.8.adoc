@@ -58,6 +58,11 @@ Perform a garbage collection pass on the blkid cache to remove devices which no 
 *-h*, *--help*::
 Display a usage message and exit.
 
+*-H*, *--hint* _setting_::
+Set probing hint. The hints are optional way how to force probing functions to
+check for example another location. The currently supported is
+"session_offset=_number_" to set session offset on multi-session UDF.
+
 *-i*, *--info*::
 Display information about I/O Limits (aka I/O topology). The 'export' output format is automatically enabled. This option can be used together with the *--probe* option.
 
