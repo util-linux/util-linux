@@ -14,7 +14,7 @@ translationproject.org and po4a) in the util-linux project. Please, contact
 Mario Blättermann if you're want to help with the conversion from
 manpages-l10n.
                                                 
-The old harlink(1) implementation from Jakub Jelinek (originally for Fedora)
+The old hardlink(1) implementation from Jakub Jelinek (originally for Fedora)
 has been replaced by a new implementation from Julian Andres Klode (originally
 for Debian). The new implementation does not support -f option to force
 hardlinks creation between filesystem.          
