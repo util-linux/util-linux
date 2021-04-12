@@ -214,6 +214,7 @@ fallback:
 static void show_sched_info(struct chrt_ctl *ctl)
 {
 	if (ctl->all_tasks) {
+#ifdef __linux__
 		pid_t tid;
 		struct proc_tasks *ts = proc_open_tasks(ctl->pid);
 
@@ -224,6 +225,9 @@ static void show_sched_info(struct chrt_ctl *ctl)
 			show_sched_pid_info(ctl, tid);
 
 		proc_close_tasks(ts);
+#else
+		err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
+#endif
 	} else
 		show_sched_pid_info(ctl, ctl->pid);
 }
@@ -320,6 +324,7 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 static void set_sched(struct chrt_ctl *ctl)
 {
 	if (ctl->all_tasks) {
+#ifdef __linux__
 		pid_t tid;
 		struct proc_tasks *ts = proc_open_tasks(ctl->pid);
 
@@ -331,7 +336,9 @@ static void set_sched(struct chrt_ctl *ctl)
 				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
 
 		proc_close_tasks(ts);
-
+#else
+		err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
+#endif
 	} else if (set_sched_one(ctl, ctl->pid) == -1)
 		err(EXIT_FAILURE, _("failed to set pid %d's policy"), ctl->pid);
 
