@@ -584,6 +584,7 @@ static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 	return 0;
 }
 
+#ifdef __linux__
 static int get_nprocs(const uid_t uid)
 {
 	int nprocs = 0;
@@ -598,6 +599,7 @@ static int get_nprocs(const uid_t uid)
 	proc_close_processes(proc);
 	return nprocs;
 }
+#endif
 
 static const char *get_pwd_method(const char *str, const char **next, unsigned int *sz)
 {
@@ -889,7 +891,10 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 #endif
 			break;
 		case COL_NPROCS:
+#ifdef __linux__
+
 			xasprintf(&user->nprocs, "%d", get_nprocs(pwd->pw_uid));
+#endif
 			break;
 		default:
 			/* something went very wrong here */
@@ -1210,7 +1215,10 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 #endif
 			break;
 		case COL_NPROCS:
+#ifdef __linux__
+
 			rc = scols_line_set_data(ln, n, user->nprocs);
+#endif
 			break;
 		default:
 			/* something went very wrong here */
@@ -1622,7 +1630,9 @@ int main(int argc, char *argv[])
 
 	} else if (ncolumns == 2) {
 		/* default columns */
+#ifdef __linux__
 		add_column(columns, ncolumns++, COL_NPROCS);
+#endif
 		add_column(columns, ncolumns++, COL_PWDLOCK);
 		add_column(columns, ncolumns++, COL_PWDDENY);
 		add_column(columns, ncolumns++, COL_LAST_LOGIN);
