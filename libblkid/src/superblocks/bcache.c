@@ -28,8 +28,23 @@ struct bcache_super_block {
 	uint8_t			uuid[16];	/* device identifier */
 } __attribute__((packed));
 
+struct bcachefs_super_block {
+	uint8_t		csum[16];
+	uint16_t	version;
+	uint16_t	version_min;
+	uint16_t	pad[2];
+	uint8_t		magic[16];
+	uint8_t		uuid[16];
+	uint8_t		user_uuid[16];
+	uint8_t		label[SB_LABEL_SIZE];
+	uint64_t	offset;
+	uint64_t	seq;
+	uint16_t	block_size;
+}  __attribute__((packed));
+
 /* magic string */
 #define BCACHE_SB_MAGIC     "\xc6\x85\x73\xf6\x4e\x1a\x45\xca\x82\x65\xf5\x7f\x48\xba\x6d\x81"
+#define BCACHEFS_SB_MAGIC   "\x18\x00\x18\x00\x00\x00\x00\x00\xc6\x85\x73\xf6\x4e\x1a\x45\xca"
 /* magic string len */
 #define BCACHE_SB_MAGIC_LEN (sizeof(BCACHE_SB_MAGIC) - 1)
 /* super block offset */
@@ -42,6 +57,8 @@ struct bcache_super_block {
 #define BCACHE_SB_CSUMMED_START 8
 /* end of checksummed data within superblock */
 #define BCACHE_SB_CSUMMED_END 208
+/* granularity of offset and length fields within superblock */
+#define BCACHEFS_SECTOR_SIZE   512
 
 static int bcache_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 		const struct bcache_super_block *bcs)
@@ -74,6 +91,28 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 	return BLKID_PROBE_OK;
 }
 
+static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
+{
+	struct bcachefs_super_block *bcs;
+	uint64_t blocksize;
+
+	bcs = blkid_probe_get_sb(pr, mag, struct bcachefs_super_block);
+	if (!bcs)
+		return errno ? -errno : BLKID_PROBE_NONE;
+
+	if (le64_to_cpu(bcs->offset) != BCACHE_SB_OFF / BCACHEFS_SECTOR_SIZE)
+		return BLKID_PROBE_NONE;
+
+	blkid_probe_set_uuid(pr, bcs->user_uuid);
+	blkid_probe_set_label(pr, bcs->label, sizeof(bcs->label));
+	blkid_probe_sprintf_version(pr, "%d", le16_to_cpu(bcs->version));
+	blocksize = le16_to_cpu(bcs->block_size);
+	blkid_probe_set_block_size(pr, blocksize * BCACHEFS_SECTOR_SIZE);
+	blkid_probe_set_wiper(pr, 0, BCACHE_SB_OFF);
+
+	return BLKID_PROBE_OK;
+}
+
 const struct blkid_idinfo bcache_idinfo =
 {
 	.name		= "bcache",
@@ -92,3 +131,25 @@ const struct blkid_idinfo bcache_idinfo =
 	}
 };
 
+const struct blkid_idinfo bcachefs_idinfo =
+{
+	.name		= "bcachefs",
+	.usage		= BLKID_USAGE_FILESYSTEM,
+	.probefunc	= probe_bcachefs,
+	.minsz		= 256 * BCACHEFS_SECTOR_SIZE,
+	.magics		= {
+		{
+			.magic = BCACHE_SB_MAGIC,
+			.len   = BCACHE_SB_MAGIC_LEN,
+			.kboff = BCACHE_SB_KBOFF,
+			.sboff = BCACHE_SB_MAGIC_OFF,
+		},
+		{
+			.magic = BCACHEFS_SB_MAGIC,
+			.len   = BCACHE_SB_MAGIC_LEN,
+			.kboff = BCACHE_SB_KBOFF,
+			.sboff = BCACHE_SB_MAGIC_OFF,
+		},
+		{ NULL }
+	}
+};
