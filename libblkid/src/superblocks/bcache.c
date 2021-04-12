@@ -15,10 +15,6 @@
 #include "crc64.h"
 
 #define SB_LABEL_SIZE      32
-#define SB_JOURNAL_BUCKETS 256U
-
-#define node(i, j)         ((i)->d + (j))
-#define end(i)             node(i, le16_to_cpu((i)->keys))
 
 /*
  * The bcache_super_block is heavily simplified version of struct cache_sb in kernel.
