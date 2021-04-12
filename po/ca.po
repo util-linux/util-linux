@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-04-09 09:15+0200\n"
+"POT-Creation-Date: 2021-04-12 09:59+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -71,7 +71,7 @@ msgstr "Massa arguments.\n"
 #: sys-utils/setpriv.c:645 sys-utils/swapon.c:374 sys-utils/swapon.c:517
 #: sys-utils/switch_root.c:174 sys-utils/unshare.c:112 sys-utils/unshare.c:127
 #: sys-utils/wdctl.c:361 sys-utils/zramctl.c:517 term-utils/agetty.c:2965
-#: term-utils/mesg.c:143 term-utils/script.c:382 term-utils/scriptlive.c:256
+#: term-utils/mesg.c:154 term-utils/script.c:382 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
@@ -886,7 +886,7 @@ msgstr "id invàlid : %s\n"
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:75 sys-utils/nsenter.c:166
 #: sys-utils/nsenter.c:170 sys-utils/swapon.c:522 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
-#: term-utils/mesg.c:145
+#: term-utils/mesg.c:144 term-utils/mesg.c:156
 #, fuzzy, c-format
 msgid "stat of %s failed"
 msgstr "(Fitxer següent: %s)"
@@ -9721,120 +9721,127 @@ msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
 #: misc-utils/blkid.c:93
 #, fuzzy
+msgid " -H, --hint <value>         set hint for probing function\n"
+msgstr ""
+"  -s, --shell=intèrpret_ordres Estableix els mateixos convenis quant a les\n"
+"                               cometes que l'interpret d'ordres indicat\n"
+
+#: misc-utils/blkid.c:94
+#, fuzzy
 msgid " -S, --size <size>          overwrite device size\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/blkid.c:94
+#: misc-utils/blkid.c:95
 #, fuzzy
 msgid " -O, --offset <offset>      probe at the given offset\n"
 msgstr ""
 "  -s, --shell=intèrpret_ordres Estableix els mateixos convenis quant a les\n"
 "                               cometes que l'interpret d'ordres indicat\n"
 
-#: misc-utils/blkid.c:95
+#: misc-utils/blkid.c:96
 #, fuzzy
 msgid " -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"
 msgstr "   l   llista els tipus de sistemes de fitxers coneguts"
 
-#: misc-utils/blkid.c:96
+#: misc-utils/blkid.c:97
 #, fuzzy
 msgid " -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
 msgstr "   l   llista els tipus de sistemes de fitxers coneguts"
 
-#: misc-utils/blkid.c:97
+#: misc-utils/blkid.c:98
 #, fuzzy
 msgid " -D, --no-part-details      don't print info from partition table\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: misc-utils/blkid.c:103
+#: misc-utils/blkid.c:104
 msgid "<size> and <offset>"
 msgstr ""
 
-#: misc-utils/blkid.c:105
+#: misc-utils/blkid.c:106
 #, fuzzy
 msgid " <dev> specify device(s) to probe (default: all devices)\n"
 msgstr "  -h, --help                   Aquesta petita guia d'ús\n"
 
-#: misc-utils/blkid.c:237
+#: misc-utils/blkid.c:238
 msgid "(mounted, mtpt unknown)"
 msgstr ""
 
-#: misc-utils/blkid.c:239
+#: misc-utils/blkid.c:240
 #, fuzzy
 msgid "(in use)"
 msgstr "Marca'l en ús"
 
-#: misc-utils/blkid.c:241
+#: misc-utils/blkid.c:242
 #, fuzzy
 msgid "(not mounted)"
 msgstr "umount: %s: no s'ha trobat"
 
-#: misc-utils/blkid.c:518 misc-utils/blkid.c:524
+#: misc-utils/blkid.c:519 misc-utils/blkid.c:525
 #, fuzzy, c-format
 msgid "error: %s"
 msgstr "Error RE:"
 
-#: misc-utils/blkid.c:567
+#: misc-utils/blkid.c:568
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
 msgstr ""
 
-#: misc-utils/blkid.c:613
+#: misc-utils/blkid.c:614
 #, fuzzy, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "%s: argument desconegut: %s\n"
 
-#: misc-utils/blkid.c:630
+#: misc-utils/blkid.c:631
 msgid "error: -u <list> argument is empty"
 msgstr ""
 
-#: misc-utils/blkid.c:783
+#: misc-utils/blkid.c:784
 #, fuzzy, c-format
 msgid "unsupported output format %s"
 msgstr "%s: argument desconegut: %s\n"
 
-#: misc-utils/blkid.c:786 misc-utils/wipefs.c:749
+#: misc-utils/blkid.c:787 misc-utils/wipefs.c:749
 #, fuzzy
 msgid "invalid offset argument"
 msgstr "identificador invàlid"
 
-#: misc-utils/blkid.c:793
+#: misc-utils/blkid.c:794
 #, fuzzy
 msgid "Too many tags specified"
 msgstr "No s'ha especificat l'opció --date.\n"
 
-#: misc-utils/blkid.c:799
+#: misc-utils/blkid.c:800
 #, fuzzy
 msgid "invalid size argument"
 msgstr "identificador invàlid"
 
-#: misc-utils/blkid.c:803
+#: misc-utils/blkid.c:804
 msgid "Can only search for one NAME=value pair"
 msgstr ""
 
-#: misc-utils/blkid.c:810
+#: misc-utils/blkid.c:811
 msgid "-t needs NAME=value pair"
 msgstr ""
 
-#: misc-utils/blkid.c:816
+#: misc-utils/blkid.c:817
 #, fuzzy, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s des de %s%s\n"
 
-#: misc-utils/blkid.c:862
+#: misc-utils/blkid.c:863
 msgid "The low-level probing mode does not support 'list' output format"
 msgstr ""
 
-#: misc-utils/blkid.c:875
+#: misc-utils/blkid.c:876
 msgid "The low-level probing mode requires a device"
 msgstr ""
 
-#: misc-utils/blkid.c:886
+#: misc-utils/blkid.c:887
 #, fuzzy, c-format
 msgid "Failed to use probing hint: %s"
 msgstr "No s'ha pogut escriure la partició a %s\n"
 
-#: misc-utils/blkid.c:929
+#: misc-utils/blkid.c:930
 msgid "The lookup option requires a search type specified using -t"
 msgstr ""
 
@@ -13792,7 +13799,7 @@ msgstr "%s: s'ha produït un error en obrir: %s\n"
 msgid "invalid adjust argument"
 msgstr "identificador invàlid"
 
-#: sys-utils/choom.c:119 term-utils/mesg.c:177
+#: sys-utils/choom.c:119 term-utils/mesg.c:178
 #, fuzzy, c-format
 msgid "invalid argument: %s"
 msgstr "id invàlid : %s\n"
@@ -21138,27 +21145,27 @@ msgid "ttyname() failed, attempting to go around using: %s"
 msgstr ""
 
 # FIXME 'y' untranslateable?
-#: term-utils/mesg.c:150
+#: term-utils/mesg.c:146
 #, fuzzy
 msgid "is y"
 msgstr "és y\n"
 
 # FIXME 'n' untranslateable?
-#: term-utils/mesg.c:153
+#: term-utils/mesg.c:149
 #, fuzzy
 msgid "is n"
 msgstr "és n\n"
 
-#: term-utils/mesg.c:164 term-utils/mesg.c:171
+#: term-utils/mesg.c:165 term-utils/mesg.c:172
 #, fuzzy, c-format
 msgid "change %s mode failed"
 msgstr "semàfors assignats = %d\n"
 
-#: term-utils/mesg.c:166
+#: term-utils/mesg.c:167
 msgid "write access to your terminal is allowed"
 msgstr ""
 
-#: term-utils/mesg.c:173
+#: term-utils/mesg.c:174
 msgid "write access to your terminal is denied"
 msgstr ""
 

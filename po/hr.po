@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-04-09 09:15+0200\n"
+"POT-Creation-Date: 2021-04-12 09:59+0200\n"
 "PO-Revision-Date: 2020-12-07 11:59-0800\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -72,7 +72,7 @@ msgstr "nema dovoljno argumenata"
 #: sys-utils/setpriv.c:645 sys-utils/swapon.c:374 sys-utils/swapon.c:517
 #: sys-utils/switch_root.c:174 sys-utils/unshare.c:112 sys-utils/unshare.c:127
 #: sys-utils/wdctl.c:361 sys-utils/zramctl.c:517 term-utils/agetty.c:2965
-#: term-utils/mesg.c:143 term-utils/script.c:382 term-utils/scriptlive.c:256
+#: term-utils/mesg.c:154 term-utils/script.c:382 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
@@ -820,7 +820,7 @@ msgstr "nevaljani argument - repair"
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:75 sys-utils/nsenter.c:166
 #: sys-utils/nsenter.c:170 sys-utils/swapon.c:522 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
-#: term-utils/mesg.c:145
+#: term-utils/mesg.c:144 term-utils/mesg.c:156
 #, c-format
 msgid "stat of %s failed"
 msgstr "stat() od %s nije uspio"
@@ -9223,116 +9223,121 @@ msgid " -i, --info                 gather information about I/O limits\n"
 msgstr " -i, --info                 skupi informacije o ograničenjima U/I\n"
 
 #: misc-utils/blkid.c:93
+#, fuzzy
+msgid " -H, --hint <value>         set hint for probing function\n"
+msgstr " -P, --port <port>        za komunikaciju putem UDP ili TCP koristi taj port\n"
+
+#: misc-utils/blkid.c:94
 msgid " -S, --size <size>          overwrite device size\n"
 msgstr ""
 " -S, --size <broj>          postavi veličinu uređaja/datoteke na broj\n"
 "                              (ima smisla samo uz --probe)\n"
 
-#: misc-utils/blkid.c:94
+#: misc-utils/blkid.c:95
 msgid " -O, --offset <offset>      probe at the given offset\n"
 msgstr " -O, --offset <broj>        proba na odmaku <broj>\n"
 
-#: misc-utils/blkid.c:95
+#: misc-utils/blkid.c:96
 msgid " -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"
 msgstr " -u, --usages <popis>       filtrira po \"uporabi\" (npr. -u filesystem,raid)\n"
 
-#: misc-utils/blkid.c:96
+#: misc-utils/blkid.c:97
 msgid " -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
 msgstr ""
 " -n, --match-types <popis>  filtrira po vrsti datotečnog sustava\n"
 "                              (npr. -n vfat,ext3)\n"
 
-#: misc-utils/blkid.c:97
+#: misc-utils/blkid.c:98
 msgid " -D, --no-part-details      don't print info from partition table\n"
 msgstr " -D, --no-part-details      ne ispisuje informacije iz particijske tablice\n"
 
-#: misc-utils/blkid.c:103
+#: misc-utils/blkid.c:104
 msgid "<size> and <offset>"
 msgstr "<veličina> i <odmak>"
 
-#: misc-utils/blkid.c:105
+#: misc-utils/blkid.c:106
 msgid " <dev> specify device(s) to probe (default: all devices)\n"
 msgstr " <uređaj> uređaj/uređaji koji/koje treba isprobati (zadano: svi uređaji)\n"
 
-#: misc-utils/blkid.c:237
+#: misc-utils/blkid.c:238
 msgid "(mounted, mtpt unknown)"
 msgstr "(montiran -- točka montiranja nije poznata)"
 
-#: misc-utils/blkid.c:239
+#: misc-utils/blkid.c:240
 msgid "(in use)"
 msgstr "(koristi se)"
 
-#: misc-utils/blkid.c:241
+#: misc-utils/blkid.c:242
 msgid "(not mounted)"
 msgstr "(nije montiran)"
 
-#: misc-utils/blkid.c:518 misc-utils/blkid.c:524
+#: misc-utils/blkid.c:519 misc-utils/blkid.c:525
 #, c-format
 msgid "error: %s"
 msgstr "greška: %s"
 
-#: misc-utils/blkid.c:567
+#: misc-utils/blkid.c:568
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
 msgstr ""
 "%s: ambivalentni rezultat (vjerojatno je nekoliko datotečnih sustava na uređaju;\n"
 "pogledajte wipefs(8) za više detalja)"
 
-#: misc-utils/blkid.c:613
+#: misc-utils/blkid.c:614
 #, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "nepoznata ključna riječ u argumentu opcije -u <popis>: „%s“"
 
-#: misc-utils/blkid.c:630
+#: misc-utils/blkid.c:631
 msgid "error: -u <list> argument is empty"
 msgstr "greška: argument opcije -u <popis> je prazan"
 
-#: misc-utils/blkid.c:783
+#: misc-utils/blkid.c:784
 #, c-format
 msgid "unsupported output format %s"
 msgstr "nepodržani izlazni format %s"
 
-#: misc-utils/blkid.c:786 misc-utils/wipefs.c:749
+#: misc-utils/blkid.c:787 misc-utils/wipefs.c:749
 msgid "invalid offset argument"
 msgstr "nevaljani argument za odmak (offset)"
 
-#: misc-utils/blkid.c:793
+#: misc-utils/blkid.c:794
 msgid "Too many tags specified"
 msgstr "Specificirano je previše argumenata"
 
-#: misc-utils/blkid.c:799
+#: misc-utils/blkid.c:800
 msgid "invalid size argument"
 msgstr "nevaljani argument veličine"
 
-#: misc-utils/blkid.c:803
+#: misc-utils/blkid.c:804
 msgid "Can only search for one NAME=value pair"
 msgstr "Tražiti se može samo jedan par IME=vrijednost"
 
-#: misc-utils/blkid.c:810
+#: misc-utils/blkid.c:811
 msgid "-t needs NAME=value pair"
 msgstr ""
 "opcija -t treba kao argument par IME=vrijednost\n"
 "uobičajene vrijednosti za IME su TYPE, LABEL i UUID: npr. blkid -t TYPE=ext2"
 
-#: misc-utils/blkid.c:816
+#: misc-utils/blkid.c:817
 #, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s iz %s  (libblkid %s, %s)\n"
 
-#: misc-utils/blkid.c:862
+#: misc-utils/blkid.c:863
 msgid "The low-level probing mode does not support 'list' output format"
 msgstr "Dubinsko probanje ne podržava ispis u „list“ (popis) formatu"
 
-#: misc-utils/blkid.c:875
+#: misc-utils/blkid.c:876
 msgid "The low-level probing mode requires a device"
 msgstr "Dubinsko probanje zahtijeva uređaj"
 
-#: misc-utils/blkid.c:886
+#: misc-utils/blkid.c:887
 #, fuzzy, c-format
 msgid "Failed to use probing hint: %s"
 msgstr "nije uspjelo postaviti osobnost na %s"
 
-#: misc-utils/blkid.c:929
+#: misc-utils/blkid.c:930
 msgid "The lookup option requires a search type specified using -t"
 msgstr "Opcija -l za gledanje zahtijeva za traženje vrstu specificiranu uz opciju -t"
 
@@ -13073,7 +13078,7 @@ msgstr "nije uspjelo pročitati vrijednost za korekciju ocjene OOM-a"
 msgid "invalid adjust argument"
 msgstr "nevaljani argument za korekciju"
 
-#: sys-utils/choom.c:119 term-utils/mesg.c:177
+#: sys-utils/choom.c:119 term-utils/mesg.c:178
 #, c-format
 msgid "invalid argument: %s"
 msgstr "nevaljani argument: %s"
@@ -20155,24 +20160,24 @@ msgstr "nema terminala"
 msgid "ttyname() failed, attempting to go around using: %s"
 msgstr "funkcija ttyname() nije uspjela -- pokušava se zaobići pomoću: %s"
 
-#: term-utils/mesg.c:150
+#: term-utils/mesg.c:146
 msgid "is y"
 msgstr "je y (da)"
 
-#: term-utils/mesg.c:153
+#: term-utils/mesg.c:149
 msgid "is n"
 msgstr "je n (ne)"
 
-#: term-utils/mesg.c:164 term-utils/mesg.c:171
+#: term-utils/mesg.c:165 term-utils/mesg.c:172
 #, c-format
 msgid "change %s mode failed"
 msgstr "nije uspjelo promijeniti mȏd %s"
 
-#: term-utils/mesg.c:166
+#: term-utils/mesg.c:167
 msgid "write access to your terminal is allowed"
 msgstr "dopušteno je pisanje po vašem terminalu"
 
-#: term-utils/mesg.c:173
+#: term-utils/mesg.c:174
 msgid "write access to your terminal is denied"
 msgstr "nije dopušteno pisanje po vašem terminalu"
 

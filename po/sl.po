@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-04-09 09:15+0200\n"
+"POT-Creation-Date: 2021-04-12 09:59+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -71,7 +71,7 @@ msgstr "Preveè argumentov.\n"
 #: sys-utils/setpriv.c:645 sys-utils/swapon.c:374 sys-utils/swapon.c:517
 #: sys-utils/switch_root.c:174 sys-utils/unshare.c:112 sys-utils/unshare.c:127
 #: sys-utils/wdctl.c:361 sys-utils/zramctl.c:517 term-utils/agetty.c:2965
-#: term-utils/mesg.c:143 term-utils/script.c:382 term-utils/scriptlive.c:256
+#: term-utils/mesg.c:154 term-utils/script.c:382 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
@@ -886,7 +886,7 @@ msgstr "neveljavni id: %s\n"
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:75 sys-utils/nsenter.c:166
 #: sys-utils/nsenter.c:170 sys-utils/swapon.c:522 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
-#: term-utils/mesg.c:145
+#: term-utils/mesg.c:144 term-utils/mesg.c:156
 #, fuzzy, c-format
 msgid "stat of %s failed"
 msgstr "(Naslednja datoteka: %s)"
@@ -9687,118 +9687,123 @@ msgstr "  -u, --unqote                 Ne citiraj izhoda\n"
 
 #: misc-utils/blkid.c:93
 #, fuzzy
+msgid " -H, --hint <value>         set hint for probing function\n"
+msgstr "  -s,  --shell=lupina          Nastavi lupinsko konvencijo citiranja\n"
+
+#: misc-utils/blkid.c:94
+#, fuzzy
 msgid " -S, --size <size>          overwrite device size\n"
 msgstr "  -V, --version                Izpi¹i informacije o razlièici\n"
 
-#: misc-utils/blkid.c:94
+#: misc-utils/blkid.c:95
 #, fuzzy
 msgid " -O, --offset <offset>      probe at the given offset\n"
 msgstr "  -s,  --shell=lupina          Nastavi lupinsko konvencijo citiranja\n"
 
-#: misc-utils/blkid.c:95
+#: misc-utils/blkid.c:96
 #, fuzzy
 msgid " -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"
 msgstr "   l   izpi¹i znane datoteène sisteme"
 
-#: misc-utils/blkid.c:96
+#: misc-utils/blkid.c:97
 #, fuzzy
 msgid " -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
 msgstr "   l   izpi¹i znane datoteène sisteme"
 
-#: misc-utils/blkid.c:97
+#: misc-utils/blkid.c:98
 #, fuzzy
 msgid " -D, --no-part-details      don't print info from partition table\n"
 msgstr "  -u, --unqote                 Ne citiraj izhoda\n"
 
-#: misc-utils/blkid.c:103
+#: misc-utils/blkid.c:104
 msgid "<size> and <offset>"
 msgstr ""
 
-#: misc-utils/blkid.c:105
+#: misc-utils/blkid.c:106
 #, fuzzy
 msgid " <dev> specify device(s) to probe (default: all devices)\n"
 msgstr "  -h  --help                   Manj¹a navodila\n"
 
-#: misc-utils/blkid.c:237
+#: misc-utils/blkid.c:238
 msgid "(mounted, mtpt unknown)"
 msgstr ""
 
-#: misc-utils/blkid.c:239
+#: misc-utils/blkid.c:240
 #, fuzzy
 msgid "(in use)"
 msgstr "Oznaèi, da je v rabi"
 
-#: misc-utils/blkid.c:241
+#: misc-utils/blkid.c:242
 #, fuzzy
 msgid "(not mounted)"
 msgstr "umount: %s: neuspe¹no iskanje"
 
-#: misc-utils/blkid.c:518 misc-utils/blkid.c:524
+#: misc-utils/blkid.c:519 misc-utils/blkid.c:525
 #, fuzzy, c-format
 msgid "error: %s"
 msgstr "napaka RE: "
 
-#: misc-utils/blkid.c:567
+#: misc-utils/blkid.c:568
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
 msgstr ""
 
-#: misc-utils/blkid.c:613
+#: misc-utils/blkid.c:614
 #, fuzzy, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "%s: neznan argument: %s\n"
 
-#: misc-utils/blkid.c:630
+#: misc-utils/blkid.c:631
 msgid "error: -u <list> argument is empty"
 msgstr ""
 
-#: misc-utils/blkid.c:783
+#: misc-utils/blkid.c:784
 #, fuzzy, c-format
 msgid "unsupported output format %s"
 msgstr "%s: neznan argument: %s\n"
 
-#: misc-utils/blkid.c:786 misc-utils/wipefs.c:749
+#: misc-utils/blkid.c:787 misc-utils/wipefs.c:749
 #, fuzzy
 msgid "invalid offset argument"
 msgstr "neveljaven id"
 
-#: misc-utils/blkid.c:793
+#: misc-utils/blkid.c:794
 #, fuzzy
 msgid "Too many tags specified"
 msgstr "Izbira --date ni bila podana.\n"
 
-#: misc-utils/blkid.c:799
+#: misc-utils/blkid.c:800
 #, fuzzy
 msgid "invalid size argument"
 msgstr "neveljaven id"
 
-#: misc-utils/blkid.c:803
+#: misc-utils/blkid.c:804
 msgid "Can only search for one NAME=value pair"
 msgstr ""
 
-#: misc-utils/blkid.c:810
+#: misc-utils/blkid.c:811
 msgid "-t needs NAME=value pair"
 msgstr ""
 
-#: misc-utils/blkid.c:816
+#: misc-utils/blkid.c:817
 #, fuzzy, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s iz %s\n"
 
-#: misc-utils/blkid.c:862
+#: misc-utils/blkid.c:863
 msgid "The low-level probing mode does not support 'list' output format"
 msgstr ""
 
-#: misc-utils/blkid.c:875
+#: misc-utils/blkid.c:876
 msgid "The low-level probing mode requires a device"
 msgstr ""
 
-#: misc-utils/blkid.c:886
+#: misc-utils/blkid.c:887
 #, fuzzy, c-format
 msgid "Failed to use probing hint: %s"
 msgstr "Neuspe¹no zapisovanje razdelka na %s\n"
 
-#: misc-utils/blkid.c:929
+#: misc-utils/blkid.c:930
 msgid "The lookup option requires a search type specified using -t"
 msgstr ""
 
@@ -13748,7 +13753,7 @@ msgstr "%s: odpiranje ni uspelo: %s\n"
 msgid "invalid adjust argument"
 msgstr "neveljaven id"
 
-#: sys-utils/choom.c:119 term-utils/mesg.c:177
+#: sys-utils/choom.c:119 term-utils/mesg.c:178
 #, fuzzy, c-format
 msgid "invalid argument: %s"
 msgstr "neveljavni id: %s\n"
@@ -21079,26 +21084,26 @@ msgstr ""
 msgid "ttyname() failed, attempting to go around using: %s"
 msgstr ""
 
-#: term-utils/mesg.c:150
+#: term-utils/mesg.c:146
 #, fuzzy
 msgid "is y"
 msgstr "je y\n"
 
-#: term-utils/mesg.c:153
+#: term-utils/mesg.c:149
 #, fuzzy
 msgid "is n"
 msgstr "je n\n"
 
-#: term-utils/mesg.c:164 term-utils/mesg.c:171
+#: term-utils/mesg.c:165 term-utils/mesg.c:172
 #, fuzzy, c-format
 msgid "change %s mode failed"
 msgstr "dodeljeni semaforji = %d\n"
 
-#: term-utils/mesg.c:166
+#: term-utils/mesg.c:167
 msgid "write access to your terminal is allowed"
 msgstr ""
 
-#: term-utils/mesg.c:173
+#: term-utils/mesg.c:174
 msgid "write access to your terminal is denied"
 msgstr ""
 

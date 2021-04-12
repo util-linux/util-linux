@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-04-09 09:15+0200\n"
+"POT-Creation-Date: 2021-04-12 09:59+0200\n"
 "PO-Revision-Date: 2020-07-23 08:09+0200\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -76,7 +76,7 @@ msgstr "pas assez d'arguments"
 #: sys-utils/setpriv.c:645 sys-utils/swapon.c:374 sys-utils/swapon.c:517
 #: sys-utils/switch_root.c:174 sys-utils/unshare.c:112 sys-utils/unshare.c:127
 #: sys-utils/wdctl.c:361 sys-utils/zramctl.c:517 term-utils/agetty.c:2965
-#: term-utils/mesg.c:143 term-utils/script.c:382 term-utils/scriptlive.c:256
+#: term-utils/mesg.c:154 term-utils/script.c:382 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
@@ -819,7 +819,7 @@ msgstr "argument incorrect - repair"
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:75 sys-utils/nsenter.c:166
 #: sys-utils/nsenter.c:170 sys-utils/swapon.c:522 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
-#: term-utils/mesg.c:145
+#: term-utils/mesg.c:144 term-utils/mesg.c:156
 #, c-format
 msgid "stat of %s failed"
 msgstr "échec de stat sur %s"
@@ -9115,109 +9115,114 @@ msgid " -i, --info                 gather information about I/O limits\n"
 msgstr " -i, --info                 collecter les informations sur les limites E/S\n"
 
 #: misc-utils/blkid.c:93
+#, fuzzy
+msgid " -H, --hint <value>         set hint for probing function\n"
+msgstr " -P, --port <port>        utiliser ce port pour la connexion UDP ou TCP\n"
+
+#: misc-utils/blkid.c:94
 msgid " -S, --size <size>          overwrite device size\n"
 msgstr " -S, --size <taille>        écraser la taille du périphérique\n"
 
 # getopt-1.1.2/getopt.c:335
-#: misc-utils/blkid.c:94
+#: misc-utils/blkid.c:95
 msgid " -O, --offset <offset>      probe at the given offset\n"
 msgstr " -O, --offset <index>       sonder à l'index indiqué\n"
 
-#: misc-utils/blkid.c:95
+#: misc-utils/blkid.c:96
 msgid " -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"
 msgstr " -u, --usages <liste>       filtrer par « usage » (par ex : -u filesystem,raid)\n"
 
-#: misc-utils/blkid.c:96
+#: misc-utils/blkid.c:97
 msgid " -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
 msgstr " -n, --match-types <liste>  filtrer par type de système de fichiers (par ex : -n vfat,ext3)\n"
 
-#: misc-utils/blkid.c:97
+#: misc-utils/blkid.c:98
 msgid " -D, --no-part-details      don't print info from partition table\n"
 msgstr " -D, --no-part-details      ne pas afficher les informations de la table de partitions\n"
 
-#: misc-utils/blkid.c:103
+#: misc-utils/blkid.c:104
 msgid "<size> and <offset>"
 msgstr "<taille> et <offset>"
 
-#: misc-utils/blkid.c:105
+#: misc-utils/blkid.c:106
 msgid " <dev> specify device(s) to probe (default: all devices)\n"
 msgstr " <périph.> spécifier le/les périphérique(s) à sonder (défaut: tous les périphériques)\n"
 
-#: misc-utils/blkid.c:237
+#: misc-utils/blkid.c:238
 msgid "(mounted, mtpt unknown)"
 msgstr "(mounté, mtpt inconnu)"
 
-#: misc-utils/blkid.c:239
+#: misc-utils/blkid.c:240
 msgid "(in use)"
 msgstr "(utilisé)"
 
-#: misc-utils/blkid.c:241
+#: misc-utils/blkid.c:242
 msgid "(not mounted)"
 msgstr "(non monté)"
 
-#: misc-utils/blkid.c:518 misc-utils/blkid.c:524
+#: misc-utils/blkid.c:519 misc-utils/blkid.c:525
 #, c-format
 msgid "error: %s"
 msgstr "erreur : %s"
 
-#: misc-utils/blkid.c:567
+#: misc-utils/blkid.c:568
 #, c-format
 msgid "%s: ambivalent result (probably more filesystems on the device, use wipefs(8) to see more details)"
 msgstr "%s : résultat ambivalent (probablement plus de systèmes de fichiers sur le périphérique, utilisez wipefs(8) pour voir plus de détails)"
 
-#: misc-utils/blkid.c:613
+#: misc-utils/blkid.c:614
 #, c-format
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "mot clé inconnu dans l'argument -u <liste> : « %s »"
 
-#: misc-utils/blkid.c:630
+#: misc-utils/blkid.c:631
 msgid "error: -u <list> argument is empty"
 msgstr "erreur : l'argument de -u <liste> est vide"
 
-#: misc-utils/blkid.c:783
+#: misc-utils/blkid.c:784
 #, c-format
 msgid "unsupported output format %s"
 msgstr "format de sortie non supporté %s"
 
-#: misc-utils/blkid.c:786 misc-utils/wipefs.c:749
+#: misc-utils/blkid.c:787 misc-utils/wipefs.c:749
 msgid "invalid offset argument"
 msgstr "argument d'index incorrect"
 
-#: misc-utils/blkid.c:793
+#: misc-utils/blkid.c:794
 msgid "Too many tags specified"
 msgstr "Trop de balises spécifiées"
 
-#: misc-utils/blkid.c:799
+#: misc-utils/blkid.c:800
 msgid "invalid size argument"
 msgstr "argument de taille incorrect"
 
-#: misc-utils/blkid.c:803
+#: misc-utils/blkid.c:804
 msgid "Can only search for one NAME=value pair"
 msgstr "Ne peut chercher qu'une seule paire NOM=valeur"
 
-#: misc-utils/blkid.c:810
+#: misc-utils/blkid.c:811
 msgid "-t needs NAME=value pair"
 msgstr "-t attend une paire NOM=valeur"
 
-#: misc-utils/blkid.c:816
+#: misc-utils/blkid.c:817
 #, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
 msgstr "%s de %s (libblkid %s, %s)\n"
 
-#: misc-utils/blkid.c:862
+#: misc-utils/blkid.c:863
 msgid "The low-level probing mode does not support 'list' output format"
 msgstr "Le mode de sondage bas niveau ne supporte pas le format de sortie « list »"
 
-#: misc-utils/blkid.c:875
+#: misc-utils/blkid.c:876
 msgid "The low-level probing mode requires a device"
 msgstr "Le mode de sondage bas niveau requiert un périphérique"
 
-#: misc-utils/blkid.c:886
+#: misc-utils/blkid.c:887
 #, fuzzy, c-format
 msgid "Failed to use probing hint: %s"
 msgstr "Échec de configuration d'architecture système à %s"
 
-#: misc-utils/blkid.c:929
+#: misc-utils/blkid.c:930
 msgid "The lookup option requires a search type specified using -t"
 msgstr "L'option de recherche requiert un type de recherche spécifié par -t"
 
@@ -12954,7 +12959,7 @@ msgstr "échec de lecture de la valeur d'ajustement du score OOM"
 msgid "invalid adjust argument"
 msgstr "argument d'ajustement incorrect"
 
-#: sys-utils/choom.c:119 term-utils/mesg.c:177
+#: sys-utils/choom.c:119 term-utils/mesg.c:178
 #, c-format
 msgid "invalid argument: %s"
 msgstr "argument incorrect : %s"
@@ -20015,24 +20020,24 @@ msgstr "pas de tty"
 msgid "ttyname() failed, attempting to go around using: %s"
 msgstr "ttyname() a échoué, tentative de contournement avec: %s"
 
-#: term-utils/mesg.c:150
+#: term-utils/mesg.c:146
 msgid "is y"
 msgstr "est y"
 
-#: term-utils/mesg.c:153
+#: term-utils/mesg.c:149
 msgid "is n"
 msgstr "est n"
 
-#: term-utils/mesg.c:164 term-utils/mesg.c:171
+#: term-utils/mesg.c:165 term-utils/mesg.c:172
 #, c-format
 msgid "change %s mode failed"
 msgstr "échec de modification du mode %s"
 
-#: term-utils/mesg.c:166
+#: term-utils/mesg.c:167
 msgid "write access to your terminal is allowed"
 msgstr "accès en écriture à votre terminal permis"
 
-#: term-utils/mesg.c:173
+#: term-utils/mesg.c:174
 msgid "write access to your terminal is denied"
 msgstr "accès en écriture à votre terminal refusé"
 
