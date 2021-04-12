@@ -139,13 +139,9 @@ int main(int argc, char *argv[])
 			warnx(_("ttyname() failed, attempting to go around using: %s"), tty);
 	}
 
-	if ((fd = open(tty, O_RDONLY)) < 0)
-		err(MESG_EXIT_FAILURE, _("cannot open %s"), tty);
-	if (fstat(fd, &sb))
-		err(MESG_EXIT_FAILURE, _("stat of %s failed"), tty);
-
 	if (!*argv) {
-		close(fd);
+		if (stat(tty, &sb))
+			err(MESG_EXIT_FAILURE, _("stat of %s failed"), tty);
 		if (sb.st_mode & (S_IWGRP | S_IWOTH)) {
 			puts(_("is y"));
 			return IS_ALLOWED;
@@ -153,6 +149,11 @@ int main(int argc, char *argv[])
 		puts(_("is n"));
 		return IS_NOT_ALLOWED;
 	}
+
+	if ((fd = open(tty, O_RDONLY)) < 0)
+		err(MESG_EXIT_FAILURE, _("cannot open %s"), tty);
+	if (fstat(fd, &sb))
+		err(MESG_EXIT_FAILURE, _("stat of %s failed"), tty);
 
 	switch (rpmatch(argv[0])) {
 	case RPMATCH_YES:
