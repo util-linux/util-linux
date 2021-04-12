@@ -48,6 +48,8 @@ hexdump - display file contents in hexadecimal, decimal, octal, or ascii
 
 *hexdump* _options file_ ...
 
+*hd* _options file_ ...
+
 == DESCRIPTION
 
 The *hexdump* utility is a filter which displays the specified files, or standard input if no files are specified, in a user-specified format.
