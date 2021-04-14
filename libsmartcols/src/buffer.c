@@ -56,6 +56,8 @@ int buffer_append_data(struct libscols_buffer *buf, const char *str)
 		return -EINVAL;
 	if (!str || !*str)
 		return 0;
+	if (!buf->cur || !buf->begin)
+		return -EINVAL;
 
 	sz = strlen(str);
 	maxsz = buf->bufsz - (buf->cur - buf->begin);
