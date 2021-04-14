@@ -233,10 +233,12 @@ static void add_scols_line(struct libscols_table *table, struct prlimit *l)
 
 		switch (get_column_id(i)) {
 		case COL_RES:
-			str = xstrdup(l->desc->name);
+			if (l->desc->name)
+				str = xstrdup(l->desc->name);
 			break;
 		case COL_HELP:
-			str = xstrdup(l->desc->help);
+			if (l->desc->help)
+				str = xstrdup(_(l->desc->help));
 			break;
 		case COL_SOFT:
 			if (l->rlim.rlim_cur == RLIM_INFINITY)
@@ -251,7 +253,8 @@ static void add_scols_line(struct libscols_table *table, struct prlimit *l)
 				xasprintf(&str, "%llu", (unsigned long long) l->rlim.rlim_max);
 			break;
 		case COL_UNITS:
-			str = l->desc->unit ? xstrdup(_(l->desc->unit)) : NULL;
+			if (l->desc->unit)
+				str = xstrdup(_(l->desc->unit));
 			break;
 		default:
 			break;
