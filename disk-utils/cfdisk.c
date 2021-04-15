@@ -2570,6 +2570,8 @@ static int ui_run(struct cfdisk *cf)
 
 	if (fdisk_is_readonly(cf->cxt))
 		ui_warnx(_("Device is open in read-only mode. Changes will remain in memory only."));
+	else if (cf->device_is_used)
+		ui_warnx(_("Device is currently in use, repartitioning is probably a bad idea."));
 	else if (cf->wrong_order)
 		ui_info(_("Note that partition table entries are not in disk order now."));
 
