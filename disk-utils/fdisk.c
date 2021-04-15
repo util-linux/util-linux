@@ -1140,6 +1140,12 @@ int main(int argc, char **argv)
 		if (rc)
 			err(EXIT_FAILURE, _("cannot open %s"), devname);
 
+		if (fdisk_device_is_used(cxt))
+			fdisk_warnx(cxt, _(
+			"This disk is currently in use - repartitioning is probably a bad idea.\n"
+			"It's recommended to umount all file systems, and swapoff all swap\n"
+			"partitions on this disk.\n"));
+
 		fflush(stdout);
 
 		if (!fdisk_is_readonly(cxt)
