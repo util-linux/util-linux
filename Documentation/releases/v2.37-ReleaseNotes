@@ -47,7 +47,8 @@ characters in the name (e.g. type="Linux /usr x86" is the same as type="linux
 usr-x86" for sfdisk).                           
                                                 
 libmount no more contains a workaround to detect inconsistent
-/proc/self/mountinfo read. This problem is fixed by the Linux kernel now.
+/proc/self/mountinfo read. This problem is fixed by the Linux kernel (since v5.8,
+kernel commit 9f6c61f96f2d97cbb5f7fa85607bc398f843ff0f).
                                                 
 libblkid supports "probing hints" now. The hints are the optional way how to
 force probing functions to check for example another location -- for example
