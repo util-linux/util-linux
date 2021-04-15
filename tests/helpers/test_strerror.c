@@ -20,7 +20,8 @@ static struct {
 } errors[] = {
 	E(ENOENT),
 	E(ENOTTY),
-	E(EILSEQ)
+	E(EILSEQ),
+	E(EINVAL),
 };
 
 int main(int argc, const char *argv[])

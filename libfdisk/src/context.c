@@ -536,7 +536,7 @@ static void reset_context(struct fdisk_context *cxt)
 		}
 	} else {
 		/* we close device only in primary context */
-		if (cxt->dev_fd > -1 && cxt->private_fd)
+		if (cxt->dev_fd > -1 && cxt->is_priv)
 			close(cxt->dev_fd);
 		DBG(CXT, ul_debugobj(cxt, "  freeing firstsector"));
 		free(cxt->firstsector);
@@ -555,7 +555,8 @@ static void reset_context(struct fdisk_context *cxt)
 	memset(&cxt->dev_st, 0, sizeof(cxt->dev_st));
 
 	cxt->dev_fd = -1;
-	cxt->private_fd = 0;
+	cxt->is_priv = 0;
+	cxt->is_excl = 0;
 	cxt->firstsector = NULL;
 	cxt->firstsector_bufsz = 0;
 
@@ -571,10 +572,13 @@ static void reset_context(struct fdisk_context *cxt)
 
 /* fdisk_assign_device() body */
 static int fdisk_assign_fd(struct fdisk_context *cxt, int fd,
-			const char *fname, int readonly, int privfd)
+			const char *fname, int readonly,
+			int priv, int excl)
 {
 	assert(cxt);
 	assert(fd >= 0);
+
+	errno = 0;
 
 	/* redirect request to parent */
 	if (cxt->parent) {
@@ -585,7 +589,7 @@ static int fdisk_assign_fd(struct fdisk_context *cxt, int fd,
 		 * unwanted extra warnings. */
 		fdisk_enable_listonly(cxt->parent, fdisk_is_listonly(cxt));
 
-		rc = fdisk_assign_fd(cxt->parent, fd, fname, readonly, privfd);
+		rc = fdisk_assign_fd(cxt->parent, fd, fname, readonly, priv, excl);
 		fdisk_enable_listonly(cxt->parent, org);
 
 		if (!rc)
@@ -600,9 +604,11 @@ static int fdisk_assign_fd(struct fdisk_context *cxt, int fd,
 	if (fstat(fd, &cxt->dev_st) != 0)
 		goto fail;
 
-	cxt->readonly = readonly;
+	cxt->readonly = readonly ? 1 : 0;
 	cxt->dev_fd = fd;
-	cxt->private_fd = privfd;
+	cxt->is_priv = priv ? 1 : 0;
+	cxt->is_excl = excl ? 1 : 0;
+
 	cxt->dev_path = fname ? strdup(fname) : NULL;
 	if (!cxt->dev_path)
 		goto fail;
@@ -630,12 +636,15 @@ static int fdisk_assign_fd(struct fdisk_context *cxt, int fd,
 		cxt->collision = NULL;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "initialized for %s [%s]",
-			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));
+	DBG(CXT, ul_debugobj(cxt, "initialized for %s [%s %s %s]",
+			      fname,
+			      cxt->readonly ? "READ-ONLY" : "READ-WRITE",
+			      cxt->is_excl ? "EXCL" : "",
+			      cxt->is_priv ? "PRIV" : ""));
 	return 0;
 fail:
 	{
-		int rc = -errno;
+		int rc = errno ? -errno : -EINVAL;
 		cxt->dev_fd = -1;
 		DBG(CXT, ul_debugobj(cxt, "failed to assign device [rc=%d]", rc));
 		return rc;
@@ -671,19 +680,31 @@ fail:
 int fdisk_assign_device(struct fdisk_context *cxt,
 			const char *fname, int readonly)
 {
-	int fd, rc;
+	int fd, rc, flags = O_CLOEXEC;
 
 	DBG(CXT, ul_debugobj(cxt, "assigning device %s", fname));
 	assert(cxt);
 
-	fd = open(fname, (readonly ? O_RDONLY : O_RDWR ) | O_CLOEXEC);
+	if (readonly)
+		flags |= O_RDONLY;
+	else
+		flags |= (O_RDWR | O_EXCL);
+
+	errno = 0;
+	fd = open(fname,flags);
+	if (fd < 0 && errno == EBUSY && (flags & O_EXCL)) {
+		flags &= ~O_EXCL;
+		errno = 0;
+		fd = open(fname, flags);
+	}
+
 	if (fd < 0) {
 		rc = -errno;
 		DBG(CXT, ul_debugobj(cxt, "failed to assign device [rc=%d]", rc));
 		return rc;
 	}
 
-	rc = fdisk_assign_fd(cxt, fd, fname, readonly, 1);
+	rc = fdisk_assign_fd(cxt, fd, fname, readonly, 1, flags & O_EXCL);
 	if (rc)
 		close(fd);
 	return rc;
@@ -708,7 +729,8 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 int fdisk_assign_device_by_fd(struct fdisk_context *cxt, int fd,
 			const char *fname, int readonly)
 {
-	return fdisk_assign_fd(cxt, fd, fname, readonly, 0);
+	DBG(CXT, ul_debugobj(cxt, "assign by fd"));
+	return fdisk_assign_fd(cxt, fd, fname, readonly, 0, 0);
 }
 
 /**
@@ -737,7 +759,7 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 
 	DBG(CXT, ul_debugobj(cxt, "de-assigning device %s", cxt->dev_path));
 
-	if (cxt->readonly && cxt->private_fd)
+	if (cxt->readonly && cxt->is_priv)
 		close(cxt->dev_fd);
 	else {
 		if (fsync(cxt->dev_fd)) {
@@ -745,7 +767,7 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 					cxt->dev_path);
 			return -errno;
 		}
-		if (cxt->private_fd && close(cxt->dev_fd)) {
+		if (cxt->is_priv && close(cxt->dev_fd)) {
 			fdisk_warn(cxt, _("%s: close device failed"),
 					cxt->dev_path);
 			return -errno;
@@ -759,6 +781,8 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 	free(cxt->dev_path);
 	cxt->dev_path = NULL;
 	cxt->dev_fd = -1;
+	cxt->is_priv = 0;
+	cxt->is_excl = 0;
 
 	return 0;
 }
@@ -777,7 +801,7 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 int fdisk_reassign_device(struct fdisk_context *cxt)
 {
 	char *devname;
-	int rdonly, rc, fd, privfd;
+	int rdonly, rc, fd, priv, excl;
 
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
@@ -790,16 +814,17 @@ int fdisk_reassign_device(struct fdisk_context *cxt)
 
 	rdonly = cxt->readonly;
 	fd = cxt->dev_fd;
-	privfd = cxt->private_fd;
+	priv = cxt->is_priv;
+	excl = cxt->is_excl;
 
 	fdisk_deassign_device(cxt, 1);
 
-	if (privfd)
+	if (priv)
 		/* reopen and assign */
 		rc = fdisk_assign_device(cxt, devname, rdonly);
 	else
 		/* assign only */
-		rc = fdisk_assign_fd(cxt, fd, devname, rdonly, privfd);
+		rc = fdisk_assign_fd(cxt, fd, devname, rdonly, priv, excl);
 
 	free(devname);
 	return rc;
@@ -981,31 +1006,24 @@ int fdisk_reread_changes(struct fdisk_context *cxt,
  * fdisk_device_is_used:
  * @cxt: context
  *
- * On systems where is no BLKRRPART ioctl the function returns zero and
- * sets errno to ENOSYS.
+ * The function returns always 0 if the device has not been opened by
+ * fdisk_assign_device() or if open read-only.
  *
  * Returns: 1 if the device assigned to the context is used by system, or 0.
  */
 int fdisk_device_is_used(struct fdisk_context *cxt)
 {
-	int rc = 0;
-
+	int rc;
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
 
-	errno = 0;
+	rc = cxt->readonly ? 0 :
+	     cxt->is_excl ? 0 :
+	     cxt->is_priv ? 1 : 0;
 
-#ifdef BLKRRPART
-	/* it seems kernel always return EINVAL for BLKRRPART on loopdevices */
-	if (S_ISBLK(cxt->dev_st.st_mode)
-	    && major(cxt->dev_st.st_rdev) != LOOPDEV_MAJOR) {
-		DBG(CXT, ul_debugobj(cxt, "calling re-read ioctl"));
-		rc = ioctl(cxt->dev_fd, BLKRRPART) != 0;
-	}
-#else
-	errno = ENOSYS;
-#endif
-	DBG(CXT, ul_debugobj(cxt, "device used: %s [errno=%d]", rc ? "TRUE" : "FALSE", errno));
+	DBG(CXT, ul_debugobj(cxt, "device used: %s [read-only=%d, excl=%d, priv:%d]",
+				rc ? "TRUE" : "FALSE", cxt->readonly,
+				cxt->is_excl, cxt->is_priv));
 	return rc;
 }
 

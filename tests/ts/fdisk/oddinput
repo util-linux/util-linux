@@ -48,6 +48,6 @@ sed -i -e "s@$($TS_HELPER_STRERROR ENOENT)@ENOENT@" $TS_OUTPUT $TS_ERRLOG
 ts_logerr "---Too small file"
 echo  "This file is too small" >> oddinput.toosmall
 $TS_CMD_FDISK -c=dos -u=cylinders -l oddinput.toosmall >> $TS_OUTPUT 2>> $TS_ERRLOG
-sed -i -e "s@$($TS_HELPER_STRERROR ENOTTY)@ENOTTY@" $TS_OUTPUT $TS_ERRLOG
+sed -i -e "s@$($TS_HELPER_STRERROR EINVAL)@EINVAL@" $TS_OUTPUT $TS_ERRLOG
 rm oddinput.toosmall
 ts_finalize

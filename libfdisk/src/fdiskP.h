@@ -404,7 +404,8 @@ struct fdisk_context {
 		     pt_collision : 1,		/* another PT detected by libblkid */
 		     no_disalogs : 1,		/* disable dialog-driven partititoning */
 		     dev_model_probed : 1,	/* tried to read from sys */
-		     private_fd : 1,		/* open by libfdisk */
+		     is_priv : 1,		/* open by libfdisk */
+		     is_excl : 1,		/* open with O_EXCL */
 		     listonly : 1;		/* list partition, nothing else */
 
 	char *collision;			/* name of already existing FS/PT */
