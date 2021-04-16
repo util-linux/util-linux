@@ -366,26 +366,23 @@ static void collect_outofbox_files(struct proc *proc,
 	closedir(dirp);
 }
 
-static void fill_proc(struct proc *proc)
+static void collect_execve_files(struct proc *proc)
 {
-	INIT_LIST_HEAD(&proc->files);
-
-	proc->command = proc_get_command_name(proc->pid);
-	if (!proc->command)
-		err(EXIT_FAILURE, _("failed to get command name"));
-
-
-	const char *classical_template = "/proc/%d";
-	enum association classical_assocs[] = { ASSOC_CWD, ASSOC_EXE, ASSOC_ROOT };
-	const char* classical_assoc_names[] = {
+	const char *execve_template = "/proc/%d";
+	enum association execve_assocs[] = { ASSOC_CWD, ASSOC_EXE, ASSOC_ROOT };
+	const char* execve_assoc_names[] = {
 		[ASSOC_CWD]  = "cwd",
 		[ASSOC_EXE]  = "exe",
 		[ASSOC_ROOT] = "root",
 	};
-	collect_outofbox_files(proc, classical_template,
-			       classical_assocs, classical_assoc_names,
-			       ARRAY_SIZE(classical_assocs));
+	collect_outofbox_files(proc, execve_template,
+			       execve_assocs, execve_assoc_names,
+			       ARRAY_SIZE(execve_assocs));
+}
 
+
+static void collect_namespace_files(struct proc *proc)
+{
 	const char *namespace_template = "/proc/%d/ns";
 	enum association namespace_assocs[] = {
 		ASSOC_NS_CGROUP,
@@ -414,11 +411,21 @@ static void fill_proc(struct proc *proc)
 	collect_outofbox_files(proc, namespace_template,
 			       namespace_assocs, namespace_assoc_names,
 			       ARRAY_SIZE(namespace_assocs));
+}
 
+static void fill_proc(struct proc *proc)
+{
+	INIT_LIST_HEAD(&proc->files);
+
+	proc->command = proc_get_command_name(proc->pid);
+	if (!proc->command)
+		err(EXIT_FAILURE, _("failed to get command name"));
+
+	collect_execve_files(proc);
+	collect_namespace_files(proc);
 	collect_mem_files(proc);
 	collect_fd_files(proc);
 }
-
 
 static void *fill_procs(void *arg)
 {
