@@ -35,6 +35,17 @@ static const char *assocstr[N_ASSOCS] = {
 	/* "root" appears as user names, too.
 	 * So we use "rtd" here instead of "root". */
 	[ASSOC_ROOT]      = "rtd",
+	[ASSOC_NS_CGROUP] = "cgroup",
+	[ASSOC_NS_IPC]    = "ipc",
+	[ASSOC_NS_MNT]    = "mnt",
+	[ASSOC_NS_NET]    = "net",
+	[ASSOC_NS_PID]    = "pid",
+	[ASSOC_NS_PID4C]  = "pid4c",
+	[ASSOC_NS_TIME]   = "time",
+	[ASSOC_NS_TIME4C] = "time4c",
+	[ASSOC_NS_USER]   = "user",
+	[ASSOC_NS_UTS]    = "uts",
+	[ASSOC_MEM]       = "mmap",
 };
 
 static const char *strftype(mode_t ftype)
