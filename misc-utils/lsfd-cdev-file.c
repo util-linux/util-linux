@@ -55,7 +55,7 @@ static bool cdev_file_fill_column(struct proc *proc __attribute__((__unused__)),
 
 const struct file_class cdev_file_class = {
 	.super = &file_class,
-	.size = sizeof (struct file),
+	.size = sizeof(struct file),
 	.fill_column = cdev_file_fill_column,
 	.free_content = NULL,
 };

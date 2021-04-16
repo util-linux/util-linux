@@ -29,6 +29,14 @@
 
 #include "lsfd.h"
 
+static const char *assocstr[N_ASSOCS] = {
+	[ASSOC_CWD]       = "cwd",
+	[ASSOC_EXE]       = "exe",
+	/* "root" appears as user names, too.
+	 * So we use "rtd" here instead of "root". */
+	[ASSOC_ROOT]      = "rtd",
+};
+
 static const char *strftype(mode_t ftype)
 {
 	switch (ftype) {
@@ -88,7 +96,14 @@ static bool file_fill_column(struct proc *proc,
 			return false;
 		/* FALL THROUGH */
 	case COL_ASSOC:
-		xasprintf(&str, "%d", file->association);
+		if (file->association >= 0)
+			xasprintf(&str, "%d", file->association);
+		else {
+			int assoc = file->association * -1;
+			if (assoc >= N_ASSOCS)
+				return false; /* INTERNAL ERROR */
+			xasprintf(&str, "%s", assocstr[assoc]);
+		}
 		break;
 	case COL_INODE:
 		xasprintf(&str, "%llu", (unsigned long long)file->stat.st_ino);
@@ -137,7 +152,7 @@ struct file *make_file(const struct file_class *class,
 
 const struct file_class file_class = {
 	.super = NULL,
-	.size = sizeof (struct file),
+	.size = sizeof(struct file),
 	.fill_column = file_fill_column,
 	.free_content = file_free_content,
 };
