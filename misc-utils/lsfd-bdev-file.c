@@ -25,11 +25,11 @@
 
 #include "lsfd.h"
 
-static bool bdev_fd_file_fill_column(struct proc *proc __attribute__((__unused__)),
-				     struct file *file __attribute__((__unused__)),
-				     struct libscols_line *ln,
-				     int column_id,
-				     size_t column_index)
+static bool bdev_file_fill_column(struct proc *proc __attribute__((__unused__)),
+				  struct file *file __attribute__((__unused__)),
+				  struct libscols_line *ln,
+				  int column_id,
+				  size_t column_index)
 {
 	char *str = NULL;
 	switch(column_id) {
@@ -53,16 +53,16 @@ static bool bdev_fd_file_fill_column(struct proc *proc __attribute__((__unused__
 	return true;
 }
 
-const struct file_class bdev_fd_file_class = {
-	.super = &fd_file_class,
-	.size = sizeof(struct fd_file),
-	.fill_column = bdev_fd_file_fill_column,
+const struct file_class bdev_file_class = {
+	.super = &file_class,
+	.size = sizeof(struct file),
+	.fill_column = bdev_file_fill_column,
 	.free_content = NULL,
 };
 
-struct file *make_bdev_fd_file(const struct file_class *class,
+struct file *make_bdev_file(const struct file_class *class,
 			       struct stat *sb, const char *name, int fd)
 {
-	return make_fd_file(class? class: &bdev_fd_file_class,
-			    sb, name, fd);
+	return make_file(class? class: &bdev_file_class,
+			 sb, name, fd);
 }

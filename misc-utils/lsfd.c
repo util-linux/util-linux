@@ -47,7 +47,7 @@
 /*
  * Multi-threading related stuffs
  */
-#define NUM_COLLECTORS 2
+#define NUM_COLLECTORS 1
 static pthread_cond_t  procs_ready = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t procs_ready_lock = PTHREAD_MUTEX_INITIALIZER;
 
@@ -247,14 +247,14 @@ static struct file *collect_file(int dd, struct dirent *dp)
 
 	switch (sb.st_mode & S_IFMT) {
 	case S_IFREG:
-		return make_regular_fd_file(NULL, &sb, sym, (int)num);
+		return make_regular_file(NULL, &sb, sym, (int)num);
 	case S_IFCHR:
-		return make_cdev_fd_file(NULL, &sb, sym, (int)num);
+		return make_cdev_file(NULL, &sb, sym, (int)num);
 	case S_IFBLK:
-		return make_bdev_fd_file(NULL, &sb, sym, (int)num);
+		return make_bdev_file(NULL, &sb, sym, (int)num);
 	}
 
-	return make_fd_file(NULL, &sb, sym, (int)num);
+	return make_file(NULL, &sb, sym, (int)num);
 }
 
 static void enqueue_file(struct proc *proc, struct file * file)

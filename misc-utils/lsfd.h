@@ -79,13 +79,9 @@ struct proc {
 struct file {
 	struct list_head files;
 	const struct file_class *class;
+	int association;
 	char *name;
 	struct stat stat;
-};
-
-struct fd_file {
-	struct file file;
-	int fd;
 };
 
 struct file_class {
@@ -100,20 +96,18 @@ struct file_class {
 };
 
 extern const struct file_class
-file_class, fd_file_class, regular_fd_file_class,
-	cdev_fd_file_class, bdev_fd_file_class
+file_class, regular_file_class,
+	cdev_file_class, bdev_file_class
 	;
 
 struct file *make_file(const struct file_class *class,
-		       struct stat *sb, const char *name);
-struct file *make_fd_file(const struct file_class *class,
-			  struct stat *sb, const char *name, int fd);
-struct file *make_regular_fd_file(const struct file_class *class,
-				  struct stat *sb, const char *name, int fd);
-struct file *make_cdev_fd_file(const struct file_class *class,
+		       struct stat *sb, const char *name, int association);
+struct file *make_regular_file(const struct file_class *class,
 			       struct stat *sb, const char *name, int fd);
-struct file *make_bdev_fd_file(const struct file_class *class,
+struct file *make_cdev_file(const struct file_class *class,
 			       struct stat *sb, const char *name, int fd);
+struct file *make_bdev_file(const struct file_class *class,
+			    struct stat *sb, const char *name, int fd);
 
 extern struct idcache *username_cache;
 
