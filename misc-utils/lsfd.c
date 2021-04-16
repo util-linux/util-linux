@@ -225,7 +225,21 @@ static void collect(struct list_head *procs)
 	run_collectors(procs);
 }
 
-static struct file *collect_file(int dd, struct dirent *dp)
+static struct file *collect_file(struct stat *sb, char *name, int assoc)
+{
+	switch (sb->st_mode & S_IFMT) {
+	case S_IFREG:
+		return make_regular_file(NULL, sb, name, assoc);
+	case S_IFCHR:
+		return make_cdev_file(NULL, sb, name, assoc);
+	case S_IFBLK:
+		return make_bdev_file(NULL, sb, name, assoc);
+	}
+
+	return make_file(NULL, sb, name, assoc);
+}
+
+static struct file *collect_fd_file(int dd, struct dirent *dp)
 {
 	long num;
 	char *endptr = NULL;
@@ -245,16 +259,7 @@ static struct file *collect_file(int dd, struct dirent *dp)
 	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	switch (sb.st_mode & S_IFMT) {
-	case S_IFREG:
-		return make_regular_file(NULL, &sb, sym, (int)num);
-	case S_IFCHR:
-		return make_cdev_file(NULL, &sb, sym, (int)num);
-	case S_IFBLK:
-		return make_bdev_file(NULL, &sb, sym, (int)num);
-	}
-
-	return make_file(NULL, &sb, sym, (int)num);
+	return collect_file(&sb, sym, (int)num);
 }
 
 static void enqueue_file(struct proc *proc, struct file * file)
@@ -263,7 +268,7 @@ static void enqueue_file(struct proc *proc, struct file * file)
 	list_add_tail(&file->files, &proc->files);
 }
 
-static void collect_files(struct proc *proc)
+static void collect_fd_files(struct proc *proc)
 {
 	DIR *dirp;
 	int dd;
@@ -279,7 +284,55 @@ static void collect_files(struct proc *proc)
 	while ((dp = xreaddir(dirp))) {
 		struct file *file;
 
-		if ((file = collect_file(dd, dp)) == NULL)
+		if ((file = collect_fd_file(dd, dp)) == NULL)
+			continue;
+
+		enqueue_file(proc, file);
+	}
+	closedir(dirp);
+}
+
+static struct file *collect_outofbox_file(int dd, const char *name, int association)
+{
+	struct stat sb;
+	ssize_t len;
+	char sym[PATH_MAX];
+
+	if (fstatat(dd, name, &sb, 0) < 0)
+		return NULL;
+
+	memset(sym, 0, sizeof(sym));
+	if ((len = readlinkat(dd, name, sym, sizeof(sym) - 1)) < 0)
+		return NULL;
+
+	return collect_file(&sb, sym, association);
+}
+
+static void collect_outofbox_files(struct proc *proc)
+{
+	DIR *dirp;
+	int dd;
+
+	dirp = opendirf("/proc/%d", proc->pid);
+	if (!dirp)
+		return;
+
+	if ((dd = dirfd(dirp)) < 0 )
+		return;
+
+	enum association assocs[] = { ASSOC_CWD, ASSOC_EXE, ASSOC_ROOT };
+	const char* assoc_names[] = {
+		[ASSOC_CWD]  = "cwd",
+		[ASSOC_EXE]  = "exe",
+		[ASSOC_ROOT] = "root",
+	};
+
+	for (unsigned int i = 0; i < ARRAY_SIZE(assocs); i++) {
+		struct file *file;
+
+		if ((file = collect_outofbox_file(dd,
+						  assoc_names[assocs[i]],
+						  assocs[i] * -1)) == NULL)
 			continue;
 
 		enqueue_file(proc, file);
@@ -295,7 +348,8 @@ static void fill_proc(struct proc *proc)
 	if (!proc->command)
 		err(EXIT_FAILURE, _("failed to get command name"));
 
-	collect_files(proc);
+	collect_outofbox_files(proc);
+	collect_fd_files(proc);
 }
 
 

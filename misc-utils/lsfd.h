@@ -66,6 +66,13 @@ enum {
 /*
  * Process structure
  */
+enum association {
+	ASSOC_CWD = 1,
+	ASSOC_EXE,
+	ASSOC_ROOT,
+	N_ASSOCS,
+};
+
 struct proc {
 	pid_t pid;
 	char *command;
