@@ -253,10 +253,9 @@ lsfd_SOURCES = \
 	misc-utils/lsfd.c \
 	misc-utils/lsfd.h \
 	misc-utils/lsfd-file.c \
-	misc-utils/lsfd-fd-file.c \
-	misc-utils/lsfd-regular-fd-file.c \
-	misc-utils/lsfd-cdev-fd-file.c \
-	misc-utils/lsfd-bdev-fd-file.c
+	misc-utils/lsfd-regular-file.c \
+	misc-utils/lsfd-cdev-file.c \
+	misc-utils/lsfd-bdev-file.c
 lsfd_LDADD = $(LDADD) libsmartcols.la libcommon.la
 lsfd_LDFLAGS =  -pthread
 lsfd_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir) -pthread

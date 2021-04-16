@@ -83,6 +83,13 @@ static bool file_fill_column(struct proc *proc,
 					       (int)file->stat.st_uid)->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_FD:
+		if (file->association < 0)
+			return false;
+		/* FALL THROUGH */
+	case COL_ASSOC:
+		xasprintf(&str, "%d", file->association);
+		break;
 	case COL_INODE:
 		xasprintf(&str, "%llu", (unsigned long long)file->stat.st_ino);
 		break;
@@ -114,11 +121,15 @@ static void file_free_content(struct file *file)
 }
 
 struct file *make_file(const struct file_class *class,
-		       struct stat *sb, const char *name)
+		       struct stat *sb, const char *name, int association)
 {
-	struct file *file = xcalloc(1, class->size);
+	struct file *file;
+
+	class = class? class: &file_class;
+	file = xcalloc(1, class->size);
 
 	file->class = class;
+	file->association = association;
 	file->name = xstrdup(name);
 	file->stat = *sb;
 	return file;
@@ -126,7 +137,7 @@ struct file *make_file(const struct file_class *class,
 
 const struct file_class file_class = {
 	.super = NULL,
-	.size = 0,
+	.size = sizeof (struct file),
 	.fill_column = file_fill_column,
 	.free_content = file_free_content,
 };

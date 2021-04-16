@@ -28,11 +28,11 @@
 
 #include "lsfd.h"
 
-static bool regular_fd_file_fill_column(struct proc *proc __attribute__((__unused__)),
-					struct file *file __attribute__((__unused__)),
-					struct libscols_line *ln,
-					int column_id,
-					size_t column_index)
+static bool regular_file_fill_column(struct proc *proc __attribute__((__unused__)),
+				     struct file *file __attribute__((__unused__)),
+				     struct libscols_line *ln,
+				     int column_id,
+				     size_t column_index)
 {
 	switch(column_id) {
 	case COL_TYPE:
@@ -44,16 +44,16 @@ static bool regular_fd_file_fill_column(struct proc *proc __attribute__((__unuse
 	return false;
 }
 
-const struct file_class regular_fd_file_class = {
-	.super = &fd_file_class,
-	.size = sizeof(struct fd_file),
-	.fill_column = regular_fd_file_fill_column,
+const struct file_class regular_file_class = {
+	.super = &file_class,
+	.size = sizeof(struct file),
+	.fill_column = regular_file_fill_column,
 	.free_content = NULL,
 };
 
-struct file *make_regular_fd_file(const struct file_class *class,
-				  struct stat *sb, const char *name, int fd)
+struct file *make_regular_file(const struct file_class *class,
+			       struct stat *sb, const char *name, int fd)
 {
-	return make_fd_file(class? class: &regular_fd_file_class,
-			    sb, name, fd);
+	return make_file(class? class: &regular_file_class,
+			 sb, name, fd);
 }
