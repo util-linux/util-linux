@@ -87,6 +87,7 @@ static struct colinfo infos[] = {
 	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, N_("user of the process") },
 	/* DEVICE */
 	/* SIZE/OFF */
+	/* MNTID */
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
@@ -308,26 +309,23 @@ static struct file *collect_outofbox_file(int dd, const char *name, int associat
 	return collect_file(&sb, sym, association);
 }
 
-static void collect_outofbox_files(struct proc *proc)
+static void collect_outofbox_files(struct proc *proc,
+				   const char *proc_template,
+				   enum association assocs[],
+				   const char* assoc_names[],
+				   unsigned int count)
 {
 	DIR *dirp;
 	int dd;
 
-	dirp = opendirf("/proc/%d", proc->pid);
+	dirp = opendirf(proc_template, proc->pid);
 	if (!dirp)
 		return;
 
 	if ((dd = dirfd(dirp)) < 0 )
 		return;
 
-	enum association assocs[] = { ASSOC_CWD, ASSOC_EXE, ASSOC_ROOT };
-	const char* assoc_names[] = {
-		[ASSOC_CWD]  = "cwd",
-		[ASSOC_EXE]  = "exe",
-		[ASSOC_ROOT] = "root",
-	};
-
-	for (unsigned int i = 0; i < ARRAY_SIZE(assocs); i++) {
+	for (unsigned int i = 0; i < count; i++) {
 		struct file *file;
 
 		if ((file = collect_outofbox_file(dd,
@@ -348,7 +346,47 @@ static void fill_proc(struct proc *proc)
 	if (!proc->command)
 		err(EXIT_FAILURE, _("failed to get command name"));
 
-	collect_outofbox_files(proc);
+
+	const char *classical_template = "/proc/%d";
+	enum association classical_assocs[] = { ASSOC_CWD, ASSOC_EXE, ASSOC_ROOT };
+	const char* classical_assoc_names[] = {
+		[ASSOC_CWD]  = "cwd",
+		[ASSOC_EXE]  = "exe",
+		[ASSOC_ROOT] = "root",
+	};
+	collect_outofbox_files(proc, classical_template,
+			       classical_assocs, classical_assoc_names,
+			       ARRAY_SIZE(classical_assocs));
+
+	const char *namespace_template = "/proc/%d/ns";
+	enum association namespace_assocs[] = {
+		ASSOC_NS_CGROUP,
+		ASSOC_NS_IPC,
+		ASSOC_NS_MNT,
+		ASSOC_NS_NET,
+		ASSOC_NS_PID,
+		ASSOC_NS_PID4C,
+		ASSOC_NS_TIME,
+		ASSOC_NS_TIME4C,
+		ASSOC_NS_USER,
+		ASSOC_NS_UTS,
+	};
+	const char* namespace_assoc_names[] = {
+		[ASSOC_NS_CGROUP] = "cgroup",
+		[ASSOC_NS_IPC]    = "ipc",
+		[ASSOC_NS_MNT]    = "mnt",
+		[ASSOC_NS_NET]    = "net",
+		[ASSOC_NS_PID]    = "pid",
+		[ASSOC_NS_PID4C]  = "pid_for_children",
+		[ASSOC_NS_TIME]   = "time",
+		[ASSOC_NS_TIME4C] = "time_for_children",
+		[ASSOC_NS_USER]   = "user",
+		[ASSOC_NS_UTS]    = "uts",
+	};
+	collect_outofbox_files(proc, namespace_template,
+			       namespace_assocs, namespace_assoc_names,
+			       ARRAY_SIZE(namespace_assocs));
+
 	collect_fd_files(proc);
 }
 
