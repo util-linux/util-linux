@@ -45,7 +45,7 @@ static const char *assocstr[N_ASSOCS] = {
 	[ASSOC_NS_TIME4C] = "time4c",
 	[ASSOC_NS_USER]   = "user",
 	[ASSOC_NS_UTS]    = "uts",
-	[ASSOC_MEM]       = "mmap",
+	[ASSOC_MEM]       = "mem",
 };
 
 static const char *strftype(mode_t ftype)

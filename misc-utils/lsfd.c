@@ -263,19 +263,37 @@ static struct file *collect_fd_file(int dd, struct dirent *dp)
 	return collect_file(&sb, sym, (int)num);
 }
 
+static struct file *collect_mem_file(int dd, struct dirent *dp)
+{
+	struct stat sb;
+	ssize_t len;
+	char sym[PATH_MAX];
+
+	if (fstatat(dd, dp->d_name, &sb, 0) < 0)
+		return NULL;
+
+	memset(sym, 0, sizeof(sym));
+	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
+		return NULL;
+
+	return collect_file(&sb, sym, -ASSOC_MEM);
+}
+
 static void enqueue_file(struct proc *proc, struct file * file)
 {
 	INIT_LIST_HEAD(&file->files);
 	list_add_tail(&file->files, &proc->files);
 }
 
-static void collect_fd_files(struct proc *proc)
+
+static void collect_fd_files_generic(struct proc *proc, const char *proc_template,
+				     struct file *(*collector)(int, struct dirent *))
 {
 	DIR *dirp;
 	int dd;
 	struct dirent *dp;
 
-	dirp = opendirf("/proc/%d/fd/", proc->pid);
+	dirp = opendirf(proc_template, proc->pid);
 	if (!dirp)
 		return;
 
@@ -285,12 +303,22 @@ static void collect_fd_files(struct proc *proc)
 	while ((dp = xreaddir(dirp))) {
 		struct file *file;
 
-		if ((file = collect_fd_file(dd, dp)) == NULL)
+		if ((file = (* collector)(dd, dp)) == NULL)
 			continue;
 
 		enqueue_file(proc, file);
 	}
 	closedir(dirp);
+}
+
+static void collect_fd_files(struct proc *proc)
+{
+	collect_fd_files_generic(proc, "/proc/%d/fd/", collect_fd_file);
+}
+
+static void collect_mem_files(struct proc *proc)
+{
+	collect_fd_files_generic(proc, "/proc/%d/map_files/", collect_mem_file);
 }
 
 static struct file *collect_outofbox_file(int dd, const char *name, int association)
@@ -387,6 +415,7 @@ static void fill_proc(struct proc *proc)
 			       namespace_assocs, namespace_assoc_names,
 			       ARRAY_SIZE(namespace_assocs));
 
+	collect_mem_files(proc);
 	collect_fd_files(proc);
 }
 
