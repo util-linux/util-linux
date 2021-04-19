@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #include "superblocks.h"
+#include "crc32c.h"
 #include "crc64.h"
 
 #define SB_LABEL_SIZE      32
@@ -48,8 +49,18 @@ struct bcachefs_sb_field_members {
 	struct bcachefs_sb_member	members[];
 }  __attribute__((packed));
 
+enum bcachefs_sb_csum_type {
+	BCACHEFS_SB_CSUM_TYPE_NONE = 0,
+	BCACHEFS_SB_CSUM_TYPE_CRC32C = 1,
+};
+
+union bcachefs_sb_csum {
+	uint32_t crc32c;
+	uint8_t raw[16];
+} __attribute__((packed));
+
 struct bcachefs_super_block {
-	uint8_t		csum[16];
+	union bcachefs_sb_csum	csum;
 	uint16_t	version;
 	uint16_t	version_min;
 	uint16_t	pad[2];
@@ -158,17 +169,10 @@ static void probe_bcachefs_sb_members(blkid_probe pr,
 	blkid_probe_set_fssize(pr, sectors * BCACHEFS_SECTOR_SIZE);
 }
 
-static void probe_bcachefs_sb_fields(blkid_probe pr, const struct blkid_idmag *mag,
-				     const struct bcachefs_super_block *bcs)
+static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super_block *bcs,
+				     unsigned char *sb_start, unsigned char *sb_end)
 {
-	unsigned long sb_size = BCACHEFS_SB_FIELDS_OFF + BYTES(bcs);
-	unsigned char *sb = blkid_probe_get_sb_buffer(pr, mag, sb_size);
-
-	if (!sb)
-		return;
-
-	unsigned char *sb_end = sb + sb_size;
-	unsigned char *field_addr = sb + BCACHEFS_SB_FIELDS_OFF;
+	unsigned char *field_addr = sb_start + BCACHEFS_SB_FIELDS_OFF;
 
 	while (1) {
 		struct bcachefs_sb_field *field = (struct bcachefs_sb_field *) field_addr;
@@ -187,6 +191,44 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct blkid_idmag *m
 		field_addr += BYTES(field);
 	}
 }
+
+static int bcachefs_validate_checksum(blkid_probe pr, const struct bcachefs_super_block *bcs,
+				      unsigned char *sb, unsigned char *sb_end)
+{
+	uint8_t checksum_type = be64_to_cpu(bcs->flags[0]) >> 58;
+	unsigned char *checksummed_data_start = sb + sizeof(bcs->csum);
+	size_t checksummed_data_size = sb_end - checksummed_data_start;
+	switch (checksum_type) {
+		case BCACHEFS_SB_CSUM_TYPE_NONE:
+			return 1;
+		case BCACHEFS_SB_CSUM_TYPE_CRC32C: {
+			uint32_t crc = crc32c(~0LL, checksummed_data_start, checksummed_data_size) ^ ~0LL;
+			return blkid_probe_verify_csum(pr, crc, le32_to_cpu(bcs->csum.crc32c));
+		}
+		default:
+			DBG(LOWPROBE, ul_debug("bcachefs: unknown checksum type %d, ignoring.", checksum_type));
+			return 1;
+	}
+}
+
+static int probe_bcachefs_full_sb(blkid_probe pr, const struct blkid_idmag *mag,
+		const struct bcachefs_super_block *bcs)
+{
+	unsigned long sb_size = BCACHEFS_SB_FIELDS_OFF + BYTES(bcs);
+	unsigned char *sb = blkid_probe_get_sb_buffer(pr, mag, sb_size);
+
+	if (!sb)
+		return BLKID_PROBE_NONE;
+
+	unsigned char *sb_end = sb + sb_size;
+
+	if (!bcachefs_validate_checksum(pr, bcs, sb, sb_end))
+		return BLKID_PROBE_NONE;
+
+	probe_bcachefs_sb_fields(pr, bcs, sb, sb_end);
+	return BLKID_PROBE_OK;
+}
+
 
 static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -210,9 +252,7 @@ static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_block_size(pr, blocksize * BCACHEFS_SECTOR_SIZE);
 	blkid_probe_set_fsblocksize(pr, blocksize * BCACHEFS_SECTOR_SIZE);
 	blkid_probe_set_wiper(pr, 0, BCACHE_SB_OFF);
-	probe_bcachefs_sb_fields(pr, mag, bcs);
-
-	return BLKID_PROBE_OK;
+	return probe_bcachefs_full_sb(pr, mag, bcs);
 }
 
 const struct blkid_idinfo bcache_idinfo =
