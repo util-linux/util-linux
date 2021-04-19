@@ -1114,7 +1114,7 @@ int blkid_probe_set_dimension(blkid_probe pr, uint64_t off, uint64_t size)
 	return 0;
 }
 
-unsigned char *_blkid_probe_get_sb(blkid_probe pr, const struct blkid_idmag *mag, size_t size)
+unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const struct blkid_idmag *mag, size_t size)
 {
 	uint64_t hint_offset;
 
