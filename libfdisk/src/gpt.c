@@ -758,7 +758,9 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 	/* Get the table length from the script, if given */
 	if (cxt->script) {
 		rc = get_script_u64(cxt, &nents, "table-length");
-		if (rc < 0)
+		if (rc == 1)
+			nents = GPT_NPARTITIONS;  /* undefined by script */
+		else if (rc < 0)
 			return rc;
 	}
 
