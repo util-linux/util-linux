@@ -1072,7 +1072,7 @@ int main(int argc, char *argv[])
 	parse_options(argc, argv);
 
 	if (optind == argc)
-		errx(EXIT_FAILURE, _("no directory or dile specified"));
+		errx(EXIT_FAILURE, _("no directory or file specified"));
 
 	gettime_monotonic(&stats.start_time);
 	stats.started = TRUE;
