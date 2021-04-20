@@ -46,8 +46,8 @@ endif
 
 if BUILD_LINE
 usrbin_exec_PROGRAMS += line
-line_SOURCES = text-utils/line.c
 MANPAGES += text-utils/line.1
+line_SOURCES = text-utils/line.c
 endif
 
 if BUILD_PG

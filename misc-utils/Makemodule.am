@@ -188,9 +188,9 @@ endif # BUILD_FINDMNT
 
 if BUILD_KILL
 bin_PROGRAMS += kill
+MANPAGES += misc-utils/kill.1
 kill_SOURCES = misc-utils/kill.c
 kill_LDADD = $(LDADD) libcommon.la
-MANPAGES += misc-utils/kill.1
 endif
 
 if BUILD_RENAME
@@ -220,6 +220,7 @@ endif
 
 if BUILD_HARDLINK
 usrbin_exec_PROGRAMS += hardlink
+MANPAGES += misc-utils/hardlink.1
 hardlink_SOURCES = misc-utils/hardlink.c lib/monotonic.c
 hardlink_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
 hardlink_CFLAGS = $(AM_CFLAGS)
@@ -227,5 +228,4 @@ if HAVE_PCRE2_POSIX
 hardlink_LDADD += $(PCRE2_POSIX_LIBS)
 hardlink_CFLAGS += $(PCRE2_POSIX_CFLAGS)
 endif
-MANPAGES += misc-utils/hardlink.1
 endif

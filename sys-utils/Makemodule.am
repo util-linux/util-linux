@@ -251,10 +251,10 @@ endif # BUILD_SETARCH
 
 if BUILD_EJECT
 usrbin_exec_PROGRAMS += eject
+MANPAGES += sys-utils/eject.1
 eject_SOURCES =  sys-utils/eject.c lib/monotonic.c
 eject_LDADD = $(LDADD) libmount.la libcommon.la $(REALTIME_LIBS)
 eject_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-MANPAGES += sys-utils/eject.1
 endif
 
 
@@ -391,6 +391,7 @@ endif
 
 if BUILD_LSCPU
 usrbin_exec_PROGRAMS += lscpu
+MANPAGES += sys-utils/lscpu.1
 lscpu_SOURCES = sys-utils/lscpu.c \
 		sys-utils/lscpu-cputype.c \
 		sys-utils/lscpu-cpu.c \
@@ -401,14 +402,13 @@ lscpu_SOURCES = sys-utils/lscpu.c \
 		sys-utils/lscpu.h
 lscpu_LDADD = $(LDADD) libcommon.la libsmartcols.la $(RTAS_LIBS)
 lscpu_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
-MANPAGES += sys-utils/lscpu.1
 endif
 
 if BUILD_CHCPU
 sbin_PROGRAMS += chcpu
+MANPAGES += sys-utils/chcpu.8
 chcpu_SOURCES = sys-utils/chcpu.c
 chcpu_LDADD = $(LDADD) libcommon.la
-MANPAGES += sys-utils/chcpu.8
 endif
 
 if BUILD_WDCTL
@@ -421,17 +421,17 @@ endif
 
 if BUILD_MOUNTPOINT
 bin_PROGRAMS += mountpoint
+MANPAGES += sys-utils/mountpoint.1
 mountpoint_LDADD = $(LDADD) libmount.la
 mountpoint_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-MANPAGES += sys-utils/mountpoint.1
 mountpoint_SOURCES = sys-utils/mountpoint.c
 endif
 
 if BUILD_FALLOCATE
 usrbin_exec_PROGRAMS += fallocate
+MANPAGES += sys-utils/fallocate.1
 fallocate_SOURCES = sys-utils/fallocate.c
 fallocate_LDADD = $(LDADD) libcommon.la
-MANPAGES += sys-utils/fallocate.1
 endif
 
 if BUILD_PIVOT_ROOT
