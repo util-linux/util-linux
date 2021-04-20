@@ -64,10 +64,13 @@ Do not truncate text in columns.
 Do not use multi-line text in columns.
 
 *-T*, *--nstree* _rel_::
-Print namespace tree(s).
-If *parent* is given as _rel_, print tree(s) constructed by the parent/child relationship.
+Use list output format.
+If *process* is gnve as _rel_, print proecss tree(s) in each name space.
+If *parent* is given, print tree(s) constructed by the parent/child relationship.
 If *owner* is given, print tree(s) constructed by the owner/owned relationship.
-The result can be forests because *lsns* cannot track a namespace having no process.
+*owner* is used as default when _rel_ is omitted.
+The result of *parent* and *owner* can be forests because *lsns* cannot track a namespace having no process.
+
 
 *-V*, *--version*::
 Display version information and exit.
