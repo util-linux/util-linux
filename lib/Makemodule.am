@@ -101,7 +101,8 @@ endif
 check_PROGRAMS += \
 	test_sysfs \
 	test_pager \
-	test_caputils
+	test_caputils \
+	test_loopdev
 endif
 
 if HAVE_OPENAT
@@ -164,6 +165,7 @@ test_pty_LDADD = $(LDADD) libcommon.la $(MATH_LIBS) $(REALTIME_LIBS) -lutil
 endif
 
 if LINUX
+
 test_cpuset_SOURCES = lib/cpuset.c
 test_cpuset_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_CPUSET
 
@@ -199,3 +201,8 @@ test_remove_env_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 test_buffer_SOURCES = lib/buffer.c
 test_buffer_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_BUFFER
+
+test_loopdev_SOURCES = lib/loopdev.c \
+		       $(test_sysfs_SOURCES) \
+		       $(test_canonicalize_SOURCES)
+test_loopdev_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_LOOPDEV
