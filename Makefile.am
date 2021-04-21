@@ -73,6 +73,12 @@ CLEANFILES =
 
 SUBDIRS = po
 
+if ENABLE_ASCIIDOC
+if ENABLE_POMAN
+SUBDIRS += po-man
+endif
+endif
+
 RCS_FIND_IGNORE = \( -name SCCS -o -name BitKeeper -o -name .svn -o \
 		-name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o
 

@@ -743,6 +743,15 @@ UL_REQUIRES_PROGRAM([asciidoc], [ASCIIDOCTOR], [asciidoctor], [man pages])
 AM_CONDITIONAL([ENABLE_ASCIIDOC], [test "x$build_asciidoc" = xyes])
 
 
+AC_ARG_ENABLE([poman],
+  AS_HELP_STRING([--enable-poman], [generate translated man pages]),
+  [], [UL_DEFAULT_ENABLE([poman], [no])]
+)
+UL_BUILD_INIT([poman])
+UL_REQUIRES_PROGRAM([poman], [PO4A], [po4a], [translated man pages])
+AM_CONDITIONAL([ENABLE_POMAN], [test "x$uild_poman" = xyes])
+
+
 AX_CHECK_TLS
 
 have_pty=no
@@ -2612,6 +2621,7 @@ libsmartcols/docs/Makefile
 libsmartcols/docs/version.xml
 libsmartcols/src/libsmartcols.h
 po/Makefile.in
+po-man/Makefile
 ])
 
 AC_OUTPUT
@@ -2656,6 +2666,7 @@ AC_MSG_RESULT([
 	Wide-char support: ${build_widechar}
 
 	Manual pages:      ${build_asciidoc}
+	Manual pages translated: ${build_poman}
 
 	warnings:
 
