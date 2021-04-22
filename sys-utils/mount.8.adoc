@@ -59,7 +59,7 @@ mount - mount a filesystem
 
 == DESCRIPTION
 
-All files accessible in a Unix system are arranged in one big tree, the file hierarchy, rooted at _/_. These files can be spread out over several devices. The *mount* command serves to attach the filesystem found on some device to the big file tree. Conversely, the umount8 command will detach it again. The filesystem is used to control how data is stored on the device or provided in a virtual way by network or other services.
+All files accessible in a Unix system are arranged in one big tree, the file hierarchy, rooted at _/_. These files can be spread out over several devices. The *mount* command serves to attach the filesystem found on some device to the big file tree. Conversely, the *umount*(8) command will detach it again. The filesystem is used to control how data is stored on the device or provided in a virtual way by network or other services.
 
 The standard form of the *mount* command is:
 

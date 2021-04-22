@@ -50,7 +50,7 @@ _/etc/fstab_
 
 == DESCRIPTION
 
-The file *fstab* contains descriptive information about the filesystems the system can mount. *fstab* is only read by programs, and not written; it is the duty of the system administrator to properly create and maintain this file. The order of records in *fstab* is important because fsck8, mount8, and umount8 sequentially iterate through *fstab* doing their thing.
+The file *fstab* contains descriptive information about the filesystems the system can mount. *fstab* is only read by programs, and not written; it is the duty of the system administrator to properly create and maintain this file. The order of records in *fstab* is important because *fsck*(8), *mount*(8), and *umount*(8) sequentially iterate through *fstab* doing their thing.
 
 Each filesystem is described on a separate line. Fields on each line are separated by tabs or spaces. Lines starting with '#' are comments. Blank lines are ignored.
 
@@ -80,7 +80,7 @@ This field describes the mount point (target) for the filesystem. For swap parti
 
 === The third field (_fs_vfstype_).
 
-This field describes the type of the filesystem. Linux supports many filesystem types: ext4, xfs, btrfs, f2fs, vfat, ntfs, hfsplus, tmpfs, sysfs, proc, iso9660, udf, squashfs, nfs, cifs, and many more. For more details, see mount8.
+This field describes the type of the filesystem. Linux supports many filesystem types: ext4, xfs, btrfs, f2fs, vfat, ntfs, hfsplus, tmpfs, sysfs, proc, iso9660, udf, squashfs, nfs, cifs, and many more. For more details, see *mount*(8).
 
 An entry _swap_ denotes a file or partition to be used for swapping, cf. *swapon*(8). An entry _none_ is useful for bind or move mounts.
 
