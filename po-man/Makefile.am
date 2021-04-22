@@ -61,3 +61,20 @@ install-data-local: gen-mans
 	    fi; \
 	  done; \
 	done
+
+uninstall-local:
+	@for l in $(PO_LANGS); do \
+	  mansrcdir="$(abs_builddir)/$$l"; \
+	  for s in $(MAN_SECTIONS); do \
+	    installfiles=`echo $${mansrcdir}/*.$$s`; \
+	    if test "$$installfiles" != '$${mansrcdir}/*.$$s'; then \
+	      installdir="$(DESTDIR)$(mandir)/$$l/man$$s"; \
+	      for file in $$installfiles; do \
+	        manname=`echo $$file | sed -e 's|^.*/||'`;  \
+	        echo "  Uninstalling " $$l ": " $$manname ; \
+	        rm -f $${installdir}/$${manname}; \
+	      done; \
+	    fi; \
+	  done; \
+	done
+
