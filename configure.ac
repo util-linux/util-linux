@@ -749,7 +749,7 @@ AC_ARG_ENABLE([poman],
 )
 UL_BUILD_INIT([poman])
 UL_REQUIRES_PROGRAM([poman], [PO4A], [po4a], [translated man pages])
-AM_CONDITIONAL([ENABLE_POMAN], [test "x$uild_poman" = xyes])
+AM_CONDITIONAL([ENABLE_POMAN], [test "x$build_poman" = xyes])
 
 
 AX_CHECK_TLS
