@@ -810,7 +810,7 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 	assert(table);
 
 	line = scols_table_new_line(table,
-			(ls->tree == LSNS_TREE_PROCESS) && proc->parent ? proc->parent->outline:
+			(ls->tree == LSNS_TREE_PROCESS && proc) && proc->parent ? proc->parent->outline:
 			(ls->tree == LSNS_TREE_PARENT)  && ns->parentns ? ns->parentns->ns_outline:
 			(ls->tree == LSNS_TREE_OWNER)   && ns->ownerns  ? ns->ownerns->ns_outline:
 			NULL);
@@ -827,10 +827,12 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 			xasprintf(&str, "%ju", (uintmax_t)ns->id);
 			break;
 		case COL_PID:
-			xasprintf(&str, "%d", (int) proc->pid);
+			if (proc)
+				xasprintf(&str, "%d", (int) proc->pid);
 			break;
 		case COL_PPID:
-			xasprintf(&str, "%d", (int) proc->ppid);
+			if (proc)
+				xasprintf(&str, "%d", (int) proc->ppid);
 			break;
 		case COL_TYPE:
 			xasprintf(&str, "%s", ns_names[ns->type]);
@@ -839,20 +841,30 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 			xasprintf(&str, "%d", ns->nprocs);
 			break;
 		case COL_COMMAND:
+			if (!proc)
+				break;
 			str = proc_get_command(proc->pid);
 			if (!str)
 				str = proc_get_command_name(proc->pid);
 			break;
 		case COL_PATH:
+			if (!proc)
+				break;
 			xasprintf(&str, "/proc/%d/ns/%s", (int) proc->pid, ns_names[ns->type]);
 			break;
 		case COL_UID:
+			if (!proc)
+				break;
 			xasprintf(&str, "%d", (int) proc->uid);
 			break;
 		case COL_USER:
+			if (!proc)
+				break;
 			xasprintf(&str, "%s", get_id(uid_cache, proc->uid)->name);
 			break;
 		case COL_NETNSID:
+			if (!proc)
+				break;
 			if (ns->type == LSNS_ID_NET)
 				netnsid_xasputs(&str, proc->netnsid);
 			break;
@@ -875,7 +887,7 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 
 	if (ls->tree == LSNS_TREE_OWNER || ls->tree == LSNS_TREE_PARENT)
 		ns->ns_outline = line;
-	else
+	else if (proc)
 		proc->outline = line;
 }
 
