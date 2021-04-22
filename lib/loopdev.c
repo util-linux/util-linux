@@ -641,7 +641,7 @@ int is_loopdev(const char *device)
 		rc = 0;
 	else if (major(st.st_rdev) == LOOPDEV_MAJOR)
 		rc = 1;
-	else {
+	else if (sysfs_devno_is_wholedisk(st.st_rdev)) {
 		/* It's possible that kernel creates a device with a different
 		 * major number ... check by /sys it's really loop device.
 		 */
@@ -1880,4 +1880,23 @@ int loopdev_count_by_backing_file(const char *filename, char **loopdev)
 	}
 	return count;
 }
+
+#ifdef TEST_PROGRAM_LOOPDEV
+int main(int argc, char *argv[])
+{
+	if (argc < 2)
+		goto usage;
+
+	if (strcmp(argv[1], "--is-loopdev") == 0 && argc == 3)
+		printf("%s: %s\n", argv[2], is_loopdev(argv[2]) ? "OK" : "FAIL");
+	else
+		goto usage;
+
+	return EXIT_SUCCESS;
+usage:
+	fprintf(stderr, "usage: %1$s --is-loopdev <dev>\n",
+			program_invocation_short_name);
+	return EXIT_FAILURE;
+}
+#endif
 

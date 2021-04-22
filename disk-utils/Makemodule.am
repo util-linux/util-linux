@@ -110,14 +110,14 @@ endif
 if BUILD_CRAMFS
 cramfs_common_sources = disk-utils/cramfs.h disk-utils/cramfs_common.c
 sbin_PROGRAMS += fsck.cramfs
+MANPAGES += disk-utils/fsck.cramfs.8
 fsck_cramfs_SOURCES = disk-utils/fsck.cramfs.c $(cramfs_common_sources)
 fsck_cramfs_LDADD = $(LDADD) -lz libcommon.la
-MANPAGES += disk-utils/fsck.cramfs.8
 
 sbin_PROGRAMS += mkfs.cramfs
+MANPAGES += disk-utils/mkfs.cramfs.8
 mkfs_cramfs_SOURCES = disk-utils/mkfs.cramfs.c $(cramfs_common_sources)
 mkfs_cramfs_LDADD = $(LDADD) -lz libcommon.la
-MANPAGES += disk-utils/mkfs.cramfs.8
 endif
 
 if BUILD_FDFORMAT

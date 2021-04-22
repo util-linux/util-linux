@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-03-28 14:30+0200\n"
+"POT-Creation-Date: 2021-03-29 18:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,28 +17,28 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. type: Title ==
-#: bugreports.adoc:1
+#: ../man-common/bugreports.adoc:1
 #, no-wrap
 msgid "REPORTING BUGS"
 msgstr ""
 
 #. type: Plain text
-#: bugreports.adoc:3
+#: ../man-common/bugreports.adoc:3
 msgid ""
 "For bug reports, use the issue tracker at "
 "https://github.com/karelzak/util-linux/issues."
 msgstr ""
 
 #. type: Title ==
-#: footer-config.adoc:1 footer-lib.adoc:1 footer.adoc:1
-#: ../login-utils/vipw.8.adoc:75
+#: ../man-common/footer-config.adoc:1 ../man-common/footer-lib.adoc:1
+#: ../man-common/footer.adoc:1 ../login-utils/vipw.8.adoc:75
 #, no-wrap
 msgid "AVAILABILITY"
 msgstr ""
 
 #.  TRANSLATORS: Keep *{configfile}* untranslated, it will be replaced with the name of the configuration file.
 #. type: Plain text
-#: footer-config.adoc:4
+#: ../man-common/footer-config.adoc:4
 #, no-wrap
 msgid ""
 "*{configfile}* is part of the util-linux package which can be downloaded "
@@ -48,7 +48,7 @@ msgstr ""
 
 #.  TRANSLATORS: Keep *{lib}* and {firstversion} untranslated, will be replaced with the library name and the version of util-linux where the library appeared for the first time.
 #. type: Plain text
-#: footer-lib.adoc:4
+#: ../man-common/footer-lib.adoc:4
 msgid ""
 "The *{lib}* library is part of the util-linux package since version "
 "{firstversion}. It can be downloaded from "
@@ -57,7 +57,7 @@ msgstr ""
 
 #.  TRANSLATORS: Keep *{command}* untranslated, it will be replaced with the command name.
 #. type: Plain text
-#: footer.adoc:4
+#: ../man-common/footer.adoc:4
 msgid ""
 "The *{command}* command is part of the util-linux package which can be "
 "downloaded from https://www.kernel.org/pub/linux/utils/util-linux/[Linux "
@@ -65,13 +65,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: translation.adoc:1
+#: ../man-common/translation.adoc:1
 #, no-wrap
 msgid "TRANSLATION"
 msgstr ""
 
 #. type: Plain text
-#: translation.adoc:6
+#: ../man-common/translation.adoc:6
 msgid ""
 "For the authors of this translation, see the header of the corresponding "
 "*.po file at GNU TP: "
@@ -81,7 +81,7 @@ msgstr ""
 #. TRANSLATORS: Please replace %1 with the address of the mailing list of your
 #. translation team.
 #. type: Plain text
-#: translation.adoc:12
+#: ../man-common/translation.adoc:12
 msgid "Report man page translation bugs to: <%1>"
 msgstr ""
 
@@ -433,7 +433,7 @@ msgstr ""
 #: ../login-utils/runuser.1.adoc:131 ../login-utils/su.1.adoc:145
 #: ../login-utils/utmpdump.1.adoc:79 ../login-utils/vipw.8.adoc:68
 #: ../misc-utils/blkid.8.adoc:178 ../misc-utils/fincore.1.adoc:57
-#: ../misc-utils/findfs.8.adoc:65 ../misc-utils/findmnt.8.adoc:217
+#: ../misc-utils/findfs.8.adoc:65 ../misc-utils/findmnt.8.adoc:219
 #: ../misc-utils/getopt.1.adoc:153 ../misc-utils/kill.1.adoc:107
 #: ../misc-utils/logger.1.adoc:242 ../misc-utils/look.1.adoc:105
 #: ../misc-utils/lsblk.8.adoc:166 ../misc-utils/lslocks.8.adoc:112
@@ -541,7 +541,7 @@ msgstr ""
 #: ../login-utils/su.1.adoc:31 ../login-utils/sulogin.8.adoc:50
 #: ../login-utils/utmpdump.1.adoc:38 ../misc-utils/blkid.8.adoc:42
 #: ../misc-utils/cal.1.adoc:67 ../misc-utils/fincore.1.adoc:29
-#: ../misc-utils/findmnt.8.adoc:30 ../misc-utils/getopt.1.adoc:30
+#: ../misc-utils/findmnt.8.adoc:32 ../misc-utils/getopt.1.adoc:30
 #: ../misc-utils/hardlink.1.adoc:27 ../misc-utils/kill.1.adoc:53
 #: ../misc-utils/logger.1.adoc:57 ../misc-utils/look.1.adoc:57
 #: ../misc-utils/lsblk.8.adoc:29 ../misc-utils/lslocks.8.adoc:34
@@ -635,7 +635,7 @@ msgstr ""
 #: ../login-utils/runuser.1.adoc:80 ../login-utils/su.1.adoc:80
 #: ../login-utils/sulogin.8.adoc:64 ../login-utils/utmpdump.1.adoc:52
 #: ../misc-utils/blkid.8.adoc:58 ../misc-utils/cal.1.adoc:123
-#: ../misc-utils/fincore.1.adoc:50 ../misc-utils/findmnt.8.adoc:62
+#: ../misc-utils/fincore.1.adoc:50 ../misc-utils/findmnt.8.adoc:64
 #: ../misc-utils/getopt.1.adoc:35 ../misc-utils/hardlink.1.adoc:29
 #: ../misc-utils/logger.1.adoc:184 ../misc-utils/look.1.adoc:76
 #: ../misc-utils/lsblk.8.adoc:54 ../misc-utils/lslocks.8.adoc:69
@@ -688,7 +688,7 @@ msgstr ""
 #: ../login-utils/nologin.8.adoc:53 ../login-utils/runuser.1.adoc:82
 #: ../login-utils/su.1.adoc:82 ../login-utils/sulogin.8.adoc:66
 #: ../login-utils/utmpdump.1.adoc:54 ../misc-utils/cal.1.adoc:125
-#: ../misc-utils/fincore.1.adoc:52 ../misc-utils/findmnt.8.adoc:64
+#: ../misc-utils/fincore.1.adoc:52 ../misc-utils/findmnt.8.adoc:66
 #: ../misc-utils/logger.1.adoc:186 ../misc-utils/look.1.adoc:78
 #: ../misc-utils/lsblk.8.adoc:56 ../misc-utils/lslocks.8.adoc:71
 #: ../misc-utils/mcookie.1.adoc:47 ../misc-utils/namei.1.adoc:64
@@ -1060,7 +1060,7 @@ msgstr ""
 #: ../login-utils/newgrp.1.adoc:30 ../login-utils/nologin.8.adoc:67
 #: ../login-utils/sulogin.8.adoc:74 ../login-utils/utmpdump.1.adoc:75
 #: ../misc-utils/blkid.8.adoc:174 ../misc-utils/fincore.1.adoc:53
-#: ../misc-utils/findfs.8.adoc:61 ../misc-utils/findmnt.8.adoc:213
+#: ../misc-utils/findfs.8.adoc:61 ../misc-utils/findmnt.8.adoc:215
 #: ../misc-utils/kill.1.adoc:100 ../misc-utils/logger.1.adoc:238
 #: ../misc-utils/lsblk.8.adoc:161 ../misc-utils/lslocks.8.adoc:108
 #: ../misc-utils/namei.1.adoc:69 ../misc-utils/uuidgen.1.adoc:66
@@ -1554,7 +1554,7 @@ msgstr ""
 #: ../disk-utils/sfdisk.8.adoc:385 ../disk-utils/swaplabel.8.adoc:40
 #: ../lib/terminal-colors.d.5.adoc:129 ../login-utils/sulogin.8.adoc:70
 #: ../login-utils/vipw.8.adoc:57 ../misc-utils/blkid.8.adoc:170
-#: ../misc-utils/findfs.8.adoc:56 ../misc-utils/findmnt.8.adoc:170
+#: ../misc-utils/findfs.8.adoc:56 ../misc-utils/findmnt.8.adoc:172
 #: ../misc-utils/getopt.1.adoc:135 ../misc-utils/look.1.adoc:81
 #: ../misc-utils/lsblk.8.adoc:138 ../misc-utils/whereis.1.adoc:110
 #: ../misc-utils/wipefs.8.adoc:84 ../sys-utils/hwclock.8.adoc:351
@@ -1644,7 +1644,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:151 ../disk-utils/sfdisk.8.adoc:407
-#: ../login-utils/nologin.8.adoc:70 ../misc-utils/findmnt.8.adoc:216
+#: ../login-utils/nologin.8.adoc:70 ../misc-utils/findmnt.8.adoc:218
 #: ../misc-utils/wipefs.8.adoc:106 ../sys-utils/choom.1.adoc:54
 #: ../sys-utils/dmesg.1.adoc:184 ../sys-utils/lsns.8.adoc:75
 #: ../sys-utils/mount.8.adoc:1455 ../sys-utils/mountpoint.1.adoc:68
@@ -2014,7 +2014,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/fdisk.8.adoc:57 ../disk-utils/fsck.minix.8.adoc:47
-#: ../disk-utils/partx.8.adoc:54 ../misc-utils/findmnt.8.adoc:74
+#: ../disk-utils/partx.8.adoc:54 ../misc-utils/findmnt.8.adoc:76
 #: ../misc-utils/lsblk.8.adoc:66 ../sys-utils/losetup.8.adoc:98
 #: ../sys-utils/lsipc.1.adoc:57 ../sys-utils/lsns.8.adoc:37
 #, no-wrap
@@ -2063,7 +2063,7 @@ msgstr ""
 #. type: Labeled list
 #: ../disk-utils/fdisk.8.adoc:71 ../disk-utils/partx.8.adoc:69
 #: ../disk-utils/sfdisk.8.adoc:186 ../login-utils/lslogins.1.adoc:72
-#: ../misc-utils/fincore.1.adoc:37 ../misc-utils/findmnt.8.adoc:93
+#: ../misc-utils/fincore.1.adoc:37 ../misc-utils/findmnt.8.adoc:95
 #: ../misc-utils/lsblk.8.adoc:78 ../misc-utils/lslocks.8.adoc:48
 #: ../sys-utils/irqtop.1.adoc:25 ../sys-utils/lsipc.1.adoc:69
 #: ../sys-utils/lsirq.1.adoc:28 ../sys-utils/lsmem.1.adoc:48
@@ -4481,7 +4481,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/mkswap.8.adoc:64 ../misc-utils/findmnt.8.adoc:164
+#: ../disk-utils/mkswap.8.adoc:64 ../misc-utils/findmnt.8.adoc:166
 #: ../misc-utils/kill.1.adoc:65 ../sys-utils/flock.1.adoc:83
 #: ../sys-utils/prlimit.1.adoc:58
 #, no-wrap
@@ -4654,7 +4654,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/partx.8.adoc:45 ../misc-utils/fincore.1.adoc:34
-#: ../misc-utils/findmnt.8.adoc:38 ../misc-utils/lsblk.8.adoc:34
+#: ../misc-utils/findmnt.8.adoc:40 ../misc-utils/lsblk.8.adoc:34
 #: ../misc-utils/lslocks.8.adoc:36 ../sys-utils/ipcs.1.adoc:73
 #: ../sys-utils/lsipc.1.adoc:72 ../sys-utils/lsmem.1.adoc:36
 #, no-wrap
@@ -4771,7 +4771,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/partx.8.adoc:72 ../login-utils/lslogins.1.adoc:75
-#: ../misc-utils/findmnt.8.adoc:99 ../misc-utils/lslocks.8.adoc:54
+#: ../misc-utils/findmnt.8.adoc:101 ../misc-utils/lslocks.8.adoc:54
 #: ../sys-utils/losetup.8.adoc:104 ../sys-utils/lscpu.1.adoc:145
 #: ../sys-utils/lsmem.1.adoc:51 ../sys-utils/lsns.8.adoc:48
 #: ../sys-utils/rfkill.8.adoc:36 ../sys-utils/swapon.8.adoc:74
@@ -4790,7 +4790,7 @@ msgid "Output all available columns."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/partx.8.adoc:75 ../misc-utils/findmnt.8.adoc:102
+#: ../disk-utils/partx.8.adoc:75 ../misc-utils/findmnt.8.adoc:104
 #: ../misc-utils/lsblk.8.adoc:86 ../sys-utils/lsirq.1.adoc:37
 #: ../sys-utils/lsmem.1.adoc:54
 #, no-wrap
@@ -4804,7 +4804,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/partx.8.adoc:78 ../login-utils/lslogins.1.adoc:81
-#: ../misc-utils/fincore.1.adoc:41 ../misc-utils/findmnt.8.adoc:128
+#: ../misc-utils/fincore.1.adoc:41 ../misc-utils/findmnt.8.adoc:130
 #: ../misc-utils/lsblk.8.adoc:92 ../misc-utils/lslocks.8.adoc:60
 #: ../misc-utils/uuidparse.1.adoc:59 ../sys-utils/dmesg.1.adoc:99
 #: ../sys-utils/lsipc.1.adoc:75 ../sys-utils/lsmem.1.adoc:57
@@ -6547,7 +6547,7 @@ msgid "LIBFDISK_DEBUG=all"
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:393 ../misc-utils/findmnt.8.adoc:181
+#: ../disk-utils/sfdisk.8.adoc:393 ../misc-utils/findmnt.8.adoc:183
 #: ../misc-utils/lsblk.8.adoc:149
 #, no-wrap
 msgid "LIBSMARTCOLS_DEBUG=all"
@@ -9232,7 +9232,7 @@ msgid "*--noheadings*"
 msgstr ""
 
 #. type: Plain text
-#: ../login-utils/lslogins.1.adoc:68 ../misc-utils/findmnt.8.adoc:88
+#: ../login-utils/lslogins.1.adoc:68 ../misc-utils/findmnt.8.adoc:90
 #: ../misc-utils/lsblk.8.adoc:77 ../misc-utils/lslocks.8.adoc:47
 #: ../misc-utils/uuidparse.1.adoc:55 ../misc-utils/wipefs.8.adoc:60
 #: ../sys-utils/lsipc.1.adoc:65 ../sys-utils/lsmem.1.adoc:47
@@ -11820,7 +11820,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/fincore.1.adoc:31 ../misc-utils/findmnt.8.adoc:86
+#: ../misc-utils/fincore.1.adoc:31 ../misc-utils/findmnt.8.adoc:88
 #: ../misc-utils/lsblk.8.adoc:75 ../misc-utils/lslocks.8.adoc:45
 #: ../misc-utils/uuidparse.1.adoc:53 ../sys-utils/losetup.8.adoc:107
 #: ../sys-utils/lsirq.1.adoc:25 ../sys-utils/lsmem.1.adoc:45
@@ -11858,7 +11858,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/fincore.1.adoc:44 ../misc-utils/findmnt.8.adoc:68
+#: ../misc-utils/fincore.1.adoc:44 ../misc-utils/findmnt.8.adoc:70
 #: ../misc-utils/lsblk.8.adoc:63 ../misc-utils/lslocks.8.adoc:42
 #: ../misc-utils/uuidparse.1.adoc:50 ../misc-utils/wipefs.8.adoc:52
 #: ../sys-utils/losetup.8.adoc:113 ../sys-utils/lscpu.1.adoc:119
@@ -11870,7 +11870,7 @@ msgid "*-J*, *--json*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/fincore.1.adoc:46 ../misc-utils/findmnt.8.adoc:70
+#: ../misc-utils/fincore.1.adoc:46 ../misc-utils/findmnt.8.adoc:72
 #: ../misc-utils/lslocks.8.adoc:44 ../misc-utils/uuidparse.1.adoc:52
 #: ../misc-utils/wipefs.8.adoc:54 ../sys-utils/lsirq.1.adoc:36
 #: ../sys-utils/lsmem.1.adoc:44 ../sys-utils/lsns.8.adoc:36
@@ -12055,8 +12055,8 @@ msgstr ""
 #: ../misc-utils/findmnt.8.adoc:21
 #, no-wrap
 msgid ""
-"*findmnt* [options] [*--source*] _device_ [*--target*|*--mountpoint*] "
-"_mountpoint_\n"
+"*findmnt* [options] [*--source*] _device_ [*--target* _path_|*--mountpoint* "
+"_mountpoint_]\n"
 msgstr ""
 
 #. type: Plain text
@@ -12082,71 +12082,78 @@ msgstr ""
 #. type: Plain text
 #: ../misc-utils/findmnt.8.adoc:29
 msgid ""
+"The command-line option *--target* accepts any file or directory and then "
+"*findmnt* displays the filesystem for the given path."
+msgstr ""
+
+#. type: Plain text
+#: ../misc-utils/findmnt.8.adoc:31
+msgid ""
 "The command prints all mounted filesystems in the tree-like format by "
 "default."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:32
+#: ../misc-utils/findmnt.8.adoc:34
 #, no-wrap
 msgid "*-A*, *--all*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:34
+#: ../misc-utils/findmnt.8.adoc:36
 msgid "Disable all built-in filters and print all filesystems."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:35
+#: ../misc-utils/findmnt.8.adoc:37
 #, no-wrap
 msgid "*-a*, *--ascii*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:37
+#: ../misc-utils/findmnt.8.adoc:39
 msgid "Use ascii characters for tree formatting."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:40
+#: ../misc-utils/findmnt.8.adoc:42
 msgid ""
 "Print the SIZE, USED and AVAIL columns in bytes rather than in a "
 "human-readable format."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:41
+#: ../misc-utils/findmnt.8.adoc:43
 #, no-wrap
 msgid "*-C*, *--nocanonicalize*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:43
+#: ../misc-utils/findmnt.8.adoc:45
 msgid ""
 "Do not canonicalize paths at all. This option affects the comparing of paths "
 "and the evaluation of tags (LABEL, UUID, etc.)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:44
+#: ../misc-utils/findmnt.8.adoc:46
 #, no-wrap
 msgid "*-c*, *--canonicalize*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:46
+#: ../misc-utils/findmnt.8.adoc:48
 msgid "Canonicalize all printed paths."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:47
+#: ../misc-utils/findmnt.8.adoc:49
 #, no-wrap
 msgid "*-D*, *--df*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:49
+#: ../misc-utils/findmnt.8.adoc:51
 msgid ""
 "Imitate the output of df1. This option is equivalent to *-o "
 "SOURCE,FSTYPE,SIZE,USED,AVAIL,USE%,TARGET* but excludes all pseudo "
@@ -12154,37 +12161,37 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:50
+#: ../misc-utils/findmnt.8.adoc:52
 #, no-wrap
 msgid "*-d*, *--direction* _word_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:52
+#: ../misc-utils/findmnt.8.adoc:54
 msgid "The search direction, either *forward* or *backward*."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:53
+#: ../misc-utils/findmnt.8.adoc:55
 #, no-wrap
 msgid "*-e*, *--evaluate*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:55
+#: ../misc-utils/findmnt.8.adoc:57
 msgid ""
 "Convert all tags (LABEL, UUID, PARTUUID or PARTLABEL) to the corresponding "
 "device names."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:56
+#: ../misc-utils/findmnt.8.adoc:58
 #, no-wrap
 msgid "*-F*, *--tab-file* _path_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:58
+#: ../misc-utils/findmnt.8.adoc:60
 msgid ""
 "Search in an alternative file. If used with *--fstab*, *--mtab* or "
 "*--kernel*, then it overrides the default paths. If specified more than "
@@ -12192,35 +12199,35 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:59
+#: ../misc-utils/findmnt.8.adoc:61
 #, no-wrap
 msgid "*-f*, *--first-only*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:61
+#: ../misc-utils/findmnt.8.adoc:63
 msgid "Print the first matching filesystem only."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:65
+#: ../misc-utils/findmnt.8.adoc:67
 #, no-wrap
 msgid "*-i*, *--invert*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:67
+#: ../misc-utils/findmnt.8.adoc:69
 msgid "Invert the sense of matching."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:71 ../sys-utils/dmesg.1.adoc:72
+#: ../misc-utils/findmnt.8.adoc:73 ../sys-utils/dmesg.1.adoc:72
 #, no-wrap
 msgid "*-k*, *--kernel*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:73
+#: ../misc-utils/findmnt.8.adoc:75
 msgid ""
 "Search in _/proc/self/mountinfo_. The output is in the tree-like "
 "format. This is the default. The output contains only mount options "
@@ -12228,7 +12235,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:76
+#: ../misc-utils/findmnt.8.adoc:78
 msgid ""
 "Use the list output format. This output format is automatically enabled if "
 "the output is restricted by the *-t*, *-O*, *-S* or *-T* option and the "
@@ -12237,37 +12244,37 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:77
+#: ../misc-utils/findmnt.8.adoc:79
 #, no-wrap
 msgid "*-M*, *--mountpoint* _path_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:79
+#: ../misc-utils/findmnt.8.adoc:81
 msgid "Explicitly define the mountpoint file or directory. See also *--target*."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:80
+#: ../misc-utils/findmnt.8.adoc:82
 #, no-wrap
 msgid "*-m*, *--mtab*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:82
+#: ../misc-utils/findmnt.8.adoc:84
 msgid ""
 "Search in _/etc/mtab_. The output is in the list format by default (see "
 "*--tree*). The output may include user space mount options."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:83
+#: ../misc-utils/findmnt.8.adoc:85
 #, no-wrap
 msgid "*-N*, *--task* _tid_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:85
+#: ../misc-utils/findmnt.8.adoc:87
 msgid ""
 "Use alternative namespace _/proc/<tid>/mountinfo_ rather than the default "
 "_/proc/self/mountinfo_. If the option is specified more than once, then "
@@ -12276,14 +12283,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:89
+#: ../misc-utils/findmnt.8.adoc:91
 #, no-wrap
 msgid "*-O*, *--options* _list_"
 msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:92
+#: ../misc-utils/findmnt.8.adoc:94
 msgid ""
 "Limit the set of printed filesystems. More than one option may be specified "
 "in a comma-separated list. The *-t* and *-O* options are cumulative in "
@@ -12294,7 +12301,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:95
+#: ../misc-utils/findmnt.8.adoc:97
 msgid ""
 "Define output columns. See the *--help* output to get a list of the "
 "currently supported columns. The *TARGET* column contains tree formatting if "
@@ -12303,21 +12310,21 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:98
+#: ../misc-utils/findmnt.8.adoc:100
 msgid ""
 "The default list of columns may be extended if _list_ is specified in the "
 "format _{plus}list_ (e.g., *findmnt -o {plus}PROPAGATION*)."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:101
+#: ../misc-utils/findmnt.8.adoc:103
 msgid ""
 "Output almost all available columns. The columns that require *--poll* are "
 "not included."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:104
+#: ../misc-utils/findmnt.8.adoc:106
 msgid ""
 "Produce output in the form of key=\"value\" pairs. All potentially unsafe "
 "value characters are hex-escaped (\\x<code>). The key (variable name) will "
@@ -12327,13 +12334,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:105
+#: ../misc-utils/findmnt.8.adoc:107
 #, no-wrap
 msgid "*-p*, *--poll*[_=list_]"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:107
+#: ../misc-utils/findmnt.8.adoc:109
 msgid ""
 "Monitor changes in the _/proc/self/mountinfo_ file. Supported actions are: "
 "mount, umount, remount and move. More than one action may be specified in a "
@@ -12341,14 +12348,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:109
+#: ../misc-utils/findmnt.8.adoc:111
 msgid ""
 "The time for which *--poll* will block can be restricted with the "
 "*--timeout* or *--first-only* options."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:111
+#: ../misc-utils/findmnt.8.adoc:113
 msgid ""
 "The standard columns always use the new version of the information from the "
 "mountinfo file, except the umount action which is based on the original "
@@ -12356,70 +12363,70 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:112
+#: ../misc-utils/findmnt.8.adoc:114
 #, no-wrap
 msgid "*ACTION*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:114
+#: ../misc-utils/findmnt.8.adoc:116
 msgid ""
 "mount, umount, move or remount action name; this column is enabled by "
 "default"
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:114
+#: ../misc-utils/findmnt.8.adoc:116
 #, no-wrap
 msgid "*OLD-TARGET*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:116
+#: ../misc-utils/findmnt.8.adoc:118
 msgid "available for umount and move actions"
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:116
+#: ../misc-utils/findmnt.8.adoc:118
 #, no-wrap
 msgid "*OLD-OPTIONS*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:118
+#: ../misc-utils/findmnt.8.adoc:120
 msgid "available for umount and remount actions"
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:119
+#: ../misc-utils/findmnt.8.adoc:121
 #, no-wrap
 msgid "*--pseudo*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:121
+#: ../misc-utils/findmnt.8.adoc:123
 msgid "Print only pseudo filesystems."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:122
+#: ../misc-utils/findmnt.8.adoc:124
 #, no-wrap
 msgid "*--shadow*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:124
+#: ../misc-utils/findmnt.8.adoc:126
 msgid "Print only filesystems over-mounted by another filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:125
+#: ../misc-utils/findmnt.8.adoc:127
 #, no-wrap
 msgid "*-R*, *--submounts*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:127
+#: ../misc-utils/findmnt.8.adoc:129
 msgid ""
 "Print recursively all submounts for the selected filesystems. The "
 "restrictions defined by options *-t*, *-O*, *-S*, *-T* and *--direction* are "
@@ -12429,31 +12436,31 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:130
+#: ../misc-utils/findmnt.8.adoc:132
 msgid ""
 "Use raw output format. All potentially unsafe characters are hex-escaped "
 "(\\x<code>)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:131
+#: ../misc-utils/findmnt.8.adoc:133
 #, no-wrap
 msgid "*--real*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:133
+#: ../misc-utils/findmnt.8.adoc:135
 msgid "Print only real filesystems."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:134
+#: ../misc-utils/findmnt.8.adoc:136
 #, no-wrap
 msgid "*-S*, *--source* _spec_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:136
+#: ../misc-utils/findmnt.8.adoc:138
 msgid ""
 "Explicitly define the mount source. Supported specifications are _device_, "
 "__maj__**:**_min_, **LABEL=**__label__, **UUID=**__uuid__, "
@@ -12461,24 +12468,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:137
+#: ../misc-utils/findmnt.8.adoc:139
 #, no-wrap
 msgid "*-s*, *--fstab*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:139
+#: ../misc-utils/findmnt.8.adoc:141
 msgid "Search in _/etc/fstab_. The output is in the list format (see *--list*)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:140
+#: ../misc-utils/findmnt.8.adoc:142
 #, no-wrap
 msgid "*-T*, *--target* _path_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:142
+#: ../misc-utils/findmnt.8.adoc:144
 msgid ""
 "Define the mount target. If _path_ is not a mountpoint file or directory, "
 "then *findmnt* checks the _path_ elements in reverse order to get the "
@@ -12489,13 +12496,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:143 ../misc-utils/wipefs.8.adoc:78
+#: ../misc-utils/findmnt.8.adoc:145 ../misc-utils/wipefs.8.adoc:78
 #, no-wrap
 msgid "*-t*, *--types* _list_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:145
+#: ../misc-utils/findmnt.8.adoc:147
 msgid ""
 "Limit the set of printed filesystems. More than one type may be specified in "
 "a comma-separated list. The list of filesystem types can be prefixed with "
@@ -12504,40 +12511,40 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:146
+#: ../misc-utils/findmnt.8.adoc:148
 #, no-wrap
 msgid "*--tree*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:148
+#: ../misc-utils/findmnt.8.adoc:150
 msgid ""
 "Enable tree-like output if possible. The options is silently ignored for "
 "tables where is missing child-parent relation (e.g., fstab)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:149
+#: ../misc-utils/findmnt.8.adoc:151
 #, no-wrap
 msgid "*-U*, *--uniq*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:151
+#: ../misc-utils/findmnt.8.adoc:153
 msgid ""
 "Ignore filesystems with duplicate mount targets, thus effectively skipping "
 "over-mounted mount points."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:152 ../misc-utils/lslocks.8.adoc:63
+#: ../misc-utils/findmnt.8.adoc:154 ../misc-utils/lslocks.8.adoc:63
 #: ../sys-utils/lsns.8.adoc:60
 #, no-wrap
 msgid "*-u*, *--notruncate*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:154
+#: ../misc-utils/findmnt.8.adoc:156
 msgid ""
 "Do not truncate text in columns. The default is to not truncate the "
 "*TARGET*, *SOURCE*, *UUID*, *LABEL*, *PARTUUID*, *PARTLABEL* columns. This "
@@ -12545,39 +12552,39 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:155
+#: ../misc-utils/findmnt.8.adoc:157
 #, no-wrap
 msgid "*-v*, *--nofsroot*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:157
+#: ../misc-utils/findmnt.8.adoc:159
 msgid ""
 "Do not print a [/dir] in the SOURCE column for bind mounts or btrfs "
 "subvolumes."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:158
+#: ../misc-utils/findmnt.8.adoc:160
 #, no-wrap
 msgid "*-w*, *--timeout* _milliseconds_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:160
+#: ../misc-utils/findmnt.8.adoc:162
 msgid ""
 "Specify an upper limit on the time for which *--poll* will block, in "
 "milliseconds."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:161
+#: ../misc-utils/findmnt.8.adoc:163
 #, no-wrap
 msgid "*-x*, *--verify*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:163
+#: ../misc-utils/findmnt.8.adoc:165
 msgid ""
 "Check mount table content. The default is to verify _/etc/fstab_ parsability "
 "and usability. It's possible to use this option also with *--tab-file*. It's "
@@ -12586,18 +12593,18 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:166
+#: ../misc-utils/findmnt.8.adoc:168
 msgid "Force findmnt to print more information (*--verify* only for now)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:167
+#: ../misc-utils/findmnt.8.adoc:169
 #, no-wrap
 msgid "*--vfs-all*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:169
+#: ../misc-utils/findmnt.8.adoc:171
 msgid ""
 "When used with *VFS-OPTIONS* column, print all VFS (fs-independent) "
 "flags. This option is designed for auditing purposes to list also default "
@@ -12605,31 +12612,31 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:172 ../sys-utils/mount.8.adoc:1397
+#: ../misc-utils/findmnt.8.adoc:174 ../sys-utils/mount.8.adoc:1397
 #: ../sys-utils/umount.8.adoc:156
 #, no-wrap
 msgid "LIBMOUNT_FSTAB=<path>"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:174
+#: ../misc-utils/findmnt.8.adoc:176
 msgid "overrides the default location of the fstab file"
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:175 ../sys-utils/mount.8.adoc:1400
+#: ../misc-utils/findmnt.8.adoc:177 ../sys-utils/mount.8.adoc:1400
 #: ../sys-utils/umount.8.adoc:159
 #, no-wrap
 msgid "LIBMOUNT_MTAB=<path>"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:177
+#: ../misc-utils/findmnt.8.adoc:179
 msgid "overrides the default location of the mtab file"
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:178 ../misc-utils/lsblk.8.adoc:146
+#: ../misc-utils/findmnt.8.adoc:180 ../misc-utils/lsblk.8.adoc:146
 #: ../sys-utils/mount.8.adoc:1403 ../sys-utils/mountpoint.1.adoc:58
 #: ../sys-utils/swapon.8.adoc:126 ../sys-utils/umount.8.adoc:162
 #, no-wrap
@@ -12637,28 +12644,28 @@ msgid "LIBMOUNT_DEBUG=all"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:180 ../sys-utils/mount.8.adoc:1405
+#: ../misc-utils/findmnt.8.adoc:182 ../sys-utils/mount.8.adoc:1405
 msgid "enables libmount debug output"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:183
+#: ../misc-utils/findmnt.8.adoc:185
 msgid "enables libsmartcols debug output"
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:184 ../misc-utils/lsblk.8.adoc:152
+#: ../misc-utils/findmnt.8.adoc:186 ../misc-utils/lsblk.8.adoc:152
 #, no-wrap
 msgid "LIBSMARTCOLS_DEBUG_PADDING=on"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:186 ../misc-utils/lsblk.8.adoc:154
+#: ../misc-utils/findmnt.8.adoc:188 ../misc-utils/lsblk.8.adoc:154
 msgid "use visible padding characters. Requires enabled LIBSMARTCOLS_DEBUG."
 msgstr ""
 
 #. type: Title ==
-#: ../misc-utils/findmnt.8.adoc:187 ../misc-utils/getopt.1.adoc:130
+#: ../misc-utils/findmnt.8.adoc:189 ../misc-utils/getopt.1.adoc:130
 #: ../misc-utils/logger.1.adoc:234 ../misc-utils/look.1.adoc:98
 #: ../misc-utils/rename.1.adoc:75 ../misc-utils/uuidgen.1.adoc:62
 #: ../misc-utils/whereis.1.adoc:115 ../misc-utils/wipefs.8.adoc:92
@@ -12673,103 +12680,103 @@ msgid "EXAMPLES"
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:189
+#: ../misc-utils/findmnt.8.adoc:191
 #, no-wrap
 msgid "*findmnt --fstab -t nfs*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:191
+#: ../misc-utils/findmnt.8.adoc:193
 msgid "Prints all NFS filesystems defined in _/etc/fstab_."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:192
+#: ../misc-utils/findmnt.8.adoc:194
 #, no-wrap
 msgid "*findmnt --fstab /mnt/foo*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:194
+#: ../misc-utils/findmnt.8.adoc:196
 msgid ""
 "Prints all _/etc/fstab_ filesystems where the mountpoint directory is "
 "_/mnt/foo_. It also prints bind mounts where _/mnt/foo_ is a source."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:195
+#: ../misc-utils/findmnt.8.adoc:197
 #, no-wrap
 msgid "*findmnt --fstab --target /mnt/foo*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:197
+#: ../misc-utils/findmnt.8.adoc:199
 msgid ""
 "Prints all _/etc/fstab_ filesystems where the mountpoint directory is "
 "_/mnt/foo_."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:198
+#: ../misc-utils/findmnt.8.adoc:200
 #, no-wrap
 msgid "*findmnt --fstab --evaluate*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:200
+#: ../misc-utils/findmnt.8.adoc:202
 msgid ""
 "Prints all _/etc/fstab_ filesystems and converts LABEL= and UUID= tags to "
 "the real device names."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:201
+#: ../misc-utils/findmnt.8.adoc:203
 #, no-wrap
 msgid "*findmnt -n --raw --evaluate --output=target LABEL=/boot*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:203
+#: ../misc-utils/findmnt.8.adoc:205
 msgid ""
 "Prints only the mountpoint where the filesystem with label \"/boot\" is "
 "mounted."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:204
+#: ../misc-utils/findmnt.8.adoc:206
 #, no-wrap
 msgid "*findmnt --poll --mountpoint /mnt/foo*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:206
+#: ../misc-utils/findmnt.8.adoc:208
 msgid "Monitors mount, unmount, remount and move on _/mnt/foo_."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:207
+#: ../misc-utils/findmnt.8.adoc:209
 #, no-wrap
 msgid "*findmnt --poll=umount --first-only --mountpoint /mnt/foo*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:209
+#: ../misc-utils/findmnt.8.adoc:211
 msgid "Waits for _/mnt/foo_ unmount."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:210
+#: ../misc-utils/findmnt.8.adoc:212
 #, no-wrap
 msgid "*findmnt --poll=remount -t ext3 -O ro*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:212
+#: ../misc-utils/findmnt.8.adoc:214
 msgid "Monitors remounts to read-only mode on all ext3 filesystems."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:221
+#: ../misc-utils/findmnt.8.adoc:223
 #, no-wrap
 msgid ""
 "*fstab*(5),\n"

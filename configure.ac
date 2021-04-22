@@ -743,6 +743,15 @@ UL_REQUIRES_PROGRAM([asciidoc], [ASCIIDOCTOR], [asciidoctor], [man pages])
 AM_CONDITIONAL([ENABLE_ASCIIDOC], [test "x$build_asciidoc" = xyes])
 
 
+AC_ARG_ENABLE([poman],
+  AS_HELP_STRING([--enable-poman], [generate translated man pages]),
+  [], [enable_poman=no]
+)
+UL_BUILD_INIT([poman])
+UL_REQUIRES_PROGRAM([poman], [PO4A], [po4a], [translated man pages])
+AM_CONDITIONAL([ENABLE_POMAN], [test "x$uild_poman" = xyes])
+
+
 AX_CHECK_TLS
 
 have_pty=no
@@ -2612,54 +2621,57 @@ libsmartcols/docs/Makefile
 libsmartcols/docs/version.xml
 libsmartcols/src/libsmartcols.h
 po/Makefile.in
+po-man/Makefile
 ])
 
 AC_OUTPUT
 
 AC_MSG_RESULT([
-	${PACKAGE}  ${VERSION}
+        ${PACKAGE}  ${VERSION}
 
-	prefix:            ${prefix}
-	exec prefix:       ${exec_prefix}
+        prefix:                    ${prefix}
+        exec prefix:               ${exec_prefix}
 
-	bindir:            ${bindir}
-	sbindir:           ${sbindir}
-	libdir:            ${libdir}
-	usrbin_execdir:    ${usrbin_execdir}
-	usrsbin_execdir:   ${usrsbin_execdir}
-	usrlib_execdir:    ${usrlib_execdir}
+        bindir:                    ${bindir}
+        sbindir:                   ${sbindir}
+        libdir:                    ${libdir}
+        usrbin_execdir:            ${usrbin_execdir}
+        usrsbin_execdir:           ${usrsbin_execdir}
+        usrlib_execdir:            ${usrlib_execdir}
 
-	localstatedir:     ${localstatedir}
-	runstatedir:       ${runstatedir}
-	includedir:        ${includedir}
-	sysconfdir:        ${sysconfdir}
-	sysconfstaticdir:  ${sysconfstaticdir}
+        localstatedir:             ${localstatedir}
+        runstatedir:               ${runstatedir}
+        includedir:                ${includedir}
+        sysconfdir:                ${sysconfdir}
+        sysconfstaticdir:          ${sysconfstaticdir}
 
-	vendordir:         ${with_vendordir}
+        vendordir:                 ${with_vendordir}
 
-	compiler:          ${CC}
-	cflags:            ${CFLAGS}
-	suid cflags:       ${SUID_CFLAGS}
-	ldflags:           ${LDFLAGS}
-	suid ldflags:      ${SUID_LDFLAGS}
-	ASAN enabled:      ${enable_asan}
+        Python:                    ${PYTHON}
+        Python version:            ${PYTHON_VERSION}
+        Python libs:               ${pyexecdir}
 
-	Python:            ${PYTHON}
-	Python version:    ${PYTHON_VERSION}
-	Python libs:       ${pyexecdir}
+        Bash completions:          ${with_bashcompletiondir}
+        Systemd support:           ${have_systemd}
+        Systemd unitdir:           ${with_systemdsystemunitdir}
+        libeconf support:          ${have_econf}
+        Btrfs support:             ${have_btrfs}
+        Wide-char support:         ${build_widechar}
 
-	Bash completions:  ${with_bashcompletiondir}
-	Systemd support:   ${have_systemd}
-	Systemd unitdir:   ${with_systemdsystemunitdir}
-	libeconf support:  ${have_econf}
-	Btrfs support:     ${have_btrfs}
-	Wide-char support: ${build_widechar}
+        Manual pages:              ${build_asciidoc}
+        Manual pages translated:   ${build_poman}
 
-	Manual pages:      ${build_asciidoc}
+        compiler:                  ${CC}
+        suid cflags:               ${SUID_CFLAGS}
+        ldflags:                   ${LDFLAGS}
+        suid ldflags:              ${SUID_LDFLAGS}
+        ASAN enabled:              ${enable_asan}
 
-	warnings:
+        cflags:                    ${CFLAGS}
+
+        warnings:
 
 ${WARN_CFLAGS}
 
-	Type 'make' or 'make <utilname>' to compile.
+ Type 'make' or 'make <utilname>' to compile.
 ])

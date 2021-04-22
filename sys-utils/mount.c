@@ -484,7 +484,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	"     --target <target>   explicitly specifies mountpoint\n"));
 	fprintf(out, _(
 	"     --target-prefix <path>\n"
-	"                         specifies path use for all mountpoints\n"));
+	"                         specifies path used for all mountpoints\n"));
 	fprintf(out, _(
 	" -v, --verbose           say what is being done\n"));
 	fprintf(out, _(

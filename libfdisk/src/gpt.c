@@ -747,7 +747,7 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 {
 	int rc = 0;
 	uint64_t flba = 0, llba = 0;
-	uint32_t nents;
+	uint64_t nents = GPT_NPARTITIONS;
 
 	assert(cxt);
 	assert(first);
@@ -755,18 +755,30 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 
 	*first = *last = 0;
 
-	/* The default is GPT_NPARTITIONS, if the device is not large enough
-	 * than reduce this number of partitions and try to recalculate it
-	 * again, until we get something useful or return error.
-	 */
-	for (nents = GPT_NPARTITIONS; nents > 0; nents--) {
-		rc = gpt_calculate_last_lba(NULL, nents, &llba, cxt);
-		if (rc == 0)
-			rc = gpt_calculate_first_lba(NULL, nents, &flba, cxt);
-		if (llba < flba)
-			rc = -ENOSPC;
-		else if (rc == 0)
-			break;
+	/* Get the table length from the script, if given */
+	if (cxt->script) {
+		rc = get_script_u64(cxt, &nents, "table-length");
+		if (rc == 1)
+			nents = GPT_NPARTITIONS;  /* undefined by script */
+		else if (rc < 0)
+			return rc;
+	}
+
+	/* The table length was not changed by the script, compute it. */
+	if (flba == 0) {
+		/* If the device is not large enough reduce this number of
+		 * partitions and try to recalculate it again, until we get
+		 * something useful or return error.
+		 */
+		for (; nents > 0; nents--) {
+			rc = gpt_calculate_last_lba(NULL, nents, &llba, cxt);
+			if (rc == 0)
+				rc = gpt_calculate_first_lba(NULL, nents, &flba, cxt);
+			if (llba < flba)
+				rc = -ENOSPC;
+			else if (rc == 0)
+				break;
+		}
 	}
 
 	if (rc)
