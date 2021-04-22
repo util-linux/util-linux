@@ -112,7 +112,7 @@ struct libmnt_fs **lsblk_device_get_filesystems(struct lsblk_device *dev, size_t
 		add_filesystem(dev, fs);
 	}
 
-	/* Try mnt_table_find_srcpath() which also cannonicalize patchs, etc.
+	/* Try mnt_table_find_srcpath() which also canonicalizes patches, etc.
 	 */
 	if (!dev->nfss) {
 		fs = get_active_swap(dev->filename);

@@ -97,7 +97,7 @@ static void show_uclamp_pid_info(pid_t pid, char *cmd)
 		comm = proc_get_command_name(pid);
 
 	printf(_("%s (%d) util_clamp: min: %d max: %d\n"),
-	       comm ? : "uknown", pid, sa.sched_util_min, sa.sched_util_max);
+	       comm ? : "unknown", pid, sa.sched_util_min, sa.sched_util_max);
 
 	if (!cmd)
 		free(comm);

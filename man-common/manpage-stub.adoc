@@ -37,7 +37,7 @@ Describe *foobar* briefly.
 *-o*, *--option* _value_::
 This option has a value.
 +
-For empty lines within a desription (to keep the indentation) you can use the "plus" character at the beginning of an otherwise empty line.
+For empty lines within a description (to keep the indentation) you can use the "plus" character at the beginning of an otherwise empty line.
 
 //Last but not least, don't forget the common options:
 *-V*, *--version*::

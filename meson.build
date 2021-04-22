@@ -511,7 +511,7 @@ funcs = '''
 
 foreach func: funcs
   have = cc.has_function(func)
-  # For autotools compatiblity, use either #define FOO 1 or #undef FOO.
+  # For autotools compatibility, use either #define FOO 1 or #undef FOO.
   # This makes little sense, but is necessary to avoid warnings about
   # redefined macros from Python.h, which uses this convention.
   conf.set('HAVE_' + func.to_upper(), have ? 1 : false)
