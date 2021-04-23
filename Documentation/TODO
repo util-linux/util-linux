@@ -1,6 +1,13 @@
 
  Note that items with (!) have high priority.
 
+all
+---
+
+ - use gettext() for column names on output in libsmartcols based tools and
+   accept trantated as well as original names on command line (lsblk -o NAME,SIZE).
+   https://github.com/karelzak/util-linux/issues/1291
+
 tests
 -----
   - add MacOS to GitHub Actions (.github/workflows/cibuild.yml). Note, we have used
@@ -12,9 +19,6 @@ tests
 script (lib/pty-session.c)
 --------------------------
   - (!) add #ifdefs and optional code for non-signalfd() systems
-
-
-
 
 docs
 ----
