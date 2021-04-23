@@ -65,7 +65,7 @@ Create a zram device of the specified _size_. Zram devices are aligned to memory
 The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-t*, *--streams* _number_::
-Set the maximum number of compression streams that can be used for the device. The default is one stream.
+Set the maximum number of compression streams that can be used for the device. The default is use all CPUs and one stream for kernels older than 4.6.
 
 *-V*, *--version*::
 Display version information and exit.
