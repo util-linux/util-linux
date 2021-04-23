@@ -947,14 +947,14 @@ static void show_namespace(struct lsns *ls, struct libscols_table *tab,
 	if (ls->tree == LSNS_TREE_OWNER
 	    && ns->ownerns
 	    && !ns->ownerns->ns_outline)
-		show_namespace(ls, tab, ns->ownerns, proc);
+		show_namespace(ls, tab, ns->ownerns, ns->ownerns->proc);
 	else if (ls->tree == LSNS_TREE_PARENT) {
 		if (ns->parentns) {
 			if (!ns->parentns->ns_outline)
-				show_namespace(ls, tab, ns->parentns, proc);
+				show_namespace(ls, tab, ns->parentns, ns->parentns->proc);
 		}
 		else if (ns->ownerns && !ns->ownerns->ns_outline)
-			show_namespace(ls, tab, ns->ownerns, proc);
+			show_namespace(ls, tab, ns->ownerns, ns->ownerns->proc);
 	}
 
 	add_scols_line(ls, tab, ns, proc);
