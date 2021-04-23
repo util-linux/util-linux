@@ -19,6 +19,7 @@
 *.3
 *.5
 *.8
+*.stamp
 .clang_complete
 .deps
 .dirstamp
