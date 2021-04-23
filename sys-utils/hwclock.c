@@ -177,8 +177,8 @@ static struct timeval time_inc(struct timeval addend, double increment)
 {
 	struct timeval newtime;
 
-	newtime.tv_sec = addend.tv_sec + (int)increment;
-	newtime.tv_usec = addend.tv_usec + (increment - (int)increment) * 1E6;
+	newtime.tv_sec = addend.tv_sec + (time_t)increment;
+	newtime.tv_usec = addend.tv_usec + (increment - (time_t)increment) * 1E6;
 
 	/*
 	 * Now adjust it so that the microsecond value is between 0 and 1
@@ -246,12 +246,21 @@ static int read_adjtime(const struct hwclock_control *ctl,
 
 	fclose(adjfile);
 
-	sscanf(line1, "%lf %ld %lf",
-	       &adjtime_p->drift_factor,
-	       &adjtime_p->last_adj_time,
-	       &adjtime_p->not_adjusted);
+	if (sizeof(time_t) > 4) {
+		sscanf(line1, "%lf %lld %lf",
+			&adjtime_p->drift_factor,
+			(int64_t*)&adjtime_p->last_adj_time,
+			&adjtime_p->not_adjusted);
 
-	sscanf(line2, "%ld", &adjtime_p->last_calib_time);
+		sscanf(line2, "%lld", (int64_t*)&adjtime_p->last_calib_time);
+	} else {
+		sscanf(line1, "%lf %ld %lf",
+			&adjtime_p->drift_factor,
+			(long*)&adjtime_p->last_adj_time,
+			&adjtime_p->not_adjusted);
+
+		sscanf(line2, "%ld", (long*)&adjtime_p->last_calib_time);
+	}
 
 	if (!strcmp(line3, "UTC\n")) {
 		adjtime_p->local_utc = UTC;
@@ -267,10 +276,10 @@ static int read_adjtime(const struct hwclock_control *ctl,
 
 	if (ctl->verbose) {
 		printf(_
-		       ("Last drift adjustment done at %ld seconds after 1969\n"),
-		       (long)adjtime_p->last_adj_time);
-		printf(_("Last calibration done at %ld seconds after 1969\n"),
-		       (long)adjtime_p->last_calib_time);
+		       ("Last drift adjustment done at %lld seconds after 1969\n"),
+		       (int64_t)adjtime_p->last_adj_time);
+		printf(_("Last calibration done at %lld seconds after 1969\n"),
+		       (int64_t)adjtime_p->last_calib_time);
 		printf(_("Hardware clock is on %s time\n"),
 		       (adjtime_p->local_utc ==
 			LOCAL) ? _("local") : (adjtime_p->local_utc ==
@@ -356,9 +365,9 @@ mktime_tz(const struct hwclock_control *ctl, struct tm tm,
 		if (ctl->verbose)
 			printf(_
 			       ("Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = "
-				"%ld seconds since 1969\n"), tm.tm_year + 1900,
+				"%lld seconds since 1969\n"), tm.tm_year + 1900,
 			       tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min,
-			       tm.tm_sec, (long)*systime_p);
+			       tm.tm_sec, (int64_t)*systime_p);
 	}
 	return valid;
 }
@@ -410,9 +419,9 @@ set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 
 	if (ctl->verbose)
 		printf(_("Setting Hardware Clock to %.2d:%.2d:%.2d "
-			 "= %ld seconds since 1969\n"),
+			 "= %lld seconds since 1969\n"),
 		       new_broken_time.tm_hour, new_broken_time.tm_min,
-		       new_broken_time.tm_sec, (long)newtime);
+		       new_broken_time.tm_sec, (int64_t)newtime);
 
 	if (!ctl->testing)
 		ur->set_hardware_clock(ctl, &new_broken_time);
@@ -565,17 +574,17 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 		if (ticksize < 0) {
 			if (ctl->verbose)
 				printf(_("time jumped backward %.6f seconds "
-					 "to %ld.%06ld - retargeting\n"),
-				       ticksize, nowsystime.tv_sec,
-				       nowsystime.tv_usec);
+					 "to %lld.%06lld - retargeting\n"),
+				       ticksize, (int64_t)nowsystime.tv_sec,
+				       (int64_t)nowsystime.tv_usec);
 			/* The retarget is handled at the end of the loop. */
 		} else if (deltavstarget < 0) {
 			/* deltavstarget < 0 if current time < target time */
 			DBG(DELTA_VS_TARGET,
-			    ul_debug("%ld.%06ld < %ld.%06ld (%.6f)",
-				     nowsystime.tv_sec, nowsystime.tv_usec,
-				     targetsystime.tv_sec,
-				     targetsystime.tv_usec, deltavstarget));
+			    ul_debug("%lld.%06lld < %lld.%06lld (%.6f)",
+				     (int64_t)nowsystime.tv_sec, (int64_t)nowsystime.tv_usec,
+				     (int64_t)targetsystime.tv_sec,
+				     (int64_t)targetsystime.tv_usec, deltavstarget));
 			continue;  /* not there yet - keep spinning */
 		} else if (deltavstarget <= target_time_tolerance_secs) {
 			/* Close enough to the target time; done waiting. */
@@ -586,12 +595,12 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 			 * aim for the next opportunity.
 			 */
 			if (ctl->verbose)
-				printf(_("missed it - %ld.%06ld is too far "
-					 "past %ld.%06ld (%.6f > %.6f)\n"),
-				       nowsystime.tv_sec,
-				       nowsystime.tv_usec,
-				       targetsystime.tv_sec,
-				       targetsystime.tv_usec,
+				printf(_("missed it - %lld.%06lld is too far "
+					 "past %lld.%06lld (%.6f > %.6f)\n"),
+				       (int64_t)nowsystime.tv_sec,
+				       (int64_t)nowsystime.tv_usec,
+				       (int64_t)targetsystime.tv_sec,
+				       (int64_t)targetsystime.tv_usec,
 				       deltavstarget,
 				       target_time_tolerance_secs);
 			target_time_tolerance_secs += tolerance_incr_secs;
@@ -613,14 +622,14 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 		    + ceil(time_diff(nowsystime, refsystime)
 			    - delay /* don't count this */);
 	if (ctl->verbose)
-		printf(_("%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
-			 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"),
-		       nowsystime.tv_sec, nowsystime.tv_usec,
-		       targetsystime.tv_sec, targetsystime.tv_usec,
+		printf(_("%lld.%06lld is close enough to %lld.%06lld (%.6f < %.6f)\n"
+			 "Set RTC to %lld (%lld + %d; refsystime = %lld.%06lld)\n"),
+		       (int64_t)nowsystime.tv_sec, (int64_t)nowsystime.tv_usec,
+		       (int64_t)targetsystime.tv_sec, (int64_t)targetsystime.tv_usec,
 		       deltavstarget, target_time_tolerance_secs,
-		       newhwtime, sethwtime,
-		       (int)(newhwtime - sethwtime),
-		       refsystime.tv_sec, refsystime.tv_usec);
+		       (int64_t)newhwtime, (int64_t)sethwtime,
+		       (int)((int64_t)newhwtime - (int64_t)sethwtime),
+		       (int64_t)refsystime.tv_sec, (int64_t)refsystime.tv_usec);
 
 	set_hardware_clock(ctl, newhwtime);
 }
@@ -719,9 +728,9 @@ set_system_clock(const struct hwclock_control *ctl,
 			       minuteswest);
 
 		if (ctl->hctosys)
-			printf(_("Calling settimeofday(%ld.%06ld, NULL) "
+			printf(_("Calling settimeofday(%lld.%06lld, NULL) "
 				 "to set the System time.\n"),
-			       newtime.tv_sec, newtime.tv_usec);
+			       (int64_t)newtime.tv_sec, (int64_t)newtime.tv_usec);
 	}
 
 	if (!ctl->testing) {
@@ -864,12 +873,12 @@ calculate_adjustment(const struct hwclock_control *ctl,
 	tdrift_p->tv_usec = (exact_adjustment -
 				 (double)tdrift_p->tv_sec) * 1E6;
 	if (ctl->verbose) {
-		printf(P_("Time since last adjustment is %ld second\n",
-			"Time since last adjustment is %ld seconds\n",
-		       (systime - last_time)),
-		       (systime - last_time));
-		printf(_("Calculated Hardware Clock drift is %ld.%06ld seconds\n"),
-		       tdrift_p->tv_sec, tdrift_p->tv_usec);
+		printf(P_("Time since last adjustment is %lld second\n",
+			"Time since last adjustment is %lld seconds\n",
+		       ((int64_t)systime - (int64_t)last_time)),
+		       ((int64_t)systime - (int64_t)last_time));
+		printf(_("Calculated Hardware Clock drift is %lld.%06lld seconds\n"),
+		       (int64_t)tdrift_p->tv_sec, (int64_t)tdrift_p->tv_usec);
 	}
 }
 
@@ -885,11 +894,11 @@ static int save_adjtime(const struct hwclock_control *ctl,
 	char *content;		/* Stuff to write to disk file */
 	FILE *fp;
 
-	xasprintf(&content, "%f %ld %f\n%ld\n%s\n",
+	xasprintf(&content, "%f %lld %f\n%lld\n%s\n",
 		  adjtime->drift_factor,
-		  adjtime->last_adj_time,
+		  (int64_t)adjtime->last_adj_time,
 		  adjtime->not_adjusted,
-		  adjtime->last_calib_time,
+		  (int64_t)adjtime->last_calib_time,
 		  (adjtime->local_utc == LOCAL) ? "LOCAL" : "UTC");
 
 	if (ctl->verbose){
@@ -1031,8 +1040,8 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 		hclocktime = time_inc(hclocktime, (double)
 				      -(tdrift.tv_sec + tdrift.tv_usec / 1E6));
 		if (ctl->verbose) {
-			printf(_ ("Target date:   %ld\n"), set_time);
-			printf(_ ("Predicted RTC: %ld\n"), hclocktime.tv_sec);
+			printf(_ ("Target date:   %lld\n"), (int64_t)set_time);
+			printf(_ ("Predicted RTC: %lld\n"), (int64_t)hclocktime.tv_sec);
 		}
 		return display_time(hclocktime);
 	}
@@ -1462,8 +1471,8 @@ int main(int argc, char **argv)
 
 	if (ctl.verbose) {
 		out_version();
-		printf(_("System Time: %ld.%06ld\n"),
-		       startup_time.tv_sec, startup_time.tv_usec);
+		printf(_("System Time: %lld.%06lld\n"),
+		       (int64_t)startup_time.tv_sec, (int64_t)startup_time.tv_usec);
 	}
 
 	if (!ctl.systz && !ctl.predict)
