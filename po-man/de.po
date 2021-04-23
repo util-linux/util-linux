@@ -514,7 +514,7 @@ msgstr "blockdev(8)"
 #. type: Plain text
 #: ../disk-utils/blockdev.8.adoc:18
 msgid "blockdev - call block device ioctls from the command line"
-msgstr "blockdev – Blockgeräte mit Ioctls über die Befehlszeile steuern"
+msgstr "blockdev - Blockgeräte mit Ioctls über die Befehlszeile steuern"
 
 #. type: Plain text
 #: ../disk-utils/blockdev.8.adoc:22
