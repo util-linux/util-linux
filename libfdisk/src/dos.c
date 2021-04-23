@@ -1878,7 +1878,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 				}
 				fdisk_info(cxt, msg);
 			}
-			DBG(LABEL, ul_debug("DOS: tring logical"));
+			DBG(LABEL, ul_debug("DOS: trying logical"));
 			rc = add_logical(cxt, pa, &res);
 		} else {
 			if (free_primary)

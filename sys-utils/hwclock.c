@@ -23,7 +23,7 @@
  * Reshuffled things, added sparc code, and re-added alpha stuff
  * by David Mosberger <davidm@azstarnet.com>
  * and Jay Estabrook <jestabro@amt.tay1.dec.com>
- * and Martin Ostermann <ost@coments.rwth-aachen.de>, aeb@cwi.nl, 990212.
+ * and Martin Ostermann <ost@comnets.rwth-aachen.de>, aeb@cwi.nl, 990212.
  *
  * Fix for Award 2094 bug, Dave Coffin (dcoffin@shore.net) 11/12/98
  * Change of local time handling, Stefan Ring <e9725446@stud3.tuwien.ac.at>
