@@ -103,11 +103,11 @@ getopt
 docs
 ----
 
- - (!) use something better than gtk-doc for libmount and libblkid (doxyden?)
+ - (!) use something better than gtk-doc for libmount and libblkid (doxygen?)
 
  - (!) add API documentation to libuuid
 
- - (!) rewrite man pages to AsciiDoc and generate final man pages by Asciidoctor & Docbook
+ - Improve line breaks in man pages and review markup
 
 
 login-utils:
