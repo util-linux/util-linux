@@ -15,6 +15,10 @@
 #include <linux/fd.h>
 #endif
 
+#ifdef HAVE_LINUX_BLKZONED_H
+#include <linux/blkzoned.h>
+#endif
+
 #ifdef HAVE_SYS_DISKLABEL_H
 #include <sys/disklabel.h>
 #endif
@@ -411,6 +415,31 @@ int blkdev_lock(int fd, const char *devname, const char *lockmode)
 		fprintf(stderr, _("OK\n"));
 	return rc;
 }
+
+#ifdef HAVE_LINUX_BLKZONED_H
+struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t nzones)
+{
+	struct blk_zone_report *rep;
+	size_t rep_size;
+	int ret;
+
+	rep_size = sizeof(struct blk_zone_report) + sizeof(struct blk_zone) * 2;
+	rep = calloc(1, rep_size);
+	if (!rep)
+		return NULL;
+
+	rep->sector = sector;
+	rep->nr_zones = nzones;
+
+	ret = ioctl(fd, BLKREPORTZONE, rep);
+	if (ret || rep->nr_zones != nzones) {
+		free(rep);
+		return NULL;
+	}
+
+	return rep;
+}
+#endif
 
 
 #ifdef TEST_PROGRAM_BLKDEV
