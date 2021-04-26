@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <stdint.h>
 
 #ifdef HAVE_SYS_MKDEV_H
 # include <sys/mkdev.h>		/* major and minor on Solaris */
@@ -147,5 +148,13 @@ int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s);
 const char *blkdev_scsi_type_to_name(int type);
 
 int blkdev_lock(int fd, const char *devname, const char *lockmode);
+#ifdef HAVE_LINUX_BLKZONED_H
+struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t nzones);
+#else
+static inline struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t nzones)
+{
+	return NULL;
+}
+#endif
 
 #endif /* BLKDEV_H */
