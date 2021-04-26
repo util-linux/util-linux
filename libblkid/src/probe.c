@@ -1229,6 +1229,39 @@ int blkid_do_probe(blkid_probe pr)
 	return rc;
 }
 
+#ifdef HAVE_LINUX_BLKZONED_H
+static int is_conventional(blkid_probe pr, uint64_t offset)
+{
+	struct blk_zone_report *rep = NULL;
+	int ret;
+	uint64_t zone_mask;
+
+	if (!pr->zone_size)
+		return 1;
+
+	zone_mask = ~(pr->zone_size - 1);
+	rep = blkdev_get_zonereport(blkid_probe_get_fd(pr),
+				    (offset & zone_mask) >> 9, 1);
+	if (!rep)
+		return -1;
+
+	if (rep->zones[0].type == BLK_ZONE_TYPE_CONVENTIONAL)
+		ret = 1;
+	else
+		ret = 0;
+
+	free(rep);
+
+	return ret;
+}
+#else
+static inline int is_conventional(blkid_probe pr __attribute__((__unused__)),
+				  uint64_t offset __attribute__((__unused__)))
+{
+	return 1;
+}
+#endif
+
 /**
  * blkid_do_wipe:
  * @pr: prober
@@ -1268,6 +1301,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	const char *off = NULL;
 	size_t len = 0;
 	uint64_t offset, magoff;
+	int conventional;
 	char buf[BUFSIZ];
 	int fd, rc = 0;
 	struct blkid_chain *chn;
@@ -1303,6 +1337,11 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	if (len > sizeof(buf))
 		len = sizeof(buf);
 
+	rc = is_conventional(pr, offset);
+	if (rc < 0)
+		return rc;
+	conventional = rc == 1;
+
 	DBG(LOWPROBE, ul_debug(
 	    "do_wipe [offset=0x%"PRIx64" (%"PRIu64"), len=%zu, chain=%s, idx=%d, dryrun=%s]\n",
 	    offset, offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
@@ -1310,13 +1349,31 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
 		return -1;
 
-	memset(buf, 0, len);
-
 	if (!dryrun && len) {
-		/* wipen on device */
-		if (write_all(fd, buf, len))
-			return -1;
-		fsync(fd);
+		if (conventional) {
+			memset(buf, 0, len);
+
+			/* wipen on device */
+			if (write_all(fd, buf, len))
+				return -1;
+			fsync(fd);
+		} else {
+#ifdef HAVE_LINUX_BLKZONED_H
+			uint64_t zone_mask = ~(pr->zone_size - 1);
+			struct blk_zone_range range = {
+				.sector = (offset & zone_mask) >> 9,
+				.nr_sectors = pr->zone_size >> 9,
+			};
+
+			rc = ioctl(fd, BLKRESETZONE, &range);
+			if (rc < 0)
+				return -1;
+#else
+			/* Should not reach here */
+			assert(0);
+#endif
+		}
+
 		pr->flags &= ~BLKID_FL_MODIF_BUFF;	/* be paranoid */
 
 		return blkid_probe_step_back(pr);
