@@ -142,18 +142,22 @@ static char *ns_names[] = {
 	[LSNS_ID_TIME] = "time"
 };
 
+enum {
+      RELA_PARENT,
+      RELA_OWNER,
+      MAX_RELA
+};
+
 struct lsns_namespace {
 	ino_t id;
 	int type;			/* LSNS_* */
 	int nprocs;
 	int netnsid;
-	ino_t parentid;
-	ino_t ownerid;
+	ino_t related_id[MAX_RELA];
 
 	struct lsns_process *proc;
 
-	struct lsns_namespace *parentns;
-	struct lsns_namespace *ownerns;
+	struct lsns_namespace *related_ns[MAX_RELA];
 	struct libscols_line *ns_outline;
 
 	struct list_head namespaces;	/* lsns->processes member */
@@ -620,8 +624,8 @@ static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino
 
 	ns->type = type;
 	ns->id = ino;
-	ns->parentid = parent_ino;
-	ns->ownerid = owner_ino;
+	ns->related_id[RELA_PARENT] = parent_ino;
+	ns->related_id[RELA_OWNER] = owner_ino;
 
 	list_add_tail(&ns->namespaces, &ls->namespaces);
 	return ns;
@@ -704,15 +708,15 @@ static int read_namespaces(struct lsns *ls)
 				struct lsns_namespace *pns = list_entry(pp, struct lsns_namespace, namespaces);
 				if (ns->type == LSNS_ID_USER
 				    || ns->type == LSNS_ID_PID) {
-					if (ns->parentid == pns->id)
-						ns->parentns = pns;
-					if (ns->ownerid == pns->id)
-						ns->ownerns = pns;
-					if (ns->parentns && ns->ownerns)
+					if (ns->related_id[RELA_PARENT] == pns->id)
+						ns->related_ns[RELA_PARENT] = pns;
+					if (ns->related_id[RELA_OWNER] == pns->id)
+						ns->related_ns[RELA_OWNER] = pns;
+					if (ns->related_ns[RELA_PARENT] && ns->related_ns[RELA_OWNER])
 						break;
 				} else {
-					if (ns->ownerid == pns->id) {
-						ns->ownerns = pns;
+					if (ns->related_id[RELA_OWNER] == pns->id) {
+						ns->related_ns[RELA_OWNER] = pns;
 						break;
 					}
 				}
@@ -811,8 +815,8 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 
 	line = scols_table_new_line(table,
 			(ls->tree == LSNS_TREE_PROCESS && proc) && proc->parent ? proc->parent->outline:
-			(ls->tree == LSNS_TREE_PARENT)  && ns->parentns ? ns->parentns->ns_outline:
-			(ls->tree == LSNS_TREE_OWNER)   && ns->ownerns  ? ns->ownerns->ns_outline:
+			(ls->tree == LSNS_TREE_PARENT)  && ns->related_ns[RELA_PARENT] ? ns->related_ns[RELA_PARENT]->ns_outline:
+			(ls->tree == LSNS_TREE_OWNER)   && ns->related_ns[RELA_OWNER]  ? ns->related_ns[RELA_OWNER]->ns_outline:
 			NULL);
 	if (!line) {
 		warn(_("failed to add line to output"));
@@ -872,10 +876,10 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 			nsfs_xasputs(&str, ns, ls->tab, ls->no_wrap ? ',' : '\n');
 			break;
 		case COL_PNS:
-			xasprintf(&str, "%ju", (uintmax_t)ns->parentid);
+			xasprintf(&str, "%ju", (uintmax_t)ns->related_id[RELA_PARENT]);
 			break;
 		case COL_ONS:
-			xasprintf(&str, "%ju", (uintmax_t)ns->ownerid);
+			xasprintf(&str, "%ju", (uintmax_t)ns->related_id[RELA_OWNER]);
 			break;
 		default:
 			break;
@@ -956,16 +960,16 @@ static void show_namespace(struct lsns *ls, struct libscols_table *tab,
 	 * create a tree from owner->owned and/or parent->child relation
 	 */
 	if (ls->tree == LSNS_TREE_OWNER
-	    && ns->ownerns
-	    && !ns->ownerns->ns_outline)
-		show_namespace(ls, tab, ns->ownerns, ns->ownerns->proc);
+	    && ns->related_ns[RELA_OWNER]
+	    && !ns->related_ns[RELA_OWNER]->ns_outline)
+		show_namespace(ls, tab, ns->related_ns[RELA_OWNER], ns->related_ns[RELA_OWNER]->proc);
 	else if (ls->tree == LSNS_TREE_PARENT) {
-		if (ns->parentns) {
-			if (!ns->parentns->ns_outline)
-				show_namespace(ls, tab, ns->parentns, ns->parentns->proc);
+		if (ns->related_ns[RELA_PARENT]) {
+			if (!ns->related_ns[RELA_PARENT]->ns_outline)
+				show_namespace(ls, tab, ns->related_ns[RELA_PARENT], ns->related_ns[RELA_PARENT]->proc);
 		}
-		else if (ns->ownerns && !ns->ownerns->ns_outline)
-			show_namespace(ls, tab, ns->ownerns, ns->ownerns->proc);
+		else if (ns->related_ns[RELA_OWNER] && !ns->related_ns[RELA_OWNER]->ns_outline)
+			show_namespace(ls, tab, ns->related_ns[RELA_OWNER], ns->related_ns[RELA_OWNER]->proc);
 	}
 
 	add_scols_line(ls, tab, ns, proc);
