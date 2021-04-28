@@ -183,7 +183,7 @@ struct lsns_process {
 
 
 enum {
-      LSNS_TREE_LIST,
+      LSNS_TREE_NONE,
       LSNS_TREE_PROCESS,
       LSNS_TREE_OWNER,
       LSNS_TREE_PARENT,
@@ -201,7 +201,6 @@ struct lsns {
 	unsigned int raw	: 1,
 		     json	: 1,
 		     tree	: 2,
-		     list	: 1,
 		     no_trunc	: 1,
 		     no_headings: 1,
 		     no_wrap    : 1;
@@ -1066,7 +1065,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	struct lsns ls;
-	int c;
+	int c, force_list = 0;
 	int r = 0;
 	char *outarg = NULL;
 	enum {
@@ -1091,6 +1090,7 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'J','r' },
+		{ 'l','T' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -1118,7 +1118,7 @@ int main(int argc, char *argv[])
 			ls.json = 1;
 			break;
 		case 'l':
-			ls.list = 1;
+			force_list = 1;
 			break;
 		case 'o':
 			outarg = optarg;
@@ -1187,7 +1187,8 @@ int main(int argc, char *argv[])
 		if (ls.fltr_pid)
 			errx(EXIT_FAILURE, _("--task is mutually exclusive with <namespace>"));
 		ls.fltr_ns = strtou64_or_err(argv[optind], _("invalid namespace argument"));
-		ls.tree = ls.list ? LSNS_TREE_LIST : LSNS_TREE_PROCESS;
+		if (!ls.tree && !force_list)
+			ls.tree = LSNS_TREE_PROCESS;
 
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_PID;
@@ -1208,6 +1209,9 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_NSFS;
 		}
 		columns[ncolumns++] = COL_COMMAND;
+
+		if (!ls.tree && !force_list)
+			ls.tree = LSNS_TREE_PROCESS;
 	}
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
