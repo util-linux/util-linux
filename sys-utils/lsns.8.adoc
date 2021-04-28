@@ -23,7 +23,7 @@ lsns - list namespaces
 
 *lsns* lists information about all the currently accessible namespaces or about the given _namespace_. The _namespace_ identifier is an inode number.
 
-The default output is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected columns by using the *--output* option together with a columns list in environments where a stable output is required.
+The default output is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected output mode (*--tree* or *--list*) and columns by using the *--output* option together with a columns list in environments where a stable output is required.
 
 The *NSFS* column, printed when *net* is specified for the *--type* option, is special; it uses multi-line cells. Use the option *--nowrap* to switch to ","-separated single-line representation.
 
@@ -63,9 +63,9 @@ Do not truncate text in columns.
 *-W*, *--nowrap*::
 Do not use multi-line text in columns.
 
-*-T*, *--nstree* _rel_::
+*-T*, *--tree* _rel_::
 Use list output format.
-If *process* is gnve as _rel_, print proecss tree(s) in each name space.
+If *process* is given as _rel_, print proecss tree(s) in each name space. This is default when *--tree* is not specified.
 If *parent* is given, print tree(s) constructed by the parent/child relationship.
 If *owner* is given, print tree(s) constructed by the owner/owned relationship.
 *owner* is used as default when _rel_ is omitted.
