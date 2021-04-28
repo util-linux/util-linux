@@ -919,6 +919,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 	size_t i = 0;
 	struct libscols_table *tb;
 	struct libscols_line *sec = NULL;
+	int hdr_caches = 0;
 
 	scols_init_debug(0);
 
@@ -1040,8 +1041,6 @@ static void print_summary(struct lscpu_cxt *cxt)
 		/* The caches are sorted by name, cxt->caches[] may contains
 		 * multiple instances for the same name.
 		 */
-		sec = add_summary_e(tb, NULL, _("Caches (sum of all):"));
-
 		for (i = 0; i < cxt->ncaches; i++) {
 			const char *name = cxt->caches[i].name;
 			uint64_t sz;
@@ -1052,6 +1051,11 @@ static void print_summary(struct lscpu_cxt *cxt)
 			sz = lscpu_get_cache_full_size(cxt, name, &n);
 			if (!sz)
 				continue;
+			if (!hdr_caches) {
+				sec = add_summary_e(tb, NULL, _("Caches (sum of all):"));
+				hdr_caches = 1;
+			}
+
 			snprintf(field, sizeof(field), is_term ? _("%s:") : _("%s cache:"), name);
 			if (cxt->bytes)
 				add_summary_sprint(tb, sec, field,
@@ -1073,26 +1077,25 @@ static void print_summary(struct lscpu_cxt *cxt)
 		}
 	}
 
-	if (cxt->necaches) {
-		if (!cxt->ncaches)
+	for (i = 0; i < cxt->necaches; i++) {
+		struct lscpu_cache *ca = &cxt->ecaches[i];
+
+		if (ca->size == 0)
+			continue;
+		if (!hdr_caches) {
 			sec = add_summary_e(tb, NULL, _("Caches:"));
-
-		for (i = 0; i < cxt->necaches; i++) {
-			struct lscpu_cache *ca = &cxt->ecaches[i];
-
-			if (ca->size == 0)
-				continue;
-			snprintf(field, sizeof(field), is_term ? _("%s:") : _("%s cache:"), ca->name);
-			if (cxt->bytes)
-				add_summary_x(tb, sec, field, "%" PRIu64, ca->size);
-			else {
-				char *tmp = size_to_human_string(
-						SIZE_SUFFIX_3LETTER |
-						SIZE_SUFFIX_SPACE,
-						ca->size);
-				add_summary_s(tb, sec, field, tmp);
-				free(tmp);
-			}
+			hdr_caches = 1;
+		}
+		snprintf(field, sizeof(field), is_term ? _("%s:") : _("%s cache:"), ca->name);
+		if (cxt->bytes)
+			add_summary_x(tb, sec, field, "%" PRIu64, ca->size);
+		else {
+			char *tmp = size_to_human_string(
+					SIZE_SUFFIX_3LETTER |
+					SIZE_SUFFIX_SPACE,
+					ca->size);
+			add_summary_s(tb, sec, field, tmp);
+			free(tmp);
 		}
 	}
 	sec = NULL;
