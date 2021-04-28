@@ -152,6 +152,10 @@ struct lsns_namespace {
 
 	struct lsns_process *proc;
 
+	struct lsns_namespace *parentns;
+	struct lsns_namespace *ownerns;
+	struct libscols_line *ns_outline;
+
 	struct list_head namespaces;	/* lsns->processes member */
 	struct list_head processes;	/* head of lsns_process *siblings */
 };
@@ -177,6 +181,14 @@ struct lsns_process {
 	int netnsid;
 };
 
+
+enum {
+      LSNS_TREE_LIST,
+      LSNS_TREE_PROCESS,
+      LSNS_TREE_OWNER,
+      LSNS_TREE_PARENT,
+};
+
 struct lsns {
 	struct list_head processes;
 	struct list_head namespaces;
@@ -188,11 +200,12 @@ struct lsns {
 
 	unsigned int raw	: 1,
 		     json	: 1,
-		     tree	: 1,
+		     tree	: 2,
 		     list	: 1,
 		     no_trunc	: 1,
 		     no_headings: 1,
 		     no_wrap    : 1;
+
 
 	struct libmnt_table *tab;
 };
@@ -684,6 +697,30 @@ static int read_namespaces(struct lsns *ls)
 		}
 	}
 
+	if (ls->tree == LSNS_TREE_OWNER || ls->tree == LSNS_TREE_PARENT) {
+		list_for_each(p, &ls->namespaces) {
+			struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
+			struct list_head *pp;
+			list_for_each(pp, &ls->namespaces) {
+				struct lsns_namespace *pns = list_entry(pp, struct lsns_namespace, namespaces);
+				if (ns->type == LSNS_ID_USER
+				    || ns->type == LSNS_ID_PID) {
+					if (ns->parentid == pns->id)
+						ns->parentns = pns;
+					if (ns->ownerid == pns->id)
+						ns->ownerns = pns;
+					if (ns->parentns && ns->ownerns)
+						break;
+				} else {
+					if (ns->ownerid == pns->id) {
+						ns->ownerns = pns;
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	list_sort(&ls->namespaces, cmp_namespaces, NULL);
 
 	return 0;
@@ -774,7 +811,10 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 	assert(table);
 
 	line = scols_table_new_line(table,
-			ls->tree && proc->parent ? proc->parent->outline : NULL);
+			(ls->tree == LSNS_TREE_PROCESS) && proc->parent ? proc->parent->outline:
+			(ls->tree == LSNS_TREE_PARENT)  && ns->parentns ? ns->parentns->ns_outline:
+			(ls->tree == LSNS_TREE_OWNER)   && ns->ownerns  ? ns->ownerns->ns_outline:
+			NULL);
 	if (!line) {
 		warn(_("failed to add line to output"));
 		return;
@@ -834,7 +874,10 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 			err_oom();
 	}
 
-	proc->outline = line;
+	if (ls->tree == LSNS_TREE_OWNER || ls->tree == LSNS_TREE_PARENT)
+		ns->ns_outline = line;
+	else
+		proc->outline = line;
 }
 
 static struct libscols_table *init_scols_table(struct lsns *ls)
@@ -862,10 +905,15 @@ static struct libscols_table *init_scols_table(struct lsns *ls)
 
 		if (ls->no_trunc)
 		       flags &= ~SCOLS_FL_TRUNC;
-		if (ls->tree && get_column_id(i) == COL_COMMAND)
+		if (ls->tree == LSNS_TREE_PROCESS && get_column_id(i) == COL_COMMAND)
 			flags |= SCOLS_FL_TREE;
 		if (ls->no_wrap)
 			flags &= ~SCOLS_FL_WRAP;
+		if ((ls->tree == LSNS_TREE_OWNER || ls->tree == LSNS_TREE_PARENT)
+		    && get_column_id(i) == COL_NS) {
+			flags |= SCOLS_FL_TREE;
+			flags &= ~SCOLS_FL_RIGHT;
+		}
 
 		cl = scols_table_new_column(tab, col->name, col->whint, flags);
 		if (cl == NULL) {
@@ -890,6 +938,28 @@ err:
 	return NULL;
 }
 
+static void show_namespace(struct lsns *ls, struct libscols_table *tab,
+			   struct lsns_namespace *ns, struct lsns_process *proc)
+{
+	/*
+	 * create a tree from owner->owned and/or parent->child relation
+	 */
+	if (ls->tree == LSNS_TREE_OWNER
+	    && ns->ownerns
+	    && !ns->ownerns->ns_outline)
+		show_namespace(ls, tab, ns->ownerns, ns->ownerns->proc);
+	else if (ls->tree == LSNS_TREE_PARENT) {
+		if (ns->parentns) {
+			if (!ns->parentns->ns_outline)
+				show_namespace(ls, tab, ns->parentns, ns->parentns->proc);
+		}
+		else if (ns->ownerns && !ns->ownerns->ns_outline)
+			show_namespace(ls, tab, ns->ownerns, ns->ownerns->proc);
+	}
+
+	add_scols_line(ls, tab, ns, proc);
+}
+
 static int show_namespaces(struct lsns *ls)
 {
 	struct libscols_table *tab;
@@ -906,7 +976,8 @@ static int show_namespaces(struct lsns *ls)
 		if (ls->fltr_pid != 0 && !namespace_has_process(ns, ls->fltr_pid))
 			continue;
 
-		add_scols_line(ls, tab, ns, ns->proc);
+		if (!ns->ns_outline)
+			show_namespace(ls, tab, ns, ns->proc);
 	}
 
 	scols_print_table(tab);
@@ -921,7 +992,7 @@ static void show_process(struct lsns *ls, struct libscols_table *tab,
 	 * create a tree from parent->child relation, but only if the parent is
 	 * within the same namespace
 	 */
-	if (ls->tree
+	if (ls->tree == LSNS_TREE_PROCESS
 	    && proc->parent
 	    && !proc->parent->outline
 	    && proc->parent->ns_ids[ns->type] == proc->ns_ids[ns->type])
@@ -977,6 +1048,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 	fputs(_(" -W, --nowrap           don't use multi-line representation\n"), out);
 	fputs(_(" -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup, time)\n"), out);
+	fputs(_(" -T, --tree <rel>       use tree format (parent, owner, or process)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(24));
@@ -1013,6 +1085,7 @@ int main(int argc, char *argv[])
 		{ "list",       no_argument,       NULL, 'l' },
 		{ "raw",        no_argument,       NULL, 'r' },
 		{ "type",       required_argument, NULL, 't' },
+		{ "tree",       optional_argument, NULL, 'T' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -1036,7 +1109,7 @@ int main(int argc, char *argv[])
 	INIT_LIST_HEAD(&netnsids_cache);
 
 	while ((c = getopt_long(argc, argv,
-				"Jlp:o:nruhVt:W", long_opts, NULL)) != -1) {
+				"Jlp:o:nruhVt:T::W", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -1080,6 +1153,19 @@ int main(int argc, char *argv[])
 		case 'W':
 			ls.no_wrap = 1;
 			break;
+		case 'T':
+			ls.tree = LSNS_TREE_OWNER;
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
+				if (strcmp (optarg, "parent") == 0)
+					ls.tree = LSNS_TREE_PARENT;
+				else if (strcmp (optarg, "process") == 0)
+					ls.tree = LSNS_TREE_PROCESS;
+				else if (strcmp (optarg, "owner") != 0)
+					errx(EXIT_FAILURE, _("unknown nstree type: %s"), optarg);
+			}
+			break;
 
 		case 'h':
 			usage();
@@ -1101,7 +1187,7 @@ int main(int argc, char *argv[])
 		if (ls.fltr_pid)
 			errx(EXIT_FAILURE, _("--task is mutually exclusive with <namespace>"));
 		ls.fltr_ns = strtou64_or_err(argv[optind], _("invalid namespace argument"));
-		ls.tree = ls.list ? 0 : 1;
+		ls.tree = ls.list ? LSNS_TREE_LIST : LSNS_TREE_PROCESS;
 
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_PID;
