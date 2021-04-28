@@ -69,7 +69,6 @@ If *process* is given as _rel_, print proecss tree(s) in each name space. This i
 If *parent* is given, print tree(s) constructed by the parent/child relationship.
 If *owner* is given, print tree(s) constructed by the owner/owned relationship.
 *owner* is used as default when _rel_ is omitted.
-The result of *parent* and *owner* can be forests because *lsns* cannot track a namespace having no process.
 
 
 *-V*, *--version*::

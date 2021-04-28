@@ -676,9 +676,124 @@ static int netnsid_xasputs(char **str, int netnsid)
 	return 0;
 }
 
+static int clone_type_to_lsns_type(int clone_type)
+{
+	switch (clone_type) {
+	case CLONE_NEWNS:
+		return LSNS_ID_MNT;
+	case CLONE_NEWCGROUP:
+		return LSNS_ID_CGROUP;
+	case CLONE_NEWUTS:
+		return LSNS_ID_UTS;
+	case CLONE_NEWIPC:
+		return LSNS_ID_IPC;
+	case CLONE_NEWUSER:
+		return LSNS_ID_USER;
+	case CLONE_NEWPID:
+		return LSNS_ID_PID;
+	case CLONE_NEWNET:
+		return LSNS_ID_NET;
+	default:
+		return -1;
+	}
+}
+
+static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino)
+{
+	int fd_owner = -1, fd_parent = -1;
+	struct stat st_owner, st_parent;
+	ino_t ino_owner = 0, ino_parent = 0;
+	struct lsns_namespace *ns;
+	int clone_type, lsns_type;
+
+	clone_type = ioctl(fd, NS_GET_NSTYPE);
+	if (clone_type < 0)
+		return NULL;
+	lsns_type = clone_type_to_lsns_type(clone_type);
+	if (lsns_type < 0)
+		return NULL;
+
+	fd_owner = ioctl(fd, NS_GET_USERNS);
+	if (fd_owner < 0)
+		goto parent;
+	if (fstat(fd_owner, &st_owner) < 0)
+		goto parent;
+	ino_owner = st_owner.st_ino;
+
+ parent:
+	fd_parent = ioctl(fd, NS_GET_PARENT);
+	if (fd_parent < 0)
+		goto add_ns;
+	if (fstat(fd_parent, &st_parent) < 0)
+		goto add_ns;
+	ino_parent = st_parent.st_ino;
+
+ add_ns:
+	ns = add_namespace(ls, lsns_type, ino, ino_parent, ino_owner);
+
+	if ((lsns_type == LSNS_ID_USER || lsns_type == LSNS_ID_PID)
+	    && ino_parent != ino && ino_parent != 0) {
+		ns->related_ns[RELA_PARENT] = get_namespace(ls, ino_parent);
+		if (!ns->related_ns[RELA_PARENT]) {
+			ns->related_ns[RELA_PARENT] = add_namespace_for_nsfd(ls, fd_parent, ino_parent);
+			if (ino_parent == ino_owner)
+				ns->related_ns[RELA_OWNER] = ns->related_ns[RELA_PARENT];
+		}
+	}
+
+	if (ns->related_ns[RELA_OWNER] == NULL && ino_owner != 0) {
+		ns->related_ns[RELA_OWNER] = get_namespace(ls, ino_owner);
+		if (!ns->related_ns[RELA_OWNER])
+			ns->related_ns[RELA_OWNER] = add_namespace_for_nsfd(ls, fd_owner, ino_owner);
+	}
+
+	if (fd_owner >= 0)
+		close(fd_owner);
+	if (fd_parent >= 0)
+		close(fd_parent);
+
+	return ns;
+}
+
+static void interpolate_missing_namespaces (struct lsns *ls, struct lsns_namespace *orphan, int rela)
+{
+	const int cmd[MAX_RELA] = {
+		[RELA_PARENT] = NS_GET_PARENT,
+		[RELA_OWNER] = NS_GET_USERNS
+	};
+	char buf[BUFSIZ];
+	int fd_orphan, fd_missing;
+	struct stat st;
+
+	orphan->related_ns[rela] = get_namespace(ls, orphan->related_id[rela]);
+	if (orphan->related_ns[rela])
+		return;
+
+	snprintf(buf, sizeof(buf), "/proc/%d/ns/%s", orphan->proc->pid, ns_names [orphan->type]);
+	fd_orphan = open(buf, O_RDONLY);
+	if (fd_orphan < 0)
+		return;
+
+	fd_missing = ioctl (fd_orphan, cmd[rela]);
+	close (fd_orphan);
+	if (fd_missing < 0)
+		return;
+
+	if (fstat(fd_missing, &st) < 0
+	    || st.st_ino != orphan->related_id[rela]) {
+		close (fd_missing);
+		return;
+	}
+
+	orphan->related_ns[rela] = add_namespace_for_nsfd(ls, fd_missing, orphan->related_id[rela]);
+	close (fd_missing);
+}
+
 static int read_namespaces(struct lsns *ls)
 {
 	struct list_head *p;
+	struct lsns_namespace *orphan[2] = {NULL, NULL};
+	int rela;
 
 	DBG(NS, ul_debug("reading namespace"));
 
@@ -721,6 +836,32 @@ static int read_namespaces(struct lsns *ls)
 					}
 				}
 			}
+
+			/* lsns scans /proc/[0-9]+ for finding namespaces.
+			 * So if a namespace has no process, lsns cannot
+			 * find it. Here we call it a missing namespace.
+			 *
+			 * If the id for a related namesspce is known but
+			 * namespace for the id is not found, there must
+			 * be orphan namespaces. A missing namespace is an
+			 * owner or a parent of the orphan namespace.
+			 */
+			for (rela = 0; rela < MAX_RELA; rela++) {
+				if (ns->related_id[rela] != 0
+				    && ns->related_ns[rela] == NULL) {
+					ns->related_ns[rela] = orphan[rela];
+					orphan[rela] = ns;
+				}
+			}
+		}
+	}
+
+	for (rela = 0; rela < MAX_RELA; rela++) {
+		while (orphan[rela]) {
+			struct lsns_namespace *current = orphan[rela];
+			orphan[rela] = orphan[rela]->related_ns[rela];
+			current->related_ns[rela] = NULL;
+			interpolate_missing_namespaces (ls, current, rela);
 		}
 	}
 
