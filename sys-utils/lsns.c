@@ -755,7 +755,7 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	return ns;
 }
 
-static void interpolate_missing_namespaces (struct lsns *ls, struct lsns_namespace *orphan, int rela)
+static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespace *orphan, int rela)
 {
 	const int cmd[MAX_RELA] = {
 		[RELA_PARENT] = NS_GET_PARENT,
@@ -769,24 +769,24 @@ static void interpolate_missing_namespaces (struct lsns *ls, struct lsns_namespa
 	if (orphan->related_ns[rela])
 		return;
 
-	snprintf(buf, sizeof(buf), "/proc/%d/ns/%s", orphan->proc->pid, ns_names [orphan->type]);
+	snprintf(buf, sizeof(buf), "/proc/%d/ns/%s", orphan->proc->pid, ns_names[orphan->type]);
 	fd_orphan = open(buf, O_RDONLY);
 	if (fd_orphan < 0)
 		return;
 
-	fd_missing = ioctl (fd_orphan, cmd[rela]);
-	close (fd_orphan);
+	fd_missing = ioctl(fd_orphan, cmd[rela]);
+	close(fd_orphan);
 	if (fd_missing < 0)
 		return;
 
 	if (fstat(fd_missing, &st) < 0
 	    || st.st_ino != orphan->related_id[rela]) {
-		close (fd_missing);
+		close(fd_missing);
 		return;
 	}
 
 	orphan->related_ns[rela] = add_namespace_for_nsfd(ls, fd_missing, orphan->related_id[rela]);
-	close (fd_missing);
+	close(fd_missing);
 }
 
 static int read_namespaces(struct lsns *ls)
@@ -861,7 +861,7 @@ static int read_namespaces(struct lsns *ls)
 			struct lsns_namespace *current = orphan[rela];
 			orphan[rela] = orphan[rela]->related_ns[rela];
 			current->related_ns[rela] = NULL;
-			interpolate_missing_namespaces (ls, current, rela);
+			interpolate_missing_namespaces(ls, current, rela);
 		}
 	}
 
