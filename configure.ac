@@ -1286,7 +1286,11 @@ AS_IF([test "x$build_uuidd" = xyes || test "x$enable_libuuid_force_uuidd" = xyes
 AM_CONDITIONAL([BUILD_UUIDD], [test "x$build_uuidd" = xyes])
 
 
-UL_BUILD_INIT([uuidgen], [check])
+AC_ARG_ENABLE([uuidgen],
+  AS_HELP_STRING([--disable-uuidgen], [do not build uuidgen]),
+  [], [UL_DEFAULT_ENABLE([uuidgen], [check])]
+)
+UL_BUILD_INIT([uuidgen])
 UL_REQUIRES_BUILD([uuidgen], [libuuid])
 AM_CONDITIONAL([BUILD_UUIDGEN], [test "x$build_uuidgen" = xyes])
 
@@ -1295,7 +1299,11 @@ UL_REQUIRES_BUILD([uuidparse], [libuuid])
 UL_REQUIRES_BUILD([uuidparse], [libsmartcols])
 AM_CONDITIONAL([BUILD_UUIDPARSE], [test "x$build_uuidparse" = xyes])
 
-UL_BUILD_INIT([blkid], [check])
+AC_ARG_ENABLE([blkid],
+  AS_HELP_STRING([--disable-blkid], [do not build blkid(8)]),
+  [], [UL_DEFAULT_ENABLE([blkid], [check])]
+)
+UL_BUILD_INIT([blkid])
 UL_REQUIRES_BUILD([blkid], [libblkid])
 AM_CONDITIONAL([BUILD_BLKID], [test "x$build_blkid" = xyes])
 
@@ -1587,20 +1595,32 @@ AS_IF([test "x$enable_hwclock_gplv3" = xyes ], [
 ])
 
 
-UL_BUILD_INIT([mkfs], [yes])
+AC_ARG_ENABLE([mkfs],
+  AS_HELP_STRING([--disable-mkfs], [do not build mkfs(8)]),
+  [], [UL_DEFAULT_ENABLE([mkfs], [check])]
+)
+UL_BUILD_INIT([mkfs])
 AM_CONDITIONAL([BUILD_MKFS], [test "x$build_mkfs" = xyes])
 
 UL_BUILD_INIT([isosize], [yes])
 AM_CONDITIONAL([BUILD_ISOSIZE], [test "x$build_isosize" = xyes])
 
 
-UL_BUILD_INIT([fstrim], [check])
+AC_ARG_ENABLE([fstrim],
+  AS_HELP_STRING([--disable-fstrim], [do not build fstrim(8)]),
+  [], [UL_DEFAULT_ENABLE([fstrim], [check])]
+)
+UL_BUILD_INIT([fstrim])
 UL_REQUIRES_LINUX([fstrim])
 UL_REQUIRES_BUILD([fstrim], [libmount])
 AM_CONDITIONAL([BUILD_FSTRIM], [test "x$build_fstrim" = xyes])
 
 
-UL_BUILD_INIT([swapon], [check])
+AC_ARG_ENABLE([swapon],
+  AS_HELP_STRING([--disable-swapon], [do not build swapon(8) and swapoff(8)]),
+  [], [UL_DEFAULT_ENABLE([swapon], [check])]
+)
+UL_BUILD_INIT([swapon])
 UL_REQUIRES_LINUX([swapon])
 UL_REQUIRES_SYSCALL_CHECK([swapon], [UL_CHECK_SYSCALL([swapon])], [swapon])
 UL_REQUIRES_SYSCALL_CHECK([swapon], [UL_CHECK_SYSCALL([swapoff])], [swapoff])
@@ -1620,7 +1640,11 @@ UL_REQUIRES_BUILD([lsblk], [libsmartcols])
 AM_CONDITIONAL([BUILD_LSBLK], [test "x$build_lsblk" = xyes])
 
 
-UL_BUILD_INIT([lscpu], [check])
+AC_ARG_ENABLE([lscpu],
+  AS_HELP_STRING([--disable-lscpu], [do not build lscpu]),
+  [], [UL_DEFAULT_ENABLE([lscpu], [check])]
+)
+UL_BUILD_INIT([lscpu])
 UL_REQUIRES_LINUX([lscpu])
 UL_REQUIRES_BUILD([lscpu], [libsmartcols])
 UL_REQUIRES_HAVE([lscpu], [cpu_set_t], [cpu_set_t type])
