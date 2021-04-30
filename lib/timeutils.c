@@ -24,6 +24,7 @@
 #include <string.h>
 #include <time.h>
 #include <sys/time.h>
+#include <inttypes.h>
 
 #include "c.h"
 #include "nls.h"
@@ -438,14 +439,14 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 	}
 
 	if (flags & ISO_DOTUSEC) {
-		len = snprintf(p, bufsz, ".%06ld", (long) usec);
+		len = snprintf(p, bufsz, ".%06"PRId64, (int64_t) usec);
 		if (len < 0 || (size_t) len > bufsz)
 			goto err;
 		bufsz -= len;
 		p += len;
 
 	} else if (flags & ISO_COMMAUSEC) {
-		len = snprintf(p, bufsz, ",%06ld", (long) usec);
+		len = snprintf(p, bufsz, ",%06"PRId64, (int64_t) usec);
 		if (len < 0 || (size_t) len > bufsz)
 			goto err;
 		bufsz -= len;
@@ -480,7 +481,7 @@ int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz)
 	if (rc)
 		return format_iso_time(&tm, tv->tv_usec, flags, buf, bufsz);
 
-	warnx(_("time %ld is out of range."), tv->tv_sec);
+	warnx(_("time %"PRId64" is out of range."), (int64_t)(tv->tv_sec));
 	return -1;
 }
 
@@ -504,7 +505,7 @@ int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz)
 	if (rc)
 		return format_iso_time(&tm, 0, flags, buf, bufsz);
 
-	warnx(_("time %ld is out of range."), (long)t);
+	warnx(_("time %"PRId64" is out of range."), (int64_t)*t);
 	return -1;
 }
 
