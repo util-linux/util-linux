@@ -159,6 +159,7 @@ struct lsns_namespace {
 
 	struct lsns_namespace *related_ns[MAX_RELA];
 	struct libscols_line *ns_outline;
+	uid_t uid_fallback;	/* refer this member if `proc' is NULL. */
 
 	struct list_head namespaces;	/* lsns->processes member */
 	struct list_head processes;	/* head of lsns_process *siblings */
@@ -730,6 +731,8 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 
  add_ns:
 	ns = add_namespace(ls, lsns_type, ino, ino_parent, ino_owner);
+	ioctl(fd, NS_GET_OWNER_UID, &ns->uid_fallback);
+	add_uid(uid_cache, ns->uid_fallback);
 
 	if ((lsns_type == LSNS_ID_USER || lsns_type == LSNS_ID_PID)
 	    && ino_parent != ino && ino_parent != 0) {
@@ -998,14 +1001,10 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 			xasprintf(&str, "/proc/%d/ns/%s", (int) proc->pid, ns_names[ns->type]);
 			break;
 		case COL_UID:
-			if (!proc)
-				break;
-			xasprintf(&str, "%d", (int) proc->uid);
+			xasprintf(&str, "%d", proc? (int) proc->uid: (int) ns->uid_fallback);
 			break;
 		case COL_USER:
-			if (!proc)
-				break;
-			xasprintf(&str, "%s", get_id(uid_cache, proc->uid)->name);
+			xasprintf(&str, "%s", get_id(uid_cache, proc? proc->uid: ns->uid_fallback)->name);
 			break;
 		case COL_NETNSID:
 			if (!proc)
