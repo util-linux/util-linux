@@ -77,15 +77,16 @@ struct colinfo {
 static struct colinfo infos[] = {
 	[COL_ASSOC]   = { "ASSOC",    0, SCOLS_FL_RIGHT, N_("association between file and process") },
 	[COL_COMMAND] = { "COMMAND",  0, 0,              N_("command of the process opening the file") },
-	[COL_DEVICE]  = { "DEVICE",   0, SCOLS_FL_RIGHT, N_("device major and minor number") },
+	[COL_DEV]     = { "DEV",      0, SCOLS_FL_RIGHT, N_("ID of device containing file") },
+	[COL_DEVICE]  = { "DEVICE",   0, SCOLS_FL_RIGHT, N_("device ID for special, or ID of device containing file") },
 	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, N_("file descriptor for the file") },
 	[COL_INODE]   = { "INODE",    0, SCOLS_FL_RIGHT, N_("inode number") },
 	[COL_NAME]    = { "NAME",     0, 0,              N_("name of the file") },
 	[COL_PID]     = { "PID",      0, SCOLS_FL_RIGHT, N_("PID of the process opening the file") },
+	[COL_RDEV]    = { "RDEV",     0, SCOLS_FL_RIGHT, N_("device ID (if special file)") },
 	[COL_TYPE]    = { "TYPE",     0, SCOLS_FL_RIGHT, N_("file type") },
 	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, N_("user ID number") },
 	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, N_("user of the process") },
-	/* DEVICE */
 	/* SIZE/OFF */
 	/* MNTID */
 };
