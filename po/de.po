@@ -6579,11 +6579,11 @@ msgstr "Die Sicherungs-GPT-Tabelle befindet sich nicht am Ende des Gerätes."
 
 #: libfdisk/src/gpt.c:1682
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
-msgstr "Die Sicherungs-GPT-Tabelle befindet sich nicht am Ende des Gerätes. Das Problem wird durch »write« korrigiert."
+msgstr "Die GPT-Sicherungstabelle befindet sich nicht am Ende des Gerätes. Das Problem wird durch »write« korrigiert."
 
 #: libfdisk/src/gpt.c:1686
 msgid "Failed to recalculate backup GPT table location"
-msgstr "Ort der GPT-Sicherungstabelle konnt nicht erneut berechnet werden"
+msgstr "Ort der GPT-Sicherungstabelle konnte nicht erneut berechnet werden"
 
 #: libfdisk/src/gpt.c:1841
 #, c-format
