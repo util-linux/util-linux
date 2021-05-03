@@ -357,13 +357,10 @@ static int read_sparc_onecache(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu,
 
 static int read_sparc_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 {
-	int i;
-
-	for (i = 1; i <= 3; i++) {
-		read_sparc_onecache(cxt, cpu, i, "Instruction", 'i');
-		read_sparc_onecache(cxt, cpu, i, "Data", 'd');
-		read_sparc_onecache(cxt, cpu, i, "Unified", 0);
-	}
+	read_sparc_onecache(cxt, cpu, 1, "Instruction", 'i');
+	read_sparc_onecache(cxt, cpu, 1, "Data", 'd');
+	read_sparc_onecache(cxt, cpu, 2, "Unified", 0);
+	read_sparc_onecache(cxt, cpu, 2, "Unified", 0);
 
 	return 0;
 }
