@@ -139,6 +139,12 @@ static bool file_fill_column(struct proc *proc,
 	case COL_SIZE:
 		xasprintf(&str, "%ju", file->stat.st_size);
 		break;
+	case COL_NLINK:
+		xasprintf(&str, "%ju", (unsigned long int)file->stat.st_nlink);
+		break;
+	case COL_DELETED:
+		xasprintf(&str, "%d", file->stat.st_nlink == 0);
+		break;
 	default:
 		return false;
 	};
