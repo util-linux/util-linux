@@ -1319,7 +1319,7 @@ int main(int argc, char *argv[])
 				else if (strcmp (optarg, "process") == 0)
 					ls.tree = LSNS_TREE_PROCESS;
 				else if (strcmp (optarg, "owner") != 0)
-					errx(EXIT_FAILURE, _("unknown nstree type: %s"), optarg);
+					errx(EXIT_FAILURE, _("unknown tree type: %s"), optarg);
 			}
 			break;
 
