@@ -70,23 +70,36 @@ struct colinfo {
 	const char *name;
 	double whint;
 	int flags;
+	int json_type;
 	const char *help;
 };
 
 /* columns descriptions */
 static struct colinfo infos[] = {
-	[COL_ASSOC]   = { "ASSOC",    0, SCOLS_FL_RIGHT, N_("association between file and process") },
-	[COL_COMMAND] = { "COMMAND",  0, 0,              N_("command of the process opening the file") },
-	[COL_DEV]     = { "DEV",      0, SCOLS_FL_RIGHT, N_("ID of device containing file") },
-	[COL_DEVICE]  = { "DEVICE",   0, SCOLS_FL_RIGHT, N_("device ID for special, or ID of device containing file") },
-	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, N_("file descriptor for the file") },
-	[COL_INODE]   = { "INODE",    0, SCOLS_FL_RIGHT, N_("inode number") },
-	[COL_NAME]    = { "NAME",     0, 0,              N_("name of the file") },
-	[COL_PID]     = { "PID",      0, SCOLS_FL_RIGHT, N_("PID of the process opening the file") },
-	[COL_RDEV]    = { "RDEV",     0, SCOLS_FL_RIGHT, N_("device ID (if special file)") },
-	[COL_TYPE]    = { "TYPE",     0, SCOLS_FL_RIGHT, N_("file type") },
-	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, N_("user ID number") },
-	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, N_("user of the process") },
+	[COL_ASSOC]   = { "ASSOC",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("association between file and process") },
+	[COL_COMMAND] = { "COMMAND",  0, 0,              SCOLS_JSON_STRING,
+		N_("command of the process opening the file") },
+	[COL_DEV]     = { "DEV",      0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("ID of device containing file") },
+	[COL_DEVICE]  = { "DEVICE",   0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("device ID for special, or ID of device containing file") },
+	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("file descriptor for the file") },
+	[COL_INODE]   = { "INODE",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("inode number") },
+	[COL_NAME]    = { "NAME",     0, 0,              SCOLS_JSON_STRING,
+		N_("name of the file") },
+	[COL_PID]     = { "PID",      0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("PID of the process opening the file") },
+	[COL_RDEV]    = { "RDEV",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("device ID (if special file)") },
+	[COL_TYPE]    = { "TYPE",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("file type") },
+	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("user ID number") },
+	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("user of the process") },
 	/* SIZE/OFF */
 	/* MNTID */
 };
@@ -641,27 +654,8 @@ int main(int argc, char *argv[])
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 
-		if (ctl.json) {
-			int id = get_column_id(i);
-
-			switch (id) {
-			case COL_COMMAND:
-			case COL_DEVICE:
-			case COL_NAME:
-			case COL_TYPE:
-			case COL_USER:
-			case COL_ASSOC:
-				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
-				break;
-			case COL_FD:
-			case COL_PID:
-			case COL_UID:
-				/* fallthrough */
-			default:
-				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
-				break;
-			}
-		}
+		if (ctl.json)
+			scols_column_set_json_type(cl, col->json_type);
 	}
 
 	INIT_LIST_HEAD(&procs);
