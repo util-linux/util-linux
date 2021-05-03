@@ -53,11 +53,13 @@ DIR *opendirf(const char *format, ...) __attribute__((format (printf, 1, 2)));
 enum {
 	COL_ASSOC,
 	COL_COMMAND,
+	COL_DELETED,
 	COL_DEVICE,
 	COL_DEV,
 	COL_FD,
 	COL_INODE,
 	COL_NAME,
+	COL_NLINK,
 	COL_PID,
 	COL_RDEV,
 	COL_SIZE,
