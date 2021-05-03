@@ -136,6 +136,9 @@ static bool file_fill_column(struct proc *proc,
 	case COL_UID:
 		xasprintf(&str, "%d", (int)file->stat.st_uid);
 		break;
+	case COL_SIZE:
+		xasprintf(&str, "%ju", file->stat.st_size);
+		break;
 	default:
 		return false;
 	};
