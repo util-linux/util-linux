@@ -292,12 +292,80 @@ static int mk_cache_id(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu, char *type,
 		if (ca->level != level || strcmp(ca->type, type) != 0)
 			continue;
 
-		if (CPU_ISSET_S(cpu->logical_id, cxt->setsize, ca->sharedmap))
+		if (ca->sharedmap &&
+		    CPU_ISSET_S(cpu->logical_id, cxt->setsize, ca->sharedmap))
 			return idx;
 		idx++;
 	}
 
 	return idx;
+}
+
+static int read_sparc_onecache(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu,
+			   int level, char *typestr, int type)
+{
+	struct lscpu_cache *ca;
+	struct path_cxt *sys = cxt->syscpu;
+	int num = cpu->logical_id;
+	uint32_t size;
+	int rc, id;
+	char buf[32];
+
+	if (type)
+		snprintf(buf, sizeof(buf), "l%d_%c", level, type);
+	else
+		snprintf(buf, sizeof(buf), "l%d_", level);
+
+	rc = ul_path_readf_u32(sys, &size,
+			"cpu%d/%scache_size", num, buf);
+	if (rc != 0)
+		return rc;
+
+	DBG(CPU, ul_debugobj(cpu, "#%d reading sparc %s cache", num, buf));
+
+	id = mk_cache_id(cxt, cpu, typestr, level);
+
+	ca = get_cache(cxt, typestr, level, id);
+	if (!ca)
+		ca = add_cache(cxt, typestr, level, id);
+
+	if (!ca->name) {
+		ul_path_readf_u32(sys, &ca->coherency_line_size,
+					"cpu%d/%scache_line_size", num, buf);
+		assert(ca->type);
+
+		if (type)
+			snprintf(buf, sizeof(buf), "L%d%c", ca->level, type);
+		else
+			snprintf(buf, sizeof(buf), "L%d", ca->level);
+		ca->name = xstrdup(buf);
+		ca->size = size;
+	}
+	/* There is no sharedmap of the cache in /sys, we assume that caches are
+	 * not shared. Send a patch if your /sys provides another information.
+	 */
+	if (!ca->sharedmap) {
+		size_t setsize = 0;
+
+		ca->sharedmap = cpuset_alloc(cxt->maxcpus, &setsize, NULL);
+		CPU_ZERO_S(setsize, ca->sharedmap);
+		CPU_SET_S(num, setsize, ca->sharedmap);
+	}
+
+	return 0;
+}
+
+static int read_sparc_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
+{
+	int i;
+
+	for (i = 1; i <= 3; i++) {
+		read_sparc_onecache(cxt, cpu, i, "Instruction", 'i');
+		read_sparc_onecache(cxt, cpu, i, "Data", 'd');
+		read_sparc_onecache(cxt, cpu, i, "Unified", 0);
+	}
+
+	return 0;
 }
 
 static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
@@ -311,6 +379,10 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 				"cpu%d/cache/index%zu",
 				num, ncaches) == 0)
 		ncaches++;
+
+	if (ncaches == 0 && ul_path_accessf(sys, F_OK,
+				"cpu%d/l1_icache_size", num) == 0)
+		return read_sparc_caches(cxt, cpu);
 
 	DBG(CPU, ul_debugobj(cpu, "#%d reading %zd caches", num, ncaches));
 
