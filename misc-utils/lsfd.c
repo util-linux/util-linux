@@ -104,6 +104,17 @@ static struct colinfo infos[] = {
 	/* MNTID */
 };
 
+static int default_columns[] = {
+	COL_COMMAND,
+	COL_PID,
+	COL_USER,
+	COL_ASSOC,
+	COL_TYPE,
+	COL_DEVICE,
+	COL_INODE,
+	COL_NAME,
+};
+
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
 static size_t ncolumns;
 
@@ -615,16 +626,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!ncolumns) {
-		columns[ncolumns++] = COL_COMMAND;
-		columns[ncolumns++] = COL_PID;
-		columns[ncolumns++] = COL_USER;
-		columns[ncolumns++] = COL_ASSOC;
-		columns[ncolumns++] = COL_TYPE;
-		columns[ncolumns++] = COL_DEVICE;
-		columns[ncolumns++] = COL_INODE;
-		columns[ncolumns++] = COL_NAME;
-	}
+	if (!ncolumns)
+		for (size_t i = 0; i < ARRAY_SIZE(default_columns); i++)
+			columns[ncolumns++] = default_columns[i];
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					    &ncolumns, column_name_to_id) < 0)
