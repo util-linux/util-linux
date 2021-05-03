@@ -60,6 +60,7 @@ enum {
 	COL_NAME,
 	COL_PID,
 	COL_RDEV,
+	COL_SIZE,
 	COL_TYPE,
 	COL_UID,
 	COL_USER,

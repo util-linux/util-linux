@@ -94,6 +94,8 @@ static struct colinfo infos[] = {
 		N_("PID of the process opening the file") },
 	[COL_RDEV]    = { "RDEV",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("device ID (if special file)") },
+	[COL_SIZE]    = { "SIZE",     4, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("file size"), },
 	[COL_TYPE]    = { "TYPE",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("file type") },
 	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
@@ -111,6 +113,7 @@ static int default_columns[] = {
 	COL_ASSOC,
 	COL_TYPE,
 	COL_DEVICE,
+	COL_SIZE,
 	COL_INODE,
 	COL_NAME,
 };
