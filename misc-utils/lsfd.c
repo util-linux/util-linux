@@ -55,7 +55,7 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 /*
  * Multi-threading related stuffs
  */
-#define NUM_COLLECTORS 1
+#define NUM_COLLECTORS 3
 static pthread_cond_t  procs_ready = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t procs_ready_lock = PTHREAD_MUTEX_INITIALIZER;
 
