@@ -73,8 +73,8 @@ enum {
  * Process structure
  */
 enum association {
-	ASSOC_CWD = 1,
-	ASSOC_EXE,
+	ASSOC_EXE = 1,
+	ASSOC_CWD,
 	ASSOC_ROOT,
 	ASSOC_NS_CGROUP,
 	ASSOC_NS_IPC,
