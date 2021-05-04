@@ -369,6 +369,13 @@ static struct file *collect_outofbox_file(int dd, const char *name, int associat
 	return collect_file(&sb, sym, association);
 }
 
+static void collect_proc_uid(struct proc *proc, int dd)
+{
+	struct stat sb;
+	if (fstat(dd, &sb) == 0)
+		proc->uid = sb.st_uid;
+}
+
 static void collect_outofbox_files(struct proc *proc,
 				   const char *proc_template,
 				   enum association assocs[],
@@ -387,6 +394,9 @@ static void collect_outofbox_files(struct proc *proc,
 
 	for (unsigned int i = 0; i < count; i++) {
 		struct file *file;
+
+		if (assocs[i] == ASSOC_EXE)
+			collect_proc_uid(proc, dd);
 
 		if ((file = collect_outofbox_file(dd,
 						  assoc_names[assocs[i]],

@@ -92,6 +92,7 @@ enum association {
 struct proc {
 	pid_t pid;
 	char *command;
+	uid_t uid;
 	struct list_head procs;
 	struct list_head files;
 };
