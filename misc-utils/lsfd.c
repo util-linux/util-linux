@@ -30,6 +30,14 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include <sys/syscall.h>
+#include <linux/kcmp.h>
+static int kcmp(pid_t pid1, pid_t pid2, int type,
+		unsigned long idx1, unsigned long idx2)
+{
+	return syscall(SYS_kcmp, pid1, pid2, type, idx1, idx2);
+}
+
 #include "c.h"
 #include "nls.h"
 #include "xalloc.h"
@@ -459,13 +467,25 @@ static void collect_outofbox_files(struct proc *proc,
 	closedir(dirp);
 }
 
-static void collect_execve_files(struct proc *proc)
+static void collect_execve_file(struct proc *proc)
 {
 	const char *execve_template = "/proc/%d";
-	enum association execve_assocs[] = { ASSOC_CWD, ASSOC_EXE, ASSOC_ROOT };
+	enum association execve_assocs[] = { ASSOC_EXE };
 	const char* execve_assoc_names[] = {
-		[ASSOC_CWD]  = "cwd",
 		[ASSOC_EXE]  = "exe",
+	};
+	collect_outofbox_files(proc, execve_template,
+			       execve_assocs, execve_assoc_names,
+			       ARRAY_SIZE(execve_assocs));
+}
+
+static void collect_execve_and_fs_files(struct proc *proc)
+{
+	const char *execve_template = "/proc/%d";
+	enum association execve_assocs[] = { ASSOC_EXE, ASSOC_CWD, ASSOC_ROOT };
+	const char* execve_assoc_names[] = {
+		[ASSOC_EXE]  = "exe",
+		[ASSOC_CWD]  = "cwd",
 		[ASSOC_ROOT] = "root",
 	};
 	collect_outofbox_files(proc, execve_template,
@@ -514,10 +534,30 @@ static void fill_proc(struct proc *proc)
 	if (!proc->command)
 		proc->command = xstrdup(_("(unknown)"));
 
-	collect_execve_files(proc);
+
+	if (proc->pid == proc->leader->pid
+	    || kcmp(proc->leader->pid, proc->pid,
+		    KCMP_FS, 0, 0) != 0)
+		collect_execve_and_fs_files(proc);
+	else
+		collect_execve_file(proc);
+
 	collect_namespace_files(proc);
-	collect_mem_files(proc);
-	collect_fd_files(proc);
+
+	/* If kcmp is not available,
+	 * there is no way to no whether threads share resources.
+	 * In such cases, we must pay the costs: call collect_mem_files()
+	 * and collect_fd_files().
+	 */
+	if (proc->pid == proc->leader->pid
+	    || kcmp(proc->leader->pid, proc->pid,
+		    KCMP_VM, 0, 0) != 0)
+		collect_mem_files(proc);
+
+	if (proc->pid == proc->leader->pid
+	    || kcmp(proc->leader->pid, proc->pid,
+		    KCMP_FILES, 0, 0) != 0)
+		collect_fd_files(proc);
 }
 
 static void *fill_procs(void *arg)
