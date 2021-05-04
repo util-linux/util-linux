@@ -100,6 +100,8 @@ static struct colinfo infos[] = {
 		N_("device ID (if special file)") },
 	[COL_SIZE]    = { "SIZE",     4, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("file size"), },
+	[COL_TID]    = { "TID",       5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("thread ID of the process opening the file") },
 	[COL_TYPE]    = { "TYPE",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("file type") },
 	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
@@ -122,6 +124,19 @@ static int default_columns[] = {
 	COL_NAME,
 };
 
+static int default_threads_columns[] = {
+	COL_COMMAND,
+	COL_PID,
+	COL_TID,
+	COL_USER,
+	COL_ASSOC,
+	COL_TYPE,
+	COL_DEVICE,
+	COL_SIZE,
+	COL_INODE,
+	COL_NAME,
+};
+
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
 static size_t ncolumns;
 
@@ -130,7 +145,8 @@ struct lsfd_control {
 
 	unsigned int noheadings : 1,
 		raw : 1,
-		json : 1;
+		json : 1,
+		threads : 1;
 };
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -162,11 +178,12 @@ static const struct colinfo *get_column_info(int num)
 	return &infos[ get_column_id(num) ];
 }
 
-static struct proc *make_proc(pid_t pid)
+static struct proc *make_proc(pid_t pid, struct proc * leader)
 {
 	struct proc *proc = xcalloc(1, sizeof(*proc));
 
-	proc->pid = pid;
+	proc->pid  = pid;
+	proc->leader = leader? leader: proc;
 	proc->command = NULL;
 
 	return proc;
@@ -198,7 +215,33 @@ static void enqueue_proc(struct list_head *procs, struct proc * proc)
 	list_add_tail(&proc->procs, procs);
 }
 
-static void collect_procs(DIR *dirp, struct list_head *procs)
+static void collect_tasks(struct proc *leader,
+			  DIR *task_dirp, struct list_head *procs)
+{
+	struct dirent *dp;
+	long num;
+
+	while ((dp = xreaddir(task_dirp))) {
+		struct proc *proc;
+
+		/* care only for numerical entries.
+		 * For a non-numerical entry, strtol returns 0.
+		 * We can skip it because there is no task having 0 as pid. */
+		if (!(num = strtol(dp->d_name, (char **) NULL, 10)))
+			continue;
+
+		if (leader->pid == (pid_t) num) {
+			/* The leader is already queued. */
+			continue;
+		}
+
+		proc = make_proc((pid_t)num, leader);
+		enqueue_proc(procs, proc);
+	}
+}
+
+static void collect_procs(DIR *dirp, struct list_head *procs,
+			  struct lsfd_control *ctl)
 {
 	struct dirent *dp;
 	long num;
@@ -212,8 +255,16 @@ static void collect_procs(DIR *dirp, struct list_head *procs)
 		if (!(num = strtol(dp->d_name, (char **) NULL, 10)))
 			continue;
 
-		proc = make_proc((pid_t)num);
+		proc = make_proc((pid_t)num, NULL);
 		enqueue_proc(procs, proc);
+
+		if (ctl->threads) {
+			DIR *task_dirp = opendirf("/proc/%s/task", dp->d_name);
+			if (task_dirp) {
+				collect_tasks(proc, task_dirp, procs);
+				closedir(task_dirp);
+			}
+		}
 	}
 }
 
@@ -245,14 +296,14 @@ static void run_collectors(struct list_head *procs)
 		pthread_join(collectors[i], NULL);
 }
 
-static void collect(struct list_head *procs)
+static void collect(struct list_head *procs, struct lsfd_control *ctl)
 {
 	DIR *dirp;
 
 	dirp = opendir("/proc");
 	if (!dirp)
 		err(EXIT_FAILURE, _("failed to open /proc"));
-	collect_procs(dirp, procs);
+	collect_procs(dirp, procs, ctl);
 	closedir(dirp);
 
 	run_collectors(procs);
@@ -461,7 +512,7 @@ static void fill_proc(struct proc *proc)
 
 	proc->command = proc_get_command_name(proc->pid);
 	if (!proc->command)
-		err(EXIT_FAILURE, _("failed to get command name"));
+		proc->command = xstrdup(_("(unknown)"));
 
 	collect_execve_files(proc);
 	collect_namespace_files(proc);
@@ -578,6 +629,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -l, --threads         list in threads level\n"), out);
 	fputs(_(" -J, --json            use JSON output format\n"), out);
 	fputs(_(" -n, --noheadings      don't print headings\n"), out);
 	fputs(_(" -o, --output <list>   output columns\n"), out);
@@ -612,6 +664,7 @@ int main(int argc, char *argv[])
 		{ "help",	no_argument, NULL, 'h' },
 		{ "json",       no_argument, NULL, 'J' },
 		{ "raw",        no_argument, NULL, 'r' },
+		{ "threads",    no_argument, NULL, 'l' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -620,7 +673,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:JrVh", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:JrVhl", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			ctl.noheadings = 1;
@@ -634,6 +687,9 @@ int main(int argc, char *argv[])
 		case 'r':
 			ctl.raw = 1;
 			break;
+		case 'l':
+			ctl.threads = 1;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -643,9 +699,15 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!ncolumns)
-		for (size_t i = 0; i < ARRAY_SIZE(default_columns); i++)
-			columns[ncolumns++] = default_columns[i];
+#define INITIALIZE_COLUMNS(COLUMN_SPEC)				\
+	for (size_t i = 0; i < ARRAY_SIZE(COLUMN_SPEC); i++)	\
+		columns[ncolumns++] = COLUMN_SPEC[i]
+	if (!ncolumns) {
+		if (ctl.threads)
+			INITIALIZE_COLUMNS(default_threads_columns);
+		else
+			INITIALIZE_COLUMNS(default_columns);
+	}
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					    &ncolumns, column_name_to_id) < 0)
@@ -680,7 +742,7 @@ int main(int argc, char *argv[])
 	}
 
 	INIT_LIST_HEAD(&procs);
-	collect(&procs);
+	collect(&procs, &ctl);
 
 	convert(&procs, &ctl);
 	emit(&ctl);
