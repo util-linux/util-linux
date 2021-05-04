@@ -63,6 +63,7 @@ enum {
 	COL_PID,
 	COL_RDEV,
 	COL_SIZE,
+	COL_TID,
 	COL_TYPE,
 	COL_UID,
 	COL_USER,
@@ -91,6 +92,7 @@ enum association {
 
 struct proc {
 	pid_t pid;
+	struct proc * leader;
 	char *command;
 	uid_t uid;
 	struct list_head procs;

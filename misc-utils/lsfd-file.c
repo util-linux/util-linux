@@ -131,6 +131,9 @@ static bool file_fill_column(struct proc *proc,
 			  minor(file->stat.st_rdev));
 		break;
 	case COL_PID:
+		xasprintf(&str, "%d", (int)proc->leader->pid);
+		break;
+	case COL_TID:
 		xasprintf(&str, "%d", (int)proc->pid);
 		break;
 	case COL_UID:
