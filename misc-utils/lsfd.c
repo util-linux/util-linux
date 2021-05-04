@@ -78,7 +78,7 @@ struct colinfo {
 static struct colinfo infos[] = {
 	[COL_ASSOC]   = { "ASSOC",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("association between file and process") },
-	[COL_COMMAND] = { "COMMAND", 15, 0,              SCOLS_JSON_STRING,
+	[COL_COMMAND] = { "COMMAND", 15, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
 		N_("command of the process opening the file") },
 	[COL_DELETED] = { "DELETED",  0, SCOLS_FL_RIGHT, SCOLS_JSON_BOOLEAN,
 		N_("reachability from the file system") },
