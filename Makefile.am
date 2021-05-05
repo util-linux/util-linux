@@ -42,6 +42,7 @@ ul_libuuid_incdir  = $(top_srcdir)/libuuid/src
 bashcompletiondir = @bashcompletiondir@
 
 dist_noinst_HEADERS =
+dist_noinst_DATA =
 noinst_PROGRAMS =
 EXTRA_LTLIBRARIES =
 usrbin_exec_PROGRAMS =
@@ -58,15 +59,15 @@ check_PROGRAMS =
 dist_check_SCRIPTS =
 
 PATHFILES =
+ADOCFILES_COMMON =
+MANPAGES =
+MANLINKS =
 
 INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =
 INSTALL_DATA_HOOKS =
 CLEAN_LOCALS =
 CHECK_LOCALS =
-MANPAGES =
-MANLINKS =
-MANPAGES_EXTRA =
 
 EXTRA_DIST =
 CLEANFILES =
@@ -112,7 +113,6 @@ include bash-completion/Makemodule.am
 include man-common/Makemodule.am
 
 include tests/Makemodule.am
-
 
 # pylibmountexec module must be installed after usrlib_exec libraries,
 # otherwise the libtool relink step will fail to find libmount.la and
@@ -196,12 +196,12 @@ $(PATHFILES): Makefile
 
 
 CLEANFILES += $(MANPAGES) $(MANLINKS)
-EXTRA_DIST += $(MANPAGES:=.adoc) $(MANPAGES_EXTRA)
+EXTRA_DIST += $(ADOCFILES_COMMON)
 
 if ENABLE_ASCIIDOC
 man_MANS += $(MANPAGES) $(MANLINKS)
 
-$(MANPAGES): $(MANPAGES_EXTRA) Makefile
+$(MANPAGES): $(ADOCFILES_COMMON) Makefile
 
 asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-b manpage \

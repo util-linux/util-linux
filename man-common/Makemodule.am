@@ -1,4 +1,4 @@
-MANPAGES_EXTRA += \
+ADOCFILES_COMMON += \
 	      man-common/bugreports.adoc \
 	      man-common/footer.adoc \
 	      man-common/footer-config.adoc \

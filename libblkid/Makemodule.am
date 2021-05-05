@@ -9,8 +9,11 @@ SUBDIRS += libblkid/docs
 endif
 
 pkgconfig_DATA += libblkid/blkid.pc
-PATHFILES      += libblkid/blkid.pc
-MANPAGES  += libblkid/libblkid.3
+PATHFILES += libblkid/blkid.pc
+
+MANPAGES += libblkid/libblkid.3
+dist_noinst_DATA += libblkid/libblkid.3.adoc
+
 EXTRA_DIST     += libblkid/COPYING
 
 endif # BUILD_LIBBLKID

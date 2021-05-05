@@ -2,6 +2,7 @@
 if BUILD_LAST
 usrbin_exec_PROGRAMS += last
 MANPAGES += login-utils/last.1
+dist_noinst_DATA += login-utils/last.1.adoc
 MANLINKS += login-utils/lastb.1
 last_SOURCES = login-utils/last.c lib/monotonic.c
 last_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
@@ -28,6 +29,7 @@ endif
 if BUILD_SULOGIN
 sbin_PROGRAMS += sulogin
 MANPAGES += login-utils/sulogin.8
+dist_noinst_DATA += login-utils/sulogin.8.adoc
 sulogin_SOURCES = \
 	login-utils/sulogin.c \
 	login-utils/sulogin-consoles.c \
@@ -54,6 +56,7 @@ endif # BUILD_SULOGIN
 if BUILD_LOGIN
 bin_PROGRAMS += login
 MANPAGES += login-utils/login.1
+dist_noinst_DATA += login-utils/login.1.adoc
 login_SOURCES = \
 	login-utils/login.c \
 	login-utils/logindefs.c \
@@ -77,6 +80,7 @@ endif # BUILD_LOGIN
 if BUILD_NOLOGIN
 sbin_PROGRAMS += nologin
 MANPAGES += login-utils/nologin.8
+dist_noinst_DATA += login-utils/nologin.8.adoc
 nologin_SOURCES = login-utils/nologin.c
 nologin_LDADD = $(LDADD) libcommon.la
 endif
@@ -85,6 +89,7 @@ endif
 if BUILD_UTMPDUMP
 usrbin_exec_PROGRAMS += utmpdump
 MANPAGES += login-utils/utmpdump.1
+dist_noinst_DATA += login-utils/utmpdump.1.adoc
 utmpdump_SOURCES = login-utils/utmpdump.c
 utmpdump_LDADD = $(LDADD) libcommon.la
 endif
@@ -95,6 +100,9 @@ usrbin_exec_PROGRAMS += chfn chsh
 MANPAGES += \
 	login-utils/chfn.1 \
 	login-utils/chsh.1
+dist_noinst_DATA += \
+	login-utils/chfn.1.adoc \
+	login-utils/chsh.1.adoc
 
 chfn_chsh_sources = \
 	login-utils/ch-common.h \
@@ -156,6 +164,7 @@ endif # BUILD_CHFN_CHSH
 if BUILD_SU
 bin_PROGRAMS += su
 MANPAGES += login-utils/su.1
+dist_noinst_DATA += login-utils/su.1.adoc
 su_SOURCES = \
 	login-utils/su.c \
 	login-utils/su-common.c \
@@ -183,6 +192,7 @@ endif # BUILD_SU
 if BUILD_RUNUSER
 sbin_PROGRAMS += runuser
 MANPAGES += login-utils/runuser.1
+dist_noinst_DATA += login-utils/runuser.1.adoc
 runuser_SOURCES = \
 	login-utils/runuser.c \
 	login-utils/su-common.c \
@@ -208,6 +218,7 @@ endif # BUILD_RUNUSER
 if BUILD_NEWGRP
 usrbin_exec_PROGRAMS += newgrp
 MANPAGES += login-utils/newgrp.1
+dist_noinst_DATA += login-utils/newgrp.1.adoc
 newgrp_SOURCES = login-utils/newgrp.c
 newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
@@ -217,9 +228,11 @@ newgrp_LDADD += -lcrypt
 endif
 endif # BUILD_NEWGRP
 
+
 if BUILD_LSLOGINS
 usrbin_exec_PROGRAMS += lslogins
 MANPAGES += login-utils/lslogins.1
+dist_noinst_DATA += login-utils/lslogins.1.adoc
 lslogins_SOURCES = \
 	login-utils/lslogins.c \
 	login-utils/logindefs.c \
@@ -238,9 +251,11 @@ lslogins_LDADD += -leconf
 endif
 endif # BUILD_LSLOGINS
 
+
 if BUILD_VIPW
 usrsbin_exec_PROGRAMS += vipw
 MANPAGES += login-utils/vipw.8
+dist_noinst_DATA += login-utils/vipw.8.adoc
 MANLINKS += login-utils/vigr.8
 vipw_SOURCES = \
 	login-utils/vipw.c \

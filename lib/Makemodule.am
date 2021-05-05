@@ -76,7 +76,7 @@ endif
 endif # !HAVE_TINFO
 
 MANPAGES += lib/terminal-colors.d.5
-
+dist_noinst_DATA += lib/terminal-colors.d.5.adoc
 
 check_PROGRAMS += \
 	test_blkdev \

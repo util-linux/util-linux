@@ -1,6 +1,7 @@
 if BUILD_SCRIPT
 usrbin_exec_PROGRAMS += script
 MANPAGES += term-utils/script.1
+dist_noinst_DATA += term-utils/script.1.adoc
 script_SOURCES = term-utils/script.c \
 		 lib/pty-session.c \
 		 include/pty-session.h \
@@ -20,6 +21,7 @@ endif # BUILD_SCRIPT
 if BUILD_SCRIPTREPLAY
 usrbin_exec_PROGRAMS += scriptreplay
 MANPAGES += term-utils/scriptreplay.1
+dist_noinst_DATA += term-utils/scriptreplay.1.adoc
 scriptreplay_SOURCES = term-utils/scriptreplay.c \
 		       term-utils/script-playutils.c \
 		       term-utils/script-playutils.h
@@ -29,6 +31,7 @@ endif # BUILD_SCRIPTREPLAY
 if BUILD_SCRIPTLIVE
 usrbin_exec_PROGRAMS += scriptlive
 MANPAGES += term-utils/scriptlive.1
+dist_noinst_DATA += term-utils/scriptlive.1.adoc
 scriptlive_SOURCES = term-utils/scriptlive.c \
 		       term-utils/script-playutils.c \
 		       term-utils/script-playutils.h \
@@ -42,6 +45,7 @@ endif # BUILD_SCRIPTLIVE
 if BUILD_AGETTY
 sbin_PROGRAMS += agetty
 MANPAGES += term-utils/agetty.8
+dist_noinst_DATA += term-utils/agetty.8.adoc
 agetty_SOURCES = term-utils/agetty.c
 if USE_PLYMOUTH_SUPPORT
 agetty_SOURCES += lib/plymouth-ctrl.c
@@ -56,6 +60,7 @@ endif # BUILD_AGETTY
 if BUILD_SETTERM
 usrbin_exec_PROGRAMS += setterm
 MANPAGES += term-utils/setterm.1
+dist_noinst_DATA += term-utils/setterm.1.adoc
 setterm_SOURCES = term-utils/setterm.c
 setterm_CFLAGS = $(AM_CFLAGS)
 setterm_LDADD = $(LDADD) libcommon.la
@@ -73,6 +78,7 @@ if BUILD_MESG
 usrbin_exec_PROGRAMS += mesg
 mesg_LDADD = $(LDADD) libcommon.la
 MANPAGES += term-utils/mesg.1
+dist_noinst_DATA += term-utils/mesg.1.adoc
 mesg_SOURCES = term-utils/mesg.c
 endif
 
@@ -84,6 +90,7 @@ wall_SOURCES = \
 	term-utils/ttymsg.c \
 	term-utils/ttymsg.h
 MANPAGES += term-utils/wall.1
+dist_noinst_DATA += term-utils/wall.1.adoc
 wall_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 wall_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 wall_LDADD = $(LDADD) libcommon.la
@@ -102,6 +109,7 @@ endif # BUILD_WALL
 if BUILD_WRITE
 usrbin_exec_PROGRAMS += write
 MANPAGES += term-utils/write.1
+dist_noinst_DATA += term-utils/write.1.adoc
 write_SOURCES = term-utils/write.c
 write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
