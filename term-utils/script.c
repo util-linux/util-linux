@@ -305,8 +305,9 @@ static int log_close(struct script_control *ctl,
 		gettime_monotonic(&now);
 		timersub(&now, &log->starttime, &delta);
 
-		log_info(ctl, "DURATION", "%ld.%06ld",
-			(long)delta.tv_sec, (long)delta.tv_usec);
+		log_info(ctl, "DURATION", "%"PRId64".%06"PRId64,
+			(int64_t)delta.tv_sec,
+			(int64_t)delta.tv_usec);
 		log_info(ctl, "EXIT_CODE", "%d", status);
 		break;
 	}
@@ -469,8 +470,8 @@ static ssize_t log_write(struct script_control *ctl,
 
 		gettime_monotonic(&now);
 		timersub(&now, &log->oldtime, &delta);
-		ssz = fprintf(log->fp, "%ld.%06ld %zd\n",
-			(long)delta.tv_sec, (long)delta.tv_usec, bytes);
+		ssz = fprintf(log->fp, "%"PRId64".%06"PRId64" %zd\n",
+			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec, bytes);
 		if (ssz < 0)
 			return -errno;
 
@@ -482,9 +483,9 @@ static ssize_t log_write(struct script_control *ctl,
 
 		gettime_monotonic(&now);
 		timersub(&now, &log->oldtime, &delta);
-		ssz = fprintf(log->fp, "%c %ld.%06ld %zd\n",
+		ssz = fprintf(log->fp, "%c %"PRId64".%06"PRId64" %zd\n",
 			stream->ident,
-			(long)delta.tv_sec, (long)delta.tv_usec, bytes);
+			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec, bytes);
 		if (ssz < 0)
 			return -errno;
 
@@ -548,12 +549,12 @@ static ssize_t log_signal(struct script_control *ctl, int signum, char *msgfmt, 
 	}
 
 	if (*msg)
-		sz = fprintf(log->fp, "S %ld.%06ld SIG%s %s\n",
-			(long)delta.tv_sec, (long)delta.tv_usec,
+		sz = fprintf(log->fp, "S %"PRId64".%06"PRId64" SIG%s %s\n",
+			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec,
 			signum_to_signame(signum), msg);
 	else
-		sz = fprintf(log->fp, "S %ld.%06ld SIG%s\n",
-			(long)delta.tv_sec, (long)delta.tv_usec,
+		sz = fprintf(log->fp, "S %"PRId64".%06"PRId64" SIG%s\n",
+			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec,
 			signum_to_signame(signum));
 
 	log->oldtime = now;
