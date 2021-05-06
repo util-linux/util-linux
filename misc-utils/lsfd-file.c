@@ -244,6 +244,14 @@ static bool file_fill_column(struct proc *proc,
 	case COL_MNT_ID:
 		xasprintf(&str, "%d", file->association < 0? 0: file->mnt_id);
 		break;
+	case COL_MODE:
+		if (file->association < 0)
+			xasprintf(&str, "---");
+		else
+			xasprintf(&str, "%c%c-",
+				  file->mode & S_IRUSR? 'r': '-',
+				  file->mode & S_IWUSR? 'w': '-');
+		break;
 	case COL_POS:
 		xasprintf(&str, "%llu",
 			  file->association < 0? 0: file->pos);
