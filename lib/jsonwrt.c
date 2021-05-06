@@ -8,6 +8,8 @@
  */
 #include <stdio.h>
 #include <inttypes.h>
+#include <ctype.h>
+#include <cctype.h>
 
 #include "c.h"
 #include "jsonwrt.h"
@@ -31,7 +33,7 @@ static void fputs_quoted_case_json(const char *data, FILE *out, int dir)
 	fputc('"', out);
 	for (p = data; p && *p; p++) {
 
-		const unsigned char c = (unsigned char) *p;
+		const unsigned int c = (unsigned int) *p;
 
 		/* From http://www.json.org
 		 *
@@ -49,8 +51,17 @@ static void fputs_quoted_case_json(const char *data, FILE *out, int dir)
 
 		/* All non-control characters OK; do the case swap as required. */
 		if (c >= 0x20) {
-			fputc(dir ==  1 ? toupper(c) :
-			      dir == -1 ? tolower(c) : *p, out);
+			/*
+			 * Don't use locale sensitive ctype.h functions for regular
+			 * ASCII chars, because for example with Turkish locale
+			 * (aka LANG=tr_TR.UTF-8) toupper('I') returns 'I'.
+			 */
+			if (c <= 127)
+				fputc(dir ==  1 ? c_toupper(c) :
+				      dir == -1 ? c_tolower(c) : *p, out);
+			else
+				fputc(dir ==  1 ? toupper(c) :
+				      dir == -1 ? tolower(c) : *p, out);
 			continue;
 		}
 
