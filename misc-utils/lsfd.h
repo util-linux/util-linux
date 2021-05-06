@@ -130,13 +130,17 @@ struct file_class {
 	void (*free_content)(struct file *file);
 };
 
-extern const struct file_class file_class, cdev_class, bdev_class;
+extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class;
 
 struct file *make_file(const struct file_class *class,
 		       struct stat *sb, const char *name, int association);
 struct file *make_cdev(const struct file_class *class,
 		       struct stat *sb, const char *name, int fd);
 struct file *make_bdev(const struct file_class *class,
+		       struct stat *sb, const char *name, int fd);
+struct file *make_sock(const struct file_class *class,
+		       struct stat *sb, const char *name, int fd);
+struct file *make_unkn(const struct file_class *class,
 		       struct stat *sb, const char *name, int fd);
 
 extern struct idcache *username_cache;
