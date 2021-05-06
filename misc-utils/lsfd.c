@@ -94,16 +94,22 @@ static struct colinfo infos[] = {
 		N_("ID of device containing file") },
 	[COL_DEVICE]  = { "DEVICE",   0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("device ID for special, or ID of device containing file") },
+	[COL_FLAGS]   = { "FLAGS",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("flags specified when opening the file") },
 	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("file descriptor for the file") },
 	[COL_INODE]   = { "INODE",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("inode number") },
+	[COL_MNT_ID]  = { "MNTID",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("mount id") },
 	[COL_NAME]    = { "NAME",    45, 0,              SCOLS_JSON_STRING,
 		N_("name of the file") },
 	[COL_NLINK]   = { "NLINK",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("link count") },
 	[COL_PID]     = { "PID",      5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("PID of the process opening the file") },
+	[COL_POS]     = { "POS",      5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("file position") },
 	[COL_RDEV]    = { "RDEV",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("device ID (if special file)") },
 	[COL_SIZE]    = { "SIZE",     4, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
@@ -116,8 +122,6 @@ static struct colinfo infos[] = {
 		N_("user ID number") },
 	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("user of the process") },
-	/* SIZE/OFF */
-	/* MNTID */
 };
 
 static int default_columns[] = {
@@ -127,7 +131,7 @@ static int default_columns[] = {
 	COL_ASSOC,
 	COL_TYPE,
 	COL_DEVICE,
-	COL_SIZE,
+	COL_POS,
 	COL_INODE,
 	COL_NAME,
 };
@@ -140,7 +144,7 @@ static int default_threads_columns[] = {
 	COL_ASSOC,
 	COL_TYPE,
 	COL_DEVICE,
-	COL_SIZE,
+	COL_POS,
 	COL_INODE,
 	COL_NAME,
 };
