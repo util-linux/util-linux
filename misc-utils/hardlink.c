@@ -302,8 +302,8 @@ static void print_stats(void)
 	jlog(JLOG_SUMMARY, "%-15s %s", _("Saved:"), ssz);
 	free(ssz);
 
-	jlog(JLOG_SUMMARY, _("%-15s %ld.%06ld seconds"), _("Duration:"),
-	     (long)delta.tv_sec, (long)delta.tv_usec);
+	jlog(JLOG_SUMMARY, _("%-15s %"PRId64".%06"PRId64" seconds"), _("Duration:"),
+	     (int64_t)delta.tv_sec, (int64_t)delta.tv_usec);
 }
 
 /**
