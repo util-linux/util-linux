@@ -41,16 +41,16 @@ static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 	}
 }
 
-const struct file_class unkn_class = {
-	.super = &file_class,
-	.size = sizeof(struct file),
-	.fill_column = unkn_fill_column,
-	.free_content = NULL,
-};
-
 struct file *make_unkn(const struct file_class *class,
 		       struct stat *sb, const char *name, int fd)
 {
 	return make_file(class? class: &unkn_class,
 			 sb, name, fd);
 }
+
+const struct file_class unkn_class = {
+	.super = &file_class,
+	.size = sizeof(struct file),
+	.fill_column = unkn_fill_column,
+	.free_content = NULL,
+};
