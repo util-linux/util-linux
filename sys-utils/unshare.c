@@ -651,7 +651,7 @@ int main(int argc, char *argv[])
 
 	if (procmnt) {
 		if (!newroot && mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL) != 0)
-			err(EXIT_FAILURE, _("umount %s failed"), procmnt);
+			err(EXIT_FAILURE, _("cannot change %s filesystem propagation"), procmnt);
 		if (mount("proc", procmnt, "proc", MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0)
 			err(EXIT_FAILURE, _("mount %s failed"), procmnt);
 	}
