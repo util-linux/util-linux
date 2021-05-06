@@ -65,6 +65,16 @@ static struct list_head *current_proc;
 static void *fill_procs(void *arg);
 
 /*
+ * /proc/$pid/maps entries
+ */
+struct map {
+	struct list_head maps;
+	unsigned long mem_addr_start;
+	unsigned long long file_offset;
+	unsigned int read:1, write:1, exec:1, shared:1;
+};
+
+/*
  * idcaches
  */
 struct idcache *username_cache;
@@ -475,9 +485,82 @@ static void collect_fd_files(struct proc *proc)
 		closedir(dirp);
 }
 
+static struct map* make_map(unsigned long mem_addr_start, unsigned long long file_offset,
+			    int r, int w, int x, int s)
+{
+	struct map *map = xcalloc(1, sizeof(*map));
+
+	INIT_LIST_HEAD(&map->maps);
+
+	map->mem_addr_start = mem_addr_start;
+	map->file_offset = file_offset;
+
+	map->read   = r;
+	map->write  = w;
+	map->exec   = x;
+	map->shared = s;
+
+	return map;
+}
+
+static void free_map(struct map *map)
+{
+	free(map);
+}
+
+static void read_maps(struct list_head *maps_list, FILE *maps_fp)
+{
+	/* Taken from proc(5):
+	 * address           perms offset  dev   inode       pathname
+	 * 00400000-00452000 r-xp 00000000 08:02 173521      /usr/bin/dbus-daemon
+	 * ... */
+
+	char line[PATH_MAX + 128];
+	unsigned long start, end;
+	char r, w, x, s;
+	unsigned long long file_offset;
+	unsigned long major;
+	unsigned long minor;
+	long unsigned inode;
+
+	while (fgets(line, sizeof(line), maps_fp)) {
+		struct map *map;
+
+		if (sscanf(line, "%lx-%lx %c%c%c%c %llx %lx:%lx %lu %*[^\n]",
+			   &start, &end, &r, &w, &x, &s, &file_offset,
+			   &major, &minor, &inode) != 10)
+			continue;
+		map = make_map(start, file_offset, r == 'r', w == 'w', x == 'x', s == 's');
+		list_add_tail(&map->maps, maps_list);
+	}
+}
+
+static FILE* open_maps(pid_t pid)
+{
+	return fopenf("r", "/proc/%d/maps", pid);
+}
+
+static void free_maps(struct list_head *maps)
+{
+	list_free(maps, struct map, maps, free_map);
+}
+
 static void collect_mem_files(struct proc *proc)
 {
-	collect_fd_files_generic(proc, "/proc/%d/map_files/", collect_mem_file, NULL);
+
+	struct list_head maps;
+	FILE *fp;
+
+	INIT_LIST_HEAD(&maps);
+	fp = open_maps(proc->pid);
+	if (fp) {
+		read_maps(&maps, fp);
+		fclose(fp);
+	}
+
+	collect_fd_files_generic(proc, "/proc/%d/map_files/", collect_mem_file, &maps);
+
+	free_maps(&maps);
 }
 
 static struct file *collect_outofbox_file(int dd, const char *name, int association)
