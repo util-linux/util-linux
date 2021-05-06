@@ -196,15 +196,15 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 		 * reflects a seconds offset from UTC.  The value can
 		 * help sort out problems like bugs in your C library. */
 		char s[64];
-		printf("\tdelta   = %ld\n", ctl->sys_time - ctl->rtc_time);
+		printf("\tdelta   = %"PRId64"\n", (int64_t) ctl->sys_time - ctl->rtc_time);
 		printf("\ttzone   = %ld\n", timezone);
 		printf("\ttzname  = %s\n", tzname[daylight]);
 		gmtime_r(&ctl->sys_time, &tm);
-		printf("\tsystime = %ld, (UTC) %s",
-				(long) ctl->sys_time, asctime_r(&tm, s));
+		printf("\tsystime = %"PRId64", (UTC) %s",
+				(int64_t) ctl->sys_time, asctime_r(&tm, s));
 		gmtime_r(&ctl->rtc_time, &tm);
-		printf("\trtctime = %ld, (UTC) %s",
-				(long) ctl->rtc_time, asctime_r(&tm, s));
+		printf("\trtctime = %"PRId64", (UTC) %s",
+				(int64_t) ctl->rtc_time, asctime_r(&tm, s));
 	}
 	return 0;
 }
@@ -428,12 +428,11 @@ int main(int argc, char **argv)
 		.clock_mode = CM_AUTO
 	};
 	char *devname = DEFAULT_RTC_DEVICE;
-	unsigned seconds = 0;
 	int suspend = SYSFS_MODE;
 	int rc = EXIT_SUCCESS;
 	int t;
 	int fd;
-	time_t alarm = 0;
+	time_t alarm = 0, seconds = 0;
 	enum {
 		OPT_DATE = CHAR_MAX + 1,
 		OPT_LIST
@@ -499,11 +498,11 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			/* alarm time, seconds-to-sleep (relative) */
-			seconds = strtou32_or_err(optarg, _("invalid seconds argument"));
+			seconds = strtotime_or_err(optarg, _("invalid seconds argument"));
 			break;
 		case 't':
 			/* alarm time, time_t (absolute, seconds since epoch) */
-			alarm = strtou32_or_err(optarg, _("invalid time argument"));
+			alarm = strtotime_or_err(optarg, _("invalid time argument"));
 			break;
 		case OPT_DATE:
 		{	/* alarm time, see timestamp format from manual */
@@ -552,8 +551,11 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 
 	if (ctl.verbose)
-		printf(_("alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"),
-				alarm, ctl.sys_time, ctl.rtc_time, seconds);
+		printf(_("alarm %"PRId64", sys_time %"PRId64", "
+			 "rtc_time %"PRId64", seconds %"PRIu64"\n"),
+				(int64_t) alarm, (int64_t) ctl.sys_time,
+				(int64_t) ctl.rtc_time,
+				(int64_t) seconds);
 
 	if (suspend != DISABLE_MODE && suspend != SHOW_MODE) {
 		/* perform alarm setup when the show or disable modes are not set */
