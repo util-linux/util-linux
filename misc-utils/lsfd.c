@@ -331,13 +331,40 @@ static struct file *collect_file(struct stat *sb, char *name, int assoc)
 	return make_file(NULL, sb, name, assoc);
 }
 
-static struct file *collect_fd_file(int dd, struct dirent *dp)
+static void read_fdinfo(struct file *file, FILE *fdinfo)
+{
+	const struct file_class *class;
+	char buf[1024];
+	char *val;
+
+	while (fgets(buf, sizeof(buf), fdinfo)) {
+		val = strchr(buf, ':');
+		if (!val)
+			continue;
+		*val++ = '\0';
+		while (*val == '\t' || *val == ' ')
+			val++;
+
+		class = file->class;
+		while (class) {
+			if (class->handle_fdinfo
+			    && class->handle_fdinfo(file, buf, val))
+				break;
+			class = class->super;
+		}
+	}
+}
+
+static struct file *collect_fd_file(int dd, struct dirent *dp, void *data)
 {
 	long num;
 	char *endptr = NULL;
 	struct stat sb;
 	ssize_t len;
 	char sym[PATH_MAX];
+	struct file *f;
+	int *fdinfo_dd = data;
+	FILE *fdinfo_fp;
 
 	/* care only for numerical descriptors */
 	num = strtol(dp->d_name, &endptr, 10);
@@ -351,10 +378,24 @@ static struct file *collect_fd_file(int dd, struct dirent *dp)
 	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	return collect_file(&sb, sym, (int)num);
+	f = collect_file(&sb, sym, (int)num);
+	if (!f)
+		return NULL;
+
+	if (*fdinfo_dd < 0)
+		return f;
+
+	fdinfo_fp = fopen_at(*fdinfo_dd, dp->d_name, O_RDONLY, "r");
+	if (fdinfo_fp) {
+		read_fdinfo(f, fdinfo_fp);
+		fclose(fdinfo_fp);
+	}
+
+	return f;
 }
 
-static struct file *collect_mem_file(int dd, struct dirent *dp)
+static struct file *collect_mem_file(int dd, struct dirent *dp,
+				     void *data __attribute__((__unused__)))
 {
 	struct stat sb;
 	ssize_t len;
@@ -378,7 +419,8 @@ static void enqueue_file(struct proc *proc, struct file * file)
 
 
 static void collect_fd_files_generic(struct proc *proc, const char *proc_template,
-				     struct file *(*collector)(int, struct dirent *))
+				     struct file *(*collector)(int, struct dirent *, void *),
+				     void *data)
 {
 	DIR *dirp;
 	int dd;
@@ -394,7 +436,7 @@ static void collect_fd_files_generic(struct proc *proc, const char *proc_templat
 	while ((dp = xreaddir(dirp))) {
 		struct file *file;
 
-		if ((file = (* collector)(dd, dp)) == NULL)
+		if ((file = (* collector)(dd, dp, data)) == NULL)
 			continue;
 
 		enqueue_file(proc, file);
@@ -404,12 +446,22 @@ static void collect_fd_files_generic(struct proc *proc, const char *proc_templat
 
 static void collect_fd_files(struct proc *proc)
 {
-	collect_fd_files_generic(proc, "/proc/%d/fd/", collect_fd_file);
+	DIR *dirp;
+	int dd = -1;
+
+	dirp = opendirf("/proc/%d/fdinfo/", proc->pid);
+	if (dirp)
+		dd = dirfd(dirp);
+
+	collect_fd_files_generic(proc, "/proc/%d/fd/", collect_fd_file, &dd);
+
+	if (dirp)
+		closedir(dirp);
 }
 
 static void collect_mem_files(struct proc *proc)
 {
-	collect_fd_files_generic(proc, "/proc/%d/map_files/", collect_mem_file);
+	collect_fd_files_generic(proc, "/proc/%d/map_files/", collect_mem_file, NULL);
 }
 
 static struct file *collect_outofbox_file(int dd, const char *name, int association)
