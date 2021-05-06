@@ -643,7 +643,8 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 				ul_jsonwrt_value_s(&json, "attrs", pa->attrs);
 		}
 
-		ul_jsonwrt_value_boolean(&json, "bootable", fdisk_partition_is_bootable(pa));
+		if (fdisk_partition_is_bootable(pa))
+			ul_jsonwrt_value_boolean(&json, "bootable", 1);
 		ul_jsonwrt_object_close(&json);
 	}
 
