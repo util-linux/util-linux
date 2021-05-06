@@ -91,7 +91,8 @@ enum association {
 	ASSOC_NS_TIME4C,
 	ASSOC_NS_USER,
 	ASSOC_NS_UTS,
-	ASSOC_MEM,
+	ASSOC_MEM,		/* private file mapping */
+	ASSOC_SHM,		/* shared file mapping */
 	N_ASSOCS,
 };
 

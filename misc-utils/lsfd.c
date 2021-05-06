@@ -420,12 +420,29 @@ static struct file *collect_fd_file(int dd, struct dirent *dp, void *data)
 	return f;
 }
 
-static struct file *collect_mem_file(int dd, struct dirent *dp,
-				     void *data __attribute__((__unused__)))
+static struct map *find_map(struct list_head *maps, unsigned long start_addr)
 {
+	struct list_head *m;
+
+	list_for_each(m, maps) {
+		struct map *map = list_entry(m, struct map, maps);
+		if (map->mem_addr_start == start_addr)
+			return map;
+	}
+	return NULL;
+}
+
+static struct file *collect_mem_file(int dd, struct dirent *dp,
+				     void *data)
+{
+	struct list_head *maps = data;
 	struct stat sb;
 	ssize_t len;
 	char sym[PATH_MAX];
+	struct file *f;
+	unsigned long start, end;
+	struct map *map;
+	enum association assoc;
 
 	if (fstatat(dd, dp->d_name, &sb, 0) < 0)
 		return NULL;
@@ -434,7 +451,16 @@ static struct file *collect_mem_file(int dd, struct dirent *dp,
 	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	return collect_file(&sb, sym, -ASSOC_MEM);
+
+	map = NULL;
+	if (sscanf(dp->d_name, "%lx-%lx", &start, &end) == 2)
+		map = find_map(maps, start);
+
+	assoc = (map && map->shared)? ASSOC_SHM: ASSOC_MEM;
+	f = collect_file(&sb, sym, -assoc);
+	if (!f)
+		return NULL;
+	return f;
 }
 
 static void enqueue_file(struct proc *proc, struct file * file)
