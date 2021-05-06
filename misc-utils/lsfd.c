@@ -871,6 +871,36 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+static void initialize_class(const struct file_class *class)
+{
+	if (class->initialize_class)
+		class->initialize_class();
+}
+
+static void initialize_classes(void)
+{
+	initialize_class(&file_class);
+	initialize_class(&cdev_class);
+	initialize_class(&bdev_class);
+	initialize_class(&sock_class);
+	initialize_class(&unkn_class);
+}
+
+static void finalize_class(const struct file_class *class)
+{
+	if (class->finalize_class)
+		class->finalize_class();
+}
+
+static void finalize_classes(void)
+{
+	finalize_class(&file_class);
+	finalize_class(&cdev_class);
+	finalize_class(&bdev_class);
+	finalize_class(&sock_class);
+	finalize_class(&unkn_class);
+}
+
 int main(int argc, char *argv[])
 {
 	int c;
@@ -964,6 +994,8 @@ int main(int argc, char *argv[])
 			scols_column_set_json_type(cl, col->json_type);
 	}
 
+	initialize_classes();
+
 	INIT_LIST_HEAD(&procs);
 	collect(&procs, &ctl);
 
@@ -972,6 +1004,8 @@ int main(int argc, char *argv[])
 	delete(&procs, &ctl);
 
 	free_idcache(username_cache);
+
+	finalize_classes();
 
 	return 0;
 }
