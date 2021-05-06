@@ -18,6 +18,7 @@
 #include <paths.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <inttypes.h>
 
 #include "c.h"
 #include "all-io.h"
@@ -129,7 +130,8 @@ void ul_pty_set_mainloop_time(struct ul_pty *pty, struct timeval *tv)
 	} else {
 		pty->next_callback_time.tv_sec = tv->tv_sec;
 		pty->next_callback_time.tv_usec = tv->tv_usec;
-		DBG(IO, ul_debugobj(pty, "mainloop time: %ld.%06ld", tv->tv_sec, tv->tv_usec));
+		DBG(IO, ul_debugobj(pty, "mainloop time: %"PRId64".%06"PRId64,
+				(int64_t) tv->tv_sec, (int64_t) tv->tv_usec));
 	}
 }
 
