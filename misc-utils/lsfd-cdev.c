@@ -1,11 +1,8 @@
 /*
- * lsfd(1) - list file descriptors
+ * lsfd-cdev.c - handle associations opening character devices
  *
  * Copyright (C) 2021 Red Hat, Inc. All rights reserved.
  * Written by Masatake YAMATO <yamato@redhat.com>
- *
- * Very generally based on lsof(8) by Victor A. Abell <abe@purdue.edu>
- * It supports multiple OSes. lsfd specializes to Linux.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,32 +25,44 @@
 
 #include "lsfd.h"
 
-static bool regular_file_fill_column(struct proc *proc __attribute__((__unused__)),
-				     struct file *file __attribute__((__unused__)),
-				     struct libscols_line *ln,
-				     int column_id,
-				     size_t column_index)
+static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
+			     struct file *file __attribute__((__unused__)),
+			     struct libscols_line *ln,
+			     int column_id,
+			     size_t column_index)
 {
+	char *str = NULL;
 	switch(column_id) {
 	case COL_TYPE:
-		if (scols_line_set_data(ln, column_index, "REG"))
+		if (scols_line_set_data(ln, column_index, "CHR"))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_DEVICE:
+		xasprintf(&str, "%u:%u",
+			  major(file->stat.st_rdev),
+			  minor(file->stat.st_rdev));
+		break;
+	default:
+		return false;
 	}
 
-	return false;
+	if (!str)
+		err(EXIT_FAILURE, _("failed to add output data"));
+	if (scols_line_refer_data(ln, column_index, str))
+		err(EXIT_FAILURE, _("failed to add output data"));
+	return true;
 }
 
-const struct file_class regular_file_class = {
+const struct file_class cdev_class = {
 	.super = &file_class,
 	.size = sizeof(struct file),
-	.fill_column = regular_file_fill_column,
+	.fill_column = cdev_fill_column,
 	.free_content = NULL,
 };
 
-struct file *make_regular_file(const struct file_class *class,
-			       struct stat *sb, const char *name, int fd)
+struct file *make_cdev(const struct file_class *class,
+		       struct stat *sb, const char *name, int fd)
 {
-	return make_file(class? class: &regular_file_class,
+	return make_file(class? class: &cdev_class,
 			 sb, name, fd);
 }

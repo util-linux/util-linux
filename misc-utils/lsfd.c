@@ -328,12 +328,10 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 static struct file *collect_file(struct stat *sb, char *name, int assoc)
 {
 	switch (sb->st_mode & S_IFMT) {
-	case S_IFREG:
-		return make_regular_file(NULL, sb, name, assoc);
 	case S_IFCHR:
-		return make_cdev_file(NULL, sb, name, assoc);
+		return make_cdev(NULL, sb, name, assoc);
 	case S_IFBLK:
-		return make_bdev_file(NULL, sb, name, assoc);
+		return make_bdev(NULL, sb, name, assoc);
 	}
 
 	return make_file(NULL, sb, name, assoc);
