@@ -459,6 +459,27 @@ err:
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 
+long double strtold_or_err(const char *str, const char *errmesg)
+{
+	double num;
+	char *end = NULL;
+
+	errno = 0;
+	if (str == NULL || *str == '\0')
+		goto err;
+	num = strtold(str, &end);
+
+	if (errno || str == end || (end && *end))
+		goto err;
+
+	return num;
+err:
+	if (errno == ERANGE)
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+
+	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+}
+
 long strtol_or_err(const char *str, const char *errmesg)
 {
 	long num;
@@ -517,11 +538,19 @@ uintmax_t strtosize_or_err(const char *str, const char *errmesg)
 
 void strtotimeval_or_err(const char *str, struct timeval *tv, const char *errmesg)
 {
-	double user_input;
+	long double user_input;
 
-	user_input = strtod_or_err(str, errmesg);
+	user_input = strtold_or_err(str, errmesg);
 	tv->tv_sec = (time_t) user_input;
-	tv->tv_usec = (long)((user_input - tv->tv_sec) * 1000000);
+	tv->tv_usec = (suseconds_t)((user_input - tv->tv_sec) * 1000000);
+}
+
+time_t strtotime_or_err(const char *str, const char *errmesg)
+{
+	int64_t user_input;
+
+	user_input = strtos64_or_err(str, errmesg);
+	return (time_t) user_input;
 }
 
 /*
