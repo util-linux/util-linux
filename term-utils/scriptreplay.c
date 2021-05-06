@@ -94,9 +94,8 @@ delay_for(struct timeval *delay)
 	ts.tv_sec = (time_t) delay->tv_sec;
 	ts.tv_nsec = delay->tv_usec * 1000;
 
-	DBG(TIMING, ul_debug("going to sleep for %ld.%06ld",
-				delay->tv_sec,
-				delay->tv_usec));
+	DBG(TIMING, ul_debug("going to sleep for %"PRId64".%06"PRId64,
+			(int64_t) delay->tv_sec, (int64_t) delay->tv_usec));
 
 	while (-1 == nanosleep(&ts, &remainder)) {
 		if (EINTR == errno)
