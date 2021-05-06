@@ -118,6 +118,7 @@ struct file_class {
 			    struct libscols_line *ln,
 			    int column_id,
 			    size_t column_index);
+	int  (*handle_fdinfo)(struct file *file, const char *key, const char* value);
 	void (*free_content)(struct file *file);
 };
 
