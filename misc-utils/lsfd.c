@@ -330,7 +330,8 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 	run_collectors(procs);
 }
 
-static struct file *collect_file(struct stat *sb, char *name, int assoc)
+static struct file *collect_file(struct proc *proc __attribute__((__unused__)),
+				 struct stat *sb, char *name, int assoc)
 {
 	switch (sb->st_mode & S_IFMT) {
 	case S_IFCHR:
@@ -373,7 +374,7 @@ static void read_fdinfo(struct file *file, FILE *fdinfo)
 	}
 }
 
-static struct file *collect_fd_file(int dd, struct dirent *dp, void *data)
+static struct file *collect_fd_file(struct proc *proc, int dd, struct dirent *dp, void *data)
 {
 	long num;
 	char *endptr = NULL;
@@ -396,7 +397,7 @@ static struct file *collect_fd_file(int dd, struct dirent *dp, void *data)
 	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	f = collect_file(&sb, sym, (int)num);
+	f = collect_file(proc, &sb, sym, (int)num);
 	if (!f)
 		return NULL;
 
@@ -427,7 +428,7 @@ static struct map *find_map(struct list_head *maps, unsigned long start_addr)
 	return NULL;
 }
 
-static struct file *collect_mem_file(int dd, struct dirent *dp,
+static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *dp,
 				     void *data)
 {
 	struct list_head *maps = data;
@@ -452,7 +453,7 @@ static struct file *collect_mem_file(int dd, struct dirent *dp,
 		map = find_map(maps, start);
 
 	assoc = (map && map->shared)? ASSOC_SHM: ASSOC_MEM;
-	f = collect_file(&sb, sym, -assoc);
+	f = collect_file(proc, &sb, sym, -assoc);
 	if (!f)
 		return NULL;
 
@@ -472,7 +473,7 @@ static void enqueue_file(struct proc *proc, struct file * file)
 
 
 static void collect_fd_files_generic(struct proc *proc, const char *proc_template,
-				     struct file *(*collector)(int, struct dirent *, void *),
+				     struct file *(*collector)(struct proc *,int, struct dirent *, void *),
 				     void *data)
 {
 	DIR *dirp;
@@ -489,7 +490,7 @@ static void collect_fd_files_generic(struct proc *proc, const char *proc_templat
 	while ((dp = xreaddir(dirp))) {
 		struct file *file;
 
-		if ((file = (* collector)(dd, dp, data)) == NULL)
+		if ((file = (* collector)(proc, dd, dp, data)) == NULL)
 			continue;
 
 		enqueue_file(proc, file);
@@ -590,7 +591,8 @@ static void collect_mem_files(struct proc *proc)
 	free_maps(&maps);
 }
 
-static struct file *collect_outofbox_file(int dd, const char *name, int association)
+static struct file *collect_outofbox_file(struct proc *proc,
+					  int dd, const char *name, int association)
 {
 	struct stat sb;
 	ssize_t len;
@@ -603,7 +605,7 @@ static struct file *collect_outofbox_file(int dd, const char *name, int associat
 	if ((len = readlinkat(dd, name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	return collect_file(&sb, sym, association);
+	return collect_file(proc, &sb, sym, association);
 }
 
 static void collect_proc_uid(struct proc *proc, int dd)
@@ -635,7 +637,7 @@ static void collect_outofbox_files(struct proc *proc,
 		if (assocs[i] == ASSOC_EXE)
 			collect_proc_uid(proc, dd);
 
-		if ((file = collect_outofbox_file(dd,
+		if ((file = collect_outofbox_file(proc, dd,
 						  assoc_names[assocs[i]],
 						  assocs[i] * -1)) == NULL)
 			continue;
