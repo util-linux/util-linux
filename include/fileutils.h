@@ -34,10 +34,15 @@ static inline FILE *fopen_at(int dir, const char *filename,
                              int flags, const char *mode)
 {
 	int fd = openat(dir, filename, flags);
+	FILE *ret;
+
 	if (fd < 0)
 		return NULL;
 
-	return fdopen(fd, mode);
+	ret = fdopen(fd, mode);
+	if (!ret)
+		close(fd);
+	return ret;
 }
 #endif
 
