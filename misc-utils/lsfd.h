@@ -123,6 +123,8 @@ struct file {
 struct file_class {
 	const struct file_class *super;
 	size_t size;
+	void (*initialize_class)(void);
+	void (*finalize_class)(void);
 	bool (*fill_column)(struct proc *proc,
 			    struct file *file,
 			    struct libscols_line *ln,
