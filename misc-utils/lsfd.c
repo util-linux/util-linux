@@ -134,7 +134,7 @@ static int default_columns[] = {
 	COL_MODE,
 	COL_TYPE,
 	COL_DEVICE,
-	COL_POS,
+	COL_MNT_ID,
 	COL_INODE,
 	COL_NAME,
 };
@@ -148,7 +148,7 @@ static int default_threads_columns[] = {
 	COL_MODE,
 	COL_TYPE,
 	COL_DEVICE,
-	COL_POS,
+	COL_MNT_ID,
 	COL_INODE,
 	COL_NAME,
 };
