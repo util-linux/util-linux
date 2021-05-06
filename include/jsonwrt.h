@@ -11,34 +11,34 @@ struct ul_jsonwrt {
 	FILE *out;
 	int indent;
 
-	unsigned int postponed_break :1;
+	unsigned int after_close :1;
 };
 
 void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent);
 void ul_jsonwrt_indent(struct ul_jsonwrt *fmt);
 void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type);
-void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type, int islast);
+void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type);
 
 #define ul_jsonwrt_root_open(_f)	ul_jsonwrt_open(_f, NULL, UL_JSON_OBJECT)
-#define ul_jsonwrt_root_close(_f)	ul_jsonwrt_close(_f, UL_JSON_OBJECT, 1)
+#define ul_jsonwrt_root_close(_f)	ul_jsonwrt_close(_f, UL_JSON_OBJECT)
 
 #define ul_jsonwrt_array_open(_f, _n)	ul_jsonwrt_open(_f, _n, UL_JSON_ARRAY)
-#define ul_jsonwrt_array_close(_f, _l)	ul_jsonwrt_close(_f, UL_JSON_ARRAY, _l)
+#define ul_jsonwrt_array_close(_f)	ul_jsonwrt_close(_f, UL_JSON_ARRAY)
 
 #define ul_jsonwrt_object_open(_f, _n)	ul_jsonwrt_open(_f, _n, UL_JSON_OBJECT)
-#define ul_jsonwrt_object_close(_f, _l)	ul_jsonwrt_close(_f, UL_JSON_OBJECT, _l)
+#define ul_jsonwrt_object_close(_f)	ul_jsonwrt_close(_f, UL_JSON_OBJECT)
 
 #define ul_jsonwrt_value_open(_f, _n)	ul_jsonwrt_open(_f, _n, UL_JSON_VALUE)
-#define ul_jsonwrt_value_close(_f, _l)	ul_jsonwrt_close(_f, UL_JSON_VALUE, _l)
+#define ul_jsonwrt_value_close(_f)	ul_jsonwrt_close(_f, UL_JSON_VALUE)
 
 
 void ul_jsonwrt_value_raw(struct ul_jsonwrt *fmt,
-			const char *name, const char *data, int islast);
+			const char *name, const char *data);
 void ul_jsonwrt_value_s(struct ul_jsonwrt *fmt,
-			const char *name, const char *data, int islast);
+			const char *name, const char *data);
 void ul_jsonwrt_value_u64(struct ul_jsonwrt *fmt,
-			const char *name, uint64_t data, int islast);
+			const char *name, uint64_t data);
 void ul_jsonwrt_value_boolean(struct ul_jsonwrt *fmt,
-			const char *name, int data, int islast);
+			const char *name, int data);
 
 #endif /* UTIL_LINUX_JSONWRT_H */

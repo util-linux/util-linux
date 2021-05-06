@@ -18,6 +18,7 @@ void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent)
 {
 	fmt->out = out;
 	fmt->indent = indent;
+	fmt->after_close = 0;
 }
 
 void ul_jsonwrt_indent(struct ul_jsonwrt *fmt)
@@ -30,12 +31,16 @@ void ul_jsonwrt_indent(struct ul_jsonwrt *fmt)
 
 void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
 {
-	if (fmt->postponed_break && !name)
-		;
-	else {
+	if (name) {
+		if (fmt->after_close)
+			fputs(",\n", fmt->out);
 		ul_jsonwrt_indent(fmt);
-		if (name)
-			fputs_quoted_json_lower(name, fmt->out);
+		fputs_quoted_json_lower(name, fmt->out);
+	} else {
+		if (fmt->after_close)
+			fputs(",", fmt->out);
+		else
+			ul_jsonwrt_indent(fmt);
 	}
 
 	switch (type) {
@@ -51,14 +56,15 @@ void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
 		fputs(name ? ": " : " ", fmt->out);
 		break;
 	}
-	fmt->postponed_break = 0;
+	fmt->after_close = 0;
 }
 
-void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type, int islast)
+void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type)
 {
-	if (fmt->indent == 0) {
-		fputs("}\n", fmt->out);
+	if (fmt->indent == 1) {
+		fputs("\n}\n", fmt->out);
 		fmt->indent--;
+		fmt->after_close = 1;
 		return;
 	}
 	assert(fmt->indent > 0);
@@ -66,63 +72,57 @@ void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type, int islast)
 	switch (type) {
 	case UL_JSON_OBJECT:
 		fmt->indent--;
+		fputc('\n', fmt->out);
 		ul_jsonwrt_indent(fmt);
-		fputs(islast ? "}" : "},", fmt->out);
+		fputs("}", fmt->out);
 		break;
 	case UL_JSON_ARRAY:
 		fmt->indent--;
+		fputc('\n', fmt->out);
 		ul_jsonwrt_indent(fmt);
-		fputs(islast ? "]" : "],", fmt->out);
+		fputs("]", fmt->out);
 		break;
 	case UL_JSON_VALUE:
-		if (!islast)
-			fputc(',', fmt->out);
 		break;
 	}
 
-	if (!islast && (type == UL_JSON_OBJECT || type == UL_JSON_ARRAY))
-		fmt->postponed_break = 1;
-	else {
-		fputc('\n', fmt->out);
-		fmt->postponed_break = 0;
-	}
+	fmt->after_close = 1;
 }
 
 void ul_jsonwrt_value_raw(struct ul_jsonwrt *fmt,
-			const char *name, const char *data, int islast)
+			const char *name, const char *data)
 {
 	ul_jsonwrt_value_open(fmt, name);
 	if (data && *data)
 		fputs(data, fmt->out);
 	else
 		fputs("null", fmt->out);
-	ul_jsonwrt_value_close(fmt, islast);
+	ul_jsonwrt_value_close(fmt);
 }
 
 void ul_jsonwrt_value_s(struct ul_jsonwrt *fmt,
-			const char *name, const char *data, int islast)
+			const char *name, const char *data)
 {
 	ul_jsonwrt_value_open(fmt, name);
 	if (data && *data)
 		fputs_quoted_json(data, fmt->out);
 	else
 		fputs("null", fmt->out);
-	ul_jsonwrt_value_close(fmt, islast);
+	ul_jsonwrt_value_close(fmt);
 }
 
 void ul_jsonwrt_value_u64(struct ul_jsonwrt *fmt,
-			const char *name, uint64_t data, int islast)
+			const char *name, uint64_t data)
 {
 	ul_jsonwrt_value_open(fmt, name);
 	fprintf(fmt->out, "%"PRIu64, data);
-	ul_jsonwrt_value_close(fmt, islast);
+	ul_jsonwrt_value_close(fmt);
 }
 
 void ul_jsonwrt_value_boolean(struct ul_jsonwrt *fmt,
-			const char *name, int data, int islast)
+			const char *name, int data)
 {
 	ul_jsonwrt_value_open(fmt, name);
 	fputs(data ? "true" : "false", fmt->out);
-	ul_jsonwrt_value_close(fmt, islast);
+	ul_jsonwrt_value_close(fmt);
 }
-

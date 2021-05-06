@@ -568,7 +568,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 	list_for_each(h, &dp->headers) {
 		struct fdisk_scriptheader *fi = list_entry(h, struct fdisk_scriptheader, headers);
 		const char *name = fi->name;
-		int num = 0, islast = 0;
+		int num = 0;
 
 		if (strcmp(name, "first-lba") == 0) {
 			name = "firstlba";
@@ -582,14 +582,10 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 		} else if (strcmp(name, "label-id") == 0)
 			name = "id";
 
-		if ((fi == list_last_entry(&dp->headers, struct fdisk_scriptheader, headers))
-		    && (!dp->table || fdisk_table_is_empty(dp->table)))
-			islast = 1;
-
 		if (num)
-			ul_jsonwrt_value_raw(&json, name, fi->data, islast);
+			ul_jsonwrt_value_raw(&json, name, fi->data);
 		else
-			ul_jsonwrt_value_s(&json, name, fi->data, islast);
+			ul_jsonwrt_value_s(&json, name, fi->data);
 
 		if (strcmp(name, "device") == 0)
 			devname = fi->data;
@@ -615,45 +611,45 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 			p = fdisk_partname(devname, pa->partno + 1);
 		if (p) {
 			DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
-			ul_jsonwrt_value_s(&json, "node", p, 0);
+			ul_jsonwrt_value_s(&json, "node", p);
 			free(p);
 		}
 
 		if (fdisk_partition_has_start(pa))
-			ul_jsonwrt_value_u64(&json, "start", (uintmax_t)pa->start, 0);
+			ul_jsonwrt_value_u64(&json, "start", (uintmax_t)pa->start);
 
 		if (fdisk_partition_has_size(pa))
-			ul_jsonwrt_value_u64(&json, "size", (uintmax_t)pa->size, 0);
+			ul_jsonwrt_value_u64(&json, "size", (uintmax_t)pa->size);
 
 		if (pa->type && fdisk_parttype_get_string(pa->type))
-			ul_jsonwrt_value_s(&json, "type", fdisk_parttype_get_string(pa->type), 0);
+			ul_jsonwrt_value_s(&json, "type", fdisk_parttype_get_string(pa->type));
 
 		else if (pa->type) {
 			ul_jsonwrt_value_open(&json, "type");
 			fprintf(f, "\"%x\"", fdisk_parttype_get_code(pa->type));
-			ul_jsonwrt_value_close(&json, 0);
+			ul_jsonwrt_value_close(&json);
 		}
 
 		if (pa->uuid)
-			ul_jsonwrt_value_s(&json, "uuid", pa->uuid, 0);
+			ul_jsonwrt_value_s(&json, "uuid", pa->uuid);
 		if (pa->name && *pa->name)
-			ul_jsonwrt_value_s(&json, "name", pa->name, 0);
+			ul_jsonwrt_value_s(&json, "name", pa->name);
 
 		/* for MBR attr=80 means bootable */
 		if (pa->attrs) {
 			struct fdisk_label *lb = script_get_label(dp);
 
 			if (!lb || fdisk_label_get_type(lb) != FDISK_DISKLABEL_DOS)
-				ul_jsonwrt_value_s(&json, "attrs", pa->attrs, 0);
+				ul_jsonwrt_value_s(&json, "attrs", pa->attrs);
 		}
 
-		ul_jsonwrt_value_boolean(&json, "bootable", fdisk_partition_is_bootable(pa), 1);
-		ul_jsonwrt_object_close(&json, (size_t)ct >= fdisk_table_get_nents(dp->table));
+		ul_jsonwrt_value_boolean(&json, "bootable", fdisk_partition_is_bootable(pa));
+		ul_jsonwrt_object_close(&json);
 	}
 
-	ul_jsonwrt_array_close(&json, 1);
+	ul_jsonwrt_array_close(&json);
 done:
-	ul_jsonwrt_object_close(&json, 1);
+	ul_jsonwrt_object_close(&json);
 	ul_jsonwrt_root_close(&json);
 
 	DBG(SCRIPT, ul_debugobj(dp, "write script done"));

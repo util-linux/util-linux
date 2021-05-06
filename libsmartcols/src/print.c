@@ -512,25 +512,23 @@ err:
 static void print_json_data(struct libscols_table *tb,
 			    struct libscols_column *cl,
 			    const char *name,
-			    char *data,
-			    int is_last)
+			    char *data)
 {
 	switch (cl->json_type) {
 	case SCOLS_JSON_STRING:
 		/* name: "aaa" */
-		ul_jsonwrt_value_s(&tb->json, name, data, is_last);
+		ul_jsonwrt_value_s(&tb->json, name, data);
 		break;
 	case SCOLS_JSON_NUMBER:
 		/* name: 123 */
-		ul_jsonwrt_value_raw(&tb->json, name, data, is_last);
+		ul_jsonwrt_value_raw(&tb->json, name, data);
 		break;
 	case SCOLS_JSON_BOOLEAN:
 		/* name: true|false */
 		ul_jsonwrt_value_boolean(&tb->json, name,
 			!*data ? 0 :
 			*data == '0' ? 0 :
-			*data == 'N' || *data == 'n' ? 0 : 1,
-			is_last);
+			*data == 'N' || *data == 'n' ? 0 : 1);
 		break;
 	case SCOLS_JSON_ARRAY_STRING:
 	case SCOLS_JSON_ARRAY_NUMBER:
@@ -538,18 +536,18 @@ static void print_json_data(struct libscols_table *tb,
 		ul_jsonwrt_array_open(&tb->json, name);
 
 		if (!scols_column_is_customwrap(cl))
-			ul_jsonwrt_value_s(&tb->json, NULL, data, 1);
+			ul_jsonwrt_value_s(&tb->json, NULL, data);
 		else do {
 				char *next = cl->wrap_nextchunk(cl, data, cl->wrapfunc_data);
 
 				if (cl->json_type == SCOLS_JSON_ARRAY_STRING)
-					ul_jsonwrt_value_s(&tb->json, NULL, data, next ? 0 : 1);
+					ul_jsonwrt_value_s(&tb->json, NULL, data);
 				else
-					ul_jsonwrt_value_raw(&tb->json, NULL, data, next ? 0 : 1);
+					ul_jsonwrt_value_raw(&tb->json, NULL, data);
 				data = next;
 		} while (data);
 
-		ul_jsonwrt_array_close(&tb->json, is_last);
+		ul_jsonwrt_array_close(&tb->json);
 		break;
 	}
 }
@@ -600,7 +598,7 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	case SCOLS_FMT_JSON:
-		print_json_data(tb, cl, name, data, is_last);
+		print_json_data(tb, cl, name, data);
 		return 0;
 
 	case SCOLS_FMT_HUMAN:
@@ -976,7 +974,7 @@ int __scols_print_range(struct libscols_table *tb,
 		rc = print_line(tb, ln, buf);
 
 		if (scols_table_is_json(tb))
-			ul_jsonwrt_object_close(&tb->json, last);
+			ul_jsonwrt_object_close(&tb->json);
 		else if (last == 0 && tb->no_linesep == 0) {
 			fputs(linesep(tb), tb->out);
 			tb->termlines_used++;
@@ -1036,9 +1034,9 @@ static int print_tree_line(struct libscols_table *tb,
 				last = (is_child(ln) && is_last_child(ln)) ||
 				       (is_tree_root(ln) && is_last_tree_root(tb, ln));
 
-				ul_jsonwrt_object_close(&tb->json, last);
+				ul_jsonwrt_object_close(&tb->json);
 				if (last && is_child(ln))
-					ul_jsonwrt_array_close(&tb->json, last);
+					ul_jsonwrt_array_close(&tb->json);
 				ln = ln->parent;
 			} while(ln && last);
 

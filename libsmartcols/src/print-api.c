@@ -120,7 +120,7 @@ static int do_print_table(struct libscols_table *tb, int *is_empty)
 			ul_jsonwrt_init(&tb->json, tb->out, 0);
 			ul_jsonwrt_root_open(&tb->json);
 			ul_jsonwrt_array_open(&tb->json, tb->name);
-			ul_jsonwrt_array_close(&tb->json, 1);
+			ul_jsonwrt_array_close(&tb->json);
 			ul_jsonwrt_root_close(&tb->json);
 		} else if (is_empty)
 			*is_empty = 1;
@@ -150,7 +150,7 @@ static int do_print_table(struct libscols_table *tb, int *is_empty)
 		rc = __scols_print_table(tb, buf);
 
 	if (scols_table_is_json(tb)) {
-		ul_jsonwrt_array_close(&tb->json, 1);
+		ul_jsonwrt_array_close(&tb->json);
 		ul_jsonwrt_root_close(&tb->json);
 	}
 done:
