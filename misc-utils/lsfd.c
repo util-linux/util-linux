@@ -102,6 +102,8 @@ static struct colinfo infos[] = {
 		N_("inode number") },
 	[COL_MNT_ID]  = { "MNTID",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("mount id") },
+	[COL_MODE]    = { "MODE",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("access mode (rwx)") },
 	[COL_NAME]    = { "NAME",    45, 0,              SCOLS_JSON_STRING,
 		N_("name of the file") },
 	[COL_NLINK]   = { "NLINK",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
@@ -129,6 +131,7 @@ static int default_columns[] = {
 	COL_PID,
 	COL_USER,
 	COL_ASSOC,
+	COL_MODE,
 	COL_TYPE,
 	COL_DEVICE,
 	COL_POS,
@@ -142,6 +145,7 @@ static int default_threads_columns[] = {
 	COL_TID,
 	COL_USER,
 	COL_ASSOC,
+	COL_MODE,
 	COL_TYPE,
 	COL_DEVICE,
 	COL_POS,
@@ -363,7 +367,7 @@ static struct file *collect_fd_file(int dd, struct dirent *dp, void *data)
 {
 	long num;
 	char *endptr = NULL;
-	struct stat sb;
+	struct stat sb, lsb;
 	ssize_t len;
 	char sym[PATH_MAX];
 	struct file *f;
@@ -385,6 +389,9 @@ static struct file *collect_fd_file(int dd, struct dirent *dp, void *data)
 	f = collect_file(&sb, sym, (int)num);
 	if (!f)
 		return NULL;
+
+	if (fstatat(dd, dp->d_name, &lsb, AT_SYMLINK_NOFOLLOW) == 0)
+		f->mode = lsb.st_mode;
 
 	if (*fdinfo_dd < 0)
 		return f;
