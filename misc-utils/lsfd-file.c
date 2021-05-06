@@ -25,10 +25,13 @@
 #include "xalloc.h"
 #include "nls.h"
 #include "buffer.h"
+#include "idcache.h"
 
 #include "libsmartcols.h"
 
 #include "lsfd.h"
+
+static struct idcache *username_cache;
 
 static const char *assocstr[N_ASSOCS] = {
 	[ASSOC_CWD]       = "cwd",
@@ -326,9 +329,23 @@ struct file *make_file(const struct file_class *class,
 	return file;
 }
 
+static void file_class_initialize(void)
+{
+	username_cache = new_idcache();
+	if (!username_cache)
+		err(EXIT_FAILURE, _("failed to allocate UID cache"));
+}
+
+static void file_class_finalize(void)
+{
+	free_idcache(username_cache);
+}
+
 const struct file_class file_class = {
 	.super = NULL,
 	.size = sizeof(struct file),
+	.initialize_class = file_class_initialize,
+	.finalize_class = file_class_finalize,
 	.fill_column = file_fill_column,
 	.handle_fdinfo = file_handle_fdinfo,
 	.free_content = file_free_content,
