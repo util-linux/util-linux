@@ -597,27 +597,31 @@ static void print_stats(struct fsck_instance *inst)
 	timersub(&inst->end_time, &inst->start_time, &delta);
 
 	if (report_stats_file)
-		fprintf(report_stats_file, "%s %d %ld "
-					   "%ld.%06ld %ld.%06ld %ld.%06ld\n",
+		fprintf(report_stats_file, "%s %d %ld"
+				   " %"PRId64".%06"PRId64
+				   " %"PRId64".%06"PRId64
+				   " %"PRId64".%06"PRId64"\n",
 			fs_get_device(inst->fs),
 			inst->exit_status,
 			inst->rusage.ru_maxrss,
-			(long)delta.tv_sec, (long)delta.tv_usec,
-			(long)inst->rusage.ru_utime.tv_sec,
-			(long)inst->rusage.ru_utime.tv_usec,
-			(long)inst->rusage.ru_stime.tv_sec,
-			(long)inst->rusage.ru_stime.tv_usec);
+			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec,
+			(int64_t)inst->rusage.ru_utime.tv_sec,
+			(int64_t)inst->rusage.ru_utime.tv_usec,
+			(int64_t)inst->rusage.ru_stime.tv_sec,
+			(int64_t)inst->rusage.ru_stime.tv_usec);
 	else
 		fprintf(stdout, "%s: status %d, rss %ld, "
-				"real %ld.%06ld, user %ld.%06ld, sys %ld.%06ld\n",
+				"real %"PRId64".%06"PRId64", "
+				"user %"PRId64".%06"PRId64", "
+				"sys %"PRId64".%06"PRId64"\n",
 			fs_get_device(inst->fs),
 			inst->exit_status,
 			inst->rusage.ru_maxrss,
-			(long)delta.tv_sec, (long)delta.tv_usec,
-			(long)inst->rusage.ru_utime.tv_sec,
-			(long)inst->rusage.ru_utime.tv_usec,
-			(long)inst->rusage.ru_stime.tv_sec,
-			(long)inst->rusage.ru_stime.tv_usec);
+			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec,
+			(int64_t)inst->rusage.ru_utime.tv_sec,
+			(int64_t)inst->rusage.ru_utime.tv_usec,
+			(int64_t)inst->rusage.ru_stime.tv_sec,
+			(int64_t)inst->rusage.ru_stime.tv_usec);
 }
 
 /*
