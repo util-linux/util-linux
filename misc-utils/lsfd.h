@@ -116,8 +116,8 @@ struct file {
 	struct stat stat;
 	mode_t mode;
 	unsigned long long pos;
-	int flags;
-	int mnt_id;
+	int flags;		/* in fdinfo */
+	int mnt_id;		/* in fdinfo */
 };
 
 struct file_class {

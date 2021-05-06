@@ -460,6 +460,12 @@ static struct file *collect_mem_file(int dd, struct dirent *dp,
 	f = collect_file(&sb, sym, -assoc);
 	if (!f)
 		return NULL;
+
+	if (map) {
+		f->mode = (map->read? S_IRUSR: 0) | (map->write? S_IWUSR: 0) | (map->exec? S_IXUSR: 0);
+		f->pos = map->file_offset;
+	}
+
 	return f;
 }
 
