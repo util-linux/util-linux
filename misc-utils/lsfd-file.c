@@ -164,6 +164,11 @@ static void file_fill_flags_buf(struct ul_buffer *buf, int flags)
 
 }
 
+#define does_file_has_fdinfo_alike(file)	\
+	((file)->association >= 0		\
+	 || (file)->association == -ASSOC_SHM	\
+	 || (file)->association == -ASSOC_MEM)
+
 static bool file_fill_column(struct proc *proc,
 			     struct file *file,
 			     struct libscols_line *ln,
@@ -246,16 +251,19 @@ static bool file_fill_column(struct proc *proc,
 		xasprintf(&str, "%d", file->association < 0? 0: file->mnt_id);
 		break;
 	case COL_MODE:
-		if (file->association < 0)
-			xasprintf(&str, "---");
-		else
-			xasprintf(&str, "%c%c-",
+		if (does_file_has_fdinfo_alike(file))
+			xasprintf(&str, "%c%c%c",
 				  file->mode & S_IRUSR? 'r': '-',
-				  file->mode & S_IWUSR? 'w': '-');
+				  file->mode & S_IWUSR? 'w': '-',
+				  ((file->association == -ASSOC_SHM
+				   || file->association == -ASSOC_MEM)
+				   && file->mode & S_IXUSR)? 'x': '-');
+		else
+			xasprintf(&str, "---");
 		break;
 	case COL_POS:
 		xasprintf(&str, "%llu",
-			  file->association < 0? 0: file->pos);
+			  (does_file_has_fdinfo_alike(file))? file->pos: 0);
 		break;
 	case COL_FLAGS: {
 		struct ul_buffer buf = UL_INIT_BUFFER;
