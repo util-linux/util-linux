@@ -65,6 +65,7 @@ enum {
 	COL_NLINK,
 	COL_PID,
 	COL_POS,
+	COL_PROTONAME,
 	COL_RDEV,
 	COL_SIZE,
 	COL_TID,
@@ -142,7 +143,8 @@ struct file *make_cdev(const struct file_class *class,
 struct file *make_bdev(const struct file_class *class,
 		       struct stat *sb, const char *name, int fd);
 struct file *make_sock(const struct file_class *class,
-		       struct stat *sb, const char *name, int fd);
+		       struct stat *sb, const char *name, int fd,
+		       struct proc *proc);
 struct file *make_unkn(const struct file_class *class,
 		       struct stat *sb, const char *name, int fd);
 

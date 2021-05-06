@@ -117,6 +117,8 @@ static struct colinfo infos[] = {
 		N_("PID of the process opening the file") },
 	[COL_POS]     = { "POS",      5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("file position") },
+	[COL_PROTONAME]={ "PROTONAME",0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("protocol name") },
 	[COL_RDEV]    = { "RDEV",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("device ID (if special file)") },
 	[COL_SIZE]    = { "SIZE",     4, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
@@ -330,7 +332,7 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 	run_collectors(procs);
 }
 
-static struct file *collect_file(struct proc *proc __attribute__((__unused__)),
+static struct file *collect_file(struct proc *proc,
 				 struct stat *sb, char *name, int assoc)
 {
 	switch (sb->st_mode & S_IFMT) {
@@ -339,7 +341,7 @@ static struct file *collect_file(struct proc *proc __attribute__((__unused__)),
 	case S_IFBLK:
 		return make_bdev(NULL, sb, name, assoc);
 	case S_IFSOCK:
-		return make_sock(NULL, sb, name, assoc);
+		return make_sock(NULL, sb, name, assoc, proc);
 	case S_IFLNK:
 	case S_IFREG:
 	case S_IFIFO:

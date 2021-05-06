@@ -19,22 +19,36 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <sys/types.h>
+#include <sys/xattr.h>
+
 #include "xalloc.h"
 #include "nls.h"
 #include "libsmartcols.h"
 
 #include "lsfd.h"
 
+struct sock {
+	struct file file;
+	char *protoname;
+};
+
 static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
-			     struct file *file __attribute__((__unused__)),
+			     struct file *file,
 			     struct libscols_line *ln,
 			     int column_id,
 			     size_t column_index)
 {
+	struct sock *sock = (struct sock *)file;
 	switch(column_id) {
 	case COL_TYPE:
 		if (scols_line_set_data(ln, column_index, "SOCK"))
 			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	case COL_PROTONAME:
+		if (sock->protoname)
+			if (scols_line_set_data(ln, column_index, sock->protoname))
+				err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
 	default:
 		return false;
@@ -42,15 +56,42 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 }
 
 struct file *make_sock(const struct file_class *class,
-		       struct stat *sb, const char *name, int fd)
+		       struct stat *sb, const char *name, int fd,
+		       struct proc *proc)
 {
-	return make_file(class? class: &sock_class,
-			 sb, name, fd);
+	struct file *file = make_file(class? class: &sock_class,
+				      sb, name, fd);
+	if (fd >= 0) {
+		struct sock *sock = (struct sock *)file;
+
+		char path[PATH_MAX];
+		char buf[256];
+		ssize_t len;
+		memset(path, 0, sizeof(path));
+
+		sprintf(path, "/proc/%d/fd/%d", proc->pid, fd);
+		len = getxattr(path, "system.sockprotoname", buf, sizeof(buf) - 1);
+		if (len > 0) {
+			buf[len] = '\0';
+			sock->protoname = xstrdup(buf);
+		}
+	}
+
+	return file;
+}
+
+static void free_sock_content(struct file *file)
+{
+	struct sock *sock = (struct sock *)file;
+	if (sock->protoname) {
+		free(sock->protoname);
+		sock->protoname = NULL;
+	}
 }
 
 const struct file_class sock_class = {
 	.super = &file_class,
-	.size = sizeof(struct file),
+	.size = sizeof(struct sock),
 	.fill_column = sock_fill_column,
-	.free_content = NULL,
+	.free_content = free_sock_content,
 };
