@@ -57,10 +57,13 @@ enum {
 	COL_DEVICE,
 	COL_DEV,
 	COL_FD,
+	COL_FLAGS,
 	COL_INODE,
+	COL_MNT_ID,
 	COL_NAME,
 	COL_NLINK,
 	COL_PID,
+	COL_POS,
 	COL_RDEV,
 	COL_SIZE,
 	COL_TID,
@@ -108,6 +111,9 @@ struct file {
 	int association;
 	char *name;
 	struct stat stat;
+	unsigned long long pos;
+	int flags;
+	int mnt_id;
 };
 
 struct file_class {

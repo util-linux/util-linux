@@ -24,6 +24,7 @@
 
 #include "xalloc.h"
 #include "nls.h"
+#include "buffer.h"
 
 #include "libsmartcols.h"
 
@@ -68,6 +69,98 @@ static const char *strftype(mode_t ftype)
 	default:
 		return "UNKN";
 	}
+}
+
+/* See /usr/include/asm-generic/fcntl.h */
+static void file_fill_flags_buf(struct ul_buffer *buf, int flags)
+{
+#define SET_FLAG_FULL(L,s)						\
+	do {								\
+		if (flags & (L)) {					\
+			if (!ul_buffer_is_empty(buf))			\
+				ul_buffer_append_data(buf, ",", 1);	\
+			ul_buffer_append_string(buf, #s);		\
+		}							\
+	} while (0)
+
+#define SET_FLAG(L,s) SET_FLAG_FULL(O_##L,s)
+
+#ifdef O_WRONLY
+	SET_FLAG(WRONLY,wronly);
+#endif
+
+#ifdef O_RDWR
+	SET_FLAG(RDWR,rdwr);
+#endif
+
+#ifdef O_CREAT
+	SET_FLAG(CREAT,creat);
+#endif
+
+#ifdef O_EXCL
+	SET_FLAG(EXCL,excl);
+#endif
+
+#ifdef O_NOCTTY
+	SET_FLAG(NOCTTY,noctty);
+#endif
+
+#ifdef O_NOCTTY
+	SET_FLAG(NOCTTY,noctty);
+#endif
+
+#ifdef O_APPEND
+	SET_FLAG(APPEND,append);
+#endif
+
+#ifdef O_NONBLOCK
+	SET_FLAG(NONBLOCK,nonblock);
+#endif
+
+#ifdef O_DSYNC
+	SET_FLAG(DSYNC,dsync);
+#endif
+
+#ifdef O_FASYNC
+	SET_FLAG(FASYNC,fasync);
+#endif
+
+#ifdef O_DIRECT
+	SET_FLAG(DIRECT,direct);
+#endif
+
+#ifdef O_LARGEFILE
+	SET_FLAG(LARGEFILE,largefile);
+#endif
+
+#ifdef O_DIRECTORY
+	SET_FLAG(DIRECTORY,directory);
+#endif
+
+#ifdef O_FOLLOW
+	SET_FLAG(FOLLOW,follow);
+#endif
+
+#ifdef O_NOATIME
+	SET_FLAG(NOATIME,noatime);
+#endif
+
+#ifdef O_CLOEXEC
+	SET_FLAG(CLOEXEC,cloexec);
+#endif
+
+#ifdef __O_SYNC
+	SET_FLAG_FULL(__O_SYNC,_sync);
+#endif
+
+#ifdef O_PATH
+	SET_FLAG(PATH,path);
+#endif
+
+#ifdef __O_TMPFILE
+	SET_FLAG_FULL(__O_TMPFILE,_tmpfile);
+#endif
+
 }
 
 static bool file_fill_column(struct proc *proc,
@@ -148,6 +241,28 @@ static bool file_fill_column(struct proc *proc,
 	case COL_DELETED:
 		xasprintf(&str, "%d", file->stat.st_nlink == 0);
 		break;
+	case COL_MNT_ID:
+		xasprintf(&str, "%d", file->association < 0? 0: file->mnt_id);
+		break;
+	case COL_POS:
+		xasprintf(&str, "%llu",
+			  file->association < 0? 0: file->pos);
+		break;
+	case COL_FLAGS: {
+		struct ul_buffer buf = UL_INIT_BUFFER;
+
+		if (file->association < 0)
+			return true;
+
+		if (file->flags == 0)
+			return true;
+
+		file_fill_flags_buf(&buf, file->flags);
+		if (ul_buffer_is_empty(&buf))
+			return true;
+		str = ul_buffer_get_data(&buf, NULL, NULL);
+		break;
+	}
 	default:
 		return false;
 	};
@@ -157,6 +272,21 @@ static bool file_fill_column(struct proc *proc,
 	if (scols_line_refer_data(ln, column_index, str))
 		err(EXIT_FAILURE, _("failed to add output data"));
 	return true;
+}
+
+static int file_handle_fdinfo(struct file *file, const char *key, const char* value)
+{
+	if (strcmp(key, "pos") == 0) {
+		file->pos = strtoull(value, NULL, 10);
+		return 1;
+	} else if (strcmp(key, "flags") == 0) {
+		file->flags = (int)strtol(value, NULL, 8);
+		return 1;
+	} else if (strcmp(key, "mnt_id") == 0) {
+		file->mnt_id = (int)strtol(value, NULL, 10);
+		return 1;
+	}
+	return 0;
 }
 
 static void file_free_content(struct file *file)
@@ -183,5 +313,6 @@ const struct file_class file_class = {
 	.super = NULL,
 	.size = sizeof(struct file),
 	.fill_column = file_fill_column,
+	.handle_fdinfo = file_handle_fdinfo,
 	.free_content = file_free_content,
 };
