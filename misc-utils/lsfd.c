@@ -75,11 +75,6 @@ struct map {
 };
 
 /*
- * idcaches
- */
-struct idcache *username_cache;
-
-/*
  * Column related stuffs
  */
 
@@ -966,10 +961,6 @@ int main(int argc, char *argv[])
 					    &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;
 
-	username_cache = new_idcache();
-	if (!username_cache)
-		err(EXIT_FAILURE, _("failed to allocate UID cache"));
-
 	scols_init_debug(0);
 	ctl.tb = scols_new_table();
 
@@ -1002,8 +993,6 @@ int main(int argc, char *argv[])
 	convert(&procs, &ctl);
 	emit(&ctl);
 	delete(&procs, &ctl);
-
-	free_idcache(username_cache);
 
 	finalize_classes();
 

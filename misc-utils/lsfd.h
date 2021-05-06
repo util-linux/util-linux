@@ -28,7 +28,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-#include "idcache.h"
 #include "list.h"
 
 /*
@@ -146,7 +145,5 @@ struct file *make_sock(const struct file_class *class,
 		       struct stat *sb, const char *name, int fd);
 struct file *make_unkn(const struct file_class *class,
 		       struct stat *sb, const char *name, int fd);
-
-extern struct idcache *username_cache;
 
 #endif /* UTIL_LINUX_LSFD_H */
