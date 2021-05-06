@@ -217,9 +217,9 @@ static int rfkill_read_event(int fd, struct rfkill_event *event)
 		return -errno;
 	}
 
-	if ((size_t) len < RFKILL_EVENT_SIZE_V1) {
+	if ((size_t) len < (size_t) RFKILL_EVENT_SIZE_V1) {
 		warnx(_("wrong size of rfkill event: %zu < %zu"),
-				(size_t) len, RFKILL_EVENT_SIZE_V1);
+				(size_t) len, (size_t) RFKILL_EVENT_SIZE_V1);
 		return 1;
 	}
 
