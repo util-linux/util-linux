@@ -160,7 +160,7 @@ typedef struct {
 	intmax_t hour;
 	intmax_t minutes;
 	time_t seconds;
-	int ns;
+	long ns;
 } relative_time;
 
 #if HAVE_COMPOUND_LITERALS
@@ -270,7 +270,7 @@ static void apply_relative_time(parser_control *pc, relative_time rel,
 /* Set PC-> hour, minutes, seconds and nanoseconds members from arguments. */
 static void
 set_hhmmss(parser_control *pc, intmax_t hour, intmax_t minutes,
-	   time_t sec, int nsec)
+	   time_t sec, long nsec)
 {
 	pc->hour = hour;
 	pc->minutes = minutes;
@@ -1076,7 +1076,7 @@ static int yylex (union YYSTYPE *lvalp, parser_control *pc)
 			}
 			if ((c == '.' || c == ',') && c_isdigit (p[1])) {
 				time_t s;
-				int ns;
+				long ns;
 				int digits;
 				uintmax_t value1;
 
