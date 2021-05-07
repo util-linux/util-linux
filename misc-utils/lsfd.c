@@ -115,6 +115,8 @@ static struct colinfo infos[] = {
 		N_("link count") },
 	[COL_PID]     = { "PID",      5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("PID of the process opening the file") },
+	[COL_PARTITION]={ "PARTITION",0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("block device name resolved by /proc/partition") },
 	[COL_POS]     = { "POS",      5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("file position") },
 	[COL_PROTONAME]={ "PROTONAME",0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,

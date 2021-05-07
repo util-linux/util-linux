@@ -180,6 +180,7 @@ static bool file_fill_column(struct proc *proc,
 {
 	char *str = NULL;
 	mode_t ftype;
+	const char *partition;
 
 	switch(column_id) {
 	case COL_COMMAND:
@@ -221,6 +222,13 @@ static bool file_fill_column(struct proc *proc,
 	case COL_INODE:
 		xasprintf(&str, "%llu", (unsigned long long)file->stat.st_ino);
 		break;
+	case COL_PARTITION:
+		partition = get_partition(file->stat.st_dev);
+		if (partition) {
+			str = strdup(partition);
+			break;
+		}
+		/* FALL THROUGH */
 	case COL_DEV:
 	case COL_DEVICE:
 		xasprintf(&str, "%u:%u",
