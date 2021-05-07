@@ -1003,6 +1003,76 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+struct name_manager {
+	struct idcache *cache;
+	pthread_rwlock_t rwlock;
+	unsigned long next_id;
+};
+
+struct name_manager *new_name_manager(void)
+{
+	struct name_manager *nm = xcalloc(1, sizeof(struct name_manager));
+	nm->cache = new_idcache();
+	if (!nm->cache)
+		err(EXIT_FAILURE, _("failed to allocate an idcache"));
+
+	pthread_rwlock_init(&nm->rwlock, NULL);
+	nm->next_id = 1;	/* 0 is never issued as id. */
+	return nm;
+}
+
+void free_name_manager(struct name_manager *nm)
+{
+	free_idcache(nm->cache);
+	free(nm);
+}
+
+const char *get_name(struct name_manager *nm, unsigned long id)
+{
+	struct identry *e;
+
+	pthread_rwlock_rdlock(&nm->rwlock);
+	e = get_id(nm->cache, id);
+	pthread_rwlock_unlock(&nm->rwlock);
+
+	return e? e->name: NULL;
+}
+
+unsigned long add_name(struct name_manager *nm, const char *name)
+{
+	struct identry *e = NULL, *tmp;
+
+	pthread_rwlock_rdlock(&nm->rwlock);
+	for (tmp = nm->cache->ent; tmp; tmp = tmp->next) {
+		if (strcmp(tmp->name, name) == 0) {
+			e = tmp;
+			break;
+		}
+	}
+	pthread_rwlock_unlock(&nm->rwlock);
+	if (e)
+		return e->id;
+
+	pthread_rwlock_wrlock(&nm->rwlock);
+	for (tmp = nm->cache->ent; tmp; tmp = tmp->next) {
+		if (strcmp(tmp->name, name) == 0) {
+			e = tmp;
+			break;
+		}
+	}
+
+	if (!e) {
+		e = xmalloc(sizeof(struct identry));
+		e->name = xstrdup(name);
+		e->id = nm->next_id++;
+		e->next = nm->cache->ent;
+		nm->cache->ent = e;
+	}
+	pthread_rwlock_unlock(&nm->rwlock);
+
+	return e->id;
+}
+
 DIR *opendirf(const char *format, ...)
 {
 	va_list ap;
