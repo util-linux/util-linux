@@ -26,10 +26,17 @@
 #include "lsfd.h"
 
 static struct list_head chrdrvs;
+static struct list_head miscdevs;
 
 struct chrdrv {
 	struct list_head chrdrvs;
 	unsigned long major;
+	char *name;
+};
+
+struct miscdev {
+	struct list_head miscdevs;
+	unsigned long minor;
 	char *name;
 };
 
@@ -117,20 +124,66 @@ static void read_devices(struct list_head *chrdrvs_list, FILE *devices_fp)
 	}
 }
 
+static struct miscdev *make_miscdev(unsigned long minor, const char *name)
+{
+	struct miscdev *miscdev = xcalloc(1, sizeof(*miscdev));
+
+	INIT_LIST_HEAD(&miscdev->miscdevs);
+
+	miscdev->minor = minor;
+	miscdev->name = xstrdup(name);
+
+	return miscdev;
+}
+
+static void free_miscdev(struct miscdev *miscdev)
+{
+	free(miscdev->name);
+	free(miscdev);
+}
+
+static void read_misc(struct list_head *miscdevs_list, FILE *misc_fp)
+{
+	unsigned long minor;
+	char line[256];
+	char name[sizeof(line)];
+
+	while (fgets(line, sizeof(line), misc_fp)) {
+		struct miscdev *miscdev;
+
+		if (sscanf(line, "%lu %s", &minor, name) != 2)
+			continue;
+
+		miscdev = make_miscdev(minor, name);
+		list_add_tail(&miscdev->miscdevs, miscdevs_list);
+	}
+}
+
 static void cdev_class_initialize(void)
 {
-	INIT_LIST_HEAD(&chrdrvs);
+	FILE *devices_fp;
+	FILE *misc_fp;
 
-	FILE *devices_fp = fopen("/proc/devices", "r");
+	INIT_LIST_HEAD(&chrdrvs);
+	INIT_LIST_HEAD(&miscdevs);
+
+	devices_fp = fopen("/proc/devices", "r");
 	if (devices_fp) {
 		read_devices(&chrdrvs, devices_fp);
 		fclose(devices_fp);
+	}
+
+	misc_fp = fopen("/proc/misc", "r");
+	if (misc_fp) {
+		read_misc(&miscdevs, misc_fp);
+		fclose(misc_fp);
 	}
 }
 
 static void cdev_class_finalize(void)
 {
 	list_free(&chrdrvs, struct chrdrv, chrdrvs, free_chrdrv);
+	list_free(&miscdevs, struct miscdev, miscdevs, free_miscdev);
 }
 
 const char *get_chrdrv(unsigned long major)
@@ -140,6 +193,17 @@ const char *get_chrdrv(unsigned long major)
 		struct chrdrv *chrdrv = list_entry(c, struct chrdrv, chrdrvs);
 		if (chrdrv->major == major)
 			return chrdrv->name;
+	}
+	return NULL;
+}
+
+const char *get_miscdev(unsigned long minor)
+{
+	struct list_head *c;
+	list_for_each(c, &miscdevs) {
+		struct miscdev *miscdev = list_entry(c, struct miscdev, miscdevs);
+		if (miscdev->minor == minor)
+			return miscdev->name;
 	}
 	return NULL;
 }
