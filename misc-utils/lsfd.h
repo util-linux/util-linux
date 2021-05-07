@@ -160,5 +160,6 @@ const char *get_name(struct name_manager *nm, unsigned long id);
 unsigned long add_name(struct name_manager *nm, const char *name);
 
 const char *get_partition(dev_t dev);
+const char *get_chrdrv(unsigned long major);
 
 #endif /* UTIL_LINUX_LSFD_H */

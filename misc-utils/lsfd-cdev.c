@@ -25,6 +25,14 @@
 
 #include "lsfd.h"
 
+static struct list_head chrdrvs;
+
+struct chrdrv {
+	struct list_head chrdrvs;
+	unsigned long major;
+	char *name;
+};
+
 static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct file *file __attribute__((__unused__)),
 			     struct libscols_line *ln,
@@ -60,9 +68,77 @@ struct file *make_cdev(const struct file_class *class,
 			 sb, name, fd);
 }
 
+static struct chrdrv *make_chrdrv(unsigned long major, const char *name)
+{
+	struct chrdrv *chrdrv = xcalloc(1, sizeof(*chrdrv));
+
+	INIT_LIST_HEAD(&chrdrv->chrdrvs);
+
+	chrdrv->major = major;
+	chrdrv->name = xstrdup(name);
+
+	return chrdrv;
+}
+
+static void free_chrdrv(struct chrdrv *chrdrv)
+{
+	free(chrdrv->name);
+	free(chrdrv);
+}
+
+static void read_devices(struct list_head *chrdrvs_list, FILE *devices_fp)
+{
+	unsigned long major;
+	char line[256];
+	char name[sizeof(line)];
+
+	while (fgets(line, sizeof(line), devices_fp)) {
+		struct chrdrv *chrdrv;
+
+		if (line[0] == 'C')
+			continue; /* "Character devices:" */
+		else if (line[0] == '\n')
+			break;
+
+		if (sscanf(line, "%lu %s", &major, name) != 2)
+			continue;
+		chrdrv = make_chrdrv(major, name);
+		list_add_tail(&chrdrv->chrdrvs, chrdrvs_list);
+	}
+}
+
+static void cdev_class_initialize(void)
+{
+	INIT_LIST_HEAD(&chrdrvs);
+
+	FILE *devices_fp = fopen("/proc/devices", "r");
+	if (devices_fp) {
+		read_devices(&chrdrvs, devices_fp);
+		fclose(devices_fp);
+	}
+}
+
+static void cdev_class_finalize(void)
+{
+	list_free(&chrdrvs, struct chrdrv, chrdrvs, free_chrdrv);
+}
+
+const char *get_chrdrv(unsigned long major)
+{
+	struct list_head *c;
+	list_for_each(c, &chrdrvs) {
+		struct chrdrv *chrdrv = list_entry(c, struct chrdrv, chrdrvs);
+		if (chrdrv->major == major)
+			return chrdrv->name;
+	}
+	return NULL;
+}
+
 const struct file_class cdev_class = {
 	.super = &file_class,
 	.size = sizeof(struct file),
+	.initialize_class = cdev_class_initialize,
+	.finalize_class = cdev_class_finalize,
 	.fill_column = cdev_fill_column,
 	.free_content = NULL,
 };
