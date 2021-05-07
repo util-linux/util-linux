@@ -37,7 +37,10 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <linux/fs.h>
-#include <blkid.h>
+
+#ifdef HAVE_LIBBLKID
+# include <blkid.h>
+#endif
 
 #include "nls.h"
 #include "strutils.h"
@@ -107,6 +110,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+#ifdef HAVE_LIBBLKID
 /*
  * Check existing signature on the open fd
  * Returns	0  signature found
@@ -142,6 +146,7 @@ out:
 	blkid_free_probe(pr);
 	return ret;
 }
+#endif /* HAVE_LIBBLKID */
 
 int main(int argc, char **argv)
 {
@@ -252,7 +257,7 @@ int main(int argc, char **argv)
 	if (range[1] % secsize)
 		errx(EXIT_FAILURE, _("%s: length %" PRIu64 " is not aligned "
 			 "to sector size %i"), path, range[1], secsize);
-
+#ifdef HAVE_LIBBLKID
 	 /* Check for existing signatures on the device */
 	switch(probe_device(fd, path)) {
 	case 0: /* signature detected */
@@ -273,6 +278,7 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("failed to probe the device"));
 		break;
 	}
+#endif /* HAVE_LIBBLKID */
 
 	stats[0] = range[0], stats[1] = 0;
 	gettime_monotonic(&last);
