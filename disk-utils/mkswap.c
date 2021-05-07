@@ -360,10 +360,9 @@ static void wipe_device(struct mkswap_control *ctl)
 	int zap = 1;
 #ifdef HAVE_LIBBLKID
 	blkid_probe pr = NULL;
+	const char *v = NULL;
 #endif
 	if (!ctl->force) {
-		const char *v = NULL;
-
 		if (lseek(ctl->fd, 0, SEEK_SET) != 0)
 			errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
