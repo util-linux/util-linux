@@ -52,6 +52,7 @@ FILE *fopenf(const char *mode, const char *format, ...) __attribute__((format (p
  */
 enum {
 	COL_ASSOC,
+	COL_CHRDRV,
 	COL_COMMAND,
 	COL_DELETED,
 	COL_DEVICE,
