@@ -91,6 +91,8 @@ struct colinfo {
 static struct colinfo infos[] = {
 	[COL_ASSOC]   = { "ASSOC",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("association between file and process") },
+	[COL_CHRDRV]  = { "CHRDRV",   0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("charcter device driver name resolved by /proc/devices") },
 	[COL_COMMAND] = { "COMMAND", 15, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
 		N_("command of the process opening the file") },
 	[COL_DELETED] = { "DELETED",  0, SCOLS_FL_RIGHT, SCOLS_JSON_BOOLEAN,
