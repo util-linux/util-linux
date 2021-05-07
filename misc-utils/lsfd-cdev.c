@@ -48,11 +48,24 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 {
 	char *str = NULL;
 	const char *chrdrv;
+	const char *miscdev;
 
 	switch(column_id) {
 	case COL_TYPE:
 		if (scols_line_set_data(ln, column_index, "CHR"))
 			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	case COL_MISCDEV:
+		chrdrv = get_chrdrv(major(file->stat.st_rdev));
+		if (chrdrv && strcmp(chrdrv, "misc") == 0) {
+			miscdev = get_miscdev(minor(file->stat.st_rdev));
+			if (miscdev)
+				str = strdup(miscdev);
+			else
+				xasprintf(&str, "%u",
+					  minor(file->stat.st_rdev));
+			break;
+		}
 		return true;
 	case COL_CHRDRV:
 		chrdrv = get_chrdrv(major(file->stat.st_rdev));

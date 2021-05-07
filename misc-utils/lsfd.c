@@ -107,6 +107,8 @@ static struct colinfo infos[] = {
 		N_("file descriptor for the file") },
 	[COL_INODE]   = { "INODE",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("inode number") },
+	[COL_MISCDEV] = { "MISCDEV",  0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("misc character device name resolved by /procmisc") },
 	[COL_MNT_ID]  = { "MNTID",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("mount id") },
 	[COL_MODE]    = { "MODE",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
