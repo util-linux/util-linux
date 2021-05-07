@@ -148,4 +148,14 @@ struct file *make_sock(const struct file_class *class,
 struct file *make_unkn(const struct file_class *class,
 		       struct stat *sb, const char *name, int fd);
 
+/*
+ * Name managing
+ */
+struct name_manager;
+
+struct name_manager *new_name_manager(void);
+void free_name_manager(struct name_manager *nm);
+const char *get_name(struct name_manager *nm, unsigned long id);
+unsigned long add_name(struct name_manager *nm, const char *name);
+
 #endif /* UTIL_LINUX_LSFD_H */
