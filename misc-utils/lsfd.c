@@ -874,3 +874,17 @@ DIR *opendirf(const char *format, ...)
 
 	return opendir(path);
 }
+
+FILE *fopenf(const char *mode, const char *format, ...)
+{
+	va_list ap;
+	char path[PATH_MAX];
+
+	memset(path, 0, sizeof(path));
+
+	va_start(ap, format);
+	vsprintf(path, format, ap);
+	va_end(ap);
+
+	return fopen(path, mode);
+}
