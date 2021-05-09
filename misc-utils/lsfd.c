@@ -75,6 +75,15 @@ struct map {
 };
 
 /*
+ * /proc/$pid/mountinfo entries
+ */
+struct nodev {
+	struct list_head nodevs;
+	unsigned long minor;
+	char *filesystem;
+};
+
+/*
  * Column related stuffs
  */
 
@@ -230,11 +239,34 @@ static void free_file(struct file *file)
 	free(file);
 }
 
+static struct nodev* make_nodev(unsigned long minor, const char *filesystem)
+{
+	struct nodev *nodev = xcalloc(1, sizeof(*nodev));
+
+	INIT_LIST_HEAD(&nodev->nodevs);
+	nodev->minor = minor;
+	nodev->filesystem = xstrdup(filesystem);
+
+	return nodev;
+}
+
+static void free_nodev(struct nodev *nodev)
+{
+	free(nodev->filesystem);
+	free(nodev);
+}
+
+static void free_nodevs(struct list_head *nodevs)
+{
+	list_free(nodevs, struct nodev, nodevs, free_nodev);
+}
+
 static void free_proc(struct proc *proc)
 {
 	list_free(&proc->files, struct file, files, free_file);
 
 	free(proc->command);
+	free_nodevs(&proc->nodevs);
 	free(proc);
 }
 
@@ -715,9 +747,43 @@ static void collect_namespace_files(struct proc *proc)
 			       ARRAY_SIZE(namespace_assocs));
 }
 
+static FILE *open_mountinfo(pid_t pid, pid_t tid)
+{
+	return fopenf("r", "/proc/%d/task/%d/mountinfo", pid, tid);
+}
+
+static void read_nodevs(struct list_head *nodevs_list, FILE *mountinfo_fp)
+{
+	/* This can be very long.
+	   A line in mountinfo can have more than 3 paths. */
+	char line[PATH_MAX * 3 + 256];
+	while (fgets(line, sizeof(line), mountinfo_fp)) {
+		struct nodev *nodev;
+		unsigned long major, minor;
+		char filesystem[256];
+
+		/* 23 61 0:22 / /sys rw,nosuid,nodev,noexec,relatime shared:2 - sysfs sysfs rw,seclabel */
+		if(sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s %*[^-] - %s %*[^\n]",
+			  &major, &minor, filesystem) != 3)
+			/* 1600 1458 0:55 / / rw,nodev,relatime - overlay overlay rw,context="s... */
+			if (sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s - %s %*[^\n]",
+				   &major, &minor, filesystem) != 3)
+				continue;
+
+		if (major != 0)
+			continue;
+
+		nodev = make_nodev(minor, filesystem);
+		list_add_tail(&nodev->nodevs, nodevs_list);
+	}
+}
+
 static void fill_proc(struct proc *proc)
 {
+	FILE *mountinfo_fp;
+
 	INIT_LIST_HEAD(&proc->files);
+	INIT_LIST_HEAD(&proc->nodevs);
 
 	proc->command = proc_get_command_name(proc->pid);
 	if (!proc->command)
@@ -732,6 +798,13 @@ static void fill_proc(struct proc *proc)
 		collect_execve_file(proc);
 
 	collect_namespace_files(proc);
+
+	mountinfo_fp = open_mountinfo(proc->leader->pid,
+				      proc->pid);
+	if (mountinfo_fp) {
+		read_nodevs(&proc->nodevs, mountinfo_fp);
+		fclose(mountinfo_fp);
+	}
 
 	/* If kcmp is not available,
 	 * there is no way to no whether threads share resources.
@@ -1078,6 +1151,17 @@ unsigned long add_name(struct name_manager *nm, const char *name)
 	pthread_rwlock_unlock(&nm->rwlock);
 
 	return e->id;
+}
+
+const char *get_nodev_filesystem(struct proc *proc, unsigned long minor)
+{
+	struct list_head *n;
+	list_for_each (n, &proc->nodevs) {
+		struct nodev *nodev = list_entry(n, struct nodev, nodevs);
+		if (nodev->minor == minor)
+			return nodev->filesystem;
+	}
+	return NULL;
 }
 
 DIR *opendirf(const char *format, ...)

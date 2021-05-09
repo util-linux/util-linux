@@ -106,6 +106,7 @@ struct proc {
 	uid_t uid;
 	struct list_head procs;
 	struct list_head files;
+	struct list_head nodevs;
 };
 
 /*
@@ -166,5 +167,6 @@ unsigned long add_name(struct name_manager *nm, const char *name);
 const char *get_partition(dev_t dev);
 const char *get_chrdrv(unsigned long major);
 const char *get_miscdev(unsigned long minor);
+const char *get_nodev_filesystem(struct proc *proc, unsigned long minor);
 
 #endif /* UTIL_LINUX_LSFD_H */
