@@ -75,6 +75,21 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			xasprintf(&str, "%u",
 				  major(file->stat.st_rdev));
 		break;
+	case COL_DEVNAME:
+		chrdrv = get_chrdrv(major(file->stat.st_rdev));
+		miscdev = NULL;
+		if (chrdrv && strcmp(chrdrv, "misc") == 0)
+			miscdev = get_miscdev(minor(file->stat.st_rdev));
+		if (chrdrv) {
+			if (miscdev) {
+				xasprintf(&str, "misc:%s", miscdev);
+			} else {
+				xasprintf(&str, "%s:%u", chrdrv,
+					  minor(file->stat.st_rdev));
+			}
+			break;
+		}
+		/* FALL THROUGH */
 	case COL_DEVICE:
 		xasprintf(&str, "%u:%u",
 			  major(file->stat.st_rdev),

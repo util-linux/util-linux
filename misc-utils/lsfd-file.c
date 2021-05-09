@@ -222,6 +222,16 @@ static bool file_fill_column(struct proc *proc,
 	case COL_INODE:
 		xasprintf(&str, "%llu", (unsigned long long)file->stat.st_ino);
 		break;
+	case COL_DEVNAME:
+		if (major(file->stat.st_dev) == 0) {
+			const char *filesystem = get_nodev_filesystem(proc,
+								      minor(file->stat.st_dev));
+			if (filesystem) {
+				xasprintf(&str, "nodev:%s", filesystem);
+				break;
+			}
+		}
+		/* FALL THROUGH */
 	case COL_PARTITION:
 		partition = get_partition(file->stat.st_dev);
 		if (partition) {

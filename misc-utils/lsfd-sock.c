@@ -58,6 +58,13 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 			break;
 		}
 		return false;
+	case COL_DEVNAME:
+		if (major(file->stat.st_dev) == 0
+		    && strncmp(file->name, "socket:", 7) == 0) {
+			str = strdup("nodev:sockfs");
+			break;
+		}
+		return false;
 	default:
 		return false;
 	}
