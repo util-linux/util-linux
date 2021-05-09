@@ -348,9 +348,10 @@ static struct file *collect_file(struct proc *proc,
 		return make_bdev(NULL, sb, name, assoc);
 	case S_IFSOCK:
 		return make_sock(NULL, sb, name, assoc, proc);
+	case S_IFIFO:
+		return make_fifo(NULL, sb, name, assoc);
 	case S_IFLNK:
 	case S_IFREG:
-	case S_IFIFO:
 	case S_IFDIR:
 		return make_file(NULL, sb, name, assoc);
 	default:
