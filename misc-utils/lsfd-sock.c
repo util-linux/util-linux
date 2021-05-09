@@ -39,6 +39,7 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 			     int column_id,
 			     size_t column_index)
 {
+	char *str = NULL;
 	struct sock *sock = (struct sock *)file;
 	switch(column_id) {
 	case COL_TYPE:
@@ -50,9 +51,22 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 			if (scols_line_set_data(ln, column_index, sock->protoname))
 				err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_NAME:
+		if (sock->protoname
+		    && file->name && strncmp(file->name, "socket:", 7) == 0) {
+			xasprintf(&str, "%s:%s", sock->protoname, file->name + 7);
+			break;
+		}
+		return false;
 	default:
 		return false;
 	}
+
+	if (!str)
+		err(EXIT_FAILURE, _("failed to add output data"));
+	if (scols_line_refer_data(ln, column_index, str))
+		err(EXIT_FAILURE, _("failed to add output data"));
+	return true;
 }
 
 struct file *make_sock(const struct file_class *class,
