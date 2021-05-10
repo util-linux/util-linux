@@ -118,6 +118,8 @@ static struct colinfo infos[] = {
 		N_("file descriptor for the file") },
 	[COL_INODE]   = { "INODE",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("inode number") },
+	[COL_MAPLEN]  = { "MAPLEN",   0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("length of file mapping (in page)") },
 	[COL_MISCDEV] = { "MISCDEV",  0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("misc character device name resolved by /procmisc") },
 	[COL_MNT_ID]  = { "MNTID",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
@@ -373,23 +375,25 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 }
 
 static struct file *collect_file(struct proc *proc,
-				 struct stat *sb, char *name, int assoc)
+				 struct stat *sb, char *name,
+				 struct map_file_data *map_file_data,
+				 int assoc)
 {
 	switch (sb->st_mode & S_IFMT) {
 	case S_IFCHR:
-		return make_cdev(NULL, sb, name, assoc);
+		return make_cdev(NULL, sb, name, map_file_data, assoc);
 	case S_IFBLK:
-		return make_bdev(NULL, sb, name, assoc);
+		return make_bdev(NULL, sb, name, map_file_data, assoc);
 	case S_IFSOCK:
-		return make_sock(NULL, sb, name, assoc, proc);
+		return make_sock(NULL, sb, name, map_file_data, assoc, proc);
 	case S_IFIFO:
-		return make_fifo(NULL, sb, name, assoc);
+		return make_fifo(NULL, sb, name, map_file_data, assoc);
 	case S_IFLNK:
 	case S_IFREG:
 	case S_IFDIR:
-		return make_file(NULL, sb, name, assoc);
+		return make_file(NULL, sb, name, map_file_data, assoc);
 	default:
-		return make_unkn(NULL, sb, name, assoc);
+		return make_unkn(NULL, sb, name, map_file_data, assoc);
 	}
 }
 
@@ -440,7 +444,7 @@ static struct file *collect_fd_file(struct proc *proc, int dd, struct dirent *dp
 	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	f = collect_file(proc, &sb, sym, (int)num);
+	f = collect_file(proc, &sb, sym, NULL, (int)num);
 	if (!f)
 		return NULL;
 
@@ -479,7 +483,7 @@ static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *d
 	ssize_t len;
 	char sym[PATH_MAX];
 	struct file *f;
-	unsigned long start, end;
+	struct map_file_data map_file_data;
 	struct map *map;
 	enum association assoc;
 
@@ -492,11 +496,11 @@ static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *d
 
 
 	map = NULL;
-	if (sscanf(dp->d_name, "%lx-%lx", &start, &end) == 2)
-		map = find_map(maps, start);
+	if (sscanf(dp->d_name, "%lx-%lx", &map_file_data.start, &map_file_data.end) == 2)
+		map = find_map(maps, map_file_data.start);
 
 	assoc = (map && map->shared)? ASSOC_SHM: ASSOC_MEM;
-	f = collect_file(proc, &sb, sym, -assoc);
+	f = collect_file(proc, &sb, sym, &map_file_data, -assoc);
 	if (!f)
 		return NULL;
 
@@ -648,7 +652,7 @@ static struct file *collect_outofbox_file(struct proc *proc,
 	if ((len = readlinkat(dd, name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	return collect_file(proc, &sb, sym, association);
+	return collect_file(proc, &sb, sym, NULL, association);
 }
 
 static void collect_proc_uid(struct proc *proc, int dd)

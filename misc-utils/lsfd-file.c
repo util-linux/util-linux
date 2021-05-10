@@ -22,6 +22,8 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <unistd.h>
+
 #include "xalloc.h"
 #include "nls.h"
 #include "buffer.h"
@@ -32,6 +34,7 @@
 #include "lsfd.h"
 
 static struct idcache *username_cache;
+static size_t pagesize;
 
 static const char *assocstr[N_ASSOCS] = {
 	[ASSOC_CWD]       = "cwd",
@@ -301,6 +304,12 @@ static bool file_fill_column(struct proc *proc,
 		str = ul_buffer_get_data(&buf, NULL, NULL);
 		break;
 	}
+	case COL_MAPLEN:
+		if (file->association != -ASSOC_SHM
+		    && file->association != -ASSOC_MEM)
+			return true;
+		xasprintf(&str, "%lu", file->assoc_data.map_length);
+		break;
 	default:
 		return false;
 	};
@@ -333,7 +342,9 @@ static void file_free_content(struct file *file)
 }
 
 struct file *make_file(const struct file_class *class,
-		       struct stat *sb, const char *name, int association)
+		       struct stat *sb, const char *name,
+		       struct map_file_data *map_file_data,
+		       int association)
 {
 	struct file *file;
 
@@ -344,6 +355,11 @@ struct file *make_file(const struct file_class *class,
 	file->association = association;
 	file->name = xstrdup(name);
 	file->stat = *sb;
+
+	if (file->association == -ASSOC_SHM
+	    || file->association == -ASSOC_MEM)
+		file->assoc_data.map_length = (map_file_data->end - map_file_data->start) / pagesize;
+
 	return file;
 }
 
@@ -352,6 +368,8 @@ static void file_class_initialize(void)
 	username_cache = new_idcache();
 	if (!username_cache)
 		err(EXIT_FAILURE, _("failed to allocate UID cache"));
+
+	pagesize = getpagesize();
 }
 
 static void file_class_finalize(void)

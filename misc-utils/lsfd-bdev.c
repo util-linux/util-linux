@@ -72,10 +72,12 @@ static bool bdev_fill_column(struct proc *proc __attribute__((__unused__)),
 }
 
 struct file *make_bdev(const struct file_class *class,
-		       struct stat *sb, const char *name, int fd)
+		       struct stat *sb, const char *name,
+		       struct map_file_data *map_file_data,
+		       int fd)
 {
 	return make_file(class? class: &bdev_class,
-			 sb, name, fd);
+			 sb, name, map_file_data, fd);
 }
 
 static struct partition *make_partition(dev_t dev, const char *name)
