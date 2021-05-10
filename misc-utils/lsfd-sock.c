@@ -84,7 +84,7 @@ struct file *make_sock(const struct file_class *class,
 {
 	struct file *file = make_file(class? class: &sock_class,
 				      sb, name, map_file_data, fd);
-	if (fd >= 0) {
+	if (fd >= 0 || fd == -ASSOC_MEM || fd == -ASSOC_SHM) {
 		struct sock *sock = (struct sock *)file;
 
 		char path[PATH_MAX];
@@ -92,7 +92,11 @@ struct file *make_sock(const struct file_class *class,
 		ssize_t len;
 		memset(path, 0, sizeof(path));
 
-		sprintf(path, "/proc/%d/fd/%d", proc->pid, fd);
+		if (fd >= 0)
+			sprintf(path, "/proc/%d/fd/%d", proc->pid, fd);
+		else
+			sprintf(path, "/proc/%d/map_files/%lx-%lx", proc->pid,
+				map_file_data->start, map_file_data->end);
 		len = getxattr(path, "system.sockprotoname", buf, sizeof(buf) - 1);
 		if (len > 0) {
 			buf[len] = '\0';
