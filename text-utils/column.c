@@ -278,13 +278,28 @@ static int column_set_flag(struct libscols_column *cl, int fl)
 static void apply_columnflag_from_list(struct column_control *ctl, const char *list,
 					 int flag, const char *errmsg)
 {
-	char **all = split_or_error(list, errmsg);
+	char **all;
 	char **one;
 	int unnamed = 0;
+	struct libscols_column *cl;
 
+	/* apply to all */
+	if (list && strcmp(list, "0") == 0) {
+		struct libscols_iter *itr;
+
+		itr = scols_new_iter(SCOLS_ITER_FORWARD);
+		if (!itr)
+			err_oom();
+
+		while (scols_table_next_column(ctl->tab, itr, &cl) == 0)
+			column_set_flag(cl, flag);
+		scols_free_iter(itr);
+	}
+
+	all = split_or_error(list, errmsg);
+
+	/* apply to columns specified by name */
 	STRV_FOREACH(one, all) {
-		struct libscols_column *cl;
-
 		if (flag == SCOLS_FL_HIDDEN && strcmp(*one, "-") == 0) {
 			unnamed = 1;
 			continue;
@@ -298,7 +313,6 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 	/* apply flag to all columns without name */
 	if (unnamed) {
 		struct libscols_iter *itr;
-		struct libscols_column *cl;
 
 		itr = scols_new_iter(SCOLS_ITER_FORWARD);
 		if (!itr)

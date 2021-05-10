@@ -65,7 +65,7 @@ Input is taken from _file_, or otherwise from standard input. Empty lines are ig
 
 == OPTIONS
 
-The argument _columns_ for *--table-** options is a comma separated list of the column names as defined by *--table-columns* or it's column number in order as specified by input. It's possible to mix names and numbers.
+The argument _columns_ for *--table-** options is a comma separated list of the column names as defined by *--table-columns* or it's column number in order as specified by input. It's possible to mix names and numbers. The special placeholder '0' (e.g. -R0) may be used to specify all columns.
 
 *-J, --json*::
 Use JSON output format to print the table, the option *--table-columns* is required and the option *--table-name* is recommended.
