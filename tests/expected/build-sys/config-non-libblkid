@@ -1,10 +1,28 @@
+cfdisk:  libfdisk libncursesw libsmartcols libtinfo libuuid 
+column:  libsmartcols 
+fdisk:  libfdisk libreadline libsmartcols libtinfo libuuid 
+fincore:  libsmartcols 
+irqtop:  libncursesw librt libsmartcols libtinfo 
 libfdisk.so.1.1.0:  libuuid 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
+losetup:  libsmartcols 
+lscpu:  libsmartcols 
+lsipc:  libsmartcols 
+lsirq:  libsmartcols 
+lslogins:  libsmartcols libsystemd 
+lsmem:  libsmartcols 
 mkswap:  libuuid 
+prlimit:  libsmartcols 
+rfkill:  libsmartcols 
+sfdisk:  libfdisk libreadline libsmartcols libtinfo libuuid 
 uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
+uuidparse:  libsmartcols libuuid 
+wdctl:  libsmartcols 
+zramctl:  libsmartcols 
 agetty:  
+blkdiscard:  librt 
 blkzone:  
 blockdev:  
 cal:  libtinfo 
