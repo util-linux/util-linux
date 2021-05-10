@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.27-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-04-12 09:59+0200\n"
+"POT-Creation-Date: 2021-05-10 12:15+0200\n"
 "PO-Revision-Date: 2015-12-29 22:55+0300\n"
 "Last-Translator: Evgeniy Yakushev <yen81@mail.ru>\n"
 "Language-Team: Russian <gnu@d07.ru>\n"
@@ -39,10 +39,10 @@ msgid "not enough arguments"
 msgstr "недостаточно аргументов"
 
 #: disk-utils/addpart.c:57 disk-utils/blockdev.c:293 disk-utils/blockdev.c:437
-#: disk-utils/blockdev.c:464 disk-utils/cfdisk.c:2766 disk-utils/delpart.c:58
+#: disk-utils/blockdev.c:464 disk-utils/cfdisk.c:2768 disk-utils/delpart.c:58
 #: disk-utils/fdformat.c:229 disk-utils/fdisk.c:810 disk-utils/fdisk.c:1141
 #: disk-utils/fdisk-list.c:327 disk-utils/fdisk-list.c:368
-#: disk-utils/fdisk-list.c:391 disk-utils/fsck.c:1466
+#: disk-utils/fdisk-list.c:391 disk-utils/fsck.c:1470
 #: disk-utils/fsck.cramfs.c:161 disk-utils/fsck.cramfs.c:520
 #: disk-utils/isosize.c:53 disk-utils/mkfs.bfs.c:186
 #: disk-utils/mkfs.cramfs.c:171 disk-utils/mkfs.cramfs.c:660
@@ -55,22 +55,22 @@ msgstr "недостаточно аргументов"
 #: login-utils/utmpdump.c:134 login-utils/utmpdump.c:354
 #: login-utils/utmpdump.c:378 login-utils/vipw.c:250 login-utils/vipw.c:268
 #: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:584 misc-utils/logger.c:1241
-#: misc-utils/mcookie.c:119 misc-utils/uuidd.c:231 sys-utils/blkdiscard.c:225
+#: misc-utils/mcookie.c:119 misc-utils/uuidd.c:231 sys-utils/blkdiscard.c:230
 #: sys-utils/blkzone.c:144 sys-utils/dmesg.c:536 sys-utils/eject.c:499
 #: sys-utils/eject.c:698 sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116
-#: sys-utils/fstrim.c:103 sys-utils/hwclock.c:236 sys-utils/hwclock.c:903
+#: sys-utils/fstrim.c:103 sys-utils/hwclock.c:239 sys-utils/hwclock.c:906
 #: sys-utils/hwclock-rtc.c:138 sys-utils/hwclock-rtc.c:403
 #: sys-utils/hwclock-rtc.c:438 sys-utils/irq-common.c:253
 #: sys-utils/ldattach.c:391 sys-utils/lscpu-cputype.c:456 sys-utils/lsmem.c:658
 #: sys-utils/nsenter.c:131 sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137
 #: sys-utils/rtcwake.c:292 sys-utils/setpriv.c:256 sys-utils/setpriv.c:622
-#: sys-utils/setpriv.c:645 sys-utils/swapon.c:374 sys-utils/swapon.c:517
+#: sys-utils/setpriv.c:645 sys-utils/swapon.c:387 sys-utils/swapon.c:530
 #: sys-utils/switch_root.c:174 sys-utils/unshare.c:112 sys-utils/unshare.c:127
 #: sys-utils/wdctl.c:361 sys-utils/zramctl.c:517 term-utils/agetty.c:2965
-#: term-utils/mesg.c:154 term-utils/script.c:382 term-utils/scriptlive.c:256
+#: term-utils/mesg.c:154 term-utils/script.c:383 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
-#: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
-#: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
+#: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
+#: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
 #: term-utils/wall.c:421 text-utils/colcrt.c:284 text-utils/more.c:453
 #: text-utils/rev.c:140 text-utils/ul.c:637
 #, c-format
@@ -213,7 +213,7 @@ msgstr " %-25s получить размер в секторах по 512 бай
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:779
-#: sys-utils/blkdiscard.c:214 sys-utils/blkzone.c:487 sys-utils/tunelp.c:241
+#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:487 sys-utils/tunelp.c:241
 #: sys-utils/zramctl.c:713 sys-utils/zramctl.c:739
 msgid "no device specified"
 msgstr "не указано устройство"
@@ -301,7 +301,7 @@ msgid "Quit program without writing changes"
 msgstr "Выйти из программы без записи таблицы разделов"
 
 #: disk-utils/cfdisk.c:196 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2616 libfdisk/src/gpt.c:3182 libfdisk/src/sgi.c:1164
+#: libfdisk/src/dos.c:2616 libfdisk/src/gpt.c:3194 libfdisk/src/sgi.c:1164
 #: libfdisk/src/sun.c:1136
 msgid "Type"
 msgstr "Тип"
@@ -480,7 +480,7 @@ msgstr "Не удалось записать скрипт %s"
 msgid "Select label type"
 msgstr "Выберите тип метки"
 
-#: disk-utils/cfdisk.c:2145 disk-utils/fdisk.c:1156 disk-utils/fdisk-menu.c:489
+#: disk-utils/cfdisk.c:2145 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:489
 msgid "Device does not contain a recognized partition table."
 msgstr "Устройство не содержит стандартной таблицы разделов."
 
@@ -657,7 +657,7 @@ msgstr "Не удалось записать метку диска."
 msgid "The partition table has been altered."
 msgstr "Таблица разделов была изменена."
 
-#: disk-utils/cfdisk.c:2501 disk-utils/cfdisk.c:2574
+#: disk-utils/cfdisk.c:2501 disk-utils/cfdisk.c:2576
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Обратите внимание, что записи таблицы разделов расположены не в дисковом порядке"
 
@@ -679,40 +679,44 @@ msgstr "не удалось прочитать разделы"
 msgid "Device is open in read-only mode. Changes will remain in memory only."
 msgstr "Устройство открыто в режиме для чтения."
 
-#: disk-utils/cfdisk.c:2658
+#: disk-utils/cfdisk.c:2574
+msgid "Device is currently in use, repartitioning is probably a bad idea."
+msgstr ""
+
+#: disk-utils/cfdisk.c:2660
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [параметры] <диск>\n"
 
-#: disk-utils/cfdisk.c:2661 disk-utils/fdisk.c:855 disk-utils/sfdisk.c:2018
+#: disk-utils/cfdisk.c:2663 disk-utils/fdisk.c:855 disk-utils/sfdisk.c:2018
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Вывести или отредактировать таблицу разделов диска.\n"
 
-#: disk-utils/cfdisk.c:2665
+#: disk-utils/cfdisk.c:2667
 #, fuzzy, c-format
 msgid " -L, --color[=<when>]     colorize output (%s, %s or %s)\n"
 msgstr " -L, --color[=<when>]     вывод сообщений разными цветами (значения: auto=автоматически, always=всегда, never=никогда)\n"
 
-#: disk-utils/cfdisk.c:2668
+#: disk-utils/cfdisk.c:2670
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               начать с обнуленной таблицей разделов\n"
 
-#: disk-utils/cfdisk.c:2670
+#: disk-utils/cfdisk.c:2672
 #, fuzzy, c-format
 msgid "     --lock[=<mode>]      use exclusive device lock (%s, %s or %s)\n"
 msgstr " -L, --color[=<when>]     вывод сообщений разными цветами (значения: auto=автоматически, always=всегда, never=никогда)\n"
 
-#: disk-utils/cfdisk.c:2671
+#: disk-utils/cfdisk.c:2673
 #, fuzzy
 msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --raw                отобразить в формате сырых данных\n"
 
-#: disk-utils/cfdisk.c:2714 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2319
+#: disk-utils/cfdisk.c:2716 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2319
 #: misc-utils/cal.c:426 sys-utils/dmesg.c:1453 text-utils/hexdump.c:121
 msgid "unsupported color mode"
 msgstr "неподдерживаемый цветовой режим"
 
-#: disk-utils/cfdisk.c:2744 disk-utils/fdisk.c:949 disk-utils/sfdisk.c:231
+#: disk-utils/cfdisk.c:2746 disk-utils/fdisk.c:949 disk-utils/sfdisk.c:231
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "Невозможно выделить буфер.\n"
@@ -764,7 +768,7 @@ msgstr ""
 "Продолжение ... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:648 sys-utils/blkdiscard.c:86
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:648 sys-utils/blkdiscard.c:89
 #: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
@@ -811,10 +815,10 @@ msgstr "недопустимый аргумент - repair"
 #: disk-utils/mkfs.cramfs.c:758 disk-utils/mkfs.cramfs.c:796
 #: disk-utils/mkfs.minix.c:835 disk-utils/mkswap.c:342 disk-utils/partx.c:959
 #: login-utils/last.c:708 login-utils/utmpdump.c:137 misc-utils/namei.c:135
-#: misc-utils/rename.c:120 misc-utils/rename.c:182 sys-utils/blkdiscard.c:228
+#: misc-utils/rename.c:120 misc-utils/rename.c:182 sys-utils/blkdiscard.c:233
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:538 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:75 sys-utils/nsenter.c:166
-#: sys-utils/nsenter.c:170 sys-utils/swapon.c:522 sys-utils/switch_root.c:93
+#: sys-utils/nsenter.c:170 sys-utils/swapon.c:535 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
 #: term-utils/mesg.c:144 term-utils/mesg.c:156
 #, c-format
@@ -822,7 +826,7 @@ msgid "stat of %s failed"
 msgstr "выполение команды stat для %s завершилось неудачно"
 
 #: disk-utils/fdformat.c:226 disk-utils/partx.c:1018 misc-utils/lsblk.c:1525
-#: sys-utils/blkdiscard.c:230 sys-utils/blkzone.c:149
+#: sys-utils/blkdiscard.c:235 sys-utils/blkzone.c:149
 #: sys-utils/mountpoint.c:109
 #, c-format
 msgid "%s: not a block device"
@@ -872,7 +876,7 @@ msgid "Using default response %c."
 msgstr "Используется ответ по умолчанию %c"
 
 #: disk-utils/fdisk.c:224 disk-utils/fdisk.c:298 disk-utils/fdisk.c:375
-#: libfdisk/src/dos.c:1382 libfdisk/src/gpt.c:2506
+#: libfdisk/src/dos.c:1382 libfdisk/src/gpt.c:2518
 msgid "Value out of range."
 msgstr "Значение за пределами диапазона."
 
@@ -984,7 +988,7 @@ msgid "cannot read"
 msgstr "ошибка чтения"
 
 #: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:968
-#: libfdisk/src/gpt.c:2434
+#: libfdisk/src/gpt.c:2446
 msgid "First sector"
 msgstr "Первый сектор"
 
@@ -1143,13 +1147,13 @@ msgstr "Параметры устройства (размера сектора �
 #: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
 #: misc-utils/findfs.c:58 misc-utils/look.c:149 misc-utils/whereis.c:580
 #: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
-#: schedutils/chrt.c:436 schedutils/ionice.c:262 schedutils/taskset.c:188
+#: schedutils/chrt.c:443 schedutils/ionice.c:262 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1536
 #: sys-utils/ipcmk.c:138 sys-utils/ldattach.c:320 sys-utils/losetup.c:917
-#: sys-utils/lscpu.c:1291 sys-utils/lsmem.c:643 sys-utils/mount.c:833
+#: sys-utils/lscpu.c:1294 sys-utils/lsmem.c:643 sys-utils/mount.c:833
 #: sys-utils/mount.c:841 sys-utils/mount.c:888 sys-utils/mount.c:901
 #: sys-utils/mount.c:973 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:992 sys-utils/switch_root.c:270
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1005 sys-utils/switch_root.c:270
 #: sys-utils/umount.c:625 term-utils/setterm.c:1197 text-utils/col.c:584
 #: text-utils/more.c:2063
 #, fuzzy
@@ -1169,7 +1173,22 @@ msgstr ""
 "Изменения останутся только в памяти до тех пор, пока вы не решите записать их.\n"
 "Будьте внимательны, используя команду write.\n"
 
-#: disk-utils/fdisk.c:1162
+#: disk-utils/fdisk.c:1145
+#, fuzzy
+#| msgid ""
+#| "This disk is currently in use - repartitioning is probably a bad idea.\n"
+#| "Umount all file systems, and swapoff all swap partitions on this disk.\n"
+#| "Use the --no-reread flag to suppress this check.\n"
+msgid ""
+"This disk is currently in use - repartitioning is probably a bad idea.\n"
+"It's recommended to umount all file systems, and swapoff all swap\n"
+"partitions on this disk.\n"
+msgstr ""
+"Диск сейчас используется, скорее всего, разметка - это плохая идея.\n"
+"Размонтируйте все файловые системы и отключите все разделы свопинга этого диска.\n"
+"Используйте флаг --no-reread для отмены этой проверки.\n"
+
+#: disk-utils/fdisk.c:1168
 msgid "A hybrid GPT was detected. You have to sync the hybrid MBR manually (expert command 'M')."
 msgstr "Обраружена гибридная таблица разделов GPT. Необходимо синхронизировать ее с гибридной таблицей MBR вручную (экспертная команда 'M')."
 
@@ -1219,46 +1238,46 @@ msgid "Alignment offset: %lu bytes"
 msgstr "Смещение выравнивания: %lu байт"
 
 #: disk-utils/fdisk-list.c:120 disk-utils/fdisk-list.c:241
-#: disk-utils/fsck.c:1253
+#: disk-utils/fsck.c:1257
 #, fuzzy
 msgid "failed to allocate iterator"
 msgstr "Невозможно выделить буфер.\n"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
-#: disk-utils/partx.c:669 login-utils/lslogins.c:1062 misc-utils/fincore.c:356
+#: disk-utils/partx.c:669 login-utils/lslogins.c:1067 misc-utils/fincore.c:356
 #: misc-utils/findmnt.c:1662 misc-utils/lsblk.c:2170 misc-utils/lslocks.c:456
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157 sys-utils/losetup.c:325
-#: sys-utils/lscpu.c:577 sys-utils/lscpu.c:727 sys-utils/lscpu.c:927
-#: sys-utils/lsipc.c:351 sys-utils/prlimit.c:297 sys-utils/rfkill.c:464
-#: sys-utils/swapon.c:283 sys-utils/wdctl.c:299 sys-utils/zramctl.c:496
+#: sys-utils/lscpu.c:577 sys-utils/lscpu.c:727 sys-utils/lscpu.c:928
+#: sys-utils/lsipc.c:351 sys-utils/prlimit.c:300 sys-utils/rfkill.c:465
+#: sys-utils/swapon.c:296 sys-utils/wdctl.c:299 sys-utils/zramctl.c:496
 #: text-utils/column.c:210
 #, fuzzy
 msgid "failed to allocate output table"
 msgstr "Невозможно выделить буфер.\n"
 
 #: disk-utils/fdisk-list.c:167 disk-utils/fdisk-list.c:271
-#: disk-utils/partx.c:583 login-utils/lslogins.c:1120 misc-utils/fincore.c:123
+#: disk-utils/partx.c:583 login-utils/lslogins.c:1125 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:705 misc-utils/findmnt.c:723 misc-utils/lsblk.c:1116
 #: misc-utils/lslocks.c:393 misc-utils/uuidparse.c:154 misc-utils/wipefs.c:224
 #: sys-utils/losetup.c:348 sys-utils/losetup.c:377 sys-utils/lscpu.c:491
 #: sys-utils/lscpu.c:756 sys-utils/lscpu.c:788 sys-utils/lsipc.c:481
 #: sys-utils/lsipc.c:562 sys-utils/lsipc.c:664 sys-utils/lsipc.c:756
-#: sys-utils/lsipc.c:920 sys-utils/prlimit.c:229 sys-utils/rfkill.c:379
+#: sys-utils/lsipc.c:920 sys-utils/prlimit.c:229 sys-utils/rfkill.c:380
 #: sys-utils/swapon.c:179 sys-utils/wdctl.c:249 sys-utils/zramctl.c:414
-#: text-utils/column.c:460 text-utils/column.c:485
+#: text-utils/column.c:474 text-utils/column.c:499
 #, fuzzy
 msgid "failed to allocate output line"
 msgstr "Невозможно выделить буфер.\n"
 
 #: disk-utils/fdisk-list.c:177 disk-utils/fdisk-list.c:278
-#: disk-utils/partx.c:646 login-utils/lslogins.c:1221 misc-utils/fincore.c:159
+#: disk-utils/partx.c:646 login-utils/lslogins.c:1229 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:709 misc-utils/findmnt.c:728 misc-utils/lsblk.c:1157
 #: misc-utils/lslocks.c:443 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:264
 #: sys-utils/losetup.c:305 sys-utils/lscpu.c:559 sys-utils/lscpu.c:763
 #: sys-utils/lscpu.c:792 sys-utils/lscpu.c:802 sys-utils/lsipc.c:521
-#: sys-utils/lsipc.c:646 sys-utils/prlimit.c:261 sys-utils/rfkill.c:407
+#: sys-utils/lsipc.c:646 sys-utils/prlimit.c:264 sys-utils/rfkill.c:408
 #: sys-utils/swapon.c:227 sys-utils/wdctl.c:277 sys-utils/zramctl.c:481
-#: text-utils/column.c:469
+#: text-utils/column.c:483
 #, fuzzy
 msgid "failed to add output data"
 msgstr "не удалось добавить данные в таблицу вывода"
@@ -1278,22 +1297,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "Элементы таблицы разделов упорядочены не так, как на диске."
 
 #: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2610
-#: libfdisk/src/gpt.c:3178 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1130
+#: libfdisk/src/gpt.c:3190 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1130
 msgid "Start"
 msgstr "начало"
 
 #: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2611
-#: libfdisk/src/gpt.c:3179 libfdisk/src/sgi.c:1159 libfdisk/src/sun.c:1131
+#: libfdisk/src/gpt.c:3191 libfdisk/src/sgi.c:1159 libfdisk/src/sun.c:1131
 msgid "End"
 msgstr "Конец"
 
 #: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2612
-#: libfdisk/src/gpt.c:3180 libfdisk/src/sgi.c:1160 libfdisk/src/sun.c:1132
+#: libfdisk/src/gpt.c:3192 libfdisk/src/sgi.c:1160 libfdisk/src/sun.c:1132
 msgid "Sectors"
 msgstr "Секторы"
 
 #: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2614
-#: libfdisk/src/gpt.c:3181 libfdisk/src/sgi.c:1162 libfdisk/src/sun.c:1134
+#: libfdisk/src/gpt.c:3193 libfdisk/src/sgi.c:1162 libfdisk/src/sun.c:1134
 msgid "Size"
 msgstr "Размер"
 
@@ -1805,47 +1824,47 @@ msgstr "%s: ошибка разбора в строке %d — игнориру�
 msgid "%s: failed to parse fstab"
 msgstr "%s: ошибка разбора fstab"
 
-#: disk-utils/fsck.c:685 login-utils/login.c:1108 login-utils/sulogin.c:1025
-#: login-utils/vipw.c:197 sys-utils/flock.c:350 sys-utils/nsenter.c:182
-#: sys-utils/swapon.c:319 sys-utils/unshare.c:242 sys-utils/unshare.c:567
+#: disk-utils/fsck.c:689 login-utils/login.c:1108 login-utils/sulogin.c:1025
+#: login-utils/vipw.c:197 sys-utils/flock.c:351 sys-utils/nsenter.c:182
+#: sys-utils/swapon.c:332 sys-utils/unshare.c:242 sys-utils/unshare.c:567
 msgid "fork failed"
 msgstr "не удалось создать дочерний процесс"
 
-#: disk-utils/fsck.c:692
+#: disk-utils/fsck.c:696
 #, c-format
 msgid "%s: execute failed"
 msgstr "%s: не удалось выполнить"
 
-#: disk-utils/fsck.c:780
+#: disk-utils/fsck.c:784
 msgid "wait: no more child process?!?"
 msgstr "wait: больше нет дочерних процессов?"
 
-#: disk-utils/fsck.c:783 sys-utils/flock.c:368 sys-utils/swapon.c:351
+#: disk-utils/fsck.c:787 sys-utils/flock.c:369 sys-utils/swapon.c:364
 #: sys-utils/unshare.c:594 sys-utils/unshare.c:607
 msgid "waitpid failed"
 msgstr "waitpid завершился неудачей"
 
-#: disk-utils/fsck.c:801
+#: disk-utils/fsck.c:805
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr "Предупреждение. %s для устройства %s завершил работу после сигнала %d."
 
-#: disk-utils/fsck.c:807
+#: disk-utils/fsck.c:811
 #, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr ""
 
-#: disk-utils/fsck.c:853
+#: disk-utils/fsck.c:857
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "Работа с %s закончена (статус завершения работы - %d)\n"
 
-#: disk-utils/fsck.c:934
+#: disk-utils/fsck.c:938
 #, fuzzy, c-format
 msgid "error %d (%s) while executing fsck.%s for %s"
 msgstr "ошибка %d (%m) при запуске fsck.%s для %s"
 
-#: disk-utils/fsck.c:1000
+#: disk-utils/fsck.c:1004
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'."
@@ -1853,93 +1872,93 @@ msgstr ""
 "Либо ни один из типов файловых систем, либо все типы файловых систем,\n"
 "переданных с параметром -t, должны быть указаны с приставкой 'no' или '!'."
 
-#: disk-utils/fsck.c:1116
+#: disk-utils/fsck.c:1120
 #, c-format
 msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr "%s: пропуск строки в файле /etc/fstab: bind mount with nonzero fsck pass number"
 
-#: disk-utils/fsck.c:1128
+#: disk-utils/fsck.c:1132
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: пропуск несуществующего устройства\n"
 
-#: disk-utils/fsck.c:1133
+#: disk-utils/fsck.c:1137
 #, c-format
 msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr "%s: несуществующее устройство (можно использовать параметр \"nofail\", чтобы пропустить это устройство)\n"
 
-#: disk-utils/fsck.c:1150
+#: disk-utils/fsck.c:1154
 #, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr "%s: пропуск неизвестной файловой системы\n"
 
-#: disk-utils/fsck.c:1164
+#: disk-utils/fsck.c:1168
 #, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr "не могу проверить %s: не найден fsck.%s"
 
-#: disk-utils/fsck.c:1268
+#: disk-utils/fsck.c:1272
 msgid "Checking all file systems.\n"
 msgstr "Проверка всех файловых систем.\n"
 
-#: disk-utils/fsck.c:1359
+#: disk-utils/fsck.c:1363
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "--ожидание-- (пройдено %d)\n"
 
-#: disk-utils/fsck.c:1385
+#: disk-utils/fsck.c:1389
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
 msgstr " %s [параметр] -- [параметры ФС] [<файловая система> ...]\n"
 
-#: disk-utils/fsck.c:1389
+#: disk-utils/fsck.c:1393
 msgid "Check and repair a Linux filesystem.\n"
 msgstr "Проверка и исправление ошибок на файловой системе Linux.\n"
 
-#: disk-utils/fsck.c:1392
+#: disk-utils/fsck.c:1396
 msgid " -A         check all filesystems\n"
 msgstr " -A         проверить все файловые системы\n"
 
-#: disk-utils/fsck.c:1393
+#: disk-utils/fsck.c:1397
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 msgstr " -C [<fd>]  показывать статус выполнения; fd - дескриптор файла при работе в графическом интерфейсе\n"
 
-#: disk-utils/fsck.c:1394
+#: disk-utils/fsck.c:1398
 msgid " -l         lock the device to guarantee exclusive access\n"
 msgstr " -l         заблокировать устройство для гарантии исключительного доступа\n"
 
-#: disk-utils/fsck.c:1395
+#: disk-utils/fsck.c:1399
 msgid " -M         do not check mounted filesystems\n"
 msgstr " -M         не проверять примонтированные файловые системы\n"
 
-#: disk-utils/fsck.c:1396
+#: disk-utils/fsck.c:1400
 msgid " -N         do not execute, just show what would be done\n"
 msgstr " -N         не запускать, показать имитацию выполнения\n"
 
-#: disk-utils/fsck.c:1397
+#: disk-utils/fsck.c:1401
 msgid " -P         check filesystems in parallel, including root\n"
 msgstr " -P         проверить файловые системы одновременно, включая корневую\n"
 
-#: disk-utils/fsck.c:1398
+#: disk-utils/fsck.c:1402
 msgid " -R         skip root filesystem; useful only with '-A'\n"
 msgstr " -R         прропустить корневую файловую систему; может быть использовано только с '-A'\n"
 
-#: disk-utils/fsck.c:1399
+#: disk-utils/fsck.c:1403
 #, fuzzy
 msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
 "            file descriptor is for GUIs\n"
 msgstr "    -l [или --list]:      список разделов каждого устройства"
 
-#: disk-utils/fsck.c:1401
+#: disk-utils/fsck.c:1405
 msgid " -s         serialize the checking operations\n"
 msgstr " -s         последовательное выполнение проверок\n"
 
-#: disk-utils/fsck.c:1402
+#: disk-utils/fsck.c:1406
 msgid " -T         do not show the title on startup\n"
 msgstr " -T         не показывать заголовок при запуске\n"
 
-#: disk-utils/fsck.c:1403
+#: disk-utils/fsck.c:1407
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "            <type> is allowed to be a comma-separated list\n"
@@ -1947,57 +1966,57 @@ msgstr ""
 " -t <тип>  указать файловую систему для проверки;\n"
 "           в качестве параметра можно перечислить несколько файловых систем через запятую\n"
 
-#: disk-utils/fsck.c:1405
+#: disk-utils/fsck.c:1409
 msgid " -V         explain what is being done\n"
 msgstr " -V         подробное описание выполняемых действий\n"
 
-#: disk-utils/fsck.c:1411
+#: disk-utils/fsck.c:1415
 msgid "See the specific fsck.* commands for available fs-options."
 msgstr "Посмотрите конкретную команду fsck.* для доступных параметров файловых систем."
 
-#: disk-utils/fsck.c:1456
+#: disk-utils/fsck.c:1460
 msgid "too many devices"
 msgstr "слишком много устройств"
 
-#: disk-utils/fsck.c:1468
+#: disk-utils/fsck.c:1472
 msgid "Is /proc mounted?"
 msgstr "Файловая система /proc примонтирована?"
 
-#: disk-utils/fsck.c:1476
+#: disk-utils/fsck.c:1480
 #, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr "необходимо запустить от имени учетной записи root, чтобы просканировать выбранные файловые системы: %s"
 
-#: disk-utils/fsck.c:1480
+#: disk-utils/fsck.c:1484
 #, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr "не найдены подходящие файловые системы: %s"
 
-#: disk-utils/fsck.c:1488 disk-utils/fsck.c:1585 misc-utils/kill.c:281
+#: disk-utils/fsck.c:1492 disk-utils/fsck.c:1589 misc-utils/kill.c:281
 #: sys-utils/eject.c:279
 msgid "too many arguments"
 msgstr "слишком много аргументов"
 
-#: disk-utils/fsck.c:1543 disk-utils/fsck.c:1546
+#: disk-utils/fsck.c:1547 disk-utils/fsck.c:1550
 msgid "invalid argument of -r"
 msgstr "неверный iаргмент параметра -r"
 
-#: disk-utils/fsck.c:1558
+#: disk-utils/fsck.c:1562
 #, fuzzy, c-format
 msgid "option '%s' may be specified only once"
 msgstr "Вы указали цилиндров больше, чем может быть на диске"
 
-#: disk-utils/fsck.c:1565 misc-utils/kill.c:327 misc-utils/kill.c:343
+#: disk-utils/fsck.c:1569 misc-utils/kill.c:327 misc-utils/kill.c:343
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr "для параметра '%s' требуется аргумент"
 
-#: disk-utils/fsck.c:1596
+#: disk-utils/fsck.c:1600
 #, c-format
 msgid "invalid argument of -r: %d"
 msgstr "неверный iаргмент параметра -r: %d"
 
-#: disk-utils/fsck.c:1639
+#: disk-utils/fsck.c:1643
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "параметр -l может быть использован только с одним устройством -- игнорируем"
 
@@ -2150,8 +2169,8 @@ msgstr "безразмерные (%ld против %ld) байты"
 
 #: disk-utils/fsck.cramfs.c:424 disk-utils/fsck.cramfs.c:526
 #: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:403 sys-utils/fallocate.c:417
-#: sys-utils/rfkill.c:554 sys-utils/setpriv.c:628 sys-utils/setpriv.c:651
-#: sys-utils/swapon.c:392 term-utils/script.c:318 term-utils/ttymsg.c:175
+#: sys-utils/rfkill.c:555 sys-utils/setpriv.c:628 sys-utils/setpriv.c:651
+#: sys-utils/swapon.c:405 term-utils/script.c:319 term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
 msgstr "ошибка write: %s"
@@ -2720,7 +2739,7 @@ msgstr ""
 "----------------------------\n"
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:854
-#: disk-utils/mkswap.c:668 disk-utils/partx.c:1068 disk-utils/resizepart.c:115
+#: disk-utils/mkswap.c:667 disk-utils/partx.c:1068 disk-utils/resizepart.c:115
 #: login-utils/utmpdump.c:395 sys-utils/dmesg.c:679 sys-utils/wdctl.c:386
 #: sys-utils/wdctl.c:446 term-utils/setterm.c:908 text-utils/col.c:195
 #: text-utils/pg.c:1259
@@ -2940,7 +2959,7 @@ msgstr ""
 
 #: disk-utils/mkfs.c:133 include/c.h:269 login-utils/su-common.c:1238
 #: login-utils/sulogin.c:794 login-utils/sulogin.c:798 sys-utils/flock.c:123
-#: sys-utils/rtcwake.c:621
+#: sys-utils/rtcwake.c:623
 #, c-format
 msgid "failed to execute %s"
 msgstr "невозможно выполнить %s"
@@ -3494,136 +3513,136 @@ msgstr ""
 msgid "warning: checking bad blocks from swap file is not supported: %s"
 msgstr "предупреждение: проверка на бэдблоки в swap-файлах не поддерживается: %s"
 
-#: disk-utils/mkswap.c:368 disk-utils/mkswap.c:393 disk-utils/mkswap.c:440
+#: disk-utils/mkswap.c:367 disk-utils/mkswap.c:392 disk-utils/mkswap.c:439
 msgid "unable to rewind swap-device"
 msgstr "невозможно перемотать устройство для свопинга"
 
-#: disk-utils/mkswap.c:396
+#: disk-utils/mkswap.c:395
 msgid "unable to erase bootbits sectors"
 msgstr "невозможно очистить загрузочные сектора"
 
-#: disk-utils/mkswap.c:412
+#: disk-utils/mkswap.c:411
 #, c-format
 msgid "%s: warning: wiping old %s signature."
 msgstr "%s: предупреждение: очистка старой сигнатуры %s."
 
-#: disk-utils/mkswap.c:417
+#: disk-utils/mkswap.c:416
 #, c-format
 msgid "%s: warning: don't erase bootbits sectors"
 msgstr "%s: предупреждение: не очищать загрузочный сектор"
 
-#: disk-utils/mkswap.c:420
+#: disk-utils/mkswap.c:419
 #, c-format
 msgid "        (%s partition table detected). "
 msgstr "        (обнаружена таблица разделов %s). "
 
-#: disk-utils/mkswap.c:422
+#: disk-utils/mkswap.c:421
 #, c-format
 msgid "        (compiled without libblkid). "
 msgstr "        (скомпилировано без libblkid). "
 
-#: disk-utils/mkswap.c:423
+#: disk-utils/mkswap.c:422
 #, c-format
 msgid "Use -f to force.\n"
 msgstr "Используйте -f для принудительного применения.\n"
 
-#: disk-utils/mkswap.c:445
+#: disk-utils/mkswap.c:444
 #, c-format
 msgid "%s: unable to write signature page"
 msgstr "%s: невозможно записать страницу с сигнатурой"
 
-#: disk-utils/mkswap.c:492
+#: disk-utils/mkswap.c:491
 msgid "parsing page size failed"
 msgstr "не удалось определить размер страницы"
 
-#: disk-utils/mkswap.c:498
+#: disk-utils/mkswap.c:497
 msgid "parsing version number failed"
 msgstr "не удалось определить номер версии"
 
-#: disk-utils/mkswap.c:501
+#: disk-utils/mkswap.c:500
 #, c-format
 msgid "swapspace version %d is not supported"
 msgstr "версия swap %d не поддерживается"
 
-#: disk-utils/mkswap.c:507
+#: disk-utils/mkswap.c:506
 #, c-format
 msgid "warning: ignoring -U (UUIDs are unsupported by %s)"
 msgstr "предупреждение: игнорирование -U (%s не поддерживает UUID)"
 
-#: disk-utils/mkswap.c:537
+#: disk-utils/mkswap.c:536
 msgid "only one device argument is currently supported"
 msgstr "в данный момент поддерживается только одно устройство в качестве аргумента"
 
-#: disk-utils/mkswap.c:544
+#: disk-utils/mkswap.c:543
 msgid "error: parsing UUID failed"
 msgstr "ошибка: не удалось определить UUID"
 
-#: disk-utils/mkswap.c:553
+#: disk-utils/mkswap.c:552
 msgid "error: Nowhere to set up swap on?"
 msgstr "ошибка: негде создать раздел подкачки?"
 
-#: disk-utils/mkswap.c:559
+#: disk-utils/mkswap.c:558
 msgid "invalid block count argument"
 msgstr "недопустимый аргумент количества блоков"
 
-#: disk-utils/mkswap.c:568
+#: disk-utils/mkswap.c:567
 #, fuzzy, c-format
 msgid "error: size %llu KiB is larger than device size %<PRIu64> KiB"
 msgstr "ошибка: размер %llu КиБ больше, чем размер устройства %ju КиБ"
 
-#: disk-utils/mkswap.c:574
+#: disk-utils/mkswap.c:573
 #, c-format
 msgid "error: swap area needs to be at least %ld KiB"
 msgstr "ошибка: пространство для swap должно быть по крайней мере %ld КиБ"
 
-#: disk-utils/mkswap.c:579
+#: disk-utils/mkswap.c:578
 #, c-format
 msgid "warning: truncating swap area to %llu KiB"
 msgstr "предупреждение: пространство для swap уменьшается до %llu КиБ"
 
-#: disk-utils/mkswap.c:584
+#: disk-utils/mkswap.c:583
 #, c-format
 msgid "error: %s is mounted; will not make swapspace"
 msgstr "ошибка: %s примонтирован; пространство swap не будет создано"
 
-#: disk-utils/mkswap.c:591
+#: disk-utils/mkswap.c:590
 #, fuzzy, c-format
 msgid "%s: insecure permissions %04o, fix with: chmod %04o %s"
 msgstr "%s: предупреждение: %s имеет небезопасные разрешения %04o, рекомендуется %04o\n"
 
-#: disk-utils/mkswap.c:595
+#: disk-utils/mkswap.c:594
 #, fuzzy, c-format
 msgid "%s: insecure file owner %d, fix with: chown 0:0 %s"
 msgstr "%s: предупреждение: %s имеет небезопасные разрешения %04o, рекомендуется %04o\n"
 
-#: disk-utils/mkswap.c:614
+#: disk-utils/mkswap.c:613
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Невозможно установить пространство для свопинга: нечитаемый"
 
-#: disk-utils/mkswap.c:619
+#: disk-utils/mkswap.c:618
 #, fuzzy, c-format
 msgid "Setting up swapspace version %d, size = %s (%<PRIu64> bytes)\n"
 msgstr "Устанавливается пространство для swap версии %d, размер = %s (%ju байт)\n"
 
-#: disk-utils/mkswap.c:638
+#: disk-utils/mkswap.c:637
 #, c-format
 msgid "%s: unable to obtain selinux file label"
 msgstr "%s: не удалось обнаружить файловую метку selinux"
 
-#: disk-utils/mkswap.c:643
+#: disk-utils/mkswap.c:642
 #, fuzzy, c-format
 msgid "%s: unable to obtain default selinux file label"
 msgstr "%s: не удалось обнаружить файловую метку selinux"
 
-#: disk-utils/mkswap.c:647
+#: disk-utils/mkswap.c:646
 msgid "unable to create new selinux context"
 msgstr "не удалось создать новый контекст selinux"
 
-#: disk-utils/mkswap.c:649
+#: disk-utils/mkswap.c:648
 msgid "couldn't compute selinux context"
 msgstr "не удалось вычислить контекст selinux"
 
-#: disk-utils/mkswap.c:655
+#: disk-utils/mkswap.c:654
 #, c-format
 msgid "unable to relabel %s to %s"
 msgstr "невозможно переименовать %s в %s"
@@ -3697,7 +3716,7 @@ msgstr "%s: не удалось настроить устройство обра
 #: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:132
 #: sys-utils/irq-common.c:102 sys-utils/losetup.c:112 sys-utils/lscpu.c:193
 #: sys-utils/lscpu.c:208 sys-utils/lsipc.c:232 sys-utils/lsmem.c:178
-#: sys-utils/lsns.c:225 sys-utils/prlimit.c:277 sys-utils/rfkill.c:162
+#: sys-utils/lsns.c:238 sys-utils/prlimit.c:280 sys-utils/rfkill.c:162
 #: sys-utils/swapon.c:150 sys-utils/wdctl.c:161 sys-utils/zramctl.c:147
 #, c-format
 msgid "unknown column: %s"
@@ -3798,8 +3817,8 @@ msgstr[2] "#%2d: %9ju-%9ju (%9ju секторов, %6ju МБ)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1690
 #: misc-utils/lsblk.c:2213 misc-utils/lslocks.c:471 sys-utils/losetup.c:339
-#: sys-utils/lscpu.c:586 sys-utils/lscpu.c:736 sys-utils/prlimit.c:306
-#: sys-utils/rfkill.c:476 sys-utils/swapon.c:292 sys-utils/wdctl.c:310
+#: sys-utils/lscpu.c:586 sys-utils/lscpu.c:736 sys-utils/prlimit.c:309
+#: sys-utils/rfkill.c:477 sys-utils/swapon.c:305 sys-utils/wdctl.c:310
 #, fuzzy
 msgid "failed to allocate output column"
 msgstr "Невозможно выделить буфер.\n"
@@ -4042,7 +4061,7 @@ msgid "cannot seek %s"
 msgstr "ошибка поиска %s"
 
 #: disk-utils/sfdisk.c:312 libfdisk/src/bsd.c:724 libfdisk/src/bsd.c:905
-#: schedutils/uclampset.c:119 term-utils/script.c:461
+#: schedutils/uclampset.c:119 term-utils/script.c:462
 #, c-format
 msgid "cannot write %s"
 msgstr "ошибка записи %s"
@@ -5894,7 +5913,7 @@ msgstr "Первый цилиндр"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Последний цилиндр + число цилиндров или + размер{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1358 libfdisk/src/gpt.c:2483
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1358 libfdisk/src/gpt.c:2495
 #, fuzzy
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Последний сектор + число секторов или + размер{K,M,G,T,P}"
@@ -6046,7 +6065,7 @@ msgstr ""
 msgid "Disklabel written to %s."
 msgstr "Метка диска записана %s."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:754
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:776
 msgid "Syncing disks."
 msgstr "Синхронизируются диски."
 
@@ -6075,64 +6094,64 @@ msgstr ""
 msgid "Cpg"
 msgstr ""
 
-#: libfdisk/src/context.c:744
+#: libfdisk/src/context.c:766
 #, fuzzy, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: не удалось закрыть устройство"
 
-#: libfdisk/src/context.c:749
+#: libfdisk/src/context.c:771
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: не удалось закрыть устройство"
 
-#: libfdisk/src/context.c:829
+#: libfdisk/src/context.c:854
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Вызывается ioctl() для перечитывания таблицы разделов."
 
-#: libfdisk/src/context.c:837
+#: libfdisk/src/context.c:862
 msgid "Re-reading the partition table failed."
 msgstr "Перечитывание таблицы разделов не удалось."
 
-#: libfdisk/src/context.c:839
+#: libfdisk/src/context.c:864
 #, fuzzy
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "Ядро все еще использует старую таблицу. Новая таблица будет использована при следующей перезагрузке или при запуске partprobe(8) или kpartx(8)."
 
-#: libfdisk/src/context.c:929
+#: libfdisk/src/context.c:954
 #, fuzzy, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "не удалось удалить раздел"
 
-#: libfdisk/src/context.c:938
+#: libfdisk/src/context.c:963
 #, fuzzy, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "вывести информацию о разделе"
 
-#: libfdisk/src/context.c:958
+#: libfdisk/src/context.c:983
 #, fuzzy, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "не удалось добавить раздел"
 
-#: libfdisk/src/context.c:964
+#: libfdisk/src/context.c:989
 #, fuzzy
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "Ядро все еще использует старую таблицу. Новая таблица будет использована при следующей перезагрузке или при запуске partprobe(8) или kpartx(8)."
 
-#: libfdisk/src/context.c:1175
+#: libfdisk/src/context.c:1193
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "цилиндр"
 msgstr[1] "цилиндра"
 msgstr[2] "цилиндров"
 
-#: libfdisk/src/context.c:1176
+#: libfdisk/src/context.c:1194
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "сектор"
 msgstr[1] "сектора"
 msgstr[2] "секторов"
 
-#: libfdisk/src/context.c:1532
+#: libfdisk/src/context.c:1550
 msgid "Incomplete geometry setting."
 msgstr "Неполные параметры геометрии."
 
@@ -6228,14 +6247,14 @@ msgstr "Неверный флаг 0x%02x%02x расширенной загруз
 msgid "Start sector %ju out of range."
 msgstr "Значение за пределами диапазона.\n"
 
-#: libfdisk/src/dos.c:1194 libfdisk/src/gpt.c:2357 libfdisk/src/sgi.c:842
+#: libfdisk/src/dos.c:1194 libfdisk/src/gpt.c:2369 libfdisk/src/sgi.c:842
 #: libfdisk/src/sun.c:528
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "Раздел %zu уже определен.  Удалите его перед тем, как снова добавить его."
 
 #: libfdisk/src/dos.c:1209 libfdisk/src/dos.c:1235 libfdisk/src/dos.c:1292
-#: libfdisk/src/dos.c:1324 libfdisk/src/gpt.c:2366
+#: libfdisk/src/dos.c:1324 libfdisk/src/gpt.c:2378
 msgid "No free sectors available."
 msgstr "Отсутствуют доступные свободные секторы."
 
@@ -6309,7 +6328,7 @@ msgstr "Раздел %zu: пуст."
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Логический раздел %zu: не находится целиком в разделе %zu."
 
-#: libfdisk/src/dos.c:1705 libfdisk/src/gpt.c:2263
+#: libfdisk/src/dos.c:1705 libfdisk/src/gpt.c:2275
 msgid "No errors detected."
 msgstr "Ошибок не обраружено."
 
@@ -6323,7 +6342,7 @@ msgstr "Суммарное количество выделенных секто�
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr "Осталось %lld незанятых %ld-байтовых секторов."
 
-#: libfdisk/src/dos.c:1714 libfdisk/src/gpt.c:2283
+#: libfdisk/src/dos.c:1714 libfdisk/src/gpt.c:2295
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -6395,7 +6414,7 @@ msgstr "Неверный тип раздела `%c'."
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Невозможно записать сектор %jd: поиск завершился неудачей"
 
-#: libfdisk/src/dos.c:2139 libfdisk/src/gpt.c:1282
+#: libfdisk/src/dos.c:2139 libfdisk/src/gpt.c:1294
 msgid "Disk identifier"
 msgstr "Идентификатор диска"
 
@@ -6408,7 +6427,7 @@ msgstr "Тип 0 означает свободное пространство д
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Не удается изменить тип расширенного раздела, в котором уже есть логические разделы. Сначала удалите их."
 
-#: libfdisk/src/dos.c:2444 libfdisk/src/gpt.c:3088
+#: libfdisk/src/dos.c:2444 libfdisk/src/gpt.c:3100
 #, fuzzy
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Нечего выполнять. Очередность уже правильная."
@@ -6437,7 +6456,7 @@ msgstr "Флаг загрузки раздела %zu включен."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Флаг загрузки раздела %zu выключен."
 
-#: libfdisk/src/dos.c:2608 libfdisk/src/gpt.c:3177 libfdisk/src/sgi.c:1157
+#: libfdisk/src/dos.c:2608 libfdisk/src/gpt.c:3189 libfdisk/src/sgi.c:1157
 #: libfdisk/src/sun.c:1129
 msgid "Device"
 msgstr "Устр-во"
@@ -6458,7 +6477,7 @@ msgstr "Начало-C/H/S"
 msgid "End-C/H/S"
 msgstr "Конец-C/H/S"
 
-#: libfdisk/src/dos.c:2621 libfdisk/src/gpt.c:3187 libfdisk/src/sgi.c:1165
+#: libfdisk/src/dos.c:2621 libfdisk/src/gpt.c:3199 libfdisk/src/sgi.c:1165
 msgid "Attrs"
 msgstr "Атрибуты"
 
@@ -6466,196 +6485,196 @@ msgstr "Атрибуты"
 msgid "failed to allocate GPT header"
 msgstr "не удалось определить заголовок GPT"
 
-#: libfdisk/src/gpt.c:787
+#: libfdisk/src/gpt.c:799
 msgid "First LBA specified by script is out of range."
 msgstr "Начальный адрес LBA, указанный в скрипте, вне допустимого диапазона."
 
-#: libfdisk/src/gpt.c:799
+#: libfdisk/src/gpt.c:811
 msgid "Last LBA specified by script is out of range."
 msgstr "Конечный адрес LBA, указанный в скрипте, вне допустимого диапазона."
 
-#: libfdisk/src/gpt.c:940
+#: libfdisk/src/gpt.c:952
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr ""
 
-#: libfdisk/src/gpt.c:965
+#: libfdisk/src/gpt.c:977
 msgid "gpt: stat() failed"
 msgstr "gpt: выполнение stat() завершилось неудачно"
 
-#: libfdisk/src/gpt.c:975
+#: libfdisk/src/gpt.c:987
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1240
+#: libfdisk/src/gpt.c:1252
 msgid "GPT Header"
 msgstr "Заголовок GPT"
 
-#: libfdisk/src/gpt.c:1245
+#: libfdisk/src/gpt.c:1257
 msgid "GPT Entries"
 msgstr "Записи GPT"
 
-#: libfdisk/src/gpt.c:1251
+#: libfdisk/src/gpt.c:1263
 #, fuzzy
 msgid "GPT Backup Entries"
 msgstr "Записи GPT"
 
-#: libfdisk/src/gpt.c:1257
+#: libfdisk/src/gpt.c:1269
 #, fuzzy
 msgid "GPT Backup Header"
 msgstr "Заголовок GPT"
 
-#: libfdisk/src/gpt.c:1289
+#: libfdisk/src/gpt.c:1301
 msgid "First LBA"
 msgstr "Начальный адрес LBA"
 
-#: libfdisk/src/gpt.c:1294
+#: libfdisk/src/gpt.c:1306
 msgid "Last LBA"
 msgstr "Конечный адрес LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1300
+#: libfdisk/src/gpt.c:1312
 msgid "Alternative LBA"
 msgstr "Альтернативный адрес LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1306
+#: libfdisk/src/gpt.c:1318
 #, fuzzy
 msgid "Partition entries LBA"
 msgstr "Раздел (a-%c): "
 
-#: libfdisk/src/gpt.c:1311
+#: libfdisk/src/gpt.c:1323
 msgid "Allocated partition entries"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1653
+#: libfdisk/src/gpt.c:1665
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Резервная таблица GPT повреждена, но с основной, кажется, все в порядке, поэтому она будет использована."
 
-#: libfdisk/src/gpt.c:1663
+#: libfdisk/src/gpt.c:1675
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Основная таблица GPT повреждена, но с резервной, кажется, все в порядке, поэтому она будет использована."
 
-#: libfdisk/src/gpt.c:1679
+#: libfdisk/src/gpt.c:1691
 #, fuzzy
 msgid "The backup GPT table is not on the end of the device."
 msgstr "Резервная таблица GPT повреждена, но с основной, кажется, все в порядке, поэтому она будет использована."
 
-#: libfdisk/src/gpt.c:1682
+#: libfdisk/src/gpt.c:1694
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1686
+#: libfdisk/src/gpt.c:1698
 #, fuzzy
 msgid "Failed to recalculate backup GPT table location"
 msgstr "Невозможно выделить буфер.\n"
 
-#: libfdisk/src/gpt.c:1841
+#: libfdisk/src/gpt.c:1853
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "неподдерживаемый бит атрибута GPT '%s'"
 
-#: libfdisk/src/gpt.c:1846
+#: libfdisk/src/gpt.c:1858
 #, fuzzy, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: libfdisk/src/gpt.c:1946
+#: libfdisk/src/gpt.c:1958
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "UUID раздела изменен с %s на %s."
 
-#: libfdisk/src/gpt.c:1955
+#: libfdisk/src/gpt.c:1967
 #, fuzzy
 msgid "Failed to translate partition name, name not changed."
 msgstr "не удалось определить имя раздела"
 
-#: libfdisk/src/gpt.c:1957
+#: libfdisk/src/gpt.c:1969
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Имя раздела изменено с '%s' на '%.*s'."
 
-#: libfdisk/src/gpt.c:1986
+#: libfdisk/src/gpt.c:1998
 #, fuzzy
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Загрузочный раздел не существует."
 
-#: libfdisk/src/gpt.c:1993
+#: libfdisk/src/gpt.c:2005
 #, fuzzy
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "конец раздела в секторах"
 
-#: libfdisk/src/gpt.c:2151
+#: libfdisk/src/gpt.c:2163
 msgid "The device contains hybrid MBR -- writing GPT only."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2187
+#: libfdisk/src/gpt.c:2199
 msgid "Disk does not contain a valid backup header."
 msgstr "На диске отсутствует допустимый резервный заголовок."
 
-#: libfdisk/src/gpt.c:2192
+#: libfdisk/src/gpt.c:2204
 msgid "Invalid primary header CRC checksum."
 msgstr "Недопустимая контрольная сумма CRC первичного заголовка."
 
-#: libfdisk/src/gpt.c:2196
+#: libfdisk/src/gpt.c:2208
 msgid "Invalid backup header CRC checksum."
 msgstr "Недопустимая контрольная сумма CRC резервного заголовка."
 
-#: libfdisk/src/gpt.c:2201
+#: libfdisk/src/gpt.c:2213
 msgid "Invalid partition entry checksum."
 msgstr "Недопустимая контрольная сумма записи раздела."
 
-#: libfdisk/src/gpt.c:2206
+#: libfdisk/src/gpt.c:2218
 msgid "Invalid primary header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2210
+#: libfdisk/src/gpt.c:2222
 msgid "Invalid backup header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2215
+#: libfdisk/src/gpt.c:2227
 msgid "MyLBA mismatch with real position at primary header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2219
+#: libfdisk/src/gpt.c:2231
 msgid "MyLBA mismatch with real position at backup header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2224
+#: libfdisk/src/gpt.c:2236
 msgid "Disk is too small to hold all data."
 msgstr "Размер диска слишком мал, чтобы вместить все данные."
 
-#: libfdisk/src/gpt.c:2234
+#: libfdisk/src/gpt.c:2246
 msgid "Primary and backup header mismatch."
 msgstr "Первичный и резервный заголовки не совпадают."
 
-#: libfdisk/src/gpt.c:2240
+#: libfdisk/src/gpt.c:2252
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Предупреждение: раздел %u перекрывает раздел %u."
 
-#: libfdisk/src/gpt.c:2247
+#: libfdisk/src/gpt.c:2259
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Раздел %u слишком большой для диска."
 
-#: libfdisk/src/gpt.c:2254
+#: libfdisk/src/gpt.c:2266
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Конец раздела %u находится раньше его начала."
 
-#: libfdisk/src/gpt.c:2264
+#: libfdisk/src/gpt.c:2276
 #, c-format
 msgid "Header version: %s"
 msgstr "Версия заголовка: %s"
 
-#: libfdisk/src/gpt.c:2265
+#: libfdisk/src/gpt.c:2277
 #, fuzzy, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "Используются %u разделов из %d."
 
-#: libfdisk/src/gpt.c:2275
+#: libfdisk/src/gpt.c:2287
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
@@ -6663,131 +6682,131 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: libfdisk/src/gpt.c:2362
+#: libfdisk/src/gpt.c:2374
 msgid "All partitions are already in use."
 msgstr "Все разделы уже используются."
 
-#: libfdisk/src/gpt.c:2419 libfdisk/src/gpt.c:2446
+#: libfdisk/src/gpt.c:2431 libfdisk/src/gpt.c:2458
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Сектор %ju уже используется."
 
-#: libfdisk/src/gpt.c:2512
+#: libfdisk/src/gpt.c:2524
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Не удалось создать раздел %zu"
 
-#: libfdisk/src/gpt.c:2519
+#: libfdisk/src/gpt.c:2531
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2526
+#: libfdisk/src/gpt.c:2538
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2665
+#: libfdisk/src/gpt.c:2677
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2668
+#: libfdisk/src/gpt.c:2680
 #, fuzzy, c-format
 msgid "The maximal number of partitions is %d (default is %d)."
 msgstr "Было создано максимально возможное количество разделов."
 
-#: libfdisk/src/gpt.c:2690
+#: libfdisk/src/gpt.c:2702
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Введите новый UUID диска (в формате 8-4-4-4-12)"
 
-#: libfdisk/src/gpt.c:2698
+#: libfdisk/src/gpt.c:2710
 msgid "Failed to parse your UUID."
 msgstr "Не удалось обработать ваш UUID."
 
-#: libfdisk/src/gpt.c:2712
+#: libfdisk/src/gpt.c:2724
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Идендификатор диска изменен с %s на %s."
 
-#: libfdisk/src/gpt.c:2732
+#: libfdisk/src/gpt.c:2744
 #, fuzzy
 msgid "Not enough space for new partition table!"
 msgstr "Нет свободных доступных разделов!"
 
-#: libfdisk/src/gpt.c:2743
+#: libfdisk/src/gpt.c:2755
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Раздел %zd содержит неверный начальный нулевой сектор."
 
-#: libfdisk/src/gpt.c:2748
+#: libfdisk/src/gpt.c:2760
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2794
+#: libfdisk/src/gpt.c:2806
 #, fuzzy
 msgid "The partition entry size is zero."
 msgstr "Загрузочный раздел не существует."
 
-#: libfdisk/src/gpt.c:2796
+#: libfdisk/src/gpt.c:2808
 #, fuzzy, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Было создано максимально возможное количество разделов."
 
-#: libfdisk/src/gpt.c:2820
+#: libfdisk/src/gpt.c:2832
 #, fuzzy
 msgid "Cannot allocate memory!"
 msgstr "Невозможно выделить буфер.\n"
 
-#: libfdisk/src/gpt.c:2849
+#: libfdisk/src/gpt.c:2861
 #, fuzzy, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Имя раздела изменено с '%s' на '%.*s'."
 
-#: libfdisk/src/gpt.c:2959
+#: libfdisk/src/gpt.c:2971
 #, fuzzy, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Системный тип раздела %d изменен на %x (%s)\n"
 
-#: libfdisk/src/gpt.c:3009
+#: libfdisk/src/gpt.c:3021
 msgid "Enter GUID specific bit"
 msgstr ""
 
-#: libfdisk/src/gpt.c:3024
+#: libfdisk/src/gpt.c:3036
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "не удалось переключить неподдерживаемый бит %lu"
 
-#: libfdisk/src/gpt.c:3037
+#: libfdisk/src/gpt.c:3049
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:3038
+#: libfdisk/src/gpt.c:3050
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:3042
+#: libfdisk/src/gpt.c:3054
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Флаг %s раздела %zu теперь включен."
 
-#: libfdisk/src/gpt.c:3043
+#: libfdisk/src/gpt.c:3055
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Флаг %s раздела %zu теперь выключен."
 
-#: libfdisk/src/gpt.c:3184
+#: libfdisk/src/gpt.c:3196
 msgid "Type-UUID"
 msgstr "Тип UUID"
 
-#: libfdisk/src/gpt.c:3185
+#: libfdisk/src/gpt.c:3197
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3186 login-utils/chfn.c:156 login-utils/chfn.c:158
+#: libfdisk/src/gpt.c:3198 login-utils/chfn.c:156 login-utils/chfn.c:158
 #: login-utils/chfn.c:322
 msgid "Name"
 msgstr "Имя"
@@ -6803,7 +6822,7 @@ msgstr "Не удалось изменить размер раздела #%zu."
 
 #: libfdisk/src/parttype.c:288 misc-utils/findmnt.c:670
 #: misc-utils/uuidparse.c:199 misc-utils/uuidparse.c:217 schedutils/chrt.c:127
-#: schedutils/ionice.c:79 sys-utils/hwclock.c:277
+#: schedutils/ionice.c:79 sys-utils/hwclock.c:282
 msgid "unknown"
 msgstr "неизвестный"
 
@@ -7652,16 +7671,16 @@ msgstr "%s: не является допустимым своп-разделом
 msgid "%s: unsupported swap version '%s'"
 msgstr "%s: неподдерживаемая версия своп '%s'"
 
-#: lib/timeutils.c:465
+#: lib/timeutils.c:466
 msgid "format_iso_time: buffer overflow."
 msgstr ""
 
-#: lib/timeutils.c:483 lib/timeutils.c:507
+#: lib/timeutils.c:484 lib/timeutils.c:508
 #, fuzzy, c-format
-msgid "time %ld is out of range."
+msgid "time %<PRId64> is out of range."
 msgstr "Значение за пределами диапазона."
 
-#: login-utils/chfn.c:96 login-utils/chsh.c:75 login-utils/lslogins.c:1374
+#: login-utils/chfn.c:96 login-utils/chsh.c:75 login-utils/lslogins.c:1382
 #, fuzzy, c-format
 msgid " %s [options] [<username>]\n"
 msgstr "Использование: %s [опции] устройство...\n"
@@ -7873,7 +7892,7 @@ msgstr "Шелл изменён.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "%s: файл паролей занят.\n"
 
-#: login-utils/last.c:174 login-utils/lslogins.c:1365 sys-utils/dmesg.c:1300
+#: login-utils/last.c:174 login-utils/lslogins.c:1373 sys-utils/dmesg.c:1300
 #: sys-utils/lsipc.c:282
 #, c-format
 msgid "unknown time format: %s"
@@ -7972,7 +7991,7 @@ msgid "failed to parse number"
 msgstr "не удалось разобрать номер"
 
 #: login-utils/last.c:1043 login-utils/last.c:1048 login-utils/last.c:1053
-#: sys-utils/dmesg.c:1514 sys-utils/dmesg.c:1522 sys-utils/rtcwake.c:512
+#: sys-utils/dmesg.c:1514 sys-utils/dmesg.c:1522 sys-utils/rtcwake.c:511
 #, c-format
 msgid "invalid time value \"%s\""
 msgstr "неверное значение времени: '%s'"
@@ -8478,20 +8497,20 @@ msgstr "неподдерживаемый тип времени"
 msgid "failed to compose time string"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: login-utils/lslogins.c:759
+#: login-utils/lslogins.c:761
 msgid "failed to get supplementary groups"
 msgstr "не удалось получить дополнительные группы"
 
-#: login-utils/lslogins.c:1041
+#: login-utils/lslogins.c:1046
 #, fuzzy, c-format
 msgid "cannot found '%s'"
 msgstr "невозможно открыть %s"
 
-#: login-utils/lslogins.c:1217
+#: login-utils/lslogins.c:1225
 msgid "internal error: unknown column"
 msgstr "внутренняя ошибка: неизвестный столбец"
 
-#: login-utils/lslogins.c:1314
+#: login-utils/lslogins.c:1322
 #, c-format
 msgid ""
 "\n"
@@ -8500,110 +8519,110 @@ msgstr ""
 "\n"
 "Последние входы в систему:\n"
 
-#: login-utils/lslogins.c:1377
+#: login-utils/lslogins.c:1385
 msgid "Display information about known users in the system.\n"
 msgstr "Показать информацию об известных пользователях системы.\n"
 
-#: login-utils/lslogins.c:1380
+#: login-utils/lslogins.c:1388
 msgid " -a, --acc-expiration     display info about passwords expiration\n"
 msgstr " -a, --acc-expiration     вывести информацию об истечении срока действия паролей\n"
 
-#: login-utils/lslogins.c:1381
+#: login-utils/lslogins.c:1389
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
 msgstr " -c, --colon-separate     вывести данные в формате схожем с форматом файла /etc/passwd\n"
 
-#: login-utils/lslogins.c:1382 sys-utils/lsipc.c:310
+#: login-utils/lslogins.c:1390 sys-utils/lsipc.c:310
 msgid " -e, --export             display in an export-able output format\n"
 msgstr " -e, --export             вывести в формате для экспортирования данных\n"
 
-#: login-utils/lslogins.c:1383
+#: login-utils/lslogins.c:1391
 msgid " -f, --failed             display data about the users' last failed logins\n"
 msgstr " -f, --failed             вывести данные по последним неудачным входам пользователей\n"
 
-#: login-utils/lslogins.c:1384
+#: login-utils/lslogins.c:1392
 msgid " -G, --supp-groups        display information about groups\n"
 msgstr " -G, --supp-groups        вывести информацию о группах\n"
 
-#: login-utils/lslogins.c:1385
+#: login-utils/lslogins.c:1393
 msgid " -g, --groups=<groups>    display users belonging to a group in <groups>\n"
 msgstr " -g, --groups=<группы>    вывести пользователей, входящих в группу из <группы>\n"
 
-#: login-utils/lslogins.c:1386
+#: login-utils/lslogins.c:1394
 msgid " -L, --last               show info about the users' last login sessions\n"
 msgstr " -L, --last               показать информацию о последнем входе пользователя\n"
 
-#: login-utils/lslogins.c:1387
+#: login-utils/lslogins.c:1395
 msgid " -l, --logins=<logins>    display only users from <logins>\n"
 msgstr " -l, --logins=<logins>    вывести только пользователей из <logins>\n"
 
-#: login-utils/lslogins.c:1388 sys-utils/lsipc.c:312
+#: login-utils/lslogins.c:1396 sys-utils/lsipc.c:312
 msgid " -n, --newline            display each piece of information on a new line\n"
 msgstr " -n, --newline            выводить каждый блок информации с новой строки\n"
 
-#: login-utils/lslogins.c:1389 sys-utils/lsipc.c:305
+#: login-utils/lslogins.c:1397 sys-utils/lsipc.c:305
 msgid "     --noheadings         don't print headings\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1390 sys-utils/lsipc.c:306
+#: login-utils/lslogins.c:1398 sys-utils/lsipc.c:306
 #, fuzzy
 msgid "     --notruncate         don't truncate output\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: login-utils/lslogins.c:1391 sys-utils/lsipc.c:314
+#: login-utils/lslogins.c:1399 sys-utils/lsipc.c:314
 msgid " -o, --output[=<list>]    define the columns to output\n"
 msgstr " -o, --output[=<list>]    определить выводимые столбцы\n"
 
-#: login-utils/lslogins.c:1392
+#: login-utils/lslogins.c:1400
 #, fuzzy
 msgid "     --output-all         output all columns\n"
 msgstr " -O, --output-all     выводить все столбцы\n"
 
-#: login-utils/lslogins.c:1393
+#: login-utils/lslogins.c:1401
 msgid " -p, --pwd                display information related to login by password.\n"
 msgstr " -p, --pwd                вывести информацию, связанную со входом по паролю.\n"
 
-#: login-utils/lslogins.c:1394 sys-utils/lsipc.c:316
+#: login-utils/lslogins.c:1402 sys-utils/lsipc.c:316
 msgid " -r, --raw                display in raw mode\n"
 msgstr " -r, --raw                отобразить в формате сырых данных\n"
 
-#: login-utils/lslogins.c:1395
+#: login-utils/lslogins.c:1403
 msgid " -s, --system-accs        display system accounts\n"
 msgstr " -s, --system-accs        вывести системных пользователей\n"
 
-#: login-utils/lslogins.c:1396 sys-utils/lsipc.c:307
+#: login-utils/lslogins.c:1404 sys-utils/lsipc.c:307
 msgid "     --time-format=<type> display dates in short, full or iso format\n"
 msgstr "     --time-format=<type> вывести даты в коротком, полном формате или формате iso\n"
 
-#: login-utils/lslogins.c:1397
+#: login-utils/lslogins.c:1405
 msgid " -u, --user-accs          display user accounts\n"
 msgstr " -u, --user-accs          отобразить пользовательские аккаунты\n"
 
-#: login-utils/lslogins.c:1398
+#: login-utils/lslogins.c:1406
 msgid " -Z, --context            display SELinux contexts\n"
 msgstr " -Z, --context            показать контекст SELinux\n"
 
-#: login-utils/lslogins.c:1399
+#: login-utils/lslogins.c:1407
 msgid " -z, --print0             delimit user entries with a nul character\n"
 msgstr " -z, --print0             разграничить пользовательские данные нуль-символом\n"
 
-#: login-utils/lslogins.c:1400
+#: login-utils/lslogins.c:1408
 msgid "     --wtmp-file <path>   set an alternate path for wtmp\n"
 msgstr "     --wtmp-file <path>   установить путь для wtmp\n"
 
-#: login-utils/lslogins.c:1401
+#: login-utils/lslogins.c:1409
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <path>   установить путь для wtmp\n"
 
-#: login-utils/lslogins.c:1402
+#: login-utils/lslogins.c:1410
 #, fuzzy
 msgid "     --lastlog <path>     set an alternate path for lastlog\n"
 msgstr "     --wtmp-file <path>   установить путь для wtmp\n"
 
-#: login-utils/lslogins.c:1591
+#: login-utils/lslogins.c:1599
 msgid "failed to request selinux state"
 msgstr "не удалось запросить состояние selinux"
 
-#: login-utils/lslogins.c:1605 login-utils/lslogins.c:1610
+#: login-utils/lslogins.c:1613 login-utils/lslogins.c:1618
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr "Может быть указан только один пользователь. Используйте -l для указания нескольких пользователей."
 
@@ -8652,7 +8671,7 @@ msgstr "setuid() завершился неудачей"
 
 #: login-utils/nologin.c:28 misc-utils/lslocks.c:528 misc-utils/mcookie.c:83
 #: misc-utils/uuidd.c:95 misc-utils/uuidgen.c:26 sys-utils/dmesg.c:272
-#: sys-utils/ipcmk.c:67 sys-utils/irqtop.c:244 sys-utils/lscpu.c:1133
+#: sys-utils/ipcmk.c:67 sys-utils/irqtop.c:244 sys-utils/lscpu.c:1136
 #: sys-utils/lsipc.c:291 sys-utils/lsirq.c:57 sys-utils/lsmem.c:506
 #: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:99
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
@@ -8729,13 +8748,13 @@ msgstr "Невозможно установить обработчик сигн�
 msgid "cannot set signal mask"
 msgstr "Невозможно установить обработчик сигнала"
 
-#: login-utils/su-common.c:538 term-utils/script.c:943
+#: login-utils/su-common.c:538 term-utils/script.c:944
 #: term-utils/scriptlive.c:296
 #, fuzzy
 msgid "failed to create pseudo-terminal"
 msgstr "Невозможно выделить буфер.\n"
 
-#: login-utils/su-common.c:550 term-utils/script.c:953
+#: login-utils/su-common.c:550 term-utils/script.c:954
 #: term-utils/scriptlive.c:303
 msgid "cannot create child process"
 msgstr "не могу создать дочерний процесс"
@@ -9732,7 +9751,7 @@ msgstr "не удаётся прочитать %s"
 #: misc-utils/findmnt-verify.c:95 misc-utils/findmnt-verify.c:487
 #: sys-utils/fstrim.c:288 sys-utils/mount.c:136 sys-utils/mount.c:184
 #: sys-utils/mount.c:251 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
-#: sys-utils/swapon.c:247 sys-utils/swapon.c:277 sys-utils/swapon.c:736
+#: sys-utils/swapon.c:247 sys-utils/swapon.c:290 sys-utils/swapon.c:749
 #: sys-utils/umount.c:195
 msgid "failed to initialize libmount iterator"
 msgstr "ошибка инициализации libmount iterator"
@@ -9836,13 +9855,13 @@ msgstr ""
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1256 misc-utils/lslocks.c:535 sys-utils/lsns.c:905
-#: sys-utils/rfkill.c:628
+#: misc-utils/findmnt.c:1256 misc-utils/lslocks.c:535 sys-utils/lsns.c:970
+#: sys-utils/rfkill.c:629
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: misc-utils/findmnt.c:1257 sys-utils/lsns.c:906
+#: misc-utils/findmnt.c:1257 sys-utils/lsns.c:971
 #, fuzzy
 msgid " -l, --list             use list format output\n"
 msgstr "  -Q, --quiet-output           Без обычных выходных данных\n"
@@ -9927,7 +9946,7 @@ msgstr "   l   список типов известных файловых си�
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1276 misc-utils/lslocks.c:542 sys-utils/lsns.c:912
+#: misc-utils/findmnt.c:1276 misc-utils/lslocks.c:542 sys-utils/lsns.c:977
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr ""
 
@@ -10273,7 +10292,7 @@ msgstr "сохранен"
 
 #: misc-utils/hardlink.c:305
 #, fuzzy, c-format
-msgid "%-15s %ld.%06ld seconds"
+msgid "%-15s %<PRId64>.%06<PRId64> seconds"
 msgstr "%-14s %2i секунда\n"
 
 #: misc-utils/hardlink.c:305
@@ -10438,7 +10457,7 @@ msgstr "Невозможно установить обработчик сигн�
 
 #: misc-utils/hardlink.c:1075
 #, fuzzy
-msgid "no directory of dile specified"
+msgid "no directory or file specified"
 msgstr "не указано устройство"
 
 #: misc-utils/hardlink.c:1082
@@ -11263,16 +11282,16 @@ msgstr "  -u, --unqote                 Не заключать в кавычки
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:537 sys-utils/lsns.c:907 sys-utils/rfkill.c:629
+#: misc-utils/lslocks.c:537 sys-utils/lsns.c:972 sys-utils/rfkill.c:630
 #, fuzzy
 msgid " -n, --noheadings       don't print headings\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: misc-utils/lslocks.c:538 sys-utils/lsns.c:908 sys-utils/rfkill.c:630
+#: misc-utils/lslocks.c:538 sys-utils/lsns.c:973 sys-utils/rfkill.c:631
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:539 sys-utils/lsns.c:909 sys-utils/rfkill.c:631
+#: misc-utils/lslocks.c:539 sys-utils/lsns.c:974 sys-utils/rfkill.c:632
 #, fuzzy
 msgid "     --output-all       output all columns\n"
 msgstr " -O, --output-all     выводить все столбцы\n"
@@ -11281,14 +11300,14 @@ msgstr " -O, --output-all     выводить все столбцы\n"
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:541 sys-utils/lsns.c:911 sys-utils/rfkill.c:632
+#: misc-utils/lslocks.c:541 sys-utils/lsns.c:976 sys-utils/rfkill.c:633
 #, fuzzy
 msgid " -r, --raw              use the raw output format\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: misc-utils/lslocks.c:606 schedutils/chrt.c:407 schedutils/ionice.c:177
+#: misc-utils/lslocks.c:606 schedutils/chrt.c:414 schedutils/ionice.c:177
 #: schedutils/taskset.c:171 schedutils/uclampset.c:255 sys-utils/choom.c:102
-#: sys-utils/lsns.c:993 sys-utils/prlimit.c:590
+#: sys-utils/lsns.c:1058 sys-utils/prlimit.c:593
 msgid "invalid PID argument"
 msgstr "недопустимый аргумент PID"
 
@@ -11308,7 +11327,7 @@ msgstr ""
 msgid " -v, --verbose         explain what is being done\n"
 msgstr " -v, --verbose         разъяснение выполняемых действий\n"
 
-#: misc-utils/mcookie.c:97 misc-utils/wipefs.c:671 sys-utils/blkdiscard.c:104
+#: misc-utils/mcookie.c:97 misc-utils/wipefs.c:671 sys-utils/blkdiscard.c:107
 #: sys-utils/fallocate.c:107 sys-utils/fstrim.c:435
 msgid "<num>"
 msgstr ""
@@ -11326,7 +11345,7 @@ msgstr[2] "Получено %zu байт из %s\n"
 msgid "closing %s failed"
 msgstr "не удалось закрыть %s"
 
-#: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:184 sys-utils/fstrim.c:501
+#: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:189 sys-utils/fstrim.c:501
 #: text-utils/hexdump.c:124
 msgid "failed to parse length"
 msgstr "не удалось определить длину"
@@ -11371,7 +11390,7 @@ msgstr ""
 msgid "pathname argument is missing"
 msgstr "отсутствует аргумент пути"
 
-#: misc-utils/namei.c:414 sys-utils/lsns.c:1070
+#: misc-utils/namei.c:414 sys-utils/lsns.c:1135
 #, fuzzy
 msgid "failed to allocate UID cache"
 msgstr "не удалось определить заголовок GPT"
@@ -11626,8 +11645,8 @@ msgid "timeout [%d sec]\n"
 msgstr "истекло время ожидания в %u секунд"
 
 #: misc-utils/uuidd.c:470 sys-utils/irqtop.c:210 sys-utils/irqtop.c:213
-#: sys-utils/irqtop.c:230 term-utils/setterm.c:920 text-utils/column.c:517
-#: text-utils/column.c:547
+#: sys-utils/irqtop.c:230 term-utils/setterm.c:920 text-utils/column.c:531
+#: text-utils/column.c:561
 msgid "read failed"
 msgstr "ошибка чтения"
 
@@ -11889,8 +11908,8 @@ msgid "sha1-based"
 msgstr ""
 
 #: misc-utils/uuidparse.c:267 misc-utils/wipefs.c:178
-#: sys-utils/irq-common.c:155 sys-utils/irq-common.c:459 sys-utils/lscpu.c:947
-#: sys-utils/lsns.c:807 sys-utils/zramctl.c:505
+#: sys-utils/irq-common.c:155 sys-utils/irq-common.c:459 sys-utils/lscpu.c:948
+#: sys-utils/lsns.c:872 sys-utils/zramctl.c:505
 msgid "failed to initialize output column"
 msgstr "не удалось проинициализировать столбец вывода"
 
@@ -12224,62 +12243,62 @@ msgstr ""
 msgid "pid %d's current runtime/deadline/period parameters: %ju/%ju/%ju\n"
 msgstr ""
 
-#: schedutils/chrt.c:221 schedutils/chrt.c:327 schedutils/uclampset.c:141
-#: schedutils/uclampset.c:182
+#: schedutils/chrt.c:222 schedutils/chrt.c:229 schedutils/chrt.c:332
+#: schedutils/chrt.c:340 schedutils/uclampset.c:141 schedutils/uclampset.c:182
 #, fuzzy
 msgid "cannot obtain the list of tasks"
 msgstr "%s: невозможно найти устройство для %s\n"
 
-#: schedutils/chrt.c:255
+#: schedutils/chrt.c:259
 #, c-format
 msgid "%s min/max priority\t: %d/%d\n"
 msgstr ""
 
-#: schedutils/chrt.c:258
+#: schedutils/chrt.c:262
 #, fuzzy, c-format
 msgid "%s not supported?\n"
 msgstr "NFS через TCP не поддерживается.\n"
 
-#: schedutils/chrt.c:331
+#: schedutils/chrt.c:336
 #, fuzzy, c-format
 msgid "failed to set tid %d's policy"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: schedutils/chrt.c:336
+#: schedutils/chrt.c:343
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: schedutils/chrt.c:416
+#: schedutils/chrt.c:423
 #, fuzzy
 msgid "invalid runtime argument"
 msgstr "недопустимый аргумент времени"
 
-#: schedutils/chrt.c:419
+#: schedutils/chrt.c:426
 #, fuzzy
 msgid "invalid period argument"
 msgstr "неверный id: %s\n"
 
-#: schedutils/chrt.c:422
+#: schedutils/chrt.c:429
 #, fuzzy
 msgid "invalid deadline argument"
 msgstr "недопустимый аргумент головок"
 
-#: schedutils/chrt.c:447
+#: schedutils/chrt.c:454
 #, fuzzy
 msgid "invalid priority argument"
 msgstr "неверный id"
 
-#: schedutils/chrt.c:451
+#: schedutils/chrt.c:458
 msgid "--sched-{runtime,deadline,period} options are supported for SCHED_DEADLINE only"
 msgstr ""
 
-#: schedutils/chrt.c:466
+#: schedutils/chrt.c:473
 #, fuzzy
 msgid "SCHED_DEADLINE is unsupported"
 msgstr "NFS через TCP не поддерживается.\n"
 
-#: schedutils/chrt.c:473
+#: schedutils/chrt.c:480
 #, c-format
 msgid "unsupported priority value for the policy: %d: see --max for valid range"
 msgstr ""
@@ -12564,120 +12583,120 @@ msgstr "отсутствует аргумент строки опций"
 msgid "no cmd to execute"
 msgstr "невозможно выполнить %s"
 
-#: sys-utils/blkdiscard.c:70
+#: sys-utils/blkdiscard.c:73
 #, c-format
 msgid "%s: Zero-filled %<PRIu64> bytes from the offset %<PRIu64>\n"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:75
+#: sys-utils/blkdiscard.c:78
 #, c-format
 msgid "%s: Discarded %<PRIu64> bytes from the offset %<PRIu64>\n"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:89
+#: sys-utils/blkdiscard.c:92
 msgid "Discard the content of sectors on a device.\n"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:92
+#: sys-utils/blkdiscard.c:95
 #, fuzzy
 msgid " -f, --force         disable all checking\n"
 msgstr "Вы можете отключить проверку всех противоречий:"
 
-#: sys-utils/blkdiscard.c:93
+#: sys-utils/blkdiscard.c:96
 msgid " -o, --offset <num>  offset in bytes to discard from\n"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:94
+#: sys-utils/blkdiscard.c:97
 #, fuzzy
 msgid " -l, --length <num>  length of bytes to discard from the offset\n"
 msgstr " -n, --namelength <кол-во>  максимальная длина имен файлов\n"
 
-#: sys-utils/blkdiscard.c:95
+#: sys-utils/blkdiscard.c:98
 #, fuzzy
 msgid " -p, --step <num>    size of the discard iterations within the offset\n"
 msgstr " -n, --months <num>    показать num месяцев, начиная с месяца даты\n"
 
-#: sys-utils/blkdiscard.c:96
+#: sys-utils/blkdiscard.c:99
 #, fuzzy
 msgid " -s, --secure        perform secure discard\n"
 msgstr " -v, --verbose        режим подробного вывода\n"
 
-#: sys-utils/blkdiscard.c:97
+#: sys-utils/blkdiscard.c:100
 #, fuzzy
 msgid " -z, --zeroout       zero-fill rather than discard\n"
 msgstr "              параметры\n"
 
-#: sys-utils/blkdiscard.c:98
+#: sys-utils/blkdiscard.c:101
 #, fuzzy
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose         разъяснение выполняемых действий\n"
 
-#: sys-utils/blkdiscard.c:188 sys-utils/fstrim.c:505 sys-utils/losetup.c:710
+#: sys-utils/blkdiscard.c:193 sys-utils/fstrim.c:505 sys-utils/losetup.c:710
 #: text-utils/hexdump.c:131
 #, fuzzy
 msgid "failed to parse offset"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: sys-utils/blkdiscard.c:192
+#: sys-utils/blkdiscard.c:197
 #, fuzzy
 msgid "failed to parse step"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
 #: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:533 sys-utils/umount.c:615
 #, fuzzy
 msgid "unexpected number of arguments"
 msgstr "максимальное количество сегментов = %lu\n"
 
-#: sys-utils/blkdiscard.c:233
+#: sys-utils/blkdiscard.c:238
 #, fuzzy, c-format
 msgid "%s: BLKGETSIZE64 ioctl failed"
 msgstr "BLKGETSIZE ioctl завершился неудачей на %s\n"
 
-#: sys-utils/blkdiscard.c:235 sys-utils/blkzone.c:155
+#: sys-utils/blkdiscard.c:240 sys-utils/blkzone.c:155
 #, fuzzy, c-format
 msgid "%s: BLKSSZGET ioctl failed"
 msgstr "BLKGETSIZE ioctl завершился неудачей на %s\n"
 
-#: sys-utils/blkdiscard.c:239
+#: sys-utils/blkdiscard.c:244
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:244 sys-utils/blkzone.c:348
+#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:348
 #, fuzzy, c-format
 msgid "%s: offset is greater than device size"
 msgstr "не удалось получить размер устройства"
 
-#: sys-utils/blkdiscard.c:253
+#: sys-utils/blkdiscard.c:258
 #, c-format
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:265
+#: sys-utils/blkdiscard.c:270
 msgid "This is destructive operation, data will be lost! Use the -f option to override."
 msgstr ""
 
-#: sys-utils/blkdiscard.c:268
+#: sys-utils/blkdiscard.c:273
 msgid "Operation forced, data will be lost!"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:273
+#: sys-utils/blkdiscard.c:278
 #, fuzzy
 msgid "failed to probe the device"
 msgstr "Невозможно выделить буфер.\n"
 
-#: sys-utils/blkdiscard.c:287
+#: sys-utils/blkdiscard.c:293
 #, fuzzy, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "BLKGETSIZE ioctl завершился неудачей на %s\n"
 
-#: sys-utils/blkdiscard.c:291
+#: sys-utils/blkdiscard.c:297
 #, fuzzy, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "KDGHWCLK ioctl завершился неудачей"
 
-#: sys-utils/blkdiscard.c:295
+#: sys-utils/blkdiscard.c:301
 #, fuzzy, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "KDGHWCLK ioctl завершился неудачей"
@@ -14079,10 +14098,10 @@ msgstr ""
 
 #: sys-utils/flock.c:334
 #, c-format
-msgid "%s: getting lock took %ld.%06ld seconds\n"
+msgid "%s: getting lock took %<PRId64>.%06<PRId64> seconds\n"
 msgstr ""
 
-#: sys-utils/flock.c:345
+#: sys-utils/flock.c:346
 #, c-format
 msgid "%s: executing %s\n"
 msgstr "%s: выполняется %s\n"
@@ -14162,7 +14181,7 @@ msgstr ""
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr ""
 
-#: sys-utils/fstrim.c:249 sys-utils/lsns.c:1079 sys-utils/swapon.c:732
+#: sys-utils/fstrim.c:249 sys-utils/lsns.c:1144 sys-utils/swapon.c:745
 #: sys-utils/umount.c:267
 #, fuzzy, c-format
 msgid "failed to parse %s"
@@ -14240,133 +14259,137 @@ msgstr "Ошибка записи раздела на %s\n"
 msgid "no mountpoint specified"
 msgstr "не указаны точки монтирования"
 
-#: sys-utils/hwclock.c:212
+#: sys-utils/hwclock.c:213
 #, c-format
 msgid "Assuming hardware clock is kept in %s time.\n"
 msgstr "Подразумевается, что аппаратные часы выставлены по %s времени.\n"
 
-#: sys-utils/hwclock.c:213 sys-utils/hwclock.c:277
+#: sys-utils/hwclock.c:214 sys-utils/hwclock.c:282
 msgid "UTC"
 msgstr "UTC"
 
-#: sys-utils/hwclock.c:213 sys-utils/hwclock.c:276
+#: sys-utils/hwclock.c:214 sys-utils/hwclock.c:281
 msgid "local"
 msgstr "местному"
 
-#: sys-utils/hwclock.c:263
+#: sys-utils/hwclock.c:269
 #, fuzzy
 msgid ""
 "Warning: unrecognized third line in adjtime file\n"
 "(Expected: `UTC' or `LOCAL' or nothing.)"
 msgstr "Предупреждение: нераспознанная третья строка в файле adjtime\n"
 
-#: sys-utils/hwclock.c:270
-#, c-format
-msgid "Last drift adjustment done at %ld seconds after 1969\n"
+#: sys-utils/hwclock.c:275
+#, fuzzy, c-format
+#| msgid "Last drift adjustment done at %ld seconds after 1969\n"
+msgid "Last drift adjustment done at %<PRId64> seconds after 1969\n"
 msgstr "Дата последней корректировки отклонения - %ld секунд после 1969\n"
 
-#: sys-utils/hwclock.c:272
-#, c-format
-msgid "Last calibration done at %ld seconds after 1969\n"
+#: sys-utils/hwclock.c:277
+#, fuzzy, c-format
+#| msgid "Last calibration done at %ld seconds after 1969\n"
+msgid "Last calibration done at %<PRId64> seconds after 1969\n"
 msgstr "Дата последней калибровки - %ld секунд после 1969\n"
 
-#: sys-utils/hwclock.c:274
+#: sys-utils/hwclock.c:279
 #, c-format
 msgid "Hardware clock is on %s time\n"
 msgstr "Аппаратные часы выставлены по %s времени\n"
 
-#: sys-utils/hwclock.c:301
+#: sys-utils/hwclock.c:306
 #, c-format
 msgid "Waiting for clock tick...\n"
 msgstr "Ожидается тиканье часов...\n"
 
-#: sys-utils/hwclock.c:307
+#: sys-utils/hwclock.c:312
 #, c-format
 msgid "...synchronization failed\n"
 msgstr "...синхронизация завершилась неудачей\n"
 
-#: sys-utils/hwclock.c:309
+#: sys-utils/hwclock.c:314
 #, c-format
 msgid "...got clock tick\n"
 msgstr "...получено тиканье часов\n"
 
-#: sys-utils/hwclock.c:350
+#: sys-utils/hwclock.c:355
 #, c-format
 msgid "Invalid values in hardware clock: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 msgstr "Неверные значения в аппаратных часах: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 
-#: sys-utils/hwclock.c:358
-#, c-format
-msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
+#: sys-utils/hwclock.c:362
+#, fuzzy, c-format
+#| msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
+msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %<PRId64> seconds since 1969\n"
 msgstr "Аппаратное время: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld секунд с 1969\n"
 
-#: sys-utils/hwclock.c:385
+#: sys-utils/hwclock.c:388
 #, c-format
 msgid "Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 msgstr "Время, прочитанное с аппаратных часов: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 
-#: sys-utils/hwclock.c:412
-#, c-format
-msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
+#: sys-utils/hwclock.c:415
+#, fuzzy, c-format
+#| msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
+msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %<PRId64> seconds since 1969\n"
 msgstr "Аппаратные часы устанавливаются в %.2d:%.2d:%.2d = %ld секунд с 1969\n"
 
-#: sys-utils/hwclock.c:448
+#: sys-utils/hwclock.c:451
 #, c-format
 msgid "RTC type: '%s'\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:548
+#: sys-utils/hwclock.c:551
 #, fuzzy, c-format
 msgid "Using delay: %.6f seconds\n"
 msgstr "%s  %.6f секунд\n"
 
-#: sys-utils/hwclock.c:567
+#: sys-utils/hwclock.c:570
 #, c-format
-msgid "time jumped backward %.6f seconds to %ld.%06ld - retargeting\n"
+msgid "time jumped backward %.6f seconds to %<PRId64>.%06<PRId64> - retargeting\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:589
+#: sys-utils/hwclock.c:592
 #, c-format
-msgid "missed it - %ld.%06ld is too far past %ld.%06ld (%.6f > %.6f)\n"
+msgid "missed it - %<PRId64>.%06<PRId64> is too far past %<PRId64>.%06<PRId64> (%.6f > %.6f)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:616
+#: sys-utils/hwclock.c:619
 #, c-format
 msgid ""
-"%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
-"Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"
+"%<PRId64>.%06<PRId64> is close enough to %<PRId64>.%06<PRId64> (%.6f < %.6f)\n"
+"Set RTC to %<PRId64> (%<PRId64> + %d; refsystime = %<PRId64>.%06<PRId64>)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:710
+#: sys-utils/hwclock.c:713
 #, fuzzy
 msgid "Calling settimeofday(NULL, 0) to lock the warp_clock function."
 msgstr "Вызывается settimeofday:\n"
 
-#: sys-utils/hwclock.c:713
+#: sys-utils/hwclock.c:716
 #, fuzzy, c-format
 msgid "Calling settimeofday(NULL, %d) to set the kernel timezone.\n"
 msgstr "Вызывается settimeofday:\n"
 
-#: sys-utils/hwclock.c:717
+#: sys-utils/hwclock.c:720
 #, c-format
 msgid "Calling settimeofday(NULL, %d) to warp System time, set PCIL and the kernel tz.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:722
+#: sys-utils/hwclock.c:725
 #, fuzzy, c-format
-msgid "Calling settimeofday(%ld.%06ld, NULL) to set the System time.\n"
+msgid "Calling settimeofday(%<PRId64>.%06<PRId64>, NULL) to set the System time.\n"
 msgstr "Вызывается settimeofday:\n"
 
-#: sys-utils/hwclock.c:744
+#: sys-utils/hwclock.c:747
 msgid "settimeofday() failed"
 msgstr "settimeofday() завершился неудачей"
 
-#: sys-utils/hwclock.c:768
+#: sys-utils/hwclock.c:771
 #, fuzzy, c-format
 msgid "Not adjusting drift factor because the --update-drift option was not used.\n"
 msgstr "Корректировка коэффициента отклонения не выполнена, потому что аппаратные часы ранее содержали мусор.\n"
 
-#: sys-utils/hwclock.c:772
+#: sys-utils/hwclock.c:775
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -14376,19 +14399,19 @@ msgstr ""
 "что последняя калибровка была нулевой, поэтому неверна\n"
 "хронология и необходим запуск калибровки.\n"
 
-#: sys-utils/hwclock.c:778
+#: sys-utils/hwclock.c:781
 #, fuzzy, c-format
 msgid "Not adjusting drift factor because it has been less than four hours since the last calibration.\n"
 msgstr "Корректировка коэффициента отклонения не выполнена, потому что со времени последней калибровки прошло менее дня.\n"
 
-#: sys-utils/hwclock.c:816
+#: sys-utils/hwclock.c:819
 #, c-format
 msgid ""
 "Clock drift factor was calculated as %f seconds/day.\n"
 "It is far too much. Resetting to zero.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:823
+#: sys-utils/hwclock.c:826
 #, fuzzy, c-format
 msgid ""
 "Clock drifted %f seconds in the past %f seconds\n"
@@ -14398,32 +14421,32 @@ msgstr ""
 "Часы переведены на %.1f секунд назад, %d секунд несмотря на коэффициент отклонения %f секунд в день.\n"
 "Коэффициент отклонения настраивается на %f секунд в день\n"
 
-#: sys-utils/hwclock.c:867
+#: sys-utils/hwclock.c:870
 #, fuzzy, c-format
-msgid "Time since last adjustment is %ld second\n"
-msgid_plural "Time since last adjustment is %ld seconds\n"
+msgid "Time since last adjustment is %<PRId64> second\n"
+msgid_plural "Time since last adjustment is %<PRId64> seconds\n"
 msgstr[0] "Время после последней корректировки составляет %d секунд\n"
 msgstr[1] "Время после последней корректировки составляет %d секунд\n"
 msgstr[2] ""
 
-#: sys-utils/hwclock.c:871
+#: sys-utils/hwclock.c:874
 #, c-format
-msgid "Calculated Hardware Clock drift is %ld.%06ld seconds\n"
+msgid "Calculated Hardware Clock drift is %<PRId64>.%06<PRId64> seconds\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:896
+#: sys-utils/hwclock.c:899
 #, c-format
 msgid ""
 "New %s data:\n"
 "%s"
 msgstr ""
 
-#: sys-utils/hwclock.c:908
+#: sys-utils/hwclock.c:911
 #, fuzzy, c-format
 msgid "cannot update %s"
 msgstr "невозможно открыть %s"
 
-#: sys-utils/hwclock.c:944
+#: sys-utils/hwclock.c:947
 #, fuzzy, c-format
 msgid "Not setting clock because last adjustment time is zero, so history is bad.\n"
 msgstr ""
@@ -14431,7 +14454,7 @@ msgstr ""
 "что последняя калибровка была нулевой, поэтому неверна\n"
 "хронология и необходим запуск калибровки.\n"
 
-#: sys-utils/hwclock.c:948
+#: sys-utils/hwclock.c:951
 #, fuzzy, c-format
 msgid "Not setting clock because drift factor %f is far too high.\n"
 msgstr ""
@@ -14439,207 +14462,207 @@ msgstr ""
 "что последняя калибровка была нулевой, поэтому неверна\n"
 "хронология и необходим запуск калибровки.\n"
 
-#: sys-utils/hwclock.c:978
+#: sys-utils/hwclock.c:981
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Не найден пригодный часовой интерфейс.\n"
 
-#: sys-utils/hwclock.c:980
+#: sys-utils/hwclock.c:983
 #, fuzzy
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr "Невозможно получить доступ к аппаратным часам каким бы то ни было известным способом.\n"
 
-#: sys-utils/hwclock.c:984
+#: sys-utils/hwclock.c:987
 #, fuzzy
 msgid "Use the --verbose option to see the details of our search for an access method."
 msgstr "Используйте опцию --debug, чтобы увидеть подробную информацию о нашем поиске для метода доступа.\n"
 
-#: sys-utils/hwclock.c:1034
+#: sys-utils/hwclock.c:1037
 #, c-format
-msgid "Target date:   %ld\n"
+msgid "Target date:   %<PRId64>\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1035
+#: sys-utils/hwclock.c:1038
 #, c-format
-msgid "Predicted RTC: %ld\n"
+msgid "Predicted RTC: %<PRId64>\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1065
+#: sys-utils/hwclock.c:1068
 msgid "RTC read returned an invalid value."
 msgstr ""
 
-#: sys-utils/hwclock.c:1095
+#: sys-utils/hwclock.c:1098
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr "Необходимая корректировка составляет меньше секунды, поэтому часы не настраиваются.\n"
 
-#: sys-utils/hwclock.c:1132
+#: sys-utils/hwclock.c:1135
 #, fuzzy
 msgid "unable to read the RTC epoch."
 msgstr "невозможно прочитать суперблок"
 
-#: sys-utils/hwclock.c:1134
+#: sys-utils/hwclock.c:1137
 #, c-format
 msgid "The RTC epoch is set to %lu.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1137
+#: sys-utils/hwclock.c:1140
 msgid "--epoch is required for --setepoch."
 msgstr ""
 
-#: sys-utils/hwclock.c:1140
+#: sys-utils/hwclock.c:1143
 #, fuzzy
 msgid "unable to set the RTC epoch."
 msgstr "Невозможно установить системные часы.\n"
 
-#: sys-utils/hwclock.c:1154
+#: sys-utils/hwclock.c:1157
 #, fuzzy, c-format
 msgid " %s [function] [option...]\n"
 msgstr "Использование: %s [опции] устройство...\n"
 
-#: sys-utils/hwclock.c:1157
+#: sys-utils/hwclock.c:1160
 msgid "Time clocks utility."
 msgstr ""
 
-#: sys-utils/hwclock.c:1160
+#: sys-utils/hwclock.c:1163
 #, fuzzy
 msgid " -r, --show           display the RTC time"
 msgstr " -r, --raw                отобразить в формате сырых данных\n"
 
-#: sys-utils/hwclock.c:1161
+#: sys-utils/hwclock.c:1164
 #, fuzzy
 msgid "     --get            display drift corrected RTC time"
 msgstr " -Z, --context            показать контекст SELinux\n"
 
-#: sys-utils/hwclock.c:1162
+#: sys-utils/hwclock.c:1165
 #, fuzzy
 msgid "     --set            set the RTC according to --date"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: sys-utils/hwclock.c:1163
+#: sys-utils/hwclock.c:1166
 msgid " -s, --hctosys        set the system time from the RTC"
 msgstr ""
 
-#: sys-utils/hwclock.c:1164
+#: sys-utils/hwclock.c:1167
 #, fuzzy
 msgid " -w, --systohc        set the RTC from the system time"
 msgstr "   l   список типов известных файловых систем"
 
-#: sys-utils/hwclock.c:1165
+#: sys-utils/hwclock.c:1168
 msgid "     --systz          send timescale configurations to the kernel"
 msgstr ""
 
-#: sys-utils/hwclock.c:1166
+#: sys-utils/hwclock.c:1169
 msgid " -a, --adjust         adjust the RTC to account for systematic drift"
 msgstr ""
 
-#: sys-utils/hwclock.c:1168
+#: sys-utils/hwclock.c:1171
 #, fuzzy
 msgid "     --getepoch       display the RTC epoch"
 msgstr "     --help                 показать эту справку и выйти\n"
 
-#: sys-utils/hwclock.c:1169
+#: sys-utils/hwclock.c:1172
 msgid "     --setepoch       set the RTC epoch according to --epoch"
 msgstr ""
 
-#: sys-utils/hwclock.c:1171
+#: sys-utils/hwclock.c:1174
 msgid "     --predict        predict the drifted RTC time according to --date"
 msgstr ""
 
-#: sys-utils/hwclock.c:1173
+#: sys-utils/hwclock.c:1176
 #, fuzzy
 msgid " -u, --utc            the RTC timescale is UTC"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: sys-utils/hwclock.c:1174
+#: sys-utils/hwclock.c:1177
 #, fuzzy
 msgid " -l, --localtime      the RTC timescale is Local"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: sys-utils/hwclock.c:1177
+#: sys-utils/hwclock.c:1180
 #, fuzzy, c-format
 msgid " -f, --rtc <file>     use an alternate file to %1$s\n"
 msgstr " -f, --file <file>    использовать указанный файл вместо %s\n"
 
-#: sys-utils/hwclock.c:1180
+#: sys-utils/hwclock.c:1183
 #, c-format
 msgid "     --directisa      use the ISA bus instead of %1$s access\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1181
+#: sys-utils/hwclock.c:1184
 msgid "     --date <time>    date/time input for --set and --predict"
 msgstr ""
 
-#: sys-utils/hwclock.c:1182
+#: sys-utils/hwclock.c:1185
 msgid "     --delay <sec>    delay used when set new RTC time"
 msgstr ""
 
-#: sys-utils/hwclock.c:1184
+#: sys-utils/hwclock.c:1187
 msgid "     --epoch <year>   epoch input for --setepoch"
 msgstr ""
 
-#: sys-utils/hwclock.c:1186
+#: sys-utils/hwclock.c:1189
 msgid "     --update-drift   update the RTC drift factor"
 msgstr ""
 
-#: sys-utils/hwclock.c:1188
+#: sys-utils/hwclock.c:1191
 #, fuzzy, c-format
 msgid "     --noadjfile      do not use %1$s\n"
 msgstr "     --nohints              не показывать советы\n"
 
-#: sys-utils/hwclock.c:1190
+#: sys-utils/hwclock.c:1193
 #, fuzzy, c-format
 msgid "     --adjfile <file> use an alternate file to %1$s\n"
 msgstr " -f, --file <file>    использовать указанный файл вместо %s\n"
 
-#: sys-utils/hwclock.c:1191
+#: sys-utils/hwclock.c:1194
 #, fuzzy
 msgid "     --test           dry run; implies --verbose"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: sys-utils/hwclock.c:1192
+#: sys-utils/hwclock.c:1195
 #, fuzzy
 msgid " -v, --verbose        display more details"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: sys-utils/hwclock.c:1288
+#: sys-utils/hwclock.c:1291
 #, fuzzy
 msgid "Unable to connect to audit system"
 msgstr "Невозможно установить системные часы.\n"
 
-#: sys-utils/hwclock.c:1312
+#: sys-utils/hwclock.c:1315
 msgid "use --verbose, --debug has been deprecated."
 msgstr ""
 
-#: sys-utils/hwclock.c:1414
+#: sys-utils/hwclock.c:1417
 #, fuzzy, c-format
 msgid "%d too many arguments given"
 msgstr "слишком много аргументов"
 
-#: sys-utils/hwclock.c:1422
+#: sys-utils/hwclock.c:1425
 msgid "--update-drift requires --set or --systohc"
 msgstr ""
 
-#: sys-utils/hwclock.c:1427
+#: sys-utils/hwclock.c:1430
 #, fuzzy
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "%s: С --noadjfile вы должны указать либо --utc, либо --localtime\n"
 
-#: sys-utils/hwclock.c:1434
+#: sys-utils/hwclock.c:1437
 msgid "--date is required for --set or --predict"
 msgstr ""
 
-#: sys-utils/hwclock.c:1451
+#: sys-utils/hwclock.c:1454
 #, fuzzy, c-format
 msgid "invalid date '%s'"
 msgstr "недопустимый id: %s"
 
-#: sys-utils/hwclock.c:1465
+#: sys-utils/hwclock.c:1468
 #, fuzzy, c-format
-msgid "System Time: %ld.%06ld\n"
+msgid "System Time: %<PRId64>.%06<PRId64>\n"
 msgstr "Текущее системное время: %ld = %s\n"
 
-#: sys-utils/hwclock.c:1482
+#: sys-utils/hwclock.c:1485
 msgid "Test mode: nothing was changed."
 msgstr ""
 
@@ -15562,11 +15585,11 @@ msgid "name"
 msgstr "Новое имя"
 
 #: sys-utils/irq-common.c:138 sys-utils/irq-common.c:443 sys-utils/lsmem.c:689
-#: sys-utils/lsns.c:782
+#: sys-utils/lsns.c:847
 msgid "failed to initialize output table"
 msgstr "не удалось проинициализировать таблицу вывода"
 
-#: sys-utils/irq-common.c:172 sys-utils/lsns.c:720
+#: sys-utils/irq-common.c:172 sys-utils/lsns.c:779
 msgid "failed to add line to output"
 msgstr "не удалось добавить строку вывода"
 
@@ -16350,92 +16373,92 @@ msgstr "размер физического сектора"
 msgid "Flags:"
 msgstr "Флаги:"
 
-#: sys-utils/lscpu.c:953
+#: sys-utils/lscpu.c:954
 msgid "Architecture:"
 msgstr "Архитектура:"
 
-#: sys-utils/lscpu.c:966
+#: sys-utils/lscpu.c:967
 msgid "CPU op-mode(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:969
+#: sys-utils/lscpu.c:970
 msgid "Address sizes:"
 msgstr ""
 
-#: sys-utils/lscpu.c:971 sys-utils/lscpu.c:973
+#: sys-utils/lscpu.c:972 sys-utils/lscpu.c:974
 msgid "Byte Order:"
 msgstr "Порядок байт:"
 
-#: sys-utils/lscpu.c:977
+#: sys-utils/lscpu.c:978
 msgid "CPU(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:981
+#: sys-utils/lscpu.c:982
 msgid "On-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:982
+#: sys-utils/lscpu.c:983
 msgid "On-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:994
+#: sys-utils/lscpu.c:995
 #, fuzzy
 msgid "failed to callocate cpu set"
 msgstr "Невозможно выделить буфер.\n"
 
-#: sys-utils/lscpu.c:1003
+#: sys-utils/lscpu.c:1004
 msgid "Off-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1004
+#: sys-utils/lscpu.c:1005
 msgid "Off-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1011
+#: sys-utils/lscpu.c:1012
 msgid "Vendor ID:"
 msgstr "ID прроизводителя:"
 
-#: sys-utils/lscpu.c:1013
+#: sys-utils/lscpu.c:1014
 #, fuzzy
 msgid "BIOS Vendor ID:"
 msgstr "ID прроизводителя:"
 
-#: sys-utils/lscpu.c:1021
+#: sys-utils/lscpu.c:1022
 #, fuzzy
 msgid "Virtualization features:"
 msgstr "Тип виртуализации:"
 
-#: sys-utils/lscpu.c:1023 sys-utils/lscpu.c:1025
+#: sys-utils/lscpu.c:1024 sys-utils/lscpu.c:1026
 msgid "Virtualization:"
 msgstr "Виртуализация:"
 
-#: sys-utils/lscpu.c:1028
+#: sys-utils/lscpu.c:1029
 msgid "Hypervisor:"
 msgstr "Гипервизор:"
 
-#: sys-utils/lscpu.c:1030
+#: sys-utils/lscpu.c:1031
 msgid "Hypervisor vendor:"
 msgstr "Разработчик гипервизора:"
 
-#: sys-utils/lscpu.c:1031
+#: sys-utils/lscpu.c:1032
 msgid "Virtualization type:"
 msgstr "Тип виртуализации:"
 
-#: sys-utils/lscpu.c:1043
+#: sys-utils/lscpu.c:1055
 msgid "Caches (sum of all):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1055 sys-utils/lscpu.c:1085 sys-utils/lscpu.c:1118
+#: sys-utils/lscpu.c:1059 sys-utils/lscpu.c:1089 sys-utils/lscpu.c:1121
 #, fuzzy, c-format
 msgid "%s:"
 msgstr "%s"
 
-#: sys-utils/lscpu.c:1055 sys-utils/lscpu.c:1085
+#: sys-utils/lscpu.c:1059 sys-utils/lscpu.c:1089
 #, c-format
 msgid "%s cache:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1058
+#: sys-utils/lscpu.c:1062
 #, c-format
 msgid "%<PRIu64> (%d instance)"
 msgid_plural "%<PRIu64> (%d instances)"
@@ -16443,7 +16466,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: sys-utils/lscpu.c:1067
+#: sys-utils/lscpu.c:1071
 #, c-format
 msgid "%s (%d instance)"
 msgid_plural "%s (%d instances)"
@@ -16451,104 +16474,104 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: sys-utils/lscpu.c:1078
+#: sys-utils/lscpu.c:1086
 msgid "Caches:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1102
+#: sys-utils/lscpu.c:1105
 msgid "NUMA:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1104
+#: sys-utils/lscpu.c:1107
 msgid "NUMA node(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1106
+#: sys-utils/lscpu.c:1109
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1114
+#: sys-utils/lscpu.c:1117
 #, fuzzy
 msgid "Vulnerabilities:"
 msgstr "Наследуемые возможности: "
 
-#: sys-utils/lscpu.c:1118
+#: sys-utils/lscpu.c:1121
 #, fuzzy, c-format
 msgid "Vulnerability %s:"
 msgstr "%s: Неизвестная команда: %s\n"
 
-#: sys-utils/lscpu.c:1136
+#: sys-utils/lscpu.c:1139
 msgid "Display information about the CPU architecture.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1139
+#: sys-utils/lscpu.c:1142
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1140
-msgid " -b, --online            print online CPUs only (default for -p)\n"
-msgstr ""
-
-#: sys-utils/lscpu.c:1141
-#, fuzzy
-msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
-msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
-
-#: sys-utils/lscpu.c:1142
-msgid " -C, --caches[=<list>]   info about caches in extended readable format\n"
-msgstr ""
-
 #: sys-utils/lscpu.c:1143
-msgid " -c, --offline           print offline CPUs only\n"
+msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr ""
 
 #: sys-utils/lscpu.c:1144
 #, fuzzy
-msgid " -J, --json              use JSON for default or extended format\n"
-msgstr "  -V, --version                Вывод информации о версии\n"
+msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
+msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
 #: sys-utils/lscpu.c:1145
-msgid " -e, --extended[=<list>] print out an extended readable format\n"
+msgid " -C, --caches[=<list>]   info about caches in extended readable format\n"
 msgstr ""
 
 #: sys-utils/lscpu.c:1146
-msgid " -p, --parse[=<list>]    print out a parsable format\n"
+msgid " -c, --offline           print offline CPUs only\n"
 msgstr ""
 
 #: sys-utils/lscpu.c:1147
-msgid " -s, --sysroot <dir>     use specified directory as system root\n"
-msgstr ""
+#, fuzzy
+msgid " -J, --json              use JSON for default or extended format\n"
+msgstr "  -V, --version                Вывод информации о версии\n"
 
 #: sys-utils/lscpu.c:1148
-msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
+msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr ""
 
 #: sys-utils/lscpu.c:1149
+msgid " -p, --parse[=<list>]    print out a parsable format\n"
+msgstr ""
+
+#: sys-utils/lscpu.c:1150
+msgid " -s, --sysroot <dir>     use specified directory as system root\n"
+msgstr ""
+
+#: sys-utils/lscpu.c:1151
+msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
+msgstr ""
+
+#: sys-utils/lscpu.c:1152
 #, fuzzy
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -a, --all            показать все устройства\n"
 
-#: sys-utils/lscpu.c:1150
+#: sys-utils/lscpu.c:1153
 #, fuzzy
 msgid "     --output-all        print all available columns for -e, -p or -C\n"
 msgstr " -O, --output-all     выводить все столбцы\n"
 
-#: sys-utils/lscpu.c:1154
+#: sys-utils/lscpu.c:1157
 #, fuzzy
 msgid ""
 "\n"
 "Available output columns for -e or -p:\n"
 msgstr "Доступные команды:\n"
 
-#: sys-utils/lscpu.c:1158
+#: sys-utils/lscpu.c:1161
 #, fuzzy
 msgid ""
 "\n"
 "Available output columns for -C:\n"
 msgstr "Доступные команды:\n"
 
-#: sys-utils/lscpu.c:1284
+#: sys-utils/lscpu.c:1287
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr ""
@@ -17129,91 +17152,99 @@ msgstr "неверный id: %s\n"
 msgid "Failed to initialize output column"
 msgstr "не удалось проинициализировать столбец вывода"
 
-#: sys-utils/lsns.c:99
+#: sys-utils/lsns.c:105
 msgid "namespace identifier (inode number)"
 msgstr ""
 
-#: sys-utils/lsns.c:100
+#: sys-utils/lsns.c:106
 msgid "kind of namespace"
 msgstr ""
 
-#: sys-utils/lsns.c:101
+#: sys-utils/lsns.c:107
 #, fuzzy
 msgid "path to the namespace"
 msgstr "состояние устройства"
 
-#: sys-utils/lsns.c:102
+#: sys-utils/lsns.c:108
 #, fuzzy
 msgid "number of processes in the namespace"
 msgstr "количество процессов, которые запустил пользователь"
 
-#: sys-utils/lsns.c:103
+#: sys-utils/lsns.c:109
 msgid "lowest PID in the namespace"
 msgstr ""
 
-#: sys-utils/lsns.c:104
+#: sys-utils/lsns.c:110
 msgid "PPID of the PID"
 msgstr ""
 
-#: sys-utils/lsns.c:105
+#: sys-utils/lsns.c:111
 msgid "command line of the PID"
 msgstr ""
 
-#: sys-utils/lsns.c:106
+#: sys-utils/lsns.c:112
 msgid "UID of the PID"
 msgstr ""
 
-#: sys-utils/lsns.c:107
+#: sys-utils/lsns.c:113
 msgid "username of the PID"
 msgstr ""
 
-#: sys-utils/lsns.c:108
+#: sys-utils/lsns.c:114
 msgid "namespace ID as used by network subsystem"
 msgstr ""
 
-#: sys-utils/lsns.c:109
+#: sys-utils/lsns.c:115
 msgid "nsfs mountpoint (usually used network subsystem)"
 msgstr ""
 
-#: sys-utils/lsns.c:899
+#: sys-utils/lsns.c:116
+msgid "parent namespace identifier (inode number)"
+msgstr ""
+
+#: sys-utils/lsns.c:117
+msgid "owner namespace identifier (inode number)"
+msgstr ""
+
+#: sys-utils/lsns.c:964
 #, fuzzy, c-format
 msgid " %s [options] [<namespace>]\n"
 msgstr "использование: %s программа [аргумент ...]\n"
 
-#: sys-utils/lsns.c:902
+#: sys-utils/lsns.c:967
 #, fuzzy
 msgid "List system namespaces.\n"
 msgstr "Невозможно установить системные часы.\n"
 
-#: sys-utils/lsns.c:910
+#: sys-utils/lsns.c:975
 #, fuzzy
 msgid " -p, --task <pid>       print process namespaces\n"
 msgstr "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: sys-utils/lsns.c:913
+#: sys-utils/lsns.c:978
 #, fuzzy
 msgid " -W, --nowrap           don't use multi-line representation\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: sys-utils/lsns.c:914
+#: sys-utils/lsns.c:979
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup, time)\n"
 msgstr ""
 
-#: sys-utils/lsns.c:1008
+#: sys-utils/lsns.c:1073
 #, fuzzy, c-format
 msgid "unknown namespace type: %s"
 msgstr "mount: неизвестный тип файловой системы '%s'"
 
-#: sys-utils/lsns.c:1037
+#: sys-utils/lsns.c:1102
 msgid "--task is mutually exclusive with <namespace>"
 msgstr ""
 
-#: sys-utils/lsns.c:1038
+#: sys-utils/lsns.c:1103
 #, fuzzy
 msgid "invalid namespace argument"
 msgstr "недопустимый аргумент головок"
 
-#: sys-utils/lsns.c:1090
+#: sys-utils/lsns.c:1155
 #, c-format
 msgid "not found namespace: %ju"
 msgstr ""
@@ -17359,7 +17390,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "     --target-prefix <path>\n"
-"                         specifies path use for all mountpoints\n"
+"                         specifies path used for all mountpoints\n"
 msgstr "  rdev -o N ...                   использование смещения байтов N"
 
 #: sys-utils/mount.c:489 sys-utils/umount.c:105
@@ -17817,46 +17848,46 @@ msgid ""
 "                        under real-time scheduling\n"
 msgstr ""
 
-#: sys-utils/prlimit.c:243 sys-utils/prlimit.c:249 sys-utils/prlimit.c:365
-#: sys-utils/prlimit.c:370
+#: sys-utils/prlimit.c:245 sys-utils/prlimit.c:251 sys-utils/prlimit.c:368
+#: sys-utils/prlimit.c:373
 msgid "unlimited"
 msgstr "неограничено"
 
-#: sys-utils/prlimit.c:331
+#: sys-utils/prlimit.c:334
 #, fuzzy, c-format
 msgid "failed to get old %s limit"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: sys-utils/prlimit.c:355
+#: sys-utils/prlimit.c:358
 #, c-format
 msgid "the soft limit %s cannot exceed the hard limit"
 msgstr ""
 
-#: sys-utils/prlimit.c:362
+#: sys-utils/prlimit.c:365
 #, c-format
 msgid "New %s limit for pid %d: "
 msgstr ""
 
-#: sys-utils/prlimit.c:377
+#: sys-utils/prlimit.c:380
 #, fuzzy, c-format
 msgid "failed to set the %s resource limit"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: sys-utils/prlimit.c:378
+#: sys-utils/prlimit.c:381
 #, fuzzy, c-format
 msgid "failed to get the %s resource limit"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: sys-utils/prlimit.c:460
+#: sys-utils/prlimit.c:463
 #, fuzzy, c-format
 msgid "failed to parse %s limit"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: sys-utils/prlimit.c:589
+#: sys-utils/prlimit.c:592
 msgid "option --pid may be specified only once"
 msgstr ""
 
-#: sys-utils/prlimit.c:618
+#: sys-utils/prlimit.c:621
 msgid "options --pid and COMMAND are mutually exclusive"
 msgstr ""
 
@@ -18059,41 +18090,41 @@ msgstr "не удаётся заблокировать %s"
 
 #: sys-utils/rfkill.c:221
 #, c-format
-msgid "wrong size of rfkill event: %zu < %d"
+msgid "wrong size of rfkill event: %zu < %zu"
 msgstr ""
 
-#: sys-utils/rfkill.c:251
+#: sys-utils/rfkill.c:252
 #, fuzzy, c-format
 msgid "failed to poll %s"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: sys-utils/rfkill.c:318
+#: sys-utils/rfkill.c:319
 #, fuzzy
 msgid "invalid identifier"
 msgstr "идентификатор устройства"
 
-#: sys-utils/rfkill.c:398 sys-utils/rfkill.c:401
+#: sys-utils/rfkill.c:399 sys-utils/rfkill.c:402
 #, fuzzy
 msgid "blocked"
 msgstr "заблокирован"
 
-#: sys-utils/rfkill.c:398 sys-utils/rfkill.c:401
+#: sys-utils/rfkill.c:399 sys-utils/rfkill.c:402
 #, fuzzy
 msgid "unblocked"
 msgstr "заблокирован"
 
-#: sys-utils/rfkill.c:420 sys-utils/rfkill.c:494 sys-utils/rfkill.c:535
-#: sys-utils/rfkill.c:571 sys-utils/rfkill.c:592
+#: sys-utils/rfkill.c:421 sys-utils/rfkill.c:495 sys-utils/rfkill.c:536
+#: sys-utils/rfkill.c:572 sys-utils/rfkill.c:593
 #, fuzzy, c-format
 msgid "invalid identifier: %s"
 msgstr "Идентификатор диска: %s"
 
-#: sys-utils/rfkill.c:622
+#: sys-utils/rfkill.c:623
 #, fuzzy, c-format
 msgid " %s [options] command [identifier ...]\n"
 msgstr " %s [параметры] [<устройство> ...]\n"
 
-#: sys-utils/rfkill.c:625
+#: sys-utils/rfkill.c:626
 msgid "Tool for enabling and disabling wireless devices.\n"
 msgstr ""
 
@@ -18102,30 +18133,30 @@ msgstr ""
 #. *
 #. list   [identifier]   (lista [tarkenne])
 #.
-#: sys-utils/rfkill.c:649
+#: sys-utils/rfkill.c:650
 msgid " help\n"
 msgstr ""
 
-#: sys-utils/rfkill.c:650
+#: sys-utils/rfkill.c:651
 msgid " event\n"
 msgstr ""
 
-#: sys-utils/rfkill.c:651
+#: sys-utils/rfkill.c:652
 #, fuzzy
 msgid " list   [identifier]\n"
 msgstr "Идентификатор диска"
 
-#: sys-utils/rfkill.c:652
+#: sys-utils/rfkill.c:653
 #, fuzzy
 msgid " block   identifier\n"
 msgstr "Идентификатор диска"
 
-#: sys-utils/rfkill.c:653
+#: sys-utils/rfkill.c:654
 #, fuzzy
 msgid " unblock identifier\n"
 msgstr "Идентификатор диска"
 
-#: sys-utils/rfkill.c:654
+#: sys-utils/rfkill.c:655
 #, fuzzy
 msgid " toggle  identifier\n"
 msgstr "Идентификатор диска"
@@ -18216,7 +18247,7 @@ msgstr "отбросить смещение выравнивания"
 msgid "unexpected third line in: %s: %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:345 sys-utils/rtcwake.c:673
+#: sys-utils/rtcwake.c:345 sys-utils/rtcwake.c:675
 #, fuzzy
 msgid "read rtc alarm failed"
 msgstr "выделено семафоров = %d\n"
@@ -18245,102 +18276,102 @@ msgstr "невозможно перемотать устройство для с
 msgid "could not read: %s"
 msgstr "не удалось прочитать: %s"
 
-#: sys-utils/rtcwake.c:494
+#: sys-utils/rtcwake.c:493
 #, fuzzy, c-format
 msgid "unrecognized suspend state '%s'"
 msgstr " %s: нераспознанный тип таблицы разделов\n"
 
-#: sys-utils/rtcwake.c:502
+#: sys-utils/rtcwake.c:501
 msgid "invalid seconds argument"
 msgstr "недопустимый аргумент секунд"
 
-#: sys-utils/rtcwake.c:506
+#: sys-utils/rtcwake.c:505
 msgid "invalid time argument"
 msgstr "недопустимый аргумент времени"
 
-#: sys-utils/rtcwake.c:533
+#: sys-utils/rtcwake.c:532
 #, c-format
 msgid "%s: assuming RTC uses UTC ...\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:538
+#: sys-utils/rtcwake.c:537
 msgid "Using UTC time.\n"
 msgstr "Используется всемирное время.\n"
 
-#: sys-utils/rtcwake.c:539
+#: sys-utils/rtcwake.c:538
 msgid "Using local time.\n"
 msgstr "Используется местное время.\n"
 
-#: sys-utils/rtcwake.c:542
+#: sys-utils/rtcwake.c:541
 msgid "must provide wake time (see --seconds, --time and --date options)"
 msgstr ""
 
-#: sys-utils/rtcwake.c:548
+#: sys-utils/rtcwake.c:547
 #, fuzzy, c-format
 msgid "%s not enabled for wakeup events"
 msgstr "%s: %s не lp-устройство.\n"
 
-#: sys-utils/rtcwake.c:555
+#: sys-utils/rtcwake.c:554
 #, c-format
-msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
+msgid "alarm %<PRId64>, sys_time %<PRId64>, rtc_time %<PRId64>, seconds %<PRIu64>\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:565
+#: sys-utils/rtcwake.c:567
 #, c-format
 msgid "time doesn't go backward to %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:578
+#: sys-utils/rtcwake.c:580
 #, fuzzy, c-format
 msgid "%s: wakeup using %s at %s"
 msgstr "Сообщение от %s@%s на %s в %s ..."
 
-#: sys-utils/rtcwake.c:584
+#: sys-utils/rtcwake.c:586
 #, fuzzy, c-format
 msgid "%s: wakeup from \"%s\" using %s at %s"
 msgstr "Сообщение от %s@%s на %s в %s ..."
 
-#: sys-utils/rtcwake.c:594
+#: sys-utils/rtcwake.c:596
 #, c-format
 msgid "suspend mode: no; leaving\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:617
+#: sys-utils/rtcwake.c:619
 #, c-format
 msgid "suspend mode: off; executing %s\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:626
+#: sys-utils/rtcwake.c:628
 #, fuzzy
 msgid "failed to find shutdown command"
 msgstr "не удалось прочитать символьную ссылку: %s"
 
-#: sys-utils/rtcwake.c:636
+#: sys-utils/rtcwake.c:638
 #, c-format
 msgid "suspend mode: on; reading rtc\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:641
+#: sys-utils/rtcwake.c:643
 #, fuzzy
 msgid "rtc read failed"
 msgstr "(Следующий файл: %s)"
 
-#: sys-utils/rtcwake.c:653
+#: sys-utils/rtcwake.c:655
 #, c-format
 msgid "suspend mode: disable; disabling alarm\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:657
+#: sys-utils/rtcwake.c:659
 #, c-format
 msgid "suspend mode: show; printing alarm info\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:664
+#: sys-utils/rtcwake.c:666
 #, c-format
 msgid "suspend mode: %s; suspending system\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:678
+#: sys-utils/rtcwake.c:680
 msgid "disable rtc alarm interrupt failed"
 msgstr ""
 
@@ -18966,7 +18997,7 @@ msgstr "Не суперпользователь."
 msgid "%s: swapoff failed"
 msgstr ""
 
-#: sys-utils/swapoff.c:141 sys-utils/swapon.c:793
+#: sys-utils/swapoff.c:141 sys-utils/swapon.c:806
 #, fuzzy, c-format
 msgid " %s [options] [<spec>]\n"
 msgstr "Использование: %s [опции] устройство...\n"
@@ -19023,168 +19054,166 @@ msgstr ""
 msgid "swap label"
 msgstr "без метки, "
 
-#: sys-utils/swapon.c:249
-#, c-format
-msgid "%s\t\t\t\tType\t\tSize\tUsed\tPriority\n"
+#. TRANSLATORS: The tabs make each field a multiple of 8 characters. Keep aligned with each entry below.
+#: sys-utils/swapon.c:250
+#, fuzzy, c-format
+#| msgid "%s\t\t\t\tType\t\tSize\tUsed\tPriority\n"
+msgid "Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority\n"
 msgstr "%s\t\t\t\tТип\t\tРазмер\tИсп-но\tПриоритет\n"
 
-#: sys-utils/swapon.c:249
-msgid "Filename"
-msgstr "Имя файла"
-
-#: sys-utils/swapon.c:315
+#: sys-utils/swapon.c:328
 #, c-format
 msgid "%s: reinitializing the swap."
 msgstr ""
 
-#: sys-utils/swapon.c:379
+#: sys-utils/swapon.c:392
 #, fuzzy, c-format
 msgid "%s: lseek failed"
 msgstr "поиск завершился неудачей"
 
-#: sys-utils/swapon.c:385
+#: sys-utils/swapon.c:398
 #, fuzzy, c-format
 msgid "%s: write signature failed"
 msgstr "невозможно записать страницу с сигнатурой"
 
-#: sys-utils/swapon.c:528
+#: sys-utils/swapon.c:541
 #, fuzzy, c-format
 msgid "%s: insecure permissions %04o, %04o suggested."
 msgstr "%s: предупреждение: %s имеет небезопасные разрешения %04o, рекомендуется %04o\n"
 
-#: sys-utils/swapon.c:533
+#: sys-utils/swapon.c:546
 #, fuzzy, c-format
 msgid "%s: insecure file owner %d, 0 (root) suggested."
 msgstr "%s: предупреждение: %s имеет небезопасные разрешения %04o, рекомендуется %04o\n"
 
-#: sys-utils/swapon.c:539
+#: sys-utils/swapon.c:552
 #, fuzzy, c-format
 msgid "%s: skipping - it appears to have holes."
 msgstr "%s: Пропускается файл %s - похоже в нём имеются дыры.\n"
 
-#: sys-utils/swapon.c:547
+#: sys-utils/swapon.c:560
 #, fuzzy, c-format
 msgid "%s: get size failed"
 msgstr "поиск завершился неудачей"
 
-#: sys-utils/swapon.c:553
+#: sys-utils/swapon.c:566
 #, c-format
 msgid "%s: read swap header failed"
 msgstr ""
 
-#: sys-utils/swapon.c:558
+#: sys-utils/swapon.c:571
 #, c-format
 msgid "%s: found signature [pagesize=%d, signature=%s]"
 msgstr ""
 
-#: sys-utils/swapon.c:569
+#: sys-utils/swapon.c:582
 #, c-format
 msgid "%s: pagesize=%d, swapsize=%llu, devsize=%llu"
 msgstr ""
 
-#: sys-utils/swapon.c:574
+#: sys-utils/swapon.c:587
 #, c-format
 msgid "%s: last_page 0x%08llx is larger than actual size of swapspace"
 msgstr ""
 
-#: sys-utils/swapon.c:584
+#: sys-utils/swapon.c:597
 #, c-format
 msgid "%s: swap format pagesize does not match."
 msgstr ""
 
-#: sys-utils/swapon.c:590
+#: sys-utils/swapon.c:603
 #, c-format
 msgid "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
 msgstr ""
 
-#: sys-utils/swapon.c:599
+#: sys-utils/swapon.c:612
 #, c-format
 msgid "%s: software suspend data detected. Rewriting the swap signature."
 msgstr ""
 
-#: sys-utils/swapon.c:669
+#: sys-utils/swapon.c:682
 #, fuzzy, c-format
 msgid "swapon %s\n"
 msgstr "%s на %s\n"
 
-#: sys-utils/swapon.c:673
+#: sys-utils/swapon.c:686
 #, fuzzy, c-format
 msgid "%s: swapon failed"
 msgstr "fsync завершился неудачей"
 
-#: sys-utils/swapon.c:746
+#: sys-utils/swapon.c:759
 #, fuzzy, c-format
 msgid "%s: noauto option -- ignored"
 msgstr "%s: ошибка разбора в строке %d — игнорируется"
 
-#: sys-utils/swapon.c:768
+#: sys-utils/swapon.c:781
 #, fuzzy, c-format
 msgid "%s: already active -- ignored"
 msgstr "%s: ошибка разбора в строке %d — игнорируется"
 
-#: sys-utils/swapon.c:774
+#: sys-utils/swapon.c:787
 #, fuzzy, c-format
 msgid "%s: inaccessible -- ignored"
 msgstr "%s: невозможно записать inode'ы"
 
-#: sys-utils/swapon.c:796
+#: sys-utils/swapon.c:809
 msgid "Enable devices and files for paging and swapping.\n"
 msgstr ""
 
-#: sys-utils/swapon.c:799
+#: sys-utils/swapon.c:812
 #, fuzzy
 msgid " -a, --all                enable all swaps from /etc/fstab\n"
 msgstr "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: sys-utils/swapon.c:800
+#: sys-utils/swapon.c:813
 msgid " -d, --discard[=<policy>] enable swap discards, if supported by device\n"
 msgstr ""
 
-#: sys-utils/swapon.c:801
+#: sys-utils/swapon.c:814
 msgid " -e, --ifexists           silently skip devices that do not exist\n"
 msgstr ""
 
-#: sys-utils/swapon.c:802
+#: sys-utils/swapon.c:815
 msgid " -f, --fixpgsz            reinitialize the swap space if necessary\n"
 msgstr ""
 
-#: sys-utils/swapon.c:803
+#: sys-utils/swapon.c:816
 msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgstr ""
 
-#: sys-utils/swapon.c:804
+#: sys-utils/swapon.c:817
 msgid " -p, --priority <prio>    specify the priority of the swap device\n"
 msgstr ""
 
-#: sys-utils/swapon.c:805
+#: sys-utils/swapon.c:818
 msgid " -s, --summary            display summary about used swap devices (DEPRECATED)\n"
 msgstr ""
 
-#: sys-utils/swapon.c:806
+#: sys-utils/swapon.c:819
 msgid "     --show[=<columns>]   display summary in definable table\n"
 msgstr ""
 
-#: sys-utils/swapon.c:807
+#: sys-utils/swapon.c:820
 #, fuzzy
 msgid "     --noheadings         don't print table heading (with --show)\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: sys-utils/swapon.c:808
+#: sys-utils/swapon.c:821
 #, fuzzy
 msgid "     --raw                use the raw output format (with --show)\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: sys-utils/swapon.c:809
+#: sys-utils/swapon.c:822
 #, fuzzy
 msgid "     --bytes              display swap size in bytes in --show output\n"
 msgstr "     --help                 показать эту справку и выйти\n"
 
-#: sys-utils/swapon.c:810
+#: sys-utils/swapon.c:823
 #, fuzzy
 msgid " -v, --verbose            verbose mode\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: sys-utils/swapon.c:815
+#: sys-utils/swapon.c:828
 msgid ""
 "\n"
 "The <spec> parameter:\n"
@@ -19198,7 +19227,7 @@ msgid ""
 " <file>                 name of file to be used\n"
 msgstr ""
 
-#: sys-utils/swapon.c:825
+#: sys-utils/swapon.c:838
 msgid ""
 "\n"
 "Available discard policy types (for --discard):\n"
@@ -19207,12 +19236,12 @@ msgid ""
 "If no policy is selected, both discard types are enabled (default).\n"
 msgstr ""
 
-#: sys-utils/swapon.c:907
+#: sys-utils/swapon.c:920
 #, fuzzy
 msgid "failed to parse priority"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: sys-utils/swapon.c:926
+#: sys-utils/swapon.c:939
 #, c-format
 msgid "unsupported discard policy: %s"
 msgstr ""
@@ -19713,8 +19742,8 @@ msgstr "не могу сменить каталог на %s"
 
 #: sys-utils/unshare.c:654
 #, fuzzy, c-format
-msgid "umount %s failed"
-msgstr "mount завершился неудачей"
+msgid "cannot change %s filesystem propagation"
+msgstr "%s: невозможно удалить разделы"
 
 #: sys-utils/unshare.c:656
 #, fuzzy, c-format
@@ -20554,26 +20583,26 @@ msgstr ""
 "\n"
 "Скрипт выполнен %s"
 
-#: term-utils/script.c:394
+#: term-utils/script.c:395
 #, fuzzy, c-format
 msgid "Script started on %s ["
 msgstr "Скрипт запущен %s"
 
-#: term-utils/script.c:406
+#: term-utils/script.c:407
 #, c-format
 msgid "<not executed on terminal>"
 msgstr ""
 
-#: term-utils/script.c:679
+#: term-utils/script.c:680
 #, c-format
 msgid "Script terminated, max output files size %<PRIu64> exceeded.\n"
 msgstr ""
 
-#: term-utils/script.c:681
+#: term-utils/script.c:682
 msgid "max output size exceeded"
 msgstr ""
 
-#: term-utils/script.c:742
+#: term-utils/script.c:743
 #, fuzzy, c-format
 msgid ""
 "output file `%s' is a link\n"
@@ -20584,51 +20613,51 @@ msgstr ""
 "Используйте `%s [опции] %s', если вы действительно хотите это использовать.\n"
 "Скрипт не запущен.\n"
 
-#: term-utils/script.c:821
+#: term-utils/script.c:822
 #, fuzzy, c-format
 msgid "unssuported echo mode: '%s'"
 msgstr "неподдерживаемый цветовой режим"
 
-#: term-utils/script.c:846
+#: term-utils/script.c:847
 #, fuzzy
 msgid "failed to parse output limit size"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: term-utils/script.c:857
+#: term-utils/script.c:858
 #, fuzzy, c-format
 msgid "unsupported logging format: '%s'"
 msgstr "Введите тип файловой системы:"
 
-#: term-utils/script.c:901
+#: term-utils/script.c:902
 msgid "log multiple streams is mutually exclusive with 'classic' format"
 msgstr ""
 
-#: term-utils/script.c:928
+#: term-utils/script.c:929
 #, fuzzy, c-format
 msgid "Script started"
 msgstr "Скрипт запущен %s"
 
-#: term-utils/script.c:930
+#: term-utils/script.c:931
 #, fuzzy, c-format
 msgid ", output log file is '%s'"
 msgstr "Скрипт выполнен, файл - %s\n"
 
-#: term-utils/script.c:932
+#: term-utils/script.c:933
 #, fuzzy, c-format
 msgid ", input log file is '%s'"
 msgstr "Скрипт выполнен, файл - %s\n"
 
-#: term-utils/script.c:934
+#: term-utils/script.c:935
 #, fuzzy, c-format
 msgid ", timing file is '%s'"
 msgstr "ioctl() завершился неудачей при чтении времени из %s"
 
-#: term-utils/script.c:935
+#: term-utils/script.c:936
 #, c-format
 msgid ".\n"
 msgstr ""
 
-#: term-utils/script.c:1041
+#: term-utils/script.c:1042
 #, fuzzy, c-format
 msgid "Script done.\n"
 msgstr "Скрипт выполнен, файл - %s\n"
@@ -20672,12 +20701,12 @@ msgstr ""
 msgid " -m, --maxdelay <num>    wait at most this many seconds between updates\n"
 msgstr ""
 
-#: term-utils/scriptlive.c:226 term-utils/scriptreplay.c:234
+#: term-utils/scriptlive.c:226 term-utils/scriptreplay.c:233
 #, fuzzy
 msgid "failed to parse maximal delay argument"
 msgstr "не удалось обработать аргумент"
 
-#: term-utils/scriptlive.c:249 term-utils/scriptreplay.c:275
+#: term-utils/scriptlive.c:249 term-utils/scriptreplay.c:274
 #, fuzzy
 msgid "timing file not specified"
 msgstr "Не указана опция --date.\n"
@@ -20735,32 +20764,32 @@ msgstr ""
 msgid " -c, --cr-mode <type>    CR char mode (auto, never, always)\n"
 msgstr ""
 
-#: term-utils/scriptreplay.c:132
+#: term-utils/scriptreplay.c:131
 #, fuzzy
 msgid "unexpected tcgetattr failure"
 msgstr "(Следующий файл: %s)"
 
-#: term-utils/scriptreplay.c:213
+#: term-utils/scriptreplay.c:212
 #, fuzzy, c-format
 msgid "unsupported mode name: '%s'"
 msgstr "неподдерживаемая метка диска '%s'"
 
-#: term-utils/scriptreplay.c:246
+#: term-utils/scriptreplay.c:245
 #, fuzzy, c-format
 msgid "unsupported stream name: '%s'"
 msgstr "неподдерживаемый аргумент: %s"
 
-#: term-utils/scriptreplay.c:277
+#: term-utils/scriptreplay.c:276
 #, fuzzy
 msgid "data log file not specified"
 msgstr "Не указана опция --date.\n"
 
-#: term-utils/scriptreplay.c:331
+#: term-utils/scriptreplay.c:330
 #, fuzzy, c-format
 msgid "%s: log file error"
 msgstr "ошибка klogctl: %s\n"
 
-#: term-utils/scriptreplay.c:333
+#: term-utils/scriptreplay.c:332
 #, c-format
 msgid "%s: line %d: timing file error"
 msgstr ""
@@ -21208,7 +21237,7 @@ msgstr "-- строка уже выровнена"
 msgid "bad -l argument"
 msgstr "col: неверный аргумент -l %s.\n"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:649
+#: text-utils/colcrt.c:82 text-utils/column.c:663
 #, fuzzy, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr "Использование: %s [опции] устройство...\n"
@@ -21265,174 +21294,174 @@ msgstr "не удалось определить конец"
 msgid "undefined column name '%s'"
 msgstr ""
 
-#: text-utils/column.c:322
+#: text-utils/column.c:336
 #, fuzzy
 msgid "failed to parse --table-order list"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: text-utils/column.c:398
+#: text-utils/column.c:412
 #, fuzzy
 msgid "failed to parse --table-right list"
 msgstr "не удалось определить начало"
 
-#: text-utils/column.c:402
+#: text-utils/column.c:416
 #, fuzzy
 msgid "failed to parse --table-trunc list"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: text-utils/column.c:406
+#: text-utils/column.c:420
 #, fuzzy
 msgid "failed to parse --table-noextreme list"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: text-utils/column.c:410
+#: text-utils/column.c:424
 #, fuzzy
 msgid "failed to parse --table-wrap list"
 msgstr "не удалось определить начало"
 
-#: text-utils/column.c:414
+#: text-utils/column.c:428
 #, fuzzy
 msgid "failed to parse --table-hide list"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: text-utils/column.c:451
+#: text-utils/column.c:465
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr ""
 
-#: text-utils/column.c:467
+#: text-utils/column.c:481
 #, fuzzy
 msgid "failed to allocate output data"
 msgstr "Невозможно выделить буфер.\n"
 
-#: text-utils/column.c:652
+#: text-utils/column.c:666
 msgid "Columnate lists.\n"
 msgstr ""
 
-#: text-utils/column.c:655
+#: text-utils/column.c:669
 #, fuzzy
 msgid " -t, --table                      create a table\n"
 msgstr "              параметры\n"
 
-#: text-utils/column.c:656
+#: text-utils/column.c:670
 #, fuzzy
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr "  -n, --name=имя_программы     Имя, от которого ведется отчет об ошибках\n"
 
-#: text-utils/column.c:657
+#: text-utils/column.c:671
 #, fuzzy
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -o, --output <список>         поля вывода\n"
 
-#: text-utils/column.c:658
+#: text-utils/column.c:672
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr ""
 
-#: text-utils/column.c:659
+#: text-utils/column.c:673
 #, fuzzy
 msgid " -l, --table-columns-limit <num>  maximal number of input columns\n"
 msgstr " -S, --sectors <число>         укажите количество секторов на дорожку\n"
 
-#: text-utils/column.c:660
+#: text-utils/column.c:674
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 
-#: text-utils/column.c:661
+#: text-utils/column.c:675
 #, fuzzy
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: text-utils/column.c:662
+#: text-utils/column.c:676
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr ""
 
-#: text-utils/column.c:663
+#: text-utils/column.c:677
 #, fuzzy
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: text-utils/column.c:664
+#: text-utils/column.c:678
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr ""
 
-#: text-utils/column.c:665
+#: text-utils/column.c:679
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr ""
 
-#: text-utils/column.c:666
+#: text-utils/column.c:680
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr ""
 
-#: text-utils/column.c:667
+#: text-utils/column.c:681
 #, fuzzy
 msgid " -L, --keep-empty-lines           don't ignore empty lines\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: text-utils/column.c:668
+#: text-utils/column.c:682
 #, fuzzy
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: text-utils/column.c:671
+#: text-utils/column.c:685
 #, fuzzy
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: text-utils/column.c:672
+#: text-utils/column.c:686
 #, fuzzy
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -g, --group <group>             указать первичную группу\n"
 
-#: text-utils/column.c:673
+#: text-utils/column.c:687
 #, fuzzy
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -H, --heads <число>           укажите количество головок\n"
 
-#: text-utils/column.c:676
+#: text-utils/column.c:690
 #, fuzzy
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -o, --output <список>         поля вывода\n"
 
-#: text-utils/column.c:677
+#: text-utils/column.c:691
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 
-#: text-utils/column.c:678
+#: text-utils/column.c:692
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr ""
 
-#: text-utils/column.c:679
+#: text-utils/column.c:693
 #, fuzzy
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: text-utils/column.c:750
+#: text-utils/column.c:764
 msgid "invalid columns argument"
 msgstr ""
 
-#: text-utils/column.c:775
+#: text-utils/column.c:789
 #, fuzzy
 msgid "invalid columns limit argument"
 msgstr "недопустимый аргумент времени"
 
-#: text-utils/column.c:777
+#: text-utils/column.c:791
 msgid "columns limit must be greater than zero"
 msgstr ""
 
-#: text-utils/column.c:780
+#: text-utils/column.c:794
 #, fuzzy
 msgid "failed to parse column names"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: text-utils/column.c:835
+#: text-utils/column.c:849
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr ""
 
-#: text-utils/column.c:843
+#: text-utils/column.c:857
 msgid "option --table required for all --table-*"
 msgstr ""
 
-#: text-utils/column.c:846
+#: text-utils/column.c:860
 msgid "option --table-columns required for --json"
 msgstr ""
 
@@ -21985,6 +22014,13 @@ msgstr "ошибка чтения terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr ""
+
+#~ msgid "Filename"
+#~ msgstr "Имя файла"
+
+#, fuzzy, c-format
+#~ msgid "umount %s failed"
+#~ msgstr "mount завершился неудачей"
 
 #, fuzzy, c-format
 #~ msgid ""
