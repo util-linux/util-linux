@@ -185,8 +185,12 @@ sbin_PROGRAMS += blkdiscard
 MANPAGES += sys-utils/blkdiscard.8
 dist_noinst_DATA += sys-utils/blkdiscard.8.adoc
 blkdiscard_SOURCES = sys-utils/blkdiscard.c lib/monotonic.c
-blkdiscard_LDADD = $(LDADD) libblkid.la libcommon.la $(REALTIME_LIBS)
-blkdiscard_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+blkdiscard_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
+blkdiscard_CFLAGS = $(AM_CFLAGS)
+if BUILD_LIBBLKID
+blkdiscard_LDADD += libblkid.la
+blkdiscard_CFLAGS += -I$(ul_libblkid_incdir)
+endif
 endif
 
 if BUILD_BLKZONE
