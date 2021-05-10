@@ -107,10 +107,12 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 }
 
 struct file *make_cdev(const struct file_class *class,
-		       struct stat *sb, const char *name, int fd)
+		       struct stat *sb, const char *name,
+		       struct map_file_data *map_file_data,
+		       int fd)
 {
 	return make_file(class? class: &cdev_class,
-			 sb, name, fd);
+			 sb, name, map_file_data, fd);
 }
 
 static struct chrdrv *make_chrdrv(unsigned long major, const char *name)
