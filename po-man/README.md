@@ -15,7 +15,7 @@ better readability.
 This is done in one step using the following simple command:
 
     po4a po4a.cfg
-    
+
 If there's something wrong with a .po file, the command will fail. In any case,
 have a look at the first line of po4a.cfg if all of the mentioned files are
 present.

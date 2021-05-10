@@ -55,7 +55,7 @@ The low-level probing code was rewritten by Karel Zak.
 
 == SEE ALSO
 
-*blkid*(8), 
+*blkid*(8),
 *findfs*(8)
 
 include::man-common/bugreports.adoc[]

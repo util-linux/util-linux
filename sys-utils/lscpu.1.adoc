@@ -120,7 +120,7 @@ Display help text and exit.
 Use JSON output format for the default summary or extended output (see *--extended*).
 
 *-p*, *--parse*[=_list_]::
-Optimize the command output for easy parsing. 
+Optimize the command output for easy parsing.
 +
 If the _list_ argument is omitted, the command output is compatible with earlier versions of *lscpu*. In this compatible format, two commas are used to separate CPU cache columns. If no CPU caches are identified the cache column is omitted. If the _list_ argument is used, cache columns are separated with a colon (:).
 +

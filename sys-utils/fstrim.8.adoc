@@ -55,7 +55,7 @@ Minimum contiguous free range to discard, in bytes. (This value is internally ro
 Verbose execution. With this option *fstrim* will output the number of bytes passed from the filesystem down the block stack to the device for potential discard. This number is a maximum discard amount from the storage device's perspective, because _FITRIM_ ioctl called repeated will keep sending the same sectors for discard repeatedly.
 +
 *fstrim* will report the same potential discard bytes each time, but only sectors which had been written to between the discards would actually be discarded by the storage device. Further, the kernel block layer reserves the right to adjust the discard ranges to fit raid stripe geometry, non-trim capable devices in a LVM setup, etc. These reductions would not be reflected in fstrim_range.len (the *--length* option).
-  
+
 *--quiet-unsupported*::
 Suppress error messages if trim operation (ioctl) is unsupported. This option is meant to be used in systemd service file or in cron scripts to hide warnings that are result of known problems, such as NTFS driver reporting _Bad file descriptor_ when device is mounted read-only, or lack of file system support for ioctl FITRIM call.
 

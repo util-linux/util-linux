@@ -1,6 +1,6 @@
 Util-linux 2.36 Release Notes
 =============================
- 
+
 Release highlights
 ------------------
 
@@ -34,14 +34,14 @@ information about partition table. Another new command line option is
 on empty devices.
 
 The command fdisk(8) and sfdisk(8) support user-friendly aliases for partition
-types. For example "echo 'size=10M type=uefi' | sfdisk /dev/sda" creates EFI 
+types. For example "echo 'size=10M type=uefi' | sfdisk /dev/sda" creates EFI
 system partition on sda.
 
-fstrim(8) supports new command line option --listed-in to specify alternatives 
+fstrim(8) supports new command line option --listed-in to specify alternatives
 where to read list of the filesystems. This option makes fstrim systemd service
 file more portable between distributions.
 
-libfdisk provides API to relocate GPT backup header. This feature is usable to 
+libfdisk provides API to relocate GPT backup header. This feature is usable to
 generate small, but still valid images for containers and resize the image later.
 This new feature is exported to command line by "sfdisk --relocate".
 
@@ -56,7 +56,7 @@ option MOTD_FILE= in /etc/login.defs now. The default value is
 
 All tools which read /etc/login.defs is possible to compile with libeconf now.
 
-The build system provides a new option --disable-hwclock-gplv3 to avoid optional 
+The build system provides a new option --disable-hwclock-gplv3 to avoid optional
 GPLv3 code in the command hwclock(8).
 
 The build system supports a new option --with-cryptsetup=dlopen to use dlopen
@@ -68,7 +68,7 @@ default.
 more(1) has been refactored to meet 21st century codding standards. Thanks to
 Sami Kerola.
 
-Thanks to Michael Kerrisk for massive man pages cleanup, and thanks to Evgeny 
+Thanks to Michael Kerrisk for massive man pages cleanup, and thanks to Evgeny
 Vereshchagin for work on better integration with CIFuzz and Travis.
 
 

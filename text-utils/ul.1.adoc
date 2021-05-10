@@ -83,7 +83,7 @@ The *ul* command appeared in 3.0BSD.
 
 == SEE ALSO
 
-*colcrt*(1), 
+*colcrt*(1),
 *login*(1),
 *man*(1),
 *nroff*(1),

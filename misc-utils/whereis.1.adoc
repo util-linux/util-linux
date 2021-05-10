@@ -99,7 +99,7 @@ Output the list of effective lookup paths that *whereis* is using. When none of 
 
 *-h*, *--help*::
 Display help text and exit.
-    
+
 *-V*, *--version*::
 Display version information and exit.
 

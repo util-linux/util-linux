@@ -33,7 +33,7 @@ Describe *foobar* briefly.
 
 == OPTIONS
 
-//Format options bold and values italic: 
+//Format options bold and values italic:
 *-o*, *--option* _value_::
 This option has a value.
 +

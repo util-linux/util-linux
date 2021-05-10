@@ -143,11 +143,11 @@ Specifies a structured data element ID for an RFC 5424 message header. The optio
 Specifies a structured data element parameter, a name and value pair. The option has to be used after *--sd-id* and may be specified more than once for the same element. Note that the quotation marks around _value_ are required and must be escaped on the command line.
 +
 ....
-    logger --rfc5424 --sd-id zoo@123               \
+    logger --rfc5424 --sd-id zoo@123             \
                      --sd-param tiger="hungry"   \
                      --sd-param zebra="running"  \
-                     --sd-id manager@123           
-                     --sd-param onMeeting="yes"  
+                     --sd-id manager@123         \
+                     --sd-param onMeeting="yes"  \
                      "this is message"
 ....
 produces:
@@ -203,14 +203,14 @@ Valid facility names are:
 *kern* cannot be generated from userspace process, automatically converted to *user* +
 
 *lpr* +
-*mail* + 
+*mail* +
 *news* +
 *syslog* +
 *user* +
 *uucp* +
 *local0* +
     to +
-*local7* + 
+*local7* +
 *security* deprecated synonym for *auth*
 
 Valid level names are:
