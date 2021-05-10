@@ -269,7 +269,7 @@ static bool file_fill_column(struct proc *proc,
 		xasprintf(&str, "%d", file->stat.st_nlink == 0);
 		break;
 	case COL_MNT_ID:
-		xasprintf(&str, "%d", file->association < 0? 0: file->mnt_id);
+		xasprintf(&str, "%d", file->association < 0? 0: file->assoc_data.fdinfo.mnt_id);
 		break;
 	case COL_MODE:
 		if (does_file_has_fdinfo_alike(file))
@@ -292,10 +292,10 @@ static bool file_fill_column(struct proc *proc,
 		if (file->association < 0)
 			return true;
 
-		if (file->flags == 0)
+		if (file->assoc_data.fdinfo.flags == 0)
 			return true;
 
-		file_fill_flags_buf(&buf, file->flags);
+		file_fill_flags_buf(&buf, file->assoc_data.fdinfo.flags);
 		if (ul_buffer_is_empty(&buf))
 			return true;
 		str = ul_buffer_get_data(&buf, NULL, NULL);
@@ -318,10 +318,10 @@ static int file_handle_fdinfo(struct file *file, const char *key, const char* va
 		file->pos = strtoull(value, NULL, 10);
 		return 1;
 	} else if (strcmp(key, "flags") == 0) {
-		file->flags = (int)strtol(value, NULL, 8);
+		file->assoc_data.fdinfo.flags = (int)strtol(value, NULL, 8);
 		return 1;
 	} else if (strcmp(key, "mnt_id") == 0) {
-		file->mnt_id = (int)strtol(value, NULL, 10);
+		file->assoc_data.fdinfo.mnt_id = (int)strtol(value, NULL, 10);
 		return 1;
 	}
 	return 0;

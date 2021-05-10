@@ -113,6 +113,11 @@ struct proc {
 /*
  * File classes
  */
+struct fdinfo_data {
+	int flags;
+	int mnt_id;
+};
+
 struct file {
 	struct list_head files;
 	const struct file_class *class;
@@ -121,8 +126,9 @@ struct file {
 	struct stat stat;
 	mode_t mode;
 	unsigned long long pos;
-	int flags;		/* in fdinfo */
-	int mnt_id;		/* in fdinfo */
+	union assoc_data {
+		struct fdinfo_data fdinfo;
+	} assoc_data;
 };
 
 struct file_class {
