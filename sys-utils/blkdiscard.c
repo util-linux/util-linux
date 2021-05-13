@@ -258,25 +258,28 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("%s: length %" PRIu64 " is not aligned "
 			 "to sector size %i"), path, range[1], secsize);
 #ifdef HAVE_LIBBLKID
-	 /* Check for existing signatures on the device */
-	switch(probe_device(fd, path)) {
-	case 0: /* signature detected */
-		/*
-		 * Only require force in interactive mode to avoid
-		 * breaking existing scripts
-		 */
-		if (!force && isatty(STDIN_FILENO)) {
-			errx(EXIT_FAILURE,
-			     _("This is destructive operation, data will " \
-			       "be lost! Use the -f option to override."));
-		}
+	if (force)
 		warnx(_("Operation forced, data will be lost!"));
-		break;
-	case 1: /* no signature */
-		break;
-	default: /* error */
-		err(EXIT_FAILURE, _("failed to probe the device"));
-		break;
+	else {
+		 /* Check for existing signatures on the device */
+		switch(probe_device(fd, path)) {
+		case 0: /* signature detected */
+			/*
+			 * Only require force in interactive mode to avoid
+			 * breaking existing scripts
+			 */
+			if (isatty(STDIN_FILENO)) {
+				errx(EXIT_FAILURE,
+				     _("This is destructive operation, data will " \
+				       "be lost! Use the -f option to override."));
+			}
+			break;
+		case 1: /* no signature */
+			break;
+		default: /* error */
+			err(EXIT_FAILURE, _("failed to probe the device"));
+			break;
+		}
 	}
 #endif /* HAVE_LIBBLKID */
 
