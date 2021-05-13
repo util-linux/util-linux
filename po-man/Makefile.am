@@ -8,6 +8,9 @@ CLEANFILES = $(PO_STAMPS)
 
 EXTRA_DIST = README.md $(PO_FILES) po4a.cfg util-linux-man.pot
 
+util-linux-man.pot: Makefile
+	$(AM_V_GEN) $(PO4A) --verbose --no-translations po4a.cfg
+
 po4a-gen.stamp: $(PO_FILES)
 	@echo 'po4a: generate man-pages translations'
 	$(AM_V_GEN) $(PO4A) po4a.cfg
