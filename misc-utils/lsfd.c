@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <inttypes.h>
-#include <pthread.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <getopt.h>
@@ -52,17 +51,7 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 
 #include "lsfd.h"
 
-/*
- * Multi-threading related stuffs
- */
-#define NUM_COLLECTORS 3
-static pthread_cond_t  procs_ready = PTHREAD_COND_INITIALIZER;
-static pthread_mutex_t procs_ready_lock = PTHREAD_MUTEX_INITIALIZER;
-
-static pthread_mutex_t procs_consumer_lock = PTHREAD_MUTEX_INITIALIZER;
-static struct list_head *current_proc;
-
-static void *fill_procs(void *arg);
+static void fill_proc(struct proc *proc);
 
 /*
  * /proc/$pid/maps entries
@@ -333,37 +322,10 @@ static void collect_procs(DIR *dirp, struct list_head *procs,
 	}
 }
 
-static void run_collectors(struct list_head *procs)
-{
-	pthread_t collectors[NUM_COLLECTORS];
-
-	for (int i = 0; i < NUM_COLLECTORS; i++) {
-		errno = pthread_create(collectors + i, NULL, fill_procs, procs);
-		if (errno)
-			err(EXIT_FAILURE, _("failed to create a thread"));
-	}
-
-	errno = pthread_mutex_lock(&procs_ready_lock);
-	if (errno != 0)
-		err(EXIT_FAILURE, _("failed to lock a mutex"));
-
-	current_proc = procs->next;
-
-	errno = pthread_mutex_unlock(&procs_ready_lock);
-	if (errno != 0)
-		err(EXIT_FAILURE, _("failed to unlock a mutex"));
-
-	errno = pthread_cond_broadcast(&procs_ready);
-	if (errno != 0)
-		err(EXIT_FAILURE, _("failed to broadcast a condvar"));
-
-	for (int i = 0; i < NUM_COLLECTORS; i++)
-		pthread_join(collectors[i], NULL);
-}
-
 static void collect(struct list_head *procs, struct lsfd_control *ctl)
 {
 	DIR *dirp;
+	struct list_head *p;
 
 	dirp = opendir("/proc");
 	if (!dirp)
@@ -371,7 +333,10 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 	collect_procs(dirp, procs, ctl);
 	closedir(dirp);
 
-	run_collectors(procs);
+	list_for_each (p, procs) {
+		struct proc *proc = list_entry(p, struct proc, procs);
+		fill_proc (proc);
+	}
 }
 
 static struct file *collect_file(struct proc *proc,
@@ -828,50 +793,6 @@ static void fill_proc(struct proc *proc)
 		collect_fd_files(proc);
 }
 
-static void *fill_procs(void *arg)
-{
-	struct list_head *procs = arg;
-	struct list_head *target_proc;
-
-	errno = pthread_mutex_lock(&procs_ready_lock);
-	if (errno != 0)
-		err(EXIT_FAILURE, _("failed to lock a mutex"));
-
-	if (current_proc == NULL) {
-		errno = pthread_cond_wait(&procs_ready, &procs_ready_lock);
-		if (errno != 0)
-			err(EXIT_FAILURE, _("failed to wait a condvar"));
-	}
-
-	errno = pthread_mutex_unlock(&procs_ready_lock);
-	if (errno != 0)
-		err(EXIT_FAILURE, _("failed to unlock a mutex"));
-
-	while (1) {
-		errno = pthread_mutex_lock(&procs_consumer_lock);
-		if (errno != 0)
-			err(EXIT_FAILURE, _("failed to lock a mutex"));
-
-		target_proc = current_proc;
-
-		if (current_proc != procs)
-			current_proc = current_proc->next;
-
-		errno = pthread_mutex_unlock(&procs_consumer_lock);
-		if (errno != 0)
-			err(EXIT_FAILURE, _("failed to lock a mutex"));
-
-		if (target_proc == procs) {
-			/* All pids are processed. */
-			break;
-		}
-
-		fill_proc(list_entry(target_proc, struct proc, procs));
-	}
-
-	return NULL;
-}
-
 static void fill_column(struct proc *proc,
 			struct file *file,
 			struct libscols_line *ln,
@@ -1091,7 +1012,6 @@ int main(int argc, char *argv[])
 
 struct name_manager {
 	struct idcache *cache;
-	pthread_rwlock_t rwlock;
 	unsigned long next_id;
 };
 
@@ -1102,7 +1022,6 @@ struct name_manager *new_name_manager(void)
 	if (!nm->cache)
 		err(EXIT_FAILURE, _("failed to allocate an idcache"));
 
-	pthread_rwlock_init(&nm->rwlock, NULL);
 	nm->next_id = 1;	/* 0 is never issued as id. */
 	return nm;
 }
@@ -1117,9 +1036,7 @@ const char *get_name(struct name_manager *nm, unsigned long id)
 {
 	struct identry *e;
 
-	pthread_rwlock_rdlock(&nm->rwlock);
 	e = get_id(nm->cache, id);
-	pthread_rwlock_unlock(&nm->rwlock);
 
 	return e? e->name: NULL;
 }
@@ -1128,33 +1045,21 @@ unsigned long add_name(struct name_manager *nm, const char *name)
 {
 	struct identry *e = NULL, *tmp;
 
-	pthread_rwlock_rdlock(&nm->rwlock);
 	for (tmp = nm->cache->ent; tmp; tmp = tmp->next) {
 		if (strcmp(tmp->name, name) == 0) {
 			e = tmp;
 			break;
 		}
 	}
-	pthread_rwlock_unlock(&nm->rwlock);
+
 	if (e)
 		return e->id;
 
-	pthread_rwlock_wrlock(&nm->rwlock);
-	for (tmp = nm->cache->ent; tmp; tmp = tmp->next) {
-		if (strcmp(tmp->name, name) == 0) {
-			e = tmp;
-			break;
-		}
-	}
-
-	if (!e) {
-		e = xmalloc(sizeof(struct identry));
-		e->name = xstrdup(name);
-		e->id = nm->next_id++;
-		e->next = nm->cache->ent;
-		nm->cache->ent = e;
-	}
-	pthread_rwlock_unlock(&nm->rwlock);
+	e = xmalloc(sizeof(struct identry));
+	e->name = xstrdup(name);
+	e->id = nm->next_id++;
+	e->next = nm->cache->ent;
+	nm->cache->ent = e;
 
 	return e->id;
 }
