@@ -227,8 +227,7 @@ static bool file_fill_column(struct proc *proc,
 		break;
 	case COL_DEVNAME:
 		if (major(file->stat.st_dev) == 0) {
-			const char *filesystem = get_nodev_filesystem(proc,
-								      minor(file->stat.st_dev));
+			const char *filesystem = get_nodev_filesystem(minor(file->stat.st_dev));
 			if (filesystem) {
 				xasprintf(&str, "nodev:%s", filesystem);
 				break;

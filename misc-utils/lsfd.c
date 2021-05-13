@@ -52,6 +52,7 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "lsfd.h"
 
 static void fill_proc(struct proc *proc);
+static void add_nodev(unsigned long minor, const char *filesystem);
 
 /*
  * /proc/$pid/maps entries
@@ -71,6 +72,11 @@ struct nodev {
 	unsigned long minor;
 	char *filesystem;
 };
+
+struct nodev_table {
+#define NODEV_TABLE_SIZE 97
+	struct list_head tables[NODEV_TABLE_SIZE];
+} nodev_table;
 
 /*
  * Column related stuffs
@@ -249,9 +255,16 @@ static void free_nodev(struct nodev *nodev)
 	free(nodev);
 }
 
-static void free_nodevs(struct list_head *nodevs)
+static void initialize_nodevs(void)
 {
-	list_free(nodevs, struct nodev, nodevs, free_nodev);
+	for (int i = 0; i < NODEV_TABLE_SIZE; i++)
+		INIT_LIST_HEAD(&nodev_table.tables[i]);
+}
+
+static void finalize_nodevs(void)
+{
+	for (int i = 0; i < NODEV_TABLE_SIZE; i++)
+		list_free(&nodev_table.tables[i], struct nodev, nodevs, free_nodev);
 }
 
 static void free_proc(struct proc *proc)
@@ -259,7 +272,6 @@ static void free_proc(struct proc *proc)
 	list_free(&proc->files, struct file, files, free_file);
 
 	free(proc->command);
-	free_nodevs(&proc->nodevs);
 	free(proc);
 }
 
@@ -723,13 +735,12 @@ static FILE *open_mountinfo(pid_t pid, pid_t tid)
 	return fopenf("r", "/proc/%d/task/%d/mountinfo", pid, tid);
 }
 
-static void read_nodevs(struct list_head *nodevs_list, FILE *mountinfo_fp)
+static void add_nodevs(FILE *mountinfo_fp)
 {
 	/* This can be very long.
 	   A line in mountinfo can have more than 3 paths. */
 	char line[PATH_MAX * 3 + 256];
 	while (fgets(line, sizeof(line), mountinfo_fp)) {
-		struct nodev *nodev;
 		unsigned long major, minor;
 		char filesystem[256];
 
@@ -744,8 +755,7 @@ static void read_nodevs(struct list_head *nodevs_list, FILE *mountinfo_fp)
 		if (major != 0)
 			continue;
 
-		nodev = make_nodev(minor, filesystem);
-		list_add_tail(&nodev->nodevs, nodevs_list);
+		add_nodev(minor, filesystem);
 	}
 }
 
@@ -754,7 +764,6 @@ static void fill_proc(struct proc *proc)
 	FILE *mountinfo_fp;
 
 	INIT_LIST_HEAD(&proc->files);
-	INIT_LIST_HEAD(&proc->nodevs);
 
 	proc->command = proc_get_command_name(proc->pid);
 	if (!proc->command)
@@ -773,7 +782,7 @@ static void fill_proc(struct proc *proc)
 	mountinfo_fp = open_mountinfo(proc->leader->pid,
 				      proc->pid);
 	if (mountinfo_fp) {
-		read_nodevs(&proc->nodevs, mountinfo_fp);
+		add_nodevs(mountinfo_fp);
 		fclose(mountinfo_fp);
 	}
 
@@ -913,7 +922,6 @@ int main(int argc, char *argv[])
 	char *outarg = NULL;
 
 	struct list_head procs;
-
 	struct lsfd_control ctl = {};
 
 	static const struct option longopts[] = {
@@ -996,6 +1004,7 @@ int main(int argc, char *argv[])
 			scols_column_set_json_type(cl, col->json_type);
 	}
 
+	initialize_nodevs();
 	initialize_classes();
 
 	INIT_LIST_HEAD(&procs);
@@ -1006,6 +1015,7 @@ int main(int argc, char *argv[])
 	delete(&procs, &ctl);
 
 	finalize_classes();
+	finalize_nodevs();
 
 	return 0;
 }
@@ -1064,17 +1074,6 @@ unsigned long add_name(struct name_manager *nm, const char *name)
 	return e->id;
 }
 
-const char *get_nodev_filesystem(struct proc *proc, unsigned long minor)
-{
-	struct list_head *n;
-	list_for_each (n, &proc->nodevs) {
-		struct nodev *nodev = list_entry(n, struct nodev, nodevs);
-		if (nodev->minor == minor)
-			return nodev->filesystem;
-	}
-	return NULL;
-}
-
 DIR *opendirf(const char *format, ...)
 {
 	va_list ap;
@@ -1101,4 +1100,26 @@ FILE *fopenf(const char *mode, const char *format, ...)
 	va_end(ap);
 
 	return fopen(path, mode);
+}
+
+static void add_nodev(unsigned long minor, const char *filesystem)
+{
+	if (get_nodev_filesystem(minor))
+		return;
+
+	struct nodev *nodev = make_nodev(minor, filesystem);
+	int slot = minor % NODEV_TABLE_SIZE;
+	list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
+}
+
+const char *get_nodev_filesystem(unsigned long minor)
+{
+	struct list_head *n;
+	int slot = minor % NODEV_TABLE_SIZE;
+	list_for_each (n, &nodev_table.tables[slot]) {
+		struct nodev *nodev = list_entry(n, struct nodev, nodevs);
+		if (nodev->minor == minor)
+			return nodev->filesystem;
+	}
+	return NULL;
 }
