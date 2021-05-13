@@ -8,6 +8,7 @@ CLEANFILES = $(PO_STAMPS)
 
 EXTRA_DIST = README.md $(PO_FILES) po4a.cfg util-linux-man.pot
 
+if ENABLE_POMAN
 util-linux-man.pot: Makefile
 	$(AM_V_GEN) $(PO4A) --verbose --no-translations po4a.cfg
 
@@ -39,7 +40,6 @@ gen-mans: gen-trans
 	    done; \
 	  fi; \
 	done
-
 all: gen-mans
 
 clean-local:
@@ -81,3 +81,10 @@ uninstall-local:
 	  done; \
 	done
 
+else
+gen-trans:
+gen-mans:
+all:
+distclean-local:
+clean-local:
+endif
