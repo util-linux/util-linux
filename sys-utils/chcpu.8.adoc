@@ -40,10 +40,10 @@ Deconfigure the specified CPUs. Deconfiguring a CPU means that the hypervisor re
 
 *-p*, *--dispatch* _mode_::
 Set the CPU dispatching _mode_ (polarization). This option has an effect only if your hardware architecture and hypervisor support CPU polarization. Available _modes_ are:
-  
+
 *horizontal*;;
 The workload is spread across all available CPUs.
-  
+
 *vertical*;;
 The workload is concentrated on few CPUs.
 

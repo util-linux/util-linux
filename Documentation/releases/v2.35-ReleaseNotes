@@ -7,52 +7,51 @@ Release highlights
 agetty(8) now provides a new command-line option --show-issue to print issue
 file(s) on the current terminal in the same way how it will be printed when
 agetty(8) executed regularly.
-                             
+
 agetty(8) supports /run/issue and /usr/lib/issue files and directrories now.
-                             
+
 dmesg(1) escapes unprintable and potentially unsafe characters by default. The
 new command-line option --noescape disables this feature.
-                             
+
 kill(1) now uses pidfd kernel feature to implement a new command-line option
 --timeout. The option allows sending a sequence of follow-up signals with
-defined timeouts without the possibility of race.       
-                             
+defined timeouts without the possibility of race.
+
 script(1) now used the same PTY code as su(1) --pty. script(1) has also been
 massively extended to support new logging features like log signals, stdin or
 additional session information. The new features are implemented by the new
 timing file format. The changes are backwardly compatible, and the original
-timing file format is still the default. 
-                             
+timing file format is still the default.
+
 scriptreplay(1) now allows to extract stdin or session summary from script(1)
 logs.
-                             
-scriptlive(1) this NEW COMMAND re-execute stdin log by a shell in PTY session. 
-                             
+
+scriptlive(1) this NEW COMMAND re-execute stdin log by a shell in PTY session.
+
 mount(8) and libmount now provides built-in dm-verity support if linked with
 libcryptsetup. This new feature is EXPERIMENTAL and disabled by default; use
---with-cryptsetup to enable. 
-                             
+--with-cryptsetup to enable.
+
 libmount now uses poll() syscall to verify /proc/self/mountinfo file consistence
-and it re-read the file if modified during previous read call.  
-                             
+and it re-read the file if modified during previous read call.
+
 mount(8) now provides a new command-line option --target-prefix to mount, for
 example, fstab to an alternative location. This feature is usable, for example,
-for chroots or containers.               
-                             
+for chroots or containers.
+
 mount(8) now allows to use -o together with --all, for example, "mount --all
 -o ro --target-prefix /foo" will mount real-only all filesystems from fstab to
-/foo.              
-                             
+/foo.
+
 lsblk(8) provides new columns FSVER (filesystem version) and PARTTYPENAME
 (human-readable partition type).
-                             
+
 lsblk(8) reads device properties from /dev/<devname> text file when executed
 with --sysroot. This is usable for tests and dumps.
-                             
+
 sfdisk(8) uses progress bar for --move-data and data move is now significantly
 faster than in previous versions as it does not use fsync during the data move
 (use --move-use-fsync to disable this feature).
-
 
 
 Changes between v2.34 and v2.35
