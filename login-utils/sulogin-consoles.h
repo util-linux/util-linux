@@ -40,6 +40,7 @@ struct console {
 	int fd, id;
 #define	CON_SERIAL	0x0001
 #define	CON_NOTTY	0x0002
+#define	CON_EIO		0x0004
 	pid_t pid;
 	struct chardata cp;
 	struct termios tio;

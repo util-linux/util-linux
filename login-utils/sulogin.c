@@ -52,6 +52,7 @@
 #ifdef __linux__
 # include <sys/kd.h>
 # include <sys/param.h>
+# include <linux/serial.h>
 #endif
 
 #include "c.h"
@@ -104,6 +105,9 @@ static void tcinit(struct console *con)
 	int flags = 0, mode = 0;
 	struct termios *tio = &con->tio;
 	const int fd = con->fd;
+#if defined(TIOCGSERIAL)
+	struct serial_struct serinfo;
+#endif
 #ifdef USE_PLYMOUTH_SUPPORT
 	struct termios lock;
 	int i = (plymouth_command(MAGIC_PING)) ? PLYMOUTH_TERMIOS_FLAGS_DELAY : 0;
@@ -123,26 +127,71 @@ static void tcinit(struct console *con)
 	}
 	memset(&lock, 0, sizeof(struct termios));
 	ioctl(fd, TIOCSLCKTRMIOS, &lock);
-#endif
 	errno = 0;
+#endif
+
+#if defined(TIOCGSERIAL)
+	if (ioctl(fd, TIOCGSERIAL,  &serinfo) >= 0)
+	    	con->flags |= CON_SERIAL;
+	errno = 0;
+#else
+# if defined(KDGKBMODE)
+	if (ioctl(fd, KDGKBMODE, &mode) < 0)
+		con->flags |= CON_SERIAL;
+	errno = 0;
+# endif
+#endif
 
 	if (tcgetattr(fd, tio) < 0) {
-		warn(_("tcgetattr failed"));
-		con->flags |= CON_NOTTY;
-		return;
+		int saveno = errno;
+#if defined(KDGKBMODE) || defined(TIOCGSERIAL)
+		if (con->flags & CON_SERIAL) {			/* Try to recover this */
+
+# if defined(TIOCGSERIAL)
+			serinfo.flags |= ASYNC_SKIP_TEST;	/* Skip test of UART */
+
+			if (ioctl(fd, TIOCSSERIAL, &serinfo) < 0)
+				goto tcgeterr;
+			if (ioctl(fd, TIOCSERCONFIG) < 0)	/* Try to autoconfigure */
+				goto tcgeterr;
+			if (ioctl(fd, TIOCGSERIAL,  &serinfo) < 0)
+				goto tcgeterr;			/* Ouch */
+# endif
+			if (tcgetattr(fd, tio) < 0)		/* Retry to get tty attributes */
+				saveno = errno;
+		}
+# if defined(TIOCGSERIAL)
+	tcgeterr:
+# endif
+		if (saveno)
+#endif
+		{
+			FILE *fcerr = fdopen(fd, "w");
+			if (fcerr) {
+				fprintf(fcerr, _("tcgetattr failed"));
+				fclose(fcerr);
+			}
+			warn(_("tcgetattr failed"));
+
+			con->flags &= ~CON_SERIAL;
+			if (saveno != EIO)
+				con->flags |= CON_NOTTY;
+			else
+				con->flags |= CON_EIO;
+
+			errno = 0;
+			return;
+		}
 	}
 
 	/* Handle lines other than virtual consoles here */
-#if defined(KDGKBMODE)
-	if (ioctl(fd, KDGKBMODE, &mode) < 0)
+#if defined(KDGKBMODE) || defined(TIOCGSERIAL)
+	if (con->flags & CON_SERIAL)
 #endif
 	{
 		speed_t ispeed, ospeed;
 		struct winsize ws;
 		errno = 0;
-
-		/* this is a modem line */
-		con->flags |= CON_SERIAL;
 
 		/* Flush input and output queues on modem lines */
 		tcflush(fd, TCIOFLUSH);
@@ -220,6 +269,8 @@ static void tcfinal(struct console *con)
 	struct termios *tio = &con->tio;
 	const int fd = con->fd;
 
+	if (con->flags & CON_EIO)
+		return;
 	if ((con->flags & CON_SERIAL) == 0) {
 		xsetenv("TERM", "linux", 1);
 		return;
@@ -557,11 +608,15 @@ err:
 static void setup(struct console *con)
 {
 	int fd = con->fd;
-	const pid_t pid = getpid(), pgrp = getpgid(0), ppgrp =
-	    getpgid(getppid()), ttypgrp = tcgetpgrp(fd);
+	const pid_t pid = getpid(), pgrp = getpgid(0), ppgrp = getpgid(getppid());
+	pid_t ttypgrp;
 
 	if (con->flags & CON_NOTTY)
+		goto notty;
+	if (con->flags & CON_EIO)
 		return;
+
+	ttypgrp = tcgetpgrp(fd);
 
 	/*
 	 * Only go through this trouble if the new
@@ -585,6 +640,7 @@ static void setup(struct console *con)
 		ioctl(fd, TIOCSCTTY, (char *)1);
 		tcsetpgrp(fd, ppgrp);
 	}
+notty:
 	dup2(fd, STDIN_FILENO);
 	dup2(fd, STDOUT_FILENO);
 	dup2(fd, STDERR_FILENO);
@@ -608,20 +664,25 @@ static const char *getpasswd(struct console *con)
 	struct termios tty;
 	static char pass[128], *ptr;
 	struct chardata *cp;
-	const char *ret = pass;
+	const char *ret = NULL;
 	unsigned char tc;
 	char c, ascval;
 	int eightbit;
 	const int fd = con->fd;
 
-	if (con->flags & CON_NOTTY)
+	if (con->flags & CON_EIO)
 		goto out;
+
 	cp = &con->cp;
 	tty = con->tio;
+	tc = 0;
+	ret = pass;
 
 	tty.c_iflag &= ~(IUCLC|IXON|IXOFF|IXANY);
 	tty.c_lflag &= ~(ECHO|ECHOE|ECHOK|ECHONL|TOSTOP|ISIG);
-	tc = (tcsetattr(fd, TCSAFLUSH, &tty) == 0);
+
+	if ((con->flags & CON_NOTTY) == 0)
+		tc = (tcsetattr(fd, TCSAFLUSH, &tty) == 0);
 
 	sigemptyset(&sa.sa_mask);
 	sa.sa_handler = alrm_handler;
@@ -647,11 +708,12 @@ static const char *getpasswd(struct console *con)
 			}
 			ret = NULL;
 			switch (errno) {
-			case 0:
 			case EIO:
+				con->flags |= CON_EIO;
 			case ESRCH:
 			case EINVAL:
 			case ENOENT:
+			case 0:
 				break;
 			default:
 				warn(_("cannot read %s"), con->tty);
@@ -969,10 +1031,13 @@ int main(int argc, char **argv)
 		con = list_entry(ptr, struct console, entry);
 		if (con->id >= CONMAX)
 			break;
+		if (con->flags & CON_EIO)
+			goto next;
 
 		switch ((con->pid = fork())) {
 		case 0:
 			mask_signal(SIGCHLD, SIG_DFL, NULL);
+			dup2(con->fd, STDERR_FILENO);
 		nofork:
 			setup(con);
 			while (1) {
@@ -1027,7 +1092,7 @@ int main(int argc, char **argv)
 		default:
 			break;
 		}
-
+	next:
 		ptr = ptr->next;
 
 	} while (ptr != &consoles);
