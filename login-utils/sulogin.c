@@ -132,7 +132,7 @@ static void tcinit(struct console *con)
 
 #if defined(TIOCGSERIAL)
 	if (ioctl(fd, TIOCGSERIAL,  &serinfo) >= 0)
-	    	con->flags |= CON_SERIAL;
+		con->flags |= CON_SERIAL;
 	errno = 0;
 #else
 # if defined(KDGKBMODE)
