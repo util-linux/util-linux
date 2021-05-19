@@ -727,7 +727,7 @@ static void output_prompt(struct more_control *ctl, char *filename)
 		ctl->prompt_len += printf(_("--More--"));
 		if (filename != NULL) {
 			ctl->prompt_len += printf(_("(Next file: %s)"), filename);
-		} else if (!ctl->no_tty_in) {
+		} else if (!ctl->no_tty_in && 0 < ctl->file_size) {
 			ctl->prompt_len +=
 			    printf("(%d%%)",
 				   (int)((ctl->file_position * 100) / ctl->file_size));
