@@ -2,6 +2,7 @@
 Description=Discard unused blocks once a week
 Documentation=man:fstrim
 ConditionVirtualization=!container
+ConditionPathExists=!/etc/initrd-release
 
 [Timer]
 OnCalendar=weekly
