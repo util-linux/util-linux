@@ -1376,6 +1376,7 @@ int main(int argc, char *argv[])
 			if (ct && ct->has_freq) {
 				columns[ncolumns++] = COL_CPU_MAXMHZ;
 				columns[ncolumns++] = COL_CPU_MINMHZ;
+				columns[ncolumns++] = COL_CPU_MHZ;
 			}
 		}
 		if (outarg && string_add_to_idarray(outarg, columns,

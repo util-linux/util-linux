@@ -28,59 +28,6 @@ Not all columns are supported on all architectures. If an unsupported column is 
 
 The cache sizes are reported as summary from all CPUs. The versions before v2.34 reported per-core sizes, but this output was confusing due to complicated CPUs topology and the way how caches are shared between CPUs. For more details about caches see *--cache*. Since version v2.37 *lscpu* follows cache IDs as provided by Linux kernel and it does not always start from zero.
 
-=== COLUMNS
-
-Note that topology elements (core, socket, etc.) use a sequential unique ID starting from zero, but CPU logical numbers follow the kernel where there is no guarantee of sequential numbering.
-
-*CPU*::
-The logical CPU number of a CPU as used by the Linux kernel.
-
-*CORE*::
-The logical core number. A core can contain several CPUs.
-
-*SOCKET*::
-The logical socket number. A socket can contain several cores.
-
-*CLUSTER*::
-The logical cluster number. A cluster can contain several cores.
-
-*BOOK*::
-The logical book number. A book can contain several sockets.
-
-*DRAWER*::
-The logical drawer number. A drawer can contain several books.
-
-*NODE*::
-The logical NUMA node number. A node can contain several drawers.
-
-*CACHE*::
-Information about how caches are shared between CPUs.
-
-*ADDRESS*::
-The physical address of a CPU.
-
-*ONLINE*::
-Indicator that shows whether the Linux instance currently makes use of the CPU.
-
-*CONFIGURED*::
-Indicator that shows if the hypervisor has allocated the CPU to the virtual hardware on which the Linux instance runs. CPUs that are configured can be set online by the Linux instance. This column contains data only if your hardware system and hypervisor support dynamic CPU resource allocation.
-
-*POLARIZATION*::
-This column contains data for Linux instances that run on virtual hardware with a hypervisor that can switch the CPU dispatching mode (polarization). The polarization can be:
-+
-*horizontal*;;
-The workload is spread across all available CPUs.
-*vertical*;;
-The workload is concentrated on few CPUs.
-+
-For vertical polarization, the column also shows the degree of concentration, high, medium, or low. This column contains data only if your hardware system and hypervisor support CPU polarization.
-
-*MAXMHZ*::
-Maximum megahertz value for the CPU. Useful when *lscpu* is used as hardware inventory information gathering tool. Notice that the megahertz value is dynamic, and driven by CPU governor depending on current resource need.
-
-*MINMHZ*::
-Minimum megahertz value for the CPU.
-
 == OPTIONS
 
 *-a*, *--all*::
@@ -107,7 +54,7 @@ Limit the output to offline CPUs. This option may only be specified together wit
 *-e*, *--extended*[=_list_]::
 Display the CPU information in human-readable format.
 +
-If the _list_ argument is omitted, all columns for which data is available are included in the command output.
+If the _list_ argument is omitted, the default columns are included in the command output.  The default output is subject to change.
 +
 When specifying the _list_ argument, the string of option, equal sign (=), and _list_ must not contain any blanks or other whitespace. Examples: '*-e=cpu,node*' or '*--extended=cpu,node*'.
 +
