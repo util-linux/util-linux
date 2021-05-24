@@ -423,7 +423,7 @@ static char *get_cell_data(
 		break;
 	case COL_CPU_MHZ:
 		if (cpu->mhz)
-			xstrncpy(buf, cpu->mhz, bufsz);
+			snprintf(buf, bufsz, "%.4f", cpu->mhz);
 		break;
 	case COL_CPU_MAXMHZ:
 		if (cpu->mhz_max_freq)

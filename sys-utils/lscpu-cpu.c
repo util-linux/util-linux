@@ -35,7 +35,6 @@ void lscpu_unref_cpu(struct lscpu_cpu *cpu)
 		cpu->type = NULL;
 		free(cpu->dynamic_mhz);
 		free(cpu->static_mhz);
-		free(cpu->mhz);
 		free(cpu->bogomips);
 		free(cpu);
 	}
