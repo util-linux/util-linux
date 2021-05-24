@@ -583,6 +583,27 @@ float lsblk_cputype_get_minmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 	return res;
 }
 
+/* returns scaling (use) of CPUs freq. in percent */
+float lsblk_cputype_get_scalmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+{
+	size_t i;
+	float fmax = 0, fcur = 0;
+
+	for (i = 0; i < cxt->npossibles; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+
+		if (!cpu || cpu->type != ct || !is_cpu_present(cxt, cpu))
+			continue;
+		if (cpu->mhz_max_freq <= 0.0 || cpu->mhz_cur_freq <= 0.0)
+			continue;
+		fmax += cpu->mhz_max_freq;
+		fcur += cpu->mhz_cur_freq;
+	}
+	if (fcur <= 0.0)
+		return 0.0;
+	return fcur / fmax * 100;
+}
+
 int lscpu_read_topology(struct lscpu_cxt *cxt)
 {
 	size_t i;

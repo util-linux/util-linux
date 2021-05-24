@@ -127,11 +127,12 @@ struct lscpu_cpu {
 	int logical_id;
 
 	char	*bogomips;	/* per-CPU bogomips */
-	char	*mhz;		/* max freq from cpuinfo */
+	char	*mhz;		/* freq from cpuinfo */
 	char	*dynamic_mhz;   /* from cpuinf for s390 */
 	char	*static_mhz;	/* from cpuinf for s390 */
 	float	mhz_max_freq;	/* realtime freq from /sys/.../cpuinfo_max_freq */
 	float	mhz_min_freq;	/* realtime freq from /sys/.../cpuinfo_min_freq */
+	float   mhz_cur_freq;
 
 	int	coreid;
 	int	socketid;
@@ -280,6 +281,7 @@ void lscpu_cputype_free_topology(struct lscpu_cputype *ct);
 
 float lsblk_cputype_get_maxmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
 float lsblk_cputype_get_minmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
+float lsblk_cputype_get_scalmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
 
 struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt);
 void lscpu_free_architecture(struct lscpu_arch *ar);

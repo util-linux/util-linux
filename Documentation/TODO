@@ -53,6 +53,7 @@ cal
 
 lscpu
 -----
+  - add --freq output to visualise CPU use, see https://github.com/karelzak/util-linux/issues/1314
   - read cpuid and uname information from file if --sysroot is specified, then
     we can prepare regression tests completely independent on hw and architecture.
 
