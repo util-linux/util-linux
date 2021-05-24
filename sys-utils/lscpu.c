@@ -424,8 +424,8 @@ static char *get_cell_data(
 				 is_cpu_online(cxt, cpu) ? _("yes") : _("no"));
 		break;
 	case COL_CPU_MHZ:
-		if (cpu->mhz)
-			xstrncpy(buf, cpu->mhz, bufsz);
+		if (cpu->mhz_cur_freq)
+			snprintf(buf, bufsz, "%.4f", cpu->mhz_cur_freq);
 		break;
 	case COL_CPU_SCALMHZ:
 		if (cpu->mhz_cur_freq && cpu->mhz_max_freq)
