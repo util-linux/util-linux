@@ -18,6 +18,7 @@ libcommon_la_SOURCES = \
 	lib/color-names.c \
 	lib/crc32.c \
 	lib/crc32c.c \
+	lib/c_strtod.c \
 	lib/encode.c \
 	lib/env.c \
 	lib/fileutils.c \
@@ -91,7 +92,8 @@ check_PROGRAMS += \
 	test_remove_env \
 	test_strutils \
 	test_ttyutils \
-	test_timeutils
+	test_timeutils \
+	test_c_strtod
 
 
 if LINUX
@@ -134,6 +136,9 @@ test_mangle_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_MANGLE
 
 test_strutils_SOURCES = lib/strutils.c
 test_strutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_STRUTILS
+
+test_c_strtod_SOURCES = lib/c_strtod.c
+test_c_strtod_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 test_colors_SOURCES = lib/colors.c lib/color-names.c
 test_colors_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_COLORS

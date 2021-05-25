@@ -540,6 +540,7 @@ AC_CHECK_FUNCS([ \
 	jrand48 \
 	lchown \
 	llseek \
+	newlocale \
 	mempcpy \
 	mkostemp \
 	nanosleep \
@@ -565,10 +566,12 @@ AC_CHECK_FUNCS([ \
 	strnchr \
 	strndup \
 	strnlen \
+	strtod_l \
 	sysconf \
 	sysinfo \
 	timegm \
 	usleep \
+	uselocale \
 	utimensat \
 	vwarnx \
 	warn \

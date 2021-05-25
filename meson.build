@@ -460,6 +460,7 @@ funcs = '''
         jrand48
         lchown
         llseek
+	newlocale
         mempcpy
         mkostemp
         nanosleep
@@ -484,6 +485,7 @@ funcs = '''
         strnchr
         strndup
         strnlen
+	strtod_l
         sysconf
         sysinfo
         swapon
@@ -491,6 +493,7 @@ funcs = '''
         timegm
         unshare
         usleep
+	uselocale
 	utimensat
         vwarnx
         warn
