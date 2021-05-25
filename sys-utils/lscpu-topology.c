@@ -546,6 +546,16 @@ static int read_mhz(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/cpuinfo_min_freq", num) == 0)
 		cpu->mhz_min_freq = (float) mhz / 1000;
 
+	/* The default current-frequency value comes is from /proc/cpuinfo (if
+	 * available).  This /proc value is usually based on MSR registers
+	 * (APERF/APERF) and it changes pretty often. It seems better to read
+	 * frequency from cpufreq subsystem that provides the current frequency
+	 * for the current policy. There is also cpuinfo_cur_freq in sysfs, but
+	 * it's not always available.
+	 */
+	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/scaling_cur_freq", num) == 0)
+		cpu->mhz_cur_freq = (float) mhz / 1000;
+
 	if (cpu->type && (cpu->mhz_min_freq || cpu->mhz_max_freq))
 		cpu->type->has_freq = 1;
 
