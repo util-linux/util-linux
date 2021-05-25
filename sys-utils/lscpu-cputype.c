@@ -5,6 +5,7 @@
 #include "lscpu.h"
 
 #include "fileutils.h"
+#include "c_strtod.h"
 
 /* Lookup a pattern and get the value for format  "<pattern> : <key>"
  */
@@ -512,7 +513,7 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 				pr->curr_type->bogomips = xstrdup(value);
 			if (pattern->id == PAT_MHZ && pr->curr_cpu && value) {
 				errno = 0;
-				pr->curr_cpu->mhz_cur_freq = strtof(value, NULL);
+				pr->curr_cpu->mhz_cur_freq = (float) c_strtod(value, NULL);
 				if (errno)
 					pr->curr_cpu->mhz_cur_freq = 0;
 			}
