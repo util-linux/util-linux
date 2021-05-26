@@ -524,11 +524,16 @@ static void print_json_data(struct libscols_table *tb,
 		ul_jsonwrt_value_raw(&tb->json, name, data);
 		break;
 	case SCOLS_JSON_BOOLEAN:
-		/* name: true|false */
-		ul_jsonwrt_value_boolean(&tb->json, name,
-			!*data ? 0 :
-			*data == '0' ? 0 :
-			*data == 'N' || *data == 'n' ? 0 : 1);
+	case SCOLS_JSON_BOOLEAN_OPTIONAL:
+		/* name: true|false|null */
+		if (cl->json_type == SCOLS_JSON_BOOLEAN_OPTIONAL && (!*data || !strcmp(data, "-"))) {
+			ul_jsonwrt_value_null(&tb->json, name);
+		} else {
+			ul_jsonwrt_value_boolean(&tb->json, name,
+					!*data ? 0 :
+					*data == '0' ? 0 :
+					*data == 'N' || *data == 'n' ? 0 : 1);
+		}
 		break;
 	case SCOLS_JSON_ARRAY_STRING:
 	case SCOLS_JSON_ARRAY_NUMBER:
