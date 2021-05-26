@@ -301,6 +301,7 @@ AC_CHECK_HEADERS([ \
 	inttypes.h \
 	lastlog.h \
 	libutil.h \
+	linux/blkzoned.h \
 	linux/btrfs.h \
 	linux/capability.h \
 	linux/cdrom.h \
@@ -381,8 +382,6 @@ AC_CHECK_HEADERS([security/pam_misc.h],
 #include <security/pam_appl.h>
 #endif
 ])
-
-AC_CHECK_HEADERS([linux/blkzoned.h])
 
 AC_CHECK_DECLS([BLK_ZONE_REP_CAPACITY], [], [], [
 	#include <linux/blkzoned.h>

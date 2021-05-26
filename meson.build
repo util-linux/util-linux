@@ -4,8 +4,8 @@ project('util-linux', 'c',
 
 pkgconfig = import('pkgconfig')
 
-libblkid_version = '1.1.0'
 libblkid_date = '11-Dec-2019'
+libblkid_version = '1.1.0'
 libuuid_version = '1.3.0'
 libmount_version = '1.1.0'
 libsmartcols_version = '1.1.0'
@@ -156,8 +156,10 @@ headers = '''
         linux/compiler.h
         linux/falloc.h
         linux/fd.h
-        linux/fs.h
+	linux/fiemap.h
+	linux/gsmmux.h
         linux/net_namespace.h
+        linux/nsfs.h
         linux/raw.h
         linux/securebits.h
         linux/tiocl.h
@@ -195,6 +197,7 @@ headers = '''
         sys/types.h
         sys/ucred.h
         sys/un.h
+	sys/xattr.h
 '''.split()
 
 lib_m = cc.find_library('m')
