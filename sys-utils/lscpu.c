@@ -80,10 +80,10 @@ struct polarization_modes {
 };
 
 static struct polarization_modes polar_modes[] = {
-	[POLAR_UNKNOWN]	   = {"U",  "-"},
-	[POLAR_VLOW]	   = {"VL", "vert-low"},
-	[POLAR_VMEDIUM]	   = {"VM", "vert-medium"},
-	[POLAR_VHIGH]	   = {"VH", "vert-high"},
+	[POLAR_UNKNOWN]    = {"U",  "-"},
+	[POLAR_VLOW]       = {"VL", "vert-low"},
+	[POLAR_VMEDIUM]    = {"VM", "vert-medium"},
+	[POLAR_VHIGH]      = {"VH", "vert-high"},
 	[POLAR_HORIZONTAL] = {"H",  "horizontal"},
 };
 
@@ -149,7 +149,7 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU") },
 	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT },
-	[COL_CPU_MHZ]	       = { "MHZ", N_("shows the currently MHz of the CPU"), SCOLS_FL_RIGHT },
+	[COL_CPU_MHZ]          = { "MHZ", N_("shows the currently MHz of the CPU"), SCOLS_FL_RIGHT },
 	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT },
 	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT }
 };
