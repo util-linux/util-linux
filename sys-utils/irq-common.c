@@ -479,6 +479,7 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 
 	/* per cpu % of delta */
 	ln = new_scols_line(table);
+	/* xgettext:no-c-format */
 	if (!ln || (!out->json && scols_line_set_data(ln, 0, _("%delta:")) != 0))
 		goto err;
 
