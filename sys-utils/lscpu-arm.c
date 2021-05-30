@@ -205,13 +205,17 @@ static const struct hw_impl hw_implementer[] = {
     { 0x44, dec_part,     "DEC" },
     { 0x46, fujitsu_part, "FUJITSU" },
     { 0x48, hisi_part,    "HiSilicon" },
+    { 0x49, unknown_part, "Infineon" },
+    { 0x4d, unknown_part, "Motorola/Freescale" },
     { 0x4e, nvidia_part,  "Nvidia" },
     { 0x50, apm_part,     "APM" },
     { 0x51, qcom_part,    "Qualcomm" },
     { 0x53, samsung_part, "Samsung" },
     { 0x56, marvell_part, "Marvell" },
+    { 0x61, unknown_part, "Apple" },
     { 0x66, faraday_part, "Faraday" },
     { 0x69, intel_part,   "Intel" },
+    { 0xc0, unknown_part, "Ampere" },
     { -1,   unknown_part, "unknown" },
 };
 
