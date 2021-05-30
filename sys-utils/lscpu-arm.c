@@ -207,7 +207,7 @@ static const struct hw_impl hw_implementer[] = {
     { 0x48, hisi_part,    "HiSilicon" },
     { 0x49, unknown_part, "Infineon" },
     { 0x4d, unknown_part, "Motorola/Freescale" },
-    { 0x4e, nvidia_part,  "Nvidia" },
+    { 0x4e, nvidia_part,  "NVIDIA" },
     { 0x50, apm_part,     "APM" },
     { 0x51, qcom_part,    "Qualcomm" },
     { 0x53, samsung_part, "Samsung" },
