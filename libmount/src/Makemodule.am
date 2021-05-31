@@ -92,11 +92,19 @@ check_PROGRAMS += test_mount_monitor
 endif
 
 libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
-libmount_tests_ldflags = libblkid.la -static
-libmount_tests_ldadd   = libmount.la $(LDADD) $(REALTIME_LIBS)
+libmount_tests_ldflags = -static
+libmount_tests_ldadd   = libmount.la libblkid.la $(LDADD) $(REALTIME_LIBS)
 
 if HAVE_SELINUX
 libmount_tests_ldadd += $(SELINUX_LIBS)
+endif
+
+if HAVE_CRYPTSETUP
+if CRYPTSETUP_VIA_DLOPEN
+libmount_tests_ldadd += -ldl
+else
+libmount_tests_ldadd += $(CRYPTSETUP_LIBS)
+endif
 endif
 
 test_mount_cache_SOURCES = libmount/src/cache.c
