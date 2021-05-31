@@ -700,6 +700,8 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len
  * cached buffers. The next blkid_do_probe() will read all data from the
  * device.
  *
+ * Since: 2.31
+ *
  * Returns: <0 in case of failure, or 0 on success.
  */
 int blkid_probe_reset_buffers(blkid_probe pr)
@@ -747,6 +749,8 @@ int blkid_probe_reset_buffers(blkid_probe pr)
  * function is not a way how to hide any large areas on your device.
  *
  * The function blkid_probe_reset_buffers() reverts all.
+ *
+ * Since: 2.31
  *
  * Returns: <0 in case of failure, or 0 on success.
  */
@@ -2181,7 +2185,7 @@ int blkid_probe_get_hint(blkid_probe pr, const char *name, uint64_t *value)
 
 /**
  * blkid_probe_reset_hints:
- * @pr probe
+ * @pr: probe
  *
  * Removes all previously defined probinig hints. See also blkid_probe_set_hint().
  */
