@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 13:20+0200\n"
+"POT-Creation-Date: 2021-05-31 18:30+0200\n"
 "PO-Revision-Date: 2021-05-10 21:10+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -55,21 +55,20 @@ msgstr "недостатньо аргументів"
 #: login-utils/sulogin.c:444 login-utils/sulogin.c:481
 #: login-utils/utmpdump.c:134 login-utils/utmpdump.c:354
 #: login-utils/utmpdump.c:378 login-utils/vipw.c:250 login-utils/vipw.c:268
-#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:584
-#: misc-utils/logger.c:1241 misc-utils/mcookie.c:119 misc-utils/uuidd.c:231
-#: sys-utils/blkdiscard.c:230 sys-utils/blkzone.c:144 sys-utils/dmesg.c:536
-#: sys-utils/eject.c:499 sys-utils/eject.c:698 sys-utils/fallocate.c:405
-#: sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:103 sys-utils/hwclock.c:239
-#: sys-utils/hwclock.c:906 sys-utils/hwclock-rtc.c:138
-#: sys-utils/hwclock-rtc.c:403 sys-utils/hwclock-rtc.c:438
-#: sys-utils/irq-common.c:253 sys-utils/ldattach.c:391
-#: sys-utils/lscpu-cputype.c:456 sys-utils/lsmem.c:658 sys-utils/nsenter.c:131
-#: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
-#: sys-utils/setpriv.c:256 sys-utils/setpriv.c:622 sys-utils/setpriv.c:645
-#: sys-utils/swapon.c:387 sys-utils/swapon.c:530 sys-utils/switch_root.c:174
-#: sys-utils/unshare.c:112 sys-utils/unshare.c:127 sys-utils/wdctl.c:361
-#: sys-utils/zramctl.c:517 term-utils/agetty.c:2965 term-utils/mesg.c:154
-#: term-utils/script.c:383 term-utils/scriptlive.c:256
+#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:584 misc-utils/logger.c:1241
+#: misc-utils/mcookie.c:119 misc-utils/uuidd.c:231 sys-utils/blkdiscard.c:230
+#: sys-utils/blkzone.c:144 sys-utils/dmesg.c:536 sys-utils/eject.c:499
+#: sys-utils/eject.c:698 sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116
+#: sys-utils/fstrim.c:103 sys-utils/hwclock.c:239 sys-utils/hwclock.c:906
+#: sys-utils/hwclock-rtc.c:138 sys-utils/hwclock-rtc.c:403
+#: sys-utils/hwclock-rtc.c:438 sys-utils/irq-common.c:253
+#: sys-utils/ldattach.c:391 sys-utils/lscpu-cputype.c:456 sys-utils/lsmem.c:658
+#: sys-utils/nsenter.c:131 sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137
+#: sys-utils/rtcwake.c:292 sys-utils/setpriv.c:256 sys-utils/setpriv.c:622
+#: sys-utils/setpriv.c:645 sys-utils/swapon.c:387 sys-utils/swapon.c:530
+#: sys-utils/switch_root.c:174 sys-utils/unshare.c:112 sys-utils/unshare.c:127
+#: sys-utils/wdctl.c:361 sys-utils/zramctl.c:517 term-utils/agetty.c:2965
+#: term-utils/mesg.c:154 term-utils/script.c:383 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
@@ -478,8 +477,7 @@ msgstr "Не вдалося записати скрипт %s"
 msgid "Select label type"
 msgstr "Вибрати тип мітки"
 
-#: disk-utils/cfdisk.c:2145 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:489
+#: disk-utils/cfdisk.c:2145 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:489
 msgid "Device does not contain a recognized partition table."
 msgstr "Пристрій не містить розпізнаної таблиці розділів."
 
@@ -624,8 +622,7 @@ msgstr "Новий розмір: "
 msgid "Partition %zu resized."
 msgstr "Змінено розмір розділу %zu."
 
-#: disk-utils/cfdisk.c:2454 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:592
+#: disk-utils/cfdisk.c:2454 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:592
 msgid "Device is open in read-only mode."
 msgstr "Пристрій відкрито у режимі лише читання."
 
@@ -762,8 +759,8 @@ msgstr ""
 "Продовжуємо... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:648
-#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:648 sys-utils/blkdiscard.c:89
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [параметри] <пристрій>\n"
@@ -1129,21 +1126,21 @@ msgstr "непідтримуваний режим витирання"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Властивості пристрою (розмір сектора та геометрію) слід використовувати лише для одного вказаного пристрою."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:702 disk-utils/mkfs.bfs.c:192
-#: disk-utils/mkfs.cramfs.c:786 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:149
-#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
-#: misc-utils/whereis.c:644 schedutils/chrt.c:443 schedutils/ionice.c:262
-#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:422
-#: sys-utils/dmesg.c:1536 sys-utils/ipcmk.c:138 sys-utils/ldattach.c:320
-#: sys-utils/losetup.c:917 sys-utils/lscpu.c:1294 sys-utils/lsmem.c:643
-#: sys-utils/mount.c:833 sys-utils/mount.c:841 sys-utils/mount.c:888
-#: sys-utils/mount.c:901 sys-utils/mount.c:973 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1005
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:625
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2063
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:702
+#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:786
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
+#: misc-utils/findfs.c:58 misc-utils/look.c:149 misc-utils/whereis.c:580
+#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
+#: schedutils/chrt.c:443 schedutils/ionice.c:262 schedutils/taskset.c:188
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1536
+#: sys-utils/ipcmk.c:138 sys-utils/ldattach.c:320 sys-utils/losetup.c:917
+#: sys-utils/lscpu.c:1294 sys-utils/lsmem.c:643 sys-utils/mount.c:833
+#: sys-utils/mount.c:841 sys-utils/mount.c:888 sys-utils/mount.c:901
+#: sys-utils/mount.c:973 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1005 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:625 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2063
 msgid "bad usage"
 msgstr "помилкове використання"
 
@@ -12296,9 +12293,8 @@ msgstr "не вдалося обробити зсув"
 msgid "failed to parse step"
 msgstr "не вдалося обробити крок"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491
-#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:533
-#: sys-utils/umount.c:615
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:533 sys-utils/umount.c:615
 msgid "unexpected number of arguments"
 msgstr "неочікувана кількість аргументів"
 
@@ -12327,29 +12323,29 @@ msgstr "%s: зсув виходить за межі розміру пристр�
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: довжину %<PRIu64> не вирівняно до розміру сектора %i"
 
-#: sys-utils/blkdiscard.c:270
-msgid "This is destructive operation, data will be lost! Use the -f option to override."
-msgstr "Це руйнівна дія, дані буде втрачено! Скористайтеся параметром -f для перевизначення."
-
-#: sys-utils/blkdiscard.c:273
+#: sys-utils/blkdiscard.c:262
 msgid "Operation forced, data will be lost!"
 msgstr "Примусове виконання дії — дані буде втрачено!"
 
-#: sys-utils/blkdiscard.c:278
+#: sys-utils/blkdiscard.c:273
+msgid "This is destructive operation, data will be lost! Use the -f option to override."
+msgstr "Це руйнівна дія, дані буде втрачено! Скористайтеся параметром -f для перевизначення."
+
+#: sys-utils/blkdiscard.c:280
 msgid "failed to probe the device"
 msgstr "не вдалося виконати зондування пристрою"
 
-#: sys-utils/blkdiscard.c:293
+#: sys-utils/blkdiscard.c:296
 #, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "%s: помилка ioctl BLKZEROOUT"
 
-#: sys-utils/blkdiscard.c:297
+#: sys-utils/blkdiscard.c:300
 #, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "%s: помилка ioctl BLKSECDISCARD"
 
-#: sys-utils/blkdiscard.c:301
+#: sys-utils/blkdiscard.c:304
 #, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s: помилка ioctl BLKDISCARD"
@@ -15154,8 +15150,8 @@ msgstr "непідтримувана назва стовпчика для упо
 msgid "cpu-interrupts"
 msgstr "переривання процесора"
 
-#: sys-utils/irq-common.c:482
-#, c-format
+#: sys-utils/irq-common.c:483
+#, no-c-format
 msgid "%delta:"
 msgstr "%delta:"
 

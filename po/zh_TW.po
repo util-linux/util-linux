@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 12:15+0200\n"
+"POT-Creation-Date: 2021-05-31 18:30+0200\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -13331,30 +13331,30 @@ msgstr "無法提取裝置大小"
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:270
-msgid "This is destructive operation, data will be lost! Use the -f option to override."
-msgstr ""
-
-#: sys-utils/blkdiscard.c:273
+#: sys-utils/blkdiscard.c:262
 msgid "Operation forced, data will be lost!"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:278
+#: sys-utils/blkdiscard.c:273
+msgid "This is destructive operation, data will be lost! Use the -f option to override."
+msgstr ""
+
+#: sys-utils/blkdiscard.c:280
 #, fuzzy
 msgid "failed to probe the device"
 msgstr "配置迭代器時失敗"
 
-#: sys-utils/blkdiscard.c:293
+#: sys-utils/blkdiscard.c:296
 #, fuzzy, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "%s：FITRIM ioctl 失敗"
 
-#: sys-utils/blkdiscard.c:297
+#: sys-utils/blkdiscard.c:300
 #, fuzzy, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "%s：FITRIM ioctl 失敗"
 
-#: sys-utils/blkdiscard.c:301
+#: sys-utils/blkdiscard.c:304
 #, fuzzy, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s：FITRIM ioctl 失敗"
@@ -16386,8 +16386,8 @@ msgstr ""
 "\n"
 "發生插斷 %10.10s %5.5s\n"
 
-#: sys-utils/irq-common.c:482
-#, c-format
+#: sys-utils/irq-common.c:483
+#, no-c-format
 msgid "%delta:"
 msgstr ""
 

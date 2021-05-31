@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 12:15+0200\n"
+"POT-Creation-Date: 2021-05-31 18:30+0200\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -12718,30 +12718,30 @@ msgstr "%s: khoảng bù còn lớn hơn cả cỡ của thiết bị"
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: chiều dài %<PRIu64> không được căn chỉnh với cỡ cung từ %i"
 
-#: sys-utils/blkdiscard.c:270
-msgid "This is destructive operation, data will be lost! Use the -f option to override."
-msgstr ""
-
-#: sys-utils/blkdiscard.c:273
+#: sys-utils/blkdiscard.c:262
 msgid "Operation forced, data will be lost!"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:278
+#: sys-utils/blkdiscard.c:273
+msgid "This is destructive operation, data will be lost! Use the -f option to override."
+msgstr ""
+
+#: sys-utils/blkdiscard.c:280
 #, fuzzy
 msgid "failed to probe the device"
 msgstr "gặp lỗi khi cấp phát iterator"
 
-#: sys-utils/blkdiscard.c:293
+#: sys-utils/blkdiscard.c:296
 #, fuzzy, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "%s: BLKSSZGET ioctl gặp lỗi"
 
-#: sys-utils/blkdiscard.c:297
+#: sys-utils/blkdiscard.c:300
 #, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "%s: BLKSECDISCARD ioctl gặp lỗi"
 
-#: sys-utils/blkdiscard.c:301
+#: sys-utils/blkdiscard.c:304
 #, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s: BLKDISCARD ioctl gặp lỗi"
@@ -15638,8 +15638,8 @@ msgstr "không được hỗ trợ tô màu"
 msgid "cpu-interrupts"
 msgstr "%s bị ngắt"
 
-#: sys-utils/irq-common.c:482
-#, c-format
+#: sys-utils/irq-common.c:483
+#, no-c-format
 msgid "%delta:"
 msgstr ""
 

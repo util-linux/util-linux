@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 12:15+0200\n"
+"POT-Creation-Date: 2021-05-31 18:30+0200\n"
 "PO-Revision-Date: 2020-07-19 21:15+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -12502,30 +12502,30 @@ msgstr "%s: オフセットがデバイスサイズよりも大きいです"
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: 長さ %<PRIu64> はセクタのサイズ %i の倍数ではありません"
 
-#: sys-utils/blkdiscard.c:270
-msgid "This is destructive operation, data will be lost! Use the -f option to override."
-msgstr ""
-
-#: sys-utils/blkdiscard.c:273
+#: sys-utils/blkdiscard.c:262
 msgid "Operation forced, data will be lost!"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:278
+#: sys-utils/blkdiscard.c:273
+msgid "This is destructive operation, data will be lost! Use the -f option to override."
+msgstr ""
+
+#: sys-utils/blkdiscard.c:280
 #, fuzzy
 msgid "failed to probe the device"
 msgstr "デバイスの割り当てに失敗しました"
 
-#: sys-utils/blkdiscard.c:293
+#: sys-utils/blkdiscard.c:296
 #, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "%s: BLKZEROOUT ioctl に失敗しました"
 
-#: sys-utils/blkdiscard.c:297
+#: sys-utils/blkdiscard.c:300
 #, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "%s: BLKSECDISCARD ioctl に失敗しました"
 
-#: sys-utils/blkdiscard.c:301
+#: sys-utils/blkdiscard.c:304
 #, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s: BLKDISCARD ioctl に失敗しました"
@@ -15392,8 +15392,8 @@ msgstr "未対応の色モードです"
 msgid "cpu-interrupts"
 msgstr "%s に割り込みが入りました"
 
-#: sys-utils/irq-common.c:482
-#, c-format
+#: sys-utils/irq-common.c:483
+#, no-c-format
 msgid "%delta:"
 msgstr ""
 

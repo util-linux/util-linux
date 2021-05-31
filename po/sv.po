@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 12:15+0200\n"
+"POT-Creation-Date: 2021-05-31 18:30+0200\n"
 "PO-Revision-Date: 2021-04-17 18:24+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -12482,29 +12482,29 @@ msgstr "%s: positionen är större än enhetsstorlek"
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: längd %<PRIu64> är inte justerad till sektorstorlek %i"
 
-#: sys-utils/blkdiscard.c:270
-msgid "This is destructive operation, data will be lost! Use the -f option to override."
-msgstr "Detta är en destruktiv åtgärd, data kommer att förloras! Använd flaggan -f för att åsidosätta."
-
-#: sys-utils/blkdiscard.c:273
+#: sys-utils/blkdiscard.c:262
 msgid "Operation forced, data will be lost!"
 msgstr "Operation tvingad, data kommer att gå förlorad!"
 
-#: sys-utils/blkdiscard.c:278
+#: sys-utils/blkdiscard.c:273
+msgid "This is destructive operation, data will be lost! Use the -f option to override."
+msgstr "Detta är en destruktiv åtgärd, data kommer att förloras! Använd flaggan -f för att åsidosätta."
+
+#: sys-utils/blkdiscard.c:280
 msgid "failed to probe the device"
 msgstr "misslyckades med att avsöka enhet"
 
-#: sys-utils/blkdiscard.c:293
+#: sys-utils/blkdiscard.c:296
 #, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "%s: BLKZEROOUT ioctl misslyckades"
 
-#: sys-utils/blkdiscard.c:297
+#: sys-utils/blkdiscard.c:300
 #, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "%s: BLKSECDISCARD-ioctl misslyckades"
 
-#: sys-utils/blkdiscard.c:301
+#: sys-utils/blkdiscard.c:304
 #, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s: BLKDISCARD-ioctl misslyckades"
@@ -15349,8 +15349,8 @@ msgstr "kolumnnamn för sortering av utdata stöds ej"
 msgid "cpu-interrupts"
 msgstr "avbrott"
 
-#: sys-utils/irq-common.c:482
-#, c-format
+#: sys-utils/irq-common.c:483
+#, no-c-format
 msgid "%delta:"
 msgstr ""
 

@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 12:15+0200\n"
+"POT-Creation-Date: 2021-05-31 18:30+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -13208,30 +13208,30 @@ msgstr "Velikosti diskovne steze ni mogoèe prebrati"
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:270
-msgid "This is destructive operation, data will be lost! Use the -f option to override."
-msgstr ""
-
-#: sys-utils/blkdiscard.c:273
+#: sys-utils/blkdiscard.c:262
 msgid "Operation forced, data will be lost!"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:278
+#: sys-utils/blkdiscard.c:273
+msgid "This is destructive operation, data will be lost! Use the -f option to override."
+msgstr ""
+
+#: sys-utils/blkdiscard.c:280
 #, fuzzy
 msgid "failed to probe the device"
 msgstr "Za medpomnilnik ni mogoèe dodeliti pomnilnika.\n"
 
-#: sys-utils/blkdiscard.c:293
+#: sys-utils/blkdiscard.c:296
 #, fuzzy, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "openpty ni uspel\n"
 
-#: sys-utils/blkdiscard.c:297
+#: sys-utils/blkdiscard.c:300
 #, fuzzy, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "openpty ni uspel\n"
 
-#: sys-utils/blkdiscard.c:301
+#: sys-utils/blkdiscard.c:304
 #, fuzzy, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "openpty ni uspel\n"
@@ -16171,8 +16171,8 @@ msgstr ""
 "\n"
 "prekinjeno %10.10s %5.5s \n"
 
-#: sys-utils/irq-common.c:482
-#, c-format
+#: sys-utils/irq-common.c:483
+#, no-c-format
 msgid "%delta:"
 msgstr ""
 

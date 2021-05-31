@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.30-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 12:15+0200\n"
+"POT-Creation-Date: 2021-05-31 18:30+0200\n"
 "PO-Revision-Date: 2017-05-29 20:16+0000\n"
 "Last-Translator: Mesutcan Kurt <mesutcank@gmail.com>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -12531,30 +12531,30 @@ msgstr "%s: ofset aygıt boyutundan daha büyük"
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: uzunluk %<PRIu64> sektör boyutu %i'ye hızalı değil"
 
-#: sys-utils/blkdiscard.c:270
-msgid "This is destructive operation, data will be lost! Use the -f option to override."
-msgstr ""
-
-#: sys-utils/blkdiscard.c:273
+#: sys-utils/blkdiscard.c:262
 msgid "Operation forced, data will be lost!"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:278
+#: sys-utils/blkdiscard.c:273
+msgid "This is destructive operation, data will be lost! Use the -f option to override."
+msgstr ""
+
+#: sys-utils/blkdiscard.c:280
 #, fuzzy
 msgid "failed to probe the device"
 msgstr "yineleyici tahsil edilemedi"
 
-#: sys-utils/blkdiscard.c:293
+#: sys-utils/blkdiscard.c:296
 #, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "%s: BLKZEROOUT ioctl başarısız"
 
-#: sys-utils/blkdiscard.c:297
+#: sys-utils/blkdiscard.c:300
 #, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "%s: BLKSECDISCARD ioctl başarısız"
 
-#: sys-utils/blkdiscard.c:301
+#: sys-utils/blkdiscard.c:304
 #, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s: BLKDISCARD ioctl başarısız"
@@ -15450,8 +15450,8 @@ msgstr "desteklenmeyen renk modu"
 msgid "cpu-interrupts"
 msgstr "Durduruldu %s"
 
-#: sys-utils/irq-common.c:482
-#, c-format
+#: sys-utils/irq-common.c:483
+#, no-c-format
 msgid "%delta:"
 msgstr ""
 

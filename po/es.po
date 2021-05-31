@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 12:15+0200\n"
+"POT-Creation-Date: 2021-05-31 18:30+0200\n"
 "PO-Revision-Date: 2020-07-31 08:41+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -12393,29 +12393,29 @@ msgstr "%s: el desplazamiento es mayor que el tamaño del dispositivo"
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: la longitud %<PRIu64> no está alineada con el tamaño del sector %i"
 
-#: sys-utils/blkdiscard.c:270
-msgid "This is destructive operation, data will be lost! Use the -f option to override."
-msgstr "Esta es una operación destructiva, ¡se perderán datos! Utilice la opción -f para forzar."
-
-#: sys-utils/blkdiscard.c:273
+#: sys-utils/blkdiscard.c:262
 msgid "Operation forced, data will be lost!"
 msgstr "¡Operación forzada, se perdarán datos!"
 
-#: sys-utils/blkdiscard.c:278
+#: sys-utils/blkdiscard.c:273
+msgid "This is destructive operation, data will be lost! Use the -f option to override."
+msgstr "Esta es una operación destructiva, ¡se perderán datos! Utilice la opción -f para forzar."
+
+#: sys-utils/blkdiscard.c:280
 msgid "failed to probe the device"
 msgstr "no se ha podido sondear el dispositivo"
 
-#: sys-utils/blkdiscard.c:293
+#: sys-utils/blkdiscard.c:296
 #, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "%s: ioctl BLKZEROOUT ha fallado"
 
-#: sys-utils/blkdiscard.c:297
+#: sys-utils/blkdiscard.c:300
 #, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "%s: ioctl BLKSECDISCARD ha fallado"
 
-#: sys-utils/blkdiscard.c:301
+#: sys-utils/blkdiscard.c:304
 #, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s: ioctl BLKDISCARD ha fallado"
@@ -15244,8 +15244,8 @@ msgstr "nombre de columna no admitido para ordenar la salida"
 msgid "cpu-interrupts"
 msgstr "interrupciones"
 
-#: sys-utils/irq-common.c:482
-#, c-format
+#: sys-utils/irq-common.c:483
+#, no-c-format
 msgid "%delta:"
 msgstr ""
 

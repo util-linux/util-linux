@@ -75,7 +75,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 12:15+0200\n"
+"POT-Creation-Date: 2021-05-31 18:30+0200\n"
 "PO-Revision-Date: 2019-06-03 14:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -12553,31 +12553,31 @@ msgstr "%s: forskydning er større end enhedsstørrelse"
 msgid "%s: length %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: længde %<PRIu64> er ikke justeret til sektorstørrelse %i"
 
-#: sys-utils/blkdiscard.c:270
+#: sys-utils/blkdiscard.c:262
+msgid "Operation forced, data will be lost!"
+msgstr ""
+
+#: sys-utils/blkdiscard.c:273
 #, fuzzy
 msgid "This is destructive operation, data will be lost! Use the -f option to override."
 msgstr "%s er på et andet filsystem end resten (brug tilvalget -f for at overskrive)."
 
-#: sys-utils/blkdiscard.c:273
-msgid "Operation forced, data will be lost!"
-msgstr ""
-
-#: sys-utils/blkdiscard.c:278
+#: sys-utils/blkdiscard.c:280
 #, fuzzy
 msgid "failed to probe the device"
 msgstr "kunne ikke allokere enhed"
 
-#: sys-utils/blkdiscard.c:293
+#: sys-utils/blkdiscard.c:296
 #, c-format
 msgid "%s: BLKZEROOUT ioctl failed"
 msgstr "%s: BLKZEROOUT ioctl mislykkedes"
 
-#: sys-utils/blkdiscard.c:297
+#: sys-utils/blkdiscard.c:300
 #, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "%s: BLKSECDISCARD ioctl mislykkedes"
 
-#: sys-utils/blkdiscard.c:301
+#: sys-utils/blkdiscard.c:304
 #, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s: BLKDISCARD ioctl mislykkedes"
@@ -15437,8 +15437,8 @@ msgstr "ikke understøttet farvetilstand"
 msgid "cpu-interrupts"
 msgstr "Afbrudt %s"
 
-#: sys-utils/irq-common.c:482
-#, c-format
+#: sys-utils/irq-common.c:483
+#, no-c-format
 msgid "%delta:"
 msgstr ""
 
