@@ -2,14 +2,14 @@
 # Copyright (C) 2005 Free Software Foundation, Inc.
 # This file is distributed under the same license as the util-linux package.
 # Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>, 2006.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2009-2020.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2009-2021.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.36-rc2\n"
+"Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-05-10 12:15+0200\n"
-"PO-Revision-Date: 2020-07-10 20:15+0200\n"
+"POT-Creation-Date: 2021-05-10 13:20+0200\n"
+"PO-Revision-Date: 2021-05-22 18:58+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -54,20 +54,21 @@ msgstr "za mało argumentów"
 #: login-utils/sulogin.c:444 login-utils/sulogin.c:481
 #: login-utils/utmpdump.c:134 login-utils/utmpdump.c:354
 #: login-utils/utmpdump.c:378 login-utils/vipw.c:250 login-utils/vipw.c:268
-#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:584 misc-utils/logger.c:1241
-#: misc-utils/mcookie.c:119 misc-utils/uuidd.c:231 sys-utils/blkdiscard.c:230
-#: sys-utils/blkzone.c:144 sys-utils/dmesg.c:536 sys-utils/eject.c:499
-#: sys-utils/eject.c:698 sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116
-#: sys-utils/fstrim.c:103 sys-utils/hwclock.c:239 sys-utils/hwclock.c:906
-#: sys-utils/hwclock-rtc.c:138 sys-utils/hwclock-rtc.c:403
-#: sys-utils/hwclock-rtc.c:438 sys-utils/irq-common.c:253
-#: sys-utils/ldattach.c:391 sys-utils/lscpu-cputype.c:456 sys-utils/lsmem.c:658
-#: sys-utils/nsenter.c:131 sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137
-#: sys-utils/rtcwake.c:292 sys-utils/setpriv.c:256 sys-utils/setpriv.c:622
-#: sys-utils/setpriv.c:645 sys-utils/swapon.c:387 sys-utils/swapon.c:530
-#: sys-utils/switch_root.c:174 sys-utils/unshare.c:112 sys-utils/unshare.c:127
-#: sys-utils/wdctl.c:361 sys-utils/zramctl.c:517 term-utils/agetty.c:2965
-#: term-utils/mesg.c:154 term-utils/script.c:383 term-utils/scriptlive.c:256
+#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:584
+#: misc-utils/logger.c:1241 misc-utils/mcookie.c:119 misc-utils/uuidd.c:231
+#: sys-utils/blkdiscard.c:230 sys-utils/blkzone.c:144 sys-utils/dmesg.c:536
+#: sys-utils/eject.c:499 sys-utils/eject.c:698 sys-utils/fallocate.c:405
+#: sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:103 sys-utils/hwclock.c:239
+#: sys-utils/hwclock.c:906 sys-utils/hwclock-rtc.c:138
+#: sys-utils/hwclock-rtc.c:403 sys-utils/hwclock-rtc.c:438
+#: sys-utils/irq-common.c:253 sys-utils/ldattach.c:391
+#: sys-utils/lscpu-cputype.c:456 sys-utils/lsmem.c:658 sys-utils/nsenter.c:131
+#: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
+#: sys-utils/setpriv.c:256 sys-utils/setpriv.c:622 sys-utils/setpriv.c:645
+#: sys-utils/swapon.c:387 sys-utils/swapon.c:530 sys-utils/switch_root.c:174
+#: sys-utils/unshare.c:112 sys-utils/unshare.c:127 sys-utils/wdctl.c:361
+#: sys-utils/zramctl.c:517 term-utils/agetty.c:2965 term-utils/mesg.c:154
+#: term-utils/script.c:383 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
@@ -476,14 +477,14 @@ msgstr "Nie udało się zapisać skryptu %s"
 msgid "Select label type"
 msgstr "Proszę wybrać typ etykiety"
 
-#: disk-utils/cfdisk.c:2145 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:489
+#: disk-utils/cfdisk.c:2145 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:489
 msgid "Device does not contain a recognized partition table."
 msgstr "Urządzenie nie zawiera żadnej znanej tablicy partycji."
 
 #: disk-utils/cfdisk.c:2153
-#, fuzzy
 msgid "Select a type to create a new label, press 'L' to load script file, 'Q' quits."
-msgstr "Proszę wybrać typ, aby utworzyć nową etykietę, albo nacisnąć 'L', aby wczytać plik skryptu."
+msgstr "Proszę wybrać typ, aby utworzyć nową etykietę, nacisnąć 'L', aby wczytać plik skryptu lub 'Q' by wyjść."
 
 #: disk-utils/cfdisk.c:2202
 msgid "This is cfdisk, a curses-based disk partitioning program."
@@ -522,9 +523,8 @@ msgid "  q          Quit program without writing partition table"
 msgstr "  q          Zakończenie programu bez zapisu tablicy partycji"
 
 #: disk-utils/cfdisk.c:2212
-#, fuzzy
 msgid "  r          Reduce or enlarge the current partition"
-msgstr "Zmniejszenie lub powiększenie bieżącej partycji"
+msgstr "  r          Zmniejszenie lub powiększenie bieżącej partycji"
 
 #: disk-utils/cfdisk.c:2213
 msgid "  s          Fix partitions order (only when in disarray)"
@@ -623,7 +623,8 @@ msgstr "Nowy rozmiar: "
 msgid "Partition %zu resized."
 msgstr "Zmieniono rozmiar partycji %zu."
 
-#: disk-utils/cfdisk.c:2454 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:592
+#: disk-utils/cfdisk.c:2454 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:592
 msgid "Device is open in read-only mode."
 msgstr "Urządzenie jest otwarte w trybie tylko do odczytu."
 
@@ -670,13 +671,12 @@ msgid "failed to read partitions"
 msgstr "nie udało się odczytać partycji"
 
 #: disk-utils/cfdisk.c:2572
-#, fuzzy
 msgid "Device is open in read-only mode. Changes will remain in memory only."
-msgstr "Urządzenie jest otwarte w trybie tylko do odczytu."
+msgstr "Urządzenie jest otwarte w trybie tylko do odczytu. Zmiany pozostaną tylko w pamięci."
 
 #: disk-utils/cfdisk.c:2574
 msgid "Device is currently in use, repartitioning is probably a bad idea."
-msgstr ""
+msgstr "Urządzenie jest obecnie w użyciu, modyfikacja partycji jest prawdopodobnie złym pomysłem."
 
 #: disk-utils/cfdisk.c:2660
 #, c-format
@@ -702,9 +702,8 @@ msgid "     --lock[=<mode>]      use exclusive device lock (%s, %s or %s)\n"
 msgstr "     --lock[=<tryb>]      użycie wyłącznej blokady urządzenia (%s, %s lub %s)\n"
 
 #: disk-utils/cfdisk.c:2673
-#, fuzzy
 msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
-msgstr " -r, --read-only               ustawienie urządzenia loop tylko do odczytu\n"
+msgstr " -r, --read-only          wymuszenie otwarcia cfdiska w trybie tylko do odczytu\n"
 
 #: disk-utils/cfdisk.c:2716 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2319
 #: misc-utils/cal.c:426 sys-utils/dmesg.c:1453 text-utils/hexdump.c:121
@@ -762,8 +761,8 @@ msgstr ""
 "Kontynuacja... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:648 sys-utils/blkdiscard.c:89
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:648
+#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcje] <urządzenie>\n"
@@ -1131,21 +1130,21 @@ msgstr "nie obsługiwany tryb wymazywania"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Właściwości urządzenia (rozmiar sektora i geometria) powinny być używane tylko z jednym określonym urządzeniem."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:702
-#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:786
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
-#: misc-utils/findfs.c:58 misc-utils/look.c:149 misc-utils/whereis.c:580
-#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
-#: schedutils/chrt.c:443 schedutils/ionice.c:262 schedutils/taskset.c:188
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:422 sys-utils/dmesg.c:1536
-#: sys-utils/ipcmk.c:138 sys-utils/ldattach.c:320 sys-utils/losetup.c:917
-#: sys-utils/lscpu.c:1294 sys-utils/lsmem.c:643 sys-utils/mount.c:833
-#: sys-utils/mount.c:841 sys-utils/mount.c:888 sys-utils/mount.c:901
-#: sys-utils/mount.c:973 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1005 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:625 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2063
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:702 disk-utils/mkfs.bfs.c:192
+#: disk-utils/mkfs.cramfs.c:786 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:149
+#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
+#: misc-utils/whereis.c:644 schedutils/chrt.c:443 schedutils/ionice.c:262
+#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:422
+#: sys-utils/dmesg.c:1536 sys-utils/ipcmk.c:138 sys-utils/ldattach.c:320
+#: sys-utils/losetup.c:917 sys-utils/lscpu.c:1294 sys-utils/lsmem.c:643
+#: sys-utils/mount.c:833 sys-utils/mount.c:841 sys-utils/mount.c:888
+#: sys-utils/mount.c:901 sys-utils/mount.c:973 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1005
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:625
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2063
 msgid "bad usage"
 msgstr "błędna składnia"
 
@@ -1163,20 +1162,14 @@ msgstr ""
 "Przed użyciem polecenia zapisu prosimy o ostrożność.\n"
 
 #: disk-utils/fdisk.c:1145
-#, fuzzy
-#| msgid ""
-#| "This disk is currently in use - repartitioning is probably a bad idea.\n"
-#| "Umount all file systems, and swapoff all swap partitions on this disk.\n"
-#| "Use the --no-reread flag to suppress this check.\n"
 msgid ""
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
 "It's recommended to umount all file systems, and swapoff all swap\n"
 "partitions on this disk.\n"
 msgstr ""
 "Ten dysk jest aktualnie używany - repartycjonowanie jest raczej złym pomysłem.\n"
-"Proszę odmontować wszystkie systemy plików oraz wyłączyć partycje wymiany\n"
-"z tego dysku.\n"
-"Aby pominąć ten test, można użyć flagi --no-reread.\n"
+"Zalecane jest, aby odmontować wszystkie systemy plików oraz wyłączyć partycje\n"
+"wymiany z tego dysku.\n"
 
 #: disk-utils/fdisk.c:1168
 msgid "A hybrid GPT was detected. You have to sync the hybrid MBR manually (expert command 'M')."
@@ -1731,9 +1724,9 @@ msgid "Number of sectors"
 msgstr "Liczba sektorów"
 
 #: disk-utils/fdisk-menu.c:1105
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create '%s' disk label"
-msgstr "nie udało się utworzyć nowej etykiety dysku"
+msgstr "Nie udało się utworzyć etykiety dysku '%s'"
 
 #: disk-utils/fsck.c:213
 #, c-format
@@ -1844,9 +1837,9 @@ msgid "Finished with %s (exit status %d)\n"
 msgstr "Zakończono %s (kod wyjścia %d)\n"
 
 #: disk-utils/fsck.c:938
-#, fuzzy, c-format
+#, c-format
 msgid "error %d (%s) while executing fsck.%s for %s"
-msgstr "błąd %d (%m) podczas wywoływania fsck.%s dla %s"
+msgstr "błąd %d (%s) podczas wywoływania fsck.%s dla %s"
 
 #: disk-utils/fsck.c:1004
 msgid ""
@@ -3155,9 +3148,9 @@ msgid " -l, --badblocks <file>  list of bad blocks from file\n"
 msgstr " -l, --badblocks <plik>  lista wadliwych bloków z pliku\n"
 
 #: disk-utils/mkfs.minix.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "     --lock[=<mode>]     use exclusive device lock (%s, %s or %s)\n"
-msgstr "     --lock[=<tryb>]      użycie wyłącznej blokady urządzenia (%s, %s lub %s)\n"
+msgstr "     --lock[=<tryb>]     użycie wyłącznej blokady urządzenia (%s, %s lub %s)\n"
 
 #: disk-utils/mkfs.minix.c:192
 #, c-format
@@ -3373,51 +3366,43 @@ msgid "no uuid\n"
 msgstr "brak uuida\n"
 
 #: disk-utils/mkswap.c:159
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] device [size]\n"
-msgstr ""
-"\n"
-"Składnia:\n"
-" %s [opcje] urządzenie [rozmiar]\n"
+msgstr " %s [opcje] urządzenie [rozmiar]\n"
 
 #: disk-utils/mkswap.c:162
 msgid "Set up a Linux swap area.\n"
 msgstr "Tworzenie linuksowego obszaru wymiany.\n"
 
 #: disk-utils/mkswap.c:165
-#, fuzzy
 msgid " -c, --check               check bad blocks before creating the swap area\n"
-msgstr " -c, --check             sprawdzenie urządzenia pod kątem wadliwych bloków\n"
+msgstr ""
+" -c, --check               sprawdzenie wadliwych bloków przed tworzeniem\n"
+"                             obszaru wymiany\n"
 
 #: disk-utils/mkswap.c:166
-#, fuzzy
 msgid " -f, --force               allow swap size area be larger than device\n"
-msgstr " -f, --find                odnalezienie wolnego urządzenia\n"
+msgstr " -f, --force               zezwolenie na obszar wymiany większy niż urządzenie\n"
 
 #: disk-utils/mkswap.c:167
-#, fuzzy
 msgid " -p, --pagesize SIZE       specify page size in bytes\n"
-msgstr " -b, --bytes       wyświetlenie rozmiarów w bajtach\n"
+msgstr " -p, --pagesize ROZMIAR    określenie rozmiaru strony w bajtach\n"
 
 #: disk-utils/mkswap.c:168
-#, fuzzy
 msgid " -L, --label LABEL         specify label\n"
-msgstr " -X, --label <nazwa>       określenie typu etykiety (dos, gpt...)\n"
+msgstr " -L, --label ETYKIETA      określenie etykiety\n"
 
 #: disk-utils/mkswap.c:169
-#, fuzzy
 msgid " -v, --swapversion NUM     specify swap-space version number\n"
-msgstr " -N, --partno <numer>      określenie numeru partycji\n"
+msgstr " -v, --swapversion NUMER   określenie numeru wersji przestrzeni wymiany\n"
 
 #: disk-utils/mkswap.c:170
-#, fuzzy
 msgid " -U, --uuid UUID           specify the uuid to use\n"
-msgstr " -g, --group <grupa>             określenie grupy głównej\n"
+msgstr " -U, --uuid UUID           określenie UUID-a do użycia\n"
 
 #: disk-utils/mkswap.c:171
-#, fuzzy
 msgid "     --verbose             verbose output\n"
-msgstr " -v, --verbose      tryb szczegółowy\n"
+msgstr "     --verbose             tryb szczegółowy\n"
 
 #: disk-utils/mkswap.c:174 disk-utils/sfdisk.c:2061
 #, c-format
@@ -3447,31 +3432,33 @@ msgid ""
 "mkswap: %s contains holes or other unsupported extents.\n"
 "        This swap file can be rejected by kernel on swap activation!\n"
 msgstr ""
+"mkswap: %s zawiera dziury lub inne nie obsługiwane ekstenty.\n"
+"        Ten plik wymiany może być odrzucony przez jądro przy włączaniu!\n"
 
 #: disk-utils/mkswap.c:236
-#, fuzzy, c-format
+#, c-format
 msgid "        Use --verbose for more details.\n"
-msgstr "     --verbose          wypisanie większej ilości szczegółów\n"
+msgstr "        Można użyć --verbose, aby zobaczyć więcej szczegółów.\n"
 
 #: disk-utils/mkswap.c:275 disk-utils/mkswap.c:300
 #, c-format
 msgid "hole detected at offset %ju"
-msgstr ""
+msgstr "wykryto dziurę pod offsetem %ju"
 
 #: disk-utils/mkswap.c:283
 #, c-format
 msgid "data inline extent at offset %ju"
-msgstr ""
+msgstr "ekstent z danymi inline pod offsetem %ju"
 
 #: disk-utils/mkswap.c:286
 #, c-format
 msgid "shared extent at offset %ju"
-msgstr ""
+msgstr "ekstent współdzielony pod offsetem %ju"
 
 #: disk-utils/mkswap.c:289
 #, c-format
 msgid "unallocated extent at offset %ju"
-msgstr ""
+msgstr "nieprzydzielony ekstent pod offsetem %ju"
 
 #: disk-utils/mkswap.c:329
 msgid "unable to alloc new libblkid probe"
@@ -3579,14 +3566,14 @@ msgid "error: %s is mounted; will not make swapspace"
 msgstr "błąd: %s jest zamontowany; odmowa utworzenia obszaru wymiany"
 
 #: disk-utils/mkswap.c:590
-#, fuzzy, c-format
+#, c-format
 msgid "%s: insecure permissions %04o, fix with: chmod %04o %s"
-msgstr "%s: niebezpieczne uprawnienia %04o, powinno być %04o."
+msgstr "%s: niebezpieczne uprawnienia %04o, należy poprawić przez: chmod %04o %s"
 
 #: disk-utils/mkswap.c:594
-#, fuzzy, c-format
+#, c-format
 msgid "%s: insecure file owner %d, fix with: chown 0:0 %s"
-msgstr "%s: niebezpieczny właściciel pliku %d, sugerowany 0 (root)."
+msgstr "%s: niebezpieczny właściciel pliku %d, należy poprawić przez: chown 0:0 %s"
 
 #: disk-utils/mkswap.c:613
 msgid "Unable to set up swap-space: unreadable"
@@ -3603,9 +3590,9 @@ msgid "%s: unable to obtain selinux file label"
 msgstr "%s: nie udało się uzyskać etykiety pliku SELinuksa"
 
 #: disk-utils/mkswap.c:642
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unable to obtain default selinux file label"
-msgstr "%s: nie udało się uzyskać etykiety pliku SELinuksa"
+msgstr "%s: nie udało się uzyskać domyślnej etykiety pliku SELinuksa"
 
 #: disk-utils/mkswap.c:646
 msgid "unable to create new selinux context"
@@ -4421,9 +4408,9 @@ msgid "line %d: unsupported command"
 msgstr "linia %d: polecenie nie obsługiwane"
 
 #: disk-utils/sfdisk.c:1642
-#, fuzzy, c-format
+#, c-format
 msgid "The device contains '%s' signature and it may be removed by a write command. See sfdisk(8) man page and --wipe option for more details."
-msgstr "Urządzenie zawiera sygnaturę '%s', która zostanie usunięta przez polecenie zapisu. Więcej na stronie podręcznika sfdisk(8), przy opcji --wipe."
+msgstr "Urządzenie zawiera sygnaturę '%s', która może zostać usunięta przez polecenie zapisu. Więcej na stronie podręcznika sfdisk(8), przy opcji --wipe."
 
 #: disk-utils/sfdisk.c:1649
 #, c-format
@@ -4548,9 +4535,8 @@ msgid "Ignoring partition."
 msgstr "Zignorowano partycję."
 
 #: disk-utils/sfdisk.c:1908
-#, fuzzy
 msgid "Failed to apply script headers, disk label not created"
-msgstr "Nie udało się nanieść nagłówków skryptu, etykieta dysku nie została utworzona."
+msgstr "Nie udało się nanieść nagłówków skryptu, etykieta dysku nie została utworzona"
 
 #: disk-utils/sfdisk.c:1929
 #, c-format
@@ -5064,29 +5050,24 @@ msgid "Linux temporary data"
 msgstr "Linux - dane tymczasowe"
 
 #: include/pt-gpt-partnames.h:63
-#, fuzzy
 msgid "Linux /usr (x86)"
-msgstr "Linux - główna (x86)"
+msgstr "Linux - /usr (x86)"
 
 #: include/pt-gpt-partnames.h:64
-#, fuzzy
 msgid "Linux /usr (x86-64)"
-msgstr "Linux - główna (x86-64)"
+msgstr "Linux - /usr (x86-64)"
 
 #: include/pt-gpt-partnames.h:65
-#, fuzzy
 msgid "Linux /usr (ARM)"
-msgstr "Linux - główna (ARM)"
+msgstr "Linux - /usr (ARM)"
 
 #: include/pt-gpt-partnames.h:66
-#, fuzzy
 msgid "Linux /usr (ARM-64)"
-msgstr "Linux - główna (ARM-64)"
+msgstr "Linux - /usr (ARM-64)"
 
 #: include/pt-gpt-partnames.h:67
-#, fuzzy
 msgid "Linux /usr (IA-64)"
-msgstr "Linux - główna (IA-64)"
+msgstr "Linux - /usr (IA-64)"
 
 #: include/pt-gpt-partnames.h:68
 msgid "Linux root verity (x86)"
@@ -5109,38 +5090,32 @@ msgid "Linux root verity (IA-64)"
 msgstr "Linux - główna verity (IA-64)"
 
 #: include/pt-gpt-partnames.h:73
-#, fuzzy
 msgid "Linux /usr verity (x86)"
-msgstr "Linux - główna verity (x86)"
+msgstr "Linux - /usr verity (x86)"
 
 #: include/pt-gpt-partnames.h:74
-#, fuzzy
 msgid "Linux /usr verity (x86-64)"
-msgstr "Linux - główna verity (x86-64)"
+msgstr "Linux - /usr verity (x86-64)"
 
 #: include/pt-gpt-partnames.h:75
-#, fuzzy
 msgid "Linux /usr verity (ARM)"
-msgstr "Linux - główna verity (ARM)"
+msgstr "Linux - /usr verity (ARM)"
 
 #: include/pt-gpt-partnames.h:76
-#, fuzzy
 msgid "Linux /usr verity (ARM-64)"
-msgstr "Linux - główna verity (ARM-64)"
+msgstr "Linux - /usr verity (ARM-64)"
 
 #: include/pt-gpt-partnames.h:77
-#, fuzzy
 msgid "Linux /usr verity (IA-64)"
-msgstr "Linux - główna verity (IA-64)"
+msgstr "Linux - /usr verity (IA-64)"
 
 #: include/pt-gpt-partnames.h:83 include/pt-mbr-partnames.h:95
 msgid "Linux extended boot"
 msgstr "Linux - rozszerzona rozruchowa"
 
 #: include/pt-gpt-partnames.h:86
-#, fuzzy
 msgid "Linux user's home"
-msgstr "Linux - katalogi domowe"
+msgstr "Linux - katalog domowy"
 
 #: include/pt-gpt-partnames.h:89
 msgid "FreeBSD data"
@@ -6410,14 +6385,12 @@ msgid "GPT Entries"
 msgstr "Wpisy GPT"
 
 #: libfdisk/src/gpt.c:1263
-#, fuzzy
 msgid "GPT Backup Entries"
-msgstr "Wpisy GPT"
+msgstr "Wpisy kopii zapasowej GPT"
 
 #: libfdisk/src/gpt.c:1269
-#, fuzzy
 msgid "GPT Backup Header"
-msgstr "Nagłówek GPT"
+msgstr "Nagłówek kopii zapasowej GPT"
 
 #: libfdisk/src/gpt.c:1301
 msgid "First LBA"
@@ -6600,9 +6573,9 @@ msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Utworzono nową etykietę dysku GPT (GUID: %s)."
 
 #: libfdisk/src/gpt.c:2680
-#, fuzzy, c-format
+#, c-format
 msgid "The maximal number of partitions is %d (default is %d)."
-msgstr "Utworzono już maksymalną liczbę partycji."
+msgstr "Maksymalna liczba partycji to %d (domyślna to %d)."
 
 #: libfdisk/src/gpt.c:2702
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
@@ -7520,10 +7493,9 @@ msgid "format_iso_time: buffer overflow."
 msgstr "format_iso_time: przepełnienie bufora."
 
 #: lib/timeutils.c:484 lib/timeutils.c:508
-#, fuzzy, c-format
-#| msgid "time %ld is out of range."
+#, c-format
 msgid "time %<PRId64> is out of range."
-msgstr "czas %ld jest poza zakresem."
+msgstr "czas %<PRId64> jest poza zakresem."
 
 #: login-utils/chfn.c:96 login-utils/chsh.c:75 login-utils/lslogins.c:1382
 #, c-format
@@ -7882,9 +7854,9 @@ msgid "FATAL: %s is not a terminal"
 msgstr "BŁĄD KRYTYCZNY: %s nie jest terminalem"
 
 #: login-utils/login.c:467
-#, fuzzy, c-format
+#, c-format
 msgid "chown (%s, %u, %u) failed: %m"
-msgstr "chown (%s, %lu, %lu) nie powiodło się: %m"
+msgstr "chown (%s, %u, %u) nie powiodło się: %m"
 
 #: login-utils/login.c:472
 #, c-format
@@ -7906,14 +7878,14 @@ msgid "Last login: %.*s "
 msgstr "Ostatnie logowanie: %.*s "
 
 #: login-utils/login.c:686
-#, fuzzy, c-format
+#, c-format
 msgid "from %s\n"
-msgstr "z %.*s\n"
+msgstr "z %s\n"
 
 #: login-utils/login.c:689
-#, fuzzy, c-format
+#, c-format
 msgid "on %s\n"
-msgstr "na %.*s\n"
+msgstr "na %s\n"
 
 #: login-utils/login.c:705
 msgid "write lastlog failed"
@@ -7973,12 +7945,12 @@ msgstr ""
 "\n"
 
 #: login-utils/login.c:967
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Password incorrect\n"
 "\n"
 msgstr ""
-"Niepoprawne logowanie\n"
+"Niepoprawne hasło\n"
 "\n"
 
 #: login-utils/login.c:981
@@ -8535,7 +8507,7 @@ msgstr " (zrzut pamięci)"
 
 #: login-utils/su-common.c:275
 msgid "change owner or mode for pseudo-terminal failed"
-msgstr ""
+msgstr "zmiana właściciela lub uprawnień pseudoterminala nie powiodła się"
 
 #: login-utils/su-common.c:369
 msgid "failed to modify environment"
@@ -9095,16 +9067,15 @@ msgstr "Niskopoziomowe opcje sprawdzania:\n"
 
 #: misc-utils/blkid.c:91
 msgid " -p, --probe                low-level superblocks probing (bypass cache)\n"
-msgstr " -p, --probe                niskopoziomowe sprawdzanie superbloków (bez cache)\n"
+msgstr " -p, --probe                niskopoziomowe sondowanie superbloków (bez cache)\n"
 
 #: misc-utils/blkid.c:92
 msgid " -i, --info                 gather information about I/O limits\n"
 msgstr " -i, --info                 zebranie informacji o limitach we/wy\n"
 
 #: misc-utils/blkid.c:93
-#, fuzzy
 msgid " -H, --hint <value>         set hint for probing function\n"
-msgstr " -P, --port <port>        użycie podanego do połączenia UDP lub TCP\n"
+msgstr " -H, --hint <wartość>       ustawienie podpowiedzi dla funkcji sondującej\n"
 
 #: misc-utils/blkid.c:94
 msgid " -S, --size <size>          overwrite device size\n"
@@ -9112,7 +9083,7 @@ msgstr " -S, --size <rozmiar>       wymuszenie rozmiaru urządzenia\n"
 
 #: misc-utils/blkid.c:95
 msgid " -O, --offset <offset>      probe at the given offset\n"
-msgstr " -O, --offset <offset>      sprawdzenie na podanej pozycji\n"
+msgstr " -O, --offset <offset>      sondowanie na podanej pozycji\n"
 
 #: misc-utils/blkid.c:96
 msgid " -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"
@@ -9204,9 +9175,9 @@ msgid "The low-level probing mode requires a device"
 msgstr "Niskopoziomowy tryb sprawdzania wymaga urządzenia"
 
 #: misc-utils/blkid.c:887
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to use probing hint: %s"
-msgstr "nie udało się ustawić osobowości na %s"
+msgstr "Nie udało się użyć podpowiedzi do sondowania: %s"
 
 #: misc-utils/blkid.c:930
 msgid "The lookup option requires a search type specified using -t"
@@ -9467,9 +9438,8 @@ msgid "optional mount fields"
 msgstr "opcjonalne pola montowania"
 
 #: misc-utils/findmnt.c:113
-#, fuzzy
 msgid "mount parent ID"
-msgstr "ID montowania"
+msgstr "ID rodzica montowania"
 
 #: misc-utils/findmnt.c:114
 msgid "partition label"
@@ -9700,9 +9670,8 @@ msgid "     --pseudo           print only pseudo-filesystems\n"
 msgstr "     --pseudo           wypisanie tylko pseudo-systemów plików\n"
 
 #: misc-utils/findmnt.c:1265
-#, fuzzy
 msgid "     --shadowed         print only filesystems over-mounted by another filesystem\n"
-msgstr "     --pseudo           wypisanie tylko pseudo-systemów plików\n"
+msgstr "     --shadowed         wypisanie tylko systemów plików przykrytych innymi\n"
 
 #: misc-utils/findmnt.c:1266
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
@@ -9729,7 +9698,6 @@ msgid " -T, --target <path>    the path to the filesystem to use\n"
 msgstr " -T, --target <ścieżka> ścieżka systemu plików do użycia\n"
 
 #: misc-utils/findmnt.c:1272
-#, fuzzy
 msgid "     --tree             enable tree format output if possible\n"
 msgstr "     --tree             wyjście w formacie drzewiastym, jeśli możliwe\n"
 
@@ -9762,9 +9730,8 @@ msgid "     --verbose          print more details\n"
 msgstr "     --verbose          wypisanie większej ilości szczegółów\n"
 
 #: misc-utils/findmnt.c:1282
-#, fuzzy
 msgid "     --vfs-all          print all VFS options\n"
-msgstr " -a, --all            wypisanie wszystkich urządzeń\n"
+msgstr "     --vfs-all          wypisanie wszystkich opcji VFS\n"
 
 #: misc-utils/findmnt.c:1421
 #, c-format
@@ -10036,204 +10003,188 @@ msgid "internal error, contact the author."
 msgstr "błąd wewnętrzny, proszę skontaktować się autorem."
 
 #: misc-utils/hardlink.c:286
-#, fuzzy
 msgid "Mode:"
-msgstr "Model:"
+msgstr "Właściwości:"
 
 #: misc-utils/hardlink.c:287
 msgid "dry-run"
-msgstr ""
+msgstr "próba"
 
 #: misc-utils/hardlink.c:287
 msgid "real"
-msgstr ""
+msgstr "rzeczywisty"
 
 #: misc-utils/hardlink.c:288
-#, fuzzy
 msgid "Files:"
-msgstr "pliki"
+msgstr "Plików:"
 
+# FIXME: ngettext
 #: misc-utils/hardlink.c:289 misc-utils/hardlink.c:295
 #, c-format
 msgid "%-15s %zu files"
-msgstr ""
+msgstr "%-15s %zu plików"
 
 #: misc-utils/hardlink.c:289
-#, fuzzy
 msgid "Linked:"
-msgstr "Dowiązano"
+msgstr "Dowiązano:"
 
+# FIXME: ngettext
 #: misc-utils/hardlink.c:292
 #, c-format
 msgid "%-15s %zu xattrs"
-msgstr ""
+msgstr "%-15s %zu atrybutów rozszerzonych"
 
 #: misc-utils/hardlink.c:292 misc-utils/hardlink.c:295
 msgid "Compared:"
-msgstr ""
+msgstr "Porównano:"
 
-# FIXME: "zaoszczędzono" in hardlink.c, "zapisano" in pg.c
 #: misc-utils/hardlink.c:302
-#, fuzzy
 msgid "Saved:"
-msgstr "zachowano"
+msgstr "Oszczędzono:"
 
 #: misc-utils/hardlink.c:305
-#, fuzzy, c-format
+#, c-format
 msgid "%-15s %<PRId64>.%06<PRId64> seconds"
-msgstr "%-14s %2i sekunda\n"
+msgstr "%-15s %<PRId64>.%06<PRId64> s"
 
 #: misc-utils/hardlink.c:305
-#, fuzzy
 msgid "Duration:"
-msgstr "Opis"
+msgstr "Trwało:"
 
 #: misc-utils/hardlink.c:343
-#, fuzzy, c-format
+#, c-format
 msgid "cannot get xattr names for %s"
-msgstr "nie można ustawić limitu czasu dla %s"
+msgstr "nie można pobrać nazw xattr dla %s"
 
 #: misc-utils/hardlink.c:359
-#, fuzzy, c-format
+#, c-format
 msgid "cannot get xattr value of %s for %s"
-msgstr "nie można pobrać atrybutów terminala dla %s"
+msgstr "nie można pobrać wartości xattr %s dla %s"
 
 #: misc-utils/hardlink.c:439
 #, c-format
 msgid "Comparing xattrs of %s to %s"
-msgstr ""
+msgstr "Porównywanie atrybutów rozszerzonych %s z %s"
 
 #: misc-utils/hardlink.c:541
-#, fuzzy, c-format
+#, c-format
 msgid "Comparing %s to %s"
-msgstr "Porównań:        %9lld\n"
+msgstr "Porównywanie %s z %s"
 
 #: misc-utils/hardlink.c:667
-#, fuzzy, c-format
+#, c-format
 msgid "%sLinking %s to %s (-%s)"
-msgstr " %s %s do %s, %s %jd\n"
+msgstr " %sDowiązywanie %s do %s (-%s)"
 
 #: misc-utils/hardlink.c:668
 msgid "[DryRun] "
-msgstr ""
+msgstr "[Próba] "
 
 #: misc-utils/hardlink.c:681
-#, fuzzy, c-format
+#, c-format
 msgid "cannot link %s to %s"
-msgstr "nie można otworzyć %s: %s"
+msgstr "nie można dowiązać %s do %s"
 
 #: misc-utils/hardlink.c:686
-#, fuzzy, c-format
+#, c-format
 msgid "cannot rename %s to %s"
-msgstr "nie można otworzyć %s: %s"
+msgstr "nie można zmienić nazwy %s na %s"
 
 #: misc-utils/hardlink.c:758
 #, c-format
 msgid "Skipped %s (smaller than configured size)"
-msgstr ""
+msgstr "Pominięto %s (mniejszy niż skonfigurowany rozmiar)"
 
 #: misc-utils/hardlink.c:762
-#, fuzzy, c-format
+#, c-format
 msgid "Visiting %s (file %zu)"
-msgstr "zamknięcie %s nie powiodło się"
+msgstr "Odwiedzanie %s (plik %zu)"
 
 #: misc-utils/hardlink.c:820
-#, fuzzy
 msgid "cannot continue"
-msgstr "nie można stać się demonem"
+msgstr "nie można kontynuować"
 
 #: misc-utils/hardlink.c:875
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <directory>|<file> ...\n"
-msgstr " %s [opcje] katalog...\n"
+msgstr " %s [opcje] <katalog>|<plik> ...\n"
 
 #: misc-utils/hardlink.c:879
-#, fuzzy
 msgid "Consolidate duplicate files using hardlinks.\n"
-msgstr "Konsolidacja powtórzonych plików przy użyciu dowiązań zwykłych."
+msgstr "Konsolidacja powtórzonych plików przy użyciu dowiązań zwykłych.\n"
 
 #: misc-utils/hardlink.c:882
-#, fuzzy
 msgid " -v, --verbose              verbose output (repeat for more verbosity)\n"
-msgstr " -v, --verbose            bardziej szczegółowe komunikaty\n"
+msgstr " -v, --verbose              szczegółowe wyjście (powtórzenie zwięsza szczegółowość)\n"
 
 #: misc-utils/hardlink.c:883
-#, fuzzy
 msgid " -q, --quiet                quiet mode - don't print anything\n"
-msgstr " -q, --quiet             włączenie trybu cichego\n"
+msgstr " -q, --quiet                tryb cichy - bez wypisywania czegokolwiek\n"
 
 #: misc-utils/hardlink.c:884
-#, fuzzy
 msgid " -n, --dry-run              don't actually link anything\n"
-msgstr " -n, --dry-run          bez właściwego dowiązywania niczego"
+msgstr " -n, --dry-run              bez właściwego dowiązywania niczego\n"
 
 #: misc-utils/hardlink.c:885
-#, fuzzy
 msgid " -f, --respect-name         filenames have to be identical\n"
-msgstr " -U, --detect-case            wykrywanie terminala z samymi wielkimi literami\n"
+msgstr " -f, --respect-name         nazwy plików muszą być identyczne\n"
 
 #: misc-utils/hardlink.c:886
-#, fuzzy
 msgid " -p, --ignore-mode          ignore changes of file mode\n"
-msgstr " -t, --ignore           zignorowanie błędów\n"
+msgstr " -p, --ignore-mode          ignorowanie zmian właściwości plików\n"
 
 #: misc-utils/hardlink.c:887
-#, fuzzy
 msgid " -o, --ignore-owner         ignore owner changes\n"
-msgstr " -t, --ignore           zignorowanie błędów\n"
+msgstr " -o, --ignore-owner         ignorowanie zmian właściciela plików\n"
 
 #: misc-utils/hardlink.c:888
-#, fuzzy
 msgid " -t, --ignore-time          ignore timestamps (when testing for equality)\n"
-msgstr " -t, --notime                bez wypisywania znaczników czasu z komunikatami\n"
+msgstr " -t, --ignore-time          ignorowanie czasu (przy sprawdzaniu identyczności)\n"
 
 #: misc-utils/hardlink.c:890
 msgid " -X, --respect-xattrs       respect extended attributes\n"
-msgstr ""
+msgstr " -X, --respect-xattrs       honorowanie rozszerzonych atrybutów\n"
 
 #: misc-utils/hardlink.c:892
-#, fuzzy
 msgid ""
 " -m, --maximize             maximize the hardlink count, remove the file with\n"
 "                              lowest hardlink count\n"
 msgstr ""
-" -m, --mtab             szukanie w tablicy zamontowanych systemów plików\n"
-"                          (zawiera opcje montowania przestrzeni użytkownika)\n"
+" -m, --maximize             maksymalizacja licznika dowiązań, usuwanie pliku\n"
+"                              z najmniejszą liczbą dowiązań\n"
 
 #: misc-utils/hardlink.c:894
-#, fuzzy
 msgid " -M, --minimize             reverse the meaning of -m\n"
-msgstr " -i, --invert           odwrócenie dopasowania\n"
+msgstr " -M, --minimize             odwrotnie do -m\n"
 
 #: misc-utils/hardlink.c:895
 msgid ""
 " -O, --keep-oldest          keep the oldest file of multiple equal files\n"
 "                              (lower precedence than minimize/maximize)\n"
 msgstr ""
+" -O, --keep-oldest          zachowywanie najstarszego pliku z wielu\n"
+"                              identycznych (mniejszy priorytet niż -m/-M)\n"
 
 #: misc-utils/hardlink.c:897
-#, fuzzy
 msgid " -x, --exclude <regex>      regular expression to exclude files\n"
-msgstr " -x, --exclude <regex>  wykluczenie plików pasujących do wyrażenia regularnego"
+msgstr " -x, --exclude <regex>      wyrażenie regularne wykluczające pliki\n"
 
 #: misc-utils/hardlink.c:898
 msgid " -i, --include <regex>      regular expression to include files/dirs\n"
-msgstr ""
+msgstr " -i, --include <regex>      wyrażenie regularne włączające pliki/kat.\n"
 
 #: misc-utils/hardlink.c:899
-#, fuzzy
 msgid " -s, --minimum-size <size>  minimum size for files.\n"
-msgstr " -S, --size <rozmiar>     maksymalny rozmiar pojedynczego komunikatu\n"
+msgstr " -s, --minimum-size <rozm>  minimalny rozmiar dla plików.\n"
 
 #: misc-utils/hardlink.c:900
-#, fuzzy
 msgid " -c, --content              compare only file contents, same as -pot\n"
-msgstr " -c, --content          porównanie tylko zawartości, ignorowanie uprawnień itp."
+msgstr " -c, --content              porównanie tylko zawartości, to samo co -pot\n"
 
 #: misc-utils/hardlink.c:927
-#, fuzzy, c-format
+#, c-format
 msgid "could not compile regular expression %s: %s"
-msgstr "Brak poprzedniego wyrażenia regularnego"
+msgstr "nie udało się skompilować wyrażenia regularnego %s: %s"
 
 #: misc-utils/hardlink.c:1020 sys-utils/ipcmk.c:114 sys-utils/losetup.c:735
 #: sys-utils/zramctl.c:650
@@ -10241,19 +10192,17 @@ msgid "failed to parse size"
 msgstr "niezrozumiały rozmiar"
 
 #: misc-utils/hardlink.c:1070
-#, fuzzy
 msgid "cannot register exit handler"
-msgstr "nie można odtworzyć procedury obsługi sygnału"
+msgstr "nie udało się zarejestrować procedury obsługi wyjścia"
 
 #: misc-utils/hardlink.c:1075
-#, fuzzy
 msgid "no directory or file specified"
-msgstr "nie podano katalogu"
+msgstr "nie podano katalogu ani pliku"
 
 #: misc-utils/hardlink.c:1082
-#, fuzzy, c-format
+#, c-format
 msgid "cannot process %s"
-msgstr "nie można dostać się do %s"
+msgstr "nie można przetworzyć %s"
 
 #: misc-utils/kill.c:168
 #, c-format
@@ -10644,9 +10593,8 @@ msgid "path to the device node"
 msgstr "ścieżka do węzła urządzenia"
 
 #: misc-utils/lsblk.c:168
-#, fuzzy
 msgid "mounted filesystem roots"
-msgstr "główny katalog systemu plików"
+msgstr "główne katalogi zamontowanych systemów plików"
 
 #: misc-utils/lsblk.c:169
 msgid "filesystem version"
@@ -10657,9 +10605,8 @@ msgid "where the device is mounted"
 msgstr "miejsce zamontowania urządzenia"
 
 #: misc-utils/lsblk.c:172
-#, fuzzy
 msgid "all locations where device is mounted"
-msgstr "miejsce zamontowania urządzenia"
+msgstr "wszystkie miejsca zamontowania urządzeń"
 
 #: misc-utils/lsblk.c:174 misc-utils/wipefs.c:110
 msgid "filesystem LABEL"
@@ -10947,9 +10894,8 @@ msgid " -t, --topology       output info about topology\n"
 msgstr " -t, --topology       wypisanie informacji o topologii\n"
 
 #: misc-utils/lsblk.c:1872
-#, fuzzy
 msgid " -w, --width <num>    specifies output width as number of characters\n"
-msgstr " -c, --output-width <szerokość>   szerokość wyjścia w znakach\n"
+msgstr " -w, --width <liczba> szerokość wyjścia jako liczba znaków\n"
 
 #: misc-utils/lsblk.c:1873
 msgid " -x, --sort <column>  sort output by <column>\n"
@@ -10969,9 +10915,8 @@ msgid "failed to access sysfs directory: %s"
 msgstr "nie udało się dostać do katalogu sysfs: %s"
 
 #: misc-utils/lsblk.c:2099
-#, fuzzy
 msgid "invalid output width number argument"
-msgstr "błędny numer partycji"
+msgstr "błędny szerokość wyjścia"
 
 #: misc-utils/lsblk.c:2257
 msgid "failed to allocate device tree"
@@ -11522,9 +11467,9 @@ msgid " -n, --namespace ns  generate hash-based uuid in this namespace\n"
 msgstr " -n, --namespace ns  wygenerowanie uuid-a opartego na skrócie w przestrzeni nazw\n"
 
 #: misc-utils/uuidgen.c:35
-#, fuzzy, c-format
+#, c-format
 msgid "                       available namespaces: %s\n"
-msgstr " -a, --all              wejście do wszystkich przestrzeni nazw\n"
+msgstr "                       dostępne przestrzenie nazw: %s\n"
 
 #: misc-utils/uuidgen.c:36
 msgid " -N, --name name     generate hash-based uuid from this name\n"
@@ -11543,39 +11488,34 @@ msgid " -x, --hex           interpret name as hex string\n"
 msgstr " -x, --hex           interpretowanie nazwy jako łańcucha szesnastkowego\n"
 
 #: misc-utils/uuidgen.c:53
-#, fuzzy
 msgid "not a valid hex string"
-msgstr "%s: nie jest poprawną partycją wymiany"
+msgstr "nie jest poprawnym ciągiem szesnastkowym"
 
 #: misc-utils/uuidgen.c:144
-#, fuzzy
 msgid "--namespace requires --name argument"
-msgstr "%s wymaga argumentu"
+msgstr "--namespace wymaga argumentu --name"
 
 #: misc-utils/uuidgen.c:148
-#, fuzzy
 msgid "--namespace requires --md5 or --sha1"
-msgstr "--update-drift wymaga --set lub --systohc"
+msgstr "--namespace wymaga --md5 lub --sha1"
 
 #: misc-utils/uuidgen.c:153
-#, fuzzy
 msgid "--name requires --namespace argument"
-msgstr "błędny argument przestrzeni nazw"
+msgstr "--name wymaga argumentu --namespace"
 
 #: misc-utils/uuidgen.c:157
-#, fuzzy
 msgid "--md5 or --sha1 requires --namespace argument"
-msgstr "%s wymaga argumentu"
+msgstr "--md5 lub --sha1 wymaga argumentu --namespace"
 
 #: misc-utils/uuidgen.c:182
-#, fuzzy, c-format
+#, c-format
 msgid "unknown namespace alias: '%s'"
-msgstr "nieznany rodzaj przestrzeni nazw: %s"
+msgstr "nieznany alias przestrzeni nazw: '%s'"
 
 #: misc-utils/uuidgen.c:188
-#, fuzzy, c-format
+#, c-format
 msgid "invalid uuid for namespace: '%s'"
-msgstr "błędna data '%s'"
+msgstr "błędny uuid dla przestrzeni nazw: '%s'"
 
 #: misc-utils/uuidparse.c:76
 msgid "unique identifier"
@@ -11884,9 +11824,8 @@ msgid "Scheduling options:\n"
 msgstr "Opcje szeregowania:\n"
 
 #: schedutils/chrt.c:80
-#, fuzzy
 msgid " -R, --reset-on-fork       set reset-on-fork flag\n"
-msgstr " -R, --reset-on-fork       ustawienie SCHED_RESET_ON_FORK dla FIFO lub RR\n"
+msgstr " -R, --reset-on-fork       ustawienie flagi reset-on-fork\n"
 
 #: schedutils/chrt.c:81
 msgid " -T, --sched-runtime <ns>  runtime parameter for DEADLINE\n"
@@ -12218,101 +12157,91 @@ msgid "failed to parse CPU mask: %s"
 msgstr "niezrozumiała maska CPU: %s"
 
 #: schedutils/uclampset.c:56
-#, fuzzy, c-format
+#, c-format
 msgid ""
 " %1$s [options]\n"
 " %1$s [options] --pid <pid> | --system | <command> <arg>...\n"
 msgstr ""
-" %1$s [opcje] -p pid\n"
-" %1$s [opcje] -n liczba -p pid\n"
-" %1$s [opcje] -n liczba [--] polecenie [argumenty...]\n"
+" %1$s [opcje]\n"
+" %1$s [opcje] --pid <pid> | --system | <polecenie> <arg>...\n"
 
 #: schedutils/uclampset.c:61
-#, fuzzy
 msgid "Show or change the utilization clamping attributes.\n"
-msgstr "Odczyt lub zmiana atrybutów szeregowania czasu rzeczywistego procesu.\n"
+msgstr "Odczyt lub zmiana atrybutów blokowania obciążenia.\n"
 
 #: schedutils/uclampset.c:64
-#, fuzzy
 msgid " -m <value>           util_min value to set\n"
-msgstr " -<liczba>            liczba linii do wyświetlenia\n"
+msgstr " -m <wartość>         wartość util_min do ustawienia\n"
 
 #: schedutils/uclampset.c:65
-#, fuzzy
 msgid " -M <value>           util_max value to set\n"
-msgstr " -<liczba>            liczba linii do wyświetlenia\n"
+msgstr " -M <wartość>         wartość util_max do ustawienia\n"
 
 #: schedutils/uclampset.c:67
-#, fuzzy
 msgid " -p, --pid <pid>      operate on existing given pid\n"
-msgstr " -p, --pid            operowanie na podanym, istniejącym PID-ie\n"
+msgstr " -p, --pid <pid>      operowanie na podanym, istniejącym PID-ie\n"
 
 #: schedutils/uclampset.c:68
-#, fuzzy
 msgid " -s, --system         operate on system\n"
-msgstr " -s, --system-accs        wypisanie kont systemowych\n"
+msgstr " -s, --system         operowanie na systemie\n"
 
 #: schedutils/uclampset.c:69
 msgid " -R, --reset-on-fork  set reset-on-fork flag\n"
-msgstr ""
+msgstr " -R, --reset-on-fork  ustawienie flagi reset-on-fork\n"
 
 #: schedutils/uclampset.c:75
 msgid "Utilization value range is [0:1024]. Use special -1 value to reset to system's default.\n"
-msgstr ""
+msgstr "Zakres wartości obciążenia to [0:1024]. Specjalna wartość -1 oznacza domyślną systemową.\n"
 
 #: schedutils/uclampset.c:92 schedutils/uclampset.c:157
-#, fuzzy, c-format
+#, c-format
 msgid "failed to get pid %d's uclamp values"
-msgstr "nie udało się odczytać atrybutów pidu %d"
+msgstr "nie udało się odczytać wartości uclamp pidu %d"
 
 #: schedutils/uclampset.c:99
 #, c-format
 msgid "%s (%d) util_clamp: min: %d max: %d\n"
-msgstr ""
+msgstr "%s (%d) util_clamp: min: %d max: %d\n"
 
 #: schedutils/uclampset.c:129
 #, c-format
 msgid "System util_clamp: min: %u max: %u\n"
-msgstr ""
+msgstr "Systemowe util_clamp: min: %u max: %u\n"
 
 #: schedutils/uclampset.c:186
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set tid %d's uclamp values"
-msgstr "nie udało się ustawić polityki dla tidu %d"
+msgstr "nie udało się ustawić wartości uclamp dla tidu %d"
 
 #: schedutils/uclampset.c:191
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set pid %d's uclamp values"
-msgstr "nie udało się ustawić polityki dla pidu %d"
+msgstr "nie udało się ustawić wartości uclamp dla pidu %d"
 
 #: schedutils/uclampset.c:205
 msgid "util_min must be <= util_max"
-msgstr ""
+msgstr "util_min musi być <= util_max"
 
 #: schedutils/uclampset.c:216
-#, fuzzy, c-format
+#, c-format
 msgid "%d out of range"
-msgstr "Wartość spoza zakresu."
+msgstr "%d jest poza zakresem"
 
 #: schedutils/uclampset.c:268
-#, fuzzy
 msgid "invalid util_min argument"
-msgstr "błędna wartość czasu"
+msgstr "błędny argument util_min"
 
 #: schedutils/uclampset.c:274
-#, fuzzy
 msgid "invalid util_max argument"
-msgstr "błędna wartość czasu"
+msgstr "błędny argument util_max"
 
 #: schedutils/uclampset.c:297
-#, fuzzy
 msgid "missing -p option"
-msgstr "brak parametru optstring"
+msgstr "brak opcji -p"
 
 #: schedutils/uclampset.c:315
-#, fuzzy
 msgid "no cmd to execute"
-msgstr "nie udało się uruchomić %s"
+msgstr "brak polecenia do uruchomienia"
 
 #: sys-utils/blkdiscard.c:73
 #, c-format
@@ -12365,8 +12294,9 @@ msgstr "niezrozumiały offset"
 msgid "failed to parse step"
 msgstr "niezrozumiały krok"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:533 sys-utils/umount.c:615
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:533
+#: sys-utils/umount.c:615
 msgid "unexpected number of arguments"
 msgstr "nieoczekiwana liczba argumentów"
 
@@ -12427,9 +12357,8 @@ msgid "Report zone information about the given device"
 msgstr "Raport informacji o strefach dotyczących podanego urządzenia"
 
 #: sys-utils/blkzone.c:97
-#, fuzzy
 msgid "Report sum of zone capacities for the given device"
-msgstr "Raport informacji o strefach dotyczących podanego urządzenia"
+msgstr "Raport sumy pojemności stref dla danego urządzenia"
 
 #: sys-utils/blkzone.c:103
 msgid "Reset a range of zones."
@@ -12473,14 +12402,14 @@ msgid "Found %d zones from 0x%<PRIx64>\n"
 msgstr "Znaleziono %d stref(y) od 0x%<PRIx64>\n"
 
 #: sys-utils/blkzone.c:302
-#, fuzzy, c-format
+#, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
-msgstr "  początek: 0x%09<PRIx64>, długość 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [typ: %u(%s)]\n"
+msgstr "  początek: 0x%09<PRIx64>, długość 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [typ: %u(%s)]\n"
 
 #: sys-utils/blkzone.c:318
 #, c-format
 msgid "0x%09<PRIx64>\n"
-msgstr ""
+msgstr "0x%09<PRIx64>\n"
 
 #: sys-utils/blkzone.c:343
 #, c-format
@@ -12498,7 +12427,7 @@ msgid "%s: %s ioctl failed"
 msgstr "%s: ioctl %s nie powiódł się"
 
 #: sys-utils/blkzone.c:373
-#, fuzzy, c-format
+#, c-format
 msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "%s: operacja %s na strefach w przedziale od %<PRIu64> do %<PRIu64> powiodła się"
 
@@ -13196,14 +13125,12 @@ msgstr ""
 "Zamrożenie/przebudzenie spowoduje niedokładność znaczników czasu ctime i iso.\n"
 
 #: sys-utils/dmesg.c:309
-#, fuzzy
 msgid "     --since <time>          display the lines since the specified time\n"
-msgstr " -s, --since <czas>   wyświetlenie linii od określonego czasu\n"
+msgstr "     --since <czas>          wyświetlenie linii od określonego czasu\n"
 
 #: sys-utils/dmesg.c:310
-#, fuzzy
 msgid "     --until <time>          display the lines until the specified time\n"
-msgstr " -t, --until <czas>   wyświetlenie linii do określonego czasu\n"
+msgstr "     --until <czas>          wyświetlenie linii do określonego czasu\n"
 
 #: sys-utils/dmesg.c:314
 msgid ""
@@ -13263,9 +13190,8 @@ msgid "read kernel buffer failed"
 msgstr "odczyt bufora jądra nie powiódł się"
 
 #: sys-utils/dmesg.c:1606
-#, fuzzy
 msgid "clear kernel buffer failed"
-msgstr "odczyt bufora jądra nie powiódł się"
+msgstr "czyszczenie bufora jądra nie powiodło się"
 
 #: sys-utils/dmesg.c:1622
 msgid "klogctl failed"
@@ -13756,7 +13682,7 @@ msgstr "błędny kod wyjścia"
 
 #: sys-utils/flock.c:216
 msgid "exit code out of range (expected 0 to 255)"
-msgstr ""
+msgstr "kod wyjścia spoza zakresu (oczekiwano od 0 do 255)"
 
 #: sys-utils/flock.c:233
 msgid "the --no-fork and --close options are incompatible"
@@ -13784,10 +13710,9 @@ msgid "timeout while waiting to get lock"
 msgstr "upłynął limit czasu podczas oczekiwania na blokadę"
 
 #: sys-utils/flock.c:334
-#, fuzzy, c-format
-#| msgid "%s: getting lock took %ld.%06ld seconds\n"
+#, c-format
 msgid "%s: getting lock took %<PRId64>.%06<PRId64> seconds\n"
-msgstr "%s: pobranie blokady zajęło %ld.%06ld sekund\n"
+msgstr "%s: pobranie blokady zajęło %<PRId64>.%06<PRId64> sekund\n"
 
 #: sys-utils/flock.c:346
 #, c-format
@@ -13957,16 +13882,14 @@ msgstr ""
 "(Oczekiwano: `UTC', `LOCAL' lub niczego)."
 
 #: sys-utils/hwclock.c:275
-#, fuzzy, c-format
-#| msgid "Last drift adjustment done at %ld seconds after 1969\n"
+#, c-format
 msgid "Last drift adjustment done at %<PRId64> seconds after 1969\n"
-msgstr "Ostatnia korekta niedokładności wykonana %ld sekund po 1969\n"
+msgstr "Ostatnia korekta niedokładności wykonana %<PRId64> sekund po 1969\n"
 
 #: sys-utils/hwclock.c:277
-#, fuzzy, c-format
-#| msgid "Last calibration done at %ld seconds after 1969\n"
+#, c-format
 msgid "Last calibration done at %<PRId64> seconds after 1969\n"
-msgstr "Ostatnia kalibracja wykonana %ld sekund po 1969\n"
+msgstr "Ostatnia kalibracja wykonana %<PRId64> sekund po 1969\n"
 
 #: sys-utils/hwclock.c:279
 #, c-format
@@ -13994,10 +13917,9 @@ msgid "Invalid values in hardware clock: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 msgstr "Błędne wartości w zegarze sprzętowym: %4d-%.2d-%.2d %.2d:%.2d:%.2d\n"
 
 #: sys-utils/hwclock.c:362
-#, fuzzy, c-format
-#| msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
+#, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %<PRId64> seconds since 1969\n"
-msgstr "Czas zegara sprzętowego: %4d-%.2d-%.2d %.2d:%.2d:%.2d = %ld sekund po 1969\n"
+msgstr "Czas zegara sprzętowego: %4d-%.2d-%.2d %.2d:%.2d:%.2d = %<PRId64> sekund po 1969\n"
 
 #: sys-utils/hwclock.c:388
 #, c-format
@@ -14005,10 +13927,9 @@ msgid "Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 msgstr "Czas odczytany z zegara sprzętowego: %4d-%.2d-%.2d %.2d:%.2d:%.2d\n"
 
 #: sys-utils/hwclock.c:415
-#, fuzzy, c-format
-#| msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
+#, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %<PRId64> seconds since 1969\n"
-msgstr "Ustawianie zegara sprzętowego na %.2d:%.2d:%.2d = %ld sekund od 1969\n"
+msgstr "Ustawianie zegara sprzętowego na %.2d:%.2d:%.2d = %<PRId64> sekund od 1969\n"
 
 #: sys-utils/hwclock.c:451
 #, c-format
@@ -14021,28 +13942,23 @@ msgid "Using delay: %.6f seconds\n"
 msgstr "Użycie opóźnienia: %.6f sekund\n"
 
 #: sys-utils/hwclock.c:570
-#, fuzzy, c-format
-#| msgid "time jumped backward %.6f seconds to %ld.%06ld - retargeting\n"
+#, c-format
 msgid "time jumped backward %.6f seconds to %<PRId64>.%06<PRId64> - retargeting\n"
-msgstr "czas przeskoczył wstecz %.6f sek na %ld.%06ld - ponowne wyliczanie\n"
+msgstr "czas przeskoczył wstecz %.6f sek na %<PRId64>.%06<PRId64> - ponowne wyliczanie\n"
 
 #: sys-utils/hwclock.c:592
-#, fuzzy, c-format
-#| msgid "missed it - %ld.%06ld is too far past %ld.%06ld (%.6f > %.6f)\n"
+#, c-format
 msgid "missed it - %<PRId64>.%06<PRId64> is too far past %<PRId64>.%06<PRId64> (%.6f > %.6f)\n"
-msgstr "chybienie - %ld.%06ld jest za bardzo wstecz od %ld.%06ld (%.6f > %.6f)\n"
+msgstr "chybienie - %<PRId64>.%06<PRId64> jest za bardzo wstecz od %<PRId64>.%06<PRId64> (%.6f > %.6f)\n"
 
 #: sys-utils/hwclock.c:619
-#, fuzzy, c-format
-#| msgid ""
-#| "%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
-#| "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"
+#, c-format
 msgid ""
 "%<PRId64>.%06<PRId64> is close enough to %<PRId64>.%06<PRId64> (%.6f < %.6f)\n"
 "Set RTC to %<PRId64> (%<PRId64> + %d; refsystime = %<PRId64>.%06<PRId64>)\n"
 msgstr ""
-"%ld.%06ld jest wystarczająco blisko %ld.%06ld (%.6f < %.6f)\n"
-"Ustawienie RTC na %ld (%ld + %d; refsystime = %ld.%06ld)\n"
+"%<PRId64>.%06<PRId64> jest wystarczająco blisko %<PRId64>.%06<PRId64> (%.6f < %.6f)\n"
+"Ustawienie RTC na %<PRId64> (%<PRId64> + %d; refsystime = %<PRId64>.%06<PRId64>)\n"
 
 #: sys-utils/hwclock.c:713
 msgid "Calling settimeofday(NULL, 0) to lock the warp_clock function."
@@ -14059,10 +13975,9 @@ msgid "Calling settimeofday(NULL, %d) to warp System time, set PCIL and the kern
 msgstr "Wywoływanie settimeofday(NULL, %d) w celu przekręcenia czasu systemowego, ustawienia PCIL i strefy czasowej jądra.\n"
 
 #: sys-utils/hwclock.c:725
-#, fuzzy, c-format
-#| msgid "Calling settimeofday(%ld.%06ld, NULL) to set the System time.\n"
+#, c-format
 msgid "Calling settimeofday(%<PRId64>.%06<PRId64>, NULL) to set the System time.\n"
-msgstr "Wywoływanie settimeofday(%ld.%06ld, NULL) w celu ustawienia czasu systemowego.\n"
+msgstr "Wywoływanie settimeofday(%<PRId64>.%06<PRId64>, NULL) w celu ustawienia czasu systemowego.\n"
 
 #: sys-utils/hwclock.c:747
 msgid "settimeofday() failed"
@@ -14108,20 +14023,17 @@ msgstr ""
 "Zmiana współczynnika korekty o %f sekund/dzień\n"
 
 #: sys-utils/hwclock.c:870
-#, fuzzy, c-format
-#| msgid "Time since last adjustment is %ld second\n"
-#| msgid_plural "Time since last adjustment is %ld seconds\n"
+#, c-format
 msgid "Time since last adjustment is %<PRId64> second\n"
 msgid_plural "Time since last adjustment is %<PRId64> seconds\n"
-msgstr[0] "Czas od ostatniej korekty to %ld sekunda\n"
-msgstr[1] "Czas od ostatniej korekty to %ld sekundy\n"
-msgstr[2] "Czas od ostatniej korekty to %ld sekund\n"
+msgstr[0] "Czas od ostatniej korekty to %<PRId64> sekunda\n"
+msgstr[1] "Czas od ostatniej korekty to %<PRId64> sekundy\n"
+msgstr[2] "Czas od ostatniej korekty to %<PRId64> sekund\n"
 
 #: sys-utils/hwclock.c:874
-#, fuzzy, c-format
-#| msgid "Calculated Hardware Clock drift is %ld.%06ld seconds\n"
+#, c-format
 msgid "Calculated Hardware Clock drift is %<PRId64>.%06<PRId64> seconds\n"
-msgstr "Obliczony dryf zegara sprzętowego to %ld.%06ld sekund\n"
+msgstr "Obliczony dryf zegara sprzętowego to %<PRId64>.%06<PRId64> sekund\n"
 
 #: sys-utils/hwclock.c:899
 #, c-format
@@ -14161,16 +14073,14 @@ msgid "Use the --verbose option to see the details of our search for an access m
 msgstr "Proszę użyć opcji --verbose, aby zobaczyć szczegóły poszukiwania metody dostępu."
 
 #: sys-utils/hwclock.c:1037
-#, fuzzy, c-format
-#| msgid "Target date:   %ld\n"
+#, c-format
 msgid "Target date:   %<PRId64>\n"
-msgstr "Data docelowa: %ld\n"
+msgstr "Data docelowa: %<PRId64>\n"
 
 #: sys-utils/hwclock.c:1038
-#, fuzzy, c-format
-#| msgid "Predicted RTC: %ld\n"
+#, c-format
 msgid "Predicted RTC: %<PRId64>\n"
-msgstr "Przewidywany RTC: %ld\n"
+msgstr "Przewidywany RTC: %<PRId64>\n"
 
 #: sys-utils/hwclock.c:1068
 msgid "RTC read returned an invalid value."
@@ -14330,10 +14240,9 @@ msgid "invalid date '%s'"
 msgstr "błędna data '%s'"
 
 #: sys-utils/hwclock.c:1468
-#, fuzzy, c-format
-#| msgid "System Time: %ld.%06ld\n"
+#, c-format
 msgid "System Time: %<PRId64>.%06<PRId64>\n"
-msgstr "Czas systemowy: %ld.%06ld\n"
+msgstr "Czas systemowy: %<PRId64>.%06<PRId64>\n"
 
 #: sys-utils/hwclock.c:1485
 msgid "Test mode: nothing was changed."
@@ -14700,9 +14609,8 @@ msgid "max seg size"
 msgstr "maksymalny rozmiar segmentu"
 
 #: sys-utils/ipcs.c:224
-#, fuzzy
 msgid "max total shared memory (kbytes)"
-msgstr "maksymalny rozmiar całej pamięci dzielonej"
+msgstr "maksymalny rozmiar całej pamięci dzielonej (kB)"
 
 #: sys-utils/ipcs.c:232
 msgid "max total shared memory"
@@ -15236,19 +15144,18 @@ msgid "failed to add line to output"
 msgstr "nie udało się dodać linii do wyjścia"
 
 #: sys-utils/irq-common.c:401
-#, fuzzy
 msgid "unsupported column name to sort output"
 msgstr "nie obsługiwana nazwa kolumny do sortowania wyjścia"
 
 #: sys-utils/irq-common.c:451
-#, fuzzy
 msgid "cpu-interrupts"
-msgstr "przerwań"
+msgstr "przerwań CPU"
 
 #: sys-utils/irq-common.c:482
-#, c-format
+#, fuzzy, c-format
+#| msgid "%delta:"
 msgid "%delta:"
-msgstr ""
+msgstr "przyrost%:"
 
 #: sys-utils/irqtop.c:123
 #, c-format
@@ -15296,9 +15203,8 @@ msgid " -s, --sort <column>  specify sort column\n"
 msgstr " -s, --sort <kolumna> kolumna do sortowania\n"
 
 #: sys-utils/irqtop.c:253 sys-utils/lsirq.c:68
-#, fuzzy
 msgid " -S, --softirq        show softirqs instead of interrupts\n"
-msgstr " -v, --vertical        wyświetlenie dni pionowo zamiast w wierszu\n"
+msgstr " -S, --softirq        wyświetlenie softirq zamiast przerwań\n"
 
 #: sys-utils/irqtop.c:257
 msgid ""
@@ -15731,7 +15637,7 @@ msgstr "pionowy"
 
 #: sys-utils/lscpu.c:139
 msgid "crude measurement of CPU speed"
-msgstr ""
+msgstr "prymitywna miara szybkości CPU"
 
 #: sys-utils/lscpu.c:140
 msgid "logical CPU number"
@@ -15742,9 +15648,8 @@ msgid "logical core number"
 msgstr "numer logicznego rdzenia"
 
 #: sys-utils/lscpu.c:142
-#, fuzzy
 msgid "logical cluster number"
-msgstr "numer logicznego rdzenia"
+msgstr "numer logicznego klastra"
 
 #: sys-utils/lscpu.c:143
 msgid "logical socket number"
@@ -15783,9 +15688,8 @@ msgid "shows if Linux currently makes use of the CPU"
 msgstr "informacja czy Linux obecnie wykorzystuje CPU"
 
 #: sys-utils/lscpu.c:152
-#, fuzzy
 msgid "shows the currently MHz of the CPU"
-msgstr "wyświetlenie maksymalnej liczby MHz procesora"
+msgstr "wyświetlenie aktualnej liczby MHz procesora"
 
 #: sys-utils/lscpu.c:153
 msgid "shows the maximum MHz of the CPU"
@@ -15856,7 +15760,7 @@ msgid "N"
 msgstr "N"
 
 #: sys-utils/lscpu.c:645
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
 "# programs. Each different item in every column has an unique ID\n"
@@ -15864,16 +15768,15 @@ msgid ""
 msgstr ""
 "# Poniżej lista w formacie łatwym do przetworzenia przez inne programy.\n"
 "# Każdy inny element w każdej kolumnie ma unikalny identyfikator\n"
-"# z numeracją zaczynającą od zera.\n"
+"# z numeracją zaczynającą zwykle od zera.\n"
 
 #: sys-utils/lscpu.c:843
 msgid "Model name:"
 msgstr "Nazwa modelu:"
 
 #: sys-utils/lscpu.c:845
-#, fuzzy
 msgid "BIOS Model name:"
-msgstr "Nazwa modelu:"
+msgstr "Nazwa modelu BIOS:"
 
 #: sys-utils/lscpu.c:847
 msgid "Machine type:"
@@ -15892,9 +15795,8 @@ msgid "Thread(s) per core:"
 msgstr "Wątków na rdzeń:"
 
 #: sys-utils/lscpu.c:855
-#, fuzzy
 msgid "Core(s) per cluster:"
-msgstr "Rdzeni na gniazdo:"
+msgstr "Rdzeni na klaster:"
 
 #: sys-utils/lscpu.c:857
 msgid "Core(s) per socket:"
@@ -15922,7 +15824,7 @@ msgstr "Gniazd:"
 
 #: sys-utils/lscpu.c:873
 msgid "Cluster(s):"
-msgstr ""
+msgstr "Klastrów:"
 
 #: sys-utils/lscpu.c:881
 msgid "Stepping:"
@@ -16025,14 +15927,12 @@ msgid "Vendor ID:"
 msgstr "ID producenta:"
 
 #: sys-utils/lscpu.c:1014
-#, fuzzy
 msgid "BIOS Vendor ID:"
-msgstr "ID producenta:"
+msgstr "ID producenta BIOS-u:"
 
 #: sys-utils/lscpu.c:1022
-#, fuzzy
 msgid "Virtualization features:"
-msgstr "Typ wirtualizacji:"
+msgstr "Właściwości wirtualizacji:"
 
 #: sys-utils/lscpu.c:1024 sys-utils/lscpu.c:1026
 msgid "Virtualization:"
@@ -16052,12 +15952,12 @@ msgstr "Typ wirtualizacji:"
 
 #: sys-utils/lscpu.c:1055
 msgid "Caches (sum of all):"
-msgstr ""
+msgstr "Pamięci podręczne (w sumie):"
 
 #: sys-utils/lscpu.c:1059 sys-utils/lscpu.c:1089 sys-utils/lscpu.c:1121
-#, fuzzy, c-format
+#, c-format
 msgid "%s:"
-msgstr "%s: OK\n"
+msgstr "%s:"
 
 #: sys-utils/lscpu.c:1059 sys-utils/lscpu.c:1089
 #, c-format
@@ -16068,26 +15968,25 @@ msgstr "Cache %s:"
 #, c-format
 msgid "%<PRIu64> (%d instance)"
 msgid_plural "%<PRIu64> (%d instances)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%<PRIu64> (%d instancja)"
+msgstr[1] "%<PRIu64> (%d instancje)"
+msgstr[2] "%<PRIu64> (%d instancji)"
 
 #: sys-utils/lscpu.c:1071
 #, c-format
 msgid "%s (%d instance)"
 msgid_plural "%s (%d instances)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%s (%d instancja)"
+msgstr[1] "%s (%d instancje)"
+msgstr[2] "%s (%d instancji)"
 
 #: sys-utils/lscpu.c:1086
-#, fuzzy
 msgid "Caches:"
-msgstr "Cache %s:"
+msgstr "Pamięci podręczne:"
 
 #: sys-utils/lscpu.c:1105
 msgid "NUMA:"
-msgstr ""
+msgstr "NUMA:"
 
 #: sys-utils/lscpu.c:1107
 msgid "NUMA node(s):"
@@ -16099,14 +15998,13 @@ msgid "NUMA node%d CPU(s):"
 msgstr "Procesory węzła NUMA %d:"
 
 #: sys-utils/lscpu.c:1117
-#, fuzzy
 msgid "Vulnerabilities:"
-msgstr "Dziedziczone zdolności: "
+msgstr "Podatności:"
 
 #: sys-utils/lscpu.c:1121
-#, fuzzy, c-format
+#, c-format
 msgid "Vulnerability %s:"
-msgstr "nieznana zdolność \"%s\""
+msgstr "Podatność %s:"
 
 #: sys-utils/lscpu.c:1139
 msgid "Display information about the CPU architecture.\n"
@@ -16733,16 +16631,12 @@ msgid "nsfs mountpoint (usually used network subsystem)"
 msgstr "punkt montowania nsfs (zwykle używany przez podsystem sieciowy)"
 
 #: sys-utils/lsns.c:116
-#, fuzzy
-#| msgid "namespace identifier (inode number)"
 msgid "parent namespace identifier (inode number)"
-msgstr "identyfikator przestrzeni nazw (numer i-węzła)"
+msgstr "identyfikator przestrzeni nazw rodzica (numer i-węzła)"
 
 #: sys-utils/lsns.c:117
-#, fuzzy
-#| msgid "namespace identifier (inode number)"
 msgid "owner namespace identifier (inode number)"
-msgstr "identyfikator przestrzeni nazw (numer i-węzła)"
+msgstr "identyfikator przestrzeni nazw właściciela (numer i-węzła)"
 
 #: sys-utils/lsns.c:964
 #, c-format
@@ -16827,7 +16721,7 @@ msgid "%s: %s propagation flags changed.\n"
 msgstr "%s: flagi propagacji %s zostały zmienione.\n"
 
 #: sys-utils/mount.c:329
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
 "       You just mounted a file system that supports labels which does not\n"
@@ -16945,16 +16839,13 @@ msgstr ""
 "     --target <cel>      określenie punktu montowania\n"
 
 #: sys-utils/mount.c:486
-#, fuzzy, c-format
-#| msgid ""
-#| "     --target-prefix <path>\n"
-#| "                         specifies path use for all mountpoints\n"
+#, c-format
 msgid ""
 "     --target-prefix <path>\n"
 "                         specifies path used for all mountpoints\n"
 msgstr ""
 "     --target-prefix <ścieżka>\n"
-"                         określenie ścieżki do użycia dla wszystkich punktów montowania\n"
+"                         określenie ścieżki dla wszystkich punktów montowania\n"
 
 #: sys-utils/mount.c:489 sys-utils/umount.c:105
 #, c-format
@@ -17666,10 +17557,9 @@ msgid "cannot set non-blocking %s"
 msgstr "nie można ustawić trybu nieblokującego %s"
 
 #: sys-utils/rfkill.c:221
-#, fuzzy, c-format
-#| msgid "wrong size of rfkill event: %zu < %d"
+#, c-format
 msgid "wrong size of rfkill event: %zu < %zu"
-msgstr "błędny rozmiar zdarzenia rfkill: %zu < %d"
+msgstr "błędny rozmiar zdarzenia rfkill: %zu < %zu"
 
 #: sys-utils/rfkill.c:252
 #, c-format
@@ -17729,9 +17619,8 @@ msgid " unblock identifier\n"
 msgstr " unblock identyfikator    wyłączenie blokady\n"
 
 #: sys-utils/rfkill.c:655
-#, fuzzy
 msgid " toggle  identifier\n"
-msgstr " block   identyfikator    włączenie blokady\n"
+msgstr " toggle  identyfikator\n"
 
 #: sys-utils/rtcwake.c:102
 msgid "Enter a system sleep state until a specified wakeup time.\n"
@@ -17879,10 +17768,9 @@ msgid "%s not enabled for wakeup events"
 msgstr "%s nie ma włączonych zdarzeń budzenia"
 
 #: sys-utils/rtcwake.c:554
-#, fuzzy, c-format
-#| msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
+#, c-format
 msgid "alarm %<PRId64>, sys_time %<PRId64>, rtc_time %<PRId64>, seconds %<PRIu64>\n"
-msgstr "alarm %ld, sys_time %ld, rtc_time %ld, sekund: %u\n"
+msgstr "alarm %<PRId64>, sys_time %<PRId64>, rtc_time %<PRId64>, sekund: %<PRIu64>\n"
 
 #: sys-utils/rtcwake.c:567
 #, c-format
@@ -18188,9 +18076,9 @@ msgid "get pdeathsig failed"
 msgstr "odczyt pdeathsig nie powiódł się"
 
 #: sys-utils/setpriv.c:321
-#, fuzzy, c-format
+#, c-format
 msgid "Parent death signal: "
-msgstr "ustawianie sygnału śmierci rodzica nie powiodło się"
+msgstr "Sygnał śmierci rodzica: "
 
 #: sys-utils/setpriv.c:337
 #, c-format
@@ -18591,10 +18479,9 @@ msgstr "etykieta obszaru wymiany"
 
 #. TRANSLATORS: The tabs make each field a multiple of 8 characters. Keep aligned with each entry below.
 #: sys-utils/swapon.c:250
-#, fuzzy, c-format
-#| msgid "%s\t\t\t\tType\t\tSize\tUsed\tPriority\n"
+#, c-format
 msgid "Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority\n"
-msgstr "%s\t\t\t\tTyp\t\tRozmiar\tUżyte\tPriorytet\n"
+msgstr "Nazwa pliku\t\t\t\tTyp\t\tRozmiar\tUżyte\tPriorytet\n"
 
 #: sys-utils/swapon.c:328
 #, c-format
@@ -19266,10 +19153,9 @@ msgid "cannot chdir to '%s'"
 msgstr "nie można zmienić katalogu na '%s'"
 
 #: sys-utils/unshare.c:654
-#, fuzzy, c-format
-#| msgid "cannot change root filesystem propagation"
+#, c-format
 msgid "cannot change %s filesystem propagation"
-msgstr "nie można zmienić propagowania głównego systemu plików"
+msgstr "nie można zmienić propagowania systemu plików %s"
 
 #: sys-utils/unshare.c:656
 #, c-format
@@ -20056,9 +19942,8 @@ msgid "     --force                   use output file even when it is a link\n"
 msgstr "     --force                   użycie pliku wyjściowego, nawet kiedy jest dowiązaniem\n"
 
 #: term-utils/script.c:211
-#, fuzzy
 msgid " -E, --echo <when>             echo input in session (auto, always or never)\n"
-msgstr " -E, --echo <kiedy>            powtarzanie wejścia (auto, always lub never)\n"
+msgstr " -E, --echo <kiedy>            powtarzanie wejścia w sesji (auto, always lub never)\n"
 
 #: term-utils/script.c:212
 msgid " -o, --output-limit <size>     terminate if output files exceed size\n"
@@ -20261,9 +20146,8 @@ msgid " -c, --cr-mode <type>    CR char mode (auto, never, always)\n"
 msgstr " -c, --cr-mode <typ>     tryb znaku CR (auto, never, always)\n"
 
 #: term-utils/scriptreplay.c:131
-#, fuzzy
 msgid "unexpected tcgetattr failure"
-msgstr "tcgetattr nie powiodło się"
+msgstr "nieoczekiwane niepowodzenie tcgetattr"
 
 #: term-utils/scriptreplay.c:212
 #, c-format
@@ -20665,9 +20549,8 @@ msgid "%s has messages disabled on %s"
 msgstr "%s ma wyłączone komunikaty na %s"
 
 #: text-utils/col.c:174
-#, fuzzy
 msgid "Filter out reverse line feeds from standard input.\n"
-msgstr "Odfiltrowanie cofania wierszy.\n"
+msgstr "Odfiltrowanie cofania wierszy ze standardowego wejścia.\n"
 
 #: text-utils/col.c:177
 #, c-format
@@ -20820,9 +20703,8 @@ msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -N, --table-columns <nazwy>      nazwy kolumn odddzielone przecinkami\n"
 
 #: text-utils/column.c:673
-#, fuzzy
 msgid " -l, --table-columns-limit <num>  maximal number of input columns\n"
-msgstr " -c, --count <liczba>   maksymalna liczba stref\n"
+msgstr " -l, --table-columns-limit <ile>  maksymalna liczba kolumn wejściowych\n"
 
 #: text-utils/column.c:674
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
@@ -20853,9 +20735,8 @@ msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary
 msgstr " -W, --table-wrap <kolumny>       zawinięcie tekstu w kolumnach jeśli trzeba\n"
 
 #: text-utils/column.c:681
-#, fuzzy
 msgid " -L, --keep-empty-lines           don't ignore empty lines\n"
-msgstr " -L, --table-empty-lines          bez ignorowania pustych wierszy\n"
+msgstr " -L, --keep-empty-lines           bez ignorowania pustych wierszy\n"
 
 #: text-utils/column.c:682
 msgid " -J, --json                       use JSON output format for table\n"
@@ -20894,13 +20775,12 @@ msgid "invalid columns argument"
 msgstr "błędna szerokość kolumn"
 
 #: text-utils/column.c:789
-#, fuzzy
 msgid "invalid columns limit argument"
-msgstr "błędna szerokość kolumn"
+msgstr "błędny limit kolumn"
 
 #: text-utils/column.c:791
 msgid "columns limit must be greater than zero"
-msgstr ""
+msgstr "limit kolumn musi być większy od zera"
 
 #: text-utils/column.c:794
 msgid "failed to parse column names"
@@ -21064,9 +20944,8 @@ msgid "MORE environment variable"
 msgstr "zmienna środowiskowa MORE"
 
 #: text-utils/more.c:405
-#, fuzzy
 msgid "magic failed"
-msgstr "rozpoznanie kodu magicznego nie powiodło się: %s\n"
+msgstr "rozpoznanie kodu magicznego nie powiodło się"
 
 #: text-utils/more.c:409 text-utils/more.c:428
 #, c-format
@@ -21479,127 +21358,3 @@ msgstr "problem z odczytem terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminal `%s' jest nieznany, użycie domyślnego `dumb'"
-
-#~ msgid "Filename"
-#~ msgstr "Nazwa pliku"
-
-#, c-format
-#~ msgid "umount %s failed"
-#~ msgstr "odmontowanie %s nie powiodło się"
-
-#, c-format
-#~ msgid ""
-#~ "\n"
-#~ "Options:\n"
-#~ " -c, --check               check bad blocks before creating the swap area\n"
-#~ " -f, --force               allow swap size area be larger than device\n"
-#~ " -p, --pagesize SIZE       specify page size in bytes\n"
-#~ " -L, --label LABEL         specify label\n"
-#~ " -v, --swapversion NUM     specify swap-space version number\n"
-#~ " -U, --uuid UUID           specify the uuid to use\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Opcje:\n"
-#~ " -c, --check               test błędnych bloków przed utw. obszaru wymiany\n"
-#~ " -f, --force               zezwolenie na obszar wymiany większy niż urządzenie\n"
-#~ " -p, --pagesize ROZMIAR    określenie rozmiaru strony w bajtach\n"
-#~ " -L, --label ETYKIETA      określenie etykiety\n"
-#~ " -v, --swapversion NUMER   określenie numeru wersji obszaru wymiany\n"
-#~ " -U, --uuid UUID           określenie uuida do użycia\n"
-#~ "\n"
-
-#~ msgid "unable to matchpathcon()"
-#~ msgstr "matchpathcon() nie powiodło się"
-
-#, c-format
-#~ msgid "Directories:   %9lld\n"
-#~ msgstr "Katalogów:       %9lld\n"
-
-#, c-format
-#~ msgid "Objects:       %9lld\n"
-#~ msgstr "Obiektów:        %9lld\n"
-
-#, c-format
-#~ msgid "Regular files: %9lld\n"
-#~ msgstr "Plików zwykłych: %9lld\n"
-
-#~ msgid "Would link:    "
-#~ msgstr "Dowiązanoby:     "
-
-#~ msgid "Linked:        "
-#~ msgstr "Dowiązano:       "
-
-#~ msgid "Would save:   "
-#~ msgstr "Oszczędzonoby:   "
-
-#~ msgid "Saved:        "
-#~ msgstr "Oszczędzono:     "
-
-#~ msgid " -v, --verbose          print summary after hardlinking"
-#~ msgstr " -v, --verbose          wypisanie podsumowania po dowiązaniu"
-
-#~ msgid " -vv                    print every hardlinked file and summary"
-#~ msgstr " -vv                    wypisanie wszystkich dowiązanych plików i podsumowania"
-
-#~ msgid " -f, --force            force hardlinking across filesystems"
-#~ msgstr " -f, --force            wymuszenie dowiązań pomiędzy systemami plików"
-
-#~ msgid "integer overflow"
-#~ msgstr "przepełnienie liczby całkowitej"
-
-#, c-format
-#~ msgid "%s is on different filesystem than the rest (use -f option to override)."
-#~ msgstr "%s jest na innym systemie plików niż reszta (opcja -f pozwala wymusić)."
-
-#, c-format
-#~ msgid "file %s changed underneath us"
-#~ msgstr "plik %s zmienił się w trakcie"
-
-#, c-format
-#~ msgid "failed to hardlink %s to %s (create temporary link as %s failed)"
-#~ msgstr "nie udało się dowiązać %s do %s (tworzenie dowiązania tymczasowego jako %s nie powiodło się)"
-
-#, c-format
-#~ msgid "failed to hardlink %s to %s (rename temporary link to %s failed)"
-#~ msgstr "nie udało się dowiązać %s do %s (zmiana nazwy dowiązania tymczasowego na %s nie powiodła się)"
-
-#, c-format
-#~ msgid "failed to remove temporary link %s"
-#~ msgstr "nie udało się usunąć tymczasowego dowiązania %s"
-
-#, c-format
-#~ msgid " %s %s to %s\n"
-#~ msgstr " %s %s do %s\n"
-
-#~ msgid "Would link"
-#~ msgstr "Dowiązanoby"
-
-#~ msgid "would save"
-#~ msgstr "zaoszczędzonoby"
-
-#~ msgid "option --exclude not supported (built without pcre2)"
-#~ msgstr "opcja --exclude nie jest obsługiwana (zbudowano bez pcre2)"
-
-#, c-format
-#~ msgid "pattern error at offset %d: %s"
-#~ msgstr "błąd wzorca pod offsetem %d: %s"
-
-#, c-format
-#~ msgid "Skipping %s%s\n"
-#~ msgstr "Pomijanie %s%s\n"
-
-#~ msgid "--reset-on-fork option is supported for SCHED_FIFO and SCHED_RR policies only"
-#~ msgstr "opcja --reset-on-fork jest obsługiwana tylko dla polityk SCHED_FIFO i SCHED_RR"
-
-#~ msgid "CPU MHz:"
-#~ msgstr "CPU MHz:"
-
-#~ msgid "libcap-ng is too old for \"all\" caps"
-#~ msgstr "libcap-ng jest zbyt stara dla zdolności \"all\""
-
-#, c-format
-#~ msgid "failed on line %d"
-#~ msgstr "niepowodzenie w linii %d"
-
-#~ msgid "Input line too long."
-#~ msgstr "Linia wejściowa zbyt długa."
