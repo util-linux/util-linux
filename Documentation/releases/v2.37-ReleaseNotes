@@ -61,8 +61,8 @@ blkzone(8) provides a new "capacity" command.
 cfdisk(8) is possible to start in read-only mode by a new command-line option
 --read-only
 
-lsblk(8) provides new columns FSROOTS, and MOUNTTARGETS. The column
-MOUNTTARGETS is used in the default output now and this new column prints all
+lsblk(8) provides new columns FSROOTS, and MOUNTPOINTS. The column
+MOUNTPOINTS is used in the default output now and this new column prints all
 mount points where the device is used (btrfs subvolumes, bind mounts, etc).
 
 losetup(8) uses LOOP_CONFIG ioctl now.
