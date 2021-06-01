@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2012 Karel Zak <kzak@redhat.com>
 #
-# Usage: ko-release-gen [<directory>]
+# Usage: ko-release-gen [<directory> [<file>]]
 #
 # This script prepares a new release for publishing on kernel.org. The
 # hierarchy of release files is created in the <directory> (default directory
@@ -79,6 +79,17 @@ add_html_dir() {
 rm -rf $DISTDIR
 
 eval $(gpg-agent --daemon)
+
+# Add just specified files only
+if [ -f "$2" ]; then
+	shift
+	while (( "$#" )); do
+		add_file "$1"
+		shift
+	done
+	killall gpg-agent
+	exit 0
+fi
 
 add_file	util-linux-${VERSION}.tar.xz
 add_file	v${VERSION}-ChangeLog
