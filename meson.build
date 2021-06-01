@@ -1,11 +1,11 @@
 project('util-linux', 'c',
-        version : '2.35-rc2',
+        version : '2.37',
         license : 'GPLv2+')
 
 pkgconfig = import('pkgconfig')
 
 libblkid_version = '1.1.0'
-libblkid_date = '11-Dec-2019'
+libblkid_date = '01-Jun-2021'
 libuuid_version = '1.3.0'
 libmount_version = '1.1.0'
 libsmartcols_version = '1.1.0'
