@@ -71,6 +71,7 @@ AUTHORS (merged projects & commands):
                        Miquel van Smoorenburg
       switch_root:     Peter Jones <pjones@redhat.com>
                        Jeremy Katz <katzj@redhat.com>
+      uclampse:        Qais Yousef <qais.yousef@arm.com>
       unshare:         Mikhail Gusarov <dottedmag@dottedmag.net>
       utmpdump:        [merged from sysvinit]
                        Danek Duvall <duvall@alumni.princeton.edu>
