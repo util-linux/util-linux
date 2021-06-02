@@ -205,6 +205,8 @@ $(MANPAGES): $(ADOCFILES_COMMON) Makefile
 
 asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-b manpage \
+	-a 'release-version=$(VERSION)' \
+	-a 'package-docdir=$(docdir)' \
 	-a 'VERSION=$(VERSION)' \
 	-a 'ADJTIME_PATH=$(ADJTIME_PATH)'
 
