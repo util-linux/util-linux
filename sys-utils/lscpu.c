@@ -594,14 +594,10 @@ static void print_caches_readable(struct lscpu_cxt *cxt, int cols[], size_t ncol
 		struct libscols_column *cl;
 
 		cl = scols_table_new_column(tb, cd->name, 0, cd->flags);
-
 		if (cl == NULL)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
-
 		if (cxt->json)
 			scols_column_set_json_type(cl, cd->json_type);
-
-
 	}
 
 	/* standard caches */
@@ -756,10 +752,8 @@ static void print_cpus_readable(struct lscpu_cxt *cxt, int cols[], size_t ncols)
 		cl = scols_table_new_column(tb, data, 0, cd->flags);
 		if (cl == NULL)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
-
 		if (cxt->json)
 			scols_column_set_json_type(cl, cd->json_type);
-
 	}
 
 	for (i = 0; i < cxt->npossibles; i++) {
