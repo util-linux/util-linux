@@ -129,8 +129,8 @@ In compatibility mode, leading '*-*' and '*{plus}*' characters in the short opti
 
 == EXAMPLES
 
-// TRANSLATORS: Don't translate _{docdir}_.
-Example scripts for (ba)sh and (t)csh are provided with the *getopt*(1) distribution, and are installed in _{docdir}_ directory.
+// TRANSLATORS: Don't translate _{package-docdir}_.
+Example scripts for (ba)sh and (t)csh are provided with the *getopt*(1) distribution, and are installed in _{package-docdir}_ directory.
 
 == ENVIRONMENT
 
