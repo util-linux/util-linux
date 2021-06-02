@@ -105,6 +105,7 @@ enum {
 	COL_CPU_CONFIGURED,
 	COL_CPU_ONLINE,
 	COL_CPU_MHZ,
+	COL_CPU_SCALMHZ,
 	COL_CPU_MAXMHZ,
 	COL_CPU_MINMHZ,
 };
@@ -150,6 +151,7 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU") },
 	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT },
 	[COL_CPU_MHZ]          = { "MHZ", N_("shows the currently MHz of the CPU"), SCOLS_FL_RIGHT },
+	[COL_CPU_SCALMHZ]      = { "SCALMHZ%", N_("shows scaling percentage of the CPU frequency"), SCOLS_FL_RIGHT },
 	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT },
 	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT }
 };
@@ -422,8 +424,12 @@ static char *get_cell_data(
 				 is_cpu_online(cxt, cpu) ? _("yes") : _("no"));
 		break;
 	case COL_CPU_MHZ:
-		if (cpu->mhz)
-			xstrncpy(buf, cpu->mhz, bufsz);
+		if (cpu->mhz_cur_freq)
+			snprintf(buf, bufsz, "%.4f", cpu->mhz_cur_freq);
+		break;
+	case COL_CPU_SCALMHZ:
+		if (cpu->mhz_cur_freq && cpu->mhz_max_freq)
+			snprintf(buf, bufsz, "%.0f%%", cpu->mhz_cur_freq / cpu->mhz_max_freq * 100);
 		break;
 	case COL_CPU_MAXMHZ:
 		if (cpu->mhz_max_freq)
@@ -890,6 +896,9 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 		add_summary_s(tb, sec, _("CPU static MHz:"), ct->static_mhz);
 
 	if (ct->has_freq) {
+		float scal = lsblk_cputype_get_scalmhz(cxt, ct);
+		if (scal > 0.0)
+			add_summary_x(tb, sec, _("CPU(s) scaling MHz:"), "%.0f%%", scal);
 		add_summary_x(tb, sec, _("CPU max MHz:"), "%.4f", lsblk_cputype_get_maxmhz(cxt, ct));
 		add_summary_x(tb, sec, _("CPU min MHz:"), "%.4f", lsblk_cputype_get_minmhz(cxt, ct));
 	}

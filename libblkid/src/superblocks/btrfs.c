@@ -9,6 +9,12 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
+#include <assert.h>
+
+#ifdef HAVE_LINUX_BLKZONED_H
+#include <linux/blkzoned.h>
+#endif
 
 #include "superblocks.h"
 
@@ -59,11 +65,157 @@ struct btrfs_super_block {
 	uint8_t label[256];
 } __attribute__ ((__packed__));
 
+#define BTRFS_SUPER_INFO_SIZE 4096
+
+/* Number of superblock log zones */
+#define BTRFS_NR_SB_LOG_ZONES 2
+
+/* Introduce some macros and types to unify the code with kernel side */
+#define SECTOR_SHIFT 9
+
+typedef uint64_t sector_t;
+
+#ifdef HAVE_LINUX_BLKZONED_H
+static int sb_write_pointer(blkid_probe pr, struct blk_zone *zones, uint64_t *wp_ret)
+{
+	bool empty[BTRFS_NR_SB_LOG_ZONES];
+	bool full[BTRFS_NR_SB_LOG_ZONES];
+	sector_t sector;
+
+	assert(zones[0].type != BLK_ZONE_TYPE_CONVENTIONAL &&
+	       zones[1].type != BLK_ZONE_TYPE_CONVENTIONAL);
+
+	empty[0] = zones[0].cond == BLK_ZONE_COND_EMPTY;
+	empty[1] = zones[1].cond == BLK_ZONE_COND_EMPTY;
+	full[0] = zones[0].cond == BLK_ZONE_COND_FULL;
+	full[1] = zones[1].cond == BLK_ZONE_COND_FULL;
+
+	/*
+	 * Possible states of log buffer zones
+	 *
+	 *           Empty[0]  In use[0]  Full[0]
+	 * Empty[1]         *          x        0
+	 * In use[1]        0          x        0
+	 * Full[1]          1          1        C
+	 *
+	 * Log position:
+	 *   *: Special case, no superblock is written
+	 *   0: Use write pointer of zones[0]
+	 *   1: Use write pointer of zones[1]
+	 *   C: Compare super blcoks from zones[0] and zones[1], use the latest
+	 *      one determined by generation
+	 *   x: Invalid state
+	 */
+
+	if (empty[0] && empty[1]) {
+		/* Special case to distinguish no superblock to read */
+		*wp_ret = zones[0].start << SECTOR_SHIFT;
+		return -ENOENT;
+	} else if (full[0] && full[1]) {
+		/* Compare two super blocks */
+		struct btrfs_super_block *super[BTRFS_NR_SB_LOG_ZONES];
+		int i;
+
+		for (i = 0; i < BTRFS_NR_SB_LOG_ZONES; i++) {
+			uint64_t bytenr;
+
+			bytenr = ((zones[i].start + zones[i].len)
+				   << SECTOR_SHIFT) - BTRFS_SUPER_INFO_SIZE;
+
+			super[i] = (struct btrfs_super_block *)
+				blkid_probe_get_buffer(pr, bytenr, BTRFS_SUPER_INFO_SIZE);
+			if (!super[i])
+				return -EIO;
+		}
+
+		if (super[0]->generation > super[1]->generation)
+			sector = zones[1].start;
+		else
+			sector = zones[0].start;
+	} else if (!full[0] && (empty[1] || full[1])) {
+		sector = zones[0].wp;
+	} else if (full[0]) {
+		sector = zones[1].wp;
+	} else {
+		return -EUCLEAN;
+	}
+	*wp_ret = sector << SECTOR_SHIFT;
+	return 0;
+}
+
+static int sb_log_offset(blkid_probe pr, uint64_t *bytenr_ret)
+{
+	uint32_t zone_num = 0;
+	uint32_t zone_size_sector;
+	struct blk_zone_report *rep;
+	struct blk_zone *zones;
+	int ret;
+	int i;
+	uint64_t wp;
+
+
+	zone_size_sector = pr->zone_size >> SECTOR_SHIFT;
+	rep = blkdev_get_zonereport(pr->fd, zone_num * zone_size_sector, 2);
+	if (!rep) {
+		ret = -errno;
+		goto out;
+	}
+	zones = (struct blk_zone *)(rep + 1);
+
+	/*
+	 * Use the head of the first conventional zone, if the zones
+	 * contain one.
+	 */
+	for (i = 0; i < BTRFS_NR_SB_LOG_ZONES; i++) {
+		if (zones[i].type == BLK_ZONE_TYPE_CONVENTIONAL) {
+			*bytenr_ret = zones[i].start << SECTOR_SHIFT;
+			ret = 0;
+			goto out;
+		}
+	}
+
+	ret = sb_write_pointer(pr, zones, &wp);
+	if (ret != -ENOENT && ret) {
+		ret = 1;
+		goto out;
+	}
+	if (ret != -ENOENT) {
+		if (wp == zones[0].start << SECTOR_SHIFT)
+			wp = (zones[1].start + zones[1].len) << SECTOR_SHIFT;
+		wp -= BTRFS_SUPER_INFO_SIZE;
+	}
+	*bytenr_ret = wp;
+
+	ret = 0;
+out:
+	free(rep);
+
+	return ret;
+}
+#endif
+
 static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct btrfs_super_block *bfs;
 
-	bfs = blkid_probe_get_sb(pr, mag, struct btrfs_super_block);
+	if (pr->zone_size) {
+#ifdef HAVE_LINUX_BLKZONED_H
+		uint64_t offset = 0;
+		int ret;
+
+		ret = sb_log_offset(pr, &offset);
+		if (ret)
+			return ret;
+		bfs = (struct btrfs_super_block *)
+			blkid_probe_get_buffer(pr, offset,
+					       sizeof(struct btrfs_super_block));
+#else
+		/* Nothing can be done */
+		return 1;
+#endif
+	} else {
+		bfs = blkid_probe_get_sb(pr, mag, struct btrfs_super_block);
+	}
 	if (!bfs)
 		return errno ? -errno : 1;
 
@@ -88,6 +240,11 @@ const struct blkid_idinfo btrfs_idinfo =
 	.magics		=
 	{
 	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40, .kboff = 64 },
+	  /* For zoned btrfs */
+	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40,
+	    .is_zoned = 1, .zonenum = 0, .kboff_inzone = 0 },
+	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40,
+	    .is_zoned = 1, .zonenum = 1, .kboff_inzone = 0 },
 	  { NULL }
 	}
 };

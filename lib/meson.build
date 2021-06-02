@@ -5,6 +5,7 @@ lib_common_sources = '''
 	color-names.c
 	crc32.c
 	crc32c.c
+	c_strtod.c
 	encode.c
 	env.c
 	fileutils.c

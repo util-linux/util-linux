@@ -301,6 +301,7 @@ AC_CHECK_HEADERS([ \
 	inttypes.h \
 	lastlog.h \
 	libutil.h \
+	linux/blkzoned.h \
 	linux/btrfs.h \
 	linux/capability.h \
 	linux/cdrom.h \
@@ -381,8 +382,6 @@ AC_CHECK_HEADERS([security/pam_misc.h],
 #include <security/pam_appl.h>
 #endif
 ])
-
-AC_CHECK_HEADERS([linux/blkzoned.h])
 
 AC_CHECK_DECLS([BLK_ZONE_REP_CAPACITY], [], [], [
 	#include <linux/blkzoned.h>
@@ -540,6 +539,7 @@ AC_CHECK_FUNCS([ \
 	jrand48 \
 	lchown \
 	llseek \
+	newlocale \
 	mempcpy \
 	mkostemp \
 	nanosleep \
@@ -565,10 +565,12 @@ AC_CHECK_FUNCS([ \
 	strnchr \
 	strndup \
 	strnlen \
+	strtod_l \
 	sysconf \
 	sysinfo \
 	timegm \
 	usleep \
+	uselocale \
 	utimensat \
 	vwarnx \
 	warn \

@@ -546,6 +546,16 @@ static int read_mhz(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/cpuinfo_min_freq", num) == 0)
 		cpu->mhz_min_freq = (float) mhz / 1000;
 
+	/* The default current-frequency value comes is from /proc/cpuinfo (if
+	 * available).  This /proc value is usually based on MSR registers
+	 * (APERF/APERF) and it changes pretty often. It seems better to read
+	 * frequency from cpufreq subsystem that provides the current frequency
+	 * for the current policy. There is also cpuinfo_cur_freq in sysfs, but
+	 * it's not always available.
+	 */
+	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/scaling_cur_freq", num) == 0)
+		cpu->mhz_cur_freq = (float) mhz / 1000;
+
 	if (cpu->type && (cpu->mhz_min_freq || cpu->mhz_max_freq))
 		cpu->type->has_freq = 1;
 
@@ -581,6 +591,27 @@ float lsblk_cputype_get_minmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 			res = cpu->mhz_min_freq;
 	}
 	return res;
+}
+
+/* returns scaling (use) of CPUs freq. in percent */
+float lsblk_cputype_get_scalmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
+{
+	size_t i;
+	float fmax = 0, fcur = 0;
+
+	for (i = 0; i < cxt->npossibles; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+
+		if (!cpu || cpu->type != ct || !is_cpu_present(cxt, cpu))
+			continue;
+		if (cpu->mhz_max_freq <= 0.0 || cpu->mhz_cur_freq <= 0.0)
+			continue;
+		fmax += cpu->mhz_max_freq;
+		fcur += cpu->mhz_cur_freq;
+	}
+	if (fcur <= 0.0)
+		return 0.0;
+	return fcur / fmax * 100;
 }
 
 int lscpu_read_topology(struct lscpu_cxt *cxt)

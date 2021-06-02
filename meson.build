@@ -156,8 +156,10 @@ headers = '''
         linux/compiler.h
         linux/falloc.h
         linux/fd.h
-        linux/fs.h
+	linux/fiemap.h
+	linux/gsmmux.h
         linux/net_namespace.h
+        linux/nsfs.h
         linux/raw.h
         linux/securebits.h
         linux/tiocl.h
@@ -195,6 +197,7 @@ headers = '''
         sys/types.h
         sys/ucred.h
         sys/un.h
+	sys/xattr.h
 '''.split()
 
 lib_m = cc.find_library('m')
@@ -460,6 +463,7 @@ funcs = '''
         jrand48
         lchown
         llseek
+	newlocale
         mempcpy
         mkostemp
         nanosleep
@@ -484,6 +488,7 @@ funcs = '''
         strnchr
         strndup
         strnlen
+	strtod_l
         sysconf
         sysinfo
         swapon
@@ -491,6 +496,7 @@ funcs = '''
         timegm
         unshare
         usleep
+	uselocale
 	utimensat
         vwarnx
         warn
