@@ -329,5 +329,8 @@ endif
 if BUILD_UL
 dist_bashcompletion_DATA += bash-completion/ul
 endif
+if BUILD_HARDLINK
+dist_bashcompletion_DATA += bash-completion/hardlink
+endif
 
 endif # BUILD_BASH_COMPLETION
