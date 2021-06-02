@@ -62,7 +62,7 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 	 */
 	type = mnt_fs_get_fstype(cxt->fs);
 
-	if (mnt_fs_is_regular(cxt->fs) &&
+	if (mnt_fs_is_regularfs(cxt->fs) &&
 	    (!type || strcmp(type, "auto") == 0 || blkid_known_fstype(type))) {
 		struct stat st;
 

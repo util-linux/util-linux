@@ -249,6 +249,7 @@ mnt_fs_get_vfs_options_all
 mnt_fs_is_kernel
 mnt_fs_is_netfs
 mnt_fs_is_pseudofs
+mnt_fs_is_regularfs
 mnt_fs_is_swaparea
 mnt_fs_match_fstype
 mnt_fs_match_options

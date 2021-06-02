@@ -361,3 +361,8 @@ MOUNT_2_37 {
 	mnt_fs_get_vfs_options_all;
 	mnt_table_over_fs;
 } MOUNT_2_35;
+
+
+MOUNT_2_38 {
+	mnt_fs_is_regularfs;
+} MOUNT_2_37;

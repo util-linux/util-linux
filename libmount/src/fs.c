@@ -637,6 +637,21 @@ int mnt_fs_is_netfs(struct libmnt_fs *fs)
 }
 
 /**
+ * mnt_fs_is_regularfs:
+ * @fs: filesystem
+ *
+ * Returns: 1 if the filesystem is a regular filesystem (not network or pseudo filesystem).
+ *
+ * Since: 2.38
+ */
+int mnt_fs_is_regularfs(struct libmnt_fs *fs)
+{
+	return !(mnt_fs_is_pseudofs(fs)
+		 || mnt_fs_is_netfs(fs)
+		 || mnt_fs_is_swaparea(fs));
+}
+
+/**
  * mnt_fs_get_fstype:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
