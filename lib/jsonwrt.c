@@ -214,3 +214,11 @@ void ul_jsonwrt_value_boolean(struct ul_jsonwrt *fmt,
 	fputs(data ? "true" : "false", fmt->out);
 	ul_jsonwrt_value_close(fmt);
 }
+
+void ul_jsonwrt_value_null(struct ul_jsonwrt *fmt,
+			const char *name)
+{
+	ul_jsonwrt_value_open(fmt, name);
+	fputs("null", fmt->out);
+	ul_jsonwrt_value_close(fmt);
+}

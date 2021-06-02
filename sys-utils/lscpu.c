@@ -133,42 +133,43 @@ struct lscpu_coldesc {
 
 	int flags;
 	unsigned int  is_abbr:1;	/* name is abbreviation */
+	int json_type;
 };
 
 static struct lscpu_coldesc coldescs_cpu[] =
 {
-	[COL_CPU_BOGOMIPS]     = { "BOGOMIPS", N_("crude measurement of CPU speed"), SCOLS_FL_RIGHT, 1 },
-	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), SCOLS_FL_RIGHT, 1 },
-	[COL_CPU_CORE]         = { "CORE", N_("logical core number"), SCOLS_FL_RIGHT },
-	[COL_CPU_CLUSTER]      = { "CLUSTER", N_("logical cluster number"), SCOLS_FL_RIGHT },
-	[COL_CPU_SOCKET]       = { "SOCKET", N_("logical socket number"), SCOLS_FL_RIGHT },
-	[COL_CPU_NODE]         = { "NODE", N_("logical NUMA node number"), SCOLS_FL_RIGHT },
-	[COL_CPU_BOOK]         = { "BOOK", N_("logical book number"), SCOLS_FL_RIGHT },
-	[COL_CPU_DRAWER]       = { "DRAWER", N_("logical drawer number"), SCOLS_FL_RIGHT },
+	[COL_CPU_BOGOMIPS]     = { "BOGOMIPS", N_("crude measurement of CPU speed"), SCOLS_FL_RIGHT, 1, SCOLS_JSON_NUMBER },
+	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), SCOLS_FL_RIGHT, 1, SCOLS_JSON_NUMBER },
+	[COL_CPU_CORE]         = { "CORE", N_("logical core number"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_CLUSTER]      = { "CLUSTER", N_("logical cluster number"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_SOCKET]       = { "SOCKET", N_("logical socket number"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_NODE]         = { "NODE", N_("logical NUMA node number"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_BOOK]         = { "BOOK", N_("logical book number"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_DRAWER]       = { "DRAWER", N_("logical drawer number"), SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER },
 	[COL_CPU_CACHE]        = { "CACHE", N_("shows how caches are shared between CPUs") },
 	[COL_CPU_POLARIZATION] = { "POLARIZATION", N_("CPU dispatching mode on virtual hardware") },
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
-	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU") },
-	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT },
-	[COL_CPU_MHZ]          = { "MHZ", N_("shows the currently MHz of the CPU"), SCOLS_FL_RIGHT },
-	[COL_CPU_SCALMHZ]      = { "SCALMHZ%", N_("shows scaling percentage of the CPU frequency"), SCOLS_FL_RIGHT },
-	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT },
-	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT }
+	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU"), 0, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
+	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
+	[COL_CPU_MHZ]          = { "MHZ", N_("shows the currently MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_SCALMHZ]      = { "SCALMHZ%", N_("shows scaling percentage of the CPU frequency"), SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER },
+	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER }
 };
 
 static struct lscpu_coldesc coldescs_cache[] =
 {
 	[COL_CACHE_ALLSIZE]    = { "ALL-SIZE", N_("size of all system caches"), SCOLS_FL_RIGHT },
-	[COL_CACHE_LEVEL]      = { "LEVEL", N_("cache level"), SCOLS_FL_RIGHT },
+	[COL_CACHE_LEVEL]      = { "LEVEL", N_("cache level"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CACHE_NAME]       = { "NAME", N_("cache name") },
 	[COL_CACHE_ONESIZE]    = { "ONE-SIZE", N_("size of one cache"), SCOLS_FL_RIGHT },
 	[COL_CACHE_TYPE]       = { "TYPE", N_("cache type") },
-	[COL_CACHE_WAYS]       = { "WAYS", N_("ways of associativity"), SCOLS_FL_RIGHT },
+	[COL_CACHE_WAYS]       = { "WAYS", N_("ways of associativity"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CACHE_ALLOCPOL]   = { "ALLOC-POLICY", N_("allocation policy") },
 	[COL_CACHE_WRITEPOL]   = { "WRITE-POLICY", N_("write policy") },
-	[COL_CACHE_PHYLINE]    = { "PHY-LINE", N_("number of physical cache line per cache t"), SCOLS_FL_RIGHT },
-	[COL_CACHE_SETS]       = { "SETS", N_("number of sets in the cache; set lines has the same cache index"), SCOLS_FL_RIGHT },
-	[COL_CACHE_COHERENCYSIZE] = { "COHERENCY-SIZE", N_("minimum amount of data in bytes transferred from memory to cache"), SCOLS_FL_RIGHT }
+	[COL_CACHE_PHYLINE]    = { "PHY-LINE", N_("number of physical cache line per cache t"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CACHE_SETS]       = { "SETS", N_("number of sets in the cache; set lines has the same cache index"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CACHE_COHERENCYSIZE] = { "COHERENCY-SIZE", N_("minimum amount of data in bytes transferred from memory to cache"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER }
 };
 
 static int is_term = 0;
@@ -308,6 +309,22 @@ static void __fill_id(	struct lscpu_cxt *cxt,
 	}
 }
 
+static void get_cell_boolean(
+		struct lscpu_cxt *cxt,
+		int has_data, int data,
+		char *buf, size_t bufsz)
+{
+		if (!has_data)
+			return;
+
+		if (cxt->mode == LSCPU_OUTPUT_PARSABLE || cxt->json)
+			snprintf(buf, bufsz, "%s",
+				 data ? _("Y") : _("N"));
+		else
+			snprintf(buf, bufsz, "%s",
+				 data ? _("yes") : _("no"));
+}
+
 #define fill_id(_cxt, _cpu, NAME, _buf, _bufsz) \
 		__fill_id(_cxt, (_cpu), \
 			(_cpu)-> NAME ## id, \
@@ -404,24 +421,10 @@ static char *get_cell_data(
 		snprintf(buf, bufsz, "%d", cpu->address);
 		break;
 	case COL_CPU_CONFIGURED:
-		if (cpu->configured < 0)
-			break;
-		if (cxt->mode == LSCPU_OUTPUT_PARSABLE)
-			snprintf(buf, bufsz, "%s",
-				 cpu->configured ? _("Y") : _("N"));
-		else
-			snprintf(buf, bufsz, "%s",
-				 cpu->configured ? _("yes") : _("no"));
+		get_cell_boolean(cxt, cpu->configured >= 0, cpu->configured, buf, bufsz);
 		break;
 	case COL_CPU_ONLINE:
-		if (!cxt->online)
-			break;
-		if (cxt->mode == LSCPU_OUTPUT_PARSABLE)
-			snprintf(buf, bufsz, "%s",
-				 is_cpu_online(cxt, cpu) ? _("Y") : _("N"));
-		else
-			snprintf(buf, bufsz, "%s",
-				 is_cpu_online(cxt, cpu) ? _("yes") : _("no"));
+		get_cell_boolean(cxt, !!cxt->online, is_cpu_online(cxt, cpu), buf, bufsz);
 		break;
 	case COL_CPU_MHZ:
 		if (cpu->mhz_cur_freq)
@@ -588,8 +591,17 @@ static void print_caches_readable(struct lscpu_cxt *cxt, int cols[], size_t ncol
 
 	for (i = 0; i < ncols; i++) {
 		struct lscpu_coldesc *cd = &coldescs_cache[cols[i]];
-		if (!scols_table_new_column(tb, cd->name, 0, cd->flags))
+		struct libscols_column *cl;
+
+		cl = scols_table_new_column(tb, cd->name, 0, cd->flags);
+
+		if (cl == NULL)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
+
+		if (cxt->json)
+			scols_column_set_json_type(cl, cd->json_type);
+
+
 	}
 
 	/* standard caches */
@@ -738,8 +750,16 @@ static void print_cpus_readable(struct lscpu_cxt *cxt, int cols[], size_t ncols)
 
 	for (i = 0; i < ncols; i++) {
 		data = get_cell_header(cxt, cols[i], buf, sizeof(buf));
-		if (!scols_table_new_column(tb, data, 0, coldescs_cpu[cols[i]].flags))
+		struct lscpu_coldesc *cd = &coldescs_cpu[cols[i]];
+		struct libscols_column *cl;
+
+		cl = scols_table_new_column(tb, data, 0, cd->flags);
+		if (cl == NULL)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
+
+		if (cxt->json)
+			scols_column_set_json_type(cl, cd->json_type);
+
 	}
 
 	for (i = 0; i < cxt->npossibles; i++) {
