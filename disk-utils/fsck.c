@@ -1089,7 +1089,7 @@ static int fs_ignored_type(struct libmnt_fs *fs)
 {
 	const char **ip, *type;
 
-	if (mnt_fs_is_netfs(fs) || mnt_fs_is_pseudofs(fs) || mnt_fs_is_swaparea(fs))
+	if (!mnt_fs_is_regularfs(fs))
 		return 1;
 
 	type = mnt_fs_get_fstype(fs);
