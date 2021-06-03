@@ -724,7 +724,7 @@ int lscpu_read_archext(struct lscpu_cxt *cxt)
 	}
 
 #if defined(HAVE_LIBRTAS)
-	/* Get PowerPC speficic info */
+	/* Get PowerPC specific info */
 	if (!cxt->noalive) {
 		int rc, len, ntypes;
 
@@ -745,8 +745,8 @@ int lscpu_read_archext(struct lscpu_cxt *cxt)
 		ct->physsockets = strbe16toh(buf, 4);
 		ct->physchips = strbe16toh(buf, 6);
 		ct->physcoresperchip = strbe16toh(buf, 8);
-nortas:
 	}
+nortas:
 #endif
 	return 0;
 }
