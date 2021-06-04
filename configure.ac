@@ -744,6 +744,13 @@ UL_BUILD_INIT([asciidoc])
 UL_REQUIRES_PROGRAM([asciidoc], [ASCIIDOCTOR], [asciidoctor], [man pages])
 AM_CONDITIONAL([ENABLE_ASCIIDOC], [test "x$build_asciidoc" = xyes])
 
+have_manpages=no
+AS_IF([test -f "$srcdir/sys-utils/mount.8"], [
+   AC_MSG_NOTICE([re-use already generated man-pages.])
+   have_manpages=yes]
+)
+AM_CONDITIONAL([HAVE_MANPAGES], [test "x$have_manpages" = xyes])
+
 
 AC_ARG_ENABLE([poman],
   AS_HELP_STRING([--enable-poman], [generate translated man pages]),
