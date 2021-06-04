@@ -19,8 +19,6 @@
 
 #include "blkidP.h"
 
-#define UDEV_ALLOWED_CHARS_INPUT               "/ $%?,"
-
 /**
  * SECTION: encode
  * @title: Encoding utils
@@ -151,34 +149,6 @@ static int utf8_encoded_valid_unichar(const char *str)
 	return len;
 }
 
-static int replace_whitespace(const char *str, char *to, size_t len)
-{
-	size_t i, j;
-
-	/* strip trailing whitespace */
-	len = strnlen(str, len);
-	while (len && isspace(str[len-1]))
-		len--;
-
-	/* strip leading whitespace */
-	i = 0;
-	while ((i < len) && isspace(str[i]))
-		i++;
-
-	j = 0;
-	while (i < len) {
-		/* substitute multiple whitespace with a single '_' */
-		if (isspace(str[i])) {
-			while (isspace(str[i]))
-				i++;
-			to[j++] = '_';
-		}
-		to[j++] = str[i++];
-	}
-	to[j] = '\0';
-	return 0;
-}
-
 static int is_whitelisted(char c, const char *white)
 {
 	if ((c >= '0' && c <= '9') ||
@@ -188,49 +158,6 @@ static int is_whitelisted(char c, const char *white)
 	    (white != NULL && strchr(white, c) != NULL))
 		return 1;
 	return 0;
-}
-
-/* allow chars in whitelist, plain ascii, hex-escaping and valid utf8 */
-static int replace_chars(char *str, const char *white)
-{
-	size_t i = 0;
-	int replaced = 0;
-
-	while (str[i] != '\0') {
-		int len;
-
-		if (is_whitelisted(str[i], white)) {
-			i++;
-			continue;
-		}
-
-		/* accept hex encoding */
-		if (str[i] == '\\' && str[i+1] == 'x') {
-			i += 2;
-			continue;
-		}
-
-		/* accept valid utf8 */
-		len = utf8_encoded_valid_unichar(&str[i]);
-		if (len > 1) {
-			i += len;
-			continue;
-		}
-
-		/* if space is allowed, replace whitespace with ordinary space */
-		if (isspace(str[i]) && white != NULL && strchr(white, ' ') != NULL) {
-			str[i] = ' ';
-			i++;
-			replaced++;
-			continue;
-		}
-
-		/* everything else is replaced with '_' */
-		str[i] = '_';
-		i++;
-		replaced++;
-	}
-	return replaced;
 }
 
 /**
@@ -290,16 +217,41 @@ err:
  * @str_safe: output string
  * @len: size of output string
  *
- * Allows plain ascii, hex-escaping and valid utf8. Replaces all whitespaces
- * with '_'.
+ * Processing whitespace characters.Allows valid ascii,valid utf8.
+ * Replace everything else with'_'
  *
  * Returns: 0 on success or -1 in case of error.
  */
 int blkid_safe_string(const char *str, char *str_safe, size_t len)
 {
+	size_t i = 0;
+
 	if (!str || !str_safe || !len)
 		return -1;
-	replace_whitespace(str, str_safe, len);
-	replace_chars(str_safe, UDEV_ALLOWED_CHARS_INPUT);
+
+        normalize_whitespace(str) ;
+
+        while (str[i] != '\0') { 
+             /* accept ASCII from '<space>' to '~' */
+             if (str[i] >= 0x20 && str[i] <= 0x7E)  {  
+                i++;
+                continue;
+            }
+           /* use ordinary space only */
+           if (isspace(str[i])) {
+              str[i] = ' ';
+              i++;
+              continue;
+           }
+          len = utf8_encoded_valid_unichar(&str[i]);
+          if (len >= 1) {
+            i += len;
+            continue;
+          }
+         /* everything else is replaced with '_' */
+        str[i] = '_';
+        i++;
+   }
+   
 	return 0;
 }
