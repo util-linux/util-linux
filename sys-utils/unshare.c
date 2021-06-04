@@ -650,8 +650,18 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("cannot chdir to '%s'"), newdir);
 
 	if (procmnt) {
-		if (!newroot && mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL) != 0)
-			err(EXIT_FAILURE, _("cannot change %s filesystem propagation"), procmnt);
+		/* When not changing root and using the default propagation flags
+		   then the recursive propagation change of root will
+		   automatically change that of an existing proc mount. */
+		if (!newroot && propagation != (MS_PRIVATE|MS_REC)) {
+			int rc = mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL);
+
+			/* Custom procmnt means that proc is very likely not mounted, causing EINVAL.
+			   Ignoring the error in this specific instance is considered safe. */
+			if(rc != 0 && errno != EINVAL)
+				err(EXIT_FAILURE, _("cannot change %s filesystem propagation"), procmnt);
+		}
+
 		if (mount("proc", procmnt, "proc", MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0)
 			err(EXIT_FAILURE, _("mount %s failed"), procmnt);
 	}
