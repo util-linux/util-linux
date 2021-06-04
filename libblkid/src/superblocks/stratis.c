@@ -19,13 +19,18 @@
 #include "superblocks.h"
 #include "crc32c.h"
 
+/* Macro to avoid error in struct declaration. */
+#define STRATIS_UUID_LEN 32
+/* Contains 4 hyphens and trailing null byte. */
+const int STRATIS_UUID_STR_LEN = 37;
+
 struct stratis_sb {
 	uint32_t crc32;
 	uint8_t magic[16];
 	uint64_t sectors;
 	uint8_t reserved[4];
-	uint8_t pool_uuid[32];
-	uint8_t dev_uuid[32];
+	uint8_t pool_uuid[STRATIS_UUID_LEN];
+	uint8_t dev_uuid[STRATIS_UUID_LEN];
 	uint64_t mda_size;
 	uint64_t reserved_size;
 	uint64_t flags;
@@ -57,11 +62,29 @@ static int stratis_valid_sb(uint8_t *p)
 	return crc == le32_to_cpu(stratis->crc32);
 }
 
+/*
+ * Format UUID string representation to include hyphens given that Stratis stores
+ * UUIDs without hyphens in the superblock to keep the UUID length a power of 2.
+ */
+static void stratis_format_uuid(const unsigned char *src_uuid,
+				unsigned char *dst_uuid)
+{
+	int i;
+
+	for (i = 0; i < STRATIS_UUID_LEN; i++) {
+		*dst_uuid++ = *src_uuid++;
+		if (i == 7 || i == 11 || i == 15 || i == 19)
+			*dst_uuid ++ = '-';
+	}
+	*dst_uuid = '\0';
+}
+
 static int probe_stratis(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	const struct stratis_sb *stratis = NULL;
 	uint8_t *buf = blkid_probe_get_buffer(pr, 0, SB_AREA_SIZE);
+	unsigned char uuid[STRATIS_UUID_STR_LEN];
 
 	if (!buf)
 		return errno ? -errno : 1;
@@ -76,17 +99,16 @@ static int probe_stratis(blkid_probe pr,
 				(buf + SECOND_COPY_OFFSET);
 	}
 
-	blkid_probe_strncpy_uuid(pr, stratis->dev_uuid,
-					sizeof(stratis->dev_uuid));
-	blkid_probe_set_value(pr, "POOL_UUID",
-				stratis->pool_uuid,
-				sizeof(stratis->pool_uuid));
+	stratis_format_uuid(stratis->dev_uuid, uuid);
+	blkid_probe_strncpy_uuid(pr, uuid, sizeof(uuid));
+
+	stratis_format_uuid(stratis->pool_uuid, uuid);
+	blkid_probe_set_value(pr, "POOL_UUID", uuid, sizeof(uuid));
 
 	blkid_probe_sprintf_value(pr, "BLOCKDEV_SECTORS", "%" PRIu64,
 				le64_to_cpu(stratis->sectors));
 	blkid_probe_sprintf_value(pr, "BLOCKDEV_INITTIME", "%" PRIu64,
 				le64_to_cpu(stratis->initialization_time));
-
 	return 0;
 }
 
