@@ -195,10 +195,10 @@ $(PATHFILES): Makefile
 	@ mv $@.tmp $@
 
 
+if ENABLE_ASCIIDOC
 EXTRA_DIST += $(ADOCFILES_COMMON) $(MANPAGES) $(MANLINKS)
 man_MANS += $(MANPAGES) $(MANLINKS)
 
-if ENABLE_ASCIIDOC
 $(MANPAGES): $(ADOCFILES_COMMON)
 
 asciidoc_man_cmd = $(ASCIIDOCTOR) \
@@ -219,6 +219,12 @@ $(MANLINKS): $(MANPAGES)
 gen-man: $(man_MANS)
 
 else
+
+if HAVE_MANPAGES
+EXTRA_DIST += $(ADOCFILES_COMMON) $(MANPAGES) $(MANLINKS)
+man_MANS += $(MANPAGES) $(MANLINKS)
+endif
+
 gen-man:
 endif
 
