@@ -465,6 +465,7 @@ static void rfkill_list_init(struct control *ctrl)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
 
 	scols_table_enable_json(ctrl->tb, ctrl->json);
+	scols_table_set_name(ctrl->tb, "rfkilldevices");
 	scols_table_enable_noheadings(ctrl->tb, ctrl->no_headings);
 	scols_table_enable_raw(ctrl->tb, ctrl->raw);
 
