@@ -253,7 +253,6 @@ int main(int argc, char **argv)
 		case 'p':
 			errno = 0;
 			ctl->pid = strtos32_or_err(optarg, _("invalid PID argument"));
-			optind++;
 			break;
 		case 's':
 			ctl->system = 1;
@@ -268,13 +267,11 @@ int main(int argc, char **argv)
 			ctl->util_min = strtos32_or_err(optarg, _("invalid util_min argument"));
 			ctl->util_min_set = 1;
 			validate_util(ctl->util_min);
-			optind++;
 			break;
 		case 'M':
 			ctl->util_max = strtos32_or_err(optarg, _("invalid util_max argument"));
 			ctl->util_max_set = 1;
 			validate_util(ctl->util_max);
-			optind++;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
