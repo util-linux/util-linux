@@ -45,7 +45,7 @@ Use _column_ as a de-duplication key to de-duplicate output tree. If the key is 
 +
 The usual use case is to de-duplicate output on system multi-path devices, for example by *-E WWN*.
 
--e*, *--exclude* _list_::
+*-e*, *--exclude* _list_::
 Exclude the devices specified by the comma-separated _list_ of major device numbers. Note that RAM disks (major=1) are excluded by default if *--all* is not specified. The filter is applied to the top-level devices only. This may be confusing for *--list* output format where hierarchy of the devices is not obvious.
 
 *-f*, *--fs*::
