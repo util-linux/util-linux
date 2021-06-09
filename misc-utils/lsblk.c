@@ -121,7 +121,8 @@ enum {
 	COL_REV,
 	COL_VENDOR,
 	COL_ZONED,
-	COL_DAX
+	COL_DAX,
+	COL_START
 };
 
 /* basic table settings */
@@ -217,6 +218,7 @@ static struct colinfo infos[] = {
 	[COL_VENDOR] = { "VENDOR", 0.1, SCOLS_FL_TRUNC, N_("device vendor") },
 	[COL_ZONED]  = { "ZONED", 0.3, 0, N_("zone model") },
 	[COL_DAX]    = { "DAX", 1, SCOLS_FL_RIGHT, N_("dax-capable device"), COLTYPE_BOOL },
+	[COL_START]  = { "START", 5, SCOLS_FL_RIGHT, N_("partition start offset"), COLTYPE_NUM },
 };
 
 struct lsblk *lsblk;	/* global handler */
@@ -952,6 +954,11 @@ static char *device_get_data(
 			str = size_to_human_string(SIZE_SUFFIX_1LETTER, dev->size);
 		if (sortdata)
 			*sortdata = dev->size;
+		break;
+	case COL_START:
+		ul_path_read_string(dev->sysfs, &str, "start");
+		if (sortdata)
+			str2u64(str, sortdata);
 		break;
 	case COL_STATE:
 		if (!device_is_partition(dev) && !dev->dm_name)
