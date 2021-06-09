@@ -145,13 +145,15 @@ print(struct hexdump_pr *pr, unsigned char *bp) {
 	    }
 	case F_INT:
 	    {
+		char cval;	/* int8_t */
 		short sval;	/* int16_t */
 		int ival;	/* int32_t */
 		long long Lval;	/* int64_t, int64_t */
 
 		switch(pr->bcnt) {
 		case 1:
-			printf(pr->fmt, (unsigned long long) *bp);
+			memmove(&cval, bp, sizeof(cval));
+			printf(pr->fmt, (unsigned long long) cval);
 			break;
 		case 2:
 			memmove(&sval, bp, sizeof(sval));
