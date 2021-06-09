@@ -67,6 +67,12 @@ test -f sys-utils/mount.c || {
 	DIE=1
 }
 
+[ -x "$(command -v gettext)" -o -x "$(command -v xgettext)" ] || {
+	echo
+	echo "You need have [x]gettext binary installed to update po/ stuff."
+	echo
+}
+
 if ! (bison --version) < /dev/null > /dev/null 2>&1; then
 	echo
 	echo "You must have bison installed to build the util-linux."
