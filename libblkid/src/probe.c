@@ -1005,7 +1005,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 #endif
 	free(dm_uuid);
 
-# ifdef HAVE_LINUX_BLKZONED_H
+# ifdef BLKGETZONESZ
 	if (S_ISBLK(sb.st_mode)) {
 		uint32_t zone_size_sector;
 
