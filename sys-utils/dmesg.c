@@ -1085,10 +1085,10 @@ full_output:
 			mesg_size = strlen(line);
 			goto full_output;
 		}
-		free(mesg_copy);
 	}
 
 done:
+	free(mesg_copy);
 	putchar('\n');
 }
 
