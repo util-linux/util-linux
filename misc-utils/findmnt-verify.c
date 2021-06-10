@@ -339,6 +339,18 @@ static int read_proc_filesystems(struct verify_context *vfy)
 	return rc;
 }
 
+static void free_proc_filesystems(struct verify_context *vfy)
+{
+	size_t n;
+
+	if (!vfy->fs_ary)
+		return;
+
+	for (n = 0; n < vfy->fs_num; n++ )
+		free(vfy->fs_ary[n]);
+	free(vfy->fs_ary);
+}
+
 static int read_kernel_filesystems(struct verify_context *vfy)
 {
 	int rc = 0;
@@ -541,6 +553,9 @@ done:
 		fputc('\n', stderr);
 	} else
 		fprintf(stdout, _("Success, no errors or warnings detected\n"));
+
+
+	free_proc_filesystems(&vfy);
 
 	return rc != 0 ? rc : vfy.nerrors + parse_nerrors;
 }
