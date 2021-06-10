@@ -160,7 +160,10 @@ static int verify_target(struct verify_context *vfy)
 static char *verify_tag(struct verify_context *vfy, const char *name,
 		      const char *value)
 {
-	char *src = mnt_resolve_tag(name, value, cache);
+	char *src = NULL;
+
+	if (!(flags & FL_NOCACHE))
+		src = mnt_resolve_tag(name, value, cache);
 
 	if (!src) {
 		if (mnt_fs_get_option(vfy->fs, "noauto", NULL, NULL) == 1)
@@ -388,14 +391,18 @@ static int read_kernel_filesystems(struct verify_context *vfy)
 
 static int verify_fstype(struct verify_context *vfy)
 {
-	const char *src = mnt_resolve_spec(mnt_fs_get_source(vfy->fs), cache);
-	const char *type, *realtype;
+	char *src = mnt_resolve_spec(mnt_fs_get_source(vfy->fs), cache);
+	char *realtype = NULL;
+	const char *type;
 	int ambi = 0, isauto = 0, isswap = 0;
 
 	if (!src)
 		return 0;
-	if (mnt_fs_is_pseudofs(vfy->fs) || mnt_fs_is_netfs(vfy->fs))
-		return verify_ok(vfy, _("do not check %s FS type (pseudo/net)"), src);
+
+	if (mnt_fs_is_pseudofs(vfy->fs) || mnt_fs_is_netfs(vfy->fs)) {
+		verify_ok(vfy, _("do not check %s FS type (pseudo/net)"), src);
+		goto done;
+	}
 
 	type = mnt_fs_get_fstype(vfy->fs);
 
@@ -404,8 +411,10 @@ static int verify_fstype(struct verify_context *vfy)
 
 		if (none
 		    && mnt_fs_get_option(vfy->fs, "bind", NULL, NULL) == 1
-		    && mnt_fs_get_option(vfy->fs, "move", NULL, NULL) == 1)
-			return verify_warn(vfy, _("\"none\" FS type is recommended for bind or move oprations only"));
+		    && mnt_fs_get_option(vfy->fs, "move", NULL, NULL) == 1) {
+			verify_warn(vfy, _("\"none\" FS type is recommended for bind or move oprations only"));
+			goto done;
+		}
 
 		if (strcmp(type, "auto") == 0)
 			isauto = 1;
@@ -421,23 +430,33 @@ static int verify_fstype(struct verify_context *vfy)
 
 	if (!realtype) {
 		if (isauto)
-			return verify_err(vfy, _("cannot detect on-disk filesystem type"));
-		return verify_warn(vfy, _("cannot detect on-disk filesystem type"));
+			verify_err(vfy, _("cannot detect on-disk filesystem type"));
+		else
+			verify_warn(vfy, _("cannot detect on-disk filesystem type"));
+		goto done;
 	}
 
 	if (realtype) {
 		isswap = strcmp(realtype, "swap") == 0;
 		vfy->no_fsck = strcmp(realtype, "xfs") == 0;
 
-		if (type && !isauto && strcmp(type, realtype) != 0)
-			return verify_err(vfy, _("%s does not match with on-disk %s"), type, realtype);
-
-		if (!isswap && !is_supported_filesystem(vfy, realtype))
-			return verify_err(vfy, _("on-disk %s seems unsupported by the current kernel"), realtype);
+		if (type && !isauto && strcmp(type, realtype) != 0) {
+			verify_err(vfy, _("%s does not match with on-disk %s"), type, realtype);
+			goto done;
+		}
+		if (!isswap && !is_supported_filesystem(vfy, realtype)) {
+			verify_err(vfy, _("on-disk %s seems unsupported by the current kernel"), realtype);
+			goto done;
+		}
 
 		verify_ok(vfy, _("FS type is %s"), realtype);
 	}
 
+done:
+	if (!cache) {
+		free(src);
+		free(realtype);
+	}
 	return 0;
 }
 
