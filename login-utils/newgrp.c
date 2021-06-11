@@ -123,7 +123,7 @@ static int allow_setgid(const struct passwd *pe, const struct group *ge)
 {
 	char **look;
 	int notfound = 1;
-	char *pwd, *xpwd;
+	char *pwd, *xpwd, *spwd;
 
 	if (getuid() == 0)
 		/* root may do anything */
@@ -144,8 +144,8 @@ static int allow_setgid(const struct passwd *pe, const struct group *ge)
 	 * as in /etc/passwd */
 
 	/* check /etc/gshadow */
-	if (!(pwd = get_gshadow_pwd(ge->gr_name)))
-		pwd = ge->gr_passwd;
+	spwd = get_gshadow_pwd(ge->gr_name);
+	pwd = spwd ? spwd : ge->gr_passwd;
 
 	if (pwd && *pwd && (xpwd = xgetpass(stdin, _("Password: ")))) {
 		char *cbuf = crypt(xpwd, pwd);
@@ -161,6 +161,8 @@ static int allow_setgid(const struct passwd *pe, const struct group *ge)
 		else if (strcmp(pwd, cbuf) == 0)
 			return TRUE;
 	}
+
+	free(spwd);
 
 	/* default to denial */
 	return FALSE;
