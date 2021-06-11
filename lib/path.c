@@ -617,7 +617,7 @@ int ul_path_readf(struct path_cxt *pc, char *buf, size_t len, const char *path, 
  * Returns newly allocated buffer with data from file. Maximal size is BUFSIZ
  * (send patch if you need something bigger;-)
  *
- * Returns size of the string!
+ * Returns size of the string without \0, nothing is allocated if returns <= 0.
  */
 int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 {
@@ -635,6 +635,8 @@ int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 	/* Remove tailing newline (usual in sysfs) */
 	if (rc > 0 && *(buf + rc - 1) == '\n')
 		--rc;
+	if (rc == 0)
+		return 0;
 
 	buf[rc] = '\0';
 	*str = strdup(buf);
@@ -1191,11 +1193,11 @@ int main(int argc, char *argv[])
 			errx(EXIT_FAILURE, "<file> not defined");
 		file = argv[optind++];
 
-		if (ul_path_read_string(pc, &res, file) < 0)
+		if (ul_path_read_string(pc, &res, file) <= 0)
 			err(EXIT_FAILURE, "read string failed");
 		printf("read:  %s: %s\n", file, res);
 
-		if (ul_path_readf_string(pc, &res, "%s", file) < 0)
+		if (ul_path_readf_string(pc, &res, "%s", file) <= 0)
 			err(EXIT_FAILURE, "readf string failed");
 		printf("readf: %s: %s\n", file, res);
 
