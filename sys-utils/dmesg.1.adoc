@@ -126,22 +126,22 @@ Print timestamps using the given _format_, which can be *ctime*, *reltime*, *del
 +
 The *iso* format has the same issue as *ctime*: the time may be inaccurate when a system is suspended and resumed.
 
-*-u*, *--userspace*;;
+*-u*, *--userspace*::
 Print userspace messages.
 
-*-w*, *--follow*;;
+*-w*, *--follow*::
 Wait for new messages. This feature is supported only on systems with a readable _/dev/kmsg_ (since kernel 3.5.0).
 
-*-W*, *--follow-new*;;
+*-W*, *--follow-new*::
 Wait and print only new messages.
 
-*-x*, *--decode*;;
+*-x*, *--decode*::
 Decode facility and level (priority) numbers to human-readable prefixes.
 
-*-V*, *--version*;;
+*-V*, *--version*::
 Display version information and exit.
 
-*-h*, *--help*;;
+*-h*, *--help*::
 Display help text and exit.
 
 == COLORS
