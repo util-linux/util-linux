@@ -901,13 +901,18 @@ static int save_adjtime(const struct hwclock_control *ctl,
 	}
 
 	if (!ctl->testing) {
+		int rc;
+
 		fp = fopen(ctl->adj_file_name, "w");
 		if (fp == NULL) {
 			warn(_("cannot open %s"), ctl->adj_file_name);
 			return EXIT_FAILURE;
 		}
 
-		if (fputs(content, fp) < 0 || close_stream(fp) != 0) {
+		rc = fputs(content, fp) < 0;
+		rc += close_stream(fp);
+
+		if (rc) {
 			warn(_("cannot update %s"), ctl->adj_file_name);
 			return EXIT_FAILURE;
 		}
