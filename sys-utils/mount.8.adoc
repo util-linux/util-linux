@@ -568,7 +568,7 @@ Do not use the lazytime feature.
 Honor set-user-ID and set-group-ID bits or file capabilities when executing programs from this filesystem.
 
 *nosuid*::
-Do not honor set-user-ID and set-group-ID bits or file capabilities when executing programs from this filesystem.
+Do not honor set-user-ID and set-group-ID bits or file capabilities when executing programs from this filesystem. In addition, SELinux domain transitions require permission nosuid_transition, which in turn needs also policy capability nnp_nosuid_transition.
 
 *silent*::
 Turn on the silent flag.
