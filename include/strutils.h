@@ -334,7 +334,7 @@ static inline size_t normalize_whitespace(unsigned char *str)
 		else
 			str[x++] = str[i++];
 	}
-	if (nsp)		/* tailing space */
+	if (nsp && x > 0)	/* tailing space */
 		x--;
 	str[x] = '\0';
 	return x;
