@@ -1175,17 +1175,26 @@ static int test_strutils_cmp_paths(int argc, char *argv[])
 
 static int test_strutils_normalize(int argc, char *argv[])
 {
-	unsigned char *str;
-	size_t sz;
+	unsigned char *src, *dst;
+	size_t sz, len;
 
 	if (argc < 2)
 		return EXIT_FAILURE;
 
-	str = (unsigned char *) strdup(argv[1]);
-	sz = normalize_whitespace(str);
+	src =  (unsigned char *) strdup(argv[1]);
+	len = strlen((char *) src);
+	dst = malloc(len + 1);
 
-	printf("'%s' --> '%s' [sz=%zu]\n", argv[1], str, sz);
-	free(str);
+	/* two buffers */
+	sz = __normalize_whitespace(src, len, dst, len + 1);
+	printf("1: '%s' --> '%s' [sz=%zu]\n", src, dst, sz);
+
+	/* one buffer */
+	sz = normalize_whitespace(src);
+	printf("2: '%s' --> '%s' [sz=%zu]\n", argv[1], src, sz);
+
+	free(src);
+	free(dst);
 
 	return EXIT_SUCCESS;
 }

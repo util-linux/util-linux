@@ -315,16 +315,20 @@ static inline size_t ltrim_whitespace(unsigned char *str)
 
 /* Removes left-hand, right-hand and repeating whitespaces.
  */
-static inline size_t normalize_whitespace(unsigned char *str)
+static inline size_t __normalize_whitespace(
+				const unsigned char *src,
+				size_t sz,
+				unsigned char *dst,
+				size_t len)
 {
-	size_t i, x, sz = strlen((char *) str);
+	size_t i, x = 0;
 	int nsp = 0, intext = 0;
 
 	if (!sz)
-		return 0;
+		goto done;
 
-	for (i = 0, x = 0; i < sz; ) {
-		if (isspace(str[i]))
+	for (i = 0, x = 0; i < sz && x < len - 1;  ) {
+		if (isspace(src[i]))
 			nsp++;
 		else
 			nsp = 0, intext = 1;
@@ -332,12 +336,19 @@ static inline size_t normalize_whitespace(unsigned char *str)
 		if (nsp > 1 || (nsp && !intext))
 			i++;
 		else
-			str[x++] = str[i++];
+			dst[x++] = src[i++];
 	}
-	if (nsp)		/* tailing space */
+	if (nsp && x > 0)		/* tailing space */
 		x--;
-	str[x] = '\0';
+done:
+	dst[x] = '\0';
 	return x;
+}
+
+static inline size_t normalize_whitespace(unsigned char *str)
+{
+	size_t sz = strlen((char *) str);
+	return __normalize_whitespace(str, sz, str, sz + 1);
 }
 
 static inline void strrep(char *s, int find, int replace)
