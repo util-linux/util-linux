@@ -863,6 +863,8 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 		sec = add_summary_s(tb, sec, _("Model name:"), ct->modelname);
 	if (ct->bios_modelname)
 		add_summary_s(tb, sec, _("BIOS Model name:"), ct->bios_modelname);
+	if (ct->bios_family)
+		add_summary_s(tb, sec, _("BIOS CPU family:"), ct->bios_family);
 	if (ct->machinetype)
 		add_summary_s(tb, sec, _("Machine type:"), ct->machinetype);
 	if (ct->family)

@@ -81,6 +81,7 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		free(ct->model);
 		free(ct->modelname);
 		free(ct->bios_modelname);
+		free(ct->bios_family);
 		free(ct->revision);	/* alternative for model (ppc) */
 		free(ct->stepping);
 		free(ct->bogomips);

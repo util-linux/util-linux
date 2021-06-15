@@ -65,6 +65,7 @@ struct lscpu_cputype {
 	char	*model;
 	char	*modelname;
 	char	*bios_modelname; /* aarch64 */
+	char	*bios_family; /* aarch64 */
 	char	*revision;	/* alternative for model (ppc) */
 	char	*stepping;
 	char    *bogomips;
@@ -318,6 +319,7 @@ struct dmi_info {
 	int sockets;
 
 	/* Processor Information */
+	uint16_t processor_family;
 	char *processor_manufacturer;
 	char *processor_version;
 	uint16_t current_speed;

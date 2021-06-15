@@ -73,6 +73,11 @@ int parse_dmi_table(uint16_t len, uint16_t num,
 				di->processor_version = dmi_string(&h, data[0x10]);
 				di->current_speed = *((uint16_t *)(&data[0x16]));
 				di->part_num = dmi_string(&h, data[0x22]);
+
+				if (data[0x6] == 0xfe)
+					di->processor_family = *((uint16_t *)(&data[0x28]));
+				else
+					di->processor_family = data[0x6];
 			}
 			di->sockets++;
 			break;
@@ -116,6 +121,11 @@ int dmi_decode_cputype(struct lscpu_cputype *ct)
 			"%s %s CPU @ %d.%dGHz", di.processor_version, di.part_num,
 			di.current_speed/1000, (di.current_speed % 1000) / 100);
 	ct->bios_modelname = xstrdup(buf);
+
+	/* Get CPU family */
+	memset(buf, 0, sizeof(buf));
+	snprintf(buf, sizeof(buf), "%d", di.processor_family);
+	ct->bios_family = xstrdup(buf);
 
 	free(data);
 	return 0;
