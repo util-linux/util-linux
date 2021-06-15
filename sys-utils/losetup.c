@@ -573,7 +573,7 @@ static int create_loop(struct loopdev_cxt *lc,
 		if (rc == 0)
 			break;			/* success */
 
-		if (errno == EBUSY && !hasdev && ntries < 64) {
+		if ((errno == EBUSY || errno == EAGAIN) && !hasdev && ntries < 64) {
 			xusleep(200000);
 			ntries++;
 			continue;
