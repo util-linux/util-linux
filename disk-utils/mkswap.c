@@ -267,6 +267,8 @@ static void check_extents(struct mkswap_control *ctl)
 			return;
 
 		n = fiemap->fm_mapped_extents;
+		if (n == 0)
+			break;
 
 		for (i = 0; i < n; i++) {
 			struct fiemap_extent *e = &fiemap->fm_extents[i];
