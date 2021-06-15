@@ -361,6 +361,8 @@ static void arm_decode(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 	/* use SMBIOS Type 4 data if available */
 	if (!cxt->noalive && access(_PATH_SYS_DMI_TYPE4, R_OK) == 0)
 		arm_smbios_decode(ct);
+	else if (!cxt->noalive && access(_PATH_SYS_DMI, R_OK) == 0)
+		dmi_decode_cputype(ct);
 
 	arm_ids_decode(ct);
 	arm_rXpY_decode(ct);
