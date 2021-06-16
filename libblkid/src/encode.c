@@ -230,30 +230,34 @@ int blkid_safe_string(const char *str, char *str_safe, size_t len)
 	if (!str || !str_safe || !len)
 		return -1;
 
-	len = strnlen(str, len);
-	__normalize_whitespace((const unsigned char *) str, len,
-			       (unsigned char *) str_safe, len + 1);
+	__normalize_whitespace(
+			(const unsigned char *) str, strnlen(str, len),
+			(unsigned char *) str_safe, len);
 
-	while (str_safe[i] != '\0') {
-		/* accept ASCII from '<space>' to '~' */
-		if (str_safe[i] > 0x20 && str_safe[i] <= 0x7E) {
+	while (i < len && str_safe[i] != '\0') {
+		int seqsz;
+
+		/* accept ASCII from ' ' to '~' */
+		if (str_safe[i] > 0x20 && str_safe[i] <= 0x7E)
 			i++;
-			continue;
-		}
+
+		/* accept hex encoding */
+		else if (str_safe[i] == '\\' && str_safe[i+1] == 'x')
+			i += 2;
+
 		/* replace whitespace */
-		if (isspace(str_safe[i])) {
-			str_safe[i] = '_';
-			i++;
-			continue;
-		}
-		len = utf8_encoded_valid_unichar(&str_safe[i]);
-		if (len >= 1) {
-			i += len;
-			continue;
-		}
+		else if (isspace(str_safe[i]))
+			str_safe[i++] = '_';
+
+		/* accept valid utf8 */
+		else if ((seqsz = utf8_encoded_valid_unichar(&str_safe[i])) >= 1)
+			i += seqsz;
+
 		/* everything else is replaced with '_' */
-		str_safe[i] = '_';
-		i++;
+		else
+			str_safe[i++] = '_';
 	}
+
+	str_safe[len - 1] = '\0';
 	return 0;
 }
