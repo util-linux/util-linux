@@ -118,6 +118,13 @@ static struct statistics {
 	struct timeval start_time;
 } stats;
 
+
+struct hdl_regex {
+	regex_t re;		/* POSIX compatible regex handler */
+
+	struct hdl_regex *next;
+};
+
 /**
  * struct options - Processed command-line options
  * @include: A linked list of regular expressions for the --include option
@@ -135,10 +142,8 @@ static struct statistics {
  * @min_size: Minimum size of files to consider. (default = 1 byte)
  */
 static struct options {
-	struct regex_link {
-		regex_t preg;
-		struct regex_link *next;
-	} *include, *exclude;
+	struct hdl_regex *include;
+	struct hdl_regex *exclude;
 
 	signed int verbosity;
 	unsigned int respect_mode:1;
@@ -207,17 +212,41 @@ static void jlog(enum log_level level, const char *format, ...)
 #define CMP(a, b) ((a) > (b) ? 1 : ((a) < (b) ? -1 : 0))
 
 /**
- * regexec_any - Match against multiple regular expressions
+ * register_regex - Compile and insert a regular expression into list
+ * @pregs: Pointer to a linked list of regular expressions
+ * @regex: String containing the regular expression to be compiled
+ */
+static void register_regex(struct hdl_regex **pregs, const char *regex)
+{
+	struct hdl_regex *link;
+	int err;
+
+	link = xmalloc(sizeof(*link));
+
+	if ((err = regcomp(&link->re, regex, REG_NOSUB | REG_EXTENDED)) != 0) {
+		size_t size = regerror(err, &link->re, NULL, 0);
+		char *buf = xmalloc(size + 1);
+
+		regerror(err, &link->re, buf, size);
+
+		errx(EXIT_FAILURE, _("could not compile regular expression %s: %s"),
+				regex, buf);
+	}
+	link->next = *pregs; *pregs = link;
+}
+
+/**
+ * match_any_regex - Match against multiple regular expressions
  * @pregs: A linked list of regular expressions
  * @what:  The string to match against
  *
  * Checks whether any of the regular expressions in the list matches the
  * string.
  */
-static int regexec_any(struct regex_link *pregs, const char *what)
+static int match_any_regex(struct hdl_regex *pregs, const char *what)
 {
 	for (; pregs != NULL; pregs = pregs->next) {
-		if (regexec(&pregs->preg, what, 0, NULL, 0) == 0)
+		if (regexec(&pregs->re, what, 0, NULL, 0) == 0)
 			return TRUE;
 	}
 	return FALSE;
@@ -744,8 +773,8 @@ static int inserter(const char *fpath, const struct stat *sb,
 	if (typeflag != FTW_F || !S_ISREG(sb->st_mode))
 		return 0;
 
-	included = regexec_any(opts.include, fpath);
-	excluded = regexec_any(opts.exclude, fpath);
+	included = match_any_regex(opts.include, fpath);
+	excluded = match_any_regex(opts.exclude, fpath);
 
 	if ((opts.exclude && excluded && !included) ||
 	    (!opts.exclude && opts.include && !included))
@@ -906,29 +935,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-/**
- * register_regex - Compile and insert a regular expression into list
- * @pregs: Pointer to a linked list of regular expressions
- * @regex: String containing the regular expression to be compiled
- */
-static void register_regex(struct regex_link **pregs, const char *regex)
-{
-	struct regex_link *link;
-	int err;
-
-	link = xmalloc(sizeof(*link));
-
-	if ((err = regcomp(&link->preg, regex, REG_NOSUB | REG_EXTENDED)) != 0) {
-		size_t size = regerror(err, &link->preg, NULL, 0);
-		char *buf = xmalloc(size + 1);
-
-		regerror(err, &link->preg, buf, size);
-
-		errx(EXIT_FAILURE, _("could not compile regular expression %s: %s"),
-				regex, buf);
-	}
-	link->next = *pregs; *pregs = link;
-}
 
 /**
  * parse_options - Parse the command line options
