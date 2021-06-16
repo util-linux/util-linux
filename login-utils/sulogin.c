@@ -713,8 +713,10 @@ quit:
 	tcfinal(con);
 	printf("\r\n");
 out:
+#ifdef HAVE_EXPLICIT_BZERO
 	if (ret == NULL)
 		explicit_bzero(pass, sizeof(pass));
+#endif
 	return ret;
 }
 
@@ -990,7 +992,9 @@ int main(int argc, char **argv)
 				if ((answer = getpasswd(con)) == NULL)
 					break;
 				if (deny) {
+#ifdef HAVE_EXPLICIT_BZERO
 					explicit_bzero(answer, SULOGIN_PASSWORD_BUFSIZ);
+#endif
 					exit(EXIT_FAILURE);
 				}
 
@@ -1005,9 +1009,9 @@ int main(int argc, char **argv)
 					else if (strcmp(cryptbuf, pwd->pw_passwd) == 0)
 						doshell++;
 				}
-
+#ifdef HAVE_EXPLICIT_BZERO
 				explicit_bzero(answer, SULOGIN_PASSWORD_BUFSIZ);
-
+#endif
 				if (doshell) {
 					/* sushell() unmask signals */
 					sushell(pwd);
