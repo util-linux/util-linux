@@ -1012,7 +1012,6 @@ static void loginpam_acct(struct login_context *cxt)
 		loginpam_err(pamh, rc);
 
 	/*
-	 * Grab the user information out of the password file for future use.
 	 * First get the username that we are actually using, though.
 	 */
 	rc = loginpam_get_username(pamh, &cxt->username);
