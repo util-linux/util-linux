@@ -81,6 +81,8 @@ static struct sigaction saved_sigchld;
 static volatile sig_atomic_t alarm_rised;
 static volatile sig_atomic_t sigchild;
 
+#define SULOGIN_PASSWORD_BUFSIZ	128
+
 #ifndef IUCLC
 # define IUCLC		0
 #endif
@@ -658,13 +660,13 @@ notty:
  * Ask for the password. Note that there is no default timeout as we normally
  * skip this during boot.
  */
-static const char *getpasswd(struct console *con)
+static char *getpasswd(struct console *con)
 {
 	struct sigaction sa;
 	struct termios tty;
-	static char pass[128], *ptr;
+	static char pass[SULOGIN_PASSWORD_BUFSIZ], *ptr;
 	struct chardata *cp;
-	const char *ret = NULL;
+	char *ret = NULL;
 	unsigned char tc;
 	char c, ascval;
 	int eightbit;
@@ -773,6 +775,8 @@ quit:
 	tcfinal(con);
 	printf("\r\n");
 out:
+	if (ret == NULL)
+		explicit_bzero(pass, sizeof(pass));
 	return ret;
 }
 
@@ -1042,7 +1046,7 @@ int main(int argc, char **argv)
 			setup(con);
 			while (1) {
 				const char *passwd = pwd->pw_passwd;
-				const char *answer;
+				char *answer;
 				int doshell = 0;
 				int deny = !opt_e && locked_account_password(pwd->pw_passwd);
 
@@ -1050,8 +1054,10 @@ int main(int argc, char **argv)
 
 				if ((answer = getpasswd(con)) == NULL)
 					break;
-				if (deny)
+				if (deny) {
+					explicit_bzero(answer, SULOGIN_PASSWORD_BUFSIZ);
 					exit(EXIT_FAILURE);
+				}
 
 				/* no password or locked account */
 				if (!passwd[0] || locked_account_password(passwd))
@@ -1064,6 +1070,8 @@ int main(int argc, char **argv)
 					else if (strcmp(cryptbuf, pwd->pw_passwd) == 0)
 						doshell++;
 				}
+
+				explicit_bzero(answer, SULOGIN_PASSWORD_BUFSIZ);
 
 				if (doshell) {
 					/* sushell() unmask signals */
