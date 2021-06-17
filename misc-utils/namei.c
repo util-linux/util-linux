@@ -99,7 +99,7 @@ readlink_to_namei(struct namei *nm, const char *path)
 	}
 	nm->abslink = xmalloc(sz + 1);
 
-	if (*sym != '/' && isrel) {
+	if (isrel) {
 		/* create the absolute path from the relative symlink */
 		memcpy(nm->abslink, path, nm->relstart);
 		*(nm->abslink + nm->relstart) = '/';
