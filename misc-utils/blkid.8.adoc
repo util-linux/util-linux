@@ -17,7 +17,7 @@ blkid - locate/print block device attributes
 
 *blkid* *--label* _label_ | *--uuid* _uuid_
 
-*blkid* [*--no-encoding* *--garbage-collect* *--list-one* *--cache-file* _file_] [*--output* _format_][*--match-tag* _tag_] [*--match-token* _NAME=value_] [_device_...]
+*blkid* [*--no-encoding* *--garbage-collect* *--list-one* *--cache-file* _file_] [*--output* _format_] [*--match-tag* _tag_] [*--match-token* _NAME=value_] [_device_...]
 
 *blkid* *--probe* [*--offset* _offset_] [*--output* _format_] [*--size* _size_] [*--match-tag* _tag_] [*--match-types* _list_] [*--usages* _list_] [*--no-part-details*] _device_...
 
