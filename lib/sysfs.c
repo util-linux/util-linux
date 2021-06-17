@@ -182,10 +182,9 @@ char *sysfs_blkdev_get_name(struct path_cxt *pc, char *buf, size_t bufsiz)
 	ssize_t	sz;
 
         /* read /sys/dev/block/<maj:min> link */
-	sz = ul_path_readlink(pc, link, sizeof(link) - 1, NULL);
+	sz = ul_path_readlink(pc, link, sizeof(link), NULL);
 	if (sz < 0)
 		return NULL;
-	link[sz] = '\0';
 
 	name = strrchr(link, '/');
 	if (!name)
@@ -393,7 +392,7 @@ char *sysfs_blkdev_get_devchain(struct path_cxt *pc, char *buf, size_t bufsz)
 	if (sz <= 0 || sz + sizeof(_PATH_SYS_DEVBLOCK "/") > bufsz)
 		return NULL;
 
-	buf[sz++] = '\0';
+	sz++;
 	prefix = ul_path_get_prefix(pc);
 	if (prefix)
 		psz = strlen(prefix);
@@ -567,10 +566,9 @@ int sysfs_blkdev_get_wholedisk(	struct path_cxt *pc,
         char *name;
 	ssize_t	linklen;
 
-	linklen = ul_path_readlink(pc, linkpath, sizeof(linkpath) - 1, NULL);
+	linklen = ul_path_readlink(pc, linkpath, sizeof(linkpath), NULL);
         if (linklen < 0)
             goto err;
-        linkpath[linklen] = '\0';
 
         stripoff_last_component(linkpath);      /* dirname */
         name = stripoff_last_component(linkpath);   /* basename */
@@ -678,11 +676,10 @@ int sysfs_blkdev_scsi_get_hctl(struct path_cxt *pc, int *h, int *c, int *t, int 
 		goto done;
 
 	blk->hctl_error = 1;
-	len = ul_path_readlink(pc, buf, sizeof(buf) - 1, "device");
+	len = ul_path_readlink(pc, buf, sizeof(buf), "device");
 	if (len < 0)
 		return len;
 
-	buf[len] = '\0';
 	hctl = strrchr(buf, '/');
 	if (!hctl)
 		return -1;
