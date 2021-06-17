@@ -315,53 +315,9 @@ static int arm_rXpY_decode(struct lscpu_cputype *ct)
 	return 0;
 }
 
-#define PROC_MFR_OFFSET		0x07
-#define PROC_VERSION_OFFSET	0x10
-
-/*
- * Use firmware to get human readable names
- */
-static int arm_smbios_decode(struct lscpu_cputype *ct)
-{
-	uint8_t data[8192];
-	char buf[128], *str;
-	struct lscpu_dmi_header h;
-	int fd;
-	ssize_t rs;
-
-	fd = open(_PATH_SYS_DMI_TYPE4, O_RDONLY);
-	if (fd < 0)
-		return fd;
-
-	rs = read_all(fd, (char *) data, 8192);
-	close(fd);
-
-	if (rs == -1)
-		return -1;
-
-	to_dmi_header(&h, data);
-
-	str = dmi_string(&h, data[PROC_MFR_OFFSET]);
-	if (str) {
-		xstrncpy(buf, str, 127);
-		ct->bios_vendor = xstrdup(buf);
-	}
-
-	str = dmi_string(&h, data[PROC_VERSION_OFFSET]);
-	if (str) {
-		xstrncpy(buf, str, 127);
-		ct->bios_modelname = xstrdup(buf);
-	}
-
-	return 0;
-}
-
 static void arm_decode(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
-	/* use SMBIOS Type 4 data if available */
-	if (!cxt->noalive && access(_PATH_SYS_DMI_TYPE4, R_OK) == 0)
-		arm_smbios_decode(ct);
-	else if (!cxt->noalive && access(_PATH_SYS_DMI, R_OK) == 0)
+	if (!cxt->noalive && access(_PATH_SYS_DMI, R_OK) == 0)
 		dmi_decode_cputype(ct);
 
 	arm_ids_decode(ct);
