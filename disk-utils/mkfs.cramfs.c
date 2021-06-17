@@ -157,6 +157,8 @@ do_mmap(char *path, unsigned int size, unsigned int mode){
 		return NULL;
 
 	if (S_ISLNK(mode)) {
+		/* The link buffer is unnecessary to terminate by null as it's
+		 * always used as buffer rather than a string */
 		start = xmalloc(size);
 		if (readlink(path, start, size) < 0) {
 			warn(_("readlink failed: %s"), path);
