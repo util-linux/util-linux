@@ -16,7 +16,7 @@ fsck - check and repair a Linux filesystem
 
 == SYNOPSIS
 
-*fsck* [*-lsAVRTMNP*] [*-r* [_fd_]] [*-C* [_fd_] [*-t* _fstype_] [_filesystem_...] [*--*] [_fs-specific-options_]
+*fsck* [*-lsAVRTMNP*] [*-r* [_fd_]] [*-C* [_fd_]] [*-t* _fstype_] [_filesystem_...] [*--*] [_fs-specific-options_]
 
 == DESCRIPTION
 
