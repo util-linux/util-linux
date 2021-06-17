@@ -105,6 +105,7 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact,
 {
 	char *newname = NULL, *target = NULL;
 	int ret = 1;
+	ssize_t ssz;
 	struct stat sb;
 
 	if ( faccessat(AT_FDCWD, s, F_OK, AT_SYMLINK_NOFOLLOW) != 0 &&
@@ -125,12 +126,15 @@ static int do_symlink(char *from, char *to, char *s, int verbose, int noact,
 		return 2;
 	}
 	target = xmalloc(sb.st_size + 1);
-	if (readlink(s, target, sb.st_size + 1) < 0) {
+
+	ssz = readlink(s, target, sb.st_size + 1);
+	if (ssz < 0) {
 		warn(_("%s: readlink failed"), s);
 		free(target);
 		return 2;
 	}
-	target[sb.st_size] = '\0';
+	target[ssz] = '\0';
+
 	if (string_replace(from, to, target, target, &newname) != 0)
 		ret = 0;
 
