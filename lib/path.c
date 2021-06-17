@@ -542,22 +542,27 @@ DIR *ul_path_opendirf(struct path_cxt *pc, const char *path, ...)
 ssize_t ul_path_readlink(struct path_cxt *pc, char *buf, size_t bufsiz, const char *path)
 {
 	int dirfd;
+	ssize_t ssz;
 
 	if (!path) {
 		const char *p = get_absdir(pc);
 		if (!p)
 			return -errno;
-		return readlink(p, buf, bufsiz);
+		ssz = readlink(p, buf, bufsiz - 1);
+	} else {
+		dirfd = ul_path_get_dirfd(pc);
+		if (dirfd < 0)
+			return dirfd;
+
+		if (*path == '/')
+			path++;
+
+		ssz = readlinkat(dirfd, path, buf, bufsiz - 1);
 	}
 
-	dirfd = ul_path_get_dirfd(pc);
-	if (dirfd < 0)
-		return dirfd;
-
-	if (*path == '/')
-		path++;
-
-	return readlinkat(dirfd, path, buf, bufsiz);
+	if (ssz >= 0)
+		buf[ssz] = '\0';
+	return ssz;
 }
 
 /*
