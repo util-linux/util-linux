@@ -2702,7 +2702,7 @@ int mnt_context_strerror(struct libmnt_context *cxt __attribute__((__unused__)),
 }
 
 
-int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, char *fmt, ...)
+int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, const char *fmt, ...)
 {
 	va_list va;
 
