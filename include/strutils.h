@@ -373,7 +373,7 @@ static inline void strrem(char *s, int rem)
 extern char *strnappend(const char *s, const char *suffix, size_t b);
 extern char *strappend(const char *s, const char *suffix);
 extern char *strfappend(const char *s, const char *format, ...)
-		 __attribute__ ((__format__ (__printf__, 2, 0)));
+		 __attribute__ ((__format__ (__printf__, 2, 3)));
 extern const char *split(const char **state, size_t *l, const char *separator, int quoted);
 
 extern int skip_fline(FILE *fp);
