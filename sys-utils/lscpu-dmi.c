@@ -115,10 +115,11 @@ int dmi_decode_cputype(struct lscpu_cputype *ct)
 		return rc;
 	}
 
-	ct->bios_vendor = xstrdup(di.processor_manufacturer);
+	if (di.processor_manufacturer)
+		ct->bios_vendor = xstrdup(di.processor_manufacturer);
 
-	snprintf(buf, sizeof(buf),
-			"%s %s CPU @ %d.%dGHz", di.processor_version, di.part_num,
+	snprintf(buf, sizeof(buf), "%s %s CPU @ %d.%dGHz",
+			(di.processor_version ?: ""), (di.part_num ?: ""),
 			di.current_speed/1000, (di.current_speed % 1000) / 100);
 	ct->bios_modelname = xstrdup(buf);
 
