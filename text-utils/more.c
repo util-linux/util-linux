@@ -1209,7 +1209,8 @@ static void sigwinch_handler(struct more_control *ctl)
 	prepare_line_buffer(ctl);
 }
 
-static void execute(struct more_control *ctl, char *filename, char *cmd, ...)
+static void __attribute__((__format__ (__printf__, 3, 4)))
+	execute(struct more_control *ctl, char *filename, const char *cmd, ...)
 {
 	pid_t id;
 	va_list argp;
