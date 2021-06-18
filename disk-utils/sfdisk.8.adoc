@@ -29,7 +29,7 @@ sfdisk - display or manipulate a disk partition table
 
 *sfdisk* [options] _device_ [*-N* _partition-number_]
 
-*sfdisk* [options] _command_]
+*sfdisk* [options] _command_
 
 == DESCRIPTION
 

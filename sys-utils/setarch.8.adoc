@@ -12,7 +12,7 @@ setarch - change reported architecture in new program environment and/or set per
 
 == SYNOPSIS
 
-*setarch* [_arch_] [options] (_program_ [_argument_...]]
+*setarch* [_arch_] [options] [_program_ [_argument_...]]
 
 *setarch* *--list*|*-h*|*-V*
 
