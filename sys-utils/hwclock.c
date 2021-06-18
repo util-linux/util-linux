@@ -441,7 +441,7 @@ get_hardware_delay(const struct hwclock_control *ctl)
 	pc = ul_new_path("/sys/class/rtc/%s", rtcname);
 	if (!pc)
 		goto unknown;
-	rc = ul_path_scanf(pc, "name", "%128[^\n ]", &name);
+	rc = ul_path_scanf(pc, "name", "%128[^\n ]", name);
 	ul_unref_path(pc);
 
 	if (rc != 1 || !*name)
