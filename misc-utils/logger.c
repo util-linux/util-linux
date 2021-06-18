@@ -619,7 +619,8 @@ static void add_structured_data_param(struct list_head *ls, const char *param)
 		err_oom();
 }
 
-static void add_structured_data_paramf(struct list_head *ls, const char *fmt, ...)
+static void __attribute__ ((__format__ (__printf__, 2, 3)))
+	add_structured_data_paramf(struct list_head *ls, const char *fmt, ...)
 {
 	struct structured_data *sd;
 	va_list ap;
