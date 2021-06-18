@@ -296,7 +296,8 @@ static void buf_puts(struct buffer *bs, const char *s)
 	bs->used += len;
 }
 
-static void buf_printf(struct buffer *bs, const char *fmt, ...)
+static void __attribute__((__format__ (__printf__, 2, 3)))
+	buf_printf(struct buffer *bs, const char *fmt, ...)
 {
 	int rc;
 	va_list ap;
