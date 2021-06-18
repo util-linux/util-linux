@@ -450,7 +450,8 @@ extern int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 				     int (*fltr)(struct libmnt_fs *, void *),
 				     void *data);
 
-extern int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, char *fmt, ...);
+extern int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, const char *fmt, ...)
+				__attribute__ ((__format__ (__printf__, 4, 5)));
 extern int mnt_context_get_mount_excode(struct libmnt_context *cxt, int mntrc, char *buf, size_t bufsz);
 extern int mnt_context_get_umount_excode(struct libmnt_context *cxt, int mntrc, char *buf, size_t bufsz);
 
