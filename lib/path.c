@@ -1106,7 +1106,7 @@ int main(int argc, char *argv[])
 
 	ul_path_init_debug();
 
-	pc = ul_new_path(dir);
+	pc = ul_new_path("%s", dir);
 	if (!pc)
 		err(EXIT_FAILURE, "failed to initialize path context");
 	if (prefix)
