@@ -23,7 +23,8 @@ struct path_cxt {
 	int	(*redirect_on_enoent)(struct path_cxt *, const char *, int *);
 };
 
-struct path_cxt *ul_new_path(const char *dir, ...);
+struct path_cxt *ul_new_path(const char *dir, ...)
+			__attribute__ ((__format__ (__printf__, 1, 2)));
 void ul_unref_path(struct path_cxt *pc);
 void ul_ref_path(struct path_cxt *pc);
 
@@ -55,15 +56,18 @@ int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 int ul_path_open(struct path_cxt *pc, int flags, const char *path);
 int ul_path_openf(struct path_cxt *pc, int flags, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 3, 4)));
-int ul_path_vopenf(struct path_cxt *pc, int flags, const char *path, va_list ap);
+int ul_path_vopenf(struct path_cxt *pc, int flags, const char *path, va_list ap)
+				__attribute__ ((__format__ (__printf__, 3, 0)));
 
 FILE *ul_path_fopen(struct path_cxt *pc, const char *mode, const char *path);
 FILE *ul_path_fopenf(struct path_cxt *pc, const char *mode, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 3, 4)));
-FILE *ul_path_vfopenf(struct path_cxt *pc, const char *mode, const char *path, va_list ap);
+FILE *ul_path_vfopenf(struct path_cxt *pc, const char *mode, const char *path, va_list ap)
+				__attribute__ ((__format__ (__printf__, 3, 0)));
 
 DIR *ul_path_opendir(struct path_cxt *pc, const char *path);
-DIR *ul_path_vopendirf(struct path_cxt *pc, const char *path, va_list ap);
+DIR *ul_path_vopendirf(struct path_cxt *pc, const char *path, va_list ap)
+				__attribute__ ((__format__ (__printf__, 2, 0)));
 DIR *ul_path_opendirf(struct path_cxt *pc, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 2, 3)));
 
@@ -72,7 +76,8 @@ ssize_t ul_path_readlinkf(struct path_cxt *pc, char *buf, size_t bufsiz, const c
 				__attribute__ ((__format__ (__printf__, 4, 5)));
 
 int ul_path_read(struct path_cxt *pc, char *buf, size_t len, const char *path);
-int ul_path_vreadf(struct path_cxt *pc, char *buf, size_t len, const char *path, va_list ap);
+int ul_path_vreadf(struct path_cxt *pc, char *buf, size_t len, const char *path, va_list ap)
+				__attribute__ ((__format__ (__printf__, 4, 0)));
 int ul_path_readf(struct path_cxt *pc, char *buf, size_t len, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 4, 5)));
 
@@ -84,8 +89,10 @@ int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char
 int ul_path_readf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 4, 5)));
 
-int ul_path_scanf(struct path_cxt *pc, const char *path, const char *fmt, ...);
+int ul_path_scanf(struct path_cxt *pc, const char *path, const char *fmt, ...)
+				__attribute__ ((__format__ (__scanf__, 3, 4)));
 int ul_path_scanff(struct path_cxt *pc, const char *path, va_list ap, const char *fmt, ...)
+				__attribute__ ((__format__ (__printf__, 2, 0)))
 				__attribute__ ((__format__ (__scanf__, 4, 5)));
 
 int ul_path_read_majmin(struct path_cxt *pc, dev_t *res, const char *path);
