@@ -110,7 +110,8 @@ static void vinfo(const char *fmt, va_list va)
 	fputc('\n', stdout);
 }
 
-static inline void verbose(const struct eject_control *ctl, const char *fmt, ...)
+static inline void __attribute__ ((__format__ (__printf__, 2, 3)))
+	verbose(const struct eject_control *ctl, const char *fmt, ...)
 {
 	va_list va;
 
@@ -122,7 +123,8 @@ static inline void verbose(const struct eject_control *ctl, const char *fmt, ...
 	va_end(va);
 }
 
-static inline void info(const char *fmt, ...)
+static inline __attribute__ ((__format__ (__printf__, 1, 2)))
+	void info(const char *fmt, ...)
 {
 	va_list va;
 	va_start(va, fmt);
