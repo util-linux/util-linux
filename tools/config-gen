@@ -35,15 +35,23 @@ echo "Configure options:"
 for x in $opts; do
 	echo "	$x"
 done
+echo
+
 if [ -n "$CFLAGS" ]; then
-	echo "CFLAGS:	$CFLAGS"
+	echo "CFLAGS:   $CFLAGS"
 	CFLAGS="$CFLAGS"
 	export CFLAGS
+	echo
+fi
+if [ -n "$LDFLAGS" ]; then
+	echo "LDFLAGS:  $LDFLAGS"
+	LDFLAGS="$LDFLAGS"
+	export LDFLAGS
+	echo
 fi
 
 if [ ! -f ./configure ]; then
 	./autogen.sh
 fi
 
-echo
 ./configure $opts
