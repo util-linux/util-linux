@@ -13,9 +13,12 @@ unsigned strv_length(char * const *l);
 int strv_extend_strv(char ***a, char **b);
 int strv_extend_strv_concat(char ***a, char **b, const char *suffix);
 int strv_extend(char ***l, const char *value);
-int strv_extendv(char ***l, const char *format, va_list ap);
+
+int strv_extendv(char ***l, const char *format, va_list ap)
+		__attribute__ ((__format__ (__printf__, 2, 0)));
 int strv_extendf(char ***l, const char *format, ...)
-			__attribute__ ((__format__ (__printf__, 2, 0)));
+		__attribute__ ((__format__ (__printf__, 2, 3)));
+
 int strv_push(char ***l, char *value);
 int strv_push_prepend(char ***l, char *value);
 int strv_consume(char ***l, char *value);
