@@ -147,7 +147,8 @@ struct script_control {
 	 isterm:1;		/* is child process running as terminal */
 };
 
-static ssize_t log_info(struct script_control *ctl, const char *name, const char *msgfmt, ...);
+static ssize_t log_info(struct script_control *ctl, const char *name, const char *msgfmt, ...)
+			__attribute__((__format__ (__printf__, 3, 4)));
 
 static void script_init_debug(void)
 {
@@ -519,7 +520,8 @@ static ssize_t log_stream_activity(
 	return outsz;
 }
 
-static ssize_t log_signal(struct script_control *ctl, int signum, char *msgfmt, ...)
+static ssize_t __attribute__ ((__format__ (__printf__, 3, 4)))
+	log_signal(struct script_control *ctl, int signum, const char *msgfmt, ...)
 {
 	struct script_log *log;
 	struct timeval now, delta;
@@ -998,12 +1000,12 @@ int main(int argc, char **argv)
 		time_t tvec = script_time((time_t *)NULL);
 
 		strtime_iso(&tvec, ISO_TIMESTAMP, buf, sizeof(buf));
-		log_info(&ctl, "START_TIME", buf);
+		log_info(&ctl, "START_TIME", "%s", buf);
 
 		if (ctl.isterm) {
 			init_terminal_info(&ctl);
-			log_info(&ctl, "TERM", ctl.ttytype);
-			log_info(&ctl, "TTY", ctl.ttyname);
+			log_info(&ctl, "TERM", "%s", ctl.ttytype);
+			log_info(&ctl, "TTY", "%s", ctl.ttyname);
 			log_info(&ctl, "COLUMNS", "%d", ctl.ttycols);
 			log_info(&ctl, "LINES", "%d", ctl.ttylines);
 		}
