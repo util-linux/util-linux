@@ -32,7 +32,8 @@ struct verify_context {
 			no_fsck : 1;
 };
 
-static void verify_mesg(struct verify_context *vfy, char type, const char *fmt, va_list ap)
+static void __attribute__ ((__format__ (__printf__, 3, 0)))
+	verify_mesg(struct verify_context *vfy, char type, const char *fmt, va_list ap)
 {
 	if (!vfy->target_printed) {
 		fprintf(stdout, "%s\n", mnt_fs_get_target(vfy->fs));
@@ -44,7 +45,8 @@ static void verify_mesg(struct verify_context *vfy, char type, const char *fmt, 
 	fputc('\n', stdout);
 }
 
-static int verify_warn(struct verify_context *vfy, const char *fmt, ...)
+static int __attribute__ ((__format__ (__printf__, 2, 3)))
+	verify_warn(struct verify_context *vfy, const char *fmt, ...)
 {
 	va_list ap;
 	vfy->nwarnings++;
@@ -54,7 +56,8 @@ static int verify_warn(struct verify_context *vfy, const char *fmt, ...)
 	return 0;
 }
 
-static int verify_err(struct verify_context *vfy, const char *fmt, ...)
+static int __attribute__ ((__format__ (__printf__, 2, 3)))
+	verify_err(struct verify_context *vfy, const char *fmt, ...)
 {
 	va_list ap;
 	vfy->nerrors++;
@@ -64,7 +67,8 @@ static int verify_err(struct verify_context *vfy, const char *fmt, ...)
 	return 0;
 }
 
-static int verify_ok(struct verify_context *vfy __attribute__((unused)),
+static int __attribute__ ((__format__ (__printf__, 2, 3)))
+	verify_ok(struct verify_context *vfy __attribute__((unused)),
 		      const char *fmt, ...)
 {
 	va_list ap;
