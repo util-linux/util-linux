@@ -24,6 +24,9 @@ ts_init "$*"
 # ts_skip_nonroot
 grep -q '#define HAVE_LINUX_NSFS_H' ${top_builddir}/config.h || ts_skip "no ioctl_ns support"
 
+[ -r /proc/self/ns/user ] || ts_skip "no USER namespace kernel support"
+[ -r /proc/self/ns/pid ] || ts_skip "no PID namespace kernel support"
+
 ts_check_test_command "$TS_CMD_LSNS"
 ts_check_test_command "$TS_CMD_UNSHARE"
 ts_check_prog "stat"
