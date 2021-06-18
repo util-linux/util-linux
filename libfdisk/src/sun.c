@@ -83,10 +83,10 @@ static void set_partition(struct fdisk_context *cxt, size_t i,
 			fdisk_label_get_parttype_from_code(cxt->label, sysid);
 
 	if (start / (cxt->geom.heads * cxt->geom.sectors) > UINT32_MAX)
-		fdisk_warnx(cxt, _("%#zu: start cylinder overflows Sun label limits"), i+1);
+		fdisk_warnx(cxt, _("#%zu: start cylinder overflows Sun label limits"), i+1);
 
 	if (stop - start > UINT32_MAX)
-		fdisk_warnx(cxt, _("%#zu: number of sectors overflow Sun label limits"), i+1);
+		fdisk_warnx(cxt, _("#%zu: number of sectors overflow Sun label limits"), i+1);
 
 	sunlabel->vtoc.infos[i].id = cpu_to_be16(sysid);
 	sunlabel->vtoc.infos[i].flags = cpu_to_be16(0);
@@ -246,10 +246,10 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 		} else {
 			fdisk_warnx(cxt,
 				_("BLKGETSIZE ioctl failed on %s. "
-				  "Using geometry cylinder value of %llu. "
+				  "Using geometry cylinder value of %ju. "
 				  "This value may be truncated for devices "
 				  "> 33.8 GB."),
-				cxt->dev_path, cxt->geom.cylinders);
+				cxt->dev_path, (uintmax_t) cxt->geom.cylinders);
 		}
 	} else
 		ask_geom(cxt);

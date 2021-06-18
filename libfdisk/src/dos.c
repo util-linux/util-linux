@@ -1257,7 +1257,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		if (start >= temp + fdisk_get_units_per_sector(cxt)
 		    && read) {
 			if (!pa || !pa->start_follow_default)
-				fdisk_info(cxt, _("Sector %llu is already allocated."), temp);
+				fdisk_info(cxt, _("Sector %ju is already allocated."),
+						(uintmax_t) temp);
 			temp = start;
 			read = 0;
 			if (pa && fdisk_partition_has_start(pa))
@@ -1513,12 +1514,13 @@ static void check(struct fdisk_context *cxt, size_t n,
 				   "maximum %d"), n, h + 1, cxt->geom.heads);
 	if (real_s >= cxt->geom.sectors)
 		fdisk_warnx(cxt, _("Partition %zu: sector %d greater than "
-				   "maximum %llu"), n, s, cxt->geom.sectors);
+				   "maximum %ju"), n, s,
+				(uintmax_t) cxt->geom.sectors);
 	if (real_c >= cxt->geom.cylinders)
 		fdisk_warnx(cxt, _("Partition %zu: cylinder %d greater than "
-				   "maximum %llu"),
+				   "maximum %ju"),
 				n, real_c + 1,
-				cxt->geom.cylinders);
+				(uintmax_t) cxt->geom.cylinders);
 
 	if (cxt->geom.cylinders <= 1024 && start != total)
 		fdisk_warnx(cxt, _("Partition %zu: previous sectors %u "
@@ -1704,11 +1706,11 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 	if (!nerrors) {
 		fdisk_info(cxt, _("No errors detected."));
 		if (total > n_sectors)
-			fdisk_info(cxt, _("Total allocated sectors %llu greater "
-				"than the maximum %llu."), total, n_sectors);
+			fdisk_info(cxt, _("Total allocated sectors %ju greater "
+				"than the maximum %ju."), (uintmax_t) total, (uintmax_t) n_sectors);
 		else if (total < n_sectors)
-			fdisk_info(cxt, _("Remaining %lld unallocated %ld-byte "
-				"sectors."), n_sectors - total, cxt->sector_size);
+			fdisk_info(cxt, _("Remaining %ju unallocated %ld-byte "
+				"sectors."), (uintmax_t) n_sectors - total, cxt->sector_size);
 	} else
 		fdisk_warnx(cxt,
 			P_("%d error detected.", "%d errors detected.", nerrors),
@@ -1873,10 +1875,10 @@ static int dos_add_partition(struct fdisk_context *cxt,
 					msg =  _("All space for primary partitions is in use.");
 
 				if (pa && fdisk_partition_has_start(pa)) {
-					fdisk_warnx(cxt, msg);
+					fdisk_warnx(cxt, "%s", msg);
 					return -EINVAL;
 				}
-				fdisk_info(cxt, msg);
+				fdisk_info(cxt, "%s", msg);
 			}
 			DBG(LABEL, ul_debug("DOS: trying logical"));
 			rc = add_logical(cxt, pa, &res);

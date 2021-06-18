@@ -68,10 +68,10 @@ void list_disk_geometry(struct fdisk_context *cxt)
 		fdisk_info(cxt, _("Disk model: %s"), fdisk_get_devmodel(cxt));
 
 	if (lb && (fdisk_label_require_geometry(lb) || fdisk_use_cylinders(cxt)))
-		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
+		fdisk_info(cxt, _("Geometry: %d heads, %ju sectors/track, %ju cylinders"),
 			       fdisk_get_geom_heads(cxt),
-			       fdisk_get_geom_sectors(cxt),
-			       fdisk_get_geom_cylinders(cxt));
+			       (uintmax_t) fdisk_get_geom_sectors(cxt),
+			       (uintmax_t) fdisk_get_geom_cylinders(cxt));
 
 	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
 	       fdisk_get_unit(cxt, FDISK_PLURAL),
@@ -182,7 +182,7 @@ void list_disklabel(struct fdisk_context *cxt)
 
 	/* print */
 	if (!scols_table_is_empty(out)) {
-		fdisk_info(cxt, "");	/* just line break */
+		fdisk_info(cxt, "%s", "");	/* just line break */
 		scols_print_table(out);
 	}
 
@@ -193,14 +193,14 @@ void list_disklabel(struct fdisk_context *cxt)
 			continue;
 		if (!fdisk_lba_is_phy_aligned(cxt, fdisk_partition_get_start(pa))) {
 			if (!post)
-				fdisk_info(cxt, ""); /* line break */
+				fdisk_info(cxt, "%s", ""); /* line break */
 			fdisk_warnx(cxt, _("Partition %zu does not start on physical sector boundary."),
 					  fdisk_partition_get_partno(pa) + 1);
 			post++;
 		}
 		if (fdisk_partition_has_wipe(cxt, pa)) {
 			if (!post)
-				fdisk_info(cxt, ""); /* line break */
+				fdisk_info(cxt, "%s", ""); /* line break */
 
 			fdisk_info(cxt, _("Filesystem/RAID signature on partition %zu will be wiped."),
 					fdisk_partition_get_partno(pa) + 1);
@@ -210,7 +210,7 @@ void list_disklabel(struct fdisk_context *cxt)
 
 	if (fdisk_table_wrong_order(tb)) {
 		if (!post)
-			fdisk_info(cxt, ""); /* line break */
+			fdisk_info(cxt, "%s", ""); /* line break */
 		fdisk_info(cxt, _("Partition table entries are not in disk order."));
 	}
 done:
@@ -308,7 +308,7 @@ void list_freespace(struct fdisk_context *cxt)
 
 	/* print */
 	if (!scols_table_is_empty(out)) {
-		fdisk_info(cxt, "");	/* line break */
+		fdisk_info(cxt, "%s", "");	/* line break */
 		scols_print_table(out);
 	}
 done:
