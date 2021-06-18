@@ -1596,8 +1596,7 @@ int main(int argc, char *argv[])
 			close(ctl.kmsg);
 		if (n < 0)
 			err(EXIT_FAILURE, _("read kernel buffer failed"));
-		if (n >= 0
-		    && ctl.action == SYSLOG_ACTION_READ_CLEAR)
+		else if (ctl.action == SYSLOG_ACTION_READ_CLEAR)
 			; /* fallthrough */
 		else
 			break;
