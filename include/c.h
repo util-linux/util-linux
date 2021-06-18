@@ -217,7 +217,7 @@ prog_inv_sh_nm_from_file(char *f, char stripext)
 
 
 #ifndef HAVE_ERR_H
-static inline void
+static inline void __attribute__ ((__format__ (__printf__, 4, 5)))
 errmsg(char doexit, int excode, char adderr, const char *fmt, ...)
 {
 	fprintf(stderr, "%s: ", program_invocation_short_name);
