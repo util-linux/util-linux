@@ -141,9 +141,14 @@ static void menu_refresh_size(struct cfdisk *cf);
 
 static int ui_end(void);
 static int ui_refresh(struct cfdisk *cf);
-static void ui_warnx(const char *fmt, ...);
-static void ui_warn(const char *fmt, ...);
-static void ui_info(const char *fmt, ...);
+
+static void ui_warnx(const char *fmt, ...)
+			__attribute__((__format__ (__printf__, 1, 2)));
+static void ui_warn(const char *fmt, ...)
+			__attribute__((__format__ (__printf__, 1, 2)));
+static void ui_info(const char *fmt, ...)
+			__attribute__((__format__ (__printf__, 1, 2)));
+
 static void ui_draw_menu(struct cfdisk *cf);
 static int ui_menu_move(struct cfdisk *cf, int key);
 static void ui_menu_resize(struct cfdisk *cf);
@@ -630,13 +635,13 @@ static int ask_callback(struct fdisk_context *cxt __attribute__((__unused__)),
 
 	switch(fdisk_ask_get_type(ask)) {
 	case FDISK_ASKTYPE_INFO:
-		ui_info(fdisk_ask_print_get_mesg(ask));
+		ui_info("%s", fdisk_ask_print_get_mesg(ask));
 		break;
 	case FDISK_ASKTYPE_WARNX:
-		ui_warnx(fdisk_ask_print_get_mesg(ask));
+		ui_warnx("%s", fdisk_ask_print_get_mesg(ask));
 		break;
 	case FDISK_ASKTYPE_WARN:
-		ui_warn(fdisk_ask_print_get_mesg(ask));
+		ui_warn("%s", fdisk_ask_print_get_mesg(ask));
 		break;
 	case FDISK_ASKTYPE_MENU:
 		ask_menu(ask, (struct cfdisk *) data);
@@ -668,7 +673,8 @@ static int ui_end(void)
 	return 0;
 }
 
-static void ui_vprint_center(size_t line, int attrs, const char *fmt, va_list ap)
+static void __attribute__((__format__ (__printf__, 3, 0)))
+	ui_vprint_center(size_t line, int attrs, const char *fmt, va_list ap)
 {
 	size_t width;
 	char *buf = NULL;
@@ -698,7 +704,8 @@ static void ui_vprint_center(size_t line, int attrs, const char *fmt, va_list ap
 	free(buf);
 }
 
-static void ui_center(size_t line, const char *fmt, ...)
+static void __attribute__((__format__ (__printf__, 2, 3)))
+	ui_center(size_t line, const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
@@ -706,7 +713,8 @@ static void ui_center(size_t line, const char *fmt, ...)
 	va_end(ap);
 }
 
-static void ui_warnx(const char *fmt, ...)
+static void __attribute__((__format__ (__printf__, 1, 2)))
+	ui_warnx(const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
@@ -721,7 +729,8 @@ static void ui_warnx(const char *fmt, ...)
 	va_end(ap);
 }
 
-static void ui_warn(const char *fmt, ...)
+static void __attribute__((__format__ (__printf__, 1, 2)))
+	ui_warn(const char *fmt, ...)
 {
 	char *fmt_m;
 	va_list ap;
@@ -747,8 +756,10 @@ static void ui_clean_warn(void)
 	clrtoeol();
 }
 
-static int __attribute__((__noreturn__)) ui_err(int rc, const char *fmt, ...)
-		{
+static int __attribute__((__noreturn__))
+	   __attribute__((__format__ (__printf__, 2, 3)))
+	ui_err(int rc, const char *fmt, ...)
+{
 	va_list ap;
 	ui_end();
 
@@ -761,7 +772,9 @@ static int __attribute__((__noreturn__)) ui_err(int rc, const char *fmt, ...)
 	exit(rc);
 }
 
-static int __attribute__((__noreturn__)) ui_errx(int rc, const char *fmt, ...)
+static int __attribute__((__noreturn__))
+	   __attribute__((__format__ (__printf__, 2, 3)))
+	ui_errx(int rc, const char *fmt, ...)
 		{
 	va_list ap;
 	ui_end();
@@ -775,7 +788,8 @@ static int __attribute__((__noreturn__)) ui_errx(int rc, const char *fmt, ...)
 	exit(rc);
 }
 
-static void ui_info(const char *fmt, ...)
+static void __attribute__((__format__ (__printf__, 1, 2)))
+	ui_info(const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
@@ -796,7 +810,8 @@ static void ui_clean_info(void)
 	clrtoeol();
 }
 
-static void ui_hint(const char *fmt, ...)
+static void __attribute__((__format__ (__printf__, 1, 2)))
+	ui_hint(const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
@@ -1130,7 +1145,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 	if (cf->menu->idx == idx) {
 		standend();
 		if (d->desc)
-			ui_hint(_(d->desc));
+			ui_hint("%s", _(d->desc));
 	}
 }
 
@@ -1778,7 +1793,7 @@ static ssize_t ui_get_string(const char *prompt,
 	mbs_edit_goto(edit, MBS_EDIT_END);
 
 	if (hint)
-		ui_hint(hint);
+		ui_hint("%s", hint);
 	else
 		ui_clean_hint();
 

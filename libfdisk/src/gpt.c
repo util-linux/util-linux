@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <stdint.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
 #include <sys/types.h>
@@ -50,7 +51,7 @@
 #define EFI_PMBR_OSTYPE     0xEE
 #define MSDOS_MBR_SIGNATURE 0xAA55
 #define GPT_PART_NAME_LEN   (72 / sizeof(uint16_t))
-#define GPT_NPARTITIONS     FDISK_GPT_NPARTITIONS_DEFAULT
+#define GPT_NPARTITIONS     ((size_t) FDISK_GPT_NPARTITIONS_DEFAULT)
 
 /* Globally unique identifier */
 struct gpt_guid {
@@ -951,7 +952,7 @@ static int valid_pmbr(struct fdisk_context *cxt)
 
 			fdisk_warnx(cxt, _("GPT PMBR size mismatch (%"PRIu64" != %"PRIu64") "
 					   "will be corrected by write."),
-					sz_lba, cxt->total_sectors - 1ULL);
+					sz_lba, cxt->total_sectors - (uint64_t) 1);
 
 			/* Note that gpt_write_pmbr() overwrites PMBR, but we want to keep it valid already
 			 * in memory too to disable warnings when valid_pmbr() called next time */
@@ -2677,7 +2678,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	fdisk_info(cxt, _("Created a new GPT disklabel (GUID: %s)."), str);
 
 	if (gpt_get_nentries(gpt) < GPT_NPARTITIONS)
-		fdisk_info(cxt, _("The maximal number of partitions is %d (default is %d)."),
+		fdisk_info(cxt, _("The maximal number of partitions is %zu (default is %zu)."),
 				gpt_get_nentries(gpt), GPT_NPARTITIONS);
 done:
 	return rc;
@@ -2758,7 +2759,7 @@ static int gpt_check_table_overlap(struct fdisk_context *cxt,
 		}
 		if (gpt_partition_end(e) > last_usable) {
 			fdisk_warnx(cxt, _("Partition #%zu out of range (maximal end is %"PRIu64" sectors)"),
-		                    i + 1, last_usable - 1ULL);
+		                    i + 1, last_usable - (uint64_t) 1);
 			rc = -EINVAL;
 		}
 	}
@@ -2806,7 +2807,7 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t nents)
 			fdisk_warnx(cxt, _("The partition entry size is zero."));
 		else
 			fdisk_warnx(cxt, _("The number of the partition has to be smaller than %zu."),
-				UINT32_MAX / entry_size);
+				(size_t) UINT32_MAX / entry_size);
 		return rc;
 	}
 
@@ -2858,7 +2859,7 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t nents)
 	/* update library info */
 	cxt->label->nparts_max = gpt_get_nentries(gpt);
 
-	fdisk_info(cxt, _("Partition table length changed from %"PRIu32" to %"PRIu64"."),
+	fdisk_info(cxt, _("Partition table length changed from %"PRIu32" to %"PRIu32"."),
 			old_nents, nents);
 
 	fdisk_label_set_changed(cxt->label, 1);

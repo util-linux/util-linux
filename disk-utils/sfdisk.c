@@ -468,7 +468,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		typescript = mk_backup_filename_tpl(sf->move_typescript, devname, ".move");
 
 	if (!sf->quiet) {
-		fdisk_info(sf->cxt,"");
+		fdisk_info(sf->cxt, "%s", "");
 		color_scheme_enable("header", UL_COLOR_BOLD);
 		fdisk_info(sf->cxt, sf->noact ? _("Data move: (--no-act)") : _("Data move:"));
 		color_disable();
@@ -1926,7 +1926,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				rc = fdisk_add_partition(sf->cxt, pa, &cur_partno);
 				if (rc) {
 					errno = -rc;
-					fdisk_warn(sf->cxt, _("Failed to add #%d partition"), next_partno + 1);
+					fdisk_warn(sf->cxt, _("Failed to add #%zu partition"), next_partno + 1);
 				}
 			}
 
