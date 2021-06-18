@@ -845,7 +845,7 @@ char *c = crypt("abc","pw");
   have_libcrypt=no
   have_crypt=yes
 ],[
-  UL_SET_FLAGS([], [], [-lcrypt])
+  UL_SET_LIBS([-lcrypt])
   AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #ifdef HAVE_CRYPT_H
   #include <crypt.h>
@@ -861,7 +861,7 @@ char *c = crypt("abc","pw");
   ],[
   AC_MSG_WARN([crypt() is not available])
   ])
-  UL_RESTORE_FLAGS
+  UL_RESTORE_LIBS
 ])
 AM_CONDITIONAL([HAVE_LIBCRYPT], [test "x$have_libcrypt" = xyes])
 
@@ -883,10 +883,10 @@ AS_IF([test "x$with_selinux" = xno], [
     UL_PKG_STATIC([SELINUX_LIBS_STATIC], [libselinux])
     AM_CONDITIONAL([HAVE_SELINUX], [true])
 
-    UL_SET_FLAGS([], [], [$SELINUX_LIBS])
+    UL_SET_LIBS([$SELINUX_LIBS])
     # This function is missing in old libselinux 1.xx versions
     AC_CHECK_FUNCS([security_get_initial_context])
-    UL_RESTORE_FLAGS
+    UL_RESTORE_LIBS
   ])
 ])
 AC_SUBST([SELINUX_LIBS])

@@ -67,28 +67,21 @@ AC_DEFUN([UL_SET_ARCH], [
 ])
 
 
-dnl UL_SET_FLAGS(CFLAGS, CPPFLAGS, LDFLAGS)
+dnl UL_SET_LIBS(LIBS)
 dnl
-dnl Sets new global CFLAGS, CPPFLAGS and LDFLAG, the original
-dnl setting could be restored by UL_RESTORE_FLAGS()
+dnl Sets new global LIBS, the original setting could be restored by UL_RESTORE_LIBS()
 dnl
-AC_DEFUN([UL_SET_FLAGS], [
-  old_CFLAGS="$CFLAGS"
-  old_CPPFLAGS="$CPPFLAGS"
-  old_LDFLAGS="$LDFLAGS"
-  CFLAGS="$CFLAGS $1"
-  CPPFLAGS="$CPPFLAGS $2"
-  LDFLAGS="$LDFLAGS $3"
+AC_DEFUN([UL_SET_LIBS], [
+  old_LIBS="$LIBS"
+  LIBS="$LIBS $1"
 ])
 
-dnl UL_RESTORE_FLAGS()
+dnl UL_RESTORE_LIBS()
 dnl
-dnl Restores CFLAGS, CPPFLAGS and LDFLAG previously saved by UL_SET_FLAGS()
+dnl Restores LIBS previously saved by UL_SET_LIBS()
 dnl
-AC_DEFUN([UL_RESTORE_FLAGS], [
-  CFLAGS="$old_CFLAGS"
-  CPPFLAGS="$old_CPPFLAGS"
-  LDFLAGS="$old_LDFLAGS"
+AC_DEFUN([UL_RESTORE_LIBS], [
+  LIBS="$old_LIBS"
 ])
 
 
