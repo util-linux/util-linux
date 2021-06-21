@@ -192,8 +192,10 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 		    !strcmp(dp->d_name, ".."))
 			continue;
 
+		errno = 0;
+
 		/* care only for numerical descriptors */
-		if (!strtol(dp->d_name, (char **) NULL, 10))
+		if (!strtol(dp->d_name, (char **) NULL, 10) || errno)
 			continue;
 
 		if (!fstatat(fd, dp->d_name, &sb, 0)
