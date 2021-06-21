@@ -51,6 +51,8 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
+#include "c.h"
+#include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
 #include "closestream.h"
@@ -130,8 +132,8 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	FILE *map;
-	int proFd;
-	char *mapFile, *proFile, *mult = NULL;
+	int proFd, has_mult = 0, multiplier = 0;
+	char *mapFile, *proFile;
 	size_t len = 0, indx = 1;
 	unsigned long long add0 = 0;
 	unsigned int step;
@@ -199,7 +201,8 @@ int main(int argc, char **argv)
 			optInfo++;
 			break;
 		case 'M':
-			mult = optarg;
+			multiplier = strtol_or_err(optarg, _("failed to parse multiplier"));
+			has_mult = 1;
 			break;
 		case 'r':
 			optReset++;
@@ -217,14 +220,13 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (optReset || mult) {
-		int multiplier, fd, to_write;
+	if (optReset || has_mult) {
+		int fd, to_write;
 
 		/* When writing the multiplier, if the length of the
 		 * write is not sizeof(int), the multiplier is not
 		 * changed. */
-		if (mult) {
-			multiplier = strtoul(mult, NULL, 10);
+		if (has_mult) {
 			to_write = sizeof(int);
 		} else {
 			multiplier = 0;
