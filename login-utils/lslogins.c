@@ -908,11 +908,14 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 
 static int str_to_uint(char *s, unsigned int *ul)
 {
-	char *end;
+	char *end = NULL;
+
 	if (!s || !*s)
 		return -1;
+
+	errno = 0;
 	*ul = strtoul(s, &end, 0);
-	if (!*end)
+	if (errno == 0 && end && !*end)
 		return 0;
 	return 1;
 }
