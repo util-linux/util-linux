@@ -176,10 +176,11 @@ static int arg_to_signum(char *arg, int maskbit)
 	char *ep;
 
 	if (isdigit(*arg)) {
+		errno = 0;
 		numsig = strtol(arg, &ep, 10);
 		if (NSIG <= numsig && maskbit && (numsig & 128) != 0)
 			numsig -= 128;
-		if (*ep != 0 || numsig < 0 || NSIG <= numsig)
+		if (errno || *ep != 0 || numsig < 0 || NSIG <= numsig)
 			return -1;
 		return numsig;
 	}
