@@ -425,10 +425,11 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 	int rtc_fd;
 	unsigned long epoch;
 
+	errno = 0;
 	epoch = strtoul(ctl->epoch_option, NULL, 10);
 
 	/* There were no RTC clocks before 1900. */
-	if (epoch < 1900 || epoch == ULONG_MAX) {
+	if (errno || epoch < 1900 || epoch == ULONG_MAX) {
 		warnx(_("invalid epoch '%s'."), ctl->epoch_option);
 		return 1;
 	}
