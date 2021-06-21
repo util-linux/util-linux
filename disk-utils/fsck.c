@@ -169,8 +169,9 @@ static int string_to_int(const char *s)
 	long l;
 	char *p;
 
+	errno = 0;
 	l = strtol(s, &p, 0);
-	if (*p || l == LONG_MIN || l == LONG_MAX || l < 0 || l > INT_MAX)
+	if (errno || *p || l == LONG_MIN || l == LONG_MAX || l < 0 || l > INT_MAX)
 		return -1;
 
 	return (int) l;
