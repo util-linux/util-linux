@@ -334,7 +334,10 @@ static struct wipe_desc *get_desc_for_probe(struct wipe_control *ctl,
 	} else
 		return NULL;
 
+	errno = 0;
 	*offset = strtoll(off, NULL, 10);
+	if (errno)
+		return NULL;
 
 	/* Filter out by -t <type> */
 	if (ctl->type_pattern && !match_fstype(type, ctl->type_pattern))
