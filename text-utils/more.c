@@ -454,7 +454,7 @@ static void checkf(struct more_control *ctl, char *fs)
 		return;
 	}
 	if (fstat(fileno(ctl->current_file), &st) != 0) {
-		warn(_("cannot stat %s"), fs);
+		warn(_("stat of %s failed"), fs);
 		return;
 	}
 	if ((st.st_mode & S_IFMT) == S_IFDIR) {

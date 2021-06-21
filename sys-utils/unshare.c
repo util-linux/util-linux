@@ -205,7 +205,7 @@ static ino_t get_mnt_ino(pid_t pid)
 	snprintf(path, sizeof(path), "/proc/%u/ns/mnt", (unsigned) pid);
 
 	if (stat(path, &st) != 0)
-		err(EXIT_FAILURE, _("cannot stat %s"), path);
+		err(EXIT_FAILURE, _("stat of %s failed"), path);
 	return st.st_ino;
 }
 
