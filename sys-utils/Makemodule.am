@@ -125,6 +125,7 @@ usrsbin_exec_PROGRAMS += readprofile
 MANPAGES += sys-utils/readprofile.8
 dist_noinst_DATA += sys-utils/readprofile.8.adoc
 readprofile_SOURCES = sys-utils/readprofile.c
+readprofile_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_TUNELP
