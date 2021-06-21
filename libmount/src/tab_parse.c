@@ -50,11 +50,12 @@ static const char *next_s32(const char *s, int *num, int *rc)
 	if (!s || !*s)
 		return s;
 
+	errno = 0;
 	*rc = -EINVAL;
 	*num = strtol(s, &end, 10);
 	if (end == NULL || s == end)
 	       return s;
-	if (*end == ' ' || *end == '\t' || *end == '\0')
+	if (errno == 0 && (*end == ' ' || *end == '\t' || *end == '\0'))
 		*rc = 0;
 	return end;
 }
@@ -66,11 +67,12 @@ static const char *next_u64(const char *s, uint64_t *num, int *rc)
 	if (!s || !*s)
 		return s;
 
+	errno = 0;
 	*rc = -EINVAL;
 	*num = (uint64_t) strtoumax(s, &end, 10);
 	if (end == NULL || s == end)
 	       return s;
-	if (*end == ' ' || *end == '\t' || *end == '\0')
+	if (errno == 0 && (*end == ' ' || *end == '\t' || *end == '\0'))
 		*rc = 0;
 	return end;
 }

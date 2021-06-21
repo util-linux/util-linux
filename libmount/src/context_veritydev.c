@@ -61,8 +61,9 @@ static size_t crypt_hex_to_bytes(const char *hex, char **result)
 
 	for (i = 0; i < len; i++) {
 		memcpy(buf, &hex[i * 2], 2);
+		errno = 0;
 		bytes[i] = strtoul(buf, &endp, 16);
-		if (endp != &buf[2]) {
+		if (errno || endp != &buf[2]) {
 			free(bytes);
 			return -EINVAL;
 		}
