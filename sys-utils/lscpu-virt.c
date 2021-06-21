@@ -166,7 +166,10 @@ static int address_from_efi(size_t *address)
 			continue;
 		*(addrp++) = '\0';
 		if (strcmp(linebuf, "SMBIOS") == 0) {
+			errno = 0;
 			*address = strtoul(addrp, NULL, 0);
+			if (errno)
+				continue;
 			ret = 0;
 			break;
 		}
