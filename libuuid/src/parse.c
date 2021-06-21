@@ -37,6 +37,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "c.h"
 #include "uuidP.h"
 
 int uuid_parse(const char *in, uuid_t uu)
@@ -70,16 +71,28 @@ int uuid_parse_range(const char *in_start, const char *in_end, uuid_t uu)
 		if (!isxdigit(*cp))
 			return -1;
 	}
+	errno = 0;
 	uuid.time_low = strtoul(in_start, NULL, 16);
-	uuid.time_mid = strtoul(in_start+9, NULL, 16);
-	uuid.time_hi_and_version = strtoul(in_start+14, NULL, 16);
-	uuid.clock_seq = strtoul(in_start+19, NULL, 16);
+
+	if (!errno)
+		uuid.time_mid = strtoul(in_start+9, NULL, 16);
+	if (!errno)
+		uuid.time_hi_and_version = strtoul(in_start+14, NULL, 16);
+	if (!errno)
+		uuid.clock_seq = strtoul(in_start+19, NULL, 16);
+	if (errno)
+		return -1;
+
 	cp = in_start+24;
 	buf[2] = 0;
 	for (i=0; i < 6; i++) {
 		buf[0] = *cp++;
 		buf[1] = *cp++;
+
+		errno = 0;
 		uuid.node[i] = strtoul(buf, NULL, 16);
+		if (errno)
+			return -1;
 	}
 
 	uuid_pack(&uuid, uu);
