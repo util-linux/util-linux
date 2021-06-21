@@ -262,9 +262,16 @@ static void read_info(struct chmem_desc *desc)
 
 	desc->ndirs = scandir(_PATH_SYS_MEMORY, &desc->dirs, filter, versionsort);
 	if (desc->ndirs <= 0)
-		err(EXIT_FAILURE, _("Failed to read %s"), _PATH_SYS_MEMORY);
+		goto fail;
 	ul_path_read_buffer(desc->sysmem, line, sizeof(line), "block_size_bytes");
+
+	errno = 0;
 	desc->block_size = strtoumax(line, NULL, 16);
+	if (errno)
+		goto fail;
+	return;
+fail:
+	err(EXIT_FAILURE, _("Failed to read %s"), _PATH_SYS_MEMORY);
 }
 
 static void parse_single_param(struct chmem_desc *desc, char *str)

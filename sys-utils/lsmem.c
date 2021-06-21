@@ -348,24 +348,31 @@ static int memory_block_get_node(struct lsmem *lsmem, char *name)
 			continue;
 		if (!isdigit_string(de->d_name + 4))
 			continue;
+		errno = 0;
 		node = strtol(de->d_name + 4, NULL, 10);
+		if (errno)
+			continue;
 		break;
 	}
 	closedir(dir);
 	return node;
 }
 
-static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
+static int memory_block_read_attrs(struct lsmem *lsmem, char *name,
 				    struct memory_block *blk)
 {
 	char *line = NULL;
-	int i, x = 0;
+	int i, x = 0, rc = 0;
 
 	memset(blk, 0, sizeof(*blk));
 
+	errno = 0;
 	blk->count = 1;
 	blk->state = MEMORY_STATE_UNKNOWN;
 	blk->index = strtoumax(name + 6, NULL, 10); /* get <num> of "memory<num>" */
+
+	if (errno)
+		rc = -errno;
 
 	if (ul_path_readf_s32(lsmem->sysmem, &x, "%s/removable", name) == 0)
 		blk->removable = x == 1;
@@ -397,6 +404,8 @@ static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
 		}
 		free(line);
 	}
+
+	return rc;
 }
 
 static int is_mergeable(struct lsmem *lsmem, struct memory_block *blk)
@@ -451,7 +460,11 @@ static void read_info(struct lsmem *lsmem)
 
 	if (ul_path_read_buffer(lsmem->sysmem, buf, sizeof(buf), "block_size_bytes") <= 0)
 		err(EXIT_FAILURE, _("failed to read memory block size"));
+
+	errno = 0;
 	lsmem->block_size = strtoumax(buf, NULL, 16);
+	if (errno)
+		err(EXIT_FAILURE, _("failed to read memory block size"));
 
 	for (i = 0; i < lsmem->ndirs; i++) {
 		memory_block_read_attrs(lsmem, lsmem->dirs[i]->d_name, &blk);
