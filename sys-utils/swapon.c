@@ -333,13 +333,8 @@ static int swap_reinitialize(struct swap_device *dev)
 		return -1;
 
 	case 0:	/* child */
-		if (geteuid() != getuid()) {
-			/* in case someone uses swapon as setuid binary */
-			if (setgid(getgid()) < 0)
-				exit(EXIT_FAILURE);
-			if (setuid(getuid()) < 0)
-				exit(EXIT_FAILURE);
-		}
+		if (geteuid() != getuid() && drop_permissions() != 0)
+			exit(EXIT_FAILURE);
 
 		cmd[idx++] = "mkswap";
 		if (dev->label) {

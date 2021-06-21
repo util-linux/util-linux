@@ -170,8 +170,7 @@ char *canonicalize_path_restricted(const char *path)
 		pipes[0] = -1;
 		errno = 0;
 
-		/* drop permissions */
-		if (setgid(getgid()) < 0 || setuid(getuid()) < 0)
+		if (drop_permissions() != 0)
 			canonical = NULL;	/* failed */
 		else {
 			char *dmname = NULL;

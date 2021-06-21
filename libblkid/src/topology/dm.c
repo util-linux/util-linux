@@ -73,10 +73,7 @@ static int probe_dm_tp(blkid_probe pr,
 		if (dmpipe[1] != STDOUT_FILENO)
 			dup2(dmpipe[1], STDOUT_FILENO);
 
-		/* The libblkid library could linked with setuid programs */
-		if (setgid(getgid()) < 0)
-			 exit(1);
-		if (setuid(getuid()) < 0)
+		if (drop_permissions() != 0)
 			 exit(1);
 
 		snprintf(maj, sizeof(maj), "%d", major(devno));
