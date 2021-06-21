@@ -658,12 +658,8 @@ static void umount_one(const struct eject_control *ctl, const char *name)
 
 	switch (fork()) {
 	case 0: /* child */
-		if (setgid(getgid()) < 0)
-			err(EXIT_FAILURE, _("cannot set group id"));
-
-		if (setuid(getuid()) < 0)
-			err(EXIT_FAILURE, _("cannot set user id"));
-
+		if (drop_permissions() != 0)
+			err(EXIT_FAILURE, _("drop permissions failed"));
 		if (ctl->p_option)
 			execl("/bin/umount", "/bin/umount", name, "-n", (char *)NULL);
 		else

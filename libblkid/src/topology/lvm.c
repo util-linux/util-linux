@@ -82,10 +82,7 @@ static int probe_lvm_tp(blkid_probe pr,
 		if (lvpipe[1] != STDOUT_FILENO)
 			dup2(lvpipe[1], STDOUT_FILENO);
 
-		/* The libblkid library could linked with setuid programs */
-		if (setgid(getgid()) < 0)
-			 exit(1);
-		if (setuid(getuid()) < 0)
+		if (drop_permissions() != 0)
 			 exit(1);
 
 		lvargv[0] = cmd;

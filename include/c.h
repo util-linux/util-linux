@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <grp.h>
 
 #include <assert.h>
 
@@ -333,6 +335,28 @@ static inline size_t get_hostname_max(void)
 	return HOST_NAME_MAX;
 #endif
 	return 64;
+}
+
+
+static inline int drop_permissions(void)
+{
+	errno = 0;
+
+	/* drop supplementary groups */
+	if (setgroups(0, NULL) != 0)
+		goto fail;
+
+	/* drop GID */
+	if (setgid(getgid()) < 0)
+		goto fail;
+
+	/* drop UID */
+	if (setuid(getuid()) < 0)
+		goto fail;
+
+	return 0;
+fail:
+	return errno ? -errno : -1;
 }
 
 /*

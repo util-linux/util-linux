@@ -696,10 +696,7 @@ static int exec_helper(struct libmnt_context *cxt)
 		const char *args[12], *type;
 		int i = 0;
 
-		if (setgid(getgid()) < 0)
-			_exit(EXIT_FAILURE);
-
-		if (setuid(getuid()) < 0)
+		if (drop_permissions() != 0)
 			_exit(EXIT_FAILURE);
 
 		if (!mnt_context_switch_origin_ns(cxt))

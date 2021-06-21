@@ -118,13 +118,8 @@ static void suid_drop(struct libmnt_context *cxt)
 	const uid_t ruid = getuid();
 	const uid_t euid = geteuid();
 
-	if (ruid != 0 && euid == 0) {
-		if (setgid(getgid()) < 0)
-			err(MNT_EX_FAIL, _("setgid() failed"));
-
-		if (setuid(getuid()) < 0)
-			err(MNT_EX_FAIL, _("setuid() failed"));
-	}
+	if (ruid != 0 && euid == 0 && drop_permissions() != 0)
+		err(MNT_EX_FAIL, _("drop permissions failed"));
 
 	/* be paranoid and check it, setuid(0) has to fail */
 	if (ruid != 0 && setuid(0) == 0)
