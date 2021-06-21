@@ -297,16 +297,25 @@ static int parse_tag(blkid_cache cache, blkid_dev dev, char **cp)
 
 	DBG(READ, ul_debug("tag: %s=\"%s\"", name, value));
 
+	errno = 0;
+
 	/* Some tags are stored directly in the device struct */
-	if (!strcmp(name, "DEVNO"))
+	if (!strcmp(name, "DEVNO")) {
 		dev->bid_devno = strtoull(value, NULL, 0);
-	else if (!strcmp(name, "PRI"))
+		if (errno)
+			return -errno;
+	} else if (!strcmp(name, "PRI")) {
 		dev->bid_pri = strtol(value, NULL, 0);
-	else if (!strcmp(name, "TIME")) {
+		if (errno)
+			return -errno;
+	} else if (!strcmp(name, "TIME")) {
 		char *end = NULL;
+
 		dev->bid_time = strtoull(value, &end, 0);
-		if (end && *end == '.')
+		if (errno == 0 && end && *end == '.')
 			dev->bid_utime = strtoull(end + 1, NULL, 0);
+		if (errno)
+			return -errno;
 	} else
 		ret = blkid_set_tag(dev, name, value, strlen(value));
 

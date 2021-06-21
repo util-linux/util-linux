@@ -1040,8 +1040,9 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 			if (prefix && strncasecmp(prefix, "part", 4) == 0) {
 				char *end = NULL;
 
+				errno = 0;
 				partno = strtol(prefix + 4, &end, 10);
-				if (prefix == end || (end && *end))
+				if (errno || prefix == end || (end && *end))
 					partno = 0;
 				else
 					rc = 0;		/* success */
