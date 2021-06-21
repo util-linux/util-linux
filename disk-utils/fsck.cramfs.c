@@ -152,13 +152,14 @@ static void test_super(int *start, size_t * length)
 {
 	struct stat st;
 
-	/* find the physical size of the file or block device */
-	if (stat(filename, &st) < 0)
-		err(FSCK_EX_ERROR, _("stat of %s failed"), filename);
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		err(FSCK_EX_ERROR, _("cannot open %s"), filename);
+
+	/* find the physical size of the file or block device */
+	if (fstat(fd, &st) < 0)
+		err(FSCK_EX_ERROR, _("stat of %s failed"), filename);
 
 	if (S_ISBLK(st.st_mode)) {
 		unsigned long long bytes;
