@@ -125,12 +125,13 @@ static int remove_id(int type, int iskey, int id)
 static int remove_arg_list(type_id type, int argc, char **argv)
 {
 	int id;
-	char *end;
+	char *end = NULL;
 	int nb_errors = 0;
 
 	do {
+		errno = 0;
 		id = strtoul(argv[0], &end, 10);
-		if (*end != 0) {
+		if (errno || !end || *end != 0) {
 			warnx(_("invalid id: %s"), argv[0]);
 			nb_errors++;
 		} else {
