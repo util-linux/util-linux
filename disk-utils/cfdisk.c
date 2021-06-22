@@ -1322,6 +1322,15 @@ static char *get_mountpoint(struct cfdisk *cf, const char *tagname, const char *
 }
 #endif /* HAVE_LIBMOUNT */
 
+static inline int iszero(const char *str)
+{
+	const char *p;
+
+	for (p = str; p && *p == '0'; p++);
+
+	return !p || *p == '\0';
+}
+
 static void extra_prepare_data(struct cfdisk *cf)
 {
 	struct fdisk_partition *pa = get_current_partition(cf);
@@ -1365,19 +1374,19 @@ static void extra_prepare_data(struct cfdisk *cf)
 
 	/* for numeric data, only show non-zero rows */
 	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_BSIZE, &data) && data) {
-		if (atoi(data))
+		if (!iszero(data))
 			extra_insert_pair(l, "BSIZE:", data);
 		free(data);
 	}
 
 	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_CPG, &data) && data) {
-		if (atoi(data))
+		if (!iszero(data))
 			extra_insert_pair(l, "CPG:", data);
 		free(data);
 	}
 
 	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_FSIZE, &data) && data) {
-		if (atoi(data))
+		if (!iszero(data))
 			extra_insert_pair(l, "FSIZE:", data);
 		free(data);
 	}
