@@ -190,7 +190,12 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			fclose(fd);
 	}
 
-	ct->nthreads_per_core = ct->mtid ? atoi(ct->mtid) + 1 : nthreads;
+	ct->nthreads_per_core = nthreads;
+	if (ct->mtid) {
+		uint64_t x;
+		if (ul_strtou64(ct->mtid, &x, 10) == 0 && x <= ULONG_MAX)
+			ct->nthreads_per_core = (size_t) x + 1;
+	}
 
 	if (!sw_topo) {
 		ct->ncores_per_socket = ct->nsockets ? ct->ncores / ct->nsockets : 0;

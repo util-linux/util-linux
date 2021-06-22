@@ -300,7 +300,15 @@ static char *key_cleanup(char *str, int *keynum)
 	}
 
 	if (i < sz) {
-		*keynum = atoi(str + i);
+		char *end = NULL, *p = str + i;
+		int n;
+
+		errno = 0;
+		n = strtol(p, &end, 10);
+		if (errno || !end || end == p)
+			return str;
+
+		*keynum = n;
 		str[i] = '\0';
 		rtrim_whitespace((unsigned char *)str);
 	}
@@ -486,7 +494,15 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 		case CPUINFO_LINE_CPU:
 			if (pattern->id == PAT_PROCESSOR) {
 				/* switch CPU */
-				int id = keynum >= 0 ? keynum : atoi(value);
+				int id = 0;
+
+				if (keynum >= 0)
+					id = keynum;
+				else {
+					uint64_t n;
+					if (ul_strtou64(value, &n, 10) == 0 && n <= INT_MAX)
+						id = n;
+				}
 
 				if (pr->curr_cpu && pr->curr_type)
 					lscpu_cpu_set_type(pr->curr_cpu, pr->curr_type);
