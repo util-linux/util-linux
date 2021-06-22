@@ -16,6 +16,7 @@
 #include "blkdev.h"
 #include "pathnames.h"
 #include "closestream.h"
+#include "strutils.h"
 #include "sysfs.h"
 
 struct bdc {
@@ -351,7 +352,7 @@ static void do_commands(int fd, char **argv, int d)
 					      bdcms[j].name);
 					errtryhelp(EXIT_FAILURE);
 				}
-				iarg = atoi(argv[++i]);
+				iarg = strtos32_or_err(argv[++i], _("failed to parse command argument"));
 			} else
 				iarg = bdcms[j].argval;
 
