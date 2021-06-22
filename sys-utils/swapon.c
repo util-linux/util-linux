@@ -722,9 +722,15 @@ static int parse_options(struct swap_prop *props, const char *options)
 	}
 
 	arg = NULL;
-	if (mnt_optstr_get_option(options, "pri", &arg, NULL) == 0 && arg)
-		props->priority = atoi(arg);
+	if (mnt_optstr_get_option(options, "pri", &arg, &argsz) == 0 && arg) {
+		char *end = NULL;
+		int n;
 
+		errno = 0;
+		n = (int) strtol(arg, &end, 10);
+		if (errno == 0 && end && end > arg)
+			props->priority = n;
+	}
 	return 0;
 }
 
