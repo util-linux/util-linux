@@ -22,6 +22,7 @@
 #include "nls.h"
 #include "closestream.h"
 #include "timeutils.h"
+#include "strutils.h"
 
 #include "ipcutils.h"
 
@@ -120,7 +121,7 @@ int main (int argc, char **argv)
 	while ((opt = getopt_long(argc, argv, options, longopts, NULL)) != -1) {
 		switch (opt) {
 		case 'i':
-			id = atoi (optarg);
+			id = strtos32_or_err(optarg, _("failed to parse id argument"));
 			specific = 1;
 			break;
 		case 'a':
