@@ -1432,6 +1432,7 @@ static void parse_argv(int argc, char *argv[])
 	int     opts_for_fsck = 0;
 	struct sigaction	sa;
 	int	report_stats_fd = -1;
+	uint64_t num;
 
 	/*
 	 * Set up signal action
@@ -1604,8 +1605,8 @@ static void parse_argv(int argc, char *argv[])
 
 	if (getenv("FSCK_FORCE_ALL_PARALLEL"))
 		force_all_parallel++;
-	if ((tmp = getenv("FSCK_MAX_INST")))
-	    max_running = atoi(tmp);
+	if (ul_strtou64(getenv("FSCK_MAX_INST"), &num, 10) == 0 && num <= INT_MAX)
+		max_running = num;
 }
 
 int main(int argc, char *argv[])
