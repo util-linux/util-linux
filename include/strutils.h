@@ -19,6 +19,9 @@ extern int parse_size(const char *str, uintmax_t *res, int *power);
 extern int strtosize(const char *str, uintmax_t *res);
 extern uintmax_t strtosize_or_err(const char *str, const char *errmesg);
 
+extern int ul_strtos64(const char *str, int64_t *num, int base);
+extern int ul_strtou64(const char *str, uint64_t *num, int base);
+
 extern int16_t strtos16_or_err(const char *str, const char *errmesg);
 extern uint16_t strtou16_or_err(const char *str, const char *errmesg);
 extern uint16_t strtox16_or_err(const char *str, const char *errmesg);
