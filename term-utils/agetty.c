@@ -2424,7 +2424,14 @@ static int caps_lock(char *s)
 static speed_t bcode(char *s)
 {
 	const struct Speedtab *sp;
-	long speed = atol(s);
+	char *end = NULL;
+	long speed;
+
+	errno = 0;
+	speed = strtol(s, &end, 10);
+
+	if (errno || !end || end == s)
+		return 0;
 
 	for (sp = speedtab; sp->speed; sp++)
 		if (sp->speed == speed)
