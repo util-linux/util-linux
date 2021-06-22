@@ -526,18 +526,18 @@ static int read_speed(const char *devname)
 		/* find line "drive speed" and read the correct speed */
 		} else {
 			if (strncmp(line, "drive speed:", 12) == 0) {
-				int i;
+				uint64_t n;
 
-				str = strtok(&line[12], "\t ");
-				for (i = 1; i < drive_number; i++)
-					str = strtok(NULL, "\t ");
-
-				if (!str)
-					errx(EXIT_FAILURE,
-						_("%s: failed to read speed"),
-						_PATH_PROC_CDROMINFO);
 				fclose(f);
-				return atoi(str);
+
+				str = line + 12;
+				normalize_whitespace((unsigned char *) str);
+
+				if (ul_strtou64(str, &n, 10) == 0 && n <= INT_MAX)
+					return (int) n;
+
+				errx(EXIT_FAILURE, _("%s: failed to read speed"),
+						_PATH_PROC_CDROMINFO);
 			}
 		}
 	}
