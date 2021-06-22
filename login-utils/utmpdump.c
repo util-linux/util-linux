@@ -74,8 +74,16 @@ static time_t strtotime(const char *s_time)
 static suseconds_t strtousec(const char *s_time)
 {
 	const char *s = strchr(s_time, ',');
-	if (s)
-		return (suseconds_t) atoi(s + 1);
+
+	if (s && *++s) {
+		suseconds_t us;
+		char *end = NULL;
+
+		errno = 0;
+		us = strtol(s, &end, 10);
+		if (errno == 0 && end && end > s)
+			return us;
+	}
 	return 0;
 }
 
@@ -266,7 +274,7 @@ static int gettok(char *line, char *dest, int size, int eatspace)
 static void undump(FILE *in, FILE *out)
 {
 	struct utmpx ut;
-	char s_addr[INET6_ADDRSTRLEN + 1], s_time[29], *linestart, *line;
+	char s_addr[INET6_ADDRSTRLEN + 1], s_time[29] = {}, *linestart, *line;
 
 	linestart = xmalloc(1024 * sizeof(*linestart));
 	s_time[28] = 0;
