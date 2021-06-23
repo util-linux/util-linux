@@ -1113,13 +1113,18 @@ static void expand(struct more_control *ctl, char *inbuf)
 	char *outstr;
 	char c;
 	char *temp;
-	int tempsz, xtra, offset;
+	int tempsz, xtra = 0, offset;
 
-	xtra = strlen(ctl->file_names[ctl->argv_position]) + strlen(ctl->shell_line) + 1;
+	if (!ctl->no_tty_in)
+		xtra += strlen(ctl->file_names[ctl->argv_position]) + 1;
+	if (ctl->shell_line)
+		xtra += strlen(ctl->shell_line) + 1;
+
 	tempsz = COMMAND_BUF + xtra;
 	temp = xmalloc(tempsz);
 	inpstr = inbuf;
 	outstr = temp;
+
 	while ((c = *inpstr++) != '\0') {
 		offset = outstr - temp;
 		if (tempsz - offset - 1 < xtra) {
