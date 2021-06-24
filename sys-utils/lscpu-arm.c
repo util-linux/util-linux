@@ -317,6 +317,7 @@ static int arm_rXpY_decode(struct lscpu_cputype *ct)
 
 #define PROC_MFR_OFFSET		0x07
 #define PROC_VERSION_OFFSET	0x10
+#define PROC_CURRENT_SPEED	0x16
 
 /*
  * Use firmware to get human readable names
@@ -328,6 +329,7 @@ static int arm_smbios_decode(struct lscpu_cputype *ct)
 	struct lscpu_dmi_header h;
 	int fd;
 	ssize_t rs;
+	uint16_t curr_speed;
 
 	fd = open(_PATH_SYS_DMI_TYPE4, O_RDONLY);
 	if (fd < 0)
@@ -350,6 +352,10 @@ static int arm_smbios_decode(struct lscpu_cputype *ct)
 	str = dmi_string(&h, data[PROC_VERSION_OFFSET]);
 	if (str) {
 		xstrncpy(buf, str, 127);
+		curr_speed = *((uint16_t *)(&data[PROC_CURRENT_SPEED]));
+		if (curr_speed > 0) {
+			snprintf(buf, 127, "%s @ %.2fGHz", str, curr_speed / 1000.f);
+		}
 		ct->bios_modelname = xstrdup(buf);
 	}
 
