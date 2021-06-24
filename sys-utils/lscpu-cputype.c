@@ -499,8 +499,8 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 				if (keynum >= 0)
 					id = keynum;
 				else {
-					uint64_t n;
-					if (ul_strtou64(value, &n, 10) == 0 && n <= INT_MAX)
+					uint32_t n;
+					if (ul_strtou32(value, &n, 10) == 0)
 						id = n;
 				}
 
