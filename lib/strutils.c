@@ -339,124 +339,92 @@ int ul_strtos64(const char *str, int64_t *num, int base)
 int ul_strtou64(const char *str, uint64_t *num, int base)
 {
 	char *end = NULL;
+	int64_t tmp;
 
 	errno = 0;
 	if (str == NULL || *str == '\0')
 		return -EINVAL;
-	*num = (uint64_t) strtoumax(str, &end, base);
+
+	/* we need to ignore negative numbers, note that for invalid negative
+	 * number strtoimax() returns negative number too, so we do not
+	 * need to check errno here */
+	tmp = (int64_t) strtoimax(str, &end, base);
+	if (tmp < 0)
+		errno = ERANGE;
+	else {
+		errno = 0;
+		*num = strtoumax(str, &end, base);
+	}
 
 	if (errno || str == end || (end && *end))
 		return -EINVAL;
 	return 0;
 }
 
+int ul_strtos32(const char *str, int32_t *num, int base)
+{
+	int64_t tmp;
+	int rc;
+
+	rc = ul_strtos64(str, &tmp, base);
+	if (rc == 0 && (tmp < INT32_MIN || tmp > INT32_MAX))
+		rc = -(errno = ERANGE);
+	if (rc == 0)
+		*num = (int32_t) tmp;
+	return rc;
+}
+
+int ul_strtou32(const char *str, uint32_t *num, int base)
+{
+	uint64_t tmp;
+	int rc;
+
+	rc = ul_strtou64(str, &tmp, base);
+	if (rc == 0 && tmp > UINT32_MAX)
+		rc = -(errno = ERANGE);
+	if (rc == 0)
+		*num = (uint32_t) tmp;
+	return rc;
+}
+
 /*
- * Covert strings to numbers and print message on error.
+ * Covert strings to numbers in defined range and print message on error.
  *
- * Note that hex functions (strtox..()) returns unsigned numbers, if you need
- * something else then use ul_strtos64(s, &n, 16).
+ * These functions are used when we read input from users (getopt() etc.). It's
+ * better to consolidate the code and keep it all based on 64-bit numbers then
+ * implement it for 32 and 16-bit numbers too.
  */
-int64_t strtos64_or_err(const char *str, const char *errmesg)
+int64_t str2num_or_err(const char *str, int base, const char *errmesg,
+			     int64_t low, int64_t up)
 {
 	int64_t num = 0;
+	int rc;
 
-	if (ul_strtos64(str, &num, 10) != 0) {
+	rc = ul_strtos64(str, &num, base);
+	if (rc == 0 && ((low && num < low) || (up && num > up)))
+		rc = -(errno = ERANGE);
+
+	if (rc) {
 		if (errno == ERANGE)
 			err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-
 		errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 	}
 	return num;
 }
 
-uint64_t strtou64_or_err(const char *str, const char *errmesg)
+uint64_t str2unum_or_err(const char *str, int base, const char *errmesg, uint64_t up)
 {
 	uint64_t num = 0;
+	int rc;
 
-	if (ul_strtou64(str, &num, 10)) {
+	rc = ul_strtou64(str, &num, base);
+	if (rc == 0 && (up && num > up))
+		rc = -(errno = ERANGE);
+
+	if (rc) {
 		if (errno == ERANGE)
 			err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-
 		errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-	}
-	return num;
-}
-
-uint64_t strtox64_or_err(const char *str, const char *errmesg)
-{
-	uint64_t num = 0;
-
-	if (ul_strtou64(str, &num, 16)) {
-		if (errno == ERANGE)
-			err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-
-		errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-	}
-	return num;
-}
-
-int32_t strtos32_or_err(const char *str, const char *errmesg)
-{
-	int64_t num = strtos64_or_err(str, errmesg);
-
-	if (num < INT32_MIN || num > INT32_MAX) {
-		errno = ERANGE;
-		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-	}
-	return num;
-}
-
-uint32_t strtou32_or_err(const char *str, const char *errmesg)
-{
-	uint64_t num = strtou64_or_err(str, errmesg);
-
-	if (num > UINT32_MAX) {
-		errno = ERANGE;
-		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-	}
-	return num;
-}
-
-uint32_t strtox32_or_err(const char *str, const char *errmesg)
-{
-	uint64_t num = strtox64_or_err(str, errmesg);
-
-	if (num > UINT32_MAX) {
-		errno = ERANGE;
-		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-	}
-	return num;
-}
-
-int16_t strtos16_or_err(const char *str, const char *errmesg)
-{
-	int64_t num = strtos64_or_err(str, errmesg);
-
-	if (num < INT16_MIN || num > INT16_MAX) {
-		errno = ERANGE;
-		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-	}
-	return num;
-}
-
-uint16_t strtou16_or_err(const char *str, const char *errmesg)
-{
-	uint64_t num = strtou64_or_err(str, errmesg);
-
-	if (num > UINT16_MAX) {
-		errno = ERANGE;
-		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-	}
-	return num;
-}
-
-uint16_t strtox16_or_err(const char *str, const char *errmesg)
-{
-	uint64_t num = strtox64_or_err(str, errmesg);
-
-	if (num > UINT16_MAX) {
-		errno = ERANGE;
-		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 	}
 	return num;
 }
@@ -1231,20 +1199,33 @@ int main(int argc, char *argv[])
 	} else if (argc == 3 && strcmp(argv[1], "--normalize") == 0) {
 		return test_strutils_normalize(argc - 1, argv + 1);
 
-	} else if (argc == 3 && strcmp(argv[1], "--str2num") == 0) {
-		uint64_t n;
 
-		if (ul_strtou64(argv[2], &n, 10) == 0) {
-			printf("'%s' --> %ju\n", argv[2], (uintmax_t) n);
-			return EXIT_SUCCESS;
-		}
+	} else if (argc == 3 && strcmp(argv[1], "--strtos64") == 0) {
+		printf("'%s'-->%jd\n", argv[2], strtos64_or_err(argv[2], "strtos64 failed"));
+		return EXIT_SUCCESS;
+	} else if (argc == 3 && strcmp(argv[1], "--strtou64") == 0) {
+		printf("'%s'-->%ju\n", argv[2], strtou64_or_err(argv[2], "strtou64 failed"));
+		return EXIT_SUCCESS;
+	} else if (argc == 3 && strcmp(argv[1], "--strtos32") == 0) {
+		printf("'%s'-->%d\n", argv[2], strtos32_or_err(argv[2], "strtos32 failed"));
+		return EXIT_SUCCESS;
+	} else if (argc == 3 && strcmp(argv[1], "--strtou32") == 0) {
+		printf("'%s'-->%u\n", argv[2], strtou32_or_err(argv[2], "strtou32 failed"));
+		return EXIT_SUCCESS;
+	} else if (argc == 3 && strcmp(argv[1], "--strtos16") == 0) {
+		printf("'%s'-->%hd\n", argv[2], strtos16_or_err(argv[2], "strtos16 failed"));
+		return EXIT_SUCCESS;
+	} else if (argc == 3 && strcmp(argv[1], "--strtou16") == 0) {
+		printf("'%s'-->%hu\n", argv[2], strtou16_or_err(argv[2], "strtou16 failed"));
+		return EXIT_SUCCESS;
+
 	} else {
 		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
 				"       %1$s --cmp-paths <path> <path>\n"
 				"       %1$s --strdup-member <str> <str>\n"
 				"       %1$s --stralnumcmp <str> <str>\n"
 				"       %1$s --normalize <str>\n"
-				"       %1$s --num2num <str>\n",
+				"       %1$s --strto{s,u}{16,32,64} <str>\n",
 				argv[0]);
 		exit(EXIT_FAILURE);
 	}
