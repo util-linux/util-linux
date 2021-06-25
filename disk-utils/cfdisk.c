@@ -1331,6 +1331,25 @@ static inline int iszero(const char *str)
 	return !p || *p == '\0';
 }
 
+static int has_uuid(struct fdisk_table *tb, const char *uuid)
+{
+	struct fdisk_partition *pa;
+	struct fdisk_iter *itr;
+	int rc = 0;
+
+	if (!tb || !uuid || fdisk_table_is_empty(tb))
+		return 0;
+
+	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
+	while (rc == 0 && fdisk_table_next_partition(tb, itr, &pa) == 0) {
+		const char *x = fdisk_partition_get_uuid(pa);
+		if (x)
+			rc = strcmp(x, uuid) == 0;
+	}
+	fdisk_free_iter(itr);
+	return rc;
+}
+
 static void extra_prepare_data(struct cfdisk *cf)
 {
 	struct fdisk_partition *pa = get_current_partition(cf);
@@ -1350,7 +1369,14 @@ static void extra_prepare_data(struct cfdisk *cf)
 
 	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_UUID, &data) && data) {
 		extra_insert_pair(l, _("Partition UUID:"), data);
-		if (!mountpoint)
+
+		/* Search for mountpoint by PARTUUID= means that we need to
+		 * check fstab and convert PARTUUID to the device name. This is
+		 * unnecessary and overkill for newly created partitions. Let's
+		 * check if the UUID already exist in the old layout, otherwise
+		 * ignore it.
+		 */
+		if (!mountpoint && has_uuid(cf->original_layout, data))
 			mountpoint = get_mountpoint(cf, "PARTUUID", data);
 		free(data);
 	}
