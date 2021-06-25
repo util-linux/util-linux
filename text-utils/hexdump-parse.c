@@ -98,6 +98,18 @@ void addfile(char *name, struct hexdump *hex)
 	fclose(fp);
 }
 
+static char *next_number(const char *str, int *num)
+{
+	char *end = NULL;
+
+	errno = 0;
+	*num = strtol(str, &end, 10);
+
+	if (errno || !end || end == str)
+		return NULL;
+	return end;
+}
+
 void add_fmt(const char *fmt, struct hexdump *hex)
 {
 	const char *p, *savep;
@@ -127,13 +139,11 @@ void add_fmt(const char *fmt, struct hexdump *hex)
 
 		/* If leading digit, repetition count. */
 		if (isdigit(*p)) {
-			savep = p;
-			while (isdigit(*p))
-				p++;
-			if (!isspace(*p) && *p != '/')
+			p = next_number(p, &tfu->reps);
+			if (!p || (!isspace(*p) && *p != '/'))
 				badfmt(fmt);
+
 			/* may overwrite either white space or slash */
-			tfu->reps = atoi(savep);
 			tfu->flags = F_SETREP;
 			/* skip trailing white space */
 			p = skip_space(++p);
@@ -145,12 +155,9 @@ void add_fmt(const char *fmt, struct hexdump *hex)
 
 		/* byte count */
 		if (isdigit(*p)) {
-			savep = p;
-			while (isdigit(*p))
-				p++;
-			if (!isspace(*p))
+			p = next_number(p, &tfu->bcnt);
+			if (!p || !isspace(*p))
 				badfmt(fmt);
-			tfu->bcnt = atoi(savep);
 			/* skip trailing white space */
 			p = skip_space(++p);
 		}
@@ -199,11 +206,8 @@ int block_size(struct hexdump_fs *fs)
 			 */
 			while (strchr(spec + 1, *++fmt))
 				;
-			if (*fmt == '.' && isdigit(*++fmt)) {
-				prec = atoi(fmt);
-				while (isdigit(*++fmt))
-					;
-			}
+			if (*fmt == '.' && isdigit(*++fmt))
+				fmt = next_number(fmt, &prec);
 			if (first_letter(fmt, "diouxX"))
 				bcnt += 4;
 			else if (first_letter(fmt, "efgEG"))
@@ -269,9 +273,7 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 					;
 				if (*p1 == '.' && isdigit(*++p1)) {
 					sokay = USEPREC;
-					prec = atoi(p1);
-					while (isdigit(*++p1))
-						;
+					p1 = next_number(p1, &prec);
 				} else
 					sokay = NOTOKAY;
 			}
