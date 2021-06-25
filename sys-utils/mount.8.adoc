@@ -470,8 +470,6 @@ The *context=* option is useful when mounting filesystems that do not support ex
 +
 A commonly used option for removable media is *context="system_u:object_r:removable_t*.
 +
-Two other options are *fscontext=* and *defcontext=*, both of which are mutually exclusive of the *context=* option. This means you can use fscontext and defcontext with each other, but neither can be used with context.
-+
 The *fscontext=* option works for all filesystems, regardless of their xattr support. The fscontext option sets the overarching filesystem label to a specific security context. This filesystem label is separate from the individual labels on the files. It represents the entire filesystem for certain kinds of permission checks, such as during mount or file creation. Individual file labels are still obtained from the xattrs on the files themselves. The context option actually sets the aggregate context that fscontext provides, in addition to supplying the same label for individual files.
 +
 You can set the default security context for unlabeled files using *defcontext=* option. This overrides the value set for unlabeled files in the policy and requires a filesystem that supports xattr labeling.
