@@ -597,11 +597,8 @@ static int getcount(char *cmdstr)
 	}
 	if (buf[0] == '-' && buf[1] == '\0') {
 		i = -1;
-	} else {
-		if (*buf == '+')
-			i = atoi(buf + 1);
-		else
-			i = atoi(buf);
+	} else if (ul_strtos32(*buf == '+' ? buf + 1 : buf, &i, 10) != 0) {
+		i = -1;
 	}
 	free(buf);
 	return i;
