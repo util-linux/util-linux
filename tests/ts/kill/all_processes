@@ -22,7 +22,7 @@ ts_skip_nonroot
 
 # make sure we do not use shell built-in command
 if [ "$TS_USE_SYSTEM_COMMANDS" == "yes" ]; then
-	TS_CMD_KILL="/bin/kill"
+	TS_CMD_KILL="$(which kill)"
 fi
 
 ts_check_test_command "$TS_CMD_KILL"
