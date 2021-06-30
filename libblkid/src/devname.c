@@ -366,35 +366,6 @@ exit:
 }
 #endif
 
-#define PROC_EVMS_VOLUMES "/proc/evms/volumes"
-
-static int
-evms_probe_all(blkid_cache cache, int only_if_new)
-{
-	char line[100];
-	int ma, mi, sz, num = 0;
-	FILE *procpt;
-	char device[110];
-
-	procpt = fopen(PROC_EVMS_VOLUMES, "r" UL_CLOEXECSTR);
-	if (!procpt)
-		return 0;
-	while (fgets(line, sizeof(line), procpt)) {
-		if (sscanf (line, " %d %d %d %*s %*s %[^\n ]",
-			    &ma, &mi, &sz, device) != 4)
-			continue;
-
-		DBG(DEVNAME, ul_debug("Probe EVMS partition %s (%d, %d)",
-					  device, ma, mi));
-
-		probe_one(cache, device, makedev(ma, mi), BLKID_PRI_EVMS,
-			  only_if_new, 0);
-		num++;
-	}
-	fclose(procpt);
-	return num;
-}
-
 static void
 ubi_probe_all(blkid_cache cache, int only_if_new)
 {
@@ -570,8 +541,6 @@ static int probe_all(blkid_cache cache, int only_if_new)
 		return 0;
 
 	blkid_read_cache(cache);
-
-	evms_probe_all(cache, only_if_new);
 #ifdef VG_DIR
 	lvm_probe_all(cache, only_if_new);
 #endif
