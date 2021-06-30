@@ -48,7 +48,7 @@ ts_log "testing offsets with full block size"
 run_tscmd $TS_CMD_BLKDISCARD -v $DEVICE
 if [ "$?" != "0" ]; then
 	# Skip the rest? For example loop backing files on NFS seem unsupported.
-	grep -q "BLKDISCARD ioctl failed: Operation not supported" "$TS_OUTPUT" \
+	grep -q "BLKDISCARD ioctl failed: Operation not supported" "$TS_ERRLOG" \
 		&& ts_skip "BLKDISCARD not supported"
 fi
 run_tscmd $TS_CMD_BLKDISCARD -v -o 1 $DEVICE
