@@ -541,7 +541,9 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 
 	rc = fstrim_filesystem(&ctl, path, NULL);
-	if (rc == 1 && !ctl.quiet_unsupp)
+	if (rc == 1 && ctl.quiet_unsupp)
+		rc = 0;
+	if (rc == 1)
 		warnx(_("%s: the discard operation is not supported"), path);
 
 	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
