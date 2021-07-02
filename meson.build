@@ -323,7 +323,7 @@ conf.set('CRYPTSETUP_VIA_DLOPEN', lib_cryptsetup_dl.found() ? 1 : false)
 have = cc.has_function(
   'crypt_activate_by_signed_key',
   dependencies : lib_cryptsetup)
-conf.set('HAVE_CRYPTSETUP', have ? 1 : false)
+conf.set('HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY', have ? 1 : false)
 
 lib_cap_ng = dependency(
   'libcap-ng')
