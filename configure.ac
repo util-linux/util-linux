@@ -2690,6 +2690,7 @@ AC_MSG_RESULT([
         libeconf support:          ${have_econf}
         Btrfs support:             ${have_btrfs}
         Wide-char support:         ${build_widechar}
+        libcryptsetup support:     ${have_cryptsetup}
 
         Manual pages:              ${build_asciidoc}
         Manual pages translated:   ${build_poman}
