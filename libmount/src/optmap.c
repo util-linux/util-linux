@@ -191,6 +191,7 @@ static const struct libmnt_optmap userspace_opts_map[] =
    { "verity.fecoffset=", MNT_MS_FEC_OFFSET, MNT_NOHLPS | MNT_NOMTAB },	      /* verity FEC area offset */
    { "verity.fecroots=", MNT_MS_FEC_ROOTS, MNT_NOHLPS | MNT_NOMTAB },	      /* verity FEC roots */
    { "verity.roothashsig=",    MNT_MS_ROOT_HASH_SIG, MNT_NOHLPS | MNT_NOMTAB },	/* verity device root hash signature file */
+   { "verity.oncorruption=",   MNT_MS_VERITY_ON_CORRUPTION, MNT_NOHLPS | MNT_NOMTAB },	/* verity: action the kernel takes on corruption */
 
    { NULL, 0, 0 }
 };

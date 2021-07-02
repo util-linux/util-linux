@@ -85,6 +85,7 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	int rc = 0;
 	/* Use the same default for FEC parity bytes as cryptsetup uses */
 	uint64_t offset = 0, fec_offset = 0, fec_roots = 2;
+	uint32_t crypt_activate_flags = CRYPT_ACTIVATE_READONLY;
 	struct stat hash_sig_st;
 #ifdef CRYPTSETUP_VIA_DLOPEN
 	/* To avoid linking libmount to libcryptsetup, and keep the default dependencies list down, use dlopen */
@@ -232,6 +233,28 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 		}
 	}
 
+	/*
+	 * verity.oncorruption=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_VERITY_ON_CORRUPTION) &&
+	    mnt_optstr_get_option(optstr, "verity.oncorruption", &val, &len) == 0) {
+		if (!strncmp(val, "ignore", len))
+			crypt_activate_flags |= CRYPT_ACTIVATE_IGNORE_CORRUPTION;
+		else if (!strncmp(val, "restart", len))
+			crypt_activate_flags |= CRYPT_ACTIVATE_RESTART_ON_CORRUPTION;
+		else if (!strncmp(val, "panic", len))
+			/* Added by libcryptsetup v2.3.4 - ignore on lower versions, as with other optional features */
+#ifdef CRYPT_ACTIVATE_PANIC_ON_CORRUPTION
+			crypt_activate_flags |= CRYPT_ACTIVATE_PANIC_ON_CORRUPTION;
+#else
+			DBG(VERITY, ul_debugobj(cxt, "verity.oncorruption=panic not supported by libcryptsetup, ignoring"));
+#endif
+		else {
+			DBG(VERITY, ul_debugobj(cxt, "failed to parse verity.oncorruption="));
+			rc = -MNT_ERR_MOUNTOPT;
+		}
+	}
+
 	if (!rc && root_hash && root_hash_file) {
 		DBG(VERITY, ul_debugobj(cxt, "verity.roothash and verity.roothashfile are mutually exclusive"));
 		rc = -EINVAL;
@@ -321,14 +344,14 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	if (hash_sig) {
 #ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
 		rc = (*sym_crypt_activate_by_signed_key)(crypt_dev, mapper_device, root_hash_binary, hash_size,
-				hash_sig, hash_sig_size, CRYPT_ACTIVATE_READONLY);
+				hash_sig, hash_sig_size, crypt_activate_flags);
 #else
 		rc = -EINVAL;
 		DBG(VERITY, ul_debugobj(cxt, "verity.roothashsig=%s passed but libcryptsetup does not provide crypt_activate_by_signed_key()", hash_sig));
 #endif
 	} else
 		rc = (*sym_crypt_activate_by_volume_key)(crypt_dev, mapper_device, root_hash_binary, hash_size,
-				CRYPT_ACTIVATE_READONLY);
+				crypt_activate_flags);
 	/*
 	 * If the mapper device already exists, and if libcryptsetup supports it, get the root
 	 * hash associated with the existing one and compare it with the parameter passed by
