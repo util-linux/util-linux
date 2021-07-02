@@ -364,7 +364,8 @@ static void arm_decode(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 
 	arm_ids_decode(ct);
 	arm_rXpY_decode(ct);
-	if (cxt->is_cluster)
+
+	if (!cxt->noalive && cxt->is_cluster)
 		ct->nr_socket_on_cluster = get_number_of_physical_sockets_from_dmi();
 }
 
@@ -372,8 +373,9 @@ static int is_cluster_arm(struct lscpu_cxt *cxt)
 {
 	struct stat st;
 
-	if (!(strcmp(cxt->arch->name, "aarch64")) &&
-	     (stat(_PATH_ACPI_PPTT, &st) < 0) && (cxt->ncputypes == 1))
+	if (!cxt->noalive
+	    && strcmp(cxt->arch->name, "aarch64") == 0
+	    && stat(_PATH_ACPI_PPTT, &st) < 0 && cxt->ncputypes == 1)
 		return 1;
 	else
 		return 0;
