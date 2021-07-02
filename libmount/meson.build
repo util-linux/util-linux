@@ -81,7 +81,7 @@ lib_mount = library(
   link_with : [lib_common,
                lib_blkid],
   dependencies : [lib_selinux,
-                  lib_cryptsetup,
+                  get_option('cryptsetup-dlopen').enabled() ? lib_dl : lib_cryptsetup,
                   realtime_libs],
   install : build_libmount)
 
