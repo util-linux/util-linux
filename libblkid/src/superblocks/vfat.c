@@ -43,7 +43,9 @@ struct vfat_super_block {
 /* 30*/	uint16_t	vs_fsinfo_sector;
 /* 32*/	uint16_t	vs_backup_boot;
 /* 34*/	uint16_t	vs_reserved2[6];
-/* 40*/	unsigned char	vs_unknown[3];
+/* 40*/	unsigned char	vs_drive_number;
+/* 41*/	unsigned char	vs_boot_flags;
+/* 42*/	unsigned char	vs_ext_boot_sign; /* 0x28 - without vs_label/vs_magic; 0x29 - with */
 /* 43*/	unsigned char	vs_serno[4];
 /* 47*/	unsigned char	vs_label[11];
 /* 52*/	unsigned char   vs_magic[8];
@@ -387,7 +389,9 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 
 		version = "FAT32";
 
-		boot_label = vs->vs_label;
+		if (vs->vs_ext_boot_sign == 0x29)
+			boot_label = vs->vs_label;
+
 		vol_serno = vs->vs_serno;
 
 		/*
