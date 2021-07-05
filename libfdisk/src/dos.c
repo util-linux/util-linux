@@ -846,6 +846,8 @@ static int dos_probe_label(struct fdisk_context *cxt)
 	if (h && s) {
 		cxt->geom.heads = h;
 	        cxt->geom.sectors = s;
+		cxt->geom.cylinders = cxt->total_sectors /
+					(cxt->geom.heads * cxt->geom.sectors);
 
 		if (fdisk_has_user_device_geometry(cxt))
 			fdisk_apply_user_device_properties(cxt);
