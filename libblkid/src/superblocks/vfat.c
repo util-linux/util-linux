@@ -53,6 +53,7 @@ struct vfat_super_block {
 
 /* Yucky misaligned values */
 struct msdos_super_block {
+/* DOS 2.0 BPB */
 /* 00*/	unsigned char	ms_ignored[3];
 /* 03*/	unsigned char	ms_sysid[8];
 /* 0b*/	unsigned char	ms_sector_size[2];
@@ -63,16 +64,21 @@ struct msdos_super_block {
 /* 13*/	unsigned char	ms_sectors[2]; /* =0 iff V3 or later */
 /* 15*/	unsigned char	ms_media;
 /* 16*/	uint16_t	ms_fat_length; /* Sectors per FAT */
+/* DOS 3.0 BPB */
 /* 18*/	uint16_t	ms_secs_track;
 /* 1a*/	uint16_t	ms_heads;
 /* 1c*/	uint32_t	ms_hidden;
-/* V3 BPB */
+/* DOS 3.31 BPB */
 /* 20*/	uint32_t	ms_total_sect; /* iff ms_sectors == 0 */
-/* V4 BPB */
-/* 24*/	unsigned char	ms_unknown[3]; /* Phys drive no., resvd, V4 sig (0x29) */
+/* DOS 3.4 EBPB */
+/* 24*/	unsigned char	ms_drive_number;
+/* 25*/	unsigned char	ms_boot_flags;
+/* 26*/	unsigned char	ms_ext_boot_sign; /* 0x28 - DOS 3.4 EBPB; 0x29 - DOS 4.0 EBPB */
 /* 27*/	unsigned char	ms_serno[4];
+/* DOS 4.0 EBPB */
 /* 2b*/	unsigned char	ms_label[11];
 /* 36*/	unsigned char   ms_magic[8];
+/* padding */
 /* 3e*/	unsigned char	ms_dummy2[0x1fe - 0x3e];
 /*1fe*/	unsigned char	ms_pmagic[2];
 } __attribute__((packed));
@@ -324,8 +330,11 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			vol_label = vol_label_buf;
 		}
 
-		boot_label = ms->ms_label;
-		vol_serno = ms->ms_serno;
+		if (ms->ms_ext_boot_sign == 0x29)
+			boot_label = ms->ms_label;
+
+		if (ms->ms_ext_boot_sign == 0x28 || ms->ms_ext_boot_sign == 0x29)
+			vol_serno = ms->ms_serno;
 
 		blkid_probe_set_value(pr, "SEC_TYPE", (unsigned char *) "msdos",
                               sizeof("msdos"));
