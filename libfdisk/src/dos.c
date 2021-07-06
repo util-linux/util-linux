@@ -926,10 +926,10 @@ static void set_partition(struct fdisk_context *cxt,
 	dos_partition_set_start(p, start - offset);
 	dos_partition_set_size(p, stop - start + 1);
 
-	if (is_dos_compatible(cxt) && (start/(cxt->geom.sectors*cxt->geom.heads) > 1023))
+	if (start/(cxt->geom.sectors*cxt->geom.heads) > 1023)
 		start = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
 	set_hsc(p->bh, p->bs, p->bc, start);
-	if (is_dos_compatible(cxt) && (stop/(cxt->geom.sectors*cxt->geom.heads) > 1023))
+	if (stop/(cxt->geom.sectors*cxt->geom.heads) > 1023)
 		stop = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
 	set_hsc(p->eh, p->es, p->ec, stop);
 	partition_set_changed(cxt, i, 1);
