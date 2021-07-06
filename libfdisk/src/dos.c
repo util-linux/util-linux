@@ -1532,7 +1532,7 @@ static int check(struct fdisk_context *cxt, size_t n,
 				(uintmax_t) cxt->geom.cylinders);
 		nerrors++;
 	}
-	if (cxt->geom.cylinders <= 1024 && lba_sector != chs_sector) {
+	if (lba_sector / (cxt->geom.heads * cxt->geom.sectors) < 1024 && lba_sector != chs_sector) {
 		fdisk_warnx(cxt, _("Partition %zu: LBA sector %u "
 				   "disagrees with C/H/S calculated sector %u"),
 				n, lba_sector, chs_sector);
