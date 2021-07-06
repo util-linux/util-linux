@@ -1574,14 +1574,14 @@ static int check_consistency(struct fdisk_context *cxt, struct dos_partition *p,
 		return 0;		/* do not check extended partitions */
 
 	/* physical beginning c, h, s */
-	pbc = (p->bc & 0xff) | ((p->bs << 2) & 0x300);
+	pbc = cylinder(p->bs, p->bc);
 	pbh = p->bh;
-	pbs = p->bs & 0x3f;
+	pbs = sector(p->bs);
 
 	/* physical ending c, h, s */
-	pec = (p->ec & 0xff) | ((p->es << 2) & 0x300);
+	pec = cylinder(p->es, p->ec);
 	peh = p->eh;
-	pes = p->es & 0x3f;
+	pes = sector(p->es);
 
 	/* compute logical beginning (c, h, s) */
 	long2chs(cxt, dos_partition_get_start(p), &lbc, &lbh, &lbs);
