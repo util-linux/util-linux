@@ -1558,19 +1558,20 @@ long2chs(struct fdisk_context *cxt, unsigned long ls,
 	*s = ls % cxt->geom.sectors + 1;	/* sectors count from 1 */
 }
 
-static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p,
+static int check_consistency(struct fdisk_context *cxt, struct dos_partition *p,
 			      size_t partition)
 {
 	unsigned int pbc, pbh, pbs;	/* physical beginning c, h, s */
 	unsigned int pec, peh, pes;	/* physical ending c, h, s */
 	unsigned int lbc, lbh, lbs;	/* logical beginning c, h, s */
 	unsigned int lec, leh, les;	/* logical ending c, h, s */
+	int nerrors = 0;
 
 	if (!is_dos_compatible(cxt))
-		return;
+		return 0;
 
 	if (!cxt->geom.heads || !cxt->geom.sectors || (partition >= 4))
-		return;		/* do not check extended partitions */
+		return 0;		/* do not check extended partitions */
 
 	/* physical beginning c, h, s */
 	pbc = (p->bc & 0xff) | ((p->bs << 2) & 0x300);
@@ -1597,6 +1598,7 @@ static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p
 			partition + 1,
 			pbc, pbh, pbs,
 			lbc, lbh, lbs);
+		nerrors++;
 	}
 
 	/* Same physical / logical ending? */
@@ -1607,6 +1609,7 @@ static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p
 			partition + 1,
 			pec, peh, pes,
 			lec, leh, les);
+		nerrors++;
 	}
 
 	/* Ending on cylinder boundary? */
@@ -1614,7 +1617,10 @@ static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p
 		fdisk_warnx(cxt, _("Partition %zu: does not end on "
 				   "cylinder boundary."),
 			partition + 1);
+		nerrors++;
 	}
+
+	return nerrors;
 }
 
 static void fill_bounds(struct fdisk_context *cxt,
@@ -1655,7 +1661,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 
 		p = self_partition(cxt, i);
 		if (p && is_used_partition(p) && !IS_EXTENDED(p->sys_ind)) {
-			check_consistency(cxt, p, i);
+			nerrors += check_consistency(cxt, p, i);
 			assert(pe);
 			if (get_abs_partition_start(pe) < first[i]) {
 				fdisk_warnx(cxt, _(
