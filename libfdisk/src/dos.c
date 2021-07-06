@@ -1516,7 +1516,7 @@ static void check(struct fdisk_context *cxt, size_t n,
 				   "maximum %d"), n, h + 1, cxt->geom.heads);
 	if (real_s >= cxt->geom.sectors)
 		fdisk_warnx(cxt, _("Partition %zu: sector %d greater than "
-				   "maximum %ju"), n, s,
+				   "maximum %ju"), n, real_s + 1,
 				(uintmax_t) cxt->geom.sectors);
 	if (real_c >= cxt->geom.cylinders)
 		fdisk_warnx(cxt, _("Partition %zu: cylinder %d greater than "
