@@ -2442,10 +2442,8 @@ static int dos_reorder(struct fdisk_context *cxt)
 	struct pte *pei, *pek;
 	size_t i,k;
 
-	if (!wrong_p_order(cxt, NULL)) {
-		fdisk_info(cxt, _("Nothing to do. Ordering is correct already."));
+	if (!wrong_p_order(cxt, NULL))
 		return 1;
-	}
 
 	while ((i = wrong_p_order(cxt, &k)) != 0 && i < 4) {
 		/* partition i should have come earlier, move it */
