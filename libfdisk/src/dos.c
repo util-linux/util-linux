@@ -1496,38 +1496,50 @@ static int add_logical(struct fdisk_context *cxt,
 	return rc;
 }
 
-static void check(struct fdisk_context *cxt, size_t n,
+static int check(struct fdisk_context *cxt, size_t n,
 	   unsigned int h, unsigned int s, unsigned int c,
 	   unsigned int lba_sector)
 {
 	unsigned int chs_sector, real_s, real_c;
+	int nerrors = 0;
 
 	if (!is_dos_compatible(cxt))
-		return;
+		return 0;
 
 	real_s = sector(s) - 1;
 	real_c = cylinder(s, c);
 	chs_sector = (real_c * cxt->geom.heads + h) * cxt->geom.sectors + real_s;
 
-	if (!chs_sector)
+	if (!chs_sector) {
 		fdisk_warnx(cxt, _("Partition %zu: contains sector 0"), n);
-	if (h >= cxt->geom.heads)
+		nerrors++;
+	}
+	if (h >= cxt->geom.heads) {
 		fdisk_warnx(cxt, _("Partition %zu: head %d greater than "
 				   "maximum %d"), n, h + 1, cxt->geom.heads);
-	if (real_s >= cxt->geom.sectors)
+		nerrors++;
+	}
+	if (real_s >= cxt->geom.sectors) {
 		fdisk_warnx(cxt, _("Partition %zu: sector %d greater than "
 				   "maximum %ju"), n, real_s + 1,
 				(uintmax_t) cxt->geom.sectors);
-	if (real_c >= cxt->geom.cylinders)
+		nerrors++;
+	}
+	if (real_c >= cxt->geom.cylinders) {
 		fdisk_warnx(cxt, _("Partition %zu: cylinder %d greater than "
 				   "maximum %ju"),
 				n, real_c + 1,
 				(uintmax_t) cxt->geom.cylinders);
-
-	if (cxt->geom.cylinders <= 1024 && lba_sector != chs_sector)
+		nerrors++;
+	}
+	if (cxt->geom.cylinders <= 1024 && lba_sector != chs_sector) {
 		fdisk_warnx(cxt, _("Partition %zu: LBA sector %u "
 				   "disagrees with C/H/S calculated sector %u"),
 				n, lba_sector, chs_sector);
+		nerrors++;
+	}
+
+	return nerrors;
 }
 
 /* check_consistency() and long2chs() added Sat Mar 6 12:28:16 1993,
@@ -1652,7 +1664,8 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 				nerrors++;
 			}
 
-			check(cxt, i + 1, p->eh, p->es, p->ec, last[i]);
+			nerrors += check(cxt, i + 1, p->bh, p->bs, p->bc, first[i]);
+			nerrors += check(cxt, i + 1, p->eh, p->es, p->ec, last[i]);
 			total += last[i] + 1 - first[i];
 
 			if (i == 0)
