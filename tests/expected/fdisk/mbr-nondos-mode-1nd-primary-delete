@@ -9,10 +9,10 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start   End Sectors Size Id Type
-<removed>3      12288 40959   28672  14M  5 Extended
-<removed>5      26624 30719    4096   2M 83 Linux
-<removed>6      14336 18431    4096   2M 83 Linux
+Device     Boot Start   End Sectors Id Type     Start-C/H/S End-C/H/S Attrs
+<removed>3      12288 40959   28672  5 Extended     0/195/4  2/140/10 
+<removed>5      26624 30719    4096 83 Linux       1/167/39  1/232/39 
+<removed>6      14336 18431    4096 83 Linux       0/227/36   1/37/36 
 
 Partition table entries are not in disk order.
 -------------------

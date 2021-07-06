@@ -9,7 +9,7 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start   End Sectors Size Id Type
-<removed>1 *     2048  8191    6144   3M 83 Linux
+Device     Boot Start   End Sectors Id Type  Start-C/H/S End-C/H/S Attrs
+<removed>1 *     2048  8191    6144 83 Linux     0/32/33   0/130/2    80
 -------------------
 
