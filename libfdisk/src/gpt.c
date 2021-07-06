@@ -3097,10 +3097,8 @@ static int gpt_reorder(struct fdisk_context *cxt)
 				(const void *) gpt_get_entry(gpt, i),
 				(const void *) gpt_get_entry(gpt, i + 1)) > 0;
 
-	if (!mess) {
-		fdisk_info(cxt, _("Nothing to do. Ordering is correct already."));
+	if (!mess)
 		return 1;
-	}
 
 	qsort(gpt->ents, nparts, sizeof(struct gpt_entry),
 			gpt_entry_cmp_start);
