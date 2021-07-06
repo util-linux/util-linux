@@ -1590,7 +1590,7 @@ static int check_consistency(struct fdisk_context *cxt, struct dos_partition *p,
 	long2chs(cxt, dos_partition_get_start(p) + dos_partition_get_size(p) - 1, &lec, &leh, &les);
 
 	/* Same physical / logical beginning? */
-	if (cxt->geom.cylinders <= 1024
+	if (lbc < 1024
 	    && (pbc != lbc || pbh != lbh || pbs != lbs)) {
 		fdisk_warnx(cxt, _("Partition %zu: different physical/logical "
 			"beginnings (non-Linux?): "
@@ -1602,7 +1602,7 @@ static int check_consistency(struct fdisk_context *cxt, struct dos_partition *p,
 	}
 
 	/* Same physical / logical ending? */
-	if (cxt->geom.cylinders <= 1024
+	if (lec < 1024
 	    && (pec != lec || peh != leh || pes != les)) {
 		fdisk_warnx(cxt, _("Partition %zu: different physical/logical "
 			"endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"),
