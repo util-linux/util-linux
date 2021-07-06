@@ -1498,18 +1498,18 @@ static int add_logical(struct fdisk_context *cxt,
 
 static void check(struct fdisk_context *cxt, size_t n,
 	   unsigned int h, unsigned int s, unsigned int c,
-	   unsigned int start)
+	   unsigned int lba_sector)
 {
-	unsigned int total, real_s, real_c;
+	unsigned int chs_sector, real_s, real_c;
 
 	if (!is_dos_compatible(cxt))
 		return;
 
 	real_s = sector(s) - 1;
 	real_c = cylinder(s, c);
-	total = (real_c * cxt->geom.heads + h) * cxt->geom.sectors + real_s;
+	chs_sector = (real_c * cxt->geom.heads + h) * cxt->geom.sectors + real_s;
 
-	if (!total)
+	if (!chs_sector)
 		fdisk_warnx(cxt, _("Partition %zu: contains sector 0"), n);
 	if (h >= cxt->geom.heads)
 		fdisk_warnx(cxt, _("Partition %zu: head %d greater than "
@@ -1524,9 +1524,10 @@ static void check(struct fdisk_context *cxt, size_t n,
 				n, real_c + 1,
 				(uintmax_t) cxt->geom.cylinders);
 
-	if (cxt->geom.cylinders <= 1024 && start != total)
-		fdisk_warnx(cxt, _("Partition %zu: previous sectors %u "
-				   "disagrees with total %u"), n, start, total);
+	if (cxt->geom.cylinders <= 1024 && lba_sector != chs_sector)
+		fdisk_warnx(cxt, _("Partition %zu: LBA sector %u "
+				   "disagrees with C/H/S calculated sector %u"),
+				n, lba_sector, chs_sector);
 }
 
 /* check_consistency() and long2chs() added Sat Mar 6 12:28:16 1993,
