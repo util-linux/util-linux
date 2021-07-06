@@ -2,6 +2,7 @@
  *
  * Copyright (C) 2007-2013 Karel Zak <kzak@redhat.com>
  *                    2012 Davidlohr Bueso <dave@gnu.org>
+ *                    2021 Pali Rohár <pali.rohar@gmail.com>
  *
  * This is re-written version for libfdisk, the original was fdiskdoslabel.c
  * from util-linux fdisk.
@@ -764,31 +765,129 @@ static int dos_set_disklabel_id(struct fdisk_context *cxt, const char *str)
 	return 0;
 }
 
+static unsigned int chs_div_minus(unsigned int a1, unsigned int a2, unsigned int b1, unsigned int b2)
+{
+	if (a1 > a2 && b1 > b2) {
+		a1 = a1 - a2;
+		b1 = b1 - b2;
+	} else if (a2 > a1 && b2 > b1) {
+		a1 = a2 - a1;
+		b1 = b2 - b1;
+	} else {
+		return 0;
+	}
+	if (a1 % b1)
+		return 0;
+	return a1 / b1;
+}
+
+static inline int chs_overflowed(unsigned int c, unsigned int h, unsigned int s)
+{
+	/* 1023/254/63 or 1023/255/63 indicates overflowed/invalid C/H/S values */
+	return (c == 1023 && (h == 254 || h == 255) && s == 63);
+}
+
+static inline int lba_overflowed(unsigned int start, unsigned int sects)
+{
+	/* Check if the last LBA sector can be represented by unsigned int */
+	return (start + (sects-1) < start);
+}
+
 static void get_partition_table_geometry(struct fdisk_context *cxt,
 			unsigned int *ph, unsigned int *ps)
 {
 	unsigned char *bufp = cxt->firstsector;
+	struct { unsigned int c, h, o, v; } t[8];
+	unsigned int n1, n2, n3, n4, n5, n6;
 	struct dos_partition *p;
-	int i, h, s, hh, ss;
-	int first = 1;
-	int bad = 0;
+	unsigned int c, h, s, l;
+	unsigned int hh, ss;
+	unsigned int sects;
+	int i, j, dif;
+
+#define chs_set_t(c, h, s, l, t, i) do { \
+	t[i].c = c; \
+	t[i].h = h; \
+	t[i].o = l - (s-1); \
+	t[i].v = (!chs_overflowed(c, h, s) && s && s-1 <= l); \
+} while (0)
+
+	/*
+	 * Conversion from C/H/S to LBA is defined by formula:
+	 *   LBA = (c * N_heads + h) * N_sectors + (s - 1)
+	 * Let o to be:
+	 *   o = LBA - (s - 1)
+	 * Then formula can be expressed as:
+	 *   o = (c * N_heads + h) * N_sectors
+	 * In general from two tuples (LBA1, c1, h1, s1), (LBA2, c2, h2, s2)
+	 * we can derive formulas for N_heads and N_sectors:
+	 *   N_heads = (o1 * h2 - o2 * h1) / (o2 * c1 - o1 * c2)
+	 *   N_sectors = (o2 * c1 - o1 * c2) / (c1 * h2 - c2 * h1)
+	 * MBR table contains for very partition start and end tuple.
+	 * So we have up to 8 tuples which leads to up to 28 equations
+	 * for calculating N_heads and N_sectors. Try to calculate
+	 * N_heads and N_sectors from the first possible partition and
+	 * if it fails then try also mixed tuples (beginning from first
+	 * partition and end from second). Calculation may fail if both
+	 * first and last sectors are on cylinder or head boundary
+	 * (dividend or divisor is zero). It is possible that different
+	 * partitions would have different C/H/S geometry. In this case
+	 * we want geometry from the first partition as in most cases
+	 * this partition is or was used by BIOS for booting.
+	 */
 
 	hh = ss = 0;
 	for (i = 0; i < 4; i++) {
 		p = mbr_get_partition(bufp, i);
-		if (p->sys_ind != 0) {
-			h = p->eh + 1;
-			s = (p->es & 077);
-			if (first) {
-				hh = h;
-				ss = s;
-				first = 0;
-			} else if (hh != h || ss != s)
-				bad = 1;
-		}
+		if (!p->sys_ind)
+			continue;
+
+		c = cylinder(p->bs, p->bc);
+		h = p->bh;
+		s = sector(p->bs);
+		l = dos_partition_get_start(p);
+		chs_set_t(c, h, s, l, t, 2*i);
+
+		sects = dos_partition_get_size(p);
+		if (!sects || lba_overflowed(l, sects))
+			continue;
+
+		c = cylinder(p->es, p->ec);
+		h = p->eh;
+		s = sector(p->es);
+		l += sects-1;
+		chs_set_t(c, h, s, l, t, 2*i+1);
 	}
 
-	if (!first && !bad) {
+	for (dif = 1; dif < 8; dif++) {
+		for (i = 0; i + dif < 8; i++) {
+			j = i + dif;
+			if (!t[i].v || !t[j].v)
+				continue;
+			n1 = t[i].o * t[j].h;
+			n2 = t[j].o * t[i].h;
+			n3 = t[j].o * t[i].c;
+			n4 = t[i].o * t[j].c;
+			n5 = t[i].c * t[j].h;
+			n6 = t[j].c * t[i].h;
+			if (!hh && n1 != n2 && n3 != n4) {
+				h = chs_div_minus(n1, n2, n3, n4);
+				if (h > 0 && h <= 256)
+					hh = h;
+			}
+			if (!ss && n3 != n4 && n5 != n6) {
+				s = chs_div_minus(n3, n4, n5, n6);
+				if (s > 0 && s <= 63)
+					ss = s;
+			}
+			if (hh && ss)
+				break;
+		}
+		if (hh && ss)
+			break;
+	}
+
+	if (hh && ss) {
 		*ph = hh;
 		*ps = ss;
 	}
