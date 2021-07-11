@@ -78,7 +78,8 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	const char *backing_file, *optstr;
 	char *val = NULL, *key = NULL, *root_hash_binary = NULL, *mapper_device = NULL,
 		*mapper_device_full = NULL, *backing_file_basename = NULL, *root_hash = NULL,
-		*hash_device = NULL, *root_hash_file = NULL, *fec_device = NULL, *hash_sig = NULL;
+		*hash_device = NULL, *root_hash_file = NULL, *fec_device = NULL, *hash_sig = NULL,
+		*root_hash_sig_file = NULL;
 	size_t len, hash_size, hash_sig_size = 0, keysize = 0;
 	struct crypt_params_verity crypt_params = {};
 	struct crypt_device *crypt_dev = NULL;
@@ -219,7 +220,10 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	 */
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ROOT_HASH_SIG) &&
 	    mnt_optstr_get_option(optstr, "verity.roothashsig", &val, &len) == 0 && val) {
-		rc = ul_path_stat(NULL, &hash_sig_st, val);
+		root_hash_sig_file = strndup(val, len);
+		rc = root_hash_sig_file ? 0 : -ENOMEM;
+		if (rc == 0)
+			rc = ul_path_stat(NULL, &hash_sig_st, root_hash_sig_file);
 		if (rc == 0)
 			rc = !S_ISREG(hash_sig_st.st_mode) || !hash_sig_st.st_size ? -EINVAL : 0;
 		if (rc == 0) {
@@ -228,7 +232,7 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 			rc = hash_sig ? 0 : -ENOMEM;
 		}
 		if (rc == 0) {
-			rc = ul_path_read(NULL, hash_sig, hash_sig_size, val);
+			rc = ul_path_read(NULL, hash_sig, hash_sig_size, root_hash_sig_file);
 			rc = rc < (int)hash_sig_size ? -1 : 0;
 		}
 	}
@@ -434,6 +438,7 @@ done:
 	free(hash_device);
 	free(root_hash);
 	free(root_hash_file);
+	free(root_hash_sig_file);
 	free(fec_device);
 	free(hash_sig);
 	free(key);
