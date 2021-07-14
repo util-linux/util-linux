@@ -60,13 +60,15 @@ function deinit_device {
 	ts_scsi_debug_rmmod
 }
 
-# As the eject binary execl()s an uninstrumented /bin/umount binary, we need
-# to explicitly $LD_PRELOAD the ASan's runtime DSO, otherwise ASan will complain.
-# Since all three utilities used by this test (eject, fdisk, mount) are just
-# libtool wrappers, let's check the kill binary instead, which should have
-# the needed DSO information.
-ASAN_RT_PATH="$(ts_get_asan_rt_path "$TS_CMD_KILL")"
-[ -n "$ASAN_RT_PATH" ] && export LD_PRELOAD="$ASAN_RT_PATH:$LD_PRELOAD"
+if [ "$TS_USE_SYSTEM_COMMANDS" != "yes" ]; then
+	# As the eject binary execl()s an uninstrumented /bin/umount binary, we need
+	# to explicitly $LD_PRELOAD the ASan's runtime DSO, otherwise ASan will complain.
+	# Since all three utilities used by this test (eject, fdisk, mount) are just
+	# libtool wrappers, let's check the kill binary instead, which should have
+	# the needed DSO information.
+	ASAN_RT_PATH="$(ts_get_asan_rt_path "$TS_CMD_KILL")"
+	[ -n "$ASAN_RT_PATH" ] && export LD_PRELOAD="$ASAN_RT_PATH:$LD_PRELOAD"
+fi
 
 ts_init_subtest "by-disk"
 init_device
