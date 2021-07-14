@@ -82,9 +82,9 @@ static inline struct dirent *xreaddir(DIR *dp)
 # if defined(SYS_close_range)
 #  include <sys/types.h>
 #  ifndef HAVE_CLOSE_RANGE
-static inline int close_range(unsigned int first, unsigned int last)
+static inline int close_range(unsigned int first, unsigned int last, int flags)
 {
-	return syscall(SYS_close_range, first, last);
+	return syscall(SYS_close_range, first, last, flags);
 }
 #  endif
 #  define HAVE_CLOSE_RANGE 1
