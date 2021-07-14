@@ -1461,14 +1461,6 @@ UL_REQUIRES_HAVE([setpriv], [linux_capability_h], [linux/capability.h header fil
 UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng library])
 AM_CONDITIONAL([BUILD_SETPRIV], [test "x$build_setpriv" = xyes])
 
-PKG_CHECK_MODULES([PCRE2_POSIX], [libpcre2-posix],
-		  [have_pcre2_posix=yes],
-		  [have_pcre2_posix=no])
-AS_IF([test "x$have_pcre2_posix" = xyes ], [
-    AC_DEFINE([HAVE_PCRE2_POSIX], [1], [Define if libpcre2-posix is available])
-])
-AM_CONDITIONAL([HAVE_PCRE2_POSIX], [test "x$have_pcre2_posix" = xyes])
-
 AC_ARG_ENABLE([hardlink],
   AS_HELP_STRING([--disable-hardlink], [do not build hardlink]),
   [], [UL_DEFAULT_ENABLE([hardlink], [check])]

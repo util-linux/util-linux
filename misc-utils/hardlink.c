@@ -44,14 +44,7 @@
 #include "monotonic.h"
 #include "optutils.h"
 
-/* Use libpcre2posix if it's available */
-#ifdef HAVE_PCRE2_POSIX
-# include <pcre2posix.h>
-# undef REG_NOSUB
-# define REG_NOSUB 0		/* we do want backreferences in PCRE mode */
-#else
-# include <regex.h>		/* regcomp(), regsearch() */
-#endif
+#include <regex.h>		/* regcomp(), regsearch() */
 
 #ifdef HAVE_SYS_XATTR_H
 # include <sys/xattr.h>		/* listxattr, getxattr */

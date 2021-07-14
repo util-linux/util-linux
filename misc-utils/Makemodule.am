@@ -244,8 +244,4 @@ dist_noinst_DATA += misc-utils/hardlink.1.adoc
 hardlink_SOURCES = misc-utils/hardlink.c lib/monotonic.c
 hardlink_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
 hardlink_CFLAGS = $(AM_CFLAGS)
-if HAVE_PCRE2_POSIX
-hardlink_LDADD += $(PCRE2_POSIX_LIBS)
-hardlink_CFLAGS += $(PCRE2_POSIX_CFLAGS)
-endif
 endif
