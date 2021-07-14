@@ -31,6 +31,7 @@ Partition table entries are not in disk order.
 The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Syncing disks.
+Partitions order fixed.
 
 The partition table has been altered.
 Calling ioctl() to re-read partition table.
