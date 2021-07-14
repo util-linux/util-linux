@@ -315,15 +315,24 @@ lib_cryptsetup = dependency(
   required : get_option('cryptsetup'))
 conf.set('HAVE_CRYPTSETUP', lib_cryptsetup.found() ? 1 : false)
 
-lib_cryptsetup_dl = dependency(
-  'dl',
-  required : get_option('cryptsetup-dlopen'))
-conf.set('CRYPTSETUP_VIA_DLOPEN', lib_cryptsetup_dl.found() ? 1 : false)
+if not get_option('cryptsetup').disabled() and get_option('cryptsetup-dlopen').enabled()
+  lib_dl = cc.find_library(
+    'libdl',
+    required : true)
+  conf.set('CRYPTSETUP_VIA_DLOPEN', 1)
+  summary('cryptsetup support (dlopen)',
+          'enabled',
+          section : 'components')
+else
+  summary('cryptsetup support',
+          lib_cryptsetup.found()  ? 'enabled' : 'disabled',
+          section : 'components')
+endif
 
 have = cc.has_function(
   'crypt_activate_by_signed_key',
   dependencies : lib_cryptsetup)
-conf.set('HAVE_CRYPTSETUP', have ? 1 : false)
+conf.set('HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY', have ? 1 : false)
 
 lib_cap_ng = dependency(
   'libcap-ng')
