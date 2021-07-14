@@ -264,11 +264,6 @@ lib_readline_static = dependency(
   static : true,
   required : need_static_libs ? get_option('readline') : disabler())
 
-lib_pcre = dependency(
-  'libpcre2-posix',
-  required : get_option('libpcre2-posix'))
-conf.set('HAVE_PCRE2_POSIX', lib_pcre.found() ? 1 : false)
-
 lib_user = dependency(
   'libuser',
   version : '>= 0.58',
@@ -2541,7 +2536,6 @@ exe = executable(
   hardlink_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [lib_pcre],
   install_dir : usrbin_exec_dir,
   install : true)
 if not is_disabler(exe)
