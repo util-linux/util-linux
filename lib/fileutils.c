@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 		ignore_result( dup(STDIN_FILENO) );
 
 # ifdef HAVE_CLOSE_RANGE
-		close_range(STDERR_FILENO + 1, ~0U);
+		close_range(STDERR_FILENO + 1, ~0U, 0);
 # else
 		ul_close_all_fds(STDERR_FILENO + 1, ~0U);
 # endif
