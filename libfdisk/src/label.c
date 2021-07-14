@@ -583,12 +583,28 @@ int fdisk_toggle_partition_flag(struct fdisk_context *cxt,
  */
 int fdisk_reorder_partitions(struct fdisk_context *cxt)
 {
+	int rc;
+
 	if (!cxt || !cxt->label)
 		return -EINVAL;
 	if (!cxt->label->op->reorder)
 		return -ENOSYS;
 
-	return cxt->label->op->reorder(cxt);
+	rc = cxt->label->op->reorder(cxt);
+
+	switch (rc) {
+	case 0:
+		fdisk_info(cxt, _("Partitions order fixed."));
+		break;
+	case 1:
+		fdisk_info(cxt, _("Nothing to do. Ordering is correct already."));
+		break;
+	default:
+		fdisk_warnx(cxt, _("Failed to fix partitions order."));
+		break;
+	}
+
+	return rc;
 }
 
 /*
