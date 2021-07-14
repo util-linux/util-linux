@@ -78,13 +78,15 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	const char *backing_file, *optstr;
 	char *val = NULL, *key = NULL, *root_hash_binary = NULL, *mapper_device = NULL,
 		*mapper_device_full = NULL, *backing_file_basename = NULL, *root_hash = NULL,
-		*hash_device = NULL, *root_hash_file = NULL, *fec_device = NULL, *hash_sig = NULL;
+		*hash_device = NULL, *root_hash_file = NULL, *fec_device = NULL, *hash_sig = NULL,
+		*root_hash_sig_file = NULL;
 	size_t len, hash_size, hash_sig_size = 0, keysize = 0;
 	struct crypt_params_verity crypt_params = {};
 	struct crypt_device *crypt_dev = NULL;
 	int rc = 0;
 	/* Use the same default for FEC parity bytes as cryptsetup uses */
 	uint64_t offset = 0, fec_offset = 0, fec_roots = 2;
+	uint32_t crypt_activate_flags = CRYPT_ACTIVATE_READONLY;
 	struct stat hash_sig_st;
 #ifdef CRYPTSETUP_VIA_DLOPEN
 	/* To avoid linking libmount to libcryptsetup, and keep the default dependencies list down, use dlopen */
@@ -218,7 +220,10 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	 */
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ROOT_HASH_SIG) &&
 	    mnt_optstr_get_option(optstr, "verity.roothashsig", &val, &len) == 0 && val) {
-		rc = ul_path_stat(NULL, &hash_sig_st, val);
+		root_hash_sig_file = strndup(val, len);
+		rc = root_hash_sig_file ? 0 : -ENOMEM;
+		if (rc == 0)
+			rc = ul_path_stat(NULL, &hash_sig_st, root_hash_sig_file);
 		if (rc == 0)
 			rc = !S_ISREG(hash_sig_st.st_mode) || !hash_sig_st.st_size ? -EINVAL : 0;
 		if (rc == 0) {
@@ -227,8 +232,30 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 			rc = hash_sig ? 0 : -ENOMEM;
 		}
 		if (rc == 0) {
-			rc = ul_path_read(NULL, hash_sig, hash_sig_size, val);
+			rc = ul_path_read(NULL, hash_sig, hash_sig_size, root_hash_sig_file);
 			rc = rc < (int)hash_sig_size ? -1 : 0;
+		}
+	}
+
+	/*
+	 * verity.oncorruption=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_VERITY_ON_CORRUPTION) &&
+	    mnt_optstr_get_option(optstr, "verity.oncorruption", &val, &len) == 0) {
+		if (!strncmp(val, "ignore", len))
+			crypt_activate_flags |= CRYPT_ACTIVATE_IGNORE_CORRUPTION;
+		else if (!strncmp(val, "restart", len))
+			crypt_activate_flags |= CRYPT_ACTIVATE_RESTART_ON_CORRUPTION;
+		else if (!strncmp(val, "panic", len))
+			/* Added by libcryptsetup v2.3.4 - ignore on lower versions, as with other optional features */
+#ifdef CRYPT_ACTIVATE_PANIC_ON_CORRUPTION
+			crypt_activate_flags |= CRYPT_ACTIVATE_PANIC_ON_CORRUPTION;
+#else
+			DBG(VERITY, ul_debugobj(cxt, "verity.oncorruption=panic not supported by libcryptsetup, ignoring"));
+#endif
+		else {
+			DBG(VERITY, ul_debugobj(cxt, "failed to parse verity.oncorruption="));
+			rc = -MNT_ERR_MOUNTOPT;
 		}
 	}
 
@@ -321,14 +348,14 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	if (hash_sig) {
 #ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
 		rc = (*sym_crypt_activate_by_signed_key)(crypt_dev, mapper_device, root_hash_binary, hash_size,
-				hash_sig, hash_sig_size, CRYPT_ACTIVATE_READONLY);
+				hash_sig, hash_sig_size, crypt_activate_flags);
 #else
 		rc = -EINVAL;
 		DBG(VERITY, ul_debugobj(cxt, "verity.roothashsig=%s passed but libcryptsetup does not provide crypt_activate_by_signed_key()", hash_sig));
 #endif
 	} else
 		rc = (*sym_crypt_activate_by_volume_key)(crypt_dev, mapper_device, root_hash_binary, hash_size,
-				CRYPT_ACTIVATE_READONLY);
+				crypt_activate_flags);
 	/*
 	 * If the mapper device already exists, and if libcryptsetup supports it, get the root
 	 * hash associated with the existing one and compare it with the parameter passed by
@@ -411,6 +438,7 @@ done:
 	free(hash_device);
 	free(root_hash);
 	free(root_hash_file);
+	free(root_hash_sig_file);
 	free(fec_device);
 	free(hash_sig);
 	free(key);

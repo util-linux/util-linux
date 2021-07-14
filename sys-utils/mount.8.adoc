@@ -1405,6 +1405,9 @@ Parity bytes for FEC (default: 2). Optional.
 **verity.roothashsig=**__path__::
 Path to *pkcs7*(1ssl) signature of root hash hex string. Requires crypt_activate_by_signed_key() from cryptsetup and kernel built with *CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG*. For device reuse, signatures have to be either used by all mounts of a device or by none. Optional.
 
+**verity.oncorruption=**__ignore__|__restart__|__panic__::
+Instruct the kernel to ignore, reboot or panic when corruption is detected. By default the I/O operation simply fails. Requires Linux 4.1 or newer, and libcrypsetup 2.3.4 or newer. Optional.
+
 Supported since util-linux v2.35.
 
 For example commands:
