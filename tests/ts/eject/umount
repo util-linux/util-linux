@@ -6,12 +6,13 @@ TS_DESC="umount"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_skip_nonroot
+
 ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_EJECT"
 ts_check_test_command "$TS_CMD_KILL"
 ts_check_test_command "$TS_CMD_MOUNT"
 
-ts_skip_nonroot
 ts_check_prog "mkfs.ext2"
 
 # scsi_debug could not eject for kernel >=3.19 and <4.4
