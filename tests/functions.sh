@@ -966,9 +966,9 @@ function ts_scsi_debug_init {
 	# wait for device if udevadm settle does not work
 	for t in 0 0.02 0.05 0.1 1; do
 		sleep $t
-		devname=$(grep --with-filename scsi_debug /sys/block/*/device/model) && break
+		devname=$(grep --no-messages --with-filename scsi_debug /sys/block/*/device/model) && break
 	done
-	[ -n "${devname}" ] || ts_die "timeout waiting for scsi_debug device"
+	[ -n "${devname}" ] || ts_skip "timeout waiting for scsi_debug device"
 
 	devname=$(echo $devname | awk -F '/' '{print $4}')
 	TS_DEVICE="/dev/${devname}"
