@@ -25,8 +25,8 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start End Cylinders  Size Id Type
-<removed>1          1   1         1  7.8M 83 Linux
+Device     Boot Start End Cylinders Id Type  Start-C/H/S End-C/H/S Attrs
+<removed>1          1   1         1 83 Linux       0/1/1  0/254/63 
 -------------------
 
 Set partition type
@@ -41,8 +41,8 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start End Cylinders  Size Id Type
-<removed>1          1   1         1  7.8M bf Solaris
+Device     Boot Start End Cylinders Id Type    Start-C/H/S End-C/H/S Attrs
+<removed>1          1   1         1 bf Solaris       0/1/1  0/254/63 
 -------------------
 
 Set primary partition active
@@ -57,8 +57,8 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start End Cylinders  Size Id Type
-<removed>1 *        1   1         1  7.8M bf Solaris
+Device     Boot Start End Cylinders Id Type    Start-C/H/S End-C/H/S Attrs
+<removed>1 *        1   1         1 bf Solaris       0/1/1  0/254/63    80
 -------------------
 
 Re-create primary partition
@@ -73,8 +73,8 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start End Cylinders  Size Id Type
-<removed>1          1   1         1  7.8M 83 Linux
+Device     Boot Start End Cylinders Id Type  Start-C/H/S End-C/H/S Attrs
+<removed>1          1   1         1 83 Linux       0/1/1  0/254/63 
 -------------------
 
 Create extended partition
@@ -89,9 +89,9 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start End Cylinders  Size Id Type
-<removed>1          1   1         1  7.8M 83 Linux
-<removed>2          2  12        12 86.3M  5 Extended
+Device     Boot Start End Cylinders Id Type     Start-C/H/S End-C/H/S Attrs
+<removed>1          1   1         1 83 Linux          0/1/1  0/254/63 
+<removed>2          2  12        12  5 Extended       1/0/1 11/254/63 
 -------------------
 
 Create logical partitions
@@ -106,13 +106,13 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start End Cylinders  Size Id Type
-<removed>1          1   1         1  7.8M 83 Linux
-<removed>2          2  12        12 86.3M  5 Extended
-<removed>5          2   3         2 15.7M 83 Linux
-<removed>6          4   5         2 15.7M 83 Linux
-<removed>7          6   7         2 15.7M 83 Linux
-<removed>8          8   9         2 15.7M 83 Linux
+Device     Boot Start End Cylinders Id Type     Start-C/H/S End-C/H/S Attrs
+<removed>1          1   1         1 83 Linux          0/1/1  0/254/63 
+<removed>2          2  12        12  5 Extended       1/0/1 11/254/63 
+<removed>5          2   3         2 83 Linux          1/1/1  2/254/63 
+<removed>6          4   5         2 83 Linux          3/1/1  4/254/63 
+<removed>7          6   7         2 83 Linux          5/1/1  6/254/63 
+<removed>8          8   9         2 83 Linux          7/1/1  8/254/63 
 -------------------
 
 Delete logical partitions
@@ -127,10 +127,10 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start End Cylinders  Size Id Type
-<removed>1          1   1         1  7.8M 83 Linux
-<removed>2          2  12        12 86.3M  5 Extended
-<removed>5          6   7         2 15.7M 83 Linux
+Device     Boot Start End Cylinders Id Type     Start-C/H/S End-C/H/S Attrs
+<removed>1          1   1         1 83 Linux          0/1/1  0/254/63 
+<removed>2          2  12        12  5 Extended       1/0/1 11/254/63 
+<removed>5          6   7         2 83 Linux          5/1/1  6/254/63 
 -------------------
 
 Create another logical partition
@@ -145,11 +145,11 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start End Cylinders  Size Id Type
-<removed>1          1   1         1  7.8M 83 Linux
-<removed>2          2  12        12 86.3M  5 Extended
-<removed>5          6   7         2 15.7M 83 Linux
-<removed>6          2   3         2 15.7M 83 Linux
+Device     Boot Start End Cylinders Id Type     Start-C/H/S End-C/H/S Attrs
+<removed>1          1   1         1 83 Linux          0/1/1  0/254/63 
+<removed>2          2  12        12  5 Extended       1/0/1 11/254/63 
+<removed>5          6   7         2 83 Linux          5/1/1  6/254/63 
+<removed>6          2   3         2 83 Linux          1/1/1  2/254/63 
 
 Partition table entries are not in disk order.
 -------------------
@@ -166,10 +166,10 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot Start End Cylinders  Size Id Type
-<removed>2          2  12        12 86.3M  5 Extended
-<removed>5          6   7         2 15.7M 83 Linux
-<removed>6          2   3         2 15.7M 83 Linux
+Device     Boot Start End Cylinders Id Type     Start-C/H/S End-C/H/S Attrs
+<removed>2          2  12        12  5 Extended       1/0/1 11/254/63 
+<removed>5          6   7         2 83 Linux          5/1/1  6/254/63 
+<removed>6          2   3         2 83 Linux          1/1/1  2/254/63 
 
 Partition table entries are not in disk order.
 -------------------

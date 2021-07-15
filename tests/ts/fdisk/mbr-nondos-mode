@@ -49,7 +49,7 @@ esac
 
 function print_layout {
 	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
-	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+	$TS_CMD_FDISK -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 
 	ts_fdisk_clean ${TEST_IMAGE_NAME}
