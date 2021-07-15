@@ -474,55 +474,52 @@ static struct utmpx *get_last_btmp(struct lslogins_control *ctl, const char *use
 
 }
 
-static int read_utmp(char const *file, size_t *nents, struct utmpx **res)
+static int parse_utmpx(const char *path, size_t *nrecords, struct utmpx **records)
 {
-	size_t n_read = 0, n_alloc = 0;
-	struct utmpx *utmp = NULL, *u;
+	size_t i, imax = 0;
+	struct utmpx *ary = NULL;
+	struct stat st;
 
-	if (utmpxname(file) < 0)
+	*nrecords = 0;
+	*records = NULL;
+
+	if (utmpxname(path) < 0)
 		return -errno;
 
-	setutxent();
-	errno = 0;
+	/* optimize allocation according to file size, the realloc() below is
+	 * just fallback only */
+	if (stat(path, &st) == 0 && (size_t) st.st_size > sizeof(struct utmpx)) {
+		imax = st.st_size / sizeof(struct utmpx);
+		ary = xmalloc(imax * sizeof(struct utmpx));
+	}
 
-	while ((u = getutxent()) != NULL) {
-		if (n_read == n_alloc) {
-			n_alloc += 32;
-			utmp = xrealloc(utmp, n_alloc * sizeof (struct utmpx));
+	for (i = 0; ; i++) {
+		struct utmpx *u;
+		errno = 0;
+		u = getutxent();
+		if (!u) {
+			if (errno)
+				goto fail;
+			break;
 		}
-		utmp[n_read++] = *u;
+		if (i == imax)
+			ary = xrealloc(ary, (imax *= 2) * sizeof(struct utmpx));
+		ary[i] = *u;
 	}
-	if (!u && errno) {
-		free(utmp);
+
+	*nrecords = i;
+	*records = ary;
+	endutxent();
+	return 0;
+fail:
+	endutxent();
+	free(ary);
+	if (errno) {
+		if (errno != EACCES)
+			err(EXIT_FAILURE, "%s", path);
 		return -errno;
 	}
-
-	endutxent();
-
-	*nents = n_read;
-	*res = utmp;
-
-	return 0;
-}
-
-static int parse_wtmp(struct lslogins_control *ctl, char *path)
-{
-	int rc = 0;
-
-	rc = read_utmp(path, &ctl->wtmp_size, &ctl->wtmp);
-	if (rc < 0 && errno != EACCES)
-		err(EXIT_FAILURE, "%s", path);
-	return rc;
-}
-
-static int parse_btmp(struct lslogins_control *ctl, char *path)
-{
-	int rc = 0;
-
-	rc = read_utmp(path, &ctl->btmp_size, &ctl->btmp);
-	if (rc < 0 && errno != EACCES)
-		err(EXIT_FAILURE, "%s", path);
-	return rc;
+	return -EINVAL;
 }
 
 static void get_lastlog(struct lslogins_control *ctl, uid_t uid, void *dst, int what)
@@ -1647,11 +1644,11 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 
 	if (require_wtmp()) {
-		parse_wtmp(ctl, path_wtmp);
+		parse_utmpx(path_wtmp, &ctl->wtmp_size, &ctl->wtmp);
 		ctl->lastlogin_fd = open(path_lastlog, O_RDONLY, 0);
 	}
 	if (require_btmp())
-		parse_btmp(ctl, path_btmp);
+		parse_utmpx(path_btmp, &ctl->btmp_size, &ctl->btmp);
 
 	if (logins || groups)
 		get_ulist(ctl, logins, groups);
