@@ -37,6 +37,7 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #include "xalloc.h"
 #include "c.h"
 #include "closestream.h"
+#include "optutils.h"
 #include "rpmatch.h"
 
 #define RENAME_EXIT_SOMEOK	2
@@ -50,7 +51,7 @@ static int last = 0;
 static int string_replace(char *from, char *to, char *s, char *orig, char **newname)
 {
 	char *p, *q, *where;
-	int count = 0, fromlen = strlen(from);
+	size_t count = 0, fromlen = strlen(from);
 
 	p = where = strstr(s, from);
 	if (where == NULL)
@@ -272,35 +273,38 @@ int main(int argc, char **argv)
 		{"symlink", no_argument, NULL, 's'},
 		{NULL, 0, NULL, 0}
 	};
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'a','l' },
+		{ 'i','o' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "vsVhnaloi", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "vsVhnaloi", longopts, NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
 		case 'n':
 			noact = 1;
 			break;
 		case 'a':
 			all = 1;
-			last = 0;
 			break;
 		case 'l':
 			last = 1;
-			all = 0;
 			break;
 		case 'v':
 			verbose = 1;
 			break;
 		case 'o':
 			nooverwrite = 1;
-			interactive = 0;
 			break;
 		case 'i':
 			interactive = 1;
-			nooverwrite = 0;
 			break;
 		case 's':
 			do_rename = do_symlink;
@@ -313,6 +317,7 @@ int main(int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
 
 	argc -= optind;
 	argv += optind;
