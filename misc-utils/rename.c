@@ -68,7 +68,7 @@ static int string_replace(char *from, char *to, char *s, char *orig, char **newn
 	p = orig;
 	*newname = xmalloc(strlen(orig) - count * fromlen + count * strlen(to) + 1);
 	q = *newname;
-	while (where) {
+	while (count--) {
 		while (p < where)
 			*q++ = *p++;
 		p = to;
