@@ -38,4 +38,34 @@ for i in rename_test.{1..3}; do
 	fi
 done
 
+
+touch rename_all\ file\ with\ spaces.{1..3}
+$TS_CMD_RENAME -v -a ' ' '_' rename_all*.? >> $TS_OUTPUT 2> $TS_ERRLOG
+
+for i in rename_all*\ *.?; do
+	echo "what is $i doing here?" >> $TS_OUTPUT
+done
+for i in rename_all_file_with_spaces.{1..3}; do
+	if [ ! -f $i ]; then
+		echo "file $i is missing" >> $TS_OUTPUT
+	else
+		rm -f $i
+	fi
+done
+
+touch rename_zz_last_{z,z{,z{,z}}}.{x..z}
+$TS_CMD_RENAME -v -l zz AAzzBB rename_zz_last_* >> $TS_OUTPUT 2> $TS_ERRLOG
+for i in rename_AAzzBB_last_z.x rename_AAzzBB_last_z.y rename_AAzzBB_last_z.z \
+	rename_zz_last_AAzzBB.x rename_zz_last_AAzzBB.y rename_zz_last_AAzzBB.z \
+	rename_zz_last_zAAzzBB.x rename_zz_last_zAAzzBB.y rename_zz_last_zAAzzBB.z ; do
+	if [ ! -f $i ]; then
+		echo "file $i is missing" >> $TS_OUTPUT
+	else
+		rm -f $i
+	fi
+done
+for i in rename*last* ; do
+	echo "what is $i doing here?" >> $TS_OUTPUT
+done
+
 ts_finalize

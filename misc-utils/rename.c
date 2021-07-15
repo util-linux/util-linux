@@ -44,23 +44,39 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #define RENAME_EXIT_UNEXPLAINED	64
 
 static int tty_cbreak = 0;
+static int all = 0;
+static int last = 0;
 
 static int string_replace(char *from, char *to, char *s, char *orig, char **newname)
 {
 	char *p, *q, *where;
+	int count = 0, fromlen = strlen(from);
 
-	where = strstr(s, from);
+	p = where = strstr(s, from);
 	if (where == NULL)
 		return 1;
+	count++;
+	while ((all || last) && p) {
+		p = strstr(p + (last ? 1 : fromlen), from);
+		if (p) {
+			if (all)
+				count++;
+			if (last)
+				where = p;
+		}
+	}
 	p = orig;
-	*newname = xmalloc(strlen(orig) + strlen(to) + 1);
+	*newname = xmalloc(strlen(orig) - count * fromlen + count * strlen(to) + 1);
 	q = *newname;
-	while (p < where)
-		*q++ = *p++;
-	p = to;
-	while (*p)
-		*q++ = *p++;
-	p = where + strlen(from);
+	while (where) {
+		while (p < where)
+			*q++ = *p++;
+		p = to;
+		while (*p)
+			*q++ = *p++;
+		p = where + fromlen;
+		where = strstr(p, from);
+	}
 	while (*p)
 		*q++ = *p++;
 	*q = 0;
@@ -226,6 +242,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose       explain what is being done\n"), out);
 	fputs(_(" -s, --symlink       act on the target of symlinks\n"), out);
 	fputs(_(" -n, --no-act        do not make any changes\n"), out);
+	fputs(_(" -a, --all           replace all occurrences\n"), out);
+	fputs(_(" -l, --last          replace only the last occurrence\n"), out);
 	fputs(_(" -o, --no-overwrite  don't overwrite existing files\n"), out);
 	fputs(_(" -i, --interactive   prompt before overwrite\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -246,6 +264,8 @@ int main(int argc, char **argv)
 		{"verbose", no_argument, NULL, 'v'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
+		{"all", no_argument, NULL, 'a'},
+		{"last", no_argument, NULL, 'l'},
 		{"no-act", no_argument, NULL, 'n'},
 		{"no-overwrite", no_argument, NULL, 'o'},
 		{"interactive", no_argument, NULL, 'i'},
@@ -258,10 +278,18 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "vsVhnoi", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "vsVhnaloi", longopts, NULL)) != -1)
 		switch (c) {
 		case 'n':
 			noact = 1;
+			break;
+		case 'a':
+			all = 1;
+			last = 0;
+			break;
+		case 'l':
+			last = 1;
+			all = 0;
 			break;
 		case 'v':
 			verbose = 1;
