@@ -91,9 +91,7 @@ static inline int close_range(unsigned int first, unsigned int last, int flags)
 # endif	/* SYS_close_range */
 #endif	/* __linux__ */
 
-#ifndef HAVE_CLOSE_RANGE
 extern void ul_close_all_fds(unsigned int first, unsigned int last);
-#endif
 
 #define UL_COPY_READ_ERROR (-1)
 #define UL_COPY_WRITE_ERROR (-2)

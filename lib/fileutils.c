@@ -129,7 +129,6 @@ unsigned int get_fd_tabsize(void)
 	return m;
 }
 
-#ifndef HAVE_CLOSE_RANGE
 void ul_close_all_fds(unsigned int first, unsigned int last)
 {
 	struct dirent *d;
@@ -166,7 +165,6 @@ void ul_close_all_fds(unsigned int first, unsigned int last)
 		}
 	}
 }
-#endif
 
 #ifdef TEST_PROGRAM_FILEUTILS
 int main(int argc, char *argv[])
@@ -189,10 +187,10 @@ int main(int argc, char *argv[])
 		ignore_result( dup(STDIN_FILENO) );
 
 # ifdef HAVE_CLOSE_RANGE
-		close_range(STDERR_FILENO + 1, ~0U, 0);
-# else
-		ul_close_all_fds(STDERR_FILENO + 1, ~0U);
+		if (close_range(STDERR_FILENO + 1, ~0U, 0) < 0)
 # endif
+			ul_close_all_fds(STDERR_FILENO + 1, ~0U);
+
 	} else if (strcmp(argv[1], "--copy-file") == 0) {
 		int ret = ul_copy_file(STDIN_FILENO, STDOUT_FILENO);
 		if (ret == UL_COPY_READ_ERROR)
