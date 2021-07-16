@@ -40,7 +40,7 @@ Disk identifier: <removed>
 
 Device     Boot Start   End Sectors Id Type  Start-C/H/S End-C/H/S Attrs
 <removed>1      20000 40959   20960 83 Linux     1/62/30  2/140/10 
-<removed>2       2048 19999   17952 83 Linux      1/63/9  14/25/10 
+<removed>2       2048 19999   17952 83 Linux     0/32/33   1/62/29 
 
 Partition table entries are not in disk order.
 -------------------

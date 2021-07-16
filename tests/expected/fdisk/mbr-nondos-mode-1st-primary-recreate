@@ -1,5 +1,5 @@
 Re-create 1st primary partition
-a5543ee1e3d2cf79913a56bae893a0f0 mbr-nondos-mode.img
+e21e16b7452d82e2a2810a1de8c3db05 mbr-nondos-mode.img
 
 ---layout----------
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
@@ -10,6 +10,6 @@ Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start   End Sectors Id Type  Start-C/H/S End-C/H/S Attrs
-<removed>1       2048  8191    6144 83 Linux     7/107/1   31/34/2 
+<removed>1       2048  8191    6144 83 Linux     0/32/33   0/130/2 
 -------------------
 
