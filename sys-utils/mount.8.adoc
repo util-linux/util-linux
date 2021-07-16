@@ -1377,7 +1377,7 @@ Set the owner and group and mode of the bus directories in the usbfs filesystem 
 **listuid=**__uid__ and **listgid=**__gid__ and **listmode=**__mode__::
 Set the owner and group and mode of the file _devices_ (default: uid=gid=0, mode=0444). The mode is given in octal.
 
-== DM-VERITY SUPPORT (experimental)
+== DM-VERITY SUPPORT
 
 The device-mapper verity target provides read-only transparent integrity checking of block devices using kernel crypto API. The *mount* command can open the dm-verity device and do the integrity verification before on the device filesystem is mounted. Requires libcryptsetup with in libmount (optionally via *dlopen*(3)). If libcryptsetup supports extracting the root hash of an already mounted device, existing devices will be automatically reused in case of a match. Mount options for dm-verity:
 
