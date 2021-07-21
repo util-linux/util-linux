@@ -712,13 +712,10 @@ static char *getpasswd(struct console *con)
 			switch (errno) {
 			case EIO:
 				con->flags |= CON_EIO;
-			case ESRCH:
-			case EINVAL:
-			case ENOENT:
-			case 0:
-				break;
 			default:
 				warn(_("cannot read %s"), con->tty);
+				break;
+			case 0:
 				break;
 			}
 			goto quit;
