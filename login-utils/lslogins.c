@@ -1231,14 +1231,28 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 	}
 }
 #ifdef HAVE_LIBSYSTEMD
+static char *get_journal_data(sd_journal *j, const char *name)
+{
+	const char *data = NULL, *p;
+	size_t len = 0;
+
+	if (sd_journal_get_data(j, name, (const void **) &data, &len) < 0
+	    || !data || !len)
+		return NULL;
+
+	/* Get rid of journal entry field identifiers */
+	p = strnchr(data, len, '=');
+	if (!p || !*(p + 1))
+		return NULL;
+	p++;
+
+	return xstrndup(p, len - (p - data));
+}
+
 static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, int time_mode)
 {
 	sd_journal *j;
-	char *match, *timestamp;
-	uint64_t x;
-	time_t t;
-	const char *identifier, *pid, *message;
-	size_t identifier_len, pid_len, message_len;
+	char *match;
 
 	if (journal_path)
 		sd_journal_open_directory(&j, journal_path, 0);
@@ -1252,30 +1266,27 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, 
 	sd_journal_previous_skip(j, len);
 
 	do {
-		if (0 > sd_journal_get_data(j, "SYSLOG_IDENTIFIER",
-				(const void **) &identifier, &identifier_len))
-			goto done;
-		if (0 > sd_journal_get_data(j, "_PID",
-				(const void **) &pid, &pid_len))
-			goto done;
-		if (0 > sd_journal_get_data(j, "MESSAGE",
-				(const void **) &message, &message_len))
-			goto done;
+		char *id, *pid, *msg, *ts;
+		uint64_t x;
+		time_t t;
 
 		sd_journal_get_realtime_usec(j, &x);
 		t = x / 1000000;
-		timestamp = make_time(time_mode, t);
-		/* Get rid of journal entry field identifiers */
-		identifier = strchr(identifier, '=') + 1;
-		pid = strchr(pid, '=') + 1;
-		message = strchr(message, '=') + 1;
+		ts = make_time(time_mode, t);
 
-		fprintf(stdout, "%s %s[%s]: %s\n", timestamp, identifier, pid,
-			message);
-		free(timestamp);
+		id = get_journal_data(j, "SYSLOG_IDENTIFIER");
+		pid = get_journal_data(j, "_PID");
+		msg = get_journal_data(j, "MESSAGE");
+
+		if (ts && id && pid && msg)
+			fprintf(stdout, "%s %s[%s]: %s\n", ts, id, pid, msg);
+
+		free(ts);
+		free(id);
+		free(pid);
+		free(msg);
 	} while (sd_journal_next(j));
 
-done:
 	free(match);
 	sd_journal_flush_matches(j);
 	sd_journal_close(j);
