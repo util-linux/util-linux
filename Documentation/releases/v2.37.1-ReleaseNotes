@@ -1,0 +1,181 @@
+util-linux 2.37.1 Release Notes
+===============================
+
+agetty:
+   - do not use atol()  [Karel Zak]
+blockdev:
+   - improve arguments parsing (remove atoi)  [Karel Zak]
+build-sys:
+   - Update configure.ac  [Alex Xu]
+   - add generated man-pages to distribution tarball  [Karel Zak]
+   - display cryptsetup status after ./configure  [Luca Boccassi]
+   - fix {release-version} man pages  [Karel Zak]
+   - install hardlink bash-completion  [Karel Zak]
+   - make re-use of generated man-pages more robust  [Karel Zak]
+   - use $LIBS rather than LDFLAGS  [Karel Zak]
+cfdisk:
+   - do not use atoi()  [Karel Zak]
+   - optimize mountpoint detection for PARTUUID  [Karel Zak]
+dmesg:
+   - fix indentation in man page  [Platon Pronko]
+   - fix possible memory leak [coverity scan]  [Karel Zak]
+   - remove  condition [lgtm scan]  [Karel Zak]
+docs:
+   - add uclampset to AUTHORS file  [Karel Zak]
+   - fix typo in v2.37-ReleaseNotes  [Karel Zak]
+   - update AUTHORS file  [Karel Zak]
+eject:
+   - add __format__ attribute  [Karel Zak]
+   - do not use atoi()  [Karel Zak]
+fdisk:
+   - do not print error message when partition reordering is not needed  [Pali Rohár]
+   - move reorder diag messages to fdisk_reorder_partitions()  [Pali Rohár]
+findmnt:
+   - (verify) fix cache related memory leaks on --nocanonicalize [coverity scan]  [Karel Zak]
+   - (verify) fix memory leak [asan]  [Karel Zak]
+   - add __format__ attribute  [Karel Zak]
+fsck:
+   - check errno after strto..()  [Karel Zak]
+   - do not use atoi()  [Karel Zak]
+fsck.cramfs:
+   - use open+fstat rather than stat+open  [Karel Zak]
+fstrim:
+   - clean return code on --quiet-unsupported  [Karel Zak]
+hardlink:
+   - remove pcre2posix.h support  [Karel Zak]
+hexdump:
+   - correctly display signed single byte integers  [Samir Benmendil]
+   - do not use atoi()  [Karel Zak]
+hwclock:
+   - check errno after strto..()  [Karel Zak]
+   - close adjtime on write error [coverity scan]  [Karel Zak]
+   - fix ul_path_scanf() use  [Karel Zak]
+include/c:
+   - add __format__ attribute  [Karel Zak]
+   - add drop_permissions(), consolidate UID/GID reset  [Karel Zak]
+include/path:
+   - add __format__attribute  [Karel Zak]
+include/strutils:
+   - cleanup strto..() functions  [Karel Zak]
+   - consolidate string to number conversion  [Karel Zak]
+   - fix __format__attribute  [Karel Zak]
+   - fix heap-buffer-overflow in normalize_whitespace()  [Karel Zak]
+include/strv:
+   - fix format attributes  [Karel Zak]
+ipcs:
+   - check errno after strto..()  [Karel Zak]
+   - do not use atoi()  [Karel Zak]
+kill:
+   - check errno after strto..()  [Karel Zak]
+ldattach:
+   - add __format__ attribute  [Karel Zak]
+lib/loopdev:
+   - perform retry on EAGAIN  [Karel Zak]
+lib/path:
+   - (test) fix ul_new_path() use  [Karel Zak]
+   - fix possible leak when use ul_path_read_string() [coverity scan]  [Karel Zak]
+   - improve ul_path_readlink() to be more robust  [Karel Zak]
+libblkid:
+   - Add hyphens to UUID string representation in Stratis superblock parsing  [John Baublitz]
+   - check errno after strto..()  [Karel Zak]
+   - vfat  Fix reading FAT16 boot label and serial id  [Pali Rohár]
+   - vfat  Fix reading FAT32 boot label  [Pali Rohár]
+libfdisk:
+   - add and fix __format__ attributes  [Karel Zak]
+libmount:
+   - add __format__ attribute  [Karel Zak]
+   - check errno after strto..()  [Karel Zak]
+libsmartcols:
+   - fix bare array on JSON output  [Karel Zak]
+libuuid:
+   - check errno after strto..()  [Karel Zak]
+logger:
+   - add __format__ attribute  [Karel Zak]
+login:
+   - add callback for close_range()  [Karel Zak]
+   - fix close_range() use  [Karel Zak]
+   - remove obsolete and confusing comment  [Karel Zak]
+lsblk:
+   - fix formatting in -e option  [ratijas]
+   - normalize space in SERIAL and MODEL  [Karel Zak]
+   - use ID_MODEL_ENC is possible  [Karel Zak]
+lscpu:
+   - check errno after strto..()  [Karel Zak]
+   - do not use atoi()  [Karel Zak]
+   - don't use DMI if executed with --sysroot  [Karel Zak]
+   - fix build on powerpc  [Georgy Yakovlev]
+lslocks:
+   - check errno after strto..()  [Karel Zak]
+lslogins:
+   - ask for supplementary groups only once [asan]  [Karel Zak]
+   - check errno after strto..()  [Karel Zak]
+   - consolidate and optimize utmp files use  [Karel Zak]
+   - fix memory leak [asan]  [Karel Zak]
+   - use sd_journal_get_data() in proper way  [Karel Zak]
+lsmem:
+   - check errno after strto..()  [Karel Zak]
+meson:
+   - fix crypt_activate_by_signed_key detection  [Luca Boccassi]
+   - fix dlopen support for cryptsetup  [Luca Boccassi]
+misc:
+   - improve string to number conversions  [Karel Zak]
+mkfs.cramfs:
+   - add comment to explain readlink() use  [Karel Zak]
+mkswap:
+   - fix holes detection (infinite loop and/or stack-buffer-underflow)  [Karel Zak]
+more:
+   - add __format__ attribute  [Karel Zak]
+   - fix null-pointer dereference  [Karel Zak]
+   - fix setuid/setgid order  [Karel Zak]
+mount:
+   - fix roothash signature extension in manpage  [Luca Boccassi]
+   - man-page; add all overlayfs options  [Tj]
+   - mount.8 fix overlayfs nfs_export= indention  [Karel Zak]
+mount.8.adoc:
+   - Remove context options exclusion  [Thiébaud Weksteen]
+   - document SELinux use of nosuid mount flag  [Topi Miettinen]
+namei:
+   - simplify code  [Karel Zak]
+newgrp:
+   - fix memory leak [coverity scan]  [Karel Zak]
+pg:
+   - do not use atoi()  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+   - update sr.po (from translationproject.org)  [Мирослав Николић]
+readprofile:
+   - check errno after strto..()  [Karel Zak]
+rename:
+   - use readlink() in more robust way  [Karel Zak]
+rfkill:
+   - Set scols table name to make the json output valid  [Nicolai Dagestad]
+script:
+   - add __format__ attribute  [Karel Zak]
+sulogin:
+   - add missing ifdefs  [Karel Zak]
+   - use explicit_bzero() for buffer with password  [Karel Zak]
+swapon:
+   - do not use atoi()  [Karel Zak]
+test/eject:
+   - guard asan LD_PRELOAD with use-system-commands check  [Ross Burton]
+tests:
+   - check correct log file for errors in blkdiscard test  [Ross Burton]
+   - don't hardcode /bin/kill in the kill tests  [Ross Burton]
+   - fix lsns test on kernels without USER namespaces  [Anatoly Pugachev]
+   - mark ul/ul as a known failure  [Ross Burton]
+   - skip if scsi_debug model file is not accessible  [Karel Zak]
+   - update sfdisk reorder test  [Karel Zak]
+tools:
+   - report and use LDFLAGS in tools/config-gen  [Karel Zak]
+uclampset:
+   - Fix left over optind++  [Qais Yousef]
+utmpdump:
+   - do not use atoi()  [Karel Zak]
+verity:
+   - fix verity.roothashsig only working as last parameter  [Luca Boccassi]
+wall:
+   - add __format__ attribute  [Karel Zak]
+wipefs:
+   - check errno after strto..()  [Karel Zak]
