@@ -7757,7 +7757,7 @@ msgstr "tamaño de prerreserva excedido"
 #: login-utils/last.c:581
 #, c-format
 msgid " %s [options] [<username>...] [<tty>...]\n"
-msgstr " %s [opcinoes] [<nombreusuario>...] [<tty>...]\n"
+msgstr " %s [opciones] [<nombreusuario>...] [<tty>...]\n"
 
 #: login-utils/last.c:584
 msgid "Show a listing of last logged in users.\n"
