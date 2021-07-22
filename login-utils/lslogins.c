@@ -1347,6 +1347,7 @@ static void free_user(void *f)
 	struct lslogins_user *u = f;
 	free(u->login);
 	free(u->group);
+	free(u->nprocs);
 	free(u->gecos);
 	free(u->sgroups);
 	free(u->pwd_ctime);
