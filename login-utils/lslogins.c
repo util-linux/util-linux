@@ -562,6 +562,9 @@ static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 
 	*list = xcalloc(1, ngroups * sizeof(gid_t));
 
+fprintf(stderr, "KZAK>>> alloc '%p' for %s\n", *list, pwd->pw_name);
+
+
 	/* now for the actual list of GIDs */
 	if (-1 == getgrouplist(pwd->pw_name, pwd->pw_gid, *list, &ngroups))
 		return -1;
@@ -754,7 +757,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		case COL_SGROUPS:
 		case COL_SGIDS:
-			if (get_sgroups(&user->sgroups, &user->nsgroups, pwd))
+			if (!user->nsgroups &&
+			    get_sgroups(&user->sgroups, &user->nsgroups, pwd) < 0)
 				err(EXIT_FAILURE, _("failed to get supplementary groups"));
 			break;
 		case COL_HOME:
@@ -1048,7 +1052,6 @@ static int create_usertree(struct lslogins_control *ctl)
 			}
 			if (rc || !user)
 				continue;
-
 			tsearch(user, &ctl->usertree, cmp_uid);
 		}
 	} else {
