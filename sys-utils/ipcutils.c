@@ -218,7 +218,7 @@ static void get_sem_elements(struct sem_data *p)
 {
 	size_t i;
 
-	if (!p || !p->sem_nsems || p->sem_perm.id < 0)
+	if (!p || !p->sem_nsems || p->sem_nsems > SIZE_MAX || p->sem_perm.id < 0)
 		return;
 
 	p->elements = xcalloc(p->sem_nsems, sizeof(struct sem_elem));
