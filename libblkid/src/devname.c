@@ -164,7 +164,7 @@ static int is_dm_leaf(const char *devname)
 		    strncmp(de->d_name, "dm-", 3) != 0 ||
 		    strlen(de->d_name) > sizeof(path)-32)
 			continue;
-		sprintf(path, "/sys/block/%s/slaves", de->d_name);
+		snprintf(path, sizeof(path), "/sys/block/%s/slaves", de->d_name);
 		if ((d_dir = opendir(path)) == NULL)
 			continue;
 		while ((d_de = readdir(d_dir)) != NULL) {
@@ -321,14 +321,16 @@ static void lvm_probe_all(blkid_cache cache, int only_if_new)
 		char		*vdirname;
 		char		*vg_name;
 		struct dirent	*lv_iter;
+		size_t		len;
 
 		vg_name = vg_iter->d_name;
 		if (!strcmp(vg_name, ".") || !strcmp(vg_name, ".."))
 			continue;
-		vdirname = malloc(vg_len + strlen(vg_name) + 8);
+		len = vg_len + strlen(vg_name) + 8;
+		vdirname = malloc(len);
 		if (!vdirname)
 			goto exit;
-		sprintf(vdirname, "%s/%s/LVs", VG_DIR, vg_name);
+		snprintf(vdirname, len, "%s/%s/LVs", VG_DIR, vg_name);
 
 		lv_list = opendir(vdirname);
 		free(vdirname);
@@ -342,16 +344,16 @@ static void lvm_probe_all(blkid_cache cache, int only_if_new)
 			if (!strcmp(lv_name, ".") || !strcmp(lv_name, ".."))
 				continue;
 
-			lvm_device = malloc(vg_len + strlen(vg_name) +
-					    strlen(lv_name) + 8);
+			len = vg_len + strlen(vg_name) + strlen(lv_name) + 8;
+			lvm_device = malloc(len);
 			if (!lvm_device) {
 				closedir(lv_list);
 				goto exit;
 			}
-			sprintf(lvm_device, "%s/%s/LVs/%s", VG_DIR, vg_name,
+			snprintf(lvm_device, len, "%s/%s/LVs/%s", VG_DIR, vg_name,
 				lv_name);
 			dev = lvm_get_devno(lvm_device);
-			sprintf(lvm_device, "%s/%s", vg_name, lv_name);
+			snprintf(lvm_device, len, "%s/%s", vg_name, lv_name);
 			DBG(DEVNAME, ul_debug("Probe LVM dev %s: devno 0x%04X",
 						  lvm_device,
 						  (unsigned int) dev));

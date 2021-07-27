@@ -128,9 +128,10 @@ int blkid_flush_cache(blkid_cache cache)
 	 * a temporary file then we open it directly.
 	 */
 	if (ret == 0 && S_ISREG(st.st_mode)) {
-		tmp = malloc(strlen(filename) + 8);
+		size_t len = strlen(filename) + 8;
+		tmp = malloc(len);
 		if (tmp) {
-			sprintf(tmp, "%s-XXXXXX", filename);
+			snprintf(tmp, len, "%s-XXXXXX", filename);
 			fd = mkstemp_cloexec(tmp);
 			if (fd >= 0) {
 				if (fchmod(fd, 0644) != 0)
@@ -178,10 +179,11 @@ int blkid_flush_cache(blkid_cache cache)
 			DBG(SAVE, ul_debug("unlinked temp cache %s", opened));
 		} else {
 			char *backup;
+			size_t len = strlen(filename) + 5;
 
-			backup = malloc(strlen(filename) + 5);
+			backup = malloc(len);
 			if (backup) {
-				sprintf(backup, "%s.old", filename);
+				snprintf(backup, len, "%s.old", filename);
 				unlink(backup);
 				if (link(filename, backup)) {
 					DBG(SAVE, ul_debug("can't link %s to %s",
