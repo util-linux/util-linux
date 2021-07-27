@@ -521,7 +521,7 @@ int get_hushlogin_status(struct passwd *pwd, int force_check)
 		if (strlen(pwd->pw_dir) + strlen(file) + 2 > sizeof(buf))
 			continue;
 
-		sprintf(buf, "%s/%s", pwd->pw_dir, file);
+		snprintf(buf, sizeof(buf), "%s/%s", pwd->pw_dir, file);
 
 		if (force_check) {
 			uid_t ruid = getuid();
