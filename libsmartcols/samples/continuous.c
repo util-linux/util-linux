@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
 	size_t i;
+	const size_t timecellsz = sizeof(stringify_value(UINT_MAX));
 	struct timeval last;
 
 	scols_init_debug(0);
@@ -84,7 +85,7 @@ int main(int argc, char *argv[])
 		struct libscols_line *line;
 		struct timeval now;
 		int done = 0;
-		char *timecell = xmalloc( sizeof(stringify_value(UINT_MAX)) );
+		char *timecell = xmalloc( timecellsz );
 
 		line = add_line(tb, i);
 
@@ -106,7 +107,7 @@ int main(int argc, char *argv[])
 				xusleep(100000);
 
 			/* update "TIME" cell data */
-			sprintf(timecell, "%f [%3d%%]", diff,
+			snprintf(timecell, timecellsz, "%f [%3d%%]", diff,
 				done ? 100 : (int)(diff / (TIME_PERIOD / 100.0)));
 
 			/* Note that libsmartcols don't print \n for last line
