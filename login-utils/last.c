@@ -463,48 +463,48 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 
 	if (logout_time == currentdate) {
 		if (ctl->time_fmt > LAST_TIMEFTM_SHORT) {
-			sprintf(logouttime, "  still running");
+			snprintf(logouttime, sizeof(logouttime), "  still running");
 			length[0] = 0;
 		} else {
-			sprintf(logouttime, "  still");
-			sprintf(length, "running");
+			snprintf(logouttime, sizeof(logouttime), "  still");
+			snprintf(length, sizeof(length), "running");
 		}
 	} else if (days) {
-		sprintf(length, "(%d+%02d:%02d)", days, abs(hours), abs(mins)); /* hours and mins always shown as positive (w/o minus sign!) even if secs < 0 */
+		snprintf(length, sizeof(length), "(%d+%02d:%02d)", days, abs(hours), abs(mins)); /* hours and mins always shown as positive (w/o minus sign!) even if secs < 0 */
 	} else if (hours) {
-		sprintf(length, " (%02d:%02d)", hours, abs(mins));  /* mins always shown as positive (w/o minus sign!) even if secs < 0 */
+		snprintf(length, sizeof(length), " (%02d:%02d)", hours, abs(mins));  /* mins always shown as positive (w/o minus sign!) even if secs < 0 */
 	} else if (secs >= 0) {
-		sprintf(length, " (%02d:%02d)", hours, mins);
+		snprintf(length, sizeof(length), " (%02d:%02d)", hours, mins);
 	} else {
-		sprintf(length, " (-00:%02d)", abs(mins));  /* mins always shown as positive (w/o minus sign!) even if secs < 0 */
+		snprintf(length, sizeof(length), " (-00:%02d)", abs(mins));  /* mins always shown as positive (w/o minus sign!) even if secs < 0 */
 	}
 
 	switch(what) {
 		case R_CRASH:
-			sprintf(logouttime, "- crash");
+			snprintf(logouttime, sizeof(logouttime), "- crash");
 			break;
 		case R_DOWN:
-			sprintf(logouttime, "- down ");
+			snprintf(logouttime, sizeof(logouttime), "- down ");
 			break;
 		case R_NOW:
 			if (ctl->time_fmt > LAST_TIMEFTM_SHORT) {
-				sprintf(logouttime, "  still logged in");
+				snprintf(logouttime, sizeof(logouttime), "  still logged in");
 				length[0] = 0;
 			} else {
-				sprintf(logouttime, "  still");
-				sprintf(length, "logged in");
+				snprintf(logouttime, sizeof(logouttime), "  still");
+				snprintf(length, sizeof(length), "logged in");
 			}
 			break;
 		case R_PHANTOM:
 			if (ctl->time_fmt > LAST_TIMEFTM_SHORT) {
-				sprintf(logouttime, "  gone - no logout");
+				snprintf(logouttime, sizeof(logouttime), "  gone - no logout");
 				length[0] = 0;
 			} else if (ctl->time_fmt == LAST_TIMEFTM_SHORT) {
-				sprintf(logouttime, "   gone");
-				sprintf(length, "- no logout");
+				snprintf(logouttime, sizeof(logouttime), "   gone");
+				snprintf(length, sizeof(length), "- no logout");
 			} else {
 				logouttime[0] = 0;
-				sprintf(length, "no logout");
+				snprintf(length, sizeof(length), "no logout");
 			}
 			break;
 		case R_TIMECHANGE:
@@ -804,7 +804,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 		case RUN_LVL:
 			x = ut.ut_pid & 255;
 			if (ctl->extended) {
-				sprintf(ut.ut_line, "(to lvl %c)", x);
+				snprintf(ut.ut_line, sizeof(ut.ut_line), "(to lvl %c)", x);
 				quit = list(ctl, &ut, lastrch, R_NORMAL);
 			}
 			if (x == '0' || x == '6') {
