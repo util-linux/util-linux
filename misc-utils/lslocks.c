@@ -177,7 +177,7 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 	 * iterate the *entire* filesystem searching
 	 * for the damn file.
 	 */
-	sprintf(path, "/proc/%d/fd/", lock_pid);
+	snprintf(path, sizeof(path), "/proc/%d/fd/", lock_pid);
 	if (!(dirp = opendir(path)))
 		return NULL;
 
