@@ -172,7 +172,7 @@ static void search_utmp(struct write_control *ctl)
 		if (strncmp(ctl->dst_login, u->ut_user, sizeof(u->ut_user)) != 0)
 			continue;
 		num_ttys++;
-		sprintf(path, "/dev/%s", u->ut_line);
+		snprintf(path, sizeof(path), "/dev/%s", u->ut_line);
 		if (check_tty(path, &tty_writeable, &tty_atime, 0))
 			/* bad term? skip */
 			continue;
