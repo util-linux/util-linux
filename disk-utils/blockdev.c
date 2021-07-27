@@ -456,7 +456,7 @@ static void report_device(char *device, int quiet)
 	long ra;
 	unsigned long long bytes;
 	uint64_t start = 0;
-	char start_str[11] = { "\0" };
+	char start_str[16] = { "\0" };
 	struct stat st;
 
 	fd = open(device, O_RDONLY | O_NONBLOCK);
@@ -478,13 +478,13 @@ static void report_device(char *device, int quiet)
 		    disk != st.st_rdev) {
 
 			if (ul_path_read_u64(pc, &start, "start") != 0)
-				/* TRANSLATORS: Start sector not available. Max. 10 letters. */
-				sprintf(start_str, "%10s", _("N/A"));
+				/* TRANSLATORS: Start sector not available. Max. 15 letters. */
+				sprintf(start_str, "%15s", _("N/A"));
 		}
 		ul_unref_path(pc);
 	}
 	if (!*start_str)
-		sprintf(start_str, "%10ju", start);
+		sprintf(start_str, "%15ju", start);
 
 	if (ioctl(fd, BLKROGET, &ro) == 0 &&
 	    ioctl(fd, BLKRAGET, &ra) == 0 &&
@@ -503,5 +503,5 @@ static void report_device(char *device, int quiet)
 
 static void report_header(void)
 {
-	printf(_("RO    RA   SSZ   BSZ   StartSec            Size   Device\n"));
+	printf(_("RO    RA   SSZ   BSZ        StartSec            Size   Device\n"));
 }
