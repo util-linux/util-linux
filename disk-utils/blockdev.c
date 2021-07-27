@@ -442,7 +442,7 @@ static void report_all_devices(void)
 			   &ma, &mi, &sz, ptname) != 4)
 			continue;
 
-		sprintf(device, "/dev/%s", ptname);
+		snprintf(device, sizeof(device), "/dev/%s", ptname);
 		report_device(device, 1);
 	}
 
@@ -479,12 +479,12 @@ static void report_device(char *device, int quiet)
 
 			if (ul_path_read_u64(pc, &start, "start") != 0)
 				/* TRANSLATORS: Start sector not available. Max. 15 letters. */
-				sprintf(start_str, "%15s", _("N/A"));
+				snprintf(start_str, sizeof(start_str), "%15s", _("N/A"));
 		}
 		ul_unref_path(pc);
 	}
 	if (!*start_str)
-		sprintf(start_str, "%15ju", start);
+		snprintf(start_str, sizeof(start_str), "%15ju", start);
 
 	if (ioctl(fd, BLKROGET, &ro) == 0 &&
 	    ioctl(fd, BLKRAGET, &ra) == 0 &&
