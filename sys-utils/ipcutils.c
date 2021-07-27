@@ -511,17 +511,17 @@ void ipc_print_size(int unit, char *msg, uint64_t size, const char *end,
 	switch (unit) {
 	case IPC_UNIT_DEFAULT:
 	case IPC_UNIT_BYTES:
-		sprintf(format, "%%%dju", width);
+		snprintf(format, sizeof(format), "%%%dju", width);
 		printf(format, size);
 		break;
 	case IPC_UNIT_KB:
-		sprintf(format, "%%%dju", width);
+		snprintf(format, sizeof(format), "%%%dju", width);
 		printf(format, size / 1024);
 		break;
 	case IPC_UNIT_HUMAN:
 	{
 		char *tmp;
-		sprintf(format, "%%%ds", width);
+		snprintf(format, sizeof(format), "%%%ds", width);
 		printf(format, (tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, size)));
 		free(tmp);
 		break;
