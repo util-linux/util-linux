@@ -34,7 +34,7 @@ struct proc_tasks *proc_open_tasks(pid_t pid)
 	struct proc_tasks *tasks;
 	char path[PATH_MAX];
 
-	sprintf(path, "/proc/%d/task/", pid);
+	snprintf(path, sizeof(path), "/proc/%d/task/", pid);
 
 	tasks = malloc(sizeof(struct proc_tasks));
 	if (tasks) {
