@@ -213,6 +213,7 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 	struct tm nowtime;
 	int rc;
 	struct timeval begin = { 0 }, now = { 0 };
+	int try_counter = 0;
 
 	if (ctl->verbose) {
 		printf("ioctl(%d, RTC_UIE_ON, 0): %s\n",
@@ -221,9 +222,9 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 		       rtc_dev_name);
 	}
 
+again:
 	if (do_rtc_read_ioctl(rtc_fd, &start_time))
 		return 1;
-
 	/*
 	 * Wait for change.  Should be within a second, but in case
 	 * something weird happens, we have a time limit (1.5s) on this loop
@@ -236,8 +237,12 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 			break;
 		gettime_monotonic(&now);
 		if (time_diff(now, begin) > 1.5) {
-			warnx(_("Timed out waiting for time change."));
-			return 1;
+			warnx(_("[#%d] Timed out waiting for time change (delay: %f sec)"),
+				try_counter, time_diff(now, begin));
+			if (try_counter == 9)
+				return 1;
+			try_counter++;
+			goto again;
 		}
 	} while (1);
 
