@@ -70,7 +70,7 @@ static FILE *myopen(char *name, char *mode, int *flag)
 	if (!strcmp(name + len - 3, ".gz")) {
 		FILE *res;
 		char *cmdline = xmalloc(len + 6);
-		sprintf(cmdline, "zcat %s", name);
+		snprintf(cmdline, len + 6, "zcat %s", name);
 		res = popen(cmdline, mode);
 		free(cmdline);
 		*flag = 1;
