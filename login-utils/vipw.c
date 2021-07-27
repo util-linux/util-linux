@@ -142,7 +142,7 @@ static void pw_write(void)
 {
 	char tmp[FILENAMELEN + 4];
 
-	sprintf(tmp, "%s%s", orig_file, ".OLD");
+	snprintf(tmp, sizeof(tmp), "%s%s", orig_file, ".OLD");
 	unlink(tmp);
 
 	if (link(orig_file, tmp))
