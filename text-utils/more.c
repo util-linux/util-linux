@@ -1515,7 +1515,7 @@ static void runtime_usage(void)
 	print_separator('-', 79);
 }
 
-static void execute_editor(struct more_control *ctl, char *cmdbuf, char *filename)
+static void execute_editor(struct more_control *ctl, char *cmdbuf, size_t buflen, char *filename)
 {
 	char *editor, *p;
 	int split = 0;
@@ -1536,10 +1536,10 @@ static void execute_editor(struct more_control *ctl, char *cmdbuf, char *filenam
 	 * POSIX: call vi -c n file (when editor is vi or ex).
 	 */
 	if (!strcmp(p, "vi") || !strcmp(p, "ex")) {
-		sprintf(cmdbuf, "-c %d", n);
+		snprintf(cmdbuf, buflen, "-c %d", n);
 		split = 1;
 	} else
-		sprintf(cmdbuf, "+%d", n);
+		snprintf(cmdbuf, buflen, "+%d", n);
 
 	erase_to_col(ctl, 0);
 	printf("%s %s %s", editor, cmdbuf, ctl->file_names[ctl->argv_position]);
@@ -1769,7 +1769,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			break;
 		case more_kc_run_editor:	/* This case should go right before default */
 			if (!ctl->no_tty_in) {
-				execute_editor(ctl, cmdbuf, filename);
+				execute_editor(ctl, cmdbuf, sizeof(cmdbuf), filename);
 				break;
 			}
 			/* fallthrough */
