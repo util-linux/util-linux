@@ -2494,10 +2494,11 @@ int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i)
 		return 0;
 	}
 
-	/* the default start is at the second sector of the disk or at the
-	 * second sector of the extended partition
+	/* The safe start is at the second sector, but some use-cases require
+	 * to have MBR within the first partition , so default to the first
+	 * sector of the disk or at the second sector of the extended partition
 	 */
-	free_start = pe->offset ? pe->offset + 1 : 1;
+	free_start = pe->offset ? pe->offset + 1 : 0;
 
 	curr_start = get_abs_partition_start(pe);
 
@@ -2537,6 +2538,11 @@ int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i)
 		dos_partition_set_start(p, new);
 
 		partition_set_changed(cxt, i, 1);
+
+		if (new == 0)
+			fdisk_info(cxt, _("The new beginning of the partition overlaps the disk "
+					  "label area. Be very careful when using the partition. "
+					  "You can lose all your partitions on the disk."));
 	}
 
 	return rc;
