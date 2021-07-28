@@ -72,6 +72,7 @@
 #include "fileutils.h"
 #include "closestream.h"
 #include "timeutils.h"
+#include "pwdutils.h"
 
 #define	TERM_WIDTH	79
 #define	WRITE_TIME_OUT	300		/* in seconds */
@@ -352,13 +353,11 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 	if (print_banner == TRUE) {
 		char *hostname = xgethostname();
 		char *whom, *where, date[CTIME_BUFSIZ];
-		struct passwd *pw;
 		time_t now;
 
-		if (!(whom = getlogin()) || !*whom)
-			whom = (pw = getpwuid(getuid())) ? pw->pw_name : "???";
+		whom = xgetlogin();
 		if (!whom) {
-			whom = "someone";
+			whom = "<someone>";
 			warn(_("cannot get passwd uid"));
 		}
 		where = ttyname(STDOUT_FILENO);
