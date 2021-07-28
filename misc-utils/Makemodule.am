@@ -28,7 +28,7 @@ usrbin_exec_PROGRAMS += logger
 MANPAGES += misc-utils/logger.1
 dist_noinst_DATA += misc-utils/logger.1.adoc
 logger_SOURCES = misc-utils/logger.c lib/strutils.c lib/strv.c
-logger_LDADD = $(LDADD)
+logger_LDADD = $(LDADD) libcommon.la
 logger_CFLAGS = $(AM_CFLAGS)
 if HAVE_SYSTEMD
 logger_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_DAEMON_LIBS) $(SYSTEMD_JOURNAL_LIBS)
