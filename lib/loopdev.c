@@ -1360,7 +1360,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	if (ioctl(dev_fd, LOOP_CONFIGURE, &lc->config) < 0) {
 		rc = -errno;
 		errsv = errno;
-		if (errno != EINVAL) {
+		if (errno != EINVAL && errno != ENOTTY) {
 			DBG(SETUP, ul_debugobj(lc, "LOOP_CONFIGURE failed: %m"));
 			goto err;
 		}
