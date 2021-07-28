@@ -104,11 +104,6 @@ char *xgetlogin(void)
 {
 	struct passwd *pw = NULL;
 	uid_t ruid;
-	char *user;
-
-	user = getlogin();
-	if (user)
-		return xstrdup(user);
 
 	/* GNU Hurd implementation has an extension where a process can exist in a
 	 * non-conforming environment, and thus be outside the realms of POSIX
@@ -117,6 +112,9 @@ char *xgetlogin(void)
 	 * environment.
 	 *
 	 * http://austingroupbugs.net/view.php?id=511
+	 *
+	 * The same implementation is useful for other systems, since getlogin(3)
+	 * shouldn't be used as actual identification.
 	 */
 	errno = 0;
 	ruid = getuid();
