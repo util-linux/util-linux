@@ -340,14 +340,16 @@ static inline size_t get_hostname_max(void)
 
 static inline int drop_permissions(void)
 {
+	gid_t newgid = getgid();
+
 	errno = 0;
 
 	/* drop supplementary groups */
-	if (setgroups(0, NULL) != 0)
+	if (geteuid() == 0 && setgroups(1, &newgid) != 0)
 		goto fail;
 
 	/* drop GID */
-	if (setgid(getgid()) < 0)
+	if (setgid(newgid) < 0)
 		goto fail;
 
 	/* drop UID */
