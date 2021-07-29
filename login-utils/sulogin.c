@@ -621,6 +621,7 @@ static char *getpasswd(struct console *con)
 	cp = &con->cp;
 	tty = con->tio;
 
+	ret = pass;
 	tty.c_iflag &= ~(IUCLC|IXON|IXOFF|IXANY);
 	tty.c_lflag &= ~(ECHO|ECHOE|ECHOK|ECHONL|TOSTOP|ISIG);
 	tc = (tcsetattr(fd, TCSAFLUSH, &tty) == 0);
