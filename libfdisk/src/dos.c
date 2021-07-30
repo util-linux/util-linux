@@ -83,15 +83,6 @@ static const struct fdisk_shortcut dos_parttype_cuts[] =
 	{ .shortcut = "X", .alias = "linuxex",  .data = "85" }  /* Linux extended */
 };
 
-#define set_hsc(h,s,c,sector) { \
-		s = sector % cxt->geom.sectors + 1;			\
-		sector /= cxt->geom.sectors;				\
-		h = sector % cxt->geom.heads;				\
-		sector /= cxt->geom.heads;				\
-		c = sector & 0xff;					\
-		s |= (sector >> 2) & 0xc0;				\
-	}
-
 
 #define sector(s)	((s) & 0x3f)
 #define cylinder(s, c)	((c) | (((s) & 0xc0) << 2))
@@ -471,6 +462,7 @@ static int delete_partition(struct fdisk_context *cxt, size_t partnum)
 			*p = *q;
 			dos_partition_set_start(p, dos_partition_get_start(q));
 			dos_partition_set_size(p, dos_partition_get_size(q));
+			dos_partition_sync_chs(p, pe->offset, cxt->geom.sectors, cxt->geom.heads);
 			partition_set_changed(cxt, partnum - 1, 1);
 
 		} else if (cxt->label->nparts_max > 5) {
@@ -482,6 +474,7 @@ static int delete_partition(struct fdisk_context *cxt, size_t partnum)
 					       get_abs_partition_start(pe) -
 					       l->ext_offset);
 			pe->offset = l->ext_offset;
+			dos_partition_sync_chs(p, pe->offset, cxt->geom.sectors, cxt->geom.heads);
 			partition_set_changed(cxt, 5, 1);
 		}
 
@@ -1024,13 +1017,7 @@ static void set_partition(struct fdisk_context *cxt,
 	p->sys_ind = sysid;
 	dos_partition_set_start(p, start - offset);
 	dos_partition_set_size(p, stop - start + 1);
-
-	if (start/(cxt->geom.sectors*cxt->geom.heads) > 1023)
-		start = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
-	set_hsc(p->bh, p->bs, p->bc, start);
-	if (stop/(cxt->geom.sectors*cxt->geom.heads) > 1023)
-		stop = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
-	set_hsc(p->eh, p->es, p->ec, stop);
+	dos_partition_sync_chs(p, offset, cxt->geom.sectors, cxt->geom.heads);
 	partition_set_changed(cxt, i, 1);
 }
 
@@ -2517,7 +2504,9 @@ again:
 			/* Recount starts according to EBR offsets, the absolute
 			 * address still has to be the same! */
 			dos_partition_set_start(cur->pt_entry, nxt_start - cur->offset);
+			dos_partition_sync_chs(cur->pt_entry, cur->offset, cxt->geom.sectors, cxt->geom.heads);
 			dos_partition_set_start(nxt->pt_entry, cur_start - nxt->offset);
+			dos_partition_sync_chs(nxt->pt_entry, nxt->offset, cxt->geom.sectors, cxt->geom.heads);
 
 			partition_set_changed(cxt, i, 1);
 			partition_set_changed(cxt, i + 1, 1);
@@ -2662,6 +2651,7 @@ int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i)
 
 		dos_partition_set_size(p, sects);
 		dos_partition_set_start(p, new);
+		dos_partition_sync_chs(p, pe->offset, cxt->geom.sectors, cxt->geom.heads);
 
 		partition_set_changed(cxt, i, 1);
 	}
