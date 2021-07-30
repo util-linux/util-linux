@@ -1,0 +1,16 @@
+CPU(s):              2
+On-line CPU(s) list: 0,1
+
+# The following is the parsable format, which can be fed to other
+# programs. Each different item in every column has an unique ID
+# starting usually from zero.
+# CPU,Core,Socket,Node
+,,,
+,,,
+
+# The following is the parsable format, which can be fed to other
+# programs. Each different item in every column has an unique ID
+# starting usually from zero.
+# CPU,Core,Socket,Node
+,,,
+,,,
