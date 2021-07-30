@@ -991,7 +991,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		*(p - 2) = '\0';
 		add_summary_s(tb, sec, _("CPU op-mode(s):"), buf);
 	}
-	if (ct->addrsz)
+	if (ct && ct->addrsz)
 		add_summary_s(tb, sec, _("Address sizes:"), ct->addrsz);
 #if !defined(WORDS_BIGENDIAN)
 	add_summary_s(tb, sec, _("Byte Order:"), "Little Endian");
@@ -1033,9 +1033,9 @@ static void print_summary(struct lscpu_cxt *cxt)
 	sec = NULL;
 
 	/* Section: cpu type description */
-	if (ct->vendor)
+	if (ct && ct->vendor)
 		sec = add_summary_s(tb, NULL, _("Vendor ID:"), ct->vendor);
-	if (ct->bios_vendor)
+	if (ct && ct->bios_vendor)
 		add_summary_s(tb, sec, _("BIOS Vendor ID:"), ct->bios_vendor);
 
 	for (i = 0; i < cxt->ncputypes; i++)
