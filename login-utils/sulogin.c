@@ -680,7 +680,6 @@ static char *getpasswd(struct console *con)
 	tc = 0;
 	ret = pass;
 
-	ret = pass;
 	tty.c_iflag &= ~(IUCLC|IXON|IXOFF|IXANY);
 	tty.c_lflag &= ~(ECHO|ECHOE|ECHOK|ECHONL|TOSTOP|ISIG);
 
