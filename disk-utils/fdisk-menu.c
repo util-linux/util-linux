@@ -221,6 +221,7 @@ static const struct menu menu_dos = {
 		MENU_ENT('c', N_("toggle the dos compatibility flag")),
 
 		MENU_XENT('b', N_("move beginning of data in a partition")),
+		MENU_XENT('F', N_("fix partitions C/H/S values")),
 		MENU_XENT('i', N_("change the disk identifier")),
 
 		MENU_BENT_NEST_H('M', N_("return from protective/hybrid MBR to GPT"), FDISK_DISKLABEL_DOS, FDISK_DISKLABEL_GPT),
@@ -868,6 +869,13 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 			fdisk_info(cxt, _("Leaving nested disklabel."));
 			fdisk_unref_context(cxt);
 		}
+		break;
+	case 'F':
+		rc = fdisk_dos_fix_chs(cxt);
+		if (rc)
+			fdisk_info(cxt, _("C/H/S values fixed."));
+		else
+			fdisk_info(cxt, _("Nothing to do. C/H/S values are correct already."));
 		break;
 	}
 	return rc;
