@@ -2267,6 +2267,11 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				break;
 			case CTL('U'):
 				cp->kill = ascval;		/* set kill character */
+				/* fallthrough */
+			case CTL('C'):
+				if (key == CTL('C') && !(op->flags & F_VCONSOLE))
+					/* Ignore CTRL+C on serial line */
+					break;
 				while (bp > logname) {
 					if ((tp->c_lflag & ECHO) == 0)
 						write_all(1, erase[cp->parity], 3);
@@ -2275,9 +2280,6 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				break;
 			case CTL('D'):
 				exit(EXIT_SUCCESS);
-			case CTL('C'):
-				/* Ignore */
-				break;
 			default:
 				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
 					log_err(_("%s: input overrun"), op->tty);
