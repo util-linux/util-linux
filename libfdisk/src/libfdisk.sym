@@ -316,3 +316,7 @@ FDISK_2.36 {
 	fdisk_label_advparse_parttype;
 	fdisk_label_get_parttype_shortcut;
 } FDISK_2.35;
+
+FDISK_2.38 {
+	fdisk_dos_fix_chs;
+} FDISK_2.36;

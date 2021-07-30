@@ -780,10 +780,10 @@ static inline int chs_overflowed(unsigned int c, unsigned int h, unsigned int s)
 	return (c == 1023 && (h == 254 || h == 255) && s == 63);
 }
 
-static inline int lba_overflowed(unsigned int start, unsigned int sects)
+static inline int lba_overflowed(fdisk_sector_t start, fdisk_sector_t sects)
 {
-	/* Check if the last LBA sector can be represented by unsigned int */
-	return (start + (sects-1) < start);
+	/* Check if the last LBA sector can be represented by unsigned 32bit int */
+	return (start + (sects-1) > UINT32_MAX);
 }
 
 static void get_partition_table_geometry(struct fdisk_context *cxt,
@@ -2584,6 +2584,87 @@ static int dos_reorder(struct fdisk_context *cxt)
 		fix_chain_of_logicals(cxt);
 
 	return 0;
+}
+
+/**
+ * fdisk_dos_fix_chs:
+ * @cxt: fdisk context
+ *
+ * Fix beginning and ending C/H/S values for every partition
+ * according to LBA relative offset, relative beginning and
+ * size and fdisk idea of disk geometry (sectors per track
+ * and number of heads).
+ *
+ * Returns: number of fixed (changed) partitions.
+ */
+int fdisk_dos_fix_chs(struct fdisk_context *cxt)
+{
+	unsigned int obc, obh, obs;	/* old beginning c, h, s */
+	unsigned int oec, oeh, oes;	/* old ending c, h, s */
+	unsigned int nbc, nbh, nbs;	/* new beginning c, h, s */
+	unsigned int nec, neh, nes;	/* new ending c, h, s */
+	fdisk_sector_t l, sects;	/* lba beginning and size */
+	struct dos_partition *p;
+	struct pte *pe;
+	int changed = 0;
+	size_t i;
+
+	assert(fdisk_is_label(cxt, DOS));
+
+	for (i = 0; i < cxt->label->nparts_max; i++) {
+		p = self_partition(cxt, i);
+		if (!p || !is_used_partition(p))
+			continue;
+
+		pe = self_pte(cxt, i);
+
+		/* old beginning c, h, s */
+		obc = cylinder(p->bs, p->bc);
+		obh = p->bh;
+		obs = sector(p->bs);
+
+		/* old ending c, h, s */
+		oec = cylinder(p->es, p->ec);
+		oeh = p->eh;
+		oes = sector(p->es);
+
+		/* new beginning c, h, s */
+		l = get_abs_partition_start(pe);
+		long2chs(cxt, l, &nbc, &nbh, &nbs);
+		if (l > UINT32_MAX || nbc >= 1024) {
+			nbc = 1023;
+			nbh = cxt->geom.heads-1;
+			nbs = cxt->geom.sectors;
+		}
+
+		/* new ending c, h, s */
+		sects = dos_partition_get_size(p);
+		long2chs(cxt, l + sects - 1, &nec, &neh, &nes);
+		if (lba_overflowed(l, sects) || nec >= 1024) {
+			nec = 1023;
+			neh = cxt->geom.heads-1;
+			nes = cxt->geom.sectors;
+		}
+
+		if (obc != nbc || obh != nbh || obs != nbs ||
+		    oec != nec || oeh != neh || oes != nes) {
+			DBG(LABEL, ul_debug("DOS: changing %zu partition CHS "
+				"from (%d, %d, %d)-(%d, %d, %d) "
+				"to (%d, %d, %d)-(%d, %d, %d)",
+				i+1, obc, obh, obs, oec, oeh, oes,
+				nbc, nbh, nbs, nec, neh, nes));
+			p->bc = nbc & 0xff;
+			p->bh = nbh;
+			p->bs = nbs | ((nbc >> 2) & 0xc0);
+			p->ec = nec & 0xff;
+			p->eh = neh;
+			p->es = nes | ((nec >> 2) & 0xc0);
+			partition_set_changed(cxt, i, 1);
+			changed++;
+		}
+	}
+
+	return changed;
 }
 
 /* TODO: use fdisk_set_partition() API */
