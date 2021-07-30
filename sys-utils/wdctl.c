@@ -419,6 +419,13 @@ static int read_watchdog_from_device(struct wd_device *wd)
 		ioctl(fd, WDIOC_GETSTATUS, &wd->status);
 		ioctl(fd, WDIOC_GETBOOTSTATUS, &wd->bstatus);
 
+		/*
+		 * Sometimes supported options like WDIOF_CARDRESET are missing from
+		 * ident.options, add anything set in status/bstatus to ident.options.
+		 */
+		wd->ident.options |= wd->status;
+		wd->ident.options |= wd->bstatus;
+
 		if (ioctl(fd, WDIOC_GETTIMEOUT, &wd->timeout) >= 0)
 			wd->has_timeout = 1;
 		if (ioctl(fd, WDIOC_GETPRETIMEOUT, &wd->pretimeout) >= 0)
