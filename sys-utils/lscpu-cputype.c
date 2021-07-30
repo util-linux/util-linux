@@ -561,7 +561,7 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 	/* Set the default type to CPUs which are missing (or not parsed)
 	 * in cpuinfo */
 	ct = lscpu_cputype_get_default(cxt);
-	for (i = 0; i < cxt->npossibles; i++) {
+	for (i = 0; ct && i < cxt->npossibles; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
 
 		if (cpu && !cpu->type)
