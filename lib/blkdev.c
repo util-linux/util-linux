@@ -226,8 +226,10 @@ int blkdev_get_sector_size(int fd __attribute__((__unused__)), int *sector_size)
 #ifdef BLKPBSZGET
 int blkdev_get_physector_size(int fd, int *sector_size)
 {
-	if (ioctl(fd, BLKPBSZGET, &sector_size) >= 0)
+	if (ioctl(fd, BLKPBSZGET, sector_size) >= 0)
+    {
 		return 0;
+    }
 	return -1;
 }
 #else
