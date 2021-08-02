@@ -148,9 +148,6 @@ int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable)
 	sz = strlen(ml->lockfile);
 	assert(sz);
 
-	if (sz < 1)
-		return -EINVAL;
-
 	/* Change lock name:
 	 *
 	 *	flock:     "<name>.lock"
