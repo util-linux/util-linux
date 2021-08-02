@@ -329,7 +329,7 @@ static void dos_init(struct fdisk_context *cxt)
 		pe->changed = 0;
 
 		DBG(LABEL, ul_debug("DOS: initialize: #%zu start=%u size=%u sysid=%02x",
-					i + 1,
+					i,
 					dos_partition_get_start(pe->pt_entry),
 					dos_partition_get_size(pe->pt_entry),
 					pe->pt_entry->sys_ind));
@@ -2645,7 +2645,7 @@ int fdisk_dos_fix_chs(struct fdisk_context *cxt)
 			DBG(LABEL, ul_debug("DOS: changing %zu partition CHS "
 				"from (%d, %d, %d)-(%d, %d, %d) "
 				"to (%d, %d, %d)-(%d, %d, %d)",
-				i+1, obc, obh, obs, oec, oeh, oes,
+				i, obc, obh, obs, oec, oeh, oes,
 				nbc, nbh, nbs, nec, neh, nes));
 			p->bc = nbc & 0xff;
 			p->bh = nbh;
