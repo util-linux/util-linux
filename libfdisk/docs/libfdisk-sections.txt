@@ -220,6 +220,7 @@ DOS_FLAG_ACTIVE
 fdisk_dos_enable_compatible
 fdisk_dos_is_compatible
 fdisk_dos_move_begin
+fdisk_dos_fix_chs
 </SECTION>
 
 <SECTION>

@@ -58,6 +58,28 @@ static inline void dos_partition_set_size(struct dos_partition *p, unsigned int 
 	__dos_store_4le(p->nr_sects, n);
 }
 
+static inline void dos_partition_sync_chs(struct dos_partition *p, unsigned long long int part_offset, unsigned int geom_sectors, unsigned int geom_heads)
+{
+	unsigned long long int start = part_offset + dos_partition_get_start(p);
+	unsigned long long int stop = start + dos_partition_get_size(p) - 1;
+	unsigned int spc = geom_heads * geom_sectors;
+
+	if (start / spc > 1023)
+		start = spc * 1024 - 1;
+	if (stop / spc > 1023)
+		stop = spc * 1024 - 1;
+
+	p->bc = (start / spc) & 0xff;
+	p->bh = (start / geom_sectors) % geom_heads;
+	p->bs = ((start % geom_sectors + 1) & 0x3f) |
+		(((start / spc) >> 2) & 0xc0);
+
+	p->ec = (stop / spc) & 0xff;
+	p->eh = (stop / geom_sectors) % geom_heads;
+	p->es = ((stop % geom_sectors + 1) & 0x3f) |
+		(((stop / spc) >> 2) & 0xc0);
+}
+
 static inline int mbr_is_valid_magic(const unsigned char *mbr)
 {
 	return mbr[510] == 0x55 && mbr[511] == 0xaa ? 1 : 0;
