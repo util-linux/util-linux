@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <inttypes.h>
 
 #ifdef HAVE_LINUX_BLKZONED_H
 #include <linux/blkzoned.h>
@@ -126,6 +127,10 @@ static int sb_write_pointer(blkid_probe pr, struct blk_zone *zones, uint64_t *wp
 				blkid_probe_get_buffer(pr, bytenr, BTRFS_SUPER_INFO_SIZE);
 			if (!super[i])
 				return -EIO;
+			DBG(LOWPROBE, ul_debug("(btrfs) checking #%d zone "
+						"[start=%" PRIu64", len=%" PRIu64", sb-offset=%" PRIu64"]",
+						i, (uint64_t) zones[i].start,
+						(uint64_t) zones[i].len, bytenr));
 		}
 
 		if (super[0]->generation > super[1]->generation)
@@ -140,6 +145,8 @@ static int sb_write_pointer(blkid_probe pr, struct blk_zone *zones, uint64_t *wp
 		return -EUCLEAN;
 	}
 	*wp_ret = sector << SECTOR_SHIFT;
+
+	DBG(LOWPROBE, ul_debug("(btrfs) write pointer: %" PRIu64" sector", sector));
 	return 0;
 }
 
@@ -168,6 +175,7 @@ static int sb_log_offset(blkid_probe pr, uint64_t *bytenr_ret)
 	 */
 	for (i = 0; i < BTRFS_NR_SB_LOG_ZONES; i++) {
 		if (zones[i].type == BLK_ZONE_TYPE_CONVENTIONAL) {
+			DBG(LOWPROBE, ul_debug("(btrfs) checking conventional zone"));
 			*bytenr_ret = zones[i].start << SECTOR_SHIFT;
 			ret = 0;
 			goto out;
