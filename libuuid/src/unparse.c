@@ -33,6 +33,7 @@
  */
 
 #include <stdio.h>
+#include "c.h"
 
 #include "uuidP.h"
 
