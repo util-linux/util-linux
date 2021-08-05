@@ -23,6 +23,7 @@ int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz);
 int ul_buffer_append_string(struct ul_buffer *buf, const char *str);
 int ul_buffer_append_ntimes(struct ul_buffer *buf, size_t n, const char *str);
 int ul_buffer_set_data(struct ul_buffer *buf, const char *data, size_t sz);
-char *ul_buffer_get_data(struct ul_buffer *buf);
+char *ul_buffer_get_data(struct ul_buffer *buf,  size_t *sz);
+size_t ul_buffer_get_bufsiz(struct ul_buffer *buf);
 
 #endif /* UTIL_LINUX_BUFFER */

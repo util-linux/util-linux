@@ -119,16 +119,26 @@ int ul_buffer_set_data(struct ul_buffer *buf, const char *data, size_t sz)
 	return ul_buffer_append_data(buf, data, sz);
 }
 
-char *ul_buffer_get_data(struct ul_buffer *buf)
+char *ul_buffer_get_data(struct ul_buffer *buf, size_t *sz)
 {
+	if (sz)
+		*sz = buf->end - buf->begin;
 	return buf->begin;
 }
+
+/* size of allocated area (!= size of stored data */
+size_t ul_buffer_get_bufsiz(struct ul_buffer *buf)
+{
+	return buf->sz;
+}
+
 
 #ifdef TEST_PROGRAM_BUFFER
 int main(void)
 {
 	struct ul_buffer buf = UL_INIT_BUFFER;
 	char *str;
+	size_t sz = 0;
 
 	ul_buffer_set_chunksize(&buf, 16);
 
@@ -140,22 +150,22 @@ int main(void)
 	ul_buffer_append_string(&buf, "=");
 	ul_buffer_append_string(&buf, "bbb");
 
-	str = ul_buffer_get_data(&buf);
-	printf("data '%s'\n", str);
+	str = ul_buffer_get_data(&buf, &sz);
+	printf("data [%zu] '%s'\n", sz, str);
 
 	ul_buffer_reset_data(&buf);
 	ul_buffer_append_string(&buf, "This is really long string to test the buffer function.");
 	ul_buffer_append_string(&buf, " YES!");
-	str = ul_buffer_get_data(&buf);
-	printf("data '%s'\n", str);
+	str = ul_buffer_get_data(&buf, &sz);
+	printf("data [%zu] '%s'\n", sz, str);
 
 	ul_buffer_free_data(&buf);
 	str = strdup("foo");
 	ul_buffer_refer_string(&buf, str);
 	ul_buffer_append_data(&buf, ",", 1);
 	ul_buffer_append_string(&buf, "bar");
-	str = ul_buffer_get_data(&buf);
-	printf("data '%s'\n", str);
+	str = ul_buffer_get_data(&buf, &sz);
+	printf("data [%zu] '%s'\n", sz, str);
 
 	ul_buffer_free_data(&buf);
 }

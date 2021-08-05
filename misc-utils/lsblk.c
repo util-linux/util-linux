@@ -820,7 +820,7 @@ static char *device_get_data(
 			if (i + 1 < n)
 				ul_buffer_append_data(&buf, "\n", 1);
 		}
-		str = ul_buffer_get_data(&buf);
+		str = ul_buffer_get_data(&buf, NULL);
 		break;
 	}
 	case COL_FSROOTS:
@@ -838,7 +838,7 @@ static char *device_get_data(
 			if (i + 1 < n)
 				ul_buffer_append_data(&buf, "\n", 1);
 		}
-		str = ul_buffer_get_data(&buf);
+		str = ul_buffer_get_data(&buf, NULL);
 		break;
 	}
 	case COL_LABEL:
