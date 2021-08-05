@@ -992,6 +992,31 @@ char *strfconcat(const char *s, const char *format, ...)
 	return res;
 }
 
+int strappend(char **a, const char *b)
+{
+	size_t al, bl;
+	char *tmp;
+
+	if (!a)
+		return -EINVAL;
+	if (!b || !*b)
+		return 0;
+	if (!*a) {
+		*a = strdup(b);
+		return !*a ? -ENOMEM : 0;
+	}
+
+	al = strlen(*a);
+	bl = strlen(b);
+
+	tmp = realloc(*a, al + bl + 1);
+	if (!tmp)
+		return -ENOMEM;
+	*a = tmp;
+	memcpy((*a) + al, b, bl + 1);
+	return 0;
+}
+
 static size_t strcspn_escaped(const char *s, const char *reject)
 {
         int escaped = 0;

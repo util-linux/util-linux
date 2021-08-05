@@ -32,31 +32,6 @@
 #include "statfs_magic.h"
 #include "sysfs.h"
 
-int append_string(char **a, const char *b)
-{
-	size_t al, bl;
-	char *tmp;
-
-	assert(a);
-
-	if (!b || !*b)
-		return 0;
-	if (!*a) {
-		*a = strdup(b);
-		return !*a ? -ENOMEM : 0;
-	}
-
-	al = strlen(*a);
-	bl = strlen(b);
-
-	tmp = realloc(*a, al + bl + 1);
-	if (!tmp)
-		return -ENOMEM;
-	*a = tmp;
-	memcpy((*a) + al, b, bl + 1);
-	return 0;
-}
-
 /*
  * Return 1 if the file is not accessible or empty
  */
@@ -1205,18 +1180,6 @@ static int test_endswith(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-static int test_appendstr(struct libmnt_test *ts, int argc, char *argv[])
-{
-	char *str = strdup(argv[1]);
-	const char *ap = argv[2];
-
-	append_string(&str, ap);
-	printf("new string: '%s'\n", str);
-
-	free(str);
-	return 0;
-}
-
 static int test_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *path = canonicalize_path(argv[1]),
@@ -1343,7 +1306,6 @@ int main(int argc, char *argv[])
 	{ "--filesystems",   test_filesystems,	   "[<pattern>] list /{etc,proc}/filesystems" },
 	{ "--starts-with",   test_startswith,      "<string> <prefix>" },
 	{ "--ends-with",     test_endswith,        "<string> <prefix>" },
-	{ "--append-string", test_appendstr,       "<string> <appendix>" },
 	{ "--mountpoint",    test_mountpoint,      "<path>" },
 	{ "--cd-parent",     test_chdir,           "<path>" },
 	{ "--kernel-cmdline",test_kernel_cmdline,  "<option> | <option>=" },

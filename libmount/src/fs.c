@@ -1369,7 +1369,7 @@ int mnt_fs_append_comment(struct libmnt_fs *fs, const char *comm)
 	if (!fs)
 		return -EINVAL;
 
-	return append_string(&fs->comment, comm);
+	return strappend(&fs->comment, comm);
 }
 
 /**

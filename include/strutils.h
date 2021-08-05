@@ -382,6 +382,9 @@ extern char *strnconcat(const char *s, const char *suffix, size_t b);
 extern char *strconcat(const char *s, const char *suffix);
 extern char *strfconcat(const char *s, const char *format, ...)
 		 __attribute__ ((__format__ (__printf__, 2, 3)));
+
+extern int strappend(char **a, const char *b);
+
 extern const char *split(const char **state, size_t *l, const char *separator, int quoted);
 
 extern int skip_fline(FILE *fp);

@@ -309,7 +309,7 @@ int mnt_table_append_intro_comment(struct libmnt_table *tb, const char *comm)
 {
 	if (!tb)
 		return -EINVAL;
-	return append_string(&tb->comm_intro, comm);
+	return strappend(&tb->comm_intro, comm);
 }
 
 /**
@@ -350,7 +350,7 @@ int mnt_table_append_trailing_comment(struct libmnt_table *tb, const char *comm)
 {
 	if (!tb)
 		return -EINVAL;
-	return append_string(&tb->comm_tail, comm);
+	return strappend(&tb->comm_tail, comm);
 }
 
 /**

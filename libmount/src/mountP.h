@@ -95,7 +95,6 @@ extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[]);
 
 /* utils.c */
 extern int mnt_valid_tagname(const char *tagname);
-extern int append_string(char **a, const char *b);
 
 extern const char *mnt_statfs_get_fstype(struct statfs *vfs);
 extern int is_file_empty(const char *name);
