@@ -11,6 +11,7 @@ void ul_buffer_reset_data(struct ul_buffer *buf)
 	if (buf->begin)
 		buf->begin[0] = '\0';
 	buf->end = buf->begin;
+	memset(buf->ptrs, 0, buf->nptrs * sizeof(char *));
 }
 
 void ul_buffer_free_data(struct ul_buffer *buf)
@@ -21,6 +22,10 @@ void ul_buffer_free_data(struct ul_buffer *buf)
 	buf->begin = NULL;
 	buf->end = NULL;
 	buf->sz = 0;
+
+	free(buf->ptrs);
+	buf->ptrs = NULL;
+	buf->nptrs = 0;
 }
 
 void ul_buffer_set_chunksize(struct ul_buffer *buf, size_t sz)
@@ -32,6 +37,39 @@ int ul_buffer_is_empty(struct ul_buffer *buf)
 {
 	return buf->begin == buf->end;
 }
+
+int ul_buffer_save_pointer(struct ul_buffer *buf, unsigned short ptr_idx)
+{
+	if (ptr_idx >= buf->nptrs) {
+		char **tmp = realloc(buf->ptrs, (ptr_idx + 1) * sizeof(char *));
+
+		if (!tmp)
+			return -EINVAL;
+		buf->ptrs = tmp;
+		buf->nptrs = ptr_idx + 1;
+	}
+
+	buf->ptrs[ptr_idx] = buf->end;
+	return 0;
+}
+
+
+char *ul_buffer_get_pointer(struct ul_buffer *buf, unsigned short ptr_idx)
+{
+	if (ptr_idx < buf->nptrs)
+		return buf->ptrs[ptr_idx];
+	return NULL;
+}
+
+size_t ul_buffer_get_pointer_length(struct ul_buffer *buf, unsigned short ptr_idx)
+{
+	char *ptr = ul_buffer_get_pointer(buf, ptr_idx);
+
+	if (ptr)
+		return ptr - buf->begin;
+	return 0;
+}
+
 
 void ul_buffer_refer_string(struct ul_buffer *buf, char *str)
 {
@@ -134,6 +172,12 @@ size_t ul_buffer_get_bufsiz(struct ul_buffer *buf)
 
 
 #ifdef TEST_PROGRAM_BUFFER
+
+enum {
+	PTR_AAA  = 0,
+	PTR_BBB,
+};
+
 int main(void)
 {
 	struct ul_buffer buf = UL_INIT_BUFFER;
@@ -145,19 +189,28 @@ int main(void)
 	ul_buffer_append_string(&buf, "AAA");
 	ul_buffer_append_data(&buf, "=", 1);
 	ul_buffer_append_string(&buf, "aaa");
+	ul_buffer_save_pointer(&buf, PTR_AAA);
+
 	ul_buffer_append_data(&buf, ",", 1);
 	ul_buffer_append_string(&buf, "BBB");
 	ul_buffer_append_string(&buf, "=");
 	ul_buffer_append_string(&buf, "bbb");
+	ul_buffer_save_pointer(&buf, PTR_BBB);
 
 	str = ul_buffer_get_data(&buf, &sz);
 	printf("data [%zu] '%s'\n", sz, str);
+
+	printf(" pointer data len: AAA=%zu, BBB=%zu\n",
+			ul_buffer_get_pointer_length(&buf, PTR_AAA),
+			ul_buffer_get_pointer_length(&buf, PTR_BBB));
 
 	ul_buffer_reset_data(&buf);
 	ul_buffer_append_string(&buf, "This is really long string to test the buffer function.");
+	ul_buffer_save_pointer(&buf, PTR_AAA);
 	ul_buffer_append_string(&buf, " YES!");
 	str = ul_buffer_get_data(&buf, &sz);
 	printf("data [%zu] '%s'\n", sz, str);
+	printf(" pointer data len: AAA=%zu\n", ul_buffer_get_pointer_length(&buf, PTR_AAA));
 
 	ul_buffer_free_data(&buf);
 	str = strdup("foo");

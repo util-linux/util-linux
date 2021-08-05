@@ -9,6 +9,9 @@ struct ul_buffer {
 
 	size_t sz;		/* allocated space for data */
 	size_t chunksize;
+
+	char **ptrs;		/* saved pointers */
+	size_t nptrs;		/* number of saved poiters */
 };
 
 #define UL_INIT_BUFFER { .begin = NULL }
@@ -25,5 +28,10 @@ int ul_buffer_append_ntimes(struct ul_buffer *buf, size_t n, const char *str);
 int ul_buffer_set_data(struct ul_buffer *buf, const char *data, size_t sz);
 char *ul_buffer_get_data(struct ul_buffer *buf,  size_t *sz);
 size_t ul_buffer_get_bufsiz(struct ul_buffer *buf);
+
+int ul_buffer_save_pointer(struct ul_buffer *buf, unsigned short ptr_idx);
+char *ul_buffer_get_pointer(struct ul_buffer *buf, unsigned short  ptr_idx);
+size_t ul_buffer_get_pointer_length(struct ul_buffer *buf, unsigned short ptr_idx);
+
 
 #endif /* UTIL_LINUX_BUFFER */
