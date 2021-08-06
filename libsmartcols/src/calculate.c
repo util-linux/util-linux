@@ -35,7 +35,7 @@ static void dbg_columns(struct libscols_table *tb)
 static int count_cell_width(struct libscols_table *tb,
 		struct libscols_line *ln,
 		struct libscols_column *cl,
-		struct libscols_buffer *buf)
+		struct ul_buffer *buf)
 {
 	size_t len;
 	char *data;
@@ -45,7 +45,7 @@ static int count_cell_width(struct libscols_table *tb,
 	if (rc)
 		return rc;
 
-	data = buffer_get_data(buf);
+	data = ul_buffer_get_data(buf, NULL, NULL);
 	if (!data)
 		len = 0;
 	else if (scols_column_is_customwrap(cl))
@@ -68,7 +68,7 @@ static int count_cell_width(struct libscols_table *tb,
 	}
 	cl->width = max(len, cl->width);
 	if (scols_column_is_tree(cl)) {
-		size_t treewidth = buffer_get_safe_art_size(buf);
+		size_t treewidth = ul_buffer_get_safe_pointer_width(buf, SCOLS_BUFPTR_TREEEND);
 		cl->width_treeart = max(cl->width_treeart, treewidth);
 	}
 	return 0;
@@ -80,7 +80,7 @@ static int walk_count_cell_width(struct libscols_table *tb,
 		struct libscols_column *cl,
 		void *data)
 {
-	return count_cell_width(tb, ln, cl, (struct libscols_buffer *) data);
+	return count_cell_width(tb, ln, cl, (struct ul_buffer *) data);
 }
 
 /*
@@ -94,7 +94,7 @@ static int walk_count_cell_width(struct libscols_table *tb,
  */
 static int count_column_width(struct libscols_table *tb,
 			      struct libscols_column *cl,
-			      struct libscols_buffer *buf)
+			      struct ul_buffer *buf)
 {
 	int rc = 0, no_header = 0;
 
@@ -183,7 +183,7 @@ done:
 /*
  * This is core of the scols_* voodoo...
  */
-int __scols_calculate(struct libscols_table *tb, struct libscols_buffer *buf)
+int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 {
 	struct libscols_column *cl;
 	struct libscols_iter itr;
