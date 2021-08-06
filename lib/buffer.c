@@ -5,6 +5,7 @@
  * Written by Karel Zak <kzak@redhat.com>
  */
 #include "buffer.h"
+#include "mbsalign.h"
 
 void ul_buffer_reset_data(struct ul_buffer *buf)
 {
@@ -26,6 +27,10 @@ void ul_buffer_free_data(struct ul_buffer *buf)
 	free(buf->ptrs);
 	buf->ptrs = NULL;
 	buf->nptrs = 0;
+
+	free(buf->encoded);
+	buf->encoded = NULL;
+	buf->encoded_sz = 0;
 }
 
 void ul_buffer_set_chunksize(struct ul_buffer *buf, size_t sz)
@@ -61,15 +66,26 @@ char *ul_buffer_get_pointer(struct ul_buffer *buf, unsigned short ptr_idx)
 	return NULL;
 }
 
+/* returns length from begin to the pointer */
 size_t ul_buffer_get_pointer_length(struct ul_buffer *buf, unsigned short ptr_idx)
 {
 	char *ptr = ul_buffer_get_pointer(buf, ptr_idx);
 
-	if (ptr)
+	if (ptr && ptr > buf->begin)
 		return ptr - buf->begin;
 	return 0;
 }
 
+/* returns width of data in safe encoding (from the begin to the pointer) */
+size_t ul_buffer_get_safe_pointer_width(struct ul_buffer *buf, unsigned short ptr_idx)
+{
+	size_t len = ul_buffer_get_pointer_length(buf, ptr_idx);
+
+	if (!len)
+		return 0;
+
+	return mbs_safe_nwidth(buf->begin, len, NULL);
+}
 
 void ul_buffer_refer_string(struct ul_buffer *buf, char *str)
 {
@@ -157,10 +173,12 @@ int ul_buffer_set_data(struct ul_buffer *buf, const char *data, size_t sz)
 	return ul_buffer_append_data(buf, data, sz);
 }
 
-char *ul_buffer_get_data(struct ul_buffer *buf, size_t *sz)
+char *ul_buffer_get_data(struct ul_buffer *buf, size_t *sz, size_t *width)
 {
 	if (sz)
 		*sz = buf->end - buf->begin;
+	if (width)
+		*width = buf->begin && *buf->begin ? mbs_width(buf->begin) : 0;
 	return buf->begin;
 }
 
@@ -168,6 +186,42 @@ char *ul_buffer_get_data(struct ul_buffer *buf, size_t *sz)
 size_t ul_buffer_get_bufsiz(struct ul_buffer *buf)
 {
 	return buf->sz;
+}
+
+/* encode data by mbs_safe_encode() to avoid control and non-printable chars */
+char *ul_buffer_get_safe_data(struct ul_buffer *buf, size_t *sz, size_t *width, const char *safechars)
+{
+	char *data = ul_buffer_get_data(buf, NULL, NULL);
+	size_t encsz, wsz = 0;
+	char *res = NULL;
+
+	if (!data)
+		goto nothing;
+
+	encsz = mbs_safe_encode_size(buf->sz) + 1;
+	if (encsz > buf->encoded_sz) {
+		char *tmp = realloc(buf->encoded, encsz);
+		if (!tmp)
+			goto nothing;
+		buf->encoded = tmp;
+		buf->encoded_sz = encsz;
+	}
+
+	res = mbs_safe_encode_to_buffer(data, &wsz, buf->encoded, safechars);
+	if (!res || !wsz || wsz == (size_t) -1)
+		goto nothing;
+
+	if (width)
+		*width = wsz;
+	if (sz)
+		*sz = strlen(res);
+	return res;
+nothing:
+	if (width)
+		*width = 0;
+	if (sz)
+		*sz = 0;
+	return NULL;
 }
 
 
@@ -197,18 +251,21 @@ int main(void)
 	ul_buffer_append_string(&buf, "bbb");
 	ul_buffer_save_pointer(&buf, PTR_BBB);
 
-	str = ul_buffer_get_data(&buf, &sz);
+	str = ul_buffer_get_data(&buf, &sz, NULL);
 	printf("data [%zu] '%s'\n", sz, str);
 
 	printf(" pointer data len: AAA=%zu, BBB=%zu\n",
 			ul_buffer_get_pointer_length(&buf, PTR_AAA),
 			ul_buffer_get_pointer_length(&buf, PTR_BBB));
+	printf(" pointer data width: AAA=%zu, BBB=%zu\n",
+			ul_buffer_get_safe_pointer_width(&buf, PTR_AAA),
+			ul_buffer_get_safe_pointer_width(&buf, PTR_BBB));
 
 	ul_buffer_reset_data(&buf);
 	ul_buffer_append_string(&buf, "This is really long string to test the buffer function.");
 	ul_buffer_save_pointer(&buf, PTR_AAA);
 	ul_buffer_append_string(&buf, " YES!");
-	str = ul_buffer_get_data(&buf, &sz);
+	str = ul_buffer_get_data(&buf, &sz, NULL);
 	printf("data [%zu] '%s'\n", sz, str);
 	printf(" pointer data len: AAA=%zu\n", ul_buffer_get_pointer_length(&buf, PTR_AAA));
 
@@ -217,7 +274,7 @@ int main(void)
 	ul_buffer_refer_string(&buf, str);
 	ul_buffer_append_data(&buf, ",", 1);
 	ul_buffer_append_string(&buf, "bar");
-	str = ul_buffer_get_data(&buf, &sz);
+	str = ul_buffer_get_data(&buf, &sz, NULL);
 	printf("data [%zu] '%s'\n", sz, str);
 
 	ul_buffer_free_data(&buf);

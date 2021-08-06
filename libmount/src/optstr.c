@@ -224,7 +224,7 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 
 	rc = __buffer_append_option(&buf, name, nsz, value, vsz);
 
-	*optstr = ul_buffer_get_data(&buf, NULL);
+	*optstr = ul_buffer_get_data(&buf, NULL, NULL);
 	return rc;
 }
 /**
@@ -261,7 +261,7 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 		free(*optstr);
 	}
 
-	*optstr = ul_buffer_get_data(&buf, NULL);
+	*optstr = ul_buffer_get_data(&buf, NULL, NULL);
 	return rc;
 }
 
@@ -558,11 +558,11 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs,
 	}
 
 	if (vfs)
-		*vfs  = rc ? NULL : ul_buffer_get_data(&xvfs, NULL);
+		*vfs  = rc ? NULL : ul_buffer_get_data(&xvfs, NULL, NULL);
 	if (fs)
-		*fs   = rc ? NULL : ul_buffer_get_data(&xfs, NULL);
+		*fs   = rc ? NULL : ul_buffer_get_data(&xfs, NULL, NULL);
 	if (user)
-		*user = rc ? NULL : ul_buffer_get_data(&xuser, NULL);
+		*user = rc ? NULL : ul_buffer_get_data(&xuser, NULL, NULL);
 	if (rc) {
 		ul_buffer_free_data(&xvfs);
 		ul_buffer_free_data(&xfs);
@@ -626,7 +626,7 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
 			break;
 	}
 
-	*subset  = rc ? NULL : ul_buffer_get_data(&buf, NULL);
+	*subset  = rc ? NULL : ul_buffer_get_data(&buf, NULL, NULL);
 	if (rc)
 		ul_buffer_free_data(&buf);
 	return rc;
@@ -834,7 +834,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 				goto err;
 		}
 
-		*optstr = ul_buffer_get_data(&buf, NULL);
+		*optstr = ul_buffer_get_data(&buf, NULL, NULL);
 	}
 
 	DBG(CXT, ul_debug("new optstr '%s'", *optstr));

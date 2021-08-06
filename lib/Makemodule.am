@@ -203,7 +203,7 @@ test_pwdutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 test_remove_env_SOURCES = lib/env.c
 test_remove_env_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
-test_buffer_SOURCES = lib/buffer.c
+test_buffer_SOURCES = lib/buffer.c lib/mbsalign.c
 test_buffer_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_BUFFER
 
 if LINUX
