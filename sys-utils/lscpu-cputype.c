@@ -2,6 +2,10 @@
 #include <sys/utsname.h>
 #include <sys/personality.h>
 
+#if defined(HAVE_LIBRTAS)
+# include <librtas.h>
+#endif
+
 #include "lscpu.h"
 
 #include "fileutils.h"
