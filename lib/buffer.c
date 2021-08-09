@@ -12,7 +12,9 @@ void ul_buffer_reset_data(struct ul_buffer *buf)
 	if (buf->begin)
 		buf->begin[0] = '\0';
 	buf->end = buf->begin;
-	memset(buf->ptrs, 0, buf->nptrs * sizeof(char *));
+
+	if (buf->ptrs && buf->nptrs)
+		memset(buf->ptrs, 0, buf->nptrs * sizeof(char *));
 }
 
 void ul_buffer_free_data(struct ul_buffer *buf)
