@@ -453,7 +453,7 @@ static int get_range(char *str, rlim_t *soft, rlim_t *hard, int *found)
 
 static int parse_prlim(struct rlimit *lim, char *ops, size_t id)
 {
-	rlim_t soft, hard;
+	rlim_t soft = 0, hard = 0;
 	int found = 0;
 
 	if (ops && *ops == '=')
