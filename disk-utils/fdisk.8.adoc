@@ -209,7 +209,7 @@ enables libblkid debug output.
 enables libsmartcols debug output.
 
 *LIBSMARTCOLS_DEBUG_PADDING*=on::
-use visible padding characters. Requires enabled *LIBSMARTCOLS_DEBUG*.
+use visible padding characters.
 
 *LOCK_BLOCK_DEVICE*=<mode>::
 use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
