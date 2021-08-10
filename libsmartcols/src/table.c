@@ -50,7 +50,7 @@ static void check_padding_debug(struct libscols_table *tb)
 {
 	const char *str;
 
-	assert(libsmartcols_debug_mask);	/* debug has to be enabled! */
+	assert(libsmartcols_debug_mask);	/* debug has to be already initialized! */
 
 	str = getenv("LIBSMARTCOLS_DEBUG_PADDING");
 	if (!str || (strcmp(str, "on") != 0 && strcmp(str, "1") != 0))
