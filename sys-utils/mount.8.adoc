@@ -274,7 +274,7 @@ mount --make-runbindable mountpoint
 
 Note that the Linux kernel does not allow changing multiple propagation flags with a single *mount*(2) system call, and the flags cannot be mixed with other mount options and operations.
 
-Since util-linux 2.23 the *mount* command can be used to do more propagation (topology) changes by one *mount*(8) call and do it also together with other mount operations. This feature is EXPERIMENTAL. The propagation flags are applied by additional *mount*(2) system calls when the preceding mount operations were successful. Note that this use case is not atomic. It is possible to specify the propagation flags in *fstab*(5) as mount options (*private*, *slave*, *shared*, *unbindable*, *rprivate*, *rslave*, *rshared*, *runbindable*).
+Since util-linux 2.23 the *mount* command can be used to do more propagation (topology) changes by one *mount*(8) call and do it also together with other mount operations. The propagation flags are applied by additional *mount*(2) system calls when the preceding mount operations were successful. Note that this use case is not atomic. It is possible to specify the propagation flags in *fstab*(5) as mount options (*private*, *slave*, *shared*, *unbindable*, *rprivate*, *rslave*, *rshared*, *runbindable*).
 
 For example:
 
