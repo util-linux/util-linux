@@ -753,6 +753,29 @@ static int do_mount_additional(struct libmnt_context *cxt,
 	return 0;
 }
 
+static int do_mount_subdir(struct libmnt_context *cxt,
+			   const char *root,
+			   const char *subdir,
+			   const char *target)
+{
+	char *src = NULL;
+	int rc = 0;
+
+	if (asprintf(&src, "%s/%s", root, subdir) < 0)
+		return -ENOMEM;
+
+	DBG(CXT, ul_debugobj(cxt, "mount subdir %s to %s", src, target));
+	if (mount(src, target, NULL, MS_BIND | MS_REC, NULL) != 0)
+		rc = -MNT_ERR_APPLYFLAGS;
+
+	DBG(CXT, ul_debugobj(cxt, "umount old root %s", root));
+	if (umount(root) != 0)
+		rc = -MNT_ERR_APPLYFLAGS;
+
+	free(src);
+	return rc;
+}
+
 /*
  * The default is to use fstype from cxt->fs, this could be overwritten by
  * @try_type argument. If @try_type is specified then mount with MS_SILENT.
@@ -763,7 +786,7 @@ static int do_mount_additional(struct libmnt_context *cxt,
  */
 static int do_mount(struct libmnt_context *cxt, const char *try_type)
 {
-	int rc = 0;
+	int rc = 0, old_ns_fd = -1;
 	const char *src, *target, *type;
 	unsigned long flags;
 
@@ -806,18 +829,18 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	if (try_type)
 		flags |= MS_SILENT;
 
-	DBG(CXT, ul_debugobj(cxt, "%smount(2) "
-			"[source=%s, target=%s, type=%s, "
-			" mountflags=0x%08lx, mountdata=%s]",
-			mnt_context_is_fake(cxt) ? "(FAKE) " : "",
-			src, target, type,
-			flags, cxt->mountdata ? "yes" : "<none>"));
 
 	if (mnt_context_is_fake(cxt)) {
 		/*
 		 * fake
 		 */
 		cxt->syscall_status = 0;
+
+		DBG(CXT, ul_debugobj(cxt, "FAKE mount(2) "
+				"[source=%s, target=%s, type=%s, "
+				" mountflags=0x%08lx, mountdata=%s]",
+				src, target, type,
+				flags, cxt->mountdata ? "yes" : "<none>"));
 
 	} else if (mnt_context_propagation_only(cxt)) {
 		/*
@@ -829,13 +852,30 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 		/*
 		 * regular mount
 		 */
+
+		/* create unhared temporary target */
+		if (cxt->subdir) {
+			rc = mnt_unshared_mkdir(cxt->tmptgt,
+					S_IRWXU, &old_ns_fd);
+			if (rc)
+				return rc;
+			target = cxt->tmptgt;
+		}
+
+		DBG(CXT, ul_debugobj(cxt, "mount(2) "
+			"[source=%s, target=%s, type=%s, "
+			" mountflags=0x%08lx, mountdata=%s]",
+			src, target, type,
+			flags, cxt->mountdata ? "yes" : "<none>"));
+
 		if (mount(src, target, type, flags, cxt->mountdata)) {
 			cxt->syscall_status = -errno;
 			DBG(CXT, ul_debugobj(cxt, "mount(2) failed [errno=%d %m]",
 							-cxt->syscall_status));
-			return -cxt->syscall_status;
+			rc = -cxt->syscall_status;
+			goto done;
 		}
-		DBG(CXT, ul_debugobj(cxt, "  success"));
+		DBG(CXT, ul_debugobj(cxt, "  mount(2) success"));
 		cxt->syscall_status = 0;
 
 		/*
@@ -845,7 +885,20 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 		    && do_mount_additional(cxt, target, flags, NULL)) {
 
 			/* TODO: call umount? */
-			return -MNT_ERR_APPLYFLAGS;
+			rc = -MNT_ERR_APPLYFLAGS;
+			goto done;
+		}
+
+		/*
+		 * bind subdir to the real target, umount temporary target
+		 */
+		if (cxt->subdir) {
+			target = mnt_fs_get_target(cxt->fs);
+			rc = do_mount_subdir(cxt, cxt->tmptgt, cxt->subdir, target);
+			if (rc)
+				goto done;
+			mnt_unshared_rmdir(cxt->tmptgt, old_ns_fd);
+			old_ns_fd = -1;
 		}
 	}
 
@@ -854,6 +907,10 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 		if (fs)
 			rc = mnt_fs_set_fstype(fs, try_type);
 	}
+
+done:
+	if (old_ns_fd >= 0)
+		mnt_unshared_rmdir(cxt->tmptgt, old_ns_fd);
 
 	return rc;
 }

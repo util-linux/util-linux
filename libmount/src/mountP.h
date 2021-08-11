@@ -74,6 +74,7 @@ UL_DEBUG_DECLARE_MASK(libmount);
 #define MNT_MNTTABDIR_EXT	".fstab"
 
 /* library private paths */
+#define MNT_TMPDIR		"/tmp/mount"
 #define MNT_RUNTIME_TOPDIR	"/run"
 #define MNT_RUNTIME_TOPDIR_OLD	"/dev"
 
@@ -122,6 +123,9 @@ extern void mnt_free_filesystems(char **filesystems);
 extern char *mnt_get_kernel_cmdline_option(const char *name);
 extern int mnt_stat_mountpoint(const char *target, struct stat *st);
 extern int mnt_lstat_mountpoint(const char *target, struct stat *st);
+
+extern int mnt_unshared_mkdir(const char *path, mode_t mode, int *old_ns_fd);
+extern int mnt_unshared_rmdir(const char *path, int old_ns_fd);
 
 /* tab.c */
 extern int is_mountinfo(struct libmnt_table *tb);
@@ -288,6 +292,9 @@ struct libmnt_context
 
 	char	*fstype_pattern;	/* for mnt_match_fstype() */
 	char	*optstr_pattern;	/* for mnt_match_options() */
+
+	char	*subdir;		/* X-mount.subdir= */
+	char	*tmptgt;		/* (unshared) private mount target */
 
 	struct libmnt_fs *fs;		/* filesystem description (type, mountpoint, device, ...) */
 	struct libmnt_fs *fs_template;	/* used for @fs on mnt_reset_context() */

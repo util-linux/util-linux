@@ -153,6 +153,8 @@ int mnt_reset_context(struct libmnt_context *cxt)
 
 	free(cxt->helper);
 	free(cxt->orig_user);
+	free(cxt->subdir);
+	free(cxt->tmptgt);
 
 	cxt->fs = NULL;
 	cxt->mtab = NULL;
@@ -162,6 +164,8 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->mountflags = 0;
 	cxt->user_mountflags = 0;
 	cxt->mountdata = NULL;
+	cxt->tmptgt = NULL;
+	cxt->subdir = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
 
 	/* free additional mounts list */
@@ -291,6 +295,10 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 	if (strdup_between_structs(n, o, helper))
 		goto failed;
 	if (strdup_between_structs(n, o, orig_user))
+		goto failed;
+	if (strdup_between_structs(n, o, subdir))
+		goto failed;
+	if (strdup_between_structs(n, o, tmptgt))
 		goto failed;
 
 	n->mountflags = o->mountflags;
@@ -1860,6 +1868,31 @@ end:
 	return rc;
 }
 
+static int is_subdir_required(struct libmnt_context *cxt, int *rc)
+{
+	char *dir;
+	size_t sz;
+
+	assert(cxt);
+	assert(rc);
+
+	*rc = 0;
+
+	if (!cxt->fs
+	    || !cxt->fs->user_optstr
+	    || mnt_optstr_get_option(cxt->fs->user_optstr,
+				  "X-mount.subdir", &dir, &sz) != 0)
+		return 0;
+
+	cxt->subdir = strndup(dir, sz);
+	if (!cxt->subdir)
+		*rc = -ENOMEM;
+	else if (asprintf(&cxt->tmptgt, "%s/mount.%d", MNT_TMPDIR, getpid()) < 0)
+		*rc = -ENOMEM;
+
+	return *rc == 0;
+}
+
 static int is_mkdir_required(const char *tgt, struct libmnt_fs *fs, mode_t *mode, int *rc)
 {
 	char *mstr = NULL;
@@ -1973,6 +2006,17 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 				rc = mnt_fs_set_target(cxt->fs, path);
 		}
 	}
+
+	/* X-mount.subdir= target */
+	if (rc == 0
+	    && cxt->action == MNT_ACT_MOUNT
+	    && (cxt->user_mountflags & MNT_MS_XFSTABCOMM)
+	    && is_subdir_required(cxt, &rc)) {
+
+		DBG(CXT, ul_debugobj(cxt, "subdir %s required, temporary target: %s",
+					cxt->subdir, cxt->tmptgt));
+	}
+
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;

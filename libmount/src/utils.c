@@ -1143,6 +1143,77 @@ done:
 	return 1;
 }
 
+/*
+ * like ul_mkdir_p(), but create a new namespace and mark (bind mount)
+ * the directory as private.
+ */
+int mnt_unshared_mkdir(const char *path, mode_t mode, int *old_ns_fd)
+{
+	int rc = 0, fd = -1, mounted = 0;
+
+	*old_ns_fd = -1;
+
+	if (!path || !old_ns_fd)
+		return -EINVAL;
+
+	/* create directory */
+	rc = ul_mkdir_p(path, mode);
+	if (rc)
+		goto fail;
+
+	/* remember the current namespace */
+	fd = open("/proc/self/ns/mnt", O_RDONLY | O_CLOEXEC);
+	if (fd < 0)
+		goto fail;
+
+	/* create new namespace */
+	if (unshare(CLONE_NEWNS) != 0)
+		goto fail;
+
+	/* make the directory private */
+	mounted = mount(path, path, "none", MS_BIND, NULL) == 0;
+	if (!mounted)
+		goto fail;
+	if (mount("none", path, NULL, MS_PRIVATE, NULL) != 0)
+		goto fail;
+
+	DBG(UTILS, ul_debug(" %s unshared", path));
+	*old_ns_fd = fd;
+	return 0;
+fail:
+	if (rc == 0)
+		rc = errno ? -errno : -EINVAL;
+	if (mounted)
+		umount(path);
+	if (fd >= 0) {
+		setns(fd, CLONE_NEWNS);		/* restore original NS */
+		close(fd);
+	}
+	rmdir(path);
+	DBG(UTILS, ul_debug(" %s unshare failed", path));
+	return rc;
+}
+
+/*
+ * umount, rmdir and switch back to old namespace
+ */
+int mnt_unshared_rmdir(const char *path, int old_ns_fd)
+{
+	if (!path)
+		return -EINVAL;
+
+	umount(path);
+	rmdir(path);
+
+	if (old_ns_fd >= 0) {
+		setns(old_ns_fd, CLONE_NEWNS);
+		close(old_ns_fd);
+	}
+
+	DBG(UTILS, ul_debug(" %s removed", path));
+	return 0;
+}
+
 #ifdef TEST_PROGRAM
 static int test_match_fstype(struct libmnt_test *ts, int argc, char *argv[])
 {

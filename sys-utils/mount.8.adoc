@@ -627,6 +627,9 @@ Note that before util-linux v2.30 the x-* options have not been maintained by li
 *X-mount.mkdir*[=_mode_]::
 Allow to make a target directory (mountpoint) if it does not exit yet. The optional argument _mode_ specifies the filesystem access mode used for *mkdir*(2) in octal notation. The default mode is 0755. This functionality is supported only for root users or when mount executed without suid permissions. The option is also supported as x-mount.mkdir, this notation is deprecated since v2.30.
 
+**X-mount.subdir=**__directory__::
+Allow mounting sub-directory from a filesystem instead of the root directory. For now, this feature is implemented by temporary filesystem root directory mount in unshared namespace and then bind the sub-directory to the final mount point and umount the root of the filesystem. The sub-directory mount shows up atomically for the rest of the system although it is implemented by multiple mount(2) syscalls. This feature is EXPERIMENTAL.
+
 *nosymfollow*::
 Do not follow symlinks when resolving paths. Symlinks can still be created, and *readlink*(1), *readlink*(2), *realpath*(1), and *realpath*(3) all still work properly.
 
