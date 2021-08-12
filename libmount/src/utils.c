@@ -1141,16 +1141,11 @@ done:
  */
 int mnt_tmptgt_unshare(int *old_ns_fd)
 {
-	int rc = 0, fd = -1, mounted = 0;
+	int rc = 0, fd = -1;
 
 	assert(old_ns_fd);
 
 	*old_ns_fd = -1;
-
-	/* create directory */
-	rc = ul_mkdir_p(MNT_PATH_TMPTGT, S_IRWXU);
-	if (rc)
-		goto fail;
 
 	/* remember the current namespace */
 	fd = open("/proc/self/ns/mnt", O_RDONLY | O_CLOEXEC);
@@ -1161,12 +1156,21 @@ int mnt_tmptgt_unshare(int *old_ns_fd)
 	if (unshare(CLONE_NEWNS) != 0)
 		goto fail;
 
-	/* make the directory private */
-	mounted = mount(MNT_PATH_TMPTGT, MNT_PATH_TMPTGT, "none", MS_BIND, NULL) == 0;
-	if (!mounted)
+	/* create directory */
+	rc = ul_mkdir_p(MNT_PATH_TMPTGT, S_IRWXU);
+	if (rc)
 		goto fail;
-	if (mount("none", MNT_PATH_TMPTGT, NULL, MS_PRIVATE, NULL) != 0)
-		goto fail;
+
+	/* try to set top-level directory as private, this is possible if
+	 * MNT_RUNTIME_TOPDIR (/run) is a separated filesystem. */
+	if (mount("none", MNT_RUNTIME_TOPDIR, NULL, MS_PRIVATE, NULL) != 0) {
+
+		/* failed; create a mountpoint from MNT_PATH_TMPTGT */
+		if (mount(MNT_PATH_TMPTGT, MNT_PATH_TMPTGT, "none", MS_BIND, NULL) != 0)
+			goto fail;
+		if (mount("none", MNT_PATH_TMPTGT, NULL, MS_PRIVATE, NULL) != 0)
+			goto fail;
+	}
 
 	DBG(UTILS, ul_debug(MNT_PATH_TMPTGT " unshared"));
 	*old_ns_fd = fd;
@@ -1174,12 +1178,8 @@ int mnt_tmptgt_unshare(int *old_ns_fd)
 fail:
 	if (rc == 0)
 		rc = errno ? -errno : -EINVAL;
-	if (mounted)
-		umount(MNT_PATH_TMPTGT);
-	if (fd >= 0) {
-		setns(fd, CLONE_NEWNS);		/* restore original NS */
-		close(fd);
-	}
+
+	mnt_tmptgt_cleanup(fd);
 	DBG(UTILS, ul_debug(MNT_PATH_TMPTGT " unshare failed"));
 	return rc;
 }
