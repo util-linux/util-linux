@@ -76,10 +76,8 @@ UL_DEBUG_DECLARE_MASK(libmount);
 /* library private paths */
 #define MNT_TMPDIR		"/tmp/mount"
 #define MNT_RUNTIME_TOPDIR	"/run"
-#define MNT_RUNTIME_TOPDIR_OLD	"/dev"
 
 #define MNT_PATH_UTAB		MNT_RUNTIME_TOPDIR "/mount/utab"
-#define MNT_PATH_UTAB_OLD	MNT_RUNTIME_TOPDIR_OLD "/.mount/utab"
 
 #define MNT_UTAB_HEADER	"# libmount utab file\n"
 

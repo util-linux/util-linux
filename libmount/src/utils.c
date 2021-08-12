@@ -858,20 +858,12 @@ const char *mnt_get_mtab_path(void)
 /*
  * Don't export this to libmount API -- utab is private library stuff.
  *
- * Returns: path to /run/mount/utab (or /dev/.mount/utab) or $LIBMOUNT_UTAB.
+ * Returns: path to /run/mount/utab or $LIBMOUNT_UTAB.
  */
 const char *mnt_get_utab_path(void)
 {
-	struct stat st;
 	const char *p = safe_getenv("LIBMOUNT_UTAB");
-
-	if (p)
-		return p;
-
-	if (stat(MNT_RUNTIME_TOPDIR, &st) == 0)
-		return MNT_PATH_UTAB;
-
-	return MNT_PATH_UTAB_OLD;
+	return p ? : MNT_PATH_UTAB;
 }
 
 
