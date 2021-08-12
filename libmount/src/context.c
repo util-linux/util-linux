@@ -154,7 +154,6 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	free(cxt->helper);
 	free(cxt->orig_user);
 	free(cxt->subdir);
-	free(cxt->tmptgt);
 
 	cxt->fs = NULL;
 	cxt->mtab = NULL;
@@ -164,7 +163,6 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->mountflags = 0;
 	cxt->user_mountflags = 0;
 	cxt->mountdata = NULL;
-	cxt->tmptgt = NULL;
 	cxt->subdir = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
 
@@ -297,8 +295,6 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 	if (strdup_between_structs(n, o, orig_user))
 		goto failed;
 	if (strdup_between_structs(n, o, subdir))
-		goto failed;
-	if (strdup_between_structs(n, o, tmptgt))
 		goto failed;
 
 	n->mountflags = o->mountflags;
@@ -1887,8 +1883,6 @@ static int is_subdir_required(struct libmnt_context *cxt, int *rc)
 	cxt->subdir = strndup(dir, sz);
 	if (!cxt->subdir)
 		*rc = -ENOMEM;
-	else if (asprintf(&cxt->tmptgt, "%s/mount.%d", MNT_TMPDIR, getpid()) < 0)
-		*rc = -ENOMEM;
 
 	return *rc == 0;
 }
@@ -2013,8 +2007,7 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	    && (cxt->user_mountflags & MNT_MS_XFSTABCOMM)
 	    && is_subdir_required(cxt, &rc)) {
 
-		DBG(CXT, ul_debugobj(cxt, "subdir %s required, temporary target: %s",
-					cxt->subdir, cxt->tmptgt));
+		DBG(CXT, ul_debugobj(cxt, "subdir %s required", cxt->subdir));
 	}
 
 

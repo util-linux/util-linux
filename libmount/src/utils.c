@@ -1136,20 +1136,19 @@ done:
 }
 
 /*
- * like ul_mkdir_p(), but create a new namespace and mark (bind mount)
- * the directory as private.
+ * Initialize MNT_PATH_TMPTGT; mkdir, create a new namespace and
+ * mark (bind mount) the directory as private.
  */
-int mnt_unshared_mkdir(const char *path, mode_t mode, int *old_ns_fd)
+int mnt_tmptgt_unshare(int *old_ns_fd)
 {
 	int rc = 0, fd = -1, mounted = 0;
 
+	assert(old_ns_fd);
+
 	*old_ns_fd = -1;
 
-	if (!path || !old_ns_fd)
-		return -EINVAL;
-
 	/* create directory */
-	rc = ul_mkdir_p(path, mode);
+	rc = ul_mkdir_p(MNT_PATH_TMPTGT, S_IRWXU);
 	if (rc)
 		goto fail;
 
@@ -1163,46 +1162,41 @@ int mnt_unshared_mkdir(const char *path, mode_t mode, int *old_ns_fd)
 		goto fail;
 
 	/* make the directory private */
-	mounted = mount(path, path, "none", MS_BIND, NULL) == 0;
+	mounted = mount(MNT_PATH_TMPTGT, MNT_PATH_TMPTGT, "none", MS_BIND, NULL) == 0;
 	if (!mounted)
 		goto fail;
-	if (mount("none", path, NULL, MS_PRIVATE, NULL) != 0)
+	if (mount("none", MNT_PATH_TMPTGT, NULL, MS_PRIVATE, NULL) != 0)
 		goto fail;
 
-	DBG(UTILS, ul_debug(" %s unshared", path));
+	DBG(UTILS, ul_debug(MNT_PATH_TMPTGT " unshared"));
 	*old_ns_fd = fd;
 	return 0;
 fail:
 	if (rc == 0)
 		rc = errno ? -errno : -EINVAL;
 	if (mounted)
-		umount(path);
+		umount(MNT_PATH_TMPTGT);
 	if (fd >= 0) {
 		setns(fd, CLONE_NEWNS);		/* restore original NS */
 		close(fd);
 	}
-	rmdir(path);
-	DBG(UTILS, ul_debug(" %s unshare failed", path));
+	DBG(UTILS, ul_debug(MNT_PATH_TMPTGT " unshare failed"));
 	return rc;
 }
 
 /*
- * umount, rmdir and switch back to old namespace
+ * Clean up MNT_PATH_TMPTGT; umount and switch back to old namespace
  */
-int mnt_unshared_rmdir(const char *path, int old_ns_fd)
+int mnt_tmptgt_cleanup(int old_ns_fd)
 {
-	if (!path)
-		return -EINVAL;
-
-	umount(path);
-	rmdir(path);
+	umount(MNT_PATH_TMPTGT);
 
 	if (old_ns_fd >= 0) {
 		setns(old_ns_fd, CLONE_NEWNS);
 		close(old_ns_fd);
 	}
 
-	DBG(UTILS, ul_debug(" %s removed", path));
+	DBG(UTILS, ul_debug(MNT_PATH_TMPTGT " cleanup done"));
 	return 0;
 }
 

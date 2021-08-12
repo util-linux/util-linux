@@ -855,11 +855,10 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 
 		/* create unhared temporary target */
 		if (cxt->subdir) {
-			rc = mnt_unshared_mkdir(cxt->tmptgt,
-					S_IRWXU, &old_ns_fd);
+			rc = mnt_tmptgt_unshare(&old_ns_fd);
 			if (rc)
 				return rc;
-			target = cxt->tmptgt;
+			target = MNT_PATH_TMPTGT;
 		}
 
 		DBG(CXT, ul_debugobj(cxt, "mount(2) "
@@ -894,10 +893,10 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 		 */
 		if (cxt->subdir) {
 			target = mnt_fs_get_target(cxt->fs);
-			rc = do_mount_subdir(cxt, cxt->tmptgt, cxt->subdir, target);
+			rc = do_mount_subdir(cxt, MNT_PATH_TMPTGT, cxt->subdir, target);
 			if (rc)
 				goto done;
-			mnt_unshared_rmdir(cxt->tmptgt, old_ns_fd);
+			mnt_tmptgt_cleanup(old_ns_fd);
 			old_ns_fd = -1;
 		}
 	}
@@ -910,7 +909,7 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 
 done:
 	if (old_ns_fd >= 0)
-		mnt_unshared_rmdir(cxt->tmptgt, old_ns_fd);
+		mnt_tmptgt_cleanup(old_ns_fd);
 
 	return rc;
 }
