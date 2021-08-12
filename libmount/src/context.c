@@ -1776,7 +1776,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	DBG(CXT, ul_debugobj(cxt, "preparing source path"));
+	DBG(CXT, ul_debugobj(cxt, "--> preparing source path"));
 
 	src = mnt_fs_get_source(cxt->fs);
 
@@ -1880,9 +1880,19 @@ static int is_subdir_required(struct libmnt_context *cxt, int *rc)
 				  "X-mount.subdir", &dir, &sz) != 0)
 		return 0;
 
-	cxt->subdir = strndup(dir, sz);
-	if (!cxt->subdir)
-		*rc = -ENOMEM;
+	if (dir && *dir == '"')
+		dir++, sz-=2;
+
+	if (!dir || sz < 1) {
+		DBG(CXT, ul_debug("failed to parse X-mount.subdir '%s'", dir));
+		*rc = -MNT_ERR_MOUNTOPT;
+	} else {
+		cxt->subdir = strndup(dir, sz);
+		if (!cxt->subdir)
+			*rc = -ENOMEM;
+
+		DBG(CXT, ul_debug("subdir %s wanted", dir));
+	}
 
 	return *rc == 0;
 }
@@ -1913,6 +1923,9 @@ static int is_mkdir_required(const char *tgt, struct libmnt_fs *fs, mode_t *mode
 	if (mstr && mstr_sz) {
 		char *end = NULL;
 
+		if (*mstr == '"')
+			mstr++, mstr_sz-=2;
+
 		errno = 0;
 		*mode = strtol(mstr, &end, 8);
 
@@ -1942,7 +1955,7 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	DBG(CXT, ul_debugobj(cxt, "preparing target path"));
+	DBG(CXT, ul_debugobj(cxt, "--> preparing target path"));
 
 	tgt = mnt_fs_get_target(cxt->fs);
 	if (!tgt)
@@ -2087,7 +2100,7 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	DBG(CXT, ul_debugobj(cxt, "preparing fstype"));
+	DBG(CXT, ul_debugobj(cxt, "--> preparing fstype"));
 
 	if ((cxt->mountflags & (MS_BIND | MS_MOVE))
 	    || mnt_context_propagation_only(cxt))
@@ -2246,7 +2259,7 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 	assert(cxt->action);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	DBG(CXT, ul_debugobj(cxt, "prepare update"));
+	DBG(CXT, ul_debugobj(cxt, "--> prepare update"));
 
 	if (mnt_context_propagation_only(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "skip update: only MS_PROPAGATION"));
