@@ -724,7 +724,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 {
 	struct libmnt_optmap const *maps[1];
 	char *name, *next, *val;
-	size_t namesz = 0, valsz = 0;
+	size_t namesz = 0, valsz = 0, multi = 0;
 	unsigned long fl;
 	int rc = 0;
 
@@ -794,13 +794,20 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 						goto err;
 				}
 				if (!(ent->mask & MNT_INVERT)) {
-					fl &= ~ent->id;
+					/* allow options with prefix (X-mount.foo,X-mount.bar) more than once */
+					if (ent->mask & MNT_PREFIX)
+						multi |= ent->id;
+					else
+						fl &= ~ent->id;
 					if (ent->id & MS_REC)
 						fl |= MS_REC;
 				}
 			}
 		}
 	}
+
+	/* remove from flags options which are alowed more than once */
+	fl &= ~multi;
 
 	/* add missing options (but ignore fl if contains MS_REC only) */
 	if (fl && fl != MS_REC) {
