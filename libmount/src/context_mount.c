@@ -1767,10 +1767,20 @@ int mnt_context_get_mount_excode(
 			}
 			return MNT_EX_USAGE;
 		case -MNT_ERR_MOUNTOPT:
-			if (buf)
-				snprintf(buf, bufsz, errno ?
+			if (buf) {
+				const char *opts = mnt_context_get_options(cxt);
+
+				if (!opts)
+					opts = "";
+				if (opts)
+					snprintf(buf, bufsz, errno ?
+						_("failed to parse mount options '%s': %m") :
+						_("failed to parse mount options '%s'"), opts);
+				else
+					snprintf(buf, bufsz, errno ?
 						_("failed to parse mount options: %m") :
 						_("failed to parse mount options"));
+			}
 			return MNT_EX_USAGE;
 		case -MNT_ERR_LOOPDEV:
 			if (buf)
