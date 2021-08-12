@@ -416,12 +416,20 @@ static int sanitize_paths(struct libmnt_context *cxt)
 	return 0;
 }
 
-static void append_option(struct libmnt_context *cxt, const char *opt)
+static void append_option(struct libmnt_context *cxt, const char *opt, const char *arg)
 {
+	char *o = NULL;
+
 	if (opt && (*opt == '=' || *opt == '\'' || *opt == '\"' || isblank(*opt)))
 		errx(MNT_EX_USAGE, _("unsupported option format: %s"), opt);
-	if (mnt_context_append_options(cxt, opt))
-		err(MNT_EX_SYSERR, _("failed to append option '%s'"), opt);
+
+	if (arg && *arg)
+		xasprintf(&o, "%s=\"%s\"", opt, arg);
+
+	if (mnt_context_append_options(cxt, o ? : opt))
+		err(MNT_EX_SYSERR, _("failed to append option '%s'"), o ? : opt);
+
+	free(o);
 }
 
 static int has_remount_flag(struct libmnt_context *cxt)
@@ -460,6 +468,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	" -i, --internal-only     don't call the mount.<type> helpers\n"));
 	fprintf(out, _(
 	" -l, --show-labels       show also filesystem labels\n"));
+	fprintf(out, _(
+	" -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"));
 	fprintf(out, _(
 	" -n, --no-mtab           don't write to /etc/mtab\n"));
 	fprintf(out, _(
@@ -636,6 +646,7 @@ int main(int argc, char **argv)
 		{ "make-rslave",      no_argument,       NULL, MOUNT_OPT_RSLAVE      },
 		{ "make-rprivate",    no_argument,       NULL, MOUNT_OPT_RPRIVATE    },
 		{ "make-runbindable", no_argument,       NULL, MOUNT_OPT_RUNBINDABLE },
+		{ "mkdir",            optional_argument, NULL, 'm'                   },
 		{ "no-canonicalize",  no_argument,       NULL, 'c'                   },
 		{ "internal-only",    no_argument,       NULL, 'i'                   },
 		{ "show-labels",      no_argument,       NULL, 'l'                   },
@@ -671,7 +682,7 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:rRsU:vVwt:T:N:",
+	while ((c = getopt_long(argc, argv, "aBcfFhilL:m::Mno:O:rRsU:vVwt:T:N:",
 					longopts, NULL)) != -1) {
 
 		/* only few options are allowed for non-root users */
@@ -703,14 +714,14 @@ int main(int argc, char **argv)
 			mnt_context_disable_mtab(cxt, TRUE);
 			break;
 		case 'r':
-			append_option(cxt, "ro");
+			append_option(cxt, "ro", NULL);
 			mnt_context_enable_rwonly_mount(cxt, FALSE);
 			break;
 		case 'v':
 			mnt_context_enable_verbose(cxt, TRUE);
 			break;
 		case 'w':
-			append_option(cxt, "rw");
+			append_option(cxt, "rw", NULL);
 			mnt_context_enable_rwonly_mount(cxt, TRUE);
 			break;
 		case 'o':
@@ -721,11 +732,11 @@ int main(int argc, char **argv)
 
 				mnt_optstr_remove_option(&o, "move");
 				if (o && *o)
-					append_option(cxt, o);
+					append_option(cxt, o, NULL);
 				oper = is_move = 1;
 				free(o);
 			} else
-				append_option(cxt, optarg);
+				append_option(cxt, optarg, NULL);
 			break;
 		case 'O':
 			if (mnt_context_set_options_pattern(cxt, optarg))
@@ -757,15 +768,20 @@ int main(int argc, char **argv)
 			break;
 		case 'B':
 			oper = 1;
-			append_option(cxt, "bind");
+			append_option(cxt, "bind", NULL);
 			break;
 		case 'M':
 			oper = 1;
 			is_move = 1;
 			break;
+		case 'm':
+			if (optarg && *optarg == '=')
+				optarg++;
+			append_option(cxt, "X-mount.mkdir", optarg);
+			break;
 		case 'R':
 			oper = 1;
-			append_option(cxt, "rbind");
+			append_option(cxt, "rbind", NULL);
 			break;
 		case 'N':
 		{
@@ -780,35 +796,35 @@ int main(int argc, char **argv)
 			break;
 		}
 		case MOUNT_OPT_SHARED:
-			append_option(cxt, "shared");
+			append_option(cxt, "shared", NULL);
 			propa = 1;
 			break;
 		case MOUNT_OPT_SLAVE:
-			append_option(cxt, "slave");
+			append_option(cxt, "slave", NULL);
 			propa = 1;
 			break;
 		case MOUNT_OPT_PRIVATE:
-			append_option(cxt, "private");
+			append_option(cxt, "private", NULL);
 			propa = 1;
 			break;
 		case MOUNT_OPT_UNBINDABLE:
-			append_option(cxt, "unbindable");
+			append_option(cxt, "unbindable", NULL);
 			propa = 1;
 			break;
 		case MOUNT_OPT_RSHARED:
-			append_option(cxt, "rshared");
+			append_option(cxt, "rshared", NULL);
 			propa = 1;
 			break;
 		case MOUNT_OPT_RSLAVE:
-			append_option(cxt, "rslave");
+			append_option(cxt, "rslave", NULL);
 			propa = 1;
 			break;
 		case MOUNT_OPT_RPRIVATE:
-			append_option(cxt, "rprivate");
+			append_option(cxt, "rprivate", NULL);
 			propa = 1;
 			break;
 		case MOUNT_OPT_RUNBINDABLE:
-			append_option(cxt, "runbindable");
+			append_option(cxt, "runbindable", NULL);
 			propa = 1;
 			break;
 		case MOUNT_OPT_TARGET:

@@ -333,6 +333,9 @@ Add the labels in the mount output. *mount* must have permission to read the dis
 *-M*, *--move*::
 Move a subtree to some other place. See above, the subsection *The move operation*.
 
+*-m*, **--mkdir**[=__mode__]::
+Allow to make a target directory (mountpoint) if it does not exist yet. Alias to "-o X-mount.mkdir[=mode]", the default mode is 0755. For more details see *X-mount.mkdir* below.
+
 *-n*, *--no-mtab*::
 Mount without writing in _/etc/mtab_. This is necessary for example when _/etc_ is on a read-only filesystem.
 
@@ -625,7 +628,7 @@ The same as *X-** options, but stored permanently in user space. This means the 
 Note that before util-linux v2.30 the x-* options have not been maintained by libmount and stored in user space (functionality was the same as for X-* now), but due to the growing number of use-cases (in initrd, systemd etc.) the functionality has been extended to keep existing _fstab_ configurations usable without a change.
 
 *X-mount.mkdir*[=_mode_]::
-Allow to make a target directory (mountpoint) if it does not exit yet. The optional argument _mode_ specifies the filesystem access mode used for *mkdir*(2) in octal notation. The default mode is 0755. This functionality is supported only for root users or when mount executed without suid permissions. The option is also supported as x-mount.mkdir, this notation is deprecated since v2.30.
+Allow to make a target directory (mountpoint) if it does not exist yet. The optional argument _mode_ specifies the filesystem access mode used for *mkdir*(2) in octal notation. The default mode is 0755. This functionality is supported only for root users or when mount executed without suid permissions. The option is also supported as x-mount.mkdir, this notation is deprecated since v2.30. See also *--mkdir* command line option.
 
 **X-mount.subdir=**__directory__::
 Allow mounting sub-directory from a filesystem instead of the root directory. For now, this feature is implemented by temporary filesystem root directory mount in unshared namespace and then bind the sub-directory to the final mount point and umount the root of the filesystem. The sub-directory mount shows up atomically for the rest of the system although it is implemented by multiple mount(2) syscalls. This feature is EXPERIMENTAL.
