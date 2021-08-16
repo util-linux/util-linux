@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-07-22 15:46+0200\n"
+"POT-Creation-Date: 2021-08-16 15:06+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -58,14 +58,14 @@ msgstr "Massa arguments.\n"
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:362
 #: login-utils/utmpdump.c:386 login-utils/vipw.c:250 login-utils/vipw.c:268
-#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:577 misc-utils/logger.c:1242
+#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:577 misc-utils/logger.c:1235
 #: misc-utils/mcookie.c:119 misc-utils/uuidd.c:231 sys-utils/blkdiscard.c:230
 #: sys-utils/blkzone.c:144 sys-utils/dmesg.c:536 sys-utils/eject.c:501
 #: sys-utils/eject.c:696 sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116
 #: sys-utils/fstrim.c:103 sys-utils/hwclock.c:239 sys-utils/hwclock.c:908
 #: sys-utils/hwclock-rtc.c:138 sys-utils/hwclock-rtc.c:403
 #: sys-utils/hwclock-rtc.c:439 sys-utils/irq-common.c:253
-#: sys-utils/ldattach.c:392 sys-utils/lscpu-cputype.c:464 sys-utils/lsmem.c:671
+#: sys-utils/ldattach.c:392 sys-utils/lscpu-cputype.c:468 sys-utils/lsmem.c:671
 #: sys-utils/nsenter.c:131 sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137
 #: sys-utils/rtcwake.c:292 sys-utils/setpriv.c:256 sys-utils/setpriv.c:622
 #: sys-utils/setpriv.c:645 sys-utils/swapon.c:382 sys-utils/swapon.c:525
@@ -75,7 +75,7 @@ msgstr "Massa arguments.\n"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
-#: term-utils/wall.c:422 text-utils/colcrt.c:284 text-utils/more.c:453
+#: term-utils/wall.c:421 text-utils/colcrt.c:284 text-utils/more.c:453
 #: text-utils/rev.c:140 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -269,14 +269,14 @@ msgstr "la cerca ha fallat"
 msgid "%s succeeded.\n"
 msgstr "%s s'ha completat amb èxit.\n"
 
-#. TRANSLATORS: Start sector not available. Max. 10 letters.
+#. TRANSLATORS: Start sector not available. Max. 15 letters.
 #: disk-utils/blockdev.c:482
 msgid "N/A"
 msgstr ""
 
 #: disk-utils/blockdev.c:506
 #, fuzzy, c-format
-msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
+msgid "RO    RA   SSZ   BSZ        StartSec            Size   Device\n"
 msgstr "RO    RA   SSZ   BSZ   SectInici    Mida    Dispositiu\n"
 
 #: disk-utils/cfdisk.c:196
@@ -937,7 +937,7 @@ msgstr ""
 msgid "user defined start track exceeds the user defined end track"
 msgstr ""
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:1046
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1039
 #, fuzzy
 msgid "close failed"
 msgstr "la cerca ha fallat"
@@ -953,7 +953,7 @@ msgid "Using default response %c."
 msgstr "S'està utilitzant el valor per defecte %u\n"
 
 #: disk-utils/fdisk.c:224 disk-utils/fdisk.c:298 disk-utils/fdisk.c:375
-#: libfdisk/src/dos.c:1383 libfdisk/src/gpt.c:2519
+#: libfdisk/src/dos.c:1377 libfdisk/src/gpt.c:2519
 #, fuzzy
 msgid "Value out of range."
 msgstr "El valor està fora del rang.\n"
@@ -1070,7 +1070,7 @@ msgid "cannot read"
 msgstr "%s: no s'ha pogut llegir %s.\n"
 
 # Parla d'etiquetes, segurament és femení
-#: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:968
+#: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:962
 #: libfdisk/src/gpt.c:2447
 #, fuzzy
 msgid "First sector"
@@ -1924,7 +1924,7 @@ msgstr "umount: %s: no s'ha trobat"
 #: disk-utils/fsck.c:330 disk-utils/fsck.cramfs.c:181
 #: disk-utils/fsck.cramfs.c:188 disk-utils/fsck.cramfs.c:244
 #: disk-utils/fsck.cramfs.c:265 disk-utils/sfdisk.c:307 libfdisk/src/bsd.c:647
-#: login-utils/last.c:214 login-utils/last.c:251 login-utils/sulogin.c:659
+#: login-utils/last.c:214 login-utils/last.c:251 login-utils/sulogin.c:660
 #: misc-utils/hardlink.c:579 misc-utils/hardlink.c:736
 #: schedutils/uclampset.c:111 sys-utils/ctrlaltdel.c:44
 #: sys-utils/irq-common.c:259 sys-utils/rfkill.c:216 sys-utils/setpriv.c:265
@@ -1986,7 +1986,7 @@ msgstr "s'ha produït un error en cercar"
 msgid "%s: failed to parse fstab"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: disk-utils/fsck.c:690 login-utils/login.c:1107 login-utils/sulogin.c:1037
+#: disk-utils/fsck.c:690 login-utils/login.c:1107 login-utils/sulogin.c:1038
 #: login-utils/vipw.c:197 sys-utils/flock.c:351 sys-utils/nsenter.c:182
 #: sys-utils/swapon.c:332 sys-utils/unshare.c:242 sys-utils/unshare.c:567
 #, fuzzy
@@ -3145,7 +3145,7 @@ msgid ""
 msgstr ""
 
 #: disk-utils/mkfs.c:133 include/c.h:271 login-utils/su-common.c:1238
-#: login-utils/sulogin.c:800 login-utils/sulogin.c:804 sys-utils/flock.c:123
+#: login-utils/sulogin.c:801 login-utils/sulogin.c:805 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, fuzzy, c-format
 msgid "failed to execute %s"
@@ -5128,14 +5128,14 @@ msgstr ""
 msgid "Try '%s --help' for more information.\n"
 msgstr "Escolliu `getopt --help' per obtenir més informació.\n"
 
-#: include/c.h:388
+#: include/c.h:384
 #, fuzzy
 msgid ""
 "\n"
 "Usage:\n"
 msgstr "Forma d'ús:\n"
 
-#: include/c.h:389
+#: include/c.h:385
 #, fuzzy
 msgid ""
 "\n"
@@ -5144,7 +5144,7 @@ msgstr ""
 "\n"
 "%d particions:\n"
 
-#: include/c.h:390
+#: include/c.h:386
 #, fuzzy
 msgid ""
 "\n"
@@ -5153,51 +5153,51 @@ msgstr ""
 "\n"
 "%d particions:\n"
 
-#: include/c.h:391
+#: include/c.h:387
 msgid ""
 "\n"
 "Commands:\n"
 msgstr ""
 
-#: include/c.h:392
+#: include/c.h:388
 #, fuzzy
 msgid ""
 "\n"
 "Arguments:\n"
 msgstr "col: argument -l incorrecte %s.\n"
 
-#: include/c.h:393
+#: include/c.h:389
 #, fuzzy
 msgid ""
 "\n"
 "Available output columns:\n"
 msgstr "Ordres disponibles:\n"
 
-#: include/c.h:396
+#: include/c.h:392
 #, fuzzy
 msgid "display this help"
 msgstr "  -h, --help                   Aquesta petita guia d'ús\n"
 
-#: include/c.h:397
+#: include/c.h:393
 #, fuzzy
 msgid "display version"
 msgstr "versió"
 
-#: include/c.h:407
+#: include/c.h:403
 #, c-format
 msgid ""
 " %s arguments may be followed by the suffixes for\n"
 "   GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"
 msgstr ""
 
-#: include/c.h:410
+#: include/c.h:406
 #, fuzzy, c-format
 msgid ""
 "\n"
 "For more details see %s.\n"
 msgstr "S'ha canviat la informació del finger.\n"
 
-#: include/c.h:412
+#: include/c.h:408
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s de %s\n"
@@ -6143,19 +6143,19 @@ msgstr "La partició %s no és vàlida perquè comença pel sector 0.\n"
 msgid "There is no *BSD partition on %s."
 msgstr "No hi ha cap partició *BSD en %s.\n"
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:968
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:962
 #, fuzzy
 msgid "First cylinder"
 msgstr "cilindre"
 
 # Parla d'etiquetes, segurament és femení
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1354
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1348
 #, fuzzy
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Última %s o +mida o +midaM o +midaK"
 
 # Parla d'etiquetes, segurament és femení
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1359 libfdisk/src/gpt.c:2496
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1353 libfdisk/src/gpt.c:2496
 #, fuzzy
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Última %s o +mida o +midaM o +midaK"
@@ -6514,205 +6514,205 @@ msgstr "Valor establert invàlid: %s\n"
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr ""
 
-#: libfdisk/src/dos.c:864
+#: libfdisk/src/dos.c:858
 #, fuzzy, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "S'està ignorant la partició estesa addicional %d\n"
 
-#: libfdisk/src/dos.c:878
+#: libfdisk/src/dos.c:872
 #, fuzzy, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "Avís: el senyalador 0x%04x invàlid de la taula de particions %d es corregirà amb w(escriu)\n"
 
-#: libfdisk/src/dos.c:955
+#: libfdisk/src/dos.c:949
 #, fuzzy, c-format
 msgid "Start sector %ju out of range."
 msgstr "El valor està fora del rang.\n"
 
-#: libfdisk/src/dos.c:1194 libfdisk/src/gpt.c:2370 libfdisk/src/sgi.c:842
+#: libfdisk/src/dos.c:1188 libfdisk/src/gpt.c:2370 libfdisk/src/sgi.c:842
 #: libfdisk/src/sun.c:528
 #, fuzzy, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "La partició %d ja està definida. Esborreu-la abans de tornar-la a afegir.\n"
 
-#: libfdisk/src/dos.c:1209 libfdisk/src/dos.c:1235 libfdisk/src/dos.c:1293
-#: libfdisk/src/dos.c:1325 libfdisk/src/gpt.c:2379
+#: libfdisk/src/dos.c:1203 libfdisk/src/dos.c:1229 libfdisk/src/dos.c:1287
+#: libfdisk/src/dos.c:1319 libfdisk/src/gpt.c:2379
 #, fuzzy
 msgid "No free sectors available."
 msgstr "No hi ha cap sector lliure disponible\n"
 
-#: libfdisk/src/dos.c:1260
+#: libfdisk/src/dos.c:1254
 #, fuzzy, c-format
 msgid "Sector %ju is already allocated."
 msgstr "El sector %d ja està assignat\n"
 
-#: libfdisk/src/dos.c:1480
+#: libfdisk/src/dos.c:1474
 #, fuzzy, c-format
 msgid "Adding logical partition %zu"
 msgstr "Partició lògica incorrecta"
 
-#: libfdisk/src/dos.c:1511
+#: libfdisk/src/dos.c:1505
 #, fuzzy, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Avís: la partició %d conté el sector 0\n"
 
-#: libfdisk/src/dos.c:1513
+#: libfdisk/src/dos.c:1507
 #, fuzzy, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Partició %d: el capçal %d supera el màxim %d\n"
 
-#: libfdisk/src/dos.c:1516
+#: libfdisk/src/dos.c:1510
 #, fuzzy, c-format
 msgid "Partition %zu: sector %d greater than maximum %ju"
 msgstr "Partició %d: el sector %d supera el màxim %d\n"
 
-#: libfdisk/src/dos.c:1520
+#: libfdisk/src/dos.c:1514
 #, fuzzy, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
 msgstr "Partició %d: el cilindre %d supera el màxim %d\n"
 
-#: libfdisk/src/dos.c:1526
+#: libfdisk/src/dos.c:1520
 #, fuzzy, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "Partició %d: sectors anteriors %d difereixen del total %d\n"
 
-#: libfdisk/src/dos.c:1579
+#: libfdisk/src/dos.c:1573
 #, fuzzy, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "La partició %d té diferents començaments físics/lògics (no Linux?):\n"
 
-#: libfdisk/src/dos.c:1590
+#: libfdisk/src/dos.c:1584
 #, fuzzy, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "La partició %d té diferents finals físics/lògics:\n"
 
-#: libfdisk/src/dos.c:1599
+#: libfdisk/src/dos.c:1593
 #, fuzzy, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "La partició %d no acaba en un límit de cilindre.\n"
 
-#: libfdisk/src/dos.c:1647
+#: libfdisk/src/dos.c:1641
 #, fuzzy, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "La partició %d no té cap àrea de dades\n"
 
-#: libfdisk/src/dos.c:1662
+#: libfdisk/src/dos.c:1656
 #, fuzzy, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Avís: la partició %d cavalca amb la partició %d.\n"
 
-#: libfdisk/src/dos.c:1691
+#: libfdisk/src/dos.c:1685
 #, fuzzy, c-format
 msgid "Partition %zu: empty."
 msgstr "Avís: la partició %d està buida\n"
 
-#: libfdisk/src/dos.c:1698
+#: libfdisk/src/dos.c:1692
 #, fuzzy, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "La partició lògica %d no està integrada en la partició %d\n"
 
-#: libfdisk/src/dos.c:1707 libfdisk/src/gpt.c:2276
+#: libfdisk/src/dos.c:1701 libfdisk/src/gpt.c:2276
 msgid "No errors detected."
 msgstr ""
 
-#: libfdisk/src/dos.c:1709
+#: libfdisk/src/dos.c:1703
 #, fuzzy, c-format
 msgid "Total allocated sectors %ju greater than the maximum %ju."
 msgstr "El total de sectors assignats %d supera el màxim de %lld\n"
 
-#: libfdisk/src/dos.c:1712
+#: libfdisk/src/dos.c:1706
 #, fuzzy, c-format
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "%lld sectors no assignats\n"
 
-#: libfdisk/src/dos.c:1716 libfdisk/src/gpt.c:2296
+#: libfdisk/src/dos.c:1710 libfdisk/src/gpt.c:2296
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] ""
 msgstr[1] ""
 
-#: libfdisk/src/dos.c:1749
+#: libfdisk/src/dos.c:1743
 #, fuzzy
 msgid "The maximum number of partitions has been created."
 msgstr "S'ha creat el màxim nombre de particions\n"
 
-#: libfdisk/src/dos.c:1782 libfdisk/src/dos.c:1797 libfdisk/src/dos.c:2250
+#: libfdisk/src/dos.c:1776 libfdisk/src/dos.c:1791 libfdisk/src/dos.c:2244
 #, fuzzy
 msgid "Extended partition already exists."
 msgstr "Aquesta partició ja existeix.\n"
 
-#: libfdisk/src/dos.c:1812
+#: libfdisk/src/dos.c:1806
 msgid "Extended partition does not exists. Failed to add logical partition."
 msgstr ""
 
-#: libfdisk/src/dos.c:1873
+#: libfdisk/src/dos.c:1867
 #, fuzzy
 msgid "All primary partitions are in use."
 msgstr "S'usen totes les particions lògiques\n"
 
-#: libfdisk/src/dos.c:1875 libfdisk/src/dos.c:1887
+#: libfdisk/src/dos.c:1869 libfdisk/src/dos.c:1881
 #, fuzzy
 msgid "All space for primary partitions is in use."
 msgstr "S'usen totes les particions lògiques\n"
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:1890
+#: libfdisk/src/dos.c:1884
 #, fuzzy
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "Primer heu de suprimir alguna partició i afegir-ne una d'estesa\n"
 
-#: libfdisk/src/dos.c:1911
+#: libfdisk/src/dos.c:1905
 #, fuzzy
 msgid "Partition type"
 msgstr "Nombre de partició"
 
-#: libfdisk/src/dos.c:1915
+#: libfdisk/src/dos.c:1909
 #, c-format
 msgid "%u primary, %d extended, %u free"
 msgstr ""
 
-#: libfdisk/src/dos.c:1920
+#: libfdisk/src/dos.c:1914
 #, fuzzy
 msgid "primary"
 msgstr "Primària"
 
-#: libfdisk/src/dos.c:1922
+#: libfdisk/src/dos.c:1916
 #, fuzzy
 msgid "extended"
 msgstr "Estesa"
 
-#: libfdisk/src/dos.c:1922
+#: libfdisk/src/dos.c:1916
 #, fuzzy
 msgid "container for logical partitions"
 msgstr "Partició lògica incorrecta"
 
-#: libfdisk/src/dos.c:1924
+#: libfdisk/src/dos.c:1918
 #, fuzzy
 msgid "logical"
 msgstr "Lògica"
 
-#: libfdisk/src/dos.c:1924
+#: libfdisk/src/dos.c:1918
 #, fuzzy
 msgid "numbered from 5"
 msgstr "l   lògica (5 o superior)"
 
-#: libfdisk/src/dos.c:1963
+#: libfdisk/src/dos.c:1957
 #, fuzzy, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Nombre de partició no vàlid per al tipus `%c'\n"
 
-#: libfdisk/src/dos.c:1981
+#: libfdisk/src/dos.c:1975
 #, fuzzy, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "%s: no s'ha pogut trobar el dispositiu per a %s\n"
 
-#: libfdisk/src/dos.c:2141 libfdisk/src/gpt.c:1295
+#: libfdisk/src/dos.c:2135 libfdisk/src/gpt.c:1295
 #, fuzzy
 msgid "Disk identifier"
 msgstr "Unitat de disc: %s"
 
-#: libfdisk/src/dos.c:2255
+#: libfdisk/src/dos.c:2249
 #, fuzzy
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr ""
@@ -6721,18 +6721,22 @@ msgstr ""
 "particions del tipus 0. Les podeu suprimir amb\n"
 "l'ordre «d».\n"
 
-#: libfdisk/src/dos.c:2260
+#: libfdisk/src/dos.c:2254
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr ""
 
-#: libfdisk/src/dos.c:2499
+#: libfdisk/src/dos.c:2493
 #, fuzzy, c-format
 msgid "Partition %zu: no data area."
 msgstr "La partició %d no té cap àrea de dades\n"
 
-#: libfdisk/src/dos.c:2532
+#: libfdisk/src/dos.c:2527
 msgid "New beginning of data"
 msgstr "Nou començament de dades"
+
+#: libfdisk/src/dos.c:2543
+msgid "The new beginning of the partition overlaps the disk label area. Be very careful when using the partition. You can lose all your partitions on the disk."
+msgstr ""
 
 #: libfdisk/src/dos.c:2588
 #, fuzzy, c-format
@@ -8522,7 +8526,7 @@ msgstr "No s'ha pogut inicialitzar PAM: %s"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "S'HA INTENTAT ACCEDIR SENSE ÈXIT %d VEGADES DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:965 login-utils/sulogin.c:1026
+#: login-utils/login.c:965 login-utils/sulogin.c:1027
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -8639,12 +8643,12 @@ msgstr "setuid() ha fallat"
 msgid "setuid() failed"
 msgstr "setuid() ha fallat"
 
-#: login-utils/login.c:1492 login-utils/sulogin.c:737
+#: login-utils/login.c:1492 login-utils/sulogin.c:738
 #, fuzzy, c-format
 msgid "%s: change directory failed"
 msgstr "la cerca ha fallat"
 
-#: login-utils/login.c:1499 login-utils/sulogin.c:738
+#: login-utils/login.c:1499 login-utils/sulogin.c:739
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "S'està entrant amb el directori inicial = «/».\n"
@@ -9099,7 +9103,7 @@ msgstr "setuid() ha fallat"
 msgid "Password: "
 msgstr "Contrasenya: "
 
-#: login-utils/newgrp.c:160 login-utils/sulogin.c:1008
+#: login-utils/newgrp.c:160 login-utils/sulogin.c:1009
 #, fuzzy
 msgid "crypt failed"
 msgstr "l'assignació de memòria (malloc) ha fallat"
@@ -9463,68 +9467,68 @@ msgstr "%s: el fitxer password està ocupat.\n"
 msgid "(or press Control-D to continue): "
 msgstr "Esteu segur de voler continuar?"
 
-#: login-utils/sulogin.c:741
+#: login-utils/sulogin.c:742
 #, fuzzy
 msgid "change directory to system root failed"
 msgstr "la cerca ha fallat"
 
-#: login-utils/sulogin.c:791
+#: login-utils/sulogin.c:792
 #, fuzzy
 msgid "setexeccon failed"
 msgstr "no s'ha pogut executar exec\n"
 
-#: login-utils/sulogin.c:812
+#: login-utils/sulogin.c:813
 #, fuzzy, c-format
 msgid " %s [options] [tty device]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: login-utils/sulogin.c:815
+#: login-utils/sulogin.c:816
 msgid "Single-user login.\n"
 msgstr ""
 
-#: login-utils/sulogin.c:818
+#: login-utils/sulogin.c:819
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
 " -e, --force              examine password files directly if getpwnam(3) fails\n"
 msgstr ""
 
-#: login-utils/sulogin.c:874 misc-utils/findmnt.c:1520 sys-utils/wdctl.c:640
-#: term-utils/agetty.c:847 term-utils/wall.c:218
+#: login-utils/sulogin.c:875 misc-utils/findmnt.c:1520 sys-utils/wdctl.c:640
+#: term-utils/agetty.c:847 term-utils/wall.c:219
 #, fuzzy
 msgid "invalid timeout argument"
 msgstr "identificador invàlid"
 
-#: login-utils/sulogin.c:893
+#: login-utils/sulogin.c:894
 #, fuzzy
 msgid "only superuser can run this program"
 msgstr "mount: només l'usuari root pot fer això"
 
-#: login-utils/sulogin.c:936
+#: login-utils/sulogin.c:937
 #, fuzzy
 msgid "cannot open console"
 msgstr "%s no es pot obrir"
 
-#: login-utils/sulogin.c:943
+#: login-utils/sulogin.c:944
 #, fuzzy
 msgid "cannot open password database"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: login-utils/sulogin.c:1023
+#: login-utils/sulogin.c:1024
 #, fuzzy, c-format
 msgid ""
 "cannot execute su shell\n"
 "\n"
 msgstr "No s'ha pogut executar %s: %s\n"
 
-#: login-utils/sulogin.c:1030
+#: login-utils/sulogin.c:1031
 #, fuzzy
 msgid ""
 "Timed out\n"
 "\n"
 msgstr "s'ha exhaurit el temps d'espera"
 
-#: login-utils/sulogin.c:1062
+#: login-utils/sulogin.c:1063
 #, fuzzy
 msgid ""
 "cannot wait on su shell\n"
@@ -11110,233 +11114,233 @@ msgstr "%s: no s'ha pogut reanomenar %s a %s: %s\n"
 msgid "cannot find process \"%s\""
 msgstr "%s: no s'ha pogut trobar el procés \"%s\"\n"
 
-#: misc-utils/logger.c:228
+#: misc-utils/logger.c:229
 #, fuzzy, c-format
 msgid "unknown facility name: %s"
 msgstr "logger: no es coneix el nom de la facilitat: %s.\n"
 
-#: misc-utils/logger.c:234
+#: misc-utils/logger.c:235
 #, fuzzy, c-format
 msgid "unknown priority name: %s"
 msgstr "logger: nom amb prioritat desconeguda: %s.\n"
 
-#: misc-utils/logger.c:246
+#: misc-utils/logger.c:247
 #, fuzzy, c-format
 msgid "openlog %s: pathname too long"
 msgstr "el nom d'entrada és massa llarg.\n"
 
-#: misc-utils/logger.c:273
+#: misc-utils/logger.c:274
 #, fuzzy, c-format
 msgid "socket %s"
 msgstr "MidaBloc: %d\n"
 
-#: misc-utils/logger.c:310
+#: misc-utils/logger.c:311
 #, fuzzy, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/logger.c:327
+#: misc-utils/logger.c:328
 #, fuzzy, c-format
 msgid "failed to connect to %s port %s"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/logger.c:375
+#: misc-utils/logger.c:376
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr ""
 
-#: misc-utils/logger.c:528
+#: misc-utils/logger.c:519
 #, fuzzy
 msgid "send message failed"
 msgstr "setuid() ha fallat"
 
-#: misc-utils/logger.c:598
+#: misc-utils/logger.c:589
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr ""
 
-#: misc-utils/logger.c:612
+#: misc-utils/logger.c:603
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr ""
 
-#: misc-utils/logger.c:792
+#: misc-utils/logger.c:783
 #, fuzzy
 msgid "localtime() failed"
 msgstr "no ha estat possible executar openpty\n"
 
-#: misc-utils/logger.c:802
+#: misc-utils/logger.c:793
 #, fuzzy, c-format
 msgid "hostname '%s' is too long"
 msgstr "el camp és massa llarg.\n"
 
-#: misc-utils/logger.c:808
+#: misc-utils/logger.c:799
 #, fuzzy, c-format
 msgid "tag '%s' is too long"
 msgstr "el camp és massa llarg.\n"
 
-#: misc-utils/logger.c:871
+#: misc-utils/logger.c:862
 #, fuzzy, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "%s: argument desconegut: %s\n"
 
-#: misc-utils/logger.c:883
+#: misc-utils/logger.c:874
 #, fuzzy, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "id invàlid : %s\n"
 
-#: misc-utils/logger.c:1054
+#: misc-utils/logger.c:1047
 #, fuzzy, c-format
 msgid " %s [options] [<message>]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: misc-utils/logger.c:1057
+#: misc-utils/logger.c:1050
 #, fuzzy
 msgid "Enter messages into the system log.\n"
 msgstr "No es pot establir el rellotge del sistema.\n"
 
-#: misc-utils/logger.c:1060
+#: misc-utils/logger.c:1053
 #, fuzzy
 msgid " -i                       log the logger command's PID\n"
 msgstr "  -h, --help                   Aquesta petita guia d'ús\n"
 
-#: misc-utils/logger.c:1061
+#: misc-utils/logger.c:1054
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr ""
 
-#: misc-utils/logger.c:1062
+#: misc-utils/logger.c:1055
 #, fuzzy
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/logger.c:1063
+#: misc-utils/logger.c:1056
 #, fuzzy
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr "    -n :                 No escrigues realment al disc"
 
-#: misc-utils/logger.c:1064
+#: misc-utils/logger.c:1057
 #, fuzzy
 msgid "     --no-act             do everything except the write the log\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: misc-utils/logger.c:1065
+#: misc-utils/logger.c:1058
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr ""
 
-#: misc-utils/logger.c:1066
+#: misc-utils/logger.c:1059
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr ""
 
-#: misc-utils/logger.c:1067
+#: misc-utils/logger.c:1060
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr ""
 
-#: misc-utils/logger.c:1068
+#: misc-utils/logger.c:1061
 #, fuzzy
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/logger.c:1069
+#: misc-utils/logger.c:1062
 #, fuzzy
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/logger.c:1070
+#: misc-utils/logger.c:1063
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr ""
 
-#: misc-utils/logger.c:1071
+#: misc-utils/logger.c:1064
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr ""
 
-#: misc-utils/logger.c:1072
+#: misc-utils/logger.c:1065
 #, fuzzy
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr ""
 "  -s, --shell=intèrpret_ordres Estableix els mateixos convenis quant a les\n"
 "                               cometes que l'interpret d'ordres indicat\n"
 
-#: misc-utils/logger.c:1073
+#: misc-utils/logger.c:1066
 #, fuzzy
 msgid " -T, --tcp                use TCP only\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/logger.c:1074
+#: misc-utils/logger.c:1067
 #, fuzzy
 msgid " -d, --udp                use UDP only\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/logger.c:1075
+#: misc-utils/logger.c:1068
 #, fuzzy
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "  -T, --test                   Prova la versió del getopt(1)\n"
 
-#: misc-utils/logger.c:1076
+#: misc-utils/logger.c:1069
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
 msgstr ""
 
-#: misc-utils/logger.c:1078
+#: misc-utils/logger.c:1071
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr ""
 
-#: misc-utils/logger.c:1079
+#: misc-utils/logger.c:1072
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr ""
 
-#: misc-utils/logger.c:1080
+#: misc-utils/logger.c:1073
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr ""
 
-#: misc-utils/logger.c:1081
+#: misc-utils/logger.c:1074
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr ""
 
-#: misc-utils/logger.c:1082
+#: misc-utils/logger.c:1075
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
 msgstr ""
 
-#: misc-utils/logger.c:1085
+#: misc-utils/logger.c:1078
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr ""
 
-#: misc-utils/logger.c:1171
+#: misc-utils/logger.c:1164
 #, fuzzy, c-format
 msgid "file %s"
 msgstr "(Fitxer següent: %s)"
 
-#: misc-utils/logger.c:1186
+#: misc-utils/logger.c:1179
 #, fuzzy
 msgid "failed to parse id"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/logger.c:1204
+#: misc-utils/logger.c:1197
 #, fuzzy
 msgid "failed to parse message size"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/logger.c:1234
+#: misc-utils/logger.c:1227
 msgid "--msgid cannot contain space"
 msgstr ""
 
-#: misc-utils/logger.c:1256
+#: misc-utils/logger.c:1249
 #, fuzzy, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "id invàlid : %s\n"
 
-#: misc-utils/logger.c:1261
+#: misc-utils/logger.c:1254
 #, fuzzy, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "valor d'expiració erroni: %s"
 
-#: misc-utils/logger.c:1276
+#: misc-utils/logger.c:1269
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr ""
 
-#: misc-utils/logger.c:1283
+#: misc-utils/logger.c:1276
 msgid "journald entry could not be written"
 msgstr ""
 
@@ -13769,7 +13773,7 @@ msgid ""
 "Supported zones:\n"
 msgstr ""
 
-#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:860 sys-utils/lsmem.c:667
+#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:864 sys-utils/lsmem.c:667
 #, fuzzy, c-format
 msgid "failed to initialize %s handler"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -17236,19 +17240,19 @@ msgstr "Ordres disponibles:\n"
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr ""
 
-#: sys-utils/lscpu-cputype.c:585
+#: sys-utils/lscpu-cputype.c:589
 #, fuzzy
 msgid "error: uname failed"
 msgstr ""
 "\n"
 "S'ha produït un error en tancar el fitxer\n"
 
-#: sys-utils/lscpu-cputype.c:682
+#: sys-utils/lscpu-cputype.c:686
 #, fuzzy, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/lscpu-cputype.c:885
+#: sys-utils/lscpu-cputype.c:889
 #, fuzzy
 msgid "Failed to extract the node number"
 msgstr "s'ha produït un error en cercar a write_tables"
@@ -21814,62 +21818,62 @@ msgstr "no s'ha pogut bifurcar"
 msgid "%s: BAD ERROR, message is far too long"
 msgstr ""
 
-#: term-utils/wall.c:88
+#: term-utils/wall.c:89
 #, fuzzy, c-format
 msgid " %s [options] [<file> | <message>]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: term-utils/wall.c:91
+#: term-utils/wall.c:92
 msgid "Write a message to all users.\n"
 msgstr ""
 
-#: term-utils/wall.c:94
+#: term-utils/wall.c:95
 msgid " -g, --group <group>     only send message to group\n"
 msgstr ""
 
-#: term-utils/wall.c:95
+#: term-utils/wall.c:96
 #, fuzzy
 msgid " -n, --nobanner          do not print banner, works only for root\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: term-utils/wall.c:96
+#: term-utils/wall.c:97
 msgid " -t, --timeout <timeout> write timeout in seconds\n"
 msgstr ""
 
-#: term-utils/wall.c:124
+#: term-utils/wall.c:125
 #, fuzzy
 msgid "invalid group argument"
 msgstr "identificador invàlid"
 
-#: term-utils/wall.c:126
+#: term-utils/wall.c:127
 #, fuzzy, c-format
 msgid "%s: unknown gid"
 msgstr "%c: ordre desconeguda\n"
 
-#: term-utils/wall.c:169
+#: term-utils/wall.c:170
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr ""
 
-#: term-utils/wall.c:215
+#: term-utils/wall.c:216
 msgid "--nobanner is available only for root"
 msgstr ""
 
-#: term-utils/wall.c:220
+#: term-utils/wall.c:221
 #, fuzzy, c-format
 msgid "invalid timeout argument: %s"
 msgstr "valor d'expiració erroni: %s"
 
-#: term-utils/wall.c:362
+#: term-utils/wall.c:361
 #, fuzzy
 msgid "cannot get passwd uid"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: term-utils/wall.c:386
+#: term-utils/wall.c:385
 #, fuzzy, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Missatge de difusió de %s@%s"
 
-#: term-utils/wall.c:418
+#: term-utils/wall.c:417
 #, fuzzy, c-format
 msgid "will not read %s - use stdin."
 msgstr "%s: no es llegirà de %s; s'utilitzarà l'entrada estàndard.\n"

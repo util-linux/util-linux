@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-07-22 15:46+0200\n"
+"POT-Creation-Date: 2021-08-16 15:06+0200\n"
 "PO-Revision-Date: 2021-05-12 13:33-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -59,14 +59,14 @@ msgstr "nema dovoljno argumenata"
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:362
 #: login-utils/utmpdump.c:386 login-utils/vipw.c:250 login-utils/vipw.c:268
-#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:577 misc-utils/logger.c:1242
+#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:577 misc-utils/logger.c:1235
 #: misc-utils/mcookie.c:119 misc-utils/uuidd.c:231 sys-utils/blkdiscard.c:230
 #: sys-utils/blkzone.c:144 sys-utils/dmesg.c:536 sys-utils/eject.c:501
 #: sys-utils/eject.c:696 sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116
 #: sys-utils/fstrim.c:103 sys-utils/hwclock.c:239 sys-utils/hwclock.c:908
 #: sys-utils/hwclock-rtc.c:138 sys-utils/hwclock-rtc.c:403
 #: sys-utils/hwclock-rtc.c:439 sys-utils/irq-common.c:253
-#: sys-utils/ldattach.c:392 sys-utils/lscpu-cputype.c:464 sys-utils/lsmem.c:671
+#: sys-utils/ldattach.c:392 sys-utils/lscpu-cputype.c:468 sys-utils/lsmem.c:671
 #: sys-utils/nsenter.c:131 sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137
 #: sys-utils/rtcwake.c:292 sys-utils/setpriv.c:256 sys-utils/setpriv.c:622
 #: sys-utils/setpriv.c:645 sys-utils/swapon.c:382 sys-utils/swapon.c:525
@@ -76,7 +76,7 @@ msgstr "nema dovoljno argumenata"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
-#: term-utils/wall.c:422 text-utils/colcrt.c:284 text-utils/more.c:453
+#: term-utils/wall.c:421 text-utils/colcrt.c:284 text-utils/more.c:453
 #: text-utils/rev.c:140 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -263,14 +263,15 @@ msgstr "%s nije uspješna.\n"
 msgid "%s succeeded.\n"
 msgstr "%s je uspješno završen.\n"
 
-#. TRANSLATORS: Start sector not available. Max. 10 letters.
+#. TRANSLATORS: Start sector not available. Max. 15 letters.
 #: disk-utils/blockdev.c:482
 msgid "N/A"
 msgstr "Nedostupan"
 
 #: disk-utils/blockdev.c:506
-#, c-format
-msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
+#, fuzzy, c-format
+#| msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
+msgid "RO    RA   SSZ   BSZ        StartSec            Size   Device\n"
 msgstr "RO    RA   SSZ   BSZ   Poč. Sek.           Vel.   Uređaj\n"
 
 #: disk-utils/cfdisk.c:196
@@ -867,7 +868,7 @@ msgstr "konačni zapis definiran korisnikom prelazi granicu medija"
 msgid "user defined start track exceeds the user defined end track"
 msgstr "početni zapis definiran korisnikom prelazi konačnu granicu definiranu korisnikom"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:1046
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1039
 msgid "close failed"
 msgstr "greška pri zatvaranju"
 
@@ -882,7 +883,7 @@ msgid "Using default response %c."
 msgstr "Koristi se zadani odgovor %c."
 
 #: disk-utils/fdisk.c:224 disk-utils/fdisk.c:298 disk-utils/fdisk.c:375
-#: libfdisk/src/dos.c:1383 libfdisk/src/gpt.c:2519
+#: libfdisk/src/dos.c:1377 libfdisk/src/gpt.c:2519
 msgid "Value out of range."
 msgstr "Vrijednost je izvan raspona."
 
@@ -993,7 +994,7 @@ msgstr "nije moguće tražiti (seek)"
 msgid "cannot read"
 msgstr "nije moguće čitati"
 
-#: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:968
+#: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:962
 #: libfdisk/src/gpt.c:2447
 msgid "First sector"
 msgstr "Prvi sektor"
@@ -1764,7 +1765,7 @@ msgstr "%s nije montiran\n"
 #: disk-utils/fsck.c:330 disk-utils/fsck.cramfs.c:181
 #: disk-utils/fsck.cramfs.c:188 disk-utils/fsck.cramfs.c:244
 #: disk-utils/fsck.cramfs.c:265 disk-utils/sfdisk.c:307 libfdisk/src/bsd.c:647
-#: login-utils/last.c:214 login-utils/last.c:251 login-utils/sulogin.c:659
+#: login-utils/last.c:214 login-utils/last.c:251 login-utils/sulogin.c:660
 #: misc-utils/hardlink.c:579 misc-utils/hardlink.c:736
 #: schedutils/uclampset.c:111 sys-utils/ctrlaltdel.c:44
 #: sys-utils/irq-common.c:259 sys-utils/rfkill.c:216 sys-utils/setpriv.c:265
@@ -1824,7 +1825,7 @@ msgstr "%s: greška pri raščlambi retka %d -- ignorira se"
 msgid "%s: failed to parse fstab"
 msgstr "%s: nije uspjelo raščlaniti fstab"
 
-#: disk-utils/fsck.c:690 login-utils/login.c:1107 login-utils/sulogin.c:1037
+#: disk-utils/fsck.c:690 login-utils/login.c:1107 login-utils/sulogin.c:1038
 #: login-utils/vipw.c:197 sys-utils/flock.c:351 sys-utils/nsenter.c:182
 #: sys-utils/swapon.c:332 sys-utils/unshare.c:242 sys-utils/unshare.c:567
 msgid "fork failed"
@@ -2966,7 +2967,7 @@ msgstr ""
 "                      više od jedan V (npr. -VV) izvrši probu (dry-run)\n"
 
 #: disk-utils/mkfs.c:133 include/c.h:271 login-utils/su-common.c:1238
-#: login-utils/sulogin.c:800 login-utils/sulogin.c:804 sys-utils/flock.c:123
+#: login-utils/sulogin.c:801 login-utils/sulogin.c:805 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
 msgid "failed to execute %s"
@@ -4894,7 +4895,7 @@ msgstr "opcija -U se ignorira (UUID-ovi  nisu podržani)"
 msgid "Try '%s --help' for more information.\n"
 msgstr "Pokušajte s „%s --help“ za pomoć i više informacija\n"
 
-#: include/c.h:388
+#: include/c.h:384
 msgid ""
 "\n"
 "Usage:\n"
@@ -4902,7 +4903,7 @@ msgstr ""
 "\n"
 "Uporaba:\n"
 
-#: include/c.h:389
+#: include/c.h:385
 msgid ""
 "\n"
 "Options:\n"
@@ -4910,7 +4911,7 @@ msgstr ""
 "\n"
 "Opcije:\n"
 
-#: include/c.h:390
+#: include/c.h:386
 msgid ""
 "\n"
 "Functions:\n"
@@ -4918,7 +4919,7 @@ msgstr ""
 "\n"
 "Funkcije:\n"
 
-#: include/c.h:391
+#: include/c.h:387
 msgid ""
 "\n"
 "Commands:\n"
@@ -4926,7 +4927,7 @@ msgstr ""
 "\n"
 "Naredbe:\n"
 
-#: include/c.h:392
+#: include/c.h:388
 msgid ""
 "\n"
 "Arguments:\n"
@@ -4934,7 +4935,7 @@ msgstr ""
 "\n"
 "Argumenti:\n"
 
-#: include/c.h:393
+#: include/c.h:389
 msgid ""
 "\n"
 "Available output columns:\n"
@@ -4942,15 +4943,15 @@ msgstr ""
 "\n"
 "Dostupni izlazni stupci:\n"
 
-#: include/c.h:396
+#: include/c.h:392
 msgid "display this help"
 msgstr "ova prikazana pomoć"
 
-#: include/c.h:397
+#: include/c.h:393
 msgid "display version"
 msgstr "podatci o inačici programa"
 
-#: include/c.h:407
+#: include/c.h:403
 #, c-format
 msgid ""
 " %s arguments may be followed by the suffixes for\n"
@@ -4959,7 +4960,7 @@ msgstr ""
 "argumentima %s smiju se dodati ovi sufiksi za\n"
 "   GiB, TiB, PiB, EiB, ZiB, and YiB (\"iB\" nije obavezan)\n"
 
-#: include/c.h:410
+#: include/c.h:406
 #, c-format
 msgid ""
 "\n"
@@ -4968,7 +4969,7 @@ msgstr ""
 "\n"
 "za više detalja pogledajte %s.\n"
 
-#: include/c.h:412
+#: include/c.h:408
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s iz %s\n"
@@ -5857,15 +5858,15 @@ msgstr "Particija %zd: ima nevaljani početni sektor 0."
 msgid "There is no *BSD partition on %s."
 msgstr "Nema *BSD particije na %s."
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:968
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:962
 msgid "First cylinder"
 msgstr "Prvi cilindar"
 
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1354
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1348
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Zadnji cilindar, +/-cilindri ili +/-veličina{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1359 libfdisk/src/gpt.c:2496
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1353 libfdisk/src/gpt.c:2496
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Zadnji sektor, +/-sektori ili +/-veličina{K,M,G,T,P}"
 
@@ -6192,122 +6193,122 @@ msgstr "Netočna vrijednost."
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "Identifikator diska je promijenjen iz 0x%08x u 0x%08x."
 
-#: libfdisk/src/dos.c:864
+#: libfdisk/src/dos.c:858
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "Suvišna proširena (extended) particija %zu se ignorira"
 
-#: libfdisk/src/dos.c:878
+#: libfdisk/src/dos.c:872
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "Nevaljani flag 0x%02x%02x od EBR (za particiju %zu) bit će ispravljen pri w(rite) -- zapisivanju."
 
-#: libfdisk/src/dos.c:955
+#: libfdisk/src/dos.c:949
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "Početni sektor %ju je izvan raspona."
 
-#: libfdisk/src/dos.c:1194 libfdisk/src/gpt.c:2370 libfdisk/src/sgi.c:842
+#: libfdisk/src/dos.c:1188 libfdisk/src/gpt.c:2370 libfdisk/src/sgi.c:842
 #: libfdisk/src/sun.c:528
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "Particija %zu je već definirana. Izbrišite ju prije ponovnog dodavanja."
 
-#: libfdisk/src/dos.c:1209 libfdisk/src/dos.c:1235 libfdisk/src/dos.c:1293
-#: libfdisk/src/dos.c:1325 libfdisk/src/gpt.c:2379
+#: libfdisk/src/dos.c:1203 libfdisk/src/dos.c:1229 libfdisk/src/dos.c:1287
+#: libfdisk/src/dos.c:1319 libfdisk/src/gpt.c:2379
 msgid "No free sectors available."
 msgstr "Nema dostupnih slobodnih sektora."
 
-#: libfdisk/src/dos.c:1260
+#: libfdisk/src/dos.c:1254
 #, fuzzy, c-format
 #| msgid "Sector %llu is already allocated."
 msgid "Sector %ju is already allocated."
 msgstr "Sektor %llu je već dodijeljen."
 
-#: libfdisk/src/dos.c:1480
+#: libfdisk/src/dos.c:1474
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "Dodavanje logičke particije %zu"
 
-#: libfdisk/src/dos.c:1511
+#: libfdisk/src/dos.c:1505
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Particija %zu: sadrži sektor 0"
 
-#: libfdisk/src/dos.c:1513
+#: libfdisk/src/dos.c:1507
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Particija %zu: glava %d ima veći broj od maksimuma %d"
 
-#: libfdisk/src/dos.c:1516
+#: libfdisk/src/dos.c:1510
 #, fuzzy, c-format
 #| msgid "Partition %zu: sector %d greater than maximum %llu"
 msgid "Partition %zu: sector %d greater than maximum %ju"
 msgstr "Particija %zu: sektor %d ima veći broj od maksimuma %llu"
 
-#: libfdisk/src/dos.c:1520
+#: libfdisk/src/dos.c:1514
 #, fuzzy, c-format
 #| msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
 msgstr "Particija %zu: cilindar %d ima veći broj od maksimuma %llu"
 
-#: libfdisk/src/dos.c:1526
+#: libfdisk/src/dos.c:1520
 #, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "Particija %zu: kraj prethodne particije u sektorima %u ne slaže se totalom %u"
 
-#: libfdisk/src/dos.c:1579
+#: libfdisk/src/dos.c:1573
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Particija %zu ima različite fizičke/logičke početke (nije Linux?): fizički=(%d, %d, %d), logički=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1590
+#: libfdisk/src/dos.c:1584
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Particija %zu ima različite fizičke/logičke krajeve: fizički=(%d, %d, %d), logički=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1599
+#: libfdisk/src/dos.c:1593
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "Particija %zu ne završava na kraju granice cilindra."
 
-#: libfdisk/src/dos.c:1647
+#: libfdisk/src/dos.c:1641
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "Particija %zu ima pogrešan početak podataka."
 
-#: libfdisk/src/dos.c:1662
+#: libfdisk/src/dos.c:1656
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Particija %zu preklapa se particijom %zu."
 
-#: libfdisk/src/dos.c:1691
+#: libfdisk/src/dos.c:1685
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "Particija %zu je prazna."
 
-#: libfdisk/src/dos.c:1698
+#: libfdisk/src/dos.c:1692
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Logička particija %zu nije u potpunosti unutar particije %zu."
 
-#: libfdisk/src/dos.c:1707 libfdisk/src/gpt.c:2276
+#: libfdisk/src/dos.c:1701 libfdisk/src/gpt.c:2276
 msgid "No errors detected."
 msgstr "Nema grešaka."
 
-#: libfdisk/src/dos.c:1709
+#: libfdisk/src/dos.c:1703
 #, fuzzy, c-format
 #| msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgid "Total allocated sectors %ju greater than the maximum %ju."
 msgstr "Ukupni broj dodijeljenih sektora %llu je veći od maksimuma %llu."
 
-#: libfdisk/src/dos.c:1712
+#: libfdisk/src/dos.c:1706
 #, fuzzy, c-format
 #| msgid "Remaining %lld unallocated %ld-byte sectors."
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "Preostalo je %lld nerezerviranih sektora od %ld bajta."
 
-#: libfdisk/src/dos.c:1716 libfdisk/src/gpt.c:2296
+#: libfdisk/src/dos.c:1710 libfdisk/src/gpt.c:2296
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -6315,94 +6316,98 @@ msgstr[0] "Otkrivena je %d greška."
 msgstr[1] "Otkrivene su %d greške."
 msgstr[2] "Otkriveno je %d grešaka."
 
-#: libfdisk/src/dos.c:1749
+#: libfdisk/src/dos.c:1743
 msgid "The maximum number of partitions has been created."
 msgstr "Već je kreiran maksimalan broj particija."
 
-#: libfdisk/src/dos.c:1782 libfdisk/src/dos.c:1797 libfdisk/src/dos.c:2250
+#: libfdisk/src/dos.c:1776 libfdisk/src/dos.c:1791 libfdisk/src/dos.c:2244
 msgid "Extended partition already exists."
 msgstr "Proširena particija već postoji."
 
-#: libfdisk/src/dos.c:1812
+#: libfdisk/src/dos.c:1806
 msgid "Extended partition does not exists. Failed to add logical partition."
 msgstr "Proširena particija ne postoji. Nije uspjelo dodati logičku particiju."
 
-#: libfdisk/src/dos.c:1873
+#: libfdisk/src/dos.c:1867
 msgid "All primary partitions are in use."
 msgstr "Sve primarne particije su iskorištene."
 
-#: libfdisk/src/dos.c:1875 libfdisk/src/dos.c:1887
+#: libfdisk/src/dos.c:1869 libfdisk/src/dos.c:1881
 msgid "All space for primary partitions is in use."
 msgstr "Sav prostor za primarne particije je iskorišten."
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:1890
+#: libfdisk/src/dos.c:1884
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "Za više particija, zamijenite primarnu particiju s proširenom particijom."
 
-#: libfdisk/src/dos.c:1911
+#: libfdisk/src/dos.c:1905
 msgid "Partition type"
 msgstr "Vrsta particije"
 
-#: libfdisk/src/dos.c:1915
+#: libfdisk/src/dos.c:1909
 #, c-format
 msgid "%u primary, %d extended, %u free"
 msgstr "%u primarna, %d proširena, %u slobodno"
 
-#: libfdisk/src/dos.c:1920
+#: libfdisk/src/dos.c:1914
 msgid "primary"
 msgstr "primarna"
 
-#: libfdisk/src/dos.c:1922
+#: libfdisk/src/dos.c:1916
 msgid "extended"
 msgstr "proširena"
 
-#: libfdisk/src/dos.c:1922
+#: libfdisk/src/dos.c:1916
 msgid "container for logical partitions"
 msgstr "kontejner za logičke particije"
 
-#: libfdisk/src/dos.c:1924
+#: libfdisk/src/dos.c:1918
 msgid "logical"
 msgstr "logička"
 
-#: libfdisk/src/dos.c:1924
+#: libfdisk/src/dos.c:1918
 msgid "numbered from 5"
 msgstr "numerirano od 5"
 
-#: libfdisk/src/dos.c:1963
+#: libfdisk/src/dos.c:1957
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Nevaljana vrsta particije „%c“."
 
-#: libfdisk/src/dos.c:1981
+#: libfdisk/src/dos.c:1975
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Sektor %jd nije moguće pisati: seek nije uspio (greška pozicioniranja)"
 
-#: libfdisk/src/dos.c:2141 libfdisk/src/gpt.c:1295
+#: libfdisk/src/dos.c:2135 libfdisk/src/gpt.c:1295
 msgid "Disk identifier"
 msgstr "Identifikator diska"
 
-#: libfdisk/src/dos.c:2255
+#: libfdisk/src/dos.c:2249
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr ""
 "Većini sustava, vrsta 0 znači „slobodni prostor“.\n"
 "Zato i nije mudro imati particije vrsta 0."
 
-#: libfdisk/src/dos.c:2260
+#: libfdisk/src/dos.c:2254
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr ""
 "Nije moguće promijeniti vrstu proširene particije ako ju već koriste logičke\n"
 "particije. Izbrišite prvo logičke particije."
 
-#: libfdisk/src/dos.c:2499
+#: libfdisk/src/dos.c:2493
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "Particija %zu nema područje za podatke."
 
-#: libfdisk/src/dos.c:2532
+#: libfdisk/src/dos.c:2527
 msgid "New beginning of data"
 msgstr "Novi početak podataka"
+
+#: libfdisk/src/dos.c:2543
+msgid "The new beginning of the partition overlaps the disk label area. Be very careful when using the partition. You can lose all your partitions on the disk."
+msgstr ""
 
 #: libfdisk/src/dos.c:2588
 #, c-format
@@ -8086,7 +8091,7 @@ msgstr "Nije (bilo) moguće inicijalizirati PAM: %s"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "NEUSPJELA PRIJAVA %u IZ %s ZA %s, %s"
 
-#: login-utils/login.c:965 login-utils/sulogin.c:1026
+#: login-utils/login.c:965 login-utils/sulogin.c:1027
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -8194,12 +8199,12 @@ msgstr "setgid() nije uspjela"
 msgid "setuid() failed"
 msgstr "setuid() nije uspjela"
 
-#: login-utils/login.c:1492 login-utils/sulogin.c:737
+#: login-utils/login.c:1492 login-utils/sulogin.c:738
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: promijeniti direktorij nije uspjelo"
 
-#: login-utils/login.c:1499 login-utils/sulogin.c:738
+#: login-utils/login.c:1499 login-utils/sulogin.c:739
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Prijava s home = \"/\".\n"
@@ -8599,7 +8604,7 @@ msgstr "getline() nije uspjela"
 msgid "Password: "
 msgstr "Lozinka: "
 
-#: login-utils/newgrp.c:160 login-utils/sulogin.c:1008
+#: login-utils/newgrp.c:160 login-utils/sulogin.c:1009
 msgid "crypt failed"
 msgstr "crypt() nije uspjela"
 
@@ -8950,24 +8955,24 @@ msgstr "Pritisnite Enter za održavanje\n"
 msgid "(or press Control-D to continue): "
 msgstr "(ili pritisnite Ctrl-D da nastavite): "
 
-#: login-utils/sulogin.c:741
+#: login-utils/sulogin.c:742
 msgid "change directory to system root failed"
 msgstr "promijeniti direktorij u korijen (root) sustava nije uspjelo"
 
-#: login-utils/sulogin.c:791
+#: login-utils/sulogin.c:792
 msgid "setexeccon failed"
 msgstr "setexeccon() nije uspjela"
 
-#: login-utils/sulogin.c:812
+#: login-utils/sulogin.c:813
 #, c-format
 msgid " %s [options] [tty device]\n"
 msgstr " %s [opcije] [tty-uređaj]\n"
 
-#: login-utils/sulogin.c:815
+#: login-utils/sulogin.c:816
 msgid "Single-user login.\n"
 msgstr "Prijava (u načinu) za jednog korisnika.\n"
 
-#: login-utils/sulogin.c:818
+#: login-utils/sulogin.c:819
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
@@ -8979,24 +8984,24 @@ msgstr ""
 " -e, --force              izravno ispita datoteku s lozinkama\n"
 "                            ako funkcija getpwnam(3) ne uspije\n"
 
-#: login-utils/sulogin.c:874 misc-utils/findmnt.c:1520 sys-utils/wdctl.c:640
-#: term-utils/agetty.c:847 term-utils/wall.c:218
+#: login-utils/sulogin.c:875 misc-utils/findmnt.c:1520 sys-utils/wdctl.c:640
+#: term-utils/agetty.c:847 term-utils/wall.c:219
 msgid "invalid timeout argument"
 msgstr "nevaljani argument za --timeout"
 
-#: login-utils/sulogin.c:893
+#: login-utils/sulogin.c:894
 msgid "only superuser can run this program"
 msgstr "samo superuser može koristiti ovaj program"
 
-#: login-utils/sulogin.c:936
+#: login-utils/sulogin.c:937
 msgid "cannot open console"
 msgstr "nije moguće otvoriti konzolu"
 
-#: login-utils/sulogin.c:943
+#: login-utils/sulogin.c:944
 msgid "cannot open password database"
 msgstr "nije moguće otvoriti bazu podataka lozinki"
 
-#: login-utils/sulogin.c:1023
+#: login-utils/sulogin.c:1024
 #, c-format
 msgid ""
 "cannot execute su shell\n"
@@ -9005,7 +9010,7 @@ msgstr ""
 "nije moguće pokrenuti ljusku su (superuser-a)\n"
 "\n"
 
-#: login-utils/sulogin.c:1030
+#: login-utils/sulogin.c:1031
 msgid ""
 "Timed out\n"
 "\n"
@@ -9013,7 +9018,7 @@ msgstr ""
 "Vrijeme je isteklo\n"
 "\n"
 
-#: login-utils/sulogin.c:1062
+#: login-utils/sulogin.c:1063
 msgid ""
 "cannot wait on su shell\n"
 "\n"
@@ -10501,153 +10506,153 @@ msgstr "slanje signala na %s nije uspjelo"
 msgid "cannot find process \"%s\""
 msgstr "nije moguće naći proces „%s“"
 
-#: misc-utils/logger.c:228
+#: misc-utils/logger.c:229
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "nepoznato ime ustroja (prioriteta): %s"
 
-#: misc-utils/logger.c:234
+#: misc-utils/logger.c:235
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "nepoznato ime prioriteta: %s"
 
-#: misc-utils/logger.c:246
+#: misc-utils/logger.c:247
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s: staza (pathname) je preduga"
 
-#: misc-utils/logger.c:273
+#: misc-utils/logger.c:274
 #, c-format
 msgid "socket %s"
 msgstr "utičnica %s"
 
-#: misc-utils/logger.c:310
+#: misc-utils/logger.c:311
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "nije uspjelo razriješiti ime %s port %s: %s"
 
-#: misc-utils/logger.c:327
+#: misc-utils/logger.c:328
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "nije uspjelo spojiti se na %s port %s"
 
-#: misc-utils/logger.c:375
+#: misc-utils/logger.c:376
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "makskimalni broj ulaznih redaka (%d) je premašen"
 
-#: misc-utils/logger.c:528
+#: misc-utils/logger.c:519
 msgid "send message failed"
 msgstr "nije uspjelo poslati poruku"
 
-#: misc-utils/logger.c:598
+#: misc-utils/logger.c:589
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr "ID „%s“ za strukturirane podatke nije unikat"
 
-#: misc-utils/logger.c:612
+#: misc-utils/logger.c:603
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr "--sd-id nije bila specificirana za --sd-param %s"
 
-#: misc-utils/logger.c:792
+#: misc-utils/logger.c:783
 msgid "localtime() failed"
 msgstr "localtime() nije uspješna"
 
-#: misc-utils/logger.c:802
+#: misc-utils/logger.c:793
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "hostname (ime uređaja, računala) „%s“ je predugo"
 
-#: misc-utils/logger.c:808
+#: misc-utils/logger.c:799
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "predugi tag „%s“"
 
-#: misc-utils/logger.c:871
+#: misc-utils/logger.c:862
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "nepoznati argument %s opcije se ignorira"
 
-#: misc-utils/logger.c:883
+#: misc-utils/logger.c:874
 #, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "nevaljani argument: %s -- koristi se „auto“"
 
-#: misc-utils/logger.c:1054
+#: misc-utils/logger.c:1047
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [opcije] [<poruka>]\n"
 
-#: misc-utils/logger.c:1057
+#: misc-utils/logger.c:1050
 msgid "Enter messages into the system log.\n"
 msgstr "Urudžbira  poruke u sustavski zapisnik.\n"
 
-#: misc-utils/logger.c:1060
+#: misc-utils/logger.c:1053
 msgid " -i                       log the logger command's PID\n"
 msgstr " -i                       urudžbira PID od naredbe loggera\n"
 
-#: misc-utils/logger.c:1061
+#: misc-utils/logger.c:1054
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr "     --id[=<ID>]          urudžbira dȃni <ID> (inače, zadano je PID)\n"
 
-#: misc-utils/logger.c:1062
+#: misc-utils/logger.c:1055
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <datoteka>    urudžbira sadržaj datoteke\n"
 
-#: misc-utils/logger.c:1063
+#: misc-utils/logger.c:1056
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -e, --skip-empty         ne urudžbira prazne retke obrađenih datoteka\n"
 
-#: misc-utils/logger.c:1064
+#: misc-utils/logger.c:1057
 msgid "     --no-act             do everything except the write the log\n"
 msgstr "     --no-act             obavi sve osim urudžbiranja\n"
 
-#: misc-utils/logger.c:1065
+#: misc-utils/logger.c:1058
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    dȃne poruke označi s tim prioritetom\n"
 
-#: misc-utils/logger.c:1066
+#: misc-utils/logger.c:1059
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr "     --octet-count        oktete izbroji prema RFC6587\n"
 
-#: misc-utils/logger.c:1067
+#: misc-utils/logger.c:1060
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        traži prefiks u svakom retku pročitanom iz stdin\n"
 
-#: misc-utils/logger.c:1068
+#: misc-utils/logger.c:1061
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             poruke ispisuje i na izlaz za standardne greške\n"
 
-#: misc-utils/logger.c:1069
+#: misc-utils/logger.c:1062
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr " -S, --size <broj>        maksimalna veličina pojedine poruke\n"
 
-#: misc-utils/logger.c:1070
+#: misc-utils/logger.c:1063
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <tag>          svaki redak obilježi s tim tagom\n"
 
-#: misc-utils/logger.c:1071
+#: misc-utils/logger.c:1064
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <ime>       daljinski urudžbira na taj syslog-server\n"
 
-#: misc-utils/logger.c:1072
+#: misc-utils/logger.c:1065
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <port>        za komunikaciju putem UDP ili TCP koristi taj port\n"
 
-#: misc-utils/logger.c:1073
+#: misc-utils/logger.c:1066
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                koristi samo TCP\n"
 
-#: misc-utils/logger.c:1074
+#: misc-utils/logger.c:1067
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                koristi samo UDP\n"
 
-#: misc-utils/logger.c:1075
+#: misc-utils/logger.c:1068
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            koristi zastarjeli BSD syslog protokol\n"
 
-#: misc-utils/logger.c:1076
+#: misc-utils/logger.c:1069
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
@@ -10655,64 +10660,64 @@ msgstr ""
 "     --rfc5424[=<način>]  koristi novi protokol (zadano za daljinski);\n"
 "                            <način> može biti notime, ili notq i/ili nohost\n"
 
-#: misc-utils/logger.c:1078
+#: misc-utils/logger.c:1071
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr "     --sd-id <ID>          strukturirani ID podatci prema RFC5424\n"
 
-#: misc-utils/logger.c:1079
+#: misc-utils/logger.c:1072
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr "     --sd-param <data>    strukturirani podatci (ime=vrijednost) prema RFC-542\n"
 
-#: misc-utils/logger.c:1080
+#: misc-utils/logger.c:1073
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr "     --msgid <ID-poruke>  ID-poruka prema RFC5424\n"
 
-#: misc-utils/logger.c:1081
+#: misc-utils/logger.c:1074
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <utičnica>  piše na tu Unix utičnicu\n"
 
-#: misc-utils/logger.c:1082
+#: misc-utils/logger.c:1075
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
 msgstr "     --socket-errors[=<on|off|auto>]  ispiše greške spajanja s Unix utičnicama\n"
 
-#: misc-utils/logger.c:1085
+#: misc-utils/logger.c:1078
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr "     --journald[=<datoteka>]  zapiše journald-stavku\n"
 
-#: misc-utils/logger.c:1171
+#: misc-utils/logger.c:1164
 #, c-format
 msgid "file %s"
 msgstr "datoteka %s"
 
-#: misc-utils/logger.c:1186
+#: misc-utils/logger.c:1179
 msgid "failed to parse id"
 msgstr "nije uspjelo razabrati ID"
 
-#: misc-utils/logger.c:1204
+#: misc-utils/logger.c:1197
 msgid "failed to parse message size"
 msgstr "nije uspjelo razabrati veličinu poruke"
 
-#: misc-utils/logger.c:1234
+#: misc-utils/logger.c:1227
 msgid "--msgid cannot contain space"
 msgstr "ID-poruke ne smije sadržavati razmak (space)"
 
-#: misc-utils/logger.c:1256
+#: misc-utils/logger.c:1249
 #, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "nevaljani ID strukturiranih podataka: „%s“"
 
-#: misc-utils/logger.c:1261
+#: misc-utils/logger.c:1254
 #, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "nevaljani argument strukturiranih podataka: „%s“"
 
-#: misc-utils/logger.c:1276
+#: misc-utils/logger.c:1269
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "datoteka i poruka se međusobno isključuju; poruka se ignorira"
 
-#: misc-utils/logger.c:1283
+#: misc-utils/logger.c:1276
 msgid "journald entry could not be written"
 msgstr "journald-stavku nije bilo moguće zapisati"
 
@@ -12992,7 +12997,7 @@ msgstr ""
 "\n"
 "Podržane zone:\n"
 
-#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:860 sys-utils/lsmem.c:667
+#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:864 sys-utils/lsmem.c:667
 #, c-format
 msgid "failed to initialize %s handler"
 msgstr "nije uspjelo inicijalizirati rukovatelja %s"
@@ -16309,16 +16314,16 @@ msgstr ""
 "%s: opcije --all, --online i --offline mogu se koristiti\n"
 "samo s opcijama --extended ili --parse.\n"
 
-#: sys-utils/lscpu-cputype.c:585
+#: sys-utils/lscpu-cputype.c:589
 msgid "error: uname failed"
 msgstr "greška: uname() nije uspjela"
 
-#: sys-utils/lscpu-cputype.c:682
+#: sys-utils/lscpu-cputype.c:686
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "nije uspjelo odrediti broj CPU-a: %s"
 
-#: sys-utils/lscpu-cputype.c:885
+#: sys-utils/lscpu-cputype.c:889
 msgid "Failed to extract the node number"
 msgstr "Nije uspjelo doznati broj čvora"
 
@@ -20701,59 +20706,59 @@ msgstr "nije moguće započeti novi proces (fork)"
 msgid "%s: BAD ERROR, message is far too long"
 msgstr "%s: OZBILJNA GREŠKA, poruka je preduga"
 
-#: term-utils/wall.c:88
+#: term-utils/wall.c:89
 #, c-format
 msgid " %s [options] [<file> | <message>]\n"
 msgstr " %s [opcije] [<datoteka> | <poruka>]\n"
 
-#: term-utils/wall.c:91
+#: term-utils/wall.c:92
 msgid "Write a message to all users.\n"
 msgstr "Pošalje poruku svim korisnicima.\n"
 
-#: term-utils/wall.c:94
+#: term-utils/wall.c:95
 msgid " -g, --group <group>     only send message to group\n"
 msgstr " -g, --group <grupa>     poruku pošalje samo toj grupi (ime ili GID)\n"
 
-#: term-utils/wall.c:95
+#: term-utils/wall.c:96
 msgid " -n, --nobanner          do not print banner, works only for root\n"
 msgstr " -n, --nobanner          ne prikaže zaglavlje (to može koristiti samo root)\n"
 
-#: term-utils/wall.c:96
+#: term-utils/wall.c:97
 msgid " -t, --timeout <timeout> write timeout in seconds\n"
 msgstr " -t, --timeout <broj>    nakon isteka broja sekundi odustane od pisanja\n"
 
-#: term-utils/wall.c:124
+#: term-utils/wall.c:125
 msgid "invalid group argument"
 msgstr "nevaljani argument grupe"
 
-#: term-utils/wall.c:126
+#: term-utils/wall.c:127
 #, c-format
 msgid "%s: unknown gid"
 msgstr "%s: nepoznati GID"
 
-#: term-utils/wall.c:169
+#: term-utils/wall.c:170
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr "getgrouplist() je pronašla više grupa nego ih sysconf() dopušta"
 
-#: term-utils/wall.c:215
+#: term-utils/wall.c:216
 msgid "--nobanner is available only for root"
 msgstr "opciju --nobanner može koristiti samo root"
 
-#: term-utils/wall.c:220
+#: term-utils/wall.c:221
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr "nevaljani argument za opciju --timeout: %s"
 
-#: term-utils/wall.c:362
+#: term-utils/wall.c:361
 msgid "cannot get passwd uid"
 msgstr "nije moguće dobiti ID korisnika"
 
-#: term-utils/wall.c:386
+#: term-utils/wall.c:385
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Emitirana poruka od %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:418
+#: term-utils/wall.c:417
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "neće čitati iz %s; koristite standardni ulaz"

@@ -75,7 +75,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-07-22 15:46+0200\n"
+"POT-Creation-Date: 2021-08-16 15:06+0200\n"
 "PO-Revision-Date: 2019-06-03 14:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -121,14 +121,14 @@ msgstr "ikke nok parametre"
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:362
 #: login-utils/utmpdump.c:386 login-utils/vipw.c:250 login-utils/vipw.c:268
-#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:577 misc-utils/logger.c:1242
+#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:577 misc-utils/logger.c:1235
 #: misc-utils/mcookie.c:119 misc-utils/uuidd.c:231 sys-utils/blkdiscard.c:230
 #: sys-utils/blkzone.c:144 sys-utils/dmesg.c:536 sys-utils/eject.c:501
 #: sys-utils/eject.c:696 sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116
 #: sys-utils/fstrim.c:103 sys-utils/hwclock.c:239 sys-utils/hwclock.c:908
 #: sys-utils/hwclock-rtc.c:138 sys-utils/hwclock-rtc.c:403
 #: sys-utils/hwclock-rtc.c:439 sys-utils/irq-common.c:253
-#: sys-utils/ldattach.c:392 sys-utils/lscpu-cputype.c:464 sys-utils/lsmem.c:671
+#: sys-utils/ldattach.c:392 sys-utils/lscpu-cputype.c:468 sys-utils/lsmem.c:671
 #: sys-utils/nsenter.c:131 sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137
 #: sys-utils/rtcwake.c:292 sys-utils/setpriv.c:256 sys-utils/setpriv.c:622
 #: sys-utils/setpriv.c:645 sys-utils/swapon.c:382 sys-utils/swapon.c:525
@@ -138,7 +138,7 @@ msgstr "ikke nok parametre"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
-#: term-utils/wall.c:422 text-utils/colcrt.c:284 text-utils/more.c:453
+#: term-utils/wall.c:421 text-utils/colcrt.c:284 text-utils/more.c:453
 #: text-utils/rev.c:140 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -320,14 +320,15 @@ msgstr "%s mislykkedes.\n"
 msgid "%s succeeded.\n"
 msgstr "%s lykkedes.\n"
 
-#. TRANSLATORS: Start sector not available. Max. 10 letters.
+#. TRANSLATORS: Start sector not available. Max. 15 letters.
 #: disk-utils/blockdev.c:482
 msgid "N/A"
 msgstr ""
 
 #: disk-utils/blockdev.c:506
-#, c-format
-msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
+#, fuzzy, c-format
+#| msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
+msgid "RO    RA   SSZ   BSZ        StartSec            Size   Device\n"
 msgstr "RO    RA   SST   BST   StartSekt           Størr.  Enhed\n"
 
 # "Opstartbar"
@@ -934,7 +935,7 @@ msgstr "brugerdefineret slutspor er højere end det mediumspecificeret maksimum"
 msgid "user defined start track exceeds the user defined end track"
 msgstr "brugerdefineret startspor er højere end det brugerdefineret slutspor"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:1046
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1039
 msgid "close failed"
 msgstr "close (luk) mislykkedes"
 
@@ -949,7 +950,7 @@ msgid "Using default response %c."
 msgstr "Bruger standardsvar %c."
 
 #: disk-utils/fdisk.c:224 disk-utils/fdisk.c:298 disk-utils/fdisk.c:375
-#: libfdisk/src/dos.c:1383 libfdisk/src/gpt.c:2519
+#: libfdisk/src/dos.c:1377 libfdisk/src/gpt.c:2519
 msgid "Value out of range."
 msgstr "Værdi uden for området."
 
@@ -1060,7 +1061,7 @@ msgstr "kunne ikke søge (seek)"
 msgid "cannot read"
 msgstr "kunne ikke læse"
 
-#: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:968
+#: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:962
 #: libfdisk/src/gpt.c:2447
 msgid "First sector"
 msgstr "Første sektor"
@@ -1820,7 +1821,7 @@ msgstr "%s er ikke monteret\n"
 #: disk-utils/fsck.c:330 disk-utils/fsck.cramfs.c:181
 #: disk-utils/fsck.cramfs.c:188 disk-utils/fsck.cramfs.c:244
 #: disk-utils/fsck.cramfs.c:265 disk-utils/sfdisk.c:307 libfdisk/src/bsd.c:647
-#: login-utils/last.c:214 login-utils/last.c:251 login-utils/sulogin.c:659
+#: login-utils/last.c:214 login-utils/last.c:251 login-utils/sulogin.c:660
 #: misc-utils/hardlink.c:579 misc-utils/hardlink.c:736
 #: schedutils/uclampset.c:111 sys-utils/ctrlaltdel.c:44
 #: sys-utils/irq-common.c:259 sys-utils/rfkill.c:216 sys-utils/setpriv.c:265
@@ -1880,7 +1881,7 @@ msgstr "%s: fortolk fejl i linje %d - ignoreret"
 msgid "%s: failed to parse fstab"
 msgstr "%s: kunne ikke fortolke fstab"
 
-#: disk-utils/fsck.c:690 login-utils/login.c:1107 login-utils/sulogin.c:1037
+#: disk-utils/fsck.c:690 login-utils/login.c:1107 login-utils/sulogin.c:1038
 #: login-utils/vipw.c:197 sys-utils/flock.c:351 sys-utils/nsenter.c:182
 #: sys-utils/swapon.c:332 sys-utils/unshare.c:242 sys-utils/unshare.c:567
 msgid "fork failed"
@@ -3019,7 +3020,7 @@ msgstr ""
 "                      specificering af -V mere end en gang vil medføre et tørløb\n"
 
 #: disk-utils/mkfs.c:133 include/c.h:271 login-utils/su-common.c:1238
-#: login-utils/sulogin.c:800 login-utils/sulogin.c:804 sys-utils/flock.c:123
+#: login-utils/sulogin.c:801 login-utils/sulogin.c:805 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
 msgid "failed to execute %s"
@@ -4929,7 +4930,7 @@ msgstr "ignorer -U (UUID'er er ikke understøttet)"
 msgid "Try '%s --help' for more information.\n"
 msgstr "Brug »%s --help« for yderligere detaljer.\n"
 
-#: include/c.h:388
+#: include/c.h:384
 msgid ""
 "\n"
 "Usage:\n"
@@ -4937,7 +4938,7 @@ msgstr ""
 "\n"
 "Brug:\n"
 
-#: include/c.h:389
+#: include/c.h:385
 msgid ""
 "\n"
 "Options:\n"
@@ -4945,7 +4946,7 @@ msgstr ""
 "\n"
 "Tilvalg:\n"
 
-#: include/c.h:390
+#: include/c.h:386
 msgid ""
 "\n"
 "Functions:\n"
@@ -4953,7 +4954,7 @@ msgstr ""
 "\n"
 "Funktioner:\n"
 
-#: include/c.h:391
+#: include/c.h:387
 msgid ""
 "\n"
 "Commands:\n"
@@ -4961,14 +4962,14 @@ msgstr ""
 "\n"
 "Kommandoer:\n"
 
-#: include/c.h:392
+#: include/c.h:388
 #, fuzzy
 msgid ""
 "\n"
 "Arguments:\n"
 msgstr "ugyldige parametre"
 
-#: include/c.h:393
+#: include/c.h:389
 msgid ""
 "\n"
 "Available output columns:\n"
@@ -4976,22 +4977,22 @@ msgstr ""
 "\n"
 "Tilgængelige uddatakolonner:\n"
 
-#: include/c.h:396
+#: include/c.h:392
 msgid "display this help"
 msgstr "vis denne hjælpetekst"
 
-#: include/c.h:397
+#: include/c.h:393
 msgid "display version"
 msgstr "vis version"
 
-#: include/c.h:407
+#: include/c.h:403
 #, c-format
 msgid ""
 " %s arguments may be followed by the suffixes for\n"
 "   GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"
 msgstr ""
 
-#: include/c.h:410
+#: include/c.h:406
 #, c-format
 msgid ""
 "\n"
@@ -5000,7 +5001,7 @@ msgstr ""
 "\n"
 "For yderligere detaljer se %s.\n"
 
-#: include/c.h:412
+#: include/c.h:408
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s fra %s\n"
@@ -5912,19 +5913,19 @@ msgstr "Partition %zd har en ugyldig startsektor 0."
 msgid "There is no *BSD partition on %s."
 msgstr "Der er ingen *BSD-partitioner på %s."
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:968
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:962
 msgid "First cylinder"
 msgstr "Første cylinder"
 
 # (lidt specielt men man skriver vist +1024, +1024K, +2048M eller
 # tilsvarende konstruktion)
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1354
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1348
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Seneste cylinder, +/-cylindere eller +/-størrelse{K,M,G,T,P}"
 
 # (lidt specielt men man skriver vist +1024, +1024K, +2048M eller
 # tilsvarende konstruktion)
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1359 libfdisk/src/gpt.c:2496
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1353 libfdisk/src/gpt.c:2496
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Seneste sektor, +/-sektorer eller +/-størrelse{K,M,G,T,P}"
 
@@ -6242,188 +6243,188 @@ msgstr "Ugyldig værdi."
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "Diskidentifikation ændret fra 0x%08x til 0x%08x."
 
-#: libfdisk/src/dos.c:864
+#: libfdisk/src/dos.c:858
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "Ignorerer ekstra udvidet partition %zu"
 
-#: libfdisk/src/dos.c:878
+#: libfdisk/src/dos.c:872
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "Ugyldigt flag 0x%02x%02x for EBR (for partition %zu) vil blive rettet med »w« (forkortelse for write; dansk=skriv)"
 
-#: libfdisk/src/dos.c:955
+#: libfdisk/src/dos.c:949
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "Startsektor %ju uden for området."
 
-#: libfdisk/src/dos.c:1194 libfdisk/src/gpt.c:2370 libfdisk/src/sgi.c:842
+#: libfdisk/src/dos.c:1188 libfdisk/src/gpt.c:2370 libfdisk/src/sgi.c:842
 #: libfdisk/src/sun.c:528
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "Partition %zu er allerede defineret. Slet den før du tilføjer den igen."
 
-#: libfdisk/src/dos.c:1209 libfdisk/src/dos.c:1235 libfdisk/src/dos.c:1293
-#: libfdisk/src/dos.c:1325 libfdisk/src/gpt.c:2379
+#: libfdisk/src/dos.c:1203 libfdisk/src/dos.c:1229 libfdisk/src/dos.c:1287
+#: libfdisk/src/dos.c:1319 libfdisk/src/gpt.c:2379
 msgid "No free sectors available."
 msgstr "Ingen tilgængelige frie sektorer."
 
-#: libfdisk/src/dos.c:1260
+#: libfdisk/src/dos.c:1254
 #, fuzzy, c-format
 #| msgid "Sector %llu is already allocated."
 msgid "Sector %ju is already allocated."
 msgstr "Sektor %llu er allerede allokeret."
 
-#: libfdisk/src/dos.c:1480
+#: libfdisk/src/dos.c:1474
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "Tilføjer logisk partition %zu"
 
-#: libfdisk/src/dos.c:1511
+#: libfdisk/src/dos.c:1505
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Partition %zu: indeholder sektor 0"
 
-#: libfdisk/src/dos.c:1513
+#: libfdisk/src/dos.c:1507
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Partition %zu: hovedet %d er større end de maksimale %d"
 
-#: libfdisk/src/dos.c:1516
+#: libfdisk/src/dos.c:1510
 #, fuzzy, c-format
 #| msgid "Partition %zu: sector %d greater than maximum %llu"
 msgid "Partition %zu: sector %d greater than maximum %ju"
 msgstr "Partition %zu: sektor %d er større end de maksimale %llu"
 
-#: libfdisk/src/dos.c:1520
+#: libfdisk/src/dos.c:1514
 #, fuzzy, c-format
 #| msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
 msgstr "Partitionerne %zu: cylinder %d større end de maksimale %llu"
 
-#: libfdisk/src/dos.c:1526
+#: libfdisk/src/dos.c:1520
 #, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "Partition %zu: forrige sektorer %u stemmer ikke med totalen %u"
 
-#: libfdisk/src/dos.c:1579
+#: libfdisk/src/dos.c:1573
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partition %zu har forskellig fysisk/logisk begyndelse (ikke-Linux?): fysik=(%d, %d, %d), logik=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1590
+#: libfdisk/src/dos.c:1584
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partition %zu har forskellig fysisk/logisk endelse: fysik=(%d, %d, %d), logik=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1599
+#: libfdisk/src/dos.c:1593
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "Partition %zu slutter ikke på en cylindergrænse."
 
-#: libfdisk/src/dos.c:1647
+#: libfdisk/src/dos.c:1641
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "Partition %zu ugyldig start på data."
 
-#: libfdisk/src/dos.c:1662
+#: libfdisk/src/dos.c:1656
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Partition %zu: overlapper med partition %zu."
 
-#: libfdisk/src/dos.c:1691
+#: libfdisk/src/dos.c:1685
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "Partition %zu: tom."
 
-#: libfdisk/src/dos.c:1698
+#: libfdisk/src/dos.c:1692
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Logisk partition %zu: ikke fuldstændigt inden for partition %zu."
 
-#: libfdisk/src/dos.c:1707 libfdisk/src/gpt.c:2276
+#: libfdisk/src/dos.c:1701 libfdisk/src/gpt.c:2276
 msgid "No errors detected."
 msgstr "Ingen fejl detekteret."
 
-#: libfdisk/src/dos.c:1709
+#: libfdisk/src/dos.c:1703
 #, fuzzy, c-format
 #| msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgid "Total allocated sectors %ju greater than the maximum %ju."
 msgstr "Det totale antal allokerede sektorer %llu er større end de maksimale %llu."
 
-#: libfdisk/src/dos.c:1712
+#: libfdisk/src/dos.c:1706
 #, fuzzy, c-format
 #| msgid "Remaining %lld unallocated %ld-byte sectors."
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "Tilbageværende %lld ikke-allokerede %ld-byte sektorer."
 
-#: libfdisk/src/dos.c:1716 libfdisk/src/gpt.c:2296
+#: libfdisk/src/dos.c:1710 libfdisk/src/gpt.c:2296
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "Ingen fejl detekteret."
 msgstr[1] "%d fejl detekteret."
 
-#: libfdisk/src/dos.c:1749
+#: libfdisk/src/dos.c:1743
 msgid "The maximum number of partitions has been created."
 msgstr "Det maksimale antal partitioner er blevet oprettet."
 
-#: libfdisk/src/dos.c:1782 libfdisk/src/dos.c:1797 libfdisk/src/dos.c:2250
+#: libfdisk/src/dos.c:1776 libfdisk/src/dos.c:1791 libfdisk/src/dos.c:2244
 msgid "Extended partition already exists."
 msgstr "Udvidet partition findes allerede."
 
-#: libfdisk/src/dos.c:1812
+#: libfdisk/src/dos.c:1806
 msgid "Extended partition does not exists. Failed to add logical partition."
 msgstr "Udvidet partition findes ikke. Kunne ikke tilføje logisk partition."
 
-#: libfdisk/src/dos.c:1873
+#: libfdisk/src/dos.c:1867
 msgid "All primary partitions are in use."
 msgstr "Samtlige primære partitioner er i brug."
 
-#: libfdisk/src/dos.c:1875 libfdisk/src/dos.c:1887
+#: libfdisk/src/dos.c:1869 libfdisk/src/dos.c:1881
 msgid "All space for primary partitions is in use."
 msgstr "Al plads for primære partitioner er i brug."
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:1890
+#: libfdisk/src/dos.c:1884
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "For at oprette flere part., så skal du først erstatte en primær med en udvid."
 
-#: libfdisk/src/dos.c:1911
+#: libfdisk/src/dos.c:1905
 msgid "Partition type"
 msgstr "Partitionstype"
 
-#: libfdisk/src/dos.c:1915
+#: libfdisk/src/dos.c:1909
 #, fuzzy, c-format
 msgid "%u primary, %d extended, %u free"
 msgstr "%zu primær, %d udvidet, %zu fri"
 
-#: libfdisk/src/dos.c:1920
+#: libfdisk/src/dos.c:1914
 msgid "primary"
 msgstr "primær"
 
-#: libfdisk/src/dos.c:1922
+#: libfdisk/src/dos.c:1916
 msgid "extended"
 msgstr "udvidet"
 
-#: libfdisk/src/dos.c:1922
+#: libfdisk/src/dos.c:1916
 msgid "container for logical partitions"
 msgstr "container for logiske partitioner"
 
-#: libfdisk/src/dos.c:1924
+#: libfdisk/src/dos.c:1918
 msgid "logical"
 msgstr "logisk"
 
-#: libfdisk/src/dos.c:1924
+#: libfdisk/src/dos.c:1918
 msgid "numbered from 5"
 msgstr "nummereret fra 5"
 
-#: libfdisk/src/dos.c:1963
+#: libfdisk/src/dos.c:1957
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Ugyldig partitionstype »%c«."
 
-#: libfdisk/src/dos.c:1981
+#: libfdisk/src/dos.c:1975
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Kan ikke skrive sektor %jd: søgning mislykkedes"
@@ -6431,26 +6432,30 @@ msgstr "Kan ikke skrive sektor %jd: søgning mislykkedes"
 # Evt. kan vi omgå det lidt mystiske "identifikation" ved bare at bruge
 # forkortelsen id:
 # Disk-id: ...
-#: libfdisk/src/dos.c:2141 libfdisk/src/gpt.c:1295
+#: libfdisk/src/dos.c:2135 libfdisk/src/gpt.c:1295
 msgid "Disk identifier"
 msgstr "Diskidentifikation"
 
-#: libfdisk/src/dos.c:2255
+#: libfdisk/src/dos.c:2249
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "Type 0 betyder fri plads for mange systemer. At have partitioner med type 0 er sandsynligvis uklogt."
 
-#: libfdisk/src/dos.c:2260
+#: libfdisk/src/dos.c:2254
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Kan ikke ændre typen for den udvidede partition, som allerede er brugt af logiske partitioner. Slet logiske partitioner først."
 
-#: libfdisk/src/dos.c:2499
+#: libfdisk/src/dos.c:2493
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "Partition %zu: intet dataområde."
 
-#: libfdisk/src/dos.c:2532
+#: libfdisk/src/dos.c:2527
 msgid "New beginning of data"
 msgstr "Ny begyndelse på data"
+
+#: libfdisk/src/dos.c:2543
+msgid "The new beginning of the partition overlaps the disk label area. Be very careful when using the partition. You can lose all your partitions on the disk."
+msgstr ""
 
 #: libfdisk/src/dos.c:2588
 #, c-format
@@ -8112,7 +8117,7 @@ msgstr "Kunne ikke klargøre PAM: %s"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "MISLYKKET LOGIND %u FRA %s FOR %s, %s"
 
-#: login-utils/login.c:965 login-utils/sulogin.c:1026
+#: login-utils/login.c:965 login-utils/sulogin.c:1027
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -8223,12 +8228,12 @@ msgstr "setgid() mislykkedes"
 msgid "setuid() failed"
 msgstr "setuid() mislykkedes"
 
-#: login-utils/login.c:1492 login-utils/sulogin.c:737
+#: login-utils/login.c:1492 login-utils/sulogin.c:738
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: Kunne ikke ændre mappe"
 
-#: login-utils/login.c:1499 login-utils/sulogin.c:738
+#: login-utils/login.c:1499 login-utils/sulogin.c:739
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Logger ind med hjemmemappe = \"/\".\n"
@@ -8627,7 +8632,7 @@ msgstr "getline() mislykkedes"
 msgid "Password: "
 msgstr "Adgangskode: "
 
-#: login-utils/newgrp.c:160 login-utils/sulogin.c:1008
+#: login-utils/newgrp.c:160 login-utils/sulogin.c:1009
 msgid "crypt failed"
 msgstr "crypt mislykkedes"
 
@@ -8981,24 +8986,24 @@ msgstr "Tryk Retur for vedligeholdelse\n"
 msgid "(or press Control-D to continue): "
 msgstr "(eller tast Kontrol-D for at fortsætte): "
 
-#: login-utils/sulogin.c:741
+#: login-utils/sulogin.c:742
 msgid "change directory to system root failed"
 msgstr "ændring af mappe til systemrod mislykkedes"
 
-#: login-utils/sulogin.c:791
+#: login-utils/sulogin.c:792
 msgid "setexeccon failed"
 msgstr "setexeccon mislykkedes"
 
-#: login-utils/sulogin.c:812
+#: login-utils/sulogin.c:813
 #, c-format
 msgid " %s [options] [tty device]\n"
 msgstr " %s [tilvalg] {tty-enhed]\n"
 
-#: login-utils/sulogin.c:815
+#: login-utils/sulogin.c:816
 msgid "Single-user login.\n"
 msgstr "Enkelbruger-logind.\n"
 
-#: login-utils/sulogin.c:818
+#: login-utils/sulogin.c:819
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
@@ -9008,24 +9013,24 @@ msgstr ""
 " -t, --timeout <sekunder>  maks. ventetid for en adgangskode (standard: ingen begrænsning)\n"
 " -e, --force              undersøg adgangskodefiler direkte hvis getpwnam(3) mislykkes\n"
 
-#: login-utils/sulogin.c:874 misc-utils/findmnt.c:1520 sys-utils/wdctl.c:640
-#: term-utils/agetty.c:847 term-utils/wall.c:218
+#: login-utils/sulogin.c:875 misc-utils/findmnt.c:1520 sys-utils/wdctl.c:640
+#: term-utils/agetty.c:847 term-utils/wall.c:219
 msgid "invalid timeout argument"
 msgstr "ugyldig parameter for tidsudløb"
 
-#: login-utils/sulogin.c:893
+#: login-utils/sulogin.c:894
 msgid "only superuser can run this program"
 msgstr "kun en superbruger kan køre dette program"
 
-#: login-utils/sulogin.c:936
+#: login-utils/sulogin.c:937
 msgid "cannot open console"
 msgstr "kan ikke åbne konsol"
 
-#: login-utils/sulogin.c:943
+#: login-utils/sulogin.c:944
 msgid "cannot open password database"
 msgstr "kan ikke åbne adgangskodedatabase"
 
-#: login-utils/sulogin.c:1023
+#: login-utils/sulogin.c:1024
 #, c-format
 msgid ""
 "cannot execute su shell\n"
@@ -9034,7 +9039,7 @@ msgstr ""
 "kan ikke køre su shell\n"
 "\n"
 
-#: login-utils/sulogin.c:1030
+#: login-utils/sulogin.c:1031
 msgid ""
 "Timed out\n"
 "\n"
@@ -9042,7 +9047,7 @@ msgstr ""
 "Tidsudløb\n"
 "\n"
 
-#: login-utils/sulogin.c:1062
+#: login-utils/sulogin.c:1063
 msgid ""
 "cannot wait on su shell\n"
 "\n"
@@ -10539,153 +10544,153 @@ msgstr "kunne ikke sende signal til %s"
 msgid "cannot find process \"%s\""
 msgstr "kan ikke finde proces »%s«"
 
-#: misc-utils/logger.c:228
+#: misc-utils/logger.c:229
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "ukendt facilitetsnavn: %s"
 
-#: misc-utils/logger.c:234
+#: misc-utils/logger.c:235
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "ukendt prioritetsnavn: %s"
 
-#: misc-utils/logger.c:246
+#: misc-utils/logger.c:247
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s: stinavn for langt"
 
-#: misc-utils/logger.c:273
+#: misc-utils/logger.c:274
 #, c-format
 msgid "socket %s"
 msgstr "sokkel: %s"
 
-#: misc-utils/logger.c:310
+#: misc-utils/logger.c:311
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "kunne ikke slå navnet %s for port %s op: %s"
 
-#: misc-utils/logger.c:327
+#: misc-utils/logger.c:328
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "kunne ikke forbinde til %s port %s"
 
-#: misc-utils/logger.c:375
+#: misc-utils/logger.c:376
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "maksimum for inddatalinjer (%d) overskredet"
 
-#: misc-utils/logger.c:528
+#: misc-utils/logger.c:519
 msgid "send message failed"
 msgstr "afsendelse af besked mislykkedes"
 
-#: misc-utils/logger.c:598
+#: misc-utils/logger.c:589
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr "struktureret data-id »%s« er ikke unik"
 
-#: misc-utils/logger.c:612
+#: misc-utils/logger.c:603
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr "--sd-id blev ikke specificeret for --sd-param %s"
 
-#: misc-utils/logger.c:792
+#: misc-utils/logger.c:783
 msgid "localtime() failed"
 msgstr "localtime() mislykkedes"
 
-#: misc-utils/logger.c:802
+#: misc-utils/logger.c:793
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "værtsnavn »%s« er for langt"
 
-#: misc-utils/logger.c:808
+#: misc-utils/logger.c:799
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "mærke »%s« er for langt"
 
-#: misc-utils/logger.c:871
+#: misc-utils/logger.c:862
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "ignorerer ukendt tilvalgsparameter: %s"
 
-#: misc-utils/logger.c:883
+#: misc-utils/logger.c:874
 #, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "ugyldig parameter: %s: bruger automatiske fejl"
 
-#: misc-utils/logger.c:1054
+#: misc-utils/logger.c:1047
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [tilvalg] [<besked>]\n"
 
-#: misc-utils/logger.c:1057
+#: misc-utils/logger.c:1050
 msgid "Enter messages into the system log.\n"
 msgstr "Indtast beskeder i systemloggen.\n"
 
-#: misc-utils/logger.c:1060
+#: misc-utils/logger.c:1053
 msgid " -i                       log the logger command's PID\n"
 msgstr " -i                        log loggerkommandoens PID\n"
 
-#: misc-utils/logger.c:1061
+#: misc-utils/logger.c:1054
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr "     --id[=<id>}          log den givne <id>, ellers PID'en\n"
 
-#: misc-utils/logger.c:1062
+#: misc-utils/logger.c:1055
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <fil>         log indholdet af denne fil\n"
 
-#: misc-utils/logger.c:1063
+#: misc-utils/logger.c:1056
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -e, --skip-empty         log ikke tomme linjer, når filer behandles\n"
 
-#: misc-utils/logger.c:1064
+#: misc-utils/logger.c:1057
 msgid "     --no-act             do everything except the write the log\n"
 msgstr "     --no-act             gør alt undtagen at skrive loggen\n"
 
-#: misc-utils/logger.c:1065
+#: misc-utils/logger.c:1058
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    marker angivne besked med denne prioritet\n"
 
-#: misc-utils/logger.c:1066
+#: misc-utils/logger.c:1059
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr "     --octet-count        brug rfc6587-oktet optælling\n"
 
-#: misc-utils/logger.c:1067
+#: misc-utils/logger.c:1060
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        kig efter et præfiks på hver læst linje fra standardind\n"
 
-#: misc-utils/logger.c:1068
+#: misc-utils/logger.c:1061
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             vis også besked på standardfejl\n"
 
-#: misc-utils/logger.c:1069
+#: misc-utils/logger.c:1062
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr " -s, --size <størrelse>   maksimal størrelse for en enkel besked\n"
 
-#: misc-utils/logger.c:1070
+#: misc-utils/logger.c:1063
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <mærke>        marker hver linje med dette mærke\n"
 
-#: misc-utils/logger.c:1071
+#: misc-utils/logger.c:1064
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <navn>      skriv til denne eksterne syslog-server\n"
 
-#: misc-utils/logger.c:1072
+#: misc-utils/logger.c:1065
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <port>        brug denne port for UDP- eller TCP-forbindelse\n"
 
-#: misc-utils/logger.c:1073
+#: misc-utils/logger.c:1066
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                brug kun TCP\n"
 
-#: misc-utils/logger.c:1074
+#: misc-utils/logger.c:1067
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                brug kun UDP\n"
 
-#: misc-utils/logger.c:1075
+#: misc-utils/logger.c:1068
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            brug den forældede BSD-syslogprotokol\n"
 
-#: misc-utils/logger.c:1076
+#: misc-utils/logger.c:1069
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
@@ -10693,23 +10698,23 @@ msgstr ""
 "     --rfc5424[=<snip>]   brug syslogprotokollen (standarden for ekstern);\n"
 "                            <snip> kan være notime, eller notq, og/eller nohost\n"
 
-#: misc-utils/logger.c:1078
+#: misc-utils/logger.c:1071
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr "     --sd-id <id>         rfc5424-struktureret data-id\n"
 
-#: misc-utils/logger.c:1079
+#: misc-utils/logger.c:1072
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr "     --sd-param <data>    rfc5424-struktureret datanavn=værdi\n"
 
-#: misc-utils/logger.c:1080
+#: misc-utils/logger.c:1073
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr "     --msgid <msgid>      angiv rfc5424-besked-id-felt\n"
 
-#: misc-utils/logger.c:1081
+#: misc-utils/logger.c:1074
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <sokkel>    skriv til denne Unix-sokkel\n"
 
-#: misc-utils/logger.c:1082
+#: misc-utils/logger.c:1075
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
@@ -10717,42 +10722,42 @@ msgstr ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          udskriv forbindelsesfejl når der bruges Unix-sokler\n"
 
-#: misc-utils/logger.c:1085
+#: misc-utils/logger.c:1078
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr "     --journald[=<fil>]   skriv journald-post\n"
 
-#: misc-utils/logger.c:1171
+#: misc-utils/logger.c:1164
 #, c-format
 msgid "file %s"
 msgstr "fil %s"
 
-#: misc-utils/logger.c:1186
+#: misc-utils/logger.c:1179
 msgid "failed to parse id"
 msgstr "kunne ikke fortolke id"
 
-#: misc-utils/logger.c:1204
+#: misc-utils/logger.c:1197
 msgid "failed to parse message size"
 msgstr "kunne ikke fortolke beskedstørrelse"
 
-#: misc-utils/logger.c:1234
+#: misc-utils/logger.c:1227
 msgid "--msgid cannot contain space"
 msgstr "--msgid kan ikke indeholde mellemrum"
 
-#: misc-utils/logger.c:1256
+#: misc-utils/logger.c:1249
 #, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "ugyldig struktureret data-id: »%s«"
 
-#: misc-utils/logger.c:1261
+#: misc-utils/logger.c:1254
 #, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "ugyldigt struktureret dataargument: »%s«"
 
-#: misc-utils/logger.c:1276
+#: misc-utils/logger.c:1269
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <fil> og <besked> udelukker hinanden, beskeden bliver ignoreret"
 
-#: misc-utils/logger.c:1283
+#: misc-utils/logger.c:1276
 msgid "journald entry could not be written"
 msgstr "journald-post kunne ikke skrives"
 
@@ -13070,7 +13075,7 @@ msgstr ""
 "\n"
 "Understøttede zoner:\n"
 
-#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:860 sys-utils/lsmem.c:667
+#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:864 sys-utils/lsmem.c:667
 #, c-format
 msgid "failed to initialize %s handler"
 msgstr "kunne ikke initialisere %s-håndtering"
@@ -16411,16 +16416,16 @@ msgstr ""
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: tilvalg -all, --online og --offline kan kun bruges med tilvalgene --extended eller --parse.\n"
 
-#: sys-utils/lscpu-cputype.c:585
+#: sys-utils/lscpu-cputype.c:589
 msgid "error: uname failed"
 msgstr "fejl: uname mislykkedes"
 
-#: sys-utils/lscpu-cputype.c:682
+#: sys-utils/lscpu-cputype.c:686
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "kunne ikke bestemme antallet af CPU'er: %s"
 
-#: sys-utils/lscpu-cputype.c:885
+#: sys-utils/lscpu-cputype.c:889
 msgid "Failed to extract the node number"
 msgstr "Kunne ikke udtrække knudenummeret"
 
@@ -20910,59 +20915,59 @@ msgstr "kunne ikke forgrene (fork)"
 msgid "%s: BAD ERROR, message is far too long"
 msgstr "%s: UGYLDIG FEJL, besked er alt for lang"
 
-#: term-utils/wall.c:88
+#: term-utils/wall.c:89
 #, c-format
 msgid " %s [options] [<file> | <message>]\n"
 msgstr " %s [tilvalg] [<fil> | <besked>]\n"
 
-#: term-utils/wall.c:91
+#: term-utils/wall.c:92
 msgid "Write a message to all users.\n"
 msgstr "Skriv en besked til alle brugere.\n"
 
-#: term-utils/wall.c:94
+#: term-utils/wall.c:95
 msgid " -g, --group <group>     only send message to group\n"
 msgstr " -g, --group <gruppe>     send kun besked til gruppe\n"
 
-#: term-utils/wall.c:95
+#: term-utils/wall.c:96
 msgid " -n, --nobanner          do not print banner, works only for root\n"
 msgstr " -n, --nobanner          vis ikke banner, virker kun for root\n"
 
-#: term-utils/wall.c:96
+#: term-utils/wall.c:97
 msgid " -t, --timeout <timeout> write timeout in seconds\n"
 msgstr " -t, --timeout <tidsud.> skriv tidsudløb i sekunder\n"
 
-#: term-utils/wall.c:124
+#: term-utils/wall.c:125
 msgid "invalid group argument"
 msgstr "ugyldig gruppeparameter"
 
-#: term-utils/wall.c:126
+#: term-utils/wall.c:127
 #, c-format
 msgid "%s: unknown gid"
 msgstr "%s: ukendt gid"
 
-#: term-utils/wall.c:169
+#: term-utils/wall.c:170
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr "getgrouplist fandt flere grupper end sysconf tillader"
 
-#: term-utils/wall.c:215
+#: term-utils/wall.c:216
 msgid "--nobanner is available only for root"
 msgstr "--nobanner er kun tilgængelig for root"
 
-#: term-utils/wall.c:220
+#: term-utils/wall.c:221
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr "ugyldig parameter for tidsudløb: %s"
 
-#: term-utils/wall.c:362
+#: term-utils/wall.c:361
 msgid "cannot get passwd uid"
 msgstr "kan ikke indhente adgangskode-uid"
 
-#: term-utils/wall.c:386
+#: term-utils/wall.c:385
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Rundsendt meddelelse fra %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:418
+#: term-utils/wall.c:417
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "kan ikke læse %s - brug standard-ind."

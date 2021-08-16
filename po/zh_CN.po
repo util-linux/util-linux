@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-07-22 15:46+0200\n"
+"POT-Creation-Date: 2021-08-16 15:06+0200\n"
 "PO-Revision-Date: 2020-07-12 22:32-0400\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -55,14 +55,14 @@ msgstr "参数不够"
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:362
 #: login-utils/utmpdump.c:386 login-utils/vipw.c:250 login-utils/vipw.c:268
-#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:577 misc-utils/logger.c:1242
+#: misc-utils/findmnt.c:1131 misc-utils/hardlink.c:577 misc-utils/logger.c:1235
 #: misc-utils/mcookie.c:119 misc-utils/uuidd.c:231 sys-utils/blkdiscard.c:230
 #: sys-utils/blkzone.c:144 sys-utils/dmesg.c:536 sys-utils/eject.c:501
 #: sys-utils/eject.c:696 sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116
 #: sys-utils/fstrim.c:103 sys-utils/hwclock.c:239 sys-utils/hwclock.c:908
 #: sys-utils/hwclock-rtc.c:138 sys-utils/hwclock-rtc.c:403
 #: sys-utils/hwclock-rtc.c:439 sys-utils/irq-common.c:253
-#: sys-utils/ldattach.c:392 sys-utils/lscpu-cputype.c:464 sys-utils/lsmem.c:671
+#: sys-utils/ldattach.c:392 sys-utils/lscpu-cputype.c:468 sys-utils/lsmem.c:671
 #: sys-utils/nsenter.c:131 sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137
 #: sys-utils/rtcwake.c:292 sys-utils/setpriv.c:256 sys-utils/setpriv.c:622
 #: sys-utils/setpriv.c:645 sys-utils/swapon.c:382 sys-utils/swapon.c:525
@@ -72,7 +72,7 @@ msgstr "参数不够"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
-#: term-utils/wall.c:422 text-utils/colcrt.c:284 text-utils/more.c:453
+#: term-utils/wall.c:421 text-utils/colcrt.c:284 text-utils/more.c:453
 #: text-utils/rev.c:140 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -254,14 +254,15 @@ msgstr "%s 失败。\n"
 msgid "%s succeeded.\n"
 msgstr "%s 成功。\n"
 
-#. TRANSLATORS: Start sector not available. Max. 10 letters.
+#. TRANSLATORS: Start sector not available. Max. 15 letters.
 #: disk-utils/blockdev.c:482
 msgid "N/A"
 msgstr "N/A"
 
 #: disk-utils/blockdev.c:506
-#, c-format
-msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
+#, fuzzy, c-format
+#| msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
+msgid "RO    RA   SSZ   BSZ        StartSec            Size   Device\n"
 msgstr "RO    RA   SSZ   BSZ   开始段              大小   设备\n"
 
 #: disk-utils/cfdisk.c:196
@@ -864,7 +865,7 @@ msgstr "用户定义的结束磁道超出了媒体的最大指定值"
 msgid "user defined start track exceeds the user defined end track"
 msgstr "用户定义的起始磁道超过了定义的终止磁道"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:1046
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1039
 msgid "close failed"
 msgstr "关闭失败"
 
@@ -879,7 +880,7 @@ msgid "Using default response %c."
 msgstr "将使用默认回应 %c。"
 
 #: disk-utils/fdisk.c:224 disk-utils/fdisk.c:298 disk-utils/fdisk.c:375
-#: libfdisk/src/dos.c:1383 libfdisk/src/gpt.c:2519
+#: libfdisk/src/dos.c:1377 libfdisk/src/gpt.c:2519
 msgid "Value out of range."
 msgstr "值超出范围。"
 
@@ -990,7 +991,7 @@ msgstr "无法定位"
 msgid "cannot read"
 msgstr "不能读"
 
-#: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:968
+#: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:962
 #: libfdisk/src/gpt.c:2447
 msgid "First sector"
 msgstr "第一个扇区"
@@ -1749,7 +1750,7 @@ msgstr "%s 未挂载\n"
 #: disk-utils/fsck.c:330 disk-utils/fsck.cramfs.c:181
 #: disk-utils/fsck.cramfs.c:188 disk-utils/fsck.cramfs.c:244
 #: disk-utils/fsck.cramfs.c:265 disk-utils/sfdisk.c:307 libfdisk/src/bsd.c:647
-#: login-utils/last.c:214 login-utils/last.c:251 login-utils/sulogin.c:659
+#: login-utils/last.c:214 login-utils/last.c:251 login-utils/sulogin.c:660
 #: misc-utils/hardlink.c:579 misc-utils/hardlink.c:736
 #: schedutils/uclampset.c:111 sys-utils/ctrlaltdel.c:44
 #: sys-utils/irq-common.c:259 sys-utils/rfkill.c:216 sys-utils/setpriv.c:265
@@ -1809,7 +1810,7 @@ msgstr "%s：第 %d 行解析出错 -- 已忽略"
 msgid "%s: failed to parse fstab"
 msgstr "%s：解析 fstab 失败"
 
-#: disk-utils/fsck.c:690 login-utils/login.c:1107 login-utils/sulogin.c:1037
+#: disk-utils/fsck.c:690 login-utils/login.c:1107 login-utils/sulogin.c:1038
 #: login-utils/vipw.c:197 sys-utils/flock.c:351 sys-utils/nsenter.c:182
 #: sys-utils/swapon.c:332 sys-utils/unshare.c:242 sys-utils/unshare.c:567
 msgid "fork failed"
@@ -2938,7 +2939,7 @@ msgstr ""
 "                      多次指定 -V 将导致空运行(dry-run)\n"
 
 #: disk-utils/mkfs.c:133 include/c.h:271 login-utils/su-common.c:1238
-#: login-utils/sulogin.c:800 login-utils/sulogin.c:804 sys-utils/flock.c:123
+#: login-utils/sulogin.c:801 login-utils/sulogin.c:805 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
 msgid "failed to execute %s"
@@ -4821,7 +4822,7 @@ msgstr "忽略 -U (不支持 UUID)"
 msgid "Try '%s --help' for more information.\n"
 msgstr "请尝试执行“%s --help”了解更多信息。\n"
 
-#: include/c.h:388
+#: include/c.h:384
 msgid ""
 "\n"
 "Usage:\n"
@@ -4829,7 +4830,7 @@ msgstr ""
 "\n"
 "用法：\n"
 
-#: include/c.h:389
+#: include/c.h:385
 msgid ""
 "\n"
 "Options:\n"
@@ -4837,7 +4838,7 @@ msgstr ""
 "\n"
 "选项：\n"
 
-#: include/c.h:390
+#: include/c.h:386
 msgid ""
 "\n"
 "Functions:\n"
@@ -4845,7 +4846,7 @@ msgstr ""
 "\n"
 "功能：\n"
 
-#: include/c.h:391
+#: include/c.h:387
 msgid ""
 "\n"
 "Commands:\n"
@@ -4853,14 +4854,14 @@ msgstr ""
 "\n"
 "命令：\n"
 
-#: include/c.h:392
+#: include/c.h:388
 #, fuzzy
 msgid ""
 "\n"
 "Arguments:\n"
 msgstr "参数错误"
 
-#: include/c.h:393
+#: include/c.h:389
 msgid ""
 "\n"
 "Available output columns:\n"
@@ -4868,22 +4869,22 @@ msgstr ""
 "\n"
 "可用的输出列：\n"
 
-#: include/c.h:396
+#: include/c.h:392
 msgid "display this help"
 msgstr "显示此帮助"
 
-#: include/c.h:397
+#: include/c.h:393
 msgid "display version"
 msgstr "显示版本"
 
-#: include/c.h:407
+#: include/c.h:403
 #, c-format
 msgid ""
 " %s arguments may be followed by the suffixes for\n"
 "   GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"
 msgstr ""
 
-#: include/c.h:410
+#: include/c.h:406
 #, c-format
 msgid ""
 "\n"
@@ -4892,7 +4893,7 @@ msgstr ""
 "\n"
 "更多信息请参阅 %s。\n"
 
-#: include/c.h:412
+#: include/c.h:408
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s，来自 %s\n"
@@ -5802,15 +5803,15 @@ msgstr "分区 %zd：无效的起始扇区 0。"
 msgid "There is no *BSD partition on %s."
 msgstr "%s 上没有 *BSD 分区。"
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:968
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:962
 msgid "First cylinder"
 msgstr "第一个柱面"
 
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1354
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1348
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "最后一个柱面, +/-cylinders 或 +size{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1359 libfdisk/src/gpt.c:2496
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1353 libfdisk/src/gpt.c:2496
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "最后一个扇区，+/-sectors 或 +size{K,M,G,T,P}"
 
@@ -6122,211 +6123,215 @@ msgstr "无效的值。"
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "磁盘标识从 0x%08x 改为 0x%08x。"
 
-#: libfdisk/src/dos.c:864
+#: libfdisk/src/dos.c:858
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "将忽略额外的扩展分区 %zu"
 
-#: libfdisk/src/dos.c:878
+#: libfdisk/src/dos.c:872
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "分区表 %3$zu 的无效标志 0x%1$02x%2$02x 将通过写入来更正"
 
-#: libfdisk/src/dos.c:955
+#: libfdisk/src/dos.c:949
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "起始扇区 %ju 超出范围。"
 
-#: libfdisk/src/dos.c:1194 libfdisk/src/gpt.c:2370 libfdisk/src/sgi.c:842
+#: libfdisk/src/dos.c:1188 libfdisk/src/gpt.c:2370 libfdisk/src/sgi.c:842
 #: libfdisk/src/sun.c:528
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "分区 %zu 已经定义过。请删除后再重新添加它。"
 
-#: libfdisk/src/dos.c:1209 libfdisk/src/dos.c:1235 libfdisk/src/dos.c:1293
-#: libfdisk/src/dos.c:1325 libfdisk/src/gpt.c:2379
+#: libfdisk/src/dos.c:1203 libfdisk/src/dos.c:1229 libfdisk/src/dos.c:1287
+#: libfdisk/src/dos.c:1319 libfdisk/src/gpt.c:2379
 msgid "No free sectors available."
 msgstr "无空闲扇区可用。"
 
-#: libfdisk/src/dos.c:1260
+#: libfdisk/src/dos.c:1254
 #, fuzzy, c-format
 #| msgid "Sector %llu is already allocated."
 msgid "Sector %ju is already allocated."
 msgstr "扇区 %llu 已经分配."
 
-#: libfdisk/src/dos.c:1480
+#: libfdisk/src/dos.c:1474
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "添加逻辑分区 %zu"
 
-#: libfdisk/src/dos.c:1511
+#: libfdisk/src/dos.c:1505
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "分区 %zu：包含扇区 0"
 
-#: libfdisk/src/dos.c:1513
+#: libfdisk/src/dos.c:1507
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "分区 %zu：磁头 %d 大于最大值 %d"
 
-#: libfdisk/src/dos.c:1516
+#: libfdisk/src/dos.c:1510
 #, fuzzy, c-format
 #| msgid "Partition %zu: sector %d greater than maximum %llu"
 msgid "Partition %zu: sector %d greater than maximum %ju"
 msgstr "分区 %zu：扇区 %d 大于最大值 %llu"
 
-#: libfdisk/src/dos.c:1520
+#: libfdisk/src/dos.c:1514
 #, fuzzy, c-format
 #| msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
 msgstr "分区 %zu：柱面 %d 大于最大值 %llu"
 
-#: libfdisk/src/dos.c:1526
+#: libfdisk/src/dos.c:1520
 #, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "分区 %zu：之前的扇区数 %u 与总数 %u 不符"
 
-#: libfdisk/src/dos.c:1579
+#: libfdisk/src/dos.c:1573
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "分区 %zu 的物理/逻辑起点不同(非 Linux 分区？)：物理=(%d, %d, %d), 逻辑=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1590
+#: libfdisk/src/dos.c:1584
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "分区 %zu 的物理/逻辑终点不同：物理=(%d, %d, %d), 逻辑=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1599
+#: libfdisk/src/dos.c:1593
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "分区 %zu 未结束在柱面边界上。"
 
-#: libfdisk/src/dos.c:1647
+#: libfdisk/src/dos.c:1641
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "分区 %zu：数据起点错误。"
 
-#: libfdisk/src/dos.c:1662
+#: libfdisk/src/dos.c:1656
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "分区 %zu：与 分区 %zu 重叠。"
 
-#: libfdisk/src/dos.c:1691
+#: libfdisk/src/dos.c:1685
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "分区 %zu：空分区。"
 
-#: libfdisk/src/dos.c:1698
+#: libfdisk/src/dos.c:1692
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "逻辑分区 %zu：没有完全在分区 %zu 中。"
 
-#: libfdisk/src/dos.c:1707 libfdisk/src/gpt.c:2276
+#: libfdisk/src/dos.c:1701 libfdisk/src/gpt.c:2276
 msgid "No errors detected."
 msgstr "未检测到错误。"
 
-#: libfdisk/src/dos.c:1709
+#: libfdisk/src/dos.c:1703
 #, fuzzy, c-format
 #| msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgid "Total allocated sectors %ju greater than the maximum %ju."
 msgstr "分配的总扇区数 %llu 大于最大值 %llu。"
 
-#: libfdisk/src/dos.c:1712
+#: libfdisk/src/dos.c:1706
 #, fuzzy, c-format
 #| msgid "Remaining %lld unallocated %ld-byte sectors."
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "剩余 %lld 未分配的 %ld字节 扇区。"
 
-#: libfdisk/src/dos.c:1716 libfdisk/src/gpt.c:2296
+#: libfdisk/src/dos.c:1710 libfdisk/src/gpt.c:2296
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "检测到 %d 个错误。"
 
-#: libfdisk/src/dos.c:1749
+#: libfdisk/src/dos.c:1743
 msgid "The maximum number of partitions has been created."
 msgstr "已创建分区达到最大数量。"
 
-#: libfdisk/src/dos.c:1782 libfdisk/src/dos.c:1797 libfdisk/src/dos.c:2250
+#: libfdisk/src/dos.c:1776 libfdisk/src/dos.c:1791 libfdisk/src/dos.c:2244
 msgid "Extended partition already exists."
 msgstr "扩展分区已存在。"
 
-#: libfdisk/src/dos.c:1812
+#: libfdisk/src/dos.c:1806
 msgid "Extended partition does not exists. Failed to add logical partition."
 msgstr "扩展分区不存在。添加逻辑分区失败。"
 
-#: libfdisk/src/dos.c:1873
+#: libfdisk/src/dos.c:1867
 msgid "All primary partitions are in use."
 msgstr "所有主分区都在使用中。"
 
-#: libfdisk/src/dos.c:1875 libfdisk/src/dos.c:1887
+#: libfdisk/src/dos.c:1869 libfdisk/src/dos.c:1881
 msgid "All space for primary partitions is in use."
 msgstr "所有主分区的空间都在使用中。"
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:1890
+#: libfdisk/src/dos.c:1884
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "要创建更多分区，请先将一个主分区替换为扩展分区。"
 
-#: libfdisk/src/dos.c:1911
+#: libfdisk/src/dos.c:1905
 msgid "Partition type"
 msgstr "分区类型"
 
-#: libfdisk/src/dos.c:1915
+#: libfdisk/src/dos.c:1909
 #, fuzzy, c-format
 msgid "%u primary, %d extended, %u free"
 msgstr "%zu个主分区，%d个扩展分区，%zu空闲"
 
-#: libfdisk/src/dos.c:1920
+#: libfdisk/src/dos.c:1914
 msgid "primary"
 msgstr "主分区"
 
-#: libfdisk/src/dos.c:1922
+#: libfdisk/src/dos.c:1916
 msgid "extended"
 msgstr "扩展分区"
 
-#: libfdisk/src/dos.c:1922
+#: libfdisk/src/dos.c:1916
 msgid "container for logical partitions"
 msgstr "逻辑分区容器"
 
-#: libfdisk/src/dos.c:1924
+#: libfdisk/src/dos.c:1918
 msgid "logical"
 msgstr "逻辑分区"
 
-#: libfdisk/src/dos.c:1924
+#: libfdisk/src/dos.c:1918
 msgid "numbered from 5"
 msgstr "从 5 开始编号"
 
-#: libfdisk/src/dos.c:1963
+#: libfdisk/src/dos.c:1957
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "无效的分区类型“%c”。"
 
-#: libfdisk/src/dos.c:1981
+#: libfdisk/src/dos.c:1975
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "写扇区 %jd 失败：定位失败"
 
-#: libfdisk/src/dos.c:2141 libfdisk/src/gpt.c:1295
+#: libfdisk/src/dos.c:2135 libfdisk/src/gpt.c:1295
 msgid "Disk identifier"
 msgstr "磁盘标识符"
 
-#: libfdisk/src/dos.c:2255
+#: libfdisk/src/dos.c:2249
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "很多系统将类型 0 视为空闲空间。不建议设置类型为 0 的分区。"
 
-#: libfdisk/src/dos.c:2260
+#: libfdisk/src/dos.c:2254
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "无法更改已被逻辑分区使用的扩展分区的类型。请先删除逻辑分区。"
 
-#: libfdisk/src/dos.c:2499
+#: libfdisk/src/dos.c:2493
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "分区 %zu：无数据区。"
 
-#: libfdisk/src/dos.c:2532
+#: libfdisk/src/dos.c:2527
 msgid "New beginning of data"
 msgstr "新数据起点"
+
+#: libfdisk/src/dos.c:2543
+msgid "The new beginning of the partition overlaps the disk label area. Be very careful when using the partition. You can lose all your partitions on the disk."
+msgstr ""
 
 #: libfdisk/src/dos.c:2588
 #, c-format
@@ -7963,7 +7968,7 @@ msgstr "无法初始化 PAM：%s"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "FAILED LOGIN %u FROM %s FOR %s, %s"
 
-#: login-utils/login.c:965 login-utils/sulogin.c:1026
+#: login-utils/login.c:965 login-utils/sulogin.c:1027
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -8072,12 +8077,12 @@ msgstr "setgid() 失败"
 msgid "setuid() failed"
 msgstr "setuid() 失败"
 
-#: login-utils/login.c:1492 login-utils/sulogin.c:737
+#: login-utils/login.c:1492 login-utils/sulogin.c:738
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s：更改目录失败"
 
-#: login-utils/login.c:1499 login-utils/sulogin.c:738
+#: login-utils/login.c:1499 login-utils/sulogin.c:739
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "以 home = “/” 登录。\n"
@@ -8476,7 +8481,7 @@ msgstr "getline() 失败"
 msgid "Password: "
 msgstr "密码："
 
-#: login-utils/newgrp.c:160 login-utils/sulogin.c:1008
+#: login-utils/newgrp.c:160 login-utils/sulogin.c:1009
 msgid "crypt failed"
 msgstr "crypt 失败"
 
@@ -8837,24 +8842,24 @@ msgstr "按 Enter 键进行维护\n"
 msgid "(or press Control-D to continue): "
 msgstr "(或按 Control-D 键继续)："
 
-#: login-utils/sulogin.c:741
+#: login-utils/sulogin.c:742
 msgid "change directory to system root failed"
 msgstr "更改到系统根目录失败"
 
-#: login-utils/sulogin.c:791
+#: login-utils/sulogin.c:792
 msgid "setexeccon failed"
 msgstr "setexeccon 失败"
 
-#: login-utils/sulogin.c:812
+#: login-utils/sulogin.c:813
 #, c-format
 msgid " %s [options] [tty device]\n"
 msgstr " %s [选项] [tty 设备]\n"
 
-#: login-utils/sulogin.c:815
+#: login-utils/sulogin.c:816
 msgid "Single-user login.\n"
 msgstr "单用户登录。\n"
 
-#: login-utils/sulogin.c:818
+#: login-utils/sulogin.c:819
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
@@ -8864,24 +8869,24 @@ msgstr ""
 " -t, --timeout <秒数>     等待密码的最大时间(默认：无限制)\n"
 " -e, --force              如果 getpwnam(3) 失败，直接检查密码文件\n"
 
-#: login-utils/sulogin.c:874 misc-utils/findmnt.c:1520 sys-utils/wdctl.c:640
-#: term-utils/agetty.c:847 term-utils/wall.c:218
+#: login-utils/sulogin.c:875 misc-utils/findmnt.c:1520 sys-utils/wdctl.c:640
+#: term-utils/agetty.c:847 term-utils/wall.c:219
 msgid "invalid timeout argument"
 msgstr "无效的 timeout 超时参数"
 
-#: login-utils/sulogin.c:893
+#: login-utils/sulogin.c:894
 msgid "only superuser can run this program"
 msgstr "只有超级用户能运行此程序"
 
-#: login-utils/sulogin.c:936
+#: login-utils/sulogin.c:937
 msgid "cannot open console"
 msgstr "打不开终端"
 
-#: login-utils/sulogin.c:943
+#: login-utils/sulogin.c:944
 msgid "cannot open password database"
 msgstr "无法打开密码数据库"
 
-#: login-utils/sulogin.c:1023
+#: login-utils/sulogin.c:1024
 #, fuzzy, c-format
 msgid ""
 "cannot execute su shell\n"
@@ -8890,7 +8895,7 @@ msgstr ""
 "无法执行 su shell\n"
 "\n"
 
-#: login-utils/sulogin.c:1030
+#: login-utils/sulogin.c:1031
 msgid ""
 "Timed out\n"
 "\n"
@@ -8898,7 +8903,7 @@ msgstr ""
 "超时\n"
 "\n"
 
-#: login-utils/sulogin.c:1062
+#: login-utils/sulogin.c:1063
 #, fuzzy
 msgid ""
 "cannot wait on su shell\n"
@@ -10392,153 +10397,153 @@ msgstr "向 %s 发送信号失败"
 msgid "cannot find process \"%s\""
 msgstr "找不到进程“%s”"
 
-#: misc-utils/logger.c:228
+#: misc-utils/logger.c:229
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "未知设施名称：%s"
 
-#: misc-utils/logger.c:234
+#: misc-utils/logger.c:235
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "未知优先级名称：%s"
 
-#: misc-utils/logger.c:246
+#: misc-utils/logger.c:247
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s：路径名过长"
 
-#: misc-utils/logger.c:273
+#: misc-utils/logger.c:274
 #, c-format
 msgid "socket %s"
 msgstr "套接字 %s"
 
-#: misc-utils/logger.c:310
+#: misc-utils/logger.c:311
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "解析名称 %s 端口 %s 失败：%s"
 
-#: misc-utils/logger.c:327
+#: misc-utils/logger.c:328
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "连接 %s 端口 %s 失败"
 
-#: misc-utils/logger.c:375
+#: misc-utils/logger.c:376
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "超过了最大输入行数(%d)"
 
-#: misc-utils/logger.c:528
+#: misc-utils/logger.c:519
 msgid "send message failed"
 msgstr "发送消息失败"
 
-#: misc-utils/logger.c:598
+#: misc-utils/logger.c:589
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr "结构化数据的 ID “%s” 不唯一"
 
-#: misc-utils/logger.c:612
+#: misc-utils/logger.c:603
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr "没有为 --sd-param %s 指定 --sd-id"
 
-#: misc-utils/logger.c:792
+#: misc-utils/logger.c:783
 msgid "localtime() failed"
 msgstr "localtime() 失败"
 
-#: misc-utils/logger.c:802
+#: misc-utils/logger.c:793
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "主机名“'%s”太长"
 
-#: misc-utils/logger.c:808
+#: misc-utils/logger.c:799
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "标签“%s”太长"
 
-#: misc-utils/logger.c:871
+#: misc-utils/logger.c:862
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "将忽略未知的选项参数：%s"
 
-#: misc-utils/logger.c:883
+#: misc-utils/logger.c:874
 #, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "无效参数︰ %s︰ 将使用自动错误"
 
-#: misc-utils/logger.c:1054
+#: misc-utils/logger.c:1047
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [选项] [<消息>]\n"
 
-#: misc-utils/logger.c:1057
+#: misc-utils/logger.c:1050
 msgid "Enter messages into the system log.\n"
 msgstr "将消息输入系统日志。\n"
 
-#: misc-utils/logger.c:1060
+#: misc-utils/logger.c:1053
 msgid " -i                       log the logger command's PID\n"
 msgstr " -i                       记录日志程序的 PID\n"
 
-#: misc-utils/logger.c:1061
+#: misc-utils/logger.c:1054
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr "     --id[=<id>]          记录指定的 <id>，否则记录 PID\n"
 
-#: misc-utils/logger.c:1062
+#: misc-utils/logger.c:1055
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <文件>       记录指定文件的内容\n"
 
-#: misc-utils/logger.c:1063
+#: misc-utils/logger.c:1056
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -e, --skip-empty         处理文件时不记录空行\n"
 
-#: misc-utils/logger.c:1064
+#: misc-utils/logger.c:1057
 msgid "     --no-act             do everything except the write the log\n"
 msgstr "     --no-act             操作但不实际写入日志\n"
 
-#: misc-utils/logger.c:1065
+#: misc-utils/logger.c:1058
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    将指定消息标记为此优先级\n"
 
-#: misc-utils/logger.c:1066
+#: misc-utils/logger.c:1059
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr "     --octet-count        使用 rfc6587 八位元组(octet) 计数\n"
 
-#: misc-utils/logger.c:1067
+#: misc-utils/logger.c:1060
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        从 stdin 输入的每一行查找前缀\n"
 
-#: misc-utils/logger.c:1068
+#: misc-utils/logger.c:1061
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             也向标准错误输出消息\n"
 
-#: misc-utils/logger.c:1069
+#: misc-utils/logger.c:1062
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr " -S, --size <大小>        单条消息的最大尺寸\n"
 
-#: misc-utils/logger.c:1070
+#: misc-utils/logger.c:1063
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <tag>          向每一行添加指定标记\n"
 
-#: misc-utils/logger.c:1071
+#: misc-utils/logger.c:1064
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <名称>      写入指定的远程 syslog 服务器\n"
 
-#: misc-utils/logger.c:1072
+#: misc-utils/logger.c:1065
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <端口>        使用指定端口进行 UDP 或 TCP 连接\n"
 
-#: misc-utils/logger.c:1073
+#: misc-utils/logger.c:1066
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                只用 TCP\n"
 
-#: misc-utils/logger.c:1074
+#: misc-utils/logger.c:1067
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                只用 UDP\n"
 
-#: misc-utils/logger.c:1075
+#: misc-utils/logger.c:1068
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            使用过时的 BSD syslog 协议\n"
 
-#: misc-utils/logger.c:1076
+#: misc-utils/logger.c:1069
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
@@ -10546,23 +10551,23 @@ msgstr ""
 "     --rfc5424[=<snip>]   使用 syslog 协议(远程时默认);\n"
 "                            <snip> 可以是 notime, 或 notq, 和/或 nohost\n"
 
-#: misc-utils/logger.c:1078
+#: misc-utils/logger.c:1071
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr "     --sd-id <id>         rfc5424 结构化数据 ID\n"
 
-#: misc-utils/logger.c:1079
+#: misc-utils/logger.c:1072
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr "     --sd-param <数据>    rfc5424 结构化数据名称=值\n"
 
-#: misc-utils/logger.c:1080
+#: misc-utils/logger.c:1073
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr "     --msgid <msgid>      设置 rfc5424 消息 id 字段\n"
 
-#: misc-utils/logger.c:1081
+#: misc-utils/logger.c:1074
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <套接字>    写入此 Unix 套接字\n"
 
-#: misc-utils/logger.c:1082
+#: misc-utils/logger.c:1075
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
@@ -10570,42 +10575,42 @@ msgstr ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          使用 Unix 套接字时打印连接错误\n"
 
-#: misc-utils/logger.c:1085
+#: misc-utils/logger.c:1078
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr "     --journald[=<文件>]  写 journald 记录\n"
 
-#: misc-utils/logger.c:1171
+#: misc-utils/logger.c:1164
 #, c-format
 msgid "file %s"
 msgstr "文件 %s"
 
-#: misc-utils/logger.c:1186
+#: misc-utils/logger.c:1179
 msgid "failed to parse id"
 msgstr "解析 id 失败"
 
-#: misc-utils/logger.c:1204
+#: misc-utils/logger.c:1197
 msgid "failed to parse message size"
 msgstr "解析消息大小失败"
 
-#: misc-utils/logger.c:1234
+#: misc-utils/logger.c:1227
 msgid "--msgid cannot contain space"
 msgstr "--msgid 不能包含空格"
 
-#: misc-utils/logger.c:1256
+#: misc-utils/logger.c:1249
 #, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "无效的结构化数据 ID: “%s”"
 
-#: misc-utils/logger.c:1261
+#: misc-utils/logger.c:1254
 #, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "无效的结构化数据参数: “%s”"
 
-#: misc-utils/logger.c:1276
+#: misc-utils/logger.c:1269
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <文件> 和 <消息> 互斥，消息已忽略"
 
-#: misc-utils/logger.c:1283
+#: misc-utils/logger.c:1276
 msgid "journald entry could not be written"
 msgstr "无法写入 journald 项"
 
@@ -12941,7 +12946,7 @@ msgstr ""
 "\n"
 "支持的日志设施：\n"
 
-#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:860 sys-utils/lsmem.c:667
+#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:864 sys-utils/lsmem.c:667
 #, fuzzy, c-format
 msgid "failed to initialize %s handler"
 msgstr "%s：初始化 sysfs 处理函数失败"
@@ -16279,16 +16284,16 @@ msgstr ""
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s：--all、--online 和 --offline 选项只能与 --extended 或 --parse 选项一起使用。\n"
 
-#: sys-utils/lscpu-cputype.c:585
+#: sys-utils/lscpu-cputype.c:589
 msgid "error: uname failed"
 msgstr "错误：uname 失败"
 
-#: sys-utils/lscpu-cputype.c:682
+#: sys-utils/lscpu-cputype.c:686
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "确定 CPU 数 失败：%s"
 
-#: sys-utils/lscpu-cputype.c:885
+#: sys-utils/lscpu-cputype.c:889
 msgid "Failed to extract the node number"
 msgstr "提取节点号失败"
 
@@ -20706,60 +20711,60 @@ msgstr "无法 fork"
 msgid "%s: BAD ERROR, message is far too long"
 msgstr "%s：严重错误，消息太长太长了"
 
-#: term-utils/wall.c:88
+#: term-utils/wall.c:89
 #, c-format
 msgid " %s [options] [<file> | <message>]\n"
 msgstr " %s [选项] [<文件> | <消息>]\n"
 
-#: term-utils/wall.c:91
+#: term-utils/wall.c:92
 msgid "Write a message to all users.\n"
 msgstr "向所有用户发消息。\n"
 
-#: term-utils/wall.c:94
+#: term-utils/wall.c:95
 #, fuzzy
 msgid " -g, --group <group>     only send message to group\n"
 msgstr " -g, --group <组>                指定主组\n"
 
-#: term-utils/wall.c:95
+#: term-utils/wall.c:96
 msgid " -n, --nobanner          do not print banner, works only for root\n"
 msgstr " -n, --nobanner          不打印欢迎消息，只对 root 用户生效\n"
 
-#: term-utils/wall.c:96
+#: term-utils/wall.c:97
 msgid " -t, --timeout <timeout> write timeout in seconds\n"
 msgstr " -t, --timeout <超时>    写超时(秒)\n"
 
-#: term-utils/wall.c:124
+#: term-utils/wall.c:125
 msgid "invalid group argument"
 msgstr "无效的组参数"
 
-#: term-utils/wall.c:126
+#: term-utils/wall.c:127
 #, c-format
 msgid "%s: unknown gid"
 msgstr "%s：未知的 gid"
 
-#: term-utils/wall.c:169
+#: term-utils/wall.c:170
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr ""
 
-#: term-utils/wall.c:215
+#: term-utils/wall.c:216
 msgid "--nobanner is available only for root"
 msgstr "--nobanner 只有 root 能用"
 
-#: term-utils/wall.c:220
+#: term-utils/wall.c:221
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr "无效的超时参数：%s"
 
-#: term-utils/wall.c:362
+#: term-utils/wall.c:361
 msgid "cannot get passwd uid"
 msgstr "无法获取 passwd uid"
 
-#: term-utils/wall.c:386
+#: term-utils/wall.c:385
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "来自 %s@%s (%s) (%s) 的广播消息："
 
-#: term-utils/wall.c:418
+#: term-utils/wall.c:417
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "将不读 %s - 使用 stdin。"
