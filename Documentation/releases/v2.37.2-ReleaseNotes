@@ -1,0 +1,41 @@
+util-linux 2.37.2 Release Notes
+===============================
+
+blockdev:
+   - allow for larger values for start sector  [Thomas Abraham]
+   - use snprintf() rather than sprintf()  [Karel Zak]
+docs:
+   - fix info about LIBSMARTCOLS_DEBUG_PADDING  [Karel Zak]
+   - update AUTHORS file  [Karel Zak]
+lib/pwdutils:
+   - don't use getlogin(3).  [Érico Nogueira]
+   - use assert to check correct usage.  [Érico Nogueira]
+libfdisk:
+   - (dos) don't ignore MBR+FAT use-case  [Karel Zak]
+   - (dos) support partition and MBR overlap  [Karel Zak]
+libmount:
+   - don't use setgroups at all()  [Karel Zak]
+   - fix setgroups() use  [Karel Zak]
+logger:
+   - use xgetlogin from pwdutils.  [Érico Nogueira]
+losetup:
+   - use LOOP_CONFIGURE in a more robust way  [Karel Zak]
+lscpu:
+   - Add Phytium FT-2000+ & S2500 support  [panchenbo]
+   - Add Phytium aarch64 cpupart  [panchenbo]
+   - fix NULL dereference  [Karel Zak]
+   - fix compilation against librtas  [Karel Zak]
+mount:
+   - mount.8 don't consider additional mounts as experimental  [Karel Zak]
+po:
+   - add sk.po (from translationproject.org)  [Jose Riha]
+   - merge changes  [Karel Zak]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+prlimit:
+   - fix compiler warning [-Wmaybe-uninitialized]  [Karel Zak]
+sulogin:
+   - fix getpasswd()  [Karel Zak]
+sys-utils/ipcutils:
+   - be careful when call calloc() for uint64 nmembs  [Karel Zak]
+wall:
+   - use xgetlogin.  [Érico Nogueira]
