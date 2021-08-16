@@ -495,6 +495,8 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 [AC_DEFINE([HAVE_TM_GMTOFF], [1], [Does struct tm have a field tm_gmtoff?])
 ])
 
+AC_CHECK_TYPES([struct mount_attr], [], [], [[#include <sys/mount.h>]])
+
 AC_CHECK_MEMBERS([struct termios.c_line],,,
     [[#include <termios.h>]])
 
@@ -557,8 +559,11 @@ AC_CHECK_FUNCS([ \
 	newlocale \
 	mempcpy \
 	mkostemp \
+	move_mount \
+	mount_setattr \
 	nanosleep \
 	ntp_gettime \
+	open_tree \
 	personality \
 	pidfd_open \
 	pidfd_send_signal \
