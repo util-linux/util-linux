@@ -38,7 +38,7 @@ Note that _zramdev_ node specified on command line has to already exist. The com
 
 == OPTIONS
 
-*-a*, **--algorithm lzo**|**lz4**|**lz4hc**|**deflate**|*842*::
+*-a*, **--algorithm lzo**|**lz4**|**lz4hc**|**deflate**|**842**|**zstd**::
 Set the compression algorithm to be used for compressing data in the zram device.
 
 *-f*, *--find*::

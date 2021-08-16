@@ -547,7 +547,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Set up and control zram devices.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --algorithm lzo|lz4|lz4hc|deflate|842   compression algorithm to use\n"), out);
+	fputs(_(" -a, --algorithm lzo|lz4|lz4hc|deflate|842|zstd   compression algorithm to use\n"), out);
 	fputs(_(" -b, --bytes               print sizes in bytes rather than in human readable format\n"), out);
 	fputs(_(" -f, --find                find a free device\n"), out);
 	fputs(_(" -n, --noheadings          don't print headings\n"), out);
