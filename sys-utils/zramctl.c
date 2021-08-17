@@ -547,7 +547,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Set up and control zram devices.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --algorithm lzo|lz4|lz4hc|deflate|842|zstd   compression algorithm to use\n"), out);
+	fputs(_(" -a, --algorithm <alg>     compression algorithm to use\n"), out);
 	fputs(_(" -b, --bytes               print sizes in bytes rather than in human readable format\n"), out);
 	fputs(_(" -f, --find                find a free device\n"), out);
 	fputs(_(" -n, --noheadings          don't print headings\n"), out);
@@ -563,6 +563,9 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_ARGUMENTS, out);
 	printf(USAGE_ARG_SIZE(_("<size>")));
+
+	fputs(_(" <alg> specify algorithm, supported are:\n"), out);
+	fputs(_("   lzo, lz4, lz4hc, deflate, 842 and zstd\n"), out);
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
