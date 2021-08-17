@@ -449,7 +449,7 @@ Display help text and exit.
 
 Some of these options are only useful when they appear in the _/etc/fstab_ file.
 
-Some of these options could be enabled or disabled by default in the system kernel. To check the current setting see the options in _/proc/mounts_. Note that filesystems also have per-filesystem specific default mount options (see for example *tune2fs -l* output for ext_N_ filesystems).
+Some of these options could be enabled or disabled by default in the system kernel. To check the current setting see the options in _/proc/mounts_. Note that filesystems also have per-filesystem specific default mount options (see for example *tune2fs -l* output for ext__N__ filesystems).
 
 The following options apply to any filesystem that is being mounted (but not every filesystem actually honors them - e.g., the *sync* option today has an effect only for ext2, ext3, ext4, fat, vfat, ufs and xfs):
 
