@@ -126,7 +126,7 @@ Do not print a newline before writing out _/etc/issue_.
 *-o*, *--login-options* _login_options_::
 Options and arguments that are passed to *login*(1). Where \u is replaced by the login name. For example:
 +
-*--login-options '-h darkstar -- \u'*
+*--login-options '-h darkstar \-- \u'*
 +
 See *--autologin*, *--login-program* and *--remote*.
 +
