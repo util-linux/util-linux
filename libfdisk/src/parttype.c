@@ -26,6 +26,9 @@ struct fdisk_parttype *fdisk_new_parttype(void)
 {
 	struct fdisk_parttype *t = calloc(1, sizeof(*t));
 
+	if (!t)
+		return NULL;
+
 	t->refcount = 1;
 	t->flags = FDISK_PARTTYPE_ALLOCATED;
 	DBG(PARTTYPE, ul_debugobj(t, "alloc"));
