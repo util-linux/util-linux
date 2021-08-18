@@ -321,7 +321,7 @@ static char *key_cleanup(char *str, int *keynum)
 
 static const struct cpuinfo_pattern *cpuinfo_parse_line(char *str, char **value, int *keynum)
 {
-	struct cpuinfo_pattern key, *pat;
+	struct cpuinfo_pattern key = { .id = 0 }, *pat;
 	char *p, *v;
 	char buf[CPUTYPE_PATTERN_BUFSZ] = { 0 };
 
