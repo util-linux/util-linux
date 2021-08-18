@@ -125,7 +125,7 @@ int main(int argc, char **argv)
 		{
 			char *end = NULL;
 			errno = 0;
-			permission = strtoul(optarg, NULL, 8);
+			permission = strtoul(optarg, &end, 8);
 			if (errno || optarg == end || (end && *end))
 				err(EXIT_FAILURE, _("failed to parse mode"));
 			break;
