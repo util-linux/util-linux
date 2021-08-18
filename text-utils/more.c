@@ -1229,7 +1229,7 @@ static void __attribute__((__format__ (__printf__, 3, 4)))
 		int errsv;
 		if (!isatty(STDIN_FILENO)) {
 			close(STDIN_FILENO);
-			open("/dev/tty", 0);
+			ignore_result( open("/dev/tty", 0) );
 		}
 		reset_tty(ctl);
 
