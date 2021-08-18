@@ -40,6 +40,9 @@ struct fdisk_labelitem *fdisk_new_labelitem(void)
 {
 	struct fdisk_labelitem *li = calloc(1, sizeof(*li));
 
+	if (!li)
+		return NULL;
+
 	li->refcount = 1;
 	DBG(ITEM, ul_debugobj(li, "alloc"));
 	return li;

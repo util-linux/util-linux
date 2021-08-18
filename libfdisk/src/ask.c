@@ -36,6 +36,10 @@ int fdisk_set_ask(struct fdisk_context *cxt,
 struct fdisk_ask *fdisk_new_ask(void)
 {
 	struct fdisk_ask *ask = calloc(1, sizeof(struct fdisk_ask));
+
+	if (!ask)
+		return NULL;
+
 	DBG(ASK, ul_debugobj(ask, "alloc"));
 	ask->refcount = 1;
 	return ask;
