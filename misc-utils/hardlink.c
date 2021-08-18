@@ -571,8 +571,8 @@ static int file_contents_equal(const struct file *a, const struct file *b)
 		goto err;
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
-	posix_fadvise(fileno(fa), 0, 0, POSIX_FADV_SEQUENTIAL);
-	posix_fadvise(fileno(fb), 0, 0, POSIX_FADV_SEQUENTIAL);
+	ignore_result( posix_fadvise(fileno(fa), 0, 0, POSIX_FADV_SEQUENTIAL) );
+	ignore_result( posix_fadvise(fileno(fb), 0, 0, POSIX_FADV_SEQUENTIAL) );
 #endif
 
 	while (!handle_interrupt() && cmp == 0) {
