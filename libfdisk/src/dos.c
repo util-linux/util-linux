@@ -1944,8 +1944,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	for (i = 0; i < 4; i++) {
 		struct dos_partition *p = self_partition(cxt, i);
 
-		assert(p);
-		if (is_used_partition(p)) {
+		if (p && is_used_partition(p)) {
 			fdisk_sector_t start = dos_partition_get_start(p);
 			if (first + grain <= start)
 				free_sectors = 1;
@@ -2340,6 +2339,7 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 
 	l = self_label(cxt);
 	p = self_partition(cxt, n);
+	assert(p);
 
 	pe = self_pte(cxt, n);
 	if (!pe)
@@ -2773,6 +2773,7 @@ static int dos_toggle_partition_flag(
 		return -EINVAL;
 
 	p = self_partition(cxt, i);
+	assert(p);
 
 	switch (flag) {
 	case DOS_FLAG_ACTIVE:
