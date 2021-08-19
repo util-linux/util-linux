@@ -229,10 +229,15 @@ static int rfkill_read_event(int fd, struct rfkill_event *event)
 
 static int rfkill_event(void)
 {
+	enum {
+		POLLFD_RFKILL,
+		POLLFD_STDOUT,
+		POLLFD_COUNT
+	};
 	struct rfkill_event event;
 	struct timeval tv;
 	char date_buf[ISO_BUFSIZ];
-	struct pollfd p;
+	struct pollfd p[POLLFD_COUNT];
 	int fd, n;
 
 	fd = rfkill_open(1, 0);
@@ -240,20 +245,24 @@ static int rfkill_event(void)
 		return fd;
 
 	memset(&p, 0, sizeof(p));
-	p.fd = fd;
-	p.events = POLLIN | POLLHUP;
+	p[POLLFD_RFKILL].fd = fd;
+	p[POLLFD_RFKILL].events = POLLIN | POLLHUP;
+	p[POLLFD_STDOUT].fd = STDOUT_FILENO;
+	p[POLLFD_STDOUT].events = 0;
 
 	/* interrupted by signal only */
 	while (1) {
 		int rc = 1;	/* recover-able error */
 
-		n = poll(&p, 1, -1);
+		n = poll(p, ARRAY_SIZE(p), -1);
 		if (n < 0) {
 			warn(_("failed to poll %s"), _PATH_DEV_RFKILL);
 			goto failed;
 		}
 
-		if (n)
+		if (p[POLLFD_STDOUT].revents)
+			goto failed; /* read end of stdout closed */
+		if (p[POLLFD_RFKILL].revents)
 			rc = rfkill_read_event(fd, &event);
 		if (rc < 0)
 			goto failed;
