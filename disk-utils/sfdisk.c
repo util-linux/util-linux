@@ -1714,7 +1714,7 @@ static void refresh_prompt_buffer(struct sfdisk *sf, const char *devname,
  */
 static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 {
-	int rc = 0, partno = sf->partno, created = 0, unused = 0;
+	int rc = 0, partno = sf->partno, created = 0, unused = 0, ignored = 0;
 	struct fdisk_script *dp;
 	struct fdisk_table *tb = NULL;
 	const char *devname = NULL, *label;
@@ -1897,6 +1897,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			if (ignore_partition(pa)) {
 				fdisk_info(sf->cxt, _("Ignoring partition."));
 				next_partno++;
+				ignored++;
 				continue;
 			}
 			if (!created) {		/* create a new disklabel */
@@ -1960,7 +1961,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	/* create empty disk label if label, but no partition specified */
 	if ((rc == SFDISK_DONE_EOF || rc == SFDISK_DONE_WRITE) && created == 0
 	    && fdisk_script_has_force_label(dp) == 1
-	    && fdisk_table_get_nents(tb) == 0
+	    && fdisk_table_get_nents(tb) == (size_t) ignored
 	    && fdisk_script_get_header(dp, "label")) {
 
 		int xrc = fdisk_apply_script_headers(sf->cxt, dp);
