@@ -24,6 +24,8 @@ PACKAGES_OPTIONAL=(
 	libsystemd-journal-dev
 )
 
+# scsi_debug
+PACKAGES+=(linux-modules-extra-$(uname -r))
 
 COMPILER="${COMPILER:?}"
 COMPILER_VERSION="${COMPILER_VERSION:?}"
