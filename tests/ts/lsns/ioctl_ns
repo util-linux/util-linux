@@ -34,6 +34,8 @@ ts_check_prog "mkfifo"
 ts_check_prog "touch"
 ts_check_prog "uniq"
 
+$TS_CMD_UNSHARE --user --pid --mount-proc --fork true &> /dev/null || ts_skip "no namespace support"
+
 ts_cd "$TS_OUTDIR"
 
 # The parent process receives namespaces ids via FIFO_DATA from bash
