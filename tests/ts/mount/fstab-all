@@ -79,6 +79,7 @@ echo  "${TS_DEVICE}4 ${MOUNTPOINT}D ext4 rw,defaults 0 0" >> $MY_FSTAB
 ts_init_subtest "basic"
 $TS_CMD_MOUNT --all --fstab $MY_FSTAB >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
+udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}{A,B,C,D}
 [ $? == 0 ] || ts_log "umount failed"
 ts_finalize_subtest
@@ -87,6 +88,7 @@ ts_finalize_subtest
 ts_init_subtest "filter-type"
 $TS_CMD_MOUNT --all --fstab $MY_FSTAB -t ext4 >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
+udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}D
 [ $? == 0 ] || ts_log "umount failed"
 ts_finalize_subtest
@@ -95,6 +97,7 @@ ts_finalize_subtest
 ts_init_subtest "filter-notype"
 $TS_CMD_MOUNT --all --fstab $MY_FSTAB -t noext4 >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
+udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}{A,B,C}
 [ $? == 0 ] || ts_log "umount failed"
 ts_finalize_subtest
@@ -103,6 +106,7 @@ ts_finalize_subtest
 ts_init_subtest "filter-option"
 $TS_CMD_MOUNT --all --fstab $MY_FSTAB -O ro >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
+udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}C
 [ $? == 0 ] || ts_log "umount failed"
 ts_finalize_subtest
@@ -111,6 +115,7 @@ ts_finalize_subtest
 ts_init_subtest "override-option"
 $TS_CMD_MOUNT --all --fstab $MY_FSTAB -o ro >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
+udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}{A,B,C,D}
 [ $? == 0 ] || ts_log "umount failed"
 ts_finalize_subtest
@@ -132,6 +137,7 @@ $TS_CMD_MOUNT	--all \
 		--target-prefix $MY_ROOT \
 		-o X-mount.mkdir >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
+udevadm settle
 $TS_CMD_UMOUNT $MY_ROOT/foo/{A,B,C,D}
 [ $? == 0 ] || ts_log "umount failed"
 ts_finalize_subtest
