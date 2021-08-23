@@ -165,7 +165,7 @@ OPTS="$OPTS --srcdir=$top_srcdir --builddir=$top_builddir"
 if [ -z "$has_asan_opt" ]; then
         if [ -e "$top_builddir/Makefile" ]; then
 	    asan=$(awk '/^ASAN_LDFLAGS/ { print $3 }' $top_builddir/Makefile)
-        else
+        elif [ -f "$top_builddir/meson.conf" ]; then
             . "$top_builddir/meson.conf"
         fi
 	if [ -n "$asan" ]; then
