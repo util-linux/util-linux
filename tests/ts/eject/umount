@@ -84,6 +84,7 @@ mkfs.ext2 -q -F $TS_DEVICE
 udevadm settle
 mkdir -p $TS_MOUNTPOINT
 $TS_CMD_MOUNT $TS_DEVICE $TS_MOUNTPOINT
+udevadm settle
 $TS_CMD_EJECT --force $TS_DEVICE && ts_log "Success"
 deinit_device
 ts_finalize_subtest
@@ -96,6 +97,7 @@ mkdir -p ${TS_MOUNTPOINT}1
 mkdir -p ${TS_MOUNTPOINT}2
 $TS_CMD_MOUNT ${TS_DEVICE}1 ${TS_MOUNTPOINT}1
 $TS_CMD_MOUNT ${TS_DEVICE}2 ${TS_MOUNTPOINT}2
+udevadm settle
 $TS_CMD_EJECT --force $TS_DEVICE && ts_log "Success"
 deinit_device
 ts_finalize_subtest
@@ -116,6 +118,7 @@ mkdir -p ${TS_MOUNTPOINT}1
 mkdir -p ${TS_MOUNTPOINT}2
 $TS_CMD_MOUNT ${TS_DEVICE}1 ${TS_MOUNTPOINT}1
 $TS_CMD_MOUNT ${TS_DEVICE}2 ${TS_MOUNTPOINT}2
+udevadm settle
 $TS_CMD_EJECT --force ${TS_DEVICE}1 && ts_log "Success"
 deinit_device
 ts_finalize_subtest
