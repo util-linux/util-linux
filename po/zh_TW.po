@@ -22741,7 +22741,7 @@ msgstr "設定 %s 資源限制時失敗"
 #: text-utils/more.c:405
 #, fuzzy
 msgid "magic failed"
-msgstr "mkdir 失敗：%s"
+msgstr "魔數校驗失敗：%s"
 
 #: text-utils/more.c:409 text-utils/more.c:428
 #, c-format

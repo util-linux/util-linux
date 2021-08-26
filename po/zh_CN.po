@@ -21217,7 +21217,7 @@ msgstr "设置环境变量 %s 失败"
 #: text-utils/more.c:405
 #, fuzzy
 msgid "magic failed"
-msgstr "mkdir 失败：%s"
+msgstr "魔数校验失败：%s"
 
 #: text-utils/more.c:409 text-utils/more.c:428
 #, c-format
