@@ -221,7 +221,7 @@ msgstr "未指定设备"
 
 #: disk-utils/blockdev.c:328
 msgid "could not get device size"
-msgstr "无法多得设备大小"
+msgstr "无法获取设备大小"
 
 #: disk-utils/blockdev.c:334
 #, c-format
