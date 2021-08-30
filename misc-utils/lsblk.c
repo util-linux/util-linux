@@ -123,6 +123,12 @@ enum {
 	COL_WSAME,
 	COL_WWN,
 	COL_ZONED,
+	COL_ZONE_SZ,
+	COL_ZONE_WGRAN,
+	COL_ZONE_APP,
+	COL_ZONE_NR,
+	COL_ZONE_OMAX,
+	COL_ZONE_AMAX,
 };
 
 /* basic table settings */
@@ -213,6 +219,12 @@ static struct colinfo infos[] = {
 	[COL_WSAME] = { "WSAME", 6, SCOLS_FL_RIGHT, N_("write same max bytes"), COLTYPE_SIZE },
 	[COL_WWN] = { "WWN", 18, 0, N_("unique storage identifier") },
 	[COL_ZONED] = { "ZONED", 0.3, 0, N_("zone model") },
+	[COL_ZONE_SZ] = { "ZONE-SZ", 9, SCOLS_FL_RIGHT, N_("zone size"), COLTYPE_NUM },
+	[COL_ZONE_WGRAN] = { "ZONE-WGRAN", 10, SCOLS_FL_RIGHT, N_("zone write granularity"), COLTYPE_NUM },
+	[COL_ZONE_APP] = { "ZONE-APP", 11, SCOLS_FL_RIGHT, N_("zone append max bytes"), COLTYPE_NUM },
+	[COL_ZONE_NR] = { "ZONE-NR", 8, SCOLS_FL_RIGHT, N_("number of zones"), COLTYPE_NUM },
+	[COL_ZONE_OMAX] = { "ZONE-OMAX", 10, SCOLS_FL_RIGHT, N_("maximum number of open zones"), COLTYPE_NUM },
+	[COL_ZONE_AMAX] = { "ZONE-AMAX", 10, SCOLS_FL_RIGHT, N_("maximum number of active zones"), COLTYPE_NUM },
 };
 
 struct lsblk *lsblk;	/* global handler */
@@ -1067,6 +1079,46 @@ static char *device_get_data(
 		break;
 	case COL_ZONED:
 		ul_path_read_string(dev->sysfs, &str, "queue/zoned");
+		break;
+	case COL_ZONE_SZ:
+	{
+		uint64_t x;
+
+		if (ul_path_read_u64(dev->sysfs, &x, "queue/chunk_sectors") == 0) {
+			x <<= 9;
+			if (lsblk->bytes)
+				xasprintf(&str, "%ju", x);
+			else
+				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
+			if (sortdata)
+				*sortdata = x;
+		}
+		break;
+	}
+	case COL_ZONE_WGRAN:
+		device_read_bytes(dev, "queue/zone_write_granularity", &str, sortdata);
+		break;
+	case COL_ZONE_APP:
+		device_read_bytes(dev, "queue/zone_append_max_bytes", &str, sortdata);
+		break;
+	case COL_ZONE_NR:
+		ul_path_read_string(dev->sysfs, &str, "queue/nr_zones");
+		if (sortdata)
+			str2u64(str, sortdata);
+		break;
+	case COL_ZONE_OMAX:
+		ul_path_read_string(dev->sysfs, &str, "queue/max_open_zones");
+		if (!str)
+			str = xstrdup("0");
+		if (sortdata)
+			str2u64(str, sortdata);
+		break;
+	case COL_ZONE_AMAX:
+		ul_path_read_string(dev->sysfs, &str, "queue/max_active_zones");
+		if (!str)
+			str = xstrdup("0");
+		if (sortdata)
+			str2u64(str, sortdata);
 		break;
 	case COL_DAX:
 		ul_path_read_string(dev->sysfs, &str, "queue/dax");
