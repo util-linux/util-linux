@@ -81,7 +81,7 @@ Print the size in 512-byte sectors of each given block device. This option is DE
 Enable support only for disklabels of the specified _type_, and disable support for all other types.
 
 *-u*, *--units*[=_unit_]::
-When listing partition tables, show sizes in 'sectors' or in 'cylinders'. The default is to show sizes in sectors. For backward compatibility, it is possible to use the option without the _unit_ argument -- then the default is used. Note that the optional _unit_ argument cannot be separated from the *-u* option by a space, the correct form is for example '*-u=*_cylinders_'.
+When listing partition tables, show sizes in 'sectors' or in 'cylinders'. The default is to show sizes in sectors. For backward compatibility, it is possible to use the option without the _unit_ argument -- then the default is used. Note that the optional _unit_ argument cannot be separated from the *-u* option by a space, the correct form is for example '**-u=**__cylinders__'.
 
 *-C*, *--cylinders* _number_::
 Specify the number of cylinders of the disk. I have no idea why anybody would want to do so.
