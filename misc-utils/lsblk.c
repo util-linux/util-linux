@@ -708,6 +708,25 @@ static uint64_t device_get_discard_granularity(struct lsblk_device *dev)
 	return dev->discard_granularity;
 }
 
+static void device_read_bytes(struct lsblk_device *dev, char *path, char **str,
+			      uint64_t *sortdata)
+{
+	uint64_t x;
+
+	if (lsblk->bytes) {
+		ul_path_read_string(dev->sysfs, str, path);
+		if (sortdata)
+			str2u64(*str, sortdata);
+		return;
+	}
+
+	if (ul_path_read_u64(dev->sysfs, &x, path) == 0) {
+		*str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
+		if (sortdata)
+			*sortdata = x;
+	}
+}
+
 /*
  * Generates data (string) for column specified by column ID for specified device. If sortdata
  * is not NULL then returns number usable to sort the column if the data are available for the
@@ -1033,18 +1052,7 @@ static char *device_get_data(
 		}
 		break;
 	case COL_DMAX:
-		if (lsblk->bytes) {
-			ul_path_read_string(dev->sysfs, &str, "queue/discard_max_bytes");
-			if (sortdata)
-				str2u64(str, sortdata);
-		} else {
-			uint64_t x;
-			if (ul_path_read_u64(dev->sysfs, &x, "queue/discard_max_bytes") == 0) {
-				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
-				if (sortdata)
-					*sortdata = x;
-			}
-		}
+		device_read_bytes(dev, "queue/discard_max_bytes", &str, sortdata);
 		break;
 	case COL_DZERO:
 		if (device_get_discard_granularity(dev) > 0)
@@ -1053,19 +1061,7 @@ static char *device_get_data(
 			str = xstrdup("0");
 		break;
 	case COL_WSAME:
-		if (lsblk->bytes) {
-			ul_path_read_string(dev->sysfs, &str, "queue/write_same_max_bytes");
-			if (sortdata)
-				str2u64(str, sortdata);
-		} else {
-			uint64_t x;
-
-			if (ul_path_read_u64(dev->sysfs, &x, "queue/write_same_max_bytes") == 0) {
-				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
-				if (sortdata)
-					*sortdata = x;
-			}
-		}
+		device_read_bytes(dev, "queue/write_same_max_bytes", &str, sortdata);
 		if (!str)
 			str = xstrdup("0");
 		break;
