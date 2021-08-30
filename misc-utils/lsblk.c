@@ -1920,7 +1920,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --topology       output info about topology\n"), out);
 	fputs(_(" -w, --width <num>    specifies output width as number of characters\n"), out);
 	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
-	fputs(_(" -z, --zoned          print zone model\n"), out);
+	fputs(_(" -z, --zoned          print zone related information\n"), out);
 	fputs(_("     --sysroot <dir>  use specified directory as system root\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(22));
@@ -2042,6 +2042,12 @@ int main(int argc, char *argv[])
 		case 'z':
 			add_uniq_column(COL_NAME);
 			add_uniq_column(COL_ZONED);
+			add_uniq_column(COL_ZONE_SZ);
+			add_uniq_column(COL_ZONE_NR);
+			add_uniq_column(COL_ZONE_AMAX);
+			add_uniq_column(COL_ZONE_OMAX);
+			add_uniq_column(COL_ZONE_APP);
+			add_uniq_column(COL_ZONE_WGRAN);
 			break;
 		case 'e':
 			parse_excludes(optarg);

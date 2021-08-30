@@ -116,7 +116,7 @@ Specifies output width as a number of characters. The default is the number of t
 Sort output lines by _column_. This option enables *--list* output format by default. It is possible to use the option *--tree* to force tree-like output and than the tree branches are sorted by the _column_.
 
 *-z*, *--zoned*::
-Print the zone model for each device.
+Print the zone related information for each device.
 
 *--sysroot* _directory_::
 Gather data for a Linux instance other than the instance from which the *lsblk* command is issued. The specified directory is the system root of the Linux instance to be inspected. The real device nodes in the target directory can be replaced by text files with udev attributes.
