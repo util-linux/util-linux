@@ -1907,6 +1907,8 @@ static void display_file(struct more_control *ctl, int left)
 			if (ctl->clear_line_ends)
 				putp(ctl->erase_line);
 			print_separator(':', 14);
+			if (ctl->clear_line_ends)
+				putp(ctl->erase_line);
 			puts(ctl->file_names[ctl->argv_position]);
 			if (ctl->clear_line_ends)
 				putp(ctl->erase_line);
