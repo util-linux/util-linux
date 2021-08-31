@@ -41,7 +41,7 @@ _su_module()
 	esac
 	local IFS=$'\n'
 	compopt -o filenames
-	COMPREPLY=( $(compgen -f -- $cur) )
+	COMPREPLY=( $(compgen -u -- $cur) )
 	return 0
 }
 complete -F _su_module su
