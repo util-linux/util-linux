@@ -724,6 +724,10 @@ int main(int argc, char **argv)
 		outbuffer = xmalloc(blksize * 2);
 		read_buffer = xmalloc(rombufsize * 2);
 		test_fs(start);
+		if(NULL != outbuffer) free(outbuffer);
+		if(NULL != read_buffer) free(read_buffer);
+		outbuffer = NULL;
+		read_buffer = NULL;
 	}
 
 	if (opt_verbose)
