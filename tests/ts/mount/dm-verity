@@ -35,7 +35,9 @@ ts_skip_nonroot
 ts_check_prog "mksquashfs"
 ts_check_prog "veritysetup"
 
-# Make a squashfs out of /etc and prepare verity device out of it
+grep -q '#define HAVE_CRYPTSETUP' ${top_builddir}/config.h || ts_skip "no dm-verity support"
+
+# Make a squashfs and prepare verity device out of it
 mksquashfs $TS_SELF $SQUASHFS &>/dev/null || ts_skip "error: mksquashfs on $TS_SELF"
 veritysetup format $SQUASHFS $HASH_DEVICE > $VERITY_OUTPUT || ts_skip "cannot format $SQUASHFS"
 
