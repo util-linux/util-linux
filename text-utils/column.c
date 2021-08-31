@@ -814,6 +814,8 @@ int main(int argc, char **argv)
 		case 's':
 			free(ctl.input_separator);
 			ctl.input_separator = mbs_to_wcs(optarg);
+			if (!ctl.input_separator)
+				err(EXIT_FAILURE, _("failed to use input separator"));
 			ctl.greedy = 0;
 			break;
 		case 'T':
