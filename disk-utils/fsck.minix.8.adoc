@@ -36,7 +36,7 @@ ____
 |===
 ____
 
-If the filesystem was changed, i.e., repaired, then *fsck.minix* will print "FILE SYSTEM HAS CHANGED" and will *sync*(2) three times before exiting. There is _no_ need to reboot after check.
+If the filesystem was changed, i.e., repaired, then *fsck.minix* will print "FILE SYSTEM HAS BEEN CHANGED" and will *sync*(2) three times before exiting. There is _no_ need to reboot after check.
 
 == WARNING
 
