@@ -147,7 +147,7 @@ static struct colinfo infos[] = {
 		N_("user of the process") },
 };
 
-static int default_columns[] = {
+static const int default_columns[] = {
 	COL_COMMAND,
 	COL_PID,
 	COL_USER,
@@ -160,7 +160,7 @@ static int default_columns[] = {
 	COL_NAME,
 };
 
-static int default_threads_columns[] = {
+static const int default_threads_columns[] = {
 	COL_COMMAND,
 	COL_PID,
 	COL_TID,
@@ -919,6 +919,7 @@ static void finalize_classes(void)
 int main(int argc, char *argv[])
 {
 	int c;
+	size_t i;
 	char *outarg = NULL;
 
 	struct list_head procs;
@@ -967,7 +968,7 @@ int main(int argc, char *argv[])
 	}
 
 #define INITIALIZE_COLUMNS(COLUMN_SPEC)				\
-	for (size_t i = 0; i < ARRAY_SIZE(COLUMN_SPEC); i++)	\
+	for (i = 0; i < ARRAY_SIZE(COLUMN_SPEC); i++)	\
 		columns[ncolumns++] = COLUMN_SPEC[i]
 	if (!ncolumns) {
 		if (ctl.threads)
@@ -981,8 +982,8 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 
 	scols_init_debug(0);
-	ctl.tb = scols_new_table();
 
+	ctl.tb = scols_new_table();
 	if (!ctl.tb)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
 
@@ -992,7 +993,7 @@ int main(int argc, char *argv[])
 	if (ctl.json)
 		scols_table_set_name(ctl.tb, "lsfd");
 
-	for (size_t i = 0; i < ncolumns; i++) {
+	for (i = 0; i < ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
 		struct libscols_column *cl;
 
@@ -1028,6 +1029,7 @@ struct name_manager {
 struct name_manager *new_name_manager(void)
 {
 	struct name_manager *nm = xcalloc(1, sizeof(struct name_manager));
+
 	nm->cache = new_idcache();
 	if (!nm->cache)
 		err(EXIT_FAILURE, _("failed to allocate an idcache"));
