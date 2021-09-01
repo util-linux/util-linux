@@ -45,6 +45,7 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "strutils.h"
 #include "procutils.h"
 #include "fileutils.h"
+#include "path.h"
 #include "idcache.h"
 
 #include "libsmartcols.h"
@@ -179,6 +180,8 @@ static size_t ncolumns;
 
 struct lsfd_control {
 	struct libscols_table *tb;		/* output */
+	const char *sysroot;			/* default is NULL */
+	struct path_cxt *procfs;
 
 	unsigned int	noheadings : 1,
 			raw : 1,
@@ -307,48 +310,50 @@ static void collect_tasks(struct proc *leader,
 	}
 }
 
-static void collect_procs(DIR *dirp, struct list_head *procs,
-			  struct lsfd_control *ctl)
+static void collect(struct list_head *procs, struct lsfd_control *ctl)
 {
+	DIR *dir;
 	struct dirent *dp;
-	long num;
+	struct list_head *p;
 
-	while ((dp = readdir(dirp))) {
+	/* open /proc */
+	dir = ul_path_opendir(ctl->procfs, NULL);
+	if (!dir)
+		err(EXIT_FAILURE, _("failed to open /proc"));
+
+	/* read /proc */
+	while ((dp = readdir(dir))) {
 		struct proc *proc;
+		long num;
 
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (dp->d_type != DT_DIR && dp->d_type != DT_UNKNOWN)
+			continue;
+#endif
 		/* care only for numerical entries.
 		 * For a non-numerical entry, strtol returns 0.
 		 * We can skip it because there is no task having 0 as pid. */
-		if (!(num = strtol(dp->d_name, (char **) NULL, 10)))
+		if (!(num = strtol(dp->d_name, NULL, 10)))
 			continue;
 
 		proc = make_proc((pid_t)num, NULL);
 		enqueue_proc(procs, proc);
 
 		if (ctl->threads) {
-			DIR *task_dirp = opendirf("/proc/%s/task", dp->d_name);
+			DIR *task_dirp = ul_path_opendirf(ctl->procfs, "%s/task", dp->d_name);
 			if (task_dirp) {
 				collect_tasks(proc, task_dirp, procs);
 				closedir(task_dirp);
 			}
 		}
+
 	}
-}
 
-static void collect(struct list_head *procs, struct lsfd_control *ctl)
-{
-	DIR *dirp;
-	struct list_head *p;
-
-	dirp = opendir("/proc");
-	if (!dirp)
-		err(EXIT_FAILURE, _("failed to open /proc"));
-	collect_procs(dirp, procs, ctl);
-	closedir(dirp);
+	closedir(dir);
 
 	list_for_each (p, procs) {
 		struct proc *proc = list_entry(p, struct proc, procs);
-		fill_proc (proc);
+		fill_proc(proc);
 	}
 }
 
@@ -873,6 +878,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --noheadings      don't print headings\n"), out);
 	fputs(_(" -o, --output <list>   output columns\n"), out);
 	fputs(_(" -r, --raw             use raw output format\n"), out);
+	fputs(_("     --sysroot <dir>   use specified directory as system root\n"), out);
 	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -927,6 +933,9 @@ int main(int argc, char *argv[])
 	struct list_head procs;
 	struct lsfd_control ctl = {};
 
+	enum {
+		OPT_SYSROOT = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
 		{ "output",     required_argument, NULL, 'o' },
@@ -936,6 +945,7 @@ int main(int argc, char *argv[])
 		{ "raw",        no_argument, NULL, 'r' },
 		{ "threads",    no_argument, NULL, 'l' },
 		{ "notruncate", no_argument, NULL, 'u' },
+		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -964,6 +974,10 @@ int main(int argc, char *argv[])
 		case 'u':
 			ctl.notrunc = 1;
 			break;
+		case OPT_SYSROOT:
+			ctl.sysroot = optarg;
+			break;
+
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -988,7 +1002,15 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 
 	scols_init_debug(0);
+	ul_path_init_debug();
 
+	/* initialize paths */
+	ctl.procfs = ul_new_path("/proc");
+	if (!ctl.procfs)
+		err(EXIT_FAILURE, _("failed to allocate /proc handler"));
+	ul_path_set_prefix(ctl.procfs, ctl.sysroot);
+
+	/* inilialize scols table */
 	ctl.tb = scols_new_table();
 	if (!ctl.tb)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
@@ -999,6 +1021,7 @@ int main(int argc, char *argv[])
 	if (ctl.json)
 		scols_table_set_name(ctl.tb, "lsfd");
 
+	/* create output columns */
 	for (i = 0; i < ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
 		struct libscols_column *cl;
@@ -1014,6 +1037,7 @@ int main(int argc, char *argv[])
 			scols_column_set_json_type(cl, col->json_type);
 	}
 
+	/* collect data */
 	initialize_nodevs();
 	initialize_classes();
 
@@ -1022,10 +1046,14 @@ int main(int argc, char *argv[])
 
 	convert(&procs, &ctl);
 	emit(&ctl);
+
+	/* cleabup */
 	delete(&procs, &ctl);
 
 	finalize_classes();
 	finalize_nodevs();
+
+	ul_unref_path(ctl.procfs);
 
 	return 0;
 }
