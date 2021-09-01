@@ -52,6 +52,7 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 
 #include "lsfd.h"
 
+
 static void fill_proc(struct proc *proc);
 static void add_nodev(unsigned long minor, const char *filesystem);
 
@@ -225,6 +226,40 @@ static const struct colinfo *get_column_info(int num)
 }
 
 
+static struct file *new_file(const struct file_class *class,
+		       struct proc *proc,
+		       struct stat *sb, const char *name,
+		       struct map_file_data *map_file_data,
+		       int association)
+{
+	struct file *file;
+
+	assert(class);
+
+	file = xcalloc(1, class->size);
+	file->class = class;
+	file->association = association;
+	file->name = xstrdup(name);
+	file->stat = *sb;
+
+	if (file->association == -ASSOC_SHM || file->association == -ASSOC_MEM) {
+		static size_t pagesize = 0;
+
+		assert(map_file_data);
+		if (!pagesize)
+			pagesize = getpagesize();
+
+		file->assoc_data.map_length =
+			(map_file_data->end - map_file_data->start) / pagesize;
+	}
+
+	if (file->class->initialize_content)
+		file->class->initialize_content(file, proc, map_file_data);
+
+	return file;
+}
+
+
 static struct proc *new_prococess(pid_t pid, struct proc * leader)
 {
 	struct proc *proc = xcalloc(1, sizeof(*proc));
@@ -363,27 +398,36 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 	}
 }
 
+static const struct file_class *stat2class(struct stat *sb)
+{
+	assert(sb);
+
+	switch (sb->st_mode & S_IFMT) {
+	case S_IFCHR:
+		return &cdev_class;
+	case S_IFBLK:
+		return &bdev_class;
+	case S_IFSOCK:
+		return &sock_class;
+	case S_IFIFO:
+		return &fifo_class;
+	case S_IFLNK:
+	case S_IFREG:
+	case S_IFDIR:
+		return &file_class;
+	default:
+		break;
+	}
+
+	return &unkn_class;
+}
+
 static struct file *collect_file(struct proc *proc,
 				 struct stat *sb, char *name,
 				 struct map_file_data *map_file_data,
 				 int assoc)
 {
-	switch (sb->st_mode & S_IFMT) {
-	case S_IFCHR:
-		return new_cdev(NULL, sb, name, map_file_data, assoc);
-	case S_IFBLK:
-		return new_bdev(NULL, sb, name, map_file_data, assoc);
-	case S_IFSOCK:
-		return new_sock(NULL, sb, name, map_file_data, assoc, proc);
-	case S_IFIFO:
-		return new_fifo(NULL, sb, name, map_file_data, assoc);
-	case S_IFLNK:
-	case S_IFREG:
-	case S_IFDIR:
-		return new_file(NULL, sb, name, map_file_data, assoc);
-	default:
-		return new_unkn(NULL, sb, name, map_file_data, assoc);
-	}
+	return new_file(stat2class(sb), proc, sb, name, map_file_data, assoc);
 }
 
 static void read_fdinfo(struct file *file, FILE *fdinfo)

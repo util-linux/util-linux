@@ -76,35 +76,38 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-struct file *new_sock(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd,
-		       struct proc *proc)
+static void init_sock_content(struct file *file,
+			      struct proc *proc,
+			      struct map_file_data *map_file_data)
 {
-	struct file *file = new_file(class? class: &sock_class,
-				      sb, name, map_file_data, fd);
+	int fd;
+
+	assert(file);
+	assert(proc);
+
+	fd = file->association;
+
 	if (fd >= 0 || fd == -ASSOC_MEM || fd == -ASSOC_SHM) {
 		struct sock *sock = (struct sock *)file;
-
 		char path[PATH_MAX];
 		char buf[256];
 		ssize_t len;
+
 		memset(path, 0, sizeof(path));
 
 		if (fd >= 0)
 			sprintf(path, "/proc/%d/fd/%d", proc->pid, fd);
-		else
+		else {
+			assert(map_file_data);
 			sprintf(path, "/proc/%d/map_files/%lx-%lx", proc->pid,
 				map_file_data->start, map_file_data->end);
+		}
 		len = getxattr(path, "system.sockprotoname", buf, sizeof(buf) - 1);
 		if (len > 0) {
 			buf[len] = '\0';
 			sock->protoname = xstrdup(buf);
 		}
 	}
-
-	return file;
 }
 
 static void free_sock_content(struct file *file)
@@ -120,5 +123,6 @@ const struct file_class sock_class = {
 	.super = &file_class,
 	.size = sizeof(struct sock),
 	.fill_column = sock_fill_column,
+	.initialize_content = init_sock_content,
 	.free_content = free_sock_content,
 };

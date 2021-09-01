@@ -34,7 +34,6 @@
 #include "lsfd.h"
 
 static struct idcache *username_cache;
-static size_t pagesize;
 
 static const char *assocstr[N_ASSOCS] = {
 	[ASSOC_CWD]       = "cwd",
@@ -340,35 +339,11 @@ static void file_free_content(struct file *file)
 	free(file->name);
 }
 
-struct file *new_file(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int association)
-{
-	struct file *file;
-
-	class = class? class: &file_class;
-	file = xcalloc(1, class->size);
-
-	file->class = class;
-	file->association = association;
-	file->name = xstrdup(name);
-	file->stat = *sb;
-
-	if (file->association == -ASSOC_SHM
-	    || file->association == -ASSOC_MEM)
-		file->assoc_data.map_length = (map_file_data->end - map_file_data->start) / pagesize;
-
-	return file;
-}
-
 static void file_class_initialize(void)
 {
 	username_cache = new_idcache();
 	if (!username_cache)
 		err(EXIT_FAILURE, _("failed to allocate UID cache"));
-
-	pagesize = getpagesize();
 }
 
 static void file_class_finalize(void)

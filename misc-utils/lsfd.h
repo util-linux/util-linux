@@ -147,36 +147,13 @@ struct file_class {
 			    int column_id,
 			    size_t column_index);
 	int  (*handle_fdinfo)(struct file *file, const char *key, const char* value);
+	void (*initialize_content)(struct file *file,
+				   struct proc *proc,
+				   struct map_file_data *map_file_data);
 	void (*free_content)(struct file *file);
 };
 
 extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class;
-
-struct file *new_file(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int association);
-struct file *new_cdev(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd);
-struct file *new_bdev(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd);
-struct file *new_sock(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd,
-		       struct proc *proc);
-struct file *new_unkn(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd);
-struct file *new_fifo(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd);
 
 /*
  * Name managing

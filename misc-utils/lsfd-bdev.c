@@ -71,15 +71,6 @@ static bool bdev_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-struct file *new_bdev(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd)
-{
-	return new_file(class? class: &bdev_class,
-			 sb, name, map_file_data, fd);
-}
-
 static struct partition *new_partition(dev_t dev, const char *name)
 {
 	struct partition *partition = xcalloc(1, sizeof(*partition));
