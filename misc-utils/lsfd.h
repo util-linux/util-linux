@@ -152,28 +152,28 @@ struct file_class {
 
 extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class;
 
-struct file *make_file(const struct file_class *class,
+struct file *new_file(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int association);
-struct file *make_cdev(const struct file_class *class,
+struct file *new_cdev(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int fd);
-struct file *make_bdev(const struct file_class *class,
+struct file *new_bdev(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int fd);
-struct file *make_sock(const struct file_class *class,
+struct file *new_sock(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int fd,
 		       struct proc *proc);
-struct file *make_unkn(const struct file_class *class,
+struct file *new_unkn(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int fd);
-struct file *make_fifo(const struct file_class *class,
+struct file *new_fifo(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int fd);

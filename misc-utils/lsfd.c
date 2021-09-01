@@ -219,7 +219,7 @@ static const struct colinfo *get_column_info(int num)
 	return &infos[ get_column_id(num) ];
 }
 
-static struct proc *make_proc(pid_t pid, struct proc * leader)
+static struct proc *new_prococess(pid_t pid, struct proc * leader)
 {
 	struct proc *proc = xcalloc(1, sizeof(*proc));
 
@@ -242,7 +242,7 @@ static void free_file(struct file *file)
 	free(file);
 }
 
-static struct nodev* make_nodev(unsigned long minor, const char *filesystem)
+static struct nodev* new_nodev(unsigned long minor, const char *filesystem)
 {
 	struct nodev *nodev = xcalloc(1, sizeof(*nodev));
 
@@ -305,7 +305,7 @@ static void collect_tasks(struct proc *leader,
 			continue;
 		}
 
-		proc = make_proc((pid_t)num, leader);
+		proc = new_prococess((pid_t)num, leader);
 		enqueue_proc(procs, proc);
 	}
 }
@@ -336,7 +336,7 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 		if (!(num = strtol(dp->d_name, NULL, 10)))
 			continue;
 
-		proc = make_proc((pid_t)num, NULL);
+		proc = new_prococess((pid_t)num, NULL);
 		enqueue_proc(procs, proc);
 
 		if (ctl->threads) {
@@ -364,19 +364,19 @@ static struct file *collect_file(struct proc *proc,
 {
 	switch (sb->st_mode & S_IFMT) {
 	case S_IFCHR:
-		return make_cdev(NULL, sb, name, map_file_data, assoc);
+		return new_cdev(NULL, sb, name, map_file_data, assoc);
 	case S_IFBLK:
-		return make_bdev(NULL, sb, name, map_file_data, assoc);
+		return new_bdev(NULL, sb, name, map_file_data, assoc);
 	case S_IFSOCK:
-		return make_sock(NULL, sb, name, map_file_data, assoc, proc);
+		return new_sock(NULL, sb, name, map_file_data, assoc, proc);
 	case S_IFIFO:
-		return make_fifo(NULL, sb, name, map_file_data, assoc);
+		return new_fifo(NULL, sb, name, map_file_data, assoc);
 	case S_IFLNK:
 	case S_IFREG:
 	case S_IFDIR:
-		return make_file(NULL, sb, name, map_file_data, assoc);
+		return new_file(NULL, sb, name, map_file_data, assoc);
 	default:
-		return make_unkn(NULL, sb, name, map_file_data, assoc);
+		return new_unkn(NULL, sb, name, map_file_data, assoc);
 	}
 }
 
@@ -543,7 +543,7 @@ static void collect_fd_files(struct proc *proc)
 		closedir(dirp);
 }
 
-static struct map* make_map(unsigned long mem_addr_start, unsigned long long file_offset,
+static struct map* new_map(unsigned long mem_addr_start, unsigned long long file_offset,
 			    int r, int w, int x, int s)
 {
 	struct map *map = xcalloc(1, sizeof(*map));
@@ -588,7 +588,7 @@ static void read_maps(struct list_head *maps_list, FILE *maps_fp)
 			   &start, &end, &r, &w, &x, &s, &file_offset,
 			   &major, &minor, &inode) != 10)
 			continue;
-		map = make_map(start, file_offset, r == 'r', w == 'w', x == 'x', s == 's');
+		map = new_map(start, file_offset, r == 'r', w == 'w', x == 'x', s == 's');
 		list_add_tail(&map->maps, maps_list);
 	}
 }
@@ -1143,11 +1143,15 @@ FILE *fopenf(const char *mode, const char *format, ...)
 
 static void add_nodev(unsigned long minor, const char *filesystem)
 {
+	struct nodev *nodev;
+	int slot;
+
 	if (get_nodev_filesystem(minor))
 		return;
 
-	struct nodev *nodev = make_nodev(minor, filesystem);
-	int slot = minor % NODEV_TABLE_SIZE;
+	nodev = new_nodev(minor, filesystem);
+	slot = minor % NODEV_TABLE_SIZE;
+
 	list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
 }
 
@@ -1155,6 +1159,7 @@ const char *get_nodev_filesystem(unsigned long minor)
 {
 	struct list_head *n;
 	int slot = minor % NODEV_TABLE_SIZE;
+
 	list_for_each (n, &nodev_table.tables[slot]) {
 		struct nodev *nodev = list_entry(n, struct nodev, nodevs);
 		if (nodev->minor == minor)

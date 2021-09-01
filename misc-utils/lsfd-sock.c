@@ -76,13 +76,13 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-struct file *make_sock(const struct file_class *class,
+struct file *new_sock(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int fd,
 		       struct proc *proc)
 {
-	struct file *file = make_file(class? class: &sock_class,
+	struct file *file = new_file(class? class: &sock_class,
 				      sb, name, map_file_data, fd);
 	if (fd >= 0 || fd == -ASSOC_MEM || fd == -ASSOC_SHM) {
 		struct sock *sock = (struct sock *)file;

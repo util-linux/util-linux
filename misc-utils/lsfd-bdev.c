@@ -71,16 +71,16 @@ static bool bdev_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-struct file *make_bdev(const struct file_class *class,
+struct file *new_bdev(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int fd)
 {
-	return make_file(class? class: &bdev_class,
+	return new_file(class? class: &bdev_class,
 			 sb, name, map_file_data, fd);
 }
 
-static struct partition *make_partition(dev_t dev, const char *name)
+static struct partition *new_partition(dev_t dev, const char *name)
 {
 	struct partition *partition = xcalloc(1, sizeof(*partition));
 
@@ -109,7 +109,7 @@ static void read_partitions(struct list_head *partitions_list, FILE *part_fp)
 
 		if (sscanf(line, "%u %u %*u %s", &major, &minor, name) != 3)
 			continue;
-		partition = make_partition(makedev(major, minor), name);
+		partition = new_partition(makedev(major, minor), name);
 		list_add_tail(&partition->partitions, partitions_list);
 	}
 }
