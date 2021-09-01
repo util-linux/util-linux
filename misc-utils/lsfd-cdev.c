@@ -106,16 +106,16 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-struct file *make_cdev(const struct file_class *class,
+struct file *new_cdev(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int fd)
 {
-	return make_file(class? class: &cdev_class,
+	return new_file(class? class: &cdev_class,
 			 sb, name, map_file_data, fd);
 }
 
-static struct chrdrv *make_chrdrv(unsigned long major, const char *name)
+static struct chrdrv *new_chrdrv(unsigned long major, const char *name)
 {
 	struct chrdrv *chrdrv = xcalloc(1, sizeof(*chrdrv));
 
@@ -149,12 +149,12 @@ static void read_devices(struct list_head *chrdrvs_list, FILE *devices_fp)
 
 		if (sscanf(line, "%lu %s", &major, name) != 2)
 			continue;
-		chrdrv = make_chrdrv(major, name);
+		chrdrv = new_chrdrv(major, name);
 		list_add_tail(&chrdrv->chrdrvs, chrdrvs_list);
 	}
 }
 
-static struct miscdev *make_miscdev(unsigned long minor, const char *name)
+static struct miscdev *new_miscdev(unsigned long minor, const char *name)
 {
 	struct miscdev *miscdev = xcalloc(1, sizeof(*miscdev));
 
@@ -184,7 +184,7 @@ static void read_misc(struct list_head *miscdevs_list, FILE *misc_fp)
 		if (sscanf(line, "%lu %s", &minor, name) != 2)
 			continue;
 
-		miscdev = make_miscdev(minor, name);
+		miscdev = new_miscdev(minor, name);
 		list_add_tail(&miscdev->miscdevs, miscdevs_list);
 	}
 }

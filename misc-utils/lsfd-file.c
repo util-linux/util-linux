@@ -340,7 +340,7 @@ static void file_free_content(struct file *file)
 	free(file->name);
 }
 
-struct file *make_file(const struct file_class *class,
+struct file *new_file(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int association)

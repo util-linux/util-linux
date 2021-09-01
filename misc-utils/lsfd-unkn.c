@@ -56,12 +56,12 @@ static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-struct file *make_unkn(const struct file_class *class,
+struct file *new_unkn(const struct file_class *class,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int fd)
 {
-	return make_file(class? class: &unkn_class,
+	return new_file(class? class: &unkn_class,
 			 sb, name, map_file_data, fd);
 }
 
