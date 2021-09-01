@@ -56,18 +56,8 @@ static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-struct file *new_unkn(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd)
-{
-	return new_file(class? class: &unkn_class,
-			 sb, name, map_file_data, fd);
-}
-
 const struct file_class unkn_class = {
 	.super = &file_class,
 	.size = sizeof(struct file),
 	.fill_column = unkn_fill_column,
-	.free_content = NULL,
 };

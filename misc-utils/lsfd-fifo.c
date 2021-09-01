@@ -56,15 +56,6 @@ static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-struct file *new_fifo(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd)
-{
-	return new_file(class? class: &fifo_class,
-			 sb, name, map_file_data, fd);
-}
-
 const struct file_class fifo_class = {
 	.super = &file_class,
 	.size = sizeof(struct file),

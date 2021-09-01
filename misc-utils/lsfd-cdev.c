@@ -106,15 +106,6 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-struct file *new_cdev(const struct file_class *class,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int fd)
-{
-	return new_file(class? class: &cdev_class,
-			 sb, name, map_file_data, fd);
-}
-
 static struct chrdrv *new_chrdrv(unsigned long major, const char *name)
 {
 	struct chrdrv *chrdrv = xcalloc(1, sizeof(*chrdrv));
