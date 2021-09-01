@@ -97,7 +97,7 @@ static struct colinfo infos[] = {
 		N_("association between file and process") },
 	[COL_CHRDRV]  = { "CHRDRV",   0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("charcter device driver name resolved by /proc/devices") },
-	[COL_COMMAND] = { "COMMAND", 15, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
+	[COL_COMMAND] = { "COMMAND",0.3, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
 		N_("command of the process opening the file") },
 	[COL_DELETED] = { "DELETED",  0, SCOLS_FL_RIGHT, SCOLS_JSON_BOOLEAN,
 		N_("reachability from the file system") },
@@ -121,7 +121,7 @@ static struct colinfo infos[] = {
 		N_("mount id") },
 	[COL_MODE]    = { "MODE",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("access mode (rwx)") },
-	[COL_NAME]    = { "NAME",    45, 0,              SCOLS_JSON_STRING,
+	[COL_NAME]    = { "NAME",   0.4, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
 		N_("name of the file") },
 	[COL_NLINK]   = { "NLINK",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("link count") },
@@ -180,10 +180,11 @@ static size_t ncolumns;
 struct lsfd_control {
 	struct libscols_table *tb;		/* output */
 
-	unsigned int noheadings : 1,
-		raw : 1,
-		json : 1,
-		threads : 1;
+	unsigned int	noheadings : 1,
+			raw : 1,
+			json : 1,
+			notrunc : 1,
+			threads : 1;
 };
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -872,6 +873,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --noheadings      don't print headings\n"), out);
 	fputs(_(" -o, --output <list>   output columns\n"), out);
 	fputs(_(" -r, --raw             use raw output format\n"), out);
+	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(23));
@@ -933,6 +935,7 @@ int main(int argc, char *argv[])
 		{ "json",       no_argument, NULL, 'J' },
 		{ "raw",        no_argument, NULL, 'r' },
 		{ "threads",    no_argument, NULL, 'l' },
+		{ "notruncate", no_argument, NULL, 'u' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -941,7 +944,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:JrVhl", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:JrVhlu", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			ctl.noheadings = 1;
@@ -957,6 +960,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'l':
 			ctl.threads = 1;
+			break;
+		case 'u':
+			ctl.notrunc = 1;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -996,8 +1002,11 @@ int main(int argc, char *argv[])
 	for (i = 0; i < ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
 		struct libscols_column *cl;
+		int flags = col->flags;
 
-		cl = scols_table_new_column(ctl.tb, col->name, col->whint, col->flags);
+		if (ctl.notrunc)
+			flags &= ~SCOLS_FL_TRUNC;
+		cl = scols_table_new_column(ctl.tb, col->name, col->whint, flags);
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 
