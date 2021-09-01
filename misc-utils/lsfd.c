@@ -79,6 +79,11 @@ struct nodev_table {
 	struct list_head tables[NODEV_TABLE_SIZE];
 } nodev_table;
 
+struct name_manager {
+	struct idcache *cache;
+	unsigned long next_id;
+};
+
 /*
  * Column related stuffs
  */
@@ -218,6 +223,7 @@ static const struct colinfo *get_column_info(int num)
 {
 	return &infos[ get_column_id(num) ];
 }
+
 
 static struct proc *new_prococess(pid_t pid, struct proc * leader)
 {
@@ -864,35 +870,6 @@ static void emit(struct lsfd_control *ctl)
 	scols_print_table(ctl->tb);
 }
 
-static void __attribute__((__noreturn__)) usage(void)
-{
-	FILE *out = stdout;
-	size_t i;
-
-	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
-
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -l, --threads         list in threads level\n"), out);
-	fputs(_(" -J, --json            use JSON output format\n"), out);
-	fputs(_(" -n, --noheadings      don't print headings\n"), out);
-	fputs(_(" -o, --output <list>   output columns\n"), out);
-	fputs(_(" -r, --raw             use raw output format\n"), out);
-	fputs(_("     --sysroot <dir>   use specified directory as system root\n"), out);
-	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
-
-	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(23));
-
-	fprintf(out, USAGE_COLUMNS);
-
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
-
-	printf(USAGE_MAN_TAIL("lsfd(1)"));
-
-	exit(EXIT_SUCCESS);
-}
 
 static void initialize_class(const struct file_class *class)
 {
@@ -922,6 +899,143 @@ static void finalize_classes(void)
 	finalize_class(&bdev_class);
 	finalize_class(&sock_class);
 	finalize_class(&unkn_class);
+}
+
+
+
+struct name_manager *new_name_manager(void)
+{
+	struct name_manager *nm = xcalloc(1, sizeof(struct name_manager));
+
+	nm->cache = new_idcache();
+	if (!nm->cache)
+		err(EXIT_FAILURE, _("failed to allocate an idcache"));
+
+	nm->next_id = 1;	/* 0 is never issued as id. */
+	return nm;
+}
+
+void free_name_manager(struct name_manager *nm)
+{
+	free_idcache(nm->cache);
+	free(nm);
+}
+
+const char *get_name(struct name_manager *nm, unsigned long id)
+{
+	struct identry *e;
+
+	e = get_id(nm->cache, id);
+
+	return e? e->name: NULL;
+}
+
+unsigned long add_name(struct name_manager *nm, const char *name)
+{
+	struct identry *e = NULL, *tmp;
+
+	for (tmp = nm->cache->ent; tmp; tmp = tmp->next) {
+		if (strcmp(tmp->name, name) == 0) {
+			e = tmp;
+			break;
+		}
+	}
+
+	if (e)
+		return e->id;
+
+	e = xmalloc(sizeof(struct identry));
+	e->name = xstrdup(name);
+	e->id = nm->next_id++;
+	e->next = nm->cache->ent;
+	nm->cache->ent = e;
+
+	return e->id;
+}
+
+DIR *opendirf(const char *format, ...)
+{
+	va_list ap;
+	char path[PATH_MAX];
+
+	memset(path, 0, sizeof(path));
+
+	va_start(ap, format);
+	vsprintf(path, format, ap);
+	va_end(ap);
+
+	return opendir(path);
+}
+
+FILE *fopenf(const char *mode, const char *format, ...)
+{
+	va_list ap;
+	char path[PATH_MAX];
+
+	memset(path, 0, sizeof(path));
+
+	va_start(ap, format);
+	vsprintf(path, format, ap);
+	va_end(ap);
+
+	return fopen(path, mode);
+}
+
+static void add_nodev(unsigned long minor, const char *filesystem)
+{
+	struct nodev *nodev;
+	int slot;
+
+	if (get_nodev_filesystem(minor))
+		return;
+
+	nodev = new_nodev(minor, filesystem);
+	slot = minor % NODEV_TABLE_SIZE;
+
+	list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
+}
+
+const char *get_nodev_filesystem(unsigned long minor)
+{
+	struct list_head *n;
+	int slot = minor % NODEV_TABLE_SIZE;
+
+	list_for_each (n, &nodev_table.tables[slot]) {
+		struct nodev *nodev = list_entry(n, struct nodev, nodevs);
+		if (nodev->minor == minor)
+			return nodev->filesystem;
+	}
+	return NULL;
+}
+
+static void __attribute__((__noreturn__)) usage(void)
+{
+	FILE *out = stdout;
+	size_t i;
+
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -l, --threads         list in threads level\n"), out);
+	fputs(_(" -J, --json            use JSON output format\n"), out);
+	fputs(_(" -n, --noheadings      don't print headings\n"), out);
+	fputs(_(" -o, --output <list>   output columns\n"), out);
+	fputs(_(" -r, --raw             use raw output format\n"), out);
+	fputs(_("     --sysroot <dir>   use specified directory as system root\n"), out);
+	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	printf(USAGE_HELP_OPTIONS(23));
+
+	fprintf(out, USAGE_COLUMNS);
+
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
+		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
+
+	printf(USAGE_MAN_TAIL("lsfd(1)"));
+
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -1056,114 +1170,4 @@ int main(int argc, char *argv[])
 	ul_unref_path(ctl.procfs);
 
 	return 0;
-}
-
-struct name_manager {
-	struct idcache *cache;
-	unsigned long next_id;
-};
-
-struct name_manager *new_name_manager(void)
-{
-	struct name_manager *nm = xcalloc(1, sizeof(struct name_manager));
-
-	nm->cache = new_idcache();
-	if (!nm->cache)
-		err(EXIT_FAILURE, _("failed to allocate an idcache"));
-
-	nm->next_id = 1;	/* 0 is never issued as id. */
-	return nm;
-}
-
-void free_name_manager(struct name_manager *nm)
-{
-	free_idcache(nm->cache);
-	free(nm);
-}
-
-const char *get_name(struct name_manager *nm, unsigned long id)
-{
-	struct identry *e;
-
-	e = get_id(nm->cache, id);
-
-	return e? e->name: NULL;
-}
-
-unsigned long add_name(struct name_manager *nm, const char *name)
-{
-	struct identry *e = NULL, *tmp;
-
-	for (tmp = nm->cache->ent; tmp; tmp = tmp->next) {
-		if (strcmp(tmp->name, name) == 0) {
-			e = tmp;
-			break;
-		}
-	}
-
-	if (e)
-		return e->id;
-
-	e = xmalloc(sizeof(struct identry));
-	e->name = xstrdup(name);
-	e->id = nm->next_id++;
-	e->next = nm->cache->ent;
-	nm->cache->ent = e;
-
-	return e->id;
-}
-
-DIR *opendirf(const char *format, ...)
-{
-	va_list ap;
-	char path[PATH_MAX];
-
-	memset(path, 0, sizeof(path));
-
-	va_start(ap, format);
-	vsprintf(path, format, ap);
-	va_end(ap);
-
-	return opendir(path);
-}
-
-FILE *fopenf(const char *mode, const char *format, ...)
-{
-	va_list ap;
-	char path[PATH_MAX];
-
-	memset(path, 0, sizeof(path));
-
-	va_start(ap, format);
-	vsprintf(path, format, ap);
-	va_end(ap);
-
-	return fopen(path, mode);
-}
-
-static void add_nodev(unsigned long minor, const char *filesystem)
-{
-	struct nodev *nodev;
-	int slot;
-
-	if (get_nodev_filesystem(minor))
-		return;
-
-	nodev = new_nodev(minor, filesystem);
-	slot = minor % NODEV_TABLE_SIZE;
-
-	list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
-}
-
-const char *get_nodev_filesystem(unsigned long minor)
-{
-	struct list_head *n;
-	int slot = minor % NODEV_TABLE_SIZE;
-
-	list_for_each (n, &nodev_table.tables[slot]) {
-		struct nodev *nodev = list_entry(n, struct nodev, nodevs);
-		if (nodev->minor == minor)
-			return nodev->filesystem;
-	}
-	return NULL;
 }
