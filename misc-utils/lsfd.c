@@ -283,6 +283,18 @@ static struct file *new_file(
 	return file;
 }
 
+static void free_file(struct file *file)
+{
+	const struct file_class *class = file->class;
+
+	while (class) {
+		if (class->free_content)
+			class->free_content(file);
+		class = class->super;
+	}
+	free(file);
+}
+
 
 static struct proc *new_prococess(pid_t pid, struct proc * leader)
 {
@@ -295,16 +307,12 @@ static struct proc *new_prococess(pid_t pid, struct proc * leader)
 	return proc;
 }
 
-static void free_file(struct file *file)
+static void free_proc(struct proc *proc)
 {
-	const struct file_class *class = file->class;
+	list_free(&proc->files, struct file, files, free_file);
 
-	while (class) {
-		if (class->free_content)
-			class->free_content(file);
-		class = class->super;
-	}
-	free(file);
+	free(proc->command);
+	free(proc);
 }
 
 static struct nodev* new_nodev(unsigned long minor, const char *filesystem)
@@ -336,13 +344,6 @@ static void finalize_nodevs(void)
 		list_free(&nodev_table.tables[i], struct nodev, nodevs, free_nodev);
 }
 
-static void free_proc(struct proc *proc)
-{
-	list_free(&proc->files, struct file, files, free_file);
-
-	free(proc->command);
-	free(proc);
-}
 
 static void enqueue_proc(struct list_head *procs, struct proc * proc)
 {
