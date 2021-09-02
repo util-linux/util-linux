@@ -118,6 +118,7 @@ struct file {
 	char *name;
 	struct stat stat;
 	mode_t mode;
+	struct proc *proc;
 	unsigned long long pos;
 	union assoc_data {
 		struct fdinfo_data fdinfo;
@@ -137,7 +138,6 @@ struct file_class {
 			    size_t column_index);
 	int  (*handle_fdinfo)(struct file *file, const char *key, const char* value);
 	void (*initialize_content)(struct file *file,
-				   struct proc *proc,
 				   struct map_file_data *map_file_data);
 	void (*free_content)(struct file *file);
 };
