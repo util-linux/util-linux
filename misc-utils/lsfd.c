@@ -261,10 +261,16 @@ static struct file *new_file(
 	assert(class);
 
 	file = xcalloc(1, class->size);
+
 	file->class = class;
 	file->association = association;
 	file->name = xstrdup(name);
 	file->stat = *sb;
+	file->proc = proc;
+
+	/* add file to the process */
+	INIT_LIST_HEAD(&file->files);
+	list_add_tail(&file->files, &proc->files);
 
 	if (file->association == -ASSOC_SHM || file->association == -ASSOC_MEM) {
 		static size_t pagesize = 0;
@@ -278,7 +284,7 @@ static struct file *new_file(
 	}
 
 	if (file->class->initialize_content)
-		file->class->initialize_content(file, proc, map_file_data);
+		file->class->initialize_content(file, map_file_data);
 
 	return file;
 }
@@ -538,13 +544,6 @@ static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *d
 	return f;
 }
 
-static void enqueue_file(struct proc *proc, struct file * file)
-{
-	INIT_LIST_HEAD(&file->files);
-	list_add_tail(&file->files, &proc->files);
-}
-
-
 static void collect_fd_files_generic(struct proc *proc, const char *proc_template,
 				     struct file *(*collector)(struct proc *,int, struct dirent *, void *),
 				     void *data)
@@ -560,14 +559,9 @@ static void collect_fd_files_generic(struct proc *proc, const char *proc_templat
 	if ((dd = dirfd(dirp)) < 0 )
 		return;
 
-	while ((dp = xreaddir(dirp))) {
-		struct file *file;
+	while ((dp = xreaddir(dirp)))
+		collector(proc, dd, dp, data);
 
-		if ((file = (* collector)(proc, dd, dp, data)) == NULL)
-			continue;
-
-		enqueue_file(proc, file);
-	}
 	closedir(dirp);
 }
 
@@ -705,17 +699,12 @@ static void collect_outofbox_files(struct proc *proc,
 		return;
 
 	for (unsigned int i = 0; i < count; i++) {
-		struct file *file;
 
 		if (assocs[i] == ASSOC_EXE)
 			collect_proc_uid(proc, dd);
 
-		if ((file = collect_outofbox_file(proc, dd,
-						  assoc_names[assocs[i]],
-						  assocs[i] * -1)) == NULL)
-			continue;
-
-		enqueue_file(proc, file);
+		collect_outofbox_file(proc, dd,
+				assoc_names[assocs[i]], assocs[i] * -1);
 	}
 	closedir(dirp);
 }

@@ -77,30 +77,30 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 }
 
 static void init_sock_content(struct file *file,
-			      struct proc *proc,
 			      struct map_file_data *map_file_data)
 {
 	int fd;
 
 	assert(file);
-	assert(proc);
 
 	fd = file->association;
 
 	if (fd >= 0 || fd == -ASSOC_MEM || fd == -ASSOC_SHM) {
 		struct sock *sock = (struct sock *)file;
-		char path[PATH_MAX];
+		char path[PATH_MAX] = {'\0'};
 		char buf[256];
 		ssize_t len;
 
-		memset(path, 0, sizeof(path));
+		assert(file->proc);
 
 		if (fd >= 0)
-			sprintf(path, "/proc/%d/fd/%d", proc->pid, fd);
+			sprintf(path, "/proc/%d/fd/%d", file->proc->pid, fd);
 		else {
 			assert(map_file_data);
-			sprintf(path, "/proc/%d/map_files/%lx-%lx", proc->pid,
-				map_file_data->start, map_file_data->end);
+			sprintf(path, "/proc/%d/map_files/%lx-%lx",
+				file->proc->pid,
+				map_file_data->start,
+				map_file_data->end);
 		}
 		len = getxattr(path, "system.sockprotoname", buf, sizeof(buf) - 1);
 		if (len > 0) {
