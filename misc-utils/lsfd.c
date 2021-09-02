@@ -225,14 +225,38 @@ static const struct colinfo *get_column_info(int num)
 	return &infos[ get_column_id(num) ];
 }
 
+static const struct file_class *stat2class(struct stat *sb)
+{
+	assert(sb);
 
-static struct file *new_file(const struct file_class *class,
+	switch (sb->st_mode & S_IFMT) {
+	case S_IFCHR:
+		return &cdev_class;
+	case S_IFBLK:
+		return &bdev_class;
+	case S_IFSOCK:
+		return &sock_class;
+	case S_IFIFO:
+		return &fifo_class;
+	case S_IFLNK:
+	case S_IFREG:
+	case S_IFDIR:
+		return &file_class;
+	default:
+		break;
+	}
+
+	return &unkn_class;
+}
+
+static struct file *new_file(
 		       struct proc *proc,
 		       struct stat *sb, const char *name,
 		       struct map_file_data *map_file_data,
 		       int association)
 {
 	struct file *file;
+	const struct file_class *class = stat2class(sb);
 
 	assert(class);
 
@@ -398,38 +422,6 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 	}
 }
 
-static const struct file_class *stat2class(struct stat *sb)
-{
-	assert(sb);
-
-	switch (sb->st_mode & S_IFMT) {
-	case S_IFCHR:
-		return &cdev_class;
-	case S_IFBLK:
-		return &bdev_class;
-	case S_IFSOCK:
-		return &sock_class;
-	case S_IFIFO:
-		return &fifo_class;
-	case S_IFLNK:
-	case S_IFREG:
-	case S_IFDIR:
-		return &file_class;
-	default:
-		break;
-	}
-
-	return &unkn_class;
-}
-
-static struct file *collect_file(struct proc *proc,
-				 struct stat *sb, char *name,
-				 struct map_file_data *map_file_data,
-				 int assoc)
-{
-	return new_file(stat2class(sb), proc, sb, name, map_file_data, assoc);
-}
-
 static void read_fdinfo(struct file *file, FILE *fdinfo)
 {
 	const struct file_class *class;
@@ -477,7 +469,7 @@ static struct file *collect_fd_file(struct proc *proc, int dd, struct dirent *dp
 	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	f = collect_file(proc, &sb, sym, NULL, (int)num);
+	f = new_file(proc, &sb, sym, NULL, (int) num);
 	if (!f)
 		return NULL;
 
@@ -533,7 +525,7 @@ static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *d
 		map = find_map(maps, map_file_data.start);
 
 	assoc = (map && map->shared)? ASSOC_SHM: ASSOC_MEM;
-	f = collect_file(proc, &sb, sym, &map_file_data, -assoc);
+	f = new_file(proc, &sb, sym, &map_file_data, -assoc);
 	if (!f)
 		return NULL;
 
@@ -685,7 +677,7 @@ static struct file *collect_outofbox_file(struct proc *proc,
 	if ((len = readlinkat(dd, name, sym, sizeof(sym) - 1)) < 0)
 		return NULL;
 
-	return collect_file(proc, &sb, sym, NULL, association);
+	return new_file(proc, &sb, sym, NULL, association);
 }
 
 static void collect_proc_uid(struct proc *proc, int dd)
