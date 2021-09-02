@@ -30,7 +30,7 @@ When _command_ is given, *prlimit* will run this command with the given argument
 
 The _limits_ parameter is composed of a soft and a hard value, separated by a colon (:), in order to modify the existing values. If no _limits_ are given, *prlimit* will display the current values. If one of the values is not given, then the existing one will be used. To specify the unlimited or infinity limit (*RLIM_INFINITY*), the -1 or 'unlimited' string can be passed.
 
-Because of the nature of limits, the soft limit must be lower or equal to the high limit (also called the ceiling). To see all available resource limits, refer to the RESOURCE OPTIONS section.
+Because of the nature of limits, the soft limit must be lower or equal to the high limit (also called the ceiling). To see all available resource limits, refer to the *RESOURCE OPTIONS* section.
 
 //TRANSLATORS: Keep {colon} untranslated.
 * _soft_{colon}_hard_ Specify both limits.

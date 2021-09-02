@@ -130,7 +130,7 @@ Options and arguments that are passed to *login*(1). Where \u is replaced by the
 +
 See *--autologin*, *--login-program* and *--remote*.
 +
-Please read the SECURITY NOTICE below before using this option.
+Please read the *SECURITY NOTICE* below before using this option.
 
 *-p*, *--login-pause*::
 Wait for any key before dropping to the login prompt. Can be combined with *--autologin* to save memory by lazily spawning shells.

@@ -71,7 +71,7 @@ If no _partition-number_ is specified, then list the partitions with an enabled 
 Delete all or the specified partitions.
 
 *-d*, *--dump* _device_::
-Dump the partitions of a device in a format that is usable as input to *sfdisk*. See the section *BACKING UP THE PARTITION TABLE*.
+Dump the partitions of a device in a format that is usable as input to *sfdisk*. See the *BACKING UP THE PARTITION TABLE* section.
 
 *-g*, *--show-geometry* [__device__...]::
 List the geometry of all or the specified devices. For backward compatibility the deprecated option *--show-pt-geometry* have the same meaning as this one.

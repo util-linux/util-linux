@@ -112,7 +112,7 @@ Display a calendar for the whole year.
 Display a calendar for the next twelve months.
 
 *-w*, *--week*[=_number_]::
-Display week numbers in the calendar (US or ISO-8601). See NOTES section for more details.
+Display week numbers in the calendar (US or ISO-8601). See the *NOTES* section for more details.
 
 *--color*[=_when_]::
 Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section.

@@ -294,7 +294,7 @@ mount --make-unbindable /foo
 
 The full set of mount options used by an invocation of *mount* is determined by first extracting the mount options for the filesystem from the _fstab_ table, then applying any options specified by the *-o* argument, and finally applying a *-r* or *-w* option, when present.
 
-The *mount* command does not pass all command-line options to the **/sbin/mount.**__suffix__ mount helpers. The interface between *mount* and the mount helpers is described below in the section *EXTERNAL HELPERS*.
+The *mount* command does not pass all command-line options to the **/sbin/mount.**__suffix__ mount helpers. The interface between *mount* and the mount helpers is described below in the *EXTERNAL HELPERS* section.
 
 Command-line options available for the *mount* command are:
 
@@ -1230,7 +1230,7 @@ If *dmode=* is set the permissions of all directory inodes read from the filesys
 *bs=*::
 Set the block size. Default value prior to kernel version 2.6.30 was 2048. Since 2.6.30 and prior to 4.11 it was logical device block size with fallback to 2048. Since 4.11 it is logical block size with fallback to any valid block size between logical device block size and 4096.
 +
-For other details see the *mkudffs*(8) 2.0+ manpage, sections *COMPATIBILITY* and *BLOCK SIZE*.
+For other details see the *mkudffs*(8) 2.0+ manpage, see the *COMPATIBILITY* and *BLOCK SIZE* sections.
 
 *unhide*::
 Show otherwise hidden files.

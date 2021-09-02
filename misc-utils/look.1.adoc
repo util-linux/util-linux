@@ -81,7 +81,7 @@ The *look* utility exits 0 if one or more lines were found and displayed, 1 if n
 == ENVIRONMENT
 
 *WORDLIST*::
-Path to a dictionary file. The environment variable has greater priority than the dictionary path defined in FILES segment.
+Path to a dictionary file. The environment variable has greater priority than the dictionary path defined in the *FILES* segment.
 
 == FILES
 

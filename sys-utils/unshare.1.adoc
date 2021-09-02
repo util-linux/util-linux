@@ -18,7 +18,7 @@ unshare - run program in new namespaces
 
 The *unshare* command creates new namespaces (as specified by the command-line options described below) and then executes the specified _program_. If _program_ is not given, then "${SHELL}" is run (default: _/bin/sh_).
 
-By default, a new namespace persists only as long as it has member processes. A new namespace can be made persistent even when it has no member processes by bind mounting /proc/_pid_/ns/_type_ files to a filesystem path. A namespace that has been made persistent in this way can subsequently be entered with *nsenter*(1) even after the _program_ terminates (except PID namespaces where a permanently running init process is required). Once a persistent namespace is no longer needed, it can be unpersisted by using *umount*(8) to remove the bind mount. See the EXAMPLES section for more details.
+By default, a new namespace persists only as long as it has member processes. A new namespace can be made persistent even when it has no member processes by bind mounting /proc/_pid_/ns/_type_ files to a filesystem path. A namespace that has been made persistent in this way can subsequently be entered with *nsenter*(1) even after the _program_ terminates (except PID namespaces where a permanently running init process is required). Once a persistent namespace is no longer needed, it can be unpersisted by using *umount*(8) to remove the bind mount. See the *EXAMPLES* section for more details.
 
 *unshare* since util-linux version 2.36 uses _/proc/[pid]/ns/pid_for_children_ and _/proc/[pid]/ns/time_for_children_ files for persistent PID and TIME namespaces. This change requires Linux kernel 4.17 or newer.
 

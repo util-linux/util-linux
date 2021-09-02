@@ -58,7 +58,7 @@ Produce output in the form of key="value" pairs. All potentially unsafe value ch
 Produce output in raw format. All potentially unsafe characters are hex-escaped (\x<code>).
 
 *-S*, *--split* _list_::
-Specify which columns (attributes) use to split memory blocks to ranges. The supported columns are STATE, REMOVABLE, NODE and ZONES, or "none". The other columns are silently ignored. For more details see DESCRIPTION above.
+Specify which columns (attributes) use to split memory blocks to ranges. The supported columns are STATE, REMOVABLE, NODE and ZONES, or "none". The other columns are silently ignored. For more details see *DESCRIPTION* above.
 
 *-s*, *--sysroot* _directory_::
 Gather memory data for a Linux instance other than the instance from which the *lsmem* command is issued. The specified _directory_ is the system root of the Linux instance to be inspected.

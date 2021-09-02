@@ -48,7 +48,7 @@ If you want to remove an old partition table from a device, use *wipefs*(8).
 Display help text and exit.
 
 *-L*, *--color*[**=**__when__]::
-Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled, for the current built-in default see *--help* output. See also the COLORS section.
+Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled, for the current built-in default see *--help* output. See also the *COLORS* section.
 
 *--lock*[=_mode_]::
 Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.
