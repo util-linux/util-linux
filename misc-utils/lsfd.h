@@ -33,17 +33,6 @@
 /*
  * Utilities
  */
-#define list_free(LIST,TYPE,MEMBER,FREEFN)				\
-	do {								\
-		struct list_head *__p, *__pnext;			\
-									\
-		list_for_each_safe (__p, __pnext, (LIST)) {		\
-			TYPE *__elt = list_entry(__p, TYPE, MEMBER);	\
-			list_del(__p);					\
-			FREEFN(__elt);					\
-		}							\
-	} while (0)
-
 DIR *opendirf(const char *format, ...) __attribute__((format (printf, 1, 2)));
 FILE *fopenf(const char *mode, const char *format, ...) __attribute__((format (printf, 2, 3)));
 
