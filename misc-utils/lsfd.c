@@ -45,7 +45,6 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "strutils.h"
 #include "procutils.h"
 #include "fileutils.h"
-#include "path.h"
 #include "idcache.h"
 
 #include "libsmartcols.h"
@@ -187,7 +186,6 @@ static size_t ncolumns;
 struct lsfd_control {
 	struct libscols_table *tb;		/* output */
 	const char *sysroot;			/* default is NULL */
-	struct path_cxt *procfs;
 
 	unsigned int	noheadings : 1,
 			raw : 1,
@@ -389,7 +387,7 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 	struct list_head *p;
 
 	/* open /proc */
-	dir = ul_path_opendir(ctl->procfs, NULL);
+	dir = opendir("/proc");
 	if (!dir)
 		err(EXIT_FAILURE, _("failed to open /proc"));
 
@@ -412,7 +410,7 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 		enqueue_proc(procs, proc);
 
 		if (ctl->threads) {
-			DIR *task_dirp = ul_path_opendirf(ctl->procfs, "%s/task", dp->d_name);
+			DIR *task_dirp = opendirf("/proc/%s/task", dp->d_name);
 			if (task_dirp) {
 				collect_tasks(proc, task_dirp, procs);
 				closedir(task_dirp);
@@ -1142,13 +1140,6 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 
 	scols_init_debug(0);
-	ul_path_init_debug();
-
-	/* initialize paths */
-	ctl.procfs = ul_new_path("/proc");
-	if (!ctl.procfs)
-		err(EXIT_FAILURE, _("failed to allocate /proc handler"));
-	ul_path_set_prefix(ctl.procfs, ctl.sysroot);
 
 	/* inilialize scols table */
 	ctl.tb = scols_new_table();
@@ -1192,8 +1183,6 @@ int main(int argc, char *argv[])
 
 	finalize_classes();
 	finalize_nodevs();
-
-	ul_unref_path(ctl.procfs);
 
 	return 0;
 }
