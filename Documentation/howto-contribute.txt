@@ -31,7 +31,7 @@ Sending Patches
 	* don't include generated (autotools) files in your patches.
 	  Hint: use 'git clean -Xd'.
 
-        * don't include po/ (tranlations) changes to the upstream patches.
+        * don't include po/ (translations) changes to the upstream patches.
           The po/ stuff is maintained on http://translationproject.org/domain/util-linux.html
           and updated always before the next release.
 

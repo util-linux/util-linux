@@ -287,7 +287,7 @@ static int is_different_cputype(struct lscpu_cputype *ct, size_t offset, const c
 	return 0;
 }
 
-/* cannonicalize @str -- remove number at the end return the
+/* canonicalize @str -- remove number at the end return the
  * number by @keynum. This is usable for example for "processor 5" or "cache1"
  * cpuinfo lines */
 static char *key_cleanup(char *str, int *keynum)

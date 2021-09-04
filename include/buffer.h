@@ -14,7 +14,7 @@ struct ul_buffer {
 	size_t encoded_sz;	/* space allocated for encoded data */
 
 	char **ptrs;		/* saved pointers */
-	size_t nptrs;		/* number of saved poiters */
+	size_t nptrs;		/* number of saved pointers */
 };
 
 #define UL_INIT_BUFFER { .begin = NULL }

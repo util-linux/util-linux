@@ -151,7 +151,7 @@ struct blkid_idmag
 	long		kboff;		/* kilobyte offset of superblock */
 	unsigned int	sboff;		/* byte offset within superblock */
 
-	int		is_zoned;	/* indicate magic location is calcluated based on zone position  */
+	int		is_zoned;	/* indicate magic location is calculated based on zone position  */
 	long		zonenum;	/* zone number which has superblock */
 	long		kboff_inzone;	/* kilobyte offset of superblock in a zone */
 };

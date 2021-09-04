@@ -85,7 +85,7 @@ libmount (mount/umount)
 -----------------------
 
  - mnt_context_get_excode() does not return error messages from /sbin/[u]mount.<type>
-   external helpers. It is disadvantages in same cases (non-terminal progarms).
+   external helpers. It is disadvantages in same cases (non-terminal programs).
    The solution is to use pipe(), keep output from helper in memory and return it later
    by mnt_context_get_excode() (or mnt_context_get_helper_output(), etc.). This feature
    should be optional and disabled by default.

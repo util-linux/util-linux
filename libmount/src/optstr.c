@@ -806,7 +806,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 		}
 	}
 
-	/* remove from flags options which are alowed more than once */
+	/* remove from flags options which are allowed more than once */
 	fl &= ~multi;
 
 	/* add missing options (but ignore fl if contains MS_REC only) */

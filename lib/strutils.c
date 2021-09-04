@@ -388,7 +388,7 @@ int ul_strtou32(const char *str, uint32_t *num, int base)
 }
 
 /*
- * Covert strings to numbers in defined range and print message on error.
+ * Convert strings to numbers in defined range and print message on error.
  *
  * These functions are used when we read input from users (getopt() etc.). It's
  * better to consolidate the code and keep it all based on 64-bit numbers then
