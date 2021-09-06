@@ -350,10 +350,12 @@ int ul_path_stat(struct path_cxt *pc, struct stat *sb, const char *path)
 		int dir = ul_path_get_dirfd(pc);
 		if (dir < 0)
 			return dir;
-		if (*path == '/')
-			path++;
-
-		rc = fstatat(dir, path, sb, 0);
+		if (path) {
+			if  (*path == '/')
+				path++;
+			rc = fstatat(dir, path, sb, 0);
+		} else
+			rc = fstat(dir, sb);	/* dir itself */
 
 		if (rc && errno == ENOENT
 		    && pc->redirect_on_enoent
