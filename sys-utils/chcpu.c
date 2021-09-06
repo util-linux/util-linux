@@ -383,6 +383,7 @@ int main(int argc, char *argv[])
 		break;
 	}
 
+	CPU_FREE(cpu_set);
 	ul_unref_path(sys);
 
 	return rc == 0 ? EXIT_SUCCESS :
