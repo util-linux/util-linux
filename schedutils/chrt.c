@@ -33,7 +33,7 @@
 #include "nls.h"
 #include "closestream.h"
 #include "strutils.h"
-#include "procutils.h"
+#include "procfs.h"
 #include "sched_attr.h"
 
 
@@ -215,16 +215,14 @@ static void show_sched_info(struct chrt_ctl *ctl)
 {
 	if (ctl->all_tasks) {
 #ifdef __linux__
+		DIR *sub = NULL;
 		pid_t tid;
-		struct proc_tasks *ts = proc_open_tasks(ctl->pid);
+		struct path_cxt *pc = ul_new_procfs_path(ctl->pid, NULL);
 
-		if (!ts)
-			err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
-
-		while (!proc_next_tid(ts, &tid))
+		while (pc && procfs_process_next_tid(pc, &sub, &tid) == 0)
 			show_sched_pid_info(ctl, tid);
 
-		proc_close_tasks(ts);
+		ul_unref_path(pc);
 #else
 		err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
 #endif
@@ -325,17 +323,18 @@ static void set_sched(struct chrt_ctl *ctl)
 {
 	if (ctl->all_tasks) {
 #ifdef __linux__
+		DIR *sub = NULL;
 		pid_t tid;
-		struct proc_tasks *ts = proc_open_tasks(ctl->pid);
+		struct path_cxt *pc = ul_new_procfs_path(ctl->pid, NULL);
 
-		if (!ts)
+		if (!pc)
 			err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
 
-		while (!proc_next_tid(ts, &tid))
+		while (procfs_process_next_tid(pc, &sub, &tid) == 0) {
 			if (set_sched_one(ctl, tid) == -1)
 				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
-
-		proc_close_tasks(ts);
+		}
+		ul_unref_path(pc);
 #else
 		err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
 #endif
