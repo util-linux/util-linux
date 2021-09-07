@@ -3051,7 +3051,7 @@ if build_libuuid
     'libuuid/man/uuid_generate_time_safe.3']
 endif
 
-asciidoctor = find_program('asciidoctor')
+asciidoctor = find_program('asciidoctor', required : false)
 if asciidoctor.found()
   foreach adoc : manadocs
     name = adoc.split('/')[-1]
