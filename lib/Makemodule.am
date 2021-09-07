@@ -58,6 +58,7 @@ if HAVE_OPENAT
 if HAVE_DIRFD
 libcommon_la_SOURCES += lib/path.c
 libcommon_la_SOURCES += lib/sysfs.c
+libcommon_la_SOURCES += lib/procfs.c
 endif
 endif
 
@@ -102,6 +103,7 @@ check_PROGRAMS += test_cpuset
 endif
 check_PROGRAMS += \
 	test_sysfs \
+	test_procfs \
 	test_pager \
 	test_caputils \
 	test_loopdev \
@@ -110,7 +112,6 @@ endif
 
 if HAVE_OPENAT
 if HAVE_DIRFD
-check_PROGRAMS += test_procutils
 check_PROGRAMS += test_path
 endif
 endif
@@ -149,9 +150,6 @@ test_randutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_RANDUTILS
 
 if HAVE_OPENAT
 if HAVE_DIRFD
-test_procutils_SOURCES = lib/procutils.c
-test_procutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PROCUTILS
-
 test_path_SOURCES = lib/path.c lib/fileutils.c
 if HAVE_CPU_SET_T
 test_path_SOURCES += lib/cpuset.c
@@ -180,6 +178,10 @@ test_sysfs_SOURCES += lib/cpuset.c
 endif
 test_sysfs_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_SYSFS
 test_sysfs_LDADD = $(LDADD)
+
+test_procfs_SOURCES = lib/procfs.c lib/path.c lib/fileutils.c lib/strutils.c
+test_procfs_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PROCFS
+test_procfs_LDADD = $(LDADD)
 
 test_pager_SOURCES = lib/pager.c
 test_pager_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PAGER

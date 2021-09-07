@@ -17,7 +17,7 @@ lib_common_sources = '''
 	mbsedit.c
 	md5.c
 	pager.c
-	procutils.c
+	procfs.c
 	pwdutils.c
 	randutils.c
 	sha1.c
@@ -74,7 +74,7 @@ endif
 if conf.get('HAVE_OPENAT') in [1] and conf.get('HAVE_DIRFD') in [1]
   lib_common_sources += '''
     path.c
-    procutils.c
+    procfs.c
     sysfs.c
 '''.split()
 endif
