@@ -88,6 +88,7 @@
 
 /* mount paths */
 #define _PATH_FILESYSTEMS	"/etc/filesystems"
+#define _PATH_PROC		"/proc"
 #define _PATH_PROC_SWAPS	"/proc/swaps"
 #define _PATH_PROC_FILESYSTEMS	"/proc/filesystems"
 #define _PATH_PROC_MOUNTS	"/proc/mounts"
