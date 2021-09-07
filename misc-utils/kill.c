@@ -55,11 +55,13 @@
 #include "closestream.h"
 #include "nls.h"
 #include "pidfd-utils.h"
-#include "procutils.h"
+#include "procfs.h"
+#include "pathnames.h"
 #include "signames.h"
 #include "strutils.h"
 #include "ttyutils.h"
 #include "xalloc.h"
+#include "fileutils.h"
 
 /* partial success, otherwise we return regular EXIT_{SUCCESS,FAILURE} */
 #define KILL_EXIT_SOMEOK	64
@@ -472,23 +474,31 @@ int main(int argc, char **argv)
 				nerrs++;
 			ct++;
 		} else {
-			struct proc_processes *ps = proc_open_processes();
 			int found = 0;
+			struct dirent *d;
+			DIR *dir = opendir(_PATH_PROC);
+			uid_t uid = !ctl.check_all ? getuid() : 0;
 
-			if (!ps)
+			if (!dir)
 				continue;
-			if (!ctl.check_all)
-				proc_processes_filter_by_uid(ps, getuid());
 
-			proc_processes_filter_by_name(ps, ctl.arg);
-			while (proc_next_pid(ps, &ctl.pid) == 0) {
+			while ((d = xreaddir(dir))) {
+				if (!ctl.check_all &&
+				    !procfs_dirent_match_uid(dir, d, uid))
+					continue;
+				if (ctl.arg &&
+				    !procfs_dirent_match_name(dir, d, ctl.arg))
+					continue;
+				if (procfs_dirent_get_pid(d, &ctl.pid) != 0)
+					continue;
+
 				if (kill_verbose(&ctl) != 0)
 					nerrs++;
 				ct++;
 				found = 1;
 			}
-			proc_close_processes(ps);
 
+			closedir(dir);
 			if (!found) {
 				nerrs++, ct++;
 				warnx(_("cannot find process \"%s\""), ctl.arg);
