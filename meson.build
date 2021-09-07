@@ -2668,9 +2668,9 @@ exes += exe
 
 # XXX: HAVE_OPENAT && HAVE_DIRFD
 exe = executable(
-  'test_procutils',
-  'lib/procutils.c',
-  c_args : ['-DTEST_PROGRAM_PROCUTILS'],
+  'test_procfs',
+  'lib/procfs.c',
+  c_args : ['-DTEST_PROGRAM_PROCFS'],
   include_directories : dir_include)
 exes += exe
 
