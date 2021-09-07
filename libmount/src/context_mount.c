@@ -1693,6 +1693,7 @@ int mnt_context_get_mount_excode(
 	int syserr;
 	struct stat st;
 	unsigned long uflags = 0, mflags = 0;
+	size_t bufused = 0;
 
 	int restricted = mnt_context_is_restricted(cxt);
 	const char *tgt = mnt_context_get_target(cxt);
@@ -1840,61 +1841,61 @@ int mnt_context_get_mount_excode(
 			break;
 		if (geteuid() == 0) {
 			if (mnt_stat_mountpoint(tgt, &st) || !S_ISDIR(st.st_mode))
-				snprintf(buf, bufsz, _("mount point is not a directory"));
+				bufused += snprintf(buf, bufsz, _("mount point is not a directory"));
 			else
-				snprintf(buf, bufsz, _("permission denied"));
+				bufused += snprintf(buf, bufsz, _("permission denied"));
 		} else
-			snprintf(buf, bufsz, _("must be superuser to use mount"));
+			bufused += snprintf(buf, bufsz, _("must be superuser to use mount"));
 		break;
 
 	case EBUSY:
 		if (!buf)
 			break;
 		if (mflags & MS_REMOUNT) {
-			snprintf(buf, bufsz, _("mount point is busy"));
+			bufused += snprintf(buf, bufsz, _("mount point is busy"));
 			break;
 		}
 		if (src) {
 			struct libmnt_fs *fs = get_already_mounted_source(cxt);
 
 			if (fs && mnt_fs_get_target(fs))
-				snprintf(buf, bufsz, _("%s already mounted on %s"),
+				bufused += snprintf(buf, bufsz, _("%s already mounted on %s"),
 						src, mnt_fs_get_target(fs));
 		}
 		if (!*buf)
-			snprintf(buf, bufsz, _("%s already mounted or mount point busy"), src);
+			bufused += snprintf(buf, bufsz, _("%s already mounted or mount point busy"), src);
 		break;
 	case ENOENT:
 		if (tgt && mnt_lstat_mountpoint(tgt, &st)) {
 			if (buf)
-				snprintf(buf, bufsz, _("mount point does not exist"));
+				bufused += snprintf(buf, bufsz, _("mount point does not exist"));
 		} else if (tgt && mnt_stat_mountpoint(tgt, &st)) {
 			if (buf)
-				snprintf(buf, bufsz, _("mount point is a symbolic link to nowhere"));
+				bufused += snprintf(buf, bufsz, _("mount point is a symbolic link to nowhere"));
 		} else if (src && stat(src, &st)) {
 			if (uflags & MNT_MS_NOFAIL)
 				return MNT_EX_SUCCESS;
 			if (buf)
-				snprintf(buf, bufsz, _("special device %s does not exist"), src);
+				bufused += snprintf(buf, bufsz, _("special device %s does not exist"), src);
 		} else if (buf) {
 			errno = syserr;
-			snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
+			bufused += snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
 		}
 		break;
 
 	case ENOTDIR:
 		if (mnt_stat_mountpoint(tgt, &st) || ! S_ISDIR(st.st_mode)) {
 			if (buf)
-				snprintf(buf, bufsz, _("mount point is not a directory"));
+				bufused += snprintf(buf, bufsz, _("mount point is not a directory"));
 		} else if (src && stat(src, &st) && errno == ENOTDIR) {
 			if (uflags & MNT_MS_NOFAIL)
 				return MNT_EX_SUCCESS;
 			if (buf)
-				snprintf(buf, bufsz, _("special device %s does not exist "
+				bufused += snprintf(buf, bufsz, _("special device %s does not exist "
 					 "(a path prefix is not a directory)"), src);
 		} else if (buf) {
 			errno = syserr;
-			snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
+			bufused += snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
 		}
 		break;
 
@@ -1902,19 +1903,19 @@ int mnt_context_get_mount_excode(
 		if (!buf)
 			break;
 		if (mflags & MS_REMOUNT)
-			snprintf(buf, bufsz, _("mount point not mounted or bad option"));
+			bufused += snprintf(buf, bufsz, _("mount point not mounted or bad option"));
 		else if (rc == -MNT_ERR_APPLYFLAGS)
-			snprintf(buf, bufsz, _("not mount point or bad option"));
+			bufused += snprintf(buf, bufsz, _("not mount point or bad option"));
 		else if ((mflags & MS_MOVE) && is_shared_tree(cxt, src))
-			snprintf(buf, bufsz,
+			bufused += snprintf(buf, bufsz,
 				_("bad option; moving a mount "
 				  "residing under a shared mount is unsupported"));
 		else if (mnt_fs_is_netfs(mnt_context_get_fs(cxt)))
-			snprintf(buf, bufsz,
+			bufused += snprintf(buf, bufsz,
 				_("bad option; for several filesystems (e.g. nfs, cifs) "
 				  "you might need a /sbin/mount.<type> helper program"));
 		else
-			snprintf(buf, bufsz,
+			bufused += snprintf(buf, bufsz,
 				_("wrong fs type, bad option, bad superblock on %s, "
 				  "missing codepage or helper program, or other error"),
 				src);
@@ -1922,22 +1923,22 @@ int mnt_context_get_mount_excode(
 
 	case EMFILE:
 		if (buf)
-			snprintf(buf, bufsz, _("mount table full"));
+			bufused += snprintf(buf, bufsz, _("mount table full"));
 		break;
 
 	case EIO:
 		if (buf)
-			snprintf(buf, bufsz, _("can't read superblock on %s"), src);
+			bufused += snprintf(buf, bufsz, _("can't read superblock on %s"), src);
 		break;
 
 	case ENODEV:
 		if (!buf)
 			break;
 		if (mnt_context_get_fstype(cxt))
-			snprintf(buf, bufsz, _("unknown filesystem type '%s'"),
+			bufused += snprintf(buf, bufsz, _("unknown filesystem type '%s'"),
 					mnt_context_get_fstype(cxt));
 		else
-			snprintf(buf, bufsz, _("unknown filesystem type"));
+			bufused += snprintf(buf, bufsz, _("unknown filesystem type"));
 		break;
 
 	case ENOTBLK:
@@ -1946,22 +1947,22 @@ int mnt_context_get_mount_excode(
 		if (!buf)
 			break;
 		if (src && stat(src, &st))
-			snprintf(buf, bufsz, _("%s is not a block device, and stat(2) fails?"), src);
+			bufused += snprintf(buf, bufsz, _("%s is not a block device, and stat(2) fails?"), src);
 		else if (src && S_ISBLK(st.st_mode))
-			snprintf(buf, bufsz,
+			bufused += snprintf(buf, bufsz,
 				_("the kernel does not recognize %s as a block device; "
 				  "maybe \"modprobe driver\" is necessary"), src);
 		else if (src && S_ISREG(st.st_mode))
-			snprintf(buf, bufsz, _("%s is not a block device; try \"-o loop\""), src);
+			bufused += snprintf(buf, bufsz, _("%s is not a block device; try \"-o loop\""), src);
 		else
-			snprintf(buf, bufsz, _("%s is not a block device"), src);
+			bufused += snprintf(buf, bufsz, _("%s is not a block device"), src);
 		break;
 
 	case ENXIO:
 		if (uflags & MNT_MS_NOFAIL)
 			return MNT_EX_SUCCESS;
 		if (buf)
-			snprintf(buf, bufsz, _("%s is not a valid block device"), src);
+			bufused += snprintf(buf, bufsz, _("%s is not a valid block device"), src);
 		break;
 
 	case EACCES:
@@ -1969,16 +1970,16 @@ int mnt_context_get_mount_excode(
 		if (!buf)
 			break;
 		if (mflags & MS_RDONLY)
-			snprintf(buf, bufsz, _("cannot mount %s read-only"), src);
+			bufused += snprintf(buf, bufsz, _("cannot mount %s read-only"), src);
 		else if (mnt_context_is_rwonly_mount(cxt))
-			snprintf(buf, bufsz, _("%s is write-protected but explicit read-write mode requested"), src);
+			bufused += snprintf(buf, bufsz, _("%s is write-protected but explicit read-write mode requested"), src);
 		else if (mflags & MS_REMOUNT)
-			snprintf(buf, bufsz, _("cannot remount %s read-write, is write-protected"), src);
+			bufused += snprintf(buf, bufsz, _("cannot remount %s read-write, is write-protected"), src);
 		else if (mflags & MS_BIND)
-			snprintf(buf, bufsz, _("bind %s failed"), src);
+			bufused += snprintf(buf, bufsz, _("bind %s failed"), src);
 		else {
 			errno = syserr;
-			snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
+			bufused += snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
 		}
 		break;
 
@@ -1986,14 +1987,14 @@ int mnt_context_get_mount_excode(
 		if (uflags & MNT_MS_NOFAIL)
 			return MNT_EX_SUCCESS;
 		if (buf)
-			snprintf(buf, bufsz, _("no medium found on %s"), src);
+			bufused += snprintf(buf, bufsz, _("no medium found on %s"), src);
 		break;
 
 	case EBADMSG:
 		/* Bad CRC for classic filesystems (e.g. extN or XFS) */
 		if (buf && src && stat(src, &st) == 0
 		    && (S_ISBLK(st.st_mode) || S_ISREG(st.st_mode))) {
-			snprintf(buf, bufsz, _("cannot mount; probably corrupted filesystem on %s"), src);
+			bufused += snprintf(buf, bufsz, _("cannot mount; probably corrupted filesystem on %s"), src);
 			break;
 		}
 		/* fallthrough */
@@ -2001,10 +2002,13 @@ int mnt_context_get_mount_excode(
 	default:
 		if (buf) {
 			errno = syserr;
-			snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
+			bufused += snprintf(buf, bufsz, _("mount(2) system call failed: %m"));
 		}
 		break;
 	}
+
+	if (bufused < bufsz)
+		snprintf(buf + bufused, bufsz - bufused, _(". dmesg(1) may have more information"));
 
 	return MNT_EX_FAIL;
 }
