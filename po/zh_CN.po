@@ -14034,7 +14034,7 @@ msgstr "硬件时钟为 %s 时间\n"
 #: sys-utils/hwclock.c:306
 #, c-format
 msgid "Waiting for clock tick...\n"
-msgstr "正在等等时钟滴答...\n"
+msgstr "正在等待时钟滴答...\n"
 
 #: sys-utils/hwclock.c:312
 #, c-format
