@@ -55,8 +55,9 @@
 #include "strutils.h"
 #include "optutils.h"
 #include "pathnames.h"
+#include "fileutils.h"
 #include "logindefs.h"
-#include "procutils.h"
+#include "procfs.h"
 #include "timeutils.h"
 
 /*
@@ -562,9 +563,6 @@ static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 
 	*list = xcalloc(1, ngroups * sizeof(gid_t));
 
-fprintf(stderr, "KZAK>>> alloc '%p' for %s\n", *list, pwd->pw_name);
-
-
 	/* now for the actual list of GIDs */
 	if (-1 == getgrouplist(pwd->pw_name, pwd->pw_gid, *list, &ngroups))
 		return -1;
@@ -587,16 +585,20 @@ fprintf(stderr, "KZAK>>> alloc '%p' for %s\n", *list, pwd->pw_name);
 #ifdef __linux__
 static int get_nprocs(const uid_t uid)
 {
+	DIR *dir;
+	struct dirent *d;
 	int nprocs = 0;
-	pid_t pid;
-	struct proc_processes *proc = proc_open_processes();
 
-	proc_processes_filter_by_uid(proc, uid);
+	dir = opendir(_PATH_PROC);
+	if (!dir)
+		return 0;
 
-	while (!proc_next_pid(proc, &pid))
-		++nprocs;
+	while ((d = xreaddir(dir))) {
+		if (procfs_dirent_match_uid(dir, d, uid))
+			++nprocs;
+	}
 
-	proc_close_processes(proc);
+	closedir(dir);
 	return nprocs;
 }
 #endif
