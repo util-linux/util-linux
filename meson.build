@@ -2245,6 +2245,7 @@ exe = executable(
   'logger',
   logger_sources,
   include_directories : includes,
+  link_with : [lib_common],
   dependencies : [lib_systemd],
   install_dir : usrbin_exec_dir,
   install : opt,
@@ -2259,6 +2260,7 @@ exe = executable(
   logger_sources,
   include_directories : includes,
   c_args : '-DTEST_LOGGER',
+  link_with : [lib_common],
   dependencies : [lib_systemd])
 if not is_disabler(exe)
   exes += exe
