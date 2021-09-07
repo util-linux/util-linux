@@ -37,7 +37,7 @@
 #include "strutils.h"
 #include "optutils.h"
 #include "xalloc.h"
-#include "procutils.h"
+#include "procfs.h"
 #include "ipcutils.h"
 #include "timeutils.h"
 
@@ -694,7 +694,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					break;
 
 				/* COMMAND */
-				arg = proc_get_command(e->pid);
+				arg = pid_get_cmdline(e->pid);
 				rc = scols_line_refer_data(sln, 5, arg);
 				if (rc)
 					break;
@@ -1059,7 +1059,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_COMMAND:
-				arg = proc_get_command(shmdsp->shm_cprid);
+				arg = pid_get_cmdline(shmdsp->shm_cprid);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			}
