@@ -49,10 +49,11 @@
 #include "list.h"
 #include "closestream.h"
 #include "optutils.h"
-#include "procutils.h"
+#include "procfs.h"
 #include "strutils.h"
 #include "namespace.h"
 #include "idcache.h"
+#include "fileutils.h"
 
 #include "debug.h"
 
@@ -561,26 +562,32 @@ done:
 
 static int read_processes(struct lsns *ls)
 {
-	struct proc_processes *proc = NULL;
-	pid_t pid;
+	DIR *dir;
+	struct dirent *d;
 	int rc = 0;
 
 	DBG(PROC, ul_debug("opening /proc"));
 
-	if (!(proc = proc_open_processes())) {
-		rc = -errno;
-		goto done;
-	}
+	dir = opendir(_PATH_PROC);
+	if (!dir)
+		return -errno;
 
-	while (proc_next_pid(proc, &pid) == 0) {
+	while ((d = xreaddir(dir))) {
+		pid_t pid = 0;
+
+		if (procfs_dirent_get_pid(d, &pid) != 0)
+			continue;
+
+		/* TODO: use ul_new_procfs_path(pid, NULL) to read files from /proc/pid/
+		 */
 		rc = read_process(ls, pid);
 		if (rc && rc != -EACCES && rc != -ENOENT)
 			break;
 		rc = 0;
 	}
-done:
+
 	DBG(PROC, ul_debug("closing /proc"));
-	proc_close_processes(proc);
+	closedir(dir);
 	return rc;
 }
 
@@ -991,9 +998,9 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 		case COL_COMMAND:
 			if (!proc)
 				break;
-			str = proc_get_command(proc->pid);
+			str = pid_get_cmdline(proc->pid);
 			if (!str)
-				str = proc_get_command_name(proc->pid);
+				str = pid_get_cmdname(proc->pid);
 			break;
 		case COL_PATH:
 			if (!proc)
