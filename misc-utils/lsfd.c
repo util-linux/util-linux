@@ -300,7 +300,7 @@ static void free_file(struct file *file)
 }
 
 
-static struct proc *new_prococess(pid_t pid, struct proc * leader)
+static struct proc *new_process(pid_t pid, struct proc * leader)
 {
 	struct proc *proc = xcalloc(1, sizeof(*proc));
 
@@ -349,7 +349,7 @@ static void finalize_nodevs(void)
 }
 
 
-static void enqueue_proc(struct list_head *procs, struct proc * proc)
+static void enqueue_process(struct list_head *procs, struct proc * proc)
 {
 	INIT_LIST_HEAD(&proc->procs);
 	list_add_tail(&proc->procs, procs);
@@ -375,8 +375,8 @@ static void collect_tasks(struct proc *leader,
 			continue;
 		}
 
-		proc = new_prococess((pid_t)num, leader);
-		enqueue_proc(procs, proc);
+		proc = new_process((pid_t)num, leader);
+		enqueue_process(procs, proc);
 	}
 }
 
@@ -406,8 +406,8 @@ static void collect(struct list_head *procs, struct lsfd_control *ctl)
 		if (!(num = strtol(dp->d_name, NULL, 10)))
 			continue;
 
-		proc = new_prococess((pid_t)num, NULL);
-		enqueue_proc(procs, proc);
+		proc = new_process((pid_t)num, NULL);
+		enqueue_process(procs, proc);
 
 		if (ctl->threads) {
 			DIR *task_dirp = opendirf("/proc/%s/task", dp->d_name);
