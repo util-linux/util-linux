@@ -43,7 +43,7 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "list.h"
 #include "closestream.h"
 #include "strutils.h"
-#include "procutils.h"
+#include "procfs.h"
 #include "fileutils.h"
 #include "idcache.h"
 
@@ -801,7 +801,7 @@ static void fill_proc(struct proc *proc)
 
 	INIT_LIST_HEAD(&proc->files);
 
-	proc->command = proc_get_command_name(proc->pid);
+	proc->command = pid_get_cmdname(proc->pid);
 	if (!proc->command)
 		proc->command = xstrdup(_("(unknown)"));
 
