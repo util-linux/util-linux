@@ -46,13 +46,13 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "procfs.h"
 #include "fileutils.h"
 #include "idcache.h"
+#include "pathnames.h"
 
 #include "libsmartcols.h"
 
 #include "lsfd.h"
 
 
-static void fill_proc(struct proc *proc);
 static void add_nodev(unsigned long minor, const char *filesystem);
 
 /*
@@ -185,6 +185,7 @@ static size_t ncolumns;
 
 struct lsfd_control {
 	struct libscols_table *tb;		/* output */
+	struct list_head procs;			/* list of all processes */
 	const char *sysroot;			/* default is NULL */
 
 	unsigned int	noheadings : 1,
@@ -300,13 +301,16 @@ static void free_file(struct file *file)
 }
 
 
-static struct proc *new_process(pid_t pid, struct proc * leader)
+static struct proc *new_process(pid_t pid, struct proc *leader)
 {
 	struct proc *proc = xcalloc(1, sizeof(*proc));
 
 	proc->pid  = pid;
 	proc->leader = leader? leader: proc;
 	proc->command = NULL;
+
+	INIT_LIST_HEAD(&proc->files);
+	INIT_LIST_HEAD(&proc->procs);
 
 	return proc;
 }
@@ -349,83 +353,6 @@ static void finalize_nodevs(void)
 }
 
 
-static void enqueue_process(struct list_head *procs, struct proc * proc)
-{
-	INIT_LIST_HEAD(&proc->procs);
-	list_add_tail(&proc->procs, procs);
-}
-
-static void collect_tasks(struct proc *leader,
-			  DIR *task_dirp, struct list_head *procs)
-{
-	struct dirent *dp;
-	long num;
-
-	while ((dp = xreaddir(task_dirp))) {
-		struct proc *proc;
-
-		/* care only for numerical entries.
-		 * For a non-numerical entry, strtol returns 0.
-		 * We can skip it because there is no task having 0 as pid. */
-		if (!(num = strtol(dp->d_name, (char **) NULL, 10)))
-			continue;
-
-		if (leader->pid == (pid_t) num) {
-			/* The leader is already queued. */
-			continue;
-		}
-
-		proc = new_process((pid_t)num, leader);
-		enqueue_process(procs, proc);
-	}
-}
-
-static void collect(struct list_head *procs, struct lsfd_control *ctl)
-{
-	DIR *dir;
-	struct dirent *dp;
-	struct list_head *p;
-
-	/* open /proc */
-	dir = opendir("/proc");
-	if (!dir)
-		err(EXIT_FAILURE, _("failed to open /proc"));
-
-	/* read /proc */
-	while ((dp = readdir(dir))) {
-		struct proc *proc;
-		long num;
-
-#ifdef _DIRENT_HAVE_D_TYPE
-		if (dp->d_type != DT_DIR && dp->d_type != DT_UNKNOWN)
-			continue;
-#endif
-		/* care only for numerical entries.
-		 * For a non-numerical entry, strtol returns 0.
-		 * We can skip it because there is no task having 0 as pid. */
-		if (!(num = strtol(dp->d_name, NULL, 10)))
-			continue;
-
-		proc = new_process((pid_t)num, NULL);
-		enqueue_process(procs, proc);
-
-		if (ctl->threads) {
-			DIR *task_dirp = opendirf("/proc/%s/task", dp->d_name);
-			if (task_dirp) {
-				collect_tasks(proc, task_dirp, procs);
-				closedir(task_dirp);
-			}
-		}
-
-	}
-
-	closedir(dir);
-
-	list_for_each (p, procs) {
-		struct proc *proc = list_entry(p, struct proc, procs);
-		fill_proc(proc);
-	}
-}
 
 static void read_fdinfo(struct file *file, FILE *fdinfo)
 {
@@ -795,48 +722,6 @@ static void add_nodevs(FILE *mountinfo_fp)
 	}
 }
 
-static void fill_proc(struct proc *proc)
-{
-	FILE *mountinfo_fp;
-
-	INIT_LIST_HEAD(&proc->files);
-
-	proc->command = pid_get_cmdname(proc->pid);
-	if (!proc->command)
-		proc->command = xstrdup(_("(unknown)"));
-
-
-	if (proc->pid == proc->leader->pid
-	    || kcmp(proc->leader->pid, proc->pid,
-		    KCMP_FS, 0, 0) != 0)
-		collect_execve_and_fs_files(proc);
-	else
-		collect_execve_file(proc);
-
-	collect_namespace_files(proc);
-
-	mountinfo_fp = open_mountinfo(proc->leader->pid,
-				      proc->pid);
-	if (mountinfo_fp) {
-		add_nodevs(mountinfo_fp);
-		fclose(mountinfo_fp);
-	}
-
-	/* If kcmp is not available,
-	 * there is no way to no whether threads share resources.
-	 * In such cases, we must pay the costs: call collect_mem_files()
-	 * and collect_fd_files().
-	 */
-	if (proc->pid == proc->leader->pid
-	    || kcmp(proc->leader->pid, proc->pid,
-		    KCMP_VM, 0, 0) != 0)
-		collect_mem_files(proc);
-
-	if (proc->pid == proc->leader->pid
-	    || kcmp(proc->leader->pid, proc->pid,
-		    KCMP_FILES, 0, 0) != 0)
-		collect_fd_files(proc);
-}
 
 static void fill_column(struct proc *proc,
 			struct file *file,
@@ -1032,6 +917,94 @@ const char *get_nodev_filesystem(unsigned long minor)
 	return NULL;
 }
 
+static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
+			 pid_t pid, struct proc *leader)
+{
+	char buf[BUFSIZ];
+	struct proc *proc;
+	FILE *mountinfo_fp;
+
+	if (procfs_process_init_path(pc, pid) != 0)
+		return;
+
+	proc = new_process(pid, leader);
+	proc->command = procfs_process_get_cmdname(pc, buf, sizeof(buf)) == 0 ?
+			xstrdup(buf) : xstrdup(_("(unknown)"));
+
+	if (proc->pid == proc->leader->pid
+	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
+		collect_execve_and_fs_files(proc);
+	else
+		collect_execve_file(proc);
+
+	collect_namespace_files(proc);
+
+	mountinfo_fp = open_mountinfo(proc->leader->pid,
+				      proc->pid);
+	if (mountinfo_fp) {
+		add_nodevs(mountinfo_fp);
+		fclose(mountinfo_fp);
+	}
+
+	/* If kcmp is not available,
+	 * there is no way to no whether threads share resources.
+	 * In such cases, we must pay the costs: call collect_mem_files()
+	 * and collect_fd_files().
+	 */
+	if (proc->pid == proc->leader->pid
+	    || kcmp(proc->leader->pid, proc->pid, KCMP_VM, 0, 0) != 0)
+		collect_mem_files(proc);
+
+	if (proc->pid == proc->leader->pid
+	    || kcmp(proc->leader->pid, proc->pid, KCMP_FILES, 0, 0) != 0)
+		collect_fd_files(proc);
+
+	list_add_tail(&proc->procs, &ctl->procs);
+
+	/* The tasks collecting overwrites @pc by /proc/<task-pid>/. Keep it as
+	 * the last path based operation in read_process()
+	 */
+	if (ctl->threads && leader == NULL) {
+		DIR *sub = NULL;;
+		pid_t tid;
+
+		while (procfs_process_next_tid(pc, &sub, &tid) == 0) {
+			if (tid == pid)
+				continue;
+			read_process(ctl, pc, tid, proc);
+		}
+	}
+
+	/* Let's be careful with number of open files */
+        ul_path_close_dirfd(pc);
+}
+
+static void collect_processes(struct lsfd_control *ctl)
+{
+	DIR *dir;
+	struct dirent *d;
+	struct path_cxt *pc = NULL;
+
+	pc = ul_new_path(NULL);
+	if (!pc)
+		err(EXIT_FAILURE, _("failed to alloc procfs handler"));
+
+	dir = opendir(_PATH_PROC);
+	if (!dir)
+		err(EXIT_FAILURE, _("failed to open /proc"));
+
+	while ((d = readdir(dir))) {
+		pid_t pid;
+
+		if (procfs_dirent_get_pid(d, &pid) != 0)
+			continue;
+		read_process(ctl, pc, pid, 0);
+	}
+
+	closedir(dir);
+	ul_unref_path(pc);
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -1067,8 +1040,6 @@ int main(int argc, char *argv[])
 	int c;
 	size_t i;
 	char *outarg = NULL;
-
-	struct list_head procs;
 	struct lsfd_control ctl = {};
 
 	enum {
@@ -1141,6 +1112,8 @@ int main(int argc, char *argv[])
 
 	scols_init_debug(0);
 
+	INIT_LIST_HEAD(&ctl.procs);
+
 	/* inilialize scols table */
 	ctl.tb = scols_new_table();
 	if (!ctl.tb)
@@ -1172,14 +1145,13 @@ int main(int argc, char *argv[])
 	initialize_nodevs();
 	initialize_classes();
 
-	INIT_LIST_HEAD(&procs);
-	collect(&procs, &ctl);
+	collect_processes(&ctl);
 
-	convert(&procs, &ctl);
+	convert(&ctl.procs, &ctl);
 	emit(&ctl);
 
 	/* cleabup */
-	delete(&procs, &ctl);
+	delete(&ctl.procs, &ctl);
 
 	finalize_classes();
 	finalize_nodevs();
