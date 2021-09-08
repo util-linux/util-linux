@@ -128,6 +128,8 @@ int ul_path_count_dirents(struct path_cxt *pc, const char *path);
 int ul_path_countf_dirents(struct path_cxt *pc, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 2, 3)));
 
+int ul_path_next_dirent(struct path_cxt *pc, DIR **sub, const char *dirname, struct dirent **d);
+
 FILE *ul_prefix_fopen(const char *prefix, const char *path, const char *mode);
 
 
