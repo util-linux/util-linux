@@ -571,11 +571,10 @@ static void collect_execve_file(struct path_cxt *pc, struct proc *proc)
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs));
 }
 
-static void collect_execve_and_fs_files(struct path_cxt *pc, struct proc *proc)
+static void collect_fs_files(struct path_cxt *pc, struct proc *proc)
 {
 	enum association assocs[] = { ASSOC_EXE, ASSOC_CWD, ASSOC_ROOT };
 	const char *names[] = {
-		[ASSOC_EXE]  = "exe",
 		[ASSOC_CWD]  = "cwd",
 		[ASSOC_ROOT] = "root",
 	};
@@ -867,11 +866,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	proc->command = procfs_process_get_cmdname(pc, buf, sizeof(buf)) > 0 ?
 			xstrdup(buf) : xstrdup(_("(unknown)"));
 
+	collect_execve_file(pc, proc);
+
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
-		collect_execve_and_fs_files(pc, proc);
-	else
-		collect_execve_file(pc, proc);
+		collect_fs_files(pc, proc);
 
 	collect_namespace_files(pc, proc);
 
