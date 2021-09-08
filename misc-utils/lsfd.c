@@ -269,7 +269,7 @@ static struct file *new_file(
 	INIT_LIST_HEAD(&file->files);
 	list_add_tail(&file->files, &proc->files);
 
-	if (file->association == -ASSOC_SHM || file->association == -ASSOC_MEM) {
+	if (is_association(file, SHM) || is_association(file, MEM)) {
 		static size_t pagesize = 0;
 
 		assert(map_file_data);
@@ -559,16 +559,21 @@ static struct file *collect_outofbox_file(struct path_cxt *pc,
 {
 	char sym[PATH_MAX] = { '\0' };
 	struct stat sb;
+	struct file *f;
 
 	if (ul_path_stat(pc, &sb, name) < 0)
 		return NULL;
-	if (assoc == ASSOC_EXE)
-		proc->uid = sb.st_uid;
-
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
 		return NULL;
 
-	return new_file(proc, &sb, sym, NULL, assoc);
+	f = new_file(proc, &sb, sym, NULL, assoc);
+	if (!f)
+		return NULL;
+
+	if (is_association(f, EXE))
+		proc->uid = sb.st_uid;
+
+	return f;
 }
 
 static void collect_outofbox_files(struct path_cxt *pc,
