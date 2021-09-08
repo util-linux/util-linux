@@ -53,8 +53,6 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "lsfd.h"
 
 
-static void add_nodev(unsigned long minor, const char *filesystem);
-
 /*
  * /proc/$pid/maps entries
  */
@@ -323,34 +321,6 @@ static void free_proc(struct proc *proc)
 	free(proc);
 }
 
-static struct nodev* new_nodev(unsigned long minor, const char *filesystem)
-{
-	struct nodev *nodev = xcalloc(1, sizeof(*nodev));
-
-	INIT_LIST_HEAD(&nodev->nodevs);
-	nodev->minor = minor;
-	nodev->filesystem = xstrdup(filesystem);
-
-	return nodev;
-}
-
-static void free_nodev(struct nodev *nodev)
-{
-	free(nodev->filesystem);
-	free(nodev);
-}
-
-static void initialize_nodevs(void)
-{
-	for (int i = 0; i < NODEV_TABLE_SIZE; i++)
-		INIT_LIST_HEAD(&nodev_table.tables[i]);
-}
-
-static void finalize_nodevs(void)
-{
-	for (int i = 0; i < NODEV_TABLE_SIZE; i++)
-		list_free(&nodev_table.tables[i], struct nodev, nodevs, free_nodev);
-}
 
 
 
@@ -693,19 +663,60 @@ static void collect_namespace_files(struct proc *proc)
 			       ARRAY_SIZE(namespace_assocs));
 }
 
-static FILE *open_mountinfo(pid_t pid, pid_t tid)
+static struct nodev *new_nodev(unsigned long minor, const char *filesystem)
 {
-	return fopenf("r", "/proc/%d/task/%d/mountinfo", pid, tid);
+	struct nodev *nodev = xcalloc(1, sizeof(*nodev));
+
+	INIT_LIST_HEAD(&nodev->nodevs);
+	nodev->minor = minor;
+	nodev->filesystem = xstrdup(filesystem);
+
+	return nodev;
 }
 
-static void add_nodevs(FILE *mountinfo_fp)
+static void free_nodev(struct nodev *nodev)
 {
-	/* This can be very long.
-	   A line in mountinfo can have more than 3 paths. */
+	free(nodev->filesystem);
+	free(nodev);
+}
+
+static void initialize_nodevs(void)
+{
+	for (int i = 0; i < NODEV_TABLE_SIZE; i++)
+		INIT_LIST_HEAD(&nodev_table.tables[i]);
+}
+
+static void finalize_nodevs(void)
+{
+	for (int i = 0; i < NODEV_TABLE_SIZE; i++)
+		list_free(&nodev_table.tables[i], struct nodev, nodevs, free_nodev);
+}
+
+const char *get_nodev_filesystem(unsigned long minor)
+{
+	struct list_head *n;
+	int slot = minor % NODEV_TABLE_SIZE;
+
+	list_for_each (n, &nodev_table.tables[slot]) {
+		struct nodev *nodev = list_entry(n, struct nodev, nodevs);
+		if (nodev->minor == minor)
+			return nodev->filesystem;
+	}
+	return NULL;
+}
+
+static void add_nodevs(FILE *mnt)
+{
+	/* This can be very long. A line in mountinfo can have more than 3
+	 * paths. */
 	char line[PATH_MAX * 3 + 256];
-	while (fgets(line, sizeof(line), mountinfo_fp)) {
+
+	while (fgets(line, sizeof(line), mnt)) {
 		unsigned long major, minor;
 		char filesystem[256];
+		struct nodev *nodev;
+		int slot;
+
 
 		/* 23 61 0:22 / /sys rw,nosuid,nodev,noexec,relatime shared:2 - sysfs sysfs rw,seclabel */
 		if(sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s %*[^-] - %s %*[^\n]",
@@ -717,11 +728,15 @@ static void add_nodevs(FILE *mountinfo_fp)
 
 		if (major != 0)
 			continue;
+		if (get_nodev_filesystem(minor))
+			continue;
 
-		add_nodev(minor, filesystem);
+		nodev = new_nodev(minor, filesystem);
+		slot = minor % NODEV_TABLE_SIZE;
+
+		list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
 	}
 }
-
 
 static void fill_column(struct proc *proc,
 			struct file *file,
@@ -890,39 +905,13 @@ FILE *fopenf(const char *mode, const char *format, ...)
 	return fopen(path, mode);
 }
 
-static void add_nodev(unsigned long minor, const char *filesystem)
-{
-	struct nodev *nodev;
-	int slot;
-
-	if (get_nodev_filesystem(minor))
-		return;
-
-	nodev = new_nodev(minor, filesystem);
-	slot = minor % NODEV_TABLE_SIZE;
-
-	list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
-}
-
-const char *get_nodev_filesystem(unsigned long minor)
-{
-	struct list_head *n;
-	int slot = minor % NODEV_TABLE_SIZE;
-
-	list_for_each (n, &nodev_table.tables[slot]) {
-		struct nodev *nodev = list_entry(n, struct nodev, nodevs);
-		if (nodev->minor == minor)
-			return nodev->filesystem;
-	}
-	return NULL;
-}
 
 static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			 pid_t pid, struct proc *leader)
 {
 	char buf[BUFSIZ];
 	struct proc *proc;
-	FILE *mountinfo_fp;
+	FILE *mnt;
 
 	if (procfs_process_init_path(pc, pid) != 0)
 		return;
@@ -939,11 +928,14 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
 	collect_namespace_files(proc);
 
-	mountinfo_fp = open_mountinfo(proc->leader->pid,
-				      proc->pid);
-	if (mountinfo_fp) {
-		add_nodevs(mountinfo_fp);
-		fclose(mountinfo_fp);
+	/* TODO: parse mountinfo only when process uses not-yet-known
+	 *       mount namespace. Parse mountinfo for each process is
+	 *       extremly expensive.
+	 */
+	mnt = ul_path_fopen(pc, "r", "mountinfo");
+	if (mnt) {
+		add_nodevs(mnt);
+		fclose(mnt);
 	}
 
 	/* If kcmp is not available,
