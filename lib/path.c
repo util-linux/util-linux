@@ -339,7 +339,7 @@ int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 	return !p ? -errno : ul_path_access(pc, mode, p);
 }
 
-int ul_path_stat(struct path_cxt *pc, struct stat *sb, const char *path)
+int ul_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *path)
 {
 	int rc;
 
@@ -353,7 +353,8 @@ int ul_path_stat(struct path_cxt *pc, struct stat *sb, const char *path)
 		if (path) {
 			if  (*path == '/')
 				path++;
-			rc = fstatat(dir, path, sb, 0);
+			rc = fstatat(dir, path, sb, flags);
+
 		} else
 			rc = fstat(dir, sb);	/* dir itself */
 
