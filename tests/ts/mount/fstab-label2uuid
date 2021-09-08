@@ -38,23 +38,26 @@ ts_device_has "LABEL" $LABEL $DEVICE \
  || ts_die "Cannot find LABEL '$LABEL' on $DEVICE"
 UUID=$(ts_uuid_by_devname "$DEVICE") || ts_die "Cannot find UUID on $DEVICE"
 
-[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-
 ts_fstab_add "UUID=$UUID"
 ts_udevadm_settle "$DEVICE" "LABEL" "UUID"
 
-# variant A)
-$TS_CMD_MOUNT -L $LABEL >> $TS_OUTPUT 2>> $TS_ERRLOG
-ts_is_mounted $DEVICE || ts_die "A) Cannot find $DEVICE in /proc/mounts"
-$TS_CMD_UMOUNT $DEVICE || ts_die "A) Cannot umount $DEVICE"
+# Mountpoint has to be created here rather than in each subtest since ts_fstab_add writes
+# this mountpoint to the /etc/fstab file and the mountpoint is needed in subtests
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
-# variant B)
+ts_init_subtest "L-option"
+$TS_CMD_MOUNT -L $LABEL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "LABEL-option"
 $TS_CMD_MOUNT "LABEL=$LABEL" >> $TS_OUTPUT 2>> $TS_ERRLOG
-ts_is_mounted $DEVICE || ts_die "B) Cannot find $DEVICE in /proc/mounts"
-$TS_CMD_UMOUNT $DEVICE || ts_die "B) Cannot umount $DEVICE"
+ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
 ts_fstab_clean
 
-ts_log "Success"
 ts_finalize
 

@@ -34,19 +34,20 @@ DEVICE=$TS_LODEV
 mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
 UUID=$(ts_uuid_by_devname "$DEVICE") || ts_die "Cannot find UUID on $DEVICE"
 
-[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 ts_udevadm_settle "$DEVICE" "UUID"
 
-# variant A)
+ts_init_subtest "U-option"
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 $TS_CMD_MOUNT -U $UUID $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
-ts_is_mounted $DEVICE || ts_die "A) Cannot find $DEVICE in /proc/mounts"
-$TS_CMD_UMOUNT $DEVICE || ts_die "A) Cannot umount $DEVICE"
+ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-# variant B)
+ts_init_subtest "UUID-option"
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 $TS_CMD_MOUNT UUID=$UUID $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
-ts_is_mounted $DEVICE || ts_die "B) Cannot find $DEVICE in /proc/mounts"
-$TS_CMD_UMOUNT $DEVICE || ts_die "B) Cannot umount $DEVICE"
+ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "Success"
 ts_finalize
-
