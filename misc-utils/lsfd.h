@@ -126,6 +126,8 @@ struct file {
 	} assoc_data;
 };
 
+#define is_association(_f, a)	((_f)->association < 0 && (_f)->association == -ASSOC_ ## a)
+
 struct file_class {
 	const struct file_class *super;
 	size_t size;
