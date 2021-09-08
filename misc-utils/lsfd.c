@@ -321,9 +321,6 @@ static void free_proc(struct proc *proc)
 	free(proc);
 }
 
-
-
-
 static void read_fdinfo(struct file *file, FILE *fdinfo)
 {
 	const struct file_class *class;
@@ -348,45 +345,40 @@ static void read_fdinfo(struct file *file, FILE *fdinfo)
 	}
 }
 
-static struct file *collect_fd_file(struct proc *proc, int dd, struct dirent *dp, void *data)
+static struct file *collect_file_symlink(struct path_cxt *pc,
+					 struct proc *proc,
+					 const char *name,
+					 int assoc)
 {
-	long num;
-	char *endptr = NULL;
-	struct stat sb, lsb;
-	ssize_t len;
-	char sym[PATH_MAX];
+	char sym[PATH_MAX] = { '\0' };
+	struct stat sb;
 	struct file *f;
-	int *fdinfo_dd = data;
-	FILE *fdinfo_fp;
 
-	/* care only for numerical descriptors */
-	num = strtol(dp->d_name, &endptr, 10);
-	if (num == 0 && endptr == dp->d_name)
+	if (ul_path_stat(pc, &sb, 0, name) < 0)
+		return NULL;
+	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
 		return NULL;
 
-	if (fstatat(dd, dp->d_name, &sb, 0) < 0)
-		return NULL;
-
-	memset(sym, 0, sizeof(sym));
-	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
-		return NULL;
-
-	f = new_file(proc, &sb, sym, NULL, (int) num);
+	f = new_file(proc, &sb, sym, NULL, assoc);
 	if (!f)
 		return NULL;
 
-	if (fstatat(dd, dp->d_name, &lsb, AT_SYMLINK_NOFOLLOW) == 0)
-		f->mode = lsb.st_mode;
+	if (is_association(f, EXE))
+		proc->uid = sb.st_uid;
 
-	if (*fdinfo_dd < 0)
-		return f;
+	else if (assoc >= 0) {
+		/* file-descriptor based association */
+		FILE *fdinfo;
 
-	fdinfo_fp = fopen_at(*fdinfo_dd, dp->d_name, O_RDONLY, "r");
-	if (fdinfo_fp) {
-		read_fdinfo(f, fdinfo_fp);
-		fclose(fdinfo_fp);
+		if (ul_path_stat(pc, &sb, AT_SYMLINK_NOFOLLOW, name) == 0)
+			f->mode = sb.st_mode;
+
+		fdinfo = ul_path_fopenf(pc, "r", "fdinfo/%d", assoc);
+		if (fdinfo) {
+			read_fdinfo(f, fdinfo);
+			fclose(fdinfo);
+		}
 	}
-
 	return f;
 }
 
@@ -460,19 +452,23 @@ static void collect_fd_files_generic(struct proc *proc, const char *proc_templat
 	closedir(dirp);
 }
 
-static void collect_fd_files(struct proc *proc)
+/* read symlinks from /proc/#/fd
+ */
+static void collect_fd_files(struct path_cxt *pc, struct proc *proc)
 {
-	DIR *dirp;
-	int dd = -1;
+	DIR *sub = NULL;
+	struct dirent *d = NULL;
+	char path[sizeof("fd/") + sizeof(stringify_value(UINT64_MAX))];
 
-	dirp = opendirf("/proc/%d/fdinfo/", proc->pid);
-	if (dirp)
-		dd = dirfd(dirp);
+	while (ul_path_next_dirent(pc, &sub, "fd", &d) == 0) {
+		uint64_t num;
 
-	collect_fd_files_generic(proc, "/proc/%d/fd/", collect_fd_file, &dd);
+		if (ul_strtou64(d->d_name, &num, 10) != 0)	/* only numbers */
+			continue;
 
-	if (dirp)
-		closedir(dirp);
+		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
+		collect_file_symlink(pc, proc, path, num);
+	}
 }
 
 static struct map* new_map(unsigned long mem_addr_start, unsigned long long file_offset,
@@ -553,28 +549,6 @@ static void collect_mem_files(struct proc *proc)
 	free_maps(&maps);
 }
 
-static struct file *collect_outofbox_file(struct path_cxt *pc,
-					  struct proc *proc,
-					  const char *name, int assoc)
-{
-	char sym[PATH_MAX] = { '\0' };
-	struct stat sb;
-	struct file *f;
-
-	if (ul_path_stat(pc, &sb, 0, name) < 0)
-		return NULL;
-	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
-		return NULL;
-
-	f = new_file(proc, &sb, sym, NULL, assoc);
-	if (!f)
-		return NULL;
-
-	if (is_association(f, EXE))
-		proc->uid = sb.st_uid;
-
-	return f;
-}
 
 static void collect_outofbox_files(struct path_cxt *pc,
 				   struct proc *proc,
@@ -585,7 +559,7 @@ static void collect_outofbox_files(struct path_cxt *pc,
 	size_t i;
 
 	for (i = 0; i < count; i++)
-		collect_outofbox_file(pc, proc, names[assocs[i]], assocs[i] * -1);
+		collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1);
 }
 
 static void collect_execve_file(struct path_cxt *pc, struct proc *proc)
@@ -922,7 +896,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FILES, 0, 0) != 0)
-		collect_fd_files(proc);
+		collect_fd_files(pc, proc);
 
 	list_add_tail(&proc->procs, &ctl->procs);
 
