@@ -191,7 +191,7 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 		return NULL;
 	if (ul_path_set_prefix(pc, lsblk->sysroot) != 0)
 		goto done;
-	if (ul_path_stat(pc, &sb, ld->filename) != 0 || !S_ISREG(sb.st_mode))
+	if (ul_path_stat(pc, &sb, 0, ld->filename) != 0 || !S_ISREG(sb.st_mode))
 		goto done;
 
 	fp = ul_path_fopen(pc, "r", ld->filename);

@@ -561,7 +561,7 @@ static struct file *collect_outofbox_file(struct path_cxt *pc,
 	struct stat sb;
 	struct file *f;
 
-	if (ul_path_stat(pc, &sb, name) < 0)
+	if (ul_path_stat(pc, &sb, 0, name) < 0)
 		return NULL;
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
 		return NULL;

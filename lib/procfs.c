@@ -167,7 +167,7 @@ int procfs_process_get_uid(struct path_cxt *pc, uid_t *uid)
 	struct stat sb;
 	int rc;
 
-	if ((rc = ul_path_stat(pc, &sb, NULL)) == 0)
+	if ((rc = ul_path_stat(pc, &sb, 0, NULL)) == 0)
 		*uid = sb.st_uid;
 	return rc;
 }
