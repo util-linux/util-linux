@@ -553,88 +553,59 @@ static void collect_mem_files(struct proc *proc)
 	free_maps(&maps);
 }
 
-static struct file *collect_outofbox_file(struct proc *proc,
-					  int dd, const char *name, int association)
+static struct file *collect_outofbox_file(struct path_cxt *pc,
+					  struct proc *proc,
+					  const char *name, int assoc)
 {
+	char sym[PATH_MAX] = { '\0' };
 	struct stat sb;
-	ssize_t len;
-	char sym[PATH_MAX];
 
-	if (fstatat(dd, name, &sb, 0) < 0)
+	if (ul_path_stat(pc, &sb, name) < 0)
 		return NULL;
-
-	memset(sym, 0, sizeof(sym));
-	if ((len = readlinkat(dd, name, sym, sizeof(sym) - 1)) < 0)
-		return NULL;
-
-	return new_file(proc, &sb, sym, NULL, association);
-}
-
-static void collect_proc_uid(struct proc *proc, int dd)
-{
-	struct stat sb;
-	if (fstat(dd, &sb) == 0)
+	if (assoc == ASSOC_EXE)
 		proc->uid = sb.st_uid;
+
+	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
+		return NULL;
+
+	return new_file(proc, &sb, sym, NULL, assoc);
 }
 
-static void collect_outofbox_files(struct proc *proc,
-				   const char *proc_template,
+static void collect_outofbox_files(struct path_cxt *pc,
+				   struct proc *proc,
 				   enum association assocs[],
-				   const char* assoc_names[],
-				   unsigned int count)
+				   const char *names[],
+				   size_t count)
 {
-	DIR *dirp;
-	int dd;
+	size_t i;
 
-	dirp = opendirf(proc_template, proc->pid);
-	if (!dirp)
-		return;
-
-	if ((dd = dirfd(dirp)) < 0 )
-		return;
-
-	for (unsigned int i = 0; i < count; i++) {
-
-		if (assocs[i] == ASSOC_EXE)
-			collect_proc_uid(proc, dd);
-
-		collect_outofbox_file(proc, dd,
-				assoc_names[assocs[i]], assocs[i] * -1);
-	}
-	closedir(dirp);
+	for (i = 0; i < count; i++)
+		collect_outofbox_file(pc, proc, names[assocs[i]], assocs[i] * -1);
 }
 
-static void collect_execve_file(struct proc *proc)
+static void collect_execve_file(struct path_cxt *pc, struct proc *proc)
 {
-	const char *execve_template = "/proc/%d";
-	enum association execve_assocs[] = { ASSOC_EXE };
-	const char* execve_assoc_names[] = {
+	enum association assocs[] = { ASSOC_EXE };
+	const char *names[] = {
 		[ASSOC_EXE]  = "exe",
 	};
-	collect_outofbox_files(proc, execve_template,
-			       execve_assocs, execve_assoc_names,
-			       ARRAY_SIZE(execve_assocs));
+	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs));
 }
 
-static void collect_execve_and_fs_files(struct proc *proc)
+static void collect_execve_and_fs_files(struct path_cxt *pc, struct proc *proc)
 {
-	const char *execve_template = "/proc/%d";
-	enum association execve_assocs[] = { ASSOC_EXE, ASSOC_CWD, ASSOC_ROOT };
-	const char* execve_assoc_names[] = {
+	enum association assocs[] = { ASSOC_EXE, ASSOC_CWD, ASSOC_ROOT };
+	const char *names[] = {
 		[ASSOC_EXE]  = "exe",
 		[ASSOC_CWD]  = "cwd",
 		[ASSOC_ROOT] = "root",
 	};
-	collect_outofbox_files(proc, execve_template,
-			       execve_assocs, execve_assoc_names,
-			       ARRAY_SIZE(execve_assocs));
+	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs));
 }
 
-
-static void collect_namespace_files(struct proc *proc)
+static void collect_namespace_files(struct path_cxt *pc, struct proc *proc)
 {
-	const char *namespace_template = "/proc/%d/ns";
-	enum association namespace_assocs[] = {
+	enum association assocs[] = {
 		ASSOC_NS_CGROUP,
 		ASSOC_NS_IPC,
 		ASSOC_NS_MNT,
@@ -646,21 +617,19 @@ static void collect_namespace_files(struct proc *proc)
 		ASSOC_NS_USER,
 		ASSOC_NS_UTS,
 	};
-	const char* namespace_assoc_names[] = {
-		[ASSOC_NS_CGROUP] = "cgroup",
-		[ASSOC_NS_IPC]    = "ipc",
-		[ASSOC_NS_MNT]    = "mnt",
-		[ASSOC_NS_NET]    = "net",
-		[ASSOC_NS_PID]    = "pid",
-		[ASSOC_NS_PID4C]  = "pid_for_children",
-		[ASSOC_NS_TIME]   = "time",
-		[ASSOC_NS_TIME4C] = "time_for_children",
-		[ASSOC_NS_USER]   = "user",
-		[ASSOC_NS_UTS]    = "uts",
+	const char *names[] = {
+		[ASSOC_NS_CGROUP] = "ns/cgroup",
+		[ASSOC_NS_IPC]    = "ns/ipc",
+		[ASSOC_NS_MNT]    = "ns/mnt",
+		[ASSOC_NS_NET]    = "ns/net",
+		[ASSOC_NS_PID]    = "ns/pid",
+		[ASSOC_NS_PID4C]  = "ns/pid_for_children",
+		[ASSOC_NS_TIME]   = "ns/time",
+		[ASSOC_NS_TIME4C] = "ns/time_for_children",
+		[ASSOC_NS_USER]   = "ns/user",
+		[ASSOC_NS_UTS]    = "ns/uts",
 	};
-	collect_outofbox_files(proc, namespace_template,
-			       namespace_assocs, namespace_assoc_names,
-			       ARRAY_SIZE(namespace_assocs));
+	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs));
 }
 
 static struct nodev *new_nodev(unsigned long minor, const char *filesystem)
@@ -905,7 +874,6 @@ FILE *fopenf(const char *mode, const char *format, ...)
 	return fopen(path, mode);
 }
 
-
 static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			 pid_t pid, struct proc *leader)
 {
@@ -917,16 +885,16 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		return;
 
 	proc = new_process(pid, leader);
-	proc->command = procfs_process_get_cmdname(pc, buf, sizeof(buf)) == 0 ?
+	proc->command = procfs_process_get_cmdname(pc, buf, sizeof(buf)) > 0 ?
 			xstrdup(buf) : xstrdup(_("(unknown)"));
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
-		collect_execve_and_fs_files(proc);
+		collect_execve_and_fs_files(pc, proc);
 	else
-		collect_execve_file(proc);
+		collect_execve_file(pc, proc);
 
-	collect_namespace_files(proc);
+	collect_namespace_files(pc, proc);
 
 	/* TODO: parse mountinfo only when process uses not-yet-known
 	 *       mount namespace. Parse mountinfo for each process is
