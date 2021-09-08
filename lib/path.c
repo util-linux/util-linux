@@ -968,6 +968,27 @@ int ul_path_countf_dirents(struct path_cxt *pc, const char *path, ...)
 	return !p ? -errno : ul_path_count_dirents(pc, p);
 }
 
+/* first call (when @sub is NULL) opens the directory, last call closes the diretory */
+int ul_path_next_dirent(struct path_cxt *pc, DIR **sub, const char *dirname, struct dirent **d)
+{
+	if (!pc || !sub || !d)
+		return -EINVAL;
+
+	if (!*sub) {
+		*sub = ul_path_opendir(pc, dirname);
+		if (!*sub)
+			return -errno;
+	}
+
+	*d = xreaddir(*sub);
+	if (*d)
+		return 0;
+
+	closedir(*sub);
+	*sub = NULL;
+	return 1;
+}
+
 /*
  * Like fopen() but, @path is always prefixed by @prefix. This function is
  * useful in case when ul_path_* API is overkill.
