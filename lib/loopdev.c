@@ -1290,7 +1290,8 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
  */
 int loopcxt_setup_device(struct loopdev_cxt *lc)
 {
-	int file_fd, dev_fd, mode = O_RDWR, rc = -1, cnt = 0, err, again;
+	int file_fd, dev_fd, mode = O_RDWR, flags = O_CLOEXEC;
+	int rc = -1, cnt = 0, err, again;
 	int errsv = 0;
 	int fallback = 0;
 
@@ -1305,9 +1306,12 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	if (lc->config.info.lo_flags & LO_FLAGS_READ_ONLY)
 		mode = O_RDONLY;
 
-	if ((file_fd = open(lc->filename, mode | O_CLOEXEC)) < 0) {
+	if (lc->config.info.lo_flags & LO_FLAGS_DIRECT_IO)
+		flags |= O_DIRECT;
+
+	if ((file_fd = open(lc->filename, mode | flags)) < 0) {
 		if (mode != O_RDONLY && (errno == EROFS || errno == EACCES))
-			file_fd = open(lc->filename, mode = O_RDONLY);
+			file_fd = open(lc->filename, (mode = O_RDONLY) | flags);
 
 		if (file_fd < 0) {
 			DBG(SETUP, ul_debugobj(lc, "open backing file failed: %m"));

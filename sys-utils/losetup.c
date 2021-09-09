@@ -728,6 +728,8 @@ int main(int argc, char **argv)
 			use_dio = set_dio = 1;
 			if (optarg)
 				use_dio = parse_switch(optarg, _("argument error"), "on", "off", NULL);
+			if (use_dio)
+				lo_flags |= LO_FLAGS_DIRECT_IO;
 			break;
 		case 'v':
 			break;
@@ -847,8 +849,6 @@ int main(int argc, char **argv)
 			if (showdev)
 				printf("%s\n", loopcxt_get_device(&lc));
 			warn_size(file, sizelimit, offset, flags);
-			if (set_dio)
-				goto lo_set_dio;
 		}
 		break;
 	case A_DELETE:
@@ -901,7 +901,6 @@ int main(int argc, char **argv)
 			        loopcxt_get_device(&lc));
 		break;
 	case A_SET_DIRECT_IO:
-lo_set_dio:
 		res = loopcxt_ioctl_dio(&lc, use_dio);
 		if (res)
 			warn(_("%s: set direct io failed"),
