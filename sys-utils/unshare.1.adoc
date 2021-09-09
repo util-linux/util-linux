@@ -53,30 +53,30 @@ The process can have a distinct view of *CLOCK_MONOTONIC* and/or *CLOCK_BOOTTIME
 == OPTIONS
 
 *-i*, *--ipc*[**=**__file__]::
-Create a new IPC namespace. If _file_ is specified, then a persistent namespace is created by a bind mount.
+Create a new IPC namespace. If _file_ is specified, then the namespace is made persistent by creating a bind mount at _file_.
 
 *-m*, *--mount*[**=**__file__]::
-Create a new mount namespace. If _file_ is specified, then a persistent namespace is created by a bind mount. Note that _file_ must be located on a mount whose propagation type is not *shared* (or an error results). Use the command *findmnt -o+PROPAGATION* when not sure about the current setting. See also the examples below.
+Create a new mount namespace. If _file_ is specified, then the namespace is made persistent by creating a bind mount at _file_. Note that _file_ must be located on a mount whose propagation type is not *shared* (or an error results). Use the command *findmnt -o+PROPAGATION* when not sure about the current setting. See also the examples below.
 
 *-n*, *--net*[**=**__file__]::
-Create a new network namespace. If _file_ is specified, then a persistent namespace is created by a bind mount.
+Create a new network namespace. If _file_ is specified, then the namespace is made persistent by creating a bind mount at _file_.
 
 *-p*, *--pid*[**=**__file__]::
-Create a new PID namespace. If _file_ is specified, then a persistent namespace is created by a bind mount. (Creation of a persistent PID namespace will fail if the *--fork* option is not also specified.)
+Create a new PID namespace. If _file_ is specified, then the namespace is made persistent by creating a bind mount at _file_. (Creation of a persistent PID namespace will fail if the *--fork* option is not also specified.)
 +
 See also the *--fork* and *--mount-proc* options.
 
 *-u*, *--uts*[**=**__file__]::
-Create a new UTS namespace. If _file_ is specified, then a persistent namespace is created by a bind mount.
+Create a new UTS namespace. If _file_ is specified, then the namespace is made persistent by creating a bind mount at _file_.
 
 *-U*, *--user*[**=**__file__]::
-Create a new user namespace. If _file_ is specified, then a persistent namespace is created by a bind mount.
+Create a new user namespace. If _file_ is specified, then the namespace is made persistent by creating a bind mount at _file_.
 
 *-C*, *--cgroup*[**=**__file__]::
-Create a new cgroup namespace. If _file_ is specified, then persistent namespace is created by bind mount.
+Create a new cgroup namespace. If _file_ is specified, then the namespace is made persistent by creating a bind mount at _file_.
 
 *-T*, *--time*[**=**__file__]::
-Create a new time namespace. If _file_ is specified, then a persistent namespace is created by a bind mount. The *--monotonic* and *--boottime* options can be used to specify the corresponding offset in the time namespace.
+Create a new time namespace. If _file_ is specified, then the namespace is made persistent by creating a bind mount at _file_. The *--monotonic* and *--boottime* options can be used to specify the corresponding offset in the time namespace.
 
 *-f*, *--fork*::
 Fork the specified _program_ as a child process of *unshare* rather than running it directly. This is useful when creating a new PID namespace. Note that when *unshare* is waiting for the child process, then it ignores *SIGINT* and *SIGTERM* and does not forward any signals to the child. It is necessary to send signals to the child process.
