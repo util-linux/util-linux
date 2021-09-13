@@ -1285,7 +1285,7 @@ static void run_shell(struct more_control *ctl, char *filename)
 	putchar('!');
 	fflush(NULL);
 	if (ctl->previous_command.key == more_kc_run_shell && ctl->shell_line)
-		fputs(ctl->shell_line, stdout);
+		fputs(ctl->shell_line, stderr);
 	else {
 		ttyin(ctl, cmdbuf, sizeof(cmdbuf) - 2, '!');
 		if (strpbrk(cmdbuf, "%!\\"))
