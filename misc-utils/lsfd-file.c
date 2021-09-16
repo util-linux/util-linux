@@ -241,7 +241,7 @@ static bool file_fill_column(struct proc *proc,
 		}
 		/* FALL THROUGH */
 	case COL_DEV:
-	case COL_DEVICE:
+	case COL_MAJMIN:
 		xasprintf(&str, "%u:%u",
 			  major(file->stat.st_dev),
 			  minor(file->stat.st_dev));
