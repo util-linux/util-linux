@@ -35,29 +35,29 @@ DEVICE=$TS_LODEV
 mkfs.ext2 -L $LABEL $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
 ts_device_has "LABEL" $LABEL $DEVICE \
  || ts_die "Cannot find LABEL '$LABEL' on $DEVICE"
-
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
+MOUNTPOINT=$TS_MOUNTPOINT
 
 ts_fstab_add "LABEL=$LABEL"
 ts_udevadm_settle "$DEVICE" "LABEL"
 
-# variant A)
-$TS_CMD_MOUNT $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
-ts_is_mounted $DEVICE || ts_die "A) Cannot find $DEVICE in /proc/mounts"
-$TS_CMD_UMOUNT $DEVICE || ts_die "A) Cannot umount $DEVICE"
+ts_init_subtest "no-option"
+$TS_CMD_MOUNT $MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-# variant B)
+ts_init_subtest "L-option"
 $TS_CMD_MOUNT -L $LABEL >> $TS_OUTPUT 2>> $TS_ERRLOG
-ts_is_mounted $DEVICE || ts_die "B) Cannot find $DEVICE in /proc/mounts"
-$TS_CMD_UMOUNT $DEVICE || ts_die "B) Cannot umount $DEVICE"
+ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG 
+ts_finalize_subtest
 
-# variant C)
+ts_init_subtest "LABEL-option"
 $TS_CMD_MOUNT LABEL=$LABEL >> $TS_OUTPUT 2>> $TS_ERRLOG
-ts_is_mounted $DEVICE || ts_die "C) Cannot find $DEVICE in /proc/mounts"
-$TS_CMD_UMOUNT $DEVICE || ts_die "C) Cannot umount $DEVICE"
+ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_fstab_clean
 
-ts_log "Success"
 ts_finalize
-
