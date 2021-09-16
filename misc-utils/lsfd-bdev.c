@@ -52,7 +52,7 @@ static bool bdev_fill_column(struct proc *proc __attribute__((__unused__)),
 					"blk"))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
-	case COL_DEVNAME:
+	case COL_SOURCE:
 	case COL_PARTITION:
 		partition = get_partition(file->stat.st_rdev);
 		if (partition) {

@@ -38,7 +38,7 @@ static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (scols_line_set_data(ln, column_index, "UNKN"))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
-	case COL_DEVNAME:
+	case COL_SOURCE:
 		if (major(file->stat.st_dev) == 0
 		    && strncmp(file->name, "anon_inode:", 11) == 0) {
 			str = strdup("anon_inodefs");
