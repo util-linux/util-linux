@@ -17,6 +17,7 @@ PACKAGES=(
 	ntp
 	socat
 	asciidoctor
+	meson
 )
 
 PACKAGES_OPTIONAL=(

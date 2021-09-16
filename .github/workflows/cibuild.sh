@@ -51,6 +51,12 @@ for phase in "${PHASES[@]}"; do
     INSTALL)
         make install DESTDIR=/tmp/dest
         ;;
+    MESONCONF)
+        meson build
+        ;;
+    MESONBUILD)
+        ninja -C build
+        ;;
     CHECK)
         if [[ "$SANITIZE" == "yes" ]]; then
             # All the following black magic is to make test/eject/umount work, since

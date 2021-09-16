@@ -37,6 +37,22 @@ jobs:
         run: sudo -E .github/workflows/cibuild.sh CHECK
       - name: Make install
         run: .github/workflows/cibuild.sh INSTALL
+  meson:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      COMPILER: gcc
+      COMPILER_VERSION: 10
+      SANITIZE: no
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v1
+      - name: Ubuntu setup
+        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+      - name: Meson configure
+        run: .github/workflows/cibuild.sh MESONCONF
+      - name: Meson build
+        run: .github/workflows/cibuild.sh MESONBUILD
   distcheck:
     needs: build
     runs-on: ubuntu-latest
