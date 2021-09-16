@@ -207,6 +207,11 @@ static bool file_fill_column(struct proc *proc,
 					       (int)proc->uid)->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_DEVTYPE:
+		if (scols_line_set_data(ln, column_index,
+					"nodev"))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
 	case COL_FD:
 		if (file->association < 0)
 			return false;
