@@ -233,7 +233,7 @@ static bool file_fill_column(struct proc *proc,
 		if (major(file->stat.st_dev) == 0) {
 			const char *filesystem = get_nodev_filesystem(minor(file->stat.st_dev));
 			if (filesystem) {
-				xasprintf(&str, "nodev:%s", filesystem);
+				xasprintf(&str, "%s", filesystem);
 				break;
 			}
 		}
