@@ -67,6 +67,11 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			break;
 		}
 		return true;
+	case COL_DEVTYPE:
+		if (scols_line_set_data(ln, column_index,
+					"char"))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
 	case COL_CHRDRV:
 		chrdrv = get_chrdrv(major(file->stat.st_rdev));
 		if (chrdrv)
