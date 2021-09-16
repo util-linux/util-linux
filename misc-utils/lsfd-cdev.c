@@ -80,7 +80,7 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			xasprintf(&str, "%u",
 				  major(file->stat.st_rdev));
 		break;
-	case COL_DEVNAME:
+	case COL_SOURCE:
 		chrdrv = get_chrdrv(major(file->stat.st_rdev));
 		miscdev = NULL;
 		if (chrdrv && strcmp(chrdrv, "misc") == 0)
