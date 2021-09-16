@@ -41,7 +41,7 @@ static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 	case COL_DEVNAME:
 		if (major(file->stat.st_dev) == 0
 		    && strncmp(file->name, "pipe:", 5) == 0) {
-			str = strdup("nodev:pipefs");
+			str = strdup("pipefs");
 			break;
 		}
 		return false;
