@@ -849,14 +849,21 @@ static char *record_ctime(struct dmesg_control *ctl,
 
 	record_localtime(ctl, rec, &tm);
 
-	if (strftime(buf, bufsiz, "%a %b %e %H:%M:%S %Y", &tm) == 0)
+	/* TRANSLATORS: dmesg uses strftime() fo generate date-time string
+	   where %a is abbreviated name of the day, %b is abbreviated month
+	   name and %e is day of the month as a decimal number. Please, set
+	   proper month/day order here */
+	if (strftime(buf, bufsiz, _("%a %b %e %H:%M:%S %Y"), &tm) == 0)
 		*buf = '\0';
 	return buf;
 }
 
 static char *short_ctime(struct tm *tm, char *buf, size_t bufsiz)
 {
-	if (strftime(buf, bufsiz, "%b%e %H:%M", tm) == 0)
+	/* TRANSLATORS: dmesg uses strftime() fo generate date-time string
+	   where: %b is abbreviated month and %e is day of the month as a
+	   decimal number. Please, set proper month/day order here. */
+	if (strftime(buf, bufsiz, _("%b%e %H:%M"), tm) == 0)
 		*buf = '\0';
 	return buf;
 }
