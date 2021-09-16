@@ -118,6 +118,7 @@ struct logger_ctl {
 	pid_t pid;			/* zero when unwanted */
 	char *hdr;			/* the syslog header (based on protocol) */
 	char const *tag;
+	char *login;
 	char *msgid;
 	char *unix_socket;		/* -u <path> or default to _PATH_DEVLOG */
 	char *server;
@@ -917,7 +918,7 @@ static void logger_open(struct logger_ctl *ctl)
 		ctl->syslogfp = ctl->server ? syslog_rfc5424_header :
 					      syslog_local_header;
 	if (!ctl->tag)
-		ctl->tag = xgetlogin();
+		ctl->tag = ctl->login = xgetlogin();
 	if (!ctl->tag)
 		ctl->tag = "<someone>";
 
@@ -1038,6 +1039,7 @@ static void logger_close(const struct logger_ctl *ctl)
 	if (ctl->fd != -1 && close(ctl->fd) != 0)
 		err(EXIT_FAILURE, _("close failed"));
 	free(ctl->hdr);
+	free(ctl->login);
 }
 
 static void __attribute__((__noreturn__)) usage(void)
