@@ -998,8 +998,8 @@ static void logger_stdin(struct logger_ctl *ctl)
 			if (c == '>' && 0 <= pri && pri <= 191) {
 				/* valid RFC PRI values */
 				i = 0;
-				if (pri < 8)	/* kern facility is forbidden */
-					pri |= 8;
+				if ((pri & LOG_FACMASK) == 0)
+					pri |= (default_priority & LOG_FACMASK);
 				ctl->pri = pri;
 			} else
 				ctl->pri = default_priority;
