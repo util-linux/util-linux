@@ -19,7 +19,6 @@ lib_smartcols_sources = '''
   src/print.c
   src/print-api.c
   src/version.c
-  src/buffer.c
   src/calculate.c
   src/grouping.c
   src/walk.c

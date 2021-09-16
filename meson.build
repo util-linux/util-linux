@@ -2245,6 +2245,7 @@ exe = executable(
   'logger',
   logger_sources,
   include_directories : includes,
+  link_with : [lib_common],
   dependencies : [lib_systemd],
   install_dir : usrbin_exec_dir,
   install : opt,
@@ -2259,6 +2260,7 @@ exe = executable(
   logger_sources,
   include_directories : includes,
   c_args : '-DTEST_LOGGER',
+  link_with : [lib_common],
   dependencies : [lib_systemd])
 if not is_disabler(exe)
   exes += exe
@@ -3049,7 +3051,7 @@ if build_libuuid
     'libuuid/man/uuid_generate_time_safe.3']
 endif
 
-asciidoctor = find_program('asciidoctor')
+asciidoctor = find_program('asciidoctor', required : false)
 if asciidoctor.found()
   foreach adoc : manadocs
     name = adoc.split('/')[-1]
