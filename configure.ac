@@ -311,6 +311,7 @@ AC_CHECK_HEADERS([ \
 	linux/kcmp.h \
 	linux/net_namespace.h \
 	linux/nsfs.h \
+	linux/pr.h \
 	linux/raw.h \
 	linux/securebits.h \
 	linux/tiocl.h \
@@ -391,6 +392,10 @@ AC_CHECK_DECLS([BLK_ZONE_REP_CAPACITY], [], [], [
 	#include <linux/blkzoned.h>
 ])
 
+AC_CHECK_DECLS([PR_REP_CAPACITY], [], [], [
+	#include <linux/pr.h>
+])
+
 AC_CHECK_HEADERS([security/openpam.h], [], [], [
 #ifdef HAVE_SECURITY_PAM_APPL_H
 #include <security/pam_appl.h>
@@ -459,6 +464,7 @@ have_linux_blkzoned_h=$ac_cv_header_linux_blkzoned_h
 have_linux_btrfs_h=$ac_cv_header_linux_btrfs_h
 have_linux_capability_h=$ac_cv_header_linux_capability_h
 have_linux_kcmp_h=$ac_cv_header_linux_kcmp_h
+have_linux_pr_h=$ac_cv_header_linux_pr_h
 have_linux_raw_h=$ac_cv_header_linux_raw_h
 have_linux_securebits_h=$ac_cv_header_linux_securebits_h
 have_linux_version_h=$ac_cv_header_linux_version_h
@@ -1983,6 +1989,11 @@ UL_BUILD_INIT([blkzone], [check])
 UL_REQUIRES_LINUX([blkzone])
 UL_REQUIRES_HAVE([blkzone], [linux_blkzoned_h], [linux/blkzoned.h header])
 AM_CONDITIONAL([BUILD_BLKZONE], [test "x$build_blkzone" = xyes])
+
+UL_BUILD_INIT([blkpr], [check])
+UL_REQUIRES_LINUX([blkpr])
+UL_REQUIRES_HAVE([blkpr], [linux_pr_h], [linux/pr.h header])
+AM_CONDITIONAL([BUILD_BLKPR], [test "x$build_blkpr" = xyes])
 
 UL_BUILD_INIT([ldattach], [check])
 UL_REQUIRES_LINUX([ldattach])

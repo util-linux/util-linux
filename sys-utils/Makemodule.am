@@ -202,6 +202,14 @@ blkzone_SOURCES = sys-utils/blkzone.c
 blkzone_LDADD = $(LDADD) libcommon.la
 endif
 
+if BUILD_BLKPR
+sbin_PROGRAMS += blkpr
+MANPAGES += sys-utils/blkpr.8
+dist_noinst_DATA += sys-utils/blkpr.8.adoc
+blkpr_SOURCES = sys-utils/blkpr.c
+blkpr_LDADD = $(LDADD) libcommon.la
+endif
+
 if BUILD_LDATTACH
 usrsbin_exec_PROGRAMS += ldattach
 MANPAGES += sys-utils/ldattach.8
