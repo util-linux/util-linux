@@ -90,7 +90,7 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			break;
 		}
 		/* FALL THROUGH */
-	case COL_DEVICE:
+	case COL_MAJMIN:
 		xasprintf(&str, "%u:%u",
 			  major(file->stat.st_rdev),
 			  minor(file->stat.st_rdev));
