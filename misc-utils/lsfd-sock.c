@@ -95,7 +95,7 @@ static void init_sock_content(struct file *file)
 		if (fd >= 0)
 			sprintf(path, "/proc/%d/fd/%d", file->proc->pid, fd);
 		else
-			sprintf(path, "/proc/%d/map_files/%lx-%lx",
+			sprintf(path, "/proc/%d/map_files/%"PRIx64 "-%" PRIx64,
 				file->proc->pid,
 				file->map_start,
 				file->map_end);

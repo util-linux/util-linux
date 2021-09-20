@@ -27,6 +27,7 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <inttypes.h>
 
 #include "list.h"
 
@@ -111,10 +112,10 @@ struct file {
 	struct stat stat;
 	mode_t mode;
 	struct proc *proc;
-	uint64_t pos;
 
-	unsigned long map_start;
-	unsigned long map_end;
+	uint64_t pos;
+	uint64_t map_start;
+	uint64_t map_end;
 
 	unsigned int sys_flags;
 	unsigned int mnt_id;
