@@ -248,44 +248,35 @@ static const struct file_class *stat2class(struct stat *sb)
 	return &unkn_class;
 }
 
-static struct file *new_file(
-		       struct proc *proc,
-		       struct stat *sb, const char *name,
-		       struct map_file_data *map_file_data,
-		       int association)
+static struct file *new_file(struct proc *proc, const struct file_class *class)
 {
 	struct file *file;
+
+	file = xcalloc(1, class->size);
+	file->proc = proc;
+
+	INIT_LIST_HEAD(&file->files);
+	list_add_tail(&file->files, &proc->files);
+
+	return file;
+}
+
+static void file_set_path(struct file *file, struct stat *sb, const char *name, int association)
+{
 	const struct file_class *class = stat2class(sb);
 
 	assert(class);
-
-	file = xcalloc(1, class->size);
 
 	file->class = class;
 	file->association = association;
 	file->name = xstrdup(name);
 	file->stat = *sb;
-	file->proc = proc;
+}
 
-	/* add file to the process */
-	INIT_LIST_HEAD(&file->files);
-	list_add_tail(&file->files, &proc->files);
-
-	if (is_association(file, SHM) || is_association(file, MEM)) {
-		static size_t pagesize = 0;
-
-		assert(map_file_data);
-		if (!pagesize)
-			pagesize = getpagesize();
-
-		file->assoc_data.map_length =
-			(map_file_data->end - map_file_data->start) / pagesize;
-	}
-
-	if (file->class->initialize_content)
-		file->class->initialize_content(file, map_file_data);
-
-	return file;
+static void file_init_content(struct file *file)
+{
+	if (file->class && file->class->initialize_content)
+		file->class->initialize_content(file);
 }
 
 static void free_file(struct file *file)
@@ -361,9 +352,10 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
 		return NULL;
 
-	f = new_file(proc, &sb, sym, NULL, assoc);
-	if (!f)
-		return NULL;
+	f = new_file(proc, stat2class(&sb));
+
+	file_set_path(f, &sb, sym, assoc);
+	file_init_content(f);
 
 	if (is_association(f, EXE))
 		proc->uid = sb.st_uid;
@@ -381,6 +373,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 			fclose(fdinfo);
 		}
 	}
+
 	return f;
 }
 
@@ -404,9 +397,10 @@ static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *d
 	ssize_t len;
 	char sym[PATH_MAX];
 	struct file *f;
-	struct map_file_data map_file_data;
+	unsigned long start, end;
 	struct map *map;
 	enum association assoc;
+	mode_t mode = 0;
 
 	if (fstatat(dd, dp->d_name, &sb, 0) < 0)
 		return NULL;
@@ -417,18 +411,23 @@ static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *d
 
 
 	map = NULL;
-	if (sscanf(dp->d_name, "%lx-%lx", &map_file_data.start, &map_file_data.end) == 2)
-		map = find_map(maps, map_file_data.start);
+	if (sscanf(dp->d_name, "%lx-%lx", &start, &end) == 2)
+		map = find_map(maps, start);
 
 	assoc = (map && map->shared)? ASSOC_SHM: ASSOC_MEM;
-	f = new_file(proc, &sb, sym, &map_file_data, -assoc);
-	if (!f)
-		return NULL;
 
-	if (map) {
-		f->mode = (map->read? S_IRUSR: 0) | (map->write? S_IWUSR: 0) | (map->exec? S_IXUSR: 0);
-		f->pos = map->file_offset;
-	}
+	f = new_file(proc, stat2class(&sb));
+	file_set_path(f, &sb, sym, -assoc);
+
+	if (map)
+		mode = (map->read? S_IRUSR: 0) | (map->write? S_IWUSR: 0) | (map->exec? S_IXUSR: 0);
+
+	f->map_start = start;
+	f->map_end = end;
+	f->pos = map ?  map->file_offset : 0;
+	f->mode = mode;
+
+	file_init_content(f);
 
 	return f;
 }
