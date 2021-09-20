@@ -252,6 +252,8 @@ bin_PROGRAMS += lsfd
 lsfd_SOURCES = \
 	misc-utils/lsfd.c \
 	misc-utils/lsfd.h \
+	misc-utils/lsfd-filter.h \
+	misc-utils/lsfd-filter.c \
 	misc-utils/lsfd-file.c \
 	misc-utils/lsfd-cdev.c \
 	misc-utils/lsfd-bdev.c \
