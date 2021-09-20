@@ -52,17 +52,6 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 
 #include "lsfd.h"
 
-
-/*
- * /proc/$pid/maps entries
- */
-struct map {
-	struct list_head maps;
-	unsigned long mem_addr_start;
-	unsigned long long file_offset;
-	unsigned int read:1, write:1, exec:1, shared:1;
-};
-
 /*
  * /proc/$pid/mountinfo entries
  */
@@ -378,82 +367,6 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	return f;
 }
 
-static struct map *find_map(struct list_head *maps, unsigned long start_addr)
-{
-	struct list_head *m;
-
-	list_for_each(m, maps) {
-		struct map *map = list_entry(m, struct map, maps);
-		if (map->mem_addr_start == start_addr)
-			return map;
-	}
-	return NULL;
-}
-
-static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *dp,
-				     void *data)
-{
-	struct list_head *maps = data;
-	struct stat sb;
-	ssize_t len;
-	char sym[PATH_MAX];
-	struct file *f;
-	uint64_t start, end;
-	struct map *map;
-	enum association assoc;
-	mode_t mode = 0;
-
-	if (fstatat(dd, dp->d_name, &sb, 0) < 0)
-		return NULL;
-
-	memset(sym, 0, sizeof(sym));
-	if ((len = readlinkat(dd, dp->d_name, sym, sizeof(sym) - 1)) < 0)
-		return NULL;
-
-
-	map = NULL;
-	if (sscanf(dp->d_name, "%" SCNx64 "-%" SCNx64, &start, &end) == 2)
-		map = find_map(maps, start);
-
-	assoc = (map && map->shared)? ASSOC_SHM: ASSOC_MEM;
-
-	f = new_file(proc, stat2class(&sb));
-	file_set_path(f, &sb, sym, -assoc);
-
-	if (map)
-		mode = (map->read? S_IRUSR: 0) | (map->write? S_IWUSR: 0) | (map->exec? S_IXUSR: 0);
-
-	f->map_start = start;
-	f->map_end = end;
-	f->pos = map ?  map->file_offset : 0;
-	f->mode = mode;
-
-	file_init_content(f);
-
-	return f;
-}
-
-static void collect_fd_files_generic(struct proc *proc, const char *proc_template,
-				     struct file *(*collector)(struct proc *,int, struct dirent *, void *),
-				     void *data)
-{
-	DIR *dirp;
-	int dd;
-	struct dirent *dp;
-
-	dirp = opendirf(proc_template, proc->pid);
-	if (!dirp)
-		return;
-
-	if ((dd = dirfd(dirp)) < 0 )
-		return;
-
-	while ((dp = xreaddir(dirp)))
-		collector(proc, dd, dp, data);
-
-	closedir(dirp);
-}
-
 /* read symlinks from /proc/#/fd
  */
 static void collect_fd_files(struct path_cxt *pc, struct proc *proc)
@@ -473,84 +386,73 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc)
 	}
 }
 
-static struct map* new_map(unsigned long mem_addr_start, unsigned long long file_offset,
-			    int r, int w, int x, int s)
+static void parse_maps_line(char *buf, struct proc *proc)
 {
-	struct map *map = xcalloc(1, sizeof(*map));
+	uint64_t start, end, offset, ino;
+	unsigned long major, minor;
+	enum association assoc = ASSOC_MEM;
+	struct stat sb;
+	struct file *f;
+	char *path, modestr[5];
 
-	INIT_LIST_HEAD(&map->maps);
+	/* ignore non-path entries */
+	path = strchr(buf, '/');
+	if (!path)
+		return;
+	rtrim_whitespace((unsigned char *) path);
 
-	map->mem_addr_start = mem_addr_start;
-	map->file_offset = file_offset;
+	/* first try the path */
+	if (stat(path, &sb) < 0)
+		return;
 
-	map->read   = r;
-	map->write  = w;
-	map->exec   = x;
-	map->shared = s;
+	/* read rest of the map */
+	if (sscanf(buf, "%"SCNx64		/* start */
+			"-%"SCNx64		/* end */
+			" %4[^ ]"		/* mode */
+			" %"SCNx64		/* offset */
+		        " %lx:%lx"		/* maj:min */
+			" %"SCNu64,		/* inode */
 
-	return map;
+			&start, &end, modestr, &offset,
+			&major, &minor, &ino) != 7)
+		return;
+
+	f = new_file(proc, stat2class(&sb));
+	if (!f)
+		return;
+
+	file_set_path(f, &sb, path, -assoc);
+
+	if (modestr[0] == 'r')
+		f->mode |= S_IRUSR;
+	if (modestr[1] == 'w')
+		f->mode |= S_IWUSR;
+	if (modestr[2] == 'x')
+		f->mode |= S_IXUSR;
+	if (modestr[3] == 's')
+		assoc = ASSOC_SHM;
+
+	f->map_start = start;
+	f->map_end = end;
+	f->pos = offset;
+
+	file_init_content(f);
 }
 
-static void free_map(struct map *map)
+static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
 {
-	free(map);
-}
-
-static void read_maps(struct list_head *maps_list, FILE *maps_fp)
-{
-	/* Taken from proc(5):
-	 * address           perms offset  dev   inode       pathname
-	 * 00400000-00452000 r-xp 00000000 08:02 173521      /usr/bin/dbus-daemon
-	 * ... */
-
-	char line[PATH_MAX + 128];
-	unsigned long start, end;
-	char r, w, x, s;
-	unsigned long long file_offset;
-	unsigned long major;
-	unsigned long minor;
-	long unsigned inode;
-
-	while (fgets(line, sizeof(line), maps_fp)) {
-		struct map *map;
-
-		if (sscanf(line, "%lx-%lx %c%c%c%c %llx %lx:%lx %lu %*[^\n]",
-			   &start, &end, &r, &w, &x, &s, &file_offset,
-			   &major, &minor, &inode) != 10)
-			continue;
-		map = new_map(start, file_offset, r == 'r', w == 'w', x == 'x', s == 's');
-		list_add_tail(&map->maps, maps_list);
-	}
-}
-
-static FILE* open_maps(pid_t pid)
-{
-	return fopenf("r", "/proc/%d/maps", pid);
-}
-
-static void free_maps(struct list_head *maps)
-{
-	list_free(maps, struct map, maps, free_map);
-}
-
-static void collect_mem_files(struct proc *proc)
-{
-
-	struct list_head maps;
 	FILE *fp;
+	char buf[BUFSIZ];
 
-	INIT_LIST_HEAD(&maps);
-	fp = open_maps(proc->pid);
-	if (fp) {
-		read_maps(&maps, fp);
-		fclose(fp);
-	}
+	fp = ul_path_fopen(pc, "r", "maps");
+	if (!fp)
+		return;
 
-	collect_fd_files_generic(proc, "/proc/%d/map_files/", collect_mem_file, &maps);
+	while (fgets(buf, sizeof(buf), fp))
+		parse_maps_line(buf, proc);
 
-	free_maps(&maps);
+	fclose(fp);
 }
-
 
 static void collect_outofbox_files(struct path_cxt *pc,
 				   struct proc *proc,
@@ -893,7 +795,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 */
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_VM, 0, 0) != 0)
-		collect_mem_files(proc);
+		collect_mem_files(pc, proc);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FILES, 0, 0) != 0)
