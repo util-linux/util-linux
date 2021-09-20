@@ -316,17 +316,18 @@ static void free_proc(struct proc *proc)
 
 static void read_fdinfo(struct file *file, FILE *fdinfo)
 {
-	const struct file_class *class;
 	char buf[1024];
-	char *val;
 
 	while (fgets(buf, sizeof(buf), fdinfo)) {
-		val = strchr(buf, ':');
+		const struct file_class *class;
+		char *val = strchr(buf, ':');
+
 		if (!val)
 			continue;
-		*val++ = '\0';
-		while (*val == '\t' || *val == ' ')
-			val++;
+		*val++ = '\0';	/* terminate key */
+
+		val = (char *) skip_space(val);
+		rtrim_whitespace((unsigned char *) val);
 
 		class = file->class;
 		while (class) {
