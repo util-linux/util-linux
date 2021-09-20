@@ -68,6 +68,7 @@ enum {
 	COL_TYPE,
 	COL_UID,
 	COL_USER,
+	LSFD_N_COLS		/* This must be at last. */
 };
 
 /*
