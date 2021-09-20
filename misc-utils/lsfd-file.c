@@ -175,9 +175,9 @@ static void file_fill_flags_buf(struct ul_buffer *buf, int flags)
 	 || (file)->association == -ASSOC_SHM	\
 	 || (file)->association == -ASSOC_MEM)
 
-static unsigned long get_map_length(struct file *file)
+static uint64_t get_map_length(struct file *file)
 {
-	unsigned long res = 0;
+	uint64_t res = 0;
 
 	if (is_association(file, SHM) || is_association(file, MEM)) {
 		static size_t pagesize = 0;

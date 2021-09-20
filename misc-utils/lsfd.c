@@ -398,7 +398,7 @@ static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *d
 	ssize_t len;
 	char sym[PATH_MAX];
 	struct file *f;
-	unsigned long start, end;
+	uint64_t start, end;
 	struct map *map;
 	enum association assoc;
 	mode_t mode = 0;
@@ -412,7 +412,7 @@ static struct file *collect_mem_file(struct proc *proc, int dd, struct dirent *d
 
 
 	map = NULL;
-	if (sscanf(dp->d_name, "%lx-%lx", &start, &end) == 2)
+	if (sscanf(dp->d_name, "%" SCNx64 "-%" SCNx64, &start, &end) == 2)
 		map = find_map(maps, start);
 
 	assoc = (map && map->shared)? ASSOC_SHM: ASSOC_MEM;
