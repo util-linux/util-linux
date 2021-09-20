@@ -76,8 +76,7 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
-static void init_sock_content(struct file *file,
-			      struct map_file_data *map_file_data)
+static void init_sock_content(struct file *file)
 {
 	int fd;
 
@@ -95,13 +94,12 @@ static void init_sock_content(struct file *file,
 
 		if (fd >= 0)
 			sprintf(path, "/proc/%d/fd/%d", file->proc->pid, fd);
-		else {
-			assert(map_file_data);
+		else
 			sprintf(path, "/proc/%d/map_files/%lx-%lx",
 				file->proc->pid,
-				map_file_data->start,
-				map_file_data->end);
-		}
+				file->map_start,
+				file->map_end);
+
 		len = getxattr(path, "system.sockprotoname", buf, sizeof(buf) - 1);
 		if (len > 0) {
 			buf[len] = '\0';

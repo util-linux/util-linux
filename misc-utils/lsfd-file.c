@@ -174,6 +174,22 @@ static void file_fill_flags_buf(struct ul_buffer *buf, int flags)
 	 || (file)->association == -ASSOC_SHM	\
 	 || (file)->association == -ASSOC_MEM)
 
+static unsigned long get_map_length(struct file *file)
+{
+	unsigned long res = 0;
+
+	if (is_association(file, SHM) || is_association(file, MEM)) {
+		static size_t pagesize = 0;
+
+		if (!pagesize)
+			pagesize = getpagesize();
+
+		res = (file->map_end - file->map_start) / pagesize;
+	}
+
+	return res;
+}
+
 static bool file_fill_column(struct proc *proc,
 			     struct file *file,
 			     struct libscols_line *ln,
@@ -311,7 +327,7 @@ static bool file_fill_column(struct proc *proc,
 		if (file->association != -ASSOC_SHM
 		    && file->association != -ASSOC_MEM)
 			return true;
-		xasprintf(&str, "%lu", file->assoc_data.map_length);
+		xasprintf(&str, "%lu", get_map_length(file));
 		break;
 	default:
 		return false;

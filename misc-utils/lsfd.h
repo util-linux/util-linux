@@ -108,10 +108,6 @@ struct fdinfo_data {
 	int mnt_id;
 };
 
-struct map_file_data {
-	unsigned long start, end;
-};
-
 struct file {
 	struct list_head files;
 	const struct file_class *class;
@@ -121,9 +117,12 @@ struct file {
 	mode_t mode;
 	struct proc *proc;
 	unsigned long long pos;
+
+	unsigned long map_start;
+	unsigned long map_end;
+
 	union assoc_data {
 		struct fdinfo_data fdinfo;
-		unsigned long map_length;
 	} assoc_data;
 };
 
@@ -140,8 +139,7 @@ struct file_class {
 			    int column_id,
 			    size_t column_index);
 	int  (*handle_fdinfo)(struct file *file, const char *key, const char* value);
-	void (*initialize_content)(struct file *file,
-				   struct map_file_data *map_file_data);
+	void (*initialize_content)(struct file *file);
 	void (*free_content)(struct file *file);
 };
 
