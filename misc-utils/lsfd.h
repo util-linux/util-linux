@@ -111,13 +111,13 @@ struct file {
 	struct stat stat;
 	mode_t mode;
 	struct proc *proc;
-	unsigned long long pos;
+	uint64_t pos;
 
 	unsigned long map_start;
 	unsigned long map_end;
 
-	int sys_flags;
-	int mnt_id;
+	unsigned int sys_flags;
+	unsigned int mnt_id;
 };
 
 #define is_association(_f, a)	((_f)->association < 0 && (_f)->association == -ASSOC_ ## a)

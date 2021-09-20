@@ -28,6 +28,7 @@
 #include "nls.h"
 #include "buffer.h"
 #include "idcache.h"
+#include "strutils.h"
 
 #include "libsmartcols.h"
 
@@ -305,7 +306,7 @@ static bool file_fill_column(struct proc *proc,
 			xasprintf(&str, "---");
 		break;
 	case COL_POS:
-		xasprintf(&str, "%llu",
+		xasprintf(&str, "%" PRIu64,
 			  (does_file_has_fdinfo_alike(file))? file->pos: 0);
 		break;
 	case COL_FLAGS: {
@@ -343,13 +344,14 @@ static bool file_fill_column(struct proc *proc,
 static int file_handle_fdinfo(struct file *file, const char *key, const char* value)
 {
 	if (strcmp(key, "pos") == 0) {
-		file->pos = strtoull(value, NULL, 10);
+		ul_strtou64(value, &file->pos, 10);
 		return 1;
 	} else if (strcmp(key, "flags") == 0) {
-		file->sys_flags = (int)strtol(value, NULL, 8);
+		ul_strtou32(value, &file->sys_flags, 8);
+
 		return 1;
 	} else if (strcmp(key, "mnt_id") == 0) {
-		file->mnt_id = (int)strtol(value, NULL, 10);
+		ul_strtou32(value, &file->mnt_id, 10);
 		return 1;
 	}
 	return 0;
