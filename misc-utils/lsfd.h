@@ -101,13 +101,8 @@ struct proc {
 };
 
 /*
- * File classes
+ * File class
  */
-struct fdinfo_data {
-	int flags;
-	int mnt_id;
-};
-
 struct file {
 	struct list_head files;
 	const struct file_class *class;
@@ -121,9 +116,8 @@ struct file {
 	unsigned long map_start;
 	unsigned long map_end;
 
-	union assoc_data {
-		struct fdinfo_data fdinfo;
-	} assoc_data;
+	int sys_flags;
+	int mnt_id;
 };
 
 #define is_association(_f, a)	((_f)->association < 0 && (_f)->association == -ASSOC_ ## a)
