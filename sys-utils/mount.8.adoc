@@ -1045,7 +1045,7 @@ Can be used to replace UUID of the underlying filesystem in file handles with nu
 When the underlying filesystems supports NFS export and the "nfs_export"
 feature is enabled, an overlay filesystem may be exported to NFS.
 +
-With the “nfs_export” feature, on copy_up of any lower object, an index entry
+With the "nfs_export" feature, on copy_up of any lower object, an index entry
 is created under the index directory. The index entry name is the hexadecimal
 representation of the copy up origin file handle. For a non-directory object,
 the index entry is a hard link to the upper inode. For a directory object, the
@@ -1071,7 +1071,7 @@ This encoding format is identical to the encoding format file handles that are s
 * Find underlying layer by UUID and path type information.
 * Decode the underlying filesystem file handle to underlying dentry.
 * For a lower file handle, lookup the handle in index directory by name.
-* If a whiteout is found in index, return ESTALE. This represents an overlay object that was deleted after its file handle was encoded.
+* If a whiteout is found in index, return **ESTALE**. This represents an overlay object that was deleted after its file handle was encoded.
 * For a non-directory, instantiate a disconnected overlay dentry from the decoded underlying dentry, the path type and index inode, if found.
 * For a directory, use the connected underlying decoded dentry, path type and index, to lookup a connected overlay dentry.
 
