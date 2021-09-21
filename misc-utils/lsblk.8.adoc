@@ -137,26 +137,26 @@ some specified devices found, some not found
 
 == ENVIRONMENT
 
-LSBLK_DEBUG=all::
+*LSBLK_DEBUG*=all::
 enables *lsblk* debug output.
 
-LIBBLKID_DEBUG=all::
+*LIBBLKID_DEBUG*=all::
 enables *libblkid* debug output.
 
-LIBMOUNT_DEBUG=all::
+*LIBMOUNT_DEBUG*=all::
 enables *libmount* debug output.
 
-LIBSMARTCOLS_DEBUG=all::
+*LIBSMARTCOLS_DEBUG*=all::
 enables *libsmartcols* debug output.
 
-LIBSMARTCOLS_DEBUG_PADDING=on::
+*LIBSMARTCOLS_DEBUG_PADDING*=on::
 use visible padding characters.
 
 == NOTES
 
 For partitions, some information (e.g., queue attributes) is inherited from the parent device.
 
-The *lsblk* command needs to be able to look up each block device by major:minor numbers, which is done by using _/sys/dev/block_. This sysfs block directory appeared in kernel 2.6.27 (October 2008). In case of problems with a new enough kernel, check that CONFIG_SYSFS was enabled at the time of the kernel build.
+The *lsblk* command needs to be able to look up each block device by major:minor numbers, which is done by using _/sys/dev/block_. This sysfs block directory appeared in kernel 2.6.27 (October 2008). In case of problems with a new enough kernel, check that *CONFIG_SYSFS* was enabled at the time of the kernel build.
 
 == AUTHORS
 

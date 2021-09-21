@@ -50,7 +50,7 @@ Display version information and exit.
 
 == NOTES
 
-Rather than using raw devices applications should prefer open2 devices, such as _/dev/sda1_, with the *O_DIRECT* flag.
+Rather than using raw devices applications should prefer *open*(2) devices, such as _/dev/sda1_, with the *O_DIRECT* flag.
 
 == BUGS
 

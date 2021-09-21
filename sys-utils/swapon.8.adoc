@@ -56,7 +56,7 @@ Display help text and exit.
 Use the partition that has the specified _label_. (For this, access to _/proc/partitions_ is needed.)
 
 *-o*, *--options* _opts_::
-Specify swap options by an fstab-compatible comma-separated string. For example:
+Specify swap options by an __fstab__-compatible comma-separated string. For example:
 +
 *swapon -o pri=1,discard=pages,nofail /dev/sda2*
 +
@@ -103,7 +103,7 @@ success
 system has insufficient memory to stop swapping (OOM)
 
 *4*::
-swapoff syscall failed for another reason
+*swapoff*(2) syscall failed for another reason
 
 *8*::
 non-swapoff syscall system error (out of memory, ...)
@@ -123,10 +123,10 @@ The old versions before v2.36 has no documented exit status, 0 means success in 
 
 == ENVIRONMENT
 
-LIBMOUNT_DEBUG=all::
+*LIBMOUNT_DEBUG*=all::
 enables *libmount* debug output.
 
-LIBBLKID_DEBUG=all::
+*LIBBLKID_DEBUG*=all::
 enables *libblkid* debug output.
 
 == FILES
@@ -159,7 +159,7 @@ Swap over *NFS* may not work.
 
 === Suspend
 
-*swapon* automatically detects and rewrites a swap space signature with old software suspend data (e.g., S1SUSPEND, S2SUSPEND, ...). The problem is that if we don't do it, then we get data corruption the next time an attempt at unsuspending is made.
+*swapon* automatically detects and rewrites a swap space signature with old software suspend data (e.g., *S1SUSPEND*, *S2SUSPEND*, ...). The problem is that if we don't do it, then we get data corruption the next time an attempt at unsuspending is made.
 
 == HISTORY
 

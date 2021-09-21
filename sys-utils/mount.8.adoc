@@ -593,7 +593,7 @@ After this call all old mount options are replaced and arbitrary stuff from _fst
 +
 *mount -o remount,rw /dir*
 +
-After this call, mount reads _fstab_ and merges these options with the options from the command line (*-o*). If no mountpoint is found in _fstab_, then a remount with unspecified source is allowed.
+After this call, *mount* reads _fstab_ and merges these options with the options from the command line (*-o*). If no mountpoint is found in _fstab_, then a remount with unspecified source is allowed.
 +
 *mount* allows the use of *--all* to remount all already mounted filesystems which match a specified filter (*-O* and *-t*). For example:
 +
@@ -1504,19 +1504,19 @@ The command *mount* does not pass the mount options *unbindable*, *runbindable*,
 
 == ENVIRONMENT
 
-LIBMOUNT_FSTAB=<path>::
+*LIBMOUNT_FSTAB*=<path>::
 overrides the default location of the _fstab_ file (ignored for suid)
 
-LIBMOUNT_MTAB=<path>::
+*LIBMOUNT_MTAB*=<path>::
 overrides the default location of the _mtab_ file (ignored for suid)
 
-LIBMOUNT_DEBUG=all::
+*LIBMOUNT_DEBUG*=all::
 enables libmount debug output
 
-LIBBLKID_DEBUG=all::
+*LIBBLKID_DEBUG*=all::
 enables libblkid debug output
 
-LOOPDEV_DEBUG=all::
+*LOOPDEV_DEBUG*=all::
 enables loop device setup debug output
 
 == FILES

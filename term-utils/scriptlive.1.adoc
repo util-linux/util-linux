@@ -23,7 +23,7 @@ The *session is executed* in a newly created pseudoterminal with the user's $SHE
 
 *Be careful!* Do not forget that the typescript may contains arbitrary commands. It is recommended to use *"scriptreplay --stream in --log-in typescript"* (or with *--log-io* instead of *--log-in*) to verify the typescript before it is executed by *scriptlive*.
 
-The timing information is what script1 outputs to file specified by *--log-timing*. The typescript has to contain stdin information and it is what script1 outputs to file specified by *--log-in* or *--log-io*.
+The timing information is what *script*(1) outputs to file specified by *--log-timing*. The typescript has to contain stdin information and it is what script1 outputs to file specified by *--log-in* or *--log-io*.
 
 == OPTIONS
 

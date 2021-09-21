@@ -73,7 +73,7 @@ Causes everything to be done except for the actual system call or umount helper 
 *-f*, *--force*::
 Force an unmount (in case of an unreachable NFS system).
 +
-Note that this option does not guarantee that umount command does not hang. It's strongly recommended to use absolute paths without symlinks to avoid unwanted readlink and stat system calls on unreachable NFS in *umount*.
+Note that this option does not guarantee that umount command does not hang. It's strongly recommended to use absolute paths without symlinks to avoid unwanted *readlink*(2) and *stat*(2) system calls on unreachable NFS in *umount*.
 
 *-i*, *--internal-only*::
 Do not call the **/sbin/umount.**__filesystem__ helper even if it exists. By default such a helper program is called if it exists.
@@ -81,10 +81,10 @@ Do not call the **/sbin/umount.**__filesystem__ helper even if it exists. By def
 *-l*, *--lazy*::
 Lazy unmount. Detach the filesystem from the file hierarchy now, and clean up all references to this filesystem as soon as it is not busy anymore.
 +
-A system reboot would be expected in near future if you're going to use this option for network filesystem or local filesystem with submounts. The recommended use-case for *umount -l* is to prevent hangs on shutdown due to an unreachable network share where a normal umount will hang due to a downed server or a network partition. Remounts of the share will not be possible.
+A system reboot would be expected in near future if you're going to use this option for network filesystem or local filesystem with submounts. The recommended use-case for *umount -l* is to prevent hangs on shutdown due to an unreachable network share where a normal *umount* will hang due to a downed server or a network partition. Remounts of the share will not be possible.
 
 *-N*, *--namespace* _ns_::
-Perform umount in the mount namespace specified by _ns_. _ns_ is either PID of process running in that namespace or special file representing that namespace.
+Perform *umount* in the mount namespace specified by _ns_. _ns_ is either PID of process running in that namespace or special file representing that namespace.
 +
 *umount* switches to the namespace when it reads _/etc/fstab_, writes _/etc/mtab_ (or writes to _/run/mount_) and calls *umount*(2) system call, otherwise it runs in the original namespace. It means that the target mount namespace does not have to contain any libraries or other requirements necessary to execute *umount*(2) command.
 +
@@ -121,7 +121,7 @@ Display help text and exit.
 
 Normally, only the superuser can umount filesystems. However, when _fstab_ contains the *user* option on a line, anybody can umount the corresponding filesystem. For more details see *mount*(8) man page.
 
-Since version 2.34 the *umount* command can be used to perform umount operation also for fuse filesystems if kernel mount table contains user's ID. In this case fstab *user=* mount option is not required.
+Since version 2.34 the *umount* command can be used to perform umount operation also for fuse filesystems if kernel mount table contains user's ID. In this case _fstab_ *user=* mount option is not required.
 
 Since version 2.35 *umount* command does not exit when user permissions are inadequate by internal libmount security rules. It drops suid permissions and continue as regular non-root user. This can be used to support use-cases where root permissions are not necessary (e.g., fuse filesystems, user namespaces, etc).
 
@@ -153,13 +153,13 @@ Note that _/etc/mtab_ is currently deprecated and *helper=* and other userspace 
 
 == ENVIRONMENT
 
-LIBMOUNT_FSTAB=<path>::
-overrides the default location of the fstab file (ignored for suid)
+*LIBMOUNT_FSTAB*=<path>::
+overrides the default location of the _fstab_ file (ignored for *suid*)
 
-LIBMOUNT_MTAB=<path>::
-overrides the default location of the mtab file (ignored for suid)
+*LIBMOUNT_MTAB*=<path>::
+overrides the default location of the _mtab_ file (ignored for *suid*)
 
-LIBMOUNT_DEBUG=all::
+*LIBMOUNT_DEBUG*=all::
 enables *libmount* debug output
 
 == FILES

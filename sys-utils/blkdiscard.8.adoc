@@ -29,7 +29,7 @@ The _device_ argument is the pathname of the block device.
 The _offset_ and _length_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-f*, *--force*::
-Disable all checking. Since v2.36 the block device is open in exclusive mode (O_EXCL) by default to avoid collision with mounted filesystem or another kernel subsystem. The *--force* option disables the exclusive access mode.
+Disable all checking. Since v2.36 the block device is open in exclusive mode (*O_EXCL*) by default to avoid collision with mounted filesystem or another kernel subsystem. The *--force* option disables the exclusive access mode.
 
 *-o*, *--offset* _offset_::
 Byte offset into the device from which to start discarding. The provided value must be aligned to the device sector size. The default value is zero.

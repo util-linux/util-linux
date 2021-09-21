@@ -25,7 +25,7 @@ The *uuidd* daemon is used by the UUID library to generate universally unique id
 == OPTIONS
 
 *-d*, *--debug*::
-Run uuidd in debugging mode. This prevents uuidd from running as a daemon.
+Run *uuidd* in debugging mode. This prevents *uuidd* from running as a daemon.
 
 *-F*, *--no-fork*::
 Do not daemonize using a double-fork.

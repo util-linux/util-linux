@@ -113,7 +113,7 @@ Timeout for real-time tasks.
 
 == NOTES
 
-The *prlimit* system call is supported since Linux 2.6.36, older kernels will break this program.
+The *prlimit*(2) system call is supported since Linux 2.6.36, older kernels will break this program.
 
 == EXAMPLES
 
@@ -130,7 +130,7 @@ Modify only the soft limit for the number of processes.
 Set for the current process both the soft and ceiling values for the number of processes to unlimited.
 
 *prlimit --cpu=10 sort -u hugefile*::
-Set both the soft and hard CPU time limit to ten seconds and run 'sort'.
+Set both the soft and hard CPU time limit to ten seconds and run *sort*(1).
 
 == AUTHORS
 

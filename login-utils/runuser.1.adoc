@@ -92,7 +92,7 @@ Defines the PATH environment variable for a regular user. The default value is _
 Defines the *PATH* environment variable for root. *ENV_SUPATH* takes precedence. The default value is _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_.
 
 *ALWAYS_SET_PATH* (boolean)::
-If set to _yes_ and --login and --preserve-environment were not specified *runuser* initializes *PATH*.
+If set to _yes_ and *--login* and *--preserve-environment* were not specified *runuser* initializes *PATH*.
 
 The environment variable *PATH* may be different on systems where _/bin_ and _/sbin_ are merged into _/usr_; this variable is also affected by the *--login* command-line option and the PAM system setting (e.g., *pam_env*(8)).
 

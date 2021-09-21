@@ -112,7 +112,7 @@ enables libblkid debug output.
 partx --show /dev/sdb3::
 partx --show --nr 3 /dev/sdb::
 partx --show /dev/sdb3 /dev/sdb::
-All three commands list partition 3 of /dev/sdb.
+All three commands list partition 3 of _/dev/sdb_.
 
 partx --show - /dev/sdb3::
 Lists all subpartitions on _/dev/sdb3_ (the device is used as whole-disk).

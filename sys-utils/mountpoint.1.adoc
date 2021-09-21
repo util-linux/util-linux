@@ -55,7 +55,7 @@ failure; the directory is not a mountpoint, or device is not a block device on *
 
 == ENVIRONMENT
 
-LIBMOUNT_DEBUG=all::
+*LIBMOUNT_DEBUG*=all::
 enables libmount debug output.
 
 == NOTES

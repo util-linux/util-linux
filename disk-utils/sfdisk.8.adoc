@@ -170,7 +170,7 @@ Override the default backup file name. Note that the device name and offset are 
 *--move-data*[**=**__path__]::
 Move data after partition relocation, for example when moving the beginning of a partition to another place on the disk. The size of the partition has to remain the same, the new and old location may overlap. This option requires option *-N* in order to be processed on one specific partition only.
 +
-The optional _path_ specifies log file name. The log file contains information about all read/write operations on the partition data. The word "@default" as a _path_ forces sfdisk to use _~/sfdisk-<devname>.move_ for the log. The log is optional since v2.35.
+The optional _path_ specifies log file name. The log file contains information about all read/write operations on the partition data. The word "@default" as a _path_ forces *sfdisk* to use _~/sfdisk-<devname>.move_ for the log. The log is optional since v2.35.
 +
 Note that this operation is risky and not atomic. *Don't forget to backup your data!*
 +
@@ -240,7 +240,7 @@ Specify the maximal number of GPT partitions.
 *grain*::
 Specify minimal size in bytes used to calculate partitions alignment. The default is 1MiB and it's strongly recommended to use the default. Do not modify this variable if you're not sure.
 *sector-size*::
-Specify sector size. This header is informative only and it is not used when sfdisk creates a new partition table, in this case the real device specific value is always used and sector size from the dump is ignored.
+Specify sector size. This header is informative only and it is not used when *sfdisk* creates a new partition table, in this case the real device specific value is always used and sector size from the dump is ignored.
 
 Note that it is only possible to use header lines before the first partition is specified in the input.
 
@@ -384,15 +384,15 @@ The welcome message.
 
 == ENVIRONMENT
 
-SFDISK_DEBUG=all::
+*SFDISK_DEBUG*=all::
 enables *sfdisk* debug output.
-LIBFDISK_DEBUG=all::
+*LIBFDISK_DEBUG*=all::
 enables libfdisk debug output.
-LIBBLKID_DEBUG=all::
+*LIBBLKID_DEBUG*=all::
 enables libblkid debug output.
-LIBSMARTCOLS_DEBUG=all::
+*LIBSMARTCOLS_DEBUG*=all::
 enables libsmartcols debug output.
-LOCK_BLOCK_DEVICE=<mode>::
+*LOCK_BLOCK_DEVICE*=<mode>::
 use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
 
 == NOTES

@@ -100,10 +100,10 @@ When using the _command_ variant, and executing the child worked, then the exit 
 Note that "shell> " in examples is a command line prompt.
 
 shell1> flock /tmp -c cat; shell2> flock -w .007 /tmp -c echo; /bin/echo $?::
-Set exclusive lock to directory /tmp and the second command will fail.
+Set exclusive lock to directory _/tmp_ and the second command will fail.
 
 shell1> flock -s /tmp -c cat; shell2> flock -s -w .007 /tmp -c echo; /bin/echo $?::
-Set shared lock to directory /tmp and the second command will not fail. Notice that attempting to get exclusive lock with second command would fail.
+Set shared lock to directory _/tmp_ and the second command will not fail. Notice that attempting to get exclusive lock with second command would fail.
 
 shell> flock -x local-lock-file echo 'a b c'::
 Grab the exclusive lock "local-lock-file" before running echo with 'a b c'.

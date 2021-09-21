@@ -20,7 +20,7 @@ fallocate - preallocate or deallocate space to a file
 
 == DESCRIPTION
 
-*fallocate* is used to manipulate the allocated disk space for a file, either to deallocate or preallocate it. For filesystems which support the fallocate system call, preallocation is done quickly by allocating blocks and marking them as uninitialized, requiring no IO to the data blocks. This is much faster than creating a file by filling it with zeroes.
+*fallocate* is used to manipulate the allocated disk space for a file, either to deallocate or preallocate it. For filesystems which support the *fallocate*(2) system call, preallocation is done quickly by allocating blocks and marking them as uninitialized, requiring no IO to the data blocks. This is much faster than creating a file by filling it with zeroes.
 
 The exit status returned by *fallocate* is 0 on success and 1 on failure.
 
@@ -35,7 +35,7 @@ Removes a byte range from a file, without leaving a hole. The byte range to be c
 +
 Available since Linux 3.15 for ext4 (only for extent-based files) and XFS.
 +
-A filesystem may place limitations on the granularity of the operation, in order to ensure efficient implementation. Typically, offset and len must be a multiple of the filesystem logical block size, which varies according to the filesystem type and configuration. If a filesystem has such a requirement, the operation will fail with the error EINVAL if this requirement is violated.
+A filesystem may place limitations on the granularity of the operation, in order to ensure efficient implementation. Typically, _offset_ and _length_ must be a multiple of the filesystem logical block size, which varies according to the filesystem type and configuration. If a filesystem has such a requirement, the operation will fail with the error *EINVAL* if this requirement is violated.
 
 *-d*, *--dig-holes*::
 Detect and dig holes. This makes the file sparse in-place, without using extra disk space. The minimum size of the hole depends on filesystem I/O block size (usually 4096 bytes). Also, when using this option, *--keep-size* is implied. If no range is specified by *--offset* and *--length*, then the entire file is analyzed for holes.

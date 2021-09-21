@@ -71,7 +71,7 @@ Invert the sense of matching.
 Use JSON output format.
 
 *-k*, *--kernel*::
-Search in _/proc/self/mountinfo_. The output is in the tree-like format. This is the default. The output contains only mount options maintained by kernel (see also *--mtab)*.
+Search in _/proc/self/mountinfo_. The output is in the tree-like format. This is the default. The output contains only mount options maintained by kernel (see also *--mtab*).
 
 *-l*, *--list*::
 Use the list output format. This output format is automatically enabled if the output is restricted by the *-t*, *-O*, *-S* or *-T* option and the option *--submounts* is not used or if more that one source file (the option *-F*) is specified.
@@ -164,29 +164,29 @@ Do not print a [/dir] in the SOURCE column for bind mounts or btrfs subvolumes.
 Specify an upper limit on the time for which *--poll* will block, in milliseconds.
 
 *-x*, *--verify*::
-Check mount table content. The default is to verify _/etc/fstab_ parsability and usability. It's possible to use this option also with *--tab-file*. It's possible to specify source (device) or target (mountpoint) to filter mount table. The option *--verbose* forces findmnt to print more details.
+Check mount table content. The default is to verify _/etc/fstab_ parsability and usability. It's possible to use this option also with *--tab-file*. It's possible to specify source (device) or target (mountpoint) to filter mount table. The option *--verbose* forces *findmnt* to print more details.
 
 *--verbose*::
-Force findmnt to print more information (*--verify* only for now).
+Force *findmnt* to print more information (*--verify* only for now).
 
 *--vfs-all*::
 When used with *VFS-OPTIONS* column, print all VFS (fs-independent) flags. This option is designed for auditing purposes to list also default VFS kernel mount options which are normally not listed.
 
 == ENVIRONMENT
 
-LIBMOUNT_FSTAB=<path>::
+*LIBMOUNT_FSTAB*=<path>::
 overrides the default location of the fstab file
 
-LIBMOUNT_MTAB=<path>::
+*LIBMOUNT_MTAB*=<path>::
 overrides the default location of the mtab file
 
-LIBMOUNT_DEBUG=all::
+*LIBMOUNT_DEBUG*=all::
 enables libmount debug output
 
-LIBSMARTCOLS_DEBUG=all::
+*LIBSMARTCOLS_DEBUG*=all::
 enables libsmartcols debug output
 
-LIBSMARTCOLS_DEBUG_PADDING=on::
+*LIBSMARTCOLS_DEBUG_PADDING*=on::
 use visible padding characters.
 
 == EXAMPLES
