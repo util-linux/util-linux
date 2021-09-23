@@ -26,7 +26,7 @@ The _device_ argument will usually be a disk partition (something like _/dev/sdb
 
 The _size_ parameter is superfluous but retained for backwards compatibility. (It specifies the desired size of the swap area in 1024-byte blocks. *mkswap* will use the entire partition or file if it is omitted. Specifying it is unwise - a typo may destroy your disk.)
 
-After creating the swap area, you need the *swapon* command to start using it. Usually swap areas are listed in _/etc/fstab_ so that they can be taken into use at boot time by a *swapon -a* command in some boot script.
+After creating the swap area, you need the *swapon*(8) command to start using it. Usually swap areas are listed in _/etc/fstab_ so that they can be taken into use at boot time by a *swapon -a* command in some boot script.
 
 == WARNING
 
@@ -47,7 +47,7 @@ Go ahead even if the command is stupid. This allows the creation of a swap area 
 Also, without this option, *mkswap* will refuse to erase the first block on a device with a partition table.
 
 *-L*, *--label* _label_::
-Specify a _label_ for the device, to allow *swapon* by label.
+Specify a _label_ for the device, to allow *swapon*(8) by label.
 
 *--lock*[=_mode_]::
 Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.

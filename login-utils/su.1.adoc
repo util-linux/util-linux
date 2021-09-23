@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: su
+:colon: :
 
 == NAME
 
@@ -56,7 +57,7 @@ Preserve the entire environment, i.e., do not set *HOME*, *SHELL*, *USER* or *LO
 *-P*, *--pty*::
 Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid TIOCSTI ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., "su --pty - username -c application &"). If the pseudo-terminal is enabled, then *su* works as a proxy between the sessions (copy stdin and stdout).
 +
-This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., echo "date" | su --pty), then the ECHO flag for the pseudo-terminal is disabled to avoid messy output.
+This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., echo "date" | su --pty), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
 
 *-s*, **--shell**=__shell__::
 Run the specified _shell_ instead of the default. The shell to run is selected according to the following rules, in order:
@@ -66,7 +67,7 @@ Run the specified _shell_ instead of the default. The shell to run is selected a
 * the shell listed in the passwd entry of the target user
 * /bin/sh
 
-If the target user has a restricted shell (i.e., not listed in /etc/shells), the *--shell* option and the *SHELL* environment variables are ignored unless the calling user is root.
+If the target user has a restricted shell (i.e., not listed in _/etc/shells_), the *--shell* option and the *SHELL* environment variables are ignored unless the calling user is root.
 
 **--session-command=**__command__::
 Same as *-c*, but do not create a new session. (Discouraged.)
@@ -86,7 +87,8 @@ Upon receiving either *SIGINT*, *SIGQUIT* or *SIGTERM*, *su* terminates its chil
 
 == CONFIG FILES
 
-*su* reads the _/etc/default/su_ and _/etc/login.defs_ configuration files. The following configuration items are relevant for *su:*
+//TRANSLATORS: Keep {colon} untranslated
+*su* reads the _/etc/default/su_ and _/etc/login.defs_ configuration files. The following configuration items are relevant for *su*{colon}
 
 *FAIL_DELAY* (number)::
 Delay in seconds in case of an authentication failure. The number must be a non-negative integer.

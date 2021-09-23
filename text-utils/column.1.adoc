@@ -144,7 +144,7 @@ The environment variable *COLUMNS* is used to determine the size of the screen i
 
 == HISTORY
 
-The column command appeared in 4.3BSD-Reno.
+The *column* command appeared in 4.3BSD-Reno.
 
 == BUGS
 

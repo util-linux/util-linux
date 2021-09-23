@@ -84,7 +84,7 @@ Enable support only for disklabels of the specified _type_, and disable support 
 When listing partition tables, show sizes in 'sectors' or in 'cylinders'. The default is to show sizes in sectors. For backward compatibility, it is possible to use the option without the _unit_ argument -- then the default is used. Note that the optional _unit_ argument cannot be separated from the *-u* option by a space, the correct form is for example '**-u=**__cylinders__'.
 
 *-C*, *--cylinders* _number_::
-Specify the number of cylinders of the disk. I have no idea why anybody would want to do so.
+Specify the _number_ of cylinders of the disk. I have no idea why anybody would want to do so.
 
 *-H*, *--heads* _number_::
 Specify the number of heads of the disk. (Not the physical number, of course, but the number used for partition tables.) Reasonable values are 255 and 16.
@@ -123,7 +123,7 @@ In the case the size is specified in bytes than the number may be followed by th
 //TRANSLATORS: Keep {plus} untranslated.
 The relative sizes are always aligned according to device I/O limits. The {plus}/-<size>{K,B,M,G,...} notation is recommended.
 
-For backward compatibility fdisk also accepts the suffixes KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB. These 10^N suffixes are deprecated.
+For backward compatibility *fdisk* also accepts the suffixes KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB. These 10^N suffixes are deprecated.
 
 == SCRIPT FILES
 
@@ -156,7 +156,7 @@ A BSD/Sun disklabel can describe 8 partitions, the third of which should be a `w
 *IRIX/SGI-type*::
 An IRIX/SGI disklabel can describe 16 partitions, the eleventh of which should be an entire `volume' partition, while the ninth should be labeled `volume header'. The volume header will also cover the partition table, i.e., it starts at block zero and extends by default over five cylinders. The remaining space in the volume header may be used by header directory entries. No partitions may overlap with the volume header. Also do not change its type or make some filesystem on it, since you will lose the partition table. Use this type of label only when working with Linux on IRIX/SGI machines or IRIX/SGI disks under Linux.
 +
-A sync() and an ioctl(BLKRRPART) (rereading the partition table from disk) are performed before exiting when the partition table has been updated.
+A *sync*(2) and an ioctl(BLKRRPART) (rereading the partition table from disk) are performed before exiting when the partition table has been updated.
 
 == DOS mode and DOS 6.x WARNING
 
@@ -164,7 +164,7 @@ A sync() and an ioctl(BLKRRPART) (rereading the partition table from disk) are p
 
 The DOS 6.x FORMAT command looks for some information in the first sector of the data area of the partition, and treats this information as more reliable than the information in the partition table. DOS FORMAT expects DOS FDISK to clear the first 512 bytes of the data area of a partition whenever a size change occurs. DOS FORMAT will look at this extra information even if the /U flag is given -- we consider this a bug in DOS FORMAT and DOS FDISK.
 
-The bottom line is that if you use *fdisk* or *cfdisk* to change the size of a DOS partition table entry, then you must also use *dd*(1) to *zero the first 512 bytes* of that partition before using DOS FORMAT to format the partition. For example, if you were using *fdisk* to make a DOS partition table entry for _/dev/sda1_, then (after exiting *fdisk* and rebooting Linux so that the partition table information is valid) you would use the command *dd if=/dev/zero of=/dev/sda1 bs=512 count=1* to zero the first 512 bytes of the partition.
+The bottom line is that if you use *fdisk* or *cfdisk*(8) to change the size of a DOS partition table entry, then you must also use *dd*(1) to *zero the first 512 bytes* of that partition before using DOS FORMAT to format the partition. For example, if you were using *fdisk* to make a DOS partition table entry for _/dev/sda1_, then (after exiting *fdisk* and rebooting Linux so that the partition table information is valid) you would use the command *dd if=/dev/zero of=/dev/sda1 bs=512 count=1* to zero the first 512 bytes of the partition.
 
 *fdisk* usually obtains the disk geometry automatically. This is not necessarily the physical disk geometry (indeed, modern disks do not really have anything like a physical geometry, certainly not something that can be described in the simplistic Cylinders/Heads/Sectors form), but it is the disk geometry that MS-DOS uses for the partition table.
 

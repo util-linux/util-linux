@@ -161,7 +161,7 @@ If an ambivalent probing result was detected by low-level probing mode (*-p*), a
 
 == CONFIGURATION FILE
 
-The standard location of the _/etc/blkid.conf_ config file can be overridden by the environment variable BLKID_CONF. The following options control the libblkid library:
+The standard location of the _/etc/blkid.conf_ config file can be overridden by the environment variable *BLKID_CONF*. The following options control the libblkid library:
 
 _SEND_UEVENT=<yes|not>_::
 Sends uevent when _/dev/disk/by-{label,uuid,partuuid,partlabel}/_ symlink does not match with LABEL, UUID, PARTUUID or PARTLABEL on the device. Default is "yes".
