@@ -160,7 +160,6 @@ headers = '''
 	linux/gsmmux.h
         linux/net_namespace.h
         linux/nsfs.h
-        linux/raw.h
         linux/securebits.h
         linux/tiocl.h
         linux/version.h
@@ -1897,6 +1896,9 @@ if not is_disabler(exe)
 endif
 
 opt = not get_option('build-raw').disabled()
+if opt
+  cc.has_header('xlinux/raw.h', required: opt)
+endif
 exe = executable(
   'raw',
   raw_sources,

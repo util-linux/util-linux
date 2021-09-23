@@ -124,7 +124,7 @@ option('build-line', type : 'feature',
        description : 'build line')
 option('build-mesg', type : 'feature',
        description : 'build mesg')
-option('build-raw', type : 'feature',
+option('build-raw', type : 'feature', value : 'disabled',
        description : 'build raw')
 option('build-rename', type : 'feature',
        description : 'build rename')
