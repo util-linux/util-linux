@@ -172,6 +172,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fprintf(out,
 	      _("     --lock[=<mode>]       use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
+
 	printf(USAGE_HELP_OPTIONS(27));
 
 	printf(USAGE_MAN_TAIL("mkswap(8)"));
@@ -541,7 +542,13 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBUUID
 	if(opt_uuid) {
-		if (uuid_parse(opt_uuid, uuid_dat) != 0)
+		if (strcmp(opt_uuid, "clear") == 0)
+			uuid_clear(uuid_dat);
+		else if (strcmp(opt_uuid, "random") == 0)
+			uuid_generate_random(uuid_dat);
+		else if (strcmp(opt_uuid, "time") == 0)
+			uuid_generate_time(uuid_dat);
+		else if (uuid_parse(opt_uuid, uuid_dat) != 0)
 			errx(EXIT_FAILURE, _("error: parsing UUID failed"));
 	} else
 		uuid_generate(uuid_dat);

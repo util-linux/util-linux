@@ -56,7 +56,16 @@ Use exclusive BSD lock for device or file it operates. The optional argument _mo
 Specify the page _size_ (in bytes) to use. This option is usually unnecessary; *mkswap* reads the size from the kernel.
 
 *-U*, *--uuid* _UUID_::
-Specify the _UUID_ to use. The default is to generate a UUID.
+Specify the _UUID_ to use. The default is to generate a UUID. The format of the UUID is a series of
+hex digits separated by hyphens, like this: "c1b9d5a2-f162-11cf-9ece-0020afc76f16". The UUID parameter
+may also be one of the following:
++
+*clear*;;
+clear the filesystem UUID
+*random*;;
+generate a new randomly-generated UUID
+*time*;;
+generate a new time-based UUID
 
 *-v*, *--swapversion 1*::
 Specify the swap-space version. (This option is currently pointless, as the old *-v 0* option has become obsolete and now only *-v 1* is supported. The kernel has not supported v0 swap-space format since 2.5.22 (June 2002). The new version v1 is supported since 2.1.117 (August 1998).)
