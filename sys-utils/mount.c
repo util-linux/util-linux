@@ -354,6 +354,10 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 		if (!spec)
 			spec = "???";
 		warnx("%s: %s.", spec, buf);
+
+		if (mnt_context_syscall_called(cxt) &&
+		    mnt_context_get_syscall_errno(cxt) != 0)
+			fprintf(stderr, _("       dmesg(1) may have more information after failed mount system call.\n"));
 	}
 
 	if (rc == MNT_EX_SUCCESS && mnt_context_get_status(cxt) == 1) {
