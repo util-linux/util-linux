@@ -69,6 +69,8 @@ static struct ul_env_list *env_list_add(struct ul_env_list *ls0, const char *str
 
 	sz = strlen(str) + 1;
 	p = malloc(sizeof(struct ul_env_list) + sz);
+	if (!p)
+		return ls0;
 
 	ls = (struct ul_env_list *) p;
 	p += sizeof(struct ul_env_list);
@@ -112,7 +114,7 @@ void env_list_free(struct ul_env_list *ls)
 }
 
 /*
- * Removes unwanted variables from environ[]. If @ls is not NULL than stores
+ * Removes unwanted variables from environ[]. If @org is not NULL than stores
  * unwnated variables to the list.
  */
 void __sanitize_env(struct ul_env_list **org)
