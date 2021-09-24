@@ -1897,7 +1897,7 @@ endif
 
 opt = not get_option('build-raw').disabled()
 if opt
-  cc.has_header('xlinux/raw.h', required: opt)
+  cc.has_header('linux/raw.h', required: opt)
 endif
 exe = executable(
   'raw',
