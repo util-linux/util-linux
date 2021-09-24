@@ -941,6 +941,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --sysroot <dir>   use specified directory as system root\n"), out);
 	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
 	fputs(_(" -Q, --filter <expr>   apply display filter\n"), out);
+	fputs(_("     --source <source> add filter by SOURCE\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(23));
@@ -963,6 +964,28 @@ static void xstrappend(char **a, const char *b)
 {
 	if (strappend(a, b) < 0)
 		err(EXIT_FAILURE, _("failed to allocate memory for string"));
+}
+
+static char * quote_filter_expr(char *expr)
+{
+	char c[] = {'\0', '\0'};
+	char *r = strdup("");
+	while (*expr) {
+		switch (*expr) {
+		case '\'':
+			xstrappend(&r, "\\'");
+			break;
+		case '"':
+			xstrappend(&r, "\\\"");
+			break;
+		default:
+			c[0] = *expr;
+			xstrappend(&r, c);
+			break;
+		}
+		expr++;
+	}
+	return r;
 }
 
 static void append_filter_expr(char **a, const char *b, bool and)
@@ -995,7 +1018,8 @@ int main(int argc, char *argv[])
 	char  *filter_expr = NULL;
 
 	enum {
-		OPT_SYSROOT = CHAR_MAX + 1
+		OPT_SYSROOT = CHAR_MAX + 1,
+		OPT_SOURCE,
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -1008,6 +1032,7 @@ int main(int argc, char *argv[])
 		{ "notruncate", no_argument, NULL, 'u' },
 		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
 		{ "filter",     required_argument, NULL, 'Q' },
+		{ "source",     required_argument, NULL, OPT_SOURCE },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -1042,6 +1067,17 @@ int main(int argc, char *argv[])
 		case 'Q':
 			append_filter_expr(&filter_expr, optarg, true);
 			break;
+		case OPT_SOURCE: {
+			char * quoted_source = quote_filter_expr(optarg);
+			char * source_expr = NULL;
+			xstrappend(&source_expr, "(SOURCE == '");
+			xstrappend(&source_expr, quoted_source);
+			xstrappend(&source_expr, "')");
+			append_filter_expr(&filter_expr, source_expr, true);
+			free(source_expr);
+			free(quoted_source);
+			break;
+		}
 
 		case 'V':
 			print_version(EXIT_SUCCESS);
