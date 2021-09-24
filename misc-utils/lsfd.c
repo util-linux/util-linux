@@ -1031,7 +1031,7 @@ int main(int argc, char *argv[])
 	convert(&ctl.procs, &ctl);
 	emit(&ctl);
 
-	/* cleabup */
+	/* cleanup */
 	delete(&ctl.procs, &ctl);
 
 	finalize_classes();
