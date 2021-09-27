@@ -35,7 +35,7 @@ A _16-color_ can be an _8-color_, or *grey*, or *bright* followed by *red*, *gre
 
 The various color options may be set independently, at least on virtual consoles, though the results of setting multiple modes (for example, *--underline* and *--half-bright*) are hardware-dependent.
 
-The optional arguments require '=' (equals sign) and not space between the option and the argument. For example --option=argument.
+The optional arguments are recommended with '=' (equals sign) and not space between the option and the argument. For example --option=argument. *setterm* can interpret the next non-option argument as an optional argument too.
 
 *--appcursorkeys* on|off::
 Sets Cursor Key Application Mode on or off. When on, ESC O A, ESC O B, etc. will be sent for the cursor keys instead of ESC [ A, ESC [ B, etc. See the _vi and Cursor-Keys_ section of the _Text-Terminal-HOWTO_ for how this can cause problems for *vi* users. Virtual consoles only.
