@@ -91,6 +91,10 @@ enum log_level {
 	JLOG_VERBOSE2
 };
 
+#ifndef DEF_SCAN_BUFSIZ
+# define DEF_SCAN_BUFSIZ 8192
+#endif
+
 /**
  * struct statistic - Statistics about the file
  * @started: Whether we are post command-line processing
@@ -149,6 +153,7 @@ static struct options {
 	unsigned int keep_oldest:1;
 	unsigned int dry_run:1;
 	uintmax_t min_size;
+	size_t bufsiz;
 } opts = {
 	/* default setting */
 	.respect_mode = TRUE,
@@ -156,7 +161,8 @@ static struct options {
 	.respect_time = TRUE,
 	.respect_xattrs = FALSE,
 	.keep_oldest = FALSE,
-	.min_size = 1
+	.min_size = 1,
+	.bufsiz = DEF_SCAN_BUFSIZ
 };
 
 /*
@@ -167,6 +173,12 @@ static struct options {
  */
 static void *files;
 static void *files_by_ino;
+
+/*
+ * Temporary buffers for reading file contents
+ */
+static char *buf_a = NULL;
+static char *buf_b = NULL;
 
 /*
  * last_signal
@@ -552,8 +564,6 @@ static int file_contents_equal(const struct file *a, const struct file *b)
 {
 	FILE *fa = NULL;
 	FILE *fb = NULL;
-	char buf_a[8192];
-	char buf_b[8192];
 	int cmp = 0;		/* zero => equal */
 	off_t off = 0;		/* current offset */
 
@@ -579,11 +589,11 @@ static int file_contents_equal(const struct file *a, const struct file *b)
 		size_t ca;
 		size_t cb;
 
-		ca = fread(buf_a, 1, sizeof(buf_a), fa);
+		ca = fread(buf_a, 1, opts.bufsiz, fa);
 		if (ca < sizeof(buf_a) && ferror(fa))
 			goto err;
 
-		cb = fread(buf_b, 1, sizeof(buf_b), fb);
+		cb = fread(buf_b, 1, opts.bufsiz, fb);
 		if (cb < sizeof(buf_b) && ferror(fb))
 			goto err;
 
@@ -919,6 +929,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
 	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
 	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
+	fputs(_(" -S, --buffer-size <size>   buffer size for file reading (speedup, using more RAM)\n"), out);
 	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -929,6 +940,18 @@ static void __attribute__((__noreturn__)) usage(void)
 }
 
 
+static void init_buffers(size_t bufsiz)
+{
+	buf_a = xmalloc(bufsiz);
+	buf_b = xmalloc(bufsiz);
+}
+
+static void deinit_buffers(void)
+{
+	free(buf_a);
+	free(buf_b);
+}
+
 /**
  * parse_options - Parse the command line options
  * @argc: Number of options
@@ -936,7 +959,7 @@ static void __attribute__((__noreturn__)) usage(void)
  */
 static int parse_options(int argc, char *argv[])
 {
-	static const char optstr[] = "VhvnfpotXcmMOx:i:s:q";
+	static const char optstr[] = "VhvnfpotXcmMOx:i:s:S:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -953,6 +976,7 @@ static int parse_options(int argc, char *argv[])
 		{"exclude", required_argument, NULL, 'x'},
 		{"include", required_argument, NULL, 'i'},
 		{"minimum-size", required_argument, NULL, 's'},
+		{"buffer-size", required_argument, NULL, 'S'},
 		{"content", no_argument, NULL, 'c'},
 		{"quiet", no_argument, NULL, 'q'},
 		{NULL, 0, NULL, 0}
@@ -1018,6 +1042,9 @@ static int parse_options(int argc, char *argv[])
 		case 's':
 			opts.min_size = strtosize_or_err(optarg, _("failed to parse size"));
 			break;
+		case 'S':
+			opts.bufsiz = strtosize_or_err(optarg, _("failed to parse size"));
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -1074,6 +1101,9 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _("no directory or file specified"));
 
 	gettime_monotonic(&stats.start_time);
+
+	init_buffers(opts.bufsiz);
+
 	stats.started = TRUE;
 
 	for (; optind < argc; optind++) {
@@ -1082,5 +1112,8 @@ int main(int argc, char *argv[])
 	}
 
 	twalk(files, visitor);
+
+	deinit_buffers();
+
 	return 0;
 }
