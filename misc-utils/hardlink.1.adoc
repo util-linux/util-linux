@@ -39,16 +39,16 @@ Quiet mode, don't print anything.
 Do not act, just print what would happen.
 
 *-f*, *--respect-name*::
-Only try to link files with the same (basename). It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by others *hardlink* implementations.
+Only try to link files with the same (base)name. It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by other *hardlink* implementations.
 
 *-p*, *--ignore-mode*::
-Link/compare files even if their mode is different. This may be a bit unpredictable.
+Link and compare files even if their mode is different. Results may be slightly unpredictable.
 
 *-o*, *--ignore-owner*::
-Link/compare files even if their owner (user and group) is different. It is not predictable.
+Link and compare files even if their owner information (user and group) differs. Results may be unpredictable.
 
 *-t*, *--ignore-time*::
-Link/compare files even if their time of modification is different. You almost always want this.
+Link and compare files even if their time of modification is different. This is usually a good choice.
 
 *-X*, *--respect-xattrs*::
 Only try to link files with the same extended attributes.
