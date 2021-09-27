@@ -406,12 +406,35 @@ int main(int argc, char **argv)
 
 	if (dig)
 		dig_holes(fd, offset, length);
+	else {
 #ifdef HAVE_POSIX_FALLOCATE
-	else if (posix)
-		xposix_fallocate(fd, offset, length);
+		if (posix)
+			xposix_fallocate(fd, offset, length);
+		else
 #endif
-	else
-		xfallocate(fd, mode, offset, length);
+			xfallocate(fd, mode, offset, length);
+
+		if (verbose) {
+			char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE, length);
+
+			if (mode & FALLOC_FL_PUNCH_HOLE)
+				fprintf(stdout, _("%s: %s (%ju bytes) hole created.\n"),
+								filename, str, length);
+			else if (mode & FALLOC_FL_COLLAPSE_RANGE)
+				fprintf(stdout, _("%s: %s (%ju bytes) removed.\n"),
+								filename, str, length);
+			else if (mode & FALLOC_FL_INSERT_RANGE)
+				fprintf(stdout, _("%s: %s (%ju bytes) inserted.\n"),
+								filename, str, length);
+			else if (mode & FALLOC_FL_ZERO_RANGE)
+				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
+								filename, str, length);
+			else
+				fprintf(stdout, _("%s: %s (%ju bytes) allocated.\n"),
+								filename, str, length);
+			free(str);
+		}
+	}
 
 	if (close_fd(fd) != 0)
 		err(EXIT_FAILURE, _("write failed: %s"), filename);
