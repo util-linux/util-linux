@@ -233,7 +233,7 @@ static struct libscols_column *add_column(struct libscols_table *tb, const struc
 	return cl;
 }
 
-static struct libscols_column *add_column_by_id_cb(struct libscols_table *tb, int colid, void *data __attribute__((__unused__)))
+static struct libscols_column *add_column_by_id_cb(struct libscols_table *tb, int colid, void *data)
 {
 	if (ncolumns >= ARRAY_SIZE(columns))
 		errx(EXIT_FAILURE, _("too many columns are added via filter expression"));
@@ -244,6 +244,12 @@ static struct libscols_column *add_column_by_id_cb(struct libscols_table *tb, in
 	if (!cl)
 		err(EXIT_FAILURE, _("failed to allocate output column"));
 	columns[ncolumns++] = colid;
+
+	if (colid == COL_TID) {
+		struct lsfd_control *ctl = data;
+		ctl->threads = 1;
+	}
+
 	return cl;
 }
 
@@ -1137,7 +1143,7 @@ int main(int argc, char *argv[])
 		ctl.filter = lsfd_filter_new(filter_expr, ctl.tb,
 					     LSFD_N_COLS,
 					     column_name_to_id_cb,
-					     add_column_by_id_cb, NULL);
+					     add_column_by_id_cb, &ctl);
 		const char *errmsg = lsfd_filter_get_errmsg(ctl.filter);
 		if (errmsg)
 			errx(EXIT_FAILURE, "%s", errmsg);
