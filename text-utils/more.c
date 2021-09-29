@@ -207,11 +207,13 @@ struct more_control {
 		eat_newline:1,		/* is newline ignored after 80 cols */
 		erase_input_ok:1,	/* is erase input supported */
 		erase_previous_ok:1,	/* is erase previous supported */
+		exit_on_eof:1,		/* exit on EOF */
 		first_file:1,		/* is the input file the first in list */
 		fold_long_lines:1,	/* fold long lines */
 		hard_tabs:1,		/* print spaces instead of '\t' */
 		hard_tty:1,		/* is this hard copy terminal (a printer or such) */
 		leading_colon:1,	/* key command has leading ':' character */
+		is_eof:1,               /* EOF detected */
 		is_paused:1,		/* is output paused */
 		no_quit_dialog:1,	/* suppress quit dialog */
 		no_scroll:1,		/* do not scroll, clear the screen and then display text */
@@ -243,6 +245,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf("%s\n", _(" -l, --no-pause        suppress pause after form feed"));
 	printf("%s\n", _(" -c, --print-over      do not scroll, display text and clean line ends"));
 	printf("%s\n", _(" -p, --clean-print     do not scroll, clean screen and display text"));
+	printf("%s\n", _(" -e, --exit-on-eof     exit on end-of-file"));
 	printf("%s\n", _(" -s, --squeeze         squeeze multiple blank lines into one"));
 	printf("%s\n", _(" -u, --plain           suppress underlining and bold"));
 	printf("%s\n", _(" -n, --lines <number>  the number of lines per screenful"));
@@ -264,6 +267,7 @@ static void argscan(struct more_control *ctl, int as_argc, char **as_argv)
 		{ "no-pause",    no_argument,       NULL, 'l' },
 		{ "print-over",  no_argument,       NULL, 'c' },
 		{ "clean-print", no_argument,       NULL, 'p' },
+		{ "exit-on-eof", no_argument,       NULL, 'e' },
 		{ "squeeze",     no_argument,       NULL, 's' },
 		{ "plain",       no_argument,       NULL, 'u' },
 		{ "lines",       required_argument, NULL, 'n' },
@@ -324,7 +328,8 @@ static void argscan(struct more_control *ctl, int as_argc, char **as_argv)
 		case 'n':
 			ctl->lines_per_screen = strtou16_or_err(optarg, _("argument error"));
 			break;
-		case 'e':	/* ignored silently to be posix compliant */
+		case 'e':
+			ctl->exit_on_eof = 1;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -728,10 +733,18 @@ static void output_prompt(struct more_control *ctl, char *filename)
 		if (filename != NULL) {
 			ctl->prompt_len += printf(_("(Next file: %s)"), filename);
 		} else if (!ctl->no_tty_in && 0 < ctl->file_size) {
-			ctl->prompt_len +=
-			    printf("(%d%%)",
-				   (int)((ctl->file_position * 100) / ctl->file_size));
+		    int position = ((ctl->file_position * 100) / ctl->file_size);
+		    if (position == 100) {
+			erase_to_col(ctl, 0);
+			ctl->prompt_len += printf(_("(END)"));
+		    } else {
+			ctl->prompt_len += printf("(%d%%)", position);
+		    }
+		} else if (ctl->is_eof) {
+			erase_to_col(ctl, 0);
+			ctl->prompt_len += printf(_("(END)"));
 		}
+
 		if (ctl->suppress_bell) {
 			ctl->prompt_len +=
 			    printf(_("[Press space to continue, 'q' to quit.]"));
@@ -1809,7 +1822,9 @@ static void screen(struct more_control *ctl, int num_lines)
 
 	for (;;) {
 		while (num_lines > 0 && !ctl->is_paused) {
-			if ((nchars = get_line(ctl, &length)) == EOF) {
+			nchars = get_line(ctl, &length);
+			ctl->is_eof = nchars == EOF;
+			if (ctl->is_eof && ctl->exit_on_eof) {
 				if (ctl->clear_line_ends)
 					putp(ctl->clear_rest);
 				return;
@@ -1834,7 +1849,11 @@ static void screen(struct more_control *ctl, int num_lines)
 			num_lines--;
 		}
 		fflush(NULL);
-		if ((c = more_getc(ctl)) == EOF) {
+
+		c = more_getc(ctl);
+		ctl->is_eof = c == EOF;
+
+		if (ctl->is_eof && ctl->exit_on_eof) {
 			if (ctl->clear_line_ends)
 				putp(ctl->clear_rest);
 			return;
