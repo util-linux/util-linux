@@ -250,6 +250,22 @@ static struct file *new_file(struct proc *proc, const struct file_class *class)
 	return file;
 }
 
+static struct file *copy_file(struct file *old)
+{
+	struct file *file = xcalloc(1, old->class->size);
+
+	INIT_LIST_HEAD(&file->files);
+	file->proc = old->proc;
+	list_add_tail(&file->files, &old->proc->files);
+
+	file->class = old->class;
+	file->association = old->association;
+	file->name = xstrdup(old->name);
+	file->stat = old->stat;
+
+	return file;
+}
+
 static void file_set_path(struct file *file, struct stat *sb, const char *name, int association)
 {
 	const struct file_class *class = stat2class(sb);
@@ -392,18 +408,15 @@ static void parse_maps_line(char *buf, struct proc *proc)
 	unsigned long major, minor;
 	enum association assoc = ASSOC_MEM;
 	struct stat sb;
-	struct file *f;
+	struct file *f, *prev;
 	char *path, modestr[5];
+	dev_t devno;
 
 	/* ignore non-path entries */
 	path = strchr(buf, '/');
 	if (!path)
 		return;
 	rtrim_whitespace((unsigned char *) path);
-
-	/* first try the path */
-	if (stat(path, &sb) < 0)
-		return;
 
 	/* read rest of the map */
 	if (sscanf(buf, "%"SCNx64		/* start */
@@ -417,11 +430,28 @@ static void parse_maps_line(char *buf, struct proc *proc)
 			&major, &minor, &ino) != 7)
 		return;
 
-	f = new_file(proc, stat2class(&sb));
-	if (!f)
-		return;
+	devno = makedev(major, minor);
 
-	file_set_path(f, &sb, path, -assoc);
+	if (modestr[3] == 's')
+		assoc = ASSOC_SHM;
+
+	/* The map usually contains the same file more than once, try to reuse
+	 * the previous file (if devno and ino are the same) to save stat() call.
+	 */
+	prev = list_last_entry(&proc->files, struct file, files);
+
+	if (prev && prev->stat.st_dev == devno && prev->stat.st_ino == ino) {
+		f = copy_file(prev);
+		f->association = -assoc;
+	} else {
+		if (stat(path, &sb) < 0)
+			return;
+		f = new_file(proc, stat2class(&sb));
+		if (!f)
+			return;
+
+		file_set_path(f, &sb, path, -assoc);
+	}
 
 	if (modestr[0] == 'r')
 		f->mode |= S_IRUSR;
@@ -429,8 +459,6 @@ static void parse_maps_line(char *buf, struct proc *proc)
 		f->mode |= S_IWUSR;
 	if (modestr[2] == 'x')
 		f->mode |= S_IXUSR;
-	if (modestr[3] == 's')
-		assoc = ASSOC_SHM;
 
 	f->map_start = start;
 	f->map_end = end;
