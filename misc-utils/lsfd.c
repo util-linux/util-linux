@@ -351,16 +351,27 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 {
 	char sym[PATH_MAX] = { '\0' };
 	struct stat sb;
-	struct file *f;
+	struct file *f, *prev;
 
-	if (ul_path_stat(pc, &sb, 0, name) < 0)
-		return NULL;
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
 		return NULL;
 
-	f = new_file(proc, stat2class(&sb));
+	/* The /proc/#/{fd,ns} often contains the same file (e.g. /dev/tty)
+	 * more than once. Let's try to reuse the previous file if the real
+	 * path is the same to save stat() call.
+	 */
+	prev = list_last_entry(&proc->files, struct file, files);
+	if (prev && prev->name && strcmp(prev->name, sym) == 0) {
+		f = copy_file(prev);
+		f->association = assoc;
+	} else {
+		if (ul_path_stat(pc, &sb, 0, name) < 0)
+			return NULL;
 
-	file_set_path(f, &sb, sym, assoc);
+		f = new_file(proc, stat2class(&sb));
+		file_set_path(f, &sb, sym, assoc);
+	}
+
 	file_init_content(f);
 
 	if (is_association(f, EXE))
