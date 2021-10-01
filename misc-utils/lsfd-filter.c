@@ -174,7 +174,9 @@ static void node_dump (struct node *, struct parameter *, int, FILE *);
 
 static struct token *token_new (void);
 static void          token_free(struct token *);
+#ifdef DEBUG
 static void          token_dump(struct token *, FILE *);
+#endif	/* DEBUG */
 
 static void token_free_str(struct token *);
 
@@ -858,6 +860,7 @@ static void token_free(struct token *token)
 	free(token);
 }
 
+#ifdef DEBUG
 static void token_dump(struct token *token, FILE *stream)
 {
 	fprintf(stream, "<%s>", TOKEN_CLASS(token)->name);
@@ -865,6 +868,7 @@ static void token_dump(struct token *token, FILE *stream)
 		TOKEN_CLASS(token)->dump(token, stream);
 	fputc('\n', stream);
 }
+#endif	/* DEBUG */
 
 static void token_free_str(struct token *token)
 {
