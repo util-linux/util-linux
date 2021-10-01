@@ -688,7 +688,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 
 	struct node *node = NULL;
 	switch (t->type) {
-	case TOKEN_NAME:
+	case TOKEN_NAME: {
 		int col_id = parser->column_name_to_id(t->val.str, parser->data);
 		if (col_id == -1) {
 			snprintf(parser->errmsg, ERRMSG_LEN,
@@ -732,6 +732,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 		}
 		node = node_val_new(ntype, col_id);
 		return node;
+	}
 
 	case TOKEN_STR:
 		node = node_val_new(NODE_STR, -1);
@@ -756,7 +757,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 		token_free(t);
 		return dparser_compile(parser);
 
-	case TOKEN_OP1:
+	case TOKEN_OP1: {
 		struct node *op1_right = dparser_compile1(parser, NULL);
 		struct op1_class *op1_class = TOKEN_OP1_CLASS(t);
 		token_free(t);
@@ -787,8 +788,9 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 		((struct node_op1 *)node)->arg = op1_right;
 
 		return node;
+	}
 
-	case TOKEN_OP2:
+	case TOKEN_OP2: {
 		struct node *op2_right = dparser_compile1(parser, NULL);
 		struct op2_class *op2_class = TOKEN_OP2_CLASS(t);
 		token_free(t);
@@ -819,6 +821,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 		((struct node_op2 *)node)->args[1] = op2_right;
 
 		return node;
+	}
 
 	default:
 		warnx("unexpected token type: %d", t->type);
@@ -911,14 +914,14 @@ static bool node_apply(struct node *node, struct parameter *params, struct libsc
 		return true;
 
 	switch (node->type) {
-	case NODE_OP1:
+	case NODE_OP1: {
 		struct node_op1 *node_op1 = (struct node_op1*)node;
 		return node_op1->opclass->is_acceptable(node_op1->arg, params, ln);
-
-	case NODE_OP2:
+	}
+	case NODE_OP2: {
 		struct node_op2 *node_op2 = (struct node_op2*)node;
 		return node_op2->opclass->is_acceptable(node_op2->args[0], node_op2->args[1], params, ln);
-
+	}
 	case NODE_BOOL:
 		if (PINDEX(node) < 0)
 			return VAL(node,boolean);
