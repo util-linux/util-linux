@@ -1,0 +1,156 @@
+//po4a: entry man manual
+////
+Copyright 2021 Red Hat, Inc.
+
+This file may be copied under the terms of the GNU Public License.
+////
+= lsfd(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: lsfd
+
+== NAME
+
+lsfd - list file descriptors
+
+== SYNOPSIS
+
+*lsfd* [option]
+
+== DESCRIPTION
+
+*lsfd* is intended to be a drop-in replacement for *lsof*(8) on Linux systems. It uses Libsmartcols for output formatting.
+
+Available output columns:
+
+ASSOC::
+Association between file and process.
+
+CHRDRV::
+Character device driver name resolved by _/proc/devices_.
+
+COMMAND::
+Command of the process opening the file.
+
+DELETED::
+Reachability from the file system.
+
+DEV::
+ID of the device containing the file.
+
+DEVTYPE::
+Device type (_blk_, _char_, or _nodev_).
+
+FD::
+File descriptor for the file.
+
+FLAGS::
+Flags specified when opening the file.
+
+INODE::
+Inode number.
+
+MAJ:MIN::
+Device ID for special, or ID of device containing file.
+
+MAPLEN::
+Length of file mapping (in page).
+
+MISCDEV::
+Misc character device name resolved by _/proc/misc_.
+
+MNTID::
+Mount ID.
+
+MODE::
+Access mode (rwx).
+
+NAME::
+Name of the file.
+
+NLINK::
+Link count.
+
+PARTITION::
+Block device name resolved by _/proc/partition_.
+
+PID::
+PID of the process opening the file.
+
+POS::
+File position.
+
+PROTONAME::
+Protocol name.
+
+RDEV::
+Device ID (if special file).
+
+SIZE::
+File size.
+
+SOURCE::
+File system, partition, or device containing the file.
+
+TID::
+Thread ID of the process opening the file.
+
+TYPE::
+File type.
+
+UID::
+User ID number.
+
+USER::
+User of the process.
+
+== OPTIONS
+
+*-l*, *--threads*::
+List in threads level.
+
+*-J*, *--json*
+Use JSON output format.
+
+*-n*, *--noheadings*
+Don't print headings.
+
+*-o*, *--output* _list_
+Output columns.
+
+*-r*, *--raw*
+Use raw output format.
+
+*--sysroot* _dir_
+Use specified directory as system root.
+
+*--notruncate*
+Don't truncate text in columns.
+
+*-V*, *--version*::
+Display version information and exit.
+
+*-h*, *--help*::
+Display help text and exit.
+
+== HISTORY
+
+The *lsfd* command is part of the util-linux package since v2.38.
+
+== AUTHORS
+
+mailto:yamato@redhat.com[Masatake YAMATO]
+
+== SEE ALSO
+
+*lsof*(8)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]
