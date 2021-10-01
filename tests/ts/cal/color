@@ -33,44 +33,48 @@ export TERM=linux
 USETERM=$( ts_has_option "useterm" "$*" )
 
 [ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
-ts_log ""
 
-ts_log "First day"
+ts_init_subtest "first-day"
 if [ "$USETERM" == "yes" ]; then
 	$TS_CMD_CAL --color=always 1 1 1
 fi
 $TS_CMD_CAL --color=always 1 1 1 >> $TS_OUTPUT
+ts_finalize_subtest
 
-ts_log "Reformation corner cases 1"
+ts_init_subtest "reformation-corner-cases-1"
 if [ "$USETERM" == "yes" ]; then
 	$TS_CMD_CAL --color=always 2 9 1752
 fi
 $TS_CMD_CAL --color=always 2 9 1752 >> $TS_OUTPUT
+ts_finalize_subtest
 
-ts_log "Reformation corner cases 2"
+ts_init_subtest "reformation-corner-cases-2"
 if [ "$USETERM" == "yes" ]; then
 	$TS_CMD_CAL --color=always 3 9 1752
 fi
 $TS_CMD_CAL --color=always 3 9 1752 >> $TS_OUTPUT
+ts_finalize_subtest
 
-ts_log "Reformation corner cases 3"
+ts_init_subtest "reformation-corner-cases-3"
 if [ "$USETERM" == "yes" ]; then
 	$TS_CMD_CAL --color=always 13 9 1752
 fi
 $TS_CMD_CAL --color=always 13 9 1752 >> $TS_OUTPUT
+ts_finalize_subtest
 
-ts_log "Reformation corner cases 4"
+ts_init_subtest "reformation-corner-cases-4"
 if [ "$USETERM" == "yes" ]; then
 	$TS_CMD_CAL --color=always 14 9 1752
 fi
 $TS_CMD_CAL --color=always 14 9 1752 >> $TS_OUTPUT
+ts_finalize_subtest
 
-ts_log "Last day"
+ts_init_subtest "last-day"
 if [ "$USETERM" == "yes" ]; then
 	$TS_CMD_CAL --color=always 31 12 9999
 fi
 $TS_CMD_CAL --color=always -3 31 12 9999 >> $TS_OUTPUT
+ts_finalize_subtest
 
 
 ts_finalize
-
