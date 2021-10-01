@@ -935,9 +935,7 @@ static bool node_apply(struct node *node, struct parameter *params, struct libsc
 			return VAL(node,boolean);
 
 		if (!params[PINDEX(node)].has_value) {
-			struct libscols_cell *cell = scols_line_get_column_cell(ln,
-										params[PINDEX(node)].cl);
-			const char *data = scols_cell_get_data(cell);
+			const char *data = scols_line_get_column_data(ln, params[PINDEX(node)].cl);
 			if (data == NULL)
 				return false;
 			params[PINDEX(node)].val.boolean = !*data ? false :
@@ -1038,8 +1036,7 @@ static bool op1_check_type_bool_or_op(struct node *node)
 	else {								\
 		struct parameter *p = params + pindex;			\
 		if (!p->has_value) {					\
-			struct libscols_cell *cell = scols_line_get_column_cell(ln, p->cl); \
-			p->val.str = scols_cell_get_data(cell);		\
+			p->val.str = scols_line_get_column_data(ln, p->cl); \
 			if (p->val.str == NULL) return false;		\
 			p->has_value = true;				\
 		}							\
@@ -1054,8 +1051,7 @@ static bool op1_check_type_bool_or_op(struct node *node)
 	else {								\
 		struct parameter *p = params + pindex;			\
 		if (!p->has_value) {					\
-			struct libscols_cell *cell = scols_line_get_column_cell(ln, p->cl); \
-			const char *tmp = scols_cell_get_data(cell);	\
+			const char *tmp = scols_line_get_column_data(ln, p->cl); \
 			if (tmp == NULL) return false;			\
 			p->val.num = strtoull(tmp, NULL, 10);		\
 			p->has_value = true;				\
