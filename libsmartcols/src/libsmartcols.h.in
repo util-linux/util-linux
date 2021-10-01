@@ -230,6 +230,7 @@ extern struct libscols_cell *scols_line_get_column_cell(
 extern int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data);
 extern int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data);
 extern int scols_line_set_column_data(struct libscols_line *ln, struct libscols_column *cl, const char *data);
+extern const char *scols_line_get_column_data(struct libscols_line *ln, struct libscols_column *cl);
 extern int scols_line_refer_column_data(struct libscols_line *ln, struct libscols_column *cl, char *data);
 extern struct libscols_line *scols_copy_line(const struct libscols_line *ln);
 
