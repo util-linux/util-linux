@@ -28,6 +28,8 @@ For backward compatibility, *runuser* defaults to not changing the current direc
 
 Note that *runuser* in all cases use PAM (pam_getenvlist()) to do the final environment modification. Command-line options such as *--login* and *--preserve-environment* affect the environment before it is modified by PAM.
 
+Since version 2.38 *runuser* resets process resource limits RLIMIT_NICE and RLIMIT_RTPRIO to zero.
+
 == OPTIONS
 
 *-c*, *--command*=_command_::

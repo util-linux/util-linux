@@ -36,6 +36,11 @@
 #include <sys/wait.h>
 #include <syslog.h>
 #include <utmpx.h>
+#include <sys/time.h>
+
+#ifdef HAVE_SYS_RESOURCE_H
+# include <sys/resource.h>
+#endif
 
 #ifdef HAVE_PTY
 # include <pty.h>
@@ -954,6 +959,16 @@ static int is_not_root(void)
 	return (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 }
 
+static void sanitize_prlimits(void)
+{
+#ifdef HAVE_SYS_RESOURCE_H
+	struct rlimit lm = { .rlim_cur = 0, .rlim_max = 0 };
+
+	setrlimit(RLIMIT_NICE, &lm);
+	setrlimit(RLIMIT_RTPRIO, &lm);
+#endif
+}
+
 static gid_t add_supp_group(const char *name, gid_t **groups, size_t *ngroups)
 {
 	struct group *gr;
@@ -1194,6 +1209,8 @@ int su_main(int argc, char **argv, int mode)
 
 	if (!su->simulate_login || command)
 		su->suppress_pam_info = 1;	/* don't print PAM info messages */
+
+	sanitize_prlimits();
 
 	supam_open_session(su);
 
