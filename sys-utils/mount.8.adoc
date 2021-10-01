@@ -525,7 +525,7 @@ Every time the inode is modified, the i_version field will be incremented.
 Do not increment the i_version inode field.
 
 *mand*::
-Allow mandatory locks on this filesystem. See *fcntl*(2).
+Allow mandatory locks on this filesystem. See *fcntl*(2). This option was deprecated in Linux 5.15.
 
 *nomand*::
 Do not allow mandatory locks on this filesystem.
