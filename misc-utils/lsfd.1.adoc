@@ -111,22 +111,22 @@ User of the process.
 *-l*, *--threads*::
 List in threads level.
 
-*-J*, *--json*
+*-J*, *--json*::
 Use JSON output format.
 
-*-n*, *--noheadings*
+*-n*, *--noheadings*::
 Don't print headings.
 
-*-o*, *--output* _list_
+*-o*, *--output* _list_::
 Output columns.
 
-*-r*, *--raw*
+*-r*, *--raw*::
 Use raw output format.
 
-*--sysroot* _dir_
+*--sysroot* _dir_::
 Use specified directory as system root.
 
-*--notruncate*
+*--notruncate*::
 Don't truncate text in columns.
 
 *-V*, *--version*::
