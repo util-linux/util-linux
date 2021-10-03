@@ -54,11 +54,11 @@ Use specified directory as system root.
 *--notruncate*::
 Don't truncate text in columns.
 
-*-V*, *--version*::
-Display version information and exit.
-
 *-h*, *--help*::
 Display help text and exit.
+
+*-V*, *--version*::
+Display version information and exit.
 
 == OUTPUT COLUMNS
 
