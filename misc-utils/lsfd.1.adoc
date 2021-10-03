@@ -154,6 +154,7 @@ mailto:yamato@redhat.com[Masatake YAMATO]
 == SEE ALSO
 
 *lsof*(8)
+*proc*(5)
 
 include::man-common/bugreports.adoc[]
 
