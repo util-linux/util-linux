@@ -42,8 +42,11 @@ Use JSON output format.
 Don't print headings.
 
 *-o*, *--output* _list_::
-Output columns.
-See the "OUTPUT COLUMNS" section for details of available column.
+Specify which output columns to print. See the "OUTPUT COLUMNS"
+section for details of available column.
++
+The default list of columns may be extended if _list_ is specified in
+the format _+list_ (e.g., *lsfd -o +DELETED*).
 
 *-r*, *--raw*::
 Use raw output format.
