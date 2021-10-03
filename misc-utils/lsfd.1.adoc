@@ -23,7 +23,37 @@ lsfd - list file descriptors
 
 *lsfd* is intended to be a drop-in replacement for *lsof*(8) on Linux systems. It uses Libsmartcols for output formatting.
 
-Available output columns:
+== OPTIONS
+
+*-l*, *--threads*::
+List in threads level.
+
+*-J*, *--json*::
+Use JSON output format.
+
+*-n*, *--noheadings*::
+Don't print headings.
+
+*-o*, *--output* _list_::
+Output columns.
+See the "OUTPUT COLUMNS" section for details of available column.
+
+*-r*, *--raw*::
+Use raw output format.
+
+*--sysroot* _dir_::
+Use specified directory as system root.
+
+*--notruncate*::
+Don't truncate text in columns.
+
+*-V*, *--version*::
+Display version information and exit.
+
+*-h*, *--help*::
+Display help text and exit.
+
+== OUTPUT COLUMNS
 
 ASSOC::
 Association between file and process.
@@ -105,35 +135,6 @@ User ID number.
 
 USER::
 User of the process.
-
-== OPTIONS
-
-*-l*, *--threads*::
-List in threads level.
-
-*-J*, *--json*::
-Use JSON output format.
-
-*-n*, *--noheadings*::
-Don't print headings.
-
-*-o*, *--output* _list_::
-Output columns.
-
-*-r*, *--raw*::
-Use raw output format.
-
-*--sysroot* _dir_::
-Use specified directory as system root.
-
-*--notruncate*::
-Don't truncate text in columns.
-
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
 
 == HISTORY
 
