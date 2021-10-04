@@ -35,6 +35,7 @@
 
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/vfs.h>
 #include <linux/fs.h>
 
 #include "nls.h"
@@ -45,6 +46,7 @@
 #include "pathnames.h"
 #include "sysfs.h"
 #include "optutils.h"
+#include "statfs_magic.h"
 
 #include <libmount.h>
 
@@ -207,6 +209,30 @@ fail:
 	return 1;
 }
 
+static int is_unwanted_fs(struct libmnt_fs *fs, const char *tgt)
+{
+	struct statfs vfs;
+	int fd, rc;
+
+	if (mnt_fs_is_pseudofs(fs))
+		return 1;
+	if (mnt_fs_is_netfs(fs))
+		return 1;
+	if (mnt_fs_is_swaparea(fs))
+		return 1;
+	if (mnt_fs_match_fstype(fs, "autofs"))
+		return 1;
+	if (mnt_fs_match_options(fs, "ro"))
+		return 1;
+
+	fd = open(tgt, O_PATH);
+	if (!fd)
+		return 1;
+	rc = fstatfs(fd, &vfs) != 0 || vfs.f_type == STATFS_AUTOFS_MAGIC;
+	close(fd);
+
+	return rc;
+}
 
 static int uniq_fs_target_cmp(
 		struct libmnt_table *tb __attribute__((__unused__)),
@@ -292,7 +318,7 @@ static int fstrim_all_from_file(struct fstrim_control *ctl, const char *filename
 		const char *src = mnt_fs_get_srcpath(fs),
 			   *tgt = mnt_fs_get_target(fs);
 
-		if (!tgt || mnt_fs_is_pseudofs(fs) || mnt_fs_is_netfs(fs)) {
+		if (!tgt || is_unwanted_fs(fs, tgt)) {
 			mnt_table_remove_fs(tab, fs);
 			continue;
 		}

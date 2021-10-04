@@ -29,7 +29,7 @@ Running *fstrim* frequently, or even using *mount -o discard*, might negatively 
 The _offset_, _length_, and _minimum-size_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-A, --fstab*::
-Trim all mounted filesystems mentioned in _/etc/fstab_ on devices that support the discard operation. The root filesystem is determined from kernel command line if missing in the file. The other supplied options, like *--offset*, *--length* and *--minimum*, are applied to all these devices. Errors from filesystems that do not support the discard operation, read-only devices and read-only filesystems are silently ignored.
+Trim all mounted filesystems mentioned in _/etc/fstab_ on devices that support the discard operation. The root filesystem is determined from kernel command line if missing in the file. The other supplied options, like *--offset*, *--length* and *--minimum*, are applied to all these devices. Errors from filesystems that do not support the discard operation, read-only devices, autofs and read-only filesystems are silently ignored.
 
 *-a, --all*::
 Trim all mounted filesystems on devices that support the discard operation. The other supplied options, like *--offset*, *--length* and *--minimum*, are applied to all these devices. Errors from filesystems that do not support the discard operation, read-only devices and read-only filesystems are silently ignored.
