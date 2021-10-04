@@ -226,7 +226,7 @@ static int is_unwanted_fs(struct libmnt_fs *fs, const char *tgt)
 		return 1;
 
 	fd = open(tgt, O_PATH);
-	if (!fd)
+	if (fd < 0)
 		return 1;
 	rc = fstatfs(fd, &vfs) != 0 || vfs.f_type == STATFS_AUTOFS_MAGIC;
 	close(fd);
