@@ -959,13 +959,27 @@ static int is_not_root(void)
 	return (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 }
 
+/* Don't rely on PAM and reset the most important limits. */
 static void sanitize_prlimits(void)
 {
 #ifdef HAVE_SYS_RESOURCE_H
 	struct rlimit lm = { .rlim_cur = 0, .rlim_max = 0 };
 
+	/* reset to zero */
 	setrlimit(RLIMIT_NICE, &lm);
 	setrlimit(RLIMIT_RTPRIO, &lm);
+
+	/* reset to unlimited */
+	lm.rlim_cur = RLIM_INFINITY;
+	lm.rlim_max = RLIM_INFINITY;
+	setrlimit(RLIMIT_FSIZE, &lm);
+
+	/* reset soft limit only */
+	getrlimit(RLIMIT_NOFILE, &lm);
+	if (lm.rlim_cur != FD_SETSIZE) {
+		lm.rlim_cur = FD_SETSIZE;
+		setrlimit(RLIMIT_NOFILE, &lm);
+	}
 #endif
 }
 
