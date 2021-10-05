@@ -219,6 +219,7 @@ struct more_control {
 		no_scroll:1,		/* do not scroll, clear the screen and then display text */
 		no_tty_in:1,		/* is input in interactive mode */
 		no_tty_out:1,		/* is output in interactive mode */
+		no_tty_err:1,           /* is stderr terminal */
 		print_banner:1,		/* print file name banner */
 		reading_num:1,		/* are we reading leading_number */
 		report_errors:1,	/* is an error reported */
@@ -1958,8 +1959,9 @@ static void initterm(struct more_control *ctl)
 	ctl->no_tty_out = tcgetattr(STDOUT_FILENO, &ctl->output_tty);
 #endif
 	ctl->no_tty_in = tcgetattr(STDIN_FILENO, &ctl->output_tty);
-	tcgetattr(STDERR_FILENO, &ctl->output_tty);
+	ctl->no_tty_err = tcgetattr(STDERR_FILENO, &ctl->output_tty);
 	ctl->original_tty = ctl->output_tty;
+
 	ctl->hard_tabs = (ctl->output_tty.c_oflag & TABDLY) != TAB3;
 	if (ctl->no_tty_out)
 		return;
@@ -2057,6 +2059,10 @@ int main(int argc, char **argv)
 	argscan(&ctl, argc, argv);
 
 	initterm(&ctl);
+
+	if (ctl.no_tty_err)
+		/* exit when we cannot read user's input */
+		ctl.exit_on_eof = 1;
 
 #ifdef HAVE_MAGIC
 	ctl.magic = magic_open(MAGIC_MIME_ENCODING | MAGIC_SYMLINK);

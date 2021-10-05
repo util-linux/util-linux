@@ -66,7 +66,7 @@ Prompt with "[Press space to continue, 'q' to quit.]", and display "[Press 'h' f
 Do not pause after any line containing a *^L* (form feed).
 
 *-e*, *--exit-on-eof*::
-Exit on End-Of-File.
+Exit on End-Of-File, enabled by default if not executed on terminal.
 
 *-f*, *--no-pause*::
 Count logical lines, rather than screen lines (i.e., long lines are not folded).
