@@ -27,8 +27,8 @@ specific features like namespaces with simpler code. *lsfd* is not a
 drop-in replacement for *lsof*; they are different in the command line
 interface and output formats.
 
-*lsfd* uses Libsmartcols for output formatting. See the description of *--output*
-option for customizing.
+*lsfd* uses Libsmartcols for output formatting and filtering. See the description of *--output*
+option for customizing the output format, and *--filter* option for filtering.
 
 == OPTIONS
 
@@ -57,6 +57,9 @@ Use specified directory as system root.
 *--notruncate*::
 Don't truncate text in columns.
 
+*-Q*, *--filter* _expr_::
+Print the files only satisfying with the condition represented by the _expr_.
+
 *-h*, *--help*::
 Display help text and exit.
 
@@ -65,92 +68,223 @@ Display version information and exit.
 
 == OUTPUT COLUMNS
 
-ASSOC::
+Each column has a type. Types are surround by < and >.
+
+ASSOC <__string__>::
 Association between file and process.
 
-CHRDRV::
+CHRDRV <__string__>::
 Character device driver name resolved by _/proc/devices_.
 
-COMMAND::
+COMMAND <__string__>::
 Command of the process opening the file.
 
-DELETED::
+DELETED <__boolean__>::
 Reachability from the file system.
 
-DEV::
+DEV <__string__>::
 ID of the device containing the file.
 
-DEVTYPE::
+DEVTYPE <__string__>::
 Device type (_blk_, _char_, or _nodev_).
 
-FD::
+FD <__number__>::
 File descriptor for the file.
 
-FLAGS::
+FLAGS <__string__>::
 Flags specified when opening the file.
 
-FUID::
+FUID <__number__>::
 User ID number of the file's owner.
 
-INODE::
+INODE <__number__>::
 Inode number.
 
-MAJ:MIN::
+MAJ:MIN <__string__>::
 Device ID for special, or ID of device containing file.
 
-MAPLEN::
+MAPLEN <__number__>::
 Length of file mapping (in page).
 
-MISCDEV::
+MISCDEV <__string__>::
 Misc character device name resolved by _/proc/misc_.
 
-MNTID::
+MNTID <__number__>::
 Mount ID.
 
-MODE::
+MODE <__string__>::
 Access mode (rwx).
 
-NAME::
+NAME <__string__>::
 Name of the file.
 
-NLINK::
+NLINK <__number__>::
 Link count.
 
-OWNER::
+OWNER <_string_>::
 Owner of the file.
 
-PARTITION::
+PARTITION <__string__>::
 Block device name resolved by _/proc/partition_.
 
-PID::
+PID <__number__>::
 PID of the process opening the file.
 
-POS::
+POS <__number__>::
 File position.
 
-PROTONAME::
+PROTONAME <__string__>::
 Protocol name.
 
-RDEV::
+RDEV <__string__>::
 Device ID (if special file).
 
-SIZE::
+SIZE <__number__>::
 File size.
 
-SOURCE::
+SOURCE <__string__>::
 File system, partition, or device containing the file.
 
-TID::
+TID <__number__>::
 Thread ID of the process opening the file.
 
-TYPE::
+TYPE <__string__>::
 File type.
 
-UID::
+UID <__number__>::
 User ID number.
 
-USER::
+USER <__string__>::
 User of the process.
+
+== FILTER EXPRESSION
+
+*lsfd* evaluates the expression passed to *--filter* option every time
+before printing a file line. *lsfd* prints the line only if the result
+of evaluation is _true_.
+
+An expression consists of column names, literals and, operators like:
+`DELETED`, `(PID == 1)`, `(NAME == "/etc/passwd")`, `(PID == 1) && DELETED`.
+`DELETED`, `PID`, and `NAME` are column names in the example.
+`1` and "/etc/passwd" are literals.
+`==` and `&&` are operators.
+
+Before evaluation, *lsfd* substitutes column names in the given
+expression with actual column values in the line. There are three
+different data types: _boolean_, _string_, and _number_.  For columns
+with a _boolean_ type, the vale can be stand-alone.  For _string_ and
+_number_ values, the value must be an operand of an operator, for
+example, `(PID == 1)`. See the "OUTPUT COLUMNS" about the types of
+columns.
+
+Literal is for representing a value directly. See BOOLLIT, STRLIT, and
+NUMLIT. Different data types have different literal syntax.
+
+An operator works with one or two operand(s). An operator has an
+expectation about the data type(s) of its operands. Giving an
+unexpected data type to an operator causes a syntax error.
+
+Operators taking two operands are _and_, _or_, _eq_, _ne_, _le_, _lt_, _ge_, _gt_, _=~_, _!~_.
+Alphabetically named operators have C-language
+flavored aliases: _&&_, _||_, _==_, _!=_, _<_, _<=_, _>=_, and _>_.
+
+_!_ is the only operator that takes one operand.
+
+_eq_, _ne_, and their aliases expect operands have the same data type.
+Applying these operators return a _boolean_.
+
+_and_, _or_, _not_ and their aliases expect operands have _bool_ data
+type. Applying these operators return a _boolean_.
+
+_lt_, _le_, _gt_, _ge_, and their aliases expect operands have
+_number_ data types. Applying these operators return a _boolean_.
+
+_=~_ is for regular expression matching; if a string at the right side
+matches a regular expression at the left side, the result is true.
+The right side operand must be a string literal. See STRLIT about the
+syntax.
+
+_!~_ is a short-hand version of `not (STR =~ PAT)`; it inverts the
+result of _=~_.
+
+=== Limitations
+
+The current implementation does not define precedences within
+operators.  Use _(_ and _)_ explicitly for grouping the
+sub-expressions if your expression uses more than two operators.
+
+About _number_ typed values, the filter engine supports only
+zero or positive numbers.
+
+=== Semi-formal syntax
+
+EXPR :: BOOLEXP
+
+BOOLEXP0 :: COLUMN <__boolean__> | BOOLLIT | _(_ BOOLEXP _)_
+
+BOOLEXP :: BOOLEXP0 | BOOLOP1 | BOOLOP2 | BOOLOP2BL | BOOLOP2CMP | BOOLOP2REG
+
+COLUMN :: [\_A-Za-z][-_:A-Za-z0-9]*
+
+BOOLOP1 :: _!_ BOOLEXP0 | _not_ BOOLEXP0
+
+STREXP :: COLUMN <__string__> | STRLIT
+
+NUMEXP :: COLUMN <__number__> | NUMLIT
+
+BOOLLIT :: _true_ | _false_
+
+CHARS  :: ( [^\] | _\\_ | _\'_ | _\"_ )*
+
+STRLIT :: _'_ CHARS _'_ | _"_ CHARS _"_
+
+NUMLIT :: [1-9][0-9]* | _0_
+
+BOOLOP2 :: STREXP OP2 STREXP | NUMEXP OP2 NUMEXP | BOOLEXP0 OP2 BOOLEXP0
+
+OP2   :: _==_ | _eq_ | _!=_ | _ne_
+
+BOOLOP2BL :: BOOLEXP0 OP2BL BOOLEXP0
+
+OP2BL ::  _&&_ | _and_ |  _||_ | _or_
+
+BOOLOP2CMP :: NUMEXP OP2CMP NUMEXP
+
+OP2CMP :: _<_ | _lt_ | _\<=_ | _le_ | _>_ | _gt_ | _>=_ | _ge_
+
+BOOLOP2REG :: STREXP OP2REG STRLIT
+
+OP2REG :: _=~_ | _!~_
+
+== EXAMPLES
+
+List files associated with PID 1 and PID 2 processes::
+
+  # lsfd -Q '(PID == 1) or (PID == 2)'
+
+Do the same in an alternative way::
+
+  # lsfd -Q '(PID == 1) || (PID == 2)'
+
+List all running executables::
+
+  # lsfd -Q '(ASSOC == "exe")'
+
+Do the same in an alternative way::
+
+  # lsfd -Q '(ASSOC eq "exe")'
+
+Do the same but print only file names::
+
+  # lsfd -o NAME -Q '(ASSOC eq "exe")' | sort -u
+
+List deleted non-regular files::
+
+  # lsfd -Q 'DELETED and (TYPE != "REG")'
+
+List files including "dconf" directory in their names::
+
+  # lsfd -Q '(NAME =~ ".*/dconf/.*")
 
 == HISTORY
 
