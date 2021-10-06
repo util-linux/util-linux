@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2021 Red Hat, Inc. All rights reserved.
  * Written by Masatake YAMATO <yamato@redhat.com>
+ *            Karel Zak <kzak@redhat.com>
  *
  * Very generally based on lsof(8) by Victor A. Abell <abe@purdue.edu>
  * It supports multiple OSes. lsfd specializes to Linux.

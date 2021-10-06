@@ -2336,6 +2336,19 @@ if not is_disabler(exe)
 endif
 
 exe = executable(
+  'lsfd',
+  lsfd_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/lsfd.1.adoc']
+endif
+
+exe = executable(
   'uuidgen',
   uuidgen_sources,
   include_directories : includes,

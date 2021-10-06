@@ -249,6 +249,7 @@ endif
 if BUILD_LSFD
 bin_PROGRAMS += lsfd
 MANPAGES += misc-utils/lsfd.1
+dist_noinst_DATA += misc-utils/lsfd.1.adoc
 lsfd_SOURCES = \
 	misc-utils/lsfd.c \
 	misc-utils/lsfd.h \

@@ -152,7 +152,8 @@ The *lsfd* command is part of the util-linux package since v2.38.
 
 == AUTHORS
 
-mailto:yamato@redhat.com[Masatake YAMATO]
+mailto:yamato@redhat.com[Masatake YAMATO],
+mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 
