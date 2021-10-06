@@ -174,6 +174,9 @@ static const int default_threads_columns[] = {
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
 static size_t ncolumns;
 
+static ino_t *mnt_namespaces;
+static size_t nspaces;
+
 struct lsfd_control {
 	struct libscols_table *tb;		/* output */
 	struct list_head procs;			/* list of all processes */
@@ -252,6 +255,31 @@ static struct libscols_column *add_column_by_id_cb(struct libscols_table *tb, in
 	}
 
 	return cl;
+}
+
+static int has_mnt_ns(ino_t id)
+{
+	size_t i;
+
+	for (i = 0; i < nspaces; i++) {
+		if (mnt_namespaces[i] == id)
+			return 1;
+	}
+	return 0;
+}
+
+static void add_mnt_ns(ino_t id)
+{
+	size_t nmax = 0;
+
+	if (nspaces)
+		nmax = (nspaces + 16) / 16 * 16;
+	if (nmax <= nspaces + 1) {
+		nmax += 16;
+		mnt_namespaces = xrealloc(mnt_namespaces,
+					sizeof(ino_t) * nmax);
+	}
+	mnt_namespaces[nspaces++] = id;
 }
 
 static const struct file_class *stat2class(struct stat *sb)
@@ -417,6 +445,8 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	if (is_association(f, EXE))
 		proc->uid = sb.st_uid;
+	if (is_association(f, NS_MNT))
+		proc->ns_mnt = sb.st_ino;
 
 	else if (assoc >= 0) {
 		/* file-descriptor based association */
@@ -621,6 +651,8 @@ static void finalize_nodevs(void)
 {
 	for (int i = 0; i < NODEV_TABLE_SIZE; i++)
 		list_free(&nodev_table.tables[i], struct nodev, nodevs, free_nodev);
+
+	free(mnt_namespaces);
 }
 
 const char *get_nodev_filesystem(unsigned long minor)
@@ -818,7 +850,6 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 {
 	char buf[BUFSIZ];
 	struct proc *proc;
-	FILE *mnt;
 
 	if (procfs_process_init_path(pc, pid) != 0)
 		return;
@@ -835,14 +866,14 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
 	collect_namespace_files(pc, proc);
 
-	/* TODO: parse mountinfo only when process uses not-yet-known
-	 *       mount namespace. Parse mountinfo for each process is
-	 *       extremly expensive.
-	 */
-	mnt = ul_path_fopen(pc, "r", "mountinfo");
-	if (mnt) {
-		add_nodevs(mnt);
-		fclose(mnt);
+	if (proc->ns_mnt == 0 || !has_mnt_ns(proc->ns_mnt)) {
+		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
+		if (mnt) {
+			add_nodevs(mnt);
+			if (proc->ns_mnt)
+				add_mnt_ns(proc->ns_mnt);
+			fclose(mnt);
+		}
 	}
 
 	/* If kcmp is not available,
