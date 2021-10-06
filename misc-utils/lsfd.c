@@ -813,34 +813,6 @@ unsigned long add_name(struct name_manager *nm, const char *name)
 	return e->id;
 }
 
-DIR *opendirf(const char *format, ...)
-{
-	va_list ap;
-	char path[PATH_MAX];
-
-	memset(path, 0, sizeof(path));
-
-	va_start(ap, format);
-	vsprintf(path, format, ap);
-	va_end(ap);
-
-	return opendir(path);
-}
-
-FILE *fopenf(const char *mode, const char *format, ...)
-{
-	va_list ap;
-	char path[PATH_MAX];
-
-	memset(path, 0, sizeof(path));
-
-	va_start(ap, format);
-	vsprintf(path, format, ap);
-	va_end(ap);
-
-	return fopen(path, mode);
-}
-
 static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			 pid_t pid, struct proc *leader)
 {
