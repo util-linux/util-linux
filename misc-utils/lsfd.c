@@ -686,7 +686,7 @@ static void fill_column(struct proc *proc,
 	}
 }
 
-static void convert1(struct proc *proc,
+static void convert_file(struct proc *proc,
 		     struct file *file,
 		     struct libscols_line *ln)
 
@@ -708,7 +708,8 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 			struct libscols_line *ln = scols_table_new_line(ctl->tb, NULL);
 			if (!ln)
 				err(EXIT_FAILURE, _("failed to allocate output line"));
-			convert1(proc, file, ln);
+
+			convert_file(proc, file, ln);
 
 			if (!lsfd_filter_apply(ctl->filter, ln))
 				scols_table_remove_line(ctl->tb, ln);
