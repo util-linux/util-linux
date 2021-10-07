@@ -172,6 +172,12 @@ Force *findmnt* to print more information (*--verify* only for now).
 *--vfs-all*::
 When used with *VFS-OPTIONS* column, print all VFS (fs-independent) flags. This option is designed for auditing purposes to list also default VFS kernel mount options which are normally not listed.
 
+== EXIT STATUS
+
+The exit value is 0 if there is something to display, or 1 on any error
+(for example if no filesystem is found based on the user's filter
+specification, or the device path or mountpoint does not exist).
+
 == ENVIRONMENT
 
 *LIBMOUNT_FSTAB*=<path>::
