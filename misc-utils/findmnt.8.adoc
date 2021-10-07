@@ -29,6 +29,10 @@ The command-line option *--target* accepts any file or directory and then *findm
 
 The command prints all mounted filesystems in the tree-like format by default.
 
+The exit value is 0 if there is something to display, or 1 on any error
+(for example if no filesystem is found based on the user's filter
+specification, or the device path or mountpoint does not exist).
+
 == OPTIONS
 
 *-A*, *--all*::
