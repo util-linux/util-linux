@@ -570,7 +570,7 @@ static int file_contents_equal(const struct file *a, const struct file *b)
 	assert(a->links != NULL);
 	assert(b->links != NULL);
 
-	jlog(JLOG_VERBOSE1, _("Comparing %s to %s"), a->links->path,
+	jlog(JLOG_VERBOSE2, _("Comparing %s to %s"), a->links->path,
 	     b->links->path);
 
 	stats.comparisons++;
@@ -791,7 +791,8 @@ static int inserter(const char *fpath, const struct stat *sb,
 		return 0;
 	}
 
-	jlog(JLOG_VERBOSE2, _("Visiting %s (file %zu)"), fpath, stats.files);
+	jlog(JLOG_VERBOSE2, " %5zu: [%ld/%ld/%ld] %s",
+			stats.files, sb->st_dev, sb->st_ino, sb->st_nlink, fpath);
 
 	pathlen = strlen(fpath) + 1;
 
@@ -874,6 +875,7 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 		return;
 
 	for (; master != NULL; master = master->next) {
+
 		if (handle_interrupt())
 			exit(EXIT_FAILURE);
 		if (master->links == NULL)
@@ -1106,6 +1108,7 @@ int main(int argc, char *argv[])
 
 	stats.started = TRUE;
 
+	jlog(JLOG_VERBOSE2, _("Scanning [device/inode/links]:"));
 	for (; optind < argc; optind++) {
 		if (nftw(argv[optind], inserter, 20, FTW_PHYS) == -1)
 			warn(_("cannot process %s"), argv[optind]);
