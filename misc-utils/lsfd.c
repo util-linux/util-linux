@@ -203,7 +203,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	}
 	warnx(_("unknown column: %s"), name);
 
-	return -1;
+	return LSFD_FILTER_UNKNOWN_COL_ID;
 }
 
 static int column_name_to_id_cb(const char *name, void *data __attribute__((__unused__)))

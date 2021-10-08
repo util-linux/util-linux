@@ -14,8 +14,16 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define LSFD_FILTER_UNKNOWN_COL_ID -1
+
 struct lsfd_filter;
 
+/*
+ * @column_name_to_id: a function converting a column name to its id.
+ *
+ * @column_name_to_id should return LSFD_FILTER_UNKNOWN_COL_ID if
+ * an unknown column name is given.
+ */
 struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_table *tb,
 				      int ncols,
 				      int (*column_name_to_id)(const char *, void *),

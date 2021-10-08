@@ -692,7 +692,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 	switch (t->type) {
 	case TOKEN_NAME: {
 		int col_id = parser->column_name_to_id(t->val.str, parser->data);
-		if (col_id == -1) {
+		if (col_id == LSFD_FILTER_UNKNOWN_COL_ID) {
 			snprintf(parser->errmsg, ERRMSG_LEN,
 				 _("error: no such column: %s"), t->val.str);
 			token_free(t);
