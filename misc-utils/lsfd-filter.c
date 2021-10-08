@@ -553,7 +553,7 @@ static struct token *parser_read(struct parser *parser)
 		parser_read_str(parser, t, c);
 		break;
 	default:
-		if (isalpha ((unsigned char)c) || c == '_') {
+		if (isalpha((unsigned char)c) || c == '_') {
 			xstrputc(&t->val.str, c);
 			parser_read_name(parser, t);
 			if (strcmp(t->val.str, "true") == 0) {
