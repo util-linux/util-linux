@@ -85,6 +85,19 @@ struct parameter {
 	} val;
 };
 
+struct parser {
+	const char *expr;
+	const char *cursor;
+	int paren_level;
+	struct libscols_table *tb;
+	int (*column_name_to_id)(const char *, void *);
+	struct libscols_column *(*add_column_by_id)(struct libscols_table *, int, void*);
+	void *data;
+	struct parameter *parameters;
+#define ERRMSG_LEN 128
+	char errmsg[ERRMSG_LEN];
+};
+
 enum node_type {
 	NODE_STR,
 	NODE_NUM,
@@ -102,7 +115,7 @@ struct op1_class {
 	/* Return true if acceptable. */
 	bool (*is_acceptable)(struct node *, struct parameter *, struct libscols_line *);
 	/* Return true if o.k. */
-	bool (*check_type)(struct node *);
+	bool (*check_type)(struct parser *, struct op1_class *, struct node *);
 };
 
 struct op2_class {
@@ -110,20 +123,7 @@ struct op2_class {
 	/* Return true if acceptable. */
 	bool (*is_acceptable)(struct node *, struct node *, struct parameter *, struct libscols_line *);
 	/* Return true if o.k. */
-	bool (*check_type)(struct node *, struct node *);
-};
-
-struct parser {
-	const char *expr;
-	const char *cursor;
-	int paren_level;
-	struct libscols_table *tb;
-	int (*column_name_to_id)(const char *, void *);
-	struct libscols_column *(*add_column_by_id)(struct libscols_table *, int, void*);
-	void *data;
-	struct parameter *parameters;
-#define ERRMSG_LEN 128
-	char errmsg[ERRMSG_LEN];
+	bool (*check_type)(struct parser *, struct op2_class *, struct node *, struct node *);
 };
 
 #define VAL(NODE,FIELD) (((struct node_val *)(NODE))->val.FIELD)
@@ -186,7 +186,7 @@ static void token_dump_op1(struct token *, FILE *);
 static void token_dump_op2(struct token *, FILE *);
 
 static bool op1_not(struct node *, struct parameter*, struct libscols_line *);
-static bool op1_check_type_bool_or_op(struct node *);
+static bool op1_check_type_bool_or_op(struct parser *, struct op1_class *, struct node *);
 
 static bool op2_eq (struct node *, struct node *, struct parameter*, struct libscols_line *);
 static bool op2_ne (struct node *, struct node *, struct parameter*, struct libscols_line *);
@@ -196,9 +196,9 @@ static bool op2_lt (struct node *, struct node *, struct parameter*, struct libs
 static bool op2_le (struct node *, struct node *, struct parameter*, struct libscols_line *);
 static bool op2_gt (struct node *, struct node *, struct parameter*, struct libscols_line *);
 static bool op2_ge (struct node *, struct node *, struct parameter*, struct libscols_line *);
-static bool op2_check_type_eq_or_bool_or_op(struct node *, struct node *);
-static bool op2_check_type_boolean_or_op   (struct node *, struct node *);
-static bool op2_check_type_num             (struct node *, struct node *);
+static bool op2_check_type_eq_or_bool_or_op(struct parser *, struct op2_class *, struct node *, struct node *);
+static bool op2_check_type_boolean_or_op   (struct parser *, struct op2_class *, struct node *, struct node *);
+static bool op2_check_type_num             (struct parser *, struct op2_class *, struct node *, struct node *);
 
 static void node_str_free(struct node *);
 static void node_op1_free(struct node *);
@@ -776,10 +776,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 			return NULL;
 		}
 
-		if (!op1_class->check_type(op1_right)) {
-			snprintf(parser->errmsg, ERRMSG_LEN,
-				 _("error: unexpected operand type for: %s"),
-				 op1_class->name);
+		if (!op1_class->check_type(parser, op1_class, op1_right)) {
 			node_free(op1_right);
 			return NULL;
 		}
@@ -808,10 +805,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 			return NULL;
 		}
 
-		if (!op2_class->check_type(last, op2_right)) {
-			snprintf(parser->errmsg, ERRMSG_LEN,
-				 _("error: unexpected operand type(s) for: %s"),
-				 op2_class->name);
+		if (!op2_class->check_type(parser, op2_class, last, op2_right)) {
 			node_free(op2_right);
 			return NULL;
 		}
@@ -1020,9 +1014,17 @@ static bool op1_not(struct node *node, struct parameter* params, struct libscols
 	return !node_apply(node, params, ln);
 }
 
-static bool op1_check_type_bool_or_op(struct node *node)
+static bool op1_check_type_bool_or_op(struct parser* parser, struct op1_class *op1_class,
+				      struct node *node)
 {
-	return (node->type == NODE_OP1 || node->type == NODE_OP2 || node->type == NODE_BOOL);
+	if (! (node->type == NODE_OP1 || node->type == NODE_OP2 || node->type == NODE_BOOL)) {
+		snprintf(parser->errmsg, ERRMSG_LEN,
+			 _("error: unexpected operand type %s for: %s"),
+			 NODE_CLASS(node)->name,
+			 op1_class->name);
+		return false;
+	}
+	return true;
 }
 
 #define OP2_GET_STR(NODE,DEST) do {					\
@@ -1118,30 +1120,61 @@ static bool op2_ge(struct node *left, struct node *right, struct parameter *para
 	OP2_CMP_BODY(>=);
 }
 
-static bool op2_check_type_boolean_or_op(struct node *left, struct node *right)
+static bool op2_check_type_boolean_or_op(struct parser* parser, struct op2_class *op2_class,
+					 struct node *left, struct node *right)
 {
 	enum node_type lt = left->type, rt = right->type;
 
-	if ((lt == NODE_BOOL || lt == NODE_OP1 || lt == NODE_OP2)
-	    && (rt == NODE_BOOL || rt == NODE_OP1 || rt == NODE_OP2))
-		return true;
+	if (!(lt == NODE_OP1 || lt == NODE_OP2 || lt == NODE_BOOL)) {
+		snprintf(parser->errmsg, ERRMSG_LEN,
+			 _("error: unexpected left operand type %s for: %s"),
+			 NODE_CLASS(left)->name,
+			 op2_class->name);
+		return false;
+	}
 
-	return false;
+	if (! (rt == NODE_OP1 || rt == NODE_OP2 || rt == NODE_BOOL)) {
+		snprintf(parser->errmsg, ERRMSG_LEN,
+			 _("error: unexpected right operand type %s for: %s"),
+			 NODE_CLASS(right)->name,
+			 op2_class->name);
+		return false;
+	}
+
+	return true;
 }
 
-static bool op2_check_type_eq_or_bool_or_op(struct node *left, struct node *right)
+static bool op2_check_type_eq_or_bool_or_op(struct parser* parser, struct op2_class *op2_class,
+					    struct node *left, struct node *right)
 {
 	enum node_type lt = left->type, rt = right->type;
 
 	if (lt == rt)
 		return true;
 
-	return op2_check_type_boolean_or_op(left, right);
+	return op2_check_type_boolean_or_op(parser, op2_class, left, right);
 }
 
-static bool op2_check_type_num(struct node *left, struct node *right)
+static bool op2_check_type_num(struct parser* parser, struct op2_class *op2_class,
+			       struct node *left, struct node *right)
 {
-	return (left->type == NODE_NUM && right->type == NODE_NUM);
+	if (left->type != NODE_NUM) {
+		snprintf(parser->errmsg, ERRMSG_LEN,
+			 _("error: unexpected left operand type %s for: %s"),
+			 NODE_CLASS(left)->name,
+			 op2_class->name);
+		return false;
+	}
+
+	if (right->type != NODE_NUM) {
+		snprintf(parser->errmsg, ERRMSG_LEN,
+			 _("error: unexpected right operand type %s for: %s"),
+			 NODE_CLASS(left)->name,
+			 op2_class->name);
+		return false;
+	}
+
+	return true;
 }
 
 struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_table *tb,
