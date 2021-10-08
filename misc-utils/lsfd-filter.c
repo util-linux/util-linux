@@ -16,6 +16,7 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <regex.h>		/* regcomp(), regexec() */
 
 /*
  * Definitions
@@ -38,9 +39,7 @@ enum token_type {
 	TOKEN_OPEN,		/* ( */
 	TOKEN_CLOSE,		/* ) */
 	TOKEN_OP1,		/* !, not */
-	TOKEN_OP2,		/* TODO: =~, !~ (regex match)
-				 *       =*, !* (glob match with fnmatch()
-				 */
+	TOKEN_OP2,		/* TODO: =*, !* (glob match with fnmatch() */
 	TOKEN_EOF,
 };
 
@@ -57,6 +56,7 @@ enum op2_type {
 	OP2_LE,
 	OP2_GT,
 	OP2_GE,
+	OP2_RE_MATCH,
 };
 
 struct token {
@@ -102,6 +102,7 @@ enum node_type {
 	NODE_STR,
 	NODE_NUM,
 	NODE_BOOL,
+	NODE_RE,
 	NODE_OP1,
 	NODE_OP2,
 };
@@ -135,6 +136,7 @@ struct node_val {
 		char *str;
 		unsigned long long num;
 		bool boolean;
+		regex_t re;
 	} val;
 };
 
@@ -196,17 +198,22 @@ static bool op2_lt (struct node *, struct node *, struct parameter*, struct libs
 static bool op2_le (struct node *, struct node *, struct parameter*, struct libscols_line *);
 static bool op2_gt (struct node *, struct node *, struct parameter*, struct libscols_line *);
 static bool op2_ge (struct node *, struct node *, struct parameter*, struct libscols_line *);
+static bool op2_re_match (struct node *, struct node *, struct parameter*, struct libscols_line *);
+
 static bool op2_check_type_eq_or_bool_or_op(struct parser *, struct op2_class *, struct node *, struct node *);
 static bool op2_check_type_boolean_or_op   (struct parser *, struct op2_class *, struct node *, struct node *);
 static bool op2_check_type_num             (struct parser *, struct op2_class *, struct node *, struct node *);
+static bool op2_check_type_re              (struct parser *, struct op2_class *, struct node *, struct node *);
 
 static void node_str_free(struct node *);
+static void node_re_free (struct node *);
 static void node_op1_free(struct node *);
 static void node_op2_free(struct node *);
 
 static void node_str_dump (struct node *, struct parameter*, int, FILE *);
 static void node_num_dump (struct node *, struct parameter*, int, FILE *);
 static void node_bool_dump(struct node *, struct parameter*, int, FILE *);
+static void node_re_dump  (struct node *, struct parameter*, int, FILE *);
 static void node_op1_dump (struct node *, struct parameter*, int, FILE *);
 static void node_op2_dump (struct node *, struct parameter*, int, FILE *);
 
@@ -307,6 +314,11 @@ struct op2_class op2_classes [] = {
 		.is_acceptable = op2_ge,
 		.check_type = op2_check_type_num,
 	},
+	[OP2_RE_MATCH] = {
+		.name = "=~",
+		.is_acceptable = op2_re_match,
+		.check_type = op2_check_type_re,
+	},
 };
 
 #define NODE_CLASS(NODE) (&node_classes[(NODE)->type])
@@ -323,6 +335,11 @@ struct node_class node_classes[] = {
 	[NODE_BOOL] = {
 		.name = "BOOL",
 		.dump = node_bool_dump,
+	},
+	[NODE_RE] = {
+		.name = "STR",
+		.free = node_re_free,
+		.dump = node_re_dump,
 	},
 	[NODE_OP1]   = {
 		.name = "OP1",
@@ -522,6 +539,10 @@ static struct token *parser_read(struct parser *parser)
 		if (c0 == '=') {
 			t->type = TOKEN_OP2;
 			t->val.op2 = OP2_EQ;
+			break;
+		} else if (c0 == '~') {
+			t->type = TOKEN_OP2;
+			t->val.op2 = OP2_RE_MATCH;
 			break;
 		}
 		snprintf(parser->errmsg, ERRMSG_LEN,
@@ -979,6 +1000,12 @@ static void node_bool_dump(struct node *node, struct parameter* params, int dept
 			: token_classes[TOKEN_FALSE].name);
 }
 
+static void node_re_dump(struct node *node, struct parameter* params __attribute__((__unused__)),
+			 int depth __attribute__((__unused__)), FILE *stream)
+{
+	fprintf(stream, ": #<regexp %p>\n", &VAL(node,re));
+}
+
 static void node_op1_dump(struct node *node, struct parameter* params, int depth, FILE *stream)
 {
 	fprintf(stream, ": %s\n", ((struct node_op1 *)node)->opclass->name);
@@ -996,6 +1023,11 @@ static void node_str_free(struct node *node)
 {
 	if (PINDEX(node) < 0)
 		free(VAL(node,str));
+}
+
+static void node_re_free(struct node *node)
+{
+	regfree(&VAL(node,re));
 }
 
 static void node_op1_free(struct node *node)
@@ -1120,6 +1152,15 @@ static bool op2_ge(struct node *left, struct node *right, struct parameter *para
 	OP2_CMP_BODY(>=);
 }
 
+static bool op2_re_match(struct node *left, struct node *right,
+			 struct parameter *params, struct libscols_line *ln)
+{
+	const char *str;
+	OP2_GET_STR(left, str);
+
+	return (regexec(&VAL(right,re), str, 0, NULL, 0) == 0);
+}
+
 static bool op2_check_type_boolean_or_op(struct parser* parser, struct op2_class *op2_class,
 					 struct node *left, struct node *right)
 {
@@ -1174,6 +1215,52 @@ static bool op2_check_type_num(struct parser* parser, struct op2_class *op2_clas
 		return false;
 	}
 
+	return true;
+}
+
+static bool op2_check_type_re(struct parser* parser, struct op2_class *op2_class,
+			      struct node *left, struct node *right)
+{
+	if (left->type != NODE_STR) {
+		snprintf(parser->errmsg, ERRMSG_LEN,
+			 _("error: unexpected left operand type %s for: %s"),
+			 NODE_CLASS(left)->name,
+			 op2_class->name);
+		return false;
+	}
+
+	if (right->type != NODE_STR) {
+		snprintf(parser->errmsg, ERRMSG_LEN,
+			 _("error: unexpected right operand type %s for: %s"),
+			 NODE_CLASS(right)->name,
+			 op2_class->name);
+		return false;
+	}
+	if (PINDEX(right) >= 0) {
+		snprintf(parser->errmsg, ERRMSG_LEN,
+			 _("error: string literal is expected as right operand for: %s"),
+			 op2_class->name);
+		return false;
+	}
+
+	char *regex = VAL(right, str);
+	VAL(right, str) = NULL;
+
+	int err = regcomp(&VAL(right, re), regex, REG_NOSUB | REG_EXTENDED);
+	if (err != 0) {
+		size_t size = regerror(err, &VAL(right, re), NULL, 0);
+		char *buf = xmalloc(size + 1);
+
+		regerror(err, &VAL(right, re), buf, size);
+
+		snprintf(parser->errmsg, ERRMSG_LEN,
+			 _("error: could not compile regular expression %s: %s"),
+			 regex, buf);
+		free(buf);
+		return false;
+	}
+	right->type = NODE_RE;
+	free(regex);
 	return true;
 }
 

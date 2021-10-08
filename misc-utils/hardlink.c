@@ -44,7 +44,7 @@
 #include "monotonic.h"
 #include "optutils.h"
 
-#include <regex.h>		/* regcomp(), regsearch() */
+#include <regex.h>		/* regcomp(), regexec() */
 
 #ifdef HAVE_SYS_XATTR_H
 # include <sys/xattr.h>		/* listxattr, getxattr */
