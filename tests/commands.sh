@@ -44,6 +44,7 @@ TS_HELPER_UUID_NAMESPACE="${ts_helpersdir}test_uuid_namespace"
 TS_HELPER_MBSENCODE="${ts_helpersdir}test_mbsencode"
 TS_HELPER_CAL="${ts_helpersdir}test_cal"
 TS_HELPER_LAST_FUZZ="${ts_helpersdir}test_last_fuzz"
+TS_HELPER_MKFDS="${ts_helpersdir}test_mkfds"
 
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"${ts_commandsdir}addpart"}
@@ -80,6 +81,7 @@ TS_CMD_LOOK=${TS_CMD_LOOK-"${ts_commandsdir}look"}
 TS_CMD_LOSETUP=${TS_CMD_LOSETUP:-"${ts_commandsdir}losetup"}
 TS_CMD_LSBLK=${TS_CMD_LSBLK-"${ts_commandsdir}lsblk"}
 TS_CMD_LSCPU=${TS_CMD_LSCPU-"${ts_commandsdir}lscpu"}
+TS_CMD_LSFD=${TS_CMD_LSFD-"${ts_commandsdir}lsfd"}
 TS_CMD_LSMEM=${TS_CMD_LSMEM-"${ts_commandsdir}lsmem"}
 TS_CMD_LSNS=${TS_CMD_LSNS-"${ts_commandsdir}lsns"}
 TS_CMD_MCOOKIE=${TS_CMD_MCOOKIE-"${ts_commandsdir}mcookie"}
