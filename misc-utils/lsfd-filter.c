@@ -57,6 +57,7 @@ enum op2_type {
 	OP2_GT,
 	OP2_GE,
 	OP2_RE_MATCH,
+	OP2_RE_UNMATCH,
 };
 
 struct token {
@@ -199,6 +200,7 @@ static bool op2_le (struct node *, struct node *, struct parameter*, struct libs
 static bool op2_gt (struct node *, struct node *, struct parameter*, struct libscols_line *);
 static bool op2_ge (struct node *, struct node *, struct parameter*, struct libscols_line *);
 static bool op2_re_match (struct node *, struct node *, struct parameter*, struct libscols_line *);
+static bool op2_re_unmatch (struct node *, struct node *, struct parameter*, struct libscols_line *);
 
 static bool op2_check_type_eq_or_bool_or_op(struct parser *, struct op2_class *, struct node *, struct node *);
 static bool op2_check_type_boolean_or_op   (struct parser *, struct op2_class *, struct node *, struct node *);
@@ -317,6 +319,11 @@ struct op2_class op2_classes [] = {
 	[OP2_RE_MATCH] = {
 		.name = "=~",
 		.is_acceptable = op2_re_match,
+		.check_type = op2_check_type_re,
+	},
+	[OP2_RE_UNMATCH] = {
+		.name = "!~",
+		.is_acceptable = op2_re_unmatch,
 		.check_type = op2_check_type_re,
 	},
 };
@@ -508,6 +515,10 @@ static struct token *parser_read(struct parser *parser)
 		if (c0 == '=') {
 			t->type = TOKEN_OP2;
 			t->val.op2 = OP2_NE;
+			break;
+		} else if (c0 == '~') {
+			t->type = TOKEN_OP2;
+			t->val.op2 = OP2_RE_UNMATCH;
 			break;
 		}
 		parser_ungetc(parser, c0);
@@ -1159,6 +1170,12 @@ static bool op2_re_match(struct node *left, struct node *right,
 	OP2_GET_STR(left, str);
 
 	return (regexec(&VAL(right,re), str, 0, NULL, 0) == 0);
+}
+
+static bool op2_re_unmatch(struct node *left, struct node *right,
+			 struct parameter *params, struct libscols_line *ln)
+{
+	return !op2_re_match(left, right, params, ln);
 }
 
 static bool op2_check_type_boolean_or_op(struct parser* parser, struct op2_class *op2_class,
