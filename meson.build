@@ -2688,7 +2688,8 @@ exe = executable(
   'test_procfs',
   'lib/procfs.c',
   c_args : ['-DTEST_PROGRAM_PROCFS'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  link_with : lib_common)
 exes += exe
 
 # XXX: HAVE_OPENAT && HAVE_DIRFD
