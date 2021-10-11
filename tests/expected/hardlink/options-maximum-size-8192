@@ -1,0 +1,33 @@
+Mode:           real
+Files:          26
+Linked:         0 files
+Compared:       0 xattrs
+Compared:       0 files
+Saved:          0 B
+Duration: [Redacted]
+dir-1/sdir-1/file-a-1	10	8192	1540236423	644
+dir-1/sdir-1/file-a-2	10	8192	1540236423	644
+dir-1/sdir-1/file-a-3	10	8192	1540236423	644
+dir-1/sdir-1/file-b-1	10	8192	1540236430	644
+dir-1/sdir-1/file-b-2	10	8192	1540236430	644
+dir-1/sdir-1/file-b-3	10	8192	1540236430	644
+dir-1/sdir-1/file-c-1	6	8192	1540236548	644
+dir-1/sdir-1/file-c-2	6	8192	1540236548	644
+dir-1/sdir-1/file-c-3	6	8192	1540236548	644
+dir-1/sdir-2/file-a-1-abcdefghijklmnopqrstxyz-"§$%&()=?*+	10	8192	1540236423	644
+dir-2/sdir-2/file-a-5	10	8192	1540236423	644
+dir-2/sdir-2/file-b-5	10	8192	1540236430	644
+dir-2/sdir-3/file-b-4	10	8192	1540236430	644
+file-a-1	10	8192	1540236423	644
+file-a-2	10	8192	1540236423	644
+file-a-3	10	8192	1540236423	644
+file-a-4	10	8192	1540236423	644
+file-a-5	10	8192	1540236423	644
+file-b-1	10	8192	1540236430	644
+file-b-2	10	8192	1540236430	644
+file-b-3	10	8192	1540236430	644
+file-b-4	10	8192	1540236430	644
+file-b-5	10	8192	1540236430	644
+file-c-1	6	8192	1540236548	644
+file-c-2	6	8192	1540236548	644
+file-c-3	6	8192	1540236548	644

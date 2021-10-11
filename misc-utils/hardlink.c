@@ -138,6 +138,7 @@ struct hdl_regex {
  * @keep_oldest: Choose the file with oldest timestamp as master (default = FALSE)
  * @dry_run: Specifies whether hardlink should not link files (default = FALSE)
  * @min_size: Minimum size of files to consider. (default = 1 byte)
+ * @max_size: Maximum size of files to consider, 0 means umlimited. (default = 0 byte)
  */
 static struct options {
 	struct hdl_regex *include;
@@ -155,6 +156,7 @@ static struct options {
 	unsigned int keep_oldest:1;
 	unsigned int dry_run:1;
 	uintmax_t min_size;
+	uintmax_t max_size;
 	size_t io_size;
 	size_t cache_size;
 } opts = {
@@ -723,6 +725,12 @@ static int inserter(const char *fpath, const struct stat *sb,
 	jlog(JLOG_VERBOSE2, " %5zu: [%ld/%ld/%ld] %s",
 			stats.files, sb->st_dev, sb->st_ino, sb->st_nlink, fpath);
 
+	if ((opts.max_size > 0) && ((uintmax_t) sb->st_size > opts.max_size)) {
+		jlog(JLOG_VERBOSE1,
+		     _("Skipped %s (greater than configured size)"), fpath);
+		return 0;
+	}
+
 	pathlen = strlen(fpath) + 1;
 
 	fil = xcalloc(1, sizeof(*fil));
@@ -915,6 +923,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
 	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
 	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
+	fputs(_(" -S, --maximum-size <size>  maximum size for files.\n"), out);
 	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"), out);
 	fputs(_(" -r, --cache-size <size>    memory limit for cached file content data\n"), out);
 	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
@@ -933,7 +942,7 @@ static void __attribute__((__noreturn__)) usage(void)
  */
 static int parse_options(int argc, char *argv[])
 {
-	static const char optstr[] = "VhvnfpotXcmMOx:y:i:r:s:b:q";
+	static const char optstr[] = "VhvnfpotXcmMOx:y:i:r:S:s:b:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -951,6 +960,7 @@ static int parse_options(int argc, char *argv[])
 		{"include", required_argument, NULL, 'i'},
 		{"method", required_argument, NULL, 'y' },
 		{"minimum-size", required_argument, NULL, 's'},
+		{"maximum-size", required_argument, NULL, 'S'},
 		{"io-size", required_argument, NULL, 'b'},
 		{"content", no_argument, NULL, 'c'},
 		{"quiet", no_argument, NULL, 'q'},
@@ -1019,7 +1029,10 @@ static int parse_options(int argc, char *argv[])
 			register_regex(&opts.include, optarg);
 			break;
 		case 's':
-			opts.min_size = strtosize_or_err(optarg, _("failed to parse size"));
+			opts.min_size = strtosize_or_err(optarg, _("failed to parse minimum size"));
+			break;
+		case 'S':
+			opts.max_size = strtosize_or_err(optarg, _("failed to parse maximum size"));
 			break;
 		case 'r':
 			opts.cache_size = strtosize_or_err(optarg, _("failed to cache size"));
