@@ -929,7 +929,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
 	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
 	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
-	fputs(_(" -S, --buffer-size <size>   buffer size for file reading (speedup, using more RAM)\n"), out);
+	fputs(_(" -b, --buffer-size <size>   buffer size for file reading (speedup, using more RAM)\n"), out);
 	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -959,7 +959,7 @@ static void deinit_buffers(void)
  */
 static int parse_options(int argc, char *argv[])
 {
-	static const char optstr[] = "VhvnfpotXcmMOx:i:s:S:q";
+	static const char optstr[] = "VhvnfpotXcmMOx:i:s:b:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -976,7 +976,7 @@ static int parse_options(int argc, char *argv[])
 		{"exclude", required_argument, NULL, 'x'},
 		{"include", required_argument, NULL, 'i'},
 		{"minimum-size", required_argument, NULL, 's'},
-		{"buffer-size", required_argument, NULL, 'S'},
+		{"buffer-size", required_argument, NULL, 'b'},
 		{"content", no_argument, NULL, 'c'},
 		{"quiet", no_argument, NULL, 'q'},
 		{NULL, 0, NULL, 0}
@@ -1042,7 +1042,7 @@ static int parse_options(int argc, char *argv[])
 		case 's':
 			opts.min_size = strtosize_or_err(optarg, _("failed to parse size"));
 			break;
-		case 'S':
+		case 'b':
 			opts.bufsiz = strtosize_or_err(optarg, _("failed to parse size"));
 			break;
 		case 'h':
