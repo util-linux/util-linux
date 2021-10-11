@@ -89,6 +89,9 @@ File descriptor for the file.
 FLAGS::
 Flags specified when opening the file.
 
+FUID::
+User ID number of the file's owner.
+
 INODE::
 Inode number.
 
@@ -112,6 +115,9 @@ Name of the file.
 
 NLINK::
 Link count.
+
+OWNER::
+Owner of the file.
 
 PARTITION::
 Block device name resolved by _/proc/partition_.

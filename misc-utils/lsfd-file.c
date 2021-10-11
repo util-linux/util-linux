@@ -224,6 +224,13 @@ static bool file_fill_column(struct proc *proc,
 					       (int)proc->uid)->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_OWNER:
+		add_uid(username_cache, (int)file->stat.st_uid);
+		if (scols_line_set_data(ln, column_index,
+					get_id(username_cache,
+					       (int)file->stat.st_uid)->name))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
 	case COL_DEVTYPE:
 		if (scols_line_set_data(ln, column_index,
 					"nodev"))
@@ -281,6 +288,9 @@ static bool file_fill_column(struct proc *proc,
 		break;
 	case COL_UID:
 		xasprintf(&str, "%d", (int)proc->uid);
+		break;
+	case COL_FUID:
+		xasprintf(&str, "%d", (int)file->stat.st_uid);
 		break;
 	case COL_SIZE:
 		xasprintf(&str, "%ju", file->stat.st_size);

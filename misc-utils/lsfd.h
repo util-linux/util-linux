@@ -66,8 +66,10 @@ enum {
 	COL_SOURCE,
 	COL_TID,
 	COL_TYPE,
-	COL_UID,
-	COL_USER,
+	COL_UID,		/* proess */
+	COL_USER,		/* process */
+	COL_FUID,		/* file */
+	COL_OWNER,		/* file */
 	LSFD_N_COLS		/* This must be at last. */
 };
 
