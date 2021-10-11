@@ -139,7 +139,7 @@ static struct colinfo infos[] = {
 	[COL_TYPE]    = { "TYPE",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("file type") },
 	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
-		N_("user ID number") },
+		N_("user ID number of the process") },
 	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("user of the process") },
 };
@@ -443,8 +443,6 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	file_init_content(f);
 
-	if (is_association(f, EXE))
-		proc->uid = sb.st_uid;
 	if (is_association(f, NS_MNT))
 		proc->ns_mnt = sb.st_ino;
 
@@ -857,6 +855,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	proc = new_process(pid, leader);
 	proc->command = procfs_process_get_cmdname(pc, buf, sizeof(buf)) > 0 ?
 			xstrdup(buf) : xstrdup(_("(unknown)"));
+	procfs_process_get_uid(pc, &proc->uid);
 
 	collect_execve_file(pc, proc);
 
