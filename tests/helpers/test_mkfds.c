@@ -112,6 +112,26 @@ static void make_pipe(struct factory *factory _U_, struct fdesc fdescs[], pid_t 
 	}
 }
 
+static void open_directory(struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
+{
+	const char *dir = "/";
+
+	int fd = open(dir, O_RDONLY|O_DIRECTORY);
+	if (fd < 0)
+		err(EXIT_FAILURE, "failed to open: %s", dir);
+
+	if (dup2(fd, fdescs[0].fd) < 0) {
+		close(fd);
+		err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+}
+
 static struct factory factories[] = {
 	{
 		.name = "ro-regular-file",
@@ -128,6 +148,14 @@ static struct factory factories[] = {
 		.N    = 2,
 		.fork = false,
 		.make = make_pipe,
+	},
+	{
+		.name = "directory",
+		.desc = "directory (/)",
+		.priv = false,
+		.N    = 1,
+		.fork = false,
+		.make = open_directory
 	},
 };
 
