@@ -71,11 +71,15 @@ A regular expression to include files. If the option *--exclude* has been given,
 *-s*, *--minimum-size* _size_::
 The minimum size to consider. By default this is 1, so empty files will not be linked. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
 
+*-S*, *--maximum-size* _size_::
+The maximum size to consider. By default this is 0 and 0 has the special meaning of unlimited. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
+
 *-b*, *--buffer-size* _size_::
 The size of read buffer used when comparing file contents (default: 8KiB). This
 costs some additional memory but potentially reduces the amount of seek
 operations and therefore improve performance, especially with mechanic disk
 drives. Optional factor suffixes are supported, like with the *-s* option. This is mostly efficient with other filters (i.e. with *-f* or *-X*) and can be less efficient with *-top* options.
+
 
 == ARGUMENTS
 
