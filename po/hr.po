@@ -5422,13 +5422,13 @@ msgstr "QNX6 file system"
 msgid "Plan 9 partition"
 msgstr "Plan 9 partition"
 
-#: include/pt-gpt-partnames.h:169
-msgid "HiFive Unleashed FSBL"
-msgstr "FSBL HiFive Unleashed"
+#: include/pt-gpt-partnames.h:181
+msgid "HiFive FSBL"
+msgstr "FSBL HiFive"
 
-#: include/pt-gpt-partnames.h:170
-msgid "HiFive Unleashed BBL"
-msgstr "BBL HiFive Unleashed"
+#: include/pt-gpt-partnames.h:182
+msgid "HiFive BBL"
+msgstr "BBL HiFive"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"

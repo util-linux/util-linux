@@ -5326,13 +5326,13 @@ msgstr "QNX6 파일 시스템"
 msgid "Plan 9 partition"
 msgstr "Plan 9 분할 영역"
 
-#: include/pt-gpt-partnames.h:169
-msgid "HiFive Unleashed FSBL"
-msgstr "HiFive Unleashed FSBL"
+#: include/pt-gpt-partnames.h:181
+msgid "HiFive FSBL"
+msgstr "HiFive FSBL"
 
-#: include/pt-gpt-partnames.h:170
-msgid "HiFive Unleashed BBL"
-msgstr "HiFive Unleashed BBL"
+#: include/pt-gpt-partnames.h:182
+msgid "HiFive BBL"
+msgstr "HiFive BBL"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"

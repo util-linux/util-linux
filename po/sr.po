@@ -5354,12 +5354,12 @@ msgid "Plan 9 partition"
 msgstr "План 9 партиција"
 
 #: include/pt-gpt-partnames.h:156
-msgid "HiFive Unleashed FSBL"
-msgstr "HiFive Unleashed FSBL"
+msgid "HiFive FSBL"
+msgstr "HiFive FSBL"
 
 #: include/pt-gpt-partnames.h:157
-msgid "HiFive Unleashed BBL"
-msgstr "HiFive Unleashed BBL"
+msgid "HiFive BBL"
+msgstr "HiFive BBL"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"

@@ -5699,12 +5699,12 @@ msgstr "檔案系統型態"
 msgid "Plan 9 partition"
 msgstr "刪除分割"
 
-#: include/pt-gpt-partnames.h:169
-msgid "HiFive Unleashed FSBL"
+#: include/pt-gpt-partnames.h:181
+msgid "HiFive FSBL"
 msgstr ""
 
-#: include/pt-gpt-partnames.h:170
-msgid "HiFive Unleashed BBL"
+#: include/pt-gpt-partnames.h:182
+msgid "HiFive BBL"
 msgstr ""
 
 #: include/pt-mbr-partnames.h:1
