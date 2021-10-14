@@ -222,11 +222,22 @@ static void open_ro_regular_file(const struct factory *factory, struct fdesc fde
 				 int argc, char ** argv)
 {
 	struct arg file = decode_arg("file", factory->params, argc, argv);
+	struct arg offset = decode_arg("offset", factory->params, argc, argv);
 
 	int fd = open(ARG_STRING(file), O_RDONLY);
 	if (fd < 0)
 		err(EXIT_FAILURE, "failed to open: %s", ARG_STRING(file));
 	free_arg(&file);
+
+	if (ARG_INTEGER(offset) != 0) {
+		if (lseek(fd, (off_t)ARG_INTEGER(offset), SEEK_CUR) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to seek 0 -> %ld", ARG_INTEGER(offset));
+		}
+	}
+	free_arg(&offset);
 
 	if (dup2(fd, fdescs[0].fd) < 0) {
 		int e = errno;
@@ -304,6 +315,12 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "file to be opened",
 				.defv.string = "/etc/passwd",
+			},
+			{
+				.name = "offset",
+				.type = PTYPE_INTEGER,
+				.desc = "seek bytes after open with SEEK_CUR",
+				.defv.integer = 0,
 			},
 			PARAM_END
 		},
