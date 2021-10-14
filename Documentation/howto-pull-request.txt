@@ -128,7 +128,17 @@ git rebase -i master
 # change something
 git push -f yourgit textual:textual
 
-4. Assuming the changes look good send them to mail list.  Yes, the all
+4. You have two ways how to send your pull request:
+
+4.1 Github pull request
+
+This is recommended way for your small and trivial changes, or for
+work-in-progress projects (rewrites, new commands, etc.). All you
+need is to press "pull request" button on GitHub.
+
+4.2. Send your work to the mailing list
+
+Assuming the changes look good send them to mail list.  Yes, the all
 of them!  Sending pull request with github is not visible for project
 contributors, and they will not have change to review your changes.
 
