@@ -277,14 +277,15 @@ static void make_pipe(const struct factory *factory _U_, struct fdesc fdescs[], 
 	}
 }
 
-static void open_directory(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_,
-			   int argc _U_, char ** argv _U_)
+static void open_directory(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+			   int argc, char ** argv)
 {
-	const char *dir = "/";
+	struct arg dir = decode_arg("dir", factory->params, argc, argv);
 
-	int fd = open(dir, O_RDONLY|O_DIRECTORY);
+	int fd = open(ARG_STRING(dir), O_RDONLY|O_DIRECTORY);
 	if (fd < 0)
-		err(EXIT_FAILURE, "failed to open: %s", dir);
+		err(EXIT_FAILURE, "failed to open: %s", ARG_STRING(dir));
+	free_arg(&dir);
 
 	if (dup2(fd, fdescs[0].fd) < 0) {
 		int e = errno;
@@ -335,11 +336,20 @@ static const struct factory factories[] = {
 	},
 	{
 		.name = "directory",
-		.desc = "directory (/)",
+		.desc = "directory",
 		.priv = false,
 		.N    = 1,
 		.fork = false,
-		.make = open_directory
+		.make = open_directory,
+		.params = (struct parameter []) {
+			{
+				.name = "dir",
+				.type = PTYPE_STRING,
+				.desc = "directory to be opened",
+				.defv.string = "/",
+			},
+			PARAM_END
+		},
 	},
 };
 
