@@ -17,6 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <errno.h>
 #include <getopt.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -80,7 +81,9 @@ static void open_ro_regular_file(struct factory *factory _U_, struct fdesc fdesc
 		err(EXIT_FAILURE, "failed to open: %s", file);
 
 	if (dup2(fd, fdescs[0].fd) < 0) {
+		int e = errno;
 		close(fd);
+		errno = e;
 		err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
 	}
 
@@ -99,8 +102,10 @@ static void make_pipe(struct factory *factory _U_, struct fdesc fdescs[], pid_t 
 
 	for (int i = 0; i < 2; i++) {
 		if (dup2(pd[i], fdescs[i].fd) < 0) {
+			int e = errno;
 			close(pd[0]);
 			close(pd[1]);
+			errno = e;
 			err(EXIT_FAILURE, "failed to dup %d -> %d",
 			    pd[i], fdescs[i].fd);
 		}
@@ -121,7 +126,9 @@ static void open_directory(struct factory *factory _U_, struct fdesc fdescs[], p
 		err(EXIT_FAILURE, "failed to open: %s", dir);
 
 	if (dup2(fd, fdescs[0].fd) < 0) {
+		int e = errno;
 		close(fd);
+		errno = e;
 		err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
 	}
 
