@@ -64,7 +64,7 @@ struct factory {
 #define MAX_N 3
 	int  N;			/* the number of fds this factory makes */
 	bool fork;		/* whether this factory make a child process or not */
-	void (*make)(struct factory *, struct fdesc[], pid_t *);
+	void (*make)(const struct factory *, struct fdesc[], pid_t *);
 };
 
 static void close_fdesc(int fd, void *data _U_)
@@ -72,7 +72,7 @@ static void close_fdesc(int fd, void *data _U_)
 	close(fd);
 }
 
-static void open_ro_regular_file(struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
+static void open_ro_regular_file(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
 {
 	const char *file = "/etc/passwd";
 
@@ -94,7 +94,7 @@ static void open_ro_regular_file(struct factory *factory _U_, struct fdesc fdesc
 	};
 }
 
-static void make_pipe(struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
+static void make_pipe(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
 {
 	int pd[2];
 	if (pipe(pd) < 0)
@@ -117,7 +117,7 @@ static void make_pipe(struct factory *factory _U_, struct fdesc fdescs[], pid_t 
 	}
 }
 
-static void open_directory(struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
+static void open_directory(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
 {
 	const char *dir = "/";
 
@@ -139,7 +139,7 @@ static void open_directory(struct factory *factory _U_, struct fdesc fdescs[], p
 	};
 }
 
-static struct factory factories[] = {
+static const struct factory factories[] = {
 	{
 		.name = "ro-regular-file",
 		.desc = "read-only regular file (FILE=/etc/passwd)",
@@ -166,7 +166,7 @@ static struct factory factories[] = {
 	},
 };
 
-static void print_factory(struct factory *factory)
+static void print_factory(const struct factory *factory)
 {
 	printf("%-20s %4s %5d %4s %s\n",
 	       factory->name,
@@ -183,7 +183,7 @@ static void list_factories(void)
 		print_factory(factories + i);
 }
 
-static struct factory *find_factory(const char *name)
+static const struct factory *find_factory(const char *name)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(factories); i++)
 		if (strcmp(factories[i].name, name) == 0)
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
 {
 	int c;
 	pid_t pid[2];
-	struct factory *factory;
+	const struct factory *factory;
 	struct fdesc fdescs[MAX_N];
 	bool quiet = false;
 	bool cont  = false;
