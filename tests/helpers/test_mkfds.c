@@ -114,6 +114,49 @@ struct ptype_class ptype_classes [] = {
 	},
 };
 
+static struct arg decode_arg(const char *pname,
+			     const struct parameter *parameters,
+			     int argc, char **argv)
+{
+	char *v = NULL;
+	size_t len = strlen(pname);
+	const struct parameter *p = NULL;
+	struct arg arg;
+
+	while (parameters->name) {
+		if (strcmp(pname, parameters->name) == 0) {
+			p = parameters;
+			break;
+		}
+		parameters++;
+	}
+	if (p == NULL)
+		errx(EXIT_FAILURE, _("no such parameter: %s"), pname);
+
+	for (int i = 0; i < argc; i++) {
+		if (strncmp(pname, argv[i], len) == 0) {
+			v = argv[i] + len;
+			if (*v == '=') {
+				v++;
+				break;
+			} else if (*v == '\0')
+				errx(EXIT_FAILURE,
+				     _("no value given for \"%s\" parameter"),
+				     pname);
+			else
+				v = NULL;
+		}
+	}
+	arg.v = ptype_classes [p->type].read (v, &p->defv);
+	arg.free = ptype_classes [p->type].free;
+	return arg;
+}
+
+static void free_arg(struct arg *arg)
+{
+	arg->free(arg->v);
+}
+
 struct fdesc {
 	int fd;
 	void (*close)(int, void *);
@@ -136,14 +179,15 @@ static void close_fdesc(int fd, void *data _U_)
 	close(fd);
 }
 
-static void open_ro_regular_file(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_,
-				 int argc _U_, char ** argv _U_)
+static void open_ro_regular_file(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+				 int argc, char ** argv)
 {
-	const char *file = "/etc/passwd";
+	struct arg file = decode_arg("file", factory->params, argc, argv);
 
-	int fd = open(file, O_RDONLY);
+	int fd = open(ARG_STRING(file), O_RDONLY);
 	if (fd < 0)
-		err(EXIT_FAILURE, "failed to open: %s", file);
+		err(EXIT_FAILURE, "failed to open: %s", ARG_STRING(file));
+	free_arg(&file);
 
 	if (dup2(fd, fdescs[0].fd) < 0) {
 		int e = errno;
@@ -206,14 +250,24 @@ static void open_directory(const struct factory *factory _U_, struct fdesc fdesc
 	};
 }
 
+#define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
 		.name = "ro-regular-file",
-		.desc = "read-only regular file (FILE=/etc/passwd)",
+		.desc = "read-only regular file",
 		.priv = false,
 		.N    = 1,
 		.fork = false,
 		.make = open_ro_regular_file,
+		.params = (struct parameter []) {
+			{
+				.name = "file",
+				.type = PTYPE_STRING,
+				.desc = "file to be opened",
+				.defv.string = "/etc/passwd",
+			},
+			PARAM_END
+		},
 	},
 	{
 		.name = "pipe-no-fork",
