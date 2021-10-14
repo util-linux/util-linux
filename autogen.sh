@@ -126,11 +126,23 @@ if ! grep -q datarootdir po/Makefile.in.in; then
 datadir = @datadir@/g' po/Makefile.in.in
 fi
 $LIBTOOLIZE --force $LT_OPTS
+
+# patch libtool
+if test -f tools/libtool.m4.patch; then
+	if test -L m4/libtool.m4; then
+		cp m4/libtool.m4 m4/libtool.m4.org
+		rm m4/libtool.m4
+		mv m4/libtool.m4.org m4/libtool.m4
+	fi
+	patch -p1 --batch < tools/libtool.m4.patch
+fi
+
 aclocal -I m4 $AL_OPTS
 autoconf $AC_OPTS
 autoheader $AH_OPTS
 
 automake --add-missing $AM_OPTS
+
 
 cd "$THEDIR"
 
