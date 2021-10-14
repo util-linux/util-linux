@@ -24,6 +24,8 @@ TS_DESC="errors"
 ts_init "$*"
 
 ts_check_test_command "$TS_HELPER_LOGGER"
+ts_check_prog "socat"
+ts_check_prog "mktemp"
 
 export TZ="GMT"
 export LOGGER_TEST_TIMEOFDAY="1234567890.123456"
