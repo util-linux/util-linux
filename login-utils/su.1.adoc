@@ -29,7 +29,7 @@ This version of *su* uses PAM for authentication, account and session management
 
 Note that *su* in all cases uses PAM (*pam_getenvlist*(3)) to do the final environment modification. Command-line options such as *--login* and *--preserve-environment* affect the environment before it is modified by PAM.
 
-Since version 2.38 *su* resets process resource limits RLIMIT_NICE, RLIMIT_RTPRIO, RLIMIT_FSIZE and RLIMIT_NOFILE.
+Since version 2.38 *su* resets process resource limits RLIMIT_NICE, RLIMIT_RTPRIO, RLIMIT_FSIZE, RLIMIT_AS and RLIMIT_NOFILE.
 
 == OPTIONS
 

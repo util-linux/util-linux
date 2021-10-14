@@ -973,6 +973,7 @@ static void sanitize_prlimits(void)
 	lm.rlim_cur = RLIM_INFINITY;
 	lm.rlim_max = RLIM_INFINITY;
 	setrlimit(RLIMIT_FSIZE, &lm);
+	setrlimit(RLIMIT_AS, &lm);
 
 	/* reset soft limit only */
 	getrlimit(RLIMIT_NOFILE, &lm);
