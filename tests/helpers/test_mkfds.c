@@ -17,6 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <dirent.h>
 #include <errno.h>
 #include <getopt.h>
 #include <signal.h>
@@ -277,10 +278,21 @@ static void make_pipe(const struct factory *factory _U_, struct fdesc fdescs[], 
 	}
 }
 
+static void close_dir(int fd, void *data)
+{
+	DIR *dp = data;
+	if (dp)
+		closedir(dp);
+	else
+		close_fdesc(fd, NULL);
+}
+
 static void open_directory(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
 			   int argc, char ** argv)
 {
 	struct arg dir = decode_arg("dir", factory->params, argc, argv);
+	struct arg dentries = decode_arg("dentries", factory->params, argc, argv);
+	DIR *dp = NULL;
 
 	int fd = open(ARG_STRING(dir), O_RDONLY|O_DIRECTORY);
 	if (fd < 0)
@@ -294,10 +306,31 @@ static void open_directory(const struct factory *factory, struct fdesc fdescs[],
 		err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
 	}
 
+	if (ARG_INTEGER(dentries) > 0) {
+		dp = fdopendir(fdescs[0].fd);
+		if (dp == NULL) {
+			int e = errno;
+			close(fdescs[0].fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to make DIR* from fd: %s", ARG_STRING(dir));
+		}
+		for (int i = 0; i < ARG_INTEGER(dentries); i++) {
+			struct dirent *d = readdir(dp);
+			if (!d) {
+				int e = errno;
+				closedir(dp);
+				errno = e;
+				err(EXIT_FAILURE, "failed in readdir(3)");
+			}
+		}
+	}
+	free_arg(&dentries);
+
+
 	fdescs[0] = (struct fdesc){
 		.fd    = fdescs[0].fd,
-		.close = close_fdesc,
-		.data  = NULL
+		.close = close_dir,
+		.data  = dp
 	};
 }
 
@@ -347,6 +380,12 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "directory to be opened",
 				.defv.string = "/",
+			},
+			{
+				.name = "dentries",
+				.type = PTYPE_INTEGER,
+				.desc = "read the number of dentries after open with readdir(3)",
+				.defv.integer = 0,
 			},
 			PARAM_END
 		},
