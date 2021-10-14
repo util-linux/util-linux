@@ -55,10 +55,12 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 
 union value {
 	const char *string;
+	long integer;
 };
 
 enum ptype {
 	PTYPE_STRING,
+	PTYPE_INTEGER,
 };
 
 struct ptype_class {
@@ -78,6 +80,7 @@ struct ptype_class {
 };
 
 #define ARG_STRING(A) (A.v.string)
+#define ARG_INTEGER(A) (A.v.integer)
 struct arg {
 	union value v;
 	void (*free)(union value value);
@@ -105,12 +108,48 @@ static void string_free(union value value)
 	free((void *)value.string);
 }
 
+static char *integer_sprint(const union value *value)
+{
+	char *str = NULL;
+	xasprintf(&str, "%ld", value->integer);
+	return str;
+}
+
+static union value integer_read(const char *arg, const union value *defv)
+{
+	char *ep;
+	union value r;
+
+	if (!arg)
+		return *defv;
+
+	errno = 0;
+	r.integer = strtol(arg, &ep, 10);
+	if (errno)
+		err(EXIT_FAILURE, _("fail to make a number from %s"), arg);
+	else if (*ep != '\0')
+		errx(EXIT_FAILURE, _("garbage at the end of number: %s"), arg);
+	return r;
+}
+
+static void integer_free(union value value _U_)
+{
+	/* Do nothing */
+}
+
+
 struct ptype_class ptype_classes [] = {
 	[PTYPE_STRING] = {
 		.name = "string",
 		.sprint = string_sprint,
 		.read   = string_read,
 		.free   = string_free,
+	},
+	[PTYPE_INTEGER] = {
+		.name = "integer",
+		.sprint = integer_sprint,
+		.read   = integer_read,
+		.free   = integer_free,
 	},
 };
 
