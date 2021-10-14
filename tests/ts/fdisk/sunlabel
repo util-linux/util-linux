@@ -35,58 +35,70 @@ FDISK_CMD_CREATE_SECONDARY="n\n2\n128\n\n" # create secondary partition to the e
 
 FDISK_OPTIONS="-H 1 -S 63 -u=cylinders"
 
+function print_layout {
+    $TS_CMD_FDISK ${FDISK_OPTIONS} -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+    ts_fdisk_clean ${TEST_IMAGE_NAME}
+}
+
 #set -x
 
-ts_log "Initialize empty image"
+ts_init_subtest "empty-sun-pt"
 TEST_IMAGE_NAME=$(ts_image_init 10)
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-ts_log "Create new SUN partition table"
 echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETEALL}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK --noauto-pt ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_CMD_FDISK ${FDISK_OPTIONS} -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+print_layout
+ts_finalize_subtest
 
-ts_log "Create first partition"
+
+ts_init_subtest "create-first-partition"
 echo -e "${FDISK_CMD_CREATE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_CMD_FDISK ${FDISK_OPTIONS} -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+print_layout
+ts_finalize_subtest
 
-ts_log "Set partition sysid"
+ts_init_subtest "set-partition-sysid"
 echo -e "${FDISK_CMD_CHANGE_SYSID}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_CMD_FDISK ${FDISK_OPTIONS} -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+print_layout
+ts_finalize_subtest
 
-ts_log "Set first partition readonly"
+ts_init_subtest "set-first-par-readonly"
 echo -e "${FDISK_CMD_TOGGLE_READONLY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_CMD_FDISK ${FDISK_OPTIONS} -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+print_layout
+ts_finalize_subtest
 
-ts_log "Set first partition mountable"
+ts_init_subtest "set-first-par-mountable"
 echo -e "${FDISK_CMD_TOGGLE_MOUNTABLE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_CMD_FDISK ${FDISK_OPTIONS} -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+print_layout
+ts_finalize_subtest
 
-ts_log "Create second partition"
+ts_init_subtest "create-second-partition"
 echo -e "${FDISK_CMD_CREATE_SECONDARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_CMD_FDISK ${FDISK_OPTIONS} -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+print_layout
+ts_finalize_subtest
 
-ts_log "Delete all partitions"
+ts_init_subtest "delete-all-partitions"
 echo -e "${FDISK_CMD_DELETEALL}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_fdisk_clean ${TEST_IMAGE_NAME}
+
 ts_finalize

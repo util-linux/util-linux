@@ -43,92 +43,103 @@ function print_layout {
 	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
 	$TS_CMD_FDISK ${FDISK_OPTIONS} -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
+
+    ts_fdisk_clean ${TEST_IMAGE_NAME}
 }
 
 #
 # Note that fdisk will enlarge the disk image (to 57MB) because the logical
 # partitions are out of the original range (10MB).
 #
-ts_log "Initialize empty image"
+ts_init_subtest "empty-pt"
 TEST_IMAGE_NAME=$(ts_image_init 10)
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-ts_log "Create new DOS partition table"
 echo -e "${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_INIT}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK --noauto-pt ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Create primary partition"
+ts_init_subtest "create-primary-partition"
 echo -e "${FDISK_CMD_CREATE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Set partition type"
+ts_init_subtest "set-partition-type"
 echo -e "${FDISK_CMD_CHANGE_PARTTYPE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Set primary partition active"
+ts_init_subtest "set-primary-par-active"
 echo -e "${FDISK_CMD_SET_ACTIVE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Re-create primary partition"
+ts_init_subtest "re-create-primary-par"
 echo -e "d\n${FDISK_CMD_CREATE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Create extended partition"
+ts_init_subtest "create-extended-par"
 echo -e "${FDISK_CMD_CREATE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Create logical partitions"
+ts_init_subtest "create-logical-par"
 echo -e "${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Delete logical partitions"
+ts_init_subtest "delete-logical-par"
 echo -e "${FDISK_CMD_DELETE_LOGICALS}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Create another logical partition"
+ts_init_subtest "create-another-log-par"
 echo -e "${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Delete primary partition"
+ts_init_subtest "delete-primary-par"
 echo -e "${FDISK_CMD_DELETE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Delete extended partition"
+ts_init_subtest "delete-extended-par"
 echo -e "${FDISK_CMD_DELETE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${FDISK_OPTIONS} ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
+ts_finalize_subtest
 
-ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize

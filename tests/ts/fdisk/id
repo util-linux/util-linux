@@ -41,12 +41,16 @@ TS_EXPECTED+="${ARCH_EXT}"
 ts_log "Initialize empty image"
 TEST_IMAGE_NAME=$(ts_image_init 10)
 
-ts_log "Create MBR with ID=0x1"
+ts_init_subtest "create-mbr-with-id-0x1"
+TS_EXPECTED+="${ARCH_EXT}"
 echo -e "${FDISK_CMD_ID1}" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 $TS_CMD_FDISK -l ${TEST_IMAGE_NAME} | grep identifier >> $TS_OUTPUT
+ts_finalize_subtest
 
-ts_log "Create MBR with ID=0x2"
+ts_init_subtest "create-mbr-with-id-0x2"
+TS_EXPECTED+="${ARCH_EXT}"
 echo -e "${FDISK_CMD_ID2}" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 $TS_CMD_FDISK -l ${TEST_IMAGE_NAME} | grep identifier >> $TS_OUTPUT
+ts_finalize_subtest
 
 ts_finalize

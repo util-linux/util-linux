@@ -38,8 +38,12 @@ function print_layout {
 	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
 	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
+
+    ts_fdisk_clean ${TEST_IMAGE_NAME}
 }
 
+
+ts_init_subtest "empty-pt"
 ts_log "Initialize empty image"
 TEST_IMAGE_NAME=$(ts_image_init 10)
 
@@ -48,49 +52,56 @@ echo -e "${FDISK_CMD_CREATE_GPTLABEL}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Create partitions"
+ts_init_subtest "create-partitions"
 for i in {1..8}; do
 	echo -e "n\n${i}\n\n+1M\n${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 done
+ts_finalize_subtest
 
-ts_log "Change partition type by number"
+ts_init_subtest "change-type-by-number"
 echo -e "${FDISK_CMD_CHANGE_TYPE_BY_NUM}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Change partition type by UUID"
+ts_init_subtest "change-type-by-uuid"
 echo -e "${FDISK_CMD_CHANGE_TYPE_BY_UUID}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Delete partition"
+ts_init_subtest "delete-partition"
 echo -e "${FDISK_CMD_DELETE_PART}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Create again partition"
+ts_init_subtest "create-again-partition"
 echo -e "${FDISK_CMD_CREATE_PART}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Corrupt primary table"
+ts_init_subtest "corrupt-primary-table"
 dd if=/dev/zero of=${TEST_IMAGE_NAME} bs=512 count=1 seek=1 conv=notrunc &> /dev/null
 echo -e "w\n" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Corrupt backup table"
+ts_init_subtest "corrupt-backup-table"
 dd if=/dev/zero of=${TEST_IMAGE_NAME} bs=512 count=1 \
 	seek=$(( 1024 * 1024 * 10 / 512 - 1)) conv=notrunc &> /dev/null
 echo -e "w\n" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
-ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize
