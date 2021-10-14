@@ -28,16 +28,18 @@
 
 #include "c.h"
 #include "nls.h"
+#include "xalloc.h"
 
 #define _U_ __attribute__((__unused__))
 
 static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] FACTORY FD...\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] FACTORY FD... [PARAM=VAL...]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -l, --list           list available file descriptor factories and exit\n"), out);
+	fputs(_(" -I, --parameters     list parameters the factory takes\n"), out);
 	fputs(_(" -q, --quiet          don't print pid(s)\n"), out);
 	fputs(_(" -c, --dont-pause     don't pause after making fd(s)\n"), out);
 
@@ -50,6 +52,67 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 
 	exit(status);
 }
+
+union value {
+	const char *string;
+};
+
+enum ptype {
+	PTYPE_STRING,
+};
+
+struct ptype_class {
+	const char *name;
+
+	/* Covert to a string representation.
+	 * A caller must free the returned value with free(3) after using. */
+	char *(*sprint)(const union value *value);
+
+	/* Convert from a string. If ARG is NULL, use DEFV instead.
+	 * A caller must free the returned value with the free method
+	 * after using. */
+	union value (*read)(const char *arg, const union value *defv);
+
+	/* Free the value returned from the read method. */
+	void (*free)(union value value);
+};
+
+#define ARG_STRING(A) (A.v.string)
+struct arg {
+	union value v;
+	void (*free)(union value value);
+};
+
+struct parameter {
+	const char *name;
+	const enum ptype type;
+	const char *desc;
+	union value defv;	/* Default value */
+};
+
+static char *string_sprint(const union value *value)
+{
+	return xstrdup(value->string);
+}
+
+static union value string_read(const char *arg, const union value *defv)
+{
+	return (union value){ .string = xstrdup(arg?: defv->string) };
+}
+
+static void string_free(union value value)
+{
+	free((void *)value.string);
+}
+
+struct ptype_class ptype_classes [] = {
+	[PTYPE_STRING] = {
+		.name = "string",
+		.sprint = string_sprint,
+		.read   = string_read,
+		.free   = string_free,
+	},
+};
 
 struct fdesc {
 	int fd;
@@ -64,7 +127,8 @@ struct factory {
 #define MAX_N 3
 	int  N;			/* the number of fds this factory makes */
 	bool fork;		/* whether this factory make a child process or not */
-	void (*make)(const struct factory *, struct fdesc[], pid_t *);
+	void (*make)(const struct factory *, struct fdesc[], pid_t *, int, char **);
+	const struct parameter * params;
 };
 
 static void close_fdesc(int fd, void *data _U_)
@@ -72,7 +136,8 @@ static void close_fdesc(int fd, void *data _U_)
 	close(fd);
 }
 
-static void open_ro_regular_file(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
+static void open_ro_regular_file(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_,
+				 int argc _U_, char ** argv _U_)
 {
 	const char *file = "/etc/passwd";
 
@@ -94,7 +159,8 @@ static void open_ro_regular_file(const struct factory *factory _U_, struct fdesc
 	};
 }
 
-static void make_pipe(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
+static void make_pipe(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_,
+		      int argc _U_, char ** argv _U_)
 {
 	int pd[2];
 	if (pipe(pd) < 0)
@@ -117,7 +183,8 @@ static void make_pipe(const struct factory *factory _U_, struct fdesc fdescs[], 
 	}
 }
 
-static void open_directory(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_)
+static void open_directory(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_,
+			   int argc _U_, char ** argv _U_)
 {
 	const char *dir = "/";
 
@@ -166,19 +233,31 @@ static const struct factory factories[] = {
 	},
 };
 
+static int count_parameters(const struct factory *factory)
+{
+
+	const struct parameter *p = factory->params;
+	if (!p)
+		return 0;
+	while (p->name)
+		p++;
+	return p - factory->params;
+}
+
 static void print_factory(const struct factory *factory)
 {
-	printf("%-20s %4s %5d %4s %s\n",
+	printf("%-20s %4s %5d %4s %6d %s\n",
 	       factory->name,
 	       factory->priv? "yes": "no",
 	       factory->N,
 	       factory->fork? "yes": "no",
+	       count_parameters(factory),
 	       factory->desc);
 }
 
 static void list_factories(void)
 {
-	printf("%-20s PRIV COUNT FORK DESCRIPTION\n", "FACTORY");
+	printf("%-20s PRIV COUNT FORK NPARAM DESCRIPTION\n", "FACTORY");
 	for (size_t i = 0; i < ARRAY_SIZE(factories); i++)
 		print_factory(factories + i);
 }
@@ -189,6 +268,25 @@ static const struct factory *find_factory(const char *name)
 		if (strcmp(factories[i].name, name) == 0)
 			return factories + i;
 	return NULL;
+}
+
+static void list_parameters(const char *factory_name)
+{
+	const struct factory *factory = find_factory(factory_name);
+	const char *fmt = "%-15s %-8s %15s %s\n";
+
+	if (!factory)
+		errx(EXIT_FAILURE, _("no such factory: %s"), factory_name);
+
+	if (!factory->params)
+		return;
+
+	printf(fmt, "PARAMETER", "TYPE", "DEFAULT_VALUE", "DESCRIPTION");
+	for (const struct parameter *p = factory->params; p->name != NULL; p++) {
+		char *defv = ptype_classes[p->type].sprint(&p->defv);
+		printf(fmt, p->name, ptype_classes[p->type].name, defv, p->desc);
+		free(defv);
+	}
 }
 
 static void do_nothing(int signum _U_)
@@ -209,17 +307,21 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 		{ "list",	no_argument, NULL, 'l' },
+		{ "parameters", required_argument, NULL, 'I' },
 		{ "quiet",	no_argument, NULL, 'q' },
 		{ "dont-puase", no_argument, NULL, 'c' },
 		{ "help",	no_argument, NULL, 'h' },
 	};
 
-	while ((c = getopt_long(argc, argv, "lhqc", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "lhqcI:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
 		case 'l':
 			list_factories();
+			exit(EXIT_SUCCESS);
+		case 'I':
+			list_parameters(optarg);
 			exit(EXIT_SUCCESS);
 		case 'q':
 			quiet = true;
@@ -261,7 +363,7 @@ int main(int argc, char **argv)
 	}
 	optind += factory->N;
 
-	factory->make(factory, fdescs, pid + 1);
+	factory->make(factory, fdescs, pid + 1, argc - optind, argv + optind);
 
 	signal(SIGCONT, do_nothing);
 
