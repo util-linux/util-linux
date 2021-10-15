@@ -46,9 +46,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Examples:\n"), out);
-	fprintf(out, _(" %s ro-regular-file 3     using 3, open an regular file\n"),
+	fprintf(out, _("Using 3, open /etc/group:\n\n	$ %s ro-regular-file 3 file=/etc/group\n\n"),
 		program_invocation_short_name);
-	fprintf(out, _(" %s pipe-no-fork 3 4      using 3 and 4, make a pair\n"),
+	fprintf(out, _("Using 3 and 4, make a pipe:\n\n	$ %s pipe-no-fork 3 4\n\n"),
 		program_invocation_short_name);
 
 	exit(status);
