@@ -44,11 +44,11 @@ FD1=4
 EXPR=
 
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" pipe-no-fork $FD0 $FD1; }
+    coproc MKFDS { "$TS_HELPER_MKFDS" pipe-no-fork $FD0 $FD1 nonblock=-w; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and ((FD == '"$FD0"') or (FD =='"$FD1"'))'
-	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
-	echo 'ASSOC,MODE,TYPE,SOURCE': $?
+	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,SOURCE,FLAGS -Q "${EXPR}"
+	echo 'ASSOC,MODE,TYPE,SOURCE,FLAGS': $?
 
 	LSFD_PIDS=$(${TS_CMD_LSFD} --raw -n -o PID -Q "${EXPR}")
 	echo 'PID[RUN]:' $?
