@@ -587,11 +587,16 @@ int main(int argc, char **argv)
 	for (int i = 0; i < factory->N; i++) {
 		char *str = argv[optind + i];
 		long fd;
+		char *ep;
 
-		errno  = 0;
-		fd = strtol(str, NULL, 10);
+		errno = 0;
+		fd = strtol(str, &ep, 10);
 		if (errno)
 			err(EXIT_FAILURE, "failed to convert fd number: %s", str);
+		if (ep == str)
+			errx(EXIT_FAILURE, "failed to convert fd number: %s", str);
+		if (*ep != '\0')
+			errx(EXIT_FAILURE, _("garbage at the end of number: %s"), str);
 		if (fd < 0)
 			errx(EXIT_FAILURE, "fd number should not be negative: %s", str);
 		if (fd < 3)
