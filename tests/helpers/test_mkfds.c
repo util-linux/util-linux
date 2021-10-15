@@ -370,6 +370,22 @@ static void open_directory(const struct factory *factory, struct fdesc fdescs[],
 	};
 }
 
+static void open_rw_chrdev(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+			   int argc, char ** argv)
+{
+	struct arg chrdev = decode_arg("chrdev", factory->params, argc, argv);
+	int fd = open(ARG_STRING(chrdev), O_RDWR);
+	if (fd < 0)
+		err(EXIT_FAILURE, "failed to open: %s", ARG_STRING(chrdev));
+	free_arg(&chrdev);
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -431,6 +447,23 @@ static const struct factory factories[] = {
 				.type = PTYPE_INTEGER,
 				.desc = "read the number of dentries after open with readdir(3)",
 				.defv.integer = 0,
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "rw-character-device",
+		.desc = "character device with O_RDWR flag",
+		.priv = false,
+		.N    = 1,
+		.fork = false,
+		.make = open_rw_chrdev,
+		.params = (struct parameter []) {
+			{
+				.name = "chrdev",
+				.type = PTYPE_STRING,
+				.desc = "character device node to be opened",
+				.defv.string = "/dev/zero",
 			},
 			PARAM_END
 		},
