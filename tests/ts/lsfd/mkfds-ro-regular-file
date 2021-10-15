@@ -37,11 +37,11 @@ FD=3
 EXPR=
 
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD offset=1; }
+    coproc MKFDS { "$TS_HELPER_MKFDS" --comm ABC ro-regular-file $FD offset=1; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and (FD == '"$FD"')'
-	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,NAME,POS -Q "${EXPR}"
-	echo 'ASSOC,MODE,TYPE,NAME,POS': $?
+	${TS_CMD_LSFD} -n -o COMMAND,ASSOC,MODE,TYPE,NAME,POS -Q "${EXPR}"
+	echo 'COMMAND,ASSOC,MODE,TYPE,NAME,POS': $?
 
 	LSFD_PID=$(${TS_CMD_LSFD} --raw -n -o PID -Q "${EXPR}")
 	echo 'PID[RUN]:' $?

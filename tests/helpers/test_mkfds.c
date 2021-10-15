@@ -25,6 +25,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/prctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
@@ -44,6 +45,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -l, --list           list available file descriptor factories and exit\n"), out);
 	fputs(_(" -I, --parameters     list parameters the factory takes\n"), out);
+	fputs(_(" -r, --comm <name>    rename self\n"), out);
 	fputs(_(" -q, --quiet          don't print pid(s)\n"), out);
 	fputs(_(" -c, --dont-pause     don't pause after making fd(s)\n"), out);
 
@@ -583,6 +585,12 @@ static void list_parameters(const char *factory_name)
 	}
 }
 
+static void rename_self(const char *comm)
+{
+	if (prctl(PR_SET_NAME, (unsigned long)comm, 0, 0, 0) < 0)
+		err(EXIT_FAILURE, _("failed to rename self via prctl: %s"), comm);
+}
+
 static void do_nothing(int signum _U_)
 {
 }
@@ -602,12 +610,13 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "list",	no_argument, NULL, 'l' },
 		{ "parameters", required_argument, NULL, 'I' },
+		{ "comm",       required_argument, NULL, 'r' },
 		{ "quiet",	no_argument, NULL, 'q' },
 		{ "dont-puase", no_argument, NULL, 'c' },
 		{ "help",	no_argument, NULL, 'h' },
 	};
 
-	while ((c = getopt_long(argc, argv, "lhqcI:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "lhqcI:r:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
@@ -622,6 +631,9 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			cont = true;
+			break;
+		case 'r':
+			rename_self(optarg);
 			break;
 		default:
 			usage(stderr, EXIT_FAILURE);
