@@ -428,6 +428,22 @@ static void make_socketpair(const struct factory *factory, struct fdesc fdescs[]
 	}
 }
 
+static void open_with_opath(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+			    int argc, char ** argv)
+{
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	int fd = open(ARG_STRING(path), O_PATH|O_NOFOLLOW);
+	if (fd < 0)
+		err(EXIT_FAILURE, "failed to open with O_PATH: %s", ARG_STRING(path));
+	free_arg(&path);
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -523,6 +539,23 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "STREAM, DGRAM, or SEQPACKET",
 				.defv.string = "STREAM",
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "symlink",
+		.desc = "symbolic link itself opened with O_PATH",
+		.priv = false,
+		.N    = 1,
+		.fork = false,
+		.make = open_with_opath,
+		.params = (struct parameter []) {
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path to a symbolic link",
+				.defv.string = "/dev/stdin",
 			},
 			PARAM_END
 		},
