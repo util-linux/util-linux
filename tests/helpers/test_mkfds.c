@@ -25,7 +25,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/un.h>
 #include <unistd.h>
 
 #include "c.h"
@@ -386,6 +388,44 @@ static void open_rw_chrdev(const struct factory *factory, struct fdesc fdescs[],
 	};
 }
 
+static void make_socketpair(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+			    int argc, char ** argv)
+{
+	int sd[2];
+	struct arg socktype = decode_arg("socktype", factory->params, argc, argv);
+	int isocktype;
+	if (strcmp(ARG_STRING(socktype), "STREAM") == 0)
+		isocktype = SOCK_STREAM;
+	else if (strcmp(ARG_STRING(socktype), "DGRAM") == 0)
+		isocktype = SOCK_DGRAM;
+	else if (strcmp(ARG_STRING(socktype), "SEQPACKET") == 0)
+		isocktype = SOCK_SEQPACKET;
+	else
+		errx(EXIT_FAILURE,
+		     "unknown socket type for socketpair(AF_UNIX,...): %s",
+		     ARG_STRING(socktype));
+	free_arg(&socktype);
+
+	if (socketpair(AF_UNIX, isocktype, 0, sd) < 0)
+		err(EXIT_FAILURE, "failed to make socket pair");
+
+	for (int i = 0; i < 2; i++) {
+		if (dup2(sd[i], fdescs[i].fd) < 0) {
+			int e = errno;
+			close(sd[0]);
+			close(sd[1]);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d",
+			    sd[i], fdescs[i].fd);
+		}
+		fdescs[i] = (struct fdesc){
+			.fd    = fdescs[i].fd,
+			.close = close_fdesc,
+			.data  = NULL
+		};
+	}
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -464,6 +504,23 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "character device node to be opened",
 				.defv.string = "/dev/zero",
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "socketpair",
+		.desc = "AF_UNIX socket pair created with socketpair(2)",
+		.priv = false,
+		.N    = 2,
+		.fork = false,
+		.make = make_socketpair,
+		.params = (struct parameter []) {
+			{
+				.name = "socktype",
+				.type = PTYPE_STRING,
+				.desc = "STREAM, DGRAM, or SEQPACKET",
+				.defv.string = "STREAM",
 			},
 			PARAM_END
 		},
