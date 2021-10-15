@@ -962,6 +962,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
 	fputs(_(" -Q, --filter <expr>   apply display filter\n"), out);
 	fputs(_("     --source <source> add filter by SOURCE\n"), out);
+	fputs(_("     --debug-filter    dump the innternal data structure of filter and exit\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(23));
@@ -1036,10 +1037,12 @@ int main(int argc, char *argv[])
 	char *outarg = NULL;
 	struct lsfd_control ctl = {};
 	char  *filter_expr = NULL;
+	bool debug_filter = false;
 
 	enum {
 		OPT_SYSROOT = CHAR_MAX + 1,
 		OPT_SOURCE,
+		OPT_DEBUG_FILTER,
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -1053,6 +1056,7 @@ int main(int argc, char *argv[])
 		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
 		{ "filter",     required_argument, NULL, 'Q' },
 		{ "source",     required_argument, NULL, OPT_SOURCE },
+		{ "debug-filter",no_argument, NULL, OPT_DEBUG_FILTER },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -1098,7 +1102,9 @@ int main(int argc, char *argv[])
 			free(quoted_source);
 			break;
 		}
-
+		case OPT_DEBUG_FILTER:
+			debug_filter = true;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -1161,6 +1167,10 @@ int main(int argc, char *argv[])
 		const char *errmsg = lsfd_filter_get_errmsg(ctl.filter);
 		if (errmsg)
 			errx(EXIT_FAILURE, "%s", errmsg);
+		if (debug_filter) {
+			lsfd_filter_dump(ctl.filter, stdout);
+			return 0;
+		}
 		free(filter_expr);
 	}
 

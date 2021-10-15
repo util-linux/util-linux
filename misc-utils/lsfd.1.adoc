@@ -60,6 +60,10 @@ Don't truncate text in columns.
 *-Q*, *--filter* _expr_::
 Print the files only satisfying with the condition represented by the _expr_.
 
+*--debug-filter*::
+Dump the internal data structure for the filter and exit. This is useful
+only for lsfd developers.
+
 *-h*, *--help*::
 Display help text and exit.
 
