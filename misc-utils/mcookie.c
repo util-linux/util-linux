@@ -65,7 +65,7 @@ static uint64_t hash_file(struct mcookie_control *ctl, int fd)
 			rdsz = wanted - count;
 
 		r = read_all(fd, (char *) buf, rdsz);
-		if (r < 0)
+		if (r <= 0)
 			break;
 		ul_MD5Update(&ctl->ctx, buf, r);
 		count += r;
