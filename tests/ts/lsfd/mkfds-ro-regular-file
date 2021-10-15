@@ -20,7 +20,11 @@ TS_DESC="read-only regular file"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+. $TS_SELF/lsfd-functions.bash
+
 ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_CMD_FINDMNT"
+
 ts_check_test_command "$TS_HELPER_MKFDS"
 
 ts_check_prog "stat"
@@ -64,6 +68,7 @@ EXPR=
 	[ "${LSFD_SIZE}" == $(stat -c %s /etc/passwd) ]
 	echo 'SIZE[STR]:' $?
 
+	lsfd_compare_dev "${TS_CMD_LSFD}" "${TS_CMD_FINDMNT}" "${EXPR}"
 
 	kill -CONT ${PID}
 	wait ${MKFDS_PID}
