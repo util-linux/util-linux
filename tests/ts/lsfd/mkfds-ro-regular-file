@@ -59,6 +59,12 @@ EXPR=
 	[ "${LSFD_USER}" == $(id -u -n) ]
 	echo 'USER[STR]:' $?
 
+	LSFD_SIZE=$(${TS_CMD_LSFD} --raw -n -o SIZE -Q "${EXPR}")
+	echo 'SIZE[RUN]:' $?
+	[ "${LSFD_SIZE}" == $(stat -c %s /etc/passwd) ]
+	echo 'SIZE[STR]:' $?
+
+
 	kill -CONT ${PID}
 	wait ${MKFDS_PID}
     fi
