@@ -19,6 +19,7 @@
 
 #include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <getopt.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -254,12 +255,47 @@ static void open_ro_regular_file(const struct factory *factory, struct fdesc fde
 	};
 }
 
-static void make_pipe(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_,
-		      int argc _U_, char ** argv _U_)
+static void make_pipe(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+		      int argc, char ** argv)
 {
 	int pd[2];
+	int nonblock_flags[2] = {0, 0};
+	struct arg nonblock = decode_arg("nonblock", factory->params, argc, argv);
+	if (strlen(ARG_STRING(nonblock)) != 2) {
+		errx(EXIT_FAILURE, "string value for %s has unexpected length: %s",
+		     "nonblock", ARG_STRING(nonblock));
+	}
+
+	for (int i = 0; i < 2; i++) {
+		if (ARG_STRING(nonblock)[i] == '-')
+			continue;
+		if ((i == 0 && ARG_STRING(nonblock)[i] == 'r')
+		    || (i == 1 && ARG_STRING(nonblock)[i] == 'w'))
+			nonblock_flags[i] = 1;
+		else
+			errx(EXIT_FAILURE, "unexpected value %c for the %s fd of %s",
+			     ARG_STRING(nonblock)[i],
+			     (i == 0)? "read": "write",
+			     "nonblock");
+	}
+	free_arg(&nonblock);
+
 	if (pipe(pd) < 0)
 		err(EXIT_FAILURE, "failed to make pipe");
+
+	for (int i = 0; i < 2; i++) {
+		if (nonblock_flags[i]) {
+			int flags = fcntl(pd[i], F_GETFL);
+			if (fcntl(pd[i], F_SETFL, flags|O_NONBLOCK) < 0) {
+				int e = errno;
+				close(pd[0]);
+				close(pd[1]);
+				errno = e;
+				errx(EXIT_FAILURE, "failed to set NONBLOCK flag to the %s fd",
+				     (i == 0)? "read": "write");
+			}
+		}
+	}
 
 	for (int i = 0; i < 2; i++) {
 		if (dup2(pd[i], fdescs[i].fd) < 0) {
@@ -366,6 +402,15 @@ static const struct factory factories[] = {
 		.N    = 2,
 		.fork = false,
 		.make = make_pipe,
+		.params = (struct parameter []) {
+			{
+				.name = "nonblock",
+				.type = PTYPE_STRING,
+				.desc = "set nonblock flag (\"--\", \"r-\", \"-w\", or \"rw\")",
+				.defv.string = "--",
+			},
+			PARAM_END
+		},
 	},
 	{
 		.name = "directory",
