@@ -112,10 +112,6 @@ static void file_fill_flags_buf(struct ul_buffer *buf, int flags)
 	SET_FLAG(NOCTTY,noctty);
 #endif
 
-#ifdef O_NOCTTY
-	SET_FLAG(NOCTTY,noctty);
-#endif
-
 #ifdef O_APPEND
 	SET_FLAG(APPEND,append);
 #endif
