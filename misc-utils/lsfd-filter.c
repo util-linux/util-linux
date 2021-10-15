@@ -21,7 +21,7 @@
 /*
  * Definitions
  */
-#define COL_HEADER_EXTRA_CHARS ":-_" /* ??? */
+#define COL_HEADER_EXTRA_CHARS ":-_%" /* ??? */
 #define GOT_ERROR(PARSERorFILTER)(*((PARSERorFILTER)->errmsg))
 
 /*
@@ -29,7 +29,7 @@
  */
 
 enum token_type {
-	TOKEN_NAME,		/* [A-Za-z_][-_:A-Za-z0-9]* */
+	TOKEN_NAME,		/* [A-Za-z_][-_:%A-Za-z0-9]* */
 	TOKEN_STR,		/* "...", '...' */
 	TOKEN_DEC,		/* [1-9][0-9]+, NOTE: negative value is no dealt. */
 	TOKEN_HEX,		/* 0x[0-9a-f]+ not implemented */
