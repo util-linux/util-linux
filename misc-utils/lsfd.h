@@ -32,12 +32,6 @@
 #include "list.h"
 
 /*
- * Utilities
- */
-DIR *opendirf(const char *format, ...) __attribute__((format (printf, 1, 2)));
-FILE *fopenf(const char *mode, const char *format, ...) __attribute__((format (printf, 2, 3)));
-
-/*
  * column IDs
  */
 enum {
