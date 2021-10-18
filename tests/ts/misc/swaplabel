@@ -25,7 +25,7 @@ ts_check_test_command "$TS_HELPER_SYSINFO"
 # fallocate does not work on most file systems
 function fallocate_or_skip()
 {
-	$TS_CMD_FALLOCATE -l $1 $2 2>/dev/null || \
+	$TS_CMD_FALLOCATE -x -l $1 $2 2>/dev/null || \
 	truncate -s $1 $2 || \
 	ts_skip "no way to create test image"
 }
